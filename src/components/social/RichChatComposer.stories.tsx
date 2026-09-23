@@ -138,3 +138,66 @@ export const CompactModes: Story = {
     );
   },
 };
+
+/* ── Adaptive layout, shape and console tone ──────────────────────────────
+   Each cell is a real width the composer measures for itself: 640 (wide),
+   460 (medium — `?` hints, `⋯` formatting) and 320 (narrow — one row, `Aa`
+   toggle, compact mode pill). Rows are the page theme × the console tone. */
+const WIDTHS = [
+  { id: 'wide', className: 'w-[640px]' },
+  { id: 'medium', className: 'w-[460px]' },
+  { id: 'narrow', className: 'w-[320px]' },
+] as const;
+
+function AdaptiveRow({ theme, tone }: { theme: 'light' | 'dark'; tone: 'auto' | 'night' | 'graphite' }) {
+  const [mode, setMode] = useState<'chat' | 'agent' | 'terminal'>('agent');
+  return (
+    <div data-theme={theme} className="grid gap-2 bg-surface p-4">
+      <p className="m-0 text-xs font-semibold text-text-secondary">{theme} page · backdropTone="{tone}"</p>
+      <div className="flex flex-wrap items-start gap-4">
+        {WIDTHS.map((w) => (
+          <div key={w.id} className={w.className}>
+            <RichChatComposer
+              onSend={() => {}}
+              mode={mode}
+              onModeChange={setMode}
+              modeShortcuts
+              backdropTone={tone}
+              allowEmoji
+              allowAttachments
+              placeholder="Ask the agent…"
+              data-testid={`composer-${theme}-${tone}-${w.id}`}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export const AdaptiveMatrix: Story = {
+  decorators: [(Story) => <div className="p-0"><Story /></div>],
+  render: () => (
+    <div className="grid gap-0">
+      {(['light', 'dark'] as const).flatMap((theme) =>
+        (['auto', 'night', 'graphite'] as const).map((tone) => <AdaptiveRow key={`${theme}-${tone}`} theme={theme} tone={tone} />),
+      )}
+    </div>
+  ),
+};
+
+/** A host whose design tokens have no radius at all still gets a rounded composer; `radius` / `--composer-radius` override. */
+export const RadiusOnASquareHost: Story = {
+  render: () => (
+    <div className="grid gap-4 [--radius-lg:0px] [--radius-md:0px]">
+      <Harness />
+      <Harness radius="none" />
+      <Harness radius="sm" />
+    </div>
+  ),
+};
+
+/** The input grows with its content to `maxInputHeight`, then scrolls inside itself. */
+export const AutoGrowCap: Story = {
+  render: () => <Harness maxInputHeight={120} placeholder="Paste a few paragraphs — it stops growing at 120px" />,
+};

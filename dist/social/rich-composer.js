@@ -1,4 +1,4 @@
 import { a as e, n as t, o as n, t as r } from "../composerCommands-C-eXrw_h.js";
 import { t as i } from "../ComposerReferences-nGKcicNt.js";
-import { a, c as o, i as s, n as c, o as l, r as u, s as d, t as f } from "../RichChatComposer-w4AwSVrg.js";
-export { f as COMPOSER_MODE_ORDER, s as CommandSuggestions, o as ComposerAttachments, i as ComposerReferences, l as DocumentSuggestions, e as EMOJI_SHORTCODES, a as EmojiSuggestions, d as MentionSuggestions, c as RichChatComposer, r as composerCommandArgumentText, t as matchComposerCommand, u as matchesModeTrigger, n as searchEmoji };
+import { a, c as o, i as s, l as c, n as l, o as u, r as d, s as f, t as p, u as m } from "../RichChatComposer-DIn_Uu1b.js";
+export { p as COMPOSER_BREAKPOINTS, l as COMPOSER_MODE_ORDER, u as CommandSuggestions, m as ComposerAttachments, i as ComposerReferences, o as DocumentSuggestions, e as EMOJI_SHORTCODES, f as EmojiSuggestions, c as MentionSuggestions, d as RichChatComposer, r as composerCommandArgumentText, s as composerSizeFor, t as matchComposerCommand, a as matchesModeTrigger, n as searchEmoji };

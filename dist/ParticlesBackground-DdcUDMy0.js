@@ -149,20 +149,27 @@ function b(e) {
 		1
 	]);
 }
-function x({ active: e = !0, particleCount: t = 200, particleSpread: n = 10, speed: i = .1, particleColors: o, moveParticlesOnHover: s = !1, particleHoverFactor: p = 1, alphaParticles: m = !1, particleBaseSize: h = 100, sizeRandomness: g = 1, cameraDistance: _ = 20, disableRotation: v = !1, pixelRatio: y, seed: b = 1, fallbackIntensity: x = "medium", className: C, children: w, "data-testid": T = "particles-background" }) {
-	let [E, D] = c(e);
+var x = 24;
+function S(e, t, n, r) {
+	if (t === void 0 || !(t > 0) || n <= 1 || r <= 1) return e;
+	let i = Math.ceil(Math.max(0, n) * Math.max(0, r) * t / 1e4);
+	return Math.min(e, Math.max(x, i));
+}
+function C({ active: e = !0, particleCount: t = 200, particleSpread: n = 10, speed: i = .1, particleColors: o, moveParticlesOnHover: s = !1, particleHoverFactor: p = 1, alphaParticles: m = !1, particleBaseSize: h = 100, sizeRandomness: g = 1, cameraDistance: _ = 20, disableRotation: v = !1, pixelRatio: y, seed: b = 1, fallbackIntensity: x = "medium", tone: S = "night", density: C, className: T, children: E, "data-testid": D = "particles-background" }) {
+	let [O, k] = c(e);
 	return a(() => {
 		if (e) {
-			D(!0);
+			k(!0);
 			return;
 		}
-		let t = setTimeout(() => D(!1), d);
+		let t = setTimeout(() => k(!1), d);
 		return () => clearTimeout(t);
 	}, [e]), /* @__PURE__ */ u("div", {
-		"data-testid": T,
+		"data-testid": D,
 		"data-active": e ? "true" : "false",
-		className: r("relative isolate", E && "uic-particles-ground overflow-hidden", C),
-		children: [E && /* @__PURE__ */ l(S, {
+		"data-tone": S,
+		className: r("relative isolate", O && "uic-particles-ground overflow-hidden", T),
+		children: [O && /* @__PURE__ */ l(w, {
 			active: e,
 			particleCount: t,
 			particleSpread: n,
@@ -178,18 +185,19 @@ function x({ active: e = !0, particleCount: t = 200, particleSpread: n = 10, spe
 			...y === void 0 ? {} : { pixelRatio: y },
 			seed: b,
 			fallbackIntensity: x,
-			testId: T
-		}, `${Math.max(1, Math.round(t))}|${(o?.length ? o : f).join(",")}`), w]
+			...C === void 0 ? {} : { density: C },
+			testId: D
+		}, `${Math.max(1, Math.round(t))}|${(o?.length ? o : f).join(",")}`), E]
 	});
 }
-function S(c) {
+function w(c) {
 	let { testId: d } = c, p = s(c);
 	p.current = c;
 	let v = s({
 		x: 0,
 		y: 0
-	}), x = s(0), S = s(0), C = (c.particleColors?.length ? c.particleColors : f).join(","), w = o(() => {
-		let e = Math.max(1, Math.round(c.particleCount)), t = new Float32Array(e * 3), n = new Float32Array(e * 4), r = new Float32Array(e * 3), i = C.split(",");
+	}), x = s(0), C = s(0), w = (c.particleColors?.length ? c.particleColors : f).join(","), T = o(() => {
+		let e = Math.max(1, Math.round(c.particleCount)), t = new Float32Array(e * 3), n = new Float32Array(e * 4), r = new Float32Array(e * 3), i = w.split(",");
 		for (let a = 0; a < e; a += 1) {
 			let e = 0, o = 0, s = 0, c = 0;
 			do
@@ -213,24 +221,24 @@ function S(c) {
 			randoms: n,
 			colors: r
 		};
-	}, [c.particleCount, C]), T = s(w);
-	T.current = w;
-	let E = [
-		w.count,
+	}, [c.particleCount, w]), E = s(T);
+	E.current = T;
+	let D = [
+		T.count,
 		c.particleSpread,
 		c.particleBaseSize,
 		c.sizeRandomness,
 		+!!c.alphaParticles,
 		c.cameraDistance,
 		+!!c.disableRotation
-	].join(":"), { hostRef: D, canvasRef: O, status: k, reducedMotion: A } = e({
+	].join(":"), { hostRef: O, canvasRef: k, status: A, reducedMotion: j } = e({
 		active: c.active,
-		version: E,
+		version: D,
 		...c.pixelRatio === void 0 ? {} : { pixelRatio: c.pixelRatio },
 		setup: (e) => {
 			let r = n(e, m, h);
 			if (!r) return null;
-			let { positions: i, randoms: a, colors: o, count: s } = T.current, c = t(e, i), l = t(e, a), u = t(e, o);
+			let { positions: i, randoms: a, colors: o, count: s } = E.current, c = t(e, i), l = t(e, a), u = t(e, o);
 			return !c || !l || !u ? null : {
 				program: r,
 				buffers: {
@@ -258,13 +266,13 @@ function S(c) {
 		},
 		draw: (e, t) => {
 			let n = p.current, { gl: r, width: i, height: a, delta: o } = t;
-			S.current += o * n.speed, n.disableRotation || (x.current += .01 * n.speed), r.clearColor(0, 0, 0, 0), r.clear(r.COLOR_BUFFER_BIT), r.disable(r.DEPTH_TEST), r.enable(r.BLEND), r.blendFunc(r.SRC_ALPHA, r.ONE_MINUS_SRC_ALPHA), r.useProgram(e.program);
+			C.current += o * n.speed, n.disableRotation || (x.current += .01 * n.speed), r.clearColor(0, 0, 0, 0), r.clear(r.COLOR_BUFFER_BIT), r.disable(r.DEPTH_TEST), r.enable(r.BLEND), r.blendFunc(r.SRC_ALPHA, r.ONE_MINUS_SRC_ALPHA), r.useProgram(e.program);
 			let s = (e, t, n) => {
 				e < 0 || (r.bindBuffer(r.ARRAY_BUFFER, t), r.enableVertexAttribArray(e), r.vertexAttribPointer(e, n, r.FLOAT, !1, 0, 0));
 			};
 			s(e.attributes.position, e.buffers.position, 3), s(e.attributes.random, e.buffers.random, 4), s(e.attributes.color, e.buffers.color, 3);
-			let c = Math.max(1, i / Math.max(1, D.current?.clientWidth || i)), l = n.disableRotation ? 0 : Math.sin(S.current * 2e-4) * .1, u = n.disableRotation ? 0 : Math.cos(S.current * 5e-4) * .15, d = n.moveParticlesOnHover ? -v.current.x * n.particleHoverFactor : 0, f = n.moveParticlesOnHover ? -v.current.y * n.particleHoverFactor : 0;
-			r.uniformMatrix4fv(e.uniforms.projectionMatrix ?? null, !1, _(15, i / Math.max(1, a), .1, 100)), r.uniformMatrix4fv(e.uniforms.viewMatrix ?? null, !1, b(n.cameraDistance)), r.uniformMatrix4fv(e.uniforms.modelMatrix ?? null, !1, y(d, f, l, u, n.disableRotation ? 0 : x.current)), r.uniform1f(e.uniforms.uTime ?? null, S.current * .001), r.uniform1f(e.uniforms.uSpread ?? null, n.particleSpread), r.uniform1f(e.uniforms.uBaseSize ?? null, n.particleBaseSize * c), r.uniform1f(e.uniforms.uSizeRandomness ?? null, n.sizeRandomness), r.uniform1f(e.uniforms.uAlphaParticles ?? null, +!!n.alphaParticles), r.drawArrays(r.POINTS, 0, e.count);
+			let c = Math.max(1, i / Math.max(1, O.current?.clientWidth || i)), l = n.disableRotation ? 0 : Math.sin(C.current * 2e-4) * .1, u = n.disableRotation ? 0 : Math.cos(C.current * 5e-4) * .15, d = n.moveParticlesOnHover ? -v.current.x * n.particleHoverFactor : 0, f = n.moveParticlesOnHover ? -v.current.y * n.particleHoverFactor : 0;
+			r.uniformMatrix4fv(e.uniforms.projectionMatrix ?? null, !1, _(15, i / Math.max(1, a), .1, 100)), r.uniformMatrix4fv(e.uniforms.viewMatrix ?? null, !1, b(n.cameraDistance)), r.uniformMatrix4fv(e.uniforms.modelMatrix ?? null, !1, y(d, f, l, u, n.disableRotation ? 0 : x.current)), r.uniform1f(e.uniforms.uTime ?? null, C.current * .001), r.uniform1f(e.uniforms.uSpread ?? null, n.particleSpread), r.uniform1f(e.uniforms.uBaseSize ?? null, n.particleBaseSize * c), r.uniform1f(e.uniforms.uSizeRandomness ?? null, n.sizeRandomness), r.uniform1f(e.uniforms.uAlphaParticles ?? null, +!!n.alphaParticles), r.drawArrays(r.POINTS, 0, S(e.count, n.density, i / c, a / c));
 		},
 		dispose: (e, t) => {
 			t.deleteProgram(e.program), t.deleteBuffer(e.buffers.position), t.deleteBuffer(e.buffers.random), t.deleteBuffer(e.buffers.color);
@@ -273,7 +281,7 @@ function S(c) {
 	a(() => {
 		if (!c.moveParticlesOnHover || typeof window > "u") return;
 		let e = (e) => {
-			let t = D.current?.getBoundingClientRect();
+			let t = O.current?.getBoundingClientRect();
 			if (!(!t || t.width === 0 || t.height === 0)) {
 				if (!(e.clientX >= t.left && e.clientX <= t.right && e.clientY >= t.top && e.clientY <= t.bottom)) {
 					v.current = {
@@ -289,21 +297,21 @@ function S(c) {
 			}
 		};
 		return window.addEventListener("pointermove", e, { passive: !0 }), () => window.removeEventListener("pointermove", e);
-	}, [c.moveParticlesOnHover, D]);
-	let j = k === "unsupported";
+	}, [c.moveParticlesOnHover, O]);
+	let M = A === "unsupported";
 	return /* @__PURE__ */ u("div", {
-		ref: D,
+		ref: O,
 		"aria-hidden": "true",
 		"data-testid": `${d}-backdrop`,
-		"data-motion": A ? "static" : "drifting",
-		"data-webgl": j ? "unavailable" : "ready",
-		className: r("pointer-events-none absolute inset-0 -z-10 transition-opacity duration-[250ms] motion-reduce:transition-none", c.active ? "uic-particles-in opacity-100" : "opacity-0"),
+		"data-motion": j ? "static" : "drifting",
+		"data-webgl": M ? "unavailable" : "ready",
+		className: r("uic-particles-field pointer-events-none absolute inset-0 -z-10 transition-opacity duration-[250ms] motion-reduce:transition-none", c.active ? "uic-particles-in opacity-100" : "opacity-0"),
 		children: [/* @__PURE__ */ l("canvas", {
-			ref: O,
+			ref: k,
 			"data-testid": `${d}-canvas`,
 			className: "block h-full w-full",
-			...j ? { hidden: !0 } : {}
-		}), j && /* @__PURE__ */ l(i, {
+			...M ? { hidden: !0 } : {}
+		}), M && /* @__PURE__ */ l(i, {
 			active: c.active,
 			intensity: c.fallbackIntensity,
 			seed: c.seed,
@@ -313,4 +321,4 @@ function S(c) {
 	});
 }
 //#endregion
-export { x as n, p as t };
+export { C as n, S as r, p as t };

@@ -1034,7 +1034,7 @@ function Ee({ composer: e, strip: t, above: n, maxWidth: i = "3xl", label: a = "
 					children: t
 				}),
 				/* @__PURE__ */ U("div", {
-					className: r("rounded-lg shadow-lg", t && "rounded-t-none [&_.chat-composer]:rounded-t-none"),
+					className: r("rounded-[var(--composer-radius,12px)] shadow-lg", t && "rounded-t-none [&_.chat-composer]:rounded-t-none"),
 					"data-testid": `${s}-composer`,
 					children: e
 				})
@@ -1379,7 +1379,7 @@ function tt(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
-var nt = ce(() => import("./SortableSlideList-g50drMkZ.js"));
+var nt = ce(() => import("./SortableSlideList-B5E_SCub.js"));
 function rt(e, t) {
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }
@@ -2387,7 +2387,7 @@ function wt({ testIdPrefix: e }) {
 		children: "The agent box needs the rich-text composer (the optional @tiptap peers). Edit the slide by hand below."
 	});
 }
-var Tt = ce(() => import("./PresentationAgentComposer-CcEBiigx.js").catch(() => ({ default: wt })));
+var Tt = ce(() => import("./PresentationAgentComposer-AfFIzwOJ.js").catch(() => ({ default: wt })));
 function Et({ back: e }) {
 	return /* @__PURE__ */ U("svg", {
 		viewBox: "0 0 16 16",

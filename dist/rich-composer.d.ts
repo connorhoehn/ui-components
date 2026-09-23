@@ -4,6 +4,9 @@ import { JSX } from 'react';
 import { ReactNode } from 'react';
 import { RefAttributes } from 'react';
 
+/** What a console surface paints behind itself. `none` keeps the ordinary surface. */
+declare type BackdropTone = 'auto' | 'night' | 'graphite' | 'none';
+
 /** One row. Both a command and a command's argument fit this shape. */
 export declare interface CommandSuggestionItem {
     /** Stable key. For a command, its trigger. */
@@ -80,6 +83,21 @@ export declare interface ComposedMessage {
      */
     mode?: ComposerMode;
 }
+
+/**
+ * Width thresholds, in CSS px of the composer's own box (not the window's):
+ * below `narrow` it is narrow, below `wide` it is medium, else wide.
+ *
+ * - wide (≥ 560): the full toolbar and the hint row.
+ * - medium (380–559): hints fold into a `?` menu; strikethrough, code, lists
+ *   and quote fold into a `⋯` overflow menu.
+ * - narrow (< 380): input and Send share ONE row; the toolbar sits behind an
+ *   `Aa` toggle; the mode switch is the compact `1 2 3` pill.
+ */
+export declare const COMPOSER_BREAKPOINTS: {
+    readonly narrow: 380;
+    readonly wide: 560;
+};
 
 /** The order Option-1/2/3 and the compact `1 2 3` buttons follow. */
 export declare const COMPOSER_MODE_ORDER: readonly ComposerMode[];
@@ -170,6 +188,8 @@ export declare interface ComposerProcess {
     tone: 'running' | 'idle' | 'failed' | 'done';
 }
 
+export declare type ComposerRadius = 'none' | 'sm' | 'md' | 'lg' | 'xl';
+
 export declare interface ComposerReference {
     /** Stable across re-renders; what `onRemove` is called with. */
     id: string;
@@ -198,6 +218,12 @@ export declare interface ComposerSendOption {
     id: string;
     label: string;
 }
+
+/** How much room the composer has, from its own width. */
+export declare type ComposerSize = 'wide' | 'medium' | 'narrow';
+
+/** `null` — not measured yet — is wide: a first paint that hides controls and then shows them is worse than one frame of overflow. */
+export declare function composerSizeFor(width: number | null): ComposerSize;
 
 export declare interface DocumentCandidate {
     /** Stable identity — this is what travels in the message, not the label. */
@@ -518,6 +544,31 @@ export declare interface RichChatComposerProps {
      * in Terminal.
      */
     submitLabel?: string | Partial<Record<ComposerMode, string>>;
+    /**
+     * Corner radius. Unset, the composer is rounded by its OWN default (12px),
+     * never by the host's `--radius-*` tokens — a host with square corners still
+     * gets a finished composer. A `--composer-radius` on any ancestor overrides
+     * the default; this prop overrides both.
+     */
+    radius?: ComposerRadius;
+    /**
+     * What Agent and Terminal paint behind the composer. `auto` (default) is
+     * graphite on a light theme and night on a dark one, read from the nearest
+     * `data-backdrop-tone` / `data-theme` ancestor, else `prefers-color-scheme`.
+     * `none` keeps the ordinary surface in every mode.
+     */
+    backdropTone?: BackdropTone;
+    /**
+     * The tallest the input grows before it scrolls inside itself: pixels, or
+     * any CSS length. Default `min(14rem, 40dvh)`.
+     */
+    maxInputHeight?: number | string;
+    /**
+     * The layout, when the host knows better than a measurement (stories, a
+     * fixed-width dock). Default `auto`: the composer measures its OWN width and
+     * picks `wide` / `medium` / `narrow` — see `COMPOSER_BREAKPOINTS`.
+     */
+    layout?: 'auto' | ComposerSize;
     className?: string;
     'data-testid'?: string;
 }

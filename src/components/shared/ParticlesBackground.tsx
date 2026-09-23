@@ -166,6 +166,22 @@ function viewMatrix(distance: number): Float32Array {
   return new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -distance, 1]);
 }
 
+/** Never thin a field below this — a handful of stars reads as dead pixels. */
+const MIN_DRAWN_PARTICLES = 24;
+
+/**
+ * How many of `count` particles to draw on a `width`×`height` CSS-px surface
+ * at `density` per 10,000 px². Exported for the tests.
+ */
+export function drawnParticles(count: number, density: number | undefined, width: number, height: number): number {
+  if (density === undefined || !(density > 0)) return count;
+  // A 1px (or smaller) box is "no layout yet", not "tiny" — the GL hook
+  // floors an unlaid-out canvas at 1×1. Thin nothing on that reading.
+  if (width <= 1 || height <= 1) return count;
+  const cap = Math.ceil((Math.max(0, width) * Math.max(0, height) * density) / 10_000);
+  return Math.min(count, Math.max(MIN_DRAWN_PARTICLES, cap));
+}
+
 export interface ParticlesBackgroundProps {
   /**
    * True while the thing behind this surface is working. False renders
@@ -190,6 +206,21 @@ export interface ParticlesBackgroundProps {
   /** Seed for the CSS fallback's star field, so a fallback pane keeps its own sky. */
   seed?: number;
   fallbackIntensity?: RisingParticlesIntensity;
+  /**
+   * The sky behind the field. `night` (default) is the navy-to-black ground it
+   * always had; `graphite` is a neutral dark grey with the field drawn at lower
+   * contrast, for a console surface sitting on a LIGHT page. Resolve `auto`
+   * with `useResolvedBackdropTone` before passing it here.
+   */
+  tone?: 'night' | 'graphite';
+  /**
+   * Upper bound on how many particles are DRAWN, per 10,000 CSS px² of the
+   * surface. Unset draws all of `particleCount` (the old behaviour). The cloud
+   * is uploaded once and its order is random, so drawing a prefix is a uniform
+   * thinning that costs nothing to change — a surface that grows or shrinks
+   * never rebuilds its GL context, and a small one never pays for a big sky.
+   */
+  density?: number;
   className?: string;
   children?: ReactNode;
   'data-testid'?: string;
@@ -226,6 +257,8 @@ export function ParticlesBackground({
   pixelRatio,
   seed = 1,
   fallbackIntensity = 'medium',
+  tone = 'night',
+  density,
   className,
   children,
   'data-testid': testId = 'particles-background',
@@ -247,6 +280,7 @@ export function ParticlesBackground({
     <div
       data-testid={testId}
       data-active={active ? 'true' : 'false'}
+      data-tone={tone}
       className={cn('relative isolate', painted && 'uic-particles-ground overflow-hidden', className)}
     >
       {painted && (
@@ -272,6 +306,7 @@ export function ParticlesBackground({
           {...(pixelRatio === undefined ? {} : { pixelRatio })}
           seed={seed}
           fallbackIntensity={fallbackIntensity}
+          {...(density === undefined ? {} : { density })}
           testId={testId}
         />
       )}
@@ -287,7 +322,7 @@ type FieldProps = Required<
     | 'alphaParticles' | 'particleBaseSize' | 'sizeRandomness' | 'cameraDistance' | 'disableRotation'
     | 'seed' | 'fallbackIntensity'
   >
-> & { particleColors?: readonly string[]; pixelRatio?: number; testId: string };
+> & { particleColors?: readonly string[]; pixelRatio?: number; density?: number; testId: string };
 
 /**
  * The GL half, mounted only while the backdrop is painted so an idle surface
@@ -412,7 +447,7 @@ function ParticleField(props: FieldProps) {
       gl.uniform1f(scene.uniforms.uSizeRandomness ?? null, p.sizeRandomness);
       gl.uniform1f(scene.uniforms.uAlphaParticles ?? null, p.alphaParticles ? 1 : 0);
 
-      gl.drawArrays(gl.POINTS, 0, scene.count);
+      gl.drawArrays(gl.POINTS, 0, drawnParticles(scene.count, p.density, width / dpr, height / dpr));
     },
     dispose: (scene, gl) => {
       gl.deleteProgram(scene.program);
@@ -456,7 +491,7 @@ function ParticleField(props: FieldProps) {
       data-motion={reducedMotion ? 'static' : 'drifting'}
       data-webgl={unsupported ? 'unavailable' : 'ready'}
       className={cn(
-        'pointer-events-none absolute inset-0 -z-10 transition-opacity duration-[250ms] motion-reduce:transition-none',
+        'uic-particles-field pointer-events-none absolute inset-0 -z-10 transition-opacity duration-[250ms] motion-reduce:transition-none',
         props.active ? 'uic-particles-in opacity-100' : 'opacity-0',
       )}
     >

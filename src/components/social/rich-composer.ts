@@ -21,7 +21,7 @@
 //
 // Everything here is a first-class export, not a deep path into src.
 
-export { RichChatComposer, matchComposerCommand, composerCommandArgumentText, matchesModeTrigger, COMPOSER_MODE_ORDER } from './RichChatComposer';
+export { RichChatComposer, matchComposerCommand, composerCommandArgumentText, matchesModeTrigger, COMPOSER_MODE_ORDER, COMPOSER_BREAKPOINTS, composerSizeFor } from './RichChatComposer';
 export type {
   RichChatComposerProps,
   RichChatComposerHandle,
@@ -33,6 +33,8 @@ export type {
   ComposerMode,
   ComposerProcess,
   ComposerHint,
+  ComposerSize,
+  ComposerRadius,
   ComposerSendOption,
   MentionCandidate,
   DocumentCandidate,

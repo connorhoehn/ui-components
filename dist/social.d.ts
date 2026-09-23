@@ -317,6 +317,9 @@ export declare interface AttachmentBubbleProps {
     className?: string;
 }
 
+/** What a console surface paints behind itself. `none` keeps the ordinary surface. */
+declare type BackdropTone = 'auto' | 'night' | 'graphite' | 'none';
+
 export declare function CallActivityCard({ callId, startedBy, participants, live, durationMs, audioOnly, recorded, notRecordedReason, lobbyName, onJoin, className, 'data-testid': testId, }: CallActivityCardProps): JSX.Element;
 
 export declare interface CallActivityCardProps {
@@ -573,7 +576,7 @@ export declare function chatChannelKindOf(ctx: Pick<ChatCommandScopeContext, 'ch
  * the mode. Layout is identical in both states — only colour and the backdrop
  * change — so nothing reflows across the transition.
  */
-export declare function ChatColumnBackdrop({ mode, working, className, children, 'data-testid': testId, }: ChatColumnBackdropProps): JSX.Element;
+export declare function ChatColumnBackdrop({ mode, working, tone: toneProp, className, children, 'data-testid': testId, }: ChatColumnBackdropProps): JSX.Element;
 
 export declare interface ChatColumnBackdropProps {
     /**
@@ -587,6 +590,13 @@ export declare interface ChatColumnBackdropProps {
      * the whole column instead of one pane.
      */
     working?: boolean;
+    /**
+     * The sky. `auto` (default): graphite on a light theme, night on a dark one
+     * (see `resolveBackdropTone`). The resolved tone is stamped on this element
+     * as `data-backdrop-tone`, so a composer inside it inherits the SAME sky
+     * instead of deciding again. `none` never darkens the column.
+     */
+    tone?: BackdropTone;
     className?: string;
     children?: ReactNode;
     'data-testid'?: string;
@@ -3474,9 +3484,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -3510,9 +3520,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -3533,9 +3543,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -3543,9 +3553,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

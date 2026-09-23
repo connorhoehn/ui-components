@@ -76,6 +76,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
   type Ref,
@@ -93,6 +94,7 @@ import { cn } from '../../lib/cn';
 import { FileInput } from '../forms/FileInput';
 import { DropdownMenu } from '../shared/DropdownMenu';
 import { AGENT_PARTICLE_COLORS, ParticlesBackground } from '../shared/ParticlesBackground';
+import { GRAPHITE_PARTICLE_COLORS, useResolvedBackdropTone, type BackdropTone } from '../shared/backdropTone';
 import { RovingToolbar } from '../shared/RovingToolbar';
 import { Tabs } from '../shared/Tabs';
 import { IconButton } from '../ui/IconButton';
@@ -410,9 +412,61 @@ export interface RichChatComposerProps {
    * in Terminal.
    */
   submitLabel?: string | Partial<Record<ComposerMode, string>>;
+  /**
+   * Corner radius. Unset, the composer is rounded by its OWN default (12px),
+   * never by the host's `--radius-*` tokens — a host with square corners still
+   * gets a finished composer. A `--composer-radius` on any ancestor overrides
+   * the default; this prop overrides both.
+   */
+  radius?: ComposerRadius;
+  /**
+   * What Agent and Terminal paint behind the composer. `auto` (default) is
+   * graphite on a light theme and night on a dark one, read from the nearest
+   * `data-backdrop-tone` / `data-theme` ancestor, else `prefers-color-scheme`.
+   * `none` keeps the ordinary surface in every mode.
+   */
+  backdropTone?: BackdropTone;
+  /**
+   * The tallest the input grows before it scrolls inside itself: pixels, or
+   * any CSS length. Default `min(14rem, 40dvh)`.
+   */
+  maxInputHeight?: number | string;
+  /**
+   * The layout, when the host knows better than a measurement (stories, a
+   * fixed-width dock). Default `auto`: the composer measures its OWN width and
+   * picks `wide` / `medium` / `narrow` — see `COMPOSER_BREAKPOINTS`.
+   */
+  layout?: 'auto' | ComposerSize;
   className?: string;
   'data-testid'?: string;
 }
+
+/** How much room the composer has, from its own width. */
+export type ComposerSize = 'wide' | 'medium' | 'narrow';
+export type ComposerRadius = 'none' | 'sm' | 'md' | 'lg' | 'xl';
+
+/**
+ * Width thresholds, in CSS px of the composer's own box (not the window's):
+ * below `narrow` it is narrow, below `wide` it is medium, else wide.
+ *
+ * - wide (≥ 560): the full toolbar and the hint row.
+ * - medium (380–559): hints fold into a `?` menu; strikethrough, code, lists
+ *   and quote fold into a `⋯` overflow menu.
+ * - narrow (< 380): input and Send share ONE row; the toolbar sits behind an
+ *   `Aa` toggle; the mode switch is the compact `1 2 3` pill.
+ */
+export const COMPOSER_BREAKPOINTS = { narrow: 380, wide: 560 } as const;
+
+/** `null` — not measured yet — is wide: a first paint that hides controls and then shows them is worse than one frame of overflow. */
+export function composerSizeFor(width: number | null): ComposerSize {
+  if (width === null) return 'wide';
+  if (width < COMPOSER_BREAKPOINTS.narrow) return 'narrow';
+  if (width < COMPOSER_BREAKPOINTS.wide) return 'medium';
+  return 'wide';
+}
+
+/** Literal lengths, deliberately not `var(--radius-*)`: the host's tokens may be 0. */
+const COMPOSER_RADII: Record<ComposerRadius, string> = { none: '0px', sm: '4px', md: '6px', lg: '8px', xl: '12px' };
 
 const DEFAULT_PRIVACY_LABELS = { visible: 'Visible to everyone', hidden: 'Only you' } as const;
 
@@ -636,6 +690,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   modeHints,
   submitLead,
   submitLabel,
+  radius,
+  backdropTone = 'auto',
+  maxInputHeight,
+  layout = 'auto',
   className,
   'data-testid': testId = 'rich-chat-composer',
 }, ref) {
@@ -1442,66 +1500,78 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
    * inside the group. So the group sheds its least-load-bearing controls
    * instead, in a fixed order, and Send is `shrink-0` and always there.
    */
-  const [toolbarWidth, setToolbarWidth] = useState<number | null>(null);
+  const [rootWidth, setRootWidth] = useState<number | null>(null);
   const observer = useRef<ResizeObserver | null>(null);
-  const toolbarNode = useRef<HTMLDivElement | null>(null);
+  const rootNode = useRef<HTMLDivElement | null>(null);
   /**
-   * A CALLBACK ref, not `useRef` + a mount effect.
+   * The composer measures its OWN box — the size classes key off the space it
+   * was given (a chat column, a dock over an editor, a side panel), never the
+   * window's.
    *
-   * The first version used the effect, and it never fired: the effect runs
-   * once on mount with `[]`, and the toolbar row is not in the DOM yet at
-   * that point — the composer renders it after Tiptap has an editor. The ref
-   * read `null`, the effect returned, and nothing ever re-attached it. The
-   * result looked exactly like "the feature does not work": eleven controls
-   * at a 234px row, the last one painting 4px past the composer's own border.
+   * A ResizeObserver rather than a CSS container query, on purpose:
+   * `container-type` applies layout containment, which makes the composer the
+   * containing block for `position: fixed` descendants — the emoji picker
+   * (ReactionPickerPopover) and the link dialog's backdrop (PopoverForm) are
+   * both fixed and both live inside this box, and would be pinned to the
+   * composer instead of the viewport.
    *
-   * A callback ref attaches whenever the node appears, however late.
+   * A CALLBACK ref, not `useRef` + a mount effect (the history: the toolbar row
+   * this used to measure is not in the DOM on the first effect, so a mount
+   * effect read `null` and never re-attached). A callback ref attaches
+   * whenever the node appears, however late.
    */
-  const toolbarRow = useCallback((el: HTMLDivElement | null) => {
+  const rootRef = useCallback((el: HTMLDivElement | null) => {
     observer.current?.disconnect();
     observer.current = null;
-    toolbarNode.current = el;
+    rootNode.current = el;
     if (!el || typeof ResizeObserver === 'undefined') return;
     // A zero width is "no layout", not "very narrow" — a detached subtree, a
     // display:none ancestor, or a test environment with no layout engine at
-    // all. Dropping every control on that reading would make the toolbar
-    // disappear wherever it is measured before it is shown.
-    const measure = (w: number) => setToolbarWidth(w > 0 ? w : null);
+    // all. Collapsing on that reading would hide the toolbar wherever the
+    // composer is measured before it is shown.
+    const measure = (w: number) => setRootWidth(w > 0 ? w : null);
     const ro = new ResizeObserver(([entry]) => measure(entry.contentRect.width));
     ro.observe(el);
     observer.current = ro;
-    // The observer's first callback arrives asynchronously; measure now so a
-    // composer that mounts narrow is never painted wide even once.
     measure(el.getBoundingClientRect().width);
   }, []);
   useEffect(() => () => observer.current?.disconnect(), []);
   /**
    * Re-measure after every commit, and do NOT rely on the observer for the
-   * first real number.
-   *
-   * The callback ref runs before layout, so the width it reads can be 0 — and
-   * the correction after layout arrives only through ResizeObserver, whose
-   * callbacks are delivered on the rendering pipeline. A tab that is not
-   * rendering (backgrounded, or driven by automation) never gets them, and
-   * the toolbar stays on its "unmeasured" reading forever. A layout effect
-   * reads the post-layout width synchronously and needs no pipeline at all.
-   *
-   * Settles in one extra render: setting the same width bails out of the
-   * update, so this does not loop.
+   * first real number: its callbacks are delivered on the rendering pipeline,
+   * and a tab that is not rendering (backgrounded, or driven by automation)
+   * never gets them. A layout effect reads the post-layout width
+   * synchronously. Settles in one extra render — the same width bails out.
    */
   useLayoutEffect(() => {
-    const el = toolbarNode.current;
+    const el = rootNode.current;
     if (!el) return;
     const w = el.getBoundingClientRect().width;
-    if (w > 0 && w !== toolbarWidth) setToolbarWidth(w);
+    if (w > 0 && w !== rootWidth) setRootWidth(w);
   });
-  // Thresholds measured against the real control widths (28px each, plus two
-  // 9px dividers and a 50px Send). `null` means we have not measured yet —
-  // render everything, because a first paint that hides controls and then
-  // shows them is worse than one frame of overflow.
-  const roomFor = (needed: number) => toolbarWidth === null || toolbarWidth >= needed;
-  const showSecondaryMarks = roomFor(360);   // strikethrough, code
-  const showListControls = roomFor(300);     // bullets, numbers, quote
+  const size: ComposerSize = layout === 'auto' ? composerSizeFor(rootWidth) : layout;
+  const wide = size === 'wide';
+  const narrow = size === 'narrow';
+  // Narrow keeps the toolbar behind a toggle. Opening it is a per-composer
+  // choice that survives a resize (someone who opened it wants it open).
+  const [formatOpen, setFormatOpen] = useState(false);
+  const singleRow = narrow && !formatOpen;
+  // Strikethrough, code, lists and quote: inline when wide, in the `⋯` menu otherwise.
+  const showSecondaryMarks = wide;
+  const showListControls = wide;
+  // The console sky. `none` keeps the ordinary surface in Agent/Terminal: the
+  // mode still changes what Enter does, it just stops repainting the box.
+  const tone = useResolvedBackdropTone(rootNode, backdropTone, consoleMode);
+  const consoleSurface = consoleMode && tone !== 'none';
+  const surfaceVars: Record<string, string> = {};
+  if (radius) surfaceVars['--composer-radius'] = COMPOSER_RADII[radius];
+  if (maxInputHeight !== undefined) {
+    surfaceVars['--composer-input-max'] = typeof maxInputHeight === 'number' ? `${maxInputHeight}px` : maxInputHeight;
+  }
+  // Drawn-particle budget for the console sky: bounded by the box's area
+  // (see `ParticlesBackground`'s `density`), so a narrow composer is not
+  // painting the same 120 stars as a wide one.
+  const CONSOLE_DENSITY = 22;
 
   const toolbarButton = (
     label: string,
@@ -1559,7 +1629,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
       // `disabled` rather than an absent handler: the zone suppresses its own
       // overlay, so a build without file capability shows no "drop here" promise.
       disabled={!attachmentsEnabled}
-      className={className}
+      className={cn('min-w-0', className)}
     >
       <div
         data-testid={testId}
@@ -1575,14 +1645,20 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         // not noise.
         data-command={activeCommand?.trigger}
         data-mode={modesEnabled ? activeMode : undefined}
-        data-console={consoleMode ? 'true' : undefined}
+        data-console={consoleSurface ? 'true' : undefined}
+        data-composer-size={size}
+        data-backdrop-tone={consoleSurface ? tone : undefined}
+        ref={rootRef}
+        // Only CSS custom properties — the radius and the input's growth cap
+        // are values the host chose, and the stylesheet reads them from here.
+        {...(Object.keys(surfaceVars).length ? { style: surfaceVars as CSSProperties } : {})}
         // Agent and Terminal put the composer on the star field and flip the
         // chrome to the night palette — see `ChatColumnBackdrop` for why this
         // is two class hooks rather than a second set of classes on every row
         // inside. `isolate` so the backdrop's negative z stays local, and NO
         // `overflow-hidden` here: the send split-menu and the suggestion
         // popovers are children of this box and clipping them is a regression.
-        {...(consoleMode ? { 'data-theme': 'dark' } : {})}
+        {...(consoleSurface ? { 'data-theme': 'dark' } : {})}
         {...(modeShortcuts && switchable
           ? {
               // Capture phase: Option-digit must be taken before the editor
@@ -1600,8 +1676,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             }
           : {})}
         className={cn(
-          'chat-composer relative isolate rounded-lg border bg-surface transition-colors duration-300 focus-within:ring-2 motion-reduce:transition-none',
-          consoleMode && 'uic-chat-console',
+          // `min-w-0 w-full max-w-full`: fills whatever it was given and never
+          // pushes past it. Radius and shadow read the composer's own tokens
+          // (see `.uic-composer` in styles.css), not the host's.
+          'uic-composer chat-composer relative isolate w-full min-w-0 max-w-full rounded-[var(--composer-radius,12px)] border bg-surface shadow-[var(--composer-shadow,var(--uic-composer-shadow))] transition-colors duration-300 focus-within:ring-2 motion-reduce:transition-none',
+          consoleSurface && 'uic-chat-console',
           activeCommand
             ? (activeCommand.disabled ? 'border-warning focus-within:border-warning focus-within:ring-warning' : 'border-info focus-within:border-info focus-within:ring-info')
             : 'border-border focus-within:border-primary focus-within:ring-primary',
@@ -1611,14 +1690,16 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             so the corners match the border above without clipping anything
             that has to escape the box. */}
         <ParticlesBackground
-          active={consoleMode}
+          active={consoleSurface}
+          tone={tone === 'graphite' ? 'graphite' : 'night'}
           particleCount={120}
+          density={CONSOLE_DENSITY}
           speed={0.09}
           alphaParticles
-          particleColors={AGENT_PARTICLE_COLORS}
-          particleBaseSize={90}
+          particleColors={tone === 'graphite' ? GRAPHITE_PARTICLE_COLORS : AGENT_PARTICLE_COLORS}
+          particleBaseSize={tone === 'graphite' ? 80 : 90}
           fallbackIntensity="low"
-          className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-lg"
+          className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[inherit]"
           data-testid={`${testId}-console`}
         />
         {sendError && <p role="alert" className="px-2 py-1 text-sm text-danger-fg">Unable to send. Your draft and attachments are saved. Try again.</p>}
@@ -1628,7 +1709,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             title={activeCommand.description ?? activeCommand.hint ?? activeCommand.label}
             data-testid={`${testId}-command`}
             className={cn(
-              'flex items-center gap-1.5 rounded-t-lg px-2 py-1 text-[11px]',
+              'flex items-center gap-1.5 rounded-t-[calc(var(--composer-radius,12px)-1px)] px-2 py-1 text-[11px]',
               activeCommand.disabled ? 'bg-warning-bg text-warning-fg' : 'bg-info-bg text-info-fg',
             )}
           >
@@ -1657,7 +1738,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               'flex items-center gap-1.5 bg-neutral-bg px-2 py-1 text-[11px] text-neutral-fg',
               // Only actually the top edge when the command bar is not also
               // showing above it.
-              !sendError && !activeCommand && 'rounded-t-lg',
+              !sendError && !activeCommand && 'rounded-t-[calc(var(--composer-radius,12px)-1px)]',
             )}
           >
             <EyeOffIcon size={13} />
@@ -1693,7 +1774,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
 
         {/* The mode switch. Its own row rather than a control in the toolbar:
             it changes what Enter DOES, which is not a formatting choice. */}
-        {modesEnabled && !fixedMode && modeControl === 'compact' && (
+        {/* Narrow always takes the compact pill: three segmented tabs with
+            labels do not fit beside anything at that width. */}
+        {modesEnabled && !fixedMode && (modeControl === 'compact' || narrow) && (
           <div className="flex items-center gap-1.5 px-2 pt-1 text-xs" data-testid={`${testId}-modes`} data-mode-control="compact">
             <span className="flex items-center gap-1 font-semibold text-text-primary" data-testid={`${testId}-mode-label`}>
               <span aria-hidden="true" className="flex w-4 justify-center text-text-secondary">{MODE_ICON[activeMode]}</span>
@@ -1725,18 +1808,18 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 );
               })}
             </span>
-            {modeShortcuts && (
+            {modeShortcuts && !narrow && (
               <kbd className="rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary" data-testid={`${testId}-mode-kbd`}>
                 ⌥{COMPOSER_MODE_ORDER.indexOf(activeMode) + 1}
               </kbd>
             )}
           </div>
         )}
-        {modesEnabled && !fixedMode && modeControl !== 'compact' && (
+        {modesEnabled && !fixedMode && modeControl !== 'compact' && !narrow && (
           <div className="flex items-center gap-2 px-2 pt-1.5" data-testid={`${testId}-modes`}>
             {/* Lit while it is not on Chat: the control that changed what Enter
                 does should be the one thing on the surface that glows. */}
-            <div className={cn('rounded-md transition-shadow duration-300 motion-reduce:transition-none', consoleMode && 'ring-1 ring-primary/60')}>
+            <div className={cn('rounded-md transition-shadow duration-300 motion-reduce:transition-none', consoleSurface && 'ring-1 ring-primary/60')}>
             <Tabs
               items={[
                 { id: 'chat', label: 'Chat', icon: <ChatIcon size={13} /> },
@@ -1764,12 +1847,18 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             down: unmounting it would destroy the half-written message someone
             switched away from, which is the bug the `useEditor` deps note above
             exists to stop recurring. */}
-        <div {...(terminalMode ? { hidden: true } : {})}>
+        {/* The body. Block flow at every size but one: NARROW with the
+            toolbar folded, where it wraps so the input and the action cluster
+            share a single row (attachments drop below via `order-last`). The
+            editor stays in the same parent at every size — moving it would
+            remount EditorContent and drop the caret on a resize. */}
+        <div className={cn(singleRow && 'flex flex-wrap items-end')} data-testid={`${testId}-body`}>
+        <div className={cn(singleRow && 'min-w-0 flex-1')} {...(terminalMode ? { hidden: true } : {})}>
           <EditorContent editor={editor} />
         </div>
 
         {terminalMode && (
-          <div className="flex items-center gap-2 px-2 py-2" data-testid={`${testId}-shell`}>
+          <div className={cn('flex items-center gap-2 px-2 py-2', singleRow && 'min-w-0 flex-1')} data-testid={`${testId}-shell`}>
             <span aria-hidden="true" className="shrink-0 font-mono text-xs text-text-tertiary">$</span>
             <input
               ref={shellInputRef}
@@ -1793,7 +1882,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           </div>
         )}
 
-        {!!resolvedHints.length && (
+        {/* Wide only. Narrower, the same hints are the `?` menu in the toolbar row. */}
+        {wide && !!resolvedHints.length && (
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-2 pb-1 text-[11px] text-text-tertiary" data-testid={`${testId}-hints`}>
             {resolvedHints.map((hint) => {
               const key = <kbd className="rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary">{hint.key}</kbd>;
@@ -1812,13 +1902,30 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           </div>
         )}
 
-        <ComposerAttachments
-          files={staged}
-          disabled={blocked}
-          onRemove={(id) => replaceStaged(stagedRef.current.filter((s) => s.id !== id))}
-        />
+        <div className={cn(singleRow && 'order-last basis-full')}>
+          <ComposerAttachments
+            files={staged}
+            disabled={blocked}
+            onRemove={(id) => replaceStaged(stagedRef.current.filter((s) => s.id !== id))}
+          />
+        </div>
 
-        <div ref={toolbarRow} className="flex items-center border-t border-border px-1.5 py-1">
+        <div
+          className={cn(
+            'flex min-w-0 items-center px-1.5 py-1',
+            singleRow ? 'shrink-0' : 'border-t border-border',
+            narrow && !singleRow && 'flex-wrap gap-y-1',
+          )}
+          data-testid={`${testId}-toolbar`}
+        >
+          {narrow && toolbarButton(
+            formatOpen ? 'Hide formatting' : 'Show formatting',
+            formatOpen,
+            () => setFormatOpen((v) => !v),
+            <span className="text-xs font-semibold">Aa</span>,
+            undefined,
+            `${testId}-format-toggle`,
+          )}
           {/* ONE tab stop for the whole bar, not one per control. Measured
               before: 14 stops between entering this composer and leaving it,
               11 of them Bold/Italic/Quote and friends — on every chat surface
@@ -1828,7 +1935,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           {/* `min-w-0` is the load-bearing half: without it a flex child will
               not shrink below its content, which is how the buttons pushed
               Send out of the composer entirely. */}
-          <RovingToolbar label="Message formatting" className="min-w-0 gap-0.5" data-testid={`${testId}-format-toolbar`}>
+          {!singleRow && (
+          <RovingToolbar label="Message formatting" className={cn('min-w-0 gap-0.5', narrow && 'flex-wrap')} data-testid={`${testId}-format-toolbar`}>
           {editor && [
             toolbarButton('Bold', editor.isActive('bold'), () => editor.chain().focus().toggleBold().run(), <b>B</b>),
             toolbarButton('Italic', editor.isActive('italic'), () => editor.chain().focus().toggleItalic().run(), <i>I</i>),
@@ -1844,6 +1952,30 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             showListControls && toolbarButton('Bulleted list', editor.isActive('bulletList'), () => editor.chain().focus().toggleBulletList().run(), <span>•</span>),
             showListControls && toolbarButton('Numbered list', editor.isActive('orderedList'), () => editor.chain().focus().toggleOrderedList().run(), <span className="text-[11px]">1.</span>),
             showListControls && toolbarButton('Quote', editor.isActive('blockquote'), () => editor.chain().focus().toggleBlockquote().run(), <QuoteIcon size={16} />),
+            // Below wide, the same five live in one overflow menu instead of
+            // being dropped: shedding them outright is how a narrow composer
+            // quietly lost lists.
+            !wide && (
+              <DropdownMenu
+                key="format-more"
+                trigger={<span aria-hidden="true" className="text-sm leading-none">⋯</span>}
+                triggerLabel="More formatting"
+                triggerTitle="More formatting"
+                triggerTabIndex={-1}
+                triggerTestId={`${testId}-format-more`}
+                data-testid={`${testId}-format-more-menu`}
+                triggerClassName="grid h-7 w-7 shrink-0 place-items-center rounded text-text-secondary hover:bg-surface-hover"
+                sections={[{
+                  items: [
+                    { label: 'Strikethrough', checked: editor.isActive('strike'), onSelect: () => editor.chain().focus().toggleStrike().run() },
+                    { label: 'Code', checked: editor.isActive('code'), onSelect: () => editor.chain().focus().toggleCode().run() },
+                    { label: 'Bulleted list', checked: editor.isActive('bulletList'), onSelect: () => editor.chain().focus().toggleBulletList().run() },
+                    { label: 'Numbered list', checked: editor.isActive('orderedList'), onSelect: () => editor.chain().focus().toggleOrderedList().run() },
+                    { label: 'Quote', checked: editor.isActive('blockquote'), onSelect: () => editor.chain().focus().toggleBlockquote().run() },
+                  ],
+                }]}
+              />
+            ),
           ]}
 
           {(allowEmoji || attachmentsEnabled || !!onPrivacyChange) && (
@@ -1894,6 +2026,26 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
 
           {toolbarExtras}
           </RovingToolbar>
+          )}
+
+          {!wide && !!resolvedHints.length && (
+            <DropdownMenu
+              trigger={<span aria-hidden="true" className="text-xs font-semibold leading-none">?</span>}
+              triggerLabel="Keyboard hints"
+              triggerTitle="Keyboard hints"
+              triggerTestId={`${testId}-hints-toggle`}
+              data-testid={`${testId}-hints-menu`}
+              align="end"
+              triggerClassName="grid h-7 w-7 shrink-0 place-items-center rounded text-text-tertiary hover:bg-surface-hover hover:text-text-primary"
+              sections={[{
+                items: resolvedHints.map((hint) => ({
+                  label: hint.label,
+                  trailing: <kbd className="rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary">{hint.key}</kbd>,
+                  ...(hint.onSelect ? { onSelect: hint.onSelect } : {}),
+                })),
+              }]}
+            />
+          )}
 
           {submitLead != null && (
             <span className="ml-auto flex shrink-0 items-center pr-1.5 text-xs text-text-secondary" data-testid={`${testId}-submit-lead`}>
@@ -1937,6 +2089,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               {sendLabel}
             </button>
           )}
+        </div>
         </div>
         <LinkDialog
           open={linkState.open}

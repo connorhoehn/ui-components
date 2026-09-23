@@ -59,31 +59,25 @@ describe('what the toolbar keeps when the column is narrow', () => {
     }
   });
 
-  it('drops the secondary marks first', () => {
-    render(<RichChatComposer onSend={vi.fn()} allowEmoji allowAttachments />);
+  it('folds the secondary marks and lists into the overflow menu at medium width', () => {
+    render(<RichChatComposer onSend={vi.fn()} allowEmoji allowAttachments data-testid="composer" />);
+    emit!(450);
+    for (const label of ['Strikethrough', 'Code', 'Bulleted list', 'Numbered list', 'Quote']) expect(has(label)).toBe(false);
+    for (const label of ['Bold', 'Italic', 'Add link', 'Emoji', 'Attach files']) expect(has(label)).toBe(true);
+    expect(screen.getByTestId('composer-format-more')).toBeInTheDocument();
+  });
+
+  it('hides the toolbar behind a toggle when narrow, and brings all of it back on demand', () => {
+    render(<RichChatComposer onSend={vi.fn()} allowEmoji allowAttachments data-testid="composer" />);
     emit!(300);
-    expect(has('Strikethrough')).toBe(false);
-    expect(has('Code')).toBe(false);
-    // Bold, italic and link are what people actually reach for.
-    expect(has('Bold')).toBe(true);
-    expect(has('Italic')).toBe(true);
-    expect(has('Add link')).toBe(true);
-  });
-
-  it('drops the list controls next, when even that is not enough', () => {
-    render(<RichChatComposer onSend={vi.fn()} allowEmoji allowAttachments />);
-    emit!(200);
-    expect(has('Bulleted list')).toBe(false);
-    expect(has('Numbered list')).toBe(false);
-    expect(has('Quote')).toBe(false);
-    expect(has('Bold')).toBe(true);
-  });
-
-  it('never drops attaching or emoji — those are content, not formatting', () => {
-    render(<RichChatComposer onSend={vi.fn()} allowEmoji allowAttachments />);
-    emit!(180);
-    expect(has('Emoji')).toBe(true);
-    expect(has('Attach files')).toBe(true);
+    expect(has('Bold')).toBe(false);
+    expect(has('Emoji')).toBe(false);
+    const toggle = screen.getByTestId('composer-format-toggle');
+    act(() => { toggle.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true })); });
+    // Emoji and attaching are content, not formatting — once the toolbar is
+    // open they are always in it, never folded into the overflow menu.
+    for (const label of ['Bold', 'Italic', 'Add link', 'Emoji', 'Attach files']) expect(has(label)).toBe(true);
+    expect(screen.getByTestId('composer-format-more')).toBeInTheDocument();
   });
 
   it('never drops Send, at any width', () => {

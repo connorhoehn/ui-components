@@ -634,7 +634,11 @@
    composer reserves three empty lines under a one-line message. */
 .chat-composer .ProseMirror {
   min-height: 2.5rem;
-  max-height: 12rem;
+  /* Auto-grows with its content up to this, then scrolls inside itself.
+     `--composer-input-max` is set by the composer's `maxInputHeight` prop (or
+     by a host); the default is bounded by the VIEWPORT too, so a composer on a
+     short landscape phone never grows over the conversation it answers. */
+  max-height: var(--composer-input-max, min(14rem, 40dvh));
   overflow-y: auto;
   padding: 0.5rem 0.625rem;
   font-size: 0.875rem;
@@ -1846,6 +1850,22 @@
   background: radial-gradient(ellipse at bottom, rgb(17, 29, 43) 0%, rgb(9, 10, 15) 100%);
 }
 
+/* Graphite — the console sky for a LIGHT page (`tone="graphite"`).
+   Night is navy fading to black; on a white page that reads as a hole punched
+   through it. Graphite is a neutral grey — no blue in it — and the field is
+   drawn at lower contrast so the stars are texture, not glare. The ground's
+   LIGHTEST point (#404247) is what the console ink below is checked against:
+   tertiary #b8babf on it is 5.3:1, primary #ededef is 10:1. */
+.uic-particles-ground[data-tone="graphite"] {
+  background: radial-gradient(ellipse at bottom, #404247 0%, #28292d 100%);
+}
+/* The canvas and the CSS fallback, not the field's own box: the box carries the
+   crossfade (`opacity-0/100` utilities), and an unlayered opacity here would
+   beat them and stop it fading out. */
+.uic-particles-ground[data-tone="graphite"] > .uic-particles-field > * {
+  opacity: 0.55;
+}
+
 .uic-particles-in {
   animation: uic-particles-fade 250ms ease-out;
 }
@@ -1938,4 +1958,50 @@
   --color-neutral-bg: rgba(205, 214, 244, 0.12);
   --color-neutral-fg: #cdd6f4;
   --color-neutral-border: rgba(205, 214, 244, 0.2);
+}
+
+/* The same glass on the GRAPHITE sky: white alphas and neutral ink instead of
+   Catppuccin's blue-lavender, which reads as a tint on grey. Keyed on the
+   resolved tone the surface stamps on itself (`data-backdrop-tone`). */
+.uic-chat-console[data-backdrop-tone="graphite"] {
+  --color-surface-inset: rgba(255, 255, 255, 0.07);
+  --color-surface-hover: rgba(255, 255, 255, 0.09);
+  --color-surface-emphasis: rgba(255, 255, 255, 0.13);
+
+  --color-border: rgba(255, 255, 255, 0.14);
+  --color-border-subtle: rgba(255, 255, 255, 0.07);
+  --color-border-emphasis: rgba(255, 255, 255, 0.26);
+  --color-border-field: rgba(255, 255, 255, 0.22);
+
+  --color-text-primary: #ededef;
+  --color-text-secondary: #cfd0d4;
+  --color-text-tertiary: #b8babf;
+  --color-text-disabled: #85878d;
+
+  --color-neutral-bg: rgba(255, 255, 255, 0.1);
+  --color-neutral-fg: #ededef;
+  --color-neutral-border: rgba(255, 255, 255, 0.18);
+}
+
+/* ===========================================================================
+   RichChatComposer — the frame that drops in anywhere.
+   ===========================================================================
+   Only CUSTOM PROPERTIES here, never `border-radius` / `box-shadow`
+   themselves: this sheet is unlayered, and an unlayered declaration would
+   beat every utility — the focus ring, and FloatingComposerDock squaring the
+   top corners under a strip. The component's own utilities read these vars.
+
+   The SHAPE deliberately does not read the host's `--radius-*` tokens: a host
+   that sets those to 0 (or never defines them) still gets a finished, rounded
+   composer. `--composer-radius` on any ancestor overrides the default; the
+   `radius` prop overrides both. Radius is applied by the component's classes
+   as `var(--composer-radius, 12px)`.
+
+   Shadow: soft and low on a light page, none on a dark one — there the 1px
+   `border-border` hairline is the edge. `--composer-shadow` overrides it. */
+.uic-composer {
+  --uic-composer-shadow: 0 1px 2px rgb(15 23 42 / 0.05), 0 4px 16px -6px rgb(15 23 42 / 0.16);
+}
+[data-theme="dark"] .uic-composer {
+  --uic-composer-shadow: 0 0 #0000;
 }

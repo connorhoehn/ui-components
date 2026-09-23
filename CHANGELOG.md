@@ -6,6 +6,50 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.369.0] — 2026-09-22
+
+### Added — `RichChatComposer` adapts to the box it is dropped into
+
+All back-compatible; a host that passes none of the new props gets the adaptive
+behaviour with the same API.
+
+- **Size classes from its own width** (ResizeObserver on the composer, not a
+  window media query; not `container-type` either, which would make the
+  composer the containing block for its `position: fixed` emoji picker and
+  link dialog). `COMPOSER_BREAKPOINTS = { narrow: 380, wide: 560 }`,
+  `composerSizeFor(width)`, stamped as `data-composer-size`.
+  - wide (≥ 560): full toolbar and hint row, as before.
+  - medium (380–559): hints fold into a `?` menu; strikethrough, code, lists
+    and quote fold into a `⋯` overflow menu (previously they were dropped).
+  - narrow (< 380): input and Send share one row, the toolbar sits behind an
+    `Aa` toggle, the mode switch is always the compact `1 2 3` pill.
+  - `layout?: 'auto' | 'wide' | 'medium' | 'narrow'` overrides the measurement.
+- **Auto-grow cap**: `maxInputHeight?: number | string` →
+  `--composer-input-max`; default `min(14rem, 40dvh)` (was a fixed 12rem).
+- **Shape that drops in anywhere**: radius is `var(--composer-radius, 12px)` —
+  the composer's own default, never the host's `--radius-*` (a host with 0 or
+  no radius tokens still gets a rounded composer). `radius?: 'none' | 'sm' |
+  'md' | 'lg' | 'xl'` overrides both. Soft shadow on a light page, none on a
+  dark one (hairline border only); `--composer-shadow` overrides.
+  `FloatingComposerDock`'s card follows the same radius.
+- **Graphite console tone**: `backdropTone?: 'auto' | 'night' | 'graphite' |
+  'none'` (default `auto`). `auto` = the nearest `data-backdrop-tone` ancestor,
+  else the nearest `data-theme` (light → graphite, dark → night), else
+  `prefers-color-scheme`. Graphite is a neutral dark grey ground with zinc,
+  lower-contrast stars and neutral console ink (tertiary ink ≥ 5:1). Stamped as
+  `data-backdrop-tone`. `none` keeps the ordinary surface in Agent/Terminal.
+- `ChatColumnBackdrop` takes the same `tone` prop (default `auto`) and stamps
+  its resolved tone so a composer inside inherits it.
+- `ParticlesBackground`: `tone?: 'night' | 'graphite'` and `density?: number`
+  (drawn particles per 10,000 px², a free per-frame cap — no GL rebuild on
+  resize). The composer uses 22, the column 10/14.
+- New exports: `resolveBackdropTone`, `useResolvedBackdropTone`,
+  `GRAPHITE_PARTICLE_COLORS`, `drawnParticles`, `BackdropTone`,
+  `ResolvedBackdropTone` (shared); `COMPOSER_BREAKPOINTS`, `composerSizeFor`,
+  `ComposerSize`, `ComposerRadius` (social/rich-composer).
+
+---
+
 ## [2.368.1] — 2026-09-22
 
 ### Fixed — `ViewportFillRegion` re-measures when something above it appears late

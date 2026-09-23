@@ -114,7 +114,7 @@ export function FloatingComposerDock({
         {strip && <div data-testid={`${testId}-strip`}>{strip}</div>}
         {/* With a strip on top the two read as one box: the composer's top
             corners square off to meet the strip's bottom edge. */}
-        <div className={cn('rounded-lg shadow-lg', strip && 'rounded-t-none [&_.chat-composer]:rounded-t-none')} data-testid={`${testId}-composer`}>{composer}</div>
+        <div className={cn('rounded-[var(--composer-radius,12px)] shadow-lg', strip && 'rounded-t-none [&_.chat-composer]:rounded-t-none')} data-testid={`${testId}-composer`}>{composer}</div>
       </div>
     </div>
   );

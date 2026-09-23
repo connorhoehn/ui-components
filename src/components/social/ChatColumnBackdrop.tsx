@@ -23,9 +23,10 @@
 // Reverting is the same two classes coming off, so "Back to chat" is a
 // crossfade rather than a re-render into a different design.
 
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { AGENT_PARTICLE_COLORS, ParticlesBackground } from '../shared/ParticlesBackground';
+import { GRAPHITE_PARTICLE_COLORS, useResolvedBackdropTone, type BackdropTone } from '../shared/backdropTone';
 import type { ComposerMode } from './RichChatComposer';
 
 /** Matches the CSS transition and `ParticlesBackground`'s own crossfade. */
@@ -43,6 +44,13 @@ export interface ChatColumnBackdropProps {
    * the whole column instead of one pane.
    */
   working?: boolean;
+  /**
+   * The sky. `auto` (default): graphite on a light theme, night on a dark one
+   * (see `resolveBackdropTone`). The resolved tone is stamped on this element
+   * as `data-backdrop-tone`, so a composer inside it inherits the SAME sky
+   * instead of deciding again. `none` never darkens the column.
+   */
+  tone?: BackdropTone;
   className?: string;
   children?: ReactNode;
   'data-testid'?: string;
@@ -56,11 +64,14 @@ export interface ChatColumnBackdropProps {
 export function ChatColumnBackdrop({
   mode = 'chat',
   working = false,
+  tone: toneProp = 'auto',
   className,
   children,
   'data-testid': testId = 'chat-column-backdrop',
 }: ChatColumnBackdropProps) {
-  const console_ = mode !== 'chat';
+  const root = useRef<HTMLDivElement | null>(null);
+  const tone = useResolvedBackdropTone(root, toneProp, mode !== 'chat');
+  const console_ = mode !== 'chat' && tone !== 'none';
   // Held one crossfade past the switch back, so the dark palette leaves WITH
   // the star field rather than a frame before it — a column that goes white
   // while the sky is still fading out flashes.
@@ -76,11 +87,12 @@ export function ChatColumnBackdrop({
 
   return (
     <div
+      ref={root}
       data-testid={testId}
       data-mode={mode}
       data-console={console_ ? 'true' : 'false'}
       data-working={working ? 'true' : 'false'}
-      {...(dark ? { 'data-theme': 'dark' } : {})}
+      {...(dark ? { 'data-theme': 'dark', 'data-backdrop-tone': tone === 'graphite' ? 'graphite' : 'night' } : {})}
       className={cn(
         'relative flex min-h-0 min-w-0 flex-1 flex-col transition-colors duration-300 motion-reduce:transition-none',
         dark && 'uic-chat-console',
@@ -89,14 +101,16 @@ export function ChatColumnBackdrop({
     >
       <ParticlesBackground
         active={console_}
+        tone={tone === 'graphite' ? 'graphite' : 'night'}
         // Working is denser and a touch quicker, and the cloud follows the
         // pointer — a difference you feel before you read the status line.
         particleCount={working ? 260 : 170}
+        density={working ? 14 : 10}
         speed={working ? 0.16 : 0.07}
         moveParticlesOnHover={working}
         particleHoverFactor={0.6}
         alphaParticles
-        particleColors={AGENT_PARTICLE_COLORS}
+        particleColors={tone === 'graphite' ? GRAPHITE_PARTICLE_COLORS : AGENT_PARTICLE_COLORS}
         particleBaseSize={working ? 110 : 90}
         fallbackIntensity={working ? 'medium' : 'low'}
         className="flex min-h-0 min-w-0 flex-1 flex-col"

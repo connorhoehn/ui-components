@@ -1429,6 +1429,9 @@ declare interface AwarenessUpdaters {
     updateCursorInfo: (name: string, color: string) => void;
 }
 
+/** What a console surface paints behind itself. `none` keeps the ordinary surface. */
+export declare type BackdropTone = 'auto' | 'night' | 'graphite' | 'none';
+
 export declare function Badge({ variant, value, color, 'aria-label': ariaLabel, className, 'data-testid': testId, }: BadgeProps): JSX.Element;
 
 export declare type BadgeColor = 'accent' | 'success' | 'danger' | 'muted';
@@ -2810,7 +2813,7 @@ export declare function chatChannelKindOf(ctx: Pick<ChatCommandScopeContext, 'ch
  * the mode. Layout is identical in both states — only colour and the backdrop
  * change — so nothing reflows across the transition.
  */
-export declare function ChatColumnBackdrop({ mode, working, className, children, 'data-testid': testId, }: ChatColumnBackdropProps): JSX.Element;
+export declare function ChatColumnBackdrop({ mode, working, tone: toneProp, className, children, 'data-testid': testId, }: ChatColumnBackdropProps): JSX.Element;
 
 export declare interface ChatColumnBackdropProps {
     /**
@@ -2824,6 +2827,13 @@ export declare interface ChatColumnBackdropProps {
      * the whole column instead of one pane.
      */
     working?: boolean;
+    /**
+     * The sky. `auto` (default): graphite on a light theme, night on a dark one
+     * (see `resolveBackdropTone`). The resolved tone is stamped on this element
+     * as `data-backdrop-tone`, so a composer inside it inherits the SAME sky
+     * instead of deciding again. `none` never darkens the column.
+     */
+    tone?: BackdropTone;
     className?: string;
     children?: ReactNode;
     'data-testid'?: string;
@@ -6071,6 +6081,12 @@ export declare interface DrawerProps {
     backdrop?: boolean;
 }
 
+/**
+ * How many of `count` particles to draw on a `width`×`height` CSS-px surface
+ * at `density` per 10,000 px². Exported for the tests.
+ */
+export declare function drawnParticles(count: number, density: number | undefined, width: number, height: number): number;
+
 export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, triggerTabIndex, triggerTestId, align, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
 
 export declare interface DropdownMenuItem {
@@ -7429,6 +7445,9 @@ export declare function graphGroupPalette(group: string | undefined, groups: str
 
 /** Groups in first-appearance order, the centre bucket excluded; undefined groups collapse to ''. */
 export declare function graphGroups(nodes: GraphNode[]): string[];
+
+/** Star colours for the graphite sky: zinc greys, so no blue cast sits on a white page. */
+export declare const GRAPHITE_PARTICLE_COLORS: readonly ["#f4f4f5", "#d4d4d8", "#a1a1aa"];
 
 export declare type GraphLayout = 'radial' | 'grid' | 'force';
 
@@ -10514,7 +10533,7 @@ export declare interface ParticipantTileProps {
  * isolated stacking context; nothing above it moves, resizes or changes
  * hit-testing when the state flips.
  */
-export declare function ParticlesBackground({ active, particleCount, particleSpread, speed, particleColors, moveParticlesOnHover, particleHoverFactor, alphaParticles, particleBaseSize, sizeRandomness, cameraDistance, disableRotation, pixelRatio, seed, fallbackIntensity, className, children, 'data-testid': testId, }: ParticlesBackgroundProps): JSX.Element;
+export declare function ParticlesBackground({ active, particleCount, particleSpread, speed, particleColors, moveParticlesOnHover, particleHoverFactor, alphaParticles, particleBaseSize, sizeRandomness, cameraDistance, disableRotation, pixelRatio, seed, fallbackIntensity, tone, density, className, children, 'data-testid': testId, }: ParticlesBackgroundProps): JSX.Element;
 
 export declare interface ParticlesBackgroundProps {
     /**
@@ -10540,6 +10559,21 @@ export declare interface ParticlesBackgroundProps {
     /** Seed for the CSS fallback's star field, so a fallback pane keeps its own sky. */
     seed?: number;
     fallbackIntensity?: RisingParticlesIntensity;
+    /**
+     * The sky behind the field. `night` (default) is the navy-to-black ground it
+     * always had; `graphite` is a neutral dark grey with the field drawn at lower
+     * contrast, for a console surface sitting on a LIGHT page. Resolve `auto`
+     * with `useResolvedBackdropTone` before passing it here.
+     */
+    tone?: 'night' | 'graphite';
+    /**
+     * Upper bound on how many particles are DRAWN, per 10,000 CSS px² of the
+     * surface. Unset draws all of `particleCount` (the old behaviour). The cloud
+     * is uploaded once and its order is random, so drawing a prefix is a uniform
+     * thinning that costs nothing to change — a surface that grows or shrinks
+     * never rebuilds its GL context, and a small one never pays for a big sky.
+     */
+    density?: number;
     className?: string;
     children?: ReactNode;
     'data-testid'?: string;
@@ -12701,6 +12735,15 @@ export declare function resolveAnchorPosition(anchor: FloatingPanelAnchor, width
     x: number;
     y: number;
 };
+
+/**
+ * Resolve `tone` for a surface mounted at `el`. Pure apart from the DOM read and
+ * the media query, so it is the thing the tests pin.
+ */
+export declare function resolveBackdropTone(tone: BackdropTone, el: Element | null, prefersDark?: boolean): ResolvedBackdropTone;
+
+/** A tone after `auto` has been decided. */
+export declare type ResolvedBackdropTone = Exclude<BackdropTone, 'auto'>;
 
 /** What a choice means as an instant: end of that day in local time. */
 export declare function resolveExpiryChoice(choice: RecordingExpiryChoice, customDate: string, now?: number): string | null | undefined;
@@ -17113,6 +17156,14 @@ declare interface UseActivityBusReturn {
   */
  export declare function useRegisterCommand(command: Command): void;
 
+ /**
+  * `resolveBackdropTone`, kept current. Re-resolves when any `data-theme` /
+  * `data-backdrop-tone` in the document changes and when the OS scheme flips.
+  * Listens only while `enabled` — an idle composer (Chat mode) subscribes to
+  * nothing, and resolves synchronously before paint when it lights up.
+  */
+ export declare function useResolvedBackdropTone(ref: RefObject<Element | null>, tone: BackdropTone, enabled?: boolean): ResolvedBackdropTone;
+
  export declare function UserFormPage({ user, isEdit, customAttributeDefinitions, onSubmit, onCancel, error, }: UserFormPageProps): JSX.Element;
 
  export declare interface UserFormPageProps {
@@ -18919,9 +18970,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -18955,9 +19006,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -18978,9 +19029,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -18988,9 +19039,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

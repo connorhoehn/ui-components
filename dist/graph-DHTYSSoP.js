@@ -14,7 +14,7 @@ import { t as h } from "./Avatar-Bq_1SEQ2.js";
 import { t as g } from "./TitledFrame-DUsxfZCI.js";
 import { t as _ } from "./InlineAlert-CRnIKeAF.js";
 import { n as v, t as y } from "./Tooltip-BY3zlDbC.js";
-import { n as b, t as x } from "./ParticlesBackground-FVwsOHUB.js";
+import { n as b, t as x } from "./ParticlesBackground-DdcUDMy0.js";
 import { n as S, t as C } from "./RippleGridBackground-DKswGKCC.js";
 import { t as w } from "./StatusPill-Db42eiME.js";
 import { t as T } from "./Select-CD8ixtYi.js";

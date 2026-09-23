@@ -148,7 +148,9 @@ export type { RisingParticlesProps, RisingParticlesIntensity } from './RisingPar
 // The WebGL backdrops. `ParticlesBackground` degrades to `RisingParticles`
 // above when there is no context to be had, so a host adopting it never has to
 // wire the fallback itself.
-export { default as ParticlesBackground, AGENT_PARTICLE_COLORS } from './ParticlesBackground';
+export { default as ParticlesBackground, AGENT_PARTICLE_COLORS, drawnParticles } from './ParticlesBackground';
+export { resolveBackdropTone, useResolvedBackdropTone, GRAPHITE_PARTICLE_COLORS } from './backdropTone';
+export type { BackdropTone, ResolvedBackdropTone } from './backdropTone';
 export type { ParticlesBackgroundProps } from './ParticlesBackground';
 export { default as RippleGridBackground, ACTIVITY_RIPPLE_GRID } from './RippleGridBackground';
 export type { RippleGridBackgroundProps } from './RippleGridBackground';
