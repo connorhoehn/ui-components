@@ -8368,6 +8368,27 @@ export declare interface InlineAlertProps {
 
 export declare type InlineAlertTone = 'error' | 'success' | 'info' | 'warning';
 
+export declare function InlineEditableText({ value, onCommit, label, placeholder, maxLength, required, disabled, size, tone, className, 'data-testid': testId, }: InlineEditableTextProps): JSX.Element;
+
+export declare interface InlineEditableTextProps {
+    value: string;
+    /** Called once per edit, with the committed value (trimmed). */
+    onCommit: (value: string) => void;
+    /** Accessible name, used as the edit button's and the input's label. */
+    label: string;
+    /** Shown in place of an empty value, and in the empty input. */
+    placeholder?: string;
+    maxLength?: number;
+    /** An empty value is refused (the old one comes back). Default false. */
+    required?: boolean;
+    disabled?: boolean;
+    size?: InputSize;
+    /** `'title'` reads as a heading; `'muted'` as secondary text. */
+    tone?: 'title' | 'muted';
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function InlineMenu({ open, onClose, placement, trigger, role, className, 'data-testid': testId, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, children, }: InlineMenuProps): JSX.Element | null;
 
 export declare type InlineMenuPlacement = 'bottom-start' | 'bottom-end' | 'top-start' | 'top-end';
@@ -11614,7 +11635,7 @@ declare interface PresenceUser_3 {
 }
 
 /** True when the keystroke belongs to whatever the person is typing into. */
-export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, sources, onSearchSources, onDownload, onOpenPresentationView, readOnly, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
+export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, sources, onSearchSources, onDownload, onOpenPresentationView, readOnly, onInstruct, instructHints, onUndoInstruct, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
 
 export declare interface PresentationEditorProps {
     /** Controlled. The host owns the spec; this component never holds a copy. */
@@ -11637,6 +11658,19 @@ export declare interface PresentationEditorProps {
     /** Opens the same deck in the read-only presentation surface. */
     onOpenPresentationView?: () => void;
     readOnly?: boolean;
+    /**
+     * Turns on the agent box under the stage (see the file header). Resolve with
+     * the agent's one-line summary once the host has applied the edit through
+     * `onChange`; reject with the message to show when it could not.
+     */
+    onInstruct?: (instruction: string, ctx: PresentationInstructContext) => Promise<PresentationInstructResult | void>;
+    /** One-tap instructions shown as chips beside the scope toggle. */
+    instructHints?: readonly string[];
+    /**
+     * Puts an Undo button on the agent's summary line. The host owns the
+     * snapshot; pass this only while it holds one.
+     */
+    onUndoInstruct?: () => void;
     className?: string;
     'data-testid'?: string;
 }
@@ -11648,6 +11682,22 @@ export declare interface PresentationEditorRevision {
     /** Already formatted by the host — this component does no clock maths. */
     createdAt?: string;
 }
+
+export declare interface PresentationInstructContext {
+    /** Present when `scope` is 'slide': the slide on the stage. */
+    slideId?: string;
+    scope: PresentationInstructScope;
+}
+
+/** What the host's agent says it did. */
+export declare interface PresentationInstructResult {
+    /** One line, shown under the composer. */
+    summary: string;
+    /** Slides the edit touched; the rail marks them until the next instruction. */
+    changedSlideIds?: string[];
+}
+
+export declare type PresentationInstructScope = 'slide' | 'deck';
 
 /**
  * What the host knows about the preview right now.
@@ -18621,16 +18671,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -18657,6 +18697,29 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
@@ -18670,19 +18733,6 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }

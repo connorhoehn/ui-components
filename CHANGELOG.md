@@ -6,6 +6,44 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.361.0] — 2026-09-22
+
+### Added — `PresentationEditor`: an agent box under the stage (`onInstruct`)
+
+The editor was a stack of forms: deck title/subtitle/theme fields on top and a
+462-line slide form under the preview. With the new `onInstruct` prop the
+editor is driven by asking instead:
+
+- **The chat's own composer, pinned to Agent mode**, sits under the stage
+  (`RichChatComposer` with the particle backdrop), with a "This slide / Whole
+  deck" scope, optional suggestion chips (`instructHints`), Send off and a
+  "Agent is editing slide N…" process line while the host works, and the
+  returned `summary` shown as one line. Slides named in `changedSlideIds` are
+  marked "Edited by agent" in the rail until the next instruction.
+  `onUndoInstruct` puts an Undo button on that line.
+- **The slide form folds into a collapsed "Edit slide details" `Disclosure`.**
+  Citations stay outside the fold as a compact chip row with "+ Add source"
+  (`SlideSources compact`), because Save depends on them.
+- **The deck fields are one line**: title and subtitle edit in place
+  (new `InlineEditableText` primitive), theme is a small `Select`.
+
+The composer is lazy-loaded (its tiptap mention peers are optional), like
+`SortableSlideList`. Without `onInstruct` the editor is unchanged.
+
+### Added
+
+- `InlineEditableText` (forms) — text that edits in place on click.
+- `RichChatComposer` `fixedMode` — pins a mode with no switch and sends the
+  text as typed (no `/agent` prefix).
+- `SlideSources` `compact`, `SlideForm` `showSources`, `SlideRow`/`SlideListItem` `changed`.
+
+### Fixed
+
+- `RichChatComposer` crashed ("Cannot read properties of null (reading
+  'nodes')") when lazy-loaded behind a `Suspense` boundary: its effects read a
+  tiptap editor that had already been destroyed. Both effects now skip a
+  destroyed editor.
+
 ## [2.357.0] — 2026-09-22
 
 ### Fixed — `MessageRow`/`ChatPanel`: a card body collapsed to ~18px inside an own message

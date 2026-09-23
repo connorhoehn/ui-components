@@ -1,5 +1,5 @@
 import { t as e } from "./cn-DhjIN-s0.js";
-import { r as t } from "./PresentationEditor-hfKRClX8.js";
+import { r as t } from "./PresentationEditor-BP0PGM1p.js";
 import { jsx as n } from "react/jsx-runtime";
 import { DndContext as r, KeyboardSensor as i, PointerSensor as a, closestCenter as o, useSensor as s, useSensors as c } from "@dnd-kit/core";
 import { SortableContext as l, sortableKeyboardCoordinates as u, useSortable as d, verticalListSortingStrategy as f } from "@dnd-kit/sortable";
@@ -13,6 +13,7 @@ function p({ item: r, index: i, total: a, selectedId: o, readOnly: s, onSelect: 
 		thumbnailSvg: r.thumbnailSvg,
 		selected: r.slide.id === o,
 		uncited: r.uncited,
+		changed: r.changed,
 		readOnly: s,
 		onSelect: c,
 		onMove: l,

@@ -18,6 +18,8 @@ export interface SlideListItem {
   /** The generator's SVG for this slide, when one has been rendered. */
   thumbnailSvg?: string;
   uncited: boolean;
+  /** The agent's last edit touched it. */
+  changed?: boolean;
 }
 
 export interface SlideListProps {
@@ -55,6 +57,7 @@ export function SlideList({
           thumbnailSvg={item.thumbnailSvg}
           selected={item.slide.id === selectedId}
           uncited={item.uncited}
+          changed={item.changed}
           readOnly={readOnly}
           onSelect={onSelect}
           onMove={onMove}

@@ -28,6 +28,20 @@
 // posts and comes back 400 with a server message about a slide the person
 // cannot see from here.
 //
+// ## The agent box (`onInstruct`)
+//
+// With `onInstruct`, the editor is driven by instruction first and by fields
+// second. Under the stage sits the chat's own composer, pinned to Agent mode
+// (`PresentationAgentComposer`), with a "This slide / Whole deck" scope; the
+// host turns the instruction into an edited spec and applies it through the
+// ordinary `onChange`, so the preview redraws and Save is still the explicit
+// act that writes a revision. The slide's full form folds into a collapsed
+// "Edit slide details" disclosure, and the deck's title/subtitle/theme fold
+// into one line — nothing on screen is a big form. Citations stay out of the
+// fold as a compact chip row, because Save depends on them.
+//
+// Without `onInstruct` the editor is exactly what it was.
+//
 // ## Reordering
 //
 // Drag comes from `@dnd-kit`, the library's existing drag-and-drop primitive,
@@ -48,7 +62,9 @@ import {
 } from 'react';
 import { cn } from '../../../lib/cn';
 import { Button } from '../../ui/Button';
+import { Disclosure } from '../../ui/Disclosure';
 import { IconButton } from '../../ui/IconButton';
+import { InlineEditableText } from '../../forms/InlineEditableText';
 import { Input } from '../../forms/Input';
 import { Select } from '../../forms/Select';
 import DotMeter from '../../shared/DotMeter';
@@ -65,7 +81,8 @@ import { nextSlideIndex, slideNavigationIntent } from '../../../lib/slideNavigat
 import SlideForm from './SlideForm';
 import SlideList from './SlideList';
 import type { SlideListItem } from './SlideList';
-import type { PresentationSourceOption } from './SlideSources';
+import SlideSources, { type PresentationSourceOption } from './SlideSources';
+import type { PresentationInstructScope } from './PresentationAgentComposer';
 import { svgDataUri } from './svgPreview';
 import {
   DECK_THEMES,
@@ -88,6 +105,38 @@ import {
 } from './deckSpec';
 
 const SortableSlideList = lazy(() => import('./SortableSlideList'));
+
+/** Rendered when the composer's optional tiptap peers are not installed. */
+function AgentComposerUnavailable({ testIdPrefix }: { testIdPrefix: string }) {
+  return (
+    <InlineAlert tone="warning" data-testid={`${testIdPrefix}-agent-unavailable`}>
+      The agent box needs the rich-text composer (the optional @tiptap peers). Edit the slide by hand below.
+    </InlineAlert>
+  );
+}
+
+// Lazy for the same reason as the sortable list: see the header of
+// `PresentationAgentComposer`. A failed import degrades to a notice rather
+// than taking the editor down.
+const PresentationAgentComposer = lazy(() =>
+  import('./PresentationAgentComposer').catch(() => ({ default: AgentComposerUnavailable })),
+);
+
+export type { PresentationInstructScope } from './PresentationAgentComposer';
+
+/** What the host's agent says it did. */
+export interface PresentationInstructResult {
+  /** One line, shown under the composer. */
+  summary: string;
+  /** Slides the edit touched; the rail marks them until the next instruction. */
+  changedSlideIds?: string[];
+}
+
+export interface PresentationInstructContext {
+  /** Present when `scope` is 'slide': the slide on the stage. */
+  slideId?: string;
+  scope: PresentationInstructScope;
+}
 
 /** One rendered slide image, as `POST /api/deck/preview` returns it. */
 export interface PresentationPreviewSlide {
@@ -137,6 +186,19 @@ export interface PresentationEditorProps {
   /** Opens the same deck in the read-only presentation surface. */
   onOpenPresentationView?: () => void;
   readOnly?: boolean;
+  /**
+   * Turns on the agent box under the stage (see the file header). Resolve with
+   * the agent's one-line summary once the host has applied the edit through
+   * `onChange`; reject with the message to show when it could not.
+   */
+  onInstruct?: (instruction: string, ctx: PresentationInstructContext) => Promise<PresentationInstructResult | void>;
+  /** One-tap instructions shown as chips beside the scope toggle. */
+  instructHints?: readonly string[];
+  /**
+   * Puts an Undo button on the agent's summary line. The host owns the
+   * snapshot; pass this only while it holds one.
+   */
+  onUndoInstruct?: () => void;
   className?: string;
   'data-testid'?: string;
 }
@@ -165,12 +227,21 @@ export function PresentationEditor({
   onDownload,
   onOpenPresentationView,
   readOnly = false,
+  onInstruct,
+  instructHints,
+  onUndoInstruct,
   className,
   'data-testid': testId = 'presentation-editor',
 }: PresentationEditorProps) {
   const [selectedId, setSelectedId] = useState<string>(() => spec.slides[0]?.id ?? '');
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const agentMode = !!onInstruct;
+  const [scope, setScope] = useState<PresentationInstructScope>('slide');
+  const [instructing, setInstructing] = useState(false);
+  const [agentSummary, setAgentSummary] = useState<string | null>(null);
+  const [agentError, setAgentError] = useState<string | null>(null);
+  const [changedIds, setChangedIds] = useState<ReadonlySet<string>>(() => new Set());
 
   // The last slide images that actually arrived. Held so a re-render in flight
   // does not blank the stage on every keystroke — see the file header.
@@ -211,6 +282,7 @@ export function PresentationEditor({
     slide,
     thumbnailSvg: previewById.get(slide.id),
     uncited: uncited.has(slide.id),
+    changed: changedIds.has(slide.id),
   }));
 
   const select = useCallback((id: string) => {
@@ -253,6 +325,42 @@ export function PresentationEditor({
     },
     [onChange, spec],
   );
+
+  const instruct = useCallback(
+    async (instruction: string): Promise<boolean> => {
+      if (!onInstruct || instructing) return false;
+      const slideId = selected?.id;
+      setInstructing(true);
+      setAgentError(null);
+      try {
+        const result = await onInstruct(
+          instruction,
+          scope === 'slide' && slideId ? { slideId, scope } : { scope: 'deck' },
+        );
+        const changed = result?.changedSlideIds ?? [];
+        setChangedIds(new Set(changed));
+        setAgentSummary(result?.summary?.trim() || 'Done.');
+        // A deck-wide edit lands the stage on what it changed, unless the
+        // slide already there is one of them.
+        if (scope === 'deck' && changed.length && (!slideId || !changed.includes(slideId))) {
+          setSelectedId(changed[0]!);
+        }
+        return true;
+      } catch (error: unknown) {
+        setAgentError(error instanceof Error ? error.message : 'The agent could not make that change.');
+        return false;
+      } finally {
+        setInstructing(false);
+      }
+    },
+    [onInstruct, instructing, scope, selected?.id],
+  );
+
+  const undoInstruct = useCallback(() => {
+    onUndoInstruct?.();
+    setAgentSummary(null);
+    setChangedIds(new Set());
+  }, [onUndoInstruct]);
 
   const blockingCount = uncited.size;
   const canSave = !readOnly && slides.length > 0 && blockingCount === 0 && !saving;
@@ -409,6 +517,46 @@ export function PresentationEditor({
 
   const revisionItems = revisions.map((revision) => ({ id: revision.id, label: revision.label }));
 
+  const revisionControls = (
+    <div className="flex flex-wrap items-center gap-2">
+      {revisionItems.length > 0 && (
+        <Tabs
+          items={revisionItems}
+          value={activeRevisionId}
+          onValueChange={onSelectRevision}
+          variant="segmented"
+          size="sm"
+          aria-label="Revision"
+          idPrefix={`${testId}-revisions`}
+        />
+      )}
+      <Button
+        variant="primary"
+        size="sm"
+        disabled={!canSave}
+        onClick={save}
+        data-testid={`${testId}-save`}
+      >
+        {saving ? 'Saving…' : `Save as ${nextRevisionLabel(revisions)}`}
+      </Button>
+      {onDownload && (
+        <Button variant="secondary" size="sm" onClick={onDownload} data-testid={`${testId}-download`}>
+          Download .pptx
+        </Button>
+      )}
+      {onOpenPresentationView && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onOpenPresentationView}
+          data-testid={`${testId}-open-view`}
+        >
+          Open in presentation view
+        </Button>
+      )}
+    </div>
+  );
+
   return (
     <div
       className={cn('flex min-h-0 flex-col gap-3 p-4', className)}
@@ -422,82 +570,80 @@ export function PresentationEditor({
         }
       }}
     >
-      {/* Deck-level fields and the revision controls */}
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div className="grid min-w-0 flex-1 grid-cols-1 gap-2 sm:grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)]">
-          <FormField label="Deck title" required>
-            {(wiring) => (
-              <Input
-                {...wiring}
-                value={spec.title}
-                maxLength={MAX_TITLE_CHARS}
-                onChange={(event) => onChange({ ...spec, title: event.target.value })}
-                data-testid={`${testId}-deck-title`}
-              />
-            )}
-          </FormField>
-          <FormField label="Subtitle">
-            {(wiring) => (
-              <Input
-                {...wiring}
-                value={spec.subtitle ?? ''}
-                maxLength={MAX_SUBTITLE_CHARS}
-                onChange={(event) => onChange({ ...spec, subtitle: event.target.value || undefined })}
-                data-testid={`${testId}-deck-subtitle`}
-              />
-            )}
-          </FormField>
-          <FormField label="Theme">
-            {(wiring) => (
-              <Select
-                {...wiring}
-                value={spec.theme ?? 'product'}
-                options={DECK_THEMES.map((theme) => ({ value: theme, label: theme }))}
-                onChange={(event) => onChange({ ...spec, theme: event.target.value as DeckTheme })}
-                data-testid={`${testId}-deck-theme`}
-              />
-            )}
-          </FormField>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          {revisionItems.length > 0 && (
-            <Tabs
-              items={revisionItems}
-              value={activeRevisionId}
-              onValueChange={onSelectRevision}
-              variant="segmented"
-              size="sm"
-              aria-label="Revision"
-              idPrefix={`${testId}-revisions`}
+      {agentMode ? (
+        // One line: the deck is named and themed here, and edited by asking.
+        <div className="flex flex-wrap items-center justify-between gap-2" data-testid={`${testId}-deck-line`}>
+          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">
+            <InlineEditableText
+              value={spec.title}
+              required
+              label="Deck title"
+              maxLength={MAX_TITLE_CHARS}
+              onCommit={(title) => onChange({ ...spec, title })}
+              data-testid={`${testId}-deck-title`}
             />
-          )}
-          <Button
-            variant="primary"
-            size="sm"
-            disabled={!canSave}
-            onClick={save}
-            data-testid={`${testId}-save`}
-          >
-            {saving ? 'Saving…' : `Save as ${nextRevisionLabel(revisions)}`}
-          </Button>
-          {onDownload && (
-            <Button variant="secondary" size="sm" onClick={onDownload} data-testid={`${testId}-download`}>
-              Download .pptx
-            </Button>
-          )}
-          {onOpenPresentationView && (
-            <Button
-              variant="ghost"
+            <InlineEditableText
+              value={spec.subtitle ?? ''}
+              label="Subtitle"
+              placeholder="Add a subtitle"
+              tone="muted"
+              maxLength={MAX_SUBTITLE_CHARS}
+              onCommit={(subtitle) => onChange({ ...spec, subtitle: subtitle || undefined })}
+              data-testid={`${testId}-deck-subtitle`}
+            />
+            <Select
               size="sm"
-              onClick={onOpenPresentationView}
-              data-testid={`${testId}-open-view`}
-            >
-              Open in presentation view
-            </Button>
-          )}
+              aria-label="Theme"
+              value={spec.theme ?? 'product'}
+              options={DECK_THEMES.map((theme) => ({ value: theme, label: `${theme} theme` }))}
+              onChange={(event) => onChange({ ...spec, theme: event.target.value as DeckTheme })}
+              data-testid={`${testId}-deck-theme`}
+            />
+          </div>
+          {revisionControls}
         </div>
-      </div>
+      ) : (
+        // Deck-level fields and the revision controls.
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div className="grid min-w-0 flex-1 grid-cols-1 gap-2 sm:grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)]">
+            <FormField label="Deck title" required>
+              {(wiring) => (
+                <Input
+                  {...wiring}
+                  value={spec.title}
+                  maxLength={MAX_TITLE_CHARS}
+                  onChange={(event) => onChange({ ...spec, title: event.target.value })}
+                  data-testid={`${testId}-deck-title`}
+                />
+              )}
+            </FormField>
+            <FormField label="Subtitle">
+              {(wiring) => (
+                <Input
+                  {...wiring}
+                  value={spec.subtitle ?? ''}
+                  maxLength={MAX_SUBTITLE_CHARS}
+                  onChange={(event) => onChange({ ...spec, subtitle: event.target.value || undefined })}
+                  data-testid={`${testId}-deck-subtitle`}
+                />
+              )}
+            </FormField>
+            <FormField label="Theme">
+              {(wiring) => (
+                <Select
+                  {...wiring}
+                  value={spec.theme ?? 'product'}
+                  options={DECK_THEMES.map((theme) => ({ value: theme, label: theme }))}
+                  onChange={(event) => onChange({ ...spec, theme: event.target.value as DeckTheme })}
+                  data-testid={`${testId}-deck-theme`}
+                />
+              )}
+            </FormField>
+          </div>
+
+          {revisionControls}
+        </div>
+      )}
 
       {blockingCount > 0 && (
         <InlineAlert tone="warning" data-testid={`${testId}-uncited-warning`}>
@@ -623,7 +769,77 @@ export function PresentationEditor({
             />
           </div>
 
-          {selected && (
+          {agentMode && selected && (
+            <>
+              <Suspense
+                fallback={
+                  <Text className="text-[12px] text-text-tertiary" data-testid={`${testId}-agent-loading`}>
+                    Loading the agent…
+                  </Text>
+                }
+              >
+                <PresentationAgentComposer
+                  scope={scope}
+                  onScopeChange={setScope}
+                  slideLabel={`slide ${selectedIndex + 1}`}
+                  busy={instructing}
+                  onSubmit={instruct}
+                  {...(instructHints?.length ? { suggestions: instructHints } : {})}
+                  testIdPrefix={testId}
+                />
+              </Suspense>
+
+              {agentError && (
+                <InlineAlert tone="error" onDismiss={() => setAgentError(null)} data-testid={`${testId}-agent-error`}>
+                  {agentError}
+                </InlineAlert>
+              )}
+
+              {agentSummary && !agentError && (
+                <div className="flex min-w-0 flex-wrap items-center gap-2" role="status" data-testid={`${testId}-agent-summary`}>
+                  <Text as="span" className="min-w-0 flex-1 truncate text-[12px] text-success-fg" title={agentSummary}>
+                    {`✓ ${agentSummary}`}
+                  </Text>
+                  {changedIds.size > 0 && (
+                    <Text as="span" className="text-[11px] text-text-tertiary">
+                      {changedIds.size === 1 ? '1 slide marked in the rail' : `${changedIds.size} slides marked in the rail`}
+                    </Text>
+                  )}
+                  {onUndoInstruct && (
+                    <Button variant="ghost" size="sm" onClick={undoInstruct} data-testid={`${testId}-agent-undo`}>
+                      Undo
+                    </Button>
+                  )}
+                </div>
+              )}
+
+              <SlideSources
+                compact
+                sources={selected.sources}
+                onChange={(next) => onChange(replaceSlide(spec, { ...selected, sources: next }))}
+                options={sources}
+                onSearchSources={onSearchSources}
+                testIdPrefix={`${testId}-slide`}
+              />
+
+              <Disclosure
+                summary="Edit slide details"
+                density="compact"
+                data-testid={`${testId}-details`}
+              >
+                <SlideForm
+                  slide={selected}
+                  onChange={(slide) => onChange(replaceSlide(spec, slide))}
+                  sources={sources}
+                  onSearchSources={onSearchSources}
+                  showSources={false}
+                  testIdPrefix={`${testId}-slide`}
+                />
+              </Disclosure>
+            </>
+          )}
+
+          {!agentMode && selected && (
             <SlideForm
               slide={selected}
               onChange={(slide) => onChange(replaceSlide(spec, slide))}

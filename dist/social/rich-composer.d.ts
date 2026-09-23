@@ -425,6 +425,17 @@ export declare interface RichChatComposerProps {
      */
     onModeChange?: (mode: ComposerMode) => void;
     /**
+     * Pins the composer to one mode with no switch. The surface is that mode's
+     * (Agent and Terminal wear the console backdrop, the mode's placeholder
+     * applies, and the published message carries `mode`), but there are no
+     * `Chat | Agent | Terminal` tabs and no default hints row — for a surface
+     * whose composer only ever talks to one thing, like the presentation
+     * editor's agent box. The text is sent as typed: the `/agent` prefix that
+     * the switchable Agent mode adds is for the chat's command router, and a
+     * pinned composer's host is not one.
+     */
+    fixedMode?: ComposerMode;
+    /**
      * Placeholder per mode. `chat` falls back to `placeholder`; the other two
      * have defaults that say what Enter will do, which is the thing that changes.
      */

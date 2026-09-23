@@ -21,6 +21,8 @@ export { Input } from './components/forms/Input';
 export type { InputProps, InputSize, InputType } from './components/forms/Input';
 export { Select } from './components/forms/Select';
 export type { SelectProps, SelectSize, SelectOption, SelectOptionGroup } from './components/forms/Select';
+export { InlineEditableText } from './components/forms/InlineEditableText';
+export type { InlineEditableTextProps } from './components/forms/InlineEditableText';
 export { Textarea } from './components/forms/Textarea';
 export type { TextareaProps } from './components/forms/Textarea';
 export { FileInput } from './components/forms/FileInput';
@@ -135,6 +137,9 @@ export type {
   PresentationEditorRevision,
   PresentationPreview,
   PresentationPreviewSlide,
+  PresentationInstructContext,
+  PresentationInstructResult,
+  PresentationInstructScope,
 } from './components/doc-editor/presentation/PresentationEditor';
 export type { PresentationSourceOption } from './components/doc-editor/presentation/SlideSources';
 export {

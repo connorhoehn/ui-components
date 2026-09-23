@@ -40,6 +40,12 @@ export interface SlideFormProps {
   sources: readonly PresentationSourceOption[];
   onSearchSources?: (query: string) => PresentationSourceOption[] | Promise<PresentationSourceOption[]>;
   readOnly?: boolean;
+  /**
+   * Render the citation picker at the foot of the form. Default true. The
+   * editor turns it off when the sources sit in their own compact row outside
+   * a collapsed form — Save depends on them, so they cannot be folded away.
+   */
+  showSources?: boolean;
   testIdPrefix: string;
 }
 
@@ -316,6 +322,7 @@ export function SlideForm({
   sources,
   onSearchSources,
   readOnly = false,
+  showSources = true,
   testIdPrefix,
 }: SlideFormProps) {
   const patch = (partial: Partial<DeckSlide>) => onChange({ ...slide, ...partial });
@@ -447,14 +454,14 @@ export function SlideForm({
         )}
       </FormField>
 
-      <SlideSources
+      {showSources && <SlideSources
         sources={slide.sources}
         onChange={(next) => patch({ sources: next })}
         options={sources}
         onSearchSources={onSearchSources}
         readOnly={readOnly}
         testIdPrefix={testIdPrefix}
-      />
+      />}
     </div>
   );
 }

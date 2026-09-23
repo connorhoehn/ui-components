@@ -27,6 +27,8 @@ export interface SlideRowProps {
   selected: boolean;
   /** The slide cites nothing, so the deck cannot be saved while it is here. */
   uncited: boolean;
+  /** The agent's last edit touched this slide — marked until the next one. */
+  changed?: boolean;
   readOnly?: boolean;
   onSelect: (id: string) => void;
   onMove: (from: number, to: number) => void;
@@ -84,6 +86,7 @@ export function SlideRow({
   thumbnailSvg,
   selected,
   uncited,
+  changed = false,
   readOnly = false,
   onSelect,
   onMove,
@@ -102,9 +105,10 @@ export function SlideRow({
       ref={rowRef}
       data-testid={`${testIdPrefix}-row-${slide.id}`}
       data-slide-id={slide.id}
+      data-changed={changed ? 'true' : undefined}
       className={cn(
         'flex items-start gap-1.5 rounded-lg border p-1.5 transition-colors',
-        selected ? 'border-info bg-info-bg' : 'border-transparent hover:bg-surface-hover',
+        selected ? 'border-info bg-info-bg' : changed ? 'border-success bg-success-bg' : 'border-transparent hover:bg-surface-hover',
         dragging && 'opacity-40',
       )}
     >
@@ -135,6 +139,15 @@ export function SlideRow({
             {slide.title || 'Untitled slide'}
           </Text>
           <Text as="span" className="text-[10px] text-text-tertiary">{slide.layout}</Text>
+          {changed && (
+            <Text
+              as="span"
+              className="text-[10px] font-semibold text-success-fg"
+              data-testid={`${testIdPrefix}-changed-${slide.id}`}
+            >
+              Edited by agent
+            </Text>
+          )}
           {uncited && (
             <Text
               as="span"

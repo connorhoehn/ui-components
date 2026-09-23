@@ -27,5 +27,8 @@ export type { SliderProps } from './Slider';
 export { Checkbox } from './Checkbox';
 export type { CheckboxProps } from './Checkbox';
 
+export { InlineEditableText } from './InlineEditableText';
+export type { InlineEditableTextProps } from './InlineEditableText';
+
 export { ColorInput } from './ColorInput';
 export type { ColorInputProps } from './ColorInput';

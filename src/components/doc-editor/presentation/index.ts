@@ -10,6 +10,9 @@ export type {
   PresentationEditorRevision,
   PresentationPreview,
   PresentationPreviewSlide,
+  PresentationInstructContext,
+  PresentationInstructResult,
+  PresentationInstructScope,
 } from './PresentationEditor';
 
 export { SlideForm } from './SlideForm';

@@ -317,6 +317,17 @@ export interface RichChatComposerProps {
    */
   onModeChange?: (mode: ComposerMode) => void;
   /**
+   * Pins the composer to one mode with no switch. The surface is that mode's
+   * (Agent and Terminal wear the console backdrop, the mode's placeholder
+   * applies, and the published message carries `mode`), but there are no
+   * `Chat | Agent | Terminal` tabs and no default hints row — for a surface
+   * whose composer only ever talks to one thing, like the presentation
+   * editor's agent box. The text is sent as typed: the `/agent` prefix that
+   * the switchable Agent mode adds is for the chat's command router, and a
+   * pinned composer's host is not one.
+   */
+  fixedMode?: ComposerMode;
+  /**
    * Placeholder per mode. `chat` falls back to `placeholder`; the other two
    * have defaults that say what Enter will do, which is the thing that changes.
    */
@@ -526,6 +537,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   processes,
   mode = 'chat',
   onModeChange,
+  fixedMode,
   modePlaceholders,
   hints,
   onQuickOpen,
@@ -570,8 +582,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // `useEditor` deps: the extension list must not change when the text does.
   // Modes are OFF until the host wires the switch. Read through one flag so
   // every branch below asks the same question and none of them can drift.
-  const modesEnabled = !!onModeChange;
-  const activeMode: ComposerMode = modesEnabled ? mode : 'chat';
+  const modesEnabled = !!onModeChange || !!fixedMode;
+  const activeMode: ComposerMode = fixedMode ?? (modesEnabled ? mode : 'chat');
   const terminalMode = activeMode === 'terminal';
   // Agent AND Terminal are "the console": both send somewhere that is not the
   // conversation, and both wear the dark surface that says so.
@@ -609,8 +621,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // The bar follows the DRAFT, not the render: re-derive whenever the host's
   // commands change (a document opened beside the chat), never clear on time.
   useEffect(() => {
-    const e = editorRef.current;
-    if (!e) return;
+    const e = editorRef.current as { getText: () => string; isDestroyed?: boolean } | null;
+    if (!e || e.isDestroyed) return;
     const hit = matchComposerCommand(e.getText(), commands);
     setActiveCommand((prev) => (prev?.trigger === hit?.trigger && prev?.disabled === hit?.disabled ? prev : hit));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1096,7 +1108,12 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     if (editor && !editor.isDestroyed) publishRef.current(editor);
   };
   useEffect(() => {
-    if (!editor) return;
+    // `isDestroyed` too: a composer revealed from a Suspense boundary (it is
+    // lazy-loaded inside the presentation editor) has its effects reconnected
+    // after tiptap tore down the instance it pre-rendered. Reading a destroyed
+    // editor throws on its null schema; `useEditor` hands back a fresh one on
+    // the next render and this effect runs again for it.
+    if (!editor || editor.isDestroyed) return;
     // An external change may be a restored conversation or a send completion
     // from its previous composer. Do not rebuild the editor or move its caret
     // in response to our own onDraftChange echo.
@@ -1161,7 +1178,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     // than a second dispatch path — same parser, same server contract, same
     // command bar above the editor. Already-prefixed text is left alone so
     // typing the command out by hand does not produce `/agent /agent …`.
-    const text = activeMode === 'agent' && typed.trim() && !/^\s*\/agent\b/i.test(typed)
+    const text = activeMode === 'agent' && !fixedMode && typed.trim() && !/^\s*\/agent\b/i.test(typed)
       ? `/agent ${typed.trim()}`
       : typed;
     const cmd = matchComposerCommand(text, commandsRef.current);
@@ -1219,7 +1236,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     } catch {
       sendingRef.current = false; setSendError(true);
     }
-  }, [editor, canSend, onSend, staged, privacy, terminalMode, activeMode, modesEnabled]);
+  }, [editor, canSend, onSend, staged, privacy, terminalMode, activeMode, modesEnabled, fixedMode]);
 
   sendRef.current = send;
   linkRef.current = openLinkDialog;
@@ -1498,7 +1515,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
 
         {/* The mode switch. Its own row rather than a control in the toolbar:
             it changes what Enter DOES, which is not a formatting choice. */}
-        {modesEnabled && (
+        {modesEnabled && !fixedMode && (
           <div className="flex items-center gap-2 px-2 pt-1.5" data-testid={`${testId}-modes`}>
             {/* Lit while it is not on Chat: the control that changed what Enter
                 does should be the one thing on the surface that glows. */}

@@ -288,9 +288,15 @@ describe('entry points and their transitive optional peers', () => {
       // reaches `SortableSlideList.tsx` through `React.lazy` precisely so that
       // importing the presentation editor does not require `@dnd-kit` on disk
       // for a consumer who never drags a slide. See SlideList.tsx's own note.
+      //
+      // `@tiptap/extension-mention`, `@tiptap/pm` and `cmdk` are DYNAMIC for the
+      // same reason (2.361.0): the editor's agent box is the chat's
+      // `RichChatComposer`, reached through `React.lazy` in
+      // `PresentationEditor.tsx` (see `PresentationAgentComposer.tsx`), so a
+      // host that never passes `onInstruct` never loads the mention stack.
       'doc-editor': {
         static: [...TIPTAP, 'yjs'].sort(),
-        dynamic: ['@dnd-kit/core', '@dnd-kit/sortable', 'amazon-ivs-web-broadcast'],
+        dynamic: ['@dnd-kit/core', '@dnd-kit/sortable', '@tiptap/extension-mention', '@tiptap/pm', 'amazon-ivs-web-broadcast', 'cmdk'],
       },
       // The root barrel re-exports nearly everything, so it needs nearly
       // everything. That is expected — subpaths are how a consumer opts out.
@@ -318,7 +324,8 @@ describe('entry points and their transitive optional peers', () => {
         // The IVS SDK and xterm entries are lazy tabs: see the `social` note
         // above. `@dnd-kit/core` and `@dnd-kit/sortable` are lazy the same
         // way, via `SlideList.tsx` — see the `doc-editor` note above.
-        dynamic: ['@dnd-kit/core', '@dnd-kit/sortable', '@xterm/addon-fit', '@xterm/xterm', 'amazon-ivs-web-broadcast'],
+        // The mention stack is lazy via the presentation editor's agent box.
+        dynamic: ['@dnd-kit/core', '@dnd-kit/sortable', '@tiptap/extension-mention', '@tiptap/pm', '@xterm/addon-fit', '@xterm/xterm', 'amazon-ivs-web-broadcast'],
       },
     };
 

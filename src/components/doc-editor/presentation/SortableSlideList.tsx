@@ -74,6 +74,7 @@ function SortableRow({
       thumbnailSvg={item.thumbnailSvg}
       selected={item.slide.id === selectedId}
       uncited={item.uncited}
+      changed={item.changed}
       readOnly={readOnly}
       onSelect={onSelect}
       onMove={onMove}

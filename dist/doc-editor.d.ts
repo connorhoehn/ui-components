@@ -1576,7 +1576,7 @@ declare interface PresenceInfo {
 }
 
 /** True when the keystroke belongs to whatever the person is typing into. */
-export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, sources, onSearchSources, onDownload, onOpenPresentationView, readOnly, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
+export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, sources, onSearchSources, onDownload, onOpenPresentationView, readOnly, onInstruct, instructHints, onUndoInstruct, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
 
 export declare interface PresentationEditorProps {
     /** Controlled. The host owns the spec; this component never holds a copy. */
@@ -1599,6 +1599,19 @@ export declare interface PresentationEditorProps {
     /** Opens the same deck in the read-only presentation surface. */
     onOpenPresentationView?: () => void;
     readOnly?: boolean;
+    /**
+     * Turns on the agent box under the stage (see the file header). Resolve with
+     * the agent's one-line summary once the host has applied the edit through
+     * `onChange`; reject with the message to show when it could not.
+     */
+    onInstruct?: (instruction: string, ctx: PresentationInstructContext) => Promise<PresentationInstructResult | void>;
+    /** One-tap instructions shown as chips beside the scope toggle. */
+    instructHints?: readonly string[];
+    /**
+     * Puts an Undo button on the agent's summary line. The host owns the
+     * snapshot; pass this only while it holds one.
+     */
+    onUndoInstruct?: () => void;
     className?: string;
     'data-testid'?: string;
 }
@@ -1610,6 +1623,22 @@ export declare interface PresentationEditorRevision {
     /** Already formatted by the host — this component does no clock maths. */
     createdAt?: string;
 }
+
+export declare interface PresentationInstructContext {
+    /** Present when `scope` is 'slide': the slide on the stage. */
+    slideId?: string;
+    scope: PresentationInstructScope;
+}
+
+/** What the host's agent says it did. */
+export declare interface PresentationInstructResult {
+    /** One line, shown under the composer. */
+    summary: string;
+    /** Slides the edit touched; the rail marks them until the next instruction. */
+    changedSlideIds?: string[];
+}
+
+export declare type PresentationInstructScope = 'slide' | 'deck';
 
 /**
  * What the host knows about the preview right now.
@@ -2054,7 +2083,7 @@ export declare const SLIDE_LAYOUT_LABELS: Record<SlideLayout, string>;
 
 export declare const SLIDE_LAYOUTS: readonly SlideLayout[];
 
-export declare function SlideForm({ slide, onChange, sources, onSearchSources, readOnly, testIdPrefix, }: SlideFormProps): JSX.Element;
+export declare function SlideForm({ slide, onChange, sources, onSearchSources, readOnly, showSources, testIdPrefix, }: SlideFormProps): JSX.Element;
 
 export declare interface SlideFormProps {
     slide: DeckSlide;
@@ -2062,6 +2091,12 @@ export declare interface SlideFormProps {
     sources: readonly PresentationSourceOption[];
     onSearchSources?: (query: string) => PresentationSourceOption[] | Promise<PresentationSourceOption[]>;
     readOnly?: boolean;
+    /**
+     * Render the citation picker at the foot of the form. Default true. The
+     * editor turns it off when the sources sit in their own compact row outside
+     * a collapsed form — Save depends on them, so they cannot be folded away.
+     */
+    showSources?: boolean;
     testIdPrefix: string;
 }
 
@@ -2074,6 +2109,8 @@ export declare interface SlideListItem {
     /** The generator's SVG for this slide, when one has been rendered. */
     thumbnailSvg?: string;
     uncited: boolean;
+    /** The agent's last edit touched it. */
+    changed?: boolean;
 }
 
 export declare interface SlideListProps {
@@ -2089,7 +2126,7 @@ export declare interface SlideListProps {
     testIdPrefix: string;
 }
 
-export declare function SlideRow({ slide, index, total, thumbnailSvg, selected, uncited, readOnly, onSelect, onMove, onDuplicate, onDelete, canDuplicate, canDelete, dragHandle, rowRef, dragging, testIdPrefix, }: SlideRowProps): JSX.Element;
+export declare function SlideRow({ slide, index, total, thumbnailSvg, selected, uncited, changed, readOnly, onSelect, onMove, onDuplicate, onDelete, canDuplicate, canDelete, dragHandle, rowRef, dragging, testIdPrefix, }: SlideRowProps): JSX.Element;
 
 export declare interface SlideRowProps {
     slide: DeckSlide;
@@ -2101,6 +2138,8 @@ export declare interface SlideRowProps {
     selected: boolean;
     /** The slide cites nothing, so the deck cannot be saved while it is here. */
     uncited: boolean;
+    /** The agent's last edit touched this slide — marked until the next one. */
+    changed?: boolean;
     readOnly?: boolean;
     onSelect: (id: string) => void;
     onMove: (from: number, to: number) => void;
@@ -2118,7 +2157,7 @@ export declare interface SlideRowProps {
     testIdPrefix: string;
 }
 
-export declare function SlideSources({ sources, onChange, options, onSearchSources, readOnly, testIdPrefix, }: SlideSourcesProps): JSX.Element;
+export declare function SlideSources({ sources, onChange, options, onSearchSources, readOnly, compact, testIdPrefix, }: SlideSourcesProps): JSX.Element;
 
 export declare interface SlideSourcesProps {
     /** The citations already on the slide. */
@@ -2133,6 +2172,12 @@ export declare interface SlideSourcesProps {
     /** The Documents explorer's search. Absent, only `options` can be picked. */
     onSearchSources?: (query: string) => PresentationSourceOption[] | Promise<PresentationSourceOption[]>;
     readOnly?: boolean;
+    /**
+     * One line: the chips and a small "Add source" button that opens the
+     * search. For the editor's agent layout, where the slide's form is folded
+     * away but its citations cannot be — Save depends on them. Default false.
+     */
+    compact?: boolean;
     testIdPrefix: string;
 }
 
@@ -2867,16 +2912,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -2903,6 +2938,29 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
@@ -2916,19 +2974,6 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }
