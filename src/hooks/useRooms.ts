@@ -2,11 +2,17 @@
 //
 // Rooms hook — list/create/join/leave rooms plus real-time member tracking.
 // Handles social:member_joined and social:member_left WebSocket events (RTIM-04).
-// All requests use Authorization: Bearer idToken against VITE_PLATFORM_API_URL.
+// All requests use Authorization: Bearer idToken against `baseUrl` — the
+// option when given, else `getApiBaseUrl()` (2.359.0). It used to read
+// `import.meta.env.VITE_PLATFORM_API_URL`, which is inlined at THIS library's
+// build and so is '' in every published build: the hook never fetched for a
+// consumer, which is why the gateway kept its own copy.
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { GatewayMessage } from '../types/gateway';
-import { useToast } from '../components/shared/ToastProvider';
+// Optional: a missing ToastProvider should cost the toast, not the rooms.
+import { useToastOptional } from '../components/shared/ToastProvider';
+import { getApiBaseUrl } from '../lib/apiBaseUrl';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -14,7 +20,10 @@ import { useToast } from '../components/shared/ToastProvider';
 
 export interface RoomItem {
   roomId: string;
+  /** `room:<slug>` — a room's chat channel is its call lobby. */
   channelId: string;
+  /** As sent by the API; `channelId` is derived from it when absent. */
+  slug?: string;
   name: string;
   type: 'standalone' | 'group' | 'dm';
   ownerId: string;
@@ -35,15 +44,22 @@ export type OnMessageFn = (handler: (msg: GatewayMessage) => void) => () => void
 export interface UseRoomsOptions {
   idToken: string | null;
   onMessage: OnMessageFn;
+  /** Origin for `/api/rooms…`. Wins over `getApiBaseUrl()` (2.359.0). */
+  baseUrl?: string;
 }
 
 export interface UseRoomsReturn {
   rooms: RoomItem[];
   activeRoom: RoomItem | null;
   setActiveRoom: (room: RoomItem | null) => void;
-  createRoom: (name: string) => Promise<void>;
-  createDM: (peerId: string) => Promise<void>;
-  createGroupRoom: (groupId: string, name: string) => Promise<void>;
+  /**
+   * Resolve with the room, so a caller can act on it — adopt it, post into it —
+   * without re-reading the list. Reject when unconfigured or refused (2.359.0;
+   * they resolved `void` and silently did nothing without a token before).
+   */
+  createRoom: (name: string) => Promise<RoomItem>;
+  createDM: (peerId: string) => Promise<RoomItem>;
+  createGroupRoom: (groupId: string, name: string) => Promise<RoomItem>;
   joinRoom: (roomId: string) => Promise<void>;
   leaveRoom: (roomId: string) => Promise<void>;
   loadMembers: (roomId: string) => Promise<void>;
@@ -66,11 +82,25 @@ export interface UseRoomsReturn {
   retry: () => void;
 }
 
+/**
+ * `GET /api/rooms` does not send a channelId, and `RoomItem` declares one, so
+ * every hydrated room had `channelId: undefined` and callers keying on it
+ * collapsed every real room onto one key. A room's chat channel IS its call
+ * lobby, `room:<slug>`, so the id is derived here, at the edge where the API
+ * shape becomes the app's.
+ */
+function withChannelId<T extends { channelId?: string; slug?: string; roomId: string }>(room: T): T {
+  if (room.channelId) return room;
+  return { ...room, channelId: room.slug ? `room:${room.slug}` : room.roomId };
+}
+
+const NOT_CONFIGURED = 'Social API not configured';
+
 // ---------------------------------------------------------------------------
 // Hook
 // ---------------------------------------------------------------------------
 
-export function useRooms({ idToken, onMessage }: UseRoomsOptions): UseRoomsReturn {
+export function useRooms({ idToken, onMessage, baseUrl: baseUrlOption }: UseRoomsOptions): UseRoomsReturn {
   const [rooms, setRooms] = useState<RoomItem[]>([]);
   const [activeRoom, setActiveRoomState] = useState<RoomItem | null>(null);
   const [members, setMembers] = useState<RoomMemberItem[]>([]);
@@ -78,9 +108,9 @@ export function useRooms({ idToken, onMessage }: UseRoomsOptions): UseRoomsRetur
   const [error, setError] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
-  const { toast } = useToast();
+  const { toast } = useToastOptional() ?? {};
 
-  const baseUrl = (import.meta.env as Record<string, string>).VITE_PLATFORM_API_URL ?? '';
+  const baseUrl = baseUrlOption ?? getApiBaseUrl();
 
   const retry = useCallback(() => setReloadKey((k) => k + 1), []);
 
@@ -113,13 +143,13 @@ export function useRooms({ idToken, onMessage }: UseRoomsOptions): UseRoomsRetur
       })
       .then((data) => {
         if (cancelled) return;
-        setRooms(data.rooms ?? []);
+        setRooms((data.rooms ?? []).map(withChannelId));
       })
       .catch((err: Error) => {
         if (cancelled) return;
         setError(err.message);
         setLoadError(err.message);
-        toast("Couldn't load rooms", { type: 'error' });
+        toast?.("Couldn't load rooms", { type: 'error' });
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -194,8 +224,8 @@ export function useRooms({ idToken, onMessage }: UseRoomsOptions): UseRoomsRetur
 
   // ---- createRoom ----------------------------------------------------------
 
-  const createRoom = useCallback(async (name: string): Promise<void> => {
-    if (!idToken || !baseUrl) { setError('Social API not configured'); return; }
+  const createRoom = useCallback(async (name: string): Promise<RoomItem> => {
+    if (!idToken || !baseUrl) { setError(NOT_CONFIGURED); throw new Error(NOT_CONFIGURED); }
     setLoading(true);
     setError(null);
     try {
@@ -208,8 +238,9 @@ export function useRooms({ idToken, onMessage }: UseRoomsOptions): UseRoomsRetur
         body: JSON.stringify({ name }),
       });
       if (!res.ok) throw new Error(`Failed to create room (${res.status})`);
-      const room = await res.json() as RoomItem;
+      const room = withChannelId(await res.json() as RoomItem);
       setRooms((prev) => [room, ...prev]);
+      return room;
     } catch (err) {
       setError((err as Error).message);
       throw err;
@@ -220,8 +251,8 @@ export function useRooms({ idToken, onMessage }: UseRoomsOptions): UseRoomsRetur
 
   // ---- createDM ------------------------------------------------------------
 
-  const createDM = useCallback(async (peerId: string): Promise<void> => {
-    if (!idToken) return;
+  const createDM = useCallback(async (peerId: string): Promise<RoomItem> => {
+    if (!idToken || !baseUrl) { setError(NOT_CONFIGURED); throw new Error(NOT_CONFIGURED); }
     setLoading(true);
     setError(null);
     try {
@@ -234,8 +265,9 @@ export function useRooms({ idToken, onMessage }: UseRoomsOptions): UseRoomsRetur
         body: JSON.stringify({ peerId }),
       });
       if (!res.ok) throw new Error(`Failed to create DM (${res.status})`);
-      const room = await res.json() as RoomItem;
+      const room = withChannelId(await res.json() as RoomItem);
       setRooms((prev) => [room, ...prev]);
+      return room;
     } catch (err) {
       setError((err as Error).message);
       throw err;
@@ -248,9 +280,13 @@ export function useRooms({ idToken, onMessage }: UseRoomsOptions): UseRoomsRetur
 
   const joinRoom = useCallback(async (roomId: string): Promise<void> => {
     if (!idToken) return;
+    if (!roomId) {
+      setError('joinRoom called with empty roomId');
+      return;
+    }
     setError(null);
     try {
-      const res = await fetch(`${baseUrl}/api/rooms/${roomId}/join`, {
+      const res = await fetch(`${baseUrl}/api/rooms/${encodeURIComponent(roomId)}/join`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${idToken}` },
       });
@@ -288,8 +324,8 @@ export function useRooms({ idToken, onMessage }: UseRoomsOptions): UseRoomsRetur
 
   // ---- createGroupRoom (ROOM-02) -------------------------------------------
 
-  const createGroupRoom = useCallback(async (groupId: string, name: string): Promise<void> => {
-    if (!idToken) return;
+  const createGroupRoom = useCallback(async (groupId: string, name: string): Promise<RoomItem> => {
+    if (!idToken || !baseUrl) { setError(NOT_CONFIGURED); throw new Error(NOT_CONFIGURED); }
     setLoading(true);
     setError(null);
     try {
@@ -302,8 +338,9 @@ export function useRooms({ idToken, onMessage }: UseRoomsOptions): UseRoomsRetur
         body: JSON.stringify({ name }),
       });
       if (!res.ok) throw new Error(`Failed to create group room (${res.status})`);
-      const room = await res.json() as RoomItem;
+      const room = withChannelId(await res.json() as RoomItem);
       setRooms((prev) => [room, ...prev]);
+      return room;
     } catch (err) {
       setError((err as Error).message);
       throw err;

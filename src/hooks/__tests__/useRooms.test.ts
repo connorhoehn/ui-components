@@ -8,6 +8,7 @@ import type { GatewayMessage } from '../../types/gateway';
 const mockToast = vi.fn();
 vi.mock('../../components/shared/ToastProvider', () => ({
   useToast: () => ({ toast: mockToast }),
+  useToastOptional: () => ({ toast: mockToast }),
 }));
 
 // ---------------------------------------------------------------------------

@@ -1,5 +1,5 @@
-import { r as e } from "./IdentityContext-CQM1qwH6.js";
-import { t } from "./apiBaseUrl-DLrXlmVj.js";
+import { t as e } from "./apiBaseUrl-DLrXlmVj.js";
+import { r as t } from "./IdentityContext-CQM1qwH6.js";
 import { t as n } from "./cn-DhjIN-s0.js";
 import { t as r } from "./Card-RQCeAPNU.js";
 import { n as i, r as a, t as o } from "./Chart-BbfaF2-B.js";
@@ -68,7 +68,7 @@ function ie(e) {
 	};
 }
 function ae(n = {}) {
-	let r = e(), i = n.idToken === void 0 ? r?.idToken ?? null : n.idToken, a = n.baseUrl ?? t(), { pollIntervalMs: o = P } = n, s = typeof o == "number" && o > 0, c = s ? o : P, [l, u] = E(null), [d, f] = E(!0), [p, m] = E(null), [h, g] = E(null), [_, v] = E(!1), y = T(null), b = T(!0), C = T(!1), w = T(0), D = x(async () => {
+	let r = t(), i = n.idToken === void 0 ? r?.idToken ?? null : n.idToken, a = n.baseUrl ?? e(), { pollIntervalMs: o = P } = n, s = typeof o == "number" && o > 0, c = s ? o : P, [l, u] = E(null), [d, f] = E(!0), [p, m] = E(null), [h, g] = E(null), [_, v] = E(!1), y = T(null), b = T(!0), C = T(!1), w = T(0), D = x(async () => {
 		y.current && y.current.abort();
 		let e = new AbortController();
 		y.current = e;

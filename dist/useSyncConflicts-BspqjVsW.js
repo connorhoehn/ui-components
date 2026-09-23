@@ -1,14 +1,14 @@
-import { n as e, r as t } from "./IdentityContext-CQM1qwH6.js";
-import { t as n } from "./apiBaseUrl-DLrXlmVj.js";
+import { t as e } from "./apiBaseUrl-DLrXlmVj.js";
+import { n as t, r as n } from "./IdentityContext-CQM1qwH6.js";
 import { n as r } from "./WebSocketContext-DUvjGLFq.js";
 import { useCallback as i, useEffect as a, useRef as o, useState as s } from "react";
 //#region src/hooks/useDocTypeProposals.ts
 var c = "", l = 3e4;
 function u() {
-	let { idToken: t, userEmail: n } = e(), [r, o] = s([]), [u, d] = s(!0), [f, p] = s(null), m = i(() => {
-		let e = { "Content-Type": "application/json" };
-		return t && (e.Authorization = `Bearer ${t}`), e;
-	}, [t]), h = i(async () => {
+	let { idToken: e, userEmail: n } = t(), [r, o] = s([]), [u, d] = s(!0), [f, p] = s(null), m = i(() => {
+		let t = { "Content-Type": "application/json" };
+		return e && (t.Authorization = `Bearer ${e}`), t;
+	}, [e]), h = i(async () => {
 		d(!0), p(null);
 		try {
 			let e = await fetch(`${c}/api/ingest/mapping/proposals`, { headers: m() });
@@ -53,15 +53,15 @@ function u() {
 //#endregion
 //#region src/hooks/useIngestAudit.ts
 var d = "", f = 3e4;
-function p(t = {}) {
-	let { idToken: n } = e(), [r, o] = s([]), [c, l] = s(!0), [u, p] = s(null), m = i(async () => {
+function p(e = {}) {
+	let { idToken: n } = t(), [r, o] = s([]), [c, l] = s(!0), [u, p] = s(null), m = i(async () => {
 		l(!0), p(null);
 		try {
-			let e = { "Content-Type": "application/json" };
-			n && (e.Authorization = `Bearer ${n}`);
+			let t = { "Content-Type": "application/json" };
+			n && (t.Authorization = `Bearer ${n}`);
 			let r = new URLSearchParams();
-			t.since && r.set("since", t.since), t.until && r.set("until", t.until), t.actor && r.set("actor", t.actor), t.eventType && r.set("eventType", t.eventType), t.targetId && r.set("targetId", t.targetId), t.limit && r.set("limit", String(t.limit));
-			let i = r.toString(), a = `${d}/api/ingest/audit${i ? `?${i}` : ""}`, s = await fetch(a, { headers: e });
+			e.since && r.set("since", e.since), e.until && r.set("until", e.until), e.actor && r.set("actor", e.actor), e.eventType && r.set("eventType", e.eventType), e.targetId && r.set("targetId", e.targetId), e.limit && r.set("limit", String(e.limit));
+			let i = r.toString(), a = `${d}/api/ingest/audit${i ? `?${i}` : ""}`, s = await fetch(a, { headers: t });
 			if (!s.ok) throw Error(`HTTP ${s.status}`);
 			let c = await s.json();
 			o(c.entries);
@@ -72,12 +72,12 @@ function p(t = {}) {
 		}
 	}, [
 		n,
-		t.since,
-		t.until,
-		t.actor,
-		t.eventType,
-		t.targetId,
-		t.limit
+		e.since,
+		e.until,
+		e.actor,
+		e.eventType,
+		e.targetId,
+		e.limit
 	]);
 	return a(() => {
 		m();
@@ -96,10 +96,10 @@ function p(t = {}) {
 //#region src/hooks/useIngestDLQ.ts
 var m = "", h = 3e4;
 function g() {
-	let { idToken: t } = e(), [n, r] = s([]), [o, c] = s(!0), [l, u] = s(null), d = i(() => {
-		let e = { "Content-Type": "application/json" };
-		return t && (e.Authorization = `Bearer ${t}`), e;
-	}, [t]), f = i(async () => {
+	let { idToken: e } = t(), [n, r] = s([]), [o, c] = s(!0), [l, u] = s(null), d = i(() => {
+		let t = { "Content-Type": "application/json" };
+		return e && (t.Authorization = `Bearer ${e}`), t;
+	}, [e]), f = i(async () => {
 		c(!0), u(null);
 		try {
 			let e = await fetch(`${m}/api/ingest/dlq`, { headers: d() });
@@ -166,8 +166,8 @@ function _(e) {
 		updatedAt: e.updatedAt
 	};
 }
-function v(e = {}) {
-	let { sourceId: r, status: c } = e, l = t(), u = e.idToken === void 0 ? l?.idToken ?? null : e.idToken, d = e.baseUrl ?? n(), [f, p] = s([]), [m, h] = s(!0), [g, v] = s(null), [y, b] = s(null), x = o(!0), S = o(0), C = i(() => {
+function v(t = {}) {
+	let { sourceId: r, status: c } = t, l = n(), u = t.idToken === void 0 ? l?.idToken ?? null : t.idToken, d = t.baseUrl ?? e(), [f, p] = s([]), [m, h] = s(!0), [g, v] = s(null), [y, b] = s(null), x = o(!0), S = o(0), C = i(() => {
 		let e = { "Content-Type": "application/json" };
 		return u && (e.Authorization = `Bearer ${u}`), e;
 	}, [u]), w = i(async () => {
@@ -319,8 +319,8 @@ function b() {
 }
 //#endregion
 //#region src/hooks/useIngestSources.ts
-function x(e = {}) {
-	let r = t(), c = e.idToken === void 0 ? r?.idToken ?? null : e.idToken, l = e.baseUrl ?? n(), [u, d] = s([]), [f, p] = s(!0), [m, h] = s(null), [g, _] = s(null), v = o(!0), y = o(0), b = i(() => {
+function x(t = {}) {
+	let r = n(), c = t.idToken === void 0 ? r?.idToken ?? null : t.idToken, l = t.baseUrl ?? e(), [u, d] = s([]), [f, p] = s(!0), [m, h] = s(null), [g, _] = s(null), v = o(!0), y = o(0), b = i(() => {
 		let e = { "Content-Type": "application/json" };
 		return c && (e.Authorization = `Bearer ${c}`), e;
 	}, [c]), x = i(() => _(null), []), S = i(async () => {
@@ -406,8 +406,8 @@ function C(e) {
 		updatedAt: e.updatedAt
 	};
 }
-function w(e = {}) {
-	let r = t(), o = e.idToken === void 0 ? r?.idToken ?? null : e.idToken, c = e.baseUrl ?? n(), [l, u] = s([]), [d, f] = s(.7), [p, m] = s(!0), [h, g] = s(null), _ = i(() => {
+function w(t = {}) {
+	let r = n(), o = t.idToken === void 0 ? r?.idToken ?? null : t.idToken, c = t.baseUrl ?? e(), [l, u] = s([]), [d, f] = s(.7), [p, m] = s(!0), [h, g] = s(null), _ = i(() => {
 		let e = { "Content-Type": "application/json" };
 		return o && (e.Authorization = `Bearer ${o}`), e;
 	}, [o]), v = i(async () => {
@@ -464,8 +464,8 @@ function w(e = {}) {
 }
 //#endregion
 //#region src/hooks/usePipelineDefs.ts
-function T(e = {}) {
-	let r = t(), c = e.idToken === void 0 ? r?.idToken ?? null : e.idToken, l = e.baseUrl ?? n(), [u, d] = s([]), [f, p] = s(!0), [m, h] = s(null), g = o(!1), _ = i(async () => {
+function T(t = {}) {
+	let r = n(), c = t.idToken === void 0 ? r?.idToken ?? null : t.idToken, l = t.baseUrl ?? e(), [u, d] = s([]), [f, p] = s(!0), [m, h] = s(null), g = o(!1), _ = i(async () => {
 		p(!0), h(null);
 		try {
 			let e = {};
@@ -500,14 +500,14 @@ function T(e = {}) {
 //#endregion
 //#region src/hooks/useSourceSloMetrics.ts
 var E = 3e4;
-function D(e, r = "1h", o = {}) {
-	let c = t(), l = o.idToken === void 0 ? c?.idToken ?? null : o.idToken, u = o.baseUrl ?? n(), [d, f] = s(null), [p, m] = s(!0), [h, g] = s(null), _ = i(async () => {
-		if (e) {
+function D(t, r = "1h", o = {}) {
+	let c = n(), l = o.idToken === void 0 ? c?.idToken ?? null : o.idToken, u = o.baseUrl ?? e(), [d, f] = s(null), [p, m] = s(!0), [h, g] = s(null), _ = i(async () => {
+		if (t) {
 			m(!0), g(null);
 			try {
-				let t = { "Content-Type": "application/json" };
-				l && (t.Authorization = `Bearer ${l}`);
-				let n = await fetch(`${u}/api/ingest/sources/${encodeURIComponent(e)}/metrics?window=${r}`, { headers: t });
+				let e = { "Content-Type": "application/json" };
+				l && (e.Authorization = `Bearer ${l}`);
+				let n = await fetch(`${u}/api/ingest/sources/${encodeURIComponent(t)}/metrics?window=${r}`, { headers: e });
 				if (!n.ok) throw Error(`HTTP ${n.status}`);
 				let i = await n.json();
 				f(i);
@@ -518,7 +518,7 @@ function D(e, r = "1h", o = {}) {
 			}
 		}
 	}, [
-		e,
+		t,
 		r,
 		l,
 		u
@@ -588,10 +588,10 @@ function k() {
 	}];
 }
 function A() {
-	let { idToken: t } = e(), [n, r] = s([]), [c, l] = s(!0), [u, d] = s(null), [f, p] = s(null), [m, h] = s(!1), g = o(!0), _ = o(0), v = i(() => {
-		let e = { "Content-Type": "application/json" };
-		return t && (e.Authorization = `Bearer ${t}`), e;
-	}, [t]), y = i(async () => {
+	let { idToken: e } = t(), [n, r] = s([]), [c, l] = s(!0), [u, d] = s(null), [f, p] = s(null), [m, h] = s(!1), g = o(!0), _ = o(0), v = i(() => {
+		let t = { "Content-Type": "application/json" };
+		return e && (t.Authorization = `Bearer ${e}`), t;
+	}, [e]), y = i(async () => {
 		let e = ++_.current, t = () => g.current && e === _.current;
 		l(!0), d(null);
 		try {

@@ -33,20 +33,20 @@ declare interface ApiCallState<T> {
     reset: () => void;
 }
 
-declare interface ApiHealthCheck {
+export declare interface ApiHealthCheck {
     status: 'ok' | 'error' | string;
     latencyMs?: number;
     error?: string;
 }
 
-declare interface ApiHealthSnapshot {
+export declare interface ApiHealthSnapshot {
     status: ApiHealthStatus;
     checks: Record<string, ApiHealthCheck>;
     /** Names of failing dependencies (status !== 'ok'). Empty when healthy or unknown. */
     failing: string[];
 }
 
-declare type ApiHealthStatus = 'ok' | 'degraded' | 'unknown';
+export declare type ApiHealthStatus = 'ok' | 'degraded' | 'unknown';
 
 export declare interface AudioRecorder {
     state: AudioRecorderState;
@@ -839,13 +839,17 @@ declare interface MfaSetupResult {
 
 declare type MyItem = MentionItem | TaskAssignment;
 
+/** Collapses either /health shape into the v1 one; `null` when it is neither. */
+export declare function normalizeApiHealth(body: unknown): {
+    status: 'ok' | 'degraded';
+    checks: Record<string, ApiHealthCheck>;
+} | null;
+
 declare type OnMessageFn = (handler: (msg: GatewayMessage) => void) => () => void;
 
 declare type OnMessageFn_2 = (handler: (msg: GatewayMessage) => void) => () => void;
 
 declare type OnMessageFn_3 = (handler: (msg: GatewayMessage) => void) => () => void;
-
-declare type OnMessageFn_4 = (handler: (msg: GatewayMessage) => void) => () => void;
 
 declare interface Participant {
     clientId: string;
@@ -940,9 +944,12 @@ declare interface RemoteCursor {
     metadata: Record<string, unknown>;
 }
 
-declare interface RoomItem {
+export declare interface RoomItem {
     roomId: string;
+    /** `room:<slug>` — a room's chat channel is its call lobby. */
     channelId: string;
+    /** As sent by the API; `channelId` is derived from it when absent. */
+    slug?: string;
     name: string;
     type: 'standalone' | 'group' | 'dm';
     ownerId: string;
@@ -951,12 +958,14 @@ declare interface RoomItem {
     createdAt: string;
 }
 
-declare interface RoomMemberItem {
+export declare interface RoomMemberItem {
     roomId: string;
     userId: string;
     displayName?: string;
     joinedAt: string;
 }
+
+export declare type RoomsOnMessageFn = (handler: (msg: GatewayMessage) => void) => () => void;
 
 declare type SaveOutcome = {
     status: 'synced';
@@ -1224,8 +1233,18 @@ declare interface UseActivityBusReturn {
   * Polls /health every `pollMs`. The first sample lands as soon as the network
   * round-trip completes; the hook starts in `unknown` so callers don't flash
   * "degraded" before the first response.
+  *
+  * Accepts the interval as a bare number (the pre-2.359.0 signature) or an
+  * options object.
   */
- export declare function useApiHealth(pollMs?: number): ApiHealthSnapshot;
+ export declare function useApiHealth(options?: number | UseApiHealthOptions): ApiHealthSnapshot;
+
+ export declare interface UseApiHealthOptions {
+     /** Poll interval. Default 30 s. */
+     pollMs?: number;
+     /** Origin whose `/health` is polled. Wins over `getApiBaseUrl()`. */
+     baseUrl?: string;
+ }
 
  export declare function useAudioRecorder({ getStream, maxMs, mimeType, audioBitsPerSecond }: UseAudioRecorderOptions): AudioRecorder;
 
@@ -2044,20 +2063,27 @@ declare interface UseActivityBusReturn {
      react: (emoji: string) => void;
  }
 
- export declare function useRooms({ idToken, onMessage }: UseRoomsOptions): UseRoomsReturn;
+ export declare function useRooms({ idToken, onMessage, baseUrl: baseUrlOption }: UseRoomsOptions): UseRoomsReturn;
 
- declare interface UseRoomsOptions {
+ export declare interface UseRoomsOptions {
      idToken: string | null;
-     onMessage: OnMessageFn_4;
+     onMessage: RoomsOnMessageFn;
+     /** Origin for `/api/rooms…`. Wins over `getApiBaseUrl()` (2.359.0). */
+     baseUrl?: string;
  }
 
- declare interface UseRoomsReturn {
+ export declare interface UseRoomsReturn {
      rooms: RoomItem[];
      activeRoom: RoomItem | null;
      setActiveRoom: (room: RoomItem | null) => void;
-     createRoom: (name: string) => Promise<void>;
-     createDM: (peerId: string) => Promise<void>;
-     createGroupRoom: (groupId: string, name: string) => Promise<void>;
+     /**
+      * Resolve with the room, so a caller can act on it — adopt it, post into it —
+      * without re-reading the list. Reject when unconfigured or refused (2.359.0;
+      * they resolved `void` and silently did nothing without a token before).
+      */
+     createRoom: (name: string) => Promise<RoomItem>;
+     createDM: (peerId: string) => Promise<RoomItem>;
+     createGroupRoom: (groupId: string, name: string) => Promise<RoomItem>;
      joinRoom: (roomId: string) => Promise<void>;
      leaveRoom: (roomId: string) => Promise<void>;
      loadMembers: (roomId: string) => Promise<void>;
@@ -2430,9 +2456,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -2443,19 +2469,6 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }
@@ -2489,9 +2502,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -2502,6 +2518,16 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

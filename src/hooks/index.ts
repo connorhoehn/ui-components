@@ -1,6 +1,7 @@
 export { useActivityBus } from './useActivityBus';
 export { useApiCall } from './useApiCall';
-export { useApiHealth } from './useApiHealth';
+export { useApiHealth, normalizeApiHealth } from './useApiHealth';
+export type { ApiHealthSnapshot, ApiHealthStatus, ApiHealthCheck, UseApiHealthOptions } from './useApiHealth';
 export { apiFetch as identityApiFetch, BASE_URL as IDENTITY_BASE_URL } from './identityApi';
 export { useIdentityAdmin } from './useIdentityAdmin';
 export { useIdentityAudit } from './useIdentityAudit';
@@ -56,6 +57,7 @@ export type { UseWebGLCanvasOptions, WebGLCanvas, WebGLCanvasStatus, WebGLContex
 export { usePresence } from './usePresence';
 export { useReactions } from './useReactions';
 export { useRooms } from './useRooms';
+export type { RoomItem, RoomMemberItem, UseRoomsOptions, UseRoomsReturn, OnMessageFn as RoomsOnMessageFn } from './useRooms';
 export { useSectionList } from './useSectionList';
 export { useSocialProfile } from './useSocialProfile';
 export { useSourceSloMetrics } from './useSourceSloMetrics';

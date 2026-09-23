@@ -212,7 +212,7 @@ export declare function ActivityPanel({ idToken, sendMessage, onMessage, connect
 export declare interface ActivityPanelProps {
     idToken: string | null;
     sendMessage: (msg: Record<string, unknown>) => void;
-    onMessage: OnMessageFn_11;
+    onMessage: OnMessageFn_10;
     connectionState: ConnectionState_4;
     /**
      * Origin for `GET /api/activity`. Wins over the build-time
@@ -838,20 +838,20 @@ declare interface ApiDegradedBannerProps {
     health: ApiHealthSnapshot;
 }
 
-declare interface ApiHealthCheck {
+export declare interface ApiHealthCheck {
     status: 'ok' | 'error' | string;
     latencyMs?: number;
     error?: string;
 }
 
-declare interface ApiHealthSnapshot {
+export declare interface ApiHealthSnapshot {
     status: ApiHealthStatus;
     checks: Record<string, ApiHealthCheck>;
     /** Names of failing dependencies (status !== 'ok'). Empty when healthy or unknown. */
     failing: string[];
 }
 
-declare type ApiHealthStatus = 'ok' | 'degraded' | 'unknown';
+export declare type ApiHealthStatus = 'ok' | 'degraded' | 'unknown';
 
 /**
  * Wraps the layout body in the pipelines event-stream + runs providers so
@@ -3434,7 +3434,7 @@ declare interface ChatRoomProps {
     idToken: string | null;
     roomId: string;
     roomName: string;
-    onMessage: OnMessageFn_9;
+    onMessage: OnMessageFn_8;
 }
 
 /**
@@ -10173,6 +10173,12 @@ declare interface NodeVocabulary {
     placeholders?: Record<string, string>;
 }
 
+/** Collapses either /health shape into the v1 one; `null` when it is neither. */
+export declare function normalizeApiHealth(body: unknown): {
+    status: 'ok' | 'degraded';
+    checks: Record<string, ApiHealthCheck>;
+} | null;
+
 /**
  * Accepts what people actually paste.
  *
@@ -10261,9 +10267,7 @@ export declare function NumberReaderRenderer({ section, fragment }: SectionRende
 
 declare type OnMessageFn = (handler: (msg: GatewayMessage) => void) => () => void;
 
-declare type OnMessageFn_10 = (handler: (msg: GatewayMessage) => void) => () => void;
-
-declare type OnMessageFn_11 = (handler: (msg: GatewayMessage_2) => void) => () => void;
+declare type OnMessageFn_10 = (handler: (msg: GatewayMessage_2) => void) => () => void;
 
 declare type OnMessageFn_2 = (handler: (msg: GatewayMessage) => void) => () => void;
 
@@ -11460,7 +11464,7 @@ declare interface PostFeedProps {
      * switching rooms could repaint the new room with the old room's posts.)
      */
     roomId: string | null;
-    onMessage: OnMessageFn_10;
+    onMessage: OnMessageFn_9;
 }
 
 declare interface PostItem {
@@ -12721,9 +12725,12 @@ export declare interface RisingParticlesProps {
     'data-testid'?: string;
 }
 
-declare interface RoomItem {
+export declare interface RoomItem {
     roomId: string;
+    /** `room:<slug>` — a room's chat channel is its call lobby. */
     channelId: string;
+    /** As sent by the API; `channelId` is derived from it when absent. */
+    slug?: string;
     name: string;
     type: 'standalone' | 'group' | 'dm';
     ownerId: string;
@@ -12748,12 +12755,14 @@ declare interface RoomListProps {
     compact?: boolean;
 }
 
-declare interface RoomMemberItem {
+export declare interface RoomMemberItem {
     roomId: string;
     userId: string;
     displayName?: string;
     joinedAt: string;
 }
+
+export declare type RoomsOnMessageFn = (handler: (msg: GatewayMessage) => void) => () => void;
 
 export declare function RosterPanel({ participants, activeSpeakerId, onParticipantClick, count, title, footer, tone, className, }: RosterPanelProps): JSX.Element;
 
@@ -13625,7 +13634,7 @@ declare interface SnapshotSection {
 
 export declare function SocialPanel({ idToken, onMessage }: {
     idToken: string | null;
-    onMessage: OnMessageFn_7;
+    onMessage: OnMessageFn_6;
 }): JSX.Element;
 
 export declare function SocialTabContent({ userId, displayName, idToken, rooms, createRoom, createDM, createGroupRoom, roomsLoading, roomsError, onRoomsRetry, handleRoomSelect, activeRoomId, onMessage, }: SocialTabContentProps): JSX.Element;
@@ -13646,7 +13655,7 @@ declare interface SocialTabContentProps {
     handleRoomSelect: (room: RoomItem) => void;
     activeRoomId: string | null;
     activityEvents: ActivityEvent[];
-    onMessage: OnMessageFn_8;
+    onMessage: OnMessageFn_7;
 }
 
 declare interface SourceSloMetrics {
@@ -15836,8 +15845,18 @@ declare interface UseActivityBusReturn {
   * Polls /health every `pollMs`. The first sample lands as soon as the network
   * round-trip completes; the hook starts in `unknown` so callers don't flash
   * "degraded" before the first response.
+  *
+  * Accepts the interval as a bare number (the pre-2.359.0 signature) or an
+  * options object.
   */
- export declare function useApiHealth(pollMs?: number): ApiHealthSnapshot;
+ export declare function useApiHealth(options?: number | UseApiHealthOptions): ApiHealthSnapshot;
+
+ export declare interface UseApiHealthOptions {
+     /** Poll interval. Default 30 s. */
+     pollMs?: number;
+     /** Origin whose `/health` is polled. Wins over `getApiBaseUrl()`. */
+     baseUrl?: string;
+ }
 
  export declare function useAudioLevel(stream: MediaStream | null | undefined): number | null;
 
@@ -16908,20 +16927,27 @@ declare interface UseActivityBusReturn {
      avatarUrl?: string;
  }
 
- export declare function useRooms({ idToken, onMessage }: UseRoomsOptions): UseRoomsReturn;
+ export declare function useRooms({ idToken, onMessage, baseUrl: baseUrlOption }: UseRoomsOptions): UseRoomsReturn;
 
- declare interface UseRoomsOptions {
+ export declare interface UseRoomsOptions {
      idToken: string | null;
-     onMessage: OnMessageFn_5;
+     onMessage: RoomsOnMessageFn;
+     /** Origin for `/api/rooms…`. Wins over `getApiBaseUrl()` (2.359.0). */
+     baseUrl?: string;
  }
 
- declare interface UseRoomsReturn {
+ export declare interface UseRoomsReturn {
      rooms: RoomItem[];
      activeRoom: RoomItem | null;
      setActiveRoom: (room: RoomItem | null) => void;
-     createRoom: (name: string) => Promise<void>;
-     createDM: (peerId: string) => Promise<void>;
-     createGroupRoom: (groupId: string, name: string) => Promise<void>;
+     /**
+      * Resolve with the room, so a caller can act on it — adopt it, post into it —
+      * without re-reading the list. Reject when unconfigured or refused (2.359.0;
+      * they resolved `void` and silently did nothing without a token before).
+      */
+     createRoom: (name: string) => Promise<RoomItem>;
+     createDM: (peerId: string) => Promise<RoomItem>;
+     createGroupRoom: (groupId: string, name: string) => Promise<RoomItem>;
      joinRoom: (roomId: string) => Promise<void>;
      leaveRoom: (roomId: string) => Promise<void>;
      loadMembers: (roomId: string) => Promise<void>;
@@ -17617,7 +17643,7 @@ declare interface UseActivityBusReturn {
   export declare interface WebSocketContextValue {
       connectionState: ConnectionState;
       sendMessage: (msg: Record<string, unknown>) => void;
-      onMessage: OnMessageFn_6;
+      onMessage: OnMessageFn_5;
       ws: UseWebSocketReturn;
       clientId: string | null;
       sessionToken: string | null;
@@ -18595,9 +18621,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -18608,19 +18634,6 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }
@@ -18654,9 +18667,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -18667,6 +18683,16 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

@@ -21,6 +21,7 @@ import type { RoomItem } from '../useRooms';
 const mockToast = vi.fn();
 vi.mock('../../components/shared/ToastProvider', () => ({
   useToast: () => ({ toast: mockToast }),
+  useToastOptional: () => ({ toast: mockToast }),
 }));
 
 const BASE = 'http://api';
