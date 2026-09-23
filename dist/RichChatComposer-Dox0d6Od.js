@@ -2808,9 +2808,9 @@ var ha = T(function({ onSend: o, draft: p, onDraftChange: re, onCommand: T, onSe
 		let e = fn.current;
 		if (!e) return;
 		let t = e.getBoundingClientRect().width;
-		t > 0 && t !== ln && un(t);
+		t > 0 && t !== ln && un(t), pn && typeof document < "u" && !e.contains(document.activeElement) && (X(!1), hn(!1));
 	});
-	let vn = Ye === "auto" ? Ki(ln) : Ye, yn = vn === "wide", bn = vn === "narrow", xn = Xe === "compact", Sn = B && !Pe && (Ve === "compact" || bn), Cn = yn && !xn, wn = !!Ze?.length && !!Qe, Tn = wn && yn && Ct && pn, En = wn && !yn, Z = et && !mn && Ct && !I && !je?.length && !pt.length && !q && !xt && !kt && !H && !lt.open && !(Te && we === "hidden"), Dn = et && "motion-safe:[animation:composerReveal_140ms_ease-out]", [On, kn] = O(!1), An = bn && !On || Z, jn = yn, Mn = yn, Nn = _(fn, F, Tt), Pn = Tt && Nn !== "none", Fn = v(), In = Pn && !!Fn?.painting, Rn = Pn && !In, zn = qe ?? Fn?.working ?? !1, Bn = {};
+	let vn = Ye === "auto" ? Ki(ln) : Ye, yn = vn === "wide", bn = vn === "narrow", xn = Xe === "compact", Sn = B && !Pe && (Ve === "compact" || bn), Cn = yn && !xn, wn = !!Ze?.length && !!Qe, Tn = wn && yn && Ct && pn && !(et && !mn), En = wn && !yn, Z = et && !mn && Ct && !I && !je?.length && !pt.length && !q && !xt && !kt && !H && !lt.open && !(Te && we === "hidden"), Dn = et && "motion-safe:[animation:composerReveal_140ms_ease-out]", [On, kn] = O(!1), An = bn && !On || Z, jn = yn, Mn = yn, Nn = _(fn, F, Tt), Pn = Tt && Nn !== "none", Fn = v(), In = Pn && !!Fn?.painting, Rn = Pn && !In, zn = qe ?? Fn?.working ?? !1, Bn = {};
 	Ke && (Bn["--composer-radius"] = qi[Ke]), Je !== void 0 && (Bn["--composer-input-max"] = typeof Je == "number" ? `${Je}px` : Je);
 	let Vn = zn ? 30 : 22, Q = (t, n, r, i, a, o) => /* @__PURE__ */ k("button", {
 		ref: a,
@@ -2961,7 +2961,7 @@ var ha = T(function({ onSend: o, draft: p, onDraftChange: re, onCommand: T, onSe
 							type: "button",
 							onClick: I.action.onSelect,
 							"data-testid": I.action["data-testid"] ?? `${L}-status-action`,
-							className: "shrink-0 cursor-pointer rounded border-none bg-transparent px-1 text-[11px] font-semibold text-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+							className: "-my-1 inline-flex min-h-6 shrink-0 cursor-pointer items-center rounded border-none bg-transparent px-1.5 text-[11px] font-semibold text-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
 							children: I.action.label
 						}),
 						I.onDismiss && /* @__PURE__ */ k("button", {
@@ -2969,7 +2969,7 @@ var ha = T(function({ onSend: o, draft: p, onDraftChange: re, onCommand: T, onSe
 							"aria-label": "Dismiss",
 							onClick: I.onDismiss,
 							"data-testid": `${L}-status-dismiss`,
-							className: "shrink-0 cursor-pointer rounded border-none bg-transparent px-1 text-[12px] leading-none text-text-tertiary hover:text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+							className: "-my-1 inline-flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded border-none bg-transparent text-[13px] leading-none text-text-tertiary hover:text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
 							children: "×"
 						})
 					]

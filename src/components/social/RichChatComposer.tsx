@@ -1632,6 +1632,15 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     if (!el) return;
     const w = el.getBoundingClientRect().width;
     if (w > 0 && w !== rootWidth) setRootWidth(w);
+    // A focused control that UNMOUNTS (the status line's × or its action,
+    // gone the moment they are pressed) takes focus to <body> without a blur
+    // event, so `onBlurCapture` never ran and the composer kept believing it
+    // held focus: suggestion chips stayed up on the idle dock (live
+    // 2026-09-23, 69 px instead of 42). Re-check after every commit.
+    if (focusWithin && typeof document !== 'undefined' && !el.contains(document.activeElement)) {
+      setFocusWithin(false);
+      setEngaged(false);
+    }
   });
   const size: ComposerSize = layout === 'auto' ? composerSizeFor(rootWidth) : layout;
   const wide = size === 'wide';
@@ -1641,7 +1650,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // Compact folds the hints row into `?` at every width.
   const hintsInRow = wide && !compact;
   const hasSuggestions = !!suggestions?.length && !!onSuggestion;
-  const showSuggestionRow = hasSuggestions && wide && empty && focusWithin;
+  // Never on the one-row idle composer: the chips there would sit where the
+  // next click lands (a chip click STARTS a run) and grow the idle dock.
+  const showSuggestionRow = hasSuggestions && wide && empty && focusWithin && !(collapseWhenIdle && !engaged);
   const suggestionsInMenu = hasSuggestions && !wide;
   // Idle: one row (pill · input · Send). Anything worth reading — a status,
   // a running process, a staged file, a command, a notice, words in the box —
@@ -1913,7 +1924,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 type="button"
                 onClick={status.action.onSelect}
                 data-testid={status.action['data-testid'] ?? `${testId}-status-action`}
-                className="shrink-0 cursor-pointer rounded border-none bg-transparent px-1 text-[11px] font-semibold text-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                className="-my-1 inline-flex min-h-6 shrink-0 cursor-pointer items-center rounded border-none bg-transparent px-1.5 text-[11px] font-semibold text-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 {status.action.label}
               </button>
@@ -1924,7 +1935,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 aria-label="Dismiss"
                 onClick={status.onDismiss}
                 data-testid={`${testId}-status-dismiss`}
-                className="shrink-0 cursor-pointer rounded border-none bg-transparent px-1 text-[12px] leading-none text-text-tertiary hover:text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                // 24 × 24 target (it was 16 × 12 and a live click beside it
+                // read as "× does nothing"); -my-1 keeps the row's height.
+                className="-my-1 inline-flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded border-none bg-transparent text-[13px] leading-none text-text-tertiary hover:text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 ×
               </button>

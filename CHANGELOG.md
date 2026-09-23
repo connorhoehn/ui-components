@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.373.3] — 2026-09-23
+
+### Fixed
+
+- `RichChatComposer` (`collapseWhenIdle`): pressing a control that unmounts on press (the status line's × or action) left focus on `<body>` with no blur event, so the composer kept `focusWithin` and the idle dock came back 69 px tall with the suggestion chips under the pointer. A post-commit check resets focus state when focus is no longer inside; suggestion chips never show on the one-row idle composer.
+- The status line's × and action are 24 × 24 px targets (were 16 × 12), row height unchanged.
+
 ## [2.373.2] — 2026-09-23
 
 ### Fixed

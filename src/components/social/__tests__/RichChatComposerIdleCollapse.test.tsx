@@ -1,6 +1,7 @@
 // `collapseWhenIdle`: an empty composer with the caret elsewhere is ONE row —
 // mode pill, input, Send — so a canvas above a pinned dock keeps the height.
 // Focus in the input, words in it, or a status brings the full composer back.
+import * as React from 'react';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { RichChatComposer } from '../RichChatComposer';
@@ -150,5 +151,44 @@ describe('collapseWhenIdle', () => {
     expect(screen.getByTestId('composer')).toHaveAttribute('data-collapsed', 'true');
     expect(screen.queryByTestId('composer-mode-pill')).toBeNull();
     expect(screen.getByTestId('composer-send')).toBeDisabled();
+  });
+});
+
+// Live 2026-09-23 (deck editor): pressing the status line's × focused it, the
+// press removed it, focus fell to <body> with no blur event, and the composer
+// kept believing it had focus — the idle dock came back 69 px tall with the
+// suggestion chips (each one starts a run) under the next click.
+describe('collapseWhenIdle after the status line is dismissed', () => {
+  function Dock() {
+    const [status, setStatus] = React.useState<{ text: string; onDismiss: () => void } | null>({
+      text: 'v2 is the agent’s edit.',
+      onDismiss: () => setStatus(null),
+    });
+    return (
+      <RichChatComposer
+        {...modes}
+        status={status}
+        suggestions={['Tighten the bullets']}
+        onSuggestion={() => {}}
+      />
+    );
+  }
+
+  it('returns to one row with no suggestion chips, and the × is a 24 px target', async () => {
+    render(<Dock />);
+    const dismiss = screen.getByTestId('composer-status-dismiss');
+    expect(dismiss.className).toMatch(/\bh-6\b/);
+    expect(dismiss.className).toMatch(/\bw-6\b/);
+    await act(async () => { dismiss.focus(); fireEvent.focusIn(dismiss); });
+    await act(async () => { fireEvent.click(dismiss); });
+    expect(document.activeElement).toBe(document.body);
+    expect(screen.getByTestId('composer')).toHaveAttribute('data-collapsed', 'true');
+    expect(screen.queryByTestId('composer-suggestions')).toBeNull();
+  });
+
+  it('chips still appear once the caret is in the empty input', async () => {
+    render(<RichChatComposer {...modes} suggestions={['Tighten the bullets']} onSuggestion={() => {}} />);
+    await act(async () => { input().focus(); fireEvent.focusIn(input()); });
+    expect(screen.getByTestId('composer-suggestions')).toBeInTheDocument();
   });
 });
