@@ -331,6 +331,42 @@ describe('PresentationEditor — host seams', () => {
     expect(screen.getByTestId('presentation-editor-no-preview')).toBeInTheDocument();
   });
 
+  it('does not ask for a render the server would refuse, and says to add a source', () => {
+    const onRequestPreview = vi.fn();
+    const blank: DeckSpec = {
+      title: 'Blank deck',
+      slides: [{ id: 's1', layout: 'title', title: 'Blank deck', sources: [] }],
+    };
+    // The host's state before any render: loading, or a refusal from an earlier spec.
+    render(<Harness initial={blank} preview={{ error: 'slides[0].sources: every slide must cite at least one source document' }} onRequestPreview={onRequestPreview} />);
+    expect(onRequestPreview).not.toHaveBeenCalled();
+    expect(screen.queryByTestId('presentation-editor-preview-error')).not.toBeInTheDocument();
+    expect(screen.queryByText('This deck could not be rendered')).not.toBeInTheDocument();
+    expect(screen.getByTestId('presentation-editor-preview-needs-source')).toHaveTextContent(
+      'Add a source to preview this slide',
+    );
+  });
+
+  it('renders again once the last uncited slide gains a source', () => {
+    const onRequestPreview = vi.fn();
+    const spec = baseSpec();
+    spec.slides[1] = { ...spec.slides[1], sources: [] };
+    render(<Harness initial={spec} preview="loading" onRequestPreview={onRequestPreview} />);
+    expect(onRequestPreview).not.toHaveBeenCalled();
+    // A cited slide in a deck that is not yet renderable: no spinner, no error.
+    expect(screen.queryByTestId('presentation-editor-preview-loading')).not.toBeInTheDocument();
+    expect(screen.getByTestId('presentation-editor-preview-needs-source')).toHaveTextContent(
+      "The preview waits for every slide's source",
+    );
+    fireEvent.click(screen.getByTestId('presentation-editor-slide-select-s2'));
+    expect(screen.getByTestId('presentation-editor-preview-needs-source')).toHaveTextContent(
+      'Add a source to preview this slide',
+    );
+    fireEvent.click(screen.getByTestId('presentation-editor-slide-source-option-doc-9'));
+    expect(onRequestPreview).toHaveBeenCalledTimes(1);
+    expect(screen.queryByTestId('presentation-editor-preview-needs-source')).not.toBeInTheDocument();
+  });
+
   it('shows the render error and offers the retry', () => {
     const onRequestPreview = vi.fn();
     render(<Harness preview={{ error: 'pptx renderer unavailable' }} onRequestPreview={onRequestPreview} />);

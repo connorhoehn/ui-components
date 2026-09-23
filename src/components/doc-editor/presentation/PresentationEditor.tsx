@@ -52,6 +52,7 @@ import { IconButton } from '../../ui/IconButton';
 import { Input } from '../../forms/Input';
 import { Select } from '../../forms/Select';
 import DotMeter from '../../shared/DotMeter';
+import EmptyState from '../../shared/EmptyState';
 import ErrorState from '../../shared/ErrorState';
 import FormField from '../../shared/FormField';
 import InlineAlert from '../../shared/InlineAlert';
@@ -183,12 +184,17 @@ export function PresentationEditor({
   // instead of per spec change.
   const requestPreview = useRef(onRequestPreview);
   requestPreview.current = onRequestPreview;
-  useEffect(() => {
-    requestPreview.current(spec);
-  }, [spec]);
-
   const slides = spec.slides;
   const uncited = useMemo(() => new Set(uncitedSlideIds(spec)), [spec]);
+  // Only a deck the server will accept is sent for a render. `/api/deck/preview`
+  // validates the whole spec and rejects it outright while any slide cites
+  // nothing — so asking anyway only produced a "could not be rendered" error
+  // for a deck that was never broken, just unfinished (a blank deck starts
+  // that way). The stage says what to do instead; see `stage` below.
+  const renderable = uncited.size === 0;
+  useEffect(() => {
+    if (renderable) requestPreview.current(spec);
+  }, [spec, renderable]);
 
   // A deep link, a delete, or a spec swapped underneath can all name a slide
   // that is not here. Falling back to the first beats rendering nothing.
@@ -345,10 +351,34 @@ export function PresentationEditor({
   // -------------------------------------------------------------------------
 
   const stage = (() => {
+    // Checked before any preview state: while a slide cites nothing the host
+    // was not asked for a render (see `renderable`), so a loading or error
+    // state here would be about an older spec, not this one.
+    if (selected && uncited.has(selected.id)) {
+      return (
+        <EmptyState
+          size="sm"
+          title="Add a source to preview this slide"
+          description="A slide renders once it cites the document or transcript it draws from. Pick one under Sources used."
+          testId={`${testId}-preview-needs-source`}
+        />
+      );
+    }
+    const uriForSelected = selected ? svgDataUri(previewById.get(selected.id)) : undefined;
+    if (!renderable && !uriForSelected) {
+      return (
+        <EmptyState
+          size="sm"
+          title="The preview waits for every slide's source"
+          description="The deck renders as a whole, so it draws once each slide cites what it draws from."
+          testId={`${testId}-preview-needs-source`}
+        />
+      );
+    }
     if (preview === 'loading' && previewById.size === 0) {
       return <LoadingState label="Rendering the deck…" testId={`${testId}-preview-loading`} />;
     }
-    if (typeof preview === 'object' && 'error' in preview) {
+    if (renderable && typeof preview === 'object' && 'error' in preview) {
       return (
         <ErrorState
           title="This deck could not be rendered"
@@ -359,7 +389,7 @@ export function PresentationEditor({
         />
       );
     }
-    const uri = selected ? svgDataUri(previewById.get(selected.id)) : undefined;
+    const uri = uriForSelected;
     if (!uri) {
       return (
         <Text className="text-[13px] text-text-tertiary" data-testid={`${testId}-no-preview`}>

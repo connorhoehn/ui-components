@@ -77,7 +77,7 @@ import { A as Ta, B as Ea, C as Da, D as Oa, E as ka, F as Aa, G as ja, H as Ma,
 import { $ as Co, A as wo, B as To, C as Eo, D as Do, E as Oo, F as ko, G as Ao, H as jo, I as Mo, J as No, K as Po, L as Fo, M as Io, N as Lo, O as Ro, P as zo, Q as Bo, R as Vo, S as Ho, T as Uo, U as Wo, V as Go, W as Ko, X as qo, Y as Jo, Z as Yo, _ as Xo, a as Zo, at as Qo, b as $o, c as es, d as ts, et as ns, f as rs, g as is, h as as, i as os, it as ss, j as cs, k as ls, l as us, m as ds, n as fs, nt as ps, o as ms, p as hs, q as gs, r as _s, rt as vs, s as ys, t as bs, tt as xs, u as Ss, v as Cs, w as ws, x as Ts, y as Es, z as Ds } from "./ConversationSurface-GrIrbu25.js";
 import { t as Os } from "./activationKey-CjbL3LUv.js";
 import { B as ks, C as As, D as js, E as Ms, F as Ns, I as Ps, L as Fs, M as Is, N as Ls, O as Rs, P as zs, R as Bs, S as Vs, T as Hs, V as Us, _ as Ws, a as Gs, b as Ks, c as qs, d as Js, f as Ys, g as Xs, h as Zs, i as Qs, j as $s, l as ec, m as tc, n as nc, o as rc, p as ic, r as ac, s as oc, t as sc, u as cc, v as lc, w as uc, x as dc, y as fc, z as pc } from "./renderers-5O9bh08s.js";
-import { A as mc, C as hc, D as gc, E as _c, F as vc, I as yc, L as bc, M as xc, O as Sc, P as Cc, S as wc, T as Tc, b as Ec, h as Dc, j as Oc, k as kc, s as Ac, t as jc, w as Mc, x as Nc } from "./PresentationEditor-CcTIkRf3.js";
+import { A as mc, C as hc, D as gc, E as _c, F as vc, I as yc, L as bc, M as xc, O as Sc, P as Cc, S as wc, T as Tc, b as Ec, h as Dc, j as Oc, k as kc, s as Ac, t as jc, w as Mc, x as Nc } from "./PresentationEditor-hfKRClX8.js";
 import { n as Pc, r as Fc, t as Ic } from "./EventStreamContext-CLzG8O5_.js";
 import { J as Lc, S as Rc, X as zc, Z as Bc, _ as Vc, b as Hc, c as Uc, d as Wc, f as Gc, g as Kc, h as qc, j as Jc, k as Yc, m as Xc, n as Zc, nt as Qc, p as $c, q as el, rt as tl, t as nl, u as rl, v as il, w as al, y as ol, z as sl } from "./services-BrNDot--.js";
 import { n as cl, t as ll } from "./ObservabilityContext-DpoDrm3T.js";
@@ -1184,7 +1184,7 @@ function jp() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var Mp = Hf(() => import("./DocumentEditorPage-DIRNWt6G.js").then((e) => e.n));
+var Mp = Hf(() => import("./DocumentEditorPage-BCjo5HQD.js").then((e) => e.n));
 function Np({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;
