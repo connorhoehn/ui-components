@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.373.0] — 2026-09-23
+
+### Added — `RichChatComposer collapseWhenIdle`: one row while idle
+
+An empty composer with the caret elsewhere (and no status, process, staged file,
+command or notice) is ONE row: a compact mode pill, the input and Send. The
+toolbar, status line, mode row, references, `submitLead` and `?` menu return the
+moment the caret enters the input or the box holds words. Expanding is one
+re-layout; the returning rows fade up with opacity/transform only
+(`composerReveal`, `motion-safe`). Pressing the pill or Send does not expand
+mid-click — only focus in the INPUT does; the pill's click puts the caret there.
+The editor element is never remounted. Off by default. `data-collapsed` on the
+root for hosts and tests.
+
+---
+
 ## [2.372.4] — 2026-09-23
 
 ### Fixed — 300 px holds with someone else on the deck

@@ -487,6 +487,15 @@ export interface RichChatComposerProps {
   onSuggestion?: (suggestion: string) => void;
   /** At the end of the compact mode row — a scope switch, a count. */
   modeRowEnd?: ReactNode;
+  /**
+   * One row while idle: with the input EMPTY and the caret elsewhere (and no
+   * status, process, attachment, command or notice to show), the composer is
+   * a compact mode pill, the input and Send on a single line. The toolbar,
+   * status line, mode row and references come back the moment the input takes
+   * focus or holds content. For a dock pinned under a canvas that needs the
+   * height (a slide stage); the dock stays pinned and grows upward. Default off.
+   */
+  collapseWhenIdle?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -758,6 +767,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   suggestions,
   onSuggestion,
   modeRowEnd,
+  collapseWhenIdle = false,
   className,
   'data-testid': testId = 'rich-chat-composer',
 }, ref) {
@@ -1571,6 +1581,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // Focus anywhere inside the composer (the input, a chip, the toolbar):
   // suggestion chips show only while it holds focus AND the input is empty.
   const [focusWithin, setFocusWithin] = useState(false);
+  // `collapseWhenIdle`: the caret entered the INPUT since focus came into the
+  // composer. Not plain focus-within: a press on the idle row's mode pill or
+  // Send must not re-lay the row out under the pointer mid-click.
+  const [engaged, setEngaged] = useState(false);
+  const inputBoxRef = useRef<HTMLDivElement | null>(null);
   /**
    * The composer measures its OWN box — the size classes key off the space it
    * was given (a chat column, a dock over an editor, a side panel), never the
@@ -1627,10 +1642,19 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const hasSuggestions = !!suggestions?.length && !!onSuggestion;
   const showSuggestionRow = hasSuggestions && wide && empty && focusWithin;
   const suggestionsInMenu = hasSuggestions && !wide;
+  // Idle: one row (pill · input · Send). Anything worth reading — a status,
+  // a running process, a staged file, a command, a notice, words in the box —
+  // keeps the full composer, as does the caret in the input.
+  const collapsed = collapseWhenIdle && !engaged && empty && !status && !processes?.length
+    && !staged.length && !activeCommand && !sendError && !modeNotice && !terminalMode
+    && !linkState.open && !(onPrivacyChange && privacy === 'hidden');
+  // Rows that appear on expanding fade up in place — opacity and transform
+  // only, so the one re-layout happens once, not on every animation frame.
+  const reveal = collapseWhenIdle && 'motion-safe:[animation:composerReveal_140ms_ease-out]';
   // Narrow keeps the toolbar behind a toggle. Opening it is a per-composer
   // choice that survives a resize (someone who opened it wants it open).
   const [formatOpen, setFormatOpen] = useState(false);
-  const singleRow = narrow && !formatOpen;
+  const singleRow = (narrow && !formatOpen) || collapsed;
   // Strikethrough, code, lists and quote: inline when wide, in the `⋯` menu otherwise.
   const showSecondaryMarks = wide;
   const showListControls = wide;
@@ -1736,10 +1760,17 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         data-working={working ? 'true' : undefined}
         ref={rootRef}
         data-density={density}
-        onFocusCapture={() => setFocusWithin(true)}
+        data-collapsed={collapseWhenIdle ? (collapsed ? 'true' : 'false') : undefined}
+        onFocusCapture={(event: ReactFocusEvent<HTMLDivElement>) => {
+          setFocusWithin(true);
+          if (collapseWhenIdle && inputBoxRef.current?.contains(event.target as Node)) setEngaged(true);
+        }}
         onBlurCapture={(event: ReactFocusEvent<HTMLDivElement>) => {
           const next = event.relatedTarget as Node | null;
-          if (!next || !event.currentTarget.contains(next)) setFocusWithin(false);
+          if (!next || !event.currentTarget.contains(next)) {
+            setFocusWithin(false);
+            setEngaged(false);
+          }
         }}
         // Only CSS custom properties — the radius and the input's growth cap
         // are values the host chose, and the stylesheet reads them from here.
@@ -1842,7 +1873,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         )}
         {/* Above the words, because a reference is part of what is about to
             be said rather than a control for saying it. */}
-        {!(compact && compactModeRow) && <ComposerReferences
+        {!(compact && compactModeRow) && !collapsed && <ComposerReferences
           references={references ?? []}
           {...(onRemoveReference ? { onRemove: onRemoveReference } : {})}
           removeLabel={(reference) => `Remove ${reference.label} from this draft`}
@@ -1872,7 +1903,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             role="status"
             data-testid={status['data-testid'] ?? `${testId}-status`}
             data-tone={status.tone ?? 'info'}
-            className="flex min-w-0 items-center gap-1.5 px-2 pt-1 text-[11px] text-text-secondary"
+            className={cn('flex min-w-0 items-center gap-1.5 px-2 pt-1 text-[11px] text-text-secondary', reveal)}
           >
             <span aria-hidden="true" className={cn('inline-block h-1.5 w-1.5 shrink-0 rounded-full', STATUS_DOT[status.tone ?? 'info'])} />
             <span className="min-w-0 flex-1 truncate" title={status.text}>{status.text}</span>
@@ -1904,8 +1935,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             it changes what Enter DOES, which is not a formatting choice. */}
         {/* Narrow always takes the compact pill: three segmented tabs with
             labels do not fit beside anything at that width. */}
-        {compactModeRow && (
-          <div className={cn('flex min-w-0 items-center gap-1.5 px-2 pt-1 text-xs', compact && 'flex-wrap')} data-testid={`${testId}-modes`} data-mode-control="compact">
+        {compactModeRow && !collapsed && (
+          <div className={cn('flex min-w-0 items-center gap-1.5 px-2 pt-1 text-xs', compact && 'flex-wrap', reveal)} data-testid={`${testId}-modes`} data-mode-control="compact">
             <span className="flex items-center gap-1 font-semibold text-text-primary" data-testid={`${testId}-mode-label`}>
               <span aria-hidden="true" className="flex w-4 justify-center text-text-secondary">{MODE_ICON[activeMode]}</span>
               {MODE_NAMES[activeMode]}
@@ -1953,8 +1984,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             {modeRowEnd != null && <span className="ml-auto flex shrink-0 items-center" data-testid={`${testId}-mode-row-end`}>{modeRowEnd}</span>}
           </div>
         )}
-        {modesEnabled && !fixedMode && modeControl !== 'compact' && !narrow && (
-          <div className="flex items-center gap-2 px-2 pt-1.5" data-testid={`${testId}-modes`}>
+        {modesEnabled && !fixedMode && modeControl !== 'compact' && !narrow && !collapsed && (
+          <div className={cn('flex items-center gap-2 px-2 pt-1.5', reveal)} data-testid={`${testId}-modes`}>
             {/* Lit while it is not on Chat: the control that changed what Enter
                 does should be the one thing on the surface that glows. */}
             <div className={cn('rounded-md transition-shadow duration-300 motion-reduce:transition-none', consoleSurface && 'ring-1 ring-primary/60')}>
@@ -1991,7 +2022,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             it) where they were. Below the input, the chips slid in under
             that pointer and its click ran one (live, 2026-09-23). */}
         {showSuggestionRow && (
-          <div className="flex flex-wrap items-center gap-1 px-2 pt-1" data-testid={`${testId}-suggestions`}>
+          <div className={cn('flex flex-wrap items-center gap-1 px-2 pt-1', reveal)} data-testid={`${testId}-suggestions`}>
             {suggestions!.map((suggestion) => (
               <button
                 key={suggestion}
@@ -2017,7 +2048,23 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             such as a disabled reason, used to wrap past the input and draw over
             the rows below. The whole text stays reachable as a tooltip while
             the box is empty. */}
+        {collapsed && modesEnabled && !fixedMode && (
+          // The idle row's mode pill: which mode Enter is in, at a glance.
+          // Pressing it puts the caret in the input (the full composer, mode
+          // switch included, comes back) — on click, after the pointer is up.
+          <button
+            type="button"
+            onClick={() => editor?.commands.focus()}
+            title={`${MODE_NAMES[activeMode]} — click to write`}
+            data-testid={`${testId}-mode-pill`}
+            className="mb-1.5 ml-1.5 flex shrink-0 items-center gap-1 self-end rounded-full bg-surface-inset px-2 py-0.5 text-xs font-semibold text-text-secondary hover:text-text-primary"
+          >
+            <span aria-hidden="true" className="flex w-4 justify-center">{MODE_ICON[activeMode]}</span>
+            {MODE_NAMES[activeMode]}
+          </button>
+        )}
         <div
+          ref={inputBoxRef}
           className={cn(singleRow && 'min-w-0 flex-1')}
           {...(empty && effectivePlaceholder ? { title: effectivePlaceholder } : {})}
           {...(terminalMode ? { hidden: true } : {})}
@@ -2051,7 +2098,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         )}
 
         {/* Wide only. Narrower, the same hints are the `?` menu in the toolbar row. */}
-        {hintsInRow && !!resolvedHints.length && (
+        {hintsInRow && !!resolvedHints.length && !collapsed && (
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-2 pb-1 text-[11px] text-text-tertiary" data-testid={`${testId}-hints`}>
             {resolvedHints.map((hint) => {
               const key = <kbd className="rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary">{hint.key}</kbd>;
@@ -2083,10 +2130,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             'flex min-w-0 items-center px-1.5 py-1',
             singleRow ? 'shrink-0' : 'border-t border-border',
             narrow && !singleRow && 'flex-wrap gap-y-1',
+            !singleRow && reveal,
           )}
           data-testid={`${testId}-toolbar`}
         >
-          {narrow && toolbarButton(
+          {narrow && !collapsed && toolbarButton(
             formatOpen ? 'Hide formatting' : 'Show formatting',
             formatOpen,
             () => setFormatOpen((v) => !v),
@@ -2196,7 +2244,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           </RovingToolbar>
           )}
 
-          {(!hintsInRow && !!resolvedHints.length) || suggestionsInMenu ? (
+          {!collapsed && ((!hintsInRow && !!resolvedHints.length) || suggestionsInMenu) ? (
             <DropdownMenu
               trigger={<span aria-hidden="true" className="text-xs font-semibold leading-none">?</span>}
               triggerLabel="Keyboard hints"
@@ -2222,7 +2270,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             />
           ) : null}
 
-          {submitLead != null && (
+          {submitLead != null && !collapsed && (
             <span className="ml-auto flex shrink-0 items-center pr-1.5 text-xs text-text-secondary" data-testid={`${testId}-submit-lead`}>
               {submitLead}
             </span>
@@ -2231,7 +2279,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             // A split button, not a second control: the primary press must
             // stay in the same place and do the same thing it always did, and
             // the alternatives have to be somewhere other than in front of it.
-            <span className={cn(submitLead == null && 'ml-auto', 'flex shrink-0 items-stretch')}>
+            <span className={cn((submitLead == null || collapsed) && 'ml-auto', 'flex shrink-0 items-stretch')}>
               <button
                 type="button"
                 onClick={terminalMode ? submitShell : send}
@@ -2257,7 +2305,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               onClick={terminalMode ? submitShell : send}
               disabled={!canSend}
               data-testid={`${testId}-send`}
-              className={submitLead == null
+              className={submitLead == null || collapsed
                 ? 'ml-auto shrink-0 rounded bg-primary px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-40'
                 : 'shrink-0 rounded bg-primary px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-40'}
             >

@@ -542,6 +542,12 @@
   100% { opacity: 0; transform: translateX(-20px) translateY(-120px); }
 }
 
+/* RichChatComposer `collapseWhenIdle`: rows that come back on focus rise into
+   place (the dock grows upward). Opacity + transform only — no per-frame layout. */
+@keyframes composerReveal {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 @keyframes fadeSlideIn {
   from { opacity: 0; transform: translateY(-6px); }
   to   { opacity: 1; transform: translateY(0); }

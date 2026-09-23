@@ -618,6 +618,15 @@ export declare interface RichChatComposerProps {
     onSuggestion?: (suggestion: string) => void;
     /** At the end of the compact mode row — a scope switch, a count. */
     modeRowEnd?: ReactNode;
+    /**
+     * One row while idle: with the input EMPTY and the caret elsewhere (and no
+     * status, process, attachment, command or notice to show), the composer is
+     * a compact mode pill, the input and Send on a single line. The toolbar,
+     * status line, mode row and references come back the moment the input takes
+     * focus or holds content. For a dock pinned under a canvas that needs the
+     * height (a slide stage); the dock stays pinned and grows upward. Default off.
+     */
+    collapseWhenIdle?: boolean;
     className?: string;
     'data-testid'?: string;
 }
