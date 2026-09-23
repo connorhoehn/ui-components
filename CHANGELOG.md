@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.367.0] — 2026-09-22
+
+### Added
+
+- `EditorShell` `onParticipantClick` / `onFollowParticipant` /
+  `followingParticipantId`, passed to the byline's `PresenceAvatars`, so the
+  shell keeps the old header's jump-to and follow-a-collaborator avatars.
+
+## [2.366.0] — 2026-09-22
+
+- The sectioned document editor is deprecated (see commit 35d2105c).
+
 ## [2.365.0] — 2026-09-22
 
 ### Changed — the composer is the editor column's last row (editor handoff WS1)
