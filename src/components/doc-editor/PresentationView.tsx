@@ -26,7 +26,7 @@
 // for. The `‹ Slide 4 of 12 ›` control stays because it is how you read
 // *through* a deck once you have found your place.
 
-import { useId, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
+import { useEffect, useId, useRef, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { nextSlideIndex, slideNavigationIntent } from '../../lib/slideNavigationKey';
 import { Button } from '../ui/Button';
@@ -100,6 +100,13 @@ export interface PresentationViewProps {
    * is known; pass this when it is not, or to hold the deck narrower still.
    */
   maxSlideWidth?: number;
+  /**
+   * Take keyboard focus when shown, so ← / → page at once. For a view the
+   * person just asked for (the editor's Present); a view embedded in a page
+   * leaves it off and is focused by clicking or tabbing. Without it, Present
+   * opened a deck whose arrow keys did nothing until it was clicked.
+   */
+  autoFocus?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -128,10 +135,18 @@ export function PresentationView({
   errorMessage,
   onRetry,
   maxSlideWidth,
+  autoFocus = false,
   className,
   'data-testid': testId = 'presentation-view',
 }: PresentationViewProps) {
   const outlineId = useId();
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const focused = useRef(false);
+  useEffect(() => {
+    if (!autoFocus || focused.current || !rootRef.current) return;
+    focused.current = true;
+    rootRef.current.focus({ preventScroll: true });
+  });
 
   if (state === 'loading') {
     return <LoadingState label="Opening the presentation…" testId={`${testId}-loading`} />;
@@ -191,6 +206,7 @@ export function PresentationView({
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40',
         className,
       )}
+      ref={rootRef}
       data-testid={testId}
       role="group"
       tabIndex={0}

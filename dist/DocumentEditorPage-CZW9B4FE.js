@@ -17,7 +17,7 @@ import { t as E } from "./Avatar-Bq_1SEQ2.js";
 import { t as ee } from "./StatusPill-Db42eiME.js";
 import { t as D } from "./activationKey-CjbL3LUv.js";
 import { O } from "./renderers-5O9bh08s.js";
-import { q as k } from "./PresentationEditor-DIX7UABc.js";
+import { q as k } from "./PresentationEditor-Bdj6fonX.js";
 import { t as A } from "./TiptapEditor-Kdj65m6g.js";
 import { t as te } from "./useHangoutEmbed-ChkoGDC_.js";
 import { t as ne } from "./useActiveSpeaker-Dc9r75EE.js";

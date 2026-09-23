@@ -1963,7 +1963,7 @@ export declare interface PresentationSourceOption {
     kind?: 'document' | 'transcript';
 }
 
-export declare function PresentationView({ title, revisions, revisionId, onRevisionChange, slideIndex, onSlideChange, onDownload, downloadLabel, onOpenPreview, pending, notice, state, errorMessage, onRetry, maxSlideWidth, className, 'data-testid': testId, }: PresentationViewProps): JSX.Element;
+export declare function PresentationView({ title, revisions, revisionId, onRevisionChange, slideIndex, onSlideChange, onDownload, downloadLabel, onOpenPreview, pending, notice, state, errorMessage, onRetry, maxSlideWidth, autoFocus, className, 'data-testid': testId, }: PresentationViewProps): JSX.Element;
 
 export declare interface PresentationViewProps {
     title: string;
@@ -2009,6 +2009,13 @@ export declare interface PresentationViewProps {
      * is known; pass this when it is not, or to hold the deck narrower still.
      */
     maxSlideWidth?: number;
+    /**
+     * Take keyboard focus when shown, so ← / → page at once. For a view the
+     * person just asked for (the editor's Present); a view embedded in a page
+     * leaves it off and is focused by clicking or tabbing. Without it, Present
+     * opened a deck whose arrow keys did nothing until it was clicked.
+     */
+    autoFocus?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -3354,16 +3361,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -3390,9 +3387,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -3416,6 +3413,16 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

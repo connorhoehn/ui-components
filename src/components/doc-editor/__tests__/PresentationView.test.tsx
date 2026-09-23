@@ -30,6 +30,20 @@ function view(props: Partial<React.ComponentProps<typeof PresentationView>> = {}
 }
 
 describe('PresentationView', () => {
+  // Live 2026-09-23: the editor's Present opened the view but ← / → did
+  // nothing until the deck was clicked.
+  it('autoFocus takes focus so the arrow keys page at once; off by default', () => {
+    const onSlideChange = vi.fn();
+    const { unmount } = view({ autoFocus: true, onSlideChange });
+    const root = screen.getByTestId('presentation-view');
+    expect(document.activeElement).toBe(root);
+    fireEvent.keyDown(document.activeElement!, { key: 'ArrowRight' });
+    expect(onSlideChange).toHaveBeenCalledWith(2);
+    unmount();
+    view();
+    expect(document.activeElement).not.toBe(screen.getByTestId('presentation-view'));
+  });
+
   it('shows the slide it was asked for, numbered as the deck numbers itself', () => {
     view({ slideIndex: 2 });
     expect(screen.getByTestId('presentation-view-position')).toHaveTextContent('Slide 2 of 3');

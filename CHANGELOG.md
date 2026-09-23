@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.373.5] — 2026-09-23
+
+### Added
+
+- `PresentationView` `autoFocus`: takes keyboard focus when shown so ← / → page at once (the deck editor's Present opened a view whose arrow keys did nothing until clicked). Off by default.
+
 ## [2.373.4] — 2026-09-23
 
 ### Fixed

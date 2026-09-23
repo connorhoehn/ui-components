@@ -13,10 +13,10 @@ import { t as D } from "./FormField-E8Z0ppOp.js";
 import { n as O } from "./Tabs-BGZyr2nH.js";
 import { t as k } from "./Input-DLknWXri.js";
 import { t as A } from "./Textarea-Dz4doxTv.js";
-import { t as ee } from "./DotMeter-BDVkadI8.js";
-import { n as j } from "./RovingToolbar-CmQag9q6.js";
-import { t as te } from "./InlineAlert-CRnIKeAF.js";
-import { t as M } from "./PresenceAvatars-CubTOqbV.js";
+import { t as j } from "./DotMeter-BDVkadI8.js";
+import { n as M } from "./RovingToolbar-CmQag9q6.js";
+import { t as ee } from "./InlineAlert-CRnIKeAF.js";
+import { t as te } from "./PresenceAvatars-CubTOqbV.js";
 import { t as N } from "./SectionLabel-bcrhNYOr.js";
 import { t as ne } from "./StatusPill-Db42eiME.js";
 import { t as re } from "./Select-CD8ixtYi.js";
@@ -101,11 +101,11 @@ function he(t) {
 	return e([...i, s]), s;
 }
 function ge({ open: e, onClose: i, onCreate: a, onCreateFromFixture: o, onSearchDocuments: s, recordings: c }) {
-	let [l, u] = H([]), [d, f] = H(!1), [p, m] = H(null), [h, g] = H(null), [_, v] = H(""), [S, C] = H(""), [w, T] = H(!1), [E, D] = H(""), [O, ee] = H("page"), [j, te] = H("blank"), [M, N] = H(""), [ne, ae] = H(""), [oe, se] = H([]), ce = V(null), F = V(null), I = le(), L = `${I}-blank-label`, z = `${I}-type-label`, ge = `${I}-cookbook-label`, K = `${I}-title`, _e = `${I}-description`, ve = `${I}-deck-from`, ye = `${I}-deck-source`;
+	let [l, u] = H([]), [d, f] = H(!1), [p, m] = H(null), [h, g] = H(null), [_, v] = H(""), [S, C] = H(""), [w, T] = H(!1), [E, D] = H(""), [O, j] = H("page"), [M, ee] = H("blank"), [te, N] = H(""), [ne, ae] = H(""), [oe, se] = H([]), ce = V(null), F = V(null), I = le(), L = `${I}-blank-label`, z = `${I}-type-label`, ge = `${I}-cookbook-label`, K = `${I}-title`, _e = `${I}-description`, ve = `${I}-deck-from`, ye = `${I}-deck-source`;
 	R(() => {
 		if (!e) return;
 		let r = n();
-		u(r), m(null), g(null), v(""), C(""), T(!1), D(""), ee("page"), te("blank"), N(""), ae(""), se([]);
+		u(r), m(null), g(null), v(""), C(""), T(!1), D(""), j("page"), ee("blank"), N(""), ae(""), se([]);
 		let i = !1;
 		f(!0), t().then((e) => {
 			if (i) return;
@@ -122,12 +122,12 @@ function ge({ open: e, onClose: i, onCreate: a, onCreateFromFixture: o, onSearch
 	let be = B(() => de.filter((e) => pe(e, _)), [_]), q = B(() => l.filter((e) => me(e, _)), [l, _]), xe = B(() => ie.filter((e) => P(e, _)), [_]);
 	if (R(() => {
 		if (!e || O !== "presentation") return;
-		if (j === "blank") {
+		if (M === "blank") {
 			se([]);
 			return;
 		}
 		let t = ne.trim().toLowerCase();
-		if (j === "transcript") {
+		if (M === "transcript") {
 			let e = c ?? [];
 			se(t ? e.filter((e) => e.title.toLowerCase().includes(t)) : e);
 			return;
@@ -145,7 +145,7 @@ function ge({ open: e, onClose: i, onCreate: a, onCreateFromFixture: o, onSearch
 	}, [
 		e,
 		O,
-		j,
+		M,
 		ne,
 		c,
 		s
@@ -161,11 +161,11 @@ function ge({ open: e, onClose: i, onCreate: a, onCreateFromFixture: o, onSearch
 		shape: O
 	}, Y = (e) => {
 		if (e.kind === "cookbook") {
-			g(e.cookbook.id), ue.has(O) && ee("page"), w || C(e.cookbook.name);
+			g(e.cookbook.id), ue.has(O) && j("page"), w || C(e.cookbook.name);
 			return;
 		}
 		if (e.kind === "blank") {
-			ee(e.shape), ue.has(e.shape) && (g(null), w || C(""));
+			j(e.shape), ue.has(e.shape) && (g(null), w || C(""));
 			return;
 		}
 		g(null), m(e.type.id), w || C("");
@@ -175,8 +175,8 @@ function ge({ open: e, onClose: i, onCreate: a, onCreateFromFixture: o, onSearch
 		let s = E.trim() || void 0;
 		if (n === "presentation") {
 			o ? o({
-				from: j,
-				...j !== "blank" && M ? { sourceId: M } : {},
+				from: M,
+				...M !== "blank" && te ? { sourceId: te } : {},
 				title: r,
 				...s ? { description: s } : {}
 			}) : a({
@@ -213,7 +213,7 @@ function ge({ open: e, onClose: i, onCreate: a, onCreateFromFixture: o, onSearch
 			shape: n
 		});
 		i();
-	}, X = O === "presentation" && j !== "blank" && !M, Z = !!S.trim() && (!Ce || we) && !X, Ae = () => {
+	}, X = O === "presentation" && M !== "blank" && !te, Z = !!S.trim() && (!Ce || we) && !X, Ae = () => {
 		Z && ke(De, S, Oe(De));
 	};
 	return /* @__PURE__ */ W(x, {
@@ -344,38 +344,38 @@ function ge({ open: e, onClose: i, onCreate: a, onCreateFromFixture: o, onSearch
 								}),
 								/* @__PURE__ */ W(re, {
 									id: ve,
-									value: j,
+									value: M,
 									options: fe.map((e) => ({
 										value: e.value,
 										label: e.label
 									})),
 									onChange: (e) => {
-										te(e.target.value), N(""), ae("");
+										ee(e.target.value), N(""), ae("");
 									},
 									"data-testid": "presentation-from"
 								}),
 								/* @__PURE__ */ W("div", {
 									className: r("mt-1 text-[11px] text-text-tertiary"),
-									children: j === "blank" ? "One empty slide. You add the slides and their sources as you write." : "The generator drafts the slides from it, and every slide cites what it came from."
+									children: M === "blank" ? "One empty slide. You add the slides and their sources as you write." : "The generator drafts the slides from it, and every slide cites what it came from."
 								}),
-								j !== "blank" && /* @__PURE__ */ G("div", {
+								M !== "blank" && /* @__PURE__ */ G("div", {
 									className: r("mt-2 flex flex-col gap-1.5"),
 									children: [/* @__PURE__ */ W(k, {
 										type: "search",
 										value: ne,
 										onChange: (e) => ae(e.target.value),
-										"aria-label": j === "transcript" ? "Search transcripts" : "Search documents",
-										placeholder: j === "transcript" ? "Search transcripts…" : "Search documents…",
+										"aria-label": M === "transcript" ? "Search transcripts" : "Search documents",
+										placeholder: M === "transcript" ? "Search transcripts…" : "Search documents…",
 										"data-testid": "presentation-source-search"
 									}), oe.length === 0 ? /* @__PURE__ */ W("div", {
 										"data-testid": "presentation-no-sources",
 										className: r("px-3.5 py-3 border border-dashed border-border-field rounded-lg text-[13px] text-text-tertiary"),
-										children: j === "transcript" ? "No transcripts to draw on. A recording with a transcript can seed a deck." : s ? "Nothing matches that. Sources come from the Documents explorer." : "Document search is not available here — start blank and add sources per slide."
+										children: M === "transcript" ? "No transcripts to draw on. A recording with a transcript can seed a deck." : s ? "Nothing matches that. Sources come from the Documents explorer." : "Document search is not available here — start blank and add sources per slide."
 									}) : /* @__PURE__ */ G(U, { children: [/* @__PURE__ */ G("label", {
 										htmlFor: ye,
 										className: r("block text-[13px] font-semibold text-text-secondary"),
 										children: [
-											j === "transcript" ? "Transcript" : "Document",
+											M === "transcript" ? "Transcript" : "Document",
 											" ",
 											/* @__PURE__ */ W("span", {
 												className: r("text-danger-fg"),
@@ -387,7 +387,7 @@ function ge({ open: e, onClose: i, onCreate: a, onCreateFromFixture: o, onSearch
 										id: ye,
 										required: !0,
 										"aria-required": "true",
-										value: M,
+										value: te,
 										placeholder: "Choose one…",
 										options: oe.map((e) => ({
 											value: e.id,
@@ -821,11 +821,13 @@ function we({ back: e }) {
 		})
 	});
 }
-function Te({ title: e, revisions: t, revisionId: n, onRevisionChange: a, slideIndex: o, onSlideChange: s, onDownload: c, downloadLabel: l = "Download .pptx", onOpenPreview: u, pending: d, notice: f, state: p = "ready", errorMessage: h, onRetry: g, maxSlideWidth: _, className: y, "data-testid": b = "presentation-view" }) {
-	let x = le();
-	if (p === "loading") return /* @__PURE__ */ W(T, {
+function Te({ title: e, revisions: t, revisionId: n, onRevisionChange: a, slideIndex: o, onSlideChange: s, onDownload: c, downloadLabel: l = "Download .pptx", onOpenPreview: u, pending: d, notice: f, state: p = "ready", errorMessage: h, onRetry: g, maxSlideWidth: _, autoFocus: y = !1, className: b, "data-testid": x = "presentation-view" }) {
+	let E = le(), D = V(null), O = V(!1);
+	if (R(() => {
+		!y || O.current || !D.current || (O.current = !0, D.current.focus({ preventScroll: !0 }));
+	}), p === "loading") return /* @__PURE__ */ W(T, {
 		label: "Opening the presentation…",
-		testId: `${b}-loading`
+		testId: `${x}-loading`
 	});
 	if (p === "error") return /* @__PURE__ */ W(C, {
 		title: "This presentation could not be opened",
@@ -834,12 +836,12 @@ function Te({ title: e, revisions: t, revisionId: n, onRevisionChange: a, slideI
 			actionLabel: "Try again",
 			onAction: g
 		} : {},
-		testId: `${b}-error`
+		testId: `${x}-error`
 	});
-	let E = t.find((e) => e.id === n) ?? t[0], D = E?.slides ?? [];
-	if (p === "empty" || !E || D.length === 0) return /* @__PURE__ */ G("div", {
-		className: r("flex min-h-0 flex-col gap-3 p-4", y),
-		"data-testid": b,
+	let k = t.find((e) => e.id === n) ?? t[0], A = k?.slides ?? [];
+	if (p === "empty" || !k || A.length === 0) return /* @__PURE__ */ G("div", {
+		className: r("flex min-h-0 flex-col gap-3 p-4", b),
+		"data-testid": x,
 		children: [/* @__PURE__ */ W(v, {
 			as: "div",
 			className: "text-base font-semibold text-text-primary",
@@ -847,23 +849,24 @@ function Te({ title: e, revisions: t, revisionId: n, onRevisionChange: a, slideI
 		}), /* @__PURE__ */ W(S, {
 			title: "No slides yet",
 			description: d?.status === "generating" ? `${d.label} is still being generated.` : d?.status === "failed" ? d.message ?? `${d.label} failed.` : "This presentation has no rendered revision to show.",
-			testId: `${b}-empty`
+			testId: `${x}-empty`
 		})]
 	});
-	let O = D[Math.min(Math.max(o, 1), D.length) - 1];
+	let j = A[Math.min(Math.max(o, 1), A.length) - 1];
 	return /* @__PURE__ */ G("div", {
-		className: r("flex min-h-0 flex-col gap-3 p-4", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40", y),
-		"data-testid": b,
+		className: r("flex min-h-0 flex-col gap-3 p-4", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40", b),
+		ref: D,
+		"data-testid": x,
 		role: "group",
 		tabIndex: 0,
 		"aria-roledescription": "Slide deck",
-		"aria-label": `${e} — slide ${O.index} of ${D.length}. Use the left and right arrow keys to change slide.`,
+		"aria-label": `${e} — slide ${j.index} of ${A.length}. Use the left and right arrow keys to change slide.`,
 		onKeyDown: (e) => {
 			let t = Se(e);
 			if (!t) return;
 			e.preventDefault();
-			let n = J(t, O.index, D.length);
-			n !== O.index && s(n);
+			let n = J(t, j.index, A.length);
+			n !== j.index && s(n);
 		},
 		children: [
 			/* @__PURE__ */ G("div", {
@@ -871,7 +874,7 @@ function Te({ title: e, revisions: t, revisionId: n, onRevisionChange: a, slideI
 				children: [/* @__PURE__ */ W(v, {
 					as: "div",
 					className: "text-base font-semibold text-text-primary",
-					"data-testid": `${b}-title`,
+					"data-testid": `${x}-title`,
 					children: e
 				}), /* @__PURE__ */ G("div", {
 					className: "flex items-center gap-2",
@@ -879,35 +882,35 @@ function Te({ title: e, revisions: t, revisionId: n, onRevisionChange: a, slideI
 						t.length > Ce ? /* @__PURE__ */ W(re, {
 							"aria-label": "Revision",
 							size: "sm",
-							value: E.id,
+							value: k.id,
 							onChange: (e) => a?.(e.target.value),
 							options: [...t].reverse().map((e, t) => ({
 								value: e.id,
 								label: t === 0 ? `${e.label} · latest` : e.label
 							})),
 							className: "w-auto",
-							"data-testid": `${b}-revision-select`
+							"data-testid": `${x}-revision-select`
 						}) : t.length > 1 && /* @__PURE__ */ W(w, {
 							"aria-label": "Revision",
 							size: "sm",
-							value: E.id,
+							value: k.id,
 							onChange: a,
 							options: t.map((e) => ({
 								label: e.label,
 								value: e.id
 							})),
-							"data-testid": `${b}-revisions`
+							"data-testid": `${x}-revisions`
 						}),
 						d && /* @__PURE__ */ W(ne, {
 							state: d.status === "failed" ? "error" : "pending",
 							label: `${d.label} ${d.status}`,
-							"data-testid": `${b}-pending`
+							"data-testid": `${x}-pending`
 						}),
 						c && /* @__PURE__ */ W(i, {
 							variant: "secondary",
 							size: "sm",
 							onClick: c,
-							"data-testid": `${b}-download`,
+							"data-testid": `${x}-download`,
 							children: l
 						})
 					]
@@ -922,10 +925,10 @@ function Te({ title: e, revisions: t, revisionId: n, onRevisionChange: a, slideI
 						children: /* @__PURE__ */ W("div", {
 							className: r("flex h-full min-h-[12rem] w-auto max-w-full flex-1 items-center justify-center", "aspect-[16/9] overflow-hidden rounded-lg border border-border bg-surface-hover/40"),
 							style: _ === void 0 ? void 0 : { maxWidth: _ },
-							"data-testid": `${b}-stage`,
-							children: O.preview ?? /* @__PURE__ */ W(v, {
+							"data-testid": `${x}-stage`,
+							children: j.preview ?? /* @__PURE__ */ W(v, {
 								className: "text-[13px] text-text-tertiary",
-								"data-testid": `${b}-no-preview`,
+								"data-testid": `${x}-no-preview`,
 								children: "This slide’s preview could not be read."
 							})
 						})
@@ -937,53 +940,53 @@ function Te({ title: e, revisions: t, revisionId: n, onRevisionChange: a, slideI
 								variant: "ghost",
 								size: "sm",
 								icon: /* @__PURE__ */ W(we, { back: !0 }),
-								disabled: O.index <= 1,
-								onClick: () => s(O.index - 1),
-								"data-testid": `${b}-previous`
+								disabled: j.index <= 1,
+								onClick: () => s(j.index - 1),
+								"data-testid": `${x}-previous`
 							}),
 							/* @__PURE__ */ W(v, {
 								className: "text-[13px] text-text-secondary",
-								"data-testid": `${b}-position`,
-								children: `Slide ${O.index} of ${D.length}`
+								"data-testid": `${x}-position`,
+								children: `Slide ${j.index} of ${A.length}`
 							}),
 							/* @__PURE__ */ W(m, {
 								"aria-label": "Next slide",
 								variant: "ghost",
 								size: "sm",
 								icon: /* @__PURE__ */ W(we, {}),
-								disabled: O.index >= D.length,
-								onClick: () => s(O.index + 1),
-								"data-testid": `${b}-next`
+								disabled: j.index >= A.length,
+								onClick: () => s(j.index + 1),
+								"data-testid": `${x}-next`
 							}),
-							u && O.preview && /* @__PURE__ */ W(i, {
+							u && j.preview && /* @__PURE__ */ W(i, {
 								variant: "ghost",
 								size: "sm",
-								onClick: () => u(O.id),
-								"data-testid": `${b}-open-preview`,
+								onClick: () => u(j.id),
+								"data-testid": `${x}-open-preview`,
 								children: "Open larger preview"
 							})
 						]
 					})]
 				}), /* @__PURE__ */ G("nav", {
 					className: "min-w-0 md:w-64",
-					"aria-labelledby": x,
-					"data-testid": `${b}-outline`,
+					"aria-labelledby": E,
+					"data-testid": `${x}-outline`,
 					children: [/* @__PURE__ */ W(N, {
 						as: "div",
 						className: "mb-1",
-						"data-testid": `${b}-outline-label`,
+						"data-testid": `${x}-outline-label`,
 						children: /* @__PURE__ */ W("span", {
-							id: x,
+							id: E,
 							children: "Slides"
 						})
 					}), /* @__PURE__ */ W("ol", {
 						className: "m-0 flex list-none flex-col gap-0.5 p-0",
-						children: D.map((e) => /* @__PURE__ */ W("li", { children: /* @__PURE__ */ G("button", {
+						children: A.map((e) => /* @__PURE__ */ W("li", { children: /* @__PURE__ */ G("button", {
 							type: "button",
 							onClick: () => s(e.index),
-							"aria-current": e.id === O.id ? "true" : void 0,
-							className: r("flex w-full cursor-pointer items-baseline gap-2 rounded-md border-none bg-transparent px-2 py-1 text-left font-[inherit] text-[13px] text-text-primary transition-colors hover:bg-surface-hover", e.id === O.id && "bg-surface-hover font-medium"),
-							"data-testid": `${b}-outline-row`,
+							"aria-current": e.id === j.id ? "true" : void 0,
+							className: r("flex w-full cursor-pointer items-baseline gap-2 rounded-md border-none bg-transparent px-2 py-1 text-left font-[inherit] text-[13px] text-text-primary transition-colors hover:bg-surface-hover", e.id === j.id && "bg-surface-hover font-medium"),
+							"data-testid": `${x}-outline-row`,
 							children: [/* @__PURE__ */ W("span", {
 								className: "tabular-nums text-text-tertiary",
 								children: e.index
@@ -997,7 +1000,7 @@ function Te({ title: e, revisions: t, revisionId: n, onRevisionChange: a, slideI
 			}),
 			f && /* @__PURE__ */ W(v, {
 				className: "text-[11.5px] text-text-tertiary",
-				"data-testid": `${b}-notice`,
+				"data-testid": `${x}-notice`,
 				children: f
 			})
 		]
@@ -1395,7 +1398,7 @@ function rt(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
-var it = F(() => import("./SortableSlideList-BATVyN7v.js"));
+var it = F(() => import("./SortableSlideList-Bznl0yPp.js"));
 function at(e, t) {
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }
@@ -1537,7 +1540,7 @@ function ct({ slide: e, index: t, total: n, thumbnailSvg: i, selected: a, uncite
 					"data-testid": `${S}-viewers-${e.id}`,
 					"aria-label": `${l.map((e) => e.name).join(", ")} ${l.length === 1 ? "is" : "are"} on this slide`,
 					role: "img",
-					children: /* @__PURE__ */ W(M, {
+					children: /* @__PURE__ */ W(te, {
 						users: [...l],
 						maxVisible: 2,
 						size: 16
@@ -1796,7 +1799,7 @@ function dt({ sources: e, onChange: t, options: n, onSearchSources: a, readOnly:
 					children: "Sources used"
 				})
 			}),
-			e.length === 0 ? /* @__PURE__ */ W(te, {
+			e.length === 0 ? /* @__PURE__ */ W(ee, {
 				tone: "warning",
 				"data-testid": `${c}-sources-warning`,
 				children: "This slide cites nothing. Every slide names at least one source — add one before saving."
@@ -2235,7 +2238,7 @@ function Ct({ label: e, value: t }) {
 	});
 }
 function wt({ slide: e, theme: t, onAddSlide: n, canAddSlide: a = !0, onLayoutChange: o, onThemeChange: s, onChartKindChange: c, onUndo: l, onRedo: u, canUndo: d = !1, canRedo: f = !1, onPresent: p, end: g, disabled: y = !1, className: b, testIdPrefix: x = "slides-toolbar" }) {
-	let S = j(), C = y;
+	let S = M(), C = y;
 	return /* @__PURE__ */ G("div", {
 		...S,
 		role: "toolbar",
@@ -2416,7 +2419,7 @@ function Tt({ value: e, onChange: t, readOnly: n = !1, maxLength: i = Re, placeh
 //#endregion
 //#region src/components/doc-editor/presentation/PresentationEditor.tsx
 function Et({ testIdPrefix: e }) {
-	return /* @__PURE__ */ W(te, {
+	return /* @__PURE__ */ W(ee, {
 		tone: "warning",
 		"data-testid": `${e}-agent-unavailable`,
 		children: "The agent box needs the rich-text composer (the optional @tiptap peers). Edit the slide by hand below."
@@ -2487,7 +2490,7 @@ function kt(e, t) {
 		canRedo: n.future.length > 0
 	};
 }
-function At({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevision: o, revisions: s, activeRevisionId: c, onSelectRevision: l, sources: u, onSearchSources: d, onDownload: f, onOpenPresentationView: p, readOnly: h = !1, onInstruct: g, instructHints: _, onUndoInstruct: y, generatingSlideIds: b, slideViewers: x, selectSlideRequest: w, footer: E, renderFrame: A, onSelectedSlideChange: j, className: M, "data-testid": N = "presentation-editor" }) {
+function At({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevision: o, revisions: s, activeRevisionId: c, onSelectRevision: l, sources: u, onSearchSources: d, onDownload: f, onOpenPresentationView: p, readOnly: h = !1, onInstruct: g, instructHints: _, onUndoInstruct: y, generatingSlideIds: b, slideViewers: x, selectSlideRequest: w, footer: E, renderFrame: A, onSelectedSlideChange: M, className: te, "data-testid": N = "presentation-editor" }) {
 	let [ne, P] = H(() => e.slides[0]?.id ?? ""), [ie, ae] = H(!1), [oe, ce] = H(null), F = !!g, [L, le] = H("slide"), [z, ue] = H(!1), [de, fe] = H(null), [pe, me] = H(null), [he, ge] = H(() => /* @__PURE__ */ new Set()), { edit: K, undo: ve, redo: ye, canUndo: be, canRedo: Ce } = kt(e, t), [we, Ee] = H([]);
 	R(() => {
 		typeof n == "object" && "slides" in n && Ee(n.slides);
@@ -2498,8 +2501,8 @@ function At({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 	R(() => {
 		Ae && Y.current(e);
 	}, [e, Ae]);
-	let Q = Math.max(X.findIndex((e) => e.id === ne), 0), $ = X[Q], je = V(j);
-	je.current = j, R(() => {
+	let Q = Math.max(X.findIndex((e) => e.id === ne), 0), $ = X[Q], je = V(M);
+	je.current = M, R(() => {
 		$ && je.current?.($.id, Q);
 	}, [$?.id, Q]);
 	let Me = B(() => {
@@ -2634,7 +2637,7 @@ function At({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 				t && P(t.id);
 			},
 			...f ? { onDownload: f } : {},
-			className: M,
+			className: te,
 			"data-testid": `${N}-readonly`
 		});
 	}
@@ -2799,16 +2802,16 @@ function At({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 		canRedo: Ce,
 		...ct ? { onPresent: ct } : {},
 		testIdPrefix: `${N}-toolbar`
-	}), ft = /* @__PURE__ */ G(U, { children: [Ke > 0 && /* @__PURE__ */ W(te, {
+	}), ft = /* @__PURE__ */ G(U, { children: [Ke > 0 && /* @__PURE__ */ W(ee, {
 		tone: "warning",
 		"data-testid": `${N}-uncited-warning`,
 		children: Ke === 1 ? "1 slide cites no source. Every slide names at least one — Save is off until it does." : `${Ke} slides cite no source. Every slide names at least one — Save is off until they do.`
-	}), oe && /* @__PURE__ */ W(te, {
+	}), oe && /* @__PURE__ */ W(ee, {
 		tone: "error",
 		onDismiss: () => ce(null),
 		"data-testid": `${N}-save-error`,
 		children: oe
-	})] }), pt = F && /* @__PURE__ */ G(U, { children: [pe && /* @__PURE__ */ W(te, {
+	})] }), pt = F && /* @__PURE__ */ G(U, { children: [pe && /* @__PURE__ */ W(ee, {
 		tone: "error",
 		onDismiss: () => me(null),
 		"data-testid": `${N}-agent-error`,
@@ -2923,7 +2926,7 @@ function At({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 				onClick: () => Xe(1),
 				"data-testid": `${N}-next`
 			}),
-			/* @__PURE__ */ W(ee, {
+			/* @__PURE__ */ W(j, {
 				value: X.length / 40,
 				segments: 10,
 				showPercent: !1,
@@ -2982,7 +2985,7 @@ function At({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 	};
 	if (A) {
 		let e = /* @__PURE__ */ G("div", {
-			className: r("flex min-h-0 flex-col gap-1.5 px-4 pb-2 pt-1.5 md:h-full md:min-h-[14rem]", M),
+			className: r("flex min-h-0 flex-col gap-1.5 px-4 pb-2 pt-1.5 md:h-full md:min-h-[14rem]", te),
 			"data-testid": N,
 			onKeyDown: Ct,
 			children: [
@@ -3003,7 +3006,7 @@ function At({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 		}) });
 	}
 	return /* @__PURE__ */ G("div", {
-		className: r("relative flex h-full min-h-0 flex-col", M),
+		className: r("relative flex h-full min-h-0 flex-col", te),
 		"data-testid": N,
 		onKeyDown: Ct,
 		children: [
