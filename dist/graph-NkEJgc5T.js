@@ -3597,12 +3597,25 @@ function Yt({ ask: e, onSelect: t }) {
 		]
 	});
 }
-function Xt({ node: e, detail: r, selection: o, onSelectionChange: s, onClose: l, onOpen: u, onReference: d, className: f, "data-testid": p = "activity-inspector" }) {
+function Xt(e) {
+	return e.replace(/\s+/g, " ").trim().toLowerCase();
+}
+function Zt(e, t) {
+	let n = Xt(e);
+	return !n || t.some((e) => !!e && (Xt(e) === n || n.length >= 8 && Xt(e).includes(n)));
+}
+function Qt({ node: e, detail: r, selection: o, onSelectionChange: s, onClose: l, onOpen: u, onReference: d, className: f, "data-testid": p = "activity-inspector" }) {
 	let m = e.locked || e.disclosure === "existence", h = m ? void 0 : r, g = e.locked ? "Restricted work item" : e.title, _ = h?.sections, v = h?.artifact ? Ot(h.artifact, o) : void 0, y = v?.revision ? {
 		...o,
 		revisionId: v.revision.id,
 		anchorId: v.slide?.id ?? o.anchorId ?? v.revision.anchorId
-	} : { ...o }, b = h?.compute, x = !!b || !!h?.artifact || !!h?.transcript, S = x ? [] : (h?.lines ?? []).filter((e) => e !== h?.banner?.title && e !== h?.banner?.description), C = x ? void 0 : h?.excerpt, w = !b && !h?.banner && !h?.artifact && !h?.transcript && !_ && !h?.note && !h?.actions?.length && !C && S.length === 0;
+	} : { ...o }, b = h?.compute, x = !!b || !!h?.artifact || !!h?.transcript, S = [
+		h?.banner?.title,
+		h?.banner?.description,
+		_?.description,
+		h?.subtitle,
+		h?.excerpt
+	], C = x ? [] : (h?.lines ?? []).filter((e, t, n) => n.indexOf(e) === t && !Zt(e, S)), w = x ? void 0 : h?.excerpt, T = !b && !h?.banner && !h?.artifact && !h?.transcript && !_ && !h?.note && !h?.actions?.length && !w && C.length === 0;
 	return /* @__PURE__ */ U("section", {
 		"aria-label": g,
 		"data-testid": p,
@@ -3638,15 +3651,15 @@ function Xt({ node: e, detail: r, selection: o, onSelectionChange: s, onClose: l
 						compute: b,
 						...h?.banner ? { banner: h.banner } : {}
 					}),
-					C && /* @__PURE__ */ H("p", {
+					w && /* @__PURE__ */ H("p", {
 						className: "text-[13px] italic leading-snug text-text-primary",
 						"data-testid": `${p}-excerpt`,
-						children: `“${C}”`
+						children: `“${w}”`
 					}),
-					S.length > 0 && /* @__PURE__ */ H("ul", {
+					C.length > 0 && /* @__PURE__ */ H("ul", {
 						className: "space-y-0.5 text-[13px] leading-snug text-text-secondary",
 						"data-testid": `${p}-lines`,
-						children: S.map((e, t) => /* @__PURE__ */ H("li", { children: e }, `${t}-${e}`))
+						children: C.map((e, t) => /* @__PURE__ */ H("li", { children: e }, `${t}-${e}`))
 					}),
 					_?.description && /* @__PURE__ */ H("p", {
 						className: "text-[13px] leading-snug text-text-secondary",
@@ -3721,7 +3734,7 @@ function Xt({ node: e, detail: r, selection: o, onSelectionChange: s, onClose: l
 						className: "text-xs leading-snug text-text-tertiary",
 						children: h.note
 					}),
-					w && /* @__PURE__ */ H("p", {
+					T && /* @__PURE__ */ H("p", {
 						className: "text-sm text-text-secondary",
 						children: m ? "Only the existence of this work is shared with you." : "No further detail is shared with you."
 					})
@@ -3742,7 +3755,7 @@ function Xt({ node: e, detail: r, selection: o, onSelectionChange: s, onClose: l
 }
 //#endregion
 //#region src/components/forms/RangeSlider.tsx
-function Zt({ value: e, min: n, max: r, step: i = 1, minDistance: a = i, labels: o, formatValue: s, onChange: c, className: l }) {
+function $t({ value: e, min: n, max: r, step: i = 1, minDistance: a = i, labels: o, formatValue: s, onChange: c, className: l }) {
 	let u = L(), d = Math.max(1, r - n), f = (e) => Math.max(n, Math.min(r, e)), p = f(e[0]), m = Math.max(p, f(e[1])), h = Math.min(a, r - n);
 	return /* @__PURE__ */ U("div", {
 		className: t("relative h-7 min-w-0", l),
@@ -3778,13 +3791,13 @@ function Zt({ value: e, min: n, max: r, step: i = 1, minDistance: a = i, labels:
 }
 //#endregion
 //#region src/components/graph/work/WorkTimeWindow.tsx
-var Q = 6e4, $ = 60 * Q, Qt = [
+var Q = 6e4, $ = 60 * Q, en = [
 	[2 * $, 30 * Q],
 	[6 * $, $],
 	[12 * $, 2 * $],
 	[Infinity, 3 * $]
 ];
-function $t({ activity: e, timezone: r = "UTC" }) {
+function tn({ activity: e, timezone: r = "UTC" }) {
 	let { bounds: a, window: o, onWindowChange: s } = e, c = Math.max(Q, o.end - o.start), l = new Intl.DateTimeFormat(void 0, {
 		timeZone: r,
 		hour: "numeric",
@@ -3808,7 +3821,7 @@ function $t({ activity: e, timezone: r = "UTC" }) {
 		15,
 		30,
 		60
-	].find((e) => c === e * Q), y = o.start === a.start && o.end >= m, b = o.end >= m, x = [Math.min(Math.max(o.start, a.start), m), Math.min(Math.max(o.end, a.start), m)], S = Qt.find(([e]) => h <= e)[1], C = [];
+	].find((e) => c === e * Q), y = o.start === a.start && o.end >= m, b = o.end >= m, x = [Math.min(Math.max(o.start, a.start), m), Math.min(Math.max(o.end, a.start), m)], S = en.find(([e]) => h <= e)[1], C = [];
 	for (let e = Math.ceil(a.start / S) * S; e <= m; e += S) (e - a.start) / h < .82 && C.push(e);
 	return /* @__PURE__ */ U("div", {
 		className: "shrink-0 border-b border-border bg-surface px-3 pb-3 pt-2",
@@ -3914,7 +3927,7 @@ function $t({ activity: e, timezone: r = "UTC" }) {
 					}, e.at);
 				})
 			}),
-			/* @__PURE__ */ H(Zt, {
+			/* @__PURE__ */ H($t, {
 				className: "mx-1",
 				value: x,
 				min: a.start,
@@ -3937,8 +3950,8 @@ function $t({ activity: e, timezone: r = "UTC" }) {
 }
 //#endregion
 //#region src/components/graph/work/WorkActivityGraph.tsx
-var en = 820;
-function tn(e) {
+var nn = 820;
+function rn(e) {
 	let { nodes: r, edges: i, selection: a, activity: o, onSelectionChange: s, onMaxEffortsChange: c } = e, l = z(null), u = z(null), d = z(null), [f, p] = B(!1), [m, h] = B(!0), [g, _] = B(e.maxEfforts ?? 2), v = c ? e.maxEfforts ?? 2 : g, y = (e) => {
 		if (!c) {
 			_(e);
@@ -3957,7 +3970,7 @@ function tn(e) {
 	}, [a]), I(() => {
 		let e = u.current;
 		if (!e || typeof ResizeObserver > "u") return;
-		let t = new ResizeObserver(([e]) => h(e.contentRect.width >= en));
+		let t = new ResizeObserver(([e]) => h(e.contentRect.width >= nn));
 		return t.observe(e), () => t.disconnect();
 	}, []);
 	let A = () => {
@@ -4006,7 +4019,7 @@ function tn(e) {
 				children: [/* @__PURE__ */ U("div", {
 					className: "flex min-h-0 min-w-0 flex-1 flex-col",
 					children: [
-						/* @__PURE__ */ H($t, {
+						/* @__PURE__ */ H(tn, {
 							activity: o,
 							timezone: e.timezone
 						}),
@@ -4035,7 +4048,7 @@ function tn(e) {
 							})]
 						})
 					]
-				}), O !== "none" && C && (x && a?.kind === "node" ? /* @__PURE__ */ H(Xt, {
+				}), O !== "none" && C && (x && a?.kind === "node" ? /* @__PURE__ */ H(Qt, {
 					node: x,
 					detail: o.details?.[x.id],
 					selection: a,
@@ -4071,7 +4084,7 @@ function tn(e) {
 }
 //#endregion
 //#region src/components/graph/work/WorkGraph.tsx
-var nn = 328, rn = 224, an = {
+var an = 328, on = 224, sn = {
 	project: 0,
 	terminal: 1,
 	agent: 2,
@@ -4083,10 +4096,10 @@ var nn = 328, rn = 224, an = {
 	meeting: 8,
 	transcript: 9
 };
-function on(e) {
+function cn(e) {
 	return e.locked ? "Restricted work item" : e.title.trim() || "Untitled work item";
 }
-function sn({ data: e }) {
+function ln({ data: e }) {
 	return /* @__PURE__ */ U("div", {
 		className: "w-[248px]",
 		children: [
@@ -4111,7 +4124,7 @@ function sn({ data: e }) {
 		]
 	});
 }
-function cn({ id: t, sourceX: n, sourceY: r, targetX: i, targetY: a, sourcePosition: o, targetPosition: s, markerEnd: c, data: l }) {
+function un({ id: t, sourceX: n, sourceY: r, targetX: i, targetY: a, sourcePosition: o, targetPosition: s, markerEnd: c, data: l }) {
 	let u = e(), [d, f, p] = ie({
 		sourceX: n,
 		sourceY: r,
@@ -4162,17 +4175,17 @@ function cn({ id: t, sourceX: n, sourceY: r, targetX: i, targetY: a, sourcePosit
 		})
 	] });
 }
-var ln = { work: sn }, un = { work: cn };
-function dn(e, t) {
+var dn = { work: ln }, fn = { work: un };
+function pn(e, t) {
 	let n = new Set(e.map((e) => e.id)), r = new Map(e.map((e) => [e.id, 0])), i = new Map(e.map((e) => [e.id, []]));
 	for (let e of t) !n.has(e.fromId) || !n.has(e.toId) || e.fromId === e.toId || (i.get(e.fromId)?.push(e.toId), r.set(e.toId, (r.get(e.toId) ?? 0) + 1));
-	let a = /* @__PURE__ */ new Map(), o = e.filter((e) => r.get(e.id) === 0).sort(fn).map((e) => e.id);
+	let a = /* @__PURE__ */ new Map(), o = e.filter((e) => r.get(e.id) === 0).sort(mn).map((e) => e.id);
 	for (let e of o) a.set(e, 0);
 	for (let e = 0; e < o.length; e += 1) {
 		let t = o[e], n = (a.get(t) ?? 0) + 1;
 		for (let e of (i.get(t) ?? []).sort()) a.set(e, Math.max(a.get(e) ?? 0, n)), r.set(e, (r.get(e) ?? 1) - 1), r.get(e) === 0 && o.push(e);
 	}
-	for (let t of [...e].sort(fn)) a.has(t.id) || a.set(t.id, an[t.kind] % 4);
+	for (let t of [...e].sort(mn)) a.has(t.id) || a.set(t.id, sn[t.kind] % 4);
 	let s = /* @__PURE__ */ new Map();
 	for (let t of e) {
 		let e = a.get(t.id) ?? 0, n = s.get(e) ?? [];
@@ -4188,23 +4201,23 @@ function dn(e, t) {
 				let t = (l.get(e) ?? []).map((e) => u.get(e)).filter((e) => e !== void 0);
 				return t.length ? t.reduce((e, t) => e + t, 0) / t.length : Infinity;
 			};
-			return n(e.id) - n(t.id) || fn(e, t);
+			return n(e.id) - n(t.id) || mn(e, t);
 		}), t.forEach((t, n) => {
 			u.set(t.id, n), c.set(t.id, {
-				x: 48 + e * nn,
-				y: 48 + n * rn
+				x: 48 + e * an,
+				y: 48 + n * on
 			});
 		});
 	}
 	return c;
 }
-function fn(e, t) {
-	return an[e.kind] - an[t.kind] || e.id.localeCompare(t.id);
+function mn(e, t) {
+	return sn[e.kind] - sn[t.kind] || e.id.localeCompare(t.id);
 }
-function pn(e, t, n) {
+function hn(e, t, n) {
 	return e ? e.kind === "node" ? t.some((t) => t.id === e.id) : n.some((t) => t.id === e.id) : !1;
 }
-function mn({ state: e, errorMessage: t, onRetry: r }) {
+function gn({ state: e, errorMessage: t, onRetry: r }) {
 	return e === "loading" ? /* @__PURE__ */ H("div", {
 		role: "status",
 		"data-testid": "work-graph-loading",
@@ -4226,8 +4239,8 @@ function mn({ state: e, errorMessage: t, onRetry: r }) {
 		description: "There is no shared work available for this day."
 	});
 }
-function hn({ nodes: e, edges: n, selection: r, viewport: i, day: a, timezone: o, sources: s = [], state: c = "ready", errorMessage: l, className: u, onSelectionChange: d, onViewportChange: f, onRetry: p, onOpen: m, onReference: h, onRequestCollaboration: g }) {
-	let _ = R(() => new Set(e.map((e) => e.id)), [e]), v = R(() => n.filter((e) => _.has(e.fromId) && _.has(e.toId)), [n, _]), y = pn(r, e, v) ? r : null;
+function _n({ nodes: e, edges: n, selection: r, viewport: i, day: a, timezone: o, sources: s = [], state: c = "ready", errorMessage: l, className: u, onSelectionChange: d, onViewportChange: f, onRetry: p, onOpen: m, onReference: h, onRequestCollaboration: g }) {
+	let _ = R(() => new Set(e.map((e) => e.id)), [e]), v = R(() => n.filter((e) => _.has(e.fromId) && _.has(e.toId)), [n, _]), y = hn(r, e, v) ? r : null;
 	I(() => {
 		r && !y && d(null);
 	}, [
@@ -4235,7 +4248,7 @@ function hn({ nodes: e, edges: n, selection: r, viewport: i, day: a, timezone: o
 		d,
 		r
 	]);
-	let b = dn(e.map((e) => ({
+	let b = pn(e.map((e) => ({
 		id: e.id,
 		kind: e.kind
 	})), v), x = new Map(e.map((e) => [e.id, e])), S = e.map((e) => ({
@@ -4270,8 +4283,8 @@ function hn({ nodes: e, edges: n, selection: r, viewport: i, day: a, timezone: o
 		data: {
 			entity: e,
 			selected: y?.kind === "edge" && y.id === e.id,
-			fromLabel: on(x.get(e.fromId)),
-			toLabel: on(x.get(e.toId)),
+			fromLabel: cn(x.get(e.fromId)),
+			toLabel: cn(x.get(e.toId)),
 			onSelect: (e) => d({
 				kind: "edge",
 				id: e
@@ -4281,7 +4294,7 @@ function hn({ nodes: e, edges: n, selection: r, viewport: i, day: a, timezone: o
 	if (c === "loading" || c === "error" || c === "empty" || e.length === 0) return /* @__PURE__ */ H("section", {
 		"aria-label": "Shared work graph",
 		className: t("min-w-0", u),
-		children: /* @__PURE__ */ H(mn, {
+		children: /* @__PURE__ */ H(gn, {
 			state: c === "ready" ? "empty" : c,
 			errorMessage: l,
 			onRetry: p
@@ -4322,8 +4335,8 @@ function hn({ nodes: e, edges: n, selection: r, viewport: i, day: a, timezone: o
 					children: /* @__PURE__ */ U(re, {
 						nodes: S,
 						edges: C,
-						nodeTypes: ln,
-						edgeTypes: un,
+						nodeTypes: dn,
+						edgeTypes: fn,
 						viewport: i,
 						onViewportChange: f,
 						onPaneClick: () => d(null),
@@ -4362,11 +4375,11 @@ function hn({ nodes: e, edges: n, selection: r, viewport: i, day: a, timezone: o
 		]
 	});
 }
-function gn(e) {
-	return e.activity && e.nodes.length > 0 && e.state !== "loading" && e.state !== "error" && e.state !== "empty" ? /* @__PURE__ */ H(tn, {
+function vn(e) {
+	return e.activity && e.nodes.length > 0 && e.state !== "loading" && e.state !== "error" && e.state !== "empty" ? /* @__PURE__ */ H(rn, {
 		...e,
 		activity: e.activity
-	}) : /* @__PURE__ */ H(hn, { ...e });
+	}) : /* @__PURE__ */ H(_n, { ...e });
 }
 //#endregion
-export { Y as A, we as C, ge as D, le as E, fe as O, xe as S, Ce as T, Fe as _, Jt as a, Ee as b, Dt as c, ut as d, et as f, Le as g, Ve as h, Gt as i, ae as j, J as k, ct as l, Ke as m, Zt as n, Ut as o, Qe as p, Xt as r, kt as s, gn as t, st as u, ke as v, Se as w, Te as x, De as y };
+export { Y as A, we as C, ge as D, le as E, fe as O, xe as S, Ce as T, Fe as _, Jt as a, Ee as b, Dt as c, ut as d, et as f, Le as g, Ve as h, Gt as i, ae as j, J as k, ct as l, Ke as m, $t as n, Ut as o, Qe as p, Qt as r, kt as s, vn as t, st as u, ke as v, Se as w, Te as x, De as y };

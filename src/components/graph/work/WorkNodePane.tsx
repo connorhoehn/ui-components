@@ -124,6 +124,20 @@ function AskPanel({ ask, onSelect }: { ask: WorkActivityAsk; onSelect?: (selecti
   );
 }
 
+/** Whitespace- and case-folded, so "Gateway · Coverage checks" matches "gateway ·  coverage checks". */
+function fold(text: string): string {
+  return text.replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+/** A detail line identical to, or contained in, text the pane already shows. */
+function alreadySaid(line: string, said: ReadonlyArray<string | undefined>): boolean {
+  const needle = fold(line);
+  if (!needle) return true;
+  // Containment only for a line with some substance: "v2" inside a subtitle
+  // is a coincidence, "Gateway · Coverage checks" inside one is a repeat.
+  return said.some((text) => !!text && (fold(text) === needle || (needle.length >= 8 && fold(text).includes(needle))));
+}
+
 export interface WorkNodePaneProps {
   node: WorkGraphNodeData;
   detail?: WorkActivityNodeDetail;
@@ -167,9 +181,12 @@ export function WorkNodePane({
   // transcript, a compute session) already show that state their own way, and
   // a line the banner already says is not repeated under it.
   const ownInspector = !!compute || !!visible?.artifact || !!visible?.transcript;
+  // Nor is a line the description, the subtitle or the excerpt already says —
+  // WORK-144's "Gateway · Coverage checks" was both its description and a line.
+  const said = [visible?.banner?.title, visible?.banner?.description, sections?.description, visible?.subtitle, visible?.excerpt];
   const bodyLines = ownInspector
     ? []
-    : (visible?.lines ?? []).filter((line) => line !== visible?.banner?.title && line !== visible?.banner?.description);
+    : (visible?.lines ?? []).filter((line, index, all) => all.indexOf(line) === index && !alreadySaid(line, said));
   const excerpt = ownInspector ? undefined : visible?.excerpt;
   const empty = !compute && !visible?.banner && !visible?.artifact && !visible?.transcript && !sections && !visible?.note && !visible?.actions?.length && !excerpt && bodyLines.length === 0;
   return (

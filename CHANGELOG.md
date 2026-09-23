@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.372.2] — 2026-09-23
+
+### Fixed
+- `WorkNodePane` no longer prints a detail line the pane already says: a line identical to, or (8+ characters) contained in, the banner, the description, the subtitle or the excerpt is skipped, as is a repeated line. WORK-144 showed "Gateway · Coverage checks" twice.
+
 ## [2.372.1] — 2026-09-23
 
 ### Fixed — measured live at 1280×720: the stage is 300 px
