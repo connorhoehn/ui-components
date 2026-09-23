@@ -54,6 +54,17 @@ describe('a run pane says what the card says, and more', () => {
     expect(screen.getAllByText('Wrote v7 of Sprint review')).toHaveLength(1);
   });
 
+  it('skips a line the description or subtitle already says (WORK-144)', () => {
+    const project = node('work-144', 'project', 'WORK-144', { status: 'running' });
+    render(<Harness entity={project} detail={{
+      subtitle: 'Project · 09:00 – 09:40 · Gateway · Coverage checks',
+      sections: { description: 'Gateway · Coverage checks' },
+      lines: ['Gateway · Coverage checks', 'gateway  ·  coverage checks', '3 of 5 checks passing', '3 of 5 checks passing', 'v2'],
+    }} />);
+    const lines = within(screen.getByTestId('activity-inspector-lines')).getAllByRole('listitem').map((item) => item.textContent);
+    expect(lines).toEqual(['3 of 5 checks passing', 'v2']);
+  });
+
   it('leaves an artifact’s lines to its own inspector', () => {
     const deck = node('deck', 'document', 'Sprint review');
     render(<Harness entity={deck} detail={{ ...artifactDetail(false), lines: ['v3 generating · v2 available'], excerpt: 'quoted' }} />);
