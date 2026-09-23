@@ -10,6 +10,7 @@ export type {
   PresentationEditorRevision,
   PresentationPreview,
   PresentationPreviewSlide,
+  PresentationGeneratedSlide,
   PresentationInstructContext,
   PresentationInstructResult,
   PresentationInstructScope,
@@ -19,7 +20,7 @@ export type {
 
 // The editor's pieces (2.363.0), for a host that composes its own surface.
 export { Filmstrip, FilmstripThumb } from './Filmstrip';
-export type { FilmstripProps } from './Filmstrip';
+export type { FilmstripProps, FilmstripGeneratedItem } from './Filmstrip';
 export { SlideStage } from './SlideStage';
 export type { SlideStageProps, SlideStageWidth } from './SlideStage';
 export { SpeakerNotes } from './SpeakerNotes';

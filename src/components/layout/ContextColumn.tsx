@@ -8,7 +8,12 @@
 //
 //   collapsed  a strip the width of an icon. One icon per panel, with its
 //              unread count; press one and the column opens to that panel.
-//              The page gets the width.
+//              The page gets the width. A panel that is itself tabbed (a
+//              workbench: task, comments, details) lists `entries`, and the
+//              strip shows one icon per entry instead — pressing one opens
+//              the column to that panel AT that entry (`onActivate(id,
+//              entryId)`), each with its own badge, so a comment or a task
+//              that needs someone is visible while the column is folded.
 //   open       one panel, chosen by the tabs in the column's header row.
 //   wide       the same, wider — a conversation someone is typing into.
 //
@@ -23,6 +28,16 @@ import Chip from '../shared/Chip';
 
 export type ContextColumnState = 'collapsed' | 'open' | 'wide';
 
+/** One of a tabbed panel's parts, as the collapsed strip shows it. Since 2.384.1. */
+export interface ContextColumnEntry {
+  id: string;
+  /** The strip icon's accessible name. */
+  label: string;
+  icon: ReactNode;
+  /** Pending count for this entry alone — unresolved comments, a running task. */
+  badge?: number;
+}
+
 export interface ContextColumnPanel {
   id: string;
   /** The tab's text and the strip icon's accessible name. */
@@ -30,6 +45,13 @@ export interface ContextColumnPanel {
   icon: ReactNode;
   /** Unread or pending count, shown on the tab and the strip icon. */
   badge?: number;
+  /**
+   * The panel's own parts, for the collapsed strip: one icon per entry in
+   * place of the panel's icon. Pressing one opens the column to this panel
+   * and reports the entry (`onActivate(panel.id, entry.id)`). The open tab
+   * row is unchanged — the panel's content owns its own tabs.
+   */
+  entries?: readonly ContextColumnEntry[];
   /** What the panel shows while it is the active one. */
   content: ReactNode;
 }
@@ -41,8 +63,8 @@ export interface ContextColumnProps {
   panels: ContextColumnPanel[];
   /** Which panel is showing. Unknown or absent falls back to the first. */
   activeId?: string | null;
-  /** A tab or a strip icon was pressed. */
-  onActivate: (id: string) => void;
+  /** A tab or a strip icon was pressed; `entryId` when the icon was one of the panel's `entries`. */
+  onActivate: (id: string, entryId?: string) => void;
   /** Accessible name of the column. Default "Side column". */
   label?: string;
   className?: string;
@@ -111,24 +133,43 @@ export function ContextColumn({
           data-testid={`${testId}-expand`}
         />
         <div className="my-1 h-px w-5 bg-border" aria-hidden="true" />
-        {panels.map((p) => (
-          <div key={p.id} className="relative">
-            <IconButton
-              aria-label={p.badge ? `${p.label} (${p.badge} unread)` : p.label}
-              title={p.label}
-              size="sm"
-              variant="ghost"
-              icon={p.icon}
-              onClick={() => { onActivate(p.id); onStateChange('open'); }}
-              data-testid={`${testId}-panel-${p.id}`}
-            />
-            {p.badge ? (
-              <span className="pointer-events-none absolute -right-1 -top-1">
-                <Badge n={p.badge} testId={`${testId}-badge-${p.id}`} />
-              </span>
-            ) : null}
-          </div>
-        ))}
+        {panels.flatMap((p) => (p.entries?.length
+          ? p.entries.map((e) => (
+              <div key={`${p.id}:${e.id}`} className="relative">
+                <IconButton
+                  aria-label={e.badge ? `${e.label} (${e.badge} pending)` : e.label}
+                  title={e.label}
+                  size="sm"
+                  variant="ghost"
+                  icon={e.icon}
+                  onClick={() => { onActivate(p.id, e.id); onStateChange('open'); }}
+                  data-testid={`${testId}-entry-${p.id}-${e.id}`}
+                />
+                {e.badge ? (
+                  <span className="pointer-events-none absolute -right-1 -top-1">
+                    <Badge n={e.badge} testId={`${testId}-badge-${p.id}-${e.id}`} />
+                  </span>
+                ) : null}
+              </div>
+            ))
+          : [(
+              <div key={p.id} className="relative">
+                <IconButton
+                  aria-label={p.badge ? `${p.label} (${p.badge} unread)` : p.label}
+                  title={p.label}
+                  size="sm"
+                  variant="ghost"
+                  icon={p.icon}
+                  onClick={() => { onActivate(p.id); onStateChange('open'); }}
+                  data-testid={`${testId}-panel-${p.id}`}
+                />
+                {p.badge ? (
+                  <span className="pointer-events-none absolute -right-1 -top-1">
+                    <Badge n={p.badge} testId={`${testId}-badge-${p.id}`} />
+                  </span>
+                ) : null}
+              </div>
+            )]))}
       </div>
     );
   }

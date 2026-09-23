@@ -81,7 +81,7 @@ import { A as Ha, B as Ua, C as Wa, D as Ga, E as Ka, F as qa, G as Ja, H as Ya,
 import { $ as Bo, A as Vo, B as Ho, C as Uo, D as Wo, E as Go, F as Ko, G as qo, H as Jo, I as Yo, J as Xo, K as Zo, L as Qo, M as $o, N as es, O as ts, P as ns, Q as rs, R as is, S as as, T as os, U as ss, V as cs, W as ls, X as us, Y as ds, Z as fs, _ as ps, a as ms, at as hs, b as gs, c as _s, d as vs, et as ys, f as bs, g as xs, h as Ss, i as Cs, it as ws, j as Ts, k as Es, l as Ds, m as Os, n as ks, nt as As, o as js, p as Ms, q as Ns, r as Ps, rt as Fs, s as Is, t as Ls, tt as Rs, u as zs, v as Bs, w as Vs, x as Hs, y as Us, z as Ws } from "./ConversationSurface-DVXsFXEi.js";
 import { t as Gs } from "./activationKey-CjbL3LUv.js";
 import { B as Ks, C as qs, D as Js, E as Ys, F as Xs, I as Zs, L as Qs, M as $s, N as ec, O as tc, P as nc, R as rc, S as ic, T as ac, V as oc, _ as sc, a as cc, b as lc, c as uc, d as dc, f as fc, g as pc, h as mc, i as hc, j as gc, l as _c, m as vc, n as yc, o as bc, p as xc, r as Sc, s as Cc, t as wc, u as Tc, v as Ec, w as Dc, x as Oc, y as kc, z as Ac } from "./renderers-BX3ZB5kO.js";
-import { A as jc, D as Mc, E as Nc, F as Pc, G as Fc, H as Ic, I as Lc, K as Rc, L as zc, M as Bc, N as Vc, O as Hc, P as Uc, T as Wc, U as Gc, W as Kc, b as qc, f as Jc, j as Yc, k as Xc, q as Zc, t as Qc } from "./PresentationEditor-CR524j4O.js";
+import { A as jc, D as Mc, E as Nc, F as Pc, G as Fc, H as Ic, I as Lc, K as Rc, L as zc, M as Bc, N as Vc, O as Hc, P as Uc, T as Wc, U as Gc, W as Kc, b as qc, f as Jc, j as Yc, k as Xc, q as Zc, t as Qc } from "./PresentationEditor-Cwcf6CXP.js";
 import { n as $c, r as el, t as tl } from "./EventStreamContext-CLzG8O5_.js";
 import { J as nl, S as rl, X as il, Z as al, _ as ol, b as sl, c as cl, d as ll, f as ul, g as dl, h as fl, j as pl, k as ml, m as hl, n as gl, nt as _l, p as vl, q as yl, rt as bl, t as xl, u as Sl, v as Cl, w as wl, y as Tl, z as El } from "./services-ChgTLB48.js";
 import { n as Dl, t as Ol } from "./ObservabilityContext-DpoDrm3T.js";
@@ -1188,7 +1188,7 @@ function Xp() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var Zp = sp(() => import("./DocumentEditorPage-B6GePDAF.js").then((e) => e.n));
+var Zp = sp(() => import("./DocumentEditorPage-BjUTjmDI.js").then((e) => e.n));
 function Qp({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;
@@ -2519,7 +2519,26 @@ function Om({ state: e, onStateChange: t, panels: n, activeId: r, onActivate: i,
 				className: "my-1 h-px w-5 bg-border",
 				"aria-hidden": "true"
 			}),
-			n.map((e) => /* @__PURE__ */ X("div", {
+			n.flatMap((e) => e.entries?.length ? e.entries.map((n) => /* @__PURE__ */ X("div", {
+				className: "relative",
+				children: [/* @__PURE__ */ Y(H, {
+					"aria-label": n.badge ? `${n.label} (${n.badge} pending)` : n.label,
+					title: n.label,
+					size: "sm",
+					variant: "ghost",
+					icon: n.icon,
+					onClick: () => {
+						i(e.id, n.id), t("open");
+					},
+					"data-testid": `${s}-entry-${e.id}-${n.id}`
+				}), n.badge ? /* @__PURE__ */ Y("span", {
+					className: "pointer-events-none absolute -right-1 -top-1",
+					children: /* @__PURE__ */ Y(Dm, {
+						n: n.badge,
+						testId: `${s}-badge-${e.id}-${n.id}`
+					})
+				}) : null]
+			}, `${e.id}:${n.id}`)) : [/* @__PURE__ */ X("div", {
 				className: "relative",
 				children: [/* @__PURE__ */ Y(H, {
 					"aria-label": e.badge ? `${e.label} (${e.badge} unread)` : e.label,
@@ -2538,7 +2557,7 @@ function Om({ state: e, onStateChange: t, panels: n, activeId: r, onActivate: i,
 						testId: `${s}-badge-${e.id}`
 					})
 				}) : null]
-			}, e.id))
+			}, e.id)])
 		]
 	});
 	let l = e === "wide";

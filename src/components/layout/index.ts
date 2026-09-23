@@ -27,7 +27,7 @@ export type { ExplorerLayoutProps } from './ExplorerLayout';
 export { SplitPane } from './SplitPane';
 export type { SplitPaneProps } from './SplitPane';
 export { ContextColumn } from './ContextColumn';
-export type { ContextColumnProps, ContextColumnPanel, ContextColumnState } from './ContextColumn';
+export type { ContextColumnProps, ContextColumnPanel, ContextColumnEntry, ContextColumnState } from './ContextColumn';
 export { DockedAside, FloatingCard, PinnedSlot } from './DockedAside';
 export type { DockedAsideProps, FloatingCardProps, PinnedSlotProps } from './DockedAside';
 

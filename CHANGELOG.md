@@ -6,6 +6,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.384.1] — 2026-09-23
+
+### Fixed
+
+- **The Sources slide is a slide of the deck, everywhere.** The renderer appends a Sources slide
+  after the spec's own, and the revision's `slideCount`, the `.pptx`, the run card and the reading
+  view all counted it — the editor did not: "Slide 1 of 4" beside a Details panel saying "5 slides",
+  and a reader's "Slide 5" that the editor's filmstrip had no thumb for. One rule now: a preview
+  slide the host marks `generated: true` (`PresentationPreviewSlide.generated`, with its `title`)
+  is a real slide the editor shows and counts but cannot change. `Filmstrip generatedItems`
+  renders it after the deck's own slides, numbered on, selectable, with a lock and "Generated"
+  in place of the drag handle and ⋯ menu (`data-generated`, `<prefix>-generated-<id>`,
+  `<prefix>-generated-list`); the stage shows the renderer's picture with a one-line note
+  (`<prefix>-generated-note`) and no form; the pager, ←/→/Home/End, Present's `slideIndex`,
+  `onSelectedSlideChange` and the read-only view all step over the whole deck; the footer's
+  `slideCount` is the whole deck and `selectedGeneratedSlide` names the generated slide on the
+  stage (`selectedSlide` is undefined then, so a host dock can scope to the deck). A stale render
+  of a slide that is no longer in the deck is not a locked thumb — only what the host marked.
+  Adding a slide while the generated one is on the stage inserts after the last of the deck's own.
+  The slide-cap meter still counts the deck's own slides — the cap is on what can be authored.
+
+### Added
+
+- **`ContextColumn` panel `entries`.** A tabbed panel (a workbench: task, comments, details) can
+  list its parts, and the collapsed strip shows one icon per entry in place of the panel's icon,
+  each with its own `badge`; pressing one opens the column to that panel and reports the entry
+  (`onActivate(panelId, entryId)`; `<testid>-entry-<panel>-<entry>`,
+  `<testid>-badge-<panel>-<entry>`). The open tab row is unchanged. This is the documents
+  mockups' thin right rail: the page keeps the width until a comment or a task asks for the column.
+
 ## [2.384.0] — 2026-09-23
 
 ### Fixed

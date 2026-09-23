@@ -31,6 +31,15 @@
 // real slide arrives. Nothing here invents progress; the host passes ids only
 // while a request is actually in flight (`useDeckReviseStatus`).
 //
+// ## Generated slides (2.384.1)
+//
+// `generatedItems` are the slides the renderer appends to the deck — the
+// Sources slide — shown after the deck's own slides and numbered on from them,
+// so the strip counts what the revision, the `.pptx` and the reader count.
+// They select like any thumb (the stage shows the renderer's picture) but
+// carry no drag handle and no ⋯ menu, and a lock marks them: nothing here can
+// change them, the slides' citations do.
+//
 // ## Who is on which slide
 //
 // `slideViewers` maps a slide id to the other people whose selected slide it
@@ -67,6 +76,96 @@ function rowFor(root: HTMLElement | null, id: string): HTMLElement | undefined {
 
 function focusThumb(root: HTMLElement | null, id: string) {
   rowFor(root, id)?.querySelector<HTMLElement>('[data-filmstrip-select]')?.focus();
+}
+
+function LockGlyph() {
+  return (
+    <svg viewBox="0 0 16 16" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+      <rect x="3.5" y="7" width="9" height="6.5" rx="1.2" />
+      <path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/** A slide the renderer appends to the deck (the Sources slide): shown, counted, not editable. */
+export interface FilmstripGeneratedItem {
+  id: string;
+  title: string;
+  thumbnailSvg?: string;
+}
+
+interface FilmstripGeneratedThumbProps {
+  item: FilmstripGeneratedItem;
+  /** 0-based position in the whole strip. */
+  index: number;
+  selected: boolean;
+  viewers?: readonly PresenceUser[];
+  onSelect: (id: string) => void;
+  testIdPrefix: string;
+}
+
+/** A locked thumb: the renderer's picture, its number, a lock — no handle, no menu. */
+function FilmstripGeneratedThumb({ item, index, selected, viewers, onSelect, testIdPrefix }: FilmstripGeneratedThumbProps) {
+  const thumbnail = svgDataUri(item.thumbnailSvg);
+  const number = index + 1;
+  return (
+    <li
+      data-testid={`${testIdPrefix}-row-${item.id}`}
+      data-slide-id={item.id}
+      data-generated="true"
+      className="group flex items-start gap-1.5"
+    >
+      <span className="flex w-4 shrink-0 flex-col items-center gap-1 pt-0.5">
+        <span className="text-[11px] tabular-nums text-text-tertiary">{number}</span>
+      </span>
+      <span className="relative flex min-w-0 flex-1 flex-col gap-0.5">
+        <button
+          type="button"
+          onClick={() => onSelect(item.id)}
+          aria-current={selected ? 'true' : undefined}
+          aria-label={`Slide ${number}: ${item.title} (generated, not editable)`}
+          data-testid={`${testIdPrefix}-select-${item.id}`}
+          data-filmstrip-select=""
+          className={cn(
+            'relative block aspect-[16/9] w-full cursor-pointer overflow-hidden rounded-md border bg-surface p-0 text-left font-[inherit] transition-shadow',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+            selected ? 'border-primary ring-2 ring-primary/40' : 'border-border hover:border-border-emphasis',
+          )}
+        >
+          {thumbnail ? (
+            <img src={thumbnail} alt="" className="h-full w-full object-contain" data-testid={`${testIdPrefix}-thumb-${item.id}`} />
+          ) : (
+            <span className="flex h-full w-full flex-col justify-center gap-0.5 px-2">
+              <Text as="span" className="line-clamp-2 text-[10px] font-semibold leading-tight text-text-primary">{item.title}</Text>
+              <Text as="span" className="text-[9px] text-text-tertiary">Generated</Text>
+            </span>
+          )}
+        </button>
+        <span className="flex min-w-0 items-center gap-1.5">
+          <Text as="span" className="min-w-0 flex-1 truncate text-[11px] text-text-secondary">{item.title}</Text>
+          <Text
+            as="span"
+            className="inline-flex shrink-0 items-center gap-0.5 text-[10px] font-semibold text-text-tertiary"
+            title="Built from the slides' citations; it changes as they do."
+            data-testid={`${testIdPrefix}-generated-${item.id}`}
+          >
+            <LockGlyph />
+            Generated
+          </Text>
+        </span>
+        {viewers && viewers.length > 0 && (
+          <span
+            className="pointer-events-none absolute left-1 top-1"
+            data-testid={`${testIdPrefix}-viewers-${item.id}`}
+            aria-label={`${viewers.map((viewer) => viewer.name).join(', ')} ${viewers.length === 1 ? 'is' : 'are'} on this slide`}
+            role="img"
+          >
+            <PresenceAvatars users={[...viewers]} maxVisible={2} size={16} />
+          </span>
+        )}
+      </span>
+    </li>
+  );
 }
 
 function MoreGlyph() {
@@ -248,6 +347,11 @@ export interface FilmstripProps {
    * (an id not in `items` becomes a placeholder card at the end).
    */
   generatingSlideIds?: readonly string[];
+  /**
+   * Slides the renderer appends after the deck's own (the Sources slide):
+   * numbered on from `items`, selectable, locked. Since 2.384.1.
+   */
+  generatedItems?: readonly FilmstripGeneratedItem[];
   /** Slide id → the other people on that slide (live presence). Since 2.371.0. */
   slideViewers?: Readonly<Record<string, readonly PresenceUser[]>>;
   readOnly?: boolean;
@@ -266,6 +370,7 @@ export function Filmstrip({
   onAdd,
   canAdd = true,
   generatingSlideIds,
+  generatedItems,
   slideViewers,
   readOnly = false,
   className,
@@ -297,27 +402,32 @@ export function Filmstrip({
     rowFor(rootRef.current, selectedId)?.scrollIntoView?.({ block: 'nearest' });
   }, [selectedId]);
 
+  // The whole strip in order: the deck's own slides, then the generated ones.
+  // ↑/↓ walk all of it; Alt+↑/↓ (a move) stays within the deck's own.
+  const generated = generatedItems ?? [];
+  const orderedIds = [...items.map((item) => item.slide.id), ...generated.map((item) => item.id)];
+
   const onKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
     if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
     const target = event.target as HTMLElement;
     // Only from a thumb itself: an open menu and the drag handle (dnd-kit's
     // keyboard sensor) own their arrow keys.
     if (!target.hasAttribute('data-filmstrip-select')) return;
-    const index = items.findIndex((item) => item.slide.id === selectedId);
+    const index = orderedIds.indexOf(selectedId);
     if (index === -1) return;
     const delta = event.key === 'ArrowUp' ? -1 : 1;
     const to = index + delta;
-    if (to < 0 || to >= items.length) return;
+    if (to < 0 || to >= orderedIds.length) return;
     event.preventDefault();
-    const id = items[index]!.slide.id;
+    const id = orderedIds[index]!;
     if (event.altKey) {
-      if (readOnly) return;
+      if (readOnly || index >= items.length || to >= items.length) return;
       onMove(index, to);
       // The moved slide keeps focus, wherever it landed.
       requestAnimationFrame(() => focusThumb(rootRef.current, id));
       return;
     }
-    const next = items[to]!.slide.id;
+    const next = orderedIds[to]!;
     onSelect(next);
     focusThumb(rootRef.current, next);
   };
@@ -357,6 +467,22 @@ export function Filmstrip({
           </span>
         </div>
       ))}
+
+      {generated.length > 0 && (
+        <ul className="m-0 flex list-none flex-col gap-2.5 p-0" aria-label="Generated slides" data-testid={`${testIdPrefix}-generated-list`}>
+          {generated.map((item, index) => (
+            <FilmstripGeneratedThumb
+              key={item.id}
+              item={item}
+              index={items.length + placeholders.length + index}
+              selected={item.id === selectedId}
+              {...(slideViewers?.[item.id]?.length ? { viewers: slideViewers[item.id] } : {})}
+              onSelect={onSelect}
+              testIdPrefix={testIdPrefix}
+            />
+          ))}
+        </ul>
+      )}
 
       {onAdd && !readOnly && (
         <div className="flex items-start gap-1.5">

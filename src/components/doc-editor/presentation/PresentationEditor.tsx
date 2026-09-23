@@ -153,6 +153,24 @@ export interface PresentationPreviewSlide {
   id: string;
   /** SVG source, rendered by the same layout engine that writes the .pptx. */
   svg: string;
+  /** The slide's title as the renderer named it. Used for a `generated` slide, which has no spec entry. */
+  title?: string;
+  /**
+   * A slide the renderer APPENDS to the deck — the Sources slide it builds
+   * from every citation — rather than one the spec holds. Since 2.384.1 it is
+   * a real slide of the deck: it is in the filmstrip (locked, numbered after
+   * the deck's own), on the stage, in the pager's count and in Present, and it
+   * is what the revision's `slideCount` and the `.pptx` already contained. The
+   * editor cannot change it: it changes as the slides' citations do.
+   */
+  generated?: boolean;
+}
+
+/** A `generated` preview slide, resolved: the renderer's title and image, in deck order after the spec's slides. */
+export interface PresentationGeneratedSlide {
+  id: string;
+  title: string;
+  svg?: string;
 }
 
 /**
@@ -177,10 +195,13 @@ export interface PresentationEditorRevision {
 
 /** What a `footer` render function is told. */
 export interface PresentationFooterContext {
-  /** The slide on the stage. */
+  /** The slide on the stage — one of the spec's. Undefined while a generated slide is on the stage. */
   selectedSlide: DeckSlide | undefined;
-  /** 0-based. */
+  /** The generated slide on the stage (the Sources slide), when that is what is selected. Since 2.384.1. */
+  selectedGeneratedSlide?: PresentationGeneratedSlide;
+  /** 0-based, over the whole deck: the spec's slides, then the generated ones. */
   selectedIndex: number;
+  /** The whole deck — the spec's slides plus the generated ones — the number every other surface shows. */
   slideCount: number;
   selectSlide: (slideId: string) => void;
   /** Marks slides "Edited by agent" in the filmstrip until the next call. */
@@ -407,22 +428,46 @@ export function PresentationEditor({
     if (renderable) requestPreview.current(spec);
   }, [spec, renderable]);
 
+  const previewSlides = typeof preview === 'object' && 'slides' in preview ? preview.slides : lastSlides;
+  const previewById = useMemo(
+    () => new Map(previewSlides.map((slide) => [slide.id, slide.svg])),
+    [previewSlides],
+  );
+  // The slides the renderer appended (the Sources slide): real slides of the
+  // deck, after the spec's own, that the editor shows and counts but cannot
+  // change. Only what the host MARKED as generated — a stale render of a
+  // deleted slide is not one, and never becomes a locked thumb.
+  const generatedSlides = useMemo<PresentationGeneratedSlide[]>(() => {
+    const own = new Set(slides.map((slide) => slide.id));
+    return previewSlides
+      .filter((slide) => slide.generated && !own.has(slide.id))
+      .map((slide, index) => ({ id: slide.id, title: slide.title || `Generated slide ${index + 1}`, svg: slide.svg }));
+  }, [previewSlides, slides]);
+  const totalSlides = slides.length + generatedSlides.length;
+
   // A deep link, a delete, or a spec swapped underneath can all name a slide
   // that is not here. Falling back to the first beats rendering nothing.
-  const selectedIndex = Math.max(slides.findIndex((slide) => slide.id === selectedId), 0);
-  const selected = slides[selectedIndex];
+  const ownIndex = slides.findIndex((slide) => slide.id === selectedId);
+  const generatedIndex = ownIndex === -1 ? generatedSlides.findIndex((slide) => slide.id === selectedId) : -1;
+  const selectedIndex = ownIndex !== -1 ? ownIndex : generatedIndex !== -1 ? slides.length + generatedIndex : 0;
+  const selected = ownIndex !== -1 || generatedIndex === -1 ? slides[selectedIndex] : undefined;
+  const selectedGenerated = generatedIndex !== -1 ? generatedSlides[generatedIndex] : undefined;
+  const currentId = selected?.id ?? selectedGenerated?.id;
+  const currentTitle = selected ? selected.title || 'Untitled slide' : selectedGenerated?.title;
+  /** Every slide's id in deck order — what ←/→, the pager and Present step through. */
+  const orderedIds = useMemo(
+    () => [...slides.map((slide) => slide.id), ...generatedSlides.map((slide) => slide.id)],
+    [slides, generatedSlides],
+  );
+  // Where an inserted slide goes: after the selected one, or after the last of
+  // the deck's own when a generated slide is on the stage (nothing goes after those).
+  const insertAfter = Math.min(selectedIndex, slides.length - 1);
 
   const selectedChanged = useRef(onSelectedSlideChange);
   selectedChanged.current = onSelectedSlideChange;
   useEffect(() => {
-    if (selected) selectedChanged.current?.(selected.id, selectedIndex);
-  }, [selected?.id, selectedIndex]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const previewById = useMemo(() => {
-    const source =
-      typeof preview === 'object' && 'slides' in preview ? preview.slides : lastSlides;
-    return new Map(source.map((slide) => [slide.id, slide.svg]));
-  }, [preview, lastSlides]);
+    if (currentId) selectedChanged.current?.(currentId, selectedIndex);
+  }, [currentId, selectedIndex]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // What the agent is rewriting: the host's live ids (`useDeckReviseStatus`)
   // plus the slide the built-in agent box is working on right now.
@@ -460,12 +505,12 @@ export function PresentationEditor({
 
   const handleAdd = useCallback(
     (layout?: SlideLayout) => {
-      const next = addSlide(spec, selectedIndex, layout);
+      const next = addSlide(spec, insertAfter, layout);
       if (next === spec) return;
       edit(next);
-      setSelectedId(next.slides[selectedIndex + 1]!.id);
+      setSelectedId(next.slides[insertAfter + 1]!.id);
     },
-    [edit, spec, selectedIndex],
+    [edit, spec, insertAfter],
   );
 
   const handleDuplicate = useCallback(
@@ -550,10 +595,10 @@ export function PresentationEditor({
   // a text field ⌘Z belongs to the field.
   const step = useCallback(
     (delta: number) => {
-      const next = slides[selectedIndex + delta];
-      if (next) setSelectedId(next.id);
+      const next = orderedIds[selectedIndex + delta];
+      if (next) setSelectedId(next);
     },
-    [slides, selectedIndex],
+    [orderedIds, selectedIndex],
   );
 
   useEffect(() => {
@@ -577,12 +622,12 @@ export function PresentationEditor({
       const intent = slideNavigationIntent(event);
       if (!intent) return;
       event.preventDefault();
-      const target = nextSlideIndex(intent, selectedIndex + 1, slides.length);
+      const target = nextSlideIndex(intent, selectedIndex + 1, totalSlides);
       if (target !== selectedIndex + 1) step(target - (selectedIndex + 1));
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [readOnly, save, undo, redo, step, selectedIndex, slides.length]);
+  }, [readOnly, save, undo, redo, step, selectedIndex, totalSlides]);
 
   // -------------------------------------------------------------------------
   // Read-only: the reading surface, not a greyed-out form
@@ -600,15 +645,28 @@ export function PresentationEditor({
       // label, which would be a lie the reader cannot detect.
       slides:
         revision.id === activeRevisionId
-          ? slides.map((slide, index) => {
-              const uri = svgDataUri(previewById.get(slide.id));
-              return {
-                id: slide.id,
-                index: index + 1,
-                title: slide.title || 'Untitled slide',
-                ...(uri ? { preview: <img src={uri} alt={slide.title || `Slide ${index + 1}`} /> } : {}),
-              };
-            })
+          ? [
+              ...slides.map((slide, index) => {
+                const uri = svgDataUri(previewById.get(slide.id));
+                return {
+                  id: slide.id,
+                  index: index + 1,
+                  title: slide.title || 'Untitled slide',
+                  ...(uri ? { preview: <img src={uri} alt={slide.title || `Slide ${index + 1}`} /> } : {}),
+                };
+              }),
+              // The generated slides read the same as they present: after the
+              // deck's own, numbered on.
+              ...generatedSlides.map((slide, index) => {
+                const uri = svgDataUri(slide.svg);
+                return {
+                  id: slide.id,
+                  index: slides.length + index + 1,
+                  title: slide.title,
+                  ...(uri ? { preview: <img src={uri} alt={slide.title} /> } : {}),
+                };
+              }),
+            ]
           : [],
     }));
 
@@ -620,8 +678,8 @@ export function PresentationEditor({
         onRevisionChange={onSelectRevision}
         slideIndex={selectedIndex + 1}
         onSlideChange={(index) => {
-          const slide = slides[index - 1];
-          if (slide) setSelectedId(slide.id);
+          const id = orderedIds[index - 1];
+          if (id) setSelectedId(id);
         }}
         {...(onDownload ? { onDownload } : {})}
         className={className}
@@ -635,6 +693,26 @@ export function PresentationEditor({
   // -------------------------------------------------------------------------
 
   const stageContent = (() => {
+    // A generated slide has exactly one picture — the renderer's — and no form
+    // behind it; the stage shows that or says it is not drawn yet.
+    if (selectedGenerated) {
+      const uri = svgDataUri(selectedGenerated.svg);
+      if (!uri) {
+        return (
+          <Text className="text-[13px] text-text-tertiary" data-testid={`${testId}-no-preview`}>
+            This slide has not been rendered yet.
+          </Text>
+        );
+      }
+      return (
+        <img
+          src={uri}
+          alt={selectedGenerated.title}
+          className="h-full w-full object-contain"
+          data-testid={`${testId}-stage-image`}
+        />
+      );
+    }
     // Checked before any preview state: while a slide cites nothing the host
     // was not asked for a render (see `renderable`), so a loading or error
     // state here would be about an older spec, not this one.
@@ -786,7 +864,7 @@ export function PresentationEditor({
   );
 
   const openView = onOpenPresentationView
-    ? () => onOpenPresentationView(selected ? { slideId: selected.id, slideIndex: selectedIndex + 1 } : undefined)
+    ? () => onOpenPresentationView(currentId ? { slideId: currentId, slideIndex: selectedIndex + 1 } : undefined)
     : undefined;
 
   const toolbar = (
@@ -882,8 +960,9 @@ export function PresentationEditor({
 
   const footerContext: PresentationFooterContext = {
     selectedSlide: selected,
+    ...(selectedGenerated ? { selectedGeneratedSlide: selectedGenerated } : {}),
     selectedIndex,
-    slideCount: slides.length,
+    slideCount: totalSlides,
     selectSlide: select,
     markChanged: (ids) => setChangedIds(new Set(ids)),
   };
@@ -971,14 +1050,14 @@ export function PresentationEditor({
         data-testid={`${testId}-previous`}
       />
       <Text className="text-[13px] text-text-secondary" data-testid={`${testId}-position`}>
-        {`Slide ${slides.length === 0 ? 0 : selectedIndex + 1} of ${slides.length}`}
+        {`Slide ${totalSlides === 0 ? 0 : selectedIndex + 1} of ${totalSlides}`}
       </Text>
       <IconButton
         aria-label="Next slide"
         variant="ghost"
         size="sm"
         icon={<Chevron />}
-        disabled={selectedIndex >= slides.length - 1}
+        disabled={selectedIndex >= totalSlides - 1}
         onClick={() => step(1)}
         data-testid={`${testId}-next`}
       />
@@ -1006,6 +1085,7 @@ export function PresentationEditor({
         onAdd={() => handleAdd()}
         canAdd={slides.length < MAX_SLIDES}
         generatingSlideIds={generating}
+        generatedItems={generatedSlides.map((slide) => ({ id: slide.id, title: slide.title, ...(slide.svg ? { thumbnailSvg: slide.svg } : {}) }))}
         {...(slideViewers ? { slideViewers } : {})}
         className="md:min-h-0 md:w-44 md:shrink-0 md:overflow-y-auto"
         testIdPrefix={`${testId}-slide`}
@@ -1020,7 +1100,7 @@ export function PresentationEditor({
         <div className="mx-auto w-full shrink-0 md:max-w-[max(20rem,calc(100cqh*16/9))]" data-testid={`${testId}-stage-frame`}>
         <SlideStage
           generating={selectedGenerating}
-          label={selected ? `Slide ${selectedIndex + 1} of ${slides.length}: ${selected.title || 'Untitled slide'}` : 'No slide'}
+          label={currentTitle ? `Slide ${selectedIndex + 1} of ${totalSlides}: ${currentTitle}` : 'No slide'}
           data-testid={`${testId}-stage`}
         >
           {stageContent}
@@ -1028,6 +1108,12 @@ export function PresentationEditor({
         </div>
 
         {!renderFrame && slideNav}
+
+        {selectedGenerated && (
+          <Text className="mx-auto w-full max-w-4xl text-[12px] text-text-tertiary" data-testid={`${testId}-generated-note`}>
+            {`${selectedGenerated.title} is built from the slides' citations and changes as they do. It has no fields of its own to edit.`}
+          </Text>
+        )}
 
         {selected && (
           <div className="mx-auto flex w-full max-w-4xl flex-col gap-3">

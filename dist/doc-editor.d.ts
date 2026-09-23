@@ -1245,7 +1245,14 @@ export declare function ExecutiveSummaryCard({ bullets, contentText, fragment, y
 
 declare type FileKind = 'page' | 'presentation' | 'recording' | 'transcript' | 'diagram' | 'folder' | 'agent' | 'experiment' | 'call' | 'conversation' | 'media' | 'workflow';
 
-export declare function Filmstrip({ items, selectedId, onSelect, onMove, onDuplicate, onDelete, onAdd, canAdd, generatingSlideIds, slideViewers, readOnly, className, testIdPrefix, }: FilmstripProps): JSX.Element;
+export declare function Filmstrip({ items, selectedId, onSelect, onMove, onDuplicate, onDelete, onAdd, canAdd, generatingSlideIds, generatedItems, slideViewers, readOnly, className, testIdPrefix, }: FilmstripProps): JSX.Element;
+
+/** A slide the renderer appends to the deck (the Sources slide): shown, counted, not editable. */
+export declare interface FilmstripGeneratedItem {
+    id: string;
+    title: string;
+    thumbnailSvg?: string;
+}
 
 export declare interface FilmstripProps {
     items: readonly SlideListItem[];
@@ -1263,6 +1270,11 @@ export declare interface FilmstripProps {
      * (an id not in `items` becomes a placeholder card at the end).
      */
     generatingSlideIds?: readonly string[];
+    /**
+     * Slides the renderer appends after the deck's own (the Sources slide):
+     * numbered on from `items`, selectable, locked. Since 2.384.1.
+     */
+    generatedItems?: readonly FilmstripGeneratedItem[];
     /** Slide id → the other people on that slide (live presence). Since 2.371.0. */
     slideViewers?: Readonly<Record<string, readonly PresenceUser[]>>;
     readOnly?: boolean;
@@ -1943,14 +1955,24 @@ export declare interface PresentationEditorRevision {
 
 /** What a `footer` render function is told. */
 export declare interface PresentationFooterContext {
-    /** The slide on the stage. */
+    /** The slide on the stage — one of the spec's. Undefined while a generated slide is on the stage. */
     selectedSlide: DeckSlide | undefined;
-    /** 0-based. */
+    /** The generated slide on the stage (the Sources slide), when that is what is selected. Since 2.384.1. */
+    selectedGeneratedSlide?: PresentationGeneratedSlide;
+    /** 0-based, over the whole deck: the spec's slides, then the generated ones. */
     selectedIndex: number;
+    /** The whole deck — the spec's slides plus the generated ones — the number every other surface shows. */
     slideCount: number;
     selectSlide: (slideId: string) => void;
     /** Marks slides "Edited by agent" in the filmstrip until the next call. */
     markChanged: (slideIds: string[]) => void;
+}
+
+/** A `generated` preview slide, resolved: the renderer's title and image, in deck order after the spec's slides. */
+export declare interface PresentationGeneratedSlide {
+    id: string;
+    title: string;
+    svg?: string;
 }
 
 export declare interface PresentationInstructContext {
@@ -1987,6 +2009,17 @@ export declare interface PresentationPreviewSlide {
     id: string;
     /** SVG source, rendered by the same layout engine that writes the .pptx. */
     svg: string;
+    /** The slide's title as the renderer named it. Used for a `generated` slide, which has no spec entry. */
+    title?: string;
+    /**
+     * A slide the renderer APPENDS to the deck — the Sources slide it builds
+     * from every citation — rather than one the spec holds. Since 2.384.1 it is
+     * a real slide of the deck: it is in the filmstrip (locked, numbered after
+     * the deck's own), on the stage, in the pager's count and in Present, and it
+     * is what the revision's `slideCount` and the `.pptx` already contained. The
+     * editor cannot change it: it changes as the slides' citations do.
+     */
+    generated?: boolean;
 }
 
 export declare interface PresentationRevision {
@@ -3447,9 +3480,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -3467,22 +3513,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -3516,9 +3549,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
