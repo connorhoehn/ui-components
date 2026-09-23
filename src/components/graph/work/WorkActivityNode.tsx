@@ -2,6 +2,7 @@ import { Avatar } from '../../shared/Avatar';
 import { IconButton } from '../../ui/IconButton';
 import { ChatIcon } from '../../ui/Icons';
 import { cn } from '../../../lib/cn';
+import { workPauseLabel } from './WorkStatus';
 import type { WorkActivityNodeDetail, WorkGraphNodeData, WorkGraphSelection } from './types';
 
 const ICONS: Record<WorkGraphNodeData['kind'], string> = { project: '▱', terminal: '⌘', agent: '✦', run: '▶', document: '▤', change: '⌥', conversation: '◌', meeting: '◉', transcript: '▤', task: '☑' };
@@ -65,14 +66,16 @@ export function WorkActivityNode({ node, detail, selected, selectedRevisionId, l
   const failed = node.status === 'error';
   const current = visible?.emphasis === 'current' || (!muted && node.status === 'running' && isFresh);
   const delayed = node.status === 'running' && live && !isFresh;
-  const statusLine = delayed ? 'Running · updates delayed' : node.status;
+  // A waiting run says why (NFR #126): "Needs approval", "Paused at write".
+  const paused = workPauseLabel(node.status, visible?.pause);
+  const statusLine = delayed ? 'Running · updates delayed' : paused ?? node.status;
   // The delay is printed, not only announced: with host lines the card used
   // to show "Tests running" while its accessible name said "updates delayed".
   const lines = visible?.lines?.length ? (delayed ? [...visible.lines, 'Updates delayed'] : visible.lines) : [statusLine];
   const cardState = pending?.status === 'generating' ? `${pending.label} generating`
     : pending?.status === 'failed' ? `${pending.label} generation failed`
       : node.status === 'running' && !isFresh ? 'running, updates delayed'
-        : node.status;
+        : paused ? `waiting, ${paused}` : node.status;
   const target = { kind: 'node' as const, id: node.id, ...(revision ? { revisionId: revision.id } : {}) };
   const select = () => onSelect(target);
   return (
@@ -110,6 +113,9 @@ export function WorkActivityNode({ node, detail, selected, selectedRevisionId, l
               <span className="min-w-0">{line}</span>
               {index === 0 && visible?.badge && (
                 <span className={cn('shrink-0 rounded px-1.5 py-px text-[10px] font-semibold', node.status === 'running' ? 'border border-info-border text-info-fg' : 'bg-info-bg text-info-fg')}>{visible.badge}</span>
+              )}
+              {index === 0 && !visible?.badge && paused && line !== paused && (
+                <span data-testid="work-card-pause" className="shrink-0 rounded bg-warning-bg px-1.5 py-px text-[10px] font-semibold text-warning-fg">{paused}</span>
               )}
             </div>
           ))}

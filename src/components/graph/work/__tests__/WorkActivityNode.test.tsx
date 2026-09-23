@@ -136,3 +136,26 @@ describe('WorkActivityNode prints the delay it announces', () => {
     expect(screen.getByRole('button', { name: 'Cloud terminal, running' })).toBeInTheDocument();
   });
 });
+
+describe('NFR #126 — a waiting run says why', () => {
+  it('names the breakpoint step as a chip beside the host line, and in the accessible name', () => {
+    show(node('run', 'run', 'Revise Sprint review', 'waiting'), { lines: ['Edit Sprint review'], pause: { reason: 'paused_at_breakpoint', step: 'write' } });
+    expect(screen.getByTestId('work-card-pause')).toHaveTextContent('Paused at write');
+    expect(screen.getByRole('button', { name: 'Revise Sprint review, waiting, Paused at write' })).toBeInTheDocument();
+  });
+
+  it('says "Needs approval" as the status line when the host sent no lines', () => {
+    show(node('run', 'run', 'Revise Sprint review', 'waiting'), { pause: { reason: 'awaiting_approval', step: 'Approve' } });
+    expect(screen.getByText('Needs approval')).toBeInTheDocument();
+    expect(screen.queryByTestId('work-card-pause')).toBeNull();
+  });
+
+  it('ignores a stale reason once the run is running again, and yields to a host badge', () => {
+    const { rerender } = render(<WorkActivityNode node={node('run', 'run', 'Revise', 'running')} detail={{ fresh: true, lines: ['Edit'], pause: { reason: 'paused_at_breakpoint', step: 'write' } }} selected={false} live onSelect={vi.fn()} />);
+    expect(screen.queryByText(/Paused at/)).toBeNull();
+    rerender(<WorkActivityNode node={node('run', 'run', 'Revise', 'waiting')} detail={{ lines: ['Edit'], badge: 'Held', pause: { reason: 'paused_at_breakpoint', step: 'write' } }} selected={false} live onSelect={vi.fn()} />);
+    expect(screen.queryByTestId('work-card-pause')).toBeNull();
+    expect(screen.getByText('Held')).toBeInTheDocument();
+  });
+});
+

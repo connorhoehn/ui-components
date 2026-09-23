@@ -691,7 +691,10 @@ var Oe = {
 		tone: "text-warning-fg"
 	}
 };
-function ke({ status: n, sharingFresh: r = !1, label: i, className: a }) {
+function ke(e, t) {
+	if (!(e !== "waiting" || !t)) return t.reason === "awaiting_approval" ? "Needs approval" : t.step ? `Paused at ${t.step}` : "Paused";
+}
+function Ae({ status: n, sharingFresh: r = !1, label: i, className: a }) {
 	let o = e(), s = Oe[n], c = i ?? s.label, l = n === "running" && r && !o;
 	return /* @__PURE__ */ G("span", {
 		role: "status",
@@ -708,7 +711,7 @@ function ke({ status: n, sharingFresh: r = !1, label: i, className: a }) {
 }
 //#endregion
 //#region src/components/graph/work/WorkNode.tsx
-var Ae = {
+var je = {
 	project: "Project",
 	terminal: "Terminal",
 	agent: "Agent",
@@ -719,14 +722,14 @@ var Ae = {
 	meeting: "Meeting",
 	transcript: "Transcript",
 	task: "Task"
-}, je = {
+}, Me = {
 	terminal: "observe-terminal",
 	document: "view-document",
 	conversation: "join-conversation",
 	meeting: "join-meeting",
 	transcript: "view-transcript",
 	run: "view-run"
-}, Me = {
+}, Ne = {
 	terminal: "Observe",
 	document: "View",
 	conversation: "Open chat",
@@ -734,7 +737,7 @@ var Ae = {
 	transcript: "View",
 	run: "View"
 };
-function Ne(e) {
+function Pe(e) {
 	if (!e) return null;
 	let t = new Date(e);
 	return Number.isNaN(t.getTime()) ? null : t.toLocaleString(void 0, {
@@ -742,15 +745,15 @@ function Ne(e) {
 		timeStyle: "short"
 	});
 }
-function Pe(e) {
-	return e.locked ? "Restricted work item" : e.title.trim() || `${Ae[e.kind]} (untitled)`;
+function Fe(e) {
+	return e.locked ? "Restricted work item" : e.title.trim() || `${je[e.kind]} (untitled)`;
 }
-function Fe({ node: e, selected: r = !1, sharingFresh: i = !1, onSelect: a, onOpen: o }) {
-	let s = Pe(e), c = je[e.kind], l = c !== void 0 && e.capabilities.includes(c), u = Me[e.kind] ?? "Open", d = Ne(e.updatedAt), f = Ne(e.startedAt), p = Ne(e.endedAt), m = () => a?.(e.id);
+function Ie({ node: e, selected: r = !1, sharingFresh: i = !1, onSelect: a, onOpen: o }) {
+	let s = Fe(e), c = Me[e.kind], l = c !== void 0 && e.capabilities.includes(c), u = Ne[e.kind] ?? "Open", d = Pe(e.updatedAt), f = Pe(e.startedAt), p = Pe(e.endedAt), m = () => a?.(e.id);
 	return /* @__PURE__ */ G("article", {
 		role: "group",
 		tabIndex: 0,
-		"aria-label": `${Ae[e.kind]}: ${s}`,
+		"aria-label": `${je[e.kind]}: ${s}`,
 		"aria-current": r ? "true" : void 0,
 		"data-testid": `work-node-${e.id}`,
 		"data-kind": e.kind,
@@ -773,7 +776,7 @@ function Fe({ node: e, selected: r = !1, sharingFresh: i = !1, onSelect: a, onOp
 						className: "min-w-0 flex-1",
 						children: [/* @__PURE__ */ W("div", {
 							className: "mb-1 text-[11px] font-medium uppercase tracking-wide text-text-tertiary",
-							children: Ae[e.kind]
+							children: je[e.kind]
 						}), /* @__PURE__ */ W("h3", {
 							className: "break-words line-clamp-2 text-sm font-semibold text-text-primary",
 							"data-testid": "work-node-title",
@@ -790,7 +793,7 @@ function Fe({ node: e, selected: r = !1, sharingFresh: i = !1, onSelect: a, onOp
 				role: "status",
 				className: "text-xs font-medium text-text-secondary",
 				children: "Recent activity"
-			}) : /* @__PURE__ */ W(ke, {
+			}) : /* @__PURE__ */ W(Ae, {
 				status: e.status,
 				sharingFresh: i
 			}),
@@ -829,7 +832,7 @@ function Fe({ node: e, selected: r = !1, sharingFresh: i = !1, onSelect: a, onOp
 				variant: "secondary",
 				disabled: !l || !o,
 				"data-capability": c,
-				"aria-label": `${u} ${Ae[e.kind].toLowerCase()}`,
+				"aria-label": `${u} ${je[e.kind].toLowerCase()}`,
 				onClick: (t) => {
 					t.stopPropagation(), l && o?.(e.id);
 				},
@@ -840,7 +843,7 @@ function Fe({ node: e, selected: r = !1, sharingFresh: i = !1, onSelect: a, onOp
 }
 //#endregion
 //#region src/components/graph/work/WorkEdge.tsx
-var Ie = {
+var Le = {
 	"works-on": "Works on",
 	"runs-in": "Runs in",
 	"operates-on": "Operates on",
@@ -850,8 +853,8 @@ var Ie = {
 	discussed: "Discussed",
 	"derived-from": "Derived from"
 };
-function Le({ edge: e, selected: n = !1, reducedMotion: r = !1, fromLabel: i, toLabel: a, onSelect: o }) {
-	let s = Ie[e.relation], c = e.disclosure === "existence", l = c ? "Shared connection" : e.label?.trim() || s;
+function Re({ edge: e, selected: n = !1, reducedMotion: r = !1, fromLabel: i, toLabel: a, onSelect: o }) {
+	let s = Le[e.relation], c = e.disclosure === "existence", l = c ? "Shared connection" : e.label?.trim() || s;
 	return /* @__PURE__ */ G("button", {
 		type: "button",
 		"aria-label": `${i}: ${s.toLowerCase()} ${a}${c ? ", details restricted" : ""}`,
@@ -882,7 +885,7 @@ function Le({ edge: e, selected: n = !1, reducedMotion: r = !1, fromLabel: i, to
 					]
 				})]
 			}),
-			/* @__PURE__ */ W(ke, { status: e.status }),
+			/* @__PURE__ */ W(Ae, { status: e.status }),
 			/* @__PURE__ */ W("span", {
 				"aria-hidden": "true",
 				className: t("h-px min-w-4 flex-1 bg-border", n ? "bg-primary" : "group-hover:bg-primary/50")
@@ -896,28 +899,28 @@ function Le({ edge: e, selected: n = !1, reducedMotion: r = !1, fromLabel: i, to
 }
 //#endregion
 //#region src/components/graph/work/WorkEntityList.tsx
-function Re(e, t, n) {
+function ze(e, t, n) {
 	return e?.kind === t && e.id === n;
 }
-function ze(e) {
+function Be(e) {
 	return e.locked ? "Restricted work item" : e.title.trim() || "Untitled work item";
 }
-function Be(e, t) {
-	let n = t.get(e.fromId), r = t.get(e.toId), i = n ? ze(n) : "Unavailable item", a = r ? ze(r) : "Unavailable item";
+function Ve(e, t) {
+	let n = t.get(e.fromId), r = t.get(e.toId), i = n ? Be(n) : "Unavailable item", a = r ? Be(r) : "Unavailable item";
 	return e.label?.trim() || `${i} ${e.relation} ${a}`;
 }
-var Ve = (e) => t("w-full rounded-md border px-3 py-2 text-left text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50", e ? "border-primary bg-primary/10 ring-1 ring-primary" : "border-border hover:bg-surface-hover");
-function He({ nodes: e, edges: t, selection: n, onSelectionChange: r, heading: i = "Accessible work graph", groups: a, footer: o }) {
+var He = (e) => t("w-full rounded-md border px-3 py-2 text-left text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50", e ? "border-primary bg-primary/10 ring-1 ring-primary" : "border-border hover:bg-surface-hover");
+function Ue({ nodes: e, edges: t, selection: n, onSelectionChange: r, heading: i = "Accessible work graph", groups: a, footer: o }) {
 	let s = new Map(e.map((e) => [e.id, e])), c = V(null), l = n ? `${n.kind}:${n.id}` : null;
 	R(() => {
 		l && c.current?.scrollIntoView?.({ block: "nearest" });
 	}, [l]);
 	let u = (e) => {
-		let t = Re(n, "node", e.id);
+		let t = ze(n, "node", e.id);
 		return /* @__PURE__ */ W("li", { children: /* @__PURE__ */ G("button", {
 			ref: t ? c : void 0,
 			type: "button",
-			"aria-label": `Work item: ${ze(e)}`,
+			"aria-label": `Work item: ${Be(e)}`,
 			"aria-pressed": t,
 			"aria-current": t ? "true" : void 0,
 			"data-selected": t || void 0,
@@ -925,10 +928,10 @@ function He({ nodes: e, edges: t, selection: n, onSelectionChange: r, heading: i
 				kind: "node",
 				id: e.id
 			}),
-			className: Ve(t),
+			className: He(t),
 			children: [/* @__PURE__ */ W("span", {
 				className: "block break-words font-medium text-text-primary",
-				children: ze(e)
+				children: Be(e)
 			}), /* @__PURE__ */ W("span", {
 				className: "text-xs text-text-tertiary",
 				children: e.kind === "conversation" ? "Chat · Recent activity" : `${e.kind} · ${e.status}`
@@ -978,7 +981,7 @@ function He({ nodes: e, edges: t, selection: n, onSelectionChange: r, heading: i
 				}), /* @__PURE__ */ W("ul", {
 					className: "space-y-1",
 					children: t.map((e) => {
-						let t = Re(n, "edge", e.id), i = Be(e, s);
+						let t = ze(n, "edge", e.id), i = Ve(e, s);
 						return /* @__PURE__ */ W("li", { children: /* @__PURE__ */ G("button", {
 							ref: t ? c : void 0,
 							type: "button",
@@ -990,7 +993,7 @@ function He({ nodes: e, edges: t, selection: n, onSelectionChange: r, heading: i
 								kind: "edge",
 								id: e.id
 							}),
-							className: Ve(t),
+							className: He(t),
 							children: [/* @__PURE__ */ W("span", {
 								className: "block break-words font-medium text-text-primary",
 								children: i
@@ -1012,7 +1015,7 @@ function He({ nodes: e, edges: t, selection: n, onSelectionChange: r, heading: i
 }
 //#endregion
 //#region src/components/graph/work/WorkInspector.tsx
-var Ue = {
+var We = {
 	message: "Message",
 	"view-document": "View document",
 	"edit-document": "Edit document",
@@ -1023,7 +1026,7 @@ var Ue = {
 	"view-transcript": "View transcript",
 	"view-run": "View run",
 	"dispatch-run": "Dispatch run"
-}, We = /* @__PURE__ */ new Set([
+}, Ge = /* @__PURE__ */ new Set([
 	"view-document",
 	"edit-document",
 	"join-conversation",
@@ -1033,14 +1036,14 @@ var Ue = {
 	"view-transcript",
 	"view-run"
 ]);
-function Ge(e, t, n) {
+function Ke(e, t, n) {
 	if (n) return n.kind === "node" ? e.find((e) => e.id === n.id) : t.find((e) => e.id === n.id);
 }
-function Ke(e) {
+function qe(e) {
 	return "kind" in e ? e.locked ? "Restricted work item" : e.title : e.label?.trim() || `${e.relation} relationship`;
 }
-function qe({ nodes: e, edges: t, selection: r, onSelectionChange: i, onOpen: a, onReference: o, onRequestCollaboration: s }) {
-	let c = Ge(e, t, r);
+function Je({ nodes: e, edges: t, selection: r, onSelectionChange: i, onOpen: a, onReference: o, onRequestCollaboration: s }) {
+	let c = Ke(e, t, r);
 	if (R(() => {
 		r && !c && i(null);
 	}, [
@@ -1055,7 +1058,7 @@ function qe({ nodes: e, edges: t, selection: r, onSelectionChange: i, onOpen: a,
 			children: "Select a work item or relationship to inspect it."
 		})
 	});
-	let l = r, u = c.capabilities.find((e) => We.has(e));
+	let l = r, u = c.capabilities.find((e) => Ge.has(e));
 	return /* @__PURE__ */ G("aside", {
 		"aria-label": "Work details",
 		className: "space-y-4 rounded-lg border border-border bg-surface p-4",
@@ -1069,7 +1072,7 @@ function qe({ nodes: e, edges: t, selection: r, onSelectionChange: i, onOpen: a,
 					}),
 					/* @__PURE__ */ W("h3", {
 						className: "break-words text-base font-semibold text-text-primary",
-						children: Ke(c)
+						children: qe(c)
 					}),
 					/* @__PURE__ */ W("p", {
 						className: "text-sm text-text-secondary",
@@ -1104,7 +1107,7 @@ function qe({ nodes: e, edges: t, selection: r, onSelectionChange: i, onOpen: a,
 					size: "sm",
 					variant: "secondary",
 					onClick: () => s(l, e),
-					children: Ue[e]
+					children: We[e]
 				}, e))
 			})] }) : null
 		]
@@ -1112,7 +1115,7 @@ function qe({ nodes: e, edges: t, selection: r, onSelectionChange: i, onOpen: a,
 }
 //#endregion
 //#region src/components/graph/work/WorkSharingControls.tsx
-var Je = [
+var Ye = [
 	{
 		value: "existence",
 		label: "Existence only"
@@ -1126,24 +1129,24 @@ var Je = [
 		label: "Details"
 	}
 ];
-function Ye(e) {
+function Xe(e) {
 	return e.locked ? "Restricted work item" : e.title.trim() || "Untitled work item";
 }
-function Xe(e) {
+function Ze(e) {
 	return e.label?.trim() || `${e.relation} relationship`;
 }
-function Ze(e, t, n, r) {
+function Qe(e, t, n, r) {
 	let i = e[t];
 	return {
 		...e,
 		[t]: r ? i.includes(n) ? i : [...i, n] : i.filter((e) => e !== n)
 	};
 }
-function Qe(e) {
+function $e(e) {
 	return e.audience.kind === "organization" ? ["Everyone in your organization"] : e.audience.kind === "people" ? e.audience.personIds : e.audience.conversationIds;
 }
-function $e({ state: e, value: t, availableNodes: r, availableEdges: i, saving: a = !1, error: o, conflict: s = !1, onChange: c, onStart: l, onPause: u, onResume: d, onStop: f }) {
-	let p = z(), h = Qe(t), g = e === "off" ? "Off" : e.charAt(0).toUpperCase() + e.slice(1);
+function et({ state: e, value: t, availableNodes: r, availableEdges: i, saving: a = !1, error: o, conflict: s = !1, onChange: c, onStart: l, onPause: u, onResume: d, onStop: f }) {
+	let p = z(), h = $e(t), g = e === "off" ? "Off" : e.charAt(0).toUpperCase() + e.slice(1);
 	return /* @__PURE__ */ G("section", {
 		"aria-labelledby": "work-sharing-heading",
 		className: "space-y-5 rounded-lg border border-border bg-surface p-4",
@@ -1225,12 +1228,12 @@ function $e({ state: e, value: t, availableNodes: r, availableEdges: i, saving: 
 								id: n,
 								checked: t.selectedNodeIds.includes(e.id),
 								disabled: a,
-								onChange: (n) => c(Ze(t, "selectedNodeIds", e.id, n))
+								onChange: (n) => c(Qe(t, "selectedNodeIds", e.id, n))
 							}), /* @__PURE__ */ G("span", {
 								className: "min-w-0 break-words",
 								children: [/* @__PURE__ */ W("span", {
 									className: "block font-medium",
-									children: Ye(e)
+									children: Xe(e)
 								}), /* @__PURE__ */ W("span", {
 									className: "text-xs text-text-tertiary",
 									children: e.kind
@@ -1260,12 +1263,12 @@ function $e({ state: e, value: t, availableNodes: r, availableEdges: i, saving: 
 								id: n,
 								checked: t.selectedEdgeIds.includes(e.id),
 								disabled: a,
-								onChange: (n) => c(Ze(t, "selectedEdgeIds", e.id, n))
+								onChange: (n) => c(Qe(t, "selectedEdgeIds", e.id, n))
 							}), /* @__PURE__ */ G("span", {
 								className: "min-w-0 break-words",
 								children: [/* @__PURE__ */ W("span", {
 									className: "block font-medium",
-									children: Xe(e)
+									children: Ze(e)
 								}), /* @__PURE__ */ W("span", {
 									className: "text-xs text-text-tertiary",
 									children: e.relation
@@ -1287,7 +1290,7 @@ function $e({ state: e, value: t, availableNodes: r, availableEdges: i, saving: 
 							disclosure: e.target.value
 						}),
 						className: "h-9 w-full rounded-md border border-border-emphasis bg-surface-panel px-2.5 text-sm text-text-primary outline-none focus:border-info focus:ring-1 focus:ring-info/40 disabled:cursor-not-allowed disabled:opacity-50",
-						children: Je.map((e) => /* @__PURE__ */ W("option", {
+						children: Ye.map((e) => /* @__PURE__ */ W("option", {
 							value: e.value,
 							children: e.label
 						}, e.value))
@@ -1420,7 +1423,7 @@ function $e({ state: e, value: t, availableNodes: r, availableEdges: i, saving: 
 }
 //#endregion
 //#region src/components/graph/work/WorkReferenceCard.tsx
-var et = /* @__PURE__ */ new Set([
+var tt = /* @__PURE__ */ new Set([
 	"view-document",
 	"edit-document",
 	"join-conversation",
@@ -1430,7 +1433,7 @@ var et = /* @__PURE__ */ new Set([
 	"view-transcript",
 	"view-run"
 ]);
-function tt({ target: e, state: t, node: r, edge: i, unavailableLabel: a, onSelect: o, onOpen: s }) {
+function nt({ target: e, state: t, node: r, edge: i, unavailableLabel: a, onSelect: o, onOpen: s }) {
 	let c = e?.kind === "node" ? r : e?.kind === "edge" ? i : void 0;
 	if (t === "loading") return /* @__PURE__ */ W("article", {
 		"aria-label": "Shared work reference",
@@ -1450,7 +1453,7 @@ function tt({ target: e, state: t, node: r, edge: i, unavailableLabel: a, onSele
 			children: a ?? "This work item is unavailable."
 		})
 	});
-	let l = e.kind === "node" ? r?.locked ? "Restricted work item" : r?.title : i?.label?.trim() || `${i?.relation ?? "Shared"} relationship`, u = (e.kind === "node" ? r?.capabilities ?? [] : i?.capabilities ?? []).some((e) => et.has(e)), d = e;
+	let l = e.kind === "node" ? r?.locked ? "Restricted work item" : r?.title : i?.label?.trim() || `${i?.relation ?? "Shared"} relationship`, u = (e.kind === "node" ? r?.capabilities ?? [] : i?.capabilities ?? []).some((e) => tt.has(e)), d = e;
 	return /* @__PURE__ */ G("article", {
 		"aria-label": "Shared work reference",
 		className: "space-y-3 rounded-lg border border-border bg-surface p-3",
@@ -1484,7 +1487,7 @@ function tt({ target: e, state: t, node: r, edge: i, unavailableLabel: a, onSele
 }
 //#endregion
 //#region src/components/graph/work/WorkActivityTimeline.tsx
-function nt(e, t) {
+function rt(e, t) {
 	let n = new Intl.DateTimeFormat("en-US", {
 		timeZone: t,
 		year: "numeric",
@@ -1500,12 +1503,12 @@ function nt(e, t) {
 		time: `${r("hour")}:${r("minute")}`
 	};
 }
-function rt(e, t, n, r, i) {
+function it(e, t, n, r, i) {
 	let a = t.updatedAt || t.startedAt;
 	if (!a) return null;
 	let o = new Date(a);
 	if (Number.isNaN(o.getTime())) return null;
-	let s = nt(o, i);
+	let s = rt(o, i);
 	return s.day === r ? {
 		key: `${e}:${t.id}`,
 		selection: {
@@ -1518,7 +1521,7 @@ function rt(e, t, n, r, i) {
 		live: t.status === "running" && !t.endedAt
 	} : null;
 }
-function it({ day: e, timezone: t, nodes: n, edges: r, selection: i, onSelectionChange: a }) {
+function at({ day: e, timezone: t, nodes: n, edges: r, selection: i, onSelectionChange: a }) {
 	let [o, s] = H(() => /* @__PURE__ */ new Date());
 	R(() => {
 		let e = window.setInterval(() => s(/* @__PURE__ */ new Date()), 6e4);
@@ -1526,7 +1529,7 @@ function it({ day: e, timezone: t, nodes: n, edges: r, selection: i, onSelection
 	}, []);
 	let c = B(() => {
 		let i = new Map(n.map((e) => [e.id, e.locked ? "Restricted work item" : e.title.trim() || "Untitled work item"]));
-		return [...n.map((n) => rt("node", n, i.get(n.id), e, t)), ...r.map((n) => rt("edge", n, `${i.get(n.fromId) ?? "Work item"} → ${i.get(n.toId) ?? "Work item"}`, e, t))].filter((e) => e !== null).sort((e, t) => e.minute - t.minute || e.key.localeCompare(t.key));
+		return [...n.map((n) => it("node", n, i.get(n.id), e, t)), ...r.map((n) => it("edge", n, `${i.get(n.fromId) ?? "Work item"} → ${i.get(n.toId) ?? "Work item"}`, e, t))].filter((e) => e !== null).sort((e, t) => e.minute - t.minute || e.key.localeCompare(t.key));
 	}, [
 		e,
 		t,
@@ -1537,7 +1540,7 @@ function it({ day: e, timezone: t, nodes: n, edges: r, selection: i, onSelection
 		let t = Math.floor(e.minute / 60), n = l.get(t) ?? [];
 		n.push(e), l.set(t, n);
 	}
-	let u = nt(o, t), d = u.day === e;
+	let u = rt(o, t), d = u.day === e;
 	return /* @__PURE__ */ G("div", {
 		className: "rounded-lg border border-border bg-surface px-4 py-3",
 		"aria-label": `Activity on ${e}`,
@@ -1631,26 +1634,26 @@ function it({ day: e, timezone: t, nodes: n, edges: r, selection: i, onSelection
 }
 //#endregion
 //#region src/components/graph/work/effortLayout.ts
-var at = .4, ot = .1, st = at, ct = 2, lt = 0, ut = (e, t, n) => JSON.stringify([
+var ot = .4, st = .1, ct = ot, lt = 2, ut = 0, dt = (e, t, n) => JSON.stringify([
 	e,
 	t,
 	n
 ]);
-function dt(e) {
+function ft(e) {
 	if (!e) return 0;
 	let t = Date.parse(e);
 	return Number.isNaN(t) ? 0 : t;
 }
-function ft(e, t, n = {}) {
+function pt(e, t, n = {}) {
 	let r = n.max ?? 2;
 	if (!Number.isFinite(r) || r <= 0 || e.length <= r) return [...e];
-	let i = new Map(t.map((e) => [e.id, Math.max(dt(e.updatedAt), dt(e.startedAt))])), a = e.map((e, t) => ({
+	let i = new Map(t.map((e) => [e.id, Math.max(ft(e.updatedAt), ft(e.startedAt))])), a = e.map((e, t) => ({
 		index: t,
 		recency: Math.max(0, ...e.nodeIds.map((e) => i.get(e) ?? 0))
 	})).sort((e, t) => t.recency - e.recency || e.index - t.index).slice(0, r), o = new Set(a.map((e) => e.index)), s = n.keepEffortId ? e.findIndex((e) => e.id === n.keepEffortId) : -1;
 	return s >= 0 && !o.has(s) && (o.delete(a[a.length - 1].index), o.add(s)), e.filter((e, t) => o.has(t));
 }
-function pt(e, t, n, r) {
+function mt(e, t, n, r) {
 	let i = new Map(e.map((e) => [e.id, e])), a = new Map(t.map((e) => [e.id, e])), o = new Set(r.expandedSourceEfforts), s = new Set(r.reversedEdgeIds), c = r.full ? 28 : 20, l = r.full ? 64 : 36, u = Math.max(240, r.width - 32), d = n.length >= 3 && !r.focusedEffortId, f = r.focusedEffortId ? n.filter((e) => e.id === r.focusedEffortId) : n, p = [];
 	for (let e of f) {
 		let t = [...new Set(e.nodeIds)].filter((e) => i.has(e)), n = new Set(t), l = new Set(e.contextNodeIds?.filter((e) => n.has(e))), u = (d || r.foldedForHeight?.includes(e.id)) && !o.has(e.id) && l.size < t.length ? t.filter((e) => !l.has(e)) : t;
@@ -1702,14 +1705,14 @@ function pt(e, t, n, r) {
 			run: 56
 		}).row || Math.ceil(j / 2) : j, B = (e) => e < z ? 0 : 1, V = I.reduce((e, t, n) => [...e, n === 0 || B(n) !== B(n - 1) ? 56 : e[n - 1] + I[n - 1] + L[n]], []), H = Math.max(0, ...w.map((e) => x(e).width)), U = (e) => P + B(e) * (H + Math.max(96, M)), W = [];
 		for (let t of w) W.push({
-			id: ut(e.id, "node", t),
+			id: dt(e.id, "node", t),
 			entityId: t,
 			x: U(E.get(t)),
 			y: V[E.get(t)],
 			...x(t)
 		});
 		for (let [t, n] of k) W.push({
-			id: ut(e.id, "node", t),
+			id: dt(e.id, "node", t),
 			entityId: t,
 			x: c,
 			y: V[n],
@@ -1734,10 +1737,10 @@ function pt(e, t, n, r) {
 				K.set(t.to, n + 1);
 				let r = ee.get(t.from), i = ee.get(t.to), a = r.x !== i.x, o = a ? "out-right" : "out-bottom", s = a ? "in-left" : "in-top";
 				return {
-					id: ut(e.id, "edge", t.id),
+					id: dt(e.id, "edge", t.id),
 					entityId: t.id,
-					source: ut(e.id, "node", t.from),
-					target: ut(e.id, "node", t.to),
+					source: dt(e.id, "node", t.from),
+					target: dt(e.id, "node", t.to),
 					sourceHandle: o,
 					targetHandle: s,
 					labelX: a ? (r.x + r.width + i.x) / 2 : i.x + i.width / 2 + 44,
@@ -1760,7 +1763,7 @@ function pt(e, t, n, r) {
 	}, h = m(!1), g = m(!0), _ = p.length <= 1 || g.zoom <= h.zoom * 1.25 ? h : g;
 	if (r.height && !r.focusedEffortId && _.zoom < .4) {
 		let i = p.filter((e) => e.sourceCount > 0 && e.sourceCount < e.nodes.length && e.collapsedSourceCount === 0 && !o.has(e.id) && !r.foldedForHeight?.includes(e.id));
-		if (i.length) return pt(e, t, n, {
+		if (i.length) return mt(e, t, n, {
 			...r,
 			foldedForHeight: [...r.foldedForHeight ?? [], ...i.map((e) => e.id)]
 		});
@@ -1770,7 +1773,7 @@ function pt(e, t, n, r) {
 }
 //#endregion
 //#region src/components/graph/work/WorkActivityNode.tsx
-var mt = {
+var ht = {
 	project: "▱",
 	terminal: "⌘",
 	agent: "✦",
@@ -1781,7 +1784,7 @@ var mt = {
 	meeting: "◉",
 	transcript: "▤",
 	task: "☑"
-}, ht = {
+}, gt = {
 	meeting: {
 		bar: "bg-cat-human",
 		chip: "bg-cat-human/10 text-cat-human"
@@ -1822,7 +1825,7 @@ var mt = {
 		bar: "bg-cat-transform",
 		chip: "bg-cat-transform/10 text-cat-transform"
 	}
-}, gt = "flex items-center justify-center [&>*]:h-full [&>*]:w-full [&_img]:h-full [&_img]:w-full [&_img]:object-contain [&_svg]:h-full [&_svg]:w-full", _t = {
+}, _t = "flex items-center justify-center [&>*]:h-full [&>*]:w-full [&_img]:h-full [&_img]:w-full [&_img]:object-contain [&_svg]:h-full [&_svg]:w-full", vt = {
 	idle: "bg-border-emphasis",
 	running: "bg-info",
 	waiting: "bg-caution",
@@ -1831,26 +1834,26 @@ var mt = {
 	stopped: "bg-border-emphasis",
 	stale: "bg-border-emphasis"
 };
-function vt({ node: e, detail: n, selected: r, selectedRevisionId: o, live: s, onSelect: c, onFeedback: l }) {
-	let u = e.locked || e.disclosure === "existence" ? void 0 : n, d = o ? u?.artifact?.revisions.find((e) => e.id === o) : u?.artifact?.revisions.at(-1), f = u?.artifact?.pending, p = e.locked ? "Restricted work item" : e.title, m = s && u?.fresh === !0, g = u?.emphasis === "earlier" || u?.emphasis === "input", _ = f?.status === "generating", v = !!u?.artifact?.revisions.length && e.status !== "running" && !_, y = ht[e.kind], b = e.status === "error", x = u?.emphasis === "current" || !g && e.status === "running" && m, S = e.status === "running" && s && !m, C = S ? "Running · updates delayed" : e.status, w = u?.lines?.length ? S ? [...u.lines, "Updates delayed"] : u.lines : [C], T = f?.status === "generating" ? `${f.label} generating` : f?.status === "failed" ? `${f.label} generation failed` : e.status === "running" && !m ? "running, updates delayed" : e.status, E = {
+function yt({ node: e, detail: n, selected: r, selectedRevisionId: o, live: s, onSelect: c, onFeedback: l }) {
+	let u = e.locked || e.disclosure === "existence" ? void 0 : n, d = o ? u?.artifact?.revisions.find((e) => e.id === o) : u?.artifact?.revisions.at(-1), f = u?.artifact?.pending, p = e.locked ? "Restricted work item" : e.title, m = s && u?.fresh === !0, g = u?.emphasis === "earlier" || u?.emphasis === "input", _ = f?.status === "generating", v = !!u?.artifact?.revisions.length && e.status !== "running" && !_, y = gt[e.kind], b = e.status === "error", x = u?.emphasis === "current" || !g && e.status === "running" && m, S = e.status === "running" && s && !m, C = ke(e.status, u?.pause), w = S ? "Running · updates delayed" : C ?? e.status, T = u?.lines?.length ? S ? [...u.lines, "Updates delayed"] : u.lines : [w], E = f?.status === "generating" ? `${f.label} generating` : f?.status === "failed" ? `${f.label} generation failed` : e.status === "running" && !m ? "running, updates delayed" : C ? `waiting, ${C}` : e.status, D = {
 		kind: "node",
 		id: e.id,
 		...d ? { revisionId: d.id } : {}
-	}, D = () => c(E);
+	}, O = () => c(D);
 	return /* @__PURE__ */ G("div", {
 		className: "pointer-events-auto relative w-[200px]",
 		"data-emphasis": u?.emphasis ?? "current",
 		"data-work-node": e.id,
-		onClick: D,
+		onClick: O,
 		children: [
 			/* @__PURE__ */ G("article", {
 				role: "button",
 				tabIndex: 0,
-				"aria-label": `${p}, ${T}`,
+				"aria-label": `${p}, ${E}`,
 				"aria-pressed": r,
 				"data-work-card": e.id,
 				onKeyDown: (e) => {
-					(e.key === "Enter" || e.key === " ") && (e.preventDefault(), D());
+					(e.key === "Enter" || e.key === " ") && (e.preventDefault(), O());
 				},
 				className: t("relative overflow-hidden rounded-lg border bg-surface text-left shadow-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary", b ? "border-danger" : x ? "border-info" : v ? "border-success" : "border-border", b || x || v ? "border-2" : "", v && "bg-success-bg/40", g && "opacity-80", r && "ring-2 ring-primary/30"),
 				children: [
@@ -1864,7 +1867,7 @@ function vt({ node: e, detail: n, selected: r, selectedRevisionId: o, live: s, o
 							/* @__PURE__ */ W("span", {
 								"aria-hidden": "true",
 								className: t("flex h-5 w-5 shrink-0 items-center justify-center rounded text-[11px] leading-none", y.chip),
-								children: mt[e.kind]
+								children: ht[e.kind]
 							}),
 							/* @__PURE__ */ W("span", {
 								className: t("min-w-0 flex-1 truncate text-[12px] font-semibold", g ? "text-text-secondary" : "text-text-primary"),
@@ -1872,22 +1875,30 @@ function vt({ node: e, detail: n, selected: r, selectedRevisionId: o, live: s, o
 							}),
 							/* @__PURE__ */ W("span", {
 								"aria-hidden": "true",
-								className: t("h-2 w-2 shrink-0 rounded-full", g ? "bg-border-emphasis" : _t[e.status])
+								className: t("h-2 w-2 shrink-0 rounded-full", g ? "bg-border-emphasis" : vt[e.status])
 							})
 						]
 					}),
 					/* @__PURE__ */ G("div", {
 						className: t("space-y-1.5 py-2 pl-3.5 pr-2.5 text-[11px] leading-snug", g ? "text-text-tertiary" : "text-text-secondary"),
 						children: [
-							w.map((n, r) => /* @__PURE__ */ G("div", {
+							T.map((n, r) => /* @__PURE__ */ G("div", {
 								className: "flex items-start justify-between gap-1.5",
-								children: [/* @__PURE__ */ W("span", {
-									className: "min-w-0",
-									children: n
-								}), r === 0 && u?.badge && /* @__PURE__ */ W("span", {
-									className: t("shrink-0 rounded px-1.5 py-px text-[10px] font-semibold", e.status === "running" ? "border border-info-border text-info-fg" : "bg-info-bg text-info-fg"),
-									children: u.badge
-								})]
+								children: [
+									/* @__PURE__ */ W("span", {
+										className: "min-w-0",
+										children: n
+									}),
+									r === 0 && u?.badge && /* @__PURE__ */ W("span", {
+										className: t("shrink-0 rounded px-1.5 py-px text-[10px] font-semibold", e.status === "running" ? "border border-info-border text-info-fg" : "bg-info-bg text-info-fg"),
+										children: u.badge
+									}),
+									r === 0 && !u?.badge && C && n !== C && /* @__PURE__ */ W("span", {
+										"data-testid": "work-card-pause",
+										className: "shrink-0 rounded bg-warning-bg px-1.5 py-px text-[10px] font-semibold text-warning-fg",
+										children: C
+									})
+								]
 							}, `${r}-${n}`)),
 							!!u?.participants?.length && /* @__PURE__ */ G("div", {
 								className: "flex items-center gap-1.5",
@@ -1958,7 +1969,7 @@ function vt({ node: e, detail: n, selected: r, selectedRevisionId: o, live: s, o
 				className: "nodrag nopan absolute -right-2 -top-3 h-7 w-7 rounded-full border border-border bg-surface shadow-sm",
 				"aria-label": `${u.feedbackCount} comments on ${p}`,
 				onClick: (e) => {
-					e.stopPropagation(), l(E);
+					e.stopPropagation(), l(D);
 				},
 				children: [/* @__PURE__ */ W(a, { size: 14 }), /* @__PURE__ */ W("span", {
 					className: "absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-0.5 text-[10px] text-white",
@@ -1970,24 +1981,24 @@ function vt({ node: e, detail: n, selected: r, selectedRevisionId: o, live: s, o
 }
 //#endregion
 //#region src/components/graph/work/WorkActivityCanvas.tsx
-var yt = "!h-1.5 !w-1.5 !min-h-0 !min-w-0 !border-0 !bg-border-emphasis";
-function bt({ data: e, selected: t }) {
+var bt = "!h-1.5 !w-1.5 !min-h-0 !min-w-0 !border-0 !bg-border-emphasis";
+function xt({ data: e, selected: t }) {
 	return /* @__PURE__ */ G(U, { children: [
 		/* @__PURE__ */ W(J, {
 			type: "target",
 			id: "in-left",
 			position: Y.Left,
 			isConnectable: !1,
-			className: yt
+			className: bt
 		}),
 		/* @__PURE__ */ W(J, {
 			type: "target",
 			id: "in-top",
 			position: Y.Top,
 			isConnectable: !1,
-			className: yt
+			className: bt
 		}),
-		/* @__PURE__ */ W(vt, {
+		/* @__PURE__ */ W(yt, {
 			node: e.entity,
 			detail: e.detail,
 			live: e.live,
@@ -2001,18 +2012,18 @@ function bt({ data: e, selected: t }) {
 			id: "out-right",
 			position: Y.Right,
 			isConnectable: !1,
-			className: yt
+			className: bt
 		}),
 		/* @__PURE__ */ W(J, {
 			type: "source",
 			id: "out-bottom",
 			position: Y.Bottom,
 			isConnectable: !1,
-			className: yt
+			className: bt
 		})
 	] });
 }
-function xt({ data: e }) {
+function St({ data: e }) {
 	return /* @__PURE__ */ W(g, {
 		tone: "surface",
 		title: /* @__PURE__ */ G("span", {
@@ -2052,7 +2063,7 @@ function xt({ data: e }) {
 		})
 	});
 }
-function St(e) {
+function Ct(e) {
 	let n = e.data;
 	return n ? /* @__PURE__ */ G(U, { children: [/* @__PURE__ */ W(P, {
 		...e,
@@ -2074,11 +2085,11 @@ function St(e) {
 		})
 	}) })] }) : null;
 }
-var Ct = {
-	activity: bt,
-	effort: xt
-}, wt = { activity: St };
-function Tt(e) {
+var wt = {
+	activity: xt,
+	effort: St
+}, Tt = { activity: Ct };
+function Et(e) {
 	let { activity: r, nodes: a, edges: o, selection: s, viewport: c, onViewportChange: l, onSelectionChange: u, background: d = "ripple-grid", onViewAsList: f, maxEfforts: p = 2 } = e, m = V(null), [h, g] = H({
 		width: 640,
 		height: 480
@@ -2095,7 +2106,7 @@ function Tt(e) {
 		});
 		return t.observe(e), () => t.disconnect();
 	}, []);
-	let O = [...Object.keys(r.edgeLabels ?? {}), ...r.failedEdgeIds ?? []].sort().join("\0"), k = s?.kind === "node" ? s.id : void 0, A = E.focusedEffortId ?? (k ? r.efforts.find((e) => e.nodeIds.includes(k))?.id ?? null : null), j = B(() => ft(r.efforts, a, {
+	let O = [...Object.keys(r.edgeLabels ?? {}), ...r.failedEdgeIds ?? []].sort().join("\0"), k = s?.kind === "node" ? s.id : void 0, A = E.focusedEffortId ?? (k ? r.efforts.find((e) => e.nodeIds.includes(k))?.id ?? null : null), j = B(() => pt(r.efforts, a, {
 		max: p,
 		keepEffortId: A
 	}), [
@@ -2103,7 +2114,7 @@ function Tt(e) {
 		a,
 		p,
 		A
-	]), M = B(() => pt(a, o, j, {
+	]), M = B(() => mt(a, o, j, {
 		width: h.width,
 		height: h.height,
 		full: r.mode === "full",
@@ -2124,7 +2135,7 @@ function Tt(e) {
 		h,
 		v
 	]), N = L(() => {
-		let e = Math.min(0, ...M.map((e) => e.x)), t = Math.min(0, ...M.map((e) => e.y)), n = Math.max(1, ...M.map((e) => e.x + e.width)) - e, r = Math.max(1, ...M.map((e) => e.y + e.height)) - t, i = Math.max(ot, Math.min(1.2, (h.width - 48) / n, (h.height - 48) / r));
+		let e = Math.min(0, ...M.map((e) => e.x)), t = Math.min(0, ...M.map((e) => e.y)), n = Math.max(1, ...M.map((e) => e.x + e.width)) - e, r = Math.max(1, ...M.map((e) => e.y + e.height)) - t, i = Math.max(st, Math.min(1.2, (h.width - 48) / n, (h.height - 48) / r));
 		return {
 			x: (h.width - n * i) / 2 - e * i,
 			y: (h.height - r * i) / 2 - t * i,
@@ -2248,10 +2259,10 @@ function Tt(e) {
 			});
 		}
 	}
-	let Y = new Map(q.filter((e) => e.type === "activity").map((e) => [e.id, e.data.entity.id])), ie = Math.min(at, c.zoom), X = (e) => l({
+	let Y = new Map(q.filter((e) => e.type === "activity").map((e) => [e.id, e.data.entity.id])), ie = Math.min(ot, c.zoom), X = (e) => l({
 		...c,
 		zoom: Math.max(ie, Math.min(2.5, c.zoom * e))
-	}), Z = c.zoom < st, Q = d === "ripple-grid", ae = b(m, "auto", Q);
+	}), Z = c.zoom < ct, Q = d === "ripple-grid", ae = b(m, "auto", Q);
 	return /* @__PURE__ */ G("div", {
 		ref: m,
 		className: "relative isolate min-h-40 min-w-0 flex-1 overflow-hidden",
@@ -2267,8 +2278,8 @@ function Tt(e) {
 			/* @__PURE__ */ W(re, {
 				nodes: q,
 				edges: J,
-				nodeTypes: Ct,
-				edgeTypes: wt,
+				nodeTypes: wt,
+				edgeTypes: Tt,
 				viewport: c,
 				onViewportChange: l,
 				onPaneClick: () => u(null),
@@ -2370,24 +2381,24 @@ function Tt(e) {
 }
 //#endregion
 //#region src/components/graph/work/WorkActivityHeader.tsx
-var Et = [{
+var Dt = [{
 	id: "activity",
 	label: "Activity"
 }, {
 	id: "lab",
 	label: "Computer Lab"
-}], Dt = [
+}], Ot = [
 	1,
 	2,
 	3,
 	5
-], Ot = "all";
-function kt({ title: e, subtitle: n, expanded: r = !1, onExpand: a, onPopOut: o, onClose: c, actions: l, view: u = "activity", onViewChange: d, viewNote: p, effortCount: m = 0, maxEfforts: h, onMaxEffortsChange: g, className: _, "data-testid": v = "work-activity-header" }) {
-	let b = !!g && m > 1, x = h ?? 0, S = Number.isFinite(x) && x > 0 && x < m, C = [...[.../* @__PURE__ */ new Set([...Dt, ...S ? [x] : []])].filter((e) => e < m).sort((e, t) => e - t).map((e) => ({
+], kt = "all";
+function At({ title: e, subtitle: n, expanded: r = !1, onExpand: a, onPopOut: o, onClose: c, actions: l, view: u = "activity", onViewChange: d, viewNote: p, effortCount: m = 0, maxEfforts: h, onMaxEffortsChange: g, className: _, "data-testid": v = "work-activity-header" }) {
+	let b = !!g && m > 1, x = h ?? 0, S = Number.isFinite(x) && x > 0 && x < m, C = [...[.../* @__PURE__ */ new Set([...Ot, ...S ? [x] : []])].filter((e) => e < m).sort((e, t) => e - t).map((e) => ({
 		value: String(e),
 		label: `Show ${e} of ${m} activities`
 	})), {
-		value: Ot,
+		value: kt,
 		label: `All ${m} activities`
 	}], w = /* @__PURE__ */ G("header", {
 		"data-testid": v,
@@ -2479,7 +2490,7 @@ function kt({ title: e, subtitle: n, expanded: r = !1, onExpand: a, onPopOut: o,
 			className: "@container flex shrink-0 items-center gap-2.5 border-b border-border bg-surface px-3 py-1.5",
 			children: [
 				d && /* @__PURE__ */ W(f, {
-					items: Et,
+					items: Dt,
 					value: u,
 					onValueChange: (e) => d(e),
 					variant: "segmented",
@@ -2494,8 +2505,8 @@ function kt({ title: e, subtitle: n, expanded: r = !1, onExpand: a, onPopOut: o,
 					"aria-label": "Activities shown",
 					"data-testid": `${v}-max-efforts`,
 					options: C,
-					value: S ? String(x) : Ot,
-					onChange: (e) => g(e.target.value === Ot ? 0 : Number(e.target.value))
+					value: S ? String(x) : kt,
+					onChange: (e) => g(e.target.value === kt ? 0 : Number(e.target.value))
 				}),
 				p && /* @__PURE__ */ W("span", {
 					className: "hidden min-w-0 truncate text-[11px] text-text-tertiary @lg:inline",
@@ -2508,7 +2519,7 @@ function kt({ title: e, subtitle: n, expanded: r = !1, onExpand: a, onPopOut: o,
 }
 //#endregion
 //#region src/components/graph/work/WorkArtifactInspector.tsx
-function At(e, t) {
+function jt(e, t) {
 	let n = t.revisionId ? e.revisions.find((e) => e.id === t.revisionId) : e.revisions.at(-1), r = n?.slides ?? [];
 	return {
 		revision: n,
@@ -2516,8 +2527,8 @@ function At(e, t) {
 		slide: r.find((e) => e.id === t.anchorId) ?? r.find((e) => e.id === n?.anchorId) ?? r[0]
 	};
 }
-function jt({ node: e, artifact: r, selection: a, onSelectionChange: o, onOpen: s, onReference: c, quiet: l = !1 }) {
-	let u = z(), { revision: d, slides: m, slide: h } = At(r, a), g = h ? m.indexOf(h) : -1, _ = {
+function Mt({ node: e, artifact: r, selection: a, onSelectionChange: o, onOpen: s, onReference: c, quiet: l = !1 }) {
+	let u = z(), { revision: d, slides: m, slide: h } = jt(r, a), g = h ? m.indexOf(h) : -1, _ = {
 		...a,
 		revisionId: d?.id,
 		anchorId: h?.id ?? d?.anchorId
@@ -2585,7 +2596,7 @@ function jt({ node: e, artifact: r, selection: a, onSelectionChange: o, onOpen: 
 				children: [
 					/* @__PURE__ */ W("div", {
 						"aria-label": `${d.label} preview`,
-						className: t("aspect-video overflow-hidden rounded-lg border border-border bg-surface", gt),
+						className: t("aspect-video overflow-hidden rounded-lg border border-border bg-surface", _t),
 						children: h?.preview ?? d.preview ?? /* @__PURE__ */ W("span", {
 							className: "flex h-full items-center justify-center text-sm text-text-secondary",
 							children: "Preview unavailable"
@@ -2665,7 +2676,7 @@ function jt({ node: e, artifact: r, selection: a, onSelectionChange: o, onOpen: 
 }
 //#endregion
 //#region src/components/graph/work/WorkComputePane.tsx
-var Mt = I(() => import("./ChatLabTerminal-DCNi0cGa.js")), Nt = {
+var Nt = I(() => import("./ChatLabTerminal-DCNi0cGa.js")), Pt = {
 	planning: {
 		label: "PLANNING",
 		pill: "info",
@@ -2722,7 +2733,7 @@ var Mt = I(() => import("./ChatLabTerminal-DCNi0cGa.js")), Nt = {
 		busy: !1,
 		tone: "info"
 	}
-}, Pt = {
+}, Ft = {
 	pending: {
 		dot: "bg-border-emphasis",
 		text: "text-text-tertiary",
@@ -2748,7 +2759,7 @@ var Mt = I(() => import("./ChatLabTerminal-DCNi0cGa.js")), Nt = {
 		text: "text-text-tertiary line-through",
 		word: "Skipped"
 	}
-}, Ft = {
+}, It = {
 	prompt: {
 		glyph: "$",
 		text: "text-code-green"
@@ -2769,7 +2780,7 @@ var Mt = I(() => import("./ChatLabTerminal-DCNi0cGa.js")), Nt = {
 		glyph: "·",
 		text: "text-code-subtle"
 	}
-}, It = {
+}, Lt = {
 	command: {
 		glyph: "$",
 		text: "text-code-mauve"
@@ -2799,34 +2810,34 @@ var Mt = I(() => import("./ChatLabTerminal-DCNi0cGa.js")), Nt = {
 		text: "text-code-yellow"
 	}
 };
-function Lt(e) {
+function Rt(e) {
 	let t = 2166136261;
 	for (let n = 0; n < e.length; n += 1) t ^= e.charCodeAt(n), t = Math.imul(t, 16777619);
 	return t >>> 0;
 }
-function Rt(e) {
+function zt(e) {
 	let t = new Date(e);
 	return Number.isNaN(t.getTime()) ? "" : t.toLocaleTimeString([], { hour12: !1 });
 }
-function zt(e) {
+function Bt(e) {
 	if (e == null || !Number.isFinite(e) || e < 0) return "";
 	let t = Math.round(e / 1e3);
 	if (t < 60) return `${t}s`;
 	let n = Math.floor(t / 60);
 	return n < 60 ? t % 60 ? `${n}m ${t % 60}s` : `${n}m` : `${Math.floor(n / 60)}h ${String(n % 60).padStart(2, "0")}m`;
 }
-function Bt(e) {
-	let t = Pt[e.status].word, n = zt(e.elapsedMs);
+function Vt(e) {
+	let t = Ft[e.status].word, n = Bt(e.elapsedMs);
 	return n ? e.status === "running" ? `${t} · ${n} elapsed` : `${t} · ${n}` : t;
 }
-function Vt(e) {
+function Ht(e) {
 	let { metrics: t, task: n } = e, r = t.contextBudgetTokens;
 	return {
 		id: e.label,
 		label: e.label,
 		sessionId: e.shell?.sessionId ?? "",
 		createdAt: n.startedAt ?? "",
-		status: Nt[e.status].box,
+		status: Pt[e.status].box,
 		...e.project ? { project: e.project } : {},
 		...e.stopsInMs == null ? {} : { stopsInMs: e.stopsInMs },
 		...r ? { contextUsed: Math.min(1, Math.max(0, t.contextTokens / r)) } : {},
@@ -2843,7 +2854,7 @@ function Vt(e) {
 		currentTask: e.workItem ? `${e.workItem.key} · ${n.title}` : n.title
 	};
 }
-function Ht({ label: e, value: t, title: n }) {
+function Ut({ label: e, value: t, title: n }) {
 	return /* @__PURE__ */ G("div", {
 		className: "min-w-0 rounded-md border border-border bg-surface-inset px-2 py-1.5",
 		children: [/* @__PURE__ */ W("span", {
@@ -2856,7 +2867,7 @@ function Ht({ label: e, value: t, title: n }) {
 		})]
 	});
 }
-function Ut({ label: e, trailing: t, children: n }) {
+function Wt({ label: e, trailing: t, children: n }) {
 	return /* @__PURE__ */ G("section", {
 		className: "space-y-1.5 rounded-md border border-border p-2.5",
 		children: [/* @__PURE__ */ G("h4", {
@@ -2871,7 +2882,7 @@ function Ut({ label: e, trailing: t, children: n }) {
 		}), n]
 	});
 }
-function Wt({ lines: e, running: n, label: r, environment: i, seed: a, testId: o }) {
+function Gt({ lines: e, running: n, label: r, environment: i, seed: a, testId: o }) {
 	return /* @__PURE__ */ G("div", {
 		"data-testid": o,
 		className: "overflow-hidden rounded-md border border-code-border bg-code-bg font-mono text-[11px] leading-relaxed",
@@ -2904,7 +2915,7 @@ function Wt({ lines: e, running: n, label: r, environment: i, seed: a, testId: o
 			"data-testid": `${o}-particles`,
 			children: [
 				e.map((e, n) => {
-					let r = Ft[e.glyph] ?? Ft.text;
+					let r = It[e.glyph] ?? It.text;
 					return /* @__PURE__ */ G("p", {
 						className: "flex gap-1.5",
 						children: [/* @__PURE__ */ W("span", {
@@ -2933,12 +2944,12 @@ function Wt({ lines: e, running: n, label: r, environment: i, seed: a, testId: o
 		})]
 	});
 }
-function Gt({ compute: e, banner: r, className: i, "data-testid": a = "work-compute-pane" }) {
-	let [s, l] = H("activity"), [u, d] = H([]), m = Nt[e.status] ?? Nt.running, { metrics: g, task: _ } = e, y = e.runtime === "agentcore-microvm" ? "AgentCore microVM" : "Local runtime", b = B(() => Vt(e), [e]), C = B(() => Lt(e.shell?.sessionId ?? e.label), [e.shell?.sessionId, e.label]), w = g.contextBudgetTokens, T = w ? `${Math.round(g.contextTokens / w * 100)}% (${j(w)})` : j(g.contextTokens), D = B(() => e.events.map((e) => {
-		let n = u.includes(e.id), r = It[e.kind] ?? It.text;
+function Kt({ compute: e, banner: r, className: i, "data-testid": a = "work-compute-pane" }) {
+	let [s, l] = H("activity"), [u, d] = H([]), m = Pt[e.status] ?? Pt.running, { metrics: g, task: _ } = e, y = e.runtime === "agentcore-microvm" ? "AgentCore microVM" : "Local runtime", b = B(() => Ht(e), [e]), C = B(() => Rt(e.shell?.sessionId ?? e.label), [e.shell?.sessionId, e.label]), w = g.contextBudgetTokens, T = w ? `${Math.round(g.contextTokens / w * 100)}% (${j(w)})` : j(g.contextTokens), D = B(() => e.events.map((e) => {
+		let n = u.includes(e.id), r = Lt[e.kind] ?? Lt.text;
 		return {
 			id: e.id,
-			timestamp: Rt(e.at),
+			timestamp: zt(e.at),
 			...e.kind === "error" ? { level: "error" } : {},
 			message: /* @__PURE__ */ G("span", {
 				className: "flex flex-wrap items-baseline gap-1.5",
@@ -3127,21 +3138,21 @@ function Gt({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 				className: "grid grid-cols-2 gap-2",
 				"data-testid": `${a}-metrics`,
 				children: [
-					/* @__PURE__ */ W(Ht, {
+					/* @__PURE__ */ W(Ut, {
 						label: "Model",
 						value: A(g.model),
 						title: g.model
 					}),
-					/* @__PURE__ */ W(Ht, {
+					/* @__PURE__ */ W(Ut, {
 						label: "Cost",
 						value: g.costUsd == null ? "—" : `$${g.costUsd.toFixed(4)}`
 					}),
-					/* @__PURE__ */ W(Ht, {
+					/* @__PURE__ */ W(Ut, {
 						label: "Context",
 						value: T,
 						title: `${g.contextTokens} tokens used`
 					}),
-					/* @__PURE__ */ W(Ht, {
+					/* @__PURE__ */ W(Ut, {
 						label: "Environment",
 						value: _.environment
 					})
@@ -3258,14 +3269,14 @@ function Gt({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 							className: "rounded-md border border-code-border bg-code-bg px-2 py-6 text-center font-mono text-[11px] text-code-muted",
 							children: "Loading terminal…"
 						}),
-						children: /* @__PURE__ */ W(Mt, {
+						children: /* @__PURE__ */ W(Nt, {
 							sessionId: e.shell.sessionId,
 							shellUrl: e.shell.shellUrl,
 							className: "flex h-72 min-h-0 flex-col overflow-hidden rounded-md border border-code-border",
 							"data-testid": `${a}-terminal`
 						})
 					}) : /* @__PURE__ */ G(U, { children: [
-						/* @__PURE__ */ W(Wt, {
+						/* @__PURE__ */ W(Gt, {
 							lines: e.terminalPreview.lines,
 							running: e.terminalPreview.running,
 							label: e.label,
@@ -3299,14 +3310,14 @@ function Gt({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 				when: L,
 				className: "space-y-3",
 				children: [
-					/* @__PURE__ */ W(Ut, {
+					/* @__PURE__ */ W(Wt, {
 						label: "Progress",
 						trailing: `${e.progress.length} ${e.progress.length === 1 ? "step" : "steps"}`,
 						children: e.progress.length ? /* @__PURE__ */ W("ol", {
 							className: "space-y-1.5",
 							"data-testid": `${a}-progress`,
 							children: e.progress.map((e) => {
-								let n = Pt[e.status];
+								let n = Ft[e.status];
 								return /* @__PURE__ */ G("li", {
 									"data-state": e.status,
 									className: "flex items-baseline gap-2 text-[12px]",
@@ -3322,7 +3333,7 @@ function Gt({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 										}),
 										/* @__PURE__ */ W("span", {
 											className: "shrink-0 text-[11px] tabular-nums text-text-tertiary",
-											children: Bt(e)
+											children: Vt(e)
 										})
 									]
 								}, e.id);
@@ -3332,7 +3343,7 @@ function Gt({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 							children: "No plan was recorded for this session."
 						})
 					}),
-					/* @__PURE__ */ W(Ut, {
+					/* @__PURE__ */ W(Wt, {
 						label: "Artifacts",
 						trailing: `${e.artifacts.length} ${e.artifacts.length === 1 ? "file" : "files"}`,
 						children: e.artifacts.length ? /* @__PURE__ */ W("ul", {
@@ -3361,7 +3372,7 @@ function Gt({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 							children: "This session has not written a file you can see."
 						})
 					}),
-					e.workItem && /* @__PURE__ */ W(Ut, {
+					e.workItem && /* @__PURE__ */ W(Wt, {
 						label: "Work item",
 						children: (() => {
 							let t = e.workItem, n = /* @__PURE__ */ G(U, { children: [/* @__PURE__ */ G("span", {
@@ -3411,7 +3422,7 @@ function Gt({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 }
 //#endregion
 //#region src/components/graph/work/WorkNodePane.tsx
-var Kt = {
+var qt = {
 	info: {
 		card: "border-info-border bg-info-bg",
 		dot: "bg-info",
@@ -3428,8 +3439,8 @@ var Kt = {
 		title: "text-danger-fg"
 	}
 };
-function qt({ banner: e }) {
-	let n = Kt[e.tone];
+function Jt({ banner: e }) {
+	let n = qt[e.tone];
 	return /* @__PURE__ */ G("div", {
 		role: "status",
 		className: t("flex gap-2 rounded-md border p-2.5", n.card),
@@ -3450,7 +3461,7 @@ function qt({ banner: e }) {
 		})]
 	});
 }
-function Jt({ label: e, children: t }) {
+function Yt({ label: e, children: t }) {
 	return /* @__PURE__ */ G("section", {
 		className: "space-y-1.5",
 		children: [/* @__PURE__ */ W("h3", {
@@ -3459,7 +3470,7 @@ function Jt({ label: e, children: t }) {
 		}), t]
 	});
 }
-function Yt({ item: e, onSelect: t }) {
+function Xt({ item: e, onSelect: t }) {
 	let n = /* @__PURE__ */ G(U, { children: [
 		/* @__PURE__ */ W("span", {
 			"aria-hidden": "true",
@@ -3492,7 +3503,7 @@ function Yt({ item: e, onSelect: t }) {
 		children: n
 	});
 }
-function Xt({ transcript: e, onSelect: t }) {
+function Zt({ transcript: e, onSelect: t }) {
 	let n = z(), [r, i] = H("transcript"), a = e.ask;
 	return /* @__PURE__ */ G("div", {
 		className: "space-y-3",
@@ -3542,7 +3553,7 @@ function Xt({ transcript: e, onSelect: t }) {
 				idPrefix: n,
 				id: "ask",
 				when: r,
-				children: /* @__PURE__ */ W(Zt, {
+				children: /* @__PURE__ */ W(Qt, {
 					ask: a,
 					onSelect: t
 				})
@@ -3550,7 +3561,7 @@ function Xt({ transcript: e, onSelect: t }) {
 		]
 	});
 }
-function Zt({ ask: e, onSelect: t }) {
+function Qt({ ask: e, onSelect: t }) {
 	let [r, i] = H(""), [a, o] = H(null), [s, c] = H(null), [l, u] = H(!1);
 	if (!e.enabled) return /* @__PURE__ */ W("p", {
 		className: "text-sm text-text-secondary",
@@ -3616,7 +3627,7 @@ function Zt({ ask: e, onSelect: t }) {
 							variant: "secondary",
 							onClick: () => t(e.selection),
 							children: [e.label, " ↗"]
-						}, e.id) : /* @__PURE__ */ W(en, { children: e.label }, e.id))
+						}, e.id) : /* @__PURE__ */ W(tn, { children: e.label }, e.id))
 					}),
 					a.note && /* @__PURE__ */ W("p", {
 						className: "text-[11px] text-text-tertiary",
@@ -3627,14 +3638,14 @@ function Zt({ ask: e, onSelect: t }) {
 		]
 	});
 }
-function Qt(e) {
+function $t(e) {
 	return e.replace(/\s+/g, " ").trim().toLowerCase();
 }
-function $t(e, t) {
-	let n = Qt(e);
-	return !n || t.some((e) => !!e && (Qt(e) === n || n.length >= 8 && Qt(e).includes(n)));
+function en(e, t) {
+	let n = $t(e);
+	return !n || t.some((e) => !!e && ($t(e) === n || n.length >= 8 && $t(e).includes(n)));
 }
-function en({ children: e, title: t, tone: n }) {
+function tn({ children: e, title: t, tone: n }) {
 	return /* @__PURE__ */ W(c, {
 		size: "sm",
 		className: "max-w-full min-w-0",
@@ -3646,15 +3657,15 @@ function en({ children: e, title: t, tone: n }) {
 		})
 	});
 }
-function tn({ node: e, detail: r, selection: a, onSelectionChange: o, onClose: c, onOpen: l, onReference: u, live: d, className: f, "data-testid": p = "activity-inspector" }) {
-	let m = e.locked || e.disclosure === "existence", h = m ? void 0 : r, g = e.locked ? "Restricted work item" : e.title, _ = h?.sections, v = h?.artifact ? At(h.artifact, a) : void 0, y = v?.revision ? {
+function nn({ node: e, detail: r, selection: a, onSelectionChange: o, onClose: c, onOpen: l, onReference: u, live: d, className: f, "data-testid": p = "activity-inspector" }) {
+	let m = e.locked || e.disclosure === "existence", h = m ? void 0 : r, g = e.locked ? "Restricted work item" : e.title, _ = h?.sections, v = h?.artifact ? jt(h.artifact, a) : void 0, y = v?.revision ? {
 		...a,
 		revisionId: v.revision.id,
 		anchorId: v.slide?.id ?? a.anchorId ?? v.revision.anchorId
-	} : { ...a }, b = h?.compute, x = h?.banner?.description && $t(h.banner.description, [g, h.subtitle]) ? {
+	} : { ...a }, b = h?.compute, x = h?.banner?.description && en(h.banner.description, [g, h.subtitle]) ? {
 		tone: h.banner.tone,
 		title: h.banner.title
-	} : h?.banner, S = x && $t(x.title, [g]) ? x.description ? {
+	} : h?.banner, S = x && en(x.title, [g]) ? x.description ? {
 		tone: x.tone,
 		title: x.description
 	} : void 0 : x, C = !m && !!d && e.status === "running" && h?.fresh !== !0, w = C ? h?.subtitle ? `${h.subtitle} · updates delayed` : "Running · updates delayed" : h?.subtitle, T = !!b || !!h?.artifact || !!h?.transcript, E = [
@@ -3663,7 +3674,7 @@ function tn({ node: e, detail: r, selection: a, onSelectionChange: o, onClose: c
 		_?.description,
 		h?.subtitle,
 		h?.excerpt
-	], D = T ? [] : (h?.lines ?? []).filter((e, t, n) => n.indexOf(e) === t && !$t(e, E)), O = T ? void 0 : h?.excerpt, k = !b && !S && !h?.artifact && !h?.transcript && !_ && !h?.note && !h?.actions?.length && !O && D.length === 0;
+	], D = T ? [] : (h?.lines ?? []).filter((e, t, n) => n.indexOf(e) === t && !en(e, E)), O = T ? void 0 : h?.excerpt, k = !b && !S && !h?.artifact && !h?.transcript && !_ && !h?.note && !h?.actions?.length && !O && D.length === 0;
 	return /* @__PURE__ */ G("section", {
 		"aria-label": g,
 		"data-testid": p,
@@ -3695,8 +3706,8 @@ function tn({ node: e, detail: r, selection: a, onSelectionChange: o, onClose: c
 			/* @__PURE__ */ G("div", {
 				className: "min-h-0 flex-1 space-y-4 overflow-auto p-3",
 				children: [
-					!b && S && /* @__PURE__ */ W(qt, { banner: S }),
-					b && /* @__PURE__ */ W(Gt, {
+					!b && S && /* @__PURE__ */ W(Jt, { banner: S }),
+					b && /* @__PURE__ */ W(Kt, {
 						compute: b,
 						...S ? { banner: S } : {}
 					}),
@@ -3714,7 +3725,7 @@ function tn({ node: e, detail: r, selection: a, onSelectionChange: o, onClose: c
 						className: "text-[13px] leading-snug text-text-secondary",
 						children: _.description
 					}),
-					h?.artifact && /* @__PURE__ */ W(jt, {
+					h?.artifact && /* @__PURE__ */ W(Mt, {
 						node: e,
 						artifact: h.artifact,
 						selection: a,
@@ -3722,43 +3733,43 @@ function tn({ node: e, detail: r, selection: a, onSelectionChange: o, onClose: c
 						onOpen: l,
 						quiet: !!h.banner
 					}),
-					h?.transcript && /* @__PURE__ */ W(Xt, {
+					h?.transcript && /* @__PURE__ */ W(Zt, {
 						transcript: h.transcript,
 						onSelect: o
 					}),
-					!!_?.inputs?.length && /* @__PURE__ */ W(Jt, {
+					!!_?.inputs?.length && /* @__PURE__ */ W(Yt, {
 						label: "Inputs",
 						children: /* @__PURE__ */ W("div", {
 							className: "flex flex-wrap gap-1.5",
-							children: _.inputs.map((e, t) => typeof e == "string" ? /* @__PURE__ */ W(en, { children: e }, `${t}-${e}`) : /* @__PURE__ */ W(en, {
+							children: _.inputs.map((e, t) => typeof e == "string" ? /* @__PURE__ */ W(tn, { children: e }, `${t}-${e}`) : /* @__PURE__ */ W(tn, {
 								title: e.meta,
 								children: e.title
 							}, e.id))
 						})
 					}),
-					!!_?.tools?.length && /* @__PURE__ */ W(Jt, {
+					!!_?.tools?.length && /* @__PURE__ */ W(Yt, {
 						label: "Tools in this run",
 						children: /* @__PURE__ */ W("div", {
 							className: "flex flex-wrap gap-1.5",
-							children: _.tools.map((e, t) => /* @__PURE__ */ W(en, {
+							children: _.tools.map((e, t) => /* @__PURE__ */ W(tn, {
 								tone: "info",
 								children: e
 							}, `${t}-${e}`))
 						})
 					}),
-					!!_?.sources?.length && /* @__PURE__ */ W(Jt, {
+					!!_?.sources?.length && /* @__PURE__ */ W(Yt, {
 						label: "Sources used",
 						children: /* @__PURE__ */ W("div", {
 							className: "space-y-1.5",
-							children: _.sources.map((e) => /* @__PURE__ */ W(Yt, {
+							children: _.sources.map((e) => /* @__PURE__ */ W(Xt, {
 								item: e,
 								onSelect: o
 							}, e.id))
 						})
 					}),
-					_?.workItem && /* @__PURE__ */ W(Jt, {
+					_?.workItem && /* @__PURE__ */ W(Yt, {
 						label: "Work item",
-						children: /* @__PURE__ */ W(Yt, {
+						children: /* @__PURE__ */ W(Xt, {
 							item: _.workItem,
 							onSelect: o
 						})
@@ -3799,7 +3810,7 @@ function tn({ node: e, detail: r, selection: a, onSelectionChange: o, onClose: c
 }
 //#endregion
 //#region src/components/forms/RangeSlider.tsx
-function nn({ value: e, min: n, max: r, step: i = 1, minDistance: a = i, labels: o, formatValue: s, onChange: c, className: l }) {
+function rn({ value: e, min: n, max: r, step: i = 1, minDistance: a = i, labels: o, formatValue: s, onChange: c, className: l }) {
 	let u = z(), d = Math.max(1, r - n), f = (e) => Math.max(n, Math.min(r, e)), p = f(e[0]), m = Math.max(p, f(e[1])), h = Math.min(a, r - n);
 	return /* @__PURE__ */ G("div", {
 		className: t("relative h-7 min-w-0", l),
@@ -3835,13 +3846,13 @@ function nn({ value: e, min: n, max: r, step: i = 1, minDistance: a = i, labels:
 }
 //#endregion
 //#region src/components/graph/work/WorkTimeWindow.tsx
-var $ = 6e4, rn = 60 * $, an = [
-	[2 * rn, 30 * $],
-	[6 * rn, rn],
-	[12 * rn, 2 * rn],
-	[Infinity, 3 * rn]
+var $ = 6e4, an = 60 * $, on = [
+	[2 * an, 30 * $],
+	[6 * an, an],
+	[12 * an, 2 * an],
+	[Infinity, 3 * an]
 ];
-function on({ activity: e, timezone: r = "UTC" }) {
+function sn({ activity: e, timezone: r = "UTC" }) {
 	let { bounds: a, window: o, onWindowChange: s } = e, c = Math.max($, o.end - o.start), l = new Intl.DateTimeFormat(void 0, {
 		timeZone: r,
 		hour: "numeric",
@@ -3865,7 +3876,7 @@ function on({ activity: e, timezone: r = "UTC" }) {
 		15,
 		30,
 		60
-	].find((e) => c === e * $), y = o.start === a.start && o.end >= m, b = o.end >= m, x = [Math.min(Math.max(o.start, a.start), m), Math.min(Math.max(o.end, a.start), m)], S = an.find(([e]) => h <= e)[1], C = [];
+	].find((e) => c === e * $), y = o.start === a.start && o.end >= m, b = o.end >= m, x = [Math.min(Math.max(o.start, a.start), m), Math.min(Math.max(o.end, a.start), m)], S = on.find(([e]) => h <= e)[1], C = [];
 	for (let e = Math.ceil(a.start / S) * S; e <= m; e += S) (e - a.start) / h < .82 && C.push(e);
 	return /* @__PURE__ */ G("div", {
 		className: "shrink-0 border-b border-border bg-surface px-3 pb-3 pt-2",
@@ -3971,7 +3982,7 @@ function on({ activity: e, timezone: r = "UTC" }) {
 					}, e.at);
 				})
 			}),
-			/* @__PURE__ */ W(nn, {
+			/* @__PURE__ */ W(rn, {
 				className: "mx-1",
 				value: x,
 				min: a.start,
@@ -3994,15 +4005,15 @@ function on({ activity: e, timezone: r = "UTC" }) {
 }
 //#endregion
 //#region src/components/graph/work/WorkActivityGraph.tsx
-var sn = 820, cn = 720;
-function ln(e) {
+var cn = 820, ln = 720;
+function un(e) {
 	let { nodes: r, edges: i, selection: a, activity: o, onSelectionChange: s, onMaxEffortsChange: c } = e, l = V(null), u = V(null), d = V(null), [f, p] = H(!1), [m, h] = H(!0), [g, _] = H(!1), [v, y] = H(null), [b, x] = H(e.maxEfforts ?? 2), S = c ? e.maxEfforts ?? 2 : b, C = (e) => {
 		if (!c) {
 			x(e);
 			return;
 		}
 		c(e);
-	}, w = a?.kind === "node" ? a.id : null, T = o.view.focusedEffortId ?? null, E = T ?? (w ? o.efforts.find((e) => e.nodeIds.includes(w))?.id ?? null : null), D = ft(o.efforts, r, {
+	}, w = a?.kind === "node" ? a.id : null, T = o.view.focusedEffortId ?? null, E = T ?? (w ? o.efforts.find((e) => e.nodeIds.includes(w))?.id ?? null : null), D = pt(o.efforts, r, {
 		max: S,
 		keepEffortId: E
 	}), O = D.length, k = T ? D.filter((e) => e.id === T) : D, A = o.efforts.length === 0 ? void 0 : k.map((e) => ({
@@ -4037,7 +4048,7 @@ function ln(e) {
 				" activities"
 			]
 		})]
-	}) : void 0, F = /* @__PURE__ */ W(He, {
+	}) : void 0, F = /* @__PURE__ */ W(Ue, {
 		...e,
 		edges: M,
 		groups: A,
@@ -4054,12 +4065,12 @@ function ln(e) {
 	}, [a]), R(() => {
 		let e = u.current;
 		if (!e || typeof ResizeObserver > "u") return;
-		let t = new ResizeObserver(([e]) => h(e.contentRect.width >= sn));
+		let t = new ResizeObserver(([e]) => h(e.contentRect.width >= cn));
 		return t.observe(e), () => t.disconnect();
 	}, []), R(() => {
 		let e = l.current;
 		if (!e || typeof ResizeObserver > "u") return;
-		let t = new ResizeObserver(([e]) => _(e.contentRect.height < cn));
+		let t = new ResizeObserver(([e]) => _(e.contentRect.height < ln));
 		return t.observe(e), () => t.disconnect();
 	}, []);
 	let J = () => {
@@ -4092,7 +4103,7 @@ function ln(e) {
 			e.key === "Escape" && a && (e.stopPropagation(), J());
 		},
 		children: [
-			o.title && /* @__PURE__ */ W(kt, {
+			o.title && /* @__PURE__ */ W(At, {
 				title: o.title,
 				subtitle: o.subtitle,
 				expanded: o.expanded ?? o.mode === "full",
@@ -4114,7 +4125,7 @@ function ln(e) {
 				children: [/* @__PURE__ */ G("div", {
 					className: "flex min-h-0 min-w-0 flex-1 flex-col",
 					children: [
-						/* @__PURE__ */ W(on, {
+						/* @__PURE__ */ W(sn, {
 							activity: o,
 							timezone: e.timezone
 						}),
@@ -4126,7 +4137,7 @@ function ln(e) {
 								className: t("flex min-h-0 flex-1 flex-col", X && "invisible"),
 								"aria-hidden": X || void 0,
 								inert: X || void 0,
-								children: /* @__PURE__ */ W(Tt, {
+								children: /* @__PURE__ */ W(Et, {
 									...e,
 									maxEfforts: S,
 									onViewAsList: () => p(!0)
@@ -4157,7 +4168,7 @@ function ln(e) {
 							})]
 						})
 					]
-				}), te !== "none" && z && (I && a?.kind === "node" ? /* @__PURE__ */ W(tn, {
+				}), te !== "none" && z && (I && a?.kind === "node" ? /* @__PURE__ */ W(nn, {
 					node: I,
 					detail: o.details?.[I.id],
 					selection: a,
@@ -4171,7 +4182,7 @@ function ln(e) {
 					onClose: J,
 					className: oe,
 					"data-testid": "activity-inspector",
-					children: /* @__PURE__ */ W(qe, { ...e })
+					children: /* @__PURE__ */ W(Je, { ...e })
 				}))]
 			}),
 			/* @__PURE__ */ W("div", {
@@ -4195,7 +4206,7 @@ function ln(e) {
 }
 //#endregion
 //#region src/components/graph/work/WorkGraph.tsx
-var un = 328, dn = 224, fn = {
+var dn = 328, fn = 224, pn = {
 	project: 0,
 	terminal: 1,
 	agent: 2,
@@ -4207,10 +4218,10 @@ var un = 328, dn = 224, fn = {
 	meeting: 8,
 	transcript: 9
 };
-function pn(e) {
+function mn(e) {
 	return e.locked ? "Restricted work item" : e.title.trim() || "Untitled work item";
 }
-function mn({ data: e }) {
+function hn({ data: e }) {
 	return /* @__PURE__ */ G("div", {
 		className: "w-[248px]",
 		children: [
@@ -4220,7 +4231,7 @@ function mn({ data: e }) {
 				isConnectable: !1,
 				className: "opacity-0"
 			}),
-			/* @__PURE__ */ W(Fe, {
+			/* @__PURE__ */ W(Ie, {
 				node: e.entity,
 				selected: e.selected,
 				onSelect: e.onSelect,
@@ -4235,7 +4246,7 @@ function mn({ data: e }) {
 		]
 	});
 }
-function hn({ id: t, sourceX: n, sourceY: r, targetX: i, targetY: a, sourcePosition: o, targetPosition: s, markerEnd: c, data: l }) {
+function gn({ id: t, sourceX: n, sourceY: r, targetX: i, targetY: a, sourcePosition: o, targetPosition: s, markerEnd: c, data: l }) {
 	let u = e(), [d, f, p] = ie({
 		sourceX: n,
 		sourceY: r,
@@ -4274,7 +4285,7 @@ function hn({ id: t, sourceX: n, sourceY: r, targetX: i, targetY: a, sourcePosit
 			children: /* @__PURE__ */ W("div", {
 				className: "nodrag nopan w-52",
 				"data-work-edge-label": l.entity.id,
-				children: /* @__PURE__ */ W(Le, {
+				children: /* @__PURE__ */ W(Re, {
 					edge: l.entity,
 					selected: l.selected,
 					reducedMotion: u,
@@ -4286,17 +4297,17 @@ function hn({ id: t, sourceX: n, sourceY: r, targetX: i, targetY: a, sourcePosit
 		})
 	] });
 }
-var gn = { work: mn }, _n = { work: hn };
-function vn(e, t) {
+var _n = { work: hn }, vn = { work: gn };
+function yn(e, t) {
 	let n = new Set(e.map((e) => e.id)), r = new Map(e.map((e) => [e.id, 0])), i = new Map(e.map((e) => [e.id, []]));
 	for (let e of t) !n.has(e.fromId) || !n.has(e.toId) || e.fromId === e.toId || (i.get(e.fromId)?.push(e.toId), r.set(e.toId, (r.get(e.toId) ?? 0) + 1));
-	let a = /* @__PURE__ */ new Map(), o = e.filter((e) => r.get(e.id) === 0).sort(yn).map((e) => e.id);
+	let a = /* @__PURE__ */ new Map(), o = e.filter((e) => r.get(e.id) === 0).sort(bn).map((e) => e.id);
 	for (let e of o) a.set(e, 0);
 	for (let e = 0; e < o.length; e += 1) {
 		let t = o[e], n = (a.get(t) ?? 0) + 1;
 		for (let e of (i.get(t) ?? []).sort()) a.set(e, Math.max(a.get(e) ?? 0, n)), r.set(e, (r.get(e) ?? 1) - 1), r.get(e) === 0 && o.push(e);
 	}
-	for (let t of [...e].sort(yn)) a.has(t.id) || a.set(t.id, fn[t.kind] % 4);
+	for (let t of [...e].sort(bn)) a.has(t.id) || a.set(t.id, pn[t.kind] % 4);
 	let s = /* @__PURE__ */ new Map();
 	for (let t of e) {
 		let e = a.get(t.id) ?? 0, n = s.get(e) ?? [];
@@ -4312,23 +4323,23 @@ function vn(e, t) {
 				let t = (l.get(e) ?? []).map((e) => u.get(e)).filter((e) => e !== void 0);
 				return t.length ? t.reduce((e, t) => e + t, 0) / t.length : Infinity;
 			};
-			return n(e.id) - n(t.id) || yn(e, t);
+			return n(e.id) - n(t.id) || bn(e, t);
 		}), t.forEach((t, n) => {
 			u.set(t.id, n), c.set(t.id, {
-				x: 48 + e * un,
-				y: 48 + n * dn
+				x: 48 + e * dn,
+				y: 48 + n * fn
 			});
 		});
 	}
 	return c;
 }
-function yn(e, t) {
-	return fn[e.kind] - fn[t.kind] || e.id.localeCompare(t.id);
+function bn(e, t) {
+	return pn[e.kind] - pn[t.kind] || e.id.localeCompare(t.id);
 }
-function bn(e, t, n) {
+function xn(e, t, n) {
 	return e ? e.kind === "node" ? t.some((t) => t.id === e.id) : n.some((t) => t.id === e.id) : !1;
 }
-function xn({ state: e, errorMessage: t, onRetry: r }) {
+function Sn({ state: e, errorMessage: t, onRetry: r }) {
 	return e === "loading" ? /* @__PURE__ */ W("div", {
 		role: "status",
 		"data-testid": "work-graph-loading",
@@ -4350,8 +4361,8 @@ function xn({ state: e, errorMessage: t, onRetry: r }) {
 		description: "There is no shared work available for this day."
 	});
 }
-function Sn({ nodes: e, edges: n, selection: r, viewport: i, day: a, timezone: o, sources: s = [], state: c = "ready", errorMessage: l, className: u, onSelectionChange: d, onViewportChange: f, onRetry: p, onOpen: m, onReference: h, onRequestCollaboration: g }) {
-	let _ = B(() => new Set(e.map((e) => e.id)), [e]), v = B(() => n.filter((e) => _.has(e.fromId) && _.has(e.toId)), [n, _]), y = bn(r, e, v) ? r : null;
+function Cn({ nodes: e, edges: n, selection: r, viewport: i, day: a, timezone: o, sources: s = [], state: c = "ready", errorMessage: l, className: u, onSelectionChange: d, onViewportChange: f, onRetry: p, onOpen: m, onReference: h, onRequestCollaboration: g }) {
+	let _ = B(() => new Set(e.map((e) => e.id)), [e]), v = B(() => n.filter((e) => _.has(e.fromId) && _.has(e.toId)), [n, _]), y = xn(r, e, v) ? r : null;
 	R(() => {
 		r && !y && d(null);
 	}, [
@@ -4359,7 +4370,7 @@ function Sn({ nodes: e, edges: n, selection: r, viewport: i, day: a, timezone: o
 		d,
 		r
 	]);
-	let b = vn(e.map((e) => ({
+	let b = yn(e.map((e) => ({
 		id: e.id,
 		kind: e.kind
 	})), v), x = new Map(e.map((e) => [e.id, e])), S = e.map((e) => ({
@@ -4394,8 +4405,8 @@ function Sn({ nodes: e, edges: n, selection: r, viewport: i, day: a, timezone: o
 		data: {
 			entity: e,
 			selected: y?.kind === "edge" && y.id === e.id,
-			fromLabel: pn(x.get(e.fromId)),
-			toLabel: pn(x.get(e.toId)),
+			fromLabel: mn(x.get(e.fromId)),
+			toLabel: mn(x.get(e.toId)),
 			onSelect: (e) => d({
 				kind: "edge",
 				id: e
@@ -4405,7 +4416,7 @@ function Sn({ nodes: e, edges: n, selection: r, viewport: i, day: a, timezone: o
 	if (c === "loading" || c === "error" || c === "empty" || e.length === 0) return /* @__PURE__ */ W("section", {
 		"aria-label": "Shared work graph",
 		className: t("min-w-0", u),
-		children: /* @__PURE__ */ W(xn, {
+		children: /* @__PURE__ */ W(Sn, {
 			state: c === "ready" ? "empty" : c,
 			errorMessage: l,
 			onRetry: p
@@ -4429,7 +4440,7 @@ function Sn({ nodes: e, edges: n, selection: r, viewport: i, day: a, timezone: o
 					children: w.map((e) => /* @__PURE__ */ W("li", { children: e.message || `${e.source} is ${e.health}.` }, e.source))
 				}) : null]
 			}) : null,
-			a ? /* @__PURE__ */ W(it, {
+			a ? /* @__PURE__ */ W(at, {
 				day: a,
 				timezone: o || "UTC",
 				nodes: e,
@@ -4446,8 +4457,8 @@ function Sn({ nodes: e, edges: n, selection: r, viewport: i, day: a, timezone: o
 					children: /* @__PURE__ */ G(re, {
 						nodes: S,
 						edges: C,
-						nodeTypes: gn,
-						edgeTypes: _n,
+						nodeTypes: _n,
+						edgeTypes: vn,
 						viewport: i,
 						onViewportChange: f,
 						onPaneClick: () => d(null),
@@ -4464,7 +4475,7 @@ function Sn({ nodes: e, edges: n, selection: r, viewport: i, day: a, timezone: o
 							color: "var(--color-border)"
 						}), /* @__PURE__ */ W(te, { showInteractive: !1 })]
 					})
-				}), /* @__PURE__ */ W(qe, {
+				}), /* @__PURE__ */ W(Je, {
 					nodes: e,
 					edges: v,
 					selection: y,
@@ -4474,7 +4485,7 @@ function Sn({ nodes: e, edges: n, selection: r, viewport: i, day: a, timezone: o
 					onRequestCollaboration: g
 				})]
 			}),
-			/* @__PURE__ */ W(He, {
+			/* @__PURE__ */ W(Ue, {
 				nodes: e,
 				edges: v,
 				selection: y,
@@ -4486,11 +4497,11 @@ function Sn({ nodes: e, edges: n, selection: r, viewport: i, day: a, timezone: o
 		]
 	});
 }
-function Cn(e) {
-	return e.activity && e.nodes.length > 0 && e.state !== "loading" && e.state !== "error" && e.state !== "empty" ? /* @__PURE__ */ W(ln, {
+function wn(e) {
+	return e.activity && e.nodes.length > 0 && e.state !== "loading" && e.state !== "error" && e.state !== "empty" ? /* @__PURE__ */ W(un, {
 		...e,
 		activity: e.activity
-	}) : /* @__PURE__ */ W(Sn, { ...e });
+	}) : /* @__PURE__ */ W(Cn, { ...e });
 }
 //#endregion
-export { Z as A, we as C, ge as D, le as E, fe as O, xe as S, Ce as T, Fe as _, Xt as a, Ee as b, kt as c, ft as d, tt as f, Le as g, He as h, qt as i, Q as j, X as k, lt as l, qe as m, nn as n, Gt as o, $e as p, tn as r, jt as s, Cn as t, ct as u, ke as v, Se as w, Te as x, De as y };
+export { X as A, xe as C, le as D, Ce as E, Q as M, ge as O, Te as S, Se as T, Ie as _, Zt as a, De as b, At as c, pt as d, nt as f, Re as g, Ue as h, Jt as i, Z as j, fe as k, ut as l, Je as m, rn as n, Kt as o, et as p, nn as r, Mt as s, wn as t, lt as u, Ae as v, we as w, Ee as x, ke as y };

@@ -1,4 +1,4 @@
-export { WorkStatus } from './WorkStatus';
+export { WorkStatus, workPauseLabel } from './WorkStatus';
 export { WorkNode } from './WorkNode';
 export { WorkEdge } from './WorkEdge';
 export { WorkEntityList } from './WorkEntityList';
@@ -22,6 +22,7 @@ export type {
   WorkActivityBannerTone,
   WorkActivityEffort,
   WorkActivityPaneAction,
+  WorkActivityPause,
   WorkActivityPanelView,
   WorkActivityPaneSections,
   WorkActivityReference,

@@ -259,6 +259,13 @@ export interface WorkActivityPaneAction {
   onSelect?: () => void;
 }
 
+/** Why a waiting run waits: an approval gate, or a breakpoint on `step`. */
+export interface WorkActivityPause {
+  reason: 'awaiting_approval' | 'paused_at_breakpoint';
+  /** The step's display label ("write"), when the source named one. */
+  step?: string;
+}
+
 export interface WorkActivityNodeDetail {
   emphasis?: 'earlier' | 'input' | 'current';
   /** Fresh process evidence, independent from presence and lifecycle. */
@@ -274,6 +281,12 @@ export interface WorkActivityNodeDetail {
   lines?: string[];
   /** Short state word beside the first secondary line — "Ready", "Tests running". */
   badge?: string;
+  /**
+   * Why a `waiting` run is waiting — realtime-modules `detail.pause` passed
+   * through. The card says "Needs approval" / "Paused at write" instead of a
+   * bare "Waiting" (see `workPauseLabel`); ignored unless the node is waiting.
+   */
+  pause?: WorkActivityPause;
   /** A short verbatim quotation from the source, already viewer-authorized. */
   excerpt?: string;
   /** Who was there. Shown as an avatar row; the host resolves the images. */

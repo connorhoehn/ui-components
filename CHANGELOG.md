@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.385.2] — 2026-09-23
+
+### Added
+- `workPauseLabel(status, pause)` and `WorkActivityNodeDetail.pause` (graph/work,
+  NFR #126): a waiting run says why — "Needs approval" for an approval gate,
+  "Paused at <step>" for a breakpoint — as the card's status line or, beside a
+  host line, a warning chip; the card's accessible name carries it too. The
+  words match `AgentRunCard` / `RunSummaryPanel` and the breakpoint overlay.
+  Ignored unless the node is `waiting`.
+
 ## [2.385.1] — 2026-09-23
 
 ### Added

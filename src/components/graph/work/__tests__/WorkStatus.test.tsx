@@ -1,5 +1,5 @@
 import { act, render, screen } from '@testing-library/react';
-import { WorkStatus } from '../WorkStatus';
+import { WorkStatus, workPauseLabel } from '../WorkStatus';
 
 function mockMatchMedia(matches: boolean) {
   const listeners: Array<(event: { matches: boolean }) => void> = [];
@@ -84,3 +84,14 @@ describe('WorkStatus', () => {
     expect(screen.getByRole('status')).toHaveAccessibleName('Waiting: Needs your input');
   });
 });
+
+describe('workPauseLabel', () => {
+  it('uses the run-card vocabulary and only for a waiting status', () => {
+    expect(workPauseLabel('waiting', { reason: 'awaiting_approval', step: 'Approve' })).toBe('Needs approval');
+    expect(workPauseLabel('waiting', { reason: 'paused_at_breakpoint', step: 'write' })).toBe('Paused at write');
+    expect(workPauseLabel('waiting', { reason: 'paused_at_breakpoint' })).toBe('Paused');
+    expect(workPauseLabel('waiting')).toBeUndefined();
+    expect(workPauseLabel('running', { reason: 'paused_at_breakpoint', step: 'write' })).toBeUndefined();
+  });
+});
+

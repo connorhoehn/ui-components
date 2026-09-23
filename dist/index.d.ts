@@ -18871,6 +18871,12 @@ declare interface UseActivityBusReturn {
       lines?: string[];
       /** Short state word beside the first secondary line — "Ready", "Tests running". */
       badge?: string;
+      /**
+       * Why a `waiting` run is waiting — realtime-modules `detail.pause` passed
+       * through. The card says "Needs approval" / "Paused at write" instead of a
+       * bare "Waiting" (see `workPauseLabel`); ignored unless the node is waiting.
+       */
+      pause?: WorkActivityPause;
       /** A short verbatim quotation from the source, already viewer-authorized. */
       excerpt?: string;
       /** Who was there. Shown as an avatar row; the host resolves the images. */
@@ -18948,6 +18954,13 @@ declare interface UseActivityBusReturn {
       workItem?: WorkActivityReference;
       /** A prose paragraph under the banner. */
       description?: string;
+  }
+
+  /** Why a waiting run waits: an approval gate, or a breakpoint on `step`. */
+  export declare interface WorkActivityPause {
+      reason: 'awaiting_approval' | 'paused_at_breakpoint';
+      /** The step's display label ("write"), when the source named one. */
+      step?: string;
   }
 
   export declare interface WorkActivityPresentation {
@@ -19655,6 +19668,14 @@ declare interface UseActivityBusReturn {
       banner: WorkActivityBanner;
   }): JSX.Element;
 
+  /**
+   * The words for WHY a run is waiting — the same vocabulary the run cards use
+   * (`AgentRunCard` / `RunSummaryPanel`: "Needs approval"; the editor's
+   * breakpoint overlay: "Paused at <step>"). Undefined unless the status is
+   * `waiting` and a reason was given, so a caller can fall back to "Waiting".
+   */
+  export declare function workPauseLabel(status: WorkGraphStatus, pause?: WorkActivityPause): string | undefined;
+
   /** A person as the meta bar and its picker see one. */
   export declare interface WorkPerson {
       id: string;
@@ -19847,6 +19868,32 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        hitlMacro: {
+            /** Inserts an agent -> human callout at the selection. */
+            insertHitl: (draft: HitlDraft) => ReturnType;
+            /**
+             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
+             * answered from an inbox by somebody who never opened this page.
+             *
+             * The same one-range edit answering in the page makes, addressed by
+             * the callout's `id` instead of by a node view. Returns false when
+             * no callout carries that id, when the body is not one
+             * `answerHitlEdit` will write to, and — deliberately — when the
+             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
+             */
+            answerHitl: (params: {
+                id: string;
+                answer: string;
+                answeredBy?: string;
+                answeredAt?: string;
+            }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
@@ -19870,16 +19917,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
@@ -19890,25 +19927,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        hitlMacro: {
-            /** Inserts an agent -> human callout at the selection. */
-            insertHitl: (draft: HitlDraft) => ReturnType;
-            /**
-             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
-             * answered from an inbox by somebody who never opened this page.
-             *
-             * The same one-range edit answering in the page makes, addressed by
-             * the callout's `id` instead of by a node view. Returns false when
-             * no callout carries that id, when the body is not one
-             * `answerHitlEdit` will write to, and — deliberately — when the
-             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
-             */
-            answerHitl: (params: {
-                id: string;
-                answer: string;
-                answeredBy?: string;
-                answeredAt?: string;
-            }) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

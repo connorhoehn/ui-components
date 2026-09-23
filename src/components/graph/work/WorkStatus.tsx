@@ -1,6 +1,6 @@
 import { usePrefersReducedMotion } from '../../../hooks/usePrefersReducedMotion';
 import { cn } from '../../../lib/cn';
-import type { WorkGraphStatus, WorkStatusProps } from './types';
+import type { WorkActivityPause, WorkGraphStatus, WorkStatusProps } from './types';
 
 /**
  * The graph status is a statement about the source of the work. Sharing
@@ -19,6 +19,18 @@ const STATUS_META: Record<
   stopped: { label: 'Stopped', icon: '■', tone: 'text-text-tertiary' },
   stale: { label: 'Stale', icon: '◌', tone: 'text-warning-fg' },
 };
+
+/**
+ * The words for WHY a run is waiting — the same vocabulary the run cards use
+ * (`AgentRunCard` / `RunSummaryPanel`: "Needs approval"; the editor's
+ * breakpoint overlay: "Paused at <step>"). Undefined unless the status is
+ * `waiting` and a reason was given, so a caller can fall back to "Waiting".
+ */
+export function workPauseLabel(status: WorkGraphStatus, pause?: WorkActivityPause): string | undefined {
+  if (status !== 'waiting' || !pause) return undefined;
+  if (pause.reason === 'awaiting_approval') return 'Needs approval';
+  return pause.step ? `Paused at ${pause.step}` : 'Paused';
+}
 
 /**
  * Compact, text-labelled status indicator for work graph nodes and edges.
