@@ -3996,7 +3996,7 @@ function an(e) {
 			end: t + e,
 			following: !1
 		});
-	}, R = N !== "none" && D, V = a ? `${a.kind}:${a.id}` : null, W = R && e.viewport.zoom < .4 && v !== V, G = W || f && g, K = f && !G, q = G || K, J = () => {
+	}, R = D, V = a ? `${a.kind}:${a.id}` : null, W = R && e.viewport.zoom < .4 && v !== V, G = W || f && g, K = f && !G, q = G || K, J = () => {
 		if (!q) {
 			p(!0);
 			return;

@@ -81,7 +81,9 @@ export function WorkActivityGraph(props: WorkGraphProps & { activity: WorkActivi
   // is the only readable view left, so the canvas region shows it — the canvas
   // stays mounted underneath (same size, same fit) and returns when the pane
   // closes. The viewer can still ask for the graph for this selection.
-  const paneOpen = placement !== 'none' && validSelection;
+  // Placement 'none' counts too: that host draws the pane itself (Active Now
+  // lays it over this canvas), and the canvas under it is just as unreadable.
+  const paneOpen = validSelection;
   const selectionKey = selection ? `${selection.kind}:${selection.id}` : null;
   const autoList = paneOpen && props.viewport.zoom < WORK_CANVAS_READABLE_ZOOM && graphFor !== selectionKey;
   const listInRegion = autoList || (list && short);

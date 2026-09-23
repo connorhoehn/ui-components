@@ -158,6 +158,9 @@ describe('Active Now composition', () => {
     // Readable zoom, or no pane: the canvas keeps the region.
     rerender(<WorkGraph {...initial} selection={null} />);
     expect(screen.queryByTestId('work-activity-list-region')).not.toBeInTheDocument();
+    // A host that draws the pane itself (placement 'none') gets the same.
+    rerender(<WorkGraph {...initial} selection={{ kind: 'node', id: 'run' }} activity={{ ...initial.activity!, detailsPlacement: 'none' }} />);
+    expect(screen.getByTestId('work-activity-list-region')).toBeInTheDocument();
     rerender(<WorkGraph {...initial} selection={{ kind: 'node', id: 'run' }} viewport={{ x: 0, y: 0, zoom: 1 }} />);
     expect(screen.queryByTestId('work-activity-list-region')).not.toBeInTheDocument();
   });

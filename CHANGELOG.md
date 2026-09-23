@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.374.1] — 2026-09-23
+
+### Fixed
+
+- `WorkActivityGraph`: the automatic list also applies when the host draws the node pane itself (`detailsPlacement: 'none'`, as Active Now does) — any valid node selection over an unreadable fit.
+
 ## [2.374.0] — 2026-09-23
 
 ### Added
