@@ -699,6 +699,18 @@
   overflow-y: visible;
   text-overflow: ellipsis;
 }
+/* One row: the input shares a line with the mode chip and Send, and the row
+   bottom-aligns them so a growing message keeps Send beside its last line.
+   The 2.5rem box with 0.5rem padding put a single line's centre 5.5 px above
+   the controls' (measured: text 822.5 vs chip/Send 828) and made the bar 42 px
+   where the controls need 32. Matching the controls' 2rem strip, with the
+   padding that centres one 1.5-line-height line in it, lines every line count
+   up with Send: the last line's centre sits 1rem above the bottom, as theirs do. */
+.chat-composer .uic-composer-single-row .ProseMirror {
+  min-height: 2rem;
+  line-height: 1.5;
+  padding-block: calc((2rem - 0.875rem * 1.5) / 2);
+}
 .chat-composer .ProseMirror p { margin: 0 0 0.25em; }
 .chat-composer .ProseMirror p:last-child { margin-bottom: 0; }
 

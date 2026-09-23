@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.384.4] — 2026-09-23
+
+### Fixed
+- **RichChatComposer, one-row layout:** the message line sat 5.5 px above the mode chip and Send (measured: text centre 822.5, controls 828) and the bar was 42 px tall where its controls need 32. In the single-row body the editor is now a 2rem box with the padding that centres one line in it, so the text lines up with the chip and Send at every line count and the bar is 34 px.
+
 ## [2.384.3] — 2026-09-23
 
 ### Fixed

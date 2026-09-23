@@ -2154,7 +2154,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             share a single row (attachments drop below via `order-last`). The
             editor stays in the same parent at every size — moving it would
             remount EditorContent and drop the caret on a resize. */}
-        <div className={cn(singleRow && 'flex flex-wrap items-end')} data-testid={`${testId}-body`}>
+        <div className={cn(singleRow && 'uic-composer-single-row flex flex-wrap items-end')} data-testid={`${testId}-body`}>
         {/* The placeholder is ONE ellipsised line (styles.css) — a long one,
             such as a disabled reason, used to wrap past the input and draw over
             the rows below. The whole text stays reachable as a tooltip while

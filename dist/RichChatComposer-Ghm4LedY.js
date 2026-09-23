@@ -3127,7 +3127,7 @@ var ha = T(function({ onSend: a, draft: p, onDraftChange: re, onCommand: T, onSe
 					}, e))
 				}),
 				/* @__PURE__ */ A("div", {
-					className: e(Pn && "flex flex-wrap items-end"),
+					className: e(Pn && "uic-composer-single-row flex flex-wrap items-end"),
 					"data-testid": `${L}-body`,
 					children: [
 						Z && z && !Fe && /* @__PURE__ */ A("button", {
