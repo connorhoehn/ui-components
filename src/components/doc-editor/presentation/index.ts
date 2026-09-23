@@ -13,7 +13,19 @@ export type {
   PresentationInstructContext,
   PresentationInstructResult,
   PresentationInstructScope,
+  PresentationFooterContext,
+  PresentationEditorFrame,
 } from './PresentationEditor';
+
+// The editor's pieces (2.363.0), for a host that composes its own surface.
+export { Filmstrip, FilmstripThumb } from './Filmstrip';
+export type { FilmstripProps } from './Filmstrip';
+export { SlideStage } from './SlideStage';
+export type { SlideStageProps, SlideStageWidth } from './SlideStage';
+export { SpeakerNotes } from './SpeakerNotes';
+export type { SpeakerNotesProps } from './SpeakerNotes';
+export { SlidesToolbar, SLIDE_INSERTS } from './SlidesToolbar';
+export type { SlidesToolbarProps } from './SlidesToolbar';
 
 export { SlideForm } from './SlideForm';
 export type { SlideFormProps } from './SlideForm';

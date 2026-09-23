@@ -10,7 +10,9 @@
 // buttons, and they are the only reorder path a keyboard user, or a consumer
 // who never installed `@dnd-kit`, ever has. Drag is the enhancement.
 
-import { SlideRow } from './SlideRow';
+import type { ComponentType } from 'react';
+import { cn } from '../../../lib/cn';
+import { SlideRow, type SlideRowProps } from './SlideRow';
 import type { DeckSlide } from './deckSpec';
 
 export interface SlideListItem {
@@ -20,6 +22,8 @@ export interface SlideListItem {
   uncited: boolean;
   /** The agent's last edit touched it. */
   changed?: boolean;
+  /** An agent edit to it is in flight. */
+  generating?: boolean;
 }
 
 export interface SlideListProps {
@@ -32,6 +36,14 @@ export interface SlideListProps {
   onDelete: (id: string) => void;
   /** False at the deck's slide cap — duplicating would exceed it. */
   canDuplicate: boolean;
+  /**
+   * What each row looks like. Default `SlideRow` (the list rail);
+   * `Filmstrip` passes its 16:9 thumbnail. Same props either way, so the drag
+   * list and the plain fallback cannot drift apart.
+   */
+  rowComponent?: ComponentType<SlideRowProps>;
+  /** Extra classes on the `<ol>`. */
+  listClassName?: string;
   testIdPrefix: string;
 }
 
@@ -44,12 +56,14 @@ export function SlideList({
   onDuplicate,
   onDelete,
   canDuplicate,
+  rowComponent: Row = SlideRow,
+  listClassName,
   testIdPrefix,
 }: SlideListProps) {
   return (
-    <ol className="m-0 flex list-none flex-col gap-1 p-0" data-testid={`${testIdPrefix}-list`}>
+    <ol className={cn('m-0 flex list-none flex-col gap-1 p-0', listClassName)} data-testid={`${testIdPrefix}-list`}>
       {items.map((item, index) => (
-        <SlideRow
+        <Row
           key={item.slide.id}
           slide={item.slide}
           index={index}
@@ -58,6 +72,7 @@ export function SlideList({
           selected={item.slide.id === selectedId}
           uncited={item.uncited}
           changed={item.changed}
+          generating={item.generating}
           readOnly={readOnly}
           onSelect={onSelect}
           onMove={onMove}

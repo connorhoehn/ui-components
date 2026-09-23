@@ -63,11 +63,12 @@ function SortableRow({
   onDuplicate,
   onDelete,
   canDuplicate,
+  rowComponent: Row = SlideRow,
   testIdPrefix,
 }: SortableRowProps) {
   const { attributes, listeners, setNodeRef, isDragging, isOver } = useSortable({ id: item.slide.id });
   return (
-    <SlideRow
+    <Row
       slide={item.slide}
       index={index}
       total={total}
@@ -75,6 +76,7 @@ function SortableRow({
       selected={item.slide.id === selectedId}
       uncited={item.uncited}
       changed={item.changed}
+      generating={item.generating}
       readOnly={readOnly}
       onSelect={onSelect}
       onMove={onMove}
@@ -114,6 +116,8 @@ export function SortableSlideList({
   onDuplicate,
   onDelete,
   canDuplicate,
+  rowComponent,
+  listClassName,
   testIdPrefix,
 }: SlideListProps) {
   const sensors = useSensors(
@@ -133,7 +137,7 @@ export function SortableSlideList({
   };
 
   const list = (
-    <ol className="m-0 flex list-none flex-col gap-1 p-0" data-testid={`${testIdPrefix}-list`}>
+    <ol className={cn('m-0 flex list-none flex-col gap-1 p-0', listClassName)} data-testid={`${testIdPrefix}-list`}>
       {items.map((item, index) => (
         <SortableRow
           key={item.slide.id}
@@ -147,6 +151,7 @@ export function SortableSlideList({
           onDuplicate={onDuplicate}
           onDelete={onDelete}
           canDuplicate={canDuplicate}
+          {...(rowComponent ? { rowComponent } : {})}
           testIdPrefix={testIdPrefix}
         />
       ))}

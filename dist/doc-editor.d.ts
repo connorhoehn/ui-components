@@ -1,4 +1,5 @@
 import { Awareness } from 'y-protocols/awareness';
+import { ComponentType } from 'react';
 import { CSSProperties } from 'react';
 import { default as default_2 } from 'react';
 import { Doc } from 'yjs';
@@ -1160,6 +1161,33 @@ export declare function ExecutiveSummaryCard({ bullets, contentText, fragment, y
 
 declare type FileKind = 'page' | 'presentation' | 'recording' | 'transcript' | 'diagram' | 'folder';
 
+export declare function Filmstrip({ items, selectedId, onSelect, onMove, onDuplicate, onDelete, onAdd, canAdd, generatingSlideIds, readOnly, className, testIdPrefix, }: FilmstripProps): JSX.Element;
+
+export declare interface FilmstripProps {
+    items: readonly SlideListItem[];
+    selectedId: string;
+    onSelect: (id: string) => void;
+    onMove: (from: number, to: number) => void;
+    onDuplicate: (id: string) => void;
+    onDelete: (id: string) => void;
+    /** Renders the dashed "Add slide" card at the end. */
+    onAdd?: () => void;
+    /** False at the deck's slide cap: no add, no duplicate. */
+    canAdd?: boolean;
+    /**
+     * Slides the agent is rewriting (`Generating…` on the thumb) or creating
+     * (an id not in `items` becomes a placeholder card at the end).
+     */
+    generatingSlideIds?: readonly string[];
+    readOnly?: boolean;
+    className?: string;
+    /** Prefix for every row's test ids. Default `filmstrip`. */
+    testIdPrefix?: string;
+}
+
+/** One slide in the strip. Takes `SlideRowProps` so both lists can render it. */
+export declare function FilmstripThumb({ slide, index, total, thumbnailSvg, selected, uncited, changed, generating, readOnly, onSelect, onMove, onDuplicate, onDelete, canDuplicate, canDelete, dragHandle, rowRef, dragging, testIdPrefix, }: SlideRowProps): JSX.Element;
+
 /**
  * The element a target points at, on whichever shape this document is.
  *
@@ -1711,8 +1739,19 @@ declare interface PresenceUser {
     location?: string;
 }
 
-/** True when the keystroke belongs to whatever the person is typing into. */
-export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, sources, onSearchSources, onDownload, onOpenPresentationView, readOnly, onInstruct, instructHints, onUndoInstruct, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
+export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, sources, onSearchSources, onDownload, onOpenPresentationView, readOnly, onInstruct, instructHints, onUndoInstruct, generatingSlideIds, footer, renderFrame, onSelectedSlideChange, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
+
+/** The parts `renderFrame` receives. */
+export declare interface PresentationEditorFrame {
+    /** `SlidesToolbar` — New slide, Layout, Insert, Theme, Undo/Redo, Present. */
+    toolbar: ReactNode;
+    /** Revision tabs, Save as vN (gated on citations), Download .pptx. */
+    actions: ReactNode;
+    /** Deck title line, warnings, filmstrip, 16:9 stage, speaker notes, sources. */
+    surface: ReactNode;
+    /** The host's `footer`, or the built-in agent box in a dock, or null. */
+    footer: ReactNode;
+}
 
 export declare interface PresentationEditorProps {
     /** Controlled. The host owns the spec; this component never holds a copy. */
@@ -1732,8 +1771,14 @@ export declare interface PresentationEditorProps {
     onSearchSources?: (query: string) => PresentationSourceOption[] | Promise<PresentationSourceOption[]>;
     /** The `.pptx`, through the host's authorized route. No handler, no button. */
     onDownload?: () => void;
-    /** Opens the same deck in the read-only presentation surface. */
-    onOpenPresentationView?: () => void;
+    /**
+     * Opens the same deck in the read-only presentation surface — the toolbar's
+     * Present. Called with the slide on the stage so the view can start there.
+     */
+    onOpenPresentationView?: (at?: {
+        slideId: string;
+        slideIndex: number;
+    }) => void;
     readOnly?: boolean;
     /**
      * Turns on the agent box under the stage (see the file header). Resolve with
@@ -1748,6 +1793,29 @@ export declare interface PresentationEditorProps {
      * snapshot; pass this only while it holds one.
      */
     onUndoInstruct?: () => void;
+    /**
+     * Slides the agent is working on right now — `useDeckReviseStatus(documentId)
+     * .generatingSlideIds`. Their thumbnails and the stage say `Generating…`; an
+     * id not in the deck is a slide being created and shows as a placeholder at
+     * the end of the filmstrip.
+     */
+    generatingSlideIds?: readonly string[];
+    /**
+     * The foot of the editor — the host's composer dock. Replaces the built-in
+     * agent box (`onInstruct`) when given. A function receives the slide on the
+     * stage and a way to mark the slides an edit changed.
+     */
+    footer?: ReactNode | ((ctx: PresentationFooterContext) => ReactNode);
+    /**
+     * Hand the editor's parts to a frame — normally `EditorShell` — instead of
+     * stacking them: `toolbar` for its toolbar row, `actions` (revisions, Save,
+     * Download) for its head, `surface` as its child, `footer` for its floating
+     * dock slot. Without `footer`, the built-in agent box arrives in `footer`
+     * already wrapped in a `FloatingComposerDock`.
+     */
+    renderFrame?: (frame: PresentationEditorFrame) => ReactNode;
+    /** The slide on the stage changed (selection, delete, an agent edit landing). */
+    onSelectedSlideChange?: (slideId: string, index: number) => void;
     className?: string;
     'data-testid'?: string;
 }
@@ -1758,6 +1826,18 @@ export declare interface PresentationEditorRevision {
     label: string;
     /** Already formatted by the host — this component does no clock maths. */
     createdAt?: string;
+}
+
+/** What a `footer` render function is told. */
+export declare interface PresentationFooterContext {
+    /** The slide on the stage. */
+    selectedSlide: DeckSlide | undefined;
+    /** 0-based. */
+    selectedIndex: number;
+    slideCount: number;
+    selectSlide: (slideId: string) => void;
+    /** Marks slides "Edited by agent" in the filmstrip until the next call. */
+    markChanged: (slideIds: string[]) => void;
 }
 
 export declare interface PresentationInstructContext {
@@ -2214,12 +2294,15 @@ declare type SidebarPanel = 'history' | 'myItems' | 'videoHistory';
 /** Slide ids stay filename- and handle-safe: they end up in preview handles. */
 export declare const SLIDE_ID_PATTERN: RegExp;
 
+/** The layouts the Insert menu offers, in the order a person reaches for them. */
+export declare const SLIDE_INSERTS: readonly SlideLayout[];
+
 /** What each layout is FOR, in the words a person picking one needs. */
 export declare const SLIDE_LAYOUT_LABELS: Record<SlideLayout, string>;
 
 export declare const SLIDE_LAYOUTS: readonly SlideLayout[];
 
-export declare function SlideForm({ slide, onChange, sources, onSearchSources, readOnly, showSources, testIdPrefix, }: SlideFormProps): JSX.Element;
+export declare function SlideForm({ slide, onChange, sources, onSearchSources, readOnly, showSources, showNotes, testIdPrefix, }: SlideFormProps): JSX.Element;
 
 export declare interface SlideFormProps {
     slide: DeckSlide;
@@ -2233,12 +2316,18 @@ export declare interface SlideFormProps {
      * a collapsed form — Save depends on them, so they cannot be folded away.
      */
     showSources?: boolean;
+    /**
+     * Render the speaker-notes field. Default true. The editor turns it off when
+     * the notes have their own pane under the stage (`SpeakerNotes`), so the
+     * same field is not editable in two places at once.
+     */
+    showNotes?: boolean;
     testIdPrefix: string;
 }
 
 export declare type SlideLayout = 'title' | 'section' | 'bullets' | 'two-column' | 'chart' | 'quote' | 'image';
 
-export declare function SlideList({ items, selectedId, readOnly, onSelect, onMove, onDuplicate, onDelete, canDuplicate, testIdPrefix, }: SlideListProps): JSX.Element;
+export declare function SlideList({ items, selectedId, readOnly, onSelect, onMove, onDuplicate, onDelete, canDuplicate, rowComponent: Row, listClassName, testIdPrefix, }: SlideListProps): JSX.Element;
 
 export declare interface SlideListItem {
     slide: DeckSlide;
@@ -2247,6 +2336,8 @@ export declare interface SlideListItem {
     uncited: boolean;
     /** The agent's last edit touched it. */
     changed?: boolean;
+    /** An agent edit to it is in flight. */
+    generating?: boolean;
 }
 
 export declare interface SlideListProps {
@@ -2259,6 +2350,14 @@ export declare interface SlideListProps {
     onDelete: (id: string) => void;
     /** False at the deck's slide cap — duplicating would exceed it. */
     canDuplicate: boolean;
+    /**
+     * What each row looks like. Default `SlideRow` (the list rail);
+     * `Filmstrip` passes its 16:9 thumbnail. Same props either way, so the drag
+     * list and the plain fallback cannot drift apart.
+     */
+    rowComponent?: ComponentType<SlideRowProps>;
+    /** Extra classes on the `<ol>`. */
+    listClassName?: string;
     testIdPrefix: string;
 }
 
@@ -2276,6 +2375,8 @@ export declare interface SlideRowProps {
     uncited: boolean;
     /** The agent's last edit touched this slide — marked until the next one. */
     changed?: boolean;
+    /** An agent edit to this slide is in flight. */
+    generating?: boolean;
     readOnly?: boolean;
     onSelect: (id: string) => void;
     onMove: (from: number, to: number) => void;
@@ -2317,6 +2418,52 @@ export declare interface SlideSourcesProps {
     testIdPrefix: string;
 }
 
+export declare function SlideStage({ children, generating, generatingLabel, label, maxWidth, className, 'data-testid': testId, }: SlideStageProps): JSX.Element;
+
+export declare interface SlideStageProps {
+    /** The slide picture or a state. Centred inside the 16:9 frame. */
+    children: ReactNode;
+    /** The agent is rewriting this slide: label over it, `aria-busy`. */
+    generating?: boolean;
+    /** Default "Generating…". */
+    generatingLabel?: string;
+    /** Accessible name of the frame — "Slide 2 of 5: Transcript". */
+    label?: string;
+    /** Widest the frame grows. Default `4xl`. */
+    maxWidth?: SlideStageWidth;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type SlideStageWidth = '2xl' | '3xl' | '4xl' | '5xl';
+
+export declare function SlidesToolbar({ slide, theme, onAddSlide, canAddSlide, onLayoutChange, onThemeChange, onChartKindChange, onUndo, onRedo, canUndo, canRedo, onPresent, end, disabled, className, testIdPrefix, }: SlidesToolbarProps): JSX.Element;
+
+export declare interface SlidesToolbarProps {
+    /** The slide on the stage. Layout and the chart switch act on it. */
+    slide?: DeckSlide;
+    theme: DeckTheme;
+    /** Adds a slide after the current one. `layout` comes from Insert. */
+    onAddSlide: (layout?: SlideLayout) => void;
+    /** False at the deck's slide cap. */
+    canAddSlide?: boolean;
+    onLayoutChange: (layout: SlideLayout) => void;
+    onThemeChange: (theme: DeckTheme) => void;
+    onChartKindChange?: (kind: DeckChart['kind']) => void;
+    onUndo?: () => void;
+    onRedo?: () => void;
+    canUndo?: boolean;
+    canRedo?: boolean;
+    /** Renders Present. */
+    onPresent?: () => void;
+    /** Before Present — revision tabs, Save, Download when the host has no header for them. */
+    end?: ReactNode;
+    disabled?: boolean;
+    className?: string;
+    /** Prefix for the controls' test ids. Default `slides-toolbar`. */
+    testIdPrefix?: string;
+}
+
 /** Plain-object snapshot of a section for diffing (no Y.js references). */
 declare interface SnapshotSection {
     id: string;
@@ -2331,6 +2478,21 @@ declare interface SnapshotSection {
         assignee: string;
         priority: string;
     }>;
+}
+
+export declare function SpeakerNotes({ value, onChange, readOnly, maxLength, placeholder, className, 'data-testid': testId, }: SpeakerNotesProps): JSX.Element;
+
+export declare interface SpeakerNotesProps {
+    value: string | undefined;
+    /** `undefined` when the box is emptied. */
+    onChange: (notes: string | undefined) => void;
+    readOnly?: boolean;
+    /** Default `MAX_NOTES_CHARS` (2000), the generator's cap. */
+    maxLength?: number;
+    placeholder?: string;
+    className?: string;
+    /** Test id of the textarea. Default `speaker-notes`; the pane is `<id>-pane`. */
+    'data-testid'?: string;
 }
 
 /**
@@ -3043,6 +3205,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3062,12 +3237,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -3078,6 +3250,29 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -3114,39 +3309,6 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

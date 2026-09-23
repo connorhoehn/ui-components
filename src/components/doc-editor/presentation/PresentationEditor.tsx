@@ -42,13 +42,23 @@
 //
 // Without `onInstruct` the editor is exactly what it was.
 //
+// ## Layout (2.363.0)
+//
+// Toolbar (`SlidesToolbar`) on top; a filmstrip of numbered 16:9 thumbnails
+// (`Filmstrip`) on the left; the selected slide on a centred 16:9 frame
+// (`SlideStage`); its speaker notes directly under it (`SpeakerNotes`); then
+// the agent box, the citation chips and the folded slide form. `renderFrame`
+// hands the toolbar, the Save controls, the surface and the footer to a
+// frame such as `EditorShell` instead of stacking them here, and `footer`
+// replaces the built-in agent box with the host's own composer dock.
+//
 // ## Reordering
 //
 // Drag comes from `@dnd-kit`, the library's existing drag-and-drop primitive,
 // loaded lazily — see the header of `SortableSlideList` for why that indirection
-// is not optional. Move-up/move-down buttons are on every row regardless, and
-// they are the reorder path for keyboards and for consumers without the
-// optional peer installed.
+// is not optional. Each thumbnail's ⋯ menu has Move up / Move down, and
+// Alt+↑/↓ on a focused thumbnail moves it: the reorder paths for keyboards and
+// for consumers without the optional peer installed.
 
 import {
   Suspense,
@@ -59,6 +69,7 @@ import {
   useRef,
   useState,
   type KeyboardEvent as ReactKeyboardEvent,
+  type ReactNode,
 } from 'react';
 import { cn } from '../../../lib/cn';
 import { Button } from '../../ui/Button';
@@ -66,31 +77,30 @@ import { Disclosure } from '../../ui/Disclosure';
 import { IconButton } from '../../ui/IconButton';
 import { InlineEditableText } from '../../forms/InlineEditableText';
 import { Input } from '../../forms/Input';
-import { Select } from '../../forms/Select';
 import DotMeter from '../../shared/DotMeter';
 import EmptyState from '../../shared/EmptyState';
 import ErrorState from '../../shared/ErrorState';
 import FormField from '../../shared/FormField';
 import InlineAlert from '../../shared/InlineAlert';
 import LoadingState from '../../shared/LoadingState';
-import { SectionLabel } from '../../shared/SectionLabel';
 import Tabs from '../../shared/Tabs';
 import { Text } from '../../shared/Text';
 import { PresentationView, type PresentationRevision } from '../PresentationView';
-import { nextSlideIndex, slideNavigationIntent } from '../../../lib/slideNavigationKey';
+import { FloatingComposerDock } from '../FloatingComposerDock';
+import { isTextEntryTarget, nextSlideIndex, slideNavigationIntent } from '../../../lib/slideNavigationKey';
+import { Filmstrip } from './Filmstrip';
 import SlideForm from './SlideForm';
-import SlideList from './SlideList';
 import type { SlideListItem } from './SlideList';
 import SlideSources, { type PresentationSourceOption } from './SlideSources';
+import { SlideStage } from './SlideStage';
+import { SlidesToolbar } from './SlidesToolbar';
+import { SpeakerNotes } from './SpeakerNotes';
 import type { PresentationInstructScope } from './PresentationAgentComposer';
 import { svgDataUri } from './svgPreview';
 import {
-  DECK_THEMES,
   MAX_SLIDES,
   MAX_SUBTITLE_CHARS,
   MAX_TITLE_CHARS,
-  SLIDE_LAYOUTS,
-  SLIDE_LAYOUT_LABELS,
   addSlide,
   duplicateSlide,
   moveSlide,
@@ -99,12 +109,10 @@ import {
   replaceSlide,
   uncitedSlideIds,
   withLayoutDefaults,
+  type DeckSlide,
   type DeckSpec,
-  type DeckTheme,
   type SlideLayout,
 } from './deckSpec';
-
-const SortableSlideList = lazy(() => import('./SortableSlideList'));
 
 /** Rendered when the composer's optional tiptap peers are not installed. */
 function AgentComposerUnavailable({ testIdPrefix }: { testIdPrefix: string }) {
@@ -165,6 +173,30 @@ export interface PresentationEditorRevision {
   createdAt?: string;
 }
 
+/** What a `footer` render function is told. */
+export interface PresentationFooterContext {
+  /** The slide on the stage. */
+  selectedSlide: DeckSlide | undefined;
+  /** 0-based. */
+  selectedIndex: number;
+  slideCount: number;
+  selectSlide: (slideId: string) => void;
+  /** Marks slides "Edited by agent" in the filmstrip until the next call. */
+  markChanged: (slideIds: string[]) => void;
+}
+
+/** The parts `renderFrame` receives. */
+export interface PresentationEditorFrame {
+  /** `SlidesToolbar` — New slide, Layout, Insert, Theme, Undo/Redo, Present. */
+  toolbar: ReactNode;
+  /** Revision tabs, Save as vN (gated on citations), Download .pptx. */
+  actions: ReactNode;
+  /** Deck title line, warnings, filmstrip, 16:9 stage, speaker notes, sources. */
+  surface: ReactNode;
+  /** The host's `footer`, or the built-in agent box in a dock, or null. */
+  footer: ReactNode;
+}
+
 export interface PresentationEditorProps {
   /** Controlled. The host owns the spec; this component never holds a copy. */
   spec: DeckSpec;
@@ -183,8 +215,11 @@ export interface PresentationEditorProps {
   onSearchSources?: (query: string) => PresentationSourceOption[] | Promise<PresentationSourceOption[]>;
   /** The `.pptx`, through the host's authorized route. No handler, no button. */
   onDownload?: () => void;
-  /** Opens the same deck in the read-only presentation surface. */
-  onOpenPresentationView?: () => void;
+  /**
+   * Opens the same deck in the read-only presentation surface — the toolbar's
+   * Present. Called with the slide on the stage so the view can start there.
+   */
+  onOpenPresentationView?: (at?: { slideId: string; slideIndex: number }) => void;
   readOnly?: boolean;
   /**
    * Turns on the agent box under the stage (see the file header). Resolve with
@@ -199,6 +234,29 @@ export interface PresentationEditorProps {
    * snapshot; pass this only while it holds one.
    */
   onUndoInstruct?: () => void;
+  /**
+   * Slides the agent is working on right now — `useDeckReviseStatus(documentId)
+   * .generatingSlideIds`. Their thumbnails and the stage say `Generating…`; an
+   * id not in the deck is a slide being created and shows as a placeholder at
+   * the end of the filmstrip.
+   */
+  generatingSlideIds?: readonly string[];
+  /**
+   * The foot of the editor — the host's composer dock. Replaces the built-in
+   * agent box (`onInstruct`) when given. A function receives the slide on the
+   * stage and a way to mark the slides an edit changed.
+   */
+  footer?: ReactNode | ((ctx: PresentationFooterContext) => ReactNode);
+  /**
+   * Hand the editor's parts to a frame — normally `EditorShell` — instead of
+   * stacking them: `toolbar` for its toolbar row, `actions` (revisions, Save,
+   * Download) for its head, `surface` as its child, `footer` for its floating
+   * dock slot. Without `footer`, the built-in agent box arrives in `footer`
+   * already wrapped in a `FloatingComposerDock`.
+   */
+  renderFrame?: (frame: PresentationEditorFrame) => ReactNode;
+  /** The slide on the stage changed (selection, delete, an agent edit landing). */
+  onSelectedSlideChange?: (slideId: string, index: number) => void;
   className?: string;
   'data-testid'?: string;
 }
@@ -211,7 +269,66 @@ function Chevron({ back }: { back?: boolean }) {
   );
 }
 
-/** True when the keystroke belongs to whatever the person is typing into. */
+/**
+ * Undo/redo over the edits THIS editor made.
+ *
+ * The spec is controlled, so the history is a stack of specs the editor
+ * handed to `onChange`. A spec that arrives from anywhere else — a revision
+ * switch, the agent's edit (it has its own Undo), a reload — is not one of
+ * ours, and the stack is dropped rather than letting Undo jump back across it.
+ * Keystrokes within 800ms fold into one step, so Undo takes back a word, not
+ * a letter.
+ */
+function useSpecHistory(spec: DeckSpec, onChange: (spec: DeckSpec) => void) {
+  const [history, setHistory] = useState<{ past: DeckSpec[]; future: DeckSpec[] }>({ past: [], future: [] });
+  const expected = useRef<DeckSpec | null>(null);
+  const lastEditAt = useRef(0);
+
+  useEffect(() => {
+    if (expected.current === spec) {
+      expected.current = null;
+      return;
+    }
+    expected.current = null;
+    setHistory((current) => (current.past.length || current.future.length ? { past: [], future: [] } : current));
+  }, [spec]);
+
+  const edit = useCallback(
+    (next: DeckSpec) => {
+      if (next === spec) return;
+      const now = Date.now();
+      const fold = now - lastEditAt.current < 800;
+      lastEditAt.current = now;
+      setHistory((current) => ({
+        past: fold && current.past.length ? current.past : [...current.past.slice(-49), spec],
+        future: [],
+      }));
+      expected.current = next;
+      onChange(next);
+    },
+    [spec, onChange],
+  );
+
+  const undo = useCallback(() => {
+    const previous = history.past[history.past.length - 1];
+    if (!previous) return;
+    setHistory({ past: history.past.slice(0, -1), future: [spec, ...history.future] });
+    lastEditAt.current = 0;
+    expected.current = previous;
+    onChange(previous);
+  }, [history, spec, onChange]);
+
+  const redo = useCallback(() => {
+    const next = history.future[0];
+    if (!next) return;
+    setHistory({ past: [...history.past, spec], future: history.future.slice(1) });
+    lastEditAt.current = 0;
+    expected.current = next;
+    onChange(next);
+  }, [history, spec, onChange]);
+
+  return { edit, undo, redo, canUndo: history.past.length > 0, canRedo: history.future.length > 0 };
+}
 
 export function PresentationEditor({
   spec,
@@ -230,6 +347,10 @@ export function PresentationEditor({
   onInstruct,
   instructHints,
   onUndoInstruct,
+  generatingSlideIds,
+  footer,
+  renderFrame,
+  onSelectedSlideChange,
   className,
   'data-testid': testId = 'presentation-editor',
 }: PresentationEditorProps) {
@@ -242,6 +363,7 @@ export function PresentationEditor({
   const [agentSummary, setAgentSummary] = useState<string | null>(null);
   const [agentError, setAgentError] = useState<string | null>(null);
   const [changedIds, setChangedIds] = useState<ReadonlySet<string>>(() => new Set());
+  const { edit, undo, redo, canUndo, canRedo } = useSpecHistory(spec, onChange);
 
   // The last slide images that actually arrived. Held so a re-render in flight
   // does not blank the stage on every keystroke — see the file header.
@@ -272,11 +394,26 @@ export function PresentationEditor({
   const selectedIndex = Math.max(slides.findIndex((slide) => slide.id === selectedId), 0);
   const selected = slides[selectedIndex];
 
+  const selectedChanged = useRef(onSelectedSlideChange);
+  selectedChanged.current = onSelectedSlideChange;
+  useEffect(() => {
+    if (selected) selectedChanged.current?.(selected.id, selectedIndex);
+  }, [selected?.id, selectedIndex]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const previewById = useMemo(() => {
     const source =
       typeof preview === 'object' && 'slides' in preview ? preview.slides : lastSlides;
     return new Map(source.map((slide) => [slide.id, slide.svg]));
   }, [preview, lastSlides]);
+
+  // What the agent is rewriting: the host's live ids (`useDeckReviseStatus`)
+  // plus the slide the built-in agent box is working on right now.
+  const generating = useMemo(() => {
+    const ids = new Set(generatingSlideIds ?? []);
+    if (instructing && scope === 'slide' && selected) ids.add(selected.id);
+    return [...ids];
+  }, [generatingSlideIds, instructing, scope, selected]);
+  const selectedGenerating = !!selected && generating.includes(selected.id);
 
   const items: SlideListItem[] = slides.map((slide) => ({
     slide,
@@ -291,27 +428,30 @@ export function PresentationEditor({
 
   const handleMove = useCallback(
     (from: number, to: number) => {
-      onChange(moveSlide(spec, from, to));
+      edit(moveSlide(spec, from, to));
     },
-    [onChange, spec],
+    [edit, spec],
   );
 
-  const handleAdd = useCallback(() => {
-    const next = addSlide(spec, selectedIndex);
-    if (next === spec) return;
-    onChange(next);
-    setSelectedId(next.slides[selectedIndex + 1]!.id);
-  }, [onChange, spec, selectedIndex]);
+  const handleAdd = useCallback(
+    (layout?: SlideLayout) => {
+      const next = addSlide(spec, selectedIndex, layout);
+      if (next === spec) return;
+      edit(next);
+      setSelectedId(next.slides[selectedIndex + 1]!.id);
+    },
+    [edit, spec, selectedIndex],
+  );
 
   const handleDuplicate = useCallback(
     (id: string) => {
       const next = duplicateSlide(spec, id);
       if (next === spec) return;
       const index = next.slides.findIndex((slide) => slide.id === id);
-      onChange(next);
+      edit(next);
       setSelectedId(next.slides[index + 1]!.id);
     },
-    [onChange, spec],
+    [edit, spec],
   );
 
   const handleDelete = useCallback(
@@ -319,12 +459,14 @@ export function PresentationEditor({
       const index = spec.slides.findIndex((slide) => slide.id === id);
       const next = removeSlide(spec, id);
       if (next === spec) return;
-      onChange(next);
+      edit(next);
       // Land on the slide that took its place, or the new last one.
       setSelectedId(next.slides[Math.min(index, next.slides.length - 1)]!.id);
     },
-    [onChange, spec],
+    [edit, spec],
   );
+
+  const editSlide = useCallback((slide: DeckSlide) => edit(replaceSlide(spec, slide)), [edit, spec]);
 
   const instruct = useCallback(
     async (instruction: string): Promise<boolean> => {
@@ -376,10 +518,11 @@ export function PresentationEditor({
       .finally(() => setSaving(false));
   }, [canSave, onSaveRevision, spec]);
 
-  // ⌘S / Ctrl+S and ←/→. Bound to the window rather than to a wrapper's
-  // onKeyDown: the person's focus is normally inside a text field deep in the
-  // form, and a save shortcut that only works when the shell has focus is a
-  // shortcut nobody's fingers ever find.
+  // ⌘S / Ctrl+S, ⌘Z / ⇧⌘Z and ←/→. Bound to the window rather than to a
+  // wrapper's onKeyDown: the person's focus is normally inside a text field
+  // deep in the form, and a save shortcut that only works when the shell has
+  // focus is a shortcut nobody's fingers ever find. Undo is the exception — in
+  // a text field ⌘Z belongs to the field.
   const step = useCallback(
     (delta: number) => {
       const next = slides[selectedIndex + delta];
@@ -389,10 +532,18 @@ export function PresentationEditor({
   );
 
   useEffect(() => {
+    if (readOnly) return undefined;
     const onKeyDown = (event: globalThis.KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 's') {
+      const mod = event.metaKey || event.ctrlKey;
+      if (mod && event.key.toLowerCase() === 's') {
         event.preventDefault();
         save();
+        return;
+      }
+      if (mod && event.key.toLowerCase() === 'z' && !isTextEntryTarget(event.target)) {
+        event.preventDefault();
+        if (event.shiftKey) redo();
+        else undo();
         return;
       }
       // Same intent vocabulary as the reading surface (`PresentationView`),
@@ -406,7 +557,7 @@ export function PresentationEditor({
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [save, step, selectedIndex, slides.length]);
+  }, [readOnly, save, undo, redo, step, selectedIndex, slides.length]);
 
   // -------------------------------------------------------------------------
   // Read-only: the reading surface, not a greyed-out form
@@ -458,7 +609,7 @@ export function PresentationEditor({
   // Editing
   // -------------------------------------------------------------------------
 
-  const stage = (() => {
+  const stageContent = (() => {
     // Checked before any preview state: while a slide cites nothing the host
     // was not asked for a render (see `renderable`), so a loading or error
     // state here would be about an older spec, not this one.
@@ -509,7 +660,7 @@ export function PresentationEditor({
       <img
         src={uri}
         alt={selected!.title || `Slide ${selectedIndex + 1}`}
-        className="max-h-full max-w-full object-contain"
+        className="h-full w-full object-contain"
         data-testid={`${testId}-stage-image`}
       />
     );
@@ -518,7 +669,7 @@ export function PresentationEditor({
   const revisionItems = revisions.map((revision) => ({ id: revision.id, label: revision.label }));
 
   const revisionControls = (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-wrap items-center gap-2" data-testid={`${testId}-revision-controls`}>
       {revisionItems.length > 0 && (
         <Tabs
           items={revisionItems}
@@ -544,108 +695,86 @@ export function PresentationEditor({
           Download .pptx
         </Button>
       )}
-      {onOpenPresentationView && (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onOpenPresentationView}
-          data-testid={`${testId}-open-view`}
-        >
-          Open in presentation view
-        </Button>
-      )}
     </div>
   );
 
-  return (
-    <div
-      className={cn('flex min-h-0 flex-col gap-3 p-4', className)}
-      data-testid={testId}
-      // Escape-free; the shortcuts are on the window (see above). This handler
-      // only stops a form Enter from submitting an ancestor <form> the host may
-      // have wrapped the editor in.
-      onKeyDown={(event: ReactKeyboardEvent<HTMLDivElement>) => {
-        if (event.key === 'Enter' && (event.target as HTMLElement).tagName === 'INPUT') {
-          event.preventDefault();
-        }
+  const deckFields = agentMode ? (
+    <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">
+      <InlineEditableText
+        value={spec.title}
+        required
+        label="Deck title"
+        maxLength={MAX_TITLE_CHARS}
+        onCommit={(title) => edit({ ...spec, title })}
+        data-testid={`${testId}-deck-title`}
+      />
+      <InlineEditableText
+        value={spec.subtitle ?? ''}
+        label="Subtitle"
+        placeholder="Add a subtitle"
+        tone="muted"
+        maxLength={MAX_SUBTITLE_CHARS}
+        onCommit={(subtitle) => edit({ ...spec, subtitle: subtitle || undefined })}
+        data-testid={`${testId}-deck-subtitle`}
+      />
+    </div>
+  ) : (
+    <div className="grid min-w-0 flex-1 grid-cols-1 gap-2 sm:grid-cols-2">
+      <FormField label="Deck title" required>
+        {(wiring) => (
+          <Input
+            {...wiring}
+            value={spec.title}
+            maxLength={MAX_TITLE_CHARS}
+            onChange={(event) => edit({ ...spec, title: event.target.value })}
+            data-testid={`${testId}-deck-title`}
+          />
+        )}
+      </FormField>
+      <FormField label="Subtitle">
+        {(wiring) => (
+          <Input
+            {...wiring}
+            value={spec.subtitle ?? ''}
+            maxLength={MAX_SUBTITLE_CHARS}
+            onChange={(event) => edit({ ...spec, subtitle: event.target.value || undefined })}
+            data-testid={`${testId}-deck-subtitle`}
+          />
+        )}
+      </FormField>
+    </div>
+  );
+
+  const openView = onOpenPresentationView
+    ? () => onOpenPresentationView(selected ? { slideId: selected.id, slideIndex: selectedIndex + 1 } : undefined)
+    : undefined;
+
+  const framed = !!renderFrame;
+
+  const toolbar = (
+    <SlidesToolbar
+      slide={selected}
+      theme={spec.theme ?? 'product'}
+      onAddSlide={handleAdd}
+      canAddSlide={slides.length < MAX_SLIDES}
+      onLayoutChange={(layout) => {
+        if (selected) edit(replaceSlide(spec, withLayoutDefaults(selected, layout)));
       }}
-    >
-      {agentMode ? (
-        // One line: the deck is named and themed here, and edited by asking.
-        <div className="flex flex-wrap items-center justify-between gap-2" data-testid={`${testId}-deck-line`}>
-          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">
-            <InlineEditableText
-              value={spec.title}
-              required
-              label="Deck title"
-              maxLength={MAX_TITLE_CHARS}
-              onCommit={(title) => onChange({ ...spec, title })}
-              data-testid={`${testId}-deck-title`}
-            />
-            <InlineEditableText
-              value={spec.subtitle ?? ''}
-              label="Subtitle"
-              placeholder="Add a subtitle"
-              tone="muted"
-              maxLength={MAX_SUBTITLE_CHARS}
-              onCommit={(subtitle) => onChange({ ...spec, subtitle: subtitle || undefined })}
-              data-testid={`${testId}-deck-subtitle`}
-            />
-            <Select
-              size="sm"
-              variant="pill"
-              aria-label="Theme"
-              value={spec.theme ?? 'product'}
-              options={DECK_THEMES.map((theme) => ({ value: theme, label: `${theme} theme` }))}
-              onChange={(event) => onChange({ ...spec, theme: event.target.value as DeckTheme })}
-              data-testid={`${testId}-deck-theme`}
-            />
-          </div>
-          {revisionControls}
-        </div>
-      ) : (
-        // Deck-level fields and the revision controls.
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div className="grid min-w-0 flex-1 grid-cols-1 gap-2 sm:grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)]">
-            <FormField label="Deck title" required>
-              {(wiring) => (
-                <Input
-                  {...wiring}
-                  value={spec.title}
-                  maxLength={MAX_TITLE_CHARS}
-                  onChange={(event) => onChange({ ...spec, title: event.target.value })}
-                  data-testid={`${testId}-deck-title`}
-                />
-              )}
-            </FormField>
-            <FormField label="Subtitle">
-              {(wiring) => (
-                <Input
-                  {...wiring}
-                  value={spec.subtitle ?? ''}
-                  maxLength={MAX_SUBTITLE_CHARS}
-                  onChange={(event) => onChange({ ...spec, subtitle: event.target.value || undefined })}
-                  data-testid={`${testId}-deck-subtitle`}
-                />
-              )}
-            </FormField>
-            <FormField label="Theme">
-              {(wiring) => (
-                <Select
-                  {...wiring}
-                  value={spec.theme ?? 'product'}
-                  options={DECK_THEMES.map((theme) => ({ value: theme, label: theme }))}
-                  onChange={(event) => onChange({ ...spec, theme: event.target.value as DeckTheme })}
-                  data-testid={`${testId}-deck-theme`}
-                />
-              )}
-            </FormField>
-          </div>
+      onThemeChange={(theme) => edit({ ...spec, theme })}
+      onChartKindChange={(kind) => {
+        if (selected?.chart) edit(replaceSlide(spec, { ...selected, chart: { ...selected.chart, kind } }));
+      }}
+      onUndo={undo}
+      onRedo={redo}
+      canUndo={canUndo}
+      canRedo={canRedo}
+      {...(openView ? { onPresent: openView } : {})}
+      testIdPrefix={`${testId}-toolbar`}
+    />
+  );
 
-          {revisionControls}
-        </div>
-      )}
-
+  const alerts = (
+    <>
       {blockingCount > 0 && (
         <InlineAlert tone="warning" data-testid={`${testId}-uncited-warning`}>
           {blockingCount === 1
@@ -659,198 +788,252 @@ export function PresentationEditor({
           {saveError}
         </InlineAlert>
       )}
+    </>
+  );
 
-      <div className="flex min-h-0 flex-1 flex-col gap-3 md:flex-row">
-        {/* Rail */}
-        <div className="flex min-w-0 flex-col gap-2 md:w-72" data-testid={`${testId}-rail`}>
-          <div className="flex items-center justify-between gap-2">
-            <SectionLabel as="div">Slides</SectionLabel>
-            <DotMeter
-              value={slides.length / MAX_SLIDES}
-              segments={10}
-              showPercent={false}
-              tone="surface"
-              note={`${slides.length} / ${MAX_SLIDES}`}
-              data-testid={`${testId}-slide-meter`}
-            />
-          </div>
+  // The agent's answer. Wraps rather than truncating: a summary can carry the
+  // server's warnings after it ("…; the new line restates one already on the
+  // slide"), and those are exactly the words a one-line ellipsis cut off.
+  const agentResult = agentMode && (
+    <>
+      {agentError && (
+        <InlineAlert tone="error" onDismiss={() => setAgentError(null)} data-testid={`${testId}-agent-error`}>
+          {agentError}
+        </InlineAlert>
+      )}
 
-          <div className="flex items-end gap-2">
-            <FormField label="Layout" className="min-w-0 flex-1">
-              {(wiring) => (
-                <Select
-                  {...wiring}
-                  size="sm"
-                  value={selected?.layout ?? 'bullets'}
-                  disabled={!selected}
-                  options={SLIDE_LAYOUTS.map((layout) => ({
-                    value: layout,
-                    label: SLIDE_LAYOUT_LABELS[layout],
-                  }))}
-                  onChange={(event) => {
-                    if (!selected) return;
-                    onChange(
-                      replaceSlide(spec, withLayoutDefaults(selected, event.target.value as SlideLayout)),
-                    );
-                  }}
-                  data-testid={`${testId}-layout`}
-                />
-              )}
-            </FormField>
-            <Button
-              variant="secondary"
-              size="sm"
-              disabled={slides.length >= MAX_SLIDES}
-              onClick={handleAdd}
-              data-testid={`${testId}-add-slide`}
-            >
-              Add slide
-            </Button>
-          </div>
-
-          <div className="min-h-0 flex-1 overflow-y-auto">
-            <Suspense
-              fallback={
-                <SlideList
-                  items={items}
-                  selectedId={selected?.id ?? ''}
-                  onSelect={select}
-                  onMove={handleMove}
-                  onDuplicate={handleDuplicate}
-                  onDelete={handleDelete}
-                  canDuplicate={slides.length < MAX_SLIDES}
-                  testIdPrefix={`${testId}-slide`}
-                />
-              }
-            >
-              <SortableSlideList
-                items={items}
-                selectedId={selected?.id ?? ''}
-                onSelect={select}
-                onMove={handleMove}
-                onDuplicate={handleDuplicate}
-                onDelete={handleDelete}
-                canDuplicate={slides.length < MAX_SLIDES}
-                testIdPrefix={`${testId}-slide`}
-              />
-            </Suspense>
-          </div>
-        </div>
-
-        {/* Stage + form */}
-        <div className="flex min-w-0 flex-1 flex-col gap-3">
-          <div
-            className="flex min-h-[14rem] items-center justify-center overflow-hidden rounded-lg border border-border bg-surface-hover/40 p-2"
-            data-testid={`${testId}-stage`}
-          >
-            {stage}
-          </div>
-
-          <div className="flex items-center justify-center gap-2">
-            <IconButton
-              aria-label="Previous slide"
-              variant="ghost"
-              size="sm"
-              icon={<Chevron back />}
-              disabled={selectedIndex <= 0}
-              onClick={() => step(-1)}
-              data-testid={`${testId}-previous`}
-            />
-            <Text className="text-[13px] text-text-secondary" data-testid={`${testId}-position`}>
-              {`Slide ${slides.length === 0 ? 0 : selectedIndex + 1} of ${slides.length}`}
+      {agentSummary && !agentError && (
+        <div className="flex min-w-0 flex-wrap items-start gap-2" role="status" data-testid={`${testId}-agent-summary`}>
+          <Text as="span" className="min-w-0 flex-1 whitespace-normal break-words text-[12px] text-success-fg">
+            {`✓ ${agentSummary}`}
+          </Text>
+          {changedIds.size > 0 && (
+            <Text as="span" className="text-[11px] text-text-tertiary">
+              {changedIds.size === 1 ? '1 slide marked in the filmstrip' : `${changedIds.size} slides marked in the filmstrip`}
             </Text>
-            <IconButton
-              aria-label="Next slide"
-              variant="ghost"
-              size="sm"
-              icon={<Chevron />}
-              disabled={selectedIndex >= slides.length - 1}
-              onClick={() => step(1)}
-              data-testid={`${testId}-next`}
-            />
-          </div>
-
-          {agentMode && selected && (
-            <>
-              <Suspense
-                fallback={
-                  <Text className="text-[12px] text-text-tertiary" data-testid={`${testId}-agent-loading`}>
-                    Loading the agent…
-                  </Text>
-                }
-              >
-                <PresentationAgentComposer
-                  scope={scope}
-                  onScopeChange={setScope}
-                  slideLabel={`slide ${selectedIndex + 1}`}
-                  busy={instructing}
-                  onSubmit={instruct}
-                  {...(instructHints?.length ? { suggestions: instructHints } : {})}
-                  testIdPrefix={testId}
-                />
-              </Suspense>
-
-              {agentError && (
-                <InlineAlert tone="error" onDismiss={() => setAgentError(null)} data-testid={`${testId}-agent-error`}>
-                  {agentError}
-                </InlineAlert>
-              )}
-
-              {agentSummary && !agentError && (
-                <div className="flex min-w-0 flex-wrap items-center gap-2" role="status" data-testid={`${testId}-agent-summary`}>
-                  <Text as="span" className="min-w-0 flex-1 truncate text-[12px] text-success-fg" title={agentSummary}>
-                    {`✓ ${agentSummary}`}
-                  </Text>
-                  {changedIds.size > 0 && (
-                    <Text as="span" className="text-[11px] text-text-tertiary">
-                      {changedIds.size === 1 ? '1 slide marked in the rail' : `${changedIds.size} slides marked in the rail`}
-                    </Text>
-                  )}
-                  {onUndoInstruct && (
-                    <Button variant="ghost" size="sm" onClick={undoInstruct} data-testid={`${testId}-agent-undo`}>
-                      Undo
-                    </Button>
-                  )}
-                </div>
-              )}
-
-              <SlideSources
-                compact
-                sources={selected.sources}
-                onChange={(next) => onChange(replaceSlide(spec, { ...selected, sources: next }))}
-                options={sources}
-                onSearchSources={onSearchSources}
-                testIdPrefix={`${testId}-slide`}
-              />
-
-              <Disclosure
-                summary="Edit slide details"
-                density="compact"
-                data-testid={`${testId}-details`}
-              >
-                <SlideForm
-                  slide={selected}
-                  onChange={(slide) => onChange(replaceSlide(spec, slide))}
-                  sources={sources}
-                  onSearchSources={onSearchSources}
-                  showSources={false}
-                  testIdPrefix={`${testId}-slide`}
-                />
-              </Disclosure>
-            </>
           )}
+          {onUndoInstruct && (
+            <Button variant="ghost" size="sm" onClick={undoInstruct} data-testid={`${testId}-agent-undo`}>
+              Undo
+            </Button>
+          )}
+        </div>
+      )}
+    </>
+  );
 
-          {!agentMode && selected && (
+  const agentComposer = agentMode && selected && (
+    <Suspense
+      fallback={
+        <Text className="text-[12px] text-text-tertiary" data-testid={`${testId}-agent-loading`}>
+          Loading the agent…
+        </Text>
+      }
+    >
+      <PresentationAgentComposer
+        scope={scope}
+        onScopeChange={setScope}
+        slideLabel={`slide ${selectedIndex + 1}`}
+        busy={instructing}
+        onSubmit={instruct}
+        {...(instructHints?.length ? { suggestions: instructHints } : {})}
+        testIdPrefix={testId}
+      />
+    </Suspense>
+  );
+
+  const footerContext: PresentationFooterContext = {
+    selectedSlide: selected,
+    selectedIndex,
+    slideCount: slides.length,
+    selectSlide: select,
+    markChanged: (ids) => setChangedIds(new Set(ids)),
+  };
+  const customFooter = typeof footer === 'function' ? footer(footerContext) : footer;
+  const hasCustomFooter = customFooter != null && customFooter !== false;
+
+  // What sits at the foot of the editing column. A host footer replaces the
+  // built-in agent box; without one, the agent box (when `onInstruct` is set).
+  const footerContent: ReactNode = hasCustomFooter
+    ? customFooter
+    : agentComposer
+      ? framed
+        ? (
+            <FloatingComposerDock
+              maxWidth="4xl"
+              label="Deck agent"
+              above={agentResult}
+              composer={agentComposer}
+              data-testid={`${testId}-dock`}
+            />
+          )
+        : (
+            <>
+              {agentComposer}
+              {agentResult}
+            </>
+          )
+      : null;
+
+  const slideExtras = selected && (
+    <>
+      {agentMode ? (
+        <>
+          <SlideSources
+            compact
+            sources={selected.sources}
+            onChange={(next) => editSlide({ ...selected, sources: next })}
+            options={sources}
+            onSearchSources={onSearchSources}
+            testIdPrefix={`${testId}-slide`}
+          />
+
+          <Disclosure
+            summary="Edit slide details"
+            density="compact"
+            data-testid={`${testId}-details`}
+          >
             <SlideForm
               slide={selected}
-              onChange={(slide) => onChange(replaceSlide(spec, slide))}
+              onChange={editSlide}
               sources={sources}
               onSearchSources={onSearchSources}
+              showSources={false}
+              showNotes={false}
               testIdPrefix={`${testId}-slide`}
             />
-          )}
+          </Disclosure>
+        </>
+      ) : (
+        <SlideForm
+          slide={selected}
+          onChange={editSlide}
+          sources={sources}
+          onSearchSources={onSearchSources}
+          showNotes={false}
+          testIdPrefix={`${testId}-slide`}
+        />
+      )}
+    </>
+  );
+
+  const body = (
+    <div className="flex min-h-0 flex-1 flex-col gap-4 md:flex-row">
+      <Filmstrip
+        items={items}
+        selectedId={selected?.id ?? ''}
+        onSelect={select}
+        onMove={handleMove}
+        onDuplicate={handleDuplicate}
+        onDelete={handleDelete}
+        onAdd={() => handleAdd()}
+        canAdd={slides.length < MAX_SLIDES}
+        generatingSlideIds={generating}
+        className="md:w-44 md:shrink-0"
+        testIdPrefix={`${testId}-slide`}
+      />
+
+      <div className="flex min-w-0 flex-1 flex-col gap-3" data-testid={`${testId}-main`}>
+        <SlideStage
+          generating={selectedGenerating}
+          label={selected ? `Slide ${selectedIndex + 1} of ${slides.length}: ${selected.title || 'Untitled slide'}` : 'No slide'}
+          data-testid={`${testId}-stage`}
+        >
+          {stageContent}
+        </SlideStage>
+
+        <div className="flex items-center justify-center gap-2">
+          <IconButton
+            aria-label="Previous slide"
+            variant="ghost"
+            size="sm"
+            icon={<Chevron back />}
+            disabled={selectedIndex <= 0}
+            onClick={() => step(-1)}
+            data-testid={`${testId}-previous`}
+          />
+          <Text className="text-[13px] text-text-secondary" data-testid={`${testId}-position`}>
+            {`Slide ${slides.length === 0 ? 0 : selectedIndex + 1} of ${slides.length}`}
+          </Text>
+          <IconButton
+            aria-label="Next slide"
+            variant="ghost"
+            size="sm"
+            icon={<Chevron />}
+            disabled={selectedIndex >= slides.length - 1}
+            onClick={() => step(1)}
+            data-testid={`${testId}-next`}
+          />
+          <DotMeter
+            value={slides.length / MAX_SLIDES}
+            segments={10}
+            showPercent={false}
+            tone="surface"
+            note={`${slides.length} / ${MAX_SLIDES}`}
+            className="ml-2"
+            data-testid={`${testId}-slide-meter`}
+          />
         </div>
+
+        {selected && (
+          <div className="mx-auto flex w-full max-w-4xl flex-col gap-3">
+            <SpeakerNotes
+              value={selected.notes}
+              onChange={(notes) => editSlide({ ...selected, notes })}
+              data-testid={`${testId}-slide-notes`}
+            />
+            {!framed && footerContent}
+            {slideExtras}
+          </div>
+        )}
       </div>
+    </div>
+  );
+
+  const editorKeyGuard = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+    // The shortcuts are on the window (see above). This handler only stops a
+    // form Enter from submitting an ancestor <form> the host may have wrapped
+    // the editor in.
+    if (event.key === 'Enter' && (event.target as HTMLElement).tagName === 'INPUT') {
+      event.preventDefault();
+    }
+  };
+
+  if (renderFrame) {
+    const surface = (
+      <div
+        className={cn('flex min-h-0 flex-col gap-3 p-4', className)}
+        data-testid={testId}
+        onKeyDown={editorKeyGuard}
+      >
+        <div className="flex flex-wrap items-center gap-2" data-testid={`${testId}-deck-line`}>
+          {deckFields}
+        </div>
+        {alerts}
+        {body}
+      </div>
+    );
+    return <>{renderFrame({ toolbar, actions: revisionControls, surface, footer: footerContent })}</>;
+  }
+
+  return (
+    <div
+      className={cn('flex min-h-0 flex-col gap-3 p-4', className)}
+      data-testid={testId}
+      onKeyDown={editorKeyGuard}
+    >
+      <div
+        className={cn('flex flex-wrap justify-between gap-2', agentMode ? 'items-center' : 'items-end')}
+        {...(agentMode ? { 'data-testid': `${testId}-deck-line` } : {})}
+      >
+        {deckFields}
+        {revisionControls}
+      </div>
+
+      <div className="rounded-lg border border-border bg-surface px-2 py-1.5">{toolbar}</div>
+
+      {alerts}
+      {body}
     </div>
   );
 }

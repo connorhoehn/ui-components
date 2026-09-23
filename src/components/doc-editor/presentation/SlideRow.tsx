@@ -29,6 +29,8 @@ export interface SlideRowProps {
   uncited: boolean;
   /** The agent's last edit touched this slide — marked until the next one. */
   changed?: boolean;
+  /** An agent edit to this slide is in flight. */
+  generating?: boolean;
   readOnly?: boolean;
   onSelect: (id: string) => void;
   onMove: (from: number, to: number) => void;

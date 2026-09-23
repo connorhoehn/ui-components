@@ -11708,8 +11708,19 @@ declare interface PresenceUser_3 {
     metadata: Record<string, unknown>;
 }
 
-/** True when the keystroke belongs to whatever the person is typing into. */
-export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, sources, onSearchSources, onDownload, onOpenPresentationView, readOnly, onInstruct, instructHints, onUndoInstruct, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
+export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, sources, onSearchSources, onDownload, onOpenPresentationView, readOnly, onInstruct, instructHints, onUndoInstruct, generatingSlideIds, footer, renderFrame, onSelectedSlideChange, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
+
+/** The parts `renderFrame` receives. */
+declare interface PresentationEditorFrame {
+    /** `SlidesToolbar` — New slide, Layout, Insert, Theme, Undo/Redo, Present. */
+    toolbar: ReactNode;
+    /** Revision tabs, Save as vN (gated on citations), Download .pptx. */
+    actions: ReactNode;
+    /** Deck title line, warnings, filmstrip, 16:9 stage, speaker notes, sources. */
+    surface: ReactNode;
+    /** The host's `footer`, or the built-in agent box in a dock, or null. */
+    footer: ReactNode;
+}
 
 export declare interface PresentationEditorProps {
     /** Controlled. The host owns the spec; this component never holds a copy. */
@@ -11729,8 +11740,14 @@ export declare interface PresentationEditorProps {
     onSearchSources?: (query: string) => PresentationSourceOption[] | Promise<PresentationSourceOption[]>;
     /** The `.pptx`, through the host's authorized route. No handler, no button. */
     onDownload?: () => void;
-    /** Opens the same deck in the read-only presentation surface. */
-    onOpenPresentationView?: () => void;
+    /**
+     * Opens the same deck in the read-only presentation surface — the toolbar's
+     * Present. Called with the slide on the stage so the view can start there.
+     */
+    onOpenPresentationView?: (at?: {
+        slideId: string;
+        slideIndex: number;
+    }) => void;
     readOnly?: boolean;
     /**
      * Turns on the agent box under the stage (see the file header). Resolve with
@@ -11745,6 +11762,29 @@ export declare interface PresentationEditorProps {
      * snapshot; pass this only while it holds one.
      */
     onUndoInstruct?: () => void;
+    /**
+     * Slides the agent is working on right now — `useDeckReviseStatus(documentId)
+     * .generatingSlideIds`. Their thumbnails and the stage say `Generating…`; an
+     * id not in the deck is a slide being created and shows as a placeholder at
+     * the end of the filmstrip.
+     */
+    generatingSlideIds?: readonly string[];
+    /**
+     * The foot of the editor — the host's composer dock. Replaces the built-in
+     * agent box (`onInstruct`) when given. A function receives the slide on the
+     * stage and a way to mark the slides an edit changed.
+     */
+    footer?: ReactNode | ((ctx: PresentationFooterContext) => ReactNode);
+    /**
+     * Hand the editor's parts to a frame — normally `EditorShell` — instead of
+     * stacking them: `toolbar` for its toolbar row, `actions` (revisions, Save,
+     * Download) for its head, `surface` as its child, `footer` for its floating
+     * dock slot. Without `footer`, the built-in agent box arrives in `footer`
+     * already wrapped in a `FloatingComposerDock`.
+     */
+    renderFrame?: (frame: PresentationEditorFrame) => ReactNode;
+    /** The slide on the stage changed (selection, delete, an agent edit landing). */
+    onSelectedSlideChange?: (slideId: string, index: number) => void;
     className?: string;
     'data-testid'?: string;
 }
@@ -11755,6 +11795,18 @@ export declare interface PresentationEditorRevision {
     label: string;
     /** Already formatted by the host — this component does no clock maths. */
     createdAt?: string;
+}
+
+/** What a `footer` render function is told. */
+declare interface PresentationFooterContext {
+    /** The slide on the stage. */
+    selectedSlide: DeckSlide | undefined;
+    /** 0-based. */
+    selectedIndex: number;
+    slideCount: number;
+    selectSlide: (slideId: string) => void;
+    /** Marks slides "Edited by agent" in the filmstrip until the next call. */
+    markChanged: (slideIds: string[]) => void;
 }
 
 export declare interface PresentationInstructContext {
@@ -18797,6 +18849,19 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -18816,12 +18881,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -18832,6 +18894,29 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -18868,39 +18953,6 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

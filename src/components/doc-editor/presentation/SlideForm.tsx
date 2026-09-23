@@ -46,6 +46,12 @@ export interface SlideFormProps {
    * a collapsed form — Save depends on them, so they cannot be folded away.
    */
   showSources?: boolean;
+  /**
+   * Render the speaker-notes field. Default true. The editor turns it off when
+   * the notes have their own pane under the stage (`SpeakerNotes`), so the
+   * same field is not editable in two places at once.
+   */
+  showNotes?: boolean;
   testIdPrefix: string;
 }
 
@@ -323,6 +329,7 @@ export function SlideForm({
   onSearchSources,
   readOnly = false,
   showSources = true,
+  showNotes = true,
   testIdPrefix,
 }: SlideFormProps) {
   const patch = (partial: Partial<DeckSlide>) => onChange({ ...slide, ...partial });
@@ -440,7 +447,7 @@ export function SlideForm({
         </FormField>
       )}
 
-      <FormField label="Speaker notes" hint="Goes into the .pptx notes pane, not onto the slide.">
+      {showNotes && <FormField label="Speaker notes" hint="Goes into the .pptx notes pane, not onto the slide.">
         {(wiring) => (
           <Textarea
             {...wiring}
@@ -452,7 +459,7 @@ export function SlideForm({
             data-testid={`${testIdPrefix}-notes`}
           />
         )}
-      </FormField>
+      </FormField>}
 
       {showSources && <SlideSources
         sources={slide.sources}

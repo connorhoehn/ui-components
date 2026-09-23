@@ -6,6 +6,59 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.364.0] — 2026-09-22
+
+### Added — the presentation editor surface (editor handoff WS3)
+
+`PresentationEditor` is recomposed around four new pieces, exported from
+`./doc-editor` (and the root) for hosts that compose their own surface:
+
+- **`Filmstrip`** (+ `FilmstripThumb`): numbered 16:9 thumbnails from the
+  platform-rendered slide SVGs (no second renderer), selection
+  (`aria-current`), ↑/↓ to move the selection and Alt+↑/↓ to move the slide,
+  drag reorder through the existing lazy `SortableSlideList`, a hover/focus ⋯
+  menu (Move up / Move down / Duplicate / Delete slide) and a dashed "Add
+  slide" card. `generatingSlideIds` dims a thumb under a quiet `Generating…`
+  (`aria-busy`); an id not in the deck shows as a placeholder card at the
+  end. The uncited ("No source") and "Edited by agent" markers stay.
+- **`SlideStage`**: the selected slide on a centred 16:9 frame (lifted from
+  `PresentationView`), with a `Generating…` line over the last render.
+- **`SpeakerNotes`**: the slide's `notes` under the stage, capped at the
+  generator's 2000 characters with a counter; emptied writes `undefined`.
+- **`SlidesToolbar`**: New slide, Layout, Insert (chart / quote / image /
+  two-column slide after this one), Theme, Bar/Line on a chart slide,
+  Undo/Redo, Present. No bold/italic/font: a DeckSpec has no rich text, and
+  the toolbar says "Text style comes from the theme" instead of showing dead
+  buttons.
+
+`PresentationEditor` new props (all optional; existing props unchanged):
+
+- `generatingSlideIds` — `useDeckReviseStatus(documentId).generatingSlideIds`.
+  The built-in agent box also marks the slide it is editing.
+- `footer` — a node or `(ctx) => node` (`PresentationFooterContext`: selected
+  slide/index, slide count, `selectSlide`, `markChanged`). Replaces the
+  built-in agent box; this is where a host mounts its composer dock.
+- `renderFrame(parts)` — hands `{ toolbar, actions, surface, footer }` to a
+  frame such as `EditorShell` instead of stacking them. Without `footer`, the
+  built-in agent box arrives docked in a `FloatingComposerDock`.
+- `onSelectedSlideChange(slideId, index)`.
+- `onOpenPresentationView` is now called with `{ slideId, slideIndex }` (still
+  assignable from `() => void`).
+
+### Changed
+
+- The agent summary wraps instead of truncating to one line, so a warning
+  appended to it is readable on a narrow stage.
+- Undo/Redo (⌘Z / ⇧⌘Z outside a text field) over the editor's own edits;
+  keystrokes within 800ms fold into one step, and a spec replaced from
+  outside (revision switch, agent edit) drops the history.
+- Theme moved from the deck line to the toolbar; the Layout select and the
+  list rail's up/down/duplicate/delete buttons moved into the toolbar and the
+  thumbnail ⋯ menu. `SlideRow`/`SlideList` are still exported unchanged.
+- `SlideForm` `showNotes` (default true); the editor turns it off because
+  the notes have their own pane.
+- `SlideList`/`SortableSlideList` accept `rowComponent` and `listClassName`.
+
 ## [2.363.0] — 2026-09-22
 
 ### Added — the page editor inside `EditorShell` (editor handoff WS2)

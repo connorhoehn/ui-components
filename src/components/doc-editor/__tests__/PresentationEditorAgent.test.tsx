@@ -104,7 +104,7 @@ describe('PresentationEditor with onInstruct', () => {
     await waitFor(() => expect(screen.queryByTestId('presentation-editor-agent-composer-processes')).toBeNull());
     const summary = screen.getByTestId('presentation-editor-agent-summary');
     expect(summary).toHaveTextContent('Added a release-risk bullet.');
-    expect(summary).toHaveTextContent('2 slides marked in the rail');
+    expect(summary).toHaveTextContent('2 slides marked in the filmstrip');
     expect(screen.getByTestId('presentation-editor-slide-changed-s1')).toHaveTextContent('Edited by agent');
     expect(screen.getByTestId('presentation-editor-slide-changed-s3')).toBeInTheDocument();
     expect(screen.queryByTestId('presentation-editor-slide-changed-s2')).toBeNull();
@@ -162,7 +162,7 @@ describe('PresentationEditor with onInstruct', () => {
     expect(within(screen.getByTestId('presentation-editor-slide-sources')).getByText('Retro transcript')).toBeInTheDocument();
   });
 
-  it('puts the deck title, subtitle and theme on one line, the title editable in place', () => {
+  it('puts the deck title and subtitle on one line, the title editable in place; theme is in the toolbar', () => {
     render(<Harness onInstruct={vi.fn(async () => ({ summary: 'ok' }))} />);
     const line = screen.getByTestId('presentation-editor-deck-line');
     expect(within(line).queryByRole('textbox')).toBeNull();
@@ -171,7 +171,7 @@ describe('PresentationEditor with onInstruct', () => {
     fireEvent.change(input, { target: { value: 'Q3 review' } });
     fireEvent.keyDown(input, { key: 'Enter' });
     expect(within(line).getByTestId('presentation-editor-deck-title')).toHaveTextContent('Q3 review');
-    expect(within(line).getByTestId('presentation-editor-deck-theme')).toBeInTheDocument();
+    expect(screen.getByTestId('presentation-editor-toolbar-theme')).toHaveTextContent('Product');
   });
 });
 

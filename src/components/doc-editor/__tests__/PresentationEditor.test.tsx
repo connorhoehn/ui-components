@@ -143,7 +143,8 @@ describe('PresentationEditor — spec round-trip', () => {
     render(<Harness onSpec={onSpec} />);
     fireEvent.click(screen.getByTestId('presentation-editor-slide-select-s2'));
 
-    fireEvent.change(screen.getByTestId('presentation-editor-layout'), { target: { value: 'quote' } });
+    fireEvent.click(screen.getByTestId('presentation-editor-toolbar-layout'));
+    fireEvent.click(screen.getByTestId('presentation-editor-toolbar-layout-quote'));
 
     const next: DeckSpec = onSpec.mock.calls.at(-1)![0];
     expect(next.slides[1].layout).toBe('quote');
@@ -153,13 +154,15 @@ describe('PresentationEditor — spec round-trip', () => {
 });
 
 describe('PresentationEditor — the rail', () => {
-  it('reorders with the row buttons', () => {
+  it('reorders from the thumbnail menu', () => {
     render(<Harness />);
     expect(slideOrder()).toEqual(['s1', 's2', 's3']);
 
+    fireEvent.click(screen.getByTestId('presentation-editor-slide-menu-s1'));
     fireEvent.click(screen.getByTestId('presentation-editor-slide-down-s1'));
     expect(slideOrder()).toEqual(['s2', 's1', 's3']);
 
+    fireEvent.click(screen.getByTestId('presentation-editor-slide-menu-s1'));
     fireEvent.click(screen.getByTestId('presentation-editor-slide-up-s1'));
     expect(slideOrder()).toEqual(['s1', 's2', 's3']);
   });
@@ -174,17 +177,19 @@ describe('PresentationEditor — the rail', () => {
     const onSpec = vi.fn();
     render(<Harness onSpec={onSpec} />);
 
-    fireEvent.click(screen.getByTestId('presentation-editor-add-slide'));
+    fireEvent.click(screen.getByTestId('presentation-editor-toolbar-new-slide'));
     expect(slideOrder()).toHaveLength(4);
     // A fresh slide cites nothing, which is exactly what should block a save.
     expect(screen.getByTestId('presentation-editor-uncited-warning')).toBeInTheDocument();
 
+    fireEvent.click(screen.getByTestId('presentation-editor-slide-menu-s3'));
     fireEvent.click(screen.getByTestId('presentation-editor-slide-duplicate-s3'));
     const afterCopy: DeckSpec = onSpec.mock.calls.at(-1)![0];
     const copyIndex = afterCopy.slides.findIndex((slide) => slide.id === 's3') + 1;
     expect(afterCopy.slides[copyIndex].sources).toEqual([{ documentId: 'doc-2', title: 'Metrics' }]);
     expect(afterCopy.slides[copyIndex].id).not.toBe('s3');
 
+    fireEvent.click(screen.getByTestId('presentation-editor-slide-menu-s1'));
     fireEvent.click(screen.getByTestId('presentation-editor-slide-delete-s1'));
     expect(slideOrder()).not.toContain('s1');
   });
@@ -192,7 +197,11 @@ describe('PresentationEditor — the rail', () => {
   it('will not delete the last slide', () => {
     const only: DeckSpec = { title: 'One', slides: [baseSpec().slides[0]] };
     render(<Harness initial={only} />);
-    expect(screen.getByTestId('presentation-editor-slide-delete-s1')).toBeDisabled();
+    // The only slide has no menu at all: nothing to move, copying is allowed
+    // but deleting is not.
+    fireEvent.click(screen.getByTestId('presentation-editor-slide-menu-s1'));
+    expect(screen.getByTestId('presentation-editor-slide-duplicate-s1')).toBeInTheDocument();
+    expect(screen.queryByTestId('presentation-editor-slide-delete-s1')).toBeNull();
   });
 });
 
