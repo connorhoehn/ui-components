@@ -165,3 +165,12 @@ describe('FloatingComposerDock', () => {
     expect((screen.getByTestId('floating-composer-dock').firstElementChild as HTMLElement).className).toContain('max-w-xl');
   });
 });
+
+describe('EditorShell participants', () => {
+  it('passes jump-to-participant through to the avatars', () => {
+    const onJump = vi.fn();
+    render(<EditorShell title="x" participants={[{ id: 'u1', name: 'Frank Davis' }]} onParticipantClick={onJump}><p /></EditorShell>);
+    fireEvent.click(within(screen.getByTestId('editor-shell-byline')).getAllByRole('listitem')[0]!);
+    expect(onJump).toHaveBeenCalledWith('u1');
+  });
+});

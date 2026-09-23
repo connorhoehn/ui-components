@@ -73,6 +73,11 @@ export interface EditorShellProps {
   statusPill?: ReactNode;
   /** Who is here. Rendered with `PresenceAvatars`. */
   participants?: PresenceUser[];
+  /** Jump to where a participant is (their cursor, their slide). Since 2.367.0. */
+  onParticipantClick?: (id: string) => void;
+  /** Follow a participant's view; `followingParticipantId` marks who is followed. Since 2.367.0. */
+  onFollowParticipant?: (id: string) => void;
+  followingParticipantId?: string | null;
   /** Beside the collaborators — "Owned by Connor Hoehn". */
   meta?: ReactNode;
   saveState?: DocumentSaveState;
@@ -128,6 +133,9 @@ export function EditorShell({
   onStarredChange,
   statusPill,
   participants,
+  onParticipantClick,
+  onFollowParticipant,
+  followingParticipantId,
   meta,
   saveState,
   headActions,
@@ -191,7 +199,15 @@ export function EditorShell({
             </div>
             {hasByline && (
               <div className="flex min-w-0 flex-wrap items-center gap-2 text-xs text-text-tertiary" data-testid={`${testId}-byline`}>
-                {participants && participants.length > 0 && <PresenceAvatars users={participants} size={22} maxVisible={4} />}
+                {participants && participants.length > 0 && (
+                  <PresenceAvatars
+                    users={participants}
+                    size={22}
+                    maxVisible={4}
+                    {...(onParticipantClick ? { onUserClick: onParticipantClick } : {})}
+                    {...(onFollowParticipant ? { onFollowUser: onFollowParticipant, followingUserId: followingParticipantId ?? null } : {})}
+                  />
+                )}
                 {meta != null && <span className="min-w-0 truncate">{meta}</span>}
                 <DocumentSaveStatus state={saveState} />
               </div>
