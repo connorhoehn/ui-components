@@ -110,7 +110,9 @@ describe('a long placeholder never draws over the rows below it', () => {
     expect(root().querySelector(`[title="${reason}"]`)).not.toBeNull();
     const css = readFileSync(resolve(__dirname, '../../../styles.css'), 'utf8');
     const rule = css.slice(css.indexOf('.chat-composer .ProseMirror .is-empty::before {'));
-    expect(rule.slice(0, rule.indexOf('}'))).toMatch(/white-space: nowrap;[\s\S]*text-overflow: ellipsis;/);
+    expect(rule.slice(0, rule.indexOf('}'))).toMatch(/white-space: nowrap;[\s\S]*overflow-x: clip;[\s\S]*overflow-y: visible;[\s\S]*text-overflow: ellipsis;/);
+    // A zero-height float: `overflow: hidden` would clip the placeholder away entirely.
+    expect(rule.slice(0, rule.indexOf('}'))).not.toMatch(/^\s*overflow: hidden;/m);
   });
 });
 

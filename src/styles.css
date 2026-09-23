@@ -663,7 +663,10 @@
      that was painted past the input's bottom edge and clipped mid-word. */
   max-width: 100%;
   white-space: nowrap;
-  overflow: hidden;
+  /* `clip` on x only. `overflow: hidden` here hid the WHOLE placeholder: the
+     pseudo is a zero-height float, so clipping y clips everything. */
+  overflow-x: clip;
+  overflow-y: visible;
   text-overflow: ellipsis;
 }
 .chat-composer .ProseMirror p { margin: 0 0 0.25em; }

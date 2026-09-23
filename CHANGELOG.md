@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.369.3] — 2026-09-22
+
+### Fixed — the composer placeholder disappeared (2.369.2 regression)
+
+The one-line placeholder used `overflow: hidden` on a zero-height float, which
+clipped it away entirely. It now clips on x only (`overflow-x: clip`), so the
+ellipsis works and the text shows. Verified live at 572px and 360px.
+
+---
+
 ## [2.369.2] — 2026-09-22
 
 ### Fixed — adaptive composer polish (found live)
