@@ -962,13 +962,19 @@ export type ErrorCategory =
   | 'ValidationError'
   | 'LLMError'
   | 'RegistryConflict'
+  /** A step looked at the request and said no (constraint not met, forbidden, revision conflict, invalid request): terminal, never retried. */
+  | 'Refused'
   | 'UnknownError';
+
+/** Whether the platform would retry this failure on its own; a `Refused` run is `terminal`. */
+export type ErrorRetryability = 'retryable' | 'terminal' | 'unknown';
 
 export interface PipelineRunError {
   nodeId: string;
   message: string;
   stack?: string;
   errorCategory?: ErrorCategory;
+  retryability?: ErrorRetryability;
 }
 
 export interface TokenUsageByModel {

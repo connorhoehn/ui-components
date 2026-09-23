@@ -13,6 +13,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **pipelines: `ErrorCategory` gains `Refused`; `PipelineRunError.retryability`.** A step that looked at the
   request and said no (the platform's `constraint-not-met`, `forbidden`, `revision-conflict`, `invalid-request`)
   is classified `Refused`, retryability `terminal` — a decision about inputs the run already has, so retrying or
+  resuming decides the same way. `RunsTable` shortens it to "Refused"; `ErrorOverlay`, `errorCategoryTone` and
+  the attempts tone map paint it caution, not danger: nothing broke. The host's run page hides retry and resume.
+
+## [2.379.1] — 2026-09-23
+
+### Added
+
+- **pipelines: `ErrorCategory` gains `Refused`; `PipelineRunError.retryability`.** A step that looked at the
+  request and said no (the platform's `constraint-not-met`, `forbidden`, `revision-conflict`, `invalid-request`)
+  is classified `Refused`, retryability `terminal` — a decision about inputs the run already has, so retrying or
   resuming decides the same way. `RunsTable` shortens it to "Refused"; `ErrorOverlay` and `errorCategoryTone`
   paint it caution, not danger: nothing broke. The host's run page hides retry and resume for it.
 

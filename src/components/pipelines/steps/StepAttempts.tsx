@@ -50,6 +50,7 @@ const CATEGORY_TONE: Record<ErrorCategory, ChipTone> = {
   LLMError: 'warning',
   ValidationError: 'danger',
   RegistryConflict: 'danger',
+  Refused: 'caution',
   UnknownError: 'neutral',
 };
 

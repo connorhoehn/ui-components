@@ -26,6 +26,7 @@ export function errorCategoryTone(cat: ErrorCategory): ChipTone {
     case 'NetworkError':     return 'warning';
     case 'ValidationError':  return 'warning';
     case 'RegistryConflict': return 'purple';
+    case 'Refused':          return 'caution';
     case 'UnknownError':     return 'neutral';
     default:                 return 'neutral';
   }

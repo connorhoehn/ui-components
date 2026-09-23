@@ -14,6 +14,7 @@ const ERROR_CATEGORY_SHORT: Record<ErrorCategory, string> = {
   NetworkError: 'Network',
   ValidationError: 'Validation',
   RegistryConflict: 'Conflict',
+  Refused: 'Refused',
   UnknownError: 'Unknown',
 };
 

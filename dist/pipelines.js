@@ -4232,6 +4232,10 @@ var Kr = {
 		bg: "var(--color-accent-bg)",
 		fg: "var(--color-accent)"
 	},
+	Refused: {
+		bg: "var(--color-caution-bg)",
+		fg: "var(--color-caution)"
+	},
 	UnknownError: {
 		bg: "var(--color-surface-hover)",
 		fg: "var(--color-text-secondary)"
@@ -4244,6 +4248,7 @@ function qr(e) {
 		case "NetworkError": return "Network Error";
 		case "ValidationError": return "Validation Error";
 		case "RegistryConflict": return "Registry Conflict";
+		case "Refused": return "Refused";
 		case "UnknownError": return "Unknown Error";
 		default: return String(e);
 	}
@@ -18634,6 +18639,7 @@ function wu(e) {
 		case "NetworkError": return "warning";
 		case "ValidationError": return "warning";
 		case "RegistryConflict": return "purple";
+		case "Refused": return "caution";
 		case "UnknownError": return "neutral";
 		default: return "neutral";
 	}
@@ -18646,6 +18652,7 @@ var Tu = {
 	NetworkError: "Network",
 	ValidationError: "Validation",
 	RegistryConflict: "Conflict",
+	Refused: "Refused",
 	UnknownError: "Unknown"
 };
 function Eu(e) {
@@ -19137,6 +19144,7 @@ var Mu = {
 	LLMError: "warning",
 	ValidationError: "danger",
 	RegistryConflict: "danger",
+	Refused: "caution",
 	UnknownError: "neutral"
 };
 function Nu(e) {

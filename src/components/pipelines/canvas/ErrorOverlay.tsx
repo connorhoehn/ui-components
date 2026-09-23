@@ -32,6 +32,8 @@ const CATEGORY_COLORS: Record<ErrorCategory, { bg: string; fg: string }> = {
   NetworkError:     { bg: 'var(--color-warning-bg)', fg: 'var(--color-warning)' },
   ValidationError:  { bg: 'var(--color-warning-bg)', fg: 'var(--color-warning)' },
   RegistryConflict: { bg: 'var(--color-accent-bg)', fg: 'var(--color-accent)' },
+  // A refusal is a decision, not a fault: the step said no to the request.
+  Refused:          { bg: 'var(--color-caution-bg)', fg: 'var(--color-caution)' },
   UnknownError:     { bg: 'var(--color-surface-hover)', fg: 'var(--color-text-secondary)' },
 };
 
@@ -42,6 +44,7 @@ function categoryLabel(cat: ErrorCategory): string {
     case 'NetworkError':     return 'Network Error';
     case 'ValidationError':  return 'Validation Error';
     case 'RegistryConflict': return 'Registry Conflict';
+    case 'Refused':          return 'Refused';
     case 'UnknownError':     return 'Unknown Error';
     default:                 return String(cat);
   }
