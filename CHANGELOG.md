@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.367.1] — 2026-09-22
+
+### Fixed
+
+- `TreeView` rows are `relative`: the `sr-only` hover meta (2.365.0) is
+  absolutely positioned and escaped the tree's scroll box, so a long tree
+  stretched the document and the whole window scrolled.
+- `EditorShell` title takes the row's remaining width (basis 0, 10rem
+  floor), so the kind mark and a long title share a line and the pills wrap
+  instead.
+
 ## [2.367.0] — 2026-09-22
 
 ### Added

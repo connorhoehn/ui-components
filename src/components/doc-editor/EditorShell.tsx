@@ -176,11 +176,11 @@ export function EditorShell({
                   onCommit={onTitleChange}
                   label={titleLabel}
                   required
-                  className="min-w-0 max-w-full text-lg"
+                  className="min-w-[10rem] max-w-full flex-1 basis-0 text-lg"
                   data-testid={`${testId}-title`}
                 />
               ) : (
-                <h1 className="m-0 min-w-0 max-w-full truncate text-lg font-semibold text-text-primary" data-testid={`${testId}-title`}>{title}</h1>
+                <h1 className="m-0 min-w-[10rem] max-w-full flex-1 basis-0 truncate text-lg font-semibold text-text-primary" data-testid={`${testId}-title`}>{title}</h1>
               )}
               {onStarredChange && (
                 <IconButton

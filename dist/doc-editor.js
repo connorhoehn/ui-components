@@ -2159,10 +2159,10 @@ function gr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 										onCommit: r,
 										label: i,
 										required: !0,
-										className: "min-w-0 max-w-full text-lg",
+										className: "min-w-[10rem] max-w-full flex-1 basis-0 text-lg",
 										"data-testid": `${N}-title`
 									}) : /* @__PURE__ */ Z("h1", {
-										className: "m-0 min-w-0 max-w-full truncate text-lg font-semibold text-text-primary",
+										className: "m-0 min-w-[10rem] max-w-full flex-1 basis-0 truncate text-lg font-semibold text-text-primary",
 										"data-testid": `${N}-title`,
 										children: t
 									}),

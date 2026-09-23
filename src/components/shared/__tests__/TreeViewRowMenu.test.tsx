@@ -32,6 +32,8 @@ describe('TreeView — hover metadata, icons and the row menu', () => {
     const meta = screen.getByTestId('tree-view-hover-meta-deck');
     expect(meta).toHaveTextContent('v4');
     expect(meta.className).toContain('sr-only');
+    // Positioned row: the absolutely positioned sr-only meta stays inside the tree's scroller.
+    expect(meta.parentElement!.className).toContain('relative');
     expect(meta.className).toContain('group-hover:not-sr-only');
     expect(meta.className).toContain('group-focus-within:not-sr-only');
     expect(screen.getByTestId('tree-view-row-deck')).toHaveTextContent('Sprint reviewv4');

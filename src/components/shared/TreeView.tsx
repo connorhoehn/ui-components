@@ -273,7 +273,10 @@ function TreeRow({
         onFocus={() => setFocusedId(entry.id)}
         data-testid={`${testId}-row-${entry.id}`}
         className={cn(
-          'group flex items-center gap-1 border-l-2 py-1.5 pr-2 text-sm transition-colors',
+          // `relative`: the sr-only hover meta is absolutely positioned; without
+          // a positioned row it escapes the rail's scroll box and stretches the
+          // document (a long tree scrolled the whole window — 2.367.1).
+          'group relative flex items-center gap-1 border-l-2 py-1.5 pr-2 text-sm transition-colors',
           // A row you can pick up says so before you try. Only when the host
           // wired a drop target: a grab cursor over an immovable row is a lie.
           draggable ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer',
