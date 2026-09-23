@@ -32,10 +32,16 @@ var f = {
 	vignetteStrength: 1.2,
 	edgeFade: .35,
 	mouseInteraction: !0
-}, p = .1, m = .05;
-function h({ active: f = !0, enableRainbow: h = !1, gridColor: g = "#ffffff", rippleIntensity: _ = .05, gridSize: v = 10, gridThickness: y = 15, fadeDistance: b = 1.5, vignetteStrength: x = 2, glowIntensity: S = .1, opacity: C = 1, edgeFade: w = 1, gridRotation: T = 0, mouseInteraction: E = !0, mouseInteractionRadius: D = 1, lightMode: O = !1, pixelRatio: k, className: A, "data-testid": j = "ripple-grid-background" }) {
+}, p = {
+	...f,
+	lightMode: !1,
+	gridColor: "#6b7280",
+	glowIntensity: 0,
+	opacity: .32
+}, m = .1, h = .05;
+function g({ active: f = !0, enableRainbow: p = !1, gridColor: g = "#ffffff", rippleIntensity: _ = .05, gridSize: v = 10, gridThickness: y = 15, fadeDistance: b = 1.5, vignetteStrength: x = 2, glowIntensity: S = .1, opacity: C = 1, edgeFade: w = 1, gridRotation: T = 0, mouseInteraction: E = !0, mouseInteractionRadius: D = 1, lightMode: O = !1, pixelRatio: k, className: A, "data-testid": j = "ripple-grid-background" }) {
 	let M = a(() => d(g), [g]), N = o({
-		enableRainbow: h,
+		enableRainbow: p,
 		rgb: M,
 		rippleIntensity: _,
 		gridSize: v,
@@ -51,7 +57,7 @@ function h({ active: f = !0, enableRainbow: h = !1, gridColor: g = "#ffffff", ri
 		lightMode: O
 	});
 	N.current = {
-		enableRainbow: h,
+		enableRainbow: p,
 		rgb: M,
 		rippleIntensity: _,
 		gridSize: v,
@@ -73,7 +79,7 @@ function h({ active: f = !0, enableRainbow: h = !1, gridColor: g = "#ffffff", ri
 		x: .5,
 		y: .5
 	}), I = o(0), L = o(0), R = [
-		+!!h,
+		+!!p,
 		g,
 		_,
 		v,
@@ -125,7 +131,7 @@ function h({ active: f = !0, enableRainbow: h = !1, gridColor: g = "#ffffff", ri
 		},
 		draw: (e, t) => {
 			let n = N.current, { gl: r, width: i, height: a, time: o } = t;
-			P.current.x += (F.current.x - P.current.x) * p, P.current.y += (F.current.y - P.current.y) * p, I.current += (L.current - I.current) * m, r.clearColor(0, 0, 0, 0), r.clear(r.COLOR_BUFFER_BIT), r.enable(r.BLEND), r.blendFunc(r.SRC_ALPHA, r.ONE_MINUS_SRC_ALPHA), r.useProgram(e.program), e.position >= 0 && (r.bindBuffer(r.ARRAY_BUFFER, e.buffer), r.enableVertexAttribArray(e.position), r.vertexAttribPointer(e.position, 2, r.FLOAT, !1, 0, 0));
+			P.current.x += (F.current.x - P.current.x) * m, P.current.y += (F.current.y - P.current.y) * m, I.current += (L.current - I.current) * h, r.clearColor(0, 0, 0, 0), r.clear(r.COLOR_BUFFER_BIT), r.enable(r.BLEND), r.blendFunc(r.SRC_ALPHA, r.ONE_MINUS_SRC_ALPHA), r.useProgram(e.program), e.position >= 0 && (r.bindBuffer(r.ARRAY_BUFFER, e.buffer), r.enableVertexAttribArray(e.position), r.vertexAttribPointer(e.position, 2, r.FLOAT, !1, 0, 0));
 			let s = e.uniforms;
 			r.uniform1f(s.iTime, o * .001), r.uniform2f(s.iResolution, i, a), r.uniform1i(s.enableRainbow, +!!n.enableRainbow), r.uniform3f(s.gridColor, n.rgb[0], n.rgb[1], n.rgb[2]), r.uniform1f(s.rippleIntensity, H ? 0 : n.rippleIntensity), r.uniform1f(s.gridSize, n.gridSize), r.uniform1f(s.gridThickness, n.gridThickness), r.uniform1f(s.fadeDistance, n.fadeDistance), r.uniform1f(s.vignetteStrength, n.vignetteStrength), r.uniform1f(s.glowIntensity, n.glowIntensity), r.uniform1f(s.opacity, n.opacity), r.uniform1f(s.edgeFade, Math.min(1, Math.max(0, n.edgeFade))), r.uniform1f(s.gridRotation, n.gridRotation), r.uniform1i(s.mouseInteraction, n.mouseInteraction && !H ? 1 : 0), r.uniform2f(s.mousePosition, P.current.x, P.current.y), r.uniform1f(s.mouseInfluence, H ? 0 : I.current), r.uniform1f(s.mouseInteractionRadius, n.mouseInteractionRadius), r.uniform1i(s.lightMode, +!!n.lightMode), r.drawArrays(r.TRIANGLES, 0, 3);
 		},
@@ -163,4 +169,4 @@ function h({ active: f = !0, enableRainbow: h = !1, gridColor: g = "#ffffff", ri
 	});
 }
 //#endregion
-export { h as n, f as t };
+export { p as n, g as r, f as t };

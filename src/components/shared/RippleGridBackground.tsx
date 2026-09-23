@@ -212,6 +212,22 @@ export const ACTIVITY_RIPPLE_GRID: RippleGridBackgroundProps = {
   mouseInteraction: true,
 };
 
+/**
+ * The same grid for a DARK surface. `lightMode` paints an opaque white ground
+ * — on a dark page that is a white box with a grid in it — so this variant
+ * uses the additive branch instead: dim grey lines on a transparent ground,
+ * and the surface underneath stays whatever the theme made it. Same cell
+ * size, same ripple, same edge fade, so switching theme changes the ink and
+ * nothing else.
+ */
+export const ACTIVITY_RIPPLE_GRID_DARK: RippleGridBackgroundProps = {
+  ...ACTIVITY_RIPPLE_GRID,
+  lightMode: false,
+  gridColor: '#6b7280',
+  glowIntensity: 0,
+  opacity: 0.32,
+};
+
 interface Scene {
   program: WebGLProgram;
   buffer: WebGLBuffer;

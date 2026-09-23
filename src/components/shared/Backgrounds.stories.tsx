@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { ParticlesBackground } from './ParticlesBackground';
-import { ACTIVITY_RIPPLE_GRID, RippleGridBackground } from './RippleGridBackground';
+import { ACTIVITY_RIPPLE_GRID, ACTIVITY_RIPPLE_GRID_DARK, RippleGridBackground } from './RippleGridBackground';
 import { Tabs } from './Tabs';
 
 /**
@@ -80,6 +80,10 @@ export const ActivityGridFillsItsSection: Story = {
         <div className="relative isolate h-96 flex-1 overflow-hidden rounded-lg border border-border bg-surface">
           <RippleGridBackground {...ACTIVITY_RIPPLE_GRID} edgeFade={1} className="absolute inset-0 -z-10" />
           <p className="absolute bottom-2 left-3 text-xs text-text-tertiary">edgeFade 1 — the old oval</p>
+        </div>
+        <div className="relative isolate h-96 flex-1 overflow-hidden rounded-lg border border-border bg-code-bg" data-theme="dark">
+          <RippleGridBackground {...ACTIVITY_RIPPLE_GRID_DARK} className="absolute inset-0 -z-10" />
+          <p className="absolute bottom-2 left-3 text-xs text-code-comment">dark twin — no white ground</p>
         </div>
       </div>
     </div>

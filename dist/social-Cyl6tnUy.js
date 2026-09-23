@@ -20,8 +20,7 @@ import { t as z } from "./StatusDot-Bgx2zxgC.js";
 import { n as B, r as V, t as H } from "./PopoverForm-DFVCfit9.js";
 import { t as U } from "./InlineAlert-CRnIKeAF.js";
 import { n as te } from "./Tooltip-BY3zlDbC.js";
-import { n as ne, t as re } from "./ParticlesBackground-DdcUDMy0.js";
-import { a as ie, n as W, t as ae } from "./backdropTone-CS87_g8W.js";
+import { a as ne, n as re, o as ie, s as W, t as ae } from "./backdropTone-BF54k8gW.js";
 import { t as oe } from "./InlinePlaceholder-51dbPRGn.js";
 import { t as se } from "./Select-CD8ixtYi.js";
 import { n as ce, r as G, t as le } from "./ChoiceList-CaZ4rZrS.js";
@@ -3534,14 +3533,14 @@ function Ht({ title: e, status: t, model: n, contextBudgetTokens: r, contextToke
 					className: "border-b-0"
 				})
 			}),
-			/* @__PURE__ */ $(ne, {
+			/* @__PURE__ */ $(W, {
 				active: k,
 				particleCount: 220,
 				speed: .14,
 				alphaParticles: !0,
 				moveParticlesOnHover: !0,
 				particleHoverFactor: .6,
-				particleColors: re,
+				particleColors: ie,
 				fallbackIntensity: "medium",
 				seed: Bt(g?.sessionId ?? e),
 				className: "flex min-h-0 flex-1 flex-col",
@@ -3653,7 +3652,7 @@ function Ut({ status: e, contextTokens: t, contextBudgetTokens: n, onOpen: r, cl
 //#region src/components/social/ChatColumnBackdrop.tsx
 var Wt = 300;
 function Gt({ mode: e = "chat", working: t = !1, tone: n = "auto", className: r, children: i, "data-testid": a = "chat-column-backdrop" }) {
-	let s = Y(null), c = ie(s, n, e !== "chat"), l = e !== "chat" && c !== "none", [u, d] = X(l);
+	let s = Y(null), c = ne(s, n, e !== "chat"), l = e !== "chat" && c !== "none", [u, d] = X(l);
 	q(() => {
 		if (l) {
 			d(!0);
@@ -3677,7 +3676,7 @@ function Gt({ mode: e = "chat", working: t = !1, tone: n = "auto", className: r,
 			"data-backdrop-tone": c === "graphite" ? "graphite" : "night"
 		} : {},
 		className: o("relative flex min-h-0 min-w-0 flex-1 flex-col transition-colors duration-300 motion-reduce:transition-none", u && "uic-chat-console", r),
-		children: /* @__PURE__ */ Q(ne, {
+		children: /* @__PURE__ */ Q(W, {
 			active: l,
 			tone: c === "graphite" ? "graphite" : "night",
 			particleCount: t ? 260 : 170,
@@ -3686,7 +3685,7 @@ function Gt({ mode: e = "chat", working: t = !1, tone: n = "auto", className: r,
 			moveParticlesOnHover: t,
 			particleHoverFactor: .6,
 			alphaParticles: !0,
-			particleColors: c === "graphite" ? W : re,
+			particleColors: c === "graphite" ? re : ie,
 			particleBaseSize: t ? 110 : 90,
 			fallbackIntensity: t ? "medium" : "low",
 			className: "flex min-h-0 min-w-0 flex-1 flex-col",

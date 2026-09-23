@@ -152,7 +152,7 @@ export { default as ParticlesBackground, AGENT_PARTICLE_COLORS, drawnParticles }
 export { resolveBackdropTone, useResolvedBackdropTone, GRAPHITE_PARTICLE_COLORS, ConsoleSurfaceContext, useEnclosingConsoleSurface } from './backdropTone';
 export type { BackdropTone, ResolvedBackdropTone, ConsoleSurfaceState } from './backdropTone';
 export type { ParticlesBackgroundProps } from './ParticlesBackground';
-export { default as RippleGridBackground, ACTIVITY_RIPPLE_GRID } from './RippleGridBackground';
+export { default as RippleGridBackground, ACTIVITY_RIPPLE_GRID, ACTIVITY_RIPPLE_GRID_DARK } from './RippleGridBackground';
 export type { RippleGridBackgroundProps } from './RippleGridBackground';
 export { default as ThumbnailCard } from './ThumbnailCard';
 export type { ThumbnailCardProps } from './ThumbnailCard';

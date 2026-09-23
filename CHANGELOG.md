@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.379.0] — 2026-09-23
+
+### Fixed
+
+- **The activity grid is not a white box in dark mode.** `ACTIVITY_RIPPLE_GRID` is a `lightMode`
+  preset, and that shader branch paints an opaque white ground — on a dark page the canvas was a
+  white rectangle with a grid in it. `WorkActivityCanvas` now resolves the theme it is inside
+  (`useResolvedBackdropTone`: `data-theme` up the tree, else the system preference) and wears the
+  new `ACTIVITY_RIPPLE_GRID_DARK` under `dark`: the additive branch, dim grey lines on a transparent
+  ground, same cells, ripple and edge fade. The canvas reports which with `data-backdrop-ink`.
+
 ## [2.378.0] — 2026-09-23
 
 ### Fixed

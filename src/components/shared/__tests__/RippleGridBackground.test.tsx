@@ -1,6 +1,6 @@
 import { act, cleanup, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { ACTIVITY_RIPPLE_GRID, RippleGridBackground } from '../RippleGridBackground';
+import { ACTIVITY_RIPPLE_GRID, ACTIVITY_RIPPLE_GRID_DARK, RippleGridBackground } from '../RippleGridBackground';
 import { installAnimationFrames, installWebGLStub, setReducedMotion, type WebGLStub } from './webglStub';
 
 let webgl: ReturnType<typeof installWebGLStub> | null = null;
@@ -129,6 +129,23 @@ describe('RippleGridBackground', () => {
       edgeFade: 0.35,
       mouseInteraction: true,
     });
+  });
+
+  it('ships a dark twin of the preset that keeps the grid and drops the white ground', () => {
+    expect(ACTIVITY_RIPPLE_GRID_DARK).toMatchObject({
+      lightMode: false,
+      gridSize: ACTIVITY_RIPPLE_GRID.gridSize,
+      rippleIntensity: ACTIVITY_RIPPLE_GRID.rippleIntensity,
+      edgeFade: ACTIVITY_RIPPLE_GRID.edgeFade,
+      glowIntensity: 0,
+    });
+    expect(ACTIVITY_RIPPLE_GRID_DARK.opacity).toBeLessThan(ACTIVITY_RIPPLE_GRID.opacity!);
+
+    webgl = installWebGLStub();
+    render(<RippleGridBackground {...ACTIVITY_RIPPLE_GRID_DARK} />);
+    advanceFrames(1);
+    // The additive branch: transparent ground, so the theme's surface shows through.
+    expect(latest().uniforms.lightMode).toBe(0);
   });
 
   it('measures the fade against the section, and lets edgeFade turn it down', () => {

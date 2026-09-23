@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Background, EdgeLabelRenderer, Handle, MarkerType, Position, ReactFlow, type Edge, type EdgeProps, type Node, type NodeProps } from '@xyflow/react';
 import AnimatedEdge from '../../pipelines/canvas/edges/AnimatedEdge';
-import { ACTIVITY_RIPPLE_GRID, RippleGridBackground } from '../../shared/RippleGridBackground';
+import { ACTIVITY_RIPPLE_GRID, ACTIVITY_RIPPLE_GRID_DARK, RippleGridBackground } from '../../shared/RippleGridBackground';
+import { useResolvedBackdropTone } from '../../shared/backdropTone';
 import { TitledFrame } from '../../shared/TitledFrame';
 import { Button } from '../../ui/Button';
 import InlineAlert from '../../shared/InlineAlert';
@@ -204,14 +205,19 @@ export function WorkActivityCanvas(props: ActivityProps) {
   const zoomBy = (factor: number) => onViewportChange({ ...viewport, zoom: Math.max(zoomFloor, Math.min(2.5, viewport.zoom * factor)) });
   const belowReadable = viewport.zoom < WORK_CANVAS_READABLE_ZOOM;
   const ripple = background === 'ripple-grid';
+  // Which ink the grid uses follows the theme the canvas is actually inside
+  // (`data-theme` up the tree, else the system preference): the light preset
+  // paints an opaque white ground, which on a dark page is a white box.
+  const tone = useResolvedBackdropTone(host, 'auto', ripple);
+  const ripplePreset = tone === 'night' ? ACTIVITY_RIPPLE_GRID_DARK : ACTIVITY_RIPPLE_GRID;
   // A 160 px floor, not 320: inside a short panel (a 577 px viewport's chat
   // column) a 320 px minimum overflowed its parent and scrolled the page. The
   // canvas takes what the column gives it and fits the graph into that.
-  return <div ref={host} className="relative isolate min-h-40 min-w-0 flex-1 overflow-hidden" data-testid="work-activity-canvas" data-background={background}>
+  return <div ref={host} className="relative isolate min-h-40 min-w-0 flex-1 overflow-hidden" data-testid="work-activity-canvas" data-background={background} data-backdrop-ink={ripple ? (tone === 'night' ? 'dark' : 'light') : undefined}>
     {/* Behind React Flow, not inside it: the pane and every node above are
         transparent over this, and the canvas takes no pointer events, so
         dragging, selecting and the edge hit-boxes are untouched. */}
-    {ripple && <RippleGridBackground {...ACTIVITY_RIPPLE_GRID} className="absolute inset-0 -z-10" data-testid="work-activity-ripple" />}
+    {ripple && <RippleGridBackground {...ripplePreset} className="absolute inset-0 -z-10" data-testid="work-activity-ripple" />}
     <ReactFlow<ActivityNode | FrameNode, ActivityEdge> nodes={flowNodes} edges={flowEdges} nodeTypes={nodeTypes} edgeTypes={edgeTypes} viewport={viewport} onViewportChange={onViewportChange} onPaneClick={() => onSelectionChange(null)} onEdgeClick={(_event, edge) => edge.data?.onSelect()} minZoom={zoomFloor} maxZoom={2.5} nodesDraggable={false} nodesConnectable={false} elementsSelectable={false} deleteKeyCode={null} proOptions={{ hideAttribution: true }} onNodesChange={(changes) => {
       const dimensions = changes.filter((change) => change.type === 'dimensions');
       if (!dimensions.length) return;

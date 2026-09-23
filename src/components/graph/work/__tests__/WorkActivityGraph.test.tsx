@@ -293,5 +293,15 @@ describe('activity canvas background', () => {
     render(<WorkGraph {...props()} background="plain" />);
     expect(screen.getByTestId('work-activity-canvas')).toHaveAttribute('data-background', 'plain');
     expect(screen.queryByTestId('work-activity-ripple')).not.toBeInTheDocument();
+    expect(screen.getByTestId('work-activity-canvas')).not.toHaveAttribute('data-backdrop-ink');
+  });
+
+  it('inks the grid for the theme it is inside — light paints a white ground, dark must not', () => {
+    const { unmount } = render(<div data-theme="light"><WorkGraph {...props()} /></div>);
+    expect(screen.getByTestId('work-activity-canvas')).toHaveAttribute('data-backdrop-ink', 'light');
+    unmount();
+
+    render(<div data-theme="dark"><WorkGraph {...props()} /></div>);
+    expect(screen.getByTestId('work-activity-canvas')).toHaveAttribute('data-backdrop-ink', 'dark');
   });
 });
