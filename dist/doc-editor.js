@@ -2136,7 +2136,7 @@ function Ar({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 		className: "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-surface",
 		children: [
 			/* @__PURE__ */ Q("header", {
-				className: "flex flex-col gap-1 border-b border-border px-5 pt-3.5",
+				className: "flex flex-col gap-1 border-b border-border px-5 pt-3",
 				"data-testid": `${I}-header`,
 				children: [
 					e && e.length > 0 && !f && /* @__PURE__ */ Z(c, {
@@ -2160,7 +2160,7 @@ function Ar({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 						})]
 					}),
 					/* @__PURE__ */ Q("div", {
-						className: "flex min-w-0 items-center gap-3",
+						className: "flex min-w-0 items-center gap-2",
 						children: [
 							o && /* @__PURE__ */ Z(ee, {
 								kind: o,
@@ -2275,10 +2275,10 @@ function Ar({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 						onValueChange: (e) => te?.(e),
 						variant: "underline",
 						size: "md",
-						itemClassName: "px-3.5 pb-2 pt-1 text-[15px] leading-5",
+						itemClassName: "px-3.5 pb-1.5 pt-1 text-[15px] leading-5",
 						"aria-label": `${t} sections`,
 						idPrefix: L,
-						className: "-mb-px -ml-3 mt-1.5 border-b-0"
+						className: "-mb-px -ml-3 mt-1 border-b-0"
 					}) : /* @__PURE__ */ Z("span", {
 						className: "h-2",
 						"aria-hidden": "true"

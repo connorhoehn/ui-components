@@ -183,7 +183,7 @@ export function EditorShell({
 
   const pane = (
     <section aria-label={label} data-testid={testId} data-surface={surface} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-surface">
-      <header className="flex flex-col gap-1 border-b border-border px-5 pt-3.5" data-testid={`${testId}-header`}>
+      <header className="flex flex-col gap-1 border-b border-border px-5 pt-3" data-testid={`${testId}-header`}>
         {breadcrumbs && breadcrumbs.length > 0 && !crumbsTrailing && (
           // A short window (a 1280×720 laptop leaves ~577 px) gives the crumbs'
           // row to the canvas: the title stays, and the explorer beside the
@@ -198,7 +198,7 @@ export function EditorShell({
             <span className="flex shrink-0 items-center gap-2" data-testid={`${testId}-crumbs-trailing`}>{crumbsTrailing}</span>
           </div>
         )}
-        <div className="flex min-w-0 items-center gap-3">
+        <div className="flex min-w-0 items-center gap-2">
           {/* The kind mark stands BESIDE the title and its save line, a 40px
               outline glyph with no tinted box (2.386.5) — so the title, the
               pill and "Saved 3 hours ago" share one left edge, and the mark
@@ -298,10 +298,10 @@ export function EditorShell({
             onValueChange={(id) => onTabChange?.(id)}
             variant="underline"
             size="md"
-            itemClassName="px-3.5 pb-2 pt-1 text-[15px] leading-5"
+            itemClassName="px-3.5 pb-1.5 pt-1 text-[15px] leading-5"
             aria-label={`${title} sections`}
             idPrefix={idPrefix}
-            className="-mb-px -ml-3 mt-1.5 border-b-0"
+            className="-mb-px -ml-3 mt-1 border-b-0"
           />
         ) : (
           <span className="h-2" aria-hidden="true" />
