@@ -23,7 +23,7 @@ const itemClass = (selected: boolean) => cn(
   selected ? 'border-primary bg-primary/10 ring-1 ring-primary' : 'border-border hover:bg-surface-hover',
 );
 
-export function WorkEntityList({ nodes, edges, selection, onSelectionChange, heading = 'Accessible work graph', groups, footer }: WorkEntityListProps) {
+export function WorkEntityList({ nodes, edges, selection, onSelectionChange, heading = 'Accessible work graph', groups, footer, statusLabelOf }: WorkEntityListProps) {
   const nodeById = new Map(nodes.map((node) => [node.id, node]));
   const selectedItem = useRef<HTMLButtonElement | null>(null);
   const selectionKey = selection ? `${selection.kind}:${selection.id}` : null;
@@ -34,7 +34,7 @@ export function WorkEntityList({ nodes, edges, selection, onSelectionChange, hea
   }, [selectionKey]);
   const nodeItem = (node: WorkGraphNodeData) => {
     const selected = isSelected(selection, 'node', node.id);
-    return <li key={node.id}><button ref={selected ? selectedItem : undefined} type="button" aria-label={`Work item: ${nodeLabel(node)}`} aria-pressed={selected} aria-current={selected ? 'true' : undefined} data-selected={selected || undefined} onClick={() => onSelectionChange({ kind: 'node', id: node.id })} className={itemClass(selected)}><span className="block break-words font-medium text-text-primary">{nodeLabel(node)}</span><span className="text-xs text-text-tertiary">{node.kind === 'conversation' ? 'Chat · Recent activity' : `${node.kind} · ${node.status}`}</span></button></li>;
+    return <li key={node.id}><button ref={selected ? selectedItem : undefined} type="button" aria-label={`Work item: ${nodeLabel(node)}`} aria-pressed={selected} aria-current={selected ? 'true' : undefined} data-selected={selected || undefined} onClick={() => onSelectionChange({ kind: 'node', id: node.id })} className={itemClass(selected)}><span className="block break-words font-medium text-text-primary">{nodeLabel(node)}</span><span className="text-xs text-text-tertiary">{node.kind === 'conversation' ? 'Chat · Recent activity' : `${node.kind} · ${statusLabelOf?.(node) ?? node.status}`}</span></button></li>;
   };
   const sections = groups?.map((group) => ({ ...group, items: group.nodeIds.map((id) => nodeById.get(id)).filter((node): node is WorkGraphNodeData => !!node) })).filter((group) => group.items.length > 0);
   const empty = sections ? sections.length === 0 && edges.length === 0 : nodes.length === 0 && edges.length === 0;

@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.385.5] — 2026-09-23
+
+### Added
+- `WorkEntityList` `statusLabelOf` — a status word in place of a node's raw
+  status; `WorkActivityGraph` passes `workPauseLabel` over the activity's
+  details, so the Activity list (the narrow panel's view) reads
+  "run · Paused at write" / "run · Needs approval" like the card and pane
+  (NFR #126).
+
 ## [2.385.4] — 2026-09-23
 
 ### Changed

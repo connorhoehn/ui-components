@@ -663,6 +663,11 @@ export interface WorkEntityListProps extends WorkInspectorProps {
   groups?: WorkEntityListGroup[];
   /** Rendered under the items, e.g. "Show all N activities". */
   footer?: ReactNode;
+  /**
+   * A status word for a node in place of its raw status — "Paused at write"
+   * for a waiting run (NFR #126, `workPauseLabel`). Undefined keeps the status.
+   */
+  statusLabelOf?: (node: WorkGraphNodeData) => string | undefined;
 }
 
 /** Frozen import names for the component implementation wave. */

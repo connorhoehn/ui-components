@@ -48,3 +48,11 @@ describe('WorkInspector', () => {
     await waitFor(() => expect(onSelectionChange).toHaveBeenCalledWith(null));
   });
 });
+
+describe('WorkEntityList status words (NFR #126)', () => {
+  it('prints the host\'s status word for a node in place of its raw status', () => {
+    const waiting = [{ id: 'run', kind: 'run' as const, title: 'Edit deck', status: 'waiting' as const, disclosure: 'details' as const, capabilities: [], updatedAt: '2026-09-23T18:00:00Z' }];
+    render(<WorkEntityList nodes={waiting} edges={[]} selection={null} onSelectionChange={vi.fn()} statusLabelOf={(node) => (node.id === 'run' ? 'Paused at write' : undefined)} />);
+    expect(screen.getByText('run · Paused at write')).toBeInTheDocument();
+  });
+});

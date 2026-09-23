@@ -9,7 +9,8 @@ import { WorkEntityList } from './WorkEntityList';
 import { WorkInspector } from './WorkInspector';
 import { WorkNodePane } from './WorkNodePane';
 import { WorkTimeWindow } from './WorkTimeWindow';
-import type { WorkActivityPresentation, WorkEntityListGroup, WorkGraphProps } from './types';
+import { workPauseLabel } from './WorkStatus';
+import type { WorkActivityPresentation, WorkEntityListGroup, WorkGraphNodeData, WorkGraphProps } from './types';
 
 /** Below this the canvas would drop under ~480px, so the pane lies over it. */
 const SPLIT_MINIMUM = 820;
@@ -59,7 +60,9 @@ export function WorkActivityGraph(props: WorkGraphProps & { activity: WorkActivi
   const listFooter = hiddenEfforts > 0
     ? <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border pt-2 text-xs text-text-tertiary" data-testid="work-activity-list-more"><span>Showing {shownEffortCount} of {activity.efforts.length} activities · Newest work first</span><Button size="sm" variant="secondary" onClick={() => changeMaxEfforts(WORK_ACTIVITY_ALL_EFFORTS)}>Show all {activity.efforts.length} activities</Button></div>
     : undefined;
-  const entityList = <WorkEntityList {...props} edges={listEdges} groups={listGroups} footer={listFooter} />;
+  // A waiting run says why in the list as on its card (NFR #126).
+  const statusLabelOf = (item: WorkGraphNodeData) => workPauseLabel(item.status, activity.details?.[item.id]?.pause);
+  const entityList = <WorkEntityList {...props} edges={listEdges} groups={listGroups} footer={listFooter} statusLabelOf={statusLabelOf} />;
   const node = selection?.kind === 'node' ? nodes.find((item) => item.id === selection.id) : undefined;
   const edge = selection?.kind === 'edge' ? edges.find((item) => item.id === selection.id && nodes.some((n) => n.id === item.fromId) && nodes.some((n) => n.id === item.toId)) : undefined;
   const validSelection = !!(node || edge);
