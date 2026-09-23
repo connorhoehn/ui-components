@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.373.6] — 2026-09-23
+
+### Fixed
+
+- `WorkActivityCanvas` asks for a 160 px floor (`min-h-40`) instead of 320 px. In a
+  short panel (the Active Now column at a 1280×577 viewport) the 320 px minimum
+  overflowed its parent and scrolled the whole page.
+
 ## [2.373.5] — 2026-09-23
 
 ### Added

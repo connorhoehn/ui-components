@@ -204,7 +204,10 @@ export function WorkActivityCanvas(props: ActivityProps) {
   const zoomBy = (factor: number) => onViewportChange({ ...viewport, zoom: Math.max(zoomFloor, Math.min(2.5, viewport.zoom * factor)) });
   const belowReadable = viewport.zoom < WORK_CANVAS_READABLE_ZOOM;
   const ripple = background === 'ripple-grid';
-  return <div ref={host} className="relative isolate min-h-80 min-w-0 flex-1 overflow-hidden" data-testid="work-activity-canvas" data-background={background}>
+  // A 160 px floor, not 320: inside a short panel (a 577 px viewport's chat
+  // column) a 320 px minimum overflowed its parent and scrolled the page. The
+  // canvas takes what the column gives it and fits the graph into that.
+  return <div ref={host} className="relative isolate min-h-40 min-w-0 flex-1 overflow-hidden" data-testid="work-activity-canvas" data-background={background}>
     {/* Behind React Flow, not inside it: the pane and every node above are
         transparent over this, and the canvas takes no pointer events, so
         dragging, selecting and the edge hit-boxes are untouched. */}

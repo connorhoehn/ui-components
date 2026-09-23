@@ -2222,7 +2222,7 @@ function Ct(e) {
 	}), Y = c.zoom < ot, ae = d === "ripple-grid";
 	return /* @__PURE__ */ U("div", {
 		ref: m,
-		className: "relative isolate min-h-80 min-w-0 flex-1 overflow-hidden",
+		className: "relative isolate min-h-40 min-w-0 flex-1 overflow-hidden",
 		"data-testid": "work-activity-canvas",
 		"data-background": d,
 		children: [

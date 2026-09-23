@@ -99,6 +99,13 @@ function makeProps(effortCount: number, viewport: WorkGraphViewport, onViewportC
 beforeEach(() => { captured = null; });
 
 describe('WorkActivityCanvas fit', () => {
+  it('asks for a 160 px floor, so a short panel is not pushed into scrolling the page', () => {
+    render(<WorkActivityCanvas {...makeProps(1, { x: 0, y: 0, zoom: 1 }, vi.fn())} />);
+    const canvas = screen.getByTestId('work-activity-canvas');
+    expect(canvas.className).toContain('min-h-40');
+    expect(canvas.className).not.toContain('min-h-80');
+  });
+
   it('fits nine parallel efforts below the interactive floor', () => {
     const onViewportChange = vi.fn();
     render(<WorkActivityCanvas {...makeProps(EFFORT_COUNT, { x: 0, y: 0, zoom: 1 }, onViewportChange)} />);
