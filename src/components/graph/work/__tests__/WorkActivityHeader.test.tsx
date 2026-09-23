@@ -101,3 +101,13 @@ describe('WorkActivityHeader activity cap', () => {
     expect(screen.getByTestId('work-activity-header-max-efforts')).toBeInTheDocument();
   });
 });
+
+describe('WorkActivityHeader view note', () => {
+  it('shows the note whole or not at all, by the row’s own width', () => {
+    render(<WorkActivityHeader title="Connor’s activity" view="activity" onViewChange={vi.fn()} viewNote="Shared work · newest first" />);
+    expect(screen.getByTestId('work-activity-header-views')).toHaveClass('@container');
+    const note = screen.getByTestId('work-activity-header-view-note');
+    expect(note).toHaveClass('hidden');
+    expect(note).toHaveClass('@lg:inline');
+  });
+});

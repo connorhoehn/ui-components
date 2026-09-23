@@ -124,3 +124,15 @@ describe('Active Now node card', () => {
     expect(screen.queryByText('Ready')).not.toBeInTheDocument();
   });
 });
+
+describe('WorkActivityNode prints the delay it announces', () => {
+  it('adds "Updates delayed" under the host lines when the lease has lapsed', () => {
+    const entity = node('term', 'terminal', 'Cloud terminal', 'running');
+    const { rerender } = render(<WorkActivityNode node={entity} detail={{ lines: ['Gateway / WORK-144'], badge: 'Tests running' }} selected={false} live onSelect={vi.fn()} onFeedback={vi.fn()} />);
+    expect(screen.getByRole('button', { name: 'Cloud terminal, running, updates delayed' })).toBeInTheDocument();
+    expect(screen.getByText('Updates delayed')).toBeInTheDocument();
+    rerender(<WorkActivityNode node={entity} detail={{ fresh: true, lines: ['Gateway / WORK-144'], badge: 'Tests running' }} selected={false} live onSelect={vi.fn()} onFeedback={vi.fn()} />);
+    expect(screen.queryByText('Updates delayed')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Cloud terminal, running' })).toBeInTheDocument();
+  });
+});

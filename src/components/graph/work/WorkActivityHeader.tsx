@@ -91,7 +91,7 @@ export function WorkActivityHeader({
       {bar}
       <div
         data-testid={`${testId}-views`}
-        className="flex shrink-0 items-center gap-2.5 border-b border-border bg-surface px-3 py-1.5"
+        className="@container flex shrink-0 items-center gap-2.5 border-b border-border bg-surface px-3 py-1.5"
       >
         {onViewChange && (
           <Tabs
@@ -116,8 +116,11 @@ export function WorkActivityHeader({
             onChange={(event) => onMaxEffortsChange(event.target.value === ALL_VALUE ? WORK_ACTIVITY_ALL_EFFORTS : Number(event.target.value))}
           />
         )}
+        {/* Whole or not at all: in a 370 px panel the tabs and the cap select
+            left the note two letters ("Sh…"), which reads as a bug. The row
+            is a container, so the cut goes by its own width, not the window's. */}
         {viewNote && (
-          <span className="min-w-0 truncate text-[11px] text-text-tertiary" data-testid={`${testId}-view-note`}>
+          <span className="hidden min-w-0 truncate text-[11px] text-text-tertiary @lg:inline" data-testid={`${testId}-view-note`}>
             {viewNote}
           </span>
         )}

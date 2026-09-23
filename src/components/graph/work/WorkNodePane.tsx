@@ -114,7 +114,7 @@ function AskPanel({ ask, onSelect }: { ask: WorkActivityAsk; onSelect?: (selecti
             <div className="flex flex-wrap gap-1.5">
               {answer.citations.map((citation) => citation.selection && onSelect
                 ? <Button key={citation.id} size="sm" variant="secondary" onClick={() => onSelect(citation.selection!)}>{citation.label} ↗</Button>
-                : <Chip key={citation.id} size="sm">{citation.label}</Chip>)}
+                : <PaneChip key={citation.id}>{citation.label}</PaneChip>)}
             </div>
           )}
           {answer.note && <p className="text-[11px] text-text-tertiary">{answer.note}</p>}
@@ -146,8 +146,28 @@ export interface WorkNodePaneProps {
   onClose: () => void;
   onOpen?: (selection: Exclude<WorkGraphSelection, null>) => void;
   onReference?: (selection: Exclude<WorkGraphSelection, null>) => void;
+  /**
+   * The canvas's own liveness (`activity.window.following`). With it, a
+   * running node whose source lease has lapsed says "updates delayed" here
+   * exactly as its card does — the card's accessible name said it while the
+   * pane, the place that is supposed to say MORE, said only "Running".
+   */
+  live?: boolean;
   className?: string;
   'data-testid'?: string;
+}
+
+/**
+ * A chip that stays inside the pane: the inputs of a deck edit are titled
+ * by the instruction ("Presentation edit · Make this bullet name who owns the
+ * rollback, briefly") and a nowrap chip ran 80 px past the pane's edge.
+ */
+function PaneChip({ children, title, tone }: { children: string; title?: string; tone?: 'info' }) {
+  return (
+    <Chip size="sm" className="max-w-full min-w-0" {...(title ? { title } : {})} {...(tone ? { tone } : {})}>
+      <span className="min-w-0 truncate">{children}</span>
+    </Chip>
+  );
 }
 
 /**
@@ -158,7 +178,7 @@ export interface WorkNodePaneProps {
  * existence of gets chrome and an honest empty body.
  */
 export function WorkNodePane({
-  node, detail, selection, onSelectionChange, onClose, onOpen, onReference, className, 'data-testid': testId = 'activity-inspector',
+  node, detail, selection, onSelectionChange, onClose, onOpen, onReference, live, className, 'data-testid': testId = 'activity-inspector',
 }: WorkNodePaneProps) {
   const restricted = node.locked || node.disclosure === 'existence';
   const visible = restricted ? undefined : detail;
@@ -177,9 +197,20 @@ export function WorkNodePane({
   // A banner whose description only repeats the pane's title or subtitle
   // ("v4 ready" over "audit-e2e-1790150600", under that same title) keeps its
   // title and drops the echo.
-  const banner = visible?.banner?.description && alreadySaid(visible.banner.description, [title, visible.subtitle])
+  const echoed = visible?.banner?.description && alreadySaid(visible.banner.description, [title, visible.subtitle])
     ? { tone: visible.banner.tone, title: visible.banner.title }
     : visible?.banner;
+  // A banner whose TITLE is the pane's title ("WORK-144" in blue under
+  // "WORK-144", "Release plan" over "Release plan · rev 6 · 09:08") says
+  // nothing the header did not: its one fact moves up, or it goes.
+  const banner = echoed && alreadySaid(echoed.title, [title])
+    ? (echoed.description ? { tone: echoed.tone, title: echoed.description } : undefined)
+    : echoed;
+  // The same rule as the card: running, live, and no fresh source lease.
+  const delayed = !restricted && !!live && node.status === 'running' && visible?.fresh !== true;
+  const subtitle = delayed
+    ? (visible?.subtitle ? `${visible.subtitle} · updates delayed` : 'Running · updates delayed')
+    : visible?.subtitle;
   // The card's own body — the lines and the verbatim excerpt the host already
   // authorized — belongs in the pane too: a composer edit's instruction, its
   // scope and "v6 → v7" were on the card and nowhere in the pane that is
@@ -194,13 +225,13 @@ export function WorkNodePane({
     ? []
     : (visible?.lines ?? []).filter((line, index, all) => all.indexOf(line) === index && !alreadySaid(line, said));
   const excerpt = ownInspector ? undefined : visible?.excerpt;
-  const empty = !compute && !visible?.banner && !visible?.artifact && !visible?.transcript && !sections && !visible?.note && !visible?.actions?.length && !excerpt && bodyLines.length === 0;
+  const empty = !compute && !banner && !visible?.artifact && !visible?.transcript && !sections && !visible?.note && !visible?.actions?.length && !excerpt && bodyLines.length === 0;
   return (
     <section aria-label={title} data-testid={testId} className={cn('flex h-full min-h-0 flex-col border-l border-border bg-surface', className)}>
       <header className="flex shrink-0 items-start justify-between gap-2 border-b border-border px-3 py-2">
         <span className="flex min-w-0 flex-col">
           <span className="truncate text-sm font-semibold text-text-primary" data-testid={`${testId}-title`}>{title}</span>
-          {visible?.subtitle && <span className="truncate text-xs text-text-tertiary" data-testid={`${testId}-subtitle`}>{visible.subtitle}</span>}
+          {subtitle && <span className="truncate text-xs text-text-tertiary" data-testid={`${testId}-subtitle`} {...(delayed ? { 'data-delayed': 'true' } : {})}>{subtitle}</span>}
         </span>
         <IconButton size="md" aria-label="Close details" onClick={onClose} data-testid={`${testId}-close`} className="shrink-0"><CloseIcon /></IconButton>
       </header>
@@ -222,12 +253,12 @@ export function WorkNodePane({
               {sections.inputs.map((item, index) => typeof item === 'string'
                 // Two inputs may legitimately read the same; the position keeps
                 // them apart when the host has no id to give.
-                ? <Chip key={`${index}-${item}`} size="sm">{item}</Chip>
-                : <Chip key={item.id} size="sm" title={item.meta}>{item.title}</Chip>)}
+                ? <PaneChip key={`${index}-${item}`}>{item}</PaneChip>
+                : <PaneChip key={item.id} title={item.meta}>{item.title}</PaneChip>)}
             </div>
           </Section>
         )}
-        {!!sections?.tools?.length && <Section label="Tools in this run"><div className="flex flex-wrap gap-1.5">{sections.tools.map((item, index) => <Chip key={`${index}-${item}`} size="sm" tone="info">{item}</Chip>)}</div></Section>}
+        {!!sections?.tools?.length && <Section label="Tools in this run"><div className="flex flex-wrap gap-1.5">{sections.tools.map((item, index) => <PaneChip key={`${index}-${item}`} tone="info">{item}</PaneChip>)}</div></Section>}
         {!!sections?.sources?.length && <Section label="Sources used"><div className="space-y-1.5">{sections.sources.map((item) => <ReferenceRow key={item.id} item={item} onSelect={onSelectionChange} />)}</div></Section>}
         {sections?.workItem && <Section label="Work item"><ReferenceRow item={sections.workItem} onSelect={onSelectionChange} /></Section>}
         {!!visible?.actions?.length && (

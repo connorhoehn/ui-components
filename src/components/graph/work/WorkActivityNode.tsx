@@ -64,8 +64,11 @@ export function WorkActivityNode({ node, detail, selected, selectedRevisionId, l
   const accent = ACCENT[node.kind];
   const failed = node.status === 'error';
   const current = visible?.emphasis === 'current' || (!muted && node.status === 'running' && isFresh);
-  const statusLine = node.status === 'running' && live && !isFresh ? 'Running · updates delayed' : node.status;
-  const lines = visible?.lines?.length ? visible.lines : [statusLine];
+  const delayed = node.status === 'running' && live && !isFresh;
+  const statusLine = delayed ? 'Running · updates delayed' : node.status;
+  // The delay is printed, not only announced: with host lines the card used
+  // to show "Tests running" while its accessible name said "updates delayed".
+  const lines = visible?.lines?.length ? (delayed ? [...visible.lines, 'Updates delayed'] : visible.lines) : [statusLine];
   const cardState = pending?.status === 'generating' ? `${pending.label} generating`
     : pending?.status === 'failed' ? `${pending.label} generation failed`
       : node.status === 'running' && !isFresh ? 'running, updates delayed'

@@ -221,3 +221,40 @@ describe('per-kind detail panes', () => {
     expect(onClose).toHaveBeenCalled();
   });
 });
+
+describe('WorkNodePane says what its card says', () => {
+  it('keeps a long input chip inside the pane', () => {
+    const long = 'Presentation edit · Make this bullet name who owns the rollback, briefly';
+    render(<Harness entity={node('step', 'run', 'Write the edit', { status: 'completed' })} detail={{ sections: { inputs: [{ id: 'in', title: long, meta: 'Run' }, 'Read the deck'], tools: ['load'] } }} />);
+    const chip = screen.getByText(long);
+    // The label truncates inside a chip that may not exceed its row.
+    expect(chip).toHaveClass('truncate');
+    expect(chip.parentElement).toHaveClass('max-w-full');
+    expect(chip.parentElement).toHaveAttribute('title', 'Run');
+    expect(screen.getByText('load').parentElement).toHaveClass('max-w-full');
+  });
+
+  it('drops a banner that only repeats the title, or promotes its one fact', () => {
+    const { unmount } = render(<Harness entity={node('task', 'task', 'WORK-144', { status: 'idle', description: 'Gateway · Coverage checks' })} detail={{ subtitle: 'Project · Shared with you', banner: { tone: 'info', title: 'WORK-144' }, sections: { description: 'Gateway · Coverage checks' } }} />);
+    expect(screen.queryByTestId('work-pane-banner')).toBeNull();
+    expect(screen.getByText('Gateway · Coverage checks')).toBeInTheDocument();
+    unmount();
+    render(<Harness entity={node('plan', 'document', 'Release plan', { status: 'completed' })} detail={{ subtitle: 'Document · Shared with you', banner: { tone: 'info', title: 'Release plan', description: 'Release plan · rev 6 · 09:08' } }} />);
+    const banner = screen.getByTestId('work-pane-banner');
+    expect(banner).toHaveTextContent('Release plan · rev 6 · 09:08');
+    expect(within(banner).queryByText('Release plan')).toBeNull();
+  });
+
+  it('says "updates delayed" for a running node without a fresh lease, as the card does', () => {
+    const entity = node('term', 'terminal', 'Cloud terminal', { status: 'running' });
+    const detail: WorkActivityNodeDetail = { subtitle: 'Cloud terminal · Running', banner: { tone: 'info', title: 'Tests running in cloud terminal' }, lines: ['Gateway / WORK-144'] };
+    const { rerender } = render(<WorkNodePane node={entity} detail={detail} live selection={{ kind: 'node', id: entity.id }} onSelectionChange={() => {}} onClose={() => {}} />);
+    expect(screen.getByTestId('activity-inspector-subtitle')).toHaveTextContent('Cloud terminal · Running · updates delayed');
+    expect(screen.getByTestId('activity-inspector-subtitle')).toHaveAttribute('data-delayed', 'true');
+    // A fresh lease, or a canvas that is not live, says nothing of the sort.
+    rerender(<WorkNodePane node={entity} detail={{ ...detail, fresh: true }} live selection={{ kind: 'node', id: entity.id }} onSelectionChange={() => {}} onClose={() => {}} />);
+    expect(screen.getByTestId('activity-inspector-subtitle')).toHaveTextContent(/Running$/);
+    rerender(<WorkNodePane node={entity} detail={detail} selection={{ kind: 'node', id: entity.id }} onSelectionChange={() => {}} onClose={() => {}} />);
+    expect(screen.getByTestId('activity-inspector-subtitle')).toHaveTextContent(/Running$/);
+  });
+});

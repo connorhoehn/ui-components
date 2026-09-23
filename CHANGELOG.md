@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.381.0] — 2026-09-23
+
+### Added
+
+- **work-activity: `WorkNodePane` takes `live`.** With the canvas's own liveness, a running node whose source
+  lease has lapsed reads "· updates delayed" in the pane's subtitle (`data-delayed="true"`) exactly as its card's
+  accessible name did — the pane, the place that is supposed to say more, said only "Running".
+
+### Fixed
+
+- **work-activity: the card prints the delay it announces.** With host lines, a card said "Tests running" while its
+  accessible name said "running, updates delayed"; it now adds an "Updates delayed" line.
+- **work-activity: pane chips stay inside the pane.** Inputs, tools and citations render as a chip whose label
+  truncates (`max-w-full` + `truncate`); a deck edit's input titled by its instruction ran 80 px past the pane's edge.
+- **work-activity: a banner that only repeats the pane's title goes, or its one fact moves up.** "WORK-144" in blue
+  under "WORK-144" is gone; "Release plan / Release plan · rev 6 · 09:08" becomes the fact line alone.
+- **work-activity: the header's view note is whole or absent.** The views row is a `@container`; the note shows
+  from `@lg` (32 rem) — in a 370 px panel it used to truncate to "Sh…".
+
 ## [2.380.0] — 2026-09-23
 
 ### Added

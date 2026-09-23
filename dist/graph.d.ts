@@ -903,7 +903,7 @@ export declare function WorkNode({ node, selected, sharingFresh, onSelect, onOpe
  * artifact AND sources gets both, and a node the viewer may only see the
  * existence of gets chrome and an honest empty body.
  */
-export declare function WorkNodePane({ node, detail, selection, onSelectionChange, onClose, onOpen, onReference, className, 'data-testid': testId, }: WorkNodePaneProps): JSX.Element;
+export declare function WorkNodePane({ node, detail, selection, onSelectionChange, onClose, onOpen, onReference, live, className, 'data-testid': testId, }: WorkNodePaneProps): JSX.Element;
 
 export declare interface WorkNodePaneProps {
     node: WorkGraphNodeData;
@@ -915,6 +915,13 @@ export declare interface WorkNodePaneProps {
     onClose: () => void;
     onOpen?: (selection: Exclude<WorkGraphSelection, null>) => void;
     onReference?: (selection: Exclude<WorkGraphSelection, null>) => void;
+    /**
+     * The canvas's own liveness (`activity.window.following`). With it, a
+     * running node whose source lease has lapsed says "updates delayed" here
+     * exactly as its card does — the card's accessible name said it while the
+     * pane, the place that is supposed to say MORE, said only "Running".
+     */
+    live?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -1044,39 +1051,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -1110,12 +1087,42 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
