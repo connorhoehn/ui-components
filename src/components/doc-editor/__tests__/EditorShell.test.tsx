@@ -169,7 +169,47 @@ describe('FloatingComposerDock', () => {
 
   it('caps its width by token', () => {
     render(<div><FloatingComposerDock maxWidth="xl" composer={<textarea aria-label="Message" />} /></div>);
-    expect((screen.getByTestId('floating-composer-dock').firstElementChild as HTMLElement).className).toContain('max-w-xl');
+    const keepout = screen.getByTestId('floating-composer-dock').firstElementChild as HTMLElement;
+    expect(keepout.className).toContain('max-w-xl');
+    expect(keepout.className).toContain('mx-auto');
+    // Floating over a page it is a card: a shadow and four rounded corners.
+    const box = screen.getByTestId('floating-composer-dock-composer');
+    expect(box.className).toContain('shadow-lg');
+    expect(box.className).not.toContain('rounded-b-none');
+  });
+
+  // 2.376.0: pinned in a shell the dock is the column's own chrome, not a
+  // card dropped onto it — a 768px pill centred in a 1300px column, on a
+  // shadow, with grey under it, read as an embedded frame.
+  it('pinned, it spans the column inside the toolbar gutter and docks to the bottom edge', () => {
+    render(<EditorShell title="x" footer={<FloatingComposerDock maxWidth="xl" composer={<textarea aria-label="Message" />} />}><p /></EditorShell>);
+    const dock = screen.getByTestId('floating-composer-dock');
+    expect(dock.dataset.placement).toBe('pinned');
+    // Full width, in the same gutter the host wraps its toolbar in.
+    expect(dock.className).toContain('w-full');
+    expect(dock.className).toContain('px-[var(--dock-inset,1rem)]');
+    // Nothing under the composer: its bottom edge is the column's.
+    expect(dock.className).not.toMatch(/\bpb-/);
+    expect(dock.className).not.toMatch(/\bpt-/);
+    const keepout = dock.firstElementChild as HTMLElement;
+    expect(keepout.className).toContain('w-full');
+    expect(keepout.className).toContain('max-w-none');
+    expect(keepout.className).not.toContain('max-w-xl');
+    expect(keepout.className).not.toContain('mx-auto');
+    // Docked shape: top corners by --composer-radius, bottom square, no shadow.
+    const box = screen.getByTestId('floating-composer-dock-composer');
+    expect(box.className).toContain('rounded-[var(--composer-radius,12px)]');
+    expect(box.className).toContain('rounded-b-none');
+    expect(box.className).toContain('[&_.chat-composer]:rounded-b-none');
+    expect(box.className).toContain('[--composer-shadow:0_0_#0000]');
+    expect(box.className).not.toContain('shadow-lg');
+  });
+
+  it('pinned under a strip, the composer squares off both ends', () => {
+    render(<EditorShell title="x" footer={<FloatingComposerDock strip={<div>strip</div>} composer={<textarea aria-label="Message" />} />}><p /></EditorShell>);
+    const box = screen.getByTestId('floating-composer-dock-composer');
+    expect(box.className).toContain('rounded-t-none');
+    expect(box.className).toContain('rounded-b-none');
   });
 });
 

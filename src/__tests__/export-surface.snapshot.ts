@@ -996,6 +996,7 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "DECK_THEMES",
     "DEFAULT_EDITOR_SHELL_TABS",
     "DOCK_HEIGHT_VAR",
+    "DOCK_INSET_VAR",
     "DiffViewer",
     "DocumentEditorPage",
     "DocumentFindBar",

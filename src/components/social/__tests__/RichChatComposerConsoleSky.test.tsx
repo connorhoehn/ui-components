@@ -2,7 +2,7 @@
 // alone. A composer inside a console column must not start a second GL field
 // on top of the column's; a composer in an editor's dock has no column, so it
 // carries the "an agent is working" density itself.
-import { cleanup, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { RichChatComposer, type ComposerMode } from '../RichChatComposer';
 import { ChatColumnBackdrop } from '../ChatColumnBackdrop';
@@ -25,7 +25,7 @@ afterEach(() => {
 });
 
 const root = () => screen.getByTestId('composer');
-const composer = (props: { working?: boolean; mode?: ComposerMode } = {}) => (
+const composer = (props: { working?: boolean; mode?: ComposerMode; collapseWhenIdle?: boolean } = {}) => (
   <RichChatComposer
     onSend={vi.fn()}
     data-testid="composer"
@@ -33,6 +33,7 @@ const composer = (props: { working?: boolean; mode?: ComposerMode } = {}) => (
     onModeChange={vi.fn()}
     backdropTone="graphite"
     {...(props.working === undefined ? {} : { working: props.working })}
+    {...(props.collapseWhenIdle ? { collapseWhenIdle: true } : {})}
   />
 );
 /** Points in the cloud uploaded to the GPU: the position buffer is xyz per point. */
@@ -121,5 +122,38 @@ describe('working', () => {
     render(composer({ working: true }));
     expect(screen.getByTestId('composer-console-backdrop')).toHaveAttribute('data-motion', 'static');
     expect(frames.pending).toHaveLength(0);
+  });
+});
+
+// 2.376.0: the one-row idle composer wears the surface it sits on. A dark pill
+// at the foot of a light editor read as an embedded frame; the console sky
+// arrives with the caret.
+describe('the idle row and the console', () => {
+  const input = () => document.querySelector('[data-testid=composer] .ProseMirror') as HTMLElement;
+
+  it('idle in Agent it is plain; the sky comes with the caret', async () => {
+    render(composer({ collapseWhenIdle: true }));
+    expect(root()).toHaveAttribute('data-collapsed', 'true');
+    expect(root()).not.toHaveAttribute('data-console');
+    expect(root()).not.toHaveAttribute('data-theme');
+    expect(root().className).not.toContain('uic-chat-console');
+    expect(screen.queryByTestId('composer-console-backdrop')).not.toBeInTheDocument();
+    await act(async () => { input().focus(); fireEvent.focusIn(input()); });
+    expect(root()).toHaveAttribute('data-collapsed', 'false');
+    expect(root()).toHaveAttribute('data-console', 'true');
+    expect(root()).toHaveAttribute('data-console-sky', 'own');
+    expect(screen.getByTestId('composer-console-backdrop')).toBeInTheDocument();
+  });
+
+  it('inside a column that is painting its sky, the idle row keeps the inherited tint', () => {
+    render(
+      <ChatColumnBackdrop mode="agent" tone="graphite">
+        {composer({ collapseWhenIdle: true })}
+      </ChatColumnBackdrop>,
+    );
+    expect(root()).toHaveAttribute('data-collapsed', 'true');
+    expect(root()).toHaveAttribute('data-console', 'true');
+    expect(root()).toHaveAttribute('data-console-sky', 'inherited');
+    expect(root().className).toContain('bg-surface-inset');
   });
 });

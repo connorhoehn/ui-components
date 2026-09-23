@@ -494,7 +494,10 @@ export interface RichChatComposerProps {
    * References stay visible in that row — they are part of the draft. The
    * toolbar, status line and mode row come back the moment the input takes
    * focus or holds content. For a dock pinned under a canvas that needs the
-   * height (a slide stage); the dock stays pinned and grows upward. Default off.
+   * height (a slide stage); the dock stays pinned and grows upward. The idle
+   * row is plain (`bg-surface`) even in Agent/Terminal: the console sky comes
+   * with the caret, unless an enclosing console column is already painting
+   * one, in which case the row keeps that tint. Default off.
    */
   collapseWhenIdle?: boolean;
   className?: string;
@@ -1679,11 +1682,16 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // The console sky. `none` keeps the ordinary surface in Agent/Terminal: the
   // mode still changes what Enter does, it just stops repainting the box.
   const tone = useResolvedBackdropTone(rootNode, backdropTone, consoleMode);
-  const consoleSurface = consoleMode && tone !== 'none';
   // One field per region: inside a console column that is already painting its
   // sky, the composer keeps its tint and border and draws no particles of its
   // own — two GL fields stacked in one box read as noise, and cost twice.
   const enclosingSurface = useEnclosingConsoleSurface();
+  // The one-row idle composer wears the surface it sits on, not the console:
+  // a dark pill at the foot of a light editor read as an embedded frame. The
+  // console sky arrives with the caret (2.376.0). Inside a column that is
+  // already painting its sky the row keeps the inherited tint — a light row
+  // on a night column would be the same mistake the other way round.
+  const consoleSurface = consoleMode && tone !== 'none' && !(collapsed && !enclosingSurface?.painting);
   const skyInherited = consoleSurface && !!enclosingSurface?.painting;
   const ownSky = consoleSurface && !skyInherited;
   const working = workingProp ?? enclosingSurface?.working ?? false;

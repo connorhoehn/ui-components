@@ -625,7 +625,10 @@ export declare interface RichChatComposerProps {
      * References stay visible in that row — they are part of the draft. The
      * toolbar, status line and mode row come back the moment the input takes
      * focus or holds content. For a dock pinned under a canvas that needs the
-     * height (a slide stage); the dock stays pinned and grows upward. Default off.
+     * height (a slide stage); the dock stays pinned and grows upward. The idle
+     * row is plain (`bg-surface`) even in Agent/Terminal: the console sky comes
+     * with the caret, unless an enclosing console column is already painting
+     * one, in which case the row keeps that tint. Default off.
      */
     collapseWhenIdle?: boolean;
     className?: string;

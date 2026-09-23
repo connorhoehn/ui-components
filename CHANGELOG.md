@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.376.0] — 2026-09-23
+
+### Changed
+
+- **`FloatingComposerDock` pinned is the column's own chrome, not a card.** Inside `EditorShell`
+  (and the unframed `PresentationEditor`) the dock now spans the editor column's content width in
+  the same gutter the host wraps its toolbar and status bar in (`--dock-inset`, default `1rem`,
+  exported as `DOCK_INSET_VAR`): no `maxWidth` cap, no centring, no shadow, no padding under the
+  composer. The composer's bottom edge is the column's bottom edge, so only its top corners are
+  rounded — `--composer-radius` still sets how much; `--composer-shadow` is zeroed for it. A 768 px
+  pill floating on a drop shadow in the middle of a 1300 px column, with grey under it, read as an
+  embedded iframe. `maxWidth` now applies to the OVERLAY placement only.
+- **`RichChatComposer collapseWhenIdle`: the idle row wears the surface it sits on.** In Agent or
+  Terminal the one-row idle composer is plain (`bg-surface`, no `data-console`, no sky); the console
+  surface arrives with the caret. Inside a `ChatColumnBackdrop` that is already painting its sky
+  the row keeps the inherited tint, as before.
+
+
 ## [2.374.1] — 2026-09-23
 
 ### Fixed
