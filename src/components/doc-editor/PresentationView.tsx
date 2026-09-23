@@ -36,8 +36,11 @@ import ErrorState from '../shared/ErrorState';
 import LoadingState from '../shared/LoadingState';
 import { SectionLabel } from '../shared/SectionLabel';
 import { SegmentedControl } from '../shared/SegmentedControl';
+import { Select } from '../forms/Select';
 import { StatusPill } from '../shared/StatusPill';
 import { Text } from '../shared/Text';
+
+const REVISION_SEGMENTS_MAX = 5;
 
 /** One page of a revision. `preview` is host-resolved; absent means absent. */
 export interface PresentationSlide {
@@ -198,7 +201,19 @@ export function PresentationView({
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Text as="div" className="text-base font-semibold text-text-primary" data-testid={`${testId}-title`}>{title}</Text>
         <div className="flex items-center gap-2">
-          {revisions.length > 1 && (
+          {revisions.length > REVISION_SEGMENTS_MAX ? (
+            // Past a handful a row of v1…v15 crowds the title; one picker
+            // holds any number (the editor does the same).
+            <Select
+              aria-label="Revision"
+              size="sm"
+              value={revision.id}
+              onChange={(event) => onRevisionChange?.(event.target.value)}
+              options={[...revisions].reverse().map((candidate, index) => ({ value: candidate.id, label: index === 0 ? `${candidate.label} · latest` : candidate.label }))}
+              className="w-auto"
+              data-testid={`${testId}-revision-select`}
+            />
+          ) : revisions.length > 1 && (
             <SegmentedControl
               aria-label="Revision"
               size="sm"

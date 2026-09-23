@@ -159,7 +159,7 @@ function ge({ open: e, onClose: i, onCreate: a, onCreateFromFixture: o, onSearch
 	} : {
 		kind: "blank",
 		shape: O
-	}, Oe = (e) => {
+	}, Y = (e) => {
 		if (e.kind === "cookbook") {
 			g(e.cookbook.id), ue.has(O) && ee("page"), w || C(e.cookbook.name);
 			return;
@@ -169,7 +169,7 @@ function ge({ open: e, onClose: i, onCreate: a, onCreateFromFixture: o, onSearch
 			return;
 		}
 		g(null), m(e.type.id), w || C("");
-	}, ke = (e) => e.kind === "blank" ? e.shape : ue.has(O) ? "page" : O, Ae = (e, t, n) => {
+	}, Oe = (e) => e.kind === "blank" ? e.shape : ue.has(O) ? "page" : O, ke = (e, t, n) => {
 		let r = t.trim();
 		if (!r) return;
 		let s = E.trim() || void 0;
@@ -213,8 +213,8 @@ function ge({ open: e, onClose: i, onCreate: a, onCreateFromFixture: o, onSearch
 			shape: n
 		});
 		i();
-	}, Y = O === "presentation" && j !== "blank" && !M, X = !!S.trim() && (!Ce || we) && !Y, Z = () => {
-		X && Ae(De, S, ke(De));
+	}, X = O === "presentation" && j !== "blank" && !M, Z = !!S.trim() && (!Ce || we) && !X, Ae = () => {
+		Z && ke(De, S, Oe(De));
 	};
 	return /* @__PURE__ */ W(x, {
 		open: e,
@@ -241,7 +241,7 @@ function ge({ open: e, onClose: i, onCreate: a, onCreateFromFixture: o, onSearch
 		},
 		children: /* @__PURE__ */ G("div", {
 			onKeyDown: (e) => {
-				e.key === "Enter" && !e.shiftKey && X && Z();
+				e.key === "Enter" && !e.shiftKey && Z && Ae();
 			},
 			className: "contents",
 			children: [
@@ -273,13 +273,13 @@ function ge({ open: e, onClose: i, onCreate: a, onCreateFromFixture: o, onSearch
 								type: q[0]
 							} : void 0;
 							if (!t) return;
-							Oe(t);
+							Y(t);
 							let n = S.trim() || (t.kind === "cookbook" ? t.cookbook.name : "");
 							if (!n) {
 								F.current?.focus();
 								return;
 							}
-							Ae(t, n, ke(t));
+							ke(t, n, Oe(t));
 						}
 					}), /* @__PURE__ */ W("div", {
 						className: r("mt-1.5 text-[11px] text-text-tertiary"),
@@ -303,7 +303,7 @@ function ge({ open: e, onClose: i, onCreate: a, onCreateFromFixture: o, onSearch
 								children: be.map((e) => /* @__PURE__ */ G(y, {
 									padding: "md",
 									selected: O === e.id,
-									onSelect: () => Oe({
+									onSelect: () => Y({
 										kind: "blank",
 										shape: e.id
 									}),
@@ -421,7 +421,7 @@ function ge({ open: e, onClose: i, onCreate: a, onCreateFromFixture: o, onSearch
 									return /* @__PURE__ */ G(y, {
 										padding: "md",
 										selected: t,
-										onSelect: () => Oe({
+										onSelect: () => Y({
 											kind: "cookbook",
 											cookbook: e
 										}),
@@ -484,7 +484,7 @@ function ge({ open: e, onClose: i, onCreate: a, onCreateFromFixture: o, onSearch
 											type: "button",
 											"data-testid": `type-option-${e.id}`,
 											"aria-pressed": t,
-											onClick: () => Oe({
+											onClick: () => Y({
 												kind: "type",
 												type: e
 											}),
@@ -583,9 +583,9 @@ function ge({ open: e, onClose: i, onCreate: a, onCreateFromFixture: o, onSearch
 						children: "Cancel"
 					}), /* @__PURE__ */ W("button", {
 						"data-testid": "new-doc-submit",
-						onClick: Z,
-						disabled: !X,
-						className: r("px-5 py-2 text-sm font-semibold border-none rounded-lg text-white font-[inherit]", X ? "bg-info cursor-pointer" : "bg-neutral cursor-not-allowed"),
+						onClick: Ae,
+						disabled: !Z,
+						className: r("px-5 py-2 text-sm font-semibold border-none rounded-lg text-white font-[inherit]", Z ? "bg-info cursor-pointer" : "bg-neutral cursor-not-allowed"),
 						children: "Create Document"
 					})]
 				})
@@ -805,7 +805,8 @@ function J(e, t, n) {
 }
 //#endregion
 //#region src/components/doc-editor/PresentationView.tsx
-function Ce({ back: e }) {
+var Ce = 5;
+function we({ back: e }) {
 	return /* @__PURE__ */ W("svg", {
 		viewBox: "0 0 16 16",
 		className: r("h-3.5 w-3.5", e && "rotate-180"),
@@ -820,7 +821,7 @@ function Ce({ back: e }) {
 		})
 	});
 }
-function we({ title: e, revisions: t, revisionId: n, onRevisionChange: a, slideIndex: o, onSlideChange: s, onDownload: c, downloadLabel: l = "Download .pptx", onOpenPreview: u, pending: d, notice: f, state: p = "ready", errorMessage: h, onRetry: g, maxSlideWidth: _, className: y, "data-testid": b = "presentation-view" }) {
+function Te({ title: e, revisions: t, revisionId: n, onRevisionChange: a, slideIndex: o, onSlideChange: s, onDownload: c, downloadLabel: l = "Download .pptx", onOpenPreview: u, pending: d, notice: f, state: p = "ready", errorMessage: h, onRetry: g, maxSlideWidth: _, className: y, "data-testid": b = "presentation-view" }) {
 	let x = le();
 	if (p === "loading") return /* @__PURE__ */ W(T, {
 		label: "Opening the presentation…",
@@ -875,7 +876,18 @@ function we({ title: e, revisions: t, revisionId: n, onRevisionChange: a, slideI
 				}), /* @__PURE__ */ G("div", {
 					className: "flex items-center gap-2",
 					children: [
-						t.length > 1 && /* @__PURE__ */ W(w, {
+						t.length > Ce ? /* @__PURE__ */ W(re, {
+							"aria-label": "Revision",
+							size: "sm",
+							value: E.id,
+							onChange: (e) => a?.(e.target.value),
+							options: [...t].reverse().map((e, t) => ({
+								value: e.id,
+								label: t === 0 ? `${e.label} · latest` : e.label
+							})),
+							className: "w-auto",
+							"data-testid": `${b}-revision-select`
+						}) : t.length > 1 && /* @__PURE__ */ W(w, {
 							"aria-label": "Revision",
 							size: "sm",
 							value: E.id,
@@ -924,7 +936,7 @@ function we({ title: e, revisions: t, revisionId: n, onRevisionChange: a, slideI
 								"aria-label": "Previous slide",
 								variant: "ghost",
 								size: "sm",
-								icon: /* @__PURE__ */ W(Ce, { back: !0 }),
+								icon: /* @__PURE__ */ W(we, { back: !0 }),
 								disabled: O.index <= 1,
 								onClick: () => s(O.index - 1),
 								"data-testid": `${b}-previous`
@@ -938,7 +950,7 @@ function we({ title: e, revisions: t, revisionId: n, onRevisionChange: a, slideI
 								"aria-label": "Next slide",
 								variant: "ghost",
 								size: "sm",
-								icon: /* @__PURE__ */ W(Ce, {}),
+								icon: /* @__PURE__ */ W(we, {}),
 								disabled: O.index >= D.length,
 								onClick: () => s(O.index + 1),
 								"data-testid": `${b}-next`
@@ -993,27 +1005,27 @@ function we({ title: e, revisions: t, revisionId: n, onRevisionChange: a, slideI
 }
 //#endregion
 //#region src/components/doc-editor/FloatingComposerDock.tsx
-var Te = {
+var Ee = {
 	md: "max-w-md",
 	lg: "max-w-lg",
 	xl: "max-w-xl",
 	"2xl": "max-w-2xl",
 	"3xl": "max-w-3xl",
 	"4xl": "max-w-4xl"
-}, Ee = ce("overlay"), De = "--dock-height";
+}, De = ce("overlay"), Y = "--dock-height";
 function Oe({ composer: e, strip: t, above: n, maxWidth: i = "3xl", label: a = "Composer", className: o, "data-testid": s = "floating-composer-dock" }) {
-	let c = V(null), l = L(Ee);
+	let c = V(null), l = L(De);
 	return z(() => {
 		if (l !== "overlay") return;
 		let e = c.current, t = e?.parentElement;
 		if (!e || !t) return;
-		let n = (e) => t.style.setProperty(De, `${Math.ceil(e)}px`);
+		let n = (e) => t.style.setProperty(Y, `${Math.ceil(e)}px`);
 		n(e.getBoundingClientRect().height);
 		let r = null;
 		return typeof ResizeObserver < "u" && (r = new ResizeObserver(([e]) => {
 			e && n(e.target.getBoundingClientRect().height);
 		}), r.observe(e)), () => {
-			r?.disconnect(), t.style.removeProperty(De);
+			r?.disconnect(), t.style.removeProperty(Y);
 		};
 	}, [l]), /* @__PURE__ */ W("div", {
 		ref: c,
@@ -1024,7 +1036,7 @@ function Oe({ composer: e, strip: t, above: n, maxWidth: i = "3xl", label: a = "
 		className: r(l === "pinned" ? "relative flex max-h-full min-h-0 shrink flex-col bg-workspace px-4 pb-2 pt-1.5" : "pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-workspace via-workspace/85 to-transparent px-4 pb-3 pt-8", o),
 		children: /* @__PURE__ */ G("div", {
 			"data-uic-keepout": "bottom",
-			className: r("pointer-events-auto mx-auto flex min-h-0 w-full flex-col", Te[i]),
+			className: r("pointer-events-auto mx-auto flex min-h-0 w-full flex-col", Ee[i]),
 			children: [
 				n && /* @__PURE__ */ W("div", {
 					className: "mb-2 min-h-0 shrink overflow-y-auto",
@@ -1054,7 +1066,7 @@ function ke(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/SlideRow.tsx
-function Ae() {
+function X() {
 	return /* @__PURE__ */ W("svg", {
 		viewBox: "0 0 16 16",
 		className: "h-3 w-3",
@@ -1069,7 +1081,7 @@ function Ae() {
 		})
 	});
 }
-function Y() {
+function Z() {
 	return /* @__PURE__ */ W("svg", {
 		viewBox: "0 0 16 16",
 		className: "h-3 w-3",
@@ -1084,7 +1096,7 @@ function Y() {
 		})
 	});
 }
-function X() {
+function Ae() {
 	return /* @__PURE__ */ G("svg", {
 		viewBox: "0 0 16 16",
 		className: "h-3 w-3",
@@ -1104,7 +1116,7 @@ function X() {
 		})]
 	});
 }
-function Z() {
+function Q() {
 	return /* @__PURE__ */ W("svg", {
 		viewBox: "0 0 16 16",
 		className: "h-3 w-3",
@@ -1118,7 +1130,7 @@ function Z() {
 		})
 	});
 }
-function Q({ slide: e, index: t, total: n, thumbnailSvg: i, selected: a, uncited: o, changed: s = !1, readOnly: c = !1, onSelect: l, onMove: u, onDuplicate: d, onDelete: f, canDuplicate: p, canDelete: h, dragHandle: g, rowRef: _, dragging: y = !1, testIdPrefix: b }) {
+function $({ slide: e, index: t, total: n, thumbnailSvg: i, selected: a, uncited: o, changed: s = !1, readOnly: c = !1, onSelect: l, onMove: u, onDuplicate: d, onDelete: f, canDuplicate: p, canDelete: h, dragHandle: g, rowRef: _, dragging: y = !1, testIdPrefix: b }) {
 	let x = ke(i);
 	return /* @__PURE__ */ G("li", {
 		ref: _,
@@ -1191,7 +1203,7 @@ function Q({ slide: e, index: t, total: n, thumbnailSvg: i, selected: a, uncited
 						"aria-label": `Move slide ${t + 1} up`,
 						variant: "ghost",
 						size: "sm",
-						icon: /* @__PURE__ */ W(Ae, {}),
+						icon: /* @__PURE__ */ W(X, {}),
 						disabled: t === 0,
 						onClick: () => u(t, t - 1),
 						"data-testid": `${b}-up-${e.id}`
@@ -1199,7 +1211,7 @@ function Q({ slide: e, index: t, total: n, thumbnailSvg: i, selected: a, uncited
 						"aria-label": `Move slide ${t + 1} down`,
 						variant: "ghost",
 						size: "sm",
-						icon: /* @__PURE__ */ W(Y, {}),
+						icon: /* @__PURE__ */ W(Z, {}),
 						disabled: t >= n - 1,
 						onClick: () => u(t, t + 1),
 						"data-testid": `${b}-down-${e.id}`
@@ -1210,7 +1222,7 @@ function Q({ slide: e, index: t, total: n, thumbnailSvg: i, selected: a, uncited
 						"aria-label": `Duplicate slide ${t + 1}`,
 						variant: "ghost",
 						size: "sm",
-						icon: /* @__PURE__ */ W(X, {}),
+						icon: /* @__PURE__ */ W(Ae, {}),
 						disabled: !p,
 						onClick: () => d(e.id),
 						"data-testid": `${b}-duplicate-${e.id}`
@@ -1218,7 +1230,7 @@ function Q({ slide: e, index: t, total: n, thumbnailSvg: i, selected: a, uncited
 						"aria-label": `Delete slide ${t + 1}`,
 						variant: "ghost",
 						size: "sm",
-						icon: /* @__PURE__ */ W(Z, {}),
+						icon: /* @__PURE__ */ W(Q, {}),
 						disabled: !h,
 						onClick: () => f(e.id),
 						"data-testid": `${b}-delete-${e.id}`
@@ -1230,7 +1242,7 @@ function Q({ slide: e, index: t, total: n, thumbnailSvg: i, selected: a, uncited
 }
 //#endregion
 //#region src/components/doc-editor/presentation/SlideList.tsx
-function $({ items: e, selectedId: t, readOnly: n = !1, onSelect: i, onMove: a, onDuplicate: o, onDelete: s, canDuplicate: c, rowComponent: l = Q, listClassName: u, testIdPrefix: d }) {
+function je({ items: e, selectedId: t, readOnly: n = !1, onSelect: i, onMove: a, onDuplicate: o, onDelete: s, canDuplicate: c, rowComponent: l = $, listClassName: u, testIdPrefix: d }) {
 	return /* @__PURE__ */ W("ol", {
 		className: r("m-0 flex list-none flex-col gap-1 p-0", u),
 		"data-testid": `${d}-list`,
@@ -1257,7 +1269,7 @@ function $({ items: e, selectedId: t, readOnly: n = !1, onSelect: i, onMove: a, 
 }
 //#endregion
 //#region src/components/doc-editor/presentation/deckSpec.ts
-var je = 40, Me = 8, Ne = 200, Pe = 120, Fe = 200, Ie = 60, Le = 2e3, Re = 24, ze = 6, Be = 400, Ve = 10, He = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/, Ue = [
+var Me = 40, Ne = 8, Pe = 200, Fe = 120, Ie = 200, Le = 60, Re = 2e3, ze = 24, Be = 6, Ve = 400, He = 10, Ue = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/, We = [
 	"title",
 	"section",
 	"bullets",
@@ -1265,7 +1277,7 @@ var je = 40, Me = 8, Ne = 200, Pe = 120, Fe = 200, Ie = 60, Le = 2e3, Re = 24, z
 	"chart",
 	"quote",
 	"image"
-], We = {
+], Ge = {
 	title: "Title",
 	section: "Section divider",
 	bullets: "Bullets",
@@ -1273,31 +1285,31 @@ var je = 40, Me = 8, Ne = 200, Pe = 120, Fe = 200, Ie = 60, Le = 2e3, Re = 24, z
 	chart: "Chart",
 	quote: "Quote",
 	image: "Image"
-}, Ge = [
+}, Ke = [
 	"product",
 	"engineering",
 	"plain"
 ];
-function Ke(e) {
+function qe(e) {
 	return e.slides.filter((e) => e.sources.length === 0).map((e) => e.id);
 }
-function qe(e) {
-	return e.slides.length > 0 && Ke(e).length === 0;
+function Je(e) {
+	return e.slides.length > 0 && qe(e).length === 0;
 }
-function Je(e, t = "s") {
+function Ye(e, t = "s") {
 	let n = new Set(e.slides.map((e) => e.id)), r = e.slides.length + 1;
 	for (; n.has(`${t}${r}`);) r += 1;
 	return `${t}${r}`;
 }
-function Ye(e, t = "bullets") {
-	return Xe({
+function Xe(e, t = "bullets") {
+	return Ze({
 		id: e,
 		layout: t,
 		title: "",
 		sources: []
 	}, t);
 }
-function Xe(e, t) {
+function Ze(e, t) {
 	let n = {
 		...e,
 		layout: t
@@ -1314,7 +1326,7 @@ function Xe(e, t) {
 		by: ""
 	}), t === "image" && !n.image && (n.image = { alt: "" }), n;
 }
-function Ze(e, t) {
+function Qe(e, t) {
 	let n = e.slides.findIndex((e) => e.id === t.id);
 	if (n === -1) return e;
 	let r = e.slides.slice();
@@ -1323,7 +1335,7 @@ function Ze(e, t) {
 		slides: r
 	};
 }
-function Qe(e, t, n) {
+function $e(e, t, n) {
 	let { slides: r } = e;
 	if (t === n || t < 0 || t >= r.length || n < 0 || n >= r.length) return e;
 	let i = r.slice(), [a] = i.splice(t, 1);
@@ -1332,21 +1344,21 @@ function Qe(e, t, n) {
 		slides: i
 	};
 }
-function $e(e, t, n = "bullets") {
+function et(e, t, n = "bullets") {
 	if (e.slides.length >= 40) return e;
-	let r = Ye(Je(e), n), i = e.slides.slice();
+	let r = Xe(Ye(e), n), i = e.slides.slice();
 	return i.splice(Math.min(Math.max(t + 1, 0), i.length), 0, r), {
 		...e,
 		slides: i
 	};
 }
-function et(e, t) {
+function tt(e, t) {
 	if (e.slides.length >= 40) return e;
 	let n = e.slides.findIndex((e) => e.id === t);
 	if (n === -1) return e;
 	let r = e.slides[n], i = {
 		...r,
-		id: Je(e),
+		id: Ye(e),
 		bullets: r.bullets ? r.bullets.slice() : void 0,
 		columns: r.columns ? [r.columns[0].slice(), r.columns[1].slice()] : void 0,
 		chart: r.chart ? {
@@ -1366,7 +1378,7 @@ function et(e, t) {
 		slides: a
 	};
 }
-function tt(e, t) {
+function nt(e, t) {
 	if (e.slides.length <= 1) return e;
 	let n = e.slides.filter((e) => e.id !== t);
 	return n.length === e.slides.length ? e : {
@@ -1374,7 +1386,7 @@ function tt(e, t) {
 		slides: n
 	};
 }
-function nt(e) {
+function rt(e) {
 	let t = e.reduce((e, t) => {
 		let n = /^v(\d+)$/i.exec(t.label.trim());
 		return n ? Math.max(e, Number(n[1])) : e;
@@ -1383,14 +1395,14 @@ function nt(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
-var rt = F(() => import("./SortableSlideList-CgW6DURF.js"));
-function it(e, t) {
+var it = F(() => import("./SortableSlideList-B8xMuP5I.js"));
+function at(e, t) {
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }
-function at(e, t) {
-	it(e, t)?.querySelector("[data-filmstrip-select]")?.focus();
+function ot(e, t) {
+	at(e, t)?.querySelector("[data-filmstrip-select]")?.focus();
 }
-function ot() {
+function st() {
 	return /* @__PURE__ */ G("svg", {
 		viewBox: "0 0 16 16",
 		className: "h-3.5 w-3.5",
@@ -1415,7 +1427,7 @@ function ot() {
 		]
 	});
 }
-function st({ slide: e, index: t, total: n, thumbnailSvg: i, selected: a, uncited: o, changed: s = !1, generating: c = !1, viewers: l, readOnly: u = !1, onSelect: d, onMove: f, onDuplicate: p, onDelete: m, canDuplicate: h, canDelete: g, dragHandle: y, rowRef: b, dragging: x = !1, testIdPrefix: S }) {
+function ct({ slide: e, index: t, total: n, thumbnailSvg: i, selected: a, uncited: o, changed: s = !1, generating: c = !1, viewers: l, readOnly: u = !1, onSelect: d, onMove: f, onDuplicate: p, onDelete: m, canDuplicate: h, canDelete: g, dragHandle: y, rowRef: b, dragging: x = !1, testIdPrefix: S }) {
 	let C = ke(i), w = t + 1, T = e.title || "Untitled slide", E = [
 		...t > 0 ? [{
 			label: "Move up",
@@ -1483,7 +1495,7 @@ function st({ slide: e, index: t, total: n, thumbnailSvg: i, selected: a, uncite
 						}), /* @__PURE__ */ W(v, {
 							as: "span",
 							className: "text-[9px] text-text-tertiary",
-							children: We[e.layout]
+							children: Ge[e.layout]
 						})]
 					}), c && /* @__PURE__ */ W("span", {
 						className: "absolute inset-x-0 bottom-0 bg-surface/85 px-1.5 py-0.5",
@@ -1534,7 +1546,7 @@ function st({ slide: e, index: t, total: n, thumbnailSvg: i, selected: a, uncite
 				!u && E.length > 0 && /* @__PURE__ */ W("span", {
 					className: r("absolute right-1 top-1 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100", a ? "opacity-100" : "opacity-0"),
 					children: /* @__PURE__ */ W(_, {
-						trigger: /* @__PURE__ */ W(ot, {}),
+						trigger: /* @__PURE__ */ W(st, {}),
 						triggerLabel: `Slide ${w} actions`,
 						triggerTitle: "Slide actions",
 						triggerClassName: "bg-surface/90 px-1 py-0.5",
@@ -1548,7 +1560,7 @@ function st({ slide: e, index: t, total: n, thumbnailSvg: i, selected: a, uncite
 		})]
 	});
 }
-function ct({ items: e, selectedId: t, onSelect: n, onMove: a, onDuplicate: o, onDelete: s, onAdd: c, canAdd: l = !0, generatingSlideIds: u, slideViewers: d, readOnly: f = !1, className: p, testIdPrefix: m = "filmstrip" }) {
+function lt({ items: e, selectedId: t, onSelect: n, onMove: a, onDuplicate: o, onDelete: s, onAdd: c, canAdd: l = !0, generatingSlideIds: u, slideViewers: d, readOnly: f = !1, className: p, testIdPrefix: m = "filmstrip" }) {
 	let g = V(null), _ = B(() => new Set(u ?? []), [u]), y = B(() => e.map((e) => {
 		let t = d?.[e.slide.id];
 		return !_.has(e.slide.id) && !t?.length ? e : {
@@ -1565,7 +1577,7 @@ function ct({ items: e, selectedId: t, onSelect: n, onMove: a, onDuplicate: o, o
 		return [..._].filter((e) => !t.has(e));
 	}, [e, _]);
 	R(() => {
-		it(g.current, t)?.scrollIntoView?.({ block: "nearest" });
+		at(g.current, t)?.scrollIntoView?.({ block: "nearest" });
 	}, [t]);
 	let x = (r) => {
 		if (r.key !== "ArrowUp" && r.key !== "ArrowDown" || !r.target.hasAttribute("data-filmstrip-select")) return;
@@ -1577,11 +1589,11 @@ function ct({ items: e, selectedId: t, onSelect: n, onMove: a, onDuplicate: o, o
 		let s = e[i].slide.id;
 		if (r.altKey) {
 			if (f) return;
-			a(i, o), requestAnimationFrame(() => at(g.current, s));
+			a(i, o), requestAnimationFrame(() => ot(g.current, s));
 			return;
 		}
 		let c = e[o].slide.id;
-		n(c), at(g.current, c);
+		n(c), ot(g.current, c);
 	}, S = {
 		items: y,
 		selectedId: t,
@@ -1591,7 +1603,7 @@ function ct({ items: e, selectedId: t, onSelect: n, onMove: a, onDuplicate: o, o
 		onDuplicate: o,
 		onDelete: s,
 		canDuplicate: l,
-		rowComponent: st,
+		rowComponent: ct,
 		listClassName: "gap-2.5",
 		testIdPrefix: m
 	};
@@ -1604,8 +1616,8 @@ function ct({ items: e, selectedId: t, onSelect: n, onMove: a, onDuplicate: o, o
 		onKeyDown: x,
 		children: [
 			/* @__PURE__ */ W(se, {
-				fallback: /* @__PURE__ */ W($, { ...S }),
-				children: W(f ? $ : rt, { ...S })
+				fallback: /* @__PURE__ */ W(je, { ...S }),
+				children: W(f ? je : it, { ...S })
 			}),
 			b.map((t) => /* @__PURE__ */ G("div", {
 				className: "flex items-start gap-1.5",
@@ -1646,11 +1658,11 @@ function ct({ items: e, selectedId: t, onSelect: n, onMove: a, onDuplicate: o, o
 }
 //#endregion
 //#region src/components/doc-editor/presentation/SlideSources.tsx
-var lt = {
+var ut = {
 	document: "📄",
 	transcript: "🎙️"
 };
-function ut({ sources: e, onChange: t, options: n, onSearchSources: a, readOnly: o = !1, compact: s = !1, testIdPrefix: c }) {
+function dt({ sources: e, onChange: t, options: n, onSearchSources: a, readOnly: o = !1, compact: s = !1, testIdPrefix: c }) {
 	let [l, u] = H(""), [d, f] = H(!1), [p, m] = H(n), h = le(), g = V(0);
 	R(() => {
 		let e = l.trim();
@@ -1723,7 +1735,7 @@ function ut({ sources: e, onChange: t, options: n, onSearchSources: a, readOnly:
 						/* @__PURE__ */ W("span", {
 							className: "mr-1.5",
 							"aria-hidden": "true",
-							children: lt[t.kind ?? "document"]
+							children: ut[t.kind ?? "document"]
 						}),
 						/* @__PURE__ */ W("span", {
 							className: "truncate",
@@ -1795,7 +1807,7 @@ function ut({ sources: e, onChange: t, options: n, onSearchSources: a, readOnly:
 }
 //#endregion
 //#region src/components/doc-editor/presentation/SlideForm.tsx
-function dt() {
+function ft() {
 	return /* @__PURE__ */ W("svg", {
 		viewBox: "0 0 16 16",
 		className: "h-3 w-3",
@@ -1809,7 +1821,7 @@ function dt() {
 		})
 	});
 }
-function ft({ label: e, bullets: t, onChange: n, readOnly: r, testIdPrefix: a }) {
+function pt({ label: e, bullets: t, onChange: n, readOnly: r, testIdPrefix: a }) {
 	let o = (e, r) => {
 		let i = t.slice();
 		i[e] = r, n(i);
@@ -1843,7 +1855,7 @@ function ft({ label: e, bullets: t, onChange: n, readOnly: r, testIdPrefix: a })
 							"aria-label": `Remove ${e.toLowerCase()} ${s + 1}`,
 							variant: "ghost",
 							size: "sm",
-							icon: /* @__PURE__ */ W(dt, {}),
+							icon: /* @__PURE__ */ W(ft, {}),
 							onClick: () => n(t.filter((e, t) => t !== s)),
 							"data-testid": `${a}-remove-${s}`
 						})
@@ -1862,7 +1874,7 @@ function ft({ label: e, bullets: t, onChange: n, readOnly: r, testIdPrefix: a })
 		]
 	});
 }
-function pt({ chart: e, onChange: t, readOnly: n, testIdPrefix: r }) {
+function mt({ chart: e, onChange: t, readOnly: n, testIdPrefix: r }) {
 	let a = (n, r, i) => {
 		let a = Number(i), o = e.series.map((e, t) => {
 			if (t !== n) return e;
@@ -1988,7 +2000,7 @@ function pt({ chart: e, onChange: t, readOnly: n, testIdPrefix: r }) {
 						"aria-label": `Remove row ${o + 1}`,
 						variant: "ghost",
 						size: "sm",
-						icon: /* @__PURE__ */ W(dt, {}),
+						icon: /* @__PURE__ */ W(ft, {}),
 						disabled: e.labels.length <= 1,
 						onClick: () => s(o),
 						"data-testid": `${r}-remove-label-${o}`
@@ -1998,7 +2010,7 @@ function pt({ chart: e, onChange: t, readOnly: n, testIdPrefix: r }) {
 		})]
 	});
 }
-function mt({ slide: e, onChange: t, sources: n, onSearchSources: i, readOnly: a = !1, showSources: o = !0, showNotes: s = !0, testIdPrefix: c }) {
+function ht({ slide: e, onChange: t, sources: n, onSearchSources: i, readOnly: a = !1, showSources: o = !0, showNotes: s = !0, testIdPrefix: c }) {
 	let l = (n) => t({
 		...e,
 		...n
@@ -2033,7 +2045,7 @@ function mt({ slide: e, onChange: t, sources: n, onSearchSources: i, readOnly: a
 					})
 				})]
 			}),
-			e.layout === "bullets" && /* @__PURE__ */ W(ft, {
+			e.layout === "bullets" && /* @__PURE__ */ W(pt, {
 				label: "Bullets",
 				bullets: e.bullets ?? [],
 				onChange: (e) => l({ bullets: e }),
@@ -2042,13 +2054,13 @@ function mt({ slide: e, onChange: t, sources: n, onSearchSources: i, readOnly: a
 			}),
 			e.layout === "two-column" && /* @__PURE__ */ G("div", {
 				className: "grid grid-cols-1 gap-3 sm:grid-cols-2",
-				children: [/* @__PURE__ */ W(ft, {
+				children: [/* @__PURE__ */ W(pt, {
 					label: "Left column",
 					bullets: e.columns?.[0] ?? [],
 					onChange: (t) => l({ columns: [t, e.columns?.[1] ?? []] }),
 					readOnly: a,
 					testIdPrefix: `${c}-column-0`
-				}), /* @__PURE__ */ W(ft, {
+				}), /* @__PURE__ */ W(pt, {
 					label: "Right column",
 					bullets: e.columns?.[1] ?? [],
 					onChange: (t) => l({ columns: [e.columns?.[0] ?? [], t] }),
@@ -2056,7 +2068,7 @@ function mt({ slide: e, onChange: t, sources: n, onSearchSources: i, readOnly: a
 					testIdPrefix: `${c}-column-1`
 				})]
 			}),
-			e.layout === "chart" && e.chart && /* @__PURE__ */ W(pt, {
+			e.layout === "chart" && e.chart && /* @__PURE__ */ W(mt, {
 				chart: e.chart,
 				onChange: (e) => l({ chart: e }),
 				readOnly: a,
@@ -2116,7 +2128,7 @@ function mt({ slide: e, onChange: t, sources: n, onSearchSources: i, readOnly: a
 					"data-testid": `${c}-notes`
 				})
 			}),
-			o && /* @__PURE__ */ W(ut, {
+			o && /* @__PURE__ */ W(dt, {
 				sources: e.sources,
 				onChange: (e) => l({ sources: e }),
 				options: n,
@@ -2129,13 +2141,13 @@ function mt({ slide: e, onChange: t, sources: n, onSearchSources: i, readOnly: a
 }
 //#endregion
 //#region src/components/doc-editor/presentation/SlideStage.tsx
-var ht = {
+var gt = {
 	"2xl": "max-w-2xl",
 	"3xl": "max-w-3xl",
 	"4xl": "max-w-4xl",
 	"5xl": "max-w-5xl"
 };
-function gt({ children: e, generating: t = !1, generatingLabel: n = "Generating…", label: i, maxWidth: a = "4xl", className: o, "data-testid": s = "slide-stage" }) {
+function _t({ children: e, generating: t = !1, generatingLabel: n = "Generating…", label: i, maxWidth: a = "4xl", className: o, "data-testid": s = "slide-stage" }) {
 	return /* @__PURE__ */ W("div", {
 		className: r("flex w-full justify-center", o),
 		children: /* @__PURE__ */ G("div", {
@@ -2144,7 +2156,7 @@ function gt({ children: e, generating: t = !1, generatingLabel: n = "Generating�
 			"aria-busy": t || void 0,
 			"data-testid": s,
 			"data-aspect": "16/9",
-			className: r("relative flex aspect-[16/9] w-full items-center justify-center overflow-hidden rounded-lg border border-border bg-surface shadow-sm", ht[a]),
+			className: r("relative flex aspect-[16/9] w-full items-center justify-center overflow-hidden rounded-lg border border-border bg-surface shadow-sm", gt[a]),
 			children: [e, t && /* @__PURE__ */ G("span", {
 				role: "status",
 				className: "absolute inset-x-0 bottom-0 flex items-center gap-2 bg-surface/85 px-3 py-1.5",
@@ -2163,17 +2175,17 @@ function gt({ children: e, generating: t = !1, generatingLabel: n = "Generating�
 }
 //#endregion
 //#region src/components/doc-editor/presentation/SlidesToolbar.tsx
-var _t = [
+var vt = [
 	"chart",
 	"quote",
 	"image",
 	"two-column"
-], vt = {
+], yt = {
 	product: "Product",
 	engineering: "Engineering",
 	plain: "Plain"
 };
-function yt({ redo: e }) {
+function bt({ redo: e }) {
 	return /* @__PURE__ */ G("svg", {
 		viewBox: "0 0 16 16",
 		className: r("h-3.5 w-3.5", e && "-scale-x-100"),
@@ -2191,7 +2203,7 @@ function yt({ redo: e }) {
 		})]
 	});
 }
-function bt() {
+function xt() {
 	return /* @__PURE__ */ W("svg", {
 		viewBox: "0 0 16 16",
 		className: "h-3 w-3",
@@ -2200,13 +2212,13 @@ function bt() {
 		children: /* @__PURE__ */ W("path", { d: "M4.5 3v10l8-5-8-5z" })
 	});
 }
-function xt() {
+function St() {
 	return /* @__PURE__ */ W("span", {
 		className: "mx-1 h-5 w-px shrink-0 bg-border",
 		"aria-hidden": "true"
 	});
 }
-function St({ label: e, value: t }) {
+function Ct({ label: e, value: t }) {
 	return /* @__PURE__ */ G("span", {
 		className: "inline-flex items-center gap-1 text-[12px]",
 		children: [
@@ -2222,7 +2234,7 @@ function St({ label: e, value: t }) {
 		]
 	});
 }
-function Ct({ slide: e, theme: t, onAddSlide: n, canAddSlide: a = !0, onLayoutChange: o, onThemeChange: s, onChartKindChange: c, onUndo: l, onRedo: u, canUndo: d = !1, canRedo: f = !1, onPresent: p, end: g, disabled: y = !1, className: b, testIdPrefix: x = "slides-toolbar" }) {
+function wt({ slide: e, theme: t, onAddSlide: n, canAddSlide: a = !0, onLayoutChange: o, onThemeChange: s, onChartKindChange: c, onUndo: l, onRedo: u, canUndo: d = !1, canRedo: f = !1, onPresent: p, end: g, disabled: y = !1, className: b, testIdPrefix: x = "slides-toolbar" }) {
 	let S = j(), C = y;
 	return /* @__PURE__ */ G("div", {
 		...S,
@@ -2244,17 +2256,17 @@ function Ct({ slide: e, theme: t, onAddSlide: n, canAddSlide: a = !0, onLayoutCh
 				})
 			}),
 			!C && e && /* @__PURE__ */ W(_, {
-				trigger: /* @__PURE__ */ W(St, {
+				trigger: /* @__PURE__ */ W(Ct, {
 					label: "Layout",
-					value: We[e.layout]
+					value: Ge[e.layout]
 				}),
-				triggerLabel: `Layout: ${We[e.layout]}`,
+				triggerLabel: `Layout: ${Ge[e.layout]}`,
 				triggerClassName: "border-transparent",
 				triggerTestId: `${x}-layout`,
 				sections: [{
 					label: "Layout of this slide",
-					items: Ue.map((t) => ({
-						label: We[t],
+					items: We.map((t) => ({
+						label: Ge[t],
 						checked: t === e.layout,
 						onSelect: () => {
 							t !== e.layout && o(t);
@@ -2265,14 +2277,14 @@ function Ct({ slide: e, theme: t, onAddSlide: n, canAddSlide: a = !0, onLayoutCh
 				"data-testid": `${x}-layout-menu`
 			}),
 			!C && a && /* @__PURE__ */ W(_, {
-				trigger: /* @__PURE__ */ W(St, { label: "Insert" }),
+				trigger: /* @__PURE__ */ W(Ct, { label: "Insert" }),
 				triggerLabel: "Insert a slide",
 				triggerClassName: "border-transparent",
 				triggerTestId: `${x}-insert`,
 				sections: [{
 					label: "New slide after this one",
-					items: _t.map((e) => ({
-						label: `${We[e]} slide`,
+					items: vt.map((e) => ({
+						label: `${Ge[e]} slide`,
 						onSelect: () => n(e),
 						"data-testid": `${x}-insert-${e}`
 					}))
@@ -2280,17 +2292,17 @@ function Ct({ slide: e, theme: t, onAddSlide: n, canAddSlide: a = !0, onLayoutCh
 				"data-testid": `${x}-insert-menu`
 			}),
 			!C && /* @__PURE__ */ W(_, {
-				trigger: /* @__PURE__ */ W(St, {
+				trigger: /* @__PURE__ */ W(Ct, {
 					label: "Theme",
-					value: vt[t]
+					value: yt[t]
 				}),
-				triggerLabel: `Theme: ${vt[t]}`,
+				triggerLabel: `Theme: ${yt[t]}`,
 				triggerClassName: "border-transparent",
 				triggerTestId: `${x}-theme`,
 				sections: [{
 					label: "Deck theme",
-					items: Ge.map((e) => ({
-						label: vt[e],
+					items: Ke.map((e) => ({
+						label: yt[e],
 						checked: e === t,
 						onSelect: () => {
 							e !== t && s(e);
@@ -2315,13 +2327,13 @@ function Ct({ slide: e, theme: t, onAddSlide: n, canAddSlide: a = !0, onLayoutCh
 				"data-testid": `${x}-chart-kind`
 			}),
 			(l || u) && /* @__PURE__ */ G(U, { children: [
-				/* @__PURE__ */ W(xt, {}),
+				/* @__PURE__ */ W(St, {}),
 				l && /* @__PURE__ */ W(m, {
 					"aria-label": "Undo",
 					title: "Undo (⌘Z)",
 					variant: "ghost",
 					size: "sm",
-					icon: /* @__PURE__ */ W(yt, {}),
+					icon: /* @__PURE__ */ W(bt, {}),
 					disabled: C || !d,
 					onClick: l,
 					"data-testid": `${x}-undo`
@@ -2331,7 +2343,7 @@ function Ct({ slide: e, theme: t, onAddSlide: n, canAddSlide: a = !0, onLayoutCh
 					title: "Redo (⇧⌘Z)",
 					variant: "ghost",
 					size: "sm",
-					icon: /* @__PURE__ */ W(yt, { redo: !0 }),
+					icon: /* @__PURE__ */ W(bt, { redo: !0 }),
 					disabled: C || !f,
 					onClick: u,
 					"data-testid": `${x}-redo`
@@ -2357,7 +2369,7 @@ function Ct({ slide: e, theme: t, onAddSlide: n, canAddSlide: a = !0, onLayoutCh
 				"data-testid": `${x}-present`,
 				children: /* @__PURE__ */ G("span", {
 					className: "inline-flex items-center gap-1.5",
-					children: [/* @__PURE__ */ W(bt, {}), "Present"]
+					children: [/* @__PURE__ */ W(xt, {}), "Present"]
 				})
 			})
 		]
@@ -2365,7 +2377,7 @@ function Ct({ slide: e, theme: t, onAddSlide: n, canAddSlide: a = !0, onLayoutCh
 }
 //#endregion
 //#region src/components/doc-editor/presentation/SpeakerNotes.tsx
-function wt({ value: e, onChange: t, readOnly: n = !1, maxLength: i = Le, placeholder: a = "Add what to say while this slide is up. Notes go into the .pptx notes pane, not onto the slide.", className: o, "data-testid": s = "speaker-notes" }) {
+function Tt({ value: e, onChange: t, readOnly: n = !1, maxLength: i = Re, placeholder: a = "Add what to say while this slide is up. Notes go into the .pptx notes pane, not onto the slide.", className: o, "data-testid": s = "speaker-notes" }) {
 	let c = le(), l = le(), u = e?.length ?? 0, d = u >= i * .9;
 	return /* @__PURE__ */ G("section", {
 		"aria-labelledby": c,
@@ -2403,15 +2415,15 @@ function wt({ value: e, onChange: t, readOnly: n = !1, maxLength: i = Le, placeh
 }
 //#endregion
 //#region src/components/doc-editor/presentation/PresentationEditor.tsx
-function Tt({ testIdPrefix: e }) {
+function Et({ testIdPrefix: e }) {
 	return /* @__PURE__ */ W(te, {
 		tone: "warning",
 		"data-testid": `${e}-agent-unavailable`,
 		children: "The agent box needs the rich-text composer (the optional @tiptap peers). Edit the slide by hand below."
 	});
 }
-var Et = F(() => import("./PresentationAgentComposer-BiL8hfIV.js").catch(() => ({ default: Tt })));
-function Dt({ back: e }) {
+var Dt = F(() => import("./PresentationAgentComposer-Bfb8gU99.js").catch(() => ({ default: Et })));
+function Ot({ back: e }) {
 	return /* @__PURE__ */ W("svg", {
 		viewBox: "0 0 16 16",
 		className: r("h-3.5 w-3.5", e && "rotate-180"),
@@ -2426,7 +2438,7 @@ function Dt({ back: e }) {
 		})
 	});
 }
-function Ot(e, t) {
+function kt(e, t) {
 	let [n, r] = H({
 		past: [],
 		future: []
@@ -2475,25 +2487,25 @@ function Ot(e, t) {
 		canRedo: n.future.length > 0
 	};
 }
-function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevision: o, revisions: s, activeRevisionId: c, onSelectRevision: l, sources: u, onSearchSources: d, onDownload: f, onOpenPresentationView: p, readOnly: h = !1, onInstruct: g, instructHints: _, onUndoInstruct: y, generatingSlideIds: b, slideViewers: x, selectSlideRequest: w, footer: E, renderFrame: A, onSelectedSlideChange: j, className: M, "data-testid": N = "presentation-editor" }) {
-	let [ne, P] = H(() => e.slides[0]?.id ?? ""), [ie, ae] = H(!1), [oe, ce] = H(null), F = !!g, [L, le] = H("slide"), [z, ue] = H(!1), [de, fe] = H(null), [pe, me] = H(null), [he, ge] = H(() => /* @__PURE__ */ new Set()), { edit: K, undo: ve, redo: ye, canUndo: be, canRedo: Ce } = Ot(e, t), [Te, De] = H([]);
+function At({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevision: o, revisions: s, activeRevisionId: c, onSelectRevision: l, sources: u, onSearchSources: d, onDownload: f, onOpenPresentationView: p, readOnly: h = !1, onInstruct: g, instructHints: _, onUndoInstruct: y, generatingSlideIds: b, slideViewers: x, selectSlideRequest: w, footer: E, renderFrame: A, onSelectedSlideChange: j, className: M, "data-testid": N = "presentation-editor" }) {
+	let [ne, P] = H(() => e.slides[0]?.id ?? ""), [ie, ae] = H(!1), [oe, ce] = H(null), F = !!g, [L, le] = H("slide"), [z, ue] = H(!1), [de, fe] = H(null), [pe, me] = H(null), [he, ge] = H(() => /* @__PURE__ */ new Set()), { edit: K, undo: ve, redo: ye, canUndo: be, canRedo: Ce } = kt(e, t), [we, Ee] = H([]);
 	R(() => {
-		typeof n == "object" && "slides" in n && De(n.slides);
+		typeof n == "object" && "slides" in n && Ee(n.slides);
 	}, [n]);
-	let Ae = V(a);
-	Ae.current = a;
-	let Y = e.slides, X = B(() => new Set(Ke(e)), [e]), Z = X.size === 0;
+	let Y = V(a);
+	Y.current = a;
+	let X = e.slides, Z = B(() => new Set(qe(e)), [e]), Ae = Z.size === 0;
 	R(() => {
-		Z && Ae.current(e);
-	}, [e, Z]);
-	let Q = Math.max(Y.findIndex((e) => e.id === ne), 0), $ = Y[Q], je = V(j);
+		Ae && Y.current(e);
+	}, [e, Ae]);
+	let Q = Math.max(X.findIndex((e) => e.id === ne), 0), $ = X[Q], je = V(j);
 	je.current = j, R(() => {
 		$ && je.current?.($.id, Q);
 	}, [$?.id, Q]);
 	let Me = B(() => {
-		let e = typeof n == "object" && "slides" in n ? n.slides : Te;
+		let e = typeof n == "object" && "slides" in n ? n.slides : we;
 		return new Map(e.map((e) => [e.id, e.svg]));
-	}, [n, Te]), Ne = B(() => {
+	}, [n, we]), Ne = B(() => {
 		let e = new Set(b ?? []);
 		return z && L === "slide" && $ && e.add($.id), [...e];
 	}, [
@@ -2501,10 +2513,10 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 		z,
 		L,
 		$
-	]), Pe = !!$ && Ne.includes($.id), Fe = Y.map((e) => ({
+	]), Pe = !!$ && Ne.includes($.id), Fe = X.map((e) => ({
 		slide: e,
 		thumbnailSvg: Me.get(e.id),
-		uncited: X.has(e.id),
+		uncited: Z.has(e.id),
 		changed: he.has(e.id)
 	})), Ie = I((e) => {
 		P(e);
@@ -2513,23 +2525,23 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 		Re && e.slides.some((e) => e.id === Re) && P(Re);
 	}, [Le, Re]);
 	let ze = I((t, n) => {
-		K(Qe(e, t, n));
+		K($e(e, t, n));
 	}, [K, e]), Be = I((t) => {
-		let n = $e(e, Q, t);
+		let n = et(e, Q, t);
 		n !== e && (K(n), P(n.slides[Q + 1].id));
 	}, [
 		K,
 		e,
 		Q
 	]), Ve = I((t) => {
-		let n = et(e, t);
+		let n = tt(e, t);
 		if (n === e) return;
 		let r = n.slides.findIndex((e) => e.id === t);
 		K(n), P(n.slides[r + 1].id);
 	}, [K, e]), He = I((t) => {
-		let n = e.slides.findIndex((e) => e.id === t), r = tt(e, t);
+		let n = e.slides.findIndex((e) => e.id === t), r = nt(e, t);
 		r !== e && (K(r), P(r.slides[Math.min(n, r.slides.length - 1)].id));
-	}, [K, e]), Ue = I((t) => K(Ze(e, t)), [K, e]), We = I(async (e) => {
+	}, [K, e]), Ue = I((t) => K(Qe(e, t)), [K, e]), We = I(async (e) => {
 		if (!g || z) return !1;
 		let t = $?.id;
 		ue(!0), me(null);
@@ -2551,7 +2563,7 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 		$?.id
 	]), Ge = I(() => {
 		y?.(), fe(null), ge(/* @__PURE__ */ new Set());
-	}, [y]), qe = X.size, Je = !h && Y.length > 0 && qe === 0 && !ie, Ye = I(() => {
+	}, [y]), Ke = Z.size, Je = !h && X.length > 0 && Ke === 0 && !ie, Ye = I(() => {
 		Je && (ae(!0), ce(null), Promise.resolve(o(e)).catch((e) => {
 			ce(e instanceof Error ? e.message : "The revision could not be saved.");
 		}).finally(() => ae(!1)));
@@ -2559,10 +2571,10 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 		Je,
 		o,
 		e
-	]), rt = I((e) => {
-		let t = Y[Q + e];
+	]), Xe = I((e) => {
+		let t = X[Q + e];
 		t && P(t.id);
-	}, [Y, Q]);
+	}, [X, Q]);
 	if (R(() => {
 		if (h) return;
 		let e = (e) => {
@@ -2578,8 +2590,8 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 			let n = Se(e);
 			if (!n) return;
 			e.preventDefault();
-			let r = J(n, Q + 1, Y.length);
-			r !== Q + 1 && rt(r - (Q + 1));
+			let r = J(n, Q + 1, X.length);
+			r !== Q + 1 && Xe(r - (Q + 1));
 		};
 		return window.addEventListener("keydown", e), () => window.removeEventListener("keydown", e);
 	}, [
@@ -2587,9 +2599,9 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 		Ye,
 		ve,
 		ye,
-		rt,
+		Xe,
 		Q,
-		Y.length
+		X.length
 	]), h) {
 		let t = (s.length > 0 ? s : [{
 			id: c,
@@ -2598,7 +2610,7 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 			id: e.id,
 			label: e.label,
 			...e.createdAt ? { createdAt: e.createdAt } : {},
-			slides: e.id === c ? Y.map((e, t) => {
+			slides: e.id === c ? X.map((e, t) => {
 				let n = ke(Me.get(e.id));
 				return {
 					id: e.id,
@@ -2611,14 +2623,14 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 				};
 			}) : []
 		}));
-		return /* @__PURE__ */ W(we, {
+		return /* @__PURE__ */ W(Te, {
 			title: e.title,
 			revisions: t,
 			revisionId: c,
 			onRevisionChange: l,
 			slideIndex: Q + 1,
 			onSlideChange: (e) => {
-				let t = Y[e - 1];
+				let t = X[e - 1];
 				t && P(t.id);
 			},
 			...f ? { onDownload: f } : {},
@@ -2627,14 +2639,14 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 		});
 	}
 	let it = (() => {
-		if ($ && X.has($.id)) return /* @__PURE__ */ W(S, {
+		if ($ && Z.has($.id)) return /* @__PURE__ */ W(S, {
 			size: "sm",
 			title: "Add a source to preview this slide",
 			description: "A slide renders once it cites the document or transcript it draws from. Pick one under Sources used.",
 			testId: `${N}-preview-needs-source`
 		});
 		let t = $ ? ke(Me.get($.id)) : void 0;
-		if (!Z && !t) return /* @__PURE__ */ W(S, {
+		if (!Ae && !t) return /* @__PURE__ */ W(S, {
 			size: "sm",
 			title: "The preview waits for every slide's source",
 			description: "The deck renders as a whole, so it draws once each slide cites what it draws from.",
@@ -2644,7 +2656,7 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 			label: "Rendering the deck…",
 			testId: `${N}-preview-loading`
 		});
-		if (Z && typeof n == "object" && "error" in n) return /* @__PURE__ */ W(C, {
+		if (Ae && typeof n == "object" && "error" in n) return /* @__PURE__ */ W(C, {
 			title: "This deck could not be rendered",
 			description: n.error,
 			actionLabel: "Try again",
@@ -2695,7 +2707,7 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 				disabled: !Je,
 				onClick: Ye,
 				"data-testid": `${N}-save`,
-				children: ie ? "Saving…" : `Save as ${nt(s)}`
+				children: ie ? "Saving…" : `Save as ${rt(s)}`
 			}),
 			f && /* @__PURE__ */ W(i, {
 				variant: "secondary",
@@ -2757,23 +2769,23 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 				"data-testid": `${N}-deck-subtitle`
 			})
 		})]
-	}), lt = p ? () => p($ ? {
+	}), ct = p ? () => p($ ? {
 		slideId: $.id,
 		slideIndex: Q + 1
-	} : void 0) : void 0, dt = /* @__PURE__ */ W(Ct, {
+	} : void 0) : void 0, ut = /* @__PURE__ */ W(wt, {
 		slide: $,
 		theme: e.theme ?? "product",
 		onAddSlide: Be,
-		canAddSlide: Y.length < 40,
+		canAddSlide: X.length < 40,
 		onLayoutChange: (t) => {
-			$ && K(Ze(e, Xe($, t)));
+			$ && K(Qe(e, Ze($, t)));
 		},
 		onThemeChange: (t) => K({
 			...e,
 			theme: t
 		}),
 		onChartKindChange: (t) => {
-			$?.chart && K(Ze(e, {
+			$?.chart && K(Qe(e, {
 				...$,
 				chart: {
 					...$.chart,
@@ -2785,12 +2797,12 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 		onRedo: ye,
 		canUndo: be,
 		canRedo: Ce,
-		...lt ? { onPresent: lt } : {},
+		...ct ? { onPresent: ct } : {},
 		testIdPrefix: `${N}-toolbar`
-	}), ft = /* @__PURE__ */ G(U, { children: [qe > 0 && /* @__PURE__ */ W(te, {
+	}), ft = /* @__PURE__ */ G(U, { children: [Ke > 0 && /* @__PURE__ */ W(te, {
 		tone: "warning",
 		"data-testid": `${N}-uncited-warning`,
-		children: qe === 1 ? "1 slide cites no source. Every slide names at least one — Save is off until it does." : `${qe} slides cite no source. Every slide names at least one — Save is off until they do.`
+		children: Ke === 1 ? "1 slide cites no source. Every slide names at least one — Save is off until it does." : `${Ke} slides cite no source. Every slide names at least one — Save is off until they do.`
 	}), oe && /* @__PURE__ */ W(te, {
 		tone: "error",
 		onDismiss: () => ce(null),
@@ -2824,13 +2836,13 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 				children: "Undo"
 			})
 		]
-	})] }), ht = F && $ && /* @__PURE__ */ W(se, {
+	})] }), mt = F && $ && /* @__PURE__ */ W(se, {
 		fallback: /* @__PURE__ */ W(v, {
 			className: "text-[12px] text-text-tertiary",
 			"data-testid": `${N}-agent-loading`,
 			children: "Loading the agent…"
 		}),
-		children: /* @__PURE__ */ W(Et, {
+		children: /* @__PURE__ */ W(Dt, {
 			scope: L,
 			onScopeChange: le,
 			slideLabel: `slide ${Q + 1}`,
@@ -2839,22 +2851,22 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 			..._?.length ? { suggestions: _ } : {},
 			testIdPrefix: N
 		})
-	}), _t = {
+	}), gt = {
 		selectedSlide: $,
 		selectedIndex: Q,
-		slideCount: Y.length,
+		slideCount: X.length,
 		selectSlide: Ie,
 		markChanged: (e) => ge(new Set(e))
-	}, vt = typeof E == "function" ? E(_t) : E, yt = vt != null && vt !== !1 ? vt : ht ? /* @__PURE__ */ W(Oe, {
+	}, vt = typeof E == "function" ? E(gt) : E, yt = vt != null && vt !== !1 ? vt : mt ? /* @__PURE__ */ W(Oe, {
 		maxWidth: "4xl",
 		label: "Deck agent",
 		composer: /* @__PURE__ */ G("div", {
 			className: "flex flex-col gap-1.5 rounded-lg border border-border bg-surface p-2",
 			"data-testid": `${N}-dock-card`,
-			children: [pt, ht]
+			children: [pt, mt]
 		}),
 		"data-testid": `${N}-dock`
-	}) : null, bt = $ && /* @__PURE__ */ W(U, { children: F ? /* @__PURE__ */ G(U, { children: [/* @__PURE__ */ W(ut, {
+	}) : null, bt = $ && /* @__PURE__ */ W(U, { children: F ? /* @__PURE__ */ G(U, { children: [/* @__PURE__ */ W(dt, {
 		compact: !0,
 		sources: $.sources,
 		onChange: (e) => Ue({
@@ -2868,7 +2880,7 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 		summary: "Edit slide details",
 		density: "compact",
 		"data-testid": `${N}-details`,
-		children: /* @__PURE__ */ W(mt, {
+		children: /* @__PURE__ */ W(ht, {
 			slide: $,
 			onChange: Ue,
 			sources: u,
@@ -2877,7 +2889,7 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 			showNotes: !1,
 			testIdPrefix: `${N}-slide`
 		})
-	})] }) : /* @__PURE__ */ W(mt, {
+	})] }) : /* @__PURE__ */ W(ht, {
 		slide: $,
 		onChange: Ue,
 		sources: u,
@@ -2892,31 +2904,31 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 				"aria-label": "Previous slide",
 				variant: "ghost",
 				size: "sm",
-				icon: /* @__PURE__ */ W(Dt, { back: !0 }),
+				icon: /* @__PURE__ */ W(Ot, { back: !0 }),
 				disabled: Q <= 0,
-				onClick: () => rt(-1),
+				onClick: () => Xe(-1),
 				"data-testid": `${N}-previous`
 			}),
 			/* @__PURE__ */ W(v, {
 				className: "text-[13px] text-text-secondary",
 				"data-testid": `${N}-position`,
-				children: `Slide ${Y.length === 0 ? 0 : Q + 1} of ${Y.length}`
+				children: `Slide ${X.length === 0 ? 0 : Q + 1} of ${X.length}`
 			}),
 			/* @__PURE__ */ W(m, {
 				"aria-label": "Next slide",
 				variant: "ghost",
 				size: "sm",
-				icon: /* @__PURE__ */ W(Dt, {}),
-				disabled: Q >= Y.length - 1,
-				onClick: () => rt(1),
+				icon: /* @__PURE__ */ W(Ot, {}),
+				disabled: Q >= X.length - 1,
+				onClick: () => Xe(1),
 				"data-testid": `${N}-next`
 			}),
 			/* @__PURE__ */ W(ee, {
-				value: Y.length / 40,
+				value: X.length / 40,
 				segments: 10,
 				showPercent: !1,
 				tone: "surface",
-				note: `${Y.length} / 40`,
+				note: `${X.length} / 40`,
 				className: "ml-2",
 				"data-testid": `${N}-slide-meter`
 			})
@@ -2924,7 +2936,7 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 	}), St = /* @__PURE__ */ G("div", {
 		className: "flex min-h-0 flex-1 flex-col gap-4 md:flex-row",
 		"data-testid": `${N}-body`,
-		children: [/* @__PURE__ */ W(ct, {
+		children: [/* @__PURE__ */ W(lt, {
 			items: Fe,
 			selectedId: $?.id ?? "",
 			onSelect: Ie,
@@ -2932,7 +2944,7 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 			onDuplicate: Ve,
 			onDelete: He,
 			onAdd: () => Be(),
-			canAdd: Y.length < 40,
+			canAdd: X.length < 40,
 			generatingSlideIds: Ne,
 			...x ? { slideViewers: x } : {},
 			className: "md:min-h-0 md:w-44 md:shrink-0 md:overflow-y-auto",
@@ -2944,9 +2956,9 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 				/* @__PURE__ */ W("div", {
 					className: "mx-auto w-full shrink-0 md:max-w-[max(20rem,calc(100cqh*16/9))]",
 					"data-testid": `${N}-stage-frame`,
-					children: /* @__PURE__ */ W(gt, {
+					children: /* @__PURE__ */ W(_t, {
 						generating: Pe,
-						label: $ ? `Slide ${Q + 1} of ${Y.length}: ${$.title || "Untitled slide"}` : "No slide",
+						label: $ ? `Slide ${Q + 1} of ${X.length}: ${$.title || "Untitled slide"}` : "No slide",
 						"data-testid": `${N}-stage`,
 						children: it
 					})
@@ -2954,7 +2966,7 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 				!A && xt,
 				$ && /* @__PURE__ */ G("div", {
 					className: "mx-auto flex w-full max-w-4xl flex-col gap-3",
-					children: [/* @__PURE__ */ W(wt, {
+					children: [/* @__PURE__ */ W(Tt, {
 						value: $.notes,
 						onChange: (e) => Ue({
 							...$,
@@ -2965,14 +2977,14 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 				})
 			]
 		})]
-	}), Tt = (e) => {
+	}), Ct = (e) => {
 		e.key === "Enter" && e.target.tagName === "INPUT" && e.preventDefault();
 	};
 	if (A) {
 		let e = /* @__PURE__ */ G("div", {
 			className: r("flex min-h-0 flex-col gap-2 px-4 pb-3 pt-2 md:h-full md:min-h-[14rem]", M),
 			"data-testid": N,
-			onKeyDown: Tt,
+			onKeyDown: Ct,
 			children: [
 				/* @__PURE__ */ G("div", {
 					className: "flex shrink-0 flex-wrap items-center gap-2",
@@ -2984,7 +2996,7 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 			]
 		});
 		return /* @__PURE__ */ W(U, { children: A({
-			toolbar: dt,
+			toolbar: ut,
 			actions: ot,
 			surface: e,
 			footer: yt
@@ -2993,7 +3005,7 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 	return /* @__PURE__ */ G("div", {
 		className: r("relative flex h-full min-h-0 flex-col", M),
 		"data-testid": N,
-		onKeyDown: Tt,
+		onKeyDown: Ct,
 		children: [
 			/* @__PURE__ */ G("div", {
 				className: "flex shrink-0 flex-col gap-3 px-4 pt-4",
@@ -3003,7 +3015,7 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 					children: [st, ot]
 				}), /* @__PURE__ */ W("div", {
 					className: "rounded-lg border border-border bg-surface px-2 py-1.5",
-					children: dt
+					children: ut
 				})]
 			}),
 			/* @__PURE__ */ G("div", {
@@ -3014,7 +3026,7 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 			/* @__PURE__ */ W("div", {
 				className: "flex max-h-[var(--dock-max-height,50%)] min-h-0 shrink-0 flex-col",
 				"data-testid": `${N}-dock-row`,
-				children: /* @__PURE__ */ W(Ee.Provider, {
+				children: /* @__PURE__ */ W(De.Provider, {
 					value: "pinned",
 					children: yt
 				})
@@ -3023,4 +3035,4 @@ function kt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 	});
 }
 //#endregion
-export { nt as A, De as B, Ue as C, et as D, qe as E, Xe as F, ye as G, we as H, $ as I, ge as J, _e as K, Q as L, tt as M, Ze as N, Ye as O, Ke as P, ke as R, He as S, $e as T, q as U, Oe as V, ve as W, Be as _, gt as a, Fe as b, ct as c, Me as d, Ne as f, Le as g, Ie as h, Ct as i, Je as j, Qe as k, st as l, ze as m, wt as n, mt as o, Re as p, K as q, _t as r, ut as s, kt as t, Ge as u, je as v, We as w, Pe as x, Ve as y, Ee as z };
+export { rt as A, Y as B, We as C, tt as D, Je as E, Ze as F, ye as G, Te as H, je as I, ge as J, _e as K, $ as L, nt as M, Qe as N, Xe as O, qe as P, ke as R, Ue as S, et as T, q as U, Oe as V, ve as W, Ve as _, _t as a, Ie as b, lt as c, Ne as d, Pe as f, Re as g, Le as h, wt as i, Ye as j, $e as k, ct as l, Be as m, Tt as n, ht as o, ze as p, K as q, vt as r, dt as s, At as t, Ke as u, Me as v, Ge as w, Fe as x, He as y, De as z };

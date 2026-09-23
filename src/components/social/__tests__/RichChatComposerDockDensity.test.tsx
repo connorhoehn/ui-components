@@ -39,6 +39,8 @@ describe('suggestions', () => {
     const input = document.querySelector('[data-testid=composer] .ProseMirror') as HTMLElement;
     await act(async () => { input.focus(); fireEvent.focusIn(input); });
     const row = screen.getByTestId('composer-suggestions');
+    // Above the input: a bottom-pinned dock grows upward, so the input stays under the pointer.
+    expect(row.compareDocumentPosition(input) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     fireEvent.click(within(row).getByText('Tighten the bullets'));
     expect(onSuggestion).toHaveBeenCalledWith('Tighten the bullets');
     await act(async () => { fireEvent.focusOut(input, { relatedTarget: document.body }); });

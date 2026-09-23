@@ -1985,6 +1985,28 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             down: unmounting it would destroy the half-written message someone
             switched away from, which is the bug the `useEditor` deps note above
             exists to stop recurring. */}
+        {/* ABOVE the input, not below it: the dock is pinned at the bottom
+            and grows upward, so the row appearing on focus moves the rows
+            above it and leaves the input (and the pointer that just pressed
+            it) where they were. Below the input, the chips slid in under
+            that pointer and its click ran one (live, 2026-09-23). */}
+        {showSuggestionRow && (
+          <div className="flex flex-wrap items-center gap-1 px-2 pt-1" data-testid={`${testId}-suggestions`}>
+            {suggestions!.map((suggestion) => (
+              <button
+                key={suggestion}
+                type="button"
+                // Keep focus in the composer: a mousedown that blurred the
+                // input would hide this row before the click landed.
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => onSuggestion?.(suggestion)}
+                className="cursor-pointer rounded-full border border-border bg-surface px-2 py-0.5 text-[11px] text-text-secondary hover:border-border-emphasis hover:text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                {suggestion}
+              </button>
+            ))}
+          </div>
+        )}
         {/* The body. Block flow at every size but one: NARROW with the
             toolbar folded, where it wraps so the input and the action cluster
             share a single row (attachments drop below via `order-last`). The
@@ -2029,23 +2051,6 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         )}
 
         {/* Wide only. Narrower, the same hints are the `?` menu in the toolbar row. */}
-        {showSuggestionRow && (
-          <div className="flex flex-wrap items-center gap-1 px-2 pb-1" data-testid={`${testId}-suggestions`}>
-            {suggestions!.map((suggestion) => (
-              <button
-                key={suggestion}
-                type="button"
-                // Keep focus in the composer: a mousedown that blurred the
-                // input would hide this row before the click landed.
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={() => onSuggestion?.(suggestion)}
-                className="cursor-pointer rounded-full border border-border bg-surface px-2 py-0.5 text-[11px] text-text-secondary hover:border-border-emphasis hover:text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-              >
-                {suggestion}
-              </button>
-            ))}
-          </div>
-        )}
         {hintsInRow && !!resolvedHints.length && (
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-2 pb-1 text-[11px] text-text-tertiary" data-testid={`${testId}-hints`}>
             {resolvedHints.map((hint) => {

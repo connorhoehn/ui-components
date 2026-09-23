@@ -239,3 +239,16 @@ describe('PresentationView slide frame', () => {
     expect(screen.getByTestId('presentation-view-position')).toHaveTextContent('Slide 2 of 3');
   });
 });
+
+describe('PresentationView revision picker', () => {
+  it('more than five revisions are one Select, newest first', () => {
+    const onRevisionChange = vi.fn();
+    const revisions = Array.from({ length: 7 }, (_, i) => revision({ id: `rev-${i + 1}`, label: `v${i + 1}` }));
+    view({ revisions, revisionId: 'rev-7', onRevisionChange });
+    const select = screen.getByTestId('presentation-view-revision-select') as HTMLSelectElement;
+    expect(select.options[0]!.textContent).toBe('v7 · latest');
+    fireEvent.change(select, { target: { value: 'rev-2' } });
+    expect(onRevisionChange).toHaveBeenCalledWith('rev-2');
+    expect(screen.queryByTestId('presentation-view-revisions')).toBeNull();
+  });
+});

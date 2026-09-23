@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.372.3] — 2026-09-23
+
+### Fixed — suggestion chips never slide under the pointer
+
+- `RichChatComposer`'s focus-only suggestion row renders ABOVE the input. A bottom-pinned dock grows
+  upward, so the row appearing on focus now moves the rows above it and leaves the input under the
+  pointer that pressed it. Below the input (2.372.0–1) the chips slid in under that pointer and,
+  live, the click that focused the input ran a suggestion.
+- `PresentationView` (the reader) shows more than five revisions as one `Select`, newest first,
+  like the editor, instead of a row of v1…v15 segments.
+
 ## [2.372.2] — 2026-09-23
 
 ### Fixed
