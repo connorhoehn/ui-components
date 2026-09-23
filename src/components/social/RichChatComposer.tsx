@@ -1956,7 +1956,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         // controls (see `roomFor`) rather than shaving every one of them.
         'grid shrink-0 place-items-center rounded leading-none',
         docked ? 'h-9 w-9 text-[15px]' : 'h-7 w-7 text-sm',
-        active ? 'bg-surface-hover text-text-primary' : 'text-text-secondary hover:bg-surface-hover',
+        active ? 'bg-surface-hover text-text-primary' : cn(docked ? 'text-text-primary' : 'text-text-secondary', 'hover:bg-surface-hover'),
       )}
     >
       {glyph}
@@ -2050,10 +2050,13 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           // The enclosing column's field shows through; a light inset tint
           // keeps the composer reading as a control on it, not a hole in it.
           skyInherited && 'bg-surface-inset',
-          docked && 'rounded-lg focus-within:ring-1',
           activeCommand
             ? (activeCommand.disabled ? 'border-warning focus-within:border-warning focus-within:ring-warning' : 'border-info focus-within:border-info focus-within:ring-info')
             : 'border-border focus-within:border-primary focus-within:ring-primary',
+          // The editor dock's card keeps a 1px edge that tints toward the
+          // primary while it is in use, rather than a 2px ring (the mockup).
+          docked && 'rounded-lg focus-within:ring-0',
+          docked && !activeCommand?.disabled && (activeCommand ? 'border-primary/40 focus-within:border-primary/50' : 'focus-within:border-primary/50'),
         )}
       >
         {/* The console surface itself. Rounded and clipped on its own element

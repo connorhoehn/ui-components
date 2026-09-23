@@ -2920,7 +2920,7 @@ var wa = le(function({ onSend: p, draft: v, onDraftChange: ce, onCommand: le, on
 		onClick: (e) => {
 			e.detail === 0 && r();
 		},
-		className: e("grid shrink-0 place-items-center rounded leading-none", Z ? "h-9 w-9 text-[15px]" : "h-7 w-7 text-sm", n ? "bg-surface-hover text-text-primary" : "text-text-secondary hover:bg-surface-hover"),
+		className: e("grid shrink-0 place-items-center rounded leading-none", Z ? "h-9 w-9 text-[15px]" : "h-7 w-7 text-sm", n ? "bg-surface-hover text-text-primary" : e(Z ? "text-text-primary" : "text-text-secondary", "hover:bg-surface-hover")),
 		children: i
 	}, o ?? t);
 	return /* @__PURE__ */ O(ne, {
@@ -2959,7 +2959,7 @@ var wa = le(function({ onSend: p, draft: v, onDraftChange: ce, onCommand: le, on
 				].indexOf(e.code);
 				t < 0 || (e.preventDefault(), e.stopPropagation(), Gt(ta[t]));
 			} } : {},
-			className: e("uic-composer chat-composer relative isolate w-full min-w-0 max-w-full rounded-[var(--composer-radius,12px)] border bg-surface shadow-[var(--composer-shadow,var(--uic-composer-shadow))] transition-colors duration-300 focus-within:ring-2 motion-reduce:transition-none", ur && "uic-chat-console", dr && "bg-surface-inset", Z && "rounded-lg focus-within:ring-1", G ? G.disabled ? "border-warning focus-within:border-warning focus-within:ring-warning" : "border-info focus-within:border-info focus-within:ring-info" : "border-border focus-within:border-primary focus-within:ring-primary"),
+			className: e("uic-composer chat-composer relative isolate w-full min-w-0 max-w-full rounded-[var(--composer-radius,12px)] border bg-surface shadow-[var(--composer-shadow,var(--uic-composer-shadow))] transition-colors duration-300 focus-within:ring-2 motion-reduce:transition-none", ur && "uic-chat-console", dr && "bg-surface-inset", G ? G.disabled ? "border-warning focus-within:border-warning focus-within:ring-warning" : "border-info focus-within:border-info focus-within:ring-info" : "border-border focus-within:border-primary focus-within:ring-primary", Z && "rounded-lg focus-within:ring-0", Z && !G?.disabled && (G ? "border-primary/40 focus-within:border-primary/50" : "focus-within:border-primary/50")),
 			children: [
 				/* @__PURE__ */ O(w, {
 					active: fr,
