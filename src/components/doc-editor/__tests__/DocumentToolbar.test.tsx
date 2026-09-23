@@ -1147,3 +1147,13 @@ describe('DocumentToolbar extras="overflow" — the word-processor row (2.386.5)
     expect(screen.queryByTestId('document-toolbar-zoom')).toBeNull();
   });
 });
+
+describe('DocumentToolbar extras="overflow" — the margin switch (2.386.9)', () => {
+  it('moves the comments-margin toggle into ⋯, leaving the row to the formatting', () => {
+    const { editor } = makeEditor();
+    render(<DocumentToolbar editor={editor} extras="overflow" size="wide" commentCount={3} onToggleGutter={() => {}} />);
+    expect(screen.queryByTestId('document-toolbar-gutter-toggle')).toBeNull();
+    fireEvent.mouseDown(screen.getByTestId('document-toolbar-more'));
+    expect(screen.getByTestId('document-toolbar-more-panel')).toContainElement(screen.getByTestId('document-toolbar-gutter-toggle'));
+  });
+});

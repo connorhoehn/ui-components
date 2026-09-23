@@ -30,7 +30,7 @@ import { o as Me, t as Ne } from "./VerdictChip-ClwrKr68.js";
 import { a as Pe, c as Fe, d as Ie, f as Le, h as Re, i as ze, l as Be, m as Ve, n as He, o as Ue, p as We, r as Ge, s as Ke, t as W, u as qe } from "./TiptapEditor-CajZRkz8.js";
 import { i as Je, n as Ye, r as Xe, t as Ze } from "./FloatingComposerDock-DMUQCjea.js";
 import { A as Qe, B as $e, C as et, D as tt, E as nt, F as rt, G as it, H as at, I as ot, L as st, M as ct, N as lt, O as ut, P as dt, R as ft, S as pt, T as mt, U as ht, V as gt, W as _t, _ as vt, a as yt, b as bt, c as xt, d as St, f as Ct, g as wt, h as Tt, i as Et, j as Dt, k as Ot, l as kt, m as At, o as jt, p as Mt, r as Nt, s as Pt, t as Ft, u as It, v as Lt, w as Rt, x as zt, y as Bt, z as Vt } from "./DocumentEditorPage-BNsG2GM9.js";
-import { S as Ht, _ as Ut, a as Wt, b as Gt, c as Kt, d as qt, f as Jt, g as Yt, h as Xt, i as Zt, l as Qt, m as $t, n as en, o as tn, p as nn, r as rn, s as an, t as on, u as sn, v as cn, x as ln, y as un } from "./useDocumentImageUpload-BBypKe_i.js";
+import { S as Ht, _ as Ut, a as Wt, b as Gt, c as Kt, d as qt, f as Jt, g as Yt, h as Xt, i as Zt, l as Qt, m as $t, n as en, o as tn, p as nn, r as rn, s as an, t as on, u as sn, v as cn, x as ln, y as un } from "./useDocumentImageUpload-5iHtXA8C.js";
 import { createContext as dn, useCallback as G, useContext as fn, useEffect as K, useId as pn, useImperativeHandle as mn, useMemo as q, useRef as J, useState as Y } from "react";
 import { Fragment as X, jsx as Z, jsxs as Q } from "react/jsx-runtime";
 import * as hn from "yjs";

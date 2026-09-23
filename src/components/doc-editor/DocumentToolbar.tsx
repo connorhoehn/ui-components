@@ -1881,6 +1881,23 @@ export default function DocumentToolbar({
   }
   if (tucked('clear') && clearControl) overflowGroups.push(<span key="clear" className="inline-flex gap-0.5">{clearControl}</span>);
 
+  // The word-processor row leaves the margin switch to ⋯: the editor's
+  // Comments tab already carries the count, and the pill cost the row its
+  // colour and image groups at 1672px (2.386.9).
+  const gutterInMore = overflowLayout && !!onToggleGutter && gutterCount > 0;
+  if (gutterInMore) {
+    overflowGroups.push(
+      <span key="gutter" className="inline-flex">
+        <GutterToggle
+          comments={commentCount}
+          suggestions={suggestionCount}
+          visible={gutterVisible}
+          onToggle={onToggleGutter!}
+          testId={`${testId}-gutter-toggle`}
+        />
+      </span>,
+    );
+  }
   // Zoom, for a page with no status bar: its own full-width row, last.
   if (zoomControl) {
     overflowGroups.push(<ZoomRow key="zoom" control={zoomControl} testId={testId} />);
@@ -2052,11 +2069,11 @@ export default function DocumentToolbar({
           folded group would need to come back. Replaces the actions' `ml-auto`. */}
       <span ref={spacerRef} aria-hidden data-testid={`${testId}-spacer`} className="min-w-0 flex-1" />
 
-      {(onToggleGutter && gutterCount > 0) || actions ? (
+      {(onToggleGutter && gutterCount > 0 && !gutterInMore) || actions ? (
         <span className="flex shrink-0 items-center gap-1">
           {/* Left of the host's actions so presence avatars stay pinned to the
               far edge where every collaborative tool puts them. */}
-          {onToggleGutter && gutterCount > 0 && (
+          {onToggleGutter && gutterCount > 0 && !gutterInMore && (
             <GutterToggle
               comments={commentCount}
               suggestions={suggestionCount}
