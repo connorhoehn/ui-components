@@ -13,7 +13,7 @@ import { t as p } from "../Badge-CrD0vvt4.js";
 import { n as m, r as h, t as g } from "../ReactionsOverlay-Ob1ecsgg.js";
 import { d as _, n as v, t as y, u as b } from "../ConversationSurface-GrIrbu25.js";
 import { d as x, g as S, h as C, m as w, p as T, t as E, y as D } from "../StreamStage-BEy6KD2Q.js";
-import { a as ee, i as te, n as ne, r as re, t as ie } from "../useDocumentImageUpload-BCm9zpfQ.js";
+import { a as ee, i as te, n as ne, r as re, t as ie } from "../useDocumentImageUpload-CcF7rhi3.js";
 import { Component as ae, createContext as oe, useCallback as O, useContext as se, useEffect as k, useMemo as A, useRef as j, useState as M } from "react";
 import { Fragment as N, jsx as P, jsxs as F } from "react/jsx-runtime";
 import { useRoomOccupancy as ce } from "@connorhoehn/realtime-modules/client/hangout-rooms";

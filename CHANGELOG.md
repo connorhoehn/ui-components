@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.363.0] — 2026-09-22
+
+### Added — the page editor inside `EditorShell` (editor handoff WS2)
+
+- **`WorkspaceDocumentHeader` `variant="actions"`**: only the right-hand
+  cluster (ownership + Share, comment count, who is here with follow/jump,
+  the Editing/Review/Read pill, My Items, the room pill, lifecycle actions and
+  the ⋯ menu, with their confirm dialogs), for `EditorShell`'s `headActions`
+  while the shell owns the title, status pill and save state. `bar` (default)
+  is unchanged.
+- **`WorkspaceDocumentHeaderNotices`** (`./doc-editor`): the header's two
+  banners (a refused lifecycle change, a legacy "final" claim) on their own,
+  so an `actions` host can put them full width at the top of the surface. The
+  `bar` header renders them through it, so the markup is the same.
+- **`DocumentLifecyclePill`** (`./doc-editor`): the header's lifecycle
+  `StatusPill` ("draft", "in review") for a host's own title row.
+- **`CanvasDocumentView` `fitHeight="parent"`**: fill the host's box instead of
+  measuring to the bottom of the window. Inside `EditorShell` the scroller
+  pads by the floating composer's `--dock-height`, so the workspace — and its
+  sticky status bar — now end above the dock instead of running under it.
+  Default `viewport` is unchanged.
+
 ## [2.362.0] — 2026-09-22
 
 ### Added — Documents workspace foundation (editor handoff WS0)

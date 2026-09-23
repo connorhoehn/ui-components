@@ -97,7 +97,7 @@ export declare const CANVAS_SCHEMA_VERSION = 2;
  */
 export declare function canvasBody(ydoc: Doc | null | undefined): XmlFragment | null;
 
-export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, gutterVisible, showRuler, toolbarDensity, showStatusBar, zoomMode, showOutline, paginate, onToggleGutter, onInsertImage, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
+export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, gutterVisible, showRuler, toolbarDensity, showStatusBar, zoomMode, fitHeight, showOutline, paginate, onToggleGutter, onInsertImage, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
 
 export declare interface CanvasDocumentViewProps {
     /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
@@ -238,6 +238,17 @@ export declare interface CanvasDocumentViewProps {
     showStatusBar?: boolean;
     /** `fit` pins the sheet to the pane's width and ignores the remembered zoom — for a document shown in a narrow host. */
     zoomMode?: 'remembered' | 'fit';
+    /**
+     * How tall the grey workspace is. `viewport` (default) measures the view's
+     * own distance from the top of the window and takes the rest of it, which
+     * is what a host with an unbounded page needs. `parent` fills the box the
+     * host gives it instead (`h-full`, the workspace `flex-1`), for a host that
+     * already bounds the height — `EditorShell`, whose scroller pads by the
+     * floating composer's `--dock-height`. Measured to the window there, the
+     * workspace ran under the dock and the composer covered the last lines of
+     * the page and the status bar.
+     */
+    fitHeight?: 'viewport' | 'parent';
     /**
      * Show the outline column beside the page.
      *
@@ -765,6 +776,11 @@ declare interface DocumentInfo {
     description?: string;
     activeCallSessionId?: string;
 }
+
+/** The lifecycle status as the header prints it — "draft", "in review" — for a host's own title row. */
+export declare function DocumentLifecyclePill({ status }: {
+    status: DocumentLifecycleStatus;
+}): JSX.Element;
 
 /** Presentation vocabulary of the document lifecycle API, not an authorization table. */
 export declare type DocumentLifecycleStatus = 'draft' | 'in_review' | 'changes_requested' | 'approved' | 'finalized';
@@ -2909,7 +2925,34 @@ export declare interface WorkItemRowProps {
     'data-testid'?: string;
 }
 
+/**
+ * The header's two banners — a refused lifecycle change, and a legacy "final"
+ * claim the server never recorded. Exported on their own so a host that shows
+ * the header as `variant="actions"` inside `EditorShell` (where the head
+ * actions are one short row) can put them at the top of the surface instead,
+ * full width, where a sentence fits.
+ */
+export declare function WorkspaceDocumentHeaderNotices({ lifecycleError, onDismissLifecycleError, lifecycleLegacyClaim, canClaimOwnership, }: WorkspaceDocumentHeaderNoticesProps): JSX.Element | null;
+
+export declare interface WorkspaceDocumentHeaderNoticesProps {
+    lifecycleError?: LifecycleErrorView | null;
+    onDismissLifecycleError?: () => void;
+    lifecycleLegacyClaim?: LegacyFinalClaim | null;
+    /** Whether the header offers "Take ownership" — changes what the ownerless note says. */
+    canClaimOwnership?: boolean;
+}
+
 export declare interface WorkspaceDocumentHeaderProps {
+    /**
+     * `bar` (default) is the whole two-row header: back link, title, status,
+     * save state, then the mode pill and the actions. `actions` is only the
+     * right-hand cluster — ownership, comment count, who is here, the mode pill,
+     * the room pill, lifecycle actions and the ⋯ menu, with their dialogs — for
+     * a host that puts the title, status and save state in `EditorShell`'s own
+     * title row and hands this over as `headActions`. The two banners are not
+     * part of it; render `WorkspaceDocumentHeaderNotices` where a sentence fits.
+     */
+    variant?: 'bar' | 'actions';
     /** Host-controlled durable persistence receipt; omitted means unknown. */
     saveState?: DocumentSaveState;
     /** Actions scoped to the current source, such as draft/review/publish. */
@@ -3000,19 +3043,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3025,6 +3055,19 @@ declare module '@tiptap/core' {
             setLineSpacing: (spacing: LineSpacing) => ReturnType;
             /** Return the paragraphs in the selection to the paper's own leading. */
             unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -3078,9 +3121,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -3098,12 +3144,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

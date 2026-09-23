@@ -370,6 +370,17 @@ declare interface CanvasDocumentViewProps {
     /** `fit` pins the sheet to the pane's width and ignores the remembered zoom — for a document shown in a narrow host. */
     zoomMode?: 'remembered' | 'fit';
     /**
+     * How tall the grey workspace is. `viewport` (default) measures the view's
+     * own distance from the top of the window and takes the rest of it, which
+     * is what a host with an unbounded page needs. `parent` fills the box the
+     * host gives it instead (`h-full`, the workspace `flex-1`), for a host that
+     * already bounds the height — `EditorShell`, whose scroller pads by the
+     * floating composer's `--dock-height`. Measured to the window there, the
+     * workspace ran under the dock and the composer covered the last lines of
+     * the page and the status bar.
+     */
+    fitHeight?: 'viewport' | 'parent';
+    /**
      * Show the outline column beside the page.
      *
      * Off by default: it is the host's call whether a document is long enough to

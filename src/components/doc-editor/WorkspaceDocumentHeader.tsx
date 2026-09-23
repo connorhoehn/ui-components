@@ -21,6 +21,16 @@ export interface LifecycleErrorView {
 }
 
 export interface WorkspaceDocumentHeaderProps {
+  /**
+   * `bar` (default) is the whole two-row header: back link, title, status,
+   * save state, then the mode pill and the actions. `actions` is only the
+   * right-hand cluster — ownership, comment count, who is here, the mode pill,
+   * the room pill, lifecycle actions and the ⋯ menu, with their dialogs — for
+   * a host that puts the title, status and save state in `EditorShell`'s own
+   * title row and hands this over as `headActions`. The two banners are not
+   * part of it; render `WorkspaceDocumentHeaderNotices` where a sentence fits.
+   */
+  variant?: 'bar' | 'actions';
   /** Host-controlled durable persistence receipt; omitted means unknown. */
   saveState?: DocumentSaveState;
   /** Actions scoped to the current source, such as draft/review/publish. */
@@ -183,6 +193,7 @@ function isOwnerlessRefusal(error: LifecycleErrorView | null | undefined): boole
 }
 
 export default function WorkspaceDocumentHeader({
+  variant = 'bar',
   saveState, workflowActions, formatActions, className, titleEditable, onPrint, exportFormats = ['markdown', 'pdf', 'json'],
   meta,
   mode,
@@ -243,7 +254,6 @@ export default function WorkspaceDocumentHeader({
   const typedSatisfied =
     !typedRequired ||
     typedConfirmation.trim().toUpperCase() === FINALIZE_CONFIRMATION_WORD;
-  const ownerless = isOwnerlessRefusal(lifecycleError);
 
   const closeLifecycleDialog = () => {
     setPendingAction(null);
@@ -315,6 +325,291 @@ export default function WorkspaceDocumentHeader({
       items: [{ label: 'Clear document', danger: true, onSelect: () => setConfirmClear(true), 'data-testid': 'clear-document-btn' }],
     }] : []),
   ];
+
+  const dialogs = (
+    <>
+      <ConfirmDialog
+        open={pendingAction != null}
+        tone={typedRequired ? 'destructive' : reasonRequired ? 'caution' : 'info'}
+        title={pendingAction ? `${lifecycleActionLabels[pendingAction]} — “${docLabel}”?` : ''}
+        body={pendingAction ? lifecycleActionBlurb[pendingAction] : ''}
+        confirmLabel={pendingAction ? lifecycleActionLabels[pendingAction] : 'Confirm'}
+        cancelLabel={typedRequired ? 'Keep it open' : 'Cancel'}
+        confirmDisabled={(reasonRequired && reason.trim().length === 0) || !typedSatisfied}
+        onConfirm={() => {
+          const action = pendingAction;
+          const text = reason.trim();
+          closeLifecycleDialog();
+          if (action) onLifecycleAction?.(action, text || undefined);
+        }}
+        onCancel={closeLifecycleDialog}
+      >
+        {typedRequired && (
+          <div className="mb-3">
+            <label
+              className="mb-1 block text-xs font-semibold text-[var(--color-text-primary)]"
+              htmlFor="lifecycle-finalize-confirm"
+            >
+              Type {FINALIZE_CONFIRMATION_WORD} to confirm
+            </label>
+            <input
+              id="lifecycle-finalize-confirm"
+              data-testid="lifecycle-finalize-confirm-input"
+              value={typedConfirmation}
+              autoComplete="off"
+              onChange={(e) => setTypedConfirmation(e.target.value)}
+              placeholder={FINALIZE_CONFIRMATION_WORD}
+              className="w-full rounded-md border border-[var(--color-border-field)] bg-[var(--color-surface)] p-2 font-mono text-sm text-[var(--color-text-primary)]"
+            />
+          </div>
+        )}
+        <label
+          className="mb-1 block text-xs font-semibold text-[var(--color-text-primary)]"
+          htmlFor="lifecycle-reason"
+        >
+          {reasonRequired ? 'Reason (required)' : 'Reason (optional)'}
+        </label>
+        <textarea
+          id="lifecycle-reason"
+          data-testid="lifecycle-reason-input"
+          value={reason}
+          rows={3}
+          onChange={(e) => setReason(e.target.value)}
+          placeholder={
+            reasonRequired
+              ? 'What needs to change, and why?'
+              : typedRequired
+                ? 'Recorded against this document permanently'
+                : 'Anything the others should know'
+          }
+          className="w-full rounded-md border border-[var(--color-border-field)] bg-[var(--color-surface)] p-2 text-[13px] text-[var(--color-text-primary)]"
+        />
+      </ConfirmDialog>
+
+      <ConfirmDialog
+        open={confirmClaim}
+        tone="caution"
+        title={`Take ownership of “${docLabel}”?`}
+        body={
+          'You become the owner of this document. Owner-only actions — submitting it for review, ' +
+          'reopening it after approval — become yours, and nobody else can claim it afterwards. ' +
+          'The claim is recorded against your name.'
+        }
+        confirmLabel="Take ownership"
+        cancelLabel="Leave it unowned"
+        onConfirm={() => { setConfirmClaim(false); onClaimOwnership?.(); }}
+        onCancel={() => setConfirmClaim(false)}
+      />
+
+      <ConfirmDialog
+        open={confirmClear}
+        tone="destructive"
+        title={`Clear “${docLabel}”?`}
+        body={
+          'Every section and everything written in it is removed — for everyone in the document, ' +
+          'not just on your screen. There is no undo; the only way back is restoring an earlier ' +
+          'version from History.'
+        }
+        confirmLabel="Clear document"
+        cancelLabel="Keep content"
+        onConfirm={() => { setConfirmClear(false); onClearDocument?.(); }}
+        onCancel={() => setConfirmClear(false)}
+      />
+    </>
+  );
+
+  if (variant === 'actions') {
+    return (
+      <div data-testid="document-header" data-variant="actions" className={cn('flex min-w-0 flex-wrap items-center justify-end gap-2', className)}>
+          {(owner !== undefined || collaborators !== undefined || onShare) && <DocumentOwnership
+            owner={owner ?? null}
+            collaborators={collaborators ?? []}
+            {...(onShare ? { onShare } : {})}
+          />}
+          {lifecycleTerminal && (
+            <span
+              data-testid="lifecycle-terminal-note"
+              className="text-[11px] italic text-[var(--color-text-tertiary)]"
+            >
+              Closed permanently — no further changes, for anyone
+            </span>
+          )}
+          {commentCount != null && commentCount > 0 && (
+            <Chip
+              tone="neutral"
+              size="sm"
+              className="rounded-full px-2.5"
+              icon={<ChatIcon size={12} />}
+            >
+              {commentCount}
+            </Chip>
+          )}
+        {participants.length > 0 && (
+          <ParticipantAvatars participants={participants} sections={sections} onJumpToUser={onJumpToUser} onFollowUser={onFollowUser} followingUserId={followingUserId} />
+        )}
+        <DocumentModePill
+          mode={mode === 'editor' ? (suggesting ? 'suggesting' : 'editing') : mode === 'ack' ? 'review' : 'read'}
+          {...(modeReason ? { reason: modeReason } : {})}
+        />
+        <div className="flex items-center gap-2">
+
+          {workflowActions}
+          {formatActions}
+          {formatActionsRef && (
+            <div ref={formatActionsRef} className="flex items-center gap-2" />
+          )}
+
+          {onToggleMyItems && (
+            <Button variant="secondary" size="sm" onClick={onToggleMyItems}>
+              My Items{myItemCount ? ` (${myItemCount})` : ''}
+            </Button>
+          )}
+
+          {(onToggleChat || onShareToRoom || (onToggleVideoCall && (callVariant === 'available' || callVariant === 'active'))) && (
+            <div
+              className="flex h-8 items-center gap-0.5 rounded-md border border-border bg-surface pl-0.5 pr-0.5"
+              data-testid="document-room-pill"
+              data-room={chatRoomName ?? shareRoomName ?? ''}
+            >
+              {onToggleChat ? (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="inline-flex items-center gap-1.5 whitespace-nowrap border-0"
+                  data-testid="document-chat-toggle"
+                  onClick={onToggleChat}
+                  title={chatRoomName ? `Open the conversation in ${chatRoomName}` : 'Open this page\u2019s conversation'}
+                >
+                  <ChatIcon size={13} />
+                  <span>{chatRoomName ? `#${chatRoomName}` : 'Conversation'}</span>
+                  {chatUnreadCount ? (
+                    <Chip tone="accent" size="xs" mono data-testid="document-chat-unread">{chatUnreadCount}</Chip>
+                  ) : null}
+                </Button>
+              ) : (chatRoomName ?? shareRoomName) ? (
+                <span className="px-1.5 text-xs font-medium text-text-primary">#{chatRoomName ?? shareRoomName}</span>
+              ) : null}
+              {onShareToRoom && (
+                <IconButton
+                  aria-label={sharingToRoom ? 'Sharing…' : `Share to #${shareRoomName ?? 'room'}`}
+                  title={shareRoomName ? `Post a link to this page in #${shareRoomName}` : 'Post a link to this page in the room'}
+                  variant="ghost"
+                  size="sm"
+                  className="border-0"
+                  data-testid="share-to-room-btn"
+                  data-sharing={sharingToRoom ? 'true' : 'false'}
+                  disabled={sharingToRoom}
+                  onClick={onShareToRoom}
+                  icon={<ShareIcon size={13} />}
+                />
+              )}
+              {onToggleVideoCall && callVariant === 'available' && (
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={onToggleVideoCall}
+                  data-call-variant="available"
+                  data-testid="doc-call-button"
+                  title="This room has a call going — join it"
+                >
+                  {callLabel ?? 'Join call'}
+                </Button>
+              )}
+              {onToggleVideoCall && callVariant === 'active' && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className={CALL_VARIANT_CLASS.active}
+                  onClick={onToggleVideoCall}
+                  aria-pressed
+                  data-call-variant="active"
+                  data-testid="doc-call-button"
+                >
+                  {callLabel ?? 'In call'}
+                </Button>
+              )}
+            </div>
+          )}
+
+          {shareStatus && (
+            <span
+              role="status"
+              data-testid="share-to-room-status"
+              data-tone={shareStatus.tone}
+              className={`inline-flex items-center gap-1 text-[12px] ${
+                shareStatus.tone === 'error' ? 'text-danger-fg' : 'text-success-fg'
+              }`}
+            >
+              {shareStatus.text}
+              {shareStatus.tone === 'error' && onDismissShareStatus && (
+                <IconButton
+                  aria-label="Dismiss share error"
+                  variant="ghost"
+                  size="sm"
+                  onClick={onDismissShareStatus}
+                  className="border-none p-0 text-current"
+                  icon={<CloseIcon size={12} />}
+                />
+              )}
+            </span>
+          )}
+
+          {onLifecycleAction && (
+            <div data-testid="lifecycle-actions" className="flex items-center gap-1.5">
+              {lifecycleLoading && offeredActions.length === 0 && (
+                <span
+                  data-testid="lifecycle-loading"
+                  className="text-xs text-[var(--color-text-tertiary)]"
+                >
+                  Checking review status…
+                </span>
+              )}
+              {offeredActions.map((action) => (
+                <Button
+                  key={action}
+                  type="button"
+                  size="sm"
+                  variant={action === 'finalize' ? 'danger' : 'secondary'}
+                  data-testid={`lifecycle-action-${action}`}
+                  disabled={lifecycleBusy}
+                  onClick={() => {
+                    setReason('');
+                    setTypedConfirmation('');
+                    setPendingAction(action);
+                  }}
+                >
+                  {lifecycleActionLabels[action]}
+                </Button>
+              ))}
+
+              {onClaimOwnership && (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="secondary"
+                  data-testid="claim-ownership-btn"
+                  onClick={() => setConfirmClaim(true)}
+                >
+                  Take ownership
+                </Button>
+              )}
+            </div>
+          )}
+
+          {menuSections.some(section => section.items.length > 0) && <DropdownMenu
+            trigger={<span className="tracking-wide">⋯</span>}
+            triggerLabel="More actions"
+            triggerTitle="More actions"
+            triggerClassName="h-8 rounded-md border border-border bg-surface px-2.5 text-[13px] text-text-primary hover:bg-surface-hover"
+            align="end"
+            data-testid="document-header-menu"
+            sections={menuSections}
+          />}
+        </div>
+        {dialogs}
+      </div>
+    );
+  }
 
   return (
     <header data-testid="document-header" className={cn(HEADER_CLASS, className)}>
@@ -556,6 +851,44 @@ export default function WorkspaceDocumentHeader({
         </div>
       </div>
 
+      <WorkspaceDocumentHeaderNotices
+        lifecycleError={lifecycleError}
+        {...(onDismissLifecycleError ? { onDismissLifecycleError } : {})}
+        lifecycleLegacyClaim={lifecycleLegacyClaim}
+        canClaimOwnership={!!onClaimOwnership}
+      />
+
+      {dialogs}
+    </header>
+  );
+}
+
+export interface WorkspaceDocumentHeaderNoticesProps {
+  lifecycleError?: LifecycleErrorView | null;
+  onDismissLifecycleError?: () => void;
+  lifecycleLegacyClaim?: LegacyFinalClaim | null;
+  /** Whether the header offers "Take ownership" — changes what the ownerless note says. */
+  canClaimOwnership?: boolean;
+}
+
+/**
+ * The header's two banners — a refused lifecycle change, and a legacy "final"
+ * claim the server never recorded. Exported on their own so a host that shows
+ * the header as `variant="actions"` inside `EditorShell` (where the head
+ * actions are one short row) can put them at the top of the surface instead,
+ * full width, where a sentence fits.
+ */
+export function WorkspaceDocumentHeaderNotices({
+  lifecycleError,
+  onDismissLifecycleError,
+  lifecycleLegacyClaim,
+  canClaimOwnership = false,
+}: WorkspaceDocumentHeaderNoticesProps) {
+  const ownerless = isOwnerlessRefusal(lifecycleError);
+  const onClaimOwnership = canClaimOwnership ? true : undefined;
+  if (!lifecycleError && !lifecycleLegacyClaim) return null;
+  return (
+    <>
       {lifecycleError && (
         <Banner
           variant={lifecycleError.kind === 'conflict' ? 'warning' : 'error'}
@@ -594,94 +927,17 @@ export default function WorkspaceDocumentHeader({
           review and use Finalize — that route records who approved it and when.
         </Banner>
       )}
+    </>
+  );
+}
 
-      <ConfirmDialog
-        open={pendingAction != null}
-        tone={typedRequired ? 'destructive' : reasonRequired ? 'caution' : 'info'}
-        title={pendingAction ? `${lifecycleActionLabels[pendingAction]} — “${docLabel}”?` : ''}
-        body={pendingAction ? lifecycleActionBlurb[pendingAction] : ''}
-        confirmLabel={pendingAction ? lifecycleActionLabels[pendingAction] : 'Confirm'}
-        cancelLabel={typedRequired ? 'Keep it open' : 'Cancel'}
-        confirmDisabled={(reasonRequired && reason.trim().length === 0) || !typedSatisfied}
-        onConfirm={() => {
-          const action = pendingAction;
-          const text = reason.trim();
-          closeLifecycleDialog();
-          if (action) onLifecycleAction?.(action, text || undefined);
-        }}
-        onCancel={closeLifecycleDialog}
-      >
-        {typedRequired && (
-          <div className="mb-3">
-            <label
-              className="mb-1 block text-xs font-semibold text-[var(--color-text-primary)]"
-              htmlFor="lifecycle-finalize-confirm"
-            >
-              Type {FINALIZE_CONFIRMATION_WORD} to confirm
-            </label>
-            <input
-              id="lifecycle-finalize-confirm"
-              data-testid="lifecycle-finalize-confirm-input"
-              value={typedConfirmation}
-              autoComplete="off"
-              onChange={(e) => setTypedConfirmation(e.target.value)}
-              placeholder={FINALIZE_CONFIRMATION_WORD}
-              className="w-full rounded-md border border-[var(--color-border-field)] bg-[var(--color-surface)] p-2 font-mono text-sm text-[var(--color-text-primary)]"
-            />
-          </div>
-        )}
-        <label
-          className="mb-1 block text-xs font-semibold text-[var(--color-text-primary)]"
-          htmlFor="lifecycle-reason"
-        >
-          {reasonRequired ? 'Reason (required)' : 'Reason (optional)'}
-        </label>
-        <textarea
-          id="lifecycle-reason"
-          data-testid="lifecycle-reason-input"
-          value={reason}
-          rows={3}
-          onChange={(e) => setReason(e.target.value)}
-          placeholder={
-            reasonRequired
-              ? 'What needs to change, and why?'
-              : typedRequired
-                ? 'Recorded against this document permanently'
-                : 'Anything the others should know'
-          }
-          className="w-full rounded-md border border-[var(--color-border-field)] bg-[var(--color-surface)] p-2 text-[13px] text-[var(--color-text-primary)]"
-        />
-      </ConfirmDialog>
-
-      <ConfirmDialog
-        open={confirmClaim}
-        tone="caution"
-        title={`Take ownership of “${docLabel}”?`}
-        body={
-          'You become the owner of this document. Owner-only actions — submitting it for review, ' +
-          'reopening it after approval — become yours, and nobody else can claim it afterwards. ' +
-          'The claim is recorded against your name.'
-        }
-        confirmLabel="Take ownership"
-        cancelLabel="Leave it unowned"
-        onConfirm={() => { setConfirmClaim(false); onClaimOwnership?.(); }}
-        onCancel={() => setConfirmClaim(false)}
-      />
-
-      <ConfirmDialog
-        open={confirmClear}
-        tone="destructive"
-        title={`Clear “${docLabel}”?`}
-        body={
-          'Every section and everything written in it is removed — for everyone in the document, ' +
-          'not just on your screen. There is no undo; the only way back is restoring an earlier ' +
-          'version from History.'
-        }
-        confirmLabel="Clear document"
-        cancelLabel="Keep content"
-        onConfirm={() => { setConfirmClear(false); onClearDocument?.(); }}
-        onCancel={() => setConfirmClear(false)}
-      />
-    </header>
+/** The lifecycle status as the header prints it — "draft", "in review" — for a host's own title row. */
+export function DocumentLifecyclePill({ status }: { status: DocumentLifecycleStatus }) {
+  return (
+    <StatusPill
+      data-testid="lifecycle-status"
+      state={lifecycleStatusTone[status]}
+      label={lifecycleStatusLabel(status)}
+    />
   );
 }

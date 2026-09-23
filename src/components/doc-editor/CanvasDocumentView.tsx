@@ -341,6 +341,17 @@ export interface CanvasDocumentViewProps {
   /** `fit` pins the sheet to the pane's width and ignores the remembered zoom — for a document shown in a narrow host. */
   zoomMode?: 'remembered' | 'fit';
   /**
+   * How tall the grey workspace is. `viewport` (default) measures the view's
+   * own distance from the top of the window and takes the rest of it, which
+   * is what a host with an unbounded page needs. `parent` fills the box the
+   * host gives it instead (`h-full`, the workspace `flex-1`), for a host that
+   * already bounds the height — `EditorShell`, whose scroller pads by the
+   * floating composer's `--dock-height`. Measured to the window there, the
+   * workspace ran under the dock and the composer covered the last lines of
+   * the page and the status bar.
+   */
+  fitHeight?: 'viewport' | 'parent';
+  /**
    * Show the outline column beside the page.
    *
    * Off by default: it is the host's call whether a document is long enough to
@@ -456,6 +467,7 @@ export default function CanvasDocumentView({
   toolbarDensity = 'full',
   showStatusBar = true,
   zoomMode = 'remembered',
+  fitHeight = 'viewport',
   showOutline = false,
   paginate = true,
   onToggleGutter,
@@ -634,6 +646,7 @@ export default function CanvasDocumentView({
   const [workspaceHeight, setWorkspaceHeight] = useState<number | null>(null);
   useEffect(() => {
     const el = workspaceRef.current;
+    if (fitHeight === 'parent') { setWorkspaceHeight(null); return; }
     if (!el || typeof window === 'undefined') return;
     const measure = () => {
       const top = el.getBoundingClientRect().top + window.scrollY;
@@ -644,7 +657,7 @@ export default function CanvasDocumentView({
     measure();
     window.addEventListener('resize', measure);
     return () => window.removeEventListener('resize', measure);
-  }, [isCanvas, body]);
+  }, [isCanvas, body, fitHeight]);
 
   // Which page the reader is looking at, for "Page 3 of 7".
   //
@@ -771,7 +784,7 @@ export default function CanvasDocumentView({
   };
 
   return (
-    <div data-testid={testId} className="flex flex-col gap-3">
+    <div data-testid={testId} data-fit-height={fitHeight} className={cn('flex flex-col gap-3', fitHeight === 'parent' && 'h-full min-h-0')}>
       {header}
 
       {unsupported.length > 0 && (
@@ -810,8 +823,8 @@ export default function CanvasDocumentView({
           ref={workspaceRef}
           // `overflow-x-auto`: a page zoomed past the width of the workspace
           // has to be scrollable to, not squeezed into it.
-          className="rounded-lg bg-workspace overflow-y-auto overflow-x-auto"
-          style={workspaceHeight === null ? undefined : { height: workspaceHeight }}
+          className={cn('rounded-lg bg-workspace overflow-y-auto overflow-x-auto', fitHeight === 'parent' && 'min-h-0 flex-1')}
+          style={fitHeight === 'parent' || workspaceHeight === null ? undefined : { height: workspaceHeight }}
         >
           {/* Chrome, not paper: the toolbar is themed and goes dark, while the
               sheet below it stays white. Sticky so it survives scrolling a

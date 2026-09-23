@@ -1821,7 +1821,7 @@ function Ze({ items: e, selectedId: t, readOnly: n = !1, onSelect: r, onMove: i,
 }
 //#endregion
 //#region src/components/doc-editor/presentation/PresentationEditor.tsx
-var Qe = M(() => import("./SortableSlideList-BYJRoMBF.js"));
+var Qe = M(() => import("./SortableSlideList-R63kRCgW.js"));
 function $e({ testIdPrefix: e }) {
 	return /* @__PURE__ */ R(O, {
 		tone: "warning",
@@ -1829,7 +1829,7 @@ function $e({ testIdPrefix: e }) {
 		children: "The agent box needs the rich-text composer (the optional @tiptap peers). Edit the slide by hand below."
 	});
 }
-var et = M(() => import("./PresentationAgentComposer-DWLdlt2U.js").catch(() => ({ default: $e })));
+var et = M(() => import("./PresentationAgentComposer-CpVCKFqO.js").catch(() => ({ default: $e })));
 function tt({ back: e }) {
 	return /* @__PURE__ */ R("svg", {
 		viewBox: "0 0 16 16",

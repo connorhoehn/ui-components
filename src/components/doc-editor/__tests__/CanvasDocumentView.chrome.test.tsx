@@ -364,3 +364,22 @@ describe('the ruler row mirrors the page row', () => {
     expect(railClasses('canvas-document-page-row')).toHaveLength(1);
   });
 });
+
+describe('CanvasDocumentView — fitHeight', () => {
+  // `viewport` measures to the bottom of the window; inside EditorShell that
+  // ran the workspace under the floating composer. `parent` fills the host box.
+  it('measures to the viewport by default', () => {
+    renderView();
+    expect(screen.getByTestId('canvas-document').getAttribute('data-fit-height')).toBe('viewport');
+    expect(screen.getByTestId('canvas-document-workspace').style.height).not.toBe('');
+  });
+
+  it('fills its parent with fitHeight="parent" and sets no measured height', () => {
+    renderView({ fitHeight: 'parent' });
+    const root = screen.getByTestId('canvas-document');
+    const ws = screen.getByTestId('canvas-document-workspace');
+    expect(root.className).toContain('h-full');
+    expect(ws.className).toContain('flex-1');
+    expect(ws.style.height).toBe('');
+  });
+});
