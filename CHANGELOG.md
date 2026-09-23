@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.372.4] — 2026-09-23
+
+### Fixed — 300 px holds with someone else on the deck
+
+- A participant in the `EditorShell` byline (22 px avatars) made the header 6 px taller and the
+  1280×720 stage 294 px. The framed `PresentationEditor` surface pads `pt-1.5 pb-2 gap-1.5` (was
+  `pt-2 pb-3 gap-2`) and the pinned dock `pt-1 pb-1.5`: stage 545×306 with a participant showing,
+  composer pinned (Playwright, audit deck).
+
 ## [2.372.3] — 2026-09-23
 
 ### Fixed — suggestion chips never slide under the pointer

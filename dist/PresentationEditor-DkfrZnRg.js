@@ -1033,7 +1033,7 @@ function Oe({ composer: e, strip: t, above: n, maxWidth: i = "3xl", label: a = "
 		"aria-label": a,
 		"data-testid": s,
 		"data-placement": l,
-		className: r(l === "pinned" ? "relative flex max-h-full min-h-0 shrink flex-col bg-workspace px-4 pb-2 pt-1.5" : "pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-workspace via-workspace/85 to-transparent px-4 pb-3 pt-8", o),
+		className: r(l === "pinned" ? "relative flex max-h-full min-h-0 shrink flex-col bg-workspace px-4 pb-1.5 pt-1" : "pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-workspace via-workspace/85 to-transparent px-4 pb-3 pt-8", o),
 		children: /* @__PURE__ */ G("div", {
 			"data-uic-keepout": "bottom",
 			className: r("pointer-events-auto mx-auto flex min-h-0 w-full flex-col", Ee[i]),
@@ -1395,7 +1395,7 @@ function rt(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
-var it = F(() => import("./SortableSlideList-B8xMuP5I.js"));
+var it = F(() => import("./SortableSlideList-CAnYzB8n.js"));
 function at(e, t) {
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }
@@ -2982,7 +2982,7 @@ function At({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 	};
 	if (A) {
 		let e = /* @__PURE__ */ G("div", {
-			className: r("flex min-h-0 flex-col gap-2 px-4 pb-3 pt-2 md:h-full md:min-h-[14rem]", M),
+			className: r("flex min-h-0 flex-col gap-1.5 px-4 pb-2 pt-1.5 md:h-full md:min-h-[14rem]", M),
 			"data-testid": N,
 			onKeyDown: Ct,
 			children: [

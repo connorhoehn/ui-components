@@ -108,7 +108,7 @@ export function FloatingComposerDock({
             // dock carries (a notice, a strip, a tall draft) the canvas keeps
             // the rest. The dock fills the row; what is above the composer
             // scrolls inside it; the composer itself never shrinks.
-            'relative flex max-h-full min-h-0 shrink flex-col bg-workspace px-4 pb-2 pt-1.5'
+            'relative flex max-h-full min-h-0 shrink flex-col bg-workspace px-4 pb-1.5 pt-1'
           : // `pointer-events-none` on the fade, `auto` on the dock itself: the
             // gradient must not swallow clicks on the page line it is fading.
             'pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-workspace via-workspace/85 to-transparent px-4 pb-3 pt-8',

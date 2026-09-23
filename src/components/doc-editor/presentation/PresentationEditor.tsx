@@ -1058,7 +1058,7 @@ export function PresentationEditor({
         // `md:h-full`: the surface is exactly the scroller's height, so the
         // body below the deck line has a definite height to fit the stage to.
         // The min-height is the point past which the scroller scrolls instead.
-        className={cn('flex min-h-0 flex-col gap-2 px-4 pb-3 pt-2 md:h-full md:min-h-[14rem]', className)}
+        className={cn('flex min-h-0 flex-col gap-1.5 px-4 pb-2 pt-1.5 md:h-full md:min-h-[14rem]', className)}
         data-testid={testId}
         onKeyDown={editorKeyGuard}
       >
