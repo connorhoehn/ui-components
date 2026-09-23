@@ -26,6 +26,14 @@ const PRESENTATION: Record<DocumentModePillMode, { label: string; tone: ChipTone
   read: { label: 'Read', tone: 'neutral' },
 };
 
+/** The pill's words per mode, for a host or a menu that states the mode without the pill. Since 2.385.1. */
+export const DOCUMENT_MODE_LABELS: Record<DocumentModePillMode, string> = {
+  editing: PRESENTATION.editing.label,
+  suggesting: PRESENTATION.suggesting.label,
+  review: PRESENTATION.review.label,
+  read: PRESENTATION.read.label,
+};
+
 export function DocumentModePill({
   mode,
   reason,

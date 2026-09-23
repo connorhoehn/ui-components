@@ -662,6 +662,9 @@ export declare const DOCK_HEIGHT_VAR = "--dock-height";
  */
 export declare const DOCK_INSET_VAR = "--dock-inset";
 
+/** The pill's words per mode, for a host or a menu that states the mode without the pill. Since 2.385.1. */
+export declare const DOCUMENT_MODE_LABELS: Record<DocumentModePillMode, string>;
+
 /**
  * Content-box widths (px) of the bar itself, not the window: the same toolbar
  * sits in a full-width page, beside a workbench, and inside a chat pane.
@@ -3378,6 +3381,15 @@ export declare interface WorkspaceDocumentHeaderProps {
      * part of it; render `WorkspaceDocumentHeaderNotices` where a sentence fits.
      */
     variant?: 'bar' | 'actions';
+    /**
+     * `variant="actions"` only. `cluster` (default) lays every control out in the
+     * row. `menu` is the editor head of the Documents mockups ("Share · (i) · ⋯"):
+     * the owner line, the mode ("Editing" and why), My Items and the lifecycle
+     * actions move into the ⋯ menu as its first sections, and the row keeps only
+     * the room / call pill, the share status and ⋯. The comment chip is dropped
+     * (the shell's Comments tab carries the count). Since 2.385.1.
+     */
+    actionsLayout?: 'cluster' | 'menu';
     /** Host-controlled durable persistence receipt; omitted means unknown. */
     saveState?: DocumentSaveState;
     /** Actions scoped to the current source, such as draft/review/publish. */
@@ -3468,6 +3480,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3480,19 +3505,6 @@ declare module '@tiptap/core' {
             setLineSpacing: (spacing: LineSpacing) => ReturnType;
             /** Return the paragraphs in the selection to the paper's own leading. */
             unsetLineSpacing: () => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -3520,25 +3532,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        hitlMacro: {
-            /** Inserts an agent -> human callout at the selection. */
-            insertHitl: (draft: HitlDraft) => ReturnType;
-            /**
-             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
-             * answered from an inbox by somebody who never opened this page.
-             *
-             * The same one-range edit answering in the page makes, addressed by
-             * the callout's `id` instead of by a node view. Returns false when
-             * no callout carries that id, when the body is not one
-             * `answerHitlEdit` will write to, and — deliberately — when the
-             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
-             */
-            answerHitl: (params: {
-                id: string;
-                answer: string;
-                answeredBy?: string;
-                answeredAt?: string;
-            }) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -3566,12 +3565,25 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        hitlMacro: {
+            /** Inserts an agent -> human callout at the selection. */
+            insertHitl: (draft: HitlDraft) => ReturnType;
+            /**
+             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
+             * answered from an inbox by somebody who never opened this page.
+             *
+             * The same one-range edit answering in the page makes, addressed by
+             * the callout's `id` instead of by a node view. Returns false when
+             * no callout carries that id, when the body is not one
+             * `answerHitlEdit` will write to, and — deliberately — when the
+             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
+             */
+            answerHitl: (params: {
+                id: string;
+                answer: string;
+                answeredBy?: string;
+                answeredAt?: string;
+            }) => ReturnType;
         };
     }
 }

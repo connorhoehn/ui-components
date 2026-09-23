@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.385.1] — 2026-09-23
+
+### Added
+
+- **`WorkspaceDocumentHeader` `actionsLayout="menu"`** (`variant="actions"` only). The Documents
+  mockups' editor head is "Share · (i) · ⋯": the owner line ("Owned by …"), the mode ("Editing"
+  with its reason), My items and the lifecycle actions (Submit for review, Take ownership, …) move
+  into the ⋯ menu as its first sections, with the same confirmation dialogs. The row keeps the
+  room / call pill, the share status and ⋯; the comment chip is dropped because the shell's
+  Comments tab carries the count. The default `cluster` layout is unchanged.
+- **`DOCUMENT_MODE_LABELS`** — the mode pill's words per mode, for a surface that states the
+  mode without the pill.
+
+---
+
 ## [2.385.0] — 2026-09-23
 
 ### Added

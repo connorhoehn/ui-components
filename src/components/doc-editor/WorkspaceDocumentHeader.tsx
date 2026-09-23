@@ -5,7 +5,7 @@ import Chip from '../shared/Chip';
 import ConfirmDialog from '../shared/ConfirmDialog';
 import { DropdownMenu, type DropdownMenuSection } from '../shared/DropdownMenu';
 import { StatusPill } from '../shared/StatusPill';
-import { DocumentModePill } from './DocumentModePill';
+import { DocumentModePill, DOCUMENT_MODE_LABELS, type DocumentModePillMode } from './DocumentModePill';
 import { DocumentOwnership, type DocumentPerson } from './DocumentOwnership';
 import type { ViewMode, DocumentMeta, Participant } from '../../types/document';
 import type { DocumentLifecycleStatus, LegacyFinalClaim, LifecycleAction, LifecycleFailureKind } from './documentLifecycleTypes';
@@ -31,6 +31,15 @@ export interface WorkspaceDocumentHeaderProps {
    * part of it; render `WorkspaceDocumentHeaderNotices` where a sentence fits.
    */
   variant?: 'bar' | 'actions';
+  /**
+   * `variant="actions"` only. `cluster` (default) lays every control out in the
+   * row. `menu` is the editor head of the Documents mockups ("Share · (i) · ⋯"):
+   * the owner line, the mode ("Editing" and why), My Items and the lifecycle
+   * actions move into the ⋯ menu as its first sections, and the row keeps only
+   * the room / call pill, the share status and ⋯. The comment chip is dropped
+   * (the shell's Comments tab carries the count). Since 2.385.1.
+   */
+  actionsLayout?: 'cluster' | 'menu';
   /** Host-controlled durable persistence receipt; omitted means unknown. */
   saveState?: DocumentSaveState;
   /** Actions scoped to the current source, such as draft/review/publish. */
@@ -194,6 +203,7 @@ function isOwnerlessRefusal(error: LifecycleErrorView | null | undefined): boole
 
 export default function WorkspaceDocumentHeader({
   variant = 'bar',
+  actionsLayout = 'cluster',
   saveState, workflowActions, formatActions, className, titleEditable, onPrint, exportFormats = ['markdown', 'pdf', 'json'],
   meta,
   mode,
@@ -276,7 +286,43 @@ export default function WorkspaceDocumentHeader({
     label: item.label.replace(/^(Hide|Show) /, '').replace(/^From what you said$/, 'Spoken items').replace(/^./, (c) => c.toUpperCase()),
     checked: /^Hide /.test(item.label),
   });
+  const menuLayout = variant === 'actions' && actionsLayout === 'menu';
+  const modeKey: DocumentModePillMode = mode === 'editor' ? (suggesting ? 'suggesting' : 'editing') : mode === 'ack' ? 'review' : 'read';
+  const ownerLine = owner?.displayName ? `Owned by ${owner.displayName}` : undefined;
+  const headSections: DropdownMenuSection[] = menuLayout ? [
+    {
+      ...(ownerLine ? { label: ownerLine } : {}),
+      'data-testid': 'document-header-menu-about',
+      items: [
+        {
+          label: DOCUMENT_MODE_LABELS[modeKey],
+          ...(modeReason ? { description: modeReason } : {}),
+          'data-testid': 'document-header-menu-mode',
+        },
+        ...(onToggleMyItems ? [{
+          label: 'My items',
+          ...(myItemCount ? { trailing: String(myItemCount) } : {}),
+          onSelect: onToggleMyItems,
+          'data-testid': 'document-header-menu-my-items',
+        }] : []),
+      ],
+    },
+    ...(onLifecycleAction && (offeredActions.length > 0 || onClaimOwnership) ? [{
+      label: 'Review',
+      'data-testid': 'document-header-menu-lifecycle',
+      items: [
+        ...offeredActions.map((action) => ({
+          label: lifecycleActionLabels[action],
+          ...(action === 'finalize' ? { danger: true } : {}),
+          onSelect: () => { if (lifecycleBusy) return; setReason(''); setTypedConfirmation(''); setPendingAction(action); },
+          'data-testid': `lifecycle-action-${action}`,
+        })),
+        ...(onClaimOwnership ? [{ label: 'Take ownership', onSelect: () => setConfirmClaim(true), 'data-testid': 'claim-ownership-btn' }] : []),
+      ],
+    }] : []),
+  ] : [];
   const menuSections: DropdownMenuSection[] = [
+    ...headSections,
     {
       items: [
         ...(onToggleHistory ? [{ label: 'Version history', onSelect: onToggleHistory, 'data-testid': 'document-header-history' }] : []),
@@ -421,7 +467,7 @@ export default function WorkspaceDocumentHeader({
   if (variant === 'actions') {
     return (
       <div data-testid="document-header" data-variant="actions" className={cn('flex min-w-0 flex-wrap items-center justify-end gap-2', className)}>
-          {(owner !== undefined || collaborators !== undefined || onShare) && <DocumentOwnership
+          {!menuLayout && (owner !== undefined || collaborators !== undefined || onShare) && <DocumentOwnership
             owner={owner ?? null}
             collaborators={collaborators ?? []}
             {...(onShare ? { onShare } : {})}
@@ -434,7 +480,7 @@ export default function WorkspaceDocumentHeader({
               Closed permanently — no further changes, for anyone
             </span>
           )}
-          {commentCount != null && commentCount > 0 && (
+          {!menuLayout && commentCount != null && commentCount > 0 && (
             <Chip
               tone="neutral"
               size="sm"
@@ -447,10 +493,10 @@ export default function WorkspaceDocumentHeader({
         {participants.length > 0 && (
           <ParticipantAvatars participants={participants} sections={sections} onJumpToUser={onJumpToUser} onFollowUser={onFollowUser} followingUserId={followingUserId} />
         )}
-        <DocumentModePill
-          mode={mode === 'editor' ? (suggesting ? 'suggesting' : 'editing') : mode === 'ack' ? 'review' : 'read'}
+        {!menuLayout && <DocumentModePill
+          mode={modeKey}
           {...(modeReason ? { reason: modeReason } : {})}
-        />
+        />}
         <div className="flex items-center gap-2">
 
           {workflowActions}
@@ -459,7 +505,7 @@ export default function WorkspaceDocumentHeader({
             <div ref={formatActionsRef} className="flex items-center gap-2" />
           )}
 
-          {onToggleMyItems && (
+          {!menuLayout && onToggleMyItems && (
             <Button variant="secondary" size="sm" onClick={onToggleMyItems}>
               My Items{myItemCount ? ` (${myItemCount})` : ''}
             </Button>
@@ -554,7 +600,7 @@ export default function WorkspaceDocumentHeader({
             </span>
           )}
 
-          {onLifecycleAction && (
+          {!menuLayout && onLifecycleAction && (
             <div data-testid="lifecycle-actions" className="flex items-center gap-1.5">
               {lifecycleLoading && offeredActions.length === 0 && (
                 <span
