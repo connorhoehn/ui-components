@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.369.2] — 2026-09-22
+
+### Fixed — adaptive composer polish (found live)
+
+- A long placeholder in a narrow composer wrapped to a second line painted
+  past the input and clipped mid-word; it is now one ellipsised line.
+  The full text is the empty input's tooltip. Seen with a diagram's
+  disabled-reason placeholder drawn over the hint row.
+- `COMPOSER_BREAKPOINTS.wide` is 600 (was 560): a ~560px dock is medium, so
+  its hints fold into `?`.
+- The `⋯` overflow and `?` hints triggers drew the DropdownMenu's default
+  border; they now match the borderless toolbar buttons beside them.
+
+---
+
 ## [2.369.1] — 2026-09-22
 
 ### Fixed

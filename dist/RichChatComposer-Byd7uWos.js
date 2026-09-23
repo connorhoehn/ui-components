@@ -2261,7 +2261,7 @@ var Ui = ne(function({ items: t, command: n, label: r = "Commands", draft: i }, 
 	});
 }), Wi = {
 	narrow: 380,
-	wide: 560
+	wide: 600
 };
 function Gi(e) {
 	return e === null ? "wide" : e < Wi.narrow ? "narrow" : e < Wi.wide ? "medium" : "wide";
@@ -3014,6 +3014,7 @@ var pa = ne(function({ onSend: o, draft: p, onDraftChange: te, onCommand: ne, on
 					children: [
 						/* @__PURE__ */ A("div", {
 							className: e(un && "min-w-0 flex-1"),
+							...mt && vt ? { title: vt } : {},
 							...H ? { hidden: !0 } : {},
 							children: /* @__PURE__ */ A(se, { editor: Y })
 						}),
@@ -3119,7 +3120,7 @@ var pa = ne(function({ onSend: o, draft: p, onDraftChange: te, onCommand: ne, on
 												triggerTabIndex: -1,
 												triggerTestId: `${L}-format-more`,
 												"data-testid": `${L}-format-more-menu`,
-												triggerClassName: "grid h-7 w-7 shrink-0 place-items-center rounded text-text-secondary hover:bg-surface-hover",
+												triggerClassName: "grid h-7 w-7 shrink-0 place-items-center rounded text-text-secondary hover:bg-surface-hover border-0 p-0",
 												sections: [{ items: [
 													{
 														label: "Strikethrough",
@@ -3191,7 +3192,7 @@ var pa = ne(function({ onSend: o, draft: p, onDraftChange: te, onCommand: ne, on
 									triggerTestId: `${L}-hints-toggle`,
 									"data-testid": `${L}-hints-menu`,
 									align: "end",
-									triggerClassName: "grid h-7 w-7 shrink-0 place-items-center rounded text-text-tertiary hover:bg-surface-hover hover:text-text-primary",
+									triggerClassName: "grid h-7 w-7 shrink-0 place-items-center rounded text-text-tertiary hover:bg-surface-hover hover:text-text-primary border-0 p-0",
 									sections: [{ items: Kt.map((e) => ({
 										label: e.label,
 										trailing: /* @__PURE__ */ A("kbd", {

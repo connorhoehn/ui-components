@@ -88,15 +88,16 @@ export declare interface ComposedMessage {
  * Width thresholds, in CSS px of the composer's own box (not the window's):
  * below `narrow` it is narrow, below `wide` it is medium, else wide.
  *
- * - wide (≥ 560): the full toolbar and the hint row.
- * - medium (380–559): hints fold into a `?` menu; strikethrough, code, lists
+ * - wide (≥ 600): the full toolbar and the hint row. 600, not less: a
+ *   560px dock (a diagram's) drew a wrapped placeholder over the hint row.
+ * - medium (380–599): hints fold into a `?` menu; strikethrough, code, lists
  *   and quote fold into a `⋯` overflow menu.
  * - narrow (< 380): input and Send share ONE row; the toolbar sits behind an
  *   `Aa` toggle; the mode switch is the compact `1 2 3` pill.
  */
 export declare const COMPOSER_BREAKPOINTS: {
     readonly narrow: 380;
-    readonly wide: 560;
+    readonly wide: 600;
 };
 
 /** The order Option-1/2/3 and the compact `1 2 3` buttons follow. */

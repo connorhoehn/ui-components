@@ -658,6 +658,13 @@
 /* Placeholder is ink too, and takes the theme with everything else here. */
 .chat-composer .ProseMirror .is-empty::before {
   color: var(--color-text-tertiary);
+  /* One line, ellipsised. The placeholder is a zero-height float, so it never
+     grows the box: a long one in a narrow composer wrapped to a second line
+     that was painted past the input's bottom edge and clipped mid-word. */
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .chat-composer .ProseMirror p { margin: 0 0 0.25em; }
 .chat-composer .ProseMirror p:last-child { margin-bottom: 0; }

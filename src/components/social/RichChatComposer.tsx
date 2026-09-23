@@ -449,13 +449,14 @@ export type ComposerRadius = 'none' | 'sm' | 'md' | 'lg' | 'xl';
  * Width thresholds, in CSS px of the composer's own box (not the window's):
  * below `narrow` it is narrow, below `wide` it is medium, else wide.
  *
- * - wide (≥ 560): the full toolbar and the hint row.
- * - medium (380–559): hints fold into a `?` menu; strikethrough, code, lists
+ * - wide (≥ 600): the full toolbar and the hint row. 600, not less: a
+ *   560px dock (a diagram's) drew a wrapped placeholder over the hint row.
+ * - medium (380–599): hints fold into a `?` menu; strikethrough, code, lists
  *   and quote fold into a `⋯` overflow menu.
  * - narrow (< 380): input and Send share ONE row; the toolbar sits behind an
  *   `Aa` toggle; the mode switch is the compact `1 2 3` pill.
  */
-export const COMPOSER_BREAKPOINTS = { narrow: 380, wide: 560 } as const;
+export const COMPOSER_BREAKPOINTS = { narrow: 380, wide: 600 } as const;
 
 /** `null` — not measured yet — is wide: a first paint that hides controls and then shows them is worse than one frame of overflow. */
 export function composerSizeFor(width: number | null): ComposerSize {
@@ -1853,7 +1854,15 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             editor stays in the same parent at every size — moving it would
             remount EditorContent and drop the caret on a resize. */}
         <div className={cn(singleRow && 'flex flex-wrap items-end')} data-testid={`${testId}-body`}>
-        <div className={cn(singleRow && 'min-w-0 flex-1')} {...(terminalMode ? { hidden: true } : {})}>
+        {/* The placeholder is ONE ellipsised line (styles.css) — a long one,
+            such as a disabled reason, used to wrap past the input and draw over
+            the rows below. The whole text stays reachable as a tooltip while
+            the box is empty. */}
+        <div
+          className={cn(singleRow && 'min-w-0 flex-1')}
+          {...(empty && effectivePlaceholder ? { title: effectivePlaceholder } : {})}
+          {...(terminalMode ? { hidden: true } : {})}
+        >
           <EditorContent editor={editor} />
         </div>
 
@@ -1964,7 +1973,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 triggerTabIndex={-1}
                 triggerTestId={`${testId}-format-more`}
                 data-testid={`${testId}-format-more-menu`}
-                triggerClassName="grid h-7 w-7 shrink-0 place-items-center rounded text-text-secondary hover:bg-surface-hover"
+                triggerClassName="grid h-7 w-7 shrink-0 place-items-center rounded text-text-secondary hover:bg-surface-hover border-0 p-0"
                 sections={[{
                   items: [
                     { label: 'Strikethrough', checked: editor.isActive('strike'), onSelect: () => editor.chain().focus().toggleStrike().run() },
@@ -2036,7 +2045,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               triggerTestId={`${testId}-hints-toggle`}
               data-testid={`${testId}-hints-menu`}
               align="end"
-              triggerClassName="grid h-7 w-7 shrink-0 place-items-center rounded text-text-tertiary hover:bg-surface-hover hover:text-text-primary"
+              triggerClassName="grid h-7 w-7 shrink-0 place-items-center rounded text-text-tertiary hover:bg-surface-hover hover:text-text-primary border-0 p-0"
               sections={[{
                 items: resolvedHints.map((hint) => ({
                   label: hint.label,

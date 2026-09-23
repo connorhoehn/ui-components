@@ -95,6 +95,25 @@ describe('size classes come from the composer’s own width', () => {
   });
 });
 
+describe('a long placeholder never draws over the rows below it', () => {
+  const reason = 'The agent cannot edit a diagram yet — no pipeline reads and changes a board. /diagram in a chat draws a new one.';
+
+  it('a 560px dock is medium: the hint row has already folded into “?”', () => {
+    render(<RichChatComposer onSend={vi.fn()} data-testid="composer" placeholder={reason} {...withHints} />);
+    emit!(560);
+    expect(root()).toHaveAttribute('data-composer-size', 'medium');
+    expect(screen.queryByTestId('composer-hints')).not.toBeInTheDocument();
+  });
+
+  it('is one ellipsised line, with the full text as the empty input’s tooltip', () => {
+    render(<RichChatComposer onSend={vi.fn()} data-testid="composer" placeholder={reason} />);
+    expect(root().querySelector(`[title="${reason}"]`)).not.toBeNull();
+    const css = readFileSync(resolve(__dirname, '../../../styles.css'), 'utf8');
+    const rule = css.slice(css.indexOf('.chat-composer .ProseMirror .is-empty::before {'));
+    expect(rule.slice(0, rule.indexOf('}'))).toMatch(/white-space: nowrap;[\s\S]*text-overflow: ellipsis;/);
+  });
+});
+
 describe('auto-grow cap', () => {
   it('leaves the stylesheet default in charge when unset — a viewport-bounded cap', () => {
     render(<RichChatComposer onSend={vi.fn()} data-testid="composer" />);
