@@ -1821,7 +1821,7 @@ function Ze({ items: e, selectedId: t, readOnly: n = !1, onSelect: r, onMove: i,
 }
 //#endregion
 //#region src/components/doc-editor/presentation/PresentationEditor.tsx
-var Qe = N(() => import("./SortableSlideList-3cvwSyDE.js"));
+var Qe = N(() => import("./SortableSlideList-C3iDIwY_.js"));
 function $e({ testIdPrefix: e }) {
 	return /* @__PURE__ */ z(k, {
 		tone: "warning",
@@ -2084,6 +2084,7 @@ function nt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 						}),
 						/* @__PURE__ */ z(te, {
 							size: "sm",
+							variant: "pill",
 							"aria-label": "Theme",
 							value: e.theme ?? "product",
 							options: Q.map((e) => ({

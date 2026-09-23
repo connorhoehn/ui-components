@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.361.1] — 2026-09-22
+
+### Fixed
+
+- `PresentationEditor` (agent layout): the theme Select stretched across the
+  deck line; it is now the compact `pill` Select.
+
 ## [2.361.0] — 2026-09-22
 
 ### Added — `PresentationEditor`: an agent box under the stage (`onInstruct`)

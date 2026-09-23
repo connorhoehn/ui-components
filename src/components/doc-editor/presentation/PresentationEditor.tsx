@@ -593,6 +593,7 @@ export function PresentationEditor({
             />
             <Select
               size="sm"
+              variant="pill"
               aria-label="Theme"
               value={spec.theme ?? 'product'}
               options={DECK_THEMES.map((theme) => ({ value: theme, label: `${theme} theme` }))}
