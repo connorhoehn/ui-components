@@ -150,6 +150,8 @@ export { DocumentOutline } from './DocumentOutline';
 export type { DocumentOutlineProps, OutlineEntry } from './DocumentOutline';
 export { useDocumentOutline, readOutline } from './useDocumentOutline';
 
+export { useCommentMarginPreference, readCommentMarginPreference, COMMENT_MARGIN_STORAGE_KEY } from './useCommentMarginPreference';
+export type { CommentMarginPreference, CommentMarginPreferenceOptions } from './useCommentMarginPreference';
 export { DocumentStatusBar, ZOOM_STEPS, ZOOM_FIT } from './DocumentStatusBar';
 export type { DocumentStatusBarProps, DocumentZoomControl } from './DocumentStatusBar';
 

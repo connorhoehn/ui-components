@@ -493,6 +493,8 @@ declare interface CollaborationProvider {
     awareness: Awareness;
 }
 
+export declare const COMMENT_MARGIN_STORAGE_KEY = "doc-editor:canvas:gutter-visible";
+
 /** A flat comment as stored in Y.js. */
 declare interface CommentData {
     id: string;
@@ -579,6 +581,21 @@ export declare interface CommentGhostThread {
      * opened from a mark the reader has not read yet.
      */
     quote?: string;
+}
+
+export declare interface CommentMarginPreference {
+    visible: boolean;
+    /** Flips the margin and remembers the choice. */
+    toggle: () => void;
+    /** Opens the margin (a thread was opened) and remembers it. */
+    show: () => void;
+}
+
+export declare interface CommentMarginPreferenceOptions {
+    /** Where the choice is remembered. */
+    storageKey?: string;
+    /** What a reader who never chose sees. Default false (closed). */
+    defaultVisible?: boolean;
 }
 
 /** A comment with nested replies, assembled client-side. */
@@ -2326,6 +2343,9 @@ export declare type ProposalKind = 'field' | 'prose';
 /** CSS pixels per inch at the canvas's 96dpi page scale. */
 export declare const PX_PER_INCH = 96;
 
+/** The stored choice, or `fallback` when there is none (or storage is unavailable). */
+export declare function readCommentMarginPreference(storageKey?: string, fallback?: boolean): boolean;
+
 /**
  * @deprecated Part of the legacy SECTIONED document editor, which is deprecated
  * (2026-09-22). New documents are pages — use the page editor (`CanvasDocumentView`) in read-only mode; decks use
@@ -3135,6 +3155,8 @@ export declare interface UploadedDocumentFile {
     type: string;
 }
 
+export declare function useCommentMarginPreference({ storageKey, defaultVisible, }?: CommentMarginPreferenceOptions): CommentMarginPreference;
+
 export declare function useDocumentActions({ documentId, userId, ws, updateMeta, addSection, exportJSON, getSectionFragment, getCanvasFragment, isCanvas, comments, }: UseDocumentActionsArgs): {
     demoLoaded: boolean;
     handleLoadDemo: () => void;
@@ -3584,19 +3606,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3616,9 +3625,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
         };
     }
 }
@@ -3626,22 +3638,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -3675,6 +3674,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
@@ -3685,9 +3697,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
