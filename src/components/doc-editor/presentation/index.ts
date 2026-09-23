@@ -24,8 +24,8 @@ export { SlideStage } from './SlideStage';
 export type { SlideStageProps, SlideStageWidth } from './SlideStage';
 export { SpeakerNotes } from './SpeakerNotes';
 export type { SpeakerNotesProps } from './SpeakerNotes';
-export { SlidesToolbar, SLIDE_INSERTS } from './SlidesToolbar';
-export type { SlidesToolbarProps } from './SlidesToolbar';
+export { SlidesToolbar, SLIDE_INSERTS, SLIDES_TOOLBAR_BREAKPOINTS, slidesToolbarSize } from './SlidesToolbar';
+export type { SlidesToolbarProps, SlidesToolbarSize } from './SlidesToolbar';
 
 export { SlideForm } from './SlideForm';
 export type { SlideFormProps } from './SlideForm';

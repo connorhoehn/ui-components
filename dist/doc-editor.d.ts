@@ -2559,6 +2559,23 @@ export declare interface SlideRowProps {
     testIdPrefix: string;
 }
 
+/**
+ * Content-box widths (px) of the bar itself, not the window.
+ *
+ * - wide (≥ 900): everything inline, the style note included.
+ * - medium (≥ 600): Insert, Theme and the style note move behind ⋯; New
+ *   slide, Layout, the chart switch, Undo/Redo, `end` and Present stay.
+ * - narrow: Layout and the chart switch join them behind ⋯.
+ *
+ * Measured with every control on (a chart slide, undo/redo, Present): the
+ * wide bar's natural width is ~850px, medium's ~560px, narrow's ~340px. The
+ * deck editor's bar in the shell is ~870px at a 1280px window.
+ */
+export declare const SLIDES_TOOLBAR_BREAKPOINTS: {
+    readonly narrow: 600;
+    readonly wide: 900;
+};
+
 export declare function SlideSources({ sources, onChange, options, onSearchSources, readOnly, compact, testIdPrefix, }: SlideSourcesProps): JSX.Element;
 
 export declare interface SlideSourcesProps {
@@ -2602,7 +2619,7 @@ export declare interface SlideStageProps {
 
 export declare type SlideStageWidth = '2xl' | '3xl' | '4xl' | '5xl';
 
-export declare function SlidesToolbar({ slide, theme, onAddSlide, canAddSlide, onLayoutChange, onThemeChange, onChartKindChange, onUndo, onRedo, canUndo, canRedo, onPresent, end, disabled, className, testIdPrefix, }: SlidesToolbarProps): JSX.Element;
+export declare function SlidesToolbar({ slide, theme, onAddSlide, canAddSlide, onLayoutChange, onThemeChange, onChartKindChange, onUndo, onRedo, canUndo, canRedo, onPresent, end, disabled, className, testIdPrefix, size: sizeProp, }: SlidesToolbarProps): JSX.Element;
 
 export declare interface SlidesToolbarProps {
     /** The slide on the stage. Layout and the chart switch act on it. */
@@ -2627,7 +2644,19 @@ export declare interface SlidesToolbarProps {
     className?: string;
     /** Prefix for the controls' test ids. Default `slides-toolbar`. */
     testIdPrefix?: string;
+    /**
+     * How much of the bar fits on ONE row. `auto` (the default) measures the
+     * bar's own box — see `SLIDES_TOOLBAR_BREAKPOINTS`. A fixed value is for
+     * tests and stories.
+     */
+    size?: SlidesToolbarSize | 'auto';
 }
+
+/** One-row layouts, widest first. */
+export declare type SlidesToolbarSize = 'wide' | 'medium' | 'narrow';
+
+/** `null` — not measured yet — is wide: a first paint that hides controls and then shows them is worse than one frame of overflow. */
+export declare function slidesToolbarSize(width: number | null): SlidesToolbarSize;
 
 /** Plain-object snapshot of a section for diffing (no Y.js references). */
 declare interface SnapshotSection {
@@ -3386,6 +3415,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3405,12 +3447,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -3444,6 +3493,16 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
@@ -3457,39 +3516,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

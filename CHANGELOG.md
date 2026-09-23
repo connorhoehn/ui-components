@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.383.2] — 2026-09-23
+
+### Fixed
+
+- **`SlidesToolbar` is one row at every width.** The deck editor's toolbar wrapped to two rows
+  (58px) in a 1280px window: the "Text style comes from the theme" note was shown by the WINDOW's
+  width (`xl:`) rather than the bar's, and the row was `flex-wrap`. It now measures its own box,
+  the way `DocumentToolbar` does (the shared `useMeasuredWidth`, a ResizeObserver, `null` = wide),
+  and picks a layout from `SLIDES_TOOLBAR_BREAKPOINTS` (narrow < 600 ≤ medium < 900 ≤ wide,
+  content-box px): at medium, Insert, Theme and the note move behind a `⋯` menu (the note as its
+  heading — a sentence, not a row); at narrow, Layout and the chart's Bar/Line switch join them as
+  checked rows. New slide, Undo/Redo, `end` and Present never leave the bar. `size` prop
+  (`'auto' | 'wide' | 'medium' | 'narrow'`), `data-size` on the bar, `slidesToolbarSize` and
+  `SlidesToolbarSize` are exported; the `-more` / `-more-menu` test ids address the menu, and the
+  layout / insert / theme / chart-kind rows keep their ids wherever they render.
+
 ## [2.383.1] — 2026-09-23
 
 ### Changed

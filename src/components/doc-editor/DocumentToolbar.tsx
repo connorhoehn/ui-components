@@ -30,6 +30,7 @@ import { Select } from '../forms/Select';
 import { useRovingToolbar } from '../shared/RovingToolbar';
 import LinkPopover from './LinkPopover';
 import { LINE_SPACINGS, LINE_SPACING_LABELS, type LineSpacing } from './canvasLineSpacing';
+import { useMeasuredWidth } from './useMeasuredWidth';
 
 export interface DocumentToolbarProps {
   editor: Editor | null;
@@ -1302,27 +1303,9 @@ export default function DocumentToolbar({
   // `editor` never flips after mount.
   const roving = useRovingToolbar();
   const { ref: rovingRef, ...rovingProps } = roving;
-  /**
-   * The bar measures its OWN box: a ResizeObserver rather than a CSS
-   * container query, for the reason the composer gives — `container-type`
-   * applies layout containment, and the link popover is `position: fixed`
-   * inside this box. A callback ref, so a bar that mounts after the editor
-   * boots is observed from its first paint.
-   */
-  const [width, setWidth] = useState<number | null>(null);
-  const observer = useRef<ResizeObserver | null>(null);
-  const rootRef = useCallback((el: HTMLDivElement | null) => {
-    (rovingRef as MutableRefObject<HTMLDivElement | null>).current = el;
-    observer.current?.disconnect();
-    observer.current = null;
-    if (!el || typeof ResizeObserver === 'undefined') return;
-    const ro = new ResizeObserver((entries) => {
-      const w = entries[0]?.contentRect.width;
-      if (w != null) setWidth(w);
-    });
-    ro.observe(el);
-    observer.current = ro;
-  }, [rovingRef]);
+  // The bar measures its OWN box (`useMeasuredWidth` says why an observer and
+  // not a container query); the roving hook's ref rides along.
+  const { ref: rootRef, width } = useMeasuredWidth<HTMLDivElement>(rovingRef as MutableRefObject<HTMLDivElement | null>);
   const more = usePanel();
   const stylePanel = usePanel();
   const size: DocumentToolbarSize = sizeProp === 'auto' ? documentToolbarSize(width) : sizeProp;
