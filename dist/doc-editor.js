@@ -2167,33 +2167,39 @@ function Cr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 								/* @__PURE__ */ Q("div", {
 									className: "flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 [@media(max-height:640px)]:flex-1",
 									children: [
-										o && /* @__PURE__ */ Z(ee, {
-											kind: o,
-											size: "xl",
-											"data-testid": `${I}-kind`
-										}),
-										r ? /* @__PURE__ */ Z(F, {
-											value: t,
-											onCommit: r,
-											label: i,
-											required: !0,
-											fitContent: !0,
-											className: "min-w-0 max-w-full flex-initial text-lg",
-											"data-testid": `${I}-title`
-										}) : /* @__PURE__ */ Z("h1", {
-											className: "m-0 min-w-0 max-w-full flex-initial truncate text-lg font-semibold text-text-primary",
-											"data-testid": `${I}-title`,
-											children: t
-										}),
-										l && /* @__PURE__ */ Z(a, {
-											size: "sm",
-											"aria-label": s ? "Remove star" : "Star this file",
-											"aria-pressed": s,
-											title: s ? "Starred" : "Star",
-											onClick: () => l(!s),
-											className: s ? "text-primary" : "text-text-tertiary",
-											"data-testid": `${I}-star`,
-											children: /* @__PURE__ */ Z(Sr, { filled: s })
+										/* @__PURE__ */ Q("span", {
+											className: "flex min-w-0 max-w-full flex-initial flex-nowrap items-center gap-x-2",
+											"data-testid": `${I}-title-group`,
+											children: [
+												o && /* @__PURE__ */ Z(ee, {
+													kind: o,
+													size: "xl",
+													"data-testid": `${I}-kind`
+												}),
+												r ? /* @__PURE__ */ Z(F, {
+													value: t,
+													onCommit: r,
+													label: i,
+													required: !0,
+													fitContent: !0,
+													className: "min-w-0 max-w-full flex-initial text-lg",
+													"data-testid": `${I}-title`
+												}) : /* @__PURE__ */ Z("h1", {
+													className: "m-0 min-w-0 max-w-full flex-initial truncate text-lg font-semibold text-text-primary",
+													"data-testid": `${I}-title`,
+													children: t
+												}),
+												l && /* @__PURE__ */ Z(a, {
+													size: "sm",
+													"aria-label": s ? "Remove star" : "Star this file",
+													"aria-pressed": s,
+													title: s ? "Starred" : "Star",
+													onClick: () => l(!s),
+													className: s ? "shrink-0 text-primary" : "shrink-0 text-text-tertiary",
+													"data-testid": `${I}-star`,
+													children: /* @__PURE__ */ Z(Sr, { filled: s })
+												})
+											]
 										}),
 										u,
 										d && d.length > 0 && /* @__PURE__ */ Z("span", {

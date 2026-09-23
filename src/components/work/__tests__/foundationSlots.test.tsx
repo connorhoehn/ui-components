@@ -86,7 +86,7 @@ describe('EditorShell work slots', () => {
     expect(screen.queryByTestId('editor-shell-subtitle')).toBeNull();
     expect(screen.queryByTestId('editor-shell-meta-bar')).toBeNull();
     expect(screen.queryByTestId('editor-shell-path')).toBeNull();
-    expect(screen.getByTestId('editor-shell-title').className).toContain('flex-1');
+    expect(screen.getByTestId('editor-shell-title').className).toContain('flex-initial');
   });
 });
 

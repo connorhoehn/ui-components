@@ -114,8 +114,21 @@ describe('EditorShell', () => {
 
   it('wraps a crowded title row instead of collapsing the title', () => {
     render(<EditorShell title="Release plan" onTitleChange={() => {}} statusPill={<span>draft · Owned by someone with a long name</span>}><p /></EditorShell>);
-    const row = screen.getByTestId('editor-shell-title').parentElement!;
+    const row = screen.getByTestId('editor-shell-title-group').parentElement!;
     expect(row.className).toContain('flex-wrap');
+  });
+
+  it('keeps the kind mark and the title on one row, the title truncating inside a capped group', () => {
+    render(<EditorShell title="Decommission legacy StatsD bridge" kind="page" onTitleChange={() => {}} statusPill={<span data-testid="pill">Draft</span>} path={[{ label: 'Observability' }]}><p /></EditorShell>);
+    const group = screen.getByTestId('editor-shell-title-group');
+    expect(group.className).toContain('flex-nowrap');
+    expect(group.className).toContain('min-w-0');
+    expect(group.className).toContain('max-w-full');
+    expect(group).toContainElement(screen.getByTestId('editor-shell-kind'));
+    expect(group).toContainElement(screen.getByTestId('editor-shell-title'));
+    expect(group).not.toContainElement(screen.getByTestId('pill'));
+    expect(group.nextElementSibling).toBe(screen.getByTestId('pill'));
+    expect(screen.getByTestId('editor-shell-title').className).toContain('min-w-0');
   });
 
   it('sizes the title to its words so the status pill sits beside it, with or without a path', () => {
@@ -126,7 +139,7 @@ describe('EditorShell', () => {
       expect(title.className).not.toMatch(/(^|\s)flex-1(\s|$)/);
       expect(title.className).not.toContain('basis-0');
       expect(title.className).toContain('truncate');
-      expect(title.nextElementSibling).toBe(screen.getByTestId('pill'));
+      expect(screen.getByTestId('editor-shell-title-group').nextElementSibling).toBe(screen.getByTestId('pill'));
       if (!withPath) rerender(<EditorShell title="Release plan" path={[{ label: 'Plans' }]} statusPill={<span data-testid="pill">Draft</span>}><p /></EditorShell>);
     }
     rerender(<EditorShell title="Release plan" onTitleChange={() => {}} statusPill={<span data-testid="pill">Draft</span>}><p /></EditorShell>);

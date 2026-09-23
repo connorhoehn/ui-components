@@ -212,6 +212,12 @@ export function EditorShell({
             <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 [@media(max-height:640px)]:flex-1">
               {/* 32px, the size the title row is drawn at (2.385.6): at the
                   22px default the mark read as a bullet beside an 18px title. */}
+              {/* Mark + title (+ star) never split across rows (2.385.8): in a
+                  ~500 px column the 32px mark used to sit alone on row 1 with
+                  the title wrapped under it. The group caps at the row's width
+                  and the title truncates inside it; only the pill and folder
+                  path wrap to the next row when there is no room. */}
+              <span className="flex min-w-0 max-w-full flex-initial flex-nowrap items-center gap-x-2" data-testid={`${testId}-title-group`}>
               {kind && <FileKindMark kind={kind} size="xl" data-testid={`${testId}-kind`} />}
               {onTitleChange ? (
                 <InlineEditableText
@@ -237,12 +243,13 @@ export function EditorShell({
                   aria-pressed={starred}
                   title={starred ? 'Starred' : 'Star'}
                   onClick={() => onStarredChange(!starred)}
-                  className={starred ? 'text-primary' : 'text-text-tertiary'}
+                  className={starred ? 'shrink-0 text-primary' : 'shrink-0 text-text-tertiary'}
                   data-testid={`${testId}-star`}
                 >
                   <StarGlyph filled={starred} />
                 </IconButton>
               )}
+              </span>
               {statusPill}
               {path && path.length > 0 && (
                 <span className="flex min-w-0 flex-1 items-center border-l border-border pl-2.5" data-testid={`${testId}-path`}>

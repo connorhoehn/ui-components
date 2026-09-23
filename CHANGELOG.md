@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.385.8] — 2026-09-23
+
+### Fixed
+- **EditorShell** — the kind mark and the title no longer split across rows in
+  a narrow editor column (~500 px, the Work view at 1280x720). They sit in one
+  non-wrapping group (`editor-shell-title-group`, `flex min-w-0 max-w-full
+  flex-initial flex-nowrap`) whose title truncates; only the status pill and
+  folder path wrap to the next row when there is no room. Wide layouts are
+  unchanged (same 8px gaps, pill right after the title). The star button is
+  part of the group and no longer shrinks.
+
 ## [2.385.7] — 2026-09-23
 
 Closes the library-side gaps between the live Documents page editor and the
