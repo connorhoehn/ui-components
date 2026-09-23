@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.369.4] — 2026-09-22
+
+### Fixed — a work-activity pane shows the card's own body
+
+- `WorkNodePane` renders the node detail's `excerpt` (quoted) and `lines` under
+  the banner. A composer edit's instruction, scope and `v6 → v7` were on the
+  card and nowhere in the pane. A line the banner already says is not repeated;
+  artifact, transcript and compute panes keep their own inspectors.
+
 ## [2.369.3] — 2026-09-22
 
 ### Fixed — the composer placeholder disappeared (2.369.2 regression)

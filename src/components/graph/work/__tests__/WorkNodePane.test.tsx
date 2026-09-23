@@ -38,6 +38,30 @@ function Harness({ detail, entity, onReference, initial }: {
   return <WorkNodePane node={entity} detail={detail} selection={selection} onSelectionChange={(next) => next?.kind === 'node' && setSelection(next)} onClose={() => {}} onReference={onReference} />;
 }
 
+describe('a run pane says what the card says, and more', () => {
+  it('shows the instruction verbatim and the card lines, without repeating the banner', () => {
+    const run = node('edit', 'run', 'Edit Sprint review · Shorter title', { status: 'completed', capabilities: ['view-run'] });
+    render(<Harness entity={run} detail={{
+      subtitle: 'Presentation edit',
+      banner: { tone: 'success', title: 'Completed', description: 'Wrote v7 of Sprint review' },
+      excerpt: 'Make the title name what the transcript decided',
+      lines: ['Wrote v7 of Sprint review', 'Slide 2 “Transcript” · title', 'v6 → v7'],
+      actions: [{ id: 'open', label: 'Open presentation at v7', selection: { kind: 'node', id: 'deck', revisionId: 'v7' } }],
+    }} />);
+    expect(screen.getByTestId('activity-inspector-excerpt')).toHaveTextContent('“Make the title name what the transcript decided”');
+    const lines = within(screen.getByTestId('activity-inspector-lines')).getAllByRole('listitem').map((item) => item.textContent);
+    expect(lines).toEqual(['Slide 2 “Transcript” · title', 'v6 → v7']);
+    expect(screen.getAllByText('Wrote v7 of Sprint review')).toHaveLength(1);
+  });
+
+  it('leaves an artifact’s lines to its own inspector', () => {
+    const deck = node('deck', 'document', 'Sprint review');
+    render(<Harness entity={deck} detail={{ ...artifactDetail(false), lines: ['v3 generating · v2 available'], excerpt: 'quoted' }} />);
+    expect(screen.queryByTestId('activity-inspector-lines')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('activity-inspector-excerpt')).not.toBeInTheDocument();
+  });
+});
+
 describe('per-kind detail panes', () => {
   it('shows the artifact pane with revisions, slides and a reference that carries the exact page', () => {
     const detail = artifactDetail(false);

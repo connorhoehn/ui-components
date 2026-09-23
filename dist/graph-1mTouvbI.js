@@ -3602,7 +3602,7 @@ function Xt({ node: e, detail: r, selection: o, onSelectionChange: s, onClose: l
 		...o,
 		revisionId: v.revision.id,
 		anchorId: v.slide?.id ?? o.anchorId ?? v.revision.anchorId
-	} : { ...o }, b = h?.compute, x = !b && !h?.banner && !h?.artifact && !h?.transcript && !_ && !h?.note && !h?.actions?.length;
+	} : { ...o }, b = h?.compute, x = !!b || !!h?.artifact || !!h?.transcript, S = x ? [] : (h?.lines ?? []).filter((e) => e !== h?.banner?.title && e !== h?.banner?.description), C = x ? void 0 : h?.excerpt, w = !b && !h?.banner && !h?.artifact && !h?.transcript && !_ && !h?.note && !h?.actions?.length && !C && S.length === 0;
 	return /* @__PURE__ */ U("section", {
 		"aria-label": g,
 		"data-testid": p,
@@ -3637,6 +3637,16 @@ function Xt({ node: e, detail: r, selection: o, onSelectionChange: s, onClose: l
 					b && /* @__PURE__ */ H(Ut, {
 						compute: b,
 						...h?.banner ? { banner: h.banner } : {}
+					}),
+					C && /* @__PURE__ */ H("p", {
+						className: "text-[13px] italic leading-snug text-text-primary",
+						"data-testid": `${p}-excerpt`,
+						children: `“${C}”`
+					}),
+					S.length > 0 && /* @__PURE__ */ H("ul", {
+						className: "space-y-0.5 text-[13px] leading-snug text-text-secondary",
+						"data-testid": `${p}-lines`,
+						children: S.map((e, t) => /* @__PURE__ */ H("li", { children: e }, `${t}-${e}`))
 					}),
 					_?.description && /* @__PURE__ */ H("p", {
 						className: "text-[13px] leading-snug text-text-secondary",
@@ -3711,7 +3721,7 @@ function Xt({ node: e, detail: r, selection: o, onSelectionChange: s, onClose: l
 						className: "text-xs leading-snug text-text-tertiary",
 						children: h.note
 					}),
-					x && /* @__PURE__ */ H("p", {
+					w && /* @__PURE__ */ H("p", {
 						className: "text-sm text-text-secondary",
 						children: m ? "Only the existence of this work is shared with you." : "No further detail is shared with you."
 					})

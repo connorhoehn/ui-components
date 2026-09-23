@@ -160,7 +160,18 @@ export function WorkNodePane({
   // AgentCore microVM · started 09:15"), and a second banner above it would
   // say the same thing twice.
   const compute = visible?.compute;
-  const empty = !compute && !visible?.banner && !visible?.artifact && !visible?.transcript && !sections && !visible?.note && !visible?.actions?.length;
+  // The card's own body — the lines and the verbatim excerpt the host already
+  // authorized — belongs in the pane too: a composer edit's instruction, its
+  // scope and "v6 → v7" were on the card and nowhere in the pane that is
+  // supposed to say MORE. Kinds with their own inspector (an artifact, a
+  // transcript, a compute session) already show that state their own way, and
+  // a line the banner already says is not repeated under it.
+  const ownInspector = !!compute || !!visible?.artifact || !!visible?.transcript;
+  const bodyLines = ownInspector
+    ? []
+    : (visible?.lines ?? []).filter((line) => line !== visible?.banner?.title && line !== visible?.banner?.description);
+  const excerpt = ownInspector ? undefined : visible?.excerpt;
+  const empty = !compute && !visible?.banner && !visible?.artifact && !visible?.transcript && !sections && !visible?.note && !visible?.actions?.length && !excerpt && bodyLines.length === 0;
   return (
     <section aria-label={title} data-testid={testId} className={cn('flex h-full min-h-0 flex-col border-l border-border bg-surface', className)}>
       <header className="flex shrink-0 items-start justify-between gap-2 border-b border-border px-3 py-2">
@@ -173,6 +184,12 @@ export function WorkNodePane({
       <div className="min-h-0 flex-1 space-y-4 overflow-auto p-3">
         {!compute && visible?.banner && <WorkPaneBanner banner={visible.banner} />}
         {compute && <WorkComputePane compute={compute} {...(visible?.banner ? { banner: visible.banner } : {})} />}
+        {excerpt && <p className="text-[13px] italic leading-snug text-text-primary" data-testid={`${testId}-excerpt`}>{`“${excerpt}”`}</p>}
+        {bodyLines.length > 0 && (
+          <ul className="space-y-0.5 text-[13px] leading-snug text-text-secondary" data-testid={`${testId}-lines`}>
+            {bodyLines.map((line, index) => <li key={`${index}-${line}`}>{line}</li>)}
+          </ul>
+        )}
         {sections?.description && <p className="text-[13px] leading-snug text-text-secondary">{sections.description}</p>}
         {visible?.artifact && <WorkArtifactInspector node={node} artifact={visible.artifact} selection={selection} onSelectionChange={onSelectionChange} onOpen={onOpen} quiet={!!visible.banner} />}
         {visible?.transcript && <WorkTranscriptPanel transcript={visible.transcript} onSelect={onSelectionChange} />}
