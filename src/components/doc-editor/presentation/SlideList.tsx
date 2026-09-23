@@ -24,6 +24,8 @@ export interface SlideListItem {
   changed?: boolean;
   /** An agent edit to it is in flight. */
   generating?: boolean;
+  /** Other people on this slide (live presence). Since 2.371.0. */
+  viewers?: SlideRowProps['viewers'];
 }
 
 export interface SlideListProps {
@@ -73,6 +75,7 @@ export function SlideList({
           uncited={item.uncited}
           changed={item.changed}
           generating={item.generating}
+          viewers={item.viewers}
           readOnly={readOnly}
           onSelect={onSelect}
           onMove={onMove}

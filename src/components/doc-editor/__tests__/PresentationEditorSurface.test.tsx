@@ -109,6 +109,26 @@ describe('Filmstrip', () => {
     expect(screen.getByTestId('presentation-editor-stage-generating')).toHaveTextContent('Generating…');
   });
 
+  it('marks who is on which slide with small avatars, named for screen readers', () => {
+    render(<Harness slideViewers={{ s2: [{ id: 'dev-frank', name: 'Frank Davis' }], s3: [] }} />);
+    const marker = screen.getByTestId('presentation-editor-slide-viewers-s2');
+    expect(marker).toHaveAttribute('aria-label', 'Frank Davis is on this slide');
+    expect(screen.queryByTestId('presentation-editor-slide-viewers-s3')).toBeNull();
+    expect(screen.queryByTestId('presentation-editor-slide-viewers-s1')).toBeNull();
+  });
+
+  it('puts a requested slide on the stage once per key (jump / follow)', () => {
+    const { rerender } = render(<Harness selectSlideRequest={{ slideId: 's3', key: 1 }} />);
+    expect(screen.getByTestId('presentation-editor-slide-select-s3')).toHaveAttribute('aria-current', 'true');
+    fireEvent.click(screen.getByTestId('presentation-editor-slide-select-s1'));
+    rerender(<Harness selectSlideRequest={{ slideId: 's3', key: 1 }} />);
+    expect(screen.getByTestId('presentation-editor-slide-select-s1')).toHaveAttribute('aria-current', 'true');
+    rerender(<Harness selectSlideRequest={{ slideId: 's3', key: 2 }} />);
+    expect(screen.getByTestId('presentation-editor-slide-select-s3')).toHaveAttribute('aria-current', 'true');
+    rerender(<Harness selectSlideRequest={{ slideId: 'gone', key: 3 }} />);
+    expect(screen.getByTestId('presentation-editor-slide-select-s3')).toHaveAttribute('aria-current', 'true');
+  });
+
   it('adds from the dashed card at the end', () => {
     const onAdd = vi.fn();
     render(

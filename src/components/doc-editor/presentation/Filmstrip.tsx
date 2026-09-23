@@ -30,6 +30,13 @@
 // creating — it is shown as a placeholder card after the last slide until the
 // real slide arrives. Nothing here invents progress; the host passes ids only
 // while a request is actually in flight (`useDeckReviseStatus`).
+//
+// ## Who is on which slide
+//
+// `slideViewers` maps a slide id to the other people whose selected slide it
+// is (the host reads it from live presence). Their avatars sit small in the
+// thumbnail's top-left corner, opposite the ⋯ menu; the row names them for
+// screen readers. Display only — the shell's byline owns follow and jump.
 
 import {
   Suspense,
@@ -44,6 +51,7 @@ import { Button } from '../../ui/Button';
 import { PlusIcon } from '../../ui/Icons';
 import { DropdownMenu, type DropdownMenuItem } from '../../shared/DropdownMenu';
 import { Text } from '../../shared/Text';
+import { PresenceAvatars, type PresenceUser } from '../../shared/PresenceAvatars';
 import SlideList, { type SlideListItem } from './SlideList';
 import type { SlideRowProps } from './SlideRow';
 import { svgDataUri } from './svgPreview';
@@ -81,6 +89,7 @@ export function FilmstripThumb({
   uncited,
   changed = false,
   generating = false,
+  viewers,
   readOnly = false,
   onSelect,
   onMove,
@@ -188,6 +197,17 @@ export function FilmstripThumb({
           )}
         </span>
 
+        {viewers && viewers.length > 0 && (
+          <span
+            className="pointer-events-none absolute left-1 top-1"
+            data-testid={`${testIdPrefix}-viewers-${slide.id}`}
+            aria-label={`${viewers.map((viewer) => viewer.name).join(', ')} ${viewers.length === 1 ? 'is' : 'are'} on this slide`}
+            role="img"
+          >
+            <PresenceAvatars users={[...viewers]} maxVisible={2} size={16} />
+          </span>
+        )}
+
         {!readOnly && menuItems.length > 0 && (
           <span
             className={cn(
@@ -228,6 +248,8 @@ export interface FilmstripProps {
    * (an id not in `items` becomes a placeholder card at the end).
    */
   generatingSlideIds?: readonly string[];
+  /** Slide id → the other people on that slide (live presence). Since 2.371.0. */
+  slideViewers?: Readonly<Record<string, readonly PresenceUser[]>>;
   readOnly?: boolean;
   className?: string;
   /** Prefix for every row's test ids. Default `filmstrip`. */
@@ -244,6 +266,7 @@ export function Filmstrip({
   onAdd,
   canAdd = true,
   generatingSlideIds,
+  slideViewers,
   readOnly = false,
   className,
   testIdPrefix = 'filmstrip',
@@ -251,8 +274,16 @@ export function Filmstrip({
   const rootRef = useRef<HTMLDivElement | null>(null);
   const generating = useMemo(() => new Set(generatingSlideIds ?? []), [generatingSlideIds]);
   const rows = useMemo(
-    () => items.map((item) => (generating.has(item.slide.id) ? { ...item, generating: true } : item)),
-    [items, generating],
+    () => items.map((item) => {
+      const viewers = slideViewers?.[item.slide.id];
+      if (!generating.has(item.slide.id) && !viewers?.length) return item;
+      return {
+        ...item,
+        ...(generating.has(item.slide.id) ? { generating: true } : {}),
+        ...(viewers?.length ? { viewers } : {}),
+      };
+    }),
+    [items, generating, slideViewers],
   );
   const placeholders = useMemo(() => {
     const ids = new Set(items.map((item) => item.slide.id));

@@ -10,6 +10,7 @@
 // that is when the deck is thirty long; a red tint at the far left of a
 // scrolling list is not findable.
 
+import type { PresenceUser } from '../../shared/PresenceAvatars';
 import type { ReactNode, Ref } from 'react';
 import { cn } from '../../../lib/cn';
 import { IconButton } from '../../ui/IconButton';
@@ -31,6 +32,8 @@ export interface SlideRowProps {
   changed?: boolean;
   /** An agent edit to this slide is in flight. */
   generating?: boolean;
+  /** Other people whose selected slide this is (live presence). Since 2.371.0. */
+  viewers?: readonly PresenceUser[];
   readOnly?: boolean;
   onSelect: (id: string) => void;
   onMove: (from: number, to: number) => void;

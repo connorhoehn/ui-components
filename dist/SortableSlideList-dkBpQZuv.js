@@ -1,5 +1,5 @@
 import { t as e } from "./cn-DhjIN-s0.js";
-import { L as t } from "./PresentationEditor-CciTAWR3.js";
+import { L as t } from "./PresentationEditor-BcWBfgVv.js";
 import { jsx as n } from "react/jsx-runtime";
 import { DndContext as r, KeyboardSensor as i, PointerSensor as a, closestCenter as o, useSensor as s, useSensors as c } from "@dnd-kit/core";
 import { SortableContext as l, sortableKeyboardCoordinates as u, useSortable as d, verticalListSortingStrategy as f } from "@dnd-kit/sortable";
@@ -15,6 +15,7 @@ function p({ item: r, index: i, total: a, selectedId: o, readOnly: s, onSelect: 
 		uncited: r.uncited,
 		changed: r.changed,
 		generating: r.generating,
+		viewers: r.viewers,
 		readOnly: s,
 		onSelect: c,
 		onMove: l,

@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.371.0] — 2026-09-23
+
+### Added — who is on which slide
+
+- `Filmstrip` takes `slideViewers` (slide id → `PresenceUser[]`): the other people whose
+  selected slide it is show as small avatars in the thumbnail's top-left corner (the ⋯ menu
+  keeps the top-right), and the marker is named for screen readers ("Frank Davis is on this
+  slide"). `SlideRowProps.viewers` / `SlideListItem.viewers` carry it through both lists.
+- `PresentationEditor` passes `slideViewers` through, and takes `selectSlideRequest`
+  (`{ slideId, key }`) to put a slide on the stage from outside — jump to or follow a
+  participant. Acted on once per `key`; an id not in the deck is ignored.
+
 ## [2.370.0] — 2026-09-22
 
 ### Fixed — one star field per region in the DM compose area

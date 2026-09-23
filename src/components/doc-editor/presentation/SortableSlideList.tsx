@@ -77,6 +77,7 @@ function SortableRow({
       uncited={item.uncited}
       changed={item.changed}
       generating={item.generating}
+      viewers={item.viewers}
       readOnly={readOnly}
       onSelect={onSelect}
       onMove={onMove}

@@ -89,6 +89,7 @@ import { PresentationView, type PresentationRevision } from '../PresentationView
 import { ComposerDockPlacementContext, FloatingComposerDock } from '../FloatingComposerDock';
 import { isTextEntryTarget, nextSlideIndex, slideNavigationIntent } from '../../../lib/slideNavigationKey';
 import { Filmstrip } from './Filmstrip';
+import type { PresenceUser } from '../../shared/PresenceAvatars';
 import SlideForm from './SlideForm';
 import type { SlideListItem } from './SlideList';
 import SlideSources, { type PresentationSourceOption } from './SlideSources';
@@ -242,6 +243,17 @@ export interface PresentationEditorProps {
    */
   generatingSlideIds?: readonly string[];
   /**
+   * Slide id → the other people whose selected slide it is (the host's live
+   * presence). Shown as small avatars on the filmstrip thumbnails. Since 2.371.0.
+   */
+  slideViewers?: Readonly<Record<string, readonly PresenceUser[]>>;
+  /**
+   * Put this slide on the stage — jump to or follow someone. Acted on when
+   * `key` changes (so jumping to the same slide twice works); an id not in the
+   * deck is ignored. Since 2.371.0.
+   */
+  selectSlideRequest?: { slideId: string; key: string | number } | null;
+  /**
    * The foot of the editor — the host's composer dock, normally a
    * `FloatingComposerDock`. It is pinned as the editor column's last row
    * (normal flow, `ComposerDockPlacementContext` = `pinned`) while only the
@@ -351,6 +363,8 @@ export function PresentationEditor({
   instructHints,
   onUndoInstruct,
   generatingSlideIds,
+  slideViewers,
+  selectSlideRequest,
   footer,
   renderFrame,
   onSelectedSlideChange,
@@ -428,6 +442,13 @@ export function PresentationEditor({
   const select = useCallback((id: string) => {
     setSelectedId(id);
   }, []);
+
+  // The host asks for a slide (jump / follow): honoured once per `key`.
+  const requestKey = selectSlideRequest?.key;
+  const requestSlideId = selectSlideRequest?.slideId;
+  useEffect(() => {
+    if (requestSlideId && spec.slides.some((slide) => slide.id === requestSlideId)) setSelectedId(requestSlideId);
+  }, [requestKey, requestSlideId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleMove = useCallback(
     (from: number, to: number) => {
@@ -932,6 +953,7 @@ export function PresentationEditor({
         onAdd={() => handleAdd()}
         canAdd={slides.length < MAX_SLIDES}
         generatingSlideIds={generating}
+        {...(slideViewers ? { slideViewers } : {})}
         className="md:w-44 md:shrink-0"
         testIdPrefix={`${testId}-slide`}
       />

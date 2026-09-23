@@ -1197,7 +1197,7 @@ export declare function ExecutiveSummaryCard({ bullets, contentText, fragment, y
 
 declare type FileKind = 'page' | 'presentation' | 'recording' | 'transcript' | 'diagram' | 'folder';
 
-export declare function Filmstrip({ items, selectedId, onSelect, onMove, onDuplicate, onDelete, onAdd, canAdd, generatingSlideIds, readOnly, className, testIdPrefix, }: FilmstripProps): JSX.Element;
+export declare function Filmstrip({ items, selectedId, onSelect, onMove, onDuplicate, onDelete, onAdd, canAdd, generatingSlideIds, slideViewers, readOnly, className, testIdPrefix, }: FilmstripProps): JSX.Element;
 
 export declare interface FilmstripProps {
     items: readonly SlideListItem[];
@@ -1215,6 +1215,8 @@ export declare interface FilmstripProps {
      * (an id not in `items` becomes a placeholder card at the end).
      */
     generatingSlideIds?: readonly string[];
+    /** Slide id → the other people on that slide (live presence). Since 2.371.0. */
+    slideViewers?: Readonly<Record<string, readonly PresenceUser[]>>;
     readOnly?: boolean;
     className?: string;
     /** Prefix for every row's test ids. Default `filmstrip`. */
@@ -1222,7 +1224,7 @@ export declare interface FilmstripProps {
 }
 
 /** One slide in the strip. Takes `SlideRowProps` so both lists can render it. */
-export declare function FilmstripThumb({ slide, index, total, thumbnailSvg, selected, uncited, changed, generating, readOnly, onSelect, onMove, onDuplicate, onDelete, canDuplicate, canDelete, dragHandle, rowRef, dragging, testIdPrefix, }: SlideRowProps): JSX.Element;
+export declare function FilmstripThumb({ slide, index, total, thumbnailSvg, selected, uncited, changed, generating, viewers, readOnly, onSelect, onMove, onDuplicate, onDelete, canDuplicate, canDelete, dragHandle, rowRef, dragging, testIdPrefix, }: SlideRowProps): JSX.Element;
 
 /**
  * The element a target points at, on whichever shape this document is.
@@ -1781,7 +1783,7 @@ declare interface PresenceUser {
     location?: string;
 }
 
-export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, sources, onSearchSources, onDownload, onOpenPresentationView, readOnly, onInstruct, instructHints, onUndoInstruct, generatingSlideIds, footer, renderFrame, onSelectedSlideChange, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
+export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, sources, onSearchSources, onDownload, onOpenPresentationView, readOnly, onInstruct, instructHints, onUndoInstruct, generatingSlideIds, slideViewers, selectSlideRequest, footer, renderFrame, onSelectedSlideChange, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
 
 /** The parts `renderFrame` receives. */
 export declare interface PresentationEditorFrame {
@@ -1842,6 +1844,20 @@ export declare interface PresentationEditorProps {
      * the end of the filmstrip.
      */
     generatingSlideIds?: readonly string[];
+    /**
+     * Slide id → the other people whose selected slide it is (the host's live
+     * presence). Shown as small avatars on the filmstrip thumbnails. Since 2.371.0.
+     */
+    slideViewers?: Readonly<Record<string, readonly PresenceUser[]>>;
+    /**
+     * Put this slide on the stage — jump to or follow someone. Acted on when
+     * `key` changes (so jumping to the same slide twice works); an id not in the
+     * deck is ignored. Since 2.371.0.
+     */
+    selectSlideRequest?: {
+        slideId: string;
+        key: string | number;
+    } | null;
     /**
      * The foot of the editor — the host's composer dock, normally a
      * `FloatingComposerDock`. It is pinned as the editor column's last row
@@ -2419,6 +2435,8 @@ export declare interface SlideListItem {
     changed?: boolean;
     /** An agent edit to it is in flight. */
     generating?: boolean;
+    /** Other people on this slide (live presence). Since 2.371.0. */
+    viewers?: SlideRowProps['viewers'];
 }
 
 export declare interface SlideListProps {
@@ -2458,6 +2476,8 @@ export declare interface SlideRowProps {
     changed?: boolean;
     /** An agent edit to this slide is in flight. */
     generating?: boolean;
+    /** Other people whose selected slide this is (live presence). Since 2.371.0. */
+    viewers?: readonly PresenceUser[];
     readOnly?: boolean;
     onSelect: (id: string) => void;
     onMove: (from: number, to: number) => void;
@@ -3292,19 +3312,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3317,6 +3324,19 @@ declare module '@tiptap/core' {
             setLineSpacing: (spacing: LineSpacing) => ReturnType;
             /** Return the paragraphs in the selection to the paper's own leading. */
             unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -3360,19 +3380,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -3393,9 +3403,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
