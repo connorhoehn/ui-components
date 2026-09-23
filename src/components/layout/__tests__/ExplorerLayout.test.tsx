@@ -33,3 +33,19 @@ describe('ExplorerLayout', () => {
     expect(screen.getByTestId('explorer-layout-pane').className).not.toContain('px-8');
   });
 });
+
+describe('ExplorerLayout asidePlacement', () => {
+  it('keeps the aside beside the pane at every width when asked', () => {
+    render(<ExplorerLayout rail={<p>rail</p>} aside={<p>aside</p>} asidePlacement="beside"><p>pane</p></ExplorerLayout>);
+    const aside = screen.getByTestId('explorer-layout-aside');
+    expect(aside.dataset.placement).toBe('beside');
+    expect(aside.className).not.toContain('border-t');
+    const row = aside.parentElement!;
+    expect(row.className).toContain('flex-row');
+    expect(row.className).not.toContain('flex-col');
+  });
+  it('still stacks below 2xl by default', () => {
+    render(<ExplorerLayout rail={<p>rail</p>} aside={<p>aside</p>}><p>pane</p></ExplorerLayout>);
+    expect(screen.getByTestId('explorer-layout-aside').parentElement!.className).toContain('2xl:flex-row');
+  });
+});

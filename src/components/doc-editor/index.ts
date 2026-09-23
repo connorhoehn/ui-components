@@ -176,8 +176,8 @@ export type { DocumentReviewEntry, DocumentReviewPanelProps } from './DocumentRe
 // and the composer dock that floats over its surface.
 export { EditorShell, DEFAULT_EDITOR_SHELL_TABS } from './EditorShell';
 export type { EditorShellProps, EditorShellTab } from './EditorShell';
-export { FloatingComposerDock, DOCK_HEIGHT_VAR } from './FloatingComposerDock';
-export type { FloatingComposerDockProps, FloatingComposerDockWidth } from './FloatingComposerDock';
+export { FloatingComposerDock, DOCK_HEIGHT_VAR, ComposerDockPlacementContext } from './FloatingComposerDock';
+export type { FloatingComposerDockProps, FloatingComposerDockWidth, ComposerDockPlacement } from './FloatingComposerDock';
 
 // The reading end of the presentation generator: a rendered deck, read-only.
 export { PresentationView } from './PresentationView';

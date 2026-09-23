@@ -3734,7 +3734,7 @@ function zn({ entry: t, depth: n, expanded: r, onToggle: i, selectedId: a, onSel
 			}),
 			t.hoverMeta && /* @__PURE__ */ V("span", {
 				"data-testid": `${v}-hover-meta-${t.id}`,
-				className: "flex-shrink-0 text-xs text-text-tertiary opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 motion-reduce:transition-none",
+				className: "sr-only flex-shrink-0 text-xs text-text-tertiary group-hover:not-sr-only group-focus:not-sr-only group-focus-within:not-sr-only",
 				children: t.hoverMeta
 			}),
 			t.badge,

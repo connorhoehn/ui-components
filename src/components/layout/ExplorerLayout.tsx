@@ -67,6 +67,14 @@ export interface ExplorerLayoutProps {
   railActions?: ReactNode;
   railHeader?: ReactNode;
   railFooter?: ReactNode;
+  /**
+   * `stack` (default): the aside stacks below the pane under `2xl` and sits
+   * beside it from `2xl`. `beside`: always beside, at every width — for a pane
+   * whose bottom row must be the window's (an editor with a pinned composer);
+   * the host keeps the aside narrow (a `ContextColumn` strip) when space is
+   * short. Since 2.365.0.
+   */
+  asidePlacement?: 'stack' | 'beside';
   /** Padding inside the main pane. `none` when the pane hosts its own full-bleed surface (an editor). */
   panePadding?: 'none' | 'md';
   className?: string;
@@ -86,6 +94,7 @@ export function ExplorerLayout({
   railHeader,
   railFooter,
   panePadding = 'md',
+  asidePlacement = 'stack',
   className,
   'data-testid': testId = 'explorer-layout',
 }: ExplorerLayoutProps) {
@@ -96,7 +105,7 @@ export function ExplorerLayout({
         toggleLabel={`${railCollapsed ? 'Show' : 'Hide'} ${railLabel}`} data-testid={`${testId}-rail`}>
         {rail}
       </WorkspaceRail>
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col 2xl:flex-row">
+      <div className={cn('flex min-h-0 min-w-0 flex-1', asidePlacement === 'beside' ? 'flex-row' : 'flex-col 2xl:flex-row')}>
         <div
           data-testid={`${testId}-pane`}
           className={cn(
@@ -111,7 +120,11 @@ export function ExplorerLayout({
           // block the host wants beside the pane); this only places it.
           <aside
             data-testid={`${testId}-aside`}
-            className="flex min-h-0 border-t border-border 2xl:flex-shrink-0 2xl:border-t-0"
+            data-placement={asidePlacement}
+            className={cn(
+              'flex min-h-0',
+              asidePlacement === 'beside' ? 'flex-shrink-0' : 'border-t border-border 2xl:flex-shrink-0 2xl:border-t-0',
+            )}
           >
             {aside}
           </aside>

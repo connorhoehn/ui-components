@@ -38,6 +38,7 @@ import { Tabs } from '../shared/Tabs';
 import { Badge } from '../shared/Badge';
 import { FileKindMark, type FileKind } from '../shared/FileKindMark';
 import { DocumentSaveStatus, type DocumentSaveState } from './DocumentSaveStatus';
+import { ComposerDockPlacementContext } from './FloatingComposerDock';
 
 export interface EditorShellTab {
   id: string;
@@ -85,7 +86,13 @@ export interface EditorShellProps {
   toolbar?: ReactNode;
   /** The editing surface. */
   children: ReactNode;
-  /** Floats over the bottom of the surface — normally a `FloatingComposerDock`. */
+  /**
+   * The composer row — normally a `FloatingComposerDock`. Always the LAST row
+   * of the editor column, flush with its bottom, never scrolling and never
+   * overlaid: the surface's scroll box ends at its top edge (a
+   * `FloatingComposerDock` inside the shell is pinned, not floated). Nothing
+   * renders below it. Since 2.365.0.
+   */
   footer?: ReactNode;
   /**
    * `workspace` (default) paints the surface the neutral grey a page or a
@@ -143,14 +150,17 @@ export function EditorShell({
   const hasByline = (participants && participants.length > 0) || meta != null || !!saveState;
 
   const pane = (
-    <section aria-label={label} data-testid={testId} data-surface={surface} className="flex min-h-0 min-w-0 flex-1 flex-col bg-surface">
+    <section aria-label={label} data-testid={testId} data-surface={surface} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-surface">
       <header className="flex flex-col gap-1 border-b border-border px-4 pt-2.5" data-testid={`${testId}-header`}>
         {breadcrumbs && breadcrumbs.length > 0 && (
           <Breadcrumbs items={breadcrumbs} maxItems={4} className="text-xs" data-testid={`${testId}-crumbs`} />
         )}
         <div className="flex min-w-0 items-start gap-3">
           <div className="flex min-w-0 flex-1 flex-col gap-1">
-            <div className="flex min-w-0 items-center gap-2">
+            {/* Wraps rather than squeezing: with a crowded row the title used to
+                take all the shrink (min-w-0) and collapse to a sliver while
+                the pills beside it could not shrink at all. */}
+            <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
               {kind && <FileKindMark kind={kind} data-testid={`${testId}-kind`} />}
               {onTitleChange ? (
                 <InlineEditableText
@@ -158,11 +168,11 @@ export function EditorShell({
                   onCommit={onTitleChange}
                   label={titleLabel}
                   required
-                  className="min-w-0 text-lg"
+                  className="min-w-0 max-w-full text-lg"
                   data-testid={`${testId}-title`}
                 />
               ) : (
-                <h1 className="m-0 min-w-0 truncate text-lg font-semibold text-text-primary" data-testid={`${testId}-title`}>{title}</h1>
+                <h1 className="m-0 min-w-0 max-w-full truncate text-lg font-semibold text-text-primary" data-testid={`${testId}-title`}>{title}</h1>
               )}
               {onStarredChange && (
                 <IconButton
@@ -217,19 +227,25 @@ export function EditorShell({
         </div>
       )}
 
-      {/* `relative`: the dock positions against this box, and writes
-          `--dock-height` on it for the scroller below to pad by. */}
+      {/* The surface is a column: the scroller takes what is left and is the
+          ONLY thing that scrolls; the dock is the last row, pinned. Popovers
+          the surface draws inline are clipped by the scroller, so they end
+          above the composer too. */}
       <div className={cn('relative flex min-h-0 flex-1 flex-col', surface === 'workspace' ? 'bg-workspace' : 'bg-surface')} data-testid={`${testId}-surface`}>
         <div
           {...(hasTabs
             ? { role: 'tabpanel', id: `${idPrefix}-panel-${currentTab}`, 'aria-labelledby': `${idPrefix}-tab-${currentTab}` }
             : {})}
-          className={cn('min-h-0 flex-1 overflow-auto', footer != null && 'pb-[var(--dock-height,0px)]')}
+          className="min-h-0 flex-1 overflow-auto"
           data-testid={`${testId}-scroller`}
         >
           {children}
         </div>
-        {footer}
+        {footer != null && (
+          <div className="relative z-20 shrink-0" data-testid={`${testId}-dock`}>
+            <ComposerDockPlacementContext.Provider value="pinned">{footer}</ComposerDockPlacementContext.Provider>
+          </div>
+        )}
       </div>
     </section>
   );
@@ -243,10 +259,13 @@ export function EditorShell({
           {explorer}
         </div>
       )}
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col xl:flex-row">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col lg:flex-row">
         {pane}
+        {/* Beside the pane from lg; below that it stacks ABOVE the pane
+            (order-first), never below — the composer stays the window's
+            last row. */}
         {workbench && (
-          <div className="flex min-h-0 shrink-0 flex-col border-t border-border xl:w-80 xl:border-l xl:border-t-0" data-testid={`${testId}-workbench`}>
+          <div className="order-first flex max-h-64 min-h-0 shrink-0 flex-col overflow-y-auto border-b border-border lg:order-none lg:max-h-none lg:w-80 lg:border-b-0 lg:border-l" data-testid={`${testId}-workbench`}>
             {workbench}
           </div>
         )}

@@ -87,11 +87,28 @@ describe('EditorShell', () => {
     expect(screen.getByTestId('editor-shell-surface').className).not.toContain('bg-workspace');
   });
 
-  it('pads the scroller by the dock height only when a footer is docked', () => {
-    const { rerender } = render(<EditorShell title="x"><p /></EditorShell>);
-    expect(screen.getByTestId('editor-shell-scroller').className).not.toContain('--dock-height');
-    rerender(<EditorShell title="x" footer={<FloatingComposerDock composer={<textarea aria-label="Message" />} />}><p /></EditorShell>);
-    expect(screen.getByTestId('editor-shell-scroller').className).toContain('pb-[var(--dock-height,0px)]');
+  it('pins a docked composer as the last row of the editor column, after the only scroller', () => {
+    render(<EditorShell title="x" footer={<FloatingComposerDock composer={<textarea aria-label="Message" />} />}><p /></EditorShell>);
+    const surface = screen.getByTestId('editor-shell-surface');
+    const scroller = screen.getByTestId('editor-shell-scroller');
+    const slot = screen.getByTestId('editor-shell-dock');
+    // Last child of the surface, after the scroller: nothing renders below it.
+    expect(surface.lastElementChild).toBe(slot);
+    expect(scroller.nextElementSibling).toBe(slot);
+    expect(slot.className).toContain('shrink-0');
+    // The content's scroll box ends at the dock: no padding trick, no overlay.
+    expect(scroller.className).toContain('overflow-auto');
+    expect(scroller.className).not.toContain('--dock-height');
+    const dock = screen.getByTestId('floating-composer-dock');
+    expect(dock.dataset.placement).toBe('pinned');
+    expect(dock.className).not.toContain('absolute');
+    expect(surface.style.getPropertyValue(DOCK_HEIGHT_VAR)).toBe('');
+  });
+
+  it('wraps a crowded title row instead of collapsing the title', () => {
+    render(<EditorShell title="Release plan" onTitleChange={() => {}} statusPill={<span>draft · Owned by someone with a long name</span>}><p /></EditorShell>);
+    const row = screen.getByTestId('editor-shell-title').parentElement!;
+    expect(row.className).toContain('flex-wrap');
   });
 
   it('frames explorer | editor | workbench when both outer slots are given', () => {

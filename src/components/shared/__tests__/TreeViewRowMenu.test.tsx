@@ -31,9 +31,9 @@ describe('TreeView — hover metadata, icons and the row menu', () => {
     render(<TreeView nodes={NODES} selectedId="deck" onSelect={() => {}} />);
     const meta = screen.getByTestId('tree-view-hover-meta-deck');
     expect(meta).toHaveTextContent('v4');
-    expect(meta.className).toContain('opacity-0');
-    expect(meta.className).toContain('group-hover:opacity-100');
-    expect(meta.className).toContain('group-focus-within:opacity-100');
+    expect(meta.className).toContain('sr-only');
+    expect(meta.className).toContain('group-hover:not-sr-only');
+    expect(meta.className).toContain('group-focus-within:not-sr-only');
     expect(screen.getByTestId('tree-view-row-deck')).toHaveTextContent('Sprint reviewv4');
   });
 

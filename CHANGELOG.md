@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.365.0] — 2026-09-22
+
+### Changed — the composer is the editor column's last row (editor handoff WS1)
+
+- `EditorShell` renders `footer` as a pinned, normal-flow last row after the
+  scroller (`editor-shell-dock`), inside `ComposerDockPlacementContext="pinned"`.
+  The scroller is the only thing that scrolls and its box ends at the dock's
+  top edge; nothing renders below the dock and inline popovers are clipped
+  above it. The scroller no longer pads by `--dock-height`.
+- `FloatingComposerDock` reads `ComposerDockPlacementContext`: `overlay`
+  (default, unchanged outside a shell) or `pinned` (no absolute positioning,
+  no fade, no `--dock-height`).
+- `EditorShell`'s title row wraps instead of collapsing the title to a sliver
+  when pills crowd it.
+- `EditorShell` frame mode: the workbench sits beside the pane from `lg` and
+  stacks ABOVE it below that — never below the composer.
+- `ExplorerLayout` gains `asidePlacement: 'stack' | 'beside'` (default
+  `stack`, unchanged). `beside` keeps the aside to the right at every width.
+- `TreeView` `hoverMeta` is `sr-only` until hover/focus instead of
+  `opacity-0`, so hidden meta no longer takes width and titles stop truncating
+  early.
+
 ## [2.364.0] — 2026-09-22
 
 ### Added — the presentation editor surface (editor handoff WS3)

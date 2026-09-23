@@ -317,7 +317,9 @@ function TreeRow({
         {entry.hoverMeta && (
           <span
             data-testid={`${testId}-hover-meta-${entry.id}`}
-            className="flex-shrink-0 text-xs text-text-tertiary opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 motion-reduce:transition-none"
+            // sr-only, not opacity-0: hidden meta must not take width, or
+            // every title truncates early for a label nobody can see (2.365.0).
+            className="sr-only flex-shrink-0 text-xs text-text-tertiary group-hover:not-sr-only group-focus:not-sr-only group-focus-within:not-sr-only"
           >
             {entry.hoverMeta}
           </span>

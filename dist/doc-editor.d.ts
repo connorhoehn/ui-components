@@ -1,5 +1,6 @@
 import { Awareness } from 'y-protocols/awareness';
 import { ComponentType } from 'react';
+import { Context } from 'react';
 import { CSSProperties } from 'react';
 import { default as default_2 } from 'react';
 import { Doc } from 'yjs';
@@ -549,6 +550,18 @@ export declare interface CommentThreadNodeProps {
     onResolveThread?: (commentId: string) => void;
     onUnresolveThread?: (commentId: string) => void;
 }
+
+/**
+ * Where a dock sits. `overlay` (the default, outside a shell) floats over the
+ * bottom of its positioned parent with a fade and writes `--dock-height` for
+ * the content to pad by. `pinned` is a normal-flow last row: the content's
+ * scroll box ENDS at the dock's top edge, so nothing in the content can scroll
+ * under it or be drawn over it. `EditorShell` pins every dock it hosts
+ * (2.365.0) — a host cannot opt a shell's composer back into overlapping.
+ */
+export declare type ComposerDockPlacement = 'overlay' | 'pinned';
+
+export declare const ComposerDockPlacementContext: Context<ComposerDockPlacement>;
 
 /** Connection lifecycle states */
 declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
@@ -1119,7 +1132,13 @@ export declare interface EditorShellProps {
     toolbar?: ReactNode;
     /** The editing surface. */
     children: ReactNode;
-    /** Floats over the bottom of the surface — normally a `FloatingComposerDock`. */
+    /**
+     * The composer row — normally a `FloatingComposerDock`. Always the LAST row
+     * of the editor column, flush with its bottom, never scrolling and never
+     * overlaid: the surface's scroll box ends at its top edge (a
+     * `FloatingComposerDock` inside the shell is pinned, not floated). Nothing
+     * renders below it. Since 2.365.0.
+     */
     footer?: ReactNode;
     /**
      * `workspace` (default) paints the surface the neutral grey a page or a
@@ -3205,19 +3224,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3237,9 +3243,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -3309,6 +3318,16 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

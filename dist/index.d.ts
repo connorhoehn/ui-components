@@ -6589,7 +6589,7 @@ export declare interface ExpertSkillMatch {
     strength?: number;
 }
 
-export declare function ExplorerLayout({ rail, children, aside, railWidth, railCollapsed, onToggleRail, railLabel, railTitle, railActions, railHeader, railFooter, panePadding, className, 'data-testid': testId, }: ExplorerLayoutProps): JSX.Element;
+export declare function ExplorerLayout({ rail, children, aside, railWidth, railCollapsed, onToggleRail, railLabel, railTitle, railActions, railHeader, railFooter, panePadding, asidePlacement, className, 'data-testid': testId, }: ExplorerLayoutProps): JSX.Element;
 
 export declare interface ExplorerLayoutProps {
     /** Left rail — flush to the pane's left edge, its own border, scrolls independently. */
@@ -6627,6 +6627,14 @@ export declare interface ExplorerLayoutProps {
     railActions?: ReactNode;
     railHeader?: ReactNode;
     railFooter?: ReactNode;
+    /**
+     * `stack` (default): the aside stacks below the pane under `2xl` and sits
+     * beside it from `2xl`. `beside`: always beside, at every width — for a pane
+     * whose bottom row must be the window's (an editor with a pinned composer);
+     * the host keeps the aside narrow (a `ContextColumn` strip) when space is
+     * short. Since 2.365.0.
+     */
+    asidePlacement?: 'stack' | 'beside';
     /** Padding inside the main pane. `none` when the pane hosts its own full-bleed surface (an editor). */
     panePadding?: 'none' | 'md';
     className?: string;
@@ -18849,19 +18857,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -18881,9 +18876,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -18953,6 +18951,16 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

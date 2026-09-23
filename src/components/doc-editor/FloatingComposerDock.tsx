@@ -18,7 +18,7 @@
 // scroller can read it (`pb-[var(--dock-height,0px)]`). Removed on unmount so
 // a surface without a dock pads nothing.
 
-import { useLayoutEffect, useRef, type ReactNode } from 'react';
+import { createContext, useContext, useLayoutEffect, useRef, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 
 export type FloatingComposerDockWidth = 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
@@ -47,6 +47,17 @@ const WIDTH: Record<FloatingComposerDockWidth, string> = {
   '4xl': 'max-w-4xl',
 };
 
+/**
+ * Where a dock sits. `overlay` (the default, outside a shell) floats over the
+ * bottom of its positioned parent with a fade and writes `--dock-height` for
+ * the content to pad by. `pinned` is a normal-flow last row: the content's
+ * scroll box ENDS at the dock's top edge, so nothing in the content can scroll
+ * under it or be drawn over it. `EditorShell` pins every dock it hosts
+ * (2.365.0) — a host cannot opt a shell's composer back into overlapping.
+ */
+export type ComposerDockPlacement = 'overlay' | 'pinned';
+export const ComposerDockPlacementContext = createContext<ComposerDockPlacement>('overlay');
+
 /** The custom property the dock writes on its parent. */
 export const DOCK_HEIGHT_VAR = '--dock-height';
 
@@ -60,8 +71,10 @@ export function FloatingComposerDock({
   'data-testid': testId = 'floating-composer-dock',
 }: FloatingComposerDockProps) {
   const ref = useRef<HTMLDivElement | null>(null);
+  const placement = useContext(ComposerDockPlacementContext);
 
   useLayoutEffect(() => {
+    if (placement !== 'overlay') return;
     const el = ref.current;
     const parent = el?.parentElement;
     if (!el || !parent) return;
@@ -78,7 +91,7 @@ export function FloatingComposerDock({
       ro?.disconnect();
       parent.style.removeProperty(DOCK_HEIGHT_VAR);
     };
-  }, []);
+  }, [placement]);
 
   return (
     <div
@@ -86,10 +99,13 @@ export function FloatingComposerDock({
       role="region"
       aria-label={label}
       data-testid={testId}
+      data-placement={placement}
       className={cn(
-        // `pointer-events-none` on the fade, `auto` on the dock itself: the
-        // gradient must not swallow clicks on the page line it is fading.
-        'pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-workspace via-workspace/85 to-transparent px-4 pb-3 pt-8',
+        placement === 'pinned'
+          ? 'relative shrink-0 bg-workspace px-4 pb-3 pt-2'
+          : // `pointer-events-none` on the fade, `auto` on the dock itself: the
+            // gradient must not swallow clicks on the page line it is fading.
+            'pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-workspace via-workspace/85 to-transparent px-4 pb-3 pt-8',
         className,
       )}
     >
