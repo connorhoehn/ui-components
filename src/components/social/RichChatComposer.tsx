@@ -94,7 +94,12 @@ import { cn } from '../../lib/cn';
 import { FileInput } from '../forms/FileInput';
 import { DropdownMenu } from '../shared/DropdownMenu';
 import { AGENT_PARTICLE_COLORS, ParticlesBackground } from '../shared/ParticlesBackground';
-import { GRAPHITE_PARTICLE_COLORS, useResolvedBackdropTone, type BackdropTone } from '../shared/backdropTone';
+import {
+  GRAPHITE_PARTICLE_COLORS,
+  useEnclosingConsoleSurface,
+  useResolvedBackdropTone,
+  type BackdropTone,
+} from '../shared/backdropTone';
 import { RovingToolbar } from '../shared/RovingToolbar';
 import { Tabs } from '../shared/Tabs';
 import { IconButton } from '../ui/IconButton';
@@ -427,6 +432,16 @@ export interface RichChatComposerProps {
    */
   backdropTone?: BackdropTone;
   /**
+   * True while an agent is mid-turn: the console sky gets denser, brighter and
+   * a little quicker — the same cue `ChatColumnBackdrop`'s `working` gives a
+   * whole column, for a composer that stands alone (an editor's dock). Unset,
+   * it follows an enclosing `ChatColumnBackdrop`. Inside one, the composer
+   * paints no field of its own (the column's shows through), so this only
+   * changes anything for a standalone composer. Reduced motion still parks
+   * the field; the particle budget stays bounded by the box's area.
+   */
+  working?: boolean;
+  /**
    * The tallest the input grows before it scrolls inside itself: pixels, or
    * any CSS length. Default `min(14rem, 40dvh)`.
    */
@@ -693,6 +708,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   submitLabel,
   radius,
   backdropTone = 'auto',
+  working: workingProp,
   maxInputHeight,
   layout = 'auto',
   className,
@@ -1564,6 +1580,13 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // mode still changes what Enter does, it just stops repainting the box.
   const tone = useResolvedBackdropTone(rootNode, backdropTone, consoleMode);
   const consoleSurface = consoleMode && tone !== 'none';
+  // One field per region: inside a console column that is already painting its
+  // sky, the composer keeps its tint and border and draws no particles of its
+  // own — two GL fields stacked in one box read as noise, and cost twice.
+  const enclosingSurface = useEnclosingConsoleSurface();
+  const skyInherited = consoleSurface && !!enclosingSurface?.painting;
+  const ownSky = consoleSurface && !skyInherited;
+  const working = workingProp ?? enclosingSurface?.working ?? false;
   const surfaceVars: Record<string, string> = {};
   if (radius) surfaceVars['--composer-radius'] = COMPOSER_RADII[radius];
   if (maxInputHeight !== undefined) {
@@ -1572,7 +1595,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // Drawn-particle budget for the console sky: bounded by the box's area
   // (see `ParticlesBackground`'s `density`), so a narrow composer is not
   // painting the same 120 stars as a wide one.
-  const CONSOLE_DENSITY = 22;
+  // Working raises both the count and the per-area cap, so the cue is visible
+  // in a small dock without letting a wide one draw more than the cap allows.
+  const CONSOLE_DENSITY = working ? 30 : 22;
 
   const toolbarButton = (
     label: string,
@@ -1649,6 +1674,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         data-console={consoleSurface ? 'true' : undefined}
         data-composer-size={size}
         data-backdrop-tone={consoleSurface ? tone : undefined}
+        data-console-sky={consoleSurface ? (skyInherited ? 'inherited' : 'own') : undefined}
+        data-working={working ? 'true' : undefined}
         ref={rootRef}
         // Only CSS custom properties — the radius and the input's growth cap
         // are values the host chose, and the stylesheet reads them from here.
@@ -1682,6 +1709,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           // (see `.uic-composer` in styles.css), not the host's.
           'uic-composer chat-composer relative isolate w-full min-w-0 max-w-full rounded-[var(--composer-radius,12px)] border bg-surface shadow-[var(--composer-shadow,var(--uic-composer-shadow))] transition-colors duration-300 focus-within:ring-2 motion-reduce:transition-none',
           consoleSurface && 'uic-chat-console',
+          // The enclosing column's field shows through; a light inset tint
+          // keeps the composer reading as a control on it, not a hole in it.
+          skyInherited && 'bg-surface-inset',
           activeCommand
             ? (activeCommand.disabled ? 'border-warning focus-within:border-warning focus-within:ring-warning' : 'border-info focus-within:border-info focus-within:ring-info')
             : 'border-border focus-within:border-primary focus-within:ring-primary',
@@ -1691,15 +1721,15 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             so the corners match the border above without clipping anything
             that has to escape the box. */}
         <ParticlesBackground
-          active={consoleSurface}
+          active={ownSky}
           tone={tone === 'graphite' ? 'graphite' : 'night'}
-          particleCount={120}
+          particleCount={working ? 180 : 120}
           density={CONSOLE_DENSITY}
-          speed={0.09}
+          speed={working ? 0.15 : 0.09}
           alphaParticles
           particleColors={tone === 'graphite' ? GRAPHITE_PARTICLE_COLORS : AGENT_PARTICLE_COLORS}
-          particleBaseSize={tone === 'graphite' ? 80 : 90}
-          fallbackIntensity="low"
+          particleBaseSize={(tone === 'graphite' ? 80 : 90) + (working ? 15 : 0)}
+          fallbackIntensity={working ? 'medium' : 'low'}
           className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[inherit]"
           data-testid={`${testId}-console`}
         />

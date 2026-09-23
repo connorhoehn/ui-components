@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.370.0] — 2026-09-22
+
+### Fixed — one star field per region in the DM compose area
+
+- `RichChatComposer` in Agent/Terminal inside a painting `ChatColumnBackdrop`
+  no longer starts its own particle field. It keeps its console tokens, border
+  and a `bg-surface-inset` tint, and the column's field shows through. The
+  composer reports `data-console-sky="own" | "inherited"`. `ChatColumnBackdrop`
+  publishes `ConsoleSurfaceContext` (`{ painting, working }`, exported with
+  `useEnclosingConsoleSurface`) for this.
+
+### Added — `working` on the composer
+
+- `RichChatComposer` takes `working?: boolean`. It is the standalone-dock
+  equivalent of the column's working density: 180 points instead of 120, a
+  per-area cap of 30 instead of 22, a quicker drift and larger points. When the
+  prop is unset, it follows an enclosing `ChatColumnBackdrop`. Reduced motion
+  still parks the field. Stamped as `data-working="true"`.
+
 ## [2.369.4] — 2026-09-22
 
 ### Fixed — a work-activity pane shows the card's own body

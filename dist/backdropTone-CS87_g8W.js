@@ -1,9 +1,9 @@
-import { useLayoutEffect as e, useState as t } from "react";
+import { createContext as e, useContext as t, useLayoutEffect as n, useState as r } from "react";
 //#region src/components/shared/backdropTone.ts
-function n() {
+function i() {
 	return typeof window > "u" || typeof window.matchMedia != "function" ? !1 : window.matchMedia("(prefers-color-scheme: dark)").matches;
 }
-function r(e, t, r = n()) {
+function a(e, t, n = i()) {
 	if (e !== "auto") return e;
 	for (let e = t?.parentElement ?? null; e; e = e.parentElement) {
 		let t = e.getAttribute("data-backdrop-tone");
@@ -12,42 +12,45 @@ function r(e, t, r = n()) {
 		if (n === "dark") return "night";
 		if (n === "light") return "graphite";
 	}
-	return r ? "night" : "graphite";
+	return n ? "night" : "graphite";
 }
-function i(n, i, a = !0) {
-	let [o, s] = t(() => i === "auto" ? "graphite" : i);
-	return e(() => {
-		if (i !== "auto") {
-			s(i);
+function o(e, t, i = !0) {
+	let [o, s] = r(() => t === "auto" ? "graphite" : t);
+	return n(() => {
+		if (t !== "auto") {
+			s(t);
 			return;
 		}
-		if (!a) return;
-		let e = () => s(r("auto", n.current));
-		e();
-		let t = [];
+		if (!i) return;
+		let n = () => s(a("auto", e.current));
+		n();
+		let r = [];
 		if (typeof MutationObserver < "u" && typeof document < "u") {
-			let n = new MutationObserver(e);
-			n.observe(document.documentElement, {
+			let e = new MutationObserver(n);
+			e.observe(document.documentElement, {
 				attributes: !0,
 				subtree: !0,
 				attributeFilter: ["data-theme", "data-backdrop-tone"]
-			}), t.push(() => n.disconnect());
+			}), r.push(() => e.disconnect());
 		}
 		if (typeof window < "u" && typeof window.matchMedia == "function") {
-			let n = window.matchMedia("(prefers-color-scheme: dark)");
-			n.addEventListener?.("change", e), t.push(() => n.removeEventListener?.("change", e));
+			let e = window.matchMedia("(prefers-color-scheme: dark)");
+			e.addEventListener?.("change", n), r.push(() => e.removeEventListener?.("change", n));
 		}
-		return () => t.forEach((e) => e());
+		return () => r.forEach((e) => e());
 	}, [
+		t,
 		i,
-		a,
-		n
+		e
 	]), o;
 }
-var a = [
+var s = [
 	"#f4f4f5",
 	"#d4d4d8",
 	"#a1a1aa"
-];
+], c = e(null);
+function l() {
+	return t(c);
+}
 //#endregion
-export { r as n, i as r, a as t };
+export { o as a, l as i, s as n, a as r, c as t };

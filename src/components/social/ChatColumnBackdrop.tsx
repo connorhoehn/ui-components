@@ -23,10 +23,16 @@
 // Reverting is the same two classes coming off, so "Back to chat" is a
 // crossfade rather than a re-render into a different design.
 
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { AGENT_PARTICLE_COLORS, ParticlesBackground } from '../shared/ParticlesBackground';
-import { GRAPHITE_PARTICLE_COLORS, useResolvedBackdropTone, type BackdropTone } from '../shared/backdropTone';
+import {
+  ConsoleSurfaceContext,
+  GRAPHITE_PARTICLE_COLORS,
+  useResolvedBackdropTone,
+  type BackdropTone,
+  type ConsoleSurfaceState,
+} from '../shared/backdropTone';
 import type { ComposerMode } from './RichChatComposer';
 
 /** Matches the CSS transition and `ParticlesBackground`'s own crossfade. */
@@ -84,6 +90,9 @@ export function ChatColumnBackdrop({
     const timer = setTimeout(() => setDark(false), CROSSFADE_MS);
     return () => clearTimeout(timer);
   }, [console_]);
+  // Tells a composer inside the column that the sky is already painted, so it
+  // does not start a second field in the same region (and can follow `working`).
+  const surface = useMemo<ConsoleSurfaceState>(() => ({ painting: console_, working }), [console_, working]);
 
   return (
     <div
@@ -116,7 +125,7 @@ export function ChatColumnBackdrop({
         className="flex min-h-0 min-w-0 flex-1 flex-col"
         data-testid={`${testId}-particles`}
       >
-        {children}
+        <ConsoleSurfaceContext.Provider value={surface}>{children}</ConsoleSurfaceContext.Provider>
       </ParticlesBackground>
     </div>
   );

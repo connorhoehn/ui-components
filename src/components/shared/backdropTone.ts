@@ -21,7 +21,7 @@
 // itself to flip its own ink, and reading that back would make every `auto`
 // surface resolve to night the moment it lit up.
 
-import { useLayoutEffect, useState, type RefObject } from 'react';
+import { createContext, useContext, useLayoutEffect, useState, type RefObject } from 'react';
 
 /** What a console surface paints behind itself. `none` keeps the ordinary surface. */
 export type BackdropTone = 'auto' | 'night' | 'graphite' | 'none';
@@ -91,3 +91,24 @@ export function useResolvedBackdropTone(
 
 /** Star colours for the graphite sky: zinc greys, so no blue cast sits on a white page. */
 export const GRAPHITE_PARTICLE_COLORS = ['#f4f4f5', '#d4d4d8', '#a1a1aa'] as const;
+
+/**
+ * What an enclosing console surface (a `ChatColumnBackdrop` in Agent/Terminal)
+ * is already painting. A composer inside one reads this and does NOT start a
+ * second star field in the same region: it keeps its tint and border and lets
+ * the column's field show through. `working` is the column's "a loop is
+ * mid-turn" cue, so a composer can follow it without the host passing it twice.
+ */
+export interface ConsoleSurfaceState {
+  /** True while the enclosing surface is painting its sky. */
+  painting: boolean;
+  /** True while the enclosing surface shows its working density. */
+  working: boolean;
+}
+
+export const ConsoleSurfaceContext = createContext<ConsoleSurfaceState | null>(null);
+
+/** The nearest enclosing console surface, or `null` outside one. */
+export function useEnclosingConsoleSurface(): ConsoleSurfaceState | null {
+  return useContext(ConsoleSurfaceContext);
+}

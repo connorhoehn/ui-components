@@ -560,6 +560,16 @@ export declare interface RichChatComposerProps {
      */
     backdropTone?: BackdropTone;
     /**
+     * True while an agent is mid-turn: the console sky gets denser, brighter and
+     * a little quicker — the same cue `ChatColumnBackdrop`'s `working` gives a
+     * whole column, for a composer that stands alone (an editor's dock). Unset,
+     * it follows an enclosing `ChatColumnBackdrop`. Inside one, the composer
+     * paints no field of its own (the column's shows through), so this only
+     * changes anything for a standalone composer. Reduced motion still parks
+     * the field; the particle budget stays bounded by the box's area.
+     */
+    working?: boolean;
+    /**
      * The tallest the input grows before it scrolls inside itself: pixels, or
      * any CSS length. Default `min(14rem, 40dvh)`.
      */
