@@ -2146,9 +2146,9 @@ function gr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 					/* @__PURE__ */ Q("div", {
 						className: "flex min-w-0 items-start gap-3",
 						children: [/* @__PURE__ */ Q("div", {
-							className: "flex min-w-0 flex-1 flex-col gap-1",
+							className: "flex min-w-0 flex-1 flex-col gap-1 [@media(max-height:640px)]:flex-row [@media(max-height:640px)]:items-center [@media(max-height:640px)]:gap-3",
 							children: [/* @__PURE__ */ Q("div", {
-								className: "flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1",
+								className: "flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 [@media(max-height:640px)]:flex-1",
 								children: [
 									o && /* @__PURE__ */ Z(l, {
 										kind: o,
@@ -2179,7 +2179,7 @@ function gr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 									d
 								]
 							}), L && /* @__PURE__ */ Q("div", {
-								className: "flex min-w-0 flex-wrap items-center gap-2 text-xs text-text-tertiary",
+								className: "flex min-w-0 flex-wrap items-center gap-2 text-xs text-text-tertiary [@media(max-height:640px)]:max-w-[50%] [@media(max-height:640px)]:flex-nowrap",
 								"data-testid": `${N}-byline`,
 								children: [
 									f && f.length > 0 && /* @__PURE__ */ Z(S, {

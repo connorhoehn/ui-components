@@ -167,11 +167,14 @@ export function EditorShell({
           <Breadcrumbs items={breadcrumbs} maxItems={4} className="text-xs [@media(max-height:640px)]:hidden" data-testid={`${testId}-crumbs`} />
         )}
         <div className="flex min-w-0 items-start gap-3">
-          <div className="flex min-w-0 flex-1 flex-col gap-1">
+          {/* A short window (under 640 px tall — a 1280×720 laptop window has a
+              577 px viewport) puts the byline BESIDE the title instead of under
+              it: one row, ~26 px back for the canvas below (a slide stage). */}
+          <div className="flex min-w-0 flex-1 flex-col gap-1 [@media(max-height:640px)]:flex-row [@media(max-height:640px)]:items-center [@media(max-height:640px)]:gap-3">
             {/* Wraps rather than squeezing: with a crowded row the title used to
                 take all the shrink (min-w-0) and collapse to a sliver while
                 the pills beside it could not shrink at all. */}
-            <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+            <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 [@media(max-height:640px)]:flex-1">
               {kind && <FileKindMark kind={kind} data-testid={`${testId}-kind`} />}
               {onTitleChange ? (
                 <InlineEditableText
@@ -201,7 +204,7 @@ export function EditorShell({
               {statusPill}
             </div>
             {hasByline && (
-              <div className="flex min-w-0 flex-wrap items-center gap-2 text-xs text-text-tertiary" data-testid={`${testId}-byline`}>
+              <div className="flex min-w-0 flex-wrap items-center gap-2 text-xs text-text-tertiary [@media(max-height:640px)]:max-w-[50%] [@media(max-height:640px)]:flex-nowrap" data-testid={`${testId}-byline`}>
                 {participants && participants.length > 0 && (
                   <PresenceAvatars
                     users={participants}

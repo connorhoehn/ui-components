@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.373.1] — 2026-09-23
+
+### Changed — `EditorShell` byline beside the title in a short window
+
+Under 640 px of window height (a 1280×720 laptop window has a 577 px viewport)
+the byline (participants, meta, save state) sits on the title's row instead of
+under it, capped at half the row and not wrapping — ~26 px back for the canvas.
+With `RichChatComposer collapseWhenIdle` the deck stage at 1280×577 goes
+287 → ≥ 300 px tall.
+
+---
+
 ## [2.373.0] — 2026-09-23
 
 ### Added — `RichChatComposer collapseWhenIdle`: one row while idle

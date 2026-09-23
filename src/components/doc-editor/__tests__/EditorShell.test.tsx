@@ -7,6 +7,13 @@ import { FloatingComposerDock, DOCK_HEIGHT_VAR } from '../FloatingComposerDock';
 afterEach(cleanup);
 
 describe('EditorShell', () => {
+  it('a short window (< 640 px tall) sets the byline beside the title — the rule, since jsdom has no media queries', () => {
+    render(<EditorShell title="Sprint review" meta="Saved as v13"><p>slide canvas</p></EditorShell>);
+    const byline = screen.getByTestId('editor-shell-byline');
+    expect(byline.className).toContain('[@media(max-height:640px)]:flex-nowrap');
+    expect(byline.parentElement!.className).toContain('[@media(max-height:640px)]:flex-row');
+  });
+
   it('draws crumbs, title, byline and head actions around the surface', () => {
     render(
       <EditorShell
