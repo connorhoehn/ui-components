@@ -1974,6 +1974,19 @@
   --color-neutral-bg: rgba(205, 214, 244, 0.12);
   --color-neutral-fg: #cdd6f4;
   --color-neutral-border: rgba(205, 214, 244, 0.2);
+
+  /* The ink itself, not only the tokens (2.377.0). Whatever inherits its
+     colour inside — the typed text (`.chat-composer .ProseMirror` inherits),
+     its caret, a bare span — used to take the PAGE's ink, which on a light
+     app is near-black on this near-black surface. */
+  color: var(--color-text-primary);
+  caret-color: var(--color-text-primary);
+}
+/* A selection on the console: a light wash, not the host's paper hover. Two
+   classes plus an element beat the host's `.ProseMirror ::selection`. */
+.uic-chat-console .ProseMirror ::selection {
+  background: var(--color-surface-emphasis);
+  color: inherit;
 }
 
 /* The same glass on the GRAPHITE sky: white alphas and neutral ink instead of
@@ -1991,8 +2004,11 @@
 
   --color-text-primary: #ededef;
   --color-text-secondary: #cfd0d4;
-  --color-text-tertiary: #b8babf;
-  --color-text-disabled: #85878d;
+  /* Tertiary and disabled lifted in 2.377.0: measured against the lightest
+     graphite stop under the inset glass they were 4.2:1 and 2.8:1
+     (consoleContrast.test.ts holds them at 4.5 and 3). */
+  --color-text-tertiary: #c4c6cb;
+  --color-text-disabled: #9ea0a7;
 
   --color-neutral-bg: rgba(255, 255, 255, 0.1);
   --color-neutral-fg: #ededef;

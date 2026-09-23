@@ -4247,7 +4247,7 @@ export declare interface ComposerReference {
     title?: string;
 }
 
-export declare function ComposerReferences({ references, onRemove, removeLabel, className, 'data-testid': testId, }: ComposerReferencesProps): JSX.Element | null;
+export declare function ComposerReferences({ references, onRemove, removeLabel, className, size, 'data-testid': testId, }: ComposerReferencesProps): JSX.Element | null;
 
 export declare interface ComposerReferencesProps {
     references: readonly ComposerReference[];
@@ -4256,6 +4256,8 @@ export declare interface ComposerReferencesProps {
     /** Accessible name for a chip's remove button. */
     removeLabel?: (reference: ComposerReference) => string;
     className?: string;
+    /** Chip type. `xs` (default) is the 11px chip of a chat composer; `sm` is the 12px chip of a docked editor card (2.377.0). */
+    size?: 'xs' | 'sm';
     'data-testid'?: string;
 }
 
@@ -19082,9 +19084,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -19092,9 +19094,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.378.0] — 2026-09-23
+
+### Fixed
+
+- **The activity grid is not a white box in dark mode.** `ACTIVITY_RIPPLE_GRID` is a `lightMode`
+  preset, and that shader branch paints an opaque white ground — on a dark page the canvas was a
+  white rectangle with a grid in it. `WorkActivityCanvas` now resolves the theme it is inside
+  (`useResolvedBackdropTone`: `data-theme` up the tree, else the system preference) and wears the
+  new `ACTIVITY_RIPPLE_GRID_DARK` under `dark`: the additive branch, dim grey lines on a transparent
+  ground, same cells, ripple and edge fade. The canvas reports which with `data-backdrop-ink`.
+
 ## [2.377.0] — 2026-09-23
 
 ### Fixed
@@ -22,6 +33,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   at `devicePixelRatio`, and re-measuring through a ResizeObserver while the loop is parked;
   `drawnParticles` (area-bounded particle count) is now tested too. Story
   `Backgrounds/ActivityGridFillsItsSection` shows wide, tall and the old oval side by side.
+
+## [2.377.0] — 2026-09-23
+
+### Changed
+
+- **The docked composer is a card, not a row.** `FloatingComposerDock` pinned keeps the column's
+  gutter below the composer too (`pb-[var(--dock-inset,1rem)]`) and the composer keeps its own
+  radius on all four corners: a flat card with a hairline border, no shadow, edges on the toolbar's
+  and the status bar's, a visible margin above the window's bottom. (2.376.0 squared the bottom
+  corners and ran the row to the edge; the row's bottom was clipped and its type was mixed.)
+- **`RichChatComposer modeControl="menu"`.** The mode as one dropdown (`✦ Agent ▾`) with the current
+  `⌥n` chip beside it and the other modes, their shortcuts and any reason they are off inside the
+  menu; the draft's references sit at the row's END (a document chip on the right); hints stay in
+  the `?` menu; a host with slash commands gets a muted `/ commands` where the toolbar ends
+  (`…-commands-hint`); the mode label, the submit lead, the Send button (`Run agent →`) and the
+  reference chip use the editor's type (14px / 12px chip) instead of the chat column's 12px / 11px.
+  `ComposerReferences size="sm"` is the 12px chip.
+- **The console paints its own ink.** `.uic-chat-console` now sets `color` and `caret-color` from
+  its own `--color-text-primary`, and a selection inside it is the console wash. The typed text
+  (`.chat-composer .ProseMirror` inherits its colour), its caret and any bare span used to take the
+  PAGE's ink — near-black on the near-black sky of a light app. Graphite tertiary and disabled ink
+  lifted to `#c4c6cb` / `#9ea0a7` (were 4.2:1 and 2.8:1 under the inset glass);
+  `consoleContrast.test.ts` holds every console text token at ≥ 4.5:1 (disabled ≥ 3:1) against both
+  ends of each sky, bare and under the inset glass.
 
 ## [2.376.0] — 2026-09-23
 

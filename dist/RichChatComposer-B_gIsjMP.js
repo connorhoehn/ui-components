@@ -8,7 +8,7 @@ import { n as h, t as g } from "./ParticlesBackground-DdcUDMy0.js";
 import { a as _, i as v, n as y } from "./backdropTone-CS87_g8W.js";
 import { i as b, n as x, r as S } from "./ReactionPickerPopover-CcL-n6gt.js";
 import { n as C, o as w, r as ee, t as te } from "./composerCommands-C-eXrw_h.js";
-import { t as ne } from "./ComposerReferences-BDud81lg.js";
+import { t as ne } from "./ComposerReferences-BU2dMFw_.js";
 import { Fragment as re, forwardRef as T, useCallback as ie, useEffect as E, useImperativeHandle as ae, useLayoutEffect as oe, useMemo as se, useRef as D, useState as O } from "react";
 import { Fragment as ce, jsx as k, jsxs as A } from "react/jsx-runtime";
 import { EditorContent as le, ReactRenderer as ue, useEditor as de } from "@tiptap/react";
@@ -2814,7 +2814,7 @@ var ha = T(function({ onSend: o, draft: p, onDraftChange: re, onCommand: T, onSe
 		let t = e.getBoundingClientRect().width;
 		t > 0 && t !== fn && pn(t), gn && yn.current === null && typeof document < "u" && (!document.activeElement || document.activeElement === document.body) && (q(!1), vn(!1));
 	});
-	let Sn = Ye === "auto" ? Ki(fn) : Ye, Cn = Sn === "wide", wn = Sn === "narrow", Tn = Xe === "compact", En = Et && !Pe && (Ve === "compact" || Ve === "menu" || wn), Dn = En && Ve === "menu" && !wn, On = En && (Tn || Dn), kn = Cn && !Tn, An = !!Ze?.length && !!Qe, jn = An && Cn && Ct && gn && !(et && !_n), Mn = An && !Cn, J = et && !_n && Ct && !I && !je?.length && !pt.length && !W && !xt && !jt && !B && !lt.open && !(Te && we === "hidden"), Nn = et && "motion-safe:[animation:composerReveal_140ms_ease-out]", [Pn, Fn] = O(!1), In = wn && !Pn || J, Ln = Cn, Rn = Cn, Y = _(hn, F, Dt), Bn = v(), X = Dt && Y !== "none" && !(J && !Bn?.painting), Vn = X && !!Bn?.painting, Hn = X && !Vn, Z = qe ?? Bn?.working ?? !1, Un = {};
+	let Sn = Ye === "auto" ? Ki(fn) : Ye, Cn = Sn === "wide", wn = Sn === "narrow", Tn = Xe === "compact", En = Et && !Pe && (Ve === "compact" || Ve === "menu" || wn), Dn = En && Ve === "menu" && !wn, On = En && (Tn || Dn), kn = Cn && !Tn && Ve !== "menu", An = !!Ze?.length && !!Qe, jn = An && Cn && Ct && gn && !(et && !_n), Mn = An && !Cn, J = et && !_n && Ct && !I && !je?.length && !pt.length && !W && !xt && !jt && !B && !lt.open && !(Te && we === "hidden"), Nn = et && "motion-safe:[animation:composerReveal_140ms_ease-out]", [Pn, Fn] = O(!1), In = wn && !Pn || J, Ln = Cn, Rn = Cn, Y = _(hn, F, Dt), Bn = v(), X = Dt && Y !== "none" && !(J && !Bn?.painting), Vn = X && !!Bn?.painting, Hn = X && !Vn, Z = qe ?? Bn?.working ?? !1, Un = {};
 	Ke && (Un["--composer-radius"] = qi[Ke]), Je !== void 0 && (Un["--composer-input-max"] = typeof Je == "number" ? `${Je}px` : Je);
 	let Wn = Z ? 30 : 22, Q = (t, n, r, i, a, o) => /* @__PURE__ */ k("button", {
 		ref: a,
@@ -2987,7 +2987,7 @@ var ha = T(function({ onSend: o, draft: p, onDraftChange: re, onCommand: T, onSe
 					children: [
 						Dn ? /* @__PURE__ */ k(u, {
 							trigger: /* @__PURE__ */ A("span", {
-								className: "flex items-center gap-1 text-xs font-semibold text-text-primary",
+								className: "flex items-center gap-1.5 text-sm font-semibold text-text-primary",
 								"data-testid": `${L}-mode-label`,
 								children: [
 									/* @__PURE__ */ k("span", {
@@ -2998,7 +2998,7 @@ var ha = T(function({ onSend: o, draft: p, onDraftChange: re, onCommand: T, onSe
 									Xi[z],
 									/* @__PURE__ */ k("span", {
 										"aria-hidden": "true",
-										className: "text-[10px] leading-none text-text-tertiary",
+										className: "text-[11px] leading-none text-text-tertiary",
 										children: "▾"
 									})
 								]
@@ -3055,7 +3055,7 @@ var ha = T(function({ onSend: o, draft: p, onDraftChange: re, onCommand: T, onSe
 							})
 						}),
 						He && !wn && /* @__PURE__ */ A("kbd", {
-							className: "rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary",
+							className: e("rounded border border-border bg-surface-inset px-1 font-mono text-text-secondary", Dn ? "py-0.5 text-[11px]" : "text-[10px]"),
 							"data-testid": `${L}-mode-kbd`,
 							children: ["⌥", Yi.indexOf(z) + 1]
 						}),
@@ -3064,6 +3064,7 @@ var ha = T(function({ onSend: o, draft: p, onDraftChange: re, onCommand: T, onSe
 							...ke ? { onRemove: ke } : {},
 							removeLabel: (e) => `Remove ${e.label} from this draft`,
 							className: e("min-w-0 flex-nowrap p-0", Dn && "ml-auto justify-end"),
+							...Dn ? { size: "sm" } : {},
 							"data-testid": `${L}-references`
 						}),
 						$e != null && /* @__PURE__ */ k("span", {
@@ -3355,7 +3356,7 @@ var ha = T(function({ onSend: o, draft: p, onDraftChange: re, onCommand: T, onSe
 									}] : []]
 								}) : null,
 								N != null && !J && /* @__PURE__ */ k("span", {
-									className: "ml-auto flex shrink-0 items-center pr-1.5 text-xs text-text-secondary",
+									className: e("ml-auto flex shrink-0 items-center pr-1.5 text-text-secondary", Dn ? "text-sm" : "text-xs"),
 									"data-testid": `${L}-submit-lead`,
 									children: N
 								}),
@@ -3384,13 +3385,17 @@ var ha = T(function({ onSend: o, draft: p, onDraftChange: re, onCommand: T, onSe
 											onSelect: () => ze(e.id)
 										})) }]
 									})]
-								}) : /* @__PURE__ */ k("button", {
+								}) : /* @__PURE__ */ A("button", {
 									type: "button",
 									onClick: B ? nn : dn,
 									disabled: !sn,
 									"data-testid": `${L}-send`,
-									className: N == null || J ? "ml-auto shrink-0 rounded bg-primary px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-40" : "shrink-0 rounded bg-primary px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-40",
-									children: on
+									className: e((N == null || J) && "ml-auto", "shrink-0 rounded bg-primary font-semibold text-white disabled:opacity-40", Dn ? "rounded-md px-3 py-1.5 text-sm" : "px-2.5 py-1 text-xs"),
+									children: [on, Dn && /* @__PURE__ */ k("span", {
+										"aria-hidden": "true",
+										className: "ml-1.5",
+										children: "→"
+									})]
 								})
 							]
 						})

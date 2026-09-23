@@ -18,17 +18,18 @@
 // scroller can read it (`pb-[var(--dock-height,0px)]`). Removed on unmount so
 // a surface without a dock pads nothing.
 //
-// ## Docked shape (2.376.0)
+// ## Docked shape (2.376.0, card 2.377.0)
 //
-// A PINNED dock is part of the editor column, not a card dropped onto it. It
+// A PINNED dock is part of the editor column, not a frame dropped onto it. It
 // spans the column's content width — the same gutter the toolbar and the
 // status bar sit in, `--dock-inset` (default 1rem, the `p-4` most hosts wrap
-// their canvas in) — with no cap, no centering, no shadow, and no padding
-// below the composer: the composer's bottom edge IS the column's bottom edge,
-// so only its top corners are rounded (`--composer-radius` still sets how
-// much). A 768px pill centred in a 1300px column, floating on a drop shadow
-// with grey under it, read as an embedded frame; this reads as the editor's
-// own chrome. `maxWidth` applies to the OVERLAY placement only.
+// their canvas in) — with no cap and no centring, and it keeps that same
+// gutter below the composer. The composer is a flat card on the surface: a
+// hairline border, the composer's own radius (`--composer-radius`) on all
+// four corners, no drop shadow (`--composer-shadow` zeroed). A 768px pill
+// centred in a 1300px column, floating on a shadow with grey under it, read
+// as an embedded iframe; this reads as the editor's own chrome, on light and
+// dark themes alike. `maxWidth` applies to the OVERLAY placement only.
 
 import { createContext, useContext, useLayoutEffect, useRef, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
@@ -130,10 +131,10 @@ export function FloatingComposerDock({
             // dock carries (a notice, a strip, a tall draft) the canvas keeps
             // the rest. The dock fills the row; what is above the composer
             // scrolls inside it; the composer itself never shrinks.
-            // Sideways it sits in the column's gutter (`--dock-inset`) and
-            // nothing else: no top padding (the gutter above is the host's),
-            // none below (the composer ends where the column does).
-            'relative flex max-h-full min-h-0 w-full min-w-0 shrink flex-col bg-workspace px-[var(--dock-inset,1rem)]'
+            // Sideways and below it sits in the column's gutter
+            // (`--dock-inset`); no top padding — the gutter above is the
+            // host's own, between its status bar and this.
+            'relative flex max-h-full min-h-0 w-full min-w-0 shrink flex-col bg-workspace px-[var(--dock-inset,1rem)] pb-[var(--dock-inset,1rem)]'
           : // `pointer-events-none` on the fade, `auto` on the dock itself: the
             // gradient must not swallow clicks on the page line it is fading.
             'pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-workspace via-workspace/85 to-transparent px-4 pb-3 pt-8',
@@ -152,15 +153,13 @@ export function FloatingComposerDock({
         {strip && <div className="shrink-0" data-testid={`${testId}-strip`}>{strip}</div>}
         {/* With a strip on top the two read as one box: the composer's top
             corners square off to meet the strip's bottom edge. Pinned, the
-            bottom corners square off too — the composer is docked to the
-            column's edge — and its shadow goes: a shadow is what made it look
-            like a card on the page. `--composer-radius` still shapes the top. */}
+            composer keeps its own radius and hairline and loses its shadow —
+            a shadow is what made it float off the page instead of sitting on
+            it. */}
         <div
           className={cn(
             'shrink-0 rounded-[var(--composer-radius,12px)]',
-            placement === 'pinned'
-              ? 'rounded-b-none [--composer-shadow:0_0_#0000] [&_.chat-composer]:rounded-b-none'
-              : 'shadow-lg',
+            placement === 'pinned' ? '[--composer-shadow:0_0_#0000]' : 'shadow-lg',
             strip && 'rounded-t-none [&_.chat-composer]:rounded-t-none',
           )}
           data-testid={`${testId}-composer`}

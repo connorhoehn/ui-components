@@ -42,7 +42,7 @@ describe('RichChatComposer is unchanged for a host that adopts nothing', () => {
     // the same classes — a split Send would move it.
     expect(screen.getByTestId('composer-send')).toHaveAttribute(
       'class',
-      'ml-auto shrink-0 rounded bg-primary px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-40',
+      'ml-auto shrink-0 rounded bg-primary font-semibold text-white disabled:opacity-40 px-2.5 py-1 text-xs',
     );
   });
 

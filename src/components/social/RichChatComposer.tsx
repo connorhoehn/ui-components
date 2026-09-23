@@ -396,8 +396,12 @@ export interface RichChatComposerProps {
    * `Chat | Agent | Terminal` row every existing host has. `'compact'` is the
    * mode's name, three small numbered buttons (`1 2 3`) and the current
    * mode's `⌥n` — one short row, for a composer floating over a page.
+   * `'menu'` (2.377.0) is the mode's glyph and name as ONE dropdown (`Agent ▾`)
+   * with the current `⌥n` beside it and the other modes, their shortcuts and
+   * any reason they are off inside the menu; the draft's references sit at
+   * the row's end — the shape of an editor's docked composer.
    */
-  modeControl?: 'tabs' | 'compact';
+  modeControl?: 'tabs' | 'compact' | 'menu';
   /**
    * Option-1 / Option-2 / Option-3 (Alt on other platforms) switch to Chat /
    * Agent / Terminal while focus is anywhere inside the composer. Bound on
@@ -1655,9 +1659,16 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const wide = size === 'wide';
   const narrow = size === 'narrow';
   const compact = density === 'compact';
-  const compactModeRow = modesEnabled && !fixedMode && (modeControl === 'compact' || narrow);
+  const compactModeRow = modesEnabled && !fixedMode && (modeControl === 'compact' || modeControl === 'menu' || narrow);
+  // `menu` puts the mode in a dropdown and the draft's references at the
+  // row's END (a document chip on the right, the way an editor's dock reads);
+  // otherwise references ride the compact row only at compact density.
+  const menuModeRow = compactModeRow && modeControl === 'menu' && !narrow;
+  const referencesInModeRow = compactModeRow && (compact || menuModeRow);
   // Compact folds the hints row into `?` at every width.
-  const hintsInRow = wide && !compact;
+  // The docked card (`menu`) keeps its hints in the `?` menu: the row of
+  // Enter/`>`/⌥n chips under the input is chat-column furniture.
+  const hintsInRow = wide && !compact && !(modeControl === 'menu');
   const hasSuggestions = !!suggestions?.length && !!onSuggestion;
   // Never on the one-row idle composer: the chips there would sit where the
   // next click lands (a chip click STARTS a run) and grow the idle dock.
@@ -1910,7 +1921,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         )}
         {/* Above the words, because a reference is part of what is about to
             be said rather than a control for saying it. */}
-        {!(compact && compactModeRow) && !collapsed && <ComposerReferences
+        {!referencesInModeRow && !collapsed && <ComposerReferences
           references={references ?? []}
           {...(onRemoveReference ? { onRemove: onRemoveReference } : {})}
           removeLabel={(reference) => `Remove ${reference.label} from this draft`}
@@ -1975,11 +1986,46 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         {/* Narrow always takes the compact pill: three segmented tabs with
             labels do not fit beside anything at that width. */}
         {compactModeRow && !collapsed && (
-          <div className={cn('flex min-w-0 items-center gap-1.5 px-2 pt-1 text-xs', compact && 'flex-wrap', reveal)} data-testid={`${testId}-modes`} data-mode-control="compact">
+          <div className={cn('flex min-w-0 items-center gap-1.5 px-2 pt-1 text-xs', compact && 'flex-wrap', reveal)} data-testid={`${testId}-modes`} data-mode-control={menuModeRow ? 'menu' : 'compact'}>
+            {menuModeRow ? (
+              // One control: the mode's glyph and name, a ▾, the other modes
+              // in a menu with their shortcuts and, when off, the reason.
+              <DropdownMenu
+                trigger={(
+                  <span className="flex items-center gap-1.5 text-sm font-semibold text-text-primary" data-testid={`${testId}-mode-label`}>
+                    <span aria-hidden="true" className="flex w-4 justify-center text-primary">{MODE_ICON[activeMode]}</span>
+                    {MODE_NAMES[activeMode]}
+                    <span aria-hidden="true" className="text-[11px] leading-none text-text-tertiary">▾</span>
+                  </span>
+                )}
+                triggerLabel={`Composer mode: ${MODE_NAMES[activeMode]}`}
+                triggerTitle="Composer mode"
+                triggerTestId={`${testId}-mode-menu`}
+                data-testid={`${testId}-mode-menu-list`}
+                align="start"
+                triggerClassName="rounded-md border-0 bg-transparent px-1.5 py-0.5 hover:bg-surface-hover"
+                sections={[{
+                  items: COMPOSER_MODE_ORDER.map((m, i) => {
+                    const unavailable = isModeDisabled(m);
+                    const reason = unavailable ? modeUnavailableReasons?.[m] : undefined;
+                    return {
+                      label: MODE_NAMES[m],
+                      icon: MODE_ICON[m],
+                      active: m === activeMode,
+                      ...(reason ? { description: reason } : {}),
+                      ...(modeShortcuts ? { trailing: <kbd className="rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary">⌥{i + 1}</kbd> } : {}),
+                      onSelect: () => { requestMode(m); },
+                    };
+                  }),
+                }]}
+              />
+            ) : (
             <span className="flex items-center gap-1 font-semibold text-text-primary" data-testid={`${testId}-mode-label`}>
               <span aria-hidden="true" className="flex w-4 justify-center text-text-secondary">{MODE_ICON[activeMode]}</span>
               {MODE_NAMES[activeMode]}
             </span>
+            )}
+            {!menuModeRow && (
             <span role="group" aria-label="Composer mode" className="flex items-center gap-0.5">
               {COMPOSER_MODE_ORDER.map((m, i) => {
                 const unavailable = isModeDisabled(m);
@@ -2006,24 +2052,26 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 );
               })}
             </span>
+            )}
             {modeShortcuts && !narrow && (
-              <kbd className="rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary" data-testid={`${testId}-mode-kbd`}>
+              <kbd className={cn('rounded border border-border bg-surface-inset px-1 font-mono text-text-secondary', menuModeRow ? 'py-0.5 text-[11px]' : 'text-[10px]')} data-testid={`${testId}-mode-kbd`}>
                 ⌥{COMPOSER_MODE_ORDER.indexOf(activeMode) + 1}
               </kbd>
             )}
-            {compact && !!references?.length && (
+            {referencesInModeRow && !!references?.length && (
               <ComposerReferences
                 references={references}
                 {...(onRemoveReference ? { onRemove: onRemoveReference } : {})}
                 removeLabel={(reference) => `Remove ${reference.label} from this draft`}
-                className="min-w-0 flex-nowrap p-0"
+                className={cn('min-w-0 flex-nowrap p-0', menuModeRow && 'ml-auto justify-end')}
+                {...(menuModeRow ? { size: 'sm' as const } : {})}
                 data-testid={`${testId}-references`}
               />
             )}
-            {modeRowEnd != null && <span className="ml-auto flex shrink-0 items-center" data-testid={`${testId}-mode-row-end`}>{modeRowEnd}</span>}
+            {modeRowEnd != null && <span className={cn('flex shrink-0 items-center', menuModeRow && references?.length ? 'ml-2' : 'ml-auto')} data-testid={`${testId}-mode-row-end`}>{modeRowEnd}</span>}
           </div>
         )}
-        {modesEnabled && !fixedMode && modeControl !== 'compact' && !narrow && !collapsed && (
+        {modesEnabled && !fixedMode && !compactModeRow && !collapsed && (
           <div className={cn('flex items-center gap-2 px-2 pt-1.5', reveal)} data-testid={`${testId}-modes`}>
             {/* Lit while it is not on Chat: the control that changed what Enter
                 does should be the one thing on the surface that glows. */}
@@ -2296,6 +2344,13 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           </RovingToolbar>
           )}
 
+          {/* A host with slash commands says so where the toolbar ends: a
+              muted `/ commands`, the way a code editor's status line names
+              its palette. Wide only — narrow has no room and the `?` menu. */}
+          {!collapsed && wide && !!commands?.length && (
+            <span className="ml-1 shrink-0 select-none border-l border-border pl-2 text-xs text-text-tertiary" data-testid={`${testId}-commands-hint`}>/ commands</span>
+          )}
+
           {!collapsed && ((!hintsInRow && !!resolvedHints.length) || suggestionsInMenu) ? (
             <DropdownMenu
               trigger={<span aria-hidden="true" className="text-xs font-semibold leading-none">?</span>}
@@ -2323,7 +2378,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           ) : null}
 
           {submitLead != null && !collapsed && (
-            <span className="ml-auto flex shrink-0 items-center pr-1.5 text-xs text-text-secondary" data-testid={`${testId}-submit-lead`}>
+            <span className={cn('ml-auto flex shrink-0 items-center pr-1.5 text-text-secondary', menuModeRow ? 'text-sm' : 'text-xs')} data-testid={`${testId}-submit-lead`}>
               {submitLead}
             </span>
           )}
@@ -2357,11 +2412,16 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               onClick={terminalMode ? submitShell : send}
               disabled={!canSend}
               data-testid={`${testId}-send`}
-              className={submitLead == null || collapsed
-                ? 'ml-auto shrink-0 rounded bg-primary px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-40'
-                : 'shrink-0 rounded bg-primary px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-40'}
+              className={cn(
+                (submitLead == null || collapsed) && 'ml-auto',
+                'shrink-0 rounded bg-primary font-semibold text-white disabled:opacity-40',
+                // The docked card's button is the editor's size, with the arrow
+                // the mockup gives it; a chat column's stays small.
+                menuModeRow ? 'rounded-md px-3 py-1.5 text-sm' : 'px-2.5 py-1 text-xs',
+              )}
             >
               {sendLabel}
+              {menuModeRow && <span aria-hidden="true" className="ml-1.5">→</span>}
             </button>
           )}
         </div>

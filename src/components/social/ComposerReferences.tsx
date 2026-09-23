@@ -42,6 +42,8 @@ export interface ComposerReferencesProps {
   /** Accessible name for a chip's remove button. */
   removeLabel?: (reference: ComposerReference) => string;
   className?: string;
+  /** Chip type. `xs` (default) is the 11px chip of a chat composer; `sm` is the 12px chip of a docked editor card (2.377.0). */
+  size?: 'xs' | 'sm';
   'data-testid'?: string;
 }
 
@@ -52,6 +54,7 @@ export function ComposerReferences({
   onRemove,
   removeLabel = defaultRemoveLabel,
   className,
+  size = 'xs',
   'data-testid': testId = 'composer-references',
 }: ComposerReferencesProps) {
   // An empty row is not an empty row — it is no row. Rendering the container
@@ -68,7 +71,7 @@ export function ComposerReferences({
           data-testid={`${testId}-item`}
           data-reference-id={reference.id}
           title={reference.title ?? reference.label}
-          className="inline-flex min-w-0 max-w-full items-center gap-1 rounded-full border border-border bg-surface py-0.5 pl-2 pr-1 text-[11px] text-text-primary"
+          className={cn('inline-flex min-w-0 max-w-full items-center gap-1 rounded-full border border-border bg-surface pl-2 pr-1 text-text-primary', size === 'sm' ? 'py-1 text-xs' : 'py-0.5 text-[11px]')}
         >
           {/* A thing's own icon is data and is rendered as given; the fallback
               glyph means "none chosen" and takes the colour of the text. */}

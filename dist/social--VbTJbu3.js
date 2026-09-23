@@ -29,7 +29,7 @@ import { L as ue, N as de, Q as fe, R as pe, X as me, nt as he } from "./Convers
 import { t as ge } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as _e, t as ve } from "./ReactionPickerPopover-CcL-n6gt.js";
 import { n as ye, t as be } from "./composerCommands-C-eXrw_h.js";
-import "./ComposerReferences-BDud81lg.js";
+import "./ComposerReferences-BU2dMFw_.js";
 import { c as xe, n as Se } from "./useComputeProjects-i0rI20XE.js";
 import "./ChatSidePanelRegistry-Cbw1Ssop.js";
 import { Suspense as Ce, createContext as we, lazy as Te, useCallback as K, useContext as Ee, useEffect as q, useId as De, useMemo as J, useRef as Y, useState as X } from "react";
