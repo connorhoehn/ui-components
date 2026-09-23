@@ -1052,7 +1052,7 @@ function ke({ composer: e, strip: t, above: n, maxWidth: i = "3xl", label: a = "
 		"aria-label": a,
 		"data-testid": s,
 		"data-placement": l,
-		className: r(l === "pinned" ? "relative flex max-h-full min-h-0 w-full min-w-0 shrink flex-col bg-workspace px-[var(--dock-inset,1rem)]" : "pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-workspace via-workspace/85 to-transparent px-4 pb-3 pt-8", o),
+		className: r(l === "pinned" ? "relative flex max-h-full min-h-0 w-full min-w-0 shrink flex-col bg-workspace px-[var(--dock-inset,1rem)] pb-[var(--dock-inset,1rem)]" : "pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-workspace via-workspace/85 to-transparent px-4 pb-3 pt-8", o),
 		children: /* @__PURE__ */ W("div", {
 			"data-uic-keepout": "bottom",
 			className: r("pointer-events-auto flex min-h-0 w-full min-w-0 flex-col", l === "pinned" ? "max-w-none" : ["mx-auto", De[i]]),
@@ -1068,7 +1068,7 @@ function ke({ composer: e, strip: t, above: n, maxWidth: i = "3xl", label: a = "
 					children: t
 				}),
 				/* @__PURE__ */ U("div", {
-					className: r("shrink-0 rounded-[var(--composer-radius,12px)]", l === "pinned" ? "rounded-b-none [--composer-shadow:0_0_#0000] [&_.chat-composer]:rounded-b-none" : "shadow-lg", t && "rounded-t-none [&_.chat-composer]:rounded-t-none"),
+					className: r("shrink-0 rounded-[var(--composer-radius,12px)]", l === "pinned" ? "[--composer-shadow:0_0_#0000]" : "shadow-lg", t && "rounded-t-none [&_.chat-composer]:rounded-t-none"),
 					"data-testid": `${s}-composer`,
 					children: e
 				})
@@ -1414,7 +1414,7 @@ function it(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
-var at = F(() => import("./SortableSlideList-Do8L3hwX.js"));
+var at = F(() => import("./SortableSlideList-KLKFjzri.js"));
 function ot(e, t) {
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }
@@ -2441,7 +2441,7 @@ function Dt({ testIdPrefix: e }) {
 		children: "The agent box needs the rich-text composer (the optional @tiptap peers). Edit the slide by hand below."
 	});
 }
-var Ot = F(() => import("./PresentationAgentComposer-DCCAW4NV.js").catch(() => ({ default: Dt })));
+var Ot = F(() => import("./PresentationAgentComposer-qT-W0cyr.js").catch(() => ({ default: Dt })));
 function kt({ back: e }) {
 	return /* @__PURE__ */ U("svg", {
 		viewBox: "0 0 16 16",

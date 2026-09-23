@@ -124,7 +124,145 @@ describe('RippleGridBackground', () => {
       gridSize: 14,
       opacity: 0.8,
       vignetteStrength: 1.2,
+      // Low on purpose: the grid is the section's surface and must reach its
+      // sides. At ReactBits' full fade a 3:2 panel showed an oval in the middle.
+      edgeFade: 0.35,
       mouseInteraction: true,
+    });
+  });
+
+  it('measures the fade against the section, and lets edgeFade turn it down', () => {
+    webgl = installWebGLStub();
+    render(<RippleGridBackground edgeFade={0.35} />);
+    advanceFrames(1);
+
+    const { shaders, uniforms } = latest();
+    const fragment = shaders[1]!.source;
+    // Both the fade and the vignette read the SECTION-relative distance (0 at
+    // the centre, 1 at the corners) — not ReactBits' short-axis radius, which
+    // is what left the grid as a centred oval on any non-square box.
+    expect(fragment).toContain('float sectionDist = length(vUv * 2.0 - 1.0) / 1.41421356');
+    expect(fragment).toContain('pow(sectionDist, fadeDistance)');
+    expect(fragment).toContain('pow(sectionDist, vignetteStrength)');
+    expect(fragment).not.toContain('pow(dist, fadeDistance)');
+    expect(fragment).toContain('mix(1.0, ddd * vignette, edgeFade)');
+    expect(uniforms.edgeFade).toBe(0.35);
+  });
+
+  it('defaults edgeFade to the full fade and clamps it to 0..1', () => {
+    webgl = installWebGLStub();
+    const { rerender } = render(<RippleGridBackground />);
+    advanceFrames(1);
+    expect(latest().uniforms.edgeFade).toBe(1);
+
+    rerender(<RippleGridBackground edgeFade={4} />);
+    advanceFrames(1);
+    expect(latest().uniforms.edgeFade).toBe(1);
+
+    rerender(<RippleGridBackground edgeFade={-1} />);
+    advanceFrames(1);
+    expect(latest().uniforms.edgeFade).toBe(0);
+  });
+
+  describe('filling its section', () => {
+    // jsdom lays nothing out, so the host's box is whatever the test says it
+    // is. The hook reads clientWidth/clientHeight of the host, exactly as it
+    // would in a browser.
+    const sizeHost = (host: HTMLElement, width: number, height: number) => {
+      Object.defineProperty(host, 'clientWidth', { configurable: true, value: width });
+      Object.defineProperty(host, 'clientHeight', { configurable: true, value: height });
+    };
+
+    let observers: Array<{ target: Element | null; callback: ResizeObserverCallback }> = [];
+    let originalResizeObserver: typeof ResizeObserver | undefined;
+    let originalDpr: number;
+
+    beforeEach(() => {
+      observers = [];
+      originalResizeObserver = globalThis.ResizeObserver;
+      originalDpr = window.devicePixelRatio;
+      class ResizeObserverMock {
+        private entry: { target: Element | null; callback: ResizeObserverCallback };
+        constructor(callback: ResizeObserverCallback) {
+          this.entry = { target: null, callback };
+          observers.push(this.entry);
+        }
+        observe(target: Element) { this.entry.target = target; }
+        unobserve() {}
+        disconnect() { this.entry.target = null; }
+      }
+      (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver = ResizeObserverMock;
+    });
+
+    afterEach(() => {
+      (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver = originalResizeObserver;
+      Object.defineProperty(window, 'devicePixelRatio', { configurable: true, value: originalDpr });
+    });
+
+    const fireResize = () =>
+      act(() => {
+        for (const { target, callback } of observers) {
+          if (target) callback([], {} as ResizeObserver);
+        }
+      });
+
+    it('sits absolutely inside a relative section and backs the canvas at devicePixelRatio', () => {
+      webgl = installWebGLStub();
+      Object.defineProperty(window, 'devicePixelRatio', { configurable: true, value: 2 });
+      render(
+        <div className="relative isolate">
+          <RippleGridBackground className="absolute inset-0 -z-10" data-testid="grid" />
+        </div>,
+      );
+      const host = screen.getByTestId('grid');
+      const canvas = screen.getByTestId('grid-canvas') as HTMLCanvasElement;
+      // The canvas is the host's whole box, and the host is the section's.
+      expect(host.className).toContain('absolute inset-0');
+      expect(canvas.className).toContain('h-full w-full');
+
+      sizeHost(host, 852, 509);
+      advanceFrames(1);
+      // Backing store is the CSS box × DPR (852×509 at 2× → 1704×1018), and
+      // the shader is told that size, so the grid's cells stay square.
+      expect([canvas.width, canvas.height]).toEqual([1704, 1018]);
+      expect(latest().uniforms.iResolution).toEqual([1704, 1018]);
+      expect(observers.some((o) => o.target === host)).toBe(true);
+    });
+
+    it('follows the section when it is resized', () => {
+      webgl = installWebGLStub();
+      Object.defineProperty(window, 'devicePixelRatio', { configurable: true, value: 1 });
+      render(<RippleGridBackground data-testid="grid" />);
+      const host = screen.getByTestId('grid');
+      const canvas = screen.getByTestId('grid-canvas') as HTMLCanvasElement;
+
+      sizeHost(host, 1600, 900);
+      advanceFrames(1);
+      expect([canvas.width, canvas.height]).toEqual([1600, 900]);
+
+      // The window shrinks; the loop's next frame re-measures.
+      sizeHost(host, 1280, 720);
+      advanceFrames(1);
+      expect([canvas.width, canvas.height]).toEqual([1280, 720]);
+    });
+
+    it('re-measures on ResizeObserver even while the loop is parked', () => {
+      setReducedMotion(true);
+      webgl = installWebGLStub();
+      Object.defineProperty(window, 'devicePixelRatio', { configurable: true, value: 1 });
+      render(<RippleGridBackground data-testid="grid" />);
+      const host = screen.getByTestId('grid');
+      const canvas = screen.getByTestId('grid-canvas') as HTMLCanvasElement;
+      sizeHost(host, 1600, 900);
+      fireResize();
+      expect([canvas.width, canvas.height]).toEqual([1600, 900]);
+
+      // No animation frame is ever requested under reduced motion, so the
+      // observer is the only thing that can catch the new size — and it does.
+      sizeHost(host, 1280, 720);
+      fireResize();
+      expect([canvas.width, canvas.height]).toEqual([1280, 720]);
+      expect(latest().uniforms.iResolution).toEqual([1280, 720]);
     });
   });
 });

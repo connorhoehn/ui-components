@@ -30,6 +30,12 @@ export declare const activeNavItemStyle: CSSProperties;
  * The preset the work-activity canvas wears: grey lines on the near-white
  * surface the nodes already sit on, rippling slowly, never competing with them.
  * Exported so a host can match it on a surface of its own.
+ *
+ * `edgeFade` is low because this grid is the SURFACE of the section, not a
+ * picture in it: it has to reach the sides of a panel that is usually much
+ * wider than it is tall. What is left is a soft dimming toward the corners
+ * (about a third of the way to white), enough that the box still has a
+ * centre without the grid ending before the box does.
  */
 export declare const ACTIVITY_RIPPLE_GRID: RippleGridBackgroundProps;
 
@@ -3263,7 +3269,7 @@ export declare interface ReviewThreadProps {
     'data-testid'?: string;
 }
 
-export declare function RippleGridBackground({ active, enableRainbow, gridColor, rippleIntensity, gridSize, gridThickness, fadeDistance, vignetteStrength, glowIntensity, opacity, gridRotation, mouseInteraction, mouseInteractionRadius, lightMode, pixelRatio, className, 'data-testid': testId, }: RippleGridBackgroundProps): JSX.Element;
+export declare function RippleGridBackground({ active, enableRainbow, gridColor, rippleIntensity, gridSize, gridThickness, fadeDistance, vignetteStrength, glowIntensity, opacity, edgeFade, gridRotation, mouseInteraction, mouseInteractionRadius, lightMode, pixelRatio, className, 'data-testid': testId, }: RippleGridBackgroundProps): JSX.Element;
 
 export declare interface RippleGridBackgroundProps {
     /** False parks the loop on a static frame without tearing the context down. */
@@ -3277,6 +3283,15 @@ export declare interface RippleGridBackgroundProps {
     vignetteStrength?: number;
     glowIntensity?: number;
     opacity?: number;
+    /**
+     * How much of the edge fade (`fadeDistance` + `vignetteStrength`) to apply,
+     * 0..1. At 1 (default, ReactBits' look) the grid fades to nothing at the
+     * section's corners; at 0 it is drawn edge to edge at full strength. The
+     * fade is measured against the SECTION — its corners are always where it
+     * ends — so a wide or tall box gets the same soft edge as a square one
+     * rather than an oval in the middle.
+     */
+    edgeFade?: number;
     /** Degrees. */
     gridRotation?: number;
     mouseInteraction?: boolean;
@@ -4989,19 +5004,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -5014,6 +5016,19 @@ declare module '@tiptap/core' {
             setLineSpacing: (spacing: LineSpacing) => ReturnType;
             /** Return the paragraphs in the selection to the paper's own leading. */
             unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -5057,12 +5072,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -5080,9 +5092,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -5090,9 +5105,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

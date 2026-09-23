@@ -1,6 +1,6 @@
 import { act, cleanup, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ParticlesBackground } from '../ParticlesBackground';
+import { ParticlesBackground, drawnParticles } from '../ParticlesBackground';
 import { installAnimationFrames, installWebGLStub, setReducedMotion, type WebGLStub } from './webglStub';
 
 let webgl: ReturnType<typeof installWebGLStub> | null = null;
@@ -168,5 +168,42 @@ describe('ParticlesBackground', () => {
     advanceFrames(1);
     expect(stub.draws.length).toBeGreaterThan(drawn);
     hidden.mockRestore();
+  });
+
+  describe('drawnParticles — the count scales with the section, bounded both ways', () => {
+    it('draws the whole cloud when no density is set or the box has no layout yet', () => {
+      expect(drawnParticles(200, undefined, 1600, 900)).toBe(200);
+      expect(drawnParticles(200, 0, 1600, 900)).toBe(200);
+      expect(drawnParticles(200, 1, 1, 1)).toBe(200);
+    });
+
+    it('never draws more than the cloud holds, however big the section', () => {
+      expect(drawnParticles(200, 1, 4000, 4000)).toBe(200);
+    });
+
+    it('thins a small section by area, and never below the floor that still reads as a sky', () => {
+      // 1 per 10,000 px²: an 800×500 box is 40 points.
+      expect(drawnParticles(200, 1, 800, 500)).toBe(40);
+      // A 100×100 box would be 1 — floored at 24, because a handful of stars
+      // reads as dead pixels.
+      expect(drawnParticles(200, 1, 100, 100)).toBe(24);
+      // The floor never exceeds the cloud.
+      expect(drawnParticles(10, 1, 100, 100)).toBe(10);
+    });
+
+    it('draws a prefix sized to the CSS box, not the DPR-scaled buffer', () => {
+      webgl = installWebGLStub();
+      Object.defineProperty(window, 'devicePixelRatio', { configurable: true, value: 2 });
+      render(<ParticlesBackground particleCount={200} density={1} data-testid="p" />);
+      const host = screen.getByTestId('p-backdrop');
+      Object.defineProperty(host, 'clientWidth', { configurable: true, value: 800 });
+      Object.defineProperty(host, 'clientHeight', { configurable: true, value: 500 });
+      advanceFrames(1);
+      const canvas = screen.getByTestId('p-canvas') as HTMLCanvasElement;
+      expect([canvas.width, canvas.height]).toEqual([1600, 1000]);
+      // 800×500 CSS px at density 1 → 40, not the 160 the 2× buffer would give.
+      expect(latest().draws.at(-1)).toMatchObject({ first: 0, count: 40 });
+      Object.defineProperty(window, 'devicePixelRatio', { configurable: true, value: 1 });
+    });
   });
 });

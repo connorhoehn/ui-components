@@ -32,7 +32,19 @@ void main() {
   gl_Position = vec4(position, 0.0, 1.0);
 }`;
 
-/** ReactBits' fragment shader, verbatim. */
+/**
+ * ReactBits' fragment shader, with one deliberate departure: where the fade and
+ * the vignette are MEASURED.
+ *
+ * ReactBits measures both from the centre in a space where the short axis is
+ * ±1 and the long axis is ±aspect, and fades to nothing at radius 1. On a
+ * square canvas that is the corners; on a 3:2 panel it is an oval that ends
+ * two-thirds of the way to the sides, and the grid reads as a blob in the
+ * middle of a white box rather than a surface the box is made of. Here both
+ * are measured in the SECTION's own space (`sectionDist`: 0 at the centre, 1
+ * at the corners, whatever the aspect), so the fade always reaches the edges
+ * of the box it is in, and `edgeFade` says how much of it to apply at all.
+ */
 const FRAGMENT_SHADER = `precision highp float;
 
 uniform float iTime;
@@ -46,6 +58,7 @@ uniform float fadeDistance;
 uniform float vignetteStrength;
 uniform float glowIntensity;
 uniform float opacity;
+uniform float edgeFade;
 uniform float gridRotation;
 uniform bool mouseInteraction;
 uniform vec2 mousePosition;
@@ -105,11 +118,11 @@ void main() {
     color += glowIntensity * exp(-gridThickness * 0.5 * smoothB.y);
   }
 
-  float ddd = exp(-2.0 * clamp(pow(dist, fadeDistance), 0.0, 1.0));
+  // 0 at the centre of the section, 1 at its corners, for any aspect ratio.
+  float sectionDist = length(vUv * 2.0 - 1.0) / 1.41421356;
+  float ddd = exp(-2.0 * clamp(pow(sectionDist, fadeDistance), 0.0, 1.0));
 
-  vec2 vignetteCoords = vUv - 0.5;
-  float vignetteDistance = length(vignetteCoords);
-  float vignette = 1.0 - pow(vignetteDistance * 2.0, vignetteStrength);
+  float vignette = 1.0 - pow(sectionDist, vignetteStrength);
   vignette = clamp(vignette, 0.0, 1.0);
 
   vec3 t;
@@ -123,7 +136,7 @@ void main() {
     t = gridColor;
   }
 
-  float finalFade = ddd * vignette;
+  float finalFade = mix(1.0, ddd * vignette, edgeFade);
   float alpha = length(color) * finalFade * opacity;
   vec3 effect = color * t * finalFade * opacity;
   if (lightMode) {
@@ -157,6 +170,15 @@ export interface RippleGridBackgroundProps {
   vignetteStrength?: number;
   glowIntensity?: number;
   opacity?: number;
+  /**
+   * How much of the edge fade (`fadeDistance` + `vignetteStrength`) to apply,
+   * 0..1. At 1 (default, ReactBits' look) the grid fades to nothing at the
+   * section's corners; at 0 it is drawn edge to edge at full strength. The
+   * fade is measured against the SECTION — its corners are always where it
+   * ends — so a wide or tall box gets the same soft edge as a square one
+   * rather than an oval in the middle.
+   */
+  edgeFade?: number;
   /** Degrees. */
   gridRotation?: number;
   mouseInteraction?: boolean;
@@ -172,6 +194,12 @@ export interface RippleGridBackgroundProps {
  * The preset the work-activity canvas wears: grey lines on the near-white
  * surface the nodes already sit on, rippling slowly, never competing with them.
  * Exported so a host can match it on a surface of its own.
+ *
+ * `edgeFade` is low because this grid is the SURFACE of the section, not a
+ * picture in it: it has to reach the sides of a panel that is usually much
+ * wider than it is tall. What is left is a soft dimming toward the corners
+ * (about a third of the way to white), enough that the box still has a
+ * centre without the grid ending before the box does.
  */
 export const ACTIVITY_RIPPLE_GRID: RippleGridBackgroundProps = {
   lightMode: true,
@@ -180,6 +208,7 @@ export const ACTIVITY_RIPPLE_GRID: RippleGridBackgroundProps = {
   gridSize: 14,
   opacity: 0.8,
   vignetteStrength: 1.2,
+  edgeFade: 0.35,
   mouseInteraction: true,
 };
 
@@ -205,6 +234,7 @@ export function RippleGridBackground({
   vignetteStrength = 2,
   glowIntensity = 0.1,
   opacity = 1,
+  edgeFade = 1,
   gridRotation = 0,
   mouseInteraction = true,
   mouseInteractionRadius = 1,
@@ -216,12 +246,12 @@ export function RippleGridBackground({
   const rgb = useMemo(() => hexToRgb(gridColor), [gridColor]);
   const live = useRef({
     enableRainbow, rgb, rippleIntensity, gridSize, gridThickness, fadeDistance,
-    vignetteStrength, glowIntensity, opacity, gridRotation, mouseInteraction,
+    vignetteStrength, glowIntensity, opacity, edgeFade, gridRotation, mouseInteraction,
     mouseInteractionRadius, lightMode,
   });
   live.current = {
     enableRainbow, rgb, rippleIntensity, gridSize, gridThickness, fadeDistance,
-    vignetteStrength, glowIntensity, opacity, gridRotation, mouseInteraction,
+    vignetteStrength, glowIntensity, opacity, edgeFade, gridRotation, mouseInteraction,
     mouseInteractionRadius, lightMode,
   };
 
@@ -236,7 +266,7 @@ export function RippleGridBackground({
   // pointer are absent: both only matter while the loop is running.
   const version = [
     enableRainbow ? 1 : 0, gridColor, rippleIntensity, gridSize, gridThickness, fadeDistance,
-    vignetteStrength, glowIntensity, opacity, gridRotation, mouseInteractionRadius, lightMode ? 1 : 0,
+    vignetteStrength, glowIntensity, opacity, edgeFade, gridRotation, mouseInteractionRadius, lightMode ? 1 : 0,
   ].join(':');
 
   const { hostRef, canvasRef, status, reducedMotion } = useWebGLCanvas<Scene>({
@@ -251,7 +281,7 @@ export function RippleGridBackground({
       const names = [
         'iTime', 'iResolution', 'enableRainbow', 'gridColor', 'rippleIntensity', 'gridSize',
         'gridThickness', 'fadeDistance', 'vignetteStrength', 'glowIntensity', 'opacity',
-        'gridRotation', 'mouseInteraction', 'mousePosition', 'mouseInfluence',
+        'edgeFade', 'gridRotation', 'mouseInteraction', 'mousePosition', 'mouseInfluence',
         'mouseInteractionRadius', 'lightMode',
       ];
       const uniforms: Record<string, WebGLUniformLocation | null> = {};
@@ -293,6 +323,7 @@ export function RippleGridBackground({
       gl.uniform1f(u.vignetteStrength, p.vignetteStrength);
       gl.uniform1f(u.glowIntensity, p.glowIntensity);
       gl.uniform1f(u.opacity, p.opacity);
+      gl.uniform1f(u.edgeFade, Math.min(1, Math.max(0, p.edgeFade)));
       gl.uniform1f(u.gridRotation, p.gridRotation);
       gl.uniform1i(u.mouseInteraction, p.mouseInteraction && !reducedMotion ? 1 : 0);
       gl.uniform2f(u.mousePosition, pointer.current.x, pointer.current.y);

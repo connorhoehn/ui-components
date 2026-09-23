@@ -59,6 +59,33 @@ export const ActivityGrid: Story = {
   ),
 };
 
+/**
+ * The preset on the panel shapes it actually meets — wide and squat, then
+ * tall and narrow. The grid reaches every side of both. At ReactBits' full
+ * fade (`edgeFade={1}`, the third box) it is an oval in the middle of the wide
+ * one, which is the bug this preset exists to not have.
+ */
+export const ActivityGridFillsItsSection: Story = {
+  render: () => (
+    <div className="flex flex-col gap-4">
+      <div className="relative isolate h-56 w-full overflow-hidden rounded-lg border border-border bg-surface">
+        <RippleGridBackground {...ACTIVITY_RIPPLE_GRID} className="absolute inset-0 -z-10" />
+        <p className="absolute bottom-2 left-3 text-xs text-text-tertiary">wide · edgeFade 0.35</p>
+      </div>
+      <div className="flex gap-4">
+        <div className="relative isolate h-96 w-48 overflow-hidden rounded-lg border border-border bg-surface">
+          <RippleGridBackground {...ACTIVITY_RIPPLE_GRID} className="absolute inset-0 -z-10" />
+          <p className="absolute bottom-2 left-3 text-xs text-text-tertiary">tall</p>
+        </div>
+        <div className="relative isolate h-96 flex-1 overflow-hidden rounded-lg border border-border bg-surface">
+          <RippleGridBackground {...ACTIVITY_RIPPLE_GRID} edgeFade={1} className="absolute inset-0 -z-10" />
+          <p className="absolute bottom-2 left-3 text-xs text-text-tertiary">edgeFade 1 — the old oval</p>
+        </div>
+      </div>
+    </div>
+  ),
+};
+
 /** ReactBits' own default: glowing white lines on a dark ground. */
 export const RippleGridDark: Story = {
   render: () => (

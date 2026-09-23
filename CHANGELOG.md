@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.377.0] — 2026-09-23
+
+### Fixed
+
+- **`RippleGridBackground` fills its section instead of pooling in the middle.** The canvas
+  always covered its box (absolute `inset-0`, ResizeObserver, DPR-scaled), but the shader's fade
+  and vignette were measured ReactBits-style on the SHORT axis — radius 1 was the corners of a
+  square and an oval two-thirds of the way across a 3:2 panel, so the Active Now activity grid
+  read as a grey blob centred in a white box. Both are now measured against the section itself
+  (0 at the centre, 1 at the corners, any aspect), and a new `edgeFade` prop (0..1, default 1 =
+  the full ReactBits fade) says how much of that fade to apply. `ACTIVITY_RIPPLE_GRID` sets
+  `edgeFade: 0.35`: the grid reaches every side, dimming about a third toward the corners.
+  Tests cover the section-relative shader, the uniform and its clamp, the canvas backing store
+  at `devicePixelRatio`, and re-measuring through a ResizeObserver while the loop is parked;
+  `drawnParticles` (area-bounded particle count) is now tested too. Story
+  `Backgrounds/ActivityGridFillsItsSection` shows wide, tall and the old oval side by side.
+
 ## [2.376.0] — 2026-09-23
 
 ### Changed

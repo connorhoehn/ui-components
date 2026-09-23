@@ -524,8 +524,12 @@ export declare interface RichChatComposerProps {
      * `Chat | Agent | Terminal` row every existing host has. `'compact'` is the
      * mode's name, three small numbered buttons (`1 2 3`) and the current
      * mode's `⌥n` — one short row, for a composer floating over a page.
+     * `'menu'` (2.377.0) is the mode's glyph and name as ONE dropdown (`Agent ▾`)
+     * with the current `⌥n` beside it and the other modes, their shortcuts and
+     * any reason they are off inside the menu; the draft's references sit at
+     * the row's end — the shape of an editor's docked composer.
      */
-    modeControl?: 'tabs' | 'compact';
+    modeControl?: 'tabs' | 'compact' | 'menu';
     /**
      * Option-1 / Option-2 / Option-3 (Alt on other platforms) switch to Chat /
      * Agent / Terminal while focus is anywhere inside the composer. Bound on

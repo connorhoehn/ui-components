@@ -42,7 +42,7 @@ import "./Tooltip-BY3zlDbC.js";
 import "./RisingParticles-DqlZf8HC.js";
 import "./ParticlesBackground-DdcUDMy0.js";
 import "./backdropTone-CS87_g8W.js";
-import "./RippleGridBackground-DKswGKCC.js";
+import "./RippleGridBackground-CdwrZFcN.js";
 import "./FollowUpChips-BD9scwlC.js";
 import "./PresenceAvatars-CubTOqbV.js";
 import { t as k } from "./InlinePopover-sx7SpM1v.js";
