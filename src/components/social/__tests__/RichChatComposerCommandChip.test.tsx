@@ -45,6 +45,23 @@ describe('command chip in the docked card', () => {
     expect(modes.compareDocumentPosition(chip) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
+  it('the editor dock puts the chip at the start of the instruction line (2.386.0)', () => {
+    render(
+      <RichChatComposer
+        {...base}
+        toolbar="editor"
+        draft={{ html: '<p>/workflow migration-plan Remove the bridge</p>', files: [], command: { trigger: '/workflow', argument: { id: 'migration-plan', label: 'migration-plan', icon: '⟡' } } }}
+      />,
+    );
+    const chip = screen.getByTestId('composer-command');
+    expect(chip).toHaveAttribute('data-command-chip', 'inline');
+    const line = screen.getByTestId('composer-input-line');
+    expect(line).toContainElement(chip);
+    expect(line).toContainElement(screen.getByTestId('composer-input'));
+    expect(chip).toHaveTextContent('/workflow');
+    expect(screen.getByTestId('composer-command-argument')).toHaveTextContent('migration-plan');
+  });
+
   it('with no argument yet, the chip says what to pick', () => {
     render(<RichChatComposer {...base} draft={{ html: '<p>/workflow </p>', files: [] }} />);
     expect(screen.getByTestId('composer-command-placeholder')).toHaveTextContent('which pipeline');

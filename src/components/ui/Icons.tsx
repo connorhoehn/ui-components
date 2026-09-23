@@ -495,3 +495,23 @@ export function FilterIcon({ size = 16, ...rest }: GlyphProps) {
     </svg>
   );
 }
+
+/** Three dots and three lines: a bulleted list. Since 2.386.0. */
+export function ListIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M6 4h7.5M6 8h7.5M6 12h7.5" />
+      <path d="M2.75 4h.01M2.75 8h.01M2.75 12h.01" strokeWidth={2} />
+    </svg>
+  );
+}
+
+/** A four-point sparkle with a small companion: the agent. Since 2.386.0. */
+export function SparkleIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M7 2.5 8.2 5.8 11.5 7 8.2 8.2 7 11.5 5.8 8.2 2.5 7 5.8 5.8z" />
+      <path d="M12.5 10.5v3M11 12h3" />
+    </svg>
+  );
+}

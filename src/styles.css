@@ -2112,3 +2112,13 @@
 [data-theme="dark"] .uic-composer {
   --uic-composer-shadow: 0 0 #0000;
 }
+
+/* The editor dock's instruction line (RichChatComposer, toolbar="editor" in
+   the menu layout): the mockup's 15 px text, and a caret line that centres
+   with the inline command chip beside it. Since 2.386.0. */
+.chat-composer .uic-composer-docked-input .ProseMirror {
+  font-size: 0.9375rem;
+  line-height: 1.5rem;
+  min-height: 2.5rem;
+  padding: 0.5rem 0.75rem;
+}

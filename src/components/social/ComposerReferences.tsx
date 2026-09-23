@@ -43,7 +43,7 @@ export interface ComposerReferencesProps {
   removeLabel?: (reference: ComposerReference) => string;
   className?: string;
   /** Chip type. `xs` (default) is the 11px chip of a chat composer; `sm` is the 12px chip of a docked editor card (2.377.0). */
-  size?: 'xs' | 'sm';
+  size?: 'xs' | 'sm' | 'md';
   'data-testid'?: string;
 }
 
@@ -71,13 +71,13 @@ export function ComposerReferences({
           data-testid={`${testId}-item`}
           data-reference-id={reference.id}
           title={reference.title ?? reference.label}
-          className={cn('inline-flex min-w-0 max-w-full items-center gap-1 rounded-full border border-border bg-surface pl-2 pr-1 text-text-primary', size === 'sm' ? 'py-1 text-xs' : 'py-0.5 text-[11px]')}
+          className={cn('inline-flex min-w-0 max-w-full items-center gap-1 rounded-full border border-border bg-surface pl-2 pr-1 text-text-primary', size === 'md' ? 'gap-1.5 rounded-md bg-surface-inset py-1 pl-2.5 pr-1.5 text-[13px]' : size === 'sm' ? 'py-1 text-xs' : 'py-0.5 text-[11px]')}
         >
           {/* A thing's own icon is data and is rendered as given; the fallback
               glyph means "none chosen" and takes the colour of the text. */}
           {reference.icon
             ? <span aria-hidden="true" className="shrink-0">{reference.icon}</span>
-            : <DocumentIcon size={12} className="shrink-0 text-text-tertiary" aria-hidden="true" />}
+            : <DocumentIcon size={size === 'md' ? 14 : 12} className={cn('shrink-0', size === 'md' ? 'text-text-secondary' : 'text-text-tertiary')} aria-hidden="true" />}
           <span className="min-w-0 truncate">{reference.label}</span>
           {onRemove && (
             <button

@@ -217,7 +217,7 @@ export declare interface ComposerReferencesProps {
     removeLabel?: (reference: ComposerReference) => string;
     className?: string;
     /** Chip type. `xs` (default) is the 11px chip of a chat composer; `sm` is the 12px chip of a docked editor card (2.377.0). */
-    size?: 'xs' | 'sm';
+    size?: 'xs' | 'sm' | 'md';
     'data-testid'?: string;
 }
 

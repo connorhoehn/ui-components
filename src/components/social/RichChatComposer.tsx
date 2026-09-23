@@ -116,7 +116,7 @@ import { DocumentSuggestions, type DocumentCandidate } from './DocumentSuggestio
 import { EmojiSuggestions } from './EmojiSuggestions';
 import { CommandSuggestions, type CommandSuggestionItem } from './CommandSuggestions';
 import { searchEmoji, type EmojiShortcode } from './emojiShortcodes';
-import { ChatIcon, EyeIcon, EyeOffIcon, LinkIcon, PaperclipIcon, PuzzleIcon, QuoteIcon, SmileyIcon } from '../ui/Icons';
+import { ArrowRightIcon, ChatIcon, ChevronIcon, CodeIcon, EyeIcon, EyeOffIcon, LinkIcon, ListIcon, PaperclipIcon, PuzzleIcon, QuoteIcon, SmileyIcon, SparkleIcon } from '../ui/Icons';
 
 export type { MentionCandidate, DocumentCandidate };
 
@@ -1811,6 +1811,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // row's END (a document chip on the right, the way an editor's dock reads);
   // otherwise references ride the compact row only at compact density.
   const menuModeRow = compactModeRow && modeControl === 'menu' && !narrow;
+  // The editor dock (menu + the `editor` strip) is the Folders mockup's card
+  // (2.386.0): `✦ Agent ⌄` whose menu also holds what `?` and `⋯` held, the
+  // picked command as a chip at the START of the instruction line, a
+  // larger strip and Send. Every other composer keeps its own layout.
+  const docked = menuModeRow && toolbar === 'editor';
   hideCommandPrefixRef.current = menuModeRow;
   // The plugin reads the ref on the next transaction; switching into or out
   // of the docked card sends an empty one so the command line hides or shows
@@ -1856,7 +1861,29 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const showQuote = wide && !compactToolbar;
   const showBulletedList = wide;
   const formatInHints = wide && !fullToolbar;
-  const showMoreActions = !!moreActions?.length;
+  // The editor dock has no `?` and no `⋯` on its strip (the mockup's strip
+  // ends in `/ commands` and Send): what they held — the two folded marks,
+  // the host's actions, the keys — is under `Agent ⌄` after the modes.
+  const showMoreActions = !!moreActions?.length && !docked;
+  const inlineCommand = docked && !!activeCommand && !collapsed && !terminalMode;
+  const dockedMenuSections: DropdownMenuSection[] = !docked ? [] : [
+    ...(editor && formatInHints ? [{
+      label: 'Formatting',
+      items: [
+        { label: 'Strikethrough', checked: editor.isActive('strike'), onSelect: () => { editor.chain().focus().toggleStrike().run(); } },
+        { label: 'Numbered list', checked: editor.isActive('orderedList'), onSelect: () => { editor.chain().focus().toggleOrderedList().run(); } },
+      ],
+    }] : []),
+    ...(moreActions ?? []),
+    ...(resolvedHints.length ? [{
+      label: 'Keys',
+      items: resolvedHints.map((hint) => ({
+        label: hint.label,
+        trailing: <kbd className="rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary">{hint.key}</kbd>,
+        ...(hint.onSelect ? { onSelect: hint.onSelect } : {}),
+      })),
+    }] : []),
+  ];
   // The console sky. `none` keeps the ordinary surface in Agent/Terminal: the
   // mode still changes what Enter does, it just stops repainting the box.
   const tone = useResolvedBackdropTone(rootNode, backdropTone, consoleMode);
@@ -1927,7 +1954,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         // dropping any — measured at 21px against a 28px box, which is under
         // the size a finger or a hurried cursor can hit. The row sheds whole
         // controls (see `roomFor`) rather than shaving every one of them.
-        'grid h-7 w-7 shrink-0 place-items-center rounded text-sm leading-none',
+        'grid shrink-0 place-items-center rounded leading-none',
+        docked ? 'h-9 w-9 text-[15px]' : 'h-7 w-7 text-sm',
         active ? 'bg-surface-hover text-text-primary' : 'text-text-secondary hover:bg-surface-hover',
       )}
     >
@@ -2022,6 +2050,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           // The enclosing column's field shows through; a light inset tint
           // keeps the composer reading as a control on it, not a hole in it.
           skyInherited && 'bg-surface-inset',
+          docked && 'rounded-lg focus-within:ring-1',
           activeCommand
             ? (activeCommand.disabled ? 'border-warning focus-within:border-warning focus-within:ring-warning' : 'border-info focus-within:border-info focus-within:ring-info')
             : 'border-border focus-within:border-primary focus-within:ring-primary',
@@ -2153,16 +2182,18 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         {/* Narrow always takes the compact pill: three segmented tabs with
             labels do not fit beside anything at that width. */}
         {compactModeRow && !collapsed && (
-          <div className={cn('flex min-w-0 items-center gap-1.5 px-2 pt-1 text-xs', compact && 'flex-wrap', reveal)} data-testid={`${testId}-modes`} data-mode-control={menuModeRow ? 'menu' : 'compact'}>
+          <div className={cn('flex min-w-0 items-center gap-1.5 text-xs', docked ? 'px-3 pt-2' : 'px-2 pt-1', compact && 'flex-wrap', reveal)} data-testid={`${testId}-modes`} data-mode-control={menuModeRow ? 'menu' : 'compact'}>
             {menuModeRow ? (
               // One control: the mode's glyph and name, a ▾, the other modes
               // in a menu with their shortcuts and, when off, the reason.
               <DropdownMenu
                 trigger={(
-                  <span className="flex items-center gap-1.5 text-sm font-semibold text-text-primary" data-testid={`${testId}-mode-label`}>
-                    <span aria-hidden="true" className="flex w-4 justify-center text-primary">{MODE_ICON[activeMode]}</span>
+                  <span className={cn('flex items-center gap-1.5 font-semibold text-text-primary', docked ? 'text-[15px]' : 'text-sm')} data-testid={`${testId}-mode-label`}>
+                    <span aria-hidden="true" className={cn('flex justify-center text-primary', docked ? 'w-5' : 'w-4')}>{docked && activeMode === 'agent' ? <SparkleIcon size={18} /> : MODE_ICON[activeMode]}</span>
                     {MODE_NAMES[activeMode]}
-                    <span aria-hidden="true" className="text-[11px] leading-none text-text-tertiary">▾</span>
+                    {docked
+                      ? <ChevronIcon size={14} aria-hidden="true" className="text-text-secondary" />
+                      : <span aria-hidden="true" className="text-[11px] leading-none text-text-tertiary">▾</span>}
                   </span>
                 )}
                 triggerLabel={`Composer mode: ${MODE_NAMES[activeMode]}`}
@@ -2177,14 +2208,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                     const reason = unavailable ? modeUnavailableReasons?.[m] : undefined;
                     return {
                       label: MODE_NAMES[m],
-                      icon: MODE_ICON[m],
+                      icon: docked && m === 'agent' ? <SparkleIcon size={13} /> : MODE_ICON[m],
                       active: m === activeMode,
                       ...(reason ? { description: reason } : {}),
                       ...(modeShortcuts ? { trailing: <kbd className="rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary">⌥{i + 1}</kbd> } : {}),
                       onSelect: () => { requestMode(m); },
                     };
                   }),
-                }]}
+                }, ...dockedMenuSections]}
               />
             ) : (
             <span className="flex items-center gap-1 font-semibold text-text-primary" data-testid={`${testId}-mode-label`}>
@@ -2221,7 +2252,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             </span>
             )}
             {modeShortcuts && !narrow && (
-              <kbd className={cn('rounded border border-border bg-surface-inset px-1 font-mono text-text-secondary', menuModeRow ? 'py-0.5 text-[11px]' : 'text-[10px]')} data-testid={`${testId}-mode-kbd`}>
+              <kbd className={cn('bg-surface-inset font-mono text-text-secondary', docked ? 'rounded-md px-1.5 py-0.5 text-xs' : 'rounded border border-border px-1', !docked && (menuModeRow ? 'py-0.5 text-[11px]' : 'text-[10px]'))} data-testid={`${testId}-mode-kbd`}>
                 ⌥{COMPOSER_MODE_ORDER.indexOf(activeMode) + 1}
               </kbd>
             )}
@@ -2231,14 +2262,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 {...(onRemoveReference ? { onRemove: onRemoveReference } : {})}
                 removeLabel={(reference) => `Remove ${reference.label} from this draft`}
                 className={cn('min-w-0 flex-nowrap p-0', menuModeRow && 'ml-auto justify-end')}
-                {...(menuModeRow ? { size: 'sm' as const } : {})}
+                {...(menuModeRow ? { size: docked ? 'md' as const : 'sm' as const } : {})}
                 data-testid={`${testId}-references`}
               />
             )}
             {modeRowEnd != null && <span className={cn('flex shrink-0 items-center', menuModeRow && references?.length ? 'ml-2' : 'ml-auto')} data-testid={`${testId}-mode-row-end`}>{modeRowEnd}</span>}
           </div>
         )}
-        {activeCommand && menuModeRow && !collapsed && (
+        {activeCommand && menuModeRow && !docked && !collapsed && (
           // The docked card (modeControl="menu") names the command as a chip
           // on its own line — "/workflow ⟡ migration-plan" — the way the
           // context chip names what the draft is about, rather than a tinted
@@ -2365,13 +2396,44 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             data-testid={`${testId}-references`}
           />
         )}
+        {/* The line the draft is written on. In the editor dock the picked
+            command sits at its START, as a chip, with the instruction running
+            on after it ("/workflow presentation-deck  Create a short…"); the
+            command's own line in the editor is hidden. Everywhere else this
+            wrapper is `contents` — no box, so the body's layout is unchanged —
+            and it is always rendered, so the editor never changes parent. */}
+        <div className={inlineCommand ? 'flex min-w-0 items-start' : 'contents'} data-testid={`${testId}-input-line`}>
+          {inlineCommand && activeCommand && (
+            <div
+              role="status"
+              title={activeCommand.description ?? activeCommand.hint ?? activeCommand.label}
+              data-testid={`${testId}-command`}
+              data-command-chip="inline"
+              className={cn(
+                'mt-1.5 ml-3 inline-flex min-w-0 max-w-[50%] shrink-0 items-center gap-1 rounded-md px-2 py-0.5 text-[15px] leading-6',
+                activeCommand.disabled ? 'bg-warning-bg text-warning-fg' : 'bg-info-bg text-info-fg',
+              )}
+            >
+              <span>{activeCommand.trigger}</span>
+              {pickedArgument ? (
+                <span className="min-w-0 truncate" data-testid={`${testId}-command-argument`}>{pickedArgument.label}</span>
+              ) : argumentEmpty && activeCommand.argument?.placeholder ? (
+                <span data-testid={`${testId}-command-placeholder`} className="min-w-0 truncate italic opacity-80">
+                  {activeCommand.argument.placeholder}
+                </span>
+              ) : (
+                <span className="min-w-0 truncate">{activeCommand.label}</span>
+              )}
+            </div>
+          )}
         <div
           ref={inputBoxRef}
-          className={cn(singleRow && 'min-w-0 flex-1')}
+          className={cn((singleRow || inlineCommand) && 'min-w-0 flex-1', docked && 'uic-composer-docked-input')}
           {...(empty && effectivePlaceholder ? { title: effectivePlaceholder } : {})}
           {...(terminalMode ? { hidden: true } : {})}
         >
           <EditorContent editor={editor} />
+        </div>
         </div>
 
         {terminalMode && (
@@ -2429,7 +2491,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
 
         <div
           className={cn(
-            'flex min-w-0 items-center px-1.5 py-1',
+            'flex min-w-0 items-center',
+            docked ? 'px-2 py-1.5' : 'px-1.5 py-1',
             singleRow ? 'shrink-0' : 'border-t border-border',
             narrow && !singleRow && 'flex-wrap gap-y-1',
             !singleRow && reveal,
@@ -2459,17 +2522,17 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             toolbarButton('Bold', editor.isActive('bold'), () => editor.chain().focus().toggleBold().run(), <b>B</b>),
             toolbarButton('Italic', editor.isActive('italic'), () => editor.chain().focus().toggleItalic().run(), <i>I</i>),
             showSecondaryMarks && toolbarButton('Strikethrough', editor.isActive('strike'), () => editor.chain().focus().toggleStrike().run(), <s>S</s>),
-            showCode && toolbarButton('Code', editor.isActive('code'), () => editor.chain().focus().toggleCode().run(), <span className="font-mono text-[11px]">{'<>'}</span>),
+            showCode && toolbarButton('Code', editor.isActive('code'), () => editor.chain().focus().toggleCode().run(), docked ? <CodeIcon size={18} /> : <span className="font-mono text-[11px]">{'<>'}</span>),
             toolbarButton(
               editor.isActive('link') ? 'Edit link' : 'Add link',
               editor.isActive('link'),
               () => openLinkDialog(),
-              <LinkIcon size={16} />,
+              <LinkIcon size={docked ? 18 : 16} />,
             ),
             showListControls && <span key="sep1" aria-hidden className="mx-1 h-4 w-px shrink-0 bg-border" />,
-            showBulletedList && toolbarButton('Bulleted list', editor.isActive('bulletList'), () => editor.chain().focus().toggleBulletList().run(), <span>•</span>),
+            showBulletedList && toolbarButton('Bulleted list', editor.isActive('bulletList'), () => editor.chain().focus().toggleBulletList().run(), docked ? <ListIcon size={18} /> : <span>•</span>),
             showListControls && toolbarButton('Numbered list', editor.isActive('orderedList'), () => editor.chain().focus().toggleOrderedList().run(), <span className="text-[11px]">1.</span>),
-            showQuote && toolbarButton('Quote', editor.isActive('blockquote'), () => editor.chain().focus().toggleBlockquote().run(), <QuoteIcon size={16} />),
+            showQuote && toolbarButton('Quote', editor.isActive('blockquote'), () => editor.chain().focus().toggleBlockquote().run(), <QuoteIcon size={docked ? 18 : 16} />),
             // Below wide, the same five live in one overflow menu instead of
             // being dropped: shedding them outright is how a narrow composer
             // quietly lost lists.
@@ -2519,7 +2582,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
 
           {attachmentsEnabled && (
             <>
-              {toolbarButton('Attach files', false, () => fileInput.current?.click(), <PaperclipIcon size={16} />)}
+              {toolbarButton('Attach files', false, () => fileInput.current?.click(), <PaperclipIcon size={docked ? 18 : 16} />)}
               <FileInput
                 ref={fileInput}
                 multiple
@@ -2543,7 +2606,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           })()}
 
           {editorToolbar && toolbarExtras != null && (
-            <span aria-hidden className="mx-1 h-4 w-px shrink-0 bg-border" data-testid={`${testId}-extras-divider`} />
+            <span aria-hidden className={cn('shrink-0 bg-border', docked ? 'mx-2.5 h-6 w-px' : 'mx-1 h-4 w-px')} data-testid={`${testId}-extras-divider`} />
           )}
           {toolbarExtras}
           </RovingToolbar>
@@ -2553,10 +2616,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               muted `/ commands`, the way a code editor's status line names
               its palette. Wide only — narrow has no room and the `?` menu. */}
           {!collapsed && wide && !!commands?.length && (
-            <span className="ml-1 shrink-0 select-none border-l border-border pl-2 text-xs text-text-tertiary" data-testid={`${testId}-commands-hint`}>/ commands</span>
+            <span className={cn('shrink-0 select-none text-text-tertiary', docked ? 'ml-3 text-[15px]' : 'ml-1 border-l border-border pl-2 text-xs')} data-testid={`${testId}-commands-hint`}>/ commands</span>
           )}
 
-          {!collapsed && ((!hintsInRow && !!resolvedHints.length) || suggestionsInMenu || (formatInHints && !!editor)) ? (
+          {!collapsed && !docked && ((!hintsInRow && !!resolvedHints.length) || suggestionsInMenu || (formatInHints && !!editor)) ? (
             <DropdownMenu
               trigger={<span aria-hidden="true" className="text-xs font-semibold leading-none">?</span>}
               triggerLabel="Keyboard hints"
@@ -2647,11 +2710,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 'shrink-0 rounded bg-primary font-semibold text-on-primary disabled:opacity-40',
                 // The docked card's button is the editor's size, with the arrow
                 // the mockup gives it; a chat column's stays small.
-                menuModeRow ? 'rounded-md px-3 py-1.5 text-sm' : 'px-2.5 py-1 text-xs',
+                docked ? 'inline-flex h-9 items-center gap-2 rounded-md px-4 text-[15px]' : menuModeRow ? 'rounded-md px-3 py-1.5 text-sm' : 'px-2.5 py-1 text-xs',
               )}
             >
               {sendLabel}
-              {menuModeRow && <span aria-hidden="true" className="ml-1.5">→</span>}
+              {docked ? <ArrowRightIcon size={16} aria-hidden="true" /> : menuModeRow && <span aria-hidden="true" className="ml-1.5">→</span>}
             </button>
           )}
         </div>

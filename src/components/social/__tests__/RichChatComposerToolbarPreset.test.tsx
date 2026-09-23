@@ -77,17 +77,21 @@ describe('toolbar="editor"', () => {
     expect(screen.getByTestId('composer-extras-divider')).toBeInTheDocument();
   });
 
-  it('files only strikethrough and numbered list under ? → Formatting', async () => {
+  // 2.386.0: the docked editor card has no `?` and no `⋯` on its strip —
+  // what they held is under `Agent ⌄`, after the modes.
+  it('files strikethrough and numbered list under Agent ⌄ → Formatting, with no ? on the strip', async () => {
     render(<RichChatComposer {...base} toolbar="editor" hints={[]} />);
-    await act(async () => { fireEvent.click(screen.getByTestId('composer-hints-toggle')); });
-    const menu = screen.getByTestId('composer-hints-menu');
+    expect(screen.queryByTestId('composer-hints-toggle')).toBeNull();
+    await act(async () => { fireEvent.click(screen.getByTestId('composer-mode-menu')); });
+    const menu = screen.getByTestId('composer-mode-menu-list');
+    expect(within(menu).getByText('Formatting')).toBeInTheDocument();
     expect(within(menu).getByText('Strikethrough')).toBeInTheDocument();
     expect(within(menu).getByText('Numbered list')).toBeInTheDocument();
     expect(within(menu).queryByText('Code')).toBeNull();
     expect(within(menu).queryByText('Quote')).toBeNull();
   });
 
-  it('puts moreActions behind a ⋯ before Send, and Send takes the host label', async () => {
+  it('puts moreActions under Agent ⌄ rather than a ⋯, and Send takes the host label', async () => {
     let picked = '';
     render(
       <RichChatComposer
@@ -97,12 +101,16 @@ describe('toolbar="editor"', () => {
         moreActions={[{ items: [{ label: 'Draft a presentation', onSelect: () => { picked = 'deck'; } }] }]}
       />,
     );
-    const trigger = screen.getByTestId('composer-more-actions-trigger');
-    expect(trigger).toHaveAttribute('aria-label', 'More actions');
+    expect(screen.queryByTestId('composer-more-actions-trigger')).toBeNull();
     expect(screen.getByTestId('composer-send')).toHaveTextContent('Send');
-    await act(async () => { fireEvent.click(trigger); });
+    await act(async () => { fireEvent.click(screen.getByTestId('composer-mode-menu')); });
     await act(async () => { fireEvent.click(screen.getByText('Draft a presentation')); });
     expect(picked).toBe('deck');
+  });
+
+  it('keeps ⋯ for moreActions on the compact strip', () => {
+    render(<RichChatComposer {...base} toolbar="compact" moreActions={[{ items: [{ label: 'X', onSelect: () => {} }] }]} />);
+    expect(screen.getByTestId('composer-more-actions-trigger')).toBeInTheDocument();
   });
 
   it('renders no ⋯ without moreActions', () => {
