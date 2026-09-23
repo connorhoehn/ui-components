@@ -85,6 +85,11 @@ import Chip from '../shared/Chip';
  * this modal's; the modal only reports which shape the person chose.
  */
 export type DocumentShape = 'page' | 'sections' | 'diagram' | 'presentation';
+// `'sections'` stays in the union so hosts that still READ a legacy document's
+// shape keep compiling, but this modal no longer offers it (see SHAPES).
+// @deprecated-value 'sections' — the sectioned editor is deprecated; create a
+// `page` (or `diagram` / `presentation`). See realtime-examples
+// docs/design/documents-editor-handoff/DEPRECATION-sectioned-documents.md.
 
 /**
  * Shapes that have no document type at all.
@@ -159,7 +164,7 @@ export interface NewDocumentModalProps {
   recordings?: readonly NewPresentationSource[];
 }
 
-/** The three blanks, with the words a person picking between them needs. */
+/** The blanks on offer, with the words a person picking between them needs. */
 const SHAPES: ReadonlyArray<{
   id: DocumentShape;
   icon: string;
@@ -176,14 +181,10 @@ const SHAPES: ReadonlyArray<{
       'One continuous document. Headings, paragraphs, lists and tables flow down a single sheet — like Google Docs or Confluence.',
     keywords: ['blank', 'empty', 'doc', 'document', 'write'],
   },
-  {
-    id: 'sections',
-    icon: '🗂️',
-    name: 'Sections',
-    description:
-      'A structured set of section forms — task lists, decisions and notes, each in its own box. Better as a todo creator or a notepad.',
-    keywords: ['blank', 'todo', 'tasks', 'notepad', 'form'],
-  },
+  // `sections` is no longer offered. The sectioned editor (section cards,
+  // per-section toolbars) is deprecated in favour of the page; a type or
+  // cookbook picked here now lays its fields out on a page as field macros.
+  // Existing sectioned documents still open, with a Convert to page notice.
   {
     id: 'diagram',
     icon: '🖉',

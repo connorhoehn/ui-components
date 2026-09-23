@@ -31,6 +31,12 @@ interface AckModeProps {
 
 const SECTIONS_PER_PAGE = 4;
 
+/**
+ * @deprecated Part of the legacy SECTIONED document editor, which is deprecated
+ * (2026-09-22). New documents are pages — use the page editor (`CanvasDocumentView`); decks use
+ * `PresentationView`, whiteboards the diagram surface. Kept so existing
+ * sectioned documents still open until they are converted to a page.
+ */
 export default function AckMode({ sections, onAckItem, onRejectItem, participants, onSectionFocus, jumpToIndex, onJumpComplete, getSectionFragment, ydoc, provider, comments, onAddComment, onResolveThread, onUnresolveThread }: AckModeProps) {
   const [pageIndex, setPageIndex] = useState(0);
 

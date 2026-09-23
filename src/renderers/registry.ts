@@ -56,6 +56,13 @@ function registryKey(sectionType: string, viewMode: string): string {
   return `${sectionType}:${viewMode}`;
 }
 
+/**
+ * @deprecated The (sectionType × viewMode) renderer registry only serves the
+ * legacy SECTIONED document editor (`SectionBlock`), which is deprecated
+ * (2026-09-22). Pages render document-type fields as `macro:field` blocks in
+ * `CanvasDocumentView`. The field-type registry above is NOT deprecated —
+ * document types and their page field macros still use it.
+ */
 export function registerRenderer(
   sectionType: string,
   viewMode: ViewMode | '*',
@@ -64,6 +71,13 @@ export function registerRenderer(
   _renderers.set(registryKey(sectionType, viewMode), component);
 }
 
+/**
+ * @deprecated The (sectionType × viewMode) renderer registry only serves the
+ * legacy SECTIONED document editor (`SectionBlock`), which is deprecated
+ * (2026-09-22). Pages render document-type fields as `macro:field` blocks in
+ * `CanvasDocumentView`. The field-type registry above is NOT deprecated —
+ * document types and their page field macros still use it.
+ */
 export function getRenderer(
   sectionType: string | null | undefined,
   viewMode: ViewMode,
@@ -81,6 +95,13 @@ export function getRenderer(
   );
 }
 
+/**
+ * @deprecated The (sectionType × viewMode) renderer registry only serves the
+ * legacy SECTIONED document editor (`SectionBlock`), which is deprecated
+ * (2026-09-22). Pages render document-type fields as `macro:field` blocks in
+ * `CanvasDocumentView`. The field-type registry above is NOT deprecated —
+ * document types and their page field macros still use it.
+ */
 /** Returns all registered (sectionType, viewMode) pairs — useful for debug / config UIs. */
 export function listRegisteredRenderers(): Array<{ sectionType: string; viewMode: string; component: SectionRenderer }> {
   return Array.from(_renderers.entries()).map(([k, component]) => {

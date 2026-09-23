@@ -1447,7 +1447,7 @@ export declare interface BadgeProps {
 
 export declare type BadgeVariant = 'count' | 'dot' | 'pulse';
 
-export declare function Banner({ variant, title, layout, onDismiss, children, className, style, 'data-testid': testId, }: BannerProps): JSX.Element;
+export declare function Banner({ variant, title, layout, onDismiss, action, children, className, style, 'data-testid': testId, }: BannerProps): JSX.Element;
 
 export declare interface BannerProps {
     variant?: BannerVariant;
@@ -1464,6 +1464,12 @@ export declare interface BannerProps {
      */
     layout?: 'inline' | 'stacked';
     onDismiss?: () => void;
+    /**
+     * A control that resolves what the banner is about — "Convert to page" on a
+     * deprecation notice, "Retry" on a failure. Sits at the trailing edge,
+     * before the dismiss button, and never shrinks under a long message.
+     */
+    action?: ReactNode;
     children?: ReactNode;
     className?: string;
     style?: CSSProperties;
@@ -7293,6 +7299,13 @@ export declare function getPagesView(type: DocumentType_2): DocumentTypePage[];
  */
 export declare function getPipelineRun(pipelineId: string, runId: string): Promise<PipelineRun | null>;
 
+/**
+ * @deprecated The (sectionType × viewMode) renderer registry only serves the
+ * legacy SECTIONED document editor (`SectionBlock`), which is deprecated
+ * (2026-09-22). Pages render document-type fields as `macro:field` blocks in
+ * `CanvasDocumentView`. The field-type registry above is NOT deprecated —
+ * document types and their page field macros still use it.
+ */
 export declare function getRenderer(sectionType: string | null | undefined, viewMode: ViewMode): SectionRenderer | null;
 
 /**
@@ -9035,6 +9048,13 @@ export declare function listPipelineRuns(pipelineId: string, options?: {
     cursor?: string;
 }): Promise<ListRunsResponse>;
 
+/**
+ * @deprecated The (sectionType × viewMode) renderer registry only serves the
+ * legacy SECTIONED document editor (`SectionBlock`), which is deprecated
+ * (2026-09-22). Pages render document-type fields as `macro:field` blocks in
+ * `CanvasDocumentView`. The field-type registry above is NOT deprecated —
+ * document types and their page field macros still use it.
+ */
 /** Returns all registered (sectionType, viewMode) pairs — useful for debug / config UIs. */
 export declare function listRegisteredRenderers(): Array<{
     sectionType: string;
@@ -12632,6 +12652,13 @@ export declare function redriveDLQEntries(ids: string[], options?: {
 
 export declare function registerFieldType(def: FieldTypeDefinition): void;
 
+/**
+ * @deprecated The (sectionType × viewMode) renderer registry only serves the
+ * legacy SECTIONED document editor (`SectionBlock`), which is deprecated
+ * (2026-09-22). Pages render document-type fields as `macro:field` blocks in
+ * `CanvasDocumentView`. The field-type registry above is NOT deprecated —
+ * document types and their page field macros still use it.
+ */
 export declare function registerRenderer(sectionType: string, viewMode: ViewMode | '*', component: SectionRenderer): void;
 
 declare interface RemoteCursor {
@@ -18889,9 +18916,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -18899,9 +18926,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -18948,9 +18975,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -18958,9 +18985,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

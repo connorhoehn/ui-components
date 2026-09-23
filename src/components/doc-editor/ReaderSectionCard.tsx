@@ -153,6 +153,12 @@ function ItemRow({
 // KeyDecisionsCard
 // ---------------------------------------------------------------------------
 
+/**
+ * @deprecated Part of the legacy SECTIONED document editor, which is deprecated
+ * (2026-09-22). New documents are pages — use the page editor (`CanvasDocumentView`); decks use
+ * `PresentationView`, whiteboards the diagram surface. Kept so existing
+ * sectioned documents still open until they are converted to a page.
+ */
 export function KeyDecisionsCard({ sections }: { sections: Section[] }) {
   const decisionSections = sections.filter((s) => s.type === 'decisions');
   const items = decisionSections.flatMap((s) => s.items);
@@ -185,6 +191,12 @@ export function KeyDecisionsCard({ sections }: { sections: Section[] }) {
 // ActionItemsCard
 // ---------------------------------------------------------------------------
 
+/**
+ * @deprecated Part of the legacy SECTIONED document editor, which is deprecated
+ * (2026-09-22). New documents are pages — use the page editor (`CanvasDocumentView`); decks use
+ * `PresentationView`, whiteboards the diagram surface. Kept so existing
+ * sectioned documents still open until they are converted to a page.
+ */
 export function ActionItemsCard({ allItems }: { allItems: TaskItem[] }) {
   const { pending, completed, rejected } = groupItems(allItems);
 
@@ -246,6 +258,12 @@ export function ActionItemsCard({ allItems }: { allItems: TaskItem[] }) {
 // SectionSummariesCard
 // ---------------------------------------------------------------------------
 
+/**
+ * @deprecated Part of the legacy SECTIONED document editor, which is deprecated
+ * (2026-09-22). New documents are pages — use the page editor (`CanvasDocumentView`); decks use
+ * `PresentationView`, whiteboards the diagram surface. Kept so existing
+ * sectioned documents still open until they are converted to a page.
+ */
 export function SectionSummariesCard({
   sections,
   commentCounts,

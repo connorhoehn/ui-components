@@ -89,6 +89,12 @@ function statusStyle(status: SectionReview['status']): StatusStyle {
 // Component
 // ---------------------------------------------------------------------------
 
+/**
+ * @deprecated Part of the legacy SECTIONED document editor, which is deprecated
+ * (2026-09-22). New documents are pages — use the page editor's suggestion review (`SuggestionReviewList`); decks use
+ * `PresentationView`, whiteboards the diagram surface. Kept so existing
+ * sectioned documents still open until they are converted to a page.
+ */
 export default function ReviewMode({
   sections,
   participants,

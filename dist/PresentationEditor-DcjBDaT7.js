@@ -39,19 +39,6 @@ var de = /* @__PURE__ */ new Set(["diagram", "presentation"]), fe = [
 		]
 	},
 	{
-		id: "sections",
-		icon: "🗂️",
-		name: "Sections",
-		description: "A structured set of section forms — task lists, decisions and notes, each in its own box. Better as a todo creator or a notepad.",
-		keywords: [
-			"blank",
-			"todo",
-			"tasks",
-			"notepad",
-			"form"
-		]
-	},
-	{
 		id: "diagram",
 		icon: "🖉",
 		name: "Diagram",
@@ -1392,7 +1379,7 @@ function tt(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
-var nt = ce(() => import("./SortableSlideList-D-2YjP2O.js"));
+var nt = ce(() => import("./SortableSlideList-1WrBxd5K.js"));
 function rt(e, t) {
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }

@@ -96,20 +96,14 @@ describe('NewDocumentModal', () => {
     expect(screen.getByTestId('no-document-types')).toHaveTextContent(/Document Types/);
   });
 
-  // Sections ARE defined by a type, so that one shape genuinely cannot be
-  // created without one — and the copy points at the way out.
-  it('open + zero types: blocks only the shape that truly needs a type', async () => {
-    loadTypes.mockReturnValue([]);
-    serverTypes = [];
-    const onCreate = vi.fn();
-    render(<NewDocumentModal open onClose={vi.fn()} onCreate={onCreate} />);
+  // The sectioned editor is deprecated: the dialog must not offer it at all,
+  // with or without types. Existing sectioned documents still open elsewhere.
+  it('never offers the deprecated Sections shape', async () => {
+    loadTypes.mockReturnValue([mkType()]);
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
     await act(async () => { await Promise.resolve(); });
-
-    fireEvent.change(screen.getByTestId('new-doc-title'), { target: { value: 'Notes' } });
-    fireEvent.click(screen.getByTestId('doc-shape-sections'));
-    fireEvent.click(screen.getByTestId('new-doc-submit'));
-    expect(onCreate).not.toHaveBeenCalled();
-    expect(screen.getByTestId('no-document-types')).toHaveTextContent(/page instead/);
+    expect(screen.queryByTestId('doc-shape-sections')).toBeNull();
+    expect(screen.queryByText('Sections')).toBeNull();
   });
 
   // THE BUG THIS PINS. The modal used to read localStorage and nothing else, so
@@ -267,69 +261,41 @@ describe('NewDocumentModal', () => {
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(onCreate).not.toHaveBeenCalled();
   });
-
-  it('section-count label pluralizes correctly (1 section vs N sections)', () => {
-    const oneField = mkType({ id: 'one', name: 'OneSec', fields: [mkField('f1')] });
-    const twoFields = mkType({ id: 'two', name: 'TwoSec', fields: [mkField('f1'), mkField('f2')] });
-    loadTypes.mockReturnValue([oneField, twoFields]);
-    render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
-    // The count is only true for a sectioned document — a page starts blank.
-    fireEvent.click(screen.getByTestId('doc-shape-sections'));
-    expect(screen.getByTestId('type-option-one').textContent).toContain('1 section');
-    expect(screen.getByTestId('type-option-one').textContent).not.toContain('1 sections');
-    expect(screen.getByTestId('type-option-two').textContent).toContain('2 sections');
-  });
 });
 
 // ── Document shape ──────────────────────────────────────────────────────
-describe('NewDocumentModal — page vs sections', () => {
+describe('NewDocumentModal — shape', () => {
   it('preselects Page', () => {
     loadTypes.mockReturnValue([mkType()]);
     render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
     expect(screen.getByTestId('doc-shape-page')).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByTestId('doc-shape-sections')).toHaveAttribute('aria-pressed', 'false');
   });
 
-  it('describes both shapes in words, never as a schema version', () => {
+  it('describes the shape in words, never as a schema version', () => {
     loadTypes.mockReturnValue([mkType()]);
     render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
     expect(screen.getByTestId('doc-shape-page').textContent).toContain('One continuous document');
-    expect(screen.getByTestId('doc-shape-sections').textContent).toContain('section forms');
     expect(screen.getByRole('dialog').textContent).not.toMatch(/schemaVersion/i);
   });
 
-  it('reports the chosen shape on create', () => {
-    // Sections REQUIRES a type — `needsType = shape === 'sections'` — because
-    // a sectioned document with no type has no sections to show. That rule
-    // predates this test and was invisible while a type was auto-selected on
-    // open; now the type has to be picked, which is the honest sequence.
+  // A picked type used to be the one way to get a sectioned document. It now
+  // lays its fields out on a page.
+  it('a picked type creates a page, never sections', () => {
     const onCreate = vi.fn();
     const t = mkType();
     loadTypes.mockReturnValue([t]);
     render(<NewDocumentModal open onClose={vi.fn()} onCreate={onCreate} />);
-    fireEvent.click(screen.getByTestId('doc-shape-sections'));
     fireEvent.click(screen.getByTestId(`type-option-${t.id}`));
     fireEvent.change(screen.getByTestId('new-doc-title'), { target: { value: 'Notepad' } });
     fireEvent.click(screen.getByTestId('new-doc-submit'));
-    expect(onCreate).toHaveBeenCalledWith(expect.objectContaining({ shape: 'sections' }));
-  });
-
-  it('will not submit Sections without a type, and says so rather than silently doing nothing', () => {
-    const onCreate = vi.fn();
-    loadTypes.mockReturnValue([mkType()]);
-    render(<NewDocumentModal open onClose={vi.fn()} onCreate={onCreate} />);
-    fireEvent.click(screen.getByTestId('doc-shape-sections'));
-    fireEvent.change(screen.getByTestId('new-doc-title'), { target: { value: 'Notepad' } });
-    expect(screen.getByTestId('new-doc-submit')).toBeDisabled();
-    fireEvent.click(screen.getByTestId('new-doc-submit'));
-    expect(onCreate).not.toHaveBeenCalled();
+    expect(onCreate).toHaveBeenCalledWith(expect.objectContaining({ shape: 'page' }));
   });
 
   it('resets to Page each time the modal opens', () => {
     loadTypes.mockReturnValue([mkType()]);
     const { rerender } = render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
-    fireEvent.click(screen.getByTestId('doc-shape-sections'));
-    expect(screen.getByTestId('doc-shape-sections')).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.click(screen.getByTestId('doc-shape-diagram'));
+    expect(screen.getByTestId('doc-shape-diagram')).toHaveAttribute('aria-pressed', 'true');
     rerender(<NewDocumentModal open={false} onClose={vi.fn()} onCreate={vi.fn()} />);
     rerender(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
     expect(screen.getByTestId('doc-shape-page')).toHaveAttribute('aria-pressed', 'true');
@@ -391,13 +357,13 @@ describe('NewDocumentModal — accessibility wiring', () => {
 });
 
 describe('NewDocumentModal — the diagram shape', () => {
-  it('offers Diagram alongside Page and Sections', async () => {
+  it('offers Diagram alongside Page (Sections is deprecated and not offered)', async () => {
     loadTypes.mockReturnValue([mkType({ id: 'a', name: 'Alpha' })]);
     render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
     await act(async () => { await Promise.resolve(); });
     expect(screen.getByText('Diagram')).toBeInTheDocument();
     expect(screen.getByText('Page')).toBeInTheDocument();
-    expect(screen.getByText('Sections')).toBeInTheDocument();
+    expect(screen.queryByText('Sections')).toBeNull();
   });
 
   it('reports shape "diagram" on create', async () => {
@@ -461,12 +427,7 @@ describe('NewDocumentModal — a diagram needs no document type', () => {
     expect(meta.documentTypeId).toBeUndefined();
   });
 
-  // WAS: "still requires a type for Page and Sections". Only SECTIONS is
-  // defined by a type — it is literally the list of sections a document starts
-  // with. A page is one continuous document and a type merely decorates it
-  // (icon + the chip the list shows), which is why the conversation surface
-  // has always created untyped pages.
-  it('requires a type for Sections only', async () => {
+  it('Page and Diagram both create without a type', async () => {
     const onCreate = vi.fn();
     loadTypes.mockReturnValue([]);          // no types available
     serverTypes = [];
@@ -474,16 +435,8 @@ describe('NewDocumentModal — a diagram needs no document type', () => {
     await act(async () => { await Promise.resolve(); });
 
     fireEvent.change(screen.getByTestId('new-doc-title'), { target: { value: 'Notes' } });
-
-    // Sections: refused, because there is no type to build them from.
-    fireEvent.click(screen.getByTestId('doc-shape-sections'));
-    expect(screen.getByTestId('new-doc-submit')).toBeDisabled();
-
-    // Page: allowed.
     fireEvent.click(screen.getByTestId('doc-shape-page'));
     expect(screen.getByTestId('new-doc-submit')).not.toBeDisabled();
-
-    // Diagram: allowed, as before.
     fireEvent.click(screen.getByTestId('doc-shape-diagram'));
     expect(screen.getByTestId('new-doc-submit')).not.toBeDisabled();
   });
@@ -613,22 +566,6 @@ describe('NewDocumentModal — starting from a known type', () => {
     expect(screen.getByTestId('new-doc-title')).toHaveValue('March billing');
   });
 
-  // Sections used to be flatly impossible without a type of your own, and the
-  // dialog said so. A known type IS a type the moment it is used.
-  it('a known type satisfies the sections requirement with zero types of your own', async () => {
-    loadTypes.mockReturnValue([]);
-    serverTypes = [];
-    render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
-    await act(async () => { await Promise.resolve(); });
-
-    fireEvent.click(screen.getByTestId('doc-shape-sections'));
-    fireEvent.change(screen.getByTestId('new-doc-title'), { target: { value: 'Notes' } });
-    expect(screen.getByTestId('new-doc-submit')).toBeDisabled();
-
-    fireEvent.click(screen.getByTestId('starter-cookbook-meeting-notes'));
-    expect(screen.getByTestId('new-doc-submit')).not.toBeDisabled();
-  });
-
   // The shape and the type are two independent questions, and this pins that
   // they stay independent. The old behaviour — picking a type forced
   // `sections`, and picking any shape discarded the type — made both controls
@@ -644,12 +581,6 @@ describe('NewDocumentModal — starting from a known type', () => {
     fireEvent.click(screen.getByTestId('starter-cookbook-meeting-notes'));
     expect(screen.getByTestId('starter-cookbook-meeting-notes')).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByTestId('doc-shape-page')).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByTestId('doc-shape-sections')).toHaveAttribute('aria-pressed', 'false');
-
-    // And switching shape keeps the type.
-    fireEvent.click(screen.getByTestId('doc-shape-sections'));
-    expect(screen.getByTestId('starter-cookbook-meeting-notes')).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByTestId('doc-shape-sections')).toHaveAttribute('aria-pressed', 'true');
 
     fireEvent.click(screen.getByTestId('doc-shape-page'));
     expect(screen.getByTestId('starter-cookbook-meeting-notes')).toHaveAttribute('aria-pressed', 'true');
@@ -682,10 +613,9 @@ describe('NewDocumentModal — starting from a known type', () => {
     );
   });
 
-  // The shape a typed create reports is the shape the person chose, both ways.
-  // The `sections` half is the legacy path and must not have moved: legacy
-  // documents are section-shaped and `canvas-shape-blind-spot` is real.
-  it('a known type creates on whichever shape is selected', async () => {
+  // A known type creates a page. The `sections` half of this test went with the
+  // deprecated sectioned editor.
+  it('a known type creates a page', async () => {
     const onCreate = vi.fn();
     loadTypes.mockReturnValue([]);
     serverTypes = [];
@@ -696,13 +626,5 @@ describe('NewDocumentModal — starting from a known type', () => {
     fireEvent.click(screen.getByTestId('new-doc-submit'));
     expect(onCreate.mock.calls[0][0]).toMatchObject({ shape: 'page', type: 'Bug Report' });
     expect(typeof onCreate.mock.calls[0][0].documentTypeId).toBe('string');
-
-    // `onClose` is a spy here, so the dialog is still standing and still holds
-    // the same type — which is the point: switching shape and submitting again
-    // is all it takes to get the other surface.
-    onCreate.mockClear();
-    fireEvent.click(screen.getByTestId('doc-shape-sections'));
-    fireEvent.click(screen.getByTestId('new-doc-submit'));
-    expect(onCreate.mock.calls[0][0]).toMatchObject({ shape: 'sections', type: 'Bug Report' });
   });
 });

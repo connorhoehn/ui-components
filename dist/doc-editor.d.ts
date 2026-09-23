@@ -20,6 +20,12 @@ import * as Y from 'yjs';
 
 export declare function acceptsDocumentImage(file: File): boolean;
 
+/**
+ * @deprecated Part of the legacy SECTIONED document editor, which is deprecated
+ * (2026-09-22). New documents are pages — use the page editor (`CanvasDocumentView`); decks use
+ * `PresentationView`, whiteboards the diagram surface. Kept so existing
+ * sectioned documents still open until they are converted to a page.
+ */
 export declare function AckMode({ sections, onAckItem, onRejectItem, participants, onSectionFocus, jumpToIndex, onJumpComplete, getSectionFragment, ydoc, provider, comments, onAddComment, onResolveThread, onUnresolveThread }: AckModeProps): JSX.Element;
 
 declare interface AckModeProps {
@@ -40,6 +46,12 @@ declare interface AckModeProps {
     onUnresolveThread?: (sectionId: string, commentId: string) => void;
 }
 
+/**
+ * @deprecated Part of the legacy SECTIONED document editor, which is deprecated
+ * (2026-09-22). New documents are pages — use the page editor (`CanvasDocumentView`); decks use
+ * `PresentationView`, whiteboards the diagram surface. Kept so existing
+ * sectioned documents still open until they are converted to a page.
+ */
 export declare function ActionItemsCard({ allItems }: {
     allItems: TaskItem[];
 }): JSX.Element;
@@ -1368,6 +1380,12 @@ export declare function isCanvasDocument(ydoc: Doc | null | undefined): boolean;
 
 export declare function isLineSpacing(value: unknown): value is LineSpacing;
 
+/**
+ * @deprecated Part of the legacy SECTIONED document editor, which is deprecated
+ * (2026-09-22). New documents are pages — use the page editor (`CanvasDocumentView`); decks use
+ * `PresentationView`, whiteboards the diagram surface. Kept so existing
+ * sectioned documents still open until they are converted to a page.
+ */
 export declare function KeyDecisionsCard({ sections }: {
     sections: Section[];
 }): JSX.Element;
@@ -2073,6 +2091,12 @@ export declare type ProposalKind = 'field' | 'prose';
 /** CSS pixels per inch at the canvas's 96dpi page scale. */
 export declare const PX_PER_INCH = 96;
 
+/**
+ * @deprecated Part of the legacy SECTIONED document editor, which is deprecated
+ * (2026-09-22). New documents are pages — use the page editor (`CanvasDocumentView`) in read-only mode; decks use
+ * `PresentationView`, whiteboards the diagram surface. Kept so existing
+ * sectioned documents still open until they are converted to a page.
+ */
 export declare function ReaderMode({ sections, participants, meta, commentCounts, sectionContentTexts, comments, getSectionFragment, ydoc, provider, }: ReaderModeProps): JSX.Element;
 
 declare interface ReaderModeProps {
@@ -2122,6 +2146,12 @@ declare interface ReviewableItemProps {
     onReject: (reason: string) => void;
 }
 
+/**
+ * @deprecated Part of the legacy SECTIONED document editor, which is deprecated
+ * (2026-09-22). New documents are pages — use the page editor's suggestion review (`SuggestionReviewList`); decks use
+ * `PresentationView`, whiteboards the diagram surface. Kept so existing
+ * sectioned documents still open until they are converted to a page.
+ */
 export declare function ReviewMode({ sections, participants, userId, getSectionFragment, ydoc, provider, sectionReviews, reviewSection, comments, onAddComment, onResolveThread, onUnresolveThread, onSectionFocus, }: ReviewModeProps): JSX.Element;
 
 declare interface ReviewModeProps {
@@ -2172,6 +2202,12 @@ declare interface Section_2 {
     title: string;
 }
 
+/**
+ * @deprecated Part of the legacy SECTIONED document editor, which is deprecated
+ * (2026-09-22). New documents are pages — use the page editor (`CanvasDocumentView`); decks use
+ * `PresentationView`, whiteboards the diagram surface. Kept so existing
+ * sectioned documents still open until they are converted to a page.
+ */
 export declare function SectionBlock({ section, fragment, ydoc, provider, user, editable, onUpdateSection, onAddItem, onUpdateItem, onRemoveItem, participants, onFocus, isFocused, comments, onUpdateCursorInfo, commentCount, onOpenComments, commentPresence, }: SectionBlockProps): JSX.Element;
 
 declare interface SectionBlockProps {
@@ -2205,6 +2241,12 @@ declare interface SectionBlockProps {
     commentPresence?: Participant[];
 }
 
+/**
+ * @deprecated Part of the legacy SECTIONED document editor, which is deprecated
+ * (2026-09-22). New documents are pages — use the page editor's margin comments (`CanvasDocumentView` + `DocumentGutter`); decks use
+ * `PresentationView`, whiteboards the diagram surface. Kept so existing
+ * sectioned documents still open until they are converted to a page.
+ */
 export declare function SectionComments({ comments, onAddComment, participants, onResolveThread, onUnresolveThread, }: SectionCommentsProps): JSX.Element;
 
 declare interface SectionCommentsProps {
@@ -2215,6 +2257,12 @@ declare interface SectionCommentsProps {
     onUnresolveThread?: (commentId: string) => void;
 }
 
+/**
+ * @deprecated Part of the legacy SECTIONED document editor, which is deprecated
+ * (2026-09-22). New documents are pages — use the page editor (`CanvasDocumentView`); decks use
+ * `PresentationView`, whiteboards the diagram surface. Kept so existing
+ * sectioned documents still open until they are converted to a page.
+ */
 export declare function SectionList({ sections, getSectionFragment, ydoc, provider, user, editable, onUpdateSection, onAddItem, onUpdateItem, onRemoveItem, participants, onSectionFocus, focusedSectionId, comments, onAddComment, onResolveThread, onUnresolveThread, onUpdateCursorInfo, onOpenComments, }: SectionListProps): JSX.Element;
 
 declare interface SectionListProps {
@@ -2253,6 +2301,12 @@ declare interface SectionReview {
     comment?: string;
 }
 
+/**
+ * @deprecated Part of the legacy SECTIONED document editor, which is deprecated
+ * (2026-09-22). New documents are pages — use the page editor (`CanvasDocumentView`); decks use
+ * `PresentationView`, whiteboards the diagram surface. Kept so existing
+ * sectioned documents still open until they are converted to a page.
+ */
 export declare function SectionSummariesCard({ sections, commentCounts, sectionContentTexts, comments, getSectionFragment, ydoc, provider, }: {
     sections: Section[];
     commentCounts?: Record<string, number>;
@@ -2677,6 +2731,12 @@ export declare interface SuggestionReviewListProps {
 /** `data:` URI for an `<img src>`, or `undefined` for an empty/absent source. */
 export declare function svgDataUri(svg: string | undefined): string | undefined;
 
+/**
+ * @deprecated Part of the legacy SECTIONED document editor, which is deprecated
+ * (2026-09-22). New documents are pages — use `DocumentOutline` (the page outline); decks use
+ * `PresentationView`, whiteboards the diagram surface. Kept so existing
+ * sectioned documents still open until they are converted to a page.
+ */
 export declare function TableOfContents({ sections, focusedSectionId }: TableOfContentsProps): JSX.Element | null;
 
 declare interface TableOfContentsProps {
@@ -3256,9 +3316,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -3266,9 +3326,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -3315,9 +3375,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -3325,9 +3385,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

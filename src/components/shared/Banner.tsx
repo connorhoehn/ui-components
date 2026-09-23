@@ -25,6 +25,12 @@ export interface BannerProps {
    */
   layout?: 'inline' | 'stacked';
   onDismiss?: () => void;
+  /**
+   * A control that resolves what the banner is about — "Convert to page" on a
+   * deprecation notice, "Retry" on a failure. Sits at the trailing edge,
+   * before the dismiss button, and never shrinks under a long message.
+   */
+  action?: ReactNode;
   children?: ReactNode;
   className?: string;
   style?: CSSProperties;
@@ -32,7 +38,7 @@ export interface BannerProps {
 }
 
 export default function Banner({
-  variant = 'error', title, layout = 'inline', onDismiss, children, className, style,
+  variant = 'error', title, layout = 'inline', onDismiss, action, children, className, style,
   'data-testid': testId,
 }: BannerProps) {
   return (
@@ -50,6 +56,7 @@ export default function Banner({
     >
       {title && <strong>{title}</strong>}
       <span className={layout === 'stacked' ? 'w-full' : 'flex-1'}>{children}</span>
+      {action && <span className="shrink-0 flex items-center gap-2">{action}</span>}
       {onDismiss && (
         <button
           type="button"

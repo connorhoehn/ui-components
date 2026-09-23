@@ -77,4 +77,23 @@ describe('Banner', () => {
     render(<Banner title="Heads up" layout="stacked">Body text</Banner>);
     expect(screen.getByText('Body text').className).toContain('w-full');
   });
+
+  it('renders an action control after the message and before dismiss', () => {
+    const onClick = vi.fn();
+    render(
+      <Banner variant="warning" onDismiss={() => {}} action={<button onClick={onClick}>Convert to page</button>}>
+        This document format is deprecated.
+      </Banner>,
+    );
+    const alert = screen.getByRole('alert');
+    const buttons = Array.from(alert.querySelectorAll('button')).map((b) => b.textContent);
+    expect(buttons).toEqual(['Convert to page', '×']);
+    fireEvent.click(screen.getByText('Convert to page'));
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders no action wrapper when there is no action', () => {
+    render(<Banner variant="info">Plain</Banner>);
+    expect(screen.getByRole('status').querySelectorAll('.shrink-0')).toHaveLength(0);
+  });
 });
