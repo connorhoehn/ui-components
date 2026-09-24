@@ -7108,7 +7108,7 @@ export declare interface FilterChipProps {
 /** A funnel: "filter this list". Since 2.385.0. */
 export declare function FilterIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function FilterPopover({ children, label, activeCount, onClear, clearLabel, open: controlledOpen, onOpenChange, placement, size, panelLabel, className, panelClassName, 'data-testid': testId, }: FilterPopoverProps): JSX.Element;
+export declare function FilterPopover({ children, label, activeCount, onClear, clearLabel, open: controlledOpen, onOpenChange, placement, size, trigger, panelLabel, className, panelClassName, 'data-testid': testId, }: FilterPopoverProps): JSX.Element;
 
 export declare interface FilterPopoverProps {
     /** The filter controls. */
@@ -7133,6 +7133,12 @@ export declare interface FilterPopoverProps {
      */
     placement?: InlineMenuPlacement;
     size?: ButtonSize;
+    /**
+     * `icon`: a square button holding only the funnel (the label becomes its
+     * accessible name); an active filter shows as a small primary dot on its
+     * corner, the count in the accessible name. Default `label`.
+     */
+    trigger?: 'label' | 'icon';
     /** Accessible name of the panel. Default "Filters". */
     panelLabel?: string;
     className?: string;
@@ -7837,7 +7843,7 @@ export declare function gridCols(count: number): number;
 /** Six dots in two columns: a drag handle — "pick this up and move it". Since 2.385.0. */
 export declare function GripIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, onReorder, canReorder, reorderLabel, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
+export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, onReorder, canReorder, reorderLabel, size, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
 
 export declare interface GroupedListGroup {
     id: string;
@@ -7884,6 +7890,13 @@ export declare interface GroupedListProps {
     canReorder?: (row: GroupedListRow) => boolean;
     /** Accessible name of a row's drag handle. Default `Reorder <title>`. */
     reorderLabel?: (row: GroupedListRow) => string;
+    /**
+     * `sm` (default): 14px titles, 12px meta, a tinted current row. `md` — the
+     * Work column: 15px group headers and titles, 13px meta, taller rows, a
+     * current row that is a rounded tint with a 3px primary bar on its left
+     * edge, and a larger drag handle that is always visible.
+     */
+    size?: 'sm' | 'md';
     className?: string;
     'data-testid'?: string;
 }
@@ -19630,6 +19643,29 @@ declare interface UseActivityBusReturn {
       tone?: ChipTone;
   }
 
+  /**
+   * One filter dimension ("Kind", "Owner", "Status"), drawn as a labelled row of
+   * toggle chips in the filter panel. `selected` empty = no narrowing on this
+   * facet. The host does the filtering; this only draws and reports.
+   */
+  export declare interface WorkListFilterFacet {
+      id: string;
+      label: string;
+      options: Array<{
+          value: string;
+          label: string;
+          count?: number;
+      }>;
+      selected: readonly string[];
+      onChange: (selected: string[]) => void;
+  }
+
+  /** The filter panel body for `facets`. Exported for hosts that compose their own toolbar. */
+  export declare function WorkListFilters({ facets, 'data-testid': testId }: {
+      facets: WorkListFilterFacet[];
+      'data-testid'?: string;
+  }): JSX.Element;
+
   export declare interface WorkListGroup {
       id: string;
       title: string;
@@ -19674,7 +19710,7 @@ declare interface UseActivityBusReturn {
   }
 
   /** Search on its own row; sort and the filter button on the next. */
-  export declare function WorkListToolbar({ query, onQueryChange, searchPlaceholder, sort, sortOptions, onSortChange, sortLabel, filters, activeFilterCount, onClearFilters, className, 'data-testid': testId, }: WorkListToolbarProps): JSX.Element;
+  export declare function WorkListToolbar({ query, onQueryChange, searchPlaceholder, sort, sortOptions, onSortChange, sortLabel, filters: filtersProp, filterFacets, activeFilterCount: activeFilterCountProp, onClearFilters, className, 'data-testid': testId, }: WorkListToolbarProps): JSX.Element;
 
   export declare interface WorkListToolbarProps {
       query: string;
@@ -19688,13 +19724,19 @@ declare interface UseActivityBusReturn {
       sortLabel?: string;
       /** Filter controls; omit for no filter button. */
       filters?: ReactNode;
+      /**
+       * Filter facets, drawn by `WorkListFilters` in the panel (and counted for
+       * the button's dot) when `filters` is not given.
+       */
+      filterFacets?: WorkListFilterFacet[];
+      /** Default: the number of facets with a selection, else 0. */
       activeFilterCount?: number;
       onClearFilters?: () => void;
       className?: string;
       'data-testid'?: string;
   }
 
-  export declare function WorkListView({ title, count, onCreate, createLabel, onCollapse, collapseLabel, chrome, query, onQueryChange, searchPlaceholder, sort, sortOptions, onSortChange, sortLabel, filters, activeFilterCount, onClearFilters, groups, items, currentId, onOpenItem, onToggleDone, onReorder, loading, error, onRetry, emptyLabel, storageKey, className, 'data-testid': testId, }: WorkListViewProps): JSX.Element;
+  export declare function WorkListView({ title, count, onCreate, createLabel, onCollapse, collapseLabel, chrome, query, onQueryChange, searchPlaceholder, sort, sortOptions, onSortChange, sortLabel, filters, filterFacets, activeFilterCount: activeFilterCountProp, onClearFilters, groups, items, currentId, onOpenItem, onToggleDone, onReorder, loading, error, onRetry, emptyLabel, storageKey, className, 'data-testid': testId, }: WorkListViewProps): JSX.Element;
 
   export declare interface WorkListViewProps extends Omit<WorkListToolbarProps, 'className' | 'data-testid'> {
       /** Default "Work". */
@@ -19941,19 +19983,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasListStyle: {
             /**
              * Make the caret's block a list of the style's kind (if it is not one
@@ -19986,9 +20015,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -19999,6 +20041,29 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -20025,29 +20090,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }

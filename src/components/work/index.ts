@@ -3,7 +3,7 @@
 // the Run draft panel. Exported from the ROOT entry. `@dnd-kit` (an optional
 // peer) is reached only through GroupedList's lazily imported drag chunk, so
 // importing anything here never requires it.
-export { WorkListView, WorkListToolbar, toWorkListRows } from './WorkListView';
+export { WorkListView, WorkListToolbar, WorkListFilters, toWorkListRows } from './WorkListView';
 export type {
   WorkListPerson,
   WorkListChip,
@@ -11,6 +11,7 @@ export type {
   WorkListItem,
   WorkListGroup,
   WorkListToolbarProps,
+  WorkListFilterFacet,
   WorkListViewProps,
   ToWorkListRowsOptions,
 } from './WorkListView';

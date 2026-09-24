@@ -165,7 +165,24 @@ describe('WorkListView', () => {
     });
     fireEvent.change(screen.getByLabelText('Sort work'), { target: { value: 'title' } });
     expect(onSortChange).toHaveBeenCalledWith('title');
-    expect(screen.getByTestId('work-list-toolbar-filter-count')).toHaveTextContent('2');
+    // The filter is a square icon button; the count is in its name, a dot marks it.
+    expect(screen.getByTestId('work-list-toolbar-filter-trigger')).toHaveAccessibleName('Filter work (2 active)');
+    expect(screen.getByTestId('work-list-toolbar-filter-dot')).toBeInTheDocument();
+  });
+
+  it('draws filter facets as toggle chips and reports the new selection', () => {
+    const onChange = vi.fn();
+    renderView({
+      filterFacets: [
+        { id: 'kind', label: 'Kind', options: [{ value: 'story', label: 'Story', count: 9 }, { value: 'bug', label: 'Bug', count: 1 }], selected: ['story'], onChange },
+      ],
+    });
+    expect(screen.getByTestId('work-list-toolbar-filter-trigger')).toHaveAccessibleName('Filter work (1 active)');
+    fireEvent.click(screen.getByTestId('work-list-toolbar-filter-trigger'));
+    fireEvent.click(screen.getByTestId('work-list-toolbar-facets-kind-bug'));
+    expect(onChange).toHaveBeenCalledWith(['story', 'bug']);
+    fireEvent.click(screen.getByTestId('work-list-toolbar-facets-kind-story'));
+    expect(onChange).toHaveBeenLastCalledWith([]);
   });
 });
 

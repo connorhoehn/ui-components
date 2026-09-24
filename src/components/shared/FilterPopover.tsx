@@ -50,6 +50,12 @@ export interface FilterPopoverProps {
    */
   placement?: InlineMenuPlacement;
   size?: ButtonSize;
+  /**
+   * `icon`: a square button holding only the funnel (the label becomes its
+   * accessible name); an active filter shows as a small primary dot on its
+   * corner, the count in the accessible name. Default `label`.
+   */
+  trigger?: 'label' | 'icon';
   /** Accessible name of the panel. Default "Filters". */
   panelLabel?: string;
   className?: string;
@@ -82,6 +88,7 @@ export function FilterPopover({
   onOpenChange,
   placement = 'bottom-start',
   size = 'md',
+  trigger = 'label',
   panelLabel = 'Filters',
   className,
   panelClassName,
@@ -110,11 +117,21 @@ export function FilterPopover({
         data-testid={`${testId}-trigger`}
         data-active={active || undefined}
         onClick={() => setOpen(!open)}
-        className={cn('inline-flex items-center gap-2 whitespace-nowrap', active && 'border-primary-border text-primary-fg')}
+        {...(trigger === 'icon'
+          ? { 'aria-label': active ? `${label} (${activeCount} active)` : label, title: label }
+          : {})}
+        className={cn(
+          'inline-flex items-center gap-2 whitespace-nowrap',
+          trigger === 'icon' && 'relative aspect-square justify-center px-0 text-text-secondary [&_svg]:h-[18px] [&_svg]:w-[18px]',
+          active && 'border-primary-border text-primary-fg',
+        )}
       >
         <FunnelIcon />
-        <span>{label}</span>
-        {active && (
+        {trigger === 'label' && <span>{label}</span>}
+        {trigger === 'icon' && active && (
+          <span aria-hidden="true" data-testid={`${testId}-dot`} className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-primary" />
+        )}
+        {trigger === 'label' && active && (
           <Chip size="xs" tone="accent" solid data-testid={`${testId}-count`} aria-label={`${activeCount} active filters`}>
             {activeCount}
           </Chip>

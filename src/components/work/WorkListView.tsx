@@ -44,6 +44,7 @@ import { StatusDot } from '../shared/StatusDot';
 import { Avatar } from '../shared/Avatar';
 import { Checkbox } from '../forms/Checkbox';
 import { Select, type SelectOption } from '../forms/Select';
+import { FilterChip } from '../shared/FilterChip';
 
 export interface WorkListPerson {
   id: string;
@@ -93,6 +94,54 @@ export interface WorkListGroup {
   defaultOpen?: boolean;
 }
 
+/**
+ * One filter dimension ("Kind", "Owner", "Status"), drawn as a labelled row of
+ * toggle chips in the filter panel. `selected` empty = no narrowing on this
+ * facet. The host does the filtering; this only draws and reports.
+ */
+export interface WorkListFilterFacet {
+  id: string;
+  label: string;
+  options: Array<{ value: string; label: string; count?: number }>;
+  selected: readonly string[];
+  onChange: (selected: string[]) => void;
+}
+
+/** The filter panel body for `facets`. Exported for hosts that compose their own toolbar. */
+export function WorkListFilters({ facets, 'data-testid': testId = 'work-list-filters' }: { facets: WorkListFilterFacet[]; 'data-testid'?: string }) {
+  return (
+    <div className="flex flex-col gap-3" data-testid={testId}>
+      {facets.map((facet) => (
+        <fieldset key={facet.id} className="m-0 flex min-w-0 flex-col gap-1.5 border-0 p-0" data-testid={`${testId}-${facet.id}`}>
+          <legend className="mb-1.5 p-0 text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">{facet.label}</legend>
+          {facet.options.length === 0 ? (
+            <span className="text-[13px] text-text-tertiary">Nothing to filter by</span>
+          ) : (
+            <div className="flex flex-wrap gap-1.5">
+              {facet.options.map((option) => {
+                const on = facet.selected.includes(option.value);
+                return (
+                  <FilterChip
+                    key={option.value}
+                    size="md"
+                    active={on}
+                    onClick={() =>
+                      facet.onChange(on ? facet.selected.filter((v) => v !== option.value) : [...facet.selected, option.value])
+                    }
+                    data-testid={`${testId}-${facet.id}-${option.value}`}
+                  >
+                    {typeof option.count === 'number' ? `${option.label} · ${option.count}` : option.label}
+                  </FilterChip>
+                );
+              })}
+            </div>
+          )}
+        </fieldset>
+      ))}
+    </div>
+  );
+}
+
 export interface WorkListToolbarProps {
   query: string;
   onQueryChange: (query: string) => void;
@@ -105,6 +154,12 @@ export interface WorkListToolbarProps {
   sortLabel?: string;
   /** Filter controls; omit for no filter button. */
   filters?: ReactNode;
+  /**
+   * Filter facets, drawn by `WorkListFilters` in the panel (and counted for
+   * the button's dot) when `filters` is not given.
+   */
+  filterFacets?: WorkListFilterFacet[];
+  /** Default: the number of facets with a selection, else 0. */
   activeFilterCount?: number;
   onClearFilters?: () => void;
   className?: string;
@@ -239,6 +294,7 @@ export function toWorkListRows(items: WorkListItem[], { onToggleDone, testId = '
             checked={!!item.done}
             disabled={!!item.donePending || !!item.disabled}
             aria-label={`Mark ${item.title} done`}
+            className="h-[18px] w-[18px]"
             onChange={(done) => onToggleDone(item, done)}
             data-testid={`${testId}-done-${item.id}`}
           />
@@ -254,6 +310,10 @@ export function toWorkListRows(items: WorkListItem[], { onToggleDone, testId = '
       meta: <MetaLine item={item} testId={testId} />,
     };
   });
+}
+
+function facetCount(facets: WorkListFilterFacet[] | undefined): number {
+  return (facets ?? []).filter((f) => f.selected.length > 0).length;
 }
 
 function matches(item: WorkListItem, query: string): boolean {
@@ -274,16 +334,20 @@ export function WorkListToolbar({
   sortOptions,
   onSortChange,
   sortLabel = 'Sort work',
-  filters,
-  activeFilterCount = 0,
+  filters: filtersProp,
+  filterFacets,
+  activeFilterCount: activeFilterCountProp,
   onClearFilters,
   className,
   'data-testid': testId = 'work-list-toolbar',
 }: WorkListToolbarProps) {
   const hasSort = !!sortOptions?.length && !!onSortChange;
+  const filters = filtersProp ?? (filterFacets?.length ? <WorkListFilters facets={filterFacets} data-testid={`${testId}-facets`} /> : null);
+  const activeFilterCount = activeFilterCountProp ?? facetCount(filterFacets);
   return (
     <div className={cn('flex flex-col gap-2', className)} data-testid={testId}>
       <SearchInput
+        size="md"
         value={query}
         onChange={onQueryChange}
         placeholder={searchPlaceholder}
@@ -301,7 +365,7 @@ export function WorkListToolbar({
               onChange={(event) => onSortChange!(event.target.value)}
               options={sortOptions!}
               wrapperClassName="min-w-0 flex-1"
-              className="w-full"
+              className="w-full text-[15px] text-text-primary"
             />
           )}
           {filters && (
@@ -309,6 +373,8 @@ export function WorkListToolbar({
               activeCount={activeFilterCount}
               onClear={onClearFilters}
               placement="bottom-end"
+              trigger="icon"
+              label="Filter work"
               data-testid={`${testId}-filter`}
               className={cn(!hasSort && 'ml-auto')}
             >
@@ -341,7 +407,8 @@ export function WorkListView({
   onSortChange,
   sortLabel,
   filters,
-  activeFilterCount = 0,
+  filterFacets,
+  activeFilterCount: activeFilterCountProp,
   onClearFilters,
   groups,
   items,
@@ -360,6 +427,7 @@ export function WorkListView({
   const visible = useMemo(() => items.filter((item) => matches(item, query)), [items, query]);
   const rows = useMemo(() => toWorkListRows(visible, { onToggleDone, testId }), [visible, onToggleDone, testId]);
   const byId = useMemo(() => new Map(visible.map((item) => [item.id, item])), [visible]);
+  const activeFilterCount = activeFilterCountProp ?? facetCount(filterFacets);
   const searching = query.trim().length > 0;
   const narrowed = searching || activeFilterCount > 0;
 
@@ -406,12 +474,13 @@ export function WorkListView({
         rows={rows}
         currentId={currentId}
         storageKey={storageKey}
-        hideEmptyGroups={searching}
+        size="md"
+        hideEmptyGroups={narrowed}
         onOpenRow={(row) => {
           const item = byId.get(row.id);
           if (item) onOpenItem?.(item);
         }}
-        onReorder={onReorder && !searching ? onReorder : undefined}
+        onReorder={onReorder && !narrowed ? onReorder : undefined}
         reorderLabel={(row) => `Reorder ${row.title}`}
       />
     );
@@ -451,6 +520,7 @@ export function WorkListView({
         onSortChange={onSortChange}
         sortLabel={sortLabel}
         filters={filters}
+        filterFacets={filterFacets}
         activeFilterCount={activeFilterCount}
         onClearFilters={onClearFilters}
         className="px-5"

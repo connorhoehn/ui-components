@@ -181,6 +181,13 @@ export interface GroupedListProps {
   canReorder?: (row: GroupedListRow) => boolean;
   /** Accessible name of a row's drag handle. Default `Reorder <title>`. */
   reorderLabel?: (row: GroupedListRow) => string;
+  /**
+   * `sm` (default): 14px titles, 12px meta, a tinted current row. `md` — the
+   * Work column: 15px group headers and titles, 13px meta, taller rows, a
+   * current row that is a rounded tint with a 3px primary bar on its left
+   * edge, and a larger drag handle that is always visible.
+   */
+  size?: 'sm' | 'md';
   className?: string;
   'data-testid'?: string;
 }
@@ -308,9 +315,11 @@ export function GroupedList({
   onReorder,
   canReorder,
   reorderLabel,
+  size = 'sm',
   className,
   'data-testid': testId = 'grouped-list',
 }: GroupedListProps) {
+  const md = size === 'md';
   const isControlled = openGroups !== undefined;
 
   // Uncontrolled: the set of CLOSED groups (so a group added later defaults open).
@@ -591,7 +600,7 @@ export function GroupedList({
                 onClick={() => setOpen(group.id, !open)}
                 className={cn(
                   'flex w-full items-center gap-2.5 border-0 bg-transparent px-2 py-2.5 text-left',
-                  'text-[14px] font-semibold text-text-primary',
+                  md ? 'text-[15px] font-semibold text-text-primary' : 'text-[14px] font-semibold text-text-primary',
                   'rounded-md hover:bg-surface-hover',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
                 )}
@@ -630,6 +639,7 @@ export function GroupedList({
                     row={row}
                     current={row.current || row.id === currentId}
                     testId={testId}
+                    size={size}
                     tabbable={tabTarget === `r:${row.id}`}
                     onFocusRow={() => setFocused(`r:${row.id}`)}
                     onOpenRow={onOpenRow}
@@ -675,6 +685,7 @@ interface RowProps {
   row: GroupedListRow;
   current: boolean;
   testId: string;
+  size: 'sm' | 'md';
   tabbable: boolean;
   onFocusRow: () => void;
   onOpenRow?: (row: GroupedListRow) => void;
@@ -684,12 +695,13 @@ interface RowProps {
   reorder?: { label: string; sortable: SortableModule | null };
 }
 
-function Row({ row, current, testId, tabbable, onFocusRow, onOpenRow, menuSections, menuLabel, reorder }: RowProps) {
+function Row({ row, current, testId, size, tabbable, onFocusRow, onOpenRow, menuSections, menuLabel, reorder }: RowProps) {
   const hasMenu = !!menuSections && menuSections.some((s) => s.items.length > 0);
   const hasHoverLine = row.hoverSubline !== undefined && row.hoverSubline !== null;
   const hasMeta = row.meta !== undefined && row.meta !== null;
   const hasLeading = row.leading !== undefined && row.leading !== null;
   const rKey: FocusKey = `r:${row.id}`;
+  const md = size === 'md';
   const [drag, setDrag] = useState({ dragging: false, over: false });
   const onDragState = useCallback((next: { dragging: boolean; over: boolean }) => {
     setDrag((prev) => (prev.dragging === next.dragging && prev.over === next.over ? prev : next));
@@ -699,8 +711,9 @@ function Row({ row, current, testId, tabbable, onFocusRow, onOpenRow, menuSectio
     'aria-label': reorder?.label,
     title: 'Drag to reorder, or Alt+arrow keys on the row',
     'data-testid': `${testId}-row-handle-${row.id}`,
-    className: HANDLE_CLASS,
+    className: cn(HANDLE_CLASS, md && 'h-8 w-6 text-text-secondary'),
   };
+  const grip = <GripIcon size={md ? 20 : 14} />;
 
   return (
     <li
@@ -722,16 +735,20 @@ function Row({ row, current, testId, tabbable, onFocusRow, onOpenRow, menuSectio
           }
         : {})}
       className={cn(
-        'group relative flex items-center gap-3 border-t border-border px-2 py-2.5',
+        'group relative flex items-center gap-3 border-t border-border px-2',
+        md ? 'py-3' : 'py-2.5',
         'transition-colors duration-100',
         current ? 'bg-primary/8 hover:bg-primary/12' : 'hover:bg-surface-hover',
+        // md: the current row is a rounded tint with a bar on its left edge;
+        // the rows either side keep their rules, this one drops its own.
+        md && current && 'rounded-r-md border-transparent shadow-[inset_3px_0_0_0_var(--color-primary)]',
         row.disabled && 'opacity-60',
         drag.dragging && 'opacity-50',
         drag.over && !drag.dragging && 'shadow-[inset_0_2px_0_0_var(--color-primary)]',
       )}
     >
       {hasLeading && (
-        <span className="flex w-5 shrink-0 items-center justify-center" data-testid={`${testId}-row-leading-${row.id}`}>
+        <span className={cn('flex shrink-0 items-center justify-center', md ? 'w-6' : 'w-5')} data-testid={`${testId}-row-leading-${row.id}`}>
           {row.leading}
         </span>
       )}
@@ -761,7 +778,7 @@ function Row({ row, current, testId, tabbable, onFocusRow, onOpenRow, menuSectio
         )}
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="flex min-w-0 items-center gap-2.5">
-            <span className="truncate text-[14px] font-medium leading-5 text-text-primary" title={row.title}>
+            <span className={cn('truncate font-medium text-text-primary', md ? 'text-[15px] leading-[22px]' : 'text-[14px] leading-5')} title={row.title}>
               {row.title}
             </span>
             {row.pill && <span className="flex shrink-0 items-center">{row.pill}</span>}
@@ -769,7 +786,7 @@ function Row({ row, current, testId, tabbable, onFocusRow, onOpenRow, menuSectio
           {hasMeta && (
             <span
               data-testid={`${testId}-row-meta-${row.id}`}
-              className="flex min-w-0 items-center gap-1.5 truncate text-[12px] leading-4 text-text-secondary"
+              className={cn('flex min-w-0 items-center gap-1.5 truncate text-text-secondary', md ? 'text-[13px] leading-5' : 'text-[12px] leading-4')}
             >
               {row.meta}
             </span>
@@ -842,11 +859,11 @@ function Row({ row, current, testId, tabbable, onFocusRow, onOpenRow, menuSectio
       {reorder &&
         (reorder.sortable ? (
           <reorder.sortable.SortableHandle id={row.id} onStateChange={onDragState} {...handleProps}>
-            <GripIcon size={14} />
+            {grip}
           </reorder.sortable.SortableHandle>
         ) : (
           <button type="button" tabIndex={-1} {...handleProps}>
-            <GripIcon size={14} />
+            {grip}
           </button>
         ))}
     </li>
