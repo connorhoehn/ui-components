@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { WorkActivityCanvas } from '../WorkActivityCanvas';
+import { CanvasPaneInsetContext } from '../../../layout/canvasPaneInset';
 import {
   WORK_ACTIVITY_ALL_EFFORTS,
   WORK_ACTIVITY_DEFAULT_MAX_EFFORTS,
@@ -132,5 +133,17 @@ describe('WorkActivityCanvas centres the selection', () => {
     // doc-0 sits at the top-left, already on screen at zoom 1: no move.
     rerender(<WorkActivityCanvas {...base} selection={{ kind: 'node', id: 'run-0' }} />);
     expect(onViewportChange.mock.calls.length).toBe(before + 1);
+  });
+
+  it('centres in the part an overlay pane leaves showing, and keeps the legend beside it (NFR #173)', () => {
+    const onViewportChange = vi.fn();
+    const props = { ...makeProps(EFFORT_COUNT, { x: 0, y: 0, zoom: 1 }, onViewportChange), selection: { kind: 'node' as const, id: 'doc-8' } };
+    render(<CanvasPaneInsetContext.Provider value={{ right: 300 }}><WorkActivityCanvas {...props} /></CanvasPaneInsetContext.Provider>);
+    const opened = onViewportChange.mock.calls.at(-1)![0] as WorkGraphViewport;
+    const { x } = nodeCentre(props, 'doc-8', opened);
+    const visible = PANE.width - 300;
+    expect(x).toBeGreaterThan(0);
+    expect(x).toBeLessThan(visible / 2);
+    expect(screen.getByRole('list', { name: 'Activity emphasis legend' }).style.right).toBe('316px');
   });
 });
