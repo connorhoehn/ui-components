@@ -144,6 +144,9 @@ describe('WorkActivityCanvas centres the selection', () => {
     const visible = PANE.width - 300;
     expect(x).toBeGreaterThan(0);
     expect(x).toBeLessThan(visible / 2);
-    expect(screen.getByRole('list', { name: 'Activity emphasis legend' }).style.right).toBe('316px');
+    const legend = screen.getByRole('list', { name: 'Activity emphasis legend' });
+    expect(legend.style.right).toBe('316px');
+    // 340 px left showing: too narrow beside the zoom controls, so above them.
+    expect(legend.style.bottom).toBe('60px');
   });
 });

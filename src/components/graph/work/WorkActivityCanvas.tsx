@@ -321,8 +321,10 @@ export function WorkActivityCanvas(props: ActivityProps) {
       <Button size="sm" variant="secondary" onClick={() => onViewportChange(fit())}>Fit graph</Button>
     </div>
     {/* Beside an overlay pane, not under it: at 1280×720 the node pane lay
-        over the legend and hid it whenever a node was open. */}
-    <ul aria-label="Activity emphasis legend" style={paneInset ? { right: paneInset + 16 } : undefined} className="pointer-events-none absolute bottom-4 right-4 flex items-center gap-2 rounded bg-surface/90 px-2 py-1 text-[10px] text-text-tertiary">
+        over the legend and hid it whenever a node was open. In a strip too
+        narrow for it and the zoom controls side by side (~300 px there), it
+        sits above the controls instead of across them. */}
+    <ul aria-label="Activity emphasis legend" style={paneInset ? { right: paneInset + 16, ...(visibleWidth < 440 ? { bottom: 60 } : {}) } : undefined} className="pointer-events-none absolute bottom-4 right-4 flex items-center gap-2 rounded bg-surface/90 px-2 py-1 text-[10px] text-text-tertiary">
       {([['earlier', 'Earlier', 'border-border bg-surface-inset opacity-70'], ['input', 'Input', 'border-border-emphasis bg-surface-inset'], ['active', live ? 'Active' : 'Active then', 'border-info bg-info']] as const).map(([key, label, swatch]) => (
         <li key={key} className="flex items-center gap-1"><span aria-hidden="true" className={cn('inline-block h-2 w-2 rounded-sm border', swatch)} />{label}</li>
       ))}

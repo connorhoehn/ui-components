@@ -2446,7 +2446,10 @@ function Mt(e) {
 			}),
 			/* @__PURE__ */ K("ul", {
 				"aria-label": "Activity emphasis legend",
-				style: k ? { right: k + 16 } : void 0,
+				style: k ? {
+					right: k + 16,
+					...G < 440 ? { bottom: 60 } : {}
+				} : void 0,
 				className: "pointer-events-none absolute bottom-4 right-4 flex items-center gap-2 rounded bg-surface/90 px-2 py-1 text-[10px] text-text-tertiary",
 				children: [
 					[
