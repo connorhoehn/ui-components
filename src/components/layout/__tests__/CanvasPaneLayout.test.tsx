@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { CanvasPaneLayout, canvasPaneGeometry } from '../CanvasPaneLayout';
+import { useCanvasPaneInset } from '../canvasPaneInset';
+
+function Inset() {
+  return <p data-testid="inset">{useCanvasPaneInset().right}</p>;
+}
 
 describe('canvasPaneGeometry', () => {
   it('gives the pane a column while the canvas keeps its floor', () => {
@@ -39,5 +44,22 @@ describe('CanvasPaneLayout', () => {
   it('is a column when wide', () => {
     render(<CanvasPaneLayout width={1200} pane={<p>pane</p>}><p>canvas</p></CanvasPaneLayout>);
     expect(screen.getByTestId('canvas-pane-layout-pane').dataset.placement).toBe('column');
+  });
+});
+
+describe('CanvasPaneLayout inset (NFR #173: pan the selected card out from under the pane)', () => {
+  it('tells the canvas how much an overlay covers', () => {
+    render(<CanvasPaneLayout width={579} pane={<p>pane</p>}><Inset /></CanvasPaneLayout>);
+    expect(screen.getByTestId('inset')).toHaveTextContent('280');
+  });
+  it('a column or a folded pane covers nothing', () => {
+    const { rerender } = render(<CanvasPaneLayout width={1200} pane={<p>pane</p>}><Inset /></CanvasPaneLayout>);
+    expect(screen.getByTestId('inset')).toHaveTextContent('0');
+    rerender(<CanvasPaneLayout width={579} collapsed pane={<p>pane</p>}><Inset /></CanvasPaneLayout>);
+    expect(screen.getByTestId('inset')).toHaveTextContent('0');
+  });
+  it('no pane, no inset', () => {
+    render(<CanvasPaneLayout width={579}><Inset /></CanvasPaneLayout>);
+    expect(screen.getByTestId('inset')).toHaveTextContent('0');
   });
 });

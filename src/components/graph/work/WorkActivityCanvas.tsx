@@ -8,6 +8,7 @@ import { Button } from '../../ui/Button';
 import InlineAlert from '../../shared/InlineAlert';
 import { IconButton } from '../../ui/IconButton';
 import { cn } from '../../../lib/cn';
+import { useCanvasPaneInset } from '../../layout/canvasPaneInset';
 import {
   layoutWorkEfforts,
   limitWorkEfforts,
@@ -131,6 +132,9 @@ export function WorkActivityCanvas(props: ActivityProps) {
   const lastCentred = useRef<string | undefined>(undefined);
   const previousFocus = useRef(activity.view.focusedEffortId);
   const { view, onViewChange } = activity;
+  // A details pane lying over the right edge (CanvasPaneLayout's overlay):
+  // a selected card is panned into the part left of it, not under it.
+  const paneInset = useCanvasPaneInset().right;
   useEffect(() => {
     const element = host.current;
     if (!element || typeof ResizeObserver === 'undefined') return;
@@ -190,11 +194,13 @@ export function WorkActivityCanvas(props: ActivityProps) {
   // The same zoom, panned so the selected node is in the middle — at least a
   // readable zoom, since a node picked from outside the canvas (a deep link,
   // the list, a citation) has to be legible where it lands.
+  // Centred in the part of the canvas a pane does not cover.
+  const visibleWidth = Math.max(1, size.width - paneInset);
   const centred = useCallback((base: WorkGraphViewport): WorkGraphViewport => {
     if (!selectedRect) return base;
-    const zoom = Math.max(base.zoom, Math.min(WORK_CANVAS_OPEN_ZOOM, (size.width - 48) / selectedRect.width));
-    return { x: size.width / 2 - (selectedRect.x + selectedRect.width / 2) * zoom, y: size.height / 2 - (selectedRect.y + selectedRect.height / 2) * zoom, zoom };
-  }, [selectedRect, size]);
+    const zoom = Math.max(base.zoom, Math.min(WORK_CANVAS_OPEN_ZOOM, (visibleWidth - 48) / selectedRect.width));
+    return { x: visibleWidth / 2 - (selectedRect.x + selectedRect.width / 2) * zoom, y: size.height / 2 - (selectedRect.y + selectedRect.height / 2) * zoom, zoom };
+  }, [selectedRect, size, visibleWidth]);
   // A status border or a new text line can change measurements. Re-layout may
   // reserve that space, but only a navigation/topology intent may reset zoom.
   const geometry = JSON.stringify([size, activity.mode, view.focusedEffortId, view.expandedSourceEfforts, layouts.map((group) => [group.id, group.nodes.map((node) => node.id), group.edges.map((edge) => edge.id)]), layouts.every((group) => group.nodes.every((node) => measurements.has(node.entityId)))]);
@@ -207,21 +213,23 @@ export function WorkActivityCanvas(props: ActivityProps) {
     if (restoring) { onViewportChange(restoring); return; }
     if (first && view.canvasInitialized) return;
     onViewportChange(centred(open()));
-    lastCentred.current = selectedNodeId;
+    lastCentred.current = selectedNodeId ? `${selectedNodeId}\u0000${paneInset}` : undefined;
     if (!view.canvasInitialized) onViewChange({ ...view, canvasInitialized: true });
-  }, [geometry, open, centred, view, onViewChange, onViewportChange]);
+  }, [geometry, open, centred, view, onViewChange, onViewportChange, selectedNodeId, paneInset]);
   // A selection made from outside the canvas (a deep link, the list, the
-  // pane's links) pans to its node when that node is not already on screen.
-  // A click on the canvas selects something visible, so it never moves.
+  // pane's links) pans to its node when that node is not already on screen —
+  // and so does a click on a card the opening pane then lies over, or a pane
+  // unfolding over the selected card. A card the reader can see never moves.
   useEffect(() => {
     if (!selectedNodeId) { lastCentred.current = undefined; return; }
-    if (lastCentred.current === selectedNodeId || !selectedRect || lastGeometry.current === null) return;
-    lastCentred.current = selectedNodeId;
+    const key = `${selectedNodeId}\u0000${paneInset}`;
+    if (lastCentred.current === key || !selectedRect || lastGeometry.current === null) return;
+    lastCentred.current = key;
     const left = selectedRect.x * viewport.zoom + viewport.x;
     const top = selectedRect.y * viewport.zoom + viewport.y;
-    const visible = left >= 0 && top >= 0 && left + selectedRect.width * viewport.zoom <= size.width && top + selectedRect.height * viewport.zoom <= size.height;
+    const visible = left >= 0 && top >= 0 && left + selectedRect.width * viewport.zoom <= visibleWidth && top + selectedRect.height * viewport.zoom <= size.height;
     if (!visible) onViewportChange(centred(viewport));
-  }, [selectedNodeId, selectedRect, viewport, size, centred, onViewportChange]);
+  }, [selectedNodeId, selectedRect, viewport, size, visibleWidth, paneInset, centred, onViewportChange]);
   const focus = (id: string) => onViewChange({ ...view, focusedEffortId: view.focusedEffortId === id ? null : id, overviewViewport: view.focusedEffortId ? view.overviewViewport : viewport });
   const byId = new Map(nodes.map((node) => [node.id, node]));
   const byEdge = new Map(edges.map((edge) => [edge.id, edge]));

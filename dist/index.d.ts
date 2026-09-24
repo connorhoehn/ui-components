@@ -2374,6 +2374,13 @@ export declare interface CanvasPaneGeometryOptions {
     canvasMinPx?: number;
 }
 
+export declare interface CanvasPaneInset {
+    /** Pixels of the canvas's right edge that the pane lies over. */
+    right: number;
+}
+
+export declare const CanvasPaneInsetContext: Context<CanvasPaneInset>;
+
 export declare function CanvasPaneLayout({ children, pane, collapsed: collapsedProp, onCollapsedChange, expandKey, paneLabel, width: fixedWidth, className, 'data-testid': testId, ...geometryOptions }: CanvasPaneLayoutProps): JSX.Element;
 
 export declare interface CanvasPaneLayoutProps extends CanvasPaneGeometryOptions {
@@ -3125,7 +3132,7 @@ export declare interface ChatLabPillProps {
     'data-testid'?: string;
 }
 
-export declare function ChatLabShell({ title, status, model, contextBudgetTokens, contextTokens, iterations, planSource, steps, events, onInstruct, onStop, onBackToChat, onOpenRun, onOpenGraph, shell, notice, className, 'data-testid': testId, }: ChatLabShellProps): JSX.Element;
+export declare function ChatLabShell({ title, status, model, contextBudgetTokens, contextTokens, iterations, planSource, steps, events, onInstruct, onStop, onBackToChat, onOpenRun, onOpenGraph, shell, notice, headerAccessory, className, 'data-testid': testId, }: ChatLabShellProps): JSX.Element;
 
 export declare interface ChatLabShellProps {
     /** The instruction the loop was started with, already truncated by the host. */
@@ -3156,6 +3163,12 @@ export declare interface ChatLabShellProps {
     };
     /** Honest state, e.g. "Planner unavailable · single step" or "Mock runtime". */
     notice?: string;
+    /**
+     * Drawn in the title bar before the actions — who else is watching this
+     * loop (a `PresenceAvatars` / viewers stack), a share control. The host
+     * supplies it so presence stays the host's subscription.
+     */
+    headerAccessory?: ReactNode;
     className?: string;
     'data-testid'?: string;
 }
@@ -17135,6 +17148,9 @@ declare interface UseActivityBusReturn {
      debounceMs?: number;
  }
 
+ /** The part of this canvas a surrounding pane covers; zero outside a CanvasPaneLayout. */
+ export declare function useCanvasPaneInset(): CanvasPaneInset;
+
  export declare function useChat(options: UseChatOptions): UseChatReturn;
 
  /** Every command in scope of the nearest provider; `[]` outside one. */
@@ -20194,19 +20210,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -20226,9 +20229,45 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -20262,16 +20301,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
@@ -20282,22 +20311,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

@@ -28,6 +28,8 @@ export type { ExplorerLayoutProps } from './ExplorerLayout';
 export { SplitPane } from './SplitPane';
 export type { SplitPaneProps } from './SplitPane';
 export { CanvasPaneLayout, canvasPaneGeometry, CANVAS_PANE_RAIL_PX } from './CanvasPaneLayout';
+export { useCanvasPaneInset, CanvasPaneInsetContext } from './canvasPaneInset';
+export type { CanvasPaneInset } from './canvasPaneInset';
 export type { CanvasPaneLayoutProps, CanvasPaneGeometry, CanvasPaneGeometryOptions, CanvasPanePlacement } from './CanvasPaneLayout';
 export { ContextColumn } from './ContextColumn';
 export type { ContextColumnProps, ContextColumnPanel, ContextColumnEntry, ContextColumnState } from './ContextColumn';

@@ -3330,20 +3330,20 @@ function Vt(e) {
 	let t = new Date(e);
 	return Number.isNaN(t.getTime()) ? "" : t.toLocaleTimeString([], { hour12: !1 });
 }
-function Ht({ title: e, status: t, model: n, contextBudgetTokens: r, contextTokens: i, iterations: a, planSource: s, steps: l, events: u, onInstruct: d, onStop: f, onBackToChat: p, onOpenRun: m, onOpenGraph: h, shell: g, notice: _, className: v, "data-testid": y = "chat-lab-shell" }) {
-	let [b, x] = X("stream"), [S, C] = X(""), [w, T] = X([]), E = It[t] ?? It.running, O = r > 0 ? Math.min(1, Math.max(0, i / r)) : 0, k = E.busy, A = K((e) => {
-		T((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]);
-	}, []), j = K(() => {
-		let e = S.trim();
-		!e || k || !d || (C(""), d(e));
+function Ht({ title: e, status: t, model: n, contextBudgetTokens: r, contextTokens: i, iterations: a, planSource: s, steps: l, events: u, onInstruct: d, onStop: f, onBackToChat: p, onOpenRun: m, onOpenGraph: h, shell: g, notice: _, headerAccessory: v, className: y, "data-testid": b = "chat-lab-shell" }) {
+	let [x, S] = X("stream"), [C, w] = X(""), [T, E] = X([]), O = It[t] ?? It.running, k = r > 0 ? Math.min(1, Math.max(0, i / r)) : 0, A = O.busy, j = K((e) => {
+		E((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]);
+	}, []), M = K(() => {
+		let e = C.trim();
+		!e || A || !d || (w(""), d(e));
 	}, [
-		S,
-		k,
+		C,
+		A,
 		d
-	]), M = K((e) => {
+	]), N = K((e) => {
 		e.key === "Escape" && (e.stopPropagation(), p());
-	}, [p]), N = J(() => u.map((e) => {
-		let t = w.includes(e.id), n = /* @__PURE__ */ $("span", {
+	}, [p]), F = J(() => u.map((e) => {
+		let t = T.includes(e.id), n = /* @__PURE__ */ $("span", {
 			className: "flex flex-wrap items-baseline gap-1.5",
 			children: [
 				/* @__PURE__ */ Q("span", {
@@ -3357,19 +3357,19 @@ function Ht({ title: e, status: t, model: n, contextBudgetTokens: r, contextToke
 					palette: "code",
 					tone: "caution",
 					title: "Produced by a mock runtime, not a real box",
-					"data-testid": `${y}-mock`,
+					"data-testid": `${b}-mock`,
 					children: "mock"
 				}),
 				e.detail && /* @__PURE__ */ Q("button", {
 					type: "button",
-					onClick: () => A(e.id),
+					onClick: () => j(e.id),
 					"aria-expanded": t,
-					"data-testid": `${y}-detail-toggle`,
+					"data-testid": `${b}-detail-toggle`,
 					className: "cursor-pointer border-none bg-transparent p-0 text-[10px] uppercase tracking-wide text-code-muted hover:text-code-text",
 					children: t ? "− hide" : "+ detail"
 				}),
 				e.detail && t && /* @__PURE__ */ Q("span", {
-					"data-testid": `${y}-detail`,
+					"data-testid": `${b}-detail`,
 					className: "mt-1 block w-full whitespace-pre-wrap break-words rounded border border-code-border bg-code-bg px-2 py-1 text-[11px] text-code-subtle",
 					children: e.detail
 				})
@@ -3384,35 +3384,35 @@ function Ht({ title: e, status: t, model: n, contextBudgetTokens: r, contextToke
 		};
 	}), [
 		u,
-		w,
-		A,
-		y
-	]), F = J(() => [{
+		T,
+		j,
+		b
+	]), I = J(() => [{
 		id: "stream",
 		label: "Stream"
 	}, ...g ? [{
 		id: "terminal",
 		label: "Terminal"
-	}] : []], [g]), I = b === "terminal" && !g ? "stream" : b;
+	}] : []], [g]), ee = x === "terminal" && !g ? "stream" : x;
 	return /* @__PURE__ */ $("div", {
-		"data-testid": y,
+		"data-testid": b,
 		"data-status": t,
-		onKeyDown: M,
-		className: o("flex h-full min-h-0 flex-col bg-code-bg font-mono text-code-text", v),
+		onKeyDown: N,
+		className: o("flex h-full min-h-0 flex-col bg-code-bg font-mono text-code-text", y),
 		children: [
 			/* @__PURE__ */ $("div", {
-				"data-testid": `${y}-status`,
+				"data-testid": `${b}-status`,
 				className: "flex shrink-0 flex-wrap items-center gap-x-2 gap-y-1 border-b border-code-border bg-code-panel px-3 py-2 text-[11px] leading-none",
 				children: [
 					/* @__PURE__ */ Q("span", {
 						"aria-hidden": "true",
-						"data-testid": `${y}-status-dot`,
-						className: o("inline-block h-2 w-2 shrink-0 rounded-full", E.dot, k && "animate-pulse motion-reduce:animate-none")
+						"data-testid": `${b}-status-dot`,
+						className: o("inline-block h-2 w-2 shrink-0 rounded-full", O.dot, A && "animate-pulse motion-reduce:animate-none")
 					}),
 					/* @__PURE__ */ Q("span", {
-						className: o("shrink-0 font-semibold", E.text),
-						"data-testid": `${y}-status-label`,
-						children: E.label
+						className: o("shrink-0 font-semibold", O.text),
+						"data-testid": `${b}-status-label`,
+						children: O.label
 					}),
 					/* @__PURE__ */ Q("span", {
 						"aria-hidden": "true",
@@ -3425,7 +3425,7 @@ function Ht({ title: e, status: t, model: n, contextBudgetTokens: r, contextToke
 						palette: "code",
 						tone: "accent",
 						title: n,
-						"data-testid": `${y}-model`,
+						"data-testid": `${b}-model`,
 						children: xe(n)
 					}),
 					/* @__PURE__ */ Q("span", {
@@ -3436,7 +3436,7 @@ function Ht({ title: e, status: t, model: n, contextBudgetTokens: r, contextToke
 					/* @__PURE__ */ $("span", {
 						className: "shrink-0 tabular-nums text-code-subtle",
 						title: "Context spent against this loop's budget",
-						"data-testid": `${y}-budget`,
+						"data-testid": `${b}-budget`,
 						children: [
 							Se(i),
 							" / ",
@@ -3444,13 +3444,13 @@ function Ht({ title: e, status: t, model: n, contextBudgetTokens: r, contextToke
 						]
 					}),
 					/* @__PURE__ */ Q(R, {
-						value: O,
+						value: k,
 						segments: 8,
 						showPercent: !1,
 						tone: "code",
 						label: "context",
 						className: "shrink-0",
-						"data-testid": `${y}-budget-meter`
+						"data-testid": `${b}-budget-meter`
 					}),
 					/* @__PURE__ */ Q("span", {
 						"aria-hidden": "true",
@@ -3459,7 +3459,7 @@ function Ht({ title: e, status: t, model: n, contextBudgetTokens: r, contextToke
 					}),
 					/* @__PURE__ */ $("span", {
 						className: "shrink-0 tabular-nums text-code-muted",
-						"data-testid": `${y}-iterations`,
+						"data-testid": `${b}-iterations`,
 						children: [
 							a,
 							" ",
@@ -3469,15 +3469,20 @@ function Ht({ title: e, status: t, model: n, contextBudgetTokens: r, contextToke
 					/* @__PURE__ */ Q("span", {
 						className: "min-w-0 flex-1 truncate text-code-comment",
 						title: e,
-						"data-testid": `${y}-title`,
+						"data-testid": `${b}-title`,
 						children: e
+					}),
+					v != null && v !== !1 && /* @__PURE__ */ Q("span", {
+						className: "flex shrink-0 items-center",
+						"data-testid": `${b}-header-accessory`,
+						children: v
 					}),
 					h && /* @__PURE__ */ Q(c, {
 						tone: "code",
 						variant: "ghost",
 						size: "sm",
 						onClick: h,
-						"data-testid": `${y}-open-graph`,
+						"data-testid": `${b}-open-graph`,
 						children: "Graph"
 					}),
 					m && /* @__PURE__ */ Q(c, {
@@ -3485,7 +3490,7 @@ function Ht({ title: e, status: t, model: n, contextBudgetTokens: r, contextToke
 						variant: "ghost",
 						size: "sm",
 						onClick: m,
-						"data-testid": `${y}-open-run`,
+						"data-testid": `${b}-open-run`,
 						children: "Run"
 					}),
 					f && /* @__PURE__ */ Q(c, {
@@ -3493,8 +3498,8 @@ function Ht({ title: e, status: t, model: n, contextBudgetTokens: r, contextToke
 						variant: "danger",
 						size: "sm",
 						onClick: f,
-						disabled: !k && t !== "waiting",
-						"data-testid": `${y}-stop`,
+						disabled: !A && t !== "waiting",
+						"data-testid": `${b}-stop`,
 						children: "Stop"
 					}),
 					/* @__PURE__ */ Q(c, {
@@ -3502,23 +3507,23 @@ function Ht({ title: e, status: t, model: n, contextBudgetTokens: r, contextToke
 						variant: "secondary",
 						size: "sm",
 						onClick: p,
-						"data-testid": `${y}-back`,
+						"data-testid": `${b}-back`,
 						children: "Back to chat"
 					})
 				]
 			}),
 			(_ || s === "fallback") && /* @__PURE__ */ Q("div", {
 				role: "status",
-				"data-testid": `${y}-notice`,
+				"data-testid": `${b}-notice`,
 				className: "shrink-0 border-b border-code-border bg-code-surface px-3 py-1.5 text-[11px] text-code-peach",
 				children: _ ?? "Planner unavailable · single step"
 			}),
 			l.length > 0 && /* @__PURE__ */ Q("ol", {
-				"data-testid": `${y}-steps`,
+				"data-testid": `${b}-steps`,
 				"aria-label": "Loop steps",
 				className: "flex shrink-0 list-none items-center gap-1.5 overflow-x-auto border-b border-code-border bg-code-panel px-3 py-1.5",
 				children: l.map((e) => /* @__PURE__ */ $("li", {
-					"data-testid": `${y}-step`,
+					"data-testid": `${b}-step`,
 					"data-state": e.status,
 					title: `${e.kind} · ${e.status}${e.iterations ? ` · ${e.iterations} turns` : ""}`,
 					className: "flex shrink-0 items-center gap-1.5 rounded-full border border-code-border bg-code-surface px-2 py-0.5 text-[11px] leading-none",
@@ -3534,9 +3539,9 @@ function Ht({ title: e, status: t, model: n, contextBudgetTokens: r, contextToke
 			/* @__PURE__ */ Q("div", {
 				className: "shrink-0 border-b border-code-border bg-code-panel px-3",
 				children: /* @__PURE__ */ Q(P, {
-					items: F,
-					value: I,
-					onValueChange: (e) => x(e === "terminal" ? "terminal" : "stream"),
+					items: I,
+					value: ee,
+					onValueChange: (e) => S(e === "terminal" ? "terminal" : "stream"),
 					variant: "underline",
 					size: "sm",
 					"aria-label": "Lab view",
@@ -3544,7 +3549,7 @@ function Ht({ title: e, status: t, model: n, contextBudgetTokens: r, contextToke
 				})
 			}),
 			/* @__PURE__ */ $(W, {
-				active: k,
+				active: A,
 				particleCount: 220,
 				speed: .14,
 				alphaParticles: !0,
@@ -3554,17 +3559,17 @@ function Ht({ title: e, status: t, model: n, contextBudgetTokens: r, contextToke
 				fallbackIntensity: "medium",
 				seed: Bt(g?.sessionId ?? e),
 				className: "flex min-h-0 flex-1 flex-col",
-				"data-testid": `${y}-particles`,
+				"data-testid": `${b}-particles`,
 				children: [/* @__PURE__ */ Q("div", {
 					className: "flex min-h-0 flex-1 flex-col",
-					children: I === "stream" ? /* @__PURE__ */ Q(te, {
-						lines: N,
+					children: ee === "stream" ? /* @__PURE__ */ Q(te, {
+						lines: F,
 						title: null,
 						showLevel: !1,
 						emptyMessage: "No output yet.",
-						tone: k ? "transparent" : "code",
+						tone: A ? "transparent" : "code",
 						className: "min-h-0 flex-1 rounded-none border-none",
-						"data-testid": `${y}-stream`
+						"data-testid": `${b}-stream`
 					}) : g?.shellUrl ? /* @__PURE__ */ Q(Ce, {
 						fallback: /* @__PURE__ */ Q("div", {
 							className: "flex flex-1 items-center justify-center text-[11px] text-code-muted",
@@ -3573,7 +3578,7 @@ function Ht({ title: e, status: t, model: n, contextBudgetTokens: r, contextToke
 						children: /* @__PURE__ */ Q(Ft, {
 							sessionId: g.sessionId,
 							shellUrl: g.shellUrl,
-							"data-testid": `${y}-terminal`
+							"data-testid": `${b}-terminal`
 						})
 					}) : /* @__PURE__ */ $("div", {
 						className: "flex flex-1 flex-col items-center justify-center gap-2 p-6 text-center",
@@ -3586,13 +3591,13 @@ function Ht({ title: e, status: t, model: n, contextBudgetTokens: r, contextToke
 							size: "sm",
 							onClick: g?.onRequestShell,
 							disabled: !g?.onRequestShell,
-							"data-testid": `${y}-connect-terminal`,
+							"data-testid": `${b}-connect-terminal`,
 							children: "Connect terminal"
 						})]
 					})
 				}), /* @__PURE__ */ $("div", {
-					"data-testid": `${y}-prompt-row`,
-					className: o("flex shrink-0 items-center gap-2 border-t border-code-border px-3 py-2", k ? "bg-transparent" : "bg-code-panel"),
+					"data-testid": `${b}-prompt-row`,
+					className: o("flex shrink-0 items-center gap-2 border-t border-code-border px-3 py-2", A ? "bg-transparent" : "bg-code-panel"),
 					children: [
 						/* @__PURE__ */ Q("span", {
 							"aria-hidden": "true",
@@ -3601,24 +3606,24 @@ function Ht({ title: e, status: t, model: n, contextBudgetTokens: r, contextToke
 						}),
 						/* @__PURE__ */ Q("input", {
 							type: "text",
-							value: S,
-							onChange: (e) => C(e.target.value),
+							value: C,
+							onChange: (e) => w(e.target.value),
 							onKeyDown: (e) => {
-								e.key !== "Enter" || e.shiftKey || (e.preventDefault(), j());
+								e.key !== "Enter" || e.shiftKey || (e.preventDefault(), M());
 							},
-							disabled: k || !d,
-							placeholder: k ? "Working — the prompt opens between turns" : "Continue with…",
+							disabled: A || !d,
+							placeholder: A ? "Working — the prompt opens between turns" : "Continue with…",
 							"aria-label": "Instruct the agent",
-							"data-testid": `${y}-prompt`,
+							"data-testid": `${b}-prompt`,
 							className: "min-w-0 flex-1 border-none bg-transparent text-[12px] text-code-text outline-none placeholder:text-code-muted disabled:cursor-not-allowed disabled:text-code-muted"
 						}),
 						/* @__PURE__ */ Q(c, {
 							tone: "code",
 							variant: "primary",
 							size: "sm",
-							onClick: j,
-							disabled: k || !d || S.trim().length === 0,
-							"data-testid": `${y}-send`,
+							onClick: M,
+							disabled: A || !d || C.trim().length === 0,
+							"data-testid": `${b}-send`,
 							children: "Send"
 						})
 					]

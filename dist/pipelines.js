@@ -10352,58 +10352,61 @@ function Zs({ layer: e, index: t, onUpdate: r, onRemove: i }) {
 	});
 }
 var Qs = 150;
-function $s(e, t, n) {
-	let [r, i] = V(null), [a, o] = V(!1), s = B(null), c = B(null), l = L(async (e, t) => {
-		c.current?.abort();
-		let r = new AbortController();
-		c.current = r, o(!0);
+function $s(e, t, n, r) {
+	let [i, a] = V(null), [o, s] = V(!1), c = B(null), l = B(null), u = L(async (e, t) => {
+		l.current?.abort();
+		let i = new AbortController();
+		l.current = i, s(!0);
 		try {
-			let a = await fetch(`${n}/api/pipeline/preview/adjust-layer`, {
+			let o = await fetch(`${n}/api/pipeline/preview/adjust-layer`, {
 				method: "POST",
-				headers: { "Content-Type": "application/json" },
+				headers: {
+					...r?.() ?? {},
+					"Content-Type": "application/json"
+				},
 				body: JSON.stringify({
 					imageId: e,
 					layers: t
 				}),
-				signal: r.signal
+				signal: i.signal
 			});
-			if (!a.ok) return;
-			let o = await a.json();
-			o.dataUrl && i(o.dataUrl);
+			if (!o.ok) return;
+			let s = await o.json();
+			s.dataUrl && a(s.dataUrl);
 		} catch {} finally {
-			o(!1);
+			s(!1);
 		}
-	}, [n]);
+	}, [n, r]);
 	return R(() => {
 		if (!e) {
-			i(null);
+			a(null);
 			return;
 		}
-		return s.current && clearTimeout(s.current), s.current = setTimeout(() => {
-			l(e, t);
+		return c.current && clearTimeout(c.current), c.current = setTimeout(() => {
+			u(e, t);
 		}, Qs), () => {
-			s.current && clearTimeout(s.current);
+			c.current && clearTimeout(c.current);
 		};
 	}, [
 		e,
 		JSON.stringify(t),
-		l
-	]), R(() => () => c.current?.abort(), []), {
-		previewSrc: r,
-		loading: a
+		u
+	]), R(() => () => l.current?.abort(), []), {
+		previewSrc: i,
+		loading: o
 	};
 }
 function ec(e) {
 	return e.length <= 8 ? e : `${e.slice(0, 8)}…`;
 }
-function tc({ layers: e, onChange: t, autoSourceImageId: r, pinnedSourceImageId: i, onPinnedSourceImageIdChange: a, sourceImageId: o, apiBase: s = "" }) {
-	let [c, l] = V("brightness"), [u, d] = V(!1), f = r ?? o, p = i ?? f, m = !!i, { previewSrc: h, loading: g } = $s(p, e, s), _ = () => {
+function tc({ layers: e, onChange: t, autoSourceImageId: r, pinnedSourceImageId: i, onPinnedSourceImageIdChange: a, sourceImageId: o, apiBase: s = "", authHeaders: c }) {
+	let l = Te(), u = c ?? l?.authHeaders, [d, f] = V("brightness"), [p, m] = V(!1), h = r ?? o, g = i ?? h, _ = !!i, { previewSrc: y, loading: b } = $s(g, e, s, u), x = () => {
 		a?.(void 0);
-	}, y = (e) => {
-		e?.imageId && (a?.(e.imageId), d(!1));
-	}, b = (n, r) => {
+	}, S = (e) => {
+		e?.imageId && (a?.(e.imageId), m(!1));
+	}, C = (n, r) => {
 		t(e.map((e, t) => t === n ? r : e));
-	}, x = (n) => {
+	}, w = (n) => {
 		t(e.filter((e, t) => t !== n));
 	};
 	return /* @__PURE__ */ W("div", {
@@ -10419,15 +10422,15 @@ function tc({ layers: e, onChange: t, autoSourceImageId: r, pinnedSourceImageId:
 				e.map((e, t) => /* @__PURE__ */ U(Zs, {
 					layer: e,
 					index: t,
-					onUpdate: (e) => b(t, e),
-					onRemove: () => x(t)
+					onUpdate: (e) => C(t, e),
+					onRemove: () => w(t)
 				}, t)),
 				/* @__PURE__ */ W("div", {
 					className: "flex items-center gap-2 mt-1",
 					children: [/* @__PURE__ */ U(N, {
-						value: c,
+						value: d,
 						onChange: (e) => {
-							l(e.target.value);
+							f(e.target.value);
 						},
 						options: Gs,
 						size: "sm",
@@ -10436,7 +10439,7 @@ function tc({ layers: e, onChange: t, autoSourceImageId: r, pinnedSourceImageId:
 					}), /* @__PURE__ */ U("button", {
 						type: "button",
 						onClick: () => {
-							t([...e, qs(c)]);
+							t([...e, qs(d)]);
 						},
 						className: n("text-[12px] font-semibold px-3 py-1 rounded-md cursor-pointer", "bg-primary text-white border-none hover:bg-primary/90"),
 						"data-testid": "add-layer-btn",
@@ -10454,58 +10457,58 @@ function tc({ layers: e, onChange: t, autoSourceImageId: r, pinnedSourceImageId:
 				/* @__PURE__ */ W("div", {
 					className: n("flex items-center gap-1.5 flex-wrap"),
 					"data-testid": "adjust-layer-source-caption-row",
-					children: [m && p ? /* @__PURE__ */ W(E, {
+					children: [_ && g ? /* @__PURE__ */ W(E, {
 						tone: "neutral",
 						size: "xs",
 						"data-testid": "adjust-layer-source-chip-pinned",
 						children: [/* @__PURE__ */ W("span", { children: [
 							"Source: pinned (",
-							ec(p),
+							ec(g),
 							")"
 						] }), /* @__PURE__ */ U("button", {
 							type: "button",
-							onClick: _,
+							onClick: x,
 							"aria-label": "Clear pinned source image",
 							"data-testid": "adjust-layer-source-clear-pin",
 							className: n("ml-1 inline-flex items-center justify-center", "w-3 h-3 rounded-full text-[10px] leading-none", "bg-transparent border-none cursor-pointer text-current", "hover:bg-surface-emphasis"),
 							children: "×"
 						})]
-					}) : f ? /* @__PURE__ */ W(E, {
+					}) : h ? /* @__PURE__ */ W(E, {
 						tone: "info",
 						size: "xs",
 						"data-testid": "adjust-layer-source-chip-auto",
 						children: [
 							"Source: ",
-							ec(f),
+							ec(h),
 							" from upstream run"
 						]
 					}) : null, a && /* @__PURE__ */ U(v, {
 						variant: "ghost",
 						size: "sm",
-						onClick: () => d((e) => !e),
+						onClick: () => m((e) => !e),
 						"data-testid": "adjust-layer-override-btn",
 						children: "Override"
 					})]
 				}),
-				u && a && /* @__PURE__ */ U("div", {
+				p && a && /* @__PURE__ */ U("div", {
 					className: "w-48",
 					"data-testid": "adjust-layer-override-uploader-wrap",
 					children: /* @__PURE__ */ U(Us, {
 						value: null,
-						onChange: y,
+						onChange: S,
 						"data-testid": "adjust-layer-override-uploader"
 					})
 				}),
-				p ? /* @__PURE__ */ W("div", {
+				g ? /* @__PURE__ */ W("div", {
 					className: "relative",
 					children: [/* @__PURE__ */ U(Ke, {
-						src: h ?? "",
+						src: y ?? "",
 						alt: "Adjust layer preview",
 						size: "lg",
 						aspectRatio: "auto",
 						loading: "eager",
 						"data-testid": "adjust-layer-preview-thumb"
-					}), g && /* @__PURE__ */ U("div", {
+					}), b && /* @__PURE__ */ U("div", {
 						className: "absolute inset-0 flex items-center justify-center bg-white/60 rounded-md",
 						children: /* @__PURE__ */ U("span", {
 							className: "text-[11px] text-text-secondary",

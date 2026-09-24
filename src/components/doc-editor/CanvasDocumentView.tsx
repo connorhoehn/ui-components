@@ -910,8 +910,14 @@ export default function CanvasDocumentView({
           {editable && editor && (
             <div data-testid={`${testId}-toolbar`} className="sticky top-0 z-20">
             <div
+              // The card sits in the column's gutter, `--dock-inset` (1rem
+              // unless the host says otherwise) — the same one the pinned
+              // composer dock and EditorShell's bar use, so the toolbar card's
+              // edges are the composer card's. A fixed px-3 left the composer
+              // 3px inside the toolbar on each side (visual audit
+              // dock-aligned-with-toolbar, page editor and Folders).
               className={toolbarStyle === 'card'
-                ? 'bg-workspace px-3 pb-2 pt-2'
+                ? 'bg-workspace px-[var(--dock-inset,1rem)] pb-2 pt-2'
                 : 'border-b border-border bg-surface-panel'}
             >
               {/* Full workspace width, NOT the sheet's 816px.
@@ -953,7 +959,7 @@ export default function CanvasDocumentView({
               // beside the card.
               <div
                 data-testid={`${testId}-find-row`}
-                className="flex justify-end bg-workspace px-3 pb-2 pt-2"
+                className="flex justify-end bg-workspace px-[var(--dock-inset,1rem)] pb-2 pt-2"
               >
                 <DocumentFindBar
                   editor={editor}

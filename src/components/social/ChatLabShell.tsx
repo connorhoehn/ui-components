@@ -120,6 +120,12 @@ export interface ChatLabShellProps {
   shell?: { sessionId: string; shellUrl?: string; onRequestShell?: () => void };
   /** Honest state, e.g. "Planner unavailable · single step" or "Mock runtime". */
   notice?: string;
+  /**
+   * Drawn in the title bar before the actions — who else is watching this
+   * loop (a `PresenceAvatars` / viewers stack), a share control. The host
+   * supplies it so presence stays the host's subscription.
+   */
+  headerAccessory?: ReactNode;
   className?: string;
   'data-testid'?: string;
 }
@@ -219,6 +225,7 @@ export function ChatLabShell({
   onOpenGraph,
   shell,
   notice,
+  headerAccessory,
   className,
   'data-testid': testId = 'chat-lab-shell',
 }: ChatLabShellProps) {
@@ -388,6 +395,11 @@ export function ChatLabShell({
         <span className="min-w-0 flex-1 truncate text-code-comment" title={title} data-testid={`${testId}-title`}>
           {title}
         </span>
+        {headerAccessory != null && headerAccessory !== false && (
+          <span className="flex shrink-0 items-center" data-testid={`${testId}-header-accessory`}>
+            {headerAccessory}
+          </span>
+        )}
         {onOpenGraph && (
           <Button tone="code" variant="ghost" size="sm" onClick={onOpenGraph} data-testid={`${testId}-open-graph`}>
             Graph

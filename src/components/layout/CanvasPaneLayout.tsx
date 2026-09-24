@@ -12,11 +12,12 @@
 // The widths are the layout's own geometry and live here, so a page never
 // writes them as inline styles.
 
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { IconButton } from '../ui/IconButton';
 import { ChevronIcon } from '../ui/Icons';
 import { useMeasuredWidth } from '../doc-editor/useMeasuredWidth';
+import { CanvasPaneInsetContext } from './canvasPaneInset';
 
 export type CanvasPanePlacement = 'none' | 'column' | 'overlay' | 'collapsed';
 
@@ -107,6 +108,10 @@ export function CanvasPaneLayout({
   const geometry = canvasPaneGeometry(width ?? Number.POSITIVE_INFINITY, geometryOptions);
   const placement: CanvasPanePlacement = !open ? 'none' : collapsed ? 'collapsed' : geometry.placement;
   const paneWidth = Number.isFinite(geometry.paneWidth) ? geometry.paneWidth : geometryOptions.paneMaxPx ?? 380;
+  // An overlay covers the canvas's right edge; tell the canvas how much, so
+  // it pans a selected item into the part left showing.
+  const insetRight = placement === 'overlay' ? paneWidth : 0;
+  const inset = useMemo(() => ({ right: insetRight }), [insetRight]);
   const hide = `Hide ${paneLabel}`;
   const show = `Show ${paneLabel}`;
 
@@ -118,7 +123,7 @@ export function CanvasPaneLayout({
       className={cn('relative flex min-h-0 min-w-0 flex-1', className)}
     >
       <div data-testid={`${testId}-canvas`} className="flex min-h-0 min-w-0 flex-1 flex-col">
-        {children}
+        <CanvasPaneInsetContext.Provider value={inset}>{children}</CanvasPaneInsetContext.Provider>
       </div>
       {placement === 'collapsed' && (
         <div

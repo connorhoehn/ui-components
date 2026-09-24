@@ -186,3 +186,14 @@ describe('ChatLabPill', () => {
     expect(onOpen).toHaveBeenCalledTimes(1);
   });
 });
+
+describe('ChatLabShell headerAccessory', () => {
+  it('draws the host accessory (who else is watching) in the title bar', () => {
+    renderShell({ headerAccessory: <span data-testid="viewers">2 watching</span> });
+    expect(screen.getByTestId('chat-lab-shell-header-accessory')).toContainElement(screen.getByTestId('viewers'));
+  });
+  it('draws no slot without one', () => {
+    renderShell();
+    expect(screen.queryByTestId('chat-lab-shell-header-accessory')).toBeNull();
+  });
+});

@@ -15,6 +15,7 @@ import { Button } from '../../../ui/Button';
 import type { UploadedImage } from '../../services';
 import type { AdjustLayer } from '../../../../types/pipeline';
 import { Slider } from '../../../forms/Slider';
+import { usePipelineNodeRuntime } from '../../context/PipelineNodeRuntimeContext';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -48,6 +49,12 @@ export interface AdjustLayerSliderPanelProps {
   sourceImageId?: string;
   /** Base URL for the platform-api. Defaults to '' (same origin). */
   apiBase?: string;
+  /**
+   * Headers that authenticate the preview request (the route is protected).
+   * Read per request. Defaults to the host's `PipelineNodeRuntimeProvider`
+   * `authHeaders`, so a panel inside the editor needs nothing passed.
+   */
+  authHeaders?: () => Record<string, string>;
 }
 
 type LayerKind = AdjustLayer['kind'];
@@ -226,6 +233,7 @@ function useAdjustPreview(
   imageId: string | undefined,
   layers: AdjustLayer[],
   apiBase: string,
+  authHeaders: (() => Record<string, string>) | undefined,
 ) {
   const [previewSrc, setPreviewSrc] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -241,7 +249,7 @@ function useAdjustPreview(
       try {
         const resp = await fetch(`${apiBase}/api/pipeline/preview/adjust-layer`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { ...(authHeaders?.() ?? {}), 'Content-Type': 'application/json' },
           body: JSON.stringify({ imageId: id, layers: l }),
           signal: ctrl.signal,
         });
@@ -256,7 +264,7 @@ function useAdjustPreview(
         setLoading(false);
       }
     },
-    [apiBase],
+    [apiBase, authHeaders],
   );
 
   useEffect(() => {
@@ -303,7 +311,10 @@ export default function AdjustLayerSliderPanel({
   onPinnedSourceImageIdChange,
   sourceImageId,
   apiBase = '',
+  authHeaders: authHeadersProp,
 }: AdjustLayerSliderPanelProps) {
+  const runtime = usePipelineNodeRuntime();
+  const authHeaders = authHeadersProp ?? runtime?.authHeaders;
   const [newKind, setNewKind] = useState<LayerKind>('brightness');
   const [showUploader, setShowUploader] = useState(false);
 
@@ -313,7 +324,7 @@ export default function AdjustLayerSliderPanel({
   const effectiveSourceId = pinnedSourceImageId ?? effectiveAutoId;
   const isPinned = !!pinnedSourceImageId;
 
-  const { previewSrc, loading } = useAdjustPreview(effectiveSourceId, layers, apiBase);
+  const { previewSrc, loading } = useAdjustPreview(effectiveSourceId, layers, apiBase, authHeaders);
 
   const handleClearPin = () => {
     onPinnedSourceImageIdChange?.(undefined);

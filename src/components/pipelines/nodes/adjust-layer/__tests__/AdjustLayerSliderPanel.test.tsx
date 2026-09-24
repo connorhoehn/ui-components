@@ -10,6 +10,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import AdjustLayerSliderPanel from '../AdjustLayerSliderPanel';
+import { PipelineNodeRuntimeProvider } from '../../../context/PipelineNodeRuntimeContext';
 import type { AdjustLayer } from '../../../../../types/pipeline';
 
 // ---------------------------------------------------------------------------
@@ -117,6 +118,27 @@ describe('AdjustLayerSliderPanel', () => {
       },
       { timeout: 500 },
     );
+  });
+
+  it('sends the host auth headers with the preview (protected route)', async () => {
+    render(
+      <PipelineNodeRuntimeProvider value={{ getLatestStepForNode: () => null, authHeaders: () => ({ Authorization: 'Bearer ctx-token' }) }}>
+        <AdjustLayerSliderPanel layers={[{ kind: 'blur', radiusPx: 1 }]} onChange={vi.fn()} sourceImageId="img-1" />
+      </PipelineNodeRuntimeProvider>,
+    );
+    await waitFor(() => expect(mockFetch).toHaveBeenCalled(), { timeout: 500 });
+    const init = mockFetch.mock.calls[0][1] as RequestInit;
+    expect(init.headers).toEqual({ Authorization: 'Bearer ctx-token', 'Content-Type': 'application/json' });
+  });
+
+  it('an authHeaders prop wins over the runtime provider', async () => {
+    render(
+      <PipelineNodeRuntimeProvider value={{ getLatestStepForNode: () => null, authHeaders: () => ({ Authorization: 'Bearer ctx' }) }}>
+        <AdjustLayerSliderPanel layers={[]} onChange={vi.fn()} sourceImageId="img-2" authHeaders={() => ({ Authorization: 'Bearer prop' })} />
+      </PipelineNodeRuntimeProvider>,
+    );
+    await waitFor(() => expect(mockFetch).toHaveBeenCalled(), { timeout: 500 });
+    expect((mockFetch.mock.calls[0][1] as RequestInit).headers).toMatchObject({ Authorization: 'Bearer prop' });
   });
 
   it('delete button removes the layer from the stack', () => {

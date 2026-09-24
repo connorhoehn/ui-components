@@ -40,6 +40,13 @@ export interface PipelineNodeRuntimeValue {
    * async; the hook normalizes the return to a Promise.
    */
   retryFromStep?: (nodeId: string) => void | Promise<void>;
+  /**
+   * Headers that authenticate a node panel's own request to the host's API
+   * (e.g. `{ Authorization: 'Bearer …' }`), read at request time so a
+   * refreshed token is used. Panels that call a protected route — the
+   * adjust-layer preview — send these; without them the route answers 401.
+   */
+  authHeaders?: () => Record<string, string>;
 }
 
 export const PipelineNodeRuntimeContext =
