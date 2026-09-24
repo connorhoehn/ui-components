@@ -3,6 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TypedNodeCanvas, layoutTypedNodes, rankTypedNodes, type TypedCanvasEdge, type TypedCanvasNode } from '../TypedNodeCanvas';
 
 const flow = { zoomIn: vi.fn(), zoomOut: vi.fn(), fitView: vi.fn() };
+// The pane size xyflow measures — tests change it to simulate a resize.
+const size = { width: 800, height: 400 };
 let lastProps: any = null;
 
 vi.mock('@xyflow/react', () => ({
@@ -44,6 +46,7 @@ vi.mock('@xyflow/react', () => ({
   getSmoothStepPath: () => ['M0 0 L100 0', 50, 0],
   useReactFlow: () => flow,
   useViewport: () => ({ x: 0, y: 0, zoom: 0.8 }),
+  useStore: (select: (st: { width: number; height: number }) => number) => select(size),
   Position: { Left: 'left', Right: 'right', Top: 'top', Bottom: 'bottom' },
 }));
 
@@ -217,5 +220,48 @@ describe('TypedNodeCanvas', () => {
   it('says so when there is nothing to draw', () => {
     render(<TypedNodeCanvas nodes={[]} edges={[]} renderNode={renderNode} emptyLabel="No lineage recorded" />);
     expect(screen.getByTestId('typed-node-canvas-empty').textContent).toBe('No lineage recorded');
+  });
+});
+
+describe('TypedNodeCanvas re-fits when the canvas resizes', () => {
+  const nodes: TypedCanvasNode[] = [
+    { id: 'a', kind: 'tier', data: {}, label: 'A' },
+    { id: 'b', kind: 'tier', data: {}, label: 'B' },
+  ];
+  const edges: TypedCanvasEdge[] = [{ id: 'a-b', from: 'a', to: 'b' }];
+  const draw = () => <TypedNodeCanvas nodes={nodes} edges={edges} renderNode={(n) => n.label} />;
+
+  beforeEach(() => {
+    size.width = 800; size.height = 400;
+    flow.fitView.mockClear();
+  });
+  afterEach(cleanup);
+
+  it('fits again when a pane opening beside it narrows the canvas', () => {
+    const { rerender } = render(draw());
+    expect(flow.fitView).not.toHaveBeenCalled();
+    size.width = 480;
+    rerender(draw());
+    expect(flow.fitView).toHaveBeenCalledTimes(1);
+  });
+
+  it('ignores a resize smaller than a few pixels', () => {
+    const { rerender } = render(draw());
+    size.width = 804;
+    rerender(draw());
+    expect(flow.fitView).not.toHaveBeenCalled();
+  });
+
+  it('leaves a view the reader zoomed alone, until they press Fit', () => {
+    const { rerender } = render(draw());
+    fireEvent.click(screen.getByRole('button', { name: /zoom in/i }));
+    size.width = 480;
+    rerender(draw());
+    expect(flow.fitView).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: /fit/i }));
+    expect(flow.fitView).toHaveBeenCalledTimes(1);
+    size.width = 900;
+    rerender(draw());
+    expect(flow.fitView).toHaveBeenCalledTimes(2);
   });
 });

@@ -22,6 +22,7 @@ import {
   ReactFlow,
   getSmoothStepPath,
   useReactFlow,
+  useStore,
   useViewport,
   type Edge,
   type EdgeProps,
@@ -306,6 +307,7 @@ function CanvasChrome({
   maxZoom,
   fitKey,
   reducedMotion,
+  userMoved,
 }: {
   controls: boolean;
   caption?: ReactNode;
@@ -313,13 +315,31 @@ function CanvasChrome({
   maxZoom: number;
   fitKey: string;
   reducedMotion: boolean;
+  /** Set once the reader zooms or pans; a resize then leaves their view alone. */
+  userMoved: { current: boolean };
 }) {
   const flow = useReactFlow();
   const { zoom } = useViewport();
   const duration = reducedMotion ? 0 : 200;
   const fit = useCallback(() => {
+    userMoved.current = false;
     void flow.fitView({ padding: 0.15, maxZoom: 1, duration });
-  }, [flow, duration]);
+  }, [flow, duration, userMoved]);
+  // Re-fit when the canvas itself changes size — a details pane opening
+  // beside it, a column widening — as long as the reader has not zoomed or
+  // panned. `fitView` on mount fits only the first size: a pane that opens a
+  // frame later left the graph at its old zoom, running off the new edge.
+  const width = useStore((st) => st.width);
+  const height = useStore((st) => st.height);
+  const lastSize = useRef<{ w: number; h: number } | null>(null);
+  useEffect(() => {
+    if (!width || !height) return;
+    const prev = lastSize.current;
+    lastSize.current = { w: width, h: height };
+    if (!prev || userMoved.current) return;
+    if (Math.abs(prev.w - width) < 8 && Math.abs(prev.h - height) < 8) return;
+    void flow.fitView({ padding: 0.15, maxZoom: 1, duration: 0 });
+  }, [width, height, flow, userMoved]);
   // Re-fit when the SET of nodes changes (a new scope), not on every render.
   const first = useRef(true);
   useEffect(() => {
@@ -336,8 +356,8 @@ function CanvasChrome({
           zoom={zoom}
           minZoom={minZoom}
           maxZoom={maxZoom}
-          onZoomIn={() => { void flow.zoomIn({ duration }); }}
-          onZoomOut={() => { void flow.zoomOut({ duration }); }}
+          onZoomIn={() => { userMoved.current = true; void flow.zoomIn({ duration }); }}
+          onZoomOut={() => { userMoved.current = true; void flow.zoomOut({ duration }); }}
           onFit={fit}
         />
       )}
@@ -452,6 +472,7 @@ export function TypedNodeCanvas<N extends TypedCanvasNode = TypedCanvasNode>({
 }: TypedNodeCanvasProps<N>) {
   const reducedMotion = usePrefersReducedMotion();
   const host = useRef<HTMLDivElement | null>(null);
+  const userMoved = useRef(false);
 
   const positions = useMemo(
     () => layoutTypedNodes(nodes, edges, { layout, nodeWidth, nodeHeight, columnGap, rowGap }),
@@ -578,6 +599,9 @@ export function TypedNodeCanvas<N extends TypedCanvasNode = TypedCanvasNode>({
         maxZoom={maxZoom}
         onEdgeClick={onSelectEdge ? (_event, edge) => onSelectEdge(edge.id) : undefined}
         onViewportChange={onViewportChange}
+        // A move with an event is the reader's (drag, pinch); programmatic
+        // fits and zooms pass none.
+        onMoveStart={(event) => { if (event) userMoved.current = true; }}
         nodesDraggable={false}
         nodesConnectable={false}
         nodesFocusable={false}
@@ -589,7 +613,7 @@ export function TypedNodeCanvas<N extends TypedCanvasNode = TypedCanvasNode>({
         disableKeyboardA11y
         proOptions={{ hideAttribution: true }}
       >
-        <CanvasChrome controls={controls} caption={caption} minZoom={minZoom} maxZoom={maxZoom} fitKey={fitKey} reducedMotion={reducedMotion} />
+        <CanvasChrome controls={controls} caption={caption} minZoom={minZoom} maxZoom={maxZoom} fitKey={fitKey} reducedMotion={reducedMotion} userMoved={userMoved} />
       </ReactFlow>
     </div>
   );

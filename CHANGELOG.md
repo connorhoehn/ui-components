@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.388.2] — 2026-09-24
+
+### Fixed
+- **TypedNodeCanvas** re-fits when the canvas itself changes size — a details
+  pane opening beside it (`CanvasPaneLayout`), a column widening — as long as
+  the reader has not zoomed or panned. `fitView` on mount only fit the first
+  size, so a pane that opened a frame later left the graph at 100% running off
+  the new edge (distillation Activity's tier graph lost its Library node under
+  the run inspector). A zoom or drag by the reader pins their view; **Fit**
+  re-arms the auto-fit. Resizes under 8px are ignored.
+- The export-surface snapshot records `WorkOmittedGroup`, which 2.388.1
+  shipped without recording.
+
 ## [2.388.0] — 2026-09-24
 
 The Distillation redesign's library pieces (Knowledge / Review / Activity).
