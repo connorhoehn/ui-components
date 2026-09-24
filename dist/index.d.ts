@@ -9539,10 +9539,20 @@ export declare interface LimitEffortsOptions {
      * the oldest effort that would otherwise have been shown.
      */
     keepEffortId?: string | null;
+    /**
+     * Keep the newest effort that holds something the person MADE (a document —
+     * a deck, a page) in view even when newer run-only efforts outnumber the cap.
+     * A deck saved a minute ago sat behind two probe runs and was a click away
+     * rather than drawn (realtime-examples NFR #221 follow-up). Default true;
+     * the selection's `keepEffortId` still wins over it.
+     */
+    keepLatestMade?: boolean;
 }
 
 /**
- * The newest `max` efforts, in the order the host gave them.
+ * The newest `max` efforts, in the order the host gave them — except that,
+ * unless `keepLatestMade` is false, the newest effort holding a document takes
+ * the last place when none of the newest does.
  *
  * Recency is the latest `updatedAt`/`startedAt` across an effort's own nodes,
  * which is the same "newest work first" rule the panel footer already claims;
@@ -20563,6 +20573,29 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -20589,42 +20622,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
