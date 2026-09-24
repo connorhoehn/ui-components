@@ -103,11 +103,11 @@ export function EstimateRow({ label, estimate, className, 'data-testid': testId 
   const hasValue = estimate.kind === 'range';
   return (
     <div
-      className={cn('flex items-center justify-between gap-3 py-2.5 text-[13px]', className)}
+      className={cn('flex items-center justify-between gap-3 py-2.5 text-[14px]', className)}
       data-testid={testId}
       data-estimate-kind={estimate.kind}
     >
-      <span className="text-text-secondary">{label}</span>
+      <span className="text-text-primary">{label}</span>
       <span
         className={cn(
           'text-right tabular-nums',

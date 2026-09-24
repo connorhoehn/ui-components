@@ -70,6 +70,13 @@ export interface ContextColumnProps {
   onActivate: (id: string, entryId?: string) => void;
   /** Accessible name of the column. Default "Side column". */
   label?: string;
+  /**
+   * Open at 384px instead of 320px on a 2xl viewport (≥1536px) — a pane with
+   * rows of label + value (a run draft) that the Work mockup draws wider.
+   * Narrower viewports keep 320px so the page beside it keeps its width.
+   * Since 2.386.13.
+   */
+  roomy?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -112,6 +119,7 @@ export function ContextColumn({
   activeId,
   onActivate,
   label = 'Side column',
+  roomy = false,
   className,
   'data-testid': testId = 'context-column',
 }: ContextColumnProps) {
@@ -181,6 +189,10 @@ export function ContextColumn({
   }
 
   const wide = state === 'wide';
+  // More labelled tabs than the header row holds (2.386.13): the open panel
+  // keeps its label and the others become icons, named by tooltip and
+  // aria-label, so no tab is clipped mid-word behind the width controls.
+  const crowded = panels.length > (wide ? 4 : 2);
   return (
     <div
       role="group"
@@ -188,27 +200,31 @@ export function ContextColumn({
       data-testid={testId}
       data-state={state}
       data-active={active.id}
-      className={cn('flex h-full shrink-0 flex-col border-l border-border bg-surface-panel', WIDTH[state], className)}
+      data-crowded={crowded || undefined}
+      className={cn('flex h-full shrink-0 flex-col border-l border-border bg-surface-panel', WIDTH[state], roomy && state === 'open' && '2xl:w-96', className)}
     >
       <div className="flex h-9 shrink-0 items-center gap-1 border-b border-border pl-1.5 pr-1.5" data-testid={`${testId}-header`}>
         <div role="tablist" aria-label={label} className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto">
           {panels.map((p) => {
             const selected = p.id === active.id;
+            const iconOnly = crowded && !selected;
             return (
               <button
                 key={p.id}
                 type="button"
                 role="tab"
                 aria-selected={selected}
+                {...(iconOnly ? { 'aria-label': p.badge ? `${p.label} (${p.badge} unread)` : p.label, title: p.label } : {})}
                 onClick={() => onActivate(p.id)}
                 className={cn(
-                  'flex h-7 shrink-0 cursor-pointer items-center gap-1.5 rounded-md border-none px-2 text-[12px] font-medium transition-colors',
+                  'flex h-7 cursor-pointer items-center gap-1.5 rounded-md border-none px-2 text-[12px] font-medium transition-colors',
+                  selected ? 'min-w-0' : 'shrink-0',
                   selected ? 'bg-surface text-text-primary shadow-sm' : 'bg-transparent text-text-secondary hover:bg-surface-hover hover:text-text-primary',
                 )}
                 data-testid={`${testId}-tab-${p.id}`}
               >
                 <span className="flex h-3.5 w-3.5 items-center justify-center" aria-hidden="true">{p.icon}</span>
-                <span className="truncate">{p.label}</span>
+                {!iconOnly && <span className="truncate">{p.label}</span>}
                 {p.badge ? <Badge n={p.badge} testId={`${testId}-badge-${p.id}`} /> : null}
               </button>
             );

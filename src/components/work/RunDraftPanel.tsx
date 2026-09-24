@@ -142,8 +142,8 @@ function FieldRow({ field }: { field: RunDraftSelectField }) {
   const reasonId = useId();
   return (
     <div className="py-2.5" data-testid={`run-draft-field-${field.id}`}>
-      <div className="flex items-center justify-between gap-3 text-[13px]">
-        <label htmlFor={selectId} className="text-text-secondary">
+      <div className="flex items-center justify-between gap-3 text-[14px]">
+        <label htmlFor={selectId} className="shrink-0 text-text-primary">
           {field.label}
         </label>
         <Select
@@ -180,8 +180,8 @@ function BudgetRow({ budget }: { budget: RunDraftBudget }) {
   const note = budget.disabledReason ?? derived;
   return (
     <div className="py-2.5" data-testid="run-draft-budget">
-      <div className="flex items-center justify-between gap-3 text-[13px]">
-        <label htmlFor={inputId} className="text-text-secondary">
+      <div className="flex items-center justify-between gap-3 text-[14px]">
+        <label htmlFor={inputId} className="shrink-0 text-text-primary">
           Run budget
         </label>
         <div className="w-40">
@@ -263,20 +263,22 @@ export function RunDraftPanel({
         </div>
       )}
       {target && (
-        <div className="flex items-start gap-3 py-1" data-testid="run-draft-target">
-          {target.mark != null && <span className="mt-0.5 shrink-0 text-primary">{target.mark}</span>}
+        <div className="flex items-center gap-3 py-1" data-testid="run-draft-target">
+          {target.mark != null && <span className="flex h-8 w-8 shrink-0 items-center justify-center text-primary" data-testid="run-draft-target-mark">{target.mark}</span>}
           <div className="min-w-0">
             <div className="truncate text-[14px] font-semibold text-text-primary">{target.title}</div>
-            {target.subtitle && <div className="text-[12px] text-text-secondary">{target.subtitle}</div>}
+            {target.subtitle && <div className="text-[13px] text-text-secondary">{target.subtitle}</div>}
           </div>
         </div>
       )}
 
       <div className="mt-3 divide-y divide-border">
         {fields?.map((f) => <FieldRow key={f.id} field={f} />)}
-        {hasEstimates && (
+        {/* Cost and duration are rows of their own (the mockup rules each);
+            the confidence line belongs to the duration it qualifies. */}
+        {cost && <EstimateRow label="Estimated cost" estimate={honest(cost, confidence)} data-testid="run-draft-cost" />}
+        {hasEstimates && (duration || confidence) && (
           <div>
-            {cost && <EstimateRow label="Estimated cost" estimate={honest(cost, confidence)} data-testid="run-draft-cost" />}
             {duration && <EstimateRow label="Duration" estimate={honest(duration, confidence)} data-testid="run-draft-duration" />}
             {confidence && (
               <InfoLine className="pb-2.5" data-testid="run-draft-confidence">

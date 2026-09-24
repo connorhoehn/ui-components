@@ -2542,15 +2542,15 @@ function Gm({ n: e, testId: t }) {
 		children: e > 99 ? "99+" : e
 	});
 }
-function Km({ state: e, onStateChange: t, panels: n, activeId: r, onActivate: i, label: a = "Side column", className: o, "data-testid": s = "context-column" }) {
+function Km({ state: e, onStateChange: t, panels: n, activeId: r, onActivate: i, label: a = "Side column", roomy: o = !1, className: s, "data-testid": c = "context-column" }) {
 	if (n.length === 0) return null;
-	let c = n.find((e) => e.id === r) ?? n[0];
+	let l = n.find((e) => e.id === r) ?? n[0];
 	if (e === "collapsed") return /* @__PURE__ */ Q("div", {
 		role: "group",
 		"aria-label": a,
-		"data-testid": s,
+		"data-testid": c,
 		"data-state": "collapsed",
-		className: z("flex h-full shrink-0 flex-col items-center gap-2.5 border-l border-border bg-surface-panel py-1", Hm.collapsed, o),
+		className: z("flex h-full shrink-0 flex-col items-center gap-2.5 border-l border-border bg-surface-panel py-1", Hm.collapsed, s),
 		children: [
 			/* @__PURE__ */ Z(V, {
 				"aria-label": `Open ${a.toLowerCase()}`,
@@ -2559,7 +2559,7 @@ function Km({ state: e, onStateChange: t, panels: n, activeId: r, onActivate: i,
 				variant: "ghost",
 				icon: /* @__PURE__ */ Z(Um, { dir: "left" }),
 				onClick: () => t("open"),
-				"data-testid": `${s}-expand`
+				"data-testid": `${c}-expand`
 			}),
 			/* @__PURE__ */ Z("div", {
 				className: "h-px w-full shrink-0 bg-border",
@@ -2577,12 +2577,12 @@ function Km({ state: e, onStateChange: t, panels: n, activeId: r, onActivate: i,
 					onClick: () => {
 						i(e.id, n.id), t("open");
 					},
-					"data-testid": `${s}-entry-${e.id}-${n.id}`
+					"data-testid": `${c}-entry-${e.id}-${n.id}`
 				}), n.badge ? /* @__PURE__ */ Z("span", {
 					className: "pointer-events-none absolute -right-1 -top-1",
 					children: /* @__PURE__ */ Z(Gm, {
 						n: n.badge,
-						testId: `${s}-badge-${e.id}-${n.id}`
+						testId: `${c}-badge-${e.id}-${n.id}`
 					})
 				}) : null]
 			}, `${e.id}:${n.id}`)) : [/* @__PURE__ */ Q("div", {
@@ -2597,68 +2597,73 @@ function Km({ state: e, onStateChange: t, panels: n, activeId: r, onActivate: i,
 					onClick: () => {
 						i(e.id), t("open");
 					},
-					"data-testid": `${s}-panel-${e.id}`
+					"data-testid": `${c}-panel-${e.id}`
 				}), e.badge ? /* @__PURE__ */ Z("span", {
 					className: "pointer-events-none absolute -right-1 -top-1",
 					children: /* @__PURE__ */ Z(Gm, {
 						n: e.badge,
-						testId: `${s}-badge-${e.id}`
+						testId: `${c}-badge-${e.id}`
 					})
 				}) : null]
 			}, e.id)])
 		]
 	});
-	let l = e === "wide";
+	let u = e === "wide", d = n.length > (u ? 4 : 2);
 	return /* @__PURE__ */ Q("div", {
 		role: "group",
 		"aria-label": a,
-		"data-testid": s,
+		"data-testid": c,
 		"data-state": e,
-		"data-active": c.id,
-		className: z("flex h-full shrink-0 flex-col border-l border-border bg-surface-panel", Hm[e], o),
+		"data-active": l.id,
+		"data-crowded": d || void 0,
+		className: z("flex h-full shrink-0 flex-col border-l border-border bg-surface-panel", Hm[e], o && e === "open" && "2xl:w-96", s),
 		children: [/* @__PURE__ */ Q("div", {
 			className: "flex h-9 shrink-0 items-center gap-1 border-b border-border pl-1.5 pr-1.5",
-			"data-testid": `${s}-header`,
+			"data-testid": `${c}-header`,
 			children: [
 				/* @__PURE__ */ Z("div", {
 					role: "tablist",
 					"aria-label": a,
 					className: "flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto",
 					children: n.map((e) => {
-						let t = e.id === c.id;
+						let t = e.id === l.id, n = d && !t;
 						return /* @__PURE__ */ Q("button", {
 							type: "button",
 							role: "tab",
 							"aria-selected": t,
+							...n ? {
+								"aria-label": e.badge ? `${e.label} (${e.badge} unread)` : e.label,
+								title: e.label
+							} : {},
 							onClick: () => i(e.id),
-							className: z("flex h-7 shrink-0 cursor-pointer items-center gap-1.5 rounded-md border-none px-2 text-[12px] font-medium transition-colors", t ? "bg-surface text-text-primary shadow-sm" : "bg-transparent text-text-secondary hover:bg-surface-hover hover:text-text-primary"),
-							"data-testid": `${s}-tab-${e.id}`,
+							className: z("flex h-7 cursor-pointer items-center gap-1.5 rounded-md border-none px-2 text-[12px] font-medium transition-colors", t ? "min-w-0" : "shrink-0", t ? "bg-surface text-text-primary shadow-sm" : "bg-transparent text-text-secondary hover:bg-surface-hover hover:text-text-primary"),
+							"data-testid": `${c}-tab-${e.id}`,
 							children: [
 								/* @__PURE__ */ Z("span", {
 									className: "flex h-3.5 w-3.5 items-center justify-center",
 									"aria-hidden": "true",
 									children: e.icon
 								}),
-								/* @__PURE__ */ Z("span", {
+								!n && /* @__PURE__ */ Z("span", {
 									className: "truncate",
 									children: e.label
 								}),
 								e.badge ? /* @__PURE__ */ Z(Gm, {
 									n: e.badge,
-									testId: `${s}-badge-${e.id}`
+									testId: `${c}-badge-${e.id}`
 								}) : null
 							]
 						}, e.id);
 					})
 				}),
 				/* @__PURE__ */ Z(V, {
-					"aria-label": l ? "Narrow the column" : "Widen the column",
-					title: l ? "Narrow the column" : "Widen the column",
+					"aria-label": u ? "Narrow the column" : "Widen the column",
+					title: u ? "Narrow the column" : "Widen the column",
 					size: "sm",
 					variant: "ghost",
-					icon: /* @__PURE__ */ Z(Wm, { wide: l }),
-					onClick: () => t(l ? "open" : "wide"),
-					"data-testid": `${s}-width`
+					icon: /* @__PURE__ */ Z(Wm, { wide: u }),
+					onClick: () => t(u ? "open" : "wide"),
+					"data-testid": `${c}-width`
 				}),
 				/* @__PURE__ */ Z(V, {
 					"aria-label": `Collapse ${a.toLowerCase()}`,
@@ -2667,14 +2672,14 @@ function Km({ state: e, onStateChange: t, panels: n, activeId: r, onActivate: i,
 					variant: "ghost",
 					icon: /* @__PURE__ */ Z(Um, { dir: "right" }),
 					onClick: () => t("collapsed"),
-					"data-testid": `${s}-collapse`
+					"data-testid": `${c}-collapse`
 				})
 			]
 		}), /* @__PURE__ */ Z("div", {
 			role: "tabpanel",
 			className: "flex min-h-0 flex-1 flex-col overflow-y-auto",
-			"data-testid": `${s}-panel`,
-			children: c.content
+			"data-testid": `${c}-panel`,
+			children: l.content
 		})]
 	});
 }
@@ -4120,11 +4125,11 @@ function Fh(e) {
 function Ih({ label: e, estimate: t, className: n, "data-testid": r }) {
 	let i = t.kind === "range";
 	return /* @__PURE__ */ Q("div", {
-		className: z("flex items-center justify-between gap-3 py-2.5 text-[13px]", n),
+		className: z("flex items-center justify-between gap-3 py-2.5 text-[14px]", n),
 		"data-testid": r,
 		"data-estimate-kind": t.kind,
 		children: [/* @__PURE__ */ Z("span", {
-			className: "text-text-secondary",
+			className: "text-text-primary",
 			children: e
 		}), /* @__PURE__ */ Z("span", {
 			className: z("text-right tabular-nums", i ? "font-semibold text-text-primary" : "text-text-tertiary"),
@@ -4167,10 +4172,10 @@ function Vh({ field: e }) {
 		className: "py-2.5",
 		"data-testid": `run-draft-field-${e.id}`,
 		children: [/* @__PURE__ */ Q("div", {
-			className: "flex items-center justify-between gap-3 text-[13px]",
+			className: "flex items-center justify-between gap-3 text-[14px]",
 			children: [/* @__PURE__ */ Z("label", {
 				htmlFor: t,
-				className: "text-text-secondary",
+				className: "shrink-0 text-text-primary",
 				children: e.label
 			}), /* @__PURE__ */ Z(U, {
 				id: t,
@@ -4198,10 +4203,10 @@ function Hh({ budget: e }) {
 		className: "py-2.5",
 		"data-testid": "run-draft-budget",
 		children: [/* @__PURE__ */ Q("div", {
-			className: "flex items-center justify-between gap-3 text-[13px]",
+			className: "flex items-center justify-between gap-3 text-[14px]",
 			children: [/* @__PURE__ */ Z("label", {
 				htmlFor: t,
-				className: "text-text-secondary",
+				className: "shrink-0 text-text-primary",
 				children: "Run budget"
 			}), /* @__PURE__ */ Z("div", {
 				className: "w-40",
@@ -4242,10 +4247,11 @@ function Uh({ status: e, collapsed: t, defaultCollapsed: n = !1, onCollapsedChan
 			children: "No workflow chosen"
 		}),
 		i && /* @__PURE__ */ Q("div", {
-			className: "flex items-start gap-3 py-1",
+			className: "flex items-center gap-3 py-1",
 			"data-testid": "run-draft-target",
 			children: [i.mark != null && /* @__PURE__ */ Z("span", {
-				className: "mt-0.5 shrink-0 text-primary",
+				className: "flex h-8 w-8 shrink-0 items-center justify-center text-primary",
+				"data-testid": "run-draft-target-mark",
 				children: i.mark
 			}), /* @__PURE__ */ Q("div", {
 				className: "min-w-0",
@@ -4253,7 +4259,7 @@ function Uh({ status: e, collapsed: t, defaultCollapsed: n = !1, onCollapsedChan
 					className: "truncate text-[14px] font-semibold text-text-primary",
 					children: i.title
 				}), i.subtitle && /* @__PURE__ */ Z("div", {
-					className: "text-[12px] text-text-secondary",
+					className: "text-[13px] text-text-secondary",
 					children: i.subtitle
 				})]
 			})]
@@ -4262,23 +4268,20 @@ function Uh({ status: e, collapsed: t, defaultCollapsed: n = !1, onCollapsedChan
 			className: "mt-3 divide-y divide-border",
 			children: [
 				a?.map((e) => /* @__PURE__ */ Z(Vh, { field: e }, e.id)),
-				A && /* @__PURE__ */ Q("div", { children: [
-					o && /* @__PURE__ */ Z(Ih, {
-						label: "Estimated cost",
-						estimate: zh(o, c),
-						"data-testid": "run-draft-cost"
-					}),
-					s && /* @__PURE__ */ Z(Ih, {
-						label: "Duration",
-						estimate: zh(s, c),
-						"data-testid": "run-draft-duration"
-					}),
-					c && /* @__PURE__ */ Z(Bh, {
-						className: "pb-2.5",
-						"data-testid": "run-draft-confidence",
-						children: Ah(c.sampleSize)
-					})
-				] }),
+				o && /* @__PURE__ */ Z(Ih, {
+					label: "Estimated cost",
+					estimate: zh(o, c),
+					"data-testid": "run-draft-cost"
+				}),
+				A && (s || c) && /* @__PURE__ */ Q("div", { children: [s && /* @__PURE__ */ Z(Ih, {
+					label: "Duration",
+					estimate: zh(s, c),
+					"data-testid": "run-draft-duration"
+				}), c && /* @__PURE__ */ Z(Bh, {
+					className: "pb-2.5",
+					"data-testid": "run-draft-confidence",
+					children: Ah(c.sampleSize)
+				})] }),
 				l && /* @__PURE__ */ Z(Hh, { budget: l }),
 				u != null && /* @__PURE__ */ Z("div", {
 					className: "py-1.5",

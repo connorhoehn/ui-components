@@ -41,4 +41,25 @@ describe('ContextColumn', () => {
     rerender(<ContextColumn state="open" onStateChange={vi.fn()} onActivate={vi.fn()} panels={[]} />);
     expect(container.firstChild).toBeNull();
   });
+
+  it('crowded (three tabs in the open column): the active tab keeps its label, the others are icons named by tooltip', () => {
+    const three = [...panels, { id: 'run-draft', label: 'Run draft', icon: <span>r</span>, content: <div>the draft</div> }];
+    const onActivate = vi.fn();
+    render(<ContextColumn state="open" onStateChange={vi.fn()} onActivate={onActivate} panels={three} activeId="run-draft" roomy />);
+    const active = screen.getByRole('tab', { name: /Run draft/ });
+    expect(active).toHaveTextContent('Run draft');
+    const activity = screen.getByRole('tab', { name: 'Activity' });
+    expect(activity).toHaveAttribute('title', 'Activity');
+    expect(activity).not.toHaveTextContent('Activity');
+    expect(screen.getByRole('tab', { name: '#design (3 unread)' })).toBeInTheDocument();
+    fireEvent.click(activity);
+    expect(onActivate).toHaveBeenCalledWith('activity');
+    expect(screen.getByTestId('context-column').className).toContain('2xl:w-96');
+  });
+
+  it('two tabs are not crowded: both keep their labels', () => {
+    render(<ContextColumn state="open" onStateChange={vi.fn()} onActivate={vi.fn()} panels={panels} activeId="activity" />);
+    expect(screen.getByRole('tab', { name: /#design/ })).toHaveTextContent('#design');
+    expect(screen.getByTestId('context-column')).not.toHaveAttribute('data-crowded');
+  });
 });

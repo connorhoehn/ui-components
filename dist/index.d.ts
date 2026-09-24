@@ -4626,7 +4626,7 @@ export declare interface ConsultCardProps {
     'data-testid'?: string;
 }
 
-export declare function ContextColumn({ state, onStateChange, panels, activeId, onActivate, label, className, 'data-testid': testId, }: ContextColumnProps): JSX.Element | null;
+export declare function ContextColumn({ state, onStateChange, panels, activeId, onActivate, label, roomy, className, 'data-testid': testId, }: ContextColumnProps): JSX.Element | null;
 
 /** One of a tabbed panel's parts, as the collapsed strip shows it. Since 2.384.1. */
 export declare interface ContextColumnEntry {
@@ -4670,6 +4670,13 @@ export declare interface ContextColumnProps {
     onActivate: (id: string, entryId?: string) => void;
     /** Accessible name of the column. Default "Side column". */
     label?: string;
+    /**
+     * Open at 384px instead of 320px on a 2xl viewport (≥1536px) — a pane with
+     * rows of label + value (a run draft) that the Work mockup draws wider.
+     * Narrower viewports keep 320px so the page beside it keeps its width.
+     * Since 2.386.13.
+     */
+    roomy?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -19979,6 +19986,16 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
@@ -20008,16 +20025,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
