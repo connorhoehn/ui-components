@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { layoutWorkEfforts } from '../effortLayout';
+import { layoutWorkEfforts, limitWorkEfforts } from '../effortLayout';
 import type { WorkActivityEffort, WorkGraphEdgeData, WorkGraphNodeData } from '../types';
 
 const node = (id: string): WorkGraphNodeData => ({ id, kind: 'document', title: id, status: 'running', disclosure: 'details', capabilities: [], updatedAt: '2026-09-20T13:00:00Z' });
@@ -126,5 +126,28 @@ describe('source-backed effort layout', () => {
     const cyclic = layoutWorkEfforts(nodes, [...edges, edge('cycle', 'deck', 'source')], [{ ...efforts[0], edgeIds: ['a', 'b', 'cycle'] }], { width: 1200 });
     expect(cyclic[0].cyclicNodeIds.sort()).toEqual(['agent-a', 'deck', 'source']);
     expect(cyclic[0].nodes).toHaveLength(3);
+  });
+});
+
+describe('limitWorkEfforts keeps the newest made work in view', () => {
+  const at = (id: string, kind: WorkGraphNodeData['kind'], time: string): WorkGraphNodeData => ({ ...node(id), kind, status: 'completed', updatedAt: time });
+  const graph = [
+    at('run-1', 'run', '2026-09-24T12:10:00Z'), at('run-2', 'run', '2026-09-24T12:09:00Z'), at('run-3', 'run', '2026-09-24T12:08:00Z'),
+    at('deck', 'document', '2026-09-24T12:05:00Z'), at('run-old', 'run', '2026-09-24T11:00:00Z'), at('page', 'document', '2026-09-24T10:00:00Z'),
+  ];
+  const lanes: WorkActivityEffort[] = ['run-1', 'run-2', 'run-3', 'deck', 'run-old', 'page'].map((id) => ({ id: `effort.${id}`, title: id, nodeIds: [id], edgeIds: [] }));
+  const ids = (list: WorkActivityEffort[]) => list.map((effort) => effort.id);
+
+  it('a deck behind newer runs takes the last place of the default two', () => {
+    expect(ids(limitWorkEfforts(lanes, graph))).toEqual(['effort.run-1', 'effort.deck']);
+  });
+  it('changes nothing when the newest already hold made work, or when turned off', () => {
+    expect(ids(limitWorkEfforts(lanes.slice(3), graph))).toEqual(['effort.deck', 'effort.run-old']);
+    expect(ids(limitWorkEfforts(lanes, graph, { keepLatestMade: false }))).toEqual(['effort.run-1', 'effort.run-2']);
+  });
+  it('a selection displaces the oldest run, not the kept deck; with one place the selection wins', () => {
+    expect(ids(limitWorkEfforts(lanes, graph, { keepEffortId: 'effort.run-old' }))).toEqual(['effort.deck', 'effort.run-old']);
+    expect(ids(limitWorkEfforts(lanes, graph, { max: 1, keepEffortId: 'effort.run-old' }))).toEqual(['effort.run-old']);
+    expect(ids(limitWorkEfforts(lanes, graph, { max: 3 }))).toEqual(['effort.run-1', 'effort.run-2', 'effort.deck']);
   });
 });

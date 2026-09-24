@@ -114,10 +114,23 @@ export interface LimitEffortsOptions {
    * the oldest effort that would otherwise have been shown.
    */
   keepEffortId?: string | null;
+  /**
+   * Keep the newest effort that holds something the person MADE (a document —
+   * a deck, a page) in view even when newer run-only efforts outnumber the cap.
+   * A deck saved a minute ago sat behind two probe runs and was a click away
+   * rather than drawn (realtime-examples NFR #221 follow-up). Default true;
+   * the selection's `keepEffortId` still wins over it.
+   */
+  keepLatestMade?: boolean;
 }
 
+/** Kinds that are a thing the person made, as opposed to a run that did work. */
+const MADE_KINDS = new Set<WorkGraphNodeData['kind']>(['document']);
+
 /**
- * The newest `max` efforts, in the order the host gave them.
+ * The newest `max` efforts, in the order the host gave them — except that,
+ * unless `keepLatestMade` is false, the newest effort holding a document takes
+ * the last place when none of the newest does.
  *
  * Recency is the latest `updatedAt`/`startedAt` across an effort's own nodes,
  * which is the same "newest work first" rule the panel footer already claims;
@@ -138,10 +151,20 @@ export function limitWorkEfforts(
     .map((effort, index) => ({ index, recency: Math.max(0, ...effort.nodeIds.map((id) => updated.get(id) ?? 0)) }))
     .sort((left, right) => right.recency - left.recency || left.index - right.index);
   const shown = ranked.slice(0, max);
+  const kinds = new Map(nodes.map((node) => [node.id, node.kind]));
+  const holdsMade = (index: number) => efforts[index].nodeIds.some((id) => MADE_KINDS.has(kinds.get(id) as WorkGraphNodeData['kind']));
+  if (options.keepLatestMade !== false && !shown.some((entry) => holdsMade(entry.index))) {
+    // Ranked newest first, so the first match is the newest made work.
+    const made = ranked.find((entry) => holdsMade(entry.index));
+    if (made) shown[shown.length - 1] = made;
+  }
   const keep = new Set(shown.map((entry) => entry.index));
   const required = options.keepEffortId ? efforts.findIndex((effort) => effort.id === options.keepEffortId) : -1;
   if (required >= 0 && !keep.has(required)) {
-    keep.delete(shown[shown.length - 1].index);
+    // The selection displaces the oldest shown effort that is not the made
+    // work kept above, unless that is all there is.
+    const displaced = [...shown].reverse().find((entry) => !holdsMade(entry.index) || max === 1) ?? shown[shown.length - 1];
+    keep.delete(displaced.index);
     keep.add(required);
   }
   return efforts.filter((_, index) => keep.has(index));
