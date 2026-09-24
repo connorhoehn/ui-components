@@ -15,7 +15,8 @@ import { DetailSection } from '../shared/DetailSection';
 import { Checkbox } from '../forms/Checkbox';
 import { Input } from '../forms/Input';
 import { IconButton } from '../ui/IconButton';
-import { ChevronIcon, EditIcon, TrashIcon } from '../ui/Icons';
+import { ChevronIcon, EditIcon, PlusIcon, TrashIcon } from '../ui/Icons';
+import { Button } from '../ui/Button';
 import { Spinner } from '../shared/Spinner';
 import VisuallyHidden from '../shared/VisuallyHidden';
 
@@ -33,6 +34,14 @@ export interface ChecklistSectionProps {
   emptyLabel?: string;
   addPlaceholder?: string;
   first?: boolean;
+  /**
+   * `heading` (default since 2.386.14): a 16px sentence-case heading, 14px
+   * rows, no tally, and "Add a criterion" as a quiet control that opens the
+   * field only when asked — a work item's Brief. `label`: the small uppercase
+   * caption with the tally and an always-open add field, for a side panel.
+   */
+  variant?: 'label' | 'heading';
+
   className?: string;
   'data-testid'?: string;
 }
@@ -42,6 +51,7 @@ interface RowProps {
   index: number;
   count: number;
   locked: boolean;
+  large: boolean;
   reasonId?: string;
   onToggle?: ChecklistSectionProps['onToggle'];
   onEdit?: ChecklistSectionProps['onEdit'];
@@ -49,7 +59,7 @@ interface RowProps {
   onMove?: ChecklistSectionProps['onMove'];
 }
 
-function Row({ item, index, count, locked, reasonId, onToggle, onEdit, onRemove, onMove }: RowProps) {
+function Row({ item, index, count, locked, large, reasonId, onToggle, onEdit, onRemove, onMove }: RowProps) {
   const textId = useId();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(item.text);
@@ -72,7 +82,7 @@ function Row({ item, index, count, locked, reasonId, onToggle, onEdit, onRemove,
 
   return (
     <li
-      className="group flex min-h-7 items-center gap-2.5 rounded-md py-0.5"
+      className={cn('group flex items-center rounded-md', large ? 'min-h-[26px] gap-3' : 'min-h-7 gap-2.5 py-0.5')}
       aria-busy={item.pending || undefined}
       data-testid={`checklist-item-${item.id}`}
     >
@@ -102,7 +112,8 @@ function Row({ item, index, count, locked, reasonId, onToggle, onEdit, onRemove,
         <span
           id={textId}
           className={cn(
-            'min-w-0 flex-1 text-[13px]',
+            'min-w-0 flex-1',
+            large ? 'text-sm leading-5' : 'text-[13px]',
             item.done ? 'text-text-tertiary line-through' : 'text-text-primary',
           )}
         >
@@ -136,13 +147,28 @@ function Row({ item, index, count, locked, reasonId, onToggle, onEdit, onRemove,
 export function ChecklistSection({
   title = 'Acceptance criteria', items, onToggle, onAdd, onEdit, onRemove, onMove,
   readOnlyReason, emptyLabel = 'No acceptance criteria yet', addPlaceholder = 'Add criterion',
-  first, className, 'data-testid': testId = 'checklist-section',
+  first, variant = 'heading', className, 'data-testid': testId = 'checklist-section',
 }: ChecklistSectionProps) {
   const reasonId = useId();
   const [newText, setNewText] = useState('');
   const locked = !!readOnlyReason;
+  const heading = variant === 'heading';
+  // The label variant always shows the add field; the heading variant opens it on request.
+  const [adding, setAdding] = useState(false);
+  const addRef = useRef<HTMLInputElement | null>(null);
+  useEffect(() => { if (adding) addRef.current?.focus(); }, [adding]);
   const doneCount = items.filter((i) => i.done).length;
-  const hint = items.length > 0 ? `${doneCount} of ${items.length}` : undefined;
+  const hint = !heading && items.length > 0 ? `${doneCount} of ${items.length}` : undefined;
+  const canAdd = !!onAdd && !locked;
+  const addLabel = addPlaceholder.charAt(0).toUpperCase() + addPlaceholder.slice(1);
+  const addButton = (
+    <Button variant="link" size="sm" onClick={() => setAdding(true)} className="inline-flex items-center gap-1 text-[13px] font-medium" data-testid={`${testId}-add`}>
+      <PlusIcon size={12} aria-hidden="true" />
+      {addLabel}
+    </Button>
+  );
+  const actions = heading && canAdd && !adding && items.length > 0 ? addButton : undefined;
+  const showField = canAdd && (!heading || adding);
 
   const add = () => {
     const t = newText.trim();
@@ -152,10 +178,13 @@ export function ChecklistSection({
   };
 
   return (
-    <DetailSection title={title} hint={hint} first={first} className={className} data-testid={testId}>
+    <DetailSection title={title} hint={hint} actions={actions} first={first} variant={variant} className={className} data-testid={testId}>
       <div title={readOnlyReason}>
         {items.length === 0 ? (
-          <p className="m-0 text-[13px] text-text-tertiary">{emptyLabel}</p>
+          <div className="flex items-center gap-2">
+            <p className={cn('m-0 text-text-tertiary', heading ? 'text-sm' : 'text-[13px]')}>{emptyLabel}</p>
+            {heading && canAdd && !adding && addButton}
+          </div>
         ) : (
           <ul className="m-0 flex list-none flex-col p-0" aria-label={title}>
             {items.map((item, index) => (
@@ -165,6 +194,7 @@ export function ChecklistSection({
                 index={index}
                 count={items.length}
                 locked={locked}
+                large={heading}
                 reasonId={readOnlyReason ? reasonId : undefined}
                 onToggle={onToggle}
                 onEdit={onEdit}
@@ -174,8 +204,9 @@ export function ChecklistSection({
             ))}
           </ul>
         )}
-        {onAdd && !locked && (
+        {showField && (
           <Input
+            ref={addRef}
             size="sm"
             aria-label={addPlaceholder}
             placeholder={`${addPlaceholder}…`}
@@ -183,8 +214,9 @@ export function ChecklistSection({
             onChange={(e) => setNewText(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') { e.preventDefault(); add(); }
-              else if (e.key === 'Escape') setNewText('');
+              else if (e.key === 'Escape') { setNewText(''); if (heading) { e.stopPropagation(); setAdding(false); } }
             }}
+            {...(heading ? { onBlur: () => { if (!newText.trim()) setAdding(false); } } : {})}
             className="mt-1.5"
           />
         )}

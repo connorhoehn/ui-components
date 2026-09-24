@@ -888,7 +888,7 @@ declare interface DocumentInfo {
 }
 
 /** The lifecycle status as the header prints it — "Draft", "In review" — for a host's own title row. */
-/** `variant="tag"` (since 2.386.5): the soft label an editor head puts beside the title. */
+/** `variant="tag"` (since 2.386.15): the soft label an editor head puts beside the title. */
 export declare function DocumentLifecyclePill({ status, variant }: {
     status: DocumentLifecycleStatus;
     variant?: 'pill' | 'tag';
@@ -1252,7 +1252,7 @@ export declare interface DocumentZoomControl {
  */
 export declare function duplicateSlide(spec: DeckSpec, id: string): DeckSpec;
 
-export declare function EditorShell({ breadcrumbs, title, onTitleChange, titleLabel, kind, starred, onStarredChange, statusPill, path, crumbsTrailing, subtitle, metaBar, participants, onParticipantClick, onFollowParticipant, followingParticipantId, meta, saveState, headActions, tabs, activeTab, onTabChange, toolbar, children, footer, surface, explorer, workbench, label, className, 'data-testid': testId, }: EditorShellProps): JSX.Element;
+export declare function EditorShell({ breadcrumbs, title, onTitleChange, titleLabel, kind, starred, onStarredChange, statusPill, path, crumbsTrailing, subtitle, metaBar, participants, onParticipantClick, onFollowParticipant, followingParticipantId, meta, saveState, headActions, tabs, activeTab, onTabChange, toolbar, children, footer, surface, explorer, workbench, label, variant, itemType, itemKey, className, 'data-testid': testId, }: EditorShellProps): JSX.Element;
 
 export declare interface EditorShellProps {
     /** The trail above the title — "Sprint planning / Sprint review". */
@@ -1329,6 +1329,20 @@ export declare interface EditorShellProps {
     workbench?: ReactNode;
     /** Accessible name of the editor pane. Default "Editor". */
     label?: string;
+    /**
+     * `document` (default): a file's head — kind mark, title with its pill and
+     * folder path, save line, and the head actions on the title row.
+     * `work-item` (since 2.386.14): the Work mockup's head — a crumb line
+     * ("› OpenTelemetry everywhere / Story wi-obs-e1-s4", from `breadcrumbs` +
+     * `crumbsTrailing`) that carries `headActions` (normally just ⋯) at its
+     * right, then a 22px title with no kind mark, then the subtitle. The crumb
+     * line stays on a short window, since it holds the actions.
+     */
+    variant?: 'document' | 'work-item';
+    /** work-item: the item's type as a soft chip on the crumb line ("Story"). Since 2.386.14. */
+    itemType?: string;
+    /** work-item: the item's key in mono after the chip ("wi-obs-e1-s4"). Since 2.386.14. */
+    itemKey?: string;
     className?: string;
     'data-testid'?: string;
 }
@@ -3503,6 +3517,12 @@ export declare interface WorkspaceDocumentHeaderProps {
      * (the shell's Comments tab carries the count). Since 2.385.1.
      */
     actionsLayout?: 'cluster' | 'menu';
+    /**
+     * The menu layout's ⋯ trigger: `boxed` (default) is the 40px bordered square
+     * of a file's head; `ghost` is a borderless 32px glyph, for the work-item
+     * head's crumb line. Since 2.386.14.
+     */
+    menuTrigger?: 'boxed' | 'ghost';
     /** Host-controlled durable persistence receipt; omitted means unknown. */
     saveState?: DocumentSaveState;
     /** Actions scoped to the current source, such as draft/review/publish. */
@@ -3606,6 +3626,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3625,55 +3658,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -3710,6 +3697,39 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

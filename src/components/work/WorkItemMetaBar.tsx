@@ -29,6 +29,7 @@ import { SearchInput } from '../shared/SearchInput';
 import { InlinePopover } from '../shared/InlinePopover';
 import VisuallyHidden from '../shared/VisuallyHidden';
 import { toneVar } from '../shared/tones';
+import { ChevronIcon } from '../ui/Icons';
 
 export interface WorkMetaOption { value: string; label: string; tone?: ChipTone }
 
@@ -54,8 +55,53 @@ export interface WorkItemMetaBarProps {
     value: string | null; options: WorkMetaOption[]; onChange?: (v: string) => void;
     readOnlyReason?: string; pending?: boolean;
   };
+  /**
+   * `inline` (default): borderless fields at 13px with a rule between each.
+   * `boxed` (since 2.386.14): the Work mockup's row — status and priority are
+   * 36px bordered select boxes ("● Open ⌄", "Priority: High ⌄"), points and
+   * owner plain 14–15px text with one rule between them.
+   */
+  appearance?: 'inline' | 'boxed';
   'data-testid'?: string;
   className?: string;
+}
+
+// ---------------------------------------------------------------------------
+// BoxedSelect — a bordered box that shows a value however it likes (a dot, a
+// toned chip) with a native <select> laid over it, transparent, so keyboard,
+// mobile pickers and the accessibility tree are the real element's.
+// ---------------------------------------------------------------------------
+
+function BoxedSelect({
+  children, value, options, placeholder, disabled, onChange, 'aria-label': ariaLabel, 'aria-labelledby': labelledBy, 'data-testid': testId,
+}: {
+  children: ReactNode; value: string; options: WorkMetaOption[]; placeholder: string; disabled?: boolean;
+  onChange: (v: string) => void; 'aria-label'?: string; 'aria-labelledby'?: string; 'data-testid'?: string;
+}) {
+  return (
+    <span
+      className={cn(
+        'relative inline-flex h-9 min-w-0 items-center gap-2 rounded-lg border border-border-emphasis bg-surface pl-3 pr-2.5 text-sm text-text-primary transition-colors',
+        'hover:bg-surface-hover focus-within:border-info focus-within:ring-1 focus-within:ring-info/40',
+        disabled && 'opacity-60',
+      )}
+      data-testid={testId}
+    >
+      {children}
+      <ChevronIcon dir="down" size={14} aria-hidden="true" className="ml-1 shrink-0 text-text-secondary" />
+      <select
+        value={value}
+        disabled={disabled}
+        aria-label={ariaLabel}
+        aria-labelledby={labelledBy}
+        onChange={(e) => onChange(e.target.value)}
+        className="absolute inset-0 h-full w-full cursor-pointer appearance-none opacity-0 disabled:cursor-default"
+      >
+        {!value && <option value="" disabled>{placeholder}</option>}
+        {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+      </select>
+    </span>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -179,11 +225,29 @@ const optionOf = (options: WorkMetaOption[], value: string | null) =>
 // Fields
 // ---------------------------------------------------------------------------
 
-function StatusField({ f }: { f: NonNullable<WorkItemMetaBarProps['status']> }) {
+function StatusField({ f, boxed }: { f: NonNullable<WorkItemMetaBarProps['status']>; boxed: boolean }) {
   const reasonId = useId();
   const opt = optionOf(f.options, f.value);
   const editable = !!f.onChange && !f.readOnlyReason;
   const dot = <StatusDot color={opt?.tone ? toneVar(opt.tone) : undefined} />;
+  if (boxed && editable) {
+    return (
+      <Field name="status" readOnlyReason={f.readOnlyReason} pending={f.pending} reasonId={reasonId}>
+        <BoxedSelect
+          aria-label="Status"
+          value={f.value ?? ''}
+          placeholder="No status"
+          options={f.options}
+          disabled={f.pending}
+          onChange={(v) => f.onChange?.(v)}
+          data-testid="work-meta-status"
+        >
+          {dot}
+          <span className={cn('whitespace-nowrap font-medium', !opt && 'text-text-tertiary')}>{opt?.label ?? 'No status'}</span>
+        </BoxedSelect>
+      </Field>
+    );
+  }
   return (
     <Field name="status" readOnlyReason={f.readOnlyReason} pending={f.pending} reasonId={reasonId}>
       {dot}
@@ -215,7 +279,7 @@ function pointsLabel(v: number | null): string {
   return `${v} ${v === 1 ? 'point' : 'points'}`;
 }
 
-function PointsField({ f }: { f: NonNullable<WorkItemMetaBarProps['points']> }) {
+function PointsField({ f, boxed }: { f: NonNullable<WorkItemMetaBarProps['points']>; boxed: boolean }) {
   const reasonId = useId();
   const editable = !!f.onChange && !f.readOnlyReason;
   const [editing, setEditing] = useState(false);
@@ -275,7 +339,7 @@ function PointsField({ f }: { f: NonNullable<WorkItemMetaBarProps['points']> }) 
           onClick={start}
           disabled={f.pending}
           aria-label={`Points: ${f.value == null ? 'not set' : f.value}. Edit`}
-          className={cn('text-[13px]', f.value == null ? 'text-text-tertiary' : 'text-text-secondary')}
+          className={cn(boxed ? 'text-sm' : 'text-[13px]', f.value == null ? 'text-text-tertiary' : 'text-text-secondary')}
         >
           {label}
         </Button>
@@ -291,18 +355,18 @@ function PointsField({ f }: { f: NonNullable<WorkItemMetaBarProps['points']> }) 
   );
 }
 
-function OwnerField({ f }: { f: NonNullable<WorkItemMetaBarProps['owner']> }) {
+function OwnerField({ f, boxed }: { f: NonNullable<WorkItemMetaBarProps['owner']>; boxed: boolean }) {
   const reasonId = useId();
   const editable = !!f.onChange && !f.readOnlyReason;
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const face = f.value ? (
     <>
-      <Avatar name={f.value.name} src={f.value.avatarUrl} size={24} />
-      <span className="truncate text-[13px] text-text-primary">{f.value.name}</span>
+      <Avatar name={f.value.name} src={f.value.avatarUrl} size={boxed ? 28 : 24} />
+      <span className={cn('truncate text-text-primary', boxed ? 'text-[15px]' : 'text-[13px]')}>{f.value.name}</span>
     </>
   ) : (
-    <span className="text-[13px] text-text-tertiary">Unassigned</span>
+    <span className={cn('text-text-tertiary', boxed ? 'text-sm' : 'text-[13px]')}>Unassigned</span>
   );
   return (
     <Field name="owner" readOnlyReason={f.readOnlyReason} pending={f.pending} reasonId={reasonId}>
@@ -316,7 +380,7 @@ function OwnerField({ f }: { f: NonNullable<WorkItemMetaBarProps['owner']> }) {
             aria-expanded={open}
             aria-label={`Owner: ${f.value?.name ?? 'Unassigned'}. Change owner`}
             onClick={() => setOpen((o) => !o)}
-            className="inline-flex min-w-0 cursor-pointer items-center gap-1.5 rounded-md border-none bg-transparent px-1 py-0.5 font-[inherit] hover:bg-surface-hover disabled:cursor-default"
+            className={cn('inline-flex min-w-0 cursor-pointer items-center rounded-md border-none bg-transparent px-1 py-0.5 font-[inherit] hover:bg-surface-hover disabled:cursor-default', boxed ? 'gap-2' : 'gap-1.5')}
           >
             {face}
           </button>
@@ -352,11 +416,29 @@ function OwnerField({ f }: { f: NonNullable<WorkItemMetaBarProps['owner']> }) {
   );
 }
 
-function PriorityField({ f }: { f: NonNullable<WorkItemMetaBarProps['priority']> }) {
+function PriorityField({ f, boxed }: { f: NonNullable<WorkItemMetaBarProps['priority']>; boxed: boolean }) {
   const reasonId = useId();
   const labelId = useId();
   const opt = optionOf(f.options, f.value);
   const editable = !!f.onChange && !f.readOnlyReason;
+  if (boxed && editable) {
+    return (
+      <Field name="priority" readOnlyReason={f.readOnlyReason} pending={f.pending} reasonId={reasonId}>
+        <BoxedSelect
+          aria-label="Priority"
+          value={f.value ?? ''}
+          placeholder="No priority"
+          options={f.options}
+          disabled={f.pending}
+          onChange={(v) => f.onChange?.(v)}
+          data-testid="work-meta-priority"
+        >
+          <span className="whitespace-nowrap text-text-primary">Priority:</span>
+          {opt ? <Chip tone={opt.tone ?? 'neutral'} size="sm">{opt.label}</Chip> : <span className="text-text-tertiary">None</span>}
+        </BoxedSelect>
+      </Field>
+    );
+  }
   return (
     <Field name="priority" readOnlyReason={f.readOnlyReason} pending={f.pending} reasonId={reasonId}>
       <span id={labelId} className="text-[13px] text-text-secondary">Priority:</span>
@@ -388,14 +470,30 @@ function PriorityField({ f }: { f: NonNullable<WorkItemMetaBarProps['priority']>
 }
 
 export function WorkItemMetaBar({
-  status, points, owner, priority, className, 'data-testid': testId = 'work-item-meta-bar',
+  status, points, owner, priority, appearance = 'inline', className, 'data-testid': testId = 'work-item-meta-bar',
 }: WorkItemMetaBarProps) {
+  const boxed = appearance === 'boxed';
   const fields: ReactNode[] = [];
-  if (status) fields.push(<StatusField key="status" f={status} />);
-  if (points) fields.push(<PointsField key="points" f={points} />);
-  if (owner) fields.push(<OwnerField key="owner" f={owner} />);
-  if (priority) fields.push(<PriorityField key="priority" f={priority} />);
+  if (status) fields.push(<StatusField key="status" f={status} boxed={boxed} />);
+  if (points) fields.push(<PointsField key="points" f={points} boxed={boxed} />);
+  if (owner) fields.push(<OwnerField key="owner" f={owner} boxed={boxed} />);
+  if (priority) fields.push(<PriorityField key="priority" f={priority} boxed={boxed} />);
   if (fields.length === 0) return null;
+  if (boxed) {
+    // One rule, between points and owner (the two plain-text fields); a box
+    // needs no rule beside it.
+    const out: ReactNode[] = [];
+    fields.forEach((node, i) => {
+      if (i > 0 && (node as { key?: string }).key === 'owner' && points) out.push(<Separator key="sep-owner" />);
+      out.push(node);
+    });
+    return (
+      <div role="group" aria-label="Work item details" data-testid={testId} data-appearance="boxed"
+        className={cn('flex flex-wrap items-center gap-x-4 gap-y-2', className)}>
+        {out}
+      </div>
+    );
+  }
   return (
     <div
       role="group"

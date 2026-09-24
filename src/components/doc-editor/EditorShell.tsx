@@ -31,11 +31,13 @@
 import { useId, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { IconButton } from '../ui/IconButton';
+import { ChevronIcon } from '../ui/Icons';
 import { InlineEditableText } from '../forms/InlineEditableText';
 import { Breadcrumbs, type BreadcrumbItem } from '../shared/Breadcrumbs';
 import { PresenceAvatars, type PresenceUser } from '../shared/PresenceAvatars';
 import { Tabs } from '../shared/Tabs';
 import { Badge } from '../shared/Badge';
+import Chip from '../shared/Chip';
 import { FileKindMark, type FileKind } from '../shared/FileKindMark';
 import { DocumentSaveStatus, type DocumentSaveState } from './DocumentSaveStatus';
 import { ComposerDockPlacementContext } from './FloatingComposerDock';
@@ -131,6 +133,20 @@ export interface EditorShellProps {
   workbench?: ReactNode;
   /** Accessible name of the editor pane. Default "Editor". */
   label?: string;
+  /**
+   * `document` (default): a file's head — kind mark, title with its pill and
+   * folder path, save line, and the head actions on the title row.
+   * `work-item` (since 2.386.14): the Work mockup's head — a crumb line
+   * ("› OpenTelemetry everywhere / Story wi-obs-e1-s4", from `breadcrumbs` +
+   * `crumbsTrailing`) that carries `headActions` (normally just ⋯) at its
+   * right, then a 22px title with no kind mark, then the subtitle. The crumb
+   * line stays on a short window, since it holds the actions.
+   */
+  variant?: 'document' | 'work-item';
+  /** work-item: the item's type as a soft chip on the crumb line ("Story"). Since 2.386.14. */
+  itemType?: string;
+  /** work-item: the item's key in mono after the chip ("wi-obs-e1-s4"). Since 2.386.14. */
+  itemKey?: string;
   className?: string;
   'data-testid'?: string;
 }
@@ -173,9 +189,22 @@ export function EditorShell({
   explorer,
   workbench,
   label = 'Editor',
+  variant = 'document',
+  itemType,
+  itemKey,
   className,
   'data-testid': testId = 'editor-shell',
 }: EditorShellProps) {
+  const workItem = variant === 'work-item';
+  const itemTag = workItem && (itemType || itemKey) ? (
+    <>
+      {itemType && <Chip size="sm" tone="info" data-testid={`${testId}-item-type`}>{itemType}</Chip>}
+      {itemKey && <span className="font-mono text-[12px] text-text-secondary" data-testid={`${testId}-item-key`}>{itemKey}</span>}
+    </>
+  ) : null;
+  const trailing = itemTag || crumbsTrailing != null ? <>{itemTag}{crumbsTrailing}</> : null;
+  const crumbsRow = workItem && ((breadcrumbs && breadcrumbs.length > 0) || trailing != null);
+  const titleClass = workItem ? 'text-[22px] font-bold leading-7' : 'text-xl font-bold leading-6';
   const idPrefix = `${testId}-${useId().replace(/:/g, '')}`;
   const hasTabs = !!tabs && tabs.length > 0;
   const currentTab = hasTabs ? (tabs!.some((t) => t.id === activeTab) ? activeTab! : tabs![0]!.id) : undefined;
@@ -183,14 +212,30 @@ export function EditorShell({
 
   const pane = (
     <section aria-label={label} data-testid={testId} data-surface={surface} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-surface">
-      <header className="flex flex-col gap-1 border-b border-border px-5 pt-3" data-testid={`${testId}-header`}>
-        {breadcrumbs && breadcrumbs.length > 0 && !crumbsTrailing && (
+      <header className="flex flex-col gap-1 border-b border-border px-5 pt-3" data-variant={variant} data-testid={`${testId}-header`}>
+        {crumbsRow && (
+          <div className="flex min-h-8 min-w-0 items-center gap-2 text-[13px] text-text-secondary" data-testid={`${testId}-crumbs-row`}>
+            <ChevronIcon dir="right" size={12} aria-hidden="true" className="shrink-0 text-text-tertiary" />
+            {breadcrumbs && breadcrumbs.length > 0 && (
+              <Breadcrumbs items={breadcrumbs} maxItems={4} lastIsCurrent={false} className="min-w-0 text-[13px] text-text-secondary" data-testid={`${testId}-crumbs`} />
+            )}
+            {breadcrumbs && breadcrumbs.length > 0 && trailing != null && (
+              <span aria-hidden="true" className="shrink-0 text-text-tertiary">/</span>
+            )}
+            {trailing != null && (
+              <span className="flex shrink-0 items-center gap-2" data-testid={`${testId}-crumbs-trailing`}>{trailing}</span>
+            )}
+            <span className="flex-1" />
+            {headActions && <div className="flex shrink-0 items-center gap-2" data-testid={`${testId}-actions`}>{headActions}</div>}
+          </div>
+        )}
+        {!workItem && breadcrumbs && breadcrumbs.length > 0 && !crumbsTrailing && (
           // A short window (a 1280×720 laptop leaves ~577 px) gives the crumbs'
           // row to the canvas: the title stays, and the explorer beside the
           // pane already shows where the file lives.
           <Breadcrumbs items={breadcrumbs} maxItems={4} className="text-xs [@media(max-height:640px)]:hidden" data-testid={`${testId}-crumbs`} />
         )}
-        {crumbsTrailing && (
+        {!workItem && crumbsTrailing && (
           <div className="flex min-w-0 items-center gap-2 text-xs [@media(max-height:640px)]:hidden" data-testid={`${testId}-crumbs-row`}>
             {breadcrumbs && breadcrumbs.length > 0 && (
               <Breadcrumbs items={breadcrumbs} maxItems={4} className="min-w-0 text-xs" data-testid={`${testId}-crumbs`} />
@@ -203,7 +248,7 @@ export function EditorShell({
               outline glyph with no tinted box (2.386.5) — so the title, the
               pill and "Saved 3 hours ago" share one left edge, and the mark
               can never sit alone on a row above a wrapped title. */}
-          {kind && <FileKindMark kind={kind} size="2xl" variant="outline" className="[@media(max-height:640px)]:h-8 [@media(max-height:640px)]:w-8" data-testid={`${testId}-kind`} />}
+          {kind && !workItem && <FileKindMark kind={kind} size="2xl" variant="outline" className="[@media(max-height:640px)]:h-8 [@media(max-height:640px)]:w-8" data-testid={`${testId}-kind`} />}
           {/* A short window (under 640 px tall — a 1280×720 laptop window has a
               577 px viewport) puts the byline BESIDE the title instead of under
               it: one row, ~26 px back for the canvas below (a slide stage). */}
@@ -234,11 +279,11 @@ export function EditorShell({
                   // "Release plan" open to 160px and left a gap before the
                   // Draft pill. The button sizes to its words; the input, while
                   // editing, to its value.
-                  className="min-w-0 max-w-full flex-initial py-0 text-xl font-bold leading-6"
+                  className={cn('min-w-0 max-w-full flex-initial py-0', titleClass)}
                   data-testid={`${testId}-title`}
                 />
               ) : (
-                <h1 className="m-0 min-w-0 max-w-full flex-initial truncate text-xl font-bold leading-6 text-text-primary" data-testid={`${testId}-title`}>{title}</h1>
+                <h1 className={cn('m-0 min-w-0 max-w-full flex-initial truncate text-text-primary', titleClass)} data-testid={`${testId}-title`}>{title}</h1>
               )}
               {onStarredChange && (
                 <IconButton
@@ -280,10 +325,10 @@ export function EditorShell({
               </div>
             )}
           </div>
-          {headActions && <div className="flex shrink-0 items-center gap-3" data-testid={`${testId}-actions`}>{headActions}</div>}
+          {headActions && !crumbsRow && <div className="flex shrink-0 items-center gap-3" data-testid={`${testId}-actions`}>{headActions}</div>}
         </div>
         {metaBar != null && (
-          <div className="flex min-w-0 items-center py-2" data-testid={`${testId}-meta-bar`}>{metaBar}</div>
+          <div className={cn('flex min-w-0 items-center', workItem ? 'pb-2 pt-3' : 'py-2')} data-testid={`${testId}-meta-bar`}>{metaBar}</div>
         )}
         {hasTabs ? (
           <Tabs
