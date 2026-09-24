@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useId, useState } from 'react';
 import { Button } from '../../ui/Button';
 import { Checkbox } from '../../forms/Checkbox';
 import { Input } from '../../forms/Input';
@@ -44,6 +44,73 @@ function audienceDescription(value: WorkSharingFormValue): string[] {
   if (value.audience.kind === 'organization') return ['Everyone in your organization'];
   if (value.audience.kind === 'people') return value.audience.personIds;
   return value.audience.conversationIds;
+}
+
+/** Past this many choices the list gets a filter; it always scrolls in a bounded box. */
+const FILTER_AT = 8;
+
+interface ChecklistItem { id: string; label: string; meta: string }
+
+/**
+ * One checklist of shareable things. A real day has hundreds of work items and
+ * relationships: listed in full they made the Activity page tens of thousands
+ * of pixels tall. The list scrolls inside its own box, the legend counts the
+ * selection, and a filter narrows it once there are more than a handful.
+ */
+function SharingChecklist({ legend, empty, saving, idPrefix, items, selected, onToggle }: {
+  legend: string;
+  empty: string;
+  saving: boolean;
+  idPrefix: string;
+  items: ChecklistItem[];
+  selected: string[];
+  onToggle: (id: string, checked: boolean) => void;
+}) {
+  const [query, setQuery] = useState('');
+  const needle = query.trim().toLowerCase();
+  const shown = needle ? items.filter((item) => `${item.label} ${item.meta}`.toLowerCase().includes(needle)) : items;
+  const chosen = items.filter((item) => selected.includes(item.id)).length;
+  return (
+    <fieldset disabled={saving} className="space-y-2" data-testid={`work-sharing-${legend.toLowerCase().replace(/\s+/g, '-')}`}>
+      <legend className="text-sm font-semibold text-text-primary">
+        {legend}
+        {items.length > 0 && <span className="ml-2 text-xs font-normal text-text-tertiary">{chosen} of {items.length} selected</span>}
+      </legend>
+      {items.length === 0 ? <p className="text-sm text-text-secondary">{empty}</p> : (
+        <>
+          {items.length > FILTER_AT && (
+            <Input
+              type="search"
+              value={query}
+              placeholder={`Filter ${legend.toLowerCase()}`}
+              aria-label={`Filter ${legend.toLowerCase()}`}
+              onChange={(event) => setQuery(event.target.value)}
+            />
+          )}
+          <div className="max-h-72 space-y-2 overflow-y-auto pr-1" data-testid="work-sharing-checklist">
+            {shown.length === 0 && <p className="text-sm text-text-secondary">Nothing matches.</p>}
+            {shown.map((item) => {
+              const id = `${idPrefix}-${item.id}`;
+              return (
+                <label key={item.id} htmlFor={id} className="flex items-start gap-2 rounded-md border border-border px-3 py-2 text-sm text-text-primary">
+                  <Checkbox
+                    id={id}
+                    checked={selected.includes(item.id)}
+                    disabled={saving}
+                    onChange={(checked) => onToggle(item.id, checked)}
+                  />
+                  <span className="min-w-0 break-words">
+                    <span className="block font-medium">{item.label}</span>
+                    <span className="text-xs text-text-tertiary">{item.meta}</span>
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        </>
+      )}
+    </fieldset>
+  );
 }
 
 export function WorkSharingControls({
@@ -109,55 +176,25 @@ export function WorkSharingControls({
         <p className="text-xs text-text-tertiary">Audience choices are provided by the host application.</p>
       </fieldset>
 
-      <fieldset disabled={saving} className="space-y-2">
-        <legend className="text-sm font-semibold text-text-primary">Work items</legend>
-        {availableNodes.length === 0 ? <p className="text-sm text-text-secondary">No work items are available.</p> : (
-          <div className="space-y-2">
-            {availableNodes.map((node) => {
-              const id = `${idPrefix}-node-${node.id}`;
-              return (
-                <label key={node.id} htmlFor={id} className="flex items-start gap-2 rounded-md border border-border px-3 py-2 text-sm text-text-primary">
-                  <Checkbox
-                    id={id}
-                    checked={value.selectedNodeIds.includes(node.id)}
-                    disabled={saving}
-                    onChange={(checked) => onChange(withSelection(value, 'selectedNodeIds', node.id, checked))}
-                  />
-                  <span className="min-w-0 break-words">
-                    <span className="block font-medium">{nodeLabel(node)}</span>
-                    <span className="text-xs text-text-tertiary">{node.kind}</span>
-                  </span>
-                </label>
-              );
-            })}
-          </div>
-        )}
-      </fieldset>
+      <SharingChecklist
+        legend="Work items"
+        empty="No work items are available."
+        saving={saving}
+        idPrefix={`${idPrefix}-node`}
+        items={availableNodes.map((node) => ({ id: node.id, label: nodeLabel(node), meta: node.kind }))}
+        selected={value.selectedNodeIds}
+        onToggle={(id, checked) => onChange(withSelection(value, 'selectedNodeIds', id, checked))}
+      />
 
-      <fieldset disabled={saving} className="space-y-2">
-        <legend className="text-sm font-semibold text-text-primary">Relationships</legend>
-        {availableEdges.length === 0 ? <p className="text-sm text-text-secondary">No relationships are available.</p> : (
-          <div className="space-y-2">
-            {availableEdges.map((edge) => {
-              const id = `${idPrefix}-edge-${edge.id}`;
-              return (
-                <label key={edge.id} htmlFor={id} className="flex items-start gap-2 rounded-md border border-border px-3 py-2 text-sm text-text-primary">
-                  <Checkbox
-                    id={id}
-                    checked={value.selectedEdgeIds.includes(edge.id)}
-                    disabled={saving}
-                    onChange={(checked) => onChange(withSelection(value, 'selectedEdgeIds', edge.id, checked))}
-                  />
-                  <span className="min-w-0 break-words">
-                    <span className="block font-medium">{edgeLabel(edge)}</span>
-                    <span className="text-xs text-text-tertiary">{edge.relation}</span>
-                  </span>
-                </label>
-              );
-            })}
-          </div>
-        )}
-      </fieldset>
+      <SharingChecklist
+        legend="Relationships"
+        empty="No relationships are available."
+        saving={saving}
+        idPrefix={`${idPrefix}-edge`}
+        items={availableEdges.map((edge) => ({ id: edge.id, label: edgeLabel(edge), meta: edge.relation }))}
+        selected={value.selectedEdgeIds}
+        onToggle={(id, checked) => onChange(withSelection(value, 'selectedEdgeIds', id, checked))}
+      />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="space-y-1 text-sm font-medium text-text-primary">

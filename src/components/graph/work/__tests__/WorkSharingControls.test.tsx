@@ -104,3 +104,26 @@ describe('WorkSharingControls', () => {
     expect(screen.queryByRole('textbox', { name: /audience|person|viewer/i })).not.toBeInTheDocument();
   });
 });
+
+describe('WorkSharingControls on a real day', () => {
+  const many: WorkGraphNodeData[] = Array.from({ length: 250 }, (_, i) => ({ ...nodes[0], id: `n-${i}`, title: i === 137 ? 'Sprint review' : `Step ${i}` }));
+
+  it('keeps hundreds of work items in a bounded, filterable list', () => {
+    const onChange = vi.fn();
+    render(<WorkSharingControls {...props({ availableNodes: many, value: { ...value, selectedNodeIds: ['n-1', 'n-2'] }, onChange })} />);
+    const items = screen.getByTestId('work-sharing-work-items');
+    expect(items).toHaveTextContent('2 of 250 selected');
+    const list = items.querySelector('[data-testid="work-sharing-checklist"]')!;
+    expect(list.className).toContain('max-h-72');
+    expect(list.className).toContain('overflow-y-auto');
+    fireEvent.change(screen.getByLabelText('Filter work items'), { target: { value: 'sprint' } });
+    expect(list.querySelectorAll('label')).toHaveLength(1);
+    fireEvent.click(screen.getByLabelText(/Sprint review/));
+    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ selectedNodeIds: ['n-1', 'n-2', 'n-137'] }));
+  });
+
+  it('shows no filter for a short list', () => {
+    render(<WorkSharingControls {...props()} />);
+    expect(screen.queryByLabelText('Filter work items')).toBeNull();
+  });
+});
