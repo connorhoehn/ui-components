@@ -2518,16 +2518,13 @@ var Gr = _n(function({ mentionUsers: e, onReply: t, onResolve: r, onAskAgent: i,
 		let e = [];
 		return r && e.push({
 			trigger: $.resolve,
-			label: "Resolve thread",
-			description: "Resolves the thread; text after it is posted as a note first."
+			label: "Resolve thread"
 		}), i && e.push({
 			trigger: $.agent,
-			label: "Ask the agent",
-			description: "Opens the page composer in Agent mode with this comment attached."
+			label: "Ask the agent"
 		}), a && e.push({
 			trigger: $.assign,
 			label: "Assign to…",
-			description: "Posts “Assigned to @Name”, which notifies them.",
 			argument: {
 				placeholder: "type a name",
 				search: (e) => {

@@ -125,16 +125,15 @@ export const CommentReplyComposer = forwardRef<CommentReplyComposerHandle, Comme
 
   const commands = useMemo<ComposerCommand[]>(() => {
     const out: ComposerCommand[] = [];
-    // Short labels, no hints: the menu opens from a 280px margin card at the
-    // window's right edge, and a hint column ran past it (measured at 1672px).
-    // The long form is the tooltip.
-    if (onResolve) out.push({ trigger: COMMENT_REPLY_COMMANDS.resolve, label: 'Resolve thread', description: 'Resolves the thread; text after it is posted as a note first.' });
-    if (onAskAgent) out.push({ trigger: COMMENT_REPLY_COMMANDS.agent, label: 'Ask the agent', description: 'Opens the page composer in Agent mode with this comment attached.' });
+    // Short labels, no hints or descriptions: the menu opens from a 280px
+    // margin card at the window's right edge, and a hint column (and the
+    // description's status line) ran past it — measured at 1672 and 1280px.
+    if (onResolve) out.push({ trigger: COMMENT_REPLY_COMMANDS.resolve, label: 'Resolve thread' });
+    if (onAskAgent) out.push({ trigger: COMMENT_REPLY_COMMANDS.agent, label: 'Ask the agent' });
     if (onAssign) {
       out.push({
         trigger: COMMENT_REPLY_COMMANDS.assign,
         label: 'Assign to…',
-        description: 'Posts “Assigned to @Name”, which notifies them.',
         argument: {
           placeholder: 'type a name',
           search: (query: string) => {
