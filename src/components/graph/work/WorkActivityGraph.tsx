@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { cn } from '../../../lib/cn';
 import { ChatSidePanelFrame } from '../../social/ChatSidePanelRegistry';
 import { Button } from '../../ui/Button';
-import { WorkActivityCanvas } from './WorkActivityCanvas';
+import { WorkActivityCanvas, WorkActivityLegend } from './WorkActivityCanvas';
 import { limitWorkEfforts, WORK_ACTIVITY_ALL_EFFORTS, WORK_ACTIVITY_DEFAULT_MAX_EFFORTS, WORK_CANVAS_READABLE_ZOOM } from './effortLayout';
 import { WorkActivityHeader } from './WorkActivityHeader';
 import { WorkEntityList } from './WorkEntityList';
@@ -150,11 +150,14 @@ export function WorkActivityGraph(props: WorkGraphProps & { activity: WorkActivi
           </div>
           {listInRegion && <div className="absolute inset-0 overflow-auto bg-surface p-3" data-testid="work-activity-list-region">{entityList}</div>}
         </div>
-        <div className="flex h-9 shrink-0 items-center justify-between gap-2 border-t border-border px-4 text-[10px] text-text-tertiary" style={paneInset > 0 ? { paddingRight: paneInset + 16 } : undefined} data-testid="work-activity-footer">
+        <div className="@container flex h-9 shrink-0 items-center justify-between gap-2 border-t border-border px-4 text-[10px] text-text-tertiary" style={paneInset > 0 ? { paddingRight: paneInset + 16 } : undefined} data-testid="work-activity-footer">
           {activity.view.focusedEffortId
             ? <Button size="sm" variant="ghost" onClick={() => activity.onViewChange({ ...activity.view, focusedEffortId: null })}>← All activities</Button>
             : <span>{shownEffortCount < activity.efforts.length ? `Showing ${shownEffortCount} of ${activity.efforts.length} parallel activities` : `${activity.efforts.length} parallel activities`} · Newest work first</span>}
-          <Button size="sm" variant="ghost" disabled={range.start <= bounds.start} onClick={earlier}>← Earlier work</Button>
+          <span className="ml-auto flex items-center gap-3">
+            {!listInRegion && <WorkActivityLegend live={activity.window.following} />}
+            <Button size="sm" variant="ghost" disabled={range.start <= bounds.start} onClick={earlier}>← Earlier work</Button>
+          </span>
         </div>
       </div>
       {placement !== 'none' && validSelection && (node && selection?.kind === 'node'

@@ -135,7 +135,7 @@ describe('WorkActivityCanvas centres the selection', () => {
     expect(onViewportChange.mock.calls.length).toBe(before + 1);
   });
 
-  it('centres in the part an overlay pane leaves showing, and keeps the legend beside it (NFR #173)', () => {
+  it('centres in the part an overlay pane leaves showing, with no legend floating over the drawing (NFR #173, Loop 34)', () => {
     const onViewportChange = vi.fn();
     const props = { ...makeProps(EFFORT_COUNT, { x: 0, y: 0, zoom: 1 }, onViewportChange), selection: { kind: 'node' as const, id: 'doc-8' } };
     render(<CanvasPaneInsetContext.Provider value={{ right: 300 }}><WorkActivityCanvas {...props} /></CanvasPaneInsetContext.Provider>);
@@ -144,9 +144,8 @@ describe('WorkActivityCanvas centres the selection', () => {
     const visible = PANE.width - 300;
     expect(x).toBeGreaterThan(0);
     expect(x).toBeLessThan(visible / 2);
-    const legend = screen.getByRole('list', { name: 'Activity emphasis legend' });
-    expect(legend.style.right).toBe('316px');
-    // 340 px left showing: too narrow beside the zoom controls, so above them.
-    expect(legend.style.bottom).toBe('60px');
+    // The legend is docked in the activity footer now, not floated over the
+    // drawing, so nothing on the canvas has to dodge the pane for it.
+    expect(screen.queryByRole('list', { name: 'Activity emphasis legend' })).toBeNull();
   });
 });

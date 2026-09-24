@@ -56,6 +56,12 @@ type ActivityNode = Node<ActivityNodeData, 'activity'>;
 type FrameNode = Node<FrameData, 'effort'>;
 type ActivityEdge = Edge<ActivityEdgeData, 'activity'>;
 
+// The top margin a fit leaves, and the band at the bottom it keeps clear: the
+// zoom controls (bottom-3, ~36 px tall) float there, opaque and above the
+// cards, so a card fitted into that band is a card half covered.
+const FIT_TOP = 24;
+const OVERLAY_BAND = 56;
+
 // Small grey dots, not the default near-black: an anchor is a seam, not a
 // control, and nothing here is draggable.
 const HANDLE = '!h-1.5 !w-1.5 !min-h-0 !min-w-0 !border-0 !bg-border-emphasis';
@@ -188,6 +194,13 @@ export function WorkActivityCanvas(props: ActivityProps) {
     const height = Math.max(1, ...layouts.map((group) => group.y + group.height)) - top;
     return { left, top, width, height };
   }, [layouts]);
+  // Where the drawing starts horizontally: centred when it fits the canvas,
+  // otherwise its LEFT edge at the margin. The graph reads left to right —
+  // inputs, then the work, then what it made — so a drawing wider than the
+  // canvas, centred, opened with the input column cut off at 1280×720.
+  const anchorX = useCallback((drawnWidth: number, drawnLeft: number) => (
+    drawnWidth <= size.width - 48 ? (size.width - drawnWidth) / 2 - drawnLeft : 24 - drawnLeft
+  ), [size]);
   const fit = useCallback((): WorkGraphViewport => {
     const { left, top, width, height } = bounds;
     // Fill the canvas: the work should span the pane with a margin, not sit in
@@ -195,9 +208,13 @@ export function WorkActivityCanvas(props: ActivityProps) {
     // one — a fit clamped to 0.4 leaves the top row of a nine-effort day
     // permanently outside the viewport while the button that promises to fix
     // that appears to do nothing.
-    const zoom = Math.max(WORK_CANVAS_FIT_MIN_ZOOM, Math.min(1.2, (size.width - 48) / width, (size.height - 48) / height));
-    return { x: (size.width - width * zoom) / 2 - left * zoom, y: (size.height - height * zoom) / 2 - top * zoom, zoom };
-  }, [bounds, size]);
+    //
+    // Vertically the fit stops above the band the zoom controls float in
+    // (OVERLAY_BAND), so the bottom row of cards is never under them.
+    const band = Math.max(1, size.height - FIT_TOP - OVERLAY_BAND);
+    const zoom = Math.max(WORK_CANVAS_FIT_MIN_ZOOM, Math.min(1.2, (size.width - 48) / width, band / height));
+    return { x: anchorX(width * zoom, left * zoom), y: FIT_TOP + Math.max(0, (band - height * zoom) / 2) - top * zoom, zoom };
+  }, [bounds, size, anchorX]);
   // What the canvas opens at: the whole graph when it fits readably (or the
   // host asked for every effort — a map), else a readable zoom anchored at the
   // top, where the newest work is. See WORK_CANVAS_OPEN_ZOOM.
@@ -208,8 +225,8 @@ export function WorkActivityCanvas(props: ActivityProps) {
     const { left, top, width } = bounds;
     const zoom = Math.max(whole.zoom, Math.min(WORK_CANVAS_OPEN_ZOOM, (size.width - 48) / width));
     if (zoom <= whole.zoom) return whole;
-    return { x: (size.width - width * zoom) / 2 - left * zoom, y: 24 - top * zoom, zoom };
-  }, [fit, capped, bounds, size]);
+    return { x: anchorX(width * zoom, left * zoom), y: FIT_TOP - top * zoom, zoom };
+  }, [fit, capped, bounds, size, anchorX]);
   // Where the selected node sits on the canvas, in flow coordinates.
   const selectedRect = useMemo(() => {
     if (!selectedNodeId) return null;
@@ -369,17 +386,20 @@ export function WorkActivityCanvas(props: ActivityProps) {
       <IconButton size="sm" aria-label="Zoom out" onClick={() => zoomBy(1 / 1.2)}>−</IconButton>
       <Button size="sm" variant="secondary" onClick={() => onViewportChange(fit())}>Fit graph</Button>
     </div>
-    {/* Beside an overlay pane, not under it: at 1280×720 the node pane lay
-        over the legend and hid it whenever a node was open. In a strip too
-        narrow for it and the zoom controls side by side (~300 px there), it
-        sits above the controls instead of across them. Both float ABOVE the
-        cards (z-10, opaque): React Flow's renderer stacks its nodes over an
-        un-indexed sibling, so a card panned under the legend drew its title
-        straight through "Earlier · Input · Active". */}
-    <ul aria-label="Activity emphasis legend" style={paneInset ? { right: paneInset + 16, ...(visibleWidth < 440 ? { bottom: 60 } : {}) } : undefined} className="pointer-events-none absolute bottom-4 right-4 z-10 flex items-center gap-2 rounded border border-border bg-surface px-2 py-1 text-[10px] text-text-tertiary">
-      {([['earlier', 'Earlier', 'border-border bg-surface-inset opacity-70'], ['input', 'Input', 'border-border-emphasis bg-surface-inset'], ['active', live ? 'Active' : 'Active then', 'border-info bg-info']] as const).map(([key, label, swatch]) => (
-        <li key={key} className="flex items-center gap-1"><span aria-hidden="true" className={cn('inline-block h-2 w-2 rounded-sm border', swatch)} />{label}</li>
-      ))}
-    </ul>
   </div>;
+}
+
+/**
+ * What the card treatments mean. Docked in the activity footer, OUTSIDE the
+ * drawing: floated over the canvas it covered a card at 1640×960 however it
+ * was placed (Loop 34), and beside an open pane it had to be re-positioned
+ * by hand. In a footer too narrow for it (a pane open at 1280×720) it is
+ * hidden rather than wrapped — the cards still carry their own state labels.
+ */
+export function WorkActivityLegend({ live }: { live: boolean }) {
+  return <ul aria-label="Activity emphasis legend" className="hidden items-center gap-2 text-[10px] text-text-tertiary @xl:flex" data-testid="work-activity-legend">
+    {([['earlier', 'Earlier', 'border-border bg-surface-inset opacity-70'], ['input', 'Input', 'border-border-emphasis bg-surface-inset'], ['active', live ? 'Active' : 'Active then', 'border-info bg-info']] as const).map(([key, label, swatch]) => (
+      <li key={key} className="flex items-center gap-1"><span aria-hidden="true" className={cn('inline-block h-2 w-2 rounded-sm border', swatch)} />{label}</li>
+    ))}
+  </ul>;
 }

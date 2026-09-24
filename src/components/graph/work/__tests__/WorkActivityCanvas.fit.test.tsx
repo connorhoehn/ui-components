@@ -140,6 +140,23 @@ describe('WorkActivityCanvas fit', () => {
     }
   });
 
+  it('keeps the bottom band clear for the zoom controls, and starts at the left edge when wider than the canvas (Loop 34)', () => {
+    for (const count of [2, 3]) {
+      captured = null;
+      const onViewportChange = vi.fn();
+      const { unmount } = render(<WorkActivityCanvas {...makeProps(count, { x: 0, y: 0, zoom: 1 }, onViewportChange)} />);
+      fireEvent.click(screen.getByRole('button', { name: 'Fit graph' }));
+      const fitted = onViewportChange.mock.calls.at(-1)![0] as WorkGraphViewport;
+      for (const frame of captured!.nodes.filter((node) => node.type === 'effort')) {
+        const bottom = (frame.position.y + (frame.style?.height ?? 0)) * fitted.zoom + fitted.y;
+        const left = frame.position.x * fitted.zoom + fitted.x;
+        expect(bottom).toBeLessThanOrEqual(PANE.height - 56 + 1);
+        expect(left).toBeGreaterThanOrEqual(24 - 1);
+      }
+      unmount();
+    }
+  });
+
   it('"Fit graph" produces the same below-floor fit on demand', () => {
     const onViewportChange = vi.fn();
     render(<WorkActivityCanvas {...makeProps(EFFORT_COUNT, { x: 0, y: 0, zoom: 1 }, onViewportChange)} />);
