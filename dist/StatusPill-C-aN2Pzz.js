@@ -57,7 +57,7 @@ function c({ state: c, tone: l, label: u, icon: d, meta: f, size: p = "md", vari
 		"data-testid": g,
 		"data-state": _,
 		"data-variant": m,
-		className: e("inline-flex items-center font-medium leading-none select-none", m === "pill" ? e("rounded-full border", v.pill, i[p]) : m === "tag" ? e("rounded-md border-0", v.pill, o[p]) : a[p], m === "tag" && _ === "neutral" ? "text-text-primary" : v.text, h),
+		className: e("inline-flex items-center font-medium leading-none select-none", m === "pill" ? e("rounded-full border", v.pill, i[p]) : m === "tag" || m === "label" ? e("rounded-md border-0", v.pill, o[p]) : a[p], m === "tag" && _ === "neutral" ? "text-text-primary" : v.text, h),
 		children: [
 			m === "tag" ? null : d ? /* @__PURE__ */ t("span", {
 				"aria-hidden": "true",

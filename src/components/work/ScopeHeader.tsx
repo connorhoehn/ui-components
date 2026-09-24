@@ -133,7 +133,7 @@ export function ScopeHeader({
             {title}
           </h1>
           {status && (
-            <StatusPill label={status.label} state={status.tone ?? 'info'} className="shrink-0" data-testid={`${testId}-status`} />
+            <StatusPill label={status.label} state={status.tone ?? 'info'} variant="label" className="shrink-0" data-testid={`${testId}-status`} />
           )}
         </div>
         {statItems.length > 0 && (
@@ -177,7 +177,7 @@ export function ScopeHeader({
             label: t.label,
             ...(t.disabled ? { disabled: true } : {}),
             ...(typeof t.count === 'number'
-              ? { badge: <span className="text-[13px] font-medium tabular-nums text-text-tertiary" aria-label={`${t.count} in ${t.label}`}>{t.count}</span> }
+              ? { badge: <span aria-label={`${t.count} in ${t.label}`}>{t.count}</span> }
               : {}),
             testId: `${testId}-tab-${t.id}`,
           }))}
@@ -185,6 +185,7 @@ export function ScopeHeader({
           onValueChange={(id) => onTabChange?.(id)}
           variant="underline"
           size="md"
+          badgeStyle="plain"
           aria-label={`${title} views`}
           className="-mb-px mt-1 border-b-0"
         />

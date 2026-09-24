@@ -1186,7 +1186,7 @@ function Ce({ row: e, current: n, testId: r, size: o, tabbable: s, onFocusRow: c
 		...m ? { onContextMenu: (e) => {
 			e.target.closest("[data-grouped-list-menu]") || (e.preventDefault(), xe(e.currentTarget));
 		} } : {},
-		className: t("group relative flex items-center gap-3 border-t border-border px-2", S ? "py-3" : "py-2.5", "transition-colors duration-100", n ? "bg-primary/8 hover:bg-primary/12" : "hover:bg-surface-hover", S && n && "rounded-r-md border-transparent shadow-[inset_3px_0_0_0_var(--color-primary)]", e.disabled && "opacity-60", C.dragging && "opacity-50", C.over && !C.dragging && "shadow-[inset_0_2px_0_0_var(--color-primary)]"),
+		className: t("group relative flex items-center gap-3 border-t border-border px-2", S ? "py-[7px]" : "py-2.5", "transition-colors duration-100", n ? "bg-primary/8 hover:bg-primary/12" : "hover:bg-surface-hover", S && n && "rounded-r-md border-transparent shadow-[inset_3px_0_0_0_var(--color-primary)]", e.disabled && "opacity-60", C.dragging && "opacity-50", C.over && !C.dragging && "shadow-[inset_0_2px_0_0_var(--color-primary)]"),
 		children: [
 			v && /* @__PURE__ */ y("span", {
 				className: t("flex shrink-0 items-center justify-center", S ? "w-6" : "w-5"),
@@ -1338,7 +1338,7 @@ function Ee({ children: e, label: r = "Filter", activeCount: i = 0, onClear: a, 
 				"aria-label": k ? `${r} (${i} active)` : r,
 				title: r
 			} : {},
-			className: t("inline-flex items-center gap-2 whitespace-nowrap", p === "icon" && "relative aspect-square justify-center px-0 text-text-secondary [&_svg]:h-[18px] [&_svg]:w-[18px]", k && "border-primary-border text-primary-fg"),
+			className: t("inline-flex items-center gap-2 whitespace-nowrap", p === "icon" && "relative h-9 w-9 justify-center px-0 py-0 text-text-secondary [&_svg]:h-[18px] [&_svg]:w-[18px]", k && "border-primary-border text-primary-fg"),
 			children: [
 				/* @__PURE__ */ y(Te, {}),
 				p === "label" && /* @__PURE__ */ y("span", { children: r }),

@@ -15056,9 +15056,10 @@ export declare type StatusPillTone = StatusPillState | 'danger';
 /**
  * `pill` (default) is the bordered, tinted chip. `text` is dot + coloured label, no box.
  * `tag` (since 2.386.5) is a soft rounded-rectangle label with no dot and no
- * border — a document's "Draft" beside its title.
+ * border — a document's "Draft" beside its title. `label` (since 2.386.15) is
+ * the tag's soft rectangle WITH the dot — a scope's "● In progress".
  */
-export declare type StatusPillVariant = 'pill' | 'text' | 'tag';
+export declare type StatusPillVariant = 'pill' | 'text' | 'tag' | 'label';
 
 export declare function StatusStrip({ phase, bitrateBps, viewerCount, duration, className, style }: StatusStripProps): JSX.Element;
 
@@ -15726,7 +15727,7 @@ export declare interface TabPanelProps {
     children?: ReactNode;
 }
 
-export declare function Tabs({ items, value, onValueChange, variant, size, className, style, 'aria-label': ariaLabel, idPrefix: idPrefixProp, getItemTestId, stretch, itemClassName, 'data-testid': testId, }: TabsProps): JSX.Element;
+export declare function Tabs({ items, value, onValueChange, variant, size, badgeStyle, className, style, 'aria-label': ariaLabel, idPrefix: idPrefixProp, getItemTestId, stretch, itemClassName, 'data-testid': testId, }: TabsProps): JSX.Element;
 
 export declare interface TabsProps {
     items: TabItem[];
@@ -15734,6 +15735,11 @@ export declare interface TabsProps {
     onValueChange: (id: string) => void;
     variant?: TabsVariant;
     size?: 'sm' | 'md';
+    /**
+     * `chip` (default): a count sits in a small grey pill. `plain`: muted
+     * numerals after the label, no box — "Decisions  2".
+     */
+    badgeStyle?: 'chip' | 'plain';
     className?: string;
     style?: CSSProperties;
     'aria-label'?: string;
@@ -20079,9 +20085,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -20115,22 +20124,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -20141,6 +20137,16 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

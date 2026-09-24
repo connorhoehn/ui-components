@@ -12,7 +12,7 @@ import { t as O } from "./EmptyState-DFWbBBcY.js";
 import { n as k, t as A } from "./SegmentedControl-X19S_gNQ.js";
 import { n as j, t as M } from "./SearchInput-TPCQujCD.js";
 import { t as N } from "./SkeletonCard-CGe8XFPB.js";
-import { n as P } from "./Tabs-BGZyr2nH.js";
+import { n as P } from "./Tabs-DjNsAODd.js";
 import { t as F } from "./Input-DLknWXri.js";
 import { t as I } from "./Textarea-Dz4doxTv.js";
 import { n as ee, t as L } from "./Avatar-DeJWic2B.js";
@@ -25,7 +25,7 @@ import { a as ne, n as re, o as ie, s as W, t as ae } from "./backdropTone-BF54k
 import { t as oe } from "./InlinePlaceholder-51dbPRGn.js";
 import { t as se } from "./Select-D2EQq7Wi.js";
 import { n as ce, r as G, t as le } from "./ChoiceList-CaZ4rZrS.js";
-import { L as ue, N as de, Q as fe, R as pe, X as me, nt as he } from "./ConversationSurface-CeErDWmh.js";
+import { L as ue, N as de, Q as fe, R as pe, X as me, nt as he } from "./ConversationSurface-CTdJphPM.js";
 import { t as ge } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as _e, t as ve } from "./ReactionPickerPopover-CcL-n6gt.js";
 import { n as ye, t as be } from "./composerCommands-CPHsHCqp.js";

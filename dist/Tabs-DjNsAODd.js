@@ -16,26 +16,26 @@ function c(e) {
 function l(t, n, r) {
 	return t === "underline" ? e("-mb-px border-b-2 rounded-none", n ? "border-[var(--color-primary)] text-[var(--color-text-primary)]" : "border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]", r && "opacity-50 cursor-not-allowed hover:text-[var(--color-text-secondary)]") : t === "pill" ? e("rounded-full", n ? "bg-[var(--color-primary)] text-white" : "text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-text-primary)]", r && "opacity-50 cursor-not-allowed hover:bg-transparent") : e("rounded-md", n ? "bg-surface shadow-sm text-[var(--color-text-primary)] border border-[var(--color-border)]" : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)]", r && "opacity-50 cursor-not-allowed hover:bg-transparent");
 }
-function u({ items: u, value: d, onValueChange: f, variant: p = "underline", size: m = "md", className: h, style: g, "aria-label": _, idPrefix: v, getItemTestId: y, stretch: b = !1, itemClassName: x, "data-testid": S }) {
-	let C = n(), w = v ?? C, T = i(/* @__PURE__ */ new Map()), E = r(() => u.filter((e) => !e.disabled).map((e) => e.id), [u]), D = t((e) => {
-		T.current.get(e)?.focus();
-	}, []), O = t((e, t) => {
-		if (E.length === 0) return;
-		let n = E.indexOf(t), r = null;
+function u({ items: u, value: d, onValueChange: f, variant: p = "underline", size: m = "md", badgeStyle: h = "chip", className: g, style: _, "aria-label": v, idPrefix: y, getItemTestId: b, stretch: x = !1, itemClassName: S, "data-testid": C }) {
+	let w = n(), T = y ?? w, E = i(/* @__PURE__ */ new Map()), D = r(() => u.filter((e) => !e.disabled).map((e) => e.id), [u]), O = t((e) => {
+		E.current.get(e)?.focus();
+	}, []), k = t((e, t) => {
+		if (D.length === 0) return;
+		let n = D.indexOf(t), r = null;
 		switch (e.key) {
 			case "ArrowRight":
 			case "ArrowDown":
-				r = n === -1 ? 0 : (n + 1) % E.length;
+				r = n === -1 ? 0 : (n + 1) % D.length;
 				break;
 			case "ArrowLeft":
 			case "ArrowUp":
-				r = n === -1 ? E.length - 1 : (n - 1 + E.length) % E.length;
+				r = n === -1 ? D.length - 1 : (n - 1 + D.length) % D.length;
 				break;
 			case "Home":
 				r = 0;
 				break;
 			case "End":
-				r = E.length - 1;
+				r = D.length - 1;
 				break;
 			case "Enter":
 			case " ":
@@ -45,43 +45,43 @@ function u({ items: u, value: d, onValueChange: f, variant: p = "underline", siz
 		}
 		if (r !== null) {
 			e.preventDefault();
-			let t = E[r];
-			f(t), D(t);
+			let t = D[r];
+			f(t), O(t);
 		}
 	}, [
-		E,
+		D,
 		f,
-		D
+		O
 	]);
 	return /* @__PURE__ */ a("div", {
 		role: "tablist",
-		"aria-label": _,
-		"data-testid": S,
-		className: e(c(p), h),
-		style: g,
+		"aria-label": v,
+		"data-testid": C,
+		className: e(c(p), g),
+		style: _,
 		children: u.map((t) => {
 			let n = t.id === d;
 			return /* @__PURE__ */ o("button", {
 				ref: (e) => {
-					e ? T.current.set(t.id, e) : T.current.delete(t.id);
+					e ? E.current.set(t.id, e) : E.current.delete(t.id);
 				},
 				type: "button",
 				role: "tab",
-				id: `${w}-tab-${t.id}`,
-				"aria-controls": `${w}-panel-${t.id}`,
-				"data-testid": t.testId ?? y?.(t),
+				id: `${T}-tab-${t.id}`,
+				"aria-controls": `${T}-panel-${t.id}`,
+				"data-testid": t.testId ?? b?.(t),
 				"aria-selected": n,
 				"aria-disabled": t.disabled || void 0,
 				tabIndex: n ? 0 : -1,
 				disabled: t.disabled,
 				onClick: () => !t.disabled && f(t.id),
-				onKeyDown: (e) => O(e, t.id),
-				className: e("inline-flex items-center gap-1.5 font-medium transition-colors cursor-pointer", b && "flex-1 justify-center", s[m], l(p, n, !!t.disabled), x),
+				onKeyDown: (e) => k(e, t.id),
+				className: e("inline-flex items-center gap-1.5 font-medium transition-colors cursor-pointer", x && "flex-1 justify-center", s[m], l(p, n, !!t.disabled), S),
 				children: [
 					t.icon,
 					/* @__PURE__ */ a("span", { children: t.label }),
 					t.badge !== void 0 && t.badge !== null && /* @__PURE__ */ a("span", {
-						className: e("ml-1 inline-flex items-center justify-center rounded-full px-1.5 min-w-[20px] text-[10px] font-semibold", n && p === "pill" ? "bg-white/20 text-white" : "bg-[var(--color-surface-hover)] text-[var(--color-text-secondary)]"),
+						className: h === "plain" ? "ml-2.5 inline-flex items-center text-[14px] font-medium tabular-nums text-[var(--color-text-tertiary)]" : e("ml-1 inline-flex items-center justify-center rounded-full px-1.5 min-w-[20px] text-[10px] font-semibold", n && p === "pill" ? "bg-white/20 text-white" : "bg-[var(--color-surface-hover)] text-[var(--color-text-secondary)]"),
 						children: t.badge
 					})
 				]

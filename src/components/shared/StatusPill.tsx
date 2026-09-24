@@ -39,9 +39,10 @@ export type StatusPillSize = 'sm' | 'md';
 /**
  * `pill` (default) is the bordered, tinted chip. `text` is dot + coloured label, no box.
  * `tag` (since 2.386.5) is a soft rounded-rectangle label with no dot and no
- * border — a document's "Draft" beside its title.
+ * border — a document's "Draft" beside its title. `label` (since 2.386.15) is
+ * the tag's soft rectangle WITH the dot — a scope's "● In progress".
  */
-export type StatusPillVariant = 'pill' | 'text' | 'tag';
+export type StatusPillVariant = 'pill' | 'text' | 'tag' | 'label';
 
 export interface StatusPillProps {
   /** The pill's tone. Either `state` or `tone`; `tone` wins when both are given. */
@@ -161,7 +162,7 @@ export function StatusPill({
       className={cn(
         'inline-flex items-center font-medium leading-none select-none',
         variant === 'pill' ? cn('rounded-full border', tokens.pill, SIZE_CLASSES[size])
-          : variant === 'tag' ? cn('rounded-md border-0', tokens.pill, TAG_SIZE_CLASSES[size])
+          : variant === 'tag' || variant === 'label' ? cn('rounded-md border-0', tokens.pill, TAG_SIZE_CLASSES[size])
           : TEXT_SIZE_CLASSES[size],
         variant === 'tag' && state === 'neutral' ? 'text-text-primary' : tokens.text,
         className,

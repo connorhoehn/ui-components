@@ -209,7 +209,7 @@ function SignalDot({ signal }: { signal: WorkListSignal }) {
     return (
       <StatusDot
         color="transparent"
-        size="sm"
+        size="md"
         aria-label={signal.label}
         className="rounded-full ring-[1.5px] ring-text-tertiary"
         data-testid="work-signal-dot"
@@ -219,7 +219,7 @@ function SignalDot({ signal }: { signal: WorkListSignal }) {
   return (
     <StatusDot
       color={signal.state === 'running' ? 'var(--color-primary)' : 'var(--color-danger)'}
-      size="sm"
+      size="md"
       aria-label={signal.label}
       data-testid="work-signal-dot"
     />
@@ -294,7 +294,7 @@ export function toWorkListRows(items: WorkListItem[], { onToggleDone, testId = '
             checked={!!item.done}
             disabled={!!item.donePending || !!item.disabled}
             aria-label={`Mark ${item.title} done`}
-            className="h-[18px] w-[18px]"
+            className="h-4 w-4"
             onChange={(done) => onToggleDone(item, done)}
             data-testid={`${testId}-done-${item.id}`}
           />

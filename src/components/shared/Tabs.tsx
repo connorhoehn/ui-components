@@ -27,6 +27,11 @@ export interface TabsProps {
   onValueChange: (id: string) => void;
   variant?: TabsVariant;
   size?: 'sm' | 'md';
+  /**
+   * `chip` (default): a count sits in a small grey pill. `plain`: muted
+   * numerals after the label, no box — "Decisions  2".
+   */
+  badgeStyle?: 'chip' | 'plain';
   className?: string;
   style?: CSSProperties;
   'aria-label'?: string;
@@ -103,6 +108,7 @@ export function Tabs({
   onValueChange,
   variant = 'underline',
   size = 'md',
+  badgeStyle = 'chip',
   className,
   style,
   'aria-label': ariaLabel,
@@ -201,7 +207,7 @@ export function Tabs({
             <span>{item.label}</span>
             {item.badge !== undefined && item.badge !== null && (
               <span
-                className={cn(
+                className={badgeStyle === 'plain' ? 'ml-2.5 inline-flex items-center text-[14px] font-medium tabular-nums text-[var(--color-text-tertiary)]' : cn(
                   'ml-1 inline-flex items-center justify-center rounded-full px-1.5 min-w-[20px] text-[10px] font-semibold',
                   active && variant === 'pill'
                     ? 'bg-white/20 text-white'

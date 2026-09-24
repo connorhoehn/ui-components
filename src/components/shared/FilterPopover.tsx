@@ -122,7 +122,7 @@ export function FilterPopover({
           : {})}
         className={cn(
           'inline-flex items-center gap-2 whitespace-nowrap',
-          trigger === 'icon' && 'relative aspect-square justify-center px-0 text-text-secondary [&_svg]:h-[18px] [&_svg]:w-[18px]',
+          trigger === 'icon' && 'relative h-9 w-9 justify-center px-0 py-0 text-text-secondary [&_svg]:h-[18px] [&_svg]:w-[18px]',
           active && 'border-primary-border text-primary-fg',
         )}
       >

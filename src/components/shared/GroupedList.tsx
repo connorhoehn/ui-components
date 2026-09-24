@@ -736,7 +736,7 @@ function Row({ row, current, testId, size, tabbable, onFocusRow, onOpenRow, menu
         : {})}
       className={cn(
         'group relative flex items-center gap-3 border-t border-border px-2',
-        md ? 'py-3' : 'py-2.5',
+        md ? 'py-[7px]' : 'py-2.5',
         'transition-colors duration-100',
         current ? 'bg-primary/8 hover:bg-primary/12' : 'hover:bg-surface-hover',
         // md: the current row is a rounded tint with a bar on its left edge;
