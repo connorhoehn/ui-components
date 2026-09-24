@@ -51,6 +51,7 @@ const CATEGORY_TONE: Record<ErrorCategory, ChipTone> = {
   ValidationError: 'danger',
   RegistryConflict: 'danger',
   Refused: 'caution',
+  ModelAuth: 'caution',
   UnknownError: 'neutral',
 };
 

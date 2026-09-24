@@ -34,6 +34,7 @@ import { IconButton } from '../ui/IconButton';
 import EmptyState from '../shared/EmptyState';
 import ErrorState from '../shared/ErrorState';
 import LoadingState from '../shared/LoadingState';
+import { NoAccessState } from '../shared/NoAccessState';
 import { SectionLabel } from '../shared/SectionLabel';
 import { SegmentedControl } from '../shared/SegmentedControl';
 import { Select } from '../forms/Select';
@@ -89,8 +90,11 @@ export interface PresentationViewProps {
   pending?: { label: string; status: 'generating' | 'failed'; message?: string };
   /** Honest state about what this view cannot show. */
   notice?: ReactNode;
-  state?: 'loading' | 'ready' | 'empty' | 'error';
+  /** `no-access`: the reader may not open this deck — never an error or a status code. */
+  state?: 'loading' | 'ready' | 'empty' | 'error' | 'no-access';
   errorMessage?: string;
+  /** Who to ask for access, named in the `no-access` state. Omitted → "its owner". */
+  ownerName?: string | null;
   onRetry?: () => void;
   /**
    * Widest the slide frame may grow, in pixels. Centred once it stops
@@ -139,6 +143,7 @@ export function PresentationView({
   notice,
   state = 'ready',
   errorMessage,
+  ownerName,
   onRetry,
   maxSlideWidth,
   autoFocus = false,
@@ -156,6 +161,9 @@ export function PresentationView({
 
   if (state === 'loading') {
     return <LoadingState label="Opening the presentation…" testId={`${testId}-loading`} />;
+  }
+  if (state === 'no-access') {
+    return <NoAccessState resource="this presentation" ownerName={ownerName ?? null} testId={`${testId}-no-access`} />;
   }
   if (state === 'error') {
     return (

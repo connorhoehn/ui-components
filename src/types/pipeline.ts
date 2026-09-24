@@ -964,6 +964,8 @@ export type ErrorCategory =
   | 'RegistryConflict'
   /** A step looked at the request and said no (constraint not met, forbidden, revision conflict, invalid request): terminal, never retried. */
   | 'Refused'
+  /** The model could not sign in (missing or expired credentials): terminal until an operator refreshes them. */
+  | 'ModelAuth'
   | 'UnknownError';
 
 /** Whether the platform would retry this failure on its own; a `Refused` run is `terminal`. */

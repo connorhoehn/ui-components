@@ -4241,6 +4241,10 @@ var vi = {
 		bg: "var(--color-caution-bg)",
 		fg: "var(--color-caution)"
 	},
+	ModelAuth: {
+		bg: "var(--color-caution-bg)",
+		fg: "var(--color-caution)"
+	},
 	UnknownError: {
 		bg: "var(--color-surface-hover)",
 		fg: "var(--color-text-secondary)"
@@ -4254,6 +4258,7 @@ function yi(e) {
 		case "ValidationError": return "Validation Error";
 		case "RegistryConflict": return "Registry Conflict";
 		case "Refused": return "Refused";
+		case "ModelAuth": return "Model sign-in";
 		case "UnknownError": return "Unknown Error";
 		default: return String(e);
 	}
@@ -18645,6 +18650,7 @@ function Zu(e) {
 		case "ValidationError": return "warning";
 		case "RegistryConflict": return "purple";
 		case "Refused": return "caution";
+		case "ModelAuth": return "caution";
 		case "UnknownError": return "neutral";
 		default: return "neutral";
 	}
@@ -18658,6 +18664,7 @@ var Qu = {
 	ValidationError: "Validation",
 	RegistryConflict: "Conflict",
 	Refused: "Refused",
+	ModelAuth: "Model sign-in",
 	UnknownError: "Unknown"
 };
 function $u(e) {
@@ -19186,6 +19193,7 @@ var dd = {
 	ValidationError: "danger",
 	RegistryConflict: "danger",
 	Refused: "caution",
+	ModelAuth: "caution",
 	UnknownError: "neutral"
 };
 function fd(e) {

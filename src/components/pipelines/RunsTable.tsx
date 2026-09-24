@@ -15,6 +15,7 @@ const ERROR_CATEGORY_SHORT: Record<ErrorCategory, string> = {
   ValidationError: 'Validation',
   RegistryConflict: 'Conflict',
   Refused: 'Refused',
+  ModelAuth: 'Model sign-in',
   UnknownError: 'Unknown',
 };
 

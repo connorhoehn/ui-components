@@ -26,6 +26,8 @@ export { default as DataTable } from './DataTable';
 export * from './DataTable';
 export { default as EmptyState } from './EmptyState';
 export * from './EmptyState';
+export { NoAccessState, noAccessMessage } from './NoAccessState';
+export type { NoAccessStateProps } from './NoAccessState';
 export { default as CapabilityDeniedFallback } from './CapabilityDeniedFallback';
 export * from './CapabilityDeniedFallback';
 export { default as ErrorState } from './ErrorState';
