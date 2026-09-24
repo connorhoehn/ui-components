@@ -26,7 +26,7 @@ export interface DetailSectionProps {
   first?: boolean;
   /**
    * `label` (default): a small uppercase caption under a hairline, for a
-   * drawer or side panel. `heading` (since 2.386.14): a 16px sentence-case
+   * drawer or side panel. `heading` (since 2.386.15): a 16px sentence-case
    * heading with no rule, for a document-like body (a work item's Brief); its
    * `actions` stay quiet until the section is hovered or focused (always shown
    * where there is no hover).
@@ -43,7 +43,9 @@ export function DetailSection({
   if (variant === 'heading') {
     return (
       <section className={cn('group/section', className)} data-variant="heading" {...(testId ? { 'data-testid': testId } : {})}>
-        <div className="mb-1 flex min-h-7 items-center gap-2">
+        {/* A fixed 24px row: a hover action may be taller, but never pushes
+            the body down (the mockup's heading → text pitch is 24px). */}
+        <div className="mb-0.5 flex h-6 items-center gap-2">
           <h3 className="m-0 text-base font-semibold leading-6 text-text-primary">{title}</h3>
           {hint != null && <span className="min-w-0 truncate text-[13px] text-text-tertiary">{hint}</span>}
           {actions != null && (

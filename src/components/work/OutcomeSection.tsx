@@ -23,7 +23,7 @@ export interface OutcomeSectionProps {
   /** Suppress DetailSection's leading rule. */
   first?: boolean;
   /**
-   * `heading` (default since 2.386.14): a 16px sentence-case heading, 14px
+   * `heading` (default since 2.386.15): a 16px sentence-case heading, 14px
    * body, affordances quiet until hover — a work item's Brief. `label`: the
    * small uppercase caption under a hairline, for a side panel.
    */
@@ -43,7 +43,7 @@ export function OutcomeSection({
   const ref = useRef<HTMLTextAreaElement | null>(null);
   const reasonId = useId();
   const text = value?.trim() ? value : null;
-  const body = variant === 'heading' ? 'text-sm leading-6' : 'text-[13px] leading-relaxed';
+  const body = variant === 'heading' ? 'text-sm leading-5' : 'text-[13px] leading-relaxed';
 
   useEffect(() => { if (editing) ref.current?.focus(); }, [editing]);
 

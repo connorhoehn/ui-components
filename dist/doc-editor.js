@@ -30,7 +30,7 @@ import { A as te, B as j, C as M, D as N, E as P, F, H as ne, I, L, M as R, N as
 import { o as Me, t as Ne } from "./VerdictChip-ClwrKr68.js";
 import { a as Pe, c as Fe, d as Ie, f as Le, h as Re, i as ze, l as Be, m as Ve, n as He, o as Ue, p as We, r as Ge, s as Ke, t as G, u as qe } from "./TiptapEditor-CajZRkz8.js";
 import { i as Je, n as Ye, r as Xe, t as Ze } from "./FloatingComposerDock-DMUQCjea.js";
-import { A as Qe, B as $e, C as et, D as tt, E as nt, F as rt, G as it, H as at, I as ot, L as st, M as ct, N as lt, O as ut, P as dt, R as ft, S as pt, T as mt, U as ht, V as gt, W as _t, _ as vt, a as yt, b as bt, c as xt, d as St, f as Ct, g as wt, h as Tt, i as Et, j as Dt, k as Ot, l as kt, m as At, o as jt, p as Mt, r as Nt, s as Pt, t as Ft, u as It, v as Lt, w as Rt, x as zt, y as Bt, z as Vt } from "./DocumentEditorPage-DdzLtFnK.js";
+import { A as Qe, B as $e, C as et, D as tt, E as nt, F as rt, G as it, H as at, I as ot, L as st, M as ct, N as lt, O as ut, P as dt, R as ft, S as pt, T as mt, U as ht, V as gt, W as _t, _ as vt, a as yt, b as bt, c as xt, d as St, f as Ct, g as wt, h as Tt, i as Et, j as Dt, k as Ot, l as kt, m as At, o as jt, p as Mt, r as Nt, s as Pt, t as Ft, u as It, v as Lt, w as Rt, x as zt, y as Bt, z as Vt } from "./DocumentEditorPage-w8Cp5XUn.js";
 import { S as Ht, _ as Ut, a as Wt, b as Gt, c as Kt, d as qt, f as Jt, g as Yt, h as Xt, i as Zt, l as Qt, m as $t, n as en, o as tn, p as nn, r as rn, s as an, t as on, u as sn, v as cn, x as ln, y as un } from "./useDocumentImageUpload-fyCnpnsn.js";
 import { createContext as dn, useCallback as K, useContext as fn, useEffect as q, useId as pn, useImperativeHandle as mn, useMemo as J, useRef as Y, useState as X } from "react";
 import { Fragment as Z, jsx as Q, jsxs as $ } from "react/jsx-runtime";
@@ -2184,14 +2184,14 @@ function Pr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 				"data-testid": `${B}-header`,
 				children: [
 					re && /* @__PURE__ */ $("div", {
-						className: "flex min-h-8 min-w-0 items-center gap-2 text-[13px] text-text-secondary",
+						className: "flex h-7 min-w-0 items-center gap-2 text-[13px] text-text-secondary",
 						"data-testid": `${B}-crumbs-row`,
 						children: [
 							/* @__PURE__ */ Q(o, {
 								dir: "right",
 								size: 12,
 								"aria-hidden": "true",
-								className: "shrink-0 text-text-tertiary"
+								className: "-ml-1 shrink-0 text-text-tertiary"
 							}),
 							e && e.length > 0 && /* @__PURE__ */ Q(l, {
 								items: e,
@@ -2263,7 +2263,7 @@ function Pr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 													label: i,
 													required: !0,
 													fitContent: !0,
-													className: n("min-w-0 max-w-full flex-initial py-0", ie),
+													className: n("min-w-0 max-w-full flex-initial py-0", ie, V && "-ml-[5px]"),
 													"data-testid": `${B}-title`
 												}) : /* @__PURE__ */ Q("h1", {
 													className: n("m-0 min-w-0 max-w-full flex-initial truncate text-text-primary", ie),

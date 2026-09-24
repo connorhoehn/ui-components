@@ -57,7 +57,7 @@ export interface WorkItemMetaBarProps {
   };
   /**
    * `inline` (default): borderless fields at 13px with a rule between each.
-   * `boxed` (since 2.386.14): the Work mockup's row — status and priority are
+   * `boxed` (since 2.386.15): the Work mockup's row — status and priority are
    * 36px bordered select boxes ("● Open ⌄", "Priority: High ⌄"), points and
    * owner plain 14–15px text with one rule between them.
    */

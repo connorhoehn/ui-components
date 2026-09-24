@@ -788,7 +788,7 @@ function fe({ title: e, hint: n, actions: r, first: i = !1, variant: a = "label"
 		"data-variant": "heading",
 		...c ? { "data-testid": c } : {},
 		children: [/* @__PURE__ */ b("div", {
-			className: "mb-1 flex min-h-7 items-center gap-2",
+			className: "mb-0.5 flex h-6 items-center gap-2",
 			children: [
 				/* @__PURE__ */ y("h3", {
 					className: "m-0 text-base font-semibold leading-6 text-text-primary",

@@ -136,16 +136,16 @@ export interface EditorShellProps {
   /**
    * `document` (default): a file's head — kind mark, title with its pill and
    * folder path, save line, and the head actions on the title row.
-   * `work-item` (since 2.386.14): the Work mockup's head — a crumb line
+   * `work-item` (since 2.386.15): the Work mockup's head — a crumb line
    * ("› OpenTelemetry everywhere / Story wi-obs-e1-s4", from `breadcrumbs` +
    * `crumbsTrailing`) that carries `headActions` (normally just ⋯) at its
    * right, then a 22px title with no kind mark, then the subtitle. The crumb
    * line stays on a short window, since it holds the actions.
    */
   variant?: 'document' | 'work-item';
-  /** work-item: the item's type as a soft chip on the crumb line ("Story"). Since 2.386.14. */
+  /** work-item: the item's type as a soft chip on the crumb line ("Story"). Since 2.386.15. */
   itemType?: string;
-  /** work-item: the item's key in mono after the chip ("wi-obs-e1-s4"). Since 2.386.14. */
+  /** work-item: the item's key in mono after the chip ("wi-obs-e1-s4"). Since 2.386.15. */
   itemKey?: string;
   className?: string;
   'data-testid'?: string;
@@ -214,8 +214,8 @@ export function EditorShell({
     <section aria-label={label} data-testid={testId} data-surface={surface} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-surface">
       <header className="flex flex-col gap-1 border-b border-border px-5 pt-3" data-variant={variant} data-testid={`${testId}-header`}>
         {crumbsRow && (
-          <div className="flex min-h-8 min-w-0 items-center gap-2 text-[13px] text-text-secondary" data-testid={`${testId}-crumbs-row`}>
-            <ChevronIcon dir="right" size={12} aria-hidden="true" className="shrink-0 text-text-tertiary" />
+          <div className="flex h-7 min-w-0 items-center gap-2 text-[13px] text-text-secondary" data-testid={`${testId}-crumbs-row`}>
+            <ChevronIcon dir="right" size={12} aria-hidden="true" className="-ml-1 shrink-0 text-text-tertiary" />
             {breadcrumbs && breadcrumbs.length > 0 && (
               <Breadcrumbs items={breadcrumbs} maxItems={4} lastIsCurrent={false} className="min-w-0 text-[13px] text-text-secondary" data-testid={`${testId}-crumbs`} />
             )}
@@ -279,7 +279,9 @@ export function EditorShell({
                   // "Release plan" open to 160px and left a gap before the
                   // Draft pill. The button sizes to its words; the input, while
                   // editing, to its value.
-                  className={cn('min-w-0 max-w-full flex-initial py-0', titleClass)}
+                  // work-item: the editor's 1px border + 4px padding pulled
+                  // back so the title shares the subtitle's and meta row's edge.
+                  className={cn('min-w-0 max-w-full flex-initial py-0', titleClass, workItem && '-ml-[5px]')}
                   data-testid={`${testId}-title`}
                 />
               ) : (

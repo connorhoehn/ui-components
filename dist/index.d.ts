@@ -3784,7 +3784,7 @@ export declare interface ChecklistSectionProps {
     addPlaceholder?: string;
     first?: boolean;
     /**
-     * `heading` (default since 2.386.14): a 16px sentence-case heading, 14px
+     * `heading` (default since 2.386.15): a 16px sentence-case heading, 14px
      * rows, no tally, and "Add a criterion" as a quiet control that opens the
      * field only when asked — a work item's Brief. `label`: the small uppercase
      * caption with the tally and an always-open add field, for a side panel.
@@ -4303,7 +4303,7 @@ export declare interface CommentListProps {
     max?: number;
     first?: boolean;
     /**
-     * `heading` (default since 2.386.14): a 16px heading, 32px avatars, 14px
+     * `heading` (default since 2.386.15): a 16px heading, 32px avatars, 14px
      * text, "View all" quiet until hover — a work item's Brief. `label`: the
      * small caption and 28px avatars, for a side panel.
      */
@@ -5704,7 +5704,7 @@ export declare interface DetailSectionProps {
     first?: boolean;
     /**
      * `label` (default): a small uppercase caption under a hairline, for a
-     * drawer or side panel. `heading` (since 2.386.14): a 16px sentence-case
+     * drawer or side panel. `heading` (since 2.386.15): a 16px sentence-case
      * heading with no rule, for a document-like body (a work item's Brief); its
      * `actions` stay quiet until the section is hovered or focused (always shown
      * where there is no hover).
@@ -9495,7 +9495,7 @@ export declare interface LinkedItemsSectionProps {
     emptyLabel?: string;
     first?: boolean;
     /**
-     * `heading` (default since 2.386.14): a 16px heading, 14px rows, the status
+     * `heading` (default since 2.386.15): a 16px heading, 14px rows, the status
      * as a soft tag, the relation read out (and on hover) rather than printed,
      * and "Add link" quiet until the section is hovered — a work item's Brief.
      * `label`: the small caption, printed relation and dotted pill.
@@ -10944,7 +10944,7 @@ export declare interface OutcomeSectionProps {
     /** Suppress DetailSection's leading rule. */
     first?: boolean;
     /**
-     * `heading` (default since 2.386.14): a 16px sentence-case heading, 14px
+     * `heading` (default since 2.386.15): a 16px sentence-case heading, 14px
      * body, affordances quiet until hover — a work item's Brief. `label`: the
      * small uppercase caption under a hairline, for a side panel.
      */
@@ -19676,7 +19676,7 @@ declare interface UseActivityBusReturn {
       };
       /**
        * `inline` (default): borderless fields at 13px with a rule between each.
-       * `boxed` (since 2.386.14): the Work mockup's row — status and priority are
+       * `boxed` (since 2.386.15): the Work mockup's row — status and priority are
        * 36px bordered select boxes ("● Open ⌄", "Priority: High ⌄"), points and
        * owner plain 14–15px text with one rule between them.
        */
@@ -20043,19 +20043,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -20075,6 +20062,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
@@ -20085,12 +20085,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -20124,9 +20121,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

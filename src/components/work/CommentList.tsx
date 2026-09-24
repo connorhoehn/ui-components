@@ -34,7 +34,7 @@ export interface CommentListProps {
   max?: number;
   first?: boolean;
   /**
-   * `heading` (default since 2.386.14): a 16px heading, 32px avatars, 14px
+   * `heading` (default since 2.386.15): a 16px heading, 32px avatars, 14px
    * text, "View all" quiet until hover — a work item's Brief. `label`: the
    * small caption and 28px avatars, for a side panel.
    */

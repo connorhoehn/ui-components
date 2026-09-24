@@ -17,8 +17,8 @@ import { t as L } from "./cn-DhjIN-s0.js";
 import { i as et, n as tt, r as nt, t as rt } from "./ToastProvider-B0D0SLKU.js";
 import { t as it } from "./useEventCallback-Cwx9QVSi.js";
 import { n as at, r as ot, t as st } from "./useAudioRecorder-BhPxnLmg.js";
-import { _ as ct, a as lt, b as ut, c as dt, d as ft, f as pt, g as mt, h as ht, i as gt, l as _t, m as vt, n as yt, o as bt, p as xt, r as St, s as Ct, t as wt, u as Tt, v as Et, x as Dt, y as Ot } from "./FilterPopover-CQg_OOJz.js";
-import { $ as kt, A as At, B as jt, C as Mt, D as Nt, E as Pt, F as Ft, G as It, H as Lt, I as Rt, J as zt, K as Bt, L as Vt, M as Ht, N as Ut, O as Wt, P as Gt, Q as Kt, R as qt, S as Jt, T as Yt, U as Xt, V as Zt, W as Qt, X as $t, Y as en, Z as tn, _ as nn, a as rn, at as an, b as on, c as sn, ct as cn, d as ln, dt as un, et as dn, f as fn, ft as pn, g as mn, h as hn, ht as gn, i as _n, it as vn, j as yn, k as bn, l as xn, lt as Sn, m as Cn, mt as wn, n as Tn, nt as En, o as Dn, ot as On, p as kn, pt as An, q as jn, r as Mn, rt as Nn, s as Pn, st as Fn, t as In, tt as Ln, u as Rn, ut as zn, v as Bn, w as Vn, x as Hn, y as Un, z as Wn } from "./shared-CyYuT82j.js";
+import { _ as ct, a as lt, b as ut, c as dt, d as ft, f as pt, g as mt, h as ht, i as gt, l as _t, m as vt, n as yt, o as bt, p as xt, r as St, s as Ct, t as wt, u as Tt, v as Et, x as Dt, y as Ot } from "./FilterPopover-RgE-RMTz.js";
+import { $ as kt, A as At, B as jt, C as Mt, D as Nt, E as Pt, F as Ft, G as It, H as Lt, I as Rt, J as zt, K as Bt, L as Vt, M as Ht, N as Ut, O as Wt, P as Gt, Q as Kt, R as qt, S as Jt, T as Yt, U as Xt, V as Zt, W as Qt, X as $t, Y as en, Z as tn, _ as nn, a as rn, at as an, b as on, c as sn, ct as cn, d as ln, dt as un, et as dn, f as fn, ft as pn, g as mn, h as hn, ht as gn, i as _n, it as vn, j as yn, k as bn, l as xn, lt as Sn, m as Cn, mt as wn, n as Tn, nt as En, o as Dn, ot as On, p as kn, pt as An, q as jn, r as Mn, rt as Nn, s as Pn, st as Fn, t as In, tt as Ln, u as Rn, ut as zn, v as Bn, w as Vn, x as Hn, y as Un, z as Wn } from "./shared-D-6whcHC.js";
 import { _ as R, a as Gn, c as Kn, d as qn, f as Jn, g as Yn, h as Xn, i as Zn, l as Qn, n as $n, p as er, r as tr, s as nr, u as rr } from "./overlayStack-CHdlnODN.js";
 import { t as ir } from "./Card-RQCeAPNU.js";
 import { a as ar, i as or, n as sr, o as cr, r as lr, t as ur } from "./Table-CypeBEj0.js";
@@ -1215,7 +1215,7 @@ function mm() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var hm = Tp(() => import("./DocumentEditorPage-DdzLtFnK.js").then((e) => e.n));
+var hm = Tp(() => import("./DocumentEditorPage-w8Cp5XUn.js").then((e) => e.n));
 function gm({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;
@@ -3777,7 +3777,7 @@ function xh({ status: e, points: t, owner: n, priority: r, appearance: i = "inli
 //#endregion
 //#region src/components/work/OutcomeSection.tsx
 function Sh({ title: e = "Outcome", value: t, onChange: n, placeholder: r = "What is true when this is done?", readOnlyReason: i, pending: a = !1, first: o, variant: s = "heading", className: c, "data-testid": l = "outcome-section" }) {
-	let u = !!n && !i, [d, f] = Y(!1), [p, m] = Y(""), h = J(!1), g = J(null), _ = K(), v = t?.trim() ? t : null, y = s === "heading" ? "text-sm leading-6" : "text-[13px] leading-relaxed";
+	let u = !!n && !i, [d, f] = Y(!1), [p, m] = Y(""), h = J(!1), g = J(null), _ = K(), v = t?.trim() ? t : null, y = s === "heading" ? "text-sm leading-5" : "text-[13px] leading-relaxed";
 	G(() => {
 		d && g.current?.focus();
 	}, [d]);

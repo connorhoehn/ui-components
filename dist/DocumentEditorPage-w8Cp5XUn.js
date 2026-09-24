@@ -1739,7 +1739,7 @@ function dt({ variant: e = "bar", actionsLayout: t = "cluster", menuTrigger: n =
 						}),
 						triggerLabel: "More actions",
 						triggerTitle: "More actions",
-						triggerClassName: $ ? n === "ghost" ? "h-8 w-8 p-0 rounded-md border-0 bg-transparent text-text-secondary hover:bg-surface-hover hover:text-text-primary" : "h-10 w-10 p-0 rounded-md border border-border bg-surface text-text-secondary hover:bg-surface-hover hover:text-text-primary" : "h-8 rounded-md border border-border bg-surface px-2.5 text-[13px] text-text-primary hover:bg-surface-hover",
+						triggerClassName: $ ? n === "ghost" ? "h-7 w-7 p-0 rounded-md border-0 bg-transparent text-text-secondary hover:bg-surface-hover hover:text-text-primary" : "h-10 w-10 p-0 rounded-md border border-border bg-surface text-text-secondary hover:bg-surface-hover hover:text-text-primary" : "h-8 rounded-md border border-border bg-surface px-2.5 text-[13px] text-text-primary hover:bg-surface-hover",
 						align: "end",
 						"data-testid": "document-header-menu",
 						sections: We

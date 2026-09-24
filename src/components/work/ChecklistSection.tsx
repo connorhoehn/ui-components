@@ -35,7 +35,7 @@ export interface ChecklistSectionProps {
   addPlaceholder?: string;
   first?: boolean;
   /**
-   * `heading` (default since 2.386.14): a 16px sentence-case heading, 14px
+   * `heading` (default since 2.386.15): a 16px sentence-case heading, 14px
    * rows, no tally, and "Add a criterion" as a quiet control that opens the
    * field only when asked — a work item's Brief. `label`: the small uppercase
    * caption with the tally and an always-open add field, for a side panel.

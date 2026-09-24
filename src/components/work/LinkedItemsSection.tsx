@@ -46,7 +46,7 @@ export interface LinkedItemsSectionProps {
   emptyLabel?: string;
   first?: boolean;
   /**
-   * `heading` (default since 2.386.14): a 16px heading, 14px rows, the status
+   * `heading` (default since 2.386.15): a 16px heading, 14px rows, the status
    * as a soft tag, the relation read out (and on hover) rather than printed,
    * and "Add link" quiet until the section is hovered — a work item's Brief.
    * `label`: the small caption, printed relation and dotted pill.
