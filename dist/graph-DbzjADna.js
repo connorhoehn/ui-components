@@ -20,13 +20,13 @@ import { t as E } from "./StatusPill-C-aN2Pzz.js";
 import { t as D } from "./Select-D2EQq7Wi.js";
 import { t as O } from "./Checkbox-Dftwml_V.js";
 import { t as k } from "./formatBytes-05ivRSJY.js";
-import { c as A, n as j, s as M } from "./useComputeProjects-BZyUWJy3.js";
-import { n as N } from "./ChatSidePanelRegistry-Cfq-b6aZ.js";
+import { c as A, n as j, s as ee } from "./useComputeProjects-BZyUWJy3.js";
+import { n as M } from "./ChatSidePanelRegistry-Cfq-b6aZ.js";
 /* empty css               */
-import { t as P } from "./AnimatedEdge-OTHCEYJd.js";
-import { Suspense as ee, lazy as F, useCallback as I, useEffect as L, useId as R, useMemo as z, useRef as B, useState as V } from "react";
+import { t as N } from "./AnimatedEdge-OTHCEYJd.js";
+import { Suspense as P, lazy as F, useCallback as I, useEffect as L, useId as R, useMemo as z, useRef as B, useState as V } from "react";
 import { Fragment as H, jsx as U, jsxs as W } from "react/jsx-runtime";
-import { Background as te, BaseEdge as ne, Controls as re, EdgeLabelRenderer as G, Handle as K, MarkerType as ie, Position as q, ReactFlow as ae, getBezierPath as J } from "@xyflow/react";
+import { Background as te, BaseEdge as G, Controls as ne, EdgeLabelRenderer as re, Handle as K, MarkerType as ie, Position as q, ReactFlow as ae, getBezierPath as J } from "@xyflow/react";
 //#region src/components/graph/layout.ts
 function Y(e) {
 	let t = e.find((e) => e.group === "center");
@@ -43,15 +43,15 @@ function X(e) {
 	}
 	return t;
 }
-function oe(e, t, n, r) {
+function Z(e, t, n, r) {
 	if (e.length === 0) return /* @__PURE__ */ new Map();
 	switch (n) {
-		case "grid": return ce(e, r);
-		case "force": return Z(e, t, r);
-		default: return se(e, r);
+		case "grid": return se(e, r);
+		case "force": return ce(e, t, r);
+		default: return oe(e, r);
 	}
 }
-function se(e, { width: t, height: n, padding: r = 40 }) {
+function oe(e, { width: t, height: n, padding: r = 40 }) {
 	let i = /* @__PURE__ */ new Map(), a = t / 2, o = n / 2, s = Y(e), c = e.filter((e) => e !== s);
 	if (s && i.set(s.id, {
 		x: a,
@@ -74,7 +74,7 @@ function se(e, { width: t, height: n, padding: r = 40 }) {
 		});
 	}), i;
 }
-function ce(e, { width: t, height: n, padding: r = 40 }) {
+function se(e, { width: t, height: n, padding: r = 40 }) {
 	let i = /* @__PURE__ */ new Map(), a = [];
 	for (let t of e) {
 		let e = t.group ?? "";
@@ -93,7 +93,7 @@ function ce(e, { width: t, height: n, padding: r = 40 }) {
 		});
 	}), i;
 }
-function Z(e, t, { width: n, height: r, padding: i = 40 }) {
+function ce(e, t, { width: n, height: r, padding: i = 40 }) {
 	let a = e.length, o = new Map(e.map((e, t) => [e.id, t])), s = new Float64Array(a), c = new Float64Array(a);
 	for (let e = 0; e < a; e++) {
 		let t = 2 * Math.PI * e / a;
@@ -191,7 +191,7 @@ var pe = .5, me = 4, he = {
 	k: 1
 };
 function ge({ nodes: e, edges: n, layout: r = "radial", selectedId: a = null, onSelect: o, height: s = 320, className: c, "data-testid": l = "node-graph" }) {
-	let u = z(() => oe(e, n, r, {
+	let u = z(() => Z(e, n, r, {
 		width: 480,
 		height: s
 	}), [
@@ -1694,7 +1694,7 @@ function ht(e, t, n, r) {
 			}
 			O.add(n), k.set(e, n);
 		}
-		let j = Math.max(w.length, ...[...k.values()].map((e) => e + 1), 1), M = r.labelledEdgeIds?.some((e) => m.some((t) => t.id === e && k.has(t.from))) ? 132 : 56, N = T.length ? Math.max(...T.map((e) => x(e).width)) : 0, P = c + (N ? N + M : 0), ee = (e) => [...w.filter((t) => E.get(t) === e), ...[...k].filter(([, t]) => t === e).map(([e]) => e)], F = [...Array(j).keys()].map((e) => Math.max(0, ...ee(e).map((e) => x(e).height))), I = [...Array(j).keys()].map((e) => 32 + Math.max(1, ...ee(e).map((e) => m.filter((t) => t.to === e).length)) * 24), L = F.reduce((e, t, n) => e + t + (n ? I[n] : 0), 56 + c), R = T.length === 0 && r.height && L > r.height && j > 2 ? F.reduce((e, t, n) => {
+		let j = Math.max(w.length, ...[...k.values()].map((e) => e + 1), 1), ee = r.labelledEdgeIds?.some((e) => m.some((t) => t.id === e && k.has(t.from))) ? 132 : 56, M = T.length ? Math.max(...T.map((e) => x(e).width)) : 0, N = c + (M ? M + ee : 0), P = (e) => [...w.filter((t) => E.get(t) === e), ...[...k].filter(([, t]) => t === e).map(([e]) => e)], F = [...Array(j).keys()].map((e) => Math.max(0, ...P(e).map((e) => x(e).height))), I = [...Array(j).keys()].map((e) => 32 + Math.max(1, ...P(e).map((e) => m.filter((t) => t.to === e).length)) * 24), L = F.reduce((e, t, n) => e + t + (n ? I[n] : 0), 56 + c), R = T.length === 0 && r.height && L > r.height && j > 2 ? F.reduce((e, t, n) => {
 			let r = e.run + t + (n ? I[n] : 0);
 			return r < L / 2 ? {
 				row: n + 1,
@@ -1703,7 +1703,7 @@ function ht(e, t, n, r) {
 		}, {
 			row: 0,
 			run: 56
-		}).row || Math.ceil(j / 2) : j, z = (e) => e < R ? 0 : 1, B = F.reduce((e, t, n) => [...e, n === 0 || z(n) !== z(n - 1) ? 56 : e[n - 1] + F[n - 1] + I[n]], []), V = Math.max(0, ...w.map((e) => x(e).width)), H = (e) => P + z(e) * (V + Math.max(96, M)), U = [];
+		}).row || Math.ceil(j / 2) : j, z = (e) => e < R ? 0 : 1, B = F.reduce((e, t, n) => [...e, n === 0 || z(n) !== z(n - 1) ? 56 : e[n - 1] + F[n - 1] + I[n]], []), V = Math.max(0, ...w.map((e) => x(e).width)), H = (e) => N + z(e) * (V + Math.max(96, ee)), U = [];
 		for (let t of w) U.push({
 			id: ft(e.id, "node", t),
 			entityId: t,
@@ -1718,7 +1718,7 @@ function ht(e, t, n, r) {
 			y: B[n],
 			...x(t)
 		});
-		let W = T.length === 0, te = new Map(U.map((e) => [e.entityId, e])), ne = /* @__PURE__ */ new Map();
+		let W = T.length === 0, te = new Map(U.map((e) => [e.entityId, e])), G = /* @__PURE__ */ new Map();
 		p.push({
 			id: e.id,
 			title: e.title,
@@ -1733,8 +1733,8 @@ function ht(e, t, n, r) {
 			cyclicNodeIds: y,
 			nodes: U,
 			edges: m.map((t) => {
-				let n = ne.get(t.to) ?? 0;
-				ne.set(t.to, n + 1);
+				let n = G.get(t.to) ?? 0;
+				G.set(t.to, n + 1);
 				let r = te.get(t.from), i = te.get(t.to), a = r.x !== i.x, o = a ? "out-right" : "out-bottom", s = a ? "in-left" : "in-top";
 				return {
 					id: ft(e.id, "edge", t.id),
@@ -2065,10 +2065,10 @@ function Ct({ data: e }) {
 }
 function wt(e) {
 	let n = e.data;
-	return n ? /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(P, {
+	return n ? /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(N, {
 		...e,
 		data: { state: n.failed ? "traversed-failure" : n.active ? "active" : "default" }
-	}), /* @__PURE__ */ U(G, { children: /* @__PURE__ */ U("button", {
+	}), /* @__PURE__ */ U(re, { children: /* @__PURE__ */ U("button", {
 		type: "button",
 		className: t("nodrag nopan pointer-events-auto absolute z-10 flex items-center justify-center rounded-full text-[10px] font-medium leading-none focus-visible:outline-2 focus-visible:outline-primary", n.pill ? t("h-5 max-w-28 border bg-surface px-2 shadow-sm", n.failed ? "border-danger text-danger-fg" : n.active ? "border-info text-info-fg" : "border-border-emphasis text-text-secondary") : "h-3 w-3 border border-transparent bg-transparent text-transparent focus-visible:border-border focus-visible:bg-surface"),
 		style: { transform: `translate(-50%, -50%) translate(${n.labelX}px, ${n.labelY}px)` },
@@ -2093,7 +2093,7 @@ function Dt(e) {
 	let { activity: r, nodes: a, edges: o, selection: s, viewport: c, onViewportChange: l, onSelectionChange: u, background: d = "ripple-grid", onViewAsList: f, maxEfforts: p = 2 } = e, m = B(null), [h, g] = V({
 		width: 640,
 		height: 480
-	}), [v, y] = V(/* @__PURE__ */ new Map()), x = B(null), S = B(r.view.focusedEffortId), { view: E, onViewChange: D } = r;
+	}), [v, y] = V(/* @__PURE__ */ new Map()), x = B(null), S = B(void 0), E = B(r.view.focusedEffortId), { view: D, onViewChange: O } = r;
 	L(() => {
 		let e = m.current;
 		if (!e || typeof ResizeObserver > "u") return;
@@ -2106,32 +2106,32 @@ function Dt(e) {
 		});
 		return t.observe(e), () => t.disconnect();
 	}, []);
-	let O = [...Object.keys(r.edgeLabels ?? {}), ...r.failedEdgeIds ?? []].sort().join("\0"), k = s?.kind === "node" ? s.id : void 0, A = E.focusedEffortId ?? (k ? r.efforts.find((e) => e.nodeIds.includes(k))?.id ?? null : null), j = z(() => mt(r.efforts, a, {
+	let k = [...Object.keys(r.edgeLabels ?? {}), ...r.failedEdgeIds ?? []].sort().join("\0"), A = s?.kind === "node" ? s.id : void 0, j = D.focusedEffortId ?? (A ? r.efforts.find((e) => e.nodeIds.includes(A))?.id ?? null : null), ee = z(() => mt(r.efforts, a, {
 		max: p,
-		keepEffortId: A
+		keepEffortId: j
 	}), [
 		r.efforts,
 		a,
 		p,
-		A
-	]), M = z(() => ht(a, o, j, {
+		j
+	]), M = z(() => ht(a, o, ee, {
 		width: h.width,
 		height: h.height,
 		full: r.mode === "full",
-		focusedEffortId: E.focusedEffortId,
-		expandedSourceEfforts: E.expandedSourceEfforts,
+		focusedEffortId: D.focusedEffortId,
+		expandedSourceEfforts: D.expandedSourceEfforts,
 		reversedEdgeIds: r.reversedEdgeIds,
-		labelledEdgeIds: O.split("\0").filter(Boolean),
+		labelledEdgeIds: k.split("\0").filter(Boolean),
 		measurements: v
 	}), [
 		a,
 		o,
-		j,
+		ee,
 		r.mode,
 		r.reversedEdgeIds,
-		O,
-		E.focusedEffortId,
-		E.expandedSourceEfforts,
+		k,
+		D.focusedEffortId,
+		D.expandedSourceEfforts,
 		h,
 		v
 	]), N = z(() => {
@@ -2149,9 +2149,9 @@ function Dt(e) {
 			y: (h.height - r * i) / 2 - t * i,
 			zoom: i
 		};
-	}, [N, h]), ee = p !== 0, F = I(() => {
+	}, [N, h]), F = p !== 0, R = I(() => {
 		let e = P();
-		if (!ee) return e;
+		if (!F) return e;
 		let { left: t, top: n, width: r } = N, i = Math.max(e.zoom, Math.min(lt, (h.width - 48) / r));
 		return i <= e.zoom ? e : {
 			x: (h.width - r * i) / 2 - t * i,
@@ -2160,14 +2160,34 @@ function Dt(e) {
 		};
 	}, [
 		P,
-		ee,
+		F,
 		N,
 		h
-	]), R = JSON.stringify([
+	]), H = z(() => {
+		if (!A) return null;
+		for (let e of M) {
+			let t = e.nodes.find((e) => e.entityId === A);
+			if (t) return {
+				x: e.x + t.x,
+				y: e.y + t.y,
+				width: t.width,
+				height: t.height
+			};
+		}
+		return null;
+	}, [M, A]), G = I((e) => {
+		if (!H) return e;
+		let t = Math.max(e.zoom, Math.min(lt, (h.width - 48) / H.width));
+		return {
+			x: h.width / 2 - (H.x + H.width / 2) * t,
+			y: h.height / 2 - (H.y + H.height / 2) * t,
+			zoom: t
+		};
+	}, [H, h]), ne = JSON.stringify([
 		h,
 		r.mode,
-		E.focusedEffortId,
-		E.expandedSourceEfforts,
+		D.focusedEffortId,
+		D.expandedSourceEfforts,
 		M.map((e) => [
 			e.id,
 			e.nodes.map((e) => e.id),
@@ -2176,33 +2196,50 @@ function Dt(e) {
 		M.every((e) => e.nodes.every((e) => v.has(e.entityId)))
 	]);
 	L(() => {
-		if (x.current === R) return;
+		if (x.current === ne) return;
 		let e = x.current === null;
-		x.current = R;
-		let t = S.current && !E.focusedEffortId && E.overviewViewport;
-		if (S.current = E.focusedEffortId, t) {
+		x.current = ne;
+		let t = E.current && !D.focusedEffortId && D.overviewViewport;
+		if (E.current = D.focusedEffortId, t) {
 			l(t);
 			return;
 		}
-		e && E.canvasInitialized || (l(F()), E.canvasInitialized || D({
-			...E,
+		e && D.canvasInitialized || (l(G(R())), S.current = A, D.canvasInitialized || O({
+			...D,
 			canvasInitialized: !0
 		}));
 	}, [
+		ne,
 		R,
-		F,
-		E,
+		G,
 		D,
+		O,
+		l
+	]), L(() => {
+		if (!A) {
+			S.current = void 0;
+			return;
+		}
+		if (S.current === A || !H || x.current === null) return;
+		S.current = A;
+		let e = H.x * c.zoom + c.x, t = H.y * c.zoom + c.y;
+		e >= 0 && t >= 0 && e + H.width * c.zoom <= h.width && t + H.height * c.zoom <= h.height || l(G(c));
+	}, [
+		A,
+		H,
+		c,
+		h,
+		G,
 		l
 	]);
-	let H = (e) => D({
-		...E,
-		focusedEffortId: E.focusedEffortId === e ? null : e,
-		overviewViewport: E.focusedEffortId ? E.overviewViewport : c
-	}), ne = new Map(a.map((e) => [e.id, e])), re = new Map(o.map((e) => [e.id, e])), G = r.window.following, K = new Set(G ? r.activeEdgeIds : []), q = new Set(r.failedEdgeIds ?? []), J = [], Y = [];
+	let re = (e) => O({
+		...D,
+		focusedEffortId: D.focusedEffortId === e ? null : e,
+		overviewViewport: D.focusedEffortId ? D.overviewViewport : c
+	}), K = new Map(a.map((e) => [e.id, e])), q = new Map(o.map((e) => [e.id, e])), J = r.window.following, Y = new Set(J ? r.activeEdgeIds : []), X = new Set(r.failedEdgeIds ?? []), Z = [], oe = [];
 	for (let e of M) {
-		let t = JSON.stringify(["effort", e.id]), n = E.expandedSourceEfforts.includes(e.id);
-		J.push({
+		let t = JSON.stringify(["effort", e.id]), n = D.expandedSourceEfforts.includes(e.id);
+		Z.push({
 			id: t,
 			type: "effort",
 			position: {
@@ -2218,19 +2255,19 @@ function Dt(e) {
 			data: {
 				title: e.title,
 				subtitle: e.subtitle,
-				live: G && e.nodes.some((e) => ne.get(e.entityId)?.status === "running"),
-				sources: !E.focusedEffortId && (e.collapsedSourceCount > 0 || n) ? e.sourceCount : 0,
+				live: J && e.nodes.some((e) => K.get(e.entityId)?.status === "running"),
+				sources: !D.focusedEffortId && (e.collapsedSourceCount > 0 || n) ? e.sourceCount : 0,
 				expanded: n,
-				focused: E.focusedEffortId === e.id,
+				focused: D.focusedEffortId === e.id,
 				cycle: e.cyclicNodeIds.length > 0,
-				onFocus: () => H(e.id),
-				onSources: () => D({
-					...E,
-					expandedSourceEfforts: n ? E.expandedSourceEfforts.filter((t) => t !== e.id) : [...E.expandedSourceEfforts, e.id]
+				onFocus: () => re(e.id),
+				onSources: () => O({
+					...D,
+					expandedSourceEfforts: n ? D.expandedSourceEfforts.filter((t) => t !== e.id) : [...D.expandedSourceEfforts, e.id]
 				})
 			}
 		});
-		for (let n of e.nodes) J.push({
+		for (let n of e.nodes) Z.push({
 			id: n.id,
 			type: "activity",
 			parentId: t,
@@ -2242,17 +2279,17 @@ function Dt(e) {
 			selected: s?.kind === "node" && s.id === n.entityId,
 			focusable: !1,
 			data: {
-				entity: ne.get(n.entityId),
+				entity: K.get(n.entityId),
 				detail: r.details?.[n.entityId],
 				revisionId: s?.kind === "node" && s.id === n.entityId ? s.revisionId : void 0,
-				live: G,
+				live: J,
 				onSelect: u,
 				onFeedback: r.onFeedback
 			}
 		});
 		for (let t of e.edges) {
-			let n = re.get(t.entityId), i = e.x + t.labelX, a = e.y + t.labelY, o = K.has(n.id) && n.status === "running" && !n.endedAt, c = q.has(n.id), l = n.label || n.relation.replaceAll("-", " "), d = r.edgeLabels?.[n.id] ?? (c ? "failed" : void 0);
-			Y.push({
+			let n = q.get(t.entityId), i = e.x + t.labelX, a = e.y + t.labelY, o = Y.has(n.id) && n.status === "running" && !n.endedAt, c = X.has(n.id), l = n.label || n.relation.replaceAll("-", " "), d = r.edgeLabels?.[n.id] ?? (c ? "failed" : void 0);
+			oe.push({
 				id: t.id,
 				type: "activity",
 				source: t.source,
@@ -2281,32 +2318,32 @@ function Dt(e) {
 			});
 		}
 	}
-	let X = new Map(J.filter((e) => e.type === "activity").map((e) => [e.id, e.data.entity.id])), oe = Math.min(ot, c.zoom), se = (e) => l({
+	let se = new Map(Z.filter((e) => e.type === "activity").map((e) => [e.id, e.data.entity.id])), ce = Math.min(ot, c.zoom), Q = (e) => l({
 		...c,
-		zoom: Math.max(oe, Math.min(2.5, c.zoom * e))
-	}), ce = c.zoom < ct, Z = d === "ripple-grid", Q = b(m, "auto", Z);
+		zoom: Math.max(ce, Math.min(2.5, c.zoom * e))
+	}), le = c.zoom < ct, ue = d === "ripple-grid", de = b(m, "auto", ue);
 	return /* @__PURE__ */ W("div", {
 		ref: m,
 		className: "relative isolate min-h-40 min-w-0 flex-1 overflow-hidden",
 		"data-testid": "work-activity-canvas",
 		"data-background": d,
-		"data-backdrop-ink": Z ? Q === "night" ? "dark" : "light" : void 0,
+		"data-backdrop-ink": ue ? de === "night" ? "dark" : "light" : void 0,
 		children: [
-			Z && /* @__PURE__ */ U(w, {
-				...Q === "night" ? C : T,
+			ue && /* @__PURE__ */ U(w, {
+				...de === "night" ? C : T,
 				className: "absolute inset-0 -z-10",
 				"data-testid": "work-activity-ripple"
 			}),
 			/* @__PURE__ */ U(ae, {
-				nodes: J,
-				edges: Y,
+				nodes: Z,
+				edges: oe,
 				nodeTypes: Tt,
 				edgeTypes: Et,
 				viewport: c,
 				onViewportChange: l,
 				onPaneClick: () => u(null),
 				onEdgeClick: (e, t) => t.data?.onSelect(),
-				minZoom: oe,
+				minZoom: ce,
 				maxZoom: 2.5,
 				nodesDraggable: !1,
 				nodesConnectable: !1,
@@ -2318,7 +2355,7 @@ function Dt(e) {
 					t.length && y((e) => {
 						let n = new Map(e), r = !1;
 						for (let i of t) {
-							let t = X.get(i.id);
+							let t = se.get(i.id);
 							if (!t || !i.dimensions) continue;
 							let a = e.get(t), o = {
 								width: Math.max(a?.width ?? 0, i.dimensions.width),
@@ -2329,13 +2366,13 @@ function Dt(e) {
 						return r ? n : e;
 					});
 				},
-				children: !Z && /* @__PURE__ */ U(te, {
+				children: !ue && /* @__PURE__ */ U(te, {
 					gap: 20,
 					size: 1,
 					color: "var(--color-border)"
 				})
 			}),
-			ce && /* @__PURE__ */ W(_, {
+			le && /* @__PURE__ */ W(_, {
 				tone: "info",
 				className: "absolute left-3 top-3 z-10 max-w-[min(26rem,calc(100%-1.5rem))] text-[11px]",
 				"data-testid": "work-activity-zoom-hint",
@@ -2354,13 +2391,13 @@ function Dt(e) {
 					/* @__PURE__ */ U(i, {
 						size: "sm",
 						"aria-label": "Zoom in",
-						onClick: () => se(1.2),
+						onClick: () => Q(1.2),
 						children: "+"
 					}),
 					/* @__PURE__ */ U(i, {
 						size: "sm",
 						"aria-label": "Zoom out",
-						onClick: () => se(1 / 1.2),
+						onClick: () => Q(1 / 1.2),
 						children: "−"
 					}),
 					/* @__PURE__ */ U(n, {
@@ -2387,7 +2424,7 @@ function Dt(e) {
 					],
 					[
 						"active",
-						G ? "Active" : "Active then",
+						J ? "Active" : "Active then",
 						"border-info bg-info"
 					]
 				].map(([e, n, r]) => /* @__PURE__ */ W("li", {
@@ -3017,7 +3054,7 @@ function qt({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 			_.startedAt ? `started ${_.startedAt}` : null,
 			e.shared ? "Shared with you" : "Yours"
 		].filter(Boolean).join(" · ")
-	}, N = O.tone === "error" ? {
+	}, M = O.tone === "error" ? {
 		card: "border-danger-border bg-danger-bg",
 		dot: "bg-danger",
 		title: "text-danger-fg"
@@ -3029,7 +3066,7 @@ function qt({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 		card: "border-info-border bg-info-bg",
 		dot: "bg-info",
 		title: "text-info-fg"
-	}, P = () => {
+	}, N = () => {
 		l("shell"), e.onOpenShell?.();
 	}, F = [
 		{
@@ -3054,15 +3091,15 @@ function qt({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 				role: "status",
 				"data-testid": `${a}-card`,
 				"data-tone": O.tone,
-				className: t("flex gap-2 rounded-md border p-2.5", N.card),
+				className: t("flex gap-2 rounded-md border p-2.5", M.card),
 				children: [/* @__PURE__ */ U("span", {
 					"aria-hidden": "true",
-					className: t("mt-1.5 h-2 w-2 shrink-0 rounded-full", N.dot, m.busy && "animate-pulse motion-reduce:animate-none")
+					className: t("mt-1.5 h-2 w-2 shrink-0 rounded-full", M.dot, m.busy && "animate-pulse motion-reduce:animate-none")
 				}), /* @__PURE__ */ W("span", {
 					className: "min-w-0",
 					children: [
 						/* @__PURE__ */ U("span", {
-							className: t("block text-[13px] font-semibold", N.title),
+							className: t("block text-[13px] font-semibold", M.title),
 							children: O.title
 						}),
 						O.description && /* @__PURE__ */ U("span", {
@@ -3115,7 +3152,7 @@ function qt({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 					e.shell && /* @__PURE__ */ W(n, {
 						size: "sm",
 						variant: "primary",
-						onClick: P,
+						onClick: N,
 						"data-testid": `${a}-open-shell`,
 						children: [/* @__PURE__ */ U("span", {
 							"aria-hidden": "true",
@@ -3148,7 +3185,7 @@ function qt({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 			}),
 			/* @__PURE__ */ U("div", {
 				className: "overflow-hidden rounded-md border border-border bg-code-bg",
-				children: /* @__PURE__ */ U(M, {
+				children: /* @__PURE__ */ U(ee, {
 					computer: b,
 					modelId: g.model,
 					...e.idleWindowMs ? { idleWindowMs: e.idleWindowMs } : {},
@@ -3286,7 +3323,7 @@ function qt({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 					seed: C,
 					className: "space-y-2 rounded-md",
 					"data-testid": `${a}-shell-particles`,
-					children: e.shell.shellUrl ? /* @__PURE__ */ U(ee, {
+					children: e.shell.shellUrl ? /* @__PURE__ */ U(P, {
 						fallback: /* @__PURE__ */ U("p", {
 							className: "rounded-md border border-code-border bg-code-bg px-2 py-6 text-center font-mono text-[11px] text-code-muted",
 							children: "Loading terminal…"
@@ -3314,7 +3351,7 @@ function qt({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 							size: "sm",
 							variant: "primary",
 							fullWidth: !0,
-							onClick: P,
+							onClick: N,
 							disabled: !e.onOpenShell,
 							"data-testid": `${a}-connect`,
 							children: [/* @__PURE__ */ U("span", {
@@ -4055,7 +4092,7 @@ function dn(e) {
 	});
 	let j = A ? new Set(k.flatMap((e) => e.edgeIds)) : null;
 	j && a?.kind === "edge" && j.add(a.id);
-	let M = j ? i.filter((e) => j.has(e.id)) : i, P = (T ? 0 : o.efforts.length - O) > 0 ? /* @__PURE__ */ W("div", {
+	let ee = j ? i.filter((e) => j.has(e.id)) : i, N = (T ? 0 : o.efforts.length - O) > 0 ? /* @__PURE__ */ W("div", {
 		className: "flex flex-wrap items-center justify-between gap-2 border-t border-border pt-2 text-xs text-text-tertiary",
 		"data-testid": "work-activity-list-more",
 		children: [/* @__PURE__ */ W("span", { children: [
@@ -4074,13 +4111,13 @@ function dn(e) {
 				" activities"
 			]
 		})]
-	}) : void 0, ee = (e) => ke(e.status, o.details?.[e.id]?.pause), F = /* @__PURE__ */ U(Ue, {
+	}) : void 0, P = (e) => ke(e.status, o.details?.[e.id]?.pause), F = /* @__PURE__ */ U(Ue, {
 		...e,
-		edges: M,
+		edges: ee,
 		groups: A,
-		footer: P,
-		statusLabelOf: ee
-	}), I = a?.kind === "node" ? r.find((e) => e.id === a.id) : void 0, R = a?.kind === "edge" ? i.find((e) => e.id === a.id && r.some((t) => t.id === e.fromId) && r.some((t) => t.id === e.toId)) : void 0, z = !!(I || R), { window: H, bounds: te, onWindowChange: ne, onEarlier: re } = o, G = o.detailsPlacement ?? "auto", K = G === "overlay" || G === "auto" && !m;
+		footer: N,
+		statusLabelOf: P
+	}), I = a?.kind === "node" ? r.find((e) => e.id === a.id) : void 0, R = a?.kind === "edge" ? i.find((e) => e.id === a.id && r.some((t) => t.id === e.fromId) && r.some((t) => t.id === e.toId)) : void 0, z = !!(I || R), { window: H, bounds: te, onWindowChange: G, onEarlier: ne } = o, re = o.detailsPlacement ?? "auto", K = re === "overlay" || re === "auto" && !m;
 	L(() => {
 		a && !z && s(null);
 	}, [
@@ -4105,23 +4142,23 @@ function dn(e) {
 			d.current?.isConnected && d.current.focus();
 		});
 	}, q = () => {
-		if (re) {
-			re();
+		if (ne) {
+			ne();
 			return;
 		}
 		let e = Math.max(6e4, H.end - H.start), t = Math.max(te.start, H.start - e);
-		ne({
+		G({
 			start: t,
 			end: t + e,
 			following: !1
 		});
-	}, ae = z, J = a ? `${a.kind}:${a.id}` : null, Y = ae && e.viewport.zoom < .4 && v !== J, X = Y || f && g, oe = f && !X, se = X || oe, ce = () => {
-		if (!se) {
+	}, ae = z, J = a ? `${a.kind}:${a.id}` : null, Y = ae && e.viewport.zoom < .4 && v !== J, X = Y || f && g, Z = f && !X, oe = X || Z, se = () => {
+		if (!oe) {
 			p(!0);
 			return;
 		}
 		p(!1), Y && y(J);
-	}, Z = K ? "absolute inset-y-0 right-0 z-10 w-[min(340px,85%)] shadow-lg" : "w-[340px] max-w-[45%] shrink-0";
+	}, ce = K ? "absolute inset-y-0 right-0 z-10 w-[min(340px,85%)] shadow-lg" : "w-[340px] max-w-[45%] shrink-0";
 	return /* @__PURE__ */ W("section", {
 		ref: l,
 		"aria-label": "Shared work graph",
@@ -4195,7 +4232,7 @@ function dn(e) {
 							})]
 						})
 					]
-				}), G !== "none" && z && (I && a?.kind === "node" ? /* @__PURE__ */ U(rn, {
+				}), re !== "none" && z && (I && a?.kind === "node" ? /* @__PURE__ */ U(rn, {
 					node: I,
 					detail: o.details?.[I.id],
 					selection: a,
@@ -4203,11 +4240,11 @@ function dn(e) {
 					onClose: ie,
 					onOpen: e.onOpen,
 					onReference: e.onReference,
-					className: Z
-				}) : /* @__PURE__ */ U(N, {
+					className: ce
+				}) : /* @__PURE__ */ U(M, {
 					title: R?.label || "Relationship",
 					onClose: ie,
-					className: Z,
+					className: ce,
 					"data-testid": "activity-inspector",
 					children: /* @__PURE__ */ U(Je, { ...e })
 				}))]
@@ -4217,13 +4254,13 @@ function dn(e) {
 				children: /* @__PURE__ */ U(n, {
 					size: "sm",
 					variant: "ghost",
-					"aria-expanded": se,
-					onClick: ce,
+					"aria-expanded": oe,
+					onClick: se,
 					"data-testid": "work-activity-list-toggle",
-					children: Y ? "Show the graph" : se ? "Hide accessible list" : "View as accessible list"
+					children: Y ? "Show the graph" : oe ? "Hide accessible list" : "View as accessible list"
 				})
 			}),
-			oe && /* @__PURE__ */ U("div", {
+			Z && /* @__PURE__ */ U("div", {
 				className: "max-h-60 min-h-0 shrink-0 overflow-auto border-t border-border p-3",
 				"data-testid": "work-activity-list-below",
 				children: F
@@ -4285,7 +4322,7 @@ function _n({ id: t, sourceX: n, sourceY: r, targetX: i, targetY: a, sourcePosit
 	if (!l) return null;
 	let m = l.entity.status === "running" && !l.entity.endedAt;
 	return /* @__PURE__ */ W(H, { children: [
-		/* @__PURE__ */ U(ne, {
+		/* @__PURE__ */ U(G, {
 			id: t,
 			path: d,
 			markerEnd: c,
@@ -4500,7 +4537,7 @@ function wn({ nodes: e, edges: n, selection: r, viewport: i, day: a, timezone: o
 							gap: 20,
 							size: 1,
 							color: "var(--color-border)"
-						}), /* @__PURE__ */ U(re, { showInteractive: !1 })]
+						}), /* @__PURE__ */ U(ne, { showInteractive: !1 })]
 					})
 				}), /* @__PURE__ */ U(Je, {
 					nodes: e,
@@ -4531,4 +4568,4 @@ function Tn(e) {
 	}) : /* @__PURE__ */ U(wn, { ...e });
 }
 //#endregion
-export { Y as A, xe as C, le as D, Ce as E, oe as M, ge as O, Te as S, Se as T, Ie as _, Qt as a, De as b, jt as c, mt as d, nt as f, Re as g, Ue as h, Yt as i, X as j, fe as k, dt as l, Je as m, an as n, qt as o, et as p, rn as r, Nt as s, Tn as t, ut as u, Ae as v, we as w, Ee as x, ke as y };
+export { Y as A, xe as C, le as D, Ce as E, Z as M, ge as O, Te as S, Se as T, Ie as _, Qt as a, De as b, jt as c, mt as d, nt as f, Re as g, Ue as h, Yt as i, X as j, fe as k, dt as l, Je as m, an as n, qt as o, et as p, rn as r, Nt as s, Tn as t, ut as u, Ae as v, we as w, Ee as x, ke as y };

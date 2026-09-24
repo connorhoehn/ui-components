@@ -123,6 +123,8 @@ export function WorkActivityCanvas(props: ActivityProps) {
   const [size, setSize] = useState({ width: 640, height: 480 });
   const [measurements, setMeasurements] = useState<Map<string, WorkNodeBounds>>(new Map());
   const lastGeometry = useRef<string | null>(null);
+  // The node the viewport was last moved to (or found already showing).
+  const lastCentred = useRef<string | undefined>(undefined);
   const previousFocus = useRef(activity.view.focusedEffortId);
   const { view, onViewChange } = activity;
   useEffect(() => {
@@ -172,6 +174,23 @@ export function WorkActivityCanvas(props: ActivityProps) {
     if (zoom <= whole.zoom) return whole;
     return { x: (size.width - width * zoom) / 2 - left * zoom, y: 24 - top * zoom, zoom };
   }, [fit, capped, bounds, size]);
+  // Where the selected node sits on the canvas, in flow coordinates.
+  const selectedRect = useMemo(() => {
+    if (!selectedNodeId) return null;
+    for (const group of layouts) {
+      const instance = group.nodes.find((node) => node.entityId === selectedNodeId);
+      if (instance) return { x: group.x + instance.x, y: group.y + instance.y, width: instance.width, height: instance.height };
+    }
+    return null;
+  }, [layouts, selectedNodeId]);
+  // The same zoom, panned so the selected node is in the middle — at least a
+  // readable zoom, since a node picked from outside the canvas (a deep link,
+  // the list, a citation) has to be legible where it lands.
+  const centred = useCallback((base: WorkGraphViewport): WorkGraphViewport => {
+    if (!selectedRect) return base;
+    const zoom = Math.max(base.zoom, Math.min(WORK_CANVAS_OPEN_ZOOM, (size.width - 48) / selectedRect.width));
+    return { x: size.width / 2 - (selectedRect.x + selectedRect.width / 2) * zoom, y: size.height / 2 - (selectedRect.y + selectedRect.height / 2) * zoom, zoom };
+  }, [selectedRect, size]);
   // A status border or a new text line can change measurements. Re-layout may
   // reserve that space, but only a navigation/topology intent may reset zoom.
   const geometry = JSON.stringify([size, activity.mode, view.focusedEffortId, view.expandedSourceEfforts, layouts.map((group) => [group.id, group.nodes.map((node) => node.id), group.edges.map((edge) => edge.id)]), layouts.every((group) => group.nodes.every((node) => measurements.has(node.entityId)))]);
@@ -183,9 +202,22 @@ export function WorkActivityCanvas(props: ActivityProps) {
     previousFocus.current = view.focusedEffortId;
     if (restoring) { onViewportChange(restoring); return; }
     if (first && view.canvasInitialized) return;
-    onViewportChange(open());
+    onViewportChange(centred(open()));
+    lastCentred.current = selectedNodeId;
     if (!view.canvasInitialized) onViewChange({ ...view, canvasInitialized: true });
-  }, [geometry, open, view, onViewChange, onViewportChange]);
+  }, [geometry, open, centred, view, onViewChange, onViewportChange]);
+  // A selection made from outside the canvas (a deep link, the list, the
+  // pane's links) pans to its node when that node is not already on screen.
+  // A click on the canvas selects something visible, so it never moves.
+  useEffect(() => {
+    if (!selectedNodeId) { lastCentred.current = undefined; return; }
+    if (lastCentred.current === selectedNodeId || !selectedRect || lastGeometry.current === null) return;
+    lastCentred.current = selectedNodeId;
+    const left = selectedRect.x * viewport.zoom + viewport.x;
+    const top = selectedRect.y * viewport.zoom + viewport.y;
+    const visible = left >= 0 && top >= 0 && left + selectedRect.width * viewport.zoom <= size.width && top + selectedRect.height * viewport.zoom <= size.height;
+    if (!visible) onViewportChange(centred(viewport));
+  }, [selectedNodeId, selectedRect, viewport, size, centred, onViewportChange]);
   const focus = (id: string) => onViewChange({ ...view, focusedEffortId: view.focusedEffortId === id ? null : id, overviewViewport: view.focusedEffortId ? view.overviewViewport : viewport });
   const byId = new Map(nodes.map((node) => [node.id, node]));
   const byEdge = new Map(edges.map((edge) => [edge.id, edge]));
