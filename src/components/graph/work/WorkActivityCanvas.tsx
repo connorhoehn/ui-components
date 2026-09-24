@@ -21,6 +21,7 @@ import {
   type WorkNodeBounds,
 } from './effortLayout';
 import { WorkActivityNode } from './WorkActivityNode';
+import { WorkOmittedGroup } from './WorkOmittedGroup';
 import type { WorkActivityNodeDetail, WorkActivityPresentation, WorkGraphProps, WorkGraphViewport } from './types';
 
 export type { WorkActivityCanvasBackground } from './types';
@@ -364,23 +365,29 @@ export function WorkActivityCanvas(props: ActivityProps) {
     }}>
       {!ripple && <Background gap={20} size={1} color="var(--color-border)" />}
     </ReactFlow>
-    {belowReadable && (
-      <InlineAlert
-        tone="info"
-        className="absolute left-3 top-3 z-10 max-w-[min(26rem,calc(100%-1.5rem))] text-[11px]"
-        data-testid="work-activity-zoom-hint"
-      >
-        <span>
-          The whole graph is in view, but too small to read.
-          {onViewAsList && ' '}
-        </span>
-        {onViewAsList && (
-          <Button size="sm" variant="link" onClick={onViewAsList} data-testid="work-activity-zoom-hint-list">
-            View as accessible list
-          </Button>
-        )}
-      </InlineAlert>
-    )}
+    {/* Top-left, above the zoom controls' band: the zoom hint and the group
+        of work the snapshot held back (NFR #221), stacked so neither covers
+        the other. */}
+    {(belowReadable || activity.omitted) && <div className="pointer-events-none absolute left-3 top-3 z-10 flex max-h-[calc(100%-4.5rem)] min-h-0 max-w-[calc(100%-1.5rem)] flex-col items-start gap-2" data-testid="work-activity-top-left">
+      {belowReadable && (
+        <InlineAlert
+          tone="info"
+          className="pointer-events-auto max-w-[min(26rem,100%)] text-[11px]"
+          data-testid="work-activity-zoom-hint"
+        >
+          <span>
+            The whole graph is in view, but too small to read.
+            {onViewAsList && ' '}
+          </span>
+          {onViewAsList && (
+            <Button size="sm" variant="link" onClick={onViewAsList} data-testid="work-activity-zoom-hint-list">
+              View as accessible list
+            </Button>
+          )}
+        </InlineAlert>
+      )}
+      {activity.omitted && <WorkOmittedGroup omitted={activity.omitted} timezone={props.timezone} className="pointer-events-auto nodrag nopan" />}
+    </div>}
     <div className="absolute z-10 bottom-3 left-3 flex items-center gap-1 rounded-md border border-border bg-surface p-1" data-testid="work-activity-controls">
       <IconButton size="sm" aria-label="Zoom in" onClick={() => zoomBy(1.2)}>+</IconButton>
       <IconButton size="sm" aria-label="Zoom out" onClick={() => zoomBy(1 / 1.2)}>−</IconButton>

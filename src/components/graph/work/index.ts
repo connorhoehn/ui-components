@@ -10,6 +10,8 @@ export { WorkActivityHeader } from './WorkActivityHeader';
 export { WorkNodePane, WorkPaneBanner, WorkTranscriptPanel } from './WorkNodePane';
 export { WorkArtifactInspector } from './WorkArtifactInspector';
 export { WorkComputePane } from './WorkComputePane';
+export { WorkOmittedGroup } from './WorkOmittedGroup';
+export type { WorkOmittedGroupProps } from './WorkOmittedGroup';
 export { limitWorkEfforts, WORK_ACTIVITY_ALL_EFFORTS, WORK_ACTIVITY_DEFAULT_MAX_EFFORTS } from './effortLayout';
 export type { LimitEffortsOptions } from './effortLayout';
 export type { WorkNodePaneProps } from './WorkNodePane';
@@ -30,6 +32,7 @@ export type {
   WorkActivityHeaderProps,
   WorkActivityNodeDetail,
   WorkActivityPresentation,
+  WorkActivityOmitted,
   WorkActivityView,
   WorkActivityWindow,
   WorkArtifactRevision,

@@ -553,6 +553,24 @@ export declare interface WorkActivityNodeDetail {
     };
 }
 
+/** The held-back group's state. The host owns the paged fetch. */
+export declare interface WorkActivityOmitted {
+    /** How many nodes the snapshot held back. */
+    count: number;
+    expanded: boolean;
+    /** Paged in so far, newest first. */
+    items: WorkGraphNodeData[];
+    loading?: boolean;
+    error?: string;
+    /** Another page exists. */
+    hasMore: boolean;
+    /** The size of one page, for the "Load N more" label. Defaults to 25. */
+    pageSize?: number;
+    onExpand: () => void;
+    onCollapse: () => void;
+    onLoadMore: () => void;
+}
+
 export declare interface WorkActivityPaneAction {
     id: string;
     label: string;
@@ -642,6 +660,12 @@ export declare interface WorkActivityPresentation {
      * renderer steps the current window back by its own duration.
      */
     onEarlier?: () => void;
+    /**
+     * Work the snapshot held back under its node cap (realtime-examples NFR
+     * #221). Drawn as a collapsed "N more earlier" group on the canvas; the host
+     * pages the items in when the viewer expands it.
+     */
+    omitted?: WorkActivityOmitted;
     onWindowChange: (window: WorkActivityWindow) => void;
     onViewChange: (view: WorkActivityView) => void;
     onFeedback?: (selection: Exclude<WorkGraphSelection, null>) => void;
@@ -1073,6 +1097,21 @@ export declare interface WorkNodeProps {
     onOpen?: (id: string) => void;
 }
 
+/**
+ * The work a capped snapshot held back (realtime-examples NFR #221): collapsed
+ * it is one card, "N more earlier"; expanded it lists what the host has paged
+ * in so far, newest first, with a control for the next page. The host owns the
+ * fetch — this renders the count, the items and the paging state it is given.
+ */
+export declare function WorkOmittedGroup({ omitted, timezone, className }: WorkOmittedGroupProps): JSX.Element;
+
+export declare interface WorkOmittedGroupProps {
+    omitted: WorkActivityOmitted;
+    /** The graph's timezone, for the item times. */
+    timezone?: string;
+    className?: string;
+}
+
 /** The state line a detail pane opens with. One dot, one claim, one qualifier. */
 export declare function WorkPaneBanner({ banner }: {
     banner: WorkActivityBanner;
@@ -1210,6 +1249,16 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -1236,9 +1285,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -1252,16 +1301,6 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

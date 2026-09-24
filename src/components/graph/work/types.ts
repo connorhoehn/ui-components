@@ -465,6 +465,24 @@ export interface WorkActivityView {
   canvasInitialized?: boolean;
 }
 
+/** The held-back group's state. The host owns the paged fetch. */
+export interface WorkActivityOmitted {
+  /** How many nodes the snapshot held back. */
+  count: number;
+  expanded: boolean;
+  /** Paged in so far, newest first. */
+  items: WorkGraphNodeData[];
+  loading?: boolean;
+  error?: string;
+  /** Another page exists. */
+  hasMore: boolean;
+  /** The size of one page, for the "Load N more" label. Defaults to 25. */
+  pageSize?: number;
+  onExpand: () => void;
+  onCollapse: () => void;
+  onLoadMore: () => void;
+}
+
 export interface WorkActivityPresentation {
   efforts: WorkActivityEffort[];
   details?: Record<string, WorkActivityNodeDetail>;
@@ -515,6 +533,12 @@ export interface WorkActivityPresentation {
    * renderer steps the current window back by its own duration.
    */
   onEarlier?: () => void;
+  /**
+   * Work the snapshot held back under its node cap (realtime-examples NFR
+   * #221). Drawn as a collapsed "N more earlier" group on the canvas; the host
+   * pages the items in when the viewer expands it.
+   */
+  omitted?: WorkActivityOmitted;
   onWindowChange: (window: WorkActivityWindow) => void;
   onViewChange: (view: WorkActivityView) => void;
   onFeedback?: (selection: Exclude<WorkGraphSelection, null>) => void;
