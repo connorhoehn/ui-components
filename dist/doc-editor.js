@@ -2495,7 +2495,7 @@ function Wr(e) {
 		}
 	}
 }
-var Gr = _n(function({ mentionUsers: e, onReply: t, onResolve: r, onAskAgent: i, onAssign: a, onCancel: o, dictation: s, placeholder: c = "Reply… (@ to mention, / for commands)", className: l, "data-testid": u = "comment-reply-composer" }, d) {
+var Gr = _n(function({ mentionUsers: e, onReply: t, onResolve: r, onAskAgent: i, onAssign: a, onCancel: o, dictation: s, placeholder: c = "Reply or type /", className: l, "data-testid": u = "comment-reply-composer" }, d) {
 	let f = J(null);
 	bn(d, () => ({
 		focus: () => f.current?.focus(),
@@ -2518,16 +2518,16 @@ var Gr = _n(function({ mentionUsers: e, onReply: t, onResolve: r, onAskAgent: i,
 		let e = [];
 		return r && e.push({
 			trigger: $.resolve,
-			label: "Resolve this thread",
-			hint: "text after it is posted as a note first"
+			label: "Resolve thread",
+			description: "Resolves the thread; text after it is posted as a note first."
 		}), i && e.push({
 			trigger: $.agent,
-			label: "Ask the agent to address it",
-			hint: "opens the page composer with this comment"
+			label: "Ask the agent",
+			description: "Opens the page composer in Agent mode with this comment attached."
 		}), a && e.push({
 			trigger: $.assign,
-			label: "Assign it to someone",
-			hint: "@person",
+			label: "Assign to…",
+			description: "Posts “Assigned to @Name”, which notifies them.",
 			argument: {
 				placeholder: "type a name",
 				search: (e) => {
