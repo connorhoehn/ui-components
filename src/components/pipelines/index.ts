@@ -32,6 +32,8 @@ export {
   refusalCodeOf,
   refusalNotRetryableReason,
   runRefusal,
+  runModelAuth,
+  MODEL_AUTH_NOT_RETRYABLE,
   stepRefusal,
 } from './utils/runRefusal';
 export type { RefusalCode, RunRefusal } from './utils/runRefusal';

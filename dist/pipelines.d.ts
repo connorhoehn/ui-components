@@ -1490,6 +1490,9 @@ declare interface MemoryNodeData {
 
 declare type MemoryScope = 'session' | 'long-term';
 
+/** Why the run page offers no retry or resume for a model sign-in failure. */
+export declare const MODEL_AUTH_NOT_RETRYABLE = "The model could not sign in \u2014 its credentials are missing or expired. Retrying fails the same way until an operator refreshes them; then start the run again.";
+
 /** One selectable model. `value` is what gets written to the node's data. */
 declare interface ModelOption {
     value: string;
@@ -2641,6 +2644,13 @@ declare interface RetryPolicy {
 /** The route as one line: "/doc → Read → Plan → Approval → Suggestions". */
 export declare function routeLine(route: string[] | undefined): string | undefined;
 
+/**
+ * A run that failed because the model could not sign in (the platform's
+ * `ModelAuth`: missing or expired credentials). Terminal like a refusal —
+ * retrying fails the same way — but nothing about the request was wrong.
+ */
+export declare function runModelAuth(run: Pick<PipelineRun, 'status' | 'error'> | null | undefined): boolean;
+
 export declare interface RunRefusal {
     /** The code the step refused with; `refused` when the platform said Refused without a code we know. */
     code: RefusalCode | 'refused';
@@ -3774,19 +3784,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3806,42 +3803,25 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         diagramMacro: {
             /**
              * Inserts a diagram block at the selection, minting an id unless one
              * is supplied.
              */
             insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -3875,6 +3855,26 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
@@ -3891,6 +3891,16 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

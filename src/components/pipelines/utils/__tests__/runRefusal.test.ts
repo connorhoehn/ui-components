@@ -182,3 +182,12 @@ describe('refusalNotRetryableReason', () => {
     expect(reason).toMatch(/start a new run/);
   });
 });
+
+describe('ModelAuth (Loop 29 ppt)', () => {
+  it('a model sign-in failure is terminal but not a refusal', async () => {
+    const { runModelAuth } = await import('../runRefusal');
+    const run = { status: 'failed', error: { message: 'deck-revise model-auth: The agent could not sign in', errorCategory: 'ModelAuth', retryability: 'terminal' } } as never;
+    expect(runRefusal(run)).toBeNull();
+    expect(runModelAuth(run)).toBe(true);
+  });
+});

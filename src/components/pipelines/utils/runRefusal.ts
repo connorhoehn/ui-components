@@ -42,6 +42,8 @@ export function refusalCodeOf(message: string | null | undefined): RefusalCode |
  */
 export function runRefusal(run: Pick<PipelineRun, 'status' | 'error'> | null | undefined): RunRefusal | null {
   if (!run || run.status !== 'failed' || !run.error) return null;
+  // Terminal, but not a decision about the inputs: the model could not sign in.
+  if (run.error.errorCategory === 'ModelAuth') return null;
   const code = refusalCodeOf(run.error.message);
   const terminal = run.error.errorCategory === 'Refused' || run.error.retryability === 'terminal';
   if (!code && !terminal) return null;
@@ -70,3 +72,16 @@ export function stepRefusal(
 export function refusalNotRetryableReason(refusal: RunRefusal): string {
   return `Refused (${refusal.code}): the step decided on the inputs this run already had, so retrying or resuming would refuse the same way. Change the request and start a new run.`;
 }
+
+/**
+ * A run that failed because the model could not sign in (the platform's
+ * `ModelAuth`: missing or expired credentials). Terminal like a refusal —
+ * retrying fails the same way — but nothing about the request was wrong.
+ */
+export function runModelAuth(run: Pick<PipelineRun, 'status' | 'error'> | null | undefined): boolean {
+  return !!run && run.status === 'failed' && run.error?.errorCategory === 'ModelAuth';
+}
+
+/** Why the run page offers no retry or resume for a model sign-in failure. */
+export const MODEL_AUTH_NOT_RETRYABLE =
+  'The model could not sign in — its credentials are missing or expired. Retrying fails the same way until an operator refreshes them; then start the run again.';
