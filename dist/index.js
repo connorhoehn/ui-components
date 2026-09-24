@@ -3691,7 +3691,7 @@ function bh({ f: e, boxed: t }) {
 			onChange: (t) => e.onChange?.(t),
 			"data-testid": "work-meta-priority",
 			children: [/* @__PURE__ */ Z("span", {
-				className: "whitespace-nowrap text-text-primary",
+				className: "whitespace-nowrap text-text-primary @max-xl:hidden",
 				children: "Priority:"
 			}), i ? /* @__PURE__ */ Z(V, {
 				tone: i.tone ?? "neutral",
@@ -3758,12 +3758,15 @@ function xh({ status: e, points: t, owner: n, priority: r, appearance: i = "inli
 		return c.forEach((n, r) => {
 			r > 0 && n.key === "owner" && t && e.push(/* @__PURE__ */ Z(mh, {}, "sep-owner")), e.push(n);
 		}), /* @__PURE__ */ Z("div", {
-			role: "group",
-			"aria-label": "Work item details",
-			"data-testid": o,
-			"data-appearance": "boxed",
-			className: L("flex flex-wrap items-center gap-x-4 gap-y-2", a),
-			children: e
+			className: "@container w-full min-w-0",
+			children: /* @__PURE__ */ Z("div", {
+				role: "group",
+				"aria-label": "Work item details",
+				"data-testid": o,
+				"data-appearance": "boxed",
+				className: L("flex flex-wrap items-center gap-x-4 gap-y-2 @max-xl:gap-x-3", a),
+				children: e
+			})
 		});
 	}
 	return /* @__PURE__ */ Z("div", {

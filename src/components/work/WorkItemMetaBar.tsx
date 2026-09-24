@@ -433,7 +433,10 @@ function PriorityField({ f, boxed }: { f: NonNullable<WorkItemMetaBarProps['prio
           onChange={(v) => f.onChange?.(v)}
           data-testid="work-meta-priority"
         >
-          <span className="whitespace-nowrap text-text-primary">Priority:</span>
+          {/* A narrow column (under 36rem, e.g. a 1280px window with both
+              side columns open) drops the word so the row stays one line;
+              the select keeps its "Priority" name. */}
+          <span className="whitespace-nowrap text-text-primary @max-xl:hidden">Priority:</span>
           {opt ? <Chip tone={opt.tone ?? 'neutral'} size="sm">{opt.label}</Chip> : <span className="text-text-tertiary">None</span>}
         </BoxedSelect>
       </Field>
@@ -488,9 +491,11 @@ export function WorkItemMetaBar({
       out.push(node);
     });
     return (
-      <div role="group" aria-label="Work item details" data-testid={testId} data-appearance="boxed"
-        className={cn('flex flex-wrap items-center gap-x-4 gap-y-2', className)}>
-        {out}
+      <div className="@container w-full min-w-0">
+        <div role="group" aria-label="Work item details" data-testid={testId} data-appearance="boxed"
+          className={cn('flex flex-wrap items-center gap-x-4 gap-y-2 @max-xl:gap-x-3', className)}>
+          {out}
+        </div>
       </div>
     );
   }

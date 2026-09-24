@@ -280,8 +280,9 @@ export function EditorShell({
                   // Draft pill. The button sizes to its words; the input, while
                   // editing, to its value.
                   // work-item: the editor's 1px border + 4px padding pulled
-                  // back so the title shares the subtitle's and meta row's edge.
-                  className={cn('min-w-0 max-w-full flex-initial py-0', titleClass, workItem && '-ml-[5px]')}
+                  // back (visually only: a negative margin shrank the fitted
+                  // box and truncated the title) onto the subtitle's edge.
+                  className={cn('min-w-0 max-w-full flex-initial py-0', titleClass, workItem && 'relative -left-[5px]')}
                   data-testid={`${testId}-title`}
                 />
               ) : (

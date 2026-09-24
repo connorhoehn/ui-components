@@ -2263,7 +2263,7 @@ function Pr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 													label: i,
 													required: !0,
 													fitContent: !0,
-													className: n("min-w-0 max-w-full flex-initial py-0", ie, V && "-ml-[5px]"),
+													className: n("min-w-0 max-w-full flex-initial py-0", ie, V && "relative -left-[5px]"),
 													"data-testid": `${B}-title`
 												}) : /* @__PURE__ */ Q("h1", {
 													className: n("m-0 min-w-0 max-w-full flex-initial truncate text-text-primary", ie),
