@@ -10,8 +10,18 @@ import remarkGfm from 'remark-gfm';
 import { cn } from '../../lib/cn';
 import CodeBlock, { type CodeBlockLanguage } from './CodeBlock';
 
+export type MarkdownViewScale = 'sm' | 'md' | 'lg';
+
 export interface MarkdownViewProps {
   markdown: string;
+  /**
+   * Type scale (since 2.388.0). `md` (default) is the long-standing rendering:
+   * 14px body, h1 20px. `sm` steps headings down to 17/15/14/13px over a 13px
+   * body, for prose inside a card (an assistant answer) whose `#` must not
+   * compete with the page title. `lg` is a document read on its own page:
+   * 15px body, h1 24px, h2 20px.
+   */
+  scale?: MarkdownViewScale;
   className?: string;
   'data-testid'?: string;
 }
@@ -33,11 +43,51 @@ function textContent(node: ReactNode): string {
   return '';
 }
 
-const components: Components = {
+interface ScaleClasses {
+  body: string;
+  h1: string;
+  h2: string;
+  h3: string;
+  h4: string;
+  inlineCode: string;
+}
+
+// `md` reproduces the pre-2.388 classes exactly; h4 had no override then and
+// keeps none at `md`.
+const SCALES: Record<MarkdownViewScale, ScaleClasses> = {
+  sm: {
+    body: 'text-[13px]',
+    h1: 'mb-2 mt-4 text-[17px] font-semibold',
+    h2: 'mb-1.5 mt-4 text-[15px] font-semibold',
+    h3: 'mb-1.5 mt-3 text-[14px] font-semibold',
+    h4: 'mb-1 mt-3 text-[13px] font-semibold',
+    inlineCode: 'text-[12px]',
+  },
+  md: {
+    body: 'text-sm',
+    h1: 'mb-3 mt-6 text-xl font-bold',
+    h2: 'mb-2 mt-5 text-lg font-bold',
+    h3: 'mb-2 mt-4 text-base font-semibold',
+    h4: '',
+    inlineCode: 'text-[13px]',
+  },
+  lg: {
+    body: 'text-[15px]',
+    h1: 'mb-3 mt-7 text-2xl font-semibold',
+    h2: 'mb-2 mt-6 text-xl font-semibold',
+    h3: 'mb-2 mt-5 text-[17px] font-semibold',
+    h4: 'mb-1.5 mt-4 text-[15px] font-semibold',
+    inlineCode: 'text-[14px]',
+  },
+};
+
+function buildComponents(scale: MarkdownViewScale): Components {
+  const t = SCALES[scale];
+  const components: Components = {
   table({ children }) {
     return (
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-sm">{children}</table>
+        <table className={cn('w-full border-collapse', t.body)}>{children}</table>
       </div>
     );
   },
@@ -55,25 +105,25 @@ const components: Components = {
     );
   },
   h1({ children }) {
-    return <h1 className="mb-3 mt-6 text-xl font-bold text-text-primary first:mt-0">{children}</h1>;
+    return <h1 className={cn(t.h1, 'text-text-primary first:mt-0')}>{children}</h1>;
   },
   h2({ children }) {
-    return <h2 className="mb-2 mt-5 text-lg font-bold text-text-primary first:mt-0">{children}</h2>;
+    return <h2 className={cn(t.h2, 'text-text-primary first:mt-0')}>{children}</h2>;
   },
   h3({ children }) {
-    return <h3 className="mb-2 mt-4 text-base font-semibold text-text-primary first:mt-0">{children}</h3>;
+    return <h3 className={cn(t.h3, 'text-text-primary first:mt-0')}>{children}</h3>;
   },
   p({ children }) {
-    return <p className="mb-3 text-sm leading-relaxed text-text-secondary last:mb-0">{children}</p>;
+    return <p className={cn('mb-3 leading-relaxed text-text-secondary last:mb-0', t.body)}>{children}</p>;
   },
   ul({ children }) {
-    return <ul className="mb-3 list-disc space-y-1 pl-5 text-sm text-text-secondary">{children}</ul>;
+    return <ul className={cn('mb-3 list-disc space-y-1 pl-5 text-text-secondary', t.body)}>{children}</ul>;
   },
   ol({ children }) {
-    return <ol className="mb-3 list-decimal space-y-1 pl-5 text-sm text-text-secondary">{children}</ol>;
+    return <ol className={cn('mb-3 list-decimal space-y-1 pl-5 text-text-secondary', t.body)}>{children}</ol>;
   },
   blockquote({ children }) {
-    return <blockquote className="mb-3 border-l-2 border-border pl-3 text-sm italic text-text-tertiary">{children}</blockquote>;
+    return <blockquote className={cn('mb-3 border-l-2 border-border pl-3 italic text-text-tertiary', t.body)}>{children}</blockquote>;
   },
   hr() {
     return <hr className="my-4 border-border" />;
@@ -87,13 +137,24 @@ const components: Components = {
   code({ className, children }) {
     if (!className) {
       return (
-        <code className="rounded bg-surface-inset px-1 py-0.5 text-[13px] text-text-primary">{children}</code>
+        <code className={cn('rounded bg-surface-inset px-1 py-0.5 text-text-primary', t.inlineCode)}>{children}</code>
       );
     }
     // Handled by the parent <pre> override for fenced blocks; inline code
     // with a language class (rare) falls back to plain styling.
     return <code className={className}>{children}</code>;
   },
+  };
+  if (t.h4) {
+    components.h4 = ({ children }) => <h4 className={cn(t.h4, 'text-text-primary first:mt-0')}>{children}</h4>;
+  }
+  return components;
+}
+
+const COMPONENTS: Record<MarkdownViewScale, Components> = {
+  sm: buildComponents('sm'),
+  md: buildComponents('md'),
+  lg: buildComponents('lg'),
 };
 
 function CodeBlockFromPre({ children, className }: { children?: ReactNode; className?: string }) {
@@ -108,10 +169,10 @@ function CodeBlockFromPre({ children, className }: { children?: ReactNode; class
   return <CodeBlock code={code} language={language} className="mb-3" copyButton />;
 }
 
-export function MarkdownView({ markdown, className, 'data-testid': testId = 'markdown-view' }: MarkdownViewProps) {
+export function MarkdownView({ markdown, scale = 'md', className, 'data-testid': testId = 'markdown-view' }: MarkdownViewProps) {
   return (
-    <div className={cn('min-w-0', className)} data-testid={testId}>
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
+    <div className={cn('min-w-0', className)} data-scale={scale} data-testid={testId}>
+      <ReactMarkdown remarkPlugins={[remarkGfm]} components={COMPONENTS[scale] ?? COMPONENTS.md}>
         {markdown}
       </ReactMarkdown>
     </div>

@@ -27,6 +27,7 @@ import { SVGProps } from 'react';
 import { TdHTMLAttributes } from 'react';
 import { TextareaHTMLAttributes } from 'react';
 import { ThHTMLAttributes } from 'react';
+import { Viewport } from '@xyflow/react';
 import { XmlFragment } from 'yjs';
 import * as Y from 'yjs';
 
@@ -2404,6 +2405,24 @@ export declare interface CanvasPaneLayoutProps extends CanvasPaneGeometryOptions
 export declare type CanvasPanePlacement = 'none' | 'column' | 'overlay' | 'collapsed';
 
 declare type CanvasTool = 'brush' | 'pen' | 'eraser' | 'select';
+
+export declare function CanvasZoomControls({ zoom, onZoomIn, onZoomOut, onFit, minZoom, maxZoom, className, 'aria-label': ariaLabel, 'data-testid': testId, }: CanvasZoomControlsProps): JSX.Element;
+
+export declare interface CanvasZoomControlsProps {
+    /** Current zoom, 1 = 100%. Omit to hide the readout. */
+    zoom?: number;
+    onZoomIn: () => void;
+    onZoomOut: () => void;
+    /** Fit the whole drawing. Omit to hide the button. */
+    onFit?: () => void;
+    /** Disable "zoom out" at or below this zoom. */
+    minZoom?: number;
+    /** Disable "zoom in" at or above this zoom. */
+    maxZoom?: number;
+    className?: string;
+    'aria-label'?: string;
+    'data-testid'?: string;
+}
 
 export declare function CapabilityDeniedFallback({ capabilityName, title, description, actionLabel, onAction, actions, icon, testId, }: CapabilityDeniedFallbackProps): JSX.Element;
 
@@ -7375,6 +7394,9 @@ export declare function formatDuration(ms?: number): string;
  */
 export declare function formatEstimate(estimate: RunEstimate): string;
 
+/** "9h ago", "just now", "Sep 3" — `formatCompactAge` read as a sentence. */
+export declare function formatSourceAge(value: string | number | Date | null | undefined, now?: number): string | undefined;
+
 /** "$1.46", "<$0.01", "$1,204". Exported for tests and hosts that echo it. */
 export declare function formatSpend(usd: number): string;
 
@@ -9377,6 +9399,37 @@ declare interface KeyboardShortcut {
     preventDefault?: boolean;
 }
 
+export declare function KeyValue({ items, layout, labelWidth, className, 'aria-label': ariaLabel, 'data-testid': testId, }: KeyValueProps): JSX.Element | null;
+
+export declare interface KeyValueItem {
+    label: string;
+    value: ReactNode;
+    /** Monospace value — ids, shas, model ids. */
+    mono?: boolean;
+    /**
+     * Native tooltip on the value — the full text of a value the layout
+     * truncates (a long id, a path).
+     */
+    title?: string;
+}
+
+export declare type KeyValueLayout = 'stack' | 'row' | 'grid';
+
+export declare interface KeyValueProps {
+    items: KeyValueItem[];
+    /**
+     * `row` (default): label in a fixed column left of the value.
+     * `stack`: label above value, one fact per line.
+     * `grid`: stacked pairs in two columns.
+     */
+    layout?: KeyValueLayout;
+    /** Row layout only: the label column's Tailwind width class. Default `w-28`. */
+    labelWidth?: string;
+    className?: string;
+    'aria-label'?: string;
+    'data-testid'?: string;
+}
+
 export declare interface KnowledgeBaseNodeData {
     type: 'knowledge-base';
     knowledgeBaseId: string;
@@ -9447,6 +9500,18 @@ export declare interface LabStep {
 export declare const LayerStack: typeof StackDiagram;
 
 export declare function layoutGraph(nodes: GraphNode[], edges: GraphEdge[], layout: GraphLayout, size: GraphLayoutSize): GraphPositions;
+
+/** Node positions for a layout. Exported for tests and hosts that draw their own minimap. */
+export declare function layoutTypedNodes(nodes: TypedCanvasNode[], edges: Pick<TypedCanvasEdge, 'from' | 'to'>[], options?: {
+    layout?: 'ltr' | 'manual';
+    nodeWidth?: number;
+    nodeHeight?: number;
+    columnGap?: number;
+    rowGap?: number;
+}): Map<string, {
+    x: number;
+    y: number;
+}>;
 
 /**
  * @deprecated Pre-2.106 spelling. 'docked' is now 'window'; everything
@@ -9870,13 +9935,23 @@ export declare interface MappingRule {
 
 export declare function mapStatusToDecision(status: string): ApprovalDecision | null;
 
-export declare function MarkdownView({ markdown, className, 'data-testid': testId }: MarkdownViewProps): JSX.Element;
+export declare function MarkdownView({ markdown, scale, className, 'data-testid': testId }: MarkdownViewProps): JSX.Element;
 
 export declare interface MarkdownViewProps {
     markdown: string;
+    /**
+     * Type scale (since 2.388.0). `md` (default) is the long-standing rendering:
+     * 14px body, h1 20px. `sm` steps headings down to 17/15/14/13px over a 13px
+     * body, for prose inside a card (an assistant answer) whose `#` must not
+     * compete with the page title. `lg` is a document read on its own page:
+     * 15px body, h1 24px, h2 20px.
+     */
+    scale?: MarkdownViewScale;
     className?: string;
     'data-testid'?: string;
 }
+
+export declare type MarkdownViewScale = 'sm' | 'md' | 'lg';
 
 export declare function MasterDetail<T>({ items, keyOf, selectedKey, onSelect, renderRow, renderCompactRow, renderDetail, railTitle, railWidth, compactWidth, storageKey, emptyDetail, className, 'data-testid': testId, }: MasterDetailProps<T>): JSX.Element;
 
@@ -12597,6 +12672,38 @@ export declare interface PresentationSourceOption {
     kind?: 'document' | 'transcript';
 }
 
+/** What each outcome marker says to a screen reader (and a host's legend). */
+export declare const PROCEDURE_STEP_STATUS_LABELS: Record<ProcedureStepStatus, string>;
+
+export declare interface ProcedureStep {
+    id: string;
+    title: ReactNode;
+    /** Longer instruction under the title. */
+    body?: ReactNode;
+    /** The latest outcome for this step. Absent: no run has reached a verdict — the number is shown. */
+    status?: ProcedureStepStatus;
+    /** A quiet line under the step — "Not reached in this run.", the failure reason. */
+    note?: ReactNode;
+}
+
+export declare function ProcedureSteps({ steps, numbered, size, onSelectStep, emptyLabel, className, 'aria-label': ariaLabel, 'data-testid': testId, }: ProcedureStepsProps): JSX.Element;
+
+export declare interface ProcedureStepsProps {
+    steps: ProcedureStep[];
+    /** Show step numbers. Default `true`. */
+    numbered?: boolean;
+    /** `sm` 13px text, 20px markers (an inspector); `md` (default) 14px, 24px markers (a record body). */
+    size?: 'sm' | 'md';
+    onSelectStep?: (id: string) => void;
+    /** Shown when `steps` is empty. Default "No steps recorded". */
+    emptyLabel?: string;
+    className?: string;
+    'aria-label'?: string;
+    'data-testid'?: string;
+}
+
+export declare type ProcedureStepStatus = 'done' | 'failed' | 'pending' | 'skipped';
+
 declare interface ProfileItem {
     userId: string;
     displayName: string;
@@ -12918,6 +13025,9 @@ export declare interface RangeSliderProps {
     onChange: (value: [number, number]) => void;
     className?: string;
 }
+
+/** Longest-path rank from the roots; cycles fall back to column 0. Exported for tests. */
+export declare function rankTypedNodes(nodes: Pick<TypedCanvasNode, 'id' | 'rank'>[], edges: Pick<TypedCanvasEdge, 'from' | 'to'>[]): Map<string, number>;
 
 export declare interface RateInfo {
     [key: string]: unknown;
@@ -14004,7 +14114,7 @@ export declare interface ScatterNodeData {
     maxConcurrency?: number;
 }
 
-export declare function ScopeHeader({ breadcrumbs, title, status, progress, spentUsd, stats, people, link, menu, menuLabel, tabs, activeTab, onTabChange, className, 'data-testid': testId, }: ScopeHeaderProps): JSX.Element;
+export declare function ScopeHeader({ breadcrumbs, title, status, progress, spentUsd, stats, people, link, controls, menu, menuLabel, tabs, activeTab, onTabChange, className, 'data-testid': testId, }: ScopeHeaderProps): JSX.Element;
 
 export declare interface ScopeHeaderPeopleGroup {
     /** "Owner". Rendered small and uppercase before the avatars. */
@@ -14043,6 +14153,11 @@ export declare interface ScopeHeaderProps {
         href: string;
         icon?: ReactNode;
     } | null;
+    /**
+     * Since 2.388.0: controls the host owns (a repository selector), drawn in
+     * the right-hand group just before the link.
+     */
+    controls?: ReactNode;
     /** The ⋯ menu. Omitted or empty — no button. */
     menu?: DropdownMenuSection[] | null;
     menuLabel?: string;
@@ -14059,7 +14174,15 @@ export declare interface ScopeHeaderTab {
     /** Shown muted after the label. Absent or `undefined` shows none; `0` shows "0". */
     count?: number;
     disabled?: boolean;
+    /** Since 2.388.0: a small dot after the label (and count). Absent or `false`-y draws none. */
+    dot?: ScopeHeaderTabDot;
 }
+
+/**
+ * A tab's attention dot. `true` is the brand dot ("something new"); a tone
+ * says what kind of attention — "Activity •" when a tier is behind.
+ */
+export declare type ScopeHeaderTabDot = 'warning' | 'danger' | 'info' | true;
 
 /**
  * Horizontal progress-bar gauge for 0..1 scores. Used by the judge
@@ -14786,6 +14909,43 @@ declare interface SocialTabContentProps {
     onMessage: OnMessageFn_7;
 }
 
+export declare function SourceCard({ id, title, kind, timestamp, excerpt, onOpen, href, current, now, className, 'data-testid': testId, }: SourceCardProps): JSX.Element;
+
+export declare interface SourceCardProps {
+    id: string;
+    title: string;
+    /** The mark's kind. Default `page`. */
+    kind?: FileKind;
+    /** When the source was written. ISO string, epoch ms or Date. */
+    timestamp?: string | number | Date | null;
+    /** A line or two of what the source says. Clamped to two lines. */
+    excerpt?: ReactNode;
+    onOpen?: (id: string) => void;
+    href?: string;
+    /** This is the source being viewed. */
+    current?: boolean;
+    /** Clock for the age (tests, server-rendered snapshots). Default `Date.now()`. */
+    now?: number;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function SourceList({ items, emptyLabel, onOpen, now, className, 'aria-label': ariaLabel, 'data-testid': testId, }: SourceListProps): JSX.Element;
+
+export declare type SourceListItem = Omit<SourceCardProps, 'now' | 'className' | 'data-testid'>;
+
+export declare interface SourceListProps {
+    items: SourceListItem[];
+    /** Shown when `items` is empty. Default "No sources recorded". */
+    emptyLabel?: string;
+    /** Applied to every card that has no handler of its own. */
+    onOpen?: (id: string) => void;
+    now?: number;
+    className?: string;
+    'aria-label'?: string;
+    'data-testid'?: string;
+}
+
 declare interface SourceSloMetrics {
     sourceId: string;
     window: string;
@@ -15073,13 +15233,24 @@ export declare interface StatsCardProps {
     style?: CSSProperties;
 }
 
-export declare function StatStrip({ items, frameless, className, 'aria-label': ariaLabel, 'data-testid': testId, }: StatStripProps): JSX.Element;
+export declare function StatStrip({ items, frameless, connectors, className, 'aria-label': ariaLabel, 'data-testid': testId, }: StatStripProps): JSX.Element;
+
+/** A labelled arrow between two clusters — "Compact", "Publish". */
+export declare interface StatStripConnector {
+    label: string;
+    /** Tints the arrow and its label. Default: tertiary ink. */
+    tone?: Tone;
+}
 
 export declare interface StatStripItem {
     label: string;
     value: ReactNode;
     hint?: ReactNode;
     tone?: 'default' | 'accent' | 'danger';
+    /** A line under the value — "● 50m behind". Since 2.388.0. */
+    status?: StatStripStatus | null;
+    /** Native tooltip on the cluster (the full hint, provenance). Since 2.388.0. */
+    title?: string;
     onSelect?: () => void;
     href?: string;
 }
@@ -15097,9 +15268,23 @@ export declare interface StatStripProps {
      * those separate the numbers from each other, not the strip from the page.
      */
     frameless?: boolean;
+    /**
+     * Since 2.388.0: `connectors[i]` is drawn between `items[i]` and
+     * `items[i + 1]` as a labelled arrow, replacing the divider there. A strip
+     * with connectors reads left to right as a flow. Extra entries are ignored;
+     * a missing one leaves a plain gap.
+     */
+    connectors?: StatStripConnector[];
     className?: string;
     'aria-label'?: string;
     'data-testid'?: string;
+}
+
+/** A cluster's health line: a tone dot and a short worded state. */
+export declare interface StatStripStatus {
+    label: string;
+    /** Default `neutral` (secondary ink). */
+    tone?: Tone;
 }
 
 export declare function StatusBadge({ status, variant }: StatusBadgeProps): JSX.Element;
@@ -16954,6 +17139,42 @@ export declare function truncationFromMetadata(metadata: Record<string, unknown>
     labels: string[];
 } | null;
 
+export declare interface TypedCanvasEdge {
+    id: string;
+    from: string;
+    to: string;
+    /** Short word over the line — "Compact", "Publish". */
+    label?: string;
+    /** A quiet line under it — "13 notes → 4 patterns · 3h ago". */
+    detail?: ReactNode;
+    /** Line colour. Default: the brand colour. */
+    tone?: Tone;
+    /** A dot rides the line. Only for work CONFIRMED running; never under reduced motion. */
+    animated?: boolean;
+    marker?: TypedCanvasEdgeMarker | null;
+}
+
+/** A job marker on an edge — a dot on the line the reader can select. */
+export declare interface TypedCanvasEdgeMarker {
+    /** Accessible name — "Compaction L0 → L1, running". */
+    label: string;
+    tone?: Tone;
+}
+
+export declare interface TypedCanvasNode<K extends string = string, D = unknown> {
+    id: string;
+    /** What the node is — `tier`, `library`, `note`, `cluster`… The host's `renderNode` switches on it. */
+    kind: K;
+    data: D;
+    /** Column in the `ltr` layout. Absent: derived from the edges (longest path from a root). */
+    rank?: number;
+    /** Explicit position. Required-ish for `manual`; in `ltr` it overrides the computed spot. */
+    x?: number;
+    y?: number;
+    /** Accessible name, and the list view's text when there is no `renderListItem`. Default: `id`. */
+    label?: string;
+}
+
 declare interface TypedDocument {
     documentId: string;
     typeId: string;
@@ -16964,6 +17185,46 @@ declare interface TypedDocument {
 }
 
 declare type TypedDocumentValue = string | string[] | number | number[] | boolean;
+
+export declare function TypedNodeCanvas<N extends TypedCanvasNode = TypedCanvasNode>({ nodes, edges, renderNode, layout, onSelectNode, onSelectEdge, selectedId, listFallback, renderListItem, nodeWidth, nodeHeight, columnGap, rowGap, controls, caption, minZoom, maxZoom, onViewportChange, emptyLabel, className, 'aria-label': ariaLabel, 'data-testid': testId, }: TypedNodeCanvasProps<N>): JSX.Element;
+
+export declare interface TypedNodeCanvasProps<N extends TypedCanvasNode = TypedCanvasNode> {
+    nodes: N[];
+    edges: TypedCanvasEdge[];
+    renderNode: (node: N, state: {
+        selected: boolean;
+    }) => ReactNode;
+    /** `ltr` (default): rank columns left to right. `manual`: every node at its own `x`/`y`. */
+    layout?: 'ltr' | 'manual';
+    onSelectNode?: (id: string) => void;
+    /** Called from an edge's marker or its line. */
+    onSelectEdge?: (id: string) => void;
+    /** The selected node OR edge id. */
+    selectedId?: string | null;
+    /** Draw the list equivalent instead of the canvas. */
+    listFallback?: boolean;
+    /** The list view's row body. Default: the node's `label` and `kind`. */
+    renderListItem?: (node: N) => ReactNode;
+    /** Layout box for a node, px. Defaults 224 × 168. */
+    nodeWidth?: number;
+    nodeHeight?: number;
+    /** Space between rank columns, px. Default 144 (room for an edge label). */
+    columnGap?: number;
+    /** Space between nodes in one column, px. Default 32. */
+    rowGap?: number;
+    /** Draw `CanvasZoomControls` in the bottom-left corner. Default `true`. */
+    controls?: boolean;
+    /** A quiet line in the bottom band beside the controls — the legend in words. */
+    caption?: ReactNode;
+    minZoom?: number;
+    maxZoom?: number;
+    onViewportChange?: (viewport: Viewport) => void;
+    /** Shown when `nodes` is empty. */
+    emptyLabel?: string;
+    className?: string;
+    'aria-label'?: string;
+    'data-testid'?: string;
+}
 
 /** Where the currently rendered list came from. */
 declare type TypesSource = 'loading' | 'remote' | 'cache';
@@ -20210,6 +20471,25 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasListStyle: {
             /**
              * Make the caret's block a list of the style's kind (if it is not one
@@ -20223,18 +20503,25 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
+        hitlMacro: {
+            /** Inserts an agent -> human callout at the selection. */
+            insertHitl: (draft: HitlDraft) => ReturnType;
             /**
-             * Space the paragraphs in the selection.
+             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
+             * answered from an inbox by somebody who never opened this page.
              *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
+             * The same one-range edit answering in the page makes, addressed by
+             * the callout's `id` instead of by a node view. Returns false when
+             * no callout carries that id, when the body is not one
+             * `answerHitlEdit` will write to, and — deliberately — when the
+             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
              */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
+            answerHitl: (params: {
+                id: string;
+                answer: string;
+                answeredBy?: string;
+                answeredAt?: string;
+            }) => ReturnType;
         };
     }
 }
@@ -20265,6 +20552,16 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
@@ -20278,42 +20575,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        hitlMacro: {
-            /** Inserts an agent -> human callout at the selection. */
-            insertHitl: (draft: HitlDraft) => ReturnType;
-            /**
-             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
-             * answered from an inbox by somebody who never opened this page.
-             *
-             * The same one-range edit answering in the page makes, addressed by
-             * the callout's `id` instead of by a node view. Returns false when
-             * no callout carries that id, when the body is not one
-             * `answerHitlEdit` will write to, and — deliberately — when the
-             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
-             */
-            answerHitl: (params: {
-                id: string;
-                answer: string;
-                answeredBy?: string;
-                answeredAt?: string;
-            }) => ReturnType;
         };
     }
 }

@@ -14,4 +14,10 @@ export type {
 export { layoutGraph, graphCenterNode, graphGroups } from './layout';
 export type { GraphLayoutSize, GraphPositions } from './layout';
 export type { GraphNode, GraphEdge, GraphLayout, GraphPoint } from './types';
+// Typed-node canvas (2.388.0) — an xyflow canvas of host-drawn typed nodes
+// (lineage, tier flow) with its list equivalent, and the standalone zoom cluster.
+export { TypedNodeCanvas, layoutTypedNodes, rankTypedNodes } from './TypedNodeCanvas';
+export type { TypedNodeCanvasProps, TypedCanvasNode, TypedCanvasEdge, TypedCanvasEdgeMarker } from './TypedNodeCanvas';
+export { CanvasZoomControls } from './CanvasZoomControls';
+export type { CanvasZoomControlsProps } from './CanvasZoomControls';
 export * from './work';

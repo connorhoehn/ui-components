@@ -72,4 +72,47 @@ describe('StatStrip', () => {
       expect(cell.className).not.toContain('pr-0');
     }
   });
+
+  it('draws a labelled connector between neighbours and drops the dividers', () => {
+    render(
+      <StatStrip
+        data-testid="flow"
+        items={[{ label: 'L0', value: 89 }, { label: 'L1', value: 22 }, { label: 'L2', value: 11 }]}
+        connectors={[{ label: 'Compact' }, { label: 'Publish', tone: 'warning' }]}
+      />,
+    );
+    const connectors = screen.getAllByTestId('stat-strip-connector');
+    expect(connectors).toHaveLength(2);
+    expect(connectors.map((c) => c.textContent)).toEqual(['Compact', 'Publish']);
+    expect(connectors[1]!.className).toContain('text-warning-fg');
+    expect(screen.getByTestId('flow').className).not.toContain('divide-x');
+    // connectors sit BETWEEN clusters: L0, arrow, L1, arrow, L2
+    const kids = Array.from(screen.getByTestId('flow').children);
+    expect(kids.map((k) => k.getAttribute('data-testid') ?? 'cluster')).toEqual([
+      'cluster', 'stat-strip-connector', 'cluster', 'stat-strip-connector', 'cluster',
+    ]);
+  });
+
+  it('keeps dividers when there are no connectors', () => {
+    render(<StatStrip data-testid="plain" items={[{ label: 'A', value: 1 }, { label: 'B', value: 2 }]} />);
+    expect(screen.getByTestId('plain').className).toContain('divide-x');
+    expect(screen.queryByTestId('stat-strip-connector')).toBeNull();
+  });
+
+  it('renders a status line with a tone dot, and a native title', () => {
+    render(
+      <StatStrip
+        items={[
+          { label: 'L1', value: 22, status: { label: '50m behind', tone: 'warning' }, title: 'Last compaction 50 minutes ago' },
+          { label: 'L2', value: 11, status: { label: 'OK' } },
+        ]}
+      />,
+    );
+    const lines = screen.getAllByTestId('stat-strip-status');
+    expect(lines[0]!.textContent).toBe('50m behind');
+    expect(lines[0]!.querySelector('[aria-hidden="true"]')!.className).toContain('bg-warning');
+    expect(screen.getByText('50m behind').className).toContain('text-warning-fg');
+    expect(screen.getByText('OK').className).toContain('text-text-secondary');
+    expect(screen.getByTitle('Last compaction 50 minutes ago')).toBeTruthy();
+  });
 });

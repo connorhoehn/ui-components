@@ -364,7 +364,9 @@ export type { RailLayoutProps, RailSectionProps } from './RailLayout';
 export { SignoffPanel } from './SignoffPanel';
 export type { SignoffPanelProps, SignoffEntry } from './SignoffPanel';
 export { StatStrip } from './StatStrip';
-export type { StatStripProps, StatStripItem } from './StatStrip';
+export type { StatStripProps, StatStripItem, StatStripConnector, StatStripStatus } from './StatStrip';
+export { KeyValue } from './KeyValue';
+export type { KeyValueProps, KeyValueItem, KeyValueLayout } from './KeyValue';
 
 // ── Content segmentation (2026-09) ──
 //
@@ -403,7 +405,7 @@ export type { WorkflowStepperProps, WorkflowStep } from './WorkflowStepper';
 export { Wizard } from './Wizard';
 export type { WizardProps, WizardStep } from './Wizard';
 export { MarkdownView } from './MarkdownView';
-export type { MarkdownViewProps } from './MarkdownView';
+export type { MarkdownViewProps, MarkdownViewScale } from './MarkdownView';
 export { Tooltip } from './Tooltip';
 export type { TooltipProps, TooltipPlacement } from './Tooltip';
 export { ChoiceList, ChoiceRow, ChoiceOption } from './ChoiceList';

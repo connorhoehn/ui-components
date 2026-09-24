@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ScopeHeader, type ScopeHeaderProps } from './ScopeHeader';
+import { Select } from '../forms/Select';
 
 const meta: Meta<typeof ScopeHeader> = {
   title: 'Work/ScopeHeader',
@@ -50,6 +51,37 @@ export const Dark: Story = {
   render: () => (
     <div data-theme="dark" className="w-[1592px] bg-surface-panel">
       <Live {...MOCKUP} />
+    </div>
+  ),
+};
+
+/**
+ * A module header (Distillation): tabs carry a count and an attention dot,
+ * and a repository selector sits in the `controls` slot before the link.
+ */
+export const DotsAndControls: Story = {
+  render: () => (
+    <div className="w-[1440px] bg-surface-panel">
+      <Live
+        title="Distillation"
+        tabs={[
+          { id: 'work', label: 'Knowledge' },
+          { id: 'review', label: 'Review', count: 7 },
+          { id: 'activity', label: 'Activity', dot: 'warning' },
+        ]}
+        controls={
+          <Select
+            size="md"
+            aria-label="Repository"
+            defaultValue="all"
+            options={[
+              { value: 'all', label: 'All repositories' },
+              { value: 'orgiq-auth-service', label: 'orgiq-auth-service' },
+            ]}
+          />
+        }
+        link={{ label: 'Open Library', href: '#library' }}
+      />
     </div>
   ),
 };

@@ -25,6 +25,25 @@ import { PresenceAvatars, type PresenceUser } from '../shared/PresenceAvatars';
 import { Tabs } from '../shared/Tabs';
 import { DropdownMenu, type DropdownMenuSection } from '../shared/DropdownMenu';
 import { LinkIcon } from '../ui/Icons';
+import { TONE_SOLID_BG } from '../shared/tones';
+
+/**
+ * A tab's attention dot. `true` is the brand dot ("something new"); a tone
+ * says what kind of attention — "Activity •" when a tier is behind.
+ */
+export type ScopeHeaderTabDot = 'warning' | 'danger' | 'info' | true;
+
+const DOT_CLASS: Record<'warning' | 'danger' | 'info', string> = {
+  warning: TONE_SOLID_BG.warning,
+  danger: TONE_SOLID_BG.danger,
+  info: TONE_SOLID_BG.info,
+};
+
+const DOT_WORD: Record<'warning' | 'danger' | 'info', string> = {
+  warning: 'needs attention',
+  danger: 'has a problem',
+  info: 'has updates',
+};
 
 export interface ScopeHeaderPeopleGroup {
   /** "Owner". Rendered small and uppercase before the avatars. */
@@ -38,6 +57,8 @@ export interface ScopeHeaderTab {
   /** Shown muted after the label. Absent or `undefined` shows none; `0` shows "0". */
   count?: number;
   disabled?: boolean;
+  /** Since 2.388.0: a small dot after the label (and count). Absent or `false`-y draws none. */
+  dot?: ScopeHeaderTabDot;
 }
 
 export interface ScopeHeaderProgress {
@@ -64,6 +85,11 @@ export interface ScopeHeaderProps {
   people?: ScopeHeaderPeopleGroup[];
   /** One link after the people ("the repository"). */
   link?: { label: string; href: string; icon?: ReactNode } | null;
+  /**
+   * Since 2.388.0: controls the host owns (a repository selector), drawn in
+   * the right-hand group just before the link.
+   */
+  controls?: ReactNode;
   /** The ⋯ menu. Omitted or empty — no button. */
   menu?: DropdownMenuSection[] | null;
   menuLabel?: string;
@@ -90,6 +116,7 @@ export function ScopeHeader({
   stats,
   people,
   link,
+  controls,
   menu,
   menuLabel,
   tabs,
@@ -146,6 +173,11 @@ export function ScopeHeader({
               <PresenceAvatars users={g.people} size={26} maxVisible={4} />
             </div>
           ))}
+          {controls != null && controls !== false && (
+            <div className="flex shrink-0 items-center gap-2" data-testid={`${testId}-controls`}>
+              {controls}
+            </div>
+          )}
           {link && (
             <a
               href={link.href}
@@ -176,8 +208,23 @@ export function ScopeHeader({
             id: t.id,
             label: t.label,
             ...(t.disabled ? { disabled: true } : {}),
-            ...(typeof t.count === 'number'
-              ? { badge: <span aria-label={`${t.count} in ${t.label}`}>{t.count}</span> }
+            ...(typeof t.count === 'number' || t.dot
+              ? {
+                  badge: (
+                    <span className="inline-flex items-center gap-1.5">
+                      {typeof t.count === 'number' && <span aria-label={`${t.count} in ${t.label}`}>{t.count}</span>}
+                      {t.dot && (
+                        <span
+                          role="img"
+                          aria-label={`${t.label} ${t.dot === true ? 'has updates' : DOT_WORD[t.dot]}`}
+                          data-testid={`${testId}-tab-${t.id}-dot`}
+                          data-dot={t.dot === true ? 'brand' : t.dot}
+                          className={cn('inline-block h-2 w-2 shrink-0 rounded-full', t.dot === true ? 'bg-primary' : DOT_CLASS[t.dot])}
+                        />
+                      )}
+                    </span>
+                  ),
+                }
               : {}),
             testId: `${testId}-tab-${t.id}`,
           }))}

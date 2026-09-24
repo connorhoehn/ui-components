@@ -16,7 +16,7 @@ export type {
   ToWorkListRowsOptions,
 } from './WorkListView';
 export { ScopeHeader, formatSpend } from './ScopeHeader';
-export type { ScopeHeaderProps, ScopeHeaderPeopleGroup, ScopeHeaderTab, ScopeHeaderProgress } from './ScopeHeader';
+export type { ScopeHeaderProps, ScopeHeaderPeopleGroup, ScopeHeaderTab, ScopeHeaderTabDot, ScopeHeaderProgress } from './ScopeHeader';
 export { WorkItemMetaBar, WorkSearchPicker } from './WorkItemMetaBar';
 export type { WorkItemMetaBarProps, WorkMetaOption, WorkPerson, WorkSearchPickerProps } from './WorkItemMetaBar';
 export { OutcomeSection } from './OutcomeSection';
@@ -45,3 +45,7 @@ export type { AccessNoticeProps, AccessNoticeTone, AccessNoticeAction } from './
 export { formatCompactAge } from './compactAge';
 export { WorkActivityList } from './WorkActivityList';
 export type { WorkActivityListProps, WorkActivityEvent, WorkActivityKind } from './WorkActivityList';
+export { ProcedureSteps, PROCEDURE_STEP_STATUS_LABELS } from './ProcedureSteps';
+export type { ProcedureStepsProps, ProcedureStep, ProcedureStepStatus } from './ProcedureSteps';
+export { SourceCard, SourceList, formatSourceAge } from './SourceCard';
+export type { SourceCardProps, SourceListProps, SourceListItem } from './SourceCard';

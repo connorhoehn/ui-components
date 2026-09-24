@@ -2400,6 +2400,37 @@ declare const INTENSITY_SCALE: {
     readonly high: 1.75;
 };
 
+export declare function KeyValue({ items, layout, labelWidth, className, 'aria-label': ariaLabel, 'data-testid': testId, }: KeyValueProps): JSX.Element | null;
+
+export declare interface KeyValueItem {
+    label: string;
+    value: ReactNode;
+    /** Monospace value — ids, shas, model ids. */
+    mono?: boolean;
+    /**
+     * Native tooltip on the value — the full text of a value the layout
+     * truncates (a long id, a path).
+     */
+    title?: string;
+}
+
+export declare type KeyValueLayout = 'stack' | 'row' | 'grid';
+
+export declare interface KeyValueProps {
+    items: KeyValueItem[];
+    /**
+     * `row` (default): label in a fixed column left of the value.
+     * `stack`: label above value, one fact per line.
+     * `grid`: stacked pairs in two columns.
+     */
+    layout?: KeyValueLayout;
+    /** Row layout only: the label column's Tailwind width class. Default `w-28`. */
+    labelWidth?: string;
+    className?: string;
+    'aria-label'?: string;
+    'data-testid'?: string;
+}
+
 export declare function KPIGrid({ children, columns, mdColumns, dense, className, style, 'data-testid': testId, }: KPIGridProps): JSX.Element;
 
 export declare type KPIGridColumns = 1 | 2 | 3 | 4;
@@ -2584,13 +2615,23 @@ export declare interface LogStreamProps {
     'data-testid'?: string;
 }
 
-export declare function MarkdownView({ markdown, className, 'data-testid': testId }: MarkdownViewProps): JSX.Element;
+export declare function MarkdownView({ markdown, scale, className, 'data-testid': testId }: MarkdownViewProps): JSX.Element;
 
 export declare interface MarkdownViewProps {
     markdown: string;
+    /**
+     * Type scale (since 2.388.0). `md` (default) is the long-standing rendering:
+     * 14px body, h1 20px. `sm` steps headings down to 17/15/14/13px over a 13px
+     * body, for prose inside a card (an assistant answer) whose `#` must not
+     * compete with the page title. `lg` is a document read on its own page:
+     * 15px body, h1 24px, h2 20px.
+     */
+    scale?: MarkdownViewScale;
     className?: string;
     'data-testid'?: string;
 }
+
+export declare type MarkdownViewScale = 'sm' | 'md' | 'lg';
 
 export declare function MasterDetail<T>({ items, keyOf, selectedKey, onSelect, renderRow, renderCompactRow, renderDetail, railTitle, railWidth, compactWidth, storageKey, emptyDetail, className, 'data-testid': testId, }: MasterDetailProps<T>): JSX.Element;
 
@@ -4152,13 +4193,24 @@ export declare interface StatCardProps {
     'data-testid'?: string;
 }
 
-export declare function StatStrip({ items, frameless, className, 'aria-label': ariaLabel, 'data-testid': testId, }: StatStripProps): JSX.Element;
+export declare function StatStrip({ items, frameless, connectors, className, 'aria-label': ariaLabel, 'data-testid': testId, }: StatStripProps): JSX.Element;
+
+/** A labelled arrow between two clusters — "Compact", "Publish". */
+export declare interface StatStripConnector {
+    label: string;
+    /** Tints the arrow and its label. Default: tertiary ink. */
+    tone?: Tone;
+}
 
 export declare interface StatStripItem {
     label: string;
     value: ReactNode;
     hint?: ReactNode;
     tone?: 'default' | 'accent' | 'danger';
+    /** A line under the value — "● 50m behind". Since 2.388.0. */
+    status?: StatStripStatus | null;
+    /** Native tooltip on the cluster (the full hint, provenance). Since 2.388.0. */
+    title?: string;
     onSelect?: () => void;
     href?: string;
 }
@@ -4176,9 +4228,23 @@ export declare interface StatStripProps {
      * those separate the numbers from each other, not the strip from the page.
      */
     frameless?: boolean;
+    /**
+     * Since 2.388.0: `connectors[i]` is drawn between `items[i]` and
+     * `items[i + 1]` as a labelled arrow, replacing the divider there. A strip
+     * with connectors reads left to right as a flow. Extra entries are ignored;
+     * a missing one leaves a plain gap.
+     */
+    connectors?: StatStripConnector[];
     className?: string;
     'aria-label'?: string;
     'data-testid'?: string;
+}
+
+/** A cluster's health line: a tone dot and a short worded state. */
+export declare interface StatStripStatus {
+    label: string;
+    /** Default `neutral` (secondary ink). */
+    tone?: Tone;
 }
 
 export declare interface StatusColors {
@@ -5349,6 +5415,25 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasListStyle: {
             /**
              * Make the caret's block a list of the style's kind (if it is not one
@@ -5362,18 +5447,25 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
+        hitlMacro: {
+            /** Inserts an agent -> human callout at the selection. */
+            insertHitl: (draft: HitlDraft) => ReturnType;
             /**
-             * Space the paragraphs in the selection.
+             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
+             * answered from an inbox by somebody who never opened this page.
              *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
+             * The same one-range edit answering in the page makes, addressed by
+             * the callout's `id` instead of by a node view. Returns false when
+             * no callout carries that id, when the body is not one
+             * `answerHitlEdit` will write to, and — deliberately — when the
+             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
              */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
+            answerHitl: (params: {
+                id: string;
+                answer: string;
+                answeredBy?: string;
+                answeredAt?: string;
+            }) => ReturnType;
         };
     }
 }
@@ -5404,6 +5496,16 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
@@ -5417,42 +5519,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        hitlMacro: {
-            /** Inserts an agent -> human callout at the selection. */
-            insertHitl: (draft: HitlDraft) => ReturnType;
-            /**
-             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
-             * answered from an inbox by somebody who never opened this page.
-             *
-             * The same one-range edit answering in the page makes, addressed by
-             * the callout's `id` instead of by a node view. Returns false when
-             * no callout carries that id, when the body is not one
-             * `answerHitlEdit` will write to, and — deliberately — when the
-             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
-             */
-            answerHitl: (params: {
-                id: string;
-                answer: string;
-                answeredBy?: string;
-                answeredAt?: string;
-            }) => ReturnType;
         };
     }
 }

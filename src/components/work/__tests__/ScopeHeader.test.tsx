@@ -96,4 +96,43 @@ describe('formatCompactAge', () => {
     expect(formatCompactAge('not a date', now)).toBeUndefined();
     expect(formatCompactAge(now + 60_000, now)).toBe('now');
   });
+
+  it('draws a tab dot with an accessible name, beside or without a count', () => {
+    render(
+      <ScopeHeader
+        title="Distillation"
+        tabs={[
+          { id: 'knowledge', label: 'Knowledge' },
+          { id: 'review', label: 'Review', count: 7, dot: true },
+          { id: 'activity', label: 'Activity', dot: 'warning' },
+        ]}
+      />,
+    );
+    expect(screen.queryByTestId('scope-header-tab-knowledge-dot')).toBeNull();
+    const warn = screen.getByTestId('scope-header-tab-activity-dot');
+    expect(warn.getAttribute('data-dot')).toBe('warning');
+    expect(warn.className).toContain('bg-warning');
+    expect(screen.getByRole('img', { name: 'Activity needs attention' })).toBe(warn);
+    expect(screen.getByLabelText('7 in Review')).toBeTruthy();
+    expect(screen.getByTestId('scope-header-tab-review-dot').className).toContain('bg-primary');
+  });
+
+  it('renders the controls slot before the link', () => {
+    render(
+      <ScopeHeader
+        title="Distillation"
+        controls={<button type="button">All repositories</button>}
+        link={{ label: 'Open Library', href: '/library' }}
+      />,
+    );
+    const controls = screen.getByTestId('scope-header-controls');
+    expect(controls.textContent).toBe('All repositories');
+    const link = screen.getByTestId('scope-header-link');
+    expect(controls.compareDocumentPosition(link) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('draws no controls wrapper when none are given', () => {
+    render(<ScopeHeader title="X" />);
+    expect(screen.queryByTestId('scope-header-controls')).toBeNull();
+  });
 });

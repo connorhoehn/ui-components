@@ -39,3 +39,13 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: { markdown: SAMPLE },
 };
+
+/** `sm`: prose inside a card — headings stepped down to 17/15/14/13px. */
+export const ScaleSmall: Story = {
+  args: { markdown: SAMPLE, scale: 'sm' },
+};
+
+/** `lg`: a guide read on its own page (Distillation Knowledge mockup). */
+export const ScaleLarge: Story = {
+  args: { markdown: SAMPLE, scale: 'lg' },
+};

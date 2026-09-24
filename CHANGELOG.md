@@ -6,6 +6,51 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.388.0] — 2026-09-24
+
+The Distillation redesign's library pieces (Knowledge / Review / Activity).
+
+### Added
+- **ProcedureSteps** (`Work/ProcedureSteps`, root) — a procedure's ordered
+  steps, drawn once. Without a `status` a step shows its number in a soft disc;
+  with one it shows the outcome (done ✓, failed !, pending ○, skipped dashed ○,
+  worded for a screen reader via `PROCEDURE_STEP_STATUS_LABELS`) and keeps the
+  number as text beside the title, plus an optional `note` ("Not reached in
+  this run."). `numbered`, `size: 'sm' | 'md'`, `onSelectStep`, `emptyLabel`.
+- **KeyValue** (`Shared/KeyValue`, root + `/shared`) — labelled facts as a real
+  `<dl>`: `items: { label, value, mono?, title? }[]`, `layout: 'row' | 'stack' |
+  'grid'` (default `row`), `labelWidth` (row, default `w-28`). The upstream of
+  the portal's local `KeyValue` (queue row 57).
+- **TypedNodeCanvas** (`/graph`, root) — an xyflow canvas of host-drawn typed
+  nodes (`renderNode`): `ltr` rank layout (or `manual` / per-node `x`,`y`),
+  handles chosen from where the ends sit, tone-coloured smooth-step edges with
+  `label` / `detail` / a selectable job `marker`, a moving dot only for
+  `animated` edges and never under reduced motion, zoom controls and a
+  `caption`, keyboard-selectable nodes (Tab, Enter/Space, arrows/Home/End), and
+  `listFallback` — the list equivalent with every node, edge and selection.
+  `layoutTypedNodes` / `rankTypedNodes` are exported. Closes queue rows 23/26/32.
+- **CanvasZoomControls** (`/graph`, root) — the standalone "− 100% + ⛶"
+  cluster: `zoom`, `onZoomIn`, `onZoomOut`, `onFit`, `minZoom` / `maxZoom`
+  disable the buttons at the limits.
+- **SourceCard / SourceList** (`Work/SourceCard`, root) — evidence rows: kind
+  mark, title (button with `onOpen`, link with `href`), "9h ago"
+  (`formatSourceAge`; nothing for a bad timestamp), two-line excerpt, `current`
+  marker. `SourceList` takes `items`, `emptyLabel` and a shared `onOpen`.
+- **StatStrip** — `connectors?: { label, tone? }[]` draws a labelled arrow
+  between neighbouring clusters (a tier flow) in place of the divider;
+  `StatStripItem.status?: { label, tone? }` adds a dot + worded health line;
+  `StatStripItem.title` is a native tooltip (queue row 39). Stories added.
+- **ScopeHeader** — `tabs[].dot?: 'warning' | 'danger' | 'info' | true` (an
+  attention dot with an accessible name) and a `controls` slot (a repository
+  selector) before the link.
+- **MarkdownView** — `scale?: 'sm' | 'md' | 'lg'` (queue row 43). `md` (default)
+  is the unchanged rendering; `sm` steps headings to 17/15/14/13px over a 13px
+  body; `lg` is a 15px body with 24/20px headings.
+
+### Fixed
+- The export-surface snapshot records names earlier releases shipped
+  unrecorded (`CanvasPaneLayout`, `NoAccessState`, `CommentReplyComposer`, …).
+
 ## [2.387.1] — 2026-09-24
 
 ### Changed
