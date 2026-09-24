@@ -2421,7 +2421,7 @@ function Mt(e) {
 				})]
 			}),
 			/* @__PURE__ */ q("div", {
-				className: "absolute bottom-3 left-3 flex items-center gap-1 rounded-md border border-border bg-surface p-1",
+				className: "absolute z-10 bottom-3 left-3 flex items-center gap-1 rounded-md border border-border bg-surface p-1",
 				"data-testid": "work-activity-controls",
 				children: [
 					/* @__PURE__ */ K(i, {
@@ -2450,7 +2450,7 @@ function Mt(e) {
 					right: k + 16,
 					...G < 440 ? { bottom: 60 } : {}
 				} : void 0,
-				className: "pointer-events-none absolute bottom-4 right-4 flex items-center gap-2 rounded bg-surface/90 px-2 py-1 text-[10px] text-text-tertiary",
+				className: "pointer-events-none absolute bottom-4 right-4 z-10 flex items-center gap-2 rounded border border-border bg-surface px-2 py-1 text-[10px] text-text-tertiary",
 				children: [
 					[
 						"earlier",
@@ -3893,15 +3893,18 @@ function ln({ node: e, detail: r, selection: o, onSelectionChange: s, onClose: c
 				className: "shrink-0 space-y-2 border-t border-border p-2",
 				"data-testid": `${m}-footer`,
 				children: [(j || A.length > 0) && /* @__PURE__ */ q("div", {
-					className: "flex flex-wrap gap-2",
+					className: "grid gap-2",
+					"data-testid": `${m}-actions`,
 					children: [j && /* @__PURE__ */ K(n, {
 						size: "sm",
 						variant: "primary",
+						fullWidth: !0,
 						onClick: () => l(b),
 						children: "Open presentation"
 					}), A.map((e) => /* @__PURE__ */ K(n, {
 						size: "sm",
 						variant: "secondary",
+						fullWidth: !0,
 						onClick: () => {
 							e.onSelect?.(), e.selection && s(e.selection);
 						},

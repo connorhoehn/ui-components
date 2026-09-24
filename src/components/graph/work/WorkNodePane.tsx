@@ -283,9 +283,13 @@ export function WorkNodePane({
         // scrolls to find the one thing the pane is for.
         <div className="shrink-0 space-y-2 border-t border-border p-2" data-testid={`${testId}-footer`}>
           {(canOpenArtifact || actions.length > 0) && (
-            <div className="flex flex-wrap gap-2">
-              {canOpenArtifact && <Button size="sm" variant="primary" onClick={() => onOpen!(referenceTarget)}>Open presentation</Button>}
-              {actions.map((action) => <Button key={action.id} size="sm" variant="secondary" onClick={() => { action.onSelect?.(); if (action.selection) onSelectionChange(action.selection); }}>{action.label}</Button>)}
+            // One column of full-width buttons, the same on every pane: a
+            // wrapped row left "Open in Recordings" and "Ask in the recording"
+            // as two ragged half-width buttons over a full-width "Reference in
+            // chat" in a ~270 px pane.
+            <div className="grid gap-2" data-testid={`${testId}-actions`}>
+              {canOpenArtifact && <Button size="sm" variant="primary" fullWidth onClick={() => onOpen!(referenceTarget)}>Open presentation</Button>}
+              {actions.map((action) => <Button key={action.id} size="sm" variant="secondary" fullWidth onClick={() => { action.onSelect?.(); if (action.selection) onSelectionChange(action.selection); }}>{action.label}</Button>)}
             </div>
           )}
           {onReference && !restricted && <Button size="sm" variant="secondary" fullWidth onClick={() => onReference(referenceTarget)}>Reference in chat</Button>}

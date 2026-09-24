@@ -315,7 +315,7 @@ export function WorkActivityCanvas(props: ActivityProps) {
         )}
       </InlineAlert>
     )}
-    <div className="absolute bottom-3 left-3 flex items-center gap-1 rounded-md border border-border bg-surface p-1" data-testid="work-activity-controls">
+    <div className="absolute z-10 bottom-3 left-3 flex items-center gap-1 rounded-md border border-border bg-surface p-1" data-testid="work-activity-controls">
       <IconButton size="sm" aria-label="Zoom in" onClick={() => zoomBy(1.2)}>+</IconButton>
       <IconButton size="sm" aria-label="Zoom out" onClick={() => zoomBy(1 / 1.2)}>−</IconButton>
       <Button size="sm" variant="secondary" onClick={() => onViewportChange(fit())}>Fit graph</Button>
@@ -323,8 +323,11 @@ export function WorkActivityCanvas(props: ActivityProps) {
     {/* Beside an overlay pane, not under it: at 1280×720 the node pane lay
         over the legend and hid it whenever a node was open. In a strip too
         narrow for it and the zoom controls side by side (~300 px there), it
-        sits above the controls instead of across them. */}
-    <ul aria-label="Activity emphasis legend" style={paneInset ? { right: paneInset + 16, ...(visibleWidth < 440 ? { bottom: 60 } : {}) } : undefined} className="pointer-events-none absolute bottom-4 right-4 flex items-center gap-2 rounded bg-surface/90 px-2 py-1 text-[10px] text-text-tertiary">
+        sits above the controls instead of across them. Both float ABOVE the
+        cards (z-10, opaque): React Flow's renderer stacks its nodes over an
+        un-indexed sibling, so a card panned under the legend drew its title
+        straight through "Earlier · Input · Active". */}
+    <ul aria-label="Activity emphasis legend" style={paneInset ? { right: paneInset + 16, ...(visibleWidth < 440 ? { bottom: 60 } : {}) } : undefined} className="pointer-events-none absolute bottom-4 right-4 z-10 flex items-center gap-2 rounded border border-border bg-surface px-2 py-1 text-[10px] text-text-tertiary">
       {([['earlier', 'Earlier', 'border-border bg-surface-inset opacity-70'], ['input', 'Input', 'border-border-emphasis bg-surface-inset'], ['active', live ? 'Active' : 'Active then', 'border-info bg-info']] as const).map(([key, label, swatch]) => (
         <li key={key} className="flex items-center gap-1"><span aria-hidden="true" className={cn('inline-block h-2 w-2 rounded-sm border', swatch)} />{label}</li>
       ))}
