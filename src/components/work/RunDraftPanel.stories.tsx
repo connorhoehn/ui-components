@@ -124,3 +124,12 @@ export const Dark: Story = {
     </div>
   ),
 };
+
+/** A stated per-tier prior with no runs yet, and a dollar cap the host enforces. */
+export const PriorBracketUsdBudget: Story = {
+  args: {
+    status: 'no-draft',
+    confidence: { sampleSize: 0, basis: 'prior' },
+    budget: { unit: 'usd', usd: 0.3, onChange: () => {}, hint: 'Not started if forecast above this' },
+  },
+};

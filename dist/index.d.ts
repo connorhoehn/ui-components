@@ -13665,16 +13665,7 @@ export declare interface RovingToolbarProps {
  */
 export declare const RUN_DRAFT_STATUS_LABELS: Record<RunDraftStatus, string>;
 
-export declare interface RunDraftBudget {
-    /** The enforced token budget; `null` = none set. */
-    tokens: number | null;
-    onChange: (tokens: number | null) => void;
-    /** Price used for the derived "≈ $x" line. Omit or `null` when unknown — the line is then not shown. */
-    usdPerMillionTokens?: number | null;
-    /** Names the price basis: "Haiku" → "at Haiku prices". */
-    priceLabel?: string;
-    disabledReason?: string;
-}
+export declare type RunDraftBudget = RunDraftTokenBudget | RunDraftUsdBudget;
 
 export declare function RunDraftPanel({ status, collapsed: collapsedProp, defaultCollapsed, onCollapsedChange, target, fields, cost, duration, confidence, budget, advanced, advancedLabel, access, onSave, saveDisabledReason, saving, onDispatch, dispatchDisabledReason, error, live, footnote, className, 'data-testid': testId, }: RunDraftPanelProps): JSX.Element;
 
@@ -13728,6 +13719,30 @@ export declare interface RunDraftTarget {
     subtitle?: string;
 }
 
+export declare interface RunDraftTokenBudget {
+    /** Omitted or `'tokens'`: a token budget. */
+    unit?: 'tokens';
+    /** The enforced token budget; `null` = none set. */
+    tokens: number | null;
+    onChange: (tokens: number | null) => void;
+    /** Price used for the derived "≈ $x" line. Omit or `null` when unknown — the line is then not shown. */
+    usdPerMillionTokens?: number | null;
+    /** Names the price basis: "Haiku" → "at Haiku prices". */
+    priceLabel?: string;
+    disabledReason?: string;
+}
+
+/** A dollar cap the host enforces (e.g. "don't start the run if it is forecast over $x"). */
+export declare interface RunDraftUsdBudget {
+    unit: 'usd';
+    /** The cap in dollars; `null` = none set. */
+    usd: number | null;
+    onChange: (usd: number | null) => void;
+    /** What the cap does, in the host's words — "Not started if forecast above this". */
+    hint?: string;
+    disabledReason?: string;
+}
+
 export declare type RunEstimate = {
     kind: 'range';
     low: number;
@@ -13743,6 +13758,13 @@ export declare type RunEstimate = {
 export declare interface RunEstimateConfidence {
     /** How many completed runs the estimate is based on. */
     sampleSize: number;
+    /**
+     * Where the range came from. `runs` (default) — measured history, so zero
+     * runs means no estimate and the range is replaced by "No prior runs".
+     * `prior` — a stated bracket the host stands behind without history (a
+     * per-tier prior); the range is shown and marked low confidence.
+     */
+    basis?: 'runs' | 'prior';
 }
 
 export declare type RunEstimateConfidenceLevel = 'none' | 'low' | 'medium' | 'high';
@@ -18955,6 +18977,23 @@ declare interface UseActivityBusReturn {
       contextNodeIds?: string[];
   }
 
+  export declare interface WorkActivityEvent {
+      id: string;
+      kind: WorkActivityKind;
+      /** ISO time, epoch ms, or Date. */
+      at: string | number | Date;
+      /** "Status changed from Open to In progress". Already worded by the host. */
+      text: string;
+      /** Who did it; absent for machine events. */
+      actor?: string | null;
+      /** A short trailing fact — "$0.18", "failed", "PR #42". */
+      detail?: ReactNode;
+      /** Opens the thing the event is about (a run, a PR). */
+      onOpen?: () => void;
+      href?: string;
+      openLabel?: string;
+  }
+
   /**
    * The one header row an activity panel gets: who and what on the left, the
    * three ways out on the right. Hosts that already sit inside
@@ -19014,6 +19053,24 @@ declare interface UseActivityBusReturn {
        * chosen number, or `WORK_ACTIVITY_ALL_EFFORTS` (0) for "All".
        */
       onMaxEffortsChange?: (maxEfforts: number) => void;
+      className?: string;
+      'data-testid'?: string;
+  }
+
+  export declare type WorkActivityKind = 'status' | 'run' | 'estimate' | 'comment' | 'system';
+
+  export declare function WorkActivityList({ title, events, now, emptyLabel, loading, error, first, className, 'data-testid': testId, }: WorkActivityListProps): JSX.Element;
+
+  export declare interface WorkActivityListProps {
+      title?: string;
+      events: WorkActivityEvent[];
+      /** Clock for relative times (ms since epoch). Default Date.now(). */
+      now?: number;
+      emptyLabel?: string;
+      loading?: boolean;
+      /** Shown instead of the list when the history could not be read. */
+      error?: string | null;
+      first?: boolean;
       className?: string;
       'data-testid'?: string;
   }
@@ -20075,9 +20132,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -20085,9 +20142,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -20121,12 +20178,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -20134,9 +20188,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

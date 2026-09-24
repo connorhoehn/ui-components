@@ -93,6 +93,35 @@ describe('RunDraftPanel', () => {
     expect(screen.queryByText(/\$/)).toBeNull();
   });
 
+  it('shows a stated prior bracket with zero runs, marked low confidence', () => {
+    render(
+      <RunDraftPanel
+        status="saved"
+        cost={{ kind: 'range', low: 0.03, high: 0.3, unit: 'usd' }}
+        confidence={{ sampleSize: 0, basis: 'prior' }}
+      />,
+    );
+    expect(screen.getByTestId('run-draft-cost').textContent).toBe('Estimated cost$0.03 – $0.30');
+    expect(screen.getByTestId('run-draft-confidence').textContent).toBe('Low confidence · No prior runs');
+  });
+
+  it('a prior basis with real runs reads like measured history', () => {
+    render(<RunDraftPanel status="saved" cost={{ kind: 'range', low: 0.03, high: 0.3, unit: 'usd' }} confidence={{ sampleSize: 4, basis: 'prior' }} />);
+    expect(screen.getByTestId('run-draft-confidence').textContent).toBe('Medium confidence · Based on 4 runs');
+  });
+
+  it('a usd budget edits dollars, clears to null, and shows the host hint', () => {
+    const onChange = vi.fn();
+    render(<RunDraftPanel status="saved" budget={{ unit: 'usd', usd: 0.3, onChange, hint: 'Not started if forecast above this' }} />);
+    const input = screen.getByLabelText('Run budget');
+    expect((input as HTMLInputElement).value).toBe('0.3');
+    fireEvent.change(input, { target: { value: '1.25' } });
+    expect(onChange).toHaveBeenLastCalledWith(1.25);
+    fireEvent.change(input, { target: { value: '' } });
+    expect(onChange).toHaveBeenLastCalledWith(null);
+    expect(screen.getByTestId('run-draft-budget-note').textContent).toBe('Not started if forecast above this');
+  });
+
   it('renders no estimate rows when none are passed', () => {
     render(<RunDraftPanel status="no-draft" />);
     expect(screen.queryByTestId('run-draft-cost')).toBeNull();

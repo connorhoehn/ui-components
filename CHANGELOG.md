@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.387.0] — 2026-09-23
+
+### Added
+- **WorkActivityList** (`Work/WorkActivityList`) — a work item's history,
+  newest first: status changes, agent runs, estimates and comments, one line
+  each with who and when, optionally linking to the run or PR. Static, unlike
+  the rotating `ActivityFeed` ticker. Sorts its own events; an unparseable
+  time sorts last and prints no time. Loading, empty and error states.
+- **RunDraftPanel** — `confidence.basis: 'prior'`: a range the host stands
+  behind without history (a per-model-tier bracket) is shown with zero runs
+  and noted "Low confidence · No prior runs", instead of being replaced by
+  "No prior runs". The default (`'runs'`) is unchanged.
+- **RunDraftPanel** — `budget` also accepts `{ unit: 'usd', usd, onChange,
+  hint? }`, a dollar cap the host enforces (e.g. a dispatch route's per-run
+  cap). The token budget is unchanged and remains the default.
+  `RunDraftTokenBudget` / `RunDraftUsdBudget` are exported.
+
+### Fixed
+- The export-surface snapshot records names earlier releases shipped
+  unrecorded (`WorkListFilters`, `COMMENT_MARGIN_STORAGE_KEY`,
+  `readCommentMarginPreference`, `useCommentMarginPreference`), so
+  `export-surface.test.ts` is green again.
+
 ## [2.386.11] — 2026-09-23
 
 ### Fixed

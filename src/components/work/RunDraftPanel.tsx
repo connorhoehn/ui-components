@@ -6,9 +6,13 @@
 //   - Money and durations arrive only as typed numbers (`RunEstimate`); there
 //     is no string prop for them, so "$0.03" cannot be hard-coded.
 //   - An estimate with zero prior runs never shows a range, even if one is
-//     passed: it reads "No prior runs".
-//   - The budget is a TOKEN budget (the one the platform enforces). Dollars
-//     appear only as a derived "≈" line, and only when a price is known.
+//     passed: it reads "No prior runs" — UNLESS the host says the range is a
+//     stated prior (`confidence.basis: 'prior'`, e.g. a per-model-tier
+//     bracket), in which case the range shows and the note says "Low
+//     confidence · No prior runs", so the number is never read as history.
+//   - The budget is whatever the host's platform enforces. A TOKEN budget
+//     shows dollars only as a derived "≈" line, and only when a price is
+//     known; a `unit: 'usd'` budget is a dollar cap the host enforces itself.
 //   - Every disabled action says why, in visible text tied to the button.
 //   - A dispatch error (e.g. the trigger route's 403) is shown verbatim.
 // After dispatch the host passes `live` (an `AgentTaskCard`), which replaces
@@ -58,6 +62,13 @@ export const RUN_DRAFT_STATUS_LABELS: Record<RunDraftStatus, string> = {
 export interface RunEstimateConfidence {
   /** How many completed runs the estimate is based on. */
   sampleSize: number;
+  /**
+   * Where the range came from. `runs` (default) — measured history, so zero
+   * runs means no estimate and the range is replaced by "No prior runs".
+   * `prior` — a stated bracket the host stands behind without history (a
+   * per-tier prior); the range is shown and marked low confidence.
+   */
+  basis?: 'runs' | 'prior';
 }
 
 export interface RunDraftSelectField {
@@ -71,7 +82,9 @@ export interface RunDraftSelectField {
   placeholder?: string;
 }
 
-export interface RunDraftBudget {
+export interface RunDraftTokenBudget {
+  /** Omitted or `'tokens'`: a token budget. */
+  unit?: 'tokens';
   /** The enforced token budget; `null` = none set. */
   tokens: number | null;
   onChange: (tokens: number | null) => void;
@@ -81,6 +94,19 @@ export interface RunDraftBudget {
   priceLabel?: string;
   disabledReason?: string;
 }
+
+/** A dollar cap the host enforces (e.g. "don't start the run if it is forecast over $x"). */
+export interface RunDraftUsdBudget {
+  unit: 'usd';
+  /** The cap in dollars; `null` = none set. */
+  usd: number | null;
+  onChange: (usd: number | null) => void;
+  /** What the cap does, in the host's words — "Not started if forecast above this". */
+  hint?: string;
+  disabledReason?: string;
+}
+
+export type RunDraftBudget = RunDraftTokenBudget | RunDraftUsdBudget;
 
 export interface RunDraftTarget {
   mark?: ReactNode;
@@ -121,10 +147,17 @@ export interface RunDraftPanelProps {
 
 const NO_PRIOR_RUNS: RunEstimate = { kind: 'none', reason: 'No prior runs' };
 
-/** A range backed by zero runs is not an estimate. */
+/** A range backed by zero runs is not an estimate — unless the host says it is a stated prior. */
 function honest(estimate: RunEstimate, confidence: RunEstimateConfidence | null | undefined): RunEstimate {
-  if (estimate.kind === 'range' && confidence && !(confidence.sampleSize > 0)) return NO_PRIOR_RUNS;
+  if (estimate.kind === 'range' && confidence && !(confidence.sampleSize > 0) && confidence.basis !== 'prior') {
+    return NO_PRIOR_RUNS;
+  }
   return estimate;
+}
+
+function confidenceLine(confidence: RunEstimateConfidence): string {
+  if (confidence.basis === 'prior' && !(confidence.sampleSize > 0)) return 'Low confidence · No prior runs';
+  return confidenceNote(confidence.sampleSize);
 }
 
 
@@ -170,6 +203,46 @@ function FieldRow({ field }: { field: RunDraftSelectField }) {
 }
 
 function BudgetRow({ budget }: { budget: RunDraftBudget }) {
+  return budget.unit === 'usd' ? <UsdBudgetRow budget={budget} /> : <TokenBudgetRow budget={budget} />;
+}
+
+function UsdBudgetRow({ budget }: { budget: RunDraftUsdBudget }) {
+  const inputId = useId();
+  const noteId = useId();
+  const note = budget.disabledReason ?? budget.hint ?? null;
+  return (
+    <div className="py-2.5" data-testid="run-draft-budget">
+      <div className="flex items-center justify-between gap-3 text-[13px]">
+        <label htmlFor={inputId} className="text-text-secondary">
+          Run budget
+        </label>
+        <div className="w-32">
+          <NumberInput
+            id={inputId}
+            size="sm"
+            unit="USD"
+            min={0}
+            step={0.05}
+            value={budget.usd ?? undefined}
+            onChange={(v) => budget.onChange(v)}
+            onClear={() => budget.onChange(null)}
+            placeholder="No cap"
+            disabled={budget.disabledReason != null}
+            aria-describedby={note ? noteId : undefined}
+            data-testid="run-draft-budget-input"
+          />
+        </div>
+      </div>
+      {note && (
+        <p id={noteId} className="mt-1 text-right text-[12px] text-text-tertiary" data-testid="run-draft-budget-note">
+          {note}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function TokenBudgetRow({ budget }: { budget: RunDraftTokenBudget }) {
   const inputId = useId();
   const noteId = useId();
   const price = budget.usdPerMillionTokens;
@@ -282,7 +355,7 @@ export function RunDraftPanel({
             {duration && <EstimateRow label="Duration" estimate={honest(duration, confidence)} data-testid="run-draft-duration" />}
             {confidence && (
               <InfoLine className="pb-2.5" data-testid="run-draft-confidence">
-                {confidenceNote(confidence.sampleSize)}
+                {confidenceLine(confidence)}
               </InfoLine>
             )}
           </div>

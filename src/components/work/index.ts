@@ -33,6 +33,8 @@ export type {
   RunDraftStatus,
   RunDraftSelectField,
   RunDraftBudget,
+  RunDraftTokenBudget,
+  RunDraftUsdBudget,
   RunDraftTarget,
   RunEstimateConfidence,
 } from './RunDraftPanel';
@@ -41,3 +43,5 @@ export type { EstimateRowProps, RunEstimate, RunEstimateUnit, RunEstimateConfide
 export { AccessNotice } from './AccessNotice';
 export type { AccessNoticeProps, AccessNoticeTone, AccessNoticeAction } from './AccessNotice';
 export { formatCompactAge } from './compactAge';
+export { WorkActivityList } from './WorkActivityList';
+export type { WorkActivityListProps, WorkActivityEvent, WorkActivityKind } from './WorkActivityList';
