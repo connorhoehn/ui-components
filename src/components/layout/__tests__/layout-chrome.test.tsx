@@ -49,6 +49,12 @@ describe('ApiDegradedBanner', () => {
 });
 
 describe('CollapsedIconStrip', () => {
+  it('drops the expand button when there is no sidebar to expand', () => {
+    render(<CollapsedIconStrip connectionState="connected" onDocuments={vi.fn()} />);
+    expect(screen.queryByTestId('collapsed-icon-strip-expand')).toBeNull();
+    expect(screen.getByTestId('collapsed-icon-strip')).toBeInTheDocument();
+  });
+
   const handlers = () => ({
     onExpand: vi.fn(),
     onDocuments: vi.fn(),

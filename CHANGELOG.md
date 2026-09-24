@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.387.1] — 2026-09-24
+
+### Changed
+- **CollapsedIconStrip** — `onExpand` is optional. Without it the strip keeps its header row but shows no
+  expand button, for surfaces that no longer have an expanded sidebar to open.
+
 ## [2.387.0] — 2026-09-23
 
 ### Added

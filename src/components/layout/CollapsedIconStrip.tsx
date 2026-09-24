@@ -25,7 +25,12 @@ export type CollapsedIconStripSection = 'documents' | 'pipelines' | 'observabili
 
 export interface CollapsedIconStripProps {
   connectionState: ConnectionState;
-  onExpand: () => void;
+  /**
+   * Opens the full sidebar. Omit when the surface has no expanded sidebar to
+   * show: the strip keeps its header row but drops the expand button, so it
+   * never offers a column that would open empty.
+   */
+  onExpand?: () => void;
   onDocuments?: () => void;
   onPipelines?: () => void;
   onObservability?: () => void;
@@ -99,7 +104,9 @@ export function CollapsedIconStrip({
         className="flex w-full shrink-0 items-center justify-center"
         {...(inHeader ? { style: { height: headerHeight } } : {})}
       >
-        <StripButton icon={<MenuIcon size={18} />} title="Expand sidebar" onClick={onExpand} testId={`${testId}-expand`} />
+        {onExpand ? (
+          <StripButton icon={<MenuIcon size={18} />} title="Expand sidebar" onClick={onExpand} testId={`${testId}-expand`} />
+        ) : null}
       </span>
       <span
         className={cn(
