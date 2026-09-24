@@ -98,3 +98,32 @@ describe('CommentThread — resolved banner keyboard access', () => {
     expect(screen.getByText(/click to expand/)).toBeInTheDocument();
   });
 });
+
+// WS-J: a comment card says WHERE it was made.
+describe('CommentThreadNode context header', () => {
+  const open = () => resolvedThread({ resolved: false, resolvedBy: undefined, resolvedAt: undefined });
+
+  it('quotes the anchored text above the body', () => {
+    renderBanner({ comment: open(), context: { kind: 'quote', text: 'Publish the rollback procedure' } });
+    const header = screen.getByTestId('comment-context');
+    expect(header.getAttribute('data-kind')).toBe('quote');
+    expect(header.textContent).toContain('Publish the rollback procedure');
+  });
+
+  it('says the text was removed, keeping the snapshot', () => {
+    renderBanner({ comment: open(), context: { kind: 'removed', text: 'Old line' } });
+    expect(screen.getByText('Original text was removed')).toBeTruthy();
+    expect(screen.getByText('Old line')).toBeTruthy();
+  });
+
+  it('labels a document-level comment', () => {
+    renderBanner({ comment: open(), context: { kind: 'document' } });
+    expect(screen.getByTestId('comment-context').textContent).toBe('On the whole document');
+  });
+
+  it('renders the actions slot on the root only', () => {
+    const reply = { ...open(), id: 'r1', parentCommentId: 'c1' };
+    renderBanner({ comment: { ...open(), replies: [reply] }, actions: <button type="button">Ask agent</button> });
+    expect(screen.getAllByText('Ask agent')).toHaveLength(1);
+  });
+});

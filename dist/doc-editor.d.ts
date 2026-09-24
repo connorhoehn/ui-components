@@ -115,7 +115,7 @@ export declare const CANVAS_SCHEMA_VERSION = 2;
  */
 export declare function canvasBody(ydoc: Doc | null | undefined): XmlFragment | null;
 
-export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, gutterVisible, showRuler, toolbarDensity, showStatusBar, zoomMode, toolbarStyle, pageMargin, onDocumentStats, fitHeight, showOutline, paginate, onToggleGutter, onInsertImage, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
+export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, onHoverGutterItem, gutterVisible, showRuler, toolbarDensity, showStatusBar, zoomMode, toolbarStyle, pageMargin, onDocumentStats, fitHeight, showOutline, paginate, onToggleGutter, onInsertImage, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
 
 export declare interface CanvasDocumentViewProps {
     /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
@@ -212,6 +212,8 @@ export declare interface CanvasDocumentViewProps {
      */
     gutterLead?: ReactNode;
     onFocusGutterItem?: (id: string) => void;
+    /** Pointer over (`id`) / off (`null`) a margin card — see DocumentGutter. */
+    onHoverGutterItem?: (id: string | null) => void;
     /**
      * Whether the margin gutter is showing. Defaults to true, so a caller that
      * knows nothing about this keeps today's behaviour.
@@ -495,6 +497,29 @@ declare interface CollaborationProvider {
 
 export declare const COMMENT_MARGIN_STORAGE_KEY = "doc-editor:canvas:gutter-visible";
 
+/**
+ * WHERE a root comment was made, shown as a quoted header above its body.
+ *
+ *   quote     the anchored text as it reads NOW (or its snapshot, while the
+ *             editor is still syncing)
+ *   removed   the anchored text was deleted — the snapshot, marked as gone
+ *   document  a comment on the whole document, with no span
+ */
+export declare type CommentContext = {
+    kind: 'quote';
+    text: string;
+} | {
+    kind: 'removed';
+    text: string;
+} | {
+    kind: 'document';
+};
+
+/** The muted, left-ruled quote a comment card leads with. */
+export declare function CommentContextHeader({ context }: {
+    context: CommentContext;
+}): JSX.Element;
+
 /** A flat comment as stored in Y.js. */
 declare interface CommentData {
     id: string;
@@ -603,10 +628,17 @@ declare interface CommentThread extends CommentData {
     replies: CommentThread[];
 }
 
-export declare function CommentThreadNode({ comment, depth, onReply, mentionUsers, onResolveThread, onUnresolveThread, }: CommentThreadNodeProps): JSX.Element;
+export declare function CommentThreadNode({ comment, context, actions, depth, onReply, mentionUsers, onResolveThread, onUnresolveThread, }: CommentThreadNodeProps): JSX.Element;
 
 export declare interface CommentThreadNodeProps {
     comment: CommentThread;
+    /** Root only: where the comment was made. Omitted → no header. */
+    context?: CommentContext;
+    /**
+     * Root only: extra actions after Reply / Resolve (WS-J lane B — Ask agent,
+     * dictate…). The host owns what they do.
+     */
+    actions?: ReactNode;
     depth: number;
     onReply: (parentId: string, text: string) => void;
     mentionUsers: MentionUser[];
@@ -805,7 +837,7 @@ export declare interface DocumentFindBarProps {
     'data-testid'?: string;
 }
 
-export declare function DocumentGutter({ items, lead, gap, estimatedHeight, onFocusItem, emptyLabel, 'data-testid': testId, }: DocumentGutterProps): JSX.Element;
+export declare function DocumentGutter({ items, lead, gap, estimatedHeight, onFocusItem, onHoverItem, emptyLabel, 'data-testid': testId, }: DocumentGutterProps): JSX.Element;
 
 export declare interface DocumentGutterProps {
     items: readonly GutterItem[];
@@ -826,6 +858,12 @@ export declare interface DocumentGutterProps {
     /** Approximate rendered height of a card, used for collision spacing. */
     estimatedHeight?: number;
     onFocusItem?: (id: string) => void;
+    /**
+     * The pointer entered (`id`) or left (`null`) a card — the host paints that
+     * card's anchored range stronger, so reader sees WHERE it points before
+     * clicking.
+     */
+    onHoverItem?: (id: string | null) => void;
     emptyLabel?: string;
     'data-testid'?: string;
 }
@@ -3626,19 +3664,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3658,9 +3683,32 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -3694,9 +3742,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -3707,19 +3758,6 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }

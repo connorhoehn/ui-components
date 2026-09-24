@@ -33,7 +33,7 @@
 // None of that changes this component's contract: it still receives an offset
 // and still refuses to invent one.
 
-import { useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 
 /**
@@ -86,6 +86,12 @@ export interface DocumentGutterProps {
   /** Approximate rendered height of a card, used for collision spacing. */
   estimatedHeight?: number;
   onFocusItem?: (id: string) => void;
+  /**
+   * The pointer entered (`id`) or left (`null`) a card — the host paints that
+   * card's anchored range stronger, so reader sees WHERE it points before
+   * clicking.
+   */
+  onHoverItem?: (id: string | null) => void;
   emptyLabel?: string;
   'data-testid'?: string;
 }
@@ -129,6 +135,7 @@ export default function DocumentGutter({
   gap = 12,
   estimatedHeight = 120,
   onFocusItem,
+  onHoverItem,
   emptyLabel = 'No comments yet',
   'data-testid': testId = 'document-gutter',
 }: DocumentGutterProps) {
@@ -160,6 +167,16 @@ export default function DocumentGutter({
     for (const [, el] of nodes.current) ro.observe(el);
     return () => ro.disconnect();
   }, [items]);
+
+  // A card that BECOMES active — its anchored text was clicked in the page —
+  // is brought into view. `nearest`, so a card already on screen does not move
+  // and clicking a card (which activates it) never scrolls under the pointer.
+  const activeId = items.find((i) => i.active)?.id ?? null;
+  useEffect(() => {
+    if (!activeId) return;
+    const el = nodes.current.get(activeId);
+    if (el && typeof el.scrollIntoView === 'function') el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [activeId]);
 
   const offsets = useMemo(
     () => stackOffsets(items, (id) => heights[id] ?? estimatedHeight, gap),
@@ -213,6 +230,8 @@ export default function DocumentGutter({
             role={onFocusItem ? 'button' : undefined}
             tabIndex={onFocusItem ? 0 : undefined}
             onClick={onFocusItem ? () => onFocusItem(item.id) : undefined}
+            onMouseEnter={onHoverItem ? () => onHoverItem(item.id) : undefined}
+            onMouseLeave={onHoverItem ? () => onHoverItem(null) : undefined}
             onKeyDown={
               onFocusItem
                 ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onFocusItem(item.id); } }

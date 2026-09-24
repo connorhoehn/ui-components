@@ -2,7 +2,7 @@
 //
 // Shared presentational layer for threaded comment rendering.
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, type ReactNode } from 'react';
 import type { CommentThread } from '../../types/document';
 import { MentionDropdown } from './MentionDropdown';
 import type { MentionDropdownHandle } from './MentionDropdown';
@@ -125,8 +125,60 @@ export function insertMention(
 // CommentThreadNode
 // ---------------------------------------------------------------------------
 
+/**
+ * WHERE a root comment was made, shown as a quoted header above its body.
+ *
+ *   quote     the anchored text as it reads NOW (or its snapshot, while the
+ *             editor is still syncing)
+ *   removed   the anchored text was deleted — the snapshot, marked as gone
+ *   document  a comment on the whole document, with no span
+ */
+export type CommentContext =
+  | { kind: 'quote'; text: string }
+  | { kind: 'removed'; text: string }
+  | { kind: 'document' };
+
+/** The muted, left-ruled quote a comment card leads with. */
+export function CommentContextHeader({ context }: { context: CommentContext }) {
+  if (context.kind === 'document') {
+    return (
+      <div data-testid="comment-context" data-kind="document" className={cn('mb-1.5 text-[11px] italic text-text-tertiary')}>
+        On the whole document
+      </div>
+    );
+  }
+  const removed = context.kind === 'removed';
+  return (
+    <div
+      data-testid="comment-context"
+      data-kind={context.kind}
+      className={cn(
+        'mb-1.5 border-l-2 pl-2 text-xs leading-snug',
+        removed ? 'border-l-border-emphasis' : 'border-l-warning',
+      )}
+    >
+      {removed && (
+        <div className={cn('text-[11px] font-medium text-text-tertiary')}>Original text was removed</div>
+      )}
+      <blockquote
+        title={context.text}
+        className={cn('m-0 line-clamp-2 text-text-secondary', removed && 'line-through decoration-text-tertiary')}
+      >
+        {context.text}
+      </blockquote>
+    </div>
+  );
+}
+
 export interface CommentThreadNodeProps {
   comment: CommentThread;
+  /** Root only: where the comment was made. Omitted → no header. */
+  context?: CommentContext;
+  /**
+   * Root only: extra actions after Reply / Resolve (WS-J lane B — Ask agent,
+   * dictate…). The host owns what they do.
+   */
+  actions?: ReactNode;
   depth: number;
   onReply: (parentId: string, text: string) => void;
   mentionUsers: MentionUser[];
@@ -136,6 +188,8 @@ export interface CommentThreadNodeProps {
 
 function CommentThreadNode({
   comment,
+  context,
+  actions,
   depth,
   onReply,
   mentionUsers,
@@ -292,7 +346,9 @@ function CommentThreadNode({
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
-        {/* Avatar + name + time */}
+        {depth === 0 && context && <CommentContextHeader context={context} />}
+
+                {/* Avatar + name + time */}
         <div className={cn('flex items-center gap-1.5 mb-1')}>
           <div
             className={cn('w-6 h-6 rounded-full text-white flex items-center justify-center text-[10px] font-semibold shrink-0')}
@@ -336,6 +392,7 @@ function CommentThreadNode({
               {'✔'} Resolve
             </button>
           )}
+          {depth === 0 && actions}
         </div>
 
         {/* Inline reply form */}

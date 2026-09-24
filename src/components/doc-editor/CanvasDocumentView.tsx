@@ -296,6 +296,8 @@ export interface CanvasDocumentViewProps {
    */
   gutterLead?: ReactNode;
   onFocusGutterItem?: (id: string) => void;
+  /** Pointer over (`id`) / off (`null`) a margin card — see DocumentGutter. */
+  onHoverGutterItem?: (id: string | null) => void;
   /**
    * Whether the margin gutter is showing. Defaults to true, so a caller that
    * knows nothing about this keeps today's behaviour.
@@ -487,6 +489,7 @@ export default function CanvasDocumentView({
   gutterItems,
   gutterLead,
   onFocusGutterItem,
+  onHoverGutterItem,
   gutterVisible = true,
   showRuler = true,
   toolbarDensity = 'full',
@@ -1207,6 +1210,7 @@ export default function CanvasDocumentView({
                 items={gutterItems ?? []}
                 lead={gutterLead}
                 onFocusItem={onFocusGutterItem}
+                onHoverItem={onHoverGutterItem}
                 data-testid={`${testId}-gutter`}
               />
             )}

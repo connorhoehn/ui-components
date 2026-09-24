@@ -177,3 +177,23 @@ describe('DocumentGutter item kinds', () => {
     ).toEqual(mixed);
   });
 });
+
+describe('DocumentGutter hover + active (WS-J)', () => {
+  it('reports the hovered card and clears it on leave', () => {
+    const onHover = vi.fn();
+    render(<DocumentGutter items={[item('a', 0)]} onFocusItem={() => {}} onHoverItem={onHover} />);
+    const card = screen.getByText('a').parentElement!;
+    fireEvent.mouseEnter(card);
+    fireEvent.mouseLeave(card);
+    expect(onHover.mock.calls).toEqual([['a'], [null]]);
+  });
+
+  it('scrolls a card into view when it becomes active', () => {
+    const spy = vi.fn();
+    Element.prototype.scrollIntoView = spy;
+    const { rerender } = render(<DocumentGutter items={[item('a', 0)]} />);
+    expect(spy).not.toHaveBeenCalled();
+    rerender(<DocumentGutter items={[item('a', 0, { active: true })]} />);
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+});

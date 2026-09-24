@@ -141,7 +141,8 @@ export type { FloatingDockBarProps } from './FloatingDockBar';
 // SectionComments is the whole panel (header + composer + list); this is the
 // piece a margin card actually wants.
 export { default as CommentThreadNode } from './CommentThread';
-export type { CommentThreadNodeProps } from './CommentThread';
+export type { CommentThreadNodeProps, CommentContext } from './CommentThread';
+export { CommentContextHeader } from './CommentThread';
 
 export { DocumentRuler, PX_PER_INCH } from './DocumentRuler';
 export type { DocumentRulerProps } from './DocumentRuler';
