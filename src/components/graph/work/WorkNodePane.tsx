@@ -236,7 +236,10 @@ export function WorkNodePane({
     && (node.capabilities.includes('view-document') || node.capabilities.includes('edit-document'));
   const empty = !compute && !banner && !visible?.artifact && !visible?.transcript && !sections && !visible?.note && !visible?.actions?.length && !excerpt && bodyLines.length === 0;
   return (
-    <section aria-label={title} data-testid={testId} className={cn('flex h-full min-h-0 flex-col border-l border-border bg-surface', className)}>
+    // Escape closes the pane from anywhere inside it, as it does from the
+    // canvas: a host that draws the pane outside the graph (Active Now's
+    // CanvasPaneLayout) otherwise left the keyboard no way out but Tab.
+    <section aria-label={title} data-testid={testId} className={cn('flex h-full min-h-0 flex-col border-l border-border bg-surface', className)} onKeyDown={(event) => { if (event.key === 'Escape' && !event.defaultPrevented) { event.stopPropagation(); onClose(); } }}>
       <header className="flex shrink-0 items-start justify-between gap-2 border-b border-border px-3 py-2">
         <span className="flex min-w-0 flex-col">
           <span className="truncate text-sm font-semibold text-text-primary" data-testid={`${testId}-title`}>{title}</span>

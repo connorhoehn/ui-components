@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { Background, EdgeLabelRenderer, Handle, MarkerType, Position, ReactFlow, type Edge, type EdgeProps, type Node, type NodeProps } from '@xyflow/react';
 import AnimatedEdge from '../../pipelines/canvas/edges/AnimatedEdge';
 import { ACTIVITY_RIPPLE_GRID, ACTIVITY_RIPPLE_GRID_DARK, RippleGridBackground } from '../../shared/RippleGridBackground';
@@ -121,12 +121,40 @@ function Relationship(props: EdgeProps<ActivityEdge>) {
 const nodeTypes = { activity: ResourceNode, effort: EffortFrame };
 const edgeTypes = { activity: Relationship };
 
+/** Arrow key → the direction it moves the focus between cards, in screen space. */
+const ARROW_DIRECTIONS: Record<string, readonly [number, number]> = { ArrowRight: [1, 0], ArrowLeft: [-1, 0], ArrowDown: [0, 1], ArrowUp: [0, -1] };
+
+/**
+ * The nearest card from `from` in the arrow's direction, as drawn: ahead
+ * along the axis, penalised for drifting off it. `null` at the edge.
+ */
+export function nextWorkCardInDirection(from: DOMRect, cards: ReadonlyArray<{ element: HTMLElement; rect: DOMRect }>, [dx, dy]: readonly [number, number]): HTMLElement | null {
+  const fx = from.left + from.width / 2;
+  const fy = from.top + from.height / 2;
+  let best: { element: HTMLElement; score: number } | null = null;
+  for (const { element, rect } of cards) {
+    const offX = rect.left + rect.width / 2 - fx;
+    const offY = rect.top + rect.height / 2 - fy;
+    const ahead = offX * dx + offY * dy;
+    if (ahead <= 4) continue;
+    const drift = Math.abs(dx ? offY : offX);
+    const score = ahead + drift * 2;
+    if (!best || score < best.score) best = { element, score };
+  }
+  return best?.element ?? null;
+}
+
 /** One canvas; effort frames and visual instances never change canonical IDs. */
 export function WorkActivityCanvas(props: ActivityProps) {
   const { activity, nodes, edges, selection, viewport, onViewportChange, onSelectionChange, background = 'ripple-grid', onViewAsList, maxEfforts = WORK_ACTIVITY_DEFAULT_MAX_EFFORTS } = props;
   const host = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ width: 640, height: 480 });
   const [measurements, setMeasurements] = useState<Map<string, WorkNodeBounds>>(new Map());
+  // Each flow node's last measured size, by flow id. The flow nodes are
+  // rebuilt every render; one without `measured` is hidden by React Flow
+  // (visibility: hidden) until it is measured again, which blurred the
+  // focused card the moment Enter opened its pane and flashed every card.
+  const measured = useRef(new Map<string, { width: number; height: number }>());
   const lastGeometry = useRef<string | null>(null);
   // The node the viewport was last moved to (or found already showing).
   const lastCentred = useRef<string | undefined>(undefined);
@@ -241,9 +269,9 @@ export function WorkActivityCanvas(props: ActivityProps) {
   for (const group of layouts) {
     const frameId = JSON.stringify(['effort', group.id]);
     const expanded = view.expandedSourceEfforts.includes(group.id);
-    flowNodes.push({ id: frameId, type: 'effort', position: { x: group.x, y: group.y }, style: { width: group.width, height: group.height }, selectable: false, focusable: false, data: { title: group.title, subtitle: group.subtitle, live: live && group.nodes.some((instance) => byId.get(instance.entityId)?.status === 'running'), sources: !view.focusedEffortId && (group.collapsedSourceCount > 0 || expanded) ? group.sourceCount : 0, expanded, focused: view.focusedEffortId === group.id, cycle: group.cyclicNodeIds.length > 0, onFocus: () => focus(group.id), onSources: () => onViewChange({ ...view, expandedSourceEfforts: expanded ? view.expandedSourceEfforts.filter((id) => id !== group.id) : [...view.expandedSourceEfforts, group.id] }) } });
+    flowNodes.push({ id: frameId, type: 'effort', position: { x: group.x, y: group.y }, measured: measured.current.get(frameId), style: { width: group.width, height: group.height }, selectable: false, focusable: false, data: { title: group.title, subtitle: group.subtitle, live: live && group.nodes.some((instance) => byId.get(instance.entityId)?.status === 'running'), sources: !view.focusedEffortId && (group.collapsedSourceCount > 0 || expanded) ? group.sourceCount : 0, expanded, focused: view.focusedEffortId === group.id, cycle: group.cyclicNodeIds.length > 0, onFocus: () => focus(group.id), onSources: () => onViewChange({ ...view, expandedSourceEfforts: expanded ? view.expandedSourceEfforts.filter((id) => id !== group.id) : [...view.expandedSourceEfforts, group.id] }) } });
     for (const instance of group.nodes) {
-      flowNodes.push({ id: instance.id, type: 'activity', parentId: frameId, extent: 'parent', position: { x: instance.x, y: instance.y }, selected: selection?.kind === 'node' && selection.id === instance.entityId, focusable: false, data: { entity: byId.get(instance.entityId)!, detail: activity.details?.[instance.entityId], revisionId: selection?.kind === 'node' && selection.id === instance.entityId ? selection.revisionId : undefined, live, onSelect: onSelectionChange, onFeedback: activity.onFeedback } });
+      flowNodes.push({ id: instance.id, type: 'activity', parentId: frameId, extent: 'parent', position: { x: instance.x, y: instance.y }, measured: measured.current.get(instance.id), selected: selection?.kind === 'node' && selection.id === instance.entityId, focusable: false, data: { entity: byId.get(instance.entityId)!, detail: activity.details?.[instance.entityId], revisionId: selection?.kind === 'node' && selection.id === instance.entityId ? selection.revisionId : undefined, live, onSelect: onSelectionChange, onFeedback: activity.onFeedback } });
     }
     for (const instance of group.edges) {
       const edge = byEdge.get(instance.entityId)!;
@@ -266,6 +294,26 @@ export function WorkActivityCanvas(props: ActivityProps) {
   const zoomFloor = Math.min(WORK_CANVAS_MIN_ZOOM, viewport.zoom);
   const zoomBy = (factor: number) => onViewportChange({ ...viewport, zoom: Math.max(zoomFloor, Math.min(2.5, viewport.zoom * factor)) });
   const belowReadable = viewport.zoom < WORK_CANVAS_READABLE_ZOOM;
+  // Arrow keys walk between the cards as they are drawn; the card moved to is
+  // panned into the part of the canvas a pane does not cover when it is off
+  // screen. Tab still walks them in document order; Enter/Space opens one.
+  const moveBetweenCards = (event: KeyboardEvent<HTMLDivElement>) => {
+    const direction = ARROW_DIRECTIONS[event.key];
+    const from = direction && event.target instanceof HTMLElement ? event.target.closest<HTMLElement>('[data-work-card]') : null;
+    const frame = host.current;
+    if (!direction || !from || !frame || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const cards = [...frame.querySelectorAll<HTMLElement>('[data-work-card]')].filter((card) => card !== from).map((element) => ({ element, rect: element.getBoundingClientRect() }));
+    const next = nextWorkCardInDirection(from.getBoundingClientRect(), cards, direction);
+    if (!next) return;
+    next.focus({ preventScroll: true });
+    const area = frame.getBoundingClientRect();
+    const rect = next.getBoundingClientRect();
+    const right = area.right - paneInset;
+    if (rect.left >= area.left && rect.top >= area.top && rect.right <= right && rect.bottom <= area.bottom) return;
+    onViewportChange({ ...viewport, x: viewport.x + (area.left + (right - area.left) / 2) - (rect.left + rect.width / 2), y: viewport.y + (area.top + area.height / 2) - (rect.top + rect.height / 2) });
+  };
   const ripple = background === 'ripple-grid';
   // Which ink the grid uses follows the theme the canvas is actually inside
   // (`data-theme` up the tree, else the system preference): the light preset
@@ -275,7 +323,7 @@ export function WorkActivityCanvas(props: ActivityProps) {
   // A 160 px floor, not 320: inside a short panel (a 577 px viewport's chat
   // column) a 320 px minimum overflowed its parent and scrolled the page. The
   // canvas takes what the column gives it and fits the graph into that.
-  return <div ref={host} className="relative isolate min-h-40 min-w-0 flex-1 overflow-hidden" data-testid="work-activity-canvas" data-background={background} data-backdrop-ink={ripple ? (tone === 'night' ? 'dark' : 'light') : undefined}>
+  return <div ref={host} className="relative isolate min-h-40 min-w-0 flex-1 overflow-hidden" data-testid="work-activity-canvas" onKeyDown={moveBetweenCards} data-background={background} data-backdrop-ink={ripple ? (tone === 'night' ? 'dark' : 'light') : undefined}>
     {/* Behind React Flow, not inside it: the pane and every node above are
         transparent over this, and the canvas takes no pointer events, so
         dragging, selecting and the edge hit-boxes are untouched. */}
@@ -283,6 +331,7 @@ export function WorkActivityCanvas(props: ActivityProps) {
     <ReactFlow<ActivityNode | FrameNode, ActivityEdge> nodes={flowNodes} edges={flowEdges} nodeTypes={nodeTypes} edgeTypes={edgeTypes} viewport={viewport} onViewportChange={onViewportChange} onPaneClick={() => onSelectionChange(null)} onEdgeClick={(_event, edge) => edge.data?.onSelect()} minZoom={zoomFloor} maxZoom={2.5} nodesDraggable={false} nodesConnectable={false} elementsSelectable={false} deleteKeyCode={null} proOptions={{ hideAttribution: true }} onNodesChange={(changes) => {
       const dimensions = changes.filter((change) => change.type === 'dimensions');
       if (!dimensions.length) return;
+      for (const change of dimensions) if (change.dimensions) measured.current.set(change.id, change.dimensions);
       setMeasurements((previous) => {
         const next = new Map(previous);
         let changed = false;

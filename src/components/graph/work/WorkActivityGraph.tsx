@@ -74,6 +74,21 @@ export function WorkActivityGraph(props: WorkGraphProps & { activity: WorkActivi
   useEffect(() => {
     if (selection && root.current?.contains(document.activeElement) && document.activeElement instanceof HTMLElement && !document.activeElement.closest('[data-testid="activity-inspector"]')) returnFocus.current = document.activeElement;
   }, [selection]);
+  // A pane that closes from outside this component (the host's own pane, its
+  // close button, Escape inside it) unmounts with the focus in it, which
+  // drops the focus to <body>: put it back on the card that opened it.
+  const hadSelection = useRef(false);
+  useEffect(() => {
+    if (selection) { hadSelection.current = true; return; }
+    if (!hadSelection.current) return;
+    hadSelection.current = false;
+    const target = returnFocus.current;
+    if (!target) return;
+    requestAnimationFrame(() => {
+      const active = document.activeElement;
+      if (target.isConnected && (!active || active === document.body)) target.focus({ preventScroll: true });
+    });
+  }, [selection]);
   useEffect(() => {
     const element = body.current;
     if (!element || typeof ResizeObserver === 'undefined') return;
