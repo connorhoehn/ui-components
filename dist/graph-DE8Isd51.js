@@ -48,15 +48,15 @@ function Q(e) {
 	}
 	return t;
 }
-function ce(e, t, n, r) {
+function $(e, t, n, r) {
 	if (e.length === 0) return /* @__PURE__ */ new Map();
 	switch (n) {
-		case "grid": return ue(e, r);
-		case "force": return de(e, t, r);
-		default: return le(e, r);
+		case "grid": return le(e, r);
+		case "force": return ue(e, t, r);
+		default: return ce(e, r);
 	}
 }
-function le(e, { width: t, height: n, padding: r = 40 }) {
+function ce(e, { width: t, height: n, padding: r = 40 }) {
 	let i = /* @__PURE__ */ new Map(), a = t / 2, o = n / 2, s = se(e), c = e.filter((e) => e !== s);
 	if (s && i.set(s.id, {
 		x: a,
@@ -73,13 +73,13 @@ function le(e, { width: t, height: n, padding: r = 40 }) {
 		n.forEach((e, t) => {
 			let n = c + t * s;
 			i.set(e.id, {
-				x: $(a + r * Math.cos(n)),
-				y: $(o + r * Math.sin(n))
+				x: de(a + r * Math.cos(n)),
+				y: de(o + r * Math.sin(n))
 			});
 		});
 	}), i;
 }
-function ue(e, { width: t, height: n, padding: r = 40 }) {
+function le(e, { width: t, height: n, padding: r = 40 }) {
 	let i = /* @__PURE__ */ new Map(), a = [];
 	for (let t of e) {
 		let e = t.group ?? "";
@@ -92,13 +92,13 @@ function ue(e, { width: t, height: n, padding: r = 40 }) {
 		l.forEach((e, t) => {
 			let n = r + o * (t + .5) / l.length;
 			i.set(e.id, {
-				x: $(n),
-				y: $(u)
+				x: de(n),
+				y: de(u)
 			});
 		});
 	}), i;
 }
-function de(e, t, { width: n, height: r, padding: i = 40 }) {
+function ue(e, t, { width: n, height: r, padding: i = 40 }) {
 	let a = e.length, o = new Map(e.map((e, t) => [e.id, t])), s = new Float64Array(a), c = new Float64Array(a);
 	for (let e = 0; e < a; e++) {
 		let t = 2 * Math.PI * e / a;
@@ -142,12 +142,12 @@ function de(e, t, { width: n, height: r, padding: i = 40 }) {
 	let _ = Math.max(1, m - p), v = Math.max(1, g - h), y = Math.min((n - i * 2) / _, (r - i * 2) / v), b = (n - _ * y) / 2, x = (r - v * y) / 2, S = /* @__PURE__ */ new Map();
 	return e.forEach((e, t) => {
 		S.set(e.id, {
-			x: $(b + (s[t] - p) * y),
-			y: $(x + (c[t] - h) * y)
+			x: de(b + (s[t] - p) * y),
+			y: de(x + (c[t] - h) * y)
 		});
 	}), S;
 }
-function $(e) {
+function de(e) {
 	return Math.round(e * 100) / 100;
 }
 //#endregion
@@ -196,7 +196,7 @@ var ge = .5, _e = 4, ve = {
 	k: 1
 };
 function ye({ nodes: e, edges: n, layout: r = "radial", selectedId: a = null, onSelect: o, height: s = 320, className: c, "data-testid": l = "node-graph" }) {
-	let u = H(() => ce(e, n, r, {
+	let u = H(() => $(e, n, r, {
 		width: 480,
 		height: s
 	}), [
@@ -2272,7 +2272,7 @@ function Mt(e) {
 		...D,
 		focusedEffortId: D.focusedEffortId === e ? null : e,
 		overviewViewport: D.focusedEffortId ? D.overviewViewport : c
-	}), Y = new Map(a.map((e) => [e.id, e])), X = new Map(o.map((e) => [e.id, e])), Z = r.window.following, ae = new Set(Z ? r.activeEdgeIds : []), se = new Set(r.failedEdgeIds ?? []), Q = [], ce = [];
+	}), Y = new Map(a.map((e) => [e.id, e])), X = new Map(o.map((e) => [e.id, e])), Z = r.window.following, ae = new Set(Z ? r.activeEdgeIds : []), se = new Set(r.failedEdgeIds ?? []), Q = [], $ = [];
 	for (let e of P) {
 		let t = JSON.stringify(["effort", e.id]), n = D.expandedSourceEfforts.includes(e.id);
 		Q.push({
@@ -2325,7 +2325,7 @@ function Mt(e) {
 		});
 		for (let t of e.edges) {
 			let n = X.get(t.entityId), i = e.x + t.labelX, a = e.y + t.labelY, o = ae.has(n.id) && n.status === "running" && !n.endedAt, c = se.has(n.id), l = n.label || n.relation.replaceAll("-", " "), d = r.edgeLabels?.[n.id] ?? (c ? "failed" : void 0);
-			ce.push({
+			$.push({
 				id: t.id,
 				type: "activity",
 				source: t.source,
@@ -2354,10 +2354,10 @@ function Mt(e) {
 			});
 		}
 	}
-	let le = new Map(Q.filter((e) => e.type === "activity").map((e) => [e.id, e.data.entity.id])), ue = Math.min(dt, c.zoom), de = (e) => l({
+	let ce = new Map(Q.filter((e) => e.type === "activity").map((e) => [e.id, e.data.entity.id])), le = Math.min(dt, c.zoom), ue = (e) => l({
 		...c,
-		zoom: Math.max(ue, Math.min(2.5, c.zoom * e))
-	}), $ = c.zoom < pt, fe = d === "ripple-grid", pe = b(m, "auto", fe);
+		zoom: Math.max(le, Math.min(2.5, c.zoom * e))
+	}), de = c.zoom < pt, fe = d === "ripple-grid", pe = b(m, "auto", fe);
 	return /* @__PURE__ */ q("div", {
 		ref: m,
 		className: "relative isolate min-h-40 min-w-0 flex-1 overflow-hidden",
@@ -2372,14 +2372,14 @@ function Mt(e) {
 			}),
 			/* @__PURE__ */ K(ie, {
 				nodes: Q,
-				edges: ce,
+				edges: $,
 				nodeTypes: At,
 				edgeTypes: jt,
 				viewport: c,
 				onViewportChange: l,
 				onPaneClick: () => u(null),
 				onEdgeClick: (e, t) => t.data?.onSelect(),
-				minZoom: ue,
+				minZoom: le,
 				maxZoom: 2.5,
 				nodesDraggable: !1,
 				nodesConnectable: !1,
@@ -2391,7 +2391,7 @@ function Mt(e) {
 					t.length && y((e) => {
 						let n = new Map(e), r = !1;
 						for (let i of t) {
-							let t = le.get(i.id);
+							let t = ce.get(i.id);
 							if (!t || !i.dimensions) continue;
 							let a = e.get(t), o = {
 								width: Math.max(a?.width ?? 0, i.dimensions.width),
@@ -2408,7 +2408,7 @@ function Mt(e) {
 					color: "var(--color-border)"
 				})
 			}),
-			$ && /* @__PURE__ */ q(_, {
+			de && /* @__PURE__ */ q(_, {
 				tone: "info",
 				className: "absolute left-3 top-3 z-10 max-w-[min(26rem,calc(100%-1.5rem))] text-[11px]",
 				"data-testid": "work-activity-zoom-hint",
@@ -2427,13 +2427,13 @@ function Mt(e) {
 					/* @__PURE__ */ K(i, {
 						size: "sm",
 						"aria-label": "Zoom in",
-						onClick: () => de(1.2),
+						onClick: () => ue(1.2),
 						children: "+"
 					}),
 					/* @__PURE__ */ K(i, {
 						size: "sm",
 						"aria-label": "Zoom out",
-						onClick: () => de(1 / 1.2),
+						onClick: () => ue(1 / 1.2),
 						children: "−"
 					}),
 					/* @__PURE__ */ K(n, {
@@ -4202,13 +4202,13 @@ function _n(e) {
 			end: t + e,
 			following: !1
 		});
-	}, re = z, X = a ? `${a.kind}:${a.id}` : null, ie = re && e.viewport.zoom < .4 && v !== X, Z = ie || f && g, ae = f && !Z, oe = Z || ae, se = () => {
-		if (!oe) {
+	}, re = z, X = a ? `${a.kind}:${a.id}` : null, ie = re && e.viewport.zoom < .4 && v !== X, Z = ie || f && g, ae = f && !Z, se = Z || ae, Q = () => {
+		if (!se) {
 			p(!0);
 			return;
 		}
 		p(!1), ie && y(X);
-	}, Q = te ? "absolute inset-y-0 right-0 z-10 w-[min(340px,85%)] shadow-lg" : "w-[340px] max-w-[45%] shrink-0";
+	}, $ = oe().right, ce = $ > 0 ? { paddingRight: $ } : void 0, le = te ? "absolute inset-y-0 right-0 z-10 w-[min(340px,85%)] shadow-lg" : "w-[340px] max-w-[45%] shrink-0";
 	return /* @__PURE__ */ q("section", {
 		ref: l,
 		"aria-label": "Shared work graph",
@@ -4239,9 +4239,13 @@ function _n(e) {
 				children: [/* @__PURE__ */ q("div", {
 					className: "flex min-h-0 min-w-0 flex-1 flex-col",
 					children: [
-						/* @__PURE__ */ K(mn, {
-							activity: o,
-							timezone: e.timezone
+						/* @__PURE__ */ K("div", {
+							style: ce,
+							"data-testid": "work-activity-time-window-frame",
+							children: /* @__PURE__ */ K(mn, {
+								activity: o,
+								timezone: e.timezone
+							})
 						}),
 						/* @__PURE__ */ q("div", {
 							className: "relative flex min-h-0 flex-1 flex-col overflow-hidden",
@@ -4264,6 +4268,7 @@ function _n(e) {
 						}),
 						/* @__PURE__ */ q("div", {
 							className: "flex h-9 shrink-0 items-center justify-between gap-2 border-t border-border px-4 text-[10px] text-text-tertiary",
+							style: $ > 0 ? { paddingRight: $ + 16 } : void 0,
 							"data-testid": "work-activity-footer",
 							children: [o.view.focusedEffortId ? /* @__PURE__ */ K(n, {
 								size: "sm",
@@ -4290,11 +4295,11 @@ function _n(e) {
 					onClose: ne,
 					onOpen: e.onOpen,
 					onReference: e.onReference,
-					className: Q
+					className: le
 				}) : /* @__PURE__ */ K(N, {
 					title: R?.label || "Relationship",
 					onClose: ne,
-					className: Q,
+					className: le,
 					"data-testid": "activity-inspector",
 					children: /* @__PURE__ */ K(Ze, { ...e })
 				}))]
@@ -4304,10 +4309,10 @@ function _n(e) {
 				children: /* @__PURE__ */ K(n, {
 					size: "sm",
 					variant: "ghost",
-					"aria-expanded": oe,
-					onClick: se,
+					"aria-expanded": se,
+					onClick: Q,
 					"data-testid": "work-activity-list-toggle",
-					children: ie ? "Show the graph" : oe ? "Hide accessible list" : "View as accessible list"
+					children: ie ? "Show the graph" : se ? "Hide accessible list" : "View as accessible list"
 				})
 			}),
 			ae && /* @__PURE__ */ K("div", {
@@ -4618,4 +4623,4 @@ function jn(e) {
 	}) : /* @__PURE__ */ K(An, { ...e });
 }
 //#endregion
-export { se as A, we as C, fe as D, Ee as E, ce as M, ae as N, ye as O, oe as P, Oe as S, Te as T, ze as _, rn as a, Ae as b, It as c, yt as d, st as f, Ve as g, Ke as h, en as i, Q as j, he as k, gt as l, Ze as m, un as n, Qt as o, at as p, ln as r, Rt as s, jn as t, ht as u, Ne as v, De as w, ke as x, Me as y };
+export { se as A, we as C, fe as D, Ee as E, $ as M, ae as N, ye as O, oe as P, Oe as S, Te as T, ze as _, rn as a, Ae as b, It as c, yt as d, st as f, Ve as g, Ke as h, en as i, Q as j, he as k, gt as l, Ze as m, un as n, Qt as o, at as p, ln as r, Rt as s, jn as t, ht as u, Ne as v, De as w, ke as x, Me as y };

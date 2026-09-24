@@ -149,22 +149,31 @@ export function CanvasPaneLayout({
           className={cn(
             // The pane brings its own edge and background; the layout adds
             // only what an overlay needs to read as lying on top.
-            'flex min-h-0 flex-col',
+            'flex min-h-0 flex-row',
             placement === 'column' ? 'relative shrink-0' : 'absolute inset-y-0 right-0 z-10 bg-surface shadow-lg',
           )}
           style={{ width: paneWidth }}
         >
-          <IconButton
-            aria-label={hide}
-            title={hide}
-            variant="outline"
-            size="sm"
-            icon={<ChevronIcon dir="right" size={12} />}
-            onClick={() => setCollapsed(true)}
-            className="absolute -left-3 top-1/2 z-20 h-6 w-6 -translate-y-1/2 rounded-full shadow-sm"
-            data-testid={`${testId}-collapse`}
-          />
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden">{pane}</div>
+          {/* The fold control has a strip of its own at the pane's edge. It
+              used to float half over the canvas (realtime-examples NFR #211),
+              where it sat on top of any card drawn at the canvas's right edge;
+              here it is outside the canvas, so no card is ever under it. */}
+          <div
+            data-testid={`${testId}-handle`}
+            className="flex w-4 shrink-0 items-center justify-center border-l border-border bg-surface-panel"
+          >
+            <IconButton
+              aria-label={hide}
+              title={hide}
+              variant="ghost"
+              size="sm"
+              icon={<ChevronIcon dir="right" size={12} />}
+              onClick={() => setCollapsed(true)}
+              className="h-8 w-4 min-w-0 rounded-none p-0"
+              data-testid={`${testId}-collapse`}
+            />
+          </div>
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">{pane}</div>
         </div>
       )}
     </div>

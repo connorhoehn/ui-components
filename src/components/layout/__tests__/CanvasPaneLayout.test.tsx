@@ -23,6 +23,12 @@ describe('canvasPaneGeometry', () => {
 });
 
 describe('CanvasPaneLayout', () => {
+  it('the fold control sits in its own strip outside the canvas, never over it (NFR #211)', () => {
+    render(<CanvasPaneLayout width={1000} pane={<p>pane</p>}><p>canvas</p></CanvasPaneLayout>);
+    const handle = screen.getByTestId('canvas-pane-layout-handle');
+    expect(handle.contains(screen.getByRole('button', { name: 'Hide details' }))).toBe(true);
+    expect(screen.getByTestId('canvas-pane-layout-canvas').contains(handle)).toBe(false);
+  });
   it('has no pane placement when nothing is open', () => {
     render(<CanvasPaneLayout width={900}><p>canvas</p></CanvasPaneLayout>);
     expect(screen.getByTestId('canvas-pane-layout').dataset.placement).toBe('none');

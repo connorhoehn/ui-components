@@ -9,6 +9,7 @@ import { WorkEntityList } from './WorkEntityList';
 import { WorkInspector } from './WorkInspector';
 import { WorkNodePane } from './WorkNodePane';
 import { WorkTimeWindow } from './WorkTimeWindow';
+import { useCanvasPaneInset } from '../../layout/canvasPaneInset';
 import { workPauseLabel } from './WorkStatus';
 import type { WorkActivityPresentation, WorkEntityListGroup, WorkGraphNodeData, WorkGraphProps } from './types';
 
@@ -115,20 +116,26 @@ export function WorkActivityGraph(props: WorkGraphProps & { activity: WorkActivi
     setList(false);
     if (autoList) setGraphFor(selectionKey);
   };
+  // A surrounding CanvasPaneLayout's overlay pane lies over this graph's right
+  // edge (realtime-examples NFR #211: at 1280×720 it covered the timeline's
+  // "Now" end and the footer's "Earlier work"). The canvas already pans the
+  // selection clear of it; the timeline and the footer stop short of it.
+  const paneInset = useCanvasPaneInset().right;
+  const clearOfPane = paneInset > 0 ? { paddingRight: paneInset } : undefined;
   const paneClass = overlay ? 'absolute inset-y-0 right-0 z-10 w-[min(340px,85%)] shadow-lg' : 'w-[340px] max-w-[45%] shrink-0';
   return <section ref={root} aria-label="Shared work graph" className={cn('flex h-full min-h-0 min-w-0 flex-col bg-surface', props.className)} onKeyDown={(event) => { if (event.key === 'Escape' && selection) { event.stopPropagation(); close(); } }}>
     {activity.title && <WorkActivityHeader title={activity.title} subtitle={activity.subtitle} expanded={activity.expanded ?? activity.mode === 'full'} onExpand={activity.onExpand} onPopOut={activity.onPopOut} onClose={activity.onClose} effortCount={activity.efforts.length} maxEfforts={maxEfforts} onMaxEffortsChange={changeMaxEfforts} />}
     {props.state === 'partial' && <p role="status" className="border-b border-warning-border bg-warning-bg px-3 py-1 text-xs text-warning-fg">Some work sources are delayed or unavailable.</p>}
     <div ref={body} className="relative flex min-h-0 min-w-0 flex-1">
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-        <WorkTimeWindow activity={activity} timezone={props.timezone} />
+        <div style={clearOfPane} data-testid="work-activity-time-window-frame"><WorkTimeWindow activity={activity} timezone={props.timezone} /></div>
         <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden" data-testid="work-activity-region" data-list={listInRegion ? 'region' : undefined}>
           <div className={cn('flex min-h-0 flex-1 flex-col', listInRegion && 'invisible')} aria-hidden={listInRegion || undefined} inert={listInRegion || undefined}>
             <WorkActivityCanvas {...props} maxEfforts={maxEfforts} onViewAsList={() => setList(true)} />
           </div>
           {listInRegion && <div className="absolute inset-0 overflow-auto bg-surface p-3" data-testid="work-activity-list-region">{entityList}</div>}
         </div>
-        <div className="flex h-9 shrink-0 items-center justify-between gap-2 border-t border-border px-4 text-[10px] text-text-tertiary" data-testid="work-activity-footer">
+        <div className="flex h-9 shrink-0 items-center justify-between gap-2 border-t border-border px-4 text-[10px] text-text-tertiary" style={paneInset > 0 ? { paddingRight: paneInset + 16 } : undefined} data-testid="work-activity-footer">
           {activity.view.focusedEffortId
             ? <Button size="sm" variant="ghost" onClick={() => activity.onViewChange({ ...activity.view, focusedEffortId: null })}>← All activities</Button>
             : <span>{shownEffortCount < activity.efforts.length ? `Showing ${shownEffortCount} of ${activity.efforts.length} parallel activities` : `${activity.efforts.length} parallel activities`} · Newest work first</span>}
