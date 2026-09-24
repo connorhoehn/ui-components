@@ -142,7 +142,8 @@ export type { FloatingDockBarProps } from './FloatingDockBar';
 // piece a margin card actually wants.
 export { default as CommentThreadNode } from './CommentThread';
 export type { CommentThreadNodeProps, CommentContext } from './CommentThread';
-export { CommentContextHeader } from './CommentThread';
+export { CommentContextHeader, ResolvedBanner, resolverLabel } from './CommentThread';
+export type { ResolvedBannerProps } from './CommentThread';
 
 export { DocumentRuler, PX_PER_INCH } from './DocumentRuler';
 export type { DocumentRulerProps } from './DocumentRuler';

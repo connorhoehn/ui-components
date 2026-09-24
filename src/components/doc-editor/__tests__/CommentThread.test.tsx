@@ -1,6 +1,6 @@
 import { cleanup, createEvent, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import CommentThreadNode from '../CommentThread';
+import CommentThreadNode, { resolverLabel } from '../CommentThread';
 import type { CommentThread } from '../../../types/document';
 
 afterEach(cleanup);
@@ -56,7 +56,7 @@ describe('CommentThread — resolved banner keyboard access', () => {
 
     fireEvent.keyDown(screen.getByRole('button', { name: /Resolved by Ann Lee/ }), { key: 'Enter' });
 
-    expect(screen.getByText(/click to collapse/)).toBeInTheDocument();
+    expect(screen.getByTestId('comment-resolved-banner')).toHaveAttribute('aria-expanded', 'true');
     expect(screen.getByRole('button', { name: /Resolved by Ann Lee/ })).toHaveAttribute(
       'aria-expanded',
       'true',
@@ -70,7 +70,7 @@ describe('CommentThread — resolved banner keyboard access', () => {
     const ev = createEvent.keyDown(banner, { key: ' ' });
     fireEvent(banner, ev);
 
-    expect(screen.getByText(/click to collapse/)).toBeInTheDocument();
+    expect(screen.getByTestId('comment-resolved-banner')).toHaveAttribute('aria-expanded', 'true');
     expect(ev.defaultPrevented).toBe(true);
   });
 
@@ -84,7 +84,7 @@ describe('CommentThread — resolved banner keyboard access', () => {
     fireEvent(expanded, ev);
 
     expect(ev.defaultPrevented).toBe(true);
-    expect(screen.getByText(/click to expand/)).toBeInTheDocument();
+    expect(screen.getByTestId('comment-resolved-banner')).toHaveAttribute('aria-expanded', 'false');
   });
 
   it('keeps the nested Reopen button independent of the banner', () => {
@@ -95,7 +95,24 @@ describe('CommentThread — resolved banner keyboard access', () => {
 
     expect(onUnresolveThread).toHaveBeenCalledWith('c1');
     // The banner must not have expanded as a side effect of the nested click.
-    expect(screen.getByText(/click to expand/)).toBeInTheDocument();
+    expect(screen.getByTestId('comment-resolved-banner')).toHaveAttribute('aria-expanded', 'false');
+  });
+});
+
+// WS-J polish: one tidy row — a person's name, never an agent's id; no inline
+// "click to expand" text (the chevron + clickable row say it).
+describe('CommentThread — resolved banner row', () => {
+  it('names an agent resolver as "<Model> agent", not its id', () => {
+    renderBanner({ comment: resolvedThread({ resolvedBy: 'agent:haiku' }) });
+    expect(screen.getByTestId('comment-resolved-banner').textContent).toContain('Resolved by Haiku agent');
+    expect(screen.queryByText(/agent:haiku/)).toBeNull();
+    expect(screen.queryByText(/click to/)).toBeNull();
+  });
+
+  it('resolverLabel keeps a display name as is', () => {
+    expect(resolverLabel('Ann Lee')).toBe('Ann Lee');
+    expect(resolverLabel('agent:claude-sonnet')).toBe('Claude sonnet agent');
+    expect(resolverLabel(undefined)).toBe('someone');
   });
 });
 

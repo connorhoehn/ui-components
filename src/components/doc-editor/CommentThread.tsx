@@ -10,7 +10,7 @@ import type { MentionUser } from '../../hooks/useMentionUsers';
 import { cn } from '../../lib/cn';
 import { onActivationKey } from '../../lib/activationKey';
 import { Textarea } from '../forms/Textarea';
-import { SparkleIcon } from '../ui/Icons';
+import { ChevronIcon, SparkleIcon } from '../ui/Icons';
 
 // ---------------------------------------------------------------------------
 // Small display helpers
@@ -196,6 +196,79 @@ export function CommentContextHeader({ context }: { context: CommentContext }) {
   );
 }
 
+/**
+ * Who resolved a thread, for people. `resolvedBy` is whatever the host stored:
+ * a person's display name, or an agent's id (`agent:haiku`) on rows written
+ * before the server stored names — those read "Haiku agent", never the id.
+ */
+export function resolverLabel(resolvedBy: string | undefined): string {
+  const raw = (resolvedBy ?? '').trim();
+  if (!raw) return 'someone';
+  const agent = /^agent:([\w-]+)$/i.exec(raw);
+  if (agent) {
+    const model = agent[1].replace(/[-_]+/g, ' ');
+    return `${model.charAt(0).toUpperCase()}${model.slice(1)} agent`;
+  }
+  return raw;
+}
+
+export interface ResolvedBannerProps {
+  resolvedBy?: string;
+  resolvedAt?: string;
+  expanded: boolean;
+  onToggle: () => void;
+  /** Omitted → no Reopen button (a reader who may not reopen). */
+  onReopen?: () => void;
+}
+
+/**
+ * The resolved thread's one-row header: check, "Resolved by <name>", time,
+ * a quiet Reopen and a chevron. The whole row toggles the thread open — the
+ * chevron says so, where the old inline "— click to expand" wrapped into a
+ * jumble in a ~280px margin card.
+ */
+export function ResolvedBanner({ resolvedBy, resolvedAt, expanded, onToggle, onReopen }: ResolvedBannerProps) {
+  const who = resolverLabel(resolvedBy);
+  const when = resolvedAt ? relativeTime(resolvedAt) : '';
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      aria-expanded={expanded}
+      aria-label={`Resolved by ${who}${when ? `, ${when}` : ''}. ${expanded ? 'Collapse' : 'Expand'} thread`}
+      title={expanded ? 'Collapse thread' : 'Show the resolved thread'}
+      data-testid="comment-resolved-banner"
+      className={cn('group bg-success-bg border-l-[3px] border-l-success pl-2.5 pr-1.5 py-1.5 mb-1 rounded cursor-pointer flex items-center gap-1.5 min-w-0 hover:bg-success-bg/80')}
+      onClick={onToggle}
+      // Space must preventDefault here or toggling also scrolls the thread.
+      onKeyDown={onActivationKey(onToggle)}
+    >
+      <span aria-hidden className={cn('text-success-fg text-xs shrink-0')}>{'✓'}</span>
+      <span className={cn('text-success-fg text-xs font-semibold truncate min-w-0')}>
+        Resolved by {who}
+      </span>
+      {when && (
+        <span className={cn('text-text-tertiary text-[11px] whitespace-nowrap shrink-0')}>{when}</span>
+      )}
+      <span className={cn('flex-1')} />
+      {onReopen && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onReopen();
+          }}
+          onKeyDown={(e) => e.stopPropagation()}
+          className={cn('shrink-0 bg-transparent border-none rounded px-1.5 py-0.5 text-text-secondary text-[11px] cursor-pointer font-[inherit] hover:bg-surface-hover hover:text-text-primary')}
+        >
+          Reopen
+        </button>
+      )}
+      <ChevronIcon aria-hidden size={14} dir={expanded ? 'up' : 'down'} className={cn('shrink-0 text-text-tertiary group-hover:text-text-secondary')} />
+    </div>
+  );
+}
+
 export interface CommentThreadNodeProps {
   comment: CommentThread;
   /** Root only: where the comment was made. Omitted → no header. */
@@ -296,87 +369,24 @@ function CommentThreadNode({
 
   const borderColor = hovered ? comment.color : depth === 0 ? 'var(--color-border)' : 'var(--color-border-emphasis)';
 
+  const resolvedBanner = (expanded: boolean) => (
+    <ResolvedBanner
+      resolvedBy={comment.resolvedBy}
+      resolvedAt={comment.resolvedAt}
+      expanded={expanded}
+      onToggle={() => setResolvedExpanded(!expanded)}
+      onReopen={onUnresolveThread ? () => onUnresolveThread(comment.id) : undefined}
+    />
+  );
+
   // Resolved banner (shown for resolved root threads)
   if (isResolved && !resolvedExpanded) {
-    return (
-      <div className={cn(cappedDepth > 0 ? 'ml-5' : 'ml-0')}>
-        <div
-          role="button"
-          tabIndex={0}
-          aria-expanded={false}
-          className={cn('bg-success-bg border-l-[3px] border-l-success px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between')}
-          onClick={() => setResolvedExpanded(true)}
-          // Space must preventDefault here or expanding also scrolls the thread.
-          onKeyDown={onActivationKey(() => setResolvedExpanded(true))}
-        >
-          <div className={cn('flex items-center gap-1.5')}>
-            <span className={cn('text-success-fg text-xs')}>{'✔'}</span>
-            <span className={cn('text-success-fg text-xs font-semibold')}>
-              Resolved by {comment.resolvedBy}
-            </span>
-            {comment.resolvedAt && (
-              <span className={cn('text-code-green text-[11px]')}>
-                {relativeTime(comment.resolvedAt)}
-              </span>
-            )}
-            <span className={cn('text-text-tertiary text-[11px] ml-1')}>
-              — click to expand
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onUnresolveThread?.(comment.id);
-            }}
-            className={cn('bg-transparent border border-border-emphasis rounded px-2 py-0.5 text-neutral text-[11px] cursor-pointer font-[inherit]')}
-          >
-            Reopen
-          </button>
-        </div>
-      </div>
-    );
+    return <div className={cn(cappedDepth > 0 ? 'ml-5' : 'ml-0')}>{resolvedBanner(false)}</div>;
   }
 
   return (
     <div className={cn(cappedDepth > 0 ? 'ml-5' : 'ml-0', isResolved ? 'opacity-60' : '')}>
-      {/* Resolved banner (expanded) */}
-      {isResolved && resolvedExpanded && (
-        <div
-          role="button"
-          tabIndex={0}
-          aria-expanded={true}
-          className={cn('bg-success-bg border-l-[3px] border-l-success px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between')}
-          onClick={() => setResolvedExpanded(false)}
-          // Space must preventDefault here or collapsing also scrolls the thread.
-          onKeyDown={onActivationKey(() => setResolvedExpanded(false))}
-        >
-          <div className={cn('flex items-center gap-1.5')}>
-            <span className={cn('text-success-fg text-xs')}>{'✔'}</span>
-            <span className={cn('text-success-fg text-xs font-semibold')}>
-              Resolved by {comment.resolvedBy}
-            </span>
-            {comment.resolvedAt && (
-              <span className={cn('text-code-green text-[11px]')}>
-                {relativeTime(comment.resolvedAt)}
-              </span>
-            )}
-            <span className={cn('text-text-tertiary text-[11px] ml-1')}>
-              — click to collapse
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onUnresolveThread?.(comment.id);
-            }}
-            className={cn('bg-transparent border border-border-emphasis rounded px-2 py-0.5 text-neutral text-[11px] cursor-pointer font-[inherit]')}
-          >
-            Reopen
-          </button>
-        </div>
-      )}
+      {isResolved && resolvedExpanded && resolvedBanner(true)}
 
       {/* Comment card */}
       <div

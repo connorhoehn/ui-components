@@ -2630,6 +2630,30 @@ export declare function replaceSlide(spec: DeckSpec, slide: DeckSlide): DeckSpec
 /** "no replies" / "1 reply" / "4 replies" — the count is the thread's weight. */
 export declare function replyLabel(count: number): string;
 
+/**
+ * The resolved thread's one-row header: check, "Resolved by <name>", time,
+ * a quiet Reopen and a chevron. The whole row toggles the thread open — the
+ * chevron says so, where the old inline "— click to expand" wrapped into a
+ * jumble in a ~280px margin card.
+ */
+export declare function ResolvedBanner({ resolvedBy, resolvedAt, expanded, onToggle, onReopen }: ResolvedBannerProps): JSX.Element;
+
+export declare interface ResolvedBannerProps {
+    resolvedBy?: string;
+    resolvedAt?: string;
+    expanded: boolean;
+    onToggle: () => void;
+    /** Omitted → no Reopen button (a reader who may not reopen). */
+    onReopen?: () => void;
+}
+
+/**
+ * Who resolved a thread, for people. `resolvedBy` is whatever the host stored:
+ * a person's display name, or an agent's id (`agent:haiku`) on rows written
+ * before the server stored names — those read "Haiku agent", never the id.
+ */
+export declare function resolverLabel(resolvedBy: string | undefined): string;
+
 export declare function ReviewableItem({ item, onAck, onReject }: ReviewableItemProps): JSX.Element;
 
 declare interface ReviewableItemProps {
@@ -3849,6 +3873,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3868,12 +3905,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -3881,9 +3915,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -3897,6 +3931,16 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -3933,26 +3977,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

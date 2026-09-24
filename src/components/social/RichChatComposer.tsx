@@ -633,12 +633,28 @@ const PROCESS_DOT: Record<ComposerProcess['tone'], string> = {
  */
 function mountSuggestionMenu() {
   let host: HTMLElement | null = null;
+  let frame = 0;
+  const MARGIN = 8;
+  // Horizontal collision. The menu opens at the caret, but a composer in a
+  // narrow column (a 280px comment card at the window's right edge) puts the
+  // caret where a ~290px menu runs off the card and out of the window. Keep the
+  // menu's right edge inside the composer's boundary — the nearest
+  // `[data-suggestion-boundary]`, else the editor — and always inside the
+  // viewport, flipping it to end at that edge rather than start at the caret.
+  const clampLeft = (left: number, boundary: Element | null | undefined) => {
+    if (!host) return left;
+    const width = host.offsetWidth;
+    if (!width) return left;
+    const box = (boundary?.closest('[data-suggestion-boundary]') ?? boundary)?.getBoundingClientRect();
+    const right = Math.min(window.innerWidth - MARGIN, box && box.width > 0 ? Math.max(box.right, left + 1) : Infinity);
+    return Math.max(MARGIN, Math.min(left, right - width));
+  };
   return {
     attach(el: HTMLElement) {
       host = el;
       document.body.appendChild(el);
     },
-    place(rect: DOMRect | null | undefined) {
+    place(rect: DOMRect | null | undefined, boundary?: Element | null) {
       if (!host || !rect) return;
       host.style.position = 'absolute';
       host.style.zIndex = '9600';
@@ -646,10 +662,16 @@ function mountSuggestionMenu() {
       // composer is most of the time.
       const wouldOverflow = rect.bottom + 240 > window.innerHeight;
       host.style.top = `${(wouldOverflow ? rect.top - 6 : rect.bottom + 6) + window.scrollY}px`;
-      host.style.left = `${rect.left + window.scrollX}px`;
+      host.style.left = `${clampLeft(rect.left, boundary) + window.scrollX}px`;
       host.style.transform = wouldOverflow ? 'translateY(-100%)' : '';
+      // The menu's width is known only once React has rendered its rows.
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        if (host) host.style.left = `${clampLeft(rect.left, boundary) + window.scrollX}px`;
+      });
     },
     detach() {
+      cancelAnimationFrame(frame);
       host?.remove();
       host = null;
     },
@@ -790,11 +812,11 @@ function commandMenuRenderer(label: string, keepItemsWhileLoading: boolean, send
       lastItems = [];
       renderer = new ReactRenderer(CommandSuggestions, { props: withItems(props), editor: props.editor });
       menu.attach(renderer.element as HTMLElement);
-      menu.place(props.clientRect?.());
+      menu.place(props.clientRect?.(), props.editor.view.dom);
     },
     onUpdate: (props: SuggestionProps<CommandSuggestionItem>) => {
       renderer?.updateProps(withItems(props));
-      menu.place(props.clientRect?.());
+      menu.place(props.clientRect?.(), props.editor.view.dom);
     },
     onKeyDown: (props: SuggestionKeyDownProps) => {
       if (props.event.key === 'Escape') {
@@ -1072,11 +1094,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                       editor: props.editor,
                     });
                     menu.attach(renderer.element as HTMLElement);
-                    menu.place(props.clientRect?.());
+                    menu.place(props.clientRect?.(), props.editor.view.dom);
                   },
                   onUpdate: (props: SuggestionProps) => {
                     renderer?.updateProps(props);
-                    menu.place(props.clientRect?.());
+                    menu.place(props.clientRect?.(), props.editor.view.dom);
                   },
                   onKeyDown: (props: SuggestionKeyDownProps) => {
                     if (props.event.key === 'Escape') {
@@ -1307,11 +1329,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                     editor: props.editor,
                   });
                   menu.attach(renderer.element as HTMLElement);
-                  menu.place(props.clientRect?.());
+                  menu.place(props.clientRect?.(), props.editor.view.dom);
                 },
                 onUpdate: (props: SuggestionProps) => {
                   renderer?.updateProps(withGate(props));
-                  menu.place(props.clientRect?.());
+                  menu.place(props.clientRect?.(), props.editor.view.dom);
                 },
                 // Returning the menu's answer is what stops Enter reaching the
                 // composer and sending "@no" mid-selection.
@@ -1359,11 +1381,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 onStart: (props: SuggestionProps) => {
                   renderer = new ReactRenderer(DocumentSuggestions, { props, editor: props.editor });
                   menu.attach(renderer.element as HTMLElement);
-                  menu.place(props.clientRect?.());
+                  menu.place(props.clientRect?.(), props.editor.view.dom);
                 },
                 onUpdate: (props: SuggestionProps) => {
                   renderer?.updateProps(props);
-                  menu.place(props.clientRect?.());
+                  menu.place(props.clientRect?.(), props.editor.view.dom);
                 },
                 onKeyDown: (props: SuggestionKeyDownProps) => {
                   if (props.event.key === 'Escape') {
@@ -1973,6 +1995,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     >
       <div
         data-testid={testId}
+        // Suggestion menus keep their right edge inside this box (mountSuggestionMenu).
+        data-suggestion-boundary=""
         // A 1px border colour change was the composer's ONLY focus signal —
         // measured in the browser, the contenteditable itself computes
         // `outline-style: none` (`.ProseMirror:focus` in the library

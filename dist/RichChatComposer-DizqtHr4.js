@@ -2308,19 +2308,27 @@ var sa = {
 	done: "bg-success"
 };
 function ua() {
-	let e = null;
+	let e = null, t = 0, n = (t, n) => {
+		if (!e) return t;
+		let r = e.offsetWidth;
+		if (!r) return t;
+		let i = (n?.closest("[data-suggestion-boundary]") ?? n)?.getBoundingClientRect(), a = Math.min(window.innerWidth - 8, i && i.width > 0 ? Math.max(i.right, t + 1) : Infinity);
+		return Math.max(8, Math.min(t, a - r));
+	};
 	return {
 		attach(t) {
 			e = t, document.body.appendChild(t);
 		},
-		place(t) {
-			if (!e || !t) return;
+		place(r, i) {
+			if (!e || !r) return;
 			e.style.position = "absolute", e.style.zIndex = "9600";
-			let n = t.bottom + 240 > window.innerHeight;
-			e.style.top = `${(n ? t.top - 6 : t.bottom + 6) + window.scrollY}px`, e.style.left = `${t.left + window.scrollX}px`, e.style.transform = n ? "translateY(-100%)" : "";
+			let a = r.bottom + 240 > window.innerHeight;
+			e.style.top = `${(a ? r.top - 6 : r.bottom + 6) + window.scrollY}px`, e.style.left = `${n(r.left, i) + window.scrollX}px`, e.style.transform = a ? "translateY(-100%)" : "", cancelAnimationFrame(t), t = requestAnimationFrame(() => {
+				e && (e.style.left = `${n(r.left, i) + window.scrollX}px`);
+			});
 		},
 		detach() {
-			e?.remove(), e = null;
+			cancelAnimationFrame(t), e?.remove(), e = null;
 		}
 	};
 }
@@ -2395,10 +2403,10 @@ function Ca(e, t, n = !1) {
 			i = [], r = new he(Xi, {
 				props: o(e),
 				editor: e.editor
-			}), a.attach(r.element), a.place(e.clientRect?.());
+			}), a.attach(r.element), a.place(e.clientRect?.(), e.editor.view.dom);
 		},
 		onUpdate: (e) => {
-			r?.updateProps(o(e)), a.place(e.clientRect?.());
+			r?.updateProps(o(e)), a.place(e.clientRect?.(), e.editor.view.dom);
 		},
 		onKeyDown: (e) => e.event.key === "Escape" ? (a.detach(), !0) : (r?.ref)?.onKeyDown?.(e) ?? !1,
 		onExit: () => {
@@ -2488,10 +2496,10 @@ var wa = ce(function({ onSend: d, draft: v, onDraftChange: se, onCommand: ce, on
 									e = new he(Ki, {
 										props: n,
 										editor: n.editor
-									}), t.attach(e.element), t.place(n.clientRect?.());
+									}), t.attach(e.element), t.place(n.clientRect?.(), n.editor.view.dom);
 								},
 								onUpdate: (n) => {
-									e?.updateProps(n), t.place(n.clientRect?.());
+									e?.updateProps(n), t.place(n.clientRect?.(), n.editor.view.dom);
 								},
 								onKeyDown: (n) => n.event.key === "Escape" ? (t.detach(), !0) : (e?.ref)?.onKeyDown?.(n) ?? !1,
 								onExit: () => {
@@ -2639,10 +2647,10 @@ var wa = ce(function({ onSend: d, draft: v, onDraftChange: se, onCommand: ce, on
 							e = new he(Wi, {
 								props: n(r),
 								editor: r.editor
-							}), t.attach(e.element), t.place(r.clientRect?.());
+							}), t.attach(e.element), t.place(r.clientRect?.(), r.editor.view.dom);
 						},
 						onUpdate: (r) => {
-							e?.updateProps(n(r)), t.place(r.clientRect?.());
+							e?.updateProps(n(r)), t.place(r.clientRect?.(), r.editor.view.dom);
 						},
 						onKeyDown: (n) => n.event.key === "Escape" ? (t.detach(), !0) : (e?.ref)?.onKeyDown?.(n) ?? !1,
 						onExit: () => {
@@ -2671,10 +2679,10 @@ var wa = ce(function({ onSend: d, draft: v, onDraftChange: se, onCommand: ce, on
 							e = new he(Gi, {
 								props: n,
 								editor: n.editor
-							}), t.attach(e.element), t.place(n.clientRect?.());
+							}), t.attach(e.element), t.place(n.clientRect?.(), n.editor.view.dom);
 						},
 						onUpdate: (n) => {
-							e?.updateProps(n), t.place(n.clientRect?.());
+							e?.updateProps(n), t.place(n.clientRect?.(), n.editor.view.dom);
 						},
 						onKeyDown: (n) => n.event.key === "Escape" ? (t.detach(), !0) : (e?.ref)?.onKeyDown?.(n) ?? !1,
 						onExit: () => {
@@ -2928,6 +2936,7 @@ var wa = ce(function({ onSend: d, draft: v, onDraftChange: se, onCommand: ce, on
 		className: e("min-w-0", mt),
 		children: /* @__PURE__ */ A("div", {
 			"data-testid": I,
+			"data-suggestion-boundary": "",
 			"data-command": G?.trigger,
 			"data-mode": z ? B : void 0,
 			"data-console": ur ? "true" : void 0,
