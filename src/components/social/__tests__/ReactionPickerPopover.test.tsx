@@ -9,6 +9,18 @@ describe('ReactionPickerPopover', () => {
     expect(screen.queryByTestId('reaction-picker-popover')).not.toBeInTheDocument();
   });
 
+  it('does not take the focus when it mounts closed', () => {
+    const other = document.createElement('button');
+    document.body.appendChild(other);
+    other.focus();
+    const trigger = { current: document.createElement('button') };
+    document.body.appendChild(trigger.current);
+    render(<ReactionPickerPopover open={false} triggerRef={trigger} onSelect={() => {}} onClose={() => {}} />);
+    expect(document.activeElement).toBe(other);
+    other.remove();
+    trigger.current.remove();
+  });
+
   it('renders the default 64-emoji grid when open', () => {
     render(
       <ReactionPickerPopover open onSelect={() => {}} onClose={() => {}} />,

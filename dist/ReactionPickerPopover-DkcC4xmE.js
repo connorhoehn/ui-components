@@ -115,19 +115,22 @@ function v({ open: t, onSelect: a, onClose: c, triggerRef: f, emojis: p = g, sho
 		};
 		return document.addEventListener("keydown", e), () => document.removeEventListener("keydown", e);
 	}, [t, c]);
-	let S = s(null);
+	let S = s(null), C = s(!1);
 	r(() => {
 		if (t) {
+			C.current = !0;
 			let e = document.activeElement;
 			S.current = e instanceof HTMLElement ? e : null;
 			return;
 		}
+		if (!C.current) return;
+		C.current = !1;
 		let e = S.current ?? f?.current ?? null;
 		S.current = null, e?.isConnected && e.focus();
 	}, [t, f]);
-	let C = n((e) => {
+	let w = n((e) => {
 		a(e), c();
-	}, [a, c]), w = o(() => x ? {
+	}, [a, c]), T = o(() => x ? {
 		position: "fixed",
 		top: x.top,
 		left: x.left,
@@ -140,7 +143,7 @@ function v({ open: t, onSelect: a, onClose: c, triggerRef: f, emojis: p = g, sho
 		"data-testid": "reaction-picker-popover",
 		className: e("z-50 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] shadow-lg p-2", "w-[18rem]", h),
 		style: {
-			...w,
+			...T,
 			...v
 		},
 		children: /* @__PURE__ */ u(d, {
@@ -162,7 +165,7 @@ function v({ open: t, onSelect: a, onClose: c, triggerRef: f, emojis: p = g, sho
 					className: "grid grid-cols-8 gap-1",
 					children: p.map((t) => /* @__PURE__ */ l(d.Item, {
 						value: t,
-						onSelect: () => C(t),
+						onSelect: () => w(t),
 						"data-testid": "reaction-picker-item",
 						"data-emoji": t,
 						className: e("flex items-center justify-center text-xl rounded-md", "h-9 cursor-pointer select-none", "aria-selected:bg-[var(--color-primary)]/20", "hover:bg-white/5"),

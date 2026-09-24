@@ -14,7 +14,7 @@ import { t as O } from "./Avatar-DeJWic2B.js";
 import { t as k } from "./RovingToolbar-CmQag9q6.js";
 import { t as ne } from "./PresenceAvatars-Dmtv09Kg.js";
 import { t as A } from "./StatusPill-C-aN2Pzz.js";
-import { i as j, n as M, r as N, t as P } from "./ReactionPickerPopover-CcL-n6gt.js";
+import { i as j, n as M, r as N, t as P } from "./ReactionPickerPopover-DkcC4xmE.js";
 import { p as re } from "./MediaIcons-OLUYBJM0.js";
 import { t as F } from "./formatBytes-05ivRSJY.js";
 import { Fragment as I, useEffect as L, useMemo as R, useRef as z, useState as B } from "react";

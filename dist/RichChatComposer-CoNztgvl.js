@@ -5,7 +5,7 @@ import { n as _ } from "./Tabs-DjNsAODd.js";
 import { t as v } from "./Avatar-DeJWic2B.js";
 import { t as y } from "./RovingToolbar-CmQag9q6.js";
 import { a as b, i as x, n as S, o as C, s as w } from "./backdropTone-BF54k8gW.js";
-import { i as ee, n as te, r as ne } from "./ReactionPickerPopover-CcL-n6gt.js";
+import { i as ee, n as te, r as ne } from "./ReactionPickerPopover-DkcC4xmE.js";
 import { i as re, n as T, r as ie, s as ae, t as oe } from "./composerCommands-DRKsP3QT.js";
 import { Fragment as se, forwardRef as ce, useCallback as le, useEffect as E, useImperativeHandle as ue, useLayoutEffect as de, useMemo as fe, useRef as D, useState as O } from "react";
 import { Fragment as pe, jsx as k, jsxs as A } from "react/jsx-runtime";

@@ -143,12 +143,20 @@ export function ReactionPickerPopover({
    * and it exists for positioning, not for focus).
    */
   const returnFocusRef = useRef<HTMLElement | null>(null);
+  // Only a real close (open → closed) hands the focus back. Mounting closed —
+  // every composer on every page, and again whenever a layout change
+  // remounts one — used to focus the Emoji button, stealing the focus from
+  // wherever the reader was (an Activity card whose pane Escape just closed).
+  const wasOpenRef = useRef(false);
   useEffect(() => {
     if (open) {
+      wasOpenRef.current = true;
       const active = document.activeElement;
       returnFocusRef.current = active instanceof HTMLElement ? active : null;
       return;
     }
+    if (!wasOpenRef.current) return;
+    wasOpenRef.current = false;
     const back = returnFocusRef.current ?? triggerRef?.current ?? null;
     returnFocusRef.current = null;
     // `isConnected`: the row a reaction was picked on can be re-keyed by the
