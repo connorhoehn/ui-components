@@ -11,8 +11,10 @@ import { cn } from '../../../lib/cn';
 import {
   layoutWorkEfforts,
   limitWorkEfforts,
+  WORK_ACTIVITY_ALL_EFFORTS,
   WORK_ACTIVITY_DEFAULT_MAX_EFFORTS,
   WORK_CANVAS_FIT_MIN_ZOOM,
+  WORK_CANVAS_OPEN_ZOOM,
   WORK_CANVAS_MIN_ZOOM,
   WORK_CANVAS_READABLE_ZOOM,
   type WorkNodeBounds,
@@ -141,11 +143,15 @@ export function WorkActivityCanvas(props: ActivityProps) {
   const keepEffortId = view.focusedEffortId ?? (selectedNodeId ? activity.efforts.find((effort) => effort.nodeIds.includes(selectedNodeId))?.id ?? null : null);
   const efforts = useMemo(() => limitWorkEfforts(activity.efforts, nodes, { max: maxEfforts, keepEffortId }), [activity.efforts, nodes, maxEfforts, keepEffortId]);
   const layouts = useMemo(() => layoutWorkEfforts(nodes, edges, efforts, { width: size.width, height: size.height, full: activity.mode === 'full', focusedEffortId: view.focusedEffortId, expandedSourceEfforts: view.expandedSourceEfforts, reversedEdgeIds: activity.reversedEdgeIds, labelledEdgeIds: labelledKey.split('\u0000').filter(Boolean), measurements }), [nodes, edges, efforts, activity.mode, activity.reversedEdgeIds, labelledKey, view.focusedEffortId, view.expandedSourceEfforts, size, measurements]);
-  const fit = useCallback((): WorkGraphViewport => {
+  const bounds = useMemo(() => {
     const left = Math.min(0, ...layouts.map((group) => group.x));
     const top = Math.min(0, ...layouts.map((group) => group.y));
     const width = Math.max(1, ...layouts.map((group) => group.x + group.width)) - left;
     const height = Math.max(1, ...layouts.map((group) => group.y + group.height)) - top;
+    return { left, top, width, height };
+  }, [layouts]);
+  const fit = useCallback((): WorkGraphViewport => {
+    const { left, top, width, height } = bounds;
     // Fill the canvas: the work should span the pane with a margin, not sit in
     // a corner of it. The floor here is the FIT floor, not the interactive
     // one — a fit clamped to 0.4 leaves the top row of a nine-effort day
@@ -153,7 +159,19 @@ export function WorkActivityCanvas(props: ActivityProps) {
     // that appears to do nothing.
     const zoom = Math.max(WORK_CANVAS_FIT_MIN_ZOOM, Math.min(1.2, (size.width - 48) / width, (size.height - 48) / height));
     return { x: (size.width - width * zoom) / 2 - left * zoom, y: (size.height - height * zoom) / 2 - top * zoom, zoom };
-  }, [layouts, size]);
+  }, [bounds, size]);
+  // What the canvas opens at: the whole graph when it fits readably (or the
+  // host asked for every effort — a map), else a readable zoom anchored at the
+  // top, where the newest work is. See WORK_CANVAS_OPEN_ZOOM.
+  const capped = maxEfforts !== WORK_ACTIVITY_ALL_EFFORTS;
+  const open = useCallback((): WorkGraphViewport => {
+    const whole = fit();
+    if (!capped) return whole;
+    const { left, top, width } = bounds;
+    const zoom = Math.max(whole.zoom, Math.min(WORK_CANVAS_OPEN_ZOOM, (size.width - 48) / width));
+    if (zoom <= whole.zoom) return whole;
+    return { x: (size.width - width * zoom) / 2 - left * zoom, y: 24 - top * zoom, zoom };
+  }, [fit, capped, bounds, size]);
   // A status border or a new text line can change measurements. Re-layout may
   // reserve that space, but only a navigation/topology intent may reset zoom.
   const geometry = JSON.stringify([size, activity.mode, view.focusedEffortId, view.expandedSourceEfforts, layouts.map((group) => [group.id, group.nodes.map((node) => node.id), group.edges.map((edge) => edge.id)]), layouts.every((group) => group.nodes.every((node) => measurements.has(node.entityId)))]);
@@ -165,9 +183,9 @@ export function WorkActivityCanvas(props: ActivityProps) {
     previousFocus.current = view.focusedEffortId;
     if (restoring) { onViewportChange(restoring); return; }
     if (first && view.canvasInitialized) return;
-    onViewportChange(fit());
+    onViewportChange(open());
     if (!view.canvasInitialized) onViewChange({ ...view, canvasInitialized: true });
-  }, [geometry, fit, view, onViewChange, onViewportChange]);
+  }, [geometry, open, view, onViewChange, onViewportChange]);
   const focus = (id: string) => onViewChange({ ...view, focusedEffortId: view.focusedEffortId === id ? null : id, overviewViewport: view.focusedEffortId ? view.overviewViewport : viewport });
   const byId = new Map(nodes.map((node) => [node.id, node]));
   const byEdge = new Map(edges.map((edge) => [edge.id, edge]));

@@ -13,8 +13,10 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { WorkActivityCanvas } from '../WorkActivityCanvas';
 import {
   WORK_ACTIVITY_ALL_EFFORTS,
+  WORK_ACTIVITY_DEFAULT_MAX_EFFORTS,
   WORK_CANVAS_FIT_MIN_ZOOM,
   WORK_CANVAS_MIN_ZOOM,
+  WORK_CANVAS_OPEN_ZOOM,
 } from '../effortLayout';
 import type {
   WorkActivityPresentation,
@@ -211,5 +213,43 @@ describe('WorkActivityCanvas readability hint', () => {
     render(<WorkActivityCanvas {...makeProps(EFFORT_COUNT, { x: 0, y: 0, zoom: 0.18 }, vi.fn())} />);
     expect(screen.getByTestId('work-activity-zoom-hint')).toBeInTheDocument();
     expect(screen.queryByTestId('work-activity-zoom-hint-list')).not.toBeInTheDocument();
+  });
+});
+
+describe('WorkActivityCanvas opening view (capped efforts)', () => {
+  // Two tall efforts in a short pane: the whole-graph fit is ~0.4 and the
+  // cards are unreadable (realtime-examples Loop 26, 1640×960).
+  function tall(onViewportChange: (v: WorkGraphViewport) => void) {
+    const props = makeProps(WORK_ACTIVITY_DEFAULT_MAX_EFFORTS, { x: 0, y: 0, zoom: 1 }, onViewportChange);
+    const chain = Array.from({ length: 8 }, (_, i) => ({ ...props.nodes[0]!, id: `step-${i}`, title: `Step ${i}` }));
+    const links = chain.slice(1).map((node, i) => ({ ...props.edges[0]!, id: `link-${i}`, fromId: chain[i]!.id, toId: node.id }));
+    return {
+      ...props,
+      maxEfforts: WORK_ACTIVITY_DEFAULT_MAX_EFFORTS,
+      nodes: [...props.nodes, ...chain],
+      edges: [...props.edges, ...links],
+      activity: { ...props.activity, efforts: [{ ...props.activity.efforts[0]!, nodeIds: [...props.activity.efforts[0]!.nodeIds, ...chain.map((n) => n.id)], edgeIds: [...props.activity.efforts[0]!.edgeIds, ...links.map((e) => e.id)] }, props.activity.efforts[1]!] },
+    };
+  }
+
+  it('opens readable and anchored at the top when the whole graph would fit only smaller', () => {
+    const onViewportChange = vi.fn();
+    render(<WorkActivityCanvas {...tall(onViewportChange)} />);
+    const opened = onViewportChange.mock.calls.at(-1)![0] as WorkGraphViewport;
+    expect(opened.zoom).toBeGreaterThan(WORK_CANVAS_MIN_ZOOM);
+    expect(opened.zoom).toBeLessThanOrEqual(WORK_CANVAS_OPEN_ZOOM);
+    const frames = captured!.nodes.filter((node) => node.type === 'effort');
+    const topmost = Math.min(...frames.map((frame) => frame.position.y * opened.zoom + opened.y));
+    expect(topmost).toBeGreaterThanOrEqual(0);
+    expect(topmost).toBeLessThan(48);
+
+    // "Fit graph" still shows all of it.
+    onViewportChange.mockClear();
+    fireEvent.click(screen.getByRole('button', { name: 'Fit graph' }));
+    const whole = onViewportChange.mock.calls.at(-1)![0] as WorkGraphViewport;
+    expect(whole.zoom).toBeLessThan(opened.zoom);
+    for (const frame of captured!.nodes.filter((node) => node.type === 'effort')) {
+      expect(frame.position.y * whole.zoom + whole.y + (frame.style?.height ?? 0) * whole.zoom).toBeLessThanOrEqual(PANE.height + 1);
+    }
   });
 });

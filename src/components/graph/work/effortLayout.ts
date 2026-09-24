@@ -27,6 +27,17 @@ export const WORK_CANVAS_FIT_MIN_ZOOM = 0.1;
 export const WORK_CANVAS_READABLE_ZOOM = WORK_CANVAS_MIN_ZOOM;
 
 /**
+ * The zoom a CAPPED canvas opens at when the whole graph would fit only
+ * smaller (realtime-examples Loop 26). Two efforts of a real day are taller
+ * than a 1640×960 page's canvas is high, so fitting all of it opened at ~0.4 —
+ * cards drawn in 5 px type. A capped canvas exists to be read, so it opens at
+ * this zoom (or the width's fit, if smaller) anchored at the top — the newest
+ * work — and pans down; "Fit graph" still shows the whole graph. A canvas
+ * asked for every effort (`WORK_ACTIVITY_ALL_EFFORTS`) is a map and opens whole.
+ */
+export const WORK_CANVAS_OPEN_ZOOM = 0.8;
+
+/**
  * How many parallel efforts the activity canvas draws at once by default.
  *
  * Two, because the canvas fits everything it is given into one pane: a real
