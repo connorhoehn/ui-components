@@ -2350,6 +2350,52 @@ export declare type CallWidgetState = 'idle' | 'ringing' | 'connecting' | 'activ
 /** True when nothing blocks a save. Kept separate so the host can ask too. */
 export declare function canSaveDeck(spec: DeckSpec): boolean;
 
+/** Width of the folded rail. */
+export declare const CANVAS_PANE_RAIL_PX = 36;
+
+export declare interface CanvasPaneGeometry {
+    placement: Exclude<CanvasPanePlacement, 'none' | 'collapsed'>;
+    paneWidth: number;
+    /** Canvas width left visible beside (column) or beside-and-under (overlay) the pane. */
+    canvasWidth: number;
+}
+
+/** Pure: where the pane goes, and how wide, in a layout this wide. */
+export declare function canvasPaneGeometry(width: number, options?: CanvasPaneGeometryOptions): CanvasPaneGeometry;
+
+export declare interface CanvasPaneGeometryOptions {
+    /** Narrowest the pane gets. Default 280. */
+    paneMinPx?: number;
+    /** Widest the pane gets. Default 380. */
+    paneMaxPx?: number;
+    /** The pane's share of the layout between those bounds. Default 0.3. */
+    paneFraction?: number;
+    /** The canvas keeps at least this beside a column pane; below it the pane overlays. Default 480. */
+    canvasMinPx?: number;
+}
+
+export declare function CanvasPaneLayout({ children, pane, collapsed: collapsedProp, onCollapsedChange, expandKey, paneLabel, width: fixedWidth, className, 'data-testid': testId, ...geometryOptions }: CanvasPaneLayoutProps): JSX.Element;
+
+export declare interface CanvasPaneLayoutProps extends CanvasPaneGeometryOptions {
+    /** The canvas. It gets the remaining width and never less than zero. */
+    children: ReactNode;
+    /** The details pane, or null/undefined when nothing is open. It fills its box (`h-full w-full`) and draws its own left edge and background. */
+    pane?: ReactNode | null;
+    /** Controlled fold state. Omit to let the layout keep its own. */
+    collapsed?: boolean;
+    onCollapsedChange?: (collapsed: boolean) => void;
+    /** When this changes (a different item opened), a folded pane unfolds. */
+    expandKey?: unknown;
+    /** What the pane holds, for the fold/unfold buttons: "Hide details" / "Show details". Default "details". */
+    paneLabel?: string;
+    /** Fixed width for tests/stories (jsdom never measures). */
+    width?: number;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type CanvasPanePlacement = 'none' | 'column' | 'overlay' | 'collapsed';
+
 declare type CanvasTool = 'brush' | 'pen' | 'eraser' | 'select';
 
 export declare function CapabilityDeniedFallback({ capabilityName, title, description, actionLabel, onAction, actions, icon, testId, }: CapabilityDeniedFallbackProps): JSX.Element;
@@ -20123,6 +20169,19 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -20155,12 +20214,32 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -20194,16 +20273,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
@@ -20214,32 +20283,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

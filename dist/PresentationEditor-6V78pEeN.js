@@ -22,9 +22,9 @@ import { t as P } from "./SectionLabel-bcrhNYOr.js";
 import { t as F } from "./StatusPill-C-aN2Pzz.js";
 import { t as I } from "./Select-D2EQq7Wi.js";
 import { G as ne, U as re } from "./renderers-CLgJ6UYB.js";
-import { r as ie } from "./composerCommands-DRKsP3QT.js";
-import { i as ae, t as oe } from "./FloatingComposerDock-DMUQCjea.js";
-import { t as se } from "./useMeasuredWidth-BPrwD0q5.js";
+import { t as ie } from "./useMeasuredWidth-BPrwD0q5.js";
+import { r as ae } from "./composerCommands-DRKsP3QT.js";
+import { i as oe, t as se } from "./FloatingComposerDock-DMUQCjea.js";
 import { Component as L, Suspense as ce, lazy as R, useCallback as z, useEffect as B, useId as le, useMemo as V, useRef as H, useState as U } from "react";
 import { Fragment as W, jsx as G, jsxs as K } from "react/jsx-runtime";
 //#region src/components/doc-editor/NewDocumentModal.tsx
@@ -1368,7 +1368,7 @@ function et(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
-var tt = R(() => import("./SortableSlideList-dCKAWqo5.js"));
+var tt = R(() => import("./SortableSlideList-Q9qkqufd.js"));
 function nt(e, t) {
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }
@@ -1771,7 +1771,7 @@ function ut({ sources: e, onChange: t, options: n, onSearchSources: a, readOnly:
 			documentId: n.documentId,
 			title: n.title
 		}]), u(""), f(!1));
-	}, x = /* @__PURE__ */ G(ie, {
+	}, x = /* @__PURE__ */ G(ae, {
 		references: _,
 		onRemove: o ? void 0 : (n) => {
 			t(e.filter((e) => `${e.documentId}${e.anchor ? `#${e.anchor}` : ""}` !== n));
@@ -2329,7 +2329,7 @@ function Dt({ label: e, value: t }) {
 	});
 }
 function Ot({ slide: e, theme: t, onAddSlide: n, canAddSlide: a = !0, onLayoutChange: o, onThemeChange: s, onChartKindChange: c, onUndo: l, onRedo: u, canUndo: d = !1, canRedo: f = !1, onPresent: p, end: h, disabled: v = !1, className: b, testIdPrefix: x = "slides-toolbar", size: S = "auto" }) {
-	let { ref: C, ...w } = j(), { ref: ee, width: E } = se(C), D = S === "auto" ? bt(E) : S, te = xt[D], O = (e) => te.has(e), k = v, A = !k && e ? {
+	let { ref: C, ...w } = j(), { ref: ee, width: E } = ie(C), D = S === "auto" ? bt(E) : S, te = xt[D], O = (e) => te.has(e), k = v, A = !k && e ? {
 		label: "Layout of this slide",
 		items: Ve.map((t) => ({
 			label: He[t],
@@ -2612,7 +2612,7 @@ function Nt(e, t) {
 	};
 }
 function Pt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevision: o, revisions: s, activeRevisionId: c, onSelectRevision: l, sources: u, onSearchSources: d, onDownload: f, onOpenPresentationView: p, readOnly: h = !1, onInstruct: g, instructHints: _, onUndoInstruct: v, generatingSlideIds: b, slideViewers: x, selectSlideRequest: S, footer: T, renderFrame: E, onSelectedSlideChange: k, className: j, "data-testid": N = "presentation-editor" }) {
-	let [P, F] = U(() => e.slides[0]?.id ?? ""), [ne, re] = U(!1), [ie, se] = U(null), L = !!g, [R, le] = U("slide"), [q, ue] = U(!1), [de, fe] = U(null), [pe, me] = U(null), [he, ge] = U(() => /* @__PURE__ */ new Set()), { edit: J, undo: ve, redo: Y, canUndo: Ce, canRedo: we } = Nt(e, t), [Ee, De] = U([]);
+	let [P, F] = U(() => e.slides[0]?.id ?? ""), [ne, re] = U(!1), [ie, ae] = U(null), L = !!g, [R, le] = U("slide"), [q, ue] = U(!1), [de, fe] = U(null), [pe, me] = U(null), [he, ge] = U(() => /* @__PURE__ */ new Set()), { edit: J, undo: ve, redo: Y, canUndo: Ce, canRedo: we } = Nt(e, t), [Ee, De] = U([]);
 	B(() => {
 		typeof n == "object" && "slides" in n && De(n.slides);
 	}, [n]);
@@ -2692,8 +2692,8 @@ function Pt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 	]), dt = z(() => {
 		v?.(), fe(null), ge(/* @__PURE__ */ new Set());
 	}, [v]), ft = ke.size, pt = !h && Z.length > 0 && ft === 0 && !ne, ht = z(() => {
-		pt && (re(!0), se(null), Promise.resolve(o(e)).catch((e) => {
-			se(e instanceof Error ? e.message : "The revision could not be saved.");
+		pt && (re(!0), ae(null), Promise.resolve(o(e)).catch((e) => {
+			ae(e instanceof Error ? e.message : "The revision could not be saved.");
 		}).finally(() => re(!1)));
 	}, [
 		pt,
@@ -2957,7 +2957,7 @@ function Pt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 		children: ft === 1 ? "1 slide cites no source. Every slide names at least one — Save is off until it does." : `${ft} slides cite no source. Every slide names at least one — Save is off until they do.`
 	}), ie && /* @__PURE__ */ G(M, {
 		tone: "error",
-		onDismiss: () => se(null),
+		onDismiss: () => ae(null),
 		"data-testid": `${N}-save-error`,
 		children: ie
 	})] }), Tt = L && /* @__PURE__ */ K(W, { children: [pe && /* @__PURE__ */ G(M, {
@@ -3010,7 +3010,7 @@ function Pt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 		slideCount: Pe,
 		selectSlide: qe,
 		markChanged: (e) => ge(new Set(e))
-	}, At = typeof T == "function" ? T(Dt) : T, Pt = At != null && At !== !1 ? At : Et ? /* @__PURE__ */ G(ae, {
+	}, At = typeof T == "function" ? T(Dt) : T, Pt = At != null && At !== !1 ? At : Et ? /* @__PURE__ */ G(oe, {
 		maxWidth: "4xl",
 		label: "Deck agent",
 		composer: /* @__PURE__ */ K("div", {
@@ -3189,7 +3189,7 @@ function Pt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 			/* @__PURE__ */ G("div", {
 				className: "flex max-h-[var(--dock-max-height,50%)] min-h-0 shrink-0 flex-col",
 				"data-testid": `${N}-dock-row`,
-				children: /* @__PURE__ */ G(oe.Provider, {
+				children: /* @__PURE__ */ G(se.Provider, {
 					value: "pinned",
 					children: Pt
 				})
