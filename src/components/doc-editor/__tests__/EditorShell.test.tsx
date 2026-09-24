@@ -264,4 +264,28 @@ describe('EditorShell participants', () => {
     fireEvent.click(within(screen.getByTestId('editor-shell-byline')).getAllByRole('listitem')[0]!);
     expect(onJump).toHaveBeenCalledWith('u1');
   });
+
+  it('work-item variant: crumb line carries parent, type chip, key and the head actions; no kind mark', () => {
+    render(
+      <EditorShell
+        variant="work-item"
+        kind="page"
+        title="Decommission legacy StatsD bridge"
+        subtitle="Service-by-service migration"
+        breadcrumbs={[{ label: 'OpenTelemetry everywhere', href: '#' }]}
+        itemType="Story"
+        itemKey="wi-obs-e1-s4"
+        headActions={<button type="button">More</button>}
+      >
+        <p />
+      </EditorShell>,
+    );
+    const row = screen.getByTestId('editor-shell-crumbs-row');
+    expect(within(row).getByText('OpenTelemetry everywhere')).toBeTruthy();
+    expect(within(row).getByText('Story')).toBeTruthy();
+    expect(within(row).getByText('wi-obs-e1-s4')).toBeTruthy();
+    expect(within(row).getByRole('button', { name: 'More' })).toBeTruthy();
+    expect(screen.queryByTestId('editor-shell-kind')).toBeNull();
+    expect(screen.getByTestId('editor-shell-title').className).toContain('text-[22px]');
+  });
 });
