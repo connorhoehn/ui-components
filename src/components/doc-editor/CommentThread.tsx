@@ -10,7 +10,7 @@ import type { MentionUser } from '../../hooks/useMentionUsers';
 import { cn } from '../../lib/cn';
 import { onActivationKey } from '../../lib/activationKey';
 import { Textarea } from '../forms/Textarea';
-import { ChevronIcon, SparkleIcon } from '../ui/Icons';
+import { ChevronIcon, SparkleIcon, UndoIcon } from '../ui/Icons';
 
 // ---------------------------------------------------------------------------
 // Small display helpers
@@ -230,38 +230,42 @@ export interface ResolvedBannerProps {
 export function ResolvedBanner({ resolvedBy, resolvedAt, expanded, onToggle, onReopen }: ResolvedBannerProps) {
   const who = resolverLabel(resolvedBy);
   const when = resolvedAt ? relativeTime(resolvedAt) : '';
+  // "32m ago" → "32m": a ~260px margin card has room for the name OR the long form.
+  const short = when.replace(/ ago$/, '');
   return (
     <div
       role="button"
       tabIndex={0}
       aria-expanded={expanded}
       aria-label={`Resolved by ${who}${when ? `, ${when}` : ''}. ${expanded ? 'Collapse' : 'Expand'} thread`}
-      title={expanded ? 'Collapse thread' : 'Show the resolved thread'}
+      title={`Resolved by ${who}${when ? ` ${when}` : ''} — ${expanded ? 'collapse' : 'show'} the thread`}
       data-testid="comment-resolved-banner"
-      className={cn('group bg-success-bg border-l-[3px] border-l-success pl-2.5 pr-1.5 py-1.5 mb-1 rounded cursor-pointer flex items-center gap-1.5 min-w-0 hover:bg-success-bg/80')}
+      className={cn('group bg-success-bg border-l-[3px] border-l-success pl-2 pr-1 py-1 mb-1 rounded cursor-pointer flex items-center gap-1 min-w-0')}
       onClick={onToggle}
       // Space must preventDefault here or toggling also scrolls the thread.
       onKeyDown={onActivationKey(onToggle)}
     >
       <span aria-hidden className={cn('text-success-fg text-xs shrink-0')}>{'✓'}</span>
-      <span className={cn('text-success-fg text-xs font-semibold truncate min-w-0')}>
+      <span className={cn('text-success-fg text-xs font-semibold truncate min-w-0 flex-1')}>
         Resolved by {who}
       </span>
-      {when && (
-        <span className={cn('text-text-tertiary text-[11px] whitespace-nowrap shrink-0')}>{when}</span>
+      {short && (
+        <span className={cn('text-text-tertiary text-[11px] whitespace-nowrap shrink-0')}>{short}</span>
       )}
-      <span className={cn('flex-1')} />
       {onReopen && (
         <button
           type="button"
+          aria-label="Reopen"
+          title="Reopen thread"
           onClick={(e) => {
             e.stopPropagation();
             onReopen();
           }}
           onKeyDown={(e) => e.stopPropagation()}
-          className={cn('shrink-0 bg-transparent border-none rounded px-1.5 py-0.5 text-text-secondary text-[11px] cursor-pointer font-[inherit] hover:bg-surface-hover hover:text-text-primary')}
+          data-testid="comment-resolved-reopen"
+          className={cn('shrink-0 inline-flex items-center justify-center w-6 h-6 bg-transparent border-none rounded text-text-tertiary cursor-pointer hover:bg-surface-hover hover:text-text-primary')}
         >
-          Reopen
+          <UndoIcon aria-hidden size={13} />
         </button>
       )}
       <ChevronIcon aria-hidden size={14} dir={expanded ? 'up' : 'down'} className={cn('shrink-0 text-text-tertiary group-hover:text-text-secondary')} />

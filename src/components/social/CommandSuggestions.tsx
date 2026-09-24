@@ -54,6 +54,12 @@ export interface CommandSuggestionsProps {
    * the top.
    */
   draft?: string;
+  /**
+   * `fit`: as wide as the rows need (11–20rem) instead of a fixed 26rem — for a
+   * compact composer in a narrow column (a margin comment card), where a fixed
+   * menu is wider than the card it opens from.
+   */
+  width?: 'fixed' | 'fit';
 }
 
 export interface CommandSuggestionsHandle {
@@ -80,7 +86,7 @@ function rowHint(item: CommandSuggestionItem): string | undefined {
 }
 
 export const CommandSuggestions = forwardRef<CommandSuggestionsHandle, CommandSuggestionsProps>(
-  function CommandSuggestions({ items, command, label = 'Commands', draft }, ref) {
+  function CommandSuggestions({ items, command, label = 'Commands', draft, width = 'fixed' }, ref) {
     const [selected, setSelected] = useState(0);
 
     // A narrowing query can leave the cursor past the end of the list.
@@ -119,7 +125,10 @@ export const CommandSuggestions = forwardRef<CommandSuggestionsHandle, CommandSu
     return (
       <div
         data-testid="command-suggestions"
-        className="w-[26rem] max-w-[calc(100vw-2rem)] rounded-lg border border-border bg-surface py-1 shadow-lg"
+        data-width={width}
+        className={width === 'fit'
+          ? 'w-max min-w-[11rem] max-w-[min(20rem,calc(100vw-2rem))] rounded-lg border border-border bg-surface py-1 shadow-lg'
+          : 'w-[26rem] max-w-[calc(100vw-2rem)] rounded-lg border border-border bg-surface py-1 shadow-lg'}
       >
         <div role="listbox" aria-label={label} className="max-h-56 overflow-y-auto">
           {items.map((item, i) => (

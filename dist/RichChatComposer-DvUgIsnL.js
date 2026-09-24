@@ -2205,18 +2205,19 @@ function Ji(e) {
 function Yi(e) {
 	if (!(e.hint && e.hint === Ji(e))) return e.hint;
 }
-var Xi = ce(function({ items: t, command: n, label: r = "Commands", draft: i }, a) {
-	let [o, s] = O(0);
-	E(() => s(0), [t]);
-	let c = (e) => {
+var Xi = ce(function({ items: t, command: n, label: r = "Commands", draft: i, width: a = "fixed" }, o) {
+	let [s, c] = O(0);
+	E(() => c(0), [t]);
+	let l = (e) => {
 		let r = t[e];
 		r && n(r);
 	};
-	if (ue(a, () => ({ onKeyDown: ({ event: e }) => t.length === 0 ? !1 : e.key === "ArrowUp" ? (s((e) => (e + t.length - 1) % t.length), !0) : e.key === "ArrowDown" ? (s((e) => (e + 1) % t.length), !0) : e.key === "Enter" && qi(t[o], i) ? !1 : e.key === "Enter" || e.key === "Tab" ? (c(o), !0) : !1 })), t.length === 0) return null;
-	let l = t[o]?.description;
+	if (ue(o, () => ({ onKeyDown: ({ event: e }) => t.length === 0 ? !1 : e.key === "ArrowUp" ? (c((e) => (e + t.length - 1) % t.length), !0) : e.key === "ArrowDown" ? (c((e) => (e + 1) % t.length), !0) : e.key === "Enter" && qi(t[s], i) ? !1 : e.key === "Enter" || e.key === "Tab" ? (l(s), !0) : !1 })), t.length === 0) return null;
+	let u = t[s]?.description;
 	return /* @__PURE__ */ A("div", {
 		"data-testid": "command-suggestions",
-		className: "w-[26rem] max-w-[calc(100vw-2rem)] rounded-lg border border-border bg-surface py-1 shadow-lg",
+		"data-width": a,
+		className: a === "fit" ? "w-max min-w-[11rem] max-w-[min(20rem,calc(100vw-2rem))] rounded-lg border border-border bg-surface py-1 shadow-lg" : "w-[26rem] max-w-[calc(100vw-2rem)] rounded-lg border border-border bg-surface py-1 shadow-lg",
 		children: [/* @__PURE__ */ k("div", {
 			role: "listbox",
 			"aria-label": r,
@@ -2224,13 +2225,13 @@ var Xi = ce(function({ items: t, command: n, label: r = "Commands", draft: i }, 
 			children: t.map((t, n) => /* @__PURE__ */ A("button", {
 				type: "button",
 				role: "option",
-				"aria-selected": n === o,
+				"aria-selected": n === s,
 				"data-testid": "command-option",
 				onMouseDown: (e) => {
-					e.preventDefault(), c(n);
+					e.preventDefault(), l(n);
 				},
-				onMouseEnter: () => s(n),
-				className: e("flex w-full items-center gap-2 px-2 py-1 text-left text-sm", n === o ? "bg-surface-hover" : "bg-transparent"),
+				onMouseEnter: () => c(n),
+				className: e("flex w-full items-center gap-2 px-2 py-1 text-left text-sm", n === s ? "bg-surface-hover" : "bg-transparent"),
 				children: [
 					t.code && /* @__PURE__ */ k("span", {
 						className: "shrink-0 font-mono text-xs text-text-secondary",
@@ -2251,10 +2252,10 @@ var Xi = ce(function({ items: t, command: n, label: r = "Commands", draft: i }, 
 					})
 				]
 			}, t.id))
-		}), l && /* @__PURE__ */ k("div", {
+		}), u && /* @__PURE__ */ k("div", {
 			"data-testid": "command-description",
 			className: "truncate border-t border-border px-2 pt-1 text-xs text-text-secondary",
-			children: l
+			children: u
 		})]
 	});
 }), Zi = {
@@ -2386,16 +2387,18 @@ function ba(e, t, n) {
 var xa = new Ne("commandSuggestion"), Sa = new Ne("commandArgumentSuggestion");
 function Ca(e, t, n = !1) {
 	let r = null, i = [], a = ua(), o = (r) => {
-		let a = n ? { draft: r.editor.getText() } : {};
+		let a = n ? { draft: r.editor.getText() } : {}, o = r.editor.view.dom.closest("[data-suggestion-boundary]")?.getAttribute("data-suggestion-boundary") === "compact" ? { width: "fit" } : {};
 		return t && r.loading ? {
 			...r,
 			items: i,
 			label: e,
-			...a
+			...a,
+			...o
 		} : (i = r.items, {
 			...r,
 			label: e,
-			...a
+			...a,
+			...o
 		});
 	};
 	return {
@@ -2936,7 +2939,7 @@ var wa = ce(function({ onSend: d, draft: v, onDraftChange: se, onCommand: ce, on
 		className: e("min-w-0", mt),
 		children: /* @__PURE__ */ A("div", {
 			"data-testid": I,
-			"data-suggestion-boundary": "",
+			"data-suggestion-boundary": lt,
 			"data-command": G?.trigger,
 			"data-mode": z ? B : void 0,
 			"data-console": ur ? "true" : void 0,

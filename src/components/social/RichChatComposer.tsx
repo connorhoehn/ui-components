@@ -803,9 +803,12 @@ function commandMenuRenderer(label: string, keepItemsWhileLoading: boolean, send
     // The command menu also gets the draft: a fully typed trigger plus Enter
     // sends rather than re-inserting the trigger (see CommandSuggestions).
     const draft = sendWhenExact ? { draft: props.editor.getText() } : {};
-    if (keepItemsWhileLoading && props.loading) return { ...props, items: lastItems, label, ...draft };
+    // A compact composer (a margin card's reply box) gets a menu sized to its rows.
+    const compact = props.editor.view.dom.closest('[data-suggestion-boundary]')?.getAttribute('data-suggestion-boundary') === 'compact';
+    const width = compact ? { width: 'fit' as const } : {};
+    if (keepItemsWhileLoading && props.loading) return { ...props, items: lastItems, label, ...draft, ...width };
     lastItems = props.items;
-    return { ...props, label, ...draft };
+    return { ...props, label, ...draft, ...width };
   };
   return {
     onStart: (props: SuggestionProps<CommandSuggestionItem>) => {
@@ -1996,7 +1999,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
       <div
         data-testid={testId}
         // Suggestion menus keep their right edge inside this box (mountSuggestionMenu).
-        data-suggestion-boundary=""
+        data-suggestion-boundary={density}
         // A 1px border colour change was the composer's ONLY focus signal —
         // measured in the browser, the contenteditable itself computes
         // `outline-style: none` (`.ProseMirror:focus` in the library

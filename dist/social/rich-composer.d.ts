@@ -41,6 +41,12 @@ export declare interface CommandSuggestionsProps {
      * the top.
      */
     draft?: string;
+    /**
+     * `fit`: as wide as the rows need (11–20rem) instead of a fixed 26rem — for a
+     * compact composer in a narrow column (a margin comment card), where a fixed
+     * menu is wider than the card it opens from.
+     */
+    width?: 'fixed' | 'fit';
 }
 
 /** What the composer hands back on send. */
