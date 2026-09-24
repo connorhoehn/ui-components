@@ -339,12 +339,16 @@ export function EditorShell({
               id: t.id,
               label: t.label,
               ...(t.disabled ? { disabled: true } : {}),
-              ...(t.count ? { badge: <Badge variant="count" value={t.count} color="muted" aria-label={`${t.count} in ${t.label}`} /> } : {}),
+              // work-item: a plain count beside the label ("Discussion 3"), as the Work mockup draws it.
+              ...(t.count ? { badge: workItem
+                ? <span aria-label={`${t.count} in ${t.label}`}>{t.count}</span>
+                : <Badge variant="count" value={t.count} color="muted" aria-label={`${t.count} in ${t.label}`} /> } : {}),
               testId: `${testId}-tab-${t.id}`,
             }))}
             value={currentTab!}
             onValueChange={(id) => onTabChange?.(id)}
             variant="underline"
+            {...(workItem ? { badgeStyle: 'plain' as const } : {})}
             size="md"
             itemClassName="px-3.5 pb-1.5 pt-1 text-[15px] leading-5"
             aria-label={`${title} sections`}

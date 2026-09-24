@@ -2342,7 +2342,10 @@ function Pr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 							id: e.id,
 							label: e.label,
 							...e.disabled ? { disabled: !0 } : {},
-							...e.count ? { badge: /* @__PURE__ */ Q(w, {
+							...e.count ? { badge: V ? /* @__PURE__ */ Q("span", {
+								"aria-label": `${e.count} in ${e.label}`,
+								children: e.count
+							}) : /* @__PURE__ */ Q(w, {
 								variant: "count",
 								value: e.count,
 								color: "muted",
@@ -2353,6 +2356,7 @@ function Pr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 						value: oe,
 						onValueChange: (e) => k?.(e),
 						variant: "underline",
+						...V ? { badgeStyle: "plain" } : {},
 						size: "md",
 						itemClassName: "px-3.5 pb-1.5 pt-1 text-[15px] leading-5",
 						"aria-label": `${t} sections`,
