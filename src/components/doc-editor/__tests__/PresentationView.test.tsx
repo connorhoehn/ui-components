@@ -30,6 +30,38 @@ function view(props: Partial<React.ComponentProps<typeof PresentationView>> = {}
 }
 
 describe('PresentationView', () => {
+  // Loop 30: the platform pages a long history; the picker asks for the next page.
+  it('ends the revision picker with "Older versions (N)…", which loads rather than selects', () => {
+    const onLoad = vi.fn();
+    const onRevisionChange = vi.fn();
+    const { rerender } = view({
+      revisions: [revision({ id: 'v1', label: 'v23' }), revision({ id: 'rev-2', label: 'v24' })],
+      olderRevisions: { count: 22, onLoad },
+      onRevisionChange,
+    });
+    const select = screen.getByTestId('presentation-view-revision-select') as HTMLSelectElement;
+    expect([...select.options].map((option) => option.text)).toEqual(['v24 · latest', 'v23', 'Older versions (22)…']);
+    fireEvent.change(select, { target: { value: '__older-revisions__' } });
+    expect(onLoad).toHaveBeenCalledTimes(1);
+    expect(onRevisionChange).not.toHaveBeenCalled();
+    fireEvent.change(select, { target: { value: 'v1' } });
+    expect(onRevisionChange).toHaveBeenCalledWith('v1');
+    rerender(
+      <PresentationView
+        title="Sprint review"
+        revisions={[revision({ id: 'v1', label: 'v23' }), revision({ id: 'rev-2', label: 'v24' })]}
+        olderRevisions={{ count: 22, loading: true, onLoad }}
+        revisionId="rev-2"
+        slideIndex={1}
+        onRevisionChange={onRevisionChange}
+        onSlideChange={() => undefined}
+      />,
+    );
+    const loading = [...(screen.getByTestId('presentation-view-revision-select') as HTMLSelectElement).options].at(-1)!;
+    expect(loading.text).toBe('Loading older versions…');
+    expect(loading.disabled).toBe(true);
+  });
+
   // Live 2026-09-23: the editor's Present opened the view but ← / → did
   // nothing until the deck was clicked.
   it('autoFocus takes focus so the arrow keys page at once; off by default', () => {

@@ -26,6 +26,7 @@
 // for. The `‹ Slide 4 of 12 ›` control stays because it is how you read
 // *through* a deck once you have found your place.
 
+import { pickRevision, revisionPickerOptions, type OlderRevisions } from './revisionPicker';
 import { useEffect, useId, useRef, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { nextSlideIndex, slideNavigationIntent } from '../../lib/slideNavigationKey';
@@ -69,6 +70,11 @@ export interface PresentationViewProps {
    */
   subtitle?: string;
   revisions: readonly PresentationRevision[];
+  /**
+   * The host holds a page of a long history (newest first from the platform):
+   * the picker ends with "Older versions (N)…", which asks for the next page.
+   */
+  olderRevisions?: OlderRevisions;
   /** Which revision is shown. Controlled; the host owns the choice. */
   revisionId: string;
   onRevisionChange: (revisionId: string) => void;
@@ -132,6 +138,7 @@ export function PresentationView({
   title,
   subtitle,
   revisions,
+  olderRevisions,
   revisionId,
   onRevisionChange,
   slideIndex,
@@ -237,15 +244,16 @@ export function PresentationView({
           {subtitle && <Text as="div" className="truncate text-xs text-text-tertiary" data-testid={`${testId}-subtitle`}>{subtitle}</Text>}
         </div>
         <div className="flex items-center gap-2">
-          {revisions.length > REVISION_SEGMENTS_MAX ? (
+          {revisions.length > REVISION_SEGMENTS_MAX || (olderRevisions?.count ?? 0) > 0 ? (
             // Past a handful a row of v1…v15 crowds the title; one picker
-            // holds any number (the editor does the same).
+            // holds any number (the editor does the same), and ends with the
+            // next older page when the host holds only one.
             <Select
               aria-label="Revision"
               size="sm"
               value={revision.id}
-              onChange={(event) => onRevisionChange?.(event.target.value)}
-              options={[...revisions].reverse().map((candidate, index) => ({ value: candidate.id, label: index === 0 ? `${candidate.label} · latest` : candidate.label }))}
+              onChange={(event) => pickRevision(event.target.value, onRevisionChange, olderRevisions)}
+              options={revisionPickerOptions(revisions, olderRevisions)}
               className="w-auto"
               data-testid={`${testId}-revision-select`}
             />

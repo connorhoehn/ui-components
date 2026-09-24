@@ -196,6 +196,7 @@ export type { FloatingComposerDockProps, FloatingComposerDockWidth, ComposerDock
 
 // The reading end of the presentation generator: a rendered deck, read-only.
 export { PresentationView } from './PresentationView';
+export { OLDER_REVISIONS_VALUE, revisionPickerOptions, type OlderRevisions } from './revisionPicker';
 export type { PresentationViewProps, PresentationRevision, PresentationSlide } from './PresentationView';
 
 // The writing end of the same document type. See presentation/index.ts for

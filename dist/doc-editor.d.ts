@@ -2105,6 +2105,19 @@ export declare const NUMBER_STYLES: readonly ["decimal", "lower-alpha", "upper-a
 
 export declare type NumberStyle = (typeof NUMBER_STYLES)[number];
 
+/** The option value that stands for "the next older page", never a revision id. */
+export declare const OLDER_REVISIONS_VALUE = "__older-revisions__";
+
+/** A page of revisions is not the whole history: how many more exist, and how to ask for them. */
+export declare interface OlderRevisions {
+    /** Revisions older than the oldest one in hand. */
+    count: number;
+    /** The next page is on its way. */
+    loading?: boolean;
+    /** Ask the host for the next older page. */
+    onLoad: () => void;
+}
+
 /**
  * The slice of a Tiptap editor this needs.
  *
@@ -2215,7 +2228,7 @@ declare interface PresenceUser {
     location?: string;
 }
 
-export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, sources, onSearchSources, onDownload, onOpenPresentationView, readOnly, onInstruct, instructHints, onUndoInstruct, generatingSlideIds, slideViewers, selectSlideRequest, footer, renderFrame, onSelectedSlideChange, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
+export declare function PresentationEditor({ spec, onChange, preview, onRequestPreview, onSaveRevision, revisions, activeRevisionId, onSelectRevision, olderRevisions, sources, onSearchSources, onDownload, onOpenPresentationView, readOnly, onInstruct, instructHints, onUndoInstruct, generatingSlideIds, slideViewers, selectSlideRequest, footer, renderFrame, onSelectedSlideChange, className, 'data-testid': testId, }: PresentationEditorProps): JSX.Element;
 
 /** The parts `renderFrame` receives. */
 export declare interface PresentationEditorFrame {
@@ -2241,6 +2254,8 @@ export declare interface PresentationEditorProps {
     revisions: readonly PresentationEditorRevision[];
     activeRevisionId: string;
     onSelectRevision: (revisionId: string) => void;
+    /** The host holds a page of a long history: the picker ends with "Older versions (N)…". */
+    olderRevisions?: OlderRevisions;
     /** The deck's own inputs, offered in the source picker before anything is typed. */
     sources: readonly PresentationSourceOption[];
     /** The Documents explorer's search, so a citation names a real document. */
@@ -2416,7 +2431,7 @@ export declare interface PresentationSourceOption {
     kind?: 'document' | 'transcript';
 }
 
-export declare function PresentationView({ title, subtitle, revisions, revisionId, onRevisionChange, slideIndex, onSlideChange, onDownload, downloadLabel, onOpenPreview, pending, notice, state, errorMessage, ownerName, onRetry, maxSlideWidth, autoFocus, className, 'data-testid': testId, }: PresentationViewProps): JSX.Element;
+export declare function PresentationView({ title, subtitle, revisions, olderRevisions, revisionId, onRevisionChange, slideIndex, onSlideChange, onDownload, downloadLabel, onOpenPreview, pending, notice, state, errorMessage, ownerName, onRetry, maxSlideWidth, autoFocus, className, 'data-testid': testId, }: PresentationViewProps): JSX.Element;
 
 export declare interface PresentationViewProps {
     title: string;
@@ -2426,6 +2441,11 @@ export declare interface PresentationViewProps {
      */
     subtitle?: string;
     revisions: readonly PresentationRevision[];
+    /**
+     * The host holds a page of a long history (newest first from the platform):
+     * the picker ends with "Older versions (N)…", which asks for the next page.
+     */
+    olderRevisions?: OlderRevisions;
     /** Which revision is shown. Controlled; the host owns the choice. */
     revisionId: string;
     onRevisionChange: (revisionId: string) => void;
@@ -2695,6 +2715,15 @@ declare interface ReviewProgressProps {
     current: number;
     total: number;
 }
+
+export declare function revisionPickerOptions(revisions: readonly {
+    id: string;
+    label: string;
+}[], older?: OlderRevisions): Array<{
+    value: string;
+    label: string;
+    disabled?: boolean;
+}>;
 
 /**
  * Scroll to the target and flash it.
@@ -3876,6 +3905,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3895,45 +3937,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }
@@ -3970,6 +3976,29 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

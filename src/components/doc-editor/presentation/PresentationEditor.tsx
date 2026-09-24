@@ -60,6 +60,7 @@
 // Alt+↑/↓ on a focused thumbnail moves it: the reorder paths for keyboards and
 // for consumers without the optional peer installed.
 
+import { pickRevision, revisionPickerOptions, type OlderRevisions } from '../revisionPicker';
 import {
   Suspense,
   lazy,
@@ -232,6 +233,8 @@ export interface PresentationEditorProps {
   revisions: readonly PresentationEditorRevision[];
   activeRevisionId: string;
   onSelectRevision: (revisionId: string) => void;
+  /** The host holds a page of a long history: the picker ends with "Older versions (N)…". */
+  olderRevisions?: OlderRevisions;
   /** The deck's own inputs, offered in the source picker before anything is typed. */
   sources: readonly PresentationSourceOption[];
   /** The Documents explorer's search, so a citation names a real document. */
@@ -376,6 +379,7 @@ export function PresentationEditor({
   revisions,
   activeRevisionId,
   onSelectRevision,
+  olderRevisions,
   sources,
   onSearchSources,
   onDownload,
@@ -774,15 +778,16 @@ export function PresentationEditor({
   const REVISION_TABS_MAX = 5;
   const revisionControls = (
     <div className="flex flex-wrap items-center gap-2" data-testid={`${testId}-revision-controls`}>
-      {revisionItems.length > REVISION_TABS_MAX ? (
+      {revisionItems.length > REVISION_TABS_MAX || (olderRevisions?.count ?? 0) > 0 ? (
         // Past a handful, one segmented tab per revision is a row of v1…v15
-        // that crowds the title into a column; a picker holds any number.
+        // that crowds the title into a column; a picker holds any number, and
+        // ends with the next older page when the host holds only one.
         <Select
           size="sm"
           aria-label="Revision"
           value={activeRevisionId}
-          onChange={(event) => onSelectRevision?.(event.target.value)}
-          options={[...revisionItems].reverse().map((item, index) => ({ value: item.id, label: index === 0 ? `${item.label} · latest` : item.label }))}
+          onChange={(event) => pickRevision(event.target.value, onSelectRevision, olderRevisions)}
+          options={revisionPickerOptions(revisionItems, olderRevisions)}
           className="w-auto"
           data-testid={`${testId}-revision-select`}
         />
