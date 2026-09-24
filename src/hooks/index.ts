@@ -1,6 +1,6 @@
 export { useActivityBus } from './useActivityBus';
 export { useApiCall } from './useApiCall';
-export { useApiHealth, normalizeApiHealth } from './useApiHealth';
+export { useApiHealth, normalizeApiHealth, modelUnavailableMessage } from './useApiHealth';
 export type { ApiHealthSnapshot, ApiHealthStatus, ApiHealthCheck, UseApiHealthOptions } from './useApiHealth';
 export { apiFetch as identityApiFetch, BASE_URL as IDENTITY_BASE_URL } from './identityApi';
 export { useIdentityAdmin } from './useIdentityAdmin';

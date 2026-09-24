@@ -2,8 +2,8 @@ import { a as e, t } from "./registry-DbX3MVAA.js";
 import { n, t as r } from "./fieldType-CGXsQUaC.js";
 import { t as i } from "./apiBaseUrl-DLrXlmVj.js";
 import { n as a } from "./IdentityContext-CQM1qwH6.js";
-import "./useVideoSessions-BJAm-oT9.js";
-import "./useWebSocket-16eHDqT5.js";
+import "./useVideoSessions-Bnxuclp-.js";
+import "./useWebSocket-C9oAM0NL.js";
 import "./useSocialProfile-5S1qyvsv.js";
 import "./useSyncConflicts-BspqjVsW.js";
 import "./useDocumentTypes-DCKwxXn8.js";
@@ -157,11 +157,16 @@ function k(e) {
 	else if (t.status === "degraded" || t.status === "unhealthy") n = "degraded";
 	else return null;
 	let r = {};
-	if (Array.isArray(t.checks)) for (let e of t.checks) !e || typeof e.name != "string" || (r[e.name] = {
-		status: e.ok === !0 || e.status === "ok" ? "ok" : "error",
-		...e.durationMs === void 0 ? {} : { latencyMs: e.durationMs },
-		...e.error === void 0 ? {} : { error: e.error }
-	});
+	if (Array.isArray(t.checks)) for (let e of t.checks) {
+		if (!e || typeof e.name != "string") continue;
+		let t = e.ok === !0 || e.status === "ok";
+		r[e.name] = {
+			status: t ? e.degraded ? "degraded" : "ok" : "error",
+			...typeof e.details == "string" && e.details ? { detail: e.details } : {},
+			...e.durationMs === void 0 ? {} : { latencyMs: e.durationMs },
+			...e.error === void 0 ? {} : { error: e.error }
+		};
+	}
 	else t.checks && typeof t.checks == "object" && (r = t.checks);
 	return {
 		status: n,
@@ -215,10 +220,16 @@ function j(e = {}) {
 		};
 	}, [r, t]), a;
 }
+function M(e) {
+	let t = e.checks.model;
+	if (!t || t.status === "ok") return null;
+	let n = t.detail ?? t.error;
+	return n ? /^model unavailable/i.test(n) ? n : `Model unavailable — ${n}` : "Model unavailable";
+}
 //#endregion
 //#region src/hooks/identityApi.ts
-var M = "";
-async function N(e, t, n) {
+var N = "";
+async function P(e, t, n) {
 	let r = await fetch(`${e}`, {
 		...n,
 		headers: {
@@ -235,7 +246,7 @@ async function N(e, t, n) {
 }
 //#endregion
 //#region src/hooks/useIdentityAdmin.ts
-function P() {
+function F() {
 	let { idToken: e } = a(), [t, n] = d(!1), [r, i] = d(!1), [o, c] = d(null), l = s(async () => {
 		if (!e) {
 			n(!1);
@@ -243,7 +254,7 @@ function P() {
 		}
 		i(!0), c(null);
 		try {
-			await N("/api/admin/session", e), n(!0);
+			await P("/api/admin/session", e), n(!0);
 		} catch (e) {
 			n(!1), c(e.message);
 		} finally {
@@ -257,7 +268,7 @@ function P() {
 		login: s(async (t, r) => {
 			i(!0), c(null);
 			try {
-				await N("/api/admin/login", e, {
+				await P("/api/admin/login", e, {
 					method: "POST",
 					body: JSON.stringify({
 						email: t,
@@ -273,7 +284,7 @@ function P() {
 		logout: s(async () => {
 			i(!0), c(null);
 			try {
-				await N("/api/admin/logout", e, { method: "POST" }), n(!1);
+				await P("/api/admin/logout", e, { method: "POST" }), n(!1);
 			} catch (e) {
 				c(e.message);
 			} finally {
@@ -285,7 +296,7 @@ function P() {
 }
 //#endregion
 //#region src/hooks/useIdentityAudit.ts
-function ee() {
+function I() {
 	let { idToken: e } = a(), [t, n] = d([]), [r, i] = d(!1), [o, c] = d(null);
 	return {
 		records: t,
@@ -297,7 +308,7 @@ function ee() {
 				try {
 					let r = new URLSearchParams();
 					t.entityType && r.set("entityType", t.entityType), t.entityId && r.set("entityId", t.entityId), t.fromTime != null && r.set("fromTime", String(t.fromTime)), t.toTime != null && r.set("toTime", String(t.toTime)), t.limit != null && r.set("limit", String(t.limit)), t.cursor && r.set("cursor", t.cursor);
-					let i = r.toString(), a = await N(`/api/audit${i ? `?${i}` : ""}`, e);
+					let i = r.toString(), a = await P(`/api/audit${i ? `?${i}` : ""}`, e);
 					n(a);
 				} catch (e) {
 					c(e.message);
@@ -309,7 +320,7 @@ function ee() {
 		getEntityHistory: s(async (t, n) => {
 			if (!e) return [];
 			try {
-				return await N(`/api/audit/entity/${t}/${n}`, e);
+				return await P(`/api/audit/entity/${t}/${n}`, e);
 			} catch (e) {
 				return c(e.message), [];
 			}
@@ -317,7 +328,7 @@ function ee() {
 		getStateAtTime: s(async (t, n) => {
 			if (!e) return null;
 			try {
-				return await N(`/api/audit/state/${t}?at=${n}`, e);
+				return await P(`/api/audit/state/${t}?at=${n}`, e);
 			} catch (e) {
 				return c(e.message), null;
 			}
@@ -326,12 +337,12 @@ function ee() {
 }
 //#endregion
 //#region src/hooks/useIdentityResource.ts
-function F(e, t) {
+function L(e, t) {
 	let { idToken: n } = a(), [r, i] = d(e), [o, l] = d(!1), [u, f] = d(null), p = s(async () => {
 		if (!(!n || !t.url)) {
 			l(!0), f(null);
 			try {
-				let e = await N(t.url, n);
+				let e = await P(t.url, n);
 				i(e);
 			} catch (e) {
 				f(e.message);
@@ -352,7 +363,7 @@ function F(e, t) {
 			if (!n) return null;
 			l(!0), f(null);
 			try {
-				return await N(e, n, t);
+				return await P(e, n, t);
 			} catch (e) {
 				return f(e.message), null;
 			} finally {
@@ -363,8 +374,8 @@ function F(e, t) {
 }
 //#endregion
 //#region src/hooks/useIdentityClients.ts
-function I() {
-	let { data: e, loading: t, error: n, setData: r, refresh: i, mutate: a } = F([], { url: "/api/clients" });
+function R() {
+	let { data: e, loading: t, error: n, setData: r, refresh: i, mutate: a } = L([], { url: "/api/clients" });
 	return {
 		clients: e,
 		loading: t,
@@ -398,15 +409,15 @@ function I() {
 }
 //#endregion
 //#region src/hooks/useIdentityDiagnostics.ts
-function L() {
+function ee() {
 	let { idToken: e } = a(), [t, n] = d(null), [r, i] = d(null), [o, c] = d([]), [l, u] = d(!1), [f, p] = d(null), m = s(async () => {
 		if (e) {
 			u(!0), p(null);
 			try {
 				let [t, r, a] = await Promise.all([
-					N("/api/admin/diagnostics", e),
-					N("/api/admin/diagnostics/rates", e),
-					N("/api/admin/diagnostics/dlq", e)
+					P("/api/admin/diagnostics", e),
+					P("/api/admin/diagnostics/rates", e),
+					P("/api/admin/diagnostics/dlq", e)
 				]);
 				n(t), i(r), c(a);
 			} catch (e) {
@@ -426,7 +437,7 @@ function L() {
 			if (e) {
 				p(null);
 				try {
-					await N(`/api/admin/diagnostics/dlq/${t}/redrive`, e, { method: "POST" }), c((e) => e.filter((e) => e.id !== t));
+					await P(`/api/admin/diagnostics/dlq/${t}/redrive`, e, { method: "POST" }), c((e) => e.filter((e) => e.id !== t));
 				} catch (e) {
 					p(e.message);
 				}
@@ -436,7 +447,7 @@ function L() {
 			if (e) {
 				p(null);
 				try {
-					await N(`/api/admin/diagnostics/dlq/${t}`, e, { method: "DELETE" }), c((e) => e.filter((e) => e.id !== t));
+					await P(`/api/admin/diagnostics/dlq/${t}`, e, { method: "DELETE" }), c((e) => e.filter((e) => e.id !== t));
 				} catch (e) {
 					p(e.message);
 				}
@@ -447,8 +458,8 @@ function L() {
 }
 //#endregion
 //#region src/hooks/useIdentityEmailTemplates.ts
-function R() {
-	let { data: e, loading: t, error: n, setData: r, refresh: i, mutate: a } = F([], { url: "/api/email-templates" });
+function te() {
+	let { data: e, loading: t, error: n, setData: r, refresh: i, mutate: a } = L([], { url: "/api/email-templates" });
 	return {
 		templates: e,
 		loading: t,
@@ -481,8 +492,8 @@ function R() {
 }
 //#endregion
 //#region src/hooks/useIdentityGroups.ts
-function te(e) {
-	let { data: t, loading: n, error: r, setData: i, refresh: a, mutate: o } = F([], { url: e ? `/api/pools/${e}/groups` : null });
+function ne(e) {
+	let { data: t, loading: n, error: r, setData: i, refresh: a, mutate: o } = L([], { url: e ? `/api/pools/${e}/groups` : null });
 	return {
 		groups: t,
 		loading: n,
@@ -544,8 +555,8 @@ function te(e) {
 }
 //#endregion
 //#region src/hooks/useIdentityMfa.ts
-function ne() {
-	let { data: e, loading: t, error: n, setData: r, mutate: i } = F([], {
+function re() {
+	let { data: e, loading: t, error: n, setData: r, mutate: i } = L([], {
 		url: null,
 		fetchOnMount: !1
 	}), a = s(async (e, t) => {
@@ -587,7 +598,7 @@ function ne() {
 }
 //#endregion
 //#region src/hooks/useIdentityMfaAdmin.ts
-function re() {
+function ie() {
 	let { idToken: e } = a(), [t, n] = d(null), [r, i] = d([]), [o, c] = d([]), [l, u] = d(!1), [f, p] = d(null);
 	return {
 		metrics: t,
@@ -600,9 +611,9 @@ function re() {
 				u(!0), p(null);
 				try {
 					let [t, r, a] = await Promise.all([
-						N("/api/admin/mfa/metrics", e),
-						N("/api/admin/mfa/users", e),
-						N("/api/admin/mfa/pools", e)
+						P("/api/admin/mfa/metrics", e),
+						P("/api/admin/mfa/users", e),
+						P("/api/admin/mfa/pools", e)
 					]);
 					n(t), i(r), c(a);
 				} catch (e) {
@@ -616,8 +627,8 @@ function re() {
 }
 //#endregion
 //#region src/hooks/useIdentityPools.ts
-function ie() {
-	let { idToken: e } = a(), { data: t, loading: n, error: r, setData: i, refresh: o, mutate: c } = F([], { url: "/api/pools" });
+function ae() {
+	let { idToken: e } = a(), { data: t, loading: n, error: r, setData: i, refresh: o, mutate: c } = L([], { url: "/api/pools" });
 	return {
 		pools: t,
 		loading: n,
@@ -642,7 +653,7 @@ function ie() {
 		getStats: s(async () => {
 			if (!e) return [];
 			try {
-				return await N("/api/pools/stats", e);
+				return await P("/api/pools/stats", e);
 			} catch {
 				return [];
 			}
@@ -652,8 +663,8 @@ function ie() {
 }
 //#endregion
 //#region src/hooks/useIdentitySetupStatus.ts
-function ae() {
-	let { data: e, loading: t, error: n, refresh: r } = F(null, { url: "/api/admin/setup-status" });
+function oe() {
+	let { data: e, loading: t, error: n, refresh: r } = L(null, { url: "/api/admin/setup-status" });
 	return {
 		status: e,
 		loading: t,
@@ -663,8 +674,8 @@ function ae() {
 }
 //#endregion
 //#region src/hooks/useIdentityUsers.ts
-function oe(e) {
-	let { data: t, loading: n, error: r, setData: i, refresh: a, mutate: o } = F([], { url: e ? `/api/pools/${e}/users` : null });
+function se(e) {
+	let { data: t, loading: n, error: r, setData: i, refresh: a, mutate: o } = L([], { url: e ? `/api/pools/${e}/users` : null });
 	return {
 		users: t,
 		loading: n,
@@ -977,12 +988,12 @@ function K(e) {
 	for (let e = 0; e < t.length; e++) n[e] = t.charCodeAt(e);
 	return n;
 }
-function se(e) {
+function ce(e) {
 	let t = "";
 	for (let n = 0; n < e.length; n++) t += String.fromCharCode(e[n]);
 	return btoa(t);
 }
-function ce(e) {
+function le(e) {
 	let { sendMessage: t, onMessage: n, currentChannel: r, connectionState: i } = e, [a, o] = d(""), [l, f] = d(!1), [p] = d(() => new _.Doc()), m = u(p), [h] = d(() => p.getText("content")), g = u(h), b = u(t);
 	c(() => {
 		b.current = t;
@@ -1035,7 +1046,7 @@ function ce(e) {
 			m.current.transact(() => {
 				g.current.delete(0, g.current.length), g.current.insert(0, e);
 			});
-			let t = se(y(m.current));
+			let t = ce(y(m.current));
 			b.current({
 				service: "crdt",
 				action: "update",
@@ -1049,7 +1060,7 @@ function ce(e) {
 }
 //#endregion
 //#region src/hooks/useCursors.ts
-function le(e) {
+function ue(e) {
 	let { sendMessage: t, onMessage: n, currentChannel: r, connectionState: i, clientId: a, displayName: o } = e, l = u(/* @__PURE__ */ new Map()), [f, p] = d(/* @__PURE__ */ new Map()), [m, h] = d(null), [g, _] = d("freeform"), v = u("freeform"), y = u(null), b = u(r);
 	c(() => {
 		b.current = r;
@@ -1223,7 +1234,7 @@ function q() {
 function J(e) {
 	localStorage.setItem(r, JSON.stringify(e));
 }
-function ue(e, t) {
+function de(e, t) {
 	if (!e.display) return t;
 	let n = {};
 	for (let [r, i] of Object.entries(t)) {
@@ -1240,11 +1251,11 @@ function Y(n) {
 		icon: n.icon,
 		description: n.description,
 		rendererType: n.baseType,
-		rendererKeys: ue(n, r?.rendererKeys ?? {}),
+		rendererKeys: de(n, r?.rendererKeys ?? {}),
 		rendererLabels: r?.rendererLabels ?? {}
 	});
 }
-function de() {
+function fe() {
 	let [e, t] = d(() => q());
 	return {
 		types: e,
@@ -1275,11 +1286,11 @@ function de() {
 }
 //#endregion
 //#region src/hooks/useDocuments.ts
-var fe = 15e3, pe = 1e4;
+var pe = 15e3, me = 1e4;
 function X(e) {
 	return [...e].sort((e, t) => new Date(t.updatedAt).getTime() - new Date(e.updatedAt).getTime());
 }
-function me(e) {
+function he(e) {
 	let { sendMessage: t, onMessage: n, connectionState: r } = e, [i, a] = d([]), [o, l] = d({}), [f, p] = d(!0), m = u(null), h = u(null), g = u(!1), _ = u(t);
 	return c(() => {
 		_.current = t;
@@ -1351,8 +1362,8 @@ function me(e) {
 					service: "crdt",
 					action: "getDocumentPresence"
 				});
-			}, pe));
-		}, fe), () => {
+			}, me));
+		}, pe), () => {
 			t(), h.current !== null && (clearTimeout(h.current), h.current = null), m.current !== null && (clearInterval(m.current), m.current = null), a([]), l({}), p(!0);
 		};
 	}, [r]), {
@@ -1397,15 +1408,15 @@ function me(e) {
 }
 //#endregion
 //#region src/hooks/useKeyboardShortcuts.ts
-function he(e) {
+function Z(e) {
 	if (!e || !(e instanceof HTMLElement)) return !1;
 	let t = e.tagName.toLowerCase();
 	return !!(t === "input" || t === "textarea" || e.isContentEditable);
 }
-function Z(e) {
+function ge(e) {
 	c(() => {
 		let t = (t) => {
-			if (!he(t.target)) for (let n of e) {
+			if (!Z(t.target)) for (let n of e) {
 				let e = !n.meta || t.metaKey || t.ctrlKey, r = !n.shift || t.shiftKey, i = !n.alt || t.altKey, a = t.key.toLowerCase() === n.key.toLowerCase();
 				if (e && r && i && a) {
 					n.preventDefault !== !1 && t.preventDefault(), n.handler(t);
@@ -1418,8 +1429,8 @@ function Z(e) {
 }
 //#endregion
 //#region src/hooks/usePresence.ts
-var ge = 3e4;
-function _e(e) {
+var _e = 3e4;
+function ve(e) {
 	let { sendMessage: t, onMessage: n, currentChannel: r, connectionState: i, displayName: a } = e, [o, l] = d(/* @__PURE__ */ new Map()), f = u(null), p = u(null), m = u(t);
 	c(() => {
 		m.current = t;
@@ -1482,7 +1493,7 @@ function _e(e) {
 				},
 				channels: [h.current]
 			});
-		}, ge), () => {
+		}, _e), () => {
 			f.current !== null && (clearInterval(f.current), f.current = null), m.current({
 				service: "presence",
 				action: "unsubscribe",
@@ -1522,7 +1533,7 @@ function _e(e) {
 }
 //#endregion
 //#region src/hooks/useReactions.ts
-function ve(e) {
+function ye(e) {
 	let { sendMessage: t, onMessage: n, currentChannel: r, connectionState: i } = e, [a, o] = d([]), l = u(t);
 	c(() => {
 		l.current = t;
@@ -1587,7 +1598,7 @@ function Q(e) {
 	};
 }
 var $ = "Social API not configured";
-function ye({ idToken: e, onMessage: t, baseUrl: n }) {
+function be({ idToken: e, onMessage: t, baseUrl: n }) {
 	let [r, a] = d([]), [l, f] = d(null), [p, m] = d([]), [h, g] = d(!1), [_, v] = d(null), [y, b] = d(null), [x, S] = d(0), { toast: C } = o() ?? {}, w = n ?? i(), T = s(() => S((e) => e + 1), []), E = u(t);
 	c(() => {
 		E.current = t;
@@ -1748,11 +1759,11 @@ function ye({ idToken: e, onMessage: t, baseUrl: n }) {
 }
 //#endregion
 //#region src/hooks/useTypedDocuments.ts
-function be() {
+function xe() {
 	return "";
 }
-function xe({ idToken: e, typeId: t, baseUrl: n }) {
-	let r = n ?? be(), [i, a] = d([]), [o, l] = d(!1), [u, f] = d(null), [p, m] = d(0);
+function Se({ idToken: e, typeId: t, baseUrl: n }) {
+	let r = n ?? xe(), [i, a] = d([]), [o, l] = d(!1), [u, f] = d(null), [p, m] = d(0);
 	return c(() => {
 		if (!e || !t) {
 			a([]);
@@ -1811,7 +1822,7 @@ function xe({ idToken: e, typeId: t, baseUrl: n }) {
 }
 //#endregion
 //#region src/hooks/useUrlFilterState.ts
-function Se(e) {
+function Ce(e) {
 	let [t, n] = b();
 	return {
 		filters: l(() => {
@@ -1834,4 +1845,4 @@ function Se(e) {
 	};
 }
 //#endregion
-export { D as A, F as C, N as D, M as E, k as O, I as S, P as T, re as _, _e as a, R as b, de as c, G as d, W as f, ie as g, ae as h, ve as i, E as j, j as k, le as l, oe as m, xe as n, Z as o, U as p, ye as r, me as s, Se as t, ce as u, ne as v, ee as w, L as x, te as y };
+export { j as A, L as C, P as D, N as E, E as M, M as O, R as S, F as T, ie as _, ve as a, te as b, fe as c, G as d, W as f, ae as g, oe as h, ye as i, D as j, k, ue as l, se as m, Se as n, ge as o, U as p, be as r, he as s, Ce as t, le as u, re as v, I as w, ee as x, ne as y };

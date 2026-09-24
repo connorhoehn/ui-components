@@ -18,9 +18,12 @@ import { getApiBaseUrl } from '../lib/apiBaseUrl';
 export type ApiHealthStatus = 'ok' | 'degraded' | 'unknown';
 
 export interface ApiHealthCheck {
-  status: 'ok' | 'error' | string;
+  /** 'degraded': the check passed but reports reduced service (the pod stays up). */
+  status: 'ok' | 'error' | 'degraded' | string;
   latencyMs?: number;
   error?: string;
+  /** The check's own words, when it gave a string (`details` on the wire). */
+  detail?: string;
 }
 
 export interface ApiHealthSnapshot {
@@ -47,7 +50,7 @@ const DEFAULT_POLL_MS = 30_000;
 interface HealthResponse {
   status?: string;
   service?: string;
-  checks?: Record<string, ApiHealthCheck> | Array<{ name: string; ok?: boolean; status?: string; durationMs?: number; error?: string }>;
+  checks?: Record<string, ApiHealthCheck> | Array<{ name: string; ok?: boolean; degraded?: boolean; status?: string; durationMs?: number; error?: string; details?: unknown }>;
 }
 
 /** Collapses either /health shape into the v1 one; `null` when it is neither. */
@@ -63,8 +66,10 @@ export function normalizeApiHealth(body: unknown): { status: 'ok' | 'degraded'; 
   if (Array.isArray(response.checks)) {
     for (const check of response.checks) {
       if (!check || typeof check.name !== 'string') continue;
+      const passed = check.ok === true || check.status === 'ok';
       checks[check.name] = {
-        status: check.ok === true || check.status === 'ok' ? 'ok' : 'error',
+        status: passed ? (check.degraded ? 'degraded' : 'ok') : 'error',
+        ...(typeof check.details === 'string' && check.details ? { detail: check.details } : {}),
         ...(check.durationMs !== undefined ? { latencyMs: check.durationMs } : {}),
         ...(check.error !== undefined ? { error: check.error } : {}),
       };
@@ -150,4 +155,18 @@ export function useApiHealth(options: number | UseApiHealthOptions = {}): ApiHea
   }, [baseUrl, pollMs]);
 
   return snapshot;
+}
+
+/**
+ * "Model unavailable — <reason>" when the API's `model` health check says the
+ * model cannot be reached (platform-api's shared probe + circuit breaker),
+ * else null. For a composer or run pane that would otherwise quietly get an
+ * offline draft or wait out a timeout.
+ */
+export function modelUnavailableMessage(health: ApiHealthSnapshot): string | null {
+  const check = health.checks.model;
+  if (!check || check.status === 'ok') return null;
+  const detail = check.detail ?? check.error;
+  if (!detail) return 'Model unavailable';
+  return /^model unavailable/i.test(detail) ? detail : `Model unavailable — ${detail}`;
 }

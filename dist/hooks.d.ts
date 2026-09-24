@@ -34,9 +34,12 @@ declare interface ApiCallState<T> {
 }
 
 export declare interface ApiHealthCheck {
-    status: 'ok' | 'error' | string;
+    /** 'degraded': the check passed but reports reduced service (the pod stays up). */
+    status: 'ok' | 'error' | 'degraded' | string;
     latencyMs?: number;
     error?: string;
+    /** The check's own words, when it gave a string (`details` on the wire). */
+    detail?: string;
 }
 
 export declare interface ApiHealthSnapshot {
@@ -836,6 +839,14 @@ declare interface MfaSetupResult {
     secret: string;
     backupCodes: string[];
 }
+
+/**
+ * "Model unavailable — <reason>" when the API's `model` health check says the
+ * model cannot be reached (platform-api's shared probe + circuit breaker),
+ * else null. For a composer or run pane that would otherwise quietly get an
+ * offline draft or wait out a timeout.
+ */
+export declare function modelUnavailableMessage(health: ApiHealthSnapshot): string | null;
 
 declare type MyItem = MentionItem | TaskAssignment;
 
@@ -2424,12 +2435,12 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
+        diagramMacro: {
             /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
              */
-            setListStyle: (style: ListStyle) => ReturnType;
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -2456,12 +2467,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
+        canvasListStyle: {
             /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
              */
-            insertDiagram: (id?: string) => ReturnType;
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -2495,29 +2516,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
@@ -2531,6 +2529,19 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

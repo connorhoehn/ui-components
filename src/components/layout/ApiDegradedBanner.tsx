@@ -5,7 +5,7 @@
 // ConnectionStatus — REST can fail while the WS gateway is fine, and vice
 // versa. Reusable from any layout that already calls `useApiHealth()`.
 
-import type { ApiHealthSnapshot } from '../../hooks/useApiHealth';
+import { modelUnavailableMessage, type ApiHealthSnapshot } from '../../hooks/useApiHealth';
 import { cn } from '../../lib/cn';
 
 interface ApiDegradedBannerProps {
@@ -15,9 +15,16 @@ interface ApiDegradedBannerProps {
 export function ApiDegradedBanner({ health }: ApiDegradedBannerProps) {
   if (health.status !== 'degraded') return null;
 
-  const detail = health.failing.length > 0
-    ? `Affected: ${health.failing.join(', ')}.`
-    : 'Some dependencies are unreachable.';
+  // The model is its own sentence: "Model unavailable — <reason>" says what
+  // to expect (offline drafts, edits that fail fast) better than "Affected: model".
+  const model = modelUnavailableMessage(health);
+  const others = health.failing.filter((name) => name !== 'model');
+  const headline = model && others.length === 0 ? model : 'Backend services degraded — some features unavailable.';
+  const detail = model && others.length === 0
+    ? 'Drafts use the offline outline and edits fail fast until it is back.'
+    : others.length > 0
+      ? `Affected: ${others.join(', ')}.${model ? ` ${model}.` : ''}`
+      : 'Some dependencies are unreachable.';
 
   return (
     <div
@@ -30,7 +37,7 @@ export function ApiDegradedBanner({ health }: ApiDegradedBannerProps) {
       )}
     >
       <span className="text-base" aria-hidden="true">⚠</span>
-      <span className="font-semibold">Backend services degraded — some features unavailable.</span>
+      <span className="font-semibold" data-testid={model ? 'api-degraded-model' : undefined}>{headline}</span>
       <span className="text-warning-fg font-normal">{detail}</span>
     </div>
   );
