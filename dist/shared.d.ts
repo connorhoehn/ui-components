@@ -1258,7 +1258,7 @@ export declare interface DetailHeaderProps {
     'data-testid'?: string;
 }
 
-export declare function DetailSection({ title, hint, actions, first, variant, children, className, 'data-testid': testId, }: DetailSectionProps): JSX.Element;
+export declare function DetailSection({ title, hint, actions, first, children, className, 'data-testid': testId, }: DetailSectionProps): JSX.Element;
 
 export declare interface DetailSectionProps {
     title: string;
@@ -1268,14 +1268,6 @@ export declare interface DetailSectionProps {
     actions?: ReactNode;
     /** Suppress the leading rule. Use on the first section of a surface. */
     first?: boolean;
-    /**
-     * `label` (default): a small uppercase caption under a hairline, for a
-     * drawer or side panel. `heading` (since 2.386.14): a 16px sentence-case
-     * heading with no rule, for a document-like body (a work item's Brief); its
-     * `actions` stay quiet until the section is hovered or focused (always shown
-     * where there is no hover).
-     */
-    variant?: 'label' | 'heading';
     children: ReactNode;
     className?: string;
     'data-testid'?: string;
@@ -5362,6 +5354,49 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -5381,49 +5416,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

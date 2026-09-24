@@ -40,12 +40,6 @@ export interface WorkspaceDocumentHeaderProps {
    * (the shell's Comments tab carries the count). Since 2.385.1.
    */
   actionsLayout?: 'cluster' | 'menu';
-  /**
-   * The menu layout's ⋯ trigger: `boxed` (default) is the 40px bordered square
-   * of a file's head; `ghost` is a borderless 32px glyph, for the work-item
-   * head's crumb line. Since 2.386.14.
-   */
-  menuTrigger?: 'boxed' | 'ghost';
   /** Host-controlled durable persistence receipt; omitted means unknown. */
   saveState?: DocumentSaveState;
   /** Actions scoped to the current source, such as draft/review/publish. */
@@ -212,7 +206,6 @@ function isOwnerlessRefusal(error: LifecycleErrorView | null | undefined): boole
 export default function WorkspaceDocumentHeader({
   variant = 'bar',
   actionsLayout = 'cluster',
-  menuTrigger = 'boxed',
   saveState, workflowActions, formatActions, className, titleEditable, onPrint, exportFormats = ['markdown', 'pdf', 'json'],
   meta,
   mode,
@@ -658,9 +651,7 @@ export default function WorkspaceDocumentHeader({
             triggerLabel="More actions"
             triggerTitle="More actions"
             triggerClassName={menuLayout
-              ? (menuTrigger === 'ghost'
-                ? 'h-8 w-8 p-0 rounded-md border-0 bg-transparent text-text-secondary hover:bg-surface-hover hover:text-text-primary'
-                : 'h-10 w-10 p-0 rounded-md border border-border bg-surface text-text-secondary hover:bg-surface-hover hover:text-text-primary')
+              ? 'h-10 w-10 p-0 rounded-md border border-border bg-surface text-text-secondary hover:bg-surface-hover hover:text-text-primary'
               : 'h-8 rounded-md border border-border bg-surface px-2.5 text-[13px] text-text-primary hover:bg-surface-hover'}
             align="end"
             data-testid="document-header-menu"
@@ -993,7 +984,7 @@ export function WorkspaceDocumentHeaderNotices({
 }
 
 /** The lifecycle status as the header prints it — "Draft", "In review" — for a host's own title row. */
-/** `variant="tag"` (since 2.386.15): the soft label an editor head puts beside the title. */
+/** `variant="tag"` (since 2.386.5): the soft label an editor head puts beside the title. */
 export function DocumentLifecyclePill({ status, variant = 'pill' }: { status: DocumentLifecycleStatus; variant?: 'pill' | 'tag' }) {
   return (
     <StatusPill

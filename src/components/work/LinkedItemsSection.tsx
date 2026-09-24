@@ -19,7 +19,6 @@ import { Button } from '../ui/Button';
 import { IconButton } from '../ui/IconButton';
 import { CloseIcon, PlusIcon } from '../ui/Icons';
 import { WorkSearchPicker } from './WorkItemMetaBar';
-import VisuallyHidden from '../shared/VisuallyHidden';
 
 export interface LinkedItem {
   id: string;
@@ -45,13 +44,6 @@ export interface LinkedItemsSectionProps {
   relations?: LinkRelationOption[];
   emptyLabel?: string;
   first?: boolean;
-  /**
-   * `heading` (default since 2.386.14): a 16px heading, 14px rows, the status
-   * as a soft tag, the relation read out (and on hover) rather than printed,
-   * and "Add link" quiet until the section is hovered — a work item's Brief.
-   * `label`: the small caption, printed relation and dotted pill.
-   */
-  variant?: 'label' | 'heading';
   className?: string;
   'data-testid'?: string;
 }
@@ -61,8 +53,8 @@ export const DEFAULT_LINK_RELATIONS: LinkRelationOption[] = [
   { value: 'decided-by', label: 'Decided by' },
 ];
 
-function ItemTitle({ item, large }: { item: LinkedItem; large: boolean }) {
-  const cls = large ? 'min-w-0 truncate text-left text-sm' : 'min-w-0 truncate text-left text-[13px]';
+function ItemTitle({ item }: { item: LinkedItem }) {
+  const cls = 'min-w-0 truncate text-left text-[13px]';
   if (item.href) return <Link href={item.href} className={cls}>{item.title}</Link>;
   if (item.onOpen) {
     return <Button variant="link" size="sm" onClick={item.onOpen} className={cls}>{item.title}</Button>;
@@ -73,9 +65,8 @@ function ItemTitle({ item, large }: { item: LinkedItem; large: boolean }) {
 export function LinkedItemsSection({
   title = 'Dependencies & decisions', items, onSearchDocuments, onAdd,
   relations = DEFAULT_LINK_RELATIONS, emptyLabel = 'No linked documents',
-  first, variant = 'heading', className, 'data-testid': testId = 'linked-items-section',
+  first, className, 'data-testid': testId = 'linked-items-section',
 }: LinkedItemsSectionProps) {
-  const heading = variant === 'heading';
   const [open, setOpen] = useState(false);
   const [relation, setRelation] = useState(relations[0]?.value ?? '');
   const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -97,25 +88,20 @@ export function LinkedItemsSection({
   ) : undefined;
 
   return (
-    <DetailSection title={title} actions={actions} first={first} variant={variant} className={className} data-testid={testId}>
+    <DetailSection title={title} actions={actions} first={first} className={className} data-testid={testId}>
       {items.length === 0 ? (
-        <p className={heading ? 'm-0 text-sm text-text-tertiary' : 'm-0 text-[13px] text-text-tertiary'}>{emptyLabel}</p>
+        <p className="m-0 text-[13px] text-text-tertiary">{emptyLabel}</p>
       ) : (
-        <ul className={heading ? 'm-0 flex list-none flex-col p-0' : 'm-0 flex list-none flex-col gap-1 p-0'} aria-label={title}>
+        <ul className="m-0 flex list-none flex-col gap-1 p-0" aria-label={title}>
           {items.map((item) => (
-            <li
-              key={item.id}
-              className={heading ? 'group flex min-h-[29px] items-center gap-2.5' : 'group flex min-h-7 items-center gap-2'}
-              {...(heading && item.relation ? { title: item.relation } : {})}
-              data-testid={`linked-item-${item.id}`}
-            >
-              <FileKindMark kind={item.kind ?? 'page'} size={heading ? 'md' : 'sm'} variant="plain" />
-              <ItemTitle item={item} large={heading} />
-              {item.relation && (heading
-                ? <VisuallyHidden>{`(${item.relation})`}</VisuallyHidden>
-                : <span className="shrink-0 text-[11px] text-text-tertiary">{item.relation}</span>)}
+            <li key={item.id} className="group flex min-h-7 items-center gap-2" data-testid={`linked-item-${item.id}`}>
+              <FileKindMark kind={item.kind ?? 'page'} size="sm" variant="plain" />
+              <ItemTitle item={item} />
+              {item.relation && (
+                <span className="shrink-0 text-[11px] text-text-tertiary">{item.relation}</span>
+              )}
               <span className="flex-1" />
-              {item.status && <StatusPill tone={item.status.tone} label={item.status.label} size="sm" {...(heading ? { variant: 'tag' as const } : {})} />}
+              {item.status && <StatusPill tone={item.status.tone} label={item.status.label} size="sm" />}
               {item.onRemove && (
                 <IconButton
                   size="sm"

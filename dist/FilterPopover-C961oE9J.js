@@ -782,31 +782,10 @@ function de({ label: e, spacing: n = "md", className: r, "data-testid": i }) {
 }
 //#endregion
 //#region src/components/shared/DetailSection.tsx
-function fe({ title: e, hint: n, actions: r, first: i = !1, variant: a = "label", children: o, className: s, "data-testid": c }) {
-	return a === "heading" ? /* @__PURE__ */ b("section", {
-		className: t("group/section", s),
-		"data-variant": "heading",
-		...c ? { "data-testid": c } : {},
-		children: [/* @__PURE__ */ b("div", {
-			className: "mb-1 flex min-h-7 items-center gap-2",
-			children: [
-				/* @__PURE__ */ y("h3", {
-					className: "m-0 text-base font-semibold leading-6 text-text-primary",
-					children: e
-				}),
-				n != null && /* @__PURE__ */ y("span", {
-					className: "min-w-0 truncate text-[13px] text-text-tertiary",
-					children: n
-				}),
-				r != null && /* @__PURE__ */ b(v, { children: [/* @__PURE__ */ y("span", { className: "flex-1" }), /* @__PURE__ */ y("span", {
-					className: "flex items-center gap-1 opacity-0 transition-opacity focus-within:opacity-100 group-hover/section:opacity-100 [@media(hover:none)]:opacity-100",
-					children: r
-				})] })
-			]
-		}), o]
-	}) : /* @__PURE__ */ b("section", {
-		className: t(s),
-		...c ? { "data-testid": c } : {},
+function fe({ title: e, hint: n, actions: r, first: i = !1, children: a, className: o, "data-testid": s }) {
+	return /* @__PURE__ */ b("section", {
+		className: t(o),
+		...s ? { "data-testid": s } : {},
 		children: [
 			!i && /* @__PURE__ */ y(de, { spacing: "md" }),
 			/* @__PURE__ */ b("div", {
@@ -823,7 +802,7 @@ function fe({ title: e, hint: n, actions: r, first: i = !1, variant: a = "label"
 					r != null && /* @__PURE__ */ b(v, { children: [/* @__PURE__ */ y("span", { className: "flex-1" }), r] })
 				]
 			}),
-			o
+			a
 		]
 	});
 }

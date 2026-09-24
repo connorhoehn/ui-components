@@ -10,7 +10,7 @@ const ITEMS: LinkedItem[] = [
 
 describe('LinkedItemsSection', () => {
   it('renders titles, relations and pills; no pill without status', () => {
-    render(<LinkedItemsSection variant="label" items={ITEMS} />);
+    render(<LinkedItemsSection items={ITEMS} />);
     expect(screen.getByRole('heading', { name: 'Dependencies & decisions' })).toBeTruthy();
     expect(screen.getByText('Completed')).toBeTruthy();
     expect(screen.getByText('Approved')).toBeTruthy();
@@ -18,12 +18,6 @@ describe('LinkedItemsSection', () => {
     expect(screen.getByTestId('linked-item-d3').textContent).toBe('Unread spec');
     expect(screen.getByRole('link', { name: 'ADR: tail-sampling policy' }).getAttribute('href')).toBe('/docs/d2');
     expect(screen.queryByRole('button', { name: /Add link/ })).toBeNull();
-  });
-
-  it('heading variant reads the relation out without printing it', () => {
-    render(<LinkedItemsSection items={ITEMS} />);
-    expect(screen.getByText('(Depends on)')).toBeTruthy();
-    expect(screen.getByTestId('linked-item-d1').getAttribute('title')).toBe('Depends on');
   });
 
   it('title button calls onOpen', () => {

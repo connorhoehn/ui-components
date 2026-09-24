@@ -272,7 +272,7 @@ export function RunDraftPanel({
         </div>
       )}
 
-      <div className="mt-3 divide-y divide-border">
+      <div className={cn('mt-3 divide-y divide-border', target != null && 'border-t border-border')}>
         {fields?.map((f) => <FieldRow key={f.id} field={f} />)}
         {/* Cost and duration are rows of their own (the mockup rules each);
             the confidence line belongs to the duration it qualifies. */}
@@ -290,7 +290,7 @@ export function RunDraftPanel({
         {budget && <BudgetRow budget={budget} />}
         {advanced != null && (
           <div className="py-1.5">
-            <Disclosure summary={advancedLabel} variant="plain" density="compact" data-testid="run-draft-advanced">
+            <Disclosure summary={advancedLabel} variant="plain" summaryClassName="rounded-md px-1 text-[14px]" data-testid="run-draft-advanced">
               {advanced}
             </Disclosure>
           </div>

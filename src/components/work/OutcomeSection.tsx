@@ -22,19 +22,13 @@ export interface OutcomeSectionProps {
   pending?: boolean;
   /** Suppress DetailSection's leading rule. */
   first?: boolean;
-  /**
-   * `heading` (default since 2.386.14): a 16px sentence-case heading, 14px
-   * body, affordances quiet until hover — a work item's Brief. `label`: the
-   * small uppercase caption under a hairline, for a side panel.
-   */
-  variant?: 'label' | 'heading';
   className?: string;
   'data-testid'?: string;
 }
 
 export function OutcomeSection({
   title = 'Outcome', value, onChange, placeholder = 'What is true when this is done?',
-  readOnlyReason, pending = false, first, variant = 'heading', className, 'data-testid': testId = 'outcome-section',
+  readOnlyReason, pending = false, first, className, 'data-testid': testId = 'outcome-section',
 }: OutcomeSectionProps) {
   const editable = !!onChange && !readOnlyReason;
   const [editing, setEditing] = useState(false);
@@ -43,7 +37,6 @@ export function OutcomeSection({
   const ref = useRef<HTMLTextAreaElement | null>(null);
   const reasonId = useId();
   const text = value?.trim() ? value : null;
-  const body = variant === 'heading' ? 'text-sm leading-6' : 'text-[13px] leading-relaxed';
 
   useEffect(() => { if (editing) ref.current?.focus(); }, [editing]);
 
@@ -67,7 +60,7 @@ export function OutcomeSection({
   ) : editing ? '⌘Enter to save · Esc to cancel' : undefined;
 
   return (
-    <DetailSection title={title} hint={hint} actions={actions} first={first} variant={variant} className={className} data-testid={testId}>
+    <DetailSection title={title} hint={hint} actions={actions} first={first} className={className} data-testid={testId}>
       <div aria-busy={pending || undefined} title={readOnlyReason}>
         {editing ? (
           <Textarea
@@ -90,12 +83,12 @@ export function OutcomeSection({
               type="button"
               onClick={start}
               disabled={pending}
-              className={`m-0 w-full cursor-text whitespace-pre-wrap rounded-md border-none bg-transparent p-0 text-left font-[inherit] ${body} text-text-primary hover:bg-surface-hover disabled:cursor-default`}
+              className="m-0 w-full cursor-text whitespace-pre-wrap rounded-md border-none bg-transparent p-0 text-left font-[inherit] text-[13px] leading-relaxed text-text-primary hover:bg-surface-hover disabled:cursor-default"
             >
               {text}
             </button>
           ) : (
-            <p className={`m-0 whitespace-pre-wrap ${body} text-text-primary`} aria-describedby={readOnlyReason ? reasonId : undefined}>
+            <p className="m-0 whitespace-pre-wrap text-[13px] leading-relaxed text-text-primary" aria-describedby={readOnlyReason ? reasonId : undefined}>
               {text}
             </p>
           )

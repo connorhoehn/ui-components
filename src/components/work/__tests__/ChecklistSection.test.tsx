@@ -10,7 +10,7 @@ const ITEMS: ChecklistItem[] = [
 
 describe('ChecklistSection', () => {
   it('renders rows and the "1 of 3" hint', () => {
-    render(<ChecklistSection variant="label" items={ITEMS} />);
+    render(<ChecklistSection items={ITEMS} />);
     expect(screen.getByRole('heading', { name: 'Acceptance criteria' })).toBeTruthy();
     expect(screen.getByText('1 of 3')).toBeTruthy();
     expect((screen.getByRole('checkbox', { name: ITEMS[0].text }) as HTMLInputElement).checked).toBe(true);
@@ -34,7 +34,7 @@ describe('ChecklistSection', () => {
 
   it('adds on Enter and clears; ignores blank', () => {
     const onAdd = vi.fn();
-    render(<ChecklistSection variant="label" items={ITEMS} onAdd={onAdd} />);
+    render(<ChecklistSection items={ITEMS} onAdd={onAdd} />);
     const input = screen.getByRole('textbox', { name: 'Add criterion' }) as HTMLInputElement;
     fireEvent.keyDown(input, { key: 'Enter' });
     expect(onAdd).not.toHaveBeenCalled();
@@ -42,20 +42,6 @@ describe('ChecklistSection', () => {
     fireEvent.keyDown(input, { key: 'Enter' });
     expect(onAdd).toHaveBeenCalledWith('Alert on drop');
     expect(input.value).toBe('');
-  });
-
-  it('heading variant: no tally; "Add criterion" opens the field on request, Escape closes it', () => {
-    const onAdd = vi.fn();
-    render(<ChecklistSection items={ITEMS} onAdd={onAdd} />);
-    expect(screen.queryByText('1 of 3')).toBeNull();
-    expect(screen.queryByRole('textbox')).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: 'Add criterion' }));
-    const input = screen.getByRole('textbox', { name: 'Add criterion' }) as HTMLInputElement;
-    fireEvent.change(input, { target: { value: 'Alert on drop' } });
-    fireEvent.keyDown(input, { key: 'Enter' });
-    expect(onAdd).toHaveBeenCalledWith('Alert on drop');
-    fireEvent.keyDown(input, { key: 'Escape' });
-    expect(screen.queryByRole('textbox')).toBeNull();
   });
 
   it('edits in place: Enter commits, Escape cancels', () => {

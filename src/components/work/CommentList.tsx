@@ -33,12 +33,6 @@ export interface CommentListProps {
   /** Show at most this many comments. */
   max?: number;
   first?: boolean;
-  /**
-   * `heading` (default since 2.386.14): a 16px heading, 32px avatars, 14px
-   * text, "View all" quiet until hover — a work item's Brief. `label`: the
-   * small caption and 28px avatars, for a side panel.
-   */
-  variant?: 'label' | 'heading';
   className?: string;
   'data-testid'?: string;
 }
@@ -50,9 +44,8 @@ function toIso(v: string | number | Date): string | undefined {
 
 export function CommentList({
   title = 'Planning notes', comments, total, onViewAll, now, emptyLabel = 'No notes yet', max,
-  first, variant = 'heading', className, 'data-testid': testId = 'comment-list',
+  first, className, 'data-testid': testId = 'comment-list',
 }: CommentListProps) {
-  const heading = variant === 'heading';
   const shown = max != null ? comments.slice(0, max) : comments;
   const count = total ?? comments.length;
   const clock = now ?? Date.now();
@@ -62,17 +55,17 @@ export function CommentList({
   ) : undefined;
 
   return (
-    <DetailSection title={title} actions={actions} first={first} variant={variant} className={className} data-testid={testId}>
+    <DetailSection title={title} actions={actions} first={first} className={className} data-testid={testId}>
       {shown.length === 0 ? (
-        <p className={heading ? 'm-0 text-sm text-text-tertiary' : 'm-0 text-[13px] text-text-tertiary'}>{emptyLabel}</p>
+        <p className="m-0 text-[13px] text-text-tertiary">{emptyLabel}</p>
       ) : (
-        <ul className={heading ? 'm-0 flex list-none flex-col gap-2.5 px-0 pb-0 pt-1' : 'm-0 flex list-none flex-col gap-3 p-0'} aria-label={title}>
+        <ul className="m-0 flex list-none flex-col gap-3 p-0" aria-label={title}>
           {shown.map((c) => {
             const iso = toIso(c.createdAt);
             const ago = relativeAgo(iso, clock);
             return (
-              <li key={c.id} className={heading ? 'flex items-start gap-3' : 'flex items-start gap-2.5'} data-testid={`comment-${c.id}`}>
-                <Avatar name={c.author.name} src={c.author.avatarUrl} size={heading ? 32 : 28} />
+              <li key={c.id} className="flex items-start gap-2.5" data-testid={`comment-${c.id}`}>
+                <Avatar name={c.author.name} src={c.author.avatarUrl} size={28} />
                 <div className="min-w-0 flex-1">
                   <MetaLine
                     size="sm"
@@ -82,7 +75,7 @@ export function CommentList({
                       ago && iso ? <time key="t" dateTime={iso}>{ago}</time> : null,
                     ]}
                   />
-                  <p className={heading ? 'm-0 whitespace-pre-wrap text-sm leading-5 text-text-primary' : 'm-0 whitespace-pre-wrap text-[13px] leading-snug text-text-primary'}>{c.text}</p>
+                  <p className="m-0 whitespace-pre-wrap text-[13px] leading-snug text-text-primary">{c.text}</p>
                 </div>
               </li>
             );
