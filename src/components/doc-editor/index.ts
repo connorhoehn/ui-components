@@ -200,3 +200,10 @@ export type { PresentationViewProps, PresentationRevision, PresentationSlide } f
 // The writing end of the same document type. See presentation/index.ts for
 // why the sortable rail is not named there.
 export * from './presentation';
+// WS-J lane B: the margin card's reply box and its push-to-talk mic.
+export { CommentReplyComposer, commentReplyIntent, COMMENT_REPLY_COMMANDS } from './CommentReplyComposer';
+export type { CommentReplyComposerProps, CommentReplyComposerHandle, CommentReplyDictation, CommentReplyIntent } from './CommentReplyComposer';
+export { DictationButton, dictationButtonLabel, DICTATION_HOLD_MS } from './DictationButton';
+export type { DictationButtonProps, DictationButtonState } from './DictationButton';
+export { CommentHandoffBar } from './CommentHandoffBar';
+export type { CommentHandoffBarProps } from './CommentHandoffBar';

@@ -10,6 +10,7 @@ import type { MentionUser } from '../../hooks/useMentionUsers';
 import { cn } from '../../lib/cn';
 import { onActivationKey } from '../../lib/activationKey';
 import { Textarea } from '../forms/Textarea';
+import { SparkleIcon } from '../ui/Icons';
 
 // ---------------------------------------------------------------------------
 // Small display helpers
@@ -48,13 +49,13 @@ export function countAllComments(threads: CommentThread[]): number {
   return total;
 }
 
-/** Render comment text with styled @mention spans. */
-export function renderCommentText(text: string): React.ReactNode {
+/** Styled @mention spans in one run of plain text. */
+function renderMentions(text: string, keyPrefix: string): React.ReactNode[] {
   const parts = text.split(/(@[A-Z][a-zA-Z]*(?:\s[A-Z][a-zA-Z]*)*)/g);
   return parts.map((part, i) =>
     part.startsWith('@') && /^@[A-Z]/.test(part) ? (
       <span
-        key={i}
+        key={`${keyPrefix}-${i}`}
         className={cn('text-info-fg font-semibold bg-info-bg px-0.5 rounded-sm')}
       >
         {part}
@@ -63,6 +64,31 @@ export function renderCommentText(text: string): React.ReactNode {
       part
     ),
   );
+}
+
+/**
+ * Render comment text with styled @mention spans and in-app links.
+ *
+ * `[label](/path)` becomes a link — SAME-ORIGIN paths only (a leading `/`,
+ * never `//`), which is what an agent's reply uses for its run
+ * ("Addressed by [run 3f2a…](/pipelines/…/runs/…)"). Anything else stays text.
+ */
+export function renderCommentText(text: string): React.ReactNode {
+  const out: React.ReactNode[] = [];
+  const link = /\[([^\]\n]{1,120})\]\((\/(?!\/)[^\s)]{0,500})\)/g;
+  let last = 0;
+  let m: RegExpExecArray | null;
+  while ((m = link.exec(text)) !== null) {
+    if (m.index > last) out.push(...renderMentions(text.slice(last, m.index), `t${last}`));
+    out.push(
+      <a key={`l${m.index}`} href={m[2]} className={cn('text-info-fg underline underline-offset-2 hover:text-info')}>
+        {m[1]}
+      </a>,
+    );
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) out.push(...renderMentions(text.slice(last), `t${last}`));
+  return out;
 }
 
 // ---------------------------------------------------------------------------
@@ -179,6 +205,17 @@ export interface CommentThreadNodeProps {
    * dictate…). The host owns what they do.
    */
   actions?: ReactNode;
+  /**
+   * Root, unresolved only: an "Ask agent" action beside Reply / Resolve (WS-J
+   * lane B). The host hands the comment to its agent composer.
+   */
+  onAskAgent?: (commentId: string) => void;
+  /**
+   * Replaces the built-in reply textarea — a host passes a
+   * `CommentReplyComposer` wired to dictation and its agent. `submit` posts a
+   * reply to THIS comment; `close` hides the box.
+   */
+  renderReply?: (args: { commentId: string; depth: number; submit: (text: string) => void; close: () => void }) => ReactNode;
   depth: number;
   onReply: (parentId: string, text: string) => void;
   mentionUsers: MentionUser[];
@@ -190,6 +227,8 @@ function CommentThreadNode({
   comment,
   context,
   actions,
+  onAskAgent,
+  renderReply,
   depth,
   onReply,
   mentionUsers,
@@ -392,11 +431,38 @@ function CommentThreadNode({
               {'✔'} Resolve
             </button>
           )}
+          {depth === 0 && !isResolved && onAskAgent && (
+            <button
+              type="button"
+              onClick={() => onAskAgent(comment.id)}
+              title="Hand this comment to the page's agent (⌥2)"
+              data-testid={`comment-ask-agent-${comment.id}`}
+              className={cn('inline-flex items-center gap-1 bg-transparent border-none text-neutral text-xs cursor-pointer py-0.5 px-0 font-[inherit] hover:text-info-fg')}
+            >
+              <SparkleIcon size={13} aria-hidden="true" /> Ask agent
+            </button>
+          )}
           {depth === 0 && actions}
         </div>
 
+        {/* Host reply box (WS-J lane B) */}
+        {showReplyForm && renderReply && (
+          <div className={cn('pl-[30px] mt-2 animate-[sectionCommentsSlideDown_0.2s_ease-out]')}>
+            {renderReply({
+              commentId: comment.id,
+              depth,
+              submit: (text: string) => {
+                const trimmed = text.trim();
+                if (trimmed) onReply(comment.id, trimmed);
+                setShowReplyForm(false);
+              },
+              close: () => setShowReplyForm(false),
+            })}
+          </div>
+        )}
+
         {/* Inline reply form */}
-        {showReplyForm && (
+        {showReplyForm && !renderReply && (
           <div className={cn('pl-[30px] mt-2 overflow-hidden animate-[sectionCommentsSlideDown_0.2s_ease-out]')}>
             <div className={cn('relative')}>
               <Textarea
@@ -449,6 +515,7 @@ function CommentThreadNode({
           mentionUsers={mentionUsers}
           onResolveThread={onResolveThread}
           onUnresolveThread={onUnresolveThread}
+          {...(renderReply ? { renderReply } : {})}
         />
       ))}
     </div>

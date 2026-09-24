@@ -7,12 +7,14 @@ import { Doc } from 'yjs';
 import { DragEvent as DragEvent_2 } from 'react';
 import { Editor } from '@tiptap/react';
 import { Extension } from '@tiptap/core';
+import { ForwardRefExoticComponent } from 'react';
 import { JSX } from 'react';
 import { MutableRefObject } from 'react';
 import { Node as Node_2 } from '@tiptap/core';
 import { NodeViewProps } from '@tiptap/react';
 import { ReactNode } from 'react';
 import { Ref } from 'react';
+import { RefAttributes } from 'react';
 import { RefObject } from 'react';
 import { useEditor } from '@tiptap/react';
 import { XmlFragment } from 'yjs';
@@ -497,6 +499,12 @@ declare interface CollaborationProvider {
 
 export declare const COMMENT_MARGIN_STORAGE_KEY = "doc-editor:canvas:gutter-visible";
 
+export declare const COMMENT_REPLY_COMMANDS: {
+    readonly resolve: "/resolve";
+    readonly agent: "/agent";
+    readonly assign: "/assign";
+};
+
 /**
  * WHERE a root comment was made, shown as a quoted header above its body.
  *
@@ -608,6 +616,19 @@ export declare interface CommentGhostThread {
     quote?: string;
 }
 
+export declare function CommentHandoffBar({ author, quote, resolveOnApply, onResolveOnApplyChange, onDismiss, className, 'data-testid': testId, }: CommentHandoffBarProps): JSX.Element;
+
+export declare interface CommentHandoffBarProps {
+    author: string;
+    /** The anchored text, when the comment has one. */
+    quote?: string;
+    resolveOnApply: boolean;
+    onResolveOnApplyChange: (next: boolean) => void;
+    onDismiss: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare interface CommentMarginPreference {
     visible: boolean;
     /** Flips the margin and remembers the choice. */
@@ -623,12 +644,70 @@ export declare interface CommentMarginPreferenceOptions {
     defaultVisible?: boolean;
 }
 
+export declare const CommentReplyComposer: ForwardRefExoticComponent<CommentReplyComposerProps & RefAttributes<CommentReplyComposerHandle>>;
+
+export declare interface CommentReplyComposerHandle {
+    focus: () => void;
+    /** Inserts words at the caret — where a dictated utterance goes. */
+    insertText: (text: string) => void;
+}
+
+export declare interface CommentReplyComposerProps {
+    mentionUsers: MentionUser[];
+    /** A plain reply. Resolve `false` to keep the draft. */
+    onReply: (text: string) => void | boolean | Promise<void | boolean>;
+    /** `/resolve` — absent on a reply-to-a-reply or a resolved thread. */
+    onResolve?: () => void;
+    /** `/agent <instruction>`; absent when no agent can edit the page. */
+    onAskAgent?: (instruction: string) => void;
+    /** `/assign @person`; absent hides the command. */
+    onAssign?: (user: MentionUser) => void;
+    onCancel?: () => void;
+    dictation?: CommentReplyDictation;
+    placeholder?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface CommentReplyDictation {
+    /** Mirrors the dictation hook's state; `unsupported` hides nothing, it says why. */
+    state: DictationButtonState;
+    /** True only while a microphone track is live. */
+    micActive: boolean;
+    /** Why pressing will not record (signed out, no transcriber) — shown as the tooltip. */
+    unavailableReason?: string;
+    start: () => void;
+    stop: () => void;
+}
+
+/** What a sent draft asks for. Pure, so the routing is testable without an editor. */
+export declare type CommentReplyIntent = {
+    kind: 'reply';
+    text: string;
+} | {
+    kind: 'resolve';
+    note: string;
+} | {
+    kind: 'agent';
+    instruction: string;
+} | {
+    kind: 'assign';
+    userId: string | null;
+    name: string;
+} | {
+    kind: 'empty';
+};
+
+export declare function commentReplyIntent(message: Pick<ComposedMessage, 'text'> & {
+    command?: ComposedMessage['command'];
+}): CommentReplyIntent;
+
 /** A comment with nested replies, assembled client-side. */
 declare interface CommentThread extends CommentData {
     replies: CommentThread[];
 }
 
-export declare function CommentThreadNode({ comment, context, actions, depth, onReply, mentionUsers, onResolveThread, onUnresolveThread, }: CommentThreadNodeProps): JSX.Element;
+export declare function CommentThreadNode({ comment, context, actions, onAskAgent, renderReply, depth, onReply, mentionUsers, onResolveThread, onUnresolveThread, }: CommentThreadNodeProps): JSX.Element;
 
 export declare interface CommentThreadNodeProps {
     comment: CommentThread;
@@ -639,11 +718,78 @@ export declare interface CommentThreadNodeProps {
      * dictate…). The host owns what they do.
      */
     actions?: ReactNode;
+    /**
+     * Root, unresolved only: an "Ask agent" action beside Reply / Resolve (WS-J
+     * lane B). The host hands the comment to its agent composer.
+     */
+    onAskAgent?: (commentId: string) => void;
+    /**
+     * Replaces the built-in reply textarea — a host passes a
+     * `CommentReplyComposer` wired to dictation and its agent. `submit` posts a
+     * reply to THIS comment; `close` hides the box.
+     */
+    renderReply?: (args: {
+        commentId: string;
+        depth: number;
+        submit: (text: string) => void;
+        close: () => void;
+    }) => ReactNode;
     depth: number;
     onReply: (parentId: string, text: string) => void;
     mentionUsers: MentionUser[];
     onResolveThread?: (commentId: string) => void;
     onUnresolveThread?: (commentId: string) => void;
+}
+
+/** What the composer hands back on send. */
+declare interface ComposedMessage {
+    /** Rich body. Empty when only files were attached. */
+    html: string;
+    /** Plain-text fallback, for clients and notifications that cannot render HTML. */
+    text: string;
+    /** Everyone the sender explicitly mentioned, de-duplicated, in document order. */
+    mentions: MentionCandidate[];
+    /** Files staged in the composer, sent WITH the message. */
+    files: File[];
+    /** Every document the sender referenced with `#`, de-duplicated, in document order. Absent when there are none. */
+    documents?: Array<{
+        id: string;
+        label: string;
+    }>;
+    /**
+     * Set when the draft starts with a known command trigger. `argument` is the
+     * item picked from the argument menu, present only when the pick was made
+     * in THIS draft and its label is still in the text — an edited-away label
+     * means the person changed their mind, and the host should read `text`.
+     */
+    command?: {
+        trigger: string;
+        argument?: ComposerArgumentItem;
+    };
+    /**
+     * Who can see this message. Mirrors the `privacy` prop at send time, so a
+     * host with no opinion on the feature still gets `'visible'` rather than an
+     * absent field.
+     */
+    privacy: 'visible' | 'hidden';
+    /**
+     * Which mode composed this. Present only while a host has wired
+     * `onModeChange` — like `RichChatDraft.privacy`, a host that never adopts
+     * the feature never sees the key. `'agent'` also rewrites `text` to
+     * `/agent <what was typed>`, so the host's existing `/agent` command path
+     * handles it with no second code path.
+     */
+    mode?: ComposerMode;
+}
+
+declare interface ComposerArgumentItem {
+    /** Stable identity — this is what travels to the host, not the label. */
+    id: string;
+    label: string;
+    /** Shown on the right of the row: where it lives, who owns it. */
+    hint?: string;
+    /** A glyph for the row, e.g. `📄`. */
+    icon?: string;
 }
 
 /**
@@ -657,6 +803,9 @@ export declare interface CommentThreadNodeProps {
 export declare type ComposerDockPlacement = 'overlay' | 'pinned';
 
 export declare const ComposerDockPlacementContext: Context<ComposerDockPlacement>;
+
+/** What the composer is for, right now. */
+declare type ComposerMode = 'chat' | 'agent' | 'terminal';
 
 /** Connection lifecycle states */
 declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
@@ -723,6 +872,26 @@ export declare type DeckTheme = 'product' | 'engineering' | 'plain';
 
 /** The handoff's four tabs, for a host that has all of them. */
 export declare const DEFAULT_EDITOR_SHELL_TABS: readonly EditorShellTab[];
+
+/** A press shorter than this is a click: it toggles instead of stopping on release. */
+export declare const DICTATION_HOLD_MS = 250;
+
+export declare function DictationButton({ state, micActive, unavailableReason, onStart, onStop, className, 'data-testid': testId, }: DictationButtonProps): JSX.Element;
+
+export declare function dictationButtonLabel(state: DictationButtonState, micActive: boolean, unavailableReason?: string): string;
+
+export declare interface DictationButtonProps {
+    state: DictationButtonState;
+    micActive: boolean;
+    /** Why pressing will not record; the button stays visible and says so. */
+    unavailableReason?: string;
+    onStart: () => void;
+    onStop: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type DictationButtonState = 'unsupported' | 'idle' | 'starting' | 'listening' | 'transcribing' | 'error';
 
 export declare function DiffViewer({ oldSections, newSections, onClose }: DiffViewerProps): JSX.Element;
 
@@ -1754,6 +1923,22 @@ export declare const MAX_SOURCES_PER_SLIDE = 10;
 export declare const MAX_SUBTITLE_CHARS = 200;
 
 export declare const MAX_TITLE_CHARS = 120;
+
+declare interface MentionCandidate {
+    /** Stable identity — this is what travels in the message, not the label. */
+    id: string;
+    label: string;
+    avatarUrl?: string;
+    color?: string;
+    /** Shown under the name, e.g. a role or team. */
+    hint?: string;
+    /**
+     * False when the composer knows the chat's members and this person is not
+     * one: the row lists under "Not in this chat" and picking it offers to add
+     * them rather than mentioning someone who could not read the message.
+     */
+    member?: boolean;
+}
 
 export declare const MentionDropdown: default_2.ForwardRefExoticComponent<MentionDropdownProps & default_2.RefAttributes<MentionDropdownHandle>>;
 
@@ -3664,6 +3849,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3683,45 +3881,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -3755,6 +3917,16 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
@@ -3765,9 +3937,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
