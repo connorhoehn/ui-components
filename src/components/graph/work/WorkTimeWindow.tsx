@@ -4,6 +4,7 @@ import { Button } from '../../ui/Button';
 import { IconButton } from '../../ui/IconButton';
 import { cn } from '../../../lib/cn';
 import type { WorkActivityPresentation } from './types';
+import { useMeasuredWidth } from '../../doc-editor/useMeasuredWidth';
 
 const MINUTE = 60_000;
 const HOUR = 60 * MINUTE;
@@ -16,6 +17,11 @@ const TICK_STEPS: Array<[number, number]> = [
   [12 * HOUR, 2 * HOUR],
   [Infinity, 3 * HOUR],
 ];
+
+/** The "Now 3:52" label's width plus half a tick label and a gap. */
+const NOW_LABEL_CLEARANCE_PX = 80;
+/** The least room between two tick labels' centres. */
+const TICK_SPACING_PX = 44;
 
 export function WorkTimeWindow({ activity, timezone = 'UTC' }: { activity: WorkActivityPresentation; timezone?: string }) {
   const { bounds, window, onWindowChange } = activity;
@@ -54,10 +60,22 @@ export function WorkTimeWindow({ activity, timezone = 'UTC' }: { activity: WorkA
   // The ruler counts from real clock marks in the host's zone, not from the
   // start of the window: "8:30" has to land where 8:30 actually is.
   const step = TICK_STEPS.find(([limit]) => span <= limit)![1];
+  // Leave the last stretch to the "Now" label so the two never overprint, and
+  // keep marks a label's width apart — in pixels, measured: a fixed 82 % of a
+  // ~270 px ruler (a 1280 px window with the node pane open) left "3:00"
+  // touching "Now 3:52" (realtime-examples Loop 32 (activity)).
+  const ruler = useMeasuredWidth<HTMLDivElement>();
+  const rulerWidth = ruler.width ?? 0;
   const ticks: number[] = [];
   for (let mark = Math.ceil(bounds.start / step) * step; mark <= end; mark += step) {
-    // Leave the last stretch to the "Now" label so the two never overprint.
-    if ((mark - bounds.start) / span < 0.82) ticks.push(mark);
+    const fraction = (mark - bounds.start) / span;
+    if (fraction >= 0.82) continue;
+    if (rulerWidth > 0) {
+      if ((1 - fraction) * rulerWidth < NOW_LABEL_CLEARANCE_PX) continue;
+      const last = ticks[ticks.length - 1];
+      if (last !== undefined && (mark - last) / span * rulerWidth < TICK_SPACING_PX) continue;
+    }
+    ticks.push(mark);
   }
   return (
     <div className="shrink-0 border-b border-border bg-surface px-3 pb-3 pt-2" aria-label="Work time window">
@@ -78,7 +96,7 @@ export function WorkTimeWindow({ activity, timezone = 'UTC' }: { activity: WorkA
           onChange={(event) => move(window.end, window.following, event.target.value === 'day' ? span : Number(event.target.value) * MINUTE)}
         />
       </div>
-      <div className="relative mx-1 mt-2 h-4 text-[10px] text-text-tertiary" aria-hidden="true" data-testid="work-time-ruler">
+      <div ref={ruler.ref} className="relative mx-1 mt-2 h-4 text-[10px] text-text-tertiary" aria-hidden="true" data-testid="work-time-ruler">
         {ticks.map((mark) => (
           <span key={mark} className="absolute top-0 -translate-x-1/2 first:translate-x-0 tabular-nums" style={{ left: `${at(mark)}%` }}>{clock(mark)}</span>
         ))}

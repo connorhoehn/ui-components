@@ -236,6 +236,28 @@ describe('Active Now composition', () => {
     expect(screen.getAllByRole('button', { name: /events at/ })).toHaveLength(1);
   });
 
+  it('on a narrow ruler drops marks that would touch "Now" or each other (Loop 32 (activity))', () => {
+    const original = globalThis.ResizeObserver;
+    globalThis.ResizeObserver = class {
+      constructor(private readonly callback: ResizeObserverCallback) {}
+      observe() { this.callback([{ contentRect: { width: 200 } } as ResizeObserverEntry], this as unknown as ResizeObserver); }
+      disconnect() {}
+      unobserve() {}
+    } as unknown as typeof ResizeObserver;
+    try {
+      const value = activity();
+      const dayStart = Date.parse('2026-09-21T04:00:00Z');
+      const rightNow = Date.parse('2026-09-21T20:28:00Z');
+      value.bounds = { start: dayStart, end: dayStart + 24 * 60 * 60_000 };
+      value.window = { start: rightNow - 15 * 60_000, end: rightNow, following: true };
+      value.now = rightNow;
+      render(<WorkTimeWindow activity={value} timezone="America/New_York" />);
+      expect([...screen.getByTestId('work-time-ruler').querySelectorAll('span')].map((span) => span.textContent)).toEqual(['2:00', '8:00', 'Now 16:28']);
+    } finally {
+      globalThis.ResizeObserver = original;
+    }
+  });
+
   it('labels a scrubbed window with both ends and keeps hour marks proportional', () => {
     const value = activity();
     const dayStart = Date.parse('2026-09-21T04:00:00Z');
