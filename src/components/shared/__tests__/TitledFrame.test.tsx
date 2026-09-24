@@ -9,6 +9,20 @@ describe('TitledFrame', () => {
     expect(screen.getByText('pane body')).toBeTruthy();
   });
 
+  it('gives a truncating title a tooltip and never lets the action shrink it away', () => {
+    // NFR #164: an action in the border took priority and a narrow frame read
+    // as "Coverag…" with no way to see the rest.
+    const { container, rerender } = render(<TitledFrame title="Coverage checks" titleAction={<button type="button">Focus</button>}>x</TitledFrame>);
+    const title = container.querySelector('[data-titled-frame-title]')!;
+    expect(title.getAttribute('title')).toBe('Coverage checks');
+    expect(title.className).toContain('truncate');
+    expect(screen.getByText('Focus').parentElement!.className).toContain('shrink-0');
+    rerender(<TitledFrame title={<b>Coverage checks</b>} titleText="Coverage checks">x</TitledFrame>);
+    const bare = container.querySelector('[data-titled-frame-title]')!;
+    expect(bare.getAttribute('title')).toBe('Coverage checks');
+    expect(bare.className).toContain('max-w-full');
+  });
+
   it('marks the active frame with the focused border', () => {
     const { container, rerender } = render(
       <TitledFrame title="a" data-testid="frame">x</TitledFrame>,

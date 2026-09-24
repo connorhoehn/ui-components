@@ -1,6 +1,6 @@
 import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./Chip-zdVBwV9j.js";
-import { t as n } from "./TitledFrame-DUsxfZCI.js";
+import { t as n } from "./TitledFrame-D8PekrkI.js";
 import { t as r } from "./DotMeter-BDVkadI8.js";
 import { t as i } from "./StatusDot-Bgx2zxgC.js";
 import { t as a } from "./InlinePopover-DtYo8_ZC.js";

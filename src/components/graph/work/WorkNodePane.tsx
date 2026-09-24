@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { cn } from '../../../lib/cn';
 import Chip from '../../shared/Chip';
 import { Tabs, TabPanel } from '../../shared/Tabs';
@@ -153,6 +153,12 @@ export interface WorkNodePaneProps {
    * pane, the place that is supposed to say MORE, said only "Running".
    */
   live?: boolean;
+  /**
+   * Beside the close button in the pane's header — who else has this node
+   * open (`<PresenceAvatars>`), for instance. Never shrinks the title away:
+   * the title truncates first.
+   */
+  headerAccessory?: ReactNode;
   className?: string;
   'data-testid'?: string;
 }
@@ -178,7 +184,7 @@ function PaneChip({ children, title, tone }: { children: string; title?: string;
  * existence of gets chrome and an honest empty body.
  */
 export function WorkNodePane({
-  node, detail, selection, onSelectionChange, onClose, onOpen, onReference, live, className, 'data-testid': testId = 'activity-inspector',
+  node, detail, selection, onSelectionChange, onClose, onOpen, onReference, live, headerAccessory, className, 'data-testid': testId = 'activity-inspector',
 }: WorkNodePaneProps) {
   const restricted = node.locked || node.disclosure === 'existence';
   const visible = restricted ? undefined : detail;
@@ -236,7 +242,10 @@ export function WorkNodePane({
           <span className="truncate text-sm font-semibold text-text-primary" data-testid={`${testId}-title`}>{title}</span>
           {subtitle && <span className="truncate text-xs text-text-tertiary" data-testid={`${testId}-subtitle`} {...(delayed ? { 'data-delayed': 'true' } : {})}>{subtitle}</span>}
         </span>
-        <IconButton size="md" aria-label="Close details" onClick={onClose} data-testid={`${testId}-close`} className="shrink-0"><CloseIcon /></IconButton>
+        <span className="flex shrink-0 items-center gap-2">
+          {headerAccessory != null && <span className="flex items-center" data-testid={`${testId}-accessory`}>{headerAccessory}</span>}
+          <IconButton size="md" aria-label="Close details" onClick={onClose} data-testid={`${testId}-close`} className="shrink-0"><CloseIcon /></IconButton>
+        </span>
       </header>
       <div className="min-h-0 flex-1 space-y-4 overflow-auto p-3">
         {!compute && banner && <WorkPaneBanner banner={banner} />}

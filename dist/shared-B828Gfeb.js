@@ -30,7 +30,7 @@ import "./DockedPanelContext-pH9A5z1h.js";
 import { t as w } from "./Input-DLknWXri.js";
 import { t as T } from "./Textarea-Dz4doxTv.js";
 import { n as E, t as D } from "./Avatar-DeJWic2B.js";
-import "./TitledFrame-DUsxfZCI.js";
+import "./TitledFrame-D8PekrkI.js";
 import "./DotMeter-BDVkadI8.js";
 import "./StatusDot-Bgx2zxgC.js";
 import { r as O } from "./PopoverForm-DZiObiP6.js";

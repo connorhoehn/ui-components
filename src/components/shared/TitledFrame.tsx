@@ -21,8 +21,13 @@ export type TitledFrameTone = 'code' | 'surface';
 export interface TitledFrameProps {
   /** Text sitting in the top border. Keep it short — it is a label, not a line. */
   title: ReactNode;
-  /** Right-aligned content in the top border, e.g. a close control. */
+  /** Right-aligned content in the top border, e.g. a close control. It never
+   *  shrinks: when the border is too short for both, the title truncates. */
   titleAction?: ReactNode;
+  /** Plain text of the title, shown as its tooltip — the title truncates, so
+   *  a long one is otherwise unreadable. Defaults to `title` when that is a
+   *  string. */
+  titleText?: string;
   /** Draw the focused border. In a pane grid, exactly one should be true. */
   active?: boolean;
   /**
@@ -65,6 +70,7 @@ const TONE = {
 export function TitledFrame({
   title,
   titleAction,
+  titleText,
   active = false,
   tone = 'code',
   children,
@@ -98,8 +104,11 @@ export function TitledFrame({
           horizontal padding is what punches the gap in the border line. */}
       <div className="absolute -top-2 left-2 right-2 h-4 flex items-center gap-1 pointer-events-none">
         <span
+          title={titleText ?? (typeof title === 'string' ? title : undefined)}
+          data-titled-frame-title=""
           className={cn(
-            'px-1.5 text-[10px] font-mono leading-none truncate max-w-[60%]',
+            'min-w-0 px-1.5 text-[10px] font-mono leading-none truncate',
+            titleAction != null ? 'max-w-[60%]' : 'max-w-full',
             palette.frame,
             active ? palette.titleActive : palette.title,
           )}
@@ -108,10 +117,10 @@ export function TitledFrame({
         </span>
         {titleAction != null && (
           <>
-            <span className="flex-1" />
+            <span className="min-w-0 flex-1" />
               {/* `h-full` + centring keeps the action inside the 16px band even
                 when the host passes something with its own padding. */}
-            <span className={cn('px-1 h-full flex items-center pointer-events-auto', palette.frame)}>
+            <span className={cn('px-1 h-full flex shrink-0 items-center pointer-events-auto', palette.frame)}>
               {titleAction}
             </span>
           </>

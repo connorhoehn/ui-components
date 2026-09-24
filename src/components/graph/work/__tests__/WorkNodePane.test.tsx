@@ -80,6 +80,16 @@ describe('a run pane says what the card says, and more', () => {
   });
 });
 
+describe('header accessory', () => {
+  it('puts who else is here beside the close button, in the header', () => {
+    render(<WorkNodePane node={node('deck', 'document', 'Sprint review')} selection={{ kind: 'node', id: 'deck' }} onSelectionChange={vi.fn()} onClose={vi.fn()} headerAccessory={<span>2 viewing</span>} />);
+    const accessory = screen.getByTestId('activity-inspector-accessory');
+    expect(accessory.textContent).toBe('2 viewing');
+    expect(accessory.closest('header')).toBeTruthy();
+    expect(accessory.parentElement!.className).toContain('shrink-0');
+  });
+});
+
 describe('per-kind detail panes', () => {
   it('shows the artifact pane with revisions, slides and a reference that carries the exact page', () => {
     const detail = artifactDetail(false);
