@@ -342,6 +342,11 @@ export function MediaEffectsTray({
 
 const MAX_CUSTOM_BYTES = 5 * 1024 * 1024;
 
+/** `url("…")` that survives any URL: quoted, with the characters that end a quoted CSS string escaped. */
+function cssUrl(url: string): string {
+  return `url("${url.replace(/["\\\n\r]/g, (c) => encodeURIComponent(c))}")`;
+}
+
 /** A frame of the viewer's camera for a thumbnail, with an optional CSS filter. */
 function Frame({
   stream,
@@ -360,7 +365,7 @@ function Frame({
         aria-hidden
         className="absolute inset-0 bg-cover bg-center"
         // Dynamic, prop-driven URL — cannot be a Tailwind class.
-        style={{ backgroundImage: `url("${backgroundUrl}")` }}
+        style={{ backgroundImage: cssUrl(backgroundUrl) }}
       />
     );
   }

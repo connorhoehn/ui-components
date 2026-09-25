@@ -5,6 +5,7 @@ import {
   VideoIcon, VideoOffIcon,
   ScreenShareIcon, ScreenShareOffIcon,
   PhoneOffIcon, MoreHorizontalIcon, UserPlusIcon,
+  SpeakerIcon, MonitorIcon, ExpandIcon, PhoneCallIcon, SettingsGearIcon,
   type IconProps,
 } from './MediaIcons';
 
@@ -23,6 +24,12 @@ const ICONS: Array<[string, IconComponent]> = [
   ['PhoneOffIcon', PhoneOffIcon],
   ['UserPlusIcon', UserPlusIcon],
   ['MoreHorizontalIcon', MoreHorizontalIcon],
+  // Document calls (2.391.0)
+  ['SpeakerIcon', SpeakerIcon],
+  ['MonitorIcon', MonitorIcon],
+  ['ExpandIcon', ExpandIcon],
+  ['PhoneCallIcon', PhoneCallIcon],
+  ['SettingsGearIcon', SettingsGearIcon],
 ];
 
 const meta = {
@@ -96,4 +103,10 @@ export const InheritsTone: Story = {
       <span className="text-text-disabled"><VideoOffIcon size={24} /></span>
     </div>
   ),
+};
+
+/** The gallery in the dark theme (icons are currentColor, so they follow the text token). */
+export const GalleryDark: Story = {
+  ...Gallery,
+  decorators: [(S) => <div data-theme="dark" className="bg-surface p-4"><S /></div>],
 };

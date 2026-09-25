@@ -110,3 +110,46 @@ export const Interactive: Story = {
     );
   },
 };
+
+// ── Grid layout (2.391.0): the call-settings Effects tab ────────────────────
+
+const GRID_FILTERS = [
+  { id: 'none', label: 'None', cssFilter: 'none' },
+  { id: 'bw', label: 'B&W', cssFilter: 'grayscale(1)' },
+  { id: 'warm', label: 'Warm', cssFilter: 'saturate(1.35) hue-rotate(-6deg)' },
+  { id: 'cool', label: 'Cool', cssFilter: 'hue-rotate(12deg)' },
+  { id: 'sepia', label: 'Sepia', cssFilter: 'sepia(1)' },
+  { id: 'vivid', label: 'Vivid', cssFilter: 'saturate(1.8)' },
+  { id: 'fade', label: 'Fade', cssFilter: 'contrast(0.8) brightness(1.1)' },
+];
+
+const FRAME = swatch('rgb(120,140,170)');
+
+const gridArgs = {
+  layout: 'grid' as const,
+  filters: GRID_FILTERS,
+  activeFilterId: 'warm',
+  backgroundMode: 'blur' as const,
+  thumbnailSrc: FRAME,
+  faceSprites: [
+    { id: 'sunglasses', label: 'Sunglasses', icon: '🕶️' },
+    { id: 'dog-ears', label: 'Dog ears', icon: '🐶' },
+    { id: 'crown', label: 'Crown', icon: '👑' },
+  ],
+  onSelectCustomBackground: () => {},
+};
+
+/** Thumbnails in three columns, in the page theme: Warm and Blur picked, "More..." folds the rest. */
+export const Grid: Story = {
+  args: gridArgs,
+  decorators: [(S) => <div className="w-[340px] bg-surface p-4"><S /></div>],
+};
+export const GridDark: Story = {
+  args: gridArgs,
+  decorators: [(S) => <div data-theme="dark" className="w-[340px] bg-surface p-4"><S /></div>],
+};
+/** No WebGL / segmenter failed: the Background section says so. */
+export const GridBackgroundsUnsupported: Story = {
+  args: { ...gridArgs, backgroundsUnsupported: true },
+  decorators: [(S) => <div className="w-[340px] bg-surface p-4"><S /></div>],
+};

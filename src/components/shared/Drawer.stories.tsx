@@ -52,3 +52,38 @@ export const Docked: Story = {
   ),
 };
 
+
+/**
+ * 2.391.0: a docked panel never outgrows its column. The 400px drawer sits in
+ * a 320px column and FILLS it — its × and body stay inside — and the header
+ * can drop its rule and take a bigger title (the call drawers' look).
+ */
+export const DockedFillsNarrowColumn: Story = {
+  args: { open: true, onClose: () => {}, children: null },
+  render: () => (
+    <div className="flex h-72 items-stretch border border-border bg-surface-panel">
+      <div className="flex-1 p-4 text-sm text-text-secondary">Page.</div>
+      <div className="flex w-80 shrink-0">
+        <Drawer
+          open
+          docked
+          width={400}
+          onClose={() => {}}
+          title="Start a call"
+          headerClassName="border-b-0"
+          titleClassName="text-lg"
+          footerClassName="bg-surface"
+          closeTestId="drawer-close"
+          footer={<Button>Start call</Button>}
+        >
+          <p className="text-sm text-text-secondary">The column is 320px; the drawer asked for 400px and fits anyway.</p>
+        </Drawer>
+      </div>
+    </div>
+  ),
+};
+
+export const DockedFillsNarrowColumnDark: Story = {
+  ...DockedFillsNarrowColumn,
+  decorators: [(S) => <div data-theme="dark" className="bg-workspace p-4"><S /></div>],
+};

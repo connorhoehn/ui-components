@@ -1,0 +1,342 @@
+import { describe, it, expect, vi } from 'vitest';
+import { useRef } from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { AudioVideoSettingsForm, type AudioVideoSettings } from '../AudioVideoSettingsForm';
+import { IncomingCallPopover, type IncomingCallPopoverProps } from '../IncomingCallPopover';
+import { StartCallDrawer, type StartCallDrawerProps } from '../StartCallDrawer';
+import { CallSettingsDrawer } from '../CallSettingsDrawer';
+import { CallDock, formatCallElapsed, type CallDockProps } from '../CallDock';
+import { DocumentCallPanel, type DocumentCallPanelProps } from '../DocumentCallPanel';
+
+const noop = () => {};
+const DEV = {
+  microphones: [{ deviceId: 'm', label: 'MacBook Pro Microphone' }],
+  speakers: [{ deviceId: 's', label: 'MacBook Pro Speakers' }],
+  cameras: [{ deviceId: 'c', label: 'FaceTime HD Camera' }],
+};
+const AV: AudioVideoSettings = {
+  noiseSuppression: true,
+  echoCancellation: true,
+  autoGainControl: true,
+  volume: 0.6,
+  mirrorPreview: true,
+  quality: 'auto',
+  frameRate: 'auto',
+  rememberDevices: true,
+};
+
+function av(over: Partial<Parameters<typeof AudioVideoSettingsForm>[0]> = {}) {
+  return render(
+    <AudioVideoSettingsForm
+      value={AV}
+      onChange={noop}
+      devices={DEV}
+      permission={{ microphone: 'granted', camera: 'granted' }}
+      micLevel={0.5}
+      previewStream={null}
+      cameraOn={false}
+      speakerSelectionSupported
+      onTestMic={noop}
+      onTestSound={noop}
+      {...over}
+    />,
+  );
+}
+
+describe('AudioVideoSettingsForm', () => {
+  it('lists the devices and reports changes immediately', () => {
+    const onChange = vi.fn();
+    av({ onChange });
+    expect(screen.getByTestId('settings-mic-select')).toBeTruthy();
+    expect(screen.getByTestId('settings-speaker-select')).toBeTruthy();
+    fireEvent.click(screen.getByTestId('settings-noise'));
+    expect(onChange).toHaveBeenCalledWith({ ...AV, noiseSuppression: false });
+    expect(screen.getByText('Camera is off')).toBeTruthy();
+  });
+
+  it('hides Speakers when setSinkId is unsupported, keeping the volume row', () => {
+    av({ speakerSelectionSupported: false });
+    expect(screen.queryByTestId('settings-speaker-select')).toBeNull();
+    expect(screen.getByTestId('settings-volume')).toBeTruthy();
+    expect(screen.getByTestId('settings-test-sound')).toBeTruthy();
+  });
+
+  it('swaps the microphone select for the blocked alert', () => {
+    av({ permission: { microphone: 'denied', camera: 'granted' } });
+    expect(screen.queryByTestId('settings-mic-select')).toBeNull();
+    expect(screen.getByTestId('settings-mic-denied').textContent).toContain('Microphone blocked');
+    expect((screen.getByTestId('settings-test-mic') as HTMLButtonElement).disabled).toBe(true);
+  });
+
+  it('labels Test mic by its state', () => {
+    av({ testMicState: 'recording' });
+    expect(screen.getByTestId('settings-test-mic').textContent).toBe('Recording…');
+  });
+});
+
+function Popover(props: Partial<IncomingCallPopoverProps>) {
+  const ref = useRef<HTMLButtonElement | null>(null);
+  return (
+    <>
+      <button ref={ref} type="button">Call</button>
+      <IncomingCallPopover
+        open
+        anchorRef={ref}
+        caller={{ name: 'Connor Hoehn' }}
+        title="Auth architecture review"
+        documents={[
+          { id: 'a', title: 'Auth architecture' },
+          { id: 'b', title: 'Migration brief' },
+        ]}
+        onOpenDocument={noop}
+        participants={[{ id: '1', name: 'Connor Hoehn' }]}
+        participantCount={3}
+        mic={{ on: true, onToggle: noop, devices: DEV.microphones, onSelectDevice: noop, permission: 'granted' }}
+        camera={{ on: false, onToggle: noop, devices: DEV.cameras, onSelectDevice: noop, permission: 'granted' }}
+        onOpenSettings={noop}
+        onJoin={noop}
+        onDecline={noop}
+        onDismiss={noop}
+        {...props}
+      />
+    </>
+  );
+}
+
+describe('IncomingCallPopover', () => {
+  it('renders the full copy', () => {
+    render(<Popover />);
+    expect(screen.getByText('Incoming call')).toBeTruthy();
+    expect(screen.getByText('invited you to a review')).toBeTruthy();
+    expect(screen.getByTestId('incoming-call-more').textContent).toBe('+1 document');
+    expect(screen.getByText('3 people in the call')).toBeTruthy();
+    expect(screen.getByText('Mic on')).toBeTruthy();
+    expect(screen.getByText('Camera off')).toBeTruthy();
+  });
+
+  it('renders the compact copy and declines from the ×', () => {
+    const onDecline = vi.fn();
+    render(<Popover compact onDecline={onDecline} />);
+    expect(screen.getByTestId('incoming-call-caller').textContent).toContain('invited you');
+    expect(screen.queryByText('invited you to a review')).toBeNull();
+    expect(screen.getByTestId('incoming-call-more').textContent).toBe('+1');
+    expect(screen.getByTestId('incoming-call-participants').textContent).toBe('3 in call');
+    fireEvent.click(screen.getByTestId('incoming-call-close'));
+    expect(onDecline).toHaveBeenCalledTimes(1);
+  });
+
+  it('offers Switch when busy', () => {
+    const onSwitch = vi.fn();
+    render(<Popover compact busy onSwitch={onSwitch} />);
+    expect(screen.queryByTestId('incoming-call-join')).toBeNull();
+    fireEvent.click(screen.getByTestId('incoming-call-switch'));
+    expect(onSwitch).toHaveBeenCalled();
+  });
+});
+
+function start(over: Partial<StartCallDrawerProps> = {}) {
+  return render(
+    <StartCallDrawer
+      open
+      onClose={noop}
+      title="Auth architecture review"
+      onTitleChange={noop}
+      media="video"
+      onMediaChange={noop}
+      documents={{ items: [{ id: 'a', title: 'Auth architecture', removable: false }], onAdd: noop, onRemove: noop }}
+      onManageAccess={noop}
+      people={{ query: '', onQueryChange: noop, chips: [], onRemoveChip: noop, collaborators: { rows: [], selected: [], onToggle: noop } }}
+      message=""
+      onMessageChange={noop}
+      ring
+      onRingChange={noop}
+      precheck={{ micOn: true, cameraOn: true, permission: 'granted', onToggleMic: noop, onToggleCamera: noop, onOpenSettings: noop }}
+      selectedCount={0}
+      onCopyLink={noop}
+      onStart={noop}
+      {...over}
+    />,
+  );
+}
+
+describe('StartCallDrawer', () => {
+  it('says how many people are selected', () => {
+    const { rerender } = start({ selectedCount: 0 });
+    expect(screen.getByTestId('start-call-selected-count').textContent).toBe('No one selected');
+    rerender(<></>);
+    start({ selectedCount: 1 });
+    expect(screen.getAllByTestId('start-call-selected-count').at(-1)!.textContent).toBe('1 person selected');
+    start({ selectedCount: 2 });
+    expect(screen.getAllByTestId('start-call-selected-count').at(-1)!.textContent).toBe('2 people selected');
+  });
+
+  it('disables Start call with a reason', () => {
+    const onStart = vi.fn();
+    start({ startDisabledReason: 'Waiting for microphone permission', onStart });
+    const btn = screen.getByTestId('start-call-submit') as HTMLButtonElement;
+    expect(btn.disabled).toBe(true);
+    expect(btn.title).toBe('Waiting for microphone permission');
+  });
+
+  it('hides the camera pre-check for an audio call', () => {
+    start({ media: 'audio' });
+    expect(screen.queryByTestId('start-call-precheck-camera')).toBeNull();
+    expect(screen.getByTestId('start-call-precheck-mic')).toBeTruthy();
+  });
+
+  it('shows Starting… and the retry banner', () => {
+    const onRetry = vi.fn();
+    start({ starting: true, error: { message: 'nope', onRetry } });
+    expect(screen.getByTestId('start-call-submit').textContent).toContain('Starting…');
+    fireEvent.click(screen.getByTestId('start-call-retry'));
+    expect(onRetry).toHaveBeenCalled();
+  });
+});
+
+describe('CallSettingsDrawer', () => {
+  it('Done on Audio & video; changes/Cancel/Apply on Effects', () => {
+    const onClose = vi.fn();
+    const onApply = vi.fn();
+    render(
+      <CallSettingsDrawer
+        open
+        onClose={onClose}
+        audioVideo={<p>av</p>}
+        effects={<p>fx</p>}
+        captions={<p>cc</p>}
+        effectsFooter={{ changeCount: 2, onCancel: noop, onApply }}
+      />,
+    );
+    expect(screen.getByText('Devices update immediately')).toBeTruthy();
+    fireEvent.click(screen.getByTestId('settings-done'));
+    expect(onClose).toHaveBeenCalled();
+    fireEvent.click(screen.getByTestId('call-settings-tab-effects'));
+    expect(screen.getByText('fx')).toBeTruthy();
+    expect(screen.getByTestId('effects-changes').textContent).toBe('2 changes');
+    fireEvent.click(screen.getByTestId('effects-apply'));
+    expect(onApply).toHaveBeenCalled();
+  });
+});
+
+const dockBase: CallDockProps = {
+  title: 'Auth architecture review',
+  participantCount: 2,
+  elapsedMs: 581_000,
+  phase: 'active',
+  documents: [{ id: 'a', title: 'Auth architecture' }],
+  participants: [
+    { id: 'me', userId: 'me', displayName: 'Me', cameraOn: false, audioOn: true, screenSharing: false, presenting: false, connection: 'connected' },
+    { id: 'al', userId: 'al', displayName: 'Alice Chen', cameraOn: false, audioOn: true, screenSharing: false, presenting: true, connection: 'connected' },
+  ],
+  localParticipantId: 'me',
+  followingUserId: 'al',
+  mic: { on: true, onToggle: noop, devices: DEV.microphones, onSelectDevice: noop, permission: 'granted' },
+  camera: { on: false, onToggle: noop, devices: DEV.cameras, onSelectDevice: noop, permission: 'granted' },
+  screenShare: { on: false, onToggle: noop },
+  onOpenPeople: noop,
+  onOpenDocuments: noop,
+  onOpenSettings: noop,
+  onPopOut: noop,
+  onLeave: noop,
+};
+
+describe('CallDock', () => {
+  it('formats elapsed time', () => {
+    expect(formatCallElapsed(581_000)).toBe('09:41');
+    expect(formatCallElapsed(3_723_000)).toBe('1:02:03');
+  });
+
+  it('shows the meta, the tiles and the followed ring', () => {
+    render(<CallDock {...dockBase} />);
+    expect(screen.getByTestId('call-dock-meta').textContent).toBe('2 people · 09:41');
+    expect(screen.getByTestId('call-tile-al').getAttribute('data-highlighted')).toBe('true');
+    expect(screen.getByTestId('call-dock-document-a')).toBeTruthy();
+  });
+
+  it('asks the host before leaving, and ends for everyone', () => {
+    const onLeave = vi.fn();
+    const onEndForEveryone = vi.fn();
+    render(<CallDock {...dockBase} canEndForEveryone onEndForEveryone={onEndForEveryone} onLeave={onLeave} />);
+    fireEvent.click(screen.getByTestId('call-dock-leave'));
+    expect(onLeave).not.toHaveBeenCalled();
+    expect(screen.getByText('Leave the call? Others stay on.')).toBeTruthy();
+    fireEvent.click(screen.getByTestId('call-dock-end-for-everyone'));
+    expect(onEndForEveryone).toHaveBeenCalled();
+  });
+
+  it('connecting disables the controls except Leave; ended and error have their own lines', () => {
+    const { rerender } = render(<CallDock {...dockBase} phase="connecting" />);
+    expect(screen.getByTestId('call-dock-meta').textContent).toBe('Connecting…');
+    expect((screen.getByTestId('call-dock-people') as HTMLButtonElement).disabled).toBe(true);
+    expect((screen.getByTestId('call-dock-leave') as HTMLButtonElement).disabled).toBe(false);
+    rerender(<CallDock {...dockBase} phase="ended" endedSummary="Not recorded (off)" onDismiss={noop} />);
+    expect(screen.getByTestId('call-dock-ended').textContent).toContain('Call ended · 09:41 · Not recorded (off)');
+    const onRetry = vi.fn();
+    rerender(<CallDock {...dockBase} phase="error" error={{ message: 'gone', onRetry }} />);
+    fireEvent.click(screen.getByTestId('call-dock-rejoin'));
+    expect(onRetry).toHaveBeenCalled();
+  });
+});
+
+function panel(over: Partial<DocumentCallPanelProps> = {}) {
+  const base = { isHost: false, state: 'in-call' as const, audioOn: true, cameraOn: true, screenSharing: false, presenting: false };
+  return render(
+    <DocumentCallPanel
+      title="Auth architecture review"
+      participantCount={2}
+      elapsedMs={581_000}
+      people={{
+        people: [
+          { ...base, userId: 'me', name: 'Connor', isLocal: true, isHost: true },
+          { ...base, userId: 'al', name: 'Alice', isLocal: false },
+        ],
+        count: 2,
+        canModerate: true,
+        onInvite: noop,
+        onFollow: noop,
+        onMuteForMe: noop,
+      }}
+      documents={{ items: [{ id: 'a', title: 'Auth architecture' }], count: 1, onAdd: noop, onOpen: noop }}
+      presenting={null}
+      currentDocumentId="a"
+      canPresent
+      onPresent={noop}
+      onCopyLink={noop}
+      onManageAccess={noop}
+      onPopOut={noop}
+      onClose={noop}
+      {...over}
+    />,
+  );
+}
+
+describe('DocumentCallPanel', () => {
+  it('presents this document, then offers to stop', () => {
+    const onPresent = vi.fn();
+    const { rerender } = panel({ onPresent });
+    fireEvent.click(screen.getByTestId('call-present'));
+    expect(onPresent).toHaveBeenCalledWith('a');
+    rerender(<></>);
+    panel({ onPresent, presenting: { documentId: 'a', userId: 'me', name: 'Connor' } });
+    expect(screen.getByTestId('call-present').textContent).toContain('Stop presenting');
+    fireEvent.click(screen.getByTestId('call-present'));
+    expect(onPresent).toHaveBeenLastCalledWith(null);
+  });
+
+  it('disables Present with the reason when someone else presents', () => {
+    panel({ canPresent: false, presentDisabledReason: 'Alice is presenting', presenting: { documentId: 'a', userId: 'al', name: 'Alice' } });
+    const btn = screen.getByTestId('call-present') as HTMLButtonElement;
+    expect(btn.disabled).toBe(true);
+    expect(btn.title).toBe('Alice is presenting');
+  });
+
+  it('has the pop-out, close and copy-link hooks', () => {
+    const onClose = vi.fn();
+    panel({ onClose });
+    fireEvent.click(screen.getByTestId('call-panel-close'));
+    expect(onClose).toHaveBeenCalled();
+    expect(screen.getByTestId('call-panel-popout')).toBeTruthy();
+    expect(screen.getByTestId('call-copy-link')).toBeTruthy();
+    expect(screen.getByTestId('call-panel-meta').textContent).toBe('2 people · 09:41');
+  });
+});

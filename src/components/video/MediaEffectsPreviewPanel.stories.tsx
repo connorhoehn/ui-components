@@ -150,3 +150,46 @@ export const InsideCallSettingsDialog: Story = {
     );
   },
 };
+
+// ── Surface variant (2.391.0): the call-settings Effects tab ────────────────
+
+function SurfaceHarness({ footer = true }: { footer?: boolean }) {
+  const s = useFakePreviewSession(true);
+  const shown = s.draft ?? s.live;
+  return (
+    <div className="w-[340px] bg-surface p-4">
+      <MediaEffectsPreviewPanel
+        variant="surface"
+        showFooter={footer}
+        previewActive={s.draft !== null}
+        previewStream={null}
+        isDirty={s.isDirty}
+        onApply={s.apply}
+        onCancel={s.cancel}
+        filters={FILTERS}
+        activeFilterId={shown.filterId}
+        onSelectFilter={(filterId) => s.patch({ filterId })}
+        backgrounds={BACKGROUNDS}
+        backgroundMode={shown.backgroundMode}
+        activeBackgroundUrl={shown.backgroundImageUrl}
+        onSelectBackground={(backgroundMode, backgroundImageUrl) => s.patch({ backgroundMode, backgroundImageUrl })}
+        faceSprites={FACE_SPRITES}
+        activeFaceSpriteId={shown.faceSpriteId}
+        onSelectFaceSprite={(faceSpriteId) => s.patch({ faceSpriteId })}
+        onSelectCustomBackground={() => {}}
+      />
+    </div>
+  );
+}
+
+/** Page-themed, "Preview · Only you", the grid tray; camera off here, so the preview says so. */
+export const Surface: Story = { render: () => <SurfaceHarness /> };
+export const SurfaceDark: Story = {
+  render: () => (
+    <div data-theme="dark">
+      <SurfaceHarness />
+    </div>
+  ),
+};
+/** Inside CallSettingsDrawer, which owns the footer ("2 changes · Cancel · Apply"). */
+export const SurfaceNoFooter: Story = { render: () => <SurfaceHarness footer={false} /> };
