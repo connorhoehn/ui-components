@@ -625,6 +625,12 @@ function InitiativesMineEmptyFrame() {
 // pre-line `description`, `StatStrip
 // variant="line"`, `PageSection size="md" count`, and `ActionRowList tone/
 // accent/leading/columns/action` with `ActionRowPerson` cells.
+//
+// 2.396.0 polish: the header sits in `paneHeader` (as the portal composes it)
+// with `tabsRule="inset"` — the rule starts under the title, inside the
+// gutter — and a 3px selected bar drawn inside the header's box; `PageSection
+// countTone="primary"`; the "Blocked" tag is `Chip size="lg" outline="soft"`;
+// "View all 11" carries a 20px arrow 8px after the label.
 // ---------------------------------------------------------------------------
 
 const V2_ROWS = INITIATIVE_ROWS.map(({ id, groupId, title }) => ({ id, groupId, title }));
@@ -675,39 +681,41 @@ function InitiativeOverviewV2Frame() {
           />
         }
         panePadding="none"
+          paneHeader={
+          <ScopeHeader
+            title="Observability Platform"
+            status={{ label: 'In progress', tone: 'info' }}
+            description={'Centralize telemetry, reduce alert noise, and control retention costs.\nFocus: actionable alerts, team error budgets, and OpenTelemetry.'}
+            descriptionSize="sm"
+            peopleStyle="inline"
+            people={[
+              { label: 'Owner', people: [{ id: 'nd', name: 'Nora DaSilva' }] },
+              { label: 'SMEs', people: [{ id: 'lh', name: 'Layla Hassan' }, { id: 'eg', name: 'Eli Garcia' }] },
+            ]}
+            link={{ label: 'Repository', href: '#repo' }}
+            linkStyle="button"
+            menu={MORE_MENU}
+            tabs={INITIATIVE_TABS}
+            tabSize="md"
+            tabsRule="inset"
+            activeTab={tab}
+            onTabChange={setTab}
+          />
+        }
         paneFooter={<InitiativeComposer chip="Observability Platform" text="Help me prioritize the next changes and explain the tradeoffs." />}
       >
-        <ScopeHeader
-          title="Observability Platform"
-          status={{ label: 'In progress', tone: 'info' }}
-          description={'Centralize telemetry, reduce alert noise, and control retention costs.\nFocus: actionable alerts, team error budgets, and OpenTelemetry.'}
-          descriptionSize="sm"
-          peopleStyle="inline"
-          people={[
-            { label: 'Owner', people: [{ id: 'nd', name: 'Nora DaSilva' }] },
-            { label: 'SMEs', people: [{ id: 'lh', name: 'Layla Hassan' }, { id: 'eg', name: 'Eli Garcia' }] },
-          ]}
-          link={{ label: 'Repository', href: '#repo' }}
-          linkStyle="button"
-          menu={MORE_MENU}
-          tabs={INITIATIVE_TABS}
-          tabSize="md"
-          activeTab={tab}
-          onTabChange={setTab}
-          className="mx-6 border-b border-border px-0"
-        />
         <div className="flex flex-col px-6 pb-6">
           <StatStrip
             variant="line"
             aria-label="Initiative progress"
-            className="mt-7"
+            className="mt-5"
             items={[
               { label: '/ 52 points delivered', value: 18, progress: { value: 18, max: 52 } },
               { label: 'agents running', value: 2 },
               { label: 'of $95 spent', value: '$1.73' },
             ]}
           />
-          <PageSection title="Needs attention" size="md" count={1} className="mt-6">
+          <PageSection title="Needs attention" size="md" count={1} countTone="primary" className="mt-6">
             <ActionRowList
               aria-label="Needs attention"
               tone="warning"
@@ -720,7 +728,7 @@ function InitiativeOverviewV2Frame() {
                   id: 'b4',
                   title: 'Stop duplicate alerts during a dependency outage',
                   description: 'Waiting on the dependency map.',
-                  leading: <Chip tone="danger" size="md" outline className="rounded-md px-2.5 py-1 text-[14px] font-normal leading-5">Blocked</Chip>,
+                  leading: <Chip tone="danger" size="lg" outline="soft">Blocked</Chip>,
                   cells: { who: <ActionRowPerson name="Eli Garcia" />, pts: '2 pts' },
                 },
               ]}
@@ -730,7 +738,7 @@ function InitiativeOverviewV2Frame() {
             title="Up next"
             size="md"
             className="mt-8"
-            actions={<Button variant="link" className="inline-flex items-center gap-1.5 text-[15px]">View all 11 <ArrowRightIcon size={16} /></Button>}
+            actions={<Button variant="link" className="inline-flex items-center gap-2 text-[15px]">View all 11 <ArrowRightIcon size={20} /></Button>}
           >
             <ActionRowList
               aria-label="Up next"

@@ -7,6 +7,7 @@ import {
   CODE_TONE_SOLID,
   CODE_TONE_SOLID_BG,
   CODE_TONE_TRANSLUCENT,
+  TONE_BG,
   TONE_BORDER,
   TONE_SOFT,
   TONE_TEXT,
@@ -44,14 +45,18 @@ const PALETTE = {
   },
 } as const;
 
-const SIZE_CLASSES: Record<'md' | 'sm' | 'xs', string> = {
+const SIZE_CLASSES: Record<'lg' | 'md' | 'sm' | 'xs', string> = {
+  // A tag read as a word, not a badge — "Blocked" leading a work row (the
+  // Initiatives v2 overview, 2.396.0): 14px regular type, 10px × 4px.
+  lg: 'rounded-md px-2.5 py-1 text-[14px] font-normal leading-5',
   // A count pill beside a 15px tree row (the Folders explorer, 2.386.0).
   md: 'min-w-6 justify-center px-1.5 py-0.5 text-[12px] font-semibold leading-4 tabular-nums',
   sm: 'px-2 py-0.5 text-[11px]',
   xs: 'px-1.5 py-px text-[10px]',
 };
 
-const DOT_SIZE: Record<'md' | 'sm' | 'xs', string> = {
+const DOT_SIZE: Record<'lg' | 'md' | 'sm' | 'xs', string> = {
+  lg: 'h-2 w-2',
   md: 'h-1.5 w-1.5',
   sm: 'h-1.5 w-1.5',
   xs: 'h-1 w-1',
@@ -65,7 +70,8 @@ export interface ChipProps {
    * debugger or terminal pane.
    */
   palette?: ChipPalette;
-  size?: 'md' | 'sm' | 'xs';
+  /** `lg` since 2.396.0: 14px regular text, 10px × 4px padding, 6px corners. */
+  size?: 'lg' | 'md' | 'sm' | 'xs';
   /** Solid fill (dark bg + white text) instead of soft tint. */
   solid?: boolean;
   /**
@@ -82,8 +88,13 @@ export interface ChipProps {
    * on an already-tinted row (the "Blocked" chip on `ActionRowList
    * tone="warning"`) without stacking a second tint on it. `surface` palette
    * only; ignored with `solid`/`translucent`. Since 2.393.1.
+   *
+   * `'soft'` (since 2.396.0): the same tone border and text over the tone's
+   * pale `-bg` fill rather than the surface wash — a tag that should still
+   * read as tinted on a tinted row (the Initiatives v2 "Blocked": pale red
+   * fill, soft red border, red text).
    */
-  outline?: boolean;
+  outline?: boolean | 'soft';
   /** Monospace font — for count badges. */
   mono?: boolean;
   /** Indicator dot. 'static' = filled circle, 'pulse' = filled circle
@@ -159,7 +170,7 @@ export default function Chip({
     : solid
       ? family.solid[key]
       : outline && palette === 'surface'
-        ? cn('border bg-surface/60', TONE_BORDER[key], TONE_TEXT[key])
+        ? cn('border', outline === 'soft' ? TONE_BG[key] : 'bg-surface/60', TONE_BORDER[key], TONE_TEXT[key])
         : family.soft[key];
   const hasAdornment = !!(dot || icon || onRemove);
   const Root = href ? 'a' : 'span';

@@ -148,8 +148,25 @@ export interface ScopeHeaderProps {
    * 10px after its label, 8px side padding with 28px gaps between tabs
    * and the first label aligned under the title — the Initiatives v2 header.
    * `sm`: 14px tabs at any title size.
+   *
+   * Since 2.396.0 `md` marks the selected tab with a 3px bar drawn inside
+   * the header's own box (`Tabs indicator="bar"`) instead of a 2px border
+   * hung 1px below it — the bottom half of that border was painted over by
+   * whatever followed (the scrolling pane body under an
+   * `ExplorerLayout.paneHeader`), so it read as 1px. The bar starts at the
+   * content's left edge with the label 4px in (`pl-1 pr-3`, was `px-2` with
+   * the row pulled 4px left), and the tabs are 10px taller below the label, 4px further under the people row.
    */
   tabSize?: 'sm' | 'md';
+  /**
+   * Who draws the rule under the tabs. `host` (default): the host's own
+   * bottom border (`className="border-b border-border"`) — the tab row sits
+   * on it, full width of the header. `inset` (since 2.396.0): the tab row
+   * draws its own rule, spanning the header's content width inside its
+   * 24px gutter — the Initiatives v2 header, where the rule starts under the
+   * title rather than at the pane's edge. Drop the host border with `inset`.
+   */
+  tabsRule?: 'host' | 'inset';
   /**
    * The description's type. `md` (default): 16px on 24px lines. `sm` (since
    * 2.392.0): 15px on 22px lines — the Initiatives v2 two-line summary.
@@ -286,6 +303,7 @@ function ScopeHeaderFull({
   linkStyle = 'inline',
   statsPlacement = 'inline',
   tabSize,
+  tabsRule = 'host',
   descriptionSize = 'md',
   className,
   'data-testid': testId = 'scope-header',
@@ -329,7 +347,7 @@ function ScopeHeaderFull({
   const currentTab = hasTabs ? (tabs!.some((t) => t.id === activeTab) ? activeTab! : tabs![0]!.id) : undefined;
 
   return (
-    <div data-testid={testId} data-title-size={titleSize} {...(tabSize ? { 'data-tab-size': tabSize } : {})} className={cn('flex min-w-0 flex-col gap-1.5 px-6 pt-3', lg && 'gap-0 pt-4', !hasTabs && (lg ? 'pb-4' : 'pb-3'), className)}>
+    <div data-testid={testId} data-title-size={titleSize} {...(tabSize ? { 'data-tab-size': tabSize } : {})} {...(hasTabs && tabsRule === 'inset' ? { 'data-tabs-rule': 'inset' } : {})} className={cn('flex min-w-0 flex-col gap-1.5 px-6 pt-3', lg && 'gap-0 pt-4', !hasTabs && (lg ? 'pb-4' : 'pb-3'), className)}>
       {breadcrumbs && breadcrumbs.length > 0 && (
         <Breadcrumbs items={breadcrumbs} separator="›" maxItems={5} className="min-w-0" data-testid={`${testId}-crumbs`} />
       )}
@@ -428,22 +446,25 @@ function ScopeHeaderFull({
           variant="underline"
           size="md"
           badgeStyle="plain"
+          {...(tabSize === 'md' ? { indicator: 'bar' as const, indicatorWeight: 3 as const } : {})}
           // lg: the count sits 10px after its label ("Work 11"), as the
           // Initiatives mockup draws it — the button's own 6px gap is dropped
           // and only the badge's margin remains. tabSize="md" (2.392.0) is
           // the same 15px/10px at any title size, with 8px side padding,
           // 28px between tabs and the first label 4px in from the title.
           {...(tabSize === 'md'
-            ? { itemClassName: 'gap-0 px-2 text-[15px]' }
+            ? { itemClassName: 'gap-0 pb-4 pl-1 pr-3 pt-2 text-[15px]' }
             : tabSize === 'sm'
               ? {}
               : lg ? { itemClassName: 'gap-0 text-[15px]' } : {})}
           aria-label={`${title} views`}
           className={cn(
-            '-mb-px border-b-0',
-            tabSize === 'md' && '-ml-1 gap-7',
+            // host: the row sits on the host's rule (-mb-px) and draws none of
+            // its own. inset: the row's own rule, inside the header's gutter.
+            tabsRule === 'inset' ? '' : tabSize === 'md' ? '-mb-px after:hidden' : '-mb-px border-b-0',
+            tabSize === 'md' && 'gap-7',
             inlinePeople
-              ? 'mt-4'
+              ? (tabSize === 'md' ? 'mt-5' : 'mt-4')
               : lg ? (hasDescription || namesLine ? 'mt-5' : 'mt-2') : hasDescription || namesLine ? 'mt-3' : 'mt-1',
           )}
         />

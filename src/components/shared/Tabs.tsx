@@ -56,6 +56,22 @@ export interface TabsProps {
    * "tablist"` element to hang one attribute on it.
    */
   'data-testid'?: string;
+  /**
+   * How the `underline` variant marks the selected tab. `border` (default):
+   * the tab's own 2px bottom border, hung 1px (`-mb-px`) over the tablist's
+   * rule — as before.
+   *
+   * `bar` (since 2.396.0): an absolutely positioned bar at the bottom of the
+   * tab, on `z-[1]`, and the rule drawn as the tablist's own `after:` line.
+   * Both sit INSIDE the tablist's box, so nothing hangs past it for the next
+   * element (a scrolling pane body with its own background) to paint over —
+   * the bug that left a 2px border reading as 1px under `ScopeHeader` in an
+   * `ExplorerLayout.paneHeader`. Hide the rule with `after:hidden` when a
+   * host draws its own. Other variants ignore this.
+   */
+  indicator?: 'border' | 'bar';
+  /** The `bar` indicator's thickness in px. Default 2. Since 2.396.0. */
+  indicatorWeight?: 2 | 3;
 }
 
 const SIZE: Record<'sm' | 'md', string> = {
@@ -63,10 +79,12 @@ const SIZE: Record<'sm' | 'md', string> = {
   md: 'px-3 py-1.5 text-sm',
 };
 
-function variantContainerClasses(variant: TabsVariant): string {
+function variantContainerClasses(variant: TabsVariant, bar: boolean): string {
   switch (variant) {
     case 'underline':
-      return 'inline-flex items-center gap-1 border-b border-[var(--color-border)]';
+      return bar
+        ? "relative inline-flex items-center gap-1 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-[var(--color-border)] after:content-['']"
+        : 'inline-flex items-center gap-1 border-b border-[var(--color-border)]';
     case 'pill':
       return 'inline-flex items-center gap-1';
     case 'segmented':
@@ -74,13 +92,13 @@ function variantContainerClasses(variant: TabsVariant): string {
   }
 }
 
-function variantItemClasses(variant: TabsVariant, active: boolean, disabled: boolean): string {
+function variantItemClasses(variant: TabsVariant, active: boolean, disabled: boolean, bar = false): string {
   if (variant === 'underline') {
     return cn(
-      '-mb-px border-b-2 rounded-none',
+      bar ? 'relative rounded-none' : '-mb-px border-b-2 rounded-none',
       active
-        ? 'border-[var(--color-primary)] text-[var(--color-text-primary)]'
-        : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]',
+        ? cn(!bar && 'border-[var(--color-primary)]', 'text-[var(--color-text-primary)]')
+        : cn(!bar && 'border-transparent', 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'),
       disabled && 'opacity-50 cursor-not-allowed hover:text-[var(--color-text-secondary)]',
     );
   }
@@ -117,7 +135,10 @@ export function Tabs({
   stretch = false,
   itemClassName,
   'data-testid': testId,
+  indicator = 'border',
+  indicatorWeight = 2,
 }: TabsProps) {
+  const bar = variant === 'underline' && indicator === 'bar';
   const autoPrefix = useId();
   const idPrefix = idPrefixProp ?? autoPrefix;
   const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
@@ -172,7 +193,8 @@ export function Tabs({
       role="tablist"
       aria-label={ariaLabel}
       data-testid={testId}
-      className={cn(variantContainerClasses(variant), className)}
+      {...(bar ? { 'data-indicator': 'bar' } : {})}
+      className={cn(variantContainerClasses(variant, bar), className)}
       style={style}
     >
       {items.map((item) => {
@@ -199,12 +221,22 @@ export function Tabs({
               'inline-flex items-center gap-1.5 font-medium transition-colors cursor-pointer',
               stretch && 'flex-1 justify-center',
               SIZE[size],
-              variantItemClasses(variant, active, !!item.disabled),
+              variantItemClasses(variant, active, !!item.disabled, bar),
               itemClassName,
             )}
           >
             {item.icon}
             <span>{item.label}</span>
+            {bar && active && (
+              <span
+                aria-hidden="true"
+                data-tab-indicator=""
+                className={cn(
+                  'pointer-events-none absolute inset-x-0 bottom-0 z-[1] bg-[var(--color-primary)]',
+                  indicatorWeight === 3 ? 'h-[3px]' : 'h-0.5',
+                )}
+              />
+            )}
             {item.badge !== undefined && item.badge !== null && (
               <span
                 className={badgeStyle === 'plain' ? 'ml-2.5 inline-flex items-center text-[14px] font-medium tabular-nums text-[var(--color-text-tertiary)]' : cn(

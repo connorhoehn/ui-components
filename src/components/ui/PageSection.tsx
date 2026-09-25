@@ -17,6 +17,12 @@ export interface PageSectionProps {
    */
   count?: number;
   /**
+   * The count pill's colour. `neutral` (default): the grey chip. `primary`
+   * (since 2.396.0): a pale indigo pill (`primary-bg`) with indigo
+   * (`primary-fg`) numerals at 13px — the Initiatives v2 "Needs attention 1".
+   */
+  countTone?: 'neutral' | 'primary';
+  /**
    * `lg` (default): the page's own 20px h1 with 24px to its content. `md`
    * (since 2.392.0): a 16px semibold h2 over a section of a page — "Needs
    * attention", "Up next" — with 8px to its content, the actions vertically
@@ -33,6 +39,7 @@ export function PageSection({
   actions,
   children,
   count,
+  countTone = 'neutral',
   size = 'lg',
   className,
   'data-testid': testId,
@@ -46,7 +53,15 @@ export function PageSection({
           <Heading className={cn('m-0 text-text-primary', md ? 'flex min-w-0 items-center gap-2.5 text-[16px] font-semibold leading-6' : 'text-xl font-semibold')}>
             {md ? <span className="min-w-0 truncate">{title}</span> : title}
             {typeof count === 'number' && (
-              <Chip size="sm" tone="neutral" className={cn('shrink-0', !md && 'ml-2.5 align-middle')} aria-label={`${count} items`} {...(testId ? { 'data-testid': `${testId}-count` } : {})}>
+              <Chip
+                size={countTone === 'primary' ? 'md' : 'sm'}
+                tone="neutral"
+                className={cn(
+                  'shrink-0',
+                  !md && 'ml-2.5 align-middle',
+                  countTone === 'primary' && 'rounded-md bg-primary-bg text-[13px] font-medium leading-[18px] text-primary-fg',
+                )}
+                aria-label={`${count} items`} {...(testId ? { 'data-testid': `${testId}-count` } : {})}>
                 {count}
               </Chip>
             )}

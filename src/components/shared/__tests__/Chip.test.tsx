@@ -46,6 +46,21 @@ describe('Chip', () => {
     expect(chip).not.toHaveClass('bg-danger-bg');
   });
 
+  it("outline='soft' keeps the tone border and text over the pale -bg fill (2.396.0)", () => {
+    render(<Chip tone="danger" outline="soft" data-testid="chip">Blocked</Chip>);
+    const chip = screen.getByTestId('chip');
+    expect(chip).toHaveClass('border', 'border-danger-border', 'text-danger-fg', 'bg-danger-bg');
+    expect(chip).not.toHaveClass('bg-surface/60');
+  });
+
+  it("size='lg' is 14px regular type with 10×4 padding; md is unchanged (2.396.0)", () => {
+    const { rerender } = render(<Chip size="lg" data-testid="chip">Blocked</Chip>);
+    expect(screen.getByTestId('chip')).toHaveClass('text-[14px]', 'font-normal', 'px-2.5', 'py-1', 'rounded-md', 'leading-5');
+    expect(screen.getByTestId('chip')).not.toHaveClass('font-semibold');
+    rerender(<Chip size="md" data-testid="chip">3</Chip>);
+    expect(screen.getByTestId('chip')).toHaveClass('text-[12px]', 'font-semibold', 'px-1.5');
+  });
+
   it('applies translucent variant styling on the code palette', () => {
     render(<Chip palette="code" tone="danger" translucent data-testid="chip">exit 1</Chip>);
     const chip = screen.getByTestId('chip');

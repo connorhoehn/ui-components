@@ -235,3 +235,41 @@ describe('Tabs container data-testid', () => {
     expect(screen.getByTestId('bar')).toContainElement(screen.getByTestId('tab-b'));
   });
 });
+
+describe('Tabs indicator (2.396.0)', () => {
+  it('border (default) keeps the 2px border hung over the tablist rule', () => {
+    render(<Tabs items={ITEMS} value="a" onValueChange={() => {}} data-testid="bar" />);
+    const tab = screen.getByRole('tab', { name: 'Alpha' });
+    expect(tab.className).toContain('border-b-2');
+    expect(tab.className).toContain('-mb-px');
+    expect(tab.querySelector('[data-tab-indicator]')).toBeNull();
+    expect(screen.getByTestId('bar').className).toContain('border-b');
+    expect(screen.getByTestId('bar')).not.toHaveAttribute('data-indicator');
+  });
+
+  it('bar draws the mark and the rule inside the tablist box, the mark on top', () => {
+    render(<Tabs items={ITEMS} value="a" onValueChange={() => {}} indicator="bar" indicatorWeight={3} data-testid="bar" />);
+    const list = screen.getByTestId('bar');
+    expect(list).toHaveAttribute('data-indicator', 'bar');
+    expect(list.className).toContain('relative');
+    expect(list.className).toContain('after:bottom-0');
+    expect(list.className).not.toMatch(/(^|\s)border-b(\s|$)/);
+    const tab = screen.getByRole('tab', { name: 'Alpha' });
+    expect(tab.className).not.toContain('border-b-2');
+    expect(tab.className).not.toContain('-mb-px');
+    const mark = tab.querySelector('[data-tab-indicator]')!;
+    expect(mark).toHaveAttribute('aria-hidden', 'true');
+    expect(mark.className).toContain('h-[3px]');
+    expect(mark.className).toContain('bottom-0');
+    expect(mark.className).toContain('z-[1]');
+    // Only the selected tab carries a mark; the accessible name is unchanged.
+    expect(screen.getByRole('tab', { name: /Beta/ }).querySelector('[data-tab-indicator]')).toBeNull();
+  });
+
+  it('bar defaults to 2px and is ignored by non-underline variants', () => {
+    const { rerender } = render(<Tabs items={ITEMS} value="a" onValueChange={() => {}} indicator="bar" />);
+    expect(screen.getByRole('tab', { name: 'Alpha' }).querySelector('[data-tab-indicator]')!.className).toContain('h-0.5');
+    rerender(<Tabs items={ITEMS} value="a" onValueChange={() => {}} indicator="bar" variant="pill" />);
+    expect(screen.getByRole('tab', { name: 'Alpha' }).querySelector('[data-tab-indicator]')).toBeNull();
+  });
+});

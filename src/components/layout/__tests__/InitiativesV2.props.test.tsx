@@ -118,8 +118,44 @@ describe('ScopeHeader tabSize', () => {
     render(<ScopeHeader title="Obs" tabs={tabs} tabSize="md" />);
     const tab = screen.getByRole('tab', { name: /Overview/ });
     expect(tab.className).toContain('text-[15px]');
-    expect(tab.className).toContain('px-2');
+    // 2.396.0: the bar starts at the content edge, the label 4px in.
+    expect(tab.className).toContain('pl-1');
+    expect(tab.className).toContain('pr-3');
     expect(screen.getByTestId('scope-header')).toHaveAttribute('data-tab-size', 'md');
+  });
+  it('md marks the selected tab with a 3px bar inside the header, not a border hung below it (2.396.0)', () => {
+    render(<ScopeHeader title="Obs" tabs={tabs} tabSize="md" className="border-b border-border" />);
+    const tab = screen.getByRole('tab', { name: /Overview/ });
+    // No hanging border: nothing reaches past the header for the pane body to paint over.
+    expect(tab.className).not.toContain('border-b-2');
+    expect(tab.className).not.toContain('-mb-px');
+    expect(tab.className).toContain('relative');
+    const bar = tab.querySelector('[data-tab-indicator]')!;
+    expect(bar).not.toBeNull();
+    expect(bar.className).toContain('h-[3px]');
+    expect(bar.className).toContain('bottom-0');
+    expect(bar.className).toContain('z-[1]');
+    expect(screen.getByRole('tab', { name: /Work/ }).querySelector('[data-tab-indicator]')).toBeNull();
+    // host rule (default): the row sits on it and draws none of its own.
+    const list = screen.getByRole('tablist');
+    expect(list.className).toContain('-mb-px');
+    expect(list.className).toContain('after:hidden');
+  });
+  it('tabsRule="inset" has the tab row draw its own rule inside the gutter; the default leaves it to the host', () => {
+    const { rerender } = render(<ScopeHeader title="Obs" tabs={tabs} tabSize="md" tabsRule="inset" />);
+    const list = screen.getByRole('tablist');
+    expect(list.className).not.toContain('-mb-px');
+    expect(list.className).not.toContain('after:hidden');
+    expect(list.className).toContain('after:h-px');
+    expect(screen.getByTestId('scope-header')).toHaveAttribute('data-tabs-rule', 'inset');
+    expect(screen.getByTestId('scope-header').className).toContain('px-6');
+    // without tabSize the row keeps its border rule, no longer cancelled
+    rerender(<ScopeHeader title="Obs" tabs={tabs} tabsRule="inset" />);
+    expect(screen.getByRole('tablist').className).not.toContain('border-b-0');
+    expect(screen.getByRole('tablist').className).toContain('border-b');
+    rerender(<ScopeHeader title="Obs" tabs={tabs} />);
+    expect(screen.getByTestId('scope-header')).not.toHaveAttribute('data-tabs-rule');
+    expect(screen.getByRole('tablist').className).toContain('border-b-0');
   });
   it('absent keeps 14px at md and 15px at lg; sm forces 14px at lg', () => {
     const { rerender } = render(<ScopeHeader title="Obs" tabs={tabs} />);
@@ -156,6 +192,19 @@ describe('StatStrip variant="line"', () => {
     render(<StatStrip variant="line" items={[{ label: 'points', value: 0, progress: { value: 0, max: 0 } }]} />);
     expect(screen.queryByTestId('stat-strip-progress')).toBeNull();
     expect(screen.queryByTestId('stat-strip-separator')).toBeNull();
+  });
+});
+
+describe('PageSection countTone', () => {
+  it('primary is a pale indigo pill with indigo numerals; the default stays the neutral chip', () => {
+    const { rerender } = render(<PageSection title="Needs attention" size="md" count={1} countTone="primary" data-testid="s"><p>x</p></PageSection>);
+    const pill = screen.getByTestId('s-count');
+    expect(pill.className).toContain('bg-primary-bg');
+    expect(pill.className).toContain('text-primary-fg');
+    expect(pill.className).not.toContain('bg-neutral-bg');
+    rerender(<PageSection title="Needs attention" size="md" count={1} data-testid="s"><p>x</p></PageSection>);
+    expect(screen.getByTestId('s-count').className).toContain('bg-neutral-bg');
+    expect(screen.getByTestId('s-count').className).not.toContain('bg-primary-bg');
   });
 });
 
