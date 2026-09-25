@@ -2855,16 +2855,17 @@ export declare interface MessageRowProps {
      * width of its own beyond its shrink-to-fit content, that container
      * collapses to a few px and the card's contents wrap letter-by-letter in
      * a sliver on the right. `'block'` renders the span as a full-width block
-     * up to a cap (`w-full max-w-[36rem]`) with no tint/padding, so the card
+     * up to a cap (`w-full max-w-[30rem]`) with no tint/padding, so the card
      * gets real horizontal room to size against — still right-aligned via the
      * column's `items-end` on a `mine` row, not via `text-align`.
      *
-     * The cap applies to EVERY card row, own or not. A card in a full-page
-     * chat used to stretch the whole column on someone else's row (and on an
-     * own row until the cap landed there): a document card 1100px wide with
-     * an icon at one end and "Open" at the other reads as a banner, not a
-     * message. 36rem sits where a message bubble's width does; in a narrow
-     * pane the cap never binds and the card takes the width it has.
+     * The cap is ONE fixed width (30rem, 480px — where Teams puts its cards)
+     * on EVERY card row, own or not, at every pane width. A card is never the
+     * column's width: on a wide monitor a document card 1100px wide, icon at
+     * one end and "Open" at the other, makes the reader run their eyes across
+     * the whole pane for one line. Incoming cards sit at the left edge,
+     * outgoing at the right, the way the bubbles do; a pane narrower than the
+     * cap shrinks the card to fit.
      */
     contentLayout?: 'inline' | 'block';
     className?: string;
@@ -3684,10 +3685,35 @@ declare module '@tiptap/core' {
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
     }
 }
 
@@ -3730,26 +3756,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
@@ -3758,14 +3764,9 @@ declare module '@tiptap/core' {
 }
 
 
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
     }
 }

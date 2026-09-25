@@ -2,11 +2,11 @@ import { a as e, i as t, n, o as r, r as i, t as a } from "./registry-DbX3MVAA.j
 import { i as o, n as s, r as c, t as l } from "./documentType-rRZpKWbO.js";
 import { n as u, t as d } from "./fieldType-CGXsQUaC.js";
 import "./types.js";
-import { A as f, C as p, D as m, E as h, M as g, O as _, S as v, T as y, _ as b, a as x, b as S, c as C, d as w, f as T, g as E, h as D, i as ee, j as O, k, l as A, m as te, n as j, o as ne, p as re, r as ie, s as M, t as N, u as P, v as ae, w as oe, x as F, y as I } from "./hooks-DaH8_mLu.js";
+import { A as f, C as p, D as m, E as h, M as g, O as _, S as v, T as y, _ as b, a as x, b as S, c as C, d as w, f as T, g as E, h as D, i as ee, j as O, k, l as A, m as te, n as j, o as ne, p as re, r as ie, s as M, t as N, u as P, v as ae, w as oe, x as F, y as I } from "./hooks-Ba3b23E2.js";
 import { i as se, n as ce, r as le, t as ue } from "./apiBaseUrl-DLrXlmVj.js";
 import { n as de, r as fe, t as pe } from "./IdentityContext-CQM1qwH6.js";
-import { a as me, c as he, d as ge, f as _e, h as ve, i as ye, l as be, m as xe, n as Se, o as Ce, p as we, r as Te, s as Ee, t as De, u as Oe } from "./useVideoSessions-DDcZSMLJ.js";
-import { n as ke, t as Ae } from "./useWebSocket-D4PAHlj8.js";
+import { a as me, c as he, d as ge, f as _e, h as ve, i as ye, l as be, m as xe, n as Se, o as Ce, p as we, r as Te, s as Ee, t as De, u as Oe } from "./useVideoSessions-Bnxuclp-.js";
+import { n as ke, t as Ae } from "./useWebSocket-C9oAM0NL.js";
 import { a as je, i as L, n as Me, o as Ne, r as Pe, t as Fe } from "./useSocialProfile-5S1qyvsv.js";
 import { a as Ie, c as Le, i as Re, l as R, n as ze, o as Be, r as Ve, s as He, t as Ue, u as We } from "./useSyncConflicts-BspqjVsW.js";
 import { i as Ge } from "./useDocumentTypes-DCKwxXn8.js";
@@ -82,11 +82,11 @@ import { t as Go } from "./Checkbox-Dftwml_V.js";
 import { n as Ko, t as qo } from "./FileKindMark-Pyuz3FHF.js";
 import { t as Jo } from "./Tooltip-af4BrR7T.js";
 import { n as Yo, r as Xo, t as Zo } from "./ReactionsOverlay-Ob1ecsgg.js";
-import { A as Qo, B as $o, C as es, D as ts, E as ns, F as rs, G as is, H as as, I as os, J as ss, K as cs, L as ls, M as us, N as ds, O as fs, P as ps, Q as ms, R as hs, S as gs, T as _s, U as vs, V as ys, W as bs, X as xs, Y as Ss, Z as Cs, _ as ws, a as Ts, b as Es, c as Ds, d as Os, f as ks, g as As, h as js, i as Ms, j as Ns, k as Ps, l as Fs, m as Is, n as Ls, o as Rs, p as zs, q as Bs, r as Vs, s as Hs, t as Us, u as Ws, v as Gs, w as Ks, x as qs, y as Js, z as Ys } from "./social-BvRDp5ZL.js";
-import { $ as Xs, A as Zs, B as Qs, C as $s, D as ec, E as tc, F as nc, G as rc, H as ic, I as ac, J as oc, K as sc, L as cc, M as lc, N as uc, O as dc, P as fc, Q as pc, R as mc, S as hc, T as gc, U as _c, V as vc, W as yc, X as bc, Y as xc, Z as Sc, _ as Cc, a as wc, at as Tc, b as Ec, c as Dc, ct as Oc, d as kc, et as Ac, f as jc, g as Mc, h as Nc, i as Pc, it as Fc, j as Ic, k as Lc, l as Rc, lt as zc, m as Bc, n as Vc, nt as Hc, o as Uc, ot as Wc, p as Gc, q as Kc, r as qc, rt as Jc, s as Yc, st as Xc, t as Zc, tt as Qc, u as $c, v as el, w as tl, x as nl, y as rl, z as il } from "./ConversationSurface-BwHFOXAm.js";
+import { A as Qo, B as $o, C as es, D as ts, E as ns, F as rs, G as is, H as as, I as os, J as ss, K as cs, L as ls, M as us, N as ds, O as fs, P as ps, Q as ms, R as hs, S as gs, T as _s, U as vs, V as ys, W as bs, X as xs, Y as Ss, Z as Cs, _ as ws, a as Ts, b as Es, c as Ds, d as Os, f as ks, g as As, h as js, i as Ms, j as Ns, k as Ps, l as Fs, m as Is, n as Ls, o as Rs, p as zs, q as Bs, r as Vs, s as Hs, t as Us, u as Ws, v as Gs, w as Ks, x as qs, y as Js, z as Ys } from "./social-Cps0ocx6.js";
+import { $ as Xs, A as Zs, B as Qs, C as $s, D as ec, E as tc, F as nc, G as rc, H as ic, I as ac, J as oc, K as sc, L as cc, M as lc, N as uc, O as dc, P as fc, Q as pc, R as mc, S as hc, T as gc, U as _c, V as vc, W as yc, X as bc, Y as xc, Z as Sc, _ as Cc, a as wc, at as Tc, b as Ec, c as Dc, ct as Oc, d as kc, et as Ac, f as jc, g as Mc, h as Nc, i as Pc, it as Fc, j as Ic, k as Lc, l as Rc, lt as zc, m as Bc, n as Vc, nt as Hc, o as Uc, ot as Wc, p as Gc, q as Kc, r as qc, rt as Jc, s as Yc, st as Xc, t as Zc, tt as Qc, u as $c, v as el, w as tl, x as nl, y as rl, z as il } from "./ConversationSurface-CJ7d90fl.js";
 import { t as al } from "./activationKey-CjbL3LUv.js";
 import { B as ol, C as sl, D as cl, E as ll, F as ul, I as dl, L as fl, M as pl, N as ml, O as hl, P as gl, R as _l, S as vl, T as yl, V as bl, _ as xl, a as Sl, b as Cl, c as wl, d as Tl, f as El, g as Dl, h as Ol, i as kl, j as Al, l as jl, m as Ml, n as Nl, o as Pl, p as Fl, r as Il, s as Ll, t as Rl, u as zl, v as Bl, w as Vl, x as Hl, y as Ul, z as Wl } from "./renderers-DIPIkjU7.js";
-import { A as Gl, D as Kl, E as ql, F as Jl, G as Yl, I as Xl, J as Zl, K as Ql, L as $l, M as eu, N as tu, O as nu, P as ru, T as iu, W as au, b as ou, f as su, j as cu, k as lu, q as uu, t as du } from "./PresentationEditor-B6agi4zf.js";
+import { A as Gl, D as Kl, E as ql, F as Jl, G as Yl, I as Xl, J as Zl, K as Ql, L as $l, M as eu, N as tu, O as nu, P as ru, T as iu, W as au, b as ou, f as su, j as cu, k as lu, q as uu, t as du } from "./PresentationEditor-DIJbZtVP.js";
 import { n as fu, r as pu, t as mu } from "./EventStreamContext-CLzG8O5_.js";
 import { B as hu, F as gu, H as _u, R as vu, Y as yu, _ as bu, bt as xu, c as Su, d as Cu, dt as wu, f as Tu, ft as Eu, g as Du, h as Ou, ht as ku, m as Au, mt as ju, n as Mu, p as Nu, q as Pu, rt as Fu, t as Iu, u as Lu, v as Ru, xt as zu, y as Bu } from "./services-EHYvvCQi.js";
 import { n as Vu, t as Hu } from "./ObservabilityContext-DpoDrm3T.js";
@@ -1221,7 +1221,7 @@ function Hh() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var Uh = Qm(() => import("./DocumentEditorPage-x2kOamb1.js").then((e) => e.n));
+var Uh = Qm(() => import("./DocumentEditorPage-B2PhHA5X.js").then((e) => e.n));
 function Wh({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;

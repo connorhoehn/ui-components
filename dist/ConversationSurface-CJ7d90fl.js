@@ -161,7 +161,7 @@ function de({ author: t, content: n, timestamp: r, avatarUrl: i, hideAvatar: a =
 				}),
 				/* @__PURE__ */ V("span", {
 					"data-testid": "message-row-content",
-					className: e("text-sm min-w-0 break-words whitespace-pre-wrap", p ? "text-white/90" : "text-text-primary", s && d === "inline" && "max-w-[85%] rounded-lg rounded-tr-sm px-3 py-1.5 text-right", s && d === "inline" && (p ? "bg-white/15" : "bg-primary-bg"), d === "block" && "w-full max-w-[36rem]"),
+					className: e("text-sm min-w-0 break-words whitespace-pre-wrap", p ? "text-white/90" : "text-text-primary", s && d === "inline" && "max-w-[85%] rounded-lg rounded-tr-sm px-3 py-1.5 text-right", s && d === "inline" && (p ? "bg-white/15" : "bg-primary-bg"), d === "block" && "w-full max-w-[30rem]"),
 					children: n
 				}),
 				c && /* @__PURE__ */ V("div", {
