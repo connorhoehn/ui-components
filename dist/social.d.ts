@@ -125,7 +125,7 @@ export declare interface AddToChatPerson {
 /** The dot class for a step status — shared with RunSummaryPanel so the two timelines read the same. */
 export declare const AGENT_RUN_STEP_DOT: Record<AgentRunStepStatus, string>;
 
-export declare function AgentRunCard({ runId, instruction, agentName, requestedBy, command, status, onOpenDocument, onOpenRun, result, onOpenResult, onDecide, suggestion: suggestionProp, onReview, documentTitle, defaultExpanded, className, 'data-testid': testId }: AgentRunCardProps): JSX.Element;
+export declare function AgentRunCard({ runId, instruction, agentName, requestedBy, command, status, onOpenDocument, onOpenRun, result, onOpenResult, onDecide, suggestion: suggestionProp, onReview, onRetry, documentTitle, defaultExpanded, className, 'data-testid': testId }: AgentRunCardProps): JSX.Element;
 
 export declare interface AgentRunCardProps {
     runId: string;
@@ -152,6 +152,12 @@ export declare interface AgentRunCardProps {
     onReview?: (runId: string, decision: AgentRunReviewDecision, suggestion: Pick<AgentRunSuggestion, 'key' | 'documentId'>) => void;
     /** The document's title as the message carried it; the expanded document row falls back to it when the live details have none. */
     documentTitle?: string;
+    /**
+     * Start the run again after it failed. A "Retry" button renders on the
+     * status row of a failed card only when this is given — the host knows
+     * whether the run can be retried (a refused run cannot) and from where.
+     */
+    onRetry?: (runId: string) => void;
     /** Start expanded. The default is the two-line card; the details are a click away. */
     defaultExpanded?: boolean;
     className?: string;
@@ -857,7 +863,7 @@ declare interface ChatMessage {
     deletedAt?: string;
 }
 
-export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onReviewRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, currentUserId, reactionsFor, onToggleReaction, onReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onReviewRun, onRetryRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -1006,6 +1012,8 @@ export declare interface ChatPanelProps {
     onDecideRun?: (runId: string, decision: AgentRunDecision) => void;
     /** Accept or reject the suggestions a finished agent edit left in the document. */
     onReviewRun?: (runId: string, decision: AgentRunReviewDecision, suggestion: Pick<AgentRunSuggestion, 'key' | 'documentId'>) => void;
+    /** Start a failed agent run again; a failed card offers "Retry" only when this is given. */
+    onRetryRun?: (runId: string) => void;
     /**
      * Joins a live call from the thread. Omit when the viewer cannot join —
      * the card then renders as a record rather than a dead button.
@@ -2115,6 +2123,22 @@ export declare interface DaySeparatorProps {
 
 export declare const DEFAULT_PICKER_EMOJIS: readonly ["👍", "❤️", "🔥", "😂", "👏", "🎉", "😮", "💯", "😀", "😅", "😉", "😍", "😘", "🤣", "🥰", "😇", "🤔", "😎", "😢", "😡", "🤯", "😱", "🙃", "🤩", "🙏", "🤝", "👋", "👌", "✌️", "🤞", "🤘", "🫶", "✨", "⭐", "💫", "🌟", "⚡", "💥", "☀️", "🌈", "🚀", "🎯", "🏆", "💪", "🎊", "🎈", "🥳", "🎁", "☕", "🍕", "🍔", "🍩", "🍦", "🍓", "🍻", "🍷", "👀", "🤖", "👻", "😺", "🐶", "🦄", "🐝", "🌸"];
 
+/**
+ * A failed run's message, as a person reads it. The pipeline's own error is
+ * written for the run log — "the chat service did not answer the join for
+ * chat:dm:a:b (timeout after 4000ms)" — and the card used to print it as-is
+ * on the status row. This turns the technical shapes the platform produces
+ * into one plain sentence that says what did not happen and what to do, and
+ * keeps the original text as `technical` for the details disclosure. A
+ * message that matches nothing is already a sentence (the pipeline wrote it
+ * for people, e.g. "The agent is busy…") and passes through unchanged, with
+ * no technical line.
+ */
+export declare function describeAgentRunFailure(raw: string | undefined, command?: string): {
+    summary: string;
+    technical?: string;
+};
+
 /** One op as a sentence. Exported for the tests and for hosts that render a run outside the card. */
 export declare function describeAgentRunOp(op: AgentRunOp): string;
 
@@ -2833,11 +2857,14 @@ export declare interface MessageRowProps {
      * a sliver on the right. `'block'` renders the span as a full-width block
      * up to a cap (`w-full max-w-[36rem]`) with no tint/padding, so the card
      * gets real horizontal room to size against — still right-aligned via the
-     * column's `items-end`, not via `text-align`.
+     * column's `items-end` on a `mine` row, not via `text-align`.
      *
-     * Only changes anything on a `mine` row — a non-`mine` row never had the
-     * shrink-to-fit bubble to begin with, so this prop is a no-op there
-     * regardless of its value.
+     * The cap applies to EVERY card row, own or not. A card in a full-page
+     * chat used to stretch the whole column on someone else's row (and on an
+     * own row until the cap landed there): a document card 1100px wide with
+     * an icon at one end and "Open" at the other reads as a banner, not a
+     * message. 36rem sits where a message bubble's width does; in a narrow
+     * pane the cap never binds and the card takes the width it has.
      */
     contentLayout?: 'inline' | 'block';
     className?: string;
@@ -3614,19 +3641,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasListStyle: {
             /**
              * Make the caret's block a list of the style's kind (if it is not one
@@ -3659,9 +3673,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -3669,32 +3686,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -3728,9 +3722,42 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

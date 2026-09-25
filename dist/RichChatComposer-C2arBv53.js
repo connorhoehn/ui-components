@@ -3896,7 +3896,7 @@ var Oa = pe(function({ onSend: g, draft: v, onDraftChange: y, onCommand: x, onSe
 										align: "end",
 										triggerTestId: `${F}-send-options`,
 										"data-testid": `${F}-send-menu`,
-										triggerClassName: "rounded-l-none rounded-r-md border-0 border-l border-on-primary/40 bg-primary px-1.5 py-1 text-on-primary hover:bg-primary",
+										triggerClassName: e("rounded-l-none rounded-r-md border-0 border-l px-1.5 py-1", In ? "border-on-primary/40 bg-primary text-on-primary hover:bg-primary" : "border-border bg-surface-inset text-text-secondary hover:bg-surface-hover"),
 										sections: [{ items: et.map((e) => ({
 											label: e.label,
 											onSelect: () => tt(e.id)

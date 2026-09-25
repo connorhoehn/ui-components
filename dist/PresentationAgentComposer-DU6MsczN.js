@@ -1,6 +1,6 @@
 import { t as e } from "./SegmentedControl-CKYHtOJ0.js";
 import { t } from "./FollowUpChips-BD9scwlC.js";
-import { r as n } from "./RichChatComposer-BJOCZozP.js";
+import { r as n } from "./RichChatComposer-C2arBv53.js";
 import { jsx as r, jsxs as i } from "react/jsx-runtime";
 //#region src/components/doc-editor/presentation/PresentationAgentComposer.tsx
 var a = {
