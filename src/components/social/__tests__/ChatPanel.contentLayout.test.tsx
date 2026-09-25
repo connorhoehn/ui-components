@@ -57,7 +57,7 @@ describe('ChatPanel — MessageRow contentLayout on card bodies', () => {
     expect(screen.getByTestId('document-activity-card')).toBeInTheDocument();
     const content = screen.getByTestId('message-row-content');
     expect(content.className).toContain('w-full');
-    expect(content.className).toContain('max-w-[36rem]');
+    expect(content.className).toContain('max-w-[30rem]');
     expect(content.className).not.toContain('max-w-[85%]');
   });
 
@@ -77,7 +77,7 @@ describe('ChatPanel — MessageRow contentLayout on card bodies', () => {
     expect(screen.getByTestId('agent-run-card')).toBeInTheDocument();
     const content = screen.getByTestId('message-row-content');
     expect(content.className).toContain('w-full');
-    expect(content.className).toContain('max-w-[36rem]');
+    expect(content.className).toContain('max-w-[30rem]');
     expect(content.className).not.toContain('max-w-[85%]');
   });
 

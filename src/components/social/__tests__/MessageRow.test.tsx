@@ -123,7 +123,7 @@ describe('MessageRow — tone', () => {
       // real horizontal room instead of the 0px a @container query resolves
       // an unconstrained shrink-to-fit ancestor to.
       expect(content.className).toContain('w-full');
-      expect(content.className).toContain('max-w-[36rem]');
+      expect(content.className).toContain('max-w-[30rem]');
       expect(content.className).not.toContain('max-w-[85%]');
       expect(content.className).not.toContain('bg-primary-bg');
       expect(content.className).not.toContain('rounded-lg');
@@ -137,7 +137,7 @@ describe('MessageRow — tone', () => {
       render(<MessageRow {...baseProps} contentLayout="block" content={<CardStub />} />);
       const content = screen.getByTestId('message-row-content');
       expect(content.className).toContain('w-full');
-      expect(content.className).toContain('max-w-[36rem]');
+      expect(content.className).toContain('max-w-[30rem]');
       expect(content.className).not.toContain('max-w-[85%]');
       expect(content.className).not.toContain('bg-primary-bg');
     });
