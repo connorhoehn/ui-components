@@ -1,7 +1,7 @@
 import { t as e } from "./rolldown-runtime-Dy4uBu1J.js";
 import { r as t } from "./registry-DbX3MVAA.js";
 import { r as n } from "./IdentityContext-CQM1qwH6.js";
-import { a as r, c as i, i as a, l as o, n as s, o as c, r as l, s as u, t as d } from "./useVideoSessions-DDcZSMLJ.js";
+import { a as r, c as i, i as a, l as o, n as s, o as c, r as l, s as u, t as d } from "./useVideoSessions-Bnxuclp-.js";
 import { t as f } from "./useDocumentTypes-DCKwxXn8.js";
 import { t as p } from "./cn-DhjIN-s0.js";
 import { t as m } from "./useEventCallback-Cwx9QVSi.js";
@@ -18,7 +18,7 @@ import { t as te } from "./DropdownMenu-R850IyDw.js";
 import { t as k } from "./StatusPill-C-aN2Pzz.js";
 import { t as A } from "./activationKey-CjbL3LUv.js";
 import { O as ne } from "./renderers-CLgJ6UYB.js";
-import { J as re } from "./PresentationEditor-flSggOqP.js";
+import { J as re } from "./PresentationEditor-B_kj1okH.js";
 import { t as ie } from "./TiptapEditor-CajZRkz8.js";
 import { t as ae } from "./useHangoutEmbed-ChkoGDC_.js";
 import { t as oe } from "./useActiveSpeaker-Dc9r75EE.js";

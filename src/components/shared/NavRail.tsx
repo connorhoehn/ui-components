@@ -228,7 +228,9 @@ function RailItem({
 
   const shell = cn(
     'block w-full border-l-[3px] border-transparent text-left no-underline',
-    size === 'md' ? 'py-[7px] pl-[33px] pr-4' : 'px-3 py-1.5',
+    // md: inset from the rail's edges, the accent under the group's caret and
+    // the label under the group's name (the All documents mockup).
+    size === 'md' ? 'ml-[18px] w-auto mr-2 rounded-r py-[7px] pl-[15px] pr-2' : 'px-3 py-1.5',
     palette.hover,
     active && palette.active,
     item.disabled && 'pointer-events-none opacity-50',

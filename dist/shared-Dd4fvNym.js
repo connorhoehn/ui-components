@@ -2720,7 +2720,7 @@ function Yt({ item: t, active: n, palette: r, renderLink: i, size: a = "sm" }) {
 	}), t.hint && /* @__PURE__ */ H("span", {
 		className: e("mt-0.5 block truncate text-[10px]", r.hint),
 		children: t.hint
-	})] }), s = e("block w-full border-l-[3px] border-transparent text-left no-underline", a === "md" ? "py-[7px] pl-[33px] pr-4" : "px-3 py-1.5", r.hover, n && r.active, t.disabled && "pointer-events-none opacity-50");
+	})] }), s = e("block w-full border-l-[3px] border-transparent text-left no-underline", a === "md" ? "ml-[18px] w-auto mr-2 rounded-r py-[7px] pl-[15px] pr-2" : "px-3 py-1.5", r.hover, n && r.active, t.disabled && "pointer-events-none opacity-50");
 	if (t.onClick || !t.to) return /* @__PURE__ */ H("button", {
 		type: "button",
 		onClick: t.onClick,
