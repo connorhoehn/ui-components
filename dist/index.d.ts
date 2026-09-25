@@ -5449,6 +5449,9 @@ export declare interface ConversationSurfaceProps {
     'data-testid'?: string;
 }
 
+/** Two stacked pages: "make a copy". Since 2.390.3. */
+export declare function CopyIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 /** A static-draw Float32 array buffer, the only buffer shape these backdrops use. */
 export declare function createArrayBuffer(gl: WebGLContextLike, data: Float32Array): WebGLBuffer | null;
 
@@ -6297,6 +6300,9 @@ export declare interface DocumentActivityEditor {
     avatarUrl?: string;
 }
 
+/** A page with a spark in its corner: "make something new from this". Since 2.390.3. */
+export declare function DocumentAddIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 /** "just now", "15m ago", "2h ago", "Yesterday", "3d ago", "Sep 12". */
 export declare function documentAgeLabel(value: string | number | Date | null | undefined, now?: number): string | null;
 
@@ -6506,6 +6512,9 @@ export declare interface DotMeterProps {
 
 export declare type DotMeterTone = 'code' | 'surface';
 
+/** An arrow into a tray: "download". Since 2.390.3. */
+export declare function DownloadIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare function Drawer({ open, onClose, title, subtitle, width, children, footer, docked, actions, className, bodyClassName, 'aria-label': ariaLabel, 'data-testid': testId, closeLabel, modal, trapFocus, backdrop, }: DrawerProps): default_2.JSX.Element | null;
 
 export declare interface DrawerProps {
@@ -6612,6 +6621,13 @@ export declare interface DropdownMenuItem {
      * runs no `onSelect`.
      */
     submenu?: DropdownMenuSection[];
+    /**
+     * Shown but not actionable: greyed, `aria-disabled`, and a click does
+     * nothing (the menu stays open). Since 2.390.3.
+     */
+    disabled?: boolean;
+    /** Why it is disabled — the row's hover tooltip and its accessible description. Since 2.390.3. */
+    disabledReason?: string;
     /** A hook for the spec that addresses this row. Without one the row is reachable by its label. */
     'data-testid'?: string;
 }
@@ -6665,6 +6681,11 @@ export declare interface DropdownMenuSection {
      * otherwise push the fixed actions below the fold.
      */
     scroll?: boolean;
+    /**
+     * A quiet line under the group's rows — what the group does as a whole
+     * ("Creates a new document."). Since 2.390.3.
+     */
+    caption?: string;
     'data-testid'?: string;
 }
 
@@ -11806,6 +11827,43 @@ export declare function PhoneIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function PhoneOffIcon({ size, ...rest }: IconProps): JSX.Element;
 
+export declare function PickerDialog({ open, title, body, options, confirmLabel, onPick, onCancel, searchPlaceholder, emptyText, loading, initialId, 'data-testid': testId, }: PickerDialogProps): JSX.Element;
+
+export declare interface PickerDialogOption {
+    id: string;
+    label: string;
+    /** A quieter second line. */
+    description?: string;
+    icon?: ReactNode;
+    /** Indent level — a folder's depth in its tree. Default 0. */
+    depth?: number;
+    /** Shown, not choosable ("the folder it is already in"). */
+    disabled?: boolean;
+    /** Said beside a disabled row. */
+    disabledReason?: string;
+}
+
+export declare interface PickerDialogProps {
+    open: boolean;
+    title: string;
+    /** A sentence under the title. */
+    body?: string;
+    options: readonly PickerDialogOption[];
+    /** The confirm button's words ("Move", "Run", "Create"). Default 'Choose'. */
+    confirmLabel?: string;
+    onPick: (id: string) => void;
+    onCancel: () => void;
+    /** Search placeholder; the box is shown when there are more than 6 options. */
+    searchPlaceholder?: string;
+    /** Said when there is nothing to choose (or nothing matches). */
+    emptyText?: string;
+    /** Said while the options are loading. */
+    loading?: boolean;
+    /** Preselected row. */
+    initialId?: string;
+    'data-testid'?: string;
+}
+
 /** The first container this browser can record, or `undefined` for its default. */
 export declare function pickRecordingMimeType(preferred?: string): string | undefined;
 
@@ -12500,6 +12558,9 @@ export declare interface PlaybackReactionsLayerProps {
     className?: string;
 }
 
+/** A play button in a ring: "run". Since 2.390.3. */
+export declare function PlayCircleIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare type PlayerPhase = 'idle' | 'connecting' | 'buffering' | 'playing' | 'error';
 
 export declare function PlayIcon({ size, ...rest }: IconProps): JSX.Element;
@@ -13014,6 +13075,9 @@ export declare interface PresentationSourceOption {
     /** How the host would open it — a document page, or a recording transcript. */
     kind?: 'document' | 'transcript';
 }
+
+/** A printer: "print". Since 2.390.3. */
+export declare function PrinterIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** What each outcome marker says to a screen reader (and a host's legend). */
 export declare const PROCEDURE_STEP_STATUS_LABELS: Record<ProcedureStepStatus, string>;
@@ -16805,6 +16869,9 @@ export declare interface TechnicalDetailsProps {
     className?: string;
     testId?: string;
 }
+
+/** A page with a dashed block: "a template". Since 2.390.3. */
+export declare function TemplateIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 declare const TERMINAL_DECISIONS: {
     readonly acked: "approved";
@@ -21116,6 +21183,19 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -21148,12 +21228,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -21161,9 +21238,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -21197,19 +21287,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -21220,19 +21300,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }

@@ -349,6 +349,13 @@ declare interface DropdownMenuItem {
      * runs no `onSelect`.
      */
     submenu?: DropdownMenuSection[];
+    /**
+     * Shown but not actionable: greyed, `aria-disabled`, and a click does
+     * nothing (the menu stays open). Since 2.390.3.
+     */
+    disabled?: boolean;
+    /** Why it is disabled — the row's hover tooltip and its accessible description. Since 2.390.3. */
+    disabledReason?: string;
     /** A hook for the spec that addresses this row. Without one the row is reachable by its label. */
     'data-testid'?: string;
 }
@@ -363,6 +370,11 @@ declare interface DropdownMenuSection {
      * otherwise push the fixed actions below the fold.
      */
     scroll?: boolean;
+    /**
+     * A quiet line under the group's rows — what the group does as a whole
+     * ("Creates a new document."). Since 2.390.3.
+     */
+    caption?: string;
     'data-testid'?: string;
 }
 

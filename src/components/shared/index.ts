@@ -26,6 +26,8 @@ export { default as CommandPalette } from './CommandPalette';
 export * from './CommandPalette';
 export { default as ConfirmDialog } from './ConfirmDialog';
 export * from './ConfirmDialog';
+export { default as PickerDialog } from './PickerDialog';
+export * from './PickerDialog';
 export { default as DataTable } from './DataTable';
 export * from './DataTable';
 export { default as EmptyState } from './EmptyState';

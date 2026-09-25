@@ -5,9 +5,9 @@ import { t as r } from "./Card-RQCeAPNU.js";
 import { n as i, r as a, t as o } from "./Chart-DRtuaJHd.js";
 import { t as s } from "./Chip-zdVBwV9j.js";
 import { t as c } from "./Modal-DMFNRUDx.js";
-import { t as l } from "./EmptyState-zKbpAhFD.js";
-import { n as u, t as d } from "./Sparkline-Ci_cmVWU.js";
-import { t as f } from "./Input-DLknWXri.js";
+import { t as l } from "./Input-DLknWXri.js";
+import { t as u } from "./EmptyState-zKbpAhFD.js";
+import { n as d, t as f } from "./Sparkline-Ci_cmVWU.js";
 import { t as p } from "./StatusDot-Bgx2zxgC.js";
 import { t as m } from "./CardHeader-CsPhVpCm.js";
 import { t as h } from "./Select-D2EQq7Wi.js";
@@ -159,7 +159,7 @@ function I({ title: e, value: t, delta: r, sparklineData: i, onClick: a }) {
 				children: [/* @__PURE__ */ O("div", {
 					className: "text-[28px] font-bold text-text-primary leading-[1.1]",
 					children: oe(t)
-				}), i && i.length > 0 && /* @__PURE__ */ O(d, {
+				}), i && i.length > 0 && /* @__PURE__ */ O(f, {
 					data: i,
 					width: 80,
 					height: 20,
@@ -294,7 +294,7 @@ function le({ node: e, selected: t, onClick: r, onKill: i }) {
 			}),
 			/* @__PURE__ */ O("div", {
 				className: "mt-auto",
-				children: /* @__PURE__ */ O(d, {
+				children: /* @__PURE__ */ O(f, {
 					data: e.cpuHistory,
 					width: 176,
 					height: 18,
@@ -606,7 +606,7 @@ function Ce({ events: e, onViewAll: t }) {
 			children: "No recent events"
 		}) : /* @__PURE__ */ O("div", {
 			className: "flex flex-col gap-0.5",
-			children: e.slice(0, 20).map((e) => /* @__PURE__ */ O(u, {
+			children: e.slice(0, 20).map((e) => /* @__PURE__ */ O(d, {
 				timestamp: e.timestamp,
 				type: e.type,
 				summary: e.summary,
@@ -1246,7 +1246,7 @@ function Fe({ events: e, selectedId: t, onSelect: r, live: i = !1 }) {
 		o
 	]), e.length === 0 ? /* @__PURE__ */ O("div", {
 		className: "flex-1 flex",
-		children: /* @__PURE__ */ O(l, {
+		children: /* @__PURE__ */ O(u, {
 			icon: "📡",
 			title: "No events yet",
 			body: "Trigger a pipeline to see activity here."
@@ -1263,7 +1263,7 @@ function Fe({ events: e, selectedId: t, onSelect: r, live: i = !1 }) {
 				s(!t);
 			},
 			className: "flex-1 overflow-y-auto py-1.5 font-[inherit]",
-			children: e.map((e) => /* @__PURE__ */ O(u, {
+			children: e.map((e) => /* @__PURE__ */ O(d, {
 				timestamp: e.timestamp,
 				type: e.type,
 				summary: e.summary,
@@ -1406,7 +1406,7 @@ var Ke = {
 	timeRange: "1h"
 };
 function qe() {
-	let [e, t] = E([]), [r, i] = E(null), [a, o] = E(!1), [s, c] = E(Ke), [l, u] = E(!1), d = C(), p = T(a);
+	let [e, t] = E([]), [r, i] = E(null), [a, o] = E(!1), [s, c] = E(Ke), [u, d] = E(!1), f = C(), p = T(a);
 	p.current = a;
 	let m = T(0), _ = x((e) => {
 		if (p.current) return;
@@ -1514,25 +1514,25 @@ function qe() {
 			children: [
 				/* @__PURE__ */ k("aside", {
 					"data-testid": "events-filter-rail",
-					className: n("shrink-0 border-r border-border bg-surface-panel overflow-y-auto transition-[width] duration-150 ease-in-out", l ? "w-9" : "w-60"),
+					className: n("shrink-0 border-r border-border bg-surface-panel overflow-y-auto transition-[width] duration-150 ease-in-out", u ? "w-9" : "w-60"),
 					children: [/* @__PURE__ */ k("div", {
 						className: "flex items-center justify-between px-3.5 py-2.5 border-b border-border",
-						children: [!l && /* @__PURE__ */ O("div", {
+						children: [!u && /* @__PURE__ */ O("div", {
 							className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary",
 							children: "FILTERS"
 						}), /* @__PURE__ */ O("button", {
-							onClick: () => u((e) => !e),
-							"aria-label": l ? "Expand filters" : "Collapse filters",
+							onClick: () => d((e) => !e),
+							"aria-label": u ? "Expand filters" : "Collapse filters",
 							className: "border-none bg-transparent text-text-tertiary cursor-pointer text-xs p-0.5 font-[inherit]",
-							children: l ? "›" : "‹"
+							children: u ? "›" : "‹"
 						})]
-					}), !l && /* @__PURE__ */ k(D, { children: [
+					}), !u && /* @__PURE__ */ k(D, { children: [
 						/* @__PURE__ */ k("div", {
 							role: "group",
-							"aria-labelledby": `${d}-event-type`,
+							"aria-labelledby": `${f}-event-type`,
 							className: "flex flex-col gap-1.5 px-3.5 py-3 border-b border-border",
 							children: [/* @__PURE__ */ O("div", {
-								id: `${d}-event-type`,
+								id: `${f}-event-type`,
 								className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase",
 								children: "Event type"
 							}), Re.map((e) => /* @__PURE__ */ k("label", {
@@ -1546,11 +1546,11 @@ function qe() {
 						/* @__PURE__ */ k("div", {
 							className: "flex flex-col gap-1.5 px-3.5 py-3 border-b border-border",
 							children: [/* @__PURE__ */ O("label", {
-								htmlFor: `${d}-runs`,
+								htmlFor: `${f}-runs`,
 								className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase",
 								children: "Runs"
-							}), /* @__PURE__ */ O(f, {
-								id: `${d}-runs`,
+							}), /* @__PURE__ */ O(l, {
+								id: `${f}-runs`,
 								"data-testid": "events-filter-runs",
 								placeholder: "runId (comma-separated)",
 								value: s.runIds,
@@ -1564,11 +1564,11 @@ function qe() {
 						/* @__PURE__ */ k("div", {
 							className: "flex flex-col gap-1.5 px-3.5 py-3 border-b border-border",
 							children: [/* @__PURE__ */ O("label", {
-								htmlFor: `${d}-pipelines`,
+								htmlFor: `${f}-pipelines`,
 								className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase",
 								children: "Pipelines"
-							}), /* @__PURE__ */ O(f, {
-								id: `${d}-pipelines`,
+							}), /* @__PURE__ */ O(l, {
+								id: `${f}-pipelines`,
 								"data-testid": "events-filter-pipelines",
 								placeholder: "pipelineId (comma-separated)",
 								value: s.pipelineIds,
@@ -1581,10 +1581,10 @@ function qe() {
 						}),
 						/* @__PURE__ */ k("div", {
 							role: "group",
-							"aria-labelledby": `${d}-nodes`,
+							"aria-labelledby": `${f}-nodes`,
 							className: "flex flex-col gap-1.5 px-3.5 py-3 border-b border-border",
 							children: [/* @__PURE__ */ O("div", {
-								id: `${d}-nodes`,
+								id: `${f}-nodes`,
 								className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase",
 								children: "Nodes"
 							}), Y.map((e) => /* @__PURE__ */ k("label", {
@@ -1597,10 +1597,10 @@ function qe() {
 						}),
 						/* @__PURE__ */ k("div", {
 							role: "group",
-							"aria-labelledby": `${d}-severity`,
+							"aria-labelledby": `${f}-severity`,
 							className: "flex flex-col gap-1.5 px-3.5 py-3 border-b border-border",
 							children: [/* @__PURE__ */ O("div", {
-								id: `${d}-severity`,
+								id: `${f}-severity`,
 								className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase",
 								children: "Severity"
 							}), Ve.map((e) => /* @__PURE__ */ k("label", {
@@ -1680,15 +1680,15 @@ var $e = [
 	{ id: "node-2" }
 ];
 function et(e) {
-	let { onInjectLatency: t = (e) => Q({ injectedLatencyMs: Math.max(0, e) }), onInjectPartition: r = (e) => Q({ paused: e.length > 0 }), onDropMessages: i = (e) => Q({ injectedFailureRate: Math.min(1, Math.max(0, e / 100)) }), onKillAll: a = () => Q({ paused: !0 }), onReset: o = () => Ze(), availableNodes: s = $e } = e, [l, u] = E("0"), [d, p] = E("0"), [m, h] = E([]), [_, v] = E(!1), y = C(), [b, x] = E(() => Xe());
+	let { onInjectLatency: t = (e) => Q({ injectedLatencyMs: Math.max(0, e) }), onInjectPartition: r = (e) => Q({ paused: e.length > 0 }), onDropMessages: i = (e) => Q({ injectedFailureRate: Math.min(1, Math.max(0, e / 100)) }), onKillAll: a = () => Q({ paused: !0 }), onReset: o = () => Ze(), availableNodes: s = $e } = e, [u, d] = E("0"), [f, p] = E("0"), [m, h] = E([]), [_, v] = E(!1), y = C(), [b, x] = E(() => Xe());
 	S(() => Qe((e) => x(e)), []);
 	let T = (e) => {
 		h((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]);
 	}, A = () => {
-		let e = Number.parseInt(l, 10);
+		let e = Number.parseInt(u, 10);
 		Number.isFinite(e) && t(e);
 	}, j = () => {
-		let e = Number.parseInt(d, 10);
+		let e = Number.parseInt(f, 10);
 		Number.isFinite(e) && i(e);
 	}, M = () => {
 		r(m);
@@ -1770,12 +1770,12 @@ function et(e) {
 					}),
 					/* @__PURE__ */ k("div", {
 						className: "flex gap-1.5",
-						children: [/* @__PURE__ */ O(f, {
+						children: [/* @__PURE__ */ O(l, {
 							"data-testid": "chaos-latency-input",
 							type: "number",
 							min: 0,
-							value: l,
-							onChange: (e) => u(e.target.value),
+							value: u,
+							onChange: (e) => d(e.target.value),
 							className: "flex-1 min-w-[60px]",
 							"aria-label": "Latency in milliseconds"
 						}), /* @__PURE__ */ O("span", {
@@ -1829,12 +1829,12 @@ function et(e) {
 					}),
 					/* @__PURE__ */ k("div", {
 						className: "flex gap-1.5",
-						children: [/* @__PURE__ */ O(f, {
+						children: [/* @__PURE__ */ O(l, {
 							"data-testid": "chaos-drop-input",
 							type: "number",
 							min: 0,
 							max: 100,
-							value: d,
+							value: f,
 							onChange: (e) => p(e.target.value),
 							className: "flex-1 min-w-[60px]",
 							"aria-label": "Drop percent"
@@ -2100,7 +2100,7 @@ function at({ title: e, data: t, series: r, yLabel: i, sparkWidth: a = 180, spar
 					className: "text-[11px] text-text-secondary w-20 shrink-0 overflow-hidden text-ellipsis whitespace-nowrap",
 					title: e.label,
 					children: e.label
-				}), /* @__PURE__ */ O(d, {
+				}), /* @__PURE__ */ O(f, {
 					data: e.data,
 					width: a,
 					height: o,

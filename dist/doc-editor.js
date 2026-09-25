@@ -3,16 +3,16 @@ import { t as n } from "./cn-DhjIN-s0.js";
 import { _ as r } from "./overlayStack-CHdlnODN.js";
 import { t as i } from "./Card-RQCeAPNU.js";
 import { t as a } from "./IconButton-DDeXW3mZ.js";
-import { Y as o, f as s, tt as c } from "./Icons-DpB_pJYh.js";
+import { et as o, f as s, ot as c } from "./Icons-BSEVGRI6.js";
 import { n as l, t as u } from "./Stack-CkiMw5K0.js";
-import { i as d, r as f } from "./Text-DJADJSl7.js";
-import { t as p } from "./Banner-CaB9d-bY.js";
+import { i as d, r as f } from "./Text-C7sRVNWD.js";
+import { t as p } from "./Banner-IBpLsSJQ.js";
 import { t as m } from "./Chip-zdVBwV9j.js";
 import { t as h } from "./Modal-DMFNRUDx.js";
-import { t as g } from "./EmptyState-zKbpAhFD.js";
-import { t as _ } from "./SegmentedControl-X19S_gNQ.js";
-import { n as v } from "./Tabs-DjNsAODd.js";
-import { t as y } from "./Input-DLknWXri.js";
+import { t as g } from "./Input-DLknWXri.js";
+import { t as _ } from "./EmptyState-zKbpAhFD.js";
+import { t as v } from "./SegmentedControl-X19S_gNQ.js";
+import { n as y } from "./Tabs-DjNsAODd.js";
 import { t as b } from "./Textarea-Dz4doxTv.js";
 import { t as x } from "./Avatar-DeJWic2B.js";
 import { t as S } from "./InlineAlert-CRnIKeAF.js";
@@ -23,17 +23,17 @@ import { t as E } from "./Badge-C23_Y4Yj.js";
 import { t as D } from "./ChangeDiff-CzO8zCc-.js";
 import { t as O } from "./Select-D2EQq7Wi.js";
 import { t as k } from "./Checkbox-Dftwml_V.js";
-import { n as ee } from "./FileKindMark-DC9vrnFM.js";
+import { n as ee } from "./FileKindMark-Pyuz3FHF.js";
 import { t as A } from "./activationKey-CjbL3LUv.js";
 import { A as te, k as j } from "./renderers-CLgJ6UYB.js";
-import { A as M, B as N, C as P, D as F, E as ne, F as I, G as L, H as re, I as R, J as z, K as B, L as V, M as H, N as U, O as ie, P as ae, R as oe, S as W, T as se, U as ce, V as le, W as ue, _ as de, a as fe, b as pe, c as me, d as he, f as ge, g as _e, h as ve, i as ye, j as be, k as xe, l as Se, m as Ce, n as we, o as Te, p as Ee, r as De, s as Oe, t as ke, u as Ae, v as je, w as Me, x as Ne, y as Pe, z as Fe } from "./PresentationEditor-DPW4A3a7.js";
+import { A as M, B as N, C as P, D as F, E as ne, F as I, G as L, H as re, I as R, J as z, K as B, L as V, M as H, N as U, O as ie, P as ae, R as oe, S as W, T as se, U as ce, V as le, W as ue, _ as de, a as fe, b as pe, c as me, d as he, f as ge, g as _e, h as ve, i as ye, j as be, k as xe, l as Se, m as Ce, n as we, o as Te, p as Ee, r as De, s as Oe, t as ke, u as Ae, v as je, w as Me, x as Ne, y as Pe, z as Fe } from "./PresentationEditor-CUuGIAQr.js";
 import { r as Ie } from "./MediaIcons-OLUYBJM0.js";
 import { o as Le, t as Re } from "./VerdictChip-ClwrKr68.js";
 import { a as ze, c as Be, d as Ve, f as He, h as Ue, i as We, l as Ge, m as Ke, n as qe, o as Je, p as Ye, r as Xe, s as Ze, t as Qe, u as $e } from "./TiptapEditor-CajZRkz8.js";
 import { i as et, n as tt, r as nt, t as rt } from "./FloatingComposerDock-DMUQCjea.js";
-import { A as it, B as at, C as ot, D as st, E as ct, F as lt, G as ut, H as dt, I as ft, J as pt, K as mt, L as ht, M as gt, N as _t, O as vt, P as yt, R as bt, S as xt, T as St, U as Ct, V as wt, W as Tt, _ as Et, a as Dt, b as Ot, c as kt, d as At, f as jt, g as Mt, h as Nt, i as Pt, j as Ft, k as It, l as Lt, m as Rt, o as zt, p as Bt, q as Vt, r as Ht, s as Ut, t as Wt, u as Gt, v as Kt, w as qt, x as Jt, y as Yt, z as Xt } from "./DocumentEditorPage-BIfn9K4T.js";
-import { S as Zt, _ as Qt, a as $t, b as en, c as tn, d as nn, f as rn, g as an, h as on, i as sn, l as cn, m as ln, n as un, o as dn, p as fn, r as pn, s as mn, t as hn, u as gn, v as _n, x as vn, y as yn } from "./useDocumentImageUpload-CUnPIpd8.js";
-import { r as bn } from "./RichChatComposer-D7LM60Xw.js";
+import { A as it, B as at, C as ot, D as st, E as ct, F as lt, G as ut, H as dt, I as ft, J as pt, K as mt, L as ht, M as gt, N as _t, O as vt, P as yt, R as bt, S as xt, T as St, U as Ct, V as wt, W as Tt, _ as Et, a as Dt, b as Ot, c as kt, d as At, f as jt, g as Mt, h as Nt, i as Pt, j as Ft, k as It, l as Lt, m as Rt, o as zt, p as Bt, q as Vt, r as Ht, s as Ut, t as Wt, u as Gt, v as Kt, w as qt, x as Jt, y as Yt, z as Xt } from "./DocumentEditorPage-RVybDK5L.js";
+import { S as Zt, _ as Qt, a as $t, b as en, c as tn, d as nn, f as rn, g as an, h as on, i as sn, l as cn, m as ln, n as un, o as dn, p as fn, r as pn, s as mn, t as hn, u as gn, v as _n, x as vn, y as yn } from "./useDocumentImageUpload-DR4ARMpD.js";
+import { r as bn } from "./RichChatComposer-D5K5qO2G.js";
 import { createContext as xn, forwardRef as Sn, useCallback as G, useContext as Cn, useEffect as K, useId as wn, useImperativeHandle as Tn, useMemo as q, useRef as J, useState as Y } from "react";
 import { Fragment as X, jsx as Z, jsxs as Q } from "react/jsx-runtime";
 import * as En from "yjs";
@@ -897,7 +897,7 @@ var cr = {
 	field: "Field change",
 	prose: "Body text"
 };
-function lr({ utterance: e, kind: t, status: i, confidence: a, attachState: o, targetLabel: s, targetReason: c, before: l, after: u, edits: d, rationale: f, draftError: p, author: h, category: g, path: _, locationHint: v, verdict: b, verdictStatus: S = "idle", verdictError: C, revision: w, onRereview: T, onAccept: E, onReject: O, onRedraft: k, onReattach: ee, onConfirmAttachment: A, className: te, "data-testid": j = "proposal-card" }) {
+function lr({ utterance: e, kind: t, status: i, confidence: a, attachState: o, targetLabel: s, targetReason: c, before: l, after: u, edits: d, rationale: f, draftError: p, author: h, category: _, path: v, locationHint: y, verdict: b, verdictStatus: S = "idle", verdictError: C, revision: w, onRereview: T, onAccept: E, onReject: O, onRedraft: k, onReattach: ee, onConfirmAttachment: A, className: te, "data-testid": j = "proposal-card" }) {
 	let [M, N] = Y(!1), [P, F] = Y(null), [ne, I] = Y(!1), [L, re] = Y(""), R = i === "applied", z = i === "rejected", B = R || z;
 	async function V() {
 		N(!0), F(null);
@@ -929,7 +929,7 @@ function lr({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 					/* @__PURE__ */ Z("span", {
 						className: "text-sm font-semibold leading-tight text-text-primary",
 						"data-testid": `${j}-category`,
-						children: g ?? cr[t]
+						children: _ ?? cr[t]
 					}),
 					h && /* @__PURE__ */ Q("span", {
 						className: "flex min-w-0 items-center gap-1.5",
@@ -989,8 +989,8 @@ function lr({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 				]
 			}),
 			/* @__PURE__ */ Z(Le, {
-				path: _ ?? (s ? [s] : []),
-				...v ? { hint: v } : {},
+				path: v ?? (s ? [s] : []),
+				...y ? { hint: y } : {},
 				"data-testid": `${j}-location`
 			}),
 			/* @__PURE__ */ Q("div", {
@@ -1103,7 +1103,7 @@ function lr({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 						htmlFor: `${j}-reason`,
 						children: "Why? (optional — helps the next draft)"
 					}),
-					/* @__PURE__ */ Z(y, {
+					/* @__PURE__ */ Z(g, {
 						id: `${j}-reason`,
 						size: "sm",
 						value: L,
@@ -1660,7 +1660,7 @@ function Er({ mode: e, onModeChange: t, showViewing: r = !0, openCount: i = null
 		"data-mode": e,
 		title: l?.hint,
 		className: n("inline-flex items-center gap-2", a && "pointer-events-none opacity-50", o),
-		children: [/* @__PURE__ */ Z(_, {
+		children: [/* @__PURE__ */ Z(v, {
 			options: c,
 			value: e,
 			size: "sm",
@@ -1819,7 +1819,7 @@ function Pr({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 }
 //#endregion
 //#region src/components/doc-editor/SuggestionReviewList.tsx
-function Fr({ count: e, children: t, onAcceptAll: a, onRejectAll: o, error: s = null, headerExtra: c, emptyTitle: l = "No suggestions", emptyBody: u = "Proposed changes to this document show up here for review.", title: d = "Suggestions", variant: f = "card", className: h, "data-testid": _ = "suggestion-review-list" }) {
+function Fr({ count: e, children: t, onAcceptAll: a, onRejectAll: o, error: s = null, headerExtra: c, emptyTitle: l = "No suggestions", emptyBody: u = "Proposed changes to this document show up here for review.", title: d = "Suggestions", variant: f = "card", className: h, "data-testid": g = "suggestion-review-list" }) {
 	let v = e > 0 && (a || o), y = v || c ? /* @__PURE__ */ Q("span", {
 		className: "flex items-center gap-1.5",
 		children: [
@@ -1828,14 +1828,14 @@ function Fr({ count: e, children: t, onAcceptAll: a, onRejectAll: o, error: s = 
 				variant: "ghost",
 				size: "sm",
 				onClick: o,
-				"data-testid": `${_}-reject-all`,
+				"data-testid": `${g}-reject-all`,
 				children: "Reject all"
 			}),
 			v && a && /* @__PURE__ */ Z(r, {
 				variant: "secondary",
 				size: "sm",
 				onClick: a,
-				"data-testid": `${_}-accept-all`,
+				"data-testid": `${g}-accept-all`,
 				children: "Accept all"
 			})
 		]
@@ -1844,28 +1844,28 @@ function Fr({ count: e, children: t, onAcceptAll: a, onRejectAll: o, error: s = 
 		children: /* @__PURE__ */ Z(p, {
 			variant: "error",
 			layout: "stacked",
-			"data-testid": `${_}-error`,
+			"data-testid": `${g}-error`,
 			children: s
 		})
-	}), e === 0 ? /* @__PURE__ */ Z(g, {
+	}), e === 0 ? /* @__PURE__ */ Z(_, {
 		size: "sm",
 		title: l,
 		body: u,
-		testId: `${_}-empty`
+		testId: `${g}-empty`
 	}) : /* @__PURE__ */ Z("ul", {
 		className: "m-0 list-none p-0",
-		"data-testid": `${_}-list`,
+		"data-testid": `${g}-list`,
 		children: t
 	})] });
 	return f === "pane" ? /* @__PURE__ */ Q("div", {
 		className: n("flex min-h-0 flex-1 flex-col", h),
-		"data-testid": _,
+		"data-testid": g,
 		"data-variant": "pane",
 		children: [/* @__PURE__ */ Q("div", {
 			className: "flex shrink-0 items-center justify-between gap-2 border-b border-border px-3 py-1.5",
 			children: [/* @__PURE__ */ Z("span", {
 				className: "text-xs text-tertiary",
-				"data-testid": `${_}-count`,
+				"data-testid": `${g}-count`,
 				children: e === 0 ? "None open" : e === 1 ? "1 open" : `${e} open`
 			}), y]
 		}), /* @__PURE__ */ Z("div", {
@@ -1875,7 +1875,7 @@ function Fr({ count: e, children: t, onAcceptAll: a, onRejectAll: o, error: s = 
 	}) : /* @__PURE__ */ Q(i, {
 		padding: "none",
 		className: n("overflow-hidden", h),
-		"data-testid": _,
+		"data-testid": g,
 		children: [/* @__PURE__ */ Z(C, {
 			title: d,
 			meta: /* @__PURE__ */ Z(m, {
@@ -2164,7 +2164,7 @@ function Wr({ filled: e }) {
 		children: /* @__PURE__ */ Z("path", { d: "M8 1.9l1.8 3.7 4.1.6-3 2.9.7 4.1L8 11.3l-3.6 1.9.7-4.1-3-2.9 4.1-.6L8 1.9Z" })
 	});
 }
-function Gr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: o, starred: c = !1, onStarredChange: l, statusPill: u, path: f, crumbsTrailing: p, subtitle: h, metaBar: g, participants: _, onParticipantClick: y, onFollowParticipant: b, followingParticipantId: x, meta: S, saveState: C, headActions: T, tabs: D, activeTab: O, onTabChange: k, toolbar: A, children: te, footer: j, surface: M = "workspace", explorer: N, workbench: P, label: F = "Editor", variant: ne = "document", itemType: I, itemKey: L, titleSize: re = "md", tabsTrailing: R, className: z, "data-testid": B = "editor-shell" }) {
+function Gr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: o, starred: c = !1, onStarredChange: l, statusPill: u, path: f, crumbsTrailing: p, subtitle: h, metaBar: g, participants: _, onParticipantClick: v, onFollowParticipant: b, followingParticipantId: x, meta: S, saveState: C, headActions: T, tabs: D, activeTab: O, onTabChange: k, toolbar: A, children: te, footer: j, surface: M = "workspace", explorer: N, workbench: P, label: F = "Editor", variant: ne = "document", itemType: I, itemKey: L, titleSize: re = "md", tabsTrailing: R, className: z, "data-testid": B = "editor-shell" }) {
 	let V = ne === "work-item", H = V && (I || L) ? /* @__PURE__ */ Q(X, { children: [I && /* @__PURE__ */ Z(m, {
 		size: "sm",
 		tone: "info",
@@ -2174,7 +2174,7 @@ function Gr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 		className: "font-mono text-[12px] text-text-secondary",
 		"data-testid": `${B}-item-key`,
 		children: L
-	})] }) : null, U = H || p != null ? /* @__PURE__ */ Q(X, { children: [H, p] }) : null, ie = V && (e && e.length > 0 || U != null), ae = re === "lg" ? "text-[26px] font-semibold leading-8" : V ? "text-[22px] font-bold leading-7" : "text-xl font-bold leading-6", oe = `${B}-${wn().replace(/:/g, "")}`, W = !!D && D.length > 0, se = W ? D.some((e) => e.id === O) ? O : D[0].id : void 0, ce = _ && _.length > 0 || S != null || !!C, le = (e) => /* @__PURE__ */ Z(v, {
+	})] }) : null, U = H || p != null ? /* @__PURE__ */ Q(X, { children: [H, p] }) : null, ie = V && (e && e.length > 0 || U != null), ae = re === "lg" ? "text-[26px] font-semibold leading-8" : V ? "text-[22px] font-bold leading-7" : "text-xl font-bold leading-6", oe = `${B}-${wn().replace(/:/g, "")}`, W = !!D && D.length > 0, se = W ? D.some((e) => e.id === O) ? O : D[0].id : void 0, ce = _ && _.length > 0 || S != null || !!C, le = (e) => /* @__PURE__ */ Z(y, {
 		items: D.map((e) => ({
 			id: e.id,
 			label: e.label,
@@ -2334,7 +2334,7 @@ function Gr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 												users: _,
 												size: 22,
 												maxVisible: 4,
-												...y ? { onUserClick: y } : {},
+												...v ? { onUserClick: v } : {},
 												...b ? {
 													onFollowUser: b,
 													followingUserId: x ?? null

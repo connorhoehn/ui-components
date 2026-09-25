@@ -9,7 +9,7 @@ import { DocumentModePill, DOCUMENT_MODE_LABELS, type DocumentModePillMode } fro
 import { DocumentOwnership, type DocumentPerson } from './DocumentOwnership';
 import type { ViewMode, DocumentMeta, Participant } from '../../types/document';
 import type { DocumentLifecycleStatus, LegacyFinalClaim, LifecycleAction, LifecycleFailureKind } from './documentLifecycleTypes';
-import { ChatIcon, CloseIcon, MoreIcon, ShareIcon } from '../ui/Icons';
+import { ChatIcon, CloseIcon, MoreIcon, ShareIcon, EditIcon, FolderIcon, CopyIcon, LinkIcon, DocumentAddIcon, PlayCircleIcon, TemplateIcon, DownloadIcon, PrinterIcon, TrashIcon, DocumentIcon, BulletListIcon, ChecklistIcon, HistoryIcon, EyeIcon, CheckIcon, PlusIcon } from '../ui/Icons';
 import { IconButton } from '../ui/IconButton';
 import { cn } from '../../lib/cn';
 import { DocumentSaveStatus, type DocumentSaveState } from './DocumentSaveStatus';
@@ -18,7 +18,56 @@ import ParticipantAvatars from './ParticipantAvatars';
 export interface LifecycleErrorView {
   kind: LifecycleFailureKind;
   message: string;
+  /**
+   * The bold lead, when the kind's default does not fit — a failed READ is
+   * not "nothing was changed". Since 2.390.3.
+   */
+  lead?: string;
 }
+
+/**
+ * One file action in the ⋯ menu. A `disabledReason` shows the row greyed with
+ * that reason as its tooltip (the viewer may not do it); leave the action out
+ * entirely when it does not apply to this document at all. Since 2.390.3.
+ */
+export interface DocumentFileAction {
+  onSelect: () => void;
+  disabledReason?: string;
+}
+
+/**
+ * The file menu of a document head (the Documents mockup's ⋯): five groups —
+ * Rename / Move to / Make a copy · Copy link · Create from this › / Run
+ * workflow / Save as template · Download as › / Print ⌘P · Move to trash.
+ * Passing it switches the `menu` layout's ⋯ to this structure; the host's
+ * `extraMenuItems`, history, lifecycle and toggles fold into those groups.
+ * Since 2.390.3.
+ */
+export interface DocumentFileActions {
+  rename?: DocumentFileAction;
+  move?: DocumentFileAction;
+  copy?: DocumentFileAction;
+  copyLink?: DocumentFileAction;
+  createFrom?: {
+    presentation?: DocumentFileAction;
+    summary?: DocumentFileAction;
+    actionList?: DocumentFileAction;
+    chooseTemplate?: DocumentFileAction;
+    /** The flyout's footer. Default 'Creates a new document.' */
+    caption?: string;
+    /** When every entry is disabled for one reason, the parent row says it. */
+    disabledReason?: string;
+  };
+  runWorkflow?: DocumentFileAction;
+  saveAsTemplate?: DocumentFileAction;
+  /** Each a real export ("Markdown (.md)"). Empty or absent: no Download row. */
+  downloads?: ReadonlyArray<DocumentFileAction & { id: string; label: string }>;
+  print?: DocumentFileAction;
+  trash?: DocumentFileAction;
+}
+
+/** Where a host's extra ⋯ item lands when `fileActions` shapes the menu. */
+export type DocumentMenuGroup = 'file' | 'share' | 'create' | 'view';
 
 export interface WorkspaceDocumentHeaderProps {
   /**
@@ -55,7 +104,9 @@ export interface WorkspaceDocumentHeaderProps {
   titleEditable?: boolean;
   onPrint?: () => void;
 
-  extraMenuItems?: ReadonlyArray<{ id: string; label: string; onSelect: () => void }>;
+  extraMenuItems?: ReadonlyArray<{ id: string; label: string; onSelect: () => void; group?: DocumentMenuGroup }>;
+  /** The file menu (see DocumentFileActions). `actionsLayout="menu"` only. Since 2.390.3. */
+  fileActions?: DocumentFileActions;
   meta: DocumentMeta;
 
   mode: ViewMode;
@@ -222,6 +273,7 @@ export default function WorkspaceDocumentHeader({
   onUpdateMeta,
   onExport,
   extraMenuItems,
+  fileActions,
   onToggleHistory,
   onToggleVideoCall,
   onToggleVideoHistory,
@@ -380,6 +432,116 @@ export default function WorkspaceDocumentHeader({
       items: [{ label: 'Clear document', danger: true, onSelect: () => setConfirmClear(true), 'data-testid': 'clear-document-btn' }],
     }] : []),
   ];
+
+  // The file menu (Documents mockup): five groups, everything else folded in.
+  const fileRow = (action: DocumentFileAction | undefined, label: string, icon: ReactNode, testId: string, extra: Partial<DropdownMenuSection['items'][number]> = {}) =>
+    action ? [{
+      label, icon, onSelect: action.onSelect, 'data-testid': testId,
+      ...(action.disabledReason ? { disabled: true, disabledReason: action.disabledReason } : {}),
+      ...extra,
+    }] : [];
+  const grouped = (group: DocumentMenuGroup) => otherItems.filter((i) => (i.group ?? 'create') === group).map((i) => ({ ...row(i), ...(i.group === 'share' ? { icon: <ShareIcon size={16} /> } : {}) }));
+  const createFrom = fileActions?.createFrom;
+  const createItems = createFrom ? [
+    ...fileRow(createFrom.presentation, 'Presentation…', <DocumentIcon size={16} />, 'document-menu-create-presentation'),
+    ...fileRow(createFrom.summary, 'Summary…', <BulletListIcon size={16} />, 'document-menu-create-summary'),
+    ...fileRow(createFrom.actionList, 'Action list…', <ChecklistIcon size={16} />, 'document-menu-create-action-list'),
+  ] : [];
+  const templateItems = createFrom ? fileRow(createFrom.chooseTemplate, 'Choose template…', <DocumentIcon size={16} />, 'document-menu-create-template') : [];
+  const createSubmenu: DropdownMenuSection[] = [
+    ...(createItems.length ? [{ items: createItems }] : []),
+    ...(templateItems.length ? [{ items: templateItems }] : []),
+  ];
+  if (createSubmenu.length) createSubmenu[createSubmenu.length - 1] = { ...createSubmenu[createSubmenu.length - 1]!, caption: createFrom?.caption ?? 'Creates a new document.' };
+  const viewItems = [
+    ...(onToggleMyItems ? [{ label: 'My items', ...(myItemCount ? { trailing: String(myItemCount) } : {}), onSelect: onToggleMyItems, 'data-testid': 'document-header-menu-my-items' }] : []),
+    ...(onToggleVideoHistory && (pastCallsCount ?? 0) > 0 ? [{ label: 'Past calls', trailing: String(pastCallsCount), onSelect: onToggleVideoHistory }] : []),
+    ...toggleItems.map(toggleRow),
+    ...grouped('view'),
+  ];
+  const reviewItems = onLifecycleAction ? [
+    ...offeredActions.map((action) => ({
+      label: lifecycleActionLabels[action],
+      ...(action === 'finalize' ? { danger: true } : {}),
+      onSelect: () => { if (lifecycleBusy) return; setReason(''); setTypedConfirmation(''); setPendingAction(action); },
+      'data-testid': `lifecycle-action-${action}`,
+    })),
+    ...(onClaimOwnership ? [{ label: 'Take ownership', onSelect: () => setConfirmClaim(true), 'data-testid': 'claim-ownership-btn' }] : []),
+  ] : [];
+  const downloads = fileActions?.downloads ?? [];
+  const aboutCaption = [DOCUMENT_MODE_LABELS[modeKey] + (modeReason ? ` — ${modeReason}` : ''), ownerLine].filter(Boolean).join(' · ');
+  const fileSections: DropdownMenuSection[] = fileActions ? [
+    {
+      'data-testid': 'document-menu-group-file',
+      items: [
+        ...fileRow(fileActions.rename, 'Rename…', <EditIcon size={16} />, 'document-menu-rename'),
+        ...fileRow(fileActions.move, 'Move to…', <FolderIcon size={16} />, 'document-menu-move'),
+        ...fileRow(fileActions.copy, 'Make a copy…', <CopyIcon size={16} />, 'document-menu-copy'),
+        ...(onToggleHistory ? [{ label: 'Version history', icon: <HistoryIcon size={16} />, onSelect: onToggleHistory, 'data-testid': 'document-header-history' }] : []),
+        ...grouped('file'),
+        ...(viewItems.length ? [{ label: 'View', icon: <EyeIcon size={16} />, 'data-testid': 'document-menu-view', submenu: [{ items: viewItems }] }] : []),
+      ],
+    },
+    {
+      'data-testid': 'document-menu-group-share',
+      items: [
+        ...fileRow(fileActions.copyLink, 'Copy link', <LinkIcon size={16} />, 'document-menu-copy-link'),
+        ...grouped('share'),
+        ...(shareItems.length > 0 ? [{
+          label: 'Share to…',
+          icon: <ShareIcon size={16} />,
+          description: `${shareItems.length} conversation${shareItems.length === 1 ? '' : 's'}`,
+          'data-testid': 'document-header-menu-share',
+          submenu: [{ 'data-testid': 'document-header-menu-extras', scroll: shareItems.length > EXTRAS_SCROLL_THRESHOLD, items: shareItems.map((i) => ({ ...row(i), label: i.label.replace(/^Share to /, '') })) }],
+        }] : []),
+      ],
+    },
+    {
+      'data-testid': 'document-menu-group-create',
+      items: [
+        ...(createSubmenu.length ? [{
+          label: 'Create from this…',
+          icon: <DocumentAddIcon size={16} />,
+          'data-testid': 'document-menu-create-from',
+          ...(createFrom?.disabledReason ? { disabled: true, disabledReason: createFrom.disabledReason } : { submenu: createSubmenu }),
+        }] : []),
+        ...fileRow(fileActions.runWorkflow, 'Run workflow…', <PlayCircleIcon size={16} />, 'document-menu-run-workflow'),
+        ...fileRow(fileActions.saveAsTemplate, 'Save as template…', <TemplateIcon size={16} />, 'document-menu-save-template'),
+        ...grouped('create'),
+        ...(insertItems.length > 0 ? [{
+          label: 'Insert…',
+          icon: <PlusIcon size={16} />,
+          'data-testid': 'document-header-menu-insert',
+          submenu: [{ items: insertItems.map((i) => ({ ...row(i), label: i.label.replace(/^Insert (a |an )?/, '').replace(/^./, (c) => c.toUpperCase()) })) }],
+        }] : []),
+        ...(reviewItems.length ? [{ label: 'Review', icon: <CheckIcon size={16} />, 'data-testid': 'document-header-menu-lifecycle', submenu: [{ items: reviewItems }] }] : []),
+      ],
+    },
+    {
+      'data-testid': 'document-menu-group-output',
+      items: [
+        ...(downloads.length ? [{
+          label: 'Download as…',
+          icon: <DownloadIcon size={16} />,
+          'data-testid': 'document-header-menu-download',
+          submenu: [{ items: downloads.map((d) => ({
+            label: d.label, onSelect: d.onSelect, 'data-testid': `document-header-export-${d.id}`,
+            ...(d.disabledReason ? { disabled: true, disabledReason: d.disabledReason } : {}),
+          })) }],
+        }] : []),
+        ...fileRow(fileActions.print, 'Print…', <PrinterIcon size={16} />, 'document-header-print', { trailing: '⌘P' }),
+      ],
+    },
+    {
+      'data-testid': 'document-menu-group-trash',
+      ...(aboutCaption ? { caption: aboutCaption } : {}),
+      items: [
+        ...fileRow(fileActions.trash, 'Move to trash', <TrashIcon size={16} />, 'document-menu-trash', { danger: true }),
+        ...(onClearDocument ? [{ label: 'Clear document', danger: true, onSelect: () => setConfirmClear(true), 'data-testid': 'clear-document-btn' }] : []),
+      ],
+    },
+  ].filter((section) => section.items.length > 0) : [];
+  const shownSections = menuLayout && fileActions ? fileSections : menuSections;
 
   const dialogs = (
     <>
@@ -653,7 +815,7 @@ export default function WorkspaceDocumentHeader({
 
           {/* The menu layout is an editor head's row (Share · (i) · ⋯): a
               40 px bordered square beside the other two (2.386.5). */}
-          {menuSections.some(section => section.items.length > 0) && <DropdownMenu
+          {shownSections.some(section => section.items.length > 0) && <DropdownMenu
             trigger={menuLayout ? <MoreIcon size={18} /> : <span className="tracking-wide">⋯</span>}
             triggerLabel="More actions"
             triggerTitle="More actions"
@@ -664,7 +826,8 @@ export default function WorkspaceDocumentHeader({
               : 'h-8 rounded-md border border-border bg-surface px-2.5 text-[13px] text-text-primary hover:bg-surface-hover'}
             align="end"
             data-testid="document-header-menu"
-            sections={menuSections}
+            {...(fileActions && menuLayout ? { className: 'min-w-[232px]' } : {})}
+            sections={shownSections}
           />}
         </div>
         {dialogs}
@@ -957,7 +1120,7 @@ export function WorkspaceDocumentHeaderNotices({
         >
 
           <span data-testid="lifecycle-error" data-kind={lifecycleError.kind}>
-            <strong>{lifecycleRefusalLead[lifecycleError.kind]}</strong>{' '}
+            <strong>{lifecycleError.lead ?? lifecycleRefusalLead[lifecycleError.kind]}</strong>{' '}
             <span data-testid="lifecycle-error-detail">{lifecycleError.message}</span>
             {ownerless && (
               <>

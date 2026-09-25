@@ -4,7 +4,7 @@ export { default as NewDocumentModal } from './NewDocumentModal';
 export type { NewDocumentModalProps, DocumentShape } from './NewDocumentModal';
 export { default as DocumentHeader } from './DocumentHeader';
 export type { DocumentHeaderCallVariant, DocumentHeaderProps, LifecycleErrorView } from './DocumentHeader';
-export type { WorkspaceDocumentHeaderProps } from './WorkspaceDocumentHeader';
+export type { WorkspaceDocumentHeaderProps, DocumentFileAction, DocumentFileActions, DocumentMenuGroup } from './WorkspaceDocumentHeader';
 export { WorkspaceDocumentHeaderNotices, DocumentLifecyclePill } from './WorkspaceDocumentHeader';
 export type { WorkspaceDocumentHeaderNoticesProps } from './WorkspaceDocumentHeader';
 export { DocumentSaveStatus } from './DocumentSaveStatus';

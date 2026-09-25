@@ -5,8 +5,8 @@ import { t as o } from "./cn-DhjIN-s0.js";
 import { _ as s } from "./overlayStack-CHdlnODN.js";
 import { n as c } from "./Stack-CkiMw5K0.js";
 import { t as l } from "./Modal-DMFNRUDx.js";
-import { t as u } from "./EmptyState-zKbpAhFD.js";
-import { t as d } from "./Input-DLknWXri.js";
+import { t as u } from "./Input-DLknWXri.js";
+import { t as d } from "./EmptyState-zKbpAhFD.js";
 import { t as f } from "./Textarea-Dz4doxTv.js";
 import { t as p } from "./PageHeader-DOSl8dnN.js";
 import { t as m } from "./Select-D2EQq7Wi.js";
@@ -91,7 +91,7 @@ function H({ step: e, totalSteps: t, canAdvance: n, isEditing: r, onCancel: i, o
 }
 //#endregion
 //#region src/components/doc-types/FieldDefinitionEditor.tsx
-function U({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemove: c, onMoveUp: l, onMoveDown: u, onToggleRequired: f, onToggleCollapsed: p }) {
+function U({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemove: c, onMoveUp: l, onMoveDown: d, onToggleRequired: f, onToggleCollapsed: p }) {
 	let h = t(n.sectionType), g = e(), _ = n.name.trim() || `Section ${r + 1}`;
 	return /* @__PURE__ */ D("div", {
 		className: "flex items-center gap-2 py-2 px-2.5 rounded-lg bg-surface-panel border border-border mb-1.5",
@@ -109,7 +109,7 @@ function U({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemov
 				}), /* @__PURE__ */ E("button", {
 					type: "button",
 					disabled: r === i - 1,
-					onClick: u,
+					onClick: d,
 					"data-testid": `field-down-${n.id}`,
 					"aria-label": `Move ${n.name} down`,
 					className: o("px-1 py-px text-[10px] leading-none font-semibold rounded-[7px] font-inherit border-none bg-transparent", r === i - 1 ? "text-neutral opacity-50 cursor-not-allowed" : "text-neutral cursor-pointer"),
@@ -120,7 +120,7 @@ function U({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemov
 				className: "text-base shrink-0",
 				children: h?.icon ?? "📄"
 			}),
-			/* @__PURE__ */ E(d, {
+			/* @__PURE__ */ E(u, {
 				"aria-label": `${_} name`,
 				"data-testid": `field-name-${n.id}`,
 				size: "sm",
@@ -181,7 +181,7 @@ function W({ name: e, setName: t, description: n, setDescription: r }) {
 				className: "text-danger-fg",
 				children: "*"
 			})]
-		}), /* @__PURE__ */ E(d, {
+		}), /* @__PURE__ */ E(u, {
 			id: `${i}-name`,
 			"aria-required": "true",
 			"data-testid": "name-input",
@@ -205,7 +205,7 @@ function W({ name: e, setName: t, description: n, setDescription: r }) {
 		})] })]
 	});
 }
-function G({ page: e, pageIdx: t, totalPages: n, isActive: r, setActivePageId: i, movePage: a, removePage: s, renamePage: c, pages: l, fieldsById: u, renderRow: f, moveSectionToPage: p }) {
+function G({ page: e, pageIdx: t, totalPages: n, isActive: r, setActivePageId: i, movePage: a, removePage: s, renamePage: c, pages: l, fieldsById: d, renderRow: f, moveSectionToPage: p }) {
 	let { attributes: m, listeners: h, setNodeRef: g, transform: _, transition: v, isDragging: y } = L({ id: e.id }), b = {
 		transform: z.Transform.toString(_),
 		transition: v,
@@ -249,7 +249,7 @@ function G({ page: e, pageIdx: t, totalPages: n, isActive: r, setActivePageId: i
 						className: "text-xs font-semibold text-text-tertiary min-w-14",
 						children: ["Page ", t + 1]
 					}),
-					/* @__PURE__ */ E(d, {
+					/* @__PURE__ */ E(u, {
 						"aria-label": `Page ${t + 1} title`,
 						"data-testid": `page-title-${e.id}`,
 						size: "sm",
@@ -278,7 +278,7 @@ function G({ page: e, pageIdx: t, totalPages: n, isActive: r, setActivePageId: i
 				strategy: R,
 				children: /* @__PURE__ */ E("div", {
 					"data-testid": `page-sections-${e.id}`,
-					children: e.sectionIds.map((t, n) => u.get(t) ? /* @__PURE__ */ E(K, {
+					children: e.sectionIds.map((t, n) => d.get(t) ? /* @__PURE__ */ E(K, {
 						sectionId: t,
 						page: e,
 						idx: n,
@@ -795,7 +795,7 @@ function ee({ cookbook: e, onPick: t, actionLabel: n, busy: r, cardPrefix: i, la
 		]
 	});
 }
-function Q({ onPick: e, busy: t = !1, actionLabel: n = "Install", autoFocusSearch: r = !1, idPrefix: i = "cookbooks", cardPrefix: a = "cookbook", layout: s = "fixed", gridHeightClassName: c = "max-h-[60vh]", installedNames: l, onOpenInstalled: u }) {
+function Q({ onPick: e, busy: t = !1, actionLabel: n = "Install", autoFocusSearch: r = !1, idPrefix: i = "cookbooks", cardPrefix: a = "cookbook", layout: s = "fixed", gridHeightClassName: c = "max-h-[60vh]", installedNames: l, onOpenInstalled: d }) {
 	let f = S(() => new Set((l ?? []).map((e) => e.trim().toLowerCase())), [l]), [p, m] = w(""), [h, g] = w("All"), v = C(null);
 	b(() => {
 		if (!r) return;
@@ -824,7 +824,7 @@ function Q({ onPick: e, busy: t = !1, actionLabel: n = "Install", autoFocusSearc
 				children: e
 			}, e))]
 		}),
-		/* @__PURE__ */ E(d, {
+		/* @__PURE__ */ E(u, {
 			ref: v,
 			type: "search",
 			"data-testid": `${i}-search`,
@@ -856,7 +856,7 @@ function Q({ onPick: e, busy: t = !1, actionLabel: n = "Install", autoFocusSearc
 				cardPrefix: a,
 				layout: s,
 				installed: f.has(r.name.trim().toLowerCase()),
-				onOpenInstalled: u
+				onOpenInstalled: d
 			}, r.id))
 		})
 	] });
@@ -994,7 +994,7 @@ function ne({ type: e, active: t, onSelect: n, onDeleteRequest: r, onCreateDocum
 	});
 }
 function re({ idToken: e, onExportSchema: t, onCreateDocument: n, layout: r = "split", processingAction: i } = {}) {
-	let { types: l, source: d, error: f, createType: m, updateType: h, deleteType: g } = a({ idToken: e }), [_, v] = w("idle"), [y, b] = w(null), [x, S] = w(null), [C, T] = w(!1), [O, k] = w(!1), [A, j] = w(null), M = y ? l.find((e) => e.id === y) : void 0, N = () => {
+	let { types: l, source: u, error: f, createType: m, updateType: h, deleteType: g } = a({ idToken: e }), [_, v] = w("idle"), [y, b] = w(null), [x, S] = w(null), [C, T] = w(!1), [O, k] = w(!1), [A, j] = w(null), M = y ? l.find((e) => e.id === y) : void 0, N = () => {
 		b(null), v("create"), j(null);
 	}, P = (e) => {
 		b(e.id), v("edit"), j(null);
@@ -1128,7 +1128,7 @@ function re({ idToken: e, onExportSchema: t, onCreateDocument: n, layout: r = "s
 							onCreateDocument: n ? () => n(e) : void 0
 						}, e.id))
 					}),
-					d === "cache" && /* @__PURE__ */ D("div", {
+					u === "cache" && /* @__PURE__ */ D("div", {
 						"data-testid": "types-offline-notice",
 						className: "py-2 px-3.5 border-t border-warning-border bg-warning-bg text-xs text-warning-fg font-medium",
 						children: [
@@ -1154,7 +1154,7 @@ function re({ idToken: e, onExportSchema: t, onCreateDocument: n, layout: r = "s
 				children: [_ === "idle" && /* @__PURE__ */ D("div", {
 					"data-testid": "known-types-panel",
 					className: "flex flex-col gap-4",
-					children: [!U && /* @__PURE__ */ E(u, {
+					children: [!U && /* @__PURE__ */ E(d, {
 						testId: "idle-panel",
 						className: "min-h-0 p-0 gap-1",
 						icon: "📋",

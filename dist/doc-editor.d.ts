@@ -991,6 +991,50 @@ declare interface DocumentEditorPageProps {
     idToken?: string | null;
 }
 
+/**
+ * One file action in the ⋯ menu. A `disabledReason` shows the row greyed with
+ * that reason as its tooltip (the viewer may not do it); leave the action out
+ * entirely when it does not apply to this document at all. Since 2.390.3.
+ */
+export declare interface DocumentFileAction {
+    onSelect: () => void;
+    disabledReason?: string;
+}
+
+/**
+ * The file menu of a document head (the Documents mockup's ⋯): five groups —
+ * Rename / Move to / Make a copy · Copy link · Create from this › / Run
+ * workflow / Save as template · Download as › / Print ⌘P · Move to trash.
+ * Passing it switches the `menu` layout's ⋯ to this structure; the host's
+ * `extraMenuItems`, history, lifecycle and toggles fold into those groups.
+ * Since 2.390.3.
+ */
+export declare interface DocumentFileActions {
+    rename?: DocumentFileAction;
+    move?: DocumentFileAction;
+    copy?: DocumentFileAction;
+    copyLink?: DocumentFileAction;
+    createFrom?: {
+        presentation?: DocumentFileAction;
+        summary?: DocumentFileAction;
+        actionList?: DocumentFileAction;
+        chooseTemplate?: DocumentFileAction;
+        /** The flyout's footer. Default 'Creates a new document.' */
+        caption?: string;
+        /** When every entry is disabled for one reason, the parent row says it. */
+        disabledReason?: string;
+    };
+    runWorkflow?: DocumentFileAction;
+    saveAsTemplate?: DocumentFileAction;
+    /** Each a real export ("Markdown (.md)"). Empty or absent: no Download row. */
+    downloads?: ReadonlyArray<DocumentFileAction & {
+        id: string;
+        label: string;
+    }>;
+    print?: DocumentFileAction;
+    trash?: DocumentFileAction;
+}
+
 /** Structural injection keeps the UI package independent of the runtime package. */
 export declare type DocumentFileUploadHook = (channel: string, options: {
     displayName: string;
@@ -1143,6 +1187,9 @@ declare interface DocumentListPageProps {
     onJumpToUser: (documentId: string, userId: string) => void;
     hideHeader?: boolean;
 }
+
+/** Where a host's extra ⋯ item lands when `fileActions` shapes the menu. */
+export declare type DocumentMenuGroup = 'file' | 'share' | 'create' | 'view';
 
 declare interface DocumentMeta {
     id: string;
@@ -1890,6 +1937,11 @@ export declare type LifecycleAction = 'submit_for_review' | 'withdraw' | 'approv
 export declare interface LifecycleErrorView {
     kind: LifecycleFailureKind;
     message: string;
+    /**
+     * The bold lead, when the kind's default does not fit — a failed READ is
+     * not "nothing was changed". Since 2.390.3.
+     */
+    lead?: string;
 }
 
 export declare type LifecycleFailureKind = 'forbidden' | 'invalid' | 'conflict' | 'network' | 'busy' | 'unknown';
@@ -3853,7 +3905,10 @@ export declare interface WorkspaceDocumentHeaderProps {
         id: string;
         label: string;
         onSelect: () => void;
+        group?: DocumentMenuGroup;
     }>;
+    /** The file menu (see DocumentFileActions). `actionsLayout="menu"` only. Since 2.390.3. */
+    fileActions?: DocumentFileActions;
     meta: DocumentMeta;
     mode: ViewMode;
     suggesting?: boolean;
@@ -3931,6 +3986,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3963,12 +4031,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -3976,9 +4041,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -4012,19 +4090,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -4035,19 +4103,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }

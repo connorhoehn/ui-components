@@ -39,6 +39,13 @@ export interface DropdownMenuItem {
    * runs no `onSelect`.
    */
   submenu?: DropdownMenuSection[];
+  /**
+   * Shown but not actionable: greyed, `aria-disabled`, and a click does
+   * nothing (the menu stays open). Since 2.390.3.
+   */
+  disabled?: boolean;
+  /** Why it is disabled — the row's hover tooltip and its accessible description. Since 2.390.3. */
+  disabledReason?: string;
   /** A hook for the spec that addresses this row. Without one the row is reachable by its label. */
   'data-testid'?: string;
 }
@@ -53,6 +60,11 @@ export interface DropdownMenuSection {
    * otherwise push the fixed actions below the fold.
    */
   scroll?: boolean;
+  /**
+   * A quiet line under the group's rows — what the group does as a whole
+   * ("Creates a new document."). Since 2.390.3.
+   */
+  caption?: string;
   'data-testid'?: string;
 }
 
@@ -207,6 +219,7 @@ export function DropdownMenu({
               {section.items.map((item, iIdx) => (
                 <MenuRow key={iIdx} item={item} close={close} testId={testId} />
               ))}
+              {section.caption && <SectionCaption text={section.caption} />}
             </div>
           ))}
         </div>
@@ -218,13 +231,25 @@ export function DropdownMenu({
 
 const ROW_CLASS = 'flex items-center gap-2.5 w-full text-left px-3.5 py-2 text-sm border-none cursor-pointer font-[inherit] transition-colors duration-100';
 
+function SectionCaption({ text }: { text: string }) {
+  return (
+    <div className="mt-1 border-t border-[var(--color-border)] px-3.5 pb-1 pt-2 text-xs text-[var(--color-text-tertiary)]" data-menu-caption="">
+      {text}
+    </div>
+  );
+}
+
 function rowTone(item: DropdownMenuItem, open = false): string {
+  if (item.disabled) return 'cursor-not-allowed text-[var(--color-text-tertiary)] bg-transparent';
   if (item.danger) return 'text-danger-fg bg-transparent hover:bg-danger-bg';
-  if (item.active || open) return 'font-semibold text-[var(--color-text-primary)] bg-[var(--color-surface-hover)]';
+  // The row whose flyout is open wears the accent, so the eye can follow it
+  // across into the flyout.
+  if (open) return 'font-normal text-primary-fg bg-primary-bg';
+  if (item.active) return 'font-semibold text-[var(--color-text-primary)] bg-[var(--color-surface-hover)]';
   return 'font-normal text-[var(--color-text-primary)] bg-transparent hover:bg-[var(--color-surface-hover)]';
 }
 
-function RowBody({ item }: { item: DropdownMenuItem }) {
+function RowBody({ item, open = false }: { item: DropdownMenuItem; open?: boolean }) {
   return (
     <>
       {item.checked !== undefined ? (
@@ -232,7 +257,7 @@ function RowBody({ item }: { item: DropdownMenuItem }) {
           {item.checked ? '✓' : ''}
         </span>
       ) : item.icon ? (
-        <span className="flex w-4 shrink-0 items-center justify-center text-base leading-none text-[var(--color-text-secondary)]" aria-hidden="true">
+        <span className={cn('flex w-4 shrink-0 items-center justify-center text-base leading-none', item.danger || open ? 'text-current' : 'text-[var(--color-text-secondary)]', item.disabled && 'opacity-60')} aria-hidden="true">
           {item.icon}
         </span>
       ) : null}
@@ -245,7 +270,7 @@ function RowBody({ item }: { item: DropdownMenuItem }) {
       {item.trailing !== undefined && (
         <span className="shrink-0 text-xs text-[var(--color-text-tertiary)]" aria-hidden="true">{item.trailing}</span>
       )}
-      {item.submenu && <ChevronIcon dir="right" size={14} className="shrink-0 text-[var(--color-text-tertiary)]" />}
+      {item.submenu && <ChevronIcon dir="right" size={14} className={cn('shrink-0', open ? 'text-current' : 'text-[var(--color-text-tertiary)]')} />}
     </>
   );
 }
@@ -260,18 +285,22 @@ function MenuRow({ item, close, testId }: { item: DropdownMenuItem; close: () =>
   const leave = () => { hold(); leaveTimer.current = setTimeout(() => setOpen(false), 180); };
   useEffect(() => () => hold(), []);
 
-  if (!item.submenu) {
+  if (!item.submenu || item.disabled) {
     return (
       <button
         type="button"
         role={item.checked !== undefined ? 'menuitemcheckbox' : 'menuitem'}
         aria-checked={item.checked !== undefined ? item.checked : undefined}
         aria-current={item.active || undefined}
-        onClick={() => { item.onSelect?.(); close(); }}
+        aria-disabled={item.disabled || undefined}
+        title={item.disabled ? item.disabledReason : undefined}
+        onClick={() => { if (item.disabled) return; item.onSelect?.(); close(); }}
         data-testid={item['data-testid']}
+        data-disabled={item.disabled ? '' : undefined}
         className={cn(ROW_CLASS, rowTone(item))}
       >
         <RowBody item={item} />
+        {item.disabled && item.disabledReason && <span className="sr-only">{` — ${item.disabledReason}`}</span>}
       </button>
     );
   }
@@ -300,7 +329,7 @@ function MenuRow({ item, close, testId }: { item: DropdownMenuItem; close: () =>
         data-testid={item['data-testid']}
         className={cn(ROW_CLASS, rowTone(item, open))}
       >
-        <RowBody item={item} />
+        <RowBody item={item} open={open} />
       </button>
       <InlinePopover
         trigger={rowRef}
@@ -329,6 +358,7 @@ function MenuRow({ item, close, testId }: { item: DropdownMenuItem; close: () =>
               {section.items.map((sub, i) => (
                 <MenuRow key={i} item={sub} close={close} testId={testId} />
               ))}
+              {section.caption && <SectionCaption text={section.caption} />}
             </div>
           ))}
         </div>
