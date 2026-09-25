@@ -43,6 +43,13 @@ export interface ComposerReference {
   menu?: readonly DropdownMenuSection[];
   /** Accessible name of the menu trigger. Default: the label. Since 2.389.0. */
   menuLabel?: string;
+  /**
+   * The chip's leading mark when it has no `icon`. `icon` (default): the
+   * document glyph. `dot`: a small brand-coloured dot — "● Observability
+   * Platform", "● This work item": the draft is about a scope, not a file.
+   * Ignored when `icon` is set. Since 2.390.0.
+   */
+  marker?: 'icon' | 'dot';
 }
 
 export interface ComposerReferencesProps {
@@ -83,6 +90,8 @@ export function ComposerReferences({
         // glyph means "none chosen" and takes the colour of the text.
         const glyph = reference.icon
           ? <span aria-hidden="true" className="shrink-0">{reference.icon}</span>
+          : reference.marker === 'dot'
+          ? <span aria-hidden="true" data-testid={`${testId}-dot`} className={cn('inline-block shrink-0 rounded-full bg-primary', size === 'md' ? 'mx-1 h-1.5 w-1.5' : 'mx-0.5 h-1.5 w-1.5')} />
           : <DocumentIcon size={size === 'md' ? 14 : 12} className={cn('shrink-0', size === 'md' ? 'text-text-secondary' : 'text-text-tertiary')} aria-hidden="true" />;
         const hasMenu = !!reference.menu && reference.menu.some((s) => s.items.length > 0);
         if (hasMenu) {

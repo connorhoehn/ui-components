@@ -85,6 +85,35 @@ export declare interface ActionNodeData {
     retryPolicy?: RetryPolicy;
 }
 
+export declare interface ActionRowItem {
+    id: string;
+    title: string;
+    /** One line under the title. Truncates; absent, no second line. */
+    description?: ReactNode;
+    /** Right-aligned facts, already worded — "Layla Hassan · 5 points". */
+    meta?: ReactNode;
+    /** A link target. Without it the row is a button calling `onOpen`. */
+    href?: string;
+    disabled?: boolean;
+    /** Tooltip on a disabled row: why it cannot be opened. */
+    disabledReason?: string;
+}
+
+export declare function ActionRowList({ items, onOpen, footer, emptyLabel, 'aria-label': ariaLabel, className, 'data-testid': testId, }: ActionRowListProps): JSX.Element | null;
+
+export declare interface ActionRowListProps {
+    items: ActionRowItem[];
+    /** A row was activated (click, Enter, Space). Also called for `href` rows. */
+    onOpen?: (item: ActionRowItem) => void;
+    /** Under the list — normally a link, "See all 11 work items →". */
+    footer?: ReactNode;
+    /** Shown instead of the rows when `items` is empty. Absent, nothing renders. */
+    emptyLabel?: ReactNode;
+    'aria-label'?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare type ActionType = 'update-document' | 'post-comment' | 'notify' | 'webhook' | 'mcp-tool' | 'sync-back';
 
 export declare function ActiveCallBanner({ open, onJoin, onDismiss, lobbyLabel, elapsedMs, participants, participantCount, loading, }: ActiveCallBannerProps): JSX.Element | null;
@@ -1522,7 +1551,7 @@ export declare interface BadgeProps {
 
 export declare type BadgeVariant = 'count' | 'dot' | 'pulse';
 
-export declare function Banner({ variant, title, layout, icon, onDismiss, action, children, className, style, 'data-testid': testId, }: BannerProps): JSX.Element;
+export declare function Banner({ variant, title, layout, icon, onDismiss, action, accent, meta, size, children, className, style, 'data-testid': testId, }: BannerProps): JSX.Element;
 
 export declare interface BannerProps {
     variant?: BannerVariant;
@@ -1559,6 +1588,25 @@ export declare interface BannerProps {
      * before the dismiss button, and never shrinks under a long message.
      */
     action?: ReactNode;
+    /**
+     * `callout` only: a 3px solid tone bar down the left edge — the notice
+     * reads as a pull-quote in a document body ("What needs attention").
+     * Default `none`. Since 2.390.0.
+     */
+    accent?: 'none' | 'bar';
+    /**
+     * `callout` only: a third line under the body — facts about the thing the
+     * notice is about ("Blocked · Eli Garcia · 2 points"), already worded and
+     * toned by the host. Since 2.390.0.
+     */
+    meta?: ReactNode;
+    /**
+     * `callout` only: `md` (default) is the 14px title over a 13px body; `lg`
+     * is a 17px title over a 15px body with roomier padding — a callout that is
+     * a section's content, not a note beside it — and its `action` sits level
+     * with the title rather than centred on the block. Since 2.390.0.
+     */
+    size?: 'md' | 'lg';
     children?: ReactNode;
     className?: string;
     style?: CSSProperties;
@@ -4541,6 +4589,13 @@ export declare interface ComposerReference {
     menu?: readonly DropdownMenuSection[];
     /** Accessible name of the menu trigger. Default: the label. Since 2.389.0. */
     menuLabel?: string;
+    /**
+     * The chip's leading mark when it has no `icon`. `icon` (default): the
+     * document glyph. `dot`: a small brand-coloured dot — "● Observability
+     * Platform", "● This work item": the draft is about a scope, not a file.
+     * Ignored when `icon` is set. Since 2.390.0.
+     */
+    marker?: 'icon' | 'dot';
 }
 
 export declare function ComposerReferences({ references, onRemove, removeLabel, className, size, 'data-testid': testId, }: ComposerReferencesProps): JSX.Element | null;
@@ -5832,7 +5887,7 @@ export declare interface DetailHeaderProps {
     'data-testid'?: string;
 }
 
-export declare function DetailSection({ title, hint, actions, first, variant, children, className, 'data-testid': testId, }: DetailSectionProps): JSX.Element;
+export declare function DetailSection({ title, hint, actions, first, variant, size, description, children, className, 'data-testid': testId, }: DetailSectionProps): JSX.Element;
 
 export declare interface DetailSectionProps {
     title: string;
@@ -5850,6 +5905,18 @@ export declare interface DetailSectionProps {
      * where there is no hover).
      */
     variant?: 'label' | 'heading';
+    /**
+     * `heading` only. `md` (default) is the 16px heading. `lg` (since 2.390.0)
+     * is a page's section heading — 19px semibold on a 28px row, sentence case
+     * ("What needs attention", "Plan next", "Why this matters").
+     */
+    size?: 'md' | 'lg';
+    /**
+     * `heading` only: one line under the heading, before the content — what
+     * the section is for ("Add enough detail for an engineer or agent to know
+     * what success looks like."). Since 2.390.0.
+     */
+    description?: ReactNode;
     children: ReactNode;
     className?: string;
     'data-testid'?: string;
@@ -5947,7 +6014,7 @@ export declare interface DiffViewerProps {
     'data-testid'?: string;
 }
 
-export declare function Disclosure({ summary, children, open, defaultOpen, onToggle, tone, density, variant, className, summaryClassName, bodyClassName, 'data-testid': testId, }: DisclosureProps): JSX.Element;
+export declare function Disclosure({ summary, children, open, defaultOpen, onToggle, tone, density, variant, hint, size, className, summaryClassName, bodyClassName, 'data-testid': testId, }: DisclosureProps): JSX.Element;
 
 export declare interface DisclosureProps {
     /** Always-visible trigger row. Any node — not just text. */
@@ -5985,6 +6052,18 @@ export declare interface DisclosureProps {
      * `density="compact"`. Default: unchanged (bordered card, tinted summary).
      */
     variant?: 'default' | 'plain';
+    /**
+     * Muted text after the summary, on the same row — what is inside, or why
+     * it is closed ("SME or release manager required to dispatch"). Since 2.390.0.
+     */
+    hint?: ReactNode;
+    /**
+     * `md` (default): the summary at the body size. `lg` (since 2.390.0): the
+     * summary is a section heading — 19px semibold with a 16px chevron — so a
+     * collapsed section ("› Run setup") reads like its open neighbours.
+     * Composable with `variant="plain"`; ignored with `density="compact"`.
+     */
+    size?: 'md' | 'lg';
     className?: string;
     summaryClassName?: string;
     bodyClassName?: string;
@@ -6695,7 +6774,7 @@ export declare interface EmojiShortcode {
     keywords?: readonly string[];
 }
 
-export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, actions, testId, actionTestId, tone, className, size, density, }: EmptyStateProps): JSX.Element;
+export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, actions, testId, actionTestId, tone, className, size, density, align, actionsDirection, details, }: EmptyStateProps): JSX.Element;
 
 export declare interface EmptyStateAction {
     /** Visible label on the action button or link. */
@@ -6708,9 +6787,10 @@ export declare interface EmptyStateAction {
      * Visual variant.
      * `primary`   — solid indigo, used for the first/most important step
      * `secondary` — outlined, used for additional steps
+     * `link`      — primary-coloured text, no box ("Show everyone →"). Since 2.390.0.
      * Defaults to `primary` for the first action, `secondary` for the rest.
      */
-    variant?: 'primary' | 'secondary';
+    variant?: 'primary' | 'secondary' | 'link';
     /**
      * When true (and `href` is set), opens in a new tab with
      * `target=_blank rel=noopener noreferrer` and an sr-only
@@ -6736,6 +6816,17 @@ export declare interface EmptyStateAction {
  * text-text-tertiary">`. `compact` wins on layout when both are set.
  */
 export declare type EmptyStateDensity = 'default' | 'compact';
+
+/**
+ * A "how this works" block under the main message, past a rule — a heading,
+ * a few lines of explanation, and one quiet action ("Refresh this view").
+ * Since 2.390.0.
+ */
+export declare interface EmptyStateDetails {
+    title: string;
+    body?: ReactNode;
+    action?: EmptyStateAction;
+}
 
 export declare interface EmptyStateProps {
     icon?: ReactNode;
@@ -6779,6 +6870,24 @@ export declare interface EmptyStateProps {
     size?: EmptyStateSize;
     /** Layout density. Default `default`. See `EmptyStateDensity`. */
     density?: EmptyStateDensity;
+    /**
+     * `center` (default): the centred block. `start`: left-aligned, with no
+     * minimum height and no centring — an empty state that is the top of a
+     * page or a rail ("No initiatives are linked to you yet." under the page
+     * title, "Nothing linked yet" at the top of a list column). Since 2.390.0.
+     *
+     * `size="lg"` (since 2.390.0) is the page-body message at a heading's
+     * scale: a 24px bold title over a 16px description.
+     */
+    align?: 'center' | 'start';
+    /**
+     * How `actions` lay out. `column` (default): stacked, full width.
+     * `row`: side by side at their own width ("Browse all initiatives"
+     * beside "Check profile"). Since 2.390.0.
+     */
+    actionsDirection?: 'column' | 'row';
+    /** A "how this works" block under a rule. See `EmptyStateDetails`. Since 2.390.0. */
+    details?: EmptyStateDetails | null;
 }
 
 /**
@@ -6786,7 +6895,7 @@ export declare interface EmptyStateProps {
  * lane or list group that is one of several on the page: no minimum height,
  * a 28px glyph and a 14px title, so three empty lanes fit above the fold.
  */
-export declare type EmptyStateSize = 'md' | 'sm';
+export declare type EmptyStateSize = 'md' | 'sm' | 'lg';
 
 /** @see SurfaceTone — which colour family the empty state paints in. */
 export declare type EmptyStateTone = SurfaceTone;
@@ -7054,7 +7163,7 @@ export declare interface ExpertSkillMatch {
     strength?: number;
 }
 
-export declare function ExplorerLayout({ rail, children, aside, railWidth, header, paneHeader, railCount, railHeading, railCollapsed, onToggleRail, railLabel, railTitle, railActions, railHeader, railFooter, panePadding, asidePlacement, className, 'data-testid': testId, }: ExplorerLayoutProps): JSX.Element;
+export declare function ExplorerLayout({ rail, children, aside, railWidth, header, paneHeader, paneFooter, railCount, railCountStyle, railBack, railHeading, railCollapsed, onToggleRail, railLabel, railTitle, railActions, railHeader, railFooter, panePadding, asidePlacement, className, 'data-testid': testId, }: ExplorerLayoutProps): JSX.Element;
 
 export declare interface ExplorerLayoutProps {
     /** Left rail — flush to the pane's left edge, its own border, scrolls independently. */
@@ -7088,8 +7197,22 @@ export declare interface ExplorerLayoutProps {
      * into the record head below the band, landed on the aside's top row).
      */
     paneHeader?: ReactNode;
+    /**
+     * A band UNDER the pane only — a docked composer that must stay put while
+     * the pane scrolls. It does not scroll; the pane above it does. It spans
+     * the pane's column, never the rail or the aside (the same rule as
+     * `paneHeader`), and has no border of its own. Since 2.390.0.
+     */
+    paneFooter?: ReactNode;
     /** A count beside `railTitle` ("Work 11"). Since 2.385.0. */
     railCount?: number;
+    /** How `railCount` reads — see `WorkspaceRail.countStyle`. Default `chip`. Since 2.390.0. */
+    railCountStyle?: 'chip' | 'plain';
+    /**
+     * A back link over the rail's title — "‹ Initiatives" above "Work 11". See
+     * `WorkspaceRail.back`. Since 2.390.0.
+     */
+    railBack?: WorkspaceRailBack | null;
     /** The rail's heading style — see `WorkspaceRail.heading`. Default `compact`. Since 2.385.0. */
     railHeading?: 'compact' | 'prominent' | 'label';
     /**
@@ -7132,6 +7255,13 @@ export declare interface ExplorerLayoutProps {
     className?: string;
     'data-testid'?: string;
 }
+
+/**
+ * An arrow leaving to the upper right, with no box: "opens somewhere else" —
+ * the ↗ after "Repository" on an outlined link button. `PopOutIcon` is the
+ * boxed variant ("open in its own view"). Since 2.390.0.
+ */
+export declare function ExternalLinkIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** An eye: watching, "N people are seeing this". */
 export declare function EyeIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -8090,7 +8220,7 @@ export declare function gridCols(count: number): number;
 /** Six dots in two columns: a drag handle — "pick this up and move it". Since 2.385.0. */
 export declare function GripIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, onReorder, canReorder, reorderLabel, size, groupHeading, currentStyle, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
+export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, onReorder, canReorder, reorderLabel, size, groupHeading, currentStyle, groupCountStyle, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
 
 export declare interface GroupedListGroup {
     id: string;
@@ -8158,6 +8288,12 @@ export declare interface GroupedListProps {
      * the left edge at `sm` too. Since 2.389.0.
      */
     currentStyle?: 'tint' | 'bar';
+    /**
+     * How a `title` group header's count reads. `chip` (default): a neutral
+     * count chip. `plain`: muted text after the title — "In progress 9". (A
+     * `label` heading's count is always plain.) Since 2.390.0.
+     */
+    groupCountStyle?: 'chip' | 'plain';
     className?: string;
     'data-testid'?: string;
 }
@@ -9554,7 +9690,7 @@ declare interface KeyboardShortcut {
     preventDefault?: boolean;
 }
 
-export declare function KeyValue({ items, layout, labelWidth, className, 'aria-label': ariaLabel, 'data-testid': testId, }: KeyValueProps): JSX.Element | null;
+export declare function KeyValue({ items, layout, labelWidth, divided, className, 'aria-label': ariaLabel, 'data-testid': testId, }: KeyValueProps): JSX.Element | null;
 
 export declare interface KeyValueItem {
     label: string;
@@ -9566,6 +9702,16 @@ export declare interface KeyValueItem {
      * truncates (a long id, a path).
      */
     title?: string;
+    /**
+     * The value in tertiary ink — a fact that is really an absence ("Not
+     * defined yet", "No links added"). Since 2.390.0.
+     */
+    muted?: boolean;
+    /**
+     * A control at the row's end, after the value — "Draft with agent", "Add a
+     * note". Row layout only. Since 2.390.0.
+     */
+    action?: ReactNode;
 }
 
 export declare type KeyValueLayout = 'stack' | 'row' | 'grid';
@@ -9580,6 +9726,12 @@ export declare interface KeyValueProps {
     layout?: KeyValueLayout;
     /** Row layout only: the label column's Tailwind width class. Default `w-28`. */
     labelWidth?: string;
+    /**
+     * Row layout only: each fact on its own ruled row (a rule above the first
+     * and under every row), at 15px, with any `action` right-aligned — a small
+     * checklist table ("Complete the brief"). Default `false`. Since 2.390.0.
+     */
+    divided?: boolean;
     className?: string;
     'aria-label'?: string;
     'data-testid'?: string;
@@ -11281,7 +11433,7 @@ declare type OnMessageFn_8 = (handler: (msg: GatewayMessage) => void) => () => v
 
 declare type OnMessageFn_9 = (handler: (msg: GatewayMessage) => void) => () => void;
 
-export declare function OutcomeSection({ title, value, onChange, placeholder, readOnlyReason, pending, first, variant, className, 'data-testid': testId, }: OutcomeSectionProps): JSX.Element;
+export declare function OutcomeSection({ title, value, onChange, placeholder, readOnlyReason, pending, first, variant, size, className, 'data-testid': testId, }: OutcomeSectionProps): JSX.Element;
 
 export declare interface OutcomeSectionProps {
     title?: string;
@@ -11298,6 +11450,11 @@ export declare interface OutcomeSectionProps {
      * small uppercase caption under a hairline, for a side panel.
      */
     variant?: 'label' | 'heading';
+    /**
+     * `heading` only: `lg` (since 2.390.0) is `DetailSection size="lg"` — a
+     * 19px heading ("Why this matters") over a 15px body.
+     */
+    size?: 'md' | 'lg';
     className?: string;
     'data-testid'?: string;
 }
@@ -14446,6 +14603,38 @@ export declare interface ScopeHeaderProps {
     tabs?: ScopeHeaderTab[];
     activeTab?: string;
     onTabChange?: (id: string) => void;
+    /**
+     * The h1's size. `md` (default) is the 22px band title; `lg` is the 28px
+     * bold page title of a header that IS the page's heading (the Initiatives
+     * overview). Since 2.390.0.
+     */
+    titleSize?: 'md' | 'lg';
+    /**
+     * A sentence under the title row — the scope's summary ("Collect
+     * telemetry, reduce alert noise, and control retention costs."). Absent,
+     * nothing is drawn. Since 2.390.0.
+     */
+    description?: ReactNode;
+    /**
+     * How `people` reads. `avatars` (default): labelled avatar groups in the
+     * right-hand group. `names`: one line under the description, names then
+     * the label — "Nora DaSilva · Owner   Layla Hassan, Eli Garcia · SMEs".
+     * Since 2.390.0.
+     */
+    peopleStyle?: 'avatars' | 'names';
+    /**
+     * How `link` reads. `inline` (default): a primary text link with a leading
+     * glyph, ruled off from the people. `button`: an outlined button — label
+     * then ↗ (`ExternalLinkIcon`, or `link.icon`) — "Repository ↗". Since 2.390.0.
+     */
+    linkStyle?: 'inline' | 'button';
+    /**
+     * Where the stats line goes. `inline` (default): beside the title.
+     * `below`: its own line under the title row, at 15px — the condensed
+     * header over a work item ("18 / 52 points delivered · $1.73 spent").
+     * Since 2.390.0.
+     */
+    statsPlacement?: 'inline' | 'below';
     className?: string;
     'data-testid'?: string;
 }
@@ -14821,6 +15010,9 @@ export declare type SelectSize = 'sm' | 'md';
  * can be changed ("Model   Haiku ▾" in a run panel).
  */
 declare type SelectVariant = 'default' | 'pill' | 'ghost';
+
+/** A paper plane: "send" — the light prompt box's Send ("✈ Send"). Since 2.390.0. */
+export declare function SendIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 declare type SendMessage = (msg: Record<string, unknown>) => void;
 
@@ -15537,7 +15729,7 @@ export declare interface StatsCardProps {
     style?: CSSProperties;
 }
 
-export declare function StatStrip({ items, frameless, connectors, className, 'aria-label': ariaLabel, 'data-testid': testId, }: StatStripProps): JSX.Element;
+export declare function StatStrip({ items, frameless, connectors, variant, className, 'aria-label': ariaLabel, 'data-testid': testId, }: StatStripProps): JSX.Element;
 
 /** A labelled arrow between two clusters — "Compact", "Publish". */
 export declare interface StatStripConnector {
@@ -15557,6 +15749,15 @@ export declare interface StatStripItem {
     title?: string;
     onSelect?: () => void;
     href?: string;
+    /**
+     * A thin bar under the cluster — "18 / 52 points delivered" with its fill.
+     * Drawn only when `max` is above zero and `value` is finite (nothing is
+     * drawn for "we do not know"). Since 2.390.0.
+     */
+    progress?: {
+        value: number;
+        max: number;
+    } | null;
 }
 
 export declare interface StatStripProps {
@@ -15579,6 +15780,15 @@ export declare interface StatStripProps {
      * a missing one leaves a plain gap.
      */
     connectors?: StatStripConnector[];
+    /**
+     * `default`: the label over a 17px value (a KPI card, compressed).
+     * `inline` (since 2.390.0): the value then its label on ONE line, sentence
+     * case — "**18** / 52 points delivered · **2** agents running · **$1.73**
+     * spent of $95 allocated" — with dividers between clusters, no card, and a
+     * rule under the strip. The label is the words after the number, so write
+     * it as the rest of the sentence.
+     */
+    variant?: 'default' | 'inline';
     className?: string;
     'aria-label'?: string;
     'data-testid'?: string;
@@ -17146,11 +17356,17 @@ export declare interface TopNavProps {
 }
 
 /** Items → `GroupedListRow`s: leading checkbox or signal dot, and the meta line. Exported for tests. */
-export declare function toWorkListRows(items: WorkListItem[], { onToggleDone, testId }?: ToWorkListRowsOptions): GroupedListRow[];
+export declare function toWorkListRows(items: WorkListItem[], { onToggleDone, testId, metaStyle, pointsLabel, signalDisplay }?: ToWorkListRowsOptions): GroupedListRow[];
 
 export declare interface ToWorkListRowsOptions {
     onToggleDone?: (item: WorkListItem, done: boolean) => void;
     testId?: string;
+    /** Since 2.390.0. See `WorkListViewProps.metaStyle`. */
+    metaStyle?: WorkListMetaStyle;
+    /** Since 2.390.0. See `WorkListViewProps.pointsLabel`. */
+    pointsLabel?: 'pts' | 'points';
+    /** Since 2.390.0. See `WorkListViewProps.signalDisplay`. */
+    signalDisplay?: 'dot' | 'meta';
 }
 
 export declare interface TraceSpan {
@@ -20401,7 +20617,7 @@ declare interface UseActivityBusReturn {
       onRequestCollaboration?: (selection: Exclude<WorkGraphSelection, null>, capability: WorkGraphCapability) => void;
   }
 
-  export declare function WorkItemMetaBar({ status, points, owner, priority, appearance, className, 'data-testid': testId, }: WorkItemMetaBarProps): JSX.Element | null;
+  export declare function WorkItemMetaBar({ status, points, owner, priority, appearance, flags, layout, priorityStyle, className, 'data-testid': testId, }: WorkItemMetaBarProps): JSX.Element | null;
 
   export declare interface WorkItemMetaBarProps {
       status?: {
@@ -20439,6 +20655,26 @@ declare interface UseActivityBusReturn {
        * owner plain 14–15px text with one rule between them.
        */
       appearance?: 'inline' | 'boxed';
+      /**
+       * Toned facts drawn as tags right after the status — `{ label: 'Blocked',
+       * tone: 'danger' }`. Read-only; the host decides what they mean. Empty or
+       * absent draws none. Since 2.390.0.
+       */
+      flags?: WorkMetaFlag[];
+      /**
+       * `default`: the fields in their usual order (status, points, owner,
+       * priority). `divided` (since 2.390.0): the read-first row under a work
+       * item's large title — status · flags · owner · points · priority, a rule
+       * between each, at 15px ("● Open | Blocked | (EG) Eli Garcia | 2 points |
+       * High priority"). Ignored when `appearance="boxed"`.
+       */
+      layout?: 'default' | 'divided';
+      /**
+       * `label` (default): "Priority:" then the value. `tag` (since 2.390.0): one
+       * toned tag that says it all — "High priority". An editable priority keeps
+       * its select, without the "Priority:" word.
+       */
+      priorityStyle?: 'label' | 'tag';
       'data-testid'?: string;
       className?: string;
   }
@@ -20494,7 +20730,21 @@ declare interface UseActivityBusReturn {
       chips?: WorkListChip[];
       signal?: WorkListSignal | null;
       disabled?: boolean;
+      /**
+       * The item's kind as a word — "Bug", "Story". With `metaStyle="text"` it
+       * leads the meta line ("Bug · Eli Garcia · 2 points") instead of a chip.
+       * Since 2.390.0.
+       */
+      kindLabel?: string;
+      /**
+       * A toned tag at the row's end — "Blocked" (danger). Always visible; not
+       * inside the row's button. Since 2.390.0.
+       */
+      tag?: WorkListChip | null;
   }
+
+  /** How a work row's second line reads. See `WorkListViewProps.metaStyle`. */
+  export declare type WorkListMetaStyle = 'default' | 'text';
 
   export declare interface WorkListPerson {
       id: string;
@@ -20515,7 +20765,7 @@ declare interface UseActivityBusReturn {
   }
 
   /** Search on its own row; sort and the filter button on the next. */
-  export declare function WorkListToolbar({ query, onQueryChange, searchPlaceholder, sort, sortOptions, onSortChange, sortLabel, filters: filtersProp, filterFacets, activeFilterCount: activeFilterCountProp, onClearFilters, className, 'data-testid': testId, }: WorkListToolbarProps): JSX.Element;
+  export declare function WorkListToolbar({ query, onQueryChange, searchPlaceholder, sort, sortOptions, onSortChange, sortLabel, filters: filtersProp, filterFacets, activeFilterCount: activeFilterCountProp, onClearFilters, toolbarLayout, sortStyle, className, 'data-testid': testId, }: WorkListToolbarProps): JSX.Element;
 
   export declare interface WorkListToolbarProps {
       query: string;
@@ -20537,11 +20787,22 @@ declare interface UseActivityBusReturn {
       /** Default: the number of facets with a selection, else 0. */
       activeFilterCount?: number;
       onClearFilters?: () => void;
+      /**
+       * `stacked` (default): search on its own row, sort and the filter button
+       * on the next. `inline`: search and the filter button share the first
+       * row; sort sits alone below. Since 2.390.0.
+       */
+      toolbarLayout?: 'stacked' | 'inline';
+      /**
+       * `select` (default): a full-width select. `menu`: a quiet text menu —
+       * the current option's label and a chevron ("By priority ⌄"). Since 2.390.0.
+       */
+      sortStyle?: 'select' | 'menu';
       className?: string;
       'data-testid'?: string;
   }
 
-  export declare function WorkListView({ title, count, onCreate, createLabel, onCollapse, collapseLabel, chrome, query, onQueryChange, searchPlaceholder, sort, sortOptions, onSortChange, sortLabel, filters, filterFacets, activeFilterCount: activeFilterCountProp, onClearFilters, groups, items, currentId, onOpenItem, onToggleDone, onReorder, loading, error, onRetry, emptyLabel, storageKey, className, 'data-testid': testId, }: WorkListViewProps): JSX.Element;
+  export declare function WorkListView({ title, count, onCreate, createLabel, onCollapse, collapseLabel, chrome, query, onQueryChange, searchPlaceholder, sort, sortOptions, onSortChange, sortLabel, filters, filterFacets, activeFilterCount: activeFilterCountProp, onClearFilters, groups, items, currentId, onOpenItem, onToggleDone, onReorder, loading, error, onRetry, emptyLabel, storageKey, toolbarLayout, sortStyle, metaStyle, pointsLabel, signalDisplay, currentStyle, groupCountStyle, className, 'data-testid': testId, }: WorkListViewProps): JSX.Element;
 
   export declare interface WorkListViewProps extends Omit<WorkListToolbarProps, 'className' | 'data-testid'> {
       /** Default "Work". */
@@ -20573,8 +20834,32 @@ declare interface UseActivityBusReturn {
       emptyLabel?: string;
       /** Persists collapsed groups (GroupedList `storageKey`). */
       storageKey?: string;
+      /**
+       * `default`: owner avatar, type chips, then "signal · 5 pts · Owner".
+       * `text` (since 2.390.0): one line of words, no avatar and no chips —
+       * "Bug · Eli Garcia · 2 points" (`kindLabel`, owner, points).
+       */
+      metaStyle?: WorkListMetaStyle;
+      /** The points unit: `pts` (default, "5 pts") or `points` ("5 points", "1 point"). Since 2.390.0. */
+      pointsLabel?: 'pts' | 'points';
+      /**
+       * Where a `signal` shows. `dot` (default): a leading dot that replaces the
+       * checkbox, and its label in the meta line. `meta`: the label in the meta
+       * line only — no dot, so the row keeps its checkbox (or nothing). Since 2.390.0.
+       */
+      signalDisplay?: 'dot' | 'meta';
+      /** Passed to `GroupedList.currentStyle`. Since 2.390.0. */
+      currentStyle?: 'tint' | 'bar';
+      /** Passed to `GroupedList.groupCountStyle`. Since 2.390.0. */
+      groupCountStyle?: 'chip' | 'plain';
       className?: string;
       'data-testid'?: string;
+  }
+
+  /** A read-only toned tag on the meta row — "Blocked", in mono like the item key. Since 2.390.0. */
+  export declare interface WorkMetaFlag {
+      label: string;
+      tone?: ChipTone;
   }
 
   export declare interface WorkMetaOption {
@@ -20739,7 +21024,13 @@ declare interface UseActivityBusReturn {
   }
 
   /** Shared document/chat rail: fixed header and footer, one scrollable body. */
-  export declare function WorkspaceRail({ title, label, actions, header, footer, children, width, count, heading, collapsed, collapsedContent, onToggle, toggleLabel, toggleTestId, className, 'data-testid': testId, }: WorkspaceRailProps): JSX.Element;
+  export declare function WorkspaceRail({ title, label, actions, header, footer, children, width, count, heading, countStyle, back, collapsed, collapsedContent, onToggle, toggleLabel, toggleTestId, className, 'data-testid': testId, }: WorkspaceRailProps): JSX.Element;
+
+  export declare interface WorkspaceRailBack {
+      label: string;
+      href?: string;
+      onClick?: () => void;
+  }
 
   export declare interface WorkspaceRailProps {
       title?: string;
@@ -20764,6 +21055,17 @@ declare interface UseActivityBusReturn {
        * mockup (since 2.389.2).
        */
       heading?: 'compact' | 'prominent' | 'label';
+      /**
+       * How `count` reads. `chip` (default): a neutral count chip. `plain`: muted
+       * text after the title — "Initiatives 11". Since 2.390.0.
+       */
+      countStyle?: 'chip' | 'plain';
+      /**
+       * A back link on its own row ABOVE the title — "‹ Initiatives" over "Work
+       * 11", when the rail has drilled into one thing. `href` renders a link,
+       * otherwise a button calling `onClick`. Since 2.390.0.
+       */
+      back?: WorkspaceRailBack | null;
       collapsed?: boolean;
       collapsedContent?: ReactNode;
       onToggle?: () => void;
@@ -20827,6 +21129,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -20839,19 +21154,6 @@ declare module '@tiptap/core' {
             setLineSpacing: (spacing: LineSpacing) => ReturnType;
             /** Return the paragraphs in the selection to the paper's own leading. */
             unsetLineSpacing: () => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
         };
     }
 }
@@ -20905,16 +21207,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
@@ -20931,6 +21223,16 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

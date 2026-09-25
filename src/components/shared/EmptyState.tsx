@@ -31,7 +31,18 @@ export type EmptyStateTone = SurfaceTone;
  * lane or list group that is one of several on the page: no minimum height,
  * a 28px glyph and a 14px title, so three empty lanes fit above the fold.
  */
-export type EmptyStateSize = 'md' | 'sm';
+export type EmptyStateSize = 'md' | 'sm' | 'lg';
+
+/**
+ * A "how this works" block under the main message, past a rule — a heading,
+ * a few lines of explanation, and one quiet action ("Refresh this view").
+ * Since 2.390.0.
+ */
+export interface EmptyStateDetails {
+  title: string;
+  body?: ReactNode;
+  action?: EmptyStateAction;
+}
 
 /**
  * `default` is the centred block (both sizes). `compact` is a single quiet
@@ -88,9 +99,10 @@ export interface EmptyStateAction {
    * Visual variant.
    * `primary`   — solid indigo, used for the first/most important step
    * `secondary` — outlined, used for additional steps
+   * `link`      — primary-coloured text, no box ("Show everyone →"). Since 2.390.0.
    * Defaults to `primary` for the first action, `secondary` for the rest.
    */
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'link';
   /**
    * When true (and `href` is set), opens in a new tab with
    * `target=_blank rel=noopener noreferrer` and an sr-only
@@ -146,27 +158,52 @@ export interface EmptyStateProps {
   size?: EmptyStateSize;
   /** Layout density. Default `default`. See `EmptyStateDensity`. */
   density?: EmptyStateDensity;
+  /**
+   * `center` (default): the centred block. `start`: left-aligned, with no
+   * minimum height and no centring — an empty state that is the top of a
+   * page or a rail ("No initiatives are linked to you yet." under the page
+   * title, "Nothing linked yet" at the top of a list column). Since 2.390.0.
+   *
+   * `size="lg"` (since 2.390.0) is the page-body message at a heading's
+   * scale: a 24px bold title over a 16px description.
+   */
+  align?: 'center' | 'start';
+  /**
+   * How `actions` lay out. `column` (default): stacked, full width.
+   * `row`: side by side at their own width ("Browse all initiatives"
+   * beside "Check profile"). Since 2.390.0.
+   */
+  actionsDirection?: 'column' | 'row';
+  /** A "how this works" block under a rule. See `EmptyStateDetails`. Since 2.390.0. */
+  details?: EmptyStateDetails | null;
 }
 
 function EmptyState({
   icon, title, body, description, actionLabel, onAction, action, actions,
   testId = 'empty-state', actionTestId = 'empty-state-action',
   tone = 'surface', className, size = 'md', density = 'default',
+  align = 'center', actionsDirection = 'column', details,
 }: EmptyStateProps) {
   const resolvedDescription = description ?? body;
   const palette: Palette = TONE[tone] ?? TONE.surface;
   const small = size === 'sm';
+  const large = size === 'lg';
   const compact = density === 'compact';
+  const start = align === 'start' && !compact;
   return (
     <div
       data-testid={testId}
+      data-align={align}
+      data-size={size}
       className={cn(
         compact
           ? 'flex flex-row flex-wrap items-center gap-1.5 py-1 text-[13px] font-[inherit]'
-          : cn(
-              'flex flex-col items-center justify-center font-[inherit]',
-              small ? 'gap-1 px-4 py-6' : 'min-h-[220px] gap-2 p-8',
-            ),
+          : start
+            ? cn('flex flex-col items-start text-left font-[inherit]', small ? 'gap-1' : large ? 'gap-2' : 'gap-1.5')
+            : cn(
+                'flex flex-col items-center justify-center font-[inherit]',
+                small ? 'gap-1 px-4 py-6' : 'min-h-[220px] gap-2 p-8',
+              ),
         palette.container,
         className,
       )}
@@ -185,19 +222,33 @@ function EmptyState({
       {compact ? (
         <span className={cn('font-normal', palette.description)}>{title}</span>
       ) : (
-        <div className={cn(small ? 'text-[14px] font-semibold' : 'text-[17px] font-semibold', palette.title)}>{title}</div>
+        <div
+          className={cn(
+            small ? 'text-[14px] font-semibold' : large ? 'text-[24px] font-bold leading-8 tracking-[-0.01em]' : start ? 'text-lg font-semibold leading-7' : 'text-[17px] font-semibold',
+            // A page-scale or start-aligned message is a heading in body ink,
+            // not the muted slate of a placeholder.
+            large || start ? 'text-text-primary' : palette.title,
+          )}
+        >
+          {title}
+        </div>
       )}
       {resolvedDescription && (
         compact ? (
           <span className={palette.description}>{resolvedDescription}</span>
         ) : (
-          <div className={cn('text-[13px] text-center max-w-[340px] leading-normal', palette.description)}>
+          <div
+            className={cn(
+              start ? 'text-left' : 'text-center max-w-[340px]',
+              large ? 'text-base leading-[25px] text-text-secondary' : start && !small ? 'text-base leading-6 text-text-secondary' : cn('text-[13px] leading-normal', palette.description),
+            )}
+          >
             {resolvedDescription}
           </div>
         )
       )}
       {actions && actions.length > 0
-        ? <GuidedActionList actions={actions} palette={palette} />
+        ? <GuidedActionList actions={actions} palette={palette} direction={actionsDirection} large={large} start={start} />
         : action
           ? <div className="mt-2.5">{action}</div>
           : actionLabel && onAction && (
@@ -213,15 +264,38 @@ function EmptyState({
                 {actionLabel}
               </button>
             )}
+      {details && !compact && (
+        <div className={cn('flex w-full flex-col gap-1.5 border-t border-border', large ? 'mt-[22px] pt-8' : 'mt-5 pt-5', start ? 'items-start text-left' : 'items-center text-center')} data-testid={`${testId}-details`}>
+          <div className={cn('font-semibold leading-7 text-text-primary', large ? 'text-[19px]' : 'text-lg')}>{details.title}</div>
+          {details.body != null && (
+            <div className="text-[15px] leading-[25px] text-text-secondary">{details.body}</div>
+          )}
+          {details.action && (
+            <div className="mt-3">
+              <GuidedAction action={details.action} defaultVariant="link" palette={palette} large={large} start={start} />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
-function GuidedActionList({ actions, palette }: { actions: EmptyStateAction[]; palette: Palette }) {
+function GuidedActionList({
+  actions, palette, direction = 'column', large = false, start = false,
+}: { actions: EmptyStateAction[]; palette: Palette; direction?: 'column' | 'row'; large?: boolean; start?: boolean }) {
+  const row = direction === 'row';
   return (
     <ul
       data-testid="empty-state-actions"
-      className="mt-3 flex flex-col gap-3 w-full max-w-[420px]"
+      data-direction={direction}
+      className={cn(
+        'm-0 list-none p-0',
+        row ? cn('flex flex-row flex-wrap items-center gap-4', start ? 'justify-start' : 'justify-center') : 'flex flex-col gap-3 w-full max-w-[420px]',
+        // lg: 8px under the body (with the stack's own 8px gap, 16px) — the
+        // Initiatives mockup's pitch from the second line to the buttons.
+        large ? 'mt-2' : start ? 'mt-0' : 'mt-3',
+      )}
     >
       {actions.map((a, i) => (
         <li key={`${a.label}-${i}`} className="flex flex-col gap-1.5">
@@ -229,6 +303,9 @@ function GuidedActionList({ actions, palette }: { actions: EmptyStateAction[]; p
             action={a}
             defaultVariant={i === 0 ? 'primary' : 'secondary'}
             palette={palette}
+            large={large}
+            inline={row}
+            start={start}
           />
           {a.code && <CopyableCode code={a.code} palette={palette} />}
         </li>
@@ -241,18 +318,35 @@ function GuidedAction({
   action,
   defaultVariant,
   palette,
+  large = false,
+  inline = false,
+  start = false,
 }: {
   action: EmptyStateAction;
-  defaultVariant: 'primary' | 'secondary';
+  defaultVariant: 'primary' | 'secondary' | 'link';
   palette: Palette;
+  large?: boolean;
+  inline?: boolean;
+  start?: boolean;
 }) {
   const variant = action.variant ?? defaultVariant;
-  const className = cn(
-    'inline-flex items-center justify-center self-stretch',
-    'px-[18px] py-[8px] text-sm font-semibold rounded-lg cursor-pointer',
-    'transition-colors font-[inherit]',
-    variant === 'primary' ? palette.actionPrimary : palette.actionSecondary,
-  );
+  const className = variant === 'link'
+    ? cn(
+        'inline-flex items-center gap-1 self-start border-0 bg-transparent p-0 font-medium text-primary no-underline',
+        'cursor-pointer hover:underline [font-family:inherit]',
+        large || start ? 'text-base' : 'text-[15px]',
+      )
+    : cn(
+        'inline-flex items-center justify-center',
+        inline ? 'self-start' : 'self-stretch',
+        large ? 'px-[21px] py-[10px] text-base' : 'px-[18px] py-[8px] text-sm',
+        'font-semibold rounded-lg cursor-pointer',
+        // `[font-family:inherit]`, not `font-[inherit]`: tailwind-merge reads the
+        // latter as a font WEIGHT and drops `font-semibold` (the buttons rendered
+        // at 400). Since 2.390.0.
+        'transition-colors [font-family:inherit]',
+        variant === 'primary' ? palette.actionPrimary : palette.actionSecondary,
+      );
 
   if (action.href) {
     const external = action.external === true;

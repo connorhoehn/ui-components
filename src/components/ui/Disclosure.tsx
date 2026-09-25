@@ -49,6 +49,18 @@ export interface DisclosureProps {
    * `density="compact"`. Default: unchanged (bordered card, tinted summary).
    */
   variant?: 'default' | 'plain';
+  /**
+   * Muted text after the summary, on the same row — what is inside, or why
+   * it is closed ("SME or release manager required to dispatch"). Since 2.390.0.
+   */
+  hint?: ReactNode;
+  /**
+   * `md` (default): the summary at the body size. `lg` (since 2.390.0): the
+   * summary is a section heading — 19px semibold with a 16px chevron — so a
+   * collapsed section ("› Run setup") reads like its open neighbours.
+   * Composable with `variant="plain"`; ignored with `density="compact"`.
+   */
+  size?: 'md' | 'lg';
   className?: string;
   summaryClassName?: string;
   bodyClassName?: string;
@@ -64,6 +76,8 @@ export function Disclosure({
   tone,
   density = 'default',
   variant = 'default',
+  hint,
+  size = 'md',
   className,
   summaryClassName,
   bodyClassName,
@@ -96,6 +110,8 @@ export function Disclosure({
   const key = tone !== undefined ? toneKey(tone) : undefined;
   const compact = density === 'compact';
   const plain = variant === 'plain';
+  const lg = size === 'lg' && !compact;
+  const hasHint = hint != null && hint !== false;
 
   return (
     <details
@@ -103,6 +119,7 @@ export function Disclosure({
       open={resolvedOpen}
       onToggle={handleToggle}
       data-testid={testId}
+      data-size={lg ? 'lg' : undefined}
       className={cn(
         'group',
         !plain && 'rounded-md border overflow-hidden',
@@ -115,19 +132,26 @@ export function Disclosure({
         data-testid={`${testId}-summary`}
         className={cn(
           'flex items-center gap-2 cursor-pointer select-none list-none marker:hidden [&::-webkit-details-marker]:hidden',
-          compact ? 'px-2 py-1' : 'px-3 py-2',
+          compact ? 'px-2 py-1' : lg ? (plain ? 'gap-3 px-0 py-0.5' : 'gap-3 px-3 py-2.5') : 'px-3 py-2',
           plain
-            ? 'text-text-primary hover:bg-surface-hover'
+            ? cn('text-text-primary', !lg && 'hover:bg-surface-hover')
             : (key ? TONE_SOFT[key] : 'bg-surface text-text-primary hover:bg-surface-hover'),
           summaryClassName,
         )}
       >
         <ChevronIcon
-          size={compact ? 11 : 14}
+          size={compact ? 11 : lg ? 16 : 14}
           dir="right"
-          className="shrink-0 transition-transform duration-150 group-open:rotate-90"
+          className={cn('shrink-0 transition-transform duration-150 group-open:rotate-90', lg && 'text-text-secondary')}
         />
-        <span className="min-w-0 flex-1">{summary}</span>
+        {hasHint ? (
+          <span className="flex min-w-0 flex-1 items-baseline gap-x-6">
+            <span className={cn('min-w-0 shrink-0', lg && 'text-[19px] font-semibold leading-7')}>{summary}</span>
+            <span className={cn('min-w-0 truncate text-text-tertiary', lg ? 'text-sm' : 'text-xs')} data-testid={`${testId}-hint`}>{hint}</span>
+          </span>
+        ) : (
+          <span className={cn('min-w-0 flex-1', lg && 'text-[19px] font-semibold leading-7')}>{summary}</span>
+        )}
       </summary>
       <div
         data-testid={`${testId}-body`}

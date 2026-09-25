@@ -254,7 +254,7 @@ export declare interface BadgeProps {
 
 export declare type BadgeVariant = 'count' | 'dot' | 'pulse';
 
-export declare function Banner({ variant, title, layout, icon, onDismiss, action, children, className, style, 'data-testid': testId, }: BannerProps): JSX.Element;
+export declare function Banner({ variant, title, layout, icon, onDismiss, action, accent, meta, size, children, className, style, 'data-testid': testId, }: BannerProps): JSX.Element;
 
 export declare interface BannerProps {
     variant?: BannerVariant;
@@ -291,6 +291,25 @@ export declare interface BannerProps {
      * before the dismiss button, and never shrinks under a long message.
      */
     action?: ReactNode;
+    /**
+     * `callout` only: a 3px solid tone bar down the left edge — the notice
+     * reads as a pull-quote in a document body ("What needs attention").
+     * Default `none`. Since 2.390.0.
+     */
+    accent?: 'none' | 'bar';
+    /**
+     * `callout` only: a third line under the body — facts about the thing the
+     * notice is about ("Blocked · Eli Garcia · 2 points"), already worded and
+     * toned by the host. Since 2.390.0.
+     */
+    meta?: ReactNode;
+    /**
+     * `callout` only: `md` (default) is the 14px title over a 13px body; `lg`
+     * is a 17px title over a 15px body with roomier padding — a callout that is
+     * a section's content, not a note beside it — and its `action` sits level
+     * with the title rather than centred on the block. Since 2.390.0.
+     */
+    size?: 'md' | 'lg';
     children?: ReactNode;
     className?: string;
     style?: CSSProperties;
@@ -1296,7 +1315,7 @@ export declare interface DetailHeaderProps {
     'data-testid'?: string;
 }
 
-export declare function DetailSection({ title, hint, actions, first, variant, children, className, 'data-testid': testId, }: DetailSectionProps): JSX.Element;
+export declare function DetailSection({ title, hint, actions, first, variant, size, description, children, className, 'data-testid': testId, }: DetailSectionProps): JSX.Element;
 
 export declare interface DetailSectionProps {
     title: string;
@@ -1314,6 +1333,18 @@ export declare interface DetailSectionProps {
      * where there is no hover).
      */
     variant?: 'label' | 'heading';
+    /**
+     * `heading` only. `md` (default) is the 16px heading. `lg` (since 2.390.0)
+     * is a page's section heading — 19px semibold on a 28px row, sentence case
+     * ("What needs attention", "Plan next", "Why this matters").
+     */
+    size?: 'md' | 'lg';
+    /**
+     * `heading` only: one line under the heading, before the content — what
+     * the section is for ("Add enough detail for an engineer or agent to know
+     * what success looks like."). Since 2.390.0.
+     */
+    description?: ReactNode;
     children: ReactNode;
     className?: string;
     'data-testid'?: string;
@@ -1360,6 +1391,62 @@ export declare interface DiffViewerProps {
     /** Note rendered when the caller knows the diff itself was truncated upstream. */
     truncatedNote?: ReactNode;
     className?: string;
+    'data-testid'?: string;
+}
+
+export declare function Disclosure({ summary, children, open, defaultOpen, onToggle, tone, density, variant, hint, size, className, summaryClassName, bodyClassName, 'data-testid': testId, }: DisclosureProps): JSX.Element;
+
+export declare interface DisclosureProps {
+    /** Always-visible trigger row. Any node — not just text. */
+    summary: ReactNode;
+    /** Shown when open. */
+    children: ReactNode;
+    /**
+     * Controlled open state. Omit to let the component own it (see
+     * `defaultOpen`); pass it and update it from `onToggle` to control it, the
+     * same contract as a controlled `<input>`.
+     */
+    open?: boolean;
+    /** Uncontrolled initial state. Default false. Ignored once `open` is passed. */
+    defaultOpen?: boolean;
+    /** Fires after every toggle, either direction, with the new open state. */
+    onToggle?: (open: boolean) => void;
+    /**
+     * Semantic tint for the summary row (and its left rule) — an admonition
+     * inside a longer document, a warning the reader can collapse once read.
+     * Default: no tint, matches surrounding chrome.
+     */
+    tone?: ToneOrAlias;
+    /**
+     * `'compact'` tightens padding, drops to `text-xs`, and shrinks the
+     * chevron — a disclosure nested inside an already-dense panel (a
+     * debugger side rail, a node inspector) where the default's `text-sm` /
+     * `px-3 py-2` reads oversized next to its neighbours. Default: unchanged.
+     */
+    density?: 'default' | 'compact';
+    /**
+     * `'plain'` drops the outer border and the summary row's background tint
+     * (including `tone`'s) entirely — just the summary row and body, for a
+     * borderless toggle inside a list where every row already has its own
+     * separator and a bordered/tinted card would double up. Composable with
+     * `density="compact"`. Default: unchanged (bordered card, tinted summary).
+     */
+    variant?: 'default' | 'plain';
+    /**
+     * Muted text after the summary, on the same row — what is inside, or why
+     * it is closed ("SME or release manager required to dispatch"). Since 2.390.0.
+     */
+    hint?: ReactNode;
+    /**
+     * `md` (default): the summary at the body size. `lg` (since 2.390.0): the
+     * summary is a section heading — 19px semibold with a 16px chevron — so a
+     * collapsed section ("› Run setup") reads like its open neighbours.
+     * Composable with `variant="plain"`; ignored with `density="compact"`.
+     */
+    size?: 'md' | 'lg';
+    className?: string;
+    summaryClassName?: string;
+    bodyClassName?: string;
     'data-testid'?: string;
 }
 
@@ -1633,7 +1720,7 @@ export declare interface DropdownMenuSection {
 /** A pencil: "change this". */
 export declare function EditIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, actions, testId, actionTestId, tone, className, size, density, }: EmptyStateProps): JSX.Element;
+export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, actions, testId, actionTestId, tone, className, size, density, align, actionsDirection, details, }: EmptyStateProps): JSX.Element;
 
 export declare interface EmptyStateAction {
     /** Visible label on the action button or link. */
@@ -1646,9 +1733,10 @@ export declare interface EmptyStateAction {
      * Visual variant.
      * `primary`   — solid indigo, used for the first/most important step
      * `secondary` — outlined, used for additional steps
+     * `link`      — primary-coloured text, no box ("Show everyone →"). Since 2.390.0.
      * Defaults to `primary` for the first action, `secondary` for the rest.
      */
-    variant?: 'primary' | 'secondary';
+    variant?: 'primary' | 'secondary' | 'link';
     /**
      * When true (and `href` is set), opens in a new tab with
      * `target=_blank rel=noopener noreferrer` and an sr-only
@@ -1674,6 +1762,17 @@ export declare interface EmptyStateAction {
  * text-text-tertiary">`. `compact` wins on layout when both are set.
  */
 export declare type EmptyStateDensity = 'default' | 'compact';
+
+/**
+ * A "how this works" block under the main message, past a rule — a heading,
+ * a few lines of explanation, and one quiet action ("Refresh this view").
+ * Since 2.390.0.
+ */
+export declare interface EmptyStateDetails {
+    title: string;
+    body?: ReactNode;
+    action?: EmptyStateAction;
+}
 
 export declare interface EmptyStateProps {
     icon?: ReactNode;
@@ -1717,6 +1816,24 @@ export declare interface EmptyStateProps {
     size?: EmptyStateSize;
     /** Layout density. Default `default`. See `EmptyStateDensity`. */
     density?: EmptyStateDensity;
+    /**
+     * `center` (default): the centred block. `start`: left-aligned, with no
+     * minimum height and no centring — an empty state that is the top of a
+     * page or a rail ("No initiatives are linked to you yet." under the page
+     * title, "Nothing linked yet" at the top of a list column). Since 2.390.0.
+     *
+     * `size="lg"` (since 2.390.0) is the page-body message at a heading's
+     * scale: a 24px bold title over a 16px description.
+     */
+    align?: 'center' | 'start';
+    /**
+     * How `actions` lay out. `column` (default): stacked, full width.
+     * `row`: side by side at their own width ("Browse all initiatives"
+     * beside "Check profile"). Since 2.390.0.
+     */
+    actionsDirection?: 'column' | 'row';
+    /** A "how this works" block under a rule. See `EmptyStateDetails`. Since 2.390.0. */
+    details?: EmptyStateDetails | null;
 }
 
 /**
@@ -1724,7 +1841,7 @@ export declare interface EmptyStateProps {
  * lane or list group that is one of several on the page: no minimum height,
  * a 28px glyph and a 14px title, so three empty lanes fit above the fold.
  */
-export declare type EmptyStateSize = 'md' | 'sm';
+export declare type EmptyStateSize = 'md' | 'sm' | 'lg';
 
 /** @see SurfaceTone — which colour family the empty state paints in. */
 export declare type EmptyStateTone = SurfaceTone;
@@ -1828,6 +1945,13 @@ export declare interface ExpertSkillMatch {
      */
     strength?: number;
 }
+
+/**
+ * An arrow leaving to the upper right, with no box: "opens somewhere else" —
+ * the ↗ after "Repository" on an outlined link button. `PopOutIcon` is the
+ * boxed variant ("open in its own view"). Since 2.390.0.
+ */
+export declare function ExternalLinkIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** An eye: watching, "N people are seeing this". */
 export declare function EyeIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -2170,7 +2294,7 @@ export declare const GRAPHITE_PARTICLE_COLORS: readonly ["#f4f4f5", "#d4d4d8", "
 /** Six dots in two columns: a drag handle — "pick this up and move it". Since 2.385.0. */
 export declare function GripIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, onReorder, canReorder, reorderLabel, size, groupHeading, currentStyle, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
+export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, onReorder, canReorder, reorderLabel, size, groupHeading, currentStyle, groupCountStyle, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
 
 export declare interface GroupedListGroup {
     id: string;
@@ -2238,6 +2362,12 @@ export declare interface GroupedListProps {
      * the left edge at `sm` too. Since 2.389.0.
      */
     currentStyle?: 'tint' | 'bar';
+    /**
+     * How a `title` group header's count reads. `chip` (default): a neutral
+     * count chip. `plain`: muted text after the title — "In progress 9". (A
+     * `label` heading's count is always plain.) Since 2.390.0.
+     */
+    groupCountStyle?: 'chip' | 'plain';
     className?: string;
     'data-testid'?: string;
 }
@@ -2521,7 +2651,7 @@ declare const INTENSITY_SCALE: {
     readonly high: 1.75;
 };
 
-export declare function KeyValue({ items, layout, labelWidth, className, 'aria-label': ariaLabel, 'data-testid': testId, }: KeyValueProps): JSX.Element | null;
+export declare function KeyValue({ items, layout, labelWidth, divided, className, 'aria-label': ariaLabel, 'data-testid': testId, }: KeyValueProps): JSX.Element | null;
 
 export declare interface KeyValueItem {
     label: string;
@@ -2533,6 +2663,16 @@ export declare interface KeyValueItem {
      * truncates (a long id, a path).
      */
     title?: string;
+    /**
+     * The value in tertiary ink — a fact that is really an absence ("Not
+     * defined yet", "No links added"). Since 2.390.0.
+     */
+    muted?: boolean;
+    /**
+     * A control at the row's end, after the value — "Draft with agent", "Add a
+     * note". Row layout only. Since 2.390.0.
+     */
+    action?: ReactNode;
 }
 
 export declare type KeyValueLayout = 'stack' | 'row' | 'grid';
@@ -2547,6 +2687,12 @@ export declare interface KeyValueProps {
     layout?: KeyValueLayout;
     /** Row layout only: the label column's Tailwind width class. Default `w-28`. */
     labelWidth?: string;
+    /**
+     * Row layout only: each fact on its own ruled row (a rule above the first
+     * and under every row), at 15px, with any `action` right-aligned — a small
+     * checklist table ("Complete the brief"). Default `false`. Since 2.390.0.
+     */
+    divided?: boolean;
     className?: string;
     'aria-label'?: string;
     'data-testid'?: string;
@@ -4009,6 +4155,9 @@ export declare type SelectSize = 'sm' | 'md';
  */
 declare type SelectVariant = 'default' | 'pill' | 'ghost';
 
+/** A paper plane: "send" — the light prompt box's Send ("✈ Send"). Since 2.390.0. */
+export declare function SendIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 /** A tray with an arrow out of it: "share", "post this somewhere". */
 export declare function ShareIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -4334,7 +4483,7 @@ export declare interface StatCardProps {
     'data-testid'?: string;
 }
 
-export declare function StatStrip({ items, frameless, connectors, className, 'aria-label': ariaLabel, 'data-testid': testId, }: StatStripProps): JSX.Element;
+export declare function StatStrip({ items, frameless, connectors, variant, className, 'aria-label': ariaLabel, 'data-testid': testId, }: StatStripProps): JSX.Element;
 
 /** A labelled arrow between two clusters — "Compact", "Publish". */
 export declare interface StatStripConnector {
@@ -4354,6 +4503,15 @@ export declare interface StatStripItem {
     title?: string;
     onSelect?: () => void;
     href?: string;
+    /**
+     * A thin bar under the cluster — "18 / 52 points delivered" with its fill.
+     * Drawn only when `max` is above zero and `value` is finite (nothing is
+     * drawn for "we do not know"). Since 2.390.0.
+     */
+    progress?: {
+        value: number;
+        max: number;
+    } | null;
 }
 
 export declare interface StatStripProps {
@@ -4376,6 +4534,15 @@ export declare interface StatStripProps {
      * a missing one leaves a plain gap.
      */
     connectors?: StatStripConnector[];
+    /**
+     * `default`: the label over a 17px value (a KPI card, compressed).
+     * `inline` (since 2.390.0): the value then its label on ONE line, sentence
+     * case — "**18** / 52 points delivered · **2** agents running · **$1.73**
+     * spent of $95 allocated" — with dividers between clusters, no card, and a
+     * rule under the strip. The label is the words after the number, so write
+     * it as the rest of the sentence.
+     */
+    variant?: 'default' | 'inline';
     className?: string;
     'aria-label'?: string;
     'data-testid'?: string;
@@ -5562,6 +5729,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -5574,19 +5754,6 @@ declare module '@tiptap/core' {
             setLineSpacing: (spacing: LineSpacing) => ReturnType;
             /** Return the paragraphs in the selection to the paper's own leading. */
             unsetLineSpacing: () => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
         };
     }
 }
@@ -5640,16 +5807,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
@@ -5666,6 +5823,16 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

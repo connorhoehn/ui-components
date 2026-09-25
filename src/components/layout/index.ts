@@ -45,4 +45,4 @@ export { MoreContextDisclosure } from './MoreContextDisclosure';
 export type { MoreContextDisclosureProps, MoreContextItem } from './MoreContextDisclosure';
 
 export { WorkspaceRail } from './WorkspaceRail';
-export type { WorkspaceRailProps } from './WorkspaceRail';
+export type { WorkspaceRailProps, WorkspaceRailBack } from './WorkspaceRail';

@@ -372,7 +372,7 @@ export function EditorShell({
           {headActions && !crumbsRow && <div className="flex shrink-0 items-center gap-3" data-testid={`${testId}-actions`}>{headActions}</div>}
         </div>
         {metaBar != null && (
-          <div className={cn('flex min-w-0 items-center', workItem ? 'pb-2 pt-3' : 'py-2')} data-testid={`${testId}-meta-bar`}>{metaBar}</div>
+          <div className={cn('flex min-w-0 items-center', workItem ? (titleSize === 'lg' ? 'pb-2 pt-1' : 'pb-2 pt-3') : 'py-2')} data-testid={`${testId}-meta-bar`}>{metaBar}</div>
         )}
         {tabsTrailing != null ? (
           <div className="-mb-px mt-1 flex min-w-0 items-end gap-3" data-testid={`${testId}-tabs-row`}>

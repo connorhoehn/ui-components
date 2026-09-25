@@ -20,6 +20,14 @@ const ICON_CLASSES: Record<BannerVariant, string> = {
   success: 'text-success',
 };
 
+/** The callout's `accent="bar"` edge — the solid tone, 3px, on the left. */
+const ACCENT_BAR_CLASSES: Record<BannerVariant, string> = {
+  error:   'border-l-danger',
+  warning: 'border-l-warning',
+  info:    'border-l-info',
+  success: 'border-l-success',
+};
+
 const VARIANT_CLASSES: Record<BannerVariant, string> = {
   error:   'bg-danger-bg border-danger-border text-danger-fg',
   warning: 'bg-warning-bg border-warning-border text-warning-fg',
@@ -74,6 +82,25 @@ export interface BannerProps {
    * before the dismiss button, and never shrinks under a long message.
    */
   action?: ReactNode;
+  /**
+   * `callout` only: a 3px solid tone bar down the left edge — the notice
+   * reads as a pull-quote in a document body ("What needs attention").
+   * Default `none`. Since 2.390.0.
+   */
+  accent?: 'none' | 'bar';
+  /**
+   * `callout` only: a third line under the body — facts about the thing the
+   * notice is about ("Blocked · Eli Garcia · 2 points"), already worded and
+   * toned by the host. Since 2.390.0.
+   */
+  meta?: ReactNode;
+  /**
+   * `callout` only: `md` (default) is the 14px title over a 13px body; `lg`
+   * is a 17px title over a 15px body with roomier padding — a callout that is
+   * a section's content, not a note beside it — and its `action` sits level
+   * with the title rather than centred on the block. Since 2.390.0.
+   */
+  size?: 'md' | 'lg';
   children?: ReactNode;
   className?: string;
   style?: CSSProperties;
@@ -81,7 +108,7 @@ export interface BannerProps {
 }
 
 export default function Banner({
-  variant = 'error', title, layout = 'inline', icon, onDismiss, action, children, className, style,
+  variant = 'error', title, layout = 'inline', icon, onDismiss, action, accent = 'none', meta, size = 'md', children, className, style,
   'data-testid': testId,
 }: BannerProps) {
   const glyph = icon === true ? DEFAULT_ICON[variant]() : icon;
@@ -105,6 +132,7 @@ export default function Banner({
     </button>
   );
 
+  const lg = size === 'lg';
   if (layout === 'callout') {
     return (
       <div
@@ -112,17 +140,28 @@ export default function Banner({
         aria-live={variant === 'error' || variant === 'warning' ? 'assertive' : 'polite'}
         data-testid={testId}
         data-layout="callout"
+        data-accent={accent}
+        data-size={size}
         className={cn(
-          'px-5 py-3 rounded-md text-[13px] flex items-center gap-4 border text-text-primary',
+          // lg hangs the action off the title line, not the block's middle.
+          'rounded-md flex gap-4 border text-text-primary',
+          lg ? 'items-start' : 'items-center',
+          lg ? 'px-6 py-3 text-[15px]' : 'px-5 py-3 text-[13px]',
           CALLOUT_CLASSES[variant],
+          accent === 'bar' && cn('border-l-[3px]', ACCENT_BAR_CLASSES[variant]),
           className,
         )}
         style={style}
       >
         {iconNode}
         <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-          {title && <strong className="text-sm font-semibold leading-5 text-text-primary">{title}</strong>}
-          {children != null && <span className="text-[13px] leading-5 text-text-secondary">{children}</span>}
+          {title && <strong className={cn('font-semibold text-text-primary', lg ? 'text-[17px] leading-[22px]' : 'text-sm leading-5')}>{title}</strong>}
+          {children != null && <span className={cn(lg ? 'text-[15px] leading-[22px] text-text-primary' : 'text-[13px] leading-5 text-text-secondary')}>{children}</span>}
+          {meta != null && (
+            <span className={cn('text-text-secondary', lg ? 'text-sm leading-5' : 'text-[12px] leading-4')} data-testid={testId ? `${testId}-meta` : undefined}>
+              {meta}
+            </span>
+          )}
         </div>
         {action && <span className="shrink-0 flex items-center gap-2 whitespace-nowrap">{action}</span>}
         {dismiss}

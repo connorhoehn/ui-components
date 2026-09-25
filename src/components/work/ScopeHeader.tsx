@@ -24,7 +24,7 @@ import { MetaLine } from '../shared/MetaLine';
 import { PresenceAvatars, type PresenceUser } from '../shared/PresenceAvatars';
 import { Tabs } from '../shared/Tabs';
 import { DropdownMenu, type DropdownMenuSection } from '../shared/DropdownMenu';
-import { LinkIcon } from '../ui/Icons';
+import { ExternalLinkIcon, LinkIcon } from '../ui/Icons';
 import { TONE_SOLID_BG } from '../shared/tones';
 
 /**
@@ -117,6 +117,38 @@ export interface ScopeHeaderProps {
   tabs?: ScopeHeaderTab[];
   activeTab?: string;
   onTabChange?: (id: string) => void;
+  /**
+   * The h1's size. `md` (default) is the 22px band title; `lg` is the 28px
+   * bold page title of a header that IS the page's heading (the Initiatives
+   * overview). Since 2.390.0.
+   */
+  titleSize?: 'md' | 'lg';
+  /**
+   * A sentence under the title row — the scope's summary ("Collect
+   * telemetry, reduce alert noise, and control retention costs."). Absent,
+   * nothing is drawn. Since 2.390.0.
+   */
+  description?: ReactNode;
+  /**
+   * How `people` reads. `avatars` (default): labelled avatar groups in the
+   * right-hand group. `names`: one line under the description, names then
+   * the label — "Nora DaSilva · Owner   Layla Hassan, Eli Garcia · SMEs".
+   * Since 2.390.0.
+   */
+  peopleStyle?: 'avatars' | 'names';
+  /**
+   * How `link` reads. `inline` (default): a primary text link with a leading
+   * glyph, ruled off from the people. `button`: an outlined button — label
+   * then ↗ (`ExternalLinkIcon`, or `link.icon`) — "Repository ↗". Since 2.390.0.
+   */
+  linkStyle?: 'inline' | 'button';
+  /**
+   * Where the stats line goes. `inline` (default): beside the title.
+   * `below`: its own line under the title row, at 15px — the condensed
+   * header over a work item ("18 / 52 points delivered · $1.73 spent").
+   * Since 2.390.0.
+   */
+  statsPlacement?: 'inline' | 'below';
   className?: string;
   'data-testid'?: string;
 }
@@ -136,8 +168,8 @@ export function ScopeHeader(props: ScopeHeaderProps) {
 
 /** The right-hand group both variants share: controls · link · ⋯. */
 function RightGroup({
-  controls, link, menu, menuLabel, title, testId,
-}: Pick<ScopeHeaderProps, 'controls' | 'link' | 'menu' | 'menuLabel'> & { title: string; testId: string }) {
+  controls, link, menu, menuLabel, title, testId, linkStyle = 'inline',
+}: Pick<ScopeHeaderProps, 'controls' | 'link' | 'menu' | 'menuLabel' | 'linkStyle'> & { title: string; testId: string }) {
   const hasMenu = !!menu && menu.some((s) => s.items.length > 0);
   return (
     <>
@@ -146,7 +178,20 @@ function RightGroup({
           {controls}
         </div>
       )}
-      {link && (
+      {link && linkStyle === 'button' && (
+        <a
+          href={link.href}
+          target="_blank"
+          rel="noreferrer"
+          data-testid={`${testId}-link`}
+          data-link-style="button"
+          className="inline-flex h-9 min-w-0 shrink-0 items-center gap-1.5 rounded-lg border border-border bg-surface px-3.5 text-sm font-medium text-text-primary no-underline transition-colors hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        >
+          <span className="max-w-[16rem] truncate">{link.label}</span>
+          {link.icon ?? <ExternalLinkIcon size={14} />}
+        </a>
+      )}
+      {link && linkStyle !== 'button' && (
         <a
           href={link.href}
           target="_blank"
@@ -173,7 +218,7 @@ function RightGroup({
 }
 
 function ScopeCrumbs({
-  breadcrumbs, title, controls, link, menu, menuLabel, className, 'data-testid': testId = 'scope-header',
+  breadcrumbs, title, controls, link, menu, menuLabel, linkStyle, className, 'data-testid': testId = 'scope-header',
 }: ScopeHeaderProps) {
   const last = breadcrumbs && breadcrumbs.length > 0 ? breadcrumbs[breadcrumbs.length - 1]!.label : undefined;
   const name = title ?? (typeof last === 'string' ? last : 'this scope');
@@ -194,7 +239,7 @@ function ScopeCrumbs({
         // bit 2px into a long title). `relative z-10` keeps it above the next
         // row's background where it overhangs.
         <div className="relative z-10 -mb-[14px] ml-auto mt-3 flex shrink-0 items-center gap-4" data-hang="10" data-testid={`${testId}-right`}>
-          <RightGroup controls={controls} link={link} menu={menu} menuLabel={menuLabel} title={name} testId={testId} />
+          <RightGroup controls={controls} link={link} menu={menu} menuLabel={menuLabel} title={name} testId={testId} linkStyle={linkStyle} />
         </div>
       )}
     </div>
@@ -216,6 +261,11 @@ function ScopeHeaderFull({
   tabs,
   activeTab,
   onTabChange,
+  titleSize = 'md',
+  description,
+  peopleStyle = 'avatars',
+  linkStyle = 'inline',
+  statsPlacement = 'inline',
   className,
   'data-testid': testId = 'scope-header',
 }: ScopeHeaderProps) {
@@ -239,36 +289,69 @@ function ScopeHeaderFull({
   });
 
   const groups = (people ?? []).filter((g) => g.people.length > 0);
+  const namesLine = peopleStyle === 'names' && groups.length > 0;
+  const lg = titleSize === 'lg';
+  const statsBelow = statsPlacement === 'below';
+  const hasDescription = description != null && description !== false;
+  const statsNode = statItems.length > 0 ? (
+    <MetaLine
+      items={statItems}
+      size="sm"
+      tone="secondary"
+      className={cn('min-w-0', statsBelow ? 'text-[15px]' : 'text-[13px]')}
+      data-testid={`${testId}-stats`}
+    />
+  ) : null;
   const hasTabs = !!tabs && tabs.length > 0;
   const currentTab = hasTabs ? (tabs!.some((t) => t.id === activeTab) ? activeTab! : tabs![0]!.id) : undefined;
 
   return (
-    <div data-testid={testId} className={cn('flex min-w-0 flex-col gap-1.5 px-6 pt-3', !hasTabs && 'pb-3', className)}>
+    <div data-testid={testId} data-title-size={titleSize} className={cn('flex min-w-0 flex-col gap-1.5 px-6 pt-3', lg && 'gap-0 pt-4', !hasTabs && (lg ? 'pb-4' : 'pb-3'), className)}>
       {breadcrumbs && breadcrumbs.length > 0 && (
         <Breadcrumbs items={breadcrumbs} separator="›" maxItems={5} className="min-w-0" data-testid={`${testId}-crumbs`} />
       )}
       <div className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2">
         <div className="flex min-w-0 items-center gap-3">
-          <h1 className="m-0 min-w-0 truncate text-[22px] font-semibold leading-8 text-text-primary" title={title} data-testid={`${testId}-title`}>
+          <h1
+            className={cn(
+              'm-0 min-w-0 truncate text-text-primary',
+              lg ? 'text-[28px] font-bold leading-9 tracking-[-0.01em]' : 'text-[22px] font-semibold leading-8',
+            )}
+            title={title}
+            data-testid={`${testId}-title`}
+          >
             {title}
           </h1>
           {status && (
             <StatusPill label={status.label} state={status.tone ?? 'info'} variant="label" className="shrink-0" data-testid={`${testId}-status`} />
           )}
         </div>
-        {statItems.length > 0 && (
-          <MetaLine items={statItems} size="sm" tone="secondary" className="min-w-0 text-[13px]" data-testid={`${testId}-stats`} />
-        )}
-        <div className="ml-auto flex shrink-0 items-center gap-5">
-          {groups.map((g) => (
+        {!statsBelow && statsNode}
+        <div className={cn('ml-auto flex shrink-0 items-center', linkStyle === 'button' ? 'gap-3' : 'gap-5')}>
+          {!namesLine && groups.map((g) => (
             <div key={g.label} className="flex items-center gap-2" data-testid={`${testId}-people-${g.label.toLowerCase()}`}>
               <span className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">{g.label}</span>
               <PresenceAvatars users={g.people} size={26} maxVisible={4} />
             </div>
           ))}
-          <RightGroup controls={controls} link={link} menu={menu} menuLabel={menuLabel} title={title} testId={testId} />
+          <RightGroup controls={controls} link={link} menu={menu} menuLabel={menuLabel} title={title} testId={testId} linkStyle={linkStyle} />
         </div>
       </div>
+      {statsBelow && statsNode}
+      {hasDescription && (
+        <p className="m-0 min-w-0 text-base leading-6 text-text-secondary" data-testid={`${testId}-description`}>{description}</p>
+      )}
+      {namesLine && (
+        <div className="flex min-w-0 flex-wrap items-center gap-x-6 gap-y-1 text-sm leading-6 text-text-secondary" data-testid={`${testId}-people`}>
+          {groups.map((g) => (
+            <span key={g.label} className="min-w-0" data-testid={`${testId}-people-${g.label.toLowerCase()}`}>
+              {g.people.map((p) => p.name).join(', ')}
+              <span aria-hidden="true"> · </span>
+              {g.label}
+            </span>
+          ))}
+        </div>
+      )}
       {hasTabs && (
         <Tabs
           items={tabs!.map((t) => ({
@@ -300,8 +383,12 @@ function ScopeHeaderFull({
           variant="underline"
           size="md"
           badgeStyle="plain"
+          // lg: the count sits 10px after its label ("Work 11"), as the
+          // Initiatives mockup draws it — the button's own 6px gap is dropped
+          // and only the badge's margin remains.
+          {...(lg ? { itemClassName: 'gap-0 text-[15px]' } : {})}
           aria-label={`${title} views`}
-          className="-mb-px mt-1 border-b-0"
+          className={cn('-mb-px border-b-0', lg ? (hasDescription || namesLine ? 'mt-5' : 'mt-2') : hasDescription || namesLine ? 'mt-3' : 'mt-1')}
         />
       )}
     </div>

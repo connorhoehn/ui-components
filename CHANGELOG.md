@@ -6,6 +6,79 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.390.0] — 2026-09-25
+
+The Initiatives redesign's library batch (agentcore
+`docs/design/initiative-{overview,work,mine-empty}-mockup.png`). Every prop is
+additive and every default renders exactly as before. Composed end to end in
+Storybook as `Layout/ExplorerLayout › Initiative overview | Initiative work
+item | Initiatives mine empty`, checked at 1642×958 against the mockups.
+
+### Added
+- `ScopeHeader titleSize="lg"` (28px bold h1), `description` (the summary line
+  under the title), `peopleStyle="names"` ("Nora DaSilva · Owner   Layla
+  Hassan, Eli Garcia · SMEs" instead of avatar groups), `linkStyle="button"`
+  (an outlined "Repository ↗") and `statsPlacement="below"` (the stats on
+  their own 15px line — the condensed header over a work item).
+- `ExternalLinkIcon` — ↗ with no box (`PopOutIcon` is the boxed one).
+- `ExplorerLayout paneFooter` — a non-scrolling band under the pane only (a
+  docked composer), `railBack` ("‹ Initiatives" above "Work 11") and
+  `railCountStyle`; underneath, `WorkspaceRail back` / `countStyle="plain"`
+  and the `WorkspaceRailBack` type.
+- `GroupedList groupCountStyle="plain"` — "In progress 9" without the chip.
+- `WorkListView toolbarLayout="inline"` (search + filter on one row, sort
+  below), `sortStyle="menu"` ("By priority ⌄"), `metaStyle="text"` ("Bug · Eli
+  Garcia · 2 points", no avatar or chips), `pointsLabel="points"`,
+  `signalDisplay="meta"` (the signal's words without the leading dot), and
+  pass-through `currentStyle` / `groupCountStyle`; `WorkListItem.kindLabel`
+  and `WorkListItem.tag` (a toned chip at the row end, "Blocked"); the
+  `WorkListMetaStyle` type. `WorkListToolbar` takes the same two toolbar props.
+- `Banner` (callout) `accent="bar"` (3px tone bar on the left), `meta` (a
+  third line — "Blocked · Eli Garcia · 2 points") and `size="lg"` (17px title
+  over a 15px body, the action level with the title).
+- `StatStrip variant="inline"` ("**18** / 52 points delivered | **2** agents
+  running | **$1.73** spent of $95 allocated", dividers, no card, a rule under)
+  and `StatStripItem.progress` (a bar under the cluster; nothing drawn without
+  a max above zero).
+- **`ActionRowList`** (work/, root export) — a short ruled list where each row
+  is one button or link: title, one-line description, right-aligned meta, a
+  chevron, then a footer ("Plan next", "See all 11 work items →"). Disabled
+  rows keep a reason; an empty list shows `emptyLabel` or nothing.
+- `KeyValue` `items[].action` (a control at the row end), `items[].muted`
+  (tertiary value for an absence) and `divided` (ruled 15px rows — "Complete
+  the brief").
+- `EmptyState align="start"`, `size="lg"` (24px bold), `actionsDirection="row"`,
+  `EmptyStateAction.variant="link"` and `details` (a ruled "How this view
+  works" block with its own action); the `EmptyStateDetails` type.
+- `DetailSection` (heading) `size="lg"` (19px section heading) and
+  `description`; `OutcomeSection size="lg"` passes it through with a 15px body.
+- `ComposerReference.marker="dot"` — a brand dot instead of the document glyph.
+- `WorkItemMetaBar flags` (toned read-only tags after the status),
+  `layout="divided"` (status · flags · owner · points · priority, ruled, 15px)
+  and `priorityStyle="tag"` ("High priority"); the `WorkMetaFlag` type.
+- `Disclosure hint` (muted text after the summary) and `size="lg"` (a
+  19px heading summary — "› Run setup   SME or release manager required to
+  dispatch"). `Disclosure` / `DisclosureProps` are now exported from `/shared`
+  as well as the root.
+- `RichChatComposer toolbar="basic"` — the docked card as a light prompt box:
+  B, I, code, link, attach, a divider, then `toolbarExtras`; lists, quote and
+  strikethrough under the mode menu → Formatting; the mode as a boxed picker
+  without a glyph, the input in a bordered well, no rule over the strip. (Not
+  `prompt`: 2.389.11 took that name for the photo editor's command card.)
+- `RichChatComposer referencesPlacement="start"` — the draft's chips right
+  after the mode menu ("Agent ⌄ · ● Observability Platform ×") instead of at
+  the row's end.
+- `SendIcon` (a paper plane) — the `basic` box's Send leads with it.
+
+### Fixed
+- `EmptyState` action buttons rendered at weight 400: `font-[inherit]` read as
+  a font weight to tailwind-merge and dropped `font-semibold`. Now
+  `[font-family:inherit]`.
+- `WorkspaceRail` actions keep their own width — a full-width control (a
+  `Select`) in `actions` squeezed the title to nothing.
+- `EditorShell variant="work-item" titleSize="lg"` sits the meta bar 4px
+  closer to the title.
+
 ## [2.389.12] — 2026-09-25
 
 ### Added

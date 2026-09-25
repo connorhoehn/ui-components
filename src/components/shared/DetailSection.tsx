@@ -32,21 +32,35 @@ export interface DetailSectionProps {
    * where there is no hover).
    */
   variant?: 'label' | 'heading';
+  /**
+   * `heading` only. `md` (default) is the 16px heading. `lg` (since 2.390.0)
+   * is a page's section heading — 19px semibold on a 28px row, sentence case
+   * ("What needs attention", "Plan next", "Why this matters").
+   */
+  size?: 'md' | 'lg';
+  /**
+   * `heading` only: one line under the heading, before the content — what
+   * the section is for ("Add enough detail for an engineer or agent to know
+   * what success looks like."). Since 2.390.0.
+   */
+  description?: ReactNode;
   children: ReactNode;
   className?: string;
   'data-testid'?: string;
 }
 
 export function DetailSection({
-  title, hint, actions, first = false, variant = 'label', children, className, 'data-testid': testId,
+  title, hint, actions, first = false, variant = 'label', size = 'md', description, children, className, 'data-testid': testId,
 }: DetailSectionProps) {
   if (variant === 'heading') {
+    const lg = size === 'lg';
+    const hasDescription = description != null && description !== false;
     return (
-      <section className={cn('group/section', className)} data-variant="heading" {...(testId ? { 'data-testid': testId } : {})}>
+      <section className={cn('group/section', className)} data-variant="heading" data-size={size} {...(testId ? { 'data-testid': testId } : {})}>
         {/* A fixed 24px row: a hover action may be taller, but never pushes
             the body down (the mockup's heading → text pitch is 24px). */}
-        <div className="mb-0.5 flex h-6 items-center gap-2">
-          <h3 className="m-0 text-base font-semibold leading-6 text-text-primary">{title}</h3>
+        <div className={cn('flex items-center gap-2', lg ? 'h-7' : 'h-6', lg ? (hasDescription ? 'mb-0' : 'mb-2') : 'mb-0.5')}>
+          <h3 className={cn('m-0 font-semibold text-text-primary', lg ? 'text-[19px] leading-7' : 'text-base leading-6')}>{title}</h3>
           {hint != null && <span className="min-w-0 truncate text-[13px] text-text-tertiary">{hint}</span>}
           {actions != null && (
             <>
@@ -57,6 +71,11 @@ export function DetailSection({
             </>
           )}
         </div>
+        {hasDescription && (
+          <p className={cn('m-0 text-text-secondary', lg ? '-mt-1 mb-2 text-[15px] leading-6' : 'mb-2 text-[13px] leading-5')} data-testid={testId ? `${testId}-description` : undefined}>
+            {description}
+          </p>
+        )}
         {children}
       </section>
     );

@@ -4,6 +4,12 @@ import { IconButton } from '../ui/IconButton';
 import { ChevronIcon } from '../ui/Icons';
 import Chip from '../shared/Chip';
 
+export interface WorkspaceRailBack {
+  label: string;
+  href?: string;
+  onClick?: () => void;
+}
+
 export interface WorkspaceRailProps {
   title?: string;
   label?: string;
@@ -27,6 +33,17 @@ export interface WorkspaceRailProps {
    * mockup (since 2.389.2).
    */
   heading?: 'compact' | 'prominent' | 'label';
+  /**
+   * How `count` reads. `chip` (default): a neutral count chip. `plain`: muted
+   * text after the title — "Initiatives 11". Since 2.390.0.
+   */
+  countStyle?: 'chip' | 'plain';
+  /**
+   * A back link on its own row ABOVE the title — "‹ Initiatives" over "Work
+   * 11", when the rail has drilled into one thing. `href` renders a link,
+   * otherwise a button calling `onClick`. Since 2.390.0.
+   */
+  back?: WorkspaceRailBack | null;
   collapsed?: boolean;
   collapsedContent?: ReactNode;
   onToggle?: () => void;
@@ -36,10 +53,15 @@ export interface WorkspaceRailProps {
   'data-testid'?: string;
 }
 
+const BACK_CLASS = cn(
+  'inline-flex items-center gap-1 rounded border-0 bg-transparent p-0 text-[15px] font-medium text-primary no-underline',
+  'cursor-pointer hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+);
+
 /** Shared document/chat rail: fixed header and footer, one scrollable body. */
 export function WorkspaceRail({
   title, label, actions, header, footer, children,
-  width = 'md', count, heading = 'compact', collapsed = false, collapsedContent,
+  width = 'md', count, heading = 'compact', countStyle = 'chip', back, collapsed = false, collapsedContent,
   onToggle, toggleLabel, toggleTestId, className,
   'data-testid': testId = 'workspace-rail',
 }: WorkspaceRailProps) {
@@ -47,17 +69,38 @@ export function WorkspaceRail({
   return (
     <nav aria-label={label ?? title ?? 'Workspace'} data-testid={testId} data-collapsed={collapsed}
       className={cn('flex h-full min-h-0 shrink-0 flex-col border-r border-border bg-surface-panel', collapsed ? 'w-9' : width === 'sm' ? 'w-[240px]' : width === 'lg' ? 'w-[368px]' : width === 'ml' ? 'w-[320px]' : 'w-[300px]', className)}>
+      {back && !collapsed && (
+        <div className={cn('flex shrink-0 items-center pt-4', heading !== 'compact' ? 'px-5' : 'px-3.5')} data-testid={`${testId}-back-row`}>
+          {back.href ? (
+            <a href={back.href} onClick={back.onClick} className={BACK_CLASS} data-testid={`${testId}-back`}>
+              <ChevronIcon dir="left" size={14} />
+              {back.label}
+            </a>
+          ) : (
+            <button type="button" onClick={back.onClick} className={BACK_CLASS} data-testid={`${testId}-back`}>
+              <ChevronIcon dir="left" size={14} />
+              {back.label}
+            </button>
+          )}
+        </div>
+      )}
       {(title || actions || onToggle) && (
         <div className={cn('flex shrink-0 items-center gap-1', heading !== 'compact' ? 'h-14' : 'h-9 border-b border-border', collapsed ? 'justify-center' : heading !== 'compact' ? 'pl-5 pr-3' : 'pl-3.5 pr-1.5')} data-testid={`${testId}-header`}>
           {!collapsed && (title ? (
             <h2 className={cn('m-0 flex min-w-0 flex-1 items-center gap-2 text-text-primary', heading === 'prominent' ? 'text-[18px] font-semibold' : heading === 'label' ? 'text-[15px] font-semibold uppercase tracking-[0.02em]' : 'text-[12px] font-semibold')} data-testid={`${testId}-title`}>
               <span className="min-w-0 truncate">{title}</span>
-              {typeof count === 'number' && (
+              {typeof count === 'number' && countStyle === 'plain' && (
+                <span className="shrink-0 text-[13px] font-medium text-text-secondary" aria-label={`${count} items`} data-testid={`${testId}-count`} data-count-style="plain">{count}</span>
+              )}
+              {typeof count === 'number' && countStyle !== 'plain' && (
                 <Chip size={heading === 'prominent' ? 'md' : heading === 'label' ? 'sm' : 'xs'} tone="neutral" className="shrink-0" aria-label={`${count} items`} data-testid={`${testId}-count`}>{count}</Chip>
               )}
             </h2>
           ) : <span className="flex-1" />)}
-          {!collapsed && actions}
+          {/* Actions keep their own width: a full-width control (the Work
+              rail's initiative Select) otherwise took the whole row and
+              squeezed the title to nothing. */}
+          {!collapsed && actions != null && <div className="flex shrink-0 items-center gap-1" data-testid={`${testId}-actions`}>{actions}</div>}
           {onToggle && (
             <IconButton
               size="sm" variant="ghost"

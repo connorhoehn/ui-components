@@ -45,6 +45,7 @@ import { Avatar } from '../shared/Avatar';
 import { Checkbox } from '../forms/Checkbox';
 import { Select, type SelectOption } from '../forms/Select';
 import { FilterChip } from '../shared/FilterChip';
+import { DropdownMenu } from '../shared/DropdownMenu';
 
 export interface WorkListPerson {
   id: string;
@@ -84,7 +85,21 @@ export interface WorkListItem {
   chips?: WorkListChip[];
   signal?: WorkListSignal | null;
   disabled?: boolean;
+  /**
+   * The item's kind as a word — "Bug", "Story". With `metaStyle="text"` it
+   * leads the meta line ("Bug · Eli Garcia · 2 points") instead of a chip.
+   * Since 2.390.0.
+   */
+  kindLabel?: string;
+  /**
+   * A toned tag at the row's end — "Blocked" (danger). Always visible; not
+   * inside the row's button. Since 2.390.0.
+   */
+  tag?: WorkListChip | null;
 }
+
+/** How a work row's second line reads. See `WorkListViewProps.metaStyle`. */
+export type WorkListMetaStyle = 'default' | 'text';
 
 export interface WorkListGroup {
   id: string;
@@ -162,6 +177,17 @@ export interface WorkListToolbarProps {
   /** Default: the number of facets with a selection, else 0. */
   activeFilterCount?: number;
   onClearFilters?: () => void;
+  /**
+   * `stacked` (default): search on its own row, sort and the filter button
+   * on the next. `inline`: search and the filter button share the first
+   * row; sort sits alone below. Since 2.390.0.
+   */
+  toolbarLayout?: 'stacked' | 'inline';
+  /**
+   * `select` (default): a full-width select. `menu`: a quiet text menu —
+   * the current option's label and a chevron ("By priority ⌄"). Since 2.390.0.
+   */
+  sortStyle?: 'select' | 'menu';
   className?: string;
   'data-testid'?: string;
 }
@@ -196,6 +222,24 @@ export interface WorkListViewProps extends Omit<WorkListToolbarProps, 'className
   emptyLabel?: string;
   /** Persists collapsed groups (GroupedList `storageKey`). */
   storageKey?: string;
+  /**
+   * `default`: owner avatar, type chips, then "signal · 5 pts · Owner".
+   * `text` (since 2.390.0): one line of words, no avatar and no chips —
+   * "Bug · Eli Garcia · 2 points" (`kindLabel`, owner, points).
+   */
+  metaStyle?: WorkListMetaStyle;
+  /** The points unit: `pts` (default, "5 pts") or `points` ("5 points", "1 point"). Since 2.390.0. */
+  pointsLabel?: 'pts' | 'points';
+  /**
+   * Where a `signal` shows. `dot` (default): a leading dot that replaces the
+   * checkbox, and its label in the meta line. `meta`: the label in the meta
+   * line only — no dot, so the row keeps its checkbox (or nothing). Since 2.390.0.
+   */
+  signalDisplay?: 'dot' | 'meta';
+  /** Passed to `GroupedList.currentStyle`. Since 2.390.0. */
+  currentStyle?: 'tint' | 'bar';
+  /** Passed to `GroupedList.groupCountStyle`. Since 2.390.0. */
+  groupCountStyle?: 'chip' | 'plain';
   className?: string;
   'data-testid'?: string;
 }
@@ -226,7 +270,12 @@ function SignalDot({ signal }: { signal: WorkListSignal }) {
   );
 }
 
-function MetaLine({ item, testId }: { item: WorkListItem; testId: string }) {
+function pointsText(points: number, unit: 'pts' | 'points'): string {
+  if (unit === 'points') return `${points} ${points === 1 ? 'point' : 'points'}`;
+  return `${points} pts`;
+}
+
+function TextMetaLine({ item, testId, unit }: { item: WorkListItem; testId: string; unit: 'pts' | 'points' }) {
   const parts: ReactNode[] = [];
   if (item.signal) {
     parts.push(
@@ -235,7 +284,31 @@ function MetaLine({ item, testId }: { item: WorkListItem; testId: string }) {
       </span>,
     );
   }
-  if (typeof item.points === 'number') parts.push(<span key="pts">{`${item.points} pts`}</span>);
+  if (item.kindLabel) parts.push(<span key="kind">{item.kindLabel}</span>);
+  parts.push(<span key="owner">{item.owner ? item.owner.name : 'Unassigned'}</span>);
+  if (typeof item.points === 'number') parts.push(<span key="pts">{pointsText(item.points, unit)}</span>);
+  return (
+    <span className="truncate" data-testid={`${testId}-meta-${item.id}`} data-meta-style="text">
+      {parts.map((part, i) => (
+        <span key={i}>
+          {i > 0 && ' · '}
+          {part}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+function MetaLine({ item, testId, unit = 'pts' }: { item: WorkListItem; testId: string; unit?: 'pts' | 'points' }) {
+  const parts: ReactNode[] = [];
+  if (item.signal) {
+    parts.push(
+      <span key="signal" className={cn(item.signal.state === 'running' && 'font-medium text-primary')}>
+        {item.signal.label}
+      </span>,
+    );
+  }
+  if (typeof item.points === 'number') parts.push(<span key="pts">{pointsText(item.points, unit)}</span>);
   parts.push(<span key="owner">{item.owner ? item.owner.name : 'Unassigned'}</span>);
 
   return (
@@ -265,13 +338,22 @@ function MetaLine({ item, testId }: { item: WorkListItem; testId: string }) {
 export interface ToWorkListRowsOptions {
   onToggleDone?: (item: WorkListItem, done: boolean) => void;
   testId?: string;
+  /** Since 2.390.0. See `WorkListViewProps.metaStyle`. */
+  metaStyle?: WorkListMetaStyle;
+  /** Since 2.390.0. See `WorkListViewProps.pointsLabel`. */
+  pointsLabel?: 'pts' | 'points';
+  /** Since 2.390.0. See `WorkListViewProps.signalDisplay`. */
+  signalDisplay?: 'dot' | 'meta';
 }
 
 /** Items → `GroupedListRow`s: leading checkbox or signal dot, and the meta line. Exported for tests. */
-export function toWorkListRows(items: WorkListItem[], { onToggleDone, testId = 'work-list' }: ToWorkListRowsOptions = {}): GroupedListRow[] {
+export function toWorkListRows(
+  items: WorkListItem[],
+  { onToggleDone, testId = 'work-list', metaStyle = 'default', pointsLabel = 'pts', signalDisplay = 'dot' }: ToWorkListRowsOptions = {},
+): GroupedListRow[] {
   return items.map((item) => {
     let leading: ReactNode = undefined;
-    if (item.signal) {
+    if (item.signal && signalDisplay !== 'meta') {
       const dot = <SignalDot signal={item.signal} />;
       leading = item.signal.onClick ? (
         <IconButton
@@ -307,7 +389,18 @@ export function toWorkListRows(items: WorkListItem[], { onToggleDone, testId = '
       title: item.title,
       disabled: item.disabled,
       leading,
-      meta: <MetaLine item={item} testId={testId} />,
+      meta: metaStyle === 'text'
+        ? <TextMetaLine item={item} testId={testId} unit={pointsLabel} />
+        : <MetaLine item={item} testId={testId} unit={pointsLabel} />,
+      ...(item.tag
+        ? {
+            trailing: (
+              <Chip size="sm" tone={item.tag.tone ?? 'neutral'} mono className="shrink-0" data-testid={`${testId}-tag-${item.id}`}>
+                {item.tag.label}
+              </Chip>
+            ),
+          }
+        : {}),
     };
   });
 }
@@ -338,12 +431,79 @@ export function WorkListToolbar({
   filterFacets,
   activeFilterCount: activeFilterCountProp,
   onClearFilters,
+  toolbarLayout = 'stacked',
+  sortStyle = 'select',
   className,
   'data-testid': testId = 'work-list-toolbar',
 }: WorkListToolbarProps) {
   const hasSort = !!sortOptions?.length && !!onSortChange;
   const filters = filtersProp ?? (filterFacets?.length ? <WorkListFilters facets={filterFacets} data-testid={`${testId}-facets`} /> : null);
   const activeFilterCount = activeFilterCountProp ?? facetCount(filterFacets);
+  const current = hasSort ? sortOptions!.find((o) => o.value === sort) ?? sortOptions![0] : undefined;
+  const sortControl = !hasSort ? null : sortStyle === 'menu' ? (
+    <DropdownMenu
+      triggerVariant="link"
+      trigger={
+        <>
+          <span className="truncate">{current?.label}</span>
+          <ChevronIcon dir="down" size={14} aria-hidden="true" className="shrink-0 text-text-secondary" />
+        </>
+      }
+      triggerLabel={`${sortLabel}: ${current?.label ?? ''}`}
+      triggerTestId={`${testId}-sort`}
+      triggerClassName="px-1 text-[15px] text-text-primary"
+      data-testid={`${testId}-sort-menu`}
+      sections={[{
+        items: sortOptions!.map((o) => ({
+          label: String(o.label),
+          active: o.value === current?.value,
+          onSelect: () => onSortChange!(o.value),
+        })),
+      }]}
+    />
+  ) : (
+    <Select
+      aria-label={sortLabel}
+      data-testid={`${testId}-sort`}
+      value={sort}
+      onChange={(event) => onSortChange!(event.target.value)}
+      options={sortOptions!}
+      wrapperClassName="min-w-0 flex-1"
+      className="w-full text-[15px] text-text-primary"
+    />
+  );
+  const filterControl = filters ? (
+    <FilterPopover
+      activeCount={activeFilterCount}
+      onClear={onClearFilters}
+      placement="bottom-end"
+      trigger="icon"
+      label="Filter work"
+      data-testid={`${testId}-filter`}
+      className={cn(!hasSort && toolbarLayout !== 'inline' && 'ml-auto')}
+    >
+      {filters}
+    </FilterPopover>
+  ) : null;
+  if (toolbarLayout === 'inline') {
+    return (
+      <div className={cn('flex flex-col gap-2', className)} data-testid={testId} data-layout="inline">
+        <div className="flex items-center gap-2">
+          <SearchInput
+            size="md"
+            value={query}
+            onChange={onQueryChange}
+            placeholder={searchPlaceholder}
+            aria-label="Search work"
+            data-testid={`${testId}-search`}
+            className="min-w-0 flex-1"
+          />
+          {filterControl}
+        </div>
+        {sortControl && <div className="flex min-w-0 items-center">{sortControl}</div>}
+      </div>
+    );
+  }
   return (
     <div className={cn('flex flex-col gap-2', className)} data-testid={testId}>
       <SearchInput
@@ -357,30 +517,8 @@ export function WorkListToolbar({
       />
       {(hasSort || filters) && (
         <div className="flex items-center gap-2">
-          {hasSort && (
-            <Select
-              aria-label={sortLabel}
-              data-testid={`${testId}-sort`}
-              value={sort}
-              onChange={(event) => onSortChange!(event.target.value)}
-              options={sortOptions!}
-              wrapperClassName="min-w-0 flex-1"
-              className="w-full text-[15px] text-text-primary"
-            />
-          )}
-          {filters && (
-            <FilterPopover
-              activeCount={activeFilterCount}
-              onClear={onClearFilters}
-              placement="bottom-end"
-              trigger="icon"
-              label="Filter work"
-              data-testid={`${testId}-filter`}
-              className={cn(!hasSort && 'ml-auto')}
-            >
-              {filters}
-            </FilterPopover>
-          )}
+          {sortStyle === 'menu' && sortControl ? <div className="min-w-0 flex-1">{sortControl}</div> : sortControl}
+          {filterControl}
         </div>
       )}
     </div>
@@ -421,11 +559,21 @@ export function WorkListView({
   onRetry,
   emptyLabel = 'No work yet',
   storageKey,
+  toolbarLayout,
+  sortStyle,
+  metaStyle = 'default',
+  pointsLabel = 'pts',
+  signalDisplay = 'dot',
+  currentStyle,
+  groupCountStyle,
   className,
   'data-testid': testId = 'work-list',
 }: WorkListViewProps) {
   const visible = useMemo(() => items.filter((item) => matches(item, query)), [items, query]);
-  const rows = useMemo(() => toWorkListRows(visible, { onToggleDone, testId }), [visible, onToggleDone, testId]);
+  const rows = useMemo(
+    () => toWorkListRows(visible, { onToggleDone, testId, metaStyle, pointsLabel, signalDisplay }),
+    [visible, onToggleDone, testId, metaStyle, pointsLabel, signalDisplay],
+  );
   const byId = useMemo(() => new Map(visible.map((item) => [item.id, item])), [visible]);
   const activeFilterCount = activeFilterCountProp ?? facetCount(filterFacets);
   const searching = query.trim().length > 0;
@@ -474,6 +622,8 @@ export function WorkListView({
         rows={rows}
         currentId={currentId}
         storageKey={storageKey}
+        {...(currentStyle ? { currentStyle } : {})}
+        {...(groupCountStyle ? { groupCountStyle } : {})}
         size="md"
         hideEmptyGroups={narrowed}
         onOpenRow={(row) => {
@@ -523,6 +673,8 @@ export function WorkListView({
         filterFacets={filterFacets}
         activeFilterCount={activeFilterCount}
         onClearFilters={onClearFilters}
+        {...(toolbarLayout ? { toolbarLayout } : {})}
+        {...(sortStyle ? { sortStyle } : {})}
         className="px-5"
         data-testid={`${testId}-toolbar`}
       />

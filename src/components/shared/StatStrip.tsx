@@ -16,6 +16,7 @@
 import { Fragment, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { TONE_SOLID_BG, TONE_TEXT, type Tone } from './tones';
+import { ProgressBar } from './ProgressBar';
 
 /** A cluster's health line: a tone dot and a short worded state. */
 export interface StatStripStatus {
@@ -35,6 +36,12 @@ export interface StatStripItem {
   title?: string;
   onSelect?: () => void;
   href?: string;
+  /**
+   * A thin bar under the cluster — "18 / 52 points delivered" with its fill.
+   * Drawn only when `max` is above zero and `value` is finite (nothing is
+   * drawn for "we do not know"). Since 2.390.0.
+   */
+  progress?: { value: number; max: number } | null;
 }
 
 /** A labelled arrow between two clusters — "Compact", "Publish". */
@@ -64,6 +71,15 @@ export interface StatStripProps {
    * a missing one leaves a plain gap.
    */
   connectors?: StatStripConnector[];
+  /**
+   * `default`: the label over a 17px value (a KPI card, compressed).
+   * `inline` (since 2.390.0): the value then its label on ONE line, sentence
+   * case — "**18** / 52 points delivered · **2** agents running · **$1.73**
+   * spent of $95 allocated" — with dividers between clusters, no card, and a
+   * rule under the strip. The label is the words after the number, so write
+   * it as the rest of the sentence.
+   */
+  variant?: 'default' | 'inline';
   className?: string;
   'aria-label'?: string;
   'data-testid'?: string;
@@ -74,6 +90,33 @@ const VALUE_TONE: Record<NonNullable<StatStripItem['tone']>, string> = {
   accent: 'text-primary',
   danger: 'text-danger',
 };
+
+function ProgressLine({ progress, label }: { progress: StatStripItem['progress']; label: string }) {
+  if (!progress || !(progress.max > 0) || !Number.isFinite(progress.value)) return null;
+  return (
+    <ProgressBar
+      value={progress.value}
+      max={progress.max}
+      size="sm"
+      aria-label={label}
+      className="mt-2 max-w-[20rem]"
+      data-testid="stat-strip-progress"
+    />
+  );
+}
+
+function InlineCluster({ item, first, last }: { item: StatStripItem; first: boolean; last: boolean }) {
+  return (
+    <div className={cn('min-w-0 py-3', first ? 'pl-0 pr-6' : 'px-6', last && !first && 'pr-0')} data-testid="stat-strip-cluster">
+      <div className="flex min-w-0 items-baseline gap-1.5 whitespace-nowrap">
+        <span className={cn('text-[17px] font-bold leading-6 tabular-nums', VALUE_TONE[item.tone ?? 'default'])}>{item.value}</span>
+        <span className="min-w-0 truncate text-[15px] leading-6 text-text-secondary">{item.label}</span>
+      </div>
+      <ProgressLine progress={item.progress} label={item.label} />
+      {item.hint != null && <div className="mt-0.5 truncate text-[12px] text-text-tertiary">{item.hint}</div>}
+    </div>
+  );
+}
 
 function Cluster({ item, flush }: { item: StatStripItem; flush?: 'start' | 'end' | 'both' }) {
   return (
@@ -107,6 +150,7 @@ function Cluster({ item, flush }: { item: StatStripItem; flush?: 'start' | 'end'
           </span>
         </div>
       )}
+      <ProgressLine progress={item.progress} label={item.label} />
     </div>
   );
 }
@@ -134,11 +178,39 @@ export function StatStrip({
   items,
   frameless = false,
   connectors,
+  variant = 'default',
   className,
   'aria-label': ariaLabel,
   'data-testid': testId,
 }: StatStripProps) {
   const flow = !!connectors && connectors.length > 0;
+  if (variant === 'inline') {
+    return (
+      <div
+        role="group"
+        data-variant="inline"
+        className={cn('flex items-center divide-x divide-border overflow-x-auto border-b border-border pb-1', className)}
+        {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}
+        {...(testId ? { 'data-testid': testId } : {})}
+      >
+        {items.map((item, i) => {
+          const tip = item.title ? { title: item.title } : {};
+          const inner = <InlineCluster item={item} first={i === 0} last={i === items.length - 1} />;
+          if (item.href) {
+            return <a key={item.label} href={item.href} className="min-w-0 flex-1 no-underline hover:bg-surface-hover" {...tip}>{inner}</a>;
+          }
+          if (item.onSelect) {
+            return (
+              <button key={item.label} type="button" onClick={item.onSelect} className="min-w-0 flex-1 cursor-pointer border-none bg-transparent p-0 text-left hover:bg-surface-hover" {...tip}>
+                {inner}
+              </button>
+            );
+          }
+          return <div key={item.label} className="min-w-0 flex-1" {...tip}>{inner}</div>;
+        })}
+      </div>
+    );
+  }
   return (
     <div
       role="group"

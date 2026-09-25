@@ -461,6 +461,20 @@ export function ArrowRightIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
+/**
+ * An arrow leaving to the upper right, with no box: "opens somewhere else" —
+ * the ↗ after "Repository" on an outlined link button. `PopOutIcon` is the
+ * boxed variant ("open in its own view"). Since 2.390.0.
+ */
+export function ExternalLinkIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M4.5 11.5 11.5 4.5" />
+      <path d="M5.5 4.5h6v6" />
+    </svg>
+  );
+}
+
 /** Two people: "shared with me", a group. Since 2.385.0. */
 export function PeopleIcon({ size = 16, ...rest }: GlyphProps) {
   return (
@@ -683,6 +697,16 @@ export function SlidersIcon({ size = 16, ...rest }: GlyphProps) {
       <path d="M2.5 5h6M11.5 5h2M2.5 11h2M7.5 11h6" />
       <circle cx="10" cy="5" r="1.5" />
       <circle cx="6" cy="11" r="1.5" />
+    </svg>
+  );
+}
+
+/** A paper plane: "send" — the light prompt box's Send ("✈ Send"). Since 2.390.0. */
+export function SendIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M14 2 7 9" />
+      <path d="M14 2 9.5 14l-2.5-5-5-2.5z" />
     </svg>
   );
 }

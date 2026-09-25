@@ -220,6 +220,13 @@ export declare interface ComposerReference {
     menu?: readonly DropdownMenuSection[];
     /** Accessible name of the menu trigger. Default: the label. Since 2.389.0. */
     menuLabel?: string;
+    /**
+     * The chip's leading mark when it has no `icon`. `icon` (default): the
+     * document glyph. `dot`: a small brand-coloured dot — "● Observability
+     * Platform", "● This work item": the draft is about a scope, not a file.
+     * Ignored when `icon` is set. Since 2.390.0.
+     */
+    marker?: 'icon' | 'dot';
 }
 
 export declare function ComposerReferences({ references, onRemove, removeLabel, className, size, 'data-testid': testId, }: ComposerReferencesProps): JSX.Element | null;
@@ -268,7 +275,7 @@ export declare interface ComposerStatus {
 }
 
 /** See `RichChatComposerProps.toolbar`. */
-export declare type ComposerToolbarPreset = 'full' | 'compact' | 'editor' | 'prompt';
+export declare type ComposerToolbarPreset = 'full' | 'compact' | 'editor' | 'prompt' | 'basic';
 
 export declare interface DocumentCandidate {
     /** Stable identity — this is what travels in the message, not the label. */
@@ -564,7 +571,15 @@ export declare interface RichChatComposerProps {
      *   before `toolbarExtras` (the host's `Workflow ▾`). Strikethrough and
      *   numbered list go under `?` → Formatting, as in `compact`.
      *
-     * Sizes are unchanged in all three: every control is the same 28px box.
+     * - `basic` (2.390.0): the docked card as a light prompt box — B, I, code,
+     *   link, attach, then the divider before `toolbarExtras`. No lists and no
+     *   quote on the strip (a prompt is a sentence, not a document); bulleted
+     *   and numbered lists, quote and strikethrough go under the card's mode
+     *   menu → Formatting. Docks like `editor` under `modeControl="menu"`, with
+     *   the mode as a boxed picker ("Agent ⌄", no glyph), the input in its own
+     *   bordered well and no rule over the strip — the Initiatives mockup.
+     *
+     * Sizes are unchanged in all of them: every control is the same 28px box.
      * Below wide the strip folds exactly as before, whichever preset is set.
      */
     toolbar?: ComposerToolbarPreset;
@@ -750,6 +765,13 @@ export declare interface RichChatComposerProps {
     hideModeMenu?: boolean;
     /** After the references in the docked header row — an "add another" control. Shown even with no references. */
     referencesAction?: ReactNode;
+    /**
+     * Where the references sit in the menu mode row. `end` (default): at the
+     * row's end, the way an editor's dock reads. `start`: right after the mode
+     * menu — "Agent ⌄ · ● Observability Platform ×", the draft's subject read
+     * as the continuation of its mode. Since 2.390.0.
+     */
+    referencesPlacement?: 'end' | 'start';
     /**
      * Makes the whole card a drop target for a host's own payload (not files):
      * while a drag carrying one of `types` is over it, the card is ringed and

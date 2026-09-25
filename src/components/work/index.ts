@@ -14,11 +14,12 @@ export type {
   WorkListFilterFacet,
   WorkListViewProps,
   ToWorkListRowsOptions,
+  WorkListMetaStyle,
 } from './WorkListView';
 export { ScopeHeader, formatSpend } from './ScopeHeader';
 export type { ScopeHeaderProps, ScopeHeaderPeopleGroup, ScopeHeaderTab, ScopeHeaderTabDot, ScopeHeaderProgress } from './ScopeHeader';
 export { WorkItemMetaBar, WorkSearchPicker } from './WorkItemMetaBar';
-export type { WorkItemMetaBarProps, WorkMetaOption, WorkPerson, WorkSearchPickerProps } from './WorkItemMetaBar';
+export type { WorkItemMetaBarProps, WorkMetaOption, WorkMetaFlag, WorkPerson, WorkSearchPickerProps } from './WorkItemMetaBar';
 export { OutcomeSection } from './OutcomeSection';
 export type { OutcomeSectionProps } from './OutcomeSection';
 export { ChecklistSection } from './ChecklistSection';
@@ -50,3 +51,5 @@ export { ProcedureSteps, PROCEDURE_STEP_STATUS_LABELS } from './ProcedureSteps';
 export type { ProcedureStepsProps, ProcedureStep, ProcedureStepStatus } from './ProcedureSteps';
 export { SourceCard, SourceList, formatSourceAge } from './SourceCard';
 export type { SourceCardProps, SourceListProps, SourceListItem } from './SourceCard';
+export { ActionRowList } from './ActionRowList';
+export type { ActionRowListProps, ActionRowItem } from './ActionRowList';

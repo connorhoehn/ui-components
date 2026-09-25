@@ -202,6 +202,12 @@ export interface GroupedListProps {
    * the left edge at `sm` too. Since 2.389.0.
    */
   currentStyle?: 'tint' | 'bar';
+  /**
+   * How a `title` group header's count reads. `chip` (default): a neutral
+   * count chip. `plain`: muted text after the title — "In progress 9". (A
+   * `label` heading's count is always plain.) Since 2.390.0.
+   */
+  groupCountStyle?: 'chip' | 'plain';
   className?: string;
   'data-testid'?: string;
 }
@@ -332,6 +338,7 @@ export function GroupedList({
   size = 'sm',
   groupHeading = 'title',
   currentStyle = 'tint',
+  groupCountStyle = 'chip',
   className,
   'data-testid': testId = 'grouped-list',
 }: GroupedListProps) {
@@ -634,12 +641,17 @@ export function GroupedList({
                   </span>
                 )}
                 <span className="truncate">{group.title}</span>
+                {typeof group.count === 'number' && !labelHeading && groupCountStyle === 'plain' && (
+                  <span className="shrink-0 text-[13px] font-medium text-text-secondary" aria-label={`${group.count} items`} data-testid={`${testId}-group-count-${group.id}`} data-count-style="plain">
+                    {group.count}
+                  </span>
+                )}
                 {typeof group.count === 'number' && labelHeading && (
                   <span className="shrink-0 font-medium normal-case tracking-normal text-text-tertiary" aria-label={`${group.count} items`} data-testid={`${testId}-group-count-${group.id}`}>
                     {group.count}
                   </span>
                 )}
-                {typeof group.count === 'number' && !labelHeading && (
+                {typeof group.count === 'number' && !labelHeading && groupCountStyle !== 'plain' && (
                   <Chip size="xs" tone="neutral" className="shrink-0" aria-label={`${group.count} items`} data-testid={`${testId}-group-count-${group.id}`}>
                     {group.count}
                   </Chip>

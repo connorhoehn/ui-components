@@ -8,6 +8,10 @@ export * from '../ui/IconButton';
 export * from '../ui/Icons';
 export * from '../ui/Stack';
 export * from '../ui/SelectableCard';
+// Since 2.390.0: the native <details> collapsible, reachable from /shared too
+// (it was root-only). Named, not `export *`, so nothing else in the file leaks.
+export { Disclosure } from '../ui/Disclosure';
+export type { DisclosureProps } from '../ui/Disclosure';
 
 export { default as Banner } from './Banner';
 export * from './Banner';

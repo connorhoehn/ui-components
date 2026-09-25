@@ -1,7 +1,7 @@
 import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./IconButton-DDeXW3mZ.js";
-import { K as n, P as r, f as i, rt as a } from "./Icons-qlxbenIZ.js";
-import { t as o } from "./DropdownMenu-CRTPdlu1.js";
+import { F as n, at as r, f as i, q as a } from "./Icons-DpB_pJYh.js";
+import { t as o } from "./DropdownMenu-DvlN38ws.js";
 import { useCallback as s, useEffect as c, useLayoutEffect as l, useMemo as u, useRef as d, useState as f } from "react";
 import { Fragment as p, jsx as m, jsxs as h } from "react/jsx-runtime";
 //#region src/components/photo-editor/model.ts
@@ -676,14 +676,14 @@ function Y({ title: s, subtitle: c, backLabel: l, onBack: u, onToggleSidebar: d,
 						"aria-label": "Undo",
 						onClick: y,
 						disabled: !x,
-						icon: /* @__PURE__ */ m(a, { size: 17 }),
+						icon: /* @__PURE__ */ m(r, { size: 17 }),
 						"data-testid": `${D}-undo`
 					}),
 					/* @__PURE__ */ m(t, {
 						"aria-label": "Redo",
 						onClick: b,
 						disabled: !S,
-						icon: /* @__PURE__ */ m(n, { size: 17 }),
+						icon: /* @__PURE__ */ m(a, { size: 17 }),
 						"data-testid": `${D}-redo`
 					}),
 					/* @__PURE__ */ m("span", {
@@ -700,7 +700,7 @@ function Y({ title: s, subtitle: c, backLabel: l, onBack: u, onToggleSidebar: d,
 						"data-testid": `${D}-layout`
 					}),
 					T && /* @__PURE__ */ m(o, {
-						trigger: /* @__PURE__ */ m(r, { size: 18 }),
+						trigger: /* @__PURE__ */ m(n, { size: 18 }),
 						triggerLabel: "More",
 						triggerTestId: `${D}-more`,
 						triggerClassName: "inline-flex h-8 w-8 items-center justify-center rounded-md border-none bg-transparent p-0 text-text-primary hover:bg-surface-hover",

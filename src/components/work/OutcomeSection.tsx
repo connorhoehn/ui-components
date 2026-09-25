@@ -28,13 +28,18 @@ export interface OutcomeSectionProps {
    * small uppercase caption under a hairline, for a side panel.
    */
   variant?: 'label' | 'heading';
+  /**
+   * `heading` only: `lg` (since 2.390.0) is `DetailSection size="lg"` — a
+   * 19px heading ("Why this matters") over a 15px body.
+   */
+  size?: 'md' | 'lg';
   className?: string;
   'data-testid'?: string;
 }
 
 export function OutcomeSection({
   title = 'Outcome', value, onChange, placeholder = 'What is true when this is done?',
-  readOnlyReason, pending = false, first, variant = 'heading', className, 'data-testid': testId = 'outcome-section',
+  readOnlyReason, pending = false, first, variant = 'heading', size = 'md', className, 'data-testid': testId = 'outcome-section',
 }: OutcomeSectionProps) {
   const editable = !!onChange && !readOnlyReason;
   const [editing, setEditing] = useState(false);
@@ -43,7 +48,9 @@ export function OutcomeSection({
   const ref = useRef<HTMLTextAreaElement | null>(null);
   const reasonId = useId();
   const text = value?.trim() ? value : null;
-  const body = variant === 'heading' ? 'text-sm leading-5' : 'text-[13px] leading-relaxed';
+  const body = variant === 'heading'
+    ? (size === 'lg' ? 'text-[15px] leading-6' : 'text-sm leading-5')
+    : 'text-[13px] leading-relaxed';
 
   useEffect(() => { if (editing) ref.current?.focus(); }, [editing]);
 
@@ -67,8 +74,11 @@ export function OutcomeSection({
   ) : editing ? '⌘Enter to save · Esc to cancel' : undefined;
 
   return (
-    <DetailSection title={title} hint={hint} actions={actions} first={first} variant={variant} className={className} data-testid={testId}>
-      <div aria-busy={pending || undefined} title={readOnlyReason}>
+    <DetailSection title={title} hint={hint} actions={actions} first={first} variant={variant} {...(size === 'lg' ? { size } : {})} className={className} data-testid={testId}>
+      {/* lg: the text starts 27px under the heading's centre, as the
+          Initiatives mockup sets it — the heading row's 8px gap is too loose
+          for a paragraph (it suits a ruled list). */}
+      <div aria-busy={pending || undefined} title={readOnlyReason} className={size === 'lg' ? '-mt-1.5' : undefined}>
         {editing ? (
           <Textarea
             ref={ref}

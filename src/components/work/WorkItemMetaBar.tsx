@@ -33,6 +33,9 @@ import { ChevronIcon } from '../ui/Icons';
 
 export interface WorkMetaOption { value: string; label: string; tone?: ChipTone }
 
+/** A read-only toned tag on the meta row — "Blocked", in mono like the item key. Since 2.390.0. */
+export interface WorkMetaFlag { label: string; tone?: ChipTone }
+
 /** A person as the meta bar and its picker see one. */
 export interface WorkPerson { id: string; name: string; avatarUrl?: string }
 
@@ -62,6 +65,26 @@ export interface WorkItemMetaBarProps {
    * owner plain 14–15px text with one rule between them.
    */
   appearance?: 'inline' | 'boxed';
+  /**
+   * Toned facts drawn as tags right after the status — `{ label: 'Blocked',
+   * tone: 'danger' }`. Read-only; the host decides what they mean. Empty or
+   * absent draws none. Since 2.390.0.
+   */
+  flags?: WorkMetaFlag[];
+  /**
+   * `default`: the fields in their usual order (status, points, owner,
+   * priority). `divided` (since 2.390.0): the read-first row under a work
+   * item's large title — status · flags · owner · points · priority, a rule
+   * between each, at 15px ("● Open | Blocked | (EG) Eli Garcia | 2 points |
+   * High priority"). Ignored when `appearance="boxed"`.
+   */
+  layout?: 'default' | 'divided';
+  /**
+   * `label` (default): "Priority:" then the value. `tag` (since 2.390.0): one
+   * toned tag that says it all — "High priority". An editable priority keeps
+   * its select, without the "Priority:" word.
+   */
+  priorityStyle?: 'label' | 'tag';
   'data-testid'?: string;
   className?: string;
 }
@@ -225,7 +248,7 @@ const optionOf = (options: WorkMetaOption[], value: string | null) =>
 // Fields
 // ---------------------------------------------------------------------------
 
-function StatusField({ f, boxed }: { f: NonNullable<WorkItemMetaBarProps['status']>; boxed: boolean }) {
+function StatusField({ f, boxed, big = false }: { f: NonNullable<WorkItemMetaBarProps['status']>; boxed: boolean; big?: boolean }) {
   const reasonId = useId();
   const opt = optionOf(f.options, f.value);
   const editable = !!f.onChange && !f.readOnlyReason;
@@ -264,7 +287,7 @@ function StatusField({ f, boxed }: { f: NonNullable<WorkItemMetaBarProps['status
         />
       ) : (
         <span
-          className={cn('text-[13px]', opt ? 'text-text-primary' : 'text-text-tertiary')}
+          className={cn(big ? 'text-[15px]' : 'text-[13px]', opt ? 'text-text-primary' : 'text-text-tertiary')}
           aria-describedby={f.readOnlyReason ? reasonId : undefined}
         >
           {opt?.label ?? f.value ?? 'No status'}
@@ -279,7 +302,7 @@ function pointsLabel(v: number | null): string {
   return `${v} ${v === 1 ? 'point' : 'points'}`;
 }
 
-function PointsField({ f, boxed }: { f: NonNullable<WorkItemMetaBarProps['points']>; boxed: boolean }) {
+function PointsField({ f, boxed, big = false }: { f: NonNullable<WorkItemMetaBarProps['points']>; boxed: boolean; big?: boolean }) {
   const reasonId = useId();
   const editable = !!f.onChange && !f.readOnlyReason;
   const [editing, setEditing] = useState(false);
@@ -339,13 +362,13 @@ function PointsField({ f, boxed }: { f: NonNullable<WorkItemMetaBarProps['points
           onClick={start}
           disabled={f.pending}
           aria-label={`Points: ${f.value == null ? 'not set' : f.value}. Edit`}
-          className={cn(boxed ? 'text-sm' : 'text-[13px]', f.value == null ? 'text-text-tertiary' : 'text-text-secondary')}
+          className={cn(big ? 'text-[15px]' : boxed ? 'text-sm' : 'text-[13px]', f.value == null ? 'text-text-tertiary' : 'text-text-secondary')}
         >
           {label}
         </Button>
       ) : (
         <span
-          className={cn('text-[13px]', f.value == null ? 'text-text-tertiary' : 'text-text-secondary')}
+          className={cn(big ? 'text-[15px]' : 'text-[13px]', f.value == null ? 'text-text-tertiary' : 'text-text-secondary')}
           aria-describedby={f.readOnlyReason ? reasonId : undefined}
         >
           {label}
@@ -355,7 +378,8 @@ function PointsField({ f, boxed }: { f: NonNullable<WorkItemMetaBarProps['points
   );
 }
 
-function OwnerField({ f, boxed }: { f: NonNullable<WorkItemMetaBarProps['owner']>; boxed: boolean }) {
+function OwnerField({ f, boxed: boxedIn, big = false }: { f: NonNullable<WorkItemMetaBarProps['owner']>; boxed: boolean; big?: boolean }) {
+  const boxed = boxedIn || big;
   const reasonId = useId();
   const editable = !!f.onChange && !f.readOnlyReason;
   const [open, setOpen] = useState(false);
@@ -416,11 +440,39 @@ function OwnerField({ f, boxed }: { f: NonNullable<WorkItemMetaBarProps['owner']
   );
 }
 
-function PriorityField({ f, boxed }: { f: NonNullable<WorkItemMetaBarProps['priority']>; boxed: boolean }) {
+function PriorityField({ f, boxed, tag = false, big = false }: { f: NonNullable<WorkItemMetaBarProps['priority']>; boxed: boolean; tag?: boolean; big?: boolean }) {
   const reasonId = useId();
   const labelId = useId();
   const opt = optionOf(f.options, f.value);
   const editable = !!f.onChange && !f.readOnlyReason;
+  if (tag && !boxed) {
+    return (
+      <Field name="priority" readOnlyReason={f.readOnlyReason} pending={f.pending} reasonId={reasonId}>
+        {editable ? (
+          <Select
+            size="sm"
+            variant="pill"
+            tone={opt?.tone ?? 'neutral'}
+            aria-label="Priority"
+            value={f.value ?? ''}
+            placeholder="No priority"
+            options={f.options.map(({ value, label }) => ({ value, label: `${label} priority` }))}
+            disabled={f.pending}
+            onChange={(e) => f.onChange?.(e.target.value)}
+            className="normal-case"
+          />
+        ) : opt ? (
+          <span aria-describedby={f.readOnlyReason ? reasonId : undefined} data-testid="work-meta-priority-tag">
+            <Chip tone={opt.tone ?? 'neutral'} size={big ? 'md' : 'sm'}>{`${opt.label} priority`}</Chip>
+          </span>
+        ) : (
+          <span className={cn(big ? 'text-[15px]' : 'text-[13px]', 'text-text-tertiary')} aria-describedby={f.readOnlyReason ? reasonId : undefined}>
+            {f.value ?? 'No priority'}
+          </span>
+        )}
+      </Field>
+    );
+  }
   if (boxed && editable) {
     return (
       <Field name="priority" readOnlyReason={f.readOnlyReason} pending={f.pending} reasonId={reasonId}>
@@ -473,15 +525,46 @@ function PriorityField({ f, boxed }: { f: NonNullable<WorkItemMetaBarProps['prio
 }
 
 export function WorkItemMetaBar({
-  status, points, owner, priority, appearance = 'inline', className, 'data-testid': testId = 'work-item-meta-bar',
+  status, points, owner, priority, appearance = 'inline', flags, layout = 'default', priorityStyle = 'label',
+  className, 'data-testid': testId = 'work-item-meta-bar',
 }: WorkItemMetaBarProps) {
   const boxed = appearance === 'boxed';
+  const divided = layout === 'divided' && !boxed;
+  const tag = priorityStyle === 'tag';
+  const shownFlags = (flags ?? []).filter((flag) => flag.label);
+  const flagNodes = shownFlags.map((flag) => (
+    <span key={`flag-${flag.label}`} className="inline-flex items-center" data-field="flag" data-testid={`${testId}-flag`}>
+      <Chip tone={flag.tone ?? 'neutral'} size={divided ? 'md' : 'sm'} mono>{flag.label}</Chip>
+    </span>
+  ));
   const fields: ReactNode[] = [];
-  if (status) fields.push(<StatusField key="status" f={status} boxed={boxed} />);
-  if (points) fields.push(<PointsField key="points" f={points} boxed={boxed} />);
-  if (owner) fields.push(<OwnerField key="owner" f={owner} boxed={boxed} />);
-  if (priority) fields.push(<PriorityField key="priority" f={priority} boxed={boxed} />);
+  if (divided) {
+    if (status) fields.push(<StatusField key="status" f={status} boxed={false} big />);
+    fields.push(...flagNodes);
+    if (owner) fields.push(<OwnerField key="owner" f={owner} boxed={false} big />);
+    if (points) fields.push(<PointsField key="points" f={points} boxed={false} big />);
+    if (priority) fields.push(<PriorityField key="priority" f={priority} boxed={false} tag={tag} big />);
+  } else {
+    if (status) fields.push(<StatusField key="status" f={status} boxed={boxed} />);
+    fields.push(...flagNodes);
+    if (points) fields.push(<PointsField key="points" f={points} boxed={boxed} />);
+    if (owner) fields.push(<OwnerField key="owner" f={owner} boxed={boxed} />);
+    if (priority) fields.push(<PriorityField key="priority" f={priority} boxed={boxed} tag={tag} />);
+  }
   if (fields.length === 0) return null;
+  if (divided) {
+    return (
+      <div
+        role="group"
+        aria-label="Work item details"
+        data-testid={testId}
+        data-layout="divided"
+        className={cn('flex flex-wrap items-center gap-x-4 gap-y-2', className)}
+      >
+        {fields.flatMap((node, i) => (i === 0 ? [node] : [<Separator key={`sep-${i}`} />, node]))}
+      </div>
+    );
+  }
   if (boxed) {
     // One rule, between points and owner (the two plain-text fields); a box
     // needs no rule beside it.

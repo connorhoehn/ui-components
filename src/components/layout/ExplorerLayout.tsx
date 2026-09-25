@@ -29,7 +29,7 @@
 
 import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
-import { WorkspaceRail } from './WorkspaceRail';
+import { WorkspaceRail, type WorkspaceRailBack } from './WorkspaceRail';
 
 export interface ExplorerLayoutProps {
   /** Left rail — flush to the pane's left edge, its own border, scrolls independently. */
@@ -63,8 +63,22 @@ export interface ExplorerLayoutProps {
    * into the record head below the band, landed on the aside's top row).
    */
   paneHeader?: ReactNode;
+  /**
+   * A band UNDER the pane only — a docked composer that must stay put while
+   * the pane scrolls. It does not scroll; the pane above it does. It spans
+   * the pane's column, never the rail or the aside (the same rule as
+   * `paneHeader`), and has no border of its own. Since 2.390.0.
+   */
+  paneFooter?: ReactNode;
   /** A count beside `railTitle` ("Work 11"). Since 2.385.0. */
   railCount?: number;
+  /** How `railCount` reads — see `WorkspaceRail.countStyle`. Default `chip`. Since 2.390.0. */
+  railCountStyle?: 'chip' | 'plain';
+  /**
+   * A back link over the rail's title — "‹ Initiatives" above "Work 11". See
+   * `WorkspaceRail.back`. Since 2.390.0.
+   */
+  railBack?: WorkspaceRailBack | null;
   /** The rail's heading style — see `WorkspaceRail.heading`. Default `compact`. Since 2.385.0. */
   railHeading?: 'compact' | 'prominent' | 'label';
   /**
@@ -115,7 +129,10 @@ export function ExplorerLayout({
   railWidth = 'md',
   header,
   paneHeader,
+  paneFooter,
   railCount,
+  railCountStyle,
+  railBack,
   railHeading = 'compact',
   railCollapsed = false,
   onToggleRail,
@@ -143,13 +160,14 @@ export function ExplorerLayout({
 
   const columns = (
       <div className={cn('flex min-h-0 min-w-0 flex-1', asidePlacement === 'beside' ? 'flex-row' : 'flex-col 2xl:flex-row')}>
-        {paneHeader != null ? (
+        {paneHeader != null || paneFooter != null ? (
           // The band sits over the pane alone. Its right-hand controls may
           // hang into the top of the pane's own content (the record head's
           // top padding) — that is the pane's space, never the aside's.
           <div className="flex min-h-0 min-w-0 flex-1 flex-col" data-testid={`${testId}-pane-column`}>
-            <div data-testid={`${testId}-pane-header`} className="shrink-0 bg-surface">{paneHeader}</div>
+            {paneHeader != null && <div data-testid={`${testId}-pane-header`} className="shrink-0 bg-surface">{paneHeader}</div>}
             {pane}
+            {paneFooter != null && <div data-testid={`${testId}-pane-footer`} className="shrink-0 bg-surface">{paneFooter}</div>}
           </div>
         ) : pane}
         {aside ? (
@@ -172,7 +190,8 @@ export function ExplorerLayout({
   const frame = (
     <div data-testid={testId} className={cn('flex h-full min-h-0', header ? 'min-w-0 flex-1' : className)}>
       <WorkspaceRail title={railTitle} label="Explorer" actions={railActions} header={railHeader} footer={railFooter}
-        width={railWidth} {...(typeof railCount === 'number' ? { count: railCount } : {})} heading={railHeading} collapsed={railCollapsed} onToggle={onToggleRail}
+        width={railWidth} {...(typeof railCount === 'number' ? { count: railCount } : {})} heading={railHeading}
+        {...(railCountStyle ? { countStyle: railCountStyle } : {})} {...(railBack ? { back: railBack } : {})} collapsed={railCollapsed} onToggle={onToggleRail}
         toggleLabel={`${railCollapsed ? 'Show' : 'Hide'} ${railLabel}`} data-testid={`${testId}-rail`}>
         {rail}
       </WorkspaceRail>

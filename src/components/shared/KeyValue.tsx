@@ -27,6 +27,16 @@ export interface KeyValueItem {
    * truncates (a long id, a path).
    */
   title?: string;
+  /**
+   * The value in tertiary ink — a fact that is really an absence ("Not
+   * defined yet", "No links added"). Since 2.390.0.
+   */
+  muted?: boolean;
+  /**
+   * A control at the row's end, after the value — "Draft with agent", "Add a
+   * note". Row layout only. Since 2.390.0.
+   */
+  action?: ReactNode;
 }
 
 export type KeyValueLayout = 'stack' | 'row' | 'grid';
@@ -41,6 +51,12 @@ export interface KeyValueProps {
   layout?: KeyValueLayout;
   /** Row layout only: the label column's Tailwind width class. Default `w-28`. */
   labelWidth?: string;
+  /**
+   * Row layout only: each fact on its own ruled row (a rule above the first
+   * and under every row), at 15px, with any `action` right-aligned — a small
+   * checklist table ("Complete the brief"). Default `false`. Since 2.390.0.
+   */
+  divided?: boolean;
   className?: string;
   'aria-label'?: string;
   'data-testid'?: string;
@@ -50,40 +66,49 @@ export function KeyValue({
   items,
   layout = 'row',
   labelWidth = 'w-28',
+  divided = false,
   className,
   'aria-label': ariaLabel,
   'data-testid': testId = 'key-value',
 }: KeyValueProps) {
   if (items.length === 0) return null;
   const row = layout === 'row';
+  const ruled = row && divided;
   return (
     <dl
       className={cn(
         'm-0 min-w-0',
-        layout === 'grid' ? 'grid grid-cols-2 gap-x-6 gap-y-3' : row ? 'flex flex-col gap-1.5' : 'flex flex-col gap-3',
+        layout === 'grid' ? 'grid grid-cols-2 gap-x-6 gap-y-3' : ruled ? 'flex flex-col border-t border-border' : row ? 'flex flex-col gap-1.5' : 'flex flex-col gap-3',
         className,
       )}
       data-layout={layout}
+      data-divided={ruled || undefined}
       data-testid={testId}
       {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}
     >
       {items.map((item, i) => (
         <div
           key={`${item.label}-${i}`}
-          className={cn('min-w-0', row ? 'flex items-baseline gap-3' : 'flex flex-col gap-0.5')}
+          className={cn(
+            'min-w-0',
+            ruled ? 'flex min-h-[38px] items-center gap-3 border-b border-border px-2.5 py-1.5' : row ? 'flex items-baseline gap-3' : 'flex flex-col gap-0.5',
+          )}
           data-testid={`${testId}-item`}
         >
           <dt
             className={cn(
-              'm-0 text-text-secondary',
-              row ? cn('shrink-0 text-[13px]', labelWidth) : 'text-[12px]',
+              'm-0',
+              ruled ? cn('shrink-0 text-[15px] text-text-primary', labelWidth) : 'text-text-secondary',
+              !ruled && (row ? cn('shrink-0 text-[13px]', labelWidth) : 'text-[12px]'),
             )}
           >
             {item.label}
           </dt>
           <dd
             className={cn(
-              'm-0 min-w-0 truncate text-[13px] text-text-primary',
+              'm-0 min-w-0 truncate',
+              ruled ? 'text-sm' : 'text-[13px]',
+              item.muted ? 'text-text-tertiary' : 'text-text-primary',
               row && 'flex-1',
               item.mono && 'font-mono text-[12px]',
             )}
@@ -91,6 +116,9 @@ export function KeyValue({
           >
             {item.value}
           </dd>
+          {row && item.action != null && item.action !== false && (
+            <dd className="m-0 flex shrink-0 items-center" data-testid={`${testId}-action`}>{item.action}</dd>
+          )}
         </div>
       ))}
     </dl>
