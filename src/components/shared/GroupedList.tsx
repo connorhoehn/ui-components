@@ -101,6 +101,16 @@ import { cn } from '../../lib/cn';
 import { DropdownMenu, type DropdownMenuSection } from './DropdownMenu';
 import Chip from './Chip';
 import { GripIcon } from '../ui/Icons';
+import {
+  RailCaretIcon,
+  RAIL_CURRENT_FILL,
+  RAIL_GROUP_COUNT,
+  RAIL_GROUP_LABEL,
+  RAIL_GROUP_LABEL_INK,
+  RAIL_GROUP_PAD_Y,
+  RAIL_ITEM_TEXT,
+  RAIL_ROW_PAD_Y,
+} from './railType';
 
 export interface GroupedListGroup {
   id: string;
@@ -217,8 +227,10 @@ export interface GroupedListProps {
   groupCountAlign?: 'inline' | 'end';
   /**
    * `ruled` (default): a 1px rule above every row. `plain` (since 2.392.0):
-   * no rules — a title-only list whose rows are separated by space alone, a
-   * 40px pitch at `md` (36px at `sm`) — the Initiatives v2 rail.
+   * no rules — a title-only list whose rows are separated by space alone —
+   * the Initiatives v2 rail. Since 2.397.0 a plain row is a RAIL row: it
+   * draws the shared rail scale (`railType`: 15px/500 titles on a 40px pitch,
+   * the 3px-bar current row) at any `size`, the same scale as SubNavLayout.
    */
   rowStyle?: 'ruled' | 'plain';
   className?: string;
@@ -301,25 +313,6 @@ function writeCollapsed(key: string | undefined, collapsed: Set<string>) {
 // ---------------------------------------------------------------------------
 
 type FocusKey = `g:${string}` | `r:${string}`;
-
-function CaretIcon({ open }: { open: boolean }) {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      width="14"
-      height="14"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className={cn('shrink-0 transition-transform duration-150', open ? '' : '-rotate-90')}
-    >
-      <path d="M4 6l4 4 4-4" />
-    </svg>
-  );
-}
 
 /** `CSS.escape` where it exists (jsdom has it; older engines do not). */
 function cssEscape(value: string): string {
@@ -642,16 +635,17 @@ export function GroupedList({
                 onClick={() => setOpen(group.id, !open)}
                 data-heading={labelHeading ? 'label' : undefined}
                 className={cn(
-                  'flex w-full items-center gap-2.5 border-0 bg-transparent px-2 py-2.5 text-left',
+                  'flex w-full items-center gap-2.5 border-0 bg-transparent px-2 text-left',
+                  RAIL_GROUP_PAD_Y,
                   labelHeading
-                    ? 'text-[11px] font-semibold uppercase leading-4 tracking-wide text-text-secondary'
+                    ? cn(RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK)
                     : md ? 'text-[15px] font-semibold text-text-primary' : 'text-[14px] font-semibold text-text-primary',
                   'rounded-md hover:bg-surface-hover',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
                 )}
               >
                 <span className="grid h-5 w-5 shrink-0 place-items-center text-text-secondary">
-                  <CaretIcon open={open} />
+                  <RailCaretIcon open={open} />
                 </span>
                 {group.icon && (
                   <span className="flex shrink-0 items-center text-text-secondary" data-testid={`${testId}-group-icon-${group.id}`}>
@@ -665,7 +659,7 @@ export function GroupedList({
                   </span>
                 )}
                 {typeof group.count === 'number' && labelHeading && (
-                  <span className={cn('shrink-0 font-medium normal-case tracking-normal text-text-tertiary', countEnd)} aria-label={`${group.count} items`} data-testid={`${testId}-group-count-${group.id}`} data-count-align={groupCountAlign === 'end' ? 'end' : undefined}>
+                  <span className={cn('shrink-0', RAIL_GROUP_COUNT, countEnd)} aria-label={`${group.count} items`} data-testid={`${testId}-group-count-${group.id}`} data-count-align={groupCountAlign === 'end' ? 'end' : undefined}>
                     {group.count}
                   </span>
                 )}
@@ -761,6 +755,9 @@ function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onF
   const hasLeading = row.leading !== undefined && row.leading !== null;
   const rKey: FocusKey = `r:${row.id}`;
   const md = size === 'md';
+  // A plain row is a rail row: it draws the shared rail scale (railType.tsx)
+  // whatever `size` says, so a rail can't drift from the shell rail beside it.
+  const railRow = md || rowStyle === 'plain';
   const [drag, setDrag] = useState({ dragging: false, over: false });
   const onDragState = useCallback((next: { dragging: boolean; over: boolean }) => {
     setDrag((prev) => (prev.dragging === next.dragging && prev.over === next.over ? prev : next));
@@ -796,14 +793,16 @@ function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onF
       className={cn(
         'group relative flex items-center gap-3 px-2',
         rowStyle === 'plain' ? 'border-t-0' : 'border-t border-border',
-        rowStyle === 'plain' ? (md ? 'py-[9px]' : 'py-2') : md ? 'py-[7px]' : 'py-2.5',
+        // plain rows are the rail form: the shared rail pitch at any size.
+        rowStyle === 'plain' ? RAIL_ROW_PAD_Y : md ? 'py-[7px]' : 'py-2.5',
         'transition-colors duration-100',
-        current ? 'bg-primary/8 hover:bg-primary/12' : 'hover:bg-surface-hover',
-        // md: the current row is a rounded tint with a bar on its left edge;
-        // the rows either side keep their rules, this one drops its own.
-        md && current && 'rounded-r-md border-transparent shadow-[inset_3px_0_0_0_var(--color-primary)]',
+        current ? cn(RAIL_CURRENT_FILL, 'hover:bg-primary/12') : 'hover:bg-surface-hover',
+        // md (and every plain rail row): the current row is a rounded tint
+        // with a 3px bar on its left edge; the rows either side keep their
+        // rules, this one drops its own.
+        railRow && current && 'rounded-r-md border-transparent shadow-[inset_3px_0_0_0_var(--color-primary)]',
         // bar (2.389.0): the same edge bar at sm, 2px.
-        !md && current && currentStyle === 'bar' && 'shadow-[inset_2px_0_0_0_var(--color-primary)]',
+        !railRow && current && currentStyle === 'bar' && 'shadow-[inset_2px_0_0_0_var(--color-primary)]',
         row.disabled && 'opacity-60',
         drag.dragging && 'opacity-50',
         drag.over && !drag.dragging && 'shadow-[inset_0_2px_0_0_var(--color-primary)]',
@@ -840,7 +839,7 @@ function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onF
         )}
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="flex min-w-0 items-center gap-2.5">
-            <span className={cn('truncate font-medium text-text-primary', md ? 'text-[15px] leading-[22px]' : 'text-[14px] leading-5')} title={row.title}>
+            <span className={cn('truncate text-text-primary', railRow ? RAIL_ITEM_TEXT : 'text-[14px] font-medium leading-5')} title={row.title}>
               {row.title}
             </span>
             {row.pill && <span className="flex shrink-0 items-center">{row.pill}</span>}

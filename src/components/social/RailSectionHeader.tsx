@@ -23,7 +23,8 @@
 
 import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
-import { ChevronIcon, PlusIcon } from '../ui/Icons';
+import { PlusIcon } from '../ui/Icons';
+import { RailCaretIcon, RAIL_GROUP_COUNT, RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK } from '../shared/railType';
 
 export interface RailSectionAction {
   /** The accessible name and the tooltip — "Create a channel", not "+". */
@@ -79,9 +80,9 @@ export interface RailSectionHeaderProps {
    */
   collapsedCount?: number;
   /**
-   * How many things the section holds — "GUIDES & FINDINGS  11". A small
-   * rounded bordered pill (the sub-nav's count shape, since 2.389.4; a soft
-   * neutral chip before) at the right end of the heading, before any actions, shown whenever
+   * How many things the section holds — "GUIDES & FINDINGS  11". Plain
+   * muted text, the shared rail group count (since 2.397.0; a bordered pill
+   * from 2.389.4, a soft neutral chip before) at the right end of the heading, before any actions, shown whenever
    * a number is given (0 included) and whatever the collapsed state. Unlike
    * `collapsedCount` it is a size, not an alert. Since 2.389.0.
    */
@@ -110,8 +111,9 @@ export function RailSectionHeader({
   // the handler alone decides whether this heading is a control.
   const isDisclosure = onToggleCollapse !== undefined;
   const labelClass = cn(
-    'min-w-0 flex-1 truncate text-[11px] font-semibold uppercase tracking-wide',
-    dark ? 'text-white/40' : 'text-text-tertiary',
+    'min-w-0 flex-1 truncate',
+    RAIL_GROUP_LABEL,
+    dark ? 'text-white/40' : RAIL_GROUP_LABEL_INK,
   );
 
   return (
@@ -133,13 +135,12 @@ export function RailSectionHeader({
             dark ? 'hover:text-white' : 'hover:text-text-primary',
           )}
         >
-          <ChevronIcon
-            dir={collapsed ? 'right' : 'down'}
-            size={12}
+          <RailCaretIcon
+            open={!collapsed}
             // Same tone as the label it sits beside — left to inherit, it
             // would take the document's default ink and read as darker than
             // the heading it belongs to.
-            className={cn('shrink-0', dark ? 'text-white/40' : 'text-text-tertiary')}
+            className={dark ? 'text-white/40' : 'text-text-secondary'}
           />
           <span className={labelClass}>{label}</span>
           {collapsed && collapsedCount > 0 && (
@@ -170,18 +171,16 @@ export function RailSectionHeader({
         </span>
       )}
       {typeof count === 'number' && (
-        // The same bordered pill the sub-nav draws beside "Guides & findings 11"
-        // (SubNavLayout's count), so the section's size reads as the same kind
-        // of number as the nav's. A soft neutral Chip (2.389.0) had no border
-        // and, on a panel-coloured rail, read as bare text.
+        // The same plain count every rail group heading draws (railType's
+        // RAIL_GROUP_COUNT, 2.397.0): SubNavLayout's group count and
+        // GroupedList's label count are this exact text, so a section's size
+        // reads as the same kind of number everywhere. It was a bordered pill
+        // (2.389.4) while the sub-nav drew pills; the sub-nav no longer does.
         <span
           aria-label={`${count} items`}
           data-testid={`${testId}-count`}
-          data-shape="pill"
-          className={cn(
-            'inline-flex h-4 min-w-5 shrink-0 items-center justify-center rounded-full border px-1.5 text-[10px] font-medium leading-none tabular-nums',
-            dark ? 'border-white/20 bg-transparent text-white/60' : 'border-border bg-surface text-text-tertiary',
-          )}
+          data-shape="plain"
+          className={cn('shrink-0 pr-1', RAIL_GROUP_COUNT, dark && 'text-white/60')}
         >
           {count}
         </span>

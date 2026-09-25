@@ -1,6 +1,18 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import {
+  RailCaretIcon,
+  RAIL_CURRENT_FILL,
+  RAIL_GROUP_COUNT,
+  RAIL_GROUP_LABEL,
+  RAIL_GROUP_LABEL_INK,
+  RAIL_GROUP_PAD_Y,
+  RAIL_ITEM_COUNT,
+  RAIL_ITEM_TEXT,
+  RAIL_ROW_PAD_Y,
+  RAIL_ROW_PITCH,
+} from './railType';
 
 // Shared "section with left-rail" layout. Pattern mirrors the InvokePage
 // session sidebar — slim rail, section title at top, NavLink items with
@@ -14,6 +26,12 @@ import { cn } from '../../lib/cn';
 // Router integration: pass a `renderNavItem` prop for full control over
 // how each link item is rendered. The default renders a plain <a> tag.
 // Portal consumers pass a React Router NavLink that handles isActive styling.
+//
+// Type scale: every size here comes from ./railType (2.397.0) — the same
+// constants the explorer rail (WorkspaceRail, RailNavList, GroupedList plain
+// rows) draws from — so a shell rail and the explorer rail beside it read as
+// one scale: 15px/500 items on a 40px pitch, 11px uppercase group labels with
+// a plain count at the right, a 3px primary bar + pale tint on the current row.
 
 export interface SubNavItem {
   /** Path relative to the section root, e.g. "summary" or "crawl". For action
@@ -299,9 +317,9 @@ function GroupSection({
   // If any item in this group specifies groupScrollAfter, cap the visible
   // height at that many items and make the rest scrollable.
   const scrollAfter = items.find((i) => i.groupScrollAfter)?.groupScrollAfter;
-  // scrollAfter * 38px per item — dynamic computed, keep inline
+  // scrollAfter * one rail row per item — dynamic computed, keep inline
   const listStyle: CSSProperties | undefined = scrollAfter
-    ? { maxHeight: scrollAfter * 38, overflowY: 'auto' }
+    ? { maxHeight: scrollAfter * RAIL_ROW_PITCH, overflowY: 'auto' }
     : undefined;
 
   return (
@@ -310,15 +328,22 @@ function GroupSection({
         type="button"
         ref={headerRef}
         onClick={toggle}
-        className="flex items-center gap-1.5 w-full px-3 py-2 bg-transparent border-none cursor-pointer text-[var(--color-text-tertiary)] text-[10px] font-bold tracking-[0.05em] uppercase text-left"
+        className={cn(
+          'flex items-center gap-1.5 w-full px-2 bg-transparent border-none cursor-pointer text-left hover:bg-surface-hover',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary',
+          RAIL_GROUP_PAD_Y,
+          RAIL_GROUP_LABEL,
+          RAIL_GROUP_LABEL_INK,
+        )}
         aria-expanded={!collapsed}
         aria-controls={bodyId}
+        data-testid="subnav-group-header"
       >
-        <span className="text-[10px] w-[10px] inline-block" aria-hidden="true">
-          {collapsed ? '▸' : '▾'}
+        <span className="grid h-5 w-5 shrink-0 place-items-center" aria-hidden="true">
+          <RailCaretIcon open={!collapsed} />
         </span>
-        <span className="flex-1">{name}</span>
-        <span className="text-[9px] font-medium text-[var(--color-text-tertiary)] bg-[var(--color-bg)] px-[5px] py-px rounded-[6px] border border-[var(--color-border)]">
+        <span className="min-w-0 flex-1 truncate">{name}</span>
+        <span className={cn('shrink-0 pr-1', RAIL_GROUP_COUNT)} aria-label={`${items.length} items`} data-testid="subnav-group-count">
           {items.length}
         </span>
       </button>
@@ -348,22 +373,25 @@ function ItemLink({
 
   const body = (
     <>
-      <div className="flex items-center justify-between gap-2">
-        {/* accent color is runtime-derived, keep inline for the override */}
+      <div className="flex min-w-0 items-center justify-between gap-2">
+        {/* Ink comes from the link (inactive/active class), so the current
+            item reads darker without a second rule. accent color is
+            runtime-derived, keep inline for the override. */}
         <span
-          className="text-[13px] font-medium text-[var(--color-text-secondary)]"
+          className={cn('min-w-0 truncate', RAIL_ITEM_TEXT)}
           style={accentColor ? { color: accentColor } : undefined}
+          data-testid="subnav-item-label"
         >
           {item.label}
         </span>
         {item.count !== undefined && (
-          <span className="text-[10px] font-medium text-[var(--color-text-tertiary)] bg-[var(--color-surface)] px-[6px] py-px rounded-[8px] border border-[var(--color-border)]">
+          <span className={cn('shrink-0', RAIL_ITEM_COUNT)} data-testid="subnav-item-count">
             {item.count}
           </span>
         )}
       </div>
       {item.hint && (
-        <div className="text-[10px] text-[var(--color-text-tertiary)] mt-0.5">
+        <div className="text-[12px] leading-4 text-[var(--color-text-tertiary)] mt-0.5">
           {item.hint}
         </div>
       )}
@@ -373,9 +401,9 @@ function ItemLink({
   // Base inactive style passed to renderNavItem for router consumers (NavLink isActive).
   const baseStyle: CSSProperties = {
     display: 'block',
-    padding: '8px 14px',
+    padding: '9px 14px',
     borderLeft: '3px solid transparent',
-    color: 'var(--color-text-secondary)',
+    color: 'var(--color-text-primary)',
     textDecoration: 'none',
     cursor: 'pointer',
   };
@@ -385,7 +413,7 @@ function ItemLink({
       <button
         type="button"
         onClick={item.onClick}
-        className="block w-full px-[14px] py-2 border-l-[3px] border-transparent border-t-0 border-r-0 border-b-0 bg-transparent text-[var(--color-text-secondary)] text-left cursor-pointer font-[inherit]"
+        className={cn('block w-full px-[14px] border-l-[3px] border-transparent border-t-0 border-r-0 border-b-0 bg-transparent text-text-primary text-left cursor-pointer font-[inherit] hover:bg-surface-hover', RAIL_ROW_PAD_Y)}
       >
         {body}
       </button>
@@ -405,7 +433,7 @@ function ItemLink({
   return (
     <a
       href={item.path}
-      className="block px-[14px] py-2 border-l-[3px] border-transparent text-[var(--color-text-secondary)] no-underline cursor-pointer"
+      className={inactiveNavItemClassName}
     >
       {body}
     </a>
@@ -415,7 +443,7 @@ function ItemLink({
 // Exported for consumers that use renderNavItem and want to apply the active style.
 export const activeNavItemStyle: CSSProperties = {
   borderLeft: '3px solid var(--color-primary)',
-  background: 'var(--color-surface-hover)',
+  background: 'color-mix(in srgb, var(--color-primary) 8%, transparent)',
   color: 'var(--color-text-primary)',
 };
 
@@ -439,9 +467,16 @@ export const activeNavItemStyle: CSSProperties = {
  * )}
  * ```
  */
+//
+// Since 2.397.0 both come from the shared rail scale (./railType): a 40px row
+// (RAIL_ROW_PAD_Y), primary ink on every item, a hover fill on inactive
+// items, and the current item marked the way GroupedList marks its current
+// rail row — the 3px primary edge plus RAIL_CURRENT_FILL (primary at 8%).
+// Before, the current item filled with `bg-surface-hover`, i.e. it looked
+// exactly like a hovered item.
 export const inactiveNavItemClassName =
-  'block px-[14px] py-2 border-l-[3px] border-transparent text-text-secondary no-underline cursor-pointer';
+  `block px-[14px] ${RAIL_ROW_PAD_Y} border-l-[3px] border-transparent text-text-primary no-underline cursor-pointer hover:bg-surface-hover`;
 export const activeNavItemClassName =
-  'block px-[14px] py-2 border-l-[3px] border-primary bg-surface-hover text-text-primary no-underline cursor-pointer';
+  `block px-[14px] ${RAIL_ROW_PAD_Y} border-l-[3px] border-primary ${RAIL_CURRENT_FILL} text-text-primary no-underline cursor-pointer`;
 
 export { cn };

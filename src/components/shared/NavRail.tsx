@@ -37,6 +37,14 @@ import {
   type ReactNode,
 } from 'react';
 import { cn } from '../../lib/cn';
+import {
+  RailCaretIcon,
+  RAIL_GROUP_LABEL,
+  RAIL_GROUP_PAD_Y,
+  RAIL_ITEM_COUNT,
+  RAIL_ITEM_TEXT,
+  RAIL_ROW_PAD_Y,
+} from './railType';
 import type { SurfaceTone } from './tones';
 
 /** @see SurfaceTone — which colour family the rail paints in. */
@@ -101,10 +109,14 @@ export interface NavRailProps {
   ) => ReactNode;
   tone?: NavRailTone;
   /**
-   * `sm` (default) is the 13px rail. `md` is the Documents surface's
-   * Workspace rail (the All documents mockup): 15px labels on 36px rows, a
-   * heading row with no rule under it, and a hairline between groups.
-   * Since 2.389.2.
+   * Layout only, since 2.397.0 — both sizes draw the one shared rail type
+   * scale (`railType`: 15px/500 labels on 40px rows, 11px caps group labels,
+   * plain counts), the same as SubNavLayout and the explorer rails. `sm`
+   * (default) is flush with the rail's edges under a ruled title row; `md` is
+   * the Documents surface's Workspace rail (the All documents mockup): items
+   * inset under the group's caret, a heading row with no rule under it, and a
+   * hairline between groups. Since 2.389.2. (Before 2.397.0 `sm` was a 13px
+   * rail and `md` 15px/400 on 36px rows.)
    */
   size?: 'sm' | 'md';
   /** Names the nav landmark. Falls back to the title, then 'Navigation'. */
@@ -130,7 +142,7 @@ const TONE = {
     hint: 'text-text-tertiary',
     badge: 'bg-surface-inset text-text-tertiary border-border',
     hover: 'hover:bg-surface-hover',
-    active: 'bg-surface-hover border-l-primary',
+    active: 'bg-primary/8 border-l-primary',
   },
   code: {
     rail: 'bg-code-panel border-code-border',
@@ -203,25 +215,20 @@ function RailItem({
         <span
           className={cn(
             'truncate',
-            size === 'md' ? 'text-[15px] font-normal' : 'text-[13px] font-medium',
-            active || size === 'md' ? palette.labelActive : palette.label,
+            RAIL_ITEM_TEXT,
+            palette.labelActive,
           )}
         >
           {item.label}
         </span>
         {item.badge != null && (
-          <span
-            className={cn(
-              'ml-auto flex-none rounded-full border px-1.5 text-[10px] font-medium leading-4',
-              palette.badge,
-            )}
-          >
+          <span className={cn('ml-auto flex-none', RAIL_ITEM_COUNT, palette.hint)} data-testid="nav-rail-badge">
             {item.badge}
           </span>
         )}
       </span>
       {item.hint && (
-        <span className={cn('mt-0.5 block truncate text-[10px]', palette.hint)}>{item.hint}</span>
+        <span className={cn('mt-0.5 block truncate text-[12px] leading-4', palette.hint)}>{item.hint}</span>
       )}
     </>
   );
@@ -230,7 +237,8 @@ function RailItem({
     'block w-full border-l-[3px] border-transparent text-left no-underline',
     // md: inset from the rail's edges, the accent under the group's caret and
     // the label under the group's name (the All documents mockup).
-    size === 'md' ? 'ml-[18px] w-auto mr-2 rounded-r py-[7px] pl-[15px] pr-2' : 'px-3 py-1.5',
+    size === 'md' ? 'ml-[18px] w-auto mr-2 rounded-r pl-[15px] pr-2' : 'px-3',
+    RAIL_ROW_PAD_Y,
     palette.hover,
     active && palette.active,
     item.disabled && 'pointer-events-none opacity-50',
@@ -329,13 +337,15 @@ function RailGroup({
         aria-expanded={!collapsed}
         aria-controls={bodyId}
         className={cn(
-          'flex w-full cursor-pointer items-center gap-1.5 border-none bg-transparent text-left font-bold uppercase tracking-[0.06em]',
-          size === 'md' ? 'px-5 py-1.5 text-[11px]' : 'px-3 py-1.5 text-[10px]',
+          'flex w-full cursor-pointer items-center gap-1.5 border-none bg-transparent text-left',
+          RAIL_GROUP_LABEL,
+          RAIL_GROUP_PAD_Y,
+          size === 'md' ? 'px-3.5' : 'px-2',
           palette.group,
         )}
       >
-        <span aria-hidden="true" className="inline-block w-2.5 text-[10px]">
-          {collapsed ? '▸' : '▾'}
+        <span aria-hidden="true" className="grid h-5 w-5 shrink-0 place-items-center">
+          <RailCaretIcon open={!collapsed} />
         </span>
         <span className="flex-1 truncate">{name}</span>
       </button>

@@ -222,6 +222,22 @@ export {
 export type { SubNavItem, SubNavLayoutProps } from './SubNavLayout';
 // A rail's scope list ("All initiatives / My initiatives / Sprints"). 2.392.0.
 export { RailNavList } from './RailNavList';
+// The one type scale every rail draws from (2.397.0) — SubNavLayout,
+// RailNavList, GroupedList rail rows, WorkspaceRail captions, RailSectionHeader.
+export {
+  railType,
+  RailCaretIcon,
+  RAIL_ITEM_TEXT,
+  RAIL_ROW_PAD_Y,
+  RAIL_ROW_PITCH,
+  RAIL_ITEM_COUNT,
+  RAIL_GROUP_LABEL,
+  RAIL_GROUP_LABEL_INK,
+  RAIL_GROUP_COUNT,
+  RAIL_GROUP_PAD_Y,
+  RAIL_CAPTION,
+  RAIL_CURRENT_FILL,
+} from './railType';
 export type { RailNavListProps, RailNavListItem } from './RailNavList';
 
 // ── Deep application layout (2026-08) ──

@@ -3,6 +3,7 @@ import { cn } from '../../lib/cn';
 import { IconButton } from '../ui/IconButton';
 import { ChevronIcon } from '../ui/Icons';
 import Chip from '../shared/Chip';
+import { RAIL_CAPTION } from '../shared/railType';
 
 export interface WorkspaceRailBack {
   label: string;
@@ -92,7 +93,7 @@ export function WorkspaceRail({
       {(title || actions || onToggle) && (
         <div className={cn('flex shrink-0 items-center gap-1', heading !== 'compact' ? 'h-14' : 'h-9 border-b border-border', collapsed ? 'justify-center' : heading !== 'compact' ? 'pl-5 pr-3' : 'pl-3.5 pr-1.5')} data-testid={`${testId}-header`}>
           {!collapsed && (title ? (
-            <h2 className={cn('m-0 flex min-w-0 flex-1 items-center gap-2 text-text-primary', heading === 'prominent' ? 'text-[18px] font-semibold' : heading === 'label' ? 'text-[15px] font-semibold uppercase tracking-[0.02em]' : heading === 'caption' ? 'text-[13px] font-semibold uppercase tracking-[0.06em]' : 'text-[12px] font-semibold')} data-testid={`${testId}-title`}>
+            <h2 className={cn('m-0 flex min-w-0 flex-1 items-center gap-2 text-text-primary', heading === 'prominent' ? 'text-[18px] font-semibold' : heading === 'label' ? 'text-[15px] font-semibold uppercase tracking-[0.02em]' : heading === 'caption' ? RAIL_CAPTION : 'text-[12px] font-semibold')} data-testid={`${testId}-title`}>
               <span className="min-w-0 truncate">{title}</span>
               {typeof count === 'number' && countStyle === 'plain' && (
                 <span className="shrink-0 text-[13px] font-medium text-text-secondary" aria-label={`${count} items`} data-testid={`${testId}-count`} data-count-style="plain">{count}</span>

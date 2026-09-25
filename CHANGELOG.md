@@ -6,6 +6,41 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.397.0] — 2026-09-25
+
+One type scale for every navigation rail. **Visual change for every consumer** (realtime-examples
+included) — intended, not opt-in: the shell rail and the explorer rail beside it drew two scales
+(13px items in 36px rows, 10px bold group headings, 9px bordered count pills — against 15px items on a
+40px pitch, 11px caps labels and plain counts), and nothing tied them together.
+
+### Added
+- `railType` (from `…/shared`): the constants every rail now composes — `RAIL_ITEM_TEXT` (15px/500,
+  22px line), `RAIL_ROW_PAD_Y` / `RAIL_ROW_PITCH` (40px rows), `RAIL_ITEM_COUNT` (13px muted tabular),
+  `RAIL_GROUP_LABEL` + `RAIL_GROUP_LABEL_INK` (11px semibold caps, letter-spaced), `RAIL_GROUP_COUNT`
+  (11px plain count), `RAIL_GROUP_PAD_Y`, `RAIL_CAPTION` (13px caps), `RAIL_CURRENT_FILL` (primary at 8%),
+  and `RailCaretIcon` (the 14px disclosure caret). Values are the Initiatives v2 explorer rail's.
+
+### Changed (visual)
+- `SubNavLayout`: items 13px → 15px/500 on 40px rows, primary ink (inherits from the link); item counts
+  plain 13px instead of a 10px pill; hints 10px → 12px; group headings 10px bold `▾` → 11px semibold caps
+  with the SVG caret on a 40px row; group counts plain 11px at the right edge instead of a 9px pill;
+  `groupScrollAfter` caps at 40px per row.
+- `activeNavItemClassName` / `inactiveNavItemClassName` / `activeNavItemStyle`: 40px rows, primary ink,
+  inactive items gain a hover fill, and the current item fills with `bg-primary/8` (was `bg-surface-hover`,
+  i.e. it looked hovered) — the same mark GroupedList puts on its current rail row.
+- `NavRail`: both sizes draw the shared scale (`size` is now layout only — flush vs inset); badges are the
+  plain item count; group headings as SubNavLayout; the surface tone's current fill is `bg-primary/8`.
+- `GroupedList` `rowStyle="plain"` is a rail row at any `size`: shared 40px pitch, 15px/500 titles and the
+  3px-bar current row (sm plain rows were 14px/36px). `groupHeading="label"` headings and counts come from
+  the shared tokens (same values as before). Ruled lists keep their `size` scale — they are work lists.
+- `RailNavList`: 15px/500 (was 400) from the shared item token, 34px pitch (was 33px) — the views list stays
+  tighter than rows, as drawn in the mockup.
+- `RailSectionHeader`: label ink `text-text-secondary` (was tertiary) with the shared caret; `count` is the
+  shared plain group count (`data-shape="plain"`), no longer a bordered pill.
+- `WorkspaceRail` `heading="caption"` reads `RAIL_CAPTION` (unchanged values).
+- Story `Layout/ExplorerLayout › Initiative overview v2 — shell rail beside the explorer rail`: a
+  SubNavLayout shell rail beside the Initiatives explorer rail, both on the one scale.
+
 ## [2.396.1] — 2026-09-25
 
 ### Changed

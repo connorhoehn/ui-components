@@ -22,7 +22,7 @@ import { TdHTMLAttributes } from 'react';
 import { TextareaHTMLAttributes } from 'react';
 import { ThHTMLAttributes } from 'react';
 
-export declare const activeNavItemClassName = "block px-[14px] py-2 border-l-[3px] border-primary bg-surface-hover text-text-primary no-underline cursor-pointer";
+export declare const activeNavItemClassName = "block px-[14px] py-[9px] border-l-[3px] border-primary bg-primary/8 text-text-primary no-underline cursor-pointer";
 
 export declare const activeNavItemStyle: CSSProperties;
 
@@ -2475,8 +2475,10 @@ export declare interface GroupedListProps {
     groupCountAlign?: 'inline' | 'end';
     /**
      * `ruled` (default): a 1px rule above every row. `plain` (since 2.392.0):
-     * no rules — a title-only list whose rows are separated by space alone, a
-     * 40px pitch at `md` (36px at `sm`) — the Initiatives v2 rail.
+     * no rules — a title-only list whose rows are separated by space alone —
+     * the Initiatives v2 rail. Since 2.397.0 a plain row is a RAIL row: it
+     * draws the shared rail scale (`railType`: 15px/500 titles on a 40px pitch,
+     * the 3px-bar current row) at any `size`, the same scale as SubNavLayout.
      */
     rowStyle?: 'ruled' | 'plain';
     className?: string;
@@ -2597,7 +2599,7 @@ export declare interface ImageLightboxProps {
  * )}
  * ```
  */
-export declare const inactiveNavItemClassName = "block px-[14px] py-2 border-l-[3px] border-transparent text-text-secondary no-underline cursor-pointer";
+export declare const inactiveNavItemClassName = "block px-[14px] py-[9px] border-l-[3px] border-transparent text-text-primary no-underline cursor-pointer hover:bg-surface-hover";
 
 /** A circled "i": "more about this" — an estimate's confidence, a footnote. Since 2.385.0. */
 export declare function InfoIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -3202,10 +3204,14 @@ export declare interface NavRailProps {
     renderLink?: (item: NavRailItem, props: AnchorHTMLAttributes<HTMLAnchorElement>) => ReactNode;
     tone?: NavRailTone;
     /**
-     * `sm` (default) is the 13px rail. `md` is the Documents surface's
-     * Workspace rail (the All documents mockup): 15px labels on 36px rows, a
-     * heading row with no rule under it, and a hairline between groups.
-     * Since 2.389.2.
+     * Layout only, since 2.397.0 — both sizes draw the one shared rail type
+     * scale (`railType`: 15px/500 labels on 40px rows, 11px caps group labels,
+     * plain counts), the same as SubNavLayout and the explorer rails. `sm`
+     * (default) is flush with the rail's edges under a ruled title row; `md` is
+     * the Documents surface's Workspace rail (the All documents mockup): items
+     * inset under the group's caret, a heading row with no rule under it, and a
+     * hairline between groups. Since 2.389.2. (Before 2.397.0 `sm` was a 13px
+     * rail and `md` 15px/400 on 36px rows.)
      */
     size?: 'sm' | 'md';
     /** Names the nav landmark. Falls back to the title, then 'Navigation'. */
@@ -3924,6 +3930,49 @@ export declare interface RadioOption<T extends string = string> {
     description?: string;
 }
 
+/** A rail's caption ("INITIATIVES 11"): 13px semibold uppercase, spaced. */
+export declare const RAIL_CAPTION = "text-[13px] font-semibold uppercase tracking-[0.06em]";
+
+/** The selected row's fill. The 3px primary edge bar goes with it. */
+export declare const RAIL_CURRENT_FILL = "bg-primary/8";
+
+/**
+ * A group heading's count ("IN PROGRESS … 9"): plain muted text at the label's
+ * size, never a pill — the heading already says what it counts.
+ */
+export declare const RAIL_GROUP_COUNT = "text-[11px] font-medium leading-4 normal-case tracking-normal tabular-nums text-text-tertiary";
+
+/**
+ * A group heading ("PLAN", "IN PROGRESS"): 11px semibold uppercase,
+ * letter-spaced. Ink is separate (`RAIL_GROUP_LABEL_INK`) so a dark rail can
+ * swap it without fighting class order.
+ */
+export declare const RAIL_GROUP_LABEL = "text-[11px] font-semibold uppercase leading-4 tracking-wide";
+
+/** The default ink of a group heading. */
+export declare const RAIL_GROUP_LABEL_INK = "text-text-secondary";
+
+/** Padding that puts a group heading (20px caret box) on the same 40px pitch. */
+export declare const RAIL_GROUP_PAD_Y = "py-2.5";
+
+/** A count at an item's right edge ("Initiatives 3"): muted, tabular. */
+export declare const RAIL_ITEM_COUNT = "text-[13px] font-medium leading-5 tabular-nums text-text-tertiary";
+
+/** A rail item's label: 15px, medium weight, 22px line. */
+export declare const RAIL_ITEM_TEXT = "text-[15px] font-medium leading-[22px]";
+
+/** Vertical padding that puts a one-line rail row on a 40px pitch (9 + 22 + 9). */
+export declare const RAIL_ROW_PAD_Y = "py-[9px]";
+
+/** The one-line row pitch in px, for hosts that cap a list by row count. */
+export declare const RAIL_ROW_PITCH = 40;
+
+/** The disclosure caret every rail group heading wears: 14px, down when open. */
+export declare function RailCaretIcon({ open, className }: {
+    open: boolean;
+    className?: string;
+}): JSX.Element;
+
 export declare function RailLayout({ children, rail, railWidth, className, 'data-testid': testId }: RailLayoutProps): JSX.Element;
 
 export declare interface RailLayoutProps {
@@ -3973,6 +4022,20 @@ export declare interface RailSectionProps {
     children: ReactNode;
     className?: string;
 }
+
+/** Everything above, as one object — `railType.item`, `railType.groupLabel`… */
+export declare const railType: {
+    readonly item: "text-[15px] font-medium leading-[22px]";
+    readonly rowPadY: "py-[9px]";
+    readonly rowPitch: 40;
+    readonly itemCount: "text-[13px] font-medium leading-5 tabular-nums text-text-tertiary";
+    readonly groupLabel: "text-[11px] font-semibold uppercase leading-4 tracking-wide";
+    readonly groupLabelInk: "text-text-secondary";
+    readonly groupCount: "text-[11px] font-medium leading-4 normal-case tracking-normal tabular-nums text-text-tertiary";
+    readonly groupPadY: "py-2.5";
+    readonly caption: "text-[13px] font-semibold uppercase tracking-[0.06em]";
+    readonly currentFill: "bg-primary/8";
+};
 
 /**
  * The text colour that reads on `background`, or `null` when the background
@@ -5973,19 +6036,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasListStyle: {
             /**
              * Make the caret's block a list of the style's kind (if it is not one
@@ -6016,6 +6066,19 @@ declare module '@tiptap/core' {
 }
 
 
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
 declare global {
     interface Window {
         /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
@@ -6026,9 +6089,19 @@ declare global {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -6062,9 +6135,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -6072,9 +6145,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -6088,16 +6161,6 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { RAIL_GROUP_COUNT } from '../../shared/railType';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { RailSectionHeader } from '../RailSectionHeader';
@@ -302,17 +303,15 @@ describe('RailSectionHeader count (2.389.0)', () => {
     expect(label.compareDocumentPosition(chip) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
-  it('draws the count as a rounded bordered pill like the sub-nav counts (2.389.4)', () => {
+  it('draws the count as the shared plain rail group count, not a pill (2.397.0)', () => {
     render(<RailSectionHeader label="Guides & findings" count={11} />);
-    const pill = screen.getByTestId('rail-section-header-count');
-    expect(pill).toHaveAttribute('data-shape', 'pill');
-    expect(pill.className).toContain('rounded-full');
-    expect(pill.className).toContain('border');
-    expect(pill.className).toContain('border-border');
-    expect(pill.className).toContain('bg-surface');
-    expect(pill.className).toContain('text-text-tertiary');
-    // Not the soft neutral chip it used to be.
-    expect(pill.className).not.toContain('bg-neutral-bg');
+    const count = screen.getByTestId('rail-section-header-count');
+    expect(count).toHaveAttribute('data-shape', 'plain');
+    for (const cls of RAIL_GROUP_COUNT.split(' ')) expect(count.className).toContain(cls);
+    expect(count.className).not.toContain('rounded-full');
+    expect(count.className).not.toContain('border-border');
+    // Not the soft neutral chip it used to be either.
+    expect(count.className).not.toContain('bg-neutral-bg');
   });
 
   it('shows 0, shows while collapsed, and draws nothing when omitted', () => {

@@ -16,6 +16,7 @@ import { Button } from '../ui/Button';
 import { ArrowRightIcon, ChevronIcon, LinkIcon, MoreIcon } from '../ui/Icons';
 import { Disclosure } from '../ui/Disclosure';
 import { NavRail, type NavRailItem } from '../shared/NavRail';
+import { SubNavLayout, activeNavItemClassName, inactiveNavItemClassName, type SubNavItem } from '../shared/SubNavLayout';
 import { Tabs } from '../shared/Tabs';
 import { SegmentedControl } from '../shared/SegmentedControl';
 import { DropdownMenu } from '../shared/DropdownMenu';
@@ -640,11 +641,57 @@ const V2_WHO_PTS = [
   { id: 'pts', width: 'sm' as const, label: 'Points' },
 ];
 
-function InitiativeOverviewV2Frame() {
+// 2.397.0 — the portal's shell rail is a SubNavLayout, not a NavRail. This
+// frame draws the mockup's left-hand "Org" rail with it, so the story shows
+// the two rails the user compares side by side: both now draw railType's one
+// scale (15px/500 items on 40px rows, 11px caps group labels with a plain
+// count at the right, the 3px bar + pale tint on the current row).
+const SHELL_NAV: SubNavItem[] = [
+  { path: '/iq/projects', label: 'Initiatives', group: 'Plan' },
+  { path: '/iq/designs', label: 'Designs', group: 'Design' },
+  { path: '/iq/promotions', label: 'Promotions', group: 'Design' },
+  { path: '/iq/library', label: 'Library', group: 'Design' },
+  { path: '/iq/work', label: 'Automate', group: 'Build' },
+  { path: '/iq/distillation', label: 'Distillation', group: 'Build' },
+  { path: '/iq/local', label: 'Local compute', group: 'Build' },
+  { path: '/iq/session', label: 'Session config', group: 'Release' },
+  { path: '/iq/ask', label: 'Ask', group: 'Org' },
+  { path: '/iq/explore', label: 'Explore', group: 'Org' },
+  { path: '/settings', label: 'Settings', group: 'System' },
+];
+
+function ShellRailFrame({ children }: { children: ReactNode }) {
+  return (
+    <div className="h-[898px] w-[1642px] bg-surface">
+      <SubNavLayout
+        title="Org"
+        items={SHELL_NAV}
+        railWidth={200}
+        storageKey="story-shell-rail"
+        railLabel="Org navigation"
+        contentAs="div"
+        renderNavItem={(item, children) => (
+          <a
+            href={item.path}
+            onClick={(e) => e.preventDefault()}
+            className={item.path === '/iq/projects' ? activeNavItemClassName : inactiveNavItemClassName}
+          >
+            {children}
+          </a>
+        )}
+      >
+        {children}
+      </SubNavLayout>
+    </div>
+  );
+}
+
+function InitiativeOverviewV2Frame({ shell = 'nav-rail' }: { shell?: 'nav-rail' | 'sub-nav' }) {
   const [tab, setTab] = useState('overview');
   const [q, setQ] = useState('');
+  const Frame = shell === 'sub-nav' ? ShellRailFrame : OrgFrame;
   return (
-    <OrgFrame>
+    <Frame>
       <ExplorerLayout
         railTitle="Initiatives"
         railCount={11}
@@ -753,7 +800,7 @@ function InitiativeOverviewV2Frame() {
           </PageSection>
         </div>
       </ExplorerLayout>
-    </OrgFrame>
+    </Frame>
   );
 }
 
@@ -775,4 +822,10 @@ export const InitiativesMineEmpty: Story = {
 export const InitiativeOverviewV2: Story = {
   name: 'Initiative overview v2',
   render: () => <InitiativeOverviewV2Frame />,
+};
+
+export const InitiativeOverviewV2ShellRail: Story = {
+  name: 'Initiative overview v2 — shell rail beside the explorer rail',
+  parameters: { layout: 'fullscreen' },
+  render: () => <InitiativeOverviewV2Frame shell="sub-nav" />,
 };

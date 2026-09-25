@@ -8,8 +8,13 @@
 // Those switch a panel in place and carry tab/radio semantics. These items are
 // navigation: each one is a URL (`?scope=mine`, `?lens=sprints`), the current
 // one is marked with `aria-current="page"`, and a reader can open one in a new
-// tab. SubNavLayout's item is the same idea at 13px with a left border, sized
-// for a settings rail; this is the lighter list a column header wears.
+// tab. SubNavLayout's item is the same idea with a left border; this is the
+// lighter list a column header wears.
+//
+// Type scale (2.397.0): the item text and count come from ./railType, the
+// same constants as SubNavLayout and GroupedList's rail rows, so the words
+// match every other rail. Only the pitch differs — 34px, not 40px — because
+// the mockup draws these as a tight list of views above the rows.
 //
 // ## Honest items
 //
@@ -18,6 +23,7 @@
 
 import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { RAIL_ITEM_COUNT, RAIL_ITEM_TEXT } from './railType';
 
 export interface RailNavListItem {
   id: string;
@@ -46,8 +52,9 @@ export interface RailNavListProps {
 }
 
 const ITEM_CLASS = cn(
-  'flex w-full min-w-0 items-center gap-2.5 rounded-md border-0 bg-transparent px-2.5 py-[5px] text-left',
-  'text-[15px] leading-[23px] text-text-primary no-underline [font-family:inherit]',
+  'flex w-full min-w-0 items-center gap-2.5 rounded-md border-0 bg-transparent px-2.5 py-[6px] text-left',
+  RAIL_ITEM_TEXT,
+  'text-text-primary no-underline [font-family:inherit]',
   'transition-colors duration-100 hover:bg-surface-hover',
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
 );
@@ -68,13 +75,13 @@ export function RailNavList({
               {item.icon != null && <span className="flex shrink-0 items-center text-text-secondary">{item.icon}</span>}
               <span className="min-w-0 flex-1 truncate" title={item.label}>{item.label}</span>
               {typeof item.count === 'number' && (
-                <span className="shrink-0 text-[13px] font-medium tabular-nums text-text-tertiary" aria-label={`${item.count} items`} data-testid={`${testId}-count-${item.id}`}>
+                <span className={cn('shrink-0', RAIL_ITEM_COUNT)} aria-label={`${item.count} items`} data-testid={`${testId}-count-${item.id}`}>
                   {item.count}
                 </span>
               )}
             </>
           );
-          const cls = cn(ITEM_CLASS, item.current ? 'font-semibold' : 'font-normal', item.disabled ? 'cursor-default opacity-60 hover:bg-transparent' : 'cursor-pointer');
+          const cls = cn(ITEM_CLASS, item.current ? 'font-semibold' : undefined, item.disabled ? 'cursor-default opacity-60 hover:bg-transparent' : 'cursor-pointer');
           const common = {
             className: cls,
             'data-testid': `${testId}-item-${item.id}`,
