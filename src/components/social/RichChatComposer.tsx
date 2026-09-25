@@ -79,6 +79,7 @@ import {
   type CSSProperties,
   type FocusEvent as ReactFocusEvent,
   type KeyboardEvent as ReactKeyboardEvent,
+  type DragEvent as ReactDragEvent,
   type ReactNode,
   type Ref,
 } from 'react';
@@ -525,6 +526,23 @@ export interface RichChatComposerProps {
   /** At the end of the compact mode row — a scope switch, a count. */
   modeRowEnd?: ReactNode;
   /**
+   * The docked card (`modeControl="menu"` + `toolbar="editor"`) with no mode
+   * switch: the header row is the references alone, left-aligned, then
+   * `referencesAction` — a page whose composer only ever does one thing
+   * (the All documents page, 2.389.x). The mode menu's extra sections go
+   * with it, so pass none.
+   */
+  hideModeMenu?: boolean;
+  /** After the references in the docked header row — an "add another" control. Shown even with no references. */
+  referencesAction?: ReactNode;
+  /**
+   * Makes the whole card a drop target for a host's own payload (not files):
+   * while a drag carrying one of `types` is over it, the card is ringed and
+   * says `hint`; a drop calls `onDrop` with the DataTransfer. File drops keep
+   * going to the attachment zone.
+   */
+  referenceDrop?: { types: readonly string[]; onDrop: (dataTransfer: DataTransfer) => void; hint?: string };
+  /**
    * One row while idle: with the input EMPTY and the caret elsewhere (and no
    * status, process, attachment, command or notice to show), the composer is
    * a compact mode pill, any references, the input and Send on a single line.
@@ -888,6 +906,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   suggestions,
   onSuggestion,
   modeRowEnd,
+  hideModeMenu = false,
+  referencesAction,
+  referenceDrop,
   collapseWhenIdle = false,
   className,
   'data-testid': testId = 'rich-chat-composer',
@@ -1802,6 +1823,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // Focus anywhere inside the composer (the input, a chip, the toolbar):
   // suggestion chips show only while it holds focus AND the input is empty.
   const [focusWithin, setFocusWithin] = useState(false);
+  // A host payload being dragged over the card (`referenceDrop`). A counter,
+  // not a flag: dragenter/dragleave fire for every child the pointer crosses.
+  const [referenceDragDepth, setReferenceDragDepth] = useState(0);
+  const acceptsReferenceDrag = (dataTransfer: DataTransfer | null): boolean =>
+    !!referenceDrop && !!dataTransfer && Array.from(dataTransfer.types ?? []).some((t) => referenceDrop.types.includes(t));
   // `collapseWhenIdle`: the caret entered the INPUT since focus came into the
   // composer. Not plain focus-within: a press on the idle row's mode pill or
   // Send must not re-lay the row out under the pointer mid-click.
@@ -2092,6 +2118,34 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         // `overflow-hidden` here: the send split-menu and the suggestion
         // popovers are children of this box and clipping them is a regression.
         {...(consoleSurface ? { 'data-theme': 'dark' } : {})}
+        {...(referenceDrop ? {
+          // Stops at the card: the attachment zone around it only takes files.
+          onDragEnter: (event: ReactDragEvent<HTMLDivElement>) => {
+            if (!acceptsReferenceDrag(event.dataTransfer)) return;
+            event.preventDefault();
+            event.stopPropagation();
+            setReferenceDragDepth((n) => n + 1);
+          },
+          onDragOver: (event: ReactDragEvent<HTMLDivElement>) => {
+            if (!acceptsReferenceDrag(event.dataTransfer)) return;
+            event.preventDefault();
+            event.stopPropagation();
+            event.dataTransfer.dropEffect = 'copy';
+          },
+          onDragLeave: (event: ReactDragEvent<HTMLDivElement>) => {
+            if (!acceptsReferenceDrag(event.dataTransfer)) return;
+            event.stopPropagation();
+            setReferenceDragDepth((n) => Math.max(0, n - 1));
+          },
+          onDrop: (event: ReactDragEvent<HTMLDivElement>) => {
+            if (!acceptsReferenceDrag(event.dataTransfer)) return;
+            event.preventDefault();
+            event.stopPropagation();
+            setReferenceDragDepth(0);
+            referenceDrop.onDrop(event.dataTransfer);
+          },
+        } : {})}
+        data-reference-drop={referenceDrop ? (referenceDragDepth > 0 ? 'over' : 'ready') : undefined}
         {...(modeShortcuts && switchable
           ? {
               // Capture phase: Option-digit must be taken before the editor
@@ -2124,8 +2178,18 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           // primary while it is in use, rather than a 2px ring (the mockup).
           docked && 'rounded-lg focus-within:ring-0',
           docked && !activeCommand?.disabled && (activeCommand ? 'border-primary/25 focus-within:border-primary/35' : 'focus-within:border-primary/35'),
+          referenceDragDepth > 0 && 'border-primary bg-primary-bg ring-2 ring-primary/40',
         )}
       >
+        {referenceDragDepth > 0 && (
+          <span
+            role="status"
+            data-testid={`${testId}-drop-hint`}
+            className="pointer-events-none absolute right-3 top-2 z-10 rounded-md bg-primary px-2 py-0.5 text-xs font-medium text-on-primary shadow-sm"
+          >
+            {referenceDrop?.hint ?? 'Drop to add'}
+          </span>
+        )}
         {/* The console surface itself. Rounded and clipped on its own element
             so the corners match the border above without clipping anything
             that has to escape the box. */}
@@ -2253,7 +2317,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             labels do not fit beside anything at that width. */}
         {compactModeRow && !collapsed && (
           <div className={cn('flex min-w-0 items-center gap-1.5 text-xs', docked ? 'px-3 pt-2' : 'px-2 pt-1', compact && 'flex-wrap', reveal)} data-testid={`${testId}-modes`} data-mode-control={menuModeRow ? 'menu' : 'compact'}>
-            {menuModeRow ? (
+            {menuModeRow ? (hideModeMenu && docked ? null : (
               // One control: the mode's glyph and name, a ▾, the other modes
               // in a menu with their shortcuts and, when off, the reason.
               <DropdownMenu
@@ -2287,7 +2351,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                   }),
                 }, ...dockedMenuSections]}
               />
-            ) : (
+            )) : (
             <span className="flex items-center gap-1 font-semibold text-text-primary" data-testid={`${testId}-mode-label`}>
               <span aria-hidden="true" className="flex w-4 justify-center text-text-secondary">{MODE_ICON[activeMode]}</span>
               {MODE_NAMES[activeMode]}
@@ -2321,7 +2385,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               })}
             </span>
             )}
-            {modeShortcuts && !narrow && (
+            {modeShortcuts && !narrow && !(docked && hideModeMenu) && (
               <kbd className={cn('bg-surface-inset font-mono text-text-secondary', docked ? 'rounded-md px-1.5 py-0.5 text-xs' : 'rounded border border-border px-1', !docked && (menuModeRow ? 'py-0.5 text-[11px]' : 'text-[10px]'))} data-testid={`${testId}-mode-kbd`}>
                 ⌥{COMPOSER_MODE_ORDER.indexOf(activeMode) + 1}
               </kbd>
@@ -2331,10 +2395,13 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 references={references}
                 {...(onRemoveReference ? { onRemove: onRemoveReference } : {})}
                 removeLabel={(reference) => `Remove ${reference.label} from this draft`}
-                className={cn('min-w-0 flex-nowrap p-0', menuModeRow && 'ml-auto justify-end')}
+                className={cn('min-w-0 p-0', docked && hideModeMenu ? 'flex-wrap gap-2' : 'flex-nowrap', menuModeRow && !(docked && hideModeMenu) && 'ml-auto justify-end')}
                 {...(menuModeRow ? { size: docked ? 'md' as const : 'sm' as const } : {})}
                 data-testid={`${testId}-references`}
               />
+            )}
+            {docked && referencesAction != null && (
+              <span className="flex shrink-0 items-center" data-testid={`${testId}-references-action`}>{referencesAction}</span>
             )}
             {modeRowEnd != null && <span className={cn('flex shrink-0 items-center', menuModeRow && references?.length ? 'ml-2' : 'ml-auto')} data-testid={`${testId}-mode-row-end`}>{modeRowEnd}</span>}
           </div>

@@ -4,7 +4,7 @@ import { t as i } from "./apiBaseUrl-DLrXlmVj.js";
 import { n as a } from "./IdentityContext-CQM1qwH6.js";
 import "./useVideoSessions-Bnxuclp-.js";
 import "./useWebSocket-C9oAM0NL.js";
-import "./useSocialProfile-5S1qyvsv.js";
+import "./usePromptContext-BQTiVpXr.js";
 import "./useSyncConflicts-BspqjVsW.js";
 import "./useDocumentTypes-DCKwxXn8.js";
 import "./usePrefersReducedMotion-Cllucr7i.js";

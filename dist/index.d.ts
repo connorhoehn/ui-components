@@ -9388,6 +9388,9 @@ export declare function isNewDay(current: string, previous?: string): boolean;
 
 export declare function isPeopleGraphData(data: GraphPanelData): data is GraphPanelPeopleData;
 
+/** True while a drag carries a prompt-context payload (types are readable during dragover; data is not). */
+export declare function isPromptContextDrag(dataTransfer: DataTransfer | null | undefined): boolean;
+
 /** A run that is still moving — the panel keeps re-reading it. */
 export declare function isRunPanelLive(status: RunPanelStatus): boolean;
 
@@ -12876,6 +12879,50 @@ export declare interface ProjectCardProps {
     minHeight?: number;
 }
 
+/** The drag payload a result row sets and the composer accepts: a JSON array of `PromptContextItem`. */
+export declare const PROMPT_CONTEXT_DRAG_TYPE = "application/x-uic-prompt-context";
+
+/** The most documents one prompt carries (the deck pipeline reads at most 6; room for a picker to show "full"). */
+export declare const PROMPT_CONTEXT_LIMIT = 10;
+
+export declare interface PromptContext {
+    items: readonly PromptContextItem[];
+    /** False when the set is full (the item is refused). An item already present only has its title refreshed. */
+    add: (item: PromptContextItem) => boolean;
+    remove: (id: string) => void;
+    has: (id: string) => boolean;
+    /** Add when absent, remove when present. Returns whether it is now present. */
+    toggle: (item: PromptContextItem) => boolean;
+    clear: () => void;
+}
+
+export declare interface PromptContextItem {
+    id: string;
+    title: string;
+    /** 'page' | 'presentation' | 'diagram' | … — drives the chip's glyph. */
+    kind?: string;
+}
+
+export declare function PromptContextPicker({ search, scope, label, placeholder, debounceMs, 'data-testid': testId, }: PromptContextPickerProps): JSX.Element;
+
+export declare interface PromptContextPickerProps {
+    /** The host's document search. An empty query may return recent documents. */
+    search: (query: string) => Promise<readonly PromptContextItem[]> | readonly PromptContextItem[];
+    /** The prompt-context scope (default 'documents'). */
+    scope?: string;
+    /** Accessible name of the "+" button. */
+    label?: string;
+    placeholder?: string;
+    /** Milliseconds between the last keystroke and the search. */
+    debounceMs?: number;
+    'data-testid'?: string;
+}
+
+/** The store's operations without React — for a drop handler or a test. */
+export declare function promptContextStore(scope?: string): Omit<PromptContext, 'items'> & {
+    get: () => readonly PromptContextItem[];
+};
+
 declare interface ProposedField {
     name: string;
     sectionType: string;
@@ -13368,6 +13415,9 @@ export declare function readableAvatarForeground(background: string): string | n
 
 export declare function readDocumentIdFromUrl(): string | null;
 
+/** The items a drop carried, cleaned; [] for any other drop. */
+export declare function readPromptContextDrag(dataTransfer: DataTransfer | null | undefined): PromptContextItem[];
+
 export declare function ReconnectingBanner({ show, label }: ReconnectingBannerProps): JSX.Element | null;
 
 export declare interface ReconnectingBannerProps {
@@ -13606,6 +13656,9 @@ export declare function replaceSlide(spec: DeckSpec, slide: DeckSlide): DeckSpec
 /** A hooked arrow pointing back: reply. ForwardIcon's mirror, because the two
  *  are the same gesture pointed different ways. */
 export declare function ReplyIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+/** Tests: forget every scope's in-memory copy (storage is left alone). */
+export declare function resetPromptContextStores(): void;
 
 export declare type ResizeFit = 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
 
@@ -18426,6 +18479,8 @@ declare interface UseActivityBusReturn {
      setTyping: (isTyping: boolean) => void;
  }
 
+ export declare function usePromptContext(scope?: string): PromptContext;
+
  export declare function UserChip({ name, label, avatarSize, avatarColor, presence, onClick, className, style, title, labelClassName, 'data-testid': testId, }: UserChipProps): JSX.Element;
 
  export declare interface UserChipProps {
@@ -20604,6 +20659,9 @@ declare interface UseActivityBusReturn {
       onSelect?: (selection: Exclude<WorkGraphSelection, null>) => void;
   }): JSX.Element;
 
+  /** Sets a drag's payload: the prompt-context MIME (JSON) plus the titles as plain text. */
+  export declare function writePromptContextDrag(dataTransfer: DataTransfer, items: readonly PromptContextItem[]): void;
+
   export declare const zIndex: {
       /** Sticky headers, fixed toolbars */
       readonly sticky: 20;
@@ -20616,6 +20674,19 @@ declare interface UseActivityBusReturn {
   };
 
   export { }
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
 
 
 declare module '@tiptap/core' {
@@ -20652,35 +20723,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -20714,6 +20759,16 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
@@ -20724,9 +20779,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -20734,9 +20792,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

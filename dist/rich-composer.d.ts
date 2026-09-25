@@ -719,6 +719,27 @@ export declare interface RichChatComposerProps {
     /** At the end of the compact mode row — a scope switch, a count. */
     modeRowEnd?: ReactNode;
     /**
+     * The docked card (`modeControl="menu"` + `toolbar="editor"`) with no mode
+     * switch: the header row is the references alone, left-aligned, then
+     * `referencesAction` — a page whose composer only ever does one thing
+     * (the All documents page, 2.389.x). The mode menu's extra sections go
+     * with it, so pass none.
+     */
+    hideModeMenu?: boolean;
+    /** After the references in the docked header row — an "add another" control. Shown even with no references. */
+    referencesAction?: ReactNode;
+    /**
+     * Makes the whole card a drop target for a host's own payload (not files):
+     * while a drag carrying one of `types` is over it, the card is ringed and
+     * says `hint`; a drop calls `onDrop` with the DataTransfer. File drops keep
+     * going to the attachment zone.
+     */
+    referenceDrop?: {
+        types: readonly string[];
+        onDrop: (dataTransfer: DataTransfer) => void;
+        hint?: string;
+    };
+    /**
      * One row while idle: with the input EMPTY and the caret elsewhere (and no
      * status, process, attachment, command or notice to show), the composer is
      * a compact mode pill, any references, the input and Send on a single line.

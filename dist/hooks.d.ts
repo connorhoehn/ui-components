@@ -739,6 +739,9 @@ declare type IngestSourceStatus = 'active' | 'paused' | 'error';
 
 declare type IngestSourceType = 'local' | 's3' | 'google-drive' | 'webhook';
 
+/** True while a drag carries a prompt-context payload (types are readable during dragover; data is not). */
+export declare function isPromptContextDrag(dataTransfer: DataTransfer | null | undefined): boolean;
+
 declare interface KeyboardShortcut {
     /** Key to match (case-insensitive, e.g., 's', 'Enter', 'Escape') */
     key: string;
@@ -932,6 +935,35 @@ declare interface ProfileItem {
     updatedAt: string;
 }
 
+/** The drag payload a result row sets and the composer accepts: a JSON array of `PromptContextItem`. */
+export declare const PROMPT_CONTEXT_DRAG_TYPE = "application/x-uic-prompt-context";
+
+/** The most documents one prompt carries (the deck pipeline reads at most 6; room for a picker to show "full"). */
+export declare const PROMPT_CONTEXT_LIMIT = 10;
+
+export declare interface PromptContext {
+    items: readonly PromptContextItem[];
+    /** False when the set is full (the item is refused). An item already present only has its title refreshed. */
+    add: (item: PromptContextItem) => boolean;
+    remove: (id: string) => void;
+    has: (id: string) => boolean;
+    /** Add when absent, remove when present. Returns whether it is now present. */
+    toggle: (item: PromptContextItem) => boolean;
+    clear: () => void;
+}
+
+export declare interface PromptContextItem {
+    id: string;
+    title: string;
+    /** 'page' | 'presentation' | 'diagram' | … — drives the chip's glyph. */
+    kind?: string;
+}
+
+/** The store's operations without React — for a drop handler or a test. */
+export declare function promptContextStore(scope?: string): Omit<PromptContext, 'items'> & {
+    get: () => readonly PromptContextItem[];
+};
+
 declare interface ProposedField {
     name: string;
     sectionType: string;
@@ -949,11 +981,17 @@ declare interface RateInfo {
     [key: string]: unknown;
 }
 
+/** The items a drop carried, cleaned; [] for any other drop. */
+export declare function readPromptContextDrag(dataTransfer: DataTransfer | null | undefined): PromptContextItem[];
+
 declare interface RemoteCursor {
     clientId: string;
     position: Record<string, unknown>;
     metadata: Record<string, unknown>;
 }
+
+/** Tests: forget every scope's in-memory copy (storage is left alone). */
+export declare function resetPromptContextStores(): void;
 
 export declare interface RoomItem {
     roomId: string;
@@ -2060,6 +2098,8 @@ declare interface UseActivityBusReturn {
      setTyping: (isTyping: boolean) => void;
  }
 
+ export declare function usePromptContext(scope?: string): PromptContext;
+
  export declare function useReactions(options: UseReactionsOptions): UseReactionsReturn;
 
  declare interface UseReactionsOptions {
@@ -2430,7 +2470,23 @@ declare interface UseActivityBusReturn {
       frame: number;
   }
 
+  /** Sets a drag's payload: the prompt-context MIME (JSON) plus the titles as plain text. */
+  export declare function writePromptContextDrag(dataTransfer: DataTransfer, items: readonly PromptContextItem[]): void;
+
   export { }
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
 
 
 declare module '@tiptap/core' {
@@ -2467,35 +2523,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -2529,6 +2559,16 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
@@ -2539,9 +2579,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -2549,9 +2592,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

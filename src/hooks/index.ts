@@ -75,3 +75,5 @@ export { useMediaDevices } from './useMediaDevices';
 export type { MediaDevices, MediaDeviceOption } from './useMediaDevices';
 export { useAudioRecorder, pickRecordingMimeType } from './useAudioRecorder';
 export type { AudioRecorder, AudioRecorderState, UseAudioRecorderOptions } from './useAudioRecorder';
+export { usePromptContext, promptContextStore, resetPromptContextStores, writePromptContextDrag, readPromptContextDrag, isPromptContextDrag, PROMPT_CONTEXT_DRAG_TYPE, PROMPT_CONTEXT_LIMIT } from './usePromptContext';
+export type { PromptContext, PromptContextItem } from './usePromptContext';

@@ -261,3 +261,8 @@ export { NewChatDialog } from './NewChatDialog';
 export type { NewChatDialogProps } from './NewChatDialog';
 export { CreateTeamDialog } from './CreateTeamDialog';
 export type { CreateTeamDialogProps, CreateTeamDialogInput, TeamVisibility } from './CreateTeamDialog';
+
+// PromptContextPicker — the "+" at the end of a composer's document row: search
+// the host's documents and toggle them in the shared prompt context (2.389.x).
+export { PromptContextPicker } from './PromptContextPicker';
+export type { PromptContextPickerProps } from './PromptContextPicker';
