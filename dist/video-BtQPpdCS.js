@@ -5032,6 +5032,10 @@ function Hr(e) {
 		label: "Ringing…",
 		tone: "muted",
 		kind: "ringing"
+	} : e.state === "notified" ? t = {
+		label: "Offline · notified",
+		tone: "muted",
+		kind: "notified"
 	} : e.state === "missed" ? t = {
 		label: "Didn't answer",
 		tone: "muted",
@@ -5079,6 +5083,7 @@ function Hr(e) {
 }
 var Ur = /* @__PURE__ */ new Set([
 	"ringing",
+	"notified",
 	"missed",
 	"declined",
 	"left"

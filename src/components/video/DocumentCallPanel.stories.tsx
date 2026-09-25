@@ -184,3 +184,21 @@ export const Reconnecting: Story = {
   ),
   decorators: [themed('light')],
 };
+
+/** 2.395.2: Frank was offline when invited — no ring, a notification: "Offline · notified" (muted, dimmed row). */
+export const WithNotifiedInvitee: Story = {
+  args,
+  render: () => (
+    <Scene
+      presenter="alice"
+      people={[
+        p('connor', { isLocal: true, isHost: true }),
+        p('alice', { presenting: true }),
+        p('bob', { cameraOn: false, audioOn: false }),
+        p('frank', { state: 'notified', presence: 'offline' }),
+      ]}
+    />
+  ),
+  decorators: [themed('light')],
+};
+export const WithNotifiedInviteeDark: Story = { ...WithNotifiedInvitee, decorators: [themed('dark')] };

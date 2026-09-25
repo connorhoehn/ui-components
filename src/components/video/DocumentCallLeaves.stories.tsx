@@ -125,6 +125,7 @@ function People() {
     { ...base, userId: 'u4', name: CAST.bob.name, cameraOn: false, audioOn: false },
     { ...base, userId: 'u5', name: 'Dan Ortiz', state: 'reconnecting' },
     { ...base, userId: 'u6', name: CAST.carol.name, state: 'ringing' },
+    { ...base, userId: 'u6b', name: 'Ivy Novak', presence: 'offline', state: 'notified' },
     { ...base, userId: 'u7', name: 'Eve Park', state: 'missed' },
     { ...base, userId: 'u8', name: 'Gus Lee', state: 'declined' },
     { ...base, userId: 'u9', name: 'Hana Ito', state: 'left' },

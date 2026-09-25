@@ -242,3 +242,19 @@ describe('AudioLevelMeter / MediaPrecheckRow', () => {
     expect(mic.title).toBe('Microphone blocked in the browser');
   });
 });
+
+describe('CallPeopleList notified (2.395.2, A-12)', () => {
+  it('reads "Offline · notified", muted, dimmed, and yields to nothing in-call', () => {
+    const s = callPersonStatus({ ...base, state: 'notified', cameraOn: false, presenting: false });
+    expect(s).toEqual({ label: 'Offline · notified', tone: 'muted', kind: 'notified' });
+    expect(callPersonStatus({ ...base, state: 'notified', isHost: true }).label).toBe('Host · Offline · notified');
+    render(
+      <CallPeopleList people={[{ ...base, userId: 'fd', name: 'Frank Davis', state: 'notified', presence: 'offline' }]} count={0} canModerate onInvite={() => {}} onFollow={() => {}} onMuteForMe={() => {}} />,
+    );
+    const status = screen.getByTestId('call-person-status-fd');
+    expect(status.textContent).toBe('Offline · notified');
+    expect(status.className).toContain('text-text-tertiary');
+    expect(screen.getByTestId('call-person-fd').className).toContain('opacity-60');
+    expect(screen.queryByTestId('call-person-mic-fd')).toBeNull();
+  });
+});

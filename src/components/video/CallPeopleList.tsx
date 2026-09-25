@@ -5,7 +5,7 @@
 // word, chosen by precedence, so a row never stacks three badges:
 //
 //   in the call:  Presenting › Sharing screen › Camera off › Reconnecting…
-//   not in it:    Ringing… (pulsing) · Didn't answer (+ Ring again) · Declined · Left
+//   not in it:    Ringing… (pulsing) · Offline · notified · Didn't answer (+ Ring again) · Declined · Left
 //
 // and "Host" when nothing else applies (prefixed "Host · " when something
 // does). Rows for people who are not in the call are dimmed.
@@ -27,7 +27,7 @@ export interface CallPerson {
   isLocal: boolean;
   isHost: boolean;
   presence?: 'online' | 'away' | 'offline';
-  state: 'in-call' | 'ringing' | 'missed' | 'declined' | 'left' | 'reconnecting';
+  state: 'in-call' | 'ringing' | 'notified' | 'missed' | 'declined' | 'left' | 'reconnecting';
   audioOn: boolean;
   cameraOn: boolean;
   screenSharing: boolean;
@@ -61,13 +61,15 @@ export interface CallPeopleListProps {
 export interface CallPersonStatus {
   label: string;
   tone: 'accent' | 'muted' | 'warning';
-  kind: 'presenting' | 'sharing' | 'camera-off' | 'reconnecting' | 'ringing' | 'missed' | 'declined' | 'left' | 'host' | 'none';
+  kind: 'presenting' | 'sharing' | 'camera-off' | 'reconnecting' | 'ringing' | 'notified' | 'missed' | 'declined' | 'left' | 'host' | 'none';
 }
 
 /** The one sub-status a row shows. Exported for hosts and tests. */
 export function callPersonStatus(p: CallPerson): CallPersonStatus {
   let base: CallPersonStatus | null = null;
   if (p.state === 'ringing') base = { label: 'Ringing…', tone: 'muted', kind: 'ringing' };
+  // Offline when invited: no ring, a notification instead (SPEC §2.6). 2.395.2.
+  else if (p.state === 'notified') base = { label: 'Offline · notified', tone: 'muted', kind: 'notified' };
   else if (p.state === 'missed') base = { label: "Didn't answer", tone: 'muted', kind: 'missed' };
   else if (p.state === 'declined') base = { label: 'Declined', tone: 'muted', kind: 'declined' };
   else if (p.state === 'left') base = { label: 'Left', tone: 'muted', kind: 'left' };
@@ -87,7 +89,7 @@ export function callPersonStatus(p: CallPerson): CallPersonStatus {
   return base ?? { label: '', tone: 'muted', kind: 'none' };
 }
 
-const INACTIVE = new Set<CallPerson['state']>(['ringing', 'missed', 'declined', 'left']);
+const INACTIVE = new Set<CallPerson['state']>(['ringing', 'notified', 'missed', 'declined', 'left']);
 
 export function CallPeopleList({
   people,

@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.395.2] — 2026-09-25
+
+### Added
+- `CallPeopleList`: `state: 'notified'` — an invitee who was offline and got a notification instead of a
+  ring reads "Offline · notified" (muted, dimmed row, no mic), in the not-in-call group of the precedence
+  (SPEC §2.6, mockup 06, lane D A-12). Stories `DocumentCallPanel` WithNotifiedInvitee (+Dark) and the
+  Pieces gallery row.
+
 ## [2.395.1] — 2026-09-25
 
 ### Fixed
