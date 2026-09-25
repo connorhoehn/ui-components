@@ -274,3 +274,29 @@ describe('placeholder text changes without a mode change', () => {
     expect(text()).toBe('Tell the agent what to change on slide 3…');
   });
 });
+
+describe('RichChatComposer `modes` limits what is offered', () => {
+  it('draws only the offered tabs and drops the shell hint', () => {
+    render(<ModedComposer modes={['chat', 'agent']} />);
+    const tabs = screen.getAllByRole('tab').map((t) => t.textContent);
+    expect(tabs).toEqual(['Chat', 'Agent']);
+    expect(screen.getByTestId('composer-hints').textContent).not.toContain('for shell');
+  });
+
+  it('keeps `>` as ordinary text and renders a stale terminal mode as Chat', () => {
+    const onModeChange = vi.fn();
+    let handle: RichChatComposerHandle | null = null;
+    render(<ModedComposer ref={(h) => { handle = h; }} modes={['chat', 'agent']} modeTriggers initial="terminal" onModeChange={onModeChange} />);
+    expect(screen.queryByTestId('composer-shell-input')).toBeNull();
+    expect(screen.getByRole('tab', { name: /Chat/ })).toHaveAttribute('aria-selected', 'true');
+    typeInto(handle, '>');
+    expect(onModeChange).not.toHaveBeenCalledWith('terminal');
+    expect(handle!.editor?.getText()).toBe('>');
+  });
+
+  it('still offers all three by default', () => {
+    render(<ModedComposer />);
+    expect(screen.getAllByRole('tab')).toHaveLength(3);
+    expect(screen.getByTestId('composer-hints').textContent).toContain('for shell');
+  });
+});

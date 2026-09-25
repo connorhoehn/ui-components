@@ -465,6 +465,17 @@ export interface RichChatComposerProps {
    * from `modeUnavailableReasons` instead.
    */
   disabledModes?: readonly ComposerMode[];
+  /**
+   * Which modes this composer offers at all, in the library's order
+   * (Chat, Agent, Terminal). Defaults to all three. A mode left out is not
+   * drawn disabled — it is absent: no tab, no menu row, no numbered button,
+   * no `>_ for shell` hint, and its trigger prefix stays ordinary text. A
+   * chat conversation passes `['chat', 'agent']`, since a shell line has
+   * nowhere to go from a DM or a channel. Shortcuts number the offered modes
+   * (`⌥1`, `⌥2`). A controlled `mode` that is not offered renders as the
+   * first offered mode. Since 2.390.1.
+   */
+  modes?: readonly ComposerMode[];
   /** Why each disabled mode is unavailable — "Start an agent task first". */
   modeUnavailableReasons?: Partial<Record<ComposerMode, string>>;
   /** Per-mode hint rows. Wins over `hints` for the modes it names. */
@@ -943,6 +954,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   modeShortcuts = false,
   modeTriggers,
   disabledModes,
+  modes,
   modeUnavailableReasons,
   modeHints,
   submitLead,
@@ -1009,7 +1021,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // Modes are OFF until the host wires the switch. Read through one flag so
   // every branch below asks the same question and none of them can drift.
   const modesEnabled = !!onModeChange || !!fixedMode;
-  const activeMode: ComposerMode = fixedMode ?? (modesEnabled ? mode : 'chat');
+  const offeredModes: readonly ComposerMode[] = modes?.length
+    ? COMPOSER_MODE_ORDER.filter((m) => modes.includes(m))
+    : COMPOSER_MODE_ORDER;
+  const activeMode: ComposerMode = fixedMode
+    ?? (modesEnabled ? (offeredModes.includes(mode) ? mode : offeredModes[0] ?? 'chat') : 'chat');
   const terminalMode = activeMode === 'terminal';
   // Agent AND Terminal are "the console": both send somewhere that is not the
   // conversation, and both wear the dark surface that says so.
@@ -1026,7 +1042,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const [modeNotice, setModeNotice] = useState<string | null>(null);
   const isModeDisabled = (m: ComposerMode) => !!disabledModes?.includes(m);
   const requestMode = (next: ComposerMode): boolean => {
-    if (!switchable) return false;
+    if (!switchable || !offeredModes.includes(next)) return false;
     if (isModeDisabled(next)) {
       setModeNotice(modeUnavailableReasons?.[next] ?? `${MODE_NAMES[next]} is not available here`);
       return false;
@@ -1057,8 +1073,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     }
     const text = e.getText();
     let target: ComposerMode | null = null;
-    if (activeMode !== 'terminal' && matchesModeTrigger(text, triggerPrefixes.terminal)) target = 'terminal';
-    else if (activeMode !== 'agent' && matchesModeTrigger(text, triggerPrefixes.agent)) target = 'agent';
+    if (activeMode !== 'terminal' && offeredModes.includes('terminal') && matchesModeTrigger(text, triggerPrefixes.terminal)) target = 'terminal';
+    else if (activeMode !== 'agent' && offeredModes.includes('agent') && matchesModeTrigger(text, triggerPrefixes.agent)) target = 'agent';
     if (!target) {
       if (modeNotice) setModeNotice(null);
       return false;
@@ -1632,6 +1648,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
    * not advertise `>_` and `⌘K`, and a hint for a key that does nothing is
    * worse than no hint at all.
    */
+  const terminalOffered = offeredModes.includes('terminal');
   const resolvedHints = useMemo<readonly ComposerHint[]>(() => {
     const perMode = modeHints?.[activeMode];
     if (perMode) return perMode;
@@ -1639,10 +1656,12 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     if (!onModeChange && !onQuickOpen) return [];
     return [
       { key: '/', label: 'for commands' },
-      { key: '>_', label: 'for shell', ...(onModeChange ? { onSelect: () => onModeChange('terminal') } : {}) },
+      ...(terminalOffered
+        ? [{ key: '>_', label: 'for shell', ...(onModeChange ? { onSelect: () => onModeChange('terminal') } : {}) }]
+        : []),
       { key: '⌘K', label: 'to quickly open', ...(onQuickOpen ? { onSelect: onQuickOpen } : {}) },
     ];
-  }, [hints, onModeChange, onQuickOpen, modeHints, activeMode]);
+  }, [hints, onModeChange, onQuickOpen, modeHints, activeMode, terminalOffered]);
 
   // Files alone are a valid message: dragging in a screenshot and pressing send
   // without typing is the common case. In terminal mode there is no message —
@@ -2276,10 +2295,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               onKeyDownCapture: (event: ReactKeyboardEvent<HTMLDivElement>) => {
                 if (!event.altKey || event.ctrlKey || event.metaKey) return;
                 const index = ['Digit1', 'Digit2', 'Digit3'].indexOf(event.code);
-                if (index < 0) return;
+                if (index < 0 || index >= offeredModes.length) return;
                 event.preventDefault();
                 event.stopPropagation();
-                requestMode(COMPOSER_MODE_ORDER[index]!);
+                requestMode(offeredModes[index]!);
               },
             }
           : {})}
@@ -2461,7 +2480,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 align="start"
                 triggerClassName={basicBox ? 'h-8 rounded-md border border-border bg-surface px-3 hover:bg-surface-hover' : 'rounded-md border-0 bg-transparent px-1.5 py-0.5 hover:bg-surface-hover'}
                 sections={[{
-                  items: COMPOSER_MODE_ORDER.map((m, i) => {
+                  items: offeredModes.map((m, i) => {
                     const unavailable = isModeDisabled(m);
                     const reason = unavailable ? modeUnavailableReasons?.[m] : undefined;
                     return {
@@ -2483,7 +2502,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             )}
             {!menuModeRow && (
             <span role="group" aria-label="Composer mode" className="flex items-center gap-0.5">
-              {COMPOSER_MODE_ORDER.map((m, i) => {
+              {offeredModes.map((m, i) => {
                 const unavailable = isModeDisabled(m);
                 const reason = unavailable ? modeUnavailableReasons?.[m] : undefined;
                 return (
@@ -2511,7 +2530,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             )}
             {modeShortcuts && !narrow && !(docked && hideModeMenu) && (
               <kbd className={cn('bg-surface-inset font-mono text-text-secondary', docked ? 'rounded-md px-1.5 py-0.5 text-xs' : 'rounded border border-border px-1', !docked && (menuModeRow ? 'py-0.5 text-[11px]' : 'text-[10px]'))} data-testid={`${testId}-mode-kbd`}>
-                ⌥{COMPOSER_MODE_ORDER.indexOf(activeMode) + 1}
+                ⌥{offeredModes.indexOf(activeMode) + 1}
               </kbd>
             )}
             {referencesInModeRow && !!references?.length && (
@@ -2572,10 +2591,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             <div className={cn('rounded-md transition-shadow duration-300 motion-reduce:transition-none', consoleSurface && 'ring-1 ring-primary/60')}>
             <Tabs
               items={[
-                { id: 'chat', label: 'Chat', icon: <ChatIcon size={13} /> },
-                { id: 'agent', label: 'Agent', icon: <PuzzleIcon size={13} /> },
-                { id: 'terminal', label: 'Terminal', icon: <span aria-hidden="true" className="font-mono text-[11px]">{'>_'}</span> },
-              ]}
+                { id: 'chat' as const, label: 'Chat', icon: <ChatIcon size={13} /> },
+                { id: 'agent' as const, label: 'Agent', icon: <PuzzleIcon size={13} /> },
+                { id: 'terminal' as const, label: 'Terminal', icon: <span aria-hidden="true" className="font-mono text-[11px]">{'>_'}</span> },
+              ].filter((item) => offeredModes.includes(item.id))}
               value={activeMode}
               onValueChange={(id) => onModeChange?.(id as ComposerMode)}
               variant="segmented"
