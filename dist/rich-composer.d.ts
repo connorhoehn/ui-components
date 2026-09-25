@@ -687,6 +687,17 @@ export declare interface RichChatComposerProps {
      * from `modeUnavailableReasons` instead.
      */
     disabledModes?: readonly ComposerMode[];
+    /**
+     * Which modes this composer offers at all, in the library's order
+     * (Chat, Agent, Terminal). Defaults to all three. A mode left out is not
+     * drawn disabled — it is absent: no tab, no menu row, no numbered button,
+     * no `>_ for shell` hint, and its trigger prefix stays ordinary text. A
+     * chat conversation passes `['chat', 'agent']`, since a shell line has
+     * nowhere to go from a DM or a channel. Shortcuts number the offered modes
+     * (`⌥1`, `⌥2`). A controlled `mode` that is not offered renders as the
+     * first offered mode. Since 2.390.1.
+     */
+    modes?: readonly ComposerMode[];
     /** Why each disabled mode is unavailable — "Start an agent task first". */
     modeUnavailableReasons?: Partial<Record<ComposerMode, string>>;
     /** Per-mode hint rows. Wins over `hints` for the modes it names. */
