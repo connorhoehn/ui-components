@@ -165,3 +165,26 @@ export const Failed: Story = {
   args: base({ phase: 'error', error: { message: 'the media server stopped answering', onRetry: noop }, onDismiss: noop }),
   decorators: [themed('light')],
 };
+
+/**
+ * Bob's camera is off but he is still talking: his video element stays
+ * mounted (invisible) so the audio on that stream keeps playing, and the
+ * tile shows his initials. An explicit `audioElement` sink works too.
+ */
+export const CameraOffRemoteWithAudio: Story = {
+  args: base({
+    participants: [
+      ...PEOPLE.slice(0, 3),
+      person('bob', {
+        cameraOn: false,
+        audioOn: true,
+        videoElement: video(CAST.bob.userId, CAST.bob.hue),
+        audioElement: <audio data-testid="bob-audio" autoPlay />,
+      }),
+    ],
+    activeSpeakerId: CAST.bob.userId,
+    followingUserId: null,
+  }),
+  decorators: [themed('light')],
+};
+export const CameraOffRemoteWithAudioDark: Story = { ...CameraOffRemoteWithAudio, decorators: [themed('dark')] };

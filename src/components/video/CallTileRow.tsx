@@ -30,6 +30,14 @@ export interface CallTileParticipant extends HangoutLayoutParticipant {
   screenSharing?: boolean;
   /** Veils the tile (last frame kept) while this person's connection recovers. */
   reconnecting?: boolean;
+  /**
+   * Camera off, but keep `videoElement` MOUNTED (invisible) and draw the
+   * initials. A remote person's audio rides the same MediaStream as their
+   * video, so unmounting the element on camera-off silences them. `dock` only.
+   */
+  cameraOff?: boolean;
+  /** An audio sink (e.g. `<audio autoPlay>`), always mounted and never shown. `dock` only. */
+  audioElement?: ReactNode;
 }
 
 export interface CallTileRowProps {
@@ -292,9 +300,21 @@ function DockTile({
       data-is-muted={p.isMuted ? 'true' : 'false'}
       data-highlighted={highlighted ? 'true' : 'false'}
       data-speaking={speaking ? 'true' : 'false'}
-      data-track-kind={p.videoElement ? 'camera' : 'avatar'}
+      data-track-kind={p.videoElement && !p.cameraOff ? 'camera' : 'avatar'}
     >
-      {p.videoElement ?? (
+      {p.videoElement && p.cameraOff && (
+        // Kept playing for its audio; 1px and transparent rather than
+        // display:none so no browser decides it may pause it.
+        <div className="pointer-events-none absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true" data-testid={`${testId}-media-sink`}>
+          {p.videoElement}
+        </div>
+      )}
+      {p.audioElement != null && (
+        <div className="pointer-events-none absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true" data-testid={`${testId}-audio-sink`}>
+          {p.audioElement}
+        </div>
+      )}
+      {p.videoElement && !p.cameraOff ? p.videoElement : (
         <div className="absolute inset-0 flex items-center justify-center">
           <Avatar
             name={p.displayName}

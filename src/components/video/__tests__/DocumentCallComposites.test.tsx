@@ -340,3 +340,40 @@ describe('DocumentCallPanel', () => {
     expect(screen.getByTestId('call-panel-meta').textContent).toBe('2 people · 09:41');
   });
 });
+
+describe('CallDock camera-off audio (REQUEST A-4)', () => {
+  it('keeps a camera-off remote person\'s media element mounted so their audio plays', () => {
+    render(
+      <CallDock
+        {...dockBase}
+        participants={[
+          dockBase.participants[0]!,
+          {
+            ...dockBase.participants[1]!,
+            cameraOn: false,
+            videoElement: <video data-testid="alice-media" />,
+            audioElement: <audio data-testid="alice-audio" />,
+          },
+        ]}
+      />,
+    );
+    const tile = screen.getByTestId('call-tile-al');
+    expect(tile.getAttribute('data-track-kind')).toBe('avatar');
+    expect(screen.getByText('AC')).toBeTruthy();
+    // Still in the DOM (inside an invisible sink), not unmounted.
+    expect(screen.getByTestId('alice-media')).toBeTruthy();
+    expect(screen.getByTestId('call-tile-al-media-sink').contains(screen.getByTestId('alice-media'))).toBe(true);
+    expect(screen.getByTestId('call-tile-al-audio-sink').contains(screen.getByTestId('alice-audio'))).toBe(true);
+  });
+
+  it('shows the video when the camera is on', () => {
+    render(
+      <CallDock
+        {...dockBase}
+        participants={[dockBase.participants[0]!, { ...dockBase.participants[1]!, cameraOn: true, videoElement: <video data-testid="alice-media" /> }]}
+      />,
+    );
+    expect(screen.getByTestId('call-tile-al').getAttribute('data-track-kind')).toBe('camera');
+    expect(screen.queryByTestId('call-tile-al-media-sink')).toBeNull();
+  });
+});

@@ -42,6 +42,12 @@ export interface CallDockParticipant extends HangoutLayoutParticipant {
   screenSharing: boolean;
   presenting: boolean;
   connection: 'connected' | 'reconnecting';
+  /**
+   * An audio sink independent of the camera (an `<audio autoPlay>` on the
+   * person's stream). Optional: with camera off the dock keeps `videoElement`
+   * mounted but invisible anyway, so the audio that rides that stream plays.
+   */
+  audioElement?: ReactNode;
 }
 
 export type CallDockPhase = 'connecting' | 'active' | 'reconnecting' | 'ended' | 'error';
@@ -189,8 +195,11 @@ export function CallDock({
     id: p.userId,
     isLocal,
     isMuted: !p.audioOn,
-    // Camera off → no video element, the tile draws the initials.
-    videoElement: p.cameraOn || p.screenSharing ? p.videoElement : undefined,
+    // Camera off → the tile draws the initials, but the video element stays
+    // mounted (hidden): the person's audio rides the same stream.
+    videoElement: p.videoElement,
+    cameraOff: !p.cameraOn && !p.screenSharing,
+    audioElement: p.audioElement,
     screenSharing: p.screenSharing,
     reconnecting: reconnecting || p.connection === 'reconnecting',
   });
