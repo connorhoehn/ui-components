@@ -24,3 +24,18 @@ export const Plain: Story = {
 export const WithCount: Story = {
   args: { label: 'Guides & findings', count: 11 },
 };
+
+/**
+ * 2.389.4 — the count as the sub-nav draws its counts: a small rounded
+ * bordered pill, here on the panel-coloured rail it lives on.
+ */
+export const WithCountOnRail: Story = {
+  args: { label: 'Guides & findings', count: 11, presentational: false },
+  decorators: [
+    (Story) => (
+      <div className="w-[320px] bg-surface-panel p-2">
+        <Story />
+      </div>
+    ),
+  ],
+};

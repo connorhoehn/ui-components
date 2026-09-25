@@ -87,6 +87,11 @@ export interface ScopeHeaderProps {
    * and `menu` on the right, hung a little below the crumb line so they sit
    * between the crumb and the headline that follows. No h1 — title, status,
    * stats, people and tabs are not drawn.
+   *
+   * The controls overhang the band by 10px (since 2.389.4; 14px before), so
+   * the band must sit over a pane whose own head starts with at least that
+   * much top padding (an `EditorShell` header has 12px). `ExplorerLayout.paneHeader` spans only the pane since 2.389.4, so
+   * the hang can never reach the aside.
    */
   variant?: 'default' | 'crumbs';
   /** The scope's own status — "In progress". */
@@ -181,11 +186,14 @@ function ScopeCrumbs({
         )}
       </div>
       {hasRight && (
-        // Hung below the crumb line (mt-3) with a matching negative bottom
-        // margin, so it sits between the crumb and the headline that follows
-        // without making the band taller than the crumb line. `relative z-10`
-        // keeps it above the next row's background where it overhangs.
-        <div className="relative z-10 -mb-[18px] ml-auto mt-3 flex shrink-0 items-center gap-4" data-testid={`${testId}-right`}>
+        // Hung below the crumb line (mt-3) with a negative bottom margin, so it
+        // sits between the crumb and the headline that follows. The overhang
+        // past the band is (mb − pb) = 14 − 4 = 10px whatever the controls'
+        // height — inside the 12px top padding of an EditorShell head, so it
+        // never reaches the title row (2.389.4; it was 18 − 4 = 14px, which
+        // bit 2px into a long title). `relative z-10` keeps it above the next
+        // row's background where it overhangs.
+        <div className="relative z-10 -mb-[14px] ml-auto mt-3 flex shrink-0 items-center gap-4" data-hang="10" data-testid={`${testId}-right`}>
           <RightGroup controls={controls} link={link} menu={menu} menuLabel={menuLabel} title={name} testId={testId} />
         </div>
       )}

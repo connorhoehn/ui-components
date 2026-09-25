@@ -51,7 +51,7 @@ describe('ExplorerLayout asidePlacement', () => {
 });
 
 describe('ExplorerLayout paneHeader (2.389.0)', () => {
-  it('draws a non-scrolling band right of the rail, above pane + aside, outside the scrolling pane', () => {
+  it('draws a non-scrolling band right of the rail, above the pane only, outside the scrolling pane', () => {
     render(
       <ExplorerLayout rail={<p>rail</p>} aside={<p>aside</p>} paneHeader={<nav aria-label="crumbs">Build › Knowledge</nav>}>
         <p>pane</p>
@@ -64,12 +64,30 @@ describe('ExplorerLayout paneHeader (2.389.0)', () => {
     expect(band.className).toContain('shrink-0');
     expect(band.className).not.toContain('overflow');
     expect(pane.className).toContain('overflow-y-auto');
-    // Right of the rail: the band's column is the rail's sibling, and holds pane + aside.
+    // Right of the rail, over the pane alone (2.389.4): the band's column holds
+    // the pane but NOT the aside, which is the column's sibling — so nothing
+    // the band draws (a crumbs ScopeHeader's hung controls) can land on the
+    // aside's top row.
     const column = screen.getByTestId('explorer-layout-pane-column');
-    expect(column.parentElement).toBe(rail.parentElement);
+    const aside = screen.getByTestId('explorer-layout-aside');
     expect(column).toContainElement(pane);
-    expect(column).toContainElement(screen.getByTestId('explorer-layout-aside'));
+    expect(column).not.toContainElement(aside);
+    expect(column.parentElement).toBe(aside.parentElement);
+    expect(column.parentElement!.parentElement).toBe(rail.parentElement);
     expect(band.compareDocumentPosition(pane) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('keeps the aside a full-height column beside the band when placed beside', () => {
+    render(
+      <ExplorerLayout rail={<p>rail</p>} asidePlacement="beside" aside={<p>aside</p>} paneHeader={<p>crumbs</p>}>
+        <p>pane</p>
+      </ExplorerLayout>,
+    );
+    const aside = screen.getByTestId('explorer-layout-aside');
+    const column = screen.getByTestId('explorer-layout-pane-column');
+    expect(column.parentElement!.className).toContain('flex-row');
+    expect(column.nextElementSibling).toBe(aside);
+    expect(aside).not.toContainElement(screen.getByTestId('explorer-layout-pane-header'));
   });
 
   it('is absent by default', () => {

@@ -1,5 +1,5 @@
 import { t as e } from "./cn-DhjIN-s0.js";
-import { t } from "./Banner-BChr4erj.js";
+import { t } from "./Banner-C2bMqNCn.js";
 import { useCallback as n, useRef as r, useState as i } from "react";
 import { jsx as a, jsxs as o } from "react/jsx-runtime";
 //#region src/components/shared/Switch.tsx

@@ -293,13 +293,26 @@ describe('ConversationList collapsible sections', () => {
 });
 
 describe('RailSectionHeader count (2.389.0)', () => {
-  it('renders the count as a neutral chip at the right of the label', () => {
+  it('renders the count at the right of the label', () => {
     render(<RailSectionHeader label="Guides & findings" count={11} />);
     const chip = screen.getByTestId('rail-section-header-count');
     expect(chip).toHaveTextContent('11');
     expect(chip).toHaveAttribute('aria-label', '11 items');
     const label = screen.getByText('Guides & findings');
     expect(label.compareDocumentPosition(chip) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('draws the count as a rounded bordered pill like the sub-nav counts (2.389.4)', () => {
+    render(<RailSectionHeader label="Guides & findings" count={11} />);
+    const pill = screen.getByTestId('rail-section-header-count');
+    expect(pill).toHaveAttribute('data-shape', 'pill');
+    expect(pill.className).toContain('rounded-full');
+    expect(pill.className).toContain('border');
+    expect(pill.className).toContain('border-border');
+    expect(pill.className).toContain('bg-surface');
+    expect(pill.className).toContain('text-text-tertiary');
+    // Not the soft neutral chip it used to be.
+    expect(pill.className).not.toContain('bg-neutral-bg');
   });
 
   it('shows 0, shows while collapsed, and draws nothing when omitted', () => {

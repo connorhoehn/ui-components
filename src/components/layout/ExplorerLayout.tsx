@@ -52,12 +52,15 @@ export interface ExplorerLayoutProps {
    */
   header?: ReactNode;
   /**
-   * A band to the RIGHT of the rail, above the pane and the aside — a crumb
-   * trail with the scope's controls ("Build › Distillation › Knowledge" · All
-   * repositories · Open Library). Unlike `header` it does not span the rail,
-   * so the rail's own title keeps the top-left corner. It does not scroll; the
-   * pane below it does. No border of its own: it reads as the top of the pane.
-   * Since 2.389.0.
+   * A band over the PANE only — a crumb trail with the scope's controls
+   * ("Build › Distillation › Knowledge" · All repositories · Open Library).
+   * Unlike `header` it spans neither the rail (so the rail's own title keeps
+   * the top-left corner) nor the aside (so the aside's top row — a
+   * `ContextColumn`'s tabs — keeps the top of its own column). It does not
+   * scroll; the pane below it does. No border of its own: it reads as the top
+   * of the pane. Since 2.389.0; spans only the pane since 2.389.4 (it spanned
+   * pane + aside, and `ScopeHeader variant="crumbs"` controls, which hang
+   * into the record head below the band, landed on the aside's top row).
    */
   paneHeader?: ReactNode;
   /** A count beside `railTitle` ("Work 11"). Since 2.385.0. */
@@ -126,17 +129,29 @@ export function ExplorerLayout({
   className,
   'data-testid': testId = 'explorer-layout',
 }: ExplorerLayoutProps) {
+  const pane = (
+    <div
+      data-testid={`${testId}-pane`}
+      className={cn(
+        'flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto bg-surface',
+        panePadding === 'md' && 'px-8 py-6',
+      )}
+    >
+      {children}
+    </div>
+  );
+
   const columns = (
       <div className={cn('flex min-h-0 min-w-0 flex-1', asidePlacement === 'beside' ? 'flex-row' : 'flex-col 2xl:flex-row')}>
-        <div
-          data-testid={`${testId}-pane`}
-          className={cn(
-            'flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto bg-surface',
-            panePadding === 'md' && 'px-8 py-6',
-          )}
-        >
-          {children}
-        </div>
+        {paneHeader != null ? (
+          // The band sits over the pane alone. Its right-hand controls may
+          // hang into the top of the pane's own content (the record head's
+          // top padding) — that is the pane's space, never the aside's.
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col" data-testid={`${testId}-pane-column`}>
+            <div data-testid={`${testId}-pane-header`} className="shrink-0 bg-surface">{paneHeader}</div>
+            {pane}
+          </div>
+        ) : pane}
         {aside ? (
           // The aside owns its own width and chrome (a ContextColumn, or any
           // block the host wants beside the pane); this only places it.
@@ -161,12 +176,7 @@ export function ExplorerLayout({
         toggleLabel={`${railCollapsed ? 'Show' : 'Hide'} ${railLabel}`} data-testid={`${testId}-rail`}>
         {rail}
       </WorkspaceRail>
-      {paneHeader != null ? (
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col" data-testid={`${testId}-pane-column`}>
-          <div data-testid={`${testId}-pane-header`} className="shrink-0 bg-surface">{paneHeader}</div>
-          {columns}
-        </div>
-      ) : columns}
+      {columns}
     </div>
   );
 

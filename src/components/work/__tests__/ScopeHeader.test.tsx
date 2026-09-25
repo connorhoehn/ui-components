@@ -162,6 +162,17 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
     expect(crumbs.compareDocumentPosition(right) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
+  it('hangs the controls at most 10px past the band — inside a record head\'s 12px top padding (2.389.4)', () => {
+    render(<ScopeHeader variant="crumbs" breadcrumbs={[{ label: 'Knowledge' }]} controls={<select aria-label="Repository" />} />);
+    const band = screen.getByTestId('scope-header');
+    const right = screen.getByTestId('scope-header-right');
+    // overhang = negative bottom margin − the band's bottom padding
+    const mb = Number(/-mb-\[(\d+)px\]/.exec(right.className)?.[1]);
+    const pb = band.className.includes('pb-1') ? 4 : NaN;
+    expect(mb - pb).toBe(10);
+    expect(right).toHaveAttribute('data-hang', '10');
+  });
+
   it('default variant still draws the h1', () => {
     render(<ScopeHeader title="Distillation" />);
     expect(screen.getByRole('heading', { level: 1, name: 'Distillation' })).toBeInTheDocument();

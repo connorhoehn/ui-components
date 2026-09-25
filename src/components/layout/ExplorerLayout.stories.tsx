@@ -13,7 +13,8 @@ import { ProcedureSteps } from '../work/ProcedureSteps';
 import { EditorShell } from '../doc-editor/EditorShell';
 import { Select } from '../forms/Select';
 import { Button } from '../ui/Button';
-import { ArrowRightIcon } from '../ui/Icons';
+import { ArrowRightIcon, LinkIcon } from '../ui/Icons';
+import { ContextColumn, type ContextColumnState } from './ContextColumn';
 
 const meta: Meta<typeof ExplorerLayout> = {
   title: 'Layout/ExplorerLayout',
@@ -31,13 +32,41 @@ type Story = StoryObj<typeof ExplorerLayout>;
  * titleSize="lg" tabsTrailing`, `Banner layout="callout"` and `SourceList
  * layout="row"`.
  */
-export const GuideRecord: Story = {
-  render: function GuideRecordStory() {
+function GuideRecordFrame({ sourcesOpen = false }: { sourcesOpen?: boolean }) {
     const [q, setQ] = useState('');
     const [tab, setTab] = useState('content');
+    const [col, setCol] = useState<ContextColumnState>('open');
     return (
       <div className="h-[880px] w-[1320px] bg-surface">
         <ExplorerLayout
+          {...(sourcesOpen
+            ? {
+                asidePlacement: 'beside' as const,
+                aside: (
+                  <ContextColumn
+                    state={col}
+                    onStateChange={setCol}
+                    activeId="sources"
+                    onActivate={() => setCol('open')}
+                    label="Sources"
+                    panels={[{
+                      id: 'sources',
+                      label: 'Sources',
+                      icon: <LinkIcon size={16} />,
+                      badge: 4,
+                      content: (
+                        <div className="p-3">
+                          <SourceList layout="row" aria-label="Sources" onOpen={() => {}} items={[
+                            { id: 'cl-010', title: 'Retire the SAML shim tenant by tenant', meta: 'Source pattern · auth-service' },
+                            { id: 'run-1', title: 'Run 1 — stopped at step 3', meta: 'Run · 20h' },
+                          ]} />
+                        </div>
+                      ),
+                    }]}
+                  />
+                ),
+              }
+            : {})}
           railTitle="Knowledge"
           railHeading="prominent"
           railWidth="ml"
@@ -125,5 +154,18 @@ export const GuideRecord: Story = {
         </ExplorerLayout>
       </div>
     );
-  },
+}
+
+export const GuideRecord: Story = {
+  render: () => <GuideRecordFrame />,
+};
+
+/**
+ * 2.389.4 — the same record with the Sources aside open. `paneHeader` spans
+ * the pane only, so the aside's tab row keeps the top of its own column and
+ * the crumb band's hung controls (All repositories · Open Library) stay over
+ * the record head, clear of the aside.
+ */
+export const GuideRecordSourcesOpen: Story = {
+  render: () => <GuideRecordFrame sourcesOpen />,
 };

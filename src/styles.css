@@ -108,6 +108,21 @@
   --color-info-fg: #2563eb;
   --color-info-border: #bfdbfe;
 
+  /* Callout surfaces (2.389.4) — the paler fill + border a `Banner
+     layout="callout"` sits on in a document body. A fifth role for the four
+     banner tones, separate from `-bg`/`-border` on purpose: hosts often push
+     `-bg` saturated so a pill or badge reads at a glance, and a paragraph-
+     wide notice painted in that ink shouted over the document around it.
+     Override these to re-tone callouts without touching pills. */
+  --color-success-callout: #f3fbf6;
+  --color-success-callout-border: #c3e8d0;
+  --color-warning-callout: #fff8eb;
+  --color-warning-callout-border: #f5d9a8;
+  --color-danger-callout: #fef6f6;
+  --color-danger-callout-border: #f5c9c9;
+  --color-info-callout: #f4f8ff;
+  --color-info-callout-border: #c8daf8;
+
   --color-caution: #ea580c;
   --color-caution-bg: #fff7ed;
   --color-caution-fg: #ea580c;
@@ -379,6 +394,17 @@
   --color-info-bg: #0c4a6e;
   --color-info-fg: #7dd3fc;
   --color-info-border: #075985;
+
+  /* Callout surfaces — a low tint of each tone on the dark page, quieter
+     than the `-bg` badge fills above. */
+  --color-success-callout: #0f2a20;
+  --color-success-callout-border: #1c4a36;
+  --color-warning-callout: #2a2112;
+  --color-warning-callout-border: #5a4418;
+  --color-danger-callout: #2e1717;
+  --color-danger-callout-border: #5e2626;
+  --color-info-callout: #10213a;
+  --color-info-callout-border: #1f3d63;
 
   --color-caution: #fb923c;
   --color-caution-bg: #7c2d12;

@@ -6,6 +6,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.389.4] — 2026-09-24
+
+Guide-record polish against the Distillation mockup. Defaults for other
+callers are unchanged except where noted.
+
+### Changed
+- **Banner** `layout="callout"` paints a new pale callout surface —
+  `--color-{success,warning,danger,info}-callout` and `-callout-border`
+  (light and dark in `styles.css`) — instead of the tone's `-bg`/`-border`.
+  A host that pushes `-bg` saturated so pills read at a glance (the portal's
+  `#fef3c7` / `#fbbf24`) turned the paragraph-wide warning callout into a
+  yellow slab; the mockup's is cream (`#fff8eb`, border `#f5d9a8`). The root
+  now inks `text-text-primary`. `inline`/`stacked` banners are untouched.
+  Override the new tokens to re-tone callouts without touching pills. New
+  story `Shared/Banner › Callout tones`.
+- **RailSectionHeader** `count` is a small rounded bordered pill — the
+  sub-nav's count shape (`border-border bg-surface text-text-tertiary`) —
+  instead of a borderless soft neutral chip, which on a panel-coloured rail
+  read as plain text. Same test id and `aria-label`. New story
+  `Social/RailSectionHeader › With count on rail`.
+- **ExplorerLayout** `paneHeader` spans the pane only, not pane + aside. The
+  aside is now a full-height column beside it, so a `ScopeHeader
+  variant="crumbs"` band's hung controls (All repositories · Open Library)
+  can no longer land on a `ContextColumn`'s tab row. No consumer change:
+  same prop, same test ids (`-pane-column` now holds the band and the pane).
+- **ScopeHeader** `variant="crumbs"` hangs its controls 10px past the band
+  (was 14px), so they stay inside an `EditorShell` head's 12px top padding
+  and never reach a long title; the title sits 4px lower. New story
+  `Layout/ExplorerLayout › Guide record sources open` (measured: controls
+  end 24px left of the aside and 2px above the title).
+
 ## [2.389.1] — 2026-09-24
 
 ### Fixed

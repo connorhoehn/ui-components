@@ -6,7 +6,7 @@ import { t as u } from "./Card-RQCeAPNU.js";
 import { t as d } from "./IconButton-DDeXW3mZ.js";
 import { $ as f, I as p, L as m, R as h, d as g, h as _, i as v, k as y, m as b, t as x, u as S, y as C } from "./Icons-CI4hzRkO.js";
 import { n as w, t as T } from "./Stack-CkiMw5K0.js";
-import { t as E } from "./Banner-BChr4erj.js";
+import { t as E } from "./Banner-C2bMqNCn.js";
 import { t as D } from "./Chip-zdVBwV9j.js";
 import { t as O } from "./EmptyState-DFWbBBcY.js";
 import { n as k, t as A } from "./SegmentedControl-X19S_gNQ.js";
@@ -769,12 +769,11 @@ function He({ label: e, actions: t = [], presentational: n = !0, collapsed: r = 
 				className: m,
 				children: e
 			}),
-			typeof l == "number" && /* @__PURE__ */ Z(D, {
-				size: "xs",
-				tone: "neutral",
-				className: "shrink-0",
+			typeof l == "number" && /* @__PURE__ */ Z("span", {
 				"aria-label": `${l} items`,
 				"data-testid": `${f}-count`,
+				"data-shape": "pill",
+				className: s("inline-flex h-4 min-w-5 shrink-0 items-center justify-center rounded-full border px-1.5 text-[10px] font-medium leading-none tabular-nums", u ? "border-white/20 bg-transparent text-white/60" : "border-border bg-surface text-text-tertiary"),
 				children: l
 			}),
 			t.map((e) => /* @__PURE__ */ Z("button", {

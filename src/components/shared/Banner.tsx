@@ -27,6 +27,18 @@ const VARIANT_CLASSES: Record<BannerVariant, string> = {
   success: 'bg-success-bg border-success-border text-success-fg',
 };
 
+/**
+ * The callout's surface (2.389.4): the paler `-callout` fill and border, not
+ * the tone's `-bg`/`-border` a pill uses — a paragraph-wide notice in the
+ * badge ink read as a saturated slab once a host pushed `-bg` darker.
+ */
+const CALLOUT_CLASSES: Record<BannerVariant, string> = {
+  error:   'bg-danger-callout border-danger-callout-border',
+  warning: 'bg-warning-callout border-warning-callout-border',
+  info:    'bg-info-callout border-info-callout-border',
+  success: 'bg-success-callout border-success-callout-border',
+};
+
 export interface BannerProps {
   variant?: BannerVariant;
   /** Bold prefix label shown before children. */
@@ -42,7 +54,8 @@ export interface BannerProps {
    *
    * `callout` (since 2.389.0) is a full-width notice in a document body:
    * icon · title over body · trailing action, all vertically centred. The
-   * surface keeps the tone's soft fill and border, but the title reads in
+   * surface is the tone's pale `--color-{tone}-callout` fill and
+   * `-callout-border` (since 2.389.4; the soft `-bg` before), the title reads in
    * primary ink and the body in secondary ink so a paragraph of advice stays
    * legible — only the icon carries the tone colour.
    */
@@ -100,8 +113,8 @@ export default function Banner({
         data-testid={testId}
         data-layout="callout"
         className={cn(
-          'px-5 py-3 rounded-md text-[13px] flex items-center gap-4 border',
-          VARIANT_CLASSES[variant],
+          'px-5 py-3 rounded-md text-[13px] flex items-center gap-4 border text-text-primary',
+          CALLOUT_CLASSES[variant],
           className,
         )}
         style={style}

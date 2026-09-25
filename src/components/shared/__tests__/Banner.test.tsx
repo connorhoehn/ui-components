@@ -132,7 +132,7 @@ describe('Banner', () => {
       );
       const root = screen.getByRole('alert');
       expect(root).toHaveAttribute('data-layout', 'callout');
-      expect(root).toHaveClass('items-center', 'bg-warning-bg');
+      expect(root).toHaveClass('items-center', 'bg-warning-callout');
       const kids = Array.from(root.children);
       expect(kids[0]).toBe(screen.getByTestId('b-icon'));
       const title = screen.getByText('Check the redirect before you use this');
@@ -140,6 +140,31 @@ describe('Banner', () => {
       expect(title.parentElement).toBe(body.parentElement);
       expect(title.compareDocumentPosition(body) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
       expect(kids[kids.length - 1]).toContainElement(screen.getByRole('button', { name: 'View run' }));
+    });
+
+    it('callout paints the pale -callout surface for every tone; other layouts keep -bg (2.389.4)', () => {
+      const tones = [['warning', 'warning'], ['error', 'danger'], ['info', 'info'], ['success', 'success']] as const;
+      for (const [variant, token] of tones) {
+        const { unmount } = render(<Banner variant={variant} layout="callout" title="T" data-testid="c">x</Banner>);
+        const root = screen.getByTestId('c');
+        expect(root).toHaveClass(`bg-${token}-callout`, `border-${token}-callout-border`, 'border');
+        expect(root.className).not.toContain(`bg-${token}-bg`);
+        unmount();
+      }
+      render(<Banner variant="warning" data-testid="d">inline</Banner>);
+      expect(screen.getByTestId('d')).toHaveClass('bg-warning-bg', 'border-warning-border', 'text-warning-fg');
+    });
+
+    it('declares the callout tokens in light and dark', async () => {
+      const { readFileSync } = await import('node:fs');
+      const { resolve } = await import('node:path');
+      const css = readFileSync(resolve(__dirname, '../../../styles.css'), 'utf8');
+      for (const tone of ['success', 'warning', 'danger', 'info']) {
+        for (const role of ['callout', 'callout-border']) {
+          const matches = css.match(new RegExp(`--color-${tone}-${role}:`, 'g')) ?? [];
+          expect(matches.length, `--color-${tone}-${role}`).toBe(2);
+        }
+      }
     });
 
     it('callout is role=status for info', () => {

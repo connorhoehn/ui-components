@@ -1518,7 +1518,8 @@ export declare interface BannerProps {
      *
      * `callout` (since 2.389.0) is a full-width notice in a document body:
      * icon · title over body · trailing action, all vertically centred. The
-     * surface keeps the tone's soft fill and border, but the title reads in
+     * surface is the tone's pale `--color-{tone}-callout` fill and
+     * `-callout-border` (since 2.389.4; the soft `-bg` before), the title reads in
      * primary ink and the body in secondary ink so a paragraph of advice stays
      * legible — only the icon carries the tone colour.
      */
@@ -7002,12 +7003,15 @@ export declare interface ExplorerLayoutProps {
      */
     header?: ReactNode;
     /**
-     * A band to the RIGHT of the rail, above the pane and the aside — a crumb
-     * trail with the scope's controls ("Build › Distillation › Knowledge" · All
-     * repositories · Open Library). Unlike `header` it does not span the rail,
-     * so the rail's own title keeps the top-left corner. It does not scroll; the
-     * pane below it does. No border of its own: it reads as the top of the pane.
-     * Since 2.389.0.
+     * A band over the PANE only — a crumb trail with the scope's controls
+     * ("Build › Distillation › Knowledge" · All repositories · Open Library).
+     * Unlike `header` it spans neither the rail (so the rail's own title keeps
+     * the top-left corner) nor the aside (so the aside's top row — a
+     * `ContextColumn`'s tabs — keeps the top of its own column). It does not
+     * scroll; the pane below it does. No border of its own: it reads as the top
+     * of the pane. Since 2.389.0; spans only the pane since 2.389.4 (it spanned
+     * pane + aside, and `ScopeHeader variant="crumbs"` controls, which hang
+     * into the record head below the band, landed on the aside's top row).
      */
     paneHeader?: ReactNode;
     /** A count beside `railTitle` ("Work 11"). Since 2.385.0. */
@@ -13116,8 +13120,9 @@ export declare interface RailSectionHeaderProps {
      */
     collapsedCount?: number;
     /**
-     * How many things the section holds — "GUIDES & FINDINGS  11". A neutral
-     * chip at the right end of the heading, before any actions, shown whenever
+     * How many things the section holds — "GUIDES & FINDINGS  11". A small
+     * rounded bordered pill (the sub-nav's count shape, since 2.389.4; a soft
+     * neutral chip before) at the right end of the heading, before any actions, shown whenever
      * a number is given (0 included) and whatever the collapsed state. Unlike
      * `collapsedCount` it is a size, not an alert. Since 2.389.0.
      */
@@ -14288,6 +14293,11 @@ export declare interface ScopeHeaderProps {
      * and `menu` on the right, hung a little below the crumb line so they sit
      * between the crumb and the headline that follows. No h1 — title, status,
      * stats, people and tabs are not drawn.
+     *
+     * The controls overhang the band by 10px (since 2.389.4; 14px before), so
+     * the band must sit over a pane whose own head starts with at least that
+     * much top padding (an `EditorShell` header has 12px). `ExplorerLayout.paneHeader` spans only the pane since 2.389.4, so
+     * the hang can never reach the aside.
      */
     variant?: 'default' | 'crumbs';
     /** The scope's own status — "In progress". */
@@ -20691,6 +20701,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -20703,19 +20726,6 @@ declare module '@tiptap/core' {
             setLineSpacing: (spacing: LineSpacing) => ReturnType;
             /** Return the paragraphs in the selection to the paper's own leading. */
             unsetLineSpacing: () => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
         };
     }
 }
@@ -20759,9 +20769,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -20769,9 +20779,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

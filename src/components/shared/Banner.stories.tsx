@@ -87,3 +87,31 @@ export const Callout: Story = {
 export const WithIcon: Story = {
   args: { variant: 'info', icon: true, title: 'Heads up', children: 'Indexing resumes at midnight.' },
 };
+
+/**
+ * 2.389.4 — every tone's callout on its pale `--color-{tone}-callout` surface,
+ * so the four read as one family (and none as a saturated slab).
+ */
+export const CalloutTones: Story = {
+  args: { children: '' },
+  render: () => (
+    <div className="flex max-w-[860px] flex-col gap-3">
+      {(['warning', 'error', 'info', 'success'] as const).map((variant) => (
+        <Banner
+          key={variant}
+          variant={variant}
+          layout="callout"
+          icon
+          title={{ warning: 'Check the redirect before you use this', error: 'The last run failed', info: 'Indexing resumes at midnight', success: 'All four checks passed' }[variant]}
+          action={
+            <Button variant="link" size="sm" className="inline-flex items-center gap-1">
+              View run <ArrowRightIcon size={14} />
+            </Button>
+          }
+        >
+          The last attempt stopped at step 3 because sign-in still pointed to the old service.
+        </Banner>
+      ))}
+    </div>
+  ),
+};

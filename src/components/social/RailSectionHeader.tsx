@@ -24,7 +24,6 @@
 import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { ChevronIcon, PlusIcon } from '../ui/Icons';
-import Chip from '../shared/Chip';
 
 export interface RailSectionAction {
   /** The accessible name and the tooltip — "Create a channel", not "+". */
@@ -80,8 +79,9 @@ export interface RailSectionHeaderProps {
    */
   collapsedCount?: number;
   /**
-   * How many things the section holds — "GUIDES & FINDINGS  11". A neutral
-   * chip at the right end of the heading, before any actions, shown whenever
+   * How many things the section holds — "GUIDES & FINDINGS  11". A small
+   * rounded bordered pill (the sub-nav's count shape, since 2.389.4; a soft
+   * neutral chip before) at the right end of the heading, before any actions, shown whenever
    * a number is given (0 included) and whatever the collapsed state. Unlike
    * `collapsedCount` it is a size, not an alert. Since 2.389.0.
    */
@@ -170,9 +170,21 @@ export function RailSectionHeader({
         </span>
       )}
       {typeof count === 'number' && (
-        <Chip size="xs" tone="neutral" className="shrink-0" aria-label={`${count} items`} data-testid={`${testId}-count`}>
+        // The same bordered pill the sub-nav draws beside "Guides & findings 11"
+        // (SubNavLayout's count), so the section's size reads as the same kind
+        // of number as the nav's. A soft neutral Chip (2.389.0) had no border
+        // and, on a panel-coloured rail, read as bare text.
+        <span
+          aria-label={`${count} items`}
+          data-testid={`${testId}-count`}
+          data-shape="pill"
+          className={cn(
+            'inline-flex h-4 min-w-5 shrink-0 items-center justify-center rounded-full border px-1.5 text-[10px] font-medium leading-none tabular-nums',
+            dark ? 'border-white/20 bg-transparent text-white/60' : 'border-border bg-surface text-text-tertiary',
+          )}
+        >
           {count}
-        </Chip>
+        </span>
       )}
       {actions.map((action) => (
         <button
