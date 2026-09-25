@@ -1950,7 +1950,9 @@
    =========================================================================== */
 
 .uic-menu-scroll {
-  max-height: min(70vh, 32rem);
+  /* The viewport less a header's height, so a menu opened from a page head
+     fits whole wherever it can (2.390.6); longer ones scroll. */
+  max-height: min(calc(100vh - 7rem), 40rem);
   overflow-y: auto;
 }
 

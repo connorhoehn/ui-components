@@ -57,7 +57,7 @@ describe('the file menu', () => {
   it('lays out the five groups in the mockup order with the host extras folded in', () => {
     renderMenu();
     const groups = screen.getAllByRole('group').map((g) => within(g).queryAllByRole('menuitem').map((i) => i.textContent?.replace(/⌘P$/, '').trim()));
-    expect(groups[0]).toEqual(['Rename…', 'Move to…', 'Make a copy…', 'Version history']);
+    expect(groups[0]).toEqual(['Rename…', 'Move to…', 'Make a copy…', 'View']);
     expect(groups[1]).toEqual(['Copy link', 'Share…']);
     expect(groups[2]).toEqual(['Create from this…', 'Run workflow…', 'Save as template…', 'More']);
     expect(groups[3]).toEqual(['Download as…', 'Print…']);

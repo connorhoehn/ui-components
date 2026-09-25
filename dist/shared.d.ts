@@ -5802,6 +5802,25 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasListStyle: {
             /**
              * Make the caret's block a list of the style's kind (if it is not one
@@ -5815,18 +5834,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
-            /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
-             */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -5896,16 +5906,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

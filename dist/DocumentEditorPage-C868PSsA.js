@@ -1527,7 +1527,13 @@ function At({ variant: e = "bar", actionsLayout: t = "cluster", menuTrigger: n =
 		...Ot[Ot.length - 1],
 		caption: $?.caption ?? "Creates a new document."
 	});
-	let kt = [
+	let kt = [pt[at] + (m ? ` — ${m}` : ""), st].filter(Boolean).join(" · "), At = [
+		...j ? [{
+			label: "Version history",
+			icon: /* @__PURE__ */ V(k, { size: 16 }),
+			onSelect: j,
+			"data-testid": "document-header-history"
+		}] : [],
 		...ye ? [{
 			label: "My items",
 			...R ? { trailing: String(R) } : {},
@@ -1541,7 +1547,7 @@ function At({ variant: e = "bar", actionsLayout: t = "cluster", menuTrigger: n =
 		}] : [],
 		...tt.map(it),
 		...ut("view")
-	], At = Re ? [...Y.map((e) => ({
+	], Mt = Re ? [...Y.map((e) => ({
 		label: xt[e],
 		...e === "finalize" ? { danger: !0 } : {},
 		onSelect: () => {
@@ -1552,7 +1558,7 @@ function At({ variant: e = "bar", actionsLayout: t = "cluster", menuTrigger: n =
 		label: "Take ownership",
 		onSelect: () => qe(!0),
 		"data-testid": "claim-ownership-btn"
-	}] : []] : [], Mt = [
+	}] : []] : [], Nt = [
 		...ut("create").length ? [{ items: ut("create") }] : [],
 		...et.length ? [{
 			label: "Insert",
@@ -1562,30 +1568,33 @@ function At({ variant: e = "bar", actionsLayout: t = "cluster", menuTrigger: n =
 				label: e.label.replace(/^Insert (a |an )?/, "").replace(/^./, (e) => e.toUpperCase())
 			}))
 		}] : [],
-		...At.length ? [{
+		...Mt.length ? [{
 			label: "Review",
 			"data-testid": "document-header-menu-lifecycle",
-			items: At
-		}] : []
-	], Nt = A?.downloads ?? [], Pt = [pt[at] + (m ? ` — ${m}` : ""), st].filter(Boolean).join(" · "), Ft = A ? [
+			items: Mt
+		}] : [],
+		...ge ? [{ items: [{
+			label: "Clear document",
+			danger: !0,
+			onSelect: () => Be(!0),
+			"data-testid": "clear-document-btn"
+		}] }] : []
+	], Pt = A?.downloads ?? [], Ft = A ? [
 		{
 			"data-testid": "document-menu-group-file",
 			items: [
 				...Q(A.rename, "Rename…", /* @__PURE__ */ V(w, { size: 16 }), "document-menu-rename"),
 				...Q(A.move, "Move to…", /* @__PURE__ */ V(x, { size: 16 }), "document-menu-move"),
 				...Q(A.copy, "Make a copy…", /* @__PURE__ */ V(O, { size: 16 }), "document-menu-copy"),
-				...j ? [{
-					label: "Version history",
-					icon: /* @__PURE__ */ V(k, { size: 16 }),
-					onSelect: j,
-					"data-testid": "document-header-history"
-				}] : [],
 				...ut("file"),
-				...kt.length ? [{
+				...At.length ? [{
 					label: "View",
 					icon: /* @__PURE__ */ V(b, { size: 16 }),
 					"data-testid": "document-menu-view",
-					submenu: [{ items: kt }]
+					submenu: [{
+						items: At,
+						...kt ? { caption: kt } : {}
+					}]
 				}] : []
 			]
 		},
@@ -1597,7 +1606,7 @@ function At({ variant: e = "bar", actionsLayout: t = "cluster", menuTrigger: n =
 				...X.length > 0 ? [{
 					label: "Share to…",
 					icon: /* @__PURE__ */ V(ae, { size: 16 }),
-					description: `${X.length} conversation${X.length === 1 ? "" : "s"}`,
+					trailing: String(X.length),
 					"data-testid": "document-header-menu-share",
 					submenu: [{
 						"data-testid": "document-header-menu-extras",
@@ -1624,21 +1633,21 @@ function At({ variant: e = "bar", actionsLayout: t = "cluster", menuTrigger: n =
 				}] : [],
 				...Q(A.runWorkflow, "Run workflow…", /* @__PURE__ */ V(_, { size: 16 }), "document-menu-run-workflow"),
 				...Q(A.saveAsTemplate, "Save as template…", /* @__PURE__ */ V(T, { size: 16 }), "document-menu-save-template"),
-				...Mt.length ? [{
+				...Nt.length ? [{
 					label: "More",
 					icon: /* @__PURE__ */ V(ie, { size: 16 }),
 					"data-testid": "document-menu-more",
-					submenu: Mt
+					submenu: Nt
 				}] : []
 			]
 		},
 		{
 			"data-testid": "document-menu-group-output",
-			items: [...Nt.length ? [{
+			items: [...Pt.length ? [{
 				label: "Download as…",
 				icon: /* @__PURE__ */ V(le, { size: 16 }),
 				"data-testid": "document-header-menu-download",
-				submenu: [{ items: Nt.map((e) => ({
+				submenu: [{ items: Pt.map((e) => ({
 					label: e.label,
 					onSelect: e.onSelect,
 					"data-testid": `document-header-export-${e.id}`,
@@ -1651,13 +1660,7 @@ function At({ variant: e = "bar", actionsLayout: t = "cluster", menuTrigger: n =
 		},
 		{
 			"data-testid": "document-menu-group-trash",
-			...Pt ? { caption: Pt } : {},
-			items: [...Q(A.trash, "Move to trash", /* @__PURE__ */ V(se, { size: 16 }), "document-menu-trash", { danger: !0 }), ...ge ? [{
-				label: "Clear document",
-				danger: !0,
-				onSelect: () => Be(!0),
-				"data-testid": "clear-document-btn"
-			}] : []]
+			items: [...Q(A.trash, "Move to trash", /* @__PURE__ */ V(se, { size: 16 }), "document-menu-trash", { danger: !0 })]
 		}
 	].filter((e) => e.items.length > 0) : [], It = Z && A ? Ft : lt, Lt = /* @__PURE__ */ H(B, { children: [
 		/* @__PURE__ */ H(fe, {

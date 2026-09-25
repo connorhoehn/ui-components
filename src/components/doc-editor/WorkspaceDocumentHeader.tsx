@@ -453,7 +453,9 @@ export default function WorkspaceDocumentHeader({
     ...(templateItems.length ? [{ items: templateItems }] : []),
   ];
   if (createSubmenu.length) createSubmenu[createSubmenu.length - 1] = { ...createSubmenu[createSubmenu.length - 1]!, caption: createFrom?.caption ?? 'Creates a new document.' };
+  const aboutCaption = [DOCUMENT_MODE_LABELS[modeKey] + (modeReason ? ` — ${modeReason}` : ''), ownerLine].filter(Boolean).join(' · ');
   const viewItems = [
+    ...(onToggleHistory ? [{ label: 'Version history', icon: <HistoryIcon size={16} />, onSelect: onToggleHistory, 'data-testid': 'document-header-history' }] : []),
     ...(onToggleMyItems ? [{ label: 'My items', ...(myItemCount ? { trailing: String(myItemCount) } : {}), onSelect: onToggleMyItems, 'data-testid': 'document-header-menu-my-items' }] : []),
     ...(onToggleVideoHistory && (pastCallsCount ?? 0) > 0 ? [{ label: 'Past calls', trailing: String(pastCallsCount), onSelect: onToggleVideoHistory }] : []),
     ...toggleItems.map(toggleRow),
@@ -476,9 +478,9 @@ export default function WorkspaceDocumentHeader({
       items: insertItems.map((i) => ({ ...row(i), label: i.label.replace(/^Insert (a |an )?/, '').replace(/^./, (c) => c.toUpperCase()) })),
     }] : []),
     ...(reviewItems.length ? [{ label: 'Review', 'data-testid': 'document-header-menu-lifecycle', items: reviewItems }] : []),
+    ...(onClearDocument ? [{ items: [{ label: 'Clear document', danger: true, onSelect: () => setConfirmClear(true), 'data-testid': 'clear-document-btn' }] }] : []),
   ];
   const downloads = fileActions?.downloads ?? [];
-  const aboutCaption = [DOCUMENT_MODE_LABELS[modeKey] + (modeReason ? ` — ${modeReason}` : ''), ownerLine].filter(Boolean).join(' · ');
   const fileSections: DropdownMenuSection[] = fileActions ? [
     {
       'data-testid': 'document-menu-group-file',
@@ -486,9 +488,8 @@ export default function WorkspaceDocumentHeader({
         ...fileRow(fileActions.rename, 'Rename…', <EditIcon size={16} />, 'document-menu-rename'),
         ...fileRow(fileActions.move, 'Move to…', <FolderIcon size={16} />, 'document-menu-move'),
         ...fileRow(fileActions.copy, 'Make a copy…', <CopyIcon size={16} />, 'document-menu-copy'),
-        ...(onToggleHistory ? [{ label: 'Version history', icon: <HistoryIcon size={16} />, onSelect: onToggleHistory, 'data-testid': 'document-header-history' }] : []),
         ...grouped('file'),
-        ...(viewItems.length ? [{ label: 'View', icon: <EyeIcon size={16} />, 'data-testid': 'document-menu-view', submenu: [{ items: viewItems }] }] : []),
+        ...(viewItems.length ? [{ label: 'View', icon: <EyeIcon size={16} />, 'data-testid': 'document-menu-view', submenu: [{ items: viewItems, ...(aboutCaption ? { caption: aboutCaption } : {}) }] }] : []),
       ],
     },
     {
@@ -499,7 +500,7 @@ export default function WorkspaceDocumentHeader({
         ...(shareItems.length > 0 ? [{
           label: 'Share to…',
           icon: <ShareIcon size={16} />,
-          description: `${shareItems.length} conversation${shareItems.length === 1 ? '' : 's'}`,
+          trailing: String(shareItems.length),
           'data-testid': 'document-header-menu-share',
           submenu: [{ 'data-testid': 'document-header-menu-extras', scroll: shareItems.length > EXTRAS_SCROLL_THRESHOLD, items: shareItems.map((i) => ({ ...row(i), label: i.label.replace(/^Share to /, '') })) }],
         }] : []),
@@ -538,10 +539,8 @@ export default function WorkspaceDocumentHeader({
     },
     {
       'data-testid': 'document-menu-group-trash',
-      ...(aboutCaption ? { caption: aboutCaption } : {}),
       items: [
         ...fileRow(fileActions.trash, 'Move to trash', <TrashIcon size={16} />, 'document-menu-trash', { danger: true }),
-        ...(onClearDocument ? [{ label: 'Clear document', danger: true, onSelect: () => setConfirmClear(true), 'data-testid': 'clear-document-btn' }] : []),
       ],
     },
   ].filter((section) => section.items.length > 0) : [];

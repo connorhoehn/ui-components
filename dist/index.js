@@ -1218,7 +1218,7 @@ function th() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var nh = dm(() => import("./DocumentEditorPage-DHBsFC4U.js").then((e) => e.n));
+var nh = dm(() => import("./DocumentEditorPage-C868PSsA.js").then((e) => e.n));
 function rh({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;
