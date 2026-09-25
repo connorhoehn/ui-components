@@ -164,7 +164,7 @@ describe('CommentThreadNode — Reply handed to the host composer', () => {
     expect(screen.queryByPlaceholderText(/Write a reply/)).not.toBeInTheDocument();
     const nested = screen.getByTestId('comment-reply-button-r1');
     expect(nested).toHaveAttribute('aria-pressed', 'true');
-    expect(nested).toHaveTextContent('Replying…');
+    expect(nested.className).toContain('text-primary');
   });
 });
 

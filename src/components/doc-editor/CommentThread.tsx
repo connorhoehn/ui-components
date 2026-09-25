@@ -299,7 +299,7 @@ export interface CommentThreadNodeProps {
    * (Reply mode). Reaches nested replies too.
    */
   onReplyRequest?: (args: { commentId: string; depth: number; author: string; text: string }) => void;
-  /** The comment whose reply is being written elsewhere: its Reply reads "Replying…", pressed. */
+  /** The comment whose reply is being written elsewhere: its Reply is drawn pressed (`aria-pressed`). */
   replyingToId?: string | null;
   depth: number;
   onReply: (parentId: string, text: string) => void;
@@ -449,11 +449,13 @@ function CommentThreadNode({
             {...(onReplyRequest ? { 'aria-pressed': replyingToId === comment.id } : {})}
             data-testid={`comment-reply-button-${comment.id}`}
             className={cn(
-              'bg-transparent border-none text-neutral text-xs cursor-pointer py-0.5 px-0 font-[inherit]',
-              replyingToId === comment.id && 'font-semibold text-primary',
+              'bg-transparent border-none text-neutral text-xs cursor-pointer py-0.5 px-0 font-[inherit] whitespace-nowrap',
+              // Same word, same width: "Replying…" wrapped the row's
+              // Resolve / Ask agent in a 280px card (measured at 1672px).
+              replyingToId === comment.id && 'text-primary underline underline-offset-2',
             )}
           >
-            {replyingToId === comment.id ? 'Replying…' : 'Reply'}
+            Reply
           </button>
           {depth === 0 && !isResolved && onResolveThread && (
             <button
