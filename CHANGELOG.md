@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.393.0] — 2026-09-25
+
+### Added
+- `FollowModeBar` / `FollowBanner`: `autoStopScope` (a ref to the editor) — follow then ends only when the
+  follower scrolls or types INSIDE it (wheel / touchmove / keydown), so a click on the call dock, the
+  toolbar or a side panel keeps following (SPEC §2.2 row 13, lane D A-5). `autoStop={false}` turns the
+  auto-unlock off (`autoStopOnInteract` still works). The shared logic is exported as `useFollowAutoStop`.
+  Unscoped behaviour is unchanged (any mousedown/keydown/wheel in the window).
+- Stories: `Doc editor/FollowModeBar` ScopedAutoStop(+Dark), `Shared/FollowBanner` AutoStopOff.
+
+### Changed
+- `StartCallDrawer` vertical rhythm matches mockup 01 at 1672 × 941 (drawer 892px tall): 32px document
+  rows, 39px collaborator rows, a 38px Video | Audio switch, a 48px message box, a 32px pre-check row and a
+  tighter header/footer — the pre-check row is on screen without scrolling. `SegmentedControl
+  tone="accent"` segments are 30px; `MediaPrecheckRow` toggles are 32px. Document-call drawer stories now
+  frame the true 892px column.
+
 ## [2.392.1] — 2026-09-25
 
 Document calls, matched to the mockups where they and the SPEC disagreed.

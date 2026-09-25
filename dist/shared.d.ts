@@ -2212,7 +2212,7 @@ export declare interface FloatingPanelProps {
  */
 export declare function FolderIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function FollowBanner({ name, onStop, autoStopOnInteract, location, appearance, className, 'data-testid': testId, }: FollowBannerProps): JSX.Element | null;
+export declare function FollowBanner({ name, onStop, autoStopOnInteract, autoStop, autoStopScope, location, appearance, className, 'data-testid': testId, }: FollowBannerProps): JSX.Element | null;
 
 export declare interface FollowBannerProps {
     /** Who is being followed. Null renders nothing. */
@@ -2223,6 +2223,14 @@ export declare interface FollowBannerProps {
      * turn off only where the host routes those interactions itself.
      */
     autoStopOnInteract?: boolean;
+    /** Same switch as `autoStopOnInteract` (2.393.0 name); `false` turns the auto-unlock off. */
+    autoStop?: boolean;
+    /**
+     * Listen on this element only, and only for scrolling or typing — the
+     * editor, typically — instead of every mousedown/keydown/wheel in the
+     * window. Clicks elsewhere (a call dock, a toolbar) keep following. 2.393.0.
+     */
+    autoStopScope?: RefObject<HTMLElement | null>;
     /**
      * Where the followed person is — a section title ("Session flow"). Rendered
      * after the name as ` · <location>` in the regular weight. Empty or unset
@@ -5660,6 +5668,22 @@ export declare function useDockedPanel(): DockedPanelContextValue | null;
 /** The nearest enclosing console surface, or `null` outside one. */
 export declare function useEnclosingConsoleSurface(): ConsoleSurfaceState | null;
 
+/**
+ * The follow lock's auto-unlock, shared by FollowBanner and FollowModeBar.
+ *
+ * Unscoped (the default, and the historical behaviour): the viewer's
+ * mousedown / keydown / wheel ANYWHERE in the window ends follow. Scoped
+ * (2.393.0): only scrolling (wheel, touchmove) or typing (keydown) INSIDE
+ * `scope` ends it — a click on a call dock, a toolbar or a side panel does
+ * not, because those are not the viewer taking the page back (SPEC §2.2 row
+ * 13). Registration waits 500ms so the click that started following cannot
+ * end it.
+ */
+export declare function useFollowAutoStop(active: boolean, onStop: () => void, { enabled, scope }?: {
+    enabled?: boolean;
+    scope?: RefObject<HTMLElement | null> | undefined;
+}): void;
+
 export declare function UserChip({ name, label, avatarSize, avatarColor, presence, onClick, className, style, title, labelClassName, 'data-testid': testId, }: UserChipProps): JSX.Element;
 
 export declare interface UserChipProps {
@@ -5903,6 +5927,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -5935,22 +5972,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -5984,22 +6008,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -6020,6 +6031,19 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

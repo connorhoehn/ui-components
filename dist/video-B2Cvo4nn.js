@@ -20,7 +20,7 @@ import { t as M } from "./DockedPanelContext-pH9A5z1h.js";
 import { t as N } from "./Textarea-Dz4doxTv.js";
 import { n as P, t as F } from "./Avatar-DeJWic2B.js";
 import { i as I, r as L, t as ee } from "./ChoiceList-DXzbK-3K.js";
-import { t as R } from "./SegmentedControl-DW3yDyNH.js";
+import { t as R } from "./SegmentedControl-CKYHtOJ0.js";
 import { t as z } from "./InlinePopover-DpXHdWeE.js";
 import { t as B } from "./DropdownMenu-CHrQvZgc.js";
 import { t as V } from "./Select-D3fGI8SO.js";
@@ -4838,7 +4838,7 @@ function zr({ micOn: t, cameraOn: n, showCamera: r = !0, permission: a, onToggle
 	let f = typeof a == "string" ? {
 		microphone: a,
 		camera: a
-	} : a, p = Rr("microphone", f.microphone), m = Rr("camera", f.camera), h = t && !p, g = n && !m, _ = (t) => e("inline-flex items-center gap-2 border-transparent px-2 font-medium", t ? "text-danger-fg" : "text-text-primary");
+	} : a, p = Rr("microphone", f.microphone), m = Rr("camera", f.camera), h = t && !p, g = n && !m, _ = (t) => e("inline-flex h-8 items-center gap-2 border-transparent px-2 py-0 font-medium", t ? "text-danger-fg" : "text-text-primary");
 	return /* @__PURE__ */ X("div", {
 		className: e("flex items-center gap-2", d),
 		"data-testid": `${l}-row`,
@@ -4900,7 +4900,7 @@ function Br({ items: t, trailing: n, onRemove: r, onOpen: i, onSelect: a, onReor
 				onDragStart: o ? () => h(t.id) : void 0,
 				onDragOver: o ? (e) => e.preventDefault() : void 0,
 				onDrop: o ? _(c) : void 0,
-				className: e("group/doc flex items-center rounded-md", g ? "min-h-[34px] gap-2.5 px-0.5" : "min-h-[58px] gap-3 px-3 py-2", t.selected && "bg-primary-bg", !t.selected && !g && "hover:bg-surface-hover", a && "cursor-pointer", p === t.id && "opacity-50"),
+				className: e("group/doc flex items-center rounded-md", g ? "min-h-8 gap-2.5 px-0.5" : "min-h-[58px] gap-3 px-3 py-2", t.selected && "bg-primary-bg", !t.selected && !g && "hover:bg-surface-hover", a && "cursor-pointer", p === t.id && "opacity-50"),
 				onClick: a ? () => a(t.id) : void 0,
 				children: [
 					/* @__PURE__ */ Y("span", {
@@ -4953,7 +4953,7 @@ function Vr({ title: t, rows: n, selected: r, onToggle: i, loading: a = !1, empt
 		"aria-label": t,
 		children: [
 			t && /* @__PURE__ */ Y("h4", {
-				className: "m-0 mb-1.5 text-sm font-normal text-text-secondary",
+				className: "m-0 mb-1 text-sm font-normal text-text-secondary",
 				children: t
 			}),
 			a ? /* @__PURE__ */ Y("div", {
@@ -4975,7 +4975,7 @@ function Vr({ title: t, rows: n, selected: r, onToggle: i, loading: a = !1, empt
 				children: n.map((t) => {
 					let n = d.has(t.userId), r = !!t.disabledReason;
 					return /* @__PURE__ */ Y("li", { children: /* @__PURE__ */ X("label", {
-						className: e("flex min-h-[41px] items-center gap-3 rounded-md", r ? "cursor-not-allowed opacity-60" : "cursor-pointer"),
+						className: e("flex min-h-[39px] items-center gap-3 rounded-md", r ? "cursor-not-allowed opacity-60" : "cursor-pointer"),
 						title: t.disabledReason,
 						"data-testid": `${u}-${t.userId}`,
 						"data-checked": n ? "true" : "false",
@@ -5381,7 +5381,7 @@ function Yr({ children: e, action: t }) {
 }
 function Xr({ open: e, onClose: t, title: n, onTitleChange: r, media: a, onMediaChange: s, documents: l, onManageAccess: u, people: d, message: m, onMessageChange: h, messageMaxLength: _ = 280, ring: y, onRingChange: b, precheck: w, selectedCount: T, onCopyLink: E, onStart: D, starting: O = !1, startDisabledReason: k, error: A, width: j = 400, docked: M = !0, className: P, "data-testid": F = "start-call-drawer" }) {
 	let { onAdd: I, ...L } = l, ee = !!k || O || !n.trim(), z = /* @__PURE__ */ X("div", {
-		className: "flex flex-col gap-3",
+		className: "flex flex-col gap-2.5",
 		children: [
 			A && /* @__PURE__ */ Y(g, {
 				variant: "error",
@@ -5436,8 +5436,8 @@ function Xr({ open: e, onClose: t, title: n, onTitleChange: r, media: a, onMedia
 		className: P,
 		headerClassName: "border-b-0 px-5 pb-3 pt-5",
 		titleClassName: "text-lg",
-		bodyClassName: "flex flex-col gap-4 px-5 pt-1 pb-4",
-		footerClassName: "bg-surface px-5 py-4",
+		bodyClassName: "flex flex-col gap-3.5 px-5 pt-0.5 pb-0",
+		footerClassName: "bg-surface px-5 pt-3 pb-7",
 		closeTestId: `${F}-close`,
 		"data-testid": F,
 		children: [
@@ -5464,7 +5464,7 @@ function Xr({ open: e, onClose: t, title: n, onTitleChange: r, media: a, onMedia
 				"data-testid": "start-call-media"
 			}),
 			/* @__PURE__ */ X("section", {
-				className: "flex flex-col gap-1.5",
+				className: "flex flex-col gap-1",
 				children: [
 					/* @__PURE__ */ Y(Yr, {
 						action: /* @__PURE__ */ X(i, {
@@ -5498,7 +5498,7 @@ function Xr({ open: e, onClose: t, title: n, onTitleChange: r, media: a, onMedia
 				]
 			}),
 			/* @__PURE__ */ X("section", {
-				className: "flex flex-col gap-2.5",
+				className: "flex flex-col gap-2",
 				children: [
 					/* @__PURE__ */ Y(Yr, { children: "People" }),
 					/* @__PURE__ */ Y(v, {
@@ -5530,7 +5530,7 @@ function Xr({ open: e, onClose: t, title: n, onTitleChange: r, media: a, onMedia
 				]
 			}),
 			/* @__PURE__ */ Y("div", {
-				className: "h-px shrink-0 bg-border",
+				className: "-my-0.5 h-px shrink-0 bg-border",
 				"aria-hidden": "true"
 			}),
 			/* @__PURE__ */ X("section", {
@@ -5548,6 +5548,7 @@ function Xr({ open: e, onClose: t, title: n, onTitleChange: r, media: a, onMedia
 					onChange: (e) => h(e.target.value.slice(0, _)),
 					maxLength: _,
 					rows: 2,
+					className: "min-h-0 h-12 resize-none py-1.5",
 					"data-testid": "start-call-message"
 				})]
 			}),
@@ -5561,7 +5562,7 @@ function Xr({ open: e, onClose: t, title: n, onTitleChange: r, media: a, onMedia
 				}), "Ring online participants"]
 			}),
 			/* @__PURE__ */ Y("div", {
-				className: "h-px shrink-0 bg-border",
+				className: "-my-0.5 h-px shrink-0 bg-border",
 				"aria-hidden": "true"
 			}),
 			/* @__PURE__ */ Y(zr, {

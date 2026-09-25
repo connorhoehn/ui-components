@@ -11,9 +11,47 @@
 // not immediately end it, and the listeners are `once` — after the unlock
 // fires there is nothing left to leak.
 
-import { useEffect, useRef } from 'react';
+import { useEffect, type RefObject } from 'react';
 import { cn } from '../../lib/cn';
+import { useEventCallback } from '../../hooks/useEventCallback';
 import { Button } from '../ui/Button';
+
+/**
+ * The follow lock's auto-unlock, shared by FollowBanner and FollowModeBar.
+ *
+ * Unscoped (the default, and the historical behaviour): the viewer's
+ * mousedown / keydown / wheel ANYWHERE in the window ends follow. Scoped
+ * (2.393.0): only scrolling (wheel, touchmove) or typing (keydown) INSIDE
+ * `scope` ends it — a click on a call dock, a toolbar or a side panel does
+ * not, because those are not the viewer taking the page back (SPEC §2.2 row
+ * 13). Registration waits 500ms so the click that started following cannot
+ * end it.
+ */
+export function useFollowAutoStop(
+  active: boolean,
+  onStop: () => void,
+  { enabled = true, scope }: { enabled?: boolean; scope?: RefObject<HTMLElement | null> | undefined } = {},
+): void {
+  const stop = useEventCallback(onStop);
+  useEffect(() => {
+    if (!active || !enabled) return;
+    let cleanup: (() => void) | null = null;
+    const timer = setTimeout(() => {
+      const target: HTMLElement | Window | null = scope ? scope.current : window;
+      if (!target) return;
+      const events = scope ? ['keydown', 'wheel', 'touchmove'] : ['mousedown', 'keydown', 'wheel'];
+      const handler = () => stop();
+      for (const evt of events) target.addEventListener(evt, handler, { once: true, passive: true });
+      cleanup = () => {
+        for (const evt of events) target.removeEventListener(evt, handler);
+      };
+    }, 500);
+    return () => {
+      clearTimeout(timer);
+      cleanup?.();
+    };
+  }, [active, enabled, scope, stop]);
+}
 
 export interface FollowBannerProps {
   /** Who is being followed. Null renders nothing. */
@@ -24,6 +62,14 @@ export interface FollowBannerProps {
    * turn off only where the host routes those interactions itself.
    */
   autoStopOnInteract?: boolean;
+  /** Same switch as `autoStopOnInteract` (2.393.0 name); `false` turns the auto-unlock off. */
+  autoStop?: boolean;
+  /**
+   * Listen on this element only, and only for scrolling or typing — the
+   * editor, typically — instead of every mousedown/keydown/wheel in the
+   * window. Clicks elsewhere (a call dock, a toolbar) keep following. 2.393.0.
+   */
+  autoStopScope?: RefObject<HTMLElement | null>;
   /**
    * Where the followed person is — a section title ("Session flow"). Rendered
    * after the name as ` · <location>` in the regular weight. Empty or unset
@@ -45,29 +91,17 @@ export function FollowBanner({
   name,
   onStop,
   autoStopOnInteract = true,
+  autoStop,
+  autoStopScope,
   location,
   appearance = 'banner',
   className,
   'data-testid': testId = 'follow-banner',
 }: FollowBannerProps) {
-  const cleanupRef = useRef<(() => void) | null>(null);
-
-  useEffect(() => {
-    if (!name || !autoStopOnInteract) return;
-    const timer = setTimeout(() => {
-      const handler = () => onStop();
-      const events: (keyof WindowEventMap)[] = ['mousedown', 'keydown', 'wheel'];
-      for (const evt of events) window.addEventListener(evt, handler, { once: true, passive: true });
-      cleanupRef.current = () => {
-        for (const evt of events) window.removeEventListener(evt, handler);
-      };
-    }, 500);
-    return () => {
-      clearTimeout(timer);
-      cleanupRef.current?.();
-      cleanupRef.current = null;
-    };
-  }, [name, autoStopOnInteract, onStop]);
+  useFollowAutoStop(Boolean(name), onStop, {
+    enabled: autoStop ?? autoStopOnInteract,
+    scope: autoStopScope,
+  });
 
   if (!name) return null;
 

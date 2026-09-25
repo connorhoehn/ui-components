@@ -106,7 +106,7 @@ function Scene({ tab, micDenied, speakers }: { tab: CallSettingsDrawerTab; micDe
   const [t, setT] = useState<CallSettingsDrawerTab>(tab);
   const [captions, setCaptions] = useState(false);
   return (
-    <div className="h-[941px] w-[380px] overflow-hidden border border-border">
+    <div className="h-[892px] w-[380px] overflow-hidden border border-border">
       <CallSettingsDrawer
         open
         onClose={noop}

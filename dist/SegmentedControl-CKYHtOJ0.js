@@ -18,7 +18,7 @@ function c({ options: c, value: l, onChange: u, size: d = "md", "aria-label": f,
 		"aria-label": f,
 		"aria-labelledby": p,
 		"data-testid": v,
-		className: e(h ? "flex w-full items-center" : "inline-flex items-center", "rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-inset,#f8fafc)] p-0.5 gap-0.5", g === "accent" && "bg-surface p-1 gap-1", _),
+		className: e(h ? "flex w-full items-center" : "inline-flex items-center", "rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-inset,#f8fafc)] p-0.5 gap-0.5", g === "accent" && "bg-surface p-[3px] gap-1", _),
 		children: c.map((t, n) => {
 			let f = t.value === l;
 			return /* @__PURE__ */ r("button", {
@@ -43,7 +43,7 @@ function c({ options: c, value: l, onChange: u, size: d = "md", "aria-label": f,
 				},
 				disabled: m,
 				"data-testid": v ? `${v}-${t.value}` : void 0,
-				className: e("inline-flex items-center justify-center gap-1.5 rounded-md font-medium transition-all cursor-pointer", h && "flex-1", m && "cursor-not-allowed opacity-60", i[d], f ? g === "accent" ? s : o : a, g === "accent" && "py-2 text-[15px]", g === "accent" && !f && "text-text-primary"),
+				className: e("inline-flex items-center justify-center gap-1.5 rounded-md font-medium transition-all cursor-pointer", h && "flex-1", m && "cursor-not-allowed opacity-60", i[d], f ? g === "accent" ? s : o : a, g === "accent" && "h-[30px] py-0 text-[15px]", g === "accent" && !f && "text-text-primary"),
 				children: [t.icon, t.label]
 			}, t.value);
 		})

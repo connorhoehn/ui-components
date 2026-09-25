@@ -108,7 +108,7 @@ export function SegmentedControl({
       className={cn(
         fullWidth ? 'flex w-full items-center' : 'inline-flex items-center',
         'rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-inset,#f8fafc)] p-0.5 gap-0.5',
-        tone === 'accent' && 'bg-surface p-1 gap-1',
+        tone === 'accent' && 'bg-surface p-[3px] gap-1',
         className,
       )}
     >
@@ -143,7 +143,7 @@ export function SegmentedControl({
               disabled && 'cursor-not-allowed opacity-60',
               SIZE_CLASSES[size],
               active ? (tone === 'accent' ? ACCENT_ACTIVE_CLASSES : ACTIVE_CLASSES) : INACTIVE_CLASSES,
-              tone === 'accent' && 'py-2 text-[15px]',
+              tone === 'accent' && 'h-[30px] py-0 text-[15px]',
               tone === 'accent' && !active && 'text-text-primary',
             )}
           >

@@ -89,7 +89,7 @@ export type { DockedPanelContextValue, DockedPanelProviderProps } from './Docked
 
 // ── New primitives (2025-05) ──
 export { default as StatCard } from './StatCard';
-export { default as FollowBanner } from './FollowBanner';
+export { default as FollowBanner, useFollowAutoStop } from './FollowBanner';
 export type { FollowBannerProps } from './FollowBanner';
 // A heading renamed in place — the text with a pencil; Enter/blur commits, Esc reverts (2.391.0).
 export { EditableHeading } from './EditableHeading';

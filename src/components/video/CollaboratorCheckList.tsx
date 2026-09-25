@@ -55,7 +55,7 @@ export function CollaboratorCheckList({
   const selectedSet = new Set(selected);
   return (
     <section className={cn('flex flex-col', className)} data-testid={testId} aria-label={title}>
-      {title && <h4 className="m-0 mb-1.5 text-sm font-normal text-text-secondary">{title}</h4>}
+      {title && <h4 className="m-0 mb-1 text-sm font-normal text-text-secondary">{title}</h4>}
       {loading ? (
         <div className="flex flex-col gap-2 py-1" data-testid={`${testId}-loading`}>
           {[0, 1, 2].map((i) => (
@@ -73,7 +73,7 @@ export function CollaboratorCheckList({
               <li key={row.userId}>
                 <label
                   className={cn(
-                    'flex min-h-[41px] items-center gap-3 rounded-md',
+                    'flex min-h-[39px] items-center gap-3 rounded-md',
                     disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
                   )}
                   title={row.disabledReason}

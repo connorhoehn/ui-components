@@ -20,7 +20,7 @@ import { n as I, t as L } from "./Avatar-DeJWic2B.js";
 import { t as R } from "./DotMeter-BDVkadI8.js";
 import { t as z } from "./StatusDot-Bgx2zxgC.js";
 import { i as ee, n as B, r as V, t as te } from "./ChoiceList-DXzbK-3K.js";
-import { t as ne } from "./SegmentedControl-DW3yDyNH.js";
+import { t as ne } from "./SegmentedControl-CKYHtOJ0.js";
 import { t as re } from "./InlineAlert-CRnIKeAF.js";
 import { t as ie } from "./LogStream-J2cxfOVI.js";
 import { a as ae, n as H, o as oe, s as se, t as ce } from "./backdropTone-BF54k8gW.js";

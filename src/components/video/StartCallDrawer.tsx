@@ -117,7 +117,7 @@ export function StartCallDrawer({
   const startDisabled = Boolean(startDisabledReason) || starting || !title.trim();
 
   const footer = (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2.5">
       {error && (
         <Banner
           variant="error"
@@ -166,8 +166,8 @@ export function StartCallDrawer({
       className={className}
       headerClassName="border-b-0 px-5 pb-3 pt-5"
       titleClassName="text-lg"
-      bodyClassName="flex flex-col gap-4 px-5 pt-1 pb-4"
-      footerClassName="bg-surface px-5 py-4"
+      bodyClassName="flex flex-col gap-3.5 px-5 pt-0.5 pb-0"
+      footerClassName="bg-surface px-5 pt-3 pb-7"
       closeTestId={`${testId}-close`}
       data-testid={testId}
     >
@@ -191,7 +191,7 @@ export function StartCallDrawer({
         data-testid="start-call-media"
       />
 
-      <section className="flex flex-col gap-1.5">
+      <section className="flex flex-col gap-1">
         <SectionHeading
           action={
             <Button variant="link" onClick={onAdd} data-testid="start-call-add-document" className="inline-flex items-center gap-1 text-sm">
@@ -211,7 +211,7 @@ export function StartCallDrawer({
         </div>
       </section>
 
-      <section className="flex flex-col gap-2.5">
+      <section className="flex flex-col gap-2">
         <SectionHeading>People</SectionHeading>
         <Input
           value={people.query}
@@ -245,7 +245,7 @@ export function StartCallDrawer({
         />
       </section>
 
-      <div className="h-px shrink-0 bg-border" aria-hidden="true" />
+      <div className="-my-0.5 h-px shrink-0 bg-border" aria-hidden="true" />
 
       <section className="flex flex-col gap-1.5">
         <label htmlFor={`${testId}-message`} className="text-sm text-text-primary">
@@ -257,6 +257,7 @@ export function StartCallDrawer({
           onChange={(e) => onMessageChange(e.target.value.slice(0, messageMaxLength))}
           maxLength={messageMaxLength}
           rows={2}
+          className="min-h-0 h-12 resize-none py-1.5"
           data-testid="start-call-message"
         />
       </section>
@@ -266,7 +267,7 @@ export function StartCallDrawer({
         Ring online participants
       </label>
 
-      <div className="h-px shrink-0 bg-border" aria-hidden="true" />
+      <div className="-my-0.5 h-px shrink-0 bg-border" aria-hidden="true" />
 
       <MediaPrecheckRow showCamera={media === 'video'} {...precheck} />
     </Drawer>

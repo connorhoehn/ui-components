@@ -23,3 +23,6 @@ export const BarDark: Story = {
   args: { appearance: 'bar', location: 'Session flow' },
   decorators: [(S) => <div data-theme="dark" className="w-[820px] bg-surface p-4"><S /></div>],
 };
+
+/** 2.393.0: `autoStop={false}` — the host ends follow itself. */
+export const AutoStopOff: Story = { args: { appearance: 'bar', location: 'Session flow', autoStop: false } };

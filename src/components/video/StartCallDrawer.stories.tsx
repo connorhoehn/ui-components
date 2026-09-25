@@ -39,7 +39,7 @@ function Scene({ width = 400, media: initialMedia = 'video', permission = 'grant
   );
   const names = Object.fromEntries(ROWS.map((r) => [r.userId, r.name]));
   return (
-    <div className={width === 360 ? 'h-[941px] w-[360px] overflow-hidden border border-border' : 'h-[941px] w-[400px] overflow-hidden border border-border'}>
+    <div className={width === 360 ? 'h-[892px] w-[360px] overflow-hidden border border-border' : 'h-[892px] w-[400px] overflow-hidden border border-border'}>
       <StartCallDrawer
         open
         onClose={noop}

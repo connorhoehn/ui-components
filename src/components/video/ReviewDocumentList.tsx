@@ -88,7 +88,7 @@ export function ReviewDocumentList({
             onDrop={onReorder ? dropOn(index) : undefined}
             className={cn(
               'group/doc flex items-center rounded-md',
-              compact ? 'min-h-[34px] gap-2.5 px-0.5' : 'min-h-[58px] gap-3 px-3 py-2',
+              compact ? 'min-h-8 gap-2.5 px-0.5' : 'min-h-[58px] gap-3 px-3 py-2',
               item.selected && 'bg-primary-bg',
               !item.selected && !compact && 'hover:bg-surface-hover',
               onSelect && 'cursor-pointer',

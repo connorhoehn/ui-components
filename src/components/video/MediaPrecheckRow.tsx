@@ -59,7 +59,7 @@ export function MediaPrecheckRow({
 
   const toggleClass = (blocked: boolean) =>
     cn(
-      'inline-flex items-center gap-2 border-transparent px-2 font-medium',
+      'inline-flex h-8 items-center gap-2 border-transparent px-2 py-0 font-medium',
       blocked ? 'text-danger-fg' : 'text-text-primary',
     );
 

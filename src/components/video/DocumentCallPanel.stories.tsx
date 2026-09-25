@@ -60,7 +60,7 @@ function Scene({
   // Connor is the host: he may take over from whoever presents (mockup 06).
   const someoneElse = false;
   return (
-    <div className="h-[941px] w-[380px] overflow-hidden border border-border">
+    <div className="h-[892px] w-[380px] overflow-hidden border border-border">
       <DocumentCallPanel
         title="Auth architecture review"
         participantCount={inCall}
@@ -102,7 +102,7 @@ function Scene({
 function BlockedScene() {
   const base = { isLocal: false, isHost: false, presence: 'online' as const, state: 'in-call' as const, audioOn: true, cameraOn: true, screenSharing: false };
   return (
-    <div className="h-[941px] w-[380px] overflow-hidden border border-border">
+    <div className="h-[892px] w-[380px] overflow-hidden border border-border">
       <DocumentCallPanel
         title="Auth architecture review"
         participantCount={2}

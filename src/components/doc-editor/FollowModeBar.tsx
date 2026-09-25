@@ -3,11 +3,10 @@
 // "Following [name]" banner with stop button.
 // Auto-unlocks follow mode on any user interaction (mousedown, keydown, wheel).
 
-import { useEffect, useRef } from 'react';
-import { useEventCallback } from '../../hooks/useEventCallback';
+import type { RefObject } from 'react';
 import type { Participant } from '../../types/document';
 import { cn } from '../../lib/cn';
-import { FollowBanner } from '../shared/FollowBanner';
+import { FollowBanner, useFollowAutoStop } from '../shared/FollowBanner';
 
 export interface FollowModeBarProps {
   followingUserId: string | null;
@@ -20,6 +19,14 @@ export interface FollowModeBarProps {
    * ("**Following Alice** · Session flow" … "Stop following"), see FollowBanner.
    */
   appearance?: 'banner' | 'bar';
+  /** `false` turns the auto-unlock off (the host ends follow itself). Default true. 2.393.0. */
+  autoStop?: boolean;
+  /**
+   * Listen on this element only (the editor), and only for scrolling or
+   * typing — a click on the call dock, the toolbar or a side panel keeps
+   * following. Unset: any mousedown/keydown/wheel in the window. 2.393.0.
+   */
+  autoStopScope?: RefObject<HTMLElement | null>;
   className?: string;
   /** Default `follow-bar`; the stop button is `<id>-stop`. */
   'data-testid'?: string;
@@ -31,36 +38,12 @@ export default function FollowModeBar({
   onStopFollow,
   location,
   appearance = 'banner',
+  autoStop = true,
+  autoStopScope,
   className,
   'data-testid': testId = 'follow-bar',
 }: FollowModeBarProps) {
-  const cleanupRef = useRef<(() => void) | null>(null);
-  // Stable, so the deferred listener registration below is not restarted by
-  // a parent re-render handing us a new `onStopFollow` arrow.
-  const stopFollow = useEventCallback(onStopFollow);
-
-  // Auto-unlock follow on local user interaction in the editor area
-  // Delay listener registration to avoid the "Follow" click itself triggering it
-  useEffect(() => {
-    if (!followingUserId) return;
-    const timerId = setTimeout(() => {
-      const handler = () => stopFollow();
-      const events: (keyof WindowEventMap)[] = ['mousedown', 'keydown', 'wheel'];
-      for (const evt of events) {
-        window.addEventListener(evt, handler, { once: true, passive: true });
-      }
-      cleanupRef.current = () => {
-        for (const evt of events) {
-          window.removeEventListener(evt, handler);
-        }
-      };
-    }, 500);
-    return () => {
-      clearTimeout(timerId);
-      cleanupRef.current?.();
-      cleanupRef.current = null;
-    };
-  }, [followingUserId, stopFollow]);
+  useFollowAutoStop(Boolean(followingUserId), onStopFollow, { enabled: autoStop, scope: autoStopScope });
 
   if (!followingUserId) return null;
 
