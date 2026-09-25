@@ -216,3 +216,34 @@ export const CompactStrip: Story = {
     </div>
   ),
 };
+
+/**
+ * 2.389.0 — a light composer whose context is a menu, not a removable chip:
+ * `Agent ▾` at the left, `This guide ▾` at the right of the mode row.
+ */
+export const ReferenceMenu: Story = {
+  render: function ReferenceMenuStory() {
+    const [ctx, setCtx] = useState<'guide' | 'guide+sources' | 'none'>('guide');
+    const labels = { guide: 'This guide', 'guide+sources': 'This guide + sources', none: 'No context' } as const;
+    return (
+      <div className="w-[592px]">
+        <RichChatComposer
+          onSend={() => {}}
+          modeControl="menu"
+          mode="agent"
+          onModeChange={() => {}}
+          disabledModes={['chat', 'terminal']}
+          toolbar="compact"
+          backdropTone="none"
+          modePlaceholders={{ agent: 'Describe your project or ask about this guide…' }}
+          submitLabel={{ agent: 'Ask' }}
+          references={[{
+            id: 'guide',
+            label: labels[ctx],
+            menu: [{ items: (Object.keys(labels) as Array<keyof typeof labels>).map((k) => ({ label: labels[k], active: k === ctx, onSelect: () => setCtx(k) })) }],
+          }]}
+        />
+      </div>
+    );
+  },
+};

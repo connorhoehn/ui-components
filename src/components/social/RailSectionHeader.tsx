@@ -24,6 +24,7 @@
 import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { ChevronIcon, PlusIcon } from '../ui/Icons';
+import Chip from '../shared/Chip';
 
 export interface RailSectionAction {
   /** The accessible name and the tooltip — "Create a channel", not "+". */
@@ -78,6 +79,13 @@ export interface RailSectionHeaderProps {
    * the same as muting it by accident.
    */
   collapsedCount?: number;
+  /**
+   * How many things the section holds — "GUIDES & FINDINGS  11". A neutral
+   * chip at the right end of the heading, before any actions, shown whenever
+   * a number is given (0 included) and whatever the collapsed state. Unlike
+   * `collapsedCount` it is a size, not an alert. Since 2.389.0.
+   */
+  count?: number;
   /** Light-on-dark, for a rail sitting on call chrome. */
   dark?: boolean;
   className?: string;
@@ -93,6 +101,7 @@ export function RailSectionHeader({
   controls,
   toggleId,
   collapsedCount = 0,
+  count,
   dark = false,
   className,
   'data-testid': testId = 'rail-section-header',
@@ -159,6 +168,11 @@ export function RailSectionHeader({
         <span aria-hidden={presentational || undefined} className={labelClass}>
           {label}
         </span>
+      )}
+      {typeof count === 'number' && (
+        <Chip size="xs" tone="neutral" className="shrink-0" aria-label={`${count} items`} data-testid={`${testId}-count`}>
+          {count}
+        </Chip>
       )}
       {actions.map((action) => (
         <button

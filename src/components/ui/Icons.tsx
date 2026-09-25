@@ -614,3 +614,14 @@ export function MoreIcon({ size = 16, ...rest }: GlyphProps) {
     </svg>
   );
 }
+
+/** A triangle with an exclamation mark: "warning", "check this first". Since 2.389.0. */
+export function WarningIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M7.13 2.5a1 1 0 0 1 1.74 0l5.5 9.75a1 1 0 0 1-.87 1.5H2.5a1 1 0 0 1-.87-1.5z" />
+      <path d="M8 6.2v3.3" />
+      <path d="M8 11.4v.1" />
+    </svg>
+  );
+}

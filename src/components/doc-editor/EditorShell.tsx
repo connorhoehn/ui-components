@@ -147,6 +147,19 @@ export interface EditorShellProps {
   itemType?: string;
   /** work-item: the item's key in mono after the chip ("wi-obs-e1-s4"). Since 2.386.15. */
   itemKey?: string;
+  /**
+   * The title's size. `md` (default) is today's 20px bold document title (22px
+   * in `work-item`). `lg` is a record's headline — 26px semibold — for a page
+   * where the title IS the page heading and nothing sits above it but a crumb
+   * band. Hosts must not style the title themselves. Since 2.389.0.
+   */
+  titleSize?: 'md' | 'lg';
+  /**
+   * At the right end of the tab row, above the tabs' underline — "Sources 4",
+   * "Open in Library ↗". Hangs from the same baseline as the tabs, so it
+   * reads as belonging to the row, not the title. Since 2.389.0.
+   */
+  tabsTrailing?: ReactNode;
   className?: string;
   'data-testid'?: string;
 }
@@ -192,6 +205,8 @@ export function EditorShell({
   variant = 'document',
   itemType,
   itemKey,
+  titleSize = 'md',
+  tabsTrailing,
   className,
   'data-testid': testId = 'editor-shell',
 }: EditorShellProps) {
@@ -204,11 +219,37 @@ export function EditorShell({
   ) : null;
   const trailing = itemTag || crumbsTrailing != null ? <>{itemTag}{crumbsTrailing}</> : null;
   const crumbsRow = workItem && ((breadcrumbs && breadcrumbs.length > 0) || trailing != null);
-  const titleClass = workItem ? 'text-[22px] font-bold leading-7' : 'text-xl font-bold leading-6';
+  const titleClass = titleSize === 'lg'
+    ? 'text-[26px] font-semibold leading-8'
+    : workItem ? 'text-[22px] font-bold leading-7' : 'text-xl font-bold leading-6';
   const idPrefix = `${testId}-${useId().replace(/:/g, '')}`;
   const hasTabs = !!tabs && tabs.length > 0;
   const currentTab = hasTabs ? (tabs!.some((t) => t.id === activeTab) ? activeTab! : tabs![0]!.id) : undefined;
   const hasByline = (participants && participants.length > 0) || meta != null || !!saveState;
+
+  const renderTabs = (tabsClassName: string) => (
+    <Tabs
+      items={tabs!.map((t) => ({
+        id: t.id,
+        label: t.label,
+        ...(t.disabled ? { disabled: true } : {}),
+        // work-item: a plain count beside the label ("Discussion 3"), as the Work mockup draws it.
+        ...(t.count ? { badge: workItem
+          ? <span aria-label={`${t.count} in ${t.label}`}>{t.count}</span>
+          : <Badge variant="count" value={t.count} color="muted" aria-label={`${t.count} in ${t.label}`} /> } : {}),
+        testId: `${testId}-tab-${t.id}`,
+      }))}
+      value={currentTab!}
+      onValueChange={(id) => onTabChange?.(id)}
+      variant="underline"
+      {...(workItem ? { badgeStyle: 'plain' as const } : {})}
+      size="md"
+      itemClassName="px-3.5 pb-1.5 pt-1 text-[15px] leading-5"
+      aria-label={`${title} sections`}
+      idPrefix={idPrefix}
+      className={tabsClassName}
+    />
+  );
 
   const pane = (
     <section aria-label={label} data-testid={testId} data-surface={surface} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-surface">
@@ -333,28 +374,13 @@ export function EditorShell({
         {metaBar != null && (
           <div className={cn('flex min-w-0 items-center', workItem ? 'pb-2 pt-3' : 'py-2')} data-testid={`${testId}-meta-bar`}>{metaBar}</div>
         )}
-        {hasTabs ? (
-          <Tabs
-            items={tabs!.map((t) => ({
-              id: t.id,
-              label: t.label,
-              ...(t.disabled ? { disabled: true } : {}),
-              // work-item: a plain count beside the label ("Discussion 3"), as the Work mockup draws it.
-              ...(t.count ? { badge: workItem
-                ? <span aria-label={`${t.count} in ${t.label}`}>{t.count}</span>
-                : <Badge variant="count" value={t.count} color="muted" aria-label={`${t.count} in ${t.label}`} /> } : {}),
-              testId: `${testId}-tab-${t.id}`,
-            }))}
-            value={currentTab!}
-            onValueChange={(id) => onTabChange?.(id)}
-            variant="underline"
-            {...(workItem ? { badgeStyle: 'plain' as const } : {})}
-            size="md"
-            itemClassName="px-3.5 pb-1.5 pt-1 text-[15px] leading-5"
-            aria-label={`${title} sections`}
-            idPrefix={idPrefix}
-            className="-mb-px -ml-3 mt-1 border-b-0"
-          />
+        {tabsTrailing != null ? (
+          <div className="-mb-px mt-1 flex min-w-0 items-end gap-3" data-testid={`${testId}-tabs-row`}>
+            {hasTabs ? renderTabs('-ml-3 min-w-0 flex-1 border-b-0') : <span className="flex-1" aria-hidden="true" />}
+            <div className="flex shrink-0 items-center gap-2 pb-1.5" data-testid={`${testId}-tabs-trailing`}>{tabsTrailing}</div>
+          </div>
+        ) : hasTabs ? (
+          renderTabs('-mb-px -ml-3 mt-1 border-b-0')
         ) : (
           <span className="h-2" aria-hidden="true" />
         )}

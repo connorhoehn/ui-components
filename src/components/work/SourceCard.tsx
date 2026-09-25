@@ -12,6 +12,7 @@
 import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { FileKindMark, type FileKind } from '../shared/FileKindMark';
+import { ChevronIcon } from '../ui/Icons';
 import { formatCompactAge } from './compactAge';
 
 export interface SourceCardProps {
@@ -27,6 +28,19 @@ export interface SourceCardProps {
   href?: string;
   /** This is the source being viewed. */
   current?: boolean;
+  /**
+   * A quiet line under the title that REPLACES the age — "Source pattern ·
+   * auth-service". Since 2.389.0.
+   */
+  meta?: string;
+  /**
+   * `card` (default): the mark, a title that is the control, the age, the
+   * excerpt. `row` (since 2.389.0): a "based on" row — the WHOLE row is one
+   * control (a button with `onOpen`, a link with `href`), the mark in a 32px
+   * bordered tile, a 13px medium title, a 12px tertiary meta line, and a
+   * trailing chevron. No excerpt. The accessible name is the title.
+   */
+  layout?: 'card' | 'row';
   /** Clock for the age (tests, server-rendered snapshots). Default `Date.now()`. */
   now?: number;
   className?: string;
@@ -72,11 +86,43 @@ export function SourceCard({
   onOpen,
   href,
   current = false,
+  meta,
+  layout = 'card',
   now,
   className,
   'data-testid': testId = `source-card-${id}`,
 }: SourceCardProps) {
   const age = formatSourceAge(timestamp, now);
+  const quiet = meta ?? age;
+  const quietId = meta != null ? `${testId}-meta` : `${testId}-age`;
+
+  if (layout === 'row') {
+    const inner = (
+      <>
+        <FileKindMark kind={kind} size="xl" variant="outline" className="rounded-md border border-border" />
+        <span className="flex min-w-0 flex-1 flex-col">
+          <span className="truncate text-[13px] font-medium leading-5 text-text-primary" data-testid={`${testId}-title`}>{title}</span>
+          {quiet && <span className="truncate text-[12px] leading-4 text-text-tertiary" data-testid={quietId}>{quiet}</span>}
+        </span>
+        {(onOpen || href) && <ChevronIcon dir="right" size={16} aria-hidden="true" className="shrink-0 text-text-secondary" data-testid={`${testId}-chevron`} />}
+      </>
+    );
+    const rowCls = cn(
+      'flex w-full min-w-0 items-center gap-3 px-0 py-2 text-left',
+      current && 'bg-surface-hover',
+      className,
+    );
+    const interactive = 'cursor-pointer border-none bg-transparent no-underline hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
+    const common = { 'data-testid': testId, 'data-layout': 'row', 'aria-label': title, ...(current ? { 'aria-current': 'true' as const } : {}) };
+    if (onOpen) {
+      return <button type="button" onClick={() => onOpen(id)} className={cn(rowCls, interactive)} {...common}>{inner}</button>;
+    }
+    if (href) {
+      return <a href={href} className={cn(rowCls, interactive)} {...common}>{inner}</a>;
+    }
+    return <div className={rowCls} data-testid={testId} data-layout="row" {...(current ? { 'aria-current': 'true' as const } : {})}>{inner}</div>;
+  }
+
   return (
     <div
       className={cn(
@@ -90,7 +136,7 @@ export function SourceCard({
       <FileKindMark kind={kind} size="md" variant="plain" className="mt-px" />
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <SourceTitle id={id} title={title} onOpen={onOpen} href={href} />
-        {age && <span className="text-[12px] text-text-tertiary" data-testid={`${testId}-age`}>{age}</span>}
+        {quiet && <span className="text-[12px] text-text-tertiary" data-testid={quietId}>{quiet}</span>}
         {excerpt != null && excerpt !== '' && (
           <p className="m-0 mt-0.5 line-clamp-2 text-[12px] leading-relaxed text-text-secondary">{excerpt}</p>
         )}
@@ -99,7 +145,7 @@ export function SourceCard({
   );
 }
 
-export type SourceListItem = Omit<SourceCardProps, 'now' | 'className' | 'data-testid'>;
+export type SourceListItem = Omit<SourceCardProps, 'now' | 'className' | 'data-testid' | 'layout'>;
 
 export interface SourceListProps {
   items: SourceListItem[];
@@ -108,6 +154,8 @@ export interface SourceListProps {
   /** Applied to every card that has no handler of its own. */
   onOpen?: (id: string) => void;
   now?: number;
+  /** Forwarded to every card — `row` for a "Based on" list. Since 2.389.0. */
+  layout?: 'card' | 'row';
   className?: string;
   'aria-label'?: string;
   'data-testid'?: string;
@@ -118,6 +166,7 @@ export function SourceList({
   emptyLabel = 'No sources recorded',
   onOpen,
   now,
+  layout = 'card',
   className,
   'aria-label': ariaLabel = 'Sources',
   'data-testid': testId = 'source-list',
@@ -126,10 +175,10 @@ export function SourceList({
     return <p className={cn('m-0 py-3 text-[13px] text-text-tertiary', className)} data-testid={`${testId}-empty`}>{emptyLabel}</p>;
   }
   return (
-    <ul className={cn('m-0 flex list-none flex-col divide-y divide-border p-0', className)} aria-label={ariaLabel} data-testid={testId}>
+    <ul className={cn('m-0 flex list-none flex-col divide-y divide-border p-0', layout === 'row' && 'border-y border-border', className)} aria-label={ariaLabel} data-testid={testId} data-layout={layout}>
       {items.map((item) => (
         <li key={item.id} className="min-w-0">
-          <SourceCard {...item} onOpen={item.onOpen ?? (item.href ? undefined : onOpen)} now={now} />
+          <SourceCard {...item} onOpen={item.onOpen ?? (item.href ? undefined : onOpen)} now={now} layout={layout} />
         </li>
       ))}
     </ul>

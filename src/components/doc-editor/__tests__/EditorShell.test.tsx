@@ -288,4 +288,43 @@ describe('EditorShell participants', () => {
     expect(screen.queryByTestId('editor-shell-kind')).toBeNull();
     expect(screen.getByTestId('editor-shell-title').className).toContain('text-[22px]');
   });
+
+  describe('titleSize + tabsTrailing (2.389.0)', () => {
+    it('default title stays 20px bold; titleSize="lg" draws 26px semibold on the h1', () => {
+      const { unmount } = render(<EditorShell title="Record"><p>x</p></EditorShell>);
+      expect(screen.getByTestId('editor-shell-title').className).toContain('text-xl');
+      unmount();
+      render(<EditorShell title="Record" titleSize="lg"><p>x</p></EditorShell>);
+      const h1 = screen.getByRole('heading', { level: 1, name: 'Record' });
+      expect(h1.className).toContain('text-[26px]');
+      expect(h1.className).toContain('font-semibold');
+      expect(h1.className).not.toContain('font-bold');
+    });
+
+    it('tabsTrailing renders inside the header, after the tablist', () => {
+      render(
+        <EditorShell
+          title="Record"
+          tabs={[{ id: 'content', label: 'Content' }, { id: 'runs', label: 'Runs', count: 2 }]}
+          activeTab="content"
+          tabsTrailing={<button type="button">Sources 4</button>}
+        >
+          <p>x</p>
+        </EditorShell>,
+      );
+      const header = screen.getByTestId('editor-shell-header');
+      const trailing = screen.getByTestId('editor-shell-tabs-trailing');
+      expect(header).toContainElement(trailing);
+      const tablist = screen.getByRole('tablist');
+      expect(tablist.compareDocumentPosition(trailing) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+      expect(tablist.parentElement).toBe(trailing.parentElement);
+      expect(within(trailing).getByRole('button', { name: 'Sources 4' })).toBeInTheDocument();
+    });
+
+    it('no tabsTrailing → no tabs row wrapper (default unchanged)', () => {
+      render(<EditorShell title="Record" tabs={DEFAULT_EDITOR_SHELL_TABS} activeTab="editor"><p>x</p></EditorShell>);
+      expect(screen.queryByTestId('editor-shell-tabs-row')).toBeNull();
+      expect(screen.getByRole('tablist')).toBeInTheDocument();
+    });
+  });
 });

@@ -136,3 +136,35 @@ describe('formatCompactAge', () => {
     expect(screen.queryByTestId('scope-header-controls')).toBeNull();
   });
 });
+
+describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
+  it('draws crumbs and the right-hand group, no h1, title optional', () => {
+    render(
+      <ScopeHeader
+        variant="crumbs"
+        breadcrumbs={[{ label: 'Build', href: '#' }, { label: 'Distillation', href: '#' }, { label: 'Knowledge' }]}
+        controls={<select aria-label="Repository"><option>All repositories</option></select>}
+        link={{ label: 'Open Library', href: '#library' }}
+        stats={['should not draw']}
+        tabs={[{ id: 'a', label: 'Tab A' }]}
+      />,
+    );
+    expect(screen.getByTestId('scope-header')).toHaveAttribute('data-variant', 'crumbs');
+    expect(screen.queryByRole('heading', { level: 1 })).toBeNull();
+    expect(screen.getByTestId('scope-header-crumbs')).toHaveTextContent('Knowledge');
+    expect(screen.getByRole('combobox', { name: 'Repository' })).toBeInTheDocument();
+    expect(screen.getByTestId('scope-header-link')).toHaveAttribute('href', '#library');
+    expect(screen.queryByText('should not draw')).toBeNull();
+    expect(screen.queryByRole('tablist')).toBeNull();
+    // crumbs first, right group after
+    const crumbs = screen.getByTestId('scope-header-crumbs');
+    const right = screen.getByTestId('scope-header-right');
+    expect(crumbs.compareDocumentPosition(right) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('default variant still draws the h1', () => {
+    render(<ScopeHeader title="Distillation" />);
+    expect(screen.getByRole('heading', { level: 1, name: 'Distillation' })).toBeInTheDocument();
+    expect(screen.getByTestId('scope-header')).not.toHaveAttribute('data-variant');
+  });
+});

@@ -51,6 +51,15 @@ export interface ExplorerLayoutProps {
    * Since 2.385.0.
    */
   header?: ReactNode;
+  /**
+   * A band to the RIGHT of the rail, above the pane and the aside — a crumb
+   * trail with the scope's controls ("Build › Distillation › Knowledge" · All
+   * repositories · Open Library). Unlike `header` it does not span the rail,
+   * so the rail's own title keeps the top-left corner. It does not scroll; the
+   * pane below it does. No border of its own: it reads as the top of the pane.
+   * Since 2.389.0.
+   */
+  paneHeader?: ReactNode;
   /** A count beside `railTitle` ("Work 11"). Since 2.385.0. */
   railCount?: number;
   /** The rail's heading style — see `WorkspaceRail.heading`. Default `compact`. Since 2.385.0. */
@@ -102,6 +111,7 @@ export function ExplorerLayout({
   aside,
   railWidth = 'md',
   header,
+  paneHeader,
   railCount,
   railHeading = 'compact',
   railCollapsed = false,
@@ -116,13 +126,7 @@ export function ExplorerLayout({
   className,
   'data-testid': testId = 'explorer-layout',
 }: ExplorerLayoutProps) {
-  const frame = (
-    <div data-testid={testId} className={cn('flex h-full min-h-0', header ? 'min-w-0 flex-1' : className)}>
-      <WorkspaceRail title={railTitle} label="Explorer" actions={railActions} header={railHeader} footer={railFooter}
-        width={railWidth} {...(typeof railCount === 'number' ? { count: railCount } : {})} heading={railHeading} collapsed={railCollapsed} onToggle={onToggleRail}
-        toggleLabel={`${railCollapsed ? 'Show' : 'Hide'} ${railLabel}`} data-testid={`${testId}-rail`}>
-        {rail}
-      </WorkspaceRail>
+  const columns = (
       <div className={cn('flex min-h-0 min-w-0 flex-1', asidePlacement === 'beside' ? 'flex-row' : 'flex-col 2xl:flex-row')}>
         <div
           data-testid={`${testId}-pane`}
@@ -148,6 +152,21 @@ export function ExplorerLayout({
           </aside>
         ) : null}
       </div>
+  );
+
+  const frame = (
+    <div data-testid={testId} className={cn('flex h-full min-h-0', header ? 'min-w-0 flex-1' : className)}>
+      <WorkspaceRail title={railTitle} label="Explorer" actions={railActions} header={railHeader} footer={railFooter}
+        width={railWidth} {...(typeof railCount === 'number' ? { count: railCount } : {})} heading={railHeading} collapsed={railCollapsed} onToggle={onToggleRail}
+        toggleLabel={`${railCollapsed ? 'Show' : 'Hide'} ${railLabel}`} data-testid={`${testId}-rail`}>
+        {rail}
+      </WorkspaceRail>
+      {paneHeader != null ? (
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col" data-testid={`${testId}-pane-column`}>
+          <div data-testid={`${testId}-pane-header`} className="shrink-0 bg-surface">{paneHeader}</div>
+          {columns}
+        </div>
+      ) : columns}
     </div>
   );
 

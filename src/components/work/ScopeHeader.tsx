@@ -72,7 +72,23 @@ export interface ScopeHeaderProgress {
 
 export interface ScopeHeaderProps {
   breadcrumbs?: BreadcrumbItem[];
-  title: string;
+  /**
+   * The scope's name, drawn as the h1. Required in practice for the default
+   * variant; optional (and not drawn) for `variant="crumbs"` since 2.389.0.
+   */
+  title?: string;
+  /**
+   * `default`: the full band — crumbs, an h1 title with status and stats, the
+   * right-hand group, tabs.
+   *
+   * `crumbs` (since 2.389.0): a crumb line ONLY, for the top of a pane whose
+   * record draws its own headline (an `EditorShell titleSize="lg"` below it,
+   * in `ExplorerLayout.paneHeader`). Crumbs on the left; `controls`, `link`
+   * and `menu` on the right, hung a little below the crumb line so they sit
+   * between the crumb and the headline that follows. No h1 — title, status,
+   * stats, people and tabs are not drawn.
+   */
+  variant?: 'default' | 'crumbs';
   /** The scope's own status — "In progress". */
   status?: { label: string; tone?: StatusPillTone } | null;
   /** "18 / 52 points delivered". Not drawn when `total` is not above zero. */
@@ -100,6 +116,7 @@ export interface ScopeHeaderProps {
   'data-testid'?: string;
 }
 
+
 /** "$1.46", "<$0.01", "$1,204". Exported for tests and hosts that echo it. */
 export function formatSpend(usd: number): string {
   if (usd > 0 && usd < 0.01) return '<$0.01';
@@ -107,9 +124,78 @@ export function formatSpend(usd: number): string {
   return `$${usd.toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits })}`;
 }
 
-export function ScopeHeader({
+export function ScopeHeader(props: ScopeHeaderProps) {
+  if (props.variant === 'crumbs') return <ScopeCrumbs {...props} />;
+  return <ScopeHeaderFull {...props} />;
+}
+
+/** The right-hand group both variants share: controls · link · ⋯. */
+function RightGroup({
+  controls, link, menu, menuLabel, title, testId,
+}: Pick<ScopeHeaderProps, 'controls' | 'link' | 'menu' | 'menuLabel'> & { title: string; testId: string }) {
+  const hasMenu = !!menu && menu.some((s) => s.items.length > 0);
+  return (
+    <>
+      {controls != null && controls !== false && (
+        <div className="flex shrink-0 items-center gap-2" data-testid={`${testId}-controls`}>
+          {controls}
+        </div>
+      )}
+      {link && (
+        <a
+          href={link.href}
+          target="_blank"
+          rel="noreferrer"
+          data-testid={`${testId}-link`}
+          className="flex min-w-0 items-center gap-1.5 border-l border-border pl-4 text-[13px] font-medium text-primary no-underline hover:underline"
+        >
+          {link.icon ?? <LinkIcon size={14} />}
+          <span className="max-w-[16rem] truncate">{link.label}</span>
+        </a>
+      )}
+      {hasMenu && (
+        <DropdownMenu
+          trigger={<span aria-hidden="true" className="text-base leading-none">⋯</span>}
+          triggerLabel={menuLabel ?? `Actions for ${title}`}
+          triggerTestId={`${testId}-menu`}
+          align="end"
+          sections={menu!}
+          triggerClassName="h-8 w-8 border-transparent px-0 py-0 text-text-secondary hover:border-border"
+        />
+      )}
+    </>
+  );
+}
+
+function ScopeCrumbs({
+  breadcrumbs, title, controls, link, menu, menuLabel, className, 'data-testid': testId = 'scope-header',
+}: ScopeHeaderProps) {
+  const last = breadcrumbs && breadcrumbs.length > 0 ? breadcrumbs[breadcrumbs.length - 1]!.label : undefined;
+  const name = title ?? (typeof last === 'string' ? last : 'this scope');
+  const hasRight = (controls != null && controls !== false) || !!link || (!!menu && menu.some((s) => s.items.length > 0));
+  return (
+    <div data-testid={testId} data-variant="crumbs" className={cn('flex min-w-0 items-start gap-4 px-6 pb-1 pt-2', className)}>
+      <div className="flex h-5 min-w-0 flex-1 items-center">
+        {breadcrumbs && breadcrumbs.length > 0 && (
+          <Breadcrumbs items={breadcrumbs} separator="›" maxItems={5} className="min-w-0" data-testid={`${testId}-crumbs`} />
+        )}
+      </div>
+      {hasRight && (
+        // Hung below the crumb line (mt-3) with a matching negative bottom
+        // margin, so it sits between the crumb and the headline that follows
+        // without making the band taller than the crumb line. `relative z-10`
+        // keeps it above the next row's background where it overhangs.
+        <div className="relative z-10 -mb-[18px] ml-auto mt-3 flex shrink-0 items-center gap-4" data-testid={`${testId}-right`}>
+          <RightGroup controls={controls} link={link} menu={menu} menuLabel={menuLabel} title={name} testId={testId} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ScopeHeaderFull({
   breadcrumbs,
-  title,
+  title = '',
   status,
   progress,
   spentUsd,
@@ -145,7 +231,6 @@ export function ScopeHeader({
   });
 
   const groups = (people ?? []).filter((g) => g.people.length > 0);
-  const hasMenu = !!menu && menu.some((s) => s.items.length > 0);
   const hasTabs = !!tabs && tabs.length > 0;
   const currentTab = hasTabs ? (tabs!.some((t) => t.id === activeTab) ? activeTab! : tabs![0]!.id) : undefined;
 
@@ -173,33 +258,7 @@ export function ScopeHeader({
               <PresenceAvatars users={g.people} size={26} maxVisible={4} />
             </div>
           ))}
-          {controls != null && controls !== false && (
-            <div className="flex shrink-0 items-center gap-2" data-testid={`${testId}-controls`}>
-              {controls}
-            </div>
-          )}
-          {link && (
-            <a
-              href={link.href}
-              target="_blank"
-              rel="noreferrer"
-              data-testid={`${testId}-link`}
-              className="flex min-w-0 items-center gap-1.5 border-l border-border pl-4 text-[13px] font-medium text-primary no-underline hover:underline"
-            >
-              {link.icon ?? <LinkIcon size={14} />}
-              <span className="max-w-[16rem] truncate">{link.label}</span>
-            </a>
-          )}
-          {hasMenu && (
-            <DropdownMenu
-              trigger={<span aria-hidden="true" className="text-base leading-none">⋯</span>}
-              triggerLabel={menuLabel ?? `Actions for ${title}`}
-              triggerTestId={`${testId}-menu`}
-              align="end"
-              sections={menu!}
-              triggerClassName="h-8 w-8 border-transparent px-0 py-0 text-text-secondary hover:border-border"
-            />
-          )}
+          <RightGroup controls={controls} link={link} menu={menu} menuLabel={menuLabel} title={title} testId={testId} />
         </div>
       </div>
       {hasTabs && (

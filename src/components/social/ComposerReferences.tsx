@@ -22,7 +22,8 @@
 // carried its title onto the wire would leak whatever the sender could read.
 
 import { cn } from '../../lib/cn';
-import { DocumentIcon, CloseIcon } from '../ui/Icons';
+import { DocumentIcon, CloseIcon, ChevronIcon } from '../ui/Icons';
+import { DropdownMenu, type DropdownMenuSection } from '../shared/DropdownMenu';
 
 export interface ComposerReference {
   /** Stable across re-renders; what `onRemove` is called with. */
@@ -33,6 +34,15 @@ export interface ComposerReference {
   icon?: string;
   /** Hover text; the label itself when absent. */
   title?: string;
+  /**
+   * Makes the chip a menu trigger — label + chevron — that opens these
+   * choices ("This guide", "This guide + sources", "No context"). A chip with
+   * a menu draws NO remove button even when `onRemove` is passed: choosing
+   * "none" is one of the menu's items, not an ×. Since 2.389.0.
+   */
+  menu?: readonly DropdownMenuSection[];
+  /** Accessible name of the menu trigger. Default: the label. Since 2.389.0. */
+  menuLabel?: string;
 }
 
 export interface ComposerReferencesProps {
@@ -65,33 +75,75 @@ export function ComposerReferences({
       data-testid={testId}
       className={cn('flex flex-wrap items-center gap-1 px-2 py-1.5', className)}
     >
-      {references.map((reference) => (
-        <li
-          key={reference.id}
-          data-testid={`${testId}-item`}
-          data-reference-id={reference.id}
-          title={reference.title ?? reference.label}
-          className={cn('inline-flex min-w-0 max-w-full items-center gap-1 rounded-full border border-border bg-surface pl-2 pr-1 text-text-primary', size === 'md' ? 'gap-1.5 rounded-md bg-surface-inset py-1 pl-2.5 pr-1.5 text-[13px]' : size === 'sm' ? 'py-1 text-xs' : 'py-0.5 text-[11px]')}
-        >
-          {/* A thing's own icon is data and is rendered as given; the fallback
-              glyph means "none chosen" and takes the colour of the text. */}
-          {reference.icon
-            ? <span aria-hidden="true" className="shrink-0">{reference.icon}</span>
-            : <DocumentIcon size={size === 'md' ? 14 : 12} className={cn('shrink-0', size === 'md' ? 'text-text-secondary' : 'text-text-tertiary')} aria-hidden="true" />}
-          <span className="min-w-0 truncate">{reference.label}</span>
-          {onRemove && (
-            <button
-              type="button"
-              aria-label={removeLabel(reference)}
-              onClick={() => onRemove(reference.id)}
-              data-testid={`${testId}-remove`}
-              className="shrink-0 rounded-full p-0.5 text-text-tertiary hover:bg-surface-hover hover:text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      {references.map((reference) => {
+        const chipSize = size === 'md'
+          ? 'gap-1.5 rounded-md bg-surface-inset py-1 pl-2.5 pr-1.5 text-[13px]'
+          : size === 'sm' ? 'py-1 text-xs' : 'py-0.5 text-[11px]';
+        // A thing's own icon is data and is rendered as given; the fallback
+        // glyph means "none chosen" and takes the colour of the text.
+        const glyph = reference.icon
+          ? <span aria-hidden="true" className="shrink-0">{reference.icon}</span>
+          : <DocumentIcon size={size === 'md' ? 14 : 12} className={cn('shrink-0', size === 'md' ? 'text-text-secondary' : 'text-text-tertiary')} aria-hidden="true" />;
+        const hasMenu = !!reference.menu && reference.menu.some((s) => s.items.length > 0);
+        if (hasMenu) {
+          return (
+            <li
+              key={reference.id}
+              data-testid={`${testId}-item`}
+              data-reference-id={reference.id}
+              data-menu="true"
+              title={reference.title ?? reference.label}
+              className="inline-flex min-w-0 max-w-full items-center"
             >
-              <CloseIcon size={10} />
-            </button>
-          )}
-        </li>
-      ))}
+              <DropdownMenu
+                trigger={
+                  <>
+                    {glyph}
+                    <span className="min-w-0 truncate">{reference.label}</span>
+                    <ChevronIcon dir="down" size={size === 'md' ? 12 : 10} aria-hidden="true" className="shrink-0 text-text-tertiary" />
+                  </>
+                }
+                triggerLabel={reference.menuLabel ?? reference.label}
+                triggerTestId={`${testId}-menu-trigger`}
+                align="end"
+                sections={[...reference.menu!]}
+                // A menu reads as a picker, so it keeps square-ish corners at
+                // every size (the mockup's "This guide ▾"), not the pill of a
+                // removable chip.
+                triggerClassName={cn(
+                  'min-w-0 max-w-full gap-1 border-border bg-surface pl-2 pr-1.5 font-normal text-text-primary hover:bg-surface-hover',
+                  chipSize,
+                  'rounded-md',
+                )}
+                data-testid={`${testId}-menu`}
+              />
+            </li>
+          );
+        }
+        return (
+          <li
+            key={reference.id}
+            data-testid={`${testId}-item`}
+            data-reference-id={reference.id}
+            title={reference.title ?? reference.label}
+            className={cn('inline-flex min-w-0 max-w-full items-center gap-1 rounded-full border border-border bg-surface pl-2 pr-1 text-text-primary', chipSize)}
+          >
+            {glyph}
+            <span className="min-w-0 truncate">{reference.label}</span>
+            {onRemove && (
+              <button
+                type="button"
+                aria-label={removeLabel(reference)}
+                onClick={() => onRemove(reference.id)}
+                data-testid={`${testId}-remove`}
+                className="shrink-0 rounded-full p-0.5 text-text-tertiary hover:bg-surface-hover hover:text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                <CloseIcon size={10} />
+              </button>
+            )}
+          </li>
+        );
+      })}
     </ul>
   );
 }

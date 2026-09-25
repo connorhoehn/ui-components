@@ -85,3 +85,28 @@ export const DotsAndControls: Story = {
     </div>
   ),
 };
+
+/**
+ * 2.389.0 — `variant="crumbs"`: just the crumb line, with the repository
+ * select and the Library link hung between it and the record headline below.
+ */
+export const CrumbsOnly: Story = {
+  render: () => (
+    <div className="w-[960px] bg-surface">
+      <ScopeHeader
+        variant="crumbs"
+        breadcrumbs={[{ label: 'Build', href: '#' }, { label: 'Distillation', href: '#' }, { label: 'Knowledge' }]}
+        controls={
+          <Select
+            size="md"
+            aria-label="Repository"
+            defaultValue="all"
+            options={[{ value: 'all', label: 'All repositories' }]}
+          />
+        }
+        link={{ label: 'Open Library ↗', href: '#library' }}
+      />
+      <h1 className="m-0 px-6 pt-3 text-[26px] font-semibold leading-8 text-text-primary">Cut one tenant over from SAML to Cognito</h1>
+    </div>
+  ),
+};

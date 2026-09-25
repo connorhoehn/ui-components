@@ -291,3 +291,22 @@ describe('ConversationList collapsible sections', () => {
     expect(rowChannels()).toEqual(['general', 'chat:dm:a:b']);
   });
 });
+
+describe('RailSectionHeader count (2.389.0)', () => {
+  it('renders the count as a neutral chip at the right of the label', () => {
+    render(<RailSectionHeader label="Guides & findings" count={11} />);
+    const chip = screen.getByTestId('rail-section-header-count');
+    expect(chip).toHaveTextContent('11');
+    expect(chip).toHaveAttribute('aria-label', '11 items');
+    const label = screen.getByText('Guides & findings');
+    expect(label.compareDocumentPosition(chip) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('shows 0, shows while collapsed, and draws nothing when omitted', () => {
+    const { unmount } = render(<RailSectionHeader label="Empty" count={0} collapsed onToggleCollapse={() => {}} />);
+    expect(screen.getByTestId('rail-section-header-count')).toHaveTextContent('0');
+    unmount();
+    render(<RailSectionHeader label="None" />);
+    expect(screen.queryByTestId('rail-section-header-count')).toBeNull();
+  });
+});

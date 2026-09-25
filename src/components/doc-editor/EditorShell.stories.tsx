@@ -167,3 +167,28 @@ export const PresentationVariantFramed: Story = {
     );
   },
 };
+
+/** 2.389.0 — a record whose title IS the page heading: `titleSize="lg"` and "Sources 4" on the tab row. */
+export const RecordHeadline: Story = {
+  args: { title: 'Cut one tenant over from SAML to Cognito', children: null },
+  render: () => {
+    const [tab, setTab] = useState('content');
+    return (
+      <div className="h-[520px]">
+        <EditorShell
+          title="Cut one tenant over from SAML to Cognito"
+          titleSize="lg"
+          statusPill={<StatusPill state="neutral" label="Draft" size="sm" />}
+          subtitle="Updated 20h ago"
+          tabs={[{ id: 'content', label: 'Content' }, { id: 'history', label: 'History' }, { id: 'runs', label: 'Runs', count: 2 }]}
+          activeTab={tab}
+          onTabChange={setTab}
+          tabsTrailing={<Button size="sm" variant="secondary">Sources 4</Button>}
+          surface="plain"
+        >
+          <EmptyState title={`${tab} tab`} body="The host renders this tab's content." />
+        </EditorShell>
+      </div>
+    );
+  },
+};

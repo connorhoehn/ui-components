@@ -385,3 +385,36 @@ describe('GroupedList — reorder', () => {
     expect(src).toMatch(/import\('\.\/GroupedListSortable'\)/);
   });
 });
+
+describe('GroupedList groupHeading + currentStyle (2.389.0)', () => {
+  it('groupHeading="label" renders an uppercase label with a plain count, no chip', () => {
+    render(<GroupedList groups={GROUPS} rows={ROWS} groupHeading="label" />);
+    const toggle = screen.getByTestId('grouped-list-group-toggle-docs');
+    expect(toggle).toHaveAttribute('data-heading', 'label');
+    expect(toggle.className).toContain('uppercase');
+    expect(toggle.className).toContain('text-[11px]');
+    const count = screen.getByTestId('grouped-list-group-count-docs');
+    expect(count.tagName).toBe('SPAN');
+    expect(count).toHaveTextContent('2');
+    expect(count.className).toContain('text-text-tertiary');
+    expect(count.className).not.toContain('rounded');
+  });
+
+  it('default heading stays sentence case with a chip', () => {
+    render(<GroupedList groups={GROUPS} rows={ROWS} />);
+    const toggle = screen.getByTestId('grouped-list-group-toggle-docs');
+    expect(toggle).not.toHaveAttribute('data-heading');
+    expect(toggle.className).not.toContain('uppercase');
+  });
+
+  it('currentStyle="bar" adds the inset primary bar at sm; tint does not', () => {
+    const { unmount } = render(<GroupedList groups={GROUPS} rows={ROWS} currentId="a" />);
+    expect(screen.getByTestId('grouped-list-row-a').className).not.toContain('inset_2px');
+    unmount();
+    render(<GroupedList groups={GROUPS} rows={ROWS} currentId="a" currentStyle="bar" />);
+    const row = screen.getByTestId('grouped-list-row-a');
+    expect(row.className).toContain('shadow-[inset_2px_0_0_0_var(--color-primary)]');
+    expect(row.className).toContain('bg-primary/8');
+    expect(screen.getByTestId('grouped-list-row-b').className).not.toContain('inset_2px');
+  });
+});

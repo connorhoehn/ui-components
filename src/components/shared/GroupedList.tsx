@@ -188,6 +188,20 @@ export interface GroupedListProps {
    * edge, and a larger drag handle that is always visible.
    */
   size?: 'sm' | 'md';
+  /**
+   * How a group header reads. `title` (default): a sentence-case heading
+   * (14px, 15px at `md`) with its count in a neutral chip. `label`: a section
+   * label — 11px uppercase semibold, letter-spaced, secondary ink — with the
+   * count as plain muted text after it ("RECENTLY UPDATED 4"), for a list
+   * whose groups are time bands rather than named things. Since 2.389.0.
+   */
+  groupHeading?: 'title' | 'label';
+  /**
+   * How the current row is marked. `tint` (default): a pale primary fill (at
+   * `md`, also the 3px bar). `bar`: the fill plus a 2px inset primary bar on
+   * the left edge at `sm` too. Since 2.389.0.
+   */
+  currentStyle?: 'tint' | 'bar';
   className?: string;
   'data-testid'?: string;
 }
@@ -316,10 +330,13 @@ export function GroupedList({
   canReorder,
   reorderLabel,
   size = 'sm',
+  groupHeading = 'title',
+  currentStyle = 'tint',
   className,
   'data-testid': testId = 'grouped-list',
 }: GroupedListProps) {
   const md = size === 'md';
+  const labelHeading = groupHeading === 'label';
   const isControlled = openGroups !== undefined;
 
   // Uncontrolled: the set of CLOSED groups (so a group added later defaults open).
@@ -598,9 +615,12 @@ export function GroupedList({
                 tabIndex={tabTarget === gKey ? 0 : -1}
                 onFocus={() => setFocused(gKey)}
                 onClick={() => setOpen(group.id, !open)}
+                data-heading={labelHeading ? 'label' : undefined}
                 className={cn(
                   'flex w-full items-center gap-2.5 border-0 bg-transparent px-2 py-2.5 text-left',
-                  md ? 'text-[15px] font-semibold text-text-primary' : 'text-[14px] font-semibold text-text-primary',
+                  labelHeading
+                    ? 'text-[11px] font-semibold uppercase leading-4 tracking-wide text-text-secondary'
+                    : md ? 'text-[15px] font-semibold text-text-primary' : 'text-[14px] font-semibold text-text-primary',
                   'rounded-md hover:bg-surface-hover',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
                 )}
@@ -614,7 +634,12 @@ export function GroupedList({
                   </span>
                 )}
                 <span className="truncate">{group.title}</span>
-                {typeof group.count === 'number' && (
+                {typeof group.count === 'number' && labelHeading && (
+                  <span className="shrink-0 font-medium normal-case tracking-normal text-text-tertiary" aria-label={`${group.count} items`} data-testid={`${testId}-group-count-${group.id}`}>
+                    {group.count}
+                  </span>
+                )}
+                {typeof group.count === 'number' && !labelHeading && (
                   <Chip size="xs" tone="neutral" className="shrink-0" aria-label={`${group.count} items`} data-testid={`${testId}-group-count-${group.id}`}>
                     {group.count}
                   </Chip>
@@ -638,6 +663,7 @@ export function GroupedList({
                     key={row.id}
                     row={row}
                     current={row.current || row.id === currentId}
+                    currentStyle={currentStyle}
                     testId={testId}
                     size={size}
                     tabbable={tabTarget === `r:${row.id}`}
@@ -684,6 +710,7 @@ export function GroupedList({
 interface RowProps {
   row: GroupedListRow;
   current: boolean;
+  currentStyle: 'tint' | 'bar';
   testId: string;
   size: 'sm' | 'md';
   tabbable: boolean;
@@ -695,7 +722,7 @@ interface RowProps {
   reorder?: { label: string; sortable: SortableModule | null };
 }
 
-function Row({ row, current, testId, size, tabbable, onFocusRow, onOpenRow, menuSections, menuLabel, reorder }: RowProps) {
+function Row({ row, current, currentStyle, testId, size, tabbable, onFocusRow, onOpenRow, menuSections, menuLabel, reorder }: RowProps) {
   const hasMenu = !!menuSections && menuSections.some((s) => s.items.length > 0);
   const hasHoverLine = row.hoverSubline !== undefined && row.hoverSubline !== null;
   const hasMeta = row.meta !== undefined && row.meta !== null;
@@ -742,6 +769,8 @@ function Row({ row, current, testId, size, tabbable, onFocusRow, onOpenRow, menu
         // md: the current row is a rounded tint with a bar on its left edge;
         // the rows either side keep their rules, this one drops its own.
         md && current && 'rounded-r-md border-transparent shadow-[inset_3px_0_0_0_var(--color-primary)]',
+        // bar (2.389.0): the same edge bar at sm, 2px.
+        !md && current && currentStyle === 'bar' && 'shadow-[inset_2px_0_0_0_var(--color-primary)]',
         row.disabled && 'opacity-60',
         drag.dragging && 'opacity-50',
         drag.over && !drag.dragging && 'shadow-[inset_0_2px_0_0_var(--color-primary)]',

@@ -191,3 +191,29 @@ export const LeadingMetaReorder: Story = {
     );
   },
 };
+
+/** 2.389.0 — time-band groups as section labels, flat rows with no icon, and the current row barred. */
+export const LabelHeadingsBarCurrent: Story = {
+  args: { groups: [], rows: [] },
+  render: () => (
+    <div className="w-[320px] bg-surface">
+      <GroupedList
+        groupHeading="label"
+        currentStyle="bar"
+        currentId="saml"
+        onOpenRow={() => {}}
+        groups={[
+          { id: 'recent', title: 'Recently updated', count: 3 },
+          { id: 'week', title: 'Earlier this week', count: 2 },
+        ]}
+        rows={[
+          { id: 'idle', groupId: 'recent', title: 'Propose an idle-capacity teardown', subline: 'Procedure · Published · 16h' },
+          { id: 'sso', groupId: 'recent', title: 'Bring SSO up on a new origin', subline: 'Procedure · Published · 18h' },
+          { id: 'saml', groupId: 'recent', title: 'Cut one tenant over from SAML to Cognito', subline: 'Procedure · Draft · 20h' },
+          { id: 'fargate', groupId: 'week', title: 'Collector-fleet Fargate tasks are AWS-managed', subline: 'Insight · Published · 1d' },
+          { id: 'aurora', groupId: 'week', title: 'Recover a cold Aurora Data API with retries', subline: 'Runbook · Published · 2d' },
+        ]}
+      />
+    </div>
+  ),
+};

@@ -35,3 +35,41 @@ describe('what a draft points at, above the editor', () => {
     expect(screen.getByTestId('composer-references-item').textContent).toContain('📄');
   });
 });
+
+describe('a reference with a menu (2.389.0)', () => {
+  const guide = (onSelect: () => void, onNone = () => {}) => ({
+    id: 'guide',
+    label: 'This guide',
+    menu: [{ items: [
+      { label: 'This guide', active: true, onSelect: () => {} },
+      { label: 'This guide + sources', onSelect },
+      { label: 'No context', onSelect: onNone },
+    ] }],
+  });
+
+  it('is a menu trigger (label + chevron) with no remove button, even with onRemove', async () => {
+    const onRemove = vi.fn();
+    const onSelect = vi.fn();
+    render(<ComposerReferences references={[guide(onSelect)]} onRemove={onRemove} />);
+    expect(screen.queryByTestId('composer-references-remove')).toBeNull();
+    const trigger = screen.getByRole('button', { name: 'This guide' });
+    expect(trigger).toHaveAttribute('aria-haspopup', 'menu');
+    expect(trigger).toHaveTextContent('This guide');
+    expect(trigger.querySelectorAll('svg').length).toBeGreaterThanOrEqual(2); // glyph + chevron
+    await userEvent.click(trigger);
+    await userEvent.click(screen.getByRole('menuitem', { name: 'This guide + sources' }));
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(onRemove).not.toHaveBeenCalled();
+  });
+
+  it('menuLabel names the trigger', () => {
+    render(<ComposerReferences references={[{ ...guide(() => {}), menuLabel: 'Context for this question' }]} />);
+    expect(screen.getByRole('button', { name: 'Context for this question' })).toBeInTheDocument();
+  });
+
+  it('a chip without a menu is unchanged', () => {
+    render(<ComposerReferences references={[reference]} onRemove={() => {}} />);
+    expect(screen.getByTestId('composer-references-remove')).toBeInTheDocument();
+    expect(screen.queryByTestId('composer-references-menu-trigger')).toBeNull();
+  });
+});

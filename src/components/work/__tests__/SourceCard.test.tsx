@@ -67,3 +67,41 @@ describe('SourceList', () => {
     expect(screen.getByTestId('source-list-empty').textContent).toBe('This guide has no recorded sources');
   });
 });
+
+describe('SourceCard meta + layout="row" (2.389.0)', () => {
+  it('meta replaces the age in the card layout', () => {
+    render(<SourceCard id="x" title="T" timestamp={NINE_H} now={NOW} meta="Source pattern · auth-service" />);
+    expect(screen.getByTestId('source-card-x-meta')).toHaveTextContent('Source pattern · auth-service');
+    expect(screen.queryByTestId('source-card-x-age')).toBeNull();
+  });
+
+  it('row: a click anywhere calls onOpen; name is the title; meta renders; chevron aria-hidden', () => {
+    const onOpen = vi.fn();
+    render(<SourceCard id="cl-010" title="Retire the SAML shim tenant by tenant" meta="Source pattern · auth-service" layout="row" onOpen={onOpen} />);
+    const row = screen.getByRole('button', { name: 'Retire the SAML shim tenant by tenant' });
+    expect(row).toHaveAttribute('data-layout', 'row');
+    fireEvent.click(screen.getByTestId('source-card-cl-010-meta'));
+    expect(onOpen).toHaveBeenCalledWith('cl-010');
+    expect(screen.getByTestId('source-card-cl-010-meta')).toHaveTextContent('Source pattern · auth-service');
+    const chevron = screen.getByTestId('source-card-cl-010-chevron');
+    expect(chevron).toHaveAttribute('aria-hidden', 'true');
+    expect(row).toContainElement(chevron);
+    // exactly one control in the row
+    expect(screen.getAllByRole('button')).toHaveLength(1);
+  });
+
+  it('row with href is one link', () => {
+    render(<SourceCard id="r" title="Linked" layout="row" href="/p/r" />);
+    expect(screen.getByRole('link', { name: 'Linked' })).toHaveAttribute('href', '/p/r');
+  });
+
+  it('SourceList forwards layout to every card', () => {
+    const onOpen = vi.fn();
+    render(<SourceList items={[{ id: 'a', title: 'A', meta: 'Source pattern' }, { id: 'b', title: 'B' }]} layout="row" onOpen={onOpen} />);
+    expect(screen.getByTestId('source-list')).toHaveAttribute('data-layout', 'row');
+    expect(screen.getByTestId('source-card-a')).toHaveAttribute('data-layout', 'row');
+    expect(screen.getByTestId('source-card-b')).toHaveAttribute('data-layout', 'row');
+    fireEvent.click(screen.getByRole('button', { name: 'B' }));
+    expect(onOpen).toHaveBeenCalledWith('b');
+  });
+});

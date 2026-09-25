@@ -44,3 +44,15 @@ export const Dark: Story = {
     </div>
   ),
 };
+
+/** 2.389.0 — a "Based on" row: whole-row control, tiled mark, meta line, chevron. */
+export const BasedOnRow: Story = {
+  render: () => (
+    <SourceList
+      layout="row"
+      aria-label="Based on"
+      onOpen={() => {}}
+      items={[{ id: 'cl-010', title: 'Retire the SAML shim tenant by tenant', meta: 'Source pattern · auth-service' }]}
+    />
+  ),
+};

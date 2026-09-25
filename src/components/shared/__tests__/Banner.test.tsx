@@ -96,4 +96,55 @@ describe('Banner', () => {
     render(<Banner variant="info">Plain</Banner>);
     expect(screen.getByRole('status').querySelectorAll('.shrink-0')).toHaveLength(0);
   });
+
+  describe('icon + callout layout (2.389.0)', () => {
+    it('draws no icon by default', () => {
+      render(<Banner variant="warning" data-testid="b">Plain</Banner>);
+      expect(screen.queryByTestId('b-icon')).toBeNull();
+      expect(screen.getByRole('alert').querySelector('svg')).toBeNull();
+    });
+
+    it('icon={true} draws the tone default glyph, aria-hidden', () => {
+      render(<Banner variant="warning" icon data-testid="b">Careful</Banner>);
+      const icon = screen.getByTestId('b-icon');
+      expect(icon).toHaveAttribute('aria-hidden', 'true');
+      expect(icon).toHaveClass('text-warning');
+      expect(icon.querySelector('svg')).not.toBeNull();
+    });
+
+    it('icon accepts a node', () => {
+      render(<Banner variant="info" icon={<span data-testid="custom" />}>x</Banner>);
+      expect(screen.getByTestId('custom')).toBeInTheDocument();
+    });
+
+    it('callout renders icon, title above body, action last, role=alert for warning', () => {
+      render(
+        <Banner
+          variant="warning"
+          layout="callout"
+          icon
+          title="Check the redirect before you use this"
+          action={<button type="button">View run</button>}
+          data-testid="b"
+        >
+          The last attempt stopped at step 3.
+        </Banner>,
+      );
+      const root = screen.getByRole('alert');
+      expect(root).toHaveAttribute('data-layout', 'callout');
+      expect(root).toHaveClass('items-center', 'bg-warning-bg');
+      const kids = Array.from(root.children);
+      expect(kids[0]).toBe(screen.getByTestId('b-icon'));
+      const title = screen.getByText('Check the redirect before you use this');
+      const body = screen.getByText('The last attempt stopped at step 3.');
+      expect(title.parentElement).toBe(body.parentElement);
+      expect(title.compareDocumentPosition(body) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+      expect(kids[kids.length - 1]).toContainElement(screen.getByRole('button', { name: 'View run' }));
+    });
+
+    it('callout is role=status for info', () => {
+      render(<Banner variant="info" layout="callout" title="FYI">x</Banner>);
+      expect(screen.getByRole('status')).toHaveAttribute('data-layout', 'callout');
+    });
+  });
 });
