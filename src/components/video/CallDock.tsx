@@ -8,7 +8,7 @@
 //
 // The header row follows the page theme; the tiles are the video tokens,
 // dark in both themes. It responds to its OWN width (container queries), not
-// the viewport's: the document chips go below 1180px, the Documents button
+// the viewport's: the document chips go below a 1240px content width (they would truncate first), the Documents button
 // below 980px, and the People/Share labels shrink to icon + count below 860px.
 //
 // Phases: connecting (one skeleton tile, only Leave enabled), active,
@@ -230,7 +230,7 @@ export function CallDock({
             type="button"
             onClick={onTitleClick}
             disabled={!onTitleClick}
-            className="min-w-0 shrink truncate border-none bg-transparent p-0 text-left font-[inherit] text-base font-semibold text-text-primary enabled:cursor-pointer enabled:hover:underline"
+            className="max-w-[45cqw] shrink-0 truncate whitespace-nowrap border-none bg-transparent p-0 text-left font-[inherit] text-base font-semibold text-text-primary enabled:cursor-pointer enabled:hover:underline"
             data-testid="call-dock-title"
             title={title}
           >
@@ -240,14 +240,14 @@ export function CallDock({
             {meta}
           </span>
           {documents.length > 0 && (
-            <span className="hidden min-w-0 items-center gap-4 @min-[1180px]:flex" data-testid="call-dock-documents-chips">
+            <span className="hidden min-w-0 flex-1 items-center gap-4 overflow-hidden @min-[1240px]:flex" data-testid="call-dock-documents-chips">
               {documents.map((d) => (
                 <button
                   key={d.id}
                   type="button"
                   onClick={onDocumentClick ? () => onDocumentClick(d.id) : undefined}
                   className={cn(
-                    'inline-flex min-w-0 items-center gap-1.5 border-none bg-transparent p-0 font-[inherit] text-[13px]',
+                    'inline-flex min-w-0 shrink items-center gap-1.5 whitespace-nowrap border-none bg-transparent p-0 font-[inherit] text-[13px]',
                     d.presenting ? 'text-primary' : 'text-text-primary',
                     onDocumentClick ? 'cursor-pointer hover:underline' : 'cursor-default',
                   )}
@@ -255,7 +255,7 @@ export function CallDock({
                   data-presenting={d.presenting ? 'true' : 'false'}
                   title={d.presenting ? `${d.title} · Presenting` : d.title}
                 >
-                  <DocumentIcon size={16} />
+                  <DocumentIcon size={16} className="shrink-0" />
                   <span className="truncate">{d.title}</span>
                 </button>
               ))}

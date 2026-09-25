@@ -6855,9 +6855,17 @@ export declare interface DocumentResultItem {
     updatedAt?: string | number | Date | null;
     /** In the working set (the toggle reads "Added"). */
     attached?: boolean;
+    /**
+     * Always-visible content at the row's right, before Add and ⋯ — a live
+     * badge such as `CallPresenceIndicator` ("● 3" for a document with an
+     * active call). Outside the row's open target, so clicking it never opens
+     * the document. Keep it one line (≤ the row's text height); the row height
+     * does not change. Since 2.394.0.
+     */
+    trailing?: ReactNode;
 }
 
-export declare function DocumentResultList({ items, currentId, onCurrentChange, onOpen, onToggleAttach, draggable, onDragStartItem, rowMenu, emptyState, now, toggleLabels, 'aria-label': ariaLabel, className, 'data-testid': testId, }: DocumentResultListProps): JSX.Element;
+export declare function DocumentResultList({ items, currentId, onCurrentChange, onOpen, onToggleAttach, draggable, onDragStartItem, rowMenu, rowTrailing, emptyState, now, toggleLabels, 'aria-label': ariaLabel, className, 'data-testid': testId, }: DocumentResultListProps): JSX.Element;
 
 export declare interface DocumentResultListProps {
     items: readonly DocumentResultItem[];
@@ -6871,6 +6879,8 @@ export declare interface DocumentResultListProps {
     draggable?: boolean;
     /** Extra drag data (called after the prompt-context payload is written). */
     onDragStartItem?: (item: DocumentResultItem, dataTransfer: DataTransfer) => void;
+    /** Per-row trailing content computed by the host (wins over `item.trailing` when it returns non-null). Since 2.394.0. */
+    rowTrailing?: (item: DocumentResultItem) => ReactNode;
     /** The row's ⋯ menu; null or empty = no menu. */
     rowMenu?: (item: DocumentResultItem) => DropdownMenuSection[] | null;
     emptyState?: ReactNode;
@@ -22086,29 +22096,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -22138,6 +22125,29 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

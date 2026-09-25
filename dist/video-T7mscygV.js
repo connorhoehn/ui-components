@@ -5664,7 +5664,7 @@ function $r({ title: t, participantCount: n, elapsedMs: r, phase: a, documents: 
 						type: "button",
 						onClick: k,
 						disabled: !k,
-						className: "min-w-0 shrink truncate border-none bg-transparent p-0 text-left font-[inherit] text-base font-semibold text-text-primary enabled:cursor-pointer enabled:hover:underline",
+						className: "max-w-[45cqw] shrink-0 truncate whitespace-nowrap border-none bg-transparent p-0 text-left font-[inherit] text-base font-semibold text-text-primary enabled:cursor-pointer enabled:hover:underline",
 						"data-testid": "call-dock-title",
 						title: t,
 						children: t
@@ -5675,16 +5675,19 @@ function $r({ title: t, participantCount: n, elapsedMs: r, phase: a, documents: 
 						children: H
 					}),
 					o.length > 0 && /* @__PURE__ */ Y("span", {
-						className: "hidden min-w-0 items-center gap-4 @min-[1180px]:flex",
+						className: "hidden min-w-0 flex-1 items-center gap-4 overflow-hidden @min-[1240px]:flex",
 						"data-testid": "call-dock-documents-chips",
 						children: o.map((t) => /* @__PURE__ */ X("button", {
 							type: "button",
 							onClick: A ? () => A(t.id) : void 0,
-							className: e("inline-flex min-w-0 items-center gap-1.5 border-none bg-transparent p-0 font-[inherit] text-[13px]", t.presenting ? "text-primary" : "text-text-primary", A ? "cursor-pointer hover:underline" : "cursor-default"),
+							className: e("inline-flex min-w-0 shrink items-center gap-1.5 whitespace-nowrap border-none bg-transparent p-0 font-[inherit] text-[13px]", t.presenting ? "text-primary" : "text-text-primary", A ? "cursor-pointer hover:underline" : "cursor-default"),
 							"data-testid": `call-dock-document-${t.id}`,
 							"data-presenting": t.presenting ? "true" : "false",
 							title: t.presenting ? `${t.title} · Presenting` : t.title,
-							children: [/* @__PURE__ */ Y(m, { size: 16 }), /* @__PURE__ */ Y("span", {
+							children: [/* @__PURE__ */ Y(m, {
+								size: 16,
+								className: "shrink-0"
+							}), /* @__PURE__ */ Y("span", {
 								className: "truncate",
 								children: t.title
 							})]

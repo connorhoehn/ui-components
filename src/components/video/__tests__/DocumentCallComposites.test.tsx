@@ -416,3 +416,15 @@ describe('2.391.1 mockup-first follow-ups', () => {
     expect(screen.getByTestId('call-tile-al').className).toContain('bg-video-tile-off');
   });
 });
+
+describe('CallDock header sizing (2.394.0)', () => {
+  it('title and meta keep their natural width; only the chips shrink, and they fold below 1240px', () => {
+    render(<CallDock {...dockBase} />);
+    expect(screen.getByTestId('call-dock-title').className).toContain('shrink-0');
+    expect(screen.getByTestId('call-dock-meta').className).toContain('shrink-0');
+    const chips = screen.getByTestId('call-dock-documents-chips').className;
+    expect(chips).toContain('flex-1');
+    expect(chips).toContain('overflow-hidden');
+    expect(chips).toContain('@min-[1240px]:flex');
+  });
+});

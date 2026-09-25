@@ -188,3 +188,29 @@ export const CameraOffRemoteWithAudio: Story = {
   decorators: [themed('light')],
 };
 export const CameraOffRemoteWithAudioDark: Story = { ...CameraOffRemoteWithAudio, decorators: [themed('dark')] };
+
+/**
+ * The live editor column (~780px): the title and "4 people · 09:41" keep
+ * their natural width; the document chips and the Documents button fold
+ * away, and People/Share drop to icon + count, so nothing truncates.
+ */
+export const EditorColumn780: Story = {
+  args: base(),
+  decorators: [themed('light')],
+  render: (args) => (
+    <div className="w-[780px] border border-border">
+      <Interactive {...args} />
+    </div>
+  ),
+};
+export const EditorColumn780Dark: Story = { ...EditorColumn780, decorators: [themed('dark')] };
+/** 1240px: the chips are back and shrink before the title does. */
+export const EditorColumn1240: Story = {
+  args: base(),
+  decorators: [themed('light')],
+  render: (args) => (
+    <div className="w-[1240px] border border-border">
+      <Interactive {...args} />
+    </div>
+  ),
+};

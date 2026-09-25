@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.394.0] — 2026-09-25
+
+### Added
+- `DocumentResultList`: a per-row trailing slot — `DocumentResultItem.trailing` or the list's
+  `rowTrailing(item)` (wins when non-null) — drawn at the row's right before Add and ⋯, outside the open
+  target, row height unchanged. For `CallPresenceIndicator` on documents with a live call (lane D A-7).
+- Story `Shared/DocumentResultList` RowInACall (+Dark).
+
+### Fixed
+- `CallDock`: the title and "4 people · 09:41" keep their natural width (the title caps at 45% of the dock
+  and truncates only past that); only the document chips shrink, and they fold away below a 1240px content
+  width — where they would truncate — leaving the Documents button's count (mockup 02). Stories
+  `CallDock` EditorColumn780 (+Dark) and EditorColumn1240.
+
 ## [2.393.1] — 2026-09-25
 
 ### Fixed

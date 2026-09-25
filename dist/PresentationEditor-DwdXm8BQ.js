@@ -1356,7 +1356,7 @@ function et(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
-var tt = ce(() => import("./SortableSlideList-BCOpN3EU.js"));
+var tt = ce(() => import("./SortableSlideList-C3K_z8Af.js"));
 function nt(e, t) {
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }
@@ -2534,7 +2534,7 @@ function At({ testIdPrefix: e }) {
 		children: "The agent box needs the rich-text composer (the optional @tiptap peers). Edit the slide by hand below."
 	});
 }
-var jt = ce(() => import("./PresentationAgentComposer-DnOjQxfL.js").catch(() => ({ default: At })));
+var jt = ce(() => import("./PresentationAgentComposer-D_qRid01.js").catch(() => ({ default: At })));
 function Mt({ back: e }) {
 	return /* @__PURE__ */ U("svg", {
 		viewBox: "0 0 16 16",

@@ -30,6 +30,14 @@ export interface DocumentResultItem {
   updatedAt?: string | number | Date | null;
   /** In the working set (the toggle reads "Added"). */
   attached?: boolean;
+  /**
+   * Always-visible content at the row's right, before Add and ⋯ — a live
+   * badge such as `CallPresenceIndicator` ("● 3" for a document with an
+   * active call). Outside the row's open target, so clicking it never opens
+   * the document. Keep it one line (≤ the row's text height); the row height
+   * does not change. Since 2.394.0.
+   */
+  trailing?: ReactNode;
 }
 
 export interface DocumentResultListProps {
@@ -44,6 +52,8 @@ export interface DocumentResultListProps {
   draggable?: boolean;
   /** Extra drag data (called after the prompt-context payload is written). */
   onDragStartItem?: (item: DocumentResultItem, dataTransfer: DataTransfer) => void;
+  /** Per-row trailing content computed by the host (wins over `item.trailing` when it returns non-null). Since 2.394.0. */
+  rowTrailing?: (item: DocumentResultItem) => ReactNode;
   /** The row's ⋯ menu; null or empty = no menu. */
   rowMenu?: (item: DocumentResultItem) => DropdownMenuSection[] | null;
   emptyState?: ReactNode;
@@ -80,6 +90,7 @@ export function DocumentResultList({
   draggable = true,
   onDragStartItem,
   rowMenu,
+  rowTrailing,
   emptyState,
   now,
   toggleLabels,
@@ -119,6 +130,7 @@ export function DocumentResultList({
         const tabStop = item.id === cursorId;
         const age = documentAgeLabel(item.updatedAt, clock);
         const menu = rowMenu?.(item);
+        const trailing = rowTrailing?.(item) ?? item.trailing ?? null;
         return (
           <li
             key={item.id}
@@ -160,6 +172,11 @@ export function DocumentResultList({
                 )}
               </span>
             </div>
+            {trailing != null && trailing !== false && (
+              <span className="flex max-h-8 shrink-0 items-center" data-testid="document-result-trailing">
+                {trailing}
+              </span>
+            )}
             {onToggleAttach && (
               <AttachToggle
                 attached={!!item.attached}

@@ -3820,7 +3820,7 @@ function Gn(e) {
 	let t = e.currentTarget.getBoundingClientRect(), n = e.clientY - t.top;
 	return n < t.height / 3 ? "before" : n > t.height * 2 / 3 ? "after" : "into";
 }
-function Z({ entry: t, depth: n, expanded: r, onToggle: i, selectedId: a, onSelect: o, renderTrailing: s, rowMenu: c, rowMenuLabel: l, dragEnabled: u, canDragNode: d, canDrop: f, dragRef: p, dropTarget: m, setDropTarget: h, onDrop: g, testId: _, focusedId: v, setFocusedId: y, size: b }) {
+function Kn({ entry: t, depth: n, expanded: r, onToggle: i, selectedId: a, onSelect: o, renderTrailing: s, rowMenu: c, rowMenuLabel: l, dragEnabled: u, canDragNode: d, canDrop: f, dragRef: p, dropTarget: m, setDropTarget: h, onDrop: g, testId: _, focusedId: v, setFocusedId: y, size: b }) {
 	let x = r.has(t.id), S = t.children.length > 0, C = t.id === a, w = m?.id === t.id, T = u && !t.disabled && t.status !== "pending" && (d?.(t) ?? !0), E = c?.(t), D = !!E && E.some((e) => e.items.length > 0), O = b === "md";
 	return /* @__PURE__ */ H("div", { children: [/* @__PURE__ */ H("div", {
 		draggable: T,
@@ -3861,7 +3861,7 @@ function Z({ entry: t, depth: n, expanded: r, onToggle: i, selectedId: a, onSele
 			t.disabled || (o(t.id), S && i(t.id));
 		},
 		...D ? { onContextMenu: (e) => {
-			e.preventDefault(), Kn(e.currentTarget);
+			e.preventDefault(), Z(e.currentTarget);
 		} } : {},
 		role: "treeitem",
 		"aria-selected": C,
@@ -3930,7 +3930,7 @@ function Z({ entry: t, depth: n, expanded: r, onToggle: i, selectedId: a, onSele
 				})
 			})
 		]
-	}), x && t.children.map((e) => /* @__PURE__ */ V(Z, {
+	}), x && t.children.map((e) => /* @__PURE__ */ V(Kn, {
 		entry: e,
 		depth: n + 1,
 		expanded: r,
@@ -3953,7 +3953,7 @@ function Z({ entry: t, depth: n, expanded: r, onToggle: i, selectedId: a, onSele
 		setFocusedId: y
 	}, e.id))] });
 }
-function Kn(e) {
+function Z(e) {
 	let t = e.querySelector("[data-tree-row-menu] button[aria-haspopup=\"menu\"]");
 	return t ? (t.getAttribute("aria-expanded") !== "true" && t.click(), !0) : !1;
 }
@@ -3998,7 +3998,7 @@ function Jn({ nodes: t, selectedId: n, onSelect: r, defaultExpanded: i, expanded
 		let n = e.target, i = n.closest("[role=\"treeitem\"]");
 		if (!i || n.closest("[data-tree-row-menu]")) return;
 		if (e.key === "F10" && e.shiftKey || e.key === "ContextMenu") {
-			Kn(i) && e.preventDefault();
+			Z(i) && e.preventDefault();
 			return;
 		}
 		let a = `${h}-row-`, o = (i.getAttribute("data-testid") ?? "").slice(a.length);
@@ -4062,7 +4062,7 @@ function Jn({ nodes: t, selectedId: n, onSelect: r, defaultExpanded: i, expanded
 		className: e("flex flex-col", m),
 		"data-testid": h,
 		onKeyDown: ee,
-		children: g.map((e) => /* @__PURE__ */ V(Z, {
+		children: g.map((e) => /* @__PURE__ */ V(Kn, {
 			entry: e,
 			depth: 0,
 			expanded: b,
@@ -4586,51 +4586,51 @@ function hr(e, t = Date.now()) {
 		day: "numeric"
 	});
 }
-function gr({ items: n, currentId: r, onCurrentChange: i, onOpen: a, onToggleAttach: o, draggable: s = !0, onDragStartItem: c, rowMenu: l, emptyState: u, now: d, toggleLabels: f, "aria-label": p = "Documents", className: m, "data-testid": _ = "document-result-list" }) {
-	let v = R(/* @__PURE__ */ new Map()), y = d ?? Date.now(), b = n.some((e) => e.id === r) ? r : n[0]?.id, x = P((e) => {
+function gr({ items: n, currentId: r, onCurrentChange: i, onOpen: a, onToggleAttach: o, draggable: s = !0, onDragStartItem: c, rowMenu: l, rowTrailing: u, emptyState: d, now: f, toggleLabels: p, "aria-label": m = "Documents", className: _, "data-testid": v = "document-result-list" }) {
+	let y = R(/* @__PURE__ */ new Map()), b = f ?? Date.now(), x = n.some((e) => e.id === r) ? r : n[0]?.id, S = P((e) => {
 		let t = n[Math.max(0, Math.min(n.length - 1, e))];
-		t && (v.current.get(t.id)?.focus(), i?.(t.id));
-	}, [n, i]), S = (e, t, r) => {
+		t && (y.current.get(t.id)?.focus(), i?.(t.id));
+	}, [n, i]), C = (e, t, r) => {
 		switch (e.key) {
 			case "ArrowDown":
-				e.preventDefault(), x(t + 1);
+				e.preventDefault(), S(t + 1);
 				break;
 			case "ArrowUp":
-				e.preventDefault(), x(t - 1);
+				e.preventDefault(), S(t - 1);
 				break;
 			case "Home":
-				e.preventDefault(), x(0);
+				e.preventDefault(), S(0);
 				break;
 			case "End":
-				e.preventDefault(), x(n.length - 1);
+				e.preventDefault(), S(n.length - 1);
 				break;
 			case "Enter":
 			case " ": e.preventDefault(), a(r);
 		}
 	};
 	return n.length ? /* @__PURE__ */ V("ul", {
-		"aria-label": p,
-		"data-testid": _,
-		className: e("m-0 flex list-none flex-col p-0", m),
-		children: n.map((n, u) => {
-			let d = n.id === r, p = n.id === b, m = hr(n.updatedAt, y), _ = l?.(n);
+		"aria-label": m,
+		"data-testid": v,
+		className: e("m-0 flex list-none flex-col p-0", _),
+		children: n.map((n, d) => {
+			let f = n.id === r, m = n.id === x, _ = hr(n.updatedAt, b), v = l?.(n), S = u?.(n) ?? n.trailing ?? null;
 			return /* @__PURE__ */ H("li", {
 				"data-testid": "document-result-row",
 				"data-id": n.id,
-				"data-current": d || void 0,
-				className: e("group relative flex items-center gap-4 border-b border-border-subtle pl-4 pr-3 transition-colors duration-100", d ? "bg-primary-bg" : "hover:bg-surface-hover"),
+				"data-current": f || void 0,
+				className: e("group relative flex items-center gap-4 border-b border-border-subtle pl-4 pr-3 transition-colors duration-100", f ? "bg-primary-bg" : "hover:bg-surface-hover"),
 				children: [
-					d && /* @__PURE__ */ V("span", {
+					f && /* @__PURE__ */ V("span", {
 						"aria-hidden": "true",
 						className: "absolute inset-y-0 left-0 w-[3px] rounded-r bg-primary"
 					}),
 					/* @__PURE__ */ H("div", {
 						ref: (e) => {
-							e ? v.current.set(n.id, e) : v.current.delete(n.id);
+							e ? y.current.set(n.id, e) : y.current.delete(n.id);
 						},
 						role: "link",
-						tabIndex: p ? 0 : -1,
-						"aria-current": d || void 0,
+						tabIndex: m ? 0 : -1,
+						"aria-current": f || void 0,
 						draggable: s,
 						onDragStart: s ? (e) => {
 							t(e.dataTransfer, [{
@@ -4643,7 +4643,7 @@ function gr({ items: n, currentId: r, onCurrentChange: i, onOpen: a, onToggleAtt
 						onFocus: () => {
 							n.id !== r && i?.(n.id);
 						},
-						onKeyDown: (e) => S(e, u, n),
+						onKeyDown: (e) => C(e, d, n),
 						className: "flex min-w-0 flex-1 cursor-pointer items-center gap-[18px] py-2.5 outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary",
 						children: [/* @__PURE__ */ V(re, {
 							kind: n.kind,
@@ -4660,7 +4660,7 @@ function gr({ items: n, currentId: r, onCurrentChange: i, onOpen: a, onToggleAtt
 									className: "truncate text-[14.5px] leading-snug text-text-secondary",
 									children: n.summary
 								}),
-								(n.folder || m) && /* @__PURE__ */ H("span", {
+								(n.folder || _) && /* @__PURE__ */ H("span", {
 									className: "flex min-w-0 items-center gap-1.5 text-sm leading-snug text-text-tertiary",
 									children: [
 										n.folder && /* @__PURE__ */ V(g, {
@@ -4671,43 +4671,48 @@ function gr({ items: n, currentId: r, onCurrentChange: i, onOpen: a, onToggleAtt
 											className: "truncate",
 											children: n.folder
 										}),
-										n.folder && m && /* @__PURE__ */ V("span", {
+										n.folder && _ && /* @__PURE__ */ V("span", {
 											"aria-hidden": "true",
 											children: "·"
 										}),
-										m && /* @__PURE__ */ V("span", {
+										_ && /* @__PURE__ */ V("span", {
 											className: "shrink-0",
-											children: m
+											children: _
 										})
 									]
 								})
 							]
 						})]
 					}),
+					S != null && S !== !1 && /* @__PURE__ */ V("span", {
+						className: "flex max-h-8 shrink-0 items-center",
+						"data-testid": "document-result-trailing",
+						children: S
+					}),
 					o && /* @__PURE__ */ V(mr, {
 						attached: !!n.attached,
 						onToggle: () => o(n),
-						labels: f,
-						tabIndex: p ? 0 : -1,
+						labels: p,
+						tabIndex: m ? 0 : -1,
 						"aria-label": `${n.attached ? "Remove" : "Add"} ${n.title}`,
-						className: e(!n.attached && !d && "opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100")
+						className: e(!n.attached && !f && "opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100")
 					}),
-					_ && _.length > 0 && /* @__PURE__ */ V("span", {
+					v && v.length > 0 && /* @__PURE__ */ V("span", {
 						className: "shrink-0 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100",
 						children: /* @__PURE__ */ V(N, {
 							trigger: /* @__PURE__ */ V(h, { size: 16 }),
 							triggerLabel: `More actions for ${n.title}`,
-							triggerTabIndex: p ? 0 : -1,
+							triggerTabIndex: m ? 0 : -1,
 							triggerClassName: "h-8 w-8 border-none px-0",
 							align: "end",
-							sections: _,
+							sections: v,
 							"data-testid": "document-result-menu"
 						})
 					})
 				]
 			}, n.id);
 		})
-	}) : /* @__PURE__ */ V(B, { children: u ?? null });
+	}) : /* @__PURE__ */ V(B, { children: d ?? null });
 }
 //#endregion
 //#region src/components/shared/FilePickerButton.tsx
