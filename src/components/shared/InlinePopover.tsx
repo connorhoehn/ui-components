@@ -75,12 +75,21 @@ function getFocusable(root: HTMLElement): HTMLElement[] {
   );
 }
 
+/** The width a right-hand flyout needs before it flips to the left. */
+const FLYOUT_MIN_WIDTH = 240;
+
 function computePosition(
   anchor: DOMRect,
   placement: InlinePopoverPlacement,
   offset: number,
 ): CSSProperties {
   if (placement === 'right') {
+    // A flyout from a menu at the window's right edge opens to the LEFT
+    // rather than over its own menu (2.390.5).
+    const room = typeof window !== 'undefined' ? window.innerWidth - anchor.right - offset : Infinity;
+    if (room < FLYOUT_MIN_WIDTH && anchor.left > FLYOUT_MIN_WIDTH) {
+      return { position: 'fixed', top: anchor.top, left: anchor.left - offset, transform: 'translateX(-100%)' };
+    }
     return {
       position: 'fixed',
       top: anchor.top,

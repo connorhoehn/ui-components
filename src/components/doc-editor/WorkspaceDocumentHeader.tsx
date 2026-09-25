@@ -9,7 +9,7 @@ import { DocumentModePill, DOCUMENT_MODE_LABELS, type DocumentModePillMode } fro
 import { DocumentOwnership, type DocumentPerson } from './DocumentOwnership';
 import type { ViewMode, DocumentMeta, Participant } from '../../types/document';
 import type { DocumentLifecycleStatus, LegacyFinalClaim, LifecycleAction, LifecycleFailureKind } from './documentLifecycleTypes';
-import { ChatIcon, CloseIcon, MoreIcon, ShareIcon, EditIcon, FolderIcon, CopyIcon, LinkIcon, DocumentAddIcon, PlayCircleIcon, TemplateIcon, DownloadIcon, PrinterIcon, TrashIcon, DocumentIcon, BulletListIcon, ChecklistIcon, HistoryIcon, EyeIcon, CheckIcon, PlusIcon } from '../ui/Icons';
+import { ChatIcon, CloseIcon, MoreIcon, ShareIcon, EditIcon, FolderIcon, CopyIcon, LinkIcon, DocumentAddIcon, PlayCircleIcon, TemplateIcon, DownloadIcon, PrinterIcon, TrashIcon, DocumentIcon, BulletListIcon, ChecklistIcon, HistoryIcon, EyeIcon, PlusIcon } from '../ui/Icons';
 import { IconButton } from '../ui/IconButton';
 import { cn } from '../../lib/cn';
 import { DocumentSaveStatus, type DocumentSaveState } from './DocumentSaveStatus';
@@ -468,6 +468,15 @@ export default function WorkspaceDocumentHeader({
     })),
     ...(onClaimOwnership ? [{ label: 'Take ownership', onSelect: () => setConfirmClaim(true), 'data-testid': 'claim-ownership-btn' }] : []),
   ] : [];
+  const moreSections: DropdownMenuSection[] = [
+    ...(grouped('create').length ? [{ items: grouped('create') }] : []),
+    ...(insertItems.length ? [{
+      label: 'Insert',
+      'data-testid': 'document-header-menu-insert',
+      items: insertItems.map((i) => ({ ...row(i), label: i.label.replace(/^Insert (a |an )?/, '').replace(/^./, (c) => c.toUpperCase()) })),
+    }] : []),
+    ...(reviewItems.length ? [{ label: 'Review', 'data-testid': 'document-header-menu-lifecycle', items: reviewItems }] : []),
+  ];
   const downloads = fileActions?.downloads ?? [];
   const aboutCaption = [DOCUMENT_MODE_LABELS[modeKey] + (modeReason ? ` — ${modeReason}` : ''), ownerLine].filter(Boolean).join(' · ');
   const fileSections: DropdownMenuSection[] = fileActions ? [
@@ -507,14 +516,9 @@ export default function WorkspaceDocumentHeader({
         }] : []),
         ...fileRow(fileActions.runWorkflow, 'Run workflow…', <PlayCircleIcon size={16} />, 'document-menu-run-workflow'),
         ...fileRow(fileActions.saveAsTemplate, 'Save as template…', <TemplateIcon size={16} />, 'document-menu-save-template'),
-        ...grouped('create'),
-        ...(insertItems.length > 0 ? [{
-          label: 'Insert…',
-          icon: <PlusIcon size={16} />,
-          'data-testid': 'document-header-menu-insert',
-          submenu: [{ items: insertItems.map((i) => ({ ...row(i), label: i.label.replace(/^Insert (a |an )?/, '').replace(/^./, (c) => c.toUpperCase()) })) }],
-        }] : []),
-        ...(reviewItems.length ? [{ label: 'Review', icon: <CheckIcon size={16} />, 'data-testid': 'document-header-menu-lifecycle', submenu: [{ items: reviewItems }] }] : []),
+        // Everything else the page offers — its tools, Insert, the review
+        // actions — in one flyout, so the menu keeps the mockup's length.
+        ...(moreSections.length ? [{ label: 'More', icon: <PlusIcon size={16} />, 'data-testid': 'document-menu-more', submenu: moreSections }] : []),
       ],
     },
     {

@@ -59,7 +59,7 @@ describe('the file menu', () => {
     const groups = screen.getAllByRole('group').map((g) => within(g).queryAllByRole('menuitem').map((i) => i.textContent?.replace(/⌘P$/, '').trim()));
     expect(groups[0]).toEqual(['Rename…', 'Move to…', 'Make a copy…', 'Version history']);
     expect(groups[1]).toEqual(['Copy link', 'Share…']);
-    expect(groups[2]).toEqual(['Create from this…', 'Run workflow…', 'Save as template…', 'Automations…']);
+    expect(groups[2]).toEqual(['Create from this…', 'Run workflow…', 'Save as template…', 'More']);
     expect(groups[3]).toEqual(['Download as…', 'Print…']);
     expect(groups[4]?.[0]).toMatch(/^Move to trash/);
     expect(screen.getByTestId('document-header-print').textContent).toContain('⌘P');
