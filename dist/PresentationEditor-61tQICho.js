@@ -19,12 +19,12 @@ import { n as te } from "./RovingToolbar-CmQag9q6.js";
 import { t as k } from "./InlineAlert-CRnIKeAF.js";
 import { t as A } from "./PresenceAvatars-Dmtv09Kg.js";
 import { t as j } from "./SectionLabel-bcrhNYOr.js";
-import { t as M } from "./DropdownMenu-9im-lUJq.js";
+import { t as M } from "./DropdownMenu-DqaWOpyO.js";
 import { t as N } from "./StatusPill-C-aN2Pzz.js";
 import { t as P } from "./Select-D2EQq7Wi.js";
 import { G as F, U as I } from "./renderers-CLgJ6UYB.js";
 import { t as ne } from "./useMeasuredWidth-BPrwD0q5.js";
-import { r as L } from "./composerCommands-iJQ-W4fJ.js";
+import { r as L } from "./composerCommands-DC6fDAfJ.js";
 import { i as re, t as ie } from "./FloatingComposerDock-DMUQCjea.js";
 import { Component as ae, Suspense as oe, lazy as se, useCallback as R, useEffect as z, useId as ce, useMemo as B, useRef as V, useState as H } from "react";
 import { Fragment as U, jsx as W, jsxs as G } from "react/jsx-runtime";
@@ -1354,7 +1354,7 @@ function et(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
-var tt = se(() => import("./SortableSlideList-Dgxqp4sf.js"));
+var tt = se(() => import("./SortableSlideList-BCBhF0rL.js"));
 function nt(e, t) {
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }
@@ -2532,7 +2532,7 @@ function At({ testIdPrefix: e }) {
 		children: "The agent box needs the rich-text composer (the optional @tiptap peers). Edit the slide by hand below."
 	});
 }
-var jt = se(() => import("./PresentationAgentComposer-D7HQw7mX.js").catch(() => ({ default: At })));
+var jt = se(() => import("./PresentationAgentComposer-B8ZZARp9.js").catch(() => ({ default: At })));
 function Mt({ back: e }) {
 	return /* @__PURE__ */ W("svg", {
 		viewBox: "0 0 16 16",

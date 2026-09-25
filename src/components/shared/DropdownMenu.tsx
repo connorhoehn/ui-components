@@ -11,7 +11,7 @@
 // dismiss, focus capture/restore, Tab cycling); adds menu semantics
 // (role="menu"/"menuitem") and ArrowUp/ArrowDown/Home/End focus movement.
 
-import { useCallback, useRef, useState, type KeyboardEvent, type ReactNode, useEffect } from 'react';
+import { useCallback, useRef, useState, type KeyboardEvent, type ReactNode, useEffect, useId } from 'react';
 import { InlinePopover } from './InlinePopover';
 import { ChevronIcon } from '../ui/Icons';
 import { cn } from '../../lib/cn';
@@ -40,11 +40,17 @@ export interface DropdownMenuItem {
    */
   submenu?: DropdownMenuSection[];
   /**
-   * Shown but not actionable: greyed, `aria-disabled`, and a click does
-   * nothing (the menu stays open). Since 2.390.3.
+   * Shown but not actionable: muted, `aria-disabled="true"` yet still
+   * focusable (WAI-ARIA menu practice, so a screen reader can reach it and
+   * hear why), and click / Enter / Space never run `onSelect` — the menu
+   * stays open. A disabled row with a `submenu` does not open it. Since 2.390.3.
    */
   disabled?: boolean;
-  /** Why it is disabled — the row's hover tooltip and its accessible description. Since 2.390.3. */
+  /**
+   * Why it is disabled — shown as the row's secondary line (in place of
+   * `description`), its hover tooltip, and its `aria-describedby`.
+   * Since 2.390.3; the visible line since 2.390.4.
+   */
   disabledReason?: string;
   /** A hook for the spec that addresses this row. Without one the row is reachable by its label. */
   'data-testid'?: string;
@@ -146,9 +152,11 @@ export function DropdownMenu({
     if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(e.key)) return;
     const menu = menuRef.current;
     if (!menu) return;
+    // Disabled rows stay in the cycle (aria-disabled, not skipped), and so
+    // do checkbox rows — the old role="menuitem"-only query stepped over them.
     const items = Array.from(
-      menu.querySelectorAll<HTMLElement>('[role="menuitem"]'),
-    );
+      menu.querySelectorAll<HTMLElement>('[role="menuitem"],[role="menuitemcheckbox"]'),
+    ).filter((el) => el.closest('[role="menu"]') === menu);
     if (items.length === 0) return;
     e.preventDefault();
     const current = items.indexOf(document.activeElement as HTMLElement);
@@ -249,11 +257,13 @@ function rowTone(item: DropdownMenuItem, open = false): string {
   return 'font-normal text-[var(--color-text-primary)] bg-transparent hover:bg-[var(--color-surface-hover)]';
 }
 
-function RowBody({ item, open = false }: { item: DropdownMenuItem; open?: boolean }) {
+function RowBody({ item, open = false, labelId, reasonId }: { item: DropdownMenuItem; open?: boolean; labelId?: string; reasonId?: string }) {
+  const reason = item.disabled && item.disabledReason ? item.disabledReason : undefined;
+  const secondary = reason ?? item.description;
   return (
     <>
       {item.checked !== undefined ? (
-        <span className="flex w-4 shrink-0 items-center justify-center text-[var(--color-text-secondary)]" aria-hidden="true">
+        <span className={cn('flex w-4 shrink-0 items-center justify-center text-[var(--color-text-secondary)]', item.disabled && 'opacity-60')} aria-hidden="true">
           {item.checked ? '✓' : ''}
         </span>
       ) : item.icon ? (
@@ -262,9 +272,9 @@ function RowBody({ item, open = false }: { item: DropdownMenuItem; open?: boolea
         </span>
       ) : null}
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate">{item.label}</span>
-        {item.description && (
-          <span className="truncate text-xs font-normal text-[var(--color-text-tertiary)]">{item.description}</span>
+        <span id={labelId} className="truncate">{item.label}</span>
+        {secondary && (
+          <span id={reason ? reasonId : undefined} data-menu-disabled-reason={reason ? '' : undefined} className="truncate text-xs font-normal text-[var(--color-text-tertiary)]">{secondary}</span>
         )}
       </span>
       {item.trailing !== undefined && (
@@ -284,6 +294,8 @@ function MenuRow({ item, close, testId }: { item: DropdownMenuItem; close: () =>
   const hold = () => { if (leaveTimer.current) { clearTimeout(leaveTimer.current); leaveTimer.current = null; } };
   const leave = () => { hold(); leaveTimer.current = setTimeout(() => setOpen(false), 180); };
   useEffect(() => () => hold(), []);
+  const baseId = useId();
+  const reasonShown = !!(item.disabled && item.disabledReason);
 
   if (!item.submenu || item.disabled) {
     return (
@@ -292,15 +304,18 @@ function MenuRow({ item, close, testId }: { item: DropdownMenuItem; close: () =>
         role={item.checked !== undefined ? 'menuitemcheckbox' : 'menuitem'}
         aria-checked={item.checked !== undefined ? item.checked : undefined}
         aria-current={item.active || undefined}
-        aria-disabled={item.disabled || undefined}
+        aria-disabled={item.disabled ? 'true' : undefined}
+        // The reason is visible text inside the row; keep it out of the
+        // accessible name (the label) and hand it over as the description.
+        aria-labelledby={reasonShown ? `${baseId}-label` : undefined}
+        aria-describedby={reasonShown ? `${baseId}-reason` : undefined}
         title={item.disabled ? item.disabledReason : undefined}
         onClick={() => { if (item.disabled) return; item.onSelect?.(); close(); }}
         data-testid={item['data-testid']}
         data-disabled={item.disabled ? '' : undefined}
         className={cn(ROW_CLASS, rowTone(item))}
       >
-        <RowBody item={item} />
-        {item.disabled && item.disabledReason && <span className="sr-only">{` — ${item.disabledReason}`}</span>}
+        <RowBody item={item} labelId={reasonShown ? `${baseId}-label` : undefined} reasonId={reasonShown ? `${baseId}-reason` : undefined} />
       </button>
     );
   }

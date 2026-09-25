@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.390.4] — 2026-09-25
+
+### Changed
+- `DropdownMenuItem disabled` finishes the contract 2.390.3 started. The
+  `disabledReason` is now the row's visible secondary line (it replaces
+  `description` while disabled), still its tooltip, and its
+  `aria-describedby` — the label alone is the accessible name. The row
+  stays focusable with `aria-disabled="true"`; click, Enter and Space never
+  run `onSelect`, and a disabled `submenu` row does not open. The same holds
+  for `checked` (menuitemcheckbox) rows and rows inside a flyout.
+
+### Fixed
+- Arrow/Home/End navigation in `DropdownMenu` stepped over
+  `menuitemcheckbox` rows; they are in the cycle now.
+
 ## [2.390.1] — 2026-09-25
 
 ### Removed

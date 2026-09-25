@@ -76,3 +76,33 @@ export const SingleSectionNoLabel: Story = {
     ],
   },
 };
+
+/**
+ * A workflow that doesn't apply right now stays listed — muted, with the
+ * reason as its second line and tooltip — so the menu still teaches what
+ * exists. It is focusable (screen readers reach it and hear why) but click,
+ * Enter and Space do nothing, and a disabled flyout row does not open.
+ */
+export const DisabledItems: Story = {
+  name: 'Disabled items with a reason',
+  args: {
+    trigger: 'Workflow ▾',
+    triggerLabel: 'Workflow',
+    sections: [
+      {
+        label: 'Run a workflow',
+        items: [
+          { label: 'Plan the next sprint', onSelect: () => {} },
+          { label: 'Unblock this item', disabled: true, disabledReason: 'Nothing on this initiative is blocked', onSelect: () => {} },
+          { label: 'Notify SMEs', checked: false, disabled: true, disabledReason: 'No SMEs attached yet' },
+          {
+            label: 'Hand off to',
+            disabled: true,
+            disabledReason: 'Needs an active sprint',
+            submenu: [{ items: [{ label: 'An agent', onSelect: () => {} }] }],
+          },
+        ],
+      },
+    ],
+  },
+};

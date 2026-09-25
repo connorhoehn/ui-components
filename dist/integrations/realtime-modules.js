@@ -11,7 +11,7 @@ import { t as d } from "../PresenceAvatars-Dmtv09Kg.js";
 import { t as f } from "../ActivityFeed-ay5wcWka.js";
 import { t as p } from "../Badge-C23_Y4Yj.js";
 import { n as m, r as h, t as g } from "../ReactionsOverlay-Ob1ecsgg.js";
-import { d as _, n as v, t as y, u as b } from "../ConversationSurface-DyaiG7N2.js";
+import { d as _, n as v, t as y, u as b } from "../ConversationSurface-C2onTeQf.js";
 import { d as x, g as S, h as C, m as w, p as T, t as E, y as D } from "../StreamStage-D3t-eP-k.js";
 import { a as ee, i as te, n as ne, r as re, t as ie } from "../useDocumentImageUpload-DR4ARMpD.js";
 import { Component as ae, createContext as oe, useCallback as O, useContext as se, useEffect as k, useMemo as A, useRef as j, useState as M } from "react";

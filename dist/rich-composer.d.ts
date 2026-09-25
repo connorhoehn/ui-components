@@ -350,11 +350,17 @@ declare interface DropdownMenuItem {
      */
     submenu?: DropdownMenuSection[];
     /**
-     * Shown but not actionable: greyed, `aria-disabled`, and a click does
-     * nothing (the menu stays open). Since 2.390.3.
+     * Shown but not actionable: muted, `aria-disabled="true"` yet still
+     * focusable (WAI-ARIA menu practice, so a screen reader can reach it and
+     * hear why), and click / Enter / Space never run `onSelect` — the menu
+     * stays open. A disabled row with a `submenu` does not open it. Since 2.390.3.
      */
     disabled?: boolean;
-    /** Why it is disabled — the row's hover tooltip and its accessible description. Since 2.390.3. */
+    /**
+     * Why it is disabled — shown as the row's secondary line (in place of
+     * `description`), its hover tooltip, and its `aria-describedby`.
+     * Since 2.390.3; the visible line since 2.390.4.
+     */
     disabledReason?: string;
     /** A hook for the spec that addresses this row. Without one the row is reachable by its label. */
     'data-testid'?: string;
