@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.389.1] — 2026-09-24
+
+### Fixed
+- **RichChatComposer** no longer loops ("Maximum update depth exceeded") in a
+  box whose width comes from its children — an `auto` grid column, an
+  inline-block. The size class keys off the composer's own width, and there
+  that width depends on the size class: with a long placeholder the medium
+  layout measured 323px (reads as narrow) and the narrow one-row layout 413px
+  (reads as medium), so the every-commit re-measure flipped between them
+  forever. The composer now records what each class measured in the current
+  space; when a class re-measures the same width and the class it points at
+  has already bounced back, it keeps the layout on screen (the box is sized
+  to it, so it fits). A changed measurement — a real resize — clears the
+  record. The ResizeObserver now reads the border box, as the layout effect
+  does, so the two readings of one layout agree. New story
+  `Social/RichChatComposer › Content-sized container`.
+
 ## [2.389.0] — 2026-09-24
 
 The Distillation guide-record redesign's library pieces. Every prop is

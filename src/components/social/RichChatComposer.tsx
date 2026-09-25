@@ -1757,6 +1757,47 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
    */
   const [rootWidth, setRootWidth] = useState<number | null>(null);
   const observer = useRef<ResizeObserver | null>(null);
+  /**
+   * The width the root measured while each size class was on screen, in the
+   * space it has now. In a box whose width comes from its children (an `auto`
+   * grid column, an inline-block) the composer's width depends on its own size
+   * class, and there may be NO class that fits the width it produces — a long
+   * placeholder measured 323px in the medium layout (reads as narrow) and
+   * 413px in the narrow one-row layout (reads as medium). Re-measuring every
+   * commit flipped between the two until React threw "Maximum update depth
+   * exceeded". This record is how a measurement tells "the space changed"
+   * from "my own layout changed": once a class re-measures what it measured
+   * before and the class it points at has already bounced, it stays put.
+   */
+  const widthUnder = useRef<Partial<Record<ComposerSize, number>>>({});
+  /** The auto size class this render drew — what the next measurement was taken under. */
+  const renderedSize = useRef<ComposerSize>(composerSizeFor(null));
+  const measureRoot = useCallback((w: number) => {
+    // A zero width is "no layout", not "very narrow" — a detached subtree, a
+    // display:none ancestor, or a test environment with no layout engine at
+    // all. Collapsing on that reading would hide the toolbar wherever the
+    // composer is measured before it is shown.
+    if (!(w > 0)) {
+      widthUnder.current = {};
+      setRootWidth(null);
+      return;
+    }
+    const drawn = renderedSize.current;
+    const before = widthUnder.current[drawn];
+    // The same layout measuring differently means the space (or the content)
+    // changed: what the other classes measured no longer says anything.
+    if (before !== undefined && before !== w) widthUnder.current = {};
+    widthUnder.current[drawn] = w;
+    const next = composerSizeFor(w);
+    // This layout measured exactly what it measured last time, and `next` was
+    // already drawn in this same space and measured outside itself: the two
+    // only hand the composer back and forth. Keep the layout on screen — the
+    // box is sized to it, so it fits. (A first reading under a class is never
+    // taken as a bounce: it is also how a real resize arrives.)
+    const tried = widthUnder.current[next];
+    if (next !== drawn && before === w && tried !== undefined && composerSizeFor(tried) !== next) return;
+    setRootWidth(w);
+  }, []);
   const rootNode = useRef<HTMLDivElement | null>(null);
   // Focus anywhere inside the composer (the input, a chip, the toolbar):
   // suggestion chips show only while it holds focus AND the input is empty.
@@ -1791,16 +1832,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     observer.current = null;
     rootNode.current = el;
     if (!el || typeof ResizeObserver === 'undefined') return;
-    // A zero width is "no layout", not "very narrow" — a detached subtree, a
-    // display:none ancestor, or a test environment with no layout engine at
-    // all. Collapsing on that reading would hide the toolbar wherever the
-    // composer is measured before it is shown.
-    const measure = (w: number) => setRootWidth(w > 0 ? w : null);
-    const ro = new ResizeObserver(([entry]) => measure(entry.contentRect.width));
+    // The border box, as the layout effect below reads it: the observer's
+    // content box is a few px narrower, and two readings of one layout would
+    // look like the space changing.
+    const ro = new ResizeObserver(([entry]) => measureRoot(el.getBoundingClientRect().width || entry.contentRect.width));
     ro.observe(el);
     observer.current = ro;
-    measure(el.getBoundingClientRect().width);
-  }, []);
+    measureRoot(el.getBoundingClientRect().width);
+  }, [measureRoot]);
   useEffect(() => () => observer.current?.disconnect(), []);
   /**
    * Re-measure after every commit, and do NOT rely on the observer for the
@@ -1813,7 +1852,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     const el = rootNode.current;
     if (!el) return;
     const w = el.getBoundingClientRect().width;
-    if (w > 0 && w !== rootWidth) setRootWidth(w);
+    if (w > 0 && w !== rootWidth) measureRoot(w);
     // A focused control that UNMOUNTS (the status line's × or its action,
     // gone the moment they are pressed) takes focus to <body> without a blur
     // event, so `onBlurCapture` never ran and the composer kept believing it
@@ -1827,7 +1866,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
       setEngaged(false);
     }
   });
-  const size: ComposerSize = layout === 'auto' ? composerSizeFor(rootWidth) : layout;
+  renderedSize.current = composerSizeFor(rootWidth);
+  const size: ComposerSize = layout === 'auto' ? renderedSize.current : layout;
   const wide = size === 'wide';
   const narrow = size === 'narrow';
   const compact = density === 'compact';

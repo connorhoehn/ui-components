@@ -247,3 +247,39 @@ export const ReferenceMenu: Story = {
     );
   },
 };
+
+/**
+ * 2.389.1 — the composer in a box whose width comes from its children: an
+ * `auto` grid column and an inline-block. The composer's size class keys off
+ * its own width, and in a box like this that width depends on which controls
+ * the size class shows — the loop that used to end in "Maximum update depth
+ * exceeded". It now settles on one layout.
+ */
+export const ContentSizedContainer: Story = {
+  render: () => (
+    <div className="grid gap-6">
+      <div className="grid grid-cols-[auto_1fr] gap-3" data-testid="content-sized-grid">
+        <RichChatComposer
+          onSend={() => {}}
+          modeControl="menu"
+          mode="agent"
+          onModeChange={() => {}}
+          disabledModes={['chat', 'terminal']}
+          toolbar="compact"
+          backdropTone="none"
+          modePlaceholders={{ agent: 'Describe your project or ask about this guide…' }}
+          submitLabel={{ agent: 'Ask' }}
+          data-testid="composer-grid"
+        />
+        <div className="text-xs text-text-tertiary">auto grid column</div>
+      </div>
+      <div className="inline-block" data-testid="content-sized-inline">
+        <RichChatComposer
+          onSend={() => {}}
+          placeholder="Describe your project or ask about this guide…"
+          data-testid="composer-inline"
+        />
+      </div>
+    </div>
+  ),
+};
