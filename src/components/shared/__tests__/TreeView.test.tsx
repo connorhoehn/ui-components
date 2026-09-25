@@ -103,4 +103,22 @@ describe('TreeView', () => {
     expect(call).not.toBeNull();
     expect(call![0]).toBe('leaf');
   });
+
+  it('toggles a directory when the row itself (its title) is clicked, and selects it', () => {
+    const picked: string[] = [];
+    render(<TreeView nodes={NODES} selectedId={null} onSelect={(id) => picked.push(id)} />);
+    fireEvent.click(screen.getByText('Root'));
+    expect(screen.getByText('Child One')).toBeInTheDocument();
+    expect(picked).toEqual(['root']);
+    fireEvent.click(screen.getByTestId('tree-view-row-root'));
+    expect(screen.queryByText('Child One')).not.toBeInTheDocument();
+  });
+
+  it('a leaf row click selects without toggling anything; rows do not select text', () => {
+    let selected = '';
+    render(<TreeView nodes={NODES} selectedId={null} onSelect={(id) => { selected = id; }} />);
+    fireEvent.click(screen.getByText('Standalone leaf'));
+    expect(selected).toBe('leaf');
+    expect(screen.getByTestId('tree-view-row-leaf').className).toContain('select-none');
+  });
 });

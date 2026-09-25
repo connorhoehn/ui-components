@@ -54,6 +54,14 @@ export interface CommentReplyComposerProps {
   onCancel?: () => void;
   dictation?: CommentReplyDictation;
   placeholder?: string;
+  /**
+   * `card` (default): the 280px margin card's compact box. `dock`: the page's
+   * docked composer in Reply mode — the dock's comfortable density and
+   * `editor` strip, so switching Agent → Reply does not change the box's size.
+   */
+  variant?: 'card' | 'dock';
+  /** Send's label. Default `Reply`. */
+  submitLabel?: string;
   className?: string;
   'data-testid'?: string;
 }
@@ -100,6 +108,8 @@ export const CommentReplyComposer = forwardRef<CommentReplyComposerHandle, Comme
   onCancel,
   dictation,
   placeholder = 'Reply or type /',
+  variant = 'card',
+  submitLabel = 'Reply',
   className,
   'data-testid': testId = 'comment-reply-composer',
 }, ref) {
@@ -189,12 +199,12 @@ export const CommentReplyComposer = forwardRef<CommentReplyComposerHandle, Comme
         onSearchPeople={searchPeople}
         commands={commands}
         placeholder={listening ? 'Listening… release to insert' : placeholder}
-        density="compact"
-        toolbar="compact"
-        radius="md"
+        density={variant === 'dock' ? 'comfortable' : 'compact'}
+        toolbar={variant === 'dock' ? 'editor' : 'compact'}
+        {...(variant === 'dock' ? { backdropTone: 'none' as const } : { radius: 'md' as const })}
         allowAttachments={false}
         allowEmoji={false}
-        submitLabel="Reply"
+        submitLabel={submitLabel}
         {...(dictation ? {
           // Beside Send, not in the strip: a 280px margin card is the
           // composer's narrow size, where the strip folds behind `Aa`.

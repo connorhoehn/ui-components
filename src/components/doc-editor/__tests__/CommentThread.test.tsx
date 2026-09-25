@@ -144,3 +144,27 @@ describe('CommentThreadNode context header', () => {
     expect(screen.getAllByText('Ask agent')).toHaveLength(1);
   });
 });
+
+describe('CommentThreadNode — Reply handed to the host composer', () => {
+  it('calls onReplyRequest instead of opening a box in the card, for nested replies too', () => {
+    const onReplyRequest = vi.fn();
+    const reply = resolvedThread({ id: 'r1', text: 'A reply', displayName: 'Bob', resolved: false, parentCommentId: 'c1' });
+    render(
+      <CommentThreadNode
+        comment={resolvedThread({ resolved: false, replies: [reply] })}
+        depth={0}
+        onReply={() => {}}
+        mentionUsers={[]}
+        onReplyRequest={onReplyRequest}
+        replyingToId="r1"
+      />,
+    );
+    fireEvent.click(screen.getByTestId('comment-reply-button-c1'));
+    expect(onReplyRequest).toHaveBeenCalledWith({ commentId: 'c1', depth: 0, author: 'Jane Doe', text: 'Please double-check this paragraph' });
+    expect(screen.queryByPlaceholderText(/Write a reply/)).not.toBeInTheDocument();
+    const nested = screen.getByTestId('comment-reply-button-r1');
+    expect(nested).toHaveAttribute('aria-pressed', 'true');
+    expect(nested).toHaveTextContent('Replying…');
+  });
+});
+

@@ -7,7 +7,10 @@
 // Keyboard: the WAI-ARIA tree pattern, built in. One row carries the tab stop
 // (roving tabindex), ArrowUp/Down/Home/End walk the VISIBLE rows, ArrowRight
 // opens a directory (or steps into it), ArrowLeft closes one (or steps up to
-// the parent), Enter/Space select. Every row carries `aria-level` and a
+// the parent), Enter/Space select (and toggle a directory). A click anywhere
+// on a directory row — caret, icon, title, count; not its ⋯ — selects it AND
+// opens/closes it, the same as Enter (2.389.9): the caret alone was a 20px
+// target and a click on the title only selected its text. Every row carries `aria-level` and a
 // directory row `aria-expanded`. Two consuming apps had bolted this on from
 // outside by reading the rendered DOM back; it belongs here.
 //
@@ -262,7 +265,13 @@ function TreeRow({
           dragRef.current = null;
           setDropTarget(null);
         }}
-        onClick={() => !entry.disabled && onSelect(entry.id)}
+        // The whole row is the target: select, and a directory also toggles —
+        // what Enter does. The caret's own click stops here (it only toggles).
+        onClick={() => {
+          if (entry.disabled) return;
+          onSelect(entry.id);
+          if (hasChildren) onToggle(entry.id);
+        }}
         {...(hasMenu
           ? {
               // A right-click opens the same menu as the ⋯, not the browser's.
@@ -290,6 +299,9 @@ function TreeRow({
           // a positioned row it escapes the rail's scroll box and stretches the
           // document (a long tree scrolled the whole window — 2.367.1).
           'group relative flex items-center border-l-2 transition-colors',
+          // A click toggles, so it must not start a text selection; the ring
+          // is the keyboard's only sign of which row has the focus.
+          'select-none outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary',
           md ? 'min-h-8 gap-1.5 py-1 pr-2.5 text-[15px] leading-6' : 'gap-1 py-1.5 pr-2 text-sm',
           // A row you can pick up says so before you try. Only when the host
           // wired a drop target: a grab cursor over an immovable row is a lie.

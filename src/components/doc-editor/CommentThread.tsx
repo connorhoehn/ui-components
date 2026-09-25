@@ -293,6 +293,14 @@ export interface CommentThreadNodeProps {
    * reply to THIS comment; `close` hides the box.
    */
   renderReply?: (args: { commentId: string; depth: number; submit: (text: string) => void; close: () => void }) => ReactNode;
+  /**
+   * Reply goes somewhere else: pressing it calls this instead of opening any
+   * box in the card — the host moves the reply into its docked composer
+   * (Reply mode). Reaches nested replies too.
+   */
+  onReplyRequest?: (args: { commentId: string; depth: number; author: string; text: string }) => void;
+  /** The comment whose reply is being written elsewhere: its Reply reads "Replying…", pressed. */
+  replyingToId?: string | null;
   depth: number;
   onReply: (parentId: string, text: string) => void;
   mentionUsers: MentionUser[];
@@ -306,6 +314,8 @@ function CommentThreadNode({
   actions,
   onAskAgent,
   renderReply,
+  onReplyRequest,
+  replyingToId = null,
   depth,
   onReply,
   mentionUsers,
@@ -427,14 +437,23 @@ function CommentThreadNode({
           <button
             type="button"
             onClick={() => {
+              if (onReplyRequest) {
+                onReplyRequest({ commentId: comment.id, depth, author: comment.displayName, text: comment.text });
+                return;
+              }
               setShowReplyForm(!showReplyForm);
               if (!showReplyForm) {
                 setTimeout(() => textareaRef.current?.focus(), 50);
               }
             }}
-            className={cn('bg-transparent border-none text-neutral text-xs cursor-pointer py-0.5 px-0 font-[inherit]')}
+            {...(onReplyRequest ? { 'aria-pressed': replyingToId === comment.id } : {})}
+            data-testid={`comment-reply-button-${comment.id}`}
+            className={cn(
+              'bg-transparent border-none text-neutral text-xs cursor-pointer py-0.5 px-0 font-[inherit]',
+              replyingToId === comment.id && 'font-semibold text-primary',
+            )}
           >
-            Reply
+            {replyingToId === comment.id ? 'Replying…' : 'Reply'}
           </button>
           {depth === 0 && !isResolved && onResolveThread && (
             <button
@@ -530,6 +549,7 @@ function CommentThreadNode({
           onResolveThread={onResolveThread}
           onUnresolveThread={onUnresolveThread}
           {...(renderReply ? { renderReply } : {})}
+          {...(onReplyRequest ? { onReplyRequest, replyingToId } : {})}
         />
       ))}
     </div>
