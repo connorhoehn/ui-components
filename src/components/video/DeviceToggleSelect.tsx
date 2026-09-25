@@ -123,13 +123,13 @@ export function DeviceToggleSelect({
         className={cn(
           'inline-flex cursor-pointer items-center gap-2 rounded-l-md border-none bg-transparent font-[inherit] text-sm font-medium',
           'hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50',
-          size === 'md' ? 'px-3' : 'px-2',
-          showLabel && 'pr-3',
+          size === 'md' ? 'px-2.5' : 'px-2',
+          showLabel && 'min-w-0 flex-1 justify-start gap-1.5 pr-2',
           offTone,
         )}
       >
         {icon}
-        {showLabel && <span className="whitespace-nowrap">{stateLabel}</span>}
+        {showLabel && <span className="min-w-0 truncate whitespace-nowrap">{stateLabel}</span>}
       </button>
       <DropdownMenu
         trigger={<ChevronIcon size={14} />}
@@ -138,8 +138,8 @@ export function DeviceToggleSelect({
         triggerTestId={`${testId}-menu`}
         triggerVariant="link"
         triggerClassName={cn(
-          'h-full rounded-none rounded-r-md px-2 text-text-secondary',
-          size === 'md' && 'px-3',
+          'h-full shrink-0 rounded-none rounded-r-md px-2 text-text-secondary',
+          size === 'md' && 'px-2',
         )}
         align="end"
         data-testid={`${testId}-menu-panel`}

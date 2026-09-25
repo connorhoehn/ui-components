@@ -173,7 +173,7 @@ export function IncomingCallPopover({
                 items={participants.slice(0, 3).map((p) => ({ name: p.name, ...(p.avatarUrl ? { src: p.avatarUrl } : {}) }))}
                 maxVisible={3}
                 size={34}
-                className="[&>*]:!border-surface"
+                className="[&>*]:!border-surface [&>*+*]:!ml-[-4px]"
               />
             )}
             <span className="text-sm text-text-secondary">{peopleInCall(participantCount, false)}</span>
@@ -188,7 +188,7 @@ export function IncomingCallPopover({
             size="md"
             showLabel
             {...mic}
-            className={cn('min-w-0 flex-1 shrink justify-between', mic.className)}
+            className={cn('min-w-0 flex-auto justify-between', mic.className)}
             data-testid="incoming-call-mic"
           />
           <DeviceToggleSelect
@@ -196,7 +196,7 @@ export function IncomingCallPopover({
             size="md"
             showLabel
             {...camera}
-            className={cn('min-w-0 flex-1 shrink justify-between', camera.className)}
+            className={cn('min-w-0 flex-auto justify-between', camera.className)}
             data-testid="incoming-call-camera"
           />
           <IconButton
