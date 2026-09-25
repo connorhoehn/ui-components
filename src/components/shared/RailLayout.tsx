@@ -6,6 +6,7 @@
 
 import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK } from './railType';
 
 export interface RailLayoutProps {
   /** The main column. */
@@ -50,7 +51,9 @@ export interface RailSectionProps {
 export function RailSection({ title, children, className }: RailSectionProps) {
   return (
     <section className={cn('border-b border-border px-3.5 py-3 last:border-b-0', className)}>
-      <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-text-tertiary">{title}</h3>
+      {/* The shared rail group label (railType, 2.397.1) — was 10px, the one
+          rail heading left off the 2.397.0 scale. */}
+      <h3 className={cn('mb-2', RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK)} data-testid="rail-section-title">{title}</h3>
       <div className="flex flex-col gap-2 text-xs text-text-secondary">{children}</div>
     </section>
   );

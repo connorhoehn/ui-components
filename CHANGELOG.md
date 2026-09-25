@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.397.4] — 2026-09-25
+
+### Changed (visual)
+- `RailSection` (RailLayout): the section title draws the shared rail group label (`RAIL_GROUP_LABEL`,
+  11px semibold caps, secondary ink) instead of 10px tertiary — the one rail heading 2.397.0 missed
+  (the assessment Workspace explorer's "VIEWS" sat beside 11px group headings).
+
 ## [2.397.2] — 2026-09-25
 
 ### Added

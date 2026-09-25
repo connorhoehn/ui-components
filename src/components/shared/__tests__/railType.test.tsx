@@ -11,6 +11,7 @@ import { RailNavList } from '../RailNavList';
 import { GroupedList } from '../GroupedList';
 import { WorkspaceRail } from '../../layout/WorkspaceRail';
 import { RailSectionHeader } from '../../social/RailSectionHeader';
+import { RailSection } from '../RailLayout';
 import {
   RAIL_CAPTION,
   RAIL_CURRENT_FILL,
@@ -129,5 +130,12 @@ describe('rail type scale (2.397.0)', () => {
     const label = screen.getByText('Guides');
     hasAll(label, RAIL_GROUP_LABEL);
     hasAll(screen.getByTestId('rail-section-header-count'), RAIL_GROUP_COUNT);
+  });
+
+  it('RailSection titles use the group label (2.397.1)', () => {
+    render(<RailSection title="Views">x</RailSection>);
+    const t = screen.getByTestId('rail-section-title');
+    hasAll(t, RAIL_GROUP_LABEL);
+    expect(t.className).not.toContain('text-[10px]');
   });
 });
