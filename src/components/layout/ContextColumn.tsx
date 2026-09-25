@@ -57,6 +57,22 @@ export interface ContextColumnPanel {
   entries?: readonly ContextColumnEntry[];
   /** What the panel shows while it is the active one. */
   content: ReactNode;
+  /**
+   * `tabs` (default): the column's header row — tabs, width and collapse
+   * controls — sits above the panel. `bare`: while this panel is the active
+   * one the header row is not drawn and the panel fills the column, bringing
+   * its own header and close (a call drawer: "Start a call ×"). Since 2.391.0.
+   */
+  chrome?: 'tabs' | 'bare';
+  /**
+   * The open column's width while this panel is active. `default` is the
+   * column's own (320px, or `roomy`). The call drawers are wider, and narrow
+   * one step below a 1440px viewport so the page keeps its width:
+   *   `drawer`       340px → 380px at ≥1440 (call settings, the call panel)
+   *   `drawer-wide`  360px → 400px at ≥1440 (start a call)
+   * Applies in `open` and `wide` alike. Since 2.391.0.
+   */
+  width?: 'default' | 'drawer' | 'drawer-wide';
 }
 
 export interface ContextColumnProps {
@@ -86,6 +102,11 @@ const WIDTH: Record<ContextColumnState, string> = {
   collapsed: 'w-12',
   open: 'w-80',
   wide: 'w-[32rem]',
+};
+
+const PANEL_WIDTH: Record<'drawer' | 'drawer-wide', string> = {
+  drawer: 'w-[340px] min-[1440px]:w-[380px]',
+  'drawer-wide': 'w-[360px] min-[1440px]:w-[400px]',
 };
 
 function Chevron({ dir }: { dir: 'left' | 'right' }) {
@@ -188,6 +209,31 @@ export function ContextColumn({
     );
   }
 
+  const panelWidth = active.width && active.width !== 'default' ? PANEL_WIDTH[active.width] : null;
+
+  if (active.chrome === 'bare') {
+    return (
+      <div
+        role="group"
+        aria-label={label}
+        data-testid={testId}
+        data-state={state}
+        data-active={active.id}
+        data-chrome="bare"
+        className={cn(
+          'flex h-full shrink-0 flex-col border-l border-border bg-surface-panel',
+          panelWidth ?? WIDTH[state],
+          !panelWidth && roomy && state === 'open' && '2xl:w-96',
+          className,
+        )}
+      >
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden" data-testid={`${testId}-panel`}>
+          {active.content}
+        </div>
+      </div>
+    );
+  }
+
   const wide = state === 'wide';
   // More labelled tabs than the header row holds (2.386.13): the open panel
   // keeps its label and the others become icons, named by tooltip and
@@ -201,7 +247,12 @@ export function ContextColumn({
       data-state={state}
       data-active={active.id}
       data-crowded={crowded || undefined}
-      className={cn('flex h-full shrink-0 flex-col border-l border-border bg-surface-panel', WIDTH[state], roomy && state === 'open' && '2xl:w-96', className)}
+      className={cn(
+        'flex h-full shrink-0 flex-col border-l border-border bg-surface-panel',
+        panelWidth ?? WIDTH[state],
+        !panelWidth && roomy && state === 'open' && '2xl:w-96',
+        className,
+      )}
     >
       <div className="flex h-9 shrink-0 items-center gap-1 border-b border-border pl-1.5 pr-1.5" data-testid={`${testId}-header`}>
         <div role="tablist" aria-label={label} className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto">

@@ -57,6 +57,14 @@ export interface DrawerProps {
   className?: string;
   /** Classes on the scrolling body. Overrides its default padding via tw-merge. */
   bodyClassName?: string;
+  /** Classes on the header row (e.g. `border-b-0` for a header with no rule under it). Since 2.391.0. */
+  headerClassName?: string;
+  /** Classes on the title heading (e.g. `text-lg`). Since 2.391.0. */
+  titleClassName?: string;
+  /** Classes on the footer row. Since 2.391.0. */
+  footerClassName?: string;
+  /** `data-testid` on the built-in close button. Since 2.391.0. */
+  closeTestId?: string;
   /**
    * Accessible name for the dialog when there is no visible `title` to point
    * at. When `title` IS set the heading labels the dialog via
@@ -110,6 +118,10 @@ function Drawer({
   actions,
   className,
   bodyClassName,
+  headerClassName,
+  titleClassName,
+  footerClassName,
+  closeTestId,
   'aria-label': ariaLabel,
   'data-testid': testId,
   closeLabel = 'Close',
@@ -172,10 +184,10 @@ function Drawer({
   // Header, body and footer are built once and rendered by both forms, so the
   // docked panel cannot drift away from the floating one.
   const header = (
-    <div className="flex items-start justify-between p-5 border-b border-[var(--color-border)] flex-shrink-0">
+    <div className={cn('flex items-start justify-between p-5 border-b border-[var(--color-border)] flex-shrink-0', headerClassName)}>
       <div className="min-w-0">
         {title && (
-          <h2 id={headingId} className="text-base font-semibold text-[var(--color-text-primary)]">
+          <h2 id={headingId} className={cn('text-base font-semibold text-[var(--color-text-primary)]', titleClassName)}>
             {title}
           </h2>
         )}
@@ -190,6 +202,7 @@ function Drawer({
         <button
           type="button"
           onClick={onClose}
+          data-testid={closeTestId}
           className="flex-shrink-0 p-1 rounded hover:bg-[var(--color-surface-hover)] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors"
           aria-label={closeLabel}
         >
@@ -209,7 +222,7 @@ function Drawer({
   const body = <div className={cn('flex-1 overflow-y-auto p-5', bodyClassName)}>{children}</div>;
 
   const footerRow = footer ? (
-    <div className="flex-shrink-0 border-t border-[var(--color-border)] p-4 bg-[var(--color-surface-inset,#f8fafc)]">
+    <div className={cn('flex-shrink-0 border-t border-[var(--color-border)] p-4 bg-[var(--color-surface-inset,#f8fafc)]', footerClassName)}>
       {footer}
     </div>
   ) : null;
@@ -224,7 +237,10 @@ function Drawer({
         data-testid={testId}
         data-docked="true"
         className={cn(
-          'relative flex h-full min-h-0 flex-shrink-0 flex-col overflow-hidden',
+          // max-w-full (2.391.0): a docked panel never outgrows the column it
+          // sits in — a 400px drawer in a 320px column clipped its own × and
+          // body. The column sets the width; `width` is only an upper bound.
+          'relative flex h-full min-h-0 max-w-full flex-shrink-0 flex-col overflow-hidden',
           'bg-surface border-l border-[var(--color-border)]',
           resolvedWidth === undefined && 'w-full',
           className,
