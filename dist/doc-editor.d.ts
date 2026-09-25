@@ -616,14 +616,17 @@ export declare interface CommentGhostThread {
     quote?: string;
 }
 
-export declare function CommentHandoffBar({ author, quote, resolveOnApply, onResolveOnApplyChange, onDismiss, className, 'data-testid': testId, }: CommentHandoffBarProps): JSX.Element;
+export declare function CommentHandoffBar({ author, quote, variant, resolveOnApply, onResolveOnApplyChange, onDismiss, className, 'data-testid': testId, }: CommentHandoffBarProps): JSX.Element;
 
 export declare interface CommentHandoffBarProps {
     author: string;
     /** The anchored text, when the comment has one. */
     quote?: string;
-    resolveOnApply: boolean;
-    onResolveOnApplyChange: (next: boolean) => void;
+    /** `agent` (default): answering through the agent. `reply`: the composer is posting a reply. */
+    variant?: 'agent' | 'reply';
+    /** Agent variant only. */
+    resolveOnApply?: boolean;
+    onResolveOnApplyChange?: (next: boolean) => void;
     onDismiss: () => void;
     className?: string;
     'data-testid'?: string;
@@ -665,6 +668,14 @@ export declare interface CommentReplyComposerProps {
     onCancel?: () => void;
     dictation?: CommentReplyDictation;
     placeholder?: string;
+    /**
+     * `card` (default): the 280px margin card's compact box. `dock`: the page's
+     * docked composer in Reply mode — the dock's comfortable density and
+     * `editor` strip, so switching Agent → Reply does not change the box's size.
+     */
+    variant?: 'card' | 'dock';
+    /** Send's label. Default `Reply`. */
+    submitLabel?: string;
     className?: string;
     'data-testid'?: string;
 }
@@ -707,7 +718,7 @@ declare interface CommentThread extends CommentData {
     replies: CommentThread[];
 }
 
-export declare function CommentThreadNode({ comment, context, actions, onAskAgent, renderReply, depth, onReply, mentionUsers, onResolveThread, onUnresolveThread, }: CommentThreadNodeProps): JSX.Element;
+export declare function CommentThreadNode({ comment, context, actions, onAskAgent, renderReply, onReplyRequest, replyingToId, depth, onReply, mentionUsers, onResolveThread, onUnresolveThread, }: CommentThreadNodeProps): JSX.Element;
 
 export declare interface CommentThreadNodeProps {
     comment: CommentThread;
@@ -734,6 +745,19 @@ export declare interface CommentThreadNodeProps {
         submit: (text: string) => void;
         close: () => void;
     }) => ReactNode;
+    /**
+     * Reply goes somewhere else: pressing it calls this instead of opening any
+     * box in the card — the host moves the reply into its docked composer
+     * (Reply mode). Reaches nested replies too.
+     */
+    onReplyRequest?: (args: {
+        commentId: string;
+        depth: number;
+        author: string;
+        text: string;
+    }) => void;
+    /** The comment whose reply is being written elsewhere: its Reply reads "Replying…", pressed. */
+    replyingToId?: string | null;
     depth: number;
     onReply: (parentId: string, text: string) => void;
     mentionUsers: MentionUser[];
@@ -3920,19 +3944,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3952,12 +3963,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
         };
     }
 }
@@ -3975,9 +3986,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -3985,9 +3996,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -4024,6 +4038,16 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

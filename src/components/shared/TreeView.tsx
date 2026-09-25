@@ -9,7 +9,7 @@
 // opens a directory (or steps into it), ArrowLeft closes one (or steps up to
 // the parent), Enter/Space select (and toggle a directory). A click anywhere
 // on a directory row — caret, icon, title, count; not its ⋯ — selects it AND
-// opens/closes it, the same as Enter (2.389.9): the caret alone was a 20px
+// opens/closes it, the same as Enter (2.389.10): the caret alone was a 20px
 // target and a click on the title only selected its text. Every row carries `aria-level` and a
 // directory row `aria-expanded`. Two consuming apps had bolted this on from
 // outside by reading the rendered DOM back; it belongs here.
