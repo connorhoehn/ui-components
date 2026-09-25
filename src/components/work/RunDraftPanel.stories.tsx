@@ -5,6 +5,7 @@ import { AgentTaskCard } from '../layout/AgentTaskCard';
 import { Button } from '../ui/Button';
 import { BranchIcon } from '../ui/Icons';
 import { Checkbox } from '../forms/Checkbox';
+import { FileKindMark } from '../shared/FileKindMark';
 
 const AGENTS = [
   { value: 'implementation', label: 'Implementation agent' },
@@ -131,5 +132,16 @@ export const PriorBracketUsdBudget: Story = {
     status: 'no-draft',
     confidence: { sampleSize: 0, basis: 'prior' },
     budget: { unit: 'usd', usd: 0.3, onChange: () => {}, hint: 'Not started if forecast above this' },
+  },
+};
+
+/** A multi-source run: the documents it will read, one of them restricted to this viewer. */
+export const WithSources: Story = {
+  args: {
+    sources: [
+      { id: 'd1', title: 'Release plan', mark: <FileKindMark kind="page" size="sm" />, onOpen: () => {} },
+      { id: 'd2', title: 'Q3 planning call — a much longer title that truncates', mark: <FileKindMark kind="page" size="sm" />, onOpen: () => {} },
+      { id: 'd3', title: 'Restricted item', restricted: true },
+    ],
   },
 };

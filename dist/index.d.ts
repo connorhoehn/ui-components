@@ -14111,7 +14111,7 @@ export declare const RUN_DRAFT_STATUS_LABELS: Record<RunDraftStatus, string>;
 
 export declare type RunDraftBudget = RunDraftTokenBudget | RunDraftUsdBudget;
 
-export declare function RunDraftPanel({ status, collapsed: collapsedProp, defaultCollapsed, onCollapsedChange, target, fields, cost, duration, confidence, budget, advanced, advancedLabel, access, onSave, saveDisabledReason, saving, onDispatch, dispatchDisabledReason, error, live, footnote, className, 'data-testid': testId, }: RunDraftPanelProps): JSX.Element;
+export declare function RunDraftPanel({ status, collapsed: collapsedProp, defaultCollapsed, onCollapsedChange, target, sources, sourcesLabel, fields, cost, duration, confidence, budget, advanced, advancedLabel, access, onSave, saveDisabledReason, saving, onDispatch, dispatchDisabledReason, error, live, footnote, className, 'data-testid': testId, }: RunDraftPanelProps): JSX.Element;
 
 export declare interface RunDraftPanelProps {
     status: RunDraftStatus;
@@ -14121,6 +14121,10 @@ export declare interface RunDraftPanelProps {
     onCollapsedChange?: (collapsed: boolean) => void;
     /** The chosen workflow. `null` shows "No workflow chosen"; `undefined` shows nothing. */
     target?: RunDraftTarget | null;
+    /** The documents the run will read. Empty, `null` or omitted → no section. Stays visible when `live` is shown. */
+    sources?: readonly RunDraftSourceItem[] | null;
+    /** Header for the sources list; default "Sources". */
+    sourcesLabel?: string;
     fields?: RunDraftSelectField[];
     cost?: RunEstimate;
     duration?: RunEstimate;
@@ -14153,6 +14157,19 @@ export declare interface RunDraftSelectField {
     /** Disables the select and says why (e.g. "This pipeline sets its own model"). */
     disabledReason?: string;
     placeholder?: string;
+}
+
+/** A document the run will read, shown as a chip under the target. */
+export declare interface RunDraftSourceItem {
+    id: string;
+    /** What the viewer may see: the document title, or the host's "Restricted item" for one they cannot read. */
+    title: string;
+    /** A file-kind mark (e.g. <FileKindMark kind="page" size="sm" />); omit for a restricted item. */
+    mark?: ReactNode;
+    /** The viewer cannot read it: neutral styling, no link, no mark. */
+    restricted?: boolean;
+    /** Opens the source; absent (or restricted) → not interactive. */
+    onOpen?: () => void;
 }
 
 export declare type RunDraftStatus = 'no-draft' | 'unsaved' | 'saved' | 'dispatching' | 'running' | 'completed' | 'failed' | 'stopped';
@@ -20791,19 +20808,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasListStyle: {
             /**
              * Make the caret's block a list of the style's kind (if it is not one
@@ -20836,6 +20840,29 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -20855,16 +20882,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

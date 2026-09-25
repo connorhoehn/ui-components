@@ -36,6 +36,7 @@ export type {
   RunDraftTokenBudget,
   RunDraftUsdBudget,
   RunDraftTarget,
+  RunDraftSourceItem,
   RunEstimateConfidence,
 } from './RunDraftPanel';
 export { EstimateRow, formatEstimate, confidenceOf, confidenceNote } from './EstimateRow';

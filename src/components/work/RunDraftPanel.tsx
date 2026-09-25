@@ -114,6 +114,19 @@ export interface RunDraftTarget {
   subtitle?: string;
 }
 
+/** A document the run will read, shown as a chip under the target. */
+export interface RunDraftSourceItem {
+  id: string;
+  /** What the viewer may see: the document title, or the host's "Restricted item" for one they cannot read. */
+  title: string;
+  /** A file-kind mark (e.g. <FileKindMark kind="page" size="sm" />); omit for a restricted item. */
+  mark?: ReactNode;
+  /** The viewer cannot read it: neutral styling, no link, no mark. */
+  restricted?: boolean;
+  /** Opens the source; absent (or restricted) → not interactive. */
+  onOpen?: () => void;
+}
+
 export interface RunDraftPanelProps {
   status: RunDraftStatus;
   /** Controlled collapse. Omit to let the panel own it. */
@@ -122,6 +135,10 @@ export interface RunDraftPanelProps {
   onCollapsedChange?: (collapsed: boolean) => void;
   /** The chosen workflow. `null` shows "No workflow chosen"; `undefined` shows nothing. */
   target?: RunDraftTarget | null;
+  /** The documents the run will read. Empty, `null` or omitted → no section. Stays visible when `live` is shown. */
+  sources?: readonly RunDraftSourceItem[] | null;
+  /** Header for the sources list; default "Sources". */
+  sourcesLabel?: string;
   fields?: RunDraftSelectField[];
   cost?: RunEstimate;
   duration?: RunEstimate;
@@ -167,6 +184,72 @@ function InfoLine({ children, className, 'data-testid': testId }: { children: Re
       <InfoIcon size={14} className="shrink-0" />
       <span>{children}</span>
     </p>
+  );
+}
+
+// Same chip vocabulary as DocumentChip (social/DocumentChip) — a rounded-full
+// bordered pill with a small mark and a truncating title — but the mark is a
+// node and a restricted item is not a button at all.
+const SOURCE_CHIP = 'inline-flex min-w-0 max-w-full items-center gap-1 rounded-full border px-2 py-0.5 text-[11px]';
+
+function SourceChip({ source }: { source: RunDraftSourceItem }) {
+  if (source.restricted) {
+    return (
+      <span
+        title={source.title}
+        data-testid="run-draft-source"
+        data-restricted=""
+        className={cn(SOURCE_CHIP, 'border-dashed border-border bg-surface-inset text-text-tertiary')}
+      >
+        <span className="min-w-0 truncate">{source.title}</span>
+      </span>
+    );
+  }
+  const inner = (
+    <>
+      {source.mark != null && <span aria-hidden="true" className="flex shrink-0 items-center">{source.mark}</span>}
+      <span className="min-w-0 truncate">{source.title}</span>
+    </>
+  );
+  if (source.onOpen) {
+    return (
+      <button
+        type="button"
+        onClick={source.onOpen}
+        title={source.title}
+        aria-label={source.title}
+        data-testid="run-draft-source"
+        className={cn(
+          SOURCE_CHIP,
+          'border-border bg-surface text-text-primary hover:border-primary hover:bg-surface-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+        )}
+      >
+        {inner}
+      </button>
+    );
+  }
+  return (
+    <span title={source.title} data-testid="run-draft-source" className={cn(SOURCE_CHIP, 'border-border bg-surface text-text-primary')}>
+      {inner}
+    </span>
+  );
+}
+
+function SourcesSection({ sources, label }: { sources: readonly RunDraftSourceItem[]; label: string }) {
+  const labelId = useId();
+  return (
+    <div className="py-2" data-testid="run-draft-sources">
+      <div id={labelId} className="text-[12px] text-text-secondary" data-testid="run-draft-sources-label">
+        {label} · {sources.length}
+      </div>
+      <ul aria-labelledby={labelId} className="mt-1.5 flex flex-wrap gap-1.5">
+        {sources.map((s) => (
+          <li key={s.id} className="min-w-0 max-w-full">
+            <SourceChip source={s} />
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
@@ -289,6 +372,8 @@ export function RunDraftPanel({
   defaultCollapsed = false,
   onCollapsedChange,
   target,
+  sources,
+  sourcesLabel = 'Sources',
   fields,
   cost,
   duration,
@@ -328,6 +413,8 @@ export function RunDraftPanel({
   const footnoteNode =
     footnote === undefined ? <InfoLine data-testid="run-draft-footnote">Nothing runs until you authorize it.</InfoLine> : footnote;
 
+  const sourcesNode = sources != null && sources.length > 0 ? <SourcesSection sources={sources} label={sourcesLabel} /> : null;
+
   const form = (
     <>
       {target === null && (
@@ -344,6 +431,7 @@ export function RunDraftPanel({
           </div>
         </div>
       )}
+      {sourcesNode}
 
       <div className={cn('mt-3 divide-y divide-border', target != null && 'border-t border-border')}>
         {fields?.map((f) => <FieldRow key={f.id} field={f} />)}
@@ -403,7 +491,12 @@ export function RunDraftPanel({
 
       {!collapsed && (
         <div id={bodyId} className="mt-3 flex flex-col" data-testid="run-draft-body">
-          {live != null ? <div data-testid="run-draft-live">{live}</div> : form}
+          {live != null ? (
+            <>
+              {sourcesNode}
+              <div data-testid="run-draft-live">{live}</div>
+            </>
+          ) : form}
 
           {error && (
             <InlineAlert tone="error" className="mt-3" data-testid="run-draft-error">

@@ -261,3 +261,51 @@ describe('AccessNotice', () => {
     expect(screen.queryByRole('link')).toBeNull();
   });
 });
+
+describe('RunDraftPanel sources', () => {
+  const sources = [
+    { id: 'a', title: 'Release plan', mark: <span data-testid="mark-a" />, onOpen: vi.fn() },
+    { id: 'b', title: 'Notes' },
+    { id: 'c', title: 'Restricted item', restricted: true, onOpen: vi.fn() },
+  ];
+
+  it('renders a labelled chip per source under the target', () => {
+    render(<RunDraftPanel status="saved" target={{ title: 'Deck' }} sources={sources} />);
+    const section = screen.getByTestId('run-draft-sources');
+    expect(within(section).getByText('Sources · 3')).toBeTruthy();
+    expect(within(section).getAllByTestId('run-draft-source')).toHaveLength(3);
+    expect(within(section).getAllByTestId('run-draft-source')[0].getAttribute('title')).toBe('Release plan');
+  });
+
+  it('a restricted chip is not a button and carries data-restricted', () => {
+    render(<RunDraftPanel status="saved" sources={sources} />);
+    const chips = screen.getAllByTestId('run-draft-source');
+    expect(chips[2].hasAttribute('data-restricted')).toBe(true);
+    expect(chips[2].tagName).not.toBe('BUTTON');
+    expect(chips[1].tagName).not.toBe('BUTTON');
+    expect(screen.queryByRole('button', { name: 'Restricted item' })).toBeNull();
+  });
+
+  it('an openable source is a named button that fires onOpen', () => {
+    render(<RunDraftPanel status="saved" sources={sources} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Release plan' }));
+    expect(sources[0].onOpen).toHaveBeenCalledTimes(1);
+    expect(sources[2].onOpen).not.toHaveBeenCalled();
+  });
+
+  it('stays visible when the live card replaces the form, with a custom label', () => {
+    render(<RunDraftPanel status="running" sources={sources} sourcesLabel="Reads" live={<div>live card</div>} />);
+    expect(screen.getByTestId('run-draft-live')).toBeTruthy();
+    expect(screen.getByText('Reads · 3')).toBeTruthy();
+    expect(screen.getAllByTestId('run-draft-source')).toHaveLength(3);
+  });
+
+  it('renders nothing for empty, null or omitted sources', () => {
+    const { rerender } = render(<RunDraftPanel status="saved" sources={[]} />);
+    expect(screen.queryByTestId('run-draft-sources')).toBeNull();
+    rerender(<RunDraftPanel status="saved" sources={null} />);
+    expect(screen.queryByTestId('run-draft-sources')).toBeNull();
+    rerender(<RunDraftPanel status="saved" />);
+    expect(screen.queryByTestId('run-draft-sources')).toBeNull();
+  });
+});
