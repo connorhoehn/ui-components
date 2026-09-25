@@ -63,7 +63,7 @@ export interface ExplorerLayoutProps {
   /** A count beside `railTitle` ("Work 11"). Since 2.385.0. */
   railCount?: number;
   /** The rail's heading style — see `WorkspaceRail.heading`. Default `compact`. Since 2.385.0. */
-  railHeading?: 'compact' | 'prominent';
+  railHeading?: 'compact' | 'prominent' | 'label';
   /**
    * The rail folded to a strip with one control that brings it back. For a
    * surface that wants the width — a diagram, a wide table — the list of

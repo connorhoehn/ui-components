@@ -47,6 +47,13 @@ export interface ConversationShelfProps {
    * scale of the Folders tree under them.
    */
   size?: 'sm' | 'md';
+  /**
+   * Labels only — no icon slot. The selected row takes the folder tree's
+   * selection (primary tint, primary left accent), so the views above a
+   * `TreeView size="md"` and the tree read as one list. The All documents
+   * mockup's All documents / Recent / Shared with me. Since 2.389.2.
+   */
+  plain?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -58,6 +65,7 @@ export function ConversationShelf({
   compact = false,
   iconOnly = false,
   size = 'sm',
+  plain = false,
   className,
   'data-testid': testId = 'conversation-shelf',
 }: ConversationShelfProps) {
@@ -84,13 +92,14 @@ export function ConversationShelf({
               className={cn(
                 'relative flex w-full cursor-pointer items-center gap-2 text-left',
                 compact ? cn('border-l-2 border-transparent px-2', size === 'md' ? 'min-h-9 gap-3 py-1.5' : 'min-h-8 py-1') : 'rounded-lg px-2 py-1.5',
-                compact && active && 'border-primary bg-surface-hover',
+                compact && active && (plain ? 'border-primary bg-primary-bg' : 'border-primary bg-surface-hover'),
+                plain && size === 'md' && 'pl-4',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset',
-                'hover:bg-surface-hover',
-                active && 'bg-surface-hover',
+                !(plain && active) && 'hover:bg-surface-hover',
+                active && !plain && 'bg-surface-hover',
               )}
             >
-              <span
+              {!plain && <span
                 aria-hidden
                 className={compact ? (size === 'md' ? 'grid h-5 w-5 shrink-0 place-items-center' : 'grid h-4 w-4 shrink-0 place-items-center') : 'grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-surface-inset'}
               >
@@ -101,12 +110,13 @@ export function ConversationShelf({
                 <span className={cn('grid shrink-0 place-items-center text-text-secondary', size === 'md' ? 'h-5 w-5 [&>svg]:h-[18px] [&>svg]:w-[18px]' : 'h-4 w-4')}>
                   {item.icon ?? <span className="h-1.5 w-1.5 rounded-full bg-current" />}
                 </span>
-              </span>
+              </span>}
               {!iconOnly && <span
                 className={cn(
                   'min-w-0 flex-1 truncate',
                   size === 'md' ? 'text-[15px]' : 'text-[13px]',
-                  count > 0 || active ? 'font-semibold text-text-primary' : size === 'md' ? 'font-normal text-text-primary' : 'font-medium text-text-secondary',
+                  plain && active ? 'font-medium text-primary-fg'
+                    : count > 0 || active ? 'font-semibold text-text-primary' : size === 'md' ? 'font-normal text-text-primary' : 'font-medium text-text-secondary',
                 )}
               >
                 {item.label}

@@ -192,17 +192,17 @@ function ke({ title: e, label: t, actions: n, header: r, footer: i, children: a,
 		className: o("flex h-full min-h-0 shrink-0 flex-col border-r border-border bg-surface-panel", d ? "w-9" : s === "sm" ? "w-[240px]" : s === "lg" ? "w-[368px]" : s === "ml" ? "w-[320px]" : "w-[300px]", g),
 		children: [
 			(e || n || p) && /* @__PURE__ */ $("div", {
-				className: o("flex shrink-0 items-center gap-1", l === "prominent" ? "h-14" : "h-9 border-b border-border", d ? "justify-center" : l === "prominent" ? "pl-5 pr-3" : "pl-3.5 pr-1.5"),
+				className: o("flex shrink-0 items-center gap-1", l === "compact" ? "h-9 border-b border-border" : "h-14", d ? "justify-center" : l === "compact" ? "pl-3.5 pr-1.5" : "pl-5 pr-3"),
 				"data-testid": `${_}-header`,
 				children: [
 					!d && (e ? /* @__PURE__ */ $("h2", {
-						className: o("m-0 flex min-w-0 flex-1 items-center gap-2 text-text-primary", l === "prominent" ? "text-[18px] font-semibold" : "text-[12px] font-semibold"),
+						className: o("m-0 flex min-w-0 flex-1 items-center gap-2 text-text-primary", l === "prominent" ? "text-[18px] font-semibold" : l === "label" ? "text-[15px] font-semibold uppercase tracking-[0.02em]" : "text-[12px] font-semibold"),
 						"data-testid": `${_}-title`,
 						children: [/* @__PURE__ */ Q("span", {
 							className: "min-w-0 truncate",
 							children: e
 						}), typeof c == "number" && /* @__PURE__ */ Q(E, {
-							size: l === "prominent" ? "md" : "xs",
+							size: l === "prominent" ? "md" : l === "label" ? "sm" : "xs",
 							tone: "neutral",
 							className: "shrink-0",
 							"aria-label": `${c} items`,
@@ -227,7 +227,7 @@ function ke({ title: e, label: t, actions: n, header: r, footer: i, children: a,
 				]
 			}),
 			!d && r && /* @__PURE__ */ Q("div", {
-				className: o("shrink-0 py-3", l === "prominent" ? "px-5 pt-0" : "px-3.5"),
+				className: o("shrink-0 py-3", l === "compact" ? "px-3.5" : "px-5 pt-0"),
 				children: r
 			}),
 			/* @__PURE__ */ Q("div", {
@@ -3152,23 +3152,23 @@ function Mt({ reactions: e, onReact: t, disabled: n = !1, pickerEmojis: r = ve, 
 }
 //#endregion
 //#region src/components/social/ConversationShelf.tsx
-function Nt({ items: e, activeId: t, onSelect: n, compact: r = !1, iconOnly: i = !1, size: a = "sm", className: s, "data-testid": c = "conversation-shelf" }) {
+function Nt({ items: e, activeId: t, onSelect: n, compact: r = !1, iconOnly: i = !1, size: a = "sm", plain: s = !1, className: c, "data-testid": l = "conversation-shelf" }) {
 	return e.length === 0 ? null : /* @__PURE__ */ Q("ul", {
-		"data-testid": c,
-		className: o("m-0 flex list-none flex-col gap-0.5 p-0", s),
+		"data-testid": l,
+		className: o("m-0 flex list-none flex-col gap-0.5 p-0", c),
 		children: e.map((e) => {
-			let s = e.id === t, l = e.count ?? 0;
+			let c = e.id === t, u = e.count ?? 0;
 			return /* @__PURE__ */ Q("li", { children: /* @__PURE__ */ $("button", {
 				type: "button",
 				onClick: () => n(e.id),
 				"aria-label": i ? e.label : void 0,
 				title: i ? e.label : void 0,
-				"data-testid": `${c}-${e.id}`,
-				"data-active": s ? "true" : "false",
-				"aria-current": s ? "true" : void 0,
-				className: o("relative flex w-full cursor-pointer items-center gap-2 text-left", r ? o("border-l-2 border-transparent px-2", a === "md" ? "min-h-9 gap-3 py-1.5" : "min-h-8 py-1") : "rounded-lg px-2 py-1.5", r && s && "border-primary bg-surface-hover", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset", "hover:bg-surface-hover", s && "bg-surface-hover"),
+				"data-testid": `${l}-${e.id}`,
+				"data-active": c ? "true" : "false",
+				"aria-current": c ? "true" : void 0,
+				className: o("relative flex w-full cursor-pointer items-center gap-2 text-left", r ? o("border-l-2 border-transparent px-2", a === "md" ? "min-h-9 gap-3 py-1.5" : "min-h-8 py-1") : "rounded-lg px-2 py-1.5", r && c && (s ? "border-primary bg-primary-bg" : "border-primary bg-surface-hover"), s && a === "md" && "pl-4", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset", !(s && c) && "hover:bg-surface-hover", c && !s && "bg-surface-hover"),
 				children: [
-					/* @__PURE__ */ Q("span", {
+					!s && /* @__PURE__ */ Q("span", {
 						"aria-hidden": !0,
 						className: r ? a === "md" ? "grid h-5 w-5 shrink-0 place-items-center" : "grid h-4 w-4 shrink-0 place-items-center" : "grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-surface-inset",
 						children: /* @__PURE__ */ Q("span", {
@@ -3177,13 +3177,13 @@ function Nt({ items: e, activeId: t, onSelect: n, compact: r = !1, iconOnly: i =
 						})
 					}),
 					!i && /* @__PURE__ */ Q("span", {
-						className: o("min-w-0 flex-1 truncate", a === "md" ? "text-[15px]" : "text-[13px]", l > 0 || s ? "font-semibold text-text-primary" : a === "md" ? "font-normal text-text-primary" : "font-medium text-text-secondary"),
+						className: o("min-w-0 flex-1 truncate", a === "md" ? "text-[15px]" : "text-[13px]", s && c ? "font-medium text-primary-fg" : u > 0 || c ? "font-semibold text-text-primary" : a === "md" ? "font-normal text-text-primary" : "font-medium text-text-secondary"),
 						children: e.label
 					}),
-					l > 0 && /* @__PURE__ */ Q("span", {
-						"data-testid": `${c}-${e.id}-count`,
+					u > 0 && /* @__PURE__ */ Q("span", {
+						"data-testid": `${l}-${e.id}-count`,
 						className: o("grid h-5 min-w-5 shrink-0 place-items-center rounded px-1 text-[11px] font-semibold leading-none text-white", i && "absolute right-0 top-0 scale-75", e.urgent ? "bg-danger" : "bg-primary"),
-						children: l > 99 ? "99+" : l
+						children: u > 99 ? "99+" : u
 					})
 				]
 			}) }, e.id);

@@ -100,6 +100,13 @@ export interface NavRailProps {
     props: AnchorHTMLAttributes<HTMLAnchorElement>,
   ) => ReactNode;
   tone?: NavRailTone;
+  /**
+   * `sm` (default) is the 13px rail. `md` is the Documents surface's
+   * Workspace rail (the All documents mockup): 15px labels on 36px rows, a
+   * heading row with no rule under it, and a hairline between groups.
+   * Since 2.389.2.
+   */
+  size?: 'sm' | 'md';
   /** Names the nav landmark. Falls back to the title, then 'Navigation'. */
   'aria-label'?: string;
   className?: string;
@@ -181,11 +188,13 @@ function RailItem({
   active,
   palette,
   renderLink,
+  size = 'sm',
 }: {
   item: NavRailItem;
   active: boolean;
   palette: Palette;
   renderLink?: NavRailProps['renderLink'];
+  size?: 'sm' | 'md';
 }) {
   const body = (
     <>
@@ -193,8 +202,9 @@ function RailItem({
         {item.icon && <span className="flex-none" aria-hidden="true">{item.icon}</span>}
         <span
           className={cn(
-            'truncate text-[13px] font-medium',
-            active ? palette.labelActive : palette.label,
+            'truncate',
+            size === 'md' ? 'text-[15px] font-normal' : 'text-[13px] font-medium',
+            active || size === 'md' ? palette.labelActive : palette.label,
           )}
         >
           {item.label}
@@ -217,7 +227,8 @@ function RailItem({
   );
 
   const shell = cn(
-    'block w-full border-l-[3px] border-transparent px-3 py-1.5 text-left no-underline',
+    'block w-full border-l-[3px] border-transparent text-left no-underline',
+    size === 'md' ? 'py-[7px] pl-[33px] pr-4' : 'px-3 py-1.5',
     palette.hover,
     active && palette.active,
     item.disabled && 'pointer-events-none opacity-50',
@@ -256,6 +267,8 @@ function RailGroup({
   palette,
   storageKey,
   renderLink,
+  size = 'sm',
+  divided = false,
 }: {
   name: string;
   items: NavRailItem[];
@@ -264,6 +277,9 @@ function RailGroup({
   palette: Palette;
   storageKey?: string;
   renderLink?: NavRailProps['renderLink'];
+  size?: 'sm' | 'md';
+  /** A hairline above the group — every group after the first, at `md`. */
+  divided?: boolean;
 }) {
   const [collapsed, setCollapsed] = useState<boolean>(() => {
     if (!storageKey || typeof window === 'undefined') return false;
@@ -302,7 +318,8 @@ function RailGroup({
   }, [collapsed]);
 
   return (
-    <section>
+    <section className={cn(size === 'md' && 'pb-1')}>
+      {divided && <div aria-hidden="true" className={cn('mx-5 mb-2 mt-1 border-t', palette.divider)} />}
       <button
         ref={headerRef}
         type="button"
@@ -310,7 +327,8 @@ function RailGroup({
         aria-expanded={!collapsed}
         aria-controls={bodyId}
         className={cn(
-          'flex w-full cursor-pointer items-center gap-1.5 border-none bg-transparent px-3 py-1.5 text-left text-[10px] font-bold uppercase tracking-[0.06em]',
+          'flex w-full cursor-pointer items-center gap-1.5 border-none bg-transparent text-left font-bold uppercase tracking-[0.06em]',
+          size === 'md' ? 'px-5 py-1.5 text-[11px]' : 'px-3 py-1.5 text-[10px]',
           palette.group,
         )}
       >
@@ -328,6 +346,7 @@ function RailGroup({
               active={isActive(item, activeHref, match)}
               palette={palette}
               renderLink={renderLink}
+              size={size}
             />
           ))}
         </div>
@@ -348,6 +367,7 @@ export function NavRail({
   storageKey,
   renderLink,
   tone = 'surface',
+  size = 'sm',
   'aria-label': ariaLabel,
   className,
   'data-testid': testId,
@@ -369,7 +389,8 @@ export function NavRail({
     >
       {(title != null || titleAction) && (
         <div className={cn(
-            'flex flex-none items-center justify-between gap-2 border-b px-3 py-2.5',
+            'flex flex-none items-center justify-between gap-2',
+            size === 'md' ? 'h-12 pl-5 pr-3' : 'border-b px-3 py-2.5',
             palette.divider,
           )}>
           <span
@@ -397,6 +418,7 @@ export function NavRail({
                   active={isActive(item, activeHref, match)}
                   palette={palette}
                   renderLink={renderLink}
+                  size={size}
                 />
               ))}
             </div>
@@ -410,6 +432,8 @@ export function NavRail({
               palette={palette}
               storageKey={storageKey ? `${storageKey}.g${gi}.${g.name}` : undefined}
               renderLink={renderLink}
+              size={size}
+              divided={size === 'md' && gi > 0}
             />
           ),
         )}

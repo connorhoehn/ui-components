@@ -5131,7 +5131,7 @@ export declare interface ConversationRailProps {
     'data-testid'?: string;
 }
 
-export declare function ConversationShelf({ items, activeId, onSelect, compact, iconOnly, size, className, 'data-testid': testId, }: ConversationShelfProps): JSX.Element | null;
+export declare function ConversationShelf({ items, activeId, onSelect, compact, iconOnly, size, plain, className, 'data-testid': testId, }: ConversationShelfProps): JSX.Element | null;
 
 export declare interface ConversationShelfItem {
     id: string;
@@ -5165,6 +5165,13 @@ export declare interface ConversationShelfProps {
      * scale of the Folders tree under them.
      */
     size?: 'sm' | 'md';
+    /**
+     * Labels only — no icon slot. The selected row takes the folder tree's
+     * selection (primary tint, primary left accent), so the views above a
+     * `TreeView size="md"` and the tree read as one list. The All documents
+     * mockup's All documents / Recent / Shared with me. Since 2.389.2.
+     */
+    plain?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -7006,7 +7013,7 @@ export declare interface ExplorerLayoutProps {
     /** A count beside `railTitle` ("Work 11"). Since 2.385.0. */
     railCount?: number;
     /** The rail's heading style — see `WorkspaceRail.heading`. Default `compact`. Since 2.385.0. */
-    railHeading?: 'compact' | 'prominent';
+    railHeading?: 'compact' | 'prominent' | 'label';
     /**
      * The rail folded to a strip with one control that brings it back. For a
      * surface that wants the width — a diagram, a wide table — the list of
@@ -10756,7 +10763,7 @@ export declare function nameToColor(name: string): string;
 
 export declare function nameToInitials(name: string): string;
 
-export declare function NavRail({ title, items, activeHref, match, titleAction, header, footer, width, storageKey, renderLink, tone, 'aria-label': ariaLabel, className, 'data-testid': testId, }: NavRailProps): JSX.Element;
+export declare function NavRail({ title, items, activeHref, match, titleAction, header, footer, width, storageKey, renderLink, tone, size, 'aria-label': ariaLabel, className, 'data-testid': testId, }: NavRailProps): JSX.Element;
 
 export declare interface NavRailItem {
     /** Target path. Also the React key unless `id` is given. */
@@ -10813,6 +10820,13 @@ export declare interface NavRailProps {
     /** Render links with a router's Link/NavLink. Defaults to a plain `<a>`. */
     renderLink?: (item: NavRailItem, props: AnchorHTMLAttributes<HTMLAnchorElement>) => ReactNode;
     tone?: NavRailTone;
+    /**
+     * `sm` (default) is the 13px rail. `md` is the Documents surface's
+     * Workspace rail (the All documents mockup): 15px labels on 36px rows, a
+     * heading row with no rule under it, and a hairline between groups.
+     * Since 2.389.2.
+     */
+    size?: 'sm' | 'md';
     /** Names the nav landmark. Falls back to the title, then 'Navigation'. */
     'aria-label'?: string;
     className?: string;
@@ -20554,9 +20568,11 @@ declare interface UseActivityBusReturn {
       /**
        * `compact` (default) is the 36px, 12px-title strip a tree rail wears;
        * `prominent` is the column heading a work list wears — an 18px title and
-       * count on a 56px row, no rule under it.
+       * count on a 56px row, no rule under it. `label` is the same 56px row with
+       * the title as a 15px uppercase label — "DOCUMENTS 137", the All documents
+       * mockup (since 2.389.2).
        */
-      heading?: 'compact' | 'prominent';
+      heading?: 'compact' | 'prominent' | 'label';
       collapsed?: boolean;
       collapsedContent?: ReactNode;
       onToggle?: () => void;
@@ -20604,19 +20620,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -20649,9 +20652,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -20659,9 +20665,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -20705,12 +20714,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -20721,6 +20727,16 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

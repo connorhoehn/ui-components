@@ -2699,8 +2699,8 @@ function Jt(e) {
 		items: t
 	}), i.concat(n);
 }
-function Yt({ item: t, active: n, palette: r, renderLink: i }) {
-	let a = /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ U("span", {
+function Yt({ item: t, active: n, palette: r, renderLink: i, size: a = "sm" }) {
+	let o = /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ U("span", {
 		className: "flex items-center gap-2 min-w-0",
 		children: [
 			t.icon && /* @__PURE__ */ H("span", {
@@ -2709,7 +2709,7 @@ function Yt({ item: t, active: n, palette: r, renderLink: i }) {
 				children: t.icon
 			}),
 			/* @__PURE__ */ H("span", {
-				className: e("truncate text-[13px] font-medium", n ? r.labelActive : r.label),
+				className: e("truncate", a === "md" ? "text-[15px] font-normal" : "text-[13px] font-medium", n || a === "md" ? r.labelActive : r.label),
 				children: t.label
 			}),
 			t.badge != null && /* @__PURE__ */ H("span", {
@@ -2720,26 +2720,26 @@ function Yt({ item: t, active: n, palette: r, renderLink: i }) {
 	}), t.hint && /* @__PURE__ */ H("span", {
 		className: e("mt-0.5 block truncate text-[10px]", r.hint),
 		children: t.hint
-	})] }), o = e("block w-full border-l-[3px] border-transparent px-3 py-1.5 text-left no-underline", r.hover, n && r.active, t.disabled && "pointer-events-none opacity-50");
+	})] }), s = e("block w-full border-l-[3px] border-transparent text-left no-underline", a === "md" ? "py-[7px] pl-[33px] pr-4" : "px-3 py-1.5", r.hover, n && r.active, t.disabled && "pointer-events-none opacity-50");
 	if (t.onClick || !t.to) return /* @__PURE__ */ H("button", {
 		type: "button",
 		onClick: t.onClick,
 		disabled: t.disabled,
 		"aria-current": n ? "page" : void 0,
-		className: e(o, "cursor-pointer bg-transparent font-[inherit]"),
-		children: a
+		className: e(s, "cursor-pointer bg-transparent font-[inherit]"),
+		children: o
 	});
-	let s = {
+	let c = {
 		href: t.to,
-		className: o,
+		className: s,
 		"aria-current": n ? "page" : void 0,
 		"aria-disabled": t.disabled || void 0,
-		children: a
+		children: o
 	};
-	return i ? /* @__PURE__ */ H(V, { children: i(t, s) }) : /* @__PURE__ */ H("a", { ...s });
+	return i ? /* @__PURE__ */ H(V, { children: i(t, c) }) : /* @__PURE__ */ H("a", { ...c });
 }
-function Xt({ name: t, items: n, activeHref: r, match: i, palette: a, storageKey: o, renderLink: s }) {
-	let [c, l] = B(() => {
+function Xt({ name: t, items: n, activeHref: r, match: i, palette: a, storageKey: o, renderLink: s, size: c = "sm", divided: l = !1 }) {
+	let [u, d] = B(() => {
 		if (!o || typeof window > "u") return !1;
 		try {
 			return window.localStorage?.getItem(o) === "1";
@@ -2749,79 +2749,93 @@ function Xt({ name: t, items: n, activeHref: r, match: i, palette: a, storageKey
 	});
 	I(() => {
 		if (!(!o || typeof window > "u")) try {
-			c ? window.localStorage?.setItem(o, "1") : window.localStorage?.removeItem(o);
+			u ? window.localStorage?.setItem(o, "1") : window.localStorage?.removeItem(o);
 		} catch {}
-	}, [c, o]);
-	let u = L(), d = z(null), f = z(null), p = F(() => {
-		if (!c) {
+	}, [u, o]);
+	let f = L(), p = z(null), m = z(null), h = F(() => {
+		if (!u) {
 			let e = typeof document > "u" ? null : document.activeElement;
-			e && f.current?.contains(e) && d.current?.focus();
+			e && m.current?.contains(e) && p.current?.focus();
 		}
-		l((e) => !e);
-	}, [c]);
-	return /* @__PURE__ */ U("section", { children: [/* @__PURE__ */ U("button", {
-		ref: d,
-		type: "button",
-		onClick: p,
-		"aria-expanded": !c,
-		"aria-controls": u,
-		className: e("flex w-full cursor-pointer items-center gap-1.5 border-none bg-transparent px-3 py-1.5 text-left text-[10px] font-bold uppercase tracking-[0.06em]", a.group),
-		children: [/* @__PURE__ */ H("span", {
-			"aria-hidden": "true",
-			className: "inline-block w-2.5 text-[10px]",
-			children: c ? "▸" : "▾"
-		}), /* @__PURE__ */ H("span", {
-			className: "flex-1 truncate",
-			children: t
-		})]
-	}), !c && /* @__PURE__ */ H("div", {
-		id: u,
-		ref: f,
-		children: n.map((e, t) => /* @__PURE__ */ H(Yt, {
-			item: e,
-			active: qt(e, r, i),
-			palette: a,
-			renderLink: s
-		}, Kt(e, t)))
-	})] });
+		d((e) => !e);
+	}, [u]);
+	return /* @__PURE__ */ U("section", {
+		className: e(c === "md" && "pb-1"),
+		children: [
+			l && /* @__PURE__ */ H("div", {
+				"aria-hidden": "true",
+				className: e("mx-5 mb-2 mt-1 border-t", a.divider)
+			}),
+			/* @__PURE__ */ U("button", {
+				ref: p,
+				type: "button",
+				onClick: h,
+				"aria-expanded": !u,
+				"aria-controls": f,
+				className: e("flex w-full cursor-pointer items-center gap-1.5 border-none bg-transparent text-left font-bold uppercase tracking-[0.06em]", c === "md" ? "px-5 py-1.5 text-[11px]" : "px-3 py-1.5 text-[10px]", a.group),
+				children: [/* @__PURE__ */ H("span", {
+					"aria-hidden": "true",
+					className: "inline-block w-2.5 text-[10px]",
+					children: u ? "▸" : "▾"
+				}), /* @__PURE__ */ H("span", {
+					className: "flex-1 truncate",
+					children: t
+				})]
+			}),
+			!u && /* @__PURE__ */ H("div", {
+				id: f,
+				ref: m,
+				children: n.map((e, t) => /* @__PURE__ */ H(Yt, {
+					item: e,
+					active: qt(e, r, i),
+					palette: a,
+					renderLink: s,
+					size: c
+				}, Kt(e, t)))
+			})
+		]
+	});
 }
-function Zt({ title: t, items: n, activeHref: r, match: i = "prefix", titleAction: a, header: o, footer: s, width: c = "default", storageKey: l, renderLink: u, tone: d = "surface", "aria-label": f, className: p, "data-testid": m }) {
-	let h = Gt[d], g = R(() => Jt(n), [n]);
+function Zt({ title: t, items: n, activeHref: r, match: i = "prefix", titleAction: a, header: o, footer: s, width: c = "default", storageKey: l, renderLink: u, tone: d = "surface", size: f = "sm", "aria-label": p, className: m, "data-testid": h }) {
+	let g = Gt[d], _ = R(() => Jt(n), [n]);
 	return /* @__PURE__ */ U("nav", {
-		"aria-label": f ?? (typeof t == "string" ? t : void 0) ?? "Navigation",
-		"data-testid": m,
-		className: e("flex flex-none flex-col overflow-hidden border-r", Wt[c], h.rail, p),
+		"aria-label": p ?? (typeof t == "string" ? t : void 0) ?? "Navigation",
+		"data-testid": h,
+		className: e("flex flex-none flex-col overflow-hidden border-r", Wt[c], g.rail, m),
 		children: [
 			(t != null || a) && /* @__PURE__ */ U("div", {
-				className: e("flex flex-none items-center justify-between gap-2 border-b px-3 py-2.5", h.divider),
+				className: e("flex flex-none items-center justify-between gap-2", f === "md" ? "h-12 pl-5 pr-3" : "border-b px-3 py-2.5", g.divider),
 				children: [/* @__PURE__ */ H("span", {
-					className: e("truncate text-[11px] font-semibold uppercase tracking-[0.05em]", h.title),
+					className: e("truncate text-[11px] font-semibold uppercase tracking-[0.05em]", g.title),
 					children: t
 				}), a]
 			}),
 			o && /* @__PURE__ */ H("div", {
-				className: e("flex-none border-b px-2 py-2", h.divider),
+				className: e("flex-none border-b px-2 py-2", g.divider),
 				children: o
 			}),
 			/* @__PURE__ */ H("div", {
 				className: "min-h-0 flex-1 overflow-y-auto py-1",
-				children: g.map((e, t) => e.name === null ? /* @__PURE__ */ H("div", { children: e.items.map((e, t) => /* @__PURE__ */ H(Yt, {
+				children: _.map((e, t) => e.name === null ? /* @__PURE__ */ H("div", { children: e.items.map((e, t) => /* @__PURE__ */ H(Yt, {
 					item: e,
 					active: qt(e, r, i),
-					palette: h,
-					renderLink: u
+					palette: g,
+					renderLink: u,
+					size: f
 				}, Kt(e, t))) }, "__ungrouped") : /* @__PURE__ */ H(Xt, {
 					name: e.name,
 					items: e.items,
 					activeHref: r,
 					match: i,
-					palette: h,
+					palette: g,
 					storageKey: l ? `${l}.g${t}.${e.name}` : void 0,
-					renderLink: u
+					renderLink: u,
+					size: f,
+					divided: f === "md" && t > 0
 				}, e.name))
 			}),
 			s && /* @__PURE__ */ H("div", {
-				className: e("flex-none border-t px-2 py-2", h.divider),
+				className: e("flex-none border-t px-2 py-2", g.divider),
 				children: s
 			})
 		]

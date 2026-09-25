@@ -22,9 +22,11 @@ export interface WorkspaceRailProps {
   /**
    * `compact` (default) is the 36px, 12px-title strip a tree rail wears;
    * `prominent` is the column heading a work list wears — an 18px title and
-   * count on a 56px row, no rule under it.
+   * count on a 56px row, no rule under it. `label` is the same 56px row with
+   * the title as a 15px uppercase label — "DOCUMENTS 137", the All documents
+   * mockup (since 2.389.2).
    */
-  heading?: 'compact' | 'prominent';
+  heading?: 'compact' | 'prominent' | 'label';
   collapsed?: boolean;
   collapsedContent?: ReactNode;
   onToggle?: () => void;
@@ -46,12 +48,12 @@ export function WorkspaceRail({
     <nav aria-label={label ?? title ?? 'Workspace'} data-testid={testId} data-collapsed={collapsed}
       className={cn('flex h-full min-h-0 shrink-0 flex-col border-r border-border bg-surface-panel', collapsed ? 'w-9' : width === 'sm' ? 'w-[240px]' : width === 'lg' ? 'w-[368px]' : width === 'ml' ? 'w-[320px]' : 'w-[300px]', className)}>
       {(title || actions || onToggle) && (
-        <div className={cn('flex shrink-0 items-center gap-1', heading === 'prominent' ? 'h-14' : 'h-9 border-b border-border', collapsed ? 'justify-center' : heading === 'prominent' ? 'pl-5 pr-3' : 'pl-3.5 pr-1.5')} data-testid={`${testId}-header`}>
+        <div className={cn('flex shrink-0 items-center gap-1', heading !== 'compact' ? 'h-14' : 'h-9 border-b border-border', collapsed ? 'justify-center' : heading !== 'compact' ? 'pl-5 pr-3' : 'pl-3.5 pr-1.5')} data-testid={`${testId}-header`}>
           {!collapsed && (title ? (
-            <h2 className={cn('m-0 flex min-w-0 flex-1 items-center gap-2 text-text-primary', heading === 'prominent' ? 'text-[18px] font-semibold' : 'text-[12px] font-semibold')} data-testid={`${testId}-title`}>
+            <h2 className={cn('m-0 flex min-w-0 flex-1 items-center gap-2 text-text-primary', heading === 'prominent' ? 'text-[18px] font-semibold' : heading === 'label' ? 'text-[15px] font-semibold uppercase tracking-[0.02em]' : 'text-[12px] font-semibold')} data-testid={`${testId}-title`}>
               <span className="min-w-0 truncate">{title}</span>
               {typeof count === 'number' && (
-                <Chip size={heading === 'prominent' ? 'md' : 'xs'} tone="neutral" className="shrink-0" aria-label={`${count} items`} data-testid={`${testId}-count`}>{count}</Chip>
+                <Chip size={heading === 'prominent' ? 'md' : heading === 'label' ? 'sm' : 'xs'} tone="neutral" className="shrink-0" aria-label={`${count} items`} data-testid={`${testId}-count`}>{count}</Chip>
               )}
             </h2>
           ) : <span className="flex-1" />)}
@@ -67,7 +69,7 @@ export function WorkspaceRail({
           )}
         </div>
       )}
-      {!collapsed && header && <div className={cn('shrink-0 py-3', heading === 'prominent' ? 'px-5 pt-0' : 'px-3.5')}>{header}</div>}
+      {!collapsed && header && <div className={cn('shrink-0 py-3', heading !== 'compact' ? 'px-5 pt-0' : 'px-3.5')}>{header}</div>}
       <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden" data-testid={`${testId}-scroll`}>
         {collapsed ? collapsedContent : children}
       </div>
