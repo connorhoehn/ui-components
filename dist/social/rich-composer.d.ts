@@ -793,6 +793,13 @@ export declare interface RichChatComposerProps {
      * is a newline — for a prompt that is written, not chatted. Since 2.390.0.
      */
     sendShortcut?: 'enter' | 'mod-enter';
+    /**
+     * The prompt card's command when the draft names none (`/adjust`): its chip
+     * shows from the start, and the host treats a draft with no command as this
+     * one. Switching from the chip writes the new trigger into the draft.
+     * Since 2.389.12.
+     */
+    defaultCommand?: string;
     className?: string;
     'data-testid'?: string;
 }

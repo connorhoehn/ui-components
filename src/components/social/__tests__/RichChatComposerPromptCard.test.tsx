@@ -74,6 +74,15 @@ describe('prompt card', () => {
     expect(last.html).toContain('/crop Lift the shadows');
   });
 
+  it('defaultCommand shows its chip on an empty draft; switching writes the trigger in', async () => {
+    const onDraftChange = vi.fn();
+    render(<RichChatComposer {...base} defaultCommand="/adjust" onDraftChange={onDraftChange} draft={{ html: '<p>Lift the shadows</p>', files: [] }} />);
+    expect(screen.getByTestId('composer-command')).toHaveTextContent('/adjust');
+    fireEvent.click(screen.getByTestId('composer-command-switch'));
+    fireEvent.click(await screen.findByText('/crop'));
+    expect(onDraftChange.mock.calls.at(-1)?.[0].html).toContain('/crop Lift the shadows');
+  });
+
   it('mod-enter: Enter does not send, ⌘Enter does', () => {
     const onSend = vi.fn();
     const ref = createRef<RichChatComposerHandle>();

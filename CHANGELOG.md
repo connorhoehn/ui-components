@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.389.12] — 2026-09-25
+
+### Added
+- `RichChatComposer defaultCommand` — the prompt card shows that command's chip on a
+  draft that names none; switching from the chip writes the new trigger in.
+
 ## [2.389.11] — 2026-09-25
 
 ### Added

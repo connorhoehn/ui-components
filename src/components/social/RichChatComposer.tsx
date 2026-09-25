@@ -574,6 +574,13 @@ export interface RichChatComposerProps {
    * is a newline — for a prompt that is written, not chatted. Since 2.390.0.
    */
   sendShortcut?: 'enter' | 'mod-enter';
+  /**
+   * The prompt card's command when the draft names none (`/adjust`): its chip
+   * shows from the start, and the host treats a draft with no command as this
+   * one. Switching from the chip writes the new trigger into the draft.
+   * Since 2.389.12.
+   */
+  defaultCommand?: string;
   className?: string;
   'data-testid'?: string;
 }
@@ -942,6 +949,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   documentMenu,
   modeRowStart,
   sendShortcut = 'enter',
+  defaultCommand,
   className,
   'data-testid': testId = 'rich-chat-composer',
 }, ref) {
@@ -2042,6 +2050,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // the host's actions, the keys — is under `Agent ⌄` after the modes.
   const showMoreActions = !!moreActions?.length && !docked;
   const inlineCommand = docked && !!activeCommand && !collapsed && !terminalMode;
+  // The prompt card's chip: the typed command, else the host's default.
+  const chipCommand = promptCard && !collapsed && !terminalMode
+    ? (activeCommand ?? (defaultCommand ? commands?.find((c) => c.trigger === defaultCommand) ?? null : null))
+    : null;
   const dockedMenuSections: DropdownMenuSection[] = !docked ? [] : [
     ...(editor && formatInHints ? [{
       label: 'Formatting',
@@ -2627,23 +2639,23 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             command's own line in the editor is hidden. Everywhere else this
             wrapper is `contents` — no box, so the body's layout is unchanged —
             and it is always rendered, so the editor never changes parent. */}
-        <div className={inlineCommand ? 'flex min-w-0 items-start' : 'contents'} data-testid={`${testId}-input-line`}>
-          {inlineCommand && activeCommand && promptCard && (
+        <div className={inlineCommand || chipCommand ? 'flex min-w-0 items-start' : 'contents'} data-testid={`${testId}-input-line`}>
+          {chipCommand && (
             <DropdownMenu
               trigger={(
-                <span className="inline-flex items-center gap-1.5" data-testid={`${testId}-command`} data-command-chip="inline" title={activeCommand.description ?? activeCommand.hint ?? activeCommand.label}>
-                  {activeCommand.icon && <span className="flex shrink-0 items-center" aria-hidden="true">{activeCommand.icon}</span>}
-                  <span>{activeCommand.trigger}</span>
+                <span className="inline-flex items-center gap-1.5" data-testid={`${testId}-command`} data-command-chip="inline" title={chipCommand.description ?? chipCommand.hint ?? chipCommand.label}>
+                  {chipCommand.icon && <span className="flex shrink-0 items-center" aria-hidden="true">{chipCommand.icon}</span>}
+                  <span>{chipCommand.trigger}</span>
                   <ChevronIcon size={14} aria-hidden="true" />
                 </span>
               )}
-              triggerLabel={`Command: ${activeCommand.trigger}. Change command`}
+              triggerLabel={`Command: ${chipCommand.trigger}. Change command`}
               triggerTestId={`${testId}-command-switch`}
               data-testid={`${testId}-command-menu`}
               align="start"
               triggerClassName={cn(
                 'mt-1 ml-3 h-7 shrink-0 rounded-md border px-2 text-[15px] leading-6',
-                activeCommand.disabled ? 'border-warning bg-warning-bg text-warning-fg' : 'border-primary/60 bg-info-bg text-info-fg hover:bg-info-bg',
+                chipCommand.disabled ? 'border-warning bg-warning-bg text-warning-fg' : 'border-primary/60 bg-info-bg text-info-fg hover:bg-info-bg',
               )}
               sections={[{
                 label: 'Commands',
@@ -2651,7 +2663,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                   label: c.trigger,
                   description: c.hint ?? c.label,
                   ...(c.icon ? { icon: c.icon } : {}),
-                  active: c.trigger === activeCommand.trigger,
+                  active: c.trigger === chipCommand.trigger,
                   ...(c.disabled ? {} : { onSelect: () => switchCommand(c) }),
                 })),
               }]}
@@ -2682,7 +2694,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           )}
         <div
           ref={inputBoxRef}
-          className={cn((singleRow || inlineCommand) && 'min-w-0 flex-1', docked && 'uic-composer-docked-input')}
+          className={cn((singleRow || inlineCommand || chipCommand) && 'min-w-0 flex-1', docked && 'uic-composer-docked-input')}
           {...(empty && effectivePlaceholder ? { title: effectivePlaceholder } : {})}
           {...(terminalMode ? { hidden: true } : {})}
         >
@@ -2787,7 +2799,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                     label: c.trigger,
                     description: c.hint ?? c.label,
                     ...(c.icon ? { icon: c.icon } : {}),
-                    active: c.trigger === activeCommand?.trigger,
+                    active: c.trigger === chipCommand?.trigger,
                     ...(c.disabled ? {} : { onSelect: () => switchCommand(c) }),
                   })),
                 }]}
