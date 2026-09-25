@@ -310,7 +310,18 @@ describe('PresentationView revision picker', () => {
 
 describe('PresentationView no-access (Loop 29 ppt)', () => {
   it('names who to ask, never a status code', () => {
-    render(<PresentationView title="Deck" revisions={[]} state="no-access" ownerName="Frank" />);
+    render(
+      <PresentationView
+        title="Deck"
+        revisions={[]}
+        revisionId=""
+        onRevisionChange={() => undefined}
+        slideIndex={0}
+        onSlideChange={() => undefined}
+        state="no-access"
+        ownerName="Frank"
+      />,
+    );
     expect(screen.getByText("You don't have access to this presentation")).toBeTruthy();
     expect(screen.getByText('Ask Frank to share it with you.')).toBeTruthy();
     expect(screen.queryByText(/404/)).toBeNull();

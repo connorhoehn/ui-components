@@ -5,14 +5,23 @@ import dts from 'vite-plugin-dts';
 import { resolve } from 'path';
 
 export default defineConfig({
-  // vite-plugin-dts is deliberately pinned to v4. v5 (a wrapper over
-  // unplugin-dts) renames `rollupTypes` -> `bundleTypes` and silently ignores
-  // the old key, and even with the rename it appends every ambient
-  // `declare module` / `declare global` block from src/declarations.d.ts to
-  // EVERY rolled-up entry -- shipping a `declare module 'reactflow'`
-  // augmentation and an unresolvable `DevEditorBridge` reference to consumers.
-  // v4 works fine on vite 8 (rolldown) and emits byte-identical .d.ts.
-  plugins: [react(), tailwindcss(), dts({ rollupTypes: true })],
+  // vite-plugin-dts v5 (unplugin-dts) renamed `rollupTypes` -> `bundleTypes`.
+  // The old key is silently ignored and emits per-file `dist/src/**/*.d.ts`
+  // instead of the self-contained rollup -- keep this as `bundleTypes`. v5
+  // also copies every ambient `declare global` / `declare module` block into
+  // EVERY bundled entry, so nothing ambient in src may name a module-local
+  // type (see useDevEditorBridge.ts).
+  //
+  // `typescriptCompilerFolder: undefined`: unplugin-dts points api-extractor
+  // at the `typescript` package for its lib.*.d.ts files, and TypeScript 7
+  // ships none (the Go compiler embeds them), so every rollup failed with
+  // "Symbol not found for identifier: Omit". Unset, api-extractor analyses
+  // with the TypeScript it bundles — exactly what v4 did.
+  plugins: [
+    react(),
+    tailwindcss(),
+    dts({ bundleTypes: { invokeOptions: { typescriptCompilerFolder: undefined } } }),
+  ],
   resolve: {
     alias: {
       '@': resolve(import.meta.dirname, 'src'),

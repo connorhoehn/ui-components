@@ -1,6 +1,10 @@
 // Repair the .d.ts of every NESTED subpath export.
 //
-// vite-plugin-dts with `rollupTypes: true` names its rolled-up declaration
+// NOTE (v2.396.1): vite-plugin-dts v5 (`bundleTypes`) writes nested entries
+// to their exports-map path directly, so this normally repairs 0 files. It
+// stays as the guard: it still FAILS the build if a stub ever ships.
+//
+// vite-plugin-dts v4 with `rollupTypes: true` named its rolled-up declaration
 // after the last segment of the entry key, so a nested entry like
 // `social/rich-composer` writes its real types to `dist/rich-composer.d.ts`
 // while `dist/social/rich-composer.d.ts` — the path the exports map actually

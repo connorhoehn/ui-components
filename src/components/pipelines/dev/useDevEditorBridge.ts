@@ -27,9 +27,15 @@ interface DevEditorBridge {
   findNodeIdByType: (type: NodeType) => string | undefined;
 }
 
+// `declare global` blocks are copied verbatim into EVERY bundled entry point by
+// vite-plugin-dts v5, so naming the module-local `DevEditorBridge` here would
+// publish a dangling reference (TS2304 for consumers on skipLibCheck: false).
+// This dev-only handle is stripped from production builds, so the published
+// surface says `unknown`; the `satisfies` below keeps the assignment checked.
 declare global {
   interface Window {
-    __pipelineEditor?: DevEditorBridge;
+    /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+    __pipelineEditor?: unknown;
   }
 }
 
@@ -105,7 +111,7 @@ export function useDevEditorBridge({
       },
     };
 
-    window.__pipelineEditor = bridge;
+    window.__pipelineEditor = bridge satisfies DevEditorBridge;
     return () => {
       if (window.__pipelineEditor === bridge) {
         delete window.__pipelineEditor;

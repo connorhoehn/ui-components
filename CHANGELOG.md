@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.396.1] — 2026-09-25
+
+### Changed
+- Toolchain: TypeScript 5.9.3 → 7.0.2 (the native compiler; `npm run lint` over src + demo drops to ~5s).
+  TS 7 ships no JavaScript Compiler API, so: vite-plugin-dts 4 → 5 (`rollupTypes` → `bundleTypes`) with
+  `@typescript/typescript6` for its JS API and `@microsoft/api-extractor` declared directly; api-extractor
+  analyses with its own bundled TypeScript (TS 7 has no `lib.*.d.ts`); every script runs `node scripts/tsc.mjs`
+  so a TypeScript-6 `.bin/tsc` symlink can never stand in for the real compiler; `export-ambiguity.test.ts`
+  runs the tsc CLI instead of the removed API. Consumers are not moved onto TS 7 — the declaration rollup
+  is still analysed by TypeScript 5.9.
+- Published `.d.ts`: no export added or lost on any entry. `social/rich-composer` and
+  `integrations/realtime-modules` are now emitted at their exports-map path directly (the orphan top-level
+  `dist/rich-composer.d.ts` / `dist/realtime-modules.d.ts` copies are gone). Each entry carries
+  `Window.__pipelineEditor?: unknown` (the dev-only bridge; typed `unknown` so it names no module-local type).
+- `encodeFrame` / `encodeResize` (`/compute`) return `Uint8Array<ArrayBuffer>`, which `WebSocket.send`
+  accepts under TS 7's DOM lib.
+
+### Fixed
+- `PresentationView` no-access test passes the required revision/slide props (lint was red on main).
+
 ## 2.396.0
 
 - **Tabs** (`underline`): `indicator="bar"` draws the selected-tab bar above the row's rule so a following pane can no longer paint over half of it; `indicatorWeight` 2 | 3.

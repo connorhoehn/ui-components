@@ -113,6 +113,18 @@ npm run test:e2e   # playwright (17 specs, 206 tests — incl. user-journey spec
 > and walks the whole type graph — the 4GB default OOMs during the dts
 > rollup.
 
+> **TypeScript 7 (native) ships no JavaScript Compiler API** (v2.396.1).
+> `import ts from 'typescript'` exposes only `version`. Three consequences:
+> (1) vite-plugin-dts v5 loads `@typescript/typescript6` for its JS API, and
+> that package's `@typescript/old` dep can re-point `node_modules/.bin/tsc`
+> at TypeScript 6 — so every script runs `node scripts/tsc.mjs`, never bare
+> `tsc`; (2) `vite.config.ts` unsets api-extractor's `typescriptCompilerFolder`
+> because TS 7 has no `lib.*.d.ts` files (without it every rollup dies with
+> "Symbol not found for identifier: Omit"); (3) v5 copies every ambient
+> `declare global` / `declare module` block into every bundled entry, so an
+> ambient block must never name a module-local type. Tests that need the
+> compiler drive the CLI (`export-ambiguity.test.ts`), not the API.
+
 > **Playwright browsers drift.** If every e2e test dies at
 > `browserType.launch`, the pinned chromium build moved: run
 > `npx playwright install chromium`.
@@ -125,7 +137,7 @@ inline styles, the first one will catch you: convert static literals to
 Tailwind, and only allowlist values that are genuinely runtime-derived.
 
 > **`build` and `build:types` fight over `dist/index.d.ts`.** `npm run build`
-> (vite + `rollupTypes`) writes a self-contained ~291KB rollup; `npm run
+> (vite + `bundleTypes`) writes a self-contained ~291KB rollup; `npm run
 > build:types` (`tsc -p tsconfig.build.json`) overwrites it with a ~2.8KB
 > `export * from './src/…'` stub plus 1600 files under `dist/src/`. The
 > committed convention is the **rollup** output. Whenever you run

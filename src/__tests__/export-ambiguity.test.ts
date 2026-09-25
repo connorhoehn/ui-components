@@ -1,6 +1,6 @@
 /** @vitest-environment node */
 import { describe, it, expect } from 'vitest';
-import ts from 'typescript';
+import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 
 /**
@@ -38,10 +38,13 @@ import path from 'node:path';
  *     entry exposes has a single defining module," the fallback this test
  *     documents choosing.
  *
- * This runs `tsc`'s own program construction (same tsconfig.json, so the
- * exact compiler options `npm run lint`'s `tsc --noEmit` uses) over every
+ * This runs `tsc --noEmit` itself (via scripts/tsc.mjs — the same compiler
+ * and tsconfig.json `npm run lint` uses) over every
  * file reachable from the package's own source tree and asserts zero
- * TS2308 diagnostics. It is deliberately redundant with `npm run lint` —
+ * TS2308 diagnostics. (It used to call the compiler API in-process;
+ * TypeScript 7 ships no JavaScript Compiler API — `import ts from
+ * 'typescript'` exposes only `version` — so it drives the CLI instead.)
+ * It is deliberately redundant with `npm run lint` —
  * `npm test` (vitest) should catch this class on its own rather than
  * depend on a human also remembering to run lint separately, and a CI
  * pipeline that runs them as independent jobs should not have a gap between
@@ -63,24 +66,19 @@ describe('no ambiguous star-export collisions in the public source graph', () =>
     'produces zero TS2308 diagnostics ("Module X has already exported a member named Y")',
     () => {
       const root = process.cwd();
-      const configFile = ts.readConfigFile(path.join(root, 'tsconfig.json'), ts.sys.readFile);
-      expect(configFile.error, 'failed to read tsconfig.json').toBeUndefined();
+      const result = spawnSync(
+        process.execPath,
+        [path.join(root, 'scripts/tsc.mjs'), '--noEmit', '--pretty', 'false', '-p', 'tsconfig.json'],
+        { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 },
+      );
+      expect(result.error, 'failed to run tsc').toBeUndefined();
 
-      const parsed = ts.parseJsonConfigFileContent(configFile.config, ts.sys, root);
-      const program = ts.createProgram(parsed.fileNames, parsed.options);
-      const ambiguous = ts.getPreEmitDiagnostics(program).filter((d) => d.code === 2308);
-
-      const formatted = ambiguous.map((d) => {
-        const file = d.file ? path.relative(root, d.file.fileName) : '(unknown file)';
-        const loc =
-          d.file && d.start !== undefined
-            ? (() => {
-                const pos = d.file!.getLineAndCharacterOfPosition(d.start!);
-                return `${file}:${pos.line + 1}:${pos.character + 1}`;
-              })()
-            : file;
-        return `${loc} — ${ts.flattenDiagnosticMessageText(d.messageText, '\n')}`;
-      });
+      // `file(line,col): error TS2308: message` — one diagnostic per line
+      // with --pretty false. Other errors are `npm run lint`'s job.
+      const formatted = `${result.stdout}\n${result.stderr}`
+        .split('\n')
+        .filter((line) => line.includes('error TS2308'))
+        .map((line) => line.trim());
 
       expect(formatted).toEqual([]);
     },

@@ -31,7 +31,7 @@ export const HEARTBEAT_MS = 30_000;
 export const MAX_RETRIES = 5;
 
 /** Prefix a payload with its channel byte. */
-export function encodeFrame(channel: number, payload?: Uint8Array): Uint8Array {
+export function encodeFrame(channel: number, payload?: Uint8Array): Uint8Array<ArrayBuffer> {
   const body = payload ?? new Uint8Array(0);
   const out = new Uint8Array(body.length + 1);
   out[0] = channel;
@@ -39,7 +39,7 @@ export function encodeFrame(channel: number, payload?: Uint8Array): Uint8Array {
   return out;
 }
 
-export function encodeResize(cols: number, rows: number): Uint8Array {
+export function encodeResize(cols: number, rows: number): Uint8Array<ArrayBuffer> {
   return encodeFrame(
     SHELL_CHANNEL.RESIZE,
     new TextEncoder().encode(JSON.stringify({ width: cols, height: rows })),
