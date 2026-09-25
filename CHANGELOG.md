@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.389.11] — 2026-09-25
+
+### Added
+- `RichChatComposer toolbar="prompt"` — the docked card as a written prompt (the
+  photo editor's assistant): no formatting strip; its foot is `/ Commands` (a
+  menu of the host's commands), `# Context` (opens the `#` menu at the caret),
+  `toolbarExtras` (a mic), the send key and a round Send. A bare command
+  (`/adjust`) hides from the text and shows as a chip whose ▾ switches command.
+- `RichChatComposer documentMenu` — the `#` menu as an "Add context" card: title,
+  the typed query in a search field with clear, rows grouped by the candidate's
+  new `group` with a `glyph` and hint, and ↑↓ Choose · ↵ Insert · esc Close.
+- `RichChatComposer modeRowStart` (a host mode select at the head of the docked
+  card) and `sendShortcut="mod-enter"` (⌘/Ctrl+Enter sends, Enter is a newline).
+- `PersonIcon`, `ArrowUpIcon`.
+
 ## [2.389.7] — 2026-09-25
 
 ### Added

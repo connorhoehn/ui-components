@@ -1,12 +1,12 @@
-import { n as e, t } from "./useWebSocket-C9oAM0NL.js";
+import { n as e, t } from "./useWebSocket-NPebiecq.js";
 import { t as n } from "./cn-DhjIN-s0.js";
 import { g as r } from "./tones-CEbHiujQ.js";
 import { t as i } from "./Card-RQCeAPNU.js";
 import { t as a } from "./IconButton-DDeXW3mZ.js";
-import { K as o, Z as s, d as c } from "./Icons-rzhVAphQ.js";
+import { $ as o, J as s, f as c } from "./Icons-qlxbenIZ.js";
 import { n as l, t as u } from "./Stack-CkiMw5K0.js";
 import { i as d, r as f } from "./Text-DKY7kP9m.js";
-import { t as p } from "./Banner-DISeKZt9.js";
+import { t as p } from "./Banner-yEoopy8T.js";
 import { t as m } from "./Chip-S5_92B2V.js";
 import { t as h } from "./Modal-CyoyiNKN.js";
 import { t as g } from "./EmptyState-DFWbBBcY.js";
@@ -23,17 +23,17 @@ import { t as E } from "./Badge-DDEc9FjV.js";
 import { t as D } from "./ChangeDiff-CzO8zCc-.js";
 import { t as O } from "./Select-BT7pq1sa.js";
 import { t as k } from "./Checkbox-DKF-CjpG.js";
-import { n as ee } from "./FileKindMark-XQ27Yxr8.js";
+import { n as ee } from "./FileKindMark-Dhk5Xy6Q.js";
 import { t as A } from "./activationKey-CjbL3LUv.js";
 import { A as te, k as j } from "./renderers-C1FLXY2c.js";
-import { A as M, B as N, C as P, D as F, E as ne, F as I, G as L, H as re, I as R, K as z, L as B, M as V, N as H, O as U, P as ie, R as ae, S as oe, T as W, U as se, V as ce, W as le, Y as ue, _ as de, a as fe, b as pe, c as me, d as he, f as ge, g as _e, h as ve, i as ye, j as be, k as xe, l as Se, m as Ce, n as we, o as Te, p as Ee, r as De, s as Oe, t as ke, u as Ae, v as je, w as Me, x as Ne, y as Pe, z as Fe } from "./PresentationEditor-DscS8fwl.js";
+import { A as M, B as N, C as P, D as F, E as ne, F as I, G as L, H as re, I as R, K as z, L as B, M as V, N as H, O as U, P as ie, R as ae, S as oe, T as W, U as se, V as ce, W as le, Y as ue, _ as de, a as fe, b as pe, c as me, d as he, f as ge, g as _e, h as ve, i as ye, j as be, k as xe, l as Se, m as Ce, n as we, o as Te, p as Ee, r as De, s as Oe, t as ke, u as Ae, v as je, w as Me, x as Ne, y as Pe, z as Fe } from "./PresentationEditor-Dm6I_opn.js";
 import { r as Ie } from "./MediaIcons-OLUYBJM0.js";
 import { o as Le, t as Re } from "./VerdictChip-BFvFymGK.js";
 import { a as ze, c as Be, d as Ve, f as He, h as Ue, i as We, l as Ge, m as Ke, n as qe, o as Je, p as Ye, r as Xe, s as Ze, t as Qe, u as $e } from "./TiptapEditor-CajZRkz8.js";
 import { i as et, n as tt, r as nt, t as rt } from "./FloatingComposerDock-DMUQCjea.js";
-import { A as it, B as at, C as ot, D as st, E as ct, F as lt, G as ut, H as dt, I as ft, J as pt, K as mt, L as ht, M as gt, N as _t, O as vt, P as yt, R as bt, S as xt, T as St, U as Ct, V as wt, W as Tt, _ as Et, a as Dt, b as Ot, c as kt, d as At, f as jt, g as Mt, h as Nt, i as Pt, j as Ft, k as It, l as Lt, m as Rt, o as zt, p as Bt, q as Vt, r as Ht, s as Ut, t as Wt, u as Gt, v as Kt, w as qt, x as Jt, y as Yt, z as Xt } from "./DocumentEditorPage-NoLsbWm4.js";
-import { S as Zt, _ as Qt, a as $t, b as en, c as tn, d as nn, f as rn, g as an, h as on, i as sn, l as cn, m as ln, n as un, o as dn, p as fn, r as pn, s as mn, t as hn, u as gn, v as _n, x as vn, y as yn } from "./useDocumentImageUpload-DlSVjTl2.js";
-import { r as bn } from "./RichChatComposer-Dn9KXu6W.js";
+import { A as it, B as at, C as ot, D as st, E as ct, F as lt, G as ut, H as dt, I as ft, J as pt, K as mt, L as ht, M as gt, N as _t, O as vt, P as yt, R as bt, S as xt, T as St, U as Ct, V as wt, W as Tt, _ as Et, a as Dt, b as Ot, c as kt, d as At, f as jt, g as Mt, h as Nt, i as Pt, j as Ft, k as It, l as Lt, m as Rt, o as zt, p as Bt, q as Vt, r as Ht, s as Ut, t as Wt, u as Gt, v as Kt, w as qt, x as Jt, y as Yt, z as Xt } from "./DocumentEditorPage-DXcFg5TD.js";
+import { S as Zt, _ as Qt, a as $t, b as en, c as tn, d as nn, f as rn, g as an, h as on, i as sn, l as cn, m as ln, n as un, o as dn, p as fn, r as pn, s as mn, t as hn, u as gn, v as _n, x as vn, y as yn } from "./useDocumentImageUpload-DQxCvhzP.js";
+import { r as bn } from "./RichChatComposer-Vs7lcAKw.js";
 import { createContext as xn, forwardRef as Sn, useCallback as G, useContext as Cn, useEffect as K, useId as wn, useImperativeHandle as Tn, useMemo as q, useRef as J, useState as Y } from "react";
 import { Fragment as X, jsx as Z, jsxs as Q } from "react/jsx-runtime";
 import * as En from "yjs";
@@ -2612,11 +2612,11 @@ function Zr({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1,
 		"data-variant": r,
 		className: n("flex min-w-0 items-center gap-3 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-text-secondary shadow-sm", l),
 		children: [
-			d ? /* @__PURE__ */ Z(o, {
+			d ? /* @__PURE__ */ Z(s, {
 				size: 14,
 				"aria-hidden": "true",
 				className: "shrink-0 text-primary"
-			}) : /* @__PURE__ */ Z(s, {
+			}) : /* @__PURE__ */ Z(o, {
 				size: 14,
 				"aria-hidden": "true",
 				className: "shrink-0 text-info-fg"

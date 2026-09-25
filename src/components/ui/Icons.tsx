@@ -473,6 +473,26 @@ export function PeopleIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
+/** One head and shoulders: "a person" (a subject mask, one member). Since 2.390.0. */
+export function PersonIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <circle cx="8" cy="5.5" r="2.5" />
+      <path d="M3 13.5c.5-2.6 2.5-4.2 5-4.2s4.5 1.6 5 4.2" />
+    </svg>
+  );
+}
+
+/** An arrow pointing up: "send" on a round prompt button. Since 2.390.0. */
+export function ArrowUpIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M8 13V3" />
+      <path d="M4 7l4-4 4 4" />
+    </svg>
+  );
+}
+
 /** Six dots in two columns: a drag handle — "pick this up and move it". Since 2.385.0. */
 export function GripIcon({ size = 16, ...rest }: GlyphProps) {
   return (

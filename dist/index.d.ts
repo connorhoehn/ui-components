@@ -1143,6 +1143,9 @@ export declare interface AppShellProps {
 /** An arrow pointing right: "go on" — a link action, "Prepare run →". Since 2.385.0. */
 export declare function ArrowRightIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+/** An arrow pointing up: "send" on a round prompt button. Since 2.390.0. */
+export declare function ArrowUpIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare function ArtifactTile({ name, type, url }: {
     name: string;
     type?: string;
@@ -11638,6 +11641,9 @@ export declare interface PersonHoverCardProps {
     'data-testid'?: string;
 }
 
+/** One head and shoulders: "a person" (a subject mask, one member). Since 2.390.0. */
+export declare function PersonIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 /** A handset: start a voice call. */
 export declare function PhoneIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -20808,12 +20814,12 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
+        canvasListStyle: {
             /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
              */
-            insertDiagram: (id?: string) => ReturnType;
+            setListStyle: (style: ListStyle) => ReturnType;
         };
     }
 }
@@ -20840,12 +20846,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
+        diagramMacro: {
             /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
              */
-            setListStyle: (style: ListStyle) => ReturnType;
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -20853,32 +20859,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -20912,9 +20895,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -20925,6 +20918,19 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

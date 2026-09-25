@@ -113,13 +113,13 @@ import { ComposerAttachments, type StagedFile } from './ComposerAttachments';
 import { ComposerReferences, type ComposerReference } from './ComposerReferences';
 import { LinkDialog } from './LinkDialog';
 import { MentionSuggestions, type MentionCandidate } from './MentionSuggestions';
-import { DocumentSuggestions, type DocumentCandidate } from './DocumentSuggestions';
+import { DocumentSuggestions, type DocumentCandidate, type DocumentMenuPanel } from './DocumentSuggestions';
 import { EmojiSuggestions } from './EmojiSuggestions';
 import { CommandSuggestions, type CommandSuggestionItem } from './CommandSuggestions';
 import { searchEmoji, type EmojiShortcode } from './emojiShortcodes';
-import { ArrowRightIcon, ChatIcon, ChevronIcon, CodeIcon, EyeIcon, EyeOffIcon, LinkIcon, ListIcon, PaperclipIcon, PuzzleIcon, QuoteIcon, SmileyIcon, SparkleIcon } from '../ui/Icons';
+import { ArrowRightIcon, ArrowUpIcon, ChatIcon, ChevronIcon, CodeIcon, EyeIcon, EyeOffIcon, LinkIcon, ListIcon, PaperclipIcon, PuzzleIcon, QuoteIcon, SmileyIcon, SparkleIcon } from '../ui/Icons';
 
-export type { MentionCandidate, DocumentCandidate };
+export type { MentionCandidate, DocumentCandidate, DocumentMenuPanel };
 
 /** What the composer hands back on send. */
 export interface ComposedMessage {
@@ -555,6 +555,25 @@ export interface RichChatComposerProps {
    * one, in which case the row keeps that tint. Default off.
    */
   collapseWhenIdle?: boolean;
+  /**
+   * Draws the `#` menu as an "Add context" card: a title, the typed query in
+   * a search field with a clear button, results grouped under each
+   * candidate's `group`, and the keys (↑↓ Choose · ↵ Insert · esc Close) at
+   * its foot. Needs `onSearchDocuments`. Since 2.390.0.
+   */
+  documentMenu?: DocumentMenuPanel;
+  /**
+   * At the START of the docked card's header row, before the references — a
+   * host's own mode select ("Assistant ▾") when `hideModeMenu` hides the
+   * composer's. Since 2.390.0.
+   */
+  modeRowStart?: ReactNode;
+  /**
+   * Which key sends. `enter` (default): Enter sends, Shift+Enter is a
+   * newline — the chat convention. `mod-enter`: ⌘/Ctrl+Enter sends and Enter
+   * is a newline — for a prompt that is written, not chatted. Since 2.390.0.
+   */
+  sendShortcut?: 'enter' | 'mod-enter';
   className?: string;
   'data-testid'?: string;
 }
@@ -562,7 +581,7 @@ export interface RichChatComposerProps {
 /** How much room the composer has, from its own width. */
 export type ComposerSize = 'wide' | 'medium' | 'narrow';
 /** See `RichChatComposerProps.toolbar`. */
-export type ComposerToolbarPreset = 'full' | 'compact' | 'editor';
+export type ComposerToolbarPreset = 'full' | 'compact' | 'editor' | 'prompt';
 export type ComposerRadius = 'none' | 'sm' | 'md' | 'lg' | 'xl';
 
 /**
@@ -760,19 +779,29 @@ function hiddenCommandPrefix(
   doc: PMNode,
   commands: readonly ComposerCommand[] | undefined,
   pick: { trigger: string; item: ComposerArgumentItem } | null,
+  bare = false,
 ): { kind: 'inline' | 'block'; from: number; to: number; caret: number } | null {
-  if (!pick) return null;
+  if (!pick && !bare) return null;
   const first = doc.firstChild;
   if (!first || !first.isTextblock) return null;
   // One character per inline leaf, so text offsets are doc offsets.
   const text = first.textBetween(0, first.content.size, undefined, '\ufffc');
   const cmd = matchComposerCommand(text, commands);
-  if (!cmd || cmd.trigger !== pick.trigger) return null;
-  const argStart = text.length - text.trimStart().length + cmd.trigger.length + 1;
-  const rest = text.slice(argStart);
-  const spaces = rest.length - rest.replace(/^ +/, '').length;
-  if (!rest.slice(spaces).startsWith(pick.item.label)) return null;
-  let end = argStart + spaces + pick.item.label.length;
+  if (!cmd) return null;
+  let end: number;
+  if (pick && cmd.trigger === pick.trigger) {
+    const argStart = text.length - text.trimStart().length + cmd.trigger.length + 1;
+    const rest = text.slice(argStart);
+    const spaces = rest.length - rest.replace(/^ +/, '').length;
+    if (!rest.slice(spaces).startsWith(pick.item.label)) return null;
+    end = argStart + spaces + pick.item.label.length;
+  } else if (bare) {
+    // The prompt card (2.390.0): a command with no argument — "/adjust" —
+    // is named by its chip, so the trigger itself hides too.
+    end = text.length - text.trimStart().length + cmd.trigger.length;
+  } else {
+    return null;
+  }
   if (text[end] === ' ') end += 1;
   const next = doc.childCount > 1 ? doc.child(1) : null;
   if (text.slice(end).trim() === '' && next?.isTextblock) {
@@ -910,6 +939,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   referencesAction,
   referenceDrop,
   collapseWhenIdle = false,
+  documentMenu,
+  modeRowStart,
+  sendShortcut = 'enter',
   className,
   'data-testid': testId = 'rich-chat-composer',
 }, ref) {
@@ -917,6 +949,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // Reading it through a ref is what lets the extension stay stable without
   // capturing a stale closure over the staged files.
   const sendRef = useRef<() => void>(() => {});
+  const sendShortcutRef = useRef(sendShortcut);
+  sendShortcutRef.current = sendShortcut;
+  const documentMenuRef = useRef(documentMenu);
+  documentMenuRef.current = documentMenu;
   const linkRef = useRef<() => void>(() => {});
   const fileInput = useRef<HTMLInputElement | null>(null);
   const emojiTrigger = useRef<HTMLButtonElement | null>(null);
@@ -1032,6 +1068,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // chip, in which case the command line it names is hidden in the input.
   // Assigned once `menuModeRow` is known, below; read by a ProseMirror plugin.
   const hideCommandPrefixRef = useRef(false);
+  const hideBareTriggerRef = useRef(false);
   // The argument picked from the menu in this draft, if any. A ref, not state:
   // the Suggestion plugin reads it inside ProseMirror's state transitions,
   // where a React state value would be one render stale. Cleared on send and
@@ -1252,7 +1289,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         name: 'commandPrefixHidden',
         addProseMirrorPlugins() {
           const find = (doc: PMNode) => (hideCommandPrefixRef.current
-            ? hiddenCommandPrefix(doc, commandsRef.current, argPickRef.current)
+            ? hiddenCommandPrefix(doc, commandsRef.current, argPickRef.current, hideBareTriggerRef.current)
             : null);
           return [
             new Plugin({
@@ -1302,6 +1339,12 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         addKeyboardShortcuts() {
           return {
             Enter: () => {
+              // A written prompt: Enter is the newline, ⌘/Ctrl+Enter sends.
+              if (sendShortcutRef.current === 'mod-enter') return false;
+              sendRef.current();
+              return true;
+            },
+            'Mod-Enter': () => {
               sendRef.current();
               return true;
             },
@@ -1386,6 +1429,19 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     }
 
     if (hasSearchDocuments) {
+      // The panel form reads the query and can clear it (leaving the `#`).
+      const docMenuProps = (props: SuggestionProps) => {
+        const panel = documentMenuRef.current;
+        if (!panel) return props;
+        return {
+          ...props,
+          panel,
+          onClearQuery: () => {
+            const { from, to } = props.range;
+            if (to > from + 1) props.editor.chain().focus().deleteRange({ from: from + 1, to }).run();
+          },
+        };
+      };
       list.push(
         DocRef.configure({
           // `docref`, painted beside `mention` in the stylesheet.
@@ -1403,12 +1459,12 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               const menu = mountSuggestionMenu();
               return {
                 onStart: (props: SuggestionProps) => {
-                  renderer = new ReactRenderer(DocumentSuggestions, { props, editor: props.editor });
+                  renderer = new ReactRenderer(DocumentSuggestions, { props: docMenuProps(props), editor: props.editor });
                   menu.attach(renderer.element as HTMLElement);
                   menu.place(props.clientRect?.(), props.editor.view.dom);
                 },
                 onUpdate: (props: SuggestionProps) => {
-                  renderer?.updateProps(props);
+                  renderer?.updateProps(docMenuProps(props));
                   menu.place(props.clientRect?.(), props.editor.view.dom);
                 },
                 onKeyDown: (props: SuggestionKeyDownProps) => {
@@ -1735,6 +1791,30 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   }, [editor, canSend, onSend, staged, privacy, terminalMode, activeMode, modesEnabled, fixedMode]);
 
   sendRef.current = send;
+
+  // The prompt card's command switch (`/adjust ▾` → `/crop`): rewrites the
+  // leading trigger in place, or puts one in front of the words already
+  // typed. The draft stays text — the host still reads the command from it.
+  const switchCommand = useCallback((next: ComposerCommand) => {
+    if (!editor || editor.isDestroyed) return;
+    const first = editor.state.doc.firstChild;
+    const text = first && first.isTextblock ? first.textBetween(0, first.content.size, undefined, '\ufffc') : '';
+    const current = matchComposerCommand(text, commandsRef.current);
+    const lead = text.length - text.trimStart().length;
+    if (current) {
+      editor.chain().focus().insertContentAt({ from: 1 + lead, to: 1 + lead + current.trigger.length }, next.trigger).run();
+    } else {
+      editor.chain().focus().insertContentAt(1, `${next.trigger} `).run();
+    }
+  }, [editor]);
+  // `# Context`: a `#` at the caret (after a space when it would join a
+  // word), which opens the `#` menu.
+  const startContext = useCallback(() => {
+    if (!editor || editor.isDestroyed) return;
+    const { from } = editor.state.selection;
+    const before = from > 1 ? editor.state.doc.textBetween(from - 1, from, undefined, '\ufffc') : '';
+    editor.chain().focus().insertContent(before && !/\s/.test(before) ? ' #' : '#').run();
+  }, [editor]);
   linkRef.current = openLinkDialog;
 
   useImperativeHandle(
@@ -1906,15 +1986,20 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // (2.386.0): `✦ Agent ⌄` whose menu also holds what `?` and `⋯` held, the
   // picked command as a chip at the START of the instruction line, a
   // larger strip and Send. Every other composer keeps its own layout.
-  const docked = menuModeRow && toolbar === 'editor';
+  const docked = menuModeRow && (toolbar === 'editor' || toolbar === 'prompt');
+  // The prompt card (2.390.0): the docked card with no formatting strip — its
+  // foot is `/ Commands`, `# Context`, the host's extras (a mic), the send
+  // key and a round Send — and the command chip switches commands.
+  const promptCard = docked && toolbar === 'prompt';
   hideCommandPrefixRef.current = menuModeRow;
+  hideBareTriggerRef.current = promptCard;
   // The plugin reads the ref on the next transaction; switching into or out
   // of the docked card sends an empty one so the command line hides or shows
   // (and the caret moves past it) straight away.
   useEffect(() => {
     if (!editor || editor.isDestroyed) return;
     editor.view.dispatch(editor.state.tr.setMeta(commandPrefixKey, true));
-  }, [editor, menuModeRow]);
+  }, [editor, menuModeRow, promptCard]);
   const referencesInModeRow = compactModeRow && (compact || menuModeRow);
   // Compact folds the hints row into `?` at every width.
   // The docked card (`menu`) keeps its hints in the `?` menu: the row of
@@ -1944,7 +2029,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // `editor` sits between the two: code and quote stay on the strip,
   // strikethrough and numbered list fold under `?` with `compact`'s.
   const compactToolbar = toolbar === 'compact';
-  const editorToolbar = toolbar === 'editor';
+  const editorToolbar = toolbar === 'editor' || toolbar === 'prompt';
   const fullToolbar = !compactToolbar && !editorToolbar;
   const showSecondaryMarks = wide && fullToolbar;
   const showCode = wide && !compactToolbar;
@@ -2317,6 +2402,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             labels do not fit beside anything at that width. */}
         {compactModeRow && !collapsed && (
           <div className={cn('flex min-w-0 items-center gap-1.5 text-xs', docked ? 'px-3 pt-2' : 'px-2 pt-1', compact && 'flex-wrap', reveal)} data-testid={`${testId}-modes`} data-mode-control={menuModeRow ? 'menu' : 'compact'}>
+            {docked && modeRowStart != null && (
+              <span className="flex shrink-0 items-center" data-testid={`${testId}-mode-row-start`}>{modeRowStart}</span>
+            )}
             {menuModeRow ? (hideModeMenu && docked ? null : (
               // One control: the mode's glyph and name, a ▾, the other modes
               // in a menu with their shortcuts and, when off, the reason.
@@ -2403,7 +2491,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             {docked && referencesAction != null && (
               <span className="flex shrink-0 items-center" data-testid={`${testId}-references-action`}>{referencesAction}</span>
             )}
-            {modeRowEnd != null && <span className={cn('flex shrink-0 items-center', menuModeRow && references?.length ? 'ml-2' : 'ml-auto')} data-testid={`${testId}-mode-row-end`}>{modeRowEnd}</span>}
+            {modeRowEnd != null && <span className={cn('flex shrink-0 items-center', menuModeRow && references?.length && !(docked && hideModeMenu) ? 'ml-2' : 'ml-auto')} data-testid={`${testId}-mode-row-end`}>{modeRowEnd}</span>}
           </div>
         )}
         {activeCommand && menuModeRow && !docked && !collapsed && (
@@ -2540,7 +2628,36 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             wrapper is `contents` — no box, so the body's layout is unchanged —
             and it is always rendered, so the editor never changes parent. */}
         <div className={inlineCommand ? 'flex min-w-0 items-start' : 'contents'} data-testid={`${testId}-input-line`}>
-          {inlineCommand && activeCommand && (
+          {inlineCommand && activeCommand && promptCard && (
+            <DropdownMenu
+              trigger={(
+                <span className="inline-flex items-center gap-1.5" data-testid={`${testId}-command`} data-command-chip="inline" title={activeCommand.description ?? activeCommand.hint ?? activeCommand.label}>
+                  {activeCommand.icon && <span className="flex shrink-0 items-center" aria-hidden="true">{activeCommand.icon}</span>}
+                  <span>{activeCommand.trigger}</span>
+                  <ChevronIcon size={14} aria-hidden="true" />
+                </span>
+              )}
+              triggerLabel={`Command: ${activeCommand.trigger}. Change command`}
+              triggerTestId={`${testId}-command-switch`}
+              data-testid={`${testId}-command-menu`}
+              align="start"
+              triggerClassName={cn(
+                'mt-1 ml-3 h-7 shrink-0 rounded-md border px-2 text-[15px] leading-6',
+                activeCommand.disabled ? 'border-warning bg-warning-bg text-warning-fg' : 'border-primary/60 bg-info-bg text-info-fg hover:bg-info-bg',
+              )}
+              sections={[{
+                label: 'Commands',
+                items: (commands ?? []).map((c) => ({
+                  label: c.trigger,
+                  description: c.hint ?? c.label,
+                  ...(c.icon ? { icon: c.icon } : {}),
+                  active: c.trigger === activeCommand.trigger,
+                  ...(c.disabled ? {} : { onSelect: () => switchCommand(c) }),
+                })),
+              }]}
+            />
+          )}
+          {inlineCommand && activeCommand && !promptCard && (
             <div
               role="status"
               title={activeCommand.description ?? activeCommand.hint ?? activeCommand.label}
@@ -2653,7 +2770,52 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           {/* `min-w-0` is the load-bearing half: without it a flex child will
               not shrink below its content, which is how the buttons pushed
               Send out of the composer entirely. */}
-          {!singleRow && (
+          {!singleRow && promptCard && (
+          <RovingToolbar label="Prompt tools" className="min-w-0 gap-2" data-testid={`${testId}-prompt-toolbar`}>
+            {!!commands?.length && (
+              <DropdownMenu
+                key="commands"
+                trigger={<span className="inline-flex items-center gap-1.5"><span aria-hidden="true" className="text-primary">/</span>Commands</span>}
+                triggerLabel="Commands"
+                triggerTestId={`${testId}-commands-button`}
+                data-testid={`${testId}-commands-menu`}
+                align="start"
+                triggerClassName="h-7 rounded-md border border-border bg-surface-inset px-2.5 text-xs font-medium text-text-secondary hover:bg-surface-hover hover:text-text-primary"
+                sections={[{
+                  label: 'Commands',
+                  items: commands.map((c) => ({
+                    label: c.trigger,
+                    description: c.hint ?? c.label,
+                    ...(c.icon ? { icon: c.icon } : {}),
+                    active: c.trigger === activeCommand?.trigger,
+                    ...(c.disabled ? {} : { onSelect: () => switchCommand(c) }),
+                  })),
+                }]}
+              />
+            )}
+            {hasSearchDocuments && (
+              <button
+                key="context"
+                type="button"
+                onClick={startContext}
+                disabled={blocked}
+                data-testid={`${testId}-context-button`}
+                className="inline-flex h-7 items-center gap-1.5 rounded-md border border-border bg-surface-inset px-2.5 text-xs font-medium text-text-secondary hover:bg-surface-hover hover:text-text-primary disabled:opacity-40"
+              >
+                <span aria-hidden="true" className="text-primary">#</span>Context
+              </button>
+            )}
+          </RovingToolbar>
+          )}
+          {!singleRow && promptCard && (
+            <span className="ml-auto flex shrink-0 items-center gap-3 pr-2 text-text-secondary" data-testid={`${testId}-prompt-end`}>
+              {toolbarExtras}
+              <span className="select-none whitespace-nowrap text-xs" data-testid={`${testId}-send-hint`}>
+                {sendShortcut === 'mod-enter' ? '⌘ Return to send' : 'Return to send'}
+              </span>
+            </span>
+          )}
+          {!singleRow && !promptCard && (
           <RovingToolbar label="Message formatting" className={cn('min-w-0 gap-0.5', narrow && 'flex-wrap')} data-testid={`${testId}-format-toolbar`}>
           {editor && [
             toolbarButton('Bold', editor.isActive('bold'), () => editor.chain().focus().toggleBold().run(), <b>B</b>),
@@ -2752,7 +2914,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           {/* A host with slash commands says so where the toolbar ends: a
               muted `/ commands`, the way a code editor's status line names
               its palette. Wide only — narrow has no room and the `?` menu. */}
-          {!collapsed && wide && !!commands?.length && (
+          {!collapsed && wide && !!commands?.length && !promptCard && (
             <span className={cn('shrink-0 select-none text-text-tertiary', docked ? 'ml-3 text-[15px]' : 'ml-1 border-l border-border pl-2 text-xs')} data-testid={`${testId}-commands-hint`}>/ commands</span>
           )}
 
@@ -2836,6 +2998,22 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 sections={[{ items: sendOptions.map((option) => ({ label: option.label, onSelect: () => onSendOption(option.id) })) }]}
               />
             </span>
+          ) : promptCard && !collapsed ? (
+            <button
+              type="button"
+              onClick={send}
+              disabled={!canSend}
+              aria-label={sendLabel}
+              title={sendShortcut === 'mod-enter' ? `${sendLabel} (⌘ Return)` : sendLabel}
+              data-testid={`${testId}-send`}
+              className={cn(
+                submitLead == null && !singleRow && 'ml-0',
+                (submitLead == null && singleRow) && 'ml-auto',
+                'grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary text-on-primary disabled:opacity-40',
+              )}
+            >
+              <ArrowUpIcon size={18} aria-hidden="true" />
+            </button>
           ) : (
             <button
               type="button"

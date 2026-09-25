@@ -1,7 +1,7 @@
 import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./IconButton-DDeXW3mZ.js";
-import { N as n, W as r, d as i, tt as a } from "./Icons-rzhVAphQ.js";
-import { t as o } from "./DropdownMenu-DUAebTA4.js";
+import { K as n, P as r, f as i, rt as a } from "./Icons-qlxbenIZ.js";
+import { t as o } from "./DropdownMenu-CRTPdlu1.js";
 import { useCallback as s, useEffect as c, useLayoutEffect as l, useMemo as u, useRef as d, useState as f } from "react";
 import { Fragment as p, jsx as m, jsxs as h } from "react/jsx-runtime";
 //#region src/components/photo-editor/model.ts
@@ -677,7 +677,7 @@ function J({ title: s, subtitle: c, backLabel: l, onBack: u, onToggleSidebar: d,
 						"aria-label": "Redo",
 						onClick: b,
 						disabled: !S,
-						icon: /* @__PURE__ */ m(r, { size: 17 }),
+						icon: /* @__PURE__ */ m(n, { size: 17 }),
 						"data-testid": `${D}-redo`
 					}),
 					/* @__PURE__ */ m("span", {
@@ -694,7 +694,7 @@ function J({ title: s, subtitle: c, backLabel: l, onBack: u, onToggleSidebar: d,
 						"data-testid": `${D}-layout`
 					}),
 					T && /* @__PURE__ */ m(o, {
-						trigger: /* @__PURE__ */ m(n, { size: 18 }),
+						trigger: /* @__PURE__ */ m(r, { size: 18 }),
 						triggerLabel: "More",
 						triggerTestId: `${D}-more`,
 						triggerClassName: "inline-flex h-8 w-8 items-center justify-center rounded-md border-none bg-transparent p-0 text-text-primary hover:bg-surface-hover",

@@ -268,7 +268,7 @@ export declare interface ComposerStatus {
 }
 
 /** See `RichChatComposerProps.toolbar`. */
-export declare type ComposerToolbarPreset = 'full' | 'compact' | 'editor';
+export declare type ComposerToolbarPreset = 'full' | 'compact' | 'editor' | 'prompt';
 
 export declare interface DocumentCandidate {
     /** Stable identity — this is what travels in the message, not the label. */
@@ -279,6 +279,22 @@ export declare interface DocumentCandidate {
     hint?: string;
     /** The document's own icon, when it has one; 📄 otherwise. */
     icon?: string;
+    /** A drawn glyph for the row (wins over `icon`) — a person for a subject mask. Since 2.390.0. */
+    glyph?: ReactNode;
+    /**
+     * The heading this row sits under in the `panel` menu ("MASKS IN THIS
+     * PHOTO"). Consecutive rows with the same group share one heading; order is
+     * the host's. Ignored by the plain menu. Since 2.390.0.
+     */
+    group?: string;
+}
+
+/** The "Add context" card form of the `#` menu (RichChatComposer `documentMenu`). */
+declare interface DocumentMenuPanel {
+    /** The card's title. Default "Add context". */
+    title?: string;
+    /** Said when nothing matches. Default "Nothing matches". */
+    emptyLabel?: string;
 }
 
 export declare const DocumentSuggestions: ForwardRefExoticComponent<DocumentSuggestionsProps & RefAttributes<DocumentSuggestionsHandle>>;
@@ -295,6 +311,12 @@ export declare interface DocumentSuggestionsProps {
         id: string;
         label: string;
     }) => void;
+    /** What was typed after `#` (the suggestion plugin passes it). */
+    query?: string;
+    /** Clears the typed query, leaving the `#` (the panel's ⓧ). */
+    onClearQuery?: () => void;
+    /** Draw as the "Add context" card. */
+    panel?: DocumentMenuPanel;
 }
 
 declare interface DropdownMenuItem {
@@ -752,6 +774,25 @@ export declare interface RichChatComposerProps {
      * one, in which case the row keeps that tint. Default off.
      */
     collapseWhenIdle?: boolean;
+    /**
+     * Draws the `#` menu as an "Add context" card: a title, the typed query in
+     * a search field with a clear button, results grouped under each
+     * candidate's `group`, and the keys (↑↓ Choose · ↵ Insert · esc Close) at
+     * its foot. Needs `onSearchDocuments`. Since 2.390.0.
+     */
+    documentMenu?: DocumentMenuPanel;
+    /**
+     * At the START of the docked card's header row, before the references — a
+     * host's own mode select ("Assistant ▾") when `hideModeMenu` hides the
+     * composer's. Since 2.390.0.
+     */
+    modeRowStart?: ReactNode;
+    /**
+     * Which key sends. `enter` (default): Enter sends, Shift+Enter is a
+     * newline — the chat convention. `mod-enter`: ⌘/Ctrl+Enter sends and Enter
+     * is a newline — for a prompt that is written, not chatted. Since 2.390.0.
+     */
+    sendShortcut?: 'enter' | 'mod-enter';
     className?: string;
     'data-testid'?: string;
 }
