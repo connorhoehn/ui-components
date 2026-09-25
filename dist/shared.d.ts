@@ -1564,7 +1564,7 @@ export declare type DotMeterTone = 'code' | 'surface';
 /** An arrow into a tray: "download". Since 2.390.3. */
 export declare function DownloadIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function Drawer({ open, onClose, title, subtitle, width, children, footer, docked, actions, className, bodyClassName, 'aria-label': ariaLabel, 'data-testid': testId, closeLabel, modal, trapFocus, backdrop, }: DrawerProps): default_2.JSX.Element | null;
+export declare function Drawer({ open, onClose, title, subtitle, width, children, footer, docked, actions, className, bodyClassName, headerClassName, titleClassName, footerClassName, closeTestId, 'aria-label': ariaLabel, 'data-testid': testId, closeLabel, modal, trapFocus, backdrop, }: DrawerProps): default_2.JSX.Element | null;
 
 export declare interface DrawerProps {
     open: boolean;
@@ -1598,6 +1598,14 @@ export declare interface DrawerProps {
     className?: string;
     /** Classes on the scrolling body. Overrides its default padding via tw-merge. */
     bodyClassName?: string;
+    /** Classes on the header row (e.g. `border-b-0` for a header with no rule under it). Since 2.391.0. */
+    headerClassName?: string;
+    /** Classes on the title heading (e.g. `text-lg`). Since 2.391.0. */
+    titleClassName?: string;
+    /** Classes on the footer row. Since 2.391.0. */
+    footerClassName?: string;
+    /** `data-testid` on the built-in close button. Since 2.391.0. */
+    closeTestId?: string;
     /**
      * Accessible name for the dialog when there is no visible `title` to point
      * at. When `title` IS set the heading labels the dialog via
@@ -1741,6 +1749,24 @@ export declare interface DropdownMenuSection {
      * ("Creates a new document."). Since 2.390.3.
      */
     caption?: string;
+    'data-testid'?: string;
+}
+
+export declare function EditableHeading({ value, onCommit, placeholder, size, readOnly, editLabel, className, 'data-testid': testId, }: EditableHeadingProps): JSX.Element;
+
+export declare interface EditableHeadingProps {
+    value: string;
+    /** Called with the trimmed new value. Not called when it is empty or unchanged. */
+    onCommit: (next: string) => void;
+    /** Shown while editing an empty input. */
+    placeholder?: string;
+    /** `md` = 16px (drawer title), `lg` = 20px. Default `md`. */
+    size?: 'md' | 'lg';
+    /** Render as plain text with no pencil (someone who may not rename it). */
+    readOnly?: boolean;
+    /** Accessible name of the pencil button. Default `Rename`. */
+    editLabel?: string;
+    className?: string;
     'data-testid'?: string;
 }
 
@@ -2186,7 +2212,7 @@ export declare interface FloatingPanelProps {
  */
 export declare function FolderIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function FollowBanner({ name, onStop, autoStopOnInteract, className, 'data-testid': testId, }: FollowBannerProps): JSX.Element | null;
+export declare function FollowBanner({ name, onStop, autoStopOnInteract, location, appearance, className, 'data-testid': testId, }: FollowBannerProps): JSX.Element | null;
 
 export declare interface FollowBannerProps {
     /** Who is being followed. Null renders nothing. */
@@ -2197,6 +2223,19 @@ export declare interface FollowBannerProps {
      * turn off only where the host routes those interactions itself.
      */
     autoStopOnInteract?: boolean;
+    /**
+     * Where the followed person is — a section title ("Session flow"). Rendered
+     * after the name as ` · <location>` in the regular weight. Empty or unset
+     * renders the name alone.
+     */
+    location?: string;
+    /**
+     * `banner` (default): the centred strip with a small "Stop" button.
+     * `bar`: the in-call follow bar — a rounded row inside the page column,
+     * "**Following Alice** · Session flow" on the left and a "Stop following"
+     * button on the right.
+     */
+    appearance?: 'banner' | 'bar';
     className?: string;
     'data-testid'?: string;
 }
@@ -5789,19 +5828,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -5834,9 +5860,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -5847,19 +5876,6 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }
@@ -5903,9 +5919,32 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

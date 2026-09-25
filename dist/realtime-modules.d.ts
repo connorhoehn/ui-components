@@ -224,6 +224,49 @@ export declare const ALL_REALTIME_CAPABILITIES: readonly RealtimeCapabilityName[
  */
 export declare function applyNetworkShim(node: ReactNode, opts: NetworkShimOptions | undefined): ReactNode;
 
+declare interface AudioVideoSettings {
+    microphoneId?: string;
+    speakerId?: string;
+    cameraId?: string;
+    noiseSuppression: boolean;
+    echoCancellation: boolean;
+    autoGainControl: boolean;
+    /** 0..1 local playback gain. */
+    volume: number;
+    mirrorPreview: boolean;
+    quality: 'auto' | '720p' | '480p' | '360p';
+    frameRate: 'auto' | 30 | 15;
+    rememberDevices: boolean;
+}
+
+declare interface AudioVideoSettingsFormProps {
+    value: AudioVideoSettings;
+    onChange: (next: AudioVideoSettings) => void;
+    devices: {
+        microphones: DeviceOption[];
+        speakers: DeviceOption[];
+        cameras: DeviceOption[];
+    };
+    permission: {
+        microphone: MediaPermission;
+        camera: MediaPermission;
+    };
+    /** 0..1 live level of the selected microphone. */
+    micLevel: number;
+    previewStream: MediaStream | null;
+    cameraOn: boolean;
+    /** `HTMLMediaElement.setSinkId` exists. False (Safari) hides the Speakers select; the volume row stays. */
+    speakerSelectionSupported: boolean;
+    onTestMic: () => void | Promise<void>;
+    onTestSound: () => void | Promise<void>;
+    testMicState?: 'idle' | 'recording' | 'playing';
+    /** Who the preview placeholder shows when the camera is off. */
+    selfName?: string;
+    selfAvatarUrl?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
 declare interface CallActivityParticipant {
     userId: string;
     displayName?: string;
@@ -1308,6 +1351,11 @@ declare interface ConversationSurfaceProps {
  */
 export declare const DEFAULT_REALTIME_CAPABILITIES: RealtimeCapabilitySet;
 
+declare interface DeviceOption {
+    deviceId: string;
+    label: string;
+}
+
 declare interface DocumentActivityEditor {
     userId: string;
     displayName?: string;
@@ -1642,9 +1690,22 @@ declare interface MediaEffectsBackgroundOption {
     url: string;
 }
 
+/**
+ * How many of the four settings the open preview session changes — the
+ * "2 changes" in the call-settings Effects footer. 0 outside a session.
+ */
+export declare function mediaEffectsChangeCount(controller: RMMediaEffectsPreviewControllerSource): number;
+
 declare interface MediaEffectsFilterOption {
     id: string;
     label: string;
+    /**
+     * The CSS filter the effect applies (RM presets carry it as `cssFilter`).
+     * The grid layout paints each filter thumbnail with it.
+     */
+    cssFilter?: string;
+    /** Glyph for a face-effect button in the grid layout. */
+    icon?: ReactNode;
 }
 
 declare interface MediaEffectsPreviewPanelProps extends Pick<MediaEffectsTrayProps, 'filters' | 'activeFilterId' | 'onSelectFilter' | 'backgrounds' | 'backgroundMode' | 'activeBackgroundUrl' | 'onSelectBackground' | 'faceSprites' | 'activeFaceSpriteId' | 'onSelectFaceSprite'> {
@@ -1672,6 +1733,24 @@ declare interface MediaEffectsPreviewPanelProps extends Pick<MediaEffectsTrayPro
     title?: string;
     /** Label for the commit button. Defaults to "Apply". */
     applyLabel?: string;
+    /**
+     * `chrome` (default): the dark call-chrome panel with its private-preview
+     * notice and pinned Apply/Cancel footer. `surface`: the call-settings
+     * Effects tab — page-themed, a "Preview · Only you" chip on the preview, a
+     * one-line hint, and the tray in its grid layout. Pair `surface` with
+     * `showFooter={false}` when the host (CallSettingsDrawer) owns the footer.
+     */
+    variant?: 'chrome' | 'surface';
+    /** Render the Apply/Cancel footer. Default true. */
+    showFooter?: boolean;
+    /** Surface: the line under the preview. Default "Changes appear in the call after Apply." */
+    hint?: ReactNode;
+    /** Surface: grid thumbnails fall back to this still when there is no preview stream. */
+    thumbnailSrc?: string;
+    /** Surface: "+ Custom" background tile. See MediaEffectsTray. */
+    onSelectCustomBackground?: (file: File) => void;
+    /** Surface: the background section says it cannot run here. */
+    backgroundsUnsupported?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -1695,9 +1774,31 @@ declare interface MediaEffectsTrayProps {
     disabled?: boolean;
     /** Compact = tighter paddings for popover placement. */
     compact?: boolean;
+    /**
+     * `strip` (default): pill chips on the dark call chrome, for a popover or
+     * the pre-join room. `grid`: the call-settings Effects tab — thumbnail
+     * tiles in `columns` columns under "Filter · Reset", "Background" and "Face
+     * effects" headings, painted in the page theme (light or dark).
+     */
+    layout?: 'strip' | 'grid';
+    /** Grid columns. Default 3. */
+    columns?: number;
+    /** Grid: a live frame for the thumbnails (the preview stream), filtered per tile. */
+    thumbnailStream?: MediaStream | null;
+    /** Grid: a still frame for the thumbnails when there is no stream. */
+    thumbnailSrc?: string;
+    /** Grid: filter tiles before "More..." folds the rest. Default 5. */
+    filterLimit?: number;
+    /** Grid: when set, a dashed "+ Custom" tile opens a file picker (images ≤ 5 MB). */
+    onSelectCustomBackground?: (file: File) => void;
+    /** Grid: background replacement cannot run here (no WebGL / segmenter failed). */
+    backgroundsUnsupported?: boolean;
     className?: string;
     'data-testid'?: string;
 }
+
+/** Browser media permission for one kind of device. */
+declare type MediaPermission = 'prompt' | 'granted' | 'denied' | 'unavailable';
 
 export declare class NetworkErrorBoundary extends Component<NetworkErrorBoundaryProps, NetworkErrorBoundaryState> {
     state: NetworkErrorBoundaryState;
@@ -1984,6 +2085,17 @@ export declare interface RMActivityEvent {
     displayName: string;
 }
 
+/** Minimum shape of RM `useAudioVideoSettings()`. */
+export declare interface RMAudioVideoSettingsSource {
+    settings: AudioVideoSettings;
+    update(patch: Partial<AudioVideoSettings>): void;
+    previewStream: MediaStream | null;
+    micLevel: number;
+    testMic(): Promise<void>;
+    testSound(): Promise<void>;
+    testMicState: 'idle' | 'recording' | 'playing';
+}
+
 export declare type RMBackgroundMode = 'none' | 'blur' | 'image';
 
 /** Mirror of realtime-modules/src/client/useCapability.ts CapabilityHookResult */
@@ -2110,6 +2222,18 @@ export declare interface RMJoinRoomResult {
     participantId: string;
 }
 
+/** Minimum shape of RM `useMediaDevices()`. */
+export declare interface RMMediaDevicesSource {
+    microphones: DeviceOption[];
+    cameras: DeviceOption[];
+    speakers: DeviceOption[];
+    permission: {
+        microphone: MediaPermission;
+        camera: MediaPermission;
+    };
+    speakerSelectionSupported: boolean;
+}
+
 /**
  * Minimum shape needed from useMediaEffects()'s MediaEffectsController.
  * Registry entries may carry extra fields (cssFilter, render fns) — the
@@ -2123,6 +2247,7 @@ export declare interface RMMediaEffectsControllerSource {
     filters: Array<{
         id: string;
         label: string;
+        cssFilter?: string;
     }>;
     backgrounds: Array<{
         id: string;
@@ -2662,6 +2787,15 @@ export declare interface WrappedActivityPanelProps {
     className?: string;
 }
 
+export declare function WrappedAudioVideoSettingsForm({ devices, settings, cameraOn, ...rest }: WrappedAudioVideoSettingsFormProps): JSX.Element;
+
+export declare interface WrappedAudioVideoSettingsFormProps extends Pick<AudioVideoSettingsFormProps, 'selfName' | 'selfAvatarUrl' | 'className' | 'data-testid'> {
+    devices: RMMediaDevicesSource;
+    settings: RMAudioVideoSettingsSource;
+    /** Whether the viewer's camera is on (the preview shows "Camera is off" otherwise). */
+    cameraOn: boolean;
+}
+
 export declare function WrappedCanvasDocument({ canvas, schema, legacyModel, beforeConvert, ...viewProps }: WrappedCanvasDocumentProps): JSX.Element;
 
 export declare interface WrappedCanvasDocumentProps extends Omit<CanvasDocumentViewProps, 'isCanvas' | 'body' | 'onConvert' | 'unsupported'> {
@@ -3015,7 +3149,7 @@ export declare interface WrappedLVSHangoutLayoutProps {
 
 export declare function WrappedMediaEffectsPreviewPanel({ open, controller, onClose, onApplied, ...rest }: WrappedMediaEffectsPreviewPanelProps): JSX.Element | null;
 
-export declare interface WrappedMediaEffectsPreviewPanelProps extends Pick<MediaEffectsPreviewPanelProps, 'disabled' | 'title' | 'applyLabel' | 'className' | 'data-testid'> {
+export declare interface WrappedMediaEffectsPreviewPanelProps extends Pick<MediaEffectsPreviewPanelProps, 'disabled' | 'title' | 'applyLabel' | 'className' | 'data-testid' | 'variant' | 'showFooter' | 'hint' | 'thumbnailSrc' | 'onSelectCustomBackground' | 'backgroundsUnsupported'> {
     /** Mounts the surface and opens a preview session. */
     open: boolean;
     /** Return value of useMediaEffects() from realtime-modules. */
@@ -3028,7 +3162,7 @@ export declare interface WrappedMediaEffectsPreviewPanelProps extends Pick<Media
 
 export declare function WrappedMediaEffectsTray({ controller, ...rest }: WrappedMediaEffectsTrayProps): JSX.Element;
 
-export declare interface WrappedMediaEffectsTrayProps extends Pick<MediaEffectsTrayProps, 'disabled' | 'compact' | 'className' | 'data-testid'> {
+export declare interface WrappedMediaEffectsTrayProps extends Pick<MediaEffectsTrayProps, 'disabled' | 'compact' | 'className' | 'data-testid' | 'layout' | 'columns' | 'thumbnailStream' | 'thumbnailSrc' | 'onSelectCustomBackground' | 'backgroundsUnsupported'> {
     /** Return value of useMediaEffects() from realtime-modules. */
     controller: RMMediaEffectsControllerSource;
 }

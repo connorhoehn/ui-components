@@ -1226,6 +1226,21 @@ export declare interface AttachToggleProps {
     'data-testid'?: string;
 }
 
+export declare function AudioLevelMeter({ level, segments, label, disabled, className, 'data-testid': testId, }: AudioLevelMeterProps): JSX.Element;
+
+export declare interface AudioLevelMeterProps {
+    /** 0..1. Values outside the range are clamped. */
+    level: number;
+    /** Number of segments. Default 10. */
+    segments?: number;
+    /** Accessible name. Default `Input level`. */
+    label?: string;
+    /** Dim every segment (microphone off or blocked). */
+    disabled?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function AudioPlayer({ src, autoPlay, onFirstPlay, onEnded, durationHint, size, className, 'data-testid': testId }: AudioPlayerProps): JSX.Element;
 
 export declare interface AudioPlayerProps {
@@ -1257,6 +1272,51 @@ export declare interface AudioRecorder {
 }
 
 export declare type AudioRecorderState = 'idle' | 'starting' | 'recording' | 'recorded' | 'error';
+
+export declare interface AudioVideoSettings {
+    microphoneId?: string;
+    speakerId?: string;
+    cameraId?: string;
+    noiseSuppression: boolean;
+    echoCancellation: boolean;
+    autoGainControl: boolean;
+    /** 0..1 local playback gain. */
+    volume: number;
+    mirrorPreview: boolean;
+    quality: 'auto' | '720p' | '480p' | '360p';
+    frameRate: 'auto' | 30 | 15;
+    rememberDevices: boolean;
+}
+
+export declare function AudioVideoSettingsForm({ value, onChange, devices, permission, micLevel, previewStream, cameraOn, speakerSelectionSupported, onTestMic, onTestSound, testMicState, selfName, selfAvatarUrl, className, 'data-testid': testId, }: AudioVideoSettingsFormProps): JSX.Element;
+
+export declare interface AudioVideoSettingsFormProps {
+    value: AudioVideoSettings;
+    onChange: (next: AudioVideoSettings) => void;
+    devices: {
+        microphones: DeviceOption[];
+        speakers: DeviceOption[];
+        cameras: DeviceOption[];
+    };
+    permission: {
+        microphone: MediaPermission;
+        camera: MediaPermission;
+    };
+    /** 0..1 live level of the selected microphone. */
+    micLevel: number;
+    previewStream: MediaStream | null;
+    cameraOn: boolean;
+    /** `HTMLMediaElement.setSinkId` exists. False (Safari) hides the Speakers select; the volume row stays. */
+    speakerSelectionSupported: boolean;
+    onTestMic: () => void | Promise<void>;
+    onTestSound: () => void | Promise<void>;
+    testMicState?: 'idle' | 'recording' | 'playing';
+    /** Who the preview placeholder shows when the camera is off. */
+    selfName?: string;
+    selfAvatarUrl?: string;
+    className?: string;
+    'data-testid'?: string;
+}
 
 export declare interface AuditActor {
     type: 'admin' | 'user' | 'system';
@@ -1873,6 +1933,22 @@ export declare interface CallActivityParticipant {
     avatarUrl?: string;
 }
 
+/** The Captions tab body: the live-captions switch and the language. */
+export declare function CallCaptionsSettings({ enabled, onEnabledChange, language, onLanguageChange, languages, className, }: CallCaptionsSettingsProps): JSX.Element;
+
+export declare interface CallCaptionsSettingsProps {
+    enabled: boolean;
+    onEnabledChange: (on: boolean) => void;
+    language: string;
+    onLanguageChange?: (language: string) => void;
+    /** Default: English only. */
+    languages?: {
+        value: string;
+        label: string;
+    }[];
+    className?: string;
+}
+
 export declare function CallControls({ mode, density, isMuted, isCameraOn, isScreenSharing, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onEndCall, onAddParticipant, availableParticipants, currentParticipantIds, onOpenAddParticipant, extras, className, }: CallControlsProps): JSX.Element;
 
 /**
@@ -1929,12 +2005,81 @@ export declare interface CallControlsProps {
     className?: string;
 }
 
+export declare function CallDock({ title, participantCount, elapsedMs, phase, documents, participants, localParticipantId, activeSpeakerId, followingUserId, mic, camera, screenShare, onOpenPeople, onOpenDocuments, peopleOpen, documentsOpen, onOpenSettings, onPopOut, onLeave, canEndForEveryone, onEndForEveryone, onTileClick, onTitleClick, onDocumentClick, endedSummary, error, onDismiss, compact, className, 'data-testid': testId, }: CallDockProps): JSX.Element;
+
 /** JSON written under {@link CALL_DOCK_DRAG_TYPE}. */
 export declare interface CallDockDragPayload {
     /** The call being moved, when the host stamped `data-call-id` via `dataAttrs`. */
     callId?: string;
     /** Slot the widget is leaving, or null when it was floating free. */
     fromDockId: string | null;
+}
+
+export declare interface CallDockParticipant extends HangoutLayoutParticipant {
+    userId: string;
+    cameraOn: boolean;
+    audioOn: boolean;
+    screenSharing: boolean;
+    presenting: boolean;
+    connection: 'connected' | 'reconnecting';
+    /**
+     * An audio sink independent of the camera (an `<audio autoPlay>` on the
+     * person's stream). Optional: with camera off the dock keeps `videoElement`
+     * mounted but invisible anyway, so the audio that rides that stream plays.
+     */
+    audioElement?: ReactNode;
+}
+
+export declare type CallDockPhase = 'connecting' | 'active' | 'reconnecting' | 'ended' | 'error';
+
+export declare interface CallDockProps {
+    title: string;
+    participantCount: number;
+    /** Elapsed call time; null before the call has a start time. */
+    elapsedMs: number | null;
+    phase: CallDockPhase;
+    documents: {
+        id: string;
+        title: string;
+        presenting?: boolean;
+    }[];
+    /** Everyone in the call, the viewer included (matched by `localParticipantId`). */
+    participants: CallDockParticipant[];
+    localParticipantId: string;
+    activeSpeakerId?: string | null;
+    /** The person being followed — their tile gets the accent ring. */
+    followingUserId?: string | null;
+    mic: Omit<DeviceToggleSelectProps, 'kind'>;
+    camera: Omit<DeviceToggleSelectProps, 'kind'>;
+    screenShare: {
+        on: boolean;
+        disabledReason?: string;
+        onToggle: () => void;
+    };
+    onOpenPeople: () => void;
+    onOpenDocuments: () => void;
+    peopleOpen?: boolean;
+    documentsOpen?: boolean;
+    onOpenSettings: () => void;
+    onPopOut: () => void;
+    onLeave: () => void;
+    /** The host with others present: Leave asks "Leave the call? Others stay on." with End for everyone. */
+    canEndForEveryone?: boolean;
+    onEndForEveryone?: () => void;
+    onTileClick?: (userId: string) => void;
+    onTitleClick?: () => void;
+    onDocumentClick?: (id: string) => void;
+    /** Ended: the line after "Call ended · 12:04 · ". */
+    endedSummary?: ReactNode;
+    error?: {
+        message: string;
+        onRetry: () => void;
+    };
+    onDismiss?: () => void;
+    /** 132 × 74 tiles (a 1280 × 720 window) instead of 176 × 88 (the mockup's 166 × 84 at its 1.054 scale). */
+    compact?: boolean;
+    className?: string;
+    'data-testid'?: string;
 }
 
 /** A place in the page that can hold the call. */
@@ -2000,6 +2145,52 @@ export declare interface CallParticipantStripProps {
     className?: string;
     style?: CSSProperties;
 }
+
+export declare function CallPeopleList({ people, count, followingUserId, canModerate, onInvite, onFollow, onMuteForMe, onMute, onRemove, onMakeHost, onRingAgain, hideHeading, className, 'data-testid': testId, }: CallPeopleListProps): JSX.Element;
+
+export declare interface CallPeopleListProps {
+    people: CallPerson[];
+    /** The number in the heading badge (people in the call). */
+    count: number;
+    followingUserId?: string | null;
+    /** Host controls: Mute, Remove from call, Make host. */
+    canModerate: boolean;
+    onInvite: () => void;
+    onFollow: (userId: string | null) => void;
+    onMuteForMe: (userId: string) => void;
+    onMute?: (userId: string) => void;
+    onRemove?: (userId: string) => void;
+    onMakeHost?: (userId: string) => void;
+    onRingAgain?: (userId: string) => void;
+    /** Hide the "People N · Invite…" heading (a host that draws its own). */
+    hideHeading?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface CallPerson {
+    userId: string;
+    name: string;
+    avatarUrl?: string;
+    color?: string;
+    isLocal: boolean;
+    isHost: boolean;
+    presence?: 'online' | 'away' | 'offline';
+    state: 'in-call' | 'ringing' | 'missed' | 'declined' | 'left' | 'reconnecting';
+    audioOn: boolean;
+    cameraOn: boolean;
+    screenSharing: boolean;
+    presenting: boolean;
+}
+
+export declare interface CallPersonStatus {
+    label: string;
+    tone: 'accent' | 'muted' | 'warning';
+    kind: 'presenting' | 'sharing' | 'camera-off' | 'reconnecting' | 'ringing' | 'missed' | 'declined' | 'left' | 'host' | 'none';
+}
+
+/** The one sub-status a row shows. Exported for hosts and tests. */
+export declare function callPersonStatus(p: CallPerson): CallPersonStatus;
 
 export declare function CallPresenceIndicator({ participants, count, onClick, label, maxVisible, }: CallPresenceIndicatorProps): JSX.Element | null;
 
@@ -2068,6 +2259,39 @@ export declare interface CallSettingsDialogProps {
     /** Dialog heading. Defaults to "Call settings". */
     title?: string;
     className?: string;
+}
+
+export declare function CallSettingsDrawer({ open, onClose, initialTab, tab: tabProp, onTabChange, docked, audioVideo, effects, captions, effectsFooter, width, className, 'data-testid': testId, }: CallSettingsDrawerProps): JSX.Element;
+
+export declare interface CallSettingsDrawerProps {
+    open: boolean;
+    onClose: () => void;
+    /** The tab shown when the drawer opens. Default `audio-video`. */
+    initialTab?: CallSettingsDrawerTab;
+    /** Controlled tab (optional). */
+    tab?: CallSettingsDrawerTab;
+    onTabChange?: (tab: CallSettingsDrawerTab) => void;
+    /** Docked in the page column (default) or floating over it (the incoming-call gear). */
+    docked?: boolean;
+    audioVideo: ReactNode;
+    effects: ReactNode;
+    captions: ReactNode;
+    /** The Effects tab's footer. Without it the Effects tab shows the Done footer. */
+    effectsFooter?: CallSettingsEffectsFooter;
+    /** Floating width in px. Docked, the drawer fills its column. */
+    width?: number;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type CallSettingsDrawerTab = 'audio-video' | 'effects' | 'captions';
+
+export declare interface CallSettingsEffectsFooter {
+    /** Settings the open preview changes. 0 disables Apply. */
+    changeCount: number;
+    onCancel: () => void;
+    onApply: () => void;
+    applying?: boolean;
 }
 
 export declare type CallSettingsTab = 'devices' | 'effects' | 'people' | 'chat';
@@ -2252,12 +2476,29 @@ export declare interface CallStripParticipant {
     isSpeaking?: boolean;
 }
 
-export declare function CallTileRow({ participants, localParticipant, activeSpeakerId, tileWidth, controls, title, onParticipantClick, variant, className, style, 'data-testid': testId, }: CallTileRowProps): JSX.Element;
+/** A row participant. The two extra flags are read by the `dock` variant only. */
+export declare interface CallTileParticipant extends HangoutLayoutParticipant {
+    /** Draws the screen-share glyph on the tile (the shared stream is the host's `videoElement`). */
+    screenSharing?: boolean;
+    /** Veils the tile (last frame kept) while this person's connection recovers. */
+    reconnecting?: boolean;
+    /**
+     * Camera off, but keep `videoElement` MOUNTED (invisible) and draw the
+     * initials. A remote person's audio rides the same MediaStream as their
+     * video, so unmounting the element on camera-off silences them. `dock` only.
+     */
+    cameraOff?: boolean;
+    /** An audio sink (e.g. `<audio autoPlay>`), always mounted and never shown. `dock` only. */
+    audioElement?: ReactNode;
+}
+
+export declare function CallTileRow({ participants, localParticipant, activeSpeakerId, tileWidth, controls, title, onParticipantClick, variant, highlightedId, overflow, maxVisible, tileHeight, tileTestIdPrefix, className, style, 'data-testid': testId, }: CallTileRowProps): JSX.Element;
 
 export declare interface CallTileRowProps {
-    participants: HangoutLayoutParticipant[];
-    /** The viewer's own tile — drawn last, at the controls' side, where a mirror belongs. */
-    localParticipant?: HangoutLayoutParticipant | null;
+    participants: CallTileParticipant[];
+    /** The viewer's own tile — drawn last, at the controls' side, where a mirror belongs.
+     *  The `dock` variant draws it FIRST, as "You", the way a call dock reads left to right. */
+    localParticipant?: CallTileParticipant | null;
     activeSpeakerId?: string | null;
     /** Width of one tile; tiles keep 16:9. Default 144. */
     tileWidth?: number;
@@ -2267,6 +2508,24 @@ export declare interface CallTileRowProps {
     title?: ReactNode;
     onParticipantClick?: (id: string) => void;
     /**
+     * The person being FOLLOWED: a 2px accent ring, distinct from the green
+     * speaking ring (both can show at once — the accent wins the ring, the
+     * speaking state keeps its corner dot).
+     */
+    highlightedId?: string | null;
+    /**
+     * What happens when there are more people than `maxVisible`:
+     * `collapse` (default) ends the row with a `+N` tile; `scroll` keeps every
+     * tile and lets the row scroll sideways.
+     */
+    overflow?: 'scroll' | 'collapse';
+    /** Tiles before the `+N` tile under `overflow="collapse"`. Default 6. */
+    maxVisible?: number;
+    /** Tile height for the `dock` variant (tiles are `tileWidth` × `tileHeight`). Default 84. */
+    tileHeight?: number;
+    /** Prefix of each tile's test id in the `dock` variant (`<prefix>-<id>`). Default `call-tile`. */
+    tileTestIdPrefix?: string;
+    /**
      * `floating` (default): the tiles stand on their own over the page —
      * rounded, shadowed, no bar behind them — with the controls centred
      * beneath. A row of people over a diagram should look like people over a
@@ -2274,7 +2533,7 @@ export declare interface CallTileRowProps {
      * keeps them in one dark strip with the controls at the end, for a dock
      * that is itself a panel.
      */
-    variant?: 'floating' | 'bar';
+    variant?: 'floating' | 'bar' | 'dock';
     className?: string;
     style?: CSSProperties;
     'data-testid'?: string;
@@ -4198,6 +4457,35 @@ declare interface CollaborationProvider {
     awareness: Awareness;
 }
 
+export declare function CollaboratorCheckList({ title, rows, selected, onToggle, loading, emptyLabel, footnote, className, 'data-testid': testId, rowTestIdPrefix, }: CollaboratorCheckListProps): JSX.Element;
+
+export declare interface CollaboratorCheckListProps {
+    /** Section label, e.g. "Document collaborators". Omit for none. */
+    title?: string;
+    rows: CollaboratorRow[];
+    selected: string[];
+    onToggle: (userId: string, next: boolean) => void;
+    loading?: boolean;
+    emptyLabel?: string;
+    footnote?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+    /** Rows are `<rowTestIdPrefix>-<userId>`. Default `start-call-collaborator`. */
+    rowTestIdPrefix?: string;
+}
+
+export declare interface CollaboratorRow {
+    userId: string;
+    name: string;
+    avatarUrl?: string;
+    color?: string;
+    presence: 'online' | 'away' | 'offline';
+    /** "Online", "Away", "Offline", "In a call"… */
+    statusLabel: string;
+    /** Disables the checkbox with this as the title (e.g. "You"). */
+    disabledReason?: string;
+}
+
 export declare function CollapsedIconStrip({ connectionState, onExpand, onDocuments, onPipelines, onObservability, active, headerHeight, className, 'data-testid': testId, }: CollapsedIconStripProps): JSX.Element;
 
 export declare interface CollapsedIconStripProps {
@@ -4858,6 +5146,22 @@ export declare interface ContextColumnPanel {
     entries?: readonly ContextColumnEntry[];
     /** What the panel shows while it is the active one. */
     content: ReactNode;
+    /**
+     * `tabs` (default): the column's header row — tabs, width and collapse
+     * controls — sits above the panel. `bare`: while this panel is the active
+     * one the header row is not drawn and the panel fills the column, bringing
+     * its own header and close (a call drawer: "Start a call ×"). Since 2.391.0.
+     */
+    chrome?: 'tabs' | 'bare';
+    /**
+     * The open column's width while this panel is active. `default` is the
+     * column's own (320px, or `roomy`). The call drawers are wider, and narrow
+     * one step below a 1440px viewport so the page keeps its width:
+     *   `drawer`       340px → 380px at ≥1440 (call settings, the call panel)
+     *   `drawer-wide`  360px → 400px at ≥1440 (start a call)
+     * Applies in `open` and `wide` alike. Since 2.391.0.
+     */
+    width?: 'default' | 'drawer' | 'drawer-wide';
 }
 
 export declare interface ContextColumnProps {
@@ -5925,6 +6229,11 @@ export declare interface DetailSectionProps {
     'data-testid'?: string;
 }
 
+export declare interface DeviceOption {
+    deviceId: string;
+    label: string;
+}
+
 export declare interface DevicePreferences {
     microphoneId?: string;
     cameraId?: string;
@@ -5940,6 +6249,31 @@ export declare interface DeviceSettingsPanelProps {
     showCamera?: boolean;
     /** Extra rows the host wants under the pickers (a level meter, a note). */
     children?: ReactNode;
+    'data-testid'?: string;
+}
+
+export declare function DeviceToggleSelect({ kind, on, onToggle, devices, selectedDeviceId, onSelectDevice, permission, level, size, showLabel, extraItems, disabledReason, className, 'data-testid': testId, }: DeviceToggleSelectProps): JSX.Element;
+
+export declare interface DeviceToggleSelectProps {
+    kind: 'microphone' | 'camera';
+    on: boolean;
+    onToggle: () => void;
+    devices: DeviceOption[];
+    selectedDeviceId?: string;
+    onSelectDevice: (deviceId: string) => void;
+    permission: MediaPermission;
+    /** 0..1 live input level (microphone only). Above 0.08 draws the speaking ring. */
+    level?: number;
+    /** `sm` = 32px (the dock), `md` = 40px (the incoming-call popover). Default `sm`. */
+    size?: 'sm' | 'md';
+    /** Show "Mic on" / "Camera off" beside the icon. Default false (icon only). */
+    showLabel?: boolean;
+    /** Extra menu rows after the device list, e.g. "Blur background…". */
+    extraItems?: DropdownMenuItem[];
+    /** Disables the toggle with this as its title (e.g. "Microphone blocked in the browser"). */
+    disabledReason?: string;
+    className?: string;
+    /** Test id on the toggle; the chevron gets `<id>-menu`. */
     'data-testid'?: string;
 }
 
@@ -6306,6 +6640,41 @@ export declare function DocumentAddIcon({ size, ...rest }: GlyphProps): JSX.Elem
 /** "just now", "15m ago", "2h ago", "Yesterday", "3d ago", "Sep 12". */
 export declare function documentAgeLabel(value: string | number | Date | null | undefined, now?: number): string | null;
 
+export declare function DocumentCallPanel({ title, participantCount, elapsedMs, people, documents, presenting, currentDocumentId, canPresent, presentDisabledReason, onPresent, onCopyLink, onManageAccess, onPopOut, onClose, loading, notice, className, 'data-testid': testId, }: DocumentCallPanelProps): JSX.Element;
+
+export declare interface DocumentCallPanelProps {
+    title: string;
+    participantCount: number;
+    elapsedMs: number | null;
+    people: CallPeopleListProps;
+    documents: Omit<ReviewDocumentListProps, 'trailing'> & {
+        count: number;
+        onAdd: () => void;
+    };
+    /** Who presents which document, or nobody. */
+    presenting: {
+        documentId: string;
+        userId: string;
+        name: string;
+    } | null;
+    /** The document the reader has open — what "Present this document" presents. */
+    currentDocumentId: string;
+    canPresent: boolean;
+    /** Title of the disabled Present button, e.g. "Alice is presenting". */
+    presentDisabledReason?: string;
+    /** A document id to present, or null to stop. */
+    onPresent: (documentId: string | null) => void;
+    onCopyLink: () => void;
+    onManageAccess: () => void;
+    onPopOut: () => void;
+    onClose: () => void;
+    loading?: boolean;
+    /** Above everything — e.g. an InlineAlert "Reconnecting to the call…". */
+    notice?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function DocumentChip({ documentId, label, icon, onOpen, className, 'data-testid': testId }: DocumentChipProps): JSX.Element;
 
 export declare interface DocumentChipProps {
@@ -6515,7 +6884,7 @@ export declare type DotMeterTone = 'code' | 'surface';
 /** An arrow into a tray: "download". Since 2.390.3. */
 export declare function DownloadIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function Drawer({ open, onClose, title, subtitle, width, children, footer, docked, actions, className, bodyClassName, 'aria-label': ariaLabel, 'data-testid': testId, closeLabel, modal, trapFocus, backdrop, }: DrawerProps): default_2.JSX.Element | null;
+export declare function Drawer({ open, onClose, title, subtitle, width, children, footer, docked, actions, className, bodyClassName, headerClassName, titleClassName, footerClassName, closeTestId, 'aria-label': ariaLabel, 'data-testid': testId, closeLabel, modal, trapFocus, backdrop, }: DrawerProps): default_2.JSX.Element | null;
 
 export declare interface DrawerProps {
     open: boolean;
@@ -6549,6 +6918,14 @@ export declare interface DrawerProps {
     className?: string;
     /** Classes on the scrolling body. Overrides its default padding via tw-merge. */
     bodyClassName?: string;
+    /** Classes on the header row (e.g. `border-b-0` for a header with no rule under it). Since 2.391.0. */
+    headerClassName?: string;
+    /** Classes on the title heading (e.g. `text-lg`). Since 2.391.0. */
+    titleClassName?: string;
+    /** Classes on the footer row. Since 2.391.0. */
+    footerClassName?: string;
+    /** `data-testid` on the built-in close button. Since 2.391.0. */
+    closeTestId?: string;
     /**
      * Accessible name for the dialog when there is no visible `title` to point
      * at. When `title` IS set the heading labels the dialog via
@@ -6703,6 +7080,24 @@ export declare interface DropdownMenuSection {
  * cannot be saved.
  */
 export declare function duplicateSlide(spec: DeckSpec, id: string): DeckSpec;
+
+export declare function EditableHeading({ value, onCommit, placeholder, size, readOnly, editLabel, className, 'data-testid': testId, }: EditableHeadingProps): JSX.Element;
+
+export declare interface EditableHeadingProps {
+    value: string;
+    /** Called with the trimmed new value. Not called when it is empty or unchanged. */
+    onCommit: (next: string) => void;
+    /** Shown while editing an empty input. */
+    placeholder?: string;
+    /** `md` = 16px (drawer title), `lg` = 20px. Default `md`. */
+    size?: 'md' | 'lg';
+    /** Render as plain text with no pencil (someone who may not rename it). */
+    readOnly?: boolean;
+    /** Accessible name of the pencil button. Default `Rename`. */
+    editLabel?: string;
+    className?: string;
+    'data-testid'?: string;
+}
 
 /** A pencil: "change this". */
 export declare function EditIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -7140,6 +7535,9 @@ export declare interface ExpandableCallWidgetProps {
      *  also stamped by <CallWidget>, so it is not a unique handle. */
     'data-testid'?: string;
 }
+
+/** Two arrows pointing out to opposite corners: expand / pop the call out. */
+export declare function ExpandIcon({ size, ...rest }: IconProps): JSX.Element;
 
 export declare function ExpertCard({ name, title, subtitle, imageUrl, matchedSkills, otherSkills, contexts, evidence, evidenceLabel, onAsk, askLabel, footerExtra, onOpen, className, 'data-testid': testId, }: ExpertCardProps): JSX.Element;
 
@@ -7612,7 +8010,7 @@ export declare interface FloatingPanelProps {
  */
 export declare function FolderIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function FollowBanner({ name, onStop, autoStopOnInteract, className, 'data-testid': testId, }: FollowBannerProps): JSX.Element | null;
+export declare function FollowBanner({ name, onStop, autoStopOnInteract, location, appearance, className, 'data-testid': testId, }: FollowBannerProps): JSX.Element | null;
 
 export declare interface FollowBannerProps {
     /** Who is being followed. Null renders nothing. */
@@ -7623,6 +8021,19 @@ export declare interface FollowBannerProps {
      * turn off only where the host routes those interactions itself.
      */
     autoStopOnInteract?: boolean;
+    /**
+     * Where the followed person is — a section title ("Session flow"). Rendered
+     * after the name as ` · <location>` in the regular weight. Empty or unset
+     * renders the name alone.
+     */
+    location?: string;
+    /**
+     * `banner` (default): the centred strip with a small "Stop" button.
+     * `bar`: the in-call follow bar — a rounded row inside the page column,
+     * "**Following Alice** · Session flow" on the left and a "Stop following"
+     * button on the right.
+     */
+    appearance?: 'banner' | 'bar';
     className?: string;
     'data-testid'?: string;
 }
@@ -7672,6 +8083,9 @@ export declare function formatBytes(bytes: number): string;
 
 /** "12m 4s" — the shape a transcript wants, not "00:12:04". */
 export declare function formatCallDuration(ms: number): string;
+
+/** "09:41", or "1:02:03" past an hour. */
+export declare function formatCallElapsed(ms: number): string;
 
 /** Formats an ISO timestamp string to HH:MM local time. */
 export declare function formatChatTime(isoString: string): string;
@@ -9175,6 +9589,47 @@ export declare interface InboxSectionRowProps extends HTMLAttributes<HTMLLIEleme
     'data-testid'?: string;
 }
 
+export declare function IncomingCallPopover({ open, anchorRef, compact, caller, title, documents, onOpenDocument, participants, participantCount, mic, camera, onOpenSettings, busy, onJoin, onSwitch, onDecline, onDismiss, ringing, className, 'data-testid': testId, }: IncomingCallPopoverProps): JSX.Element;
+
+export declare interface IncomingCallPopoverProps {
+    open: boolean;
+    anchorRef: RefObject<HTMLElement | null>;
+    compact?: boolean;
+    caller: {
+        name: string;
+        avatarUrl?: string;
+        color?: string;
+    };
+    title: string;
+    documents: {
+        id: string;
+        title: string;
+    }[];
+    /** Opens a document without answering. */
+    onOpenDocument: (id: string) => void;
+    participants: {
+        id: string;
+        name: string;
+        avatarUrl?: string;
+    }[];
+    participantCount: number;
+    mic: Omit<DeviceToggleSelectProps, 'kind'>;
+    camera: Omit<DeviceToggleSelectProps, 'kind'>;
+    onOpenSettings: () => void;
+    /** Already in a call: the primary action reads "Switch". */
+    busy?: boolean;
+    onJoin: () => void;
+    onSwitch?: () => void;
+    /** Not now, the ×, and an outside click. */
+    onDecline: () => void;
+    /** Close without answering (the invite keeps ringing elsewhere until it expires). */
+    onDismiss: () => void;
+    /** Pulse the phone while ringing. Default true. */
+    ringing?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
 /** A circled "i": "more about this" — an estimate's confidence, a footnote. Since 2.385.0. */
 export declare function InfoIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -10403,9 +10858,16 @@ export declare interface MediaEffectsBackgroundOption {
 export declare interface MediaEffectsFilterOption {
     id: string;
     label: string;
+    /**
+     * The CSS filter the effect applies (RM presets carry it as `cssFilter`).
+     * The grid layout paints each filter thumbnail with it.
+     */
+    cssFilter?: string;
+    /** Glyph for a face-effect button in the grid layout. */
+    icon?: ReactNode;
 }
 
-export declare function MediaEffectsPreviewPanel({ previewActive, previewStream, isDirty, onApply, onCancel, filters, activeFilterId, onSelectFilter, backgrounds, backgroundMode, activeBackgroundUrl, onSelectBackground, faceSprites, activeFaceSpriteId, onSelectFaceSprite, disabled, title, applyLabel, className, 'data-testid': testId, }: MediaEffectsPreviewPanelProps): JSX.Element;
+export declare function MediaEffectsPreviewPanel({ previewActive, previewStream, isDirty, onApply, onCancel, filters, activeFilterId, onSelectFilter, backgrounds, backgroundMode, activeBackgroundUrl, onSelectBackground, faceSprites, activeFaceSpriteId, onSelectFaceSprite, disabled, title, applyLabel, variant, showFooter, hint, thumbnailSrc, onSelectCustomBackground, backgroundsUnsupported, className, 'data-testid': testId, }: MediaEffectsPreviewPanelProps): JSX.Element;
 
 export declare interface MediaEffectsPreviewPanelProps extends Pick<MediaEffectsTrayProps, 'filters' | 'activeFilterId' | 'onSelectFilter' | 'backgrounds' | 'backgroundMode' | 'activeBackgroundUrl' | 'onSelectBackground' | 'faceSprites' | 'activeFaceSpriteId' | 'onSelectFaceSprite'> {
     /**
@@ -10432,11 +10894,29 @@ export declare interface MediaEffectsPreviewPanelProps extends Pick<MediaEffects
     title?: string;
     /** Label for the commit button. Defaults to "Apply". */
     applyLabel?: string;
+    /**
+     * `chrome` (default): the dark call-chrome panel with its private-preview
+     * notice and pinned Apply/Cancel footer. `surface`: the call-settings
+     * Effects tab — page-themed, a "Preview · Only you" chip on the preview, a
+     * one-line hint, and the tray in its grid layout. Pair `surface` with
+     * `showFooter={false}` when the host (CallSettingsDrawer) owns the footer.
+     */
+    variant?: 'chrome' | 'surface';
+    /** Render the Apply/Cancel footer. Default true. */
+    showFooter?: boolean;
+    /** Surface: the line under the preview. Default "Changes appear in the call after Apply." */
+    hint?: ReactNode;
+    /** Surface: grid thumbnails fall back to this still when there is no preview stream. */
+    thumbnailSrc?: string;
+    /** Surface: "+ Custom" background tile. See MediaEffectsTray. */
+    onSelectCustomBackground?: (file: File) => void;
+    /** Surface: the background section says it cannot run here. */
+    backgroundsUnsupported?: boolean;
     className?: string;
     'data-testid'?: string;
 }
 
-export declare function MediaEffectsTray({ filters, activeFilterId, onSelectFilter, backgrounds, backgroundMode, activeBackgroundUrl, onSelectBackground, faceSprites, activeFaceSpriteId, onSelectFaceSprite, disabled, compact, className, 'data-testid': testId, }: MediaEffectsTrayProps): JSX.Element;
+export declare function MediaEffectsTray({ filters, activeFilterId, onSelectFilter, backgrounds, backgroundMode, activeBackgroundUrl, onSelectBackground, faceSprites, activeFaceSpriteId, onSelectFaceSprite, disabled, compact, layout, columns, thumbnailStream, thumbnailSrc, filterLimit, onSelectCustomBackground, backgroundsUnsupported, className, 'data-testid': testId, }: MediaEffectsTrayProps): JSX.Element;
 
 export declare interface MediaEffectsTrayProps {
     filters: MediaEffectsFilterOption[];
@@ -10457,8 +10937,52 @@ export declare interface MediaEffectsTrayProps {
     disabled?: boolean;
     /** Compact = tighter paddings for popover placement. */
     compact?: boolean;
+    /**
+     * `strip` (default): pill chips on the dark call chrome, for a popover or
+     * the pre-join room. `grid`: the call-settings Effects tab — thumbnail
+     * tiles in `columns` columns under "Filter · Reset", "Background" and "Face
+     * effects" headings, painted in the page theme (light or dark).
+     */
+    layout?: 'strip' | 'grid';
+    /** Grid columns. Default 3. */
+    columns?: number;
+    /** Grid: a live frame for the thumbnails (the preview stream), filtered per tile. */
+    thumbnailStream?: MediaStream | null;
+    /** Grid: a still frame for the thumbnails when there is no stream. */
+    thumbnailSrc?: string;
+    /** Grid: filter tiles before "More..." folds the rest. Default 5. */
+    filterLimit?: number;
+    /** Grid: when set, a dashed "+ Custom" tile opens a file picker (images ≤ 5 MB). */
+    onSelectCustomBackground?: (file: File) => void;
+    /** Grid: background replacement cannot run here (no WebGL / segmenter failed). */
+    backgroundsUnsupported?: boolean;
     className?: string;
     'data-testid'?: string;
+}
+
+/** Browser media permission for one kind of device. */
+export declare type MediaPermission = 'prompt' | 'granted' | 'denied' | 'unavailable';
+
+export declare function MediaPrecheckRow({ micOn, cameraOn, showCamera, permission, onToggleMic, onToggleCamera, onOpenSettings, testIdPrefix, settingsTestId, className, }: MediaPrecheckRowProps): JSX.Element;
+
+export declare interface MediaPrecheckRowProps {
+    micOn: boolean;
+    cameraOn: boolean;
+    /** Hide the camera toggle (an audio-only call). Default true. */
+    showCamera?: boolean;
+    /** One permission for both, or one per kind. */
+    permission: MediaPermission | {
+        microphone: MediaPermission;
+        camera: MediaPermission;
+    };
+    onToggleMic: () => void;
+    onToggleCamera: () => void;
+    onOpenSettings: () => void;
+    /** Prefix for the test ids: `<prefix>-mic`, `<prefix>-camera`, `<prefix>-settings`. Default `start-call-precheck`. */
+    testIdPrefix?: string;
+    /** Test id of the Settings link. Default `start-call-settings`. */
+    settingsTestId?: string;
+    className?: string;
 }
 
 declare interface MemberItem {
@@ -10992,6 +11516,9 @@ declare interface ModelOption {
  * offline draft or wait out a timeout.
  */
 export declare function modelUnavailableMessage(health: ApiHealthSnapshot): string | null;
+
+/** A monitor: "present this document" / someone is presenting. */
+export declare function MonitorIcon({ size, ...rest }: IconProps): JSX.Element;
 
 /** A crescent: the dark theme — "switch to (or currently in) dark mode". */
 export declare function MoonIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -11827,6 +12354,9 @@ export declare interface PersonHoverCardProps {
 
 /** One head and shoulders: "a person" (a subject mask, one member). Since 2.390.0. */
 export declare function PersonIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+/** A phone handset: a call, ringing or in progress. */
+export declare function PhoneCallIcon({ size, ...rest }: IconProps): JSX.Element;
 
 /** A handset: start a voice call. */
 export declare function PhoneIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -14143,6 +14673,36 @@ export declare const REVIEW_KIND_TONES: Record<string, ToneOrAlias>;
 
 export declare type ReviewAuthorKind = 'agent' | 'human';
 
+export declare interface ReviewDocumentItem {
+    id: string;
+    title: string;
+    subline?: ReactNode;
+    /** Accent sublines ("Presenting · Alice") vs tertiary ("Up next"). Default: accent when `selected`. */
+    sublineTone?: 'accent' | 'muted';
+    selected?: boolean;
+    /** Default true. The document a call starts from is not removable. */
+    removable?: boolean;
+    icon?: ReactNode;
+}
+
+export declare function ReviewDocumentList({ items, trailing, onRemove, onOpen, onSelect, onReorder, emptyLabel, className, 'data-testid': testId, rowTestIdPrefix, }: ReviewDocumentListProps): JSX.Element;
+
+export declare interface ReviewDocumentListProps {
+    items: ReviewDocumentItem[];
+    trailing: 'remove' | 'open';
+    onRemove?: (id: string) => void;
+    onOpen?: (id: string) => void;
+    onSelect?: (id: string) => void;
+    /** Drag-reorder: the id moved and its new index. */
+    onReorder?: (id: string, index: number) => void;
+    emptyLabel?: string;
+    className?: string;
+    /** Test id of the list; rows are `<rowTestIdPrefix>-<id>`. */
+    'data-testid'?: string;
+    /** Default `call-document` (so rows read `call-document-<id>`). */
+    rowTestIdPrefix?: string;
+}
+
 export declare interface ReviewPostData {
     id: string;
     authorKind: ReviewAuthorKind;
@@ -15117,6 +15677,9 @@ export declare function setApprovalApiBase(base: ApprovalApiBase | null): void;
  */
 export declare const setDocumentTypeApiBaseUrl: typeof setApiBaseUrl;
 
+/** A cog: "device settings" — which microphone, speaker and camera this call uses. */
+export declare function SettingsGearIcon({ size, ...rest }: IconProps): JSX.Element;
+
 export declare function SettingsLayout({ title, subtitle, sections, activeSectionId, onSectionChange, dirty, saveLabel, cancelLabel, onSave, onCancel, saving, saveBarSlot, railWidth, className, style, 'data-testid': testId, }: SettingsLayoutProps): JSX.Element;
 
 export declare interface SettingsLayoutProps {
@@ -15564,6 +16127,9 @@ export declare interface SparklineProps {
     baseline?: 'min' | 'zero' | number;
 }
 
+/** A speaker with sound waves: output volume / "Test sound". */
+export declare function SpeakerIcon({ size, ...rest }: IconProps): JSX.Element;
+
 export declare function Spinner({ size, color, className, style, decorative, 'aria-label': ariaLabel, 'data-testid': testId, }: SpinnerProps): JSX.Element;
 
 export declare interface SpinnerProps {
@@ -15706,6 +16272,61 @@ export declare function stagePhaseIsLive(phase: StreamStagePhase): boolean;
  * words over it rather than a bare frame.
  */
 export declare function stagePhaseIsShowingLiveMedia(phase: StreamStagePhase): boolean;
+
+export declare function StartCallDrawer({ open, onClose, title, onTitleChange, media, onMediaChange, documents, onManageAccess, people, message, onMessageChange, messageMaxLength, ring, onRingChange, precheck, selectedCount, onCopyLink, onStart, starting, startDisabledReason, error, width, docked, className, 'data-testid': testId, }: StartCallDrawerProps): JSX.Element;
+
+export declare interface StartCallDrawerProps {
+    open: boolean;
+    onClose: () => void;
+    title: string;
+    onTitleChange: (t: string) => void;
+    media: 'video' | 'audio';
+    onMediaChange: (m: 'video' | 'audio') => void;
+    documents: Omit<ReviewDocumentListProps, 'trailing'> & {
+        onAdd: () => void;
+    };
+    onManageAccess: () => void;
+    people: StartCallPeople;
+    message: string;
+    onMessageChange: (m: string) => void;
+    /** Max message length. Default 280. */
+    messageMaxLength?: number;
+    ring: boolean;
+    onRingChange: (r: boolean) => void;
+    /** `showCamera` is derived from `media` unless given. */
+    precheck: Omit<MediaPrecheckRowProps, 'showCamera'> & {
+        showCamera?: boolean;
+    };
+    selectedCount: number;
+    onCopyLink: () => void;
+    onStart: () => void;
+    starting?: boolean;
+    /** Disables Start call with this as the button's title. */
+    startDisabledReason?: string;
+    error?: {
+        message: string;
+        onRetry: () => void;
+    };
+    /** Floating width in px. Docked (default), the drawer fills its column. */
+    width?: number;
+    docked?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface StartCallPeople {
+    /** The search box. Typing filters `collaborators.rows` (the host's job). */
+    query: string;
+    onQueryChange: (q: string) => void;
+    placeholder?: string;
+    /** One chip per selected person, in selection order. */
+    chips: {
+        userId: string;
+        name: string;
+    }[];
+    onRemoveChip: (userId: string) => void;
+    collaborators: CollaboratorCheckListProps;
+}
 
 export declare function StatCard({ label, value, accent, danger, hint, title, delta, sparklineData, to, as: As, onClick, mono, className, style, 'data-testid': testId, }: StatCardProps): JSX.Element;
 
@@ -19716,6 +20337,26 @@ declare interface UseActivityBusReturn {
       'data-testid'?: string;
   }
 
+  export declare function VolumeSlider({ value, onChange, onTest, testLabel, testing, muted, disabled, className, 'data-testid': testId, testButtonTestId, }: VolumeSliderProps): JSX.Element;
+
+  export declare interface VolumeSliderProps {
+      /** 0..1. */
+      value: number;
+      onChange: (value: number) => void;
+      /** When set, a "Test sound" button follows the slider. */
+      onTest?: () => void;
+      /** Label of the test button. Default `Test sound`. */
+      testLabel?: string;
+      /** Disables the test button (a test is already playing). */
+      testing?: boolean;
+      muted?: boolean;
+      disabled?: boolean;
+      className?: string;
+      'data-testid'?: string;
+      /** Test id of the test button. Default `settings-test-sound`. */
+      testButtonTestId?: string;
+  }
+
   /** A triangle with an exclamation mark: "warning", "check this first". Since 2.389.0. */
   export declare function WarningIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -21189,19 +21830,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -21234,9 +21862,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -21247,19 +21878,6 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }
@@ -21303,9 +21921,32 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

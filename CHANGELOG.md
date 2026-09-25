@@ -6,6 +6,44 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.391.0] — 2026-09-24
+
+In-document calls (realtime-examples `docs/design/document-calls/SPEC.md` §3,
+mockups 01–06). Everything is additive.
+
+### Added
+- **Composites** (`/video`): `StartCallDrawer` (01), `CallDock` (02, + `formatCallElapsed`),
+  `CallSettingsDrawer` with `CallCaptionsSettings` (03b/04), `AudioVideoSettingsForm` (03b),
+  `IncomingCallPopover` with `compact` / `busy` (05/05b), `DocumentCallPanel` (06). Pure props in,
+  callbacks out; the PLAN §7 test ids are on the elements.
+- **Leaves**: `EditableHeading` (`/shared`); `DeviceToggleSelect` (+ `MediaPermission`, `DeviceOption`),
+  `AudioLevelMeter`, `VolumeSlider`, `MediaPrecheckRow`, `ReviewDocumentList`, `CollaboratorCheckList`,
+  `CallPeopleList` (+ `callPersonStatus`) (`/video`).
+- **Adapter**: `WrappedAudioVideoSettingsForm` bound structurally to RM `useMediaDevices` +
+  `useAudioVideoSettings`; `mediaEffectsChangeCount(controller)` for the Effects footer.
+- Icons: `SpeakerIcon`, `MonitorIcon`, `ExpandIcon`, `PhoneCallIcon`; `SettingsGearIcon` now exported.
+
+### Changed (additive props)
+- `FollowBanner` / `FollowModeBar`: `location` (" · Session flow") and `appearance="bar"` (the in-call
+  follow bar with "Stop following"); `FollowModeBar` gets `data-testid` (default `follow-bar`).
+- `CallTileRow`: `highlightedId` (accent ring for the followed person), `variant="dock"` with
+  `tileHeight`, `overflow` (`collapse` → `+N` tile past `maxVisible`, or `scroll`), and per-tile
+  `cameraOff` / `audioElement` so a camera-off person's audio keeps playing.
+- `MediaEffectsTray`: `layout="grid"` (thumbnail grid in the page theme, `columns`, `thumbnailStream` /
+  `thumbnailSrc`, filter `cssFilter`, "More...", `onSelectCustomBackground`, `backgroundsUnsupported`).
+- `MediaEffectsPreviewPanel`: `variant="surface"` ("Preview · Only you", hint, grid tray) and
+  `showFooter`. The Wrapped effects adapters pass these through and forward `cssFilter`.
+- `ContextColumn` panels: `chrome: 'bare'` (no tab row) and `width: 'drawer' | 'drawer-wide'`
+  (340→380px / 360→400px at ≥1440px).
+- `Drawer`: a docked drawer never outgrows its column (`max-w-full`); `headerClassName`,
+  `titleClassName`, `footerClassName`, `closeTestId`.
+
+### Stories
+- `Video/Document calls/*` (CallDock, CallSettingsDrawer, StartCallDrawer, IncomingCallPopover,
+  DocumentCallPanel, Pieces), `Video/CallTileRow`, `Shared/FollowBanner`, `Shared/EditableHeading`,
+  `Doc editor/FollowModeBar`, `Layout/ContextColumn`; new variants in `Shared/Drawer`,
+  `Video/MediaEffectsTray`, `Video/MediaEffectsPreviewPanel`, `Video/MediaIcons` — light and dark.
+
 ## [2.390.4] — 2026-09-25
 
 ### Changed

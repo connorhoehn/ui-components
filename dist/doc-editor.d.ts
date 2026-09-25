@@ -1789,12 +1789,22 @@ export declare interface FloatingDockBarProps {
     'data-testid'?: string;
 }
 
-export declare function FollowModeBar({ followingUserId, participants, onStopFollow, }: FollowModeBarProps): JSX.Element | null;
+export declare function FollowModeBar({ followingUserId, participants, onStopFollow, location, appearance, className, 'data-testid': testId, }: FollowModeBarProps): JSX.Element | null;
 
-declare interface FollowModeBarProps {
+export declare interface FollowModeBarProps {
     followingUserId: string | null;
     participants: Participant[];
     onStopFollow: () => void;
+    /** The followed person's section title — rendered as ` · <location>`. */
+    location?: string;
+    /**
+     * `banner` (default): the centred strip. `bar`: the in-call follow bar
+     * ("**Following Alice** · Session flow" … "Stop following"), see FollowBanner.
+     */
+    appearance?: 'banner' | 'bar';
+    className?: string;
+    /** Default `follow-bar`; the stop button is `<id>-stop`. */
+    'data-testid'?: string;
 }
 
 /** Error received from the gateway (matches server error-codes.js format) */
@@ -3986,19 +3996,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -4031,9 +4028,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -4044,19 +4044,6 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }
@@ -4100,9 +4087,32 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
