@@ -208,6 +208,19 @@ export interface GroupedListProps {
    * `label` heading's count is always plain.) Since 2.390.0.
    */
   groupCountStyle?: 'chip' | 'plain';
+  /**
+   * Where a group header's count sits. `inline` (default): right after the
+   * title. `end`: pushed to the header's right edge — "IN PROGRESS … 9", the
+   * Initiatives v2 rail. Applies to every heading and count style. Since
+   * 2.392.0.
+   */
+  groupCountAlign?: 'inline' | 'end';
+  /**
+   * `ruled` (default): a 1px rule above every row. `plain` (since 2.392.0):
+   * no rules — a title-only list whose rows are separated by space alone, a
+   * 40px pitch at `md` (36px at `sm`) — the Initiatives v2 rail.
+   */
+  rowStyle?: 'ruled' | 'plain';
   className?: string;
   'data-testid'?: string;
 }
@@ -339,11 +352,16 @@ export function GroupedList({
   groupHeading = 'title',
   currentStyle = 'tint',
   groupCountStyle = 'chip',
+  groupCountAlign = 'inline',
+  rowStyle = 'ruled',
   className,
   'data-testid': testId = 'grouped-list',
 }: GroupedListProps) {
   const md = size === 'md';
   const labelHeading = groupHeading === 'label';
+  // `end`: the count takes the header's right edge (a little in from it, so
+  // it lines up with a row's trailing content rather than the hover fill).
+  const countEnd = groupCountAlign === 'end' ? 'ml-auto pr-1' : undefined;
   const isControlled = openGroups !== undefined;
 
   // Uncontrolled: the set of CLOSED groups (so a group added later defaults open).
@@ -642,17 +660,17 @@ export function GroupedList({
                 )}
                 <span className="truncate">{group.title}</span>
                 {typeof group.count === 'number' && !labelHeading && groupCountStyle === 'plain' && (
-                  <span className="shrink-0 text-[13px] font-medium text-text-secondary" aria-label={`${group.count} items`} data-testid={`${testId}-group-count-${group.id}`} data-count-style="plain">
+                  <span className={cn('shrink-0 text-[13px] font-medium text-text-secondary', countEnd)} aria-label={`${group.count} items`} data-testid={`${testId}-group-count-${group.id}`} data-count-style="plain" data-count-align={groupCountAlign === 'end' ? 'end' : undefined}>
                     {group.count}
                   </span>
                 )}
                 {typeof group.count === 'number' && labelHeading && (
-                  <span className="shrink-0 font-medium normal-case tracking-normal text-text-tertiary" aria-label={`${group.count} items`} data-testid={`${testId}-group-count-${group.id}`}>
+                  <span className={cn('shrink-0 font-medium normal-case tracking-normal text-text-tertiary', countEnd)} aria-label={`${group.count} items`} data-testid={`${testId}-group-count-${group.id}`} data-count-align={groupCountAlign === 'end' ? 'end' : undefined}>
                     {group.count}
                   </span>
                 )}
                 {typeof group.count === 'number' && !labelHeading && groupCountStyle !== 'plain' && (
-                  <Chip size="xs" tone="neutral" className="shrink-0" aria-label={`${group.count} items`} data-testid={`${testId}-group-count-${group.id}`}>
+                  <Chip size="xs" tone="neutral" className={cn('shrink-0', countEnd)} aria-label={`${group.count} items`} data-testid={`${testId}-group-count-${group.id}`} data-count-align={groupCountAlign === 'end' ? 'end' : undefined}>
                     {group.count}
                   </Chip>
                 )}
@@ -676,6 +694,7 @@ export function GroupedList({
                     row={row}
                     current={row.current || row.id === currentId}
                     currentStyle={currentStyle}
+                    rowStyle={rowStyle}
                     testId={testId}
                     size={size}
                     tabbable={tabTarget === `r:${row.id}`}
@@ -723,6 +742,7 @@ interface RowProps {
   row: GroupedListRow;
   current: boolean;
   currentStyle: 'tint' | 'bar';
+  rowStyle: 'ruled' | 'plain';
   testId: string;
   size: 'sm' | 'md';
   tabbable: boolean;
@@ -734,7 +754,7 @@ interface RowProps {
   reorder?: { label: string; sortable: SortableModule | null };
 }
 
-function Row({ row, current, currentStyle, testId, size, tabbable, onFocusRow, onOpenRow, menuSections, menuLabel, reorder }: RowProps) {
+function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onFocusRow, onOpenRow, menuSections, menuLabel, reorder }: RowProps) {
   const hasMenu = !!menuSections && menuSections.some((s) => s.items.length > 0);
   const hasHoverLine = row.hoverSubline !== undefined && row.hoverSubline !== null;
   const hasMeta = row.meta !== undefined && row.meta !== null;
@@ -774,8 +794,9 @@ function Row({ row, current, currentStyle, testId, size, tabbable, onFocusRow, o
           }
         : {})}
       className={cn(
-        'group relative flex items-center gap-3 border-t border-border px-2',
-        md ? 'py-[7px]' : 'py-2.5',
+        'group relative flex items-center gap-3 px-2',
+        rowStyle === 'plain' ? 'border-t-0' : 'border-t border-border',
+        rowStyle === 'plain' ? (md ? 'py-[9px]' : 'py-2') : md ? 'py-[7px]' : 'py-2.5',
         'transition-colors duration-100',
         current ? 'bg-primary/8 hover:bg-primary/12' : 'hover:bg-surface-hover',
         // md: the current row is a rounded tint with a bar on its left edge;

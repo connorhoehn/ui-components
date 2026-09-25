@@ -21,6 +21,7 @@ import { cn } from '../../lib/cn';
 import { Breadcrumbs, type BreadcrumbItem } from '../shared/Breadcrumbs';
 import { StatusPill, type StatusPillTone } from '../shared/StatusPill';
 import { MetaLine } from '../shared/MetaLine';
+import { Avatar } from '../shared/Avatar';
 import { PresenceAvatars, type PresenceUser } from '../shared/PresenceAvatars';
 import { Tabs } from '../shared/Tabs';
 import { DropdownMenu, type DropdownMenuSection } from '../shared/DropdownMenu';
@@ -134,8 +135,26 @@ export interface ScopeHeaderProps {
    * right-hand group. `names`: one line under the description, names then
    * the label — "Nora DaSilva · Owner   Layla Hassan, Eli Garcia · SMEs".
    * Since 2.390.0.
+   *
+   * `inline` (since 2.392.0): its own row under the description — the muted
+   * label, then a 32px avatar and the name for each person, groups ruled
+   * apart — "Owner (ND) Nora DaSilva │ SMEs (LH) Layla Hassan (EG) Eli
+   * Garcia". A person's `avatarUrl` is used when present, else initials.
    */
-  peopleStyle?: 'avatars' | 'names';
+  peopleStyle?: 'avatars' | 'names' | 'inline';
+  /**
+   * The tab row's size. Absent: 14px tabs, or 15px at `titleSize="lg"` (as
+   * before). `md` (since 2.392.0): 15px tabs at any title size, the count
+   * 10px after its label, 8px side padding with 28px gaps between tabs
+   * and the first label aligned under the title — the Initiatives v2 header.
+   * `sm`: 14px tabs at any title size.
+   */
+  tabSize?: 'sm' | 'md';
+  /**
+   * The description's type. `md` (default): 16px on 24px lines. `sm` (since
+   * 2.392.0): 15px on 22px lines — the Initiatives v2 two-line summary.
+   */
+  descriptionSize?: 'sm' | 'md';
   /**
    * How `link` reads. `inline` (default): a primary text link with a leading
    * glyph, ruled off from the people. `button`: an outlined button — label
@@ -266,6 +285,8 @@ function ScopeHeaderFull({
   peopleStyle = 'avatars',
   linkStyle = 'inline',
   statsPlacement = 'inline',
+  tabSize,
+  descriptionSize = 'md',
   className,
   'data-testid': testId = 'scope-header',
 }: ScopeHeaderProps) {
@@ -290,6 +311,8 @@ function ScopeHeaderFull({
 
   const groups = (people ?? []).filter((g) => g.people.length > 0);
   const namesLine = peopleStyle === 'names' && groups.length > 0;
+  const inlinePeople = peopleStyle === 'inline' && groups.length > 0;
+  const peopleInRight = !namesLine && !inlinePeople;
   const lg = titleSize === 'lg';
   const statsBelow = statsPlacement === 'below';
   const hasDescription = description != null && description !== false;
@@ -306,7 +329,7 @@ function ScopeHeaderFull({
   const currentTab = hasTabs ? (tabs!.some((t) => t.id === activeTab) ? activeTab! : tabs![0]!.id) : undefined;
 
   return (
-    <div data-testid={testId} data-title-size={titleSize} className={cn('flex min-w-0 flex-col gap-1.5 px-6 pt-3', lg && 'gap-0 pt-4', !hasTabs && (lg ? 'pb-4' : 'pb-3'), className)}>
+    <div data-testid={testId} data-title-size={titleSize} {...(tabSize ? { 'data-tab-size': tabSize } : {})} className={cn('flex min-w-0 flex-col gap-1.5 px-6 pt-3', lg && 'gap-0 pt-4', !hasTabs && (lg ? 'pb-4' : 'pb-3'), className)}>
       {breadcrumbs && breadcrumbs.length > 0 && (
         <Breadcrumbs items={breadcrumbs} separator="›" maxItems={5} className="min-w-0" data-testid={`${testId}-crumbs`} />
       )}
@@ -328,7 +351,7 @@ function ScopeHeaderFull({
         </div>
         {!statsBelow && statsNode}
         <div className={cn('ml-auto flex shrink-0 items-center', linkStyle === 'button' ? 'gap-3' : 'gap-5')}>
-          {!namesLine && groups.map((g) => (
+          {peopleInRight && groups.map((g) => (
             <div key={g.label} className="flex items-center gap-2" data-testid={`${testId}-people-${g.label.toLowerCase()}`}>
               <span className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">{g.label}</span>
               <PresenceAvatars users={g.people} size={26} maxVisible={4} />
@@ -339,7 +362,9 @@ function ScopeHeaderFull({
       </div>
       {statsBelow && statsNode}
       {hasDescription && (
-        <p className="m-0 min-w-0 text-base leading-6 text-text-secondary" data-testid={`${testId}-description`}>{description}</p>
+        // pre-line (2.392.0): a "\n" in the text is a line break — a summary
+        // then a "Focus: …" line — without the host building markup.
+        <p className={cn('m-0 min-w-0 whitespace-pre-line text-text-secondary', descriptionSize === 'sm' ? 'text-[15px] leading-[22px]' : 'text-base leading-6')} data-testid={`${testId}-description`} data-size={descriptionSize === 'sm' ? 'sm' : undefined}>{description}</p>
       )}
       {namesLine && (
         <div className="flex min-w-0 flex-wrap items-center gap-x-6 gap-y-1 text-sm leading-6 text-text-secondary" data-testid={`${testId}-people`}>
@@ -349,6 +374,26 @@ function ScopeHeaderFull({
               <span aria-hidden="true"> · </span>
               {g.label}
             </span>
+          ))}
+        </div>
+      )}
+      {inlinePeople && (
+        <div className={cn('flex min-w-0 flex-wrap items-center gap-x-7 gap-y-2', hasDescription ? 'mt-5' : 'mt-3')} data-testid={`${testId}-people`} data-people-style="inline">
+          {groups.map((g, gi) => (
+            <div key={g.label} className="flex min-w-0 items-center gap-7" data-testid={`${testId}-people-${g.label.toLowerCase()}`}>
+              {gi > 0 && <span aria-hidden="true" className="h-6 w-px shrink-0 bg-border" data-testid={`${testId}-people-rule`} />}
+              <div className="flex min-w-0 items-center gap-4" role="group" aria-label={g.label}>
+                <span className="shrink-0 text-[15px] leading-6 text-text-secondary">{g.label}</span>
+                <span className="flex min-w-0 flex-wrap items-center gap-x-7 gap-y-2">
+                  {g.people.map((p) => (
+                    <span key={p.id} className="flex min-w-0 items-center gap-3" data-testid={`${testId}-person-${p.id}`}>
+                      <Avatar name={p.name} size={32} {...(p.avatarUrl ? { src: p.avatarUrl } : {})} {...(p.color ? { color: p.color } : {})} />
+                      <span className="truncate text-[15px] font-medium leading-6 text-text-primary">{p.name}</span>
+                    </span>
+                  ))}
+                </span>
+              </div>
+            </div>
           ))}
         </div>
       )}
@@ -385,10 +430,22 @@ function ScopeHeaderFull({
           badgeStyle="plain"
           // lg: the count sits 10px after its label ("Work 11"), as the
           // Initiatives mockup draws it — the button's own 6px gap is dropped
-          // and only the badge's margin remains.
-          {...(lg ? { itemClassName: 'gap-0 text-[15px]' } : {})}
+          // and only the badge's margin remains. tabSize="md" (2.392.0) is
+          // the same 15px/10px at any title size, with 8px side padding,
+          // 28px between tabs and the first label 4px in from the title.
+          {...(tabSize === 'md'
+            ? { itemClassName: 'gap-0 px-2 text-[15px]' }
+            : tabSize === 'sm'
+              ? {}
+              : lg ? { itemClassName: 'gap-0 text-[15px]' } : {})}
           aria-label={`${title} views`}
-          className={cn('-mb-px border-b-0', lg ? (hasDescription || namesLine ? 'mt-5' : 'mt-2') : hasDescription || namesLine ? 'mt-3' : 'mt-1')}
+          className={cn(
+            '-mb-px border-b-0',
+            tabSize === 'md' && '-ml-1 gap-7',
+            inlinePeople
+              ? 'mt-4'
+              : lg ? (hasDescription || namesLine ? 'mt-5' : 'mt-2') : hasDescription || namesLine ? 'mt-3' : 'mt-1',
+          )}
         />
       )}
     </div>

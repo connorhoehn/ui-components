@@ -23,7 +23,10 @@ import { StatStrip } from '../shared/StatStrip';
 import { KeyValue } from '../shared/KeyValue';
 import { MetaLine } from '../shared/MetaLine';
 import EmptyState from '../shared/EmptyState';
-import { ActionRowList } from '../work/ActionRowList';
+import { ActionRowList, ActionRowPerson } from '../work/ActionRowList';
+import { RailNavList } from '../shared/RailNavList';
+import { PageSection } from '../ui/PageSection';
+import Chip from '../shared/Chip';
 import { WorkListView, type WorkListItem } from '../work/WorkListView';
 import { WorkItemMetaBar } from '../work/WorkItemMetaBar';
 import { OutcomeSection } from '../work/OutcomeSection';
@@ -613,6 +616,139 @@ function InitiativesMineEmptyFrame() {
   );
 }
 
+// ---------------------------------------------------------------------------
+// 2.392.0 — Initiatives v2 (agentcore docs/design/initiative-overview-v2-mockup.png),
+// composed only from library parts: `railWidth="ms"` (264px), `railHeading=
+// "caption"` + chip count, `RailNavList`, `GroupedList groupHeading="label"
+// groupCountAlign="end" rowStyle="plain"` with title-only rows, `ScopeHeader
+// tabSize="md" peopleStyle="inline" descriptionSize="sm"` and a two-line
+// pre-line `description`, `StatStrip
+// variant="line"`, `PageSection size="md" count`, and `ActionRowList tone/
+// accent/leading/columns/action` with `ActionRowPerson` cells.
+// ---------------------------------------------------------------------------
+
+const V2_ROWS = INITIATIVE_ROWS.map(({ id, groupId, title }) => ({ id, groupId, title }));
+
+const V2_WHO_PTS = [
+  { id: 'who', width: 'lg' as const, label: 'Assignee' },
+  { id: 'pts', width: 'sm' as const, label: 'Points' },
+];
+
+function InitiativeOverviewV2Frame() {
+  const [tab, setTab] = useState('overview');
+  const [q, setQ] = useState('');
+  return (
+    <OrgFrame>
+      <ExplorerLayout
+        railTitle="Initiatives"
+        railCount={11}
+        railHeading="caption"
+        railWidth="ms"
+        railActions={<DropdownMenu trigger={<MoreIcon size={18} />} triggerLabel="Initiative list options" triggerClassName="h-8 w-8 border-transparent px-0 py-0 text-text-secondary" align="end" sections={MORE_MENU} />}
+        onToggleRail={() => {}}
+        railLabel="initiatives"
+        railHeader={
+          <div className="flex flex-col gap-3">
+            <SearchInput size="md" value={q} onChange={setQ} placeholder="Find an initiative…" className="w-full" />
+            <RailNavList
+              aria-label="Initiative views"
+              items={[
+                { id: 'all', label: 'All initiatives', href: '?scope=all' },
+                { id: 'mine', label: 'My initiatives', href: '?scope=mine' },
+                { id: 'sprints', label: 'Sprints', href: '?lens=sprints' },
+              ]}
+            />
+          </div>
+        }
+        railFooter={<span className="text-[15px] text-text-secondary">11 initiatives</span>}
+        rail={
+          <GroupedList
+            size="md"
+            groupHeading="label"
+            groupCountAlign="end"
+            rowStyle="plain"
+            currentStyle="bar"
+            currentId="obs"
+            onOpenRow={() => {}}
+            groups={[{ id: 'progress', title: 'In progress', count: 9 }, { id: 'planning', title: 'Planning', count: 2, defaultOpen: false }]}
+            rows={V2_ROWS}
+          />
+        }
+        panePadding="none"
+        paneFooter={<InitiativeComposer chip="Observability Platform" text="Help me prioritize the next changes and explain the tradeoffs." />}
+      >
+        <ScopeHeader
+          title="Observability Platform"
+          status={{ label: 'In progress', tone: 'info' }}
+          description={'Centralize telemetry, reduce alert noise, and control retention costs.\nFocus: actionable alerts, team error budgets, and OpenTelemetry.'}
+          descriptionSize="sm"
+          peopleStyle="inline"
+          people={[
+            { label: 'Owner', people: [{ id: 'nd', name: 'Nora DaSilva' }] },
+            { label: 'SMEs', people: [{ id: 'lh', name: 'Layla Hassan' }, { id: 'eg', name: 'Eli Garcia' }] },
+          ]}
+          link={{ label: 'Repository', href: '#repo' }}
+          linkStyle="button"
+          menu={MORE_MENU}
+          tabs={INITIATIVE_TABS}
+          tabSize="md"
+          activeTab={tab}
+          onTabChange={setTab}
+          className="mx-6 border-b border-border px-0"
+        />
+        <div className="flex flex-col px-6 pb-6">
+          <StatStrip
+            variant="line"
+            aria-label="Initiative progress"
+            className="mt-7"
+            items={[
+              { label: '/ 52 points delivered', value: 18, progress: { value: 18, max: 52 } },
+              { label: 'agents running', value: 2 },
+              { label: 'of $95 spent', value: '$1.73' },
+            ]}
+          />
+          <PageSection title="Needs attention" size="md" count={1} className="mt-6">
+            <ActionRowList
+              aria-label="Needs attention"
+              tone="warning"
+              accent="bar"
+              action="Open"
+              columns={[{ id: 'who', width: 'md' as const, label: 'Assignee' }, { id: 'pts', width: 'xs' as const, label: 'Points' }]}
+              onOpen={() => {}}
+              items={[
+                {
+                  id: 'b4',
+                  title: 'Stop duplicate alerts during a dependency outage',
+                  description: 'Waiting on the dependency map.',
+                  leading: <Chip tone="danger" size="md">Blocked</Chip>,
+                  cells: { who: <ActionRowPerson name="Eli Garcia" />, pts: '2 pts' },
+                },
+              ]}
+            />
+          </PageSection>
+          <PageSection
+            title="Up next"
+            size="md"
+            className="mt-8"
+            actions={<Button variant="link" className="inline-flex items-center gap-1.5 text-[15px]">View all 11 <ArrowRightIcon size={16} /></Button>}
+          >
+            <ActionRowList
+              aria-label="Up next"
+              columns={V2_WHO_PTS}
+              onOpen={() => {}}
+              items={[
+                { id: 's1', title: 'Decommission the legacy StatsD bridge', cells: { who: <ActionRowPerson name="Layla Hassan" />, pts: '5 pts' } },
+                { id: 's2', title: 'Error-budget dashboard per team', cells: { who: <ActionRowPerson name="Nora DaSilva" />, pts: '3 pts' } },
+                { id: 's3', title: 'Metric cardinality budgets', cells: { who: <ActionRowPerson name="Eli Garcia" />, pts: '5 pts' } },
+              ]}
+            />
+          </PageSection>
+        </div>
+      </ExplorerLayout>
+    </OrgFrame>
+  );
+}
+
 export const InitiativeOverview: Story = {
   name: 'Initiative overview',
   render: () => <InitiativeOverviewFrame />,
@@ -626,4 +762,9 @@ export const InitiativeWorkItem: Story = {
 export const InitiativesMineEmpty: Story = {
   name: 'Initiatives mine empty',
   render: () => <InitiativesMineEmptyFrame />,
+};
+
+export const InitiativeOverviewV2: Story = {
+  name: 'Initiative overview v2',
+  render: () => <InitiativeOverviewV2Frame />,
 };

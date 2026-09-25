@@ -17,9 +17,12 @@ export interface WorkspaceRailProps {
   header?: ReactNode;
   footer?: ReactNode;
   children: ReactNode;
-  /** `sm` 240px, `md` 300px, `lg` 368px (a two-line work list with a toolbar). */
-  /** sm 240, md 300, ml 320 (the Folders explorer, 2.386.0), lg 368. */
-  width?: 'sm' | 'md' | 'ml' | 'lg';
+  /**
+   * sm 240, ms 264 (a one-line title list — the Initiatives v2 rail, since
+   * 2.392.0), md 300, ml 320 (the Folders explorer, 2.386.0), lg 368 (a
+   * two-line work list with a toolbar).
+   */
+  width?: 'sm' | 'ms' | 'md' | 'ml' | 'lg';
   /**
    * A count beside the title ("Work 11"). Omit for none; zero shows "0" —
    * an empty list is a fact, not a missing number.
@@ -30,9 +33,11 @@ export interface WorkspaceRailProps {
    * `prominent` is the column heading a work list wears — an 18px title and
    * count on a 56px row, no rule under it. `label` is the same 56px row with
    * the title as a 15px uppercase label — "DOCUMENTS 137", the All documents
-   * mockup (since 2.389.2).
+   * mockup (since 2.389.2). `caption` (since 2.392.0) is the same row with a
+   * 13px letter-spaced uppercase label — "INITIATIVES 11", the Initiatives v2
+   * rail.
    */
-  heading?: 'compact' | 'prominent' | 'label';
+  heading?: 'compact' | 'prominent' | 'label' | 'caption';
   /**
    * How `count` reads. `chip` (default): a neutral count chip. `plain`: muted
    * text after the title — "Initiatives 11". Since 2.390.0.
@@ -68,7 +73,7 @@ export function WorkspaceRail({
   const toggleName = toggleLabel ?? `${collapsed ? 'Show' : 'Hide'} ${label ?? title ?? 'the list'}`;
   return (
     <nav aria-label={label ?? title ?? 'Workspace'} data-testid={testId} data-collapsed={collapsed}
-      className={cn('flex h-full min-h-0 shrink-0 flex-col border-r border-border bg-surface-panel', collapsed ? 'w-9' : width === 'sm' ? 'w-[240px]' : width === 'lg' ? 'w-[368px]' : width === 'ml' ? 'w-[320px]' : 'w-[300px]', className)}>
+      className={cn('flex h-full min-h-0 shrink-0 flex-col border-r border-border bg-surface-panel', collapsed ? 'w-9' : width === 'sm' ? 'w-[240px]' : width === 'ms' ? 'w-[264px]' : width === 'lg' ? 'w-[368px]' : width === 'ml' ? 'w-[320px]' : 'w-[300px]', className)}>
       {back && !collapsed && (
         <div className={cn('flex shrink-0 items-center pt-4', heading !== 'compact' ? 'px-5' : 'px-3.5')} data-testid={`${testId}-back-row`}>
           {back.href ? (
@@ -87,13 +92,13 @@ export function WorkspaceRail({
       {(title || actions || onToggle) && (
         <div className={cn('flex shrink-0 items-center gap-1', heading !== 'compact' ? 'h-14' : 'h-9 border-b border-border', collapsed ? 'justify-center' : heading !== 'compact' ? 'pl-5 pr-3' : 'pl-3.5 pr-1.5')} data-testid={`${testId}-header`}>
           {!collapsed && (title ? (
-            <h2 className={cn('m-0 flex min-w-0 flex-1 items-center gap-2 text-text-primary', heading === 'prominent' ? 'text-[18px] font-semibold' : heading === 'label' ? 'text-[15px] font-semibold uppercase tracking-[0.02em]' : 'text-[12px] font-semibold')} data-testid={`${testId}-title`}>
+            <h2 className={cn('m-0 flex min-w-0 flex-1 items-center gap-2 text-text-primary', heading === 'prominent' ? 'text-[18px] font-semibold' : heading === 'label' ? 'text-[15px] font-semibold uppercase tracking-[0.02em]' : heading === 'caption' ? 'text-[13px] font-semibold uppercase tracking-[0.06em]' : 'text-[12px] font-semibold')} data-testid={`${testId}-title`}>
               <span className="min-w-0 truncate">{title}</span>
               {typeof count === 'number' && countStyle === 'plain' && (
                 <span className="shrink-0 text-[13px] font-medium text-text-secondary" aria-label={`${count} items`} data-testid={`${testId}-count`} data-count-style="plain">{count}</span>
               )}
               {typeof count === 'number' && countStyle !== 'plain' && (
-                <Chip size={heading === 'prominent' ? 'md' : heading === 'label' ? 'sm' : 'xs'} tone="neutral" className="shrink-0" aria-label={`${count} items`} data-testid={`${testId}-count`}>{count}</Chip>
+                <Chip size={heading === 'prominent' ? 'md' : heading === 'label' || heading === 'caption' ? 'sm' : 'xs'} tone="neutral" className="shrink-0" aria-label={`${count} items`} data-testid={`${testId}-count`}>{count}</Chip>
               )}
             </h2>
           ) : <span className="flex-1" />)}

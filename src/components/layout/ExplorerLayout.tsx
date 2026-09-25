@@ -41,9 +41,10 @@ export interface ExplorerLayoutProps {
   /**
    * Rail width. `md` is the 300px agentcore measured against; `sm` is 240px for
    * a shallower tree; `lg` is 368px for a two-line work list with its toolbar
-   * (the Documents Work column, measured against the redesign's 370px).
+   * (the Documents Work column, measured against the redesign's 370px); `ms`
+   * is 264px for a one-line title list (the Initiatives v2 rail, since 2.392.0).
    */
-  railWidth?: 'sm' | 'md' | 'ml' | 'lg';
+  railWidth?: 'sm' | 'ms' | 'md' | 'ml' | 'lg';
   /**
    * A band ABOVE all three columns — a scope header (breadcrumb, title, stats,
    * tabs) that names what the rail, the pane and the aside are all looking at.
@@ -80,7 +81,7 @@ export interface ExplorerLayoutProps {
    */
   railBack?: WorkspaceRailBack | null;
   /** The rail's heading style — see `WorkspaceRail.heading`. Default `compact`. Since 2.385.0. */
-  railHeading?: 'compact' | 'prominent' | 'label';
+  railHeading?: 'compact' | 'prominent' | 'label' | 'caption';
   /**
    * The rail folded to a strip with one control that brings it back. For a
    * surface that wants the width — a diagram, a wide table — the list of

@@ -1,8 +1,8 @@
 import { r as e } from "./IdentityContext-CQM1qwH6.js";
 import { t } from "./cn-DhjIN-s0.js";
 import { _ as n, t as r } from "./overlayStack-CHdlnODN.js";
-import { D as i } from "./Icons-BSEVGRI6.js";
-import { t as a } from "./Chip-zdVBwV9j.js";
+import { t as i } from "./Chip-zdVBwV9j.js";
+import { D as a } from "./Icons-BSEVGRI6.js";
 import { i as o, r as s } from "./focusTrap-C5l9cvTe.js";
 import { t as c } from "./InlinePopover-DpXHdWeE.js";
 import { t as l } from "./DropdownMenu-CHrQvZgc.js";
@@ -334,7 +334,7 @@ function H(e) {
 }
 //#endregion
 //#region src/components/shared/TrendSparkline.tsx
-function ee({ points: e, yMin: n, yMax: r, width: i = 120, height: a = 32, stroke: o = "currentColor", strokeWidth: s = 1.5, showLastPoint: c = !0, showFill: l = !0, ariaLabel: u, className: d }) {
+function U({ points: e, yMin: n, yMax: r, width: i = 120, height: a = 32, stroke: o = "currentColor", strokeWidth: s = 1.5, showLastPoint: c = !0, showFill: l = !0, ariaLabel: u, className: d }) {
 	let f = e.filter((e) => Number.isFinite(e));
 	if (f.length === 0) return /* @__PURE__ */ y("div", {
 		role: "img",
@@ -349,7 +349,7 @@ function ee({ points: e, yMin: n, yMax: r, width: i = 120, height: a = 32, strok
 	let p = Math.min(...f), m = Math.max(...f), h = n ?? (p === m ? p - 1 : p), g = r ?? (p === m ? m + 1 : m), _ = Math.max(1e-9, g - h), v = f.length === 1 ? 0 : i / (f.length - 1), x = s, S = a - x * 2, C = f.map((e, t) => ({
 		x: f.length === 1 ? i / 2 : t * v,
 		y: x + S - (e - h) / _ * S
-	})), w = C.map((e, t) => `${t === 0 ? "M" : "L"}${e.x.toFixed(2)},${e.y.toFixed(2)}`).join(" "), T = `${w} L${C[C.length - 1].x.toFixed(2)},${(a - x).toFixed(2)} L${C[0].x.toFixed(2)},${(a - x).toFixed(2)} Z`, E = C[C.length - 1], D = `Trend, ${f.length} points, starts ${U(f[0])}, ends ${U(f[f.length - 1])}`;
+	})), w = C.map((e, t) => `${t === 0 ? "M" : "L"}${e.x.toFixed(2)},${e.y.toFixed(2)}`).join(" "), T = `${w} L${C[C.length - 1].x.toFixed(2)},${(a - x).toFixed(2)} L${C[0].x.toFixed(2)},${(a - x).toFixed(2)} Z`, E = C[C.length - 1], D = `Trend, ${f.length} points, starts ${W(f[0])}, ends ${W(f[f.length - 1])}`;
 	return /* @__PURE__ */ y("div", {
 		role: "img",
 		"aria-label": u ?? D,
@@ -389,18 +389,18 @@ function ee({ points: e, yMin: n, yMax: r, width: i = 120, height: a = 32, strok
 		})
 	});
 }
-function U(e) {
+function W(e) {
 	return Math.abs(e) >= 100 ? e.toFixed(0) : Math.abs(e) >= 1 ? e.toFixed(2) : e.toFixed(3);
 }
 //#endregion
 //#region src/components/shared/TagEditor.tsx
-function W(e, t) {
+function ee(e, t) {
 	let n = e.trim();
 	return t ? n.toLowerCase() : n;
 }
 function te({ "aria-label": e, value: t, onChange: n, placeholder: r = "add tag...", suggestions: i, lowercase: a = !0 }) {
 	let [o, s] = _(""), [c, l] = _(!1), u = g(null), d = (e) => {
-		let r = W(e, a);
+		let r = ee(e, a);
 		if (r) {
 			if (t.includes(r)) {
 				s("");
@@ -477,7 +477,7 @@ function K(e, t) {
 	let n = e.displayName;
 	return typeof n == "string" && n.length > 0 ? n : t.slice(0, 8);
 }
-function q({ value: n, onChange: r, placeholder: i, maxSelect: a, presenceUsers: o, idToken: s, searchUsers: c, baseUrl: l }) {
+function ne({ value: n, onChange: r, placeholder: i, maxSelect: a, presenceUsers: o, idToken: s, searchUsers: c, baseUrl: l }) {
 	let u = T(), d = e(), f = o ?? u?.presenceUsers ?? [], m = s === void 0 ? d?.idToken ?? null : s, [v, x] = _(""), [S, C] = _(!1), [w, E] = _(0), [D, O] = _([]), k = g(null), A = g(null), j = h(() => {
 		let e = new Set(n), t = [];
 		for (let n of f) {
@@ -612,12 +612,12 @@ function q({ value: n, onChange: r, placeholder: i, maxSelect: a, presenceUsers:
 }
 //#endregion
 //#region src/components/shared/FilterChip.tsx
-var J = {
+var re = {
 	md: "px-3 py-1 text-[12.5px]",
 	sm: "px-2.5 py-0.5 text-[11px]",
 	xs: "px-2 py-px text-[10px]"
-}, Y = "bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)] hover:border-[var(--color-border-emphasis)]", X = "bg-[var(--color-primary)] border-[var(--color-primary)] text-white hover:opacity-90", ne = "border-[var(--color-border-emphasis)] text-[var(--color-text-primary)]";
-function Z({ active: e, onClick: n, color: r, dot: i = !1, size: a = "sm", children: o, className: s, disabled: c = !1, "data-testid": l }) {
+}, ie = "bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)] hover:border-[var(--color-border-emphasis)]", q = "bg-[var(--color-primary)] border-[var(--color-primary)] text-white hover:opacity-90", J = "border-[var(--color-border-emphasis)] text-[var(--color-text-primary)]";
+function Y({ active: e, onClick: n, color: r, dot: i = !1, size: a = "sm", children: o, className: s, disabled: c = !1, "data-testid": l }) {
 	let u = e && !!r, d = u ? {
 		background: `${r}22`,
 		borderColor: `${r}66`,
@@ -629,7 +629,7 @@ function Z({ active: e, onClick: n, color: r, dot: i = !1, size: a = "sm", child
 		disabled: c,
 		"aria-pressed": e,
 		"data-testid": l,
-		className: t("inline-flex items-center gap-1.5 rounded-full font-semibold border transition-colors cursor-pointer select-none", J[a], e ? u ? ne : X : Y, c && "opacity-50 cursor-not-allowed", s),
+		className: t("inline-flex items-center gap-1.5 rounded-full font-semibold border transition-colors cursor-pointer select-none", re[a], e ? u ? J : q : ie, c && "opacity-50 cursor-not-allowed", s),
 		style: d,
 		children: [i && /* @__PURE__ */ y("span", {
 			className: "w-1.5 h-1.5 rounded-full flex-shrink-0",
@@ -639,17 +639,17 @@ function Z({ active: e, onClick: n, color: r, dot: i = !1, size: a = "sm", child
 }
 //#endregion
 //#region src/components/shared/Toolbar.tsx
-var Q = {
+var X = {
 	sm: "min-h-9 px-3 gap-2 text-xs",
 	md: "min-h-11 px-4 gap-2.5 text-[13px]"
-}, re = {
+}, ae = {
 	surface: "bg-surface text-text-primary border-border",
 	code: "bg-code-panel text-code-text border-code-border"
-}, $ = {
+}, Z = {
 	surface: "bg-border",
 	code: "bg-code-border"
-}, ie = "a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex=\"-1\"])";
-function ae({ children: e, end: n, tone: r = "surface", size: i = "sm", sticky: a = !1, bordered: o = !0, wrap: s = !1, className: c, "aria-label": l = "Toolbar", "data-testid": u }) {
+}, Q = "a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex=\"-1\"])";
+function oe({ children: e, end: n, tone: r = "surface", size: i = "sm", sticky: a = !1, bordered: o = !0, wrap: s = !1, className: c, "aria-label": l = "Toolbar", "data-testid": u }) {
 	let f = g(null), p = d((e) => {
 		if (![
 			"ArrowLeft",
@@ -661,7 +661,7 @@ function ae({ children: e, end: n, tone: r = "surface", size: i = "sm", sticky: 
 		if (t && (t.isContentEditable || t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT")) return;
 		let n = f.current;
 		if (!n) return;
-		let r = Array.from(n.querySelectorAll(ie));
+		let r = Array.from(n.querySelectorAll(Q));
 		if (r.length === 0) return;
 		let i = r.indexOf(document.activeElement), a;
 		a = e.key === "Home" ? 0 : e.key === "End" ? r.length - 1 : i < 0 ? 0 : (i + (e.key === "ArrowRight" ? 1 : -1) + r.length) % r.length, r[a]?.focus(), e.preventDefault();
@@ -673,7 +673,7 @@ function ae({ children: e, end: n, tone: r = "surface", size: i = "sm", sticky: 
 		"aria-orientation": "horizontal",
 		"data-testid": u,
 		onKeyDown: p,
-		className: t("flex flex-none", s ? "flex-wrap items-start py-1.5" : "items-center", Q[i], re[r], o && "border-b", a && "sticky top-0 z-20", c),
+		className: t("flex flex-none", s ? "flex-wrap items-start py-1.5" : "items-center", X[i], ae[r], o && "border-b", a && "sticky top-0 z-20", c),
 		children: [/* @__PURE__ */ y("div", {
 			className: t("flex min-w-0 flex-1 items-center gap-2", s ? "flex-wrap gap-y-1.5" : "overflow-x-auto"),
 			children: e
@@ -683,7 +683,7 @@ function ae({ children: e, end: n, tone: r = "surface", size: i = "sm", sticky: 
 		})]
 	});
 }
-function oe({ children: e, divided: n = !1, tone: r = "surface", className: i, "aria-label": a }) {
+function $({ children: e, divided: n = !1, tone: r = "surface", className: i, "aria-label": a }) {
 	return /* @__PURE__ */ b(v, { children: [n && /* @__PURE__ */ y(se, { tone: r }), /* @__PURE__ */ y("div", {
 		role: a ? "group" : void 0,
 		"aria-label": a,
@@ -695,7 +695,7 @@ function se({ tone: e = "surface", className: n }) {
 	return /* @__PURE__ */ y("span", {
 		role: "separator",
 		"aria-orientation": "vertical",
-		className: t("h-4 w-px flex-none", $[e], n)
+		className: t("h-4 w-px flex-none", Z[e], n)
 	});
 }
 function ce({ children: e, tone: n = "surface", className: r }) {
@@ -902,64 +902,64 @@ function xe(e) {
 	let t = e.querySelector("[data-grouped-list-menu] button[aria-haspopup=\"menu\"]");
 	return t ? (t.getAttribute("aria-expanded") !== "true" && t.click(), !0) : !1;
 }
-function Se({ groups: e, rows: n, onOpenRow: r, rowMenu: i, rowMenuLabel: o, openGroups: s, onToggleGroup: c, storageKey: l, currentId: u = null, hideEmptyGroups: f = !1, onReorder: m, canReorder: v, reorderLabel: x, size: S = "sm", groupHeading: C = "title", currentStyle: w = "tint", groupCountStyle: T = "chip", className: E, "data-testid": D = "grouped-list" }) {
-	let O = S === "md", k = C === "label", A = s !== void 0, [j, M] = _(() => {
+function Se({ groups: e, rows: n, onOpenRow: r, rowMenu: a, rowMenuLabel: o, openGroups: s, onToggleGroup: c, storageKey: l, currentId: u = null, hideEmptyGroups: f = !1, onReorder: m, canReorder: v, reorderLabel: x, size: S = "sm", groupHeading: C = "title", currentStyle: w = "tint", groupCountStyle: T = "chip", groupCountAlign: E = "inline", rowStyle: D = "ruled", className: O, "data-testid": k = "grouped-list" }) {
+	let A = S === "md", j = C === "label", M = E === "end" ? "ml-auto pr-1" : void 0, N = s !== void 0, [P, F] = _(() => {
 		let t = _e(l);
 		return e.forEach((e) => {
 			e.defaultOpen === !1 && !t.has(e.id) && t.add(e.id);
 		}), t;
-	}), N = d((e) => A ? s.includes(e) : !j.has(e), [
-		A,
+	}), I = d((e) => N ? s.includes(e) : !P.has(e), [
+		N,
 		s,
-		j
-	]), P = d((e, t) => {
-		A || M((n) => {
+		P
+	]), L = d((e, t) => {
+		N || F((n) => {
 			let r = new Set(n);
 			return t ? r.delete(e) : r.add(e), ve(l, r), r;
 		}), c?.(e, t);
 	}, [
-		A,
+		N,
 		c,
 		l
-	]), F = h(() => {
+	]), R = h(() => {
 		let t = /* @__PURE__ */ new Map();
 		return e.forEach((e) => t.set(e.id, [])), n.forEach((e) => {
 			let n = t.get(e.groupId);
 			n && n.push(e);
 		}), t;
-	}, [e, n]), I = h(() => f ? e.filter((e) => (F.get(e.id)?.length ?? 0) > 0) : e, [
+	}, [e, n]), z = h(() => f ? e.filter((e) => (R.get(e.id)?.length ?? 0) > 0) : e, [
 		e,
-		F,
+		R,
 		f
-	]), L = h(() => {
+	]), B = h(() => {
 		let e = [];
-		return I.forEach((t) => {
-			e.push(`g:${t.id}`), N(t.id) && F.get(t.id)?.forEach((t) => e.push(`r:${t.id}`));
+		return z.forEach((t) => {
+			e.push(`g:${t.id}`), I(t.id) && R.get(t.id)?.forEach((t) => e.push(`r:${t.id}`));
 		}), e;
 	}, [
-		I,
-		F,
-		N
-	]), [R, z] = _(null), B = g(null), V = d((e) => !!m && (v ? v(e) : !e.disabled), [m, v]), [H, ee] = _(""), U = g(null), [W, te] = _(null), [G, K] = _(null), q = g(/* @__PURE__ */ new Map()), J = !!m;
+		z,
+		R,
+		I
+	]), [V, H] = _(null), U = g(null), W = d((e) => !!m && (v ? v(e) : !e.disabled), [m, v]), [ee, te] = _(""), G = g(null), [K, ne] = _(null), [re, ie] = _(null), q = g(/* @__PURE__ */ new Map()), J = !!m;
 	p(() => {
-		if (!J || W) return;
+		if (!J || K) return;
 		let e = !0;
 		return he().then((t) => {
-			e && t && te(t);
+			e && t && ne(t);
 		}), () => {
 			e = !1;
 		};
-	}, [J, W]);
+	}, [J, K]);
 	let Y = d((t, n, r) => {
 		if (!m) return;
-		let i = e.find((e) => e.id === n), a = (F.get(n) ?? []).filter((e) => e.id !== t.id).length;
-		m(t.id, n, r), ee(`Moved ${t.title} to position ${r + 1} of ${a + 1} in ${i?.title ?? n}`);
+		let i = e.find((e) => e.id === n), a = (R.get(n) ?? []).filter((e) => e.id !== t.id).length;
+		m(t.id, n, r), te(`Moved ${t.title} to position ${r + 1} of ${a + 1} in ${i?.title ?? n}`);
 	}, [
 		m,
 		e,
-		F
+		R
 	]), X = d((t, n) => {
-		let r = F.get(t.groupId) ?? [], i = r.findIndex((e) => e.id === t.id), a = null;
+		let r = R.get(t.groupId) ?? [], i = r.findIndex((e) => e.id === t.id), a = null;
 		if (n === "ArrowUp" && i > 0) a = {
 			toGroupId: t.groupId,
 			index: i - 1
@@ -972,62 +972,62 @@ function Se({ groups: e, rows: n, onOpenRow: r, rowMenu: i, rowMenuLabel: o, ope
 			let r = e.findIndex((e) => e.id === t.groupId), i = e[n === "ArrowLeft" ? r - 1 : r + 1];
 			r >= 0 && i && (a = {
 				toGroupId: i.id,
-				index: F.get(i.id)?.length ?? 0
+				index: R.get(i.id)?.length ?? 0
 			});
 		}
-		a && (Y(t, a.toGroupId, a.index), U.current = {
+		a && (Y(t, a.toGroupId, a.index), G.current = {
 			id: t.id,
 			groupId: a.toGroupId,
 			index: a.index
-		}, N(a.toGroupId) || P(a.toGroupId, !0));
+		}, I(a.toGroupId) || L(a.toGroupId, !0));
 	}, [
-		F,
+		R,
 		e,
 		Y,
-		N,
-		P
-	]), ne = d((e, t) => {
-		let r = n.find((t) => t.id === e), i = r && V(r) ? pe(n, e, t) : null;
+		I,
+		L
+	]), ae = d((e, t) => {
+		let r = n.find((t) => t.id === e), i = r && W(r) ? pe(n, e, t) : null;
 		r && i && Y(r, i.toGroupId, i.index);
 	}, [
 		n,
-		V,
+		W,
 		Y
 	]), Z = h(() => {
-		if (R && L.includes(R)) return R;
+		if (V && B.includes(V)) return V;
 		let e = n.find((e) => e.current || e.id === u), t = e ? `r:${e.id}` : null;
-		return t && L.includes(t) ? t : L[0] ?? null;
+		return t && B.includes(t) ? t : B[0] ?? null;
 	}, [
-		R,
-		L,
+		V,
+		B,
 		n,
 		u
 	]), Q = d((e) => {
-		let t = B.current?.querySelector(`[data-focus-key="${be(e)}"]`);
-		t && (z(e), t.focus());
+		let t = U.current?.querySelector(`[data-focus-key="${be(e)}"]`);
+		t && (H(e), t.focus());
 	}, []);
 	p(() => {
-		R && !L.includes(R) && z(null);
-	}, [R, L]), p(() => {
-		let e = U.current;
-		if (!e || (F.get(e.groupId) ?? []).findIndex((t) => t.id === e.id) !== e.index || !L.includes(`r:${e.id}`)) return;
-		U.current = null;
-		let t = B.current?.querySelector(`[data-focus-key="${be(`r:${e.id}`)}"]`);
+		V && !B.includes(V) && H(null);
+	}, [V, B]), p(() => {
+		let e = G.current;
+		if (!e || (R.get(e.groupId) ?? []).findIndex((t) => t.id === e.id) !== e.index || !B.includes(`r:${e.id}`)) return;
+		G.current = null;
+		let t = U.current?.querySelector(`[data-focus-key="${be(`r:${e.id}`)}"]`);
 		t && t !== document.activeElement && Q(`r:${e.id}`);
 	});
-	let re = d((e) => {
+	let oe = d((e) => {
 		let t = e.target;
 		if (t.closest("[role=\"menu\"]")) return;
 		let r = t.closest("[data-focus-key]")?.dataset.focusKey;
 		if (!r) return;
-		let i = L.indexOf(r);
+		let i = B.indexOf(r);
 		if (i < 0) return;
 		let a = r.startsWith("g:"), o = r.slice(2);
-		if (U.current = null, e.altKey && m && e.key.startsWith("Arrow")) {
+		if (G.current = null, e.altKey && m && e.key.startsWith("Arrow")) {
 			if (a) return;
 			e.preventDefault();
 			let t = n.find((e) => e.id === o);
-			t && V(t) && X(t, e.key);
+			t && W(t) && X(t, e.key);
 			return;
 		}
 		if (e.key === "F10" && e.shiftKey || e.key === "ContextMenu") {
@@ -1039,65 +1039,65 @@ function Se({ groups: e, rows: n, onOpenRow: r, rowMenu: i, rowMenuLabel: o, ope
 		}
 		switch (e.key) {
 			case "ArrowDown":
-				e.preventDefault(), i < L.length - 1 && Q(L[i + 1]);
+				e.preventDefault(), i < B.length - 1 && Q(B[i + 1]);
 				break;
 			case "ArrowUp":
-				e.preventDefault(), i > 0 && Q(L[i - 1]);
+				e.preventDefault(), i > 0 && Q(B[i - 1]);
 				break;
 			case "Home":
-				e.preventDefault(), L.length && Q(L[0]);
+				e.preventDefault(), B.length && Q(B[0]);
 				break;
 			case "End":
-				e.preventDefault(), L.length && Q(L[L.length - 1]);
+				e.preventDefault(), B.length && Q(B[B.length - 1]);
 				break;
 			case "ArrowLeft":
-				if (e.preventDefault(), a) N(o) && P(o, !1);
+				if (e.preventDefault(), a) I(o) && L(o, !1);
 				else {
 					let e = n.find((e) => e.id === o);
-					e && (P(e.groupId, !1), Q(`g:${e.groupId}`));
+					e && (L(e.groupId, !1), Q(`g:${e.groupId}`));
 				}
 				break;
 			case "ArrowRight": if (e.preventDefault(), a) {
-				if (!N(o)) P(o, !0);
+				if (!I(o)) L(o, !0);
 				else {
-					let e = F.get(o)?.[0];
+					let e = R.get(o)?.[0];
 					e && Q(`r:${e.id}`);
 				}
 			}
 		}
 	}, [
-		L,
+		B,
 		Q,
-		N,
-		P,
+		I,
+		L,
 		n,
-		F,
+		R,
 		m,
-		V,
+		W,
 		X
 	]), $ = /* @__PURE__ */ b("div", {
-		ref: B,
-		"data-testid": D,
-		className: t("flex flex-col", E),
-		onKeyDown: re,
+		ref: U,
+		"data-testid": k,
+		className: t("flex flex-col", O),
+		onKeyDown: oe,
 		children: [m && /* @__PURE__ */ y("div", {
 			role: "status",
 			"aria-live": "polite",
 			className: "sr-only",
-			"data-testid": `${D}-reorder-status`,
-			children: H
-		}), I.map((e) => {
-			let n = N(e.id), s = F.get(e.id) ?? [], c = `${D}-group-toggle-${e.id}`, l = `${D}-group-rows-${e.id}`, d = `g:${e.id}`;
+			"data-testid": `${k}-reorder-status`,
+			children: ee
+		}), z.map((e) => {
+			let n = I(e.id), s = R.get(e.id) ?? [], c = `${k}-group-toggle-${e.id}`, l = `${k}-group-rows-${e.id}`, d = `g:${e.id}`;
 			return /* @__PURE__ */ b("section", {
 				"aria-labelledby": c,
-				"data-testid": `${D}-group-${e.id}`,
+				"data-testid": `${k}-group-${e.id}`,
 				"data-group-id": e.id,
 				"data-open": n,
 				className: "flex flex-col",
 				children: [
 					/* @__PURE__ */ y("h3", {
-						className: t("m-0 rounded-md", G === e.id && "bg-primary/8"),
-						"data-drop-over": G === e.id || void 0,
+						className: t("m-0 rounded-md", re === e.id && "bg-primary/8"),
+						"data-drop-over": re === e.id || void 0,
 						ref: (t) => {
 							q.current.set(e.id, t);
 						},
@@ -1109,10 +1109,10 @@ function Se({ groups: e, rows: n, onOpenRow: r, rowMenu: i, rowMenuLabel: o, ope
 							"aria-expanded": n,
 							"aria-controls": l,
 							tabIndex: Z === d ? 0 : -1,
-							onFocus: () => z(d),
-							onClick: () => P(e.id, !n),
-							"data-heading": k ? "label" : void 0,
-							className: t("flex w-full items-center gap-2.5 border-0 bg-transparent px-2 py-2.5 text-left", k ? "text-[11px] font-semibold uppercase leading-4 tracking-wide text-text-secondary" : O ? "text-[15px] font-semibold text-text-primary" : "text-[14px] font-semibold text-text-primary", "rounded-md hover:bg-surface-hover", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"),
+							onFocus: () => H(d),
+							onClick: () => L(e.id, !n),
+							"data-heading": j ? "label" : void 0,
+							className: t("flex w-full items-center gap-2.5 border-0 bg-transparent px-2 py-2.5 text-left", j ? "text-[11px] font-semibold uppercase leading-4 tracking-wide text-text-secondary" : A ? "text-[15px] font-semibold text-text-primary" : "text-[14px] font-semibold text-text-primary", "rounded-md hover:bg-surface-hover", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"),
 							children: [
 								/* @__PURE__ */ y("span", {
 									className: "grid h-5 w-5 shrink-0 place-items-center text-text-secondary",
@@ -1120,32 +1120,35 @@ function Se({ groups: e, rows: n, onOpenRow: r, rowMenu: i, rowMenuLabel: o, ope
 								}),
 								e.icon && /* @__PURE__ */ y("span", {
 									className: "flex shrink-0 items-center text-text-secondary",
-									"data-testid": `${D}-group-icon-${e.id}`,
+									"data-testid": `${k}-group-icon-${e.id}`,
 									children: e.icon
 								}),
 								/* @__PURE__ */ y("span", {
 									className: "truncate",
 									children: e.title
 								}),
-								typeof e.count == "number" && !k && T === "plain" && /* @__PURE__ */ y("span", {
-									className: "shrink-0 text-[13px] font-medium text-text-secondary",
+								typeof e.count == "number" && !j && T === "plain" && /* @__PURE__ */ y("span", {
+									className: t("shrink-0 text-[13px] font-medium text-text-secondary", M),
 									"aria-label": `${e.count} items`,
-									"data-testid": `${D}-group-count-${e.id}`,
+									"data-testid": `${k}-group-count-${e.id}`,
 									"data-count-style": "plain",
+									"data-count-align": E === "end" ? "end" : void 0,
 									children: e.count
 								}),
-								typeof e.count == "number" && k && /* @__PURE__ */ y("span", {
-									className: "shrink-0 font-medium normal-case tracking-normal text-text-tertiary",
+								typeof e.count == "number" && j && /* @__PURE__ */ y("span", {
+									className: t("shrink-0 font-medium normal-case tracking-normal text-text-tertiary", M),
 									"aria-label": `${e.count} items`,
-									"data-testid": `${D}-group-count-${e.id}`,
+									"data-testid": `${k}-group-count-${e.id}`,
+									"data-count-align": E === "end" ? "end" : void 0,
 									children: e.count
 								}),
-								typeof e.count == "number" && !k && T !== "plain" && /* @__PURE__ */ y(a, {
+								typeof e.count == "number" && !j && T !== "plain" && /* @__PURE__ */ y(i, {
 									size: "xs",
 									tone: "neutral",
-									className: "shrink-0",
+									className: t("shrink-0", M),
 									"aria-label": `${e.count} items`,
-									"data-testid": `${D}-group-count-${e.id}`,
+									"data-testid": `${k}-group-count-${e.id}`,
+									"data-count-align": E === "end" ? "end" : void 0,
 									children: e.count
 								})
 							]
@@ -1158,90 +1161,91 @@ function Se({ groups: e, rows: n, onOpenRow: r, rowMenu: i, rowMenuLabel: o, ope
 						className: "m-0 flex list-none flex-col p-0",
 						children: [n && s.length === 0 && /* @__PURE__ */ y("li", {
 							className: "px-4 py-3 pl-12 text-[13px] text-text-tertiary",
-							"data-testid": `${D}-group-empty-${e.id}`,
+							"data-testid": `${k}-group-empty-${e.id}`,
 							children: e.emptyLabel ?? "Nothing here"
 						}), n && s.map((e) => /* @__PURE__ */ y(Ce, {
 							row: e,
 							current: e.current || e.id === u,
 							currentStyle: w,
-							testId: D,
+							rowStyle: D,
+							testId: k,
 							size: S,
 							tabbable: Z === `r:${e.id}`,
-							onFocusRow: () => z(`r:${e.id}`),
+							onFocusRow: () => H(`r:${e.id}`),
 							onOpenRow: r,
-							menuSections: i?.(e),
+							menuSections: a?.(e),
 							menuLabel: o?.(e) ?? `Actions for ${e.title}`,
-							reorder: V(e) ? {
+							reorder: W(e) ? {
 								label: x?.(e) ?? `Reorder ${e.title}`,
-								sortable: W
+								sortable: K
 							} : void 0
 						}, e.id))]
 					}),
-					W && /* @__PURE__ */ y(W.GroupDropTarget, {
+					K && /* @__PURE__ */ y(K.GroupDropTarget, {
 						id: `__grouped-list-group__:${e.id}`,
 						getNode: () => q.current.get(e.id) ?? null,
-						onOverChange: (t) => K((n) => t ? e.id : n === e.id ? null : n)
+						onOverChange: (t) => ie((n) => t ? e.id : n === e.id ? null : n)
 					})
 				]
 			}, e.id);
 		})]
 	});
-	return W ? /* @__PURE__ */ y(W.GroupedListDndRoot, {
-		ids: L.filter((e) => e.startsWith("r:")).map((e) => e.slice(2)),
-		onDrop: ne,
+	return K ? /* @__PURE__ */ y(K.GroupedListDndRoot, {
+		ids: B.filter((e) => e.startsWith("r:")).map((e) => e.slice(2)),
+		onDrop: ae,
 		children: $
 	}) : $;
 }
-function Ce({ row: e, current: n, currentStyle: r, testId: a, size: o, tabbable: s, onFocusRow: c, onOpenRow: u, menuSections: f, menuLabel: p, reorder: m }) {
-	let h = !!f && f.some((e) => e.items.length > 0), g = e.hoverSubline !== void 0 && e.hoverSubline !== null, v = e.meta !== void 0 && e.meta !== null, x = e.leading !== void 0 && e.leading !== null, S = `r:${e.id}`, C = o === "md", [w, T] = _({
+function Ce({ row: e, current: n, currentStyle: r, rowStyle: i, testId: o, size: s, tabbable: c, onFocusRow: u, onOpenRow: f, menuSections: p, menuLabel: m, reorder: h }) {
+	let g = !!p && p.some((e) => e.items.length > 0), v = e.hoverSubline !== void 0 && e.hoverSubline !== null, x = e.meta !== void 0 && e.meta !== null, S = e.leading !== void 0 && e.leading !== null, C = `r:${e.id}`, w = s === "md", [T, E] = _({
 		dragging: !1,
 		over: !1
-	}), E = d((e) => {
-		T((t) => t.dragging === e.dragging && t.over === e.over ? t : e);
-	}, []), D = {
-		"aria-label": m?.label,
+	}), D = d((e) => {
+		E((t) => t.dragging === e.dragging && t.over === e.over ? t : e);
+	}, []), O = {
+		"aria-label": h?.label,
 		title: "Drag to reorder, or Alt+arrow keys on the row",
-		"data-testid": `${a}-row-handle-${e.id}`,
-		className: t(ge, C && "h-8 w-6 text-text-secondary")
-	}, O = /* @__PURE__ */ y(i, { size: C ? 20 : 14 });
+		"data-testid": `${o}-row-handle-${e.id}`,
+		className: t(ge, w && "h-8 w-6 text-text-secondary")
+	}, k = /* @__PURE__ */ y(a, { size: w ? 20 : 14 });
 	return /* @__PURE__ */ b("li", {
-		"data-dragging": w.dragging || void 0,
-		"data-drop-over": w.over && !w.dragging || void 0,
-		"data-testid": `${a}-row-${e.id}`,
+		"data-dragging": T.dragging || void 0,
+		"data-drop-over": T.over && !T.dragging || void 0,
+		"data-testid": `${o}-row-${e.id}`,
 		"data-row-id": e.id,
 		"data-current": n || void 0,
 		"aria-current": n ? "true" : void 0,
-		onFocus: c,
-		...h ? { onContextMenu: (e) => {
+		onFocus: u,
+		...g ? { onContextMenu: (e) => {
 			e.target.closest("[data-grouped-list-menu]") || (e.preventDefault(), xe(e.currentTarget));
 		} } : {},
-		className: t("group relative flex items-center gap-3 border-t border-border px-2", C ? "py-[7px]" : "py-2.5", "transition-colors duration-100", n ? "bg-primary/8 hover:bg-primary/12" : "hover:bg-surface-hover", C && n && "rounded-r-md border-transparent shadow-[inset_3px_0_0_0_var(--color-primary)]", !C && n && r === "bar" && "shadow-[inset_2px_0_0_0_var(--color-primary)]", e.disabled && "opacity-60", w.dragging && "opacity-50", w.over && !w.dragging && "shadow-[inset_0_2px_0_0_var(--color-primary)]"),
+		className: t("group relative flex items-center gap-3 px-2", i === "plain" ? "border-t-0" : "border-t border-border", i === "plain" ? w ? "py-[9px]" : "py-2" : w ? "py-[7px]" : "py-2.5", "transition-colors duration-100", n ? "bg-primary/8 hover:bg-primary/12" : "hover:bg-surface-hover", w && n && "rounded-r-md border-transparent shadow-[inset_3px_0_0_0_var(--color-primary)]", !w && n && r === "bar" && "shadow-[inset_2px_0_0_0_var(--color-primary)]", e.disabled && "opacity-60", T.dragging && "opacity-50", T.over && !T.dragging && "shadow-[inset_0_2px_0_0_var(--color-primary)]"),
 		children: [
-			x && /* @__PURE__ */ y("span", {
-				className: t("flex shrink-0 items-center justify-center", C ? "w-6" : "w-5"),
-				"data-testid": `${a}-row-leading-${e.id}`,
+			S && /* @__PURE__ */ y("span", {
+				className: t("flex shrink-0 items-center justify-center", w ? "w-6" : "w-5"),
+				"data-testid": `${o}-row-leading-${e.id}`,
 				children: e.leading
 			}),
 			/* @__PURE__ */ b("button", {
 				type: "button",
-				"data-testid": `${a}-row-open-${e.id}`,
-				"data-focus-key": S,
+				"data-testid": `${o}-row-open-${e.id}`,
+				"data-focus-key": C,
 				"aria-label": e.ariaLabel,
 				"aria-disabled": e.disabled || void 0,
-				tabIndex: s ? 0 : -1,
+				tabIndex: c ? 0 : -1,
 				disabled: e.disabled,
 				onClick: () => {
-					e.disabled || u?.(e);
+					e.disabled || f?.(e);
 				},
 				className: t("flex min-w-0 flex-1 items-center gap-3 rounded-md border-0 bg-transparent p-0 text-left", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", e.disabled ? "cursor-default" : "cursor-pointer"),
 				children: [
-					!x && /* @__PURE__ */ y("span", {
+					!S && /* @__PURE__ */ y("span", {
 						className: "w-5 shrink-0",
 						"aria-hidden": "true"
 					}),
 					e.icon && /* @__PURE__ */ y("span", {
 						className: "flex shrink-0 items-center",
-						"data-testid": `${a}-row-icon-${e.id}`,
+						"data-testid": `${o}-row-icon-${e.id}`,
 						children: e.icon
 					}),
 					/* @__PURE__ */ b("span", {
@@ -1250,7 +1254,7 @@ function Ce({ row: e, current: n, currentStyle: r, testId: a, size: o, tabbable:
 							/* @__PURE__ */ b("span", {
 								className: "flex min-w-0 items-center gap-2.5",
 								children: [/* @__PURE__ */ y("span", {
-									className: t("truncate font-medium text-text-primary", C ? "text-[15px] leading-[22px]" : "text-[14px] leading-5"),
+									className: t("truncate font-medium text-text-primary", w ? "text-[15px] leading-[22px]" : "text-[14px] leading-5"),
 									title: e.title,
 									children: e.title
 								}), e.pill && /* @__PURE__ */ y("span", {
@@ -1258,20 +1262,20 @@ function Ce({ row: e, current: n, currentStyle: r, testId: a, size: o, tabbable:
 									children: e.pill
 								})]
 							}),
-							v && /* @__PURE__ */ y("span", {
-								"data-testid": `${a}-row-meta-${e.id}`,
-								className: t("flex min-w-0 items-center gap-1.5 truncate text-text-secondary", C ? "text-[13px] leading-5" : "text-[12px] leading-4"),
+							x && /* @__PURE__ */ y("span", {
+								"data-testid": `${o}-row-meta-${e.id}`,
+								className: t("flex min-w-0 items-center gap-1.5 truncate text-text-secondary", w ? "text-[13px] leading-5" : "text-[12px] leading-4"),
 								children: e.meta
 							}),
-							(e.subline !== void 0 || g) && /* @__PURE__ */ b("span", {
+							(e.subline !== void 0 || v) && /* @__PURE__ */ b("span", {
 								className: "min-w-0 text-[12px] leading-4 text-text-secondary",
 								children: [e.subline !== void 0 && /* @__PURE__ */ y("span", {
-									"data-testid": `${a}-row-subline-${e.id}`,
-									className: t("block truncate", g && (n ? "hidden" : "group-hover:hidden group-focus-within:hidden")),
+									"data-testid": `${o}-row-subline-${e.id}`,
+									className: t("block truncate", v && (n ? "hidden" : "group-hover:hidden group-focus-within:hidden")),
 									children: e.subline
-								}), g && /* @__PURE__ */ y("span", {
+								}), v && /* @__PURE__ */ y("span", {
 									"aria-hidden": e.subline !== void 0 || void 0,
-									"data-testid": `${a}-row-hover-subline-${e.id}`,
+									"data-testid": `${o}-row-hover-subline-${e.id}`,
 									className: t("truncate", n || e.subline === void 0 ? "block" : "hidden group-hover:block group-focus-within:block"),
 									children: e.hoverSubline
 								})]
@@ -1281,18 +1285,18 @@ function Ce({ row: e, current: n, currentStyle: r, testId: a, size: o, tabbable:
 				]
 			}),
 			e.hoverActions && /* @__PURE__ */ y("span", {
-				"data-testid": `${a}-row-actions-${e.id}`,
+				"data-testid": `${o}-row-actions-${e.id}`,
 				className: t("flex shrink-0 items-center gap-1.5 transition-opacity duration-100", n ? "opacity-100" : "opacity-0 group-hover:opacity-100 group-focus-within:opacity-100"),
 				children: e.hoverActions
 			}),
 			e.trailing && /* @__PURE__ */ y("span", {
 				className: "flex shrink-0 items-center gap-1.5 text-[13px]",
-				"data-testid": `${a}-row-trailing-${e.id}`,
+				"data-testid": `${o}-row-trailing-${e.id}`,
 				children: e.trailing
 			}),
-			h && /* @__PURE__ */ y("span", {
+			g && /* @__PURE__ */ y("span", {
 				"data-grouped-list-menu": !0,
-				"data-testid": `${a}-row-menu-${e.id}`,
+				"data-testid": `${o}-row-menu-${e.id}`,
 				className: "flex shrink-0 items-center",
 				onContextMenu: (e) => e.stopPropagation(),
 				children: /* @__PURE__ */ y(l, {
@@ -1301,24 +1305,24 @@ function Ce({ row: e, current: n, currentStyle: r, testId: a, size: o, tabbable:
 						className: "text-base leading-none",
 						children: "⋯"
 					}),
-					triggerLabel: p,
+					triggerLabel: m,
 					triggerTabIndex: -1,
-					triggerTestId: `${a}-row-menu-trigger-${e.id}`,
+					triggerTestId: `${o}-row-menu-trigger-${e.id}`,
 					align: "end",
-					sections: f,
+					sections: p,
 					triggerClassName: "h-7 w-7 border-transparent px-0 py-0 text-text-secondary hover:border-border"
 				})
 			}),
-			m && (m.sortable ? /* @__PURE__ */ y(m.sortable.SortableHandle, {
+			h && (h.sortable ? /* @__PURE__ */ y(h.sortable.SortableHandle, {
 				id: e.id,
-				onStateChange: E,
-				...D,
-				children: O
+				onStateChange: D,
+				...O,
+				children: k
 			}) : /* @__PURE__ */ y("button", {
 				type: "button",
 				tabIndex: -1,
-				...D,
-				children: O
+				...O,
+				children: k
 			}))
 		]
 	});
@@ -1345,10 +1349,10 @@ function Te() {
 		children: /* @__PURE__ */ y("path", { d: "M2 3h12l-4.5 5.5V13l-3-1.5V8.5L2 3Z" })
 	});
 }
-function Ee({ children: e, label: r = "Filter", activeCount: i = 0, onClear: o, clearLabel: s = "Clear filters", open: l, onOpenChange: u, placement: d = "bottom-start", size: f = "md", trigger: p = "label", panelLabel: h = "Filters", className: v, panelClassName: x, icon: S, "data-testid": C = "filter-popover" }) {
+function Ee({ children: e, label: r = "Filter", activeCount: a = 0, onClear: o, clearLabel: s = "Clear filters", open: l, onOpenChange: u, placement: d = "bottom-start", size: f = "md", trigger: p = "label", panelLabel: h = "Filters", className: v, panelClassName: x, icon: S, "data-testid": C = "filter-popover" }) {
 	let [w, T] = _(!1), E = l ?? w, D = (e) => {
 		l === void 0 && T(e), u?.(e);
-	}, O = g(null), k = m(), A = i > 0;
+	}, O = g(null), k = m(), A = a > 0;
 	return /* @__PURE__ */ b("span", {
 		className: t("inline-flex shrink-0", v),
 		"data-testid": `${C}-root`,
@@ -1364,7 +1368,7 @@ function Ee({ children: e, label: r = "Filter", activeCount: i = 0, onClear: o, 
 			"data-active": A || void 0,
 			onClick: () => D(!E),
 			...p === "icon" ? {
-				"aria-label": A ? `${r} (${i} active)` : r,
+				"aria-label": A ? `${r} (${a} active)` : r,
 				title: r
 			} : {},
 			className: t("inline-flex items-center gap-2 whitespace-nowrap", p === "icon" && (f === "lg" ? "relative h-11 w-11 justify-center rounded-lg px-0 py-0 text-text-secondary [&_svg]:h-5 [&_svg]:w-5" : "relative h-9 w-9 justify-center px-0 py-0 text-text-secondary [&_svg]:h-[18px] [&_svg]:w-[18px]"), A && "border-primary-border text-primary-fg"),
@@ -1376,13 +1380,13 @@ function Ee({ children: e, label: r = "Filter", activeCount: i = 0, onClear: o, 
 					"data-testid": `${C}-dot`,
 					className: "absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-primary"
 				}),
-				p === "label" && A && /* @__PURE__ */ y(a, {
+				p === "label" && A && /* @__PURE__ */ y(i, {
 					size: "xs",
 					tone: "accent",
 					solid: !0,
 					"data-testid": `${C}-count`,
-					"aria-label": `${i} active filters`,
-					children: i
+					"aria-label": `${a} active filters`,
+					children: a
 				})
 			]
 		}), /* @__PURE__ */ y(c, {
@@ -1415,4 +1419,4 @@ function Ee({ children: e, label: r = "Filter", activeCount: i = 0, onClear: o, 
 	});
 }
 //#endregion
-export { I as _, le as a, T as b, ce as c, q as d, te as f, P as g, R as h, de as i, se as l, V as m, Se as n, ae as o, ee as p, fe as r, oe as s, Ee as t, Z as u, N as v, w as x, C as y };
+export { I as _, le as a, T as b, ce as c, ne as d, te as f, P as g, R as h, de as i, se as l, V as m, Se as n, oe as o, U as p, fe as r, $ as s, Ee as t, Y as u, N as v, w as x, C as y };

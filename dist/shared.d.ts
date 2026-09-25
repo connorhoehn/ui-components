@@ -2360,7 +2360,7 @@ export declare const GRAPHITE_PARTICLE_COLORS: readonly ["#f4f4f5", "#d4d4d8", "
 /** Six dots in two columns: a drag handle — "pick this up and move it". Since 2.385.0. */
 export declare function GripIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, onReorder, canReorder, reorderLabel, size, groupHeading, currentStyle, groupCountStyle, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
+export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, onReorder, canReorder, reorderLabel, size, groupHeading, currentStyle, groupCountStyle, groupCountAlign, rowStyle, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
 
 export declare interface GroupedListGroup {
     id: string;
@@ -2434,6 +2434,19 @@ export declare interface GroupedListProps {
      * `label` heading's count is always plain.) Since 2.390.0.
      */
     groupCountStyle?: 'chip' | 'plain';
+    /**
+     * Where a group header's count sits. `inline` (default): right after the
+     * title. `end`: pushed to the header's right edge — "IN PROGRESS … 9", the
+     * Initiatives v2 rail. Applies to every heading and count style. Since
+     * 2.392.0.
+     */
+    groupCountAlign?: 'inline' | 'end';
+    /**
+     * `ruled` (default): a 1px rule above every row. `plain` (since 2.392.0):
+     * no rules — a title-only list whose rows are separated by space alone, a
+     * 40px pitch at `md` (36px at `sm`) — the Initiatives v2 rail.
+     */
+    rowStyle?: 'ruled' | 'plain';
     className?: string;
     'data-testid'?: string;
 }
@@ -3339,14 +3352,27 @@ export declare interface PageHeaderProps {
     className?: string;
 }
 
-export declare function PageSection({ title, description, actions, children, className, }: PageSectionProps): JSX.Element;
+export declare function PageSection({ title, description, actions, children, count, size, className, 'data-testid': testId, }: PageSectionProps): JSX.Element;
 
 export declare interface PageSectionProps {
     title: string;
     description?: string;
     actions?: ReactNode;
     children: ReactNode;
+    /**
+     * A count beside the title in a neutral chip — "Needs attention 1". Absent
+     * draws none; zero shows "0" (an empty section is a fact). Since 2.392.0.
+     */
+    count?: number;
+    /**
+     * `lg` (default): the page's own 20px h1 with 24px to its content. `md`
+     * (since 2.392.0): a 16px semibold h2 over a section of a page — "Needs
+     * attention", "Up next" — with 8px to its content, the actions vertically
+     * centred on the title.
+     */
+    size?: 'lg' | 'md';
     className?: string;
+    'data-testid'?: string;
 }
 
 /** A paperclip: a file came along with this. */
@@ -3869,6 +3895,34 @@ export declare interface RailLayoutProps {
     rail: ReactNode;
     /** Rail width at lg+. Default 'md' (300px). */
     railWidth?: 'sm' | 'md' | 'lg';
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function RailNavList({ items, 'aria-label': ariaLabel, className, 'data-testid': testId, }: RailNavListProps): JSX.Element | null;
+
+export declare interface RailNavListItem {
+    id: string;
+    label: string;
+    /** A link target. Without it the item is a button calling `onSelect`. */
+    href?: string;
+    /** Called on activation — also for `href` items (the host's router). */
+    onSelect?: () => void;
+    /** The view on screen. Marked `aria-current="page"` and drawn semibold. */
+    current?: boolean;
+    /** Muted number at the item's right edge. Absent draws none; 0 shows "0". */
+    count?: number;
+    /** A glyph before the label. */
+    icon?: ReactNode;
+    disabled?: boolean;
+    /** Tooltip on a disabled item: why it cannot be opened. */
+    disabledReason?: string;
+}
+
+export declare interface RailNavListProps {
+    items: RailNavListItem[];
+    /** The nav landmark's name. Default "Views". */
+    'aria-label'?: string;
     className?: string;
     'data-testid'?: string;
 }
@@ -4650,8 +4704,15 @@ export declare interface StatStripProps {
      * spent of $95 allocated" — with dividers between clusters, no card, and a
      * rule under the strip. The label is the words after the number, so write
      * it as the rest of the sentence.
+     *
+     * `line` (since 2.392.0): ONE unboxed line of prose-weight stats, clusters
+     * separated by a muted "•" — "**18** / 52 points delivered ▬▬▭▭ • **2**
+     * agents running • **$1.73** of $95 spent". No dividers, no rule, no card;
+     * a cluster's `progress` is drawn as a 150px bar INLINE after its label
+     * rather than under it. `hint` and `status` are not drawn (use `title`).
+     * The line wraps between clusters, never inside one.
      */
-    variant?: 'default' | 'inline';
+    variant?: 'default' | 'inline' | 'line';
     className?: string;
     'aria-label'?: string;
     'data-testid'?: string;
@@ -5828,18 +5889,12 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
+        diagramMacro: {
             /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
              */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -5860,12 +5915,18 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
+        canvasLineSpacing: {
             /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
              */
-            insertDiagram: (id?: string) => ReturnType;
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
         };
     }
 }
@@ -5932,9 +5993,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -5942,9 +6003,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

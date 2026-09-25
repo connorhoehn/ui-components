@@ -18,10 +18,73 @@
 // the right but the chevron. A `disabled` row stays visible and muted, with
 // its `disabledReason` as the tooltip, so "why can't I open this?" has an
 // answer. An empty list renders `emptyLabel` when given, else nothing at all.
+//
+// ## Columns, tone, leading, action (2.392.0)
+//
+// The Initiatives v2 overview draws each row as a title then a few facts in
+// COLUMNS — "(LH) Layla Hassan │ 5 pts ›" — whose edges line up down the list.
+// `columns` declares them once on the list (fixed widths from a small scale,
+// so every row's cells share edges); each item fills `cells` by column id. A
+// missing cell leaves its column blank so the next one still lines up.
+// `tone` tints a row ("Needs attention" is `warning`), `accent="bar"` adds a
+// 3px tone bar on its left edge, `leading` goes before the title (a "Blocked"
+// chip), and `action` replaces the chevron with a worded target ("Open →").
+// The row stays ONE target: nothing new is separately interactive.
+//
+// None of it is required: an item with a `description` and `meta` and no
+// columns renders exactly as before, and descriptions still work beside
+// columns — both arrangements stay reachable from the same list.
 
 import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
-import { ChevronIcon } from '../ui/Icons';
+import { ArrowRightIcon, ChevronIcon } from '../ui/Icons';
+import type { Tone } from '../shared/tones';
+import { Avatar } from '../shared/Avatar';
+
+/** Row tint. `neutral` (and absent) draws none. */
+export type ActionRowTone = Exclude<Tone, 'neutral'> | 'neutral';
+
+/**
+ * A fact column at the row's right. Widths come from a fixed scale so cells
+ * line up across rows: xs 64, sm 88, md 120, lg 152, xl 184 (px).
+ */
+export interface ActionRowColumn {
+  id: string;
+  width: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  /** Where the cell's content sits inside its width. Default `start`. */
+  align?: 'start' | 'end';
+  /** A 1px rule before this column. Default: every column after the first. */
+  divider?: boolean;
+  /** Screen-reader name for the column's cells, e.g. "Assignee". */
+  label?: string;
+}
+
+const COLUMN_WIDTH: Record<ActionRowColumn['width'], string> = {
+  xs: 'w-16',
+  sm: 'w-[88px]',
+  md: 'w-[120px]',
+  lg: 'w-[152px]',
+  xl: 'w-[184px]',
+};
+
+const TONE_ROW: Record<Exclude<ActionRowTone, 'neutral'>, string> = {
+  success: 'bg-success-bg hover:bg-success-bg',
+  warning: 'bg-warning-bg hover:bg-warning-bg',
+  danger: 'bg-danger-bg hover:bg-danger-bg',
+  info: 'bg-info-bg hover:bg-info-bg',
+  caution: 'bg-caution-bg hover:bg-caution-bg',
+  accent: 'bg-accent-bg hover:bg-accent-bg',
+};
+
+const TONE_BAR: Record<ActionRowTone, string> = {
+  neutral: 'shadow-[inset_3px_0_0_0_var(--color-border-emphasis)]',
+  success: 'shadow-[inset_3px_0_0_0_var(--color-success)]',
+  warning: 'shadow-[inset_3px_0_0_0_var(--color-warning)]',
+  danger: 'shadow-[inset_3px_0_0_0_var(--color-danger)]',
+  info: 'shadow-[inset_3px_0_0_0_var(--color-info)]',
+  caution: 'shadow-[inset_3px_0_0_0_var(--color-caution)]',
+  accent: 'shadow-[inset_3px_0_0_0_var(--color-accent)]',
+};
 
 export interface ActionRowItem {
   id: string;
@@ -35,6 +98,20 @@ export interface ActionRowItem {
   disabled?: boolean;
   /** Tooltip on a disabled row: why it cannot be opened. */
   disabledReason?: string;
+  /** Content per `ActionRowListProps.columns` id. Since 2.392.0. */
+  cells?: Record<string, ReactNode>;
+  /** Before the title — a toned `Chip` ("Blocked"). Since 2.392.0. */
+  leading?: ReactNode;
+  /** This row's tint; overrides the list's `tone`. Since 2.392.0. */
+  tone?: ActionRowTone;
+  /** This row's edge accent; overrides the list's `accent`. Since 2.392.0. */
+  accent?: 'none' | 'bar';
+  /**
+   * A worded target in place of the chevron — "Open" draws "Open →" in the
+   * primary colour. Not a separate control: the whole row is still the
+   * target. Overrides the list's `action`. Since 2.392.0.
+   */
+  action?: string;
 }
 
 export interface ActionRowListProps {
@@ -45,6 +122,21 @@ export interface ActionRowListProps {
   footer?: ReactNode;
   /** Shown instead of the rows when `items` is empty. Absent, nothing renders. */
   emptyLabel?: ReactNode;
+  /**
+   * Fact columns at every row's right, declared once so their edges line up
+   * down the list; each item fills `cells`. Since 2.392.0.
+   */
+  columns?: ActionRowColumn[];
+  /**
+   * Tints every row — `warning` for "Needs attention". A toned list drops the
+   * grey rules (the tint separates the rows) and rounds the rows' right
+   * corners. Default `neutral`: no tint, ruled. Since 2.392.0.
+   */
+  tone?: ActionRowTone;
+  /** `bar`: a 3px bar in the row's tone on its left edge. Default `none`. Since 2.392.0. */
+  accent?: 'none' | 'bar';
+  /** Every row's worded target in place of the chevron ("Open"). Since 2.392.0. */
+  action?: string;
   'aria-label'?: string;
   className?: string;
   'data-testid'?: string;
@@ -56,20 +148,74 @@ const ROW_CLASS = cn(
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary',
 );
 
-function RowBody({ item }: { item: ActionRowItem }) {
+function RowBody({ item, columns, action }: { item: ActionRowItem; columns?: ActionRowColumn[]; action?: string }) {
+  const hasColumns = !!columns && columns.length > 0;
+  const hasDescription = item.description != null && item.description !== false;
   return (
     <>
+      {item.leading != null && item.leading !== false && (
+        <span className="flex shrink-0 items-center" data-testid="action-row-leading">{item.leading}</span>
+      )}
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate text-[15px] font-medium leading-6 text-text-primary">{item.title}</span>
-        {item.description != null && item.description !== false && (
-          <span className="truncate text-sm leading-5 text-text-secondary" data-testid="action-row-description">{item.description}</span>
+        <span className={cn('truncate text-[15px] leading-6 text-text-primary', hasColumns ? (hasDescription ? 'font-semibold' : 'font-normal') : 'font-medium')} title={hasColumns ? item.title : undefined}>{item.title}</span>
+        {hasDescription && (
+          <span className={cn('truncate text-text-secondary', hasColumns ? 'text-[13px] leading-[18px]' : 'text-sm leading-5')} data-testid="action-row-description">{item.description}</span>
         )}
       </span>
       {item.meta != null && item.meta !== false && (
         <span className="shrink-0 whitespace-nowrap text-[13px] text-text-secondary" data-testid="action-row-meta">{item.meta}</span>
       )}
-      <ChevronIcon dir="right" size={16} aria-hidden="true" className="ml-2 shrink-0 text-text-secondary" />
+      {hasColumns && (
+        <span className="flex shrink-0 items-center" data-testid="action-row-cells">
+          {columns!.map((col, i) => {
+            const divider = col.divider ?? i > 0;
+            const cell = item.cells?.[col.id];
+            return (
+              <span key={col.id} className="flex shrink-0 items-center">
+                {divider && <span aria-hidden="true" className="h-6 w-px shrink-0 bg-border" data-testid="action-row-divider" />}
+                <span
+                  className={cn('flex min-w-0 items-center truncate whitespace-nowrap text-[15px] leading-6 text-text-secondary', COLUMN_WIDTH[col.width], divider && 'pl-5', col.align === 'end' && 'justify-end')}
+                  data-testid={`action-row-cell-${col.id}`}
+                  data-width={col.width}
+                >
+                  {col.label && cell != null && cell !== false && <span className="sr-only">{col.label}: </span>}
+                  {cell}
+                </span>
+              </span>
+            );
+          })}
+        </span>
+      )}
+      {action ? (
+        <span className="ml-2 inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-[15px] font-medium leading-6 text-primary" data-testid="action-row-action">
+          {action}
+          <ArrowRightIcon size={16} aria-hidden="true" />
+        </span>
+      ) : (
+        <ChevronIcon dir="right" size={16} aria-hidden="true" className="ml-2 shrink-0 text-text-secondary" />
+      )}
     </>
+  );
+}
+
+export interface ActionRowPersonProps {
+  name: string;
+  /** A photo; initials when absent (or when it fails to load). */
+  avatarUrl?: string;
+  /** Avatar diameter in px. Default 28. */
+  size?: number;
+}
+
+/**
+ * The person cell of an `ActionRowList` column — a 28px avatar then the name,
+ * truncating inside the column's width. Since 2.392.0.
+ */
+export function ActionRowPerson({ name, avatarUrl, size = 28 }: ActionRowPersonProps) {
+  return (
+    <span className="flex min-w-0 items-center gap-3" data-testid="action-row-person">
+      <Avatar name={name} size={size} {...(avatarUrl ? { src: avatarUrl } : {})} />
+      <span className="min-w-0 truncate" title={name}>{name}</span>
+    </span>
   );
 }
 
@@ -78,22 +224,40 @@ export function ActionRowList({
   onOpen,
   footer,
   emptyLabel,
+  columns,
+  tone = 'neutral',
+  accent = 'none',
+  action,
   'aria-label': ariaLabel,
   className,
   'data-testid': testId = 'action-row-list',
 }: ActionRowListProps) {
   if (items.length === 0 && emptyLabel == null && footer == null) return null;
+  const toned = tone !== 'neutral';
+  const hasColumns = !!columns && columns.length > 0;
   return (
     <div className={cn('flex min-w-0 flex-col', className)} data-testid={testId}>
       {items.length === 0 ? (
         emptyLabel != null && <p className="m-0 py-2 text-sm text-text-tertiary" data-testid={`${testId}-empty`}>{emptyLabel}</p>
       ) : (
-        <ul className="m-0 list-none border-t border-border p-0" {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}>
-          {items.map((item) => (
-            <li key={item.id} className="border-b border-border" data-testid={`${testId}-row-${item.id}`}>
+        <ul className={cn('m-0 list-none p-0', toned ? 'flex flex-col gap-1' : 'border-t border-border')} {...(ariaLabel ? { 'aria-label': ariaLabel } : {})} {...(toned ? { 'data-tone': tone } : {})}>
+          {items.map((item) => {
+            const rowTone = item.tone ?? tone;
+            const rowAccent = item.accent ?? accent;
+            const rowAction = item.action ?? action;
+            const rowClass = cn(
+              ROW_CLASS,
+              hasColumns && 'min-h-[45px] py-[3px]',
+              hasColumns && item.leading != null && 'pl-5',
+              rowTone !== 'neutral' && cn(TONE_ROW[rowTone], 'rounded-r-md'),
+              rowAccent === 'bar' && TONE_BAR[rowTone],
+            );
+            const body = <RowBody item={item} {...(hasColumns ? { columns } : {})} {...(rowAction ? { action: rowAction } : {})} />;
+            return (
+            <li key={item.id} className={toned ? undefined : 'border-b border-border'} data-testid={`${testId}-row-${item.id}`} {...(rowTone !== 'neutral' ? { 'data-tone': rowTone } : {})} {...(rowAccent === 'bar' ? { 'data-accent': 'bar' } : {})}>
               {item.href && !item.disabled ? (
-                <a href={item.href} onClick={() => onOpen?.(item)} className={ROW_CLASS} data-testid={`${testId}-open-${item.id}`}>
-                  <RowBody item={item} />
+                <a href={item.href} onClick={() => onOpen?.(item)} className={rowClass} data-testid={`${testId}-open-${item.id}`}>
+                  {body}
                 </a>
               ) : (
                 <button
@@ -103,14 +267,15 @@ export function ActionRowList({
                   onClick={() => {
                     if (!item.disabled) onOpen?.(item);
                   }}
-                  className={cn(ROW_CLASS, item.disabled ? 'cursor-default opacity-60 hover:bg-transparent' : 'cursor-pointer')}
+                  className={cn(rowClass, item.disabled ? 'cursor-default opacity-60' : 'cursor-pointer', item.disabled && rowTone === 'neutral' && 'hover:bg-transparent')}
                   data-testid={`${testId}-open-${item.id}`}
                 >
-                  <RowBody item={item} />
+                  {body}
                 </button>
               )}
             </li>
-          ))}
+            );
+          })}
         </ul>
       )}
       {footer != null && <div className="mt-2 flex items-center" data-testid={`${testId}-footer`}>{footer}</div>}

@@ -6,6 +6,51 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.392.0] — 2026-09-24
+
+The Initiatives v2 library batch (agentcore
+`docs/design/initiative-overview-v2-mockup.png`). Every prop is additive and
+every default renders as before. Composed end to end in Storybook as
+`Layout/ExplorerLayout › Initiative overview v2`, measured at 1642×958 against
+the mockup (rail 264px, 22px/600 title, 32px avatars, 15px tabs, one
+dot-separated stats line with a 150px bar, row cells aligned down the list,
+46px row pitch).
+
+### Added
+- `RailNavList` (`/shared`) — a rail's scope list ("All initiatives / My
+  initiatives / Sprints"): 15px items, no chrome, links or buttons, the current
+  one `aria-current="page"`, optional muted `count`, disabled items keep their
+  reason as the tooltip. Types `RailNavListProps`, `RailNavListItem`.
+- `ActionRowPerson` (`/work`) — the 28px avatar + name cell for an
+  `ActionRowList` column. Types `ActionRowPersonProps`, `ActionRowColumn`,
+  `ActionRowTone`.
+- `ExplorerLayout railWidth="ms"` / `WorkspaceRail width="ms"` — 264px.
+- `ExplorerLayout railHeading="caption"` / `WorkspaceRail heading="caption"` —
+  the 56px header row with a 13px letter-spaced uppercase title ("INITIATIVES 11").
+- `GroupedList groupCountAlign="end"` (the group count at the header's right
+  edge, "IN PROGRESS … 9") and `rowStyle="plain"` (no row rules, 40px pitch at
+  `md` — a title-only list).
+- `ScopeHeader peopleStyle="inline"` — its own row under the description:
+  muted label, then a 32px `Avatar` and name per person, groups ruled apart.
+  `tabSize="md"` (15px tabs at any title size, 8px padding, 28px gaps, count
+  10px after its label) and `tabSize="sm"`; `descriptionSize="sm"` (15px/22px).
+- `StatStrip variant="line"` — one unboxed line, clusters separated by a muted
+  "•", a cluster's `progress` drawn as a 150px bar inline after its label.
+- `PageSection count` (a neutral chip after the title, 0 shows "0") and
+  `size="md"` (16px semibold h2, 8px to content, actions centred on the title);
+  `data-testid`.
+- `ActionRowList columns` (fixed-width fact columns declared once on the list,
+  filled per item by `cells`, ruled apart, aligned down the list), `tone`
+  (row tint; a toned list drops the grey rules), `accent="bar"` (3px tone bar
+  on the left), `action` (a worded "Open →" in place of the chevron), and per
+  item `leading` (a chip before the title), `tone`, `accent`, `action`. The
+  row is still one target. Descriptions keep working beside columns, so the
+  2.390.0 arrangement (title + description + text meta) stays reachable.
+
+### Changed
+- `ScopeHeader description` renders with `white-space: pre-line`: a "\n" in
+  the text is now a line break (it collapsed to a space before).
+
 ## [2.391.0] — 2026-09-24
 
 In-document calls (realtime-examples `docs/design/document-calls/SPEC.md` §3,

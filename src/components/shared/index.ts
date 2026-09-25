@@ -220,6 +220,9 @@ export {
   inactiveNavItemClassName,
 } from './SubNavLayout';
 export type { SubNavItem, SubNavLayoutProps } from './SubNavLayout';
+// A rail's scope list ("All initiatives / My initiatives / Sprints"). 2.392.0.
+export { RailNavList } from './RailNavList';
+export type { RailNavListProps, RailNavListItem } from './RailNavList';
 
 // ── Deep application layout (2026-08) ──
 // SubNavLayout tops out at two rails; NavRailStack takes an array, so a route

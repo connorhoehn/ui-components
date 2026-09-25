@@ -51,5 +51,5 @@ export { ProcedureSteps, PROCEDURE_STEP_STATUS_LABELS } from './ProcedureSteps';
 export type { ProcedureStepsProps, ProcedureStep, ProcedureStepStatus } from './ProcedureSteps';
 export { SourceCard, SourceList, formatSourceAge } from './SourceCard';
 export type { SourceCardProps, SourceListProps, SourceListItem } from './SourceCard';
-export { ActionRowList } from './ActionRowList';
-export type { ActionRowListProps, ActionRowItem } from './ActionRowList';
+export { ActionRowList, ActionRowPerson } from './ActionRowList';
+export type { ActionRowListProps, ActionRowItem, ActionRowColumn, ActionRowTone, ActionRowPersonProps } from './ActionRowList';

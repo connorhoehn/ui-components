@@ -78,8 +78,15 @@ export interface StatStripProps {
    * spent of $95 allocated" — with dividers between clusters, no card, and a
    * rule under the strip. The label is the words after the number, so write
    * it as the rest of the sentence.
+   *
+   * `line` (since 2.392.0): ONE unboxed line of prose-weight stats, clusters
+   * separated by a muted "•" — "**18** / 52 points delivered ▬▬▭▭ • **2**
+   * agents running • **$1.73** of $95 spent". No dividers, no rule, no card;
+   * a cluster's `progress` is drawn as a 150px bar INLINE after its label
+   * rather than under it. `hint` and `status` are not drawn (use `title`).
+   * The line wraps between clusters, never inside one.
    */
-  variant?: 'default' | 'inline';
+  variant?: 'default' | 'inline' | 'line';
   className?: string;
   'aria-label'?: string;
   'data-testid'?: string;
@@ -115,6 +122,28 @@ function InlineCluster({ item, first, last }: { item: StatStripItem; first: bool
       <ProgressLine progress={item.progress} label={item.label} />
       {item.hint != null && <div className="mt-0.5 truncate text-[12px] text-text-tertiary">{item.hint}</div>}
     </div>
+  );
+}
+
+function LineCluster({ item }: { item: StatStripItem }) {
+  const bar = item.progress && item.progress.max > 0 && Number.isFinite(item.progress.value);
+  return (
+    <span className="flex min-w-0 items-center whitespace-nowrap" data-testid="stat-strip-cluster">
+      <span className="flex min-w-0 items-baseline gap-1.5">
+        <span className={cn('text-[16px] font-semibold leading-6 tabular-nums', VALUE_TONE[item.tone ?? 'default'])}>{item.value}</span>
+        <span className="min-w-0 truncate text-[15px] leading-6 text-text-secondary">{item.label}</span>
+      </span>
+      {bar && (
+        <ProgressBar
+          value={item.progress!.value}
+          max={item.progress!.max}
+          size="sm"
+          aria-label={item.label}
+          className="ml-[18px] w-[150px] shrink-0"
+          data-testid="stat-strip-progress"
+        />
+      )}
+    </span>
   );
 }
 
@@ -184,6 +213,42 @@ export function StatStrip({
   'data-testid': testId,
 }: StatStripProps) {
   const flow = !!connectors && connectors.length > 0;
+  if (variant === 'line') {
+    return (
+      <div
+        role="group"
+        data-variant="line"
+        className={cn('flex min-w-0 flex-wrap items-center gap-y-1', className)}
+        {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}
+        {...(testId ? { 'data-testid': testId } : {})}
+      >
+        {items.map((item, i) => {
+          const tip = item.title ? { title: item.title } : {};
+          const inner = <LineCluster item={item} />;
+          let cluster: ReactNode;
+          if (item.href) {
+            cluster = <a href={item.href} className="min-w-0 rounded no-underline hover:underline" {...tip}>{inner}</a>;
+          } else if (item.onSelect) {
+            cluster = (
+              <button type="button" onClick={item.onSelect} className="min-w-0 cursor-pointer rounded border-none bg-transparent p-0 text-left hover:underline" {...tip}>
+                {inner}
+              </button>
+            );
+          } else {
+            cluster = <span className="min-w-0" {...tip}>{inner}</span>;
+          }
+          return (
+            <Fragment key={item.label}>
+              {i > 0 && (
+                <span aria-hidden="true" className="mx-5 text-[15px] leading-6 text-text-secondary" data-testid="stat-strip-separator">•</span>
+              )}
+              {cluster}
+            </Fragment>
+          );
+        })}
+      </div>
+    );
+  }
   if (variant === 'inline') {
     return (
       <div

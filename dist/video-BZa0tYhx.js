@@ -2,11 +2,11 @@ import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./useEventCallback-Cwx9QVSi.js";
 import { n, r } from "./useAudioRecorder-BhPxnLmg.js";
 import { _ as i, t as a } from "./overlayStack-CHdlnODN.js";
-import { t as o } from "./IconButton-DDeXW3mZ.js";
-import { M as s, f as c, n as l, p as u, q as d, tt as f, v as p } from "./Icons-BSEVGRI6.js";
-import { t as m } from "./Badge-BGDepkwI.js";
-import { t as h } from "./Banner-IBpLsSJQ.js";
-import { t as g } from "./Chip-zdVBwV9j.js";
+import { t as o } from "./Chip-zdVBwV9j.js";
+import { t as s } from "./IconButton-DDeXW3mZ.js";
+import { M as c, f as l, n as u, p as d, q as f, tt as p, v as m } from "./Icons-BSEVGRI6.js";
+import { t as h } from "./Badge-BGDepkwI.js";
+import { t as g } from "./Banner-IBpLsSJQ.js";
 import { t as _ } from "./Modal-DMFNRUDx.js";
 import { t as v } from "./Input-DLknWXri.js";
 import { i as y, n as b, r as x, t as S } from "./Drawer-vgGETlwD.js";
@@ -3934,7 +3934,7 @@ function ir({ participants: e, loading: t }) {
 							className: "font-mono text-xs truncate",
 							children: t
 						}),
-						/* @__PURE__ */ Y(g, {
+						/* @__PURE__ */ Y(o, {
 							size: "xs",
 							tone: e.ready ? "success" : "warning",
 							dot: e.ready ? "static" : "pulse",
@@ -3962,7 +3962,7 @@ var ar = {
 	armed: "Recording armed — will start once the call is under way"
 };
 function or({ armed: e, active: t, titles: n, className: r, "data-testid": i = "recording-chip" }) {
-	return !e && !t ? null : /* @__PURE__ */ Y(g, {
+	return !e && !t ? null : /* @__PURE__ */ Y(o, {
 		tone: t ? "danger" : "neutral",
 		size: "xs",
 		uppercase: !0,
@@ -4009,10 +4009,10 @@ function lr() {
 		}), /* @__PURE__ */ Y("polyline", { points: "12 7 12 12 15 14" })]
 	});
 }
-function ur({ channelName: t, subtitle: n, recording: r, elapsedLabel: i, phase: a, actions: o, className: s, "data-testid": c }) {
+function ur({ channelName: t, subtitle: n, recording: r, elapsedLabel: i, phase: a, actions: s, className: c, "data-testid": l }) {
 	return /* @__PURE__ */ X("header", {
-		"data-testid": c,
-		className: e("flex items-center justify-between gap-4 px-6 py-4 border-b border-border bg-surface", s),
+		"data-testid": l,
+		className: e("flex items-center justify-between gap-4 px-6 py-4 border-b border-border bg-surface", c),
 		children: [/* @__PURE__ */ X("div", {
 			className: "min-w-0 flex-1",
 			children: [/* @__PURE__ */ Y("h1", {
@@ -4028,7 +4028,7 @@ function ur({ channelName: t, subtitle: n, recording: r, elapsedLabel: i, phase:
 						titles: { armed: "Recording armed — will start when someone joins" },
 						"data-testid": "hangout-room-header-recording"
 					}),
-					i && /* @__PURE__ */ Y(g, {
+					i && /* @__PURE__ */ Y(o, {
 						tone: "neutral",
 						size: "xs",
 						icon: /* @__PURE__ */ Y(lr, {}),
@@ -4041,15 +4041,15 @@ function ur({ channelName: t, subtitle: n, recording: r, elapsedLabel: i, phase:
 					})
 				]
 			})]
-		}), (a || o) && /* @__PURE__ */ X("div", {
+		}), (a || s) && /* @__PURE__ */ X("div", {
 			className: "flex items-center gap-3 shrink-0",
-			children: [a && /* @__PURE__ */ Y(g, {
+			children: [a && /* @__PURE__ */ Y(o, {
 				tone: sr[a],
 				size: "sm",
 				dot: a === "reconnecting" ? "pulse" : "static",
 				"data-testid": "hangout-room-header-phase",
 				children: cr[a]
-			}), o]
+			}), s]
 		})]
 	});
 }
@@ -4639,7 +4639,7 @@ function Dr(e) {
 	let t = Math.max(0, Math.floor(e)), n = Math.floor(t / 3600), r = Math.floor(t % 3600 / 60), i = t % 60;
 	return n > 0 ? `${n}:${String(r).padStart(2, "0")}:${String(i).padStart(2, "0")}` : `${r}:${String(i).padStart(2, "0")}`;
 }
-function Or({ title: t, subtitle: n, durationSeconds: r, live: i = !0, recording: a, onPopOut: s, popOutLabel: c = "Pop the call out", children: l, controls: u, aside: d, stage: f = "video", className: p, "data-testid": m = "embedded-call-panel" }) {
+function Or({ title: t, subtitle: n, durationSeconds: r, live: i = !0, recording: a, onPopOut: o, popOutLabel: c = "Pop the call out", children: l, controls: u, aside: d, stage: f = "video", className: p, "data-testid": m = "embedded-call-panel" }) {
 	return /* @__PURE__ */ X("section", {
 		className: e("flex w-full min-w-0 flex-col overflow-hidden rounded-xl bg-video-stage text-white shadow-md", d && "@container", p),
 		"aria-label": typeof t == "string" ? `Call: ${t}` : "Call",
@@ -4674,13 +4674,13 @@ function Or({ title: t, subtitle: n, durationSeconds: r, live: i = !0, recording
 						"data-testid": `${m}-duration`,
 						children: Dr(r)
 					}),
-					s && /* @__PURE__ */ Y(o, {
+					o && /* @__PURE__ */ Y(s, {
 						"aria-label": c,
 						title: c,
 						size: "sm",
 						variant: "ghost",
 						icon: /* @__PURE__ */ Y(oe, { size: 16 }),
-						onClick: s,
+						onClick: o,
 						className: "shrink-0 text-white/80 hover:text-white",
 						"data-testid": `${m}-pop-out`
 					})
@@ -4778,8 +4778,8 @@ var Mr = {
 	microphone: "No microphone found",
 	camera: "No camera found"
 };
-function Ir({ kind: t, on: n, onToggle: r, devices: i, selectedDeviceId: a, onSelectDevice: o, permission: s, level: l, size: u = "sm", showLabel: d = !1, extraItems: f, disabledReason: p, className: m, "data-testid": h = `device-toggle-${t}` }) {
-	let g = s === "denied" || s === "unavailable", _ = p ?? (s === "denied" ? Pr[t] : s === "unavailable" ? Fr[t] : void 0), v = !!_ || g, y = n && !v, b = t === "microphone" && y && (l ?? 0) > .08, x = u === "md" ? 20 : 18, S;
+function Ir({ kind: t, on: n, onToggle: r, devices: i, selectedDeviceId: a, onSelectDevice: o, permission: s, level: c, size: u = "sm", showLabel: d = !1, extraItems: f, disabledReason: p, className: m, "data-testid": h = `device-toggle-${t}` }) {
+	let g = s === "denied" || s === "unavailable", _ = p ?? (s === "denied" ? Pr[t] : s === "unavailable" ? Fr[t] : void 0), v = !!_ || g, y = n && !v, b = t === "microphone" && y && (c ?? 0) > .08, x = u === "md" ? 20 : 18, S;
 	S = Y(t === "microphone" ? y ? ce : H : y ? U : ve, { size: x });
 	let C = `${Mr[t]} ${y ? "on" : "off"}`, w = y ? `Turn ${Nr[t]} off` : `Turn ${Nr[t]} on`, T = i.length ? i.map((e) => ({
 		label: e.label,
@@ -4809,7 +4809,7 @@ function Ir({ kind: t, on: n, onToggle: r, devices: i, selectedDeviceId: a, onSe
 				children: C
 			})]
 		}), /* @__PURE__ */ Y(B, {
-			trigger: /* @__PURE__ */ Y(c, { size: 14 }),
+			trigger: /* @__PURE__ */ Y(l, { size: 14 }),
 			triggerLabel: `Choose ${Nr[t]}`,
 			triggerTitle: `Choose ${Nr[t]}`,
 			triggerTestId: `${h}-menu`,
@@ -4878,35 +4878,35 @@ function zr({ micOn: t, cameraOn: n, showCamera: r = !0, permission: a, onToggle
 }
 //#endregion
 //#region src/components/video/ReviewDocumentList.tsx
-function Br({ items: t, trailing: n, onRemove: r, onOpen: i, onSelect: a, onReorder: s, emptyLabel: c = "No documents yet", className: l, "data-testid": d = "review-document-list", rowTestIdPrefix: f = "call-document" }) {
-	let [m, h] = q(null), g = n === "remove";
+function Br({ items: t, trailing: n, onRemove: r, onOpen: i, onSelect: a, onReorder: o, emptyLabel: c = "No documents yet", className: l, "data-testid": u = "review-document-list", rowTestIdPrefix: f = "call-document" }) {
+	let [p, h] = q(null), g = n === "remove";
 	if (t.length === 0) return /* @__PURE__ */ Y("p", {
 		className: e("m-0 py-2 text-sm text-text-tertiary", l),
-		"data-testid": d,
+		"data-testid": u,
 		children: c
 	});
 	let _ = (e) => (t) => {
-		t.preventDefault(), m && s && s(m, e), h(null);
+		t.preventDefault(), p && o && o(p, e), h(null);
 	};
 	return /* @__PURE__ */ Y("ul", {
 		className: e("m-0 flex list-none flex-col p-0", !g && "gap-1", l),
-		"data-testid": d,
+		"data-testid": u,
 		children: t.map((t, c) => {
-			let l = t.removable !== !1, d = t.sublineTone ? t.sublineTone === "accent" : t.selected;
+			let l = t.removable !== !1, u = t.sublineTone ? t.sublineTone === "accent" : t.selected;
 			return /* @__PURE__ */ X("li", {
 				"data-testid": `${f}-${t.id}`,
 				"data-selected": t.selected ? "true" : "false",
-				draggable: !!s,
-				onDragStart: s ? () => h(t.id) : void 0,
-				onDragOver: s ? (e) => e.preventDefault() : void 0,
-				onDrop: s ? _(c) : void 0,
-				className: e("group/doc flex items-center rounded-md", g ? "min-h-[34px] gap-2.5 px-0.5" : "min-h-[58px] gap-3 px-3 py-2", t.selected && "bg-primary-bg", !t.selected && !g && "hover:bg-surface-hover", a && "cursor-pointer", m === t.id && "opacity-50"),
+				draggable: !!o,
+				onDragStart: o ? () => h(t.id) : void 0,
+				onDragOver: o ? (e) => e.preventDefault() : void 0,
+				onDrop: o ? _(c) : void 0,
+				className: e("group/doc flex items-center rounded-md", g ? "min-h-[34px] gap-2.5 px-0.5" : "min-h-[58px] gap-3 px-3 py-2", t.selected && "bg-primary-bg", !t.selected && !g && "hover:bg-surface-hover", a && "cursor-pointer", p === t.id && "opacity-50"),
 				onClick: a ? () => a(t.id) : void 0,
 				children: [
 					/* @__PURE__ */ Y("span", {
 						className: e("flex shrink-0 text-text-secondary", t.selected && "text-primary"),
 						"aria-hidden": "true",
-						children: t.icon ?? /* @__PURE__ */ Y(p, { size: g ? 18 : 24 })
+						children: t.icon ?? /* @__PURE__ */ Y(m, { size: g ? 18 : 24 })
 					}),
 					/* @__PURE__ */ X("span", {
 						className: "flex min-w-0 flex-1 flex-col",
@@ -4914,21 +4914,21 @@ function Br({ items: t, trailing: n, onRemove: r, onOpen: i, onSelect: a, onReor
 							className: e("truncate text-text-primary", g ? "text-sm" : "text-[15px] font-medium"),
 							children: t.title
 						}), t.subline != null && /* @__PURE__ */ Y("span", {
-							className: e("truncate text-sm", d ? "text-primary" : "text-text-tertiary"),
+							className: e("truncate text-sm", u ? "text-primary" : "text-text-tertiary"),
 							children: t.subline
 						})]
 					}),
-					n === "remove" && l && r && /* @__PURE__ */ Y(o, {
+					n === "remove" && l && r && /* @__PURE__ */ Y(s, {
 						"aria-label": `Remove ${t.title}`,
 						size: "sm",
-						icon: /* @__PURE__ */ Y(u, { size: 14 }),
+						icon: /* @__PURE__ */ Y(d, { size: 14 }),
 						onClick: (e) => {
 							e.stopPropagation(), r(t.id);
 						},
 						"data-testid": `${f}-remove-${t.id}`,
 						className: "shrink-0 text-text-secondary"
 					}),
-					n === "open" && i && /* @__PURE__ */ Y(o, {
+					n === "open" && i && /* @__PURE__ */ Y(s, {
 						"aria-label": `Open ${t.title}`,
 						title: `Open ${t.title}`,
 						icon: /* @__PURE__ */ Y(oe, { size: 18 }),
@@ -5083,9 +5083,9 @@ var Ur = /* @__PURE__ */ new Set([
 	"declined",
 	"left"
 ]);
-function Wr({ people: t, count: n, followingUserId: r, canModerate: a, onInvite: o, onFollow: s, onMuteForMe: c, onMute: l, onRemove: u, onMakeHost: d, onRingAgain: f, hideHeading: p = !1, className: h, "data-testid": g = "call-people-list" }) {
+function Wr({ people: t, count: n, followingUserId: r, canModerate: a, onInvite: o, onFollow: s, onMuteForMe: c, onMute: l, onRemove: u, onMakeHost: d, onRingAgain: f, hideHeading: p = !1, className: m, "data-testid": g = "call-people-list" }) {
 	return /* @__PURE__ */ X("section", {
-		className: e("flex flex-col", h),
+		className: e("flex flex-col", m),
 		"data-testid": g,
 		"aria-label": "People",
 		children: [!p && /* @__PURE__ */ X("div", {
@@ -5095,7 +5095,7 @@ function Wr({ people: t, count: n, followingUserId: r, canModerate: a, onInvite:
 					className: "m-0 text-base font-semibold text-text-primary",
 					children: "People"
 				}),
-				/* @__PURE__ */ Y(m, {
+				/* @__PURE__ */ Y(h, {
 					variant: "count",
 					value: n,
 					color: "muted",
@@ -5368,11 +5368,11 @@ function Yr({ children: e, action: t }) {
 		}), t]
 	});
 }
-function Xr({ open: e, onClose: t, title: n, onTitleChange: r, media: a, onMediaChange: o, documents: c, onManageAccess: l, people: u, message: p, onMessageChange: m, messageMaxLength: _ = 280, ring: y, onRingChange: b, precheck: w, selectedCount: T, onCopyLink: E, onStart: D, starting: O = !1, startDisabledReason: k, error: A, width: j = 400, docked: M = !0, className: P, "data-testid": F = "start-call-drawer" }) {
-	let { onAdd: I, ...L } = c, ee = !!k || O || !n.trim(), z = /* @__PURE__ */ X("div", {
+function Xr({ open: e, onClose: t, title: n, onTitleChange: r, media: a, onMediaChange: s, documents: l, onManageAccess: u, people: d, message: m, onMessageChange: h, messageMaxLength: _ = 280, ring: y, onRingChange: b, precheck: w, selectedCount: T, onCopyLink: E, onStart: D, starting: O = !1, startDisabledReason: k, error: A, width: j = 400, docked: M = !0, className: P, "data-testid": F = "start-call-drawer" }) {
+	let { onAdd: I, ...L } = l, ee = !!k || O || !n.trim(), z = /* @__PURE__ */ X("div", {
 		className: "flex flex-col gap-3",
 		children: [
-			A && /* @__PURE__ */ Y(h, {
+			A && /* @__PURE__ */ Y(g, {
 				variant: "error",
 				title: `Could not start the call — ${A.message}`,
 				action: /* @__PURE__ */ Y(i, {
@@ -5396,7 +5396,7 @@ function Xr({ open: e, onClose: t, title: n, onTitleChange: r, media: a, onMedia
 					onClick: E,
 					"data-testid": "start-call-copy-link",
 					className: "inline-flex items-center gap-2 font-medium",
-					children: [/* @__PURE__ */ Y(s, { size: 16 }), "Copy invite link"]
+					children: [/* @__PURE__ */ Y(c, { size: 16 }), "Copy invite link"]
 				}), /* @__PURE__ */ X(i, {
 					onClick: D,
 					disabled: ee,
@@ -5446,7 +5446,7 @@ function Xr({ open: e, onClose: t, title: n, onTitleChange: r, media: a, onMedia
 					label: "Audio"
 				}],
 				value: a,
-				onChange: (e) => o(e),
+				onChange: (e) => s(e),
 				fullWidth: !0,
 				"aria-label": "Call type",
 				"data-testid": "start-call-media"
@@ -5460,7 +5460,7 @@ function Xr({ open: e, onClose: t, title: n, onTitleChange: r, media: a, onMedia
 							onClick: I,
 							"data-testid": "start-call-add-document",
 							className: "inline-flex items-center gap-1 text-sm",
-							children: [/* @__PURE__ */ Y(d, { size: 14 }), "Add"]
+							children: [/* @__PURE__ */ Y(f, { size: 14 }), "Add"]
 						}),
 						children: "Review documents"
 					}),
@@ -5477,7 +5477,7 @@ function Xr({ open: e, onClose: t, title: n, onTitleChange: r, media: a, onMedia
 							children: "Existing document access applies."
 						}), /* @__PURE__ */ Y(i, {
 							variant: "link",
-							onClick: l,
+							onClick: u,
 							"data-testid": "start-call-manage",
 							className: "text-xs",
 							children: "Manage"
@@ -5490,19 +5490,19 @@ function Xr({ open: e, onClose: t, title: n, onTitleChange: r, media: a, onMedia
 				children: [
 					/* @__PURE__ */ Y(Yr, { children: "People" }),
 					/* @__PURE__ */ Y(v, {
-						value: u.query,
-						onChange: (e) => u.onQueryChange(e.target.value),
-						placeholder: u.placeholder ?? "Find people, teams or channels",
-						"aria-label": u.placeholder ?? "Find people, teams or channels",
-						prefix: /* @__PURE__ */ Y(f, { size: 16 }),
+						value: d.query,
+						onChange: (e) => d.onQueryChange(e.target.value),
+						placeholder: d.placeholder ?? "Find people, teams or channels",
+						"aria-label": d.placeholder ?? "Find people, teams or channels",
+						prefix: /* @__PURE__ */ Y(p, { size: 16 }),
 						"data-testid": "start-call-people-search"
 					}),
-					u.chips.length > 0 && /* @__PURE__ */ Y("div", {
+					d.chips.length > 0 && /* @__PURE__ */ Y("div", {
 						className: "flex flex-wrap gap-2",
 						"data-testid": "start-call-chips",
-						children: u.chips.map((e) => /* @__PURE__ */ Y(g, {
+						children: d.chips.map((e) => /* @__PURE__ */ Y(o, {
 							tone: "neutral",
-							onRemove: () => u.onRemoveChip(e.userId),
+							onRemove: () => d.onRemoveChip(e.userId),
 							removeLabel: `Remove ${e.name}`,
 							removeTestId: `start-call-chip-remove-${e.userId}`,
 							"data-testid": `start-call-chip-${e.userId}`,
@@ -5513,7 +5513,7 @@ function Xr({ open: e, onClose: t, title: n, onTitleChange: r, media: a, onMedia
 					/* @__PURE__ */ Y(Vr, {
 						title: "Document collaborators",
 						footnote: "Offline people can use the invite link.",
-						...u.collaborators
+						...d.collaborators
 					})
 				]
 			}),
@@ -5532,8 +5532,8 @@ function Xr({ open: e, onClose: t, title: n, onTitleChange: r, media: a, onMedia
 					})]
 				}), /* @__PURE__ */ Y(N, {
 					id: `${F}-message`,
-					value: p,
-					onChange: (e) => m(e.target.value.slice(0, _)),
+					value: m,
+					onChange: (e) => h(e.target.value.slice(0, _)),
 					maxLength: _,
 					rows: 2,
 					"data-testid": "start-call-message"
@@ -5568,13 +5568,13 @@ function Zr(e) {
 function Qr(e) {
 	return e === 1 ? "1 person" : `${e} people`;
 }
-function $r({ title: t, participantCount: n, elapsedMs: r, phase: a, documents: s, participants: c, localParticipantId: l, activeSpeakerId: u = null, followingUserId: d = null, mic: f, camera: g, screenShare: _, onOpenPeople: v, onOpenDocuments: y, peopleOpen: b = !1, documentsOpen: x = !1, onOpenSettings: S, onPopOut: C, onLeave: w, canEndForEveryone: T = !1, onEndForEveryone: E, onTileClick: D, onTitleClick: k, onDocumentClick: A, endedSummary: j, error: M, onDismiss: N, compact: P = !1, className: F, "data-testid": I = "call-dock" }) {
+function $r({ title: t, participantCount: n, elapsedMs: r, phase: a, documents: o, participants: c, localParticipantId: l, activeSpeakerId: u = null, followingUserId: d = null, mic: f, camera: p, screenShare: _, onOpenPeople: v, onOpenDocuments: y, peopleOpen: b = !1, documentsOpen: x = !1, onOpenSettings: S, onPopOut: C, onLeave: w, canEndForEveryone: T = !1, onEndForEveryone: E, onTileClick: D, onTitleClick: k, onDocumentClick: A, endedSummary: j, error: M, onDismiss: N, compact: P = !1, className: F, "data-testid": I = "call-dock" }) {
 	let L = K(null), [ee, R] = q(!1);
 	if (a === "error" && M) return /* @__PURE__ */ Y("div", {
 		className: e("border-t border-border bg-surface px-5 py-3", F),
 		"data-testid": I,
 		"data-phase": "error",
-		children: /* @__PURE__ */ Y(h, {
+		children: /* @__PURE__ */ Y(g, {
 			variant: "error",
 			title: `Lost the call — ${M.message}`,
 			"data-testid": "call-dock-error",
@@ -5661,17 +5661,17 @@ function $r({ title: t, participantCount: n, elapsedMs: r, phase: a, documents: 
 						"data-testid": "call-dock-meta",
 						children: H
 					}),
-					s.length > 0 && /* @__PURE__ */ Y("span", {
+					o.length > 0 && /* @__PURE__ */ Y("span", {
 						className: "hidden min-w-0 items-center gap-4 @min-[1180px]:flex",
 						"data-testid": "call-dock-documents-chips",
-						children: s.map((t) => /* @__PURE__ */ X("button", {
+						children: o.map((t) => /* @__PURE__ */ X("button", {
 							type: "button",
 							onClick: A ? () => A(t.id) : void 0,
 							className: e("inline-flex min-w-0 items-center gap-1.5 border-none bg-transparent p-0 font-[inherit] text-[13px]", t.presenting ? "text-primary" : "text-text-primary", A ? "cursor-pointer hover:underline" : "cursor-default"),
 							"data-testid": `call-dock-document-${t.id}`,
 							"data-presenting": t.presenting ? "true" : "false",
 							title: t.presenting ? `${t.title} · Presenting` : t.title,
-							children: [/* @__PURE__ */ Y(p, { size: 16 }), /* @__PURE__ */ Y("span", {
+							children: [/* @__PURE__ */ Y(m, { size: 16 }), /* @__PURE__ */ Y("span", {
 								className: "truncate",
 								children: t.title
 							})]
@@ -5689,7 +5689,7 @@ function $r({ title: t, participantCount: n, elapsedMs: r, phase: a, documents: 
 					}),
 					/* @__PURE__ */ Y(Ir, {
 						kind: "camera",
-						...g,
+						...p,
 						"data-testid": "call-dock-camera",
 						...B ? { disabledReason: "Connecting…" } : {}
 					}),
@@ -5723,7 +5723,7 @@ function $r({ title: t, participantCount: n, elapsedMs: r, phase: a, documents: 
 								className: "hidden @min-[860px]:inline",
 								children: "People"
 							}),
-							/* @__PURE__ */ Y(m, {
+							/* @__PURE__ */ Y(h, {
 								variant: "count",
 								value: n,
 								color: "muted",
@@ -5736,25 +5736,25 @@ function $r({ title: t, participantCount: n, elapsedMs: r, phase: a, documents: 
 						size: "sm",
 						onClick: y,
 						disabled: B,
-						"aria-label": `Documents (${s.length})`,
+						"aria-label": `Documents (${o.length})`,
 						"aria-pressed": x,
 						"data-testid": "call-dock-documents",
 						className: e("hidden h-8 items-center gap-1.5 font-medium @min-[980px]:inline-flex", !x && "bg-surface"),
 						children: [
-							/* @__PURE__ */ Y(p, { size: 16 }),
+							/* @__PURE__ */ Y(m, { size: 16 }),
 							/* @__PURE__ */ Y("span", {
 								className: "hidden @min-[860px]:inline",
 								children: "Documents"
 							}),
-							/* @__PURE__ */ Y(m, {
+							/* @__PURE__ */ Y(h, {
 								variant: "count",
-								value: s.length,
+								value: o.length,
 								color: "muted",
-								"aria-label": `${s.length} documents`
+								"aria-label": `${o.length} documents`
 							})
 						]
 					}),
-					/* @__PURE__ */ Y(o, {
+					/* @__PURE__ */ Y(s, {
 						"aria-label": "Call settings",
 						title: "Call settings",
 						variant: "outline",
@@ -5762,7 +5762,7 @@ function $r({ title: t, participantCount: n, elapsedMs: r, phase: a, documents: 
 						icon: /* @__PURE__ */ Y(se, { size: 18 }),
 						"data-testid": "call-dock-settings"
 					}),
-					/* @__PURE__ */ Y(o, {
+					/* @__PURE__ */ Y(s, {
 						"aria-label": "Pop out the call",
 						title: "Pop out the call",
 						variant: "outline",
@@ -5855,7 +5855,7 @@ function $r({ title: t, participantCount: n, elapsedMs: r, phase: a, documents: 
 function ei(e, t) {
 	return e === 0 ? "Nobody has joined yet" : t ? `${e} in call` : e === 1 ? "1 person in the call" : `${e} people in the call`;
 }
-function ti({ open: t, anchorRef: n, compact: r = !1, caller: a, title: s, documents: c, onOpenDocument: d, participants: f, participantCount: m, mic: h, camera: g, onOpenSettings: _, busy: v = !1, onJoin: y, onSwitch: b, onDecline: x, onDismiss: S, ringing: C = !0, className: w, "data-testid": T = "incoming-call-popover" }) {
+function ti({ open: t, anchorRef: n, compact: r = !1, caller: a, title: o, documents: c, onOpenDocument: l, participants: f, participantCount: p, mic: h, camera: g, onOpenSettings: _, busy: v = !1, onJoin: y, onSwitch: b, onDecline: x, onDismiss: S, ringing: C = !0, className: w, "data-testid": T = "incoming-call-popover" }) {
 	let [E, ...D] = c, O = D.length ? r ? `+${D.length}` : `+${D.length} ${D.length === 1 ? "document" : "documents"}` : null, k = v && !!b;
 	return /* @__PURE__ */ Y(z, {
 		trigger: n,
@@ -5881,11 +5881,11 @@ function ti({ open: t, anchorRef: n, compact: r = !1, caller: a, title: s, docum
 							className: "flex-1 text-[15px] font-semibold text-text-primary",
 							children: "Incoming call"
 						}),
-						/* @__PURE__ */ Y(o, {
+						/* @__PURE__ */ Y(s, {
 							"aria-label": "Not now",
 							title: "Not now",
 							size: "sm",
-							icon: /* @__PURE__ */ Y(u, { size: 16 }),
+							icon: /* @__PURE__ */ Y(d, { size: 16 }),
 							onClick: x,
 							"data-testid": "incoming-call-close",
 							className: "text-text-secondary"
@@ -5938,18 +5938,18 @@ function ti({ open: t, anchorRef: n, compact: r = !1, caller: a, title: s, docum
 				/* @__PURE__ */ Y("h3", {
 					className: e("m-0 font-semibold text-text-primary", r ? "text-lg" : "text-xl"),
 					"data-testid": "incoming-call-title",
-					children: s
+					children: o
 				}),
 				E && /* @__PURE__ */ X("div", {
 					className: "flex min-w-0 items-center gap-3 text-sm",
 					children: [
-						/* @__PURE__ */ Y(p, {
+						/* @__PURE__ */ Y(m, {
 							size: r ? 20 : 22,
 							className: "shrink-0 text-primary"
 						}),
 						/* @__PURE__ */ Y(i, {
 							variant: "link",
-							onClick: () => d(E.id),
+							onClick: () => l(E.id),
 							"data-testid": `incoming-call-document-${E.id}`,
 							className: "min-w-0 truncate text-[15px] underline",
 							children: E.title
@@ -5961,7 +5961,7 @@ function ti({ open: t, anchorRef: n, compact: r = !1, caller: a, title: s, docum
 							content: D.map((e) => e.title).join(", "),
 							children: /* @__PURE__ */ Y(i, {
 								variant: "link",
-								onClick: () => d(D[0].id),
+								onClick: () => l(D[0].id),
 								"data-testid": "incoming-call-more",
 								className: "shrink-0 text-[15px] underline",
 								children: O
@@ -5970,7 +5970,7 @@ function ti({ open: t, anchorRef: n, compact: r = !1, caller: a, title: s, docum
 						r && /* @__PURE__ */ Y("span", {
 							className: "ml-auto shrink-0 text-text-secondary",
 							"data-testid": "incoming-call-participants",
-							children: ei(m, !0)
+							children: ei(p, !0)
 						})
 					]
 				}),
@@ -5987,7 +5987,7 @@ function ti({ open: t, anchorRef: n, compact: r = !1, caller: a, title: s, docum
 						className: "[&>*]:!border-surface [&>*+*]:!ml-[-4px]"
 					}), /* @__PURE__ */ Y("span", {
 						className: "text-sm text-text-secondary",
-						children: ei(m, !1)
+						children: ei(p, !1)
 					})]
 				}),
 				!r && /* @__PURE__ */ Y("div", {
@@ -6013,7 +6013,7 @@ function ti({ open: t, anchorRef: n, compact: r = !1, caller: a, title: s, docum
 							className: e("min-w-0 flex-auto justify-between", g.className),
 							"data-testid": "incoming-call-camera"
 						}),
-						/* @__PURE__ */ Y(o, {
+						/* @__PURE__ */ Y(s, {
 							"aria-label": "Call settings",
 							title: "Call settings",
 							variant: "outline",
@@ -6037,12 +6037,12 @@ function ti({ open: t, anchorRef: n, compact: r = !1, caller: a, title: s, docum
 						onClick: b,
 						"data-testid": "incoming-call-switch",
 						className: "inline-flex h-10 items-center gap-2 px-4",
-						children: ["Switch", /* @__PURE__ */ Y(l, { size: 16 })]
+						children: ["Switch", /* @__PURE__ */ Y(u, { size: 16 })]
 					}) : /* @__PURE__ */ X(i, {
 						onClick: y,
 						"data-testid": "incoming-call-join",
 						className: "inline-flex h-10 items-center gap-2 px-4",
-						children: ["Join call", /* @__PURE__ */ Y(l, { size: 16 })]
+						children: ["Join call", /* @__PURE__ */ Y(u, { size: 16 })]
 					})]
 				})
 			]
@@ -6051,14 +6051,14 @@ function ti({ open: t, anchorRef: n, compact: r = !1, caller: a, title: s, docum
 }
 //#endregion
 //#region src/components/video/DocumentCallPanel.tsx
-function ni({ title: t, participantCount: n, elapsedMs: r, people: a, documents: c, presenting: l, currentDocumentId: u, canPresent: f, presentDisabledReason: p, onPresent: h, onCopyLink: g, onManageAccess: _, onPopOut: v, onClose: y, loading: b = !1, notice: x, className: C, "data-testid": w = "document-call-panel" }) {
-	let { count: T, onAdd: E, ...D } = c, k = a.people.find((e) => e.isLocal), A = !!(l && k && l.userId === k.userId && l.documentId === u), j = a.people.filter((e) => e.state === "in-call" && !e.isLocal).length === 0, M = `${n === 1 ? "1 person" : `${n} people`}${r == null ? "" : ` · ${Zr(r)}`}`;
+function ni({ title: t, participantCount: n, elapsedMs: r, people: a, documents: o, presenting: l, currentDocumentId: u, canPresent: d, presentDisabledReason: p, onPresent: m, onCopyLink: g, onManageAccess: _, onPopOut: v, onClose: y, loading: b = !1, notice: x, className: C, "data-testid": w = "document-call-panel" }) {
+	let { count: T, onAdd: E, ...D } = o, k = a.people.find((e) => e.isLocal), A = !!(l && k && l.userId === k.userId && l.documentId === u), j = a.people.filter((e) => e.state === "in-call" && !e.isLocal).length === 0, M = `${n === 1 ? "1 person" : `${n} people`}${r == null ? "" : ` · ${Zr(r)}`}`;
 	return /* @__PURE__ */ X(S, {
 		open: !0,
 		docked: !0,
 		onClose: y,
 		title: "Call",
-		actions: /* @__PURE__ */ Y(o, {
+		actions: /* @__PURE__ */ Y(s, {
 			"aria-label": "Pop out the call",
 			title: "Pop out the call",
 			size: "sm",
@@ -6132,7 +6132,7 @@ function ni({ title: t, participantCount: n, elapsedMs: r, people: a, documents:
 								className: "m-0 text-base font-semibold text-text-primary",
 								children: "Review documents"
 							}),
-							/* @__PURE__ */ Y(m, {
+							/* @__PURE__ */ Y(h, {
 								variant: "count",
 								value: T,
 								color: "muted",
@@ -6143,7 +6143,7 @@ function ni({ title: t, participantCount: n, elapsedMs: r, people: a, documents:
 								onClick: E,
 								"data-testid": "call-add-document",
 								className: "ml-auto inline-flex items-center gap-1 text-sm",
-								children: [/* @__PURE__ */ Y(d, { size: 14 }), "Add"]
+								children: [/* @__PURE__ */ Y(f, { size: 14 }), "Add"]
 							})
 						]
 					}), /* @__PURE__ */ Y(Br, {
@@ -6157,9 +6157,9 @@ function ni({ title: t, participantCount: n, elapsedMs: r, people: a, documents:
 					className: "flex items-center justify-between gap-3",
 					children: [/* @__PURE__ */ X(i, {
 						variant: "ghost",
-						onClick: () => h(A ? null : u),
-						disabled: !A && !f,
-						title: !A && !f ? p : void 0,
+						onClick: () => m(A ? null : u),
+						disabled: !A && !d,
+						title: !A && !d ? p : void 0,
 						"data-testid": "call-present",
 						className: "inline-flex items-center gap-2 font-medium",
 						children: [/* @__PURE__ */ Y(fe, { size: 18 }), A ? "Stop presenting" : "Present this document"]
@@ -6168,7 +6168,7 @@ function ni({ title: t, participantCount: n, elapsedMs: r, people: a, documents:
 						onClick: g,
 						"data-testid": "call-copy-link",
 						className: "inline-flex items-center gap-1.5 text-sm",
-						children: [/* @__PURE__ */ Y(s, { size: 16 }), "Copy call link"]
+						children: [/* @__PURE__ */ Y(c, { size: 16 }), "Copy call link"]
 					})]
 				}),
 				/* @__PURE__ */ Y("div", {

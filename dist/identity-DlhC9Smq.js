@@ -3,9 +3,9 @@ import { t } from "./useEventCallback-Cwx9QVSi.js";
 import { _ as n } from "./overlayStack-CHdlnODN.js";
 import { t as r } from "./Card-RQCeAPNU.js";
 import { a as i, i as a, n as o, o as s, r as c, t as l } from "./Table-CypeBEj0.js";
-import { n as u, t as d } from "./DataTable-3jKrGxjU.js";
-import { t as f } from "./Banner-IBpLsSJQ.js";
-import { t as p } from "./Chip-zdVBwV9j.js";
+import { t as u } from "./Chip-zdVBwV9j.js";
+import { n as d, t as f } from "./DataTable-8nu1Nkuk.js";
+import { t as p } from "./Banner-IBpLsSJQ.js";
 import { t as m } from "./Modal-DMFNRUDx.js";
 import { t as h } from "./ConfirmDialog-CSS_SMC6.js";
 import { t as g } from "./Input-DLknWXri.js";
@@ -46,7 +46,7 @@ function M({ stats: e, pools: t, onNavigate: i, loading: a }) {
 				children: [/* @__PURE__ */ A("div", { className: "h-5 w-12 rounded bg-surface-hover animate-pulse mb-2" }), /* @__PURE__ */ A("div", { className: "h-3 w-20 rounded bg-surface-hover animate-pulse" })]
 			}, e))
 		}), /* @__PURE__ */ A(r, { className: "h-[200px] animate-pulse" })]
-	}) : /* @__PURE__ */ j(u, {
+	}) : /* @__PURE__ */ j(d, {
 		title: "Dashboard",
 		children: [
 			/* @__PURE__ */ A("section", {
@@ -142,7 +142,7 @@ function N({ columns: e, data: t, keyField: n, onRowClick: i, actions: a, emptyM
 			className: "text-sm font-medium text-neutral text-center max-w-[280px] m-0",
 			children: o
 		})]
-	}) : /* @__PURE__ */ A(r, { children: /* @__PURE__ */ A(d, {
+	}) : /* @__PURE__ */ A(r, { children: /* @__PURE__ */ A(f, {
 		data: u,
 		columns: l,
 		keyField: (e) => String(e[n]),
@@ -155,14 +155,14 @@ function N({ columns: e, data: t, keyField: n, onRowClick: i, actions: a, emptyM
 //#endregion
 //#region src/components/identity/admin/PoolListPage.tsx
 function P({ pools: e, onCreatePool: t, onEditPool: r, onDeletePool: i, onViewPool: a, loading: o }) {
-	let [s, c] = O(null), [l, d] = O(!1), [p, m] = O(null), g = C(async (e) => {
-		d(!0), m(null);
+	let [s, c] = O(null), [l, u] = O(!1), [f, m] = O(null), g = C(async (e) => {
+		u(!0), m(null);
 		try {
 			await i(e), c(null);
 		} catch (e) {
 			m(e instanceof Error ? e.message : "Failed to delete pool.");
 		} finally {
-			d(!1);
+			u(!1);
 		}
 	}, [i]), _ = C(() => {
 		c(null), m(null);
@@ -203,7 +203,7 @@ function P({ pools: e, onCreatePool: t, onEditPool: r, onDeletePool: i, onViewPo
 			children: "Delete"
 		})
 	] }), [r, a]);
-	return /* @__PURE__ */ j(u, {
+	return /* @__PURE__ */ j(d, {
 		title: "User Pools",
 		actions: /* @__PURE__ */ A(n, {
 			variant: "primary",
@@ -230,9 +230,9 @@ function P({ pools: e, onCreatePool: t, onEditPool: r, onDeletePool: i, onViewPo
 			tone: "destructive",
 			confirmLabel: "Delete",
 			confirmDisabled: l,
-			children: p && /* @__PURE__ */ A(f, {
+			children: f && /* @__PURE__ */ A(p, {
 				variant: "error",
-				children: p
+				children: f
 			})
 		})]
 	});
@@ -330,7 +330,7 @@ function F({ label: e, name: t, type: n = "text", value: r, onChange: i, error: 
 //#endregion
 //#region src/components/identity/admin/PoolFormPage.tsx
 function I({ pool: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
-	let [s, c] = O(e?.poolName ?? ""), [l, d] = O(e?.settings?.mfaConfiguration ?? "OFF"), [p, m] = O(e?.settings?.passwordPolicy?.minLength ?? 8), [h, _] = O(e?.settings?.passwordPolicy?.requireUppercase ?? !0), [v, y] = O(e?.settings?.passwordPolicy?.requireLowercase ?? !0), [b, x] = O(e?.settings?.passwordPolicy?.requireNumbers ?? !0), [S, w] = O(e?.settings?.passwordPolicy?.requireSymbols ?? !1), [T, E] = O(Object.entries(e?.customAttributes ?? {}).map(([e, t]) => ({
+	let [s, c] = O(e?.poolName ?? ""), [l, u] = O(e?.settings?.mfaConfiguration ?? "OFF"), [f, m] = O(e?.settings?.passwordPolicy?.minLength ?? 8), [h, _] = O(e?.settings?.passwordPolicy?.requireUppercase ?? !0), [v, y] = O(e?.settings?.passwordPolicy?.requireLowercase ?? !0), [b, x] = O(e?.settings?.passwordPolicy?.requireNumbers ?? !0), [S, w] = O(e?.settings?.passwordPolicy?.requireSymbols ?? !1), [T, E] = O(Object.entries(e?.customAttributes ?? {}).map(([e, t]) => ({
 		key: e,
 		value: t
 	}))), [D, k] = O(!1), M = C(() => {
@@ -356,7 +356,7 @@ function I({ pool: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
 				settings: {
 					mfaConfiguration: l,
 					passwordPolicy: {
-						minLength: p,
+						minLength: f,
 						requireUppercase: h,
 						requireLowercase: v,
 						requireNumbers: b,
@@ -370,7 +370,7 @@ function I({ pool: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
 	}, [
 		s,
 		l,
-		p,
+		f,
 		h,
 		v,
 		b,
@@ -378,10 +378,10 @@ function I({ pool: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
 		T,
 		i
 	]);
-	return /* @__PURE__ */ j(u, {
+	return /* @__PURE__ */ j(d, {
 		title: t ? "Edit Pool" : "Create Pool",
 		className: "max-w-[640px]",
-		children: [o && /* @__PURE__ */ A(f, {
+		children: [o && /* @__PURE__ */ A(p, {
 			variant: "error",
 			children: o
 		}), /* @__PURE__ */ A(r, {
@@ -407,7 +407,7 @@ function I({ pool: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
 							name: "mfaConfig",
 							type: "select",
 							value: l,
-							onChange: (e) => d(String(e)),
+							onChange: (e) => u(String(e)),
 							options: [
 								{
 									value: "OFF",
@@ -435,7 +435,7 @@ function I({ pool: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
 								label: "Minimum Length",
 								name: "minLength",
 								type: "number",
-								value: p,
+								value: f,
 								onChange: (e) => m(Number(e))
 							}),
 							/* @__PURE__ */ A(F, {
@@ -551,7 +551,7 @@ var L = {
 };
 function z({ status: e, variant: t }) {
 	let n = t ? R[t] || "neutral" : L[e] || "neutral";
-	return /* @__PURE__ */ A(p, {
+	return /* @__PURE__ */ A(u, {
 		tone: n,
 		size: "sm",
 		children: e
@@ -560,14 +560,14 @@ function z({ status: e, variant: t }) {
 //#endregion
 //#region src/components/identity/admin/UserListPage.tsx
 function B({ users: e, poolName: t, onCreateUser: r, onEditUser: i, onDeleteUser: a, loading: o }) {
-	let [s, c] = O(null), [l, d] = O(!1), [p, m] = O(null), g = C(async (e) => {
-		d(!0), m(null);
+	let [s, c] = O(null), [l, u] = O(!1), [f, m] = O(null), g = C(async (e) => {
+		u(!0), m(null);
 		try {
 			await a(e), c(null);
 		} catch (e) {
 			m(e instanceof Error ? e.message : "Failed to delete user.");
 		} finally {
-			d(!1);
+			u(!1);
 		}
 	}, [a]), _ = C(() => {
 		c(null), m(null);
@@ -606,7 +606,7 @@ function B({ users: e, poolName: t, onCreateUser: r, onEditUser: i, onDeleteUser
 		},
 		children: "Delete"
 	})] }), [i]);
-	return /* @__PURE__ */ j(u, {
+	return /* @__PURE__ */ j(d, {
 		title: `Users — ${t}`,
 		actions: /* @__PURE__ */ A(n, {
 			variant: "primary",
@@ -633,9 +633,9 @@ function B({ users: e, poolName: t, onCreateUser: r, onEditUser: i, onDeleteUser
 			tone: "destructive",
 			confirmLabel: "Delete",
 			confirmDisabled: l,
-			children: p && /* @__PURE__ */ A(f, {
+			children: f && /* @__PURE__ */ A(p, {
 				variant: "error",
-				children: p
+				children: f
 			})
 		})]
 	});
@@ -643,7 +643,7 @@ function B({ users: e, poolName: t, onCreateUser: r, onEditUser: i, onDeleteUser
 //#endregion
 //#region src/components/identity/admin/UserFormPage.tsx
 function V({ user: e, isEdit: t, customAttributeDefinitions: i, onSubmit: a, onCancel: o, error: s }) {
-	let [c, l] = O(e?.email ?? ""), [d, p] = O(""), [m, h] = O(e?.givenName ?? ""), [g, _] = O(e?.familyName ?? ""), [v, y] = O(e?.nickname ?? ""), [b, x] = O(e?.picture ?? ""), [S, w] = O(e?.website ?? ""), [T, E] = O(Object.fromEntries(Object.entries(e?.customAttributes ?? {}).map(([e, t]) => [e, String(t)]))), [D, k] = O(!1), M = C((e, t) => {
+	let [c, l] = O(e?.email ?? ""), [u, f] = O(""), [m, h] = O(e?.givenName ?? ""), [g, _] = O(e?.familyName ?? ""), [v, y] = O(e?.nickname ?? ""), [b, x] = O(e?.picture ?? ""), [S, w] = O(e?.website ?? ""), [T, E] = O(Object.fromEntries(Object.entries(e?.customAttributes ?? {}).map(([e, t]) => [e, String(t)]))), [D, k] = O(!1), M = C((e, t) => {
 		E((n) => ({
 			...n,
 			[e]: t
@@ -653,7 +653,7 @@ function V({ user: e, isEdit: t, customAttributeDefinitions: i, onSubmit: a, onC
 		try {
 			await a({
 				email: c,
-				...!t && d ? { password: d } : {},
+				...!t && u ? { password: u } : {},
 				givenName: m || void 0,
 				familyName: g || void 0,
 				nickname: v || void 0,
@@ -666,7 +666,7 @@ function V({ user: e, isEdit: t, customAttributeDefinitions: i, onSubmit: a, onC
 		}
 	}, [
 		c,
-		d,
+		u,
 		m,
 		g,
 		v,
@@ -676,10 +676,10 @@ function V({ user: e, isEdit: t, customAttributeDefinitions: i, onSubmit: a, onC
 		t,
 		a
 	]);
-	return /* @__PURE__ */ j(u, {
+	return /* @__PURE__ */ j(d, {
 		title: t ? "Edit User" : "Create User",
 		className: "max-w-[640px]",
-		children: [s && /* @__PURE__ */ A(f, {
+		children: [s && /* @__PURE__ */ A(p, {
 			variant: "error",
 			children: s
 		}), /* @__PURE__ */ A(r, {
@@ -700,8 +700,8 @@ function V({ user: e, isEdit: t, customAttributeDefinitions: i, onSubmit: a, onC
 						label: "Password",
 						name: "password",
 						type: "password",
-						value: d,
-						onChange: (e) => p(String(e)),
+						value: u,
+						onChange: (e) => f(String(e)),
 						required: !0,
 						placeholder: "Temporary password",
 						helpText: "User will be prompted to change on first login."
@@ -775,14 +775,14 @@ function V({ user: e, isEdit: t, customAttributeDefinitions: i, onSubmit: a, onC
 //#endregion
 //#region src/components/identity/admin/GroupListPage.tsx
 function H({ groups: e, poolName: t, onCreateGroup: r, onEditGroup: i, onDeleteGroup: a, loading: o }) {
-	let [s, c] = O(null), [l, d] = O(!1), [m, g] = O(null), _ = C(async (e) => {
-		d(!0), g(null);
+	let [s, c] = O(null), [l, f] = O(!1), [m, g] = O(null), _ = C(async (e) => {
+		f(!0), g(null);
 		try {
 			await a(e), c(null);
 		} catch (e) {
 			g(e instanceof Error ? e.message : "Failed to delete group.");
 		} finally {
-			d(!1);
+			f(!1);
 		}
 	}, [a]), v = C(() => {
 		c(null), g(null);
@@ -806,7 +806,7 @@ function H({ groups: e, poolName: t, onCreateGroup: r, onEditGroup: i, onDeleteG
 					children: t.length === 0 ? /* @__PURE__ */ A("span", {
 						className: "text-text-tertiary text-xs",
 						children: "None"
-					}) : t.map((e) => /* @__PURE__ */ A(p, {
+					}) : t.map((e) => /* @__PURE__ */ A(u, {
 						tone: "info",
 						size: "xs",
 						children: e
@@ -827,7 +827,7 @@ function H({ groups: e, poolName: t, onCreateGroup: r, onEditGroup: i, onDeleteG
 		},
 		children: "Delete"
 	})] }), [i]);
-	return /* @__PURE__ */ j(u, {
+	return /* @__PURE__ */ j(d, {
 		title: `Groups — ${t}`,
 		actions: /* @__PURE__ */ A(n, {
 			variant: "primary",
@@ -854,7 +854,7 @@ function H({ groups: e, poolName: t, onCreateGroup: r, onEditGroup: i, onDeleteG
 			tone: "destructive",
 			confirmLabel: "Delete",
 			confirmDisabled: l,
-			children: m && /* @__PURE__ */ A(f, {
+			children: m && /* @__PURE__ */ A(p, {
 				variant: "error",
 				children: m
 			})
@@ -863,8 +863,8 @@ function H({ groups: e, poolName: t, onCreateGroup: r, onEditGroup: i, onDeleteG
 }
 //#endregion
 //#region src/components/identity/admin/GroupFormPage.tsx
-function U({ group: e, isEdit: t, members: i, availableUsers: a, onSubmit: o, onAddMember: s, onRemoveMember: c, onCancel: l, error: d }) {
-	let [p, m] = O(e?.groupName ?? ""), [h, _] = O(e?.description ?? ""), [v, y] = O(e?.permissions ?? []), [x, S] = O(""), [w, E] = O(""), [D, k] = O(!1), M = T(), N = C((e) => {
+function U({ group: e, isEdit: t, members: i, availableUsers: a, onSubmit: o, onAddMember: s, onRemoveMember: c, onCancel: l, error: u }) {
+	let [f, m] = O(e?.groupName ?? ""), [h, _] = O(e?.description ?? ""), [v, y] = O(e?.permissions ?? []), [x, S] = O(""), [w, E] = O(""), [D, k] = O(!1), M = T(), N = C((e) => {
 		if (e.key === "Enter") {
 			e.preventDefault();
 			let t = x.trim();
@@ -878,7 +878,7 @@ function U({ group: e, isEdit: t, members: i, availableUsers: a, onSubmit: o, on
 		e.preventDefault(), k(!0);
 		try {
 			await o({
-				groupName: p,
+				groupName: f,
 				description: h,
 				permissions: v
 			});
@@ -886,17 +886,17 @@ function U({ group: e, isEdit: t, members: i, availableUsers: a, onSubmit: o, on
 			k(!1);
 		}
 	}, [
-		p,
+		f,
 		h,
 		v,
 		o
 	]);
-	return /* @__PURE__ */ j(u, {
+	return /* @__PURE__ */ j(d, {
 		title: t ? "Edit Group" : "Create Group",
 		className: "max-w-[640px]",
-		children: [d && /* @__PURE__ */ A(f, {
+		children: [u && /* @__PURE__ */ A(p, {
 			variant: "error",
-			children: d
+			children: u
 		}), /* @__PURE__ */ A(r, {
 			padding: "md",
 			children: /* @__PURE__ */ j("form", {
@@ -905,7 +905,7 @@ function U({ group: e, isEdit: t, members: i, availableUsers: a, onSubmit: o, on
 					/* @__PURE__ */ A(F, {
 						label: "Group Name",
 						name: "groupName",
-						value: p,
+						value: f,
 						onChange: (e) => m(String(e)),
 						required: !0,
 						placeholder: "admins"
@@ -1011,14 +1011,14 @@ function U({ group: e, isEdit: t, members: i, availableUsers: a, onSubmit: o, on
 //#endregion
 //#region src/components/identity/admin/ApplicationListPage.tsx
 function W({ applications: e, onCreateApp: t, onCreateAppWithPool: r, onEditApp: i, onDeleteApp: a, loading: o }) {
-	let [s, c] = O(null), [l, d] = O(!1), [m, g] = O(null), _ = C(async (e) => {
-		d(!0), g(null);
+	let [s, c] = O(null), [l, f] = O(!1), [m, g] = O(null), _ = C(async (e) => {
+		f(!0), g(null);
 		try {
 			await a(e), c(null);
 		} catch (e) {
 			g(e instanceof Error ? e.message : "Failed to delete application.");
 		} finally {
-			d(!1);
+			f(!1);
 		}
 	}, [a]), v = C(() => {
 		c(null), g(null);
@@ -1053,12 +1053,12 @@ function W({ applications: e, onCreateApp: t, onCreateAppWithPool: r, onEditApp:
 							className: "text-text-tertiary text-xs",
 							children: "None"
 						}),
-						t.slice(0, 2).map((e) => /* @__PURE__ */ A(p, {
+						t.slice(0, 2).map((e) => /* @__PURE__ */ A(u, {
 							tone: "neutral",
 							size: "xs",
 							children: e
 						}, e)),
-						t.length > 2 && /* @__PURE__ */ j(p, {
+						t.length > 2 && /* @__PURE__ */ j(u, {
 							tone: "neutral",
 							size: "xs",
 							children: [
@@ -1084,7 +1084,7 @@ function W({ applications: e, onCreateApp: t, onCreateAppWithPool: r, onEditApp:
 		},
 		children: "Delete"
 	})] }), [i]);
-	return /* @__PURE__ */ j(u, {
+	return /* @__PURE__ */ j(d, {
 		title: "Applications",
 		actions: /* @__PURE__ */ j(k, { children: [/* @__PURE__ */ A(n, {
 			variant: "primary",
@@ -1116,7 +1116,7 @@ function W({ applications: e, onCreateApp: t, onCreateAppWithPool: r, onEditApp:
 			tone: "destructive",
 			confirmLabel: "Delete",
 			confirmDisabled: l,
-			children: m && /* @__PURE__ */ A(f, {
+			children: m && /* @__PURE__ */ A(p, {
 				variant: "error",
 				children: m
 			})
@@ -1171,7 +1171,7 @@ var K = [
 	"id_token"
 ];
 function ee({ application: e, isEdit: t, pools: i, onSubmit: a, onCancel: o, error: s }) {
-	let [c, l] = O(e?.clientName ?? ""), [d, p] = O(e?.poolId ?? ""), [m, h] = O(e?.redirectUris ?? [""]), [g, _] = O(e?.postLogoutRedirectUris ?? []), [v, y] = O(e?.grantTypes ?? ["authorization_code"]), [b, S] = O(e?.responseTypes ?? ["code"]), [w, T] = O(e?.scope ?? "openid profile email"), [E, D] = O(!1), k = C((e) => {
+	let [c, l] = O(e?.clientName ?? ""), [u, f] = O(e?.poolId ?? ""), [m, h] = O(e?.redirectUris ?? [""]), [g, _] = O(e?.postLogoutRedirectUris ?? []), [v, y] = O(e?.grantTypes ?? ["authorization_code"]), [b, S] = O(e?.responseTypes ?? ["code"]), [w, T] = O(e?.scope ?? "openid profile email"), [E, D] = O(!1), k = C((e) => {
 		y((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]);
 	}, []), M = C((e) => {
 		S((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]);
@@ -1180,7 +1180,7 @@ function ee({ application: e, isEdit: t, pools: i, onSubmit: a, onCancel: o, err
 		try {
 			await a({
 				clientName: c,
-				poolId: d,
+				poolId: u,
 				redirectUris: m.filter((e) => e.trim()),
 				postLogoutRedirectUris: g.filter((e) => e.trim()),
 				grantTypes: v,
@@ -1192,7 +1192,7 @@ function ee({ application: e, isEdit: t, pools: i, onSubmit: a, onCancel: o, err
 		}
 	}, [
 		c,
-		d,
+		u,
 		m,
 		g,
 		v,
@@ -1200,10 +1200,10 @@ function ee({ application: e, isEdit: t, pools: i, onSubmit: a, onCancel: o, err
 		w,
 		a
 	]);
-	return /* @__PURE__ */ j(u, {
+	return /* @__PURE__ */ j(d, {
 		title: t ? "Edit Application" : "New Application",
 		className: "max-w-[640px]",
-		children: [s && /* @__PURE__ */ A(f, {
+		children: [s && /* @__PURE__ */ A(p, {
 			variant: "error",
 			children: s
 		}), /* @__PURE__ */ A(r, {
@@ -1223,8 +1223,8 @@ function ee({ application: e, isEdit: t, pools: i, onSubmit: a, onCancel: o, err
 						label: "User Pool",
 						name: "poolId",
 						type: "select",
-						value: d,
-						onChange: (e) => p(String(e)),
+						value: u,
+						onChange: (e) => f(String(e)),
 						required: !0,
 						options: i.map((e) => ({
 							value: e.poolId,
@@ -1306,14 +1306,14 @@ var J = [
 	"refresh_token"
 ];
 function Y({ onSubmit: e, onCancel: t, error: i }) {
-	let [a, o] = O(""), [s, c] = O(""), [l, d] = O([""]), [p, m] = O(["authorization_code"]), [h, _] = O(!1), v = C((e) => {
+	let [a, o] = O(""), [s, c] = O(""), [l, u] = O([""]), [f, m] = O(["authorization_code"]), [h, _] = O(!1), v = C((e) => {
 		m((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]);
 	}, []), y = C(() => {
-		d((e) => [...e, ""]);
+		u((e) => [...e, ""]);
 	}, []), b = C((e) => {
-		d((t) => t.filter((t, n) => n !== e));
+		u((t) => t.filter((t, n) => n !== e));
 	}, []), S = C((e, t) => {
-		d((n) => n.map((n, r) => r === e ? t : n));
+		u((n) => n.map((n, r) => r === e ? t : n));
 	}, []), w = C(async (t) => {
 		t.preventDefault(), _(!0);
 		try {
@@ -1321,7 +1321,7 @@ function Y({ onSubmit: e, onCancel: t, error: i }) {
 				poolName: a,
 				clientName: s,
 				redirectUris: l.filter((e) => e.trim()),
-				grantTypes: p
+				grantTypes: f
 			});
 		} finally {
 			_(!1);
@@ -1330,14 +1330,14 @@ function Y({ onSubmit: e, onCancel: t, error: i }) {
 		a,
 		s,
 		l,
-		p,
+		f,
 		e
 	]);
-	return /* @__PURE__ */ j(u, {
+	return /* @__PURE__ */ j(d, {
 		title: "New Application + Pool",
 		description: "Create a user pool and register an application in one step.",
 		className: "max-w-[640px]",
-		children: [i && /* @__PURE__ */ A(f, {
+		children: [i && /* @__PURE__ */ A(p, {
 			variant: "error",
 			children: i
 		}), /* @__PURE__ */ A(r, {
@@ -1397,7 +1397,7 @@ function Y({ onSubmit: e, onCancel: t, error: i }) {
 						children: J.map((e) => /* @__PURE__ */ j("label", {
 							className: "flex items-center gap-2 text-base text-text-primary cursor-pointer",
 							children: [/* @__PURE__ */ A(x, {
-								checked: p.includes(e),
+								checked: f.includes(e),
 								onChange: () => v(e)
 							}), e]
 						}, e))
@@ -1425,14 +1425,14 @@ function Y({ onSubmit: e, onCancel: t, error: i }) {
 //#endregion
 //#region src/components/identity/admin/EmailTemplateListPage.tsx
 function X({ templates: e, onCreateTemplate: t, onEditTemplate: r, onDeleteTemplate: i, onTestSend: a, loading: o }) {
-	let [s, c] = O(null), [l, d] = O(!1), [p, g] = O(null), [_, v] = O(null), [y, b] = O(""), [x, S] = O(!1), [w, T] = O(null), D = C(async (e) => {
-		d(!0), g(null);
+	let [s, c] = O(null), [l, u] = O(!1), [f, g] = O(null), [_, v] = O(null), [y, b] = O(""), [x, S] = O(!1), [w, T] = O(null), D = C(async (e) => {
+		u(!0), g(null);
 		try {
 			await i(e), c(null);
 		} catch (e) {
 			g(e instanceof Error ? e.message : "Failed to delete template.");
 		} finally {
-			d(!1);
+			u(!1);
 		}
 	}, [i]), M = C(() => {
 		c(null), g(null);
@@ -1482,7 +1482,7 @@ function X({ templates: e, onCreateTemplate: t, onEditTemplate: r, onDeleteTempl
 			children: "Delete"
 		})
 	] }), [r]);
-	return /* @__PURE__ */ j(u, {
+	return /* @__PURE__ */ j(d, {
 		title: "Email Templates",
 		actions: /* @__PURE__ */ A(n, {
 			variant: "primary",
@@ -1524,7 +1524,7 @@ function X({ templates: e, onCreateTemplate: t, onEditTemplate: r, onDeleteTempl
 				})] }),
 				children: [w && /* @__PURE__ */ A("div", {
 					className: "mb-3",
-					children: /* @__PURE__ */ A(f, {
+					children: /* @__PURE__ */ A(p, {
 						variant: "error",
 						children: w
 					})
@@ -1548,9 +1548,9 @@ function X({ templates: e, onCreateTemplate: t, onEditTemplate: r, onDeleteTempl
 				tone: "destructive",
 				confirmLabel: "Delete",
 				confirmDisabled: l,
-				children: p && /* @__PURE__ */ A(f, {
+				children: f && /* @__PURE__ */ A(p, {
 					variant: "error",
-					children: p
+					children: f
 				})
 			})
 		]
@@ -1559,7 +1559,7 @@ function X({ templates: e, onCreateTemplate: t, onEditTemplate: r, onDeleteTempl
 //#endregion
 //#region src/components/identity/admin/EmailTemplateFormPage.tsx
 function te({ template: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
-	let [s, c] = O(e?.name ?? ""), [l, d] = O(e?.subject ?? ""), [p, m] = O(e?.htmlBody ?? ""), [h, _] = O(e?.textBody ?? ""), [v, b] = O(e?.variables ?? []), [x, S] = O(""), [w, E] = O(!1), D = T(), [k, M] = O(!1), N = C((e) => {
+	let [s, c] = O(e?.name ?? ""), [l, u] = O(e?.subject ?? ""), [f, m] = O(e?.htmlBody ?? ""), [h, _] = O(e?.textBody ?? ""), [v, b] = O(e?.variables ?? []), [x, S] = O(""), [w, E] = O(!1), D = T(), [k, M] = O(!1), N = C((e) => {
 		if (e.key === "Enter") {
 			e.preventDefault();
 			let t = x.trim();
@@ -1573,7 +1573,7 @@ function te({ template: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
 			await i({
 				name: s,
 				subject: l,
-				htmlBody: p,
+				htmlBody: f,
 				textBody: h,
 				variables: v
 			});
@@ -1583,15 +1583,15 @@ function te({ template: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
 	}, [
 		s,
 		l,
-		p,
+		f,
 		h,
 		v,
 		i
 	]);
-	return /* @__PURE__ */ j(u, {
+	return /* @__PURE__ */ j(d, {
 		title: t ? "Edit Email Template" : "Create Email Template",
 		className: "max-w-[800px]",
-		children: [o && /* @__PURE__ */ A(f, {
+		children: [o && /* @__PURE__ */ A(p, {
 			variant: "error",
 			children: o
 		}), /* @__PURE__ */ A(r, {
@@ -1611,7 +1611,7 @@ function te({ template: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
 						label: "Subject",
 						name: "subject",
 						value: l,
-						onChange: (e) => d(String(e)),
+						onChange: (e) => u(String(e)),
 						required: !0,
 						placeholder: "Welcome to {{appName}}"
 					}),
@@ -1633,7 +1633,7 @@ function te({ template: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
 							}),
 							/* @__PURE__ */ A(y, {
 								id: `${D}-html-body`,
-								value: p,
+								value: f,
 								onChange: (e) => m(e.target.value),
 								placeholder: "<html><body>...</body></html>",
 								rows: 10,
@@ -1641,7 +1641,7 @@ function te({ template: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
 							}),
 							w && /* @__PURE__ */ A("div", {
 								className: "border border-border rounded-sm p-4 bg-surface min-h-[200px] mt-2",
-								dangerouslySetInnerHTML: { __html: p }
+								dangerouslySetInnerHTML: { __html: f }
 							})
 						]
 					}),
@@ -1716,7 +1716,7 @@ function Z({ label: t, hint: n, children: r, layout: i = "stacked", className: a
 //#endregion
 //#region src/components/identity/admin/MfaManagementPage.tsx
 function ne({ metrics: e, users: t, pools: i, onRefresh: a, loading: o }) {
-	let [s, c] = O(""), l = E(() => (t ?? []).some((e) => e.poolId !== void 0), [t]), d = E(() => {
+	let [s, c] = O(""), l = E(() => (t ?? []).some((e) => e.poolId !== void 0), [t]), u = E(() => {
 		let e = t ?? [];
 		return !s || !l ? e : e.filter((e) => e.poolId === s);
 	}, [
@@ -1744,7 +1744,7 @@ function ne({ metrics: e, users: t, pools: i, onRefresh: a, loading: o }) {
 			width: "100px"
 		}
 	], []);
-	return o ? /* @__PURE__ */ j(u, {
+	return o ? /* @__PURE__ */ j(d, {
 		title: "MFA Management",
 		children: [/* @__PURE__ */ A("div", {
 			className: "grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4",
@@ -1758,7 +1758,7 @@ function ne({ metrics: e, users: t, pools: i, onRefresh: a, loading: o }) {
 				children: [/* @__PURE__ */ A("div", { className: "h-5 w-12 rounded bg-surface-hover animate-pulse mb-2" }), /* @__PURE__ */ A("div", { className: "h-3 w-20 rounded bg-surface-hover animate-pulse" })]
 			}, e))
 		}), /* @__PURE__ */ A(r, { className: "h-[200px] animate-pulse" })]
-	}) : /* @__PURE__ */ j(u, {
+	}) : /* @__PURE__ */ j(d, {
 		title: "MFA Management",
 		actions: /* @__PURE__ */ A(n, {
 			variant: "ghost",
@@ -1831,7 +1831,7 @@ function ne({ metrics: e, users: t, pools: i, onRefresh: a, loading: o }) {
 			}),
 			/* @__PURE__ */ A(N, {
 				columns: f,
-				data: d,
+				data: u,
 				keyField: "userId",
 				emptyMessage: "No user MFA data available.",
 				emptyIcon: "🔑"
@@ -1850,17 +1850,17 @@ var re = [
 	"template"
 ];
 function ie({ records: e, onQuery: t, onViewEntity: i, onReplay: a, loading: o, totalRecords: s }) {
-	let [c, l] = O(""), [d, f] = O(""), [p, m] = O(""), [h, _] = O(""), [v, y] = O("50"), [x, S] = O(""), [w, T] = O(""), [D, k] = O(null), [M, P] = O(!1), F = C(async () => {
+	let [c, l] = O(""), [u, f] = O(""), [p, m] = O(""), [h, _] = O(""), [v, y] = O("50"), [x, S] = O(""), [w, T] = O(""), [D, k] = O(null), [M, P] = O(!1), F = C(async () => {
 		await t({
 			entityType: c || void 0,
-			entityId: d || void 0,
+			entityId: u || void 0,
 			fromTime: p ? new Date(p).getTime() : void 0,
 			toTime: h ? new Date(h).getTime() : void 0,
 			limit: v ? Number(v) : void 0
 		});
 	}, [
 		c,
-		d,
+		u,
 		p,
 		h,
 		v,
@@ -1914,7 +1914,7 @@ function ie({ records: e, onQuery: t, onViewEntity: i, onReplay: a, loading: o, 
 			header: "Operation"
 		}
 	], [i]);
-	return /* @__PURE__ */ j(u, {
+	return /* @__PURE__ */ j(d, {
 		title: "Audit Log",
 		children: [
 			/* @__PURE__ */ A(r, {
@@ -1943,7 +1943,7 @@ function ie({ records: e, onQuery: t, onViewEntity: i, onReplay: a, loading: o, 
 							children: (e) => /* @__PURE__ */ A(g, {
 								...e,
 								className: "w-44",
-								value: d,
+								value: u,
 								onChange: (e) => f(e.target.value),
 								placeholder: "Optional"
 							})
@@ -2178,10 +2178,10 @@ window.location.href = authUrl;`
 				})
 			})
 		}
-	], [t, i]), d = l.filter((e) => e.done).length, f = Math.round(d / l.length * 100);
-	return /* @__PURE__ */ j(u, {
+	], [t, i]), u = l.filter((e) => e.done).length, f = Math.round(u / l.length * 100);
+	return /* @__PURE__ */ j(d, {
 		title: "Setup Guide",
-		description: `${d} of ${l.length} steps completed (${f}%)`,
+		description: `${u} of ${l.length} steps completed (${f}%)`,
 		children: [/* @__PURE__ */ A("div", {
 			className: "h-2 bg-surface-hover rounded-full overflow-hidden",
 			children: /* @__PURE__ */ A("div", {
@@ -2239,7 +2239,7 @@ function se({ rates: e }) {
 		children: e
 	}), /* @__PURE__ */ A(i, { children: typeof t == "object" ? JSON.stringify(t) : String(t) })] }, e)) })] });
 }
-function ce({ diagnostics: e, rates: d, dlq: m, onRedrive: h, onPurge: g, onRefresh: _, loading: v }) {
+function ce({ diagnostics: e, rates: f, dlq: m, onRedrive: h, onPurge: g, onRefresh: _, loading: v }) {
 	let [y, b] = O(!1), S = D(null), T = t(_);
 	w(() => (y ? S.current = setInterval(T, 1e4) : S.current &&= (clearInterval(S.current), null), () => {
 		S.current && clearInterval(S.current);
@@ -2254,7 +2254,7 @@ function ce({ diagnostics: e, rates: d, dlq: m, onRedrive: h, onPurge: g, onRefr
 			N(null);
 		}
 	}, []), F = C((e) => P(e, h, "Redrive"), [P, h]), I = C((e) => P(e, g, "Purge"), [P, g]);
-	return v ? /* @__PURE__ */ A(u, {
+	return v ? /* @__PURE__ */ A(d, {
 		title: "Diagnostics",
 		children: /* @__PURE__ */ A("div", {
 			className: "flex flex-col gap-4",
@@ -2264,7 +2264,7 @@ function ce({ diagnostics: e, rates: d, dlq: m, onRedrive: h, onPurge: g, onRefr
 				3
 			].map((e) => /* @__PURE__ */ A(r, { className: "h-[120px] animate-pulse" }, e))
 		})
-	}) : /* @__PURE__ */ j(u, {
+	}) : /* @__PURE__ */ j(d, {
 		title: "Diagnostics",
 		actions: /* @__PURE__ */ j("div", {
 			className: "flex items-center gap-3",
@@ -2299,7 +2299,7 @@ function ce({ diagnostics: e, rates: d, dlq: m, onRedrive: h, onPurge: g, onRefr
 					className: "text-sm font-semibold text-text-primary m-0",
 					children: "Rate Limiter Stats"
 				})
-			}), d ? /* @__PURE__ */ A(se, { rates: d }) : /* @__PURE__ */ A("p", {
+			}), f ? /* @__PURE__ */ A(se, { rates: f }) : /* @__PURE__ */ A("p", {
 				className: "p-5 text-center text-text-tertiary text-sm m-0",
 				children: "No rate data available."
 			})] }),
@@ -2313,7 +2313,7 @@ function ce({ diagnostics: e, rates: d, dlq: m, onRedrive: h, onPurge: g, onRefr
 				}),
 				E && /* @__PURE__ */ A("div", {
 					className: "px-5 pt-4",
-					children: /* @__PURE__ */ A(f, {
+					children: /* @__PURE__ */ A(p, {
 						variant: "error",
 						onDismiss: () => k(null),
 						children: E
@@ -2336,7 +2336,7 @@ function ce({ diagnostics: e, rates: d, dlq: m, onRedrive: h, onPurge: g, onRefr
 						className: "font-mono text-xs",
 						children: [e.id.substring(0, 12), "..."]
 					}),
-					/* @__PURE__ */ A(i, { children: /* @__PURE__ */ A(p, {
+					/* @__PURE__ */ A(i, { children: /* @__PURE__ */ A(u, {
 						tone: "danger",
 						size: "xs",
 						children: e.error
@@ -2345,7 +2345,7 @@ function ce({ diagnostics: e, rates: d, dlq: m, onRedrive: h, onPurge: g, onRefr
 						className: "text-xs text-neutral",
 						children: new Date(e.failedAt).toLocaleString()
 					}),
-					/* @__PURE__ */ A(i, { children: /* @__PURE__ */ A(p, {
+					/* @__PURE__ */ A(i, { children: /* @__PURE__ */ A(u, {
 						tone: "neutral",
 						size: "xs",
 						mono: !0,
@@ -2381,8 +2381,8 @@ function ce({ diagnostics: e, rates: d, dlq: m, onRedrive: h, onPurge: g, onRefr
 }
 //#endregion
 //#region src/components/identity/auth/LoginPage.tsx
-function le({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = null, onLogin: s, onRegister: c, onForgotPassword: l, registrationEnabled: u = !0, forgotPasswordEnabled: d = !0, defaultTab: p = "signin" }) {
-	let [m, h] = O(() => p === "register" && !u || p === "forgot" && !d ? "signin" : p), [g, _] = O(!1), [v, y] = O(null), [b, x] = O(""), [w, T] = O(""), [E, D] = O(""), [M, N] = O(""), [P, I] = O(""), [L, R] = O(""), [z, B] = O(""), [V, H] = O(!1), [U, W] = O(""), [G, K] = O(!1), q = o || v, ee = C(async (e) => {
+function le({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = null, onLogin: s, onRegister: c, onForgotPassword: l, registrationEnabled: u = !0, forgotPasswordEnabled: d = !0, defaultTab: f = "signin" }) {
+	let [m, h] = O(() => f === "register" && !u || f === "forgot" && !d ? "signin" : f), [g, _] = O(!1), [v, y] = O(null), [b, x] = O(""), [w, T] = O(""), [E, D] = O(""), [M, N] = O(""), [P, I] = O(""), [L, R] = O(""), [z, B] = O(""), [V, H] = O(!1), [U, W] = O(""), [G, K] = O(!1), q = o || v, ee = C(async (e) => {
 		e.preventDefault(), y(null), _(!0);
 		try {
 			await s(b, w);
@@ -2492,7 +2492,7 @@ function le({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 				}),
 				q && /* @__PURE__ */ A("div", {
 					className: "mb-5",
-					children: /* @__PURE__ */ A(f, {
+					children: /* @__PURE__ */ A(p, {
 						variant: "error",
 						children: q
 					})
@@ -2610,7 +2610,7 @@ function le({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 				m === "forgot" && /* @__PURE__ */ A("form", {
 					onSubmit: Y,
 					"aria-label": "Forgot password form",
-					children: G ? /* @__PURE__ */ A(f, {
+					children: G ? /* @__PURE__ */ A(p, {
 						variant: "success",
 						children: "If an account exists for that email, a password reset link has been sent."
 					}) : /* @__PURE__ */ j(k, { children: [
@@ -2854,28 +2854,28 @@ var pe = [
 	"Backup"
 ];
 function he({ onSetup: t, onVerify: r, onComplete: i, userEmail: a, initialStep: o = "name", initialSetupResult: s, initialDeviceName: c = "" }) {
-	let [l, u] = O(o === "scan" && !s ? "name" : o), [d, p] = O(!1), [m, h] = O(null), [g, _] = O(c), [v, y] = O(s ?? null), [b, x] = O(s?.backupCodes ?? []), [S, T] = O(!1), E = pe.indexOf(l), k = C(async (e) => {
+	let [l, u] = O(o === "scan" && !s ? "name" : o), [d, f] = O(!1), [m, h] = O(null), [g, _] = O(c), [v, y] = O(s ?? null), [b, x] = O(s?.backupCodes ?? []), [S, T] = O(!1), E = pe.indexOf(l), k = C(async (e) => {
 		if (e.preventDefault(), g.trim()) {
-			h(null), p(!0);
+			h(null), f(!0);
 			try {
 				let e = await t(g.trim());
 				y(e), x(e.backupCodes), u("scan");
 			} catch (e) {
 				h(e instanceof Error ? e.message : "Setup failed");
 			} finally {
-				p(!1);
+				f(!1);
 			}
 		}
 	}, [g, t]), M = C(async (e) => {
 		if (v) {
-			h(null), p(!0);
+			h(null), f(!0);
 			try {
 				let t = await r(v.deviceId, e);
 				t.success ? (t.backupCodes && x(t.backupCodes), u("backup")) : h("Verification failed. Please try again.");
 			} catch (e) {
 				h(e instanceof Error ? e.message : "Verification failed");
 			} finally {
-				p(!1);
+				f(!1);
 			}
 		}
 	}, [v, r]), N = D(null);
@@ -2919,7 +2919,7 @@ function he({ onSetup: t, onVerify: r, onComplete: i, userEmail: a, initialStep:
 				}),
 				m && /* @__PURE__ */ A("div", {
 					className: "mb-5",
-					children: /* @__PURE__ */ A(f, {
+					children: /* @__PURE__ */ A(p, {
 						variant: "error",
 						children: m
 					})
@@ -3064,7 +3064,7 @@ function he({ onSetup: t, onVerify: r, onComplete: i, userEmail: a, initialStep:
 //#endregion
 //#region src/components/identity/auth/MfaVerifyPage.tsx
 function ge({ onVerify: e, onVerifyBackup: t, error: r = null, defaultMode: i = "totp" }) {
-	let [a, o] = O(i), [s, c] = O(!1), [l, u] = O(null), [d, p] = O(""), m = r || l, h = C(async (t) => {
+	let [a, o] = O(i), [s, c] = O(!1), [l, u] = O(null), [d, f] = O(""), m = r || l, h = C(async (t) => {
 		u(null), c(!0);
 		try {
 			await e(t);
@@ -3125,7 +3125,7 @@ function ge({ onVerify: e, onVerifyBackup: t, error: r = null, defaultMode: i = 
 					}),
 					m && /* @__PURE__ */ A("div", {
 						className: "mb-5",
-						children: /* @__PURE__ */ A(f, {
+						children: /* @__PURE__ */ A(p, {
 							variant: "error",
 							children: m
 						})
@@ -3156,7 +3156,7 @@ function ge({ onVerify: e, onVerifyBackup: t, error: r = null, defaultMode: i = 
 					}),
 					m && /* @__PURE__ */ A("div", {
 						className: "mb-5",
-						children: /* @__PURE__ */ A(f, {
+						children: /* @__PURE__ */ A(p, {
 							variant: "error",
 							children: m
 						})
@@ -3168,7 +3168,7 @@ function ge({ onVerify: e, onVerifyBackup: t, error: r = null, defaultMode: i = 
 							label: "Backup Code",
 							name: "backup-code",
 							value: d,
-							onChange: (e) => p(String(e)),
+							onChange: (e) => f(String(e)),
 							required: !0,
 							placeholder: "XXXX-XXXX-XXXX",
 							disabled: s
@@ -3209,7 +3209,7 @@ function _e(e) {
 	}
 }
 function ve({ devices: e, userEmail: t, mfaEnabled: r, onAddDevice: i, onRenameDevice: a, onRemoveDevice: o, loading: s = !1 }) {
-	let [c, l] = O(null), [u, d] = O(null), [m, g] = O(""), [v, y] = O(!1), [b, x] = O(null), S = C(async () => {
+	let [c, l] = O(null), [d, f] = O(null), [m, g] = O(""), [v, y] = O(!1), [b, x] = O(null), S = C(async () => {
 		if (c) {
 			y(!0), x(null);
 			try {
@@ -3224,7 +3224,7 @@ function ve({ devices: e, userEmail: t, mfaEnabled: r, onAddDevice: i, onRenameD
 		if (m.trim()) {
 			y(!0), x(null);
 			try {
-				await a(e, m.trim()), d(null), g("");
+				await a(e, m.trim()), f(null), g("");
 			} catch (e) {
 				x(e instanceof Error ? e.message : "Failed to rename device.");
 			} finally {
@@ -3232,7 +3232,7 @@ function ve({ devices: e, userEmail: t, mfaEnabled: r, onAddDevice: i, onRenameD
 			}
 		}
 	}, [m, a]), T = (e) => {
-		d(e.deviceId), g(e.deviceName), x(null);
+		f(e.deviceId), g(e.deviceName), x(null);
 	};
 	return /* @__PURE__ */ A("div", {
 		className: "min-h-full flex items-start justify-center p-6 bg-surface-panel",
@@ -3254,7 +3254,7 @@ function ve({ devices: e, userEmail: t, mfaEnabled: r, onAddDevice: i, onRenameD
 						})]
 					}), /* @__PURE__ */ j("div", {
 						className: "flex items-center gap-3",
-						children: [/* @__PURE__ */ A(p, {
+						children: [/* @__PURE__ */ A(u, {
 							tone: r ? "success" : "warning",
 							children: r ? "Enabled" : "Disabled"
 						}), /* @__PURE__ */ A(n, {
@@ -3267,7 +3267,7 @@ function ve({ devices: e, userEmail: t, mfaEnabled: r, onAddDevice: i, onRenameD
 				}),
 				b && !c && /* @__PURE__ */ A("div", {
 					className: "mb-5",
-					children: /* @__PURE__ */ A(f, {
+					children: /* @__PURE__ */ A(p, {
 						variant: "error",
 						children: b
 					})
@@ -3295,7 +3295,7 @@ function ve({ devices: e, userEmail: t, mfaEnabled: r, onAddDevice: i, onRenameD
 								className: "flex items-center justify-between mb-2",
 								children: /* @__PURE__ */ A("div", {
 									className: "flex items-center gap-2.5",
-									children: u === e.deviceId ? /* @__PURE__ */ j("form", {
+									children: d === e.deviceId ? /* @__PURE__ */ j("form", {
 										onSubmit: (t) => {
 											t.preventDefault(), w(e.deviceId);
 										},
@@ -3318,7 +3318,7 @@ function ve({ devices: e, userEmail: t, mfaEnabled: r, onAddDevice: i, onRenameD
 											/* @__PURE__ */ A(n, {
 												variant: "ghost",
 												size: "sm",
-												onClick: () => d(null),
+												onClick: () => f(null),
 												children: "Cancel"
 											})
 										]
@@ -3338,7 +3338,7 @@ function ve({ devices: e, userEmail: t, mfaEnabled: r, onAddDevice: i, onRenameD
 									e.lastUsed && ` · Last used: ${_e(e.lastUsed)}`
 								]
 							}),
-							u !== e.deviceId && /* @__PURE__ */ j("div", {
+							d !== e.deviceId && /* @__PURE__ */ j("div", {
 								className: "flex gap-2",
 								children: [/* @__PURE__ */ A(n, {
 									variant: "ghost",
@@ -3370,7 +3370,7 @@ function ve({ devices: e, userEmail: t, mfaEnabled: r, onAddDevice: i, onRenameD
 					confirmLabel: v ? "Removing..." : "Remove",
 					confirmDisabled: v,
 					tone: "destructive",
-					children: b && /* @__PURE__ */ A(f, {
+					children: b && /* @__PURE__ */ A(p, {
 						variant: "error",
 						children: b
 					})

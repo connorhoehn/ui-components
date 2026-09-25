@@ -2,8 +2,8 @@ import { t as e } from "./apiBaseUrl-DLrXlmVj.js";
 import { r as t } from "./IdentityContext-CQM1qwH6.js";
 import { t as n } from "./cn-DhjIN-s0.js";
 import { t as r } from "./Card-RQCeAPNU.js";
-import { n as i, r as a, t as o } from "./Chart-DRtuaJHd.js";
-import { t as s } from "./Chip-zdVBwV9j.js";
+import { t as i } from "./Chip-zdVBwV9j.js";
+import { n as a, r as o, t as s } from "./Chart-DRtuaJHd.js";
 import { t as c } from "./Modal-DMFNRUDx.js";
 import { t as l } from "./Input-DLknWXri.js";
 import { t as u } from "./EmptyState-zKbpAhFD.js";
@@ -834,7 +834,7 @@ var U = [
 		label: "60s"
 	}
 ];
-function W({ seeds: e, liveSeries: t, cols: r, isLiveData: s, failedColor: c, onResetZoom: l, onExportCsv: u, timeRange: d, onTimeRangeChange: f, refreshInterval: p, onRefreshIntervalChange: m }) {
+function W({ seeds: e, liveSeries: t, cols: r, isLiveData: i, failedColor: c, onResetZoom: l, onExportCsv: u, timeRange: d, onTimeRangeChange: f, refreshInterval: p, onRefreshIntervalChange: m }) {
 	let g = d !== void 0 && f !== void 0, _ = p !== void 0 && m !== void 0, v = g ? U.find((e) => e.value === d)?.label ?? "" : void 0, y = (e) => e == null;
 	return /* @__PURE__ */ k(D, { children: [/* @__PURE__ */ k("div", {
 		className: "flex items-center gap-3 px-4 py-2.5 border-b border-border bg-surface-panel",
@@ -877,9 +877,9 @@ function W({ seeds: e, liveSeries: t, cols: r, isLiveData: s, failedColor: c, on
 				"data-testid": "metrics-data-source",
 				className: "ml-auto flex items-center gap-3 text-[11px] text-text-tertiary",
 				children: [/* @__PURE__ */ O("span", {
-					title: s ? "Connected to /api/pipelines/metrics" : "Backend unreachable — using seeded fixture",
-					className: n("font-semibold", s ? "text-state-completed" : "text-text-tertiary"),
-					children: s ? "live" : "fixture"
+					title: i ? "Connected to /api/pipelines/metrics" : "Backend unreachable — using seeded fixture",
+					className: n("font-semibold", i ? "text-state-completed" : "text-text-tertiary"),
+					children: i ? "live" : "fixture"
 				}), /* @__PURE__ */ k("span", { children: [
 					r,
 					" column",
@@ -895,7 +895,7 @@ function W({ seeds: e, liveSeries: t, cols: r, isLiveData: s, failedColor: c, on
 				title: "Runs per minute",
 				timeRange: v,
 				sample: y(t?.runsPerMinute),
-				children: /* @__PURE__ */ O(a, {
+				children: /* @__PURE__ */ O(o, {
 					series: t?.runsPerMinute ?? e.runsPerMinute,
 					height: 180
 				})
@@ -904,7 +904,7 @@ function W({ seeds: e, liveSeries: t, cols: r, isLiveData: s, failedColor: c, on
 				title: "Step duration (p50/p95/p99)",
 				timeRange: v,
 				sample: !0,
-				children: /* @__PURE__ */ O(i, {
+				children: /* @__PURE__ */ O(a, {
 					series: e.stepDuration,
 					height: 180,
 					yFormat: (e) => `${Math.round(e)}ms`
@@ -914,7 +914,7 @@ function W({ seeds: e, liveSeries: t, cols: r, isLiveData: s, failedColor: c, on
 				title: "LLM tokens",
 				timeRange: v,
 				sample: y(t?.llmTokens),
-				children: /* @__PURE__ */ O(i, {
+				children: /* @__PURE__ */ O(a, {
 					series: t?.llmTokens ?? e.llmTokens,
 					height: 180
 				})
@@ -923,7 +923,7 @@ function W({ seeds: e, liveSeries: t, cols: r, isLiveData: s, failedColor: c, on
 				title: "LLM cost",
 				timeRange: v,
 				sample: y(t?.llmCost),
-				children: /* @__PURE__ */ O(i, {
+				children: /* @__PURE__ */ O(a, {
 					series: t?.llmCost ?? e.llmCost,
 					height: 180,
 					yFormat: (e) => `$${e.toFixed(2)}`
@@ -933,7 +933,7 @@ function W({ seeds: e, liveSeries: t, cols: r, isLiveData: s, failedColor: c, on
 				title: "Cluster CPU",
 				timeRange: v,
 				sample: !0,
-				children: /* @__PURE__ */ O(i, {
+				children: /* @__PURE__ */ O(a, {
 					series: e.clusterCpu,
 					height: 180,
 					yFormat: (e) => `${Math.round(e)}%`
@@ -943,7 +943,7 @@ function W({ seeds: e, liveSeries: t, cols: r, isLiveData: s, failedColor: c, on
 				title: "Cluster memory",
 				timeRange: v,
 				sample: !0,
-				children: /* @__PURE__ */ O(i, {
+				children: /* @__PURE__ */ O(a, {
 					series: e.clusterMemory,
 					height: 180,
 					yFormat: (e) => `${Math.round(e)}MB`
@@ -953,7 +953,7 @@ function W({ seeds: e, liveSeries: t, cols: r, isLiveData: s, failedColor: c, on
 				title: "Event rate",
 				timeRange: v,
 				sample: !0,
-				children: /* @__PURE__ */ O(i, {
+				children: /* @__PURE__ */ O(a, {
 					series: e.eventRate,
 					height: 180
 				})
@@ -962,7 +962,7 @@ function W({ seeds: e, liveSeries: t, cols: r, isLiveData: s, failedColor: c, on
 				title: "Active runs over time",
 				timeRange: v,
 				sample: y(t?.activeRuns),
-				children: /* @__PURE__ */ O(i, {
+				children: /* @__PURE__ */ O(a, {
 					series: t?.activeRuns ?? e.activeRuns,
 					height: 180
 				})
@@ -971,7 +971,7 @@ function W({ seeds: e, liveSeries: t, cols: r, isLiveData: s, failedColor: c, on
 				title: "Failure rate by type",
 				timeRange: v,
 				sample: !0,
-				children: /* @__PURE__ */ O(o, {
+				children: /* @__PURE__ */ O(s, {
 					data: e.failureRate,
 					xKey: "x",
 					yKey: "total",
@@ -983,7 +983,7 @@ function W({ seeds: e, liveSeries: t, cols: r, isLiveData: s, failedColor: c, on
 				title: "Approval latency",
 				timeRange: v,
 				sample: !0,
-				children: /* @__PURE__ */ O(i, {
+				children: /* @__PURE__ */ O(a, {
 					series: e.approvalLatency,
 					height: 180,
 					yFormat: (e) => `${Math.round(e)}s`
@@ -2125,38 +2125,38 @@ var ot = {
 	warning: "border-l-[var(--color-warning)]",
 	info: "border-l-[var(--color-info)]"
 };
-function lt({ severity: e, title: t, description: r, timestamp: i, resolved: a = !1, action: o, className: c, style: l, "data-testid": u = `alert-${e}` }) {
+function lt({ severity: e, title: t, description: r, timestamp: a, resolved: o = !1, action: s, className: c, style: l, "data-testid": u = `alert-${e}` }) {
 	return /* @__PURE__ */ k("div", {
 		role: "listitem",
 		"data-testid": u,
-		"data-resolved": a || void 0,
-		className: n("rounded-md px-3 py-2.5 border-l-[3px] transition-opacity duration-300", a ? "bg-[var(--color-surface-subtle,#f8fafc)] border-l-[var(--color-text-tertiary)] opacity-70" : n(st[e], ct[e]), c),
+		"data-resolved": o || void 0,
+		className: n("rounded-md px-3 py-2.5 border-l-[3px] transition-opacity duration-300", o ? "bg-[var(--color-surface-subtle,#f8fafc)] border-l-[var(--color-text-tertiary)] opacity-70" : n(st[e], ct[e]), c),
 		style: l,
 		children: [/* @__PURE__ */ k("div", {
 			className: "flex items-center gap-1.5",
 			children: [
 				/* @__PURE__ */ O(p, {
 					size: "xs",
-					color: a ? "var(--color-text-tertiary)" : ot[e],
-					"aria-label": a ? "Resolved" : e
+					color: o ? "var(--color-text-tertiary)" : ot[e],
+					"aria-label": o ? "Resolved" : e
 				}),
 				/* @__PURE__ */ O("span", {
 					className: "text-[12px] font-semibold text-[var(--color-text-primary)]",
 					children: t
 				}),
-				a && /* @__PURE__ */ O(s, {
+				o && /* @__PURE__ */ O(i, {
 					tone: "success",
 					size: "xs",
 					className: "ml-1",
 					children: "Resolved"
 				}),
-				i != null && /* @__PURE__ */ O("span", {
+				a != null && /* @__PURE__ */ O("span", {
 					className: "ml-auto text-[10px] text-[var(--color-text-tertiary)]",
-					children: i
+					children: a
 				}),
-				o && /* @__PURE__ */ O("span", {
+				s && /* @__PURE__ */ O("span", {
 					className: "ml-1 shrink-0",
-					children: o
+					children: s
 				})
 			]
 		}), r != null && /* @__PURE__ */ O("div", {
@@ -2174,8 +2174,8 @@ var ut = /* @__PURE__ */ O("div", {
 	className: "text-center text-[12px] text-[var(--color-text-tertiary)] py-8",
 	children: "Loading alerts…"
 });
-function ft({ items: e, title: t = "Alerts", headerSlot: i, loading: a = !1, empty: o, maxHeight: c, className: l, style: u, "data-testid": d = "alert-list" }) {
-	let f = e.filter((e) => !e.resolved).length, p = f > 0 ? /* @__PURE__ */ k(s, {
+function ft({ items: e, title: t = "Alerts", headerSlot: a, loading: o = !1, empty: s, maxHeight: c, className: l, style: u, "data-testid": d = "alert-list" }) {
+	let f = e.filter((e) => !e.resolved).length, p = f > 0 ? /* @__PURE__ */ k(i, {
 		tone: "danger",
 		size: "xs",
 		"data-testid": "alert-list-active-count",
@@ -2189,14 +2189,14 @@ function ft({ items: e, title: t = "Alerts", headerSlot: i, loading: a = !1, emp
 			className: "px-4 py-3 border-b border-[var(--color-border)]",
 			children: /* @__PURE__ */ O(m, {
 				title: t,
-				meta: i ?? p
+				meta: a ?? p
 			})
 		}), /* @__PURE__ */ O("div", {
 			role: "list",
 			"data-testid": `${d}-rows`,
 			className: "flex-1 overflow-y-auto p-2 space-y-1.5",
 			style: { maxHeight: c },
-			children: a ? dt : e.length === 0 ? o ?? ut : e.map((e) => /* @__PURE__ */ O(lt, {
+			children: o ? dt : e.length === 0 ? s ?? ut : e.map((e) => /* @__PURE__ */ O(lt, {
 				severity: e.severity,
 				title: e.title,
 				description: e.description,

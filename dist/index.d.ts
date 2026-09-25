@@ -85,6 +85,21 @@ export declare interface ActionNodeData {
     retryPolicy?: RetryPolicy;
 }
 
+/**
+ * A fact column at the row's right. Widths come from a fixed scale so cells
+ * line up across rows: xs 64, sm 88, md 120, lg 152, xl 184 (px).
+ */
+export declare interface ActionRowColumn {
+    id: string;
+    width: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+    /** Where the cell's content sits inside its width. Default `start`. */
+    align?: 'start' | 'end';
+    /** A 1px rule before this column. Default: every column after the first. */
+    divider?: boolean;
+    /** Screen-reader name for the column's cells, e.g. "Assignee". */
+    label?: string;
+}
+
 export declare interface ActionRowItem {
     id: string;
     title: string;
@@ -97,9 +112,23 @@ export declare interface ActionRowItem {
     disabled?: boolean;
     /** Tooltip on a disabled row: why it cannot be opened. */
     disabledReason?: string;
+    /** Content per `ActionRowListProps.columns` id. Since 2.392.0. */
+    cells?: Record<string, ReactNode>;
+    /** Before the title — a toned `Chip` ("Blocked"). Since 2.392.0. */
+    leading?: ReactNode;
+    /** This row's tint; overrides the list's `tone`. Since 2.392.0. */
+    tone?: ActionRowTone;
+    /** This row's edge accent; overrides the list's `accent`. Since 2.392.0. */
+    accent?: 'none' | 'bar';
+    /**
+     * A worded target in place of the chevron — "Open" draws "Open →" in the
+     * primary colour. Not a separate control: the whole row is still the
+     * target. Overrides the list's `action`. Since 2.392.0.
+     */
+    action?: string;
 }
 
-export declare function ActionRowList({ items, onOpen, footer, emptyLabel, 'aria-label': ariaLabel, className, 'data-testid': testId, }: ActionRowListProps): JSX.Element | null;
+export declare function ActionRowList({ items, onOpen, footer, emptyLabel, columns, tone, accent, action, 'aria-label': ariaLabel, className, 'data-testid': testId, }: ActionRowListProps): JSX.Element | null;
 
 export declare interface ActionRowListProps {
     items: ActionRowItem[];
@@ -109,10 +138,42 @@ export declare interface ActionRowListProps {
     footer?: ReactNode;
     /** Shown instead of the rows when `items` is empty. Absent, nothing renders. */
     emptyLabel?: ReactNode;
+    /**
+     * Fact columns at every row's right, declared once so their edges line up
+     * down the list; each item fills `cells`. Since 2.392.0.
+     */
+    columns?: ActionRowColumn[];
+    /**
+     * Tints every row — `warning` for "Needs attention". A toned list drops the
+     * grey rules (the tint separates the rows) and rounds the rows' right
+     * corners. Default `neutral`: no tint, ruled. Since 2.392.0.
+     */
+    tone?: ActionRowTone;
+    /** `bar`: a 3px bar in the row's tone on its left edge. Default `none`. Since 2.392.0. */
+    accent?: 'none' | 'bar';
+    /** Every row's worded target in place of the chevron ("Open"). Since 2.392.0. */
+    action?: string;
     'aria-label'?: string;
     className?: string;
     'data-testid'?: string;
 }
+
+/**
+ * The person cell of an `ActionRowList` column — a 28px avatar then the name,
+ * truncating inside the column's width. Since 2.392.0.
+ */
+export declare function ActionRowPerson({ name, avatarUrl, size }: ActionRowPersonProps): JSX.Element;
+
+export declare interface ActionRowPersonProps {
+    name: string;
+    /** A photo; initials when absent (or when it fails to load). */
+    avatarUrl?: string;
+    /** Avatar diameter in px. Default 28. */
+    size?: number;
+}
+
+/** Row tint. `neutral` (and absent) draws none. */
+export declare type ActionRowTone = Exclude<Tone, 'neutral'> | 'neutral';
 
 export declare type ActionType = 'update-document' | 'post-comment' | 'notify' | 'webhook' | 'mcp-tool' | 'sync-back';
 
@@ -7600,9 +7661,10 @@ export declare interface ExplorerLayoutProps {
     /**
      * Rail width. `md` is the 300px agentcore measured against; `sm` is 240px for
      * a shallower tree; `lg` is 368px for a two-line work list with its toolbar
-     * (the Documents Work column, measured against the redesign's 370px).
+     * (the Documents Work column, measured against the redesign's 370px); `ms`
+     * is 264px for a one-line title list (the Initiatives v2 rail, since 2.392.0).
      */
-    railWidth?: 'sm' | 'md' | 'ml' | 'lg';
+    railWidth?: 'sm' | 'ms' | 'md' | 'ml' | 'lg';
     /**
      * A band ABOVE all three columns — a scope header (breadcrumb, title, stats,
      * tabs) that names what the rail, the pane and the aside are all looking at.
@@ -7639,7 +7701,7 @@ export declare interface ExplorerLayoutProps {
      */
     railBack?: WorkspaceRailBack | null;
     /** The rail's heading style — see `WorkspaceRail.heading`. Default `compact`. Since 2.385.0. */
-    railHeading?: 'compact' | 'prominent' | 'label';
+    railHeading?: 'compact' | 'prominent' | 'label' | 'caption';
     /**
      * The rail folded to a strip with one control that brings it back. For a
      * surface that wants the width — a diagram, a wide table — the list of
@@ -8661,7 +8723,7 @@ export declare function gridCols(count: number): number;
 /** Six dots in two columns: a drag handle — "pick this up and move it". Since 2.385.0. */
 export declare function GripIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, onReorder, canReorder, reorderLabel, size, groupHeading, currentStyle, groupCountStyle, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
+export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, onReorder, canReorder, reorderLabel, size, groupHeading, currentStyle, groupCountStyle, groupCountAlign, rowStyle, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
 
 export declare interface GroupedListGroup {
     id: string;
@@ -8735,6 +8797,19 @@ export declare interface GroupedListProps {
      * `label` heading's count is always plain.) Since 2.390.0.
      */
     groupCountStyle?: 'chip' | 'plain';
+    /**
+     * Where a group header's count sits. `inline` (default): right after the
+     * title. `end`: pushed to the header's right edge — "IN PROGRESS … 9", the
+     * Initiatives v2 rail. Applies to every heading and count style. Since
+     * 2.392.0.
+     */
+    groupCountAlign?: 'inline' | 'end';
+    /**
+     * `ruled` (default): a 1px rule above every row. `plain` (since 2.392.0):
+     * no rules — a title-only list whose rows are separated by space alone, a
+     * 40px pitch at `md` (36px at `sm`) — the Initiatives v2 rail.
+     */
+    rowStyle?: 'ruled' | 'plain';
     className?: string;
     'data-testid'?: string;
 }
@@ -12039,14 +12114,27 @@ export declare interface PageHeaderProps {
     className?: string;
 }
 
-export declare function PageSection({ title, description, actions, children, className, }: PageSectionProps): JSX.Element;
+export declare function PageSection({ title, description, actions, children, count, size, className, 'data-testid': testId, }: PageSectionProps): JSX.Element;
 
 export declare interface PageSectionProps {
     title: string;
     description?: string;
     actions?: ReactNode;
     children: ReactNode;
+    /**
+     * A count beside the title in a neutral chip — "Needs attention 1". Absent
+     * draws none; zero shows "0" (an empty section is a fact). Since 2.392.0.
+     */
+    count?: number;
+    /**
+     * `lg` (default): the page's own 20px h1 with 24px to its content. `md`
+     * (since 2.392.0): a 16px semibold h2 over a section of a page — "Needs
+     * attention", "Up next" — with 8px to its content, the actions vertically
+     * centred on the title.
+     */
+    size?: 'lg' | 'md';
     className?: string;
+    'data-testid'?: string;
 }
 
 /** A paperclip: a file came along with this. */
@@ -13917,6 +14005,34 @@ export declare interface RailLayoutProps {
     'data-testid'?: string;
 }
 
+export declare function RailNavList({ items, 'aria-label': ariaLabel, className, 'data-testid': testId, }: RailNavListProps): JSX.Element | null;
+
+export declare interface RailNavListItem {
+    id: string;
+    label: string;
+    /** A link target. Without it the item is a button calling `onSelect`. */
+    href?: string;
+    /** Called on activation — also for `href` items (the host's router). */
+    onSelect?: () => void;
+    /** The view on screen. Marked `aria-current="page"` and drawn semibold. */
+    current?: boolean;
+    /** Muted number at the item's right edge. Absent draws none; 0 shows "0". */
+    count?: number;
+    /** A glyph before the label. */
+    icon?: ReactNode;
+    disabled?: boolean;
+    /** Tooltip on a disabled item: why it cannot be opened. */
+    disabledReason?: string;
+}
+
+export declare interface RailNavListProps {
+    items: RailNavListItem[];
+    /** The nav landmark's name. Default "Views". */
+    'aria-label'?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
 /** One titled block in the rail. Sections divide themselves. */
 export declare function RailSection({ title, children, className }: RailSectionProps): JSX.Element;
 
@@ -15250,8 +15366,26 @@ export declare interface ScopeHeaderProps {
      * right-hand group. `names`: one line under the description, names then
      * the label — "Nora DaSilva · Owner   Layla Hassan, Eli Garcia · SMEs".
      * Since 2.390.0.
+     *
+     * `inline` (since 2.392.0): its own row under the description — the muted
+     * label, then a 32px avatar and the name for each person, groups ruled
+     * apart — "Owner (ND) Nora DaSilva │ SMEs (LH) Layla Hassan (EG) Eli
+     * Garcia". A person's `avatarUrl` is used when present, else initials.
      */
-    peopleStyle?: 'avatars' | 'names';
+    peopleStyle?: 'avatars' | 'names' | 'inline';
+    /**
+     * The tab row's size. Absent: 14px tabs, or 15px at `titleSize="lg"` (as
+     * before). `md` (since 2.392.0): 15px tabs at any title size, the count
+     * 10px after its label, 8px side padding with 28px gaps between tabs
+     * and the first label aligned under the title — the Initiatives v2 header.
+     * `sm`: 14px tabs at any title size.
+     */
+    tabSize?: 'sm' | 'md';
+    /**
+     * The description's type. `md` (default): 16px on 24px lines. `sm` (since
+     * 2.392.0): 15px on 22px lines — the Initiatives v2 two-line summary.
+     */
+    descriptionSize?: 'sm' | 'md';
     /**
      * How `link` reads. `inline` (default): a primary text link with a leading
      * glyph, ruled off from the people. `button`: an outlined button — label
@@ -16478,8 +16612,15 @@ export declare interface StatStripProps {
      * spent of $95 allocated" — with dividers between clusters, no card, and a
      * rule under the strip. The label is the words after the number, so write
      * it as the rest of the sentence.
+     *
+     * `line` (since 2.392.0): ONE unboxed line of prose-weight stats, clusters
+     * separated by a muted "•" — "**18** / 52 points delivered ▬▬▭▭ • **2**
+     * agents running • **$1.73** of $95 spent". No dividers, no rule, no card;
+     * a cluster's `progress` is drawn as a 150px bar INLINE after its label
+     * rather than under it. `hint` and `status` are not drawn (use `title`).
+     * The line wraps between clusters, never inside one.
      */
-    variant?: 'default' | 'inline';
+    variant?: 'default' | 'inline' | 'line';
     className?: string;
     'aria-label'?: string;
     'data-testid'?: string;
@@ -21753,9 +21894,12 @@ declare interface UseActivityBusReturn {
       header?: ReactNode;
       footer?: ReactNode;
       children: ReactNode;
-      /** `sm` 240px, `md` 300px, `lg` 368px (a two-line work list with a toolbar). */
-      /** sm 240, md 300, ml 320 (the Folders explorer, 2.386.0), lg 368. */
-      width?: 'sm' | 'md' | 'ml' | 'lg';
+      /**
+       * sm 240, ms 264 (a one-line title list — the Initiatives v2 rail, since
+       * 2.392.0), md 300, ml 320 (the Folders explorer, 2.386.0), lg 368 (a
+       * two-line work list with a toolbar).
+       */
+      width?: 'sm' | 'ms' | 'md' | 'ml' | 'lg';
       /**
        * A count beside the title ("Work 11"). Omit for none; zero shows "0" —
        * an empty list is a fact, not a missing number.
@@ -21766,9 +21910,11 @@ declare interface UseActivityBusReturn {
        * `prominent` is the column heading a work list wears — an 18px title and
        * count on a 56px row, no rule under it. `label` is the same 56px row with
        * the title as a 15px uppercase label — "DOCUMENTS 137", the All documents
-       * mockup (since 2.389.2).
+       * mockup (since 2.389.2). `caption` (since 2.392.0) is the same row with a
+       * 13px letter-spaced uppercase label — "INITIATIVES 11", the Initiatives v2
+       * rail.
        */
-      heading?: 'compact' | 'prominent' | 'label';
+      heading?: 'compact' | 'prominent' | 'label' | 'caption';
       /**
        * How `count` reads. `chip` (default): a neutral count chip. `plain`: muted
        * text after the title — "Initiatives 11". Since 2.390.0.
@@ -21830,18 +21976,12 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
+        diagramMacro: {
             /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
              */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -21862,12 +22002,18 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
+        canvasLineSpacing: {
             /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
              */
-            insertDiagram: (id?: string) => ReturnType;
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
         };
     }
 }
@@ -21934,9 +22080,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -21944,9 +22090,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
