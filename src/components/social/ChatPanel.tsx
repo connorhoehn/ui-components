@@ -16,7 +16,7 @@ import { ForwardIcon, PinIcon, SmileyIcon } from '../ui/Icons';
 import { MessageBody } from './MessageBody';
 import { DocumentActivityCard, type DocumentActivityEditor } from './DocumentActivityCard';
 import { DocumentChip } from './DocumentChip';
-import { CallActivityCard, type CallActivityParticipant } from './CallActivityCard';
+import { CallActivityCard, type CallActivityParticipant, type CallOutcome } from './CallActivityCard';
 import { RecordingActivityCard, type RecordingParticipant, type RecordingStage } from './RecordingActivityCard';
 import { MembershipNotice, type MembershipRef, type MembershipHistory } from './MembershipNotice';
 import { AgentRunCard, agentRunRefFromMetadata, type AgentRunDecision, type AgentRunResult, type AgentRunReviewDecision, type AgentRunStatus, type AgentRunSuggestion } from './AgentRunCard';
@@ -793,6 +793,9 @@ export function callRefFromMetadata(
   callId: string;
   live: boolean;
   durationMs?: number;
+  startedAt?: string;
+  outcome?: CallOutcome;
+  recordingId?: string;
   audioOnly?: boolean;
   recorded?: boolean;
   notRecordedReason?: string;
@@ -823,6 +826,11 @@ export function callRefFromMetadata(
     // Only an explicit flag, never the absence of one.
     live: metadata.live === true,
     durationMs: typeof metadata.durationMs === 'number' ? metadata.durationMs : undefined,
+    startedAt: typeof metadata.startedAt === 'string' ? metadata.startedAt : undefined,
+    outcome: metadata.outcome === 'cancelled' || metadata.outcome === 'declined' || metadata.outcome === 'no-answer'
+      ? metadata.outcome
+      : undefined,
+    recordingId: typeof metadata.recordingId === 'string' ? metadata.recordingId : undefined,
     // Tri-state: absent means the record does not say, and the card renders
     // an unqualified "Call" rather than guessing which kind it was.
     audioOnly: typeof metadata.audioOnly === 'boolean' ? metadata.audioOnly : undefined,
@@ -2055,6 +2063,10 @@ export function ChatPanel({
       participants={callParticipants?.(callRef.callId) ?? callRef.participants}
       live={callRef.live}
       durationMs={callRef.durationMs}
+      startedAt={callRef.startedAt}
+      outcome={callRef.outcome}
+      recordingId={callRef.recordingId}
+      onOpenRecording={onOpenRecording}
       audioOnly={callRef.audioOnly}
       recorded={callRef.recorded}
       notRecordedReason={callRef.notRecordedReason}

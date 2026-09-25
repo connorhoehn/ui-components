@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { CallActivityCard, describeNotRecorded, describeParticipants, formatCallDuration } from '../CallActivityCard';
+import { act } from 'react';
+import { CallActivityCard, describeNotRecorded, describeParticipants, formatCallDuration, formatElapsed } from '../CallActivityCard';
 
 afterEach(cleanup);
 
@@ -86,14 +87,90 @@ describe('CallActivityCard — live', () => {
   });
 });
 
+describe('CallActivityCard — live clock and pulse', () => {
+  it('formats a running clock', () => {
+    expect(formatElapsed(5_000)).toBe('0:05');
+    expect(formatElapsed(3 * 60_000 + 12_000)).toBe('3:12');
+    expect(formatElapsed(62 * 60_000 + 3_000)).toBe('1:02:03');
+  });
+
+  it('pulses and counts up from when it started, on the reader\'s clock', () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(new Date('2026-09-25T10:00:05Z'));
+      render(<CallActivityCard callId="c1" live startedAt="2026-09-25T10:00:00Z" participants={[HANK]} />);
+      expect(screen.getByTestId('call-activity-card-pulse')).toBeInTheDocument();
+      expect(screen.getByTestId('call-activity-card-live')).toHaveTextContent('Live · 0:05');
+      act(() => { vi.advanceTimersByTime(3_000); });
+      expect(screen.getByTestId('call-activity-card-live')).toHaveTextContent('Live · 0:08');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('says only "Live" when it does not know when the call began', () => {
+    render(<CallActivityCard callId="c1" live participants={[HANK]} />);
+    expect(screen.getByTestId('call-activity-card-live')).toHaveTextContent(/^Live$/);
+  });
+
+  // The swell is the part that moves; the dot is the part that means "live".
+  it('keeps the still dot and gates the swell on motion-safe', () => {
+    render(<CallActivityCard callId="c1" live participants={[HANK]} />);
+    const pulse = screen.getByTestId('call-activity-card-pulse');
+    expect(pulse.querySelector('.motion-safe\\:animate-ping')).not.toBeNull();
+    expect(pulse.querySelectorAll('.bg-success').length).toBe(2);
+  });
+});
+
+describe('CallActivityCard — missed', () => {
+  it('reads as a missed call, with no roster, clock or way in', () => {
+    render(<CallActivityCard callId="c1" live startedBy="Hank Anderson" outcome="cancelled" onJoin={vi.fn()} participants={[HANK]} />);
+    expect(screen.getByText('Missed call')).toBeInTheDocument();
+    expect(screen.getByText('Hank Anderson called')).toBeInTheDocument();
+    expect(screen.queryByTestId('call-activity-card-join')).toBeNull();
+    expect(screen.queryByTestId('call-activity-card-pulse')).toBeNull();
+    expect(screen.queryByTestId('call-activity-card-participants')).toBeNull();
+    expect(screen.getByTestId('call-activity-card')).toHaveAttribute('data-outcome', 'cancelled');
+  });
+
+  it('distinguishes no answer from a decline', () => {
+    const { rerender } = render(<CallActivityCard callId="c1" outcome="no-answer" />);
+    expect(screen.getByText('No answer')).toBeInTheDocument();
+    rerender(<CallActivityCard callId="c1" outcome="declined" />);
+    expect(screen.getByText('Declined')).toBeInTheDocument();
+  });
+});
+
 describe('CallActivityCard — ended', () => {
   it('becomes a record: who started it and how long it took', () => {
     render(
       <CallActivityCard callId="c1" startedBy="Hank Anderson" durationMs={12 * 60_000 + 4_000}
         participants={[HANK, BOB]} />,
     );
-    expect(screen.getByText('Call')).toBeInTheDocument();
-    expect(screen.getByText('Hank Anderson started a call · 12m 4s')).toBeInTheDocument();
+    expect(screen.getByText('Call ended · 12m 4s')).toBeInTheDocument();
+    expect(screen.getByText('Hank Anderson started the call')).toBeInTheDocument();
+    expect(screen.queryByTestId('call-activity-card-pulse')).toBeNull();
+    expect(screen.queryByTestId('call-activity-card-live')).toBeNull();
+  });
+
+  // The two cards in the bug report: calls long over, stored with a duration
+  // and no `startedAt`, must read as ended — never as a clock at zero.
+  it('reads a stored record with no start time as ended', () => {
+    render(<CallActivityCard callId="c1" startedBy="Hank Anderson" durationMs={24_000} participants={[BOB]} />);
+    expect(screen.getByText('Call ended · 24s')).toBeInTheDocument();
+    expect(screen.getByTestId('call-activity-card')).not.toHaveAttribute('data-live');
+  });
+
+  it('says so when nobody joined', () => {
+    render(<CallActivityCard callId="c1" startedBy="Hank Anderson" durationMs={5_000} />);
+    expect(screen.getByText('Hank Anderson started the call · Nobody joined')).toBeInTheDocument();
+  });
+
+  it('links the recording once there is one', () => {
+    const onOpenRecording = vi.fn();
+    render(<CallActivityCard callId="c1" durationMs={5_000} recordingId="rec-9" onOpenRecording={onOpenRecording} />);
+    fireEvent.click(screen.getByTestId('call-activity-card-recording'));
+    expect(onOpenRecording).toHaveBeenCalledWith('rec-9');
   });
 
   // The whole reason live and ended are one component.
@@ -109,7 +186,7 @@ describe('CallActivityCard — ended', () => {
 
   it('names the kind when the record does say', () => {
     render(<CallActivityCard callId="c1" audioOnly={false} participants={[HANK]} />);
-    expect(screen.getByText('Video call')).toBeInTheDocument();
+    expect(screen.getByText('Video call ended')).toBeInTheDocument();
   });
 
   it('marks a live call in the DOM so a transcript can find it', () => {

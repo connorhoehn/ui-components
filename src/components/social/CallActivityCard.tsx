@@ -20,15 +20,26 @@
 // changes state keeps its place in the transcript, which is also what the
 // scroll position expects.
 //
-// ## Why the duration is only shown when it is over
+// ## Why a live card ticks and pulses
 //
-// A running timer in a transcript is noise: the number is stale the instant
-// it renders, and the transcript is not a place anyone watches a clock. While
-// the call is live the honest and useful statement is who is in it. The
-// duration becomes interesting exactly once it is final.
+// The card used to look the same live and ended — "Call · 24s" both times —
+// and a reader could not tell from the thread whether there was a call to
+// join RIGHT NOW. That is the one question a live card exists to answer, so
+// it answers it three ways: a pulsing dot (still for people who asked for
+// reduced motion), "Live · 3:12" counting up, and the people in it. Once the
+// call ends the same row says "Call ended · 24s" with who was there; the
+// pulse, the clock and the way in all go, because a Join on a finished call
+// is a promise the product cannot keep.
+//
+// The clock is `startedAt` measured on the reader's own clock, so ten open
+// tabs agree with each other to the second without any of them being told.
 
+import { useEffect, useState } from 'react';
 import { PresenceAvatars } from '../shared/PresenceAvatars';
 import { cn } from '../../lib/cn';
+
+/** How an invite that never became a call ended. */
+export type CallOutcome = 'cancelled' | 'declined' | 'no-answer';
 
 export interface CallActivityParticipant {
   userId: string;
@@ -52,6 +63,19 @@ export interface CallActivityCardProps {
   live?: boolean;
   /** Wall-clock length in ms. Rendered only once the call has ended. */
   durationMs?: number;
+  /**
+   * When the call started (ISO string or epoch ms). While live, the card
+   * counts up from it — "Live · 3:12" — on the reader's clock.
+   */
+  startedAt?: string | number;
+  /**
+   * Set when the invite never became a call: the card reads "Missed call",
+   * "Declined" or "No answer" instead of a duration, and shows no roster.
+   */
+  outcome?: CallOutcome;
+  /** The recording of this call, once there is one — with `onOpenRecording`, a link to it. */
+  recordingId?: string;
+  onOpenRecording?: (recordingId: string) => void;
   /**
    * True when the call had no camera, false when it had one — and UNDEFINED
    * when nobody knows.
@@ -155,12 +179,61 @@ export function describeNotRecorded(reason: string | undefined, lobbyName?: stri
   return 'Not recorded.';
 }
 
+/** "3:12", "1:02:03" — a clock, because this one is running. */
+export function formatElapsed(ms: number): string {
+  if (!Number.isFinite(ms) || ms < 0) return '0:00';
+  const total = Math.floor(ms / 1000);
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  const mm = h > 0 ? String(m).padStart(2, '0') : String(m);
+  return `${h > 0 ? `${h}:` : ''}${mm}:${String(s).padStart(2, '0')}`;
+}
+
+function toEpochMs(value: string | number | undefined): number | null {
+  if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+  if (typeof value === 'string' && value) {
+    const t = Date.parse(value);
+    return Number.isFinite(t) ? t : null;
+  }
+  return null;
+}
+
+/**
+ * Milliseconds since `startedAt`, re-read every second while `running`.
+ * Null when there is no start to count from — the card then says "Live"
+ * without a number rather than counting from a made-up zero.
+ */
+export function useElapsedMs(startedAt: string | number | undefined, running: boolean): number | null {
+  const start = toEpochMs(startedAt);
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!running || start === null) return;
+    setNow(Date.now());
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, [running, start]);
+  if (start === null) return null;
+  return Math.max(0, now - start);
+}
+
+/** The headline for an invite that never became a call. */
+export function describeOutcome(outcome: CallOutcome): string {
+  if (outcome === 'declined') return 'Declined';
+  if (outcome === 'no-answer') return 'No answer';
+  return 'Missed call';
+}
+
 export function CallActivityCard({
   callId,
   startedBy,
   participants = [],
   live = false,
   durationMs,
+  startedAt,
+  outcome,
+  recordingId,
+  onOpenRecording,
   audioOnly,
   recorded,
   notRecordedReason,
@@ -169,54 +242,87 @@ export function CallActivityCard({
   className,
   'data-testid': testId = 'call-activity-card',
 }: CallActivityCardProps) {
-  const duration = !live && typeof durationMs === 'number' ? formatCallDuration(durationMs) : '';
+  // A missed call was never live, whatever a stale flag says.
+  const isLive = live && !outcome;
+  const elapsedMs = useElapsedMs(startedAt, isLive);
+  const duration = !isLive && typeof durationMs === 'number' ? formatCallDuration(durationMs) : '';
   // "Call" rather than a guess when the record does not say which kind.
   const kindLabel = audioOnly === undefined ? 'Call' : audioOnly ? 'Audio call' : 'Video call';
 
-  const detail = live
-    ? describeParticipants(participants, true)
-    : [
-        startedBy ? `${startedBy} started a call` : 'Call ended',
-        duration,
-      ].filter(Boolean).join(' · ');
+  let title: string;
+  let detail: string;
+  if (outcome) {
+    title = describeOutcome(outcome);
+    detail = startedBy ? `${startedBy} called` : 'Nobody answered';
+  } else if (isLive) {
+    title = `${kindLabel} in progress`;
+    detail = describeParticipants(participants, true);
+  } else {
+    title = duration ? `${kindLabel} ended · ${duration}` : `${kindLabel} ended`;
+    detail = startedBy
+      ? participants.length === 0 ? `${startedBy} started the call · Nobody joined` : `${startedBy} started the call`
+      : describeParticipants(participants, false);
+  }
 
   return (
     <div
       data-testid={testId}
       data-call-id={callId}
-      data-live={live ? 'true' : undefined}
+      data-live={isLive ? 'true' : undefined}
+      data-outcome={outcome}
       className={cn(
         'flex items-center gap-3 rounded-lg border px-3 py-2',
         // A live call is the one row in a transcript worth interrupting for.
-        live ? 'border-primary bg-primary-bg' : 'border-border bg-surface-inset',
+        isLive ? 'border-primary bg-primary-bg' : 'border-border bg-surface-inset',
         className,
       )}
     >
       <span
         aria-hidden
-        className={cn(
-          'grid h-9 w-9 shrink-0 place-items-center rounded text-base',
-          live ? 'bg-surface' : 'bg-surface',
-        )}
+        className="relative grid h-9 w-9 shrink-0 place-items-center rounded bg-surface text-base"
       >
         {audioOnly === undefined ? '\u{1F4DE}' : audioOnly ? '\u{1F4DE}' : '\u{1F4F9}'}
+        {/* The pulse: a ring that swells out of a solid dot. `motion-safe`
+            keeps the dot and drops the swell for anyone who asked the OS
+            for reduced motion — a still green dot still says "live". */}
+        {isLive && (
+          <span
+            data-testid={`${testId}-pulse`}
+            className="absolute -right-1 -top-1 grid h-3 w-3 place-items-center"
+          >
+            <span className="absolute inline-flex h-full w-full rounded-full bg-success opacity-60 motion-safe:animate-ping" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-success ring-2 ring-surface" />
+          </span>
+        )}
       </span>
 
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="truncate text-[13px] font-semibold text-text-primary">
-          {live ? `${kindLabel} in progress` : kindLabel}
+        <span className={cn('truncate text-[13px] font-semibold', outcome ? 'text-danger' : 'text-text-primary')}>
+          {title}
         </span>
-        <span className="truncate text-[11px] text-text-tertiary">{detail}</span>
+        <span className="flex min-w-0 items-center gap-1 text-[11px] text-text-tertiary">
+          {isLive && (
+            <span
+              className="shrink-0 font-semibold text-success"
+              data-testid={`${testId}-live`}
+              aria-live="off"
+            >
+              {elapsedMs === null ? 'Live' : `Live · ${formatElapsed(elapsedMs)}`}
+            </span>
+          )}
+          {isLive && <span aria-hidden className="shrink-0">·</span>}
+          <span className="truncate">{detail}</span>
+        </span>
         {/* Only once the call is over: while it is live the chip in the call
             chrome owns this statement, and a note here would lag it. */}
-        {!live && recorded === false && (
+        {!isLive && !outcome && recorded === false && (
           <span className="truncate text-[11px] text-text-tertiary" data-testid={`${testId}-not-recorded`}>
             {describeNotRecorded(notRecordedReason, lobbyName)}
           </span>
         )}
       </span>
 
-      {participants.length > 0 && (
+      {!outcome && participants.length > 0 && (
         <span className="shrink-0" data-testid={`${testId}-participants`}>
           <PresenceAvatars
             users={participants.map((p) => ({
@@ -225,7 +331,7 @@ export function CallActivityCard({
               // "6ea7c8fd" names someone by their key.
               name: p.displayName ?? 'Someone',
               avatarUrl: p.avatarUrl,
-              online: live,
+              online: isLive,
             }))}
             maxVisible={3}
             size={22}
@@ -233,7 +339,18 @@ export function CallActivityCard({
         </span>
       )}
 
-      {live && onJoin && (
+      {!isLive && recordingId && onOpenRecording && (
+        <button
+          type="button"
+          data-testid={`${testId}-recording`}
+          onClick={() => onOpenRecording(recordingId)}
+          className="shrink-0 rounded border border-border bg-surface px-2.5 py-1 text-[11px] font-semibold text-text-primary hover:bg-surface-hover"
+        >
+          Recording
+        </button>
+      )}
+
+      {isLive && onJoin && (
         <button
           type="button"
           data-testid={`${testId}-join`}

@@ -140,12 +140,12 @@ export type { DocumentChipProps } from './DocumentChip';
 // CallActivityCard — the same idea for calls: live it is an invitation, ended
 // it is a record, and it is one component so the transcript does not swap
 // rows underneath a reader as the call ends.
-export { CallActivityCard, formatCallDuration, describeParticipants } from './CallActivityCard';
+export { CallActivityCard, formatCallDuration, formatElapsed, describeParticipants, describeOutcome, useElapsedMs } from './CallActivityCard';
 export { RecordingActivityCard } from './RecordingActivityCard';
 export { describeRecordingParticipants } from './RecordingActivityCard';
 export type { RecordingActivityCardProps, RecordingStage, RecordingParticipant } from './RecordingActivityCard';
 export type { RecordingCardStatus } from './ChatPanel';
-export type { CallActivityCardProps, CallActivityParticipant } from './CallActivityCard';
+export type { CallActivityCardProps, CallActivityParticipant, CallOutcome } from './CallActivityCard';
 
 // The persistent destinations above a conversation list — Activity, Mentions.
 // They are not conversations, so they do not live in a list sorted by recency.
