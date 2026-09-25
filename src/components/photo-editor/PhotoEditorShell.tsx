@@ -50,14 +50,16 @@ export interface PhotoEditorStatusBarProps {
   /** A proposed list is being previewed and has not been kept. */
   previewing: boolean;
   saving?: boolean;
+  /** The kept version has edits (right side reads "Applied"); none reads "No edits". */
+  applied?: boolean;
   /** Left text override. Default "Previewing changes · Original preserved" / "Original preserved". */
   message?: ReactNode;
   className?: string;
   'data-testid'?: string;
 }
 
-export function PhotoEditorStatusBar({ previewing, saving = false, message, className, 'data-testid': testId = 'photo-editor-status' }: PhotoEditorStatusBarProps) {
-  const state = saving ? 'Saving…' : previewing ? 'Not applied' : 'Applied';
+export function PhotoEditorStatusBar({ previewing, saving = false, applied = false, message, className, 'data-testid': testId = 'photo-editor-status' }: PhotoEditorStatusBarProps) {
+  const state = saving ? 'Saving…' : previewing ? 'Not applied' : applied ? 'Applied' : 'No edits';
   return (
     <footer
       data-testid={testId}
@@ -66,7 +68,7 @@ export function PhotoEditorStatusBar({ previewing, saving = false, message, clas
     >
       <span className="truncate">{message ?? (previewing ? 'Previewing changes · Original preserved' : 'Original preserved')}</span>
       <span className="inline-flex shrink-0 items-center gap-2" data-testid={`${testId}-state`}>
-        <span aria-hidden className={cn('h-2 w-2 rounded-full', saving ? 'bg-info' : previewing ? 'bg-warning' : 'bg-success')} />
+        <span aria-hidden className={cn('h-2 w-2 rounded-full', saving ? 'bg-info' : previewing ? 'bg-warning' : applied ? 'bg-success' : 'bg-text-tertiary')} />
         {state}
       </span>
     </footer>

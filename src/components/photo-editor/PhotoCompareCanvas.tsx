@@ -47,6 +47,7 @@ const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v
 
 /** A translucent chip that sits on the photo; dark in both themes, like the stage. */
 const OVERLAY = 'rounded-lg bg-black/60 text-white shadow-sm backdrop-blur-sm';
+const BADGE_TOP = 'pointer-events-none absolute top-[max(12px,calc(50%-var(--fit-h)/2+12px))] px-3 py-1.5 text-[13px] font-medium';
 
 function OverlayButton({ active, className, ...rest }: React.ButtonHTMLAttributes<HTMLButtonElement> & { active?: boolean }) {
   return (
@@ -148,7 +149,16 @@ export function PhotoCompareCanvas({
     el.style.setProperty('--pan-x', `${pan.current.x}px`);
     el.style.setProperty('--pan-y', `${pan.current.y}px`);
     el.style.setProperty('--split', `${(split * 100).toFixed(2)}%`);
-  }, [scaleFor, zoom, split]);
+    // The fitted photo's size in the stage (per pane when side by side), so
+    // the badges, the toolbar and the split line sit on the photo, not on the
+    // letterbox around it.
+    const { width, height } = el.getBoundingClientRect();
+    const paneW = layout === 'side-by-side' && compare ? (width - 4) / 2 : width;
+    const ar = natural ? natural.width / natural.height : 3 / 2;
+    const fitW = Math.min(paneW, height * ar);
+    el.style.setProperty('--fit-w', `${Math.round(fitW)}px`);
+    el.style.setProperty('--fit-h', `${Math.round(fitW / ar)}px`);
+  }, [scaleFor, zoom, split, layout, compare, natural]);
 
   useLayoutEffect(applyVars, [applyVars]);
   useEffect(() => {
@@ -231,7 +241,7 @@ export function PhotoCompareCanvas({
 
       {compare && !sideBySide && (
         <div
-          className="pointer-events-none absolute inset-y-0 left-[var(--split)] w-0"
+          className="pointer-events-none absolute bottom-[max(0px,calc(50%-var(--fit-h)/2))] left-[var(--split)] top-[max(0px,calc(50%-var(--fit-h)/2))] w-0"
           data-testid={`${testId}-split`}
         >
           <div className="absolute inset-y-0 -left-px w-0.5 bg-white/85 shadow-[0_0_4px_rgba(0,0,0,0.5)]" />
@@ -258,16 +268,16 @@ export function PhotoCompareCanvas({
       )}
 
       {compare && (
-        <span className={cn(OVERLAY, 'pointer-events-none absolute left-3 top-3 px-3 py-1.5 text-[13px] font-medium')} data-testid={`${testId}-badge-original`}>
+        <span className={cn(OVERLAY, BADGE_TOP, sideBySide ? 'left-[max(12px,calc(25%-var(--fit-w)/2+12px))]' : 'left-[max(12px,calc(50%-var(--fit-w)/2+12px))]')} data-testid={`${testId}-badge-original`}>
           {originalLabel}
         </span>
       )}
-      <span className={cn(OVERLAY, 'pointer-events-none absolute right-3 top-3 px-3 py-1.5 text-[13px] font-medium')} data-testid={`${testId}-badge-preview`}>
+      <span className={cn(OVERLAY, BADGE_TOP, sideBySide ? 'right-[max(12px,calc(25%-var(--fit-w)/2+12px))]' : 'right-[max(12px,calc(50%-var(--fit-w)/2+12px))]')} data-testid={`${testId}-badge-preview`}>
         {previewLabel}
       </span>
 
       <div
-        className={cn(OVERLAY, 'absolute left-1/2 top-3 flex -translate-x-1/2 items-center divide-x divide-white/15 overflow-hidden')}
+        className={cn(OVERLAY, 'absolute left-1/2 top-[max(12px,calc(50%-var(--fit-h)/2+12px))] flex -translate-x-1/2 items-center divide-x divide-white/15 overflow-hidden')}
         data-testid={`${testId}-toolbar`}
         onPointerDown={(e) => e.stopPropagation()}
       >

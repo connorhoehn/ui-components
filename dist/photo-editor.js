@@ -276,8 +276,8 @@ var ee = [
 	1,
 	2,
 	4
-], I = (e, t, n) => Math.min(n, Math.max(t, e)), L = "rounded-lg bg-black/60 text-white shadow-sm backdrop-blur-sm";
-function R({ active: t, className: n, ...r }) {
+], I = (e, t, n) => Math.min(n, Math.max(t, e)), L = "rounded-lg bg-black/60 text-white shadow-sm backdrop-blur-sm", R = "pointer-events-none absolute top-[max(12px,calc(50%-var(--fit-h)/2+12px))] px-3 py-1.5 text-[13px] font-medium";
+function z({ active: t, className: n, ...r }) {
 	return /* @__PURE__ */ m("button", {
 		type: "button",
 		"aria-pressed": t,
@@ -285,7 +285,7 @@ function R({ active: t, className: n, ...r }) {
 		...r
 	});
 }
-function z({ natural: t, children: n }) {
+function B({ natural: t, children: n }) {
 	let r = d(null);
 	return l(() => {
 		let e = r.current;
@@ -306,13 +306,13 @@ function z({ natural: t, children: n }) {
 		})
 	});
 }
-function B({ src: t, ops: n, alt: r, compare: a, onCompareChange: u, layout: g = "split", split: _, onSplitChange: v, originalLabel: y = "Original", previewLabel: b = "Preview", overlay: x, className: S, "data-testid": C = "photo-compare-canvas" }) {
+function V({ src: t, ops: n, alt: r, compare: a, onCompareChange: u, layout: g = "split", split: _, onSplitChange: v, originalLabel: y = "Original", previewLabel: b = "Preview", overlay: x, className: S, "data-testid": C = "photo-compare-canvas" }) {
 	let w = d(null), [T, E] = f(null), [D, O] = f("fit"), [k, A] = f(.5), [j, M] = f(!0), N = a ?? j, P = () => {
 		a === void 0 && M(!N), u?.(!N);
-	}, B = _ ?? k, V = d({
+	}, V = _ ?? k, H = d({
 		x: 0,
 		y: 0
-	}), H = d(null), U = s((e) => {
+	}), U = d(null), W = s((e) => {
 		if (e === "fit" || !T) return 1;
 		let t = w.current?.getBoundingClientRect();
 		if (!t) return 1;
@@ -322,103 +322,109 @@ function B({ src: t, ops: n, alt: r, compare: a, onCompareChange: u, layout: g =
 		T,
 		g,
 		N
-	]), W = s((e) => {
+	]), G = s((e) => {
 		let t = I(e, 0, 1);
 		_ === void 0 && A(t), v?.(t);
-	}, [_, v]), G = s(() => {
+	}, [_, v]), K = s(() => {
 		let e = w.current;
-		e && (e.style.setProperty("--zoom", String(U(D))), e.style.setProperty("--pan-x", `${V.current.x}px`), e.style.setProperty("--pan-y", `${V.current.y}px`), e.style.setProperty("--split", `${(B * 100).toFixed(2)}%`));
+		if (!e) return;
+		e.style.setProperty("--zoom", String(W(D))), e.style.setProperty("--pan-x", `${H.current.x}px`), e.style.setProperty("--pan-y", `${H.current.y}px`), e.style.setProperty("--split", `${(V * 100).toFixed(2)}%`);
+		let { width: t, height: n } = e.getBoundingClientRect(), r = g === "side-by-side" && N ? (t - 4) / 2 : t, i = T ? T.width / T.height : 3 / 2, a = Math.min(r, n * i);
+		e.style.setProperty("--fit-w", `${Math.round(a)}px`), e.style.setProperty("--fit-h", `${Math.round(a / i)}px`);
 	}, [
-		U,
+		W,
 		D,
-		B
+		V,
+		g,
+		N,
+		T
 	]);
-	l(G, [G]), c(() => {
+	l(K, [K]), c(() => {
 		let e = w.current;
 		if (!e || typeof ResizeObserver > "u") return;
-		let t = new ResizeObserver(G);
+		let t = new ResizeObserver(K);
 		return t.observe(e), () => t.disconnect();
-	}, [G]);
-	let K = (e) => {
-		e === "fit" && (V.current = {
+	}, [K]);
+	let q = (e) => {
+		e === "fit" && (H.current = {
 			x: 0,
 			y: 0
 		}), O(e);
-	}, q = (e, t) => {
-		(t !== "pan" || D !== "fit") && (e.currentTarget.setPointerCapture?.(e.pointerId), e.stopPropagation(), H.current = {
+	}, J = (e, t) => {
+		(t !== "pan" || D !== "fit") && (e.currentTarget.setPointerCapture?.(e.pointerId), e.stopPropagation(), U.current = {
 			kind: t,
 			x: e.clientX,
 			y: e.clientY,
-			px: V.current.x,
-			py: V.current.y
+			px: H.current.x,
+			py: H.current.y
 		});
-	}, J = (e) => {
-		let t = H.current, n = w.current?.getBoundingClientRect();
-		!t || !n || (t.kind === "split" ? W((e.clientX - n.left) / n.width) : (V.current = {
+	}, Y = (e) => {
+		let t = U.current, n = w.current?.getBoundingClientRect();
+		!t || !n || (t.kind === "split" ? G((e.clientX - n.left) / n.width) : (H.current = {
 			x: t.px + e.clientX - t.x,
 			y: t.py + e.clientY - t.y
-		}, G()));
-	}, Y = () => {
-		H.current = null;
-	}, X = (e) => {
-		if (!e.ctrlKey && !e.metaKey) return;
-		let t = I((D === "fit" ? T && w.current ? 1 / U(1) : 1 : D) * (e.deltaY < 0 ? 1.1 : 1 / 1.1), .1, 8);
-		K(t);
+		}, K()));
+	}, X = () => {
+		U.current = null;
 	}, Z = (e) => {
-		e.key === "ArrowLeft" && (e.preventDefault(), W(B - .02)), e.key === "ArrowRight" && (e.preventDefault(), W(B + .02)), e.key === "Home" && (e.preventDefault(), W(0)), e.key === "End" && (e.preventDefault(), W(1));
-	}, Q = D === "fit" ? "100%" : `${Math.round(D * 100)}%`, $ = t ? /* @__PURE__ */ m("img", {
+		if (!e.ctrlKey && !e.metaKey) return;
+		let t = I((D === "fit" ? T && w.current ? 1 / W(1) : 1 : D) * (e.deltaY < 0 ? 1.1 : 1 / 1.1), .1, 8);
+		q(t);
+	}, Q = (e) => {
+		e.key === "ArrowLeft" && (e.preventDefault(), G(V - .02)), e.key === "ArrowRight" && (e.preventDefault(), G(V + .02)), e.key === "Home" && (e.preventDefault(), G(0)), e.key === "End" && (e.preventDefault(), G(1));
+	}, te = D === "fit" ? "100%" : `${Math.round(D * 100)}%`, ne = t ? /* @__PURE__ */ m("img", {
 		src: t,
 		alt: `${r} (original)`,
 		draggable: !1,
 		className: "block h-full w-full select-none",
 		"data-testid": `${C}-original`
-	}) : null, te = /* @__PURE__ */ m(F, {
+	}) : null, re = /* @__PURE__ */ m(F, {
 		src: t,
 		ops: n,
 		alt: `${r} (preview)`,
 		onLoad: E,
 		"data-testid": `${C}-preview`
-	}), ne = N && g === "side-by-side";
+	}), $ = N && g === "side-by-side";
 	return /* @__PURE__ */ h("div", {
 		ref: w,
 		"data-testid": C,
 		"data-zoom": D === "fit" ? "fit" : String(D),
 		"data-compare": N ? g : "off",
 		className: e("relative min-h-0 min-w-0 select-none overflow-hidden rounded-md bg-video-stage", D !== "fit" && "cursor-grab active:cursor-grabbing", S),
-		onPointerDown: (e) => q(e, "pan"),
-		onPointerMove: J,
-		onPointerUp: Y,
-		onPointerCancel: Y,
-		onWheel: X,
+		onPointerDown: (e) => J(e, "pan"),
+		onPointerMove: Y,
+		onPointerUp: X,
+		onPointerCancel: X,
+		onWheel: Z,
 		children: [
-			ne ? /* @__PURE__ */ h("div", {
+			$ ? /* @__PURE__ */ h("div", {
 				className: "absolute inset-0 grid grid-cols-2 gap-1",
 				children: [/* @__PURE__ */ m("div", {
 					className: "relative min-w-0",
-					children: /* @__PURE__ */ m(z, {
+					children: /* @__PURE__ */ m(B, {
 						natural: T,
-						children: $
+						children: ne
 					})
 				}), /* @__PURE__ */ m("div", {
 					className: "relative min-w-0",
-					children: /* @__PURE__ */ m(z, {
+					children: /* @__PURE__ */ m(B, {
 						natural: T,
-						children: te
+						children: re
 					})
 				})]
-			}) : /* @__PURE__ */ h(p, { children: [N && /* @__PURE__ */ m(z, {
+			}) : /* @__PURE__ */ h(p, { children: [N && /* @__PURE__ */ m(B, {
 				natural: T,
-				children: $
+				children: ne
 			}), /* @__PURE__ */ m("div", {
 				className: e("absolute inset-0", N && "[clip-path:inset(0_0_0_var(--split))]"),
 				"data-testid": `${C}-preview-layer`,
-				children: /* @__PURE__ */ m(z, {
+				children: /* @__PURE__ */ m(B, {
 					natural: T,
-					children: te
+					children: re
 				})
 			})] }),
-			N && !ne && /* @__PURE__ */ h("div", {
-				className: "pointer-events-none absolute inset-y-0 left-[var(--split)] w-0",
+			N && !$ && /* @__PURE__ */ h("div", {
+				className: "pointer-events-none absolute bottom-[max(0px,calc(50%-var(--fit-h)/2))] left-[var(--split)] top-[max(0px,calc(50%-var(--fit-h)/2))] w-0",
 				"data-testid": `${C}-split`,
 				children: [/* @__PURE__ */ m("div", { className: "absolute inset-y-0 -left-px w-0.5 bg-white/85 shadow-[0_0_4px_rgba(0,0,0,0.5)]" }), /* @__PURE__ */ h("div", {
 					role: "slider",
@@ -426,9 +432,9 @@ function B({ src: t, ops: n, alt: r, compare: a, onCompareChange: u, layout: g =
 					"aria-label": "Before and after split",
 					"aria-valuemin": 0,
 					"aria-valuemax": 100,
-					"aria-valuenow": Math.round(B * 100),
-					onPointerDown: (e) => q(e, "split"),
-					onKeyDown: Z,
+					"aria-valuenow": Math.round(V * 100),
+					onPointerDown: (e) => J(e, "split"),
+					onKeyDown: Q,
 					"data-testid": `${C}-handle`,
 					className: e("pointer-events-auto absolute left-0 top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize items-center justify-center", "rounded-full border-2 border-solid border-white bg-black/45 text-white shadow-md backdrop-blur-sm", "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"),
 					children: [/* @__PURE__ */ m(i, {
@@ -441,17 +447,17 @@ function B({ src: t, ops: n, alt: r, compare: a, onCompareChange: u, layout: g =
 				})]
 			}),
 			N && /* @__PURE__ */ m("span", {
-				className: e(L, "pointer-events-none absolute left-3 top-3 px-3 py-1.5 text-[13px] font-medium"),
+				className: e(L, R, $ ? "left-[max(12px,calc(25%-var(--fit-w)/2+12px))]" : "left-[max(12px,calc(50%-var(--fit-w)/2+12px))]"),
 				"data-testid": `${C}-badge-original`,
 				children: y
 			}),
 			/* @__PURE__ */ m("span", {
-				className: e(L, "pointer-events-none absolute right-3 top-3 px-3 py-1.5 text-[13px] font-medium"),
+				className: e(L, R, $ ? "right-[max(12px,calc(25%-var(--fit-w)/2+12px))]" : "right-[max(12px,calc(50%-var(--fit-w)/2+12px))]"),
 				"data-testid": `${C}-badge-preview`,
 				children: b
 			}),
 			/* @__PURE__ */ h("div", {
-				className: e(L, "absolute left-1/2 top-3 flex -translate-x-1/2 items-center divide-x divide-white/15 overflow-hidden"),
+				className: e(L, "absolute left-1/2 top-[max(12px,calc(50%-var(--fit-h)/2+12px))] flex -translate-x-1/2 items-center divide-x divide-white/15 overflow-hidden"),
 				"data-testid": `${C}-toolbar`,
 				onPointerDown: (e) => e.stopPropagation(),
 				children: [
@@ -466,21 +472,21 @@ function B({ src: t, ops: n, alt: r, compare: a, onCompareChange: u, layout: g =
 						sections: [{ items: [{
 							label: "Fit",
 							active: D === "fit",
-							onSelect: () => K("fit")
+							onSelect: () => q("fit")
 						}, ...ee.map((e) => ({
 							label: `${e * 100}%`,
 							active: D === e,
-							onSelect: () => K(e)
+							onSelect: () => q(e)
 						}))] }]
 					}),
-					/* @__PURE__ */ m(R, {
-						onClick: () => K(D === "fit" ? 1 : "fit"),
+					/* @__PURE__ */ m(z, {
+						onClick: () => q(D === "fit" ? 1 : "fit"),
 						active: D === 1,
 						"aria-label": D === "fit" ? "Zoom to 100%" : "Fit to window",
 						"data-testid": `${C}-zoom-100`,
-						children: Q
+						children: te
 					}),
-					/* @__PURE__ */ m(R, {
+					/* @__PURE__ */ m(z, {
 						onClick: P,
 						active: N,
 						"data-testid": `${C}-before-after`,
@@ -494,7 +500,7 @@ function B({ src: t, ops: n, alt: r, compare: a, onCompareChange: u, layout: g =
 }
 //#endregion
 //#region src/components/photo-editor/icons.tsx
-function V(e, t) {
+function H(e, t) {
 	return {
 		width: e,
 		height: e,
@@ -508,9 +514,9 @@ function V(e, t) {
 		...t
 	};
 }
-function H({ size: e = 16, ...t }) {
+function U({ size: e = 16, ...t }) {
 	return /* @__PURE__ */ h("svg", {
-		...V(e, t),
+		...H(e, t),
 		children: [/* @__PURE__ */ m("rect", {
 			x: "2",
 			y: "3",
@@ -520,22 +526,22 @@ function H({ size: e = 16, ...t }) {
 		}), /* @__PURE__ */ m("path", { d: "M6 3v10M3.5 5.5h1M3.5 7.5h1" })]
 	});
 }
-function U({ size: e = 16, ...t }) {
+function W({ size: e = 16, ...t }) {
 	return /* @__PURE__ */ m("svg", {
-		...V(e, t),
+		...H(e, t),
 		children: /* @__PURE__ */ m("path", { d: "M3.5 14V2.5M3.5 3h8l-1.5 3 1.5 3h-8" })
 	});
 }
-function W({ size: e = 16, filled: t = !1, ...n }) {
+function G({ size: e = 16, filled: t = !1, ...n }) {
 	return /* @__PURE__ */ m("svg", {
-		...V(e, n),
+		...H(e, n),
 		fill: t ? "currentColor" : "none",
 		children: /* @__PURE__ */ m("path", { d: "M8 13.5S2.5 10.2 2.5 6.3A2.8 2.8 0 0 1 8 5a2.8 2.8 0 0 1 5.5 1.3C13.5 10.2 8 13.5 8 13.5z" })
 	});
 }
-function G({ size: e = 16, ...t }) {
+function K({ size: e = 16, ...t }) {
 	return /* @__PURE__ */ h("svg", {
-		...V(e, t),
+		...H(e, t),
 		children: [/* @__PURE__ */ m("rect", {
 			x: "1.5",
 			y: "3",
@@ -545,9 +551,9 @@ function G({ size: e = 16, ...t }) {
 		}), /* @__PURE__ */ m("path", { d: "M8 3v10M3.5 6h2.5M3.5 8h2.5M10 6h2.5M10 8h2.5" })]
 	});
 }
-function K({ size: e = 16, ...t }) {
+function q({ size: e = 16, ...t }) {
 	return /* @__PURE__ */ h("svg", {
-		...V(e, t),
+		...H(e, t),
 		children: [/* @__PURE__ */ m("rect", {
 			x: "2.5",
 			y: "5",
@@ -559,12 +565,12 @@ function K({ size: e = 16, ...t }) {
 }
 //#endregion
 //#region src/components/photo-editor/PhotoEditorTopBar.tsx
-var q = {
+var J = {
 	pick: "Pick",
 	reject: "Rejected",
 	none: "Pick"
 };
-function J({ title: s, subtitle: c, backLabel: l, onBack: u, onToggleSidebar: d, sidebarOpen: f, onPrev: p, onNext: g, pick: _, onPickChange: v, onUndo: y, onRedo: b, canUndo: x = !1, canRedo: S = !1, compareLayout: C = "split", onCompareLayoutChange: w, moreSections: T, className: E, "data-testid": D = "photo-editor-top-bar" }) {
+function Y({ title: s, subtitle: c, backLabel: l, onBack: u, onToggleSidebar: d, sidebarOpen: f, onPrev: p, onNext: g, pick: _, onPickChange: v, onUndo: y, onRedo: b, canUndo: x = !1, canRedo: S = !1, compareLayout: C = "split", onCompareLayoutChange: w, moreSections: T, className: E, "data-testid": D = "photo-editor-top-bar" }) {
 	return /* @__PURE__ */ h("header", {
 		"data-testid": D,
 		className: e("grid h-[52px] shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-3 border-b border-solid border-border bg-surface px-3", E),
@@ -575,7 +581,7 @@ function J({ title: s, subtitle: c, backLabel: l, onBack: u, onToggleSidebar: d,
 					"aria-label": f ? "Hide sidebar" : "Show sidebar",
 					"aria-pressed": f,
 					onClick: d,
-					icon: /* @__PURE__ */ m(H, { size: 18 }),
+					icon: /* @__PURE__ */ m(U, { size: 18 }),
 					className: "text-text-secondary",
 					"data-testid": `${D}-sidebar`
 				}), /* @__PURE__ */ h("button", {
@@ -633,8 +639,8 @@ function J({ title: s, subtitle: c, backLabel: l, onBack: u, onToggleSidebar: d,
 							trigger: /* @__PURE__ */ h("span", {
 								className: "inline-flex items-center gap-2",
 								children: [
-									/* @__PURE__ */ m(U, { size: 15 }),
-									q[_ ?? "none"],
+									/* @__PURE__ */ m(W, { size: 15 }),
+									J[_ ?? "none"],
 									/* @__PURE__ */ m(i, { size: 12 })
 								]
 							}),
@@ -689,7 +695,7 @@ function J({ title: s, subtitle: c, backLabel: l, onBack: u, onToggleSidebar: d,
 						"aria-pressed": C === "side-by-side",
 						onClick: () => w?.(C === "side-by-side" ? "split" : "side-by-side"),
 						disabled: !w,
-						icon: /* @__PURE__ */ m(G, { size: 18 }),
+						icon: /* @__PURE__ */ m(K, { size: 18 }),
 						className: C === "side-by-side" ? "bg-surface-hover" : void 0,
 						"data-testid": `${D}-layout`
 					}),
@@ -708,8 +714,8 @@ function J({ title: s, subtitle: c, backLabel: l, onBack: u, onToggleSidebar: d,
 }
 //#endregion
 //#region src/components/photo-editor/PhotoFilmstrip.tsx
-var Y = "pointer-events-none absolute rounded-md bg-black/65 text-white backdrop-blur-sm";
-function X({ items: t, currentId: n, onSelect: r, className: i, "data-testid": a = "photo-filmstrip" }) {
+var X = "pointer-events-none absolute rounded-md bg-black/65 text-white backdrop-blur-sm";
+function Z({ items: t, currentId: n, onSelect: r, className: i, "data-testid": a = "photo-filmstrip" }) {
 	let o = d(null);
 	return c(() => {
 		(o.current?.querySelector("[aria-current=\"true\"]"))?.scrollIntoView?.({
@@ -749,14 +755,14 @@ function X({ items: t, currentId: n, onSelect: r, className: i, "data-testid": a
 						className: "block h-full w-full object-cover"
 					}),
 					!!t.editCount && /* @__PURE__ */ h("span", {
-						className: e(Y, "right-1 top-1 inline-flex items-center gap-1 px-1.5 py-0.5 text-[11px] font-semibold leading-none"),
+						className: e(X, "right-1 top-1 inline-flex items-center gap-1 px-1.5 py-0.5 text-[11px] font-semibold leading-none"),
 						"data-testid": "photo-filmstrip-edit-badge",
-						children: [/* @__PURE__ */ m(K, { size: 11 }), t.editCount]
+						children: [/* @__PURE__ */ m(q, { size: 11 }), t.editCount]
 					}),
 					t.pick === "pick" && /* @__PURE__ */ m("span", {
-						className: e(Y, "bottom-1 left-1 inline-flex h-5 w-5 items-center justify-center rounded-full"),
+						className: e(X, "bottom-1 left-1 inline-flex h-5 w-5 items-center justify-center rounded-full"),
 						"data-testid": "photo-filmstrip-pick",
-						children: /* @__PURE__ */ m(W, { size: 12 })
+						children: /* @__PURE__ */ m(G, { size: 12 })
 					})
 				]
 			}, t.id);
@@ -765,7 +771,7 @@ function X({ items: t, currentId: n, onSelect: r, className: i, "data-testid": a
 }
 //#endregion
 //#region src/components/photo-editor/PhotoEditorShell.tsx
-function Z({ topBar: t, canvas: n, rightPanel: r, composer: i, filmstrip: a, statusBar: o, className: s, "data-testid": c = "photo-editor-shell" }) {
+function Q({ topBar: t, canvas: n, rightPanel: r, composer: i, filmstrip: a, statusBar: o, className: s, "data-testid": c = "photo-editor-shell" }) {
 	return /* @__PURE__ */ h("div", {
 		"data-testid": c,
 		className: e("flex h-full min-h-0 w-full flex-col overflow-hidden bg-surface-panel text-text-primary", s),
@@ -795,24 +801,24 @@ function Z({ topBar: t, canvas: n, rightPanel: r, composer: i, filmstrip: a, sta
 		]
 	});
 }
-function Q({ previewing: t, saving: n = !1, message: r, className: i, "data-testid": a = "photo-editor-status" }) {
-	let o = n ? "Saving…" : t ? "Not applied" : "Applied";
+function te({ previewing: t, saving: n = !1, applied: r = !1, message: i, className: a, "data-testid": o = "photo-editor-status" }) {
+	let s = n ? "Saving…" : t ? "Not applied" : r ? "Applied" : "No edits";
 	return /* @__PURE__ */ h("footer", {
-		"data-testid": a,
+		"data-testid": o,
 		"data-state": n ? "saving" : t ? "previewing" : "clean",
-		className: e("flex h-8 shrink-0 items-center justify-between gap-4 border-t border-solid border-border bg-surface-panel px-6 text-[12.5px] text-text-secondary", i),
+		className: e("flex h-8 shrink-0 items-center justify-between gap-4 border-t border-solid border-border bg-surface-panel px-6 text-[12.5px] text-text-secondary", a),
 		children: [/* @__PURE__ */ m("span", {
 			className: "truncate",
-			children: r ?? (t ? "Previewing changes · Original preserved" : "Original preserved")
+			children: i ?? (t ? "Previewing changes · Original preserved" : "Original preserved")
 		}), /* @__PURE__ */ h("span", {
 			className: "inline-flex shrink-0 items-center gap-2",
-			"data-testid": `${a}-state`,
+			"data-testid": `${o}-state`,
 			children: [/* @__PURE__ */ m("span", {
 				"aria-hidden": !0,
-				className: e("h-2 w-2 rounded-full", n ? "bg-info" : t ? "bg-warning" : "bg-success")
-			}), o]
+				className: e("h-2 w-2 rounded-full", n ? "bg-info" : t ? "bg-warning" : r ? "bg-success" : "bg-text-tertiary")
+			}), s]
 		})]
 	});
 }
 //#endregion
-export { F as AdjustedImageCanvas, G as CompareLayoutIcon, K as EditStackIcon, U as FlagIcon, W as HeartIcon, g as NEUTRAL_KELVIN, S as NEUTRAL_PARAMS, B as PhotoCompareCanvas, Z as PhotoEditorShell, Q as PhotoEditorStatusBar, J as PhotoEditorTopBar, X as PhotoFilmstrip, H as SidebarToggleIcon, E as adjustRgb, M as createAdjustRenderer, N as cssFilterFor, x as effectiveOps, D as hueRotateMatrix, b as isNeutralOp, _ as opIdentity, w as paramsFromOps, y as removeOpIn, v as setOpIn };
+export { F as AdjustedImageCanvas, K as CompareLayoutIcon, q as EditStackIcon, W as FlagIcon, G as HeartIcon, g as NEUTRAL_KELVIN, S as NEUTRAL_PARAMS, V as PhotoCompareCanvas, Q as PhotoEditorShell, te as PhotoEditorStatusBar, Y as PhotoEditorTopBar, Z as PhotoFilmstrip, U as SidebarToggleIcon, E as adjustRgb, M as createAdjustRenderer, N as cssFilterFor, x as effectiveOps, D as hueRotateMatrix, b as isNeutralOp, _ as opIdentity, w as paramsFromOps, y as removeOpIn, v as setOpIn };
