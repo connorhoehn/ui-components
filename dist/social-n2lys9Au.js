@@ -30,7 +30,7 @@ import { t as fe } from "./InlinePlaceholder-51dbPRGn.js";
 import { n as pe, t as W } from "./PopoverForm-BCCYkHYg.js";
 import { t as me } from "./DropdownMenu-CHrQvZgc.js";
 import { t as he } from "./Select-D3fGI8SO.js";
-import { L as ge, N as _e, Q as ve, R as ye, X as be, nt as xe } from "./ConversationSurface-CBgepogL.js";
+import { $ as ge, L as _e, N as ve, R as ye, at as be, tt as xe } from "./ConversationSurface-mEoJEMaV.js";
 import { t as Se } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as Ce, t as we } from "./ReactionPickerPopover-DkcC4xmE.js";
 import { n as Te, t as Ee } from "./composerCommands-CgPFKkKH.js";
@@ -951,7 +951,7 @@ function Je({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sec
 					"aria-label": e.collapsible ? void 0 : e.label,
 					"aria-labelledby": e.collapsible ? n : void 0,
 					children: e.shown.map((e) => {
-						let t = e.channel === u, n = e.channel === ce, r = e.kind ?? (e.peers.length > 1 ? "group" : "dm"), i = r === "channel", a = r === "group", c = e.peers[0], l = i ? e.name ?? e.channel : e.peers.map((e) => e.displayName).join(", "), f = e.lastMessageAt ? ve(e.lastMessageAt) : "", p = e.lastMessageAt ? xe(e.lastMessageAt) : "", E = e.unreadCount ?? 0, D = !!e.mentioned, O = !!e.live, j = !!e.muted, M = `${A}-row-menu-${e.channel}`, N = [];
+						let t = e.channel === u, n = e.channel === ce, r = e.kind ?? (e.peers.length > 1 ? "group" : "dm"), i = r === "channel", a = r === "group", c = e.peers[0], l = i ? e.name ?? e.channel : e.peers.map((e) => e.displayName).join(", "), f = e.lastMessageAt ? xe(e.lastMessageAt) : "", p = e.lastMessageAt ? be(e.lastMessageAt) : "", E = e.unreadCount ?? 0, D = !!e.mentioned, O = !!e.live, j = !!e.muted, M = `${A}-row-menu-${e.channel}`, N = [];
 						return s && (N.push({
 							label: "Call",
 							icon: /* @__PURE__ */ Z(h, { size: 14 }),
@@ -1516,7 +1516,7 @@ function rt({ author: e, avatarUrl: t, mine: n = !1, messages: r, className: i }
 		"data-author": e,
 		"data-row-count": r.length,
 		className: o("flex flex-col", i),
-		children: r.map((r, i) => /* @__PURE__ */ Z(be, {
+		children: r.map((r, i) => /* @__PURE__ */ Z(ge, {
 			author: e,
 			content: r.content,
 			timestamp: r.timestamp,
@@ -3798,7 +3798,7 @@ function on(e) {
 	return e.kind === "link" ? e.label ?? "Open link" : e.kind === "panel" ? e.panel.title ? `Open ${e.panel.title}` : "Open result" : "Open beside the chat";
 }
 function sn({ data: e, onOpenFull: t, onOpenChat: n, onOpenDocument: r, onOpenResult: i, className: a, "data-testid": s = "run-summary-panel" }) {
-	let { status: c } = e, u = e.pipelineName || e.pipelineId, f = ge({
+	let { status: c } = e, u = e.pipelineName || e.pipelineId, f = _e({
 		startedAt: e.startedAt,
 		completedAt: e.completedAt
 	}), p = e.ops ?? [], m = e.result && i && !(e.result.kind === "document" && e.document && r), h = e.document?.title || "Document", g = c === "failed" ? e.error || "The run failed" : void 0;
@@ -3867,7 +3867,7 @@ function sn({ data: e, onOpenFull: t, onOpenChat: n, onOpenDocument: r, onOpenRe
 								}),
 								/* @__PURE__ */ Z("span", {
 									"aria-hidden": "true",
-									className: o("relative mt-[5px] inline-block h-[7px] w-[7px] shrink-0 rounded-full", _e[t.status] ?? _e.pending)
+									className: o("relative mt-[5px] inline-block h-[7px] w-[7px] shrink-0 rounded-full", ve[t.status] ?? ve.pending)
 								}),
 								/* @__PURE__ */ Q("span", {
 									className: "flex min-w-0 flex-1 items-baseline justify-between gap-2",

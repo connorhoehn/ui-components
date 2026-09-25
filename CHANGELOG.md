@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.397.1] — 2026-09-25
+
+### Changed
+- `CallActivityCard` now has three states a reader can tell apart. Live: a pulsing green dot (still under `prefers-reduced-motion`), "Live · 3:12" counting up on the reader's clock from the new `startedAt`, the people in it, and Join. Ended: "Call ended · 24s" with who was there; pulse, clock and Join gone. New `outcome` (`cancelled` / `declined` / `no-answer`) reads "Missed call" / "Declined" / "No answer". New `recordingId` + `onOpenRecording` link the recording. Stored cards with no `startedAt` render as ended with their duration.
+- `ChatPanel` reads `startedAt`, `outcome` and `recordingId` from call metadata and passes `onOpenRecording` to the call card.
+
 ## [2.397.0] — 2026-09-25
 
 One type scale for every navigation rail. **Visual change for every consumer** (realtime-examples

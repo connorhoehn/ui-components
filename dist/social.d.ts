@@ -320,7 +320,7 @@ export declare interface AttachmentBubbleProps {
 /** What a console surface paints behind itself. `none` keeps the ordinary surface. */
 declare type BackdropTone = 'auto' | 'night' | 'graphite' | 'none';
 
-export declare function CallActivityCard({ callId, startedBy, participants, live, durationMs, audioOnly, recorded, notRecordedReason, lobbyName, onJoin, className, 'data-testid': testId, }: CallActivityCardProps): JSX.Element;
+export declare function CallActivityCard({ callId, startedBy, participants, live, durationMs, startedAt, outcome, recordingId, onOpenRecording, audioOnly, recorded, notRecordedReason, lobbyName, onJoin, className, 'data-testid': testId, }: CallActivityCardProps): JSX.Element;
 
 export declare interface CallActivityCardProps {
     callId: string;
@@ -338,6 +338,19 @@ export declare interface CallActivityCardProps {
     live?: boolean;
     /** Wall-clock length in ms. Rendered only once the call has ended. */
     durationMs?: number;
+    /**
+     * When the call started (ISO string or epoch ms). While live, the card
+     * counts up from it — "Live · 3:12" — on the reader's clock.
+     */
+    startedAt?: string | number;
+    /**
+     * Set when the invite never became a call: the card reads "Missed call",
+     * "Declined" or "No answer" instead of a duration, and shows no roster.
+     */
+    outcome?: CallOutcome;
+    /** The recording of this call, once there is one — with `onOpenRecording`, a link to it. */
+    recordingId?: string;
+    onOpenRecording?: (recordingId: string) => void;
     /**
      * True when the call had no camera, false when it had one — and UNDEFINED
      * when nobody knows.
@@ -379,10 +392,16 @@ export declare interface CallActivityParticipant {
     avatarUrl?: string;
 }
 
+/** How an invite that never became a call ended. */
+export declare type CallOutcome = 'cancelled' | 'declined' | 'no-answer';
+
 export declare function callRefFromMetadata(metadata: Record<string, unknown> | undefined): {
     callId: string;
     live: boolean;
     durationMs?: number;
+    startedAt?: string;
+    outcome?: CallOutcome;
+    recordingId?: string;
     audioOnly?: boolean;
     recorded?: boolean;
     notRecordedReason?: string;
@@ -2104,6 +2123,9 @@ export declare function describeMembership(ref: MembershipRef, fallbackText?: st
 
 export declare function describeMembershipHistory(history: MembershipHistory | undefined): string;
 
+/** The headline for an invite that never became a call. */
+export declare function describeOutcome(outcome: CallOutcome): string;
+
 /**
  * Names, not ids, and never more than two before it starts counting.
  *
@@ -2332,6 +2354,9 @@ export declare function formatChatTime(isoString: string): string;
 
 /** "12:04" / "1:02:11" — a duration people read, not a millisecond count. */
 export declare function formatDuration(ms?: number): string;
+
+/** "3:12", "1:02:03" — a clock, because this one is running. */
+export declare function formatElapsed(ms: number): string;
 
 /** `84.2k`, `1.3M` — a token count is scale, not an exact figure. */
 export declare function formatTokens(tokens: number): string;
@@ -3523,6 +3548,13 @@ export declare function useChatSidePanelRenderer(kind: string): ChatSidePanelRen
 export declare function useChatSidePanelRenderers(): ChatSidePanelRenderers;
 
 /**
+ * Milliseconds since `startedAt`, re-read every second while `running`.
+ * Null when there is no start to count from — the card then says "Live"
+ * without a number rather than counting from a made-up zero.
+ */
+export declare function useElapsedMs(startedAt: string | number | undefined, running: boolean): number | null;
+
+/**
  * Adds `commands` to the nearest provider while the caller is mounted. Pass a
  * stable array (module-level or memoised): a new array each render is a
  * re-registration each render.
@@ -3582,12 +3614,12 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
+        diagramMacro: {
             /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
              */
-            setListStyle: (style: ListStyle) => ReturnType;
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -3614,30 +3646,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
+        canvasListStyle: {
             /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
              */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+            setListStyle: (style: ListStyle) => ReturnType;
         };
     }
 }
@@ -3645,9 +3659,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -3681,9 +3695,32 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -3699,14 +3736,9 @@ declare module '@tiptap/core' {
 }
 
 
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
     }
 }
