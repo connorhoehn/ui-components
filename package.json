@@ -1,6 +1,6 @@
 {
   "name": "@connorhoehnslalom/ui-components",
-  "version": "2.389.8",
+  "version": "2.389.9",
   "description": "React component library for real-time collaborative applications — chat, presence, video, collaborative documents, pipeline editing and identity flows.",
   "keywords": [
     "react",
@@ -94,6 +94,11 @@
       "types": "./dist/agents.d.ts",
       "import": "./dist/agents.js",
       "require": "./dist/agents.cjs"
+    },
+    "./photo-editor": {
+      "types": "./dist/photo-editor.d.ts",
+      "import": "./dist/photo-editor.js",
+      "require": "./dist/photo-editor.cjs"
     },
     "./compute": {
       "types": "./dist/compute.d.ts",
