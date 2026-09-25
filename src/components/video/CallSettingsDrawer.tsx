@@ -189,7 +189,9 @@ export function CallCaptionsSettings({
           onChange={(e) => onLanguageChange?.(e.target.value)}
           disabled={languages.length < 2 || !onLanguageChange}
           options={languages}
-          className="h-9 w-40 text-sm"
+          chevron="custom"
+          className="h-9 w-full text-sm"
+          wrapperClassName="w-40 shrink-0"
           data-testid="settings-captions-language"
         />
       </div>

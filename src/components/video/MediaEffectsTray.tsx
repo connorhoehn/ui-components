@@ -628,6 +628,8 @@ function EffectsGrid({
           onChange={(e) => onSelectFaceSprite(e.target.value || null)}
           disabled={disabled}
           aria-label="Face effect"
+          chevron="custom"
+          className="h-9 text-sm"
           data-testid="effects-face-select"
           options={[{ value: '', label: 'None' }, ...faceSprites.map((f) => ({ value: f.id, label: f.label }))]}
         />

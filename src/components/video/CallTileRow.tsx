@@ -281,7 +281,10 @@ function DockTile({
   return (
     <div
       className={cn(
-        'relative shrink-0 overflow-hidden rounded-md bg-video-tile text-white',
+        'relative shrink-0 overflow-hidden rounded-md text-white',
+        // Camera off: the soft grey tile with initials (mockup 02); a live
+        // frame sits on the dark video tile.
+        p.videoElement && !p.cameraOff ? 'bg-video-tile' : 'bg-video-tile-off',
         '[&_video]:h-full [&_video]:w-full [&_video]:object-cover',
         highlighted ? 'ring-2 ring-primary ring-offset-1 ring-offset-surface' : speaking ? 'ring-2 ring-success' : '',
         onClick && 'cursor-pointer',
@@ -320,7 +323,7 @@ function DockTile({
             name={p.displayName}
             size={Math.round(Math.min(40, height * 0.48))}
             {...(p.avatarUrl ? { src: p.avatarUrl } : {})}
-            color="rgba(255,255,255,0.22)"
+            color="rgba(71,80,92,0.28)"
             showTitle={false}
           />
         </div>

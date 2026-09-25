@@ -4205,7 +4205,7 @@ export declare interface SectionLabelProps {
     'data-testid'?: string;
 }
 
-export declare function SegmentedControl({ options, value, onChange, size, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, disabled, fullWidth, className, 'data-testid': testId, }: SegmentedControlProps): JSX.Element;
+export declare function SegmentedControl({ options, value, onChange, size, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, disabled, fullWidth, tone, className, 'data-testid': testId, }: SegmentedControlProps): JSX.Element;
 
 export declare interface SegmentedControlProps {
     options: SegmentOption[];
@@ -4234,6 +4234,12 @@ export declare interface SegmentedControlProps {
     disabled?: boolean;
     /** Stretch the group and share its width equally between the segments. */
     fullWidth?: boolean;
+    /**
+     * `neutral` (default): a raised white segment on an inset track.
+     * `accent` (2.391.1): a flat track on the surface and the chosen segment in
+     * the brand's soft fill and text — the start-a-call Video | Audio switch.
+     */
+    tone?: 'neutral' | 'accent';
     className?: string;
     'data-testid'?: string;
 }
@@ -4294,6 +4300,14 @@ export declare interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelec
      * caller can restyle the capsule without losing the layout hook.
      */
     wrapperClassName?: string;
+    /**
+     * `native` (default): the browser's own arrow. `custom` (2.391.1): the
+     * default field with `appearance-none` and the library's chevron drawn over
+     * its right edge, so the field looks the same in every browser and theme
+     * (the call-settings selects). The select is then wrapped in a relative
+     * `<span>` that takes `wrapperClassName`.
+     */
+    chevron?: 'native' | 'custom';
     'data-testid'?: string;
 }
 
@@ -5889,12 +5903,18 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
+        canvasLineSpacing: {
             /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
              */
-            insertDiagram: (id?: string) => ReturnType;
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
         };
     }
 }
@@ -5915,18 +5935,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
+        diagramMacro: {
             /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
              */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -5970,9 +5984,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -5980,12 +5997,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

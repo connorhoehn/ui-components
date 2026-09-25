@@ -48,6 +48,12 @@ export interface SegmentedControlProps {
   disabled?: boolean;
   /** Stretch the group and share its width equally between the segments. */
   fullWidth?: boolean;
+  /**
+   * `neutral` (default): a raised white segment on an inset track.
+   * `accent` (2.391.1): a flat track on the surface and the chosen segment in
+   * the brand's soft fill and text — the start-a-call Video | Audio switch.
+   */
+  tone?: 'neutral' | 'accent';
   className?: string;
   'data-testid'?: string;
 }
@@ -63,6 +69,8 @@ const INACTIVE_CLASSES =
 const ACTIVE_CLASSES =
   'bg-surface shadow-sm text-[var(--color-text-primary)] border border-[var(--color-border)]';
 
+const ACCENT_ACTIVE_CLASSES = 'bg-primary-bg text-primary border border-transparent';
+
 export function SegmentedControl({
   options,
   value,
@@ -72,6 +80,7 @@ export function SegmentedControl({
   'aria-labelledby': ariaLabelledBy,
   disabled = false,
   fullWidth = false,
+  tone = 'neutral',
   className,
   'data-testid': testId,
 }: SegmentedControlProps) {
@@ -99,6 +108,7 @@ export function SegmentedControl({
       className={cn(
         fullWidth ? 'flex w-full items-center' : 'inline-flex items-center',
         'rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-inset,#f8fafc)] p-0.5 gap-0.5',
+        tone === 'accent' && 'bg-surface p-1 gap-1',
         className,
       )}
     >
@@ -132,7 +142,9 @@ export function SegmentedControl({
               fullWidth && 'flex-1',
               disabled && 'cursor-not-allowed opacity-60',
               SIZE_CLASSES[size],
-              active ? ACTIVE_CLASSES : INACTIVE_CLASSES,
+              active ? (tone === 'accent' ? ACCENT_ACTIVE_CLASSES : ACTIVE_CLASSES) : INACTIVE_CLASSES,
+              tone === 'accent' && 'py-2 text-[15px]',
+              tone === 'accent' && !active && 'text-text-primary',
             )}
           >
             {option.icon}

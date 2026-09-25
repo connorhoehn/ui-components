@@ -186,6 +186,7 @@ export function StartCallDrawer({
         value={media}
         onChange={(v) => onMediaChange(v as 'video' | 'audio')}
         fullWidth
+        tone="accent"
         aria-label="Call type"
         data-testid="start-call-media"
       />

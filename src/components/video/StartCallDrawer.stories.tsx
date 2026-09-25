@@ -26,7 +26,7 @@ interface SceneProps {
 function Scene({ width = 400, media: initialMedia = 'video', permission = 'granted', over = {}, loading = false }: SceneProps) {
   const [title, setTitle] = useState('Auth architecture review');
   const [media, setMedia] = useState<'video' | 'audio'>(initialMedia);
-  const [docs, setDocs] = useState(REVIEW_DOCS.map((d, i) => ({ ...d, removable: i > 0 })));
+  const [docs, setDocs] = useState(REVIEW_DOCS.map((d) => ({ ...d, removable: true })));
   const [selected, setSelected] = useState<string[]>([CAST.alice.userId, CAST.frank.userId]);
   const [query, setQuery] = useState('');
   const [message, setMessage] = useState('Review the sign-in flow and migration plan.');

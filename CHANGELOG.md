@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.392.1] — 2026-09-25
+
+Document calls, matched to the mockups where they and the SPEC disagreed.
+
+### Changed
+- `StartCallDrawer`: Video | Audio uses `SegmentedControl tone="accent"` (soft brand fill on the chosen
+  segment, mockup 01). Every review document may show its × (the host passes `removable`).
+- `CallDock` / `CallTileRow` `dock`: a camera-off tile is the mockup's grey (`--color-video-tile-off`,
+  theme-invariant) with a darker initials circle; live tiles stay on the dark video tile.
+- `AudioVideoSettingsForm`, the Effects face select and `CallCaptionsSettings` use `Select chevron="custom"`
+  — no native arrow (03b, 04).
+- `DocumentCallPanel`: Present stays live while someone else presents when `canPresent` (titled
+  "Take over from Alice"); `CallPeopleList` gives your own row a ⋯ menu (`onOpenSelfSettings` →
+  "Call settings", `onLeave` → "Leave call") (06).
+
+### Added
+- `SegmentedControl tone="accent"`; `Select chevron="custom"`; `--color-video-tile-off`.
+- Stories: `Shared/SegmentedControl` Accent(+Dark), `Forms/Select` CustomChevron(+Dark),
+  `DocumentCallPanel` PresentBlocked; existing document-call stories updated.
+
+### Fixed
+- The export-surface snapshot now lists the 2.391.0 exports.
+
 ## [2.392.0] — 2026-09-24
 
 The Initiatives v2 library batch (agentcore

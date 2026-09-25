@@ -31,6 +31,11 @@ export interface DocumentCallPanelProps {
   /** The document the reader has open — what "Present this document" presents. */
   currentDocumentId: string;
   canPresent: boolean;
+  /**
+   * Whether the viewer may press Present. True while someone else presents
+   * means "take over" (the button stays live, titled "Take over from Alice");
+   * false disables it with `presentDisabledReason`.
+   */
   /** Title of the disabled Present button, e.g. "Alice is presenting". */
   presentDisabledReason?: string;
   /** A document id to present, or null to stop. */
@@ -69,6 +74,9 @@ export function DocumentCallPanel({
   const { count: docCount, onAdd, ...docList } = documents;
   const self = people.people.find((p) => p.isLocal);
   const iPresentThis = Boolean(presenting && self && presenting.userId === self.userId && presenting.documentId === currentDocumentId);
+  // Someone else presents and the viewer may present anyway (mockup 06: the
+  // host's button stays live) — pressing it takes over.
+  const someoneElsePresents = Boolean(presenting && (!self || presenting.userId !== self.userId));
   const alone = people.people.filter((p) => p.state === 'in-call' && !p.isLocal).length === 0;
   const meta = `${participantCount === 1 ? '1 person' : `${participantCount} people`}${elapsedMs != null ? ` · ${formatCallElapsed(elapsedMs)}` : ''}`;
 
@@ -145,7 +153,14 @@ export function DocumentCallPanel({
               variant="ghost"
               onClick={() => onPresent(iPresentThis ? null : currentDocumentId)}
               disabled={!iPresentThis && !canPresent}
-              title={!iPresentThis && !canPresent ? presentDisabledReason : undefined}
+              title={
+                !iPresentThis && !canPresent
+                  ? presentDisabledReason
+                  : someoneElsePresents
+                    ? `Take over from ${presenting!.name}`
+                    : undefined
+              }
+              data-take-over={someoneElsePresents && canPresent ? 'true' : undefined}
               data-testid="call-present"
               className="inline-flex items-center gap-2 font-medium"
             >

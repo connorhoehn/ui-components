@@ -57,7 +57,8 @@ function Scene({
     };
   });
   const inCall = people.filter((x) => x.state === 'in-call' || x.state === 'reconnecting').length;
-  const someoneElse = presenting && presenting.userId !== CAST.connor.userId;
+  // Connor is the host: he may take over from whoever presents (mockup 06).
+  const someoneElse = false;
   return (
     <div className="h-[941px] w-[380px] overflow-hidden border border-border">
       <DocumentCallPanel
@@ -76,6 +77,8 @@ function Scene({
           onRemove: noop,
           onMakeHost: noop,
           onRingAgain: noop,
+          onOpenSelfSettings: noop,
+          onLeave: noop,
         }}
         documents={{ items, count: items.length, onAdd: noop, onOpen: noop }}
         presenting={presenting}
@@ -96,6 +99,40 @@ function Scene({
   );
 }
 
+function BlockedScene() {
+  const base = { isLocal: false, isHost: false, presence: 'online' as const, state: 'in-call' as const, audioOn: true, cameraOn: true, screenSharing: false };
+  return (
+    <div className="h-[941px] w-[380px] overflow-hidden border border-border">
+      <DocumentCallPanel
+        title="Auth architecture review"
+        participantCount={2}
+        elapsedMs={9 * 60_000 + 41_000}
+        people={{
+          people: [
+            { ...base, userId: 'f', name: CAST.frank.name, isLocal: true, presenting: false },
+            { ...base, userId: 'a', name: CAST.alice.name, isHost: true, presenting: true },
+          ],
+          count: 2,
+          canModerate: false,
+          onInvite: noop,
+          onFollow: noop,
+          onMuteForMe: noop,
+        }}
+        documents={{ items: [{ ...REVIEW_DOCS[0]!, selected: true, subline: 'Presenting · Alice' }], count: 1, onAdd: noop, onOpen: noop }}
+        presenting={{ documentId: 'doc-auth', userId: 'a', name: 'Alice' }}
+        currentDocumentId="doc-auth"
+        canPresent={false}
+        presentDisabledReason="Alice is presenting"
+        onPresent={noop}
+        onCopyLink={noop}
+        onManageAccess={noop}
+        onPopOut={noop}
+        onClose={noop}
+      />
+    </div>
+  );
+}
+
 const meta = {
   title: 'Video/Document calls/DocumentCallPanel',
   component: DocumentCallPanel,
@@ -108,6 +145,13 @@ const args = {} as DocumentCallPanelProps;
 /** Mockup 06: Alice presents Auth architecture; Migration brief is up next. */
 export const Default: Story = { args, render: () => <Scene />, decorators: [themed('light')] };
 export const DefaultDark: Story = { args, render: () => <Scene />, decorators: [themed('dark')] };
+/** A participant who is not the host, while Alice presents: Present is disabled with the reason. */
+export const PresentBlocked: Story = {
+  args,
+  render: () => <BlockedScene />,
+  decorators: [themed('light')],
+};
+
 /** Nobody presenting — Present this document is live. */
 export const NobodyPresenting: Story = { args, render: () => <Scene presenter={null} />, decorators: [themed('light')] };
 /** Alone, two people still ringing, one who did not answer. */

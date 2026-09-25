@@ -103,3 +103,12 @@ export const PillTones: Story = {
     </div>
   ),
 };
+
+/** 2.391.1: `chevron="custom"` — no native arrow; the library chevron (the call-settings selects). */
+export const CustomChevron: Story = {
+  args: { options: providerOptions, value: 'anthropic', chevron: 'custom', wrapperClassName: 'w-72', onChange: () => {} },
+};
+export const CustomChevronDark: Story = {
+  ...CustomChevron,
+  decorators: [(S) => <div data-theme="dark" className="bg-surface p-4"><S /></div>],
+};

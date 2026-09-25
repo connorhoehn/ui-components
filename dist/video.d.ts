@@ -342,7 +342,7 @@ export declare interface CallParticipantStripProps {
     style?: CSSProperties;
 }
 
-export declare function CallPeopleList({ people, count, followingUserId, canModerate, onInvite, onFollow, onMuteForMe, onMute, onRemove, onMakeHost, onRingAgain, hideHeading, className, 'data-testid': testId, }: CallPeopleListProps): JSX.Element;
+export declare function CallPeopleList({ people, count, followingUserId, canModerate, onInvite, onFollow, onMuteForMe, onMute, onRemove, onMakeHost, onRingAgain, onOpenSelfSettings, onLeave, hideHeading, className, 'data-testid': testId, }: CallPeopleListProps): JSX.Element;
 
 export declare interface CallPeopleListProps {
     people: CallPerson[];
@@ -358,6 +358,10 @@ export declare interface CallPeopleListProps {
     onRemove?: (userId: string) => void;
     onMakeHost?: (userId: string) => void;
     onRingAgain?: (userId: string) => void;
+    /** Your own row's ⋯ menu (2.391.1, mockup 06): "Call settings". */
+    onOpenSelfSettings?: () => void;
+    /** Your own row's ⋯ menu: "Leave call". */
+    onLeave?: () => void;
     /** Hide the "People N · Invite…" heading (a host that draws its own). */
     hideHeading?: boolean;
     className?: string;
@@ -998,6 +1002,11 @@ export declare interface DocumentCallPanelProps {
     /** The document the reader has open — what "Present this document" presents. */
     currentDocumentId: string;
     canPresent: boolean;
+    /**
+     * Whether the viewer may press Present. True while someone else presents
+     * means "take over" (the button stays live, titled "Take over from Alice");
+     * false disables it with `presentDisabledReason`.
+     */
     /** Title of the disabled Present button, e.g. "Alice is presenting". */
     presentDisabledReason?: string;
     /** A document id to present, or null to stop. */
@@ -2972,12 +2981,18 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
+        canvasLineSpacing: {
             /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
              */
-            insertDiagram: (id?: string) => ReturnType;
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
         };
     }
 }
@@ -2998,18 +3013,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
+        diagramMacro: {
             /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
              */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -3053,9 +3062,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -3063,12 +3075,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

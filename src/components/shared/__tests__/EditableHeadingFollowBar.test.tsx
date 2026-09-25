@@ -41,3 +41,20 @@ describe('FollowBanner bar', () => {
     expect(screen.getByText('Stop following')).toBeTruthy();
   });
 });
+
+import { SegmentedControl } from '../SegmentedControl';
+import { Select } from '../../forms/Select';
+
+describe('SegmentedControl tone="accent" / Select chevron="custom"', () => {
+  it('paints the chosen segment in the soft brand fill', () => {
+    render(<SegmentedControl tone="accent" options={[{ value: 'v', label: 'Video' }, { value: 'a', label: 'Audio' }]} value="v" onChange={() => {}} data-testid="seg" />);
+    expect(screen.getByTestId('seg-v').className).toContain('bg-primary-bg');
+    expect(screen.getByTestId('seg-a').className).not.toContain('bg-primary-bg');
+  });
+
+  it('drops the native arrow and draws the library chevron', () => {
+    const { container } = render(<Select chevron="custom" options={[{ value: 'x', label: 'X' }]} value="x" onChange={() => {}} data-testid="sel" />);
+    expect(screen.getByTestId('sel').className).toContain('appearance-none');
+    expect(container.querySelector('svg')).toBeTruthy();
+  });
+});

@@ -68,6 +68,14 @@ export interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement
    * caller can restyle the capsule without losing the layout hook.
    */
   wrapperClassName?: string;
+  /**
+   * `native` (default): the browser's own arrow. `custom` (2.391.1): the
+   * default field with `appearance-none` and the library's chevron drawn over
+   * its right edge, so the field looks the same in every browser and theme
+   * (the call-settings selects). The select is then wrapped in a relative
+   * `<span>` that takes `wrapperClassName`.
+   */
+  chevron?: 'native' | 'custom';
   'data-testid'?: string;
 }
 
@@ -101,6 +109,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
     disabled = false,
     className,
     wrapperClassName,
+    chevron = 'native',
     'data-testid': testId,
     'aria-invalid': ariaInvalidProp,
     value,
@@ -176,7 +185,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
               // native appearance show through via a Tailwind `select` reset
               // that keeps the arrow. We use `appearance-auto` to restore the
               // native arrow on modern browsers.
-              'appearance-auto',
+              chevron === 'custom' ? 'appearance-none pr-8' : 'appearance-auto',
               'focus:bg-surface focus:border-info focus:ring-1 focus:ring-info/40',
               'disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-hover',
               invalid
@@ -194,6 +203,29 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
 
   // The default variant is the bare element, with no wrapper of any kind —
   // callers position it directly and a surprise <span> would break them.
+  if (!pill && !ghost && chevron === 'custom') {
+    return (
+      <span className={cn('relative flex w-full items-center', wrapperClassName)}>
+        {select}
+        <svg
+          aria-hidden="true"
+          focusable="false"
+          width="14"
+          height="14"
+          viewBox="0 0 16 16"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={cn('pointer-events-none absolute right-3 top-1/2 -translate-y-1/2', invalid ? 'text-danger-fg' : 'text-text-secondary')}
+        >
+          <path d="M4 6l4 4 4-4" />
+        </svg>
+      </span>
+    );
+  }
+
   if (!pill) return select;
 
   return (

@@ -377,3 +377,42 @@ describe('CallDock camera-off audio (REQUEST A-4)', () => {
     expect(screen.queryByTestId('call-tile-al-media-sink')).toBeNull();
   });
 });
+
+describe('2.391.1 mockup-first follow-ups', () => {
+  it('Present stays live as "take over" when the viewer may present over someone else', () => {
+    const onPresent = vi.fn();
+    panel({ onPresent, canPresent: true, presenting: { documentId: 'a', userId: 'al', name: 'Alice' } });
+    const btn = screen.getByTestId('call-present') as HTMLButtonElement;
+    expect(btn.disabled).toBe(false);
+    expect(btn.title).toBe('Take over from Alice');
+    expect(btn.textContent).toContain('Present this document');
+    fireEvent.click(btn);
+    expect(onPresent).toHaveBeenCalledWith('a');
+  });
+
+  it('your own row has a ⋯ menu with Call settings and Leave call', () => {
+    const onLeave = vi.fn();
+    const base = { isHost: false, state: 'in-call' as const, audioOn: true, cameraOn: true, screenSharing: false, presenting: false };
+    panel({
+      people: {
+        people: [{ ...base, userId: 'me', name: 'Connor', isLocal: true, isHost: true }],
+        count: 1,
+        canModerate: true,
+        onInvite: noop,
+        onFollow: noop,
+        onMuteForMe: noop,
+        onOpenSelfSettings: noop,
+        onLeave,
+      },
+    });
+    fireEvent.click(screen.getByTestId('call-person-menu-me'));
+    expect(screen.getByText('Call settings')).toBeTruthy();
+    fireEvent.click(screen.getByText('Leave call'));
+    expect(onLeave).toHaveBeenCalled();
+  });
+
+  it('a camera-off dock tile is the grey tile', () => {
+    render(<CallDock {...dockBase} />);
+    expect(screen.getByTestId('call-tile-al').className).toContain('bg-video-tile-off');
+  });
+});

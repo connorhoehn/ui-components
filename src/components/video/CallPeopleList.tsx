@@ -48,6 +48,10 @@ export interface CallPeopleListProps {
   onRemove?: (userId: string) => void;
   onMakeHost?: (userId: string) => void;
   onRingAgain?: (userId: string) => void;
+  /** Your own row's ⋯ menu (2.391.1, mockup 06): "Call settings". */
+  onOpenSelfSettings?: () => void;
+  /** Your own row's ⋯ menu: "Leave call". */
+  onLeave?: () => void;
   /** Hide the "People N · Invite…" heading (a host that draws its own). */
   hideHeading?: boolean;
   className?: string;
@@ -97,6 +101,8 @@ export function CallPeopleList({
   onRemove,
   onMakeHost,
   onRingAgain,
+  onOpenSelfSettings,
+  onLeave,
   hideHeading = false,
   className,
   'data-testid': testId = 'call-people-list',
@@ -130,6 +136,10 @@ export function CallPeopleList({
             if (onMute) menu.push({ label: 'Mute', onSelect: () => onMute(p.userId), disabled: !p.audioOn });
             if (onMakeHost && !p.isHost) menu.push({ label: 'Make host', onSelect: () => onMakeHost(p.userId) });
             if (onRemove) menu.push({ label: 'Remove from call', danger: true, onSelect: () => onRemove(p.userId) });
+          }
+          if (p.isLocal) {
+            if (onOpenSelfSettings) menu.push({ label: 'Call settings', onSelect: onOpenSelfSettings, 'data-testid': 'call-person-self-settings' });
+            if (onLeave) menu.push({ label: 'Leave call', danger: true, onSelect: onLeave, 'data-testid': 'call-person-self-leave' });
           }
           if (p.state === 'missed' && onRingAgain) {
             menu.push({ label: 'Ring again', onSelect: () => onRingAgain(p.userId) });

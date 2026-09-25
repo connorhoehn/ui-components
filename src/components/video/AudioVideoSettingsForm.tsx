@@ -176,6 +176,7 @@ export function AudioVideoSettingsForm({
           </InlineAlert>
         ) : (
           <Select
+              chevron="custom"
             id={`${testId}-mic`}
             value={value.microphoneId ?? devices.microphones[0]?.deviceId ?? ''}
             onChange={(e) => set({ microphoneId: e.target.value })}
@@ -217,6 +218,7 @@ export function AudioVideoSettingsForm({
           <>
             <FieldLabel htmlFor={`${testId}-speaker`}>Speakers</FieldLabel>
             <Select
+              chevron="custom"
               id={`${testId}-speaker`}
               value={value.speakerId ?? devices.speakers[0]?.deviceId ?? ''}
               onChange={(e) => set({ speakerId: e.target.value })}
@@ -240,6 +242,7 @@ export function AudioVideoSettingsForm({
         ) : (
           <>
             <Select
+              chevron="custom"
               id={`${testId}-camera`}
               value={value.cameraId ?? devices.cameras[0]?.deviceId ?? ''}
               onChange={(e) => set({ cameraId: e.target.value })}
@@ -268,11 +271,13 @@ export function AudioVideoSettingsForm({
             Quality
           </label>
           <Select
+              chevron="custom"
             id={`${testId}-quality`}
             value={value.quality}
             onChange={(e) => set({ quality: e.target.value as AudioVideoSettings['quality'] })}
             options={QUALITY_OPTIONS}
-            className="h-9 w-32 text-sm"
+            className="h-9 w-full text-sm"
+              wrapperClassName="w-32 shrink-0"
             data-testid="settings-quality"
           />
         </div>
@@ -307,6 +312,7 @@ export function AudioVideoSettingsForm({
           <div className="flex items-center justify-between gap-3">
             <label htmlFor={`${testId}-fps`} className="text-sm text-text-primary">Frame rate</label>
             <Select
+              chevron="custom"
               id={`${testId}-fps`}
               value={String(value.frameRate)}
               onChange={(e) => {
@@ -314,7 +320,8 @@ export function AudioVideoSettingsForm({
                 set({ frameRate: v === 'auto' ? 'auto' : (Number(v) as 30 | 15) });
               }}
               options={FRAME_RATE_OPTIONS}
-              className="h-9 w-32 text-sm"
+              className="h-9 w-full text-sm"
+              wrapperClassName="w-32 shrink-0"
               data-testid="settings-frame-rate"
             />
           </div>
