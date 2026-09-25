@@ -36,7 +36,7 @@ export type FileKind =
   | 'workflow';
 
 /** `outline` (since 2.386.5): the glyph alone, in the kind's colour, no box fill — an editor's title mark. */
-export type FileKindMarkVariant = 'tinted' | 'plain' | 'glyph' | 'outline';
+export type FileKindMarkVariant = 'tinted' | 'plain' | 'glyph' | 'outline' | 'app';
 
 export type FileKindMarkSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
@@ -55,6 +55,11 @@ export interface FileKindMarkProps {
    * reader scans for drawn in colour — a deck as a three-colour bar chart, a
    * diagram as two linked nodes in the brand colour. A selected tree row
    * turns the neutral ink to its own text colour (`currentColor`).
+   */
+  /*
+   * `app` (2.389.6) is a result list's mark: a page is the plain outline
+   * sheet, a presentation the red "P" slide tile people know from
+   * PowerPoint, a diagram the brand nodes.
    */
   variant?: FileKindMarkVariant;
   className?: string;
@@ -93,6 +98,9 @@ const TONE: Record<FileKind, string> = {
 };
 
 const PLAIN = 'bg-transparent text-text-secondary';
+
+/** `app` glyph sizes: a result row's 28px mark at `xl`. */
+const APP_GLYPH: Record<FileKindMarkSize, number> = { sm: 14, md: 18, lg: 22, xl: 28, '2xl': 36 };
 
 const BOX: Record<FileKindMarkSize, string> = {
   sm: 'h-[18px] w-[18px] rounded',
@@ -177,6 +185,18 @@ function DeckBarsGlyph({ size }: GlyphProps) {
 }
 
 /** A diagram, as the Folders tree draws it: two nodes and a connector. */
+/** A slide tile with a "P": what a person recognises as a deck file. */
+function SlideTileGlyph({ size }: GlyphProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" data-glyph="slide-tile">
+      <rect x="7" y="3.5" width="14" height="17" rx="1.5" className="fill-danger-bg stroke-danger" strokeWidth="1.2" />
+      <path d="M14 8h4M14 11h4M14 14h4" className="stroke-danger" strokeWidth="1.2" strokeLinecap="round" />
+      <rect x="2.5" y="6.5" width="11" height="11" rx="1.5" className="fill-danger" />
+      <path d="M6.3 15V9.2h2.3a1.8 1.8 0 0 1 0 3.6H6.3" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function DiagramNodesGlyph({ size }: GlyphProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" aria-hidden="true" data-glyph="diagram-nodes" className="text-primary">
@@ -191,12 +211,14 @@ const GLYPH_BOX: Record<FileKindMarkSize, string> = { sm: 'h-5 w-5', md: 'h-6 w-
 const GLYPH_ONLY: Record<FileKindMarkSize, number> = { sm: 18, md: 20, lg: 24, xl: 28, '2xl': 36 };
 
 export function FileKindMark({ kind, size = 'md', variant = 'tinted', label, className, 'data-testid': testId = 'file-kind-mark' }: FileKindMarkProps) {
-  const px = variant === 'glyph' ? GLYPH_ONLY[size] : GLYPH[size];
+  const px = variant === 'glyph' ? GLYPH_ONLY[size] : variant === 'app' ? APP_GLYPH[size] : GLYPH[size];
   const special = variant === 'glyph'
     ? (kind === 'presentation' ? <DeckBarsGlyph size={px} /> : kind === 'diagram' ? <DiagramNodesGlyph size={px} /> : null)
-    : null;
+    : variant === 'app'
+      ? (kind === 'presentation' ? <SlideTileGlyph size={APP_GLYPH[size]} /> : kind === 'diagram' ? <DiagramNodesGlyph size={APP_GLYPH[size]} /> : null)
+      : null;
   // A big glyph keeps a ~2px line, not a scaled-up 3.4px one.
-  const thin = size === '2xl' ? { strokeWidth: 1 } : {};
+  const thin = size === '2xl' || variant === 'app' ? { strokeWidth: 1 } : {};
   const glyph = special ?? {
     page: <DocumentIcon size={px} {...thin} />,
     presentation: <SlidesGlyph size={px} {...thin} />,
@@ -217,7 +239,7 @@ export function FileKindMark({ kind, size = 'md', variant = 'tinted', label, cla
       data-kind={kind}
       data-variant={variant}
       {...(label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': true })}
-      className={cn('inline-grid shrink-0 place-items-center', variant === 'glyph' ? GLYPH_BOX[size] : BOX[size], variant === 'glyph' ? 'bg-transparent' : variant === 'outline' ? cn('bg-transparent', outlineTone(kind)) : variant === 'plain' ? PLAIN : TONE[kind], className)}
+      className={cn('inline-grid shrink-0 place-items-center', variant === 'glyph' || variant === 'app' ? GLYPH_BOX[size] : BOX[size], variant === 'glyph' ? 'bg-transparent' : variant === 'app' ? PLAIN : variant === 'outline' ? cn('bg-transparent', outlineTone(kind)) : variant === 'plain' ? PLAIN : TONE[kind], className)}
     >
       {glyph}
     </span>

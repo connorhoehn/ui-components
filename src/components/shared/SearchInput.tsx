@@ -30,9 +30,13 @@ export interface SearchInputProps {
   className?: string;
   /**
    * `sm` (default) is the 13px field. `md` (2.386.3) is the Documents
-   * explorer's: a 36px field, 15px text and an 18px glass.
+   * explorer's: a 36px field, 15px text and an 18px glass. `lg` (2.389.6) is
+   * a page's primary search: a 44px field, 16px text, a 20px glass and a
+   * larger clear ×.
    */
-  size?: 'sm' | 'md';
+  size?: 'sm' | 'md' | 'lg';
+  /** Keys on the field — e.g. ArrowDown into a result list. Since 2.389.6. */
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   /** Class for the `<input>` itself — the one `className` cannot reach. */
   inputClassName?: string;
   style?: React.CSSProperties;
@@ -76,6 +80,7 @@ function SearchInput({
   className,
   inputClassName,
   size = 'sm',
+  onKeyDown,
   style,
   autoFocus,
   'aria-label': ariaLabel,
@@ -89,7 +94,7 @@ function SearchInput({
     >
       {/* Search icon — absolutely positioned inside the input gutter. */}
       <svg
-        className={cn('absolute pointer-events-none', size === 'md' ? 'left-3 h-[18px] w-[18px]' : 'left-3 w-3.5 h-3.5', palette.icon)}
+        className={cn('absolute pointer-events-none', size === 'lg' ? 'left-4 h-5 w-5' : size === 'md' ? 'left-3 h-[18px] w-[18px]' : 'left-3 w-3.5 h-3.5', palette.icon)}
         viewBox="0 0 16 16"
         fill="none"
         aria-hidden="true"
@@ -112,6 +117,7 @@ function SearchInput({
         type="text"
         value={value}
         onChange={e => onChange(e.target.value)}
+        onKeyDown={onKeyDown}
         placeholder={placeholder ?? 'Search…'}
         autoFocus={autoFocus}
         // A placeholder is only a LAST-RESORT accessible name, and it is gone
@@ -122,8 +128,8 @@ function SearchInput({
         aria-label={ariaLabel ?? placeholder ?? 'Search'}
         data-testid={testId}
         className={cn(
-          'w-full pr-7 rounded-md border focus:outline-none focus:ring-2 transition-colors',
-          size === 'md' ? 'h-9 pl-10 text-[15px]' : 'pl-8 py-1.5 text-sm',
+          'w-full border focus:outline-none focus:ring-2 transition-colors',
+          size === 'lg' ? 'h-11 pl-12 pr-11 text-base rounded-lg' : size === 'md' ? 'h-9 pl-10 pr-7 text-[15px] rounded-md' : 'pl-8 pr-7 py-1.5 text-sm rounded-md',
           palette.field,
           inputClassName,
         )}
@@ -135,10 +141,10 @@ function SearchInput({
             onChange('');
             onClear?.();
           }}
-          className={cn('absolute right-2 p-0.5 rounded', palette.clear)}
+          className={cn('absolute rounded', size === 'lg' ? 'right-3 p-1' : 'right-2 p-0.5', palette.clear)}
           aria-label="Clear search"
         >
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <svg width={size === 'lg' ? 16 : 12} height={size === 'lg' ? 16 : 12} viewBox="0 0 12 12" fill="none">
             <path
               d="M2 2l8 8M10 2l-8 8"
               stroke="currentColor"

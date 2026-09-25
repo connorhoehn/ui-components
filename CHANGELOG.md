@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.389.6] — 2026-09-25
+
+The realtime-examples All documents page (documents-detail lane L2).
+
+### Added
+- **DocumentResultList** — search results as rows: kind mark, bold title, a
+  one-line summary, folder · age; Add/Added toggle and ⋯ menu outside the open
+  target; roving tab stop (arrows/Home/End, Enter opens); the current row is
+  tinted with a left bar; rows drag the prompt-context payload.
+- **AttachToggle** (`aria-pressed` "⊕ Add" / "✓ Added"), **FilePickerButton**.
+- Icons: `UploadIcon`, `CheckIcon`, `PlusCircleIcon`, `SlidersIcon`.
+- `FileKindMark variant="app"` (a deck is the red "P" slide tile),
+  `SearchInput size="lg"` (44px) + `onKeyDown`, `DropdownMenu triggerVariant`
+  (`primary` / `secondary` / `link`), `FilterPopover icon` + `size="lg"` icon trigger.
+
 ## [2.389.4] — 2026-09-24
 
 Guide-record polish against the Distillation mockup. Defaults for other

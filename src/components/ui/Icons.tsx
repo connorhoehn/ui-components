@@ -625,3 +625,44 @@ export function WarningIcon({ size = 16, ...rest }: GlyphProps) {
     </svg>
   );
 }
+
+/** A tray with an arrow leaving it: "upload". Since 2.389.6. */
+export function UploadIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M8 10.5V2.5" />
+      <path d="M5 5.5l3-3 3 3" />
+      <path d="M2.5 10v2.5a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V10" />
+    </svg>
+  );
+}
+
+/** A tick: "done", "added". Since 2.389.6. */
+export function CheckIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M3 8.5l3.2 3L13 4.5" />
+    </svg>
+  );
+}
+
+/** A plus in a ring: "add this". Since 2.389.6. */
+export function PlusCircleIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <circle cx="8" cy="8" r="6" />
+      <path d="M8 5.5v5M5.5 8h5" />
+    </svg>
+  );
+}
+
+/** Two sliders: "refine these results". Since 2.389.6. */
+export function SlidersIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M2.5 5h6M11.5 5h2M2.5 11h2M7.5 11h6" />
+      <circle cx="10" cy="5" r="1.5" />
+      <circle cx="6" cy="11" r="1.5" />
+    </svg>
+  );
+}

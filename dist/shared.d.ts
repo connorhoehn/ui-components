@@ -113,6 +113,24 @@ export declare function ArtifactTile({ name, type, url }: {
 /** An @ sign: mentions, "someone named you". */
 export declare function AtIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+export declare function AttachToggle({ attached, onToggle, labels, size, tabIndex, className, 'aria-label': ariaLabel, 'data-testid': testId, }: AttachToggleProps): JSX.Element;
+
+export declare interface AttachToggleProps {
+    attached: boolean;
+    onToggle: () => void;
+    labels?: {
+        add: string;
+        added: string;
+    };
+    size?: 'sm' | 'md';
+    /** Names the thing, e.g. "Add Release plan to the prompt". */
+    'aria-label'?: string;
+    /** -1 inside a roving list, where only the current row's controls are tab stops. */
+    tabIndex?: number;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function Avatar({ name, size, initials: initialsProp, color, src, icon, glyph, foreground, tone, autoContrast, className, style, title, showTitle, }: AvatarProps): JSX.Element;
 
 export declare function AvatarGroup({ names, items, maxVisible, size, className, total, }: AvatarGroupProps): JSX.Element;
@@ -721,6 +739,9 @@ export declare interface CheckboxProps {
  * every one of those.
  */
 declare type CheckboxShape = 'square' | 'round';
+
+/** A tick: "done", "added". Since 2.389.6. */
+export declare function CheckIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** A ticked box: "checklist". Since 2.386.5. */
 export declare function ChecklistIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -1368,8 +1389,52 @@ export declare interface DockedPanelProviderProps extends Partial<DockedPanelCon
     children: ReactNode;
 }
 
+/** "just now", "15m ago", "2h ago", "Yesterday", "3d ago", "Sep 12". */
+export declare function documentAgeLabel(value: string | number | Date | null | undefined, now?: number): string | null;
+
 /** A page with a folded corner: a document, a file. */
 export declare function DocumentIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+export declare interface DocumentResultItem {
+    id: string;
+    title: string;
+    /** One line: the document's opening sentence or description. */
+    summary?: string | null;
+    kind: FileKind;
+    /** The folder's name; absent = no folder line segment. */
+    folder?: string | null;
+    updatedAt?: string | number | Date | null;
+    /** In the working set (the toggle reads "Added"). */
+    attached?: boolean;
+}
+
+export declare function DocumentResultList({ items, currentId, onCurrentChange, onOpen, onToggleAttach, draggable, onDragStartItem, rowMenu, emptyState, now, toggleLabels, 'aria-label': ariaLabel, className, 'data-testid': testId, }: DocumentResultListProps): JSX.Element;
+
+export declare interface DocumentResultListProps {
+    items: readonly DocumentResultItem[];
+    currentId?: string | null;
+    /** Keyboard focus moved to a row. */
+    onCurrentChange?: (id: string) => void;
+    onOpen: (item: DocumentResultItem) => void;
+    /** Omit to draw no toggle. */
+    onToggleAttach?: (item: DocumentResultItem) => void;
+    /** Default true. */
+    draggable?: boolean;
+    /** Extra drag data (called after the prompt-context payload is written). */
+    onDragStartItem?: (item: DocumentResultItem, dataTransfer: DataTransfer) => void;
+    /** The row's ⋯ menu; null or empty = no menu. */
+    rowMenu?: (item: DocumentResultItem) => DropdownMenuSection[] | null;
+    emptyState?: ReactNode;
+    /** For the age labels; default Date.now(). */
+    now?: number;
+    toggleLabels?: {
+        add: string;
+        added: string;
+    };
+    'aria-label'?: string;
+    className?: string;
+    'data-testid'?: string;
+}
 
 export declare function DotMeter({ label, value, segments, showPercent, note, warnAbove, tone, className, 'data-testid': testId, }: DotMeterProps): JSX.Element;
 
@@ -1481,7 +1546,7 @@ export declare interface DrawerProps {
  */
 export declare function drawnParticles(count: number, density: number | undefined, width: number, height: number): number;
 
-export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, triggerTabIndex, triggerTestId, align, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
+export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, triggerVariant, triggerTabIndex, triggerTestId, align, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
 
 export declare interface DropdownMenuItem {
     /** Visible item label. */
@@ -1519,6 +1584,12 @@ export declare interface DropdownMenuProps {
     triggerTitle?: string;
     /** Optional className for the trigger button. */
     triggerClassName?: string;
+    /**
+     * The trigger's look. `default` is the small bordered menu button;
+     * `primary` is a 40px brand button ("New ▾"), `secondary` a 40px bordered
+     * one, `link` bare secondary text ("Relevance ▾"). Since 2.389.6.
+     */
+    triggerVariant?: 'default' | 'primary' | 'secondary' | 'link';
     /**
      * Tab order of the trigger. Default undefined (a normal tab stop).
      *
@@ -1792,7 +1863,24 @@ export declare interface FileKindMarkProps {
 export declare type FileKindMarkSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
 /** `outline` (since 2.386.5): the glyph alone, in the kind's colour, no box fill — an editor's title mark. */
-export declare type FileKindMarkVariant = 'tinted' | 'plain' | 'glyph' | 'outline';
+export declare type FileKindMarkVariant = 'tinted' | 'plain' | 'glyph' | 'outline' | 'app';
+
+export declare function FilePickerButton({ onFiles, accept, multiple, variant, icon, disabled, children, className, 'aria-label': ariaLabel, 'data-testid': testId, }: FilePickerButtonProps): JSX.Element;
+
+export declare interface FilePickerButtonProps {
+    onFiles: (files: File[]) => void;
+    /** The input's `accept`, e.g. ".md,.txt". */
+    accept?: string;
+    multiple?: boolean;
+    /** `secondary` is a 40px bordered button, `primary` the brand one. */
+    variant?: 'secondary' | 'primary';
+    icon?: ReactNode;
+    disabled?: boolean;
+    children: ReactNode;
+    className?: string;
+    'aria-label'?: string;
+    'data-testid'?: string;
+}
 
 export declare function FileUploadDrop({ accept, maxSize, multiple, onFiles, onError, disabled, label, className, 'data-testid': testId, inputTestId, inputProps, }: FileUploadDropProps): JSX.Element;
 
@@ -1854,7 +1942,7 @@ export declare interface FilterChipProps {
 /** A funnel: "filter this list". Since 2.385.0. */
 export declare function FilterIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function FilterPopover({ children, label, activeCount, onClear, clearLabel, open: controlledOpen, onOpenChange, placement, size, trigger, panelLabel, className, panelClassName, 'data-testid': testId, }: FilterPopoverProps): JSX.Element;
+export declare function FilterPopover({ children, label, activeCount, onClear, clearLabel, open: controlledOpen, onOpenChange, placement, size, trigger, panelLabel, className, panelClassName, icon, 'data-testid': testId, }: FilterPopoverProps): JSX.Element;
 
 export declare interface FilterPopoverProps {
     /** The filter controls. */
@@ -1889,6 +1977,8 @@ export declare interface FilterPopoverProps {
     panelLabel?: string;
     className?: string;
     panelClassName?: string;
+    /** Replaces the funnel glyph (e.g. `SlidersIcon`). Since 2.389.6. */
+    icon?: ReactNode;
     'data-testid'?: string;
 }
 
@@ -3190,6 +3280,9 @@ export declare function PhoneIcon({ size, ...rest }: GlyphProps): JSX.Element;
 /** A pushpin: "keep this at the top". */
 export declare function PinIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+/** A plus in a ring: "add this". Since 2.389.6. */
+export declare function PlusCircleIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 /** A plus: "make a new one". */
 export declare function PlusIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -3725,7 +3818,7 @@ export declare interface ScoreBarGaugeProps {
  */
 export declare function SearchIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function SearchInput({ value, onChange, placeholder, onClear, tone, className, inputClassName, size, style, autoFocus, 'aria-label': ariaLabel, 'data-testid': testId, }: SearchInputProps): default_2.JSX.Element;
+export declare function SearchInput({ value, onChange, placeholder, onClear, tone, className, inputClassName, size, onKeyDown, style, autoFocus, 'aria-label': ariaLabel, 'data-testid': testId, }: SearchInputProps): default_2.JSX.Element;
 
 export declare interface SearchInputProps {
     value: string;
@@ -3746,9 +3839,13 @@ export declare interface SearchInputProps {
     className?: string;
     /**
      * `sm` (default) is the 13px field. `md` (2.386.3) is the Documents
-     * explorer's: a 36px field, 15px text and an 18px glass.
+     * explorer's: a 36px field, 15px text and an 18px glass. `lg` (2.389.6) is
+     * a page's primary search: a 44px field, 16px text, a 20px glass and a
+     * larger clear ×.
      */
-    size?: 'sm' | 'md';
+    size?: 'sm' | 'md' | 'lg';
+    /** Keys on the field — e.g. ArrowDown into a result list. Since 2.389.6. */
+    onKeyDown?: (event: default_2.KeyboardEvent<HTMLInputElement>) => void;
     /** Class for the `<input>` itself — the one `className` cannot reach. */
     inputClassName?: string;
     style?: default_2.CSSProperties;
@@ -4021,6 +4118,9 @@ export declare interface SliderProps {
     className?: string;
     'data-testid'?: string;
 }
+
+/** Two sliders: "refine these results". Since 2.389.6. */
+export declare function SlidersIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** A smiling face: pick an emoji. The button, not the emoji — a reaction a
  *  person actually left stays the character they chose. */
@@ -5186,6 +5286,9 @@ export declare interface TypingIndicatorProps {
 /** A curved arrow back: "undo". Since 2.386.5. */
 export declare function UndoIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+/** A tray with an arrow leaving it: "upload". Since 2.389.6. */
+export declare function UploadIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare function useCommandPalette(): CommandPaletteController;
 
 /**
@@ -5505,29 +5608,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
@@ -5557,6 +5637,29 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

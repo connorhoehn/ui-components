@@ -412,3 +412,11 @@ export { ChoiceList, ChoiceRow, ChoiceOption } from './ChoiceList';
 export type { ChoiceListProps, ChoiceRowProps, ChoiceOptionProps } from './ChoiceList';
 export { Text, T } from './Text';
 export type { TextProps } from './Text';
+
+// All documents page (realtime-examples documents-detail lane L2) — 2.389.6.
+export { DocumentResultList, documentAgeLabel } from './DocumentResultList';
+export type { DocumentResultListProps, DocumentResultItem } from './DocumentResultList';
+export { AttachToggle } from './AttachToggle';
+export type { AttachToggleProps } from './AttachToggle';
+export { FilePickerButton } from './FilePickerButton';
+export type { FilePickerButtonProps } from './FilePickerButton';

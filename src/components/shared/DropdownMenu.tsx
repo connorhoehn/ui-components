@@ -66,6 +66,12 @@ export interface DropdownMenuProps {
   /** Optional className for the trigger button. */
   triggerClassName?: string;
   /**
+   * The trigger's look. `default` is the small bordered menu button;
+   * `primary` is a 40px brand button ("New ▾"), `secondary` a 40px bordered
+   * one, `link` bare secondary text ("Relevance ▾"). Since 2.389.6.
+   */
+  triggerVariant?: 'default' | 'primary' | 'secondary' | 'link';
+  /**
    * Tab order of the trigger. Default undefined (a normal tab stop).
    *
    * `-1` is for a menu that lives inside a ROVING-FOCUS list — one trigger per
@@ -89,11 +95,26 @@ export interface DropdownMenuProps {
   'data-testid'?: string;
 }
 
+const TRIGGER_VARIANT: Record<NonNullable<DropdownMenuProps['triggerVariant']>, string> = {
+  default: 'rounded-md border border-[var(--color-border)] px-2 py-1 text-base leading-none text-[var(--color-text-secondary)] bg-transparent hover:bg-[var(--color-surface-hover)]',
+  primary: 'h-10 rounded-lg border-none px-4 text-[15px] font-semibold leading-none bg-primary text-on-primary hover:bg-primary-hover',
+  secondary: 'h-10 rounded-lg border border-border px-4 text-[15px] font-medium leading-none bg-surface text-text-primary hover:bg-surface-hover',
+  link: 'rounded px-1 py-0.5 border-none text-sm leading-none bg-transparent text-text-secondary hover:text-text-primary hover:bg-surface-hover',
+};
+
+const TRIGGER_OPEN: Record<NonNullable<DropdownMenuProps['triggerVariant']>, string> = {
+  default: 'bg-[var(--color-surface-hover)]',
+  primary: 'bg-primary-hover',
+  secondary: 'bg-surface-hover',
+  link: 'text-text-primary',
+};
+
 export function DropdownMenu({
   trigger,
   triggerLabel = 'Open menu',
   triggerTitle,
   triggerClassName,
+  triggerVariant = 'default',
   triggerTabIndex,
   triggerTestId,
   align = 'start',
@@ -139,12 +160,11 @@ export function DropdownMenu({
         tabIndex={triggerTabIndex}
         data-testid={triggerTestId}
         onClick={() => setOpen((v) => !v)}
+        data-variant={triggerVariant}
         className={cn(
-          'inline-flex items-center justify-center gap-1.5 cursor-pointer',
-          'rounded-md border border-[var(--color-border)] px-2 py-1',
-          'text-base leading-none text-[var(--color-text-secondary)]',
-          'bg-transparent hover:bg-[var(--color-surface-hover)] transition-colors duration-100',
-          open && 'bg-[var(--color-surface-hover)]',
+          'inline-flex items-center justify-center gap-1.5 cursor-pointer transition-colors duration-100',
+          TRIGGER_VARIANT[triggerVariant],
+          open && TRIGGER_OPEN[triggerVariant],
           triggerClassName,
         )}
       >

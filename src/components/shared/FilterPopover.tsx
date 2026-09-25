@@ -60,6 +60,8 @@ export interface FilterPopoverProps {
   panelLabel?: string;
   className?: string;
   panelClassName?: string;
+  /** Replaces the funnel glyph (e.g. `SlidersIcon`). Since 2.389.6. */
+  icon?: ReactNode;
   'data-testid'?: string;
 }
 
@@ -92,6 +94,7 @@ export function FilterPopover({
   panelLabel = 'Filters',
   className,
   panelClassName,
+  icon,
   'data-testid': testId = 'filter-popover',
 }: FilterPopoverProps) {
   const [ownOpen, setOwnOpen] = useState(false);
@@ -122,11 +125,13 @@ export function FilterPopover({
           : {})}
         className={cn(
           'inline-flex items-center gap-2 whitespace-nowrap',
-          trigger === 'icon' && 'relative h-9 w-9 justify-center px-0 py-0 text-text-secondary [&_svg]:h-[18px] [&_svg]:w-[18px]',
+          trigger === 'icon' && (size === 'lg'
+            ? 'relative h-11 w-11 justify-center rounded-lg px-0 py-0 text-text-secondary [&_svg]:h-5 [&_svg]:w-5'
+            : 'relative h-9 w-9 justify-center px-0 py-0 text-text-secondary [&_svg]:h-[18px] [&_svg]:w-[18px]'),
           active && 'border-primary-border text-primary-fg',
         )}
       >
-        <FunnelIcon />
+        {icon ?? <FunnelIcon />}
         {trigger === 'label' && <span>{label}</span>}
         {trigger === 'icon' && active && (
           <span aria-hidden="true" data-testid={`${testId}-dot`} className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-primary" />
