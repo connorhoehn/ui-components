@@ -2,13 +2,13 @@ import { a as e, i as t, n, o as r, r as i, t as a } from "./registry-DbX3MVAA.j
 import { i as o, n as s, r as c, t as l } from "./documentType-rRZpKWbO.js";
 import { n as u, t as d } from "./fieldType-CGXsQUaC.js";
 import "./types.js";
-import { A as f, C as p, D as m, E as h, M as g, O as _, S as v, T as y, _ as b, a as x, b as S, c as C, d as w, f as T, g as E, h as D, i as O, j as k, k as A, l as j, m as M, n as N, o as ee, p as te, r as ne, s as P, t as F, u as re, v as ie, w as ae, x as I, y as L } from "./hooks-DaH8_mLu.js";
-import { i as oe, n as se, r as ce, t as le } from "./apiBaseUrl-DLrXlmVj.js";
-import { n as R, r as ue, t as de } from "./IdentityContext-CQM1qwH6.js";
-import { a as fe, c as pe, d as me, f as he, h as ge, i as _e, l as ve, m as ye, n as be, o as xe, p as Se, r as Ce, s as we, t as Te, u as Ee } from "./useVideoSessions-DDcZSMLJ.js";
-import { n as De, t as Oe } from "./useWebSocket-D4PAHlj8.js";
-import { a as ke, i as Ae, n as je, o as Me, r as Ne, t as Pe } from "./useSocialProfile-5S1qyvsv.js";
-import { a as Fe, c as Ie, i as Le, l as Re, n as ze, o as Be, r as Ve, s as He, t as Ue, u as We } from "./useSyncConflicts-BspqjVsW.js";
+import { A as f, C as p, D as m, E as h, M as g, O as _, S as v, T as y, _ as b, a as x, b as S, c as C, d as w, f as T, g as E, h as D, i as ee, j as O, k, l as A, m as te, n as j, o as ne, p as re, r as ie, s as M, t as N, u as ae, v as oe, w as se, x as P, y as F } from "./hooks-DE01TNQU.js";
+import { i as ce, n as le, r as ue, t as de } from "./apiBaseUrl-DLrXlmVj.js";
+import { n as I, r as fe, t as pe } from "./IdentityContext-CQM1qwH6.js";
+import { a as me, c as he, d as ge, f as _e, h as ve, i as ye, l as be, m as xe, n as Se, o as Ce, p as we, r as Te, s as Ee, t as De, u as Oe } from "./useVideoSessions-WO-vkKyy.js";
+import { n as ke, t as Ae } from "./useWebSocket-CGc0yRhM.js";
+import { a as je, i as L, n as Me, o as Ne, r as Pe, t as Fe } from "./useSocialProfile-5S1qyvsv.js";
+import { a as Ie, c as Le, i as Re, l as R, n as ze, o as Be, r as Ve, s as He, t as Ue, u as We } from "./useSyncConflicts-BspqjVsW.js";
 import { i as Ge } from "./useDocumentTypes-DCKwxXn8.js";
 import { n as Ke, t as qe } from "./WebSocketContext-DUvjGLFq.js";
 import { t as Je } from "./usePrefersReducedMotion-Cllucr7i.js";
@@ -18,13 +18,13 @@ import { i as $e, n as et, r as tt, t as nt } from "./ToastProvider-BVUJvzmK.js"
 import { t as rt } from "./useEventCallback-Cwx9QVSi.js";
 import { n as it, r as at, t as ot } from "./useAudioRecorder-BhPxnLmg.js";
 import { a as st, c as ct, i as lt, n as ut, o as dt, r as ft, s as pt, t as mt } from "./usePromptContext-CUNhKC01.js";
-import { _ as ht, a as gt, b as _t, c as vt, d as yt, f as bt, g as xt, h as St, i as Ct, l as wt, m as Tt, n as Et, o as Dt, p as Ot, r as kt, s as At, t as jt, u as Mt, v as Nt, x as Pt, y as Ft } from "./FilterPopover-hqI1EQHR.js";
-import { $ as It, A as Lt, B as Rt, C as zt, D as Bt, E as Vt, F as Ht, G as Ut, H as Wt, I as Gt, J as Kt, K as qt, L as Jt, M as Yt, N as Xt, O as Zt, P as Qt, Q as $t, R as en, S as tn, T as nn, U as rn, V as an, W as on, X as sn, Y as cn, Z as ln, _ as un, _t as dn, a as fn, at as pn, b as mn, bt as hn, c as gn, ct as _n, d as vn, dt as yn, et as bn, f as xn, ft as Sn, g as Cn, gt as wn, h as Tn, ht as En, i as Dn, it as On, j as kn, k as An, l as jn, lt as Mn, m as Nn, mt as Pn, n as Fn, nt as In, o as Ln, ot as Rn, p as zn, pt as Bn, q as Vn, r as Hn, rt as Un, s as Wn, st as Gn, t as Kn, tt as qn, u as Jn, ut as Yn, v as Xn, vt as Zn, w as Qn, x as $n, y as er, yt as tr, z as nr } from "./shared-8uxyQ5sb.js";
+import { _ as ht, a as gt, b as _t, c as vt, d as yt, f as bt, g as xt, h as St, i as Ct, l as wt, m as Tt, n as Et, o as Dt, p as Ot, r as kt, s as At, t as jt, u as Mt, v as Nt, x as Pt, y as Ft } from "./FilterPopover-MLuQKP5r.js";
+import { $ as It, A as Lt, B as Rt, C as zt, D as Bt, E as Vt, F as Ht, G as Ut, H as Wt, I as Gt, J as Kt, K as qt, L as Jt, M as Yt, N as Xt, O as Zt, P as Qt, Q as $t, R as en, S as tn, T as nn, U as rn, V as an, W as on, X as sn, Y as cn, Z as ln, _ as un, _t as dn, a as fn, at as pn, b as mn, bt as hn, c as gn, ct as _n, d as vn, dt as yn, et as bn, f as xn, ft as Sn, g as Cn, gt as wn, h as Tn, ht as En, i as Dn, it as On, j as kn, k as An, l as jn, lt as Mn, m as Nn, mt as Pn, n as Fn, nt as In, o as Ln, ot as Rn, p as zn, pt as Bn, q as Vn, r as Hn, rt as Un, s as Wn, st as Gn, t as Kn, tt as qn, u as Jn, ut as Yn, v as Xn, vt as Zn, w as Qn, x as $n, y as er, yt as tr, z as nr } from "./shared-5-NrP9rh.js";
 import { _ as B, a as rr, c as ir, d as ar, f as or, g as sr, h as cr, i as lr, l as ur, n as dr, p as fr, r as pr, s as mr, u as hr } from "./overlayStack-CHdlnODN.js";
 import { t as gr } from "./Card-RQCeAPNU.js";
 import { a as _r, i as vr, n as yr, o as br, r as xr, t as Sr } from "./Table-CypeBEj0.js";
-import { t as V } from "./Chip-z-0KmFds.js";
-import { n as Cr, t as wr } from "./DataTable-DddDsoxo.js";
+import { t as V } from "./Chip-4IBrlduZ.js";
+import { n as Cr, t as wr } from "./DataTable-CcQZDoUb.js";
 import { t as H } from "./IconButton-DDeXW3mZ.js";
 import { $ as Tr, A as Er, B as Dr, C as Or, D as kr, E as Ar, F as jr, G as Mr, H as Nr, I as Pr, J as Fr, K as Ir, L as Lr, M as Rr, N as zr, O as Br, P as Vr, Q as Hr, R as Ur, S as Wr, T as Gr, U as Kr, V as qr, W as Jr, X as Yr, Y as Xr, Z as Zr, _ as Qr, a as $r, at as ei, b as ti, c as ni, ct as ri, d as ii, dt as ai, et as oi, f as U, ft as si, g as ci, h as li, ht as ui, i as di, it as fi, j as pi, k as mi, l as hi, lt as gi, m as _i, mt as vi, n as yi, nt as bi, o as xi, ot as Si, p as Ci, pt as wi, q as Ti, r as Ei, rt as Di, s as Oi, st as ki, t as Ai, tt as ji, u as Mi, ut as Ni, v as Pi, w as Fi, x as Ii, y as Li, z as Ri } from "./Icons-BSEVGRI6.js";
 import { n as zi, t as Bi } from "./Stack-CkiMw5K0.js";
@@ -45,7 +45,7 @@ import { a as ha, i as ga, n as _a, r as va, t as ya } from "./Sparkline-Ci_cmVW
 import { t as ba } from "./SkeletonCard-CGe8XFPB.js";
 import { a as xa, i as Sa, n as Ca, o as wa, r as Ta, t as Ea } from "./ChannelHeader-qvaO7oMR.js";
 import { n as Da, t as Oa } from "./Slider-izEq1bGO.js";
-import { n as ka, t as Aa } from "./Tabs-DjNsAODd.js";
+import { n as ka, t as Aa } from "./Tabs-CWj6ZL7J.js";
 import { n as ja, t as Ma } from "./DockedPanelContext-pH9A5z1h.js";
 import { t as Na } from "./Textarea-Dz4doxTv.js";
 import { a as Pa, i as Fa, n as Ia, r as La, t as W } from "./Avatar-DeJWic2B.js";
@@ -81,27 +81,27 @@ import { t as No } from "./Checkbox-Dftwml_V.js";
 import { n as Po, t as Fo } from "./FileKindMark-Pyuz3FHF.js";
 import { t as Io } from "./Tooltip-af4BrR7T.js";
 import { n as Lo, r as Ro, t as zo } from "./ReactionsOverlay-Ob1ecsgg.js";
-import { A as Bo, B as Vo, C as Ho, D as Uo, E as Wo, F as Go, G as Ko, H as qo, I as Jo, J as Yo, K as Xo, L as Zo, M as Qo, N as $o, O as es, P as ts, Q as ns, R as rs, S as is, T as as, U as os, V as ss, W as cs, X as ls, Y as us, Z as ds, _ as fs, a as ps, b as ms, c as hs, d as gs, f as _s, g as vs, h as ys, i as bs, j as xs, k as Ss, l as Cs, m as ws, n as Ts, o as Es, p as Ds, q as Os, r as ks, s as As, t as js, u as Ms, v as Ns, w as Ps, x as Fs, y as Is, z as Ls } from "./social-DBjX7toP.js";
-import { $ as Rs, A as zs, B as Bs, C as Vs, D as Hs, E as Us, F as Ws, G as Gs, H as Ks, I as qs, J as Js, K as Ys, L as Xs, M as Zs, N as Qs, O as $s, P as ec, Q as tc, R as nc, S as rc, T as ic, U as ac, V as oc, W as sc, X as cc, Y as lc, Z as uc, _ as dc, a as fc, at as pc, b as mc, c as hc, d as gc, et as _c, f as vc, g as yc, h as bc, i as xc, it as Sc, j as Cc, k as wc, l as Tc, m as Ec, n as Dc, nt as Oc, o as kc, p as Ac, q as jc, r as Mc, rt as Nc, s as Pc, t as Fc, tt as Ic, u as Lc, v as Rc, w as zc, x as Bc, y as Vc, z as Hc } from "./ConversationSurface-BtffnUkI.js";
+import { A as Bo, B as Vo, C as Ho, D as Uo, E as Wo, F as Go, G as Ko, H as qo, I as Jo, J as Yo, K as Xo, L as Zo, M as Qo, N as $o, O as es, P as ts, Q as ns, R as rs, S as is, T as as, U as os, V as ss, W as cs, X as ls, Y as us, Z as ds, _ as fs, a as ps, b as ms, c as hs, d as gs, f as _s, g as vs, h as ys, i as bs, j as xs, k as Ss, l as Cs, m as ws, n as Ts, o as Es, p as Ds, q as Os, r as ks, s as As, t as js, u as Ms, v as Ns, w as Ps, x as Fs, y as Is, z as Ls } from "./social-BGiXE4em.js";
+import { $ as Rs, A as zs, B as Bs, C as Vs, D as Hs, E as Us, F as Ws, G as Gs, H as Ks, I as qs, J as Js, K as Ys, L as Xs, M as Zs, N as Qs, O as $s, P as ec, Q as tc, R as nc, S as rc, T as ic, U as ac, V as oc, W as sc, X as cc, Y as lc, Z as uc, _ as dc, a as fc, at as pc, b as mc, c as hc, d as gc, et as _c, f as vc, g as yc, h as bc, i as xc, it as Sc, j as Cc, k as wc, l as Tc, m as Ec, n as Dc, nt as Oc, o as kc, p as Ac, q as jc, r as Mc, rt as Nc, s as Pc, t as Fc, tt as Ic, u as Lc, v as Rc, w as zc, x as Bc, y as Vc, z as Hc } from "./ConversationSurface-CBgepogL.js";
 import { t as Uc } from "./activationKey-CjbL3LUv.js";
 import { B as Wc, C as Gc, D as Kc, E as qc, F as Jc, I as Yc, L as Xc, M as Zc, N as Qc, O as $c, P as el, R as tl, S as nl, T as rl, V as il, _ as al, a as ol, b as sl, c as cl, d as ll, f as ul, g as dl, h as fl, i as pl, j as ml, l as hl, m as gl, n as _l, o as vl, p as yl, r as bl, s as xl, t as Sl, u as Cl, v as wl, w as Tl, x as El, y as Dl, z as Ol } from "./renderers-DIPIkjU7.js";
-import { A as kl, D as Al, E as jl, F as Ml, G as Nl, I as Pl, J as Fl, K as Il, L as Ll, M as Rl, N as zl, O as Bl, P as Vl, T as Hl, W as Ul, b as Wl, f as Gl, j as Kl, k as ql, q as Jl, t as Yl } from "./PresentationEditor-DwdXm8BQ.js";
+import { A as kl, D as Al, E as jl, F as Ml, G as Nl, I as Pl, J as Fl, K as Il, L as Ll, M as Rl, N as zl, O as Bl, P as Vl, T as Hl, W as Ul, b as Wl, f as Gl, j as Kl, k as ql, q as Jl, t as Yl } from "./PresentationEditor--1M_Ltax.js";
 import { n as Xl, r as Zl, t as Ql } from "./EventStreamContext-CLzG8O5_.js";
 import { B as $l, F as eu, H as tu, R as nu, Y as ru, _ as iu, bt as au, c as ou, d as su, dt as cu, f as lu, ft as uu, g as du, h as fu, ht as pu, m as mu, mt as hu, n as gu, p as _u, q as vu, rt as yu, t as bu, u as xu, v as Su, xt as Cu, y as wu } from "./services-EHYvvCQi.js";
 import { n as Tu, t as Eu } from "./ObservabilityContext-DpoDrm3T.js";
 import { t as Du } from "./useMeasuredWidth-BPrwD0q5.js";
-import { A as Ou, C as ku, D as Au, E as ju, F as Mu, I as Nu, L as Pu, M as Fu, N as Iu, O as Lu, P as Ru, R as zu, S as Bu, T as Vu, _ as Hu, a as Uu, b as Wu, c as Gu, d as Ku, f as qu, g as Ju, h as Yu, i as Xu, j as Zu, k as Qu, l as $u, m as ed, n as td, o as nd, p as rd, r as id, s as ad, t as od, u as sd, v as cd, w as ld, x as ud, y as dd, z as fd } from "./graph-VjzquDL2.js";
+import { A as Ou, C as ku, D as Au, E as ju, F as Mu, I as Nu, L as Pu, M as Fu, N as Iu, O as Lu, P as Ru, R as zu, S as Bu, T as Vu, _ as Hu, a as Uu, b as Wu, c as Gu, d as Ku, f as qu, g as Ju, h as Yu, i as Xu, j as Zu, k as Qu, l as $u, m as ed, n as td, o as nd, p as rd, r as id, s as ad, t as od, u as sd, v as cd, w as ld, x as ud, y as dd, z as fd } from "./graph-BRqE9VEe.js";
 import { i as pd, n as md, r as hd, t as gd } from "./ReactionPickerPopover-DkcC4xmE.js";
 import { _ as _d, a as vd, b as yd, c as bd, d as xd, g as Sd, h as Cd, i as wd, l as Td, m as Ed, n as Dd, o as Od, p as kd, r as Ad, s as jd, t as Md, u as Nd, v as Pd, x as Fd, y as Id } from "./MediaIcons-_ai5Til2.js";
 import { t as Ld } from "./formatBytes-05ivRSJY.js";
 import { a as Rd, i as zd, n as Bd, o as Vd, r as Hd, s as Ud, t as Wd } from "./composerCommands-CgPFKkKH.js";
-import { n as Gd } from "./useComputeProjects-oJNghl3l.js";
+import { n as Gd } from "./useComputeProjects-C2esFdTJ.js";
 import { a as Kd, i as qd, n as Jd, o as Yd, r as Xd, t as Zd } from "./ChatSidePanelRegistry-CFYMdnJZ.js";
-import { $ as Qd, A as $d, B as ef, C as tf, D as nf, E as rf, F as af, G as of, H as sf, I as cf, J as lf, K as uf, L as df, M as ff, N as pf, O as mf, P as hf, Q as gf, R as _f, S as vf, T as yf, U as bf, V as xf, W as Sf, X as Cf, Y as wf, Z as Tf, _ as Ef, _t as Df, a as Of, at as kf, b as Af, bt as jf, c as Mf, ct as Nf, d as Pf, dt as Ff, et as If, f as Lf, ft as Rf, g as zf, gt as Bf, h as Vf, ht as Hf, i as Uf, it as Wf, j as Gf, k as Kf, l as qf, lt as Jf, m as Yf, mt as Xf, n as Zf, nt as Qf, o as $f, ot as ep, p as tp, pt as np, q as rp, r as ip, rt as ap, s as op, st as sp, t as cp, tt as lp, u as up, ut as dp, v as fp, vt as pp, w as mp, x as hp, y as gp, yt as _p, z as vp } from "./video-BCcknGcV.js";
+import { $ as Qd, A as $d, B as ef, C as tf, D as nf, E as rf, F as af, G as of, H as sf, I as cf, J as lf, K as uf, L as df, M as ff, N as pf, O as mf, P as hf, Q as gf, R as _f, S as vf, T as yf, U as bf, V as xf, W as Sf, X as Cf, Y as wf, Z as Tf, _ as Ef, _t as Df, a as Of, at as kf, b as Af, bt as jf, c as Mf, ct as Nf, d as Pf, dt as Ff, et as If, f as Lf, ft as Rf, g as zf, gt as Bf, h as Vf, ht as Hf, i as Uf, it as Wf, j as Gf, k as Kf, l as qf, lt as Jf, m as Yf, mt as Xf, n as Zf, nt as Qf, o as $f, ot as ep, p as tp, pt as np, q as rp, r as ip, rt as ap, s as op, st as sp, t as cp, tt as lp, u as up, ut as dp, v as fp, vt as pp, w as mp, x as hp, y as gp, yt as _p, z as vp } from "./video-CVUuBWGr.js";
 import { A as yp, C as bp, D as xp, E as Sp, O as Cp, S as wp, T as Tp, _ as Ep, a as Dp, b as Op, c as kp, d as Ap, f as jp, g as Mp, h as Np, i as Pp, k as Fp, l as Ip, m as Lp, n as Rp, o as zp, p as Bp, r as Vp, s as Hp, t as Up, u as Wp, v as Gp, w as Kp, x as qp, y as Jp } from "./AudioVideoSettingsForm-RynnAku7.js";
-import { A as Yp, C as Xp, D as Zp, E as Qp, O as $p, S as em, T as tm, _ as nm, a as rm, b as im, c as am, d as om, f as sm, g as cm, h as lm, i as um, k as dm, l as fm, m as pm, n as mm, o as hm, p as gm, r as _m, s as vm, t as ym, u as bm, v as xm, w as Sm, x as Cm, y as wm } from "./identity-S6_dDF0T.js";
-import { n as Tm, t as Em } from "./ChangeReviewCard-CEOn3OYw.js";
-import { a as Dm, i as Om, n as km, o as Am, r as jm, t as Mm } from "./VerdictChip-Cdnru3r5.js";
+import { A as Yp, C as Xp, D as Zp, E as Qp, O as $p, S as em, T as tm, _ as nm, a as rm, b as im, c as am, d as om, f as sm, g as cm, h as lm, i as um, k as dm, l as fm, m as pm, n as mm, o as hm, p as gm, r as _m, s as vm, t as ym, u as bm, v as xm, w as Sm, x as Cm, y as wm } from "./identity-Es5NSNoA.js";
+import { n as Tm, t as Em } from "./ChangeReviewCard-BMTednUT.js";
+import { a as Dm, i as Om, n as km, o as Am, r as jm, t as Mm } from "./VerdictChip-C758SfR5.js";
 import { Suspense as Nm, createContext as Pm, forwardRef as Fm, lazy as Im, useCallback as Lm, useContext as Rm, useEffect as G, useId as K, useLayoutEffect as zm, useMemo as q, useRef as J, useState as Y } from "react";
 import { Fragment as X, jsx as Z, jsxs as Q } from "react/jsx-runtime";
 import { Outlet as Bm, useLocation as Vm, useNavigate as Hm } from "react-router";
@@ -1220,7 +1220,7 @@ function Eh() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var Dh = Im(() => import("./DocumentEditorPage-DWbpOIJM.js").then((e) => e.n));
+var Dh = Im(() => import("./DocumentEditorPage-Ba_x_eQU.js").then((e) => e.n));
 function Oh({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;
@@ -1254,73 +1254,73 @@ function kh(e) {
 	});
 }
 function Ah({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReactions: r, logEntries: i, errors: a, lastError: o, activityEvents: s, activityPublish: c, defaultSidebarOpen: l = !0, identity: u, presenceUsers: d }) {
-	let { connectionState: p, sendMessage: m, onMessage: h, ws: g, clientId: _, sessionToken: v } = Ke(), y = ue(), b = u ?? y, x = b?.userId ?? "", S = b?.displayName ?? "", C = b?.userEmail ?? null, T = b?.idToken ?? null, E = b?.onSignOut ?? (() => {}), D = _t(), O = d ?? D?.presenceUsers ?? [], k = D?.currentClientId ?? null, A = Hm(), j = Vm(), M = f(), { toast: N } = et(), ee = rt(n), te = J(null);
+	let { connectionState: p, sendMessage: m, onMessage: h, ws: g, clientId: _, sessionToken: v } = Ke(), y = fe(), b = u ?? y, x = b?.userId ?? "", S = b?.displayName ?? "", C = b?.userEmail ?? null, T = b?.idToken ?? null, E = b?.onSignOut ?? (() => {}), D = _t(), ee = d ?? D?.presenceUsers ?? [], O = D?.currentClientId ?? null, k = Hm(), A = Vm(), te = f(), { toast: j } = et(), ne = rt(n), re = J(null);
 	G(() => {
 		let e = o ? `${o.code}@${o.timestamp}` : null;
-		o?.code === "RECONNECT_EXHAUSTED" && te.current !== e && N(o.message, {
+		o?.code === "RECONNECT_EXHAUSTED" && re.current !== e && j(o.message, {
 			type: "error",
 			actionLabel: "Reconnect",
-			onAction: () => ee()
-		}), te.current = e;
+			onAction: () => ne()
+		}), re.current = e;
 	}, [
 		o,
-		N,
-		ee
+		j,
+		ne
 	]);
-	let F = j.pathname.startsWith("/pipelines") ? "pipelines" : j.pathname.startsWith("/ingest") ? "ingest" : j.pathname.startsWith("/observability") ? "observability" : j.pathname.startsWith("/documents") ? "doc-editor" : j.pathname.startsWith("/social") ? "social" : j.pathname.startsWith("/dashboard") ? "dashboard" : j.pathname.startsWith("/document-types") ? "doc-types" : j.pathname.startsWith("/field-types") ? "field-types" : "panels", [re] = Y(null), [ie, ae] = Y(!1), [I, L] = Y(!1), [oe, se] = Y(!1), [ce, le] = Y(!1), [R, de] = Y(null), [fe, pe] = Y(l), me = fe ? 260 : 56, { rooms: he } = ne({
+	let N = A.pathname.startsWith("/pipelines") ? "pipelines" : A.pathname.startsWith("/ingest") ? "ingest" : A.pathname.startsWith("/observability") ? "observability" : A.pathname.startsWith("/documents") ? "doc-editor" : A.pathname.startsWith("/social") ? "social" : A.pathname.startsWith("/dashboard") ? "dashboard" : A.pathname.startsWith("/document-types") ? "doc-types" : A.pathname.startsWith("/field-types") ? "field-types" : "panels", [ae] = Y(null), [oe, se] = Y(!1), [P, F] = Y(!1), [ce, le] = Y(!1), [ue, de] = Y(!1), [I, pe] = Y(null), [me, he] = Y(l), ge = me ? 260 : 56, { rooms: _e } = ie({
 		idToken: T,
 		onMessage: h
-	}), { documents: ge, createDocument: _e } = P({
+	}), { documents: ve, createDocument: ye } = M({
 		sendMessage: m,
 		onMessage: h,
 		connectionState: p
-	}), [ve, ye] = Y([]);
+	}), [be, xe] = Y([]);
 	G(() => {
 		let e = !1;
 		return yu().then((t) => {
-			e || ye(t);
+			e || xe(t);
 		}), () => {
 			e = !0;
 		};
 	}, []), vh(s), bh();
-	let { dispatchEnvelope: be } = Zl();
+	let { dispatchEnvelope: Se } = Zl();
 	ru({
 		channel: "pipeline:all",
-		onEvent: (e) => be(e),
+		onEvent: (e) => Se(e),
 		enabled: !0
 	});
-	let xe = nu().length;
+	let Ce = nu().length;
 	Ch(c), Eh();
-	let [Se, Ce] = Y([]), we = J(re);
+	let [we, Te] = Y([]), Ee = J(ae);
 	G(() => {
-		we.current = re;
-	}, [re]);
-	let Te = J(he);
+		Ee.current = ae;
+	}, [ae]);
+	let De = J(_e);
 	G(() => {
-		Te.current = he;
-	}, [he]);
-	let Ee = J(h);
+		De.current = _e;
+	}, [_e]);
+	let Oe = J(h);
 	G(() => {
-		Ee.current = h;
+		Oe.current = h;
 	}, [h]);
-	let De = J(S);
+	let ke = J(S);
 	G(() => {
-		De.current = S;
+		ke.current = S;
 	}, [S]);
-	let Oe = J(x);
+	let Ae = J(x);
 	G(() => {
-		Oe.current = x;
-	}, [x]), G(() => Ee.current((e) => {
+		Ae.current = x;
+	}, [x]), G(() => Oe.current((e) => {
 		let t = null, n = null, r;
 		if (e.type === "social:member_joined") {
-			let r = e.payload, i = Te.current.find((e) => e.roomId === r?.roomId)?.name ?? "a room";
+			let r = e.payload, i = De.current.find((e) => e.roomId === r?.roomId)?.name ?? "a room";
 			t = `${r?.userId?.slice(0, 8) ?? "Someone"} joined ${i}`, n = "member_joined";
 		} else if (e.type === "social:post") {
 			let r = e.payload;
-			r?.roomId === we.current && (t = `New post in ${Te.current.find((e) => e.roomId === r.roomId)?.name ?? "this room"}`, n = "post_created");
+			r?.roomId === Ee.current && (t = `New post in ${De.current.find((e) => e.roomId === r.roomId)?.name ?? "this room"}`, n = "post_created");
 		} else if (e.type === "activity:event") {
 			let i = e.payload;
-			i?.eventType === "doc.mention" && i.userId !== Oe.current && Array.isArray(i.detail?.mentionedNames) && i.detail.mentionedNames.some((e) => e.toLowerCase() === De.current.toLowerCase()) && (t = `${i.detail.authorName ?? "Someone"} mentioned you in ${i.detail.sectionTitle ?? "a section"}`, n = "mention", r = i.detail.sectionId);
+			i?.eventType === "doc.mention" && i.userId !== Ae.current && Array.isArray(i.detail?.mentionedNames) && i.detail.mentionedNames.some((e) => e.toLowerCase() === ke.current.toLowerCase()) && (t = `${i.detail.authorName ?? "Someone"} mentioned you in ${i.detail.sectionTitle ?? "a section"}`, n = "mention", r = i.detail.sectionId);
 		}
 		if (!t && e.type === "social:post") {
 			let i = e.payload;
@@ -1328,13 +1328,13 @@ function Ah({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 				let e = i.type;
 				if (e === "section:item:created" || e === "section:item:updated") {
 					let e = i.item, a = i.updates, o = e?.assignee ?? a?.assignee;
-					o && o === Oe.current && (t = "You were assigned an action item", n = "assignment", r = i.sectionId);
+					o && o === Ae.current && (t = "You were assigned an action item", n = "assignment", r = i.sectionId);
 				}
 			}
 		}
 		if (t && n) {
 			let e = `${Date.now()}-${Math.random()}`;
-			Ce((i) => [{
+			Te((i) => [{
 				id: e,
 				message: t,
 				type: n,
@@ -1343,14 +1343,14 @@ function Ah({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 			}, ...i].slice(0, 5));
 		}
 	}), []), G(() => {
-		if (Se.length === 0) return;
-		let e = Se[Se.length - 1], t = Date.now() - e.timestamp, n = Math.max(0, 4e3 - t), r = setTimeout(() => {
-			Ce((e) => e.slice(0, -1));
+		if (we.length === 0) return;
+		let e = we[we.length - 1], t = Date.now() - e.timestamp, n = Math.max(0, 4e3 - t), r = setTimeout(() => {
+			Te((e) => e.slice(0, -1));
 		}, n);
 		return () => clearTimeout(r);
-	}, [Se]);
-	let ke = Lm((e) => {
-		Ce((t) => t.filter((t) => t.id !== e));
+	}, [we]);
+	let je = Lm((e) => {
+		Te((t) => t.filter((t) => t.id !== e));
 	}, []);
 	G(() => {
 		let e = (e) => {
@@ -1360,45 +1360,45 @@ function Ah({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 				let e = t.tagName;
 				if (e === "INPUT" || e === "TEXTAREA" || e === "SELECT" || t.isContentEditable) return;
 			}
-			e.preventDefault(), le(!0);
+			e.preventDefault(), de(!0);
 		};
 		return window.addEventListener("keydown", e), () => window.removeEventListener("keydown", e);
 	}, []);
-	let Ae = J(null);
+	let L = J(null);
 	G(() => () => {
-		Ae.current !== null && clearTimeout(Ae.current);
+		L.current !== null && clearTimeout(L.current);
 	}, []);
-	let je = Lm((e) => {
-		e.sectionId && (A("/documents"), ke(e.id), Ae.current !== null && clearTimeout(Ae.current), Ae.current = setTimeout(() => {
-			Ae.current = null, document.getElementById(`section-${e.sectionId}`)?.scrollIntoView({
+	let Me = Lm((e) => {
+		e.sectionId && (k("/documents"), je(e.id), L.current !== null && clearTimeout(L.current), L.current = setTimeout(() => {
+			L.current = null, document.getElementById(`section-${e.sectionId}`)?.scrollIntoView({
 				behavior: "smooth",
 				block: "center"
 			});
 		}, 300));
-	}, [A, ke]), Me = J(null), Ne = J(null), Pe = Lm((e) => {
-		Ne.current = e ? "Collapse sidebar" : "Expand sidebar", pe(e);
+	}, [k, je]), Ne = J(null), Pe = J(null), Fe = Lm((e) => {
+		Pe.current = e ? "Collapse sidebar" : "Expand sidebar", he(e);
 	}, []);
 	G(() => {
-		let e = Ne.current;
-		e && (Ne.current = null, Me.current?.querySelector(`[aria-label="${e}"]`)?.focus());
-	}, [fe]);
-	let Fe = J(null), Ie = J(null), Le = Lm(() => L(!1), []);
-	w(Fe, Le, I), G(() => {
-		if (!I) return;
+		let e = Pe.current;
+		e && (Pe.current = null, Ne.current?.querySelector(`[aria-label="${e}"]`)?.focus());
+	}, [me]);
+	let Ie = J(null), Le = J(null), Re = Lm(() => F(!1), []);
+	w(Ie, Re, P), G(() => {
+		if (!P) return;
 		let e = (e) => {
-			e.key === "Escape" && (e.preventDefault(), L(!1), Ie.current?.focus());
+			e.key === "Escape" && (e.preventDefault(), F(!1), Le.current?.focus());
 		};
 		return window.addEventListener("keydown", e), () => window.removeEventListener("keydown", e);
-	}, [I]);
-	let Re = (e) => z("flex w-full items-center gap-2.5 text-left px-3.5 py-2 text-sm border-none cursor-pointer font-[inherit] hover:bg-surface-panel", "[&>svg]:shrink-0", e ? "bg-surface-hover text-text-primary font-semibold" : "bg-transparent text-text-primary font-normal"), ze = (e) => z("px-3.5 py-1.5 border-none rounded-md cursor-pointer font-[inherit] transition-[background,color] duration-[120ms] ease-in-out", e ? "bg-primary-bg text-text-primary font-semibold" : "bg-transparent text-neutral font-medium hover:bg-surface-hover"), Be = (e) => z("px-3 py-[5px] border-none rounded-md cursor-pointer font-[inherit] text-[0.8125rem] transition-[background,color] duration-[120ms] ease-in-out", e ? "bg-primary-bg text-text-primary font-semibold" : "bg-transparent text-neutral font-medium hover:bg-surface-hover");
+	}, [P]);
+	let R = (e) => z("flex w-full items-center gap-2.5 text-left px-3.5 py-2 text-sm border-none cursor-pointer font-[inherit] hover:bg-surface-panel", "[&>svg]:shrink-0", e ? "bg-surface-hover text-text-primary font-semibold" : "bg-transparent text-text-primary font-normal"), ze = (e) => z("px-3.5 py-1.5 border-none rounded-md cursor-pointer font-[inherit] transition-[background,color] duration-[120ms] ease-in-out", e ? "bg-primary-bg text-text-primary font-semibold" : "bg-transparent text-neutral font-medium hover:bg-surface-hover"), Be = (e) => z("px-3 py-[5px] border-none rounded-md cursor-pointer font-[inherit] text-[0.8125rem] transition-[background,color] duration-[120ms] ease-in-out", e ? "bg-primary-bg text-text-primary font-semibold" : "bg-transparent text-neutral font-medium hover:bg-surface-hover");
 	return /* @__PURE__ */ Q("div", {
 		className: "relative min-h-screen font-sans bg-surface-panel",
 		children: [
 			/* @__PURE__ */ Z(zo, { reactions: r }),
 			/* @__PURE__ */ Z(Oh, {
-				notifications: Se,
-				onDismiss: ke,
-				onClick: je
+				notifications: we,
+				onDismiss: je,
+				onClick: Me
 			}),
 			/* @__PURE__ */ Q("div", {
 				className: "flex items-center justify-between px-6 py-3 bg-surface border-b border-border gap-4 sticky top-0 z-50",
@@ -1411,7 +1411,7 @@ function Ah({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 						className: "flex items-center gap-4 flex-1 justify-center",
 						children: [/* @__PURE__ */ Z($m, { state: p }), /* @__PURE__ */ Z("span", {
 							className: "text-sm text-neutral font-mono bg-surface-hover border border-border rounded-md px-2.5 py-1",
-							children: he.find((e) => e.roomId === re)?.name ?? e
+							children: _e.find((e) => e.roomId === ae)?.name ?? e
 						})]
 					}),
 					/* @__PURE__ */ Q("div", {
@@ -1428,18 +1428,18 @@ function Ah({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 							}),
 							/* @__PURE__ */ Q("div", {
 								className: "relative",
-								ref: Fe,
+								ref: Ie,
 								children: [/* @__PURE__ */ Z("button", {
 									type: "button",
-									ref: Ie,
-									onClick: () => L((e) => !e),
-									className: z("border border-border rounded-md px-2 py-1 cursor-pointer text-base text-neutral leading-none", I ? "bg-surface-hover" : "bg-none"),
+									ref: Le,
+									onClick: () => F((e) => !e),
+									className: z("border border-border rounded-md px-2 py-1 cursor-pointer text-base text-neutral leading-none", P ? "bg-surface-hover" : "bg-none"),
 									title: "Menu",
 									"aria-label": "Open app menu",
 									"aria-haspopup": "menu",
-									"aria-expanded": I,
+									"aria-expanded": P,
 									children: /* @__PURE__ */ Z(Pr, { size: 18 })
-								}), I && /* @__PURE__ */ Q("div", {
+								}), P && /* @__PURE__ */ Q("div", {
 									"data-testid": "app-menu",
 									className: "absolute top-[calc(100%+6px)] right-0 bg-surface border border-border rounded-lg shadow-md z-[100] min-w-[180px] overflow-hidden",
 									children: [
@@ -1449,16 +1449,16 @@ function Ah({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 										}),
 										/* @__PURE__ */ Q("button", {
 											onClick: () => {
-												A("/document-types"), L(!1);
+												k("/document-types"), F(!1);
 											},
-											className: Re(F === "doc-types"),
+											className: R(N === "doc-types"),
 											children: [/* @__PURE__ */ Z(Pi, {}), "Document Types"]
 										}),
 										/* @__PURE__ */ Q("button", {
 											onClick: () => {
-												A("/field-types"), L(!1);
+												k("/field-types"), F(!1);
 											},
-											className: Re(F === "field-types"),
+											className: R(N === "field-types"),
 											children: [/* @__PURE__ */ Z(Yr, {}), "Data Types"]
 										}),
 										/* @__PURE__ */ Z("div", { className: "border-t border-surface-hover my-1" }),
@@ -1468,16 +1468,16 @@ function Ah({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 										}),
 										/* @__PURE__ */ Q("button", {
 											onClick: () => {
-												A("/pipelines"), L(!1);
+												k("/pipelines"), F(!1);
 											},
-											className: Re(F === "pipelines"),
+											className: R(N === "pipelines"),
 											children: [/* @__PURE__ */ Z(xi, {}), "Pipelines"]
 										}),
 										/* @__PURE__ */ Q("button", {
 											onClick: () => {
-												A("/observability"), L(!1);
+												k("/observability"), F(!1);
 											},
-											className: Re(F === "observability"),
+											className: R(N === "observability"),
 											children: [/* @__PURE__ */ Z(Ai, {}), "Observability"]
 										}),
 										/* @__PURE__ */ Z("div", { className: "border-t border-surface-hover my-1" }),
@@ -1487,9 +1487,9 @@ function Ah({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 										}),
 										/* @__PURE__ */ Q("button", {
 											onClick: () => {
-												A("/dashboard"), L(!1);
+												k("/dashboard"), F(!1);
 											},
-											className: Re(F === "dashboard"),
+											className: R(N === "dashboard"),
 											children: [/* @__PURE__ */ Z(ni, {}), "Live Activity"]
 										}),
 										/* @__PURE__ */ Z("div", { className: "border-t border-surface-hover my-1" }),
@@ -1499,9 +1499,9 @@ function Ah({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 										}),
 										/* @__PURE__ */ Q("button", {
 											onClick: () => {
-												ae((e) => !e), L(!1);
+												se((e) => !e), F(!1);
 											},
-											className: Re(ie),
+											className: R(oe),
 											children: [/* @__PURE__ */ Z(_i, {}), "Dev Tools"]
 										})
 									]
@@ -1514,46 +1514,46 @@ function Ah({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 			/* @__PURE__ */ Q("div", {
 				className: "flex min-h-[calc(100vh-53px)]",
 				children: [/* @__PURE__ */ Z("div", {
-					ref: Me,
+					ref: Ne,
 					className: "shrink-0 border-r border-border bg-surface flex flex-col fixed top-[53px] left-0 bottom-0 overflow-y-auto overflow-x-hidden z-40 box-border transition-[width,padding] duration-[180ms] ease-in-out",
 					style: {
-						width: me,
-						padding: fe ? "1rem" : "0.5rem 0"
+						width: ge,
+						padding: me ? "1rem" : "0.5rem 0"
 					},
-					children: fe ? /* @__PURE__ */ Z(sh, {
+					children: me ? /* @__PURE__ */ Z(sh, {
 						connectionState: p,
 						onDisconnect: t,
 						onReconnect: n,
-						onCollapse: () => Pe(!1),
-						presenceUsers: O,
-						currentClientId: k ?? "",
+						onCollapse: () => Fe(!1),
+						presenceUsers: ee,
+						currentClientId: O ?? "",
 						currentChannel: e,
 						activityEvents: s,
 						userId: x,
-						documents: ge,
+						documents: ve,
 						onOpenDocument: (e) => {
-							A(`/documents/${e}`);
+							k(`/documents/${e}`);
 						},
-						pipelines: ve,
-						onOpenPipeline: (e) => A(`/pipelines/${e}`),
-						onSeeAllPipelines: () => A("/pipelines"),
-						videoSlot: R ? /* @__PURE__ */ Z("div", { id: "sidebar-video-slot" }) : void 0
+						pipelines: be,
+						onOpenPipeline: (e) => k(`/pipelines/${e}`),
+						onSeeAllPipelines: () => k("/pipelines"),
+						videoSlot: I ? /* @__PURE__ */ Z("div", { id: "sidebar-video-slot" }) : void 0
 					}) : /* @__PURE__ */ Z(lh, {
 						connectionState: p,
-						onExpand: () => Pe(!0),
-						onPipelines: () => A("/pipelines"),
-						onObservability: () => A("/observability"),
-						onDocuments: () => A("/documents")
+						onExpand: () => Fe(!0),
+						onPipelines: () => k("/pipelines"),
+						onObservability: () => k("/observability"),
+						onDocuments: () => k("/documents")
 					})
 				}), /* @__PURE__ */ Q("div", {
 					className: "flex flex-col gap-0 min-h-0 bg-surface-panel relative z-[1]",
 					style: {
-						marginLeft: me,
-						width: `calc(100% - ${me}px)`
+						marginLeft: ge,
+						width: `calc(100% - ${ge}px)`
 					},
 					children: [
 						(() => {
-							let e = F === "doc-editor" || F === "doc-types" || F === "field-types";
+							let e = N === "doc-editor" || N === "doc-types" || N === "field-types";
 							return /* @__PURE__ */ Q("div", {
 								className: "sticky top-[53px] bg-surface-panel z-[33] px-8",
 								children: [
@@ -1592,12 +1592,12 @@ function Ah({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 												"Observability"
 											]
 										].map(([t, n, r]) => /* @__PURE__ */ Z("button", {
-											onClick: () => A(t),
-											className: z(ze(n === "doc-editor" ? e : F === n), "text-sm"),
+											onClick: () => k(t),
+											className: z(ze(n === "doc-editor" ? e : N === n), "text-sm"),
 											children: r
-										}, n)), F === "doc-editor" && j.pathname === "/documents" && /* @__PURE__ */ Z("button", {
+										}, n)), N === "doc-editor" && A.pathname === "/documents" && /* @__PURE__ */ Z("button", {
 											"data-testid": "new-document-btn",
-											onClick: () => se(!0),
+											onClick: () => le(!0),
 											className: "ml-auto flex items-center gap-1 px-3 py-[5px] text-[13px] font-semibold border-none rounded-md bg-info text-white cursor-pointer font-[inherit]",
 											children: "+ New Document"
 										})]
@@ -1621,12 +1621,12 @@ function Ah({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 												"Data Types"
 											]
 										].map(([e, t, n]) => /* @__PURE__ */ Z("button", {
-											onClick: () => A(e),
-											className: Be(F === t),
+											onClick: () => k(e),
+											className: Be(N === t),
 											children: n
 										}, t))
 									}),
-									F === "pipelines" && /* @__PURE__ */ Z("div", {
+									N === "pipelines" && /* @__PURE__ */ Z("div", {
 										className: "flex items-center gap-1 px-1 py-1.5 border-b border-border bg-surface-panel",
 										children: [
 											[
@@ -1645,19 +1645,19 @@ function Ah({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 												(e) => e === "/pipelines/runs"
 											]
 										].map(([e, t, n]) => {
-											let r = n(j.pathname), i = e === "/pipelines/approvals" && xe > 0;
+											let r = n(A.pathname), i = e === "/pipelines/approvals" && Ce > 0;
 											return /* @__PURE__ */ Q("button", {
-												onClick: () => A(e),
+												onClick: () => k(e),
 												className: z(Be(r), "flex items-center gap-1.5"),
 												children: [/* @__PURE__ */ Z("span", { children: t }), i && /* @__PURE__ */ Z("span", {
 													"data-testid": "pending-approvals-badge",
 													className: "inline-flex items-center justify-center min-w-[18px] h-[18px] px-1.5 rounded-full text-[11px] font-bold bg-warning text-white leading-none",
-													children: xe
+													children: Ce
 												})]
 											}, e);
 										})
 									}),
-									F === "ingest" && /* @__PURE__ */ Z("div", {
+									N === "ingest" && /* @__PURE__ */ Z("div", {
 										className: "flex items-center gap-1 px-1 py-1.5 border-b border-border bg-surface-panel",
 										children: [
 											[
@@ -1706,15 +1706,15 @@ function Ah({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 												(e) => e === "/ingest/audit"
 											]
 										].map(([e, t, n]) => {
-											let r = n(j.pathname);
+											let r = n(A.pathname);
 											return /* @__PURE__ */ Z("button", {
-												onClick: () => A(e),
+												onClick: () => k(e),
 												className: z(Be(r), "flex items-center gap-1.5"),
 												children: /* @__PURE__ */ Z("span", { children: t })
 											}, e);
 										})
 									}),
-									F === "observability" && /* @__PURE__ */ Z("div", {
+									N === "observability" && /* @__PURE__ */ Z("div", {
 										className: "flex items-center gap-0.5 px-1 border-b border-border bg-surface-panel",
 										children: [
 											[
@@ -1738,9 +1738,9 @@ function Ah({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 												(e) => e === "/observability/metrics"
 											]
 										].map(([e, t, n]) => {
-											let r = n(j.pathname);
+											let r = n(A.pathname);
 											return /* @__PURE__ */ Z("button", {
-												onClick: () => A(e),
+												onClick: () => k(e),
 												className: z("px-3 py-1.5 border-none bg-none cursor-pointer font-[inherit] text-[0.8125rem]", r ? "border-b-2 border-b-primary text-text-primary font-semibold" : "border-b-2 border-b-transparent text-neutral font-normal"),
 												children: t
 											}, e);
@@ -1751,35 +1751,35 @@ function Ah({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 						})(),
 						/* @__PURE__ */ Q("div", {
 							className: "px-8 pt-4 pb-6 flex flex-col gap-4 flex-1 min-h-0",
-							children: [/* @__PURE__ */ Z(eh, { health: M }), /* @__PURE__ */ Z(Jl, {
+							children: [/* @__PURE__ */ Z(eh, { health: te }), /* @__PURE__ */ Z(Jl, {
 								name: "RouteContent",
 								children: /* @__PURE__ */ Z(Nm, {
 									fallback: /* @__PURE__ */ Z("div", { children: "Loading..." }),
 									children: /* @__PURE__ */ Z(Bm, { context: {
-										dockedVideoDocId: R,
-										setDockedVideoDocId: de
+										dockedVideoDocId: I,
+										setDockedVideoDocId: pe
 									} })
 								})
 							})]
 						}),
-						R && j.pathname !== `/documents/${R}` && /* @__PURE__ */ Z(Jl, {
+						I && A.pathname !== `/documents/${I}` && /* @__PURE__ */ Z(Jl, {
 							name: "DockedVideoEditor",
 							children: /* @__PURE__ */ Z(Nm, {
 								fallback: /* @__PURE__ */ Z("div", { children: "Loading..." }),
 								children: /* @__PURE__ */ Z("div", {
 									className: "hidden",
 									children: /* @__PURE__ */ Z(Dh, {
-										documentId: R,
+										documentId: I,
 										ws: g,
 										userId: x,
 										displayName: S,
 										onMessage: h,
 										activityPublish: c,
 										activityEvents: s,
-										onBack: () => A("/documents"),
+										onBack: () => k("/documents"),
 										isVideoDocked: !0,
-										onDockVideo: () => de(R),
-										onUndockVideo: () => de(null)
+										onDockVideo: () => pe(I),
+										onUndockVideo: () => pe(null)
 									})
 								})
 							})
@@ -1787,7 +1787,7 @@ function Ah({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 					]
 				})]
 			}),
-			ie && /* @__PURE__ */ Q("div", {
+			oe && /* @__PURE__ */ Q("div", {
 				className: "fixed top-[53px] right-0 bottom-0 w-[480px] bg-surface border-l border-border shadow-[-4px_0_12px_rgba(0,0,0,0.08)] z-[900] flex flex-col overflow-hidden",
 				children: [/* @__PURE__ */ Q("div", {
 					className: "flex items-center justify-between px-4 py-3 border-b border-border",
@@ -1795,7 +1795,7 @@ function Ah({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 						className: "text-sm font-semibold text-text-primary",
 						children: "Dev Tools"
 					}), /* @__PURE__ */ Z("button", {
-						onClick: () => ae(!1),
+						onClick: () => se(!1),
 						className: "bg-none border-none cursor-pointer text-xl text-text-tertiary leading-none px-1",
 						children: "x"
 					})]
@@ -1818,15 +1818,15 @@ function Ah({ currentChannel: e, onDisconnect: t, onReconnect: n, activeReaction
 				})]
 			}),
 			/* @__PURE__ */ Z(Fl, {
-				open: oe,
-				onClose: () => se(!1),
+				open: ce,
+				onClose: () => le(!1),
 				onCreate: (e) => {
-					_e(e), se(!1);
+					ye(e), le(!1);
 				}
 			}),
 			/* @__PURE__ */ Z(yn, {
-				open: ce,
-				onClose: () => le(!1)
+				open: ue,
+				onClose: () => de(!1)
 			})
 		]
 	});
@@ -3333,70 +3333,70 @@ function kg({ query: e, onQueryChange: t, searchPlaceholder: n = "Search work…
 		})]
 	});
 }
-function Ag({ title: e = "Work", count: t, onCreate: n, createLabel: r = "New work item", onCollapse: i, collapseLabel: a = "Collapse work list", chrome: o = "full", query: s, onQueryChange: c, searchPlaceholder: l, sort: u, sortOptions: d, onSortChange: f, sortLabel: p, filters: m, filterFacets: h, activeFilterCount: g, onClearFilters: _, groups: v, items: y, currentId: b = null, onOpenItem: x, onToggleDone: S, onReorder: C, loading: w = !1, error: T = null, onRetry: E, emptyLabel: D = "No work yet", storageKey: O, toolbarLayout: k, sortStyle: A, metaStyle: j = "default", pointsLabel: M = "pts", signalDisplay: N = "dot", currentStyle: ee, groupCountStyle: te, className: ne, "data-testid": P = "work-list" }) {
-	let F = q(() => y.filter((e) => Og(e, s)), [y, s]), re = q(() => Eg(F, {
+function Ag({ title: e = "Work", count: t, onCreate: n, createLabel: r = "New work item", onCollapse: i, collapseLabel: a = "Collapse work list", chrome: o = "full", query: s, onQueryChange: c, searchPlaceholder: l, sort: u, sortOptions: d, onSortChange: f, sortLabel: p, filters: m, filterFacets: h, activeFilterCount: g, onClearFilters: _, groups: v, items: y, currentId: b = null, onOpenItem: x, onToggleDone: S, onReorder: C, loading: w = !1, error: T = null, onRetry: E, emptyLabel: D = "No work yet", storageKey: ee, toolbarLayout: O, sortStyle: k, metaStyle: A = "default", pointsLabel: te = "pts", signalDisplay: j = "dot", currentStyle: ne, groupCountStyle: re, className: ie, "data-testid": M = "work-list" }) {
+	let N = q(() => y.filter((e) => Og(e, s)), [y, s]), ae = q(() => Eg(N, {
 		onToggleDone: S,
-		testId: P,
-		metaStyle: j,
-		pointsLabel: M,
-		signalDisplay: N
+		testId: M,
+		metaStyle: A,
+		pointsLabel: te,
+		signalDisplay: j
 	}), [
-		F,
+		N,
 		S,
-		P,
-		j,
 		M,
-		N
-	]), ie = q(() => new Map(F.map((e) => [e.id, e])), [F]), ae = g ?? Dg(h), I = s.trim().length > 0 || ae > 0, L = q(() => v.map((e) => ({
+		A,
+		te,
+		j
+	]), oe = q(() => new Map(N.map((e) => [e.id, e])), [N]), se = g ?? Dg(h), P = s.trim().length > 0 || se > 0, F = q(() => v.map((e) => ({
 		id: e.id,
 		title: e.title,
-		count: F.filter((t) => t.groupId === e.id).length,
+		count: N.filter((t) => t.groupId === e.id).length,
 		emptyLabel: e.emptyLabel,
 		defaultOpen: e.defaultOpen
-	})), [v, F]), oe;
-	oe = w && y.length === 0 ? /* @__PURE__ */ Z(fa, {
+	})), [v, N]), ce;
+	ce = w && y.length === 0 ? /* @__PURE__ */ Z(fa, {
 		label: "Loading work…",
 		spinnerSize: "md",
-		testId: `${P}-loading`
+		testId: `${M}-loading`
 	}) : y.length === 0 ? T ? null : /* @__PURE__ */ Z(aa, {
-		testId: `${P}-empty`,
+		testId: `${M}-empty`,
 		size: "sm",
 		title: D
-	}) : F.length === 0 ? /* @__PURE__ */ Z(aa, {
-		testId: `${P}-no-match`,
+	}) : N.length === 0 ? /* @__PURE__ */ Z(aa, {
+		testId: `${M}-no-match`,
 		size: "sm",
 		title: "No work matches",
-		body: I ? "Try a different search, or clear the filters." : void 0,
-		actionLabel: I ? "Clear search and filters" : void 0,
-		onAction: I ? () => {
+		body: P ? "Try a different search, or clear the filters." : void 0,
+		actionLabel: P ? "Clear search and filters" : void 0,
+		onAction: P ? () => {
 			c(""), _?.();
 		} : void 0
 	}) : /* @__PURE__ */ Z(Et, {
-		"data-testid": `${P}-groups`,
-		groups: L,
-		rows: re,
+		"data-testid": `${M}-groups`,
+		groups: F,
+		rows: ae,
 		currentId: b,
-		storageKey: O,
-		...ee ? { currentStyle: ee } : {},
-		...te ? { groupCountStyle: te } : {},
+		storageKey: ee,
+		...ne ? { currentStyle: ne } : {},
+		...re ? { groupCountStyle: re } : {},
 		size: "md",
-		hideEmptyGroups: I,
+		hideEmptyGroups: P,
 		onOpenRow: (e) => {
-			let t = ie.get(e.id);
+			let t = oe.get(e.id);
 			t && x?.(t);
 		},
-		onReorder: C && !I ? C : void 0,
+		onReorder: C && !P ? C : void 0,
 		reorderLabel: (e) => `Reorder ${e.title}`
 	});
-	let se = t ?? y.length;
+	let le = t ?? y.length;
 	return /* @__PURE__ */ Q("div", {
-		"data-testid": P,
+		"data-testid": M,
 		"data-chrome": o,
-		className: z("flex h-full min-h-0 flex-col gap-3", o === "full" ? "pt-3" : "pt-1", ne),
+		className: z("flex h-full min-h-0 flex-col gap-3", o === "full" ? "pt-3" : "pt-1", ie),
 		children: [
 			o === "full" && /* @__PURE__ */ Q("div", {
 				className: "flex items-center gap-2 pl-5 pr-3",
-				"data-testid": `${P}-title-row`,
+				"data-testid": `${M}-title-row`,
 				children: [
 					/* @__PURE__ */ Z("h2", {
 						className: "m-0 truncate text-[18px] font-semibold text-text-primary",
@@ -3406,23 +3406,23 @@ function Ag({ title: e = "Work", count: t, onCreate: n, createLabel: r = "New wo
 						size: "sm",
 						tone: "neutral",
 						className: "shrink-0",
-						"data-testid": `${P}-count`,
-						"aria-label": `${se} items`,
-						children: se
+						"data-testid": `${M}-count`,
+						"aria-label": `${le} items`,
+						children: le
 					}),
 					/* @__PURE__ */ Z("span", { className: "flex-1" }),
 					n && /* @__PURE__ */ Z(H, {
 						"aria-label": r,
 						icon: /* @__PURE__ */ Z(Ti, {}),
 						onClick: n,
-						"data-testid": `${P}-create`,
+						"data-testid": `${M}-create`,
 						className: "text-primary"
 					}),
 					i && /* @__PURE__ */ Z(H, {
 						"aria-label": a,
 						icon: /* @__PURE__ */ Z(U, { dir: "left" }),
 						onClick: i,
-						"data-testid": `${P}-collapse`,
+						"data-testid": `${M}-collapse`,
 						className: "text-text-secondary"
 					})
 				]
@@ -3437,30 +3437,30 @@ function Ag({ title: e = "Work", count: t, onCreate: n, createLabel: r = "New wo
 				sortLabel: p,
 				filters: m,
 				filterFacets: h,
-				activeFilterCount: ae,
+				activeFilterCount: se,
 				onClearFilters: _,
-				...k ? { toolbarLayout: k } : {},
-				...A ? { sortStyle: A } : {},
+				...O ? { toolbarLayout: O } : {},
+				...k ? { sortStyle: k } : {},
 				className: "px-5",
-				"data-testid": `${P}-toolbar`
+				"data-testid": `${M}-toolbar`
 			}),
 			T && /* @__PURE__ */ Z(Qi, {
 				className: "mx-5",
 				variant: "error",
-				"data-testid": `${P}-error`,
+				"data-testid": `${M}-error`,
 				action: E ? /* @__PURE__ */ Z(B, {
 					variant: "secondary",
 					size: "sm",
 					onClick: E,
-					"data-testid": `${P}-retry`,
+					"data-testid": `${M}-retry`,
 					children: "Retry"
 				}) : void 0,
 				children: T
 			}),
 			/* @__PURE__ */ Z("div", {
 				className: "min-h-0 flex-1 overflow-y-auto px-2 pb-2",
-				"data-testid": `${P}-body`,
-				children: oe
+				"data-testid": `${M}-body`,
+				children: ce
 			})
 		]
 	});
@@ -3563,10 +3563,10 @@ function Ig({ breadcrumbs: e, title: t, controls: n, link: r, menu: i, menuLabel
 		})]
 	});
 }
-function Lg({ breadcrumbs: e, title: t = "", status: n, progress: r, spentUsd: i, stats: a, people: o, link: s, controls: c, menu: l, menuLabel: u, tabs: d, activeTab: f, onTabChange: p, titleSize: m = "md", description: h, peopleStyle: g = "avatars", linkStyle: _ = "inline", statsPlacement: v = "inline", tabSize: y, descriptionSize: b = "md", className: x, "data-testid": S = "scope-header" }) {
-	let C = [];
-	r && r.total > 0 && Number.isFinite(r.done) && C.push(/* @__PURE__ */ Q("span", {
-		"data-testid": `${S}-progress`,
+function Lg({ breadcrumbs: e, title: t = "", status: n, progress: r, spentUsd: i, stats: a, people: o, link: s, controls: c, menu: l, menuLabel: u, tabs: d, activeTab: f, onTabChange: p, titleSize: m = "md", description: h, peopleStyle: g = "avatars", linkStyle: _ = "inline", statsPlacement: v = "inline", tabSize: y, tabsRule: b = "host", descriptionSize: x = "md", className: S, "data-testid": C = "scope-header" }) {
+	let w = [];
+	r && r.total > 0 && Number.isFinite(r.done) && w.push(/* @__PURE__ */ Q("span", {
+		"data-testid": `${C}-progress`,
 		children: [
 			r.done,
 			" / ",
@@ -3576,31 +3576,32 @@ function Lg({ breadcrumbs: e, title: t = "", status: n, progress: r, spentUsd: i
 			" ",
 			r.verb ?? "delivered"
 		]
-	}, "progress")), typeof i == "number" && Number.isFinite(i) && C.push(/* @__PURE__ */ Q("span", {
-		"data-testid": `${S}-spent`,
+	}, "progress")), typeof i == "number" && Number.isFinite(i) && w.push(/* @__PURE__ */ Q("span", {
+		"data-testid": `${C}-spent`,
 		children: [Ng(i), " spent"]
 	}, "spent")), (a ?? []).forEach((e, t) => {
-		e && C.push(/* @__PURE__ */ Z("span", { children: e }, `stat-${t}`));
+		e && w.push(/* @__PURE__ */ Z("span", { children: e }, `stat-${t}`));
 	});
-	let w = (o ?? []).filter((e) => e.people.length > 0), T = g === "names" && w.length > 0, E = g === "inline" && w.length > 0, D = !T && !E, O = m === "lg", k = v === "below", A = h != null && h !== !1, j = C.length > 0 ? /* @__PURE__ */ Z(qi, {
-		items: C,
+	let T = (o ?? []).filter((e) => e.people.length > 0), E = g === "names" && T.length > 0, D = g === "inline" && T.length > 0, ee = !E && !D, O = m === "lg", k = v === "below", A = h != null && h !== !1, te = w.length > 0 ? /* @__PURE__ */ Z(qi, {
+		items: w,
 		size: "sm",
 		tone: "secondary",
 		className: z("min-w-0", k ? "text-[15px]" : "text-[13px]"),
-		"data-testid": `${S}-stats`
-	}) : null, M = !!d && d.length > 0, N = M ? d.some((e) => e.id === f) ? f : d[0].id : void 0;
+		"data-testid": `${C}-stats`
+	}) : null, j = !!d && d.length > 0, ne = j ? d.some((e) => e.id === f) ? f : d[0].id : void 0;
 	return /* @__PURE__ */ Q("div", {
-		"data-testid": S,
+		"data-testid": C,
 		"data-title-size": m,
 		...y ? { "data-tab-size": y } : {},
-		className: z("flex min-w-0 flex-col gap-1.5 px-6 pt-3", O && "gap-0 pt-4", !M && (O ? "pb-4" : "pb-3"), x),
+		...j && b === "inset" ? { "data-tabs-rule": "inset" } : {},
+		className: z("flex min-w-0 flex-col gap-1.5 px-6 pt-3", O && "gap-0 pt-4", !j && (O ? "pb-4" : "pb-3"), S),
 		children: [
 			e && e.length > 0 && /* @__PURE__ */ Z(Ui, {
 				items: e,
 				separator: "›",
 				maxItems: 5,
 				className: "min-w-0",
-				"data-testid": `${S}-crumbs`
+				"data-testid": `${C}-crumbs`
 			}),
 			/* @__PURE__ */ Q("div", {
 				className: "flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2",
@@ -3610,22 +3611,22 @@ function Lg({ breadcrumbs: e, title: t = "", status: n, progress: r, spentUsd: i
 						children: [/* @__PURE__ */ Z("h1", {
 							className: z("m-0 min-w-0 truncate text-text-primary", O ? "text-[28px] font-bold leading-9 tracking-[-0.01em]" : "text-[22px] font-semibold leading-8"),
 							title: t,
-							"data-testid": `${S}-title`,
+							"data-testid": `${C}-title`,
 							children: t
 						}), n && /* @__PURE__ */ Z(Ao, {
 							label: n.label,
 							state: n.tone ?? "info",
 							variant: "label",
 							className: "shrink-0",
-							"data-testid": `${S}-status`
+							"data-testid": `${C}-status`
 						})]
 					}),
-					!k && j,
+					!k && te,
 					/* @__PURE__ */ Q("div", {
 						className: z("ml-auto flex shrink-0 items-center", _ === "button" ? "gap-3" : "gap-5"),
-						children: [D && w.map((e) => /* @__PURE__ */ Q("div", {
+						children: [ee && T.map((e) => /* @__PURE__ */ Q("div", {
 							className: "flex items-center gap-2",
-							"data-testid": `${S}-people-${e.label.toLowerCase()}`,
+							"data-testid": `${C}-people-${e.label.toLowerCase()}`,
 							children: [/* @__PURE__ */ Z("span", {
 								className: "text-[11px] font-semibold uppercase tracking-wide text-text-tertiary",
 								children: e.label
@@ -3640,25 +3641,25 @@ function Lg({ breadcrumbs: e, title: t = "", status: n, progress: r, spentUsd: i
 							menu: l,
 							menuLabel: u,
 							title: t,
-							testId: S,
+							testId: C,
 							linkStyle: _
 						})]
 					})
 				]
 			}),
-			k && j,
+			k && te,
 			A && /* @__PURE__ */ Z("p", {
-				className: z("m-0 min-w-0 whitespace-pre-line text-text-secondary", b === "sm" ? "text-[15px] leading-[22px]" : "text-base leading-6"),
-				"data-testid": `${S}-description`,
-				"data-size": b === "sm" ? "sm" : void 0,
+				className: z("m-0 min-w-0 whitespace-pre-line text-text-secondary", x === "sm" ? "text-[15px] leading-[22px]" : "text-base leading-6"),
+				"data-testid": `${C}-description`,
+				"data-size": x === "sm" ? "sm" : void 0,
 				children: h
 			}),
-			T && /* @__PURE__ */ Z("div", {
+			E && /* @__PURE__ */ Z("div", {
 				className: "flex min-w-0 flex-wrap items-center gap-x-6 gap-y-1 text-sm leading-6 text-text-secondary",
-				"data-testid": `${S}-people`,
-				children: w.map((e) => /* @__PURE__ */ Q("span", {
+				"data-testid": `${C}-people`,
+				children: T.map((e) => /* @__PURE__ */ Q("span", {
 					className: "min-w-0",
-					"data-testid": `${S}-people-${e.label.toLowerCase()}`,
+					"data-testid": `${C}-people-${e.label.toLowerCase()}`,
 					children: [
 						e.people.map((e) => e.name).join(", "),
 						/* @__PURE__ */ Z("span", {
@@ -3669,17 +3670,17 @@ function Lg({ breadcrumbs: e, title: t = "", status: n, progress: r, spentUsd: i
 					]
 				}, e.label))
 			}),
-			E && /* @__PURE__ */ Z("div", {
+			D && /* @__PURE__ */ Z("div", {
 				className: z("flex min-w-0 flex-wrap items-center gap-x-7 gap-y-2", A ? "mt-5" : "mt-3"),
-				"data-testid": `${S}-people`,
+				"data-testid": `${C}-people`,
 				"data-people-style": "inline",
-				children: w.map((e, t) => /* @__PURE__ */ Q("div", {
+				children: T.map((e, t) => /* @__PURE__ */ Q("div", {
 					className: "flex min-w-0 items-center gap-7",
-					"data-testid": `${S}-people-${e.label.toLowerCase()}`,
+					"data-testid": `${C}-people-${e.label.toLowerCase()}`,
 					children: [t > 0 && /* @__PURE__ */ Z("span", {
 						"aria-hidden": "true",
 						className: "h-6 w-px shrink-0 bg-border",
-						"data-testid": `${S}-people-rule`
+						"data-testid": `${C}-people-rule`
 					}), /* @__PURE__ */ Q("div", {
 						className: "flex min-w-0 items-center gap-4",
 						role: "group",
@@ -3691,7 +3692,7 @@ function Lg({ breadcrumbs: e, title: t = "", status: n, progress: r, spentUsd: i
 							className: "flex min-w-0 flex-wrap items-center gap-x-7 gap-y-2",
 							children: e.people.map((e) => /* @__PURE__ */ Q("span", {
 								className: "flex min-w-0 items-center gap-3",
-								"data-testid": `${S}-person-${e.id}`,
+								"data-testid": `${C}-person-${e.id}`,
 								children: [/* @__PURE__ */ Z(W, {
 									name: e.name,
 									size: 32,
@@ -3706,7 +3707,7 @@ function Lg({ breadcrumbs: e, title: t = "", status: n, progress: r, spentUsd: i
 					})]
 				}, e.label))
 			}),
-			M && /* @__PURE__ */ Z(ka, {
+			j && /* @__PURE__ */ Z(ka, {
 				items: d.map((e) => ({
 					id: e.id,
 					label: e.label,
@@ -3719,21 +3720,25 @@ function Lg({ breadcrumbs: e, title: t = "", status: n, progress: r, spentUsd: i
 						}), e.dot && /* @__PURE__ */ Z("span", {
 							role: "img",
 							"aria-label": `${e.label} ${e.dot === !0 ? "has updates" : Mg[e.dot]}`,
-							"data-testid": `${S}-tab-${e.id}-dot`,
+							"data-testid": `${C}-tab-${e.id}-dot`,
 							"data-dot": e.dot === !0 ? "brand" : e.dot,
 							className: z("inline-block h-2 w-2 shrink-0 rounded-full", e.dot === !0 ? "bg-primary" : jg[e.dot])
 						})]
 					}) } : {},
-					testId: `${S}-tab-${e.id}`
+					testId: `${C}-tab-${e.id}`
 				})),
-				value: N,
+				value: ne,
 				onValueChange: (e) => p?.(e),
 				variant: "underline",
 				size: "md",
 				badgeStyle: "plain",
-				...y === "md" ? { itemClassName: "gap-0 px-2 text-[15px]" } : y === "sm" ? {} : O ? { itemClassName: "gap-0 text-[15px]" } : {},
+				...y === "md" ? {
+					indicator: "bar",
+					indicatorWeight: 3
+				} : {},
+				...y === "md" ? { itemClassName: "gap-0 pb-4 pl-1 pr-3 pt-2 text-[15px]" } : y === "sm" ? {} : O ? { itemClassName: "gap-0 text-[15px]" } : {},
 				"aria-label": `${t} views`,
-				className: z("-mb-px border-b-0", y === "md" && "-ml-1 gap-7", E ? "mt-4" : O ? A || T ? "mt-5" : "mt-2" : A || T ? "mt-3" : "mt-1")
+				className: z(b === "inset" ? "" : y === "md" ? "-mb-px after:hidden" : "-mb-px border-b-0", y === "md" && "gap-7", D ? y === "md" ? "mt-5" : "mt-4" : O ? A || E ? "mt-5" : "mt-2" : A || E ? "mt-3" : "mt-1")
 			})
 		]
 	});
@@ -4400,7 +4405,7 @@ function Zg({ title: e = "Acceptance criteria", items: t, onToggle: n, onAdd: r,
 			size: 12,
 			"aria-hidden": "true"
 		}), T]
-	}), D = v && w && !y && t.length > 0 ? E : void 0, O = w && (!v || y), k = () => {
+	}), D = v && w && !y && t.length > 0 ? E : void 0, ee = w && (!v || y), O = () => {
 		let e = h.trim();
 		e && (r?.(e), g(""));
 	};
@@ -4437,7 +4442,7 @@ function Zg({ title: e = "Acceptance criteria", items: t, onToggle: n, onAdd: r,
 						onMove: o
 					}, e.id))
 				}),
-				O && /* @__PURE__ */ Z(ia, {
+				ee && /* @__PURE__ */ Z(ia, {
 					ref: x,
 					size: "sm",
 					"aria-label": l,
@@ -4445,7 +4450,7 @@ function Zg({ title: e = "Acceptance criteria", items: t, onToggle: n, onAdd: r,
 					value: h,
 					onChange: (e) => g(e.target.value),
 					onKeyDown: (e) => {
-						e.key === "Enter" ? (e.preventDefault(), k()) : e.key === "Escape" && (g(""), v && (e.stopPropagation(), b(!1)));
+						e.key === "Enter" ? (e.preventDefault(), O()) : e.key === "Escape" && (g(""), v && (e.stopPropagation(), b(!1)));
 					},
 					...v ? { onBlur: () => {
 						h.trim() || b(!1);
@@ -4948,16 +4953,16 @@ function w_({ budget: e }) {
 	});
 }
 function T_({ status: e, collapsed: t, defaultCollapsed: n = !1, onCollapsedChange: r, target: i, sources: a, sourcesLabel: o = "Sources", fields: s, cost: c, duration: l, confidence: u, budget: d, advanced: f, advancedLabel: p = "Advanced settings", access: m, onSave: h, saveDisabledReason: g, saving: _ = !1, onDispatch: v, dispatchDisabledReason: y, error: b, live: x, footnote: S, className: C, "data-testid": w = "run-draft-panel" }) {
-	let [T, E] = Y(n), D = t ?? T, O = K(), k = K(), A = K(), j = K(), M = () => {
+	let [T, E] = Y(n), D = t ?? T, ee = K(), O = K(), k = K(), A = K(), te = () => {
 		let e = !D;
 		t === void 0 && E(e), r?.(e);
-	}, N = e === "dispatching", ee = _ || g != null, te = N || y != null, ne = c != null || l != null, P = S === void 0 ? /* @__PURE__ */ Z(__, {
+	}, j = e === "dispatching", ne = _ || g != null, re = j || y != null, ie = c != null || l != null, M = S === void 0 ? /* @__PURE__ */ Z(__, {
 		"data-testid": "run-draft-footnote",
 		children: "Nothing runs until you authorize it."
-	}) : S, F = a != null && a.length > 0 ? /* @__PURE__ */ Z(b_, {
+	}) : S, N = a != null && a.length > 0 ? /* @__PURE__ */ Z(b_, {
 		sources: a,
 		label: o
-	}) : null, re = /* @__PURE__ */ Q(X, { children: [
+	}) : null, ae = /* @__PURE__ */ Q(X, { children: [
 		i === null && /* @__PURE__ */ Z("div", {
 			className: "rounded-md border border-dashed border-border px-3 py-3 text-[13px] text-text-secondary",
 			"data-testid": "run-draft-no-target",
@@ -4981,7 +4986,7 @@ function T_({ status: e, collapsed: t, defaultCollapsed: n = !1, onCollapsedChan
 				})]
 			})]
 		}),
-		F,
+		N,
 		/* @__PURE__ */ Q("div", {
 			className: z("mt-3 divide-y divide-border", i != null && "border-t border-border"),
 			children: [
@@ -4991,7 +4996,7 @@ function T_({ status: e, collapsed: t, defaultCollapsed: n = !1, onCollapsedChan
 					estimate: h_(c, u),
 					"data-testid": "run-draft-cost"
 				}),
-				ne && (l || u) && /* @__PURE__ */ Q("div", { children: [l && /* @__PURE__ */ Z(f_, {
+				ie && (l || u) && /* @__PURE__ */ Q("div", { children: [l && /* @__PURE__ */ Z(f_, {
 					label: "Duration",
 					estimate: h_(l, u),
 					"data-testid": "run-draft-duration"
@@ -5017,9 +5022,9 @@ function T_({ status: e, collapsed: t, defaultCollapsed: n = !1, onCollapsedChan
 				})
 			]
 		})
-	] }), ie = h != null || v != null;
+	] }), oe = h != null || v != null;
 	return /* @__PURE__ */ Q("section", {
-		"aria-labelledby": k,
+		"aria-labelledby": O,
 		"data-status": e,
 		"data-collapsed": D || void 0,
 		"data-testid": w,
@@ -5028,7 +5033,7 @@ function T_({ status: e, collapsed: t, defaultCollapsed: n = !1, onCollapsedChan
 			className: "flex items-center gap-2",
 			children: [
 				/* @__PURE__ */ Z("h2", {
-					id: k,
+					id: O,
 					className: "text-[18px] font-semibold text-text-primary",
 					children: "Run draft"
 				}),
@@ -5042,17 +5047,17 @@ function T_({ status: e, collapsed: t, defaultCollapsed: n = !1, onCollapsedChan
 					size: "sm",
 					"aria-label": D ? "Expand run draft" : "Collapse run draft",
 					"aria-expanded": !D,
-					"aria-controls": O,
+					"aria-controls": ee,
 					icon: /* @__PURE__ */ Z(U, { dir: D ? "down" : "up" }),
-					onClick: M
+					onClick: te
 				})
 			]
 		}), !D && /* @__PURE__ */ Q("div", {
-			id: O,
+			id: ee,
 			className: "mt-3 flex flex-col",
 			"data-testid": "run-draft-body",
 			children: [
-				x == null ? re : /* @__PURE__ */ Q(X, { children: [F, /* @__PURE__ */ Z("div", {
+				x == null ? ae : /* @__PURE__ */ Q(X, { children: [N, /* @__PURE__ */ Z("div", {
 					"data-testid": "run-draft-live",
 					children: x
 				})] }),
@@ -5062,7 +5067,7 @@ function T_({ status: e, collapsed: t, defaultCollapsed: n = !1, onCollapsedChan
 					"data-testid": "run-draft-error",
 					children: b
 				}),
-				x == null && ie && /* @__PURE__ */ Q("div", {
+				x == null && oe && /* @__PURE__ */ Q("div", {
 					className: "mt-3 border-t border-border pt-4",
 					children: [
 						/* @__PURE__ */ Q("div", {
@@ -5071,10 +5076,10 @@ function T_({ status: e, collapsed: t, defaultCollapsed: n = !1, onCollapsedChan
 								variant: "secondary",
 								fullWidth: !0,
 								onClick: h,
-								disabled: ee,
+								disabled: ne,
 								"aria-busy": _ || void 0,
 								title: g,
-								"aria-describedby": g ? A : void 0,
+								"aria-describedby": g ? k : void 0,
 								className: z(!v && "col-span-2"),
 								"data-testid": "run-draft-save",
 								children: _ ? "Saving…" : "Save draft"
@@ -5082,32 +5087,32 @@ function T_({ status: e, collapsed: t, defaultCollapsed: n = !1, onCollapsedChan
 								variant: "primary",
 								fullWidth: !0,
 								onClick: v,
-								disabled: te,
-								"aria-busy": N || void 0,
+								disabled: re,
+								"aria-busy": j || void 0,
 								title: y,
-								"aria-describedby": y ? j : void 0,
+								"aria-describedby": y ? A : void 0,
 								className: z(!h && "col-span-2"),
 								"data-testid": "run-draft-dispatch",
-								children: N ? "Dispatching…" : "Dispatch agent"
+								children: j ? "Dispatching…" : "Dispatch agent"
 							})]
 						}),
 						g && /* @__PURE__ */ Z("p", {
-							id: A,
+							id: k,
 							className: "mt-2 text-[12px] text-text-tertiary",
 							"data-testid": "run-draft-save-reason",
 							children: g
 						}),
 						y && /* @__PURE__ */ Z("p", {
-							id: j,
+							id: A,
 							className: "mt-2 text-[12px] text-text-tertiary",
 							"data-testid": "run-draft-dispatch-reason",
 							children: y
 						})
 					]
 				}),
-				x == null && P != null && /* @__PURE__ */ Z("div", {
+				x == null && M != null && /* @__PURE__ */ Z("div", {
 					className: "mt-3",
-					children: P
+					children: M
 				})
 			]
 		})]
@@ -5954,4 +5959,4 @@ function Tv({ children: e, variant: t = "light", className: n, "data-testid": r 
 	});
 }
 //#endregion
-export { po as ACTIVITY_RIPPLE_GRID, uo as ACTIVITY_RIPPLE_GRID_DARK, oo as AGENT_PARTICLE_COLORS, Qs as AGENT_RUN_STEP_DOT, gn as AGENT_TASK_STATUS_DOT, jn as AGENT_TASK_STATUS_LABELS, Fc as ALL_CONVERSATION_FEATURES, i_ as AccessNotice, X_ as ActionRowList, Y_ as ActionRowPerson, Xm as ActiveCallBanner, Es as ActivePeopleGrid, bo as ActivityFeed, Ai as ActivityIcon, rs as ActivityPanel, hs as AddToChatDialog, Yp as AdminDashboardPage, ec as AgentRunCard, yg as AgentTaskCard, eh as ApiDegradedBanner, kh as AppLayout, Mh as AppShell, wm as ApplicationFormPage, im as ApplicationListPage, xm as ApplicationPoolFormPage, yi as ArrowRightIcon, Ei as ArrowUpIcon, mn as ArtifactTile, di as AtIcon, Dn as AttachToggle, Vs as AttachmentBubble, Vp as AudioLevelMeter, gp as AudioPlayer, Up as AudioVideoSettingsForm, pm as AuditPage, pm as IdentityAuditPage, Ef as AuthedAudio, af as AutoplayGate, W as Avatar, Ia as AvatarGroup, Zi as Badge, Qi as Banner, ta as BarChart, $r as BellMutedIcon, Vt as BoardColumn, Sl as BooleanEditorRenderer, _l as BooleanReaderRenderer, xi as BranchIcon, Ui as Breadcrumbs, Oi as BulletListIcon, B as Button, lf as CALL_CARD_WIDTH, wf as CALL_DOCK_DRAG_TYPE, Cf as CALL_DOCK_ROW_HEIGHT, Tf as CALL_STAGE_DOCKED_WIDTH, eg as CANVAS_PANE_RAIL_PX, dr as CODE_TONE_SOFT, pr as CODE_TONE_SOLID, lr as CODE_TONE_SOLID_BG, rr as CODE_TONE_TEXT, ug as CONTEXT_COLUMN_INSET_VAR, d as CUSTOM_FIELD_TYPE_STORAGE_KEY, sc as CallActivityCard, $f as CallCaptionsSettings, Nf as CallControls, ip as CallDock, Yf as CallInterruptedNotice, Vf as CallNoticePill, Jf as CallParticipantStrip, Mf as CallPeopleList, Jm as CallPresenceIndicator, tf as CallSettingsDialog, op as CallSettingsDrawer, Qf as CallSidePanel, ap as CallSidePanelToggles, uf as CallStartedBanner, sp as CallStatsOverlay, rp as CallTileRow, gf as CallWidget, ff as CallingStatusPill, zu as CanvasPaneInsetContext, ig as CanvasPaneLayout, ld as CanvasZoomControls, Sn as CapabilityDeniedFallback, Md as CaptionsIcon, gr as Card, Ya as CardHeader, Kt as CatalogGrid, ko as ChangeDiff, Am as ChangeLocation, Em as ChangeReviewCard, Tm as ChangeReviewList, Mc as ChannelDocumentsPanel, xc as ChannelFilesPanel, Ea as ChannelHeader, fc as ChannelMentionsPanel, kc as ChannelRecordingsPanel, ni as ChartIcon, Dd as ChatBubbleIcon, Ds as ChatBubbleStack, Qo as ChatColumnBackdrop, ws as ChatCommandProvider, Ut as ChatComposer, hd as ChatDropZone, hi as ChatIcon, $o as ChatLabPill, ts as ChatLabShell, gc as ChatPanel, Ko as ChatRoom, Zd as ChatSidePanel, Jd as ChatSidePanelFrame, Xd as ChatSidePanelProvider, Mi as CheckIcon, No as Checkbox, Gc as ChecklistEditorRenderer, ii as ChecklistIcon, nl as ChecklistReaderRenderer, Zg as ChecklistSection, U as ChevronIcon, V as Chip, Wa as ChoiceList, Ha as ChoiceOption, Ua as ChoiceRow, Kf as CircularIconToggle, Ci as CloseIcon, hn as CodeBlock, Nt as CodeEditor, _i as CodeIcon, am as CodeInput, up as CollaboratorCheckList, lh as CollapsedIconStrip, sn as CollapsibleSection, sh as CollapsibleSidebar, wv as ColorInput, Gm as ColorSchemeProvider, Pn as CommandPalette, En as CommandPaletteHint, wn as CommandPaletteProvider, li as CommentIcon, n_ as CommentList, ss as CommentThread, ss as CommentThreadPanel, Hd as ComposerReferences, ra as ConfirmDialog, Za as ConnectionPill, $m as ConnectionStatus, bm as ConsentPage, lo as ConsoleSurfaceContext, On as ConsultCard, fg as ContextColumn, Xo as ConversationList, Go as ConversationRail, Jo as ConversationShelf, _s as ConversationStart, Dc as ConversationSurface, ci as CopyIcon, bs as CreateChannelDialog, Ts as CreateTeamDialog, Gl as DECK_THEMES, Qg as DEFAULT_LINK_RELATIONS, gd as DEFAULT_PICKER_EMOJIS, xt as DEFAULT_PIPELINE_ICONS, l as DOCUMENT_TYPE_ICONS, wr as DataTable, ol as DateEditorRenderer, vl as DateReaderRenderer, rc as DaySeparator, dl as DecisionsEditorRenderer, fl as DecisionsReaderRenderer, $c as DefaultRenderer, Qn as DetailHeader, kt as DetailSection, hp as DeviceSettingsPanel, tp as DeviceToggleSelect, sm as DiagnosticsPage, ul as DiagramEditorRenderer, ll as DiagramReaderRenderer, In as DiffViewer, Xi as Disclosure, Ct as Divider, pg as DockedAside, Ma as DockedPanelProvider, Bh as DocsShell, Uh as DocsSidebar, Jh as DocsTopNav, Js as DocumentActivityCard, Qr as DocumentAddIcon, cp as DocumentCallPanel, jc as DocumentChip, Pi as DocumentIcon, Fn as DocumentResultList, za as DotMeter, Li as DownloadIcon, ua as Drawer, Oo as DropdownMenu, Vd as EMOJI_SHORTCODES, ti as EditIcon, la as EditableHeading, cm as EmailTemplateFormPage, nm as EmailTemplateListPage, zf as EmbeddedCallPanel, aa as EmptyState, ln as EntityCell, dm as EntityTable, Jl as ErrorBoundary, _m as ErrorPage, oa as ErrorState, f_ as EstimateRow, _a as EventRow, Ad as ExpandIcon, pf as ExpandableCallWidget, pn as ExpertCard, Zh as ExplorerLayout, Ii as ExternalLinkIcon, Wr as EyeIcon, Or as EyeOffIcon, Fo as FILE_KIND_LABELS, Do as FLOATING_PANEL_ANCHORS, Tc as FeedRow, pd as FileInput, Po as FileKindMark, Kn as FilePickerButton, go as FileUploadDrop, gl as FileUploadEditorRenderer, yl as FileUploadReaderRenderer, Mt as FilterChip, Fi as FilterIcon, jt as FilterPopover, hg as FloatingCard, To as FloatingPanel, Gr as FolderIcon, Vi as FollowBanner, mo as FollowUpChips, ma as FormField, nn as FormRow, Ar as ForwardIcon, ao as GRAPHITE_PARTICLE_COLORS, xu as GenerativeImagePreview, vf as GoLiveButton, Vu as GraphPanelBody, kr as GripIcon, Cm as GroupFormPage, em as GroupListPage, Ls as GroupPanel, Et as GroupedList, Cs as HISTORY_DAYS_DEFAULT, Ms as HISTORY_DAYS_MAX, gs as HISTORY_DAYS_MIN, Sp as HangoutGrid, bp as HangoutLayout, mf as HangoutPreJoinShell, yf as HangoutRoomHeader, Kp as HangoutSpotlight, Br as HighlighterIcon, mi as HistoryIcon, h as IDENTITY_BASE_URL, H as IconButton, ht as IconPicker, mm as IdentityAdminLayout, Zp as IdentityFormField, de as IdentityProvider, Er as ImageIcon, St as ImageLightbox, su as ImageThumbnail, Nl as InboxSection, Il as InboxSectionRow, Zf as IncomingCallPopover, pi as InfoIcon, Bi as Inline, Ja as InlineAlert, Ul as InlineEditableText, An as InlineMenu, $s as InlineMessageEditor, Tv as InlinePanel, So as InlinePlaceholder, yo as InlinePopover, ia as Input, ns as InviteCandidateList, qm as InviteToCallDialog, lu as JsonPathInput, qn as KPIGrid, Tn as KeyValue, qt as LayerStack, $i as LineChart, Zt as Link, Cl as LinkBlockEditorRenderer, hl as LinkBlockReaderRenderer, zd as LinkDialog, Rr as LinkIcon, e_ as LinkedItemsSection, zr as ListIcon, Vr as ListStyleIcon, Mn as LiveRegion, fa as LoadingState, jr as LockIcon, eo as LogStream, om as LoginPage, um as LogoutPage, Wl as MAX_DECK_SLIDES, fn as MarkdownView, zn as MasterDetail, mp as MediaControlsBar, Lp as MediaEffectsPreviewPanel, Mp as MediaEffectsTray, Lf as MediaPrecheckRow, As as MembersPanel, Hc as MembershipNotice, Pr as MenuIcon, wc as MessageActionBar, lc as MessageBody, Wt as MessageBubble, os as MessageGroup, cc as MessageRow, qi as MetaLine, rm as MfaDashboardPage, lm as MfaManagementPage, vm as MfaSetupPage, hm as MfaVerifyPage, wd as MicIcon, vd as MicOffIcon, na as Modal, Od as MonitorIcon, Lr as MoonIcon, bg as MoreContextDisclosure, jd as MoreHorizontalIcon, Ur as MoreIcon, Gf as MuteWhileTalkingToast, Fu as NODE_GRAPH_VIEW_WIDTH, kn as NavRail, Yt as NavRailStack, Rh as NavTabs, Df as NetworkQualityBadge, ks as NewChatDialog, Yo as NewConversationPanel, Ji as NoAccessState, Bt as NodeCard, Iu as NodeGraph, Qa as NotificationCenter, bl as NumberEditorRenderer, Mo as NumberInput, pl as NumberReaderRenderer, Ri as NumberedListIcon, Yg as OutcomeSection, Lu as PEOPLE_GRAPH_QUERY_NODE_ID, _o as POPOVER_KEEPOUT_ATTR, P_ as PROCEDURE_STEP_STATUS_LABELS, mt as PROMPT_CONTEXT_DRAG_TYPE, ut as PROMPT_CONTEXT_LIMIT, Xa as PageHeader, Cr as PageSection, Dr as PaperclipIcon, yp as ParticipantTile, co as ParticlesBackground, du as PatchHttpError, iu as PatchValidationRejectedError, bd as PauseIcon, Qu as PeopleGraph, qr as PeopleIcon, ca as PermissionDeniedCard, Nn as PersonHoverCard, Nr as PersonIcon, Td as PhoneCallIcon, Kr as PhoneIcon, Nd as PhoneOffIcon, _f as PiPButton, Bn as PickerDialog, Jr as PinIcon, Pc as PinnedMessagesPanel, gg as PinnedSlot, bu as PipelineEditorServicesProvider, Mr as PlayCircleIcon, xd as PlayIcon, Ff as PlaybackReactionsLayer, Ir as PlusCircleIcon, Ti as PlusIcon, Qp as PoolFormPage, $p as PoolListPage, ym as PoolScopedLayout, Fr as PopOutIcon, wo as PopoverField, Co as PopoverForm, Vo as PostFeed, ho as PresenceAvatars, Va as PresenceDot, Lc as PresencePanel, Ft as PresenceProvider, Yl as PresentationEditor, Xr as PrinterIcon, z_ as ProcedureSteps, bn as ProgressBar, en as ProjectCard, js as PromptContextPicker, It as Prose, Yr as PuzzleIcon, fm as QrCodeDisplay, Rt as QuickPromptGrid, Us as QuoteBlock, Zr as QuoteIcon, rf as RECORDING_CHIP_TITLES, $n as REVIEW_KIND_LABELS, tn as REVIEW_KIND_TONES, p_ as RUN_DRAFT_STATUS_LABELS, gt as RadioGroup, Xn as RailLayout, Xt as RailNavList, er as RailSection, Os as RailSectionHeader, td as RangeSlider, zs as ReactionChips, Rf as ReactionOverlay, np as ReactionPicker, Xf as ReactionPickerButton, md as ReactionPickerPopover, Zo as ReactionsBar, Gp as ReconnectingBanner, Ks as RecordingActivityCard, nf as RecordingChip, xf as RecordingExpiryDialog, bf as RecordingList, of as RecordingPlayer, Sf as RecordingRow, Hr as RedoIcon, Jp as RemoteTileSlot, Tr as RepeatIcon, oi as ReplyIcon, Qm as ResumeCallDialog, Pf as ReviewDocumentList, zt as ReviewThread, Kc as RichTextEditorRenderer, qc as RichTextReaderRenderer, fo as RippleGridBackground, to as RisingParticles, qo as RoomList, df as RosterPanel, qa as RovingToolbar, T_ as RunDraftPanel, Wo as RunPanelBody, Uo as RunSummaryPanel, Hl as SLIDE_LAYOUTS, jl as SLIDE_LAYOUT_LABELS, Pg as ScopeHeader, Tt as ScoreBarGauge, kd as ScreenShareIcon, Ed as ScreenShareOffIcon, ji as SearchIcon, pa as SearchInput, xo as SectionLabel, Ga as SegmentedControl, jo as Select, Wi as SelectableCard, bi as SendIcon, Cd as SettingsGearIcon, zh as SettingsLayout, gm as SetupGuidePage, Di as ShareIcon, yn as ShortcutsHelp, Lo as SidebarRow, Ro as SidebarSection, un as SignoffPanel, ba as SkeletonCard, Yn as SkipLink, Oa as Slider, fi as SlidersIcon, ei as SmileyIcon, ls as SocialPanel, cs as SocialTabContent, H_ as SourceCard, U_ as SourceList, Si as SparkleIcon, Sd as SparklesIcon, ya as Sparkline, _d as SpeakerIcon, da as Spinner, $h as SplitPane, zi as Stack, Vn as StackDiagram, ea as StackedAreaChart, Of as StartCallDrawer, _n as StatCard, Cn as StatStrip, pp as StatsCard, tm as StatusBadge, Ba as StatusDot, Ao as StatusPill, dp as StatusStrip, Wp as StreamAudioOnly, zp as StreamChatTicker, Pp as StreamStage, Op as StreamVideo, Qt as SubNavLayout, Gn as SuggestionCard, vp as SummaryPanel, ki as SunIcon, Da as Switch, Yi as T, ev as THEME_TOKEN_ALIASES, mr as TONES, ir as TONE_BG, ur as TONE_BORDER, hr as TONE_SOFT, ar as TONE_SOLID, or as TONE_SOLID_BG, fr as TONE_TEXT, Aa as TabPanel, Sr as Table, yr as TableBody, xr as TableHead, vr as TableRow, _r as TableTd, br as TableTh, ka as Tabs, bt as TagEditor, Rn as TaskComposer, Jn as TaskStrip, rl as TasksEditorRenderer, Tl as TasksReaderRenderer, ps as TeamChannelTree, sa as TechnicalDetails, ri as TemplateIcon, $a as TerminalLog, Gi as Text, xl as TextEditorRenderer, cl as TextReaderRenderer, Na as Textarea, gv as ThemeProvider, an as ThinkingBlock, Sa as ThinkingDots, cn as ThumbnailCard, Ra as TitledFrame, $e as Toast, nt as ToastProvider, rn as ToolCallPill, on as ToolCallStrip, Dt as Toolbar, At as ToolbarGroup, vt as ToolbarLabel, wt as ToolbarSeparator, Io as Tooltip, Lh as TopNav, gi as TranscribeIcon, $d as TranscriptOverlay, ef as TranscriptPanel, zc as TransferBubble, Ni as TrashIcon, xn as TreeView, Ot as TrendSparkline, ud as TypedNodeCanvas, Ca as TypingIndicator, ai as UndoIcon, si as UploadIcon, $t as UserChip, Xp as UserFormPage, Sm as UserListPage, nr as UserMenu, yt as UserPicker, Pd as UserPlusIcon, Id as UsersIcon, km as VERDICT_GLYPH, jm as VERDICT_LABEL, Om as VERDICT_TONE, xa as VISUALLY_HIDDEN_STYLE, Mm as VerdictChip, wi as VideoCallIcon, Bf as VideoGrid, yd as VideoIcon, Fd as VideoOffIcon, jf as VideoPlayer, _p as VideoPlayerModal, Cp as ViewerCount, Xh as ViewportFillRegion, wa as VisuallyHidden, fp as VoicemailRecorder, Rp as VolumeSlider, sd as WORK_ACTIVITY_ALL_EFFORTS, Ku as WORK_ACTIVITY_DEFAULT_MAX_EFFORTS, vi as WarningIcon, qe as WebSocketProvider, ui as WhiteboardIcon, Ln as Wizard, Gu as WorkActivityHeader, N_ as WorkActivityList, Lt as WorkArea, ad as WorkArtifactInspector, nd as WorkComputePane, Hu as WorkEdge, Ju as WorkEntityList, od as WorkGraph, Yu as WorkInspector, Jg as WorkItemMetaBar, xg as WorkListFilters, kg as WorkListToolbar, Ag as WorkListView, cd as WorkNode, id as WorkNodePane, $u as WorkOmittedGroup, Xu as WorkPaneBanner, rd as WorkReferenceCard, zg as WorkSearchPicker, ed as WorkSharingControls, dd as WorkStatus, Uu as WorkTranscriptPanel, _g as Workbench, Wn as WorkflowStepper, ds as WorkspaceRail, Ht as activeNavItemClassName, Gt as activeNavItemStyle, Al as addSlide, Ws as agentRunRefFromMetadata, qs as agentRunResultFromMetadata, Xs as agentRunTimings, Su as applyPatch, ml as booleanFieldType, dv as borderRadius, qf as callPersonStatus, vc as callRefFromMetadata, Wf as callSidePanelBodyTestId, kf as callSidePanelPlacement, ep as callSidePanelToggleTestId, Bl as canSaveDeck, rg as canvasPaneGeometry, Is as chatChannelKindOf, ms as chatCommandScopeHint, Fs as chatCommandsToComposer, qd as chatSidePanelKindLabel, tl as checklistFieldType, cv as colors, Qe as compileProgram, Wd as composerCommandArgumentText, o_ as confidenceNote, a_ as confidenceOf, tc as conversationStamp, Xe as createArrayBuffer, ju as createGraphPanelRenderer, es as createRunPanelRenderer, Ze as createWebGLContext, $ as cssVar, pv as darkTheme, Qc as dateFieldType, Rs as dayKeyOf, _c as dayLabel, Ol as decisionsFieldType, nc as describeAgentRunOp, Bs as describeMembership, oc as describeMembershipHistory, Gs as describeParticipants, Cc as describeReactors, ac as describeRecordingParticipants, Yc as diagramFieldType, Hn as documentAgeLabel, Ac as documentRefFromMetadata, Ec as documentRefsFromMetadata, ro as drawnParticles, ql as duplicateSlide, va as eventGlyphs, Hs as excerpt, Xc as fileUploadFieldType, Yh as fillHeight, uv as fontSize, au as forceFail, Af as formatAudioTime, Ld as formatBytes, Ys as formatCallDuration, Uf as formatCallElapsed, uc as formatChatTime, A_ as formatCompactAge, hc as formatDuration, d_ as formatEstimate, B_ as formatSourceAge, Ng as formatSpend, Gd as formatTokens, Ta as formatTypingBanner, bc as forwardAttributionLine, yc as forwardOriginLabel, dc as forwardedFromMetadata, Ic as fullDateLabel, Oc as fullTimestampLabel, le as getApiBaseUrl, al as getApprovalApiBase, se as getDocumentTypeApiBaseUrl, ga as getEventCategory, ha as getEventGlyph, a as getFieldType, n as getFieldTypes, s as getPageConfig, c as getPagesView, hu as getPipelineRun, i as getRenderer, _u as getRunAuditLog, Mu as graphCenterNode, Ru as graphGroupPalette, Nu as graphGroups, xp as gridCols, Zs as groupReactions, Np as guardedSelection, jp as hlsFailureText, m as identityApiFetch, Jt as inactiveNavItemClassName, $_ as injectThemeVars, is as isChatCommandInScope, ic as isImageAttachment, Fp as isKnownViewerCount, Nc as isNewDay, Au as isPeopleGraphData, ft as isPromptContextDrag, Ss as isRunPanelLive, u as isValidCustomFieldType, Pu as layoutGraph, Bu as layoutTypedNodes, fv as lightTheme, qu as limitWorkEfforts, Jc as linkBlockFieldType, xv as listDLQEntries, pu as listPipelineRuns, t as listRegisteredRenderers, o as makeEmptyField, kl as makeSlide, wl as mapStatusToDecision, Bd as matchComposerCommand, dn as matchHotkey, Ou as matchingTag, Rc as membershipRefFromMetadata, ys as mergeChatCommands, Qd as modeFromMinimized, _ as modelUnavailableMessage, Kl as moveSlide, La as nameToColor, Fa as nameToInitials, Rl as nextRevisionLabel, zl as nextSlideId, Hi as noAccessMessage, A as normalizeApiHealth, Rd as normalizeHref, Zc as numberFieldType, Ho as parseChatCommand, Bo as parseRunPanelId, Un as parseUnifiedDiff, Zu as peopleToGraph, ot as pickRecordingMimeType, vo as popoverFloor, Dl as postApproval, lt as promptContextStore, Cv as purgeDLQEntries, ku as rankTypedNodes, ov as rawBorderRadius, rv as rawColors, av as rawFontSize, iv as rawSpacing, sv as rawTokens, Hf as reactionEmojiName, sl as readDocumentIdFromUrl, st as readPromptContextDrag, Pa as readableAvatarForeground, Vc as recordingRefFromMetadata, Sv as redriveDLQEntries, e as registerFieldType, r as registerRenderer, Vl as removeSlide, Ml as replaceSlide, dt as resetPromptContextStores, Eo as resolveAnchorPosition, so as resolveBackdropTone, sf as resolveExpiryChoice, Dm as resolveVerdictState, fu as resumeFromStep, Cu as retryFromNode, wu as revertPatch, Wc as richTextFieldType, xs as runPanelId, mu as searchAudit, Ud as searchEmoji, ce as setApiBaseUrl, El as setApprovalApiBase, oe as setDocumentTypeApiBaseUrl, yv as shadows, Ps as sidePanelFromSearch, as as sidePanelToSearch, lv as spacing, Ep as splitEffectLabel, Hp as stagePhaseIsLive, kp as stagePhaseIsShowingLiveMedia, qp as streamHasUsableVideo, Dp as streamIsAudioOnly, Ip as streamStagePhase, vn as taskPercent, il as tasksFieldType, el as textFieldType, Q_ as themeToCssVars, If as toCanonicalMode, us as toChannelName, lp as toLegacyMode, Eg as toWorkListRows, Z_ as tokenToCssVarName, nv as toneCssVarName, cr as toneKey, sr as toneVar, mc as truncationFromMetadata, Pl as uncitedSlideIds, g as useActivityBus, k as useApiCall, f as useApiHealth, Ap as useAudioLevel, it as useAudioRecorder, te as useAuth, Se as useAwareness, ye as useAwarenessState, re as useCRDT, hf as useCallWidgetPersistence, fd as useCanvasPaneInset, T as useChat, vs as useChatCommands, Kd as useChatSidePanelRenderer, Yd as useChatSidePanelRenderers, w as useClickOutside, ve as useCollaborativeDoc, Km as useColorScheme, Zn as useCommandPalette, Me as useComments, j as useCursors, C as useCustomFieldTypes, We as useDocTypeProposals, ja as useDockedPanel, pe as useDocumentComments, Ee as useDocumentExport, we as useDocumentItems, he as useDocumentMetadata, xe as useDocumentReviews, Ge as useDocumentTypes, P as useDocuments, io as useEnclosingConsoleSurface, rt as useEventCallback, Ki as useFollowAutoStop, ke as useFriends, Ae as useGroups, Bp as useHlsSource, y as useIdentityAdmin, ae as useIdentityAudit, v as useIdentityClients, R as useIdentityContext, I as useIdentityDiagnostics, S as useIdentityEmailTemplates, L as useIdentityGroups, ie as useIdentityMfa, b as useIdentityMfaAdmin, E as useIdentityPools, p as useIdentityResource, D as useIdentitySetupStatus, M as useIdentityUsers, ge as useIdleDetector, gu as useImageUrl, Re as useIngestAudit, Ie as useIngestDLQ, He as useIngestItems, Be as useIngestProgress, Fe as useIngestSources, ee as useKeyboardShortcuts, Ne as useLikes, Le as useMappingReviewQueue, at as useMediaDevices, fe as useMentionUsers, cf as useMuteWhileTalking, _e as useMyMentionsAndTasks, ue as useOptionalIdentityContext, _t as useOptionalPresenceContext, Ve as usePipelineDefs, ou as usePipelineEditorServices, je as usePosts, Je as usePrefersReducedMotion, x as usePresence, Pt as usePresenceContext, pt as usePromptContext, O as useReactions, fs as useRegisterChatCommands, tr as useRegisterCommand, no as useResolvedBackdropTone, ne as useRooms, Ka as useRovingToolbar, Ns as useRunChatCommand, me as useSectionList, Pe as useSocialProfile, ze as useSourceSloMetrics, Tp as useStableActiveSpeaker, Ue as useSyncConflicts, vv as useTheme, _v as useThemeContext, et as useToast, tt as useToastOptional, wp as useTrackStateBump, N as useTypedDocuments, F as useUrlFilterState, Ce as useVersionHistory, be as useVideoCall, Te as useVideoSessions, Ye as useWebGLCanvas, Oe as useWebSocket, Ke as useWebSocketContext, De as useYjsDoc, Ll as withLayoutDefaults, Bc as withoutForwardAttribution, Wu as workPauseLabel, ct as writePromptContextDrag, bv as zIndex };
+export { po as ACTIVITY_RIPPLE_GRID, uo as ACTIVITY_RIPPLE_GRID_DARK, oo as AGENT_PARTICLE_COLORS, Qs as AGENT_RUN_STEP_DOT, gn as AGENT_TASK_STATUS_DOT, jn as AGENT_TASK_STATUS_LABELS, Fc as ALL_CONVERSATION_FEATURES, i_ as AccessNotice, X_ as ActionRowList, Y_ as ActionRowPerson, Xm as ActiveCallBanner, Es as ActivePeopleGrid, bo as ActivityFeed, Ai as ActivityIcon, rs as ActivityPanel, hs as AddToChatDialog, Yp as AdminDashboardPage, ec as AgentRunCard, yg as AgentTaskCard, eh as ApiDegradedBanner, kh as AppLayout, Mh as AppShell, wm as ApplicationFormPage, im as ApplicationListPage, xm as ApplicationPoolFormPage, yi as ArrowRightIcon, Ei as ArrowUpIcon, mn as ArtifactTile, di as AtIcon, Dn as AttachToggle, Vs as AttachmentBubble, Vp as AudioLevelMeter, gp as AudioPlayer, Up as AudioVideoSettingsForm, pm as AuditPage, pm as IdentityAuditPage, Ef as AuthedAudio, af as AutoplayGate, W as Avatar, Ia as AvatarGroup, Zi as Badge, Qi as Banner, ta as BarChart, $r as BellMutedIcon, Vt as BoardColumn, Sl as BooleanEditorRenderer, _l as BooleanReaderRenderer, xi as BranchIcon, Ui as Breadcrumbs, Oi as BulletListIcon, B as Button, lf as CALL_CARD_WIDTH, wf as CALL_DOCK_DRAG_TYPE, Cf as CALL_DOCK_ROW_HEIGHT, Tf as CALL_STAGE_DOCKED_WIDTH, eg as CANVAS_PANE_RAIL_PX, dr as CODE_TONE_SOFT, pr as CODE_TONE_SOLID, lr as CODE_TONE_SOLID_BG, rr as CODE_TONE_TEXT, ug as CONTEXT_COLUMN_INSET_VAR, d as CUSTOM_FIELD_TYPE_STORAGE_KEY, sc as CallActivityCard, $f as CallCaptionsSettings, Nf as CallControls, ip as CallDock, Yf as CallInterruptedNotice, Vf as CallNoticePill, Jf as CallParticipantStrip, Mf as CallPeopleList, Jm as CallPresenceIndicator, tf as CallSettingsDialog, op as CallSettingsDrawer, Qf as CallSidePanel, ap as CallSidePanelToggles, uf as CallStartedBanner, sp as CallStatsOverlay, rp as CallTileRow, gf as CallWidget, ff as CallingStatusPill, zu as CanvasPaneInsetContext, ig as CanvasPaneLayout, ld as CanvasZoomControls, Sn as CapabilityDeniedFallback, Md as CaptionsIcon, gr as Card, Ya as CardHeader, Kt as CatalogGrid, ko as ChangeDiff, Am as ChangeLocation, Em as ChangeReviewCard, Tm as ChangeReviewList, Mc as ChannelDocumentsPanel, xc as ChannelFilesPanel, Ea as ChannelHeader, fc as ChannelMentionsPanel, kc as ChannelRecordingsPanel, ni as ChartIcon, Dd as ChatBubbleIcon, Ds as ChatBubbleStack, Qo as ChatColumnBackdrop, ws as ChatCommandProvider, Ut as ChatComposer, hd as ChatDropZone, hi as ChatIcon, $o as ChatLabPill, ts as ChatLabShell, gc as ChatPanel, Ko as ChatRoom, Zd as ChatSidePanel, Jd as ChatSidePanelFrame, Xd as ChatSidePanelProvider, Mi as CheckIcon, No as Checkbox, Gc as ChecklistEditorRenderer, ii as ChecklistIcon, nl as ChecklistReaderRenderer, Zg as ChecklistSection, U as ChevronIcon, V as Chip, Wa as ChoiceList, Ha as ChoiceOption, Ua as ChoiceRow, Kf as CircularIconToggle, Ci as CloseIcon, hn as CodeBlock, Nt as CodeEditor, _i as CodeIcon, am as CodeInput, up as CollaboratorCheckList, lh as CollapsedIconStrip, sn as CollapsibleSection, sh as CollapsibleSidebar, wv as ColorInput, Gm as ColorSchemeProvider, Pn as CommandPalette, En as CommandPaletteHint, wn as CommandPaletteProvider, li as CommentIcon, n_ as CommentList, ss as CommentThread, ss as CommentThreadPanel, Hd as ComposerReferences, ra as ConfirmDialog, Za as ConnectionPill, $m as ConnectionStatus, bm as ConsentPage, lo as ConsoleSurfaceContext, On as ConsultCard, fg as ContextColumn, Xo as ConversationList, Go as ConversationRail, Jo as ConversationShelf, _s as ConversationStart, Dc as ConversationSurface, ci as CopyIcon, bs as CreateChannelDialog, Ts as CreateTeamDialog, Gl as DECK_THEMES, Qg as DEFAULT_LINK_RELATIONS, gd as DEFAULT_PICKER_EMOJIS, xt as DEFAULT_PIPELINE_ICONS, l as DOCUMENT_TYPE_ICONS, wr as DataTable, ol as DateEditorRenderer, vl as DateReaderRenderer, rc as DaySeparator, dl as DecisionsEditorRenderer, fl as DecisionsReaderRenderer, $c as DefaultRenderer, Qn as DetailHeader, kt as DetailSection, hp as DeviceSettingsPanel, tp as DeviceToggleSelect, sm as DiagnosticsPage, ul as DiagramEditorRenderer, ll as DiagramReaderRenderer, In as DiffViewer, Xi as Disclosure, Ct as Divider, pg as DockedAside, Ma as DockedPanelProvider, Bh as DocsShell, Uh as DocsSidebar, Jh as DocsTopNav, Js as DocumentActivityCard, Qr as DocumentAddIcon, cp as DocumentCallPanel, jc as DocumentChip, Pi as DocumentIcon, Fn as DocumentResultList, za as DotMeter, Li as DownloadIcon, ua as Drawer, Oo as DropdownMenu, Vd as EMOJI_SHORTCODES, ti as EditIcon, la as EditableHeading, cm as EmailTemplateFormPage, nm as EmailTemplateListPage, zf as EmbeddedCallPanel, aa as EmptyState, ln as EntityCell, dm as EntityTable, Jl as ErrorBoundary, _m as ErrorPage, oa as ErrorState, f_ as EstimateRow, _a as EventRow, Ad as ExpandIcon, pf as ExpandableCallWidget, pn as ExpertCard, Zh as ExplorerLayout, Ii as ExternalLinkIcon, Wr as EyeIcon, Or as EyeOffIcon, Fo as FILE_KIND_LABELS, Do as FLOATING_PANEL_ANCHORS, Tc as FeedRow, pd as FileInput, Po as FileKindMark, Kn as FilePickerButton, go as FileUploadDrop, gl as FileUploadEditorRenderer, yl as FileUploadReaderRenderer, Mt as FilterChip, Fi as FilterIcon, jt as FilterPopover, hg as FloatingCard, To as FloatingPanel, Gr as FolderIcon, Vi as FollowBanner, mo as FollowUpChips, ma as FormField, nn as FormRow, Ar as ForwardIcon, ao as GRAPHITE_PARTICLE_COLORS, xu as GenerativeImagePreview, vf as GoLiveButton, Vu as GraphPanelBody, kr as GripIcon, Cm as GroupFormPage, em as GroupListPage, Ls as GroupPanel, Et as GroupedList, Cs as HISTORY_DAYS_DEFAULT, Ms as HISTORY_DAYS_MAX, gs as HISTORY_DAYS_MIN, Sp as HangoutGrid, bp as HangoutLayout, mf as HangoutPreJoinShell, yf as HangoutRoomHeader, Kp as HangoutSpotlight, Br as HighlighterIcon, mi as HistoryIcon, h as IDENTITY_BASE_URL, H as IconButton, ht as IconPicker, mm as IdentityAdminLayout, Zp as IdentityFormField, pe as IdentityProvider, Er as ImageIcon, St as ImageLightbox, su as ImageThumbnail, Nl as InboxSection, Il as InboxSectionRow, Zf as IncomingCallPopover, pi as InfoIcon, Bi as Inline, Ja as InlineAlert, Ul as InlineEditableText, An as InlineMenu, $s as InlineMessageEditor, Tv as InlinePanel, So as InlinePlaceholder, yo as InlinePopover, ia as Input, ns as InviteCandidateList, qm as InviteToCallDialog, lu as JsonPathInput, qn as KPIGrid, Tn as KeyValue, qt as LayerStack, $i as LineChart, Zt as Link, Cl as LinkBlockEditorRenderer, hl as LinkBlockReaderRenderer, zd as LinkDialog, Rr as LinkIcon, e_ as LinkedItemsSection, zr as ListIcon, Vr as ListStyleIcon, Mn as LiveRegion, fa as LoadingState, jr as LockIcon, eo as LogStream, om as LoginPage, um as LogoutPage, Wl as MAX_DECK_SLIDES, fn as MarkdownView, zn as MasterDetail, mp as MediaControlsBar, Lp as MediaEffectsPreviewPanel, Mp as MediaEffectsTray, Lf as MediaPrecheckRow, As as MembersPanel, Hc as MembershipNotice, Pr as MenuIcon, wc as MessageActionBar, lc as MessageBody, Wt as MessageBubble, os as MessageGroup, cc as MessageRow, qi as MetaLine, rm as MfaDashboardPage, lm as MfaManagementPage, vm as MfaSetupPage, hm as MfaVerifyPage, wd as MicIcon, vd as MicOffIcon, na as Modal, Od as MonitorIcon, Lr as MoonIcon, bg as MoreContextDisclosure, jd as MoreHorizontalIcon, Ur as MoreIcon, Gf as MuteWhileTalkingToast, Fu as NODE_GRAPH_VIEW_WIDTH, kn as NavRail, Yt as NavRailStack, Rh as NavTabs, Df as NetworkQualityBadge, ks as NewChatDialog, Yo as NewConversationPanel, Ji as NoAccessState, Bt as NodeCard, Iu as NodeGraph, Qa as NotificationCenter, bl as NumberEditorRenderer, Mo as NumberInput, pl as NumberReaderRenderer, Ri as NumberedListIcon, Yg as OutcomeSection, Lu as PEOPLE_GRAPH_QUERY_NODE_ID, _o as POPOVER_KEEPOUT_ATTR, P_ as PROCEDURE_STEP_STATUS_LABELS, mt as PROMPT_CONTEXT_DRAG_TYPE, ut as PROMPT_CONTEXT_LIMIT, Xa as PageHeader, Cr as PageSection, Dr as PaperclipIcon, yp as ParticipantTile, co as ParticlesBackground, du as PatchHttpError, iu as PatchValidationRejectedError, bd as PauseIcon, Qu as PeopleGraph, qr as PeopleIcon, ca as PermissionDeniedCard, Nn as PersonHoverCard, Nr as PersonIcon, Td as PhoneCallIcon, Kr as PhoneIcon, Nd as PhoneOffIcon, _f as PiPButton, Bn as PickerDialog, Jr as PinIcon, Pc as PinnedMessagesPanel, gg as PinnedSlot, bu as PipelineEditorServicesProvider, Mr as PlayCircleIcon, xd as PlayIcon, Ff as PlaybackReactionsLayer, Ir as PlusCircleIcon, Ti as PlusIcon, Qp as PoolFormPage, $p as PoolListPage, ym as PoolScopedLayout, Fr as PopOutIcon, wo as PopoverField, Co as PopoverForm, Vo as PostFeed, ho as PresenceAvatars, Va as PresenceDot, Lc as PresencePanel, Ft as PresenceProvider, Yl as PresentationEditor, Xr as PrinterIcon, z_ as ProcedureSteps, bn as ProgressBar, en as ProjectCard, js as PromptContextPicker, It as Prose, Yr as PuzzleIcon, fm as QrCodeDisplay, Rt as QuickPromptGrid, Us as QuoteBlock, Zr as QuoteIcon, rf as RECORDING_CHIP_TITLES, $n as REVIEW_KIND_LABELS, tn as REVIEW_KIND_TONES, p_ as RUN_DRAFT_STATUS_LABELS, gt as RadioGroup, Xn as RailLayout, Xt as RailNavList, er as RailSection, Os as RailSectionHeader, td as RangeSlider, zs as ReactionChips, Rf as ReactionOverlay, np as ReactionPicker, Xf as ReactionPickerButton, md as ReactionPickerPopover, Zo as ReactionsBar, Gp as ReconnectingBanner, Ks as RecordingActivityCard, nf as RecordingChip, xf as RecordingExpiryDialog, bf as RecordingList, of as RecordingPlayer, Sf as RecordingRow, Hr as RedoIcon, Jp as RemoteTileSlot, Tr as RepeatIcon, oi as ReplyIcon, Qm as ResumeCallDialog, Pf as ReviewDocumentList, zt as ReviewThread, Kc as RichTextEditorRenderer, qc as RichTextReaderRenderer, fo as RippleGridBackground, to as RisingParticles, qo as RoomList, df as RosterPanel, qa as RovingToolbar, T_ as RunDraftPanel, Wo as RunPanelBody, Uo as RunSummaryPanel, Hl as SLIDE_LAYOUTS, jl as SLIDE_LAYOUT_LABELS, Pg as ScopeHeader, Tt as ScoreBarGauge, kd as ScreenShareIcon, Ed as ScreenShareOffIcon, ji as SearchIcon, pa as SearchInput, xo as SectionLabel, Ga as SegmentedControl, jo as Select, Wi as SelectableCard, bi as SendIcon, Cd as SettingsGearIcon, zh as SettingsLayout, gm as SetupGuidePage, Di as ShareIcon, yn as ShortcutsHelp, Lo as SidebarRow, Ro as SidebarSection, un as SignoffPanel, ba as SkeletonCard, Yn as SkipLink, Oa as Slider, fi as SlidersIcon, ei as SmileyIcon, ls as SocialPanel, cs as SocialTabContent, H_ as SourceCard, U_ as SourceList, Si as SparkleIcon, Sd as SparklesIcon, ya as Sparkline, _d as SpeakerIcon, da as Spinner, $h as SplitPane, zi as Stack, Vn as StackDiagram, ea as StackedAreaChart, Of as StartCallDrawer, _n as StatCard, Cn as StatStrip, pp as StatsCard, tm as StatusBadge, Ba as StatusDot, Ao as StatusPill, dp as StatusStrip, Wp as StreamAudioOnly, zp as StreamChatTicker, Pp as StreamStage, Op as StreamVideo, Qt as SubNavLayout, Gn as SuggestionCard, vp as SummaryPanel, ki as SunIcon, Da as Switch, Yi as T, ev as THEME_TOKEN_ALIASES, mr as TONES, ir as TONE_BG, ur as TONE_BORDER, hr as TONE_SOFT, ar as TONE_SOLID, or as TONE_SOLID_BG, fr as TONE_TEXT, Aa as TabPanel, Sr as Table, yr as TableBody, xr as TableHead, vr as TableRow, _r as TableTd, br as TableTh, ka as Tabs, bt as TagEditor, Rn as TaskComposer, Jn as TaskStrip, rl as TasksEditorRenderer, Tl as TasksReaderRenderer, ps as TeamChannelTree, sa as TechnicalDetails, ri as TemplateIcon, $a as TerminalLog, Gi as Text, xl as TextEditorRenderer, cl as TextReaderRenderer, Na as Textarea, gv as ThemeProvider, an as ThinkingBlock, Sa as ThinkingDots, cn as ThumbnailCard, Ra as TitledFrame, $e as Toast, nt as ToastProvider, rn as ToolCallPill, on as ToolCallStrip, Dt as Toolbar, At as ToolbarGroup, vt as ToolbarLabel, wt as ToolbarSeparator, Io as Tooltip, Lh as TopNav, gi as TranscribeIcon, $d as TranscriptOverlay, ef as TranscriptPanel, zc as TransferBubble, Ni as TrashIcon, xn as TreeView, Ot as TrendSparkline, ud as TypedNodeCanvas, Ca as TypingIndicator, ai as UndoIcon, si as UploadIcon, $t as UserChip, Xp as UserFormPage, Sm as UserListPage, nr as UserMenu, yt as UserPicker, Pd as UserPlusIcon, Id as UsersIcon, km as VERDICT_GLYPH, jm as VERDICT_LABEL, Om as VERDICT_TONE, xa as VISUALLY_HIDDEN_STYLE, Mm as VerdictChip, wi as VideoCallIcon, Bf as VideoGrid, yd as VideoIcon, Fd as VideoOffIcon, jf as VideoPlayer, _p as VideoPlayerModal, Cp as ViewerCount, Xh as ViewportFillRegion, wa as VisuallyHidden, fp as VoicemailRecorder, Rp as VolumeSlider, sd as WORK_ACTIVITY_ALL_EFFORTS, Ku as WORK_ACTIVITY_DEFAULT_MAX_EFFORTS, vi as WarningIcon, qe as WebSocketProvider, ui as WhiteboardIcon, Ln as Wizard, Gu as WorkActivityHeader, N_ as WorkActivityList, Lt as WorkArea, ad as WorkArtifactInspector, nd as WorkComputePane, Hu as WorkEdge, Ju as WorkEntityList, od as WorkGraph, Yu as WorkInspector, Jg as WorkItemMetaBar, xg as WorkListFilters, kg as WorkListToolbar, Ag as WorkListView, cd as WorkNode, id as WorkNodePane, $u as WorkOmittedGroup, Xu as WorkPaneBanner, rd as WorkReferenceCard, zg as WorkSearchPicker, ed as WorkSharingControls, dd as WorkStatus, Uu as WorkTranscriptPanel, _g as Workbench, Wn as WorkflowStepper, ds as WorkspaceRail, Ht as activeNavItemClassName, Gt as activeNavItemStyle, Al as addSlide, Ws as agentRunRefFromMetadata, qs as agentRunResultFromMetadata, Xs as agentRunTimings, Su as applyPatch, ml as booleanFieldType, dv as borderRadius, qf as callPersonStatus, vc as callRefFromMetadata, Wf as callSidePanelBodyTestId, kf as callSidePanelPlacement, ep as callSidePanelToggleTestId, Bl as canSaveDeck, rg as canvasPaneGeometry, Is as chatChannelKindOf, ms as chatCommandScopeHint, Fs as chatCommandsToComposer, qd as chatSidePanelKindLabel, tl as checklistFieldType, cv as colors, Qe as compileProgram, Wd as composerCommandArgumentText, o_ as confidenceNote, a_ as confidenceOf, tc as conversationStamp, Xe as createArrayBuffer, ju as createGraphPanelRenderer, es as createRunPanelRenderer, Ze as createWebGLContext, $ as cssVar, pv as darkTheme, Qc as dateFieldType, Rs as dayKeyOf, _c as dayLabel, Ol as decisionsFieldType, nc as describeAgentRunOp, Bs as describeMembership, oc as describeMembershipHistory, Gs as describeParticipants, Cc as describeReactors, ac as describeRecordingParticipants, Yc as diagramFieldType, Hn as documentAgeLabel, Ac as documentRefFromMetadata, Ec as documentRefsFromMetadata, ro as drawnParticles, ql as duplicateSlide, va as eventGlyphs, Hs as excerpt, Xc as fileUploadFieldType, Yh as fillHeight, uv as fontSize, au as forceFail, Af as formatAudioTime, Ld as formatBytes, Ys as formatCallDuration, Uf as formatCallElapsed, uc as formatChatTime, A_ as formatCompactAge, hc as formatDuration, d_ as formatEstimate, B_ as formatSourceAge, Ng as formatSpend, Gd as formatTokens, Ta as formatTypingBanner, bc as forwardAttributionLine, yc as forwardOriginLabel, dc as forwardedFromMetadata, Ic as fullDateLabel, Oc as fullTimestampLabel, de as getApiBaseUrl, al as getApprovalApiBase, le as getDocumentTypeApiBaseUrl, ga as getEventCategory, ha as getEventGlyph, a as getFieldType, n as getFieldTypes, s as getPageConfig, c as getPagesView, hu as getPipelineRun, i as getRenderer, _u as getRunAuditLog, Mu as graphCenterNode, Ru as graphGroupPalette, Nu as graphGroups, xp as gridCols, Zs as groupReactions, Np as guardedSelection, jp as hlsFailureText, m as identityApiFetch, Jt as inactiveNavItemClassName, $_ as injectThemeVars, is as isChatCommandInScope, ic as isImageAttachment, Fp as isKnownViewerCount, Nc as isNewDay, Au as isPeopleGraphData, ft as isPromptContextDrag, Ss as isRunPanelLive, u as isValidCustomFieldType, Pu as layoutGraph, Bu as layoutTypedNodes, fv as lightTheme, qu as limitWorkEfforts, Jc as linkBlockFieldType, xv as listDLQEntries, pu as listPipelineRuns, t as listRegisteredRenderers, o as makeEmptyField, kl as makeSlide, wl as mapStatusToDecision, Bd as matchComposerCommand, dn as matchHotkey, Ou as matchingTag, Rc as membershipRefFromMetadata, ys as mergeChatCommands, Qd as modeFromMinimized, _ as modelUnavailableMessage, Kl as moveSlide, La as nameToColor, Fa as nameToInitials, Rl as nextRevisionLabel, zl as nextSlideId, Hi as noAccessMessage, k as normalizeApiHealth, Rd as normalizeHref, Zc as numberFieldType, Ho as parseChatCommand, Bo as parseRunPanelId, Un as parseUnifiedDiff, Zu as peopleToGraph, ot as pickRecordingMimeType, vo as popoverFloor, Dl as postApproval, lt as promptContextStore, Cv as purgeDLQEntries, ku as rankTypedNodes, ov as rawBorderRadius, rv as rawColors, av as rawFontSize, iv as rawSpacing, sv as rawTokens, Hf as reactionEmojiName, sl as readDocumentIdFromUrl, st as readPromptContextDrag, Pa as readableAvatarForeground, Vc as recordingRefFromMetadata, Sv as redriveDLQEntries, e as registerFieldType, r as registerRenderer, Vl as removeSlide, Ml as replaceSlide, dt as resetPromptContextStores, Eo as resolveAnchorPosition, so as resolveBackdropTone, sf as resolveExpiryChoice, Dm as resolveVerdictState, fu as resumeFromStep, Cu as retryFromNode, wu as revertPatch, Wc as richTextFieldType, xs as runPanelId, mu as searchAudit, Ud as searchEmoji, ue as setApiBaseUrl, El as setApprovalApiBase, ce as setDocumentTypeApiBaseUrl, yv as shadows, Ps as sidePanelFromSearch, as as sidePanelToSearch, lv as spacing, Ep as splitEffectLabel, Hp as stagePhaseIsLive, kp as stagePhaseIsShowingLiveMedia, qp as streamHasUsableVideo, Dp as streamIsAudioOnly, Ip as streamStagePhase, vn as taskPercent, il as tasksFieldType, el as textFieldType, Q_ as themeToCssVars, If as toCanonicalMode, us as toChannelName, lp as toLegacyMode, Eg as toWorkListRows, Z_ as tokenToCssVarName, nv as toneCssVarName, cr as toneKey, sr as toneVar, mc as truncationFromMetadata, Pl as uncitedSlideIds, g as useActivityBus, O as useApiCall, f as useApiHealth, Ap as useAudioLevel, it as useAudioRecorder, re as useAuth, we as useAwareness, xe as useAwarenessState, ae as useCRDT, hf as useCallWidgetPersistence, fd as useCanvasPaneInset, T as useChat, vs as useChatCommands, Kd as useChatSidePanelRenderer, Yd as useChatSidePanelRenderers, w as useClickOutside, be as useCollaborativeDoc, Km as useColorScheme, Zn as useCommandPalette, Ne as useComments, A as useCursors, C as useCustomFieldTypes, We as useDocTypeProposals, ja as useDockedPanel, he as useDocumentComments, Oe as useDocumentExport, Ee as useDocumentItems, _e as useDocumentMetadata, Ce as useDocumentReviews, Ge as useDocumentTypes, M as useDocuments, io as useEnclosingConsoleSurface, rt as useEventCallback, Ki as useFollowAutoStop, je as useFriends, L as useGroups, Bp as useHlsSource, y as useIdentityAdmin, se as useIdentityAudit, v as useIdentityClients, I as useIdentityContext, P as useIdentityDiagnostics, S as useIdentityEmailTemplates, F as useIdentityGroups, oe as useIdentityMfa, b as useIdentityMfaAdmin, E as useIdentityPools, p as useIdentityResource, D as useIdentitySetupStatus, te as useIdentityUsers, ve as useIdleDetector, gu as useImageUrl, R as useIngestAudit, Le as useIngestDLQ, He as useIngestItems, Be as useIngestProgress, Ie as useIngestSources, ne as useKeyboardShortcuts, Pe as useLikes, Re as useMappingReviewQueue, at as useMediaDevices, me as useMentionUsers, cf as useMuteWhileTalking, ye as useMyMentionsAndTasks, fe as useOptionalIdentityContext, _t as useOptionalPresenceContext, Ve as usePipelineDefs, ou as usePipelineEditorServices, Me as usePosts, Je as usePrefersReducedMotion, x as usePresence, Pt as usePresenceContext, pt as usePromptContext, ee as useReactions, fs as useRegisterChatCommands, tr as useRegisterCommand, no as useResolvedBackdropTone, ie as useRooms, Ka as useRovingToolbar, Ns as useRunChatCommand, ge as useSectionList, Fe as useSocialProfile, ze as useSourceSloMetrics, Tp as useStableActiveSpeaker, Ue as useSyncConflicts, vv as useTheme, _v as useThemeContext, et as useToast, tt as useToastOptional, wp as useTrackStateBump, j as useTypedDocuments, N as useUrlFilterState, Te as useVersionHistory, Se as useVideoCall, De as useVideoSessions, Ye as useWebGLCanvas, Ae as useWebSocket, Ke as useWebSocketContext, ke as useYjsDoc, Ll as withLayoutDefaults, Bc as withoutForwardAttribution, Wu as workPauseLabel, ct as writePromptContextDrag, bv as zIndex };

@@ -791,7 +791,8 @@ export declare interface ChipProps {
      * debugger or terminal pane.
      */
     palette?: ChipPalette;
-    size?: 'md' | 'sm' | 'xs';
+    /** `lg` since 2.396.0: 14px regular text, 10px × 4px padding, 6px corners. */
+    size?: 'lg' | 'md' | 'sm' | 'xs';
     /** Solid fill (dark bg + white text) instead of soft tint. */
     solid?: boolean;
     /**
@@ -808,8 +809,13 @@ export declare interface ChipProps {
      * on an already-tinted row (the "Blocked" chip on `ActionRowList
      * tone="warning"`) without stacking a second tint on it. `surface` palette
      * only; ignored with `solid`/`translucent`. Since 2.393.1.
+     *
+     * `'soft'` (since 2.396.0): the same tone border and text over the tone's
+     * pale `-bg` fill rather than the surface wash — a tag that should still
+     * read as tinted on a tinted row (the Initiatives v2 "Blocked": pale red
+     * fill, soft red border, red text).
      */
-    outline?: boolean;
+    outline?: boolean | 'soft';
     /** Monospace font — for count badges. */
     mono?: boolean;
     /** Indicator dot. 'static' = filled circle, 'pulse' = filled circle
@@ -3378,7 +3384,7 @@ export declare interface PageHeaderProps {
     className?: string;
 }
 
-export declare function PageSection({ title, description, actions, children, count, size, className, 'data-testid': testId, }: PageSectionProps): JSX.Element;
+export declare function PageSection({ title, description, actions, children, count, countTone, size, className, 'data-testid': testId, }: PageSectionProps): JSX.Element;
 
 export declare interface PageSectionProps {
     title: string;
@@ -3390,6 +3396,12 @@ export declare interface PageSectionProps {
      * draws none; zero shows "0" (an empty section is a fact). Since 2.392.0.
      */
     count?: number;
+    /**
+     * The count pill's colour. `neutral` (default): the grey chip. `primary`
+     * (since 2.396.0): a pale indigo pill (`primary-bg`) with indigo
+     * (`primary-fg`) numerals at 13px — the Initiatives v2 "Needs attention 1".
+     */
+    countTone?: 'neutral' | 'primary';
     /**
      * `lg` (default): the page's own 20px h1 with 24px to its content. `md`
      * (since 2.392.0): a 16px semibold h2 over a section of a page — "Needs
@@ -5055,7 +5067,7 @@ export declare interface TabPanelProps {
     children?: ReactNode;
 }
 
-export declare function Tabs({ items, value, onValueChange, variant, size, badgeStyle, className, style, 'aria-label': ariaLabel, idPrefix: idPrefixProp, getItemTestId, stretch, itemClassName, 'data-testid': testId, }: TabsProps): JSX.Element;
+export declare function Tabs({ items, value, onValueChange, variant, size, badgeStyle, className, style, 'aria-label': ariaLabel, idPrefix: idPrefixProp, getItemTestId, stretch, itemClassName, 'data-testid': testId, indicator, indicatorWeight, }: TabsProps): JSX.Element;
 
 export declare interface TabsProps {
     items: TabItem[];
@@ -5092,6 +5104,22 @@ export declare interface TabsProps {
      * "tablist"` element to hang one attribute on it.
      */
     'data-testid'?: string;
+    /**
+     * How the `underline` variant marks the selected tab. `border` (default):
+     * the tab's own 2px bottom border, hung 1px (`-mb-px`) over the tablist's
+     * rule — as before.
+     *
+     * `bar` (since 2.396.0): an absolutely positioned bar at the bottom of the
+     * tab, on `z-[1]`, and the rule drawn as the tablist's own `after:` line.
+     * Both sit INSIDE the tablist's box, so nothing hangs past it for the next
+     * element (a scrolling pane body with its own background) to paint over —
+     * the bug that left a 2px border reading as 1px under `ScopeHeader` in an
+     * `ExplorerLayout.paneHeader`. Hide the rule with `after:hidden` when a
+     * host draws its own. Other variants ignore this.
+     */
+    indicator?: 'border' | 'bar';
+    /** The `bar` indicator's thickness in px. Default 2. Since 2.396.0. */
+    indicatorWeight?: 2 | 3;
 }
 
 export declare type TabsVariant = 'underline' | 'pill' | 'segmented';
@@ -5958,19 +5986,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -5990,9 +6005,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
         };
     }
 }
@@ -6000,12 +6018,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -6049,6 +6064,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
@@ -6059,9 +6087,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.396.0
+
+- **Tabs** (`underline`): `indicator="bar"` draws the selected-tab bar above the row's rule so a following pane can no longer paint over half of it; `indicatorWeight` 2 | 3.
+- **ScopeHeader**: the tab rule can be inset to the content edge rather than spanning the pane.
+- **Chip**: `outline="soft"` — tone border and text over the tone's pale fill; `size="lg"`.
+- **PageSection**: `countTone="primary"` for a pale-indigo count pill.
+- Story `Layout/ExplorerLayout › Initiative overview v2` updated to the 23:25 mockup.
+
 ## [2.395.3] — 2026-09-25
 
 ### Fixed
