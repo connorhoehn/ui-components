@@ -166,6 +166,18 @@ export const Failed: Story = {
   decorators: [themed('light')],
 };
 
+/** A join that never connected (2.397.2): the banner and its retry take their own copy. */
+export const JoinFailed: Story = {
+  args: base({
+    phase: 'error',
+    participantCount: 1,
+    error: { message: 'the server could not be reached', title: "Couldn't join the call — the server could not be reached", retryLabel: 'Try again', onRetry: noop },
+    onDismiss: noop,
+  }),
+  decorators: [themed('light')],
+};
+export const JoinFailedDark: Story = { ...JoinFailed, decorators: [themed('dark')] };
+
 /**
  * Bob's camera is off but he is still talking: his video element stays
  * mounted (invisible) so the audio on that stream keeps playing, and the

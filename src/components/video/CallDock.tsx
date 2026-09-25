@@ -83,7 +83,12 @@ export interface CallDockProps {
   onDocumentClick?: (id: string) => void;
   /** Ended: the line after "Call ended · 12:04 · ". */
   endedSummary?: ReactNode;
-  error?: { message: string; onRetry: () => void };
+  /**
+   * The error banner. `title` replaces the default "Lost the call — <message>"
+   * (a join that never connected reads "Couldn't join the call — …"), and
+   * `retryLabel` replaces "Rejoin" ("Try again" for that same case).
+   */
+  error?: { message: string; onRetry: () => void; title?: string; retryLabel?: string };
   onDismiss?: () => void;
   /** 132 × 74 tiles (a 1280 × 720 window) instead of 176 × 88 (the mockup's 166 × 84 at its 1.054 scale). */
   compact?: boolean;
@@ -146,12 +151,12 @@ export function CallDock({
       <div className={cn('border-t border-border bg-surface px-5 py-3', className)} data-testid={testId} data-phase="error">
         <Banner
           variant="error"
-          title={`Lost the call — ${error.message}`}
+          title={error.title ?? `Lost the call — ${error.message}`}
           data-testid="call-dock-error"
           action={
             <div className="flex items-center gap-2">
               <Button size="sm" onClick={error.onRetry} data-testid="call-dock-rejoin">
-                Rejoin
+                {error.retryLabel ?? 'Rejoin'}
               </Button>
               {onDismiss && (
                 <Button size="sm" variant="ghost" onClick={onDismiss} data-testid="call-dock-dismiss">

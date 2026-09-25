@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.397.2] — 2026-09-25
+
+### Added
+- `CallDock`: `error.title` and `error.retryLabel`. The banner read "Lost the call — <message>" with
+  "Rejoin" for every error, including a join that never connected; a host can now say
+  "Couldn't join the call — …" with "Try again". Stories `JoinFailed` / `JoinFailedDark`.
+
 ## [2.397.1] — 2026-09-25
 
 ### Changed

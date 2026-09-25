@@ -5600,7 +5600,7 @@ function $r({ title: t, participantCount: n, elapsedMs: r, phase: a, documents: 
 		"data-phase": "error",
 		children: /* @__PURE__ */ X(g, {
 			variant: "error",
-			title: `Lost the call — ${M.message}`,
+			title: M.title ?? `Lost the call — ${M.message}`,
 			"data-testid": "call-dock-error",
 			action: /* @__PURE__ */ Z("div", {
 				className: "flex items-center gap-2",
@@ -5608,7 +5608,7 @@ function $r({ title: t, participantCount: n, elapsedMs: r, phase: a, documents: 
 					size: "sm",
 					onClick: M.onRetry,
 					"data-testid": "call-dock-rejoin",
-					children: "Rejoin"
+					children: M.retryLabel ?? "Rejoin"
 				}), N && /* @__PURE__ */ X(i, {
 					size: "sm",
 					variant: "ghost",
