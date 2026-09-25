@@ -1501,7 +1501,7 @@ export declare interface BadgeProps {
 
 export declare type BadgeVariant = 'count' | 'dot' | 'pulse';
 
-export declare function Banner({ variant, title, layout, onDismiss, action, children, className, style, 'data-testid': testId, }: BannerProps): JSX.Element;
+export declare function Banner({ variant, title, layout, icon, onDismiss, action, children, className, style, 'data-testid': testId, }: BannerProps): JSX.Element;
 
 export declare interface BannerProps {
     variant?: BannerVariant;
@@ -1515,8 +1515,21 @@ export declare interface BannerProps {
      * comment gutter the two children split the width and the body was left
      * with 68px, about six characters per line, wrapping into a ragged tower.
      * `stacked` puts the title above the body and gives each the full width.
+     *
+     * `callout` (since 2.389.0) is a full-width notice in a document body:
+     * icon · title over body · trailing action, all vertically centred. The
+     * surface keeps the tone's soft fill and border, but the title reads in
+     * primary ink and the body in secondary ink so a paragraph of advice stays
+     * legible — only the icon carries the tone colour.
      */
-    layout?: 'inline' | 'stacked';
+    layout?: 'inline' | 'stacked' | 'callout';
+    /**
+     * A leading glyph. `true` draws the tone's default (a warning triangle for
+     * `warning`/`error`, an info circle for `info`, a check for `success`); a
+     * node is drawn as given. Omitted (default) draws none — existing banners
+     * are unchanged. Since 2.389.0.
+     */
+    icon?: ReactNode | true;
     onDismiss?: () => void;
     /**
      * A control that resolves what the banner is about — "Convert to page" on a
@@ -4494,6 +4507,15 @@ export declare interface ComposerReference {
     icon?: string;
     /** Hover text; the label itself when absent. */
     title?: string;
+    /**
+     * Makes the chip a menu trigger — label + chevron — that opens these
+     * choices ("This guide", "This guide + sources", "No context"). A chip with
+     * a menu draws NO remove button even when `onRemove` is passed: choosing
+     * "none" is one of the menu's items, not an ×. Since 2.389.0.
+     */
+    menu?: readonly DropdownMenuSection[];
+    /** Accessible name of the menu trigger. Default: the label. Since 2.389.0. */
+    menuLabel?: string;
 }
 
 export declare function ComposerReferences({ references, onRemove, removeLabel, className, size, 'data-testid': testId, }: ComposerReferencesProps): JSX.Element | null;
@@ -6950,7 +6972,7 @@ export declare interface ExpertSkillMatch {
     strength?: number;
 }
 
-export declare function ExplorerLayout({ rail, children, aside, railWidth, header, railCount, railHeading, railCollapsed, onToggleRail, railLabel, railTitle, railActions, railHeader, railFooter, panePadding, asidePlacement, className, 'data-testid': testId, }: ExplorerLayoutProps): JSX.Element;
+export declare function ExplorerLayout({ rail, children, aside, railWidth, header, paneHeader, railCount, railHeading, railCollapsed, onToggleRail, railLabel, railTitle, railActions, railHeader, railFooter, panePadding, asidePlacement, className, 'data-testid': testId, }: ExplorerLayoutProps): JSX.Element;
 
 export declare interface ExplorerLayoutProps {
     /** Left rail — flush to the pane's left edge, its own border, scrolls independently. */
@@ -6972,6 +6994,15 @@ export declare interface ExplorerLayoutProps {
      * Since 2.385.0.
      */
     header?: ReactNode;
+    /**
+     * A band to the RIGHT of the rail, above the pane and the aside — a crumb
+     * trail with the scope's controls ("Build › Distillation › Knowledge" · All
+     * repositories · Open Library). Unlike `header` it does not span the rail,
+     * so the rail's own title keeps the top-left corner. It does not scroll; the
+     * pane below it does. No border of its own: it reads as the top of the pane.
+     * Since 2.389.0.
+     */
+    paneHeader?: ReactNode;
     /** A count beside `railTitle` ("Work 11"). Since 2.385.0. */
     railCount?: number;
     /** The rail's heading style — see `WorkspaceRail.heading`. Default `compact`. Since 2.385.0. */
@@ -7955,7 +7986,7 @@ export declare function gridCols(count: number): number;
 /** Six dots in two columns: a drag handle — "pick this up and move it". Since 2.385.0. */
 export declare function GripIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, onReorder, canReorder, reorderLabel, size, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
+export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, onReorder, canReorder, reorderLabel, size, groupHeading, currentStyle, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
 
 export declare interface GroupedListGroup {
     id: string;
@@ -8009,6 +8040,20 @@ export declare interface GroupedListProps {
      * edge, and a larger drag handle that is always visible.
      */
     size?: 'sm' | 'md';
+    /**
+     * How a group header reads. `title` (default): a sentence-case heading
+     * (14px, 15px at `md`) with its count in a neutral chip. `label`: a section
+     * label — 11px uppercase semibold, letter-spaced, secondary ink — with the
+     * count as plain muted text after it ("RECENTLY UPDATED 4"), for a list
+     * whose groups are time bands rather than named things. Since 2.389.0.
+     */
+    groupHeading?: 'title' | 'label';
+    /**
+     * How the current row is marked. `tint` (default): a pale primary fill (at
+     * `md`, also the 3px bar). `bar`: the fill plus a 2px inset primary bar on
+     * the left edge at `sm` too. Since 2.389.0.
+     */
+    currentStyle?: 'tint' | 'bar';
     className?: string;
     'data-testid'?: string;
 }
@@ -12964,7 +13009,7 @@ export declare interface RailSectionAction {
     'data-testid'?: string;
 }
 
-export declare function RailSectionHeader({ label, actions, presentational, collapsed, onToggleCollapse, controls, toggleId, collapsedCount, dark, className, 'data-testid': testId, }: RailSectionHeaderProps): JSX.Element;
+export declare function RailSectionHeader({ label, actions, presentational, collapsed, onToggleCollapse, controls, toggleId, collapsedCount, count, dark, className, 'data-testid': testId, }: RailSectionHeaderProps): JSX.Element;
 
 export declare interface RailSectionHeaderProps {
     label: string;
@@ -13009,6 +13054,13 @@ export declare interface RailSectionHeaderProps {
      * the same as muting it by accident.
      */
     collapsedCount?: number;
+    /**
+     * How many things the section holds — "GUIDES & FINDINGS  11". A neutral
+     * chip at the right end of the heading, before any actions, shown whenever
+     * a number is given (0 included) and whatever the collapsed state. Unlike
+     * `collapsedCount` it is a size, not an alert. Since 2.389.0.
+     */
+    count?: number;
     /** Light-on-dark, for a rail sitting on call chrome. */
     dark?: boolean;
     className?: string;
@@ -14135,7 +14187,7 @@ export declare interface ScatterNodeData {
     maxConcurrency?: number;
 }
 
-export declare function ScopeHeader({ breadcrumbs, title, status, progress, spentUsd, stats, people, link, controls, menu, menuLabel, tabs, activeTab, onTabChange, className, 'data-testid': testId, }: ScopeHeaderProps): JSX.Element;
+export declare function ScopeHeader(props: ScopeHeaderProps): JSX.Element;
 
 export declare interface ScopeHeaderPeopleGroup {
     /** "Owner". Rendered small and uppercase before the avatars. */
@@ -14154,7 +14206,23 @@ export declare interface ScopeHeaderProgress {
 
 export declare interface ScopeHeaderProps {
     breadcrumbs?: BreadcrumbItem[];
-    title: string;
+    /**
+     * The scope's name, drawn as the h1. Required in practice for the default
+     * variant; optional (and not drawn) for `variant="crumbs"` since 2.389.0.
+     */
+    title?: string;
+    /**
+     * `default`: the full band — crumbs, an h1 title with status and stats, the
+     * right-hand group, tabs.
+     *
+     * `crumbs` (since 2.389.0): a crumb line ONLY, for the top of a pane whose
+     * record draws its own headline (an `EditorShell titleSize="lg"` below it,
+     * in `ExplorerLayout.paneHeader`). Crumbs on the left; `controls`, `link`
+     * and `menu` on the right, hung a little below the crumb line so they sit
+     * between the crumb and the headline that follows. No h1 — title, status,
+     * stats, people and tabs are not drawn.
+     */
+    variant?: 'default' | 'crumbs';
     /** The scope's own status — "In progress". */
     status?: {
         label: string;
@@ -14930,7 +14998,7 @@ declare interface SocialTabContentProps {
     onMessage: OnMessageFn_7;
 }
 
-export declare function SourceCard({ id, title, kind, timestamp, excerpt, onOpen, href, current, now, className, 'data-testid': testId, }: SourceCardProps): JSX.Element;
+export declare function SourceCard({ id, title, kind, timestamp, excerpt, onOpen, href, current, meta, layout, now, className, 'data-testid': testId, }: SourceCardProps): JSX.Element;
 
 export declare interface SourceCardProps {
     id: string;
@@ -14945,15 +15013,28 @@ export declare interface SourceCardProps {
     href?: string;
     /** This is the source being viewed. */
     current?: boolean;
+    /**
+     * A quiet line under the title that REPLACES the age — "Source pattern ·
+     * auth-service". Since 2.389.0.
+     */
+    meta?: string;
+    /**
+     * `card` (default): the mark, a title that is the control, the age, the
+     * excerpt. `row` (since 2.389.0): a "based on" row — the WHOLE row is one
+     * control (a button with `onOpen`, a link with `href`), the mark in a 32px
+     * bordered tile, a 13px medium title, a 12px tertiary meta line, and a
+     * trailing chevron. No excerpt. The accessible name is the title.
+     */
+    layout?: 'card' | 'row';
     /** Clock for the age (tests, server-rendered snapshots). Default `Date.now()`. */
     now?: number;
     className?: string;
     'data-testid'?: string;
 }
 
-export declare function SourceList({ items, emptyLabel, onOpen, now, className, 'aria-label': ariaLabel, 'data-testid': testId, }: SourceListProps): JSX.Element;
+export declare function SourceList({ items, emptyLabel, onOpen, now, layout, className, 'aria-label': ariaLabel, 'data-testid': testId, }: SourceListProps): JSX.Element;
 
-export declare type SourceListItem = Omit<SourceCardProps, 'now' | 'className' | 'data-testid'>;
+export declare type SourceListItem = Omit<SourceCardProps, 'now' | 'className' | 'data-testid' | 'layout'>;
 
 export declare interface SourceListProps {
     items: SourceListItem[];
@@ -14962,6 +15043,8 @@ export declare interface SourceListProps {
     /** Applied to every card that has no handler of its own. */
     onOpen?: (id: string) => void;
     now?: number;
+    /** Forwarded to every card — `row` for a "Based on" list. Since 2.389.0. */
+    layout?: 'card' | 'row';
     className?: string;
     'aria-label'?: string;
     'data-testid'?: string;
@@ -19139,6 +19222,9 @@ declare interface UseActivityBusReturn {
       'data-testid'?: string;
   }
 
+  /** A triangle with an exclamation mark: "warning", "check this first". Since 2.389.0. */
+  export declare function WarningIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
   export declare type WatermarkGravity = 'northwest' | 'north' | 'northeast' | 'west' | 'center' | 'east' | 'southwest' | 'south' | 'southeast';
 
   export declare interface WebGLCanvas {
@@ -20531,6 +20617,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -20550,45 +20649,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }
@@ -20622,9 +20685,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -20635,6 +20701,26 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

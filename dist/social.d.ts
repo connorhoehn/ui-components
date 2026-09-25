@@ -1412,6 +1412,15 @@ export declare interface ComposerReference {
     icon?: string;
     /** Hover text; the label itself when absent. */
     title?: string;
+    /**
+     * Makes the chip a menu trigger — label + chevron — that opens these
+     * choices ("This guide", "This guide + sources", "No context"). A chip with
+     * a menu draws NO remove button even when `onRemove` is passed: choosing
+     * "none" is one of the menu's items, not an ×. Since 2.389.0.
+     */
+    menu?: readonly DropdownMenuSection[];
+    /** Accessible name of the menu trigger. Default: the label. Since 2.389.0. */
+    menuLabel?: string;
 }
 
 export declare function ComposerReferences({ references, onRemove, removeLabel, className, size, 'data-testid': testId, }: ComposerReferencesProps): JSX.Element | null;
@@ -2169,6 +2178,46 @@ export declare function documentRefsFromMetadata(metadata: Record<string, unknow
     icon?: string;
 }>;
 
+declare interface DropdownMenuItem {
+    /** Visible item label. */
+    label: string;
+    /** Optional leading icon / glyph. */
+    icon?: ReactNode;
+    /** Highlight this item as the currently-active selection. */
+    active?: boolean;
+    /** Style this item as destructive. */
+    danger?: boolean;
+    /** Fires on click / Enter; the menu closes afterwards. Not needed on a row with a `submenu`. */
+    onSelect?: () => void;
+    /** Right-aligned hint after the label — a shortcut (`⌘P`), a count. */
+    trailing?: ReactNode;
+    /** A second, quieter line under the label. */
+    description?: string;
+    /** A setting that is on: a check leads the row (menuitemcheckbox). */
+    checked?: boolean;
+    /**
+     * A flyout of further choices, opened from this row — "Share to ›",
+     * "Download as ›". Opens on hover, click or ArrowRight; the row itself
+     * runs no `onSelect`.
+     */
+    submenu?: DropdownMenuSection[];
+    /** A hook for the spec that addresses this row. Without one the row is reachable by its label. */
+    'data-testid'?: string;
+}
+
+declare interface DropdownMenuSection {
+    /** Optional uppercase section heading. */
+    label?: string;
+    items: DropdownMenuItem[];
+    /**
+     * The group scrolls in place (`uic-menu-group-scroll`) so the sections
+     * after it stay put. For a generated list — one row per room — that would
+     * otherwise push the fixed actions below the fold.
+     */
+    scroll?: boolean;
+    'data-testid'?: string;
+}
+
 export declare const EMOJI_SHORTCODES: readonly EmojiShortcode[];
 
 export declare interface EmojiShortcode {
@@ -2912,7 +2961,7 @@ export declare interface RailSectionAction {
     'data-testid'?: string;
 }
 
-export declare function RailSectionHeader({ label, actions, presentational, collapsed, onToggleCollapse, controls, toggleId, collapsedCount, dark, className, 'data-testid': testId, }: RailSectionHeaderProps): JSX.Element;
+export declare function RailSectionHeader({ label, actions, presentational, collapsed, onToggleCollapse, controls, toggleId, collapsedCount, count, dark, className, 'data-testid': testId, }: RailSectionHeaderProps): JSX.Element;
 
 export declare interface RailSectionHeaderProps {
     label: string;
@@ -2957,6 +3006,13 @@ export declare interface RailSectionHeaderProps {
      * the same as muting it by accident.
      */
     collapsedCount?: number;
+    /**
+     * How many things the section holds — "GUIDES & FINDINGS  11". A neutral
+     * chip at the right end of the heading, before any actions, shown whenever
+     * a number is given (0 included) and whatever the collapsed state. Unlike
+     * `collapsedCount` it is a size, not an alert. Since 2.389.0.
+     */
+    count?: number;
     /** Light-on-dark, for a rail sitting on call chrome. */
     dark?: boolean;
     className?: string;
@@ -3484,6 +3540,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3503,45 +3572,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }
@@ -3575,9 +3608,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -3588,6 +3624,26 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

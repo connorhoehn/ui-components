@@ -233,7 +233,7 @@ export declare interface BadgeProps {
 
 export declare type BadgeVariant = 'count' | 'dot' | 'pulse';
 
-export declare function Banner({ variant, title, layout, onDismiss, action, children, className, style, 'data-testid': testId, }: BannerProps): JSX.Element;
+export declare function Banner({ variant, title, layout, icon, onDismiss, action, children, className, style, 'data-testid': testId, }: BannerProps): JSX.Element;
 
 export declare interface BannerProps {
     variant?: BannerVariant;
@@ -247,8 +247,21 @@ export declare interface BannerProps {
      * comment gutter the two children split the width and the body was left
      * with 68px, about six characters per line, wrapping into a ragged tower.
      * `stacked` puts the title above the body and gives each the full width.
+     *
+     * `callout` (since 2.389.0) is a full-width notice in a document body:
+     * icon · title over body · trailing action, all vertically centred. The
+     * surface keeps the tone's soft fill and border, but the title reads in
+     * primary ink and the body in secondary ink so a paragraph of advice stays
+     * legible — only the icon carries the tone colour.
      */
-    layout?: 'inline' | 'stacked';
+    layout?: 'inline' | 'stacked' | 'callout';
+    /**
+     * A leading glyph. `true` draws the tone's default (a warning triangle for
+     * `warning`/`error`, an info circle for `info`, a check for `success`); a
+     * node is drawn as given. Omitted (default) draws none — existing banners
+     * are unchanged. Since 2.389.0.
+     */
+    icon?: ReactNode | true;
     onDismiss?: () => void;
     /**
      * A control that resolves what the banner is about — "Convert to page" on a
@@ -2063,7 +2076,7 @@ export declare const GRAPHITE_PARTICLE_COLORS: readonly ["#f4f4f5", "#d4d4d8", "
 /** Six dots in two columns: a drag handle — "pick this up and move it". Since 2.385.0. */
 export declare function GripIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, onReorder, canReorder, reorderLabel, size, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
+export declare function GroupedList({ groups, rows, onOpenRow, rowMenu, rowMenuLabel, openGroups, onToggleGroup, storageKey, currentId, hideEmptyGroups, onReorder, canReorder, reorderLabel, size, groupHeading, currentStyle, className, 'data-testid': testId, }: GroupedListProps): JSX.Element;
 
 export declare interface GroupedListGroup {
     id: string;
@@ -2117,6 +2130,20 @@ export declare interface GroupedListProps {
      * edge, and a larger drag handle that is always visible.
      */
     size?: 'sm' | 'md';
+    /**
+     * How a group header reads. `title` (default): a sentence-case heading
+     * (14px, 15px at `md`) with its count in a neutral chip. `label`: a section
+     * label — 11px uppercase semibold, letter-spaced, secondary ink — with the
+     * count as plain muted text after it ("RECENTLY UPDATED 4"), for a list
+     * whose groups are time bands rather than named things. Since 2.389.0.
+     */
+    groupHeading?: 'title' | 'label';
+    /**
+     * How the current row is marked. `tint` (default): a pale primary fill (at
+     * `md`, also the 3px bar). `bar`: the fill plus a 2px inset primary bar on
+     * the left edge at `sm` too. Since 2.389.0.
+     */
+    currentStyle?: 'tint' | 'bar';
     className?: string;
     'data-testid'?: string;
 }
@@ -5328,6 +5355,9 @@ export declare interface VisuallyHiddenProps {
     'data-testid'?: string;
 }
 
+/** A triangle with an exclamation mark: "warning", "check this first". Since 2.389.0. */
+export declare function WarningIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 /**
  * A board with a shape and a connector on it: a whiteboard.
  *
@@ -5415,6 +5445,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -5434,45 +5477,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }
@@ -5506,9 +5513,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -5519,6 +5529,26 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

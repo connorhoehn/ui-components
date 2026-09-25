@@ -211,6 +211,15 @@ export declare interface ComposerReference {
     icon?: string;
     /** Hover text; the label itself when absent. */
     title?: string;
+    /**
+     * Makes the chip a menu trigger — label + chevron — that opens these
+     * choices ("This guide", "This guide + sources", "No context"). A chip with
+     * a menu draws NO remove button even when `onRemove` is passed: choosing
+     * "none" is one of the menu's items, not an ×. Since 2.389.0.
+     */
+    menu?: readonly DropdownMenuSection[];
+    /** Accessible name of the menu trigger. Default: the label. Since 2.389.0. */
+    menuLabel?: string;
 }
 
 export declare function ComposerReferences({ references, onRemove, removeLabel, className, size, 'data-testid': testId, }: ComposerReferencesProps): JSX.Element | null;

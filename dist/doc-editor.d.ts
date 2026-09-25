@@ -1459,7 +1459,7 @@ export declare interface DocumentZoomControl {
  */
 export declare function duplicateSlide(spec: DeckSpec, id: string): DeckSpec;
 
-export declare function EditorShell({ breadcrumbs, title, onTitleChange, titleLabel, kind, starred, onStarredChange, statusPill, path, crumbsTrailing, subtitle, metaBar, participants, onParticipantClick, onFollowParticipant, followingParticipantId, meta, saveState, headActions, tabs, activeTab, onTabChange, toolbar, children, footer, surface, explorer, workbench, label, variant, itemType, itemKey, className, 'data-testid': testId, }: EditorShellProps): JSX.Element;
+export declare function EditorShell({ breadcrumbs, title, onTitleChange, titleLabel, kind, starred, onStarredChange, statusPill, path, crumbsTrailing, subtitle, metaBar, participants, onParticipantClick, onFollowParticipant, followingParticipantId, meta, saveState, headActions, tabs, activeTab, onTabChange, toolbar, children, footer, surface, explorer, workbench, label, variant, itemType, itemKey, titleSize, tabsTrailing, className, 'data-testid': testId, }: EditorShellProps): JSX.Element;
 
 export declare interface EditorShellProps {
     /** The trail above the title — "Sprint planning / Sprint review". */
@@ -1550,6 +1550,19 @@ export declare interface EditorShellProps {
     itemType?: string;
     /** work-item: the item's key in mono after the chip ("wi-obs-e1-s4"). Since 2.386.15. */
     itemKey?: string;
+    /**
+     * The title's size. `md` (default) is today's 20px bold document title (22px
+     * in `work-item`). `lg` is a record's headline — 26px semibold — for a page
+     * where the title IS the page heading and nothing sits above it but a crumb
+     * band. Hosts must not style the title themselves. Since 2.389.0.
+     */
+    titleSize?: 'md' | 'lg';
+    /**
+     * At the right end of the tab row, above the tabs' underline — "Sources 4",
+     * "Open in Library ↗". Hangs from the same baseline as the tabs, so it
+     * reads as belonging to the row, not the title. Since 2.389.0.
+     */
+    tabsTrailing?: ReactNode;
     className?: string;
     'data-testid'?: string;
 }
@@ -3905,6 +3918,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3924,45 +3950,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }
@@ -3996,9 +3986,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -4009,6 +4002,26 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

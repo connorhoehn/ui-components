@@ -6,6 +6,57 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.389.0] — 2026-09-24
+
+The Distillation guide-record redesign's library pieces. Every prop is
+additive; existing callers render exactly as before.
+
+### Added
+- **WarningIcon** (`ui/Icons`, root + `/shared`) — a triangle with an
+  exclamation mark, stroke on `currentColor` like `InfoIcon`.
+- **Banner** `icon?: ReactNode | true` — a leading glyph; `true` draws the
+  tone's default (warning triangle for `warning`/`error`, info circle for
+  `info`, check for `success`) in the tone's solid ink. And
+  `layout: 'callout'` — a full-width notice in a document body: icon · title
+  over body · trailing action, vertically centred; title in primary ink, body
+  in secondary, only the icon carries the tone. Role/live region unchanged
+  (`alert` for warning/error).
+- **EditorShell** (`/doc-editor`) `titleSize?: 'md' | 'lg'` — `lg` is a
+  record headline, 26px semibold. `tabsTrailing?: ReactNode` — at the right
+  end of the tab row, above the underline ("Sources 4"), testid
+  `<id>-tabs-trailing`.
+- **ExplorerLayout** `paneHeader?: ReactNode` — a non-scrolling band right of
+  the rail, above the pane and the aside (testid `<id>-pane-header`). Unlike
+  `header` it does not span the rail.
+- **ScopeHeader** `variant?: 'default' | 'crumbs'` — `crumbs` is the crumb
+  line only (no h1, stats, people or tabs), with `controls` / `link` / `menu`
+  hung on the right between the crumb and the headline that follows. `title`
+  is now optional (not drawn by `crumbs`).
+- **GroupedList** `groupHeading?: 'title' | 'label'` — `label` renders group
+  headers as 11px uppercase section labels with a plain muted count
+  ("RECENTLY UPDATED 4"). `currentStyle?: 'tint' | 'bar'` — `bar` adds a 2px
+  inset primary bar to the current row at `sm` too.
+- **SourceCard / SourceList** `meta?: string` — a quiet line under the title
+  that replaces the age. `layout?: 'card' | 'row'` — `row` makes the whole row
+  one control (button with `onOpen`, link with `href`; accessible name = the
+  title), the kind mark in a 32px bordered tile, a 13px medium title, a 12px
+  tertiary meta line and an aria-hidden trailing chevron. `SourceList`
+  forwards `layout` (and draws a rule above and below a `row` list).
+- **ComposerReference** `menu?: readonly DropdownMenuSection[]` +
+  `menuLabel?: string` — the chip becomes a `DropdownMenu` trigger (glyph ·
+  label · chevron, square corners) and draws no remove button even when
+  `onRemove` is passed. Works in `RichChatComposer`'s `modeControl="menu"`
+  row, the compact row, and the idle one-row composer.
+- **RailSectionHeader** `count?: number` — a neutral chip at the right of the
+  heading, shown for any number (0 included), collapsed or not.
+
+### Notes
+- An icon inside `Button variant="link"` needs `className="inline-flex
+  items-center gap-1"`: preflight makes `svg` block-level, so the arrow of
+  "View run →" otherwise drops to its own line.
+- Stories: `Layout/ExplorerLayout › GuideRecord` composes the whole record;
+  per-component stories for each addition.
+
 ## [2.388.2] — 2026-09-24
 
 ### Fixed

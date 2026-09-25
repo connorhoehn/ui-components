@@ -1,12 +1,12 @@
-import { n as e, t } from "./useWebSocket-D4PAHlj8.js";
+import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
 import { t as n } from "./cn-DhjIN-s0.js";
 import { _ as r } from "./overlayStack-CHdlnODN.js";
 import { t as i } from "./Card-RQCeAPNU.js";
 import { t as a } from "./IconButton-DDeXW3mZ.js";
-import { Y as o, d as s } from "./DropdownMenu-thsvyIAZ.js";
+import { J as o, u as s } from "./Icons-CI4hzRkO.js";
 import { n as c, t as l } from "./Stack-CkiMw5K0.js";
 import { i as u, r as d } from "./Text-DLYUIQhS.js";
-import { t as f } from "./Banner-6sJQ2hAL.js";
+import { t as f } from "./Banner-BChr4erj.js";
 import { t as p } from "./Chip-zdVBwV9j.js";
 import { t as m } from "./Modal-DMFNRUDx.js";
 import { t as h } from "./EmptyState-DFWbBBcY.js";
@@ -23,17 +23,17 @@ import { t as T } from "./Badge-C23_Y4Yj.js";
 import { t as E } from "./ChangeDiff-CzO8zCc-.js";
 import { t as D } from "./Select-D2EQq7Wi.js";
 import { t as O } from "./Checkbox-Dftwml_V.js";
-import { n as ee } from "./FileKindMark-Dl7rnRek.js";
+import { n as ee } from "./FileKindMark-C3w1Iq9C.js";
 import { t as te } from "./activationKey-CjbL3LUv.js";
 import { A as k, k as ne } from "./renderers-CLgJ6UYB.js";
-import { A, B as j, C as M, D as N, E as P, F, G as I, H as L, I as re, K as R, L as z, M as B, N as V, O as H, P as ie, R as ae, S as U, T as oe, U as se, V as ce, W as le, Y as ue, _ as de, a as fe, b as pe, c as me, d as he, f as ge, g as _e, h as ve, i as ye, j as be, k as xe, l as Se, m as Ce, n as we, o as Te, p as Ee, r as De, s as Oe, t as ke, u as Ae, v as je, w as Me, x as Ne, y as Pe, z as Fe } from "./PresentationEditor-C7MmkDmV.js";
-import { r as Ie } from "./MediaIcons-OLUYBJM0.js";
-import { o as Le, t as Re } from "./VerdictChip-ClwrKr68.js";
-import { a as ze, c as Be, d as Ve, f as He, h as Ue, i as We, l as Ge, m as Ke, n as qe, o as Je, p as Ye, r as Xe, s as Ze, t as W, u as Qe } from "./TiptapEditor-CajZRkz8.js";
+import { A, B as j, C as M, D as N, E as P, F as re, G as F, H as I, I as ie, K as L, L as R, M as z, N as B, O as V, P as H, R as ae, S as oe, T as se, U, V as W, W as ce, Y as le, _ as ue, a as de, b as fe, c as pe, d as me, f as he, g as ge, h as _e, i as ve, j as ye, k as be, l as xe, m as Se, n as Ce, o as we, p as Te, r as Ee, s as De, t as Oe, u as ke, v as Ae, w as je, x as Me, y as Ne, z as Pe } from "./PresentationEditor-BsEbUmCt.js";
+import { r as Fe } from "./MediaIcons-OLUYBJM0.js";
+import { o as Ie, t as Le } from "./VerdictChip-ClwrKr68.js";
+import { a as Re, c as ze, d as Be, f as Ve, h as He, i as Ue, l as We, m as Ge, n as Ke, o as qe, p as Je, r as Ye, s as Xe, t as Ze, u as Qe } from "./TiptapEditor-CajZRkz8.js";
 import { i as $e, n as et, r as tt, t as nt } from "./FloatingComposerDock-DMUQCjea.js";
-import { A as rt, B as it, C as at, D as ot, E as st, F as ct, G as lt, H as ut, I as dt, J as ft, K as pt, L as mt, M as ht, N as gt, O as _t, P as vt, R as yt, S as bt, T as xt, U as St, V as Ct, W as wt, _ as Tt, a as Et, b as Dt, c as Ot, d as kt, f as At, g as jt, h as Mt, i as Nt, j as Pt, k as Ft, l as It, m as Lt, o as Rt, p as zt, q as Bt, r as Vt, s as Ht, t as Ut, u as Wt, v as Gt, w as Kt, x as qt, y as Jt, z as Yt } from "./DocumentEditorPage-C97Lui_5.js";
-import { S as Xt, _ as Zt, a as Qt, b as $t, c as en, d as tn, f as nn, g as rn, h as an, i as on, l as sn, m as cn, n as ln, o as un, p as dn, r as fn, s as pn, t as mn, u as hn, v as gn, x as _n, y as vn } from "./useDocumentImageUpload-CN-31eh0.js";
-import { r as yn } from "./RichChatComposer-CzBA2ftU.js";
+import { A as rt, B as it, C as at, D as ot, E as st, F as ct, G as lt, H as ut, I as dt, J as ft, K as pt, L as mt, M as ht, N as gt, O as _t, P as vt, R as yt, S as bt, T as xt, U as St, V as Ct, W as wt, _ as Tt, a as Et, b as Dt, c as Ot, d as kt, f as At, g as jt, h as Mt, i as Nt, j as Pt, k as Ft, l as It, m as Lt, o as Rt, p as zt, q as Bt, r as Vt, s as Ht, t as Ut, u as Wt, v as Gt, w as Kt, x as qt, y as Jt, z as Yt } from "./DocumentEditorPage-D6OaQhgF.js";
+import { S as Xt, _ as Zt, a as Qt, b as $t, c as en, d as tn, f as nn, g as rn, h as an, i as on, l as sn, m as cn, n as ln, o as un, p as dn, r as fn, s as pn, t as mn, u as hn, v as gn, x as _n, y as vn } from "./useDocumentImageUpload-BBlDtrgH.js";
+import { r as yn } from "./RichChatComposer-CvIX4YpY.js";
 import { createContext as bn, forwardRef as xn, useCallback as G, useContext as Sn, useEffect as K, useId as Cn, useImperativeHandle as wn, useMemo as q, useRef as J, useState as Y } from "react";
 import { Fragment as X, jsx as Z, jsxs as Q } from "react/jsx-runtime";
 import * as Tn from "yjs";
@@ -270,7 +270,7 @@ function Fn({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 					})
 				]
 			}),
-			/* @__PURE__ */ Z(ue, {
+			/* @__PURE__ */ Z(le, {
 				open: c,
 				onClose: () => l(!1),
 				onCreate: i
@@ -335,7 +335,7 @@ function Vn({ ydoc: e, provider: t, fragment: r, user: i, fragmentName: a = Rn, 
 	]), d = J(!1);
 	return d.current || (d.current = !0, l?.(u, e)), /* @__PURE__ */ Z("div", {
 		className: n(c),
-		children: /* @__PURE__ */ Z(W, {
+		children: /* @__PURE__ */ Z(Ze, {
 			fragment: u,
 			ydoc: e,
 			provider: t,
@@ -368,7 +368,7 @@ function Hn({ gatewayUrl: r, docId: i, authToken: a, channel: o, user: s, fragme
 	}), w = q(() => x ? x.getXmlFragment(c) : null, [x, c]), T = !!x && !!w && (m !== !0 || C), E = J(!1);
 	return !E.current && T && w && x && (E.current = !0, f?.(w, x)), T ? /* @__PURE__ */ Z("div", {
 		className: n(d),
-		children: /* @__PURE__ */ Z(W, {
+		children: /* @__PURE__ */ Z(Ze, {
 			fragment: w,
 			ydoc: x,
 			provider: S,
@@ -626,7 +626,7 @@ function Yn({ section: e, onAckItem: t, onRejectItem: r, fragment: i, ydoc: a, p
 			}),
 			i && /* @__PURE__ */ Z("div", {
 				className: n(e.items.length > 0 ? "mb-4" : ""),
-				children: /* @__PURE__ */ Z(W, {
+				children: /* @__PURE__ */ Z(Ze, {
 					fragment: i,
 					ydoc: a,
 					provider: o,
@@ -898,8 +898,8 @@ var sr = {
 	prose: "Body text"
 };
 function cr({ utterance: e, kind: t, status: i, confidence: a, attachState: o, targetLabel: s, targetReason: c, before: l, after: u, edits: d, rationale: f, draftError: m, author: h, category: g, path: _, locationHint: y, verdict: x, verdictStatus: S = "idle", verdictError: C, revision: w, onRereview: T, onAccept: D, onReject: O, onRedraft: ee, onReattach: te, onConfirmAttachment: k, className: ne, "data-testid": A = "proposal-card" }) {
-	let [j, M] = Y(!1), [N, P] = Y(null), [F, I] = Y(!1), [L, re] = Y(""), R = i === "applied", z = i === "rejected", B = R || z;
-	async function V() {
+	let [j, M] = Y(!1), [N, P] = Y(null), [re, F] = Y(!1), [I, ie] = Y(""), L = i === "applied", R = i === "rejected", z = L || R;
+	async function B() {
 		M(!0), P(null);
 		try {
 			let e = await D();
@@ -913,7 +913,7 @@ function cr({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 			M(!1);
 		}
 	}
-	let H = t === "prose" ? d ?? [] : [{
+	let V = t === "prose" ? d ?? [] : [{
 		before: l ?? "",
 		after: u ?? ""
 	}];
@@ -921,7 +921,7 @@ function cr({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 		"data-testid": A,
 		"data-status": i,
 		"data-confidence": a,
-		className: n("flex flex-col gap-3 rounded-lg border bg-surface p-3", R ? "border-success-border" : "border-border", z && "opacity-60", ne),
+		className: n("flex flex-col gap-3 rounded-lg border bg-surface p-3", L ? "border-success-border" : "border-border", R && "opacity-60", ne),
 		children: [
 			/* @__PURE__ */ Q("div", {
 				className: "flex flex-wrap items-center gap-2",
@@ -967,13 +967,13 @@ function cr({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 						size: "sm",
 						children: "Only you can see this"
 					}),
-					R && /* @__PURE__ */ Z(p, {
+					L && /* @__PURE__ */ Z(p, {
 						tone: "success",
 						size: "sm",
 						"data-testid": `${A}-applied`,
 						children: "Applied"
 					}),
-					z && /* @__PURE__ */ Z(p, {
+					R && /* @__PURE__ */ Z(p, {
 						tone: "neutral",
 						size: "sm",
 						children: "Rejected"
@@ -988,7 +988,7 @@ function cr({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 					"”"
 				]
 			}),
-			/* @__PURE__ */ Z(Le, {
+			/* @__PURE__ */ Z(Ie, {
 				path: _ ?? (s ? [s] : []),
 				...y ? { hint: y } : {},
 				"data-testid": `${A}-location`
@@ -1013,11 +1013,11 @@ function cr({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 				"data-testid": `${A}-draft-error`,
 				children: m
 			}),
-			i !== "drafting" && !m && H.length > 0 && /* @__PURE__ */ Z(E, {
-				pairs: H,
+			i !== "drafting" && !m && V.length > 0 && /* @__PURE__ */ Z(E, {
+				pairs: V,
 				"data-testid": `${A}-diff`
 			}),
-			i !== "drafting" && /* @__PURE__ */ Z(Re, {
+			i !== "drafting" && /* @__PURE__ */ Z(Le, {
 				verdict: x,
 				status: S,
 				error: C,
@@ -1042,14 +1042,14 @@ function cr({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 					] })
 				]
 			}),
-			!B && /* @__PURE__ */ Q("div", {
+			!z && /* @__PURE__ */ Q("div", {
 				className: "flex flex-wrap items-center gap-2",
 				children: [
 					/* @__PURE__ */ Z(r, {
 						size: "sm",
 						variant: "primary",
 						disabled: j || i === "drafting" || !!m,
-						onClick: V,
+						onClick: B,
 						"data-testid": `${A}-accept`,
 						children: j ? "Applying…" : t === "field" ? "Apply change" : "Add as suggestion"
 					}),
@@ -1057,7 +1057,7 @@ function cr({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 						size: "sm",
 						variant: "ghost",
 						disabled: j,
-						onClick: () => I((e) => !e),
+						onClick: () => F((e) => !e),
 						"data-testid": `${A}-reject`,
 						children: "Reject"
 					}),
@@ -1095,7 +1095,7 @@ function cr({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 					})
 				]
 			}),
-			F && !B && /* @__PURE__ */ Q("div", {
+			re && !z && /* @__PURE__ */ Q("div", {
 				className: "flex flex-col gap-1.5",
 				children: [
 					/* @__PURE__ */ Z("label", {
@@ -1106,8 +1106,8 @@ function cr({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 					/* @__PURE__ */ Z(v, {
 						id: `${A}-reason`,
 						size: "sm",
-						value: L,
-						onChange: (e) => re(e.target.value),
+						value: I,
+						onChange: (e) => ie(e.target.value),
 						"data-testid": `${A}-reason`
 					}),
 					/* @__PURE__ */ Q("div", {
@@ -1116,14 +1116,14 @@ function cr({ utterance: e, kind: t, status: i, confidence: a, attachState: o, t
 							size: "sm",
 							variant: "danger",
 							onClick: () => {
-								O(L), I(!1);
+								O(I), F(!1);
 							},
 							"data-testid": `${A}-reject-confirm`,
 							children: "Reject proposal"
 						}), /* @__PURE__ */ Z(r, {
 							size: "sm",
 							variant: "ghost",
-							onClick: () => I(!1),
+							onClick: () => F(!1),
 							children: "Cancel"
 						})]
 					})
@@ -1970,7 +1970,7 @@ function Br({ request: e, onDecide: t, onWithdraw: n }) {
 		}
 	}
 	let g = e.reviewerName || e.reviewerId, _ = e.state.replace(/_/g, " "), v = _.charAt(0).toUpperCase() + _.slice(1);
-	return /* @__PURE__ */ Z(R, {
+	return /* @__PURE__ */ Z(L, {
 		"aria-label": `Review by ${g}`,
 		"aria-busy": o,
 		children: /* @__PURE__ */ Q(c, {
@@ -2110,7 +2110,7 @@ function Vr({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 					})
 				]
 			}),
-			/* @__PURE__ */ Z(I, {
+			/* @__PURE__ */ Z(F, {
 				title: "Document reviews",
 				count: e.length,
 				hint: i ? "Loading…" : void 0,
@@ -2164,30 +2164,55 @@ function Ur({ filled: e }) {
 		children: /* @__PURE__ */ Z("path", { d: "M8 1.9l1.8 3.7 4.1.6-3 2.9.7 4.1L8 11.3l-3.6 1.9.7-4.1-3-2.9 4.1-.6L8 1.9Z" })
 	});
 }
-function Wr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: o, starred: c = !1, onStarredChange: l, statusPill: d, path: f, crumbsTrailing: m, subtitle: h, metaBar: g, participants: v, onParticipantClick: y, onFollowParticipant: b, followingParticipantId: x, meta: S, saveState: w, headActions: E, tabs: D, activeTab: O, onTabChange: te, toolbar: k, children: ne, footer: A, surface: j = "workspace", explorer: M, workbench: N, label: P = "Editor", variant: F = "document", itemType: I, itemKey: L, className: re, "data-testid": R = "editor-shell" }) {
-	let z = F === "work-item", B = z && (I || L) ? /* @__PURE__ */ Q(X, { children: [I && /* @__PURE__ */ Z(p, {
+function Wr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: o, starred: c = !1, onStarredChange: l, statusPill: d, path: f, crumbsTrailing: m, subtitle: h, metaBar: g, participants: v, onParticipantClick: y, onFollowParticipant: b, followingParticipantId: x, meta: S, saveState: w, headActions: E, tabs: D, activeTab: O, onTabChange: te, toolbar: k, children: ne, footer: A, surface: j = "workspace", explorer: M, workbench: N, label: P = "Editor", variant: re = "document", itemType: F, itemKey: I, titleSize: ie = "md", tabsTrailing: L, className: R, "data-testid": z = "editor-shell" }) {
+	let B = re === "work-item", V = B && (F || I) ? /* @__PURE__ */ Q(X, { children: [F && /* @__PURE__ */ Z(p, {
 		size: "sm",
 		tone: "info",
-		"data-testid": `${R}-item-type`,
-		children: I
-	}), L && /* @__PURE__ */ Z("span", {
+		"data-testid": `${z}-item-type`,
+		children: F
+	}), I && /* @__PURE__ */ Z("span", {
 		className: "font-mono text-[12px] text-text-secondary",
-		"data-testid": `${R}-item-key`,
-		children: L
-	})] }) : null, V = B || m != null ? /* @__PURE__ */ Q(X, { children: [B, m] }) : null, H = z && (e && e.length > 0 || V != null), ie = z ? "text-[22px] font-bold leading-7" : "text-xl font-bold leading-6", ae = `${R}-${Cn().replace(/:/g, "")}`, U = !!D && D.length > 0, oe = U ? D.some((e) => e.id === O) ? O : D[0].id : void 0, se = v && v.length > 0 || S != null || !!w, ce = /* @__PURE__ */ Q("section", {
+		"data-testid": `${z}-item-key`,
+		children: I
+	})] }) : null, H = V || m != null ? /* @__PURE__ */ Q(X, { children: [V, m] }) : null, ae = B && (e && e.length > 0 || H != null), oe = ie === "lg" ? "text-[26px] font-semibold leading-8" : B ? "text-[22px] font-bold leading-7" : "text-xl font-bold leading-6", se = `${z}-${Cn().replace(/:/g, "")}`, U = !!D && D.length > 0, W = U ? D.some((e) => e.id === O) ? O : D[0].id : void 0, le = v && v.length > 0 || S != null || !!w, ue = (e) => /* @__PURE__ */ Z(_, {
+		items: D.map((e) => ({
+			id: e.id,
+			label: e.label,
+			...e.disabled ? { disabled: !0 } : {},
+			...e.count ? { badge: B ? /* @__PURE__ */ Z("span", {
+				"aria-label": `${e.count} in ${e.label}`,
+				children: e.count
+			}) : /* @__PURE__ */ Z(T, {
+				variant: "count",
+				value: e.count,
+				color: "muted",
+				"aria-label": `${e.count} in ${e.label}`
+			}) } : {},
+			testId: `${z}-tab-${e.id}`
+		})),
+		value: W,
+		onValueChange: (e) => te?.(e),
+		variant: "underline",
+		...B ? { badgeStyle: "plain" } : {},
+		size: "md",
+		itemClassName: "px-3.5 pb-1.5 pt-1 text-[15px] leading-5",
+		"aria-label": `${t} sections`,
+		idPrefix: se,
+		className: e
+	}), de = /* @__PURE__ */ Q("section", {
 		"aria-label": P,
-		"data-testid": R,
+		"data-testid": z,
 		"data-surface": j,
 		className: "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-surface",
 		children: [
 			/* @__PURE__ */ Q("header", {
 				className: "flex flex-col gap-1 border-b border-border px-5 pt-3",
-				"data-variant": F,
-				"data-testid": `${R}-header`,
+				"data-variant": re,
+				"data-testid": `${z}-header`,
 				children: [
-					H && /* @__PURE__ */ Q("div", {
+					ae && /* @__PURE__ */ Q("div", {
 						className: "flex h-7 min-w-0 items-center gap-2 text-[13px] text-text-secondary",
-						"data-testid": `${R}-crumbs-row`,
+						"data-testid": `${z}-crumbs-row`,
 						children: [
 							/* @__PURE__ */ Z(s, {
 								dir: "right",
@@ -2200,55 +2225,55 @@ function Wr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 								maxItems: 4,
 								lastIsCurrent: !1,
 								className: "min-w-0 text-[13px] text-text-secondary",
-								"data-testid": `${R}-crumbs`
+								"data-testid": `${z}-crumbs`
 							}),
-							e && e.length > 0 && V != null && /* @__PURE__ */ Z("span", {
+							e && e.length > 0 && H != null && /* @__PURE__ */ Z("span", {
 								"aria-hidden": "true",
 								className: "shrink-0 text-text-tertiary",
 								children: "/"
 							}),
-							V != null && /* @__PURE__ */ Z("span", {
+							H != null && /* @__PURE__ */ Z("span", {
 								className: "flex shrink-0 items-center gap-2",
-								"data-testid": `${R}-crumbs-trailing`,
-								children: V
+								"data-testid": `${z}-crumbs-trailing`,
+								children: H
 							}),
 							/* @__PURE__ */ Z("span", { className: "flex-1" }),
 							E && /* @__PURE__ */ Z("div", {
 								className: "flex shrink-0 items-center gap-2",
-								"data-testid": `${R}-actions`,
+								"data-testid": `${z}-actions`,
 								children: E
 							})
 						]
 					}),
-					!z && e && e.length > 0 && !m && /* @__PURE__ */ Z(u, {
+					!B && e && e.length > 0 && !m && /* @__PURE__ */ Z(u, {
 						items: e,
 						maxItems: 4,
 						className: "text-xs [@media(max-height:640px)]:hidden",
-						"data-testid": `${R}-crumbs`
+						"data-testid": `${z}-crumbs`
 					}),
-					!z && m && /* @__PURE__ */ Q("div", {
+					!B && m && /* @__PURE__ */ Q("div", {
 						className: "flex min-w-0 items-center gap-2 text-xs [@media(max-height:640px)]:hidden",
-						"data-testid": `${R}-crumbs-row`,
+						"data-testid": `${z}-crumbs-row`,
 						children: [e && e.length > 0 && /* @__PURE__ */ Z(u, {
 							items: e,
 							maxItems: 4,
 							className: "min-w-0 text-xs",
-							"data-testid": `${R}-crumbs`
+							"data-testid": `${z}-crumbs`
 						}), /* @__PURE__ */ Z("span", {
 							className: "flex shrink-0 items-center gap-2",
-							"data-testid": `${R}-crumbs-trailing`,
+							"data-testid": `${z}-crumbs-trailing`,
 							children: m
 						})]
 					}),
 					/* @__PURE__ */ Q("div", {
 						className: "flex min-w-0 items-center gap-2",
 						children: [
-							o && !z && /* @__PURE__ */ Z(ee, {
+							o && !B && /* @__PURE__ */ Z(ee, {
 								kind: o,
 								size: "2xl",
 								variant: "outline",
 								className: "[@media(max-height:640px)]:h-8 [@media(max-height:640px)]:w-8",
-								"data-testid": `${R}-kind`
+								"data-testid": `${z}-kind`
 							}),
 							/* @__PURE__ */ Q("div", {
 								className: "flex min-w-0 flex-1 flex-col gap-0 [@media(max-height:640px)]:flex-row [@media(max-height:640px)]:items-center [@media(max-height:640px)]:gap-3",
@@ -2258,18 +2283,18 @@ function Wr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 										children: [
 											/* @__PURE__ */ Q("span", {
 												className: "flex min-w-0 max-w-full flex-initial flex-nowrap items-center gap-x-2",
-												"data-testid": `${R}-title-group`,
-												children: [r ? /* @__PURE__ */ Z(le, {
+												"data-testid": `${z}-title-group`,
+												children: [r ? /* @__PURE__ */ Z(ce, {
 													value: t,
 													onCommit: r,
 													label: i,
 													required: !0,
 													fitContent: !0,
-													className: n("min-w-0 max-w-full flex-initial py-0", ie, z && "relative -left-[5px]"),
-													"data-testid": `${R}-title`
+													className: n("min-w-0 max-w-full flex-initial py-0", oe, B && "relative -left-[5px]"),
+													"data-testid": `${z}-title`
 												}) : /* @__PURE__ */ Z("h1", {
-													className: n("m-0 min-w-0 max-w-full flex-initial truncate text-text-primary", ie),
-													"data-testid": `${R}-title`,
+													className: n("m-0 min-w-0 max-w-full flex-initial truncate text-text-primary", oe),
+													"data-testid": `${z}-title`,
 													children: t
 												}), l && /* @__PURE__ */ Z(a, {
 													size: "sm",
@@ -2278,32 +2303,32 @@ function Wr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 													title: c ? "Starred" : "Star",
 													onClick: () => l(!c),
 													className: c ? "shrink-0 text-primary" : "shrink-0 text-text-tertiary",
-													"data-testid": `${R}-star`,
+													"data-testid": `${z}-star`,
 													children: /* @__PURE__ */ Z(Ur, { filled: c })
 												})]
 											}),
 											d,
 											f && f.length > 0 && /* @__PURE__ */ Z("span", {
 												className: "flex min-w-0 flex-1 items-center border-l border-border pl-3",
-												"data-testid": `${R}-path`,
+												"data-testid": `${z}-path`,
 												children: /* @__PURE__ */ Z(u, {
 													items: f,
 													maxItems: 4,
 													lastIsCurrent: !1,
 													className: "min-w-0 text-[13px] text-text-tertiary",
-													"data-testid": `${R}-path-crumbs`
+													"data-testid": `${z}-path-crumbs`
 												})
 											})
 										]
 									}),
 									h != null && /* @__PURE__ */ Z("p", {
 										className: "m-0 min-w-0 truncate text-[15px] leading-5 text-text-secondary [@media(max-height:640px)]:hidden",
-										"data-testid": `${R}-subtitle`,
+										"data-testid": `${z}-subtitle`,
 										children: h
 									}),
-									se && /* @__PURE__ */ Q("div", {
+									le && /* @__PURE__ */ Q("div", {
 										className: "flex min-w-0 flex-wrap items-center gap-2 text-[13px] text-text-tertiary [@media(max-height:640px)]:max-w-[50%] [@media(max-height:640px)]:flex-nowrap",
-										"data-testid": `${R}-byline`,
+										"data-testid": `${z}-byline`,
 										children: [
 											v && v.length > 0 && /* @__PURE__ */ Z(C, {
 												users: v,
@@ -2327,69 +2352,55 @@ function Wr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 									})
 								]
 							}),
-							E && !H && /* @__PURE__ */ Z("div", {
+							E && !ae && /* @__PURE__ */ Z("div", {
 								className: "flex shrink-0 items-center gap-3",
-								"data-testid": `${R}-actions`,
+								"data-testid": `${z}-actions`,
 								children: E
 							})
 						]
 					}),
 					g != null && /* @__PURE__ */ Z("div", {
-						className: n("flex min-w-0 items-center", z ? "pb-2 pt-3" : "py-2"),
-						"data-testid": `${R}-meta-bar`,
+						className: n("flex min-w-0 items-center", B ? "pb-2 pt-3" : "py-2"),
+						"data-testid": `${z}-meta-bar`,
 						children: g
 					}),
-					U ? /* @__PURE__ */ Z(_, {
-						items: D.map((e) => ({
-							id: e.id,
-							label: e.label,
-							...e.disabled ? { disabled: !0 } : {},
-							...e.count ? { badge: z ? /* @__PURE__ */ Z("span", {
-								"aria-label": `${e.count} in ${e.label}`,
-								children: e.count
-							}) : /* @__PURE__ */ Z(T, {
-								variant: "count",
-								value: e.count,
-								color: "muted",
-								"aria-label": `${e.count} in ${e.label}`
-							}) } : {},
-							testId: `${R}-tab-${e.id}`
-						})),
-						value: oe,
-						onValueChange: (e) => te?.(e),
-						variant: "underline",
-						...z ? { badgeStyle: "plain" } : {},
-						size: "md",
-						itemClassName: "px-3.5 pb-1.5 pt-1 text-[15px] leading-5",
-						"aria-label": `${t} sections`,
-						idPrefix: ae,
-						className: "-mb-px -ml-3 mt-1 border-b-0"
-					}) : /* @__PURE__ */ Z("span", {
+					L == null ? U ? ue("-mb-px -ml-3 mt-1 border-b-0") : /* @__PURE__ */ Z("span", {
 						className: "h-2",
 						"aria-hidden": "true"
+					}) : /* @__PURE__ */ Q("div", {
+						className: "-mb-px mt-1 flex min-w-0 items-end gap-3",
+						"data-testid": `${z}-tabs-row`,
+						children: [U ? ue("-ml-3 min-w-0 flex-1 border-b-0") : /* @__PURE__ */ Z("span", {
+							className: "flex-1",
+							"aria-hidden": "true"
+						}), /* @__PURE__ */ Z("div", {
+							className: "flex shrink-0 items-center gap-2 pb-1.5",
+							"data-testid": `${z}-tabs-trailing`,
+							children: L
+						})]
 					})
 				]
 			}),
 			k && /* @__PURE__ */ Z("div", {
 				className: "flex min-w-0 items-center gap-1 border-b border-border px-[var(--dock-inset,1rem)] py-1.5",
-				"data-testid": `${R}-toolbar`,
+				"data-testid": `${z}-toolbar`,
 				children: k
 			}),
 			/* @__PURE__ */ Q("div", {
 				className: n("relative flex min-h-0 flex-1 flex-col", j === "workspace" ? "bg-workspace" : "bg-surface"),
-				"data-testid": `${R}-surface`,
+				"data-testid": `${z}-surface`,
 				children: [/* @__PURE__ */ Z("div", {
 					...U ? {
 						role: "tabpanel",
-						id: `${ae}-panel-${oe}`,
-						"aria-labelledby": `${ae}-tab-${oe}`
+						id: `${se}-panel-${W}`,
+						"aria-labelledby": `${se}-tab-${W}`
 					} : {},
 					className: "min-h-0 flex-1 overflow-auto",
-					"data-testid": `${R}-scroller`,
+					"data-testid": `${z}-scroller`,
 					children: ne
 				}), A != null && /* @__PURE__ */ Z("div", {
 					className: "relative z-20 flex max-h-[var(--dock-max-height,50%)] min-h-0 shrink-0 flex-col",
-					"data-testid": `${R}-dock`,
+					"data-testid": `${z}-dock`,
 					children: /* @__PURE__ */ Z(nt.Provider, {
 						value: "pinned",
 						children: A
@@ -2399,20 +2410,20 @@ function Wr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 		]
 	});
 	return !M && !N ? /* @__PURE__ */ Z("div", {
-		className: n("flex h-full min-h-0 flex-col", re),
-		children: ce
+		className: n("flex h-full min-h-0 flex-col", R),
+		children: de
 	}) : /* @__PURE__ */ Q("div", {
-		className: n("flex h-full min-h-0 flex-col lg:flex-row", re),
-		"data-testid": `${R}-frame`,
+		className: n("flex h-full min-h-0 flex-col lg:flex-row", R),
+		"data-testid": `${z}-frame`,
 		children: [M && /* @__PURE__ */ Z("div", {
 			className: "flex max-h-72 min-h-0 shrink-0 flex-col overflow-y-auto border-b border-border bg-surface lg:max-h-none lg:w-64 lg:border-b-0 lg:border-r",
-			"data-testid": `${R}-explorer`,
+			"data-testid": `${z}-explorer`,
 			children: M
 		}), /* @__PURE__ */ Q("div", {
 			className: "flex min-h-0 min-w-0 flex-1 flex-col lg:flex-row",
-			children: [ce, N && /* @__PURE__ */ Z("div", {
+			children: [de, N && /* @__PURE__ */ Z("div", {
 				className: "order-first flex max-h-64 min-h-0 shrink-0 flex-col overflow-y-auto border-b border-border lg:order-none lg:max-h-none lg:w-80 lg:border-b-0 lg:border-l",
-				"data-testid": `${R}-workbench`,
+				"data-testid": `${z}-workbench`,
 				children: N
 			})]
 		})]
@@ -2454,7 +2465,7 @@ function qr({ state: e, micActive: t, unavailableReason: r, onStart: i, onStop: 
 			(e.key === " " || e.key === "Enter") && (e.preventDefault(), f());
 		},
 		className: n("grid h-7 w-7 shrink-0 place-items-center rounded-md border-0 p-0 transition-colors", t ? "bg-danger text-white" : "bg-transparent text-text-secondary hover:bg-surface-hover hover:text-text-primary", u && "animate-pulse", (r || e === "unsupported") && "opacity-60", o),
-		children: /* @__PURE__ */ Z(Ie, {
+		children: /* @__PURE__ */ Z(Fe, {
 			size: 15,
 			"aria-hidden": "true"
 		})
@@ -2647,4 +2658,4 @@ function Xr({ author: e, quote: t, resolveOnApply: r, onResolveOnApplyChange: i,
 	});
 }
 //#endregion
-export { Zn as AckMode, It as ActionItemsCard, rr as ActivityFeed, xt as AttachmentsPanel, Rr as AuthenticatedDocumentImageView, qe as BULLET_STYLES, St as CANVAS_BODY_KEY, wt as CANVAS_SCHEMA_VERSION, vr as COMMENT_MARGIN_STORAGE_KEY, $ as COMMENT_REPLY_COMMANDS, Qt as CanvasDocumentView, Ge as CanvasLineSpacing, Xe as CanvasListStyle, Yn as ChunkViewer, Tt as CommentContextHeader, mr as CommentGhostPopover, Xr as CommentHandoffBar, Yr as CommentReplyComposer, Gt as CommentThreadNode, nt as ComposerDockPlacementContext, ge as DECK_THEMES, Hr as DEFAULT_EDITOR_SHELL_TABS, Gr as DICTATION_HOLD_MS, et as DOCK_HEIGHT_VAR, tt as DOCK_INSET_VAR, vt as DOCUMENT_MODE_LABELS, tn as DOCUMENT_TOOLBAR_BREAKPOINTS, qr as DictationButton, Ht as DiffViewer, Ut as DocumentEditorPage, un as DocumentFindBar, sn as DocumentGutter, rt as DocumentHeader, Lr as DocumentImageProvider, Pt as DocumentLifecyclePill, Fn as DocumentListPage, ct as DocumentModePill, $t as DocumentOutline, gt as DocumentOwnership, Vr as DocumentReviewPanel, _n as DocumentRuler, dt as DocumentSaveStatus, Cr as DocumentShareDialog, Zt as DocumentStatusBar, nn as DocumentToolbar, Wr as EditorShell, Ue as EditorToolbar, At as ExecutiveSummaryCard, Ae as Filmstrip, he as FilmstripThumb, $e as FloatingComposerDock, _r as FloatingDockBar, Ft as FollowModeBar, zt as HeaderBanner, Wt as KeyDecisionsCard, Qe as LINE_SPACINGS, Ve as LINE_SPACING_LABELS, We as LIST_STYLE_LABELS, mn as MAX_ATTACHMENT_BYTES, Ee as MAX_BULLETS_PER_SLIDE, Ce as MAX_BULLET_CHARS, ve as MAX_CHART_LABELS, _e as MAX_CHART_SERIES, de as MAX_EYEBROW_CHARS, ln as MAX_IMAGE_BYTES, je as MAX_NOTES_CHARS, Pe as MAX_QUOTE_CHARS, pe as MAX_SLIDES, Ne as MAX_SOURCES_PER_SLIDE, U as MAX_SUBTITLE_CHARS, M as MAX_TITLE_CHARS, ze as MULTILEVEL_STYLES, Kt as MentionDropdown, Et as MyMentionsPanel, Je as NUMBER_STYLES, ue as NewDocumentModal, L as OLDER_REVISIONS_VALUE, Xt as PX_PER_INCH, mt as ParticipantAvatars, ke as PresentationEditor, ce as PresentationView, cr as ProposalCard, Ot as ReaderMode, Jt as ResolvedBanner, Mt as ReviewMode, Un as ReviewProgress, qn as ReviewableItem, xr as SHARE_ROLES, De as SLIDES_TOOLBAR_BREAKPOINTS, Me as SLIDE_ID_PATTERN, ye as SLIDE_INSERTS, oe as SLIDE_LAYOUTS, P as SLIDE_LAYOUT_LABELS, wr as SUGGESTION_AUTHORING_MODES, ot as SectionBlock, jt as SectionComments, st as SectionList, kt as SectionSummariesCard, me as SlideForm, ae as SlideList, Fe as SlideRow, Se as SlideSources, Oe as SlideStage, fe as SlidesToolbar, we as SpeakerNotes, Bn as StandaloneTiptap, Nr as SuggestionCard, Tr as SuggestionModeControl, Pr as SuggestionReviewList, Vt as TableOfContents, k as TaskItemRow, ne as TaskList, W as TiptapEditor, Rt as VersionHistoryPanel, _t as VideoCallPanel, gr as VideoDockSlot, Nt as VideoHistoryPanel, lr as WorkItemRow, ht as WorkspaceDocumentHeaderNotices, gn as ZOOM_FIT, vn as ZOOM_STEPS, fn as acceptsDocumentImage, N as addSlide, H as canSaveDeck, lt as canvasBody, Ct as canvasFragmentToMarkdown, In as clientIdForUser, Jr as commentReplyIntent, Dt as countAllComments, zr as createAuthenticatedDocumentImage, Kr as dictationButtonLabel, dn as documentToolbarSize, xe as duplicateSlide, yt as findDocumentTarget, pn as findMatches, Lt as generateSummaryBullets, qt as getInitials, pt as isCanvasDocument, He as isLineSpacing, Ye as lineSpacingAttributes, Ze as listTypeFor, A as makeSlide, be as moveSlide, en as nextMatchIndex, B as nextRevisionLabel, V as nextSlideId, Ke as parseLineSpacing, Be as parseListStyle, yr as readCommentMarginPreference, an as readOutline, Bt as readSchemaVersion, bt as relativeTime, ie as removeSlide, F as replaceSlide, pr as replyLabel, at as resolverLabel, se as revisionPickerOptions, Yt as scrollToDocumentTarget, Te as slidesToolbarSize, hn as stackOffsets, j as svgDataUri, re as uncitedSlideIds, br as useCommentMarginPreference, ut as useDocumentActions, on as useDocumentImageUpload, rn as useDocumentOutline, cn as useDocumentToolbarSize, Ln as useFollowCursor, ft as useIsCanvasDocument, it as useSidebarPanels, z as withLayoutDefaults };
+export { Zn as AckMode, It as ActionItemsCard, rr as ActivityFeed, xt as AttachmentsPanel, Rr as AuthenticatedDocumentImageView, Ke as BULLET_STYLES, St as CANVAS_BODY_KEY, wt as CANVAS_SCHEMA_VERSION, vr as COMMENT_MARGIN_STORAGE_KEY, $ as COMMENT_REPLY_COMMANDS, Qt as CanvasDocumentView, We as CanvasLineSpacing, Ye as CanvasListStyle, Yn as ChunkViewer, Tt as CommentContextHeader, mr as CommentGhostPopover, Xr as CommentHandoffBar, Yr as CommentReplyComposer, Gt as CommentThreadNode, nt as ComposerDockPlacementContext, he as DECK_THEMES, Hr as DEFAULT_EDITOR_SHELL_TABS, Gr as DICTATION_HOLD_MS, et as DOCK_HEIGHT_VAR, tt as DOCK_INSET_VAR, vt as DOCUMENT_MODE_LABELS, tn as DOCUMENT_TOOLBAR_BREAKPOINTS, qr as DictationButton, Ht as DiffViewer, Ut as DocumentEditorPage, un as DocumentFindBar, sn as DocumentGutter, rt as DocumentHeader, Lr as DocumentImageProvider, Pt as DocumentLifecyclePill, Fn as DocumentListPage, ct as DocumentModePill, $t as DocumentOutline, gt as DocumentOwnership, Vr as DocumentReviewPanel, _n as DocumentRuler, dt as DocumentSaveStatus, Cr as DocumentShareDialog, Zt as DocumentStatusBar, nn as DocumentToolbar, Wr as EditorShell, He as EditorToolbar, At as ExecutiveSummaryCard, ke as Filmstrip, me as FilmstripThumb, $e as FloatingComposerDock, _r as FloatingDockBar, Ft as FollowModeBar, zt as HeaderBanner, Wt as KeyDecisionsCard, Qe as LINE_SPACINGS, Be as LINE_SPACING_LABELS, Ue as LIST_STYLE_LABELS, mn as MAX_ATTACHMENT_BYTES, Te as MAX_BULLETS_PER_SLIDE, Se as MAX_BULLET_CHARS, _e as MAX_CHART_LABELS, ge as MAX_CHART_SERIES, ue as MAX_EYEBROW_CHARS, ln as MAX_IMAGE_BYTES, Ae as MAX_NOTES_CHARS, Ne as MAX_QUOTE_CHARS, fe as MAX_SLIDES, Me as MAX_SOURCES_PER_SLIDE, oe as MAX_SUBTITLE_CHARS, M as MAX_TITLE_CHARS, Re as MULTILEVEL_STYLES, Kt as MentionDropdown, Et as MyMentionsPanel, qe as NUMBER_STYLES, le as NewDocumentModal, I as OLDER_REVISIONS_VALUE, Xt as PX_PER_INCH, mt as ParticipantAvatars, Oe as PresentationEditor, W as PresentationView, cr as ProposalCard, Ot as ReaderMode, Jt as ResolvedBanner, Mt as ReviewMode, Un as ReviewProgress, qn as ReviewableItem, xr as SHARE_ROLES, Ee as SLIDES_TOOLBAR_BREAKPOINTS, je as SLIDE_ID_PATTERN, ve as SLIDE_INSERTS, se as SLIDE_LAYOUTS, P as SLIDE_LAYOUT_LABELS, wr as SUGGESTION_AUTHORING_MODES, ot as SectionBlock, jt as SectionComments, st as SectionList, kt as SectionSummariesCard, pe as SlideForm, ae as SlideList, Pe as SlideRow, xe as SlideSources, De as SlideStage, de as SlidesToolbar, Ce as SpeakerNotes, Bn as StandaloneTiptap, Nr as SuggestionCard, Tr as SuggestionModeControl, Pr as SuggestionReviewList, Vt as TableOfContents, k as TaskItemRow, ne as TaskList, Ze as TiptapEditor, Rt as VersionHistoryPanel, _t as VideoCallPanel, gr as VideoDockSlot, Nt as VideoHistoryPanel, lr as WorkItemRow, ht as WorkspaceDocumentHeaderNotices, gn as ZOOM_FIT, vn as ZOOM_STEPS, fn as acceptsDocumentImage, N as addSlide, V as canSaveDeck, lt as canvasBody, Ct as canvasFragmentToMarkdown, In as clientIdForUser, Jr as commentReplyIntent, Dt as countAllComments, zr as createAuthenticatedDocumentImage, Kr as dictationButtonLabel, dn as documentToolbarSize, be as duplicateSlide, yt as findDocumentTarget, pn as findMatches, Lt as generateSummaryBullets, qt as getInitials, pt as isCanvasDocument, Ve as isLineSpacing, Je as lineSpacingAttributes, Xe as listTypeFor, A as makeSlide, ye as moveSlide, en as nextMatchIndex, z as nextRevisionLabel, B as nextSlideId, Ge as parseLineSpacing, ze as parseListStyle, yr as readCommentMarginPreference, an as readOutline, Bt as readSchemaVersion, bt as relativeTime, H as removeSlide, re as replaceSlide, pr as replyLabel, at as resolverLabel, U as revisionPickerOptions, Yt as scrollToDocumentTarget, we as slidesToolbarSize, hn as stackOffsets, j as svgDataUri, ie as uncitedSlideIds, br as useCommentMarginPreference, ut as useDocumentActions, on as useDocumentImageUpload, rn as useDocumentOutline, cn as useDocumentToolbarSize, Ln as useFollowCursor, ft as useIsCanvasDocument, it as useSidebarPanels, R as withLayoutDefaults };
