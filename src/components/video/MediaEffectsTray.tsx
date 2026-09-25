@@ -323,7 +323,8 @@ export function MediaEffectsTray({
           return (
             <EffectChip
               key={s.id}
-              label={s.label}
+              // RM ≥ 0.97.4 sends the emoji separately; the pill keeps showing it.
+              label={typeof s.icon === 'string' && !s.label.startsWith(s.icon) ? `${s.icon} ${s.label}` : s.label}
               active={active}
               disabled={disabled}
               compact={compact}

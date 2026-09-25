@@ -104,3 +104,23 @@ describe('A-11 overlays stay clear of an open ContextColumn', () => {
     expect(screen.getByTestId('toast-stack').className).toContain('right-[calc(1rem+var(--uic-context-column-inset,0px))]');
   });
 });
+
+describe('A-8 follow-up: RM 0.97.4 sprites carry `icon` separately', () => {
+  it('renders the icon glyph and the plain label; old emoji-in-label still parses', () => {
+    const controller = {
+      filterId: 'none', backgroundMode: 'none' as const, backgroundImageUrl: null, faceSpriteId: null,
+      filters: [{ id: 'none', label: 'None' }], backgrounds: [],
+      faceSprites: [
+        { id: 'sunglasses', label: 'Sunglasses', icon: '🕶️' },
+        { id: 'dog-ears', label: '🐶 Dog Ears' },
+      ],
+      setFilter: noop, setBackgroundMode: noop, setBackgroundImageUrl: noop, setFaceSpriteId: noop,
+      draft: { filterId: 'none', backgroundMode: 'none' as const, backgroundImageUrl: null, faceSpriteId: null },
+      isDirty: false, previewTrack: null, beginPreview: noop, applyPreview: noop, cancelPreview: noop,
+    };
+    render(<WrappedMediaEffectsPreviewPanel open controller={controller} onClose={noop} variant="surface" showFooter={false} />);
+    const sun = screen.getByTestId('effects-face-sunglasses');
+    expect(sun.textContent).toBe('🕶️Sunglasses');
+    expect(screen.getByTestId('effects-face-dog-ears').textContent).toBe('🐶Dog ears');
+  });
+});

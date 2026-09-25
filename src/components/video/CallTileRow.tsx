@@ -286,7 +286,6 @@ function DockTile({
         // frame sits on the dark video tile.
         p.videoElement && !p.cameraOff ? 'bg-video-tile' : 'bg-video-tile-off',
         '[&_video]:h-full [&_video]:w-full [&_video]:object-cover',
-        highlighted ? 'ring-2 ring-primary ring-offset-1 ring-offset-surface' : speaking ? 'ring-2 ring-success' : '',
         onClick && 'cursor-pointer',
       )}
       // Tile size is a prop (74px tall at 1280, 84px at 1672) — not a static class.
@@ -336,6 +335,20 @@ function DockTile({
         {p.screenSharing && <ScreenShareIcon size={13} className="shrink-0" />}
         {p.isMuted ? <MicOffIcon size={14} className="shrink-0" /> : <MicIcon size={14} className="shrink-0" />}
       </div>
+      {(highlighted || speaking) && (
+        // The ring is drawn INSIDE the tile, on top of the video (2.395.3): an
+        // outer ring/offset was clipped by the dock row's overflow and never
+        // showed. Accent = followed; green = speaking.
+        <span
+          aria-hidden="true"
+          data-testid={`${testId}-ring`}
+          data-ring={highlighted ? 'highlighted' : 'speaking'}
+          className={cn(
+            'pointer-events-none absolute inset-0 z-10 rounded-md ring-2 ring-inset',
+            highlighted ? 'ring-primary' : 'ring-success',
+          )}
+        />
+      )}
       {speaking && highlighted && (
         <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-success" aria-hidden="true" />
       )}

@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.395.3] — 2026-09-25
+
+### Fixed
+- `CallTileRow` `dock` (and so `CallDock`): the followed person's accent ring, and the green speaking
+  ring, are drawn INSIDE the tile as an inset overlay above the video. The outer ring + offset was clipped
+  by the row's overflow and never showed (lane D A-13, mockup 02). Stories `Video/CallTileRow`
+  DockHighlightAtRowEdges (+Dark): the ring on the first tile and on the last of a scrolling row.
+- Face effects: RM ≥ 0.97.4 sends each sprite's emoji in `icon` with a plain label. The Wrapped effects
+  adapters forward `icon`, the grid tile draws it (the old emoji-in-label parsing stays as a fallback),
+  and the strip pill prefixes it. Story `CallSettingsDrawer` EffectsRmFaceLabels uses the new shape.
+
 ## [2.395.2] — 2026-09-25
 
 ### Added

@@ -173,7 +173,7 @@ export function WrappedMediaEffectsPreviewPanel({
         controller.setBackgroundImageUrl(url);
         controller.setBackgroundMode(mode);
       }}
-      faceSprites={controller.faceSprites.map(({ id, label }) => ({ id, label }))}
+      faceSprites={controller.faceSprites.map(({ id, label, icon }) => ({ id, label, ...(icon ? { icon } : {}) }))}
       activeFaceSpriteId={shown.faceSpriteId}
       onSelectFaceSprite={(id) => controller.setFaceSpriteId(id)}
     />

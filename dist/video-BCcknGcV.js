@@ -28,7 +28,7 @@ import { t as te } from "./Checkbox-Dftwml_V.js";
 import { t as ne } from "./Tooltip-af4BrR7T.js";
 import { t as re } from "./activationKey-CjbL3LUv.js";
 import { a as H, b as U, c as ie, d as ae, f as oe, h as se, i as W, l as ce, m as le, n as ue, o as de, p as fe, r as pe, s as me, t as he, u as ge, x as _e, y as ve } from "./MediaIcons-_ai5Til2.js";
-import { A as ye, b as be } from "./AudioVideoSettingsForm-Dq6jGPz2.js";
+import { A as ye, b as be } from "./AudioVideoSettingsForm-RynnAku7.js";
 import { useCallback as G, useEffect as K, useImperativeHandle as xe, useLayoutEffect as Se, useMemo as Ce, useRef as q, useState as J } from "react";
 import { Fragment as Y, jsx as X, jsxs as Z } from "react/jsx-runtime";
 //#region src/components/video/VideoPlayer.tsx
@@ -2054,7 +2054,7 @@ function Rt({ participants: t, localParticipant: n, activeSpeakerId: r, tileWidt
 function zt({ participant: t, width: n, height: r, speaking: i, highlighted: a, testId: o, onClick: s }) {
 	let c = t.isLocal ? "You" : t.displayName, l = `${t.isLocal ? "You" : t.displayName}${t.isMuted ? ", muted" : ""}${t.screenSharing ? ", sharing screen" : ""}`;
 	return /* @__PURE__ */ Z("div", {
-		className: e("relative shrink-0 overflow-hidden rounded-md text-white", t.videoElement && !t.cameraOff ? "bg-video-tile" : "bg-video-tile-off", "[&_video]:h-full [&_video]:w-full [&_video]:object-cover", a ? "ring-2 ring-primary ring-offset-1 ring-offset-surface" : i ? "ring-2 ring-success" : "", s && "cursor-pointer"),
+		className: e("relative shrink-0 overflow-hidden rounded-md text-white", t.videoElement && !t.cameraOff ? "bg-video-tile" : "bg-video-tile-off", "[&_video]:h-full [&_video]:w-full [&_video]:object-cover", s && "cursor-pointer"),
 		style: {
 			width: n,
 			height: r
@@ -2121,6 +2121,12 @@ function zt({ participant: t, width: n, height: r, speaking: i, highlighted: a, 
 						className: "shrink-0"
 					})
 				]
+			}),
+			(a || i) && /* @__PURE__ */ X("span", {
+				"aria-hidden": "true",
+				"data-testid": `${o}-ring`,
+				"data-ring": a ? "highlighted" : "speaking",
+				className: e("pointer-events-none absolute inset-0 z-10 rounded-md ring-2 ring-inset", a ? "ring-primary" : "ring-success")
 			}),
 			i && a && /* @__PURE__ */ X("span", {
 				className: "absolute right-1 top-1 h-2 w-2 rounded-full bg-success",

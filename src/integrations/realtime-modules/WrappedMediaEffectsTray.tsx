@@ -27,7 +27,8 @@ export interface RMMediaEffectsControllerSource {
   faceSpriteId: string | null;
   filters: Array<{ id: string; label: string; cssFilter?: string }>;
   backgrounds: Array<{ id: string; label: string; url: string }>;
-  faceSprites: Array<{ id: string; label: string }>;
+  /** `icon` (RM ≥ 0.97.4): the sprite's emoji, separate from a plain label. */
+  faceSprites: Array<{ id: string; label: string; icon?: string }>;
   setFilter(id: string): void;
   setBackgroundMode(mode: RMBackgroundMode): void;
   setBackgroundImageUrl(url: string | null): void;
@@ -71,7 +72,7 @@ export function WrappedMediaEffectsTray({
         controller.setBackgroundImageUrl(url);
         controller.setBackgroundMode(mode);
       }}
-      faceSprites={controller.faceSprites.map(({ id, label }) => ({ id, label }))}
+      faceSprites={controller.faceSprites.map(({ id, label, icon }) => ({ id, label, ...(icon ? { icon } : {}) }))}
       activeFaceSpriteId={controller.faceSpriteId}
       onSelectFaceSprite={(id) => controller.setFaceSpriteId(id)}
       {...rest}

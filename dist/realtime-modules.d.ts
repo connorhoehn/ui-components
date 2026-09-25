@@ -2263,9 +2263,11 @@ export declare interface RMMediaEffectsControllerSource {
         label: string;
         url: string;
     }>;
+    /** `icon` (RM ≥ 0.97.4): the sprite's emoji, separate from a plain label. */
     faceSprites: Array<{
         id: string;
         label: string;
+        icon?: string;
     }>;
     setFilter(id: string): void;
     setBackgroundMode(mode: RMBackgroundMode): void;

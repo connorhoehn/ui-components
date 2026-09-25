@@ -65,7 +65,8 @@ describe('CallTileRow dock variant', () => {
     expect(within(tiles[0] as HTMLElement).getByText('You')).toBeTruthy();
     const hi = screen.getByTestId('call-tile-u1');
     expect(hi.getAttribute('data-highlighted')).toBe('true');
-    expect(hi.className).toContain('ring-primary');
+    expect(screen.getByTestId('call-tile-u1-ring').className).toContain('ring-primary');
+    expect(screen.getByTestId('call-tile-u1-ring').className).toContain('ring-inset');
     expect(screen.getByTestId('call-tile-u0').getAttribute('data-highlighted')).toBe('false');
   });
 
@@ -256,5 +257,17 @@ describe('CallPeopleList notified (2.395.2, A-12)', () => {
     expect(status.className).toContain('text-text-tertiary');
     expect(screen.getByTestId('call-person-fd').className).toContain('opacity-60');
     expect(screen.queryByTestId('call-person-mic-fd')).toBeNull();
+  });
+});
+
+describe('CallTileRow dock ring inside the tile (2.395.3, A-13)', () => {
+  it('draws the followed ring as an inset overlay inside the tile, not on the tile edge', () => {
+    render(<CallTileRow variant="dock" overflow="scroll" participants={[{ id: 'a', displayName: 'Alice' }, { id: 'b', displayName: 'Bob' }]} highlightedId="a" activeSpeakerId="b" />);
+    const tile = screen.getByTestId('call-tile-a');
+    const ring = screen.getByTestId('call-tile-a-ring');
+    expect(tile.contains(ring)).toBe(true);
+    expect(tile.className).not.toContain('ring-');
+    expect(ring.getAttribute('data-ring')).toBe('highlighted');
+    expect(screen.getByTestId('call-tile-b-ring').getAttribute('data-ring')).toBe('speaking');
   });
 });

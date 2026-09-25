@@ -70,12 +70,13 @@ function AudioVideoTab({ micDenied = false, speakers = true }: { micDenied?: boo
   );
 }
 
-// What RM's useMediaEffects().faceSprites actually carries: the emoji in the label.
+// What RM's useMediaEffects().faceSprites carries since 0.97.4: a plain label
+// and the emoji in `icon` (older RM put the emoji in the label; still parsed).
 const RM_FACE = [
-  { id: 'dog-ears', label: '🐶 Dog Ears' },
-  { id: 'sunglasses', label: '🕶️ Sunglasses' },
-  { id: 'disguise', label: '🥸 Disguise' },
-  { id: 'crown', label: '👑 Crown' },
+  { id: 'sunglasses', label: 'Sunglasses', icon: '🕶️' },
+  { id: 'dog-ears', label: 'Dog ears', icon: '🐶' },
+  { id: 'disguise', label: 'Disguise', icon: '🥸' },
+  { id: 'crown', label: 'Crown', icon: '👑' },
 ];
 
 function EffectsTab({ filter, bg, sprites = FACE }: { filter: string; bg: 'none' | 'blur' | 'image'; sprites?: typeof FACE | typeof RM_FACE }) {
@@ -152,6 +153,6 @@ export const EffectsDark: Story = { args, render: () => <Scene tab="effects" />,
 export const Captions: Story = { args, render: () => <Scene tab="captions" />, decorators: [themed('light')] };
 export const CaptionsDark: Story = { args, render: () => <Scene tab="captions" />, decorators: [themed('dark')] };
 
-/** 2.395.0 (A-8): the Face effects icon row from RM's own labels ("🕶️ Sunglasses") — glyph in the tile, words under it, then More. */
+/** A-8: the Face effects icon row from RM's sprites (`icon` + plain label, RM ≥ 0.97.4) — glyph in the tile, words under it, then More. */
 export const EffectsRmFaceLabels: Story = { args, render: () => <Scene tab="effects" rmFace />, decorators: [themed('light')] };
 export const EffectsRmFaceLabelsDark: Story = { args, render: () => <Scene tab="effects" rmFace />, decorators: [themed('dark')] };

@@ -552,7 +552,7 @@ function R({ filters: t, activeFilterId: n, onSelectFilter: r, backgrounds: i, b
 				}), c.map((e) => {
 					let t = e.id === l;
 					return /* @__PURE__ */ b(I, {
-						label: e.label,
+						label: typeof e.icon == "string" && !e.label.startsWith(e.icon) ? `${e.icon} ${e.label}` : e.label,
 						active: t,
 						disabled: d,
 						compact: f,

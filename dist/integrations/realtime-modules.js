@@ -13,7 +13,7 @@ import { t as f } from "../FileUploadDrop-Ds6LsAtK.js";
 import { t as p } from "../ActivityFeed-ay5wcWka.js";
 import { n as m, r as h, t as g } from "../ReactionsOverlay-Ob1ecsgg.js";
 import { d as _, n as v, t as y, u as b } from "../ConversationSurface-BtffnUkI.js";
-import { C as x, b as S, g as C, i as w, m as T, t as E, v as D, y as ee } from "../AudioVideoSettingsForm-Dq6jGPz2.js";
+import { C as x, b as S, g as C, i as w, m as T, t as E, v as D, y as ee } from "../AudioVideoSettingsForm-RynnAku7.js";
 import { a as te, i as ne, n as re, r as ie, t as ae } from "../useDocumentImageUpload-BBnGd0HH.js";
 import { Component as oe, createContext as se, useCallback as O, useContext as ce, useEffect as k, useMemo as A, useRef as j, useState as M } from "react";
 import { Fragment as N, jsx as P, jsxs as F } from "react/jsx-runtime";
@@ -1038,9 +1038,10 @@ function Ze({ controller: e, ...t }) {
 		onSelectBackground: (t, n) => {
 			e.setBackgroundImageUrl(n), e.setBackgroundMode(t);
 		},
-		faceSprites: e.faceSprites.map(({ id: e, label: t }) => ({
+		faceSprites: e.faceSprites.map(({ id: e, label: t, icon: n }) => ({
 			id: e,
-			label: t
+			label: t,
+			...n ? { icon: n } : {}
 		})),
 		activeFaceSpriteId: e.faceSpriteId,
 		onSelectFaceSprite: (t) => e.setFaceSpriteId(t),
@@ -1104,9 +1105,10 @@ function Qe({ open: e, controller: t, onClose: n, onApplied: r, ...i }) {
 		onSelectBackground: (e, n) => {
 			t.setBackgroundImageUrl(n), t.setBackgroundMode(e);
 		},
-		faceSprites: t.faceSprites.map(({ id: e, label: t }) => ({
+		faceSprites: t.faceSprites.map(({ id: e, label: t, icon: n }) => ({
 			id: e,
-			label: t
+			label: t,
+			...n ? { icon: n } : {}
 		})),
 		activeFaceSpriteId: l.faceSpriteId,
 		onSelectFaceSprite: (e) => t.setFaceSpriteId(e)
