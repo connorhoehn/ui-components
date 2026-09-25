@@ -441,3 +441,15 @@ describe('CanvasDocumentView belowRuler slot (2.395.0, A-10)', () => {
     expect(document.querySelector('[data-testid$="-below-ruler"]')).toBeNull();
   });
 });
+
+describe('CanvasDocumentView belowRuler is sticky (2.395.1)', () => {
+  it('pins under the toolbar via --uic-canvas-toolbar-h on the workspace', () => {
+    renderView({ belowRuler: <div data-testid="follow-slot">Following</div> });
+    const wrapper = screen.getByTestId('follow-slot').parentElement!;
+    expect(wrapper.className).toContain('sticky');
+    expect(wrapper.className).toContain('top-[var(--uic-canvas-toolbar-h,0px)]');
+    const ws = [...document.querySelectorAll<HTMLElement>('*')].find((e) => e.style.getPropertyValue('--uic-canvas-toolbar-h'));
+    expect(ws).toBeTruthy();
+    expect(ws!.contains(wrapper)).toBe(true);
+  });
+});

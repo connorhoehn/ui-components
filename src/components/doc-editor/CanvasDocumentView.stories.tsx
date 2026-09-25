@@ -561,6 +561,7 @@ export const ReleasePlan: Story = {
  * ruler, across the editor column, above the sheet (mockups 02/03b/04/06).
  */
 function WithFollowBar(args: ComponentProps<typeof CanvasDocumentView>) {
+  // (fitHeight comes through args for the pinned-while-scrolling story)
   const { ydoc, provider, body } = useFixture();
   const onEditorReady = useSeed(SAMPLE_HTML, body);
   const [following, setFollowing] = useState<string | null>('Alice');
@@ -594,6 +595,42 @@ export const FollowBarBelowRulerDark: Story = {
   render: (args) => (
     <div data-theme="dark" className="bg-workspace">
       <WithFollowBar {...args} />
+    </div>
+  ),
+};
+
+/**
+ * 2.395.1: the follow bar stays PINNED under the toolbar while the page
+ * scrolls — the story scrolls the workspace 360px on mount; the ruler has
+ * gone, the bar has not.
+ */
+function ScrolledFollowBar(args: ComponentProps<typeof CanvasDocumentView>) {
+  const [host, setHost] = useState<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (!host) return;
+    const t = setTimeout(() => {
+      const ws = host.querySelector('[data-testid$="-page-row"]')?.parentElement;
+      let el: HTMLElement | null | undefined = ws;
+      while (el && !(el.scrollHeight > el.clientHeight && getComputedStyle(el).overflowY !== 'visible')) el = el.parentElement;
+      el?.scrollTo({ top: 360 });
+    }, 900);
+    return () => clearTimeout(t);
+  }, [host]);
+  return (
+    <div ref={setHost} className="flex h-[560px] flex-col">
+      <WithFollowBar {...args} fitHeight="parent" />
+    </div>
+  );
+}
+export const FollowBarPinnedWhileScrolling: Story = {
+  args: { isCanvas: true, body: null, ydoc: null as never, provider: null, ...BASE },
+  render: (args) => <ScrolledFollowBar {...args} />,
+};
+export const FollowBarPinnedWhileScrollingDark: Story = {
+  ...FollowBarPinnedWhileScrolling,
+  render: (args) => (
+    <div data-theme="dark" className="bg-workspace">
+      <ScrolledFollowBar {...args} />
     </div>
   ),
 };

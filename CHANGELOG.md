@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.395.1] — 2026-09-25
+
+### Fixed
+- `CanvasDocumentView` `belowRuler` is sticky: it starts just under the ruler and, as the page scrolls,
+  pins under the toolbar (the toolbar's height is published on the workspace as `--uic-canvas-toolbar-h`),
+  on an opaque workspace strip. Follow mode moves the viewport for you and the follow bar is the way out,
+  so it no longer scrolls away (A-10 follow-up). Stories `Doc-Editor/CanvasDocumentView`
+  FollowBarPinnedWhileScrolling (+Dark).
+
 ## [2.395.0] — 2026-09-25
 
 Document calls, lane D requests A-8 to A-11.

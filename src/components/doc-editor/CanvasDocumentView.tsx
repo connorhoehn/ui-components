@@ -270,8 +270,10 @@ export interface CanvasDocumentViewProps {
   /**
    * Rendered between the ruler (or the toolbar, with the ruler off) and the
    * sheet, across the editor column's width — the in-call follow bar
-   * ("Following Alice · Session flow", mockups 02/03b/04/06). In the page's
-   * flow, so it scrolls with the ruler. Since 2.395.0.
+   * ("Following Alice · Session flow", mockups 02/03b/04/06). STICKY
+   * (2.395.1): it starts under the ruler and, as the page scrolls, pins just
+   * under the toolbar — follow mode moves the viewport for you, and the bar
+   * is the way out, so it never scrolls away. Since 2.395.0.
    */
   belowRuler?: ReactNode;
   /**
@@ -577,6 +579,12 @@ export default function CanvasDocumentView({
   // down because fit width needs it before `zoom` is resolved, and `zoom` is a
   // dependency of nearly everything below.
   const workspaceRef = useRef<HTMLDivElement | null>(null);
+  // The sticky toolbar's height, published on the workspace as
+  // `--uic-canvas-toolbar-h` so the `belowRuler` slot can pin itself just
+  // under it (2.395.1). A CSS variable rather than an inline `top`, because
+  // the toolbar mounts late (it waits for the editor) and changes height with
+  // its own wrapping.
+  const toolbarRef = useRef<HTMLDivElement | null>(null);
 
   // Fit width: a rule, re-evaluated, not a number chosen once.
   //
@@ -635,6 +643,21 @@ export default function CanvasDocumentView({
   // 150% — the sheet came out 1196px while a predicted ruler drew 1224, so
   // every measure on it was off by half an inch. Reading the real width keeps
   // the two in agreement whatever the layout does to the page.
+  useEffect(() => {
+    const ws = workspaceRef.current;
+    if (!ws) return;
+    const write = () => {
+      const h = toolbarRef.current ? Math.round(toolbarRef.current.getBoundingClientRect().height) : 0;
+      ws.style.setProperty('--uic-canvas-toolbar-h', `${h}px`);
+    };
+    write();
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(write) : null;
+    if (ro) {
+      ro.observe(ws);
+      if (toolbarRef.current) ro.observe(toolbarRef.current);
+    }
+    return () => ro?.disconnect();
+  });
   const paperRef = useRef<HTMLDivElement | null>(null);
   const [paperWidth, setPaperWidth] = useState<number | null>(null);
   const measurePaper = useCallback(() => {
@@ -916,7 +939,7 @@ export default function CanvasDocumentView({
               box rather than as a second toolbar. The cost is one ~44px shift
               of the sheet on open, which does not recur while searching. */}
           {editable && editor && (
-            <div data-testid={`${testId}-toolbar`} className="sticky top-0 z-20">
+            <div ref={toolbarRef} data-testid={`${testId}-toolbar`} className="sticky top-0 z-20">
             <div
               // The card sits in the column's gutter, `--dock-inset` (1rem
               // unless the host says otherwise) — the same one the pinned
@@ -1066,7 +1089,12 @@ export default function CanvasDocumentView({
             </div>
           )}
           {belowRuler != null && belowRuler !== false && (
-            <div data-testid={`${testId}-below-ruler`} className="px-2 pt-2 sm:px-6">
+            <div
+              data-testid={`${testId}-below-ruler`}
+              // Opaque workspace behind the bar so the page scrolling under
+              // it does not show through the padding while it is pinned.
+              className="sticky top-[var(--uic-canvas-toolbar-h,0px)] z-10 bg-workspace px-2 pt-2 pb-1 sm:px-6"
+            >
               {belowRuler}
             </div>
           )}

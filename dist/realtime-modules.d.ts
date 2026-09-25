@@ -342,8 +342,10 @@ declare interface CanvasDocumentViewProps {
     /**
      * Rendered between the ruler (or the toolbar, with the ruler off) and the
      * sheet, across the editor column's width — the in-call follow bar
-     * ("Following Alice · Session flow", mockups 02/03b/04/06). In the page's
-     * flow, so it scrolls with the ruler. Since 2.395.0.
+     * ("Following Alice · Session flow", mockups 02/03b/04/06). STICKY
+     * (2.395.1): it starts under the ruler and, as the page scrolls, pins just
+     * under the toolbar — follow mode moves the viewport for you, and the bar
+     * is the way out, so it never scrolls away. Since 2.395.0.
      */
     belowRuler?: ReactNode;
     /**
