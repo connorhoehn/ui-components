@@ -60,7 +60,7 @@ export interface WorkspaceRailProps {
 }
 
 const BACK_CLASS = cn(
-  'inline-flex items-center gap-1 rounded border-0 bg-transparent p-0 text-[15px] font-medium text-primary no-underline',
+  'inline-flex items-center gap-1 rounded border-0 bg-transparent p-0 text-[13px] font-medium text-primary no-underline',
   'cursor-pointer hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
 );
 

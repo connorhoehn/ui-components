@@ -290,10 +290,10 @@ describe('ActionRowList tone / accent / leading / columns / action', () => {
 });
 
 describe('WorkspaceRail heading="caption"', () => {
-  it('is a 13px uppercase label with a chip count; the default stays compact', () => {
+  it('is a 12px uppercase label with a chip count; the default stays compact', () => {
     const { rerender } = render(<WorkspaceRail title="Initiatives" count={11} heading="caption">x</WorkspaceRail>);
     const t = screen.getByTestId('workspace-rail-title');
-    expect(t.className).toContain('text-[13px]');
+    expect(t.className).toContain('text-[12px]');
     expect(t.className).toContain('uppercase');
     expect(screen.getByTestId('workspace-rail-header').className).toContain('h-14');
     expect(screen.getByTestId('workspace-rail-count')).toHaveTextContent('11');
@@ -307,11 +307,11 @@ describe('GroupedList rowStyle', () => {
     groups: [{ id: 'p', title: 'In progress' }],
     rows: [{ id: 'a', groupId: 'p', title: 'Observability Platform' }],
   };
-  it('plain drops the row rules and uses the 40px md pitch', () => {
+  it('plain drops the row rules and uses the 36px rail pitch', () => {
     render(<GroupedList {...props} size="md" rowStyle="plain" />);
     const row = screen.getByTestId('grouped-list-row-a');
     expect(row.className).toContain('border-t-0');
-    expect(row.className).toContain('py-[9px]');
+    expect(row.className).toContain('py-2');
   });
   it('the default keeps the rules', () => {
     render(<GroupedList {...props} size="md" />);

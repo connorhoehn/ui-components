@@ -211,10 +211,10 @@ describe('NavRailStack', () => {
     expect(secondBuild).toHaveAttribute('aria-expanded', 'true');
   });
 
-  it('size md: 15px labels, no rule under the title, a hairline between groups (2.389.2)', () => {
+  it('size md: 13px rail labels, no rule under the title, a hairline between groups (2.389.2)', () => {
     const { container } = render(<NavRail title="Workspace" size="md" items={ITEMS} />);
     const label = screen.getByText('Health');
-    expect(label.className).toContain('text-[15px]');
+    expect(label.className).toContain('text-[13px]');
     const titleRow = screen.getByText('Workspace').parentElement!;
     expect(titleRow.className).not.toMatch(/(^| )border-b( |$)/);
     // Two groups → one hairline, above the second.

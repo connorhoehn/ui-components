@@ -110,7 +110,7 @@ export interface NavRailProps {
   tone?: NavRailTone;
   /**
    * Layout only, since 2.397.0 — both sizes draw the one shared rail type
-   * scale (`railType`: 15px/500 labels on 40px rows, 11px caps group labels,
+   * scale (`railType`: 13px/500 labels on 36px rows, 11px caps group labels,
    * plain counts), the same as SubNavLayout and the explorer rails. `sm`
    * (default) is flush with the rail's edges under a ruled title row; `md` is
    * the Documents surface's Workspace rail (the All documents mockup): items

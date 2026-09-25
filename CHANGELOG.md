@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.398.0
+
+- **Rail type scale, one step smaller (visual change for every consumer).** The shared `railType` scale that every navigation rail draws from (shell rail, `NavRail`, module sub-navs, `WorkspaceRail`, `RailNavList`, `GroupedList rowStyle="plain"`, rail section headers) is now 13px/500 items on a 36px pitch, 12px item counts and a 12px caption; group headings stay 11px caps. 2.397.0 had unified the rails on the explorer's 15px/40px scale; the user preferred the smaller one. `RAIL_ROW_PITCH` is 36.
+
 ## [2.397.4] — 2026-09-25
 
 ### Changed (visual)

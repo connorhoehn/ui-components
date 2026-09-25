@@ -30,14 +30,14 @@ const hasAll = (el: Element, classes: string) => {
 };
 
 describe('rail type scale (2.397.0)', () => {
-  it('is the explorer scale: 15px/500 items on a 40px pitch, 11px caps labels', () => {
-    expect(RAIL_ITEM_TEXT).toBe('text-[15px] font-medium leading-[22px]');
-    expect(RAIL_ROW_PAD_Y).toBe('py-[9px]');
-    expect(railType.rowPitch).toBe(40);
+  it('is the compact scale (2.398.0): 13px/500 items on a 36px pitch, 11px caps labels', () => {
+    expect(RAIL_ITEM_TEXT).toBe('text-[13px] font-medium leading-5');
+    expect(RAIL_ROW_PAD_Y).toBe('py-2');
+    expect(railType.rowPitch).toBe(36);
     expect(RAIL_GROUP_LABEL).toContain('text-[11px]');
     expect(RAIL_GROUP_LABEL).toContain('uppercase');
     expect(RAIL_GROUP_COUNT).toContain('text-[11px]');
-    expect(RAIL_CAPTION).toContain('text-[13px]');
+    expect(RAIL_CAPTION).toContain('text-[12px]');
   });
 
   it('is exported from the shared barrel', () => {

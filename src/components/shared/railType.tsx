@@ -10,8 +10,9 @@
 // tied them together, so every fix to one widened the gap to the other.
 //
 // Every rail now composes these constants instead of spelling its own sizes,
-// so a change here moves all of them together (2.397.0). The values are the
-// explorer rail's scale as drawn in the Initiatives v2 mockup.
+// so a change here moves all of them together (2.397.0). 2.397.0 set the
+// explorer rail's 15px/40px scale; the user preferred the smaller shell-rail
+// scale, so since 2.398.0 the shared scale is 13px items on a 36px pitch.
 //
 // Deliberate exceptions, and why:
 // - `RailNavList` (the "All / Mine / Sprints" views list at the top of a rail)
@@ -25,17 +26,17 @@
 
 import { cn } from '../../lib/cn';
 
-/** A rail item's label: 15px, medium weight, 22px line. */
-export const RAIL_ITEM_TEXT = 'text-[15px] font-medium leading-[22px]';
+/** A rail item's label: 13px, medium weight, 20px line. */
+export const RAIL_ITEM_TEXT = 'text-[13px] font-medium leading-5';
 
-/** Vertical padding that puts a one-line rail row on a 40px pitch (9 + 22 + 9). */
-export const RAIL_ROW_PAD_Y = 'py-[9px]';
+/** Vertical padding that puts a one-line rail row on a 36px pitch (8 + 20 + 8). */
+export const RAIL_ROW_PAD_Y = 'py-2';
 
 /** The one-line row pitch in px, for hosts that cap a list by row count. */
-export const RAIL_ROW_PITCH = 40;
+export const RAIL_ROW_PITCH = 36;
 
 /** A count at an item's right edge ("Initiatives 3"): muted, tabular. */
-export const RAIL_ITEM_COUNT = 'text-[13px] font-medium leading-5 tabular-nums text-text-tertiary';
+export const RAIL_ITEM_COUNT = 'text-[12px] font-medium leading-4 tabular-nums text-text-tertiary';
 
 /**
  * A group heading ("PLAN", "IN PROGRESS"): 11px semibold uppercase,
@@ -53,11 +54,11 @@ export const RAIL_GROUP_LABEL_INK = 'text-text-secondary';
  */
 export const RAIL_GROUP_COUNT = 'text-[11px] font-medium leading-4 normal-case tracking-normal tabular-nums text-text-tertiary';
 
-/** Padding that puts a group heading (20px caret box) on the same 40px pitch. */
-export const RAIL_GROUP_PAD_Y = 'py-2.5';
+/** Padding that puts a group heading (20px caret box) on the same 36px pitch. */
+export const RAIL_GROUP_PAD_Y = 'py-2';
 
-/** A rail's caption ("INITIATIVES 11"): 13px semibold uppercase, spaced. */
-export const RAIL_CAPTION = 'text-[13px] font-semibold uppercase tracking-[0.06em]';
+/** A rail's caption ("INITIATIVES 11"): 12px semibold uppercase, spaced. */
+export const RAIL_CAPTION = 'text-[12px] font-semibold uppercase tracking-[0.06em]';
 
 /** The selected row's fill. The 3px primary edge bar goes with it. */
 export const RAIL_CURRENT_FILL = 'bg-primary/8';
