@@ -2,11 +2,11 @@ import { a as e, i as t, n, o as r, r as i, t as a } from "./registry-DbX3MVAA.j
 import { i as o, n as s, r as c, t as l } from "./documentType-rRZpKWbO.js";
 import { n as u, t as d } from "./fieldType-CGXsQUaC.js";
 import "./types.js";
-import { A as f, C as p, D as m, E as h, M as g, O as _, S as v, T as y, _ as b, a as x, b as S, c as C, d as w, f as T, g as E, h as D, i as ee, j as te, k as O, l as k, m as ne, n as A, o as re, p as j, r as ie, s as ae, t as M, u as oe, v as se, w as ce, x as N, y as P } from "./hooks-CI9nB8Va.js";
+import { A as f, C as p, D as m, E as h, M as g, O as _, S as v, T as y, _ as b, a as x, b as S, c as C, d as w, f as T, g as E, h as D, i as ee, j as te, k as O, l as k, m as ne, n as A, o as re, p as j, r as ie, s as ae, t as M, u as oe, v as se, w as ce, x as N, y as P } from "./hooks-CpIBkiWr.js";
 import { i as le, n as ue, r as de, t as fe } from "./apiBaseUrl-DLrXlmVj.js";
 import { n as F, r as pe, t as me } from "./IdentityContext-CQM1qwH6.js";
-import { a as he, c as ge, d as _e, f as ve, h as ye, i as be, l as xe, m as Se, n as Ce, o as we, p as Te, r as Ee, s as De, t as Oe, u as ke } from "./useVideoSessions-dVq49wgC.js";
-import { n as Ae, t as je } from "./useWebSocket-NPebiecq.js";
+import { a as he, c as ge, d as _e, f as ve, h as ye, i as be, l as xe, m as Se, n as Ce, o as we, p as Te, r as Ee, s as De, t as Oe, u as ke } from "./useVideoSessions-Bnxuclp-.js";
+import { n as Ae, t as je } from "./useWebSocket-C9oAM0NL.js";
 import { a as Me, i as I, n as Ne, o as Pe, r as Fe, t as Ie } from "./useSocialProfile-5S1qyvsv.js";
 import { a as Le, c as Re, i as ze, l as L, n as Be, o as Ve, r as He, s as Ue, t as We, u as Ge } from "./useSyncConflicts-BspqjVsW.js";
 import { i as Ke } from "./useDocumentTypes-DCKwxXn8.js";
@@ -83,7 +83,7 @@ import { A as Oo, B as ko, C as Ao, D as jo, E as Mo, F as No, G as Po, H as Fo,
 import { $ as Es, A as Ds, B as Os, C as ks, D as As, E as js, F as Ms, G as Ns, H as Ps, I as Fs, J as Is, K as Ls, L as Rs, M as zs, N as Bs, O as Vs, P as Hs, Q as Us, R as Ws, S as Gs, T as Ks, U as qs, V as Js, W as Ys, X as Xs, Y as Zs, Z as Qs, _ as $s, a as ec, at as tc, b as nc, c as rc, d as ic, et as ac, f as oc, g as sc, h as cc, i as lc, it as uc, j as dc, k as fc, l as pc, m as mc, n as hc, nt as gc, o as _c, p as vc, q as yc, r as bc, rt as xc, s as Sc, t as Cc, tt as wc, u as Tc, v as Ec, w as Dc, x as Oc, y as kc, z as Ac } from "./ConversationSurface-s9IhkhOR.js";
 import { t as jc } from "./activationKey-CjbL3LUv.js";
 import { B as Mc, C as Nc, D as Pc, E as Fc, F as Ic, I as Lc, L as Rc, M as zc, N as Bc, O as Vc, P as Hc, R as Uc, S as Wc, T as Gc, V as Kc, _ as qc, a as Jc, b as Yc, c as Xc, d as Zc, f as Qc, g as $c, h as el, i as tl, j as nl, l as rl, m as il, n as al, o as ol, p as sl, r as cl, s as ll, t as ul, u as dl, v as fl, w as pl, x as ml, y as hl, z as gl } from "./renderers-C1FLXY2c.js";
-import { A as _l, D as vl, E as yl, F as bl, G as xl, I as Sl, J as Cl, K as wl, L as Tl, M as El, N as Dl, O as Ol, P as kl, T as Al, W as jl, Y as Ml, b as Nl, f as Pl, j as Fl, k as Il, q as Ll, t as Rl } from "./PresentationEditor-BtMX2gOw.js";
+import { A as _l, D as vl, E as yl, F as bl, G as xl, I as Sl, J as Cl, K as wl, L as Tl, M as El, N as Dl, O as Ol, P as kl, T as Al, W as jl, Y as Ml, b as Nl, f as Pl, j as Fl, k as Il, q as Ll, t as Rl } from "./PresentationEditor-D0yL0RvQ.js";
 import { n as zl, r as Bl, t as Vl } from "./EventStreamContext-CLzG8O5_.js";
 import { B as Hl, F as Ul, H as Wl, R as Gl, Y as Kl, _ as ql, bt as Jl, c as Yl, d as Xl, dt as Zl, f as Ql, ft as $l, g as eu, h as tu, ht as nu, m as ru, mt as iu, n as au, p as ou, q as su, rt as cu, t as lu, u as uu, v as du, xt as fu, y as pu } from "./services-EHYvvCQi.js";
 import { n as mu, t as hu } from "./ObservabilityContext-DpoDrm3T.js";
@@ -1218,7 +1218,7 @@ function Km() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var qm = rm(() => import("./DocumentEditorPage-BC7Cx4oP.js").then((e) => e.n));
+var qm = rm(() => import("./DocumentEditorPage-WcZAn_Kv.js").then((e) => e.n));
 function Jm({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;

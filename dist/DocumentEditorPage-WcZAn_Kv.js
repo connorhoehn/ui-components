@@ -1,7 +1,7 @@
 import { t as e } from "./rolldown-runtime-Dy4uBu1J.js";
 import { r as t } from "./registry-DbX3MVAA.js";
 import { r as n } from "./IdentityContext-CQM1qwH6.js";
-import { a as r, c as i, i as a, l as o, n as s, o as c, r as l, s as u, t as d } from "./useVideoSessions-dVq49wgC.js";
+import { a as r, c as i, i as a, l as o, n as s, o as c, r as l, s as u, t as d } from "./useVideoSessions-Bnxuclp-.js";
 import { t as f } from "./useDocumentTypes-DCKwxXn8.js";
 import { t as p } from "./cn-DhjIN-s0.js";
 import { t as m } from "./useEventCallback-Cwx9QVSi.js";
@@ -18,7 +18,7 @@ import { t as ee } from "./DropdownMenu-CRTPdlu1.js";
 import { t as A } from "./StatusPill-C-aN2Pzz.js";
 import { t as j } from "./activationKey-CjbL3LUv.js";
 import { O as te } from "./renderers-C1FLXY2c.js";
-import { J as ne } from "./PresentationEditor-BtMX2gOw.js";
+import { J as ne } from "./PresentationEditor-D0yL0RvQ.js";
 import { t as re } from "./TiptapEditor-CajZRkz8.js";
 import { t as ie } from "./useHangoutEmbed-ChkoGDC_.js";
 import { t as ae } from "./useActiveSpeaker-Dc9r75EE.js";
@@ -3040,8 +3040,8 @@ function rn({ comment: e, context: t, actions: n, onAskAgent: r, renderReply: i,
 								},
 								...a ? { "aria-pressed": o === e.id } : {},
 								"data-testid": `comment-reply-button-${e.id}`,
-								className: p("bg-transparent border-none text-neutral text-xs cursor-pointer py-0.5 px-0 font-[inherit]", o === e.id && "font-semibold text-primary"),
-								children: o === e.id ? "Replying…" : "Reply"
+								className: p("bg-transparent border-none text-neutral text-xs cursor-pointer py-0.5 px-0 font-[inherit] whitespace-nowrap", o === e.id && "text-primary underline underline-offset-2"),
+								children: "Reply"
 							}),
 							s === 0 && !E && u && /* @__PURE__ */ B("button", {
 								type: "button",
