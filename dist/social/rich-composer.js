@@ -1,3 +1,3 @@
-import { n as e, o as t, r as n, s as r, t as i } from "../composerCommands-M9-am4uY.js";
-import { a, c as o, i as s, l as c, n as l, o as u, r as d, s as f, t as p, u as m } from "../RichChatComposer-BH0eZQXm.js";
+import { n as e, o as t, r as n, s as r, t as i } from "../composerCommands-BJ4J0xSw.js";
+import { a, c as o, i as s, l as c, n as l, o as u, r as d, s as f, t as p, u as m } from "../RichChatComposer-3fI_Cv2j.js";
 export { p as COMPOSER_BREAKPOINTS, l as COMPOSER_MODE_ORDER, u as CommandSuggestions, m as ComposerAttachments, n as ComposerReferences, o as DocumentSuggestions, t as EMOJI_SHORTCODES, f as EmojiSuggestions, c as MentionSuggestions, d as RichChatComposer, i as composerCommandArgumentText, s as composerSizeFor, e as matchComposerCommand, a as matchesModeTrigger, r as searchEmoji };

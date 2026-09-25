@@ -40,7 +40,6 @@ export default defineConfig({
         identity: resolve(import.meta.dirname, 'src/components/identity/index.ts'),
         agents: resolve(import.meta.dirname, 'src/components/agents/index.ts'),
         compute: resolve(import.meta.dirname, 'src/components/compute/index.ts'),
-        'photo-editor': resolve(import.meta.dirname, 'src/components/photo-editor/index.ts'),
         video: resolve(import.meta.dirname, 'src/video.ts'),
         'video-ivs': resolve(import.meta.dirname, 'src/video-ivs.ts'),
         'integrations/realtime-modules': resolve(import.meta.dirname, 'src/integrations/realtime-modules/index.ts'),

@@ -1,14 +1,14 @@
 import { t as e } from "./cn-DhjIN-s0.js";
-import { t } from "./Chip-S5_92B2V.js";
+import { t } from "./Chip-zdVBwV9j.js";
 import { t as n } from "./TitledFrame-D8PekrkI.js";
 import { t as r } from "./DotMeter-BDVkadI8.js";
 import { t as i } from "./StatusDot-Bgx2zxgC.js";
-import { t as a } from "./InlinePopover-D102uoo1.js";
+import { t as a } from "./InlinePopover-DtYo8_ZC.js";
 import { t as o } from "./SectionLabel-bcrhNYOr.js";
 import { t as s } from "./InlinePlaceholder-51dbPRGn.js";
 import { n as c } from "./FloatingPanel-6GL9dXGL.js";
-import { a as l, c as u, d, f, i as p, l as m, n as h, o as g, r as _, s as v, t as y, u as b } from "./useComputeProjects-CJpBXqk0.js";
-import { A as x, B as S, C, D as w, E as ee, F as T, G as te, H as E, I as D, J as O, K as ne, L as k, M as A, N as j, O as M, P as re, R as ie, S as ae, T as N, U as oe, V as se, W as ce, Y as P, _ as le, a as ue, b as de, c as fe, d as pe, f as F, g as me, h as he, i as ge, j as I, k as _e, l as ve, m as ye, n as be, o as xe, p as Se, q as L, r as R, s as Ce, t as we, u as Te, v as Ee, w as De, x as Oe, y as ke, z as Ae } from "./ComputeContext-CkhjRYlo.js";
+import { a as l, c as u, d, f, i as p, l as m, n as h, o as g, r as _, s as v, t as y, u as b } from "./useComputeProjects-BZyUWJy3.js";
+import { A as x, B as S, C, D as w, E as ee, F as T, G as te, H as E, I as D, J as O, K as ne, L as k, M as A, N as j, O as M, P as re, R as ie, S as ae, T as N, U as oe, V as se, W as ce, Y as P, _ as le, a as ue, b as de, c as fe, d as pe, f as F, g as me, h as he, i as ge, j as I, k as _e, l as ve, m as ye, n as be, o as xe, p as Se, q as L, r as R, s as Ce, t as we, u as Te, v as Ee, w as De, x as Oe, y as ke, z as Ae } from "./ComputeContext-DJUKwE8p.js";
 import { Fragment as je, useCallback as z, useEffect as B, useMemo as V, useRef as H, useState as U, useSyncExternalStore as Me } from "react";
 import { Fragment as Ne, jsx as W, jsxs as G } from "react/jsx-runtime";
 //#region src/components/compute/lib/paneTree.ts

@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.390.1] — 2026-09-25
+
+### Removed
+- The `./photo-editor` subpath (PhotoCompareCanvas, PhotoEditorShell,
+  PhotoEditorTopBar, PhotoFilmstrip, the edit-op model and WebGL2 adjust
+  renderer, 2.389.9–2.389.14). It was built for the wrong project. The
+  composer's prompt card (`toolbar="prompt"`, `documentMenu`, `modeRowStart`,
+  `sendShortcut`, `defaultCommand`) stays: 2.390.0's `basic` preset builds on it.
+
 ## [2.390.0] — 2026-09-25
 
 The Initiatives redesign's library batch (agentcore
