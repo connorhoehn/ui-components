@@ -1586,7 +1586,7 @@ export declare interface DropdownMenuProps {
     triggerClassName?: string;
     /**
      * The trigger's look. `default` is the small bordered menu button;
-     * `primary` is a 40px brand button ("New ▾"), `secondary` a 40px bordered
+     * `primary` is a 36px brand button ("New ▾"), `secondary` a 36px bordered
      * one, `link` bare secondary text ("Relevance ▾"). Since 2.389.6.
      */
     triggerVariant?: 'default' | 'primary' | 'secondary' | 'link';
@@ -1872,7 +1872,7 @@ export declare interface FilePickerButtonProps {
     /** The input's `accept`, e.g. ".md,.txt". */
     accept?: string;
     multiple?: boolean;
-    /** `secondary` is a 40px bordered button, `primary` the brand one. */
+    /** `secondary` is a 36px bordered button, `primary` the brand one. */
     variant?: 'secondary' | 'primary';
     icon?: ReactNode;
     disabled?: boolean;
@@ -5588,6 +5588,32 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        hitlMacro: {
+            /** Inserts an agent -> human callout at the selection. */
+            insertHitl: (draft: HitlDraft) => ReturnType;
+            /**
+             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
+             * answered from an inbox by somebody who never opened this page.
+             *
+             * The same one-range edit answering in the page makes, addressed by
+             * the callout's `id` instead of by a node view. Returns false when
+             * no callout carries that id, when the body is not one
+             * `answerHitlEdit` will write to, and — deliberately — when the
+             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
+             */
+            answerHitl: (params: {
+                id: string;
+                answer: string;
+                answeredBy?: string;
+                answeredAt?: string;
+            }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
@@ -5611,32 +5637,6 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        hitlMacro: {
-            /** Inserts an agent -> human callout at the selection. */
-            insertHitl: (draft: HitlDraft) => ReturnType;
-            /**
-             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
-             * answered from an inbox by somebody who never opened this page.
-             *
-             * The same one-range edit answering in the page makes, addressed by
-             * the callout's `id` instead of by a node view. Returns false when
-             * no callout carries that id, when the body is not one
-             * `answerHitlEdit` will write to, and — deliberately — when the
-             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
-             */
-            answerHitl: (params: {
-                id: string;
-                answer: string;
-                answeredBy?: string;
-                answeredAt?: string;
-            }) => ReturnType;
         };
     }
 }

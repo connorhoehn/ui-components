@@ -11,7 +11,7 @@ export interface FilePickerButtonProps {
   /** The input's `accept`, e.g. ".md,.txt". */
   accept?: string;
   multiple?: boolean;
-  /** `secondary` is a 40px bordered button, `primary` the brand one. */
+  /** `secondary` is a 36px bordered button, `primary` the brand one. */
   variant?: 'secondary' | 'primary';
   icon?: ReactNode;
   disabled?: boolean;
@@ -43,7 +43,7 @@ export function FilePickerButton({
         data-testid={testId}
         onClick={() => input.current?.click()}
         className={cn(
-          'inline-flex h-10 cursor-pointer items-center gap-2 rounded-lg px-4 text-[15px] font-medium transition-colors duration-100',
+          'inline-flex h-9 cursor-pointer items-center gap-2 rounded-lg px-3.5 text-[15px] font-medium transition-colors duration-100',
           'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50',
           variant === 'primary'
             ? 'border-none bg-primary text-on-primary hover:bg-primary-hover'

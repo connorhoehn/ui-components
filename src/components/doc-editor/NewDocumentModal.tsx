@@ -162,6 +162,8 @@ export interface NewDocumentModalProps {
   onSearchDocuments?: (query: string) => NewPresentationSource[] | Promise<NewPresentationSource[]>;
   /** Transcripts available to this person, for "From a transcript". */
   recordings?: readonly NewPresentationSource[];
+  /** The blank picked when the modal opens (a "New ▾ → Diagram" menu). Default `page`. Since 2.389.7. */
+  initialShape?: DocumentShape;
 }
 
 /** The blanks on offer, with the words a person picking between them needs. */
@@ -289,6 +291,7 @@ export default function NewDocumentModal({
   onCreateFromFixture,
   onSearchDocuments,
   recordings,
+  initialShape,
 }: NewDocumentModalProps) {
   const [types, setTypes] = useState<DocumentType[]>([]);
   /**
@@ -360,7 +363,7 @@ export default function NewDocumentModal({
     setTitle('');
     setTitleTouched(false);
     setDescription('');
-    setShape('page');
+    setShape(initialShape ?? 'page');
     setDeckFrom('blank');
     setDeckSourceId('');
     setDeckQuery('');
@@ -387,6 +390,7 @@ export default function NewDocumentModal({
     // steals focus back from whatever the user moved to.
     const t = setTimeout(() => searchRef.current?.focus(), 50);
     return () => { cancelled = true; clearTimeout(t); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- reset on open only
   }, [open]);
 
   const visibleBlanks = useMemo(

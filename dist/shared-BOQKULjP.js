@@ -1,7 +1,7 @@
 import { t as e } from "./cn-DhjIN-s0.js";
 import "./ToastProvider-B0D0SLKU.js";
 import { c as t } from "./usePromptContext-CUNhKC01.js";
-import "./FilterPopover-BpsMqxE_.js";
+import "./FilterPopover-BNo5REoG.js";
 import { _ as n, c as r, f as i, g as a, h as o, l as s, p as c, t as l, u } from "./overlayStack-CHdlnODN.js";
 import { t as d } from "./Card-RQCeAPNU.js";
 import "./Table-CypeBEj0.js";
@@ -52,7 +52,7 @@ import "./SectionLabel-bcrhNYOr.js";
 import "./Badge-C23_Y4Yj.js";
 import { t as te } from "./InlinePlaceholder-51dbPRGn.js";
 import "./FloatingPanel-6GL9dXGL.js";
-import { t as F } from "./DropdownMenu-BzYB5p-d.js";
+import { t as F } from "./DropdownMenu-Bs9T94oU.js";
 import "./ChangeDiff-CzO8zCc-.js";
 import { t as ne } from "./StatusPill-C-aN2Pzz.js";
 import "./Select-D2EQq7Wi.js";
@@ -4504,13 +4504,13 @@ function mr({ items: n, currentId: r, onCurrentChange: i, onOpen: a, onToggleAtt
 							n.id !== r && i?.(n.id);
 						},
 						onKeyDown: (e) => S(e, u, n),
-						className: "flex min-w-0 flex-1 cursor-pointer items-center gap-[18px] py-3 outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary",
+						className: "flex min-w-0 flex-1 cursor-pointer items-center gap-[18px] py-2.5 outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary",
 						children: [/* @__PURE__ */ U(re, {
 							kind: n.kind,
 							variant: "app",
 							size: "xl"
 						}), /* @__PURE__ */ W("span", {
-							className: "flex min-w-0 flex-col gap-[3px]",
+							className: "flex min-w-0 flex-col gap-0.5",
 							children: [
 								/* @__PURE__ */ U("span", {
 									className: "truncate text-base font-semibold leading-snug text-text-primary",
@@ -4553,7 +4553,7 @@ function mr({ items: n, currentId: r, onCurrentChange: i, onOpen: a, onToggleAtt
 						className: e(!n.attached && !d && "opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100")
 					}),
 					_ && _.length > 0 && /* @__PURE__ */ U("span", {
-						className: e("shrink-0", !d && "opacity-0 group-hover:opacity-100 group-focus-within:opacity-100"),
+						className: "shrink-0 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100",
 						children: /* @__PURE__ */ U(F, {
 							trigger: /* @__PURE__ */ U(p, { size: 16 }),
 							triggerLabel: `More actions for ${n.title}`,
@@ -4579,7 +4579,7 @@ function hr({ onFiles: t, accept: n, multiple: r = !1, variant: i = "secondary",
 		"aria-label": l,
 		"data-testid": u,
 		onClick: () => d.current?.click(),
-		className: e("inline-flex h-10 cursor-pointer items-center gap-2 rounded-lg px-4 text-[15px] font-medium transition-colors duration-100", "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50", i === "primary" ? "border-none bg-primary text-on-primary hover:bg-primary-hover" : "border border-border bg-surface text-text-primary hover:bg-surface-hover", c),
+		className: e("inline-flex h-9 cursor-pointer items-center gap-2 rounded-lg px-3.5 text-[15px] font-medium transition-colors duration-100", "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50", i === "primary" ? "border-none bg-primary text-on-primary hover:bg-primary-hover" : "border border-border bg-surface text-text-primary hover:bg-surface-hover", c),
 		children: [a, s]
 	}), /* @__PURE__ */ U("input", {
 		ref: d,

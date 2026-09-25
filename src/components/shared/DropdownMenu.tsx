@@ -67,7 +67,7 @@ export interface DropdownMenuProps {
   triggerClassName?: string;
   /**
    * The trigger's look. `default` is the small bordered menu button;
-   * `primary` is a 40px brand button ("New ▾"), `secondary` a 40px bordered
+   * `primary` is a 36px brand button ("New ▾"), `secondary` a 36px bordered
    * one, `link` bare secondary text ("Relevance ▾"). Since 2.389.6.
    */
   triggerVariant?: 'default' | 'primary' | 'secondary' | 'link';
@@ -97,8 +97,8 @@ export interface DropdownMenuProps {
 
 const TRIGGER_VARIANT: Record<NonNullable<DropdownMenuProps['triggerVariant']>, string> = {
   default: 'rounded-md border border-[var(--color-border)] px-2 py-1 text-base leading-none text-[var(--color-text-secondary)] bg-transparent hover:bg-[var(--color-surface-hover)]',
-  primary: 'h-10 rounded-lg border-none px-4 text-[15px] font-semibold leading-none bg-primary text-on-primary hover:bg-primary-hover',
-  secondary: 'h-10 rounded-lg border border-border px-4 text-[15px] font-medium leading-none bg-surface text-text-primary hover:bg-surface-hover',
+  primary: 'h-9 rounded-lg border-none px-3.5 text-[15px] font-semibold leading-none bg-primary text-on-primary hover:bg-primary-hover',
+  secondary: 'h-9 rounded-lg border border-border px-3.5 text-[15px] font-medium leading-none bg-surface text-text-primary hover:bg-surface-hover',
   link: 'rounded px-1 py-0.5 border-none text-sm leading-none bg-transparent text-text-secondary hover:text-text-primary hover:bg-surface-hover',
 };
 

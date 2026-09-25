@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.389.7] — 2026-09-25
+
+### Added
+- `NewDocumentModal initialShape` — the blank picked on open ("New ▾ → Diagram").
+
+### Changed
+- `DropdownMenu triggerVariant="primary" | "secondary"` and `FilePickerButton`
+  are 36px (the All documents header); `DocumentResultList`'s ⋯ shows on hover
+  or focus only, rows are 10px taller-padded instead of 12.
+
 ## [2.389.6] — 2026-09-25
 
 The realtime-examples All documents page (documents-detail lane L2).

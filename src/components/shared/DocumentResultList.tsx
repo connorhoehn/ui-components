@@ -144,10 +144,10 @@ export function DocumentResultList({
               onClick={() => onOpen(item)}
               onFocus={() => { if (item.id !== currentId) onCurrentChange?.(item.id); }}
               onKeyDown={(event) => onKeyDown(event, index, item)}
-              className="flex min-w-0 flex-1 cursor-pointer items-center gap-[18px] py-3 outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+              className="flex min-w-0 flex-1 cursor-pointer items-center gap-[18px] py-2.5 outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
             >
               <FileKindMark kind={item.kind} variant="app" size="xl" />
-              <span className="flex min-w-0 flex-col gap-[3px]">
+              <span className="flex min-w-0 flex-col gap-0.5">
                 <span className="truncate text-base font-semibold leading-snug text-text-primary">{item.title}</span>
                 {item.summary && <span className="truncate text-[14.5px] leading-snug text-text-secondary">{item.summary}</span>}
                 {(item.folder || age) && (
@@ -171,7 +171,7 @@ export function DocumentResultList({
               />
             )}
             {menu && menu.length > 0 && (
-              <span className={cn('shrink-0', !current && 'opacity-0 group-hover:opacity-100 group-focus-within:opacity-100')}>
+              <span className="shrink-0 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100">
                 <DropdownMenu
                   trigger={<MoreIcon size={16} />}
                   triggerLabel={`More actions for ${item.title}`}
