@@ -21,7 +21,7 @@
 // collapse controls on the right, at the height and inset of every other
 // header row in the app. The panel below it is the host's.
 
-import type { ReactNode } from 'react';
+import { useLayoutEffect, useRef, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { IconButton } from '../ui/IconButton';
 import Chip from '../shared/Chip';
@@ -93,6 +93,13 @@ export interface ContextColumnProps {
    * Since 2.386.13.
    */
   roomy?: boolean;
+  /**
+   * While open, publish the column's width as `--uic-context-column-inset` on
+   * <html>, so the fixed bottom/top-right overlays (ToastProvider,
+   * ChatBubbleStack) move left of it instead of covering a drawer's footer.
+   * Default true. Since 2.395.0.
+   */
+  reserveOverlayInset?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -133,6 +140,27 @@ function Badge({ n, testId }: { n: number; testId: string }) {
   return <Chip tone="accent" size="xs" mono solid data-testid={testId}>{n > 99 ? '99+' : n}</Chip>;
 }
 
+/** The CSS variable fixed overlays read to stay clear of an open ContextColumn. */
+export const CONTEXT_COLUMN_INSET_VAR = '--uic-context-column-inset';
+
+function useOverlayInset(ref: { current: HTMLElement | null }, active: boolean, shape: string) {
+  useLayoutEffect(() => {
+    if (!active || typeof document === 'undefined') return;
+    const el = ref.current;
+    if (!el) return;
+    const root = document.documentElement;
+    const write = () => root.style.setProperty(CONTEXT_COLUMN_INSET_VAR, `${Math.round(el.getBoundingClientRect().width)}px`);
+    write();
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(write) : null;
+    ro?.observe(el);
+    return () => {
+      ro?.disconnect();
+      root.style.removeProperty(CONTEXT_COLUMN_INSET_VAR);
+    };
+  // `shape` changes when a different root element is rendered (tabbed ↔ bare).
+  }, [ref, active, shape]);
+}
+
 export function ContextColumn({
   state,
   onStateChange,
@@ -141,9 +169,17 @@ export function ContextColumn({
   onActivate,
   label = 'Side column',
   roomy = false,
+  reserveOverlayInset = true,
   className,
   'data-testid': testId = 'context-column',
 }: ContextColumnProps) {
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const shapePanel = panels.find((p) => p.id === activeId) ?? panels[0];
+  useOverlayInset(
+    rootRef,
+    reserveOverlayInset && panels.length > 0 && state !== 'collapsed',
+    `${state}:${shapePanel?.chrome ?? 'tabs'}:${shapePanel?.width ?? 'default'}`,
+  );
   if (panels.length === 0) return null;
   const active = panels.find((p) => p.id === activeId) ?? panels[0]!;
 
@@ -219,6 +255,7 @@ export function ContextColumn({
         data-testid={testId}
         data-state={state}
         data-active={active.id}
+        ref={rootRef}
         data-chrome="bare"
         className={cn(
           'flex h-full shrink-0 flex-col border-l border-border bg-surface-panel',
@@ -246,6 +283,7 @@ export function ContextColumn({
       data-testid={testId}
       data-state={state}
       data-active={active.id}
+      ref={rootRef}
       data-crowded={crowded || undefined}
       className={cn(
         'flex h-full shrink-0 flex-col border-l border-border bg-surface-panel',

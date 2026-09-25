@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { ToastProvider, useToast } from '../shared/ToastProvider';
 import { ContextColumn, type ContextColumnState } from './ContextColumn';
 import { ChatIcon, PhoneIcon } from '../ui/Icons';
 import { SettingsGearIcon } from '../video/MediaIcons';
@@ -83,6 +84,39 @@ export const BareDrawerDark: Story = {
   render: () => (
     <div data-theme="dark">
       <Scene initial="settings" />
+    </div>
+  ),
+};
+
+// ── 2.395.0: overlays stay clear of the open column ─────────────────────────
+
+
+function FireToast() {
+  const { toast } = useToast();
+  useEffect(() => {
+    toast('Pipeline (agent) Recording — 25s', { type: 'info', durationMs: 600_000 });
+  }, [toast]);
+  return null;
+}
+
+/** A toast while Call settings is open: it sits left of the column, not over the drawer. */
+export const ToastsClearOfColumn: Story = {
+  args,
+  render: () => (
+    <ToastProvider>
+      <FireToast />
+      <Scene initial="settings" />
+    </ToastProvider>
+  ),
+};
+export const ToastsClearOfColumnDark: Story = {
+  args,
+  render: () => (
+    <div data-theme="dark">
+      <ToastProvider>
+        <FireToast />
+        <Scene initial="settings" />
+      </ToastProvider>
     </div>
   ),
 };

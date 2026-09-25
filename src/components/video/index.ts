@@ -203,7 +203,7 @@ export type {
 export { MediaEffectsPreviewPanel, guardedSelection } from './MediaEffectsPreviewPanel';
 export type { MediaEffectsPreviewPanelProps } from './MediaEffectsPreviewPanel';
 
-export { default as MediaEffectsTray } from './MediaEffectsTray';
+export { default as MediaEffectsTray, splitEffectLabel } from './MediaEffectsTray';
 export type {
   MediaEffectsTrayProps,
   MediaEffectsFilterOption,

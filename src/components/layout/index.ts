@@ -31,7 +31,7 @@ export { CanvasPaneLayout, canvasPaneGeometry, CANVAS_PANE_RAIL_PX } from './Can
 export { useCanvasPaneInset, CanvasPaneInsetContext } from './canvasPaneInset';
 export type { CanvasPaneInset } from './canvasPaneInset';
 export type { CanvasPaneLayoutProps, CanvasPaneGeometry, CanvasPaneGeometryOptions, CanvasPanePlacement } from './CanvasPaneLayout';
-export { ContextColumn } from './ContextColumn';
+export { ContextColumn, CONTEXT_COLUMN_INSET_VAR } from './ContextColumn';
 export type { ContextColumnProps, ContextColumnPanel, ContextColumnEntry, ContextColumnState } from './ContextColumn';
 export { DockedAside, FloatingCard, PinnedSlot } from './DockedAside';
 export type { DockedAsideProps, FloatingCardProps, PinnedSlotProps } from './DockedAside';

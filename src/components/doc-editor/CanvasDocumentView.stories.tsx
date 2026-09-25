@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ComponentProps } from 'react';
 import * as Y from 'yjs';
 import { Awareness, encodeAwarenessUpdate, applyAwarenessUpdate } from 'y-protocols/awareness';
 import { ySyncPluginKey, absolutePositionToRelativePosition } from '@tiptap/y-tiptap';
@@ -554,4 +554,46 @@ export const ReleasePlan: Story = {
       />
     );
   },
+};
+
+/**
+ * 2.395.0: `belowRuler` — the in-call follow bar sits under the toolbar and
+ * ruler, across the editor column, above the sheet (mockups 02/03b/04/06).
+ */
+function WithFollowBar(args: ComponentProps<typeof CanvasDocumentView>) {
+  const { ydoc, provider, body } = useFixture();
+  const onEditorReady = useSeed(SAMPLE_HTML, body);
+  const [following, setFollowing] = useState<string | null>('Alice');
+  return (
+    <CanvasDocumentView
+      {...args}
+      isCanvas
+      body={body}
+      ydoc={ydoc}
+      provider={provider}
+      onEditorReady={onEditorReady as never}
+      belowRuler={
+        <FollowBanner
+          name={following}
+          location="Session flow"
+          appearance="bar"
+          autoStop={false}
+          onStop={() => setFollowing(null)}
+          data-testid="follow-bar"
+        />
+      }
+    />
+  );
+}
+export const FollowBarBelowRuler: Story = {
+  args: { isCanvas: true, body: null, ydoc: null as never, provider: null, ...BASE },
+  render: (args) => <WithFollowBar {...args} />,
+};
+export const FollowBarBelowRulerDark: Story = {
+  ...FollowBarBelowRuler,
+  render: (args) => (
+    <div data-theme="dark" className="bg-workspace">
+      <WithFollowBar {...args} />
+    </div>
+  ),
 };

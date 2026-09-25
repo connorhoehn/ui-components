@@ -423,3 +423,21 @@ describe('CanvasDocumentView — the convert offer in a toolbar slot', () => {
     expect(screen.getByTestId('canvas-document-convert-prompt')).toBeInTheDocument();
   });
 });
+
+describe('CanvasDocumentView belowRuler slot (2.395.0, A-10)', () => {
+  it('renders between the ruler and the page row', () => {
+    renderView({ belowRuler: <div data-testid="follow-slot">Following Alice · Session flow</div> });
+    const slot = screen.getByTestId('follow-slot');
+    const wrapper = slot.parentElement!;
+    expect(wrapper.getAttribute('data-testid')).toMatch(/-below-ruler$/);
+    const ruler = document.querySelector('[data-testid$="-ruler-row"]');
+    const page = document.querySelector('[data-testid$="-page-row"]')!;
+    if (ruler) expect(ruler.compareDocumentPosition(wrapper) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(wrapper.compareDocumentPosition(page) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('draws nothing when unset', () => {
+    renderView();
+    expect(document.querySelector('[data-testid$="-below-ruler"]')).toBeNull();
+  });
+});

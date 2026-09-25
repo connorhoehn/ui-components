@@ -95,7 +95,7 @@ export function ChatBubbleStack({
   if (shown.length === 0) return null;
   return (
     <div
-      className={cn('pointer-events-none fixed bottom-4 right-4 z-[60] flex flex-col items-end gap-2', className)}
+      className={cn('pointer-events-none fixed bottom-4 right-[calc(1rem+var(--uic-context-column-inset,0px))] z-[60] flex flex-col items-end gap-2', className)}
       data-testid={testId}
       aria-live="polite"
     >

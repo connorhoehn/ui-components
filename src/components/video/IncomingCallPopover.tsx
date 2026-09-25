@@ -10,7 +10,7 @@
 // on narrower windows, when a second invite is queued, and when you are
 // already in a call (`busy`: "Switch" instead of "Join call").
 
-import type { RefObject } from 'react';
+import { useEffect, useRef, type RefObject } from 'react';
 import { cn } from '../../lib/cn';
 import { Avatar, AvatarGroup } from '../shared/Avatar';
 import { InlinePopover } from '../shared/InlinePopover';
@@ -43,6 +43,12 @@ export interface IncomingCallPopoverProps {
   onDecline: () => void;
   /** Close without answering (the invite keeps ringing elsewhere until it expires). */
   onDismiss: () => void;
+  /**
+   * Where focus lands when the popover opens. `join` (default, 2.395.0):
+   * the primary "Join call" (or "Switch"), so Enter answers and the × carries
+   * no focus ring (mockups 05/05b). `close`: the ×, the first control.
+   */
+  initialFocus?: 'join' | 'close';
   /** Pulse the phone while ringing. Default true. */
   ringing?: boolean;
   className?: string;
@@ -74,12 +80,21 @@ export function IncomingCallPopover({
   onDecline,
   onDismiss,
   ringing = true,
+  initialFocus = 'join',
   className,
   'data-testid': testId = 'incoming-call-popover',
 }: IncomingCallPopoverProps) {
   const [first, ...rest] = documents;
   const restLabel = rest.length ? (compact ? `+${rest.length}` : `+${rest.length} ${rest.length === 1 ? 'document' : 'documents'}`) : null;
   const primaryIsSwitch = busy && Boolean(onSwitch);
+  const primaryRef = useRef<HTMLButtonElement | null>(null);
+  // InlinePopover focuses its first control (the ×) in a microtask on open;
+  // move it to the primary action right after, one frame later.
+  useEffect(() => {
+    if (!open || initialFocus !== 'join') return;
+    const id = requestAnimationFrame(() => primaryRef.current?.focus());
+    return () => cancelAnimationFrame(id);
+  }, [open, initialFocus, primaryIsSwitch]);
 
   return (
     <InlinePopover
@@ -216,12 +231,12 @@ export function IncomingCallPopover({
             Not now
           </Button>
           {primaryIsSwitch ? (
-            <Button onClick={onSwitch} data-testid="incoming-call-switch" className="inline-flex h-10 items-center gap-2 px-4">
+            <Button ref={primaryRef} onClick={onSwitch} data-testid="incoming-call-switch" className="inline-flex h-10 items-center gap-2 px-4">
               Switch
               <ArrowRightIcon size={16} />
             </Button>
           ) : (
-            <Button onClick={onJoin} data-testid="incoming-call-join" className="inline-flex h-10 items-center gap-2 px-4">
+            <Button ref={primaryRef} onClick={onJoin} data-testid="incoming-call-join" className="inline-flex h-10 items-center gap-2 px-4">
               Join call
               <ArrowRightIcon size={16} />
             </Button>

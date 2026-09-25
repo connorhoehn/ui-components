@@ -70,7 +70,15 @@ function AudioVideoTab({ micDenied = false, speakers = true }: { micDenied?: boo
   );
 }
 
-function EffectsTab({ filter, bg }: { filter: string; bg: 'none' | 'blur' | 'image' }) {
+// What RM's useMediaEffects().faceSprites actually carries: the emoji in the label.
+const RM_FACE = [
+  { id: 'dog-ears', label: '🐶 Dog Ears' },
+  { id: 'sunglasses', label: '🕶️ Sunglasses' },
+  { id: 'disguise', label: '🥸 Disguise' },
+  { id: 'crown', label: '👑 Crown' },
+];
+
+function EffectsTab({ filter, bg, sprites = FACE }: { filter: string; bg: 'none' | 'blur' | 'image'; sprites?: typeof FACE | typeof RM_FACE }) {
   const [f, setF] = useState(filter);
   const [mode, setMode] = useState(bg);
   const [url, setUrl] = useState<string | null>(null);
@@ -94,7 +102,7 @@ function EffectsTab({ filter, bg }: { filter: string; bg: 'none' | 'blur' | 'ima
         setMode(m);
         setUrl(u);
       }}
-      faceSprites={FACE}
+      faceSprites={sprites}
       activeFaceSpriteId={face}
       onSelectFaceSprite={setFace}
       onSelectCustomBackground={noop}
@@ -102,7 +110,7 @@ function EffectsTab({ filter, bg }: { filter: string; bg: 'none' | 'blur' | 'ima
   );
 }
 
-function Scene({ tab, micDenied, speakers }: { tab: CallSettingsDrawerTab; micDenied?: boolean; speakers?: boolean }) {
+function Scene({ tab, micDenied, speakers, rmFace }: { tab: CallSettingsDrawerTab; micDenied?: boolean; speakers?: boolean; rmFace?: boolean }) {
   const [t, setT] = useState<CallSettingsDrawerTab>(tab);
   const [captions, setCaptions] = useState(false);
   return (
@@ -113,7 +121,7 @@ function Scene({ tab, micDenied, speakers }: { tab: CallSettingsDrawerTab; micDe
         tab={t}
         onTabChange={setT}
         audioVideo={<AudioVideoTab {...(micDenied ? { micDenied } : {})} {...(speakers === false ? { speakers } : {})} />}
-        effects={<EffectsTab filter="warm" bg="blur" />}
+        effects={<EffectsTab filter="warm" bg="blur" {...(rmFace ? { sprites: RM_FACE } : {})} />}
         captions={<CallCaptionsSettings enabled={captions} onEnabledChange={setCaptions} language="en" />}
         effectsFooter={{ changeCount: 2, onCancel: noop, onApply: noop }}
       />
@@ -143,3 +151,7 @@ export const Effects: Story = { args, render: () => <Scene tab="effects" />, dec
 export const EffectsDark: Story = { args, render: () => <Scene tab="effects" />, decorators: [themed('dark')] };
 export const Captions: Story = { args, render: () => <Scene tab="captions" />, decorators: [themed('light')] };
 export const CaptionsDark: Story = { args, render: () => <Scene tab="captions" />, decorators: [themed('dark')] };
+
+/** 2.395.0 (A-8): the Face effects icon row from RM's own labels ("🕶️ Sunglasses") — glyph in the tile, words under it, then More. */
+export const EffectsRmFaceLabels: Story = { args, render: () => <Scene tab="effects" rmFace />, decorators: [themed('light')] };
+export const EffectsRmFaceLabelsDark: Story = { args, render: () => <Scene tab="effects" rmFace />, decorators: [themed('dark')] };

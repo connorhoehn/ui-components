@@ -138,7 +138,7 @@ export function CallSettingsDrawer({
           getItemTestId={(item) => `call-settings-tab-${item.id}`}
         />
       </div>
-      <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-3.5 pb-2" data-testid={`${testId}-body`} data-tab={tab}>
+      <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-2.5 pb-2" data-testid={`${testId}-body`} data-tab={tab}>
         {tab === 'audio-video' && audioVideo}
         {tab === 'effects' && effects}
         {tab === 'captions' && captions}

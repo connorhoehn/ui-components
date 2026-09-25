@@ -1,6 +1,6 @@
 import { a as e, i as t, n, o as r, r as i, t as a } from "./useSocialProfile-5S1qyvsv.js";
 import { t as o } from "./cn-DhjIN-s0.js";
-import { n as s } from "./ToastProvider-B0D0SLKU.js";
+import { n as s } from "./ToastProvider-BVUJvzmK.js";
 import { s as c } from "./usePromptContext-CUNhKC01.js";
 import { _ as l } from "./overlayStack-CHdlnODN.js";
 import { t as u } from "./Card-RQCeAPNU.js";
@@ -4263,7 +4263,7 @@ function Dn({ bubble: e, onOpen: t, onDismiss: n, dismissAfterMs: r }) {
 function On({ bubbles: e, onOpen: t, onDismiss: n, dismissAfterMs: r = 8e3, max: i = 3, className: a, "data-testid": s = "chat-bubble-stack" }) {
 	let c = e.slice(-i);
 	return c.length === 0 ? null : /* @__PURE__ */ Z("div", {
-		className: o("pointer-events-none fixed bottom-4 right-4 z-[60] flex flex-col items-end gap-2", a),
+		className: o("pointer-events-none fixed bottom-4 right-[calc(1rem+var(--uic-context-column-inset,0px))] z-[60] flex flex-col items-end gap-2", a),
 		"data-testid": s,
 		"aria-live": "polite",
 		children: c.map((e) => /* @__PURE__ */ Z(Dn, {

@@ -268,6 +268,13 @@ export interface CanvasDocumentViewProps {
   /** Rendered above the page — title, participants, actions. */
   header?: ReactNode;
   /**
+   * Rendered between the ruler (or the toolbar, with the ruler off) and the
+   * sheet, across the editor column's width — the in-call follow bar
+   * ("Following Alice · Session flow", mockups 02/03b/04/06). In the page's
+   * flow, so it scrolls with the ruler. Since 2.395.0.
+   */
+  belowRuler?: ReactNode;
+  /**
    * Rendered at the right end of the toolbar — presence avatars, share, and
    * anything belonging to the document rather than to formatting.
    */
@@ -485,6 +492,7 @@ export default function CanvasDocumentView({
   unsupported = [],
   schemaProbe,
   header,
+  belowRuler,
   toolbarActions,
   gutterItems,
   gutterLead,
@@ -1055,6 +1063,11 @@ export default function CanvasDocumentView({
               {showOutline && !showGutter && (
                 <div aria-hidden className="flex-1 max-w-[280px]" />
               )}
+            </div>
+          )}
+          {belowRuler != null && belowRuler !== false && (
+            <div data-testid={`${testId}-below-ruler`} className="px-2 pt-2 sm:px-6">
+              {belowRuler}
             </div>
           )}
           <div

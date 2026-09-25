@@ -105,7 +105,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={ctxValue}>
       {children}
-      <div className="fixed top-16 right-4 z-[2000] flex flex-col gap-2 pointer-events-none">
+      {/* right: 1rem, plus an open ContextColumn's width (2.395.0) so a toast
+          never covers a docked drawer's footer. */}
+      <div
+        data-testid="toast-stack"
+        className="fixed top-16 right-[calc(1rem+var(--uic-context-column-inset,0px))] z-[2000] flex flex-col gap-2 pointer-events-none"
+      >
         {toasts.map(t => (
           <div key={t.id} className="pointer-events-auto">
             <Toast

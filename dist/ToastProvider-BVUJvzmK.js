@@ -75,7 +75,8 @@ function g({ children: e }) {
 	return /* @__PURE__ */ l(p.Provider, {
 		value: v,
 		children: [e, /* @__PURE__ */ c("div", {
-			className: "fixed top-16 right-4 z-[2000] flex flex-col gap-2 pointer-events-none",
+			"data-testid": "toast-stack",
+			className: "fixed top-16 right-[calc(1rem+var(--uic-context-column-inset,0px))] z-[2000] flex flex-col gap-2 pointer-events-none",
 			children: t.map((e) => /* @__PURE__ */ c("div", {
 				className: "pointer-events-auto",
 				children: /* @__PURE__ */ c(f, {

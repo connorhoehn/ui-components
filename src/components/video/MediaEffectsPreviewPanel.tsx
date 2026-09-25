@@ -164,7 +164,7 @@ export function MediaEffectsPreviewPanel({
       >
         <div
           data-testid="effects-preview"
-          className="relative aspect-[320/170] w-full shrink-0 overflow-hidden rounded-lg bg-video-stage"
+          className="relative aspect-[338/161] w-full shrink-0 overflow-hidden rounded-lg bg-video-stage"
         >
           {previewStream ? (
             <div data-testid="media-effects-preview-video" className="h-full w-full">
@@ -193,7 +193,7 @@ export function MediaEffectsPreviewPanel({
         <MediaEffectsTray
           data-testid="media-effects-preview-tray"
           layout="grid"
-          className="mt-2"
+          className="mt-1.5"
           disabled={disabled || !previewActive}
           thumbnailStream={previewStream}
           {...(thumbnailSrc ? { thumbnailSrc } : {})}

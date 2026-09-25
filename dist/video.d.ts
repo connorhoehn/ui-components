@@ -1590,7 +1590,7 @@ export declare interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'childr
     size?: number;
 }
 
-export declare function IncomingCallPopover({ open, anchorRef, compact, caller, title, documents, onOpenDocument, participants, participantCount, mic, camera, onOpenSettings, busy, onJoin, onSwitch, onDecline, onDismiss, ringing, className, 'data-testid': testId, }: IncomingCallPopoverProps): JSX.Element;
+export declare function IncomingCallPopover({ open, anchorRef, compact, caller, title, documents, onOpenDocument, participants, participantCount, mic, camera, onOpenSettings, busy, onJoin, onSwitch, onDecline, onDismiss, ringing, initialFocus, className, 'data-testid': testId, }: IncomingCallPopoverProps): JSX.Element;
 
 export declare interface IncomingCallPopoverProps {
     open: boolean;
@@ -1625,6 +1625,12 @@ export declare interface IncomingCallPopoverProps {
     onDecline: () => void;
     /** Close without answering (the invite keeps ringing elsewhere until it expires). */
     onDismiss: () => void;
+    /**
+     * Where focus lands when the popover opens. `join` (default, 2.395.0):
+     * the primary "Join call" (or "Switch"), so Enter answers and the × carries
+     * no focus ring (mockups 05/05b). `close`: the ×, the first control.
+     */
+    initialFocus?: 'join' | 'close';
     /** Pulse the phone while ringing. Default true. */
     ringing?: boolean;
     className?: string;
@@ -2252,6 +2258,16 @@ export declare function SparklesIcon({ size, ...rest }: IconProps): JSX.Element;
 
 /** A speaker with sound waves: output volume / "Test sound". */
 export declare function SpeakerIcon({ size, ...rest }: IconProps): JSX.Element;
+
+/**
+ * RM sprite labels carry their emoji ("🕶️ Sunglasses"). Split it off so the
+ * grid shows the glyph in the tile and the words underneath, as the mockup
+ * does. A label without a leading emoji keeps its whole text.
+ */
+export declare function splitEffectLabel(label: string): {
+    glyph: string | null;
+    text: string;
+};
 
 /**
  * Whether the LIVE badge may be lit.

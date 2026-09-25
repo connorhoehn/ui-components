@@ -83,3 +83,6 @@ export const MicBlocked: Story = {
   ),
   decorators: [themed('light')],
 };
+
+/** 2.395.0: focus lands on Join call by default (Default above); `initialFocus="close"` puts it on the ×. */
+export const FocusOnClose: Story = { args, render: () => <Scene initialFocus="close" />, decorators: [themed('light')] };

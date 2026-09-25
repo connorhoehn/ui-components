@@ -117,7 +117,7 @@ export declare const CANVAS_SCHEMA_VERSION = 2;
  */
 export declare function canvasBody(ydoc: Doc | null | undefined): XmlFragment | null;
 
-export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, onHoverGutterItem, gutterVisible, showRuler, toolbarDensity, showStatusBar, zoomMode, toolbarStyle, pageMargin, onDocumentStats, fitHeight, showOutline, paginate, onToggleGutter, onInsertImage, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
+export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, belowRuler, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, onHoverGutterItem, gutterVisible, showRuler, toolbarDensity, showStatusBar, zoomMode, toolbarStyle, pageMargin, onDocumentStats, fitHeight, showOutline, paginate, onToggleGutter, onInsertImage, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
 
 export declare interface CanvasDocumentViewProps {
     /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
@@ -185,6 +185,13 @@ export declare interface CanvasDocumentViewProps {
     schemaProbe?: XmlFragment | null;
     /** Rendered above the page — title, participants, actions. */
     header?: ReactNode;
+    /**
+     * Rendered between the ruler (or the toolbar, with the ruler off) and the
+     * sheet, across the editor column's width — the in-call follow bar
+     * ("Following Alice · Session flow", mockups 02/03b/04/06). In the page's
+     * flow, so it scrolls with the ruler. Since 2.395.0.
+     */
+    belowRuler?: ReactNode;
     /**
      * Rendered at the right end of the toolbar — presence avatars, share, and
      * anything belonging to the document rather than to formatting.

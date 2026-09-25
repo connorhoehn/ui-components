@@ -421,7 +421,7 @@ function Thumb({
     >
       <span
         className={cn(
-          'relative flex aspect-[96/56] w-full items-center justify-center overflow-hidden rounded-md',
+          'relative flex aspect-[101/50] w-full items-center justify-center overflow-hidden rounded-md',
           dashed ? 'border border-dashed border-border-emphasis bg-surface text-text-tertiary' : 'bg-video-tile',
           active ? 'ring-2 ring-primary ring-offset-2 ring-offset-surface' : !dashed && 'group-hover/thumb:ring-1 group-hover/thumb:ring-border-emphasis',
         )}
@@ -431,6 +431,19 @@ function Thumb({
       <span className={cn('truncate text-xs', dashed ? 'text-primary' : 'text-text-secondary')}>{label}</span>
     </button>
   );
+}
+
+/**
+ * RM sprite labels carry their emoji ("🕶️ Sunglasses"). Split it off so the
+ * grid shows the glyph in the tile and the words underneath, as the mockup
+ * does. A label without a leading emoji keeps its whole text.
+ */
+export function splitEffectLabel(label: string): { glyph: string | null; text: string } {
+  const m = /^(\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictographic})*)\s*(.*)$/u.exec(label.trim());
+  if (!m) return { glyph: null, text: label };
+  const text = m[2]!.trim();
+  // "Dog Ears" → "Dog ears": the grid captions are sentence case.
+  return { glyph: m[1]!, text: text ? text.charAt(0) + text.slice(1).toLowerCase() : label };
 }
 
 function GridHeading({ children, action }: { children: ReactNode; action?: ReactNode }) {
@@ -508,7 +521,7 @@ function EffectsGrid({
   const frame = { stream: thumbnailStream, ...(thumbnailSrc ? { src: thumbnailSrc } : {}) };
 
   return (
-    <div data-testid={testId} data-layout="grid" className={cn('flex flex-col gap-4 text-text-primary', className)}>
+    <div data-testid={testId} data-layout="grid" className={cn('flex flex-col gap-3 text-text-primary', className)}>
       <section className="flex flex-col gap-2" aria-label="Filter">
         <GridHeading
           action={
@@ -634,9 +647,10 @@ function EffectsGrid({
           options={[{ value: '', label: 'None' }, ...faceSprites.map((f) => ({ value: f.id, label: f.label }))]}
         />
         {faceSprites.length > 0 && (
-          <div className={cn('grid gap-2', cols)}>
+          <div className={cn('-mt-0.5 grid gap-2', cols)}>
             {shownSprites.map((f) => {
               const active = f.id === activeFaceSpriteId;
+              const { glyph, text } = splitEffectLabel(f.label);
               return (
                 <button
                   key={f.id}
@@ -646,15 +660,15 @@ function EffectsGrid({
                   aria-pressed={active}
                   data-testid={`effects-face-${f.id}`}
                   className={cn(
-                    'flex cursor-pointer flex-col items-center gap-1 rounded-md border-none bg-transparent py-1.5 font-[inherit] text-xs text-text-secondary',
+                    'flex cursor-pointer flex-col items-center gap-0.5 rounded-md border-none bg-transparent py-0.5 font-[inherit] text-xs text-text-secondary',
                     'hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50',
                     active && 'bg-primary-bg text-primary',
                   )}
                 >
-                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-inset text-lg text-text-primary">
-                    {f.icon ?? f.label.slice(0, 1)}
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-inset text-lg text-text-primary">
+                    {f.icon ?? glyph ?? Array.from(text)[0]}
                   </span>
-                  <span className="truncate">{f.label}</span>
+                  <span className="truncate">{f.icon ? f.label : text}</span>
                 </button>
               );
             })}
@@ -664,9 +678,9 @@ function EffectsGrid({
                 onClick={() => setAllSprites(true)}
                 disabled={disabled}
                 data-testid="effects-face-more"
-                className="flex cursor-pointer flex-col items-center gap-1 rounded-md border-none bg-transparent py-1.5 font-[inherit] text-xs text-text-secondary hover:bg-surface-hover"
+                className="flex cursor-pointer flex-col items-center gap-0.5 rounded-md border-none bg-transparent py-0.5 font-[inherit] text-xs text-text-secondary hover:bg-surface-hover"
               >
-                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-inset text-text-primary">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-inset text-text-primary">
                   <MoreHorizontalIcon size={20} />
                 </span>
                 <span>More</span>

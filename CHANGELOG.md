@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.395.0] — 2026-09-25
+
+Document calls, lane D requests A-8 to A-11.
+
+### Added
+- `CanvasDocumentView` `belowRuler` (A-10): a slot between the ruler and the sheet, across the editor
+  column — where the in-call follow bar sits in mockups 02/03b/04/06.
+- `IncomingCallPopover` `initialFocus: 'join' | 'close'` (A-9, default `join`): focus lands on Join call
+  (or Switch), so the × carries no focus ring (05/05b).
+- `ContextColumn` `reserveOverlayInset` (A-11, default on): while open it publishes its width as
+  `--uic-context-column-inset` (`CONTEXT_COLUMN_INSET_VAR`) on <html>; `ToastProvider` and
+  `ChatBubbleStack` offset their right edge by it, so toasts no longer cover a drawer's Done/Apply.
+- `splitEffectLabel` (A-8): RM face-sprite labels ("🕶️ Sunglasses") become a glyph tile and a caption in
+  the Effects grid's icon row (Sunglasses · Dog ears · More), driven by the controller's `faceSprites`.
+
+### Changed
+- Call settings match mockups 03b/04 at 1672 × 941 (the drawer is 892px tall there): preview 338/156 (A&V)
+  and 338/161 (Effects), effect thumbnails 101/50, tighter face-effects row, compact Advanced — both tabs
+  fit without scrolling.
+- Stories: `Doc-Editor/CanvasDocumentView` FollowBarBelowRuler(+Dark), `Layout/ContextColumn`
+  ToastsClearOfColumn(+Dark), `CallSettingsDrawer` EffectsRmFaceLabels(+Dark), `IncomingCallPopover`
+  FocusOnClose.
+
 ## [2.394.0] — 2026-09-25
 
 ### Added

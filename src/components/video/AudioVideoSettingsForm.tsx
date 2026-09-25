@@ -82,9 +82,9 @@ function deviceOptions(list: DeviceOption[], none: string) {
     : [{ value: '', label: none, disabled: true }];
 }
 
-function Section({ children, divided = true }: { children: ReactNode; divided?: boolean }) {
+function Section({ children, divided = true, className }: { children: ReactNode; divided?: boolean; className?: string }) {
   return (
-    <section className={cn('flex flex-col gap-2.5 py-3.5 first:pt-0', divided && 'border-b border-border')}>
+    <section className={cn('flex flex-col gap-2.5 py-3.5 first:pt-0', divided && 'border-b border-border', className)}>
       {children}
     </section>
   );
@@ -252,7 +252,7 @@ export function AudioVideoSettingsForm({
               data-testid="settings-camera-select"
             />
             <div
-              className="relative aspect-[321/164] w-full overflow-hidden rounded-lg bg-video-stage"
+              className="relative aspect-[338/156] w-full overflow-hidden rounded-lg bg-video-stage"
               data-testid="settings-preview"
               data-mirrored={value.mirrorPreview ? 'true' : 'false'}
             >
@@ -283,10 +283,11 @@ export function AudioVideoSettingsForm({
         </div>
       </Section>
 
-      <Section>
+      <Section className="py-1.5">
         <Disclosure
           summary="Advanced"
           variant="plain"
+          density="compact"
           data-testid="settings-advanced"
           summaryClassName="text-[15px] font-medium text-text-primary"
           bodyClassName="flex flex-col gap-3 pt-3"
@@ -328,7 +329,7 @@ export function AudioVideoSettingsForm({
         </Disclosure>
       </Section>
 
-      <Section divided={false}>
+      <Section divided={false} className="pt-2.5 pb-0">
         <CheckRow checked={value.rememberDevices} onChange={(v) => set({ rememberDevices: v })} testId="settings-remember">
           Use these devices next time
         </CheckRow>

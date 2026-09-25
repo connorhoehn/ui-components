@@ -340,6 +340,13 @@ declare interface CanvasDocumentViewProps {
     /** Rendered above the page — title, participants, actions. */
     header?: ReactNode;
     /**
+     * Rendered between the ruler (or the toolbar, with the ruler off) and the
+     * sheet, across the editor column's width — the in-call follow bar
+     * ("Following Alice · Session flow", mockups 02/03b/04/06). In the page's
+     * flow, so it scrolls with the ruler. Since 2.395.0.
+     */
+    belowRuler?: ReactNode;
+    /**
      * Rendered at the right end of the toolbar — presence avatars, share, and
      * anything belonging to the document rather than to formatting.
      */

@@ -5188,7 +5188,10 @@ export declare interface ConsultCardProps {
     'data-testid'?: string;
 }
 
-export declare function ContextColumn({ state, onStateChange, panels, activeId, onActivate, label, roomy, className, 'data-testid': testId, }: ContextColumnProps): JSX.Element | null;
+/** The CSS variable fixed overlays read to stay clear of an open ContextColumn. */
+export declare const CONTEXT_COLUMN_INSET_VAR = "--uic-context-column-inset";
+
+export declare function ContextColumn({ state, onStateChange, panels, activeId, onActivate, label, roomy, reserveOverlayInset, className, 'data-testid': testId, }: ContextColumnProps): JSX.Element | null;
 
 /** One of a tabbed panel's parts, as the collapsed strip shows it. Since 2.384.1. */
 export declare interface ContextColumnEntry {
@@ -5255,6 +5258,13 @@ export declare interface ContextColumnProps {
      * Since 2.386.13.
      */
     roomy?: boolean;
+    /**
+     * While open, publish the column's width as `--uic-context-column-inset` on
+     * <html>, so the fixed bottom/top-right overlays (ToastProvider,
+     * ChatBubbleStack) move left of it instead of covering a drawer's footer.
+     * Default true. Since 2.395.0.
+     */
+    reserveOverlayInset?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -9699,7 +9709,7 @@ export declare interface InboxSectionRowProps extends HTMLAttributes<HTMLLIEleme
     'data-testid'?: string;
 }
 
-export declare function IncomingCallPopover({ open, anchorRef, compact, caller, title, documents, onOpenDocument, participants, participantCount, mic, camera, onOpenSettings, busy, onJoin, onSwitch, onDecline, onDismiss, ringing, className, 'data-testid': testId, }: IncomingCallPopoverProps): JSX.Element;
+export declare function IncomingCallPopover({ open, anchorRef, compact, caller, title, documents, onOpenDocument, participants, participantCount, mic, camera, onOpenSettings, busy, onJoin, onSwitch, onDecline, onDismiss, ringing, initialFocus, className, 'data-testid': testId, }: IncomingCallPopoverProps): JSX.Element;
 
 export declare interface IncomingCallPopoverProps {
     open: boolean;
@@ -9734,6 +9744,12 @@ export declare interface IncomingCallPopoverProps {
     onDecline: () => void;
     /** Close without answering (the invite keeps ringing elsewhere until it expires). */
     onDismiss: () => void;
+    /**
+     * Where focus lands when the popover opens. `join` (default, 2.395.0):
+     * the primary "Join call" (or "Switch"), so Enter answers and the × carries
+     * no focus ring (mockups 05/05b). `close`: the ×, the first control.
+     */
+    initialFocus?: 'join' | 'close';
     /** Pulse the phone while ringing. Default true. */
     ringing?: boolean;
     className?: string;
@@ -16333,6 +16349,16 @@ export declare interface SpinnerProps {
 }
 
 export declare type SpinnerSize = 'sm' | 'md' | 'lg';
+
+/**
+ * RM sprite labels carry their emoji ("🕶️ Sunglasses"). Split it off so the
+ * grid shows the glyph in the tile and the words underneath, as the mockup
+ * does. A label without a leading emoji keeps its whole text.
+ */
+export declare function splitEffectLabel(label: string): {
+    glyph: string | null;
+    text: string;
+};
 
 export declare function SplitPane({ primary, secondary, defaultRatio, ratio: controlled, onRatioChange, minPrimaryPx, minSecondaryPx, dividerLabel, className, 'data-testid': testId, }: SplitPaneProps): JSX.Element;
 
