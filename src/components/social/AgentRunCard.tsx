@@ -166,6 +166,12 @@ export interface AgentRunCardProps {
   onReview?: (runId: string, decision: AgentRunReviewDecision, suggestion: Pick<AgentRunSuggestion, 'key' | 'documentId'>) => void;
   /** The document's title as the message carried it; the expanded document row falls back to it when the live details have none. */
   documentTitle?: string;
+  /**
+   * Start the run again after it failed. A "Retry" button renders on the
+   * status row of a failed card only when this is given — the host knows
+   * whether the run can be retried (a refused run cannot) and from where.
+   */
+  onRetry?: (runId: string) => void;
   /** Start expanded. The default is the two-line card; the details are a click away. */
   defaultExpanded?: boolean;
   className?: string;
@@ -184,6 +190,61 @@ const PHASE_LABEL: Record<AgentRunPhase, string> = { received: 'Received', runni
 
 /** The most ops the expanded card lists before "+N more". */
 const MAX_OPS = 6;
+
+/** What a command's run produces, for the failure sentence: "Couldn't post the deck…". */
+function runSubject(command: string | undefined): string {
+  switch ((command ?? '').replace(/^\//, '').toLowerCase()) {
+    case 'deck': return 'the deck';
+    case 'doc': case 'edit': return 'the edit';
+    case 'summarize': return 'the summary';
+    case 'diagram': return 'the diagram';
+    case 'transcribe': return 'the transcript';
+    case 'recording': return 'the recording';
+    default: return 'the result';
+  }
+}
+
+/**
+ * A failed run's message, as a person reads it. The pipeline's own error is
+ * written for the run log — "the chat service did not answer the join for
+ * chat:dm:a:b (timeout after 4000ms)" — and the card used to print it as-is
+ * on the status row. This turns the technical shapes the platform produces
+ * into one plain sentence that says what did not happen and what to do, and
+ * keeps the original text as `technical` for the details disclosure. A
+ * message that matches nothing is already a sentence (the pipeline wrote it
+ * for people, e.g. "The agent is busy…") and passes through unchanged, with
+ * no technical line.
+ */
+export function describeAgentRunFailure(raw: string | undefined, command?: string): { summary: string; technical?: string } {
+  const text = (raw ?? '').trim();
+  if (!text) return { summary: 'The run failed.' };
+  // Already a sentence for people — capitalised, ending in a full stop, the
+  // way the platform writes the ones it means to be read ("The agent is
+  // busy: … Try again in a minute."). Its log-shaped errors start lowercase.
+  if (/^[A-Z][^]*[.!]$/.test(text)) return { summary: text };
+  const t = text.toLowerCase();
+  const subject = runSubject(command);
+  const chat = /chat service|chat:|the join|conversation/.test(t);
+  if (/refused to post|refused to read|dm_forbidden|not a member|forbidden|not allowed|permission/.test(t)) {
+    return { summary: `Couldn't post ${subject} to this conversation — you're not a member of it.`, technical: text };
+  }
+  if (chat && /did not answer|did not confirm|timeout|timed out|within \d+ ?ms/.test(t)) {
+    return { summary: `Couldn't post ${subject} to this conversation — the chat didn't respond. Try again.`, technical: text };
+  }
+  if (/gateway connection failed|could not connect|did not open|econnrefused|enotfound|socket hang up|network/.test(t)) {
+    return { summary: `Couldn't reach the chat service to post ${subject}. Try again.`, technical: text };
+  }
+  if (/model slot|rate limit|rate_limit|rate limited|overloaded|quota/.test(t)) {
+    return { summary: `The agent is busy right now, so ${subject} wasn't made. Try again in a minute.`, technical: text };
+  }
+  if (/model did not answer/.test(t)) {
+    return { summary: `The agent didn't answer in time, so ${subject} wasn't made. Try again in a minute.`, technical: text };
+  }
+  if (/timeout|timed out|etimedout/.test(t)) {
+    return { summary: `Making ${subject} took too long and was stopped. Try again.`, technical: text };
+  }
+  return { summary: text };
+}
 
 // The status row's text controls are underlined AT REST, not on hover. They
 // were flat tertiary text that only underlined under the pointer, so nothing
@@ -258,7 +319,7 @@ export const AGENT_RUN_STEP_DOT: Record<AgentRunStepStatus, string> = {
   awaiting: 'bg-warning',
 };
 
-export function AgentRunCard({ runId, instruction, agentName, requestedBy, command = '/doc', status, onOpenDocument, onOpenRun, result, onOpenResult, onDecide, suggestion: suggestionProp, onReview, documentTitle, defaultExpanded = false, className, 'data-testid': testId = 'agent-run-card' }: AgentRunCardProps) {
+export function AgentRunCard({ runId, instruction, agentName, requestedBy, command = '/doc', status, onOpenDocument, onOpenRun, result, onOpenResult, onDecide, suggestion: suggestionProp, onReview, onRetry, documentTitle, defaultExpanded = false, className, 'data-testid': testId = 'agent-run-card' }: AgentRunCardProps) {
   const phase = status?.phase ?? 'received';
   const [expanded, setExpanded] = useState(defaultExpanded);
   // Suggestions are only reviewable once the run is done — before that there is nothing in the document yet.
@@ -280,11 +341,16 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
   const reviewer = review ? review.byName ?? review.by : undefined;
   const reviewDetail = review ? `${review.decision === 'accept' ? 'Accepted' : 'Rejected'} by ${reviewer}` : undefined;
   const awaiting = phase === 'awaiting_approval';
+  // A failed run's status row says it in plain words; the pipeline's own
+  // message goes under the disclosure, as "Details".
+  const failure = phase === 'failed' ? describeAgentRunFailure(status?.details?.error ?? status?.detail, command) : undefined;
   const detailText = phase === 'running'
     ? (status?.stepLabel ? `${agentName} — ${status.stepLabel}` : `${agentName} is working via the pipeline`)
     : awaiting
       ? `Waiting for approval${status?.detail ? ` — ${status.detail}` : ''}`
-      : reviewDetail ?? status?.detail ?? (reviewable && status?.suggestion ? `${status.suggestion.applied} ${status.suggestion.applied === 1 ? 'change' : 'changes'} suggested` : phase === 'received' ? 'Received' : phaseLabel);
+      : failure
+        ? failure.summary
+        : reviewDetail ?? status?.detail ?? (reviewable && status?.suggestion ? `${status.suggestion.applied} ${status.suggestion.applied === 1 ? 'change' : 'changes'} suggested` : phase === 'received' ? 'Received' : phaseLabel);
 
   const details = status?.details;
   const ops = details?.ops ?? [];
@@ -292,7 +358,7 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
   const docTitle = details?.document?.title || documentTitle || 'Document';
   // The document row shows whenever there IS a document — named in the details, or openable through the host.
   const hasDocumentRow = Boolean(details?.document) || Boolean(onOpenDocument);
-  const error = details?.error ?? (phase === 'failed' ? status?.detail : undefined);
+  const error = failure ? failure.technical : details?.error;
   const timings = agentRunTimings(details);
   const detailsId = `${testId}-details-${runId}`;
   // Does the status row carry anything that must keep its full size? Only then
@@ -386,7 +452,7 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
             data-review={review?.decision}
             // The full sentence on hover: the line truncates, and a declined
             // run's reason or a failure's message is exactly what gets cut.
-            title={status?.detail}
+            title={failure ? failure.summary : status?.detail}
           >
             {detailText}
           </span>
@@ -405,6 +471,11 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
             <Button size="sm" variant="primary" className="!px-2 !py-0 text-[11px] leading-5" onClick={() => onDecide(runId, 'approve')} data-testid={`${testId}-approve`}>Approve</Button>
             <Button size="sm" variant="ghost" className="!px-2 !py-0 text-[11px] leading-5" onClick={() => onDecide(runId, 'reject')} data-testid={`${testId}-reject`}>Reject</Button>
           </span>
+        )}
+        {phase === 'failed' && onRetry && (
+          // The next thing to do after a failure, so it sits where Approve
+          // and Accept sit, at every width.
+          <Button size="sm" variant="primary" className="!px-2 !py-0 text-[11px] leading-5" onClick={() => onRetry(runId)} data-testid={`${testId}-retry`}>Retry</Button>
         )}
         {/* The run's own outcome, not navigation — it stays at every width.
             It is one short word and there is nowhere else to reach a panel or
@@ -472,7 +543,10 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
             </ol>
           )}
           {error && (
-            <div className="text-[11px] text-danger" data-testid={`${testId}-details-error`}>{error}</div>
+            <div data-testid={`${testId}-details-error-block`}>
+              <div className="text-[10px] font-semibold uppercase tracking-wide text-text-tertiary">Details</div>
+              <div className="mt-0.5 break-words text-[11px] text-danger" data-testid={`${testId}-details-error`}>{error}</div>
+            </div>
           )}
           <div className="flex min-w-0 items-center gap-2 text-[11px] text-text-tertiary">
             {/* Named apart from the status row's "Open run": both are on screen

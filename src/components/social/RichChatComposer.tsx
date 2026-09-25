@@ -3055,7 +3055,18 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 align="end"
                 triggerTestId={`${testId}-send-options`}
                 data-testid={`${testId}-send-menu`}
-                triggerClassName="rounded-l-none rounded-r-md border-0 border-l border-on-primary/40 bg-primary px-1.5 py-1 text-on-primary hover:bg-primary"
+                // One control, two halves: while Send is dimmed for an empty
+                // draft, its caret must not stay a saturated primary block —
+                // it read as the one live action in the row. The menu's
+                // options still work without text (they switch the mode),
+                // so the caret is not disabled with Send; it drops to the
+                // secondary style and joins the primary colour when Send does.
+                triggerClassName={cn(
+                  'rounded-l-none rounded-r-md border-0 border-l px-1.5 py-1',
+                  canSend
+                    ? 'border-on-primary/40 bg-primary text-on-primary hover:bg-primary'
+                    : 'border-border bg-surface-inset text-text-secondary hover:bg-surface-hover',
+                )}
                 sections={[{ items: sendOptions.map((option) => ({ label: option.label, onSelect: () => onSendOption(option.id) })) }]}
               />
             </span>

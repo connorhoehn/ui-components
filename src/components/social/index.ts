@@ -156,7 +156,7 @@ export type { ConversationShelfItem, ConversationShelfProps } from './Conversati
 // cannot end up with two highlighted rows and one pane.
 export { ConversationRail } from './ConversationRail';
 export type { ConversationRailProps, RailSelection } from './ConversationRail';
-export { AgentRunCard, agentRunRefFromMetadata, describeAgentRunOp, agentRunTimings, AGENT_RUN_STEP_DOT } from './AgentRunCard';
+export { AgentRunCard, agentRunRefFromMetadata, describeAgentRunOp, describeAgentRunFailure, agentRunTimings, AGENT_RUN_STEP_DOT } from './AgentRunCard';
 export type { AgentRunCardProps, AgentRunStatus, AgentRunPhase, AgentRunDecision, AgentRunReviewDecision, AgentRunSuggestion, AgentRunReview, AgentRunDetails, AgentRunStep, AgentRunStepStatus, AgentRunOp } from './AgentRunCard';
 export type { ComposerCommand, ComposerCommandArgument, ComposerArgumentItem } from './composerCommands';
 export { matchComposerCommand, composerCommandArgumentText } from './composerCommands';

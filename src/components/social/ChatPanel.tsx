@@ -208,6 +208,8 @@ export interface ChatPanelProps {
   onDecideRun?: (runId: string, decision: AgentRunDecision) => void;
   /** Accept or reject the suggestions a finished agent edit left in the document. */
   onReviewRun?: (runId: string, decision: AgentRunReviewDecision, suggestion: Pick<AgentRunSuggestion, 'key' | 'documentId'>) => void;
+  /** Start a failed agent run again; a failed card offers "Retry" only when this is given. */
+  onRetryRun?: (runId: string) => void;
   /**
    * Joins a live call from the thread. Omit when the viewer cannot join —
    * the card then renders as a record rather than a dead button.
@@ -1356,6 +1358,7 @@ export function ChatPanel({
   onOpenResult,
   onDecideRun,
   onReviewRun,
+  onRetryRun,
   onJoinCall,
   onOpenRecording,
   onCopyRecordingLink,
@@ -1930,6 +1933,7 @@ export function ChatPanel({
                     onDecide={onDecideRun}
                     suggestion={localRef.suggestionKey ? { key: localRef.suggestionKey, ...(localRef.documentId ? { documentId: localRef.documentId } : {}) } : undefined}
                     onReview={onReviewRun}
+                    onRetry={onRetryRun}
                   />
                 ) : (
                   <MessageBody text={local.content} />
@@ -2021,6 +2025,7 @@ export function ChatPanel({
       onDecide={onDecideRun}
       suggestion={agentRef.suggestionKey ? { key: agentRef.suggestionKey, ...(agentRef.documentId ? { documentId: agentRef.documentId } : {}) } : undefined}
       onReview={onReviewRun}
+      onRetry={onRetryRun}
     />
   ) : recordingRef ? (
     (() => {

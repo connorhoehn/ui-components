@@ -155,7 +155,8 @@ describe('AgentRunCard details', () => {
     const badge = screen.getByTestId('agent-run-card-phase');
     expect(badge).toHaveTextContent('Failed');
     expect(badge.className).toContain('danger');
-    expect(screen.getByTestId('agent-run-card-detail')).toHaveTextContent('claude exited 1: rate limited');
+    // The row says it in plain words; the pipeline's own text is under Details.
+    expect(screen.getByTestId('agent-run-card-detail')).toHaveTextContent("The agent is busy right now, so the edit wasn't made. Try again in a minute.");
     fireEvent.click(screen.getByTestId('agent-run-card-toggle'));
     expect(screen.getByTestId('agent-run-card-details-error')).toHaveTextContent('claude exited 1: rate limited');
     expect(screen.getByTestId('agent-run-card-details-steps').querySelector('li')?.dataset.status).toBe('failed');

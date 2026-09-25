@@ -219,6 +219,34 @@ describe('the split send', () => {
     // out from under it.
     expect(onSend).toHaveBeenCalledTimes(1);
   });
+
+  it('the caret half follows Send: secondary while Send is dimmed for an empty draft, primary once there is text', () => {
+    const onSendOption = vi.fn();
+    let handle: RichChatComposerHandle | null = null;
+    render(
+      <RichChatComposer
+        ref={(h) => { handle = h; }}
+        onSend={vi.fn()}
+        data-testid="composer"
+        sendOptions={[{ id: 'agent', label: 'Send as agent task' }]}
+        onSendOption={onSendOption}
+      />,
+    );
+    const send = screen.getByTestId('composer-send') as HTMLButtonElement;
+    const caret = screen.getByTestId('composer-send-options');
+    expect(send.disabled).toBe(true);
+    // Not a saturated primary block beside a dimmed Send…
+    expect(caret.className).not.toContain('bg-primary');
+    expect(caret.className).toContain('text-text-secondary');
+    // …but still a working menu: its options switch the mode and need no text.
+    fireEvent.click(caret);
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Send as agent task' }));
+    expect(onSendOption).toHaveBeenCalledWith('agent');
+
+    typeInto(handle, 'ship it');
+    expect(send.disabled).toBe(false);
+    expect(screen.getByTestId('composer-send-options').className).toContain('bg-primary');
+  });
 });
 
 describe('the composer goes to the console in Agent and Terminal mode', () => {

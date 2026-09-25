@@ -59,11 +59,14 @@ export interface MessageRowProps {
    * a sliver on the right. `'block'` renders the span as a full-width block
    * up to a cap (`w-full max-w-[36rem]`) with no tint/padding, so the card
    * gets real horizontal room to size against — still right-aligned via the
-   * column's `items-end`, not via `text-align`.
+   * column's `items-end` on a `mine` row, not via `text-align`.
    *
-   * Only changes anything on a `mine` row — a non-`mine` row never had the
-   * shrink-to-fit bubble to begin with, so this prop is a no-op there
-   * regardless of its value.
+   * The cap applies to EVERY card row, own or not. A card in a full-page
+   * chat used to stretch the whole column on someone else's row (and on an
+   * own row until the cap landed there): a document card 1100px wide with
+   * an icon at one end and "Open" at the other reads as a banner, not a
+   * message. 36rem sits where a message bubble's width does; in a narrow
+   * pane the cap never binds and the card takes the width it has.
    */
   contentLayout?: 'inline' | 'block';
   className?: string;
@@ -176,8 +179,10 @@ export function MessageRow({
             // sizes itself to ITS CONTAINER rather than its content, so the
             // shrink-to-fit inline bubble above gives it 0px to work with.
             // Full-width-up-to-a-cap gives the card real room; `items-end` on
-            // the column above still pulls it to the right once the cap binds.
-            mine && contentLayout === 'block' && 'w-full max-w-[36rem]',
+            // the column above still pulls an own card to the right once the
+            // cap binds, and someone else's stays at the left edge. Every card
+            // row, not only `mine`: see the prop's doc comment.
+            contentLayout === 'block' && 'w-full max-w-[36rem]',
           )}
         >
           {content}

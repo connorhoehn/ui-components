@@ -130,11 +130,16 @@ describe('MessageRow — tone', () => {
       expect(screen.getByTestId('card-stub')).toBeInTheDocument();
     });
 
-    it('contentLayout="block" on a non-mine row changes nothing (no shrink-to-fit bubble to begin with)', () => {
+    it('contentLayout="block" on a non-mine row takes the same cap, at the left edge and with no bubble', () => {
+      // A card on someone else's row used to stretch the whole column of a
+      // full-page chat — a document card 1100px wide reads as a banner. The
+      // cap is the message width; a narrow pane never reaches it.
       render(<MessageRow {...baseProps} contentLayout="block" content={<CardStub />} />);
       const content = screen.getByTestId('message-row-content');
-      expect(content.className).not.toContain('w-full');
-      expect(content.className).not.toContain('max-w-[36rem]');
+      expect(content.className).toContain('w-full');
+      expect(content.className).toContain('max-w-[36rem]');
+      expect(content.className).not.toContain('max-w-[85%]');
+      expect(content.className).not.toContain('bg-primary-bg');
     });
   });
 });
