@@ -7,17 +7,32 @@ import { useEffect, useRef } from 'react';
 import { useEventCallback } from '../../hooks/useEventCallback';
 import type { Participant } from '../../types/document';
 import { cn } from '../../lib/cn';
+import { FollowBanner } from '../shared/FollowBanner';
 
-interface FollowModeBarProps {
+export interface FollowModeBarProps {
   followingUserId: string | null;
   participants: Participant[];
   onStopFollow: () => void;
+  /** The followed person's section title — rendered as ` · <location>`. */
+  location?: string;
+  /**
+   * `banner` (default): the centred strip. `bar`: the in-call follow bar
+   * ("**Following Alice** · Session flow" … "Stop following"), see FollowBanner.
+   */
+  appearance?: 'banner' | 'bar';
+  className?: string;
+  /** Default `follow-bar`; the stop button is `<id>-stop`. */
+  'data-testid'?: string;
 }
 
 export default function FollowModeBar({
   followingUserId,
   participants,
   onStopFollow,
+  location,
+  appearance = 'banner',
+  className,
+  'data-testid': testId = 'follow-bar',
 }: FollowModeBarProps) {
   const cleanupRef = useRef<(() => void) | null>(null);
   // Stable, so the deferred listener registration below is not restarted by
@@ -54,10 +69,28 @@ export default function FollowModeBar({
   );
   if (!followed) return null;
 
+  if (appearance === 'bar') {
+    return (
+      <FollowBanner
+        name={followed.displayName}
+        onStop={onStopFollow}
+        autoStopOnInteract={false}
+        appearance="bar"
+        {...(location !== undefined ? { location } : {})}
+        {...(className ? { className } : {})}
+        data-testid={testId}
+      />
+    );
+  }
+
   return (
-    <div className={cn('flex items-center justify-center gap-2 px-4 py-1.5 bg-info-bg border-b border-info-border text-[13px] font-medium text-info-fg shrink-0')}>
-      <span>Following {followed.displayName}</span>
+    <div data-testid={testId} className={cn('flex items-center justify-center gap-2 px-4 py-1.5 bg-info-bg border-b border-info-border text-[13px] font-medium text-info-fg shrink-0', className)}>
+      <span>
+        Following {followed.displayName}
+        {location ? <span className="font-normal"> · {location}</span> : null}
+      </span>
       <button
+        data-testid={`${testId}-stop`}
         onClick={onStopFollow}
         className={cn('bg-transparent border border-info-border rounded px-2 py-0.5 text-xs font-semibold text-info-fg cursor-pointer font-[inherit]')}
       >

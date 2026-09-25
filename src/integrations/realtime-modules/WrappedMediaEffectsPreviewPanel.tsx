@@ -59,7 +59,17 @@ export interface RMMediaEffectsPreviewControllerSource
 export interface WrappedMediaEffectsPreviewPanelProps
   extends Pick<
     MediaEffectsPreviewPanelProps,
-    'disabled' | 'title' | 'applyLabel' | 'className' | 'data-testid'
+    | 'disabled'
+    | 'title'
+    | 'applyLabel'
+    | 'className'
+    | 'data-testid'
+    | 'variant'
+    | 'showFooter'
+    | 'hint'
+    | 'thumbnailSrc'
+    | 'onSelectCustomBackground'
+    | 'backgroundsUnsupported'
   > {
   /** Mounts the surface and opens a preview session. */
   open: boolean;
@@ -149,7 +159,7 @@ export function WrappedMediaEffectsPreviewPanel({
         endSession();
         onClose();
       }}
-      filters={controller.filters.map(({ id, label }) => ({ id, label }))}
+      filters={controller.filters.map(({ id, label, cssFilter }) => ({ id, label, ...(cssFilter ? { cssFilter } : {}) }))}
       activeFilterId={shown.filterId}
       onSelectFilter={(id) => controller.setFilter(id)}
       backgrounds={controller.backgrounds.map(({ id, label, url }) => ({ id, label, url }))}
@@ -168,6 +178,20 @@ export function WrappedMediaEffectsPreviewPanel({
       onSelectFaceSprite={(id) => controller.setFaceSpriteId(id)}
     />
   );
+}
+
+/**
+ * How many of the four settings the open preview session changes — the
+ * "2 changes" in the call-settings Effects footer. 0 outside a session.
+ */
+export function mediaEffectsChangeCount(controller: RMMediaEffectsPreviewControllerSource): number {
+  const d = controller.draft;
+  if (!d) return 0;
+  let n = 0;
+  if (d.filterId !== controller.filterId) n++;
+  if (d.backgroundMode !== controller.backgroundMode || (d.backgroundMode === 'image' && d.backgroundImageUrl !== controller.backgroundImageUrl)) n++;
+  if (d.faceSpriteId !== controller.faceSpriteId) n++;
+  return n;
 }
 
 export default WrappedMediaEffectsPreviewPanel;

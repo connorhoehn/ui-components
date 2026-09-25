@@ -13,6 +13,7 @@
 
 import { useEffect, useRef } from 'react';
 import { cn } from '../../lib/cn';
+import { Button } from '../ui/Button';
 
 export interface FollowBannerProps {
   /** Who is being followed. Null renders nothing. */
@@ -23,6 +24,19 @@ export interface FollowBannerProps {
    * turn off only where the host routes those interactions itself.
    */
   autoStopOnInteract?: boolean;
+  /**
+   * Where the followed person is — a section title ("Session flow"). Rendered
+   * after the name as ` · <location>` in the regular weight. Empty or unset
+   * renders the name alone.
+   */
+  location?: string;
+  /**
+   * `banner` (default): the centred strip with a small "Stop" button.
+   * `bar`: the in-call follow bar — a rounded row inside the page column,
+   * "**Following Alice** · Session flow" on the left and a "Stop following"
+   * button on the right.
+   */
+  appearance?: 'banner' | 'bar';
   className?: string;
   'data-testid'?: string;
 }
@@ -31,6 +45,8 @@ export function FollowBanner({
   name,
   onStop,
   autoStopOnInteract = true,
+  location,
+  appearance = 'banner',
   className,
   'data-testid': testId = 'follow-banner',
 }: FollowBannerProps) {
@@ -55,6 +71,34 @@ export function FollowBanner({
 
   if (!name) return null;
 
+  if (appearance === 'bar') {
+    return (
+      <div
+        data-testid={testId}
+        data-appearance="bar"
+        className={cn(
+          'flex min-h-10 shrink-0 items-center gap-3 rounded-md border border-info-border bg-info-bg px-3.5 py-1',
+          'text-sm text-text-primary',
+          className,
+        )}
+      >
+        <span className="min-w-0 flex-1 truncate">
+          <span className="font-semibold">Following {name}</span>
+          {location ? <span className="text-text-secondary"> · {location}</span> : null}
+        </span>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onStop}
+          data-testid={`${testId}-stop`}
+          className="shrink-0 bg-surface font-medium"
+        >
+          Stop following
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div
       data-testid={testId}
@@ -64,7 +108,10 @@ export function FollowBanner({
         className,
       )}
     >
-      <span>Following {name}</span>
+      <span>
+        Following {name}
+        {location ? <span className="font-normal"> · {location}</span> : null}
+      </span>
       <button
         type="button"
         onClick={onStop}

@@ -22,11 +22,21 @@ import { cn } from '../../lib/cn';
 import { ParticipantTile } from './ParticipantTile';
 import { Avatar } from '../shared/Avatar';
 import type { HangoutLayoutParticipant } from './HangoutLayoutTypes';
+import { MicIcon, MicOffIcon, ScreenShareIcon } from './MediaIcons';
+
+/** A row participant. The two extra flags are read by the `dock` variant only. */
+export interface CallTileParticipant extends HangoutLayoutParticipant {
+  /** Draws the screen-share glyph on the tile (the shared stream is the host's `videoElement`). */
+  screenSharing?: boolean;
+  /** Veils the tile (last frame kept) while this person's connection recovers. */
+  reconnecting?: boolean;
+}
 
 export interface CallTileRowProps {
-  participants: HangoutLayoutParticipant[];
-  /** The viewer's own tile — drawn last, at the controls' side, where a mirror belongs. */
-  localParticipant?: HangoutLayoutParticipant | null;
+  participants: CallTileParticipant[];
+  /** The viewer's own tile — drawn last, at the controls' side, where a mirror belongs.
+   *  The `dock` variant draws it FIRST, as "You", the way a call dock reads left to right. */
+  localParticipant?: CallTileParticipant | null;
   activeSpeakerId?: string | null;
   /** Width of one tile; tiles keep 16:9. Default 144. */
   tileWidth?: number;
@@ -36,6 +46,24 @@ export interface CallTileRowProps {
   title?: ReactNode;
   onParticipantClick?: (id: string) => void;
   /**
+   * The person being FOLLOWED: a 2px accent ring, distinct from the green
+   * speaking ring (both can show at once — the accent wins the ring, the
+   * speaking state keeps its corner dot).
+   */
+  highlightedId?: string | null;
+  /**
+   * What happens when there are more people than `maxVisible`:
+   * `collapse` (default) ends the row with a `+N` tile; `scroll` keeps every
+   * tile and lets the row scroll sideways.
+   */
+  overflow?: 'scroll' | 'collapse';
+  /** Tiles before the `+N` tile under `overflow="collapse"`. Default 6. */
+  maxVisible?: number;
+  /** Tile height for the `dock` variant (tiles are `tileWidth` × `tileHeight`). Default 84. */
+  tileHeight?: number;
+  /** Prefix of each tile's test id in the `dock` variant (`<prefix>-<id>`). Default `call-tile`. */
+  tileTestIdPrefix?: string;
+  /**
    * `floating` (default): the tiles stand on their own over the page —
    * rounded, shadowed, no bar behind them — with the controls centred
    * beneath. A row of people over a diagram should look like people over a
@@ -43,7 +71,7 @@ export interface CallTileRowProps {
    * keeps them in one dark strip with the controls at the end, for a dock
    * that is itself a panel.
    */
-  variant?: 'floating' | 'bar';
+  variant?: 'floating' | 'bar' | 'dock';
   className?: string;
   style?: CSSProperties;
   'data-testid'?: string;
@@ -58,10 +86,63 @@ export function CallTileRow({
   title,
   onParticipantClick,
   variant = 'floating',
+  highlightedId = null,
+  overflow = 'collapse',
+  maxVisible = 6,
+  tileHeight = 84,
+  tileTestIdPrefix = 'call-tile',
   className,
   style,
   'data-testid': testId = 'call-tile-row',
 }: CallTileRowProps) {
+  if (variant === 'dock') {
+    const all = localParticipant ? [localParticipant, ...participants] : participants;
+    const collapse = overflow === 'collapse' && all.length > maxVisible;
+    // Keep the room for the +N tile inside maxVisible, so the row never grows past it.
+    const shown = collapse ? all.slice(0, Math.max(1, maxVisible - 1)) : all;
+    const hidden = all.length - shown.length;
+    return (
+      <div
+        className={cn(
+          'flex min-w-0 items-center gap-2',
+          overflow === 'scroll' ? 'overflow-x-auto' : 'overflow-hidden',
+          className,
+        )}
+        style={style}
+        role="group"
+        aria-label={typeof title === 'string' ? `Call: ${title}` : 'Call participants'}
+        data-testid={testId}
+        data-variant="dock"
+        data-tile-count={all.length}
+      >
+        {shown.map((p) => (
+          <DockTile
+            key={p.id}
+            participant={p}
+            width={tileWidth}
+            height={tileHeight}
+            speaking={p.id === activeSpeakerId}
+            highlighted={p.id === highlightedId}
+            testId={`${tileTestIdPrefix}-${p.id}`}
+            {...(onParticipantClick ? { onClick: () => onParticipantClick(p.id) } : {})}
+          />
+        ))}
+        {hidden > 0 && (
+          <div
+            className="flex shrink-0 items-center justify-center rounded-md bg-video-tile text-white"
+            // Tile size is a prop (74px at 1280, 84px at 1672) — not a static class.
+            style={{ width: tileWidth, height: tileHeight }}
+            data-testid={`${tileTestIdPrefix}-overflow`}
+            aria-label={`${hidden} more`}
+            role="img"
+          >
+            <Avatar name={`+ ${hidden}`} initials={`+${hidden}`} size={40} color="rgba(255,255,255,0.18)" showTitle={false} />
+          </div>
+        )}
+      </div>
+    );
+  }
+
   const tiles = localParticipant ? [...participants, localParticipant] : participants;
   const tileNodes = tiles.map((p) => (
     <ParticipantTile
@@ -74,7 +155,11 @@ export function CallTileRow({
       isSpeaking={p.id === activeSpeakerId}
       videoElement={p.videoElement}
       {...(onParticipantClick ? { onClick: () => onParticipantClick(p.id) } : {})}
-      className={cn('shrink-0', variant === 'floating' && 'rounded-xl shadow-lg ring-1 ring-black/10')}
+      className={cn(
+        'shrink-0',
+        variant === 'floating' && 'rounded-xl shadow-lg ring-1 ring-black/10',
+        p.id === highlightedId && 'ring-2 ring-primary',
+      )}
       style={{ width: tileWidth }}
     />
   ));
@@ -110,7 +195,7 @@ export function CallTileRow({
                 // row must look like two of the same thing.
                 className={cn(
                   'shrink-0 rounded-xl !border-0 shadow-lg ring-2 [&_video]:h-full [&_video]:w-full [&_video]:object-cover [&>*:first-child]:h-full [&>*:first-child]:w-full',
-                  p.id === activeSpeakerId ? 'ring-success' : 'ring-white/80',
+                  p.id === highlightedId ? 'ring-primary' : p.id === activeSpeakerId ? 'ring-success' : 'ring-white/80',
                 )}
                 style={{ width: tileWidth }}
               />
@@ -155,6 +240,82 @@ export function CallTileRow({
         {tileNodes}
       </div>
       {controls && <div className="flex shrink-0 items-center" data-testid={`${testId}-controls`}>{controls}</div>}
+    </div>
+  );
+}
+
+/**
+ * One tile of the in-call dock: the person's video filling a rounded frame,
+ * or — camera off — their initials on the dark tile colour; the name
+ * bottom-left and the mic state bottom-right on a soft gradient, so both
+ * read over any frame. The tile colours are the video tokens, dark in both
+ * themes on purpose.
+ */
+function DockTile({
+  participant: p,
+  width,
+  height,
+  speaking,
+  highlighted,
+  testId,
+  onClick,
+}: {
+  participant: CallTileParticipant;
+  width: number;
+  height: number;
+  speaking: boolean;
+  highlighted: boolean;
+  testId: string;
+  onClick?: () => void;
+}) {
+  const name = p.isLocal ? 'You' : p.displayName;
+  const label = `${p.isLocal ? 'You' : p.displayName}${p.isMuted ? ', muted' : ''}${p.screenSharing ? ', sharing screen' : ''}`;
+  return (
+    <div
+      className={cn(
+        'relative shrink-0 overflow-hidden rounded-md bg-video-tile text-white',
+        '[&_video]:h-full [&_video]:w-full [&_video]:object-cover',
+        highlighted ? 'ring-2 ring-primary ring-offset-1 ring-offset-surface' : speaking ? 'ring-2 ring-success' : '',
+        onClick && 'cursor-pointer',
+      )}
+      // Tile size is a prop (74px tall at 1280, 84px at 1672) — not a static class.
+      style={{ width, height }}
+      title={label}
+      aria-label={label}
+      role={onClick ? 'button' : 'img'}
+      tabIndex={onClick ? 0 : undefined}
+      onClick={onClick}
+      onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') onClick(); } : undefined}
+      data-testid={testId}
+      data-peer-id={p.id}
+      data-is-local={p.isLocal ? 'true' : 'false'}
+      data-is-muted={p.isMuted ? 'true' : 'false'}
+      data-highlighted={highlighted ? 'true' : 'false'}
+      data-speaking={speaking ? 'true' : 'false'}
+      data-track-kind={p.videoElement ? 'camera' : 'avatar'}
+    >
+      {p.videoElement ?? (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Avatar
+            name={p.displayName}
+            size={Math.round(Math.min(40, height * 0.48))}
+            {...(p.avatarUrl ? { src: p.avatarUrl } : {})}
+            color="rgba(255,255,255,0.22)"
+            showTitle={false}
+          />
+        </div>
+      )}
+      {p.reconnecting && (
+        <div className="absolute inset-0 bg-surface-inverse/40" data-testid={`${testId}-reconnecting`} aria-hidden="true" />
+      )}
+      <div className="absolute inset-x-0 bottom-0 flex items-center gap-1 bg-gradient-to-t from-black/70 to-transparent px-1.5 pb-1 pt-3 text-xs">
+        <span className="min-w-0 flex-1 truncate font-medium">{name}</span>
+        {p.screenSharing && <ScreenShareIcon size={13} className="shrink-0" />}
+        {p.isMuted ? <MicOffIcon size={14} className="shrink-0" /> : <MicIcon size={14} className="shrink-0" />}
+      </div>
+      {speaking && highlighted && (
+        <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-success" aria-hidden="true" />
+      )}
     </div>
   );
 }

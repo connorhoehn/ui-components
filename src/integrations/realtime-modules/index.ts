@@ -132,7 +132,7 @@ export type {
 } from './WrappedMediaEffectsTray';
 
 // ── Preview-before-publish effects (2026-08) ──
-export { WrappedMediaEffectsPreviewPanel } from './WrappedMediaEffectsPreviewPanel';
+export { WrappedMediaEffectsPreviewPanel, mediaEffectsChangeCount } from './WrappedMediaEffectsPreviewPanel';
 export type {
   WrappedMediaEffectsPreviewPanelProps,
   RMMediaEffectsPreviewControllerSource,

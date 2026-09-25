@@ -25,7 +25,7 @@ export interface RMMediaEffectsControllerSource {
   backgroundMode: RMBackgroundMode;
   backgroundImageUrl: string | null;
   faceSpriteId: string | null;
-  filters: Array<{ id: string; label: string }>;
+  filters: Array<{ id: string; label: string; cssFilter?: string }>;
   backgrounds: Array<{ id: string; label: string; url: string }>;
   faceSprites: Array<{ id: string; label: string }>;
   setFilter(id: string): void;
@@ -37,7 +37,16 @@ export interface RMMediaEffectsControllerSource {
 export interface WrappedMediaEffectsTrayProps
   extends Pick<
     MediaEffectsTrayProps,
-    'disabled' | 'compact' | 'className' | 'data-testid'
+    | 'disabled'
+    | 'compact'
+    | 'className'
+    | 'data-testid'
+    | 'layout'
+    | 'columns'
+    | 'thumbnailStream'
+    | 'thumbnailSrc'
+    | 'onSelectCustomBackground'
+    | 'backgroundsUnsupported'
   > {
   /** Return value of useMediaEffects() from realtime-modules. */
   controller: RMMediaEffectsControllerSource;
@@ -49,7 +58,7 @@ export function WrappedMediaEffectsTray({
 }: WrappedMediaEffectsTrayProps) {
   return (
     <MediaEffectsTray
-      filters={controller.filters.map(({ id, label }) => ({ id, label }))}
+      filters={controller.filters.map(({ id, label, cssFilter }) => ({ id, label, ...(cssFilter ? { cssFilter } : {}) }))}
       activeFilterId={controller.filterId}
       onSelectFilter={(id) => controller.setFilter(id)}
       backgrounds={controller.backgrounds.map(({ id, label, url }) => ({ id, label, url }))}

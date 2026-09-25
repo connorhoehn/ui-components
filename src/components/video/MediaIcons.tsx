@@ -216,3 +216,46 @@ export function SettingsGearIcon({ size = 20, ...rest }: IconProps) {
     </svg>
   );
 }
+
+/** A speaker with sound waves: output volume / "Test sound". */
+export function SpeakerIcon({ size = 20, ...rest }: IconProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M11 5 6 9H3v6h3l5 4V5z" />
+      <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+      <path d="M18.5 5.5a9 9 0 0 1 0 13" />
+    </svg>
+  );
+}
+
+/** A monitor: "present this document" / someone is presenting. */
+export function MonitorIcon({ size = 20, ...rest }: IconProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <rect x="3" y="4" width="18" height="12" rx="2" />
+      <line x1="8" y1="20" x2="16" y2="20" />
+      <line x1="12" y1="16" x2="12" y2="20" />
+    </svg>
+  );
+}
+
+/** Two arrows pointing out to opposite corners: expand / pop the call out. */
+export function ExpandIcon({ size = 20, ...rest }: IconProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M15 3h6v6" />
+      <path d="M21 3l-7 7" />
+      <path d="M9 21H3v-6" />
+      <path d="M3 21l7-7" />
+    </svg>
+  );
+}
+
+/** A phone handset: a call, ringing or in progress. */
+export function PhoneCallIcon({ size = 20, ...rest }: IconProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />
+    </svg>
+  );
+}

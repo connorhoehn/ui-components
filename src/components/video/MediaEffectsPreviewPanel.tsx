@@ -29,7 +29,9 @@
 // <WrappedMediaEffectsPreviewPanel> in
 // ui-components/integrations/realtime-modules.
 
+import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { Button } from '../ui/Button';
 import { MediaEffectsTray } from './MediaEffectsTray';
 import type { MediaEffectsTrayProps } from './MediaEffectsTray';
 import { StreamVideo } from './StreamVideo';
@@ -93,6 +95,24 @@ export interface MediaEffectsPreviewPanelProps
   title?: string;
   /** Label for the commit button. Defaults to "Apply". */
   applyLabel?: string;
+  /**
+   * `chrome` (default): the dark call-chrome panel with its private-preview
+   * notice and pinned Apply/Cancel footer. `surface`: the call-settings
+   * Effects tab — page-themed, a "Preview · Only you" chip on the preview, a
+   * one-line hint, and the tray in its grid layout. Pair `surface` with
+   * `showFooter={false}` when the host (CallSettingsDrawer) owns the footer.
+   */
+  variant?: 'chrome' | 'surface';
+  /** Render the Apply/Cancel footer. Default true. */
+  showFooter?: boolean;
+  /** Surface: the line under the preview. Default "Changes appear in the call after Apply." */
+  hint?: ReactNode;
+  /** Surface: grid thumbnails fall back to this still when there is no preview stream. */
+  thumbnailSrc?: string;
+  /** Surface: "+ Custom" background tile. See MediaEffectsTray. */
+  onSelectCustomBackground?: (file: File) => void;
+  /** Surface: the background section says it cannot run here. */
+  backgroundsUnsupported?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -116,6 +136,12 @@ export function MediaEffectsPreviewPanel({
   disabled = false,
   title = 'Video effects',
   applyLabel = 'Apply',
+  variant = 'chrome',
+  showFooter = true,
+  hint = 'Changes appear in the call after Apply.',
+  thumbnailSrc,
+  onSelectCustomBackground,
+  backgroundsUnsupported = false,
   className,
   'data-testid': testId = 'media-effects-preview-panel',
 }: MediaEffectsPreviewPanelProps) {
@@ -125,6 +151,81 @@ export function MediaEffectsPreviewPanel({
     guardedSelection(previewActive, fn);
 
   const canApply = previewActive && isDirty && !disabled;
+
+  if (variant === 'surface') {
+    return (
+      <section
+        data-testid={testId}
+        data-variant="surface"
+        data-preview-active={previewActive ? 'true' : 'false'}
+        data-preview-dirty={isDirty ? 'true' : 'false'}
+        aria-label={title}
+        className={cn('flex flex-col gap-3 text-text-primary', className)}
+      >
+        <div
+          data-testid="effects-preview"
+          className="relative aspect-[320/170] w-full shrink-0 overflow-hidden rounded-lg bg-video-stage"
+        >
+          {previewStream ? (
+            <div data-testid="media-effects-preview-video" className="h-full w-full">
+              <StreamVideo stream={previewStream} muted className="h-full w-full scale-x-[-1] object-cover" />
+            </div>
+          ) : (
+            <div
+              data-testid="media-effects-preview-empty"
+              className="flex h-full w-full items-center justify-center px-6 text-center text-sm text-white/70"
+            >
+              {previewActive ? 'Turn the camera on to preview effects' : 'Preview is not running'}
+            </div>
+          )}
+          <span
+            data-testid="media-effects-preview-badge"
+            className="absolute bottom-2 left-2 rounded bg-black/65 px-2 py-0.5 text-xs font-semibold text-white"
+          >
+            Preview · Only you
+          </span>
+        </div>
+        {hint != null && (
+          <p data-testid="media-effects-preview-notice" className="m-0 text-xs text-text-secondary">
+            {hint}
+          </p>
+        )}
+        <MediaEffectsTray
+          data-testid="media-effects-preview-tray"
+          layout="grid"
+          className="mt-2"
+          disabled={disabled || !previewActive}
+          thumbnailStream={previewStream}
+          {...(thumbnailSrc ? { thumbnailSrc } : {})}
+          {...(onSelectCustomBackground ? { onSelectCustomBackground: guard(onSelectCustomBackground) } : {})}
+          backgroundsUnsupported={backgroundsUnsupported}
+          filters={filters}
+          activeFilterId={activeFilterId}
+          onSelectFilter={guard(onSelectFilter)}
+          backgrounds={backgrounds}
+          backgroundMode={backgroundMode}
+          activeBackgroundUrl={activeBackgroundUrl}
+          onSelectBackground={guard(onSelectBackground)}
+          faceSprites={faceSprites}
+          activeFaceSpriteId={activeFaceSpriteId}
+          onSelectFaceSprite={guard(onSelectFaceSprite)}
+        />
+        {showFooter && (
+          <footer className="mt-2 flex items-center justify-end gap-3 border-t border-border pt-3">
+            <span data-testid="media-effects-preview-status" className="mr-auto text-sm text-text-tertiary">
+              {isDirty ? 'Not shared yet' : 'Nothing to apply'}
+            </span>
+            <Button variant="ghost" onClick={onCancel} data-testid="media-effects-preview-cancel">
+              Cancel
+            </Button>
+            <Button onClick={onApply} disabled={!canApply} data-testid="media-effects-preview-apply">
+              {applyLabel}
+            </Button>
+          </footer>
+        )}
+      </section>
+    );
+  }
 
   return (
     <section
@@ -198,7 +299,7 @@ export function MediaEffectsPreviewPanel({
           matter permanently in reach, which is what Teams does. `bg-surface-
           inverse` is opaque so scrolling content passes behind it, not
           through it. */}
-      <footer className="sticky bottom-0 z-10 -mx-1 mt-auto flex shrink-0 items-center justify-end gap-3 border-t border-call-chrome-border bg-call-chrome px-1 pb-1 pt-3">
+      {showFooter && <footer className="sticky bottom-0 z-10 -mx-1 mt-auto flex shrink-0 items-center justify-end gap-3 border-t border-call-chrome-border bg-call-chrome px-1 pb-1 pt-3">
         <span
           data-testid="media-effects-preview-status"
           className="mr-auto text-[12px] text-white/60"
@@ -227,7 +328,7 @@ export function MediaEffectsPreviewPanel({
         >
           {applyLabel}
         </button>
-      </footer>
+      </footer>}
     </section>
   );
 }

@@ -1,0 +1,155 @@
+// ui-components/src/components/video/DeviceToggleSelect.tsx
+//
+// A split button for one media device: the left half turns the microphone
+// (or camera) on and off, the right half (▾) opens a menu of the devices of
+// that kind. Clicking the toggle never opens the menu, and picking a device
+// never toggles — they are two controls that share a border, the shape every
+// call app uses for "mute" + "which mic".
+//
+// Pure: the device list, the permission and the level come from the host
+// (RM `useMediaDevices` / `useAudioLevel`).
+
+import type { ReactNode } from 'react';
+import { cn } from '../../lib/cn';
+import { DropdownMenu, type DropdownMenuItem } from '../shared/DropdownMenu';
+import { ChevronIcon } from '../ui/Icons';
+import { MicIcon, MicOffIcon, VideoIcon, VideoOffIcon } from './MediaIcons';
+
+/** Browser media permission for one kind of device. */
+export type MediaPermission = 'prompt' | 'granted' | 'denied' | 'unavailable';
+
+export interface DeviceOption {
+  deviceId: string;
+  label: string;
+}
+
+export interface DeviceToggleSelectProps {
+  kind: 'microphone' | 'camera';
+  on: boolean;
+  onToggle: () => void;
+  devices: DeviceOption[];
+  selectedDeviceId?: string;
+  onSelectDevice: (deviceId: string) => void;
+  permission: MediaPermission;
+  /** 0..1 live input level (microphone only). Above 0.08 draws the speaking ring. */
+  level?: number;
+  /** `sm` = 32px (the dock), `md` = 40px (the incoming-call popover). Default `sm`. */
+  size?: 'sm' | 'md';
+  /** Show "Mic on" / "Camera off" beside the icon. Default false (icon only). */
+  showLabel?: boolean;
+  /** Extra menu rows after the device list, e.g. "Blur background…". */
+  extraItems?: DropdownMenuItem[];
+  /** Disables the toggle with this as its title (e.g. "Microphone blocked in the browser"). */
+  disabledReason?: string;
+  className?: string;
+  /** Test id on the toggle; the chevron gets `<id>-menu`. */
+  'data-testid'?: string;
+}
+
+const NOUN = { microphone: 'Mic', camera: 'Camera' } as const;
+const DEVICE_NOUN = { microphone: 'microphone', camera: 'camera' } as const;
+const BLOCKED = {
+  microphone: 'Microphone blocked in the browser',
+  camera: 'Camera blocked in the browser',
+} as const;
+const NONE = { microphone: 'No microphone found', camera: 'No camera found' } as const;
+
+export function DeviceToggleSelect({
+  kind,
+  on,
+  onToggle,
+  devices,
+  selectedDeviceId,
+  onSelectDevice,
+  permission,
+  level,
+  size = 'sm',
+  showLabel = false,
+  extraItems,
+  disabledReason,
+  className,
+  'data-testid': testId = `device-toggle-${kind}`,
+}: DeviceToggleSelectProps) {
+  const blocked = permission === 'denied' || permission === 'unavailable';
+  const reason =
+    disabledReason ??
+    (permission === 'denied' ? BLOCKED[kind] : permission === 'unavailable' ? NONE[kind] : undefined);
+  const disabled = Boolean(reason) || blocked;
+  const isOn = on && !disabled;
+  const speaking = kind === 'microphone' && isOn && (level ?? 0) > 0.08;
+
+  const iconSize = size === 'md' ? 20 : 18;
+  let icon: ReactNode;
+  if (kind === 'microphone') icon = isOn ? <MicIcon size={iconSize} /> : <MicOffIcon size={iconSize} />;
+  else icon = isOn ? <VideoIcon size={iconSize} /> : <VideoOffIcon size={iconSize} />;
+
+  const stateLabel = `${NOUN[kind]} ${isOn ? 'on' : 'off'}`;
+  const actionLabel = isOn ? `Turn ${DEVICE_NOUN[kind]} off` : `Turn ${DEVICE_NOUN[kind]} on`;
+
+  const deviceItems: DropdownMenuItem[] = devices.length
+    ? devices.map((d) => ({
+        label: d.label,
+        checked: d.deviceId === selectedDeviceId,
+        onSelect: () => onSelectDevice(d.deviceId),
+        'data-testid': `${testId}-device-${d.deviceId}`,
+      }))
+    : [{ label: NONE[kind], disabled: true }];
+
+  const height = size === 'md' ? 'h-10' : 'h-8';
+  // Off reads as a warning on the microphone only: a muted mic is the state
+  // people forget they are in; a camera off is the ordinary default.
+  const offTone = !isOn && kind === 'microphone' && !disabled ? 'text-danger-fg' : 'text-text-primary';
+
+  return (
+    <div
+      className={cn(
+        'inline-flex shrink-0 items-stretch rounded-md border border-border bg-surface',
+        speaking && 'ring-2 ring-primary/50',
+        height,
+        className,
+      )}
+      data-kind={kind}
+      data-on={isOn ? 'true' : 'false'}
+      data-permission={permission}
+    >
+      <button
+        type="button"
+        onClick={disabled ? undefined : onToggle}
+        disabled={disabled}
+        aria-pressed={isOn}
+        aria-label={showLabel ? undefined : actionLabel}
+        title={reason ?? actionLabel}
+        data-testid={testId}
+        className={cn(
+          'inline-flex cursor-pointer items-center gap-2 rounded-l-md border-none bg-transparent font-[inherit] text-sm font-medium',
+          'hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50',
+          size === 'md' ? 'px-3' : 'px-2',
+          showLabel && 'pr-3',
+          offTone,
+        )}
+      >
+        {icon}
+        {showLabel && <span className="whitespace-nowrap">{stateLabel}</span>}
+      </button>
+      <DropdownMenu
+        trigger={<ChevronIcon size={14} />}
+        triggerLabel={`Choose ${DEVICE_NOUN[kind]}`}
+        triggerTitle={`Choose ${DEVICE_NOUN[kind]}`}
+        triggerTestId={`${testId}-menu`}
+        triggerVariant="link"
+        triggerClassName={cn(
+          'h-full rounded-none rounded-r-md px-2 text-text-secondary',
+          size === 'md' && 'px-3',
+        )}
+        align="end"
+        data-testid={`${testId}-menu-panel`}
+        sections={[
+          { label: kind === 'microphone' ? 'Microphone' : 'Camera', items: deviceItems },
+          ...(extraItems?.length ? [{ items: extraItems }] : []),
+        ]}
+      />
+    </div>
+  );
+}
+
+export default DeviceToggleSelect;
