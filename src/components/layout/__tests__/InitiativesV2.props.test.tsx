@@ -209,14 +209,14 @@ describe('ActionRowList tone / accent / leading / columns / action', () => {
     expect(row).toHaveAttribute('data-accent', 'bar');
     expect(row.className).not.toContain('border-b');
     const btn = screen.getByTestId('action-row-list-open-x');
-    expect(btn.className).toContain('bg-warning-bg');
+    expect(btn.className).toContain('bg-warning-callout');
     expect(btn.className).toContain('var(--color-warning)');
   });
   it('an item tone overrides the list; the default is untinted and ruled', () => {
     render(<ActionRowList items={[{ id: 'x', title: 'A' }, { id: 'y', title: 'B', tone: 'danger' }]} />);
     expect(screen.getByTestId('action-row-list-row-x')).not.toHaveAttribute('data-tone');
     expect(screen.getByTestId('action-row-list-row-x').className).toContain('border-b');
-    expect(screen.getByTestId('action-row-list-open-y').className).toContain('bg-danger-bg');
+    expect(screen.getByTestId('action-row-list-open-y').className).toContain('bg-danger-callout');
   });
   it('leading goes before the title; action replaces the chevron; the row is still one target', () => {
     const onOpen = vi.fn();

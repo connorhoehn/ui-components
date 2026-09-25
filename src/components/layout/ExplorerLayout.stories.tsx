@@ -720,7 +720,7 @@ function InitiativeOverviewV2Frame() {
                   id: 'b4',
                   title: 'Stop duplicate alerts during a dependency outage',
                   description: 'Waiting on the dependency map.',
-                  leading: <Chip tone="danger" size="md">Blocked</Chip>,
+                  leading: <Chip tone="danger" size="md" outline className="rounded-md px-2.5 py-1 text-[14px] font-normal leading-5">Blocked</Chip>,
                   cells: { who: <ActionRowPerson name="Eli Garcia" />, pts: '2 pts' },
                 },
               ]}

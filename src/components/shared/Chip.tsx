@@ -7,7 +7,9 @@ import {
   CODE_TONE_SOLID,
   CODE_TONE_SOLID_BG,
   CODE_TONE_TRANSLUCENT,
+  TONE_BORDER,
   TONE_SOFT,
+  TONE_TEXT,
   TONE_SOLID,
   TONE_SOLID_BG,
   TONE_TRANSLUCENT,
@@ -74,6 +76,14 @@ export interface ChipProps {
    * Takes precedence over `solid` if both are set.
    */
   translucent?: boolean;
+  /**
+   * Outlined: a 1px border in the tone's `-border`, the tone's text colour,
+   * and a faint surface wash instead of the soft `-bg` fill — a tag that sits
+   * on an already-tinted row (the "Blocked" chip on `ActionRowList
+   * tone="warning"`) without stacking a second tint on it. `surface` palette
+   * only; ignored with `solid`/`translucent`. Since 2.393.1.
+   */
+  outline?: boolean;
   /** Monospace font — for count badges. */
   mono?: boolean;
   /** Indicator dot. 'static' = filled circle, 'pulse' = filled circle
@@ -124,6 +134,7 @@ export default function Chip({
   size = 'sm',
   solid = false,
   translucent = false,
+  outline = false,
   mono = false,
   dot,
   uppercase = false,
@@ -147,7 +158,9 @@ export default function Chip({
     ? family.translucent[key]
     : solid
       ? family.solid[key]
-      : family.soft[key];
+      : outline && palette === 'surface'
+        ? cn('border bg-surface/60', TONE_BORDER[key], TONE_TEXT[key])
+        : family.soft[key];
   const hasAdornment = !!(dot || icon || onRemove);
   const Root = href ? 'a' : 'span';
   const rootProps = href

@@ -67,13 +67,17 @@ const COLUMN_WIDTH: Record<ActionRowColumn['width'], string> = {
   xl: 'w-[184px]',
 };
 
+// The row tint is the tone's pale `-callout` surface (2.393.1), the same one
+// `Banner layout="callout"` sits on — not `-bg`, which hosts often push
+// saturated so a pill reads at a glance (a portal painting warning-bg #fef3c7
+// turned "Needs attention" into a solid yellow slab).
 const TONE_ROW: Record<Exclude<ActionRowTone, 'neutral'>, string> = {
-  success: 'bg-success-bg hover:bg-success-bg',
-  warning: 'bg-warning-bg hover:bg-warning-bg',
-  danger: 'bg-danger-bg hover:bg-danger-bg',
-  info: 'bg-info-bg hover:bg-info-bg',
-  caution: 'bg-caution-bg hover:bg-caution-bg',
-  accent: 'bg-accent-bg hover:bg-accent-bg',
+  success: 'bg-success-callout hover:bg-success-callout',
+  warning: 'bg-warning-callout hover:bg-warning-callout',
+  danger: 'bg-danger-callout hover:bg-danger-callout',
+  info: 'bg-info-callout hover:bg-info-callout',
+  caution: 'bg-caution-callout hover:bg-caution-callout',
+  accent: 'bg-accent-callout hover:bg-accent-callout',
 };
 
 const TONE_BAR: Record<ActionRowTone, string> = {

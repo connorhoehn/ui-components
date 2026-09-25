@@ -122,6 +122,11 @@
   --color-danger-callout-border: #f5c9c9;
   --color-info-callout: #f4f8ff;
   --color-info-callout-border: #c8daf8;
+  /* caution/accent (2.393.1): ActionRowList tints rows in every tone. */
+  --color-caution-callout: #fffaf5;
+  --color-caution-callout-border: #fbd9bd;
+  --color-accent-callout: #fcf9ff;
+  --color-accent-callout-border: #eadcfb;
 
   --color-caution: #ea580c;
   --color-caution-bg: #fff7ed;
@@ -408,6 +413,10 @@
   --color-danger-callout-border: #5e2626;
   --color-info-callout: #10213a;
   --color-info-callout-border: #1f3d63;
+  --color-caution-callout: #2b1a10;
+  --color-caution-callout-border: #5c3217;
+  --color-accent-callout: #231432;
+  --color-accent-callout-border: #452466;
 
   --color-caution: #fb923c;
   --color-caution-bg: #7c2d12;

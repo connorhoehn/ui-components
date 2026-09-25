@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.393.1] — 2026-09-25
+
+### Fixed
+- `ActionRowList` toned rows paint the tone's pale `--color-{tone}-callout` surface (the one `Banner
+  layout="callout"` uses since 2.389.4), not the generic `-bg`. A host that pushes `--color-warning-bg`
+  saturated for pills (#fef3c7) no longer turns "Needs attention" into a solid yellow slab — the row
+  stays the mockup's cream (#fff8eb). Applies to every tone.
+
+### Added
+- Tokens `--color-caution-callout(-border)` and `--color-accent-callout(-border)` (light + dark), so the
+  callout surface covers all six tones.
+- `Chip outline`: 1px tone border + tone text on a faint surface wash instead of the soft `-bg` fill —
+  for a tag on an already-tinted row. The `Initiative overview v2` story's "Blocked" chip uses it
+  (`tone="danger"`), matching the v2 mockup.
+
 ## [2.393.0] — 2026-09-25
 
 ### Added

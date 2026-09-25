@@ -39,6 +39,13 @@ describe('Chip', () => {
     expect(chip).toHaveClass('bg-warning/15', 'text-warning-fg');
   });
 
+  it('outline draws the tone border and text on a faint wash, not the soft -bg', () => {
+    render(<Chip tone="danger" outline data-testid="chip">Blocked</Chip>);
+    const chip = screen.getByTestId('chip');
+    expect(chip).toHaveClass('border', 'border-danger-border', 'text-danger-fg', 'bg-surface/60');
+    expect(chip).not.toHaveClass('bg-danger-bg');
+  });
+
   it('applies translucent variant styling on the code palette', () => {
     render(<Chip palette="code" tone="danger" translucent data-testid="chip">exit 1</Chip>);
     const chip = screen.getByTestId('chip');

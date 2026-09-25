@@ -4290,7 +4290,7 @@ export declare function ChevronIcon({ size, dir, ...rest }: GlyphProps & {
     dir?: 'up' | 'down' | 'left' | 'right';
 }): JSX.Element;
 
-export declare function Chip({ tone, palette, size, solid, translucent, mono, dot, uppercase, icon, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, href, external, onRemove, removeLabel, removeTestId, removeIcon, }: ChipProps): JSX.Element;
+export declare function Chip({ tone, palette, size, solid, translucent, outline, mono, dot, uppercase, icon, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, href, external, onRemove, removeLabel, removeTestId, removeIcon, }: ChipProps): JSX.Element;
 
 /**
  * `tone` was already spoken for by the semantic scale, so the surface-family
@@ -4319,6 +4319,14 @@ export declare interface ChipProps {
      * Takes precedence over `solid` if both are set.
      */
     translucent?: boolean;
+    /**
+     * Outlined: a 1px border in the tone's `-border`, the tone's text colour,
+     * and a faint surface wash instead of the soft `-bg` fill — a tag that sits
+     * on an already-tinted row (the "Blocked" chip on `ActionRowList
+     * tone="warning"`) without stacking a second tint on it. `surface` palette
+     * only; ignored with `solid`/`translucent`. Since 2.393.1.
+     */
+    outline?: boolean;
     /** Monospace font — for count badges. */
     mono?: boolean;
     /** Indicator dot. 'static' = filled circle, 'pulse' = filled circle
@@ -22068,9 +22076,32 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -22104,19 +22135,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -22127,19 +22148,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }

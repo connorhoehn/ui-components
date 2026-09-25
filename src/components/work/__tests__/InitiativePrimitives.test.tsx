@@ -226,6 +226,17 @@ describe('WorkItemMetaBar (2.390.0)', () => {
 });
 
 describe('ActionRowList', () => {
+  it('tints a toned row with the callout surface, never the generic -bg (2.393.1)', () => {
+    const tones = ['success', 'warning', 'danger', 'info', 'caution', 'accent'] as const;
+    for (const tone of tones) {
+      const { getByTestId, unmount } = render(<ActionRowList tone={tone} items={[{ id: 'a', title: 'A' }]} />);
+      const cls = getByTestId('action-row-list-open-a').className;
+      expect(cls).toContain(`bg-${tone}-callout`);
+      expect(cls).not.toContain(`bg-${tone}-bg`);
+      unmount();
+    }
+  });
+
   const rows = [
     { id: 's1', title: 'Decommission the legacy StatsD bridge', description: 'Move remaining service metrics to OpenTelemetry.', meta: 'Layla Hassan · 5 points' },
     { id: 's2', title: 'Error-budget dashboard per team' },
