@@ -1,0 +1,167 @@
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useState } from 'react';
+import { CallDock, type CallDockParticipant, type CallDockProps } from './CallDock';
+import { StreamVideo } from './StreamVideo';
+import { CAST, DEVICES, REVIEW_DOCS, fakeCameraStream, noop, themed } from './documentCallStoryKit';
+
+// The in-call dock under a document (mockup 02). Stories render it at the
+// pane width it gets at 1672 × 941 (1240px) and at 1280 × 720 (compact).
+
+function video(key: string, hue: number) {
+  const s = fakeCameraStream(key, hue);
+  return s ? <StreamVideo stream={s} muted /> : undefined;
+}
+
+function person(
+  who: keyof typeof CAST,
+  over: Partial<CallDockParticipant> = {},
+): CallDockParticipant {
+  const c = CAST[who];
+  const cameraOn = over.cameraOn ?? true;
+  return {
+    id: c.userId,
+    userId: c.userId,
+    displayName: c.name,
+    cameraOn,
+    audioOn: true,
+    screenSharing: false,
+    presenting: false,
+    connection: 'connected',
+    videoElement: cameraOn ? video(c.userId, c.hue) : undefined,
+    ...over,
+  };
+}
+
+const PEOPLE: CallDockParticipant[] = [
+  person('connor'),
+  person('alice', { presenting: true }),
+  person('frank'),
+  person('bob', { cameraOn: false, audioOn: false, videoElement: undefined }),
+];
+
+function base(over: Partial<CallDockProps> = {}): CallDockProps {
+  return {
+    title: 'Auth architecture review',
+    participantCount: 4,
+    elapsedMs: 9 * 60_000 + 41_000,
+    phase: 'active',
+    documents: [{ ...REVIEW_DOCS[0]!, presenting: false }, REVIEW_DOCS[1]!],
+    participants: PEOPLE,
+    localParticipantId: CAST.connor.userId,
+    activeSpeakerId: null,
+    followingUserId: CAST.alice.userId,
+    mic: { on: true, onToggle: noop, devices: DEVICES.microphones, selectedDeviceId: 'mbp-mic', onSelectDevice: noop, permission: 'granted' },
+    camera: {
+      on: true,
+      onToggle: noop,
+      devices: DEVICES.cameras,
+      selectedDeviceId: 'facetime',
+      onSelectDevice: noop,
+      permission: 'granted',
+      extraItems: [{ label: 'Blur background…', onSelect: noop }],
+    },
+    screenShare: { on: false, onToggle: noop },
+    onOpenPeople: noop,
+    onOpenDocuments: noop,
+    onOpenSettings: noop,
+    onPopOut: noop,
+    onLeave: noop,
+    ...over,
+  };
+}
+
+function Interactive(props: CallDockProps) {
+  const [mic, setMic] = useState(props.mic.on);
+  const [cam, setCam] = useState(props.camera.on);
+  return (
+    <CallDock
+      {...props}
+      mic={{ ...props.mic, on: mic, onToggle: () => setMic((v) => !v) }}
+      camera={{ ...props.camera, on: cam, onToggle: () => setCam((v) => !v) }}
+    />
+  );
+}
+
+const meta = {
+  title: 'Video/Document calls/CallDock',
+  component: CallDock,
+  parameters: { layout: 'fullscreen' },
+  render: (args) => (
+    <div className="w-[1312px] border border-border">
+      <Interactive {...args} />
+    </div>
+  ),
+} satisfies Meta<typeof CallDock>;
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+/** Mockup 02: four people, following Alice (accent ring), Bob camera off and muted. */
+export const Active: Story = { args: base(), decorators: [themed('light')] };
+export const ActiveDark: Story = { args: base(), decorators: [themed('dark')] };
+
+/** 1280 × 720: 132 × 74 tiles; the doc chips and the Documents button fold away with the width. */
+export const Compact: Story = {
+  args: base({ compact: true }),
+  decorators: [themed('light')],
+  render: (args) => (
+    <div className="w-[938px] border border-border">
+      <Interactive {...args} />
+    </div>
+  ),
+};
+export const CompactDark: Story = { ...Compact, decorators: [themed('dark')] };
+
+export const Connecting: Story = { args: base({ phase: 'connecting', participantCount: 1 }), decorators: [themed('light')] };
+export const Reconnecting: Story = { args: base({ phase: 'reconnecting' }), decorators: [themed('light')] };
+export const ReconnectingDark: Story = { args: base({ phase: 'reconnecting' }), decorators: [themed('dark')] };
+
+export const MicOffAndSharing: Story = {
+  args: base({
+    mic: { ...base().mic, on: false },
+    screenShare: { on: true, onToggle: noop },
+    participants: [person('connor', { screenSharing: true, audioOn: false }), ...PEOPLE.slice(1)],
+  }),
+  decorators: [themed('light')],
+};
+
+export const MicBlocked: Story = {
+  args: base({ mic: { ...base().mic, permission: 'denied' }, screenShare: { on: false, onToggle: noop, disabledReason: 'Alice is sharing' } }),
+  decorators: [themed('light')],
+};
+
+/** More than six people: the row ends with a +N tile. */
+export const Overflow: Story = {
+  args: base({
+    participantCount: 9,
+    participants: [
+      ...PEOPLE,
+      person('carol'),
+      ...['Dan Ortiz', 'Eve Park', 'Gus Lee', 'Hana Ito'].map((n, i) => ({
+        ...person('carol'),
+        id: `u-${i}`,
+        userId: `u-${i}`,
+        displayName: n,
+        cameraOn: false,
+        videoElement: undefined,
+      })),
+    ],
+  }),
+  decorators: [themed('light')],
+};
+
+/** The host with others present: Leave asks first. */
+export const HostLeave: Story = {
+  args: base({ canEndForEveryone: true, onEndForEveryone: noop }),
+  decorators: [themed('light')],
+};
+
+export const Ended: Story = {
+  args: base({ phase: 'ended', elapsedMs: 12 * 60_000 + 4_000, endedSummary: <strong>Recording will appear in the conversation</strong>, onDismiss: noop }),
+  decorators: [themed('light')],
+};
+export const EndedDark: Story = { ...Ended, decorators: [themed('dark')] };
+
+export const Failed: Story = {
+  args: base({ phase: 'error', error: { message: 'the media server stopped answering', onRetry: noop }, onDismiss: noop }),
+  decorators: [themed('light')],
+};

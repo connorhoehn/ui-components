@@ -184,3 +184,11 @@ export type { WrappedStreamStageProps, StreamMode } from './WrappedStreamStage';
 
 export { useDocumentImageUpload, acceptsDocumentImage, MAX_IMAGE_BYTES, MAX_ATTACHMENT_BYTES } from './useDocumentImageUpload';
 export type { DocumentImageUpload, DocumentFileUploadHook, DocumentUploadCompletion, UploadedDocumentFile } from './useDocumentImageUpload';
+
+// Call settings "Audio & video" bound to RM useMediaDevices + useAudioVideoSettings (document calls, 2.391.0).
+export { WrappedAudioVideoSettingsForm } from './WrappedAudioVideoSettingsForm';
+export type {
+  WrappedAudioVideoSettingsFormProps,
+  RMMediaDevicesSource,
+  RMAudioVideoSettingsSource,
+} from './WrappedAudioVideoSettingsForm';

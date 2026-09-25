@@ -84,7 +84,7 @@ function deviceOptions(list: DeviceOption[], none: string) {
 
 function Section({ children, divided = true }: { children: ReactNode; divided?: boolean }) {
   return (
-    <section className={cn('flex flex-col gap-3 py-4 first:pt-0', divided && 'border-b border-border')}>
+    <section className={cn('flex flex-col gap-2.5 py-3.5 first:pt-0', divided && 'border-b border-border')}>
       {children}
     </section>
   );
@@ -249,7 +249,7 @@ export function AudioVideoSettingsForm({
               data-testid="settings-camera-select"
             />
             <div
-              className="relative -mt-1 aspect-[16/10] w-full overflow-hidden rounded-lg bg-video-stage"
+              className="relative aspect-[321/164] w-full overflow-hidden rounded-lg bg-video-stage"
               data-testid="settings-preview"
               data-mirrored={value.mirrorPreview ? 'true' : 'false'}
             >

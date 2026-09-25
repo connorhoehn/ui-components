@@ -91,6 +91,9 @@ export type { DockedPanelContextValue, DockedPanelProviderProps } from './Docked
 export { default as StatCard } from './StatCard';
 export { default as FollowBanner } from './FollowBanner';
 export type { FollowBannerProps } from './FollowBanner';
+// A heading renamed in place — the text with a pencil; Enter/blur commits, Esc reverts (2.391.0).
+export { EditableHeading } from './EditableHeading';
+export type { EditableHeadingProps } from './EditableHeading';
 export { default as SuggestionCard } from './SuggestionCard';
 export { default as TaskComposer } from './TaskComposer';
 export type { TaskComposerProps, ComposerSuggestion } from './TaskComposer';

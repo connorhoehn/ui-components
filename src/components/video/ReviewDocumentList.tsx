@@ -11,7 +11,8 @@
 
 import { useState, type DragEvent, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
-import { CloseIcon, DocumentIcon, ExternalLinkIcon } from '../ui/Icons';
+import { CloseIcon, DocumentIcon } from '../ui/Icons';
+import { PopOutIcon } from './MediaIcons';
 import { IconButton } from '../ui/IconButton';
 
 export interface ReviewDocumentItem {
@@ -125,7 +126,7 @@ export function ReviewDocumentList({
               <IconButton
                 aria-label={`Open ${item.title}`}
                 title={`Open ${item.title}`}
-                icon={<ExternalLinkIcon size={18} />}
+                icon={<PopOutIcon size={18} />}
                 onClick={(e) => {
                   e.stopPropagation();
                   onOpen(item.id);

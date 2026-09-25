@@ -360,7 +360,7 @@ function Frame({
         aria-hidden
         className="absolute inset-0 bg-cover bg-center"
         // Dynamic, prop-driven URL — cannot be a Tailwind class.
-        style={{ backgroundImage: `url(${backgroundUrl})` }}
+        style={{ backgroundImage: `url("${backgroundUrl}")` }}
       />
     );
   }
@@ -503,8 +503,8 @@ function EffectsGrid({
   const frame = { stream: thumbnailStream, ...(thumbnailSrc ? { src: thumbnailSrc } : {}) };
 
   return (
-    <div data-testid={testId} data-layout="grid" className={cn('flex flex-col gap-5 text-text-primary', className)}>
-      <section className="flex flex-col gap-2.5" aria-label="Filter">
+    <div data-testid={testId} data-layout="grid" className={cn('flex flex-col gap-4 text-text-primary', className)}>
+      <section className="flex flex-col gap-2" aria-label="Filter">
         <GridHeading
           action={
             <Button
@@ -520,7 +520,7 @@ function EffectsGrid({
         >
           Filter
         </GridHeading>
-        <div className={cn('grid gap-x-3 gap-y-2.5', cols)}>
+        <div className={cn('grid gap-x-3 gap-y-2', cols)}>
           {shownFilters.map((f) => (
             <Thumb
               key={f.id}
@@ -550,14 +550,14 @@ function EffectsGrid({
         </div>
       </section>
 
-      <section className="flex flex-col gap-2.5" aria-label="Background">
+      <section className="flex flex-col gap-2" aria-label="Background">
         <GridHeading>Background</GridHeading>
         {backgroundsUnsupported ? (
           <InlineAlert tone="info" data-testid="effects-background-unsupported">
             Backgrounds need a newer browser
           </InlineAlert>
         ) : (
-          <div className={cn('grid gap-x-3 gap-y-2.5', cols)}>
+          <div className={cn('grid gap-x-3 gap-y-2', cols)}>
             <Thumb
               label="None"
               active={backgroundMode === 'none'}
@@ -616,7 +616,7 @@ function EffectsGrid({
         )}
       </section>
 
-      <section className="flex flex-col gap-2.5" aria-label="Face effects">
+      <section className="flex flex-col gap-2" aria-label="Face effects">
         <GridHeading>Face effects</GridHeading>
         <Select
           value={activeFaceSpriteId ?? ''}
@@ -644,7 +644,7 @@ function EffectsGrid({
                     active && 'bg-primary-bg text-primary',
                   )}
                 >
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-inset text-lg text-text-primary">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-inset text-lg text-text-primary">
                     {f.icon ?? f.label.slice(0, 1)}
                   </span>
                   <span className="truncate">{f.label}</span>
@@ -659,7 +659,7 @@ function EffectsGrid({
                 data-testid="effects-face-more"
                 className="flex cursor-pointer flex-col items-center gap-1 rounded-md border-none bg-transparent py-1.5 font-[inherit] text-xs text-text-secondary hover:bg-surface-hover"
               >
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-inset text-text-primary">
+                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-inset text-text-primary">
                   <MoreHorizontalIcon size={20} />
                 </span>
                 <span>More</span>

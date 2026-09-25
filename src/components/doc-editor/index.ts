@@ -58,6 +58,7 @@ export { default as DiffViewer } from './DiffViewer';
 export { default as ActivityFeed } from './ActivityFeed';
 export { default as AttachmentsPanel } from './AttachmentsPanel';
 export { default as FollowModeBar } from './FollowModeBar';
+export type { FollowModeBarProps } from './FollowModeBar';
 export { default as ParticipantAvatars } from './ParticipantAvatars';
 export { default as VersionHistoryPanel } from './VersionHistoryPanel';
 export { default as VideoCallPanel } from './VideoCallPanel';

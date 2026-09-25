@@ -282,3 +282,38 @@ export type { CallNoticePillProps } from './CallNoticePill';
 // truncating line: terminal, user-resolved, and owed an explanation.
 export { CallInterruptedNotice } from './CallInterruptedNotice';
 export type { CallInterruptedNoticeProps } from './CallInterruptedNotice';
+
+// ── In-document calls (2.391.0) — SPEC docs/design/document-calls in realtime-examples ──
+export { DeviceToggleSelect } from './DeviceToggleSelect';
+export type { DeviceToggleSelectProps, DeviceOption, MediaPermission } from './DeviceToggleSelect';
+export { AudioLevelMeter } from './AudioLevelMeter';
+export type { AudioLevelMeterProps } from './AudioLevelMeter';
+export { VolumeSlider } from './VolumeSlider';
+export type { VolumeSliderProps } from './VolumeSlider';
+export { MediaPrecheckRow } from './MediaPrecheckRow';
+export type { MediaPrecheckRowProps } from './MediaPrecheckRow';
+export { ReviewDocumentList } from './ReviewDocumentList';
+export type { ReviewDocumentListProps, ReviewDocumentItem } from './ReviewDocumentList';
+export { CollaboratorCheckList } from './CollaboratorCheckList';
+export type { CollaboratorCheckListProps, CollaboratorRow } from './CollaboratorCheckList';
+export { CallPeopleList, callPersonStatus } from './CallPeopleList';
+export type { CallPeopleListProps, CallPerson, CallPersonStatus } from './CallPeopleList';
+export { AudioVideoSettingsForm } from './AudioVideoSettingsForm';
+export type { AudioVideoSettingsFormProps, AudioVideoSettings } from './AudioVideoSettingsForm';
+export { CallSettingsDrawer, CallCaptionsSettings } from './CallSettingsDrawer';
+export type {
+  CallSettingsDrawerProps,
+  CallSettingsDrawerTab,
+  CallSettingsEffectsFooter,
+  CallCaptionsSettingsProps,
+} from './CallSettingsDrawer';
+export { StartCallDrawer } from './StartCallDrawer';
+export type { StartCallDrawerProps, StartCallPeople } from './StartCallDrawer';
+export { CallDock, formatCallElapsed } from './CallDock';
+export type { CallDockProps, CallDockParticipant, CallDockPhase } from './CallDock';
+export { IncomingCallPopover } from './IncomingCallPopover';
+export type { IncomingCallPopoverProps } from './IncomingCallPopover';
+export { DocumentCallPanel } from './DocumentCallPanel';
+export type { DocumentCallPanelProps } from './DocumentCallPanel';
+export type { CallTileParticipant } from './CallTileRow';
+export { SpeakerIcon, MonitorIcon, ExpandIcon, PhoneCallIcon, SettingsGearIcon } from './MediaIcons';
