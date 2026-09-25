@@ -1,7 +1,7 @@
 import { t as e } from "./cn-DhjIN-s0.js";
 import "./ToastProvider-BVUJvzmK.js";
 import { c as t } from "./usePromptContext-CUNhKC01.js";
-import "./FilterPopover-B8Z9FZ4W.js";
+import "./FilterPopover-B76PCoO8.js";
 import { _ as n, c as r, f as i, g as a, h as o, l as s, p as c, t as l, u } from "./overlayStack-CHdlnODN.js";
 import { t as d } from "./Card-RQCeAPNU.js";
 import "./Table-CypeBEj0.js";
@@ -51,7 +51,7 @@ import "./PresenceAvatars-Dmtv09Kg.js";
 import "./FileUploadDrop-Ds6LsAtK.js";
 import { t as M } from "./InlinePopover-DpXHdWeE.js";
 import { t as ee } from "./ActivityFeed-ay5wcWka.js";
-import { a as N, c as P, d as te, i as F, l as I, n as ne, o as re, r as ie } from "./railType-DxAfixMZ.js";
+import { a as N, c as P, d as te, i as F, l as I, n as ne, o as re, r as ie } from "./railType-CZeDcxl8.js";
 import "./SectionLabel-bcrhNYOr.js";
 import { t as ae } from "./InlinePlaceholder-51dbPRGn.js";
 import "./PopoverForm-BCCYkHYg.js";
@@ -2522,7 +2522,7 @@ function Xt({ name: t, items: n, storageKey: r, renderNavItem: i }) {
 		}
 		o((e) => !e);
 	}, d = n.find((e) => e.groupScrollAfter)?.groupScrollAfter, f = d ? {
-		maxHeight: d * 40,
+		maxHeight: d * 36,
 		overflowY: "auto"
 	} : void 0;
 	return /* @__PURE__ */ G("section", {
@@ -2572,7 +2572,7 @@ function Zt({ item: t, renderNavItem: n }) {
 			"data-testid": "subnav-item-label",
 			children: t.label
 		}), t.count !== void 0 && /* @__PURE__ */ W("span", {
-			className: e("shrink-0", "text-[13px] font-medium leading-5 tabular-nums text-text-tertiary"),
+			className: e("shrink-0", "text-[12px] font-medium leading-4 tabular-nums text-text-tertiary"),
 			"data-testid": "subnav-item-count",
 			children: t.count
 		})]
@@ -2622,7 +2622,7 @@ function nn({ items: t, "aria-label": n = "Views", className: r, "data-testid": 
 						children: t.label
 					}),
 					typeof t.count == "number" && /* @__PURE__ */ W("span", {
-						className: e("shrink-0", "text-[13px] font-medium leading-5 tabular-nums text-text-tertiary"),
+						className: e("shrink-0", "text-[12px] font-medium leading-4 tabular-nums text-text-tertiary"),
 						"aria-label": `${t.count} items`,
 						"data-testid": `${i}-count-${t.id}`,
 						children: t.count
@@ -2726,7 +2726,7 @@ function ln({ item: t, active: n, palette: r, renderLink: i, size: a = "sm" }) {
 				children: t.label
 			}),
 			t.badge != null && /* @__PURE__ */ W("span", {
-				className: e("ml-auto flex-none", "text-[13px] font-medium leading-5 tabular-nums text-text-tertiary", r.hint),
+				className: e("ml-auto flex-none", "text-[12px] font-medium leading-4 tabular-nums text-text-tertiary", r.hint),
 				"data-testid": "nav-rail-badge",
 				children: t.badge
 			})

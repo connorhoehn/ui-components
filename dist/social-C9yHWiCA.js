@@ -25,7 +25,7 @@ import { t as ne } from "./InlineAlert-CRnIKeAF.js";
 import { t as re } from "./LogStream-J2cxfOVI.js";
 import { a as ie, n as U, o as ae, s as oe, t as se } from "./backdropTone-BF54k8gW.js";
 import { t as ce } from "./InlinePopover-DpXHdWeE.js";
-import { a as le, d as ue, i as de } from "./railType-DxAfixMZ.js";
+import { a as le, d as ue, i as de } from "./railType-CZeDcxl8.js";
 import { t as fe } from "./InlinePlaceholder-51dbPRGn.js";
 import { n as pe, t as W } from "./PopoverForm-BCCYkHYg.js";
 import { t as me } from "./DropdownMenu-CHrQvZgc.js";
@@ -187,7 +187,7 @@ function Pe({ candidates: e, onInvite: t, loading: n = !1, resetKey: r, children
 }
 //#endregion
 //#region src/components/layout/WorkspaceRail.tsx
-var Fe = o("inline-flex items-center gap-1 rounded border-0 bg-transparent p-0 text-[15px] font-medium text-primary no-underline", "cursor-pointer hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary");
+var Fe = o("inline-flex items-center gap-1 rounded border-0 bg-transparent p-0 text-[13px] font-medium text-primary no-underline", "cursor-pointer hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary");
 function Ie({ title: e, label: t, actions: n, header: r, footer: i, children: a, width: s = "md", count: c, heading: l = "compact", countStyle: u = "chip", back: p, collapsed: m = !1, collapsedContent: h, onToggle: g, toggleLabel: _, toggleTestId: v, className: b, "data-testid": x = "workspace-rail" }) {
 	let S = _ ?? `${m ? "Show" : "Hide"} ${t ?? e ?? "the list"}`;
 	return /* @__PURE__ */ Q("nav", {
@@ -224,7 +224,7 @@ function Ie({ title: e, label: t, actions: n, header: r, footer: i, children: a,
 				"data-testid": `${x}-header`,
 				children: [
 					!m && (e ? /* @__PURE__ */ Q("h2", {
-						className: o("m-0 flex min-w-0 flex-1 items-center gap-2 text-text-primary", l === "prominent" ? "text-[18px] font-semibold" : l === "label" ? "text-[15px] font-semibold uppercase tracking-[0.02em]" : l === "caption" ? "text-[13px] font-semibold uppercase tracking-[0.06em]" : "text-[12px] font-semibold"),
+						className: o("m-0 flex min-w-0 flex-1 items-center gap-2 text-text-primary", l === "prominent" ? "text-[18px] font-semibold" : l === "label" ? "text-[15px] font-semibold uppercase tracking-[0.02em]" : l === "caption" ? "text-[12px] font-semibold uppercase tracking-[0.06em]" : "text-[12px] font-semibold"),
 						"data-testid": `${x}-title`,
 						children: [
 							/* @__PURE__ */ Z("span", {

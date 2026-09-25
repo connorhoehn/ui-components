@@ -212,7 +212,7 @@ export declare interface ActiveCallBannerProps {
     loading?: boolean;
 }
 
-export declare const activeNavItemClassName = "block px-[14px] py-[9px] border-l-[3px] border-primary bg-primary/8 text-text-primary no-underline cursor-pointer";
+export declare const activeNavItemClassName = "block px-[14px] py-2 border-l-[3px] border-primary bg-primary/8 text-text-primary no-underline cursor-pointer";
 
 export declare const activeNavItemStyle: CSSProperties;
 
@@ -9728,7 +9728,7 @@ export declare interface ImageWatermarkNodeData {
  * )}
  * ```
  */
-export declare const inactiveNavItemClassName = "block px-[14px] py-[9px] border-l-[3px] border-transparent text-text-primary no-underline cursor-pointer hover:bg-surface-hover";
+export declare const inactiveNavItemClassName = "block px-[14px] py-2 border-l-[3px] border-transparent text-text-primary no-underline cursor-pointer hover:bg-surface-hover";
 
 export declare function InboxSection({ title, count, countTone, hint, action, empty, footer, headingLevel, children, className, 'data-testid': testId, }: InboxSectionProps): JSX.Element;
 
@@ -11822,7 +11822,7 @@ export declare interface NavRailProps {
     tone?: NavRailTone;
     /**
      * Layout only, since 2.397.0 — both sizes draw the one shared rail type
-     * scale (`railType`: 15px/500 labels on 40px rows, 11px caps group labels,
+     * scale (`railType`: 13px/500 labels on 36px rows, 11px caps group labels,
      * plain counts), the same as SubNavLayout and the explorer rails. `sm`
      * (default) is flush with the rail's edges under a ruled title row; `md` is
      * the Documents surface's Workspace rail (the All documents mockup): items
@@ -14121,8 +14121,8 @@ export declare interface RadioOption<T extends string = string> {
     description?: string;
 }
 
-/** A rail's caption ("INITIATIVES 11"): 13px semibold uppercase, spaced. */
-export declare const RAIL_CAPTION = "text-[13px] font-semibold uppercase tracking-[0.06em]";
+/** A rail's caption ("INITIATIVES 11"): 12px semibold uppercase, spaced. */
+export declare const RAIL_CAPTION = "text-[12px] font-semibold uppercase tracking-[0.06em]";
 
 /** The selected row's fill. The 3px primary edge bar goes with it. */
 export declare const RAIL_CURRENT_FILL = "bg-primary/8";
@@ -14143,20 +14143,20 @@ export declare const RAIL_GROUP_LABEL = "text-[11px] font-semibold uppercase lea
 /** The default ink of a group heading. */
 export declare const RAIL_GROUP_LABEL_INK = "text-text-secondary";
 
-/** Padding that puts a group heading (20px caret box) on the same 40px pitch. */
-export declare const RAIL_GROUP_PAD_Y = "py-2.5";
+/** Padding that puts a group heading (20px caret box) on the same 36px pitch. */
+export declare const RAIL_GROUP_PAD_Y = "py-2";
 
 /** A count at an item's right edge ("Initiatives 3"): muted, tabular. */
-export declare const RAIL_ITEM_COUNT = "text-[13px] font-medium leading-5 tabular-nums text-text-tertiary";
+export declare const RAIL_ITEM_COUNT = "text-[12px] font-medium leading-4 tabular-nums text-text-tertiary";
 
-/** A rail item's label: 15px, medium weight, 22px line. */
-export declare const RAIL_ITEM_TEXT = "text-[15px] font-medium leading-[22px]";
+/** A rail item's label: 13px, medium weight, 20px line. */
+export declare const RAIL_ITEM_TEXT = "text-[13px] font-medium leading-5";
 
-/** Vertical padding that puts a one-line rail row on a 40px pitch (9 + 22 + 9). */
-export declare const RAIL_ROW_PAD_Y = "py-[9px]";
+/** Vertical padding that puts a one-line rail row on a 36px pitch (8 + 20 + 8). */
+export declare const RAIL_ROW_PAD_Y = "py-2";
 
 /** The one-line row pitch in px, for hosts that cap a list by row count. */
-export declare const RAIL_ROW_PITCH = 40;
+export declare const RAIL_ROW_PITCH = 36;
 
 /** The disclosure caret every rail group heading wears: 14px, down when open. */
 export declare function RailCaretIcon({ open, className }: {
@@ -14296,15 +14296,15 @@ export declare type RailSelection = {
 
 /** Everything above, as one object — `railType.item`, `railType.groupLabel`… */
 export declare const railType: {
-    readonly item: "text-[15px] font-medium leading-[22px]";
-    readonly rowPadY: "py-[9px]";
-    readonly rowPitch: 40;
-    readonly itemCount: "text-[13px] font-medium leading-5 tabular-nums text-text-tertiary";
+    readonly item: "text-[13px] font-medium leading-5";
+    readonly rowPadY: "py-2";
+    readonly rowPitch: 36;
+    readonly itemCount: "text-[12px] font-medium leading-4 tabular-nums text-text-tertiary";
     readonly groupLabel: "text-[11px] font-semibold uppercase leading-4 tracking-wide";
     readonly groupLabelInk: "text-text-secondary";
     readonly groupCount: "text-[11px] font-medium leading-4 normal-case tracking-normal tabular-nums text-text-tertiary";
-    readonly groupPadY: "py-2.5";
-    readonly caption: "text-[13px] font-semibold uppercase tracking-[0.06em]";
+    readonly groupPadY: "py-2";
+    readonly caption: "text-[12px] font-semibold uppercase tracking-[0.06em]";
     readonly currentFill: "bg-primary/8";
 };
 
@@ -22255,6 +22255,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -22272,14 +22285,32 @@ declare module '@tiptap/core' {
 }
 
 
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
+    }
+}
+
+
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -22307,22 +22338,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -22350,23 +22368,5 @@ declare module '@tiptap/core' {
                 answeredAt?: string;
             }) => ReturnType;
         };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
     }
 }
