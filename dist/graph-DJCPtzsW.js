@@ -21,11 +21,11 @@ import { t as A } from "./InlineAlert-CRnIKeAF.js";
 import { t as j } from "./CardHeader-CsPhVpCm.js";
 import { t as M } from "./LogStream-J2cxfOVI.js";
 import { a as ee, o as N, s as P } from "./backdropTone-BF54k8gW.js";
-import { a as F, i as I, n as L, o as te, r as R, t as z } from "./MeterRow-DZmsGJZ1.js";
-import { t as ne } from "./SectionLabel-bcrhNYOr.js";
-import { t as B } from "./DropdownMenu-CHrQvZgc.js";
+import { a as F, i as I, n as L, o as R, r as z, t as B } from "./MeterRow-DZmsGJZ1.js";
+import { t as te } from "./SectionLabel-bcrhNYOr.js";
+import { t as ne } from "./DropdownMenu-CHrQvZgc.js";
 import { t as V } from "./StatusPill-C-aN2Pzz.js";
-import { r as re, t as H } from "./Text-Dl82j5s1.js";
+import { r as H, t as re } from "./Text-Dl82j5s1.js";
 import { t as ie } from "./Select-D3fGI8SO.js";
 import { t as ae } from "./Checkbox-Dftwml_V.js";
 import { t as oe } from "./Tooltip-af4BrR7T.js";
@@ -2262,7 +2262,7 @@ function _n(e, t, n, r) {
 			}
 			O.add(n), k.set(e, n);
 		}
-		let j = Math.max(w.length, ...[...k.values()].map((e) => e + 1), 1), M = r.labelledEdgeIds?.some((e) => m.some((t) => t.id === e && k.has(t.from))) ? 132 : 56, ee = T.length ? Math.max(...T.map((e) => x(e).width)) : 0, N = c + (ee ? ee + M : 0), P = (e) => [...w.filter((t) => E.get(t) === e), ...[...k].filter(([, t]) => t === e).map(([e]) => e)], F = [...Array(j).keys()].map((e) => Math.max(0, ...P(e).map((e) => x(e).height))), I = [...Array(j).keys()].map((e) => 32 + Math.max(1, ...P(e).map((e) => m.filter((t) => t.to === e).length)) * 24), L = F.reduce((e, t, n) => e + t + (n ? I[n] : 0), 56 + c), te = T.length === 0 && r.height && L > r.height && j > 2 ? F.reduce((e, t, n) => {
+		let j = Math.max(w.length, ...[...k.values()].map((e) => e + 1), 1), M = r.labelledEdgeIds?.some((e) => m.some((t) => t.id === e && k.has(t.from))) ? 132 : 56, ee = T.length ? Math.max(...T.map((e) => x(e).width)) : 0, N = c + (ee ? ee + M : 0), P = (e) => [...w.filter((t) => E.get(t) === e), ...[...k].filter(([, t]) => t === e).map(([e]) => e)], F = [...Array(j).keys()].map((e) => Math.max(0, ...P(e).map((e) => x(e).height))), I = [...Array(j).keys()].map((e) => 32 + Math.max(1, ...P(e).map((e) => m.filter((t) => t.to === e).length)) * 24), L = F.reduce((e, t, n) => e + t + (n ? I[n] : 0), 56 + c), R = T.length === 0 && r.height && L > r.height && j > 2 ? F.reduce((e, t, n) => {
 			let r = e.run + t + (n ? I[n] : 0);
 			return r < L / 2 ? {
 				row: n + 1,
@@ -2271,22 +2271,22 @@ function _n(e, t, n, r) {
 		}, {
 			row: 0,
 			run: 56
-		}).row || Math.ceil(j / 2) : j, R = (e) => e < te ? 0 : 1, z = F.reduce((e, t, n) => [...e, n === 0 || R(n) !== R(n - 1) ? 56 : e[n - 1] + F[n - 1] + I[n]], []), ne = Math.max(0, ...w.map((e) => x(e).width)), B = (e) => N + R(e) * (ne + Math.max(96, M)), V = [];
+		}).row || Math.ceil(j / 2) : j, z = (e) => e < R ? 0 : 1, B = F.reduce((e, t, n) => [...e, n === 0 || z(n) !== z(n - 1) ? 56 : e[n - 1] + F[n - 1] + I[n]], []), te = Math.max(0, ...w.map((e) => x(e).width)), ne = (e) => N + z(e) * (te + Math.max(96, M)), V = [];
 		for (let t of w) V.push({
 			id: pn(e.id, "node", t),
 			entityId: t,
-			x: B(E.get(t)),
-			y: z[E.get(t)],
+			x: ne(E.get(t)),
+			y: B[E.get(t)],
 			...x(t)
 		});
 		for (let [t, n] of k) V.push({
 			id: pn(e.id, "node", t),
 			entityId: t,
 			x: c,
-			y: z[n],
+			y: B[n],
 			...x(t)
 		});
-		let re = T.length === 0, H = new Map(V.map((e) => [e.entityId, e])), ie = /* @__PURE__ */ new Map();
+		let H = T.length === 0, re = new Map(V.map((e) => [e.entityId, e])), ie = /* @__PURE__ */ new Map();
 		p.push({
 			id: e.id,
 			title: e.title,
@@ -2297,13 +2297,13 @@ function _n(e, t, n, r) {
 			height: Math.max(...V.map((e) => e.y + e.height)) + c,
 			collapsedSourceCount: t.length - u.length,
 			sourceCount: l.size,
-			vertical: re,
+			vertical: H,
 			cyclicNodeIds: y,
 			nodes: V,
 			edges: m.map((t) => {
 				let n = ie.get(t.to) ?? 0;
 				ie.set(t.to, n + 1);
-				let r = H.get(t.from), i = H.get(t.to), a = r.x !== i.x, o = a ? "out-right" : "out-bottom", s = a ? "in-left" : "in-top";
+				let r = re.get(t.from), i = re.get(t.to), a = r.x !== i.x, o = a ? "out-right" : "out-bottom", s = a ? "in-left" : "in-top";
 				return {
 					id: pn(e.id, "edge", t.id),
 					entityId: t.id,
@@ -2885,7 +2885,7 @@ function In(e) {
 		j,
 		m,
 		M
-	]), R = K(() => {
+	]), z = K(() => {
 		if (!E) return null;
 		for (let e of k) {
 			let t = e.nodes.find((e) => e.entityId === E);
@@ -2897,19 +2897,19 @@ function In(e) {
 			};
 		}
 		return null;
-	}, [k, E]), z = Math.max(1, m.width - w), ne = W((e) => {
-		if (!R) return e;
-		let t = Math.max(e.zoom, Math.min(un, (z - 48) / R.width));
+	}, [k, E]), B = Math.max(1, m.width - w), te = W((e) => {
+		if (!z) return e;
+		let t = Math.max(e.zoom, Math.min(un, (B - 48) / z.width));
 		return {
-			x: z / 2 - (R.x + R.width / 2) * t,
-			y: m.height / 2 - (R.y + R.height / 2) * t,
+			x: B / 2 - (z.x + z.width / 2) * t,
+			y: m.height / 2 - (z.y + z.height / 2) * t,
 			zoom: t
 		};
 	}, [
-		R,
+		z,
 		m,
-		z
-	]), B = JSON.stringify([
+		B
+	]), ne = JSON.stringify([
 		m,
 		t.mode,
 		S.focusedEffortId,
@@ -2922,22 +2922,22 @@ function In(e) {
 		k.every((e) => e.nodes.every((e) => g.has(e.entityId)))
 	]);
 	G(() => {
-		if (y.current === B) return;
+		if (y.current === ne) return;
 		let e = y.current === null;
-		y.current = B;
+		y.current = ne;
 		let t = x.current && !S.focusedEffortId && S.overviewViewport;
 		if (x.current = S.focusedEffortId, t) {
 			s(t);
 			return;
 		}
-		e && S.canvasInitialized || (s(ne(L())), b.current = E ? `${E}\u0000${w}` : void 0, S.canvasInitialized || C({
+		e && S.canvasInitialized || (s(te(L())), b.current = E ? `${E}\u0000${w}` : void 0, S.canvasInitialized || C({
 			...S,
 			canvasInitialized: !0
 		}));
 	}, [
-		B,
-		L,
 		ne,
+		L,
+		te,
 		S,
 		C,
 		s,
@@ -2949,25 +2949,25 @@ function In(e) {
 			return;
 		}
 		let e = `${E}\u0000${w}`;
-		if (b.current === e || !R || y.current === null) return;
+		if (b.current === e || !z || y.current === null) return;
 		b.current = e;
-		let t = R.x * o.zoom + o.x, n = R.y * o.zoom + o.y;
-		t >= 0 && n >= 0 && t + R.width * o.zoom <= z && n + R.height * o.zoom <= m.height || s(ne(o));
+		let t = z.x * o.zoom + o.x, n = z.y * o.zoom + o.y;
+		t >= 0 && n >= 0 && t + z.width * o.zoom <= B && n + z.height * o.zoom <= m.height || s(te(o));
 	}, [
 		E,
-		R,
+		z,
 		o,
 		m,
-		z,
+		B,
 		w,
-		ne,
+		te,
 		s
 	]);
 	let V = (e) => C({
 		...S,
 		focusedEffortId: S.focusedEffortId === e ? null : e,
 		overviewViewport: S.focusedEffortId ? S.overviewViewport : o
-	}), re = new Map(r.map((e) => [e.id, e])), H = new Map(i.map((e) => [e.id, e])), ie = t.window.following, ae = new Set(ie ? t.activeEdgeIds : []), oe = new Set(t.failedEdgeIds ?? []), se = [], U = [];
+	}), H = new Map(r.map((e) => [e.id, e])), re = new Map(i.map((e) => [e.id, e])), ie = t.window.following, ae = new Set(ie ? t.activeEdgeIds : []), oe = new Set(t.failedEdgeIds ?? []), se = [], U = [];
 	for (let e of k) {
 		let n = JSON.stringify(["effort", e.id]), r = S.expandedSourceEfforts.includes(e.id);
 		se.push({
@@ -2987,7 +2987,7 @@ function In(e) {
 			data: {
 				title: e.title,
 				subtitle: e.subtitle,
-				live: ie && e.nodes.some((e) => re.get(e.entityId)?.status === "running"),
+				live: ie && e.nodes.some((e) => H.get(e.entityId)?.status === "running"),
 				sources: !S.focusedEffortId && (e.collapsedSourceCount > 0 || r) ? e.sourceCount : 0,
 				expanded: r,
 				focused: S.focusedEffortId === e.id,
@@ -3012,7 +3012,7 @@ function In(e) {
 			selected: a?.kind === "node" && a.id === r.entityId,
 			focusable: !1,
 			data: {
-				entity: re.get(r.entityId),
+				entity: H.get(r.entityId),
 				detail: t.details?.[r.entityId],
 				revisionId: a?.kind === "node" && a.id === r.entityId ? a.revisionId : void 0,
 				live: ie,
@@ -3021,7 +3021,7 @@ function In(e) {
 			}
 		});
 		for (let n of e.edges) {
-			let r = H.get(n.entityId), i = e.x + n.labelX, o = e.y + n.labelY, s = ae.has(r.id) && r.status === "running" && !r.endedAt, c = oe.has(r.id), u = r.label || r.relation.replaceAll("-", " "), d = t.edgeLabels?.[r.id] ?? (c ? "failed" : void 0);
+			let r = re.get(n.entityId), i = e.x + n.labelX, o = e.y + n.labelY, s = ae.has(r.id) && r.status === "running" && !r.endedAt, c = oe.has(r.id), u = r.label || r.relation.replaceAll("-", " "), d = t.edgeLabels?.[r.id] ?? (c ? "failed" : void 0);
 			U.push({
 				id: n.id,
 				type: "activity",
@@ -3079,7 +3079,7 @@ function In(e) {
 		"data-background": u,
 		"data-backdrop-ink": pe ? me === "night" ? "dark" : "light" : void 0,
 		children: [
-			pe && /* @__PURE__ */ X(te, {
+			pe && /* @__PURE__ */ X(R, {
 				...me === "night" ? F : I,
 				className: "absolute inset-0 -z-10",
 				"data-testid": "work-activity-ripple"
@@ -3931,7 +3931,7 @@ function rr({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 						"data-testid": `${a}-open-lab`,
 						children: "Open in Computer Lab"
 					}),
-					!!e.moreActions?.length && /* @__PURE__ */ X(B, {
+					!!e.moreActions?.length && /* @__PURE__ */ X(ne, {
 						trigger: /* @__PURE__ */ X("span", {
 							"aria-hidden": "true",
 							children: "…"
@@ -4905,7 +4905,7 @@ function Cr(e) {
 		groups: A,
 		footer: ee,
 		statusLabelOf: N
-	}), F = a?.kind === "node" ? r.find((e) => e.id === a.id) : void 0, I = a?.kind === "edge" ? i.find((e) => e.id === a.id && r.some((t) => t.id === e.fromId) && r.some((t) => t.id === e.toId)) : void 0, L = !!(F || I), { window: te, bounds: R, onWindowChange: z, onEarlier: ne } = o, B = o.detailsPlacement ?? "auto", V = B === "overlay" || B === "auto" && !m;
+	}), F = a?.kind === "node" ? r.find((e) => e.id === a.id) : void 0, I = a?.kind === "edge" ? i.find((e) => e.id === a.id && r.some((t) => t.id === e.fromId) && r.some((t) => t.id === e.toId)) : void 0, L = !!(F || I), { window: R, bounds: z, onWindowChange: B, onEarlier: te } = o, ne = o.detailsPlacement ?? "auto", V = ne === "overlay" || ne === "auto" && !m;
 	G(() => {
 		a && !L && s(null);
 	}, [
@@ -4915,14 +4915,14 @@ function Cr(e) {
 	]), G(() => {
 		a && l.current?.contains(document.activeElement) && document.activeElement instanceof HTMLElement && !document.activeElement.closest("[data-testid=\"activity-inspector\"]") && (d.current = document.activeElement);
 	}, [a]);
-	let re = q(!1);
+	let H = q(!1);
 	G(() => {
 		if (a) {
-			re.current = !0;
+			H.current = !0;
 			return;
 		}
-		if (!re.current) return;
-		re.current = !1;
+		if (!H.current) return;
+		H.current = !1;
 		let e = d.current;
 		e && requestAnimationFrame(() => {
 			let t = document.activeElement;
@@ -4939,17 +4939,17 @@ function Cr(e) {
 		let t = new ResizeObserver(([e]) => _(e.contentRect.height < Sr));
 		return t.observe(e), () => t.disconnect();
 	}, []);
-	let H = () => {
+	let re = () => {
 		s(null), requestAnimationFrame(() => {
 			d.current?.isConnected && d.current.focus();
 		});
 	}, ie = () => {
-		if (ne) {
-			ne();
+		if (te) {
+			te();
 			return;
 		}
-		let e = Math.max(6e4, te.end - te.start), t = Math.max(R.start, te.start - e);
-		z({
+		let e = Math.max(6e4, R.end - R.start), t = Math.max(z.start, R.start - e);
+		B({
 			start: t,
 			end: t + e,
 			following: !1
@@ -4966,7 +4966,7 @@ function Cr(e) {
 		"aria-label": "Shared work graph",
 		className: t("flex h-full min-h-0 min-w-0 flex-col bg-surface", e.className),
 		onKeyDown: (e) => {
-			e.key === "Escape" && a && (e.stopPropagation(), H());
+			e.key === "Escape" && a && (e.stopPropagation(), re());
 		},
 		children: [
 			o.title && /* @__PURE__ */ X(Vn, {
@@ -5035,25 +5035,25 @@ function Cr(e) {
 								children: [!U && /* @__PURE__ */ X(Ln, { live: o.window.following }), /* @__PURE__ */ X(n, {
 									size: "sm",
 									variant: "ghost",
-									disabled: te.start <= R.start,
+									disabled: R.start <= z.start,
 									onClick: ie,
 									children: "← Earlier work"
 								})]
 							})]
 						})
 					]
-				}), B !== "none" && L && (F && a?.kind === "node" ? /* @__PURE__ */ X(pr, {
+				}), ne !== "none" && L && (F && a?.kind === "node" ? /* @__PURE__ */ X(pr, {
 					node: F,
 					detail: o.details?.[F.id],
 					selection: a,
 					onSelectionChange: s,
-					onClose: H,
+					onClose: re,
 					onOpen: e.onOpen,
 					onReference: e.onReference,
 					className: me
 				}) : /* @__PURE__ */ X(de, {
 					title: I?.label || "Relationship",
-					onClose: H,
+					onClose: re,
 					className: me,
 					"data-testid": "activity-inspector",
 					children: /* @__PURE__ */ X(Kt, { ...e })
@@ -5713,7 +5713,7 @@ function ui({ records: e, edges: r, selectedKeys: i, onSelectionChange: a, onAsk
 		a,
 		F,
 		i
-	]), te = N.records.map((e) => {
+	]), R = N.records.map((e) => {
 		let t = Vr(e);
 		return {
 			id: t,
@@ -5731,13 +5731,13 @@ function ui({ records: e, edges: r, selectedKeys: i, onSelectionChange: a, onAsk
 				onToggle: () => L(t)
 			}
 		};
-	}), R = (e) => {
+	}), z = (e) => {
 		let t = P.get(e);
 		return {
 			x: t.x + 90,
 			y: t.y + ei
 		};
-	}, z = N.edges.filter((e) => e.source !== e.target).map((e) => ({
+	}, B = N.edges.filter((e) => e.source !== e.target).map((e) => ({
 		id: e.id,
 		type: "record",
 		source: e.source,
@@ -5745,12 +5745,12 @@ function ui({ records: e, edges: r, selectedKeys: i, onSelectionChange: a, onAsk
 		focusable: !1,
 		selectable: !1,
 		data: {
-			from: R(e.source),
-			to: R(e.target),
+			from: z(e.source),
+			to: z(e.target),
 			label: e.label,
 			related: Qr.test(e.label)
 		}
-	})), ne = `${j}:${N.records.map(Vr).join("|")}:${N.edges.map((e) => e.id).join("|")}`, B = ee.filter((e) => N.records.some((t) => t.type === e.value));
+	})), te = `${j}:${N.records.map(Vr).join("|")}:${N.edges.map((e) => e.id).join("|")}`, ne = ee.filter((e) => N.records.some((t) => t.type === e.value));
 	G(() => {
 		if (typeof document > "u") return;
 		let e = () => E(document.fullscreenElement === A.current);
@@ -5811,7 +5811,7 @@ function ui({ records: e, edges: r, selectedKeys: i, onSelectionChange: a, onAsk
 							w(t), d?.(t);
 						}
 					}),
-					/* @__PURE__ */ Z(H, {
+					/* @__PURE__ */ Z(re, {
 						className: "text-xs text-text-secondary",
 						"data-testid": `${m}-counts`,
 						children: [
@@ -5826,7 +5826,7 @@ function ui({ records: e, edges: r, selectedKeys: i, onSelectionChange: a, onAsk
 						align: "center",
 						className: "ml-auto",
 						children: [
-							/* @__PURE__ */ Z(H, {
+							/* @__PURE__ */ Z(re, {
 								className: "text-xs text-primary",
 								"aria-label": `${i.length} selected`,
 								children: [i.length, " selected"]
@@ -5854,20 +5854,20 @@ function ui({ records: e, edges: r, selectedKeys: i, onSelectionChange: a, onAsk
 					})
 				]
 			}),
-			D && /* @__PURE__ */ X(H, {
+			D && /* @__PURE__ */ X(re, {
 				role: "status",
 				className: "px-2 py-1 text-xs text-text-secondary",
 				children: "Full screen is unavailable in this browser."
 			}),
-			N.records.length ? !z.length && !b ? /* @__PURE__ */ X(v, {
+			N.records.length ? !B.length && !b ? /* @__PURE__ */ X(v, {
 				title: y,
 				testId: `${m}-unconnected`
 			}) : /* @__PURE__ */ X(h, {
 				gap: "none",
 				className: "relative min-h-64 flex-1 [--xy-background-color:var(--color-surface)]",
 				children: /* @__PURE__ */ X(we, { children: /* @__PURE__ */ Z(Ce, {
-					nodes: te,
-					edges: z,
+					nodes: R,
+					edges: B,
 					nodeTypes: oi,
 					edgeTypes: si,
 					fitView: !0,
@@ -5887,8 +5887,8 @@ function ui({ records: e, edges: r, selectedKeys: i, onSelectionChange: a, onAsk
 						gap: 22,
 						size: 1
 					}), /* @__PURE__ */ X(li, {
-						graphKey: ne,
-						legend: B,
+						graphKey: te,
+						legend: ne,
 						fullscreen: T,
 						onFullscreen: () => void V(),
 						testId: m
@@ -5902,9 +5902,63 @@ function ui({ records: e, edges: r, selectedKeys: i, onSelectionChange: a, onAsk
 		]
 	});
 }
-//#endregion
-//#region src/components/graph/org/useForceLayout.ts
-function di(e, t) {
+var di = 40, fi = (e, t, n) => Math.min(n, Math.max(t, e));
+function pi(e, t, n) {
+	let r = Math.max(1, e), i = Math.max(1, t), a = Math.max(1, n), o = Math.sqrt(i * a / r), s = fi(o * .7, 60, 240), c = -fi(o * o / 70, 150, 1500);
+	if (r > di) return {
+		linkDistance: s,
+		linkStiffness: .3,
+		charge: c,
+		collidePadding: 6,
+		xStrength: .1,
+		yStrength: .1,
+		jitter: 50
+	};
+	let l = .09, u = i / a;
+	return {
+		linkDistance: s,
+		linkStiffness: .03,
+		charge: c,
+		collidePadding: 18,
+		xStrength: fi(l / u, .01, .3),
+		yStrength: fi(l * u, .01, .3),
+		jitter: Math.min(s, 150)
+	};
+}
+var mi = (e) => 15 + e.influenceScore * 20;
+function hi({ people: e, relationships: t, departments: n, width: r, height: i, nodeRadiusOf: a = mi }) {
+	let o = pi(e.length, r, i), s = /* @__PURE__ */ new Map(), c = Math.max(1, Math.ceil(Math.sqrt(n.length))), l = Math.max(1, Math.ceil(n.length / c));
+	n.forEach((e, t) => {
+		let n = t % c, a = Math.floor(t / c);
+		s.set(e.name, {
+			x: (n + .5) * (r / c),
+			y: (a + .5) * (i / l)
+		});
+	});
+	let u = e.map((e) => {
+		let t = s.get(e.department) ?? {
+			x: r / 2,
+			y: i / 2
+		};
+		return {
+			...e,
+			x: t.x + (Math.random() - .5) * 2 * o.jitter,
+			y: t.y + (Math.random() - .5) * 2 * o.jitter
+		};
+	}), d = new Set(e.map((e) => e.id)), f = t.filter((e) => d.has(e.source) && d.has(e.target)).map((e) => ({
+		source: e.source,
+		target: e.target,
+		type: e.type,
+		strength: e.strength
+	}));
+	return {
+		sim: Pe(u).force("link", Me(f).id((e) => e.id).distance(o.linkDistance).strength((e) => e.strength * o.linkStiffness)).force("charge", Ne().strength(o.charge)).force("center", Ae(r / 2, i / 2)).force("collide", je().radius((e) => a(e) + o.collidePadding).iterations(2)).force("x", Fe().x((e) => s.get(e.department)?.x ?? r / 2).strength(o.xStrength)).force("y", Ie().y((e) => s.get(e.department)?.y ?? i / 2).strength(o.yStrength)).alpha(1).alphaDecay(.02),
+		simNodes: u,
+		simLinks: f,
+		params: o
+	};
+}
+function gi(e, t) {
 	let n = [];
 	for (let r of e) {
 		let e = t.get(r.source), i = t.get(r.target);
@@ -5917,7 +5971,7 @@ function di(e, t) {
 	}
 	return n;
 }
-function fi(e, t, n) {
+function _i(e, t, n) {
 	if (e.length === 0) return [];
 	let r = [...e].sort((e, t) => t.influenceScore - e.influenceScore), i = t / 2, a = n / 2, o = [
 		1,
@@ -5962,49 +6016,35 @@ function fi(e, t, n) {
 	}
 	return c;
 }
-function pi({ people: e, relationships: t, departments: n, width: r, height: i, layout: a = "force" }) {
-	let [o, s] = J([]), [c, l] = J([]), [u, d] = J(!1), f = q(null);
-	return G(() => {
+function vi({ people: e, relationships: t, departments: n, width: r, height: i, layout: a = "force", nodeRadiusOf: o }) {
+	let [s, c] = J([]), [l, u] = J([]), [d, f] = J(!1), [p, m] = J(!1), h = q(null), g = q(o);
+	return g.current = o, G(() => {
 		if (!e.length || !r || !i) return;
-		if (f.current?.stop(), f.current = null, a === "radial") {
-			let n = fi(e, r, i), a = new Map(n.map((e) => [e.id, e]));
-			s(n), l(di(t, a)), d(!0);
+		if (h.current?.stop(), h.current = null, a === "radial") {
+			let n = _i(e, r, i), a = new Map(n.map((e) => [e.id, e]));
+			c(n), u(gi(t, a)), f(!0), m(!0);
 			return;
 		}
-		d(!1);
-		let o = /* @__PURE__ */ new Map(), c = Math.ceil(Math.sqrt(n.length));
-		n.forEach((e, t) => {
-			let a = t % c, s = Math.floor(t / c);
-			o.set(e.name, {
-				x: (a + .5) * (r / c),
-				y: (s + .5) * (i / Math.ceil(n.length / c))
-			});
+		f(!1), m(!1);
+		let { sim: o, simNodes: s, simLinks: l } = hi({
+			people: e,
+			relationships: t,
+			departments: n,
+			width: r,
+			height: i,
+			nodeRadiusOf: g.current
 		});
-		let u = e.map((e) => {
-			let t = o.get(e.department) ?? {
-				x: r / 2,
-				y: i / 2
-			};
-			return {
-				...e,
-				x: t.x + (Math.random() - .5) * 100,
-				y: t.y + (Math.random() - .5) * 100
-			};
-		}), p = new Set(e.map((e) => e.id)), m = t.filter((e) => p.has(e.source) && p.has(e.target)).map((e) => ({
-			source: e.source,
-			target: e.target,
-			type: e.type,
-			strength: e.strength
-		})), h = Pe(u).force("link", Me(m).id((e) => e.id).distance(80).strength((e) => e.strength * .3)).force("charge", Ne().strength(-200)).force("center", Ae(r / 2, i / 2)).force("collide", je().radius((e) => 15 + e.influenceScore * 20)).force("x", Fe().x((e) => o.get(e.department)?.x ?? r / 2).strength(.1)).force("y", Ie().y((e) => o.get(e.department)?.y ?? i / 2).strength(.1)).alpha(1).alphaDecay(.02);
-		return h.on("tick", () => {
-			s([...u]), l(m.map((e) => ({
+		return o.on("tick", () => {
+			o.alpha() < .05 && m(!0), c([...s]), u(l.map((e) => ({
 				source: e.source,
 				target: e.target,
 				type: e.type,
 				strength: e.strength
 			})));
-		}), h.on("end", () => d(!0)), f.current = h, () => {
-			h.stop();
+		}), o.on("end", () => {
+			m(!0), f(!0);
+		}), h.current = o, () => {
+			o.stop();
 		};
 	}, [
 		e,
@@ -6014,25 +6054,26 @@ function pi({ people: e, relationships: t, departments: n, width: r, height: i, 
 		i,
 		a
 	]), {
-		nodes: o,
-		links: c,
-		isDone: u
+		nodes: s,
+		links: l,
+		isDone: d,
+		isSettled: p
 	};
 }
 //#endregion
 //#region src/components/graph/org/graphInsights.ts
-var mi = {
+var yi = {
 	collaborates: "collaborates",
 	mentors: "mentors",
 	reports_to: "reports to",
 	expert_in_common: "shared expertise"
-}, hi = 2, gi = 2, _i = {
+}, bi = 2, xi = 2, Si = {
 	personMatches: [],
 	skillMatches: []
 };
-function vi(e, t) {
+function Ci(e, t) {
 	let n = t.trim().toLowerCase();
-	if (n.length < gi) return _i;
+	if (n.length < xi) return Si;
 	let r = e.filter((e) => e.name.toLowerCase().includes(n) || e.title.toLowerCase().includes(n) || e.department.toLowerCase().includes(n)).slice(0, 6), i = /* @__PURE__ */ new Map();
 	for (let t of e) for (let e of t.skills) {
 		if (!e.toLowerCase().includes(n)) continue;
@@ -6047,7 +6088,7 @@ function vi(e, t) {
 		})).sort((e, t) => t.personIds.length - e.personIds.length).slice(0, 4)
 	};
 }
-function yi(e) {
+function wi(e) {
 	let t = /* @__PURE__ */ new Map();
 	for (let n of e) {
 		let e = t.get(n.department);
@@ -6055,7 +6096,7 @@ function yi(e) {
 	}
 	return t;
 }
-function bi(e, t) {
+function Ti(e, t) {
 	let n = e.filter((e) => e.department === t), r = /* @__PURE__ */ new Map();
 	for (let e of n) for (let t of e.skills) r.set(t, (r.get(t) ?? 0) + 1);
 	let i = [...r.entries()].sort((e, t) => t[1] - e[1]).slice(0, 6), a = /* @__PURE__ */ new Map();
@@ -6073,13 +6114,13 @@ function bi(e, t) {
 		})).sort((e, t) => e.holderCount - t.holderCount).slice(0, 8)
 	};
 }
-function xi(e) {
+function Ei(e) {
 	return e.split(" ")[0] ?? e;
 }
-function Si(e) {
+function Di(e) {
 	return e ? e.split(",").map((e) => e.trim()).filter(Boolean) : [];
 }
-function Ci(e) {
+function Oi(e) {
 	let t = /* @__PURE__ */ new Map();
 	for (let n of e) for (let e of n.skills) {
 		let r = t.get(e);
@@ -6091,52 +6132,52 @@ function Ci(e) {
 		holderCount: t.length
 	}))).sort((e, t) => e.holderCount - t.holderCount || e.skill.localeCompare(t.skill)).slice(0, 16) };
 }
-var wi = "bus_factor", Ti = "/iq/work/findings";
-function Ei(e, t, n = Ti) {
+var ki = "bus_factor", Ai = "/iq/work/findings";
+function ji(e, t, n = Ai) {
 	return `${n}?${(t ? new URLSearchParams({
-		sweep: wi,
+		sweep: ki,
 		finding: t
 	}) : new URLSearchParams({
-		sweep: wi,
+		sweep: ki,
 		q: e
 	})).toString()}`;
 }
-function Di(e) {
+function Mi(e) {
 	let t = e.indexOf(":");
 	return t <= 0 || !e.slice(t + 1).trim().toLowerCase().includes("holder") ? null : e.slice(0, t).trim().toLowerCase();
 }
-function Oi(e) {
+function Ni(e) {
 	let t = /* @__PURE__ */ new Map();
 	for (let n of e) {
 		if (n.sweep !== "bus_factor" || n.entityType !== "skill") continue;
-		let e = Di(n.title);
+		let e = Mi(n.title);
 		!e || t.has(e) || t.set(e, n);
 	}
 	return t;
 }
-function ki(e, t) {
+function Pi(e, t) {
 	return e.get(t.trim().toLowerCase()) ?? null;
 }
-var Ai = 12, ji = 18;
-function Mi(e) {
+var Fi = 12, Ii = 18;
+function Li(e) {
 	return Number.isFinite(e) ? Math.max(0, Math.min(1, e)) : 0;
 }
-function Ni(e, t, n, r) {
-	return Ai + (e ? Mi(t) : r > 0 ? Mi(n / r) : 0) * ji;
+function Ri(e, t, n, r) {
+	return Fi + (e ? Li(t) : r > 0 ? Li(n / r) : 0) * Ii;
 }
-function Pi(e) {
+function zi(e) {
 	let t = /* @__PURE__ */ new Map(), n = (e) => t.set(e, (t.get(e) ?? 0) + 1);
 	for (let t of e) n(t.source), t.target !== t.source && n(t.target);
 	return t;
 }
-function Fi(e) {
+function Bi(e) {
 	let t = 0;
 	for (let n of e.values()) n > t && (t = n);
 	return t;
 }
 //#endregion
 //#region src/components/graph/org/presence.ts
-var Ii = {
+var Vi = {
 	office: {
 		fill: i("success"),
 		stroke: "var(--color-surface)",
@@ -6172,15 +6213,15 @@ var Ii = {
 		stroke: "var(--color-border)",
 		label: "No check-in"
 	}
-}, Li = [
+}, Hi = [
 	"pto",
 	"vacation",
 	"sick"
 ];
-function Ri(e, t) {
-	return t ? t === "office" ? e === "office" : t === "remote" ? e === "wfh" || e === "travel" : Li.includes(e) : !0;
+function Ui(e, t) {
+	return t ? t === "office" ? e === "office" : t === "remote" ? e === "wfh" || e === "travel" : Hi.includes(e) : !0;
 }
-var zi = {
+var Wi = {
 	collaborates: {
 		color: "var(--color-text-tertiary)",
 		label: "Collaborates"
@@ -6200,10 +6241,37 @@ var zi = {
 	}
 };
 //#endregion
+//#region src/components/graph/org/fitTransform.ts
+function Gi(e, t, n, r, i = 0) {
+	let a = Math.max(0, e.maxX - e.minX), o = Math.max(0, e.maxY - e.minY), s = Math.max(1, t.width - 2 * n), c = Math.max(1, t.height - 2 * n), l = [a > 0 ? s / a : Infinity, o > 0 ? c / o : Infinity], u = Math.max(i, Math.min(r, ...l)), d = (e.minX + e.maxX) / 2, f = (e.minY + e.maxY) / 2;
+	return {
+		x: t.width / 2 - d * u,
+		y: t.height / 2 - f * u,
+		scale: u
+	};
+}
+function Ki(e) {
+	return Math.ceil(e.length * 6 + 10);
+}
+function qi(e, t, n) {
+	if (e.length === 0) return null;
+	let r = Infinity, i = Infinity, a = -Infinity, o = -Infinity;
+	for (let s of e) {
+		let e = t(s.id), c = n?.has(s.id) ?? !1, l = c ? s.name : s.name.split(" ")[0] ?? "", u = Math.max(e, Ki(l) / 2);
+		r = Math.min(r, s.x - u), a = Math.max(a, s.x + u), i = Math.min(i, s.y - e - (c ? 18 : 0)), o = Math.max(o, s.y + e + 18);
+	}
+	return {
+		minX: r,
+		minY: i,
+		maxX: a,
+		maxY: o
+	};
+}
+//#endregion
 //#region src/components/graph/org/OrgGraphNode.tsx
-function Bi({ node: e, departments: t, isSelected: n, isHighlighted: r, onSelect: i, onHover: a, presenceFilter: o, showInfluence: s, degree: c, maxDegree: l }) {
-	let u = t.find((t) => t.name === e.department)?.color ?? "var(--color-text-tertiary)", d = Ni(s, e.influenceScore, c, l), f = e.presence ?? "unknown", p = Ii[f], m = r || n ? 1 : .3, h = Ri(f, o) ? m : .15, g = Math.max(2, d * .14), _ = Math.PI * .25, v = (d - g * .4) * Math.cos(_), y = (d - g * .4) * Math.sin(_);
-	function b(t) {
+function Ji({ node: e, departments: t, isSelected: n, isHighlighted: r, onSelect: i, onHover: a, presenceFilter: o, showInfluence: s, degree: c, maxDegree: l, showLabel: u = !0 }) {
+	let d = t.find((t) => t.name === e.department)?.color ?? "var(--color-text-tertiary)", f = Ri(s, e.influenceScore, c, l), p = e.name.split(" ")[0] ?? e.name, m = e.presence ?? "unknown", h = Vi[m], g = r || n ? 1 : .3, _ = Ui(m, o) ? g : .15, v = Math.max(2, f * .14), y = Math.PI * .25, b = (f - v * .4) * Math.cos(y), x = (f - v * .4) * Math.sin(y);
+	function S(t) {
 		(t.key === "Enter" || t.key === " " || t.key === "Spacebar") && (t.preventDefault(), i(e.id));
 	}
 	return /* @__PURE__ */ Z("g", {
@@ -6213,41 +6281,62 @@ function Bi({ node: e, departments: t, isSelected: n, isHighlighted: r, onSelect
 		onMouseLeave: () => a(null),
 		onFocus: () => a(e.id),
 		onBlur: () => a(null),
-		onKeyDown: b,
+		onKeyDown: S,
 		tabIndex: 0,
 		role: "button",
 		"aria-label": `${e.name} · ${e.title} · ${e.department}`,
 		"aria-pressed": n,
-		opacity: h,
+		opacity: _,
 		"data-person-id": e.id,
 		className: "cursor-pointer outline-none [&:focus-visible>circle.org-node-main]:stroke-[3]",
 		children: [
-			f === "wfh" && /* @__PURE__ */ X("circle", {
-				r: d + 3,
+			m === "wfh" && /* @__PURE__ */ X("circle", {
+				r: f + 3,
 				fill: "none",
-				stroke: Ii.wfh.fill,
+				stroke: Vi.wfh.fill,
 				strokeWidth: 1.5,
 				strokeDasharray: "4 3",
 				opacity: .5
 			}),
 			/* @__PURE__ */ X("circle", {
 				className: "org-node-main",
-				r: d,
-				fill: u,
+				r: f,
+				fill: d,
 				fillOpacity: n ? 1 : .125,
-				stroke: u,
+				stroke: d,
 				strokeWidth: n ? 3 : 2
 			}),
-			/* @__PURE__ */ X("text", {
-				y: d + 14,
-				textAnchor: "middle",
-				fontSize: 10,
-				fill: "var(--color-text-secondary)",
+			u && /* @__PURE__ */ Z("g", {
 				className: "pointer-events-none select-none",
-				children: e.name.split(" ")[0]
+				"data-org-label": "",
+				children: [/* @__PURE__ */ X("rect", {
+					x: -Ki(p) / 2,
+					y: f + 4,
+					width: Ki(p),
+					height: 14,
+					rx: 7,
+					fill: "var(--color-surface)",
+					fillOpacity: .85
+				}), /* @__PURE__ */ X("text", {
+					y: f + 14,
+					textAnchor: "middle",
+					fontSize: 10,
+					fill: "var(--color-text-secondary)",
+					children: p
+				})]
+			}),
+			n && /* @__PURE__ */ X("rect", {
+				x: -Ki(e.name) * .55,
+				y: -f - 19,
+				width: Ki(e.name) * 1.1,
+				height: 16,
+				rx: 8,
+				fill: "var(--color-surface)",
+				fillOpacity: .85,
+				className: "pointer-events-none"
 			}),
 			n && /* @__PURE__ */ X("text", {
-				y: -d - 6,
+				y: -f - 6,
 				textAnchor: "middle",
 				fontSize: 11,
 				fontWeight: 600,
@@ -6255,14 +6344,14 @@ function Bi({ node: e, departments: t, isSelected: n, isHighlighted: r, onSelect
 				className: "pointer-events-none",
 				children: e.name
 			}),
-			f !== "unknown" && /* @__PURE__ */ Z("g", {
-				transform: `translate(${v}, ${y})`,
+			m !== "unknown" && /* @__PURE__ */ Z("g", {
+				transform: `translate(${b}, ${x})`,
 				children: [/* @__PURE__ */ X("circle", {
-					r: g,
-					fill: p.stroke
+					r: v,
+					fill: h.stroke
 				}), /* @__PURE__ */ X("circle", {
-					r: g - 1,
-					fill: p.fill
+					r: v - 1,
+					fill: h.fill
 				})]
 			})
 		]
@@ -6270,8 +6359,8 @@ function Bi({ node: e, departments: t, isSelected: n, isHighlighted: r, onSelect
 }
 //#endregion
 //#region src/components/graph/org/OrgGraphEdge.tsx
-function Vi({ source: e, target: t, type: n, strength: r, isHighlighted: i, targetRadius: a, arrowMarkerId: o }) {
-	let s = zi[n], c = s?.color ?? "var(--color-border-emphasis)", l = i ? .8 : .2, u = n === "reports_to" ? 1.5 : 1 + r * 1.5, d = t.x ?? 0, f = t.y ?? 0;
+function Yi({ source: e, target: t, type: n, strength: r, isHighlighted: i, targetRadius: a, arrowMarkerId: o }) {
+	let s = Wi[n], c = s?.color ?? "var(--color-border-emphasis)", l = i ? .8 : .2, u = n === "reports_to" ? 1.5 : 1 + r * 1.5, d = t.x ?? 0, f = t.y ?? 0;
 	if (n === "reports_to") {
 		let n = (a ?? 12 + (t.influenceScore ?? 0) * 18) + 15 + 2, r = (t.x ?? 0) - (e.x ?? 0), i = (t.y ?? 0) - (e.y ?? 0), o = Math.sqrt(r * r + i * i);
 		o > n && (d = (t.x ?? 0) - r / o * n, f = (t.y ?? 0) - i / o * n);
@@ -6292,9 +6381,9 @@ function Vi({ source: e, target: t, type: n, strength: r, isHighlighted: i, targ
 }
 //#endregion
 //#region src/components/graph/org/OrgGraphTooltip.tsx
-var Hi = 220;
-function Ui({ node: e, departments: t, x: n, y: r, containerWidth: i, showInfluence: a }) {
-	let c = t.find((t) => t.name === e.department), l = Math.max(8, Math.min(n + 20, i - Hi - 20)), u = Math.max(r - 40, 10);
+var Xi = 220;
+function Zi({ node: e, departments: t, x: n, y: r, containerWidth: i, showInfluence: a }) {
+	let c = t.find((t) => t.name === e.department), l = Math.max(8, Math.min(n + 20, i - Xi - 20)), u = Math.max(r - 40, 10);
 	return /* @__PURE__ */ Z(o, {
 		role: "tooltip",
 		className: "pointer-events-none absolute z-[100] w-[220px] px-4 py-3 shadow-md",
@@ -6358,7 +6447,7 @@ function Ui({ node: e, departments: t, x: n, y: r, containerWidth: i, showInflue
 }
 //#endregion
 //#region src/components/graph/org/OrgGraphLegend.tsx
-var Wi = [
+var Qi = [
 	"office",
 	"wfh",
 	"travel",
@@ -6366,7 +6455,7 @@ var Wi = [
 	"vacation",
 	"sick"
 ];
-function Gi({ departments: e, filter: r, onFilter: i, presenceFilter: a, pinned: s = !1, className: c, "data-testid": l = "org-graph-legend" }) {
+function $i({ departments: e, filter: r, onFilter: i, presenceFilter: a, pinned: s = !1, className: c, "data-testid": l = "org-graph-legend" }) {
 	let [u, d] = J(!1);
 	return /* @__PURE__ */ Z(o, {
 		onMouseEnter: () => d(!0),
@@ -6408,7 +6497,7 @@ function Gi({ departments: e, filter: r, onFilter: i, presenceFilter: a, pinned:
 					gap: "none",
 					className: "mb-1.5 text-xs font-semibold text-text-primary",
 					children: "Relationships"
-				}), Object.entries(zi).map(([e, t]) => /* @__PURE__ */ Z(g, {
+				}), Object.entries(Wi).map(([e, t]) => /* @__PURE__ */ Z(g, {
 					gap: "xs",
 					wrap: !1,
 					className: "mb-[3px]",
@@ -6447,14 +6536,14 @@ function Gi({ departments: e, filter: r, onFilter: i, presenceFilter: a, pinned:
 						className: "mb-[5px] text-xs font-semibold text-text-primary",
 						children: "Presence today"
 					}),
-					Wi.map((e) => /* @__PURE__ */ Z(g, {
+					Qi.map((e) => /* @__PURE__ */ Z(g, {
 						gap: "xs",
 						wrap: !1,
 						className: "mb-[3px]",
 						children: [/* @__PURE__ */ X(O, {
-							color: Ii[e].fill,
+							color: Vi[e].fill,
 							size: "xs"
-						}), /* @__PURE__ */ X("span", { children: Ii[e].label })]
+						}), /* @__PURE__ */ X("span", { children: Vi[e].label })]
 					}, e)),
 					/* @__PURE__ */ Z(g, {
 						gap: "xs",
@@ -6475,7 +6564,7 @@ function Gi({ departments: e, filter: r, onFilter: i, presenceFilter: a, pinned:
 }
 //#endregion
 //#region src/components/graph/org/focusOrgGraph.ts
-function Ki(e, t) {
+function ea(e, t) {
 	let n = [...e].sort((e, t) => t.strength - e.strength), r = /* @__PURE__ */ new Map(), i = [];
 	for (let e of n) {
 		let n = r.get(e.source) ?? 0, a = r.get(e.target) ?? 0;
@@ -6483,9 +6572,9 @@ function Ki(e, t) {
 	}
 	return i;
 }
-function qi(e, t, n, { hops: r = 1, minStrength: i = 0, topK: a } = {}) {
+function ta(e, t, n, { hops: r = 1, minStrength: i = 0, topK: a } = {}) {
 	let o = new Set(e.map((e) => e.id)), s = t.filter((e) => e.strength >= i && o.has(e.source) && o.has(e.target));
-	a !== void 0 && (s = Ki(s, a));
+	a !== void 0 && (s = ea(s, a));
 	let c = [...n ?? []].filter((e) => o.has(e));
 	if (c.length === 0) {
 		let n = new Set(s);
@@ -6508,8 +6597,18 @@ function qi(e, t, n, { hops: r = 1, minStrength: i = 0, topK: a } = {}) {
 }
 //#endregion
 //#region src/components/graph/org/OrgGraph.tsx
-var Ji = .3, Yi = 3;
-function Xi({ people: e, relationships: n, departments: r, onPersonSelect: i, multiSelectIds: a, onToggleMultiSelect: o, spotlightIds: s, layout: c, presenceFilter: l, showInfluence: u = !1, legend: d = !0, controls: f = !0, focusIds: p, focusHops: m = 1, className: g, "aria-label": _ = "Org graph", "data-testid": v = "org-graph" }) {
+var na = .3, ra = 3, ia = 1.25, aa = 32, oa = 40;
+function sa(e, t) {
+	let n = zi(e);
+	if (t.size === 0) return n;
+	let r = 0;
+	return n.forEach((e, n) => {
+		t.has(n) || (r = Math.max(r, e));
+	}), r === 0 || t.forEach((e) => {
+		n.has(e) && n.set(e, Math.min(n.get(e) ?? 0, r));
+	}), n;
+}
+function ca({ people: e, relationships: n, departments: r, onPersonSelect: i, multiSelectIds: a, onToggleMultiSelect: o, spotlightIds: s, layout: c, presenceFilter: l, showInfluence: u = !1, legend: d = !0, controls: f = !0, focusIds: p, focusHops: m = 1, className: g, "aria-label": _ = "Org graph", "data-testid": v = "org-graph" }) {
 	let y = q(null), b = `org-arrow-${_e().replace(/:/g, "")}`, [x, S] = J({
 		width: 800,
 		height: 600
@@ -6533,7 +6632,7 @@ function Xi({ people: e, relationships: n, departments: r, onPersonSelect: i, mu
 		});
 		return t.observe(e), () => t.disconnect();
 	}, []);
-	let N = p ? [...p].sort().join("\0") : "", P = K(() => N ? qi(e, n, N.split("\0"), { hops: m }) : {
+	let N = p ? [...p].sort().join("\0") : "", P = K(() => N ? ta(e, n, N.split("\0"), { hops: m }) : {
 		people: e,
 		relationships: n
 	}, [
@@ -6541,31 +6640,73 @@ function Xi({ people: e, relationships: n, departments: r, onPersonSelect: i, mu
 		n,
 		N,
 		m
-	]), F = K(() => new Set(N ? N.split("\0").filter((e) => P.people.some((t) => t.id === e)) : []), [N, P]), I = K(() => D ? P.people.filter((e) => e.department === D) : P.people, [P, D]), { nodes: L, links: te } = pi({
+	]), F = K(() => new Set(N ? N.split("\0").filter((e) => P.people.some((t) => t.id === e)) : []), [N, P]), I = K(() => D ? P.people.filter((e) => e.department === D) : P.people, [P, D]), L = K(() => {
+		if (!D) return P.relationships;
+		let e = new Set(I.map((e) => e.id));
+		return P.relationships.filter((t) => e.has(t.source) && e.has(t.target));
+	}, [
+		P,
+		I,
+		D
+	]), R = K(() => {
+		let e = new Set(I.map((e) => e.id));
+		return sa(L.filter((t) => e.has(t.source) && e.has(t.target)), F);
+	}, [
+		I,
+		L,
+		F
+	]), z = K(() => Bi(R), [R]), { nodes: B, links: te, isSettled: ne } = vi({
 		people: I,
-		relationships: K(() => {
-			if (!D) return P.relationships;
-			let e = new Set(I.map((e) => e.id));
-			return P.relationships.filter((t) => e.has(t.source) && e.has(t.target));
-		}, [
-			P,
-			I,
-			D
-		]),
+		relationships: L,
 		departments: r,
 		width: x.width,
 		height: x.height,
-		layout: c
-	}), R = K(() => Pi(te.map((e) => ({
-		source: e.source.id,
-		target: e.target.id
-	}))), [te]), z = K(() => Fi(R), [R]), ne = W((e) => {
+		layout: c,
+		nodeRadiusOf: (e) => Ri(u, e.influenceScore, R.get(e.id) ?? 0, z)
+	}), V = q(!0), H = K(() => I.map((e) => e.id).sort().join("\0"), [I]), re = K(() => B.map((e) => e.id).sort().join("\0"), [B]), ie = q(H);
+	G(() => {
+		ie.current !== H && (ie.current = H, V.current = !0, A({
+			x: 0,
+			y: 0,
+			scale: 1
+		}));
+	}, [H]);
+	let ae = W(() => {
+		let e = qi(B, (e) => Ri(u, B.find((t) => t.id === e)?.influenceScore ?? 0, R.get(e) ?? 0, z), F);
+		return e ? Gi(e, x, aa, ia, na) : null;
+	}, [
+		B,
+		u,
+		R,
+		z,
+		F,
+		x
+	]);
+	G(() => {
+		if (!V.current || !ne || re !== H) return;
+		let e = ae();
+		e && A((t) => Math.abs(t.x - e.x) < .5 && Math.abs(t.y - e.y) < .5 && Math.abs(t.scale - e.scale) < .001 ? t : e);
+	}, [
+		ae,
+		ne,
+		re,
+		H
+	]);
+	let oe = W(() => {
+		V.current = !0;
+		let e = ae();
+		A(e ?? {
+			x: 0,
+			y: 0,
+			scale: 1
+		});
+	}, [ae]), se = W((e) => {
 		if (!e) return /* @__PURE__ */ new Set();
 		let t = /* @__PURE__ */ new Set([e]);
 		return te.forEach((n) => {
 			n.source.id === e && t.add(n.target.id), n.target.id === e && t.add(n.source.id);
 		}), t;
-	}, [te]), B = T ?? C, V = F.size > 0 ? /* @__PURE__ */ new Set([...s ?? [], ...F]) : s, re = !!V && V.size > 0, H = re ? /* @__PURE__ */ new Set([...V ?? [], ...Array.from(ne(B))]) : ne(B), ie = W((t) => {
+	}, [te]), U = T ?? C, ce = F.size > 0 ? /* @__PURE__ */ new Set([...s ?? [], ...F]) : s, le = !!ce && ce.size > 0, ue = le ? /* @__PURE__ */ new Set([...ce ?? [], ...Array.from(se(U))]) : se(U), de = W((t) => {
 		if (o) {
 			o(t);
 			return;
@@ -6579,24 +6720,22 @@ function Xi({ people: e, relationships: n, departments: r, onPersonSelect: i, mu
 		e,
 		i,
 		o
-	]), ae = W((e) => {
+	]), fe = W((e) => {
+		V.current = !1;
 		let t = e.deltaY > 0 ? .9 : 1.1;
-		A((e) => ({
-			...e,
-			scale: Math.max(Ji, Math.min(Yi, e.scale * t))
-		}));
-	}, []), oe = W((e) => {
-		(e.target === e.currentTarget || e.target.tagName === "svg") && (M(!0), ee.current = {
+		A((e) => la(e, Math.max(na, Math.min(ra, e.scale * t)), x));
+	}, [x]), pe = W((e) => {
+		(e.target === e.currentTarget || e.target.tagName === "svg") && (M(!0), V.current = !1, ee.current = {
 			x: e.clientX - k.x,
 			y: e.clientY - k.y
 		});
-	}, [k]), se = W((e) => {
+	}, [k]), me = W((e) => {
 		j && A((t) => ({
 			...t,
 			x: e.clientX - ee.current.x,
 			y: e.clientY - ee.current.y
 		}));
-	}, [j]), U = W(() => M(!1), []), ce = T ? L.find((e) => e.id === T) : null, le = (e, t) => Ni(u, t, R.get(e) ?? 0, z);
+	}, [j]), he = W(() => M(!1), []), ge = T ? B.find((e) => e.id === T) : null, Y = (e, t) => Ri(u, t, R.get(e) ?? 0, z);
 	return /* @__PURE__ */ Z(h, {
 		ref: y,
 		gap: "none",
@@ -6608,11 +6747,11 @@ function Xi({ people: e, relationships: n, departments: r, onPersonSelect: i, mu
 				height: x.height,
 				role: "group",
 				"aria-label": _,
-				onWheel: ae,
-				onMouseDown: oe,
-				onMouseMove: se,
-				onMouseUp: U,
-				onMouseLeave: U,
+				onWheel: fe,
+				onMouseDown: pe,
+				onMouseMove: me,
+				onMouseUp: he,
+				onMouseLeave: he,
 				className: j ? "cursor-grabbing" : "cursor-grab",
 				children: [/* @__PURE__ */ X("defs", { children: /* @__PURE__ */ X("marker", {
 					id: b,
@@ -6628,71 +6767,74 @@ function Xi({ people: e, relationships: n, departments: r, onPersonSelect: i, mu
 					})
 				}) }), /* @__PURE__ */ Z("g", {
 					transform: `translate(${k.x}, ${k.y}) scale(${k.scale})`,
-					children: [te.map((e) => /* @__PURE__ */ X(Vi, {
+					children: [te.map((e) => /* @__PURE__ */ X(Yi, {
 						source: e.source,
 						target: e.target,
 						type: e.type,
 						strength: e.strength,
-						targetRadius: le(e.target.id, e.target.influenceScore),
+						targetRadius: Y(e.target.id, e.target.influenceScore),
 						arrowMarkerId: b,
-						isHighlighted: !B || H.has(e.source.id) && H.has(e.target.id)
-					}, `${e.source.id}-${e.target.id}-${e.type}`)), L.map((e) => {
-						let t = a ? a.has(e.id) : C === e.id, n = re ? H.has(e.id) : !B || H.has(e.id);
-						return /* @__PURE__ */ X(Bi, {
+						isHighlighted: !U || ue.has(e.source.id) && ue.has(e.target.id)
+					}, `${e.source.id}-${e.target.id}-${e.type}`)), B.map((e) => {
+						let t = a ? a.has(e.id) : C === e.id, n = le ? ue.has(e.id) : !U || ue.has(e.id), i = n || t || B.length <= oa;
+						return /* @__PURE__ */ X(Ji, {
 							node: e,
 							departments: r,
 							isSelected: t,
 							isHighlighted: n,
-							onSelect: ie,
+							onSelect: de,
 							onHover: E,
 							presenceFilter: l,
 							showInfluence: u,
 							degree: R.get(e.id) ?? 0,
-							maxDegree: z
+							maxDegree: z,
+							showLabel: i
 						}, e.id);
 					})]
 				})]
 			}),
-			d && /* @__PURE__ */ X(Gi, {
+			d && /* @__PURE__ */ X($i, {
 				departments: r,
 				filter: D,
 				onFilter: O,
 				presenceFilter: l
 			}),
-			ce && /* @__PURE__ */ X(Ui, {
-				node: ce,
+			ge && /* @__PURE__ */ X(Zi, {
+				node: ge,
 				departments: r,
-				x: ce.x * k.scale + k.x,
-				y: ce.y * k.scale + k.y,
+				x: ge.x * k.scale + k.x,
+				y: ge.y * k.scale + k.y,
 				containerWidth: x.width,
 				showInfluence: u
 			}),
 			f && /* @__PURE__ */ X(ft, {
 				className: "absolute bottom-3 right-3",
 				zoom: k.scale,
-				minZoom: Ji,
-				maxZoom: Yi,
-				onZoomIn: () => A((e) => ({
-					...e,
-					scale: Math.min(Yi, e.scale * 1.2)
-				})),
-				onZoomOut: () => A((e) => ({
-					...e,
-					scale: Math.max(Ji, e.scale * .8)
-				})),
-				onFit: () => A({
-					x: 0,
-					y: 0,
-					scale: 1
-				}),
+				minZoom: na,
+				maxZoom: ra,
+				onZoomIn: () => {
+					V.current = !1, A((e) => la(e, Math.min(ra, e.scale * 1.2), x));
+				},
+				onZoomOut: () => {
+					V.current = !1, A((e) => la(e, Math.max(na, e.scale * .8), x));
+				},
+				onFit: oe,
 				"data-testid": `${v}-zoom`
 			})
 		]
 	});
 }
+function la(e, t, n) {
+	let r = n.width / 2, i = n.height / 2, a = t / e.scale;
+	return {
+		x: r - (r - e.x) * a,
+		y: i - (i - e.y) * a,
+		scale: t
+	};
+}
 //#endregion
 //#region src/components/graph/org/graphOverlay.tsx
-function Zi({ children: e, "aria-label": t, "data-testid": n }) {
+function ua({ children: e, "aria-label": t, "data-testid": n }) {
 	return /* @__PURE__ */ X(g, {
 		gap: "md",
 		align: "center",
@@ -6704,15 +6846,15 @@ function Zi({ children: e, "aria-label": t, "data-testid": n }) {
 		children: e
 	});
 }
-function Qi({ children: e, tone: n = "default", className: r }) {
-	return /* @__PURE__ */ X(ne, {
+function da({ children: e, tone: n = "default", className: r }) {
+	return /* @__PURE__ */ X(te, {
 		className: t("whitespace-nowrap", n === "warning" && "text-warning", r),
 		children: e
 	});
 }
 //#endregion
 //#region src/components/graph/org/GraphSearchBox.tsx
-function $i({ people: e, onPickPerson: n, onPickSkill: r, placeholder: i = "Find a person or skill…", className: a }) {
+function fa({ people: e, onPickPerson: n, onPickSkill: r, placeholder: i = "Find a person or skill…", className: a }) {
 	let [o, s] = J(""), [c, l] = J(!1), [u, d] = J(0), f = q(null), p = `graph-search-${_e().replace(/:/g, "")}`;
 	G(() => {
 		if (!c) return;
@@ -6721,7 +6863,7 @@ function $i({ people: e, onPickPerson: n, onPickSkill: r, placeholder: i = "Find
 		};
 		return document.addEventListener("mousedown", e), () => document.removeEventListener("mousedown", e);
 	}, [c]);
-	let { personMatches: m, skillMatches: g } = K(() => vi(e, o), [o, e]), y = m.length + g.length, b = o.trim().length > 0;
+	let { personMatches: m, skillMatches: g } = K(() => Ci(e, o), [o, e]), y = m.length + g.length, b = o.trim().length > 0;
 	function x(e) {
 		if (e < m.length) {
 			let t = m[e];
@@ -6779,7 +6921,7 @@ function $i({ people: e, onPickPerson: n, onPickSkill: r, placeholder: i = "Find
 						gap: "none",
 						className: "px-3 pb-1 pt-1.5",
 						role: "presentation",
-						children: /* @__PURE__ */ X(Qi, { children: "Skills" })
+						children: /* @__PURE__ */ X(da, { children: "Skills" })
 					}),
 					g.map((e, t) => {
 						let n = m.length + t;
@@ -6812,7 +6954,7 @@ function $i({ people: e, onPickPerson: n, onPickSkill: r, placeholder: i = "Find
 }
 //#endregion
 //#region src/components/graph/org/PersonDetailCard.tsx
-function ea(e) {
+function pa(e) {
 	let t = Date.parse(e);
 	if (Number.isNaN(t)) return e;
 	let n = Math.max(0, (Date.now() - t) / 1e3);
@@ -6822,7 +6964,7 @@ function ea(e) {
 		year: "numeric"
 	});
 }
-function ta({ person: e, evidence: r = [], loading: i = !1, error: a, onClose: l, onFocusPerson: u, onAsk: d, showInfluence: p = !1, formatTime: m = ea, askLabel: _ = (e) => `Ask agent about ${xi(e.name)} →`, className: v, "data-testid": y = "person-detail-card" }) {
+function ma({ person: e, evidence: r = [], loading: i = !1, error: a, onClose: l, onFocusPerson: u, onAsk: d, showInfluence: p = !1, formatTime: m = pa, askLabel: _ = (e) => `Ask agent about ${Ei(e.name)} →`, className: v, "data-testid": y = "person-detail-card" }) {
 	let S = K(() => e ? [...e.connections].filter((e) => e.otherPerson).sort((e, t) => t.strength - e.strength).slice(0, 8) : [], [e]), C = Math.max(...S.map((e) => e.strength), .001);
 	return /* @__PURE__ */ X(o, {
 		padding: "md",
@@ -6862,7 +7004,7 @@ function ta({ person: e, evidence: r = [], loading: i = !1, error: a, onClose: l
 					children: /* @__PURE__ */ X(f, { size: 14 })
 				})]
 			}), e && /* @__PURE__ */ Z(Y, { children: [
-				/* @__PURE__ */ X(re, {
+				/* @__PURE__ */ X(H, {
 					size: "sm",
 					items: [
 						p && `influence ${e.influenceScore.toFixed(2)}`,
@@ -6888,11 +7030,11 @@ function ta({ person: e, evidence: r = [], loading: i = !1, error: a, onClose: l
 						gap: "none",
 						children: S.map((e, t) => {
 							let n = e.otherPerson;
-							return /* @__PURE__ */ X(z, {
+							return /* @__PURE__ */ X(B, {
 								onClick: () => u(n.id),
 								title: `Add ${n.name} to selection`,
 								label: n.name,
-								note: mi[e.type] ?? e.type,
+								note: yi[e.type] ?? e.type,
 								meter: /* @__PURE__ */ X(x, {
 									value: e.strength / C,
 									tone: "info",
@@ -6934,7 +7076,7 @@ function ta({ person: e, evidence: r = [], loading: i = !1, error: a, onClose: l
 										children: ["×", e.mentionCount]
 									})
 								]
-							}), /* @__PURE__ */ X(re, {
+							}), /* @__PURE__ */ X(H, {
 								size: "xs",
 								items: [e.ingestedAt ? m(e.ingestedAt) : null]
 							})]
@@ -6954,13 +7096,13 @@ function ta({ person: e, evidence: r = [], loading: i = !1, error: a, onClose: l
 }
 //#endregion
 //#region src/components/graph/org/connectionPath.ts
-var na = {
+var ha = {
 	collaborates: "collaborates with",
 	mentors: "mentors",
 	reports_to: "reports to",
 	expert_in_common: "shares expertise with"
 };
-function ra(e, t, n, r) {
+function ga(e, t, n, r) {
 	if (n === r) return null;
 	let i = new Map(e.map((e) => [e.id, e]));
 	if (!i.has(n) || !i.has(r)) return null;
@@ -7009,9 +7151,9 @@ function ra(e, t, n, r) {
 }
 //#endregion
 //#region src/components/graph/org/ConnectionPathStrip.tsx
-function ia({ path: e, onHighlightPath: t }) {
+function _a({ path: e, onHighlightPath: t }) {
 	let r = e.length - 2;
-	return /* @__PURE__ */ Z(Zi, {
+	return /* @__PURE__ */ Z(ua, {
 		"aria-label": "Connection path",
 		"data-testid": "connection-path-strip",
 		children: [
@@ -7033,7 +7175,7 @@ function ia({ path: e, onHighlightPath: t }) {
 						className: "whitespace-nowrap text-[10px] text-text-tertiary",
 						children: [
 							"—",
-							na[t.viaType] ?? t.viaType,
+							ha[t.viaType] ?? t.viaType,
 							"→"
 						]
 					}), /* @__PURE__ */ X("span", {
@@ -7056,8 +7198,8 @@ function ia({ path: e, onHighlightPath: t }) {
 }
 //#endregion
 //#region src/components/graph/org/DepartmentChips.tsx
-function aa({ departments: e, people: t, activeDepartment: n, onToggle: r, className: i }) {
-	let a = K(() => yi(t), [t]);
+function va({ departments: e, people: t, activeDepartment: n, onToggle: r, className: i }) {
+	let a = K(() => wi(t), [t]);
 	return /* @__PURE__ */ X(g, {
 		gap: "xs",
 		align: "center",
@@ -7085,15 +7227,15 @@ function aa({ departments: e, people: t, activeDepartment: n, onToggle: r, class
 }
 //#endregion
 //#region src/components/graph/org/DepartmentInsightStrip.tsx
-function oa({ department: e, people: t, onFocusPerson: r, busFactorFindings: i, busFactorFindingsUnavailable: a, findingHref: o = Ei, onNavigate: s }) {
-	let { members: c, topSkills: l, atRisk: u } = K(() => e ? bi(t, e) : {
+function ya({ department: e, people: t, onFocusPerson: r, busFactorFindings: i, busFactorFindingsUnavailable: a, findingHref: o = ji, onNavigate: s }) {
+	let { members: c, topSkills: l, atRisk: u } = K(() => e ? Ti(t, e) : {
 		members: t,
 		topSkills: [],
-		...Ci(t)
+		...Oi(t)
 	}, [e, t]), d = (e) => (t) => {
 		!s || t.defaultPrevented || t.button !== 0 || t.metaKey || t.ctrlKey || t.shiftKey || t.altKey || (t.preventDefault(), s(e, t));
 	};
-	return /* @__PURE__ */ Z(Zi, {
+	return /* @__PURE__ */ Z(ua, {
 		"aria-label": e ? `${e} insight` : "Org-wide rare skills",
 		"data-testid": "department-insight-strip",
 		children: [
@@ -7112,7 +7254,7 @@ function oa({ department: e, people: t, onFocusPerson: r, busFactorFindings: i, 
 				wrap: !0,
 				as: "span",
 				className: "text-text-secondary",
-				children: [/* @__PURE__ */ X(Qi, { children: "Top skills" }), l.map(([e, t]) => /* @__PURE__ */ Z("span", {
+				children: [/* @__PURE__ */ X(da, { children: "Top skills" }), l.map(([e, t]) => /* @__PURE__ */ Z("span", {
 					className: "whitespace-nowrap",
 					children: [
 						e,
@@ -7133,11 +7275,11 @@ function oa({ department: e, people: t, onFocusPerson: r, busFactorFindings: i, 
 				align: "center",
 				wrap: !0,
 				as: "span",
-				children: [/* @__PURE__ */ X(Qi, {
+				children: [/* @__PURE__ */ X(da, {
 					tone: "warning",
 					children: "⚠ rare skills"
 				}), u.map(({ skill: e, holder: t, holderCount: a }) => {
-					let s = i ? ki(i, e) : void 0, c = s !== null, l = c ? o(e, s?.id) : "";
+					let s = i ? Pi(i, e) : void 0, c = s !== null, l = c ? o(e, s?.id) : "";
 					return /* @__PURE__ */ Z(g, {
 						gap: "none",
 						align: "center",
@@ -7152,9 +7294,9 @@ function oa({ department: e, people: t, onFocusPerson: r, busFactorFindings: i, 
 							children: [
 								e,
 								" · ",
-								xi(t.name)
+								Ei(t.name)
 							]
-						}), c ? /* @__PURE__ */ X(R, {
+						}), c ? /* @__PURE__ */ X(z, {
 							href: l,
 							onClick: d(l),
 							title: s ? `Open the bus-factor finding the sweep filed for ${e}` : `See the bus-factor finding for ${e}`,
@@ -7168,7 +7310,7 @@ function oa({ department: e, people: t, onFocusPerson: r, busFactorFindings: i, 
 					}, `${e}-${t.id}`);
 				})]
 			}),
-			u.length > 0 && a && /* @__PURE__ */ X(re, {
+			u.length > 0 && a && /* @__PURE__ */ X(H, {
 				size: "xs",
 				tone: "secondary",
 				items: ["Could not read the bus-factor sweep — showing every rare skill from the live graph instead."]
@@ -7177,4 +7319,4 @@ function oa({ department: e, people: t, onFocusPerson: r, busFactorFindings: i, 
 	});
 }
 //#endregion
-export { Vt as $, pi as A, pr as B, Fi as C, Si as D, Ci as E, Hr as F, Vn as G, cr as H, Ur as I, dn as J, Tn as K, Vr as L, zr as M, Rr as N, Ei as O, Br as P, Kt as Q, Lr as R, Oi as S, Re as St, Ni as T, rr as U, ar as V, Un as W, nn as X, gn as Y, en as Z, hi as _, Ye as _t, ra as a, gt as at, ki as b, Ve as bt, Xi as c, ut as ct, Ii as d, it as dt, It as et, zi as f, st as ft, wi as g, $e as gt, Ti as h, Ke as ht, na as i, Tt as it, ui as j, vi as k, qi as l, lt, mi as m, ot as mt, aa as n, Ot as nt, ta as o, ht as ot, Ri as p, at as pt, fn as q, ia as r, Dt as rt, $i as s, ft as st, oa as t, Pt as tt, Gi as u, ct as ut, Pi as v, ze as vt, yi as w, xi as x, Le as xt, bi as y, Be as yt, mr as z };
+export { en as $, Ci as A, Lr as B, Ni as C, Le as Ct, Oi as D, Ri as E, Rr as F, rr as G, pr as H, Br as I, Tn as J, Un as K, Hr as L, vi as M, ui as N, Di as O, zr as P, nn as Q, Ur as R, Ei as S, Ve as St, wi as T, ar as U, mr as V, cr as W, dn as X, fn as Y, gn as Z, ki as _, Ke as _t, ga as a, Dt as at, Ti as b, ze as bt, ca as c, ht as ct, Gi as d, lt as dt, Kt as et, Vi as f, ct as ft, Ai as g, ot as gt, yi as h, at as ht, ha as i, Ot as it, pi as j, ji as k, ta as l, ft as lt, Ui as m, st as mt, va as n, It as nt, ma as o, Tt as ot, Wi as p, it as pt, Vn as q, _a as r, Pt as rt, fa as s, gt as st, ya as t, Vt as tt, $i as u, ut, bi as v, $e as vt, Bi as w, Re as wt, Pi as x, Be as xt, zi as y, Ye as yt, Vr as z };

@@ -517,6 +517,8 @@ export declare interface AgentComposerDockProps {
     composerRef?: Ref<RichChatComposerHandle>;
     /** Accessible name of the dock region. Default "Agent composer". */
     label?: string;
+    /** Accessible name of the editor (the textbox) inside it. Default "Message". */
+    inputLabel?: string;
     /** On the dock. */
     className?: string;
     /** The dock's test id. Default `agent-composer-dock`. */
@@ -8462,6 +8464,25 @@ export declare interface FindingLike {
 
 export declare function firstName(full: string): string;
 
+export declare interface FitBounds {
+    minX: number;
+    minY: number;
+    maxX: number;
+    maxY: number;
+}
+
+/**
+ * The transform that centres `bounds` in a `size` canvas with `padding` px on
+ * every side, zoomed as far as fits but never past `maxZoom` (so two people do
+ * not become two giant circles) nor below `minZoom`. A zero-width or
+ * zero-height box (one person, or a row) fits on its other axis; an empty box
+ * gets `maxZoom`.
+ */
+export declare function fitTransform(bounds: FitBounds, size: {
+    width: number;
+    height: number;
+}, padding: number, maxZoom: number, minZoom?: number): ViewTransform;
+
 export declare const FLOATING_PANEL_ANCHORS: readonly FloatingPanelAnchor[];
 
 /** A small card pinned to a corner of the viewport — a table of contents, a mini-map. */
@@ -8620,6 +8641,21 @@ export declare interface ForceFailResponse {
     hint: string;
     at: string;
 }
+
+/**
+ * The simulation's forces for `count` people on a `width` × `height` canvas,
+ * so any drawn set fills the area without overlapping. The per-node share of
+ * the canvas, `spacing = √(area / count)`, sets the scale: links are ~0.7 of
+ * it and the charge grows with its square, so eleven people spread as far as
+ * fifty-six do instead of collapsing into a blob. For a small set (≤ 40)
+ * links go soft — a star of one person and ten neighbours otherwise stays a
+ * ring one link long — collide reserves the label band, and the x/y pulls are
+ * weighted by the aspect ratio so a wide canvas gets a wide layout. Larger
+ * sets keep the tight original packing: at 56 people on a typical canvas
+ * the numbers land where the original fixed tuning was (distance 80,
+ * charge −200, link stiffness 0.3, x/y 0.1).
+ */
+export declare function forceParamsFor(count: number, width: number, height: number): OrgForceParams;
 
 export declare interface ForkNodeData {
     type: 'fork';
@@ -12698,6 +12734,22 @@ declare type OnMessageFn_8 = (handler: (msg: GatewayMessage) => void) => () => v
 
 declare type OnMessageFn_9 = (handler: (msg: GatewayMessage) => void) => () => void;
 
+export declare interface OrgForceParams {
+    /** forceLink distance, px. */
+    linkDistance: number;
+    /** Multiplier on each relationship's strength for forceLink's stiffness. */
+    linkStiffness: number;
+    /** forceManyBody strength (negative = repel). */
+    charge: number;
+    /** Added to each node's radius for forceCollide — label room for small graphs. */
+    collidePadding: number;
+    /** forceX / forceY pull toward the department cell. */
+    xStrength: number;
+    yStrength: number;
+    /** Half-width of the random scatter around a department cell at start, px. */
+    jitter: number;
+}
+
 export declare function OrgGraph({ people, relationships, departments, onPersonSelect, multiSelectIds, onToggleMultiSelect, spotlightIds, layout, presenceFilter, showInfluence, legend, controls, focusIds, focusHops, className, 'aria-label': ariaLabel, 'data-testid': testId, }: OrgGraphProps): JSX.Element;
 
 export declare function OrgGraphLegend({ departments, filter, onFilter, presenceFilter, pinned, className, 'data-testid': testId, }: OrgGraphLegendProps): JSX.Element;
@@ -15978,6 +16030,13 @@ declare interface RichChatComposerProps {
      */
     onRequestLink?: (selectedText: string) => string | null | undefined;
     placeholder?: string;
+    /**
+     * Accessible name of the editor — `aria-label` on the contenteditable, which
+     * is always `role="textbox"` + `aria-multiline="true"`. The placeholder is
+     * not a name (it vanishes once text is typed), so a host whose page has
+     * more than one textbox should set this. Since 2.403.1.
+     */
+    inputLabel?: string;
     disabled?: boolean;
     /**
      * Slash commands the host understands. While the draft starts with one, the
@@ -20668,7 +20727,7 @@ declare interface UseActivityBusReturn {
      scope?: RefObject<HTMLElement | null> | undefined;
  }): void;
 
- export declare function useForceLayout({ people, relationships, departments, width, height, layout }: UseForceLayoutProps): UseForceLayoutReturn;
+ export declare function useForceLayout({ people, relationships, departments, width, height, layout, nodeRadiusOf }: UseForceLayoutProps): UseForceLayoutReturn;
 
  export declare interface UseForceLayoutProps {
      people: OrgGraphPerson[];
@@ -20677,6 +20736,13 @@ declare interface UseActivityBusReturn {
      width: number;
      height: number;
      layout?: LayoutMode;
+     /**
+      * The drawn radius of a person, so the collide force keeps each circle AND
+      * its label clear of its neighbours. Read when the simulation starts (a new
+      * function each render does not restart it). Default: the old
+      * influence-based radius, `15 + influence × 20`. Since 2.403.1.
+      */
+     nodeRadiusOf?: (person: OrgGraphPerson) => number;
  }
 
  export declare interface UseForceLayoutReturn {
@@ -20688,6 +20754,12 @@ declare interface UseActivityBusReturn {
          strength: number;
      }>;
      isDone: boolean;
+     /**
+      * True once the layout has visibly settled (force: alpha below
+      * `SETTLED_ALPHA`; radial: immediately) — earlier than `isDone`, which waits
+      * for d3's alphaMin. The moment to frame the viewport. Since 2.403.1.
+      */
+     isSettled: boolean;
  }
 
  export declare function useFriends({ idToken }: UseFriendsOptions): UseFriendsReturn;
@@ -22038,6 +22110,13 @@ declare interface UseActivityBusReturn {
       className?: string;
       children: React.ReactNode;
       'data-testid'?: string;
+  }
+
+  /** The SVG group's pan and zoom: screen = world × scale + (x, y). */
+  export declare interface ViewTransform {
+      x: number;
+      y: number;
+      scale: number;
   }
 
   /**
@@ -23637,29 +23716,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
@@ -23673,16 +23729,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -23709,6 +23755,39 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

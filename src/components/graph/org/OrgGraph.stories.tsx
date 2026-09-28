@@ -55,6 +55,25 @@ type Story = StoryObj<typeof meta>;
  *  relationship line styles and filters on click. Hover a node for its card. */
 export const Default: Story = {};
 
+// The portal's full org size — the count the large-graph forces are tuned for.
+const PEOPLE_56: GraphPerson[] = Array.from({ length: 56 }, (_, i) => ({
+  ...PEOPLE[i % PEOPLE.length]!,
+  id: `q-${i + 1}`,
+  department: DEPARTMENTS[i % DEPARTMENTS.length]!.name,
+  influenceScore: ((i * 37) % 100) / 100,
+}));
+const RELATIONSHIPS_56: GraphRelationship[] = PEOPLE_56.flatMap((p, i) => [
+  { source: p.id, target: PEOPLE_56[(i + 6) % 56]!.id, type: TYPES[i % 4]!, strength: 0.4 + ((i * 13) % 60) / 100 },
+  { source: p.id, target: PEOPLE_56[(i + 1) % 56]!.id, type: 'collaborates' as const, strength: 0.5 },
+]);
+
+/** Fifty-six people — the whole org at the size the original tuning was for;
+ *  the forces here stay where they were (link 80, charge −200). */
+export const Default56: Story = {
+  name: 'Default (56)',
+  args: { people: PEOPLE_56, relationships: RELATIONSHIPS_56 },
+};
+
 /** Radial rings, most influential in the centre. */
 export const Radial: Story = { args: { layout: 'radial', showInfluence: true } };
 
@@ -88,3 +107,14 @@ export const PresenceFilter: Story = { args: { presenceFilter: 'remote' } };
 /** Focused on one person: Vera, the people she is directly connected to and
  *  the lines among them — the `/iq/search?selection=person:<id>` view. */
 export const FocusedOnOnePerson: Story = { args: { focusIds: ['p-1'] } };
+
+/** The smallest focused drawing: two people and the line between them. The
+ *  fit stops at 125%, so they stay people-sized in a wide canvas. */
+export const FocusedTwoPeople: Story = {
+  name: 'Focused, two people',
+  args: {
+    people: PEOPLE.slice(0, 2),
+    relationships: [{ source: 'p-1', target: 'p-2', type: 'mentors', strength: 0.8 }],
+    focusIds: ['p-1'],
+  },
+};

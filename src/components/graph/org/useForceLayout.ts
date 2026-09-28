@@ -25,12 +25,145 @@ export interface UseForceLayoutProps {
   width: number;
   height: number;
   layout?: LayoutMode;
+  /**
+   * The drawn radius of a person, so the collide force keeps each circle AND
+   * its label clear of its neighbours. Read when the simulation starts (a new
+   * function each render does not restart it). Default: the old
+   * influence-based radius, `15 + influence × 20`. Since 2.403.1.
+   */
+  nodeRadiusOf?: (person: GraphPerson) => number;
 }
 
 export interface UseForceLayoutReturn {
   nodes: GraphNode[];
   links: Array<{ source: GraphNode; target: GraphNode; type: string; strength: number }>;
   isDone: boolean;
+  /**
+   * True once the layout has visibly settled (force: alpha below
+   * `SETTLED_ALPHA`; radial: immediately) — earlier than `isDone`, which waits
+   * for d3's alphaMin. The moment to frame the viewport. Since 2.403.1.
+   */
+  isSettled: boolean;
+}
+
+// ── Force parameters ─────────────────────────────────────────────────────────
+
+/** Vertical room a node's first-name label needs below its circle (10px text + gap). */
+export const ORG_LABEL_BAND = 18;
+/** Above this many people the forces keep their original, 56-person tuning. */
+const LARGE_GRAPH = 40;
+/** Alpha below which the force layout counts as settled for framing. */
+export const SETTLED_ALPHA = 0.05;
+
+export interface OrgForceParams {
+  /** forceLink distance, px. */
+  linkDistance: number;
+  /** Multiplier on each relationship's strength for forceLink's stiffness. */
+  linkStiffness: number;
+  /** forceManyBody strength (negative = repel). */
+  charge: number;
+  /** Added to each node's radius for forceCollide — label room for small graphs. */
+  collidePadding: number;
+  /** forceX / forceY pull toward the department cell. */
+  xStrength: number;
+  yStrength: number;
+  /** Half-width of the random scatter around a department cell at start, px. */
+  jitter: number;
+}
+
+const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+
+/**
+ * The simulation's forces for `count` people on a `width` × `height` canvas,
+ * so any drawn set fills the area without overlapping. The per-node share of
+ * the canvas, `spacing = √(area / count)`, sets the scale: links are ~0.7 of
+ * it and the charge grows with its square, so eleven people spread as far as
+ * fifty-six do instead of collapsing into a blob. For a small set (≤ 40)
+ * links go soft — a star of one person and ten neighbours otherwise stays a
+ * ring one link long — collide reserves the label band, and the x/y pulls are
+ * weighted by the aspect ratio so a wide canvas gets a wide layout. Larger
+ * sets keep the tight original packing: at 56 people on a typical canvas
+ * the numbers land where the original fixed tuning was (distance 80,
+ * charge −200, link stiffness 0.3, x/y 0.1).
+ */
+export function forceParamsFor(count: number, width: number, height: number): OrgForceParams {
+  const n = Math.max(1, count);
+  const w = Math.max(1, width);
+  const h = Math.max(1, height);
+  const spacing = Math.sqrt((w * h) / n);
+  const linkDistance = clamp(spacing * 0.7, 60, 240);
+  const charge = -clamp((spacing * spacing) / 70, 150, 1500);
+  if (n > LARGE_GRAPH) {
+    return { linkDistance, linkStiffness: 0.3, charge, collidePadding: 6, xStrength: 0.1, yStrength: 0.1, jitter: 50 };
+  }
+  // The long axis pulls weaker and the short axis harder, by the aspect
+  // ratio, so the set takes the canvas's shape rather than a circle.
+  const K = 0.09;
+  const aspect = w / h;
+  return {
+    linkDistance,
+    // Softer links let the charge open a star (one person, ten neighbours)
+    // into the canvas instead of holding it to a ring of one link length.
+    linkStiffness: 0.03,
+    charge,
+    collidePadding: ORG_LABEL_BAND,
+    xStrength: clamp(K / aspect, 0.01, 0.3),
+    yStrength: clamp(K * aspect, 0.01, 0.3),
+    jitter: Math.min(linkDistance, 150),
+  };
+}
+
+const defaultRadiusOf = (p: GraphPerson) => 15 + p.influenceScore * 20;
+
+/**
+ * The force simulation for a drawn set, built but not yet ticking in any
+ * particular way — the hook animates it; a test can `stop()` it and `tick(n)`.
+ * Internal to the org graph (not on the barrel).
+ */
+export function createOrgSimulation({
+  people, relationships, departments, width, height, nodeRadiusOf = defaultRadiusOf,
+}: Omit<UseForceLayoutProps, 'layout'>) {
+  const params = forceParamsFor(people.length, width, height);
+  const deptCenters = new Map<string, { x: number; y: number }>();
+  const cols = Math.max(1, Math.ceil(Math.sqrt(departments.length)));
+  const rows = Math.max(1, Math.ceil(departments.length / cols));
+  departments.forEach((dept, i) => {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    deptCenters.set(dept.name, {
+      x: (col + 0.5) * (width / cols),
+      y: (row + 0.5) * (height / rows),
+    });
+  });
+
+  const simNodes: GraphNode[] = people.map(p => {
+    const center = deptCenters.get(p.department) ?? { x: width / 2, y: height / 2 };
+    return {
+      ...p,
+      x: center.x + (Math.random() - 0.5) * 2 * params.jitter,
+      y: center.y + (Math.random() - 0.5) * 2 * params.jitter,
+    };
+  });
+
+  const peopleIds = new Set(people.map(p => p.id));
+  const simLinks: GraphLink[] = relationships
+    .filter(r => peopleIds.has(r.source) && peopleIds.has(r.target))
+    .map(r => ({ source: r.source, target: r.target, type: r.type, strength: r.strength }));
+
+  const sim = forceSimulation<GraphNode>(simNodes)
+    .force('link', forceLink<GraphNode, SimulationLinkDatum<GraphNode>>(simLinks as SimulationLinkDatum<GraphNode>[])
+      .id((d) => d.id)
+      .distance(params.linkDistance)
+      .strength((d) => (d as unknown as GraphLink).strength * params.linkStiffness))
+    .force('charge', forceManyBody<GraphNode>().strength(params.charge))
+    .force('center', forceCenter(width / 2, height / 2))
+    .force('collide', forceCollide<GraphNode>().radius(d => nodeRadiusOf(d) + params.collidePadding).iterations(2))
+    .force('x', forceX<GraphNode>().x(d => deptCenters.get(d.department)?.x ?? width / 2).strength(params.xStrength))
+    .force('y', forceY<GraphNode>().y(d => deptCenters.get(d.department)?.y ?? height / 2).strength(params.yStrength))
+    .alpha(1)
+    .alphaDecay(0.02);
+
+  return { sim, simNodes, simLinks, params };
 }
 
 // ── Static layout helpers ────────────────────────────────────────────────────
@@ -83,11 +216,14 @@ function radialNodes(people: GraphPerson[], width: number, height: number): Grap
 
 // ── Hook ─────────────────────────────────────────────────────────────────────
 
-export function useForceLayout({ people, relationships, departments, width, height, layout = 'force' }: UseForceLayoutProps): UseForceLayoutReturn {
+export function useForceLayout({ people, relationships, departments, width, height, layout = 'force', nodeRadiusOf }: UseForceLayoutProps): UseForceLayoutReturn {
   const [nodes, setNodes] = useState<GraphNode[]>([]);
   const [links, setLinks] = useState<Array<{ source: GraphNode; target: GraphNode; type: string; strength: number }>>([]);
   const [isDone, setIsDone] = useState(false);
+  const [isSettled, setIsSettled] = useState(false);
   const simRef = useRef<Simulation<GraphNode, SimulationLinkDatum<GraphNode>> | null>(null);
+  const radiusRef = useRef(nodeRadiusOf);
+  radiusRef.current = nodeRadiusOf;
 
   useEffect(() => {
     if (!people.length || !width || !height) return;
@@ -102,51 +238,19 @@ export function useForceLayout({ people, relationships, departments, width, heig
       setNodes(staticNodes);
       setLinks(buildLinks(relationships, nodeMap));
       setIsDone(true);
+      setIsSettled(true);
       return;
     }
 
-    // Force layout (default)
+    // Force layout (default) — forces scaled to the drawn count and canvas.
     setIsDone(false);
-    const deptCenters = new Map<string, { x: number; y: number }>();
-    const cols = Math.ceil(Math.sqrt(departments.length));
-    departments.forEach((dept, i) => {
-      const col = i % cols;
-      const row = Math.floor(i / cols);
-      deptCenters.set(dept.name, {
-        x: (col + 0.5) * (width / cols),
-        y: (row + 0.5) * (height / Math.ceil(departments.length / cols)),
-      });
+    setIsSettled(false);
+    const { sim, simNodes, simLinks } = createOrgSimulation({
+      people, relationships, departments, width, height, nodeRadiusOf: radiusRef.current,
     });
-
-    const simNodes: GraphNode[] = people.map(p => {
-      const center = deptCenters.get(p.department) ?? { x: width / 2, y: height / 2 };
-      return {
-        ...p,
-        x: center.x + (Math.random() - 0.5) * 100,
-        y: center.y + (Math.random() - 0.5) * 100,
-      };
-    });
-
-    const peopleIds = new Set(people.map(p => p.id));
-
-    const simLinks: GraphLink[] = relationships
-      .filter(r => peopleIds.has(r.source) && peopleIds.has(r.target))
-      .map(r => ({ source: r.source, target: r.target, type: r.type, strength: r.strength }));
-
-    const sim = forceSimulation<GraphNode>(simNodes)
-      .force('link', forceLink<GraphNode, SimulationLinkDatum<GraphNode>>(simLinks as SimulationLinkDatum<GraphNode>[])
-        .id((d) => d.id)
-        .distance(80)
-        .strength((d) => (d as unknown as GraphLink).strength * 0.3))
-      .force('charge', forceManyBody<GraphNode>().strength(-200))
-      .force('center', forceCenter(width / 2, height / 2))
-      .force('collide', forceCollide<GraphNode>().radius(d => 15 + d.influenceScore * 20))
-      .force('x', forceX<GraphNode>().x(d => deptCenters.get(d.department)?.x ?? width / 2).strength(0.1))
-      .force('y', forceY<GraphNode>().y(d => deptCenters.get(d.department)?.y ?? height / 2).strength(0.1))
-      .alpha(1)
-      .alphaDecay(0.02);
 
     sim.on('tick', () => {
+      if (sim.alpha() < SETTLED_ALPHA) setIsSettled(true);
       setNodes([...simNodes]);
       setLinks(simLinks.map(l => ({
         source: l.source as GraphNode,
@@ -156,11 +260,11 @@ export function useForceLayout({ people, relationships, departments, width, heig
       })));
     });
 
-    sim.on('end', () => setIsDone(true));
+    sim.on('end', () => { setIsSettled(true); setIsDone(true); });
 
     simRef.current = sim;
     return () => { sim.stop(); };
   }, [people, relationships, departments, width, height, layout]);
 
-  return { nodes, links, isDone };
+  return { nodes, links, isDone, isSettled };
 }

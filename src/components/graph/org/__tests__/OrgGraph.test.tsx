@@ -65,11 +65,12 @@ describe('OrgGraph', () => {
 
   it('zooms from the cluster and resets with fit', () => {
     render(<OrgGraph {...base} />);
-    expect(screen.getByLabelText('Zoom 100%')).toBeInTheDocument();
+    // Four people fit well inside 800×600, so the fit stops at its 125% cap.
+    expect(screen.getByLabelText('Zoom 125%')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Zoom in' }));
-    expect(screen.getByLabelText('Zoom 120%')).toBeInTheDocument();
+    expect(screen.getByLabelText('Zoom 150%')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Fit to view' }));
-    expect(screen.getByLabelText('Zoom 100%')).toBeInTheDocument();
+    expect(screen.getByLabelText('Zoom 125%')).toBeInTheDocument();
   });
 
   it('renders the animated force layout without throwing', () => {
@@ -85,5 +86,54 @@ describe('OrgGraph', () => {
     expect(screen.getByRole('button', { name: /^Aisha Bello/ })).toHaveAttribute('opacity', '1');
     expect(screen.getByRole('button', { name: /^Hiro Tanaka/ })).toHaveAttribute('opacity', '0.3');
     expect(document.querySelectorAll('line[data-relationship]')).toHaveLength(1);
+  });
+
+  it('fits the viewport to a focused set: centred, inside the canvas, zoom capped', () => {
+    render(<OrgGraph {...base} focusIds={['p-1']} />);
+    const group = document.querySelector('svg[aria-label="Org graph"] > g')!;
+    const m = /translate\(([-\d.e]+), ([-\d.e]+)\) scale\(([-\d.e]+)\)/.exec(group.getAttribute('transform')!)!;
+    const [tx, ty, k] = [Number(m[1]), Number(m[2]), Number(m[3])];
+    expect(k).toBeGreaterThan(0.3);
+    expect(k).toBeLessThanOrEqual(1.25);
+    expect(tx !== 0 || ty !== 0 || k !== 1).toBe(true);
+    const drawn = screen.getAllByRole('button', { name: /·/ });
+    expect(drawn).toHaveLength(3); // Vera + Nora + Hiro
+    const screenPts = drawn.map((el) => {
+      const p = /translate\(([-\d.e]+), ([-\d.e]+)\)/.exec(el.getAttribute('transform')!)!;
+      return { x: Number(p[1]) * k + tx, y: Number(p[2]) * k + ty };
+    });
+    for (const pt of screenPts) {
+      expect(pt.x).toBeGreaterThan(32);
+      expect(pt.x).toBeLessThan(800 - 32);
+      expect(pt.y).toBeGreaterThan(32);
+      expect(pt.y).toBeLessThan(600 - 32);
+    }
+    // The drawing is centred horizontally on the canvas (labels widen it evenly).
+    const xs = screenPts.map(p => p.x);
+    expect((Math.min(...xs) + Math.max(...xs)) / 2).toBeCloseTo(400, -1);
+  });
+
+  it('does not draw the focus as the one big circle when sizing by connections', () => {
+    render(<OrgGraph {...base} focusIds={['p-1']} />);
+    const r = (name: RegExp) => Number(screen.getByRole('button', { name }).querySelector('circle.org-node-main')!.getAttribute('r'));
+    // Vera touches all three lines; Nora, her best-connected neighbour, two.
+    expect(r(/^Vera Green/)).toBe(r(/^Nora Chang/));
+    // With influence sizing the host asked for, influence decides.
+    cleanup();
+    render(<OrgGraph {...base} focusIds={['p-1']} showInfluence />);
+    expect(r(/^Vera Green/)).toBeGreaterThan(r(/^Nora Chang/));
+  });
+
+  it('draws each first name on a pill, and "Fit to view" re-fits after a pan', () => {
+    render(<OrgGraph {...base} focusIds={['p-1']} />);
+    const vera = screen.getByRole('button', { name: /^Vera Green/ });
+    expect(vera.querySelector('[data-org-label] rect')).not.toBeNull();
+    expect(vera.querySelector('[data-org-label] text')).toHaveTextContent('Vera');
+    const group = document.querySelector('svg[aria-label="Org graph"] > g')!;
+    const fitted = group.getAttribute('transform');
+    fireEvent.click(screen.getByRole('button', { name: 'Zoom out' }));
+    expect(group.getAttribute('transform')).not.toBe(fitted);
+    fireEvent.click(screen.getByRole('button', { name: 'Fit to view' }));
+    expect(group.getAttribute('transform')).toBe(fitted);
   });
 });

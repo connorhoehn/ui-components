@@ -288,6 +288,13 @@ export interface RichChatComposerProps {
    */
   onRequestLink?: (selectedText: string) => string | null | undefined;
   placeholder?: string;
+  /**
+   * Accessible name of the editor — `aria-label` on the contenteditable, which
+   * is always `role="textbox"` + `aria-multiline="true"`. The placeholder is
+   * not a name (it vanishes once text is typed), so a host whose page has
+   * more than one textbox should set this. Since 2.403.1.
+   */
+  inputLabel?: string;
   disabled?: boolean;
   /**
    * Slash commands the host understands. While the draft starts with one, the
@@ -835,10 +842,20 @@ function hiddenCommandPrefix(
   } else {
     return null;
   }
+  const hideTo = end;
   if (text[end] === ' ') end += 1;
   const next = doc.childCount > 1 ? doc.child(1) : null;
   if (text.slice(end).trim() === '' && next?.isTextblock) {
     return { kind: 'block', from: 0, to: first.nodeSize, caret: first.nodeSize + 1 };
+  }
+  // Nothing typed after the command yet (a fresh argument pick is
+  // "/agent Advisor "): leave its trailing space rendered. Hiding the whole
+  // line leaves a paragraph with nothing rendered in it, so the browser has no
+  // caret position there and puts the next keystrokes in a NEW paragraph ahead
+  // of the command — which then no longer leads the draft (2.403.1). The caret
+  // still goes after the space, so typed words land on the command's line.
+  if (end === text.length && hideTo < end) {
+    return { kind: 'inline', from: 1, to: 1 + hideTo, caret: 1 + end };
   }
   return { kind: 'inline', from: 1, to: 1 + end, caret: 1 + end };
 }
@@ -929,6 +946,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   allowEmoji = false,
   onRequestLink,
   placeholder = 'Write a message…',
+  inputLabel,
   commands,
   privacy = 'visible',
   onPrivacyChange,
@@ -1357,7 +1375,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                   const range = find(view.state.doc);
                   const sel = view.state.selection;
                   if (!range || !sel.empty || sel.from !== range.caret) return false;
-                  view.dispatch(view.state.tr.delete(range.from, range.to));
+                  // Inline: through the caret, so a still-rendered trailing
+                  // space goes with the command.
+                  view.dispatch(view.state.tr.delete(range.from, range.kind === 'inline' ? range.caret : range.to));
                   return true;
                 },
               },
@@ -1533,6 +1553,18 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasSearchPeople, hasSearchDocuments]);
 
+  // The contenteditable's attributes. Built into the editor at creation; a
+  // later change (a new `inputLabel`) is applied to the living view below
+  // rather than by rebuilding the editor (see the note on the deps).
+  const inputAttributes = useMemo<Record<string, string>>(() => ({
+    role: 'textbox',
+    'aria-multiline': 'true',
+    ...(inputLabel ? { 'aria-label': inputLabel } : {}),
+    class: 'chat-composer-input',
+    'data-testid': `${testId}-input`,
+  }), [inputLabel, testId]);
+  const appliedInputAttributesRef = useRef(inputAttributes);
+
   const editor = useEditor(
     {
       extensions,
@@ -1553,12 +1585,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         setPickedArgument(pickedArgumentFor(argPickRef.current, hit, text));
         publishRef.current(e);
       },
-      editorProps: {
-        attributes: {
-          class: 'chat-composer-input',
-          'data-testid': `${testId}-input`,
-        },
-      },
+      editorProps: { attributes: inputAttributes },
     },
     // ONLY `extensions`, which now changes only when mentions or document
     // references are switched on or off.
@@ -1585,6 +1612,13 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   useEffect(() => {
     editor?.setEditable(!blocked);
   }, [editor, blocked]);
+
+  // A changed `inputLabel` (or test id), on the living view.
+  useEffect(() => {
+    if (!editor || editor.isDestroyed || appliedInputAttributesRef.current === inputAttributes) return;
+    appliedInputAttributesRef.current = inputAttributes;
+    editor.view.setProps({ attributes: inputAttributes });
+  }, [editor, inputAttributes]);
 
   // The Placeholder extension reads `placeholderRef` while it builds
   // decorations, and switching mode is not an editor transaction — so without

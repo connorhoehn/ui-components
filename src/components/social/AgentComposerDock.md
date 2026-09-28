@@ -25,6 +25,18 @@ reasons; override with `disabledModes` / `modeUnavailableReasons`.
 - **Send** receives what was TYPED: the switchable Agent mode's `/agent `
   prefix is removed and `command` is re-matched against `commands`. Return (or
   resolve) `false` to keep the draft.
+- **Argument picks** survive typing (2.403.1): pick "Advisor" from `/agent`'s
+  argument menu, type the question, and `onSend` gets `command`
+  `{ trigger: '/agent', argument: { id: 'advisor', label: 'Advisor', … } }`
+  with `text` `/agent Advisor <question>` — the command line is hidden behind
+  the chip, not removed, and the typed words land on that same line. Read the
+  pick from `command.argument` rather than re-parsing the label out of `text`.
+  Enter with nothing typed after the pick still sends the bare command; return
+  `false` to keep it.
+- **Accessible name**: `inputLabel` (default "Message") is the editor's
+  `aria-label`; the editor is a `role="textbox"` with `aria-multiline="true"`,
+  so tests and screen readers find it as `getByRole('textbox', { name })`.
+  `label` names the surrounding region, not the textbox.
 - **Draft**: uncontrolled with `defaultDraft` (text or a draft), reset whenever
   `draftKey` changes; or controlled with `draft` + `onDraftChange`.
   `composerDraftOf(text)` builds a draft from plain text.

@@ -19,7 +19,11 @@
 // router. A dock's host is not one, so the dock hands back what was TYPED
 // (read from the editor) and re-matches `command` against `commands` on that
 // text — `/prioritize …` arrives as the `/prioritize` command, not as
-// `/agent /prioritize …`. `html`, `files`, `documents` and `mentions` are the
+// `/agent /prioritize …`. An argument picked from a command's menu rides
+// along: pick "Advisor" under `/agent`, type the question, and `command` is
+// `{ trigger: '/agent', argument: { id: 'advisor', … } }` with `text`
+// `/agent Advisor <question>` (the command line is hidden in the editor, not
+// removed). `html`, `files`, `documents` and `mentions` are the
 // composer's own. Return (or resolve) `false` to keep the draft.
 //
 // ## Draft
@@ -128,6 +132,8 @@ export interface AgentComposerDockProps {
   composerRef?: Ref<RichChatComposerHandle>;
   /** Accessible name of the dock region. Default "Agent composer". */
   label?: string;
+  /** Accessible name of the editor (the textbox) inside it. Default "Message". */
+  inputLabel?: string;
   /** On the dock. */
   className?: string;
   /** The dock's test id. Default `agent-composer-dock`. */
@@ -187,6 +193,7 @@ export function AgentComposerDock({
   maxInputHeight,
   composerRef,
   label = 'Agent composer',
+  inputLabel = 'Message',
   className,
   'data-testid': testId = 'agent-composer-dock',
   composerTestId,
@@ -280,6 +287,7 @@ export function AgentComposerDock({
             disabledModes={disabledModes}
             modeUnavailableReasons={{ ...DEFAULT_REASONS, ...modeUnavailableReasons }}
             placeholder={placeholder}
+            inputLabel={inputLabel}
             modePlaceholders={placeholders}
             commands={commands}
             onSearchDocuments={onSearchDocuments}

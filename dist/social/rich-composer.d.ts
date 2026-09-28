@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 import { Ref } from 'react';
 import { RefAttributes } from 'react';
 
-export declare function AgentComposerDock({ presentation, mode: modeProp, defaultMode, onModeChange, placeholder, modePlaceholders, references, onRemoveReference, commands, workflows, onWorkflow, disabledModes, modeUnavailableReasons, draft: draftProp, onDraftChange, defaultDraft, draftKey, onSend, onSearchDocuments, documentMenu, onSearchPeople, allowAttachments, allowEmoji, disabled, working, status, hints, suggestions, onSuggestion, submitLabel, maxInputHeight, composerRef, label, className, 'data-testid': testId, composerTestId, }: AgentComposerDockProps): JSX.Element;
+export declare function AgentComposerDock({ presentation, mode: modeProp, defaultMode, onModeChange, placeholder, modePlaceholders, references, onRemoveReference, commands, workflows, onWorkflow, disabledModes, modeUnavailableReasons, draft: draftProp, onDraftChange, defaultDraft, draftKey, onSend, onSearchDocuments, documentMenu, onSearchPeople, allowAttachments, allowEmoji, disabled, working, status, hints, suggestions, onSuggestion, submitLabel, maxInputHeight, composerRef, label, inputLabel, className, 'data-testid': testId, composerTestId, }: AgentComposerDockProps): JSX.Element;
 
 export declare interface AgentComposerDockProps {
     /** `document` (default `compact`): the full editor strip and comfortable density, for a full-width page. */
@@ -65,6 +65,8 @@ export declare interface AgentComposerDockProps {
     composerRef?: Ref<RichChatComposerHandle>;
     /** Accessible name of the dock region. Default "Agent composer". */
     label?: string;
+    /** Accessible name of the editor (the textbox) inside it. Default "Message". */
+    inputLabel?: string;
     /** On the dock. */
     className?: string;
     /** The dock's test id. Default `agent-composer-dock`. */
@@ -611,6 +613,13 @@ export declare interface RichChatComposerProps {
      */
     onRequestLink?: (selectedText: string) => string | null | undefined;
     placeholder?: string;
+    /**
+     * Accessible name of the editor — `aria-label` on the contenteditable, which
+     * is always `role="textbox"` + `aria-multiline="true"`. The placeholder is
+     * not a name (it vanishes once text is typed), so a host whose page has
+     * more than one textbox should set this. Since 2.403.1.
+     */
+    inputLabel?: string;
     disabled?: boolean;
     /**
      * Slash commands the host understands. While the draft starts with one, the
@@ -1026,29 +1035,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
@@ -1062,16 +1048,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -1098,6 +1074,39 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

@@ -14,6 +14,7 @@ Everything is exported from the root barrel and `/graph`.
 | `ConnectionPathStrip` | "How are these two connected?" band. [ConnectionPathStrip.md](./ConnectionPathStrip.md) |
 | `PersonDetailCard` | A person's role, skills, strongest connections, evidence. [PersonDetailCard.md](./PersonDetailCard.md) |
 | `useForceLayout` | The layout hook OrgGraph uses. |
+| `forceParamsFor`, `fitTransform` | The layout's forces for a drawn count and canvas, and the pan/zoom that frames a box (2.403.1). |
 | pure helpers | `findConnectionPath`, `searchGraph`, `departmentInsight`, `orgInsight`, `indexBusFactorFindings`, `findingForSkill`, `rareSkillFindingsUrl`, `nodeRadius`, `degreeMap`, `maxDegree`, `membersByDepartment`, `parseFocusIds`, `firstName` and the label maps. |
 
 ## What changed from the portal
@@ -29,7 +30,7 @@ Everything is exported from the root barrel and `/graph`.
   pass `onNavigate` for client-side routing and `findingHref` to change the
   target (default `rareSkillFindingsUrl`, which gained an optional `basePath`).
 - **Zoom.** OrgGraph's +/−/⟲ buttons are `CanvasZoomControls` (−, %, +, Fit —
-  Fit resets the view). The `reports_to` arrow marker id is per instance.
+  since 2.403.1 Fit frames the drawn nodes rather than resetting to 1:1). The `reports_to` arrow marker id is per instance.
 - **Tokens.** Presence dots and relationship lines paint from theme tokens;
   department colours stay data.
 - `SuggestionRow` / `MeterRow` graduated to `shared/` as list-row primitives.

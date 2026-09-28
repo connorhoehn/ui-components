@@ -6,6 +6,7 @@ import type { KeyboardEvent } from 'react';
 import type { GraphNode, GraphDepartment, PresenceStatus } from './types';
 import { nodeRadius } from './graphInsights';
 import { PRESENCE_DOT, passesPresenceFilter, type PresenceFilter } from './presence';
+import { orgLabelWidth } from './fitTransform';
 
 export interface OrgGraphNodeProps {
   node: GraphNode;
@@ -23,15 +24,19 @@ export interface OrgGraphNodeProps {
   degree: number;
   /** Largest degree in the currently-rendered graph. */
   maxDegree: number;
+  /** Draw the first-name label. OrgGraph turns it off for dimmed people in a
+   *  large graph, where forty faded names are noise. Default true. */
+  showLabel?: boolean;
 }
 
 export function OrgGraphNode({
   node, departments, isSelected, isHighlighted, onSelect, onHover, presenceFilter,
-  showInfluence, degree, maxDegree,
+  showInfluence, degree, maxDegree, showLabel = true,
 }: OrgGraphNodeProps) {
   const dept = departments.find(d => d.name === node.department);
   const color = dept?.color ?? 'var(--color-text-tertiary)';
   const radius = nodeRadius(showInfluence, node.influenceScore, degree, maxDegree);
+  const firstName = node.name.split(' ')[0] ?? node.name;
 
   const pres: PresenceStatus = node.presence ?? 'unknown';
   const presInfo = PRESENCE_DOT[pres];
@@ -82,16 +87,36 @@ export function OrgGraphNode({
         strokeWidth={isSelected ? 3 : 2}
       />
 
-      <text
-        y={radius + 14}
-        textAnchor="middle"
-        fontSize={10}
-        fill="var(--color-text-secondary)"
-        className="pointer-events-none select-none"
-      >
-        {node.name.split(' ')[0]}
-      </text>
+      {showLabel && (
+        <g className="pointer-events-none select-none" data-org-label="">
+          {/* A surface pill under the name so crossing lines don't strike it through. */}
+          <rect
+            x={-orgLabelWidth(firstName) / 2}
+            y={radius + 4}
+            width={orgLabelWidth(firstName)}
+            height={14}
+            rx={7}
+            fill="var(--color-surface)"
+            fillOpacity={0.85}
+          />
+          <text y={radius + 14} textAnchor="middle" fontSize={10} fill="var(--color-text-secondary)">
+            {firstName}
+          </text>
+        </g>
+      )}
 
+      {isSelected && (
+        <rect
+          x={-orgLabelWidth(node.name) * 0.55}
+          y={-radius - 19}
+          width={orgLabelWidth(node.name) * 1.1}
+          height={16}
+          rx={8}
+          fill="var(--color-surface)"
+          fillOpacity={0.85}
+          className="pointer-events-none"
+        />
+      )}
       {isSelected && (
         <text
           y={-radius - 6}
