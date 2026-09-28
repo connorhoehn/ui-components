@@ -3986,7 +3986,7 @@ export declare interface RailLayoutProps {
     'data-testid'?: string;
 }
 
-export declare function RailNavList({ items, 'aria-label': ariaLabel, className, 'data-testid': testId, }: RailNavListProps): JSX.Element | null;
+export declare function RailNavList({ items, currentStyle, 'aria-label': ariaLabel, className, 'data-testid': testId, }: RailNavListProps): JSX.Element | null;
 
 export declare interface RailNavListItem {
     id: string;
@@ -3995,6 +3995,8 @@ export declare interface RailNavListItem {
     href?: string;
     /** Called on activation — also for `href` items (the host's router). */
     onSelect?: () => void;
+    /** Router interception; keep modified clicks native by checking the event. */
+    onNavigate?: (event: MouseEvent_2<HTMLAnchorElement>) => void;
     /** The view on screen. Marked `aria-current="page"` and drawn semibold. */
     current?: boolean;
     /** Muted number at the item's right edge. Absent draws none; 0 shows "0". */
@@ -4008,6 +4010,8 @@ export declare interface RailNavListItem {
 
 export declare interface RailNavListProps {
     items: RailNavListItem[];
+    /** A tinted current view for a rail that also contains selected records. */
+    currentStyle?: 'weight' | 'tint';
     /** The nav landmark's name. Default "Views". */
     'aria-label'?: string;
     className?: string;
@@ -6049,19 +6053,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -6079,10 +6070,15 @@ declare module '@tiptap/core' {
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
     }
 }
 
@@ -6092,49 +6088,6 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -6162,5 +6115,56 @@ declare module '@tiptap/core' {
                 answeredAt?: string;
             }) => ReturnType;
         };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
     }
 }

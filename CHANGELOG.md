@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.399.0
+
+- Add `WorkTableView`, the full-width grouped-table counterpart to `WorkListView`, with shared toolbar/filter controls, owner avatars, optional completion controls, and honest loading/error states. Includes Storybook variants, component documentation, and interaction tests.
+- Add optional `RailNavList.currentStyle="tint"` and per-item `onNavigate` for selected-view styling and client-side routing without losing native modified-click behavior.
+
 ## 2.398.0
 
 - **Rail type scale, one step smaller (visual change for every consumer).** The shared `railType` scale that every navigation rail draws from (shell rail, `NavRail`, module sub-navs, `WorkspaceRail`, `RailNavList`, `GroupedList rowStyle="plain"`, rail section headers) is now 13px/500 items on a 36px pitch, 12px item counts and a 12px caption; group headings stay 11px caps. 2.397.0 had unified the rails on the explorer's 15px/40px scale; the user preferred the smaller one. `RAIL_ROW_PITCH` is 36.

@@ -4,6 +4,8 @@
 // peer) is reached only through GroupedList's lazily imported drag chunk, so
 // importing anything here never requires it.
 export { WorkListView, WorkListToolbar, WorkListFilters, toWorkListRows } from './WorkListView';
+export { WorkTableView } from './WorkTableView';
+export type { WorkTableViewProps, WorkTableGrouping } from './WorkTableView';
 export type {
   WorkListPerson,
   WorkListChip,

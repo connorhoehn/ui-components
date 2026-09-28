@@ -637,6 +637,7 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "WorkSearchPicker",
     "WorkSharingControls",
     "WorkStatus",
+    "WorkTableView",
     "WorkTranscriptPanel",
     "Workbench",
     "WorkflowStepper",

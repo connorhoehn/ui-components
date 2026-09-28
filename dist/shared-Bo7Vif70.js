@@ -2603,15 +2603,15 @@ var Qt = {
 	background: "color-mix(in srgb, var(--color-primary) 8%, transparent)",
 	color: "var(--color-text-primary)"
 }, $t = `block px-[14px] ${I} border-l-[3px] border-transparent text-text-primary no-underline cursor-pointer hover:bg-surface-hover`, en = `block px-[14px] ${I} border-l-[3px] border-primary ${ne} text-text-primary no-underline cursor-pointer`, tn = e("flex w-full min-w-0 items-center gap-2.5 rounded-md border-0 bg-transparent px-2.5 py-[6px] text-left", P, "text-text-primary no-underline [font-family:inherit]", "transition-colors duration-100 hover:bg-surface-hover", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary");
-function nn({ items: t, "aria-label": n = "Views", className: r, "data-testid": i = "rail-nav-list" }) {
+function nn({ items: t, currentStyle: n = "weight", "aria-label": r = "Views", className: i, "data-testid": a = "rail-nav-list" }) {
 	return t.length === 0 ? null : /* @__PURE__ */ W("nav", {
-		"aria-label": n,
-		className: e("min-w-0", r),
-		"data-testid": i,
+		"aria-label": r,
+		className: e("min-w-0", i),
+		"data-testid": a,
 		children: /* @__PURE__ */ W("ul", {
 			className: "m-0 flex list-none flex-col p-0",
 			children: t.map((t) => {
-				let n = /* @__PURE__ */ G(U, { children: [
+				let r = /* @__PURE__ */ G(U, { children: [
 					t.icon != null && /* @__PURE__ */ W("span", {
 						className: "flex shrink-0 items-center text-text-secondary",
 						children: t.icon
@@ -2624,12 +2624,12 @@ function nn({ items: t, "aria-label": n = "Views", className: r, "data-testid": 
 					typeof t.count == "number" && /* @__PURE__ */ W("span", {
 						className: e("shrink-0", "text-[12px] font-medium leading-4 tabular-nums text-text-tertiary"),
 						"aria-label": `${t.count} items`,
-						"data-testid": `${i}-count-${t.id}`,
+						"data-testid": `${a}-count-${t.id}`,
 						children: t.count
 					})
-				] }), r = {
-					className: e(tn, t.current ? "font-semibold" : void 0, t.disabled ? "cursor-default opacity-60 hover:bg-transparent" : "cursor-pointer"),
-					"data-testid": `${i}-item-${t.id}`,
+				] }), i = {
+					className: e(tn, t.current ? "font-semibold" : void 0, t.current && n === "tint" && "bg-primary/10", t.disabled ? "cursor-default opacity-60 hover:bg-transparent" : "cursor-pointer"),
+					"data-testid": `${a}-item-${t.id}`,
 					"data-current": t.current || void 0,
 					"aria-current": t.current ? "page" : void 0
 				};
@@ -2637,9 +2637,11 @@ function nn({ items: t, "aria-label": n = "Views", className: r, "data-testid": 
 					className: "min-w-0",
 					children: t.href && !t.disabled ? /* @__PURE__ */ W("a", {
 						href: t.href,
-						onClick: () => t.onSelect?.(),
-						...r,
-						children: n
+						onClick: (e) => {
+							t.onNavigate?.(e), t.onSelect?.();
+						},
+						...i,
+						children: r
 					}) : /* @__PURE__ */ W("button", {
 						type: "button",
 						disabled: t.disabled,
@@ -2647,8 +2649,8 @@ function nn({ items: t, "aria-label": n = "Views", className: r, "data-testid": 
 						onClick: () => {
 							t.disabled || t.onSelect?.();
 						},
-						...r,
-						children: n
+						...i,
+						children: r
 					})
 				}, t.id);
 			})

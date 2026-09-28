@@ -21,7 +21,7 @@
 // A `count` is drawn only when it is a number (zero shows "0"). A `disabled`
 // item stays visible and muted with its `disabledReason` as the tooltip.
 
-import type { ReactNode } from 'react';
+import type { MouseEvent, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { RAIL_ITEM_COUNT, RAIL_ITEM_TEXT } from './railType';
 
@@ -32,6 +32,8 @@ export interface RailNavListItem {
   href?: string;
   /** Called on activation — also for `href` items (the host's router). */
   onSelect?: () => void;
+  /** Router interception; keep modified clicks native by checking the event. */
+  onNavigate?: (event: MouseEvent<HTMLAnchorElement>) => void;
   /** The view on screen. Marked `aria-current="page"` and drawn semibold. */
   current?: boolean;
   /** Muted number at the item's right edge. Absent draws none; 0 shows "0". */
@@ -45,6 +47,8 @@ export interface RailNavListItem {
 
 export interface RailNavListProps {
   items: RailNavListItem[];
+  /** A tinted current view for a rail that also contains selected records. */
+  currentStyle?: 'weight' | 'tint';
   /** The nav landmark's name. Default "Views". */
   'aria-label'?: string;
   className?: string;
@@ -61,6 +65,7 @@ const ITEM_CLASS = cn(
 
 export function RailNavList({
   items,
+  currentStyle = 'weight',
   'aria-label': ariaLabel = 'Views',
   className,
   'data-testid': testId = 'rail-nav-list',
@@ -81,7 +86,7 @@ export function RailNavList({
               )}
             </>
           );
-          const cls = cn(ITEM_CLASS, item.current ? 'font-semibold' : undefined, item.disabled ? 'cursor-default opacity-60 hover:bg-transparent' : 'cursor-pointer');
+          const cls = cn(ITEM_CLASS, item.current ? 'font-semibold' : undefined, item.current && currentStyle === 'tint' && 'bg-primary/10', item.disabled ? 'cursor-default opacity-60 hover:bg-transparent' : 'cursor-pointer');
           const common = {
             className: cls,
             'data-testid': `${testId}-item-${item.id}`,
@@ -91,7 +96,7 @@ export function RailNavList({
           return (
             <li key={item.id} className="min-w-0">
               {item.href && !item.disabled ? (
-                <a href={item.href} onClick={() => item.onSelect?.()} {...common}>
+                <a href={item.href} onClick={(event) => { item.onNavigate?.(event); item.onSelect?.(); }} {...common}>
                   {body}
                 </a>
               ) : (
