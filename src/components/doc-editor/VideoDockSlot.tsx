@@ -63,6 +63,12 @@ export interface VideoDockSlotProps {
   undockLabel?: string;
   /** Fires when the undock / pop-out control is used. Omit to hide it. */
   onRequestUndock?: () => void;
+  /**
+   * A one-line drop prompt (label · hint in a 40px dashed strip) instead of
+   * the 16:9 box — for a slot whose docked content is a shelf, not a stage:
+   * the in-call shelf above a chat composer.
+   */
+  compact?: boolean;
   /** Called after the internal drag-over state updates, with the raw event. */
   onDragOver?: (e: DragEvent<HTMLDivElement>) => void;
   onDragLeave?: (e: DragEvent<HTMLDivElement>) => void;
@@ -91,6 +97,7 @@ export default function VideoDockSlot({
   hint = 'Drop the call here to read alongside it',
   undockLabel = 'Pop video back out',
   onRequestUndock,
+  compact = false,
   onDragOver,
   onDragLeave,
   onDrop,
@@ -133,6 +140,7 @@ export default function VideoDockSlot({
     <div
       data-testid={testId}
       data-docked={String(docked)}
+      data-compact={compact ? 'true' : undefined}
       data-drag-over={String(dragOver)}
       // Only advertised while the slot can actually take the video, so a
       // pointer-drag hit-test cannot land on a slot that would refuse it.
@@ -185,13 +193,15 @@ export default function VideoDockSlot({
           aria-label={label}
           data-testid={`${testId}-dropzone`}
           className={cn(
-            'flex aspect-video w-full flex-col items-center justify-center gap-1',
+            compact
+              ? 'flex h-10 w-full flex-row items-center justify-center gap-2'
+              : 'flex aspect-video w-full flex-col items-center justify-center gap-1',
             'rounded-lg border-2 border-dashed px-3 text-center',
             dragOver ? 'border-primary bg-surface-hover' : 'border-border',
           )}
         >
           <span className="text-xs font-medium text-text-secondary">{label}</span>
-          <span className="text-xs text-text-tertiary">{hint}</span>
+          <span className="truncate text-xs text-text-tertiary">{hint}</span>
         </div>
       )}
     </div>

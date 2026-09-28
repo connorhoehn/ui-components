@@ -2,9 +2,10 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { CallDock, type CallDockParticipant, type CallDockProps } from './CallDock';
 import { StreamVideo } from './StreamVideo';
-import { Button } from '../ui/Button';
-import { SmileyIcon } from '../ui/Icons';
-import { ChatBubbleIcon, SparklesIcon } from './MediaIcons';
+import { SparklesIcon } from './MediaIcons';
+import { CallSidePanelToggles } from './CallSidePanel';
+import { ReactionPickerButton } from './ReactionOverlay';
+import { RecordingChip } from './RecordingChip';
 import { CAST, DEVICES, REVIEW_DOCS, fakeCameraStream, noop, themed } from './documentCallStoryKit';
 
 // The in-call dock under a document (mockup 02). Stories render it at the
@@ -235,19 +236,17 @@ export const EditorColumn1240: Story = {
  * so no chips and no Documents button; the host's reactions trigger and
  * side-panel toggles ride in `extras`, before the settings gear.
  */
+const CONVERSATION_TABS = [
+  { id: 'chat', label: 'Chat', content: null },
+  { id: 'people', label: 'People', content: null },
+  { id: 'effects', label: 'Effects', icon: <SparklesIcon size={16} />, content: null },
+  { id: 'captions', label: 'Captions', content: null },
+];
 const conversationExtras = (
   <>
-    <Button variant="ghost" size="sm" className="h-8 bg-surface" aria-label="Reactions" onClick={noop}>
-      <SmileyIcon size={16} />
-    </Button>
-    <Button variant="ghost" size="sm" className="inline-flex h-8 items-center gap-1.5 bg-surface" onClick={noop}>
-      <ChatBubbleIcon size={16} />
-      Chat
-    </Button>
-    <Button variant="ghost" size="sm" className="inline-flex h-8 items-center gap-1.5 bg-surface" onClick={noop}>
-      <SparklesIcon size={16} />
-      Effects
-    </Button>
+    <ReactionPickerButton tone="surface" onReact={noop} align="right" />
+    <RecordingChip armed active />
+    <CallSidePanelToggles tone="surface" tabs={CONVERSATION_TABS} activeTab="chat" onTabChange={noop} />
   </>
 );
 export const Conversation: Story = {

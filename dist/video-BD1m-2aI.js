@@ -408,24 +408,25 @@ var Ve = /* @__PURE__ */ Z("svg", {
 		})
 	]
 });
-function He({ onReact: t, emojis: n, closeOnReact: r = !0, align: i = "center", disabled: a = !1, className: o }) {
-	let [s, c] = J(!1);
+function He({ onReact: t, emojis: n, closeOnReact: r = !0, align: i = "center", disabled: a = !1, tone: o = "chrome", className: s }) {
+	let [c, l] = J(!1);
 	return /* @__PURE__ */ Z("div", {
-		className: e("relative inline-flex", o),
+		className: e("relative inline-flex", s),
 		children: [/* @__PURE__ */ X("button", {
 			type: "button",
 			title: "Send a reaction",
 			"aria-label": "Send a reaction",
-			"aria-expanded": s,
+			"aria-expanded": c,
 			disabled: a,
-			onClick: () => c((e) => !e),
+			onClick: () => l((e) => !e),
 			"data-testid": "reaction-picker-open",
-			className: e("w-9 h-9 rounded-full flex items-center justify-center border-none cursor-pointer transition-all duration-150", s ? "bg-white/20 text-white" : "bg-white/10 text-white/80 hover:bg-white/20 hover:text-white", a && "opacity-40 cursor-not-allowed"),
+			"data-tone": o,
+			className: e(o === "surface" ? ["w-8 h-8 rounded-md flex items-center justify-center border border-solid border-border cursor-pointer transition-colors duration-150", c ? "bg-surface-inset text-text-primary" : "bg-surface text-text-secondary hover:bg-surface-hover hover:text-text-primary"] : ["w-9 h-9 rounded-full flex items-center justify-center border-none cursor-pointer transition-all duration-150", c ? "bg-white/20 text-white" : "bg-white/10 text-white/80 hover:bg-white/20 hover:text-white"], a && "opacity-40 cursor-not-allowed"),
 			children: Ve
-		}), s && /* @__PURE__ */ X(Be, {
+		}), c && /* @__PURE__ */ X(Be, {
 			emojis: n,
 			onReact: (e) => {
-				t(e), r && c(!1);
+				t(e), r && l(!1);
 			},
 			className: e("absolute bottom-full mb-2 z-10 shadow-lg", i === "center" && "left-1/2 -translate-x-1/2", i === "left" && "left-0", i === "right" && "right-0")
 		})]
@@ -1088,24 +1089,25 @@ function ht(e) {
 		default: return null;
 	}
 }
-function gt({ tabs: t, activeTab: n = null, onTabChange: r, disabled: i = !1, className: a, "data-testid": o = "call-side-panel-toggles" }) {
+function gt({ tabs: t, activeTab: n = null, onTabChange: r, disabled: i = !1, tone: a = "chrome", className: o, "data-testid": s = "call-side-panel-toggles" }) {
 	return t.length === 0 ? null : /* @__PURE__ */ X("div", {
-		"data-testid": o,
-		className: e("flex items-center gap-1", a),
+		"data-testid": s,
+		className: e("flex items-center", a === "surface" ? "gap-2" : "gap-1", o),
+		"data-tone": a,
 		role: "group",
 		"aria-label": "Call side panel",
 		children: t.map((t) => {
-			let a = t.id === n, o = i || t.disabled === !0;
+			let o = t.id === n, s = i || t.disabled === !0;
 			return /* @__PURE__ */ Z("button", {
 				type: "button",
 				"aria-label": t.label,
-				"aria-pressed": a,
+				"aria-pressed": o,
 				title: t.label,
-				disabled: o,
+				disabled: s,
 				"data-testid": ft(t),
-				"data-active": a ? "true" : "false",
-				onClick: () => r?.(a ? null : t.id),
-				className: e("relative grid h-9 w-9 shrink-0 place-items-center rounded-full transition-colors duration-150", a ? "bg-call-chrome-accent text-white" : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white", o ? "cursor-not-allowed opacity-40" : "cursor-pointer"),
+				"data-active": o ? "true" : "false",
+				onClick: () => r?.(o ? null : t.id),
+				className: e(a === "surface" ? ["relative grid h-8 w-8 shrink-0 place-items-center rounded-md border border-solid transition-colors duration-150", o ? "border-border bg-surface-inset text-text-primary" : "border-border bg-surface text-text-secondary hover:bg-surface-hover hover:text-text-primary"] : ["relative grid h-9 w-9 shrink-0 place-items-center rounded-full transition-colors duration-150", o ? "bg-call-chrome-accent text-white" : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white"], s ? "cursor-not-allowed opacity-40" : "cursor-pointer"),
 				children: [t.icon ?? ht(t.id) ?? /* @__PURE__ */ X("span", {
 					className: "text-[11px] font-semibold uppercase",
 					children: t.label.slice(0, 2)

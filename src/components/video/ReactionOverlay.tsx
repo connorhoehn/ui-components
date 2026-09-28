@@ -169,6 +169,12 @@ export interface ReactionPickerButtonProps {
   /** Dims the trigger and blocks opening — e.g. while the send path
    *  is unavailable. */
   disabled?: boolean;
+  /**
+   * `chrome` (default): the round translucent trigger of the dark call
+   * control row. `surface`: an outline button that follows the page theme,
+   * 32px like `CallDock`'s header controls — for the in-call shelf.
+   */
+  tone?: 'chrome' | 'surface';
   className?: string;
 }
 
@@ -198,6 +204,7 @@ export function ReactionPickerButton({
   closeOnReact = true,
   align = 'center',
   disabled = false,
+  tone = 'chrome',
   className,
 }: ReactionPickerButtonProps) {
   const [open, setOpen] = useState(false);
@@ -212,11 +219,19 @@ export function ReactionPickerButton({
         disabled={disabled}
         onClick={() => setOpen(v => !v)}
         data-testid="reaction-picker-open"
+        data-tone={tone}
         className={cn(
-          // Mirrors CallControls' ControlButton chrome so the trigger reads
-          // as one more control in the row.
-          'w-9 h-9 rounded-full flex items-center justify-center border-none cursor-pointer transition-all duration-150',
-          open ? 'bg-white/20 text-white' : 'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white',
+          tone === 'surface'
+            ? [
+                'w-8 h-8 rounded-md flex items-center justify-center border border-solid border-border cursor-pointer transition-colors duration-150',
+                open ? 'bg-surface-inset text-text-primary' : 'bg-surface text-text-secondary hover:bg-surface-hover hover:text-text-primary',
+              ]
+            : [
+                // Mirrors CallControls' ControlButton chrome so the trigger reads
+                // as one more control in the row.
+                'w-9 h-9 rounded-full flex items-center justify-center border-none cursor-pointer transition-all duration-150',
+                open ? 'bg-white/20 text-white' : 'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white',
+              ],
           disabled && 'opacity-40 cursor-not-allowed',
         )}
       >

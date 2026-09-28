@@ -3736,7 +3736,7 @@ declare interface VideoCallPanelProps {
     onCallEnd?: () => void;
 }
 
-export declare function VideoDockSlot({ docked, canAccept, dockId, label, hint, undockLabel, onRequestUndock, onDragOver, onDragLeave, onDrop, className, children, 'data-testid': testId, }: VideoDockSlotProps): JSX.Element | null;
+export declare function VideoDockSlot({ docked, canAccept, dockId, label, hint, undockLabel, onRequestUndock, compact, onDragOver, onDragLeave, onDrop, className, children, 'data-testid': testId, }: VideoDockSlotProps): JSX.Element | null;
 
 export declare interface VideoDockSlotProps {
     /** True when the caller has portaled the live widget into `children`. */
@@ -3770,6 +3770,12 @@ export declare interface VideoDockSlotProps {
     undockLabel?: string;
     /** Fires when the undock / pop-out control is used. Omit to hide it. */
     onRequestUndock?: () => void;
+    /**
+     * A one-line drop prompt (label · hint in a 40px dashed strip) instead of
+     * the 16:9 box — for a slot whose docked content is a shelf, not a stage:
+     * the in-call shelf above a chat composer.
+     */
+    compact?: boolean;
     /** Called after the internal drag-over state updates, with the raw event. */
     onDragOver?: (e: DragEvent_2<HTMLDivElement>) => void;
     onDragLeave?: (e: DragEvent_2<HTMLDivElement>) => void;
@@ -4013,19 +4019,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -4056,10 +4049,28 @@ declare module '@tiptap/core' {
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
     }
 }
 
@@ -4069,6 +4080,16 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -4120,24 +4141,9 @@ declare module '@tiptap/core' {
 }
 
 
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
     }
 }

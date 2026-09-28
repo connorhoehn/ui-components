@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.401.0
+
+- `CallSidePanelToggles` and `ReactionPickerButton`: `tone?: 'chrome' | 'surface'`. `chrome` (default, unchanged) is the round translucent-white control of the dark call chrome; `surface` is a 32px outline button that follows the page theme, for `CallDock`'s header — the conversation call shelf carries both in its `extras`, where the chrome buttons were white on white. Both stamp `data-tone`. The `CallDock › Conversation` stories now use the real controls.
+- `VideoDockSlot`: `compact?: boolean` draws the empty-slot drop prompt as a one-line 40px dashed strip instead of the 16:9 box (`data-compact="true"`), for a slot whose docked content is a shelf rather than a stage. Story `Empty — compact strip (chat shelf)`.
+
 ## 2.400.0
 
 - Add `ChatPanel.dock?: ReactNode`, a slot pinned to the composer's top edge (between the thread / typing row and the composer, `shrink-0`, `data-testid="chat-panel-dock-slot"`) for the in-call shelf of the call a conversation is on (document-calls mockup 02). New story `Social/ConversationSurface › CallDockedAboveComposer`.

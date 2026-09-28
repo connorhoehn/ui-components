@@ -113,3 +113,18 @@ describe('VideoDockSlot undock control', () => {
     expect(screen.queryByRole('button')).toBeNull();
   });
 });
+
+describe('VideoDockSlot compact (2.401.0)', () => {
+  it('draws a one-line strip instead of the 16:9 box, still a drop target', () => {
+    const onDrop = vi.fn();
+    render(<VideoDockSlot compact docked={false} canAccept dockId="chat" label="Call" hint="Drop the call here" onDrop={onDrop} />);
+    const slot = screen.getByTestId('video-dock-slot');
+    expect(slot.getAttribute('data-compact')).toBe('true');
+    expect(slot.getAttribute('data-call-dock-target')).toBe('chat');
+    const zone = screen.getByTestId('video-dock-slot-dropzone');
+    expect(zone.className).toContain('h-10');
+    expect(zone.className).not.toContain('aspect-video');
+    fireEvent.drop(slot);
+    expect(onDrop).toHaveBeenCalled();
+  });
+});

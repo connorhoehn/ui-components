@@ -1401,34 +1401,35 @@ function gr() {
 		})]
 	});
 }
-function _r({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint: a = "Drop the call here to read alongside it", undockLabel: s = "Pop video back out", onRequestUndock: c, onDragOver: l, onDragLeave: u, onDrop: d, className: f, children: p, "data-testid": m = "video-dock-slot" }) {
-	let [h, g] = Y(!1), _ = G((e) => {
-		e.preventDefault(), t && g(!0), l?.(e);
-	}, [t, l]), v = G((e) => {
+function _r({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint: a = "Drop the call here to read alongside it", undockLabel: s = "Pop video back out", onRequestUndock: c, compact: l = !1, onDragOver: u, onDragLeave: d, onDrop: f, className: p, children: m, "data-testid": h = "video-dock-slot" }) {
+	let [g, _] = Y(!1), v = G((e) => {
+		e.preventDefault(), t && _(!0), u?.(e);
+	}, [t, u]), y = G((e) => {
 		let t = e.relatedTarget;
-		t instanceof Node && e.currentTarget.contains(t) || (g(!1), u?.(e));
-	}, [u]), y = G((e) => {
-		e.preventDefault(), g(!1), t && d?.(e);
-	}, [t, d]);
+		t instanceof Node && e.currentTarget.contains(t) || (_(!1), d?.(e));
+	}, [d]), b = G((e) => {
+		e.preventDefault(), _(!1), t && f?.(e);
+	}, [t, f]);
 	return !e && !t ? null : /* @__PURE__ */ Z("div", {
-		"data-testid": m,
+		"data-testid": h,
 		"data-docked": String(e),
-		"data-drag-over": String(h),
+		"data-compact": l ? "true" : void 0,
+		"data-drag-over": String(g),
 		"data-call-dock-target": t && r ? r : void 0,
-		onDragOver: _,
-		onDragLeave: v,
-		onDrop: y,
-		className: n("w-full overflow-hidden rounded-lg border transition-colors duration-150", "bg-surface", h ? "border-primary" : "border-border", "data-[pointer-over=true]:border-primary", f),
+		onDragOver: v,
+		onDragLeave: y,
+		onDrop: b,
+		className: n("w-full overflow-hidden rounded-lg border transition-colors duration-150", "bg-surface", g ? "border-primary" : "border-border", "data-[pointer-over=true]:border-primary", p),
 		children: e ? /* @__PURE__ */ Q("div", {
-			"data-testid": `${m}-content`,
+			"data-testid": `${h}-content`,
 			className: "relative w-full",
-			children: [p, c && /* @__PURE__ */ Z("div", {
+			children: [m, c && /* @__PURE__ */ Z("div", {
 				className: "absolute right-1 top-1 z-10 rounded bg-black/45 backdrop-blur-sm",
 				children: /* @__PURE__ */ Z(o, {
 					"aria-label": s,
 					size: "sm",
 					onClick: c,
-					"data-testid": `${m}-undock`,
+					"data-testid": `${h}-undock`,
 					icon: /* @__PURE__ */ Z(gr, {}),
 					className: "text-white hover:bg-white/20"
 				})
@@ -1436,13 +1437,13 @@ function _r({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint:
 		}) : /* @__PURE__ */ Q("div", {
 			role: "region",
 			"aria-label": i,
-			"data-testid": `${m}-dropzone`,
-			className: n("flex aspect-video w-full flex-col items-center justify-center gap-1", "rounded-lg border-2 border-dashed px-3 text-center", h ? "border-primary bg-surface-hover" : "border-border"),
+			"data-testid": `${h}-dropzone`,
+			className: n(l ? "flex h-10 w-full flex-row items-center justify-center gap-2" : "flex aspect-video w-full flex-col items-center justify-center gap-1", "rounded-lg border-2 border-dashed px-3 text-center", g ? "border-primary bg-surface-hover" : "border-border"),
 			children: [/* @__PURE__ */ Z("span", {
 				className: "text-xs font-medium text-text-secondary",
 				children: i
 			}), /* @__PURE__ */ Z("span", {
-				className: "text-xs text-text-tertiary",
+				className: "truncate text-xs text-text-tertiary",
 				children: a
 			})]
 		})

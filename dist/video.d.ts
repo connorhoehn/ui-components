@@ -545,7 +545,7 @@ export declare interface CallSidePanelTab {
  * `sidePanelTabs` is supplied — a consumer never positions these by hand.
  * Exported for hosts that build their own control bar.
  */
-export declare function CallSidePanelToggles({ tabs, activeTab, onTabChange, disabled, className, 'data-testid': testId, }: CallSidePanelTogglesProps): JSX.Element | null;
+export declare function CallSidePanelToggles({ tabs, activeTab, onTabChange, disabled, tone, className, 'data-testid': testId, }: CallSidePanelTogglesProps): JSX.Element | null;
 
 export declare interface CallSidePanelTogglesProps {
     tabs: CallSidePanelTab[];
@@ -555,6 +555,13 @@ export declare interface CallSidePanelTogglesProps {
      *  is clicked again (click-to-close, like Meet's chat button). */
     onTabChange?: (id: string | null) => void;
     disabled?: boolean;
+    /**
+     * `chrome` (default): round translucent-white buttons for the dark call
+     * chrome (CallWidget, MediaControlsBar). `surface`: outline buttons that
+     * follow the page theme, sized to `CallDock`'s 32px header row — for the
+     * in-call shelf, whose header is not call chrome.
+     */
+    tone?: 'chrome' | 'surface';
     className?: string;
     'data-testid'?: string;
 }
@@ -2043,7 +2050,7 @@ export declare function ReactionPicker({ onReact, emojis, className, style }: Re
  * children. Absolute-in-relative keeps the popover anchored to the button
  * in both the docked and expanded layouts.
  */
-export declare function ReactionPickerButton({ onReact, emojis, closeOnReact, align, disabled, className, }: ReactionPickerButtonProps): JSX.Element;
+export declare function ReactionPickerButton({ onReact, emojis, closeOnReact, align, disabled, tone, className, }: ReactionPickerButtonProps): JSX.Element;
 
 export declare interface ReactionPickerButtonProps {
     onReact: (emoji: string) => void;
@@ -2057,6 +2064,12 @@ export declare interface ReactionPickerButtonProps {
     /** Dims the trigger and blocks opening — e.g. while the send path
      *  is unavailable. */
     disabled?: boolean;
+    /**
+     * `chrome` (default): the round translucent trigger of the dark call
+     * control row. `surface`: an outline button that follows the page theme,
+     * 32px like `CallDock`'s header controls — for the in-call shelf.
+     */
+    tone?: 'chrome' | 'surface';
     className?: string;
 }
 
@@ -3008,19 +3021,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3051,10 +3051,28 @@ declare module '@tiptap/core' {
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
     }
 }
 
@@ -3064,6 +3082,16 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -3115,24 +3143,9 @@ declare module '@tiptap/core' {
 }
 
 
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
     }
 }

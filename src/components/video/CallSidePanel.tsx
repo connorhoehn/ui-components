@@ -134,6 +134,13 @@ export interface CallSidePanelTogglesProps {
    *  is clicked again (click-to-close, like Meet's chat button). */
   onTabChange?: (id: string | null) => void;
   disabled?: boolean;
+  /**
+   * `chrome` (default): round translucent-white buttons for the dark call
+   * chrome (CallWidget, MediaControlsBar). `surface`: outline buttons that
+   * follow the page theme, sized to `CallDock`'s 32px header row — for the
+   * in-call shelf, whose header is not call chrome.
+   */
+  tone?: 'chrome' | 'surface';
   className?: string;
   'data-testid'?: string;
 }
@@ -149,6 +156,7 @@ export function CallSidePanelToggles({
   activeTab = null,
   onTabChange,
   disabled = false,
+  tone = 'chrome',
   className,
   'data-testid': testId = 'call-side-panel-toggles',
 }: CallSidePanelTogglesProps) {
@@ -157,7 +165,8 @@ export function CallSidePanelToggles({
   return (
     <div
       data-testid={testId}
-      className={cn('flex items-center gap-1', className)}
+      className={cn('flex items-center', tone === 'surface' ? 'gap-2' : 'gap-1', className)}
+      data-tone={tone}
       role="group"
       aria-label="Call side panel"
     >
@@ -176,10 +185,19 @@ export function CallSidePanelToggles({
             data-active={active ? 'true' : 'false'}
             onClick={() => onTabChange?.(active ? null : tab.id)}
             className={cn(
-              'relative grid h-9 w-9 shrink-0 place-items-center rounded-full transition-colors duration-150',
-              active
-                ? 'bg-call-chrome-accent text-white'
-                : 'bg-white/10 text-white/70 hover:bg-white/20 hover:text-white',
+              tone === 'surface'
+                ? [
+                    'relative grid h-8 w-8 shrink-0 place-items-center rounded-md border border-solid transition-colors duration-150',
+                    active
+                      ? 'border-border bg-surface-inset text-text-primary'
+                      : 'border-border bg-surface text-text-secondary hover:bg-surface-hover hover:text-text-primary',
+                  ]
+                : [
+                    'relative grid h-9 w-9 shrink-0 place-items-center rounded-full transition-colors duration-150',
+                    active
+                      ? 'bg-call-chrome-accent text-white'
+                      : 'bg-white/10 text-white/70 hover:bg-white/20 hover:text-white',
+                  ],
               isDisabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer',
             )}
           >

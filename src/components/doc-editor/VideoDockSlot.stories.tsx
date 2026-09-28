@@ -43,6 +43,17 @@ export const AwaitingDrop: Story = {
   ),
 };
 
+/** The chat shelf's drop prompt: a one-line strip above the composer. */
+export const AwaitingDropCompact: Story = {
+  name: 'Empty — compact strip (chat shelf)',
+  args: { docked: false, canAccept: true, compact: true, label: 'Call', hint: 'Drop the call here to chat alongside it' },
+  render: (args) => (
+    <div className="w-[640px]">
+      <VideoDockSlot {...args} />
+    </div>
+  ),
+};
+
 export const Docked: Story = {
   args: { docked: true, canAccept: false, label: 'Design review', onRequestUndock: () => {} },
   render: (args) => (
