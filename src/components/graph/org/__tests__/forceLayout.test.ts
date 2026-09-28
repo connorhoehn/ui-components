@@ -141,7 +141,7 @@ describe('createOrgSimulation — the whole org (56) on a 1160 × 360 strip', ()
     sim.tick(300);
     const bounds = orgGraphBounds(simNodes, id => radius(simNodes.find(n => n.id === id)!))!;
     const t = fitTransform(bounds, { width: 1160, height: 360 }, 32, 1.25, ORG_FIT_MIN_ZOOM, { left: 200 });
-    // Labels stay at ≥ 11px (was 56% → 6px) …
+    // Labels stay at ≥ 9px on their pills (was 56% → 6px) …
     expect(t.scale).toBeGreaterThanOrEqual(ORG_FIT_MIN_ZOOM);
     // … and the drawing spans most of the clear width (was 47% of the canvas).
     const drawnW = (bounds.maxX - bounds.minX) * t.scale;

@@ -29,16 +29,25 @@ itself with a ResizeObserver, so give it a sized container.
   size, padding, maxZoom)`, 32px padding, never past 125%) until the viewer
   pans or zooms; Fit to view re-fits. Zoom buttons and the wheel zoom about
   the canvas centre.
-- Readability and keep-outs (2.403.2): the fit never goes below
-  `ORG_FIT_MIN_ZOOM` (1.1, so the 10px first names draw at 11px); a whole org
-  that does not fit overflows the canvas — top/left aligned — and the viewer
-  pans. The forces are laid out for the clear area at that zoom, the
+- Readability and keep-outs (2.403.2): the automatic fit never goes below
+  `minFitZoom` (default `ORG_FIT_MIN_ZOOM`, 0.9 since 2.403.4, so the 10px
+  first names draw at 9px on their pills); a whole org that does not fit
+  overflows the canvas — top/left aligned — and the viewer pans.
+- Fit to view (2.403.4): the control, and `fitAll()` on the `ref` handle
+  (`OrgGraphHandle`), fit the whole drawn set with no readability floor, down
+  to `ORG_FIT_ALL_MIN_ZOOM` (0.5), so the viewer can see everyone at once. The
+  view stays fitted that way across resizes until a pan, a zoom or a new drawn
+  set. The forces are laid out for the clear area at that zoom, the
   department cells form a grid shaped to the canvas (`orgDepartmentCells`) and
   the > 40-people pulls are weighted by aspect ÷ 16:9, so 56 people span a
   1160 × 360 strip instead of a square in its middle. `fitInset` (`{ left,
   right, top, bottom }`, screen px) is kept clear by the layout and the fit —
   pass a person card's width as `right`. `left` defaults to `ORG_LEGEND_INSET`
-  (200) while `legend` is on.
+  (200) while `legend` is on. While `controls` is on, the zoom cluster's
+  corner (`ORG_CONTROLS_SIZE`, 172 × 48 with margins) is kept clear too, along
+  whichever of the bottom or right edge costs the smaller share of the clear
+  area (the bottom on a 1160 × 400 canvas), unless `fitInset` already covers
+  it (2.403.4).
 - Labels sit on a surface pill under the circle; in a drawing of more than 40
   people, dimmed (not highlighted) people drop their label. Sizing by
   connection count caps a focused person at their best-connected neighbour's

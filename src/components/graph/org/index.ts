@@ -6,14 +6,14 @@
 // NOTE: the graph barrel re-exports `GraphPerson` from here as
 // `OrgGraphPerson`, because `PeopleGraph` already owns `GraphPerson` there.
 export { OrgGraph } from './OrgGraph';
-export type { OrgGraphProps } from './OrgGraph';
+export type { OrgGraphProps, OrgGraphHandle } from './OrgGraph';
 export { focusOrgGraph } from './focusOrgGraph';
 export type { FocusOrgGraphOptions, FocusedOrgGraph } from './focusOrgGraph';
 export { OrgGraphLegend, ORG_LEGEND_INSET } from './OrgGraphLegend';
 export type { OrgGraphLegendProps } from './OrgGraphLegend';
 export { useForceLayout, forceParamsFor, orgDepartmentCells } from './useForceLayout';
 export type { LayoutMode, UseForceLayoutProps, UseForceLayoutReturn, OrgForceParams } from './useForceLayout';
-export { fitTransform, ORG_FIT_MIN_ZOOM } from './fitTransform';
+export { fitTransform, ORG_FIT_MIN_ZOOM, ORG_FIT_ALL_MIN_ZOOM, ORG_CONTROLS_SIZE } from './fitTransform';
 export type { FitBounds, FitInset, ViewTransform } from './fitTransform';
 export type { GraphPerson, GraphRelationship, GraphDepartment, PresenceStatus } from './types';
 export { PRESENCE_DOT, RELATIONSHIP_STYLES, passesPresenceFilter } from './presence';

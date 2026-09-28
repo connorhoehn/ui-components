@@ -19,8 +19,14 @@
 // `ORG_FIT_MIN_ZOOM` (11px names) — a whole org that does not fit overflows
 // and pans — and both the layout and the fit keep clear of `fitInset` (the
 // legend's width on the left by default, a host's person card on the right).
+//
+// Fit to view vs the automatic fit (2.403.4): the automatic fit keeps the
+// readability floor (`minFitZoom`, default `ORG_FIT_MIN_ZOOM` 0.9 — 9px
+// names), while "Fit to view" and `ref.fitAll()` fit the whole drawn set with
+// no floor (down to `ORG_FIT_ALL_MIN_ZOOM`, 0.5), so the viewer can choose to
+// see everyone at once. The zoom cluster's corner is kept clear by the fit.
 
-import { useState, useRef, useCallback, useEffect, useId, useMemo } from 'react';
+import { useState, useRef, useCallback, useEffect, useId, useImperativeHandle, useMemo, type Ref } from 'react';
 import type { MouseEvent as ReactMouseEvent, WheelEvent as ReactWheelEvent } from 'react';
 import { cn } from '../../../lib/cn';
 import { Stack } from '../../ui/Stack';
@@ -34,7 +40,9 @@ import type { GraphPerson, GraphRelationship, GraphDepartment } from './types';
 import { degreeMap as buildDegreeMap, maxDegree as maxOfDegreeMap, nodeRadius } from './graphInsights';
 import type { PresenceFilter } from './presence';
 import { focusOrgGraph } from './focusOrgGraph';
-import { fitTransform, orgGraphBounds, ORG_FIT_MIN_ZOOM, type FitInset } from './fitTransform';
+import {
+  fitTransform, orgGraphBounds, reserveCorner, ORG_CONTROLS_SIZE, ORG_FIT_ALL_MIN_ZOOM, ORG_FIT_MIN_ZOOM, type FitInset,
+} from './fitTransform';
 
 export interface OrgGraphProps {
   people: GraphPerson[];
@@ -74,10 +82,39 @@ export interface OrgGraphProps {
    * under it. The layout is sized to, and the fit centred in, what is left.
    * `left` defaults to the legend's width (`ORG_LEGEND_INSET`) while `legend`
    * is on, 0 otherwise; the rest default to 0. Since 2.403.2.
+   *
+   * While `controls` is on, the zoom cluster's bottom-right corner
+   * (`ORG_CONTROLS_SIZE`) is kept clear too — along the bottom or the right
+   * edge, whichever costs less — unless these insets already cover it.
+   * Since 2.403.4.
    */
   fitInset?: FitInset;
+  /**
+   * Floor of the automatic fit (screen zoom). A set that does not fit at it
+   * overflows and the viewer pans; "Fit to view" / `fitAll()` ignore it.
+   * The layout is also spread for the clear area at this zoom. Default
+   * `ORG_FIT_MIN_ZOOM` (0.9). Since 2.403.4.
+   */
+  minFitZoom?: number;
+  /** Imperative fit handle (`OrgGraphHandle`). Since 2.403.4. */
+  ref?: Ref<OrgGraphHandle>;
   'aria-label'?: string;
   'data-testid'?: string;
+}
+
+/**
+ * `ref` handle on `OrgGraph`. The graph already fits on its own when the drawn
+ * set or canvas changes; call this to drive a host "Show everyone" button.
+ * A no-op before the layout has positions. Since 2.403.4.
+ */
+export interface OrgGraphHandle {
+  /**
+   * Fit the whole drawn set with no readability floor (down to
+   * `ORG_FIT_ALL_MIN_ZOOM`), exactly as the "Fit to view" control does. The
+   * view stays in this mode — re-fitting on a resize — until the viewer pans
+   * or zooms or the drawn set changes.
+   */
+  fitAll: () => void;
 }
 
 const MIN_SCALE = 0.3;
@@ -124,6 +161,8 @@ export function OrgGraph({
   focusIds,
   focusHops = 1,
   fitInset,
+  minFitZoom = ORG_FIT_MIN_ZOOM,
+  ref,
   className,
   'aria-label': ariaLabel = 'Org graph',
   'data-testid': testId = 'org-graph',
@@ -183,19 +222,24 @@ export function OrgGraph({
   const maxDeg = useMemo(() => maxOfDegreeMap(degrees), [degrees]);
 
   // The clear area: the canvas less the legend / host card keep-outs.
-  const inset = useMemo(() => ({
-    left: fitInset?.left ?? (legend ? ORG_LEGEND_INSET : 0),
-    right: fitInset?.right ?? 0,
-    top: fitInset?.top ?? 0,
-    bottom: fitInset?.bottom ?? 0,
-  }), [fitInset?.left, fitInset?.right, fitInset?.top, fitInset?.bottom, legend]);
+  // With the zoom cluster on, its corner is reserved as well (`reserveCorner`).
+  const inset = useMemo(() => {
+    const base = {
+      left: fitInset?.left ?? (legend ? ORG_LEGEND_INSET : 0),
+      right: fitInset?.right ?? 0,
+      top: fitInset?.top ?? 0,
+      bottom: fitInset?.bottom ?? 0,
+    };
+    return controls ? reserveCorner(base, dimensions, ORG_CONTROLS_SIZE) : base;
+  }, [fitInset?.left, fitInset?.right, fitInset?.top, fitInset?.bottom, legend, controls, dimensions]);
   // The forces fill the clear area as it will be drawn at the label floor
-  // (`ORG_FIT_MIN_ZOOM`), so the fit lands at a readable zoom rather than
+  // (`minFitZoom`), so the fit lands at a readable zoom rather than
   // shrinking a canvas-sized layout until the names are 6px.
+  const floor = Math.max(ORG_FIT_ALL_MIN_ZOOM, minFitZoom);
   const layoutSize = useMemo(() => ({
-    width: Math.max(160, (dimensions.width - inset.left - inset.right - 2 * FIT_PADDING) / ORG_FIT_MIN_ZOOM),
-    height: Math.max(120, (dimensions.height - inset.top - inset.bottom - 2 * FIT_PADDING) / ORG_FIT_MIN_ZOOM),
-  }), [dimensions, inset]);
+    width: Math.max(160, (dimensions.width - inset.left - inset.right - 2 * FIT_PADDING) / floor),
+    height: Math.max(120, (dimensions.height - inset.top - inset.bottom - 2 * FIT_PADDING) / floor),
+  }), [dimensions, inset, floor]);
 
   const { nodes, links, isSettled } = useForceLayout({
     people: filteredPeople,
@@ -209,8 +253,10 @@ export function OrgGraph({
 
   // ── Framing ────────────────────────────────────────────────────────────────
   // Auto-fit is on until the viewer pans or zooms; a new drawn set or "Fit to
-  // view" turns it back on.
+  // view" turns it back on. `fitAllMode` is set by "Fit to view" / `fitAll()`
+  // (no readability floor) and cleared by a new drawn set.
   const autoFit = useRef(true);
+  const fitAllMode = useRef(false);
   const drawnKey = useMemo(() => filteredPeople.map(p => p.id).sort().join('\u0000'), [filteredPeople]);
   const laidOutKey = useMemo(() => nodes.map(n => n.id).sort().join('\u0000'), [nodes]);
   const lastDrawnKey = useRef(drawnKey);
@@ -218,11 +264,12 @@ export function OrgGraph({
     if (lastDrawnKey.current === drawnKey) return;
     lastDrawnKey.current = drawnKey;
     autoFit.current = true;
+    fitAllMode.current = false;
     // The forces aim to fill the canvas at 1:1, so start the new set there.
     setTransform({ x: 0, y: 0, scale: 1 });
   }, [drawnKey]);
 
-  const computeFit = useCallback(() => {
+  const computeFit = useCallback((all: boolean) => {
     const bounds = orgGraphBounds(
       nodes,
       id => nodeRadius(showInfluence, nodes.find(n => n.id === id)?.influenceScore ?? 0, degrees.get(id) ?? 0, maxDeg),
@@ -230,25 +277,31 @@ export function OrgGraph({
       // left out so a click does not re-frame the drawing.
       focusSet,
     );
-    // Never below the label floor: a set too big for the clear area at 11px
-    // labels overflows it (top / left aligned) and the viewer pans.
-    return bounds ? fitTransform(bounds, dimensions, FIT_PADDING, FIT_MAX_ZOOM, ORG_FIT_MIN_ZOOM, inset) : null;
-  }, [nodes, showInfluence, degrees, maxDeg, focusSet, dimensions, inset]);
+    // The automatic fit never goes below the label floor: a set too big for
+    // the clear area at it overflows (top / left aligned) and the viewer pans.
+    // Fit-all only stops at the hard minimum.
+    return bounds
+      ? fitTransform(bounds, dimensions, FIT_PADDING, FIT_MAX_ZOOM, all ? ORG_FIT_ALL_MIN_ZOOM : floor, inset)
+      : null;
+  }, [nodes, showInfluence, degrees, maxDeg, focusSet, dimensions, inset, floor]);
 
   useEffect(() => {
     if (!autoFit.current || !isSettled || laidOutKey !== drawnKey) return;
-    const next = computeFit();
+    const next = computeFit(fitAllMode.current);
     if (!next) return;
     setTransform(t => (
       Math.abs(t.x - next.x) < 0.5 && Math.abs(t.y - next.y) < 0.5 && Math.abs(t.scale - next.scale) < 0.001 ? t : next
     ));
   }, [computeFit, isSettled, laidOutKey, drawnKey]);
 
-  const fitNow = useCallback(() => {
+  const fitAll = useCallback(() => {
+    const next = computeFit(true);
+    if (!next) return;
     autoFit.current = true;
-    const next = computeFit();
-    setTransform(next ?? { x: 0, y: 0, scale: 1 });
+    fitAllMode.current = true;
+    setTransform(next);
   }, [computeFit]);
+  useImperativeHandle(ref, () => ({ fitAll }), [fitAll]);
 
   const connectedIds = useCallback((id: string | null): Set<string> => {
     if (!id) return new Set();
@@ -391,7 +444,7 @@ export function OrgGraph({
           maxZoom={MAX_SCALE}
           onZoomIn={() => { autoFit.current = false; setTransform(t => zoomAboutCentre(t, Math.min(MAX_SCALE, t.scale * 1.2), dimensions)); }}
           onZoomOut={() => { autoFit.current = false; setTransform(t => zoomAboutCentre(t, Math.max(MIN_SCALE, t.scale * 0.8), dimensions)); }}
-          onFit={fitNow}
+          onFit={fitAll}
           data-testid={`${testId}-zoom`}
         />
       )}

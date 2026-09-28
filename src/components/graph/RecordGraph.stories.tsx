@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { Button } from '../ui/Button';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { RecordGraph } from './RecordGraph';
+import { RecordGraph, type RecordGraphHandle } from './RecordGraph';
 import type { RecordGraphEdge, RecordGraphLayout, RecordGraphRecord, RecordGraphType } from './recordGraphLayout';
 
 // The search-connections mockup's cast: "Who can help finish Auth Migration?"
@@ -96,7 +97,7 @@ const MANY_EDGES: RecordGraphEdge[] = [
 /**
  * Twenty-five records and 56 connections in the search page's 1160 × 418
  * canvas, with the three people selected and passed as `focusKeys`: the view
- * frames them and their neighbours at a readable zoom (never below 70%), the
+ * frames them and their neighbours at a readable zoom (never below 80%), the
  * rest is a pan away, and Fit frames everything at the same floor. Switch to
  * Hierarchy for longest-path columns wrapped to the canvas height.
  */
@@ -110,6 +111,40 @@ export const ManyRecords: Story = {
     return (
       <RecordGraph {...args} selectedKeys={selected} onSelectionChange={setSelected} focusKeys={selected}
         layout={layout} onLayoutChange={setLayout} />
+    );
+  },
+};
+
+/**
+ * The portal's journey defect (2.403.4): the host's answer strip opens under
+ * the canvas and takes 50px from it. The graph re-fits on the canvas resize
+ * and, at the 80% floor, keeps the three selected people fully in view. Fit
+ * re-centres on the selection; pressed again it frames the whole graph from
+ * the top-left. The host buttons drive the `RecordGraphHandle` ref.
+ */
+export const StripOpens: Story = {
+  name: '25 records, strip opens',
+  args: { records: MANY, edges: MANY_EDGES },
+  decorators: [(Story) => <div className="flex h-[520px] w-[1160px] max-w-full flex-col border border-border"><Story /></div>],
+  render: (args) => {
+    const [selected, setSelected] = useState(['person:vera', 'person:nora-c', 'person:nora-d']);
+    const [strip, setStrip] = useState(false);
+    const graph = useRef<RecordGraphHandle>(null);
+    return (
+      <>
+        <RecordGraph {...args} ref={graph} selectedKeys={selected} onSelectionChange={setSelected} focusKeys={selected}
+          onAskSelection={() => setStrip(true)} />
+        {strip && (
+          <div className="flex h-[50px] shrink-0 items-center border-t border-border bg-surface-panel px-3 text-sm text-text-secondary">
+            Org Assistant · I found relevant information about auth …
+          </div>
+        )}
+        <div className="flex shrink-0 gap-2 border-t border-border p-2">
+          <Button size="sm" variant="secondary" onClick={() => setStrip((open) => !open)}>{strip ? 'Close strip' : 'Open strip'}</Button>
+          <Button size="sm" variant="secondary" onClick={() => graph.current?.fitToFocus()}>fitToFocus()</Button>
+          <Button size="sm" variant="secondary" onClick={() => graph.current?.fitAll()}>fitAll()</Button>
+        </div>
+      </>
     );
   },
 };

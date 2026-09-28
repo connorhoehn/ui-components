@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { fitTransform, orgGraphBounds, orgLabelWidth, ORG_FIT_MIN_ZOOM } from '../fitTransform';
+import {
+  fitTransform, orgGraphBounds, orgLabelWidth, reserveCorner, ORG_CONTROLS_SIZE, ORG_FIT_ALL_MIN_ZOOM, ORG_FIT_MIN_ZOOM,
+} from '../fitTransform';
 import { ORG_LABEL_BAND } from '../useForceLayout';
 
 const size = { width: 1000, height: 500 };
@@ -56,16 +58,45 @@ describe('fitTransform — insets and the label floor', () => {
 
   it('stops at the label floor and start-aligns the overflowing axis', () => {
     // 900 × 600 of world on a 1000 × 500 canvas, legend inset 200: the fit
-    // would be ~0.6; the floor holds 1.1 and the drawing runs off the bottom.
-    const t = fitTransform({ minX: 0, minY: 0, maxX: 700, maxY: 600 }, size, 32, 1.25, ORG_FIT_MIN_ZOOM, { left: 200 });
+    // would be ~0.73; the floor holds 0.9 and the drawing runs off the bottom.
+    const t = fitTransform({ minX: 0, minY: 0, maxX: 900, maxY: 600 }, size, 32, 1.25, ORG_FIT_MIN_ZOOM, { left: 200 });
     expect(t.scale).toBe(ORG_FIT_MIN_ZOOM);
     expect(0 * t.scale + t.y).toBeCloseTo(32); // top of the drawing at the top padding
-    // Width (770) still overflows the 736 clear width → left edge right of the legend.
+    // Width (810) still overflows the 736 clear width → left edge right of the legend.
     expect(0 * t.scale + t.x).toBeCloseTo(232);
     // An axis that still fits stays centred.
     const wide = fitTransform({ minX: 0, minY: 0, maxX: 600, maxY: 600 }, size, 32, 1.25, ORG_FIT_MIN_ZOOM, { left: 200 });
     expect(300 * wide.scale + wide.x).toBeCloseTo(200 + 400);
     expect(0 * wide.scale + wide.y).toBeCloseTo(32);
+  });
+
+  it('keeps the automatic floor at 0.9 and the fit-all floor at 0.5', () => {
+    expect(ORG_FIT_MIN_ZOOM).toBe(0.9);
+    expect(ORG_FIT_ALL_MIN_ZOOM).toBe(0.5);
+    // The same overflowing box fits whole under the fit-all floor.
+    const all = fitTransform({ minX: 0, minY: 0, maxX: 900, maxY: 600 }, size, 32, 1.25, ORG_FIT_ALL_MIN_ZOOM, { left: 200 });
+    expect(all.scale).toBeCloseTo(436 / 600);
+    expect(600 * all.scale + all.y).toBeLessThanOrEqual(500 - 32 + 0.01);
+    expect(900 * all.scale + all.x).toBeLessThanOrEqual(1000 - 32 + 0.01);
+  });
+});
+
+describe('reserveCorner', () => {
+  const zero = { left: 0, right: 0, top: 0, bottom: 0 };
+  it('reserves the controls corner along the cheaper edge', () => {
+    // A wide strip: 48 of 400 tall is cheaper than 172 of 1160 wide.
+    expect(reserveCorner({ ...zero, left: 200 }, { width: 1160, height: 400 }, ORG_CONTROLS_SIZE))
+      .toEqual({ ...zero, left: 200, bottom: ORG_CONTROLS_SIZE.height });
+    // A very wide, short strip gives up the right edge instead (172 of 1600 < 48 of 300).
+    expect(reserveCorner(zero, { width: 1600, height: 300 }, ORG_CONTROLS_SIZE))
+      .toEqual({ ...zero, right: ORG_CONTROLS_SIZE.width });
+  });
+
+  it('leaves host insets that already cover the corner alone', () => {
+    const card = { ...zero, right: 320 };
+    expect(reserveCorner(card, { width: 1160, height: 400 }, ORG_CONTROLS_SIZE)).toBe(card);
+    const band = { ...zero, bottom: 60 };
+    expect(reserveCorner(band, { width: 1160, height: 400 }, ORG_CONTROLS_SIZE)).toBe(band);
   });
 });
 

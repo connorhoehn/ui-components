@@ -1,7 +1,9 @@
+import { act, createRef } from 'react';
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { OrgGraph } from '../OrgGraph';
-import { ORG_FIT_MIN_ZOOM } from '../fitTransform';
+import { OrgGraph, type OrgGraphHandle } from '../OrgGraph';
+import { ORG_CONTROLS_SIZE, ORG_FIT_ALL_MIN_ZOOM, ORG_FIT_MIN_ZOOM, orgGraphBounds } from '../fitTransform';
+import type { GraphPerson, GraphRelationship } from '../types';
 import { ORG_LEGEND_INSET } from '../OrgGraphLegend';
 import { departments, people, relationships } from './fixtures';
 
@@ -9,6 +11,35 @@ afterEach(cleanup);
 
 // Radial is static (no d3 timer), so node positions exist on first effect.
 const base = { people, relationships, departments, layout: 'radial' as const };
+
+// A whole org: 56 people on fixed radial rings (~1000px across) do not fit the
+// default 800 × 600 test canvas at the readability floor.
+const org: GraphPerson[] = Array.from({ length: 56 }, (_, i) => ({
+  id: `o-${i}`, name: `Person${i} Doe`, title: 'Engineer', department: departments[i % 3]!.name,
+  skills: [], influenceScore: ((i * 37) % 100) / 100,
+}));
+const orgRels: GraphRelationship[] = org.map((p, i) => ({
+  source: p.id, target: org[(i + 1) % 56]!.id, type: 'collaborates' as const, strength: 0.5,
+}));
+const whole = { people: org, relationships: orgRels, departments, layout: 'radial' as const };
+
+function viewTransform() {
+  const group = document.querySelector('svg[aria-label="Org graph"] > g')!;
+  const m = /translate\(([-\d.e]+), ([-\d.e]+)\) scale\(([-\d.e]+)\)/.exec(group.getAttribute('transform')!)!;
+  return { x: Number(m[1]), y: Number(m[2]), scale: Number(m[3]) };
+}
+
+/** Screen box of every drawn node with its circle and label pill. */
+function drawnScreenBox() {
+  const t = viewTransform();
+  const nodes = screen.getAllByRole('button', { name: /·/ }).map((el) => {
+    const p = /translate\(([-\d.e]+), ([-\d.e]+)\)/.exec(el.getAttribute('transform')!)!;
+    const r = Number(el.querySelector('circle.org-node-main')!.getAttribute('r'));
+    return { id: el.getAttribute('aria-label')!, name: el.getAttribute('aria-label')!.split(' · ')[0]!, x: Number(p[1]), y: Number(p[2]), r };
+  });
+  const b = orgGraphBounds(nodes, id => nodes.find(n => n.id === id)!.r)!;
+  return { left: b.minX * t.scale + t.x, right: b.maxX * t.scale + t.x, top: b.minY * t.scale + t.y, bottom: b.maxY * t.scale + t.y };
+}
 
 describe('OrgGraph', () => {
   it('renders every person as a keyboard-reachable node, the legend, and the zoom cluster', () => {
@@ -166,5 +197,55 @@ describe('OrgGraph', () => {
     expect(group.getAttribute('transform')).not.toBe(fitted);
     fireEvent.click(screen.getByRole('button', { name: 'Fit to view' }));
     expect(group.getAttribute('transform')).toBe(fitted);
+  });
+
+  it('the automatic fit holds the readability floor; Fit to view ignores it and shows everyone', () => {
+    render(<OrgGraph {...whole} />);
+    expect(viewTransform().scale).toBe(ORG_FIT_MIN_ZOOM);
+    let box = drawnScreenBox();
+    expect(box.right > 800 || box.bottom > 600).toBe(true); // overflows at the floor
+    fireEvent.click(screen.getByRole('button', { name: 'Fit to view' }));
+    const k = viewTransform().scale;
+    expect(k).toBeLessThan(ORG_FIT_MIN_ZOOM);
+    expect(k).toBeGreaterThanOrEqual(ORG_FIT_ALL_MIN_ZOOM);
+    box = drawnScreenBox();
+    expect(box.left).toBeGreaterThanOrEqual(0);
+    expect(box.top).toBeGreaterThanOrEqual(0);
+    expect(box.right).toBeLessThanOrEqual(800);
+    expect(box.bottom).toBeLessThanOrEqual(600);
+  });
+
+  it('minFitZoom tunes the automatic floor', () => {
+    render(<OrgGraph {...whole} minFitZoom={1.2} />);
+    expect(viewTransform().scale).toBe(1.2);
+  });
+
+  it('ref.fitAll() fits the whole drawn set with no floor, like the control', () => {
+    const ref = createRef<OrgGraphHandle>();
+    render(<OrgGraph {...whole} ref={ref} controls={false} />);
+    expect(viewTransform().scale).toBe(ORG_FIT_MIN_ZOOM);
+    act(() => ref.current!.fitAll());
+    const box = drawnScreenBox();
+    expect(viewTransform().scale).toBeLessThan(ORG_FIT_MIN_ZOOM);
+    expect(box.right).toBeLessThanOrEqual(800);
+    expect(box.bottom).toBeLessThanOrEqual(600);
+  });
+
+  it('keeps the fitted drawing clear of the zoom controls', () => {
+    const controlsRect = {
+      left: 800 - ORG_CONTROLS_SIZE.width, top: 600 - ORG_CONTROLS_SIZE.height, right: 800, bottom: 600,
+    };
+    const intersects = (b: ReturnType<typeof drawnScreenBox>) =>
+      b.left < controlsRect.right && b.right > controlsRect.left && b.top < controlsRect.bottom && b.bottom > controlsRect.top;
+    render(<OrgGraph {...whole} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Fit to view' }));
+    expect(intersects(drawnScreenBox())).toBe(false);
+    // Without the controls the same fit uses that corner.
+    cleanup();
+    const noControls = createRef<OrgGraphHandle>();
+    cleanup();
+    render(<OrgGraph {...whole} controls={false} ref={noControls} />);
+    act(() => noControls.current!.fitAll());
+    expect(intersects(drawnScreenBox())).toBe(true);
   });
 });

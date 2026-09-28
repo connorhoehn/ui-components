@@ -12756,11 +12756,33 @@ declare type OnMessageFn_8 = (handler: (msg: GatewayMessage) => void) => () => v
 declare type OnMessageFn_9 = (handler: (msg: GatewayMessage) => void) => () => void;
 
 /**
- * Screen zoom below which the fit does not go: the org graph's first-name
- * labels are 10px, so 1.1 keeps them at 11px. A drawing that does not fit at
- * this zoom overflows the canvas and the viewer pans. Since 2.403.2.
+ * The zoom cluster's box in the canvas's bottom-right corner, margins
+ * included (`bottom-3 right-3` + a 34px-tall, ~158px-wide toolbar). The fit
+ * keeps clear of it while `controls` is on. Since 2.403.4.
  */
-export declare const ORG_FIT_MIN_ZOOM = 1.1;
+export declare const ORG_CONTROLS_SIZE: {
+    readonly width: 172;
+    readonly height: 48;
+};
+
+/**
+ * Hard floor of "Fit to view" / `OrgGraphHandle.fitAll()`, which fit the
+ * whole drawn set with no readability floor — the viewer asked to see
+ * everyone at once. Only a set that does not fit even at this zoom overflows.
+ * Since 2.403.4.
+ */
+export declare const ORG_FIT_ALL_MIN_ZOOM = 0.5;
+
+/**
+ * Default floor of the org graph's AUTOMATIC fit: the first-name labels are
+ * 10px on a surface pill, so 0.9 draws them at 9px — still legible on the
+ * pill, and it brings far more of a whole org into view than 2.403.2's 1.1
+ * (11px), which left 21 of 56 people off a 1160 × 400 canvas. A drawing that
+ * does not fit at this zoom overflows the canvas and the viewer pans, or
+ * presses "Fit to view". `OrgGraph`'s `minFitZoom` overrides it.
+ * Since 2.403.2; 0.9 since 2.403.4.
+ */
+export declare const ORG_FIT_MIN_ZOOM = 0.9;
 
 /**
  * Screen px the legend takes from the canvas's left edge: its 12px offset,
@@ -12796,7 +12818,22 @@ export declare interface OrgForceParams {
     jitter: number;
 }
 
-export declare function OrgGraph({ people, relationships, departments, onPersonSelect, multiSelectIds, onToggleMultiSelect, spotlightIds, layout, presenceFilter, showInfluence, legend, controls, focusIds, focusHops, fitInset, className, 'aria-label': ariaLabel, 'data-testid': testId, }: OrgGraphProps): JSX.Element;
+export declare function OrgGraph({ people, relationships, departments, onPersonSelect, multiSelectIds, onToggleMultiSelect, spotlightIds, layout, presenceFilter, showInfluence, legend, controls, focusIds, focusHops, fitInset, minFitZoom, ref, className, 'aria-label': ariaLabel, 'data-testid': testId, }: OrgGraphProps): JSX.Element;
+
+/**
+ * `ref` handle on `OrgGraph`. The graph already fits on its own when the drawn
+ * set or canvas changes; call this to drive a host "Show everyone" button.
+ * A no-op before the layout has positions. Since 2.403.4.
+ */
+export declare interface OrgGraphHandle {
+    /**
+     * Fit the whole drawn set with no readability floor (down to
+     * `ORG_FIT_ALL_MIN_ZOOM`), exactly as the "Fit to view" control does. The
+     * view stays in this mode — re-fitting on a resize — until the viewer pans
+     * or zooms or the drawn set changes.
+     */
+    fitAll: () => void;
+}
 
 export declare function OrgGraphLegend({ departments, filter, onFilter, presenceFilter, pinned, className, 'data-testid': testId, }: OrgGraphLegendProps): JSX.Element;
 
@@ -12862,8 +12899,22 @@ export declare interface OrgGraphProps {
      * under it. The layout is sized to, and the fit centred in, what is left.
      * `left` defaults to the legend's width (`ORG_LEGEND_INSET`) while `legend`
      * is on, 0 otherwise; the rest default to 0. Since 2.403.2.
+     *
+     * While `controls` is on, the zoom cluster's bottom-right corner
+     * (`ORG_CONTROLS_SIZE`) is kept clear too — along the bottom or the right
+     * edge, whichever costs less — unless these insets already cover it.
+     * Since 2.403.4.
      */
     fitInset?: FitInset;
+    /**
+     * Floor of the automatic fit (screen zoom). A set that does not fit at it
+     * overflows and the viewer pans; "Fit to view" / `fitAll()` ignore it.
+     * The layout is also spread for the clear area at this zoom. Default
+     * `ORG_FIT_MIN_ZOOM` (0.9). Since 2.403.4.
+     */
+    minFitZoom?: number;
+    /** Imperative fit handle (`OrgGraphHandle`). Since 2.403.4. */
+    ref?: Ref<OrgGraphHandle>;
     'aria-label'?: string;
     'data-testid'?: string;
 }
@@ -15395,11 +15446,12 @@ export declare interface ReconnectingBannerProps {
 export declare const RECORD_GRAPH_MAX_FIT_ZOOM = 1;
 
 /**
- * Fit never zooms out past this: below it the 13px titles drop under ~9px and
- * the graph stops being readable. A larger set overflows the canvas and the
- * viewer pans instead. Since 2.403.2.
+ * Fit never zooms out past this: the 13px titles stay at ~10.4px and the 11px
+ * edge labels at ~8.8px. A larger set overflows the canvas and the viewer
+ * pans; the fit keeps the focus in view (`recordGraphViewport`). 0.7 in
+ * 2.403.2–2.403.3 (9.1px titles, 7.7px edge labels); 0.8 since 2.403.4.
  */
-export declare const RECORD_GRAPH_MIN_FIT_ZOOM = 0.7;
+export declare const RECORD_GRAPH_MIN_FIT_ZOOM = 0.8;
 
 export declare const RECORD_GRAPH_NODE_HEIGHT = 104;
 
@@ -15443,7 +15495,7 @@ export declare interface RecordForceParams {
  */
 export declare function recordForceParams(count: number, width?: number, height?: number): RecordForceParams;
 
-export declare function RecordGraph({ records, edges, selectedKeys, onSelectionChange, onAskSelection, onOpenRecord, layout: controlledLayout, onLayoutChange, typeFilter: controlledType, onTypeFilterChange, typeLabels, className, 'data-testid': testId, 'aria-label': ariaLabel, emptyLabel, showIsolated, focusKeys, }: RecordGraphProps): JSX.Element;
+export declare function RecordGraph({ records, edges, selectedKeys, onSelectionChange, onAskSelection, onOpenRecord, layout: controlledLayout, onLayoutChange, typeFilter: controlledType, onTypeFilterChange, typeLabels, className, 'data-testid': testId, 'aria-label': ariaLabel, emptyLabel, showIsolated, focusKeys, ref, }: RecordGraphProps): JSX.Element;
 
 /** A directed, labelled relationship. `source`/`target` are `type:id` keys. */
 export declare interface RecordGraphEdge {
@@ -15459,6 +15511,22 @@ export declare interface RecordGraphEdge {
  * drawn — the host then fits the whole graph. Since 2.403.2.
  */
 export declare function recordGraphFitKeys(recordKeys: readonly string[], edges: readonly Pick<RecordGraphEdge, 'source' | 'target'>[], focusKeys: readonly string[] | undefined): string[];
+
+/**
+ * `ref` handle on `RecordGraph`. The graph already re-fits on its own when the
+ * drawing or the canvas size changes; call these after a host-side change it
+ * cannot observe, or to drive a host "Show selection" / "Show all" button.
+ * Both are no-ops while the canvas is not drawn. Since 2.403.4.
+ */
+export declare interface RecordGraphHandle {
+    /**
+     * Frame `focusKeys` + their neighbours; at the zoom floor, centre on them so
+     * the focus is fully in view. Frames the whole graph when there is no focus.
+     */
+    fitToFocus: () => void;
+    /** Frame the whole graph as best it can: centred when it fits, top-left aligned (pan for the rest) when not. */
+    fitAll: () => void;
+}
 
 /** The key a node and a selection hold: `${type}:${id}`. */
 export declare function recordGraphKey(record: Pick<RecordGraphRecord, 'id' | 'type'>): string;
@@ -15511,9 +15579,16 @@ export declare interface RecordGraphProps {
      * (records, edges, layout, canvas size) — not on a selection click alone,
      * so passing `selectedKeys` straight through does not move the view under
      * the pointer. Omit, or name nothing drawn, to fit the whole graph.
-     * Since 2.403.2.
+     * Since 2.403.2. When the neighbourhood cannot fit at the floor, the fit
+     * centres on these records so they are never clipped while they fit, and
+     * "Fit" re-centres on them (a second press frames the whole graph) — 2.403.4.
      */
     focusKeys?: readonly string[];
+    /**
+     * Imperative fit handle (`RecordGraphHandle`) for a host whose own layout
+     * moves the canvas in a way the graph cannot see. Since 2.403.4.
+     */
+    ref?: Ref<RecordGraphHandle>;
 }
 
 /** One typed org record — the same shape a search read model returns. */
@@ -15530,6 +15605,32 @@ export declare interface RecordGraphRecord {
 }
 
 export declare type RecordGraphType = 'person' | 'initiative' | 'work' | 'decision' | 'knowledge' | 'asset';
+
+/** A pan/zoom viewport in xyflow's terms: screen = flow × zoom + (x, y). */
+export declare interface RecordGraphViewport {
+    x: number;
+    y: number;
+    zoom: number;
+}
+
+export declare interface RecordGraphViewportOptions {
+    /**
+     * `focus` frames `focusKeys` + their neighbours (`fitKeys`) when they fit at
+     * or above the floor; at the floor it centres on the largest of the whole
+     * graph, the neighbourhood and the focus itself that fits, per axis, so the
+     * focus is never clipped while it fits. `all` frames the whole graph, and
+     * where it overflows at the floor aligns it top-left so the viewer pans.
+     */
+    mode: 'focus' | 'all';
+    /** The focus records themselves (usually the selection) — never clipped when they fit. */
+    focusKeys?: readonly string[];
+    /** Focus plus direct neighbours (`recordGraphFitKeys`). Framed first when it fits. */
+    fitKeys?: readonly string[];
+    /** Screen px kept clear on every side. Default 24. */
+    padding?: number;
+    minZoom?: number;
+    maxZoom?: number;
+}
 
 export declare const RECORDING_CHIP_TITLES: {
     readonly active: "Recording — saved to /recordings when the call ends";
@@ -23833,6 +23934,49 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -23859,52 +24003,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }

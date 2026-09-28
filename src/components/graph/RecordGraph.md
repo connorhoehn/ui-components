@@ -42,12 +42,37 @@ filled by arc length. Hierarchy ranks by longest path from the roots, falls
 back to columns by type (person → initiative → work/decision/knowledge/asset)
 when nothing forms a directed chain, and wraps a rank taller than the canvas
 into side-by-side columns. The fit never goes below
-`RECORD_GRAPH_MIN_FIT_ZOOM` (0.7) nor above 100%: a larger graph overflows and
+`RECORD_GRAPH_MIN_FIT_ZOOM` (0.8 since 2.403.4, was 0.7) nor above 100%: a larger graph overflows and
 the viewer pans. `focusKeys` (usually the host's `selectedKeys`) frames those
 records plus their direct neighbours first (`recordGraphFitKeys`); "Fit to
 view" frames the whole graph. The view re-fits when the drawing changes, not
 on a selection click. `layoutRecordGraph(records, edges, layout, { width,
 height })` takes the canvas to fill.
 
+Fit and resize (2.403.4): the view also re-fits when the canvas is resized (a
+host strip opening under it), one fit per animation frame. A selection click
+never moves it. At the floor the fit keeps the focus whole: it centres on the
+whole graph, the neighbourhood, or the focus itself, whichever fits
+(`recordGraphViewport(positions, { width, height }, { mode, focusKeys,
+fitKeys })`, pure). "Fit to view" re-centres on the focus. Pressed again, or
+with no `focusKeys`, it frames the whole graph, top-left aligned when that
+overflows.
+
+A host whose own layout moves the canvas in ways the graph cannot see (or
+that wants "Show selection" / "Show all" buttons) takes the handle:
+
+```tsx
+const graph = useRef<RecordGraphHandle>(null);
+<RecordGraph ref={graph} focusKeys={selected} … />
+graph.current?.fitToFocus(); // focus + neighbours; the focus is never clipped while it fits
+graph.current?.fitAll();     // the whole graph, centred or top-left aligned
+```
+
+Edge labels (2.403.4) draw at rest only on edges that touch a selected or
+focused record; the others appear on hover. With nothing selected, a graph of
+≤ 16 edges labels every edge. Names and status lines sit on a surface pill,
+so a crossing edge passes under the text.
+
 Storybook: Graph/RecordGraph (Default with the Auth Migration cast, Search
-result (25 records), Hierarchy, Radial, Empty, Unconnected, ShowIsolated, Dark).
+result (25 records), 25 records, strip opens, Hierarchy, Radial, Empty,
+Unconnected, ShowIsolated, Dark).

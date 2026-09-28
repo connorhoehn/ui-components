@@ -30,11 +30,52 @@ export interface FitInset {
 }
 
 /**
- * Screen zoom below which the fit does not go: the org graph's first-name
- * labels are 10px, so 1.1 keeps them at 11px. A drawing that does not fit at
- * this zoom overflows the canvas and the viewer pans. Since 2.403.2.
+ * Default floor of the org graph's AUTOMATIC fit: the first-name labels are
+ * 10px on a surface pill, so 0.9 draws them at 9px — still legible on the
+ * pill, and it brings far more of a whole org into view than 2.403.2's 1.1
+ * (11px), which left 21 of 56 people off a 1160 × 400 canvas. A drawing that
+ * does not fit at this zoom overflows the canvas and the viewer pans, or
+ * presses "Fit to view". `OrgGraph`'s `minFitZoom` overrides it.
+ * Since 2.403.2; 0.9 since 2.403.4.
  */
-export const ORG_FIT_MIN_ZOOM = 1.1;
+export const ORG_FIT_MIN_ZOOM = 0.9;
+
+/**
+ * Hard floor of "Fit to view" / `OrgGraphHandle.fitAll()`, which fit the
+ * whole drawn set with no readability floor — the viewer asked to see
+ * everyone at once. Only a set that does not fit even at this zoom overflows.
+ * Since 2.403.4.
+ */
+export const ORG_FIT_ALL_MIN_ZOOM = 0.5;
+
+/**
+ * The zoom cluster's box in the canvas's bottom-right corner, margins
+ * included (`bottom-3 right-3` + a 34px-tall, ~158px-wide toolbar). The fit
+ * keeps clear of it while `controls` is on. Since 2.403.4.
+ */
+export const ORG_CONTROLS_SIZE = { width: 172, height: 48 } as const;
+
+/**
+ * Insets that also keep a bottom-right `corner` box (the zoom cluster) clear.
+ * Clearing either edge clears the corner, so when the host's insets do not
+ * already cover it, the corner is reserved along the edge that costs the
+ * smaller share of the clear area — usually the bottom, the right only on a
+ * strip more than ~3.6× wider than tall — rather than both. Since 2.403.4.
+ */
+export function reserveCorner(
+  inset: Required<FitInset>,
+  size: { width: number; height: number },
+  corner: { width: number; height: number },
+): Required<FitInset> {
+  if (inset.right >= corner.width || inset.bottom >= corner.height) return inset;
+  const clearW = Math.max(1, size.width - inset.left - inset.right);
+  const clearH = Math.max(1, size.height - inset.top - inset.bottom);
+  const costBottom = (corner.height - inset.bottom) / clearH;
+  const costRight = (corner.width - inset.right) / clearW;
+  return costBottom <= costRight
+    ? { ...inset, bottom: corner.height }
+    : { ...inset, right: corner.width };
+}
 
 /**
  * The transform that centres `bounds` in a `size` canvas — less `inset` on

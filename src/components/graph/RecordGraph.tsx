@@ -16,6 +16,12 @@
 // that never goes below `RECORD_GRAPH_MIN_FIT_ZOOM` — the selection
 // (`focusKeys`) and its neighbours are framed first; the rest is a pan away.
 //
+// Fit (2.403.4): the view re-fits when the canvas is resized (a host strip
+// opening under it), not only when the drawing changes. At the floor the fit
+// keeps the focus fully in view (`recordGraphViewport`); "Fit to view"
+// re-centres on the focus, and pressed again frames the whole graph from the
+// top-left. `ref` exposes `fitToFocus()` / `fitAll()` (`RecordGraphHandle`).
+//
 // Built on @xyflow/react, not SVG like NodeGraph: xyflow already gives pan,
 // zoom, fit-to-view and viewport culling, which the mockup's zoom cluster and
 // a 100-record result need, and TypedNodeCanvas already carries the
@@ -38,7 +44,7 @@ import {
   type NodeProps,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState, type Ref, type RefObject } from 'react';
 import { cn } from '../../lib/cn';
 import { Select } from '../forms/Select';
 import { Avatar } from '../shared/Avatar';
@@ -56,6 +62,7 @@ import {
   layoutRecordGraph,
   recordGraphFitKeys,
   recordGraphKey,
+  recordGraphViewport,
   RECORD_GRAPH_MAX_FIT_ZOOM,
   RECORD_GRAPH_MIN_FIT_ZOOM,
   RECORD_GRAPH_NODE_HEIGHT,
@@ -107,9 +114,32 @@ export interface RecordGraphProps {
    * (records, edges, layout, canvas size) — not on a selection click alone,
    * so passing `selectedKeys` straight through does not move the view under
    * the pointer. Omit, or name nothing drawn, to fit the whole graph.
-   * Since 2.403.2.
+   * Since 2.403.2. When the neighbourhood cannot fit at the floor, the fit
+   * centres on these records so they are never clipped while they fit, and
+   * "Fit" re-centres on them (a second press frames the whole graph) — 2.403.4.
    */
   focusKeys?: readonly string[];
+  /**
+   * Imperative fit handle (`RecordGraphHandle`) for a host whose own layout
+   * moves the canvas in a way the graph cannot see. Since 2.403.4.
+   */
+  ref?: Ref<RecordGraphHandle>;
+}
+
+/**
+ * `ref` handle on `RecordGraph`. The graph already re-fits on its own when the
+ * drawing or the canvas size changes; call these after a host-side change it
+ * cannot observe, or to drive a host "Show selection" / "Show all" button.
+ * Both are no-ops while the canvas is not drawn. Since 2.403.4.
+ */
+export interface RecordGraphHandle {
+  /**
+   * Frame `focusKeys` + their neighbours; at the zoom floor, centre on them so
+   * the focus is fully in view. Frames the whole graph when there is no focus.
+   */
+  fitToFocus: () => void;
+  /** Frame the whole graph as best it can: centred when it fits, top-left aligned (pan for the rest) when not. */
+  fitAll: () => void;
 }
 
 const DEFAULT_EMPTY_LABEL = 'No recorded connections — search, or select related records';
@@ -152,6 +182,8 @@ const LINE_START = MARK_SIZE / 2 + 4;
 const LINE_END = MARK_SIZE / 2 + 6;
 /** Fit options: never past 100%, never below the readable floor (the viewer pans instead). */
 const FIT = { padding: 0.12, minZoom: RECORD_GRAPH_MIN_FIT_ZOOM, maxZoom: RECORD_GRAPH_MAX_FIT_ZOOM };
+/** With no selection or focus, edge labels draw at rest up to this many edges (else on hover). */
+const LABEL_ALL_EDGES = 16;
 /** Layout re-runs for a canvas size change only past this step, px. */
 const SIZE_STEP = 40;
 
@@ -165,6 +197,8 @@ interface RecordEdgeData extends Record<string, unknown> {
   to: { x: number; y: number };
   label: string;
   related: boolean;
+  /** Draw the label at rest (the edge touches a focused/selected record); otherwise it shows on hover. */
+  labelShown: boolean;
 }
 type RecordFlowNode = Node<RecordNodeData, 'record'>;
 type RecordFlowEdge = Edge<RecordEdgeData, 'record'>;
@@ -213,16 +247,16 @@ function RecordNodeView({ data }: NodeProps<RecordFlowNode>) {
             </span>
           )}
         </span>
-        <span className="line-clamp-2 text-[13px] font-medium leading-tight text-text-primary">{record.title}</span>
+        <span className="line-clamp-2 rounded-sm bg-surface px-1 text-[13px] font-medium leading-tight text-text-primary">{record.title}</span>
         {dotted ? (
           <StatusDot
             size="xs"
             color={blocked ? 'var(--color-danger)' : LIVE_STATUSES.has(statusKey(record.status)) ? 'var(--color-success)' : 'var(--color-text-tertiary)'}
             label={statusText}
-            className="max-w-full truncate text-xs text-text-secondary"
+            className="max-w-full truncate rounded-sm bg-surface px-1 text-xs text-text-secondary"
           />
         ) : (
-          <span className={cn('max-w-full truncate text-xs', record.status ? 'text-primary' : 'text-text-secondary')}>{statusText}</span>
+          <span className={cn('max-w-full truncate rounded-sm bg-surface px-1 text-xs', record.status ? 'text-primary' : 'text-text-secondary')}>{statusText}</span>
         )}
       </button>
       <Handle type="source" position={Position.Right} isConnectable={false} className="opacity-0" />
@@ -234,7 +268,7 @@ function RecordNodeView({ data }: NodeProps<RecordFlowNode>) {
  *  an arrowhead at the target and its label on a surface-coloured halo. */
 function RecordEdgeView({ id, data }: EdgeProps<RecordFlowEdge>) {
   if (!data) return null;
-  const { from, to, label, related } = data;
+  const { from, to, label, related, labelShown } = data;
   const dx = to.x - from.x;
   const dy = to.y - from.y;
   const dist = Math.hypot(dx, dy);
@@ -259,11 +293,14 @@ function RecordEdgeView({ id, data }: EdgeProps<RecordFlowEdge>) {
   const ly = 0.25 * sy + 0.5 * cy + 0.25 * ey;
   const stroke = 'var(--color-text-tertiary)';
   return (
-    <g data-edge-id={id} data-related={related ? 'true' : 'false'}>
+    <g data-edge-id={id} data-related={related ? 'true' : 'false'} className="group">
+      {/* Wide invisible hit line: hovering near an edge reveals a resting-hidden label. */}
+      <path d={`M${sx} ${sy} Q${cx} ${cy} ${ex} ${ey}`} fill="none" stroke="transparent" strokeWidth={12} className="[pointer-events:stroke]" />
       <path d={`M${sx} ${sy} Q${cx} ${cy} ${ex} ${ey}`} fill="none" stroke={stroke} strokeWidth={1} strokeDasharray={related ? '4 4' : undefined} />
       <path d={arrow} fill={stroke} />
       {label && (
         <text
+          data-edge-label={labelShown ? 'shown' : 'hover'}
           x={lx}
           y={ly}
           textAnchor="middle"
@@ -274,7 +311,7 @@ function RecordEdgeView({ id, data }: EdgeProps<RecordFlowEdge>) {
           strokeWidth={4}
           strokeLinejoin="round"
           paintOrder="stroke"
-          className="pointer-events-none select-none"
+          className={cn('pointer-events-none select-none', !labelShown && 'opacity-0 transition-opacity group-hover:opacity-100')}
         >
           {label}
         </text>
@@ -296,18 +333,33 @@ function FullscreenGlyph({ exit }: { exit: boolean }) {
   );
 }
 
+/** Two viewports this close are the same view (a Fit press would not move it). */
+function sameViewport(a: { x: number; y: number; zoom: number }, b: { x: number; y: number; zoom: number }): boolean {
+  return Math.abs(a.x - b.x) < 1 && Math.abs(a.y - b.y) < 1 && Math.abs(a.zoom - b.zoom) < 0.005;
+}
+
 /** Children of <ReactFlow>: the legend and zoom cluster, plus re-fit on change. */
 function CanvasChrome({
   graphKey,
+  positions,
+  focusKeys,
   fitKeys,
+  canvasRef,
+  apiRef,
   legend,
   fullscreen,
   onFullscreen,
   testId,
 }: {
   graphKey: string;
+  /** Top-left of every drawn record, flow px. */
+  positions: ReadonlyMap<string, { x: number; y: number }>;
+  /** Drawn focus records (never clipped when they fit); empty = no focus. */
+  focusKeys: string[];
   /** Records the automatic fit frames (focus + neighbours); empty = all. */
   fitKeys: string[];
+  canvasRef: RefObject<HTMLElement | null>;
+  apiRef: { current: RecordGraphHandle | null };
   legend: { value: RecordGraphType; label: string }[];
   fullscreen: boolean;
   onFullscreen: () => void;
@@ -315,18 +367,73 @@ function CanvasChrome({
 }) {
   const flow = useReactFlow();
   const { zoom } = useViewport();
-  // "Fit" frames the whole graph; the automatic fit frames the focus first.
-  const fit = useCallback(() => void flow.fitView(FIT), [flow]);
   // Read through a ref: a selection click must not move the view — only a
-  // new drawing (records, edges, layout, canvas) re-frames it.
-  const focus = useRef(fitKeys);
-  focus.current = fitKeys;
+  // new drawing (records, edges, layout) or a canvas resize re-frames it.
+  const state = useRef({ positions, focusKeys, fitKeys });
+  state.current = { positions, focusKeys, fitKeys };
+
+  /** The viewport a fit would set, from the canvas's size now; null while unmeasured. */
+  const target = useCallback((mode: 'focus' | 'all') => {
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (!rect) return null;
+    const { positions: pos, focusKeys: core, fitKeys: near } = state.current;
+    return recordGraphViewport(pos, { width: rect.width, height: rect.height }, {
+      mode: core.length ? mode : 'all', focusKeys: core, fitKeys: near,
+      minZoom: FIT.minZoom, maxZoom: FIT.maxZoom,
+    });
+  }, [canvasRef]);
+  const apply = useCallback((mode: 'focus' | 'all', animate = false) => {
+    const viewport = target(mode);
+    if (viewport) {
+      void flow.setViewport(viewport, animate ? { duration: 200 } : undefined);
+      return;
+    }
+    // Unmeasured canvas: let xyflow fit whatever it can see.
+    const near = state.current.fitKeys;
+    void flow.fitView(mode === 'focus' && near.length ? { ...FIT, nodes: near.map((id) => ({ id })) } : FIT);
+  }, [flow, target]);
+  const autoFit = useCallback(() => apply('focus'), [apply]);
+
+  // "Fit": frame the focus — or, pressed while the view already is the focus
+  // fit (or with no focus), the whole graph.
+  const fit = useCallback(() => {
+    const focusView = state.current.focusKeys.length ? target('focus') : null;
+    const atFocus = focusView ? sameViewport(flow.getViewport(), focusView) : false;
+    apply(state.current.focusKeys.length && !atFocus ? 'focus' : 'all', true);
+  }, [apply, flow, target]);
+
+  useEffect(() => {
+    apiRef.current = { fitToFocus: () => apply('focus', true), fitAll: () => apply('all', true) };
+    return () => { apiRef.current = null; };
+  }, [apiRef, apply]);
+
+  // A new drawing re-frames.
   useEffect(() => {
     if (typeof requestAnimationFrame !== 'function') return;
-    const nodes = focus.current.length ? focus.current.map((id) => ({ id })) : undefined;
-    const frame = requestAnimationFrame(() => void flow.fitView(nodes ? { ...FIT, nodes } : FIT));
+    const frame = requestAnimationFrame(autoFit);
     return () => cancelAnimationFrame(frame);
-  }, [graphKey, flow]);
+  }, [graphKey, autoFit]);
+
+  // So does a canvas size change (a host strip opening under the canvas),
+  // debounced to one fit per animation frame.
+  useEffect(() => {
+    const el = canvasRef.current;
+    if (!el || typeof ResizeObserver === 'undefined' || typeof requestAnimationFrame !== 'function') return;
+    let last: { width: number; height: number } | null = null;
+    let frame = 0;
+    const obs = new ResizeObserver((entries) => {
+      const rect = entries[0]?.contentRect;
+      if (!rect || rect.width <= 0 || rect.height <= 0) return;
+      if (last && Math.abs(last.width - rect.width) < 1 && Math.abs(last.height - rect.height) < 1) return;
+      const first = !last;
+      last = { width: rect.width, height: rect.height };
+      if (first) return; // the drawing's own fit covers the first measurement
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(autoFit);
+    });
+    obs.observe(el);
+    return () => { obs.disconnect(); cancelAnimationFrame(frame); };
+  }, [canvasRef, autoFit]);
   return (
     <>
       {legend.length > 0 && (
@@ -384,6 +491,7 @@ export function RecordGraph({
   emptyLabel = DEFAULT_EMPTY_LABEL,
   showIsolated = false,
   focusKeys,
+  ref,
 }: RecordGraphProps) {
   const [localLayout, setLocalLayout] = useState<RecordGraphLayout>('force');
   const [localType, setLocalType] = useState<RecordGraphType | 'all'>('all');
@@ -391,6 +499,11 @@ export function RecordGraph({
   const [fullscreenError, setFullscreenError] = useState(false);
   const container = useRef<HTMLElement>(null);
   const canvas = useRef<HTMLElement>(null);
+  const api = useRef<RecordGraphHandle | null>(null);
+  useImperativeHandle(ref, () => ({
+    fitToFocus: () => api.current?.fitToFocus(),
+    fitAll: () => api.current?.fitAll(),
+  }), []);
   // The layout fills the measured canvas (stepped, so a resize of a few px
   // does not re-lay out); unmeasured, it assumes the search page's canvas.
   const [canvasSize, setCanvasSize] = useState<{ width: number; height: number } | null>(null);
@@ -428,6 +541,11 @@ export function RecordGraph({
       data: { record, selected: selected.has(id), onToggle: () => toggle(id) },
     };
   });
+  // Edge labels at rest only where they help: on edges touching a focused or
+  // selected record. With nothing selected or focused, a small graph labels
+  // every edge; a larger one labels them on hover, so labels stop crossing names.
+  const emphasis = new Set([...(focusKeys ?? []), ...selectedKeys]);
+  const labelAll = !emphasis.size && graph.edges.length <= LABEL_ALL_EDGES;
   const centre = (key: string) => {
     const p = positions.get(key)!;
     return { x: p.x + RECORD_GRAPH_NODE_WIDTH / 2, y: p.y + MARK_CENTER_Y };
@@ -441,14 +559,20 @@ export function RecordGraph({
       target: edge.target,
       focusable: false,
       selectable: false,
-      data: { from: centre(edge.source), to: centre(edge.target), label: edge.label, related: RELATED_EDGE.test(edge.label) },
+      data: {
+        from: centre(edge.source), to: centre(edge.target), label: edge.label, related: RELATED_EDGE.test(edge.label),
+        labelShown: labelAll || emphasis.has(edge.source) || emphasis.has(edge.target),
+      },
     }));
   const graphKey = `${layout}:${canvasSize ? `${canvasSize.width}x${canvasSize.height}` : ''}:${graph.records.map(recordGraphKey).join('|')}:${graph.edges.map((edge) => edge.id).join('|')}`;
   const fitKeys = useMemo(
     () => recordGraphFitKeys(graph.records.map(recordGraphKey), graph.edges, focusKeys),
     [graph, focusKeys],
   );
-  const initialFit = fitKeys.length ? { ...FIT, nodes: fitKeys.map((id) => ({ id })) } : FIT;
+  const drawnFocus = useMemo(() => {
+    const drawnKeys = new Set(fitKeys);
+    return (focusKeys ?? []).filter((key) => drawnKeys.has(key));
+  }, [fitKeys, focusKeys]);
   const drawn = graph.records.length > 0 && (flowEdges.length > 0 || showIsolated);
 
   useEffect(() => {
@@ -535,8 +659,6 @@ export function RecordGraph({
               edges={flowEdges}
               nodeTypes={NODE_TYPES}
               edgeTypes={EDGE_TYPES}
-              fitView
-              fitViewOptions={initialFit}
               minZoom={0.15}
               maxZoom={2}
               nodesDraggable={false}
@@ -551,7 +673,11 @@ export function RecordGraph({
               <Background color="var(--color-border)" gap={22} size={1} />
               <CanvasChrome
                 graphKey={graphKey}
+                positions={positions}
+                focusKeys={drawnFocus}
                 fitKeys={fitKeys}
+                canvasRef={canvas}
+                apiRef={api}
                 legend={legend}
                 fullscreen={fullscreen}
                 onFullscreen={() => void toggleFullscreen()}

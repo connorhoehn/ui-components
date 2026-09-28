@@ -40,11 +40,12 @@ export const RECORD_GRAPH_NODE_WIDTH = 140;
 export const RECORD_GRAPH_NODE_HEIGHT = 104;
 
 /**
- * Fit never zooms out past this: below it the 13px titles drop under ~9px and
- * the graph stops being readable. A larger set overflows the canvas and the
- * viewer pans instead. Since 2.403.2.
+ * Fit never zooms out past this: the 13px titles stay at ~10.4px and the 11px
+ * edge labels at ~8.8px. A larger set overflows the canvas and the viewer
+ * pans; the fit keeps the focus in view (`recordGraphViewport`). 0.7 in
+ * 2.403.2–2.403.3 (9.1px titles, 7.7px edge labels); 0.8 since 2.403.4.
  */
-export const RECORD_GRAPH_MIN_FIT_ZOOM = 0.7;
+export const RECORD_GRAPH_MIN_FIT_ZOOM = 0.8;
 /** Fit never zooms in past 100% (two records do not become two giant circles). */
 export const RECORD_GRAPH_MAX_FIT_ZOOM = 1;
 
@@ -340,4 +341,86 @@ export function layoutRecordGraph(
   simulation.tick(300);
   nodes.forEach(node => positions.set(node.id, { x: node.x, y: node.y * squash }));
   return positions;
+}
+
+/** A pan/zoom viewport in xyflow's terms: screen = flow × zoom + (x, y). */
+export interface RecordGraphViewport {
+  x: number;
+  y: number;
+  zoom: number;
+}
+
+export interface RecordGraphViewportOptions {
+  /**
+   * `focus` frames `focusKeys` + their neighbours (`fitKeys`) when they fit at
+   * or above the floor; at the floor it centres on the largest of the whole
+   * graph, the neighbourhood and the focus itself that fits, per axis, so the
+   * focus is never clipped while it fits. `all` frames the whole graph, and
+   * where it overflows at the floor aligns it top-left so the viewer pans.
+   */
+  mode: 'focus' | 'all';
+  /** The focus records themselves (usually the selection) — never clipped when they fit. */
+  focusKeys?: readonly string[];
+  /** Focus plus direct neighbours (`recordGraphFitKeys`). Framed first when it fits. */
+  fitKeys?: readonly string[];
+  /** Screen px kept clear on every side. Default 24. */
+  padding?: number;
+  minZoom?: number;
+  maxZoom?: number;
+}
+
+interface Box { x0: number; y0: number; x1: number; y1: number }
+
+function boxOf(positions: ReadonlyMap<string, { x: number; y: number }>, keys: Iterable<string>): Box | null {
+  let box: Box | null = null;
+  for (const key of keys) {
+    const p = positions.get(key);
+    if (!p) continue;
+    const x1 = p.x + RECORD_GRAPH_NODE_WIDTH, y1 = p.y + RECORD_GRAPH_NODE_HEIGHT;
+    box = box
+      ? { x0: Math.min(box.x0, p.x), y0: Math.min(box.y0, p.y), x1: Math.max(box.x1, x1), y1: Math.max(box.y1, y1) }
+      : { x0: p.x, y0: p.y, x1, y1 };
+  }
+  return box;
+}
+
+/**
+ * The viewport that fits a laid-out record graph into a `width` × `height`
+ * canvas without going below `minZoom` (default `RECORD_GRAPH_MIN_FIT_ZOOM`)
+ * or above `maxZoom` (default `RECORD_GRAPH_MAX_FIT_ZOOM`). Pure, so a host or
+ * test can check what a fit shows. Null when nothing is positioned or the
+ * canvas is unmeasured. Since 2.403.4.
+ */
+export function recordGraphViewport(
+  positions: ReadonlyMap<string, { x: number; y: number }>,
+  size: { width: number; height: number },
+  options: RecordGraphViewportOptions,
+): RecordGraphViewport | null {
+  const { padding = 24, minZoom = RECORD_GRAPH_MIN_FIT_ZOOM, maxZoom = RECORD_GRAPH_MAX_FIT_ZOOM } = options;
+  const all = boxOf(positions, positions.keys());
+  if (!all || size.width <= 0 || size.height <= 0) return null;
+  const availW = Math.max(1, size.width - 2 * padding);
+  const availH = Math.max(1, size.height - 2 * padding);
+  const rawZoom = (box: Box) => Math.min(availW / (box.x1 - box.x0), availH / (box.y1 - box.y0));
+  const focus = options.mode === 'focus' ? boxOf(positions, options.focusKeys ?? []) : null;
+  const near = focus ? boxOf(positions, options.fitKeys?.length ? options.fitKeys : options.focusKeys ?? []) : null;
+  // Per axis: centre the first candidate that fits; start-align the last if none does.
+  const place = (zoom: number, candidates: Box[]): RecordGraphViewport => {
+    const axis = (lo: 'x0' | 'y0', hi: 'x1' | 'y1', canvas: number, avail: number) => {
+      for (const box of candidates) {
+        const span = (box[hi] - box[lo]) * zoom;
+        if (span <= avail + 0.5) return canvas / 2 - ((box[lo] + box[hi]) / 2) * zoom;
+      }
+      return padding - candidates[candidates.length - 1]![lo] * zoom;
+    };
+    return { x: axis('x0', 'x1', size.width, availW), y: axis('y0', 'y1', size.height, availH), zoom };
+  };
+  if (focus && near) {
+    const nearZoom = rawZoom(near);
+    if (nearZoom >= minZoom) return place(Math.min(nearZoom, maxZoom), [near]);
+    // At the floor: the whole graph if it fits on an axis, else the
+    // neighbourhood, else the focus itself (top-left of it when even that overflows).
+    return place(minZoom, [all, near, focus]);
+  }
+  return place(clamp(rawZoom(all), minZoom, maxZoom), [all]);
 }

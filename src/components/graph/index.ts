@@ -24,7 +24,7 @@ export * from './work';
 // Typed record graph (2.400.0) — a search result set as avatar nodes and
 // labelled relationships on xyflow, with its pure force/radial/hierarchy layout.
 export { RecordGraph } from './RecordGraph';
-export type { RecordGraphProps } from './RecordGraph';
+export type { RecordGraphProps, RecordGraphHandle } from './RecordGraph';
 export {
   filterRecordGraph, layoutRecordGraph, recordGraphKey,
   RECORD_GRAPH_NODE_WIDTH, RECORD_GRAPH_NODE_HEIGHT, RECORD_GRAPH_TYPES,
@@ -34,6 +34,8 @@ export {
 export type {
   RecordGraphRecord, RecordGraphEdge, RecordGraphType, RecordGraphLayout,
   RecordGraphLayoutOptions, RecordForceParams,
+  // 2.403.4 — the fit's viewport (the helper itself stays module-local until the next export snapshot).
+  RecordGraphViewport, RecordGraphViewportOptions,
 } from './recordGraphLayout';
 // Org graph (2.400.0), ported from the aws-agentcore portal. Its `GraphPerson`
 // is re-exported as `OrgGraphPerson`: the explicit `GraphPerson` above

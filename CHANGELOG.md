@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.403.4
+
+- `RecordGraph` keeps the selection in view when its canvas changes size. In the portal, the answer strip opening under the canvas took it from 418 to 369px (256px expanded) without a re-fit, so a selected person was clipped at the top edge, and "Fit to view" did nothing at the zoom floor.
+  - The view re-fits when the canvas is resized (a `ResizeObserver` on the canvas, one fit per animation frame), as well as when the drawing changes. A selection click still never moves it.
+  - At the floor, the fit keeps the focus whole. When `focusKeys` and their neighbours cannot fit, the view centres, per axis, on the largest of the whole graph, the neighbourhood and the focus itself that fits. If even the focus overflows, it aligns the focus's top-left.
+  - "Fit to view" re-centres on the focus. Pressed again while already there (or with no `focusKeys`), it frames the whole graph: centred when it fits, top-left aligned when it overflows.
+  - New `ref` prop with a `RecordGraphHandle` (`fitToFocus()`, `fitAll()`), so a host can re-fit after a layout change the graph cannot observe.
+  - New pure `recordGraphViewport(positions, { width, height }, { mode, focusKeys, fitKeys, padding?, minZoom?, maxZoom? })` → `RecordGraphViewport | null` computes the fit. It is exported from `recordGraphLayout.ts`, and its types are exported from `/graph`.
+  - The initial fit no longer goes through xyflow's `fitView` prop (it could land after, and overwrite, the focus fit). xyflow's `fitView` remains only as the fallback for an unmeasured canvas.
+- `RECORD_GRAPH_MIN_FIT_ZOOM` is 0.8 (was 0.7), so names draw at ≥ 10.4px and edge labels at ≥ 8.8px (were 9.1 / 7.7px). Layouts are sized for the new floor, and a graph that overflows pans, with the focus kept in view.
+- Edge labels no longer cross node names.
+  - A label draws at rest only on edges that touch a selected or focused record. Other labels appear on hover over the edge, which has a 12px invisible hit line. With nothing selected or focused, a graph of ≤ 16 edges still labels every edge.
+  - Node names and status lines sit on a `bg-surface` pill, so a crossing edge or edge label passes under the text.
+- Story "25 records, strip opens" toggles a 50px strip under a 1160px canvas and drives the handle.
+- `OrgGraph` can show the whole org. At the 1.1 floor a 1160 × ~400 canvas held only 35 of 56 people (Force) and 12 of 56 (Radial), and "Fit to view" could not go lower.
+  - `ORG_FIT_MIN_ZOOM` is 0.9 (was 1.1), so first names draw at 9px on their pills. Only the automatic fit uses it; the layout is sized for it. New `minFitZoom?: number` lets a host tune it.
+  - "Fit to view", and `fitAll()` on the new `ref` handle (`OrgGraphHandle`), fit the whole drawn set with no readability floor, down to the new `ORG_FIT_ALL_MIN_ZOOM` (0.5). The view stays in that mode across resizes until a pan, a zoom or a new drawn set.
+- `OrgGraph`'s zoom controls no longer sit on people. While `controls` is on, the fit keeps the cluster's corner clear (new `ORG_CONTROLS_SIZE`, 172 × 48 with margins). It reserves the bottom or the right edge, whichever costs the smaller share of the clear area (the bottom on a 1160 × 400 canvas), unless `fitInset` already covers the corner.
+
 ## 2.403.3
 
 - `RecordGraph` reads at a search page's density. 25 records and 56 connections on a 1160 × 418 canvas used to fit at 46% (Force, 5–6px labels), 26% (Radial) and 15% (Hierarchy, one column).
