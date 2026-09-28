@@ -275,7 +275,9 @@ describe('entry points and their transitive optional peers', () => {
       // `WorkGraph` does not require two optional peers on disk. If this ever
       // moves to `static`, that lazy boundary has been lost and every Active
       // Now consumer now needs xterm installed to import the graph at all.
-      graph: { static: ['@xyflow/react'], dynamic: ['@xterm/addon-fit', '@xterm/xterm'] },
+      // `d3-force` (2.400.0): OrgGraph's animated layout and RecordGraph's
+      // stopped simulation — a real dependency, externalised.
+      graph: { static: ['@xyflow/react', 'd3-force'], dynamic: ['@xterm/addon-fit', '@xterm/xterm'] },
       agents: { static: ['@xyflow/react'], dynamic: [] },
       // react-markdown + remark-gfm power MarkdownView (real `dependencies`,
       // same footing as cmdk — npm installs them for the consumer).
@@ -323,7 +325,7 @@ describe('entry points and their transitive optional peers', () => {
       index: {
         static: [
           ...TIPTAP,
-          '@xyflow/react', 'amazon-cognito-identity-js', 'cmdk', 'react-markdown', 'react-router', 'recharts', 'remark-gfm', 'yjs',
+          '@xyflow/react', 'amazon-cognito-identity-js', 'cmdk', 'd3-force', 'react-markdown', 'react-router', 'recharts', 'remark-gfm', 'yjs',
         ].sort(),
         // The IVS SDK and xterm entries are lazy tabs: see the `social` note
         // above. `@dnd-kit/core` and `@dnd-kit/sortable` are lazy the same

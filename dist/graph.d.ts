@@ -1,6 +1,15 @@
 import { JSX } from 'react';
+import { MouseEvent as MouseEvent_2 } from 'react';
 import { ReactNode } from 'react';
 import { Viewport } from '@xyflow/react';
+
+export declare interface AtRiskSkill {
+    skill: string;
+    /** A holder who sits in the department being inspected. */
+    holder: OrgGraphPerson;
+    /** How many people hold it ORG-WIDE, not just in this department. */
+    holderCount: number;
+}
 
 export declare function CanvasZoomControls({ zoom, onZoomIn, onZoomOut, onFit, minZoom, maxZoom, className, 'aria-label': ariaLabel, 'data-testid': testId, }: CanvasZoomControlsProps): JSX.Element;
 
@@ -45,6 +54,16 @@ declare interface ChatSidePanelRef {
 
 declare type ChatSidePanelRenderer = (panel: ChatSidePanelRef, api: ChatSidePanelApi) => ReactNode;
 
+export declare const CONNECTION_TYPE_LABELS: Record<string, string>;
+
+export declare function ConnectionPathStrip({ path, onHighlightPath }: ConnectionPathStripProps): JSX.Element;
+
+export declare interface ConnectionPathStripProps {
+    path: PathHop[];
+    /** Select every person on the path so the graph shows the corridor. */
+    onHighlightPath: (ids: string[]) => void;
+}
+
 /** One line for an embedder: `renderers={{ graph: createGraphPanelRenderer({ load }) }}`. */
 export declare function createGraphPanelRenderer(options: CreateGraphPanelRendererOptions): ChatSidePanelRenderer;
 
@@ -69,6 +88,85 @@ export declare interface CreateGraphPanelRendererOptions {
     'data-testid'?: string;
 }
 
+/** id → degree (count of links touching that id), from a flat list of
+ *  {source, target} pairs. Self-loops (shouldn't occur in this graph) count
+ *  once, not twice. */
+export declare function degreeMap(links: Array<{
+    source: string;
+    target: string;
+}>): Map<string, number>;
+
+export declare function DepartmentChips({ departments, people, activeDepartment, onToggle, className }: DepartmentChipsProps): JSX.Element;
+
+export declare interface DepartmentChipsProps {
+    departments: GraphDepartment[];
+    people: OrgGraphPerson[];
+    activeDepartment: string | null;
+    /** `name` is null when the active chip is toggled off. */
+    onToggle: (name: string | null, memberIds: string[]) => void;
+    className?: string;
+}
+
+export declare interface DepartmentInsight {
+    members: OrgGraphPerson[];
+    /** [skill, headcount within the department], most common first. */
+    topSkills: [string, number][];
+    atRisk: AtRiskSkill[];
+}
+
+/** Headcount, the department's most common skills, and the skills it depends
+ *  on that almost nobody in the org holds. */
+export declare function departmentInsight(people: OrgGraphPerson[], department: string): DepartmentInsight;
+
+export declare function DepartmentInsightStrip({ department, people, onFocusPerson, busFactorFindings, busFactorFindingsUnavailable, findingHref, onNavigate, }: DepartmentInsightStripProps): JSX.Element;
+
+export declare interface DepartmentInsightStripProps {
+    /** null renders the org-wide rare-skills view instead of one department. */
+    department: string | null;
+    people: OrgGraphPerson[];
+    /** Click an at-risk holder → focus them (select + detail). */
+    onFocusPerson: (id: string) => void;
+    /**
+     * skill name → the host's open bus-factor finding for it, built by
+     * `indexBusFactorFindings`. `null` means the read has not resolved (loading
+     * or failed) — the strip then shows the unconditional "finding →" link
+     * rather than asserting "not on the sweep yet" for something unchecked.
+     */
+    busFactorFindings: Map<string, FindingLike> | null;
+    /** True only when the findings read genuinely failed (not while loading). */
+    busFactorFindingsUnavailable?: boolean;
+    /** Where "finding →" points. Default `rareSkillFindingsUrl(skill, findingId)`. */
+    findingHref?: (skill: string, findingId?: string | null) => string;
+    /** Route a plain click on "finding →" (modified clicks stay native). */
+    onNavigate?: (href: string, event: MouseEvent_2<HTMLAnchorElement>) => void;
+}
+
+/** Deduplicate real records and discard dangling edges after filtering. */
+export declare function filterRecordGraph<R extends RecordGraphRecord, E extends RecordGraphEdge>(records: R[], edges: E[], type: RecordGraphType | 'all'): {
+    records: R[];
+    edges: E[];
+};
+
+/**
+ * Shortest path between two people over the full (unfiltered) edge set —
+ * paths are allowed to cross relationship types the current view hides,
+ * because "how are these two connected at all?" is the actual question.
+ */
+export declare function findConnectionPath(people: OrgGraphPerson[], edges: GraphRelationship[], fromId: string, toId: string): PathHop[] | null;
+
+/** Look up the server's bus-factor finding for a skill name, case-insensitive. */
+export declare function findingForSkill(index: Map<string, FindingLike>, skill: string): FindingLike | null;
+
+export declare interface FindingLike {
+    id: string;
+    sweep: string;
+    status: string;
+    entityType: string | null;
+    title: string;
+}
+
+export declare function firstName(full: string): string;
+
 /**
  * The node the radial layout puts in the middle: the one whose `group` is
  * `'center'`, else the node with the strictly highest weight, else none.
@@ -76,6 +174,12 @@ export declare interface CreateGraphPanelRendererOptions {
  * arbitrary one.
  */
 export declare function graphCenterNode(nodes: GraphNode[]): GraphNode | null;
+
+export declare interface GraphDepartment {
+    id: string;
+    name: string;
+    color: string;
+}
 
 export declare interface GraphEdge {
     from: string;
@@ -120,6 +224,15 @@ export declare interface GraphNode {
     color?: string;
 }
 
+declare interface GraphNode_2 extends OrgGraphPerson {
+    x: number;
+    y: number;
+    vx?: number;
+    vy?: number;
+    fx?: number | null;
+    fy?: number | null;
+}
+
 export declare function GraphPanelBody({ panel, api, options }: GraphPanelBodyProps): ReactNode;
 
 declare interface GraphPanelBodyProps {
@@ -160,9 +273,48 @@ export declare interface GraphPoint {
 
 export declare type GraphPositions = Map<string, GraphPoint>;
 
+export declare interface GraphRelationship {
+    source: string;
+    target: string;
+    type: 'collaborates' | 'mentors' | 'reports_to' | 'expert_in_common';
+    strength: number;
+}
+
+export declare function GraphSearchBox({ people, onPickPerson, onPickSkill, placeholder, className, }: GraphSearchBoxProps): JSX.Element;
+
+export declare interface GraphSearchBoxProps {
+    people: OrgGraphPerson[];
+    /** Single-person pick — select + focus + open detail. */
+    onPickPerson: (id: string) => void;
+    /** Skill pick — select everyone holding the skill. */
+    onPickSkill: (skill: string, personIds: string[]) => void;
+    placeholder?: string;
+    className?: string;
+}
+
+export declare interface GraphSearchResult {
+    personMatches: OrgGraphPerson[];
+    skillMatches: SkillMatch[];
+}
+
+/** skill name (lowercased) → the bus-factor finding for it. Later findings
+ *  for a name already seen are ignored — `sweepBusFactor` upserts by
+ *  fingerprint, so the caller's list should carry at most one open finding
+ *  per skill; if it ever carries more, the first (most-recently-fetched
+ *  order) wins over silently picking one at random on every render. */
+export declare function indexBusFactorFindings(findings: FindingLike[]): Map<string, FindingLike>;
+
 export declare function isPeopleGraphData(data: GraphPanelData): data is GraphPanelPeopleData;
 
 export declare function layoutGraph(nodes: GraphNode[], edges: GraphEdge[], layout: GraphLayout, size: GraphLayoutSize): GraphPositions;
+
+export declare type LayoutMode = 'force' | 'radial';
+
+/** Rendering positions only: never infer an edge from a shared title or type. */
+export declare function layoutRecordGraph(records: Pick<RecordGraphRecord, 'id' | 'type'>[], edges: Pick<RecordGraphEdge, 'source' | 'target'>[], layout: RecordGraphLayout): Map<string, {
+    x: number;
+    y: number;
+}>;
 
 /** Node positions for a layout. Exported for tests and hosts that draw their own minimap. */
 export declare function layoutTypedNodes(nodes: TypedCanvasNode[], edges: Pick<TypedCanvasEdge, 'from' | 'to'>[], options?: {
@@ -220,6 +372,12 @@ export declare function limitWorkEfforts(efforts: readonly WorkActivityEffort[],
  */
 export declare function matchingTag(person: GraphPerson, query: string | undefined): string | undefined;
 
+/** Largest value in a degree map, or 0 for an empty graph. */
+export declare function maxDegree(map: Map<string, number>): number;
+
+/** department name → the ids of everyone in it. */
+export declare function membersByDepartment(people: OrgGraphPerson[]): Map<string, string[]>;
+
 /** The logical drawing width; the SVG scales it to whatever width it is given. */
 export declare const NODE_GRAPH_VIEW_WIDTH = 480;
 
@@ -235,6 +393,94 @@ export declare interface NodeGraphProps {
     height?: number;
     className?: string;
     'data-testid'?: string;
+}
+
+/**
+ * `showInfluence` true → size by `influenceScore` (0..1), the original rule.
+ * `showInfluence` false → size by `degree` relative to `maxDegree` in the
+ * currently-rendered graph (0 when there are no edges at all, so an edgeless
+ * graph draws every node at the minimum radius rather than one arbitrary node
+ * reading as "biggest").
+ */
+export declare function nodeRadius(showInfluence: boolean, influenceScore: number, degree: number, maxDegree: number): number;
+
+export declare function OrgGraph({ people, relationships, departments, onPersonSelect, multiSelectIds, onToggleMultiSelect, spotlightIds, layout, presenceFilter, showInfluence, legend, controls, className, 'aria-label': ariaLabel, 'data-testid': testId, }: OrgGraphProps): JSX.Element;
+
+export declare function OrgGraphLegend({ departments, filter, onFilter, presenceFilter, pinned, className, 'data-testid': testId, }: OrgGraphLegendProps): JSX.Element;
+
+export declare interface OrgGraphLegendProps {
+    departments: GraphDepartment[];
+    /** The department the graph is filtered to, or null. */
+    filter: string | null;
+    onFilter: (dept: string | null) => void;
+    /** Shows the presence key while a presence filter is active. */
+    presenceFilter?: PresenceFilter | null;
+    /** Keep the legend fully opaque instead of resting translucent. */
+    pinned?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface OrgGraphPerson {
+    id: string;
+    name: string;
+    title: string;
+    department: string;
+    skills: string[];
+    influenceScore: number;
+    /** Today's presence status. Absent means the API did not return one (treat as unknown). */
+    presence?: PresenceStatus;
+}
+
+export declare interface OrgGraphProps {
+    people: OrgGraphPerson[];
+    relationships: GraphRelationship[];
+    departments: GraphDepartment[];
+    onPersonSelect?: (person: OrgGraphPerson | null) => void;
+    /** Optional multi-select mode. When provided, clicking toggles IDs in this set. */
+    multiSelectIds?: Set<string>;
+    onToggleMultiSelect?: (id: string) => void;
+    /** Optional ID set to apply a "spotlight" visual highlight (e.g. agent-cited nodes). */
+    spotlightIds?: Set<string>;
+    /** Layout algorithm to use. Defaults to 'force'. */
+    layout?: LayoutMode;
+    /** Presence filter — dims nodes that don't match. null/undefined = no filter. */
+    presenceFilter?: PresenceFilter | null;
+    /** True only for roles allowed to see influence — sizes nodes by influence
+     *  and shows it on the hover card. Everyone else gets sizing by connection
+     *  count, so a bigger circle can't leak a number the card hides. */
+    showInfluence?: boolean;
+    /** Draw the department/relationship legend. Default true. */
+    legend?: boolean;
+    /** Draw the zoom cluster (bottom-right). Default true. */
+    controls?: boolean;
+    className?: string;
+    'aria-label'?: string;
+    'data-testid'?: string;
+}
+
+/** Same bus-factor rule as `departmentInsight`'s `atRisk`, but with no
+ *  department to pick "the" holder from — every holder of a rare skill gets
+ *  its own entry (same `AtRiskSkill` shape, so callers that already render
+ *  `atRisk` need no branching), sorted rarest-first. */
+export declare function orgInsight(people: OrgGraphPerson[]): {
+    atRisk: AtRiskSkill[];
+};
+
+/** Parse a `?focus=` query param into individual ids. Accepts a single id
+ *  (related-people cards on /search) or a comma-joined list ("Open in Ask →"
+ *  / "Show all N in Explore" round-trip) alike; trims whitespace and drops
+ *  empties so a trailing comma or stray space never adds a blank selection. */
+export declare function parseFocusIds(focus: string | null): string[];
+
+export declare function passesPresenceFilter(status: PresenceStatus, filter: PresenceFilter | null | undefined): boolean;
+
+export declare const PATH_TYPE_LABELS: Record<string, string>;
+
+export declare interface PathHop {
+    person: OrgGraphPerson;
+    /** Edge type connecting this person to the PREVIOUS hop (empty for hop 0). */
+    viaType: string;
 }
 
 export declare const PEOPLE_GRAPH_QUERY_NODE_ID = "__query__";
@@ -259,8 +505,175 @@ export declare function peopleToGraph(people: GraphPerson[], query: string | und
     edges: GraphEdge[];
 };
 
+export declare interface PersonConnection {
+    type: string;
+    strength: number;
+    otherPerson: {
+        id: string;
+        name: string;
+        title: string;
+    } | null;
+}
+
+/** The person read — the portal's `GET /api/graph/people/:id` shape. */
+export declare interface PersonDetail {
+    id: string;
+    name: string;
+    title: string;
+    department: string;
+    skills: string[];
+    influenceScore: number;
+    scoredAt: string | null;
+    connections: PersonConnection[];
+}
+
+export declare function PersonDetailCard({ person, evidence, loading, error, onClose, onFocusPerson, onAsk, showInfluence, formatTime, askLabel, className, 'data-testid': testId, }: PersonDetailCardProps): JSX.Element;
+
+export declare interface PersonDetailCardProps {
+    /** The person, once read. */
+    person: PersonDetail | null | undefined;
+    /** Documents that evidence them. */
+    evidence?: PersonEvidenceDocument[];
+    loading?: boolean;
+    /** A failed read: the message to show. */
+    error?: string | null;
+    onClose: () => void;
+    /** Click a connection → add that person to the graph selection. */
+    onFocusPerson: (id: string) => void;
+    /** "Ask agent" → open the chat pre-seeded with this person. */
+    onAsk: (id: string) => void;
+    /** Show influence and scored-at (leadership analytics roles only). */
+    showInfluence?: boolean;
+    /** Evidence timestamps. Default: a short "3h ago" / date. */
+    formatTime?: (iso: string) => string;
+    /** The ask button's label. Default "Ask agent about <first name> →". */
+    askLabel?: (person: PersonDetail) => string;
+    /** Default: floats top-right over the graph (`absolute right-3 top-3`). */
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** One evidence document — the portal's `/evidence` shape. */
+export declare interface PersonEvidenceDocument {
+    id: string;
+    title: string;
+    source: string;
+    sourceUri: string | null;
+    ingestedAt: string | null;
+    mentionCount: number;
+}
+
+export declare const PRESENCE_DOT: Record<PresenceStatus, {
+    fill: string;
+    stroke: string;
+    label: string;
+}>;
+
+/** The presence filter the graph dims against. */
+export declare type PresenceFilter = 'office' | 'remote' | 'away';
+
+export declare type PresenceStatus = 'office' | 'wfh' | 'travel' | 'pto' | 'vacation' | 'sick' | 'unknown';
+
 /** Longest-path rank from the roots; cycles fall back to column 0. Exported for tests. */
 export declare function rankTypedNodes(nodes: Pick<TypedCanvasNode, 'id' | 'rank'>[], edges: Pick<TypedCanvasEdge, 'from' | 'to'>[]): Map<string, number>;
+
+/** The findings route the portal serves. A default, not a contract: pass your
+ *  own `basePath` (or give `DepartmentInsightStrip` a `findingHref`). */
+export declare const RARE_SKILL_FINDINGS_PATH = "/iq/work/findings";
+
+/** Sweep id the org-sweep scheduler files bus-factor findings under
+ *  (`schema`/work findings — see `findingsFilter.ts`'s `SWEEP_TITLES`). */
+export declare const RARE_SKILL_SWEEP = "bus_factor";
+
+/** A skill held org-wide by this many people or fewer is a bus-factor risk. */
+export declare const RARE_THRESHOLD = 2;
+
+/** Where the rare-skill pill sends you: a findings view filtered to the
+ *  bus-factor sweep and this skill, or (once we know a specific finding exists
+ *  for it) straight to that finding. The target reads `?sweep=`/`?q=`/`?finding=`. */
+export declare function rareSkillFindingsUrl(skill: string, findingId?: string | null, basePath?: string): string;
+
+export declare const RECORD_GRAPH_NODE_HEIGHT = 116;
+
+export declare const RECORD_GRAPH_NODE_WIDTH = 180;
+
+/** Plural labels, in legend/select order. */
+export declare const RECORD_GRAPH_TYPES: {
+    value: RecordGraphType;
+    label: string;
+}[];
+
+export declare function RecordGraph({ records, edges, selectedKeys, onSelectionChange, onAskSelection, onOpenRecord, layout: controlledLayout, onLayoutChange, typeFilter: controlledType, onTypeFilterChange, typeLabels, className, 'data-testid': testId, 'aria-label': ariaLabel, }: RecordGraphProps): JSX.Element;
+
+/** A directed, labelled relationship. `source`/`target` are `type:id` keys. */
+export declare interface RecordGraphEdge {
+    id: string;
+    source: string;
+    target: string;
+    label: string;
+}
+
+/** The key a node and a selection hold: `${type}:${id}`. */
+export declare function recordGraphKey(record: Pick<RecordGraphRecord, 'id' | 'type'>): string;
+
+export declare type RecordGraphLayout = 'force' | 'radial' | 'hierarchy';
+
+export declare interface RecordGraphProps {
+    records: RecordGraphRecord[];
+    /** `source`/`target` are `type:id` keys (`recordGraphKey`). */
+    edges: RecordGraphEdge[];
+    /** Selected `type:id` keys — shared with the host's results and answer views. */
+    selectedKeys: string[];
+    onSelectionChange: (keys: string[]) => void;
+    /** "Ask about selection →". Disabled while nothing is selected. */
+    onAskSelection: () => void;
+    /** Draws "Open record ↗" while exactly one record is selected. */
+    onOpenRecord?: (record: RecordGraphRecord) => void;
+    /** Controlled layout. Omit to let the graph hold it (default `force`). */
+    layout?: RecordGraphLayout;
+    onLayoutChange?: (layout: RecordGraphLayout) => void;
+    /** Controlled type filter. Omit to let the graph hold it (default `all`). */
+    typeFilter?: RecordGraphType | 'all';
+    onTypeFilterChange?: (type: RecordGraphType | 'all') => void;
+    /** Plural labels for the type filter and legend ("People", "Agent library"…). */
+    typeLabels?: Partial<Record<RecordGraphType, string>>;
+    className?: string;
+    'data-testid'?: string;
+    /** The canvas's accessible name. Default "Record connections". */
+    'aria-label'?: string;
+}
+
+/** One typed org record — the same shape a search read model returns. */
+export declare interface RecordGraphRecord {
+    id: string;
+    type: RecordGraphType;
+    title: string;
+    description?: string;
+    subtitle?: string;
+    /** Raw status ("in_progress", "blocked"). */
+    status?: string;
+    href: string;
+    avatarUrl?: string;
+}
+
+export declare type RecordGraphType = 'person' | 'initiative' | 'work' | 'decision' | 'knowledge' | 'asset';
+
+/** Relationship line styles — the edges and the legend draw from this one map. */
+export declare const RELATIONSHIP_STYLES: Record<string, {
+    color: string;
+    label: string;
+    dash?: string;
+}>;
+
+/** Name/title/department matches first, then skills ordered by how many people
+ *  hold them — a skill five people share is a more useful jump than one only
+ *  one person has. */
+export declare function searchGraph(people: OrgGraphPerson[], query: string): GraphSearchResult;
+
+export declare interface SkillMatch {
+    skill: string;
+    personIds: string[];
+}
 
 declare type Tone = (typeof TONES)[number];
 
@@ -340,6 +753,28 @@ export declare interface TypedNodeCanvasProps<N extends TypedCanvasNode = TypedC
     className?: string;
     'aria-label'?: string;
     'data-testid'?: string;
+}
+
+export declare function useForceLayout({ people, relationships, departments, width, height, layout }: UseForceLayoutProps): UseForceLayoutReturn;
+
+export declare interface UseForceLayoutProps {
+    people: OrgGraphPerson[];
+    relationships: GraphRelationship[];
+    departments: GraphDepartment[];
+    width: number;
+    height: number;
+    layout?: LayoutMode;
+}
+
+export declare interface UseForceLayoutReturn {
+    nodes: GraphNode_2[];
+    links: Array<{
+        source: GraphNode_2;
+        target: GraphNode_2;
+        type: string;
+        strength: number;
+    }>;
+    isDone: boolean;
 }
 
 /**
@@ -1214,6 +1649,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -1246,25 +1694,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -1282,9 +1714,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -1318,9 +1750,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -1328,9 +1760,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

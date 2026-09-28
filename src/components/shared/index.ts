@@ -448,3 +448,12 @@ export { AttachToggle } from './AttachToggle';
 export type { AttachToggleProps } from './AttachToggle';
 export { FilePickerButton } from './FilePickerButton';
 export type { FilePickerButtonProps } from './FilePickerButton';
+// List-row controls (2.400.0): a combobox option row and a label-plus-meter row.
+export { SuggestionRow } from './SuggestionRow';
+export type { SuggestionRowProps } from './SuggestionRow';
+export { MeterRow } from './MeterRow';
+export type { MeterRowProps } from './MeterRow';
+
+// Search workspace — matched-term marking for result rows. Since 2.400.0.
+export { Highlight, highlightSegments } from './Highlight';
+export type { HighlightProps } from './Highlight';

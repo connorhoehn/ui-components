@@ -2519,8 +2519,33 @@ export declare interface GroupedListRow {
     meta?: ReactNode;
 }
 
+declare function Highlight_2({ text, terms, className, markClassName, 'data-testid': testId }: HighlightProps): ReactNode;
+export { Highlight_2 as Highlight }
+
 /** A marker tip over a stroke: "highlight". Since 2.386.5. */
 export declare function HighlighterIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+export declare interface HighlightProps {
+    /** The text to render. */
+    text: string;
+    /** Terms or phrases to mark. Empty or blank terms are ignored. */
+    terms: readonly string[];
+    /** Classes for the outer span. */
+    className?: string;
+    /** Classes merged onto every <mark>. */
+    markClassName?: string;
+    'data-testid'?: string;
+}
+
+/**
+ * Split `text` into alternating plain / matched segments. Exported so a host
+ * that needs the match positions (a count, an aria description) reads the
+ * same answer the component draws.
+ */
+export declare function highlightSegments(text: string, terms: readonly string[]): Array<{
+    text: string;
+    match: boolean;
+}>;
 
 /** A clock: history, "when". */
 export declare function HistoryIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -3084,6 +3109,24 @@ export declare interface MetaLineProps {
 export declare type MetaLineSize = 'xs' | 'sm';
 
 export declare type MetaLineTone = 'tertiary' | 'secondary';
+
+export declare function MeterRow({ onClick, title, label, note, meter, meterWidth, className, 'aria-label': ariaLabel, 'data-testid': testId, }: MeterRowProps): JSX.Element;
+
+export declare interface MeterRowProps {
+    onClick: () => void;
+    /** Tooltip — what the click does ("Add Nora to selection"). */
+    title?: string;
+    label: ReactNode;
+    /** Muted trailing note after the label: "mentors". */
+    note?: ReactNode;
+    /** The meter — usually `<ScoreBarGauge size="sm" showLabel={false} />`. */
+    meter: ReactNode;
+    /** Meter slot width. Default `sm` (44px); `md` is 72px. */
+    meterWidth?: 'sm' | 'md';
+    className?: string;
+    'aria-label'?: string;
+    'data-testid'?: string;
+}
 
 export declare function Modal({ open, onClose, title, ariaLabel, maxWidth, children, footer, backdropTestId, backdropStyle, cardStyle, cardClassName, zIndex, rawChildren, }: ModalProps): ReactPortal | null;
 
@@ -5039,6 +5082,24 @@ export declare interface SuggestionCardProps {
     'data-testid'?: string;
 }
 
+export declare function SuggestionRow({ active, onHighlight, onPick, primary, secondary, leading, id, className, 'data-testid': testId, }: SuggestionRowProps): JSX.Element;
+
+export declare interface SuggestionRowProps {
+    /** Is this the row the keyboard cursor sits on (`aria-selected`)? */
+    active: boolean;
+    /** Pointer entered the row — move the host's cursor here. */
+    onHighlight?: () => void;
+    /** Click (the host handles Enter on its input). */
+    onPick: () => void;
+    primary: ReactNode;
+    secondary?: ReactNode;
+    /** Leading slot — an avatar or kind mark. */
+    leading?: ReactNode;
+    id?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
 /** A sun: the light theme — "switch to (or currently in) light mode". */
 export declare function SunIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -6040,6 +6101,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -6072,25 +6146,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -6108,9 +6166,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -6144,9 +6202,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -6154,9 +6212,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

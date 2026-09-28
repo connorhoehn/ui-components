@@ -12,6 +12,7 @@ export * from './components/change-review';
 export * from './components/inbox';
 export * from './components/graph';
 export * from './components/work';
+export * from './components/search';
 export * from './styles';
 export * from './theme';
 export * from './api';

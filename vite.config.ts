@@ -79,6 +79,9 @@ export default defineConfig({
         // vite-plugin-dts 4 happened to pull it in transitively, and it got
         // silently inlined into dist/pipelines.js. Declared + externalised now.
         'ajv',
+        // The org graph's and RecordGraph's force layout (2.400.0). A real
+        // `dependency`, externalised for the same reason as the ones above.
+        'd3-force',
         'yjs', 'y-prosemirror', 'y-protocols',
         // xterm paints to a canvas and owns global listeners; two copies in
         // one page fight over both. Peer + external, never bundled.

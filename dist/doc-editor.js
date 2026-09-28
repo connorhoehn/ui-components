@@ -1,4 +1,4 @@
-import { n as e, t } from "./useWebSocket-D4PAHlj8.js";
+import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
 import { t as n } from "./cn-DhjIN-s0.js";
 import { _ as r } from "./overlayStack-CHdlnODN.js";
 import { t as i } from "./Card-RQCeAPNU.js";
@@ -6,34 +6,35 @@ import { t as a } from "./Chip-4IBrlduZ.js";
 import { t as o } from "./IconButton-DDeXW3mZ.js";
 import { et as s, f as c, ot as l } from "./Icons-BSEVGRI6.js";
 import { n as u, t as d } from "./Stack-CkiMw5K0.js";
-import { i as f, r as p } from "./Text-BMaVbS3F.js";
-import { t as m } from "./Badge-BGDepkwI.js";
-import { t as h } from "./Banner-IBpLsSJQ.js";
-import { t as g } from "./Modal-DMFNRUDx.js";
-import { t as _ } from "./Input-DLknWXri.js";
-import { t as v } from "./EmptyState-zKbpAhFD.js";
-import { n as y } from "./Tabs-CWj6ZL7J.js";
-import { t as b } from "./Textarea-Dz4doxTv.js";
-import { t as x } from "./Avatar-DeJWic2B.js";
-import { t as S } from "./SegmentedControl-CKYHtOJ0.js";
-import { t as C } from "./InlineAlert-CRnIKeAF.js";
-import { t as w } from "./CardHeader-CsPhVpCm.js";
-import { t as T } from "./PresenceAvatars-Dmtv09Kg.js";
-import { t as E } from "./InlinePopover-DpXHdWeE.js";
-import { t as D } from "./ChangeDiff-CzO8zCc-.js";
+import { t as f } from "./Breadcrumbs-embdT7_l.js";
+import { t as p } from "./Badge-BGDepkwI.js";
+import { t as m } from "./Banner-IBpLsSJQ.js";
+import { t as h } from "./Modal-DMFNRUDx.js";
+import { t as g } from "./Input-DLknWXri.js";
+import { t as _ } from "./EmptyState-zKbpAhFD.js";
+import { n as v } from "./Tabs-CWj6ZL7J.js";
+import { t as y } from "./Textarea-Dz4doxTv.js";
+import { t as b } from "./Avatar-DeJWic2B.js";
+import { t as x } from "./SegmentedControl-CKYHtOJ0.js";
+import { t as S } from "./InlineAlert-CRnIKeAF.js";
+import { t as C } from "./CardHeader-CsPhVpCm.js";
+import { t as w } from "./PresenceAvatars-Dmtv09Kg.js";
+import { t as T } from "./InlinePopover-DpXHdWeE.js";
+import { t as E } from "./ChangeDiff-CzO8zCc-.js";
+import { r as D } from "./Text-Dl82j5s1.js";
 import { t as O } from "./Select-D3fGI8SO.js";
 import { t as k } from "./Checkbox-Dftwml_V.js";
 import { n as ee } from "./FileKindMark-Pyuz3FHF.js";
 import { t as A } from "./activationKey-CjbL3LUv.js";
 import { A as te, k as j } from "./renderers-DIPIkjU7.js";
-import { A as M, B as N, C as P, D as F, E as ne, F as I, G as L, H as re, I as R, J as z, K as B, L as V, M as H, N as U, O as ie, P as ae, R as oe, S as W, T as se, U as ce, V as le, W as ue, _ as de, a as fe, b as pe, c as me, d as he, f as ge, g as _e, h as ve, i as ye, j as be, k as xe, l as Se, m as Ce, n as we, o as Te, p as Ee, r as De, s as Oe, t as ke, u as Ae, v as je, w as Me, x as Ne, y as Pe, z as Fe } from "./PresentationEditor-B6agi4zf.js";
+import { A as M, B as N, C as P, D as F, E as ne, F as I, G as L, H as re, I as R, J as z, K as B, L as V, M as H, N as U, O as ie, P as ae, R as oe, S as W, T as se, U as ce, V as le, W as ue, _ as de, a as fe, b as pe, c as me, d as he, f as ge, g as _e, h as ve, i as ye, j as be, k as xe, l as Se, m as Ce, n as we, o as Te, p as Ee, r as De, s as Oe, t as ke, u as Ae, v as je, w as Me, x as Ne, y as Pe, z as Fe } from "./PresentationEditor-w_AwQBlk.js";
 import { i as Ie } from "./MediaIcons-_ai5Til2.js";
 import { o as Le, t as Re } from "./VerdictChip-C758SfR5.js";
 import { a as ze, c as Be, d as Ve, f as He, h as Ue, i as We, l as Ge, m as Ke, n as qe, o as Je, p as Ye, r as Xe, s as Ze, t as Qe, u as $e } from "./TiptapEditor-CajZRkz8.js";
 import { i as et, n as tt, r as nt, t as rt } from "./FloatingComposerDock-DMUQCjea.js";
-import { A as it, B as at, C as ot, D as st, E as ct, F as lt, G as ut, H as dt, I as ft, J as pt, K as mt, L as ht, M as gt, N as _t, O as vt, P as yt, R as bt, S as xt, T as St, U as Ct, V as wt, W as Tt, _ as Et, a as Dt, b as Ot, c as kt, d as At, f as jt, g as Mt, h as Nt, i as Pt, j as Ft, k as It, l as Lt, m as Rt, o as zt, p as Bt, q as Vt, r as Ht, s as Ut, t as Wt, u as Gt, v as Kt, w as qt, x as Jt, y as Yt, z as Xt } from "./DocumentEditorPage-x2kOamb1.js";
+import { A as it, B as at, C as ot, D as st, E as ct, F as lt, G as ut, H as dt, I as ft, J as pt, K as mt, L as ht, M as gt, N as _t, O as vt, P as yt, R as bt, S as xt, T as St, U as Ct, V as wt, W as Tt, _ as Et, a as Dt, b as Ot, c as kt, d as At, f as jt, g as Mt, h as Nt, i as Pt, j as Ft, k as It, l as Lt, m as Rt, o as zt, p as Bt, q as Vt, r as Ht, s as Ut, t as Wt, u as Gt, v as Kt, w as qt, x as Jt, y as Yt, z as Xt } from "./DocumentEditorPage-CKtEdeAf.js";
 import { S as Zt, _ as Qt, a as $t, b as en, c as tn, d as nn, f as rn, g as an, h as on, i as sn, l as cn, m as ln, n as un, o as dn, p as fn, r as pn, s as mn, t as hn, u as gn, v as _n, x as vn, y as yn } from "./useDocumentImageUpload-Cj-LX7Th.js";
-import { r as bn } from "./RichChatComposer-ViLoBQIv.js";
+import { r as bn } from "./RichChatComposer-BP--4sGI.js";
 import { createContext as xn, forwardRef as Sn, useCallback as G, useContext as Cn, useEffect as K, useId as wn, useImperativeHandle as Tn, useMemo as q, useRef as J, useState as Y } from "react";
 import { Fragment as X, jsx as Z, jsxs as Q } from "react/jsx-runtime";
 import * as En from "yjs";
@@ -540,7 +541,7 @@ function Jn({ item: e, onAck: t, onReject: r }) {
 				]
 			}), i && /* @__PURE__ */ Q("div", {
 				className: n("mt-2"),
-				children: [/* @__PURE__ */ Z(b, {
+				children: [/* @__PURE__ */ Z(y, {
 					value: o,
 					onChange: (e) => s(e.target.value),
 					onKeyDown: (e) => {
@@ -897,12 +898,12 @@ var cr = {
 	field: "Field change",
 	prose: "Body text"
 };
-function lr({ utterance: e, kind: t, status: i, confidence: o, attachState: s, targetLabel: c, targetReason: l, before: u, after: d, edits: f, rationale: p, draftError: m, author: h, category: g, path: v, locationHint: y, verdict: b, verdictStatus: S = "idle", verdictError: C, revision: w, onRereview: T, onAccept: E, onReject: O, onRedraft: k, onReattach: ee, onConfirmAttachment: A, className: te, "data-testid": j = "proposal-card" }) {
+function lr({ utterance: e, kind: t, status: i, confidence: o, attachState: s, targetLabel: c, targetReason: l, before: u, after: d, edits: f, rationale: p, draftError: m, author: h, category: _, path: v, locationHint: y, verdict: x, verdictStatus: S = "idle", verdictError: C, revision: w, onRereview: T, onAccept: D, onReject: O, onRedraft: k, onReattach: ee, onConfirmAttachment: A, className: te, "data-testid": j = "proposal-card" }) {
 	let [M, N] = Y(!1), [P, F] = Y(null), [ne, I] = Y(!1), [L, re] = Y(""), R = i === "applied", z = i === "rejected", B = R || z;
 	async function V() {
 		N(!0), F(null);
 		try {
-			let e = await E();
+			let e = await D();
 			F(e);
 		} catch (e) {
 			F({
@@ -929,12 +930,12 @@ function lr({ utterance: e, kind: t, status: i, confidence: o, attachState: s, t
 					/* @__PURE__ */ Z("span", {
 						className: "text-sm font-semibold leading-tight text-text-primary",
 						"data-testid": `${j}-category`,
-						children: g ?? cr[t]
+						children: _ ?? cr[t]
 					}),
 					h && /* @__PURE__ */ Q("span", {
 						className: "flex min-w-0 items-center gap-1.5",
 						"data-testid": `${j}-requester`,
-						children: [/* @__PURE__ */ Z(x, {
+						children: [/* @__PURE__ */ Z(b, {
 							name: h.name,
 							size: 18,
 							...h.avatarUrl ? { src: h.avatarUrl } : {}
@@ -1013,12 +1014,12 @@ function lr({ utterance: e, kind: t, status: i, confidence: o, attachState: s, t
 				"data-testid": `${j}-draft-error`,
 				children: m
 			}),
-			i !== "drafting" && !m && H.length > 0 && /* @__PURE__ */ Z(D, {
+			i !== "drafting" && !m && H.length > 0 && /* @__PURE__ */ Z(E, {
 				pairs: H,
 				"data-testid": `${j}-diff`
 			}),
 			i !== "drafting" && /* @__PURE__ */ Z(Re, {
-				verdict: b,
+				verdict: x,
 				status: S,
 				error: C,
 				revision: w,
@@ -1103,7 +1104,7 @@ function lr({ utterance: e, kind: t, status: i, confidence: o, attachState: s, t
 						htmlFor: `${j}-reason`,
 						children: "Why? (optional — helps the next draft)"
 					}),
-					/* @__PURE__ */ Z(_, {
+					/* @__PURE__ */ Z(g, {
 						id: `${j}-reason`,
 						size: "sm",
 						value: L,
@@ -1254,7 +1255,7 @@ function hr({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 		m.current !== null && (clearTimeout(m.current), m.current = null);
 	}, []), y = G(() => {
 		v(), f(null);
-	}, [v]), b = G((e, n, r) => {
+	}, [v]), x = G((e, n, r) => {
 		if (v(), !_.current.has(e)) return;
 		let i = n ?? t?.current?.querySelector(`[data-comment-id="${pr(e)}"]`) ?? null;
 		i instanceof HTMLElement && (p.current = i, f({
@@ -1263,9 +1264,9 @@ function hr({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 		}));
 	}, [v, t]);
 	Tn(l, () => ({
-		openComment: (e, t) => b(e, t, "click"),
+		openComment: (e, t) => x(e, t, "click"),
 		close: y
-	}), [b, y]);
+	}), [x, y]);
 	let S = J(null), C = d?.id ?? null;
 	K(() => {
 		S.current !== C && (S.current = C, o?.(C));
@@ -1279,12 +1280,12 @@ function hr({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 					y();
 					return;
 				}
-				b(n, t, "click");
+				x(n, t, "click");
 			}
 		}, o = (e) => {
 			if (!i) return;
 			let t = r(e.target), a = t?.getAttribute("data-comment-id");
-			!t || !a || (v(), h.current?.id !== a && (m.current = setTimeout(() => b(a, t, "hover"), n)));
+			!t || !a || (v(), h.current?.id !== a && (m.current = setTimeout(() => x(a, t, "hover"), n)));
 		}, s = (e) => {
 			i && r(e.target) && (v(), m.current = setTimeout(() => {
 				h.current?.via === "hover" && y();
@@ -1297,14 +1298,14 @@ function hr({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 		t,
 		i,
 		n,
-		b,
+		x,
 		y,
 		v
 	]);
-	let w = C ? g.get(C) ?? null : null, T = (e) => () => {
+	let w = C ? g.get(C) ?? null : null, E = (e) => () => {
 		w && (e?.(w.id), y());
 	};
-	return /* @__PURE__ */ Z(E, {
+	return /* @__PURE__ */ Z(T, {
 		trigger: p,
 		open: !!w,
 		onClose: y,
@@ -1326,7 +1327,7 @@ function hr({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 				/* @__PURE__ */ Q("div", {
 					className: "flex items-center gap-2",
 					children: [
-						/* @__PURE__ */ Z(x, {
+						/* @__PURE__ */ Z(b, {
 							name: w.author,
 							size: 20,
 							color: w.color
@@ -1365,13 +1366,13 @@ function hr({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 						children: [s && /* @__PURE__ */ Z(r, {
 							size: "sm",
 							variant: "ghost",
-							onClick: T(s),
+							onClick: E(s),
 							"data-testid": `${u}-open`,
 							children: "Open thread"
 						}), c && !w.resolved && /* @__PURE__ */ Z(r, {
 							size: "sm",
 							variant: "ghost",
-							onClick: T(c),
+							onClick: E(c),
 							"data-testid": `${u}-resolve`,
 							children: "Resolve"
 						})]
@@ -1523,11 +1524,11 @@ var Sr = [
 	"link-view": () => "Anyone with the link can view"
 };
 function wr({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a = "restricted", orgName: o = "your organisation", onChangeGeneralAccess: s, onChangeRole: c, onInvite: l, onCopyLink: u, notice: d, "data-testid": f = "document-share-dialog" }) {
-	let [p, m] = Y(""), h = () => {
+	let [p, m] = Y(""), g = () => {
 		let e = p.trim();
 		!e || !l || (l(e), m(""));
 	};
-	return /* @__PURE__ */ Z(g, {
+	return /* @__PURE__ */ Z(h, {
 		open: e,
 		onClose: t,
 		title: n ? `Share “${n}”` : "Share",
@@ -1542,7 +1543,7 @@ function wr({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 						value: p,
 						onChange: (e) => m(e.target.value),
 						onKeyDown: (e) => {
-							e.key === "Enter" && h();
+							e.key === "Enter" && g();
 						},
 						placeholder: "Add people by name or email",
 						"aria-label": "Add people",
@@ -1550,7 +1551,7 @@ function wr({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 						className: "min-w-0 flex-1 rounded border border-border bg-surface px-2 py-1.5 text-sm text-text-primary"
 					}), /* @__PURE__ */ Z(r, {
 						size: "sm",
-						onClick: h,
+						onClick: g,
 						disabled: !p.trim(),
 						"data-testid": `${f}-invite`,
 						children: "Invite"
@@ -1568,7 +1569,7 @@ function wr({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 						className: "flex items-center gap-2",
 						"data-testid": `${f}-person`,
 						children: [
-							/* @__PURE__ */ Z(x, {
+							/* @__PURE__ */ Z(b, {
 								name: e.displayName,
 								size: 26,
 								...e.avatarUrl ? { src: e.avatarUrl } : {}
@@ -1661,7 +1662,7 @@ function Er({ mode: e, onModeChange: t, showViewing: r = !0, openCount: i = null
 		"data-mode": e,
 		title: l?.hint,
 		className: n("inline-flex items-center gap-2", a && "pointer-events-none opacity-50", o),
-		children: [/* @__PURE__ */ Z(S, {
+		children: [/* @__PURE__ */ Z(x, {
 			options: c,
 			value: e,
 			size: "sm",
@@ -1724,7 +1725,7 @@ function Nr({ lines: e, tone: t, testId: r }) {
 	});
 }
 function Pr({ kind: e, author: t, when: i = null, context: a, deletedText: o = "", insertedText: s = "", insertedBlocks: c, deletedBlocks: l, active: u = !1, onFocus: d, onAccept: f, onReject: p, className: m, "data-testid": h = "suggestion-card" }) {
-	let { person: g, model: _ } = jr(t.trim() === "" ? "Unknown author" : t.trim()), v = c && c.length > 0 ? c : s ? [s] : [], y = l && l.length > 0 ? l : o ? [o] : [], b = v.length > 0 || y.length > 0;
+	let { person: g, model: _ } = jr(t.trim() === "" ? "Unknown author" : t.trim()), v = c && c.length > 0 ? c : s ? [s] : [], y = l && l.length > 0 ? l : o ? [o] : [], x = v.length > 0 || y.length > 0;
 	return /* @__PURE__ */ Q("div", {
 		"data-testid": h,
 		"data-kind": e,
@@ -1734,7 +1735,7 @@ function Pr({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 			/* @__PURE__ */ Q("div", {
 				className: "flex items-center gap-2",
 				children: [
-					/* @__PURE__ */ Z(x, {
+					/* @__PURE__ */ Z(b, {
 						name: g,
 						size: 20
 					}),
@@ -1772,7 +1773,7 @@ function Pr({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 					})
 				]
 			}),
-			b && /* @__PURE__ */ Q("button", {
+			x && /* @__PURE__ */ Q("button", {
 				type: "button",
 				onClick: d,
 				disabled: !d,
@@ -1820,19 +1821,19 @@ function Pr({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 }
 //#endregion
 //#region src/components/doc-editor/SuggestionReviewList.tsx
-function Fr({ count: e, children: t, onAcceptAll: o, onRejectAll: s, error: c = null, headerExtra: l, emptyTitle: u = "No suggestions", emptyBody: d = "Proposed changes to this document show up here for review.", title: f = "Suggestions", variant: p = "card", className: m, "data-testid": g = "suggestion-review-list" }) {
-	let _ = e > 0 && (o || s), y = _ || l ? /* @__PURE__ */ Q("span", {
+function Fr({ count: e, children: t, onAcceptAll: o, onRejectAll: s, error: c = null, headerExtra: l, emptyTitle: u = "No suggestions", emptyBody: d = "Proposed changes to this document show up here for review.", title: f = "Suggestions", variant: p = "card", className: h, "data-testid": g = "suggestion-review-list" }) {
+	let v = e > 0 && (o || s), y = v || l ? /* @__PURE__ */ Q("span", {
 		className: "flex items-center gap-1.5",
 		children: [
 			l,
-			_ && s && /* @__PURE__ */ Z(r, {
+			v && s && /* @__PURE__ */ Z(r, {
 				variant: "ghost",
 				size: "sm",
 				onClick: s,
 				"data-testid": `${g}-reject-all`,
 				children: "Reject all"
 			}),
-			_ && o && /* @__PURE__ */ Z(r, {
+			v && o && /* @__PURE__ */ Z(r, {
 				variant: "secondary",
 				size: "sm",
 				onClick: o,
@@ -1842,13 +1843,13 @@ function Fr({ count: e, children: t, onAcceptAll: o, onRejectAll: s, error: c = 
 		]
 	}) : void 0, b = /* @__PURE__ */ Q(X, { children: [c && /* @__PURE__ */ Z("div", {
 		className: n("pt-2", p === "card" && "px-3"),
-		children: /* @__PURE__ */ Z(h, {
+		children: /* @__PURE__ */ Z(m, {
 			variant: "error",
 			layout: "stacked",
 			"data-testid": `${g}-error`,
 			children: c
 		})
-	}), e === 0 ? /* @__PURE__ */ Z(v, {
+	}), e === 0 ? /* @__PURE__ */ Z(_, {
 		size: "sm",
 		title: u,
 		body: d,
@@ -1859,7 +1860,7 @@ function Fr({ count: e, children: t, onAcceptAll: o, onRejectAll: s, error: c = 
 		children: t
 	})] });
 	return p === "pane" ? /* @__PURE__ */ Q("div", {
-		className: n("flex min-h-0 flex-1 flex-col", m),
+		className: n("flex min-h-0 flex-1 flex-col", h),
 		"data-testid": g,
 		"data-variant": "pane",
 		children: [/* @__PURE__ */ Q("div", {
@@ -1875,9 +1876,9 @@ function Fr({ count: e, children: t, onAcceptAll: o, onRejectAll: s, error: c = 
 		})]
 	}) : /* @__PURE__ */ Q(i, {
 		padding: "none",
-		className: n("overflow-hidden", m),
+		className: n("overflow-hidden", h),
 		"data-testid": g,
-		children: [/* @__PURE__ */ Z(w, {
+		children: [/* @__PURE__ */ Z(C, {
 			title: f,
 			meta: /* @__PURE__ */ Z(a, {
 				tone: "neutral",
@@ -1957,22 +1958,22 @@ function Br(e) {
 //#endregion
 //#region src/components/doc-editor/DocumentReviewPanel.tsx
 function Vr({ request: e, onDecide: t, onWithdraw: n }) {
-	let [i, o] = Y(""), [s, c] = Y(!1), [l, f] = Y(null), m = J(!1);
-	async function h(e) {
-		if (!m.current) {
-			m.current = !0, c(!0), f(null);
+	let [i, o] = Y(""), [s, c] = Y(!1), [l, f] = Y(null), p = J(!1);
+	async function m(e) {
+		if (!p.current) {
+			p.current = !0, c(!0), f(null);
 			try {
 				await e(), o("");
 			} catch (e) {
 				f(e instanceof Error ? e.message : "The review could not be updated.");
 			} finally {
-				m.current = !1, c(!1);
+				p.current = !1, c(!1);
 			}
 		}
 	}
-	let g = e.reviewerName || e.reviewerId, _ = e.state.replace(/_/g, " "), v = _.charAt(0).toUpperCase() + _.slice(1);
+	let h = e.reviewerName || e.reviewerId, g = e.state.replace(/_/g, " "), _ = g.charAt(0).toUpperCase() + g.slice(1);
 	return /* @__PURE__ */ Z(B, {
-		"aria-label": `Review by ${g}`,
+		"aria-label": `Review by ${h}`,
 		"aria-busy": s,
 		children: /* @__PURE__ */ Q(u, {
 			gap: "sm",
@@ -1981,11 +1982,11 @@ function Vr({ request: e, onDecide: t, onWithdraw: n }) {
 					gap: "sm",
 					wrap: !0,
 					children: [
-						/* @__PURE__ */ Z("strong", { children: g }),
+						/* @__PURE__ */ Z("strong", { children: h }),
 						/* @__PURE__ */ Z(a, {
 							size: "xs",
 							tone: e.state === "approved" ? "success" : e.state === "changes_requested" ? "warning" : "neutral",
-							children: v
+							children: _
 						}),
 						e.required && /* @__PURE__ */ Z(a, {
 							size: "xs",
@@ -1994,7 +1995,7 @@ function Vr({ request: e, onDecide: t, onWithdraw: n }) {
 						})
 					]
 				}),
-				/* @__PURE__ */ Z(p, { items: [`Requested by ${e.requestedByName || e.requestedBy}`, e.dueDate ? `Due ${e.dueDate}` : null] }),
+				/* @__PURE__ */ Z(D, { items: [`Requested by ${e.requestedByName || e.requestedBy}`, e.dueDate ? `Due ${e.dueDate}` : null] }),
 				e.note && /* @__PURE__ */ Z("p", {
 					className: "m-0 text-sm text-text-primary whitespace-pre-wrap",
 					children: e.note
@@ -2003,16 +2004,16 @@ function Vr({ request: e, onDecide: t, onWithdraw: n }) {
 					className: "m-0 text-sm text-text-secondary whitespace-pre-wrap",
 					children: e.comment
 				}),
-				l && /* @__PURE__ */ Z(C, {
+				l && /* @__PURE__ */ Z(S, {
 					tone: "error",
 					children: l
 				}),
-				t && e.state === "pending" && /* @__PURE__ */ Q(X, { children: [/* @__PURE__ */ Z(b, {
+				t && e.state === "pending" && /* @__PURE__ */ Q(X, { children: [/* @__PURE__ */ Z(y, {
 					value: i,
 					onChange: (e) => o(e.target.value),
 					rows: 2,
 					disabled: s,
-					"aria-label": `Review comment for ${g}`,
+					"aria-label": `Review comment for ${h}`,
 					placeholder: "Add a comment (optional)"
 				}), /* @__PURE__ */ Q(d, {
 					gap: "sm",
@@ -2021,13 +2022,13 @@ function Vr({ request: e, onDecide: t, onWithdraw: n }) {
 						size: "sm",
 						variant: "secondary",
 						disabled: s,
-						onClick: () => void h(() => t(e.requestKey, "changes_requested", i)),
+						onClick: () => void m(() => t(e.requestKey, "changes_requested", i)),
 						children: "Request changes"
 					}), /* @__PURE__ */ Z(r, {
 						size: "sm",
 						variant: "primary",
 						disabled: s,
-						onClick: () => void h(() => t(e.requestKey, "approved", i)),
+						onClick: () => void m(() => t(e.requestKey, "approved", i)),
 						children: "Approve review"
 					})]
 				})] }),
@@ -2035,7 +2036,7 @@ function Vr({ request: e, onDecide: t, onWithdraw: n }) {
 					size: "sm",
 					variant: "ghost",
 					disabled: s,
-					onClick: () => void h(() => n(e.requestKey)),
+					onClick: () => void m(() => n(e.requestKey)),
 					children: "Withdraw review"
 				})
 			]
@@ -2043,10 +2044,10 @@ function Vr({ request: e, onDecide: t, onWithdraw: n }) {
 	});
 }
 function Hr({ requests: e, reviewers: t = [], currentUserId: n, loading: i, error: a, onRefresh: o, onRequest: s, onDecide: c, onWithdraw: l }) {
-	let [f, p] = Y(""), [m, h] = Y(""), [g, _] = Y(!0), [v, y] = Y(!1), [x, S] = Y(null), w = J(!1);
+	let [f, p] = Y(""), [m, h] = Y(""), [g, _] = Y(!0), [v, b] = Y(!1), [x, C] = Y(null), w = J(!1);
 	async function T() {
 		if (!(!s || !t.some((e) => e.id === f) || w.current)) {
-			w.current = !0, y(!0), S(null);
+			w.current = !0, b(!0), C(null);
 			try {
 				await s({
 					reviewerId: f,
@@ -2054,16 +2055,16 @@ function Hr({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 					required: g
 				}), h(""), p("");
 			} catch (e) {
-				S(e instanceof Error ? e.message : "The review could not be requested.");
+				C(e instanceof Error ? e.message : "The review could not be requested.");
 			} finally {
-				w.current = !1, y(!1);
+				w.current = !1, b(!1);
 			}
 		}
 	}
 	return /* @__PURE__ */ Q(u, {
 		gap: "md",
 		children: [
-			a && /* @__PURE__ */ Z(C, {
+			a && /* @__PURE__ */ Z(S, {
 				tone: "error",
 				children: a
 			}),
@@ -2081,7 +2082,7 @@ function Hr({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 						})),
 						onChange: (e) => p(e.target.value)
 					}),
-					/* @__PURE__ */ Z(b, {
+					/* @__PURE__ */ Z(y, {
 						"aria-label": "Review request note",
 						placeholder: "What should they review?",
 						rows: 2,
@@ -2099,7 +2100,7 @@ function Hr({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 							disabled: v
 						}), "Required review"]
 					}),
-					x && /* @__PURE__ */ Z(C, {
+					x && /* @__PURE__ */ Z(S, {
 						tone: "error",
 						children: x
 					}),
@@ -2165,7 +2166,7 @@ function Wr({ filled: e }) {
 		children: /* @__PURE__ */ Z("path", { d: "M8 1.9l1.8 3.7 4.1.6-3 2.9.7 4.1L8 11.3l-3.6 1.9.7-4.1-3-2.9 4.1-.6L8 1.9Z" })
 	});
 }
-function Gr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: s, starred: l = !1, onStarredChange: u, statusPill: d, path: p, crumbsTrailing: h, subtitle: g, metaBar: _, participants: v, onParticipantClick: b, onFollowParticipant: x, followingParticipantId: S, meta: C, saveState: w, headActions: E, tabs: D, activeTab: O, onTabChange: k, toolbar: A, children: te, footer: j, surface: M = "workspace", explorer: N, workbench: P, label: F = "Editor", variant: ne = "document", itemType: I, itemKey: L, titleSize: re = "md", tabsTrailing: R, className: z, "data-testid": B = "editor-shell" }) {
+function Gr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: s, starred: l = !1, onStarredChange: u, statusPill: d, path: m, crumbsTrailing: h, subtitle: g, metaBar: _, participants: y, onParticipantClick: b, onFollowParticipant: x, followingParticipantId: S, meta: C, saveState: T, headActions: E, tabs: D, activeTab: O, onTabChange: k, toolbar: A, children: te, footer: j, surface: M = "workspace", explorer: N, workbench: P, label: F = "Editor", variant: ne = "document", itemType: I, itemKey: L, titleSize: re = "md", tabsTrailing: R, className: z, "data-testid": B = "editor-shell" }) {
 	let V = ne === "work-item", H = V && (I || L) ? /* @__PURE__ */ Q(X, { children: [I && /* @__PURE__ */ Z(a, {
 		size: "sm",
 		tone: "info",
@@ -2175,7 +2176,7 @@ function Gr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 		className: "font-mono text-[12px] text-text-secondary",
 		"data-testid": `${B}-item-key`,
 		children: L
-	})] }) : null, U = H || h != null ? /* @__PURE__ */ Q(X, { children: [H, h] }) : null, ie = V && (e && e.length > 0 || U != null), ae = re === "lg" ? "text-[26px] font-semibold leading-8" : V ? "text-[22px] font-bold leading-7" : "text-xl font-bold leading-6", oe = `${B}-${wn().replace(/:/g, "")}`, W = !!D && D.length > 0, se = W ? D.some((e) => e.id === O) ? O : D[0].id : void 0, ce = v && v.length > 0 || C != null || !!w, le = (e) => /* @__PURE__ */ Z(y, {
+	})] }) : null, U = H || h != null ? /* @__PURE__ */ Q(X, { children: [H, h] }) : null, ie = V && (e && e.length > 0 || U != null), ae = re === "lg" ? "text-[26px] font-semibold leading-8" : V ? "text-[22px] font-bold leading-7" : "text-xl font-bold leading-6", oe = `${B}-${wn().replace(/:/g, "")}`, W = !!D && D.length > 0, se = W ? D.some((e) => e.id === O) ? O : D[0].id : void 0, ce = y && y.length > 0 || C != null || !!T, le = (e) => /* @__PURE__ */ Z(v, {
 		items: D.map((e) => ({
 			id: e.id,
 			label: e.label,
@@ -2183,7 +2184,7 @@ function Gr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 			...e.count ? { badge: V ? /* @__PURE__ */ Z("span", {
 				"aria-label": `${e.count} in ${e.label}`,
 				children: e.count
-			}) : /* @__PURE__ */ Z(m, {
+			}) : /* @__PURE__ */ Z(p, {
 				variant: "count",
 				value: e.count,
 				color: "muted",
@@ -2309,11 +2310,11 @@ function Gr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 												})]
 											}),
 											d,
-											p && p.length > 0 && /* @__PURE__ */ Z("span", {
+											m && m.length > 0 && /* @__PURE__ */ Z("span", {
 												className: "flex min-w-0 flex-1 items-center border-l border-border pl-3",
 												"data-testid": `${B}-path`,
 												children: /* @__PURE__ */ Z(f, {
-													items: p,
+													items: m,
 													maxItems: 4,
 													lastIsCurrent: !1,
 													className: "min-w-0 text-[13px] text-text-tertiary",
@@ -2331,8 +2332,8 @@ function Gr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 										className: "flex min-w-0 flex-wrap items-center gap-2 text-[13px] text-text-tertiary [@media(max-height:640px)]:max-w-[50%] [@media(max-height:640px)]:flex-nowrap",
 										"data-testid": `${B}-byline`,
 										children: [
-											v && v.length > 0 && /* @__PURE__ */ Z(T, {
-												users: v,
+											y && y.length > 0 && /* @__PURE__ */ Z(w, {
+												users: y,
 												size: 22,
 												maxVisible: 4,
 												...b ? { onUserClick: b } : {},
@@ -2346,7 +2347,7 @@ function Gr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 												children: C
 											}),
 											/* @__PURE__ */ Z(ft, {
-												state: w,
+												state: T,
 												className: "text-[13px]"
 											})
 										]
