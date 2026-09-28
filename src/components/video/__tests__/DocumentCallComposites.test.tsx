@@ -459,3 +459,32 @@ describe('CallDock in a conversation (2.400.0)', () => {
     expect(people.parentElement).toBe(extras.parentElement);
   });
 });
+
+describe('CallDock header wraps instead of overlapping (2.403.2)', () => {
+  it('sizes the title block by its content and lets the controls take their own line', () => {
+    render(
+      <CallDock
+        {...dockBase}
+        extras={
+          <button type="button" data-testid="my-reactions">
+            React
+          </button>
+        }
+      />,
+    );
+    const header = screen.getByTestId('call-dock-header');
+    const controls = screen.getByTestId('call-dock-controls');
+    const titleBlock = screen.getByTestId('call-dock-title').parentElement!;
+    // flex-1 has a 0 basis, so the row never wrapped and the controls painted
+    // over the name and clock once title + meta + controls outgrew the dock.
+    expect(header.className).toContain('flex-wrap');
+    expect(titleBlock.parentElement).toBe(header);
+    expect(titleBlock.className).toContain('flex-auto');
+    expect(titleBlock.className).not.toContain('flex-1');
+    expect(controls.parentElement).toBe(header);
+    expect(controls.className).toContain('ml-auto');
+    expect(controls.className).toContain('shrink-0');
+    expect(controls.contains(screen.getByTestId('call-dock-extras'))).toBe(true);
+  });
+});
+

@@ -5,7 +5,7 @@ import { t as i } from "./DropdownMenu-CHrQvZgc.js";
 import { n as ee } from "./composerCommands-CgPFKkKH.js";
 import { t as a } from "./agentComposerDraft-Cj2sSkVv.js";
 import { i as te, t as ne } from "./FloatingComposerDock-DMUQCjea.js";
-import { r as re } from "./RichChatComposer-CVU988IM.js";
+import { r as re } from "./RichChatComposer-z6_CJV3A.js";
 import { useCallback as o, useRef as s, useState as c } from "react";
 import { jsx as l, jsxs as ie } from "react/jsx-runtime";
 //#region src/components/social/AgentComposerDock.tsx

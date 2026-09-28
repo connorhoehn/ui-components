@@ -259,3 +259,27 @@ export const Conversation: Story = {
   ),
 };
 export const ConversationDark: Story = { ...Conversation, decorators: [themed('dark')] };
+
+/**
+ * The chat column at a 1280×720 window (~904px) with a DM's long name and the
+ * host's full extras: title + meta + controls do not fit one line, so the
+ * controls take their own right-aligned line instead of covering the name
+ * and the clock (2.403.2).
+ */
+export const ConversationChatColumn904: Story = {
+  args: base({
+    title: 'Carol Johnson (@e2e-carol-9vstoy)',
+    documents: undefined,
+    onOpenDocuments: undefined,
+    compact: true,
+    extras: conversationExtras,
+  }),
+  decorators: [themed('light')],
+  render: (args) => (
+    <div className="w-[904px] border border-border">
+      <Interactive {...args} />
+    </div>
+  ),
+};
+export const ConversationChatColumn904Dark: Story = { ...ConversationChatColumn904, decorators: [themed('dark')] };
+

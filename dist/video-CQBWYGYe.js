@@ -5669,9 +5669,10 @@ function $r({ title: t, participantCount: n, elapsedMs: r, phase: a, documents: 
 		"data-phase": a,
 		"data-compact": F ? "true" : "false",
 		children: [/* @__PURE__ */ Z("div", {
-			className: "flex min-w-0 items-center gap-2",
+			className: "flex min-w-0 flex-wrap items-center gap-x-2 gap-y-2",
+			"data-testid": `${L}-header`,
 			children: [/* @__PURE__ */ Z("div", {
-				className: "flex min-w-0 flex-1 items-baseline gap-3",
+				className: "flex min-w-0 flex-auto items-baseline gap-3",
 				children: [
 					/* @__PURE__ */ X("button", {
 						type: "button",
@@ -5708,7 +5709,8 @@ function $r({ title: t, participantCount: n, elapsedMs: r, phase: a, documents: 
 					})
 				]
 			}), /* @__PURE__ */ Z("div", {
-				className: "flex shrink-0 items-center gap-2",
+				className: "ml-auto flex shrink-0 items-center gap-2",
+				"data-testid": `${L}-controls`,
 				children: [
 					/* @__PURE__ */ X(Ir, {
 						kind: "microphone",

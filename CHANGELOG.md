@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.403.2
+
+- `CallDock`: the header wraps instead of overlapping. The title block was `flex-1` (a 0 basis), so the row never wrapped; once title + meta + controls outgrew the dock — the conversation shelf in a 1280×720 window's chat column (~904px) carrying the host's `extras` — the controls painted over the conversation name and the "N people · mm:ss" clock. The title block is now `flex-auto` (sized by its content), the header row `flex-wrap`, and the controls `ml-auto`, so the controls take their own right-aligned line when they do not fit and the one-line layout is unchanged when they do. The title and meta keep their natural width (2.394.0). New testids `call-dock-header` and `call-dock-controls`. Stories `ConversationChatColumn904` (+ Dark); test.
+
 ## 2.403.1
 
 - `OrgGraph` lays out and frames whatever set it draws. A focused set (e.g. one person and ten neighbours) no longer collapses into a ~300px blob with labels stacked on each other in the middle of a wide canvas.

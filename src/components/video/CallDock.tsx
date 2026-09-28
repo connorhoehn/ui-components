@@ -240,8 +240,13 @@ export function CallDock({
       data-phase={phase}
       data-compact={compact ? 'true' : 'false'}
     >
-      <div className="flex min-w-0 items-center gap-2">
-        <div className="flex min-w-0 flex-1 items-baseline gap-3">
+      {/* The header wraps rather than overlaps: the title block's basis is its
+          content (`flex-auto`, not `flex-1`), so when title + meta + controls
+          outgrow the dock — a narrow chat column, a caller's `extras` — the
+          controls move to their own right-aligned line instead of painting
+          over the name and the clock. */}
+      <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-2" data-testid={`${testId}-header`}>
+        <div className="flex min-w-0 flex-auto items-baseline gap-3">
           <button
             type="button"
             onClick={onTitleClick}
@@ -279,7 +284,7 @@ export function CallDock({
           )}
         </div>
 
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="ml-auto flex shrink-0 items-center gap-2" data-testid={`${testId}-controls`}>
           <DeviceToggleSelect kind="microphone" {...mic} data-testid="call-dock-mic" {...(connecting ? { disabledReason: 'Connecting…' } : {})} />
           <DeviceToggleSelect kind="camera" {...camera} data-testid="call-dock-camera" {...(connecting ? { disabledReason: 'Connecting…' } : {})} />
           <Button
