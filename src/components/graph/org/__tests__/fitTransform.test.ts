@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fitTransform, orgGraphBounds, orgLabelWidth } from '../fitTransform';
+import { fitTransform, orgGraphBounds, orgLabelWidth, ORG_FIT_MIN_ZOOM } from '../fitTransform';
 import { ORG_LABEL_BAND } from '../useForceLayout';
 
 const size = { width: 1000, height: 500 };
@@ -33,6 +33,39 @@ describe('fitTransform', () => {
     expect(point).toEqual({ x: 500 - 15, y: 250 - 15, scale: 1.5 });
     const row = fitTransform({ minX: 0, minY: 5, maxX: 1680, maxY: 5 }, size, 80, 3);
     expect(row.scale).toBeCloseTo(0.5);
+  });
+});
+
+describe('fitTransform — insets and the label floor', () => {
+  it('centres the box in the canvas less the insets', () => {
+    // Clear area: x 200 … 680 (480 wide), y 0 … 500; available 416 × 436 after 32px padding.
+    const t = fitTransform({ minX: 0, minY: 0, maxX: 208, maxY: 100 }, size, 32, 3, 0, { left: 200, right: 320 });
+    expect(t.scale).toBeCloseTo(2);
+    expect(0 * t.scale + t.x).toBeCloseTo(200 + 32);
+    expect(208 * t.scale + t.x).toBeCloseTo(1000 - 320 - 32);
+    expect(50 * t.scale + t.y).toBeCloseTo(250);
+  });
+
+  it('honours top and bottom insets and treats missing edges as 0', () => {
+    const t = fitTransform({ minX: 0, minY: 0, maxX: 100, maxY: 100 }, size, 0, 1, 0, { top: 100 });
+    expect(50 * t.scale + t.x).toBeCloseTo(500);
+    expect(50 * t.scale + t.y).toBeCloseTo(100 + 200);
+    expect(fitTransform({ minX: 0, minY: 0, maxX: 100, maxY: 100 }, size, 0, 1, 0, {}))
+      .toEqual(fitTransform({ minX: 0, minY: 0, maxX: 100, maxY: 100 }, size, 0, 1));
+  });
+
+  it('stops at the label floor and start-aligns the overflowing axis', () => {
+    // 900 × 600 of world on a 1000 × 500 canvas, legend inset 200: the fit
+    // would be ~0.6; the floor holds 1.1 and the drawing runs off the bottom.
+    const t = fitTransform({ minX: 0, minY: 0, maxX: 700, maxY: 600 }, size, 32, 1.25, ORG_FIT_MIN_ZOOM, { left: 200 });
+    expect(t.scale).toBe(ORG_FIT_MIN_ZOOM);
+    expect(0 * t.scale + t.y).toBeCloseTo(32); // top of the drawing at the top padding
+    // Width (770) still overflows the 736 clear width → left edge right of the legend.
+    expect(0 * t.scale + t.x).toBeCloseTo(232);
+    // An axis that still fits stays centred.
+    const wide = fitTransform({ minX: 0, minY: 0, maxX: 600, maxY: 600 }, size, 32, 1.25, ORG_FIT_MIN_ZOOM, { left: 200 });
+    expect(300 * wide.scale + wide.x).toBeCloseTo(200 + 400);
+    expect(0 * wide.scale + wide.y).toBeCloseTo(32);
   });
 });
 

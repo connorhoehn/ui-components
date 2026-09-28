@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { createOrgSimulation, forceParamsFor, ORG_LABEL_BAND } from '../useForceLayout';
+import { createOrgSimulation, forceParamsFor, orgDepartmentCells, ORG_LABEL_BAND } from '../useForceLayout';
+import { fitTransform, orgGraphBounds, ORG_FIT_MIN_ZOOM } from '../fitTransform';
 import type { GraphDepartment, GraphPerson, GraphRelationship } from '../types';
 
 const DEPTS: GraphDepartment[] = ['Platform Engineering', 'Data Platform', 'Product', 'Design Systems', 'ML / AI', 'Security']
@@ -31,9 +32,18 @@ describe('forceParamsFor', () => {
       expect(p.charge).toBeGreaterThanOrEqual(-300);
       expect(p.collidePadding).toBeLessThanOrEqual(8);
       expect(p.linkStiffness).toBe(0.3);
-      expect(p.xStrength).toBe(0.1);
-      expect(p.yStrength).toBe(0.1);
+      // Near 16:9 the department pulls stay at the original 0.1.
+      expect(p.xStrength).toBeCloseTo(0.1, 1);
+      expect(p.yStrength).toBeCloseTo(0.1, 1);
     }
+    expect(forceParamsFor(56, 1600, 900).xStrength).toBeCloseTo(0.1, 5);
+  });
+
+  it('shapes the large-graph pulls to the canvas: a wide strip pulls y harder than x', () => {
+    const strip = forceParamsFor(56, 1160, 360);
+    expect(strip.yStrength).toBeGreaterThan(strip.xStrength * 2);
+    const tall = forceParamsFor(56, 400, 900);
+    expect(tall.xStrength).toBeGreaterThan(tall.yStrength);
   });
 
   it('spreads a small set further, pushes harder and reserves the label band', () => {
@@ -91,5 +101,52 @@ describe('createOrgSimulation — the focused eleven on a wide canvas', () => {
         expect(d).toBeGreaterThan(0.9 * 2 * (20 + ORG_LABEL_BAND));
       }
     }
+  });
+});
+
+describe('orgDepartmentCells', () => {
+  const names = DEPTS.map(d => d.name);
+  it('keeps 3 × 2 on a 16:9 canvas and goes wider on a 3:1 strip', () => {
+    const square = orgDepartmentCells(names, 1200, 640);
+    expect(new Set([...square.values()].map(c => c.y)).size).toBe(2);
+    expect(new Set([...square.values()].map(c => c.x)).size).toBe(3);
+    const strip = orgDepartmentCells(names, 1160, 360);
+    expect(new Set([...strip.values()].map(c => c.x)).size).toBeGreaterThanOrEqual(4);
+    for (const c of strip.values()) {
+      expect(c.x).toBeGreaterThan(0);
+      expect(c.x).toBeLessThan(1160);
+    }
+  });
+});
+
+describe('createOrgSimulation — the whole org (56) on a 1160 × 360 strip', () => {
+  it('fills the clear area\'s width at the 11px label floor', () => {
+    // OrgGraph's clear area: 1160 less the legend (200) and 2 × 32 padding,
+    // laid out at the label floor.
+    const TYPES = ['collaborates', 'mentors', 'reports_to', 'expert_in_common'] as const;
+    const people: GraphPerson[] = Array.from({ length: 56 }, (_, i) => ({
+      id: `q-${i}`, name: `${FIRST[i % FIRST.length]} Doe`, title: 'Engineer', department: DEPTS[i % 6]!.name,
+      skills: [], influenceScore: ((i * 37) % 100) / 100,
+    }));
+    const relationships: GraphRelationship[] = people.flatMap((p, i) => [
+      { source: p.id, target: people[(i + 6) % 56]!.id, type: TYPES[i % 4]!, strength: 0.4 + ((i * 13) % 60) / 100 },
+      { source: p.id, target: people[(i + 1) % 56]!.id, type: 'collaborates' as const, strength: 0.5 },
+    ]);
+    const clearW = 1160 - 200 - 64, clearH = 360 - 64;
+    const radius = (p: GraphPerson) => 12 + p.influenceScore * 18;
+    const { sim, simNodes } = createOrgSimulation({
+      people, relationships, departments: DEPTS, width: clearW / ORG_FIT_MIN_ZOOM, height: clearH / ORG_FIT_MIN_ZOOM, nodeRadiusOf: radius,
+    });
+    sim.stop();
+    sim.tick(300);
+    const bounds = orgGraphBounds(simNodes, id => radius(simNodes.find(n => n.id === id)!))!;
+    const t = fitTransform(bounds, { width: 1160, height: 360 }, 32, 1.25, ORG_FIT_MIN_ZOOM, { left: 200 });
+    // Labels stay at ≥ 11px (was 56% → 6px) …
+    expect(t.scale).toBeGreaterThanOrEqual(ORG_FIT_MIN_ZOOM);
+    // … and the drawing spans most of the clear width (was 47% of the canvas).
+    const drawnW = (bounds.maxX - bounds.minX) * t.scale;
+    expect(drawnW).toBeGreaterThan(clearW * 0.8);
+    // Nothing is drawn under the legend.
+    expect(bounds.minX * t.scale + t.x).toBeGreaterThanOrEqual(200);
   });
 });

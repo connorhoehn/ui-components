@@ -18,9 +18,31 @@ export interface ViewTransform {
 }
 
 /**
- * The transform that centres `bounds` in a `size` canvas with `padding` px on
- * every side, zoomed as far as fits but never past `maxZoom` (so two people do
- * not become two giant circles) nor below `minZoom`. A zero-width or
+ * Screen px along each canvas edge that the fitted drawing keeps clear of —
+ * the legend on the left, a person card the host overlays on the right. The
+ * fit centres the drawing in what is left. Since 2.403.2.
+ */
+export interface FitInset {
+  left?: number;
+  right?: number;
+  top?: number;
+  bottom?: number;
+}
+
+/**
+ * Screen zoom below which the fit does not go: the org graph's first-name
+ * labels are 10px, so 1.1 keeps them at 11px. A drawing that does not fit at
+ * this zoom overflows the canvas and the viewer pans. Since 2.403.2.
+ */
+export const ORG_FIT_MIN_ZOOM = 1.1;
+
+/**
+ * The transform that centres `bounds` in a `size` canvas — less `inset` on
+ * each edge (2.403.2) and `padding` px inside that — zoomed as far as fits but
+ * never past `maxZoom` (so two people do not become two giant circles) nor
+ * below `minZoom`. When `minZoom` wins and the drawing overflows an axis, that
+ * axis is aligned to its start (top / left of the clear area) instead of
+ * centred, so the viewer sees the beginning and pans on. A zero-width or
  * zero-height box (one person, or a row) fits on its other axis; an empty box
  * gets `maxZoom`.
  */
@@ -30,16 +52,28 @@ export function fitTransform(
   padding: number,
   maxZoom: number,
   minZoom = 0,
+  inset: FitInset = {},
 ): ViewTransform {
+  const left = Math.max(0, inset.left ?? 0);
+  const right = Math.max(0, inset.right ?? 0);
+  const top = Math.max(0, inset.top ?? 0);
+  const bottom = Math.max(0, inset.bottom ?? 0);
   const bw = Math.max(0, bounds.maxX - bounds.minX);
   const bh = Math.max(0, bounds.maxY - bounds.minY);
-  const availW = Math.max(1, size.width - 2 * padding);
-  const availH = Math.max(1, size.height - 2 * padding);
+  const availW = Math.max(1, size.width - left - right - 2 * padding);
+  const availH = Math.max(1, size.height - top - bottom - 2 * padding);
   const fits = [bw > 0 ? availW / bw : Infinity, bh > 0 ? availH / bh : Infinity];
   const scale = Math.max(minZoom, Math.min(maxZoom, ...fits));
   const cx = (bounds.minX + bounds.maxX) / 2;
   const cy = (bounds.minY + bounds.maxY) / 2;
-  return { x: size.width / 2 - cx * scale, y: size.height / 2 - cy * scale, scale };
+  // Centre of the clear area, or its start edge when the drawing overflows.
+  const x = bw * scale > availW + 0.5
+    ? left + padding - bounds.minX * scale
+    : left + (size.width - left - right) / 2 - cx * scale;
+  const y = bh * scale > availH + 0.5
+    ? top + padding - bounds.minY * scale
+    : top + (size.height - top - bottom) / 2 - cy * scale;
+  return { x, y, scale };
 }
 
 /** Rough drawn width of a 10px first-name label plus its pill padding. */

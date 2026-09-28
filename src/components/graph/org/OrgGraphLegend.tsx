@@ -1,7 +1,9 @@
 // OrgGraphLegend — the org graph's key, pinned top-left: departments (click
 // one to filter the graph to it), relationship line styles, and — while a
-// presence filter is on — the presence dots. It rests translucent so it does
-// not hide nodes, and opens fully on hover or keyboard focus.
+// presence filter is on — the presence dots. An opaque surface panel with a
+// hairline border and a fixed width (2.403.2; it used to rest at 20% opacity
+// over the nodes): `OrgGraph` keeps its drawing clear of `ORG_LEGEND_INSET`
+// instead. At rest it shows its first rows; hover or keyboard focus opens it.
 
 import { useState } from 'react';
 import { cn } from '../../../lib/cn';
@@ -19,13 +21,20 @@ export interface OrgGraphLegendProps {
   onFilter: (dept: string | null) => void;
   /** Shows the presence key while a presence filter is active. */
   presenceFilter?: PresenceFilter | null;
-  /** Keep the legend fully opaque instead of resting translucent. */
+  /** Keep the legend fully open instead of showing its first rows at rest. */
   pinned?: boolean;
   className?: string;
   'data-testid'?: string;
 }
 
 const PRESENCE_KEYS = ['office', 'wfh', 'travel', 'pto', 'vacation', 'sick'] as const;
+
+/**
+ * Screen px the legend takes from the canvas's left edge: its 12px offset,
+ * its fixed 176px (`w-44`) panel and a 12px gap. `OrgGraph` keeps its
+ * drawing clear of this while the legend is on. Since 2.403.2.
+ */
+export const ORG_LEGEND_INSET = 200;
 
 export function OrgGraphLegend({
   departments, filter, onFilter, presenceFilter, pinned = false, className,
@@ -42,9 +51,9 @@ export function OrgGraphLegend({
       aria-label="Graph legend"
       role="group"
       className={cn(
-        'absolute left-3 top-3 overflow-hidden px-4 py-3 text-[11px] text-text-secondary shadow-sm',
-        'transition-[opacity,max-height] duration-300 ease-out focus-within:max-h-[800px] focus-within:opacity-100',
-        open ? 'max-h-[800px] opacity-100' : 'max-h-40 opacity-20',
+        'absolute left-3 top-3 z-10 w-44 overflow-hidden border border-border bg-surface px-4 py-3 text-[11px] text-text-secondary shadow-sm',
+        'transition-[max-height] duration-300 ease-out focus-within:max-h-[800px]',
+        open ? 'max-h-[800px]' : 'max-h-40',
         className,
       )}
     >

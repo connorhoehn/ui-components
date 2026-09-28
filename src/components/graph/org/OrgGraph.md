@@ -29,6 +29,16 @@ itself with a ResizeObserver, so give it a sized container.
   size, padding, maxZoom)`, 32px padding, never past 125%) until the viewer
   pans or zooms; Fit to view re-fits. Zoom buttons and the wheel zoom about
   the canvas centre.
+- Readability and keep-outs (2.403.2): the fit never goes below
+  `ORG_FIT_MIN_ZOOM` (1.1, so the 10px first names draw at 11px); a whole org
+  that does not fit overflows the canvas — top/left aligned — and the viewer
+  pans. The forces are laid out for the clear area at that zoom, the
+  department cells form a grid shaped to the canvas (`orgDepartmentCells`) and
+  the > 40-people pulls are weighted by aspect ÷ 16:9, so 56 people span a
+  1160 × 360 strip instead of a square in its middle. `fitInset` (`{ left,
+  right, top, bottom }`, screen px) is kept clear by the layout and the fit —
+  pass a person card's width as `right`. `left` defaults to `ORG_LEGEND_INSET`
+  (200) while `legend` is on.
 - Labels sit on a surface pill under the circle; in a drawing of more than 40
   people, dimmed (not highlighted) people drop their label. Sizing by
   connection count caps a focused person at their best-connected neighbour's
@@ -42,5 +52,6 @@ itself with a ResizeObserver, so give it a sized container.
   `className`, `aria-label`, `data-testid` as usual.
 
 Keyboard: every node is a tab stop; Enter/Space selects. Storybook:
-Graph/OrgGraph (Default, Default (56), Radial, WithSelection, PresenceFilter,
-FocusedOnOnePerson, Focused two people).
+Graph/OrgGraph (Default, Default (56) in a 1160 × 360 frame, Focused card
+inset, Radial, WithSelection, PresenceFilter, FocusedOnOnePerson, Focused two
+people).

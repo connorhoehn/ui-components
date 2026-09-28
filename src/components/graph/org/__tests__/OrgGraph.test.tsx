@@ -1,6 +1,8 @@
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { OrgGraph } from '../OrgGraph';
+import { ORG_FIT_MIN_ZOOM } from '../fitTransform';
+import { ORG_LEGEND_INSET } from '../OrgGraphLegend';
 import { departments, people, relationships } from './fixtures';
 
 afterEach(cleanup);
@@ -88,12 +90,12 @@ describe('OrgGraph', () => {
     expect(document.querySelectorAll('line[data-relationship]')).toHaveLength(1);
   });
 
-  it('fits the viewport to a focused set: centred, inside the canvas, zoom capped', () => {
+  it('fits the viewport to a focused set: centred right of the legend, inside the canvas, zoom capped', () => {
     render(<OrgGraph {...base} focusIds={['p-1']} />);
     const group = document.querySelector('svg[aria-label="Org graph"] > g')!;
     const m = /translate\(([-\d.e]+), ([-\d.e]+)\) scale\(([-\d.e]+)\)/.exec(group.getAttribute('transform')!)!;
     const [tx, ty, k] = [Number(m[1]), Number(m[2]), Number(m[3])];
-    expect(k).toBeGreaterThan(0.3);
+    expect(k).toBeGreaterThanOrEqual(ORG_FIT_MIN_ZOOM);
     expect(k).toBeLessThanOrEqual(1.25);
     expect(tx !== 0 || ty !== 0 || k !== 1).toBe(true);
     const drawn = screen.getAllByRole('button', { name: /·/ });
@@ -103,14 +105,43 @@ describe('OrgGraph', () => {
       return { x: Number(p[1]) * k + tx, y: Number(p[2]) * k + ty };
     });
     for (const pt of screenPts) {
-      expect(pt.x).toBeGreaterThan(32);
+      // Clear of the legend's column (ORG_LEGEND_INSET) plus the fit padding.
+      expect(pt.x).toBeGreaterThan(ORG_LEGEND_INSET + 32);
       expect(pt.x).toBeLessThan(800 - 32);
       expect(pt.y).toBeGreaterThan(32);
       expect(pt.y).toBeLessThan(600 - 32);
     }
-    // The drawing is centred horizontally on the canvas (labels widen it evenly).
+    // The drawing is centred in the clear area right of the legend.
     const xs = screenPts.map(p => p.x);
-    expect((Math.min(...xs) + Math.max(...xs)) / 2).toBeCloseTo(400, -1);
+    expect((Math.min(...xs) + Math.max(...xs)) / 2).toBeCloseTo((ORG_LEGEND_INSET + 800) / 2, -1);
+  });
+
+  it('fitInset keeps the drawing clear of a host card on the right', () => {
+    render(<OrgGraph {...base} legend={false} fitInset={{ right: 320 }} />);
+    const group = document.querySelector('svg[aria-label="Org graph"] > g')!;
+    const m = /translate\(([-\d.e]+), ([-\d.e]+)\) scale\(([-\d.e]+)\)/.exec(group.getAttribute('transform')!)!;
+    const [tx, k] = [Number(m[1]), Number(m[3])];
+    const xs = screen.getAllByRole('button', { name: /·/ }).map((el) => {
+      const p = /translate\(([-\d.e]+), ([-\d.e]+)\)/.exec(el.getAttribute('transform')!)!;
+      return Number(p[1]) * k + tx;
+    });
+    expect(xs).toHaveLength(4);
+    for (const x of xs) {
+      expect(x).toBeGreaterThan(32);
+      expect(x).toBeLessThan(800 - 320 - 32);
+    }
+    expect((Math.min(...xs) + Math.max(...xs)) / 2).toBeCloseTo((800 - 320) / 2, -1);
+  });
+
+  it('draws the legend as an opaque, fixed-width surface panel — never translucent over nodes', () => {
+    render(<OrgGraph {...base} />);
+    const legend = screen.getByTestId('org-graph-legend');
+    expect(legend.className).toMatch(/\bbg-surface\b/);
+    expect(legend.className).toMatch(/\bborder-border\b/);
+    expect(legend.className).toMatch(/\bw-44\b/);
+    expect(legend.className).not.toMatch(/opacity-/);
+    fireEvent.mouseEnter(legend);
+    expect(legend.className).not.toMatch(/opacity-/);
   });
 
   it('does not draw the focus as the one big circle when sizing by connections', () => {

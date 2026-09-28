@@ -10,6 +10,12 @@
 // glyph and a selection check, labelled edges with arrowheads ("related"
 // edges dashed), a legend of the types on screen, and zoom / fit / full-screen.
 //
+// Readability (2.403.2): 140 × 104 nodes, layouts sized to the measured
+// canvas (`recordForceParams`, elliptical radial rings, a longest-path
+// hierarchy that falls back to type columns and wraps tall ranks), and a fit
+// that never goes below `RECORD_GRAPH_MIN_FIT_ZOOM` — the selection
+// (`focusKeys`) and its neighbours are framed first; the rest is a pan away.
+//
 // Built on @xyflow/react, not SVG like NodeGraph: xyflow already gives pan,
 // zoom, fit-to-view and viewport culling, which the mockup's zoom cluster and
 // a 100-record result need, and TypedNodeCanvas already carries the
@@ -48,7 +54,10 @@ import { CanvasZoomControls } from './CanvasZoomControls';
 import {
   filterRecordGraph,
   layoutRecordGraph,
+  recordGraphFitKeys,
   recordGraphKey,
+  RECORD_GRAPH_MAX_FIT_ZOOM,
+  RECORD_GRAPH_MIN_FIT_ZOOM,
   RECORD_GRAPH_NODE_HEIGHT,
   RECORD_GRAPH_NODE_WIDTH,
   RECORD_GRAPH_TYPES,
@@ -90,6 +99,17 @@ export interface RecordGraphProps {
   emptyLabel?: string;
   /** Draw records that have no connections anyway (the pre-2.403 behaviour). Default false. Since 2.403.0. */
   showIsolated?: boolean;
+  /**
+   * `type:id` keys to frame first — usually the host's `selectedKeys`. The
+   * view fits these records plus their direct neighbours (never below
+   * `RECORD_GRAPH_MIN_FIT_ZOOM`); the rest of the graph is a pan away, and
+   * "Fit" frames the whole graph. The view re-fits when the drawing changes
+   * (records, edges, layout, canvas size) — not on a selection click alone,
+   * so passing `selectedKeys` straight through does not move the view under
+   * the pointer. Omit, or name nothing drawn, to fit the whole graph.
+   * Since 2.403.2.
+   */
+  focusKeys?: readonly string[];
 }
 
 const DEFAULT_EMPTY_LABEL = 'No recorded connections — search, or select related records';
@@ -130,7 +150,10 @@ const MARK_CENTER_Y = 4 + MARK_SIZE / 2;
 /** Gap from a mark's centre to where a line starts / its arrow tip lands. */
 const LINE_START = MARK_SIZE / 2 + 4;
 const LINE_END = MARK_SIZE / 2 + 6;
-const FIT = { padding: 0.15, maxZoom: 1 };
+/** Fit options: never past 100%, never below the readable floor (the viewer pans instead). */
+const FIT = { padding: 0.12, minZoom: RECORD_GRAPH_MIN_FIT_ZOOM, maxZoom: RECORD_GRAPH_MAX_FIT_ZOOM };
+/** Layout re-runs for a canvas size change only past this step, px. */
+const SIZE_STEP = 40;
 
 interface RecordNodeData extends Record<string, unknown> {
   record: RecordGraphRecord;
@@ -156,7 +179,7 @@ function RecordNodeView({ data }: NodeProps<RecordFlowNode>) {
   const statusText = record.status ? statusLabel(record.status) : record.subtitle || TYPE_SINGULAR[record.type];
   const dotted = !!record.status && (record.type === 'work' || record.type === 'decision');
   return (
-    <div className="relative flex h-[116px] w-[180px] flex-col items-center" data-record-key={recordGraphKey(record)}>
+    <div className="relative flex h-[104px] w-[140px] flex-col items-center" data-record-key={recordGraphKey(record)}>
       <Handle type="target" position={Position.Left} isConnectable={false} className="opacity-0" />
       <button
         type="button"
@@ -276,12 +299,15 @@ function FullscreenGlyph({ exit }: { exit: boolean }) {
 /** Children of <ReactFlow>: the legend and zoom cluster, plus re-fit on change. */
 function CanvasChrome({
   graphKey,
+  fitKeys,
   legend,
   fullscreen,
   onFullscreen,
   testId,
 }: {
   graphKey: string;
+  /** Records the automatic fit frames (focus + neighbours); empty = all. */
+  fitKeys: string[];
   legend: { value: RecordGraphType; label: string }[];
   fullscreen: boolean;
   onFullscreen: () => void;
@@ -289,12 +315,18 @@ function CanvasChrome({
 }) {
   const flow = useReactFlow();
   const { zoom } = useViewport();
+  // "Fit" frames the whole graph; the automatic fit frames the focus first.
   const fit = useCallback(() => void flow.fitView(FIT), [flow]);
+  // Read through a ref: a selection click must not move the view — only a
+  // new drawing (records, edges, layout, canvas) re-frames it.
+  const focus = useRef(fitKeys);
+  focus.current = fitKeys;
   useEffect(() => {
     if (typeof requestAnimationFrame !== 'function') return;
-    const frame = requestAnimationFrame(fit);
+    const nodes = focus.current.length ? focus.current.map((id) => ({ id })) : undefined;
+    const frame = requestAnimationFrame(() => void flow.fitView(nodes ? { ...FIT, nodes } : FIT));
     return () => cancelAnimationFrame(frame);
-  }, [graphKey, fit]);
+  }, [graphKey, flow]);
   return (
     <>
       {legend.length > 0 && (
@@ -351,12 +383,17 @@ export function RecordGraph({
   'aria-label': ariaLabel = 'Record connections',
   emptyLabel = DEFAULT_EMPTY_LABEL,
   showIsolated = false,
+  focusKeys,
 }: RecordGraphProps) {
   const [localLayout, setLocalLayout] = useState<RecordGraphLayout>('force');
   const [localType, setLocalType] = useState<RecordGraphType | 'all'>('all');
   const [fullscreen, setFullscreen] = useState(false);
   const [fullscreenError, setFullscreenError] = useState(false);
   const container = useRef<HTMLElement>(null);
+  const canvas = useRef<HTMLElement>(null);
+  // The layout fills the measured canvas (stepped, so a resize of a few px
+  // does not re-lay out); unmeasured, it assumes the search page's canvas.
+  const [canvasSize, setCanvasSize] = useState<{ width: number; height: number } | null>(null);
   const layout = controlledLayout ?? localLayout;
   const type = controlledType ?? localType;
 
@@ -365,7 +402,10 @@ export function RecordGraph({
     [typeLabels],
   );
   const graph = useMemo(() => filterRecordGraph(records, edges, type), [records, edges, type]);
-  const positions = useMemo(() => layoutRecordGraph(graph.records, graph.edges, layout), [graph, layout]);
+  const positions = useMemo(
+    () => layoutRecordGraph(graph.records, graph.edges, layout, canvasSize ?? undefined),
+    [graph, layout, canvasSize],
+  );
   const selected = useMemo(() => new Set(selectedKeys), [selectedKeys]);
   const selectedRecords = records.filter((record) => selected.has(recordGraphKey(record)));
 
@@ -403,7 +443,26 @@ export function RecordGraph({
       selectable: false,
       data: { from: centre(edge.source), to: centre(edge.target), label: edge.label, related: RELATED_EDGE.test(edge.label) },
     }));
-  const graphKey = `${layout}:${graph.records.map(recordGraphKey).join('|')}:${graph.edges.map((edge) => edge.id).join('|')}`;
+  const graphKey = `${layout}:${canvasSize ? `${canvasSize.width}x${canvasSize.height}` : ''}:${graph.records.map(recordGraphKey).join('|')}:${graph.edges.map((edge) => edge.id).join('|')}`;
+  const fitKeys = useMemo(
+    () => recordGraphFitKeys(graph.records.map(recordGraphKey), graph.edges, focusKeys),
+    [graph, focusKeys],
+  );
+  const initialFit = fitKeys.length ? { ...FIT, nodes: fitKeys.map((id) => ({ id })) } : FIT;
+  const drawn = graph.records.length > 0 && (flowEdges.length > 0 || showIsolated);
+
+  useEffect(() => {
+    const el = canvas.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const obs = new ResizeObserver((entries) => {
+      const rect = entries[0]?.contentRect;
+      if (!rect || rect.width <= 0 || rect.height <= 0) return;
+      const next = { width: Math.round(rect.width / SIZE_STEP) * SIZE_STEP, height: Math.round(rect.height / SIZE_STEP) * SIZE_STEP };
+      setCanvasSize((prev) => (prev && prev.width === next.width && prev.height === next.height ? prev : next));
+    });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [drawn]);
   const legend = typeOptions.filter((item) => graph.records.some((record) => record.type === item.value));
 
   useEffect(() => {
@@ -469,7 +528,7 @@ export function RecordGraph({
       ) : !flowEdges.length && !showIsolated ? (
         <EmptyState title={emptyLabel} testId={`${testId}-unconnected`} />
       ) : (
-        <Stack gap="none" className="relative min-h-64 flex-1 [--xy-background-color:var(--color-surface)]">
+        <Stack ref={canvas} gap="none" className="relative min-h-64 flex-1 [--xy-background-color:var(--color-surface)]">
           <ReactFlowProvider>
             <ReactFlow
               nodes={nodes}
@@ -477,7 +536,7 @@ export function RecordGraph({
               nodeTypes={NODE_TYPES}
               edgeTypes={EDGE_TYPES}
               fitView
-              fitViewOptions={FIT}
+              fitViewOptions={initialFit}
               minZoom={0.15}
               maxZoom={2}
               nodesDraggable={false}
@@ -492,6 +551,7 @@ export function RecordGraph({
               <Background color="var(--color-border)" gap={22} size={1} />
               <CanvasChrome
                 graphKey={graphKey}
+                fitKeys={fitKeys}
                 legend={legend}
                 fullscreen={fullscreen}
                 onFullscreen={() => void toggleFullscreen()}

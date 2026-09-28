@@ -4,6 +4,7 @@ import { OrgGraph } from './OrgGraph';
 import { DepartmentChips } from './DepartmentChips';
 import { GraphSearchBox } from './GraphSearchBox';
 import { Inline, Stack } from '../../ui/Stack';
+import { Card } from '../../ui/Card';
 import type { GraphDepartment, GraphPerson, GraphRelationship, PresenceStatus } from './types';
 
 // Department colours are data (they arrive from the org read), so they stay
@@ -67,11 +68,28 @@ const RELATIONSHIPS_56: GraphRelationship[] = PEOPLE_56.flatMap((p, i) => [
   { source: p.id, target: PEOPLE_56[(i + 1) % 56]!.id, type: 'collaborates' as const, strength: 0.5 },
 ]);
 
-/** Fifty-six people — the whole org at the size the original tuning was for;
- *  the forces here stay where they were (link 80, charge −200). */
+/** Fifty-six people — the whole org — in the search page's 1160 × 360 frame
+ *  (the 2.403.2 regression): departments sit in a grid shaped to the strip
+ *  and the pulls are aspect-weighted, so the drawing spans the width right of
+ *  the legend; the fit stops at 110% so names stay 11px, and the rows that do
+ *  not fit run off the bottom for the viewer to pan to. */
 export const Default56: Story = {
   name: 'Default (56)',
   args: { people: PEOPLE_56, relationships: RELATIONSHIPS_56 },
+  decorators: [(Story) => <div className="h-[360px] w-[1160px] max-w-full border border-border"><Story /></div>],
+};
+
+/** A host card overlaid on the right: `fitInset={{ right: 320 }}` keeps the
+ *  focused drawing clear of it (the card here is a stand-in panel). */
+export const WithCardInset: Story = {
+  name: 'Focused, card inset',
+  args: { focusIds: ['p-1'], fitInset: { right: 320 } },
+  render: (args) => (
+    <Stack gap="none" className="relative h-full">
+      <OrgGraph {...args} />
+      <Card className="absolute bottom-3 right-3 top-3 w-[300px] p-4">Person card (300px)</Card>
+    </Stack>
+  ),
 };
 
 /** Radial rings, most influential in the centre. */

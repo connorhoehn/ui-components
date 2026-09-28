@@ -52,6 +52,8 @@ export interface UseForceLayoutReturn {
 export const ORG_LABEL_BAND = 18;
 /** Above this many people the forces keep their original, 56-person tuning. */
 const LARGE_GRAPH = 40;
+/** The aspect ratio at which the large-graph pulls are the original 0.1 / 0.1. */
+const ASPECT_NEUTRAL = 16 / 9;
 /** Alpha below which the force layout counts as settled for framing. */
 export const SETTLED_ALPHA = 0.05;
 
@@ -94,7 +96,22 @@ export function forceParamsFor(count: number, width: number, height: number): Or
   const linkDistance = clamp(spacing * 0.7, 60, 240);
   const charge = -clamp((spacing * spacing) / 70, 150, 1500);
   if (n > LARGE_GRAPH) {
-    return { linkDistance, linkStiffness: 0.3, charge, collidePadding: 6, xStrength: 0.1, yStrength: 0.1, jitter: 50 };
+    // The original 56-person tuning, with the department pulls shaped to the
+    // canvas (2.403.2): on a wide canvas the x pull (toward each department's
+    // cell, see `orgDepartmentCells`) weakens and the y pull strengthens in
+    // proportion to aspect ÷ 16:9, so the org spreads along the width instead
+    // of settling into a near-square blob in the middle. On a 16:9 canvas both
+    // are the original 0.1.
+    const shape = w / h / ASPECT_NEUTRAL;
+    return {
+      linkDistance,
+      linkStiffness: 0.3,
+      charge,
+      collidePadding: 6,
+      xStrength: clamp(0.1 / shape, 0.03, 0.2),
+      yStrength: clamp(0.1 * shape, 0.03, 0.3),
+      jitter: 50,
+    };
   }
   // The long axis pulls weaker and the short axis harder, by the aspect
   // ratio, so the set takes the canvas's shape rather than a circle.
@@ -124,17 +141,7 @@ export function createOrgSimulation({
   people, relationships, departments, width, height, nodeRadiusOf = defaultRadiusOf,
 }: Omit<UseForceLayoutProps, 'layout'>) {
   const params = forceParamsFor(people.length, width, height);
-  const deptCenters = new Map<string, { x: number; y: number }>();
-  const cols = Math.max(1, Math.ceil(Math.sqrt(departments.length)));
-  const rows = Math.max(1, Math.ceil(departments.length / cols));
-  departments.forEach((dept, i) => {
-    const col = i % cols;
-    const row = Math.floor(i / cols);
-    deptCenters.set(dept.name, {
-      x: (col + 0.5) * (width / cols),
-      y: (row + 0.5) * (height / rows),
-    });
-  });
+  const deptCenters = orgDepartmentCells(departments.map(d => d.name), width, height);
 
   const simNodes: GraphNode[] = people.map(p => {
     const center = deptCenters.get(p.department) ?? { x: width / 2, y: height / 2 };
@@ -164,6 +171,30 @@ export function createOrgSimulation({
     .alphaDecay(0.02);
 
   return { sim, simNodes, simLinks, params };
+}
+
+/**
+ * Each department's cell centre on a `width` × `height` canvas. The grid is
+ * shaped to the canvas (2.403.2): `cols ≈ √(departments × aspect)`, so six
+ * departments are 3 × 2 on a 16:9 canvas but 4 + 2 on a 3:1 strip — the
+ * pulls then spread the org along the width. A short last row is centred.
+ */
+export function orgDepartmentCells(names: readonly string[], width: number, height: number): Map<string, { x: number; y: number }> {
+  const d = names.length;
+  const w = Math.max(1, width), h = Math.max(1, height);
+  const cols = clamp(Math.round(Math.sqrt(d * (w / h))), 1, Math.max(1, d));
+  const rows = Math.max(1, Math.ceil(d / cols));
+  const cells = new Map<string, { x: number; y: number }>();
+  names.forEach((name, i) => {
+    const row = Math.floor(i / cols);
+    const inRow = row === rows - 1 ? d - row * cols : cols;
+    const col = i % cols;
+    cells.set(name, {
+      x: (col + 0.5 + (cols - inRow) / 2) * (w / cols),
+      y: (row + 0.5) * (h / rows),
+    });
+  });
+  return cells;
 }
 
 // ── Static layout helpers ────────────────────────────────────────────────────

@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.403.3
+
+- `RecordGraph` reads at a search page's density. 25 records and 56 connections on a 1160 × 418 canvas used to fit at 46% (Force, 5–6px labels), 26% (Radial) and 15% (Hierarchy, one column).
+  - Nodes are 140 × 104 (`RECORD_GRAPH_NODE_WIDTH/HEIGHT`, were 180 × 116).
+  - Layouts are sized to the measured canvas. `layoutRecordGraph(records, edges, layout, { width, height }?)` takes the canvas to fill.
+  - Force uses the new exported `recordForceParams(count, width, height)` → `RecordForceParams`. Link distance is `clamp(0.75·√(area/N), 130, 240)` over the canvas at the fit floor; charge scales with that spacing²; collide follows the node box. The x/y pulls are weighted by the aspect ratio, and the simulation runs in a space where the box is square, so boxes clear each other on both axes.
+  - Radial rings are ellipses shaped to the canvas and filled by arc length.
+  - Hierarchy ranks by longest path from the roots, with cycles broken where they close. When nothing forms a directed chain it falls back to columns by type (person → initiative → work/decision/knowledge/asset). A rank taller than the canvas wraps into side-by-side columns, and each column is ordered by its predecessors.
+  - The fit never goes below `RECORD_GRAPH_MIN_FIT_ZOOM` (0.7) nor above `RECORD_GRAPH_MAX_FIT_ZOOM` (1). A larger graph overflows and the viewer pans.
+  - New `focusKeys?: readonly string[]` (usually the selection) frames those records and their direct neighbours first (`recordGraphFitKeys(recordKeys, edges, focusKeys)`). "Fit to view" frames the whole graph. The view re-fits when the drawing changes, not on a selection click.
+  - Story "Search result (25 records)".
+- `OrgGraph` fits a whole org readably.
+  - The fit never zooms below the new `ORG_FIT_MIN_ZOOM` (1.1, so the 10px first names draw at 11px). A set that does not fit overflows the canvas and the viewer pans; `fitTransform` start-aligns an overflowing axis instead of centring it.
+  - The forces are laid out for the clear area at that zoom.
+  - Department cells come from the new `orgDepartmentCells(names, width, height)`, a grid shaped to the canvas (six departments are 3 × 2 at 16:9 and 4 + 2 on a 3:1 strip).
+  - `forceParamsFor`'s > 40-people branch weights the x/y pulls by aspect ÷ 16:9 (0.1 / 0.1 at 16:9), so 56 people span a 1160 × 360 strip instead of a square in its middle.
+  - Story "Default (56)" renders in a 1160 × 360 frame.
+- Keep-outs for overlays on the org graph.
+  - `OrgGraph` gains `fitInset?: FitInset` (`{ left?, right?, top?, bottom? }`, screen px). The layout is sized to, and the fit centred in, the canvas less the insets. A host overlaying a person card passes its width as `right`.
+  - `left` defaults to the new `ORG_LEGEND_INSET` (200) while `legend` is on.
+  - `fitTransform(bounds, size, padding, maxZoom, minZoom?, inset?)` takes the insets.
+  - `OrgGraphLegend` is an opaque `bg-surface` panel with a hairline border and a fixed 176px width. It no longer rests at 20% opacity over the nodes; at rest it still shows only its first rows.
+  - Story "Focused, card inset".
+
 ## 2.403.2
 
 - `CallDock`: the header wraps instead of overlapping. The title block was `flex-1` (a 0 basis), so the row never wrapped; once title + meta + controls outgrew the dock — the conversation shelf in a 1280×720 window's chat column (~904px) carrying the host's `extras` — the controls painted over the conversation name and the "N people · mm:ss" clock. The title block is now `flex-auto` (sized by its content), the header row `flex-wrap`, and the controls `ml-auto`, so the controls take their own right-aligned line when they do not fit and the one-line layout is unchanged when they do. The title and meta keep their natural width (2.394.0). New testids `call-dock-header` and `call-dock-controls`. Stories `ConversationChatColumn904` (+ Dark); test.

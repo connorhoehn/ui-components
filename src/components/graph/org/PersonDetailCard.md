@@ -12,3 +12,7 @@ Data in: `person` (`PersonDetail`), `evidence` (`PersonEvidenceDocument[]`),
 `/evidence` reads, but the card fetches nothing. `showInfluence` adds influence
 and scored-at to the meta line — leadership-analytics roles only.
 `formatTime(iso)` formats evidence timestamps (default "3h ago" / a date).
+
+Overlaying it on an `OrgGraph`: pass the card's width plus its offset as
+`fitInset={{ right: … }}` (e.g. 320 for a 300px card 12px from the edge) so no
+person or line is drawn under it (2.403.2).

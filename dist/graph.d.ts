@@ -175,16 +175,31 @@ export declare interface FitBounds {
 }
 
 /**
- * The transform that centres `bounds` in a `size` canvas with `padding` px on
- * every side, zoomed as far as fits but never past `maxZoom` (so two people do
- * not become two giant circles) nor below `minZoom`. A zero-width or
+ * Screen px along each canvas edge that the fitted drawing keeps clear of —
+ * the legend on the left, a person card the host overlays on the right. The
+ * fit centres the drawing in what is left. Since 2.403.2.
+ */
+export declare interface FitInset {
+    left?: number;
+    right?: number;
+    top?: number;
+    bottom?: number;
+}
+
+/**
+ * The transform that centres `bounds` in a `size` canvas — less `inset` on
+ * each edge (2.403.2) and `padding` px inside that — zoomed as far as fits but
+ * never past `maxZoom` (so two people do not become two giant circles) nor
+ * below `minZoom`. When `minZoom` wins and the drawing overflows an axis, that
+ * axis is aligned to its start (top / left of the clear area) instead of
+ * centred, so the viewer sees the beginning and pans on. A zero-width or
  * zero-height box (one person, or a row) fits on its other axis; an empty box
  * gets `maxZoom`.
  */
 export declare function fitTransform(bounds: FitBounds, size: {
     width: number;
     height: number;
-}, padding: number, maxZoom: number, minZoom?: number): ViewTransform;
+}, padding: number, maxZoom: number, minZoom?: number, inset?: FitInset): ViewTransform;
 
 export declare interface FocusedOrgGraph {
     people: OrgGraphPerson[];
@@ -370,8 +385,14 @@ export declare function layoutGraph(nodes: GraphNode[], edges: GraphEdge[], layo
 
 export declare type LayoutMode = 'force' | 'radial';
 
-/** Rendering positions only: never infer an edge from a shared title or type. */
-export declare function layoutRecordGraph(records: Pick<RecordGraphRecord, 'id' | 'type'>[], edges: Pick<RecordGraphEdge, 'source' | 'target'>[], layout: RecordGraphLayout): Map<string, {
+/**
+ * Rendering positions only: never infer an edge from a shared title or type.
+ * `options` is the canvas the layout should fill (default 1160 × 420): the
+ * force distances, the radial rings' shape and the hierarchy's column height
+ * are all sized to it at the fit floor, so the drawing reads without zooming
+ * below `RECORD_GRAPH_MIN_FIT_ZOOM`.
+ */
+export declare function layoutRecordGraph(records: Pick<RecordGraphRecord, 'id' | 'type'>[], edges: Pick<RecordGraphEdge, 'source' | 'target'>[], layout: RecordGraphLayout, options?: RecordGraphLayoutOptions): Map<string, {
     x: number;
     y: number;
 }>;
@@ -464,6 +485,31 @@ export declare interface NodeGraphProps {
  */
 export declare function nodeRadius(showInfluence: boolean, influenceScore: number, degree: number, maxDegree: number): number;
 
+/**
+ * Screen zoom below which the fit does not go: the org graph's first-name
+ * labels are 10px, so 1.1 keeps them at 11px. A drawing that does not fit at
+ * this zoom overflows the canvas and the viewer pans. Since 2.403.2.
+ */
+export declare const ORG_FIT_MIN_ZOOM = 1.1;
+
+/**
+ * Screen px the legend takes from the canvas's left edge: its 12px offset,
+ * its fixed 176px (`w-44`) panel and a 12px gap. `OrgGraph` keeps its
+ * drawing clear of this while the legend is on. Since 2.403.2.
+ */
+export declare const ORG_LEGEND_INSET = 200;
+
+/**
+ * Each department's cell centre on a `width` × `height` canvas. The grid is
+ * shaped to the canvas (2.403.2): `cols ≈ √(departments × aspect)`, so six
+ * departments are 3 × 2 on a 16:9 canvas but 4 + 2 on a 3:1 strip — the
+ * pulls then spread the org along the width. A short last row is centred.
+ */
+export declare function orgDepartmentCells(names: readonly string[], width: number, height: number): Map<string, {
+    x: number;
+    y: number;
+}>;
+
 export declare interface OrgForceParams {
     /** forceLink distance, px. */
     linkDistance: number;
@@ -480,7 +526,7 @@ export declare interface OrgForceParams {
     jitter: number;
 }
 
-export declare function OrgGraph({ people, relationships, departments, onPersonSelect, multiSelectIds, onToggleMultiSelect, spotlightIds, layout, presenceFilter, showInfluence, legend, controls, focusIds, focusHops, className, 'aria-label': ariaLabel, 'data-testid': testId, }: OrgGraphProps): JSX.Element;
+export declare function OrgGraph({ people, relationships, departments, onPersonSelect, multiSelectIds, onToggleMultiSelect, spotlightIds, layout, presenceFilter, showInfluence, legend, controls, focusIds, focusHops, fitInset, className, 'aria-label': ariaLabel, 'data-testid': testId, }: OrgGraphProps): JSX.Element;
 
 export declare function OrgGraphLegend({ departments, filter, onFilter, presenceFilter, pinned, className, 'data-testid': testId, }: OrgGraphLegendProps): JSX.Element;
 
@@ -491,7 +537,7 @@ export declare interface OrgGraphLegendProps {
     onFilter: (dept: string | null) => void;
     /** Shows the presence key while a presence filter is active. */
     presenceFilter?: PresenceFilter | null;
-    /** Keep the legend fully opaque instead of resting translucent. */
+    /** Keep the legend fully open instead of showing its first rows at rest. */
     pinned?: boolean;
     className?: string;
     'data-testid'?: string;
@@ -540,6 +586,14 @@ export declare interface OrgGraphProps {
     focusIds?: ReadonlySet<string> | readonly string[];
     /** How far out `focusIds` reaches. Default 1 (direct neighbours). Since 2.403.0. */
     focusHops?: number;
+    /**
+     * Screen px along each edge the drawing keeps clear of — pass the width of
+     * a card the host overlays (`{ right: 320 }`) so no person or line sits
+     * under it. The layout is sized to, and the fit centred in, what is left.
+     * `left` defaults to the legend's width (`ORG_LEGEND_INSET`) while `legend`
+     * is on, 0 otherwise; the rest default to 0. Since 2.403.2.
+     */
+    fitInset?: FitInset;
     'aria-label'?: string;
     'data-testid'?: string;
 }
@@ -678,9 +732,24 @@ export declare const RARE_THRESHOLD = 2;
  *  for it) straight to that finding. The target reads `?sweep=`/`?q=`/`?finding=`. */
 export declare function rareSkillFindingsUrl(skill: string, findingId?: string | null, basePath?: string): string;
 
-export declare const RECORD_GRAPH_NODE_HEIGHT = 116;
+/** Fit never zooms in past 100% (two records do not become two giant circles). */
+export declare const RECORD_GRAPH_MAX_FIT_ZOOM = 1;
 
-export declare const RECORD_GRAPH_NODE_WIDTH = 180;
+/**
+ * Fit never zooms out past this: below it the 13px titles drop under ~9px and
+ * the graph stops being readable. A larger set overflows the canvas and the
+ * viewer pans instead. Since 2.403.2.
+ */
+export declare const RECORD_GRAPH_MIN_FIT_ZOOM = 0.7;
+
+export declare const RECORD_GRAPH_NODE_HEIGHT = 104;
+
+/**
+ * A node's box: the 48px mark, a two-line 13px title and the status line.
+ * 140 × 104 since 2.403.2 (was 180 × 116, which with the fixed force distances
+ * only read for about a dozen records).
+ */
+export declare const RECORD_GRAPH_NODE_WIDTH = 140;
 
 /** Plural labels, in legend/select order. */
 export declare const RECORD_GRAPH_TYPES: {
@@ -688,7 +757,31 @@ export declare const RECORD_GRAPH_TYPES: {
     label: string;
 }[];
 
-export declare function RecordGraph({ records, edges, selectedKeys, onSelectionChange, onAskSelection, onOpenRecord, layout: controlledLayout, onLayoutChange, typeFilter: controlledType, onTypeFilterChange, typeLabels, className, 'data-testid': testId, 'aria-label': ariaLabel, emptyLabel, showIsolated, }: RecordGraphProps): JSX.Element;
+export declare interface RecordForceParams {
+    /** forceLink distance, in simulation units (see `layoutRecordGraph`). */
+    linkDistance: number;
+    /** forceManyBody strength (negative = repel). */
+    charge: number;
+    /** forceCollide radius — half a node's width plus a gap, so boxes never overlap. */
+    collide: number;
+    /** forceX / forceY pull toward the centre, shaped to the canvas's aspect ratio. */
+    xStrength: number;
+    yStrength: number;
+}
+
+/**
+ * The force layout's parameters for `count` records on a `width` × `height`
+ * canvas, like the org graph's `forceParamsFor`: the canvas at the fit floor
+ * (`RECORD_GRAPH_MIN_FIT_ZOOM`) is shared among the records, `spacing =
+ * √(area / N)`, and links are ~0.9 of it (clamped 150–260) so a dozen records
+ * spread across the canvas while twenty-five pack to a readable zoom rather
+ * than to 46%. Collide is fixed by the node box (half its width + a gap), and
+ * the x/y pulls are weighted by the aspect ratio so a wide canvas gets a wide
+ * layout. Since 2.403.2.
+ */
+export declare function recordForceParams(count: number, width?: number, height?: number): RecordForceParams;
+
+export declare function RecordGraph({ records, edges, selectedKeys, onSelectionChange, onAskSelection, onOpenRecord, layout: controlledLayout, onLayoutChange, typeFilter: controlledType, onTypeFilterChange, typeLabels, className, 'data-testid': testId, 'aria-label': ariaLabel, emptyLabel, showIsolated, focusKeys, }: RecordGraphProps): JSX.Element;
 
 /** A directed, labelled relationship. `source`/`target` are `type:id` keys. */
 export declare interface RecordGraphEdge {
@@ -698,10 +791,23 @@ export declare interface RecordGraphEdge {
     label: string;
 }
 
+/**
+ * The records a selection-first fit frames: the `focusKeys` that are drawn,
+ * plus their direct neighbours over `edges`. Empty when none of the focus is
+ * drawn — the host then fits the whole graph. Since 2.403.2.
+ */
+export declare function recordGraphFitKeys(recordKeys: readonly string[], edges: readonly Pick<RecordGraphEdge, 'source' | 'target'>[], focusKeys: readonly string[] | undefined): string[];
+
 /** The key a node and a selection hold: `${type}:${id}`. */
 export declare function recordGraphKey(record: Pick<RecordGraphRecord, 'id' | 'type'>): string;
 
 export declare type RecordGraphLayout = 'force' | 'radial' | 'hierarchy';
+
+export declare interface RecordGraphLayoutOptions {
+    /** The canvas the layout should fill at a readable zoom, px. Default 1160 × 420. */
+    width?: number;
+    height?: number;
+}
 
 export declare interface RecordGraphProps {
     records: RecordGraphRecord[];
@@ -735,6 +841,17 @@ export declare interface RecordGraphProps {
     emptyLabel?: string;
     /** Draw records that have no connections anyway (the pre-2.403 behaviour). Default false. Since 2.403.0. */
     showIsolated?: boolean;
+    /**
+     * `type:id` keys to frame first — usually the host's `selectedKeys`. The
+     * view fits these records plus their direct neighbours (never below
+     * `RECORD_GRAPH_MIN_FIT_ZOOM`); the rest of the graph is a pan away, and
+     * "Fit" frames the whole graph. The view re-fits when the drawing changes
+     * (records, edges, layout, canvas size) — not on a selection click alone,
+     * so passing `selectedKeys` straight through does not move the view under
+     * the pointer. Omit, or name nothing drawn, to fit the whole graph.
+     * Since 2.403.2.
+     */
+    focusKeys?: readonly string[];
 }
 
 /** One typed org record — the same shape a search read model returns. */
@@ -1763,6 +1880,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -1788,37 +1918,6 @@ declare module '@tiptap/core' {
              * already) and set its marker.
              */
             setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -1862,12 +1961,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -1885,9 +1991,20 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
+    }
+}
+
+
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
     }
 }

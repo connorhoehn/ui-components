@@ -14,6 +14,11 @@
 // group's `transform` attribute — is fitted to the drawn nodes
 // (`fitTransform`), again whenever the drawn set or canvas changes, until the
 // viewer pans or zooms. "Fit to view" re-fits and resumes that.
+//
+// Readability and keep-outs (2.403.2): the fit never zooms below
+// `ORG_FIT_MIN_ZOOM` (11px names) — a whole org that does not fit overflows
+// and pans — and both the layout and the fit keep clear of `fitInset` (the
+// legend's width on the left by default, a host's person card on the right).
 
 import { useState, useRef, useCallback, useEffect, useId, useMemo } from 'react';
 import type { MouseEvent as ReactMouseEvent, WheelEvent as ReactWheelEvent } from 'react';
@@ -24,12 +29,12 @@ import { useForceLayout, type LayoutMode } from './useForceLayout';
 import { OrgGraphNode } from './OrgGraphNode';
 import { OrgGraphEdge } from './OrgGraphEdge';
 import { OrgGraphTooltip } from './OrgGraphTooltip';
-import { OrgGraphLegend } from './OrgGraphLegend';
+import { OrgGraphLegend, ORG_LEGEND_INSET } from './OrgGraphLegend';
 import type { GraphPerson, GraphRelationship, GraphDepartment } from './types';
 import { degreeMap as buildDegreeMap, maxDegree as maxOfDegreeMap, nodeRadius } from './graphInsights';
 import type { PresenceFilter } from './presence';
 import { focusOrgGraph } from './focusOrgGraph';
-import { fitTransform, orgGraphBounds } from './fitTransform';
+import { fitTransform, orgGraphBounds, ORG_FIT_MIN_ZOOM, type FitInset } from './fitTransform';
 
 export interface OrgGraphProps {
   people: GraphPerson[];
@@ -63,6 +68,14 @@ export interface OrgGraphProps {
   focusIds?: ReadonlySet<string> | readonly string[];
   /** How far out `focusIds` reaches. Default 1 (direct neighbours). Since 2.403.0. */
   focusHops?: number;
+  /**
+   * Screen px along each edge the drawing keeps clear of — pass the width of
+   * a card the host overlays (`{ right: 320 }`) so no person or line sits
+   * under it. The layout is sized to, and the fit centred in, what is left.
+   * `left` defaults to the legend's width (`ORG_LEGEND_INSET`) while `legend`
+   * is on, 0 otherwise; the rest default to 0. Since 2.403.2.
+   */
+  fitInset?: FitInset;
   'aria-label'?: string;
   'data-testid'?: string;
 }
@@ -110,6 +123,7 @@ export function OrgGraph({
   controls = true,
   focusIds,
   focusHops = 1,
+  fitInset,
   className,
   'aria-label': ariaLabel = 'Org graph',
   'data-testid': testId = 'org-graph',
@@ -168,12 +182,27 @@ export function OrgGraph({
   }, [filteredPeople, filteredRels, focusSet]);
   const maxDeg = useMemo(() => maxOfDegreeMap(degrees), [degrees]);
 
+  // The clear area: the canvas less the legend / host card keep-outs.
+  const inset = useMemo(() => ({
+    left: fitInset?.left ?? (legend ? ORG_LEGEND_INSET : 0),
+    right: fitInset?.right ?? 0,
+    top: fitInset?.top ?? 0,
+    bottom: fitInset?.bottom ?? 0,
+  }), [fitInset?.left, fitInset?.right, fitInset?.top, fitInset?.bottom, legend]);
+  // The forces fill the clear area as it will be drawn at the label floor
+  // (`ORG_FIT_MIN_ZOOM`), so the fit lands at a readable zoom rather than
+  // shrinking a canvas-sized layout until the names are 6px.
+  const layoutSize = useMemo(() => ({
+    width: Math.max(160, (dimensions.width - inset.left - inset.right - 2 * FIT_PADDING) / ORG_FIT_MIN_ZOOM),
+    height: Math.max(120, (dimensions.height - inset.top - inset.bottom - 2 * FIT_PADDING) / ORG_FIT_MIN_ZOOM),
+  }), [dimensions, inset]);
+
   const { nodes, links, isSettled } = useForceLayout({
     people: filteredPeople,
     relationships: filteredRels,
     departments,
-    width: dimensions.width,
-    height: dimensions.height,
+    width: layoutSize.width,
+    height: layoutSize.height,
     layout,
     nodeRadiusOf: p => nodeRadius(showInfluence, p.influenceScore, degrees.get(p.id) ?? 0, maxDeg),
   });
@@ -201,8 +230,10 @@ export function OrgGraph({
       // left out so a click does not re-frame the drawing.
       focusSet,
     );
-    return bounds ? fitTransform(bounds, dimensions, FIT_PADDING, FIT_MAX_ZOOM, MIN_SCALE) : null;
-  }, [nodes, showInfluence, degrees, maxDeg, focusSet, dimensions]);
+    // Never below the label floor: a set too big for the clear area at 11px
+    // labels overflows it (top / left aligned) and the viewer pans.
+    return bounds ? fitTransform(bounds, dimensions, FIT_PADDING, FIT_MAX_ZOOM, ORG_FIT_MIN_ZOOM, inset) : null;
+  }, [nodes, showInfluence, degrees, maxDeg, focusSet, dimensions, inset]);
 
   useEffect(() => {
     if (!autoFit.current || !isSettled || laidOutKey !== drawnKey) return;

@@ -28,8 +28,13 @@ export type { RecordGraphProps } from './RecordGraph';
 export {
   filterRecordGraph, layoutRecordGraph, recordGraphKey,
   RECORD_GRAPH_NODE_WIDTH, RECORD_GRAPH_NODE_HEIGHT, RECORD_GRAPH_TYPES,
+  // 2.403.2 — count/canvas-scaled forces and the readable fit floor.
+  recordForceParams, recordGraphFitKeys, RECORD_GRAPH_MIN_FIT_ZOOM, RECORD_GRAPH_MAX_FIT_ZOOM,
 } from './recordGraphLayout';
-export type { RecordGraphRecord, RecordGraphEdge, RecordGraphType, RecordGraphLayout } from './recordGraphLayout';
+export type {
+  RecordGraphRecord, RecordGraphEdge, RecordGraphType, RecordGraphLayout,
+  RecordGraphLayoutOptions, RecordForceParams,
+} from './recordGraphLayout';
 // Org graph (2.400.0), ported from the aws-agentcore portal. Its `GraphPerson`
 // is re-exported as `OrgGraphPerson`: the explicit `GraphPerson` above
 // (PeopleGraph's) shadows the star export, by design.

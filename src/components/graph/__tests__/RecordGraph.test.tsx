@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { RecordGraph, type RecordGraphProps } from '../RecordGraph';
-import type { RecordGraphEdge, RecordGraphRecord } from '../recordGraphLayout';
+import { RECORD_GRAPH_MIN_FIT_ZOOM, type RecordGraphEdge, type RecordGraphRecord } from '../recordGraphLayout';
 
 const flow = { zoomIn: vi.fn(), zoomOut: vi.fn(), fitView: vi.fn() };
 
@@ -126,6 +126,31 @@ describe('RecordGraph', () => {
     expect(flow.zoomIn).toHaveBeenCalled();
     fireEvent.click(screen.getByRole('button', { name: 'Fit to view' }));
     expect(flow.fitView).toHaveBeenCalled();
+  });
+
+  it('Fit frames the whole graph but never below the readable floor', () => {
+    flow.fitView.mockClear();
+    setup();
+    fireEvent.click(screen.getByRole('button', { name: 'Fit to view' }));
+    expect(flow.fitView).toHaveBeenLastCalledWith(expect.objectContaining({ minZoom: RECORD_GRAPH_MIN_FIT_ZOOM, maxZoom: 1 }));
+    expect(flow.fitView.mock.lastCall![0]).not.toHaveProperty('nodes');
+  });
+
+  it('focusKeys frames the selection and its neighbours first', async () => {
+    flow.fitView.mockClear();
+    setup({ focusKeys: ['person:vera'] });
+    await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
+    expect(flow.fitView).toHaveBeenCalledWith(expect.objectContaining({
+      minZoom: RECORD_GRAPH_MIN_FIT_ZOOM,
+      nodes: [{ id: 'person:vera' }, { id: 'initiative:auth' }],
+    }));
+  });
+
+  it('draws the compact node box', () => {
+    setup();
+    const box = document.querySelector('[data-record-key="person:vera"]')!;
+    expect(box.className).toContain('w-[140px]');
+    expect(box.className).toContain('h-[104px]');
   });
 
   it('records with no connections among them draw the empty label, not a cloud of nodes', () => {
