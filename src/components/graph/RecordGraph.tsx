@@ -679,7 +679,7 @@ export function RecordGraph({
       ) : !flowEdges.length && !showIsolated ? (
         <EmptyState title={emptyLabel} testId={`${testId}-unconnected`} />
       ) : (
-        <Stack ref={canvas} gap="none" className="relative min-h-64 flex-1 [--xy-background-color:var(--color-surface)]">
+        <Stack ref={canvas} gap="none" className="relative min-h-40 flex-1 [--xy-background-color:var(--color-surface)]">
           <ReactFlowProvider>
             <ReactFlow
               nodes={nodes}

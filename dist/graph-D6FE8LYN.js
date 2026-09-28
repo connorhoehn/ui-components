@@ -6415,7 +6415,7 @@ function ra({ records: e, edges: r, selectedKeys: i, onSelectionChange: a, onAsk
 			}) : /* @__PURE__ */ X(h, {
 				ref: ee,
 				gap: "none",
-				className: "relative min-h-64 flex-1 [--xy-background-color:var(--color-surface)]",
+				className: "relative min-h-40 flex-1 [--xy-background-color:var(--color-surface)]",
 				children: /* @__PURE__ */ X(Te, { children: /* @__PURE__ */ Z(we, {
 					nodes: B,
 					edges: U,

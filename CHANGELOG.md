@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.403.6
+
+- `RecordGraph`: the canvas minimum height is 160px (was 256px). A host pane that shrinks — the Search page with its assistant conversation expanded left a 258px pane — no longer overflows by the difference and hides the legend and zoom controls under whatever sits below; the fit re-runs at the new size.
+
 ## 2.403.5
 
 Three residues from the portal's search-journey audit, plus two from the org-leader walk.

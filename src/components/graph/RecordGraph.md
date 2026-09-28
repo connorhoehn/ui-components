@@ -90,3 +90,5 @@ so a crossing edge passes under the text.
 Storybook: Graph/RecordGraph (Default with the Auth Migration cast, Search
 result (25 records), 25 records, strip opens, Hierarchy, Radial, Empty,
 Unconnected, ShowIsolated, Dark).
+
+The canvas keeps a 160px minimum height inside its pane; give the graph a taller host to draw larger, never a fixed height on the graph itself.
