@@ -7,6 +7,8 @@
 // `OrgGraphPerson`, because `PeopleGraph` already owns `GraphPerson` there.
 export { OrgGraph } from './OrgGraph';
 export type { OrgGraphProps } from './OrgGraph';
+export { focusOrgGraph } from './focusOrgGraph';
+export type { FocusOrgGraphOptions, FocusedOrgGraph } from './focusOrgGraph';
 export { OrgGraphLegend } from './OrgGraphLegend';
 export type { OrgGraphLegendProps } from './OrgGraphLegend';
 export { useForceLayout } from './useForceLayout';

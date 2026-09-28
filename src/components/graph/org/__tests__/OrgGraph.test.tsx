@@ -77,4 +77,13 @@ describe('OrgGraph', () => {
     expect(screen.getByRole('group', { name: 'Org graph' })).toBeInTheDocument();
     expect(screen.queryByTestId('org-graph-legend')).not.toBeInTheDocument();
   });
+
+  it('focusIds draws the focus and its neighbours only, and spotlights the focus', () => {
+    render(<OrgGraph {...base} focusIds={['p-4']} />);
+    expect(screen.queryByRole('button', { name: /^Vera Green/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /^Nora Chang/ })).toBeNull();
+    expect(screen.getByRole('button', { name: /^Aisha Bello/ })).toHaveAttribute('opacity', '1');
+    expect(screen.getByRole('button', { name: /^Hiro Tanaka/ })).toHaveAttribute('opacity', '0.3');
+    expect(document.querySelectorAll('line[data-relationship]')).toHaveLength(1);
+  });
 });

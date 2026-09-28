@@ -64,3 +64,10 @@ export { ComposerReferences } from './ComposerReferences';
 export type { ComposerReference, ComposerReferencesProps } from './ComposerReferences';
 export { EMOJI_SHORTCODES, searchEmoji } from './emojiShortcodes';
 export type { EmojiShortcode } from './emojiShortcodes';
+
+// The agent composer a page docks under its content (2.403.0): the pinned
+// FloatingComposerDock + this composer with the mode menu / toolbar / Workflow
+// preset. The root barrel exports the same component behind a lazy boundary.
+export { AgentComposerDock } from './AgentComposerDock';
+export type { AgentComposerDockProps, AgentComposerWorkflow, AgentComposerSendContext } from './AgentComposerDock';
+export { composerDraftOf } from './agentComposerDraft';

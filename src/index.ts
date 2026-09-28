@@ -18,6 +18,13 @@ export * from './theme';
 export * from './api';
 export * from './renderers';
 
+// The agent composer dock (2.403.0), LAZY here: it is a RichChatComposer, whose
+// tiptap mention stack the root entry must not need statically. The real
+// (static) component is on `…/social/rich-composer`. See AgentComposerDockLazy.tsx.
+export { AgentComposerDock } from './components/social/AgentComposerDockLazy';
+export type { AgentComposerDockProps, AgentComposerWorkflow, AgentComposerSendContext } from './components/social/AgentComposerDock';
+export { composerDraftOf } from './components/social/agentComposerDraft';
+
 // ── Form primitives (Phase 5 + Phase 6) ──
 export { Input } from './components/forms/Input';
 export type { InputProps, InputSize, InputType } from './components/forms/Input';

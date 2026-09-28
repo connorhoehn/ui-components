@@ -22,6 +22,7 @@ import { OrgGraphLegend } from './OrgGraphLegend';
 import type { GraphPerson, GraphRelationship, GraphDepartment } from './types';
 import { degreeMap as buildDegreeMap, maxDegree as maxOfDegreeMap, nodeRadius } from './graphInsights';
 import type { PresenceFilter } from './presence';
+import { focusOrgGraph } from './focusOrgGraph';
 
 export interface OrgGraphProps {
   people: GraphPerson[];
@@ -46,6 +47,15 @@ export interface OrgGraphProps {
   /** Draw the zoom cluster (bottom-right). Default true. */
   controls?: boolean;
   className?: string;
+  /**
+   * Narrows the drawn people to these ids plus their direct neighbours over
+   * `relationships` (see `focusOrgGraph`), and spotlights them — "Focused on
+   * Vera" draws Vera, the people she is connected to and the lines among
+   * them. Empty, or naming no one in `people`, draws the whole graph. Since 2.403.0.
+   */
+  focusIds?: ReadonlySet<string> | readonly string[];
+  /** How far out `focusIds` reaches. Default 1 (direct neighbours). Since 2.403.0. */
+  focusHops?: number;
   'aria-label'?: string;
   'data-testid'?: string;
 }
@@ -66,6 +76,8 @@ export function OrgGraph({
   showInfluence = false,
   legend = true,
   controls = true,
+  focusIds,
+  focusHops = 1,
   className,
   'aria-label': ariaLabel = 'Org graph',
   'data-testid': testId = 'org-graph',
@@ -93,15 +105,26 @@ export function OrgGraph({
     return () => obs.disconnect();
   }, []);
 
+  // Focus first (who is in the picture at all), then the legend's department
+  // filter within it. Keyed by content so an inline array does not re-lay out.
+  const focusKey = focusIds ? [...focusIds].sort().join('\u0000') : '';
+  const focused = useMemo(
+    () => (focusKey ? focusOrgGraph(people, relationships, focusKey.split('\u0000'), { hops: focusHops }) : { people, relationships }),
+    [people, relationships, focusKey, focusHops],
+  );
+  const focusSet = useMemo(
+    () => new Set(focusKey ? focusKey.split('\u0000').filter(id => focused.people.some(p => p.id === id)) : []),
+    [focusKey, focused],
+  );
   const filteredPeople = useMemo(
-    () => (deptFilter ? people.filter(p => p.department === deptFilter) : people),
-    [people, deptFilter],
+    () => (deptFilter ? focused.people.filter(p => p.department === deptFilter) : focused.people),
+    [focused, deptFilter],
   );
   const filteredRels = useMemo(() => {
-    if (!deptFilter) return relationships;
+    if (!deptFilter) return focused.relationships;
     const ids = new Set(filteredPeople.map(p => p.id));
-    return relationships.filter(r => ids.has(r.source) && ids.has(r.target));
-  }, [relationships, filteredPeople, deptFilter]);
+    return focused.relationships.filter(r => ids.has(r.source) && ids.has(r.target));
+  }, [focused, filteredPeople, deptFilter]);
 
   const { nodes, links } = useForceLayout({
     people: filteredPeople,
@@ -133,9 +156,11 @@ export function OrgGraph({
   const activeId = hoveredId ?? selectedId;
   // A spotlight (e.g. agent-cited people) replaces the hover/selection
   // neighbourhood as the highlight set — the host is saying who matters.
-  const spotlightActive = !!spotlightIds && spotlightIds.size > 0;
+  // A focus set is spotlit the same way, alongside any host spotlight.
+  const spotlight = focusSet.size > 0 ? new Set([...(spotlightIds ?? []), ...focusSet]) : spotlightIds;
+  const spotlightActive = !!spotlight && spotlight.size > 0;
   const highlighted = spotlightActive
-    ? new Set([...(spotlightIds ?? []), ...Array.from(connectedIds(activeId))])
+    ? new Set([...(spotlight ?? []), ...Array.from(connectedIds(activeId))])
     : connectedIds(activeId);
 
   const handleSelect = useCallback((id: string) => {

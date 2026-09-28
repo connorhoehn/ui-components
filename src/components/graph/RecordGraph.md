@@ -26,5 +26,11 @@ Built on `@xyflow/react` for pan/zoom/fit and culling; nodes and edges are
 custom renderers painted with tokens, so no xyflow CSS overrides. Positions come
 from the pure `layoutRecordGraph`, and `filterRecordGraph` drops records of
 other types and any edge left dangling — both exported for hosts and tests.
+
+It never draws a cloud of unconnected records by default: when the
+type-filtered records have no connections among them, the canvas is replaced by
+`emptyLabel` (default "No recorded connections — search, or select related
+records"); the toolbar stays so the filter and selection still work.
+`showIsolated` draws them anyway (the pre-2.403 behaviour).
 Storybook: Graph/RecordGraph (Default with the Auth Migration cast, Hierarchy,
-Radial, Empty, Dark).
+Radial, Empty, Unconnected, ShowIsolated, Dark).

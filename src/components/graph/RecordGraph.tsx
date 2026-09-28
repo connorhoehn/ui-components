@@ -81,7 +81,18 @@ export interface RecordGraphProps {
   'data-testid'?: string;
   /** The canvas's accessible name. Default "Record connections". */
   'aria-label'?: string;
+  /**
+   * Said instead of the canvas when the (type-filtered) records have no
+   * connections among them — a cloud of unconnected records reads as a graph
+   * that means nothing. Default "No recorded connections — search, or select
+   * related records". Since 2.403.0.
+   */
+  emptyLabel?: string;
+  /** Draw records that have no connections anyway (the pre-2.403 behaviour). Default false. Since 2.403.0. */
+  showIsolated?: boolean;
 }
+
+const DEFAULT_EMPTY_LABEL = 'No recorded connections — search, or select related records';
 
 /** Singular labels for a node's accessible name and its fallback subtitle. */
 const TYPE_SINGULAR: Record<RecordGraphType, string> = {
@@ -338,6 +349,8 @@ export function RecordGraph({
   className,
   'data-testid': testId = 'record-graph',
   'aria-label': ariaLabel = 'Record connections',
+  emptyLabel = DEFAULT_EMPTY_LABEL,
+  showIsolated = false,
 }: RecordGraphProps) {
   const [localLayout, setLocalLayout] = useState<RecordGraphLayout>('force');
   const [localType, setLocalType] = useState<RecordGraphType | 'all'>('all');
@@ -453,6 +466,8 @@ export function RecordGraph({
       {fullscreenError && <T role="status" className="px-2 py-1 text-xs text-text-secondary">Full screen is unavailable in this browser.</T>}
       {!graph.records.length ? (
         <EmptyState title="No connections to show" description="Choose another record type or search for records." testId={`${testId}-empty`} />
+      ) : !flowEdges.length && !showIsolated ? (
+        <EmptyState title={emptyLabel} testId={`${testId}-unconnected`} />
       ) : (
         <Stack gap="none" className="relative min-h-64 flex-1 [--xy-background-color:var(--color-surface)]">
           <ReactFlowProvider>

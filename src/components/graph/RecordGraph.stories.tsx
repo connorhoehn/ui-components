@@ -69,6 +69,12 @@ export const Radial: Story = { args: { layout: 'radial' } };
 /** Nothing to draw — no records, or a type filter that leaves none. */
 export const Empty: Story = { args: { records: [], edges: [] } };
 
+/** Records with no connections among them (a lone person): the empty label, not a cloud of nodes. */
+export const Unconnected: Story = { args: { edges: [] } };
+
+/** `showIsolated`: draw unconnected records anyway. */
+export const ShowIsolated: Story = { args: { edges: [], showIsolated: true } };
+
 export const Dark: Story = {
   decorators: [(Story) => <div data-theme="dark" className="flex h-full flex-col bg-surface"><Story /></div>],
 };

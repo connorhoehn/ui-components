@@ -84,3 +84,7 @@ export const WithSelection: Story = {
 
 /** Presence filter on: nodes that are not remote dim, and the legend keys the dots. */
 export const PresenceFilter: Story = { args: { presenceFilter: 'remote' } };
+
+/** Focused on one person: Vera, the people she is directly connected to and
+ *  the lines among them — the `/iq/search?selection=person:<id>` view. */
+export const FocusedOnOnePerson: Story = { args: { focusIds: ['p-1'] } };

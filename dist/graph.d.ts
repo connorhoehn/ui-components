@@ -167,6 +167,32 @@ export declare interface FindingLike {
 
 export declare function firstName(full: string): string;
 
+export declare interface FocusedOrgGraph {
+    people: OrgGraphPerson[];
+    relationships: GraphRelationship[];
+}
+
+/**
+ * The people within `hops` of `focusIds` over `relationships`, and the
+ * relationships among them. Focus ids that name no one in `people` are
+ * ignored; an empty (or wholly unknown) focus returns the whole graph, with
+ * `minStrength`/`topK` still applied. Input order is preserved.
+ */
+export declare function focusOrgGraph(people: readonly OrgGraphPerson[], relationships: readonly GraphRelationship[], focusIds: ReadonlySet<string> | readonly string[] | null | undefined, { hops, minStrength, topK }?: FocusOrgGraphOptions): FocusedOrgGraph;
+
+export declare interface FocusOrgGraphOptions {
+    /** How far out from the focus set to keep people. Default 1 (direct neighbours). */
+    hops?: number;
+    /** Drop relationships weaker than this before anything else. Default 0 (keep all). */
+    minStrength?: number;
+    /**
+     * Keep at most this many relationships per person, strongest first (an edge
+     * stays while either end is under the cap). Applied BEFORE the neighbourhood
+     * walk, so a focused person's neighbours are their strongest K. Default: no cap.
+     */
+    topK?: number;
+}
+
 /**
  * The node the radial layout puts in the middle: the one whose `group` is
  * `'center'`, else the node with the strictly highest weight, else none.
@@ -404,7 +430,7 @@ export declare interface NodeGraphProps {
  */
 export declare function nodeRadius(showInfluence: boolean, influenceScore: number, degree: number, maxDegree: number): number;
 
-export declare function OrgGraph({ people, relationships, departments, onPersonSelect, multiSelectIds, onToggleMultiSelect, spotlightIds, layout, presenceFilter, showInfluence, legend, controls, className, 'aria-label': ariaLabel, 'data-testid': testId, }: OrgGraphProps): JSX.Element;
+export declare function OrgGraph({ people, relationships, departments, onPersonSelect, multiSelectIds, onToggleMultiSelect, spotlightIds, layout, presenceFilter, showInfluence, legend, controls, focusIds, focusHops, className, 'aria-label': ariaLabel, 'data-testid': testId, }: OrgGraphProps): JSX.Element;
 
 export declare function OrgGraphLegend({ departments, filter, onFilter, presenceFilter, pinned, className, 'data-testid': testId, }: OrgGraphLegendProps): JSX.Element;
 
@@ -455,6 +481,15 @@ export declare interface OrgGraphProps {
     /** Draw the zoom cluster (bottom-right). Default true. */
     controls?: boolean;
     className?: string;
+    /**
+     * Narrows the drawn people to these ids plus their direct neighbours over
+     * `relationships` (see `focusOrgGraph`), and spotlights them — "Focused on
+     * Vera" draws Vera, the people she is connected to and the lines among
+     * them. Empty, or naming no one in `people`, draws the whole graph. Since 2.403.0.
+     */
+    focusIds?: ReadonlySet<string> | readonly string[];
+    /** How far out `focusIds` reaches. Default 1 (direct neighbours). Since 2.403.0. */
+    focusHops?: number;
     'aria-label'?: string;
     'data-testid'?: string;
 }
@@ -603,7 +638,7 @@ export declare const RECORD_GRAPH_TYPES: {
     label: string;
 }[];
 
-export declare function RecordGraph({ records, edges, selectedKeys, onSelectionChange, onAskSelection, onOpenRecord, layout: controlledLayout, onLayoutChange, typeFilter: controlledType, onTypeFilterChange, typeLabels, className, 'data-testid': testId, 'aria-label': ariaLabel, }: RecordGraphProps): JSX.Element;
+export declare function RecordGraph({ records, edges, selectedKeys, onSelectionChange, onAskSelection, onOpenRecord, layout: controlledLayout, onLayoutChange, typeFilter: controlledType, onTypeFilterChange, typeLabels, className, 'data-testid': testId, 'aria-label': ariaLabel, emptyLabel, showIsolated, }: RecordGraphProps): JSX.Element;
 
 /** A directed, labelled relationship. `source`/`target` are `type:id` keys. */
 export declare interface RecordGraphEdge {
@@ -641,6 +676,15 @@ export declare interface RecordGraphProps {
     'data-testid'?: string;
     /** The canvas's accessible name. Default "Record connections". */
     'aria-label'?: string;
+    /**
+     * Said instead of the canvas when the (type-filtered) records have no
+     * connections among them — a cloud of unconnected records reads as a graph
+     * that means nothing. Default "No recorded connections — search, or select
+     * related records". Since 2.403.0.
+     */
+    emptyLabel?: string;
+    /** Draw records that have no connections anyway (the pre-2.403 behaviour). Default false. Since 2.403.0. */
+    showIsolated?: boolean;
 }
 
 /** One typed org record — the same shape a search read model returns. */
@@ -1694,6 +1738,29 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
@@ -1704,9 +1771,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -1743,29 +1810,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
         };
     }
 }

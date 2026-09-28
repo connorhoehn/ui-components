@@ -12,6 +12,13 @@ itself with a ResizeObserver, so give it a sized container.
 - Selection: without `onToggleMultiSelect` a click toggles one person and calls
   `onPersonSelect(person | null)`; with it, the host owns `multiSelectIds`.
   `spotlightIds` highlights a set (e.g. people an answer cited).
+- `focusIds` (2.403.0) narrows the drawing to those people plus their direct
+  neighbours (`focusHops`, default 1) and the lines among them, and spotlights
+  the focus set — "focused on Vera". Empty, or naming no one in `people`, draws
+  the whole graph. The same subset is `focusOrgGraph(people, relationships,
+  focusIds, { hops, minStrength, topK })` → `{ people, relationships }`, for a
+  host that wants the counts or a "Show whole org" toggle; `topK` is the old
+  Explore page's strongest-K-per-person edge cap.
 - `presenceFilter` (`office` | `remote` | `away`) dims non-matching people and
   adds the presence key to the legend.
 - `showInfluence` sizes nodes by influence and shows it on the hover card; off
@@ -20,4 +27,4 @@ itself with a ResizeObserver, so give it a sized container.
   `className`, `aria-label`, `data-testid` as usual.
 
 Keyboard: every node is a tab stop; Enter/Space selects. Storybook:
-Graph/OrgGraph (Default, Radial, WithSelection, PresenceFilter).
+Graph/OrgGraph (Default, Radial, WithSelection, PresenceFilter, FocusedOnOnePerson).

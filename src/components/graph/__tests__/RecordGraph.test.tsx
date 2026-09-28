@@ -127,4 +127,22 @@ describe('RecordGraph', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Fit to view' }));
     expect(flow.fitView).toHaveBeenCalled();
   });
+
+  it('records with no connections among them draw the empty label, not a cloud of nodes', () => {
+    setup({ edges: [] });
+    expect(screen.queryByTestId('react-flow')).toBeNull();
+    expect(screen.getByTestId('record-graph-unconnected')).toHaveTextContent('No recorded connections — search, or select related records');
+    // The toolbar stays, so the type filter and selection actions still work.
+    expect(screen.getByTestId('record-graph-counts')).toHaveTextContent('4 records · 0 connections');
+    cleanup();
+    setup({ edges: [], emptyLabel: 'Nothing links these records' });
+    expect(screen.getByTestId('record-graph-unconnected')).toHaveTextContent('Nothing links these records');
+  });
+
+  it('showIsolated draws unconnected records as before', () => {
+    setup({ edges: [], showIsolated: true });
+    expect(screen.queryByTestId('record-graph-unconnected')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Person: Vera Green' })).toBeInTheDocument();
+    expect(screen.getAllByTestId(/^flow-node-/)).toHaveLength(4);
+  });
 });

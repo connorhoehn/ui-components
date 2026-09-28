@@ -50,6 +50,13 @@ layer ships pre-wired wrappers — `<WrappedChatPanel>`,
 `<WrappedPresencePanel>`, `<WrappedReactionsOverlay>` — that take the
 channel name and handle the hook plumbing internally.
 
+## Agent composer dock
+
+`AgentComposerDock` (2.403.0, `…/social/rich-composer`; lazy on the root) is
+the pinned composer a page docks under its content — the rich composer with
+the mode menu, chips, `Workflow ⌄` and `/ commands` preset. See
+`AgentComposerDock.md`.
+
 ## Tests + stories
 
 - `ChatPanel`, `ReactionsBar`, `MessageRow`, `MessageGroup` have
