@@ -428,3 +428,34 @@ describe('CallDock header sizing (2.394.0)', () => {
     expect(chips).toContain('@min-[1240px]:flex');
   });
 });
+
+describe('CallDock in a conversation (2.400.0)', () => {
+  it('renders no document chips and no Documents button without documents', () => {
+    const { documents: _d, onOpenDocuments: _o, ...rest } = dockBase;
+    render(<CallDock {...rest} title="#general" />);
+    expect(screen.getByTestId('call-dock-title').textContent).toBe('#general');
+    expect(screen.queryByTestId('call-dock-documents-chips')).toBeNull();
+    expect(screen.queryByTestId('call-dock-documents')).toBeNull();
+    expect(screen.getByTestId('call-dock-people')).toBeTruthy();
+  });
+
+  it('places extras in the controls row after People and before the settings gear', () => {
+    render(
+      <CallDock
+        {...dockBase}
+        extras={
+          <button type="button" data-testid="my-reactions">
+            React
+          </button>
+        }
+      />,
+    );
+    const extras = screen.getByTestId('call-dock-extras');
+    expect(extras.contains(screen.getByTestId('my-reactions'))).toBe(true);
+    const people = screen.getByTestId('call-dock-people');
+    const gear = screen.getByTestId('call-dock-settings');
+    expect(people.compareDocumentPosition(extras) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(extras.compareDocumentPosition(gear) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(people.parentElement).toBe(extras.parentElement);
+  });
+});

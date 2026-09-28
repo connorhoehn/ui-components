@@ -30,7 +30,7 @@ import { t as fe } from "./InlinePlaceholder-51dbPRGn.js";
 import { n as pe, t as W } from "./PopoverForm-BCCYkHYg.js";
 import { t as me } from "./DropdownMenu-CHrQvZgc.js";
 import { t as he } from "./Select-D3fGI8SO.js";
-import { L as ge, N as _e, et as ve, nt as ye, ot as be, z as xe } from "./ConversationSurface-CJ7d90fl.js";
+import { L as ge, N as _e, et as ve, nt as ye, ot as be, z as xe } from "./ConversationSurface-Ub37bB1m.js";
 import { t as Se } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as Ce, t as we } from "./ReactionPickerPopover-DkcC4xmE.js";
 import { n as Te, t as Ee } from "./composerCommands-CgPFKkKH.js";

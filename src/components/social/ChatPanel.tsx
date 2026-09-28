@@ -90,6 +90,13 @@ export interface ChatPanelProps {
    */
   composer?: ReactNode;
   /**
+   * Pinned to the composer's top edge, between the thread (and the typing
+   * row) and the composer — the in-call shelf (`CallDock`) of the call this
+   * conversation is on, per the document-calls mockup 02. The composer keeps
+   * the bottom edge. Rendered `shrink-0`; the host owns what goes in it.
+   */
+  dock?: ReactNode;
+  /**
    * The viewer, so their own reactions can be marked and their own messages
    * can offer edit/delete. Without it reactions render but cannot be toggled
    * meaningfully — "did I react?" is unanswerable.
@@ -1337,6 +1344,8 @@ export function ChatPanel({
   typingUsers = [],
   emptyState,
   composer,
+  // `dock` (the local) is the docked-panel context below; the slot is `dockSlot`.
+  dock: dockSlot,
   currentUserId,
   reactionsFor,
   onToggleReaction,
@@ -2935,6 +2944,13 @@ export function ChatPanel({
           names={typingUsers}
           className={cn('mb-1 mt-1 shrink-0 italic', dark ? 'text-white/50' : 'text-text-secondary')}
         />
+      )}
+
+      {/* The call shelf, pinned above the composer (mockup 02). */}
+      {dockSlot != null && dockSlot !== false && (
+        <div className="shrink-0" data-testid="chat-panel-dock-slot">
+          {dockSlot}
+        </div>
       )}
 
       {/* Input row — or whatever the host put in its place. */}

@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { ConversationSurface, type ConversationFeature } from './ConversationSurface';
 import { ChatPanel } from './ChatPanel';
+import { CallDock } from '../video/CallDock';
+import { CAST, DEVICES, noop } from '../video/documentCallStoryKit';
 
 // A conversation and everything that belongs to it. The stories below are the
 // SHAPES an embedder actually ships — chat pasted into an existing product,
@@ -159,6 +161,51 @@ export const CallInProgress: Story = {
       callInProgress
     >
       <ChatPanel fill showHeader={false} messages={MESSAGES} onSend={() => {}} />
+    </ConversationSurface>
+  ),
+};
+
+/**
+ * The call you are on, docked to this conversation: the mockup-02 shelf
+ * (`CallDock` without documents) sits in ChatPanel's `dock` slot, directly
+ * above the composer, which keeps the bottom edge.
+ */
+export const CallDockedAboveComposer: Story = {
+  render: () => (
+    <ConversationSurface className="flex-1" name="Hank Anderson" online features={['chat', 'calls']} onStartCall={() => {}} callInProgress>
+      <ChatPanel
+        fill
+        showHeader={false}
+        messages={MESSAGES}
+        onSend={() => {}}
+        dock={
+          <CallDock
+            compact
+            title="Hank Anderson"
+            participantCount={2}
+            elapsedMs={4 * 60_000 + 12_000}
+            phase="active"
+            participants={[CAST.connor, CAST.alice].map((c) => ({
+              id: c.userId,
+              userId: c.userId,
+              displayName: c.name,
+              cameraOn: false,
+              audioOn: true,
+              screenSharing: false,
+              presenting: false,
+              connection: 'connected' as const,
+            }))}
+            localParticipantId={CAST.connor.userId}
+            mic={{ on: true, onToggle: noop, devices: DEVICES.microphones, onSelectDevice: noop, permission: 'granted' }}
+            camera={{ on: false, onToggle: noop, devices: DEVICES.cameras, onSelectDevice: noop, permission: 'granted' }}
+            screenShare={{ on: false, onToggle: noop }}
+            onOpenPeople={noop}
+            onOpenSettings={noop}
+            onPopOut={noop}
+            onLeave={noop}
+          />
+        }
+      />
     </ConversationSurface>
   ),
 };

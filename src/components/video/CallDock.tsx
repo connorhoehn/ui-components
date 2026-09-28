@@ -14,6 +14,12 @@
 // Phases: connecting (one skeleton tile, only Leave enabled), active,
 // reconnecting (veiled tiles, a warning meta), ended (a one-line summary with
 // Dismiss), error (a danger banner with Rejoin and Dismiss).
+//
+// A conversation call (a DM or room shelf above the chat composer) has no
+// review documents: leave `documents` / `onOpenDocuments` out and the chips
+// and the Documents button are not rendered. `extras` carries the host's own
+// controls (reactions, recording chip, side-panel toggles) into the controls
+// row, before the settings gear.
 
 import { useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
@@ -58,7 +64,8 @@ export interface CallDockProps {
   /** Elapsed call time; null before the call has a start time. */
   elapsedMs: number | null;
   phase: CallDockPhase;
-  documents: { id: string; title: string; presenting?: boolean }[];
+  /** The review documents; omit (or pass []) with no `onOpenDocuments` for a call without documents. */
+  documents?: { id: string; title: string; presenting?: boolean }[];
   /** Everyone in the call, the viewer included (matched by `localParticipantId`). */
   participants: CallDockParticipant[];
   localParticipantId: string;
@@ -69,10 +76,13 @@ export interface CallDockProps {
   camera: Omit<DeviceToggleSelectProps, 'kind'>;
   screenShare: { on: boolean; disabledReason?: string; onToggle: () => void };
   onOpenPeople: () => void;
-  onOpenDocuments: () => void;
+  /** Omitted → no Documents button (a conversation call). */
+  onOpenDocuments?: () => void;
   peopleOpen?: boolean;
   documentsOpen?: boolean;
   onOpenSettings: () => void;
+  /** Host controls rendered in the controls row, before the settings gear. */
+  extras?: ReactNode;
   onPopOut: () => void;
   onLeave: () => void;
   /** The host with others present: Leave asks "Leave the call? Others stay on." with End for everyone. */
@@ -116,7 +126,7 @@ export function CallDock({
   participantCount,
   elapsedMs,
   phase,
-  documents,
+  documents = [],
   participants,
   localParticipantId,
   activeSpeakerId = null,
@@ -129,6 +139,7 @@ export function CallDock({
   peopleOpen = false,
   documentsOpen = false,
   onOpenSettings,
+  extras,
   onPopOut,
   onLeave,
   canEndForEveryone = false,
@@ -299,20 +310,27 @@ export function CallDock({
             <span className="hidden @min-[860px]:inline">People</span>
             <Badge variant="count" value={participantCount} color="muted" aria-label={`${participantCount} people`} />
           </Button>
-          <Button
-            variant={documentsOpen ? 'secondary' : 'ghost'}
-            size="sm"
-            onClick={onOpenDocuments}
-            disabled={connecting}
-            aria-label={`Documents (${documents.length})`}
-            aria-pressed={documentsOpen}
-            data-testid="call-dock-documents"
-            className={cn('hidden h-8 items-center gap-1.5 font-medium @min-[980px]:inline-flex', !documentsOpen && 'bg-surface')}
-          >
-            <DocumentIcon size={16} />
-            <span className="hidden @min-[860px]:inline">Documents</span>
-            <Badge variant="count" value={documents.length} color="muted" aria-label={`${documents.length} documents`} />
-          </Button>
+          {onOpenDocuments && (
+            <Button
+              variant={documentsOpen ? 'secondary' : 'ghost'}
+              size="sm"
+              onClick={onOpenDocuments}
+              disabled={connecting}
+              aria-label={`Documents (${documents.length})`}
+              aria-pressed={documentsOpen}
+              data-testid="call-dock-documents"
+              className={cn('hidden h-8 items-center gap-1.5 font-medium @min-[980px]:inline-flex', !documentsOpen && 'bg-surface')}
+            >
+              <DocumentIcon size={16} />
+              <span className="hidden @min-[860px]:inline">Documents</span>
+              <Badge variant="count" value={documents.length} color="muted" aria-label={`${documents.length} documents`} />
+            </Button>
+          )}
+          {extras != null && (
+            <div className="flex shrink-0 items-center gap-2" data-testid="call-dock-extras">
+              {extras}
+            </div>
+          )}
           <IconButton
             aria-label="Call settings"
             title="Call settings"

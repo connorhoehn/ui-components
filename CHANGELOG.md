@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.400.0
+
+- Add `ChatPanel.dock?: ReactNode`, a slot pinned to the composer's top edge (between the thread / typing row and the composer, `shrink-0`, `data-testid="chat-panel-dock-slot"`) for the in-call shelf of the call a conversation is on (document-calls mockup 02). New story `Social/ConversationSurface › CallDockedAboveComposer`.
+- `CallDock`: `documents` and `onOpenDocuments` are optional — without them the document chips and the Documents button are not rendered (a conversation call has no review documents). New `extras?: ReactNode`, rendered in the controls row before the settings gear (`data-testid="call-dock-extras"`), for host controls such as a reactions trigger, a recording chip or side-panel toggles. No visual change for existing document-call callers. New stories `Conversation` / `ConversationDark`.
+
 ## 2.399.0
 
 - Add `WorkTableView`, the full-width grouped-table counterpart to `WorkListView`, with shared toolbar/filter controls, owner avatars, optional completion controls, and honest loading/error states. Includes Storybook variants, component documentation, and interaction tests.

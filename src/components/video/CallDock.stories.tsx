@@ -2,6 +2,9 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { CallDock, type CallDockParticipant, type CallDockProps } from './CallDock';
 import { StreamVideo } from './StreamVideo';
+import { Button } from '../ui/Button';
+import { SmileyIcon } from '../ui/Icons';
+import { ChatBubbleIcon, SparklesIcon } from './MediaIcons';
 import { CAST, DEVICES, REVIEW_DOCS, fakeCameraStream, noop, themed } from './documentCallStoryKit';
 
 // The in-call dock under a document (mockup 02). Stories render it at the
@@ -226,3 +229,34 @@ export const EditorColumn1240: Story = {
     </div>
   ),
 };
+
+/**
+ * A conversation call (the shelf above a chat composer): no review documents,
+ * so no chips and no Documents button; the host's reactions trigger and
+ * side-panel toggles ride in `extras`, before the settings gear.
+ */
+const conversationExtras = (
+  <>
+    <Button variant="ghost" size="sm" className="h-8 bg-surface" aria-label="Reactions" onClick={noop}>
+      <SmileyIcon size={16} />
+    </Button>
+    <Button variant="ghost" size="sm" className="inline-flex h-8 items-center gap-1.5 bg-surface" onClick={noop}>
+      <ChatBubbleIcon size={16} />
+      Chat
+    </Button>
+    <Button variant="ghost" size="sm" className="inline-flex h-8 items-center gap-1.5 bg-surface" onClick={noop}>
+      <SparklesIcon size={16} />
+      Effects
+    </Button>
+  </>
+);
+export const Conversation: Story = {
+  args: base({ title: '#general', documents: undefined, onOpenDocuments: undefined, compact: true, extras: conversationExtras }),
+  decorators: [themed('light')],
+  render: (args) => (
+    <div className="w-[760px] border border-border">
+      <Interactive {...args} />
+    </div>
+  ),
+};
+export const ConversationDark: Story = { ...Conversation, decorators: [themed('dark')] };
