@@ -212,36 +212,128 @@ function buildLinks(
   return result;
 }
 
-function radialNodes(people: GraphPerson[], width: number, height: number): GraphNode[] {
+/** Ramanujan's perimeter of an ellipse with semi-axes `a`, `b`. */
+function ellipsePerimeter(a: number, b: number): number {
+  return Math.PI * (3 * (a + b) - Math.sqrt((3 * a + b) * (a + 3 * b)));
+}
+
+/** `count` points spread by equal arc length (not equal angle) round an ellipse, starting at the top. */
+function ellipsePoints(a: number, b: number, count: number, phase: number): Array<{ x: number; y: number }> {
+  const STEPS = 720;
+  const at = (i: number) => {
+    const t = (i * 2 * Math.PI) / STEPS - Math.PI / 2;
+    return { x: Math.cos(t) * a, y: Math.sin(t) * b };
+  };
+  const arc: number[] = [0];
+  for (let i = 1; i <= STEPS; i++) {
+    const p = at(i - 1), q = at(i);
+    arc.push(arc[i - 1]! + Math.hypot(q.x - p.x, q.y - p.y));
+  }
+  const total = arc[STEPS]!;
+  const out: Array<{ x: number; y: number }> = [];
+  let step = 0;
+  for (let i = 0; i < count; i++) {
+    const target = (((i + phase) / count) % 1) * total;
+    while (step < STEPS && arc[step + 1]! < target) step++;
+    out.push(at(step));
+  }
+  return out;
+}
+
+/** The radial layout's rings: how many, and their semi-axis step on each axis. */
+export interface OrgRadialRings {
+  /** Ring count (the centre person is not a ring). */
+  rings: number;
+  /** Semi-axes of ring k are `k × stepX`, `k × stepY`. */
+  stepX: number;
+  stepY: number;
+  /** People on each ring, inner first. */
+  counts: number[];
+  /** True when the outer ring fits inside the `width` × `height` area. */
+  fits: boolean;
+}
+
+/**
+ * Rings for `count` people on a `width` × `height` area (OrgGraph passes its
+ * clear area at the automatic fit floor). The rings are ellipses shaped to the
+ * area's width:height, and their spacing comes from the head count: the
+ * fewest rings whose perimeters hold everyone with the outer ring inside the
+ * area's shorter half-dimension, keeping `minArc` between neighbours along a
+ * ring and `minGap` between rings. When no ring count fits, the rings keep
+ * their shape at the least spacing that holds everyone (the most compact
+ * overflow) and "Fit to view" zooms out to it. Since 2.403.5 (was fixed
+ * circles 130–680px apart, which on a 1160 × 400 canvas spanned 244% of its
+ * height).
+ */
+export function orgRadialRings(
+  count: number,
+  width: number,
+  height: number,
+  opts: { maxRadius?: number } = {},
+): OrgRadialRings {
+  const others = Math.max(0, count - 1);
+  const maxR = opts.maxRadius ?? 30;
+  // A node's reach past its centre: its circle, plus the label band below.
+  const ax = Math.max(1, width / 2 - Math.max(maxR, 40));
+  const ay = Math.max(1, height / 2 - (maxR + ORG_LABEL_BAND));
+  const aspect = clamp(ax / ay, 0.25, 6);
+  const minArc = Math.max(76, 2 * maxR + ORG_LABEL_BAND);
+  // Between rings: two circles and a label band vertically; a label's width sideways.
+  const minGap = Math.max(2 * maxR + ORG_LABEL_BAND + 4, 76 / aspect);
+  const capacity = (rings: number, stepY: number) => {
+    const caps: number[] = [];
+    for (let k = 1; k <= rings; k++) caps.push(Math.max(1, Math.floor(ellipsePerimeter(k * stepY * aspect, k * stepY) / minArc)));
+    return caps;
+  };
+  const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
+  const spread = (caps: number[]): number[] => {
+    // People per ring in proportion to its capacity (so the outer ring is not a lone straggler).
+    const total = sum(caps);
+    const counts = caps.map(c => Math.min(c, Math.floor((others * c) / total)));
+    let left = others - sum(counts);
+    for (let k = caps.length - 1; left > 0; k = (k - 1 + caps.length) % caps.length) {
+      if (counts[k]! < caps[k]!) { counts[k]!++; left--; }
+    }
+    return counts;
+  };
+  if (others === 0) return { rings: 0, stepX: 0, stepY: 0, counts: [], fits: true };
+  // Inside the area: the fewest rings that hold everyone at the widest
+  // spacing — capped at the old first ring's 130px, so four people do not
+  // stand at the canvas's edges.
+  const maxStep = Math.max(minGap, 130);
+  for (let rings = 1; ay / rings >= minGap; rings++) {
+    const stepY = Math.min(maxStep, ay / rings);
+    const caps = capacity(rings, stepY);
+    if (sum(caps) >= others) return { rings, stepX: stepY * aspect, stepY, counts: spread(caps), fits: true };
+  }
+  // Overflow: for each ring count, the least spacing (≥ minGap) that holds
+  // everyone; keep the count whose outer ring is smallest.
+  let best: OrgRadialRings | null = null;
+  for (let rings = 1; rings <= 12; rings++) {
+    let stepY = minGap;
+    let caps = capacity(rings, stepY);
+    while (sum(caps) < others) { stepY *= 1.03; caps = capacity(rings, stepY); }
+    if (!best || rings * stepY < best.rings * best.stepY) {
+      best = { rings, stepX: stepY * aspect, stepY, counts: spread(caps), fits: false };
+    }
+  }
+  return best!;
+}
+
+function radialNodes(people: GraphPerson[], width: number, height: number, radiusOf: (p: GraphPerson) => number): GraphNode[] {
   if (people.length === 0) return [];
   const sorted = [...people].sort((a, b) => b.influenceScore - a.influenceScore);
   const cx = width / 2, cy = height / 2;
-  // Capacity and radius sized so arc-per-node stays > ~80px (avoids label collisions).
-  const ringCapacity = [1, 7, 12, 17, 22, 27, 32];
-  const ringRadius  = [0, 130, 240, 350, 460, 570, 680];
-  const nodes: GraphNode[] = [];
-  let idx = 0;
-  for (let r = 0; r < ringCapacity.length && idx < sorted.length; r++) {
-    const cap = ringCapacity[r];
-    const radius = ringRadius[r];
-    const count = Math.min(cap, sorted.length - idx);
-    for (let i = 0; i < count; i++, idx++) {
-      const angle = count === 1 ? -Math.PI / 2 : (i / count) * 2 * Math.PI - Math.PI / 2;
-      nodes.push({ ...sorted[idx], x: cx + radius * Math.cos(angle), y: cy + radius * Math.sin(angle) });
-    }
-  }
-  // Overflow: keep adding rings at +80px each
-  let overflowRing = 0;
-  while (idx < sorted.length) {
-    const radius = ringRadius[ringRadius.length - 1] + (overflowRing + 1) * 80;
-    const cap = Math.floor((2 * Math.PI * radius) / 90);
-    const count = Math.min(cap, sorted.length - idx);
-    for (let i = 0; i < count && idx < sorted.length; i++, idx++) {
-      const angle = (i / cap) * 2 * Math.PI - Math.PI / 2;
-      nodes.push({ ...sorted[idx], x: cx + radius * Math.cos(angle), y: cy + radius * Math.sin(angle) });
-    }
-    overflowRing++;
-  }
+  const maxRadius = Math.max(...people.map(radiusOf));
+  const { stepX, stepY, counts } = orgRadialRings(people.length, width, height, { maxRadius });
+  const nodes: GraphNode[] = [{ ...sorted[0]!, x: cx, y: cy }];
+  let idx = 1;
+  counts.forEach((n, k) => {
+    const ring = k + 1;
+    ellipsePoints(ring * stepX, ring * stepY, n, ring % 2 ? 0 : 0.5).forEach(p => {
+      nodes.push({ ...sorted[idx++]!, x: cx + p.x, y: cy + p.y });
+    });
+  });
   return nodes;
 }
 
@@ -264,7 +356,7 @@ export function useForceLayout({ people, relationships, departments, width, heig
     simRef.current = null;
 
     if (layout === 'radial') {
-      const staticNodes = radialNodes(people, width, height);
+      const staticNodes = radialNodes(people, width, height, radiusRef.current ?? defaultRadiusOf);
       const nodeMap = new Map(staticNodes.map(n => [n.id, n]));
       setNodes(staticNodes);
       setLinks(buildLinks(relationships, nodeMap));

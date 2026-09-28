@@ -249,3 +249,49 @@ describe('OrgGraph', () => {
     expect(intersects(drawnScreenBox())).toBe(true);
   });
 });
+
+describe('OrgGraph — Radial whole org (2.403.5)', () => {
+  /** Report a `width` × `height` canvas to the graph's ResizeObserver. */
+  function canvas(width: number, height: number) {
+    vi.stubGlobal('ResizeObserver', class {
+      constructor(private cb: ResizeObserverCallback) {}
+      observe(el: Element) { this.cb([{ target: el, contentRect: { width, height } } as unknown as ResizeObserverEntry], this as unknown as ResizeObserver); }
+      unobserve() {}
+      disconnect() {}
+    });
+  }
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('56 people on 1160 × 400: Fit to view shows every one of them (was 39 of 56 at 50%)', () => {
+    canvas(1160, 400);
+    const ref = createRef<OrgGraphHandle>();
+    render(<OrgGraph {...whole} ref={ref} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Fit to view' }));
+    const inside = () => {
+      const box = drawnScreenBox();
+      expect(box.left).toBeGreaterThanOrEqual(0);
+      expect(box.top).toBeGreaterThanOrEqual(0);
+      expect(box.right).toBeLessThanOrEqual(1160);
+      expect(box.bottom).toBeLessThanOrEqual(400);
+    };
+    inside();
+    expect(viewTransform().scale).toBeGreaterThanOrEqual(ORG_FIT_ALL_MIN_ZOOM);
+    // The rings are shaped to the canvas, so the whole org fits at a zoom
+    // near Force's (≈ 0.6), not at the hard minimum.
+    expect(viewTransform().scale).toBeGreaterThan(0.5);
+    act(() => ref.current!.fitAll());
+    inside();
+  });
+
+  it('the rings are ellipses wider than tall on a wide canvas', () => {
+    canvas(1160, 400);
+    render(<OrgGraph {...whole} />);
+    const pts = screen.getAllByRole('button', { name: /·/ }).map((el) => {
+      const p = /translate\(([-\d.e]+), ([-\d.e]+)\)/.exec(el.getAttribute('transform')!)!;
+      return { x: Number(p[1]), y: Number(p[2]) };
+    });
+    const w = Math.max(...pts.map((p) => p.x)) - Math.min(...pts.map((p) => p.x));
+    const h = Math.max(...pts.map((p) => p.y)) - Math.min(...pts.map((p) => p.y));
+    expect(w / h).toBeGreaterThan(2.5);
+  });
+});

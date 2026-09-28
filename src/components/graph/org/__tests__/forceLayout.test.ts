@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createOrgSimulation, forceParamsFor, orgDepartmentCells, ORG_LABEL_BAND } from '../useForceLayout';
+import { createOrgSimulation, forceParamsFor, orgDepartmentCells, orgRadialRings, ORG_LABEL_BAND } from '../useForceLayout';
 import { fitTransform, orgGraphBounds, ORG_FIT_MIN_ZOOM } from '../fitTransform';
 import type { GraphDepartment, GraphPerson, GraphRelationship } from '../types';
 
@@ -148,5 +148,28 @@ describe('createOrgSimulation — the whole org (56) on a 1160 × 360 strip', ()
     expect(drawnW).toBeGreaterThan(clearW * 0.8);
     // Nothing is drawn under the legend.
     expect(bounds.minX * t.scale + t.x).toBeGreaterThanOrEqual(200);
+  });
+});
+
+describe('orgRadialRings (2.403.5)', () => {
+  it('fits a small set inside the area, with rings shaped to its width:height', () => {
+    const rings = orgRadialRings(20, 1000, 500);
+    expect(rings.fits).toBe(true);
+    expect(rings.counts.reduce((a, b) => a + b, 0)).toBe(19);
+    expect(rings.stepX / rings.stepY).toBeGreaterThan(2);
+    // The outer ring and its labels stay inside the shorter half-dimension.
+    expect(rings.rings * rings.stepY + 30 + ORG_LABEL_BAND).toBeLessThanOrEqual(250 + 0.5);
+  });
+
+  it('a whole org that cannot fit keeps the shape and the least spacing that holds everyone', () => {
+    // OrgGraph's clear area for 1160 × 400 at the 0.9 floor.
+    const w = (1160 - 200 - 64) / 0.9, h = (400 - 48 - 64) / 0.9;
+    const rings = orgRadialRings(56, w, h);
+    expect(rings.counts.reduce((a, b) => a + b, 0)).toBe(55);
+    expect(rings.stepX / rings.stepY).toBeGreaterThan(3);
+    // Proportional rings: no lone straggler on the outside.
+    expect(rings.counts[rings.counts.length - 1]).toBeGreaterThan(5);
+    // The drawing needs well under 2× the area's height (the fixed rings needed 4.4×).
+    expect(2 * (rings.rings * rings.stepY + 30 + ORG_LABEL_BAND)).toBeLessThan(2 * h);
   });
 });

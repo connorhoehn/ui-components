@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.403.5
+
+Three residues from the portal's search-journey audit, plus two from the org-leader walk.
+
+- `RecordGraph` focus margin. With three people selected at the 0.8 floor, the answer strip took the canvas from 418 to 369px and the fit top-aligned a selection it could not fit, so Vera Green's node box ended 7px below the canvas. When the focus's boxes do not fit the clear area, the fit now keeps them 16px inside the canvas; when they are taller than that, it keeps the selected avatar circles whole (16px clear), as close to centred on the selection as that allows.
+- `RecordGraph` legend and controls keep-out. The bottom-left legend and the bottom-right zoom cluster covered unselected records (one under the legend in Force; one under each in Radial). The fit now reserves both corners the way `OrgGraph` does (`reserveCorner`, mirrored for the left corner) — along the bottom on the search canvas — so a drawing that fits never sits under either overlay.
+  - New in `recordGraphLayout.ts`: `recordGraphInset(size, { legend, controls })`, `recordGraphLegendSize(labels, canvasWidth)`, `RECORD_GRAPH_CONTROLS_SIZE` (212 × 48) and `RECORD_GRAPH_FIT_ALL_MIN_ZOOM` (0.5). Not added to the `/graph` barrel.
+  - `recordGraphViewport` takes an optional `inset` (`FitInset`); `padding` is at least 16.
+- `RecordGraph` "Fit to view" frames the whole graph. The second press and `ref.fitAll()` may now zoom below the 0.8 floor, down to 0.5, like `OrgGraph`'s `fitAll`; the automatic fit keeps the floor.
+- `RecordGraph` Force layout fills a wide canvas. 25 records on 1160 × 418 drew 82% of the width and 117% of the height. The x/y pulls now go as aspect² once the set packs the canvas (aspect¹ for a sparse set, so a dozen still read at 100%), the simulation starts from an ellipse of the canvas's shape, and a collide-only pass ends it; collide is half the box + 20 (was + 16, which let diagonal neighbours overlap a box corner). The same 25 records now span ~99% × 97%.
+- `OrgGraph` Radial fits a whole org. `?type=person` Radial opened at 90% with 17 of 56 people on the canvas, and "Fit to view" stopped at 50% with 39. The rings were fixed circles 130–680px apart. They are now ellipses shaped to the clear area and spaced from the head count (`orgRadialRings` in `useForceLayout.ts`, not on the barrel): the fewest rings that fit the shorter half-dimension at the automatic floor, or when none can, the least spacing that holds everyone, with people spread over the rings in proportion to their perimeters. 56 people on 1160 × 400 now fit whole at Fit to view, near Force's zoom.
+- `ORG_FIT_ALL_MIN_ZOOM` is 0.3 (was 0.5), the pan/zoom's own minimum, so "Fit to view" / `fitAll()` can always show everyone.
+
 ## 2.403.4
 
 - `RecordGraph` keeps the selection in view when its canvas changes size. In the portal, the answer strip opening under the canvas took it from 418 to 369px (256px expanded) without a re-fit, so a selected person was clipped at the top edge, and "Fit to view" did nothing at the zoom floor.

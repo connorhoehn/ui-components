@@ -22,6 +22,12 @@
 // re-centres on the focus, and pressed again frames the whole graph from the
 // top-left. `ref` exposes `fitToFocus()` / `fitAll()` (`RecordGraphHandle`).
 //
+// Keep-outs (2.403.5): the fit keeps the drawing clear of the legend's and
+// the controls' corners (`recordGraphInset`), a focus taller than the clear
+// area keeps its boxes 16px inside the canvas and then its circles
+// (`recordGraphViewport`), and the viewer's whole-graph fit (second "Fit to
+// view" press, `fitAll()`) may go down to `RECORD_GRAPH_FIT_ALL_MIN_ZOOM`.
+//
 // Built on @xyflow/react, not SVG like NodeGraph: xyflow already gives pan,
 // zoom, fit-to-view and viewport culling, which the mockup's zoom cluster and
 // a 100-record result need, and TypedNodeCanvas already carries the
@@ -61,8 +67,12 @@ import {
   filterRecordGraph,
   layoutRecordGraph,
   recordGraphFitKeys,
+  recordGraphInset,
   recordGraphKey,
+  recordGraphLegendSize,
   recordGraphViewport,
+  RECORD_GRAPH_CONTROLS_SIZE,
+  RECORD_GRAPH_FIT_ALL_MIN_ZOOM,
   RECORD_GRAPH_MAX_FIT_ZOOM,
   RECORD_GRAPH_MIN_FIT_ZOOM,
   RECORD_GRAPH_NODE_HEIGHT,
@@ -138,7 +148,11 @@ export interface RecordGraphHandle {
    * the focus is fully in view. Frames the whole graph when there is no focus.
    */
   fitToFocus: () => void;
-  /** Frame the whole graph as best it can: centred when it fits, top-left aligned (pan for the rest) when not. */
+  /**
+   * Frame the whole graph: centred when it fits, top-left aligned (pan for
+   * the rest) when not. Since 2.403.5 it may zoom below the readability floor,
+   * down to `RECORD_GRAPH_FIT_ALL_MIN_ZOOM` (0.5), like "Fit to view"'s second press.
+   */
   fitAll: () => void;
 }
 
@@ -369,21 +383,34 @@ function CanvasChrome({
   const { zoom } = useViewport();
   // Read through a ref: a selection click must not move the view — only a
   // new drawing (records, edges, layout) or a canvas resize re-frames it.
-  const state = useRef({ positions, focusKeys, fitKeys });
-  state.current = { positions, focusKeys, fitKeys };
+  const legendLabels = legend.map((item) => item.label);
+  const state = useRef({ positions, focusKeys, fitKeys, legendLabels });
+  state.current = { positions, focusKeys, fitKeys, legendLabels };
 
-  /** The viewport a fit would set, from the canvas's size now; null while unmeasured. */
-  const target = useCallback((mode: 'focus' | 'all') => {
+  /**
+   * The viewport a fit would set, from the canvas's size now; null while
+   * unmeasured. The legend's and the controls' corners are kept clear
+   * (`recordGraphInset`). `whole` is the viewer's whole-graph fit, which may
+   * go below the readability floor (`RECORD_GRAPH_FIT_ALL_MIN_ZOOM`).
+   */
+  const target = useCallback((mode: 'focus' | 'all', whole = false) => {
     const rect = canvasRef.current?.getBoundingClientRect();
     if (!rect) return null;
-    const { positions: pos, focusKeys: core, fitKeys: near } = state.current;
-    return recordGraphViewport(pos, { width: rect.width, height: rect.height }, {
-      mode: core.length ? mode : 'all', focusKeys: core, fitKeys: near,
-      minZoom: FIT.minZoom, maxZoom: FIT.maxZoom,
+    const { positions: pos, focusKeys: core, fitKeys: near, legendLabels: labels } = state.current;
+    const size = { width: rect.width, height: rect.height };
+    const inset = recordGraphInset(size, {
+      legend: labels.length ? recordGraphLegendSize(labels, size.width) : null,
+      controls: RECORD_GRAPH_CONTROLS_SIZE,
+    });
+    return recordGraphViewport(pos, size, {
+      mode: core.length ? mode : 'all', focusKeys: core, fitKeys: near, inset,
+      minZoom: whole && mode === 'all' ? RECORD_GRAPH_FIT_ALL_MIN_ZOOM : FIT.minZoom, maxZoom: FIT.maxZoom,
     });
   }, [canvasRef]);
   const apply = useCallback((mode: 'focus' | 'all', animate = false) => {
-    const viewport = target(mode);
+    // An animated fit is one the viewer asked for: its whole-graph frame may
+    // go below the floor. The automatic fit never does.
+    const viewport = target(mode, animate);
     if (viewport) {
       void flow.setViewport(viewport, animate ? { duration: 200 } : undefined);
       return;

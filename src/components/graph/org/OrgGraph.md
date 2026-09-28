@@ -8,7 +8,13 @@ with an arrowhead, shared expertise amber). It fills its parent and measures
 itself with a ResizeObserver, so give it a sized container.
 
 - `layout`: `force` (default; d3-force, animated, departments pulled to their
-  own cells) or `radial` (static rings, most influential in the centre).
+  own cells) or `radial` (static rings, most influential in the centre). Since
+  2.403.5 the rings are ellipses shaped to the clear area's width:height and
+  spaced from the head count: the fewest rings that hold everyone inside the
+  shorter half-dimension at the automatic floor, or, when none do, the least
+  spacing that holds everyone (people spread over the rings in proportion to
+  their perimeters). 56 people on 1160 × 400 fit whole at Fit to view, near
+  Force's zoom.
 - Selection: without `onToggleMultiSelect` a click toggles one person and calls
   `onPersonSelect(person | null)`; with it, the host owns `multiSelectIds`.
   `spotlightIds` highlights a set (e.g. people an answer cited).
@@ -35,7 +41,7 @@ itself with a ResizeObserver, so give it a sized container.
   overflows the canvas — top/left aligned — and the viewer pans.
 - Fit to view (2.403.4): the control, and `fitAll()` on the `ref` handle
   (`OrgGraphHandle`), fit the whole drawn set with no readability floor, down
-  to `ORG_FIT_ALL_MIN_ZOOM` (0.5), so the viewer can see everyone at once. The
+  to `ORG_FIT_ALL_MIN_ZOOM` (0.3 since 2.403.5, was 0.5), so the viewer can see everyone at once. The
   view stays fitted that way across resizes until a pan, a zoom or a new drawn
   set. The forces are laid out for the clear area at that zoom, the
   department cells form a grid shaped to the canvas (`orgDepartmentCells`) and

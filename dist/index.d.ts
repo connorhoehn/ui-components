@@ -12769,9 +12769,11 @@ export declare const ORG_CONTROLS_SIZE: {
  * Hard floor of "Fit to view" / `OrgGraphHandle.fitAll()`, which fit the
  * whole drawn set with no readability floor — the viewer asked to see
  * everyone at once. Only a set that does not fit even at this zoom overflows.
- * Since 2.403.4.
+ * Since 2.403.4; 0.3 since 2.403.5 (was 0.5, where a whole org in Radial
+ * still left 17 of 56 people off a 1160 × 360 canvas) — the pan/zoom's own
+ * minimum.
  */
-export declare const ORG_FIT_ALL_MIN_ZOOM = 0.5;
+export declare const ORG_FIT_ALL_MIN_ZOOM = 0.3;
 
 /**
  * Default floor of the org graph's AUTOMATIC fit: the first-name labels are
@@ -12828,7 +12830,7 @@ export declare function OrgGraph({ people, relationships, departments, onPersonS
 export declare interface OrgGraphHandle {
     /**
      * Fit the whole drawn set with no readability floor (down to
-     * `ORG_FIT_ALL_MIN_ZOOM`), exactly as the "Fit to view" control does. The
+     * `ORG_FIT_ALL_MIN_ZOOM`, 0.3), exactly as the "Fit to view" control does. The
      * view stays in this mode — re-fitting on a resize — until the viewer pans
      * or zooms or the drawn set changes.
      */
@@ -15524,7 +15526,11 @@ export declare interface RecordGraphHandle {
      * the focus is fully in view. Frames the whole graph when there is no focus.
      */
     fitToFocus: () => void;
-    /** Frame the whole graph as best it can: centred when it fits, top-left aligned (pan for the rest) when not. */
+    /**
+     * Frame the whole graph: centred when it fits, top-left aligned (pan for
+     * the rest) when not. Since 2.403.5 it may zoom below the readability floor,
+     * down to `RECORD_GRAPH_FIT_ALL_MIN_ZOOM` (0.5), like "Fit to view"'s second press.
+     */
     fitAll: () => void;
 }
 
@@ -15618,16 +15624,25 @@ export declare interface RecordGraphViewportOptions {
      * `focus` frames `focusKeys` + their neighbours (`fitKeys`) when they fit at
      * or above the floor; at the floor it centres on the largest of the whole
      * graph, the neighbourhood and the focus itself that fits, per axis, so the
-     * focus is never clipped while it fits. `all` frames the whole graph, and
-     * where it overflows at the floor aligns it top-left so the viewer pans.
+     * focus is never clipped while it fits. When the focus's boxes do not fit
+     * the clear area they are kept 16px inside the canvas, and when they do not
+     * fit that either, its avatar circles are kept in view (2.403.5). `all` frames the
+     * whole graph, and where it overflows at the floor aligns it top-left so
+     * the viewer pans.
      */
     mode: 'focus' | 'all';
     /** The focus records themselves (usually the selection) — never clipped when they fit. */
     focusKeys?: readonly string[];
     /** Focus plus direct neighbours (`recordGraphFitKeys`). Framed first when it fits. */
     fitKeys?: readonly string[];
-    /** Screen px kept clear on every side. Default 24. */
+    /** Screen px kept clear on every side (at least 16). Default 24. */
     padding?: number;
+    /**
+     * Screen px along each edge taken by an overlay — `recordGraphInset` for the
+     * legend and controls. The drawing keeps `padding`, or the inset plus an
+     * 8px gap where that is more, from each edge. Since 2.403.5.
+     */
+    inset?: FitInset;
     minZoom?: number;
     maxZoom?: number;
 }
@@ -23934,36 +23949,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
@@ -23996,6 +23981,36 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

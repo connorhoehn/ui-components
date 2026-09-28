@@ -116,6 +116,25 @@ test('force: a dozen records read at 100%, twenty-five near the floor — never 
   expect(overlaps(positions)).toBe(0);
 });
 
+test('force fills a wide canvas\'s width before it overflows its height (2.403.5: was 82% × 117%)', () => {
+  for (const canvas of [CANVAS, { width: 1160, height: 360 }]) {
+    const full = searchResult();
+    const positions = layoutRecordGraph(full.records, full.edges, 'force', canvas);
+    const { w, h } = fitZoom(positions);
+    const drawnW = w * RECORD_GRAPH_MIN_FIT_ZOOM, drawnH = h * RECORD_GRAPH_MIN_FIT_ZOOM;
+    // At the floor it spans at least 90% of the width; only then does it
+    // overflow the height — not at all on the 418px canvas (~99% × 97%), by
+    // about a seventh on 360px (~99% × 114%).
+    expect(drawnW / canvas.width, `${canvas.height}`).toBeGreaterThan(0.9);
+    expect(drawnH / canvas.height, `${canvas.height}`).toBeLessThan(canvas.height >= 418 ? 1.02 : 1.2);
+    expect(overlaps(positions)).toBe(0);
+  }
+  // A tall canvas gets a tall drawing.
+  const full = searchResult();
+  const { w, h } = fitZoom(layoutRecordGraph(full.records, full.edges, 'force', { width: 418, height: 1160 }));
+  expect(h).toBeGreaterThan(w);
+});
+
 test('radial rings are shaped to a wide canvas and spaced by arc length', () => {
   const full = searchResult();
   const positions = layoutRecordGraph(full.records, full.edges, 'radial', CANVAS);

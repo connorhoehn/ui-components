@@ -70,9 +70,9 @@ describe('fitTransform — insets and the label floor', () => {
     expect(0 * wide.scale + wide.y).toBeCloseTo(32);
   });
 
-  it('keeps the automatic floor at 0.9 and the fit-all floor at 0.5', () => {
+  it('keeps the automatic floor at 0.9 and the fit-all floor at 0.3 (0.5 before 2.403.5)', () => {
     expect(ORG_FIT_MIN_ZOOM).toBe(0.9);
-    expect(ORG_FIT_ALL_MIN_ZOOM).toBe(0.5);
+    expect(ORG_FIT_ALL_MIN_ZOOM).toBe(0.3);
     // The same overflowing box fits whole under the fit-all floor.
     const all = fitTransform({ minX: 0, minY: 0, maxX: 900, maxY: 600 }, size, 32, 1.25, ORG_FIT_ALL_MIN_ZOOM, { left: 200 });
     expect(all.scale).toBeCloseTo(436 / 600);

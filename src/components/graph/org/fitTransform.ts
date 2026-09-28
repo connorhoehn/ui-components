@@ -44,9 +44,11 @@ export const ORG_FIT_MIN_ZOOM = 0.9;
  * Hard floor of "Fit to view" / `OrgGraphHandle.fitAll()`, which fit the
  * whole drawn set with no readability floor — the viewer asked to see
  * everyone at once. Only a set that does not fit even at this zoom overflows.
- * Since 2.403.4.
+ * Since 2.403.4; 0.3 since 2.403.5 (was 0.5, where a whole org in Radial
+ * still left 17 of 56 people off a 1160 × 360 canvas) — the pan/zoom's own
+ * minimum.
  */
-export const ORG_FIT_ALL_MIN_ZOOM = 0.5;
+export const ORG_FIT_ALL_MIN_ZOOM = 0.3;
 
 /**
  * The zoom cluster's box in the canvas's bottom-right corner, margins

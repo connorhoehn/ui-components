@@ -23,8 +23,10 @@
 // Fit to view vs the automatic fit (2.403.4): the automatic fit keeps the
 // readability floor (`minFitZoom`, default `ORG_FIT_MIN_ZOOM` 0.9 — 9px
 // names), while "Fit to view" and `ref.fitAll()` fit the whole drawn set with
-// no floor (down to `ORG_FIT_ALL_MIN_ZOOM`, 0.5), so the viewer can choose to
-// see everyone at once. The zoom cluster's corner is kept clear by the fit.
+// no floor (down to `ORG_FIT_ALL_MIN_ZOOM`, 0.3 since 2.403.5), so the viewer
+// can choose to see everyone at once. The zoom cluster's corner is kept clear
+// by the fit. Radial rings (2.403.5) are ellipses shaped to the clear area and
+// spaced from the head count (`orgRadialRings`).
 
 import { useState, useRef, useCallback, useEffect, useId, useImperativeHandle, useMemo, type Ref } from 'react';
 import type { MouseEvent as ReactMouseEvent, WheelEvent as ReactWheelEvent } from 'react';
@@ -110,7 +112,7 @@ export interface OrgGraphProps {
 export interface OrgGraphHandle {
   /**
    * Fit the whole drawn set with no readability floor (down to
-   * `ORG_FIT_ALL_MIN_ZOOM`), exactly as the "Fit to view" control does. The
+   * `ORG_FIT_ALL_MIN_ZOOM`, 0.3), exactly as the "Fit to view" control does. The
    * view stays in this mode — re-fitting on a resize — until the viewer pans
    * or zooms or the drawn set changes.
    */

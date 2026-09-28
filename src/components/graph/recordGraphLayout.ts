@@ -6,6 +6,7 @@
 // deterministic starting points, so the same input always lands the same way.
 
 import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation, forceX, forceY } from 'd3-force';
+import { reserveCorner, type FitInset } from './org/fitTransform';
 
 export type RecordGraphType = 'person' | 'initiative' | 'work' | 'decision' | 'knowledge' | 'asset';
 export type RecordGraphLayout = 'force' | 'radial' | 'hierarchy';
@@ -77,6 +78,11 @@ export interface RecordForceParams {
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
+/** The canvas's width:height in the force simulation's space, where y is stretched so the node box is square. */
+function recordSimAspect(width: number, height: number): number {
+  return (Math.max(1, width) / Math.max(1, height)) * (RECORD_GRAPH_NODE_HEIGHT / RECORD_GRAPH_NODE_WIDTH);
+}
+
 /**
  * The force layout's parameters for `count` records on a `width` × `height`
  * canvas, like the org graph's `forceParamsFor`: the canvas at the fit floor
@@ -94,14 +100,26 @@ export function recordForceParams(count: number, width = DEFAULT_CANVAS.width, h
   const spacing = Math.sqrt((w * h) / n);
   // The simulation runs with y stretched so the (wider than tall) node box is
   // square — its canvas is correspondingly taller.
-  const aspect = (w / h) * (RECORD_GRAPH_NODE_HEIGHT / RECORD_GRAPH_NODE_WIDTH);
-  const K = 0.2;
+  const aspect = recordSimAspect(width, height);
+  // How full the canvas is at the floor: each record takes its box plus a gap.
+  const crowd = (n * (RECORD_GRAPH_NODE_WIDTH + 32) * (RECORD_GRAPH_NODE_HEIGHT + 24)) / (w * h);
+  // 0 for a sparse set (a dozen on the search page's canvas), 1 once it packs.
+  const t = clamp((crowd - 0.35) / 0.35, 0, 1);
+  const K = 0.2 + 0.1 * t;
+  const shape = Math.pow(aspect, 1 + t);
   return {
     linkDistance: clamp(spacing * 0.75, 130, 240),
     charge: -clamp((spacing * spacing) / 60, 300, 1200),
-    collide: RECORD_GRAPH_NODE_WIDTH / 2 + 16,
-    xStrength: clamp(K / aspect, 0.01, 0.3),
-    yStrength: clamp(K * aspect, 0.01, 0.6),
+    // + 20: two collide circles 180 apart clear the boxes at every angle (at
+    // + 16 a diagonal neighbour overlapped a box corner by 4px).
+    collide: RECORD_GRAPH_NODE_WIDTH / 2 + 20,
+    // A packed set's outline is an equipotential of the pulls, so the pulls
+    // go as aspect² once the set packs — it then fills the canvas's width
+    // before it overflows its height (2.403.5; aspect¹ left 25 records on a
+    // 1160 × 418 canvas 82% wide and 117% tall). A sparse set keeps aspect¹,
+    // which already spreads it, so a dozen still read at 100%.
+    xStrength: clamp(K / shape, 0.005, 1),
+    yStrength: clamp(K * shape, 0.005, 1),
   };
 }
 
@@ -322,9 +340,12 @@ export function layoutRecordGraph(
   const squash = RECORD_GRAPH_NODE_HEIGHT / RECORD_GRAPH_NODE_WIDTH;
   const params = recordForceParams(ids.length, width, height);
   const start = params.linkDistance;
+  // Start from an ellipse of the canvas's (simulation-space) shape, not a
+  // circle, so the pulls do not have to drag a round blob wide (2.403.5).
+  const stretch = recordSimAspect(width, height);
   const nodes = ordered.map((id, index) => {
     const r = start * Math.sqrt((index + 0.5) / ordered.length) * 1.5;
-    return { id, x: Math.cos(index * 2.4) * r, y: Math.sin(index * 2.4) * r };
+    return { id, x: Math.cos(index * 2.4) * r * stretch, y: Math.sin(index * 2.4) * r / stretch };
   });
   // Deterministic initial positions and a stopped simulation avoid background
   // timers and layout jitter.
@@ -339,6 +360,11 @@ export function layoutRecordGraph(
     .force('y', forceY(0).strength(params.yStrength))
     .force('center', forceCenter(0, 0)).stop();
   simulation.tick(300);
+  // The aspect-shaped pulls can press a packed set harder than collide pushes
+  // back, so finish with collide alone: overlapping boxes step apart and
+  // nothing else moves (2.403.5).
+  simulation.force('link', null).force('charge', null).force('x', null).force('y', null).force('center', null);
+  simulation.tick(80);
   nodes.forEach(node => positions.set(node.id, { x: node.x, y: node.y * squash }));
   return positions;
 }
@@ -350,36 +376,112 @@ export interface RecordGraphViewport {
   zoom: number;
 }
 
+/**
+ * Floor of the whole-graph fit the viewer asks for — the second "Fit to view"
+ * press and `RecordGraphHandle.fitAll()` — which, like the org graph's
+ * `fitAll`, trades the readability floor for seeing everything at once. The
+ * automatic fit keeps `RECORD_GRAPH_MIN_FIT_ZOOM`. Since 2.403.5.
+ */
+export const RECORD_GRAPH_FIT_ALL_MIN_ZOOM = 0.5;
+
+/**
+ * The zoom cluster plus the full-screen button in the canvas's bottom-right
+ * corner, margins included (`bottom-3 right-3`, a 34px-tall toolbar about
+ * 196px wide). The fit keeps the drawing clear of it. Since 2.403.5.
+ */
+export const RECORD_GRAPH_CONTROLS_SIZE = { width: 212, height: 48 } as const;
+
+/** Screen px between an overlay's box and the fitted drawing. */
+const OVERLAY_GAP = 8;
+/** Screen px a focus node's circle keeps from the canvas edge when nothing else fits. */
+const FOCUS_EDGE_MARGIN = 16;
+
+/**
+ * The bottom-left legend's box for these type labels on a `canvasWidth`
+ * canvas, margins included: 12px text on a bordered pill (`bottom-3 left-3`),
+ * capped at the canvas less 18rem, wrapping into rows past that. An estimate
+ * from the label lengths — the fit reserves it before the legend is measured.
+ * Since 2.403.5.
+ */
+export function recordGraphLegendSize(labels: readonly string[], canvasWidth: number): { width: number; height: number } {
+  if (!labels.length) return { width: 0, height: 0 };
+  const items = labels.map(label => 14 + Math.ceil(label.length * 5.6));
+  const natural = 22 + items.reduce((sum, w) => sum + w, 0) + 12 * (labels.length - 1);
+  const cap = Math.max(120, canvasWidth - 288);
+  const rows = Math.max(1, Math.ceil(natural / cap));
+  return { width: Math.min(natural, cap) + 12, height: 14 + rows * 16 + (rows - 1) * 4 + 12 };
+}
+
+/**
+ * Insets that keep the bottom-left legend and the bottom-right controls clear:
+ * each corner is reserved along the bottom or its side edge, whichever costs
+ * the smaller share of the clear area (the org graph's `reserveCorner`,
+ * mirrored for the left corner). On a wide canvas both land on the bottom, so
+ * one band clears both. Since 2.403.5.
+ */
+export function recordGraphInset(
+  size: { width: number; height: number },
+  overlays: { legend?: { width: number; height: number } | null; controls?: { width: number; height: number } | null },
+): Required<FitInset> {
+  let inset: Required<FitInset> = { left: 0, right: 0, top: 0, bottom: 0 };
+  if (overlays.controls && overlays.controls.width > 0) inset = reserveCorner(inset, size, overlays.controls);
+  if (overlays.legend && overlays.legend.width > 0) {
+    const mirrored = reserveCorner({ ...inset, left: inset.right, right: inset.left }, size, overlays.legend);
+    inset = { ...mirrored, left: mirrored.right, right: mirrored.left };
+  }
+  return inset;
+}
+
 export interface RecordGraphViewportOptions {
   /**
    * `focus` frames `focusKeys` + their neighbours (`fitKeys`) when they fit at
    * or above the floor; at the floor it centres on the largest of the whole
    * graph, the neighbourhood and the focus itself that fits, per axis, so the
-   * focus is never clipped while it fits. `all` frames the whole graph, and
-   * where it overflows at the floor aligns it top-left so the viewer pans.
+   * focus is never clipped while it fits. When the focus's boxes do not fit
+   * the clear area they are kept 16px inside the canvas, and when they do not
+   * fit that either, its avatar circles are kept in view (2.403.5). `all` frames the
+   * whole graph, and where it overflows at the floor aligns it top-left so
+   * the viewer pans.
    */
   mode: 'focus' | 'all';
   /** The focus records themselves (usually the selection) — never clipped when they fit. */
   focusKeys?: readonly string[];
   /** Focus plus direct neighbours (`recordGraphFitKeys`). Framed first when it fits. */
   fitKeys?: readonly string[];
-  /** Screen px kept clear on every side. Default 24. */
+  /** Screen px kept clear on every side (at least 16). Default 24. */
   padding?: number;
+  /**
+   * Screen px along each edge taken by an overlay — `recordGraphInset` for the
+   * legend and controls. The drawing keeps `padding`, or the inset plus an
+   * 8px gap where that is more, from each edge. Since 2.403.5.
+   */
+  inset?: FitInset;
   minZoom?: number;
   maxZoom?: number;
 }
 
 interface Box { x0: number; y0: number; x1: number; y1: number }
 
-function boxOf(positions: ReadonlyMap<string, { x: number; y: number }>, keys: Iterable<string>): Box | null {
+/** Where a node's parts sit inside its box, flow px. */
+interface NodePart { x0: number; y0: number; x1: number; y1: number }
+const WHOLE_NODE: NodePart = { x0: 0, y0: 0, x1: RECORD_GRAPH_NODE_WIDTH, y1: RECORD_GRAPH_NODE_HEIGHT };
+/**
+ * The avatar circle: 48px, 4px below the node's top and centred, plus 6px for
+ * the selection ring (2px + 2px offset) and the check badge.
+ */
+const NODE_CIRCLE: NodePart = {
+  x0: RECORD_GRAPH_NODE_WIDTH / 2 - 30, y0: -2, x1: RECORD_GRAPH_NODE_WIDTH / 2 + 30, y1: 58,
+};
+
+function boxOf(positions: ReadonlyMap<string, { x: number; y: number }>, keys: Iterable<string>, part: NodePart = WHOLE_NODE): Box | null {
   let box: Box | null = null;
   for (const key of keys) {
     const p = positions.get(key);
     if (!p) continue;
-    const x1 = p.x + RECORD_GRAPH_NODE_WIDTH, y1 = p.y + RECORD_GRAPH_NODE_HEIGHT;
+    const x0 = p.x + part.x0, y0 = p.y + part.y0, x1 = p.x + part.x1, y1 = p.y + part.y1;
     box = box
-      ? { x0: Math.min(box.x0, p.x), y0: Math.min(box.y0, p.y), x1: Math.max(box.x1, x1), y1: Math.max(box.y1, y1) }
-      : { x0: p.x, y0: p.y, x1, y1 };
+      ? { x0: Math.min(box.x0, x0), y0: Math.min(box.y0, y0), x1: Math.max(box.x1, x1), y1: Math.max(box.y1, y1) }
+      : { x0, y0, x1, y1 };
   }
   return box;
 }
@@ -389,37 +491,66 @@ function boxOf(positions: ReadonlyMap<string, { x: number; y: number }>, keys: I
  * canvas without going below `minZoom` (default `RECORD_GRAPH_MIN_FIT_ZOOM`)
  * or above `maxZoom` (default `RECORD_GRAPH_MAX_FIT_ZOOM`). Pure, so a host or
  * test can check what a fit shows. Null when nothing is positioned or the
- * canvas is unmeasured. Since 2.403.4.
+ * canvas is unmeasured. Since 2.403.4; `inset` and the circles-first focus
+ * fallback since 2.403.5.
  */
 export function recordGraphViewport(
   positions: ReadonlyMap<string, { x: number; y: number }>,
   size: { width: number; height: number },
   options: RecordGraphViewportOptions,
 ): RecordGraphViewport | null {
-  const { padding = 24, minZoom = RECORD_GRAPH_MIN_FIT_ZOOM, maxZoom = RECORD_GRAPH_MAX_FIT_ZOOM } = options;
+  const { minZoom = RECORD_GRAPH_MIN_FIT_ZOOM, maxZoom = RECORD_GRAPH_MAX_FIT_ZOOM, inset = {} } = options;
+  const padding = Math.max(FOCUS_EDGE_MARGIN, options.padding ?? 24);
   const all = boxOf(positions, positions.keys());
   if (!all || size.width <= 0 || size.height <= 0) return null;
-  const availW = Math.max(1, size.width - 2 * padding);
-  const availH = Math.max(1, size.height - 2 * padding);
+  // The clear area: padding from each edge, or an overlay's inset plus a gap.
+  const edge = (v: number | undefined) => (v && v > 0 ? Math.max(padding, v + OVERLAY_GAP) : padding);
+  const clear = {
+    x0: edge(inset.left), x1: size.width - edge(inset.right),
+    y0: edge(inset.top), y1: size.height - edge(inset.bottom),
+  };
+  const availW = Math.max(1, clear.x1 - clear.x0);
+  const availH = Math.max(1, clear.y1 - clear.y0);
   const rawZoom = (box: Box) => Math.min(availW / (box.x1 - box.x0), availH / (box.y1 - box.y0));
   const focus = options.mode === 'focus' ? boxOf(positions, options.focusKeys ?? []) : null;
+  const circles = focus ? boxOf(positions, options.focusKeys ?? [], NODE_CIRCLE) : null;
   const near = focus ? boxOf(positions, options.fitKeys?.length ? options.fitKeys : options.focusKeys ?? []) : null;
-  // Per axis: centre the first candidate that fits; start-align the last if none does.
+  // Per axis: centre the first candidate that fits. When none does, a focus
+  // keeps its circles in view (in the clear area, else within 16px of the
+  // canvas edge), as close to centring its boxes as that allows; otherwise
+  // the last candidate is start-aligned.
   const place = (zoom: number, candidates: Box[]): RecordGraphViewport => {
-    const axis = (lo: 'x0' | 'y0', hi: 'x1' | 'y1', canvas: number, avail: number) => {
+    const axis = (lo: 'x0' | 'y0', hi: 'x1' | 'y1', start: number, end: number, canvas: number) => {
       for (const box of candidates) {
         const span = (box[hi] - box[lo]) * zoom;
-        if (span <= avail + 0.5) return canvas / 2 - ((box[lo] + box[hi]) / 2) * zoom;
+        if (span <= end - start + 0.5) return (start + end) / 2 - ((box[lo] + box[hi]) / 2) * zoom;
       }
-      return padding - candidates[candidates.length - 1]![lo] * zoom;
+      if (focus && circles) {
+        // As centred on the focus as the first of these allows: its whole
+        // boxes 16px inside the canvas (over an overlay's corner if need be),
+        // then its circles in the clear area, then its circles 16px inside.
+        const centred = (start + end) / 2 - ((focus[lo] + focus[hi]) / 2) * zoom;
+        const inner: [number, number] = [FOCUS_EDGE_MARGIN, canvas - FOCUS_EDGE_MARGIN];
+        const tries: Array<[Box, number, number]> = [[focus, ...inner], [circles, start, end], [circles, ...inner]];
+        for (const [box, s, e] of tries) {
+          const min = s - box[lo] * zoom, max = e - box[hi] * zoom;
+          if (min <= max + 0.5) return clamp(centred, min, Math.max(min, max));
+        }
+        return FOCUS_EDGE_MARGIN - circles[lo] * zoom;
+      }
+      return start - candidates[candidates.length - 1]![lo] * zoom;
     };
-    return { x: axis('x0', 'x1', size.width, availW), y: axis('y0', 'y1', size.height, availH), zoom };
+    return {
+      x: axis('x0', 'x1', clear.x0, clear.x1, size.width),
+      y: axis('y0', 'y1', clear.y0, clear.y1, size.height),
+      zoom,
+    };
   };
   if (focus && near) {
     const nearZoom = rawZoom(near);
     if (nearZoom >= minZoom) return place(Math.min(nearZoom, maxZoom), [near]);
     // At the floor: the whole graph if it fits on an axis, else the
-    // neighbourhood, else the focus itself (top-left of it when even that overflows).
+    // neighbourhood, else the focus itself, else the focus's circles.
     return place(minZoom, [all, near, focus]);
   }
   return place(clamp(rawZoom(all), minZoom, maxZoom), [all]);

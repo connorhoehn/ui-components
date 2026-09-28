@@ -3,7 +3,8 @@ import { createRef } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { RecordGraph, type RecordGraphHandle, type RecordGraphProps } from '../RecordGraph';
 import {
-  layoutRecordGraph, recordGraphFitKeys, recordGraphViewport, RECORD_GRAPH_MIN_FIT_ZOOM,
+  layoutRecordGraph, recordGraphFitKeys, recordGraphInset, recordGraphLegendSize, recordGraphViewport,
+  RECORD_GRAPH_CONTROLS_SIZE, RECORD_GRAPH_FIT_ALL_MIN_ZOOM, RECORD_GRAPH_MIN_FIT_ZOOM,
   RECORD_GRAPH_NODE_HEIGHT, RECORD_GRAPH_NODE_WIDTH, type RecordGraphEdge, type RecordGraphRecord,
 } from '../recordGraphLayout';
 
@@ -380,6 +381,88 @@ describe('RecordGraph', () => {
       expect(flow.viewport).toEqual(focusView);
       expectInside(FOCUS);
     });
+
+    // 2.403.5 — the journey residues.
+    /** Screen rect of a record's avatar circle (48px + the 6px selection ring/check). */
+    function circleOnScreen(key: string) {
+      const box = onScreen(key);
+      const { zoom } = flow.viewport;
+      const cx = (box.x0 + box.x1) / 2;
+      return { x0: cx - 30 * zoom, x1: cx + 30 * zoom, y0: box.y0 - 2 * zoom, y1: box.y0 + 58 * zoom };
+    }
+    const LEGEND_LABELS = ['People', 'Initiatives', 'Work', 'Decisions', 'Knowledge'];
+    /** The legend's and the controls' rectangles on the current canvas. */
+    function overlays() {
+      const legend = recordGraphLegendSize(LEGEND_LABELS, size.width);
+      return [
+        { name: 'legend', x0: 0, x1: legend.width, y0: size.height - legend.height, y1: size.height },
+        { name: 'controls', x0: size.width - RECORD_GRAPH_CONTROLS_SIZE.width, x1: size.width, y0: size.height - RECORD_GRAPH_CONTROLS_SIZE.height, y1: size.height },
+      ];
+    }
+    const intersects = (a: { x0: number; y0: number; x1: number; y1: number }, b: { x0: number; y0: number; x1: number; y1: number }) =>
+      a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0;
+
+    it('at 369px the focus keeps its full boxes 16px inside the canvas, or at least its circles', async () => {
+      for (const layout of ['force', 'radial', 'hierarchy'] as const) {
+        cleanup();
+        setupMany({ layout });
+        await frames();
+        resize(1160, 369); // the answer strip opens under the canvas
+        await frames();
+        expect(flow.viewport.zoom, layout).toBeGreaterThanOrEqual(RECORD_GRAPH_MIN_FIT_ZOOM);
+        const boxes = FOCUS.map(onScreen);
+        const span = Math.max(...boxes.map((b) => b.y1)) - Math.min(...boxes.map((b) => b.y0));
+        if (span <= 369 - 32) {
+          boxes.forEach((box) => {
+            expect(box.y0, layout).toBeGreaterThanOrEqual(16);
+            expect(box.y1, layout).toBeLessThanOrEqual(369 - 16);
+          });
+        }
+        // Either way every selected circle is whole, 16px clear of the edges.
+        FOCUS.map(circleOnScreen).forEach((c) => {
+          expect(c.y0, layout).toBeGreaterThanOrEqual(16 - 0.5);
+          expect(c.y1, layout).toBeLessThanOrEqual(369 - 16 + 0.5);
+          expect(c.x0, layout).toBeGreaterThanOrEqual(16 - 0.5);
+          expect(c.x1, layout).toBeLessThanOrEqual(1160 - 16 + 0.5);
+        });
+      }
+    });
+
+    it('Fit to view (twice) and fitAll() go below the floor to frame everything, clear of the legend and controls', async () => {
+      for (const layout of ['force', 'radial', 'hierarchy'] as const) {
+        cleanup();
+        const ref = createRef<RecordGraphHandle>();
+        measure(1160, 418);
+        render(<RecordGraph ref={ref} layout={layout} records={MANY} edges={MANY_EDGES} selectedKeys={FOCUS} focusKeys={FOCUS}
+          onSelectionChange={vi.fn()} onAskSelection={vi.fn()} />);
+        await frames();
+        expect(flow.viewport.zoom, layout).toBeGreaterThanOrEqual(RECORD_GRAPH_MIN_FIT_ZOOM);
+        act(() => ref.current!.fitAll());
+        expect(flow.viewport.zoom, layout).toBeGreaterThanOrEqual(RECORD_GRAPH_FIT_ALL_MIN_ZOOM);
+        expectInside(KEYS);
+        KEYS.forEach((key) => overlays().forEach((o) => expect(intersects(onScreen(key), o), `${layout} ${key} under the ${o.name}`).toBe(false)));
+      }
+    });
+
+    it('the automatic fit keeps unselected nodes out from under the legend and controls where the graph fits', async () => {
+      // Four records fit at 100%: nothing may sit under either corner.
+      measure(1160, 418);
+      flow.setViewport.mockClear();
+      for (const layout of ['force', 'radial', 'hierarchy'] as const) {
+        cleanup();
+        setup({ layout });
+        await frames();
+        const legend = recordGraphLegendSize(['People', 'Initiatives', 'Work', 'Knowledge'], 1160);
+        const rects = [
+          { x0: 0, x1: legend.width, y0: 418 - legend.height, y1: 418 },
+          { x0: 1160 - RECORD_GRAPH_CONTROLS_SIZE.width, x1: 1160, y0: 418 - RECORD_GRAPH_CONTROLS_SIZE.height, y1: 418 },
+        ];
+        records.forEach((record) => {
+          const box = onScreen(`${record.type}:${record.id}`);
+          rects.forEach((r) => expect(intersects(box, r), `${layout} ${record.title}`).toBe(false));
+        });
+      }
+    });
   });
 
   it('recordGraphViewport keeps the focus box inside the canvas at the floor', () => {
@@ -387,7 +470,8 @@ describe('RecordGraph', () => {
     const keys = recs.map((record) => `work:${record.id}`);
     const chain: RecordGraphEdge[] = keys.slice(1).map((key, i) => ({ id: `e${i}`, source: keys[i]!, target: key, label: 'next' }));
     const positions = layoutRecordGraph(recs, chain, 'force', { width: 800, height: 300 });
-    const focus = [keys[0]!, keys[29]!];
+    // One record mid-chain, framed with its neighbours (2.403.5: the chain's two ends, the old focus, now lie a canvas apart — the force layout spreads along the width — so the focus fallback test below covers them).
+    const focus = [keys[14]!];
     const fit = recordGraphFitKeys(keys, chain, focus);
     const vp = recordGraphViewport(positions, { width: 800, height: 300 }, { mode: 'focus', focusKeys: focus, fitKeys: fit })!;
     expect(vp.zoom).toBeGreaterThanOrEqual(RECORD_GRAPH_MIN_FIT_ZOOM);
@@ -405,5 +489,100 @@ describe('RecordGraph', () => {
       expect(box.y1 * vp.zoom + vp.y).toBeLessThanOrEqual(300);
     }
     expect(recordGraphViewport(new Map(), { width: 800, height: 300 }, { mode: 'all' })).toBeNull();
+  });
+
+  describe('recordGraphViewport — 2.403.5 focus margin and overlay corners', () => {
+    const W = RECORD_GRAPH_NODE_WIDTH, H = RECORD_GRAPH_NODE_HEIGHT;
+    const CANVAS = { width: 1160, height: 369 };
+    const inset = recordGraphInset(CANVAS, {
+      legend: recordGraphLegendSize(['People', 'Initiatives', 'Work'], CANVAS.width), controls: RECORD_GRAPH_CONTROLS_SIZE,
+    });
+    const screenBox = (p: { x: number; y: number }, vp: { x: number; y: number; zoom: number }) => ({
+      y0: p.y * vp.zoom + vp.y, y1: (p.y + H) * vp.zoom + vp.y, x0: p.x * vp.zoom + vp.x, x1: (p.x + W) * vp.zoom + vp.x,
+    });
+    /** A spread of unselected records around three selected people, so nothing but the focus fits at the floor. */
+    function graph(focus: Record<string, { x: number; y: number }>) {
+      const positions = new Map(Object.entries(focus));
+      for (let i = 0; i < 20; i++) positions.set(`work:w${i}`, { x: -900 + (i % 10) * 300, y: -400 + Math.floor(i / 10) * 1200 });
+      return { positions, focusKeys: Object.keys(focus) };
+    }
+
+    it('reserves both bottom corners along the bottom on the search canvas, along the sides on a long strip', () => {
+      expect(inset.bottom).toBe(RECORD_GRAPH_CONTROLS_SIZE.height);
+      expect(inset.left).toBe(0);
+      expect(inset.right).toBe(0);
+      // 6:1 — a side costs less of the clear area than the bottom band.
+      const strip = recordGraphInset({ width: 2400, height: 400 }, { legend: { width: 220, height: 42 }, controls: RECORD_GRAPH_CONTROLS_SIZE });
+      expect(strip.bottom).toBe(0);
+      expect(strip.left).toBe(220);
+      expect(strip.right).toBe(RECORD_GRAPH_CONTROLS_SIZE.width);
+    });
+
+    it('the portal case: a selection 352px tall in a 369px canvas keeps its circles 16px in and its boxes inside (was 7px over)', () => {
+      // Vera's box ends 440 flow px below Nora Chang's top: 352px at the 0.8 floor.
+      const { positions, focusKeys } = graph({
+        'person:nora-c': { x: 0, y: 0 }, 'person:vera': { x: 300, y: 440 - H }, 'person:nora-d': { x: 600, y: 150 },
+      });
+      const vp = recordGraphViewport(positions, CANVAS, { mode: 'focus', focusKeys, fitKeys: focusKeys, inset })!;
+      expect(vp.zoom).toBe(RECORD_GRAPH_MIN_FIT_ZOOM);
+      focusKeys.forEach((key) => {
+        const p = positions.get(key)!;
+        const box = screenBox(p, vp);
+        // 352px of boxes cannot also keep 16px margins in 369px; the circles
+        // keep theirs and the boxes stay on the canvas (the old fit put
+        // Vera's box bottom at 376px).
+        expect((p.y - 2) * vp.zoom + vp.y, key).toBeGreaterThanOrEqual(16 - 0.5);
+        expect(box.y0, key).toBeGreaterThanOrEqual(0);
+        expect(box.y1, key).toBeLessThanOrEqual(CANVAS.height + 1);
+      });
+    });
+
+    it('a selection that fits the canvas less 32px keeps its full boxes 16px inside', () => {
+      const { positions, focusKeys } = graph({
+        'person:nora-c': { x: 0, y: 0 }, 'person:vera': { x: 300, y: 400 - H }, 'person:nora-d': { x: 600, y: 150 },
+      });
+      const vp = recordGraphViewport(positions, CANVAS, { mode: 'focus', focusKeys, fitKeys: focusKeys, inset })!;
+      focusKeys.forEach((key) => {
+        const box = screenBox(positions.get(key)!, vp);
+        expect(box.y0, key).toBeGreaterThanOrEqual(16);
+        expect(box.y1, key).toBeLessThanOrEqual(CANVAS.height - 16);
+      });
+    });
+
+    it('a selection taller than the canvas keeps its circles whole first', () => {
+      const { positions, focusKeys } = graph({
+        'person:nora-c': { x: 0, y: 0 }, 'person:vera': { x: 300, y: 460 - H }, 'person:nora-d': { x: 600, y: 150 },
+      });
+      const vp = recordGraphViewport(positions, CANVAS, { mode: 'focus', focusKeys, fitKeys: focusKeys, inset })!;
+      focusKeys.forEach((key) => {
+        const p = positions.get(key)!;
+        const top = (p.y - 2) * vp.zoom + vp.y, bottom = (p.y + 58) * vp.zoom + vp.y;
+        expect(top, key).toBeGreaterThanOrEqual(16 - 0.5);
+        expect(bottom, key).toBeLessThanOrEqual(CANVAS.height - 16 + 0.5);
+      });
+    });
+
+    it('a graph that fits is drawn clear of the legend and the zoom controls', () => {
+      // 5 × 3 records spanning the canvas: without the keep-out the corners sit under both overlays.
+      const size = { width: 1160, height: 418 };
+      const positions = new Map<string, { x: number; y: number }>();
+      for (let i = 0; i < 15; i++) positions.set(`work:g${i}`, { x: (i % 5) * 220, y: Math.floor(i / 5) * 140 });
+      const legend = recordGraphLegendSize(['Work'], size.width);
+      const rects = [
+        { x0: 0, x1: legend.width, y0: size.height - legend.height, y1: size.height },
+        { x0: size.width - RECORD_GRAPH_CONTROLS_SIZE.width, x1: size.width, y0: size.height - RECORD_GRAPH_CONTROLS_SIZE.height, y1: size.height },
+      ];
+      const hits = (vp: { x: number; y: number; zoom: number }) => [...positions.values()].filter((p) => {
+        const b = screenBox(p, vp);
+        return rects.some((r) => b.x0 < r.x1 && b.x1 > r.x0 && b.y0 < r.y1 && b.y1 > r.y0);
+      }).length;
+      const bare = recordGraphViewport(positions, size, { mode: 'all' })!;
+      expect(hits(bare)).toBeGreaterThan(0);
+      const kept = recordGraphViewport(positions, size, {
+        mode: 'all', inset: recordGraphInset(size, { legend, controls: RECORD_GRAPH_CONTROLS_SIZE }),
+      })!;
+      expect(hits(kept)).toBe(0);
+      expect(kept.zoom).toBeGreaterThanOrEqual(RECORD_GRAPH_MIN_FIT_ZOOM);
+    });
   });
 });

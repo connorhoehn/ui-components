@@ -68,6 +68,20 @@ graph.current?.fitToFocus(); // focus + neighbours; the focus is never clipped w
 graph.current?.fitAll();     // the whole graph, centred or top-left aligned
 ```
 
+Keep-outs and the whole-graph fit (2.403.5): every fit keeps the drawing
+clear of the bottom-left legend and the bottom-right zoom cluster
+(`recordGraphInset(size, { legend: recordGraphLegendSize(labels, width),
+controls: RECORD_GRAPH_CONTROLS_SIZE })`, passed to `recordGraphViewport` as
+`inset`) — each corner is reserved along the bottom or its side, whichever
+costs less, so on the search canvas one bottom band clears both. A focus
+taller than the clear area keeps its whole boxes 16px inside the canvas, and
+when even that is too tall, its avatar circles. The automatic fit keeps the
+0.8 floor; the viewer's whole-graph fit (the second "Fit to view" press, or
+`fitAll()`) may zoom down to `RECORD_GRAPH_FIT_ALL_MIN_ZOOM` (0.5) so the whole
+graph is in view. Force pulls go as the aspect ratio squared once a set packs
+the canvas, and start from an ellipse of the canvas's shape, so 25 records on
+a 1160 × 418 canvas fill its width (~99%) rather than overflow its height.
+
 Edge labels (2.403.4) draw at rest only on edges that touch a selected or
 focused record; the others appear on hover. With nothing selected, a graph of
 ≤ 16 edges labels every edge. Names and status lines sit on a surface pill,
