@@ -188,6 +188,18 @@ export interface ContextComposerProps {
   allowEmoji?: boolean;
   onRequestLink?: RichChatComposerProps['onRequestLink'];
 
+  // ── privacy ──
+  /**
+   * Who will see the message: `visible` (default) or `hidden` (only you — a
+   * private question). Controlled; the toggle appears on the strip only when
+   * `onPrivacyChange` is passed, and the sent message carries `privacy`.
+   */
+  privacy?: RichChatComposerProps['privacy'];
+  /** Turns the privacy toggle on. Apply the value back through `privacy`. */
+  onPrivacyChange?: RichChatComposerProps['onPrivacyChange'];
+  /** The toggle's two labels. Default "Visible to everyone" / "Only you". */
+  privacyLabels?: RichChatComposerProps['privacyLabels'];
+
   // ── conversation only ──
   sendOptions?: readonly ComposerSendOption[];
   onSendOption?: (id: string) => void;
@@ -274,6 +286,8 @@ export interface ContextComposerLook {
   collapseWhenIdle: boolean;
   /** Pass `modes` to the composer (false: undefined → every mode). */
   passModes: boolean;
+  /** One offered mode renders as a static label, not a one-item menu. */
+  singleModeLabel?: boolean;
   className?: string;
 }
 
@@ -316,6 +330,7 @@ export function ContextComposer(props: ContextComposerProps) {
         density: presentation === 'document' ? 'comfortable' : 'compact',
         collapseWhenIdle: true,
         passModes: true,
+        singleModeLabel: true,
         className: DEFAULT_CLASS[context.kind],
       }}
     />
@@ -354,6 +369,9 @@ export function ContextComposerBase({
   allowAttachments = true,
   allowEmoji = true,
   onRequestLink,
+  privacy,
+  onPrivacyChange,
+  privacyLabels,
   sendOptions,
   onSendOption,
   onShareDocument,
@@ -643,6 +661,7 @@ export function ContextComposerBase({
                 mode={mode}
                 onModeChange={handleModeChange}
                 modeControl="menu"
+                singleModeLabel={!!look.singleModeLabel}
                 layout="auto"
                 toolbar={look.toolbar}
                 density={look.density}
@@ -655,6 +674,9 @@ export function ContextComposerBase({
                 allowAttachments={allowAttachments && !chatOnlyAttachments}
                 allowEmoji={f.emoji && allowEmoji}
                 onRequestLink={onRequestLink}
+                privacy={privacy}
+                onPrivacyChange={onPrivacyChange}
+                privacyLabels={privacyLabels}
                 references={allReferences}
                 onRemoveReference={referencesRemovable ? removeReference : undefined}
                 modes={look.passModes ? modes : modesProp}

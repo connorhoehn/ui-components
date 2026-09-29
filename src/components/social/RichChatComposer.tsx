@@ -559,6 +559,15 @@ export interface RichChatComposerProps {
    * with it, so pass none.
    */
   hideModeMenu?: boolean;
+  /**
+   * With exactly one offered mode, name it as a static label instead of a
+   * one-item switch: the mode's glyph and name where the pill or `Mode ⌄` sits,
+   * no chevron, no menu, no `⌥1` badge — a call chat reads "Chat". Keeps the
+   * `<testId>-mode-pill` test id and adds `data-single-mode="true"`. With the
+   * docked card, `moreActions` move to the strip's `⋯`. Default false (the
+   * one-item menu). `ContextComposer` sets it. Since 2.407.2.
+   */
+  singleModeLabel?: boolean;
   /** After the references in the docked header row — an "add another" control. Shown even with no references. */
   referencesAction?: ReactNode;
   /**
@@ -996,6 +1005,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   onSuggestion,
   modeRowEnd,
   hideModeMenu = false,
+  singleModeLabel = false,
   referencesAction,
   referencesPlacement = 'end',
   referenceDrop,
@@ -1062,6 +1072,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // Shortcuts and triggers switch modes on the host's behalf, so they exist
   // only where the host can be told (`onModeChange`) and the mode can move.
   const switchable = !!onModeChange && !fixedMode;
+  // One offered mode, named rather than switched (`singleModeLabel`).
+  const singleMode = singleModeLabel && modesEnabled && !fixedMode && offeredModes.length === 1;
   const shellInputRef = useRef<HTMLInputElement | null>(null);
   /** Set by a shortcut or trigger: the next render moves focus to the new mode's input. */
   const focusAfterSwitchRef = useRef(false);
@@ -2132,7 +2144,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // The editor dock has no `?` and no `⋯` on its strip (the mockup's strip
   // ends in `/ commands` and Send): what they held — the two folded marks,
   // the host's actions, the keys — is under `Agent ⌄` after the modes.
-  const showMoreActions = !!moreActions?.length && !docked;
+  // A single-mode label has no menu to hold them: they go back to the `⋯`.
+  const showMoreActions = !!moreActions?.length && (!docked || singleMode);
   const inlineCommand = docked && !!activeCommand && !collapsed && !terminalMode;
   // The prompt card's chip: the typed command, else the host's default.
   const chipCommand = promptCard && !collapsed && !terminalMode
@@ -2503,7 +2516,17 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             {docked && modeRowStart != null && (
               <span className="flex shrink-0 items-center" data-testid={`${testId}-mode-row-start`}>{modeRowStart}</span>
             )}
-            {menuModeRow ? (hideModeMenu && docked ? null : (
+            {singleMode ? (
+              // One mode: its name, not a one-item switch.
+              <span
+                className={cn('flex items-center gap-1.5 px-1.5 py-0.5 text-text-primary', basicBox ? 'gap-2 font-medium' : 'font-semibold', docked ? 'text-[15px]' : 'text-sm')}
+                data-testid={`${testId}-mode-pill`}
+                data-single-mode="true"
+              >
+                {!basicBox && <span aria-hidden="true" className={cn('flex justify-center text-primary', docked ? 'w-5' : 'w-4')}>{docked && activeMode === 'agent' ? <SparkleIcon size={18} /> : MODE_ICON[activeMode]}</span>}
+                <span data-testid={`${testId}-mode-label`}>{MODE_NAMES[activeMode]}</span>
+              </span>
+            ) : menuModeRow ? (hideModeMenu && docked ? null : (
               // One control: the mode's glyph and name, a ▾, the other modes
               // in a menu with their shortcuts and, when off, the reason.
               <DropdownMenu
@@ -2543,7 +2566,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               {MODE_NAMES[activeMode]}
             </span>
             )}
-            {!menuModeRow && (
+            {!menuModeRow && !singleMode && (
             <span role="group" aria-label="Composer mode" className="flex items-center gap-0.5">
               {offeredModes.map((m, i) => {
                 const unavailable = isModeDisabled(m);
@@ -2571,7 +2594,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               })}
             </span>
             )}
-            {modeShortcuts && !narrow && !(docked && hideModeMenu) && (
+            {modeShortcuts && !narrow && !singleMode && !(docked && hideModeMenu) && (
               <kbd className={cn('bg-surface-inset font-mono text-text-secondary', docked ? 'rounded-md px-1.5 py-0.5 text-xs' : 'rounded border border-border px-1', !docked && (menuModeRow ? 'py-0.5 text-[11px]' : 'text-[10px]'))} data-testid={`${testId}-mode-kbd`}>
                 ⌥{offeredModes.indexOf(activeMode) + 1}
               </kbd>
@@ -2691,7 +2714,19 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             such as a disabled reason, used to wrap past the input and draw over
             the rows below. The whole text stays reachable as a tooltip while
             the box is empty. */}
-        {collapsed && modesEnabled && !fixedMode && (
+        {collapsed && singleMode && (
+          // One mode: the same pill, as a label — nothing to switch to.
+          <span
+            title={MODE_NAMES[activeMode]}
+            data-testid={`${testId}-mode-pill`}
+            data-single-mode="true"
+            className="mb-1.5 ml-1.5 flex shrink-0 items-center gap-1 self-end rounded-full bg-surface-inset px-2 py-0.5 text-xs font-semibold text-text-secondary"
+          >
+            <span aria-hidden="true" className="flex w-4 justify-center">{MODE_ICON[activeMode]}</span>
+            {MODE_NAMES[activeMode]}
+          </span>
+        )}
+        {collapsed && modesEnabled && !fixedMode && !singleMode && (
           // The idle row's mode pill: which mode Enter is in, at a glance.
           // Pressing it puts the caret in the input (the full composer, mode
           // switch included, comes back) — on click, after the pointer is up.

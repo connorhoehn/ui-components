@@ -587,6 +587,16 @@ export declare interface ContextComposerProps {
     /** Default true. */
     allowEmoji?: boolean;
     onRequestLink?: RichChatComposerProps['onRequestLink'];
+    /**
+     * Who will see the message: `visible` (default) or `hidden` (only you — a
+     * private question). Controlled; the toggle appears on the strip only when
+     * `onPrivacyChange` is passed, and the sent message carries `privacy`.
+     */
+    privacy?: RichChatComposerProps['privacy'];
+    /** Turns the privacy toggle on. Apply the value back through `privacy`. */
+    onPrivacyChange?: RichChatComposerProps['onPrivacyChange'];
+    /** The toggle's two labels. Default "Visible to everyone" / "Only you". */
+    privacyLabels?: RichChatComposerProps['privacyLabels'];
     sendOptions?: readonly ComposerSendOption[];
     onSendOption?: (id: string) => void;
     /** "Share a document" on the strip. Receives the button, to anchor a picker. */
@@ -1191,6 +1201,15 @@ export declare interface RichChatComposerProps {
      * with it, so pass none.
      */
     hideModeMenu?: boolean;
+    /**
+     * With exactly one offered mode, name it as a static label instead of a
+     * one-item switch: the mode's glyph and name where the pill or `Mode ⌄` sits,
+     * no chevron, no menu, no `⌥1` badge — a call chat reads "Chat". Keeps the
+     * `<testId>-mode-pill` test id and adds `data-single-mode="true"`. With the
+     * docked card, `moreActions` move to the strip's `⋯`. Default false (the
+     * one-item menu). `ContextComposer` sets it. Since 2.407.2.
+     */
+    singleModeLabel?: boolean;
     /** After the references in the docked header row — an "add another" control. Shown even with no references. */
     referencesAction?: ReactNode;
     /**
@@ -1312,19 +1331,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -1344,9 +1350,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
         };
     }
 }
@@ -1403,9 +1412,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -1416,6 +1425,16 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

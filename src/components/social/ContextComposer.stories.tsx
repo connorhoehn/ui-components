@@ -153,3 +153,49 @@ export const Interactive: Story = {
     );
   },
 };
+
+/** One mode (a call chat, a document's chat): the mode is a static label — "Chat", no ⌄, no menu. */
+export const SingleMode: Story = {
+  name: 'Single mode — static label',
+  render: () => (
+    <div className="grid grid-cols-1 gap-4 bg-surface p-4 lg:grid-cols-2">
+      {([false, true] as const).map((expanded) => (
+        <Panel key={`call-${expanded}`} theme="light" caption={`call chat · ${expanded ? 'expanded' : 'idle'}`}>
+          <ContextComposer context={CONTEXTS.conversation!} modes={['chat']} expanded={expanded} onSend={() => true} />
+        </Panel>
+      ))}
+      {([false, true] as const).map((expanded) => (
+        <Panel key={`doc-${expanded}`} theme="dark" caption={`document chat · ${expanded ? 'expanded' : 'idle'}`}>
+          <ContextComposer context={CONTEXTS.document!} modes={['chat']} expanded={expanded} onSend={() => true} />
+        </Panel>
+      ))}
+    </div>
+  ),
+};
+
+const DOCS = [
+  { id: 'doc-adr', label: 'ADR: Aurora over Neptune' },
+  { id: 'doc-runbook', label: 'Cutover runbook' },
+];
+
+/** Private vs shared questions (a transcript's Ask column): the eye toggle on the strip, and `#` to cite a document. */
+export const Privacy: Story = {
+  name: 'Privacy toggle + # documents',
+  render: () => {
+    const [privacy, setPrivacy] = useState<'visible' | 'hidden'>('hidden');
+    return (
+      <div className="flex min-h-[20rem] flex-col justify-end gap-3 bg-workspace p-4">
+        <ContextComposer
+          context={{ kind: 'conversation', id: 'transcript-ask', title: 'Ask the transcript' }}
+          modes={['chat']}
+          expanded
+          privacy={privacy}
+          onPrivacyChange={setPrivacy}
+          privacyLabels={{ visible: 'Shared with the call', hidden: 'Only you' }}
+          onSearchDocuments={(q) => DOCS.filter((d) => d.label.toLowerCase().includes(q.toLowerCase()))}
+          onSend={() => true}
+        />
+      </div>
+    );
+  },
+};

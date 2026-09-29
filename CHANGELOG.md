@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.407.2
+
+- `ContextComposer`: a composer with exactly one offered mode (the preset's, or the `modes` prop's) names the mode as a static label instead of a one-item `Mode ⌄` menu — a call chat or a document's chat (`modes={['chat']}`) reads "Chat", and a search (Agent only) reads "Agent". Idle and expanded it is a `<span data-testid="<composerTestId>-mode-pill" data-single-mode="true">` with the mode's glyph and name (expanded: the menu trigger's typography, name in `<composerTestId>-mode-label`); no chevron, no menu, no `⌥1` badge, and nothing to switch to. With the docked card, page actions (`onMakeDeck`, `moreActions`) move to the strip's `⋯`. Two or more modes are unchanged. Backed by a new `RichChatComposer` prop `singleModeLabel` (default false, so `AgentComposerDock` and other `RichChatComposer` hosts keep the one-item menu).
+- `ContextComposer`: `privacy?: 'visible' | 'hidden'`, `onPrivacyChange?`, `privacyLabels?` — passed straight to `RichChatComposer`, so the eye toggle renders on the strip where it always has (only when `onPrivacyChange` is passed) and the sent message carries `privacy`. For private vs shared questions (the transcript's Ask column).
+- `ContextComposer`: `onSearchDocuments` (the `#` picker) was already a pass-through in every context; now covered by a test per context kind, including a transcript-style chat-only conversation.
+
 ## 2.407.1
 
 - `ScopeHeader variant="inline"`: the row never wraps or grows. The crumbs are drawn by the inline trail itself (no longer `Breadcrumbs`, whose `<li>` let a label wrap): each crumb is `truncate whitespace-nowrap` with a cap (`max-w-[10rem]`, the last crumb `max-w-[14rem]`) and its full label as `title`; the crumb list is `shrink-[100]` against the title's `shrink`, so the crumbs give up width before the title; and when a crumb is squeezed below its cap anyway the middle collapses to "…" (first and last kept, the hidden labels in its `title`, `data-collapsed="true"` on the nav) before the title loses more. The right cluster (tabs, controls) stays `shrink-0`. Found on the portal's scoped search: "Org › Search › Design System API" with three tabs, four chips and a link wrapped the last crumb onto three lines (58px inside the 48px row) and cut the title to "component c…". Each crumb carries `data-testid="<testid>-crumb"`; the "…" is `<testid>-crumbs-more`.

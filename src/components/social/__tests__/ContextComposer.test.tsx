@@ -205,10 +205,10 @@ describe('ContextComposer — gating (context allows AND callback passed)', () =
 describe('ContextComposer — modes override', () => {
   it('modes replaces the context’s set', async () => {
     setup({ context: DM, modes: ['agent'], expanded: true });
-    const list = await openModeMenu();
-    const rows = within(within(list).getAllByRole('group')[0]!).getAllByRole('menuitem');
-    expect(rows).toHaveLength(1);
-    expect(rows[0]).toHaveTextContent('Agent');
+    // One mode left: named, not switched (see "single mode" below).
+    expect(screen.getByTestId('composer-mode-pill')).toHaveTextContent('Agent');
+    expect(screen.queryByTestId('composer-mode-menu')).toBeNull();
+    expect(screen.queryByText('Chat')).toBeNull();
   });
 
   it('modes on a document drops the default-off Terminal when not named', async () => {
@@ -276,4 +276,91 @@ describe('ContextComposer — replacement', () => {
 it('the root (lazy) export renders the same composite', async () => {
   render(<LazyContextComposer context={DM} onSend={() => true} />);
   expect(await screen.findByRole('region', { name: 'Message composer' })).toBeInTheDocument();
+});
+
+describe('ContextComposer — single mode', () => {
+  it('a call chat (conversation, modes=[chat]) reads "Chat" as a static label, idle and expanded', async () => {
+    const onModeChange = vi.fn();
+    setup({ context: DM, modes: ['chat'], onModeChange });
+    const idle = screen.getByTestId('composer-mode-pill');
+    expect(idle.tagName).toBe('SPAN');
+    expect(idle).toHaveAttribute('data-single-mode', 'true');
+    expect(idle).toHaveTextContent('Chat');
+    await focus();
+    const pill = screen.getByTestId('composer-mode-pill');
+    expect(pill).toHaveAttribute('data-single-mode', 'true');
+    expect(pill).toHaveTextContent('Chat');
+    expect(pill.closest('button')).toBeNull();
+    expect(screen.queryByTestId('composer-mode-menu')).toBeNull();
+    expect(screen.queryByTestId('composer-mode-kbd')).toBeNull();
+    expect(pill.querySelector('svg[data-icon="chevron"], [class*="chevron"]')).toBeNull();
+    fireEvent.keyDown(input(), { key: '2', altKey: true });
+    expect(onModeChange).not.toHaveBeenCalled();
+  });
+
+  it('a document chat (modes=[chat]) is a static label; its page actions move to ⋯', async () => {
+    const onMakeDeck = vi.fn();
+    setup({ modes: ['chat'], expanded: true, onMakeDeck });
+    expect(screen.getByTestId('composer-mode-pill')).toHaveTextContent('Chat');
+    expect(screen.queryByTestId('composer-mode-menu')).toBeNull();
+    await act(async () => { fireEvent.click(screen.getByTestId('composer-more-actions-trigger')); });
+    await act(async () => { fireEvent.click(screen.getByText('Make a deck from this page')); });
+    expect(onMakeDeck).toHaveBeenCalledOnce();
+  });
+
+  it('search (Agent only by its preset) is a static label too', () => {
+    setup({ context: { kind: 'search', id: 'search', title: '' }, expanded: true });
+    expect(screen.getByTestId('composer-mode-pill')).toHaveAttribute('data-single-mode', 'true');
+    expect(screen.getByTestId('composer-mode-pill')).toHaveTextContent('Agent');
+  });
+
+  it('two or more modes keep the menu and no data-single-mode', async () => {
+    setup({ context: DM, modes: ['chat', 'agent'] });
+    expect(screen.getByTestId('composer-mode-pill')).not.toHaveAttribute('data-single-mode');
+    await focus();
+    expect(screen.getByTestId('composer-mode-menu')).toHaveTextContent('Chat');
+  });
+});
+
+describe('ContextComposer — privacy', () => {
+  it('no onPrivacyChange: no toggle', () => {
+    setup({ context: DM, expanded: true });
+    expect(screen.queryByTestId('composer-privacy-toggle')).toBeNull();
+  });
+
+  it('passes privacy / onPrivacyChange / privacyLabels through; the sent message carries privacy', async () => {
+    const onPrivacyChange = vi.fn();
+    const onSend = vi.fn(() => true);
+    const { handle } = setup({
+      context: DM, modes: ['chat'], expanded: true, onSend,
+      privacy: 'hidden', onPrivacyChange, privacyLabels: { visible: 'Everyone', hidden: 'Just me' },
+    });
+    const toggle = screen.getByTestId('composer-privacy-toggle');
+    expect(toggle).toHaveAttribute('title', 'Just me');
+    fireEvent.click(toggle);
+    expect(onPrivacyChange).toHaveBeenCalledWith('visible');
+    await act(async () => { handle()!.insertText('only for me'); });
+    fireEvent.keyDown(input(), { key: 'Enter' });
+    await waitFor(() => expect(onSend).toHaveBeenCalled());
+    expect((onSend.mock.calls[0] as unknown as [ComposedMessage])[0].privacy).toBe('hidden');
+  });
+});
+
+describe('ContextComposer — # documents on every context', () => {
+  const contexts = [
+    DM,
+    { kind: 'conversation', id: 'transcript', title: 'Ask the transcript' },
+    DOC,
+    { kind: 'work-item', id: 'w', title: 'W' },
+    { kind: 'diagram', id: 'dg', title: 'D' },
+    { kind: 'initiative', id: 'p', title: 'P' },
+    { kind: 'search', id: 's', title: '' },
+  ] as const;
+  it.each(contexts)('$kind ($id): onSearchDocuments opens the # menu', async (context) => {
+    const search = vi.fn((q: string) => [{ id: 'd1', label: 'Roadmap' }].filter((d) => d.label.toLowerCase().startsWith(q.toLowerCase())));
+    const { handle } = setup({ context, expanded: true, onSearchDocuments: search, ...(context.id === 'transcript' ? { modes: ['chat'] as const } : {}) });
+    await act(async () => { handle()!.insertText('see #Ro'); });
+    await waitFor(() => expect(search).toHaveBeenCalledWith('Ro'));
+    await waitFor(() => expect(screen.getAllByTestId('document-option')).toHaveLength(1));
+  });
 });
