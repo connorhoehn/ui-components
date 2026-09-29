@@ -3936,7 +3936,7 @@ var ka = pe(function({ onSend: m, draft: g, onDraftChange: b, onCommand: S, onSe
 										onClick: V ? Rn : qn,
 										disabled: !Un,
 										"data-testid": `${I}-send`,
-										className: e("shrink-0 rounded-l-md rounded-r-none bg-primary text-on-primary disabled:opacity-40", t, Sr),
+										className: e(`shrink-0 rounded-l-md rounded-r-none bg-primary ${t} text-on-primary disabled:opacity-40`, Sr),
 										children: Cr
 									}), /* @__PURE__ */ k(T, {
 										trigger: /* @__PURE__ */ k("span", {
@@ -3971,7 +3971,7 @@ var ka = pe(function({ onSend: m, draft: g, onDraftChange: b, onCommand: S, onSe
 									onClick: V ? Rn : qn,
 									disabled: !Un,
 									"data-testid": `${I}-send`,
-									className: e((st == null || X) && !(Hr && !X) && "ml-auto", "shrink-0 rounded bg-primary text-on-primary disabled:opacity-40", t, (Y || J) && "rounded-md", Sr),
+									className: e((st == null || X) && !(Hr && !X) && "ml-auto", `shrink-0 rounded bg-primary ${t} text-on-primary disabled:opacity-40`, (Y || J) && "rounded-md", Sr),
 									children: Cr
 								})
 							]

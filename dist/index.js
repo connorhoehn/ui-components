@@ -89,7 +89,7 @@ import { A as ss, B as cs, C as ls, D as us, E as ds, F as fs, G as ps, H as ms,
 import { $ as ac, A as oc, B as sc, C as cc, D as lc, E as uc, F as dc, G as fc, H as pc, I as mc, J as hc, K as gc, L as _c, M as vc, N as yc, O as bc, P as xc, Q as Sc, R as Cc, S as wc, T as Tc, U as Ec, V as Dc, W as Oc, X as kc, Y as Ac, Z as jc, _ as Mc, a as Nc, at as Pc, b as Fc, c as Ic, ct as Lc, d as Rc, et as zc, f as Bc, g as Vc, h as Hc, i as Uc, it as Wc, j as Gc, k as Kc, l as qc, lt as Jc, m as Yc, n as Xc, nt as Zc, o as Qc, ot as $c, p as el, q as tl, r as nl, rt as rl, s as il, st as al, t as ol, tt as sl, u as cl, ut as ll, v as ul, w as dl, x as fl, y as pl, z as ml } from "./ConversationSurface-Byppck73.js";
 import { t as hl } from "./activationKey-CjbL3LUv.js";
 import { B as gl, C as _l, D as vl, E as yl, F as bl, I as xl, L as Sl, M as Cl, N as wl, O as Tl, P as El, R as Dl, S as Ol, T as kl, V as Al, _ as jl, a as Ml, b as Nl, c as Pl, d as Fl, f as Il, g as Ll, h as Rl, i as zl, j as Bl, l as Vl, m as Hl, n as Ul, o as Wl, p as Gl, r as Kl, s as ql, t as Jl, u as Yl, v as Xl, w as Zl, x as Ql, y as $l, z as eu } from "./renderers-Doqpgh8C.js";
-import { A as tu, D as nu, E as ru, F as iu, G as au, I as ou, J as su, K as cu, L as lu, M as uu, N as du, O as fu, P as pu, T as mu, W as hu, b as gu, f as _u, j as vu, k as yu, q as bu, t as xu } from "./PresentationEditor-C2w_fZBo.js";
+import { A as tu, D as nu, E as ru, F as iu, G as au, I as ou, J as su, K as cu, L as lu, M as uu, N as du, O as fu, P as pu, T as mu, W as hu, b as gu, f as _u, j as vu, k as yu, q as bu, t as xu } from "./PresentationEditor-CnpYzEUX.js";
 import { n as Su, r as Cu, t as wu } from "./EventStreamContext-CLzG8O5_.js";
 import { B as Tu, F as Eu, H as Du, R as Ou, Y as ku, _ as Au, bt as ju, c as Mu, d as Nu, dt as Pu, f as Fu, ft as Iu, g as Lu, h as Ru, ht as zu, m as Bu, mt as Vu, n as Hu, p as Uu, q as Wu, rt as Gu, t as Ku, u as qu, v as Ju, xt as Yu, y as Xu } from "./services-BrRU8Xu8.js";
 import { n as Zu, t as Qu } from "./ObservabilityContext-DpoDrm3T.js";
@@ -1226,7 +1226,7 @@ function $g() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var e_ = lg(() => import("./DocumentEditorPage-CmWPAvXj.js").then((e) => e.n));
+var e_ = lg(() => import("./DocumentEditorPage-D4ZOhbbT.js").then((e) => e.n));
 function t_({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;
@@ -7059,7 +7059,7 @@ async function Pb(e, t) {
 }
 //#endregion
 //#region src/components/social/AgentComposerDockLazy.tsx
-var Fb = lg(() => import("./AgentComposerDock-BBdpocow.js").then((e) => e.n).then((e) => ({ default: e.AgentComposerDock })));
+var Fb = lg(() => import("./AgentComposerDock-inuLCGQ2.js").then((e) => e.n).then((e) => ({ default: e.AgentComposerDock })));
 function Ib(e) {
 	return /* @__PURE__ */ Z(og, {
 		fallback: null,
@@ -7068,7 +7068,7 @@ function Ib(e) {
 }
 //#endregion
 //#region src/components/social/ContextComposerLazy.tsx
-var Lb = lg(() => import("./ContextComposer-DN7MJqhN.js").then((e) => e.r).then((e) => ({ default: e.ContextComposer })));
+var Lb = lg(() => import("./ContextComposer-DDnd5pRt.js").then((e) => e.r).then((e) => ({ default: e.ContextComposer })));
 function Rb(e) {
 	return /* @__PURE__ */ Z(og, {
 		fallback: null,
