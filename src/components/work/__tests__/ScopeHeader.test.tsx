@@ -1,7 +1,7 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import type { ComponentProps } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { ScopeHeader, formatSpend, inlineRowDeficit, inlineTrailMinimum } from '../ScopeHeader';
+import { ScopeHeader, formatSpend, inlineRowDeficit, inlineRowWanted, inlineTrailMinimum } from '../ScopeHeader';
 import { FilterChip } from '../../shared/FilterChip';
 import { DropdownMenu } from '../../shared/DropdownMenu';
 import { Inline } from '../../ui/Stack';
@@ -610,6 +610,220 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
             } finally {
               restore();
             }
+          });
+          describe('inline whenever the wanted width fits, both ways, on load and on every resize (2.407.5)', () => {
+            // The portal's scoped header as the 1672 walk measured it: crumbs
+            // 219 (Org 24 / Search 45 / Design System API 122) + "›" 14 + the
+            // title's 192 = trail 425, tabs 280, chips 321, ⋯ 32, Filters ▾ 58.
+            // jsdom draws no gaps or padding, so the mocked row is the portal's
+            // row less them (viewport − 464 rail − 48 padding − 44 gaps): the
+            // wanted width is 1058 here, 1102 + 48 in the browser, and the
+            // header is inline from a 1614px viewport (+2px to come back).
+            const TRAIL = 425;
+            const TABS_W = 280;
+            const CHIPS_W = 321;
+            const MORE_W = 32;
+            const TOGGLE_W = 58;
+            const rowAt = (viewport: number) => viewport - 556;
+            let row = 0;
+            let observers: Array<() => void> = [];
+            const RO = globalThis.ResizeObserver;
+            function install(viewport: number) {
+              row = rowAt(viewport);
+              observers = [];
+              (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver = class {
+                cb: () => void;
+                constructor(cb: () => void) { this.cb = cb; }
+                observe() { observers.push(this.cb); }
+                unobserve() {}
+                disconnect() { observers = observers.filter((o) => o !== this.cb); }
+              };
+              const collapsed = () => document.querySelector('[data-testid="scope-header"]')?.getAttribute('data-controls') === 'collapsed';
+              // Inline, the chips' box shrinks first (shrink-[100]); the trail
+              // only once the box is gone.
+              const layout = () => {
+                if (collapsed()) return { trail: row - TABS_W - TOGGLE_W - MORE_W, box: 0, cut: 0 };
+                const free = row - TABS_W - MORE_W;
+                const box = Math.min(CHIPS_W, Math.max(0, free - TRAIL));
+                const trail = free - box;
+                return { trail, box, cut: Math.max(0, TRAIL - trail) };
+              };
+              const isMore = (el: HTMLElement) => el.getAttribute('aria-label') === 'Search actions'
+                || (el.parentElement?.getAttribute('data-testid') === 'scope-header-right' && !!el.querySelector('[aria-label="Search actions"]'));
+              const spies = [
+                vi.spyOn(HTMLElement.prototype, 'scrollWidth', 'get').mockImplementation(function (this: HTMLElement) {
+                  if (this.hasAttribute('data-crumb')) return NATURAL[this.textContent ?? ''] ?? 0;
+                  if (this.tagName === 'H1') return 180;
+                  if (this.hasAttribute('data-scope-controls')) return CHIPS_W;
+                  return 0;
+                }),
+                vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
+                  const l = layout();
+                  if (this.hasAttribute('data-crumb')) {
+                    const natural = NATURAL[this.textContent ?? ''] ?? 0;
+                    return this.textContent === 'Design System API' ? natural - l.cut : natural;
+                  }
+                  if (this.tagName === 'H1') return 192;
+                  if (this.hasAttribute('data-scope-controls')) return l.box;
+                  const id = this.getAttribute('data-testid');
+                  if (id === 'scope-header') return row;
+                  if (id === 'scope-header-trail') return l.trail;
+                  return 0;
+                }),
+                vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (this: HTMLElement) {
+                  const id = this.getAttribute('data-testid');
+                  if (id === 'scope-header-tabs') return TABS_W;
+                  if (id === 'scope-header-crumbs') return 219 - layout().cut;
+                  if (this.hasAttribute('data-scope-controls-toggle')) return TOGGLE_W;
+                  if (this.hasAttribute('data-scope-controls')) return layout().box;
+                  if (this.parentElement?.hasAttribute('data-scope-controls-ghost')) return CHIPS_W;
+                  if (this.tagName === 'SPAN' && this.parentElement?.getAttribute('data-testid') === 'scope-header-trail') return 14;
+                  if (isMore(this)) return MORE_W;
+                  return 0;
+                }),
+              ];
+              return () => {
+                spies.forEach((s) => s.mockRestore());
+                (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver = RO;
+              };
+            }
+            const resize = (viewport: number) => {
+              row = rowAt(viewport);
+              act(() => { observers.slice().forEach((cb) => cb()); });
+            };
+            const mode = () => screen.getByTestId('scope-header').getAttribute('data-controls');
+
+            it('1672 inline → 1500 collapsed → 1672 inline → 1500 collapsed → 1672 inline', () => {
+              const restore = install(1672);
+              try {
+                renderPortal();
+                expect(mode()).toBe('inline');
+                expect(screen.getByTestId('scope-header-controls')).toBeInTheDocument();
+                resize(1500);
+                expect(mode()).toBe('collapsed');
+                expect(screen.getByTestId('scope-header-controls-toggle')).toBeInTheDocument();
+                resize(1672);
+                expect(mode()).toBe('inline');
+                expect(screen.getByRole('button', { name: 'Sort results' })).toBeInTheDocument();
+                resize(1500);
+                expect(mode()).toBe('collapsed');
+                resize(1672);
+                expect(mode()).toBe('inline');
+                // Nothing left over: one copy of the chips, no measuring copy.
+                expect(screen.getAllByRole('button', { name: 'Sort results' })).toHaveLength(1);
+                expect(document.querySelector('[data-scope-controls-ghost]')).toBeNull();
+              } finally {
+                restore();
+              }
+            });
+
+            it('down to 1280 (the crumbs fold) and back up through 1440 / 1536 / 1600 to 1672 comes back inline', () => {
+              const restore = install(1672);
+              try {
+                renderPortal();
+                [1600, 1536, 1440, 1280].forEach((w) => { resize(w); expect(mode()).toBe('collapsed'); });
+                [1440, 1536, 1600].forEach((w) => { resize(w); expect(mode()).toBe('collapsed'); });
+                resize(1672);
+                expect(mode()).toBe('inline');
+              } finally {
+                restore();
+              }
+            });
+
+            it('a collapse at a width that squeezes the trail under its minimum does not raise the way back (1672 → 1000 → 1672)', () => {
+              // Before 2.407.5 the expand threshold added the trail's shortfall
+              // below its minimum to the row's deficit (which already counts it)
+              // and was never re-derived: from 1000 it asked for ~1350px of row.
+              const restore = install(1672);
+              try {
+                renderPortal();
+                resize(1000);
+                expect(mode()).toBe('collapsed');
+                resize(1672);
+                expect(mode()).toBe('inline');
+              } finally {
+                restore();
+              }
+            });
+
+            it('fresh loads: 1600 and 1536 collapse (wanted 1058 > the row), 1620 is inline (1058 + 2 ≤ 1064), 1500 collapses', () => {
+              const cases: Array<[number, string]> = [[1600, 'collapsed'], [1536, 'collapsed'], [1620, 'inline'], [1672, 'inline'], [1500, 'collapsed']];
+              for (const [viewport, expected] of cases) {
+                const restore = install(viewport);
+                try {
+                  renderPortal();
+                  expect([viewport, mode()]).toEqual([viewport, expected]);
+                  // The wanted width is the parts' natural widths, each once:
+                  // trail content 425 (not its slack), tabs, chips, ⋯ — no Filters ▾.
+                  const header = screen.getByTestId('scope-header');
+                  expect(inlineRowWanted(header, screen.getByTestId('scope-header-trail'), CHIPS_W)).toBe(TRAIL + TABS_W + CHIPS_W + MORE_W);
+                } finally {
+                  restore();
+                  cleanup();
+                }
+              }
+            });
+
+            it('never alternates: collapsed below wanted + 2, inline at it, one state per width', () => {
+              const restore = install(1672);
+              try {
+                renderPortal();
+                resize(1500);
+                resize(1615); // row 1059 < 1058 + 2
+                expect(mode()).toBe('collapsed');
+                resize(1615);
+                expect(mode()).toBe('collapsed');
+                resize(1616); // row 1060
+                expect(mode()).toBe('inline');
+                resize(1616);
+                expect(mode()).toBe('inline');
+              } finally {
+                restore();
+              }
+            });
+
+            it('a first render at 1280 that later grows to 1672 expands', () => {
+              const restore = install(1280);
+              try {
+                renderPortal();
+                expect(mode()).toBe('collapsed');
+                resize(1672);
+                expect(mode()).toBe('inline');
+              } finally {
+                restore();
+              }
+            });
+
+            it('first render already collapsed by controlsCollapseAt: a hidden copy gives the chips’ width, and growing to 1672 expands', () => {
+              const restore = install(1280);
+              try {
+                cleanup();
+                render(
+                  <ScopeHeader
+                    variant="inline"
+                    breadcrumbs={LONG}
+                    title="component contracts"
+                    tabs={TABS}
+                    activeTab="results"
+                    controlsCollapseAt={1000}
+                    controls={<Inline gap="xs" align="center" wrap={false}><button type="button">Sort</button></Inline>}
+                    menuLabel="Search actions"
+                    menu={[{ items: [{ label: 'Save search', onSelect: () => {} }] }]}
+                  />,
+                );
+                expect(mode()).toBe('collapsed');
+                resize(1500); // above the floor (row 944), but the chips need 1058
+                expect(mode()).toBe('collapsed');
+                // The measuring copy was drawn once and is gone.
+                expect(document.querySelector('[data-scope-controls-ghost]')).toBeNull();
+                // …and left no second, focusable set of the chips behind (they are in the closed popover).
+                expect(screen.queryAllByRole('button', { name: 'Sort' })).toHaveLength(0);
+                resize(1672);
+                expect(mode()).toBe('inline');
+              } finally {
+                restore();
+              }
+            });
           });
         });
 

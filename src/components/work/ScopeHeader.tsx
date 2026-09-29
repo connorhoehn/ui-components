@@ -254,10 +254,17 @@ export function ScopeHeader(props: ScopeHeaderProps) {
 /** The right-hand group both variants share: controls · link · ⋯. */
 function RightGroup({
   controls, link, menu, menuLabel, title, testId, linkStyle = 'inline',
-  controlsMode = 'fixed', controlsMenu, controlsLabel = 'Filters',
+  controlsMode = 'fixed', controlsMenu, controlsLabel = 'Filters', ghost = false,
 }: Pick<ScopeHeaderProps, 'controls' | 'link' | 'menu' | 'menuLabel' | 'linkStyle' | 'controlsMenu' | 'controlsLabel'> & {
   title: string;
   testId: string;
+  /**
+   * Collapsed only (2.407.5): also draw an invisible, inert, zero-size
+   * clipped copy of the controls at their natural width, so the inline row
+   * can measure what they would need. Drawn for one layout pass, when no
+   * inline measurement exists yet.
+   */
+  ghost?: boolean;
   /**
    * `fixed`: the controls keep their width (default, crumbs variants).
    * `shrink`: the inline row's first give (2.407.2) — the cluster may shrink
@@ -299,6 +306,13 @@ function RightGroup({
       )}
       {hasControls && controlsMode === 'collapsed' && !menuControls && (
         <ControlsPopover label={controlsLabel} testId={testId}>{controls}</ControlsPopover>
+      )}
+      {hasControls && controlsMode === 'collapsed' && ghost && (
+        <div aria-hidden="true" inert data-scope-controls-ghost="" className="pointer-events-none invisible absolute right-0 top-0 h-0 w-0 overflow-hidden">
+          <div className="flex w-max flex-nowrap items-center gap-2 whitespace-nowrap [&_*]:whitespace-nowrap [&>*]:shrink-0 [&>*]:flex-nowrap [&>*>*]:shrink-0">
+            {controls}
+          </div>
+        </div>
       )}
       {link && linkStyle === 'button' && (
         <a
@@ -360,6 +374,7 @@ function ControlsPopover({ label, testId, children }: { label: string; testId: s
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
         data-testid={`${testId}-controls-toggle`}
+        data-scope-controls-toggle=""
         className={cn(
           'inline-flex shrink-0 cursor-pointer items-center gap-1 whitespace-nowrap rounded border-none bg-transparent px-1 py-0.5 text-sm leading-none text-text-secondary transition-colors duration-100 hover:bg-surface-hover hover:text-text-primary',
           open && 'text-text-primary',
@@ -462,6 +477,82 @@ export function inlineRowDeficit(row: HTMLElement, trail: HTMLElement | null): n
   need += gap * Math.max(0, kids.length - 1);
   return need - inner;
 }
+
+/** An element's laid-out width, not less than its content (overflow hidden or not). */
+function naturalWidth(el: HTMLElement): number {
+  return Math.max(el.scrollWidth, el.offsetWidth || 0);
+}
+
+/** Out of the flow (the Filters popover's panel, the measuring copy): not part of the row. */
+function outOfFlow(el: HTMLElement): boolean {
+  const pos = getComputedStyle(el).position;
+  return pos === 'absolute' || pos === 'fixed' || el.hasAttribute('data-scope-controls-ghost');
+}
+
+/**
+ * The inline trail's wanted width from its content, not its box (2.407.5):
+ * the crumb list at its natural width (every crumb whole inside its cap —
+ * the nav's width plus any crumb's shortfall), the joiners, and the title at
+ * its 12rem floor (`min-w-[12rem]`: its box is never narrower, a shorter
+ * title included). The trail is `flex-auto`, so its own `clientWidth`
+ * carries the row's slack — useless as a wanted width when the row has room.
+ * A trail folded to "…" counts at least the width it needed unfolded
+ * (`data-full-width`, recorded by the trail when it folded).
+ */
+function inlineTrailWanted(trail: HTMLElement): number {
+  const px = (v: string) => parseFloat(v) || 0;
+  const kids = (Array.from(trail.children) as HTMLElement[]).filter((k) => !outOfFlow(k));
+  let need = 0;
+  for (const kid of kids) {
+    if (kid.tagName === 'H1') {
+      need += px(getComputedStyle(kid).minWidth) || TITLE_MIN_PX;
+    } else if (kid.tagName === 'NAV') {
+      need += naturalWidth(kid);
+      kid.querySelectorAll<HTMLElement>('[data-crumb]').forEach((el) => { need += crumbShortfall(el); });
+    } else {
+      need += naturalWidth(kid);
+    }
+  }
+  need += px(getComputedStyle(trail).columnGap) * Math.max(0, kids.length - 1);
+  // Folded to "…", the hidden crumbs are not in the DOM: the trail recorded
+  // the width its whole crumb list needed when it folded.
+  const full = parseFloat(trail.dataset.fullWidth ?? '');
+  return Number.isFinite(full) ? Math.max(need, full) : need;
+}
+
+/**
+ * The inline row's wanted width, px, padding included (2.407.5), with the
+ * controls inline at `controlsWidth`: the trail at its content's width
+ * (`inlineTrailWanted`), the tabs, the right cluster's other items at their
+ * natural widths — the ⋯ once, the collapsed "Filters ▾" never — and every
+ * gap. Measurable in either state, so the collapse can be undone: while
+ * collapsed the controls are not in the row, and their width comes from the
+ * last inline measurement or a hidden copy. Exported for tests.
+ */
+export function inlineRowWanted(row: HTMLElement, trail: HTMLElement | null, controlsWidth: number): number {
+  const style = getComputedStyle(row);
+  const px = (v: string) => parseFloat(v) || 0;
+  const kids = (Array.from(row.children) as HTMLElement[]).filter((k) => !outOfFlow(k));
+  let need = px(style.paddingLeft) + px(style.paddingRight);
+  for (const kid of kids) {
+    if (kid === trail) {
+      need += inlineTrailWanted(trail);
+    } else if (kid.getAttribute('data-testid')?.endsWith('-right')) {
+      // The controls' slot: the inline box, or the Filters ▾ standing in for it.
+      const others = (Array.from(kid.children) as HTMLElement[]).filter((el) =>
+        !outOfFlow(el) && !el.hasAttribute('data-scope-controls') && !el.hasAttribute('data-scope-controls-toggle'));
+      const count = others.length + (controlsWidth > 0 ? 1 : 0);
+      need += others.reduce((sum, el) => sum + naturalWidth(el), 0) + Math.max(0, controlsWidth)
+        + px(getComputedStyle(kid).columnGap) * Math.max(0, count - 1);
+    } else {
+      need += naturalWidth(kid);
+    }
+  }
+  return need + px(style.columnGap) * Math.max(0, kids.length - 1);
+}
+
+/** The slack an expand needs: inline comes back only with 2px to spare. */
+const EXPAND_MARGIN_PX = 2;
 
 function ScopeCrumbs({
   breadcrumbs, title, controls, link, menu, menuLabel, linkStyle, className, 'data-testid': testId = 'scope-header',
@@ -568,7 +659,10 @@ function InlineTrail({ crumbs, title, lg, testId }: { crumbs: BreadcrumbItem[]; 
     const trail = trailRef.current;
     if (!trail) return;
     if (collapsed) {
-      if (trail.clientWidth >= expandAt.current) setCollapsed(false);
+      if (trail.clientWidth >= expandAt.current) {
+        delete trail.dataset.fullWidth;
+        setCollapsed(false);
+      }
       return;
     }
     if (!canCollapse) return;
@@ -580,6 +674,9 @@ function InlineTrail({ crumbs, title, lg, testId }: { crumbs: BreadcrumbItem[]; 
     });
     if (deficit > 0) {
       expandAt.current = trail.clientWidth + deficit;
+      // 2.407.5: folded, the hidden crumbs are not in the DOM; the header's
+      // wanted width reads their width from here (`inlineTrailWanted`).
+      trail.dataset.fullWidth = String(Math.ceil(expandAt.current));
       setCollapsed(true);
     }
   }, [collapsed, canCollapse]);
@@ -588,6 +685,7 @@ function InlineTrail({ crumbs, title, lg, testId }: { crumbs: BreadcrumbItem[]; 
   useLayoutEffect(() => {
     setCollapsed(false);
     expandAt.current = Infinity;
+    if (trailRef.current) delete trailRef.current.dataset.fullWidth;
   }, [crumbKey]);
 
   useLayoutEffect(() => {
@@ -685,26 +783,58 @@ function ScopeHeaderInline({
   // Squeeze step (a) (2.407.2): the controls leave the row when they no
   // longer fit their shrunken box, the trail would drop under its minimum,
   // or the row is under `controlsCollapseAt`.
+  //
+  // 2.407.5 — the rule, in both directions, on load and on every row resize:
+  // inline while the row's wanted width (`inlineRowWanted`) fits with 2px to
+  // spare, collapsed otherwise. Before, the expand threshold was fixed at the
+  // moment of collapse (width + the shortfall + the trail's shortfall below
+  // its minimum, the last counted twice) and never re-derived: collapsed, the
+  // controls are not in the row, so nothing re-measured them and one
+  // over-estimate latched "Filters ▾" until a reload. Now the controls'
+  // natural width is remembered from the last inline measurement (or taken
+  // from a hidden copy when there is none — a first render already under
+  // `controlsCollapseAt`) and the wanted width is re-derived from the
+  // collapsed row on every resize.
   const rowRef = useRef<HTMLDivElement | null>(null);
   const [controlsCollapsed, setControlsCollapsed] = useState(false);
-  // The row width at which the full controls fit again (measured mode).
-  const expandAt = useRef<number>(Infinity);
+  // Collapsed with no inline measurement: draw an invisible copy to measure.
+  const [ghost, setGhost] = useState(false);
+  // From the last inline measurement: the controls' natural width and the
+  // row's wanted width; and the row width that last collapsed them (never
+  // expand at or under it, so the two states cannot alternate at one width).
+  const fit = useRef<{ controls: number | null; wanted: number | null; collapsedAt: number }>({ controls: null, wanted: null, collapsedAt: 0 });
   const measure = useCallback(() => {
     const row = rowRef.current;
     if (!row || !hasControls) return;
     const width = row.clientWidth;
     if (width <= 0) return; // unmeasured (jsdom, display:none)
-    if (typeof controlsCollapseAt === 'number') {
-      setControlsCollapsed(width < controlsCollapseAt);
+    const underFloor = typeof controlsCollapseAt === 'number' && width < controlsCollapseAt;
+    const trail = row.querySelector<HTMLElement>(`[data-testid="${testId}-trail"]`);
+    if (controlsCollapsed) {
+      if (underFloor) return;
+      let controlsWidth = fit.current.controls;
+      if (controlsWidth == null) {
+        const copy = row.querySelector<HTMLElement>('[data-scope-controls-ghost] > *');
+        if (!copy) { setGhost(true); return; }
+        controlsWidth = naturalWidth(copy);
+        fit.current.controls = controlsWidth;
+        setGhost(false);
+      }
+      // Re-derived from the collapsed row with the controls put back, and
+      // never below what the last over-full inline row measured.
+      const wanted = Math.max(inlineRowWanted(row, trail, controlsWidth), fit.current.wanted ?? 0);
+      if (width > fit.current.collapsedAt && width >= wanted + EXPAND_MARGIN_PX) setControlsCollapsed(false);
       return;
     }
-    if (controlsCollapsed) {
-      if (width >= expandAt.current) setControlsCollapsed(false);
+    fit.current.wanted = null;
+    if (underFloor) {
+      fit.current.collapsedAt = width;
+      setControlsCollapsed(true);
       return;
     }
     const box = row.querySelector<HTMLElement>('[data-scope-controls]');
-    const trail = row.querySelector<HTMLElement>(`[data-testid="${testId}-trail"]`);
     const right = row.querySelector<HTMLElement>(`[data-testid="${testId}-right"]`);
+    if (box && box.scrollWidth > 0) fit.current.controls = box.scrollWidth;
     const overflow = box ? box.scrollWidth - box.clientWidth : 0;
     // 2.407.4: the whole right cluster too — a ⋯ or a link pushed past it.
     const rightOverflow = right ? right.scrollWidth - right.clientWidth : 0;
@@ -715,11 +845,15 @@ function ScopeHeaderInline({
     const rowDeficit = inlineRowDeficit(row, trail);
     let crumbShort = 0;
     trail?.querySelectorAll<HTMLElement>('[data-crumb]').forEach((el) => { crumbShort += crumbShortfall(el); });
+    // Each is its own estimate of the same shortfall; the largest wins (the
+    // trail's minimum is inside the row's wanted width, not added to it).
+    const need = Math.max(overflow, rightOverflow, rowDeficit, crumbShort, short);
     if (overflow > 1 || rightOverflow > 1 || short > 1 || rowDeficit > 0.5 || crumbShort > 0.5) {
-      // Ratchet: never expand back at a width that just collapsed, and
-      // come back only with a couple of pixels to spare.
-      const need = Math.max(overflow, rightOverflow, rowDeficit, crumbShort, 0) + Math.max(0, short);
-      expandAt.current = Math.max(width + 1, Math.ceil(width + need + 2));
+      // Over-full, the trail has no slack, so width + need is the wanted
+      // width as laid out. (A fitting row's trail carries the slack — its
+      // width + need is just the row, so it is not remembered.)
+      fit.current.wanted = width + need;
+      fit.current.collapsedAt = width;
       setControlsCollapsed(true);
     }
   }, [hasControls, controlsCollapseAt, controlsCollapsed, testId]);
@@ -731,7 +865,7 @@ function ScopeHeaderInline({
     const ro = new ResizeObserver(() => measure());
     ro.observe(row);
     return () => ro.disconnect();
-  }, [measure]);
+  }, [measure, ghost]);
 
   return (
     <div
@@ -768,7 +902,7 @@ function ScopeHeaderInline({
         // (2.407.4) it is shrink-0: Filters ▾ and ⋯ are all that is left, and
         // they stay inside the row's padding.
         <div
-          className={cn('flex flex-nowrap items-center gap-3', controlsCollapsed ? 'shrink-0' : 'min-w-0 shrink-[100]')}
+          className={cn('relative flex flex-nowrap items-center gap-3', controlsCollapsed ? 'shrink-0' : 'min-w-0 shrink-[100]')}
           data-testid={`${testId}-right`}
         >
           <RightGroup
@@ -776,6 +910,7 @@ function ScopeHeaderInline({
             controlsMenu={controlsMenu}
             controlsLabel={controlsLabel}
             controlsMode={controlsCollapsed ? 'collapsed' : 'shrink'}
+            ghost={controlsCollapsed && ghost}
             link={link}
             menu={menu}
             menuLabel={menuLabel}
