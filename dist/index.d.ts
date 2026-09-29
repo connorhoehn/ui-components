@@ -612,7 +612,7 @@ export declare interface AgentNodeData {
 
 export declare type AgentProtocol = 'a2a' | 'direct';
 
-export declare function AgentRunCard({ runId, instruction, agentName, requestedBy, command, status, onOpenDocument, onOpenRun, result, onOpenResult, onDecide, suggestion: suggestionProp, onReview, onRetry, documentTitle, defaultExpanded, className, 'data-testid': testId }: AgentRunCardProps): JSX.Element;
+export declare function AgentRunCard({ runId, instruction, agentName, requestedBy, command, status, onOpenDocument, onOpenRun, result, onOpenResult, onDecide, suggestion: suggestionProp, onReview, onRetry, documentTitle, defaultExpanded, loop, onOpenLab, className, 'data-testid': testId }: AgentRunCardProps): JSX.Element;
 
 export declare interface AgentRunCardProps {
     runId: string;
@@ -647,6 +647,14 @@ export declare interface AgentRunCardProps {
     onRetry?: (runId: string) => void;
     /** Start expanded. The default is the two-line card; the details are a click away. */
     defaultExpanded?: boolean;
+    /**
+     * The run is an agent loop, and this is where it is. Given, the card shows
+     * the loop's phase, clock, steps and budget in place of the pipeline's three
+     * beats. The pipeline props above keep working for every other run.
+     */
+    loop?: AgentRunLoop;
+    /** Open the loop's lab beside the chat. An "Open lab" action renders only when this is given. */
+    onOpenLab?: (runId: string) => void;
     className?: string;
     'data-testid'?: string;
 }
@@ -670,6 +678,33 @@ export declare interface AgentRunDetails {
     completedAt?: string;
     error?: string;
 }
+
+/**
+ * An agent loop, live, for its card in the transcript.
+ *
+ * A loop (`/agent …`) is not a pipeline edit that is received, processed and
+ * done in seconds: it plans for half a minute, then works through steps for
+ * minutes, spending a context budget. The card says that in the thread so
+ * nothing has to take the conversation's place to show it — the phase, the
+ * clock while it is planning, the step it is on, what it has spent, and a way
+ * into the lab.
+ */
+export declare interface AgentRunLoop {
+    phase: AgentRunLoopPhase;
+    /** When the run started (ISO). With it, the card's clock ticks on its own while the loop is busy. */
+    startedAt?: string;
+    /** How long it has run, as last reported. Used when `startedAt` is absent. */
+    elapsedMs?: number;
+    /** The plan, with the running step marked. Empty while planning. */
+    steps?: readonly LabStep[];
+    contextTokens?: number;
+    contextBudgetTokens?: number;
+    /** One sentence about how it ended — the failure, the summary. Replaces the phase's own words once it has ended. */
+    outcome?: string;
+}
+
+/** Where an agent LOOP is — the lab's own eight words. */
+export declare type AgentRunLoopPhase = LabStatus;
 
 /**
  * One edit the agent made, in the document-ops vocabulary the pipeline emits
@@ -701,6 +736,7 @@ export declare function agentRunRefFromMetadata(metadata: Record<string, unknown
     command: string;
     result?: AgentRunResult;
     suggestionKey?: string;
+    lab?: true;
 } | null;
 
 /**
@@ -3707,7 +3743,7 @@ export declare interface ChatLabPillProps {
     'data-testid'?: string;
 }
 
-export declare function ChatLabShell({ title, status, model, contextBudgetTokens, contextTokens, iterations, planSource, steps, events, onInstruct, onStop, onBackToChat, onOpenRun, onOpenGraph, shell, notice, headerAccessory, className, 'data-testid': testId, }: ChatLabShellProps): JSX.Element;
+export declare function ChatLabShell({ title, status, model, contextBudgetTokens, contextTokens, iterations, planSource, steps, events, onInstruct, onStop, onBackToChat, onOpenRun, onOpenGraph, shell, notice, headerAccessory, variant, className, 'data-testid': testId, }: ChatLabShellProps): JSX.Element;
 
 export declare interface ChatLabShellProps {
     /** The instruction the loop was started with, already truncated by the host. */
@@ -3744,9 +3780,21 @@ export declare interface ChatLabShellProps {
      * supplies it so presence stays the host's subscription.
      */
     headerAccessory?: ReactNode;
+    /**
+     * Where the shell is drawn. `'column'` (the default) is the whole chat
+     * column: one dense status row and a horizontal step rail. `'pane'` is a
+     * 400–560px side pane beside a conversation that stays on screen: the
+     * status line takes two rows (where it is and what it is on; what it has
+     * spent and how many turns), the step rail wraps instead of scrolling
+     * sideways, and `onBackToChat` reads **Close** — nothing was taken from the
+     * chat, so there is nothing to go "back" to.
+     */
+    variant?: ChatLabShellVariant;
     className?: string;
     'data-testid'?: string;
 }
+
+export declare type ChatLabShellVariant = 'column' | 'pane';
 
 export declare interface ChatMember {
     id: string;
@@ -3806,7 +3854,7 @@ export declare interface ChatMessage {
     deletedAt?: string;
 }
 
-export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, dock: dockSlot, currentUserId, reactionsFor, onToggleReaction, onReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, callParticipants, agentRunStatus, onOpenRun, onOpenResult, onDecideRun, onReviewRun, onRetryRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, dock: dockSlot, currentUserId, reactionsFor, onToggleReaction, onReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, callParticipants, agentRunStatus, onOpenRun, agentLoopStatus, onOpenLab, onOpenResult, onDecideRun, onReviewRun, onRetryRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -3956,6 +4004,15 @@ export declare interface ChatPanelProps {
     agentRunStatus?: (runId: string) => AgentRunStatus | undefined;
     /** Open the run in the pipeline UI from an agent-run card. */
     onOpenRun?: (runId: string) => void;
+    /**
+     * Where an agent LOOP is, keyed by runId — the phase, clock, steps and
+     * budget its card shows in place of the pipeline's three beats. Called for
+     * the run cards the panel renders, so a host can watch only those.
+     * Undefined for a run that is not a loop, or one the host is not watching.
+     */
+    agentLoopStatus?: (runId: string) => AgentRunLoop | undefined;
+    /** Open a loop's lab beside the chat. The card offers "Open lab" for a loop only when this is given. */
+    onOpenLab?: (runId: string) => void;
     /** Open what a finished agent run produced — a side panel, a document, a link. */
     onOpenResult?: (result: AgentRunResult) => void;
     /** Approve or reject a run whose card says it is waiting for approval. */
@@ -6589,6 +6646,9 @@ export declare interface DepartmentInsightStripProps {
     onNavigate?: (href: string, event: MouseEvent_2<HTMLAnchorElement>) => void;
 }
 
+/** The loop's status sentence: "Planning…", "Running step 2 of 4 — Build the deck", the outcome. */
+export declare function describeAgentLoop(loop: AgentRunLoop): string;
+
 /**
  * A failed run's message, as a person reads it. The pipeline's own error is
  * written for the run log — "the chat service did not answer the join for
@@ -8714,6 +8774,9 @@ export declare function formatElapsed(ms: number): string;
  * rather than printing NaN.
  */
 export declare function formatEstimate(estimate: RunEstimate): string;
+
+/** `0:42`, `12:05` — a clock, not a duration sentence: it is read while it moves. */
+export declare function formatLoopClock(ms: number): string;
 
 /** "9h ago", "just now", "Sep 3" — `formatCompactAge` read as a sentence. */
 export declare function formatSourceAge(value: string | number | Date | null | undefined, now?: number): string | undefined;
@@ -23985,6 +24048,39 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -24011,26 +24107,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
@@ -24041,22 +24117,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

@@ -7,8 +7,9 @@ import { t as a } from "./InlinePopover-DpXHdWeE.js";
 import { t as o } from "./SectionLabel-bcrhNYOr.js";
 import { t as s } from "./InlinePlaceholder-51dbPRGn.js";
 import { n as c } from "./FloatingPanel-6GL9dXGL.js";
-import { a as l, c as u, d, f, i as p, l as m, n as h, o as g, r as _, s as v, t as y, u as b } from "./useComputeProjects-C2esFdTJ.js";
-import { A as x, B as S, C, D as w, E as ee, F as T, G as te, H as E, I as D, J as O, K as ne, L as k, M as A, N as j, O as M, P as re, R as ie, S as ae, T as N, U as oe, V as se, W as ce, Y as P, _ as le, a as ue, b as de, c as fe, d as pe, f as F, g as me, h as he, i as ge, j as I, k as _e, l as ve, m as ye, n as be, o as xe, p as Se, q as L, r as R, s as Ce, t as we, u as Te, v as Ee, w as De, x as Oe, y as ke, z as Ae } from "./ComputeContext-BkNY3eNI.js";
+import { a as l, i as u, n as d, r as f, t as p } from "./useComputeProjects-ZSazDRet.js";
+import { a as m, i as h, n as g, o as _, r as v, s as y, t as b } from "./PaneStatusLine-C0Ewhgab.js";
+import { A as x, B as S, C, D as w, E as ee, F as T, G as te, H as E, I as D, J as O, K as ne, L as k, M as A, N as j, O as M, P as re, R as ie, S as ae, T as N, U as oe, V as se, W as ce, Y as P, _ as le, a as ue, b as de, c as fe, d as pe, f as F, g as me, h as he, i as ge, j as I, k as _e, l as ve, m as ye, n as be, o as xe, p as Se, q as L, r as R, s as Ce, t as we, u as Te, v as Ee, w as De, x as Oe, y as ke, z as Ae } from "./ComputeContext-D1XmvC4V.js";
 import { Fragment as je, useCallback as z, useEffect as B, useMemo as V, useRef as H, useState as U, useSyncExternalStore as Me } from "react";
 import { Fragment as Ne, jsx as W, jsxs as G } from "react/jsx-runtime";
 //#region src/components/compute/lib/paneTree.ts
@@ -614,7 +615,7 @@ function ct(e) {
 	return t < 60 ? `${t}m` : `${Math.floor(t / 60)}h ${String(t % 60).padStart(2, "0")}m`;
 }
 function lt({ project: n, showMeter: i = !0, className: a, "data-testid": o }) {
-	let { budgetUsd: s, spentUsd: c, maintenanceUsd: l, tokensUsed: u, tokenBudget: d } = n, f = typeof s == "number" && s > 0, p = c ?? n.liveSpendUsd, m = f ? p / s : 0, g = f && l ? l / s : null, _ = n.computers.length, v = n.id === y;
+	let { budgetUsd: s, spentUsd: c, maintenanceUsd: l, tokensUsed: u, tokenBudget: f } = n, m = typeof s == "number" && s > 0, h = c ?? n.liveSpendUsd, g = m ? h / s : 0, _ = m && l ? l / s : null, v = n.computers.length, y = n.id === p;
 	return /* @__PURE__ */ G("div", {
 		"data-testid": o,
 		className: e("flex flex-col gap-1 font-mono min-w-0", a),
@@ -622,11 +623,11 @@ function lt({ project: n, showMeter: i = !0, className: a, "data-testid": o }) {
 			/* @__PURE__ */ G("div", {
 				className: "flex items-center gap-2 text-[10px] leading-none min-w-0 flex-wrap",
 				children: [
-					f ? /* @__PURE__ */ G("span", {
+					m ? /* @__PURE__ */ G("span", {
 						className: "text-code-subtle tabular-nums shrink-0",
 						children: [
 							"$",
-							p.toFixed(2),
+							h.toFixed(2),
 							/* @__PURE__ */ G("span", {
 								className: "text-code-muted",
 								children: [" / $", s.toFixed(0)]
@@ -634,7 +635,7 @@ function lt({ project: n, showMeter: i = !0, className: a, "data-testid": o }) {
 						]
 					}) : /* @__PURE__ */ W("span", {
 						className: "text-code-subtle tabular-nums shrink-0",
-						children: p > 0 ? `$${p.toFixed(2)}` : "$—"
+						children: h > 0 ? `$${h.toFixed(2)}` : "$—"
 					}),
 					u != null && /* @__PURE__ */ G(Ne, { children: [/* @__PURE__ */ W("span", {
 						"aria-hidden": "true",
@@ -642,12 +643,12 @@ function lt({ project: n, showMeter: i = !0, className: a, "data-testid": o }) {
 						children: "│"
 					}), /* @__PURE__ */ G("span", {
 						className: "text-code-muted tabular-nums shrink-0",
-						title: d ? `${u} of ${d} tokens` : `${u} tokens`,
+						title: f ? `${u} of ${f} tokens` : `${u} tokens`,
 						children: [
-							h(u),
-							d ? /* @__PURE__ */ G("span", {
+							d(u),
+							f ? /* @__PURE__ */ G("span", {
 								className: "text-code-raised",
-								children: ["/", h(d)]
+								children: ["/", d(f)]
 							}) : null,
 							" tok"
 						]
@@ -664,13 +665,13 @@ function lt({ project: n, showMeter: i = !0, className: a, "data-testid": o }) {
 							n.botCount === 1 ? "bot" : "bots"
 						]
 					}),
-					_ > 0 && /* @__PURE__ */ G(t, {
+					v > 0 && /* @__PURE__ */ G(t, {
 						size: "xs",
 						mono: !0,
 						tone: n.activeCount > 0 ? "info" : "neutral",
 						...n.activeCount > 0 ? { dot: "pulse" } : {},
-						title: n.activeCount > 0 ? `${n.activeCount} of ${_} doing something right now` : `${_} idle`,
-						children: [n.activeCount > 0 ? `${n.activeCount}/${_}` : _, " ▣"]
+						title: n.activeCount > 0 ? `${n.activeCount} of ${v} doing something right now` : `${v} idle`,
+						children: [n.activeCount > 0 ? `${n.activeCount}/${v}` : v, " ▣"]
 					}),
 					n.soonestExpiryMs != null && /* @__PURE__ */ G(t, {
 						size: "xs",
@@ -681,13 +682,13 @@ function lt({ project: n, showMeter: i = !0, className: a, "data-testid": o }) {
 					})
 				]
 			}),
-			i && f && /* @__PURE__ */ W(r, {
+			i && m && /* @__PURE__ */ W(r, {
 				label: "budget",
-				value: m,
-				note: g == null ? n.periodResetsAt ? `⟳ ${new Date(n.periodResetsAt).toLocaleDateString()}` : void 0 : `${Math.round(g * 100)}% is upkeep`,
+				value: g,
+				note: _ == null ? n.periodResetsAt ? `⟳ ${new Date(n.periodResetsAt).toLocaleDateString()}` : void 0 : `${Math.round(_ * 100)}% is upkeep`,
 				tone: "code"
 			}),
-			v && /* @__PURE__ */ W("span", {
+			y && /* @__PURE__ */ W("span", {
 				className: "text-[10px] text-code-raised",
 				children: "not charged to any project"
 			})
@@ -703,11 +704,11 @@ var ut = {
 	idle: 3,
 	stopped: 4
 };
-function dt({ computers: n, activeComputerId: r, openComputerIds: i, onSelect: a, onOpenInPane: o, onWatch: s, onCreate: c, onOpenMenu: l, showAllActivity: d, onToggleShowAll: p, canManage: h = !1, models: g = [], className: _ }) {
-	let v = new Set(i), b = n.filter((e) => {
-		let t = f(e);
+function dt({ computers: n, activeComputerId: r, openComputerIds: i, onSelect: a, onOpenInPane: o, onWatch: s, onCreate: c, onOpenMenu: l, showAllActivity: u, onToggleShowAll: d, canManage: f = !1, models: m = [], className: g }) {
+	let _ = new Set(i), b = n.filter((e) => {
+		let t = y(e);
 		return t === "running" || t === "waiting" || t === "error";
-	}), x = [...d ? n : b].sort((e, t) => (ut[f(e)] ?? 9) - (ut[f(t)] ?? 9)), S = R(), C = S?.projects ?? [], w = S?.projectsAbsent ?? !0, ee = C.filter((e) => e.id !== "__unassigned__" && e.computers.length > 0), T = C.find((e) => e.id === y), te = !w && ee.length > 0 ? [...ee.map((e) => ({
+	}), x = [...u ? n : b].sort((e, t) => (ut[y(e)] ?? 9) - (ut[y(t)] ?? 9)), S = R(), C = S?.projects ?? [], w = S?.projectsAbsent ?? !0, ee = C.filter((e) => e.id !== "__unassigned__" && e.computers.length > 0), T = C.find((e) => e.id === p), te = !w && ee.length > 0 ? [...ee.map((e) => ({
 		id: e.id,
 		computers: e.computers,
 		heading: /* @__PURE__ */ G("div", {
@@ -723,7 +724,7 @@ function dt({ computers: n, activeComputerId: r, openComputerIds: i, onSelect: a
 			})]
 		})
 	})), ...T && T.computers.length > 0 ? [{
-		id: y,
+		id: p,
 		computers: T.computers,
 		heading: /* @__PURE__ */ W("div", {
 			role: "presentation",
@@ -732,7 +733,7 @@ function dt({ computers: n, activeComputerId: r, openComputerIds: i, onSelect: a
 		})
 	}] : []] : null;
 	return /* @__PURE__ */ G("div", {
-		className: e("flex flex-col h-full min-h-0 bg-code-panel border-r border-code-border", _),
+		className: e("flex flex-col h-full min-h-0 bg-code-panel border-r border-code-border", g),
 		children: [
 			/* @__PURE__ */ W(ft, {
 				title: "computers",
@@ -742,13 +743,13 @@ function dt({ computers: n, activeComputerId: r, openComputerIds: i, onSelect: a
 				activeId: r,
 				onSelect: a,
 				onOpenInPane: o ?? null,
-				open: v,
+				open: _,
 				renderSub: null
 			}),
 			/* @__PURE__ */ G("div", {
 				className: "flex items-center px-3 py-1.5 border-y border-code-border shrink-0",
 				children: [
-					h && c ? /* @__PURE__ */ W("button", {
+					f && c ? /* @__PURE__ */ W("button", {
 						type: "button",
 						onClick: c,
 						className: "text-[11px] font-mono text-code-green bg-transparent border-none cursor-pointer p-0 hover:underline",
@@ -775,27 +776,27 @@ function dt({ computers: n, activeComputerId: r, openComputerIds: i, onSelect: a
 				activeId: r,
 				onSelect: a,
 				onOpenInPane: o ?? null,
-				open: v,
+				open: _,
 				action: /* @__PURE__ */ W("button", {
 					type: "button",
-					onClick: p,
-					"aria-pressed": d,
-					title: d ? "Show only boxes doing something" : "Show every box",
-					className: e("text-[11px] font-mono bg-transparent border-none cursor-pointer p-0", d ? "text-code-blue" : "text-code-muted hover:text-code-text"),
+					onClick: d,
+					"aria-pressed": u,
+					title: u ? "Show only boxes doing something" : "Show every box",
+					className: e("text-[11px] font-mono bg-transparent border-none cursor-pointer p-0", u ? "text-code-blue" : "text-code-muted hover:text-code-text"),
 					children: "all"
 				}),
 				onWatch: s ?? null,
 				renderSub: (e) => {
-					let n = f(e), r = e.lastResult ? u(null, g) : null;
+					let n = y(e), r = e.lastResult ? v(null, m) : null;
 					return /* @__PURE__ */ G("span", {
 						className: "flex items-center gap-1 truncate",
 						children: [
 							/* @__PURE__ */ W(t, {
 								size: "xs",
 								mono: !0,
-								tone: m[n].tone,
+								tone: h[n].tone,
 								className: "bg-transparent px-0",
-								children: m[n].label
+								children: h[n].label
 							}),
 							e.currentTask && /* @__PURE__ */ G(Ne, { children: [/* @__PURE__ */ W("span", {
 								"aria-hidden": "true",
@@ -820,15 +821,15 @@ function dt({ computers: n, activeComputerId: r, openComputerIds: i, onSelect: a
 		]
 	});
 }
-function ft({ title: t, count: n, rows: r, activeId: a, open: o, onSelect: s, onOpenInPane: c, action: l, renderSub: u, onWatch: d = null, groups: p = null }) {
-	let h = H(null), g = z((e) => {
+function ft({ title: t, count: n, rows: r, activeId: a, open: o, onSelect: s, onOpenInPane: c, action: l, renderSub: u, onWatch: d = null, groups: f = null }) {
+	let p = H(null), m = z((e) => {
 		if (![
 			"ArrowDown",
 			"ArrowUp",
 			"Home",
 			"End"
 		].includes(e.key)) return;
-		let t = Array.from(h.current?.querySelectorAll("[data-rail-row]") ?? []);
+		let t = Array.from(p.current?.querySelectorAll("[data-rail-row]") ?? []);
 		if (t.length === 0) return;
 		let n = t.findIndex((e) => e === document.activeElement);
 		e.preventDefault(), t[e.key === "Home" ? 0 : e.key === "End" ? t.length - 1 : n < 0 ? 0 : (n + (e.key === "ArrowDown" ? 1 : -1) + t.length) % t.length]?.focus();
@@ -853,19 +854,19 @@ function ft({ title: t, count: n, rows: r, activeId: a, open: o, onSelect: s, on
 			className: "px-3 pb-3 text-[11px] font-mono text-code-raised",
 			children: "nothing here"
 		}) : /* @__PURE__ */ W("div", {
-			ref: h,
+			ref: p,
 			role: "listbox",
 			"aria-label": t,
-			onKeyDown: g,
+			onKeyDown: m,
 			className: "flex-1 min-h-0 overflow-y-auto pb-1",
-			children: p ? p.map((e) => /* @__PURE__ */ G("div", {
+			children: f ? f.map((e) => /* @__PURE__ */ G("div", {
 				role: "presentation",
-				children: [e.heading, e.computers.map(_)]
-			}, e.id)) : r.map(_)
+				children: [e.heading, e.computers.map(g)]
+			}, e.id)) : r.map(g)
 		})]
 	});
-	function _(t) {
-		let n = f(t), r = m[n], l = t.id === a;
+	function g(t) {
+		let n = y(t), r = h[n], l = t.id === a;
 		return /* @__PURE__ */ G("div", {
 			role: "presentation",
 			className: e("group relative flex items-stretch", l ? "bg-code-surface" : "hover:bg-code-surface/60"),
@@ -933,13 +934,13 @@ function pt(e, t) {
 	}
 	return a;
 }
-function mt({ open: n, onClose: r, computers: a, panes: o, onJumpToPane: s, onRetarget: c, onOpenInSplit: l, projects: u = [], onSelectProject: d, chrome: p = "code" }) {
-	let [h, g] = U(""), [_, v] = U(0), y = H(null), b = H(null), x = V(() => new Map(a.map((e) => [e.id, e])), [a]), S = V(() => {
+function mt({ open: n, onClose: r, computers: a, panes: o, onJumpToPane: s, onRetarget: c, onOpenInSplit: l, projects: u = [], onSelectProject: d, chrome: f = "code" }) {
+	let [p, m] = U(""), [g, _] = U(0), v = H(null), b = H(null), x = V(() => new Map(a.map((e) => [e.id, e])), [a]), S = V(() => {
 		let e = [];
 		for (let t of o) {
 			let n = x.get(t.computerId);
 			if (!n) continue;
-			let r = pt(`${n.label} ${t.kindId}`, h);
+			let r = pt(`${n.label} ${t.kindId}`, p);
 			r != null && e.push({
 				row: {
 					kind: "pane",
@@ -953,7 +954,7 @@ function mt({ open: n, onClose: r, computers: a, panes: o, onJumpToPane: s, onRe
 		let t = new Set(o.map((e) => e.computerId)), n = [];
 		for (let e of a) {
 			if (t.has(e.id)) continue;
-			let r = pt(`${e.label} ${e.sessionId}`, h);
+			let r = pt(`${e.label} ${e.sessionId}`, p);
 			r != null && n.push({
 				row: {
 					kind: "computer",
@@ -964,8 +965,8 @@ function mt({ open: n, onClose: r, computers: a, panes: o, onJumpToPane: s, onRe
 			});
 		}
 		let r = [];
-		if (d && h.trim()) for (let e of u) {
-			let t = pt(e.name, h);
+		if (d && p.trim()) for (let e of u) {
+			let t = pt(e.name, p);
 			t != null && r.push({
 				row: {
 					kind: "project",
@@ -985,21 +986,21 @@ function mt({ open: n, onClose: r, computers: a, panes: o, onJumpToPane: s, onRe
 		o,
 		a,
 		x,
-		h,
+		p,
 		u,
 		d
 	]);
 	if (B(() => {
 		if (n) {
-			g(""), v(0);
-			let e = setTimeout(() => y.current?.focus(), 0);
+			m(""), _(0);
+			let e = setTimeout(() => v.current?.focus(), 0);
 			return () => clearTimeout(e);
 		}
 	}, [n]), B(() => {
-		v((e) => Math.min(e, Math.max(0, S.length - 1)));
+		_((e) => Math.min(e, Math.max(0, S.length - 1)));
 	}, [S.length]), B(() => {
 		b.current?.querySelector("[data-highlighted=\"true\"]")?.scrollIntoView({ block: "nearest" });
-	}, [_]), !n) return null;
+	}, [g]), !n) return null;
 	let C = (e, t) => {
 		e && (e.kind === "project" ? d?.(e.project) : e.kind === "pane" ? s(e.pane.id) : t ? l(e.computer) : c(e.computer), r());
 	};
@@ -1007,7 +1008,7 @@ function mt({ open: n, onClose: r, computers: a, panes: o, onJumpToPane: s, onRe
 		className: "absolute inset-0 z-20 flex items-start justify-center pt-[12vh] bg-code-bg/70",
 		onClick: r,
 		children: /* @__PURE__ */ G("div", {
-			style: st(p),
+			style: st(f),
 			onClick: (e) => e.stopPropagation(),
 			role: "dialog",
 			"aria-label": "Jump to a computer, pane or project",
@@ -1021,13 +1022,13 @@ function mt({ open: n, onClose: r, computers: a, panes: o, onJumpToPane: s, onRe
 						children: "/"
 					}),
 					/* @__PURE__ */ W("input", {
-						ref: y,
-						value: h,
+						ref: v,
+						value: p,
 						onChange: (e) => {
-							g(e.target.value), v(0);
+							m(e.target.value), _(0);
 						},
 						onKeyDown: (e) => {
-							e.key === "ArrowDown" || e.key === "n" && e.ctrlKey ? (e.preventDefault(), v((e) => S.length ? (e + 1) % S.length : 0)) : e.key === "ArrowUp" || e.key === "p" && e.ctrlKey ? (e.preventDefault(), v((e) => S.length ? (e - 1 + S.length) % S.length : 0)) : e.key === "Enter" ? (e.preventDefault(), C(S[_], e.shiftKey)) : e.key === "Escape" && (e.preventDefault(), r());
+							e.key === "ArrowDown" || e.key === "n" && e.ctrlKey ? (e.preventDefault(), _((e) => S.length ? (e + 1) % S.length : 0)) : e.key === "ArrowUp" || e.key === "p" && e.ctrlKey ? (e.preventDefault(), _((e) => S.length ? (e - 1 + S.length) % S.length : 0)) : e.key === "Enter" ? (e.preventDefault(), C(S[g], e.shiftKey)) : e.key === "Escape" && (e.preventDefault(), r());
 						},
 						placeholder: "jump to a computer, pane or project…",
 						"aria-label": "Filter computers, panes and projects",
@@ -1047,16 +1048,16 @@ function mt({ open: n, onClose: r, computers: a, panes: o, onJumpToPane: s, onRe
 					className: "px-3 py-4 text-[11px] text-code-raised",
 					children: [
 						"nothing matches “",
-						h,
+						p,
 						"”"
 					]
 				}) : S.map((n, r) => {
-					let a = r === _;
+					let a = r === g;
 					if (n.kind === "project") return /* @__PURE__ */ G("div", {
 						role: "option",
 						"aria-selected": a,
 						"data-highlighted": a,
-						onMouseEnter: () => v(r),
+						onMouseEnter: () => _(r),
 						onClick: () => C(n, !1),
 						className: e("flex flex-col gap-0.5 px-3 py-1.5 cursor-pointer border-l-2", a ? "bg-code-surface border-code-mauve" : "bg-transparent border-transparent"),
 						children: [/* @__PURE__ */ G("div", {
@@ -1077,12 +1078,12 @@ function mt({ open: n, onClose: r, computers: a, panes: o, onJumpToPane: s, onRe
 							className: "pl-1"
 						})]
 					}, n.id);
-					let o = f(n.computer), s = m[o];
+					let o = y(n.computer), s = h[o];
 					return /* @__PURE__ */ G("div", {
 						role: "option",
 						"aria-selected": a,
 						"data-highlighted": a,
-						onMouseEnter: () => v(r),
+						onMouseEnter: () => _(r),
 						onClick: (e) => C(n, e.shiftKey),
 						className: e("flex items-center gap-2 px-3 py-1.5 cursor-pointer border-l-2", a ? "bg-code-surface border-code-blue" : "bg-transparent border-transparent"),
 						children: [
@@ -1212,15 +1213,15 @@ function _t({ node: t, activePaneId: n, renderLeaf: r, onRatioChange: i }) {
 }
 //#endregion
 //#region src/components/compute/components/ComputerLab.tsx
-function vt({ open: t, onClose: n, focusComputerId: i = null, variant: a = "overlay", chrome: o = "app", keymap: s = et, leader: c = null, idleWindowMs: l = g, className: u }) {
-	let { computers: d, canManage: f, create: p, models: m, notify: h, refresh: _, paneKinds: v, projects: y } = be(), b = v[0]?.id ?? "agent", x = Ye(), [S, C] = U(!1), [w, ee] = U(""), [T, te] = U(!1), [E, D] = U(!1), [O, ne] = U(!1), [k, A] = U(!1), j = H(/* @__PURE__ */ new Map()), M = H(null), re = H(null), ie = H(null), ae = V(() => new Map(d.map((e) => [e.id, e])), [d]), N = x.panes.find((e) => e.id === x.activePaneId) ?? x.panes[0] ?? null, oe = N ? ae.get(N.computerId) ?? null : null, se = Qe(v, x.panes.map((e) => e.kindId), "shell"), ce = x.windows.length > 0, P = i && ae.has(i) ? i : null, le = P ?? d[0]?.id ?? null;
+function vt({ open: t, onClose: n, focusComputerId: i = null, variant: a = "overlay", chrome: o = "app", keymap: s = et, leader: c = null, idleWindowMs: l = b, className: u }) {
+	let { computers: d, canManage: f, create: p, models: m, notify: h, refresh: g, paneKinds: _, projects: v } = be(), y = _[0]?.id ?? "agent", x = Ye(), [S, C] = U(!1), [w, ee] = U(""), [T, te] = U(!1), [E, D] = U(!1), [O, ne] = U(!1), [k, A] = U(!1), j = H(/* @__PURE__ */ new Map()), M = H(null), re = H(null), ie = H(null), ae = V(() => new Map(d.map((e) => [e.id, e])), [d]), N = x.panes.find((e) => e.id === x.activePaneId) ?? x.panes[0] ?? null, oe = N ? ae.get(N.computerId) ?? null : null, se = Qe(_, x.panes.map((e) => e.kindId), "shell"), ce = x.windows.length > 0, P = i && ae.has(i) ? i : null, le = P ?? d[0]?.id ?? null;
 	B(() => {
-		!t || ce || !le || x.ensureSeeded(le, b);
+		!t || ce || !le || x.ensureSeeded(le, y);
 	}, [
 		t,
 		ce,
 		le,
-		b,
+		y,
 		x.ensureSeeded
 	]);
 	let ue = H(null), { focusPane: de, setPaneComputer: fe, panes: pe, activePaneId: F } = x;
@@ -1281,15 +1282,15 @@ function vt({ open: t, onClose: n, focusComputerId: i = null, variant: a = "over
 		h
 	]), ve = z((e) => {
 		let t = N?.computerId ?? d[0]?.id;
-		t && x.split(e, t, N?.kindId ?? b);
+		t && x.split(e, t, N?.kindId ?? y);
 	}, [
 		N,
 		d,
 		x,
-		b
+		y
 	]), ye = z((e, t, n) => {
 		if (!n || n.id === t) return;
-		let r = Xe(v, t);
+		let r = Xe(_, t);
 		if (n.quota === "shell" && r?.quota !== "shell" && se >= 8) {
 			h({
 				tone: "error",
@@ -1301,18 +1302,18 @@ function vt({ open: t, onClose: n, focusComputerId: i = null, variant: a = "over
 		x.setPaneKind(e, n.id);
 	}, [
 		x,
-		v,
+		_,
 		se,
 		h
 	]), xe = z(() => {
-		N && ye(N.id, N.kindId, Ze(v, N.kindId));
+		N && ye(N.id, N.kindId, Ze(_, N.kindId));
 	}, [
 		N,
-		v,
+		_,
 		ye
 	]), Se = z((e) => {
 		p(e ? { projectId: e } : void 0).then((e) => {
-			x.newWindow(e.id, b), h({
+			x.newWindow(e.id, y), h({
 				tone: "success",
 				title: `${e.label} ready`,
 				detail: "microVM session live · workspace persists"
@@ -1328,7 +1329,7 @@ function vt({ open: t, onClose: n, focusComputerId: i = null, variant: a = "over
 		p,
 		x,
 		h,
-		b
+		y
 	]);
 	B(() => {
 		if (!t || !x.activePaneId || O || E) return;
@@ -1504,7 +1505,7 @@ function vt({ open: t, onClose: n, focusComputerId: i = null, variant: a = "over
 							}, t.id);
 						}), /* @__PURE__ */ W("button", {
 							type: "button",
-							onClick: () => N && x.newWindow(N.computerId, b),
+							onClick: () => N && x.newWindow(N.computerId, y),
 							disabled: !N,
 							title: "New window",
 							"aria-label": "New window",
@@ -1564,9 +1565,9 @@ function vt({ open: t, onClose: n, focusComputerId: i = null, variant: a = "over
 						onSelect: (e) => {
 							N && x.setPaneComputer(N.id, e.id);
 						},
-						onOpenInPane: (e) => x.split("row", e.id, N?.kindId ?? b),
+						onOpenInPane: (e) => x.split("row", e.id, N?.kindId ?? y),
 						onWatch: (e) => {
-							let t = v.find((e) => e.id === "tail");
+							let t = _.find((e) => e.id === "tail");
 							if (!t) {
 								N && x.setPaneComputer(N.id, e.id);
 								return;
@@ -1600,12 +1601,12 @@ function vt({ open: t, onClose: n, focusComputerId: i = null, variant: a = "over
 								onClose: () => {
 									x.focusPane(e.id), x.closeActivePane();
 								},
-								kinds: v,
+								kinds: _,
 								onToggleKind: () => {
-									x.focusPane(e.id), ye(e.id, e.kindId, Ze(v, e.kindId));
+									x.focusPane(e.id), ye(e.id, e.kindId, Ze(_, e.kindId));
 								},
 								onRegisterPane: ge,
-								onSettled: () => void _()
+								onSettled: () => void g()
 							}, e.id);
 						}
 					}) : /* @__PURE__ */ G("div", {
@@ -1679,8 +1680,8 @@ function vt({ open: t, onClose: n, focusComputerId: i = null, variant: a = "over
 				onRetarget: (e) => {
 					N && x.setPaneComputer(N.id, e.id);
 				},
-				onOpenInSplit: (e) => x.split("row", e.id, N?.kindId ?? b),
-				projects: y,
+				onOpenInSplit: (e) => x.split("row", e.id, N?.kindId ?? y),
+				projects: v,
 				onSelectProject: (e) => {
 					let t = e.computers[0];
 					if (t) {
@@ -1707,15 +1708,15 @@ function vt({ open: t, onClose: n, focusComputerId: i = null, variant: a = "over
 		]
 	});
 }
-function yt({ pane: e, computer: t, active: r, broadcasting: a, zoomed: o, idleWindowMs: s, kinds: c, onFocus: l, onClose: u, onToggleKind: d, onRegisterPane: p, onSettled: h }) {
-	let g = Xe(c, e.kindId), _ = z((t) => {
-		g && p(e.id, g, t);
+function yt({ pane: e, computer: t, active: r, broadcasting: a, zoomed: o, idleWindowMs: s, kinds: c, onFocus: l, onClose: u, onToggleKind: d, onRegisterPane: f, onSettled: p }) {
+	let m = Xe(c, e.kindId), _ = z((t) => {
+		m && f(e.id, m, t);
 	}, [
-		p,
+		f,
 		e.id,
-		g
+		m
 	]);
-	if (!t || !g) return /* @__PURE__ */ W(n, {
+	if (!t || !m) return /* @__PURE__ */ W(n, {
 		title: "unbound",
 		active: r,
 		className: "flex-1 min-w-0",
@@ -1725,7 +1726,7 @@ function yt({ pane: e, computer: t, active: r, broadcasting: a, zoomed: o, idleW
 			children: t ? "no pane kind registered" : "this computer is gone"
 		})
 	});
-	let y = f(t), b = m[y];
+	let v = y(t), b = h[v];
 	return /* @__PURE__ */ G(n, {
 		active: r,
 		onActivate: l,
@@ -1755,7 +1756,7 @@ function yt({ pane: e, computer: t, active: r, broadcasting: a, zoomed: o, idleW
 				onClick: d,
 				title: Ze(c, e.kindId)?.description ?? "Switch pane kind",
 				className: "text-[9px] font-mono text-code-muted bg-transparent border-none cursor-pointer hover:text-code-text",
-				children: g.label
+				children: m.label
 			}), /* @__PURE__ */ W("button", {
 				type: "button",
 				onClick: u,
@@ -1766,19 +1767,19 @@ function yt({ pane: e, computer: t, active: r, broadcasting: a, zoomed: o, idleW
 		}),
 		children: [/* @__PURE__ */ W("div", {
 			className: "flex-1 min-h-0",
-			children: g.render({
+			children: m.render({
 				computer: t,
 				paneId: e.id,
 				active: r,
 				registerPane: _,
-				onSettled: h
+				onSettled: p
 			})
-		}), /* @__PURE__ */ W(v, {
+		}), /* @__PURE__ */ W(g, {
 			className: "rounded-b-[3px]",
 			computer: t,
 			idleWindowMs: s,
 			broadcasting: a,
-			mode: g.statusMode ?? g.label
+			mode: m.statusMode ?? m.label
 		})]
 	});
 }
@@ -1869,7 +1870,7 @@ function Ct(e) {
 	return !e || e.mode === "disabled" ? "— sync off" : e.mode === "offline" ? "○ offline — queuing" : e.mode === "pending" ? `◐ ${e.pendingOps ?? "?"} pending` : "● synced";
 }
 function wt(e, t = []) {
-	let n = e.modelProvider === "bedrock" ? u(e.model, t) : e.model ?? "—";
+	let n = e.modelProvider === "bedrock" ? v(e.model, t) : e.model ?? "—";
 	return e.modelProvider ? `${e.modelProvider} · ${n}` : n;
 }
 function Tt(e) {
@@ -2036,7 +2037,7 @@ function kt(e) {
 	}, [e]);
 }
 function At({ status: e }) {
-	let t = b[e];
+	let t = m[e];
 	return /* @__PURE__ */ W("span", {
 		"aria-hidden": "true",
 		title: t.help,
@@ -2899,4 +2900,4 @@ function sn(e = {}) {
 	};
 }
 //#endregion
-export { m as COMPUTE_STATUS, ce as COMPUTE_STORAGE_KEYS, Mt as ComputeDock, we as ComputeProvider, vt as ComputerLab, g as DEFAULT_IDLE_WINDOW_MS, et as DEFAULT_KEYMAP, ge as DEFAULT_PANE_KINDS, fe as DETACH_BYTE, te as DOCK_STORAGE_KEY, ne as FLEET_STORAGE_KEY, ve as HEARTBEAT_MS, L as LAB_LAYOUT_STORAGE_KEY, mt as LabChooser, dt as LabRail, Te as MAX_FRAME_BYTES, Fe as MAX_RATIO, pe as MAX_RETRIES, w as MAX_SHELLS, Pe as MIN_RATIO, Bt as MOCK_SHELL_SCHEME, en as MOCK_TAIL_SCHEME, nn as MOCK_TAIL_SCRIPTS, Dt as MachinePresenceMenu, v as PaneStatusLine, ht as PaneTreeView, lt as ProjectSummary, F as SHELL_CHANNEL, ue as SHELL_PANE_KIND, b as SHELL_STATUS, Ce as ShellTerminal, xe as TAIL_PANE_KIND, $e as TMUX_LEADER, Ee as TailPane, y as UNASSIGNED_PROJECT_ID, Ft as WORKSPACE_ENTRY_CAP, Nt as WORKSPACE_FIND_COMMAND, Pt as WORKSPACE_GIT_COMMAND, It as buildWorkspaceTree, O as clearComputeStorage, Se as closeAdvice, Be as closePane, M as closeShell, Rt as countDescendants, Re as countPanes, P as createComputeClient, _e as cycleLayout, We as cyclePane, x as cycleShell, Ge as enclosingSplit, ye as encodeFrame, he as encodeResize, me as exhaustedAdvice, le as exitCodeOf, d as expiryPressure, Le as findLeaf, ae as fixtureComputers, C as fixtureMachines, De as fixtureModels, N as fixtureRuntimeStatus, ee as fixtureWorkspace, I as focusShell, h as formatTokens, pt as fuzzyScore, A as getDock, it as groupBindings, $t as installMockShellSocket, sn as installMockTailSource, tt as isLeaderKey, at as labelFor, q as layoutRects, K as listLeaves, Ie as makeLeaf, rt as matchBinding, nt as matchLeaderBinding, Ct as memorySummary, qt as mockShellUrl, rn as mockTailUrl, Ue as neighborPane, Ze as nextKind, j as openShell, wt as providerSummary, Qe as quotaUsage, Ke as ratioOf, re as reconcileDock, T as reportShellStatus, Xe as resolveKind, _ as rollUpProjects, D as selectShellByIndex, k as setDockVisible, ie as setGeometry, Ae as setMode, Ve as setRatio, u as shortModelName, S as showsAllPanes, ze as splitPane, f as statusOf, se as subscribeDock, de as summarizeTool, E as toggleFloating, He as updateLeaf, be as useCompute, oe as useComputeFleet, R as useComputeOptional, p as useComputeProjects, ke as useComputeTail, Oe as useComputeTask, Ye as useLabLayout, l as useProjectRollups, zt as visibleRows };
+export { h as COMPUTE_STATUS, ce as COMPUTE_STORAGE_KEYS, Mt as ComputeDock, we as ComputeProvider, vt as ComputerLab, b as DEFAULT_IDLE_WINDOW_MS, et as DEFAULT_KEYMAP, ge as DEFAULT_PANE_KINDS, fe as DETACH_BYTE, te as DOCK_STORAGE_KEY, ne as FLEET_STORAGE_KEY, ve as HEARTBEAT_MS, L as LAB_LAYOUT_STORAGE_KEY, mt as LabChooser, dt as LabRail, Te as MAX_FRAME_BYTES, Fe as MAX_RATIO, pe as MAX_RETRIES, w as MAX_SHELLS, Pe as MIN_RATIO, Bt as MOCK_SHELL_SCHEME, en as MOCK_TAIL_SCHEME, nn as MOCK_TAIL_SCRIPTS, Dt as MachinePresenceMenu, g as PaneStatusLine, ht as PaneTreeView, lt as ProjectSummary, F as SHELL_CHANNEL, ue as SHELL_PANE_KIND, m as SHELL_STATUS, Ce as ShellTerminal, xe as TAIL_PANE_KIND, $e as TMUX_LEADER, Ee as TailPane, p as UNASSIGNED_PROJECT_ID, Ft as WORKSPACE_ENTRY_CAP, Nt as WORKSPACE_FIND_COMMAND, Pt as WORKSPACE_GIT_COMMAND, It as buildWorkspaceTree, O as clearComputeStorage, Se as closeAdvice, Be as closePane, M as closeShell, Rt as countDescendants, Re as countPanes, P as createComputeClient, _e as cycleLayout, We as cyclePane, x as cycleShell, Ge as enclosingSplit, ye as encodeFrame, he as encodeResize, me as exhaustedAdvice, le as exitCodeOf, _ as expiryPressure, Le as findLeaf, ae as fixtureComputers, C as fixtureMachines, De as fixtureModels, N as fixtureRuntimeStatus, ee as fixtureWorkspace, I as focusShell, d as formatTokens, pt as fuzzyScore, A as getDock, it as groupBindings, $t as installMockShellSocket, sn as installMockTailSource, tt as isLeaderKey, at as labelFor, q as layoutRects, K as listLeaves, Ie as makeLeaf, rt as matchBinding, nt as matchLeaderBinding, Ct as memorySummary, qt as mockShellUrl, rn as mockTailUrl, Ue as neighborPane, Ze as nextKind, j as openShell, wt as providerSummary, Qe as quotaUsage, Ke as ratioOf, re as reconcileDock, T as reportShellStatus, Xe as resolveKind, f as rollUpProjects, D as selectShellByIndex, k as setDockVisible, ie as setGeometry, Ae as setMode, Ve as setRatio, v as shortModelName, S as showsAllPanes, ze as splitPane, y as statusOf, se as subscribeDock, de as summarizeTool, E as toggleFloating, He as updateLeaf, be as useCompute, oe as useComputeFleet, R as useComputeOptional, u as useComputeProjects, ke as useComputeTail, Oe as useComputeTask, Ye as useLabLayout, l as useProjectRollups, zt as visibleRows };

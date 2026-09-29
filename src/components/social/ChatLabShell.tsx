@@ -14,6 +14,14 @@
 // prompt line at the bottom. "Back to chat" hands the column back; the loop
 // keeps running and stays reachable through `ChatLabPill`.
 //
+// 2026-09-28: the host that shipped this stopped lending it the column. With
+// a call docked above the composer, swapping the column hid the people you
+// were talking to, and even without one it hid every realtime update for the
+// half-minute the planner takes. The loop is now a card in the transcript and
+// this shell opens BESIDE the conversation, as `variant="pane"` — the same
+// shell, laid out for a 400–560px side pane. `variant="column"` is unchanged
+// for any host that still wants the swap.
+//
 // PALETTE: the shell paints in the code family (`--color-code-*`), not the
 // host theme, for the same reason `PaneStatusLine` does — the body of it is a
 // log console and, optionally, an xterm canvas, and a light bar above a dark
@@ -126,9 +134,21 @@ export interface ChatLabShellProps {
    * supplies it so presence stays the host's subscription.
    */
   headerAccessory?: ReactNode;
+  /**
+   * Where the shell is drawn. `'column'` (the default) is the whole chat
+   * column: one dense status row and a horizontal step rail. `'pane'` is a
+   * 400–560px side pane beside a conversation that stays on screen: the
+   * status line takes two rows (where it is and what it is on; what it has
+   * spent and how many turns), the step rail wraps instead of scrolling
+   * sideways, and `onBackToChat` reads **Close** — nothing was taken from the
+   * chat, so there is nothing to go "back" to.
+   */
+  variant?: ChatLabShellVariant;
   className?: string;
   'data-testid'?: string;
 }
+
+export type ChatLabShellVariant = 'column' | 'pane';
 
 interface StatusMeta {
   label: string;
@@ -226,9 +246,11 @@ export function ChatLabShell({
   shell,
   notice,
   headerAccessory,
+  variant = 'column',
   className,
   'data-testid': testId = 'chat-lab-shell',
 }: ChatLabShellProps) {
+  const pane = variant === 'pane';
   const [tab, setTab] = useState<'stream' | 'terminal'>('stream');
   const [draft, setDraft] = useState('');
   const [expanded, setExpanded] = useState<readonly string[]>([]);
@@ -332,99 +354,145 @@ export function ChatLabShell({
   // renders one frame of nothing.
   const activeTab = tab === 'terminal' && !shell ? 'stream' : tab;
 
+  const whereItIs = (
+    <>
+      <span
+        aria-hidden="true"
+        data-testid={`${testId}-status-dot`}
+        className={cn(
+          'inline-block h-2 w-2 shrink-0 rounded-full',
+          meta.dot,
+          busy && 'animate-pulse motion-reduce:animate-none',
+        )}
+      />
+      <span className={cn('shrink-0 font-semibold', meta.text)} data-testid={`${testId}-status-label`}>
+        {meta.label}
+      </span>
+      <span aria-hidden="true" className="text-code-raised">│</span>
+      <Chip
+        size="xs"
+        mono
+        palette="code"
+        tone="accent"
+        title={model}
+        data-testid={`${testId}-model`}
+      >
+        {shortModelName(model)}
+      </Chip>
+    </>
+  );
+
+  const whatItSpent = (
+    <>
+      <span
+        className="shrink-0 tabular-nums text-code-subtle"
+        title="Context spent against this loop's budget"
+        data-testid={`${testId}-budget`}
+      >
+        {formatTokens(contextTokens)} / {formatTokens(contextBudgetTokens)}
+      </span>
+      <DotMeter
+        value={spent}
+        segments={8}
+        showPercent={false}
+        tone="code"
+        label="context"
+        className="shrink-0"
+        data-testid={`${testId}-budget-meter`}
+      />
+      <span aria-hidden="true" className="text-code-raised">│</span>
+      <span className="shrink-0 tabular-nums text-code-muted" data-testid={`${testId}-iterations`}>
+        {iterations} {iterations === 1 ? 'turn' : 'turns'}
+      </span>
+    </>
+  );
+
+  const titleNode = (
+    <span className="min-w-0 flex-1 truncate text-code-comment" title={title} data-testid={`${testId}-title`}>
+      {title}
+    </span>
+  );
+
+  const controls = (
+    <>
+      {headerAccessory != null && headerAccessory !== false && (
+        <span className="flex shrink-0 items-center" data-testid={`${testId}-header-accessory`}>
+          {headerAccessory}
+        </span>
+      )}
+      {onOpenGraph && (
+        <Button tone="code" variant="ghost" size="sm" onClick={onOpenGraph} data-testid={`${testId}-open-graph`}>
+          Graph
+        </Button>
+      )}
+      {onOpenRun && (
+        <Button tone="code" variant="ghost" size="sm" onClick={onOpenRun} data-testid={`${testId}-open-run`}>
+          Run
+        </Button>
+      )}
+      {onStop && (
+        <Button
+          tone="code"
+          variant="danger"
+          size="sm"
+          onClick={onStop}
+          disabled={!busy && status !== 'waiting'}
+          data-testid={`${testId}-stop`}
+        >
+          Stop
+        </Button>
+      )}
+      <Button tone="code" variant="secondary" size="sm" onClick={onBackToChat} data-testid={`${testId}-back`}>
+        {pane ? 'Close' : 'Back to chat'}
+      </Button>
+    </>
+  );
+
   return (
     <div
       data-testid={testId}
       data-status={status}
+      data-variant={variant}
       onKeyDown={onRootKeyDown}
       className={cn(
         'flex h-full min-h-0 flex-col bg-code-bg font-mono text-code-text',
         className,
       )}
     >
-      {/* Status line. One dense row, in the order you ask the questions:
-          where is it, what is it on, what has it spent, how many turns. */}
+      {/* Status line. In the column: one dense row, in the order you ask the
+          questions — where is it, what is it on, what has it spent, how many
+          turns. In a pane there is not the width for that row, so it breaks
+          where the questions do: where it is and what it is on (with the
+          controls), then what it has spent. */}
       <div
         data-testid={`${testId}-status`}
-        className="flex shrink-0 flex-wrap items-center gap-x-2 gap-y-1 border-b border-code-border bg-code-panel px-3 py-2 text-[11px] leading-none"
+        data-layout={pane ? 'stacked' : 'row'}
+        className={cn(
+          'flex shrink-0 border-b border-code-border bg-code-panel px-3 py-2 text-[11px] leading-none',
+          pane ? 'flex-col gap-1.5' : 'flex-wrap items-center gap-x-2 gap-y-1',
+        )}
       >
-        <span
-          aria-hidden="true"
-          data-testid={`${testId}-status-dot`}
-          className={cn(
-            'inline-block h-2 w-2 shrink-0 rounded-full',
-            meta.dot,
-            busy && 'animate-pulse motion-reduce:animate-none',
-          )}
-        />
-        <span className={cn('shrink-0 font-semibold', meta.text)} data-testid={`${testId}-status-label`}>
-          {meta.label}
-        </span>
-        <span aria-hidden="true" className="text-code-raised">│</span>
-        <Chip
-          size="xs"
-          mono
-          palette="code"
-          tone="accent"
-          title={model}
-          data-testid={`${testId}-model`}
-        >
-          {shortModelName(model)}
-        </Chip>
-        <span aria-hidden="true" className="text-code-raised">│</span>
-        <span
-          className="shrink-0 tabular-nums text-code-subtle"
-          title="Context spent against this loop's budget"
-          data-testid={`${testId}-budget`}
-        >
-          {formatTokens(contextTokens)} / {formatTokens(contextBudgetTokens)}
-        </span>
-        <DotMeter
-          value={spent}
-          segments={8}
-          showPercent={false}
-          tone="code"
-          label="context"
-          className="shrink-0"
-          data-testid={`${testId}-budget-meter`}
-        />
-        <span aria-hidden="true" className="text-code-raised">│</span>
-        <span className="shrink-0 tabular-nums text-code-muted" data-testid={`${testId}-iterations`}>
-          {iterations} {iterations === 1 ? 'turn' : 'turns'}
-        </span>
-        <span className="min-w-0 flex-1 truncate text-code-comment" title={title} data-testid={`${testId}-title`}>
-          {title}
-        </span>
-        {headerAccessory != null && headerAccessory !== false && (
-          <span className="flex shrink-0 items-center" data-testid={`${testId}-header-accessory`}>
-            {headerAccessory}
-          </span>
+        {pane ? (
+          <>
+            <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1" data-testid={`${testId}-status-where`}>
+              {whereItIs}
+              <span className="min-w-0 flex-1" aria-hidden="true" />
+              {controls}
+            </div>
+            <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1" data-testid={`${testId}-status-spend`}>
+              {whatItSpent}
+              {titleNode}
+            </div>
+          </>
+        ) : (
+          <>
+            {whereItIs}
+            <span aria-hidden="true" className="text-code-raised">│</span>
+            {whatItSpent}
+            {titleNode}
+            {controls}
+          </>
         )}
-        {onOpenGraph && (
-          <Button tone="code" variant="ghost" size="sm" onClick={onOpenGraph} data-testid={`${testId}-open-graph`}>
-            Graph
-          </Button>
-        )}
-        {onOpenRun && (
-          <Button tone="code" variant="ghost" size="sm" onClick={onOpenRun} data-testid={`${testId}-open-run`}>
-            Run
-          </Button>
-        )}
-        {onStop && (
-          <Button
-            tone="code"
-            variant="danger"
-            size="sm"
-            onClick={onStop}
-            disabled={!busy && status !== 'waiting'}
-            data-testid={`${testId}-stop`}
-          >
-            Stop
-          </Button>
-        )}
-        <Button tone="code" variant="secondary" size="sm" onClick={onBackToChat} data-testid={`${testId}-back`}>
-          Back to chat
-        </Button>
       </div>
 
       {/* The honest banner. Never styled as a warning when it is only a fact
@@ -445,7 +513,12 @@ export function ChatLabShell({
         <ol
           data-testid={`${testId}-steps`}
           aria-label="Loop steps"
-          className="flex shrink-0 list-none items-center gap-1.5 overflow-x-auto border-b border-code-border bg-code-panel px-3 py-1.5"
+          className={cn(
+            'flex shrink-0 list-none items-center gap-1.5 border-b border-code-border bg-code-panel px-3 py-1.5',
+            // A pane is narrow and the plan is short: every step stays in
+            // sight on a second line rather than behind a sideways scroll.
+            pane ? 'flex-wrap' : 'overflow-x-auto',
+          )}
         >
           {steps.map((step) => (
             <li
@@ -459,7 +532,7 @@ export function ChatLabShell({
                 aria-hidden="true"
                 className={cn('inline-block h-1.5 w-1.5 shrink-0 rounded-full', STEP_DOT[step.status])}
               />
-              <span className={cn('max-w-[16rem] truncate', STEP_TEXT[step.status])}>{step.title}</span>
+              <span className={cn(pane ? 'max-w-[12rem]' : 'max-w-[16rem]', 'truncate', STEP_TEXT[step.status])}>{step.title}</span>
             </li>
           ))}
         </ol>

@@ -19,7 +19,7 @@ import { DocumentChip } from './DocumentChip';
 import { CallActivityCard, type CallActivityParticipant, type CallOutcome } from './CallActivityCard';
 import { RecordingActivityCard, type RecordingParticipant, type RecordingStage } from './RecordingActivityCard';
 import { MembershipNotice, type MembershipRef, type MembershipHistory } from './MembershipNotice';
-import { AgentRunCard, agentRunRefFromMetadata, type AgentRunDecision, type AgentRunResult, type AgentRunReviewDecision, type AgentRunStatus, type AgentRunSuggestion } from './AgentRunCard';
+import { AgentRunCard, agentRunRefFromMetadata, type AgentRunLoop, type AgentRunDecision, type AgentRunResult, type AgentRunReviewDecision, type AgentRunStatus, type AgentRunSuggestion } from './AgentRunCard';
 import { ReactionChips } from './ReactionChips';
 import { MessageActionBar } from './MessageActionBar';
 import { InlineMessageEditor } from './InlineMessageEditor';
@@ -209,6 +209,15 @@ export interface ChatPanelProps {
   agentRunStatus?: (runId: string) => AgentRunStatus | undefined;
   /** Open the run in the pipeline UI from an agent-run card. */
   onOpenRun?: (runId: string) => void;
+  /**
+   * Where an agent LOOP is, keyed by runId — the phase, clock, steps and
+   * budget its card shows in place of the pipeline's three beats. Called for
+   * the run cards the panel renders, so a host can watch only those.
+   * Undefined for a run that is not a loop, or one the host is not watching.
+   */
+  agentLoopStatus?: (runId: string) => AgentRunLoop | undefined;
+  /** Open a loop's lab beside the chat. The card offers "Open lab" for a loop only when this is given. */
+  onOpenLab?: (runId: string) => void;
   /** Open what a finished agent run produced — a side panel, a document, a link. */
   onOpenResult?: (result: AgentRunResult) => void;
   /** Approve or reject a run whose card says it is waiting for approval. */
@@ -1335,6 +1344,23 @@ function otherParticipantCount(
   return others.size;
 }
 
+/**
+ * A run card's loop half: the live loop when the host is watching this run,
+ * and "Open lab" for a run that is a loop (the metadata's `lab` mark) or that
+ * the host reports as one.
+ */
+function loopCardProps(
+  ref: { runId: string; lab?: true },
+  statusFor: ((runId: string) => AgentRunLoop | undefined) | undefined,
+  onOpenLab: ((runId: string) => void) | undefined,
+): { loop?: AgentRunLoop; onOpenLab?: (runId: string) => void } {
+  const loop = statusFor?.(ref.runId);
+  return {
+    ...(loop ? { loop } : {}),
+    ...(onOpenLab && (loop || ref.lab) ? { onOpenLab } : {}),
+  };
+}
+
 export function ChatPanel({
   messages,
   localMessages = [],
@@ -1364,6 +1390,8 @@ export function ChatPanel({
   callParticipants,
   agentRunStatus,
   onOpenRun,
+  agentLoopStatus,
+  onOpenLab,
   onOpenResult,
   onDecideRun,
   onReviewRun,
@@ -1943,6 +1971,7 @@ export function ChatPanel({
                     suggestion={localRef.suggestionKey ? { key: localRef.suggestionKey, ...(localRef.documentId ? { documentId: localRef.documentId } : {}) } : undefined}
                     onReview={onReviewRun}
                     onRetry={onRetryRun}
+                    {...loopCardProps(localRef, agentLoopStatus, onOpenLab)}
                   />
                 ) : (
                   <MessageBody text={local.content} />
@@ -2035,6 +2064,7 @@ export function ChatPanel({
       suggestion={agentRef.suggestionKey ? { key: agentRef.suggestionKey, ...(agentRef.documentId ? { documentId: agentRef.documentId } : {}) } : undefined}
       onReview={onReviewRun}
       onRetry={onRetryRun}
+      {...loopCardProps(agentRef, agentLoopStatus, onOpenLab)}
     />
   ) : recordingRef ? (
     (() => {

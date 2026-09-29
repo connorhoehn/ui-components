@@ -156,8 +156,8 @@ export type { ConversationShelfItem, ConversationShelfProps } from './Conversati
 // cannot end up with two highlighted rows and one pane.
 export { ConversationRail } from './ConversationRail';
 export type { ConversationRailProps, RailSelection } from './ConversationRail';
-export { AgentRunCard, agentRunRefFromMetadata, describeAgentRunOp, describeAgentRunFailure, agentRunTimings, AGENT_RUN_STEP_DOT } from './AgentRunCard';
-export type { AgentRunCardProps, AgentRunStatus, AgentRunPhase, AgentRunDecision, AgentRunReviewDecision, AgentRunSuggestion, AgentRunReview, AgentRunDetails, AgentRunStep, AgentRunStepStatus, AgentRunOp } from './AgentRunCard';
+export { AgentRunCard, agentRunRefFromMetadata, describeAgentRunOp, describeAgentRunFailure, describeAgentLoop, formatLoopClock, agentRunTimings, AGENT_RUN_STEP_DOT } from './AgentRunCard';
+export type { AgentRunCardProps, AgentRunLoop, AgentRunLoopPhase, AgentRunStatus, AgentRunPhase, AgentRunDecision, AgentRunReviewDecision, AgentRunSuggestion, AgentRunReview, AgentRunDetails, AgentRunStep, AgentRunStepStatus, AgentRunOp } from './AgentRunCard';
 export type { ComposerCommand, ComposerCommandArgument, ComposerArgumentItem } from './composerCommands';
 export { matchComposerCommand, composerCommandArgumentText } from './composerCommands';
 export type { AgentRunResult } from './AgentRunCard';
@@ -172,7 +172,7 @@ export { agentRunResultFromMetadata } from './AgentRunCard';
 // `React.lazy` from the shell precisely so the compute provider and pane
 // registry stay out of this entry, and naming it here would pull them back in.
 export { ChatLabShell, ChatLabPill, formatTokens } from './ChatLabShell';
-export type { LabStatus, LabStep, LabEvent, ChatLabShellProps, ChatLabPillProps } from './ChatLabShell';
+export type { LabStatus, LabStep, LabEvent, ChatLabShellProps, ChatLabShellVariant, ChatLabPillProps } from './ChatLabShell';
 
 // ChatColumnBackdrop — the whole chat column turned into a console while the
 // composer is in Agent or Terminal mode. Wrap the message list + composer.

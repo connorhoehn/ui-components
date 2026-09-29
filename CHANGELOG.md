@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.405.0
+
+- `ChatLabShell` `variant?: 'column' | 'pane'` (default `'column'`, unchanged). `'pane'` lays the lab out for a 400–560px side pane beside a conversation that stays on screen: the status line takes two rows (dot + status · model chip with the controls; `42k / 200k` meter · turns · title), the step rail wraps instead of scrolling sideways, and `onBackToChat` reads **Close** (testid `…-back` unchanged; Escape still closes). The root carries `data-variant`, the status line `data-layout="stacked" | "row"`. New type `ChatLabShellVariant`. Why: a host that swapped the chat column for the lab hid a docked call shelf and every realtime update for the planner's 20–40 s.
+- `AgentRunCard` shows an agent LOOP live: `loop?: AgentRunLoop` (`phase` — the lab's eight words, `startedAt` / `elapsedMs`, `steps: LabStep[]`, `contextTokens` / `contextBudgetTokens`, `outcome`) and `onOpenLab?: (runId) => void` ("Open lab"). With `loop` the card replaces the pipeline's three beats with the phase chip, a sentence ("Planning…", "Running step 2 of 4 — Write the haiku", the outcome), a clock that ticks once a second from `startedAt` while busy, the budget meter, and — once there is a plan — a wrapping step rail with the running step marked (`data-mode="loop"`, `…-loop`, `…-loop-steps`, `…-clock`, `…-open-lab`). Every existing prop works as before; without `loop` nothing changes. New exports `describeAgentLoop`, `formatLoopClock`, types `AgentRunLoop`, `AgentRunLoopPhase`.
+- `agentRunRefFromMetadata` returns `lab: true` for a message whose metadata carries `lab` (an `/agent` card).
+- `ChatPanel` `agentLoopStatus?: (runId) => AgentRunLoop | undefined` and `onOpenLab?: (runId) => void`, passed to every run card it renders (thread and local); "Open lab" is offered for a card marked `lab` or one the host reports a loop for.
+- Storybook: ChatLabShell pane at 420 / 520 in light and dark, planning, column, pill; AgentRunCard "Agent loop" for every phase and a 267px column.
+
 ## 2.404.1
 
 - `RecordGraph` "Fit to view" shows everything on a short canvas. The member search journey: with the conversation expanded (canvas 1160 × 209), 25 records and three selected, Fit to view went to the 0.4 floor and Force showed 22 of 25 — three records clipped at the top with 45px of empty canvas below, because the 2.403.8 focus offset was applied although the 184px drawing fitted — and Radial 17 of 25 (1.17× the canvas height at 0.4). `recordGraphViewport` `mode: 'all'` now uses the whole drawing's own zoom whenever it fits the clear area at or above the floor and centres it there, never applying the focus; only a drawing that does not fit even at the floor centres on the selection, as before. Still idempotent across presses.

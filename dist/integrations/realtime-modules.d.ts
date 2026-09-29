@@ -120,6 +120,33 @@ declare interface AgentRunDetails {
 }
 
 /**
+ * An agent loop, live, for its card in the transcript.
+ *
+ * A loop (`/agent …`) is not a pipeline edit that is received, processed and
+ * done in seconds: it plans for half a minute, then works through steps for
+ * minutes, spending a context budget. The card says that in the thread so
+ * nothing has to take the conversation's place to show it — the phase, the
+ * clock while it is planning, the step it is on, what it has spent, and a way
+ * into the lab.
+ */
+declare interface AgentRunLoop {
+    phase: AgentRunLoopPhase;
+    /** When the run started (ISO). With it, the card's clock ticks on its own while the loop is busy. */
+    startedAt?: string;
+    /** How long it has run, as last reported. Used when `startedAt` is absent. */
+    elapsedMs?: number;
+    /** The plan, with the running step marked. Empty while planning. */
+    steps?: readonly LabStep[];
+    contextTokens?: number;
+    contextBudgetTokens?: number;
+    /** One sentence about how it ended — the failure, the summary. Replaces the phase's own words once it has ended. */
+    outcome?: string;
+}
+
+/** Where an agent LOOP is — the lab's own eight words. */
+declare type AgentRunLoopPhase = LabStatus;
+
+/**
  * One edit the agent made, in the document-ops vocabulary the pipeline emits
  * (`setTitle`, `appendBlock`, `replaceBlock`, …). The card turns each into a
  * sentence; an op it does not know is shown by name.
@@ -889,6 +916,15 @@ declare interface ChatPanelProps {
     agentRunStatus?: (runId: string) => AgentRunStatus | undefined;
     /** Open the run in the pipeline UI from an agent-run card. */
     onOpenRun?: (runId: string) => void;
+    /**
+     * Where an agent LOOP is, keyed by runId — the phase, clock, steps and
+     * budget its card shows in place of the pipeline's three beats. Called for
+     * the run cards the panel renders, so a host can watch only those.
+     * Undefined for a run that is not a loop, or one the host is not watching.
+     */
+    agentLoopStatus?: (runId: string) => AgentRunLoop | undefined;
+    /** Open a loop's lab beside the chat. The card offers "Open lab" for a loop only when this is given. */
+    onOpenLab?: (runId: string) => void;
     /** Open what a finished agent run produced — a side panel, a document, a link. */
     onOpenResult?: (result: AgentRunResult) => void;
     /** Approve or reject a run whose card says it is waiting for approval. */
@@ -1669,6 +1705,18 @@ export declare interface HangoutRoomsSectionProps {
         open: boolean;
         onClose: () => void;
     }) => React.ReactNode;
+}
+
+/** Where a loop is. Mirrors the run status platform-api reports. */
+declare type LabStatus = 'planning' | 'starting' | 'running' | 'waiting' | 'done' | 'failed' | 'stopped' | 'budget';
+
+declare interface LabStep {
+    id: string;
+    title: string;
+    kind: string;
+    status: 'pending' | 'running' | 'done' | 'failed' | 'skipped';
+    iterations?: number;
+    contextTokens?: number;
 }
 
 /**
@@ -3332,6 +3380,39 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -3358,26 +3439,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
@@ -3388,22 +3449,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

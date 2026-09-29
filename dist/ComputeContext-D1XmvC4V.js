@@ -1,7 +1,8 @@
 import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./Chip-4IBrlduZ.js";
 import { t as n } from "./RisingParticles-DqlZf8HC.js";
-import { f as r, i, r as a, u as o } from "./useComputeProjects-C2esFdTJ.js";
+import { i as r, r as i } from "./useComputeProjects-ZSazDRet.js";
+import { a, s as o } from "./PaneStatusLine-C0Ewhgab.js";
 import { createContext as s, forwardRef as c, useCallback as l, useContext as u, useEffect as d, useImperativeHandle as f, useLayoutEffect as p, useMemo as m, useRef as h, useState as g } from "react";
 import { Fragment as _, jsx as v, jsxs as y } from "react/jsx-runtime";
 import { Terminal as b } from "@xterm/xterm";
@@ -905,27 +906,27 @@ function ge(e) {
 	for (let n = 0; n < e.length; n += 1) t ^= e.charCodeAt(n), t = Math.imul(t, 16777619);
 	return t >>> 0;
 }
-function _e({ computer: i, registerPane: a, className: o }) {
+function _e({ computer: r, registerPane: i, className: a }) {
 	let { client: s } = $(), c = pe({
 		client: s,
-		boxId: i.id
+		boxId: r.id
 	}), l = h(null), u = h(!0), f = h(0), [m, _] = g(!0), [b, x] = g(0);
 	function S() {
 		let e = l.current;
 		e && (e.scrollTop = e.scrollHeight), u.current = !0, _(!0), x(0);
 	}
 	d(() => {
-		if (a) return a({ focus: () => l.current?.focus() }), () => a(null);
-	}, [a]), p(() => {
+		if (i) return i({ focus: () => l.current?.focus() }), () => i(null);
+	}, [i]), p(() => {
 		let e = l.current, t = c.steps.length - f.current;
 		f.current = c.steps.length, e && (u.current ? (e.scrollTop = e.scrollHeight, b !== 0 && x(0)) : t > 0 && x((e) => e + t));
 	}, [c.steps]);
-	let C = Math.max(0, c.steps.length - he), w = C > 0 ? c.steps.slice(-200) : c.steps, T = r(i) === "running";
+	let C = Math.max(0, c.steps.length - he), w = C > 0 ? c.steps.slice(-200) : c.steps, T = o(r) === "running";
 	return /* @__PURE__ */ y(n, {
 		active: T,
 		intensity: "low",
-		seed: ge(i.id),
-		className: e("flex flex-col h-full min-h-0 bg-code-bg", o),
+		seed: ge(r.id),
+		className: e("flex flex-col h-full min-h-0 bg-code-bg", a),
 		"data-testid": "tail-pane-particles",
 		children: [/* @__PURE__ */ y("div", {
 			className: "shrink-0 flex items-center gap-2 px-2 py-1 border-b border-code-border",
@@ -963,7 +964,7 @@ function _e({ computer: i, registerPane: a, className: o }) {
 				},
 				tabIndex: 0,
 				role: "log",
-				"aria-label": `Activity on ${i.label}`,
+				"aria-label": `Activity on ${r.label}`,
 				"data-testid": "tail-pane-log",
 				className: "h-full overflow-y-auto px-2 py-1.5 font-mono text-[11px] leading-[1.5] flex flex-col gap-0.5 outline-none focus-visible:ring-1 focus-visible:ring-code-blue focus-visible:ring-inset",
 				children: [
@@ -982,7 +983,7 @@ function _e({ computer: i, registerPane: a, className: o }) {
 					}),
 					c.steps.length === 0 && !c.error ? /* @__PURE__ */ v("div", {
 						className: "text-code-raised",
-						children: i.currentTask ? `waiting for output · ${i.currentTask}` : "nothing running on this box — open a terminal pane to start something"
+						children: r.currentTask ? `waiting for output · ${r.currentTask}` : "nothing running on this box — open a terminal pane to start something"
 					}) : w.map((n, r) => {
 						if (n.kind === "job") return /* @__PURE__ */ y("div", {
 							"data-testid": "tail-banner-job",
@@ -1203,7 +1204,7 @@ function Oe(e, t) {
 		selectionBackground: i("--color-terminal-selection", n.selectionBackground)
 	};
 }
-var ke = c(function({ sessionId: t, shellId: i, label: a, cwd: s, onExit: c, height: u = 460, chrome: p = !0, fillHeight: m = !1, autoConnect: S = !1, onStatus: C, background: w, className: T }, E) {
+var ke = c(function({ sessionId: t, shellId: r, label: i, cwd: s, onExit: c, height: u = 460, chrome: p = !0, fillHeight: m = !1, autoConnect: S = !1, onStatus: C, background: w, className: T }, E) {
 	let { client: D, computers: O } = $(), k = h(null);
 	d(() => {
 		let e = () => A.current, t = () => {
@@ -1219,7 +1220,7 @@ var ke = c(function({ sessionId: t, shellId: i, label: a, cwd: s, onExit: c, hei
 			n?.disconnect(), r?.removeEventListener?.("change", t);
 		};
 	}, [w]);
-	let A = h(null), j = h(null), M = h(null), N = h(i), ee = h(c);
+	let A = h(null), j = h(null), M = h(null), N = h(r), ee = h(c);
 	ee.current = c;
 	let P = h(C);
 	P.current = C;
@@ -1352,7 +1353,7 @@ var ke = c(function({ sessionId: t, shellId: i, label: a, cwd: s, onExit: c, hei
 		G,
 		K
 	]);
-	let q = B === "live", te = r(O.find((e) => e.sessionId === t)) === "running" && !!O.find((e) => e.sessionId === t), ne = o[q ? "ready" : B === "error" ? "error" : B === "detached" || B === "closed" ? "detached" : "connecting"];
+	let q = B === "live", te = o(O.find((e) => e.sessionId === t)) === "running" && !!O.find((e) => e.sessionId === t), ne = a[q ? "ready" : B === "error" ? "error" : B === "detached" || B === "closed" ? "detached" : "connecting"];
 	return /* @__PURE__ */ y("div", {
 		style: w ? { background: w } : void 0,
 		className: e("flex flex-col", w ? "" : "bg-terminal-bg", m ? "h-full min-h-0" : "rounded-lg overflow-hidden border border-code-border", T),
@@ -1366,7 +1367,7 @@ var ke = c(function({ sessionId: t, shellId: i, label: a, cwd: s, onExit: c, hei
 				children: [
 					/* @__PURE__ */ v("span", {
 						className: "text-[11px] font-semibold text-code-text",
-						children: a ?? "terminal"
+						children: i ?? "terminal"
 					}),
 					/* @__PURE__ */ y("span", {
 						className: e("text-[10px]", q ? "text-code-green" : B === "error" ? "text-code-red" : "text-code-muted"),
@@ -1454,18 +1455,18 @@ function Ne({ computer: e, paneId: t, registerPane: n }) {
 //#endregion
 //#region src/components/compute/context/ComputeContext.tsx
 var Pe = s(null);
-function Fe({ children: e, client: t, clientOptions: n, computers: r, useFixtures: o = !0, pollIntervalMs: s = 5e3, canManage: c = !1, enabled: l = !0, models: u, projects: f, paneKinds: p = Me, onNotify: h }) {
+function Fe({ children: e, client: t, clientOptions: n, computers: a, useFixtures: o = !0, pollIntervalMs: s = 5e3, canManage: c = !1, enabled: l = !0, models: u, projects: f, paneKinds: p = Me, onNotify: h }) {
 	let _ = m(() => t ?? C(n), [t, n]), y = j({
 		client: _,
 		pollIntervalMs: l ? s : 0,
 		enabled: l,
-		...r ? { computers: r } : {},
+		...a ? { computers: a } : {},
 		...o ? { fixtures: oe } : {}
-	}), b = i({
+	}), b = r({
 		client: _,
 		enabled: l,
 		...f ? { projects: f } : {}
-	}), x = m(() => a(b.projects, y.computers), [b.projects, y.computers]), [S, w] = g(null), [T, E] = g(null);
+	}), x = m(() => i(b.projects, y.computers), [b.projects, y.computers]), [S, w] = g(null), [T, E] = g(null);
 	d(() => {
 		if (!l) {
 			w(null), E(null);

@@ -30,8 +30,9 @@ import { t as V } from "./Select-D3fGI8SO.js";
 import { t as oe } from "./Checkbox-Dftwml_V.js";
 import { t as se } from "./Tooltip-af4BrR7T.js";
 import { t as H } from "./useMeasuredWidth-BPrwD0q5.js";
-import { t as U } from "./formatBytes-05ivRSJY.js";
-import { c as ce, n as le, s as ue } from "./useComputeProjects-C2esFdTJ.js";
+import { n as U } from "./useComputeProjects-ZSazDRet.js";
+import { t as ce } from "./formatBytes-05ivRSJY.js";
+import { n as le, r as ue } from "./PaneStatusLine-C0Ewhgab.js";
 import { n as de } from "./ChatSidePanelRegistry-CFYMdnJZ.js";
 /* empty css               */
 import { t as fe } from "./AnimatedEdge-OTHCEYJd.js";
@@ -3499,7 +3500,7 @@ function Wn({ node: e, artifact: r, selection: i, onSelectionChange: a, onOpen: 
 }
 //#endregion
 //#region src/components/graph/work/WorkComputePane.tsx
-var Gn = he(() => import("./ChatLabTerminal-Di2AZJhg.js")), Kn = {
+var Gn = he(() => import("./ChatLabTerminal-wMgGjuD7.js")), Kn = {
 	planning: {
 		label: "PLANNING",
 		pill: "info",
@@ -3768,7 +3769,7 @@ function rr({ lines: e, running: n, label: r, environment: i, seed: a, testId: o
 	});
 }
 function ir({ compute: e, banner: r, className: i, "data-testid": a = "work-compute-pane" }) {
-	let [o, c] = J("activity"), [l, u] = J([]), d = Kn[e.status] ?? Kn.running, { metrics: f, task: p } = e, m = e.runtime === "agentcore-microvm" ? "AgentCore microVM" : "Local runtime", h = K(() => er(e), [e]), g = K(() => Xn(e.shell?.sessionId ?? e.label), [e.shell?.sessionId, e.label]), _ = f.contextBudgetTokens, v = _ ? `${Math.round(f.contextTokens / _ * 100)}% (${le(_)})` : le(f.contextTokens), y = K(() => e.events.map((e) => {
+	let [o, c] = J("activity"), [l, u] = J([]), d = Kn[e.status] ?? Kn.running, { metrics: f, task: p } = e, m = e.runtime === "agentcore-microvm" ? "AgentCore microVM" : "Local runtime", h = K(() => er(e), [e]), g = K(() => Xn(e.shell?.sessionId ?? e.label), [e.shell?.sessionId, e.label]), _ = f.contextBudgetTokens, v = _ ? `${Math.round(f.contextTokens / _ * 100)}% (${U(_)})` : U(f.contextTokens), y = K(() => e.events.map((e) => {
 		let n = l.includes(e.id), r = Yn[e.kind] ?? Yn.text;
 		return {
 			id: e.id,
@@ -3949,7 +3950,7 @@ function ir({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 			}),
 			/* @__PURE__ */ X("div", {
 				className: "overflow-hidden rounded-md border border-border bg-code-bg",
-				children: /* @__PURE__ */ X(ue, {
+				children: /* @__PURE__ */ X(le, {
 					computer: h,
 					modelId: f.model,
 					...e.idleWindowMs ? { idleWindowMs: e.idleWindowMs } : {},
@@ -3963,7 +3964,7 @@ function ir({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 				children: [
 					/* @__PURE__ */ X(tr, {
 						label: "Model",
-						value: ce(f.model),
+						value: ue(f.model),
 						title: f.model
 					}),
 					/* @__PURE__ */ X(tr, {
@@ -4181,7 +4182,7 @@ function ir({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 										children: e.name
 									}), /* @__PURE__ */ X("span", {
 										className: "block truncate text-[11px] text-text-tertiary",
-										children: [e.sizeBytes == null ? null : U(e.sizeBytes), e.updatedAt].filter(Boolean).join(" · ")
+										children: [e.sizeBytes == null ? null : ce(e.sizeBytes), e.updatedAt].filter(Boolean).join(" · ")
 									})]
 								}), e.onDownload && /* @__PURE__ */ X(n, {
 									size: "sm",

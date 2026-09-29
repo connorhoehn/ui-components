@@ -24,9 +24,16 @@
 // decision buttons are never the thing that gives way — they are the only part
 // of the card that asks the reader to do something.
 
-import { useState, type MouseEvent } from 'react';
+import { useEffect, useState, type MouseEvent } from 'react';
 import { cn } from '../../lib/cn';
 import Chip from '../shared/Chip';
+import DotMeter from '../shared/DotMeter';
+// The formatter from its module, not the compute barrel — the same one the lab
+// uses, so the card and the lab never disagree about the same number.
+import { formatTokens } from '../compute/hooks/useComputeProjects';
+// Types only: the card must not pull the lab (particles, tabs, the lazy
+// terminal) into every thread that renders a run card.
+import type { LabStatus, LabStep } from './ChatLabShell';
 import { ChevronIcon, DocumentIcon } from '../ui/Icons';
 // Imported from the module rather than the barrel: `SparklesIcon` is also
 // re-exported through ./video, and the export-ambiguity guard trips on a
@@ -141,6 +148,33 @@ export interface AgentRunStatus {
   review?: AgentRunReview;
 }
 
+/** Where an agent LOOP is — the lab's own eight words. */
+export type AgentRunLoopPhase = LabStatus;
+
+/**
+ * An agent loop, live, for its card in the transcript.
+ *
+ * A loop (`/agent …`) is not a pipeline edit that is received, processed and
+ * done in seconds: it plans for half a minute, then works through steps for
+ * minutes, spending a context budget. The card says that in the thread so
+ * nothing has to take the conversation's place to show it — the phase, the
+ * clock while it is planning, the step it is on, what it has spent, and a way
+ * into the lab.
+ */
+export interface AgentRunLoop {
+  phase: AgentRunLoopPhase;
+  /** When the run started (ISO). With it, the card's clock ticks on its own while the loop is busy. */
+  startedAt?: string;
+  /** How long it has run, as last reported. Used when `startedAt` is absent. */
+  elapsedMs?: number;
+  /** The plan, with the running step marked. Empty while planning. */
+  steps?: readonly LabStep[];
+  contextTokens?: number;
+  contextBudgetTokens?: number;
+  /** One sentence about how it ended — the failure, the summary. Replaces the phase's own words once it has ended. */
+  outcome?: string;
+}
+
 export interface AgentRunCardProps {
   runId: string;
   instruction: string;
@@ -174,8 +208,95 @@ export interface AgentRunCardProps {
   onRetry?: (runId: string) => void;
   /** Start expanded. The default is the two-line card; the details are a click away. */
   defaultExpanded?: boolean;
+  /**
+   * The run is an agent loop, and this is where it is. Given, the card shows
+   * the loop's phase, clock, steps and budget in place of the pipeline's three
+   * beats. The pipeline props above keep working for every other run.
+   */
+  loop?: AgentRunLoop;
+  /** Open the loop's lab beside the chat. An "Open lab" action renders only when this is given. */
+  onOpenLab?: (runId: string) => void;
   className?: string;
   'data-testid'?: string;
+}
+
+interface LoopPhaseMeta {
+  label: string;
+  tone: 'info' | 'success' | 'warning' | 'danger' | 'neutral';
+  dot: string;
+  /** Mid-turn: the clock ticks and the dot breathes. */
+  busy: boolean;
+}
+
+/**
+ * The lab's eight words in the host theme. `budget` is a caution, not a
+ * failure, for the same reason the lab paints it peach: spending the budget
+ * is the loop obeying its limit.
+ */
+const LOOP_PHASE: Record<AgentRunLoopPhase, LoopPhaseMeta> = {
+  planning: { label: 'Planning', tone: 'info', dot: 'bg-info', busy: true },
+  starting: { label: 'Starting', tone: 'info', dot: 'bg-info', busy: true },
+  running: { label: 'Running', tone: 'info', dot: 'bg-success', busy: true },
+  waiting: { label: 'Waiting', tone: 'warning', dot: 'bg-warning', busy: false },
+  done: { label: 'Done', tone: 'success', dot: 'bg-success', busy: false },
+  failed: { label: 'Failed', tone: 'danger', dot: 'bg-danger', busy: false },
+  stopped: { label: 'Stopped', tone: 'neutral', dot: 'bg-border', busy: false },
+  budget: { label: 'Budget spent', tone: 'warning', dot: 'bg-warning', busy: false },
+};
+
+const LOOP_STEP_DOT: Record<LabStep['status'], string> = {
+  pending: 'bg-border',
+  running: 'animate-pulse bg-success motion-reduce:animate-none',
+  done: 'bg-info',
+  failed: 'bg-danger',
+  skipped: 'bg-border',
+};
+
+/** `0:42`, `12:05` — a clock, not a duration sentence: it is read while it moves. */
+export function formatLoopClock(ms: number): string {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return `${m}:${String(s).padStart(2, '0')}`;
+}
+
+/** The loop's status sentence: "Planning…", "Running step 2 of 4 — Build the deck", the outcome. */
+export function describeAgentLoop(loop: AgentRunLoop): string {
+  const steps = loop.steps ?? [];
+  const n = steps.length;
+  const at = steps.findIndex((step) => step.status === 'running');
+  switch (loop.phase) {
+    case 'planning': return 'Planning…';
+    case 'starting': return 'Starting the box…';
+    case 'running':
+      return at >= 0 ? `Running step ${at + 1} of ${n} — ${steps[at]!.title}` : 'Running…';
+    case 'waiting': {
+      const done = steps.filter((step) => step.status === 'done').length;
+      return n ? `Waiting between turns · ${done} of ${n} steps done` : 'Waiting between turns';
+    }
+    case 'done': return loop.outcome ?? (n ? `Done · ${n} ${n === 1 ? 'step' : 'steps'}` : 'Done');
+    case 'failed': return loop.outcome ?? 'The loop failed.';
+    case 'stopped': return loop.outcome ?? 'Stopped';
+    case 'budget': return loop.outcome ?? 'Stopped at its context budget';
+    default: return LOOP_PHASE[loop.phase as AgentRunLoopPhase]?.label ?? 'Running…';
+  }
+}
+
+/** The loop's clock: ticks once a second from `startedAt` while busy, else the reported `elapsedMs`. */
+function useLoopClock(loop: AgentRunLoop | undefined): number | null {
+  const busy = !!loop && (LOOP_PHASE[loop.phase]?.busy ?? false);
+  const started = loop?.startedAt ? Date.parse(loop.startedAt) : NaN;
+  const ticking = busy && !Number.isNaN(started);
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!ticking) return undefined;
+    setNow(Date.now());
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, [ticking]);
+  if (!loop) return null;
+  if (ticking) return Math.max(0, now - started);
+  return typeof loop.elapsedMs === 'number' ? loop.elapsedMs : null;
 }
 
 const STEPS: Array<{ phase: AgentRunPhase | 'running'; label: string }> = [
@@ -319,9 +440,68 @@ export const AGENT_RUN_STEP_DOT: Record<AgentRunStepStatus, string> = {
   awaiting: 'bg-warning',
 };
 
-export function AgentRunCard({ runId, instruction, agentName, requestedBy, command = '/doc', status, onOpenDocument, onOpenRun, result, onOpenResult, onDecide, suggestion: suggestionProp, onReview, onRetry, documentTitle, defaultExpanded = false, className, 'data-testid': testId = 'agent-run-card' }: AgentRunCardProps) {
+/**
+ * The loop's rows: where it is (dot, sentence, clock, budget, Open lab) and,
+ * once there is a plan, the plan — wrapped, never scrolled, with the running
+ * step marked. Planning has no plan yet, so it has no rail: the clock is the
+ * thing that says it is alive.
+ */
+function LoopRows({ runId, loop, clock, onOpenLab, testId }: { runId: string; loop: AgentRunLoop; clock: number | null; onOpenLab?: (runId: string) => void; testId: string }) {
+  const meta = LOOP_PHASE[loop.phase] ?? LOOP_PHASE.running;
+  const steps = loop.phase === 'planning' ? [] : loop.steps ?? [];
+  const budget = loop.contextBudgetTokens ?? 0;
+  const spent = loop.contextTokens ?? 0;
+  const ended = loop.phase === 'failed';
+  return (
+    <>
+      <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-text-secondary" data-testid={`${testId}-loop`}>
+        <span
+          aria-hidden="true"
+          className={cn('inline-block h-1.5 w-1.5 shrink-0 rounded-full', meta.dot, meta.busy && 'animate-pulse motion-reduce:animate-none')}
+        />
+        <span className={cn('min-w-0 flex-1 truncate', ended && 'text-danger')} title={loop.outcome} data-testid={`${testId}-detail`}>
+          {describeAgentLoop(loop)}
+        </span>
+        {clock !== null && meta.busy && (
+          <span className="shrink-0 tabular-nums text-text-tertiary" title="Time since the loop started" data-testid={`${testId}-clock`}>
+            {formatLoopClock(clock)}
+          </span>
+        )}
+        {budget > 0 && (
+          <span className="flex shrink-0 items-center gap-1" title="Context spent against this loop's budget" data-testid={`${testId}-budget`}>
+            <span className="tabular-nums text-text-tertiary">{formatTokens(spent)} / {formatTokens(budget)}</span>
+            <DotMeter value={Math.min(1, Math.max(0, spent / budget))} segments={6} showPercent={false} tone="surface" label="context" />
+          </span>
+        )}
+        {onOpenLab && (
+          <button type="button" onClick={() => onOpenLab(runId)} className={cn(ROW_LINK, 'font-medium text-info')} data-testid={`${testId}-open-lab`}>
+            Open lab
+          </button>
+        )}
+      </div>
+      {steps.length > 0 && (
+        <ol className="m-0 flex list-none flex-wrap items-center gap-1 p-0 text-[11px]" aria-label="Loop steps" data-testid={`${testId}-loop-steps`}>
+          {steps.map((step) => (
+            <li
+              key={step.id}
+              data-state={step.status}
+              title={`${step.kind} · ${step.status}`}
+              className="flex min-w-0 max-w-full items-center gap-1 rounded-full border border-border bg-surface-inset px-1.5 py-px leading-4"
+            >
+              <span aria-hidden="true" className={cn('inline-block h-1.5 w-1.5 shrink-0 rounded-full', LOOP_STEP_DOT[step.status] ?? LOOP_STEP_DOT.pending)} />
+              <span className={cn('min-w-0 max-w-[12rem] truncate', step.status === 'running' ? 'text-text-primary' : step.status === 'failed' ? 'text-danger' : step.status === 'skipped' ? 'text-text-tertiary line-through' : 'text-text-secondary')}>{step.title}</span>
+            </li>
+          ))}
+        </ol>
+      )}
+    </>
+  );
+}
+
+export function AgentRunCard({ runId, instruction, agentName, requestedBy, command = '/doc', status, onOpenDocument, onOpenRun, result, onOpenResult, onDecide, suggestion: suggestionProp, onReview, onRetry, documentTitle, defaultExpanded = false, loop, onOpenLab, className, 'data-testid': testId = 'agent-run-card' }: AgentRunCardProps) {
   const phase = status?.phase ?? 'received';
   const [expanded, setExpanded] = useState(defaultExpanded);
+  const loopClock = useLoopClock(loop);
   // Suggestions are only reviewable once the run is done — before that there is nothing in the document yet.
   const suggestion = phase === 'completed' ? status?.suggestion ?? suggestionProp : undefined;
   const review = phase === 'completed' ? status?.review : undefined;
@@ -386,7 +566,8 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
       // read the window and get the narrow column wrong every time.
       className={cn('@container flex w-full max-w-[36rem] cursor-default flex-col gap-0.5 rounded-md border border-border bg-surface px-2 py-1 text-left text-[12px]', className)}
       data-testid={testId}
-      data-phase={phase}
+      data-phase={loop ? loop.phase : phase}
+      data-mode={loop ? 'loop' : undefined}
       data-run-id={runId}
       data-expanded={expanded ? 'true' : undefined}
       title={requestedBy ? `${requestedBy} asked ${agentName}: ${instruction}` : `${agentName}: ${instruction}`}
@@ -401,7 +582,11 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
         <span className="min-w-0 flex-1 truncate text-text-primary" data-testid={`${testId}-instruction`}>
           <span className="font-mono text-text-tertiary">{command}</span> {instruction}
         </span>
-        <Chip size="xs" tone={tone} data-testid={`${testId}-phase`}>{phaseLabel}</Chip>
+        {loop ? (
+          <Chip size="xs" tone={LOOP_PHASE[loop.phase]?.tone ?? 'info'} data-testid={`${testId}-phase`}>{LOOP_PHASE[loop.phase]?.label ?? loop.phase}</Chip>
+        ) : (
+          <Chip size="xs" tone={tone} data-testid={`${testId}-phase`}>{phaseLabel}</Chip>
+        )}
         <IconButton
           size="sm"
           aria-label={expanded ? 'Hide details' : 'Show details'}
@@ -423,6 +608,15 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
           whole line to itself once anything shares the row with it), and the
           two "open" links are dropped below `@md` — the disclosure below leads
           to both of those destinations, so nothing becomes unreachable. */}
+      {loop ? (
+        <LoopRows
+          runId={runId}
+          loop={loop}
+          clock={loopClock}
+          onOpenLab={onOpenLab}
+          testId={testId}
+        />
+      ) : (
       <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-text-secondary">
         {/* Progress and the sentence travel as one block so the wrap can never
             separate the dots from what they are describing. `basis-full` gives
@@ -501,6 +695,7 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
           </button>
         )}
       </div>
+      )}
       {expanded && (
         <div id={detailsId} className="mt-1 flex flex-col gap-2 border-t border-border pt-1.5" data-testid={`${testId}-details`}>
           {hasDocumentRow && (
@@ -573,7 +768,7 @@ export function AgentRunCard({ runId, instruction, agentName, requestedBy, comma
 /** Reads a `/doc` command message's metadata; null for anything else. */
 export function agentRunRefFromMetadata(
   metadata: Record<string, unknown> | undefined,
-): { runId: string; documentId: string; documentTitle?: string; instruction: string; agentName: string; pipelineId?: string; command: string; result?: AgentRunResult; suggestionKey?: string } | null {
+): { runId: string; documentId: string; documentTitle?: string; instruction: string; agentName: string; pipelineId?: string; command: string; result?: AgentRunResult; suggestionKey?: string; lab?: true } | null {
   if (!metadata || metadata.kind !== 'agent-run') return null;
   const runId = typeof metadata.runId === 'string' ? metadata.runId : '';
   // A document is what /doc acts on; a recording or transcription run has none.
@@ -592,6 +787,9 @@ export function agentRunRefFromMetadata(
     ...(result ? { result } : {}),
     // An edit posted as suggestions names the key so the card can offer the review even before a live status arrives.
     ...(typeof metadata.suggestionKey === 'string' && metadata.suggestionKey ? { suggestionKey: metadata.suggestionKey } : {}),
+    // An agent LOOP's card carries `lab` (whatever its value — the key is the
+    // mark); the host watches those runs as loops and offers the lab.
+    ...('lab' in metadata && metadata.lab !== undefined && metadata.lab !== false ? { lab: true as const } : {}),
   };
 }
 
