@@ -300,7 +300,7 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
         // 2.407.15: the title gives up width before the crumbs (the reverse
         // of 2.406.4), so a long title truncates while the crumbs stay whole.
         expect(screen.getByTestId('scope-header-crumbs').className).not.toMatch(/shrink-\[100\]/);
-        expect(screen.getByTestId('scope-header-title').className).toMatch(/shrink-\[100\]/);
+        expect(screen.getByTestId('scope-header-title').className).toMatch(/\bflex-1\b/);
         const crumbs = screen.getAllByTestId('scope-header-crumb');
         expect(crumbs).toHaveLength(3);
         crumbs.forEach((c, i) => {
@@ -403,9 +403,9 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
         const expectTitleFloor = () => {
           const title = screen.getByRole('heading', { level: 1, name: 'component contracts' });
           // 2.407.15: the 12rem floor is back, and the title gives up width
-          // first (shrink-[100]) so it truncates before a crumb is squeezed.
+          // first (flex-1: basis 0) so it truncates before a crumb is squeezed.
           expect(title.className).toMatch(/min-w-\[12rem\]/);
-          expect(title.className).toMatch(/shrink-\[100\]/);
+          expect(title.className).toMatch(/\bflex-1\b/);
           expect(title.className).not.toMatch(/max-w-\[50%\]/);
           expect(title.className).toMatch(/\btruncate\b/);
         };
@@ -1109,7 +1109,7 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
         // The title (2.407.15): gives up width first, truncates to its 12rem
         // floor, full text in `title`; the trail's basis is 0 so its length
         // never reaches the tabs.
-        expect(title.className).toMatch(/shrink-\[100\]/);
+        expect(title.className).toMatch(/\bflex-1\b/);
         expect(title.className).toMatch(/min-w-\[12rem\]/);
         expect(title.className).toMatch(/\btruncate\b/);
         expect(title.className).toMatch(/\bwhitespace-nowrap\b/);

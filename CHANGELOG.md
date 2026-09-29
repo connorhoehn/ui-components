@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.407.17
+
+- **`ScopeHeader variant="inline"`: the crumbs are exactly whole beside a long title (fix).** 2.407.15 made the title give up width first with `shrink-[100]`, but a flex shrink phase hands every item its proportional share — "Search" lost 0.23px and rendered as "Sear…" at device-pixel-ratio 2. The title is now `flex-1 min-w-[12rem]` (basis 0, grow 1): it takes what the trail has left after the crumbs and truncates inside it, and the crumbs enter no shrink phase until the title is at its 12rem floor. Measured at DPR 2 across 1672/1536/1280 for a short and a 170-character title: every crumb's box equals its text width.
+
 ## 2.407.16
 
 - `Panel.docked` and `VersionHistoryPanel.docked` (new): render inline where the panel is placed, filling its parent, instead of fixed to the right edge of the window — for a panel that IS a view (an `EditorShell` Versions tab) rather than one that slides over the page; `width` is ignored when docked. Default unchanged. First consumer: the OrgIQ assessment workspace's Versions tab, whose panel opened over the whole window.

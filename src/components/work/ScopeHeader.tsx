@@ -662,7 +662,9 @@ function InlineCrumb({ item, last, testId }: { item: BreadcrumbItem; last: boole
  * first crumb keeps its own width (2.407.2); the header moves its controls
  * out of the row before the trail gets that tight. Since 2.407.15 the order
  * inside the trail is the reverse of 2.406.4's: the title gives up width
- * FIRST (`shrink-[100]`, truncating to its 12rem floor) and the crumbs only
+ * FIRST (`flex-1 min-w-[12rem]` since 2.407.17 — basis 0, no shrink phase for
+ * the crumbs until the title's floor; 2.407.15's `shrink-[100]` left them a
+ * sub-pixel share that rendered "Sear…") and the crumbs only
  * then — so "Org › Search › Auth Migration ›" stays whole ahead of a long
  * title, and the trail's basis is 0 (`flex-1`) so the title's length never
  * reaches the tabs or the controls. The crumb list clips inside its own box
@@ -777,7 +779,12 @@ function InlineTrail({ crumbs, title, titleHint, lg, testId }: { crumbs: Breadcr
             // The `title` attribute carries the full text (`titleHint`). The
             // header still moves its controls out before the trail drops
             // under its minimum (`TITLE_MIN_PX`, the collapse arithmetic).
-            'm-0 min-w-[12rem] shrink-[100] truncate whitespace-nowrap text-text-primary',
+            // 2.407.17: basis 0, grow 1 (flex-1) instead of shrink-[100] — a
+            // shrink phase gives every item its proportional share, and 0.2px
+            // off "Search" rendered as "Sear…" at DPR 2; with a zero basis the
+            // crumbs are not in a shrink phase at all until the title is at
+            // its 12rem floor.
+            'm-0 min-w-[12rem] flex-1 truncate whitespace-nowrap text-text-primary',
             lg ? 'text-[20px] font-bold leading-7 tracking-[-0.01em]' : 'text-[18px] font-semibold leading-7',
           )}
         >

@@ -4036,7 +4036,7 @@ function Cv({ crumbs: e, title: t, titleHint: n, lg: r, testId: i }) {
 				"aria-current": "page",
 				title: n ?? t,
 				"data-testid": `${i}-title`,
-				className: R("m-0 min-w-[12rem] shrink-[100] truncate whitespace-nowrap text-text-primary", r ? "text-[20px] font-bold leading-7 tracking-[-0.01em]" : "text-[18px] font-semibold leading-7"),
+				className: R("m-0 min-w-[12rem] flex-1 truncate whitespace-nowrap text-text-primary", r ? "text-[20px] font-bold leading-7 tracking-[-0.01em]" : "text-[18px] font-semibold leading-7"),
 				children: t
 			})
 		]
