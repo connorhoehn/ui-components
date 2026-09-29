@@ -6507,14 +6507,14 @@ function Vy({ records: e, edges: t, selectedKeys: n, title: r = "Connections", s
 					gap: "none",
 					align: "center",
 					wrap: !1,
-					className: "shrink-0 -space-x-1.5",
+					className: "relative shrink-0 -space-x-1.5",
 					role: "list",
 					"aria-label": y.length ? "Selected records" : "Most connected records",
 					"data-testid": `${p}-marks`,
 					children: [w.map((e) => /* @__PURE__ */ Q("span", {
 						role: "listitem",
 						title: e.title,
-						className: "inline-flex rounded-full ring-2 ring-surface",
+						className: "relative inline-flex rounded-full ring-2 ring-surface",
 						children: [/* @__PURE__ */ Z(Ey, {
 							record: e,
 							size: 22

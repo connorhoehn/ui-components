@@ -141,13 +141,17 @@ export function RecordGraphCard({
             gap="none"
             align="center"
             wrap={false}
-            className="shrink-0 -space-x-1.5"
+            // `relative` on the strip and each mark: the `sr-only` labels are
+            // absolutely positioned, and without a positioned ancestor they are
+            // placed against the page body — outside any scroll container the
+            // host puts the card in, stretching the document.
+            className="relative shrink-0 -space-x-1.5"
             role="list"
             aria-label={selection.length ? 'Selected records' : 'Most connected records'}
             data-testid={`${testId}-marks`}
           >
             {shown.map((r) => (
-              <span key={recordGraphKey(r)} role="listitem" title={r.title} className="inline-flex rounded-full ring-2 ring-surface">
+              <span key={recordGraphKey(r)} role="listitem" title={r.title} className="relative inline-flex rounded-full ring-2 ring-surface">
                 <RecordMark record={r} size={22} />
                 <span className="sr-only">{r.title}</span>
               </span>

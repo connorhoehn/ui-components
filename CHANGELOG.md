@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.406.2
+
+- `RecordGraphCard`: the marks strip (`-marks`) and each mark are now `relative`. Each mark carries an `sr-only` label, which is absolutely positioned; with no positioned ancestor the labels were placed against the page body, escaping the host's scroll container — in the portal's Search transcript the document grew to 1575px in a 941px window and wheeling over the header scrolled the whole workspace. `RecordResultList` and `CitedRecordList` were audited and hold no `sr-only` text.
+
 ## 2.406.1
 
 - `AgentComposerDock` `dock?: ReactNode`: pinned to the composer's top edge inside the dock frame, full width of the composer card — the in-call shelf (`CallDock`) on initiative and document pages. Placed like `ChatPanel.dock` (`shrink-0`, flush on the composer) so a shelf looks the same over either composer; testid `<data-testid>-dock-slot`; absent, no element. Not `FloatingComposerDock.above` (shrinks, scrolls, gap) nor `strip` (squares the composer's top corners); it rides in the dock's composer row.

@@ -115,4 +115,22 @@ describe('RecordGraphCard', () => {
     expect(screen.queryByTestId('record-graph-card-graph')).toBeNull();
     expect(screen.getByTestId('record-graph-card')).toHaveAttribute('data-expanded', 'false');
   });
+
+  it('keeps every screen-reader label positioned inside the card (six marks)', () => {
+    // A hub with six neighbours: six marks, six sr-only labels.
+    const hub: RecordGraphRecord = { id: 'hub', type: 'initiative', title: 'Hub', href: '/i/hub' };
+    const people: RecordGraphRecord[] = Array.from({ length: 6 }, (_, i) => ({ id: `p${i}`, type: 'person', title: `Person ${i}`, href: `/p/${i}` }));
+    const spokes: RecordGraphEdge[] = people.map((p, i) => ({ id: `s${i}`, source: `person:${p.id}`, target: 'initiative:hub', label: 'SME on' }));
+    render(<RecordGraphCard records={[hub, ...people]} edges={spokes} />);
+    const card = screen.getByTestId('record-graph-card');
+    const labels = card.querySelectorAll('.sr-only');
+    expect(within(screen.getByTestId('record-graph-card-marks')).getAllByRole('listitem')).toHaveLength(6);
+    expect(labels.length).toBeGreaterThanOrEqual(6);
+    for (const label of labels) {
+      const anchor = label.parentElement?.closest('.relative');
+      expect(anchor).not.toBeNull();
+      expect(card.contains(anchor!)).toBe(true);
+    }
+    expect(screen.getByTestId('record-graph-card-marks')).toHaveClass('relative');
+  });
 });
