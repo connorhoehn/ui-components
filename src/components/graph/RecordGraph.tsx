@@ -439,7 +439,9 @@ function CanvasChrome({
   const apply = useCallback((mode: 'focus' | 'all' | 'auto', animate = false) => {
     // An animated fit is one the viewer asked for: its whole-graph frame may
     // go below the floor. The automatic fit goes below it only as far as
-    // `RECORD_GRAPH_READABLE_ZOOM`, and only to show everything (2.403.7).
+    // `RECORD_GRAPH_READABLE_ZOOM`, and only to show everything (2.403.7) —
+    // except with no focus, where it is the whole-graph fit down to
+    // `RECORD_GRAPH_FIT_ALL_MIN_ZOOM` (2.406.3; `recordGraphViewport`).
     const viewport = target(mode, animate);
     if (viewport) {
       void flow.setViewport(viewport, animate ? { duration: 200 } : undefined);

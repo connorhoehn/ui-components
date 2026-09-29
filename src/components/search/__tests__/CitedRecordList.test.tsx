@@ -50,7 +50,10 @@ describe('CitedRecordList', () => {
     render(<CitedRecordList records={records} onOpen={onOpen} onViewConnections={onViewConnections} />);
     fireEvent.click(screen.getByRole('button', { name: 'Open Tenant-by-tenant cutover' }));
     expect(onOpen).toHaveBeenCalledWith(cutover);
-    fireEvent.click(screen.getByRole('button', { name: /View these connections/ }));
+    const view = screen.getByRole('button', { name: /View these connections/ });
+    // One line: the arrow stays beside the words (svg is block under preflight).
+    expect(view).toHaveClass('whitespace-nowrap', 'shrink-0', 'inline-flex', 'items-center');
+    fireEvent.click(view);
     expect(onViewConnections).toHaveBeenCalledOnce();
   });
 

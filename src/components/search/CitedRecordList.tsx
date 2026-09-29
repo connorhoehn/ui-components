@@ -187,7 +187,7 @@ export function CitedRecordList({
               ))}
             </Inline>
             {onViewConnections && (
-              <Button variant="link" size="sm" className="gap-1 text-primary" onClick={onViewConnections}>
+              <Button variant="link" size="sm" className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-primary" onClick={onViewConnections}>
                 {viewConnectionsLabel}
                 <ArrowRightIcon size={14} aria-hidden />
               </Button>

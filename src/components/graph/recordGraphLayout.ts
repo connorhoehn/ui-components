@@ -690,12 +690,20 @@ export interface RecordGraphViewportOptions {
    * `auto` — the automatic fit ladder (2.403.7, rung (b) since 2.403.8):
    * (a) the whole graph when it fits at or above this zoom; else (b) the focus
    * + neighbours when they fit at or above `neighbourhoodZoom`; else (c) the
-   * `focus` rule's selection fit (or `all` at the floor, with no focus).
-   * Default `RECORD_GRAPH_READABLE_ZOOM`.
+   * `focus` rule's selection fit. With no drawn `focusKeys` there is nothing
+   * to centre on, so `auto` is `all` down to `fitAllMinZoom` (2.406.3; was
+   * `all` at the 0.8 floor, which left 59 records under the legend and zoom
+   * cluster on a 270px card canvas). Default `RECORD_GRAPH_READABLE_ZOOM`.
    */
   readableZoom?: number;
   /** Rung (b) of `auto`. Default `RECORD_GRAPH_NEIGHBOURHOOD_ZOOM`. Since 2.403.8. */
   neighbourhoodZoom?: number;
+  /**
+   * How far `auto` with no focus may zoom out to show every record (the
+   * whole-graph fit, corners reserved). Default `RECORD_GRAPH_FIT_ALL_MIN_ZOOM`.
+   * Since 2.406.3.
+   */
+  fitAllMinZoom?: number;
   /** How far a focus fit may zoom out to keep the selection's boxes whole. Default `RECORD_GRAPH_FOCUS_MIN_ZOOM`. Since 2.403.8. */
   focusMinZoom?: number;
   /** The focus records themselves (usually the selection) — never clipped when they fit. */
@@ -781,6 +789,13 @@ export function recordGraphViewport(
   });
   // Automatic: everything, when everything is readable (2.403.7).
   if (options.mode === 'auto' && rawZoom(all) >= readableZoom) return centreAll(Math.min(rawZoom(all), maxZoom));
+  // Automatic with no focus drawn: nothing to centre on, so the whole-graph
+  // fit, down to `fitAllMinZoom` (2.406.3 — the OrgGraph no-focus Radial rule
+  // of 2.405.1). With a focus the ladder below is unchanged.
+  if (options.mode === 'auto' && !boxOf(positions, options.focusKeys ?? [])) {
+    const fitAllMinZoom = Math.min(minZoom, options.fitAllMinZoom ?? RECORD_GRAPH_FIT_ALL_MIN_ZOOM);
+    return recordGraphViewport(positions, size, { ...options, mode: 'all', minZoom: fitAllMinZoom });
+  }
   // The whole graph, when it fits the clear area at or above the floor: centred
   // there, the focus never steering it (2.403.9 — the focus offset was applied
   // on the 209px canvas although the drawing fitted, clipping three records).

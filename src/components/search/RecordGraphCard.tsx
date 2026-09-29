@@ -135,7 +135,7 @@ export function RecordGraphCard({
           <GraphIcon size={16} />
         </span>
         <T as="span" className="shrink-0 text-sm font-semibold text-text-primary">{title}</T>
-        <T as="span" className="min-w-0 truncate text-xs text-text-secondary" data-testid={`${testId}-summary`}>{line}</T>
+        <T as="span" className="min-w-0 flex-1 truncate text-xs text-text-secondary" data-testid={`${testId}-summary`}>{line}</T>
         {hasConnections && shown.length > 0 && (
           <Inline
             gap="none"
@@ -159,15 +159,18 @@ export function RecordGraphCard({
             {more > 0 && <T as="span" className="pl-2.5 text-xs text-text-tertiary">+{more}</T>}
           </Inline>
         )}
+        {/* The actions never wrap or shrink: the summary truncates instead.
+            `inline-flex` on each button: preflight makes the icon's <svg>
+            `display: block`, which broke it onto its own line. */}
         <Inline gap="xs" align="center" wrap={false} className="ml-auto shrink-0">
           {hasConnections && (
-            <Button size="sm" variant="ghost" aria-expanded={open} onClick={toggle} data-testid={`${testId}-toggle`}>
+            <Button size="sm" variant="ghost" className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap" aria-expanded={open} onClick={toggle} data-testid={`${testId}-toggle`}>
               {open ? 'Collapse' : 'Expand'}
               <ChevronIcon size={14} dir={open ? 'up' : 'down'} aria-hidden="true" />
             </Button>
           )}
           {onOpen && (
-            <Button size="sm" variant="secondary" onClick={onOpen} data-testid={`${testId}-open`}>
+            <Button size="sm" variant="secondary" className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap" onClick={onOpen} data-testid={`${testId}-open`}>
               Open graph
               <ExternalLinkIcon size={14} aria-hidden="true" />
             </Button>

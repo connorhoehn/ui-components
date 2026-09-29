@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.406.3
+
+- `RecordGraph` / `recordGraphViewport` `mode: 'auto'` with no drawn `focusKeys` is now the whole-graph fit, down to `RECORD_GRAPH_FIT_ALL_MIN_ZOOM` (0.25), legend and zoom-cluster corners reserved — the same view Fit to view lands on. Before, with nothing to centre on, it fell through to the 0.8 floor: the member search journey's `RecordGraphCard` (59 records, no selection, 1098×270) opened with 12 of 18 drawn records inside and six under the legend and zoom cluster. Mirrors the `OrgGraph` no-focus Radial rule (2.405.1). With focus keys the 2.403.8 ladder is unchanged. New option `fitAllMinZoom` (default `RECORD_GRAPH_FIT_ALL_MIN_ZOOM`).
+- `RecordGraphCard` "Expand ⌄" / "Open graph ↗" and `CitedRecordList` "View these connections →" keep their icon on the same line: each is `inline-flex items-center whitespace-nowrap shrink-0`. The cause was not wrapping text — Tailwind's preflight makes `svg` `display: block`, so inside a non-flex button the icon took its own line. The card's summary is `flex-1 min-w-0 truncate`, so a narrow header truncates the summary rather than squeezing the actions.
+
 ## 2.406.2
 
 - `RecordGraphCard`: the marks strip (`-marks`) and each mark are now `relative`. Each mark carries an `sr-only` label, which is absolutely positioned; with no positioned ancestor the labels were placed against the page body, escaping the host's scroll container — in the portal's Search transcript the document grew to 1575px in a 941px window and wheeling over the header scrolled the whole workspace. `RecordResultList` and `CitedRecordList` were audited and hold no `sr-only` text.

@@ -1000,12 +1000,20 @@ export declare interface RecordGraphViewportOptions {
      * `auto` — the automatic fit ladder (2.403.7, rung (b) since 2.403.8):
      * (a) the whole graph when it fits at or above this zoom; else (b) the focus
      * + neighbours when they fit at or above `neighbourhoodZoom`; else (c) the
-     * `focus` rule's selection fit (or `all` at the floor, with no focus).
-     * Default `RECORD_GRAPH_READABLE_ZOOM`.
+     * `focus` rule's selection fit. With no drawn `focusKeys` there is nothing
+     * to centre on, so `auto` is `all` down to `fitAllMinZoom` (2.406.3; was
+     * `all` at the 0.8 floor, which left 59 records under the legend and zoom
+     * cluster on a 270px card canvas). Default `RECORD_GRAPH_READABLE_ZOOM`.
      */
     readableZoom?: number;
     /** Rung (b) of `auto`. Default `RECORD_GRAPH_NEIGHBOURHOOD_ZOOM`. Since 2.403.8. */
     neighbourhoodZoom?: number;
+    /**
+     * How far `auto` with no focus may zoom out to show every record (the
+     * whole-graph fit, corners reserved). Default `RECORD_GRAPH_FIT_ALL_MIN_ZOOM`.
+     * Since 2.406.3.
+     */
+    fitAllMinZoom?: number;
     /** How far a focus fit may zoom out to keep the selection's boxes whole. Default `RECORD_GRAPH_FOCUS_MIN_ZOOM`. Since 2.403.8. */
     focusMinZoom?: number;
     /** The focus records themselves (usually the selection) — never clipped when they fit. */
@@ -2035,18 +2043,12 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
+        diagramMacro: {
             /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
              */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -2067,12 +2069,18 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
+        canvasLineSpacing: {
             /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
              */
-            insertDiagram: (id?: string) => ReturnType;
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
         };
     }
 }
@@ -2083,6 +2091,29 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -2116,29 +2147,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
@@ -2149,9 +2157,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

@@ -94,7 +94,7 @@ import { n as bu, r as xu, t as Su } from "./EventStreamContext-CLzG8O5_.js";
 import { B as Cu, F as wu, H as Tu, R as Eu, Y as Du, _ as Ou, bt as ku, c as Au, d as ju, dt as Mu, f as Nu, ft as Pu, g as Fu, h as Iu, ht as Lu, m as Ru, mt as zu, n as Bu, p as Vu, q as Hu, rt as Uu, t as Wu, u as Gu, v as Ku, xt as qu, y as Ju } from "./services-EHYvvCQi.js";
 import { n as Yu, t as Xu } from "./ObservabilityContext-DpoDrm3T.js";
 import { t as Zu } from "./useMeasuredWidth-BPrwD0q5.js";
-import { $ as Qu, A as $u, At as ed, B as td, C as nd, Ct as rd, D as id, Dt as ad, E as od, Et as sd, F as cd, G as ld, H as ud, I as dd, J as fd, K as pd, L as md, M as hd, Mt as gd, N as _d, Nt as vd, O as yd, Ot as bd, P as xd, Q as Sd, R as Cd, S as wd, St as Td, T as Ed, Tt as Dd, U as Od, V as kd, W as Ad, X as jd, Y as Md, Z as Nd, _ as Pd, _t as Fd, a as Id, at as Ld, b as Rd, bt as zd, c as Bd, ct as Vd, d as Hd, dt as Ud, et as Wd, f as Gd, ft as Kd, g as qd, gt as Jd, h as Yd, ht as Xd, i as Zd, it as Qd, j as $d, jt as ef, k as tf, kt as nf, l as rf, lt as af, m as of, mt as sf, n as cf, nt as lf, o as uf, ot as df, p as ff, pt as pf, q as mf, r as hf, rt as gf, s as _f, st as vf, t as yf, tt as bf, u as xf, ut as Sf, v as Cf, vt as wf, w as Tf, wt as Ef, x as Df, xt as Of, y as kf, yt as Af, z as jf } from "./graph-CrRfVBNW.js";
+import { $ as Qu, A as $u, At as ed, B as td, C as nd, Ct as rd, D as id, Dt as ad, E as od, Et as sd, F as cd, G as ld, H as ud, I as dd, J as fd, K as pd, L as md, M as hd, Mt as gd, N as _d, Nt as vd, O as yd, Ot as bd, P as xd, Q as Sd, R as Cd, S as wd, St as Td, T as Ed, Tt as Dd, U as Od, V as kd, W as Ad, X as jd, Y as Md, Z as Nd, _ as Pd, _t as Fd, a as Id, at as Ld, b as Rd, bt as zd, c as Bd, ct as Vd, d as Hd, dt as Ud, et as Wd, f as Gd, ft as Kd, g as qd, gt as Jd, h as Yd, ht as Xd, i as Zd, it as Qd, j as $d, jt as ef, k as tf, kt as nf, l as rf, lt as af, m as of, mt as sf, n as cf, nt as lf, o as uf, ot as df, p as ff, pt as pf, q as mf, r as hf, rt as gf, s as _f, st as vf, t as yf, tt as bf, u as xf, ut as Sf, v as Cf, vt as wf, w as Tf, wt as Ef, x as Df, xt as Of, y as kf, yt as Af, z as jf } from "./graph-uE2EqmBb.js";
 import { i as Mf, n as Nf, r as Pf, t as Ff } from "./ReactionPickerPopover-DkcC4xmE.js";
 import { n as If } from "./useComputeProjects-ZSazDRet.js";
 import { _ as Lf, a as Rf, b as zf, c as Bf, d as Vf, g as Hf, h as Uf, i as Wf, l as Gf, m as Kf, n as qf, o as Jf, p as Yf, r as Xf, s as Zf, t as Qf, u as $f, v as ep, x as tp, y as np } from "./MediaIcons-_ai5Til2.js";
@@ -6434,7 +6434,7 @@ function Ly({ records: e, sections: t = Ny, onOpen: n, onViewConnections: r, vie
 						}), r && /* @__PURE__ */ Q(z, {
 							variant: "link",
 							size: "sm",
-							className: "gap-1 text-primary",
+							className: "inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-primary",
 							onClick: r,
 							children: [i, /* @__PURE__ */ Z(bi, {
 								size: 14,
@@ -6499,7 +6499,7 @@ function Vy({ records: e, edges: t, selectedKeys: n, title: r = "Connections", s
 				}),
 				/* @__PURE__ */ Z(qo, {
 					as: "span",
-					className: "min-w-0 truncate text-xs text-text-secondary",
+					className: "min-w-0 flex-1 truncate text-xs text-text-secondary",
 					"data-testid": `${p}-summary`,
 					children: ee
 				}),
@@ -6536,6 +6536,7 @@ function Vy({ records: e, edges: t, selectedKeys: n, title: r = "Connections", s
 					children: [S && /* @__PURE__ */ Q(z, {
 						size: "sm",
 						variant: "ghost",
+						className: "inline-flex shrink-0 items-center gap-1 whitespace-nowrap",
 						"aria-expanded": O,
 						onClick: E,
 						"data-testid": `${p}-toggle`,
@@ -6547,6 +6548,7 @@ function Vy({ records: e, edges: t, selectedKeys: n, title: r = "Connections", s
 					}), s && /* @__PURE__ */ Q(z, {
 						size: "sm",
 						variant: "secondary",
+						className: "inline-flex shrink-0 items-center gap-1 whitespace-nowrap",
 						onClick: s,
 						"data-testid": `${p}-open`,
 						children: ["Open graph", /* @__PURE__ */ Z(Li, {

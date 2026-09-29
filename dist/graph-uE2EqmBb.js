@@ -6109,7 +6109,16 @@ function $i(e, t, n) {
 		y: (f.y0 + f.y1) / 2 - (u.y0 + u.y1) / 2 * e,
 		zoom: e
 	});
-	if (n.mode === "auto" && h(u) >= o || n.mode === "all" && h(u) >= r) return g(Math.min(h(u), i));
+	if (n.mode === "auto" && h(u) >= o) return g(Math.min(h(u), i));
+	if (n.mode === "auto" && !Qi(e, n.focusKeys ?? [])) {
+		let i = Math.min(r, n.fitAllMinZoom ?? .25);
+		return $i(e, t, {
+			...n,
+			mode: "all",
+			minZoom: i
+		});
+	}
+	if (n.mode === "all" && h(u) >= r) return g(Math.min(h(u), i));
 	let _ = Qi(e, n.focusKeys ?? []), v = _ ? Qi(e, n.focusKeys ?? [], Zi) : null, y = _ && v ? {
 		x0: Math.min(_.x0, v.x0),
 		y0: Math.min(_.y0, v.y0),

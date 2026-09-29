@@ -133,4 +133,13 @@ describe('RecordGraphCard', () => {
     }
     expect(screen.getByTestId('record-graph-card-marks')).toHaveClass('relative');
   });
+
+  it('keeps each action on one line and never squeezes it (the summary truncates)', () => {
+    render(<RecordGraphCard records={records} edges={edges} onOpen={vi.fn()} />);
+    for (const id of ['record-graph-card-toggle', 'record-graph-card-open']) {
+      // `inline-flex`: preflight makes the icon's svg block, which wrapped it below the words.
+      expect(screen.getByTestId(id)).toHaveClass('whitespace-nowrap', 'shrink-0', 'inline-flex', 'items-center');
+    }
+    expect(screen.getByTestId('record-graph-card-summary')).toHaveClass('min-w-0', 'truncate');
+  });
 });

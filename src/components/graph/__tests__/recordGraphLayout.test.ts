@@ -525,3 +525,46 @@ test('209px, three selected: the automatic fit keeps every selected box clear of
     }
   }
 });
+
+// ── 2.406.3: the automatic fit with no focus is the whole-graph fit ─────────
+
+test('59 records, no focus, 1098×270: the automatic fit shows every record clear of the legend and controls', () => {
+  // The portal's answer card: 59 records whose whole drawing fits at ~0.28 —
+  // under the 0.7 readable rung, with no selection for rung (b). Laid out as a
+  // 12 × 5 grid so the fit-all zoom lands there (0.25 < zoom < 0.7).
+  const size = { width: 1098, height: 270 };
+  const inset = insetFor(size);
+  const positions = new Map<string, { x: number; y: number }>();
+  for (let i = 0; i < 59; i++) positions.set(`work:w${i}`, { x: (i % 12) * 140, y: Math.floor(i / 12) * 130 });
+  const keys = [...positions.keys()];
+  for (const focusKeys of [undefined, [] as string[], ['person:not-drawn']]) {
+    const label = `focus=${JSON.stringify(focusKeys)}`;
+    const vp = recordGraphViewport(positions, size, { mode: 'auto', focusKeys, fitKeys: focusKeys, inset })!;
+    expect(vp.zoom, label).toBeLessThan(RECORD_GRAPH_READABLE_ZOOM);
+    expect(vp.zoom, label).toBeGreaterThan(RECORD_GRAPH_FIT_ALL_MIN_ZOOM);
+    // Every record whole inside the padded canvas, none under the legend or controls.
+    for (const key of keys) {
+      const box = screenSpan(positions, [key], vp);
+      expectWhole(box, size, 16, `${label} ${key}`);
+      overlayRects(size).forEach(r => expect(intersects(box, r), `${label} ${key} under the ${r.name}`).toBe(false));
+    }
+    // The same view Fit to view lands on.
+    expect(vp, label).toEqual(recordGraphViewport(positions, size, { mode: 'all', inset, minZoom: RECORD_GRAPH_FIT_ALL_MIN_ZOOM }));
+  }
+});
+
+test('no focus: the automatic fit is Fit to view in every layout (a drawing too wide at 0.25 stops there)', () => {
+  const full = sixtyRecords();
+  const graph = filterRecordGraph(full.records.slice(0, 59), full.edges, 'all');
+  for (const size of [{ width: 1098, height: 270 }, CANVAS]) {
+    const inset = insetFor(size);
+    for (const layout of ['force', 'radial', 'hierarchy'] as const) {
+      const positions = layoutRecordGraph(graph.records, graph.edges, layout, size);
+      const vp = recordGraphViewport(positions, size, { mode: 'auto', inset })!;
+      const label = `${layout} ${size.height}`;
+      expect(vp.zoom, label).toBeGreaterThanOrEqual(RECORD_GRAPH_FIT_ALL_MIN_ZOOM);
+      expect(vp.zoom, label).toBeLessThan(RECORD_GRAPH_MIN_FIT_ZOOM);
+      expect(vp, label).toEqual(recordGraphViewport(positions, size, { mode: 'all', inset, minZoom: RECORD_GRAPH_FIT_ALL_MIN_ZOOM }));
+    }
+  }
+});
