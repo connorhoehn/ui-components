@@ -60,18 +60,31 @@ export interface BreadcrumbsProps {
    * Since 2.385.0.
    */
   lastIsCurrent?: boolean;
+  /**
+   * Type step. `md` (default) is 14px. `sm` (2.407.13) is the 13px meta step —
+   * the size of a document header's "Saved …" line and status pill, for a
+   * trail that sits in that row (EditorShell's folder path). The size is on
+   * every crumb, separator and ellipsis; a `className` on the nav cannot
+   * reach them.
+   */
+  size?: BreadcrumbSize;
   className?: string;
   'data-testid'?: string;
 }
+
+export type BreadcrumbSize = 'sm' | 'md';
+const CRUMB_TEXT: Record<BreadcrumbSize, string> = { sm: 'text-[13px]', md: 'text-sm' };
 
 function BreadcrumbLink({
   item,
   isLast,
   block = false,
   afterActivate,
+  size = 'md',
 }: {
   item: BreadcrumbItem;
   isLast: boolean;
+  size?: BreadcrumbSize;
   /** Full-width row styling for the overflow menu's stacked list. */
   block?: boolean;
   /** Runs after the caller's own handler — the overflow menu closes here. */
@@ -82,7 +95,7 @@ function BreadcrumbLink({
     afterActivate?.();
   };
   const baseClass = cn(
-    'text-sm leading-snug transition-colors duration-100',
+    CRUMB_TEXT[size], 'leading-snug transition-colors duration-100',
     isLast
       ? 'text-[var(--color-text-primary)] font-medium cursor-default'
       : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] font-normal',
@@ -134,7 +147,7 @@ function hiddenItems(items: BreadcrumbItem[], maxItems: number): BreadcrumbItem[
   return items.slice(1, items.length - tailCount);
 }
 
-function OverflowMenu({ items }: { items: BreadcrumbItem[] }) {
+function OverflowMenu({ items, size }: { items: BreadcrumbItem[]; size: BreadcrumbSize }) {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
 
@@ -147,7 +160,7 @@ function OverflowMenu({ items }: { items: BreadcrumbItem[] }) {
         aria-expanded={open}
         aria-haspopup="true"
         onClick={() => setOpen((v) => !v)}
-        className="text-sm text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] border-none bg-transparent cursor-pointer px-1 py-0 rounded-sm leading-snug"
+        className={cn(CRUMB_TEXT[size], 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] border-none bg-transparent cursor-pointer px-1 py-0 rounded-sm leading-snug')}
       >
         &hellip;
       </button>
@@ -169,6 +182,7 @@ function OverflowMenu({ items }: { items: BreadcrumbItem[] }) {
                 item={item}
                 isLast={false}
                 block
+                size={size}
                 afterActivate={() => setOpen(false)}
               />
             </li>
@@ -186,6 +200,7 @@ export function Breadcrumbs({
   overflow = 'ellipsis',
   minItems,
   lastIsCurrent = true,
+  size = 'md',
   className,
   'data-testid': testId,
 }: BreadcrumbsProps) {
@@ -207,10 +222,10 @@ export function Breadcrumbs({
             <li key={idx} className="flex items-center gap-1">
               {isEllipsis ? (
                 overflow === 'menu' && hidden.length > 0 ? (
-                  <OverflowMenu items={hidden} />
+                  <OverflowMenu items={hidden} size={size} />
                 ) : (
                   <span
-                    className="text-sm text-[var(--color-text-tertiary)] select-none"
+                    className={cn(CRUMB_TEXT[size], 'text-[var(--color-text-tertiary)] select-none')}
                     aria-label="More items"
                     title="Some items are hidden"
                   >
@@ -218,11 +233,11 @@ export function Breadcrumbs({
                   </span>
                 )
               ) : (
-                <BreadcrumbLink item={item} isLast={isLast && lastIsCurrent} />
+                <BreadcrumbLink item={item} isLast={isLast && lastIsCurrent} size={size} />
               )}
               {!isLast && (
                 <span
-                  className="text-[var(--color-text-tertiary)] text-sm select-none"
+                  className={cn('text-[var(--color-text-tertiary)] select-none', CRUMB_TEXT[size])}
                   aria-hidden="true"
                 >
                   {separator}

@@ -1979,7 +1979,9 @@ export declare interface BreadcrumbItem {
 
 export declare type BreadcrumbOverflow = 'ellipsis' | 'menu';
 
-export declare function Breadcrumbs({ items, separator, maxItems, overflow, minItems, lastIsCurrent, className, 'data-testid': testId, }: BreadcrumbsProps): JSX.Element | null;
+export declare function Breadcrumbs({ items, separator, maxItems, overflow, minItems, lastIsCurrent, size, className, 'data-testid': testId, }: BreadcrumbsProps): JSX.Element | null;
+
+export declare type BreadcrumbSize = 'sm' | 'md';
 
 export declare interface BreadcrumbsProps {
     items: BreadcrumbItem[];
@@ -2008,6 +2010,14 @@ export declare interface BreadcrumbsProps {
      * Since 2.385.0.
      */
     lastIsCurrent?: boolean;
+    /**
+     * Type step. `md` (default) is 14px. `sm` (2.407.13) is the 13px meta step —
+     * the size of a document header's "Saved …" line and status pill, for a
+     * trail that sits in that row (EditorShell's folder path). The size is on
+     * every crumb, separator and ellipsis; a `className` on the nav cannot
+     * reach them.
+     */
+    size?: BreadcrumbSize;
     className?: string;
     'data-testid'?: string;
 }
@@ -6302,9 +6312,12 @@ export declare interface ConversationShelfProps {
     /**
      * `sm` (default) is the 13px shelf. `md` (2.386.0) is the Documents
      * explorer's quick views: 15px labels and 18px icons on 36px rows, the
-     * scale of the Folders tree under them.
+     * scale of the Folders tree under them. `rail` (2.407.13) is `md` on the
+     * shared rail scale (../shared/railType): 13px/500 labels on the 36px rail
+     * pitch, the scale of a `TreeView size="rail"` under them and of the
+     * Workspace `NavRail` beside them.
      */
-    size?: 'sm' | 'md';
+    size?: 'sm' | 'md' | 'rail';
     /**
      * Labels only — no icon slot. The selected row takes the folder tree's
      * selection (primary tint, primary left accent), so the views above a
@@ -20841,13 +20854,16 @@ export declare interface TreeViewProps {
      * a selected row in the brand tint with brand ink (its icon follows through
      * `currentColor`), and the ⋯ laid OVER the row's meta on hover instead of
      * holding an empty 24px slot that pushed every time off the right edge.
+     * `rail` (2.407.13) is `md` on the shared rail scale (./railType): 13px/500
+     * titles on the 36px rail pitch and 12px `RAIL_ITEM_COUNT` meta — the
+     * Documents explorer beside the Workspace `NavRail`, one type scale.
      */
     size?: TreeViewSize;
     className?: string;
     'data-testid'?: string;
 }
 
-export declare type TreeViewSize = 'sm' | 'md';
+export declare type TreeViewSize = 'sm' | 'md' | 'rail';
 
 /**
  * Generic 0..N-point sparkline. Pure SVG, no canvas / chart library.
@@ -24412,15 +24428,20 @@ declare interface UseActivityBusReturn {
        * `compact` (default) is the 36px, 12px-title strip a tree rail wears;
        * `prominent` is the column heading a work list wears — an 18px title and
        * count on a 56px row, no rule under it. `label` is the same 56px row with
-       * the title as a 15px uppercase label — "DOCUMENTS 137", the All documents
-       * mockup (since 2.389.2). `caption` (since 2.392.0) is the same row with a
-       * 13px letter-spaced uppercase label — "INITIATIVES 11", the Initiatives v2
-       * rail.
+       * the title as the rail group label — "DOCUMENTS 137", the All documents
+       * mockup (since 2.389.2). Since 2.407.13 it draws the shared rail scale
+       * (`RAIL_GROUP_LABEL`, 11px semibold caps, with its plain 11px
+       * `RAIL_GROUP_COUNT`), so the rail matches the Workspace `NavRail` beside it
+       * ("WORKSPACE"); it was a 15px label with a count chip. `caption` (since
+       * 2.392.0) is the same row with a 12px letter-spaced uppercase label —
+       * "INITIATIVES 11", the Initiatives v2 rail.
        */
       heading?: 'compact' | 'prominent' | 'label' | 'caption';
       /**
        * How `count` reads. `chip` (default): a neutral count chip. `plain`: muted
-       * text after the title — "Initiatives 11". Since 2.390.0.
+       * text after the title — "Initiatives 11". Since 2.390.0. A `label` heading
+       * always draws its count plain (`RAIL_GROUP_COUNT`) — a rail group heading's
+       * count is never a pill (railType).
        */
       countStyle?: 'chip' | 'plain';
       /**
@@ -24539,11 +24560,52 @@ declare module '@tiptap/core' {
 }
 
 
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -24577,50 +24639,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
         };
-    }
-}
-
-
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
     }
 }

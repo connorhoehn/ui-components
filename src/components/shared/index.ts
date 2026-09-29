@@ -206,7 +206,7 @@ export type { NotificationCenterProps, NotificationItem } from './NotificationCe
 export { UserMenu } from './UserMenu';
 export type { UserMenuProps, UserMenuUser, UserMenuItem } from './UserMenu';
 export { Breadcrumbs } from './Breadcrumbs';
-export type { BreadcrumbsProps, BreadcrumbItem, BreadcrumbOverflow } from './Breadcrumbs';
+export type { BreadcrumbsProps, BreadcrumbItem, BreadcrumbOverflow, BreadcrumbSize } from './Breadcrumbs';
 
 // ── Project-management components (2025-05) ──
 export { ActivityFeed } from './ActivityFeed';

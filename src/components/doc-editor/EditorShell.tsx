@@ -243,8 +243,10 @@ export function EditorShell({
       onValueChange={(id) => onTabChange?.(id)}
       variant="underline"
       {...(workItem ? { badgeStyle: 'plain' as const } : {})}
+      // Tabs' own md step (14px/500) — the size of the section band tabs the
+      // app shell draws (NavTabs), not a 15px of the header's own (2.407.13).
       size="md"
-      itemClassName="px-3.5 pb-1.5 pt-1 text-[15px] leading-5"
+      itemClassName="px-3.5 pb-1.5 pt-1 leading-5"
       aria-label={`${title} sections`}
       idPrefix={idPrefix}
       className={tabsClassName}
@@ -258,7 +260,7 @@ export function EditorShell({
           <div className="flex h-7 min-w-0 items-center gap-2 text-[13px] text-text-secondary" data-testid={`${testId}-crumbs-row`}>
             <ChevronIcon dir="right" size={12} aria-hidden="true" className="-ml-1 shrink-0 text-text-tertiary" />
             {breadcrumbs && breadcrumbs.length > 0 && (
-              <Breadcrumbs items={breadcrumbs} maxItems={4} lastIsCurrent={false} className="min-w-0 text-[13px] text-text-secondary" data-testid={`${testId}-crumbs`} />
+              <Breadcrumbs items={breadcrumbs} maxItems={4} lastIsCurrent={false} size="sm" className="min-w-0" data-testid={`${testId}-crumbs`} />
             )}
             {breadcrumbs && breadcrumbs.length > 0 && trailing != null && (
               <span aria-hidden="true" className="shrink-0 text-text-tertiary">/</span>
@@ -274,12 +276,12 @@ export function EditorShell({
           // A short window (a 1280×720 laptop leaves ~577 px) gives the crumbs'
           // row to the canvas: the title stays, and the explorer beside the
           // pane already shows where the file lives.
-          <Breadcrumbs items={breadcrumbs} maxItems={4} className="text-xs [@media(max-height:640px)]:hidden" data-testid={`${testId}-crumbs`} />
+          <Breadcrumbs items={breadcrumbs} maxItems={4} size="sm" className="[@media(max-height:640px)]:hidden" data-testid={`${testId}-crumbs`} />
         )}
         {!workItem && crumbsTrailing && (
           <div className="flex min-w-0 items-center gap-2 text-xs [@media(max-height:640px)]:hidden" data-testid={`${testId}-crumbs-row`}>
             {breadcrumbs && breadcrumbs.length > 0 && (
-              <Breadcrumbs items={breadcrumbs} maxItems={4} className="min-w-0 text-xs" data-testid={`${testId}-crumbs`} />
+              <Breadcrumbs items={breadcrumbs} maxItems={4} size="sm" className="min-w-0" data-testid={`${testId}-crumbs`} />
             )}
             <span className="flex shrink-0 items-center gap-2" data-testid={`${testId}-crumbs-trailing`}>{crumbsTrailing}</span>
           </div>
@@ -346,7 +348,10 @@ export function EditorShell({
               {statusPill}
               {path && path.length > 0 && (
                 <span className="flex min-w-0 flex-1 items-center border-l border-border pl-3" data-testid={`${testId}-path`}>
-                  <Breadcrumbs items={path} maxItems={4} lastIsCurrent={false} className="min-w-0 text-[13px] text-text-tertiary" data-testid={`${testId}-path-crumbs`} />
+                  {/* The 13px meta step (Breadcrumbs size="sm") — the "Saved …" line's
+                      and the status pill's size; a class on the nav never
+                      reached the 14px crumbs inside it (2.407.13). */}
+                  <Breadcrumbs items={path} maxItems={4} lastIsCurrent={false} size="sm" className="min-w-0" data-testid={`${testId}-path-crumbs`} />
                 </span>
               )}
             </div>

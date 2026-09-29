@@ -34,6 +34,8 @@ import { OutcomeSection } from '../work/OutcomeSection';
 import { RichChatComposer, type RichChatDraft } from '../social/RichChatComposer';
 import type { ComposerCommand } from '../social/composerCommands';
 import { ContextColumn, type ContextColumnState } from './ContextColumn';
+import { ConversationShelf } from '../social/ConversationShelf';
+import { TreeView } from '../shared/TreeView';
 
 const meta: Meta<typeof ExplorerLayout> = {
   title: 'Layout/ExplorerLayout',
@@ -828,4 +830,77 @@ export const InitiativeOverviewV2ShellRail: Story = {
   name: 'Initiative overview v2 — shell rail beside the explorer rail',
   parameters: { layout: 'fullscreen' },
   render: () => <InitiativeOverviewV2Frame shell="sub-nav" />,
+};
+
+// ---------------------------------------------------------------------------
+// 2.407.13 — the Documents surface on ONE type scale. The Workspace NavRail and
+// the Documents explorer beside it both draw railType: 13px/500 items on a
+// 36px pitch, 12px counts, 11px caps labels ("DOCUMENTS 180" is the rail's
+// group label, not a 15px heading). The editor head beside them uses the
+// library's steps: a 20px title (EditorShell's default), 14px tabs (Tabs md,
+// the section band's NavTabs size) and a 13px folder path (Breadcrumbs sm,
+// the "Saved …" line's meta step).
+// ---------------------------------------------------------------------------
+
+const DOCS_TREE = [
+  { id: 'f-sprint', title: 'Sprint planning', parentId: null, isDir: true, meta: '10' },
+  { id: 'f-meet', title: 'Meetings', parentId: 'f-sprint', isDir: true, meta: '5' },
+  { id: 'd-sync', title: 'Planning sync transcript', parentId: 'f-meet', meta: '4d' },
+  { id: 'd-notes', title: 'Sprint notes', parentId: 'f-meet', meta: '4d' },
+  { id: 'd-audit', title: 'audit-file-menu renamed', parentId: 'f-meet', meta: '4d' },
+  { id: 'f-auth', title: 'Auth migration', parentId: null, isDir: true, meta: '2' },
+  { id: 'd-arch', title: 'Auth architecture', parentId: 'f-auth', meta: '12h' },
+];
+
+function DocumentsRailScaleFrame() {
+  const [tab, setTab] = useState('editor');
+  const [picked, setPicked] = useState<string | null>('d-audit');
+  const [view, setView] = useState<string | null>(null);
+  return (
+    <OrgFrame>
+      <ExplorerLayout
+        railTitle="Documents"
+        railCount={180}
+        railHeading="label"
+        railLabel="the documents list"
+        onToggleRail={() => {}}
+        rail={
+          <div className="flex flex-col pb-3">
+            <div className="px-3.5 pb-2">
+              <ConversationShelf compact plain size="rail" items={[{ id: 'all', label: 'All documents' }, { id: 'recent', label: 'Recent' }, { id: 'shared', label: 'Shared with me' }]} activeId={view} onSelect={setView} data-testid="story-views" />
+            </div>
+            <div className="flex flex-col px-2">
+              <RailSectionHeader label="Folders" presentational={false} />
+              <TreeView size="rail" nodes={DOCS_TREE} selectedId={picked} onSelect={setPicked} defaultExpanded={['f-sprint', 'f-meet', 'f-auth']} data-testid="story-tree" />
+            </div>
+          </div>
+        }
+      >
+        <EditorShell
+          title="audit-file-menu renamed"
+          kind="page"
+          statusPill={<StatusPill state="neutral" label="Draft" size="sm" />}
+          path={[{ label: 'Sprint planning', href: '#sprint' }, { label: 'Meetings', href: '#meetings' }]}
+          saveState={{ status: 'saved', detail: '4 days ago' }}
+          tabs={[{ id: 'editor', label: 'Editor' }, { id: 'comments', label: 'Comments' }, { id: 'versions', label: 'Versions' }, { id: 'history', label: 'History' }]}
+          activeTab={tab}
+          onTabChange={setTab}
+        >
+          <div className="px-5 py-4 text-sm text-text-secondary">Page body</div>
+        </EditorShell>
+      </ExplorerLayout>
+    </OrgFrame>
+  );
+}
+
+export const DocumentsSurfaceOneTypeScale: Story = {
+  name: 'Documents surface — one type scale (rail + editor head)',
+  parameters: { layout: 'fullscreen' },
+  render: () => <DocumentsRailScaleFrame />,
+};
+
+export const DocumentsSurfaceOneTypeScaleDark: Story = {
+  name: 'Documents surface — one type scale (dark)',
+  parameters: { layout: 'fullscreen' },
+  render: () => <div data-theme="dark"><DocumentsRailScaleFrame /></div>,
 };

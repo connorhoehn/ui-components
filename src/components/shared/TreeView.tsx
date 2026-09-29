@@ -41,6 +41,7 @@ import {
   type ReactNode,
 } from 'react';
 import { cn } from '../../lib/cn';
+import { RAIL_ITEM_COUNT, RAIL_ITEM_TEXT, RAIL_ROW_PAD_Y } from './railType';
 import { DropdownMenu, type DropdownMenuSection } from './DropdownMenu';
 
 export interface TreeNode {
@@ -107,13 +108,16 @@ export interface TreeViewProps {
    * a selected row in the brand tint with brand ink (its icon follows through
    * `currentColor`), and the ⋯ laid OVER the row's meta on hover instead of
    * holding an empty 24px slot that pushed every time off the right edge.
+   * `rail` (2.407.13) is `md` on the shared rail scale (./railType): 13px/500
+   * titles on the 36px rail pitch and 12px `RAIL_ITEM_COUNT` meta — the
+   * Documents explorer beside the Workspace `NavRail`, one type scale.
    */
   size?: TreeViewSize;
   className?: string;
   'data-testid'?: string;
 }
 
-export type TreeViewSize = 'sm' | 'md';
+export type TreeViewSize = 'sm' | 'md' | 'rail';
 
 interface Entry extends TreeNode {
   children: Entry[];
@@ -225,7 +229,9 @@ function TreeRow({
   const draggable = dragEnabled && !entry.disabled && entry.status !== 'pending' && (canDragNode?.(entry) ?? true);
   const menuSections = rowMenu?.(entry);
   const hasMenu = !!menuSections && menuSections.some((section) => section.items.length > 0);
-  const md = size === 'md';
+  // `rail` is `md`'s row (tint, indent, ⋯ over the meta) on the rail scale.
+  const rail = size === 'rail';
+  const md = size === 'md' || rail;
 
   return (
     <div>
@@ -302,7 +308,8 @@ function TreeRow({
           // A click toggles, so it must not start a text selection; the ring
           // is the keyboard's only sign of which row has the focus.
           'select-none outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary',
-          md ? 'min-h-8 gap-1.5 py-1 pr-2.5 text-[15px] leading-6' : 'gap-1 py-1.5 pr-2 text-sm',
+          rail ? cn('min-h-9 gap-1.5 pr-2.5', RAIL_ROW_PAD_Y, RAIL_ITEM_TEXT)
+            : md ? 'min-h-8 gap-1.5 py-1 pr-2.5 text-[15px] leading-6' : 'gap-1 py-1.5 pr-2 text-sm',
           // A row you can pick up says so before you try. Only when the host
           // wired a drop target: a grab cursor over an immovable row is a lie.
           draggable ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer',
@@ -342,13 +349,13 @@ function TreeRow({
         <span className="min-w-0 flex-1 truncate" title={entry.title}>
           {entry.title}
         </span>
-        {entry.meta && <span className={cn('flex-shrink-0 text-text-tertiary', md ? 'text-[13px] tabular-nums' : 'text-xs')}>{entry.meta}</span>}
+        {entry.meta && <span className={cn('flex-shrink-0 text-text-tertiary', rail ? RAIL_ITEM_COUNT : md ? 'text-[13px] tabular-nums' : 'text-xs')}>{entry.meta}</span>}
         {entry.hoverMeta && (
           <span
             data-testid={`${testId}-hover-meta-${entry.id}`}
             // sr-only, not opacity-0: hidden meta must not take width, or
             // every title truncates early for a label nobody can see (2.365.0).
-            className="sr-only flex-shrink-0 text-xs text-text-tertiary group-hover:not-sr-only group-focus:not-sr-only group-focus-within:not-sr-only"
+            className={cn('sr-only flex-shrink-0 text-text-tertiary', rail ? RAIL_ITEM_COUNT : 'text-xs', 'group-hover:not-sr-only group-focus:not-sr-only group-focus-within:not-sr-only')}
           >
             {entry.hoverMeta}
           </span>

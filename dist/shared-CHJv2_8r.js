@@ -10,7 +10,7 @@ import "./DataTable-CcQZDoUb.js";
 import "./IconButton-DDeXW3mZ.js";
 import { T as f, q as p, u as m, z as h } from "./Icons-CCn6EnUZ.js";
 import "./Stack-CkiMw5K0.js";
-import "./Breadcrumbs-embdT7_l.js";
+import "./Breadcrumbs-BXD4oiJI.js";
 import "./Badge-CTSXmryI.js";
 import "./Banner-e3wgB68D.js";
 import "./Chart-DRtuaJHd.js";
@@ -3782,7 +3782,7 @@ function Gn(e) {
 	return n < t.height / 3 ? "before" : n > t.height * 2 / 3 ? "after" : "into";
 }
 function Kn({ entry: t, depth: n, expanded: r, onToggle: i, selectedId: a, onSelect: o, renderTrailing: s, rowMenu: c, rowMenuLabel: l, dragEnabled: u, canDragNode: d, canDrop: f, dragRef: p, dropTarget: m, setDropTarget: h, onDrop: g, testId: _, focusedId: v, setFocusedId: y, size: b }) {
-	let x = r.has(t.id), S = t.children.length > 0, C = t.id === a, w = m?.id === t.id, T = u && !t.disabled && t.status !== "pending" && (d?.(t) ?? !0), E = c?.(t), D = !!E && E.some((e) => e.items.length > 0), O = b === "md";
+	let x = r.has(t.id), S = t.children.length > 0, C = t.id === a, w = m?.id === t.id, T = u && !t.disabled && t.status !== "pending" && (d?.(t) ?? !0), E = c?.(t), D = !!E && E.some((e) => e.items.length > 0), O = b === "rail", k = b === "md" || O;
 	return /* @__PURE__ */ G("div", { children: [/* @__PURE__ */ G("div", {
 		draggable: T,
 		onDragStart: (e) => {
@@ -3834,8 +3834,8 @@ function Kn({ entry: t, depth: n, expanded: r, onToggle: i, selectedId: a, onSel
 		tabIndex: v === t.id ? 0 : -1,
 		onFocus: () => y(t.id),
 		"data-testid": `${_}-row-${t.id}`,
-		className: e("group relative flex items-center border-l-2 transition-colors", "select-none outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary", O ? "min-h-8 gap-1.5 py-1 pr-2.5 text-[15px] leading-6" : "gap-1 py-1.5 pr-2 text-sm", T ? "cursor-grab active:cursor-grabbing" : "cursor-pointer", C ? O ? "border-primary bg-primary-bg font-medium text-primary-fg" : "border-primary bg-surface-hover font-semibold text-text-primary" : O ? "border-transparent text-text-primary hover:bg-surface-hover" : "border-transparent text-text-secondary hover:bg-surface-hover", t.disabled && "cursor-not-allowed opacity-50", t.status === "pending" && "pointer-events-none opacity-50", t.status === "moved" && "bg-success/10", w && m?.position === "into" && "ring-1 ring-inset ring-primary", w && m?.position === "before" && "shadow-[inset_0_2px_0_0_var(--color-primary)]", w && m?.position === "after" && "shadow-[inset_0_-2px_0_0_var(--color-primary)]"),
-		style: { paddingLeft: n * (O ? 18 : 14) + 8 },
+		className: e("group relative flex items-center border-l-2 transition-colors", "select-none outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary", O ? e("min-h-9 gap-1.5 pr-2.5", F, M) : k ? "min-h-8 gap-1.5 py-1 pr-2.5 text-[15px] leading-6" : "gap-1 py-1.5 pr-2 text-sm", T ? "cursor-grab active:cursor-grabbing" : "cursor-pointer", C ? k ? "border-primary bg-primary-bg font-medium text-primary-fg" : "border-primary bg-surface-hover font-semibold text-text-primary" : k ? "border-transparent text-text-primary hover:bg-surface-hover" : "border-transparent text-text-secondary hover:bg-surface-hover", t.disabled && "cursor-not-allowed opacity-50", t.status === "pending" && "pointer-events-none opacity-50", t.status === "moved" && "bg-success/10", w && m?.position === "into" && "ring-1 ring-inset ring-primary", w && m?.position === "before" && "shadow-[inset_0_2px_0_0_var(--color-primary)]", w && m?.position === "after" && "shadow-[inset_0_-2px_0_0_var(--color-primary)]"),
+		style: { paddingLeft: n * (k ? 18 : 14) + 8 },
 		children: [
 			S ? /* @__PURE__ */ W("button", {
 				type: "button",
@@ -3850,7 +3850,7 @@ function Kn({ entry: t, depth: n, expanded: r, onToggle: i, selectedId: a, onSel
 				"aria-hidden": "true"
 			}),
 			t.icon && /* @__PURE__ */ W("span", {
-				className: e("flex flex-shrink-0 items-center", O && (C ? "text-primary-fg" : "text-text-secondary")),
+				className: e("flex flex-shrink-0 items-center", k && (C ? "text-primary-fg" : "text-text-secondary")),
 				"data-testid": `${_}-icon-${t.id}`,
 				children: t.icon
 			}),
@@ -3860,19 +3860,19 @@ function Kn({ entry: t, depth: n, expanded: r, onToggle: i, selectedId: a, onSel
 				children: t.title
 			}),
 			t.meta && /* @__PURE__ */ W("span", {
-				className: e("flex-shrink-0 text-text-tertiary", O ? "text-[13px] tabular-nums" : "text-xs"),
+				className: e("flex-shrink-0 text-text-tertiary", O ? "text-[12px] font-medium leading-4 tabular-nums text-text-tertiary" : k ? "text-[13px] tabular-nums" : "text-xs"),
 				children: t.meta
 			}),
 			t.hoverMeta && /* @__PURE__ */ W("span", {
 				"data-testid": `${_}-hover-meta-${t.id}`,
-				className: "sr-only flex-shrink-0 text-xs text-text-tertiary group-hover:not-sr-only group-focus:not-sr-only group-focus-within:not-sr-only",
+				className: e("sr-only flex-shrink-0 text-text-tertiary", O ? "text-[12px] font-medium leading-4 tabular-nums text-text-tertiary" : "text-xs", "group-hover:not-sr-only group-focus:not-sr-only group-focus-within:not-sr-only"),
 				children: t.hoverMeta
 			}),
 			t.badge,
 			s?.(t),
 			D && /* @__PURE__ */ W("span", {
 				"data-tree-row-menu": "",
-				className: e("flex flex-shrink-0 items-center", O && "pointer-events-none absolute inset-y-0 right-1.5 opacity-0 group-hover:pointer-events-auto group-hover:opacity-100 group-focus:pointer-events-auto group-focus:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 has-[[aria-expanded=true]]:pointer-events-auto has-[[aria-expanded=true]]:opacity-100"),
+				className: e("flex flex-shrink-0 items-center", k && "pointer-events-none absolute inset-y-0 right-1.5 opacity-0 group-hover:pointer-events-auto group-hover:opacity-100 group-focus:pointer-events-auto group-focus:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 has-[[aria-expanded=true]]:pointer-events-auto has-[[aria-expanded=true]]:opacity-100"),
 				onClick: (e) => e.stopPropagation(),
 				onContextMenu: (e) => e.stopPropagation(),
 				children: /* @__PURE__ */ W(ae, {
@@ -3887,7 +3887,7 @@ function Kn({ entry: t, depth: n, expanded: r, onToggle: i, selectedId: a, onSel
 					align: "end",
 					sections: E,
 					"data-testid": `${_}-menu-panel-${t.id}`,
-					triggerClassName: e("h-5 w-6 border-transparent px-0 py-0 opacity-0 transition-opacity motion-reduce:transition-none", "group-hover:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 aria-expanded:opacity-100", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", O && "h-6 w-7 bg-surface-hover")
+					triggerClassName: e("h-5 w-6 border-transparent px-0 py-0 opacity-0 transition-opacity motion-reduce:transition-none", "group-hover:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 aria-expanded:opacity-100", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", k && "h-6 w-7 bg-surface-hover")
 				})
 			})
 		]

@@ -3,7 +3,7 @@ import { cn } from '../../lib/cn';
 import { IconButton } from '../ui/IconButton';
 import { ChevronIcon } from '../ui/Icons';
 import Chip from '../shared/Chip';
-import { RAIL_CAPTION } from '../shared/railType';
+import { RAIL_CAPTION, RAIL_GROUP_COUNT, RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK } from '../shared/railType';
 
 export interface WorkspaceRailBack {
   label: string;
@@ -33,15 +33,20 @@ export interface WorkspaceRailProps {
    * `compact` (default) is the 36px, 12px-title strip a tree rail wears;
    * `prominent` is the column heading a work list wears — an 18px title and
    * count on a 56px row, no rule under it. `label` is the same 56px row with
-   * the title as a 15px uppercase label — "DOCUMENTS 137", the All documents
-   * mockup (since 2.389.2). `caption` (since 2.392.0) is the same row with a
-   * 13px letter-spaced uppercase label — "INITIATIVES 11", the Initiatives v2
-   * rail.
+   * the title as the rail group label — "DOCUMENTS 137", the All documents
+   * mockup (since 2.389.2). Since 2.407.13 it draws the shared rail scale
+   * (`RAIL_GROUP_LABEL`, 11px semibold caps, with its plain 11px
+   * `RAIL_GROUP_COUNT`), so the rail matches the Workspace `NavRail` beside it
+   * ("WORKSPACE"); it was a 15px label with a count chip. `caption` (since
+   * 2.392.0) is the same row with a 12px letter-spaced uppercase label —
+   * "INITIATIVES 11", the Initiatives v2 rail.
    */
   heading?: 'compact' | 'prominent' | 'label' | 'caption';
   /**
    * How `count` reads. `chip` (default): a neutral count chip. `plain`: muted
-   * text after the title — "Initiatives 11". Since 2.390.0.
+   * text after the title — "Initiatives 11". Since 2.390.0. A `label` heading
+   * always draws its count plain (`RAIL_GROUP_COUNT`) — a rail group heading's
+   * count is never a pill (railType).
    */
   countStyle?: 'chip' | 'plain';
   /**
@@ -71,6 +76,7 @@ export function WorkspaceRail({
   onToggle, toggleLabel, toggleTestId, className,
   'data-testid': testId = 'workspace-rail',
 }: WorkspaceRailProps) {
+  const plainCount = countStyle === 'plain' || heading === 'label';
   const toggleName = toggleLabel ?? `${collapsed ? 'Show' : 'Hide'} ${label ?? title ?? 'the list'}`;
   return (
     <nav aria-label={label ?? title ?? 'Workspace'} data-testid={testId} data-collapsed={collapsed}
@@ -93,13 +99,13 @@ export function WorkspaceRail({
       {(title || actions || onToggle) && (
         <div className={cn('flex shrink-0 items-center gap-1', heading !== 'compact' ? 'h-14' : 'h-9 border-b border-border', collapsed ? 'justify-center' : heading !== 'compact' ? 'pl-5 pr-3' : 'pl-3.5 pr-1.5')} data-testid={`${testId}-header`}>
           {!collapsed && (title ? (
-            <h2 className={cn('m-0 flex min-w-0 flex-1 items-center gap-2 text-text-primary', heading === 'prominent' ? 'text-[18px] font-semibold' : heading === 'label' ? 'text-[15px] font-semibold uppercase tracking-[0.02em]' : heading === 'caption' ? RAIL_CAPTION : 'text-[12px] font-semibold')} data-testid={`${testId}-title`}>
+            <h2 className={cn('m-0 flex min-w-0 flex-1 items-center gap-2 text-text-primary', heading === 'prominent' ? 'text-[18px] font-semibold' : heading === 'label' ? cn(RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK) : heading === 'caption' ? RAIL_CAPTION : 'text-[12px] font-semibold')} data-testid={`${testId}-title`}>
               <span className="min-w-0 truncate">{title}</span>
-              {typeof count === 'number' && countStyle === 'plain' && (
-                <span className="shrink-0 text-[13px] font-medium text-text-secondary" aria-label={`${count} items`} data-testid={`${testId}-count`} data-count-style="plain">{count}</span>
+              {typeof count === 'number' && plainCount && (
+                <span className={cn('shrink-0', heading === 'label' ? RAIL_GROUP_COUNT : 'text-[13px] font-medium text-text-secondary')} aria-label={`${count} items`} data-testid={`${testId}-count`} data-count-style="plain">{count}</span>
               )}
-              {typeof count === 'number' && countStyle !== 'plain' && (
-                <Chip size={heading === 'prominent' ? 'md' : heading === 'label' || heading === 'caption' ? 'sm' : 'xs'} tone="neutral" className="shrink-0" aria-label={`${count} items`} data-testid={`${testId}-count`}>{count}</Chip>
+              {typeof count === 'number' && !plainCount && (
+                <Chip size={heading === 'prominent' ? 'md' : heading === 'caption' ? 'sm' : 'xs'} tone="neutral" className="shrink-0" aria-label={`${count} items`} data-testid={`${testId}-count`}>{count}</Chip>
               )}
             </h2>
           ) : <span className="flex-1" />)}

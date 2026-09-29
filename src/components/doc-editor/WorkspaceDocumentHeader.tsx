@@ -164,6 +164,15 @@ export interface WorkspaceDocumentHeaderProps {
 
   lifecycleLoading?: boolean;
 
+  /**
+   * The document has no review status this caller can read (the platform
+   * answered "not found" for its lifecycle). Not an error: no status pill, and
+   * the review actions show as ONE disabled "Submit for review" row whose
+   * tooltip is this text, so the reader learns why rather than finding the
+   * Review group missing. Ignored while the server offers actions. Since 2.407.13.
+   */
+  lifecycleUnavailableReason?: string;
+
   lifecycleBusy?: boolean;
 
   lifecycleError?: LifecycleErrorView | null;
@@ -306,6 +315,7 @@ export default function WorkspaceDocumentHeader({
   lifecycleLegacyClaim,
   lifecycleActions,
   lifecycleLoading,
+  lifecycleUnavailableReason,
   lifecycleBusy,
   lifecycleError,
   onDismissLifecycleError,
@@ -319,6 +329,10 @@ export default function WorkspaceDocumentHeader({
   const [confirmClaim, setConfirmClaim] = useState(false);
 
   const offeredActions = lifecycleActions ?? [];
+  // No record to act on: one disabled row that says why (see the prop).
+  const unavailableRow = lifecycleUnavailableReason && offeredActions.length === 0
+    ? [{ label: lifecycleActionLabels.submit_for_review, disabled: true, disabledReason: lifecycleUnavailableReason, onSelect: () => {}, 'data-testid': 'lifecycle-action-unavailable' }]
+    : [];
   const reasonRequired = pendingAction != null && lifecycleReasonRequired.includes(pendingAction);
   const typedRequired =
     pendingAction != null && lifecycleTypedConfirmation.includes(pendingAction);
@@ -368,10 +382,11 @@ export default function WorkspaceDocumentHeader({
         }] : []),
       ],
     },
-    ...(onLifecycleAction && (offeredActions.length > 0 || onClaimOwnership) ? [{
+    ...(onLifecycleAction && (offeredActions.length > 0 || onClaimOwnership || unavailableRow.length > 0) ? [{
       label: 'Review',
       'data-testid': 'document-header-menu-lifecycle',
       items: [
+        ...unavailableRow,
         ...offeredActions.map((action) => ({
           label: lifecycleActionLabels[action],
           ...(action === 'finalize' ? { danger: true } : {}),
@@ -462,6 +477,7 @@ export default function WorkspaceDocumentHeader({
     ...grouped('view'),
   ];
   const reviewItems = onLifecycleAction ? [
+    ...unavailableRow,
     ...offeredActions.map((action) => ({
       label: lifecycleActionLabels[action],
       ...(action === 'finalize' ? { danger: true } : {}),
@@ -784,6 +800,11 @@ export default function WorkspaceDocumentHeader({
                   Checking review status…
                 </span>
               )}
+              {unavailableRow.length > 0 && !lifecycleLoading && (
+                <Button type="button" size="sm" variant="secondary" disabled title={lifecycleUnavailableReason} data-testid="lifecycle-action-unavailable">
+                  {lifecycleActionLabels.submit_for_review}
+                </Button>
+              )}
               {offeredActions.map((action) => (
                 <Button
                   key={action}
@@ -1033,6 +1054,11 @@ export default function WorkspaceDocumentHeader({
                 >
                   Checking review status…
                 </span>
+              )}
+              {unavailableRow.length > 0 && !lifecycleLoading && (
+                <Button type="button" size="sm" variant="secondary" disabled title={lifecycleUnavailableReason} data-testid="lifecycle-action-unavailable">
+                  {lifecycleActionLabels.submit_for_review}
+                </Button>
               )}
               {offeredActions.map((action) => (
                 <Button

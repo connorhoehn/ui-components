@@ -6,7 +6,7 @@ import { t as a } from "./Chip-4IBrlduZ.js";
 import { t as o } from "./IconButton-DDeXW3mZ.js";
 import { f as s, st as c, tt as l } from "./Icons-CCn6EnUZ.js";
 import { n as u, t as d } from "./Stack-CkiMw5K0.js";
-import { t as f } from "./Breadcrumbs-embdT7_l.js";
+import { t as f } from "./Breadcrumbs-BXD4oiJI.js";
 import { t as p } from "./Badge-CTSXmryI.js";
 import { t as m } from "./Banner-e3wgB68D.js";
 import { t as h } from "./Modal-DMFNRUDx.js";
@@ -27,12 +27,12 @@ import { t as k } from "./Checkbox-Dftwml_V.js";
 import { n as ee } from "./FileKindMark-XRAKQoRm.js";
 import { t as A } from "./activationKey-CjbL3LUv.js";
 import { A as te, k as j } from "./renderers-DIPIkjU7.js";
-import { A as M, B as N, C as P, D as F, E as ne, F as I, G as L, H as re, I as R, J as z, K as B, L as V, M as H, N as U, O as ie, P as ae, R as oe, S as W, T as se, U as ce, V as le, W as ue, _ as de, a as fe, b as pe, c as me, d as he, f as ge, g as _e, h as ve, i as ye, j as be, k as xe, l as Se, m as Ce, n as we, o as Te, p as Ee, r as De, s as Oe, t as ke, u as Ae, v as je, w as Me, x as Ne, y as Pe, z as Fe } from "./PresentationEditor-CiBBPoPK.js";
+import { A as M, B as N, C as P, D as F, E as ne, F as I, G as L, H as re, I as R, J as z, K as B, L as V, M as H, N as U, O as ie, P as ae, R as oe, S as W, T as se, U as ce, V as le, W as ue, _ as de, a as fe, b as pe, c as me, d as he, f as ge, g as _e, h as ve, i as ye, j as be, k as xe, l as Se, m as Ce, n as we, o as Te, p as Ee, r as De, s as Oe, t as ke, u as Ae, v as je, w as Me, x as Ne, y as Pe, z as Fe } from "./PresentationEditor-z6j-aabn.js";
 import { i as Ie } from "./MediaIcons-_ai5Til2.js";
 import { o as Le, t as Re } from "./VerdictChip-C758SfR5.js";
 import { a as ze, c as Be, d as Ve, f as He, h as Ue, i as We, l as Ge, m as Ke, n as qe, o as Je, p as Ye, r as Xe, s as Ze, t as Qe, u as $e } from "./TiptapEditor-CajZRkz8.js";
 import { i as et, n as tt, r as nt, t as rt } from "./FloatingComposerDock-DvFguey-.js";
-import { A as it, B as at, C as ot, D as st, E as ct, F as lt, G as ut, H as dt, I as ft, J as pt, K as mt, L as ht, M as gt, N as _t, O as vt, P as yt, R as bt, S as xt, T as St, U as Ct, V as wt, W as Tt, _ as Et, a as Dt, b as Ot, c as kt, d as At, f as jt, g as Mt, h as Nt, i as Pt, j as Ft, k as It, l as Lt, m as Rt, o as zt, p as Bt, q as Vt, r as Ht, s as Ut, t as Wt, u as Gt, v as Kt, w as qt, x as Jt, y as Yt, z as Xt } from "./DocumentEditorPage-Bn_NIpFX.js";
+import { A as it, B as at, C as ot, D as st, E as ct, F as lt, G as ut, H as dt, I as ft, J as pt, K as mt, L as ht, M as gt, N as _t, O as vt, P as yt, R as bt, S as xt, T as St, U as Ct, V as wt, W as Tt, _ as Et, a as Dt, b as Ot, c as kt, d as At, f as jt, g as Mt, h as Nt, i as Pt, j as Ft, k as It, l as Lt, m as Rt, o as zt, p as Bt, q as Vt, r as Ht, s as Ut, t as Wt, u as Gt, v as Kt, w as qt, x as Jt, y as Yt, z as Xt } from "./DocumentEditorPage-Ch23N1Fc.js";
 import { S as Zt, _ as Qt, a as $t, b as en, c as tn, d as nn, f as rn, g as an, h as on, i as sn, l as cn, m as ln, n as un, o as dn, p as fn, r as pn, s as mn, t as hn, u as gn, v as _n, x as vn, y as yn } from "./useDocumentImageUpload-RRj5byEK.js";
 import { r as bn } from "./RichChatComposer-DaON9dc8.js";
 import { createContext as xn, forwardRef as Sn, useCallback as G, useContext as Cn, useEffect as K, useId as wn, useImperativeHandle as Tn, useMemo as q, useRef as J, useState as Y } from "react";
@@ -2197,7 +2197,7 @@ function Gr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 		variant: "underline",
 		...V ? { badgeStyle: "plain" } : {},
 		size: "md",
-		itemClassName: "px-3.5 pb-1.5 pt-1 text-[15px] leading-5",
+		itemClassName: "px-3.5 pb-1.5 pt-1 leading-5",
 		"aria-label": `${t} sections`,
 		idPrefix: oe,
 		className: e
@@ -2226,7 +2226,8 @@ function Gr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 								items: e,
 								maxItems: 4,
 								lastIsCurrent: !1,
-								className: "min-w-0 text-[13px] text-text-secondary",
+								size: "sm",
+								className: "min-w-0",
 								"data-testid": `${B}-crumbs`
 							}),
 							e && e.length > 0 && U != null && /* @__PURE__ */ Z("span", {
@@ -2250,7 +2251,8 @@ function Gr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 					!V && e && e.length > 0 && !h && /* @__PURE__ */ Z(f, {
 						items: e,
 						maxItems: 4,
-						className: "text-xs [@media(max-height:640px)]:hidden",
+						size: "sm",
+						className: "[@media(max-height:640px)]:hidden",
 						"data-testid": `${B}-crumbs`
 					}),
 					!V && h && /* @__PURE__ */ Q("div", {
@@ -2259,7 +2261,8 @@ function Gr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 						children: [e && e.length > 0 && /* @__PURE__ */ Z(f, {
 							items: e,
 							maxItems: 4,
-							className: "min-w-0 text-xs",
+							size: "sm",
+							className: "min-w-0",
 							"data-testid": `${B}-crumbs`
 						}), /* @__PURE__ */ Z("span", {
 							className: "flex shrink-0 items-center gap-2",
@@ -2317,7 +2320,8 @@ function Gr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 													items: m,
 													maxItems: 4,
 													lastIsCurrent: !1,
-													className: "min-w-0 text-[13px] text-text-tertiary",
+													size: "sm",
+													className: "min-w-0",
 													"data-testid": `${B}-path-crumbs`
 												})
 											})

@@ -385,7 +385,9 @@ export declare interface BreadcrumbItem {
 
 export declare type BreadcrumbOverflow = 'ellipsis' | 'menu';
 
-export declare function Breadcrumbs({ items, separator, maxItems, overflow, minItems, lastIsCurrent, className, 'data-testid': testId, }: BreadcrumbsProps): JSX.Element | null;
+export declare function Breadcrumbs({ items, separator, maxItems, overflow, minItems, lastIsCurrent, size, className, 'data-testid': testId, }: BreadcrumbsProps): JSX.Element | null;
+
+export declare type BreadcrumbSize = 'sm' | 'md';
 
 export declare interface BreadcrumbsProps {
     items: BreadcrumbItem[];
@@ -414,6 +416,14 @@ export declare interface BreadcrumbsProps {
      * Since 2.385.0.
      */
     lastIsCurrent?: boolean;
+    /**
+     * Type step. `md` (default) is 14px. `sm` (2.407.13) is the 13px meta step —
+     * the size of a document header's "Saved …" line and status pill, for a
+     * trail that sits in that row (EditorShell's folder path). The size is on
+     * every crumb, separator and ellipsis; a `className` on the nav cannot
+     * reach them.
+     */
+    size?: BreadcrumbSize;
     className?: string;
     'data-testid'?: string;
 }
@@ -5776,13 +5786,16 @@ export declare interface TreeViewProps {
      * a selected row in the brand tint with brand ink (its icon follows through
      * `currentColor`), and the ⋯ laid OVER the row's meta on hover instead of
      * holding an empty 24px slot that pushed every time off the right edge.
+     * `rail` (2.407.13) is `md` on the shared rail scale (./railType): 13px/500
+     * titles on the 36px rail pitch and 12px `RAIL_ITEM_COUNT` meta — the
+     * Documents explorer beside the Workspace `NavRail`, one type scale.
      */
     size?: TreeViewSize;
     className?: string;
     'data-testid'?: string;
 }
 
-export declare type TreeViewSize = 'sm' | 'md';
+export declare type TreeViewSize = 'sm' | 'md' | 'rail';
 
 /**
  * Generic 0..N-point sparkline. Pure SVG, no canvas / chart library.
@@ -6154,11 +6167,52 @@ declare module '@tiptap/core' {
 }
 
 
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -6192,50 +6246,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
         };
-    }
-}
-
-
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
     }
 }

@@ -5,7 +5,7 @@ import { a, i as o, n as s, o as c, r as l, t as u } from "./Table-CypeBEj0.js";
 import { t as d } from "./Chip-4IBrlduZ.js";
 import { t as f } from "./IconButton-DDeXW3mZ.js";
 import { J as p, f as m } from "./Icons-CCn6EnUZ.js";
-import { i as h, o as g } from "./Breadcrumbs-embdT7_l.js";
+import { i as h, o as g } from "./Breadcrumbs-BXD4oiJI.js";
 import { n as _ } from "./Badge-CTSXmryI.js";
 import { t as v } from "./Modal-DMFNRUDx.js";
 import { t as y } from "./Input-DLknWXri.js";
@@ -1358,7 +1358,7 @@ function et(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
-var tt = ce(() => import("./SortableSlideList-CO0Dk6q8.js"));
+var tt = ce(() => import("./SortableSlideList-DXUJkiK4.js"));
 function nt(e, t) {
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }

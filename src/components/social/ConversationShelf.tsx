@@ -14,6 +14,7 @@
 
 import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { RAIL_ITEM_TEXT, RAIL_ROW_PAD_Y } from '../shared/railType';
 
 export interface ConversationShelfItem {
   id: string;
@@ -44,9 +45,12 @@ export interface ConversationShelfProps {
   /**
    * `sm` (default) is the 13px shelf. `md` (2.386.0) is the Documents
    * explorer's quick views: 15px labels and 18px icons on 36px rows, the
-   * scale of the Folders tree under them.
+   * scale of the Folders tree under them. `rail` (2.407.13) is `md` on the
+   * shared rail scale (../shared/railType): 13px/500 labels on the 36px rail
+   * pitch, the scale of a `TreeView size="rail"` under them and of the
+   * Workspace `NavRail` beside them.
    */
-  size?: 'sm' | 'md';
+  size?: 'sm' | 'md' | 'rail';
   /**
    * Labels only — no icon slot. The selected row takes the folder tree's
    * selection (primary tint, primary left accent), so the views above a
@@ -70,6 +74,9 @@ export function ConversationShelf({
   'data-testid': testId = 'conversation-shelf',
 }: ConversationShelfProps) {
   if (items.length === 0) return null;
+  // `rail` keeps md's row (icon box, plain indent) on the rail scale.
+  const rail = size === 'rail';
+  const md = size === 'md' || rail;
 
   return (
     <ul
@@ -91,9 +98,9 @@ export function ConversationShelf({
               aria-current={active ? 'true' : undefined}
               className={cn(
                 'relative flex w-full cursor-pointer items-center gap-2 text-left',
-                compact ? cn('border-l-2 border-transparent px-2', size === 'md' ? 'min-h-9 gap-3 py-1.5' : 'min-h-8 py-1') : 'rounded-lg px-2 py-1.5',
+                compact ? cn('border-l-2 border-transparent px-2', rail ? cn('min-h-9 gap-3', RAIL_ROW_PAD_Y) : md ? 'min-h-9 gap-3 py-1.5' : 'min-h-8 py-1') : 'rounded-lg px-2 py-1.5',
                 compact && active && (plain ? 'border-primary bg-primary-bg' : 'border-primary bg-surface-hover'),
-                plain && size === 'md' && 'pl-4',
+                plain && md && 'pl-4',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset',
                 !(plain && active) && 'hover:bg-surface-hover',
                 active && !plain && 'bg-surface-hover',
@@ -101,22 +108,23 @@ export function ConversationShelf({
             >
               {!plain && <span
                 aria-hidden
-                className={compact ? (size === 'md' ? 'grid h-5 w-5 shrink-0 place-items-center' : 'grid h-4 w-4 shrink-0 place-items-center') : 'grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-surface-inset'}
+                className={compact ? (md ? 'grid h-5 w-5 shrink-0 place-items-center' : 'grid h-4 w-4 shrink-0 place-items-center') : 'grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-surface-inset'}
               >
                 {/* Fixed 16px inner box: every row's label starts at the same
                     x no matter what the icon draws, and the fallback below
                     sits in the identical box rather than a differently-sized
                     glyph of its own. */}
-                <span className={cn('grid shrink-0 place-items-center text-text-secondary', size === 'md' ? 'h-5 w-5 [&>svg]:h-[18px] [&>svg]:w-[18px]' : 'h-4 w-4')}>
+                <span className={cn('grid shrink-0 place-items-center text-text-secondary', md ? 'h-5 w-5 [&>svg]:h-[18px] [&>svg]:w-[18px]' : 'h-4 w-4')}>
                   {item.icon ?? <span className="h-1.5 w-1.5 rounded-full bg-current" />}
                 </span>
               </span>}
               {!iconOnly && <span
                 className={cn(
                   'min-w-0 flex-1 truncate',
-                  size === 'md' ? 'text-[15px]' : 'text-[13px]',
+                  rail ? RAIL_ITEM_TEXT : md ? 'text-[15px]' : 'text-[13px]',
                   plain && active ? 'font-medium text-primary-fg'
-                    : count > 0 || active ? 'font-semibold text-text-primary' : size === 'md' ? 'font-normal text-text-primary' : 'font-medium text-text-secondary',
+                    : count > 0 || active ? 'font-semibold text-text-primary'
+                    : rail ? 'text-text-primary' : md ? 'font-normal text-text-primary' : 'font-medium text-text-secondary',
                 )}
               >
                 {item.label}

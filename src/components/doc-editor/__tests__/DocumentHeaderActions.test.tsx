@@ -56,6 +56,41 @@ describe('WorkspaceDocumentHeader variant="actions"', () => {
     expect(onLifecycleAction).toHaveBeenCalledWith('submit_for_review', undefined);
   });
 
+  it('lifecycleUnavailableReason: one disabled Submit for review that says why, no pill (2.407.13)', () => {
+    const onLifecycleAction = vi.fn();
+    const { rerender } = render(
+      <WorkspaceDocumentHeader
+        variant="actions"
+        meta={meta}
+        mode="editor"
+        participants={[]}
+        lifecycleActions={[]}
+        lifecycleUnavailableReason="This document has no review status you can see."
+        onLifecycleAction={onLifecycleAction}
+      />,
+    );
+    const button = screen.getByTestId('lifecycle-action-unavailable');
+    expect(button).toBeDisabled();
+    expect(button.getAttribute('title')).toBe('This document has no review status you can see.');
+    fireEvent.click(button);
+    expect(onLifecycleAction).not.toHaveBeenCalled();
+    expect(screen.queryByTestId('lifecycle-status')).toBeNull();
+    // Offered actions win: the placeholder is only for "nothing to act on".
+    rerender(
+      <WorkspaceDocumentHeader
+        variant="actions"
+        meta={meta}
+        mode="editor"
+        participants={[]}
+        lifecycleActions={['submit_for_review']}
+        lifecycleUnavailableReason="unused"
+        onLifecycleAction={onLifecycleAction}
+      />,
+    );
+    expect(screen.queryByTestId('lifecycle-action-unavailable')).toBeNull();
+    expect(screen.getByTestId('lifecycle-action-submit_for_review')).not.toBeDisabled();
+  });
+
   it('does not render the banners; the notices component does', () => {
     const error = { kind: 'forbidden' as const, message: 'Document has no established owner' };
     const { rerender } = render(

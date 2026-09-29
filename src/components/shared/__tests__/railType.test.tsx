@@ -24,6 +24,9 @@ import {
   railType,
 } from '../railType';
 import * as shared from '../index';
+import { TreeView } from '../TreeView';
+import { ConversationShelf } from '../../social/ConversationShelf';
+import { Breadcrumbs } from '../Breadcrumbs';
 
 const hasAll = (el: Element, classes: string) => {
   for (const cls of classes.split(' ')) expect(el.className, `${cls} on ${el.outerHTML.slice(0, 80)}`).toContain(cls);
@@ -137,5 +140,65 @@ describe('rail type scale (2.397.0)', () => {
     const t = screen.getByTestId('rail-section-title');
     hasAll(t, RAIL_GROUP_LABEL);
     expect(t.className).not.toContain('text-[10px]');
+  });
+});
+
+// 2.407.13: the Documents surface. The Documents explorer (WorkspaceRail
+// heading="label", ConversationShelf, TreeView) sat at 15px beside the 13px
+// Workspace NavRail; its rail forms now draw the same constants.
+describe('Documents rail on the rail scale (2.407.13)', () => {
+  it('WorkspaceRail heading="label" is the group label with a plain group count, never a chip', () => {
+    render(<WorkspaceRail title="Documents" count={180} heading="label">body</WorkspaceRail>);
+    const title = screen.getByTestId('workspace-rail-title');
+    hasAll(title, RAIL_GROUP_LABEL);
+    expect(title.className).not.toContain('text-[15px]');
+    const count = screen.getByTestId('workspace-rail-count');
+    hasAll(count, RAIL_GROUP_COUNT);
+    expect(count.getAttribute('data-count-style')).toBe('plain');
+    expect(count.textContent).toBe('180');
+  });
+
+  it('TreeView size="rail" rows are rail items on the 36px pitch with 12px meta', () => {
+    render(
+      <TreeView
+        size="rail"
+        nodes={[{ id: 'f', title: 'Sprint planning', parentId: null, isDir: true, meta: '10' }, { id: 'd', title: 'Sprint notes', parentId: 'f', meta: '4d' }]}
+        defaultExpanded={['f']}
+        selectedId="d"
+        onSelect={() => {}}
+        data-testid="tree"
+      />,
+    );
+    for (const id of ['f', 'd']) {
+      const row = screen.getByTestId(`tree-row-${id}`);
+      hasAll(row, RAIL_ITEM_TEXT);
+      hasAll(row, RAIL_ROW_PAD_Y);
+      hasAll(row, 'min-h-9');
+      expect(row.className).not.toContain('text-[15px]');
+    }
+    hasAll(within(screen.getByTestId('tree-row-f')).getByText('10'), RAIL_ITEM_COUNT);
+    // md's selection survives: the brand tint and the primary edge.
+    hasAll(screen.getByTestId('tree-row-d'), 'border-primary bg-primary-bg');
+  });
+
+  it('ConversationShelf size="rail" labels are rail items on the 36px pitch', () => {
+    render(<ConversationShelf compact plain size="rail" items={[{ id: 'all', label: 'All documents' }, { id: 'recent', label: 'Recent' }]} activeId="all" onSelect={() => {}} data-testid="views" />);
+    for (const id of ['all', 'recent']) {
+      const button = screen.getByTestId(`views-${id}`);
+      hasAll(button, 'min-h-9');
+      hasAll(button, RAIL_ROW_PAD_Y);
+      const label = within(button).getByText(id === 'all' ? 'All documents' : 'Recent');
+      hasAll(label, 'text-[13px]');
+      expect(label.className).not.toContain('text-[15px]');
+    }
+  });
+
+  it('Breadcrumbs size="sm" puts every crumb and separator on the 13px meta step', () => {
+    render(<Breadcrumbs size="sm" lastIsCurrent={false} items={[{ label: 'Sprint planning', href: '#a' }, { label: 'Meetings', href: '#b' }]} data-testid="crumbs" />);
+    const nav = screen.getByTestId('crumbs');
+    for (const el of [...nav.querySelectorAll('a'), ...nav.querySelectorAll('[aria-hidden="true"]')]) {
+      expect(el.className).toContain('text-[13px]');
+      expect(el.className).not.toContain('text-sm');
+    }
   });
 });
