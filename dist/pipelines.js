@@ -16,7 +16,7 @@ import { t as E } from "./Input-DLknWXri.js";
 import { t as D } from "./EmptyState-zKbpAhFD.js";
 import { t as ee } from "./LoadingState-a2GlKOK1.js";
 import { i as O, t as k } from "./focusTrap-C5l9cvTe.js";
-import { n as A, t as te } from "./FilterChip-DaEogAC-.js";
+import { n as A, t as te } from "./FilterChip-0hc-J7iS.js";
 import { t as ne } from "./SkeletonCard-CGe8XFPB.js";
 import { n as re, t as ie } from "./Slider-izEq1bGO.js";
 import { t as j } from "./Textarea-Dz4doxTv.js";

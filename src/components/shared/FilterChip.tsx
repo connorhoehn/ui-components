@@ -19,6 +19,13 @@ export interface FilterChipProps {
   disabled?: boolean;
   /** Forwarded to the underlying <button> for test selectors. */
   'data-testid'?: string;
+  /**
+   * Since 2.406.4: the button's accessible name when the visible label is not
+   * the whole story ("In: Design System API. Search entire workspace").
+   */
+  'aria-label'?: string;
+  /** Since 2.406.4: forwarded to the button — the hover tooltip. */
+  title?: string;
 }
 
 const SIZE_CLASSES: Record<'md' | 'sm' | 'xs', string> = {
@@ -46,6 +53,8 @@ export function FilterChip({
   className,
   disabled = false,
   'data-testid': dataTestId,
+  'aria-label': ariaLabel,
+  title,
 }: FilterChipProps) {
   const useColoredActive = active && !!color;
 
@@ -60,6 +69,8 @@ export function FilterChip({
       disabled={disabled}
       aria-pressed={active}
       data-testid={dataTestId}
+      aria-label={ariaLabel}
+      title={title}
       className={cn(
         'inline-flex items-center gap-1.5 rounded-full font-semibold border transition-colors cursor-pointer select-none',
         SIZE_CLASSES[size],

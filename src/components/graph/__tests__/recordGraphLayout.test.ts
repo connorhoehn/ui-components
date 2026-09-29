@@ -5,7 +5,7 @@ import {
   filterRecordGraph, recordGraphKey, layoutRecordGraph, recordForceParams, recordGraphFitKeys,
   recordGraphInset, recordGraphLegendSize, recordGraphViewport, recordRadialRings,
   RECORD_GRAPH_CONTROLS_SIZE, RECORD_GRAPH_MIN_FIT_ZOOM, RECORD_GRAPH_READABLE_ZOOM,
-  RECORD_GRAPH_NEIGHBOURHOOD_ZOOM, RECORD_GRAPH_FOCUS_MIN_ZOOM, RECORD_GRAPH_FIT_ALL_MIN_ZOOM, RECORD_GRAPH_NODE_HEIGHT as NODE_H, RECORD_GRAPH_NODE_WIDTH as NODE_W,
+  RECORD_GRAPH_NEIGHBOURHOOD_ZOOM, RECORD_GRAPH_FOCUS_MIN_ZOOM, RECORD_GRAPH_FIT_ALL_MIN_ZOOM, RECORD_GRAPH_FIT_ALL_SHORT_MIN_ZOOM, RECORD_GRAPH_NODE_HEIGHT as NODE_H, RECORD_GRAPH_NODE_WIDTH as NODE_W,
   type RecordGraphEdge, type RecordGraphRecord, type RecordGraphType,
 } from '../recordGraphLayout';
 
@@ -237,9 +237,12 @@ test('radial: the outer ring\'s ellipse fits the canvas at 70% for 25 records, a
     expect(Math.abs(p.y), key).toBeLessThanOrEqual(outer.b + 0.01);
   });
   expect(boxOverlaps(positions)).toBe(0);
-  // A handful keeps the natural spacing; past ~30 nothing fits and the natural rings return.
+  // A handful keeps the natural spacing; past ~30 nothing fits at 70% and the
+  // rings are shaped to the canvas (2.406.4; was the natural 128px step).
   expect(recordRadialRings(4, CANVAS.width, CANVAS.height)).toMatchObject({ rings: 1, stepY: NODE_H + 24, fits: true });
-  expect(recordRadialRings(60, CANVAS.width, CANVAS.height)).toMatchObject({ stepY: NODE_H + 24, fits: false });
+  const sixty = recordRadialRings(60, CANVAS.width, CANVAS.height);
+  expect(sixty).toMatchObject({ fits: false, shaped: true });
+  expect(sixty.stepX / sixty.stepY).toBeGreaterThan(CANVAS.width / CANVAS.height);
 });
 
 test('hierarchy: the column block is centred on x = 0 and fits the canvas at 70% for 25 records', () => {
@@ -365,13 +368,14 @@ test('the member journey: three people ~430 flow px tall on the 209px canvas zoo
 });
 
 test('Radial on 1160 × 418 where the whole graph needs < 0.7: rung (b) or (c), the selection whole', () => {
-  // Laid out for the 369px canvas (the answer strip open) and viewed at 418:
-  // the drawing's fit-all is 0.55, the portal's Radial number.
-  const graph = searchResult();
+  // Sixty records: their whole Radial drawing needs < 0.7 on 418 (it was 25
+  // records laid out for 369 until 2.406.4, whose canvas-shaped rings now
+  // fit that set whole).
+  const graph = sixtyRecords();
   const keys = graph.records.map(recordGraphKey);
   const focusKeys = keys.slice(0, 3);
   const fitKeys = recordGraphFitKeys(keys, graph.edges, focusKeys);
-  const positions = layoutRecordGraph(graph.records, graph.edges, 'radial', { width: 1160, height: 369 });
+  const positions = layoutRecordGraph(graph.records, graph.edges, 'radial', CANVAS);
   const inset = insetFor(CANVAS);
   const all = recordGraphViewport(positions, CANVAS, { mode: 'all', inset, minZoom: RECORD_GRAPH_FOCUS_MIN_ZOOM })!;
   expect(all.zoom).toBeLessThan(RECORD_GRAPH_READABLE_ZOOM);
@@ -553,7 +557,7 @@ test('59 records, no focus, 1098×270: the automatic fit shows every record clea
   }
 });
 
-test('no focus: the automatic fit is Fit to view in every layout (a drawing too wide at 0.25 stops there)', () => {
+test('no focus: the automatic fit is Fit to view in every layout (a drawing too wide at 0.25 stops there on 418, 0.1 on a short canvas)', () => {
   const full = sixtyRecords();
   const graph = filterRecordGraph(full.records.slice(0, 59), full.edges, 'all');
   for (const size of [{ width: 1098, height: 270 }, CANVAS]) {
@@ -562,9 +566,85 @@ test('no focus: the automatic fit is Fit to view in every layout (a drawing too 
       const positions = layoutRecordGraph(graph.records, graph.edges, layout, size);
       const vp = recordGraphViewport(positions, size, { mode: 'auto', inset })!;
       const label = `${layout} ${size.height}`;
-      expect(vp.zoom, label).toBeGreaterThanOrEqual(RECORD_GRAPH_FIT_ALL_MIN_ZOOM);
+      // 270 is a short canvas (clear height 222 < 300): the floor there is 0.1 (2.406.4).
+      expect(vp.zoom, label).toBeGreaterThanOrEqual(size.height === 270 ? RECORD_GRAPH_FIT_ALL_SHORT_MIN_ZOOM : RECORD_GRAPH_FIT_ALL_MIN_ZOOM);
       expect(vp.zoom, label).toBeLessThan(RECORD_GRAPH_MIN_FIT_ZOOM);
       expect(vp, label).toEqual(recordGraphViewport(positions, size, { mode: 'all', inset, minZoom: RECORD_GRAPH_FIT_ALL_MIN_ZOOM }));
     }
   }
+});
+
+// ── 2.406.4: Radial on the short, wide answer card; the short-canvas fit-all floor ──
+
+function sixtyFourRecords() {
+  const all: RecordGraphRecord[] = [
+    // Every type the test legend (`LEGEND`) names, so the layout's legend estimate matches it.
+    ...(['person', 'person', 'person', 'initiative', 'initiative', 'knowledge'] as RecordGraphType[]).map((type, i) => ({ id: `s${i}`, type, title: `S ${i}`, href: '' })),
+    ...Array.from({ length: 58 }, (_, i): RecordGraphRecord => ({ id: `w${i}`, type: i < 4 ? 'decision' : 'work', title: `W ${i}`, href: '' })),
+  ];
+  const key = (i: number) => recordGraphKey(all[i]!);
+  const links: RecordGraphEdge[] = [];
+  for (let i = 6; i < 64; i++) links.push({ id: `inc-${i}`, source: key(3 + (i % 2)), target: key(i), label: 'includes' });
+  for (let i = 6; i < 64; i++) links.push({ id: `asg-${i}`, source: key(i % 3), target: key(i), label: 'assigned to' });
+  for (let i = 6; i < 40; i++) links.push({ id: `doc-${i}`, source: key(5), target: key(i), label: 'documents' });
+  return filterRecordGraph(all, links, 'all');
+}
+
+test('64 records, Radial, 1098×270, no focus: every record inside the clear area and none under the overlays, at ≥ 0.25', () => {
+  const graph = sixtyFourRecords();
+  expect(graph.records).toHaveLength(64);
+  const size = { width: 1098, height: 270 };
+  const inset = insetFor(size);
+  const positions = layoutRecordGraph(graph.records, graph.edges, 'radial', size);
+  expect(boxOverlaps(positions)).toBe(0);
+  // The rings are shaped to the card: wider than the canvas's own aspect, not taller.
+  const plan = recordRadialRings(64, size.width, size.height);
+  expect(plan).toMatchObject({ fits: false, shaped: true });
+  expect(plan.stepX).toBeGreaterThan(plan.stepY);
+  const auto = recordGraphViewport(positions, size, { mode: 'auto', inset })!;
+  const fit = recordGraphViewport(positions, size, { mode: 'all', inset, minZoom: RECORD_GRAPH_FIT_ALL_MIN_ZOOM })!;
+  // Fits whole without the short-canvas backstop (was 0.25 with 10 outside and 4 under the overlays).
+  expect(auto.zoom).toBeGreaterThanOrEqual(RECORD_GRAPH_FIT_ALL_MIN_ZOOM);
+  expect(fit).toEqual(auto);
+  for (const key of positions.keys()) {
+    const box = screenSpan(positions, [key], auto);
+    expectWhole(box, size, 16, key);
+    overlayRects(size).forEach(r => expect(intersects(box, r), `${key} under the ${r.name}`).toBe(false));
+  }
+});
+
+test('64 records, 1098×270, no focus: Force and Hierarchy still show everything clear of the overlays', () => {
+  const graph = sixtyFourRecords();
+  const size = { width: 1098, height: 270 };
+  const inset = insetFor(size);
+  for (const layout of ['force', 'hierarchy'] as const) {
+    const positions = layoutRecordGraph(graph.records, graph.edges, layout, size);
+    const vp = recordGraphViewport(positions, size, { mode: 'auto', inset })!;
+    expect(vp.zoom, layout).toBeGreaterThanOrEqual(RECORD_GRAPH_FIT_ALL_SHORT_MIN_ZOOM);
+    for (const key of positions.keys()) {
+      const box = screenSpan(positions, [key], vp);
+      expectWhole(box, size, 16, `${layout} ${key}`);
+      overlayRects(size).forEach(r => expect(intersects(box, r), `${layout} ${key} under the ${r.name}`).toBe(false));
+    }
+  }
+});
+
+test('the short-canvas fit-all floor: below 0.25 to 0.1 only on a short canvas with nothing selected', () => {
+  expect(RECORD_GRAPH_FIT_ALL_SHORT_MIN_ZOOM).toBe(0.1);
+  // A row of 40 boxes: needs ~0.18 on 1098 wide.
+  const positions = new Map<string, { x: number; y: number }>();
+  for (let i = 0; i < 40; i++) positions.set(`work:w${i}`, { x: i * 150, y: 0 });
+  const short = { width: 1098, height: 270 };
+  const vp = recordGraphViewport(positions, short, { mode: 'all', inset: insetFor(short), minZoom: RECORD_GRAPH_FIT_ALL_MIN_ZOOM })!;
+  expect(vp.zoom).toBeLessThan(RECORD_GRAPH_FIT_ALL_MIN_ZOOM);
+  expect(vp.zoom).toBeGreaterThanOrEqual(RECORD_GRAPH_FIT_ALL_SHORT_MIN_ZOOM);
+  for (const key of positions.keys()) expectWhole(screenSpan(positions, [key], vp), short, 16, key);
+  // A tall canvas keeps the 0.25 floor.
+  const tall = { width: 1098, height: 418 };
+  expect(recordGraphViewport(positions, tall, { mode: 'all', inset: insetFor(tall), minZoom: RECORD_GRAPH_FIT_ALL_MIN_ZOOM })!.zoom).toBeCloseTo(RECORD_GRAPH_FIT_ALL_MIN_ZOOM);
+  // A selection keeps the 0.25 floor and the centre-on-the-selection rule.
+  const focused = recordGraphViewport(positions, short, { mode: 'all', focusKeys: ['work:w0'], inset: insetFor(short), minZoom: RECORD_GRAPH_FIT_ALL_MIN_ZOOM })!;
+  expect(focused.zoom).toBeCloseTo(RECORD_GRAPH_FIT_ALL_MIN_ZOOM);
+  // A floor above 0.25 (the automatic 0.8 fit) is not lowered.
+  expect(recordGraphViewport(positions, short, { mode: 'all', inset: insetFor(short), minZoom: 0.8 })!.zoom).toBeCloseTo(0.8);
 });

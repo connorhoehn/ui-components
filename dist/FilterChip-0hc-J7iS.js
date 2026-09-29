@@ -43,8 +43,8 @@ var s = {
 	sm: "px-2.5 py-0.5 text-[11px]",
 	xs: "px-2 py-px text-[10px]"
 }, c = "bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)] hover:border-[var(--color-border-emphasis)]", l = "bg-[var(--color-primary)] border-[var(--color-primary)] text-white hover:opacity-90", u = "border-[var(--color-border-emphasis)] text-[var(--color-text-primary)]";
-function d({ active: r, onClick: i, color: a, dot: o = !1, size: d = "sm", children: f, className: p, disabled: m = !1, "data-testid": h }) {
-	let g = r && !!a, _ = g ? {
+function d({ active: r, onClick: i, color: a, dot: o = !1, size: d = "sm", children: f, className: p, disabled: m = !1, "data-testid": h, "aria-label": g, title: _ }) {
+	let v = r && !!a, y = v ? {
 		background: `${a}22`,
 		borderColor: `${a}66`,
 		color: a
@@ -55,8 +55,10 @@ function d({ active: r, onClick: i, color: a, dot: o = !1, size: d = "sm", child
 		disabled: m,
 		"aria-pressed": r,
 		"data-testid": h,
-		className: e("inline-flex items-center gap-1.5 rounded-full font-semibold border transition-colors cursor-pointer select-none", s[d], r ? g ? u : l : c, m && "opacity-50 cursor-not-allowed", p),
-		style: _,
+		"aria-label": g,
+		title: _,
+		className: e("inline-flex items-center gap-1.5 rounded-full font-semibold border transition-colors cursor-pointer select-none", s[d], r ? v ? u : l : c, m && "opacity-50 cursor-not-allowed", p),
+		style: y,
 		children: [o && /* @__PURE__ */ t("span", {
 			className: "w-1.5 h-1.5 rounded-full flex-shrink-0",
 			style: { background: a || "currentColor" }

@@ -263,5 +263,83 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
       expect(screen.queryByTestId('scope-header-people-owner')).toBeNull();
       expect(screen.queryByTestId('scope-header-description')).toBeNull();
     });
+
+    describe('long trail never wraps (2.406.4)', () => {
+      const LONG = [
+        { label: 'Org' },
+        { label: 'Search', href: '/iq/search' },
+        { label: 'Design System API', href: '/iq/search?scope=p-design-system-api' },
+      ];
+      function renderLong(width: number) {
+        return render(
+          <div style={{ width }}>
+            <ScopeHeader
+              variant="inline"
+              breadcrumbs={LONG}
+              title="component contracts"
+              tabs={TABS}
+              activeTab="results"
+              controls={<>{['Type', 'Owner', 'Date', 'Status'].map((c) => <button key={c} type="button">{c}</button>)}<a href="#">Search entire workspace</a></>}
+            />
+          </div>,
+        );
+      }
+
+      it.each([1200, 900])('keeps the %ipx row at 48px: trail min-w-0, crumbs truncate and capped, right cluster shrink-0', (width) => {
+        const { unmount } = renderLong(width);
+        const row = screen.getByTestId('scope-header');
+        expect(row.className).toMatch(/\bh-12\b/);
+        expect(row.className).toMatch(/\bflex-nowrap\b/);
+        const trail = screen.getByTestId('scope-header-trail');
+        expect(trail.className).toMatch(/\bmin-w-0\b/);
+        expect(trail.className).toMatch(/\boverflow-hidden\b/);
+        // Crumbs give up width before the title.
+        expect(screen.getByTestId('scope-header-crumbs').className).toMatch(/shrink-\[100\]/);
+        const crumbs = screen.getAllByTestId('scope-header-crumb');
+        expect(crumbs).toHaveLength(3);
+        crumbs.forEach((c, i) => {
+          expect(c.className).toMatch(/\btruncate\b/);
+          expect(c.className).toMatch(/\bwhitespace-nowrap\b/);
+          expect(c.className).toMatch(i === crumbs.length - 1 ? /max-w-\[14rem\]/ : /max-w-\[10rem\]/);
+          expect(c).toHaveAttribute('title', LONG[i]!.label);
+        });
+        // Nothing in the trail may wrap.
+        expect(trail.querySelector('.flex-wrap, .whitespace-normal, .break-words, .whitespace-pre-line')).toBeNull();
+        expect(trail.querySelector('ol')!.className).toMatch(/\bflex-nowrap\b/);
+        expect(screen.getByTestId('scope-header-title').className).toMatch(/\btruncate\b/);
+        expect(screen.getByTestId('scope-header-tabs').className).toMatch(/\bshrink-0\b/);
+        expect(screen.getByTestId('scope-header-right').className).toMatch(/\bshrink-0\b/);
+        unmount();
+      });
+
+      it('collapses the middle crumbs to "…" (first and last kept) when a crumb is squeezed below its cap', () => {
+        // jsdom has no layout: report every crumb as squeezed (natural 200px, given 40px).
+        const sw = vi.spyOn(HTMLElement.prototype, 'scrollWidth', 'get').mockImplementation(function (this: HTMLElement) {
+          return this.hasAttribute('data-crumb') ? 200 : 0;
+        });
+        const cw = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
+          if (this.hasAttribute('data-crumb')) return 40;
+          return this.getAttribute('data-testid') === 'scope-header-trail' ? 300 : 0;
+        });
+        try {
+          renderLong(900);
+          const nav = screen.getByTestId('scope-header-crumbs');
+          expect(nav).toHaveAttribute('data-collapsed', 'true');
+          expect(screen.getAllByTestId('scope-header-crumb').map((c) => c.textContent)).toEqual(['Org', 'Design System API']);
+          expect(screen.getByTestId('scope-header-crumbs-more')).toHaveAttribute('title', 'Search');
+          // The title keeps its place after the crumbs.
+          expect(screen.getByRole('heading', { level: 1, name: 'component contracts' })).toBeInTheDocument();
+        } finally {
+          sw.mockRestore();
+          cw.mockRestore();
+        }
+      });
+
+      it('does not collapse a trail whose crumbs fit', () => {
+        renderLong(1200);
+        expect(screen.getByTestId('scope-header-crumbs')).not.toHaveAttribute('data-collapsed');
+        expect(screen.queryByTestId('scope-header-crumbs-more')).toBeNull();
+      });
+    });
   });
 });

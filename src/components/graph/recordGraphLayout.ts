@@ -375,6 +375,13 @@ export interface RecordRadialRings {
   counts: number[];
   /** Whether the outer ring fits the readable area (`RECORD_GRAPH_READABLE_ZOOM`). */
   fits: boolean;
+  /**
+   * Since 2.406.4: a plan for a set too big to fit at the readable zoom,
+   * shaped to the canvas (`fits` is false) — its rings may sit closer than a
+   * node box, so its records are placed with the same overlap resolution as
+   * a fitting plan.
+   */
+  shaped?: true;
 }
 
 /** Arc length a record takes on a ring: its box width plus a gap. */
@@ -391,12 +398,19 @@ const RADIAL_ARC = RECORD_GRAPH_NODE_WIDTH + 30;
  * thirty records nothing fits and the natural spacing is kept (the automatic
  * fit then centres on the focus). Since 2.403.7; was a fixed 128 × 307px step.
  */
-export function recordRadialRings(count: number, width = DEFAULT_CANVAS.width, height = DEFAULT_CANVAS.height): RecordRadialRings {
-  return radialPlans(count, width, height)[0]!;
+export function recordRadialRings(
+  count: number,
+  width = DEFAULT_CANVAS.width,
+  height = DEFAULT_CANVAS.height,
+  legendLabels: readonly string[] = TYPICAL_LEGEND,
+): RecordRadialRings {
+  // The plan the layout actually uses: the first whose records all find room.
+  const plans = radialPlans(count, width, height, legendLabels);
+  return placeRadial(plans)?.plan ?? plans[plans.length - 1]!;
 }
 
 /** Every ring plan that fits the readable area, preferred first, then the natural fallback. */
-function radialPlans(count: number, width: number, height: number): RecordRadialRings[] {
+function radialPlans(count: number, width: number, height: number, legendLabels: readonly string[] = TYPICAL_LEGEND): RecordRadialRings[] {
   const others = Math.max(0, count - 1);
   if (!others) return [{ rings: 0, stepX: 0, stepY: 0, counts: [], fits: true }];
   const area = readableArea(width, height);
@@ -428,10 +442,79 @@ function radialPlans(count: number, width: number, height: number): RecordRadial
       if (sum(caps) >= others) plans.push({ rings, stepX: sx, stepY: sy, counts: spread(caps), fits: true });
     }
   }
-  // Too many to fit: the natural spacing, as many rings as it takes.
+  // Too many to fit (2.406.4): rings shaped to the canvas. The natural
+  // fallback kept a 128px vertical step and a sideways step capped at 2.4× it,
+  // so on a short, wide canvas (the 1098 × 270 answer card, 64 records) the
+  // outer ellipse was four rings tall and could not be shown whole even at the
+  // 0.25 fit-all floor. Every ring count is tried at a vertical step from the
+  // natural one down to a node box's height, with the narrowest sideways step
+  // whose rings hold everyone; the plans are ranked by the zoom at which their
+  // whole drawing fits the canvas's clear area (less the padding and the
+  // overlay band), so a wide canvas gets few, wide rings and a tall one more,
+  // rounder rings — for any N.
+  plans.push(...shapedPlans(others, width, height, legendLabels, capacity, spread));
+  // Last resort: the natural spacing, as many rings as it takes.
   let rings = 1;
   while (sum(capacity(rings, naturalX, naturalY)) < others) rings++;
   plans.push({ rings, stepX: naturalX, stepY: naturalY, counts: spread(capacity(rings, naturalX, naturalY)), fits: false });
+  return plans;
+}
+
+/** Screen px a node box keeps from its neighbour when a squeezed ring's records are placed. */
+const RADIAL_NEED_X = RECORD_GRAPH_NODE_WIDTH + 10;
+const RADIAL_NEED_Y = RECORD_GRAPH_NODE_HEIGHT + 6;
+/** The legend `recordRadialRings` assumes when it is not told the record types. */
+const TYPICAL_LEGEND = ['People', 'Initiatives', 'Work', 'Decisions', 'Knowledge'] as const;
+/** The zooms a canvas-shaped plan is sized for: from the readable zoom down to this, in these steps. */
+const SHAPED_MIN_ZOOM = 0.1;
+const SHAPED_ZOOM_STEP = 0.01;
+/** The most rings a canvas-shaped plan tries. */
+const RADIAL_MAX_SHAPED_RINGS = 12;
+
+/**
+ * Canvas-shaped ring plans for `others` records that do not fit the readable
+ * area, best whole-drawing zoom first (see `radialPlans`). Since 2.406.4.
+ */
+function shapedPlans(
+  others: number,
+  width: number,
+  height: number,
+  legendLabels: readonly string[],
+  capacity: (rings: number, sx: number, sy: number) => number[],
+  spread: (caps: number[]) => number[],
+): RecordRadialRings[] {
+  // The clear area the whole-graph fit will use: the canvas less the padding
+  // and the legend and controls, reserved as `recordGraphInset` does (a short
+  // canvas reserves them as side columns, not a bottom band), for the legend
+  // the graph will draw (one label per record type present).
+  const inset = recordGraphInset({ width, height }, {
+    legend: legendLabels.length ? recordGraphLegendSize(legendLabels, width) : null,
+    controls: RECORD_GRAPH_CONTROLS_SIZE,
+  });
+  const edge = (v: number) => (v > 0 ? Math.max(LAYOUT_FIT_PADDING, v + OVERLAY_GAP) : LAYOUT_FIT_PADDING);
+  const clearW = Math.max(1, width - edge(inset.left) - edge(inset.right));
+  const clearH = Math.max(1, height - edge(inset.top) - edge(inset.bottom));
+  const total = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
+  const plans: RecordRadialRings[] = [];
+  // From the readable zoom down, the outer ring's bounds are the clear area at
+  // that zoom — the canvas's own shape, however wide — and the fewest rings
+  // whose perimeters hold everyone are tried there. Rings closer than a node
+  // box are packed by `ringPoints`, which returns null when there is no room,
+  // and `radialPositions` then tries the next (smaller) zoom.
+  for (let zoom = RECORD_GRAPH_READABLE_ZOOM; zoom >= SHAPED_MIN_ZOOM - 1e-9; zoom -= SHAPED_ZOOM_STEP) {
+    const boundX = (clearW / zoom - RECORD_GRAPH_NODE_WIDTH) / 2;
+    const boundY = (clearH / zoom - RECORD_GRAPH_NODE_HEIGHT) / 2;
+    if (boundX <= 0 || boundY <= 0) continue;
+    // A box-packing bound: no plan holds more records than the bounds' grid of boxes.
+    if ((2 * boundX / RADIAL_NEED_X + 1) * (2 * boundY / RADIAL_NEED_Y + 1) < others + 1) continue;
+    for (let rings = 1; rings <= RADIAL_MAX_SHAPED_RINGS && boundX / rings >= RADIAL_ARC / 2; rings++) {
+      const sx = boundX / rings, sy = boundY / rings;
+      const caps = capacity(rings, sx, sy);
+      if (total(caps) < others) continue;
+      plans.push({ rings, stepX: sx, stepY: sy, counts: spread(caps), fits: false, shaped: true });
+      break;
+    }
+  }
   return plans;
 }
 
@@ -444,13 +527,42 @@ function radialPlans(count: number, width: number, height: number): RecordRadial
  * some record finds none, the next plan is tried (wider rings, then the
  * natural spacing, which never overlaps). Since 2.403.7.
  */
-function radialPositions(ordered: string[], width: number, height: number): Map<string, { x: number; y: number }> {
-  // The first plan whose records all find room; the natural spacing always does.
-  for (const plan of radialPlans(ordered.length, width, height)) {
-    const points = ringPoints(plan);
-    if (points) return new Map(ordered.map((id, i) => [id, points[i]!]));
+function radialPositions(ordered: string[], width: number, height: number, legendLabels: readonly string[]): Map<string, { x: number; y: number }> {
+  const placed = placeRadial(radialPlans(ordered.length, width, height, legendLabels));
+  return placed ? new Map(ordered.map((id, i) => [id, placed.points[i]!])) : new Map();
+}
+
+/**
+ * The first plan whose records all find room, and its points; the natural
+ * spacing always does. The canvas-shaped plans (2.406.4) are a run ordered
+ * from the largest zoom down, where a smaller zoom only adds room, so that
+ * run is binary-searched rather than tried one by one — each failed packing
+ * is a full grid search.
+ */
+function placeRadial(plans: RecordRadialRings[]): { plan: RecordRadialRings; points: { x: number; y: number }[] } | null {
+  for (let i = 0; i < plans.length; i++) {
+    if (!plans[i]!.shaped) {
+      const points = ringPoints(plans[i]!);
+      if (points) return { plan: plans[i]!, points };
+      continue;
+    }
+    let end = i;
+    while (end < plans.length && plans[end]!.shaped) end++;
+    // The first index in [i, end) that places; the last one is checked first.
+    const lastPoints = ringPoints(plans[end - 1]!);
+    if (lastPoints) {
+      let lo = i, hi = end - 1;
+      let best = { plan: plans[hi]!, points: lastPoints };
+      while (lo < hi) {
+        const mid = Math.floor((lo + hi) / 2);
+        const points = ringPoints(plans[mid]!);
+        if (points) { best = { plan: plans[mid]!, points }; hi = mid; } else lo = mid + 1;
+      }
+      return best;
+    }
+    i = end - 1;
   }
-  return new Map();
+  return null;
 }
 
 /** A plan's positions (centre first), or null when a squeezed plan has no room for some record. */
@@ -460,14 +572,14 @@ function ringPoints(plan: RecordRadialRings): { x: number; y: number }[] | null 
     const ring = k + 1;
     points.push(...ellipsePoints(ring * plan.stepX, ring * plan.stepY, n, ring % 2 ? 0.25 : 0.75));
   });
-  if (plan.fits && plan.rings > 0) {
+  if ((plan.fits || plan.shaped) && plan.rings > 0) {
     // Rings squeezed below a node box's height would stack boxes: place the
     // records one at a time, inner ring first, each at its ring point or —
     // when that box is taken — at the nearest free spot inside the outer
     // ring's bounds (on a grid). Deterministic, and no two boxes overlap
     // while there is room.
     const boundX = plan.rings * plan.stepX, boundY = plan.rings * plan.stepY;
-    const needX = RECORD_GRAPH_NODE_WIDTH + 10, needY = RECORD_GRAPH_NODE_HEIGHT + 6;
+    const needX = RADIAL_NEED_X, needY = RADIAL_NEED_Y;
     const placed: { x: number; y: number }[] = [points[0]!];
     const free = (x: number, y: number) => placed.every(q => Math.abs(q.x - x) >= needX || Math.abs(q.y - y) >= needY);
     // A 4px grid, coarser on a big canvas so the search stays ~20k spots.
@@ -520,7 +632,11 @@ export function layoutRecordGraph(
   });
   const ordered = [...ids].sort((a, b) => degree.get(b)! - degree.get(a)! || a.localeCompare(b));
   const positions = new Map<string, { x: number; y: number }>();
-  if (layout === 'radial') return radialPositions(ordered, width, height);
+  if (layout === 'radial') {
+    // The legend RecordGraph draws: one label per type present (2.406.4).
+    const legendLabels = RECORD_GRAPH_TYPES.filter(t => records.some(r => r.type === t.value)).map(t => t.label);
+    return radialPositions(ordered, width, height, legendLabels);
+  }
   if (layout === 'hierarchy') return hierarchyPositions(records, ordered, validEdges, width, height);
   // Force: simulate with y stretched so the node box is square (collide is a
   // circle), then squash y back — boxes clear each other on both axes.
@@ -594,6 +710,18 @@ export interface RecordGraphViewport {
  * record. Only a drawing that does not fit even here centres on the focus.
  */
 export const RECORD_GRAPH_FIT_ALL_MIN_ZOOM = 0.25;
+/**
+ * The whole-graph fit's hard minimum on a short canvas (2.406.4): where the
+ * clear height (the canvas less 24px padding top and bottom) is under
+ * `RECORD_GRAPH_SHORT_FIT_CLEAR_HEIGHT` and nothing is selected, a whole-graph
+ * fit (`mode: 'all'` at or below `RECORD_GRAPH_FIT_ALL_MIN_ZOOM`, and `auto`
+ * with no focus) goes below 0.25 as far as this, so "everything visible"
+ * holds for the 270px answer card with 60+ records. With a selection the
+ * 0.25 floor and the centre-on-the-selection rule are unchanged.
+ */
+export const RECORD_GRAPH_FIT_ALL_SHORT_MIN_ZOOM = 0.1;
+/** Clear height, px, under which the short-canvas fit-all minimum applies. Since 2.406.4. */
+export const RECORD_GRAPH_SHORT_FIT_CLEAR_HEIGHT = 300;
 
 /**
  * The zoom cluster plus the full-screen button in the canvas's bottom-right
@@ -795,6 +923,14 @@ export function recordGraphViewport(
   if (options.mode === 'auto' && !boxOf(positions, options.focusKeys ?? [])) {
     const fitAllMinZoom = Math.min(minZoom, options.fitAllMinZoom ?? RECORD_GRAPH_FIT_ALL_MIN_ZOOM);
     return recordGraphViewport(positions, size, { ...options, mode: 'all', minZoom: fitAllMinZoom });
+  }
+  // A short canvas with nothing selected (2.406.4): the whole-graph fit may go
+  // below its 0.25 floor, as far as 0.1, so every record is shown.
+  if (
+    options.mode === 'all' && rawZoom(all) < minZoom && minZoom <= RECORD_GRAPH_FIT_ALL_MIN_ZOOM
+    && size.height - 2 * padding < RECORD_GRAPH_SHORT_FIT_CLEAR_HEIGHT && !boxOf(positions, options.focusKeys ?? [])
+  ) {
+    return centreAll(Math.max(RECORD_GRAPH_FIT_ALL_SHORT_MIN_ZOOM, Math.min(rawZoom(all), maxZoom)));
   }
   // The whole graph, when it fits the clear area at or above the floor: centred
   // there, the focus never steering it (2.403.9 — the focus offset was applied

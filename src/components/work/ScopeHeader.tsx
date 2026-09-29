@@ -16,7 +16,7 @@
 // host cannot pass a pre-formatted string it made up. A people group with no
 // people is dropped rather than drawn as an empty label.
 
-import type { ReactNode } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { Breadcrumbs, type BreadcrumbItem } from '../shared/Breadcrumbs';
 import { StatusPill, type StatusPillTone } from '../shared/StatusPill';
@@ -323,6 +323,133 @@ function scopeTabItems(tabs: ScopeHeaderTab[], testId: string): TabItem[] {
   }));
 }
 
+/** A crumb's own classes: never wraps, capped, truncates with "…". */
+const CRUMB_CLASS =
+  'block min-w-0 truncate whitespace-nowrap text-sm leading-snug text-text-tertiary transition-colors duration-100';
+
+function InlineCrumb({ item, last, testId }: { item: BreadcrumbItem; last: boolean; testId: string }) {
+  // The last crumb is the scope the title sits in ("Design System API"), so
+  // it gets more room than the levels above it.
+  const cls = cn(CRUMB_CLASS, last ? 'max-w-[14rem]' : 'max-w-[10rem]');
+  const common = { title: item.label, 'data-crumb': '', 'data-testid': `${testId}-crumb` } as const;
+  if (item.href) {
+    return (
+      <a href={item.href} onClick={item.onClick} className={cn(cls, 'no-underline hover:text-text-primary')} {...common}>
+        {item.label}
+      </a>
+    );
+  }
+  if (item.onClick) {
+    return (
+      <button type="button" onClick={item.onClick} className={cn(cls, 'cursor-pointer border-none bg-transparent p-0 text-left font-[inherit] hover:text-text-primary')} {...common}>
+        {item.label}
+      </button>
+    );
+  }
+  return <span className={cls} {...common}>{item.label}</span>;
+}
+
+/**
+ * The inline variant's crumbs + title (2.406.4). The row never wraps or
+ * grows: every crumb truncates inside its cap, the crumbs give up width
+ * before the title does (`shrink-[100]` against the title's `shrink`), and
+ * when a crumb is squeezed below its cap anyway the middle collapses to "…"
+ * — first and last crumb kept — before the title loses any more.
+ */
+function InlineTrail({ crumbs, title, lg, testId }: { crumbs: BreadcrumbItem[]; title?: string; lg: boolean; testId: string }) {
+  const trailRef = useRef<HTMLDivElement | null>(null);
+  const [collapsed, setCollapsed] = useState(false);
+  // The trail width at which the full crumb list fits again.
+  const expandAt = useRef<number>(Infinity);
+  const canCollapse = crumbs.length > 2;
+  const crumbKey = crumbs.map((c) => c.label).join('\u0000');
+
+  const measure = useCallback(() => {
+    const trail = trailRef.current;
+    if (!trail) return;
+    if (collapsed) {
+      if (trail.clientWidth >= expandAt.current) setCollapsed(false);
+      return;
+    }
+    if (!canCollapse) return;
+    let deficit = 0;
+    trail.querySelectorAll<HTMLElement>('[data-crumb]').forEach((el) => {
+      const cap = parseFloat(getComputedStyle(el).maxWidth);
+      const natural = Math.min(el.scrollWidth, Number.isFinite(cap) ? cap : Infinity);
+      if (el.clientWidth + 1 < natural) deficit += natural - el.clientWidth;
+    });
+    if (deficit > 0) {
+      expandAt.current = trail.clientWidth + deficit;
+      setCollapsed(true);
+    }
+  }, [collapsed, canCollapse]);
+
+  // A new trail starts expanded and is measured afresh.
+  useLayoutEffect(() => {
+    setCollapsed(false);
+    expandAt.current = Infinity;
+  }, [crumbKey]);
+
+  useLayoutEffect(() => {
+    measure();
+    const trail = trailRef.current;
+    if (!trail || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(() => measure());
+    ro.observe(trail);
+    return () => ro.disconnect();
+  }, [measure, crumbKey]);
+
+  const hidden = collapsed && canCollapse ? crumbs.slice(1, -1) : [];
+  const visible: Array<BreadcrumbItem | null> = hidden.length > 0 ? [crumbs[0]!, null, crumbs[crumbs.length - 1]!] : crumbs;
+
+  return (
+    <div ref={trailRef} className="flex min-w-0 flex-1 flex-nowrap items-center gap-1 overflow-hidden" data-testid={`${testId}-trail`}>
+      {crumbs.length > 0 && (
+        // Every crumb is a place to go: the title after them is the page.
+        <nav aria-label="Breadcrumb" data-testid={`${testId}-crumbs`} data-collapsed={hidden.length > 0 ? 'true' : undefined} className="flex min-w-0 shrink-[100] items-center">
+          <ol className="m-0 flex min-w-0 list-none flex-nowrap items-center gap-1 p-0">
+            {visible.map((item, i) => (
+              <li key={item ? `${i}-${item.label}` : 'collapsed'} className={cn('flex items-center gap-1', item ? 'min-w-0' : 'shrink-0')}>
+                {item ? (
+                  <InlineCrumb item={item} last={i === visible.length - 1} testId={testId} />
+                ) : (
+                  <span
+                    className="shrink-0 select-none whitespace-nowrap text-sm text-text-tertiary"
+                    title={hidden.map((h) => h.label).join(' › ')}
+                    aria-label={`${hidden.length} hidden: ${hidden.map((h) => h.label).join(', ')}`}
+                    data-testid={`${testId}-crumbs-more`}
+                  >
+                    &hellip;
+                  </span>
+                )}
+                {i < visible.length - 1 && (
+                  <span aria-hidden="true" className="shrink-0 select-none text-sm text-text-tertiary">›</span>
+                )}
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )}
+      {crumbs.length > 0 && title && (
+        <span aria-hidden="true" className="shrink-0 select-none text-sm text-text-tertiary">›</span>
+      )}
+      {title && (
+        <h1
+          aria-current="page"
+          title={title}
+          data-testid={`${testId}-title`}
+          className={cn(
+            'm-0 min-w-0 shrink truncate whitespace-nowrap text-text-primary',
+            lg ? 'text-[20px] font-bold leading-7 tracking-[-0.01em]' : 'text-[18px] font-semibold leading-7',
+          )}
+        >
+          {title}
+        </h1>
+      )}
+    </div>
+  );
+}
+
 function ScopeHeaderInline({
   breadcrumbs,
   title,
@@ -354,28 +481,7 @@ function ScopeHeaderInline({
       {...(tabSize ? { 'data-tab-size': tabSize } : {})}
       className={cn('flex h-12 min-w-0 flex-nowrap items-center gap-4 px-6', className)}
     >
-      <div className="flex min-w-0 flex-1 items-center gap-1 overflow-hidden" data-testid={`${testId}-trail`}>
-        {crumbs.length > 0 && (
-          // Every crumb is a place to go: the title after them is the page.
-          <Breadcrumbs items={crumbs} separator="›" maxItems={4} lastIsCurrent={false} className="min-w-0 shrink [&_ol]:flex-nowrap" data-testid={`${testId}-crumbs`} />
-        )}
-        {crumbs.length > 0 && title && (
-          <span aria-hidden="true" className="shrink-0 select-none text-sm text-text-tertiary">›</span>
-        )}
-        {title && (
-          <h1
-            aria-current="page"
-            title={title}
-            data-testid={`${testId}-title`}
-            className={cn(
-              'm-0 min-w-0 truncate text-text-primary',
-              lg ? 'text-[20px] font-bold leading-7 tracking-[-0.01em]' : 'text-[18px] font-semibold leading-7',
-            )}
-          >
-            {title}
-          </h1>
-        )}
-      </div>
+      <InlineTrail crumbs={crumbs} title={title} lg={lg} testId={testId} />
       {hasTabs && (
         <Tabs
           items={scopeTabItems(tabs!, testId)}

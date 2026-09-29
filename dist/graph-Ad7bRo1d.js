@@ -10,7 +10,7 @@ import { t as _ } from "./Input-DLknWXri.js";
 import { t as v } from "./EmptyState-zKbpAhFD.js";
 import { t as y } from "./Spinner-CLcq5z8N.js";
 import { t as b } from "./LoadingState-a2GlKOK1.js";
-import { n as x, t as S } from "./FilterChip-DaEogAC-.js";
+import { n as x, t as S } from "./FilterChip-0hc-J7iS.js";
 import { t as C } from "./SkeletonCard-CGe8XFPB.js";
 import { n as w, t as T } from "./Tabs-CWj6ZL7J.js";
 import { t as E } from "./Avatar-DeJWic2B.js";
@@ -20,15 +20,15 @@ import { t as k } from "./SegmentedControl-CKYHtOJ0.js";
 import { t as A } from "./InlineAlert-CRnIKeAF.js";
 import { t as j } from "./CardHeader-CsPhVpCm.js";
 import { t as M } from "./LogStream-J2cxfOVI.js";
-import { a as ee, o as te, s as N } from "./backdropTone-BF54k8gW.js";
-import { a as ne, i as P, n as F, o as re, r as I, t as L } from "./MeterRow-DZmsGJZ1.js";
+import { a as N, o as ee, s as P } from "./backdropTone-BF54k8gW.js";
+import { a as te, i as F, n as I, o as ne, r as L, t as re } from "./MeterRow-DZmsGJZ1.js";
 import { t as R } from "./SectionLabel-bcrhNYOr.js";
 import { t as z } from "./DropdownMenu-dM1tsyrs.js";
-import { t as B } from "./StatusPill-C-aN2Pzz.js";
-import { r as V, t as ie } from "./Text-Dl82j5s1.js";
-import { t as H } from "./Select-D3fGI8SO.js";
-import { t as ae } from "./Checkbox-Dftwml_V.js";
-import { t as oe } from "./Tooltip-af4BrR7T.js";
+import { t as ie } from "./StatusPill-C-aN2Pzz.js";
+import { r as B, t as ae } from "./Text-Dl82j5s1.js";
+import { t as V } from "./Select-D3fGI8SO.js";
+import { t as oe } from "./Checkbox-Dftwml_V.js";
+import { t as H } from "./Tooltip-af4BrR7T.js";
 import { t as se } from "./useMeasuredWidth-BPrwD0q5.js";
 import { n as U } from "./useComputeProjects-ZSazDRet.js";
 import { t as ce } from "./formatBytes-05ivRSJY.js";
@@ -1118,7 +1118,7 @@ function Et({ nodes: n, edges: r, renderNode: i, layout: a = "ltr", onSelectNode
 				onSelect: o ? () => o(e.id) : void 0
 			}
 		};
-	}), ee = A.map((e) => {
+	}), N = A.map((e) => {
 		let [t, n] = vt(D.get(e.from), D.get(e.to), d), r = t === "r" ? "r" : t === "b" ? "b" : t === "l" ? "ls" : "ts", i = n === "l" ? "l" : n === "t" ? "t" : n === "r" ? "rt" : "bt";
 		return {
 			id: e.id,
@@ -1160,7 +1160,7 @@ function Et({ nodes: n, edges: r, renderNode: i, layout: a = "ltr", onSelectNode
 		"data-reduced-motion": w ? "true" : "false",
 		children: /* @__PURE__ */ X(we, {
 			nodes: M,
-			edges: ee,
+			edges: N,
 			nodeTypes: St,
 			edgeTypes: Ct,
 			fitView: !0,
@@ -1728,7 +1728,7 @@ function en({ legend: e, empty: t, saving: n, idPrefix: r, items: i, selected: a
 				return /* @__PURE__ */ Z("label", {
 					htmlFor: t,
 					className: "flex items-start gap-2 rounded-md border border-border px-3 py-2 text-sm text-text-primary",
-					children: [/* @__PURE__ */ X(ae, {
+					children: [/* @__PURE__ */ X(oe, {
 						id: t,
 						checked: a.includes(e.id),
 						disabled: n,
@@ -1878,7 +1878,7 @@ function tn({ state: e, value: t, availableNodes: r, availableEdges: i, saving: 
 					/* @__PURE__ */ Z("label", {
 						htmlFor: `${p}-history`,
 						className: "flex items-start gap-2 text-sm text-text-primary",
-						children: [/* @__PURE__ */ X(ae, {
+						children: [/* @__PURE__ */ X(oe, {
 							id: `${p}-history`,
 							checked: t.history !== void 0,
 							disabled: a,
@@ -2263,48 +2263,48 @@ function vn(e, t, n, r) {
 			}
 			O.add(n), k.set(e, n);
 		}
-		let j = Math.max(w.length, ...[...k.values()].map((e) => e + 1), 1), M = r.labelledEdgeIds?.some((e) => m.some((t) => t.id === e && k.has(t.from))) ? 132 : 56, ee = T.length ? Math.max(...T.map((e) => x(e).width)) : 0, te = c + (ee ? ee + M : 0), N = (e) => [...w.filter((t) => E.get(t) === e), ...[...k].filter(([, t]) => t === e).map(([e]) => e)], ne = [...Array(j).keys()].map((e) => Math.max(0, ...N(e).map((e) => x(e).height))), P = [...Array(j).keys()].map((e) => 32 + Math.max(1, ...N(e).map((e) => m.filter((t) => t.to === e).length)) * 24), F = ne.reduce((e, t, n) => e + t + (n ? P[n] : 0), 56 + c), re = T.length === 0 && r.height && F > r.height && j > 2 ? ne.reduce((e, t, n) => {
-			let r = e.run + t + (n ? P[n] : 0);
-			return r < F / 2 ? {
+		let j = Math.max(w.length, ...[...k.values()].map((e) => e + 1), 1), M = r.labelledEdgeIds?.some((e) => m.some((t) => t.id === e && k.has(t.from))) ? 132 : 56, N = T.length ? Math.max(...T.map((e) => x(e).width)) : 0, ee = c + (N ? N + M : 0), P = (e) => [...w.filter((t) => E.get(t) === e), ...[...k].filter(([, t]) => t === e).map(([e]) => e)], te = [...Array(j).keys()].map((e) => Math.max(0, ...P(e).map((e) => x(e).height))), F = [...Array(j).keys()].map((e) => 32 + Math.max(1, ...P(e).map((e) => m.filter((t) => t.to === e).length)) * 24), I = te.reduce((e, t, n) => e + t + (n ? F[n] : 0), 56 + c), ne = T.length === 0 && r.height && I > r.height && j > 2 ? te.reduce((e, t, n) => {
+			let r = e.run + t + (n ? F[n] : 0);
+			return r < I / 2 ? {
 				row: n + 1,
 				run: r
 			} : e;
 		}, {
 			row: 0,
 			run: 56
-		}).row || Math.ceil(j / 2) : j, I = (e) => e < re ? 0 : 1, L = ne.reduce((e, t, n) => [...e, n === 0 || I(n) !== I(n - 1) ? 56 : e[n - 1] + ne[n - 1] + P[n]], []), R = Math.max(0, ...w.map((e) => x(e).width)), z = (e) => te + I(e) * (R + Math.max(96, M)), B = [];
-		for (let t of w) B.push({
+		}).row || Math.ceil(j / 2) : j, L = (e) => e < ne ? 0 : 1, re = te.reduce((e, t, n) => [...e, n === 0 || L(n) !== L(n - 1) ? 56 : e[n - 1] + te[n - 1] + F[n]], []), R = Math.max(0, ...w.map((e) => x(e).width)), z = (e) => ee + L(e) * (R + Math.max(96, M)), ie = [];
+		for (let t of w) ie.push({
 			id: mn(e.id, "node", t),
 			entityId: t,
 			x: z(E.get(t)),
-			y: L[E.get(t)],
+			y: re[E.get(t)],
 			...x(t)
 		});
-		for (let [t, n] of k) B.push({
+		for (let [t, n] of k) ie.push({
 			id: mn(e.id, "node", t),
 			entityId: t,
 			x: c,
-			y: L[n],
+			y: re[n],
 			...x(t)
 		});
-		let V = T.length === 0, ie = new Map(B.map((e) => [e.entityId, e])), H = /* @__PURE__ */ new Map();
+		let B = T.length === 0, ae = new Map(ie.map((e) => [e.entityId, e])), V = /* @__PURE__ */ new Map();
 		p.push({
 			id: e.id,
 			title: e.title,
 			subtitle: e.subtitle,
 			x: 0,
 			y: 0,
-			width: Math.max(...B.map((e) => e.x + e.width)) + c,
-			height: Math.max(...B.map((e) => e.y + e.height)) + c,
+			width: Math.max(...ie.map((e) => e.x + e.width)) + c,
+			height: Math.max(...ie.map((e) => e.y + e.height)) + c,
 			collapsedSourceCount: t.length - u.length,
 			sourceCount: l.size,
-			vertical: V,
+			vertical: B,
 			cyclicNodeIds: y,
-			nodes: B,
+			nodes: ie,
 			edges: m.map((t) => {
-				let n = H.get(t.to) ?? 0;
-				H.set(t.to, n + 1);
-				let r = ie.get(t.from), i = ie.get(t.to), a = r.x !== i.x, o = a ? "out-right" : "out-bottom", s = a ? "in-left" : "in-top";
+				let n = V.get(t.to) ?? 0;
+				V.set(t.to, n + 1);
+				let r = ae.get(t.from), i = ae.get(t.to), a = r.x !== i.x, o = a ? "out-right" : "out-bottom", s = a ? "in-left" : "in-top";
 				return {
 					id: mn(e.id, "edge", t.id),
 					entityId: t.id,
@@ -2860,7 +2860,7 @@ function Ln(e) {
 			width: Math.max(1, ...k.map((e) => e.x + e.width)) - e,
 			height: Math.max(1, ...k.map((e) => e.y + e.height)) - t
 		};
-	}, [k]), M = W((e, t) => e <= m.width - 48 ? (m.width - e) / 2 - t : 24 - t, [m]), te = W(() => {
+	}, [k]), M = W((e, t) => e <= m.width - 48 ? (m.width - e) / 2 - t : 24 - t, [m]), ee = W(() => {
 		let { left: e, top: t, width: n, height: r } = j, i = Math.max(1, m.height - Dn - On), a = Math.max(ln, Math.min(1.2, (m.width - 48) / n, i / r));
 		return {
 			x: M(n * a, e * a),
@@ -2871,9 +2871,9 @@ function Ln(e) {
 		j,
 		m,
 		M
-	]), N = f !== 0, F = W(() => {
-		let e = te();
-		if (!N) return e;
+	]), P = f !== 0, I = W(() => {
+		let e = ee();
+		if (!P) return e;
 		let { left: t, top: n, width: r } = j, i = Math.max(e.zoom, Math.min(dn, (m.width - 48) / r));
 		return i <= e.zoom ? e : {
 			x: M(r * i, t * i),
@@ -2881,12 +2881,12 @@ function Ln(e) {
 			zoom: i
 		};
 	}, [
-		te,
-		N,
+		ee,
+		P,
 		j,
 		m,
 		M
-	]), I = K(() => {
+	]), L = K(() => {
 		if (!E) return null;
 		for (let e of k) {
 			let t = e.nodes.find((e) => e.entityId === E);
@@ -2898,18 +2898,18 @@ function Ln(e) {
 			};
 		}
 		return null;
-	}, [k, E]), L = Math.max(1, m.width - w), R = W((e) => {
-		if (!I) return e;
-		let t = Math.max(e.zoom, Math.min(dn, (L - 48) / I.width));
+	}, [k, E]), re = Math.max(1, m.width - w), R = W((e) => {
+		if (!L) return e;
+		let t = Math.max(e.zoom, Math.min(dn, (re - 48) / L.width));
 		return {
-			x: L / 2 - (I.x + I.width / 2) * t,
-			y: m.height / 2 - (I.y + I.height / 2) * t,
+			x: re / 2 - (L.x + L.width / 2) * t,
+			y: m.height / 2 - (L.y + L.height / 2) * t,
 			zoom: t
 		};
 	}, [
-		I,
+		L,
 		m,
-		L
+		re
 	]), z = JSON.stringify([
 		m,
 		t.mode,
@@ -2931,13 +2931,13 @@ function Ln(e) {
 			s(t);
 			return;
 		}
-		e && S.canvasInitialized || (s(R(F())), b.current = E ? `${E}\u0000${w}` : void 0, S.canvasInitialized || C({
+		e && S.canvasInitialized || (s(R(I())), b.current = E ? `${E}\u0000${w}` : void 0, S.canvasInitialized || C({
 			...S,
 			canvasInitialized: !0
 		}));
 	}, [
 		z,
-		F,
+		I,
 		R,
 		S,
 		C,
@@ -2950,25 +2950,25 @@ function Ln(e) {
 			return;
 		}
 		let e = `${E}\u0000${w}`;
-		if (b.current === e || !I || y.current === null) return;
+		if (b.current === e || !L || y.current === null) return;
 		b.current = e;
-		let t = I.x * o.zoom + o.x, n = I.y * o.zoom + o.y;
-		t >= 0 && n >= 0 && t + I.width * o.zoom <= L && n + I.height * o.zoom <= m.height || s(R(o));
+		let t = L.x * o.zoom + o.x, n = L.y * o.zoom + o.y;
+		t >= 0 && n >= 0 && t + L.width * o.zoom <= re && n + L.height * o.zoom <= m.height || s(R(o));
 	}, [
 		E,
-		I,
+		L,
 		o,
 		m,
-		L,
+		re,
 		w,
 		R,
 		s
 	]);
-	let B = (e) => C({
+	let ie = (e) => C({
 		...S,
 		focusedEffortId: S.focusedEffortId === e ? null : e,
 		overviewViewport: S.focusedEffortId ? S.overviewViewport : o
-	}), V = new Map(r.map((e) => [e.id, e])), ie = new Map(i.map((e) => [e.id, e])), H = t.window.following, ae = new Set(H ? t.activeEdgeIds : []), oe = new Set(t.failedEdgeIds ?? []), se = [], U = [];
+	}), B = new Map(r.map((e) => [e.id, e])), ae = new Map(i.map((e) => [e.id, e])), V = t.window.following, oe = new Set(V ? t.activeEdgeIds : []), H = new Set(t.failedEdgeIds ?? []), se = [], U = [];
 	for (let e of k) {
 		let n = JSON.stringify(["effort", e.id]), r = S.expandedSourceEfforts.includes(e.id);
 		se.push({
@@ -2988,12 +2988,12 @@ function Ln(e) {
 			data: {
 				title: e.title,
 				subtitle: e.subtitle,
-				live: H && e.nodes.some((e) => V.get(e.entityId)?.status === "running"),
+				live: V && e.nodes.some((e) => B.get(e.entityId)?.status === "running"),
 				sources: !S.focusedEffortId && (e.collapsedSourceCount > 0 || r) ? e.sourceCount : 0,
 				expanded: r,
 				focused: S.focusedEffortId === e.id,
 				cycle: e.cyclicNodeIds.length > 0,
-				onFocus: () => B(e.id),
+				onFocus: () => ie(e.id),
 				onSources: () => C({
 					...S,
 					expandedSourceEfforts: r ? S.expandedSourceEfforts.filter((t) => t !== e.id) : [...S.expandedSourceEfforts, e.id]
@@ -3013,16 +3013,16 @@ function Ln(e) {
 			selected: a?.kind === "node" && a.id === r.entityId,
 			focusable: !1,
 			data: {
-				entity: V.get(r.entityId),
+				entity: B.get(r.entityId),
 				detail: t.details?.[r.entityId],
 				revisionId: a?.kind === "node" && a.id === r.entityId ? a.revisionId : void 0,
-				live: H,
+				live: V,
 				onSelect: l,
 				onFeedback: t.onFeedback
 			}
 		});
 		for (let n of e.edges) {
-			let r = ie.get(n.entityId), i = e.x + n.labelX, o = e.y + n.labelY, s = ae.has(r.id) && r.status === "running" && !r.endedAt, c = oe.has(r.id), u = r.label || r.relation.replaceAll("-", " "), d = t.edgeLabels?.[r.id] ?? (c ? "failed" : void 0);
+			let r = ae.get(n.entityId), i = e.x + n.labelX, o = e.y + n.labelY, s = oe.has(r.id) && r.status === "running" && !r.endedAt, c = H.has(r.id), u = r.label || r.relation.replaceAll("-", " "), d = t.edgeLabels?.[r.id] ?? (c ? "failed" : void 0);
 			U.push({
 				id: n.id,
 				type: "activity",
@@ -3071,7 +3071,7 @@ function Ln(e) {
 			x: o.x + (c.left + (u - c.left) / 2) - (l.left + l.width / 2),
 			y: o.y + (c.top + c.height / 2) - (l.top + l.height / 2)
 		});
-	}, pe = u === "ripple-grid", me = ee(p, "auto", pe);
+	}, pe = u === "ripple-grid", me = N(p, "auto", pe);
 	return /* @__PURE__ */ Z("div", {
 		ref: p,
 		className: "relative isolate min-h-40 min-w-0 flex-1 overflow-hidden",
@@ -3080,8 +3080,8 @@ function Ln(e) {
 		"data-background": u,
 		"data-backdrop-ink": pe ? me === "night" ? "dark" : "light" : void 0,
 		children: [
-			pe && /* @__PURE__ */ X(re, {
-				...me === "night" ? ne : P,
+			pe && /* @__PURE__ */ X(ne, {
+				...me === "night" ? te : F,
 				className: "absolute inset-0 -z-10",
 				"data-testid": "work-activity-ripple"
 			}),
@@ -3165,7 +3165,7 @@ function Ln(e) {
 					/* @__PURE__ */ X(n, {
 						size: "sm",
 						variant: "secondary",
-						onClick: () => s(te()),
+						onClick: () => s(ee()),
 						children: "Fit graph"
 					})
 				]
@@ -3242,7 +3242,7 @@ function Hn({ title: e, subtitle: n, expanded: r = !1, onExpand: i, onPopOut: a,
 			className: "flex shrink-0 items-center gap-1",
 			children: [
 				s,
-				i && /* @__PURE__ */ X(oe, {
+				i && /* @__PURE__ */ X(H, {
 					content: r ? "Show chat" : "Expand activity",
 					placement: "bottom",
 					children: /* @__PURE__ */ X(c, {
@@ -3271,7 +3271,7 @@ function Hn({ title: e, subtitle: n, expanded: r = !1, onExpand: i, onPopOut: a,
 						})
 					})
 				}),
-				a && /* @__PURE__ */ X(oe, {
+				a && /* @__PURE__ */ X(H, {
 					content: "Open activity in its own page",
 					placement: "bottom",
 					children: /* @__PURE__ */ X(c, {
@@ -3293,7 +3293,7 @@ function Hn({ title: e, subtitle: n, expanded: r = !1, onExpand: i, onPopOut: a,
 						})
 					})
 				}),
-				o && /* @__PURE__ */ X(oe, {
+				o && /* @__PURE__ */ X(H, {
 					content: "Close activity",
 					placement: "bottom",
 					children: /* @__PURE__ */ X(c, {
@@ -3322,7 +3322,7 @@ function Hn({ title: e, subtitle: n, expanded: r = !1, onExpand: i, onPopOut: a,
 					"aria-label": "Side panel content",
 					idPrefix: `${_}-view`
 				}),
-				v && /* @__PURE__ */ X(H, {
+				v && /* @__PURE__ */ X(V, {
 					size: "sm",
 					variant: "pill",
 					className: "max-w-52 truncate normal-case",
@@ -3452,7 +3452,7 @@ function Wn({ node: e, artifact: r, selection: i, onSelectionChange: a, onOpen: 
 								onClick: () => v(f[m + 1].id),
 								children: "›"
 							}),
-							/* @__PURE__ */ X(H, {
+							/* @__PURE__ */ X(V, {
 								size: "sm",
 								"aria-label": "Slide",
 								className: "w-32",
@@ -3727,12 +3727,12 @@ function rr({ lines: e, running: n, label: r, environment: i, seed: a, testId: o
 					children: i
 				})
 			]
-		}), /* @__PURE__ */ Z(N, {
+		}), /* @__PURE__ */ Z(P, {
 			active: n,
 			particleCount: 90,
 			speed: .1,
 			alphaParticles: !0,
-			particleColors: te,
+			particleColors: ee,
 			fallbackIntensity: "low",
 			seed: a,
 			className: "space-y-0.5 px-2 py-1.5",
@@ -3903,7 +3903,7 @@ function ir({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 							children: e.shared ? "Shared with you" : "Yours"
 						})]
 					}),
-					/* @__PURE__ */ X(B, {
+					/* @__PURE__ */ X(ie, {
 						state: d.pill,
 						label: d.label,
 						size: "sm",
@@ -3996,14 +3996,14 @@ function ir({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 				id: "activity",
 				when: D,
 				className: "space-y-2",
-				children: /* @__PURE__ */ Z(N, {
+				children: /* @__PURE__ */ Z(P, {
 					active: d.busy,
 					particleCount: 200,
 					speed: .14,
 					alphaParticles: !0,
 					moveParticlesOnHover: !0,
 					particleHoverFactor: .6,
-					particleColors: te,
+					particleColors: ee,
 					fallbackIntensity: "medium",
 					seed: g,
 					className: "overflow-hidden rounded-md border border-code-border bg-code-bg",
@@ -4078,12 +4078,12 @@ function ir({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 				idPrefix: `${a}-tab`,
 				id: "shell",
 				when: D,
-				children: /* @__PURE__ */ X(N, {
+				children: /* @__PURE__ */ X(P, {
 					active: d.busy,
 					particleCount: 90,
 					speed: .1,
 					alphaParticles: !0,
-					particleColors: te,
+					particleColors: ee,
 					fallbackIntensity: "low",
 					seed: g,
 					className: "space-y-2 rounded-md",
@@ -4771,7 +4771,7 @@ function xr({ activity: e, timezone: r = "UTC" }) {
 							className: t("mr-1 inline-block h-1.5 w-1.5 rounded-full align-middle", a.following ? "bg-success" : "bg-border-emphasis")
 						}), a.following ? "Following now" : "Back to now"]
 					}),
-					/* @__PURE__ */ X(H, {
+					/* @__PURE__ */ X(V, {
 						"aria-label": "Interval duration",
 						value: y ? "day" : v ? String(v) : "custom",
 						size: "sm",
@@ -4881,7 +4881,7 @@ function wr(e) {
 	});
 	let j = A ? new Set(k.flatMap((e) => e.edgeIds)) : null;
 	j && a?.kind === "edge" && j.add(a.id);
-	let M = j ? i.filter((e) => j.has(e.id)) : i, ee = (T ? 0 : o.efforts.length - O) > 0 ? /* @__PURE__ */ Z("div", {
+	let M = j ? i.filter((e) => j.has(e.id)) : i, N = (T ? 0 : o.efforts.length - O) > 0 ? /* @__PURE__ */ Z("div", {
 		className: "flex flex-wrap items-center justify-between gap-2 border-t border-border pt-2 text-xs text-text-tertiary",
 		"data-testid": "work-activity-list-more",
 		children: [/* @__PURE__ */ Z("span", { children: [
@@ -4900,30 +4900,30 @@ function wr(e) {
 				" activities"
 			]
 		})]
-	}) : void 0, te = (e) => Ot(e.status, o.details?.[e.id]?.pause), N = /* @__PURE__ */ X(Ht, {
+	}) : void 0, ee = (e) => Ot(e.status, o.details?.[e.id]?.pause), P = /* @__PURE__ */ X(Ht, {
 		...e,
 		edges: M,
 		groups: A,
-		footer: ee,
-		statusLabelOf: te
-	}), ne = a?.kind === "node" ? r.find((e) => e.id === a.id) : void 0, P = a?.kind === "edge" ? i.find((e) => e.id === a.id && r.some((t) => t.id === e.fromId) && r.some((t) => t.id === e.toId)) : void 0, F = !!(ne || P), { window: re, bounds: I, onWindowChange: L, onEarlier: R } = o, z = o.detailsPlacement ?? "auto", B = z === "overlay" || z === "auto" && !m;
+		footer: N,
+		statusLabelOf: ee
+	}), te = a?.kind === "node" ? r.find((e) => e.id === a.id) : void 0, F = a?.kind === "edge" ? i.find((e) => e.id === a.id && r.some((t) => t.id === e.fromId) && r.some((t) => t.id === e.toId)) : void 0, I = !!(te || F), { window: ne, bounds: L, onWindowChange: re, onEarlier: R } = o, z = o.detailsPlacement ?? "auto", ie = z === "overlay" || z === "auto" && !m;
 	G(() => {
-		a && !F && s(null);
+		a && !I && s(null);
 	}, [
 		a,
-		F,
+		I,
 		s
 	]), G(() => {
 		a && l.current?.contains(document.activeElement) && document.activeElement instanceof HTMLElement && !document.activeElement.closest("[data-testid=\"activity-inspector\"]") && (d.current = document.activeElement);
 	}, [a]);
-	let V = q(!1);
+	let B = q(!1);
 	G(() => {
 		if (a) {
-			V.current = !0;
+			B.current = !0;
 			return;
 		}
-		if (!V.current) return;
-		V.current = !1;
+		if (!B.current) return;
+		B.current = !1;
 		let e = d.current;
 		e && requestAnimationFrame(() => {
 			let t = document.activeElement;
@@ -4940,34 +4940,34 @@ function wr(e) {
 		let t = new ResizeObserver(([e]) => _(e.contentRect.height < Cr));
 		return t.observe(e), () => t.disconnect();
 	}, []);
-	let ie = () => {
+	let ae = () => {
 		s(null), requestAnimationFrame(() => {
 			d.current?.isConnected && d.current.focus();
 		});
-	}, H = () => {
+	}, V = () => {
 		if (R) {
 			R();
 			return;
 		}
-		let e = Math.max(6e4, re.end - re.start), t = Math.max(I.start, re.start - e);
-		L({
+		let e = Math.max(6e4, ne.end - ne.start), t = Math.max(L.start, ne.start - e);
+		re({
 			start: t,
 			end: t + e,
 			following: !1
 		});
-	}, ae = F, oe = a ? `${a.kind}:${a.id}` : null, se = ae && e.viewport.zoom < .4 && v !== oe, U = se || f && g, ce = f && !U, le = U || ce, ue = () => {
+	}, oe = I, H = a ? `${a.kind}:${a.id}` : null, se = oe && e.viewport.zoom < .4 && v !== H, U = se || f && g, ce = f && !U, le = U || ce, ue = () => {
 		if (!le) {
 			p(!0);
 			return;
 		}
-		p(!1), se && y(oe);
-	}, fe = ze().right, pe = fe > 0 ? { paddingRight: fe } : void 0, me = B ? "absolute inset-y-0 right-0 z-10 w-[min(340px,85%)] shadow-lg" : "w-[340px] max-w-[45%] shrink-0";
+		p(!1), se && y(H);
+	}, fe = ze().right, pe = fe > 0 ? { paddingRight: fe } : void 0, me = ie ? "absolute inset-y-0 right-0 z-10 w-[min(340px,85%)] shadow-lg" : "w-[340px] max-w-[45%] shrink-0";
 	return /* @__PURE__ */ Z("section", {
 		ref: l,
 		"aria-label": "Shared work graph",
 		className: t("flex h-full min-h-0 min-w-0 flex-col bg-surface", e.className),
 		onKeyDown: (e) => {
-			e.key === "Escape" && a && (e.stopPropagation(), ie());
+			e.key === "Escape" && a && (e.stopPropagation(), ae());
 		},
 		children: [
 			o.title && /* @__PURE__ */ X(Hn, {
@@ -5016,7 +5016,7 @@ function wr(e) {
 							}), U && /* @__PURE__ */ X("div", {
 								className: "absolute inset-0 overflow-auto bg-surface p-3",
 								"data-testid": "work-activity-list-region",
-								children: N
+								children: P
 							})]
 						}),
 						/* @__PURE__ */ Z("div", {
@@ -5036,25 +5036,25 @@ function wr(e) {
 								children: [!U && /* @__PURE__ */ X(Rn, { live: o.window.following }), /* @__PURE__ */ X(n, {
 									size: "sm",
 									variant: "ghost",
-									disabled: re.start <= I.start,
-									onClick: H,
+									disabled: ne.start <= L.start,
+									onClick: V,
 									children: "← Earlier work"
 								})]
 							})]
 						})
 					]
-				}), z !== "none" && F && (ne && a?.kind === "node" ? /* @__PURE__ */ X(mr, {
-					node: ne,
-					detail: o.details?.[ne.id],
+				}), z !== "none" && I && (te && a?.kind === "node" ? /* @__PURE__ */ X(mr, {
+					node: te,
+					detail: o.details?.[te.id],
 					selection: a,
 					onSelectionChange: s,
-					onClose: ie,
+					onClose: ae,
 					onOpen: e.onOpen,
 					onReference: e.onReference,
 					className: me
 				}) : /* @__PURE__ */ X(de, {
-					title: P?.label || "Relationship",
-					onClose: ie,
+					title: F?.label || "Relationship",
+					onClose: ae,
 					className: me,
 					"data-testid": "activity-inspector",
 					children: /* @__PURE__ */ X(qt, { ...e })
@@ -5074,7 +5074,7 @@ function wr(e) {
 			ce && /* @__PURE__ */ X("div", {
 				className: "max-h-60 min-h-0 shrink-0 overflow-auto border-t border-border p-3",
 				"data-testid": "work-activity-list-below",
-				children: N
+				children: P
 			})
 		]
 	});
@@ -5916,48 +5916,111 @@ function Fi(e, t, n, r) {
 	return s;
 }
 var Ii = 170;
-function Li(e, t, n) {
-	let r = Math.max(0, e - 1);
-	if (!r) return [{
+function Li(e, t, n, r = Bi) {
+	let i = Math.max(0, e - 1);
+	if (!i) return [{
 		rings: 0,
 		stepX: 0,
 		stepY: 0,
 		counts: [],
 		fits: !0
 	}];
-	let i = xi(t, n), a = Math.max(70, (i.width - 140) / 2), o = Math.max(52, (i.height - 104) / 2), s = wi(t / n, 1, 2.4), c = Math.max(Ii, 128 * s), l = (e, t, n) => Array.from({ length: e }, (e, r) => Math.max(1, Math.floor(Pi((r + 1) * t, (r + 1) * n) / Ii))), u = (e) => e.reduce((e, t) => e + t, 0), d = (e) => {
-		let t = u(e), n = e.map((e) => Math.min(e, Math.floor(r * e / t))), i = r - u(n);
-		for (let t = e.length - 1; i > 0; t = (t - 1 + e.length) % e.length) n[t] < e[t] && (n[t]++, i--);
+	let a = xi(t, n), o = Math.max(70, (a.width - 140) / 2), s = Math.max(52, (a.height - 104) / 2), c = wi(t / n, 1, 2.4), l = Math.max(Ii, 128 * c), u = (e, t, n) => Array.from({ length: e }, (e, r) => Math.max(1, Math.floor(Pi((r + 1) * t, (r + 1) * n) / Ii))), d = (e) => e.reduce((e, t) => e + t, 0), f = (e) => {
+		let t = d(e), n = e.map((e) => Math.min(e, Math.floor(i * e / t))), r = i - d(n);
+		for (let t = e.length - 1; r > 0; t = (t - 1 + e.length) % e.length) n[t] < e[t] && (n[t]++, r--);
 		return n;
-	}, f = [];
-	for (let e of [!1, !0]) for (let t = 1; t <= 6 && a / t >= Ii / 2; t++) {
-		let n = Math.min(128, o / t), i = e ? a / t : Math.min(c, a / t), s = l(t, i, n);
-		u(s) >= r && f.push({
+	}, p = [];
+	for (let e of [!1, !0]) for (let t = 1; t <= 6 && o / t >= Ii / 2; t++) {
+		let n = Math.min(128, s / t), r = e ? o / t : Math.min(l, o / t), a = u(t, r, n);
+		d(a) >= i && p.push({
 			rings: t,
-			stepX: i,
+			stepX: r,
 			stepY: n,
-			counts: d(s),
+			counts: f(a),
 			fits: !0
 		});
 	}
-	let p = 1;
-	for (; u(l(p, c, 128)) < r;) p++;
-	return f.push({
-		rings: p,
-		stepX: c,
+	p.push(...Ui(i, t, n, r, u, f));
+	let m = 1;
+	for (; d(u(m, l, 128)) < i;) m++;
+	return p.push({
+		rings: m,
+		stepX: l,
 		stepY: 128,
-		counts: d(l(p, c, 128)),
+		counts: f(u(m, l, 128)),
 		fits: !1
-	}), f;
+	}), p;
 }
-function Ri(e, t, n) {
-	for (let r of Li(e.length, t, n)) {
-		let t = zi(r);
-		if (t) return new Map(e.map((e, n) => [e, t[n]]));
+var Ri = 150, zi = 110, Bi = [
+	"People",
+	"Initiatives",
+	"Work",
+	"Decisions",
+	"Knowledge"
+], Vi = .01, Hi = 12;
+function Ui(e, t, n, r, i, a) {
+	let o = ra({
+		width: t,
+		height: n
+	}, {
+		legend: r.length ? na(r, t) : null,
+		controls: Xi
+	}), s = (e) => e > 0 ? Math.max(yi, e + Zi) : yi, c = Math.max(1, t - s(o.left) - s(o.right)), l = Math.max(1, n - s(o.top) - s(o.bottom)), u = (e) => e.reduce((e, t) => e + t, 0), d = [];
+	for (let t = gi; t >= .099999999; t -= Vi) {
+		let n = (c / t - 140) / 2, r = (l / t - 104) / 2;
+		if (!(n <= 0 || r <= 0) && !((2 * n / Ri + 1) * (2 * r / zi + 1) < e + 1)) for (let t = 1; t <= Hi && n / t >= Ii / 2; t++) {
+			let o = n / t, s = r / t, c = i(t, o, s);
+			if (!(u(c) < e)) {
+				d.push({
+					rings: t,
+					stepX: o,
+					stepY: s,
+					counts: a(c),
+					fits: !1,
+					shaped: !0
+				});
+				break;
+			}
+		}
 	}
-	return /* @__PURE__ */ new Map();
+	return d;
 }
-function zi(e) {
+function Wi(e, t, n, r) {
+	let i = Gi(Li(e.length, t, n, r));
+	return i ? new Map(e.map((e, t) => [e, i.points[t]])) : /* @__PURE__ */ new Map();
+}
+function Gi(e) {
+	for (let t = 0; t < e.length; t++) {
+		if (!e[t].shaped) {
+			let n = Ki(e[t]);
+			if (n) return {
+				plan: e[t],
+				points: n
+			};
+			continue;
+		}
+		let n = t;
+		for (; n < e.length && e[n].shaped;) n++;
+		let r = Ki(e[n - 1]);
+		if (r) {
+			let i = t, a = n - 1, o = {
+				plan: e[a],
+				points: r
+			};
+			for (; i < a;) {
+				let t = Math.floor((i + a) / 2), n = Ki(e[t]);
+				n ? (o = {
+					plan: e[t],
+					points: n
+				}, a = t) : i = t + 1;
+			}
+			return o;
+		}
+		t = n - 1;
+	}
+	return null;
+}
+function Ki(e) {
 	let t = [{
 		x: 0,
 		y: 0
@@ -5965,24 +6028,24 @@ function zi(e) {
 	if (e.counts.forEach((n, r) => {
 		let i = r + 1;
 		t.push(...Fi(i * e.stepX, i * e.stepY, n, i % 2 ? .25 : .75));
-	}), e.fits && e.rings > 0) {
-		let n = e.rings * e.stepX, r = e.rings * e.stepY, i = [t[0]], a = (e, t) => i.every((n) => Math.abs(n.x - e) >= 150 || Math.abs(n.y - t) >= 110), o = Math.max(4, Math.sqrt(4 * n * r / 2e4));
+	}), (e.fits || e.shaped) && e.rings > 0) {
+		let n = e.rings * e.stepX, r = e.rings * e.stepY, i = Ri, a = zi, o = [t[0]], s = (e, t) => o.every((n) => Math.abs(n.x - e) >= i || Math.abs(n.y - t) >= a), c = Math.max(4, Math.sqrt(4 * n * r / 2e4));
 		for (let e = 1; e < t.length; e++) {
-			let s = t[e], c = a(s.x, s.y) ? s : null, l = 0;
-			if (!c) for (let e = -r; e <= r + .01; e += o) for (let t = -n; t <= n + .01; t += o) {
-				let n = ((t - s.x) / 150) ** 2 + ((e - s.y) / 110) ** 2;
-				c && n >= l || a(t, e) && (c = {
+			let l = t[e], u = s(l.x, l.y) ? l : null, d = 0;
+			if (!u) for (let e = -r; e <= r + .01; e += c) for (let t = -n; t <= n + .01; t += c) {
+				let n = ((t - l.x) / i) ** 2 + ((e - l.y) / a) ** 2;
+				u && n >= d || s(t, e) && (u = {
 					x: t,
 					y: e
-				}, l = n);
+				}, d = n);
 			}
-			if (!c) return null;
-			t[e] = c, i.push(c);
+			if (!u) return null;
+			t[e] = u, o.push(u);
 		}
 	}
 	return t;
 }
-function Bi(e, t, n, r = {}) {
+function qi(e, t, n, r = {}) {
 	let i = r.width && r.width > 0 ? r.width : Si.width, a = r.height && r.height > 0 ? r.height : Si.height, o = e.map(ki);
 	if (!o.length) return /* @__PURE__ */ new Map();
 	let s = new Map(o.map((e) => [e, 0])), c = t.filter((e) => s.has(e.source) && s.has(e.target));
@@ -5990,7 +6053,7 @@ function Bi(e, t, n, r = {}) {
 		s.set(e.source, s.get(e.source) + 1), s.set(e.target, s.get(e.target) + 1);
 	});
 	let l = [...o].sort((e, t) => s.get(t) - s.get(e) || e.localeCompare(t)), u = /* @__PURE__ */ new Map();
-	if (n === "radial") return Ri(l, i, a);
+	if (n === "radial") return Wi(l, i, a, Oi.filter((t) => e.some((e) => e.type === t.value)).map((e) => e.label));
 	if (n === "hierarchy") return Ni(e, l, c, i, a);
 	let d = Ei(o.length, i, a), f = d.linkDistance, p = Ti(i, a), m = l.map((e, t) => {
 		let n = f * Math.sqrt((t + .5) / l.length) * 1.5;
@@ -6018,11 +6081,11 @@ function Bi(e, t, n, r = {}) {
 		y: g[t] * y
 	})), u;
 }
-var Vi = .25, Hi = {
+var Ji = .25, Yi = .1, Xi = {
 	width: 212,
 	height: 48
-}, Ui = 8, Wi = 16, Gi = 260, Ki = .4, qi = .6;
-function Ji(e, t) {
+}, Zi = 8, Qi = 16, $i = 260, ea = .4, ta = .6;
+function na(e, t) {
 	if (!e.length) return {
 		width: 0,
 		height: 0
@@ -6033,7 +6096,7 @@ function Ji(e, t) {
 		height: 14 + i * 16 + (i - 1) * 4 + 12
 	};
 }
-function Yi(e, t) {
+function ra(e, t) {
 	let n = {
 		left: 0,
 		right: 0,
@@ -6042,7 +6105,7 @@ function Yi(e, t) {
 	}, { legend: r, controls: i } = t;
 	if (r && r.width > 0 && i && i.width > 0) {
 		let t = e.height - 48, a = r.height + i.height + 16;
-		if (t < Gi && a > Ki * t) return r.width + i.width + 16 <= qi * e.width ? {
+		if (t < $i && a > ea * t) return r.width + i.width + 16 <= ta * e.width ? {
 			...n,
 			left: r.width,
 			right: i.width
@@ -6065,18 +6128,18 @@ function Yi(e, t) {
 	}
 	return n;
 }
-var Xi = {
+var ia = {
 	x0: 0,
 	y0: 0,
 	x1: 140,
 	y1: 104
-}, Zi = {
+}, aa = {
 	x0: 40,
 	y0: -2,
 	x1: 100,
 	y1: 58
 };
-function Qi(e, t, n = Xi) {
+function oa(e, t, n = ia) {
 	let r = null;
 	for (let i of t) {
 		let t = e.get(i);
@@ -6096,10 +6159,10 @@ function Qi(e, t, n = Xi) {
 	}
 	return r;
 }
-function $i(e, t, n) {
-	let { minZoom: r = mi, maxZoom: i = 1, inset: a = {}, readableZoom: o = gi, neighbourhoodZoom: s = _i, focusMinZoom: c = vi } = n, l = Math.max(Wi, n.padding ?? 24), u = Qi(e, e.keys());
+function sa(e, t, n) {
+	let { minZoom: r = mi, maxZoom: i = 1, inset: a = {}, readableZoom: o = gi, neighbourhoodZoom: s = _i, focusMinZoom: c = vi } = n, l = Math.max(Qi, n.padding ?? 24), u = oa(e, e.keys());
 	if (!u || t.width <= 0 || t.height <= 0) return null;
-	let d = (e) => e && e > 0 ? Math.max(l, e + Ui) : l, f = {
+	let d = (e) => e && e > 0 ? Math.max(l, e + Zi) : l, f = {
 		x0: d(a.left),
 		x1: t.width - d(a.right),
 		y0: d(a.top),
@@ -6110,25 +6173,26 @@ function $i(e, t, n) {
 		zoom: e
 	});
 	if (n.mode === "auto" && h(u) >= o) return g(Math.min(h(u), i));
-	if (n.mode === "auto" && !Qi(e, n.focusKeys ?? [])) {
+	if (n.mode === "auto" && !oa(e, n.focusKeys ?? [])) {
 		let i = Math.min(r, n.fitAllMinZoom ?? .25);
-		return $i(e, t, {
+		return sa(e, t, {
 			...n,
 			mode: "all",
 			minZoom: i
 		});
 	}
+	if (n.mode === "all" && h(u) < r && r <= .25 && t.height - 2 * l < 300 && !oa(e, n.focusKeys ?? [])) return g(Math.max(Yi, Math.min(h(u), i)));
 	if (n.mode === "all" && h(u) >= r) return g(Math.min(h(u), i));
-	let _ = Qi(e, n.focusKeys ?? []), v = _ ? Qi(e, n.focusKeys ?? [], Zi) : null, y = _ && v ? {
+	let _ = oa(e, n.focusKeys ?? []), v = _ ? oa(e, n.focusKeys ?? [], aa) : null, y = _ && v ? {
 		x0: Math.min(_.x0, v.x0),
 		y0: Math.min(_.y0, v.y0),
 		x1: Math.max(_.x1, v.x1),
 		y1: Math.max(_.y1, v.y1)
-	} : null, b = _ ? Qi(e, n.fitKeys?.length ? n.fitKeys : n.focusKeys ?? []) : null, x = (e, n) => {
+	} : null, b = _ ? oa(e, n.fitKeys?.length ? n.fitKeys : n.focusKeys ?? []) : null, x = (e, n) => {
 		let r = (t, r, i, a, o) => {
 			for (let o of n) if ((o[r] - o[t]) * e <= a - i + .5) return (i + a) / 2 - (o[t] + o[r]) / 2 * e;
 			if (_ && v && y) {
-				let n = (i + a) / 2 - (_[t] + _[r]) / 2 * e, s = [Wi, o - Wi], c = [
+				let n = (i + a) / 2 - (_[t] + _[r]) / 2 * e, s = [Qi, o - Qi], c = [
 					[
 						y,
 						i,
@@ -6146,7 +6210,7 @@ function $i(e, t, n) {
 					let s = a - i[t] * e, c = o - i[r] * e;
 					if (s <= c + .5) return wi(n, s, Math.max(s, c));
 				}
-				return Wi - v[t] * e;
+				return Qi - v[t] * e;
 			}
 			return i - n[n.length - 1][t] * e;
 		};
@@ -6170,14 +6234,14 @@ function $i(e, t, n) {
 }
 //#endregion
 //#region src/components/graph/RecordGraph.tsx
-var ea = "No recorded connections — search, or select related records", ta = {
+var ca = "No recorded connections — search, or select related records", la = {
 	person: "Person",
 	initiative: "Initiative",
 	work: "Work",
 	decision: "Decision",
 	knowledge: "Knowledge",
 	asset: "Agent library"
-}, na = {
+}, ua = {
 	person: {
 		bg: "var(--color-primary-bg)",
 		fg: "var(--color-primary-fg)",
@@ -6208,18 +6272,18 @@ var ea = "No recorded connections — search, or select related records", ta = {
 		fg: "var(--color-neutral-fg)",
 		swatch: "var(--color-neutral)"
 	}
-}, ra = {
+}, da = {
 	bg: "var(--color-danger-bg)",
 	fg: "var(--color-danger-fg)",
 	swatch: "var(--color-danger)"
-}, ia = /* @__PURE__ */ new Set([
+}, fa = /* @__PURE__ */ new Set([
 	"blocked",
 	"failed",
 	"at_risk",
 	"error",
 	"cancelled",
 	"canceled"
-]), aa = /* @__PURE__ */ new Set([
+]), pa = /* @__PURE__ */ new Set([
 	"open",
 	"in_progress",
 	"active",
@@ -6227,20 +6291,20 @@ var ea = "No recorded connections — search, or select related records", ta = {
 	"running",
 	"todo"
 ]);
-function oa(e) {
+function ma(e) {
 	return (e ?? "").trim().toLowerCase().replace(/[\s-]+/g, "_");
 }
-function sa(e) {
+function ha(e) {
 	let t = e.replace(/[_-]+/g, " ").trim();
 	return t.charAt(0).toUpperCase() + t.slice(1);
 }
-var ca = /related (result|match)/i, la = 48, ua = 28, da = 28, fa = 30, pa = {
+var ga = /related (result|match)/i, _a = 48, va = 28, ya = 28, ba = 30, xa = {
 	padding: .12,
 	minZoom: mi,
 	maxZoom: 1
-}, ma = 16, ha = 40;
-function ga({ data: e }) {
-	let { record: n, selected: r, onToggle: i } = e, a = ia.has(oa(n.status)), o = a && n.type !== "person" ? ra : na[n.type], s = n.type === "person" ? void 0 : a ? /* @__PURE__ */ X(l, { size: 22 }) : n.type === "asset" ? /* @__PURE__ */ X(f, { size: 22 }) : /* @__PURE__ */ X(m, { size: 22 }), c = n.status ? sa(n.status) : n.subtitle || ta[n.type], u = !!n.status && (n.type === "work" || n.type === "decision");
+}, Sa = 16, Ca = 40;
+function wa({ data: e }) {
+	let { record: n, selected: r, onToggle: i } = e, a = fa.has(ma(n.status)), o = a && n.type !== "person" ? da : ua[n.type], s = n.type === "person" ? void 0 : a ? /* @__PURE__ */ X(l, { size: 22 }) : n.type === "asset" ? /* @__PURE__ */ X(f, { size: 22 }) : /* @__PURE__ */ X(m, { size: 22 }), c = n.status ? ha(n.status) : n.subtitle || la[n.type], u = !!n.status && (n.type === "work" || n.type === "decision");
 	return /* @__PURE__ */ Z("div", {
 		className: "relative flex h-[104px] w-[140px] flex-col items-center",
 		"data-record-key": ki(n),
@@ -6255,7 +6319,7 @@ function ga({ data: e }) {
 				type: "button",
 				onClick: i,
 				"aria-pressed": r,
-				"aria-label": `${ta[n.type]}: ${n.title}${n.status ? `, ${sa(n.status)}` : ""}`,
+				"aria-label": `${la[n.type]}: ${n.title}${n.status ? `, ${ha(n.status)}` : ""}`,
 				title: n.description ?? n.title,
 				className: t("nodrag nopan flex h-full w-full cursor-pointer flex-col items-center gap-1 rounded-lg border-none bg-transparent px-2 pb-1 pt-1 text-center", "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"),
 				children: [
@@ -6264,7 +6328,7 @@ function ga({ data: e }) {
 						children: [/* @__PURE__ */ X(E, {
 							name: n.title,
 							src: n.type === "person" ? n.avatarUrl : void 0,
-							size: la,
+							size: _a,
 							color: o.bg,
 							foreground: o.fg,
 							icon: s,
@@ -6283,7 +6347,7 @@ function ga({ data: e }) {
 					}),
 					u ? /* @__PURE__ */ X(O, {
 						size: "xs",
-						color: a ? "var(--color-danger)" : aa.has(oa(n.status)) ? "var(--color-success)" : "var(--color-text-tertiary)",
+						color: a ? "var(--color-danger)" : pa.has(ma(n.status)) ? "var(--color-success)" : "var(--color-text-tertiary)",
 						label: c,
 						className: "max-w-full truncate rounded-sm bg-surface px-1 text-xs text-text-secondary"
 					}) : /* @__PURE__ */ X("span", {
@@ -6301,11 +6365,11 @@ function ga({ data: e }) {
 		]
 	});
 }
-function _a({ id: e, data: n }) {
+function Ta({ id: e, data: n }) {
 	if (!n) return null;
 	let { from: r, to: i, label: a, related: o, labelShown: s } = n, c = i.x - r.x, l = i.y - r.y, u = Math.hypot(c, l);
 	if (u < 62) return null;
-	let d = c / u, f = l / u, p = r.x + d * da, m = r.y + f * da, h = i.x - d * fa, g = i.y - f * fa, _ = Math.min(40, u * .08), v = (p + h) / 2 - f * _, y = (m + g) / 2 + d * _, b = h - v, x = g - y, S = Math.hypot(b, x) || 1, C = b / S, w = x / S, T = `M${h} ${g} L${h - C * 8 - w * 4} ${g - w * 8 + C * 4} L${h - C * 8 + w * 4} ${g - w * 8 - C * 4} Z`, E = .25 * p + .5 * v + .25 * h, D = .25 * m + .5 * y + .25 * g, O = "var(--color-text-tertiary)";
+	let d = c / u, f = l / u, p = r.x + d * ya, m = r.y + f * ya, h = i.x - d * ba, g = i.y - f * ba, _ = Math.min(40, u * .08), v = (p + h) / 2 - f * _, y = (m + g) / 2 + d * _, b = h - v, x = g - y, S = Math.hypot(b, x) || 1, C = b / S, w = x / S, T = `M${h} ${g} L${h - C * 8 - w * 4} ${g - w * 8 + C * 4} L${h - C * 8 + w * 4} ${g - w * 8 - C * 4} Z`, E = .25 * p + .5 * v + .25 * h, D = .25 * m + .5 * y + .25 * g, O = "var(--color-text-tertiary)";
 	return /* @__PURE__ */ Z("g", {
 		"data-edge-id": e,
 		"data-related": o ? "true" : "false",
@@ -6347,8 +6411,8 @@ function _a({ id: e, data: n }) {
 		]
 	});
 }
-var va = { record: ga }, ya = { record: _a };
-function ba({ exit: e }) {
+var Ea = { record: wa }, Da = { record: Ta };
+function Oa({ exit: e }) {
 	return /* @__PURE__ */ X("svg", {
 		"aria-hidden": "true",
 		width: "14",
@@ -6361,7 +6425,7 @@ function ba({ exit: e }) {
 		children: e ? /* @__PURE__ */ X("path", { d: "M5 1.5 V5 H1.5 M9 1.5 V5 H12.5 M12.5 9 H9 V12.5 M1.5 9 H5 V12.5" }) : /* @__PURE__ */ X("path", { d: "M1.5 5 V1.5 H5 M9 1.5 H12.5 V5 M12.5 9 V12.5 H9 M5 12.5 H1.5 V9" })
 	});
 }
-function xa({ graphKey: e, positions: t, focusKeys: n, fitKeys: r, canvasRef: i, apiRef: a, legend: o, fullscreen: s, onFullscreen: l, testId: u }) {
+function ka({ graphKey: e, positions: t, focusKeys: n, fitKeys: r, canvasRef: i, apiRef: a, legend: o, fullscreen: s, onFullscreen: l, testId: u }) {
 	let d = Oe(), { zoom: f } = Ae(), p = o.map((e) => e.label), m = q({
 		positions: t,
 		focusKeys: n,
@@ -6380,17 +6444,17 @@ function xa({ graphKey: e, positions: t, focusKeys: n, fitKeys: r, canvasRef: i,
 		let { positions: r, focusKeys: a, fitKeys: o, legendLabels: s } = m.current, c = {
 			width: n.width,
 			height: n.height
-		}, l = Yi(c, {
-			legend: s.length ? Ji(s, c.width) : null,
-			controls: Hi
+		}, l = ra(c, {
+			legend: s.length ? na(s, c.width) : null,
+			controls: Xi
 		});
-		return $i(r, c, {
+		return sa(r, c, {
 			mode: a.length || e === "auto" ? e : "all",
 			focusKeys: a,
 			fitKeys: o,
 			inset: l,
-			minZoom: t && e === "all" ? Vi : pa.minZoom,
-			maxZoom: pa.maxZoom
+			minZoom: t && e === "all" ? Ji : xa.minZoom,
+			maxZoom: xa.maxZoom
 		});
 	}, [i]), _ = W((e, t = !1) => {
 		let n = h(e, t);
@@ -6400,9 +6464,9 @@ function xa({ graphKey: e, positions: t, focusKeys: n, fitKeys: r, canvasRef: i,
 		}
 		let r = m.current.fitKeys;
 		d.fitView(e !== "all" && r.length ? {
-			...pa,
+			...xa,
 			nodes: r.map((e) => ({ id: e }))
-		} : pa);
+		} : xa);
 	}, [d, h]), v = W(() => _("auto"), [_]), y = W(() => _("all", !0), [_]);
 	return G(() => (a.current = {
 		fitToFocus: () => _("focus", !0),
@@ -6435,7 +6499,7 @@ function xa({ graphKey: e, positions: t, focusKeys: n, fitKeys: r, canvasRef: i,
 		children: o.map((e) => /* @__PURE__ */ X("li", {
 			className: "inline-flex items-center",
 			children: /* @__PURE__ */ X(O, {
-				color: na[e.value].swatch,
+				color: ua[e.value].swatch,
 				size: "sm",
 				label: e.label
 			})
@@ -6458,39 +6522,39 @@ function xa({ graphKey: e, positions: t, focusKeys: n, fitKeys: r, canvasRef: i,
 			"aria-label": s ? "Exit full screen" : "Full screen connections",
 			"aria-pressed": s,
 			onClick: l,
-			children: /* @__PURE__ */ X(ba, { exit: s })
+			children: /* @__PURE__ */ X(Oa, { exit: s })
 		})]
 	})] });
 }
-function Sa({ records: e, edges: r, selectedKeys: i, onSelectionChange: a, onAskSelection: o, onOpenRecord: s, layout: c, onLayoutChange: l, typeFilter: u, onTypeFilterChange: d, typeLabels: f, className: p, "data-testid": m = "record-graph", "aria-label": _ = "Record connections", emptyLabel: y = ea, showIsolated: b = !1, focusKeys: x, ref: S }) {
-	let [C, w] = J("force"), [T, E] = J("all"), [D, O] = J(!1), [A, j] = J(!1), M = q(null), ee = q(null), te = q(null);
+function Aa({ records: e, edges: r, selectedKeys: i, onSelectionChange: a, onAskSelection: o, onOpenRecord: s, layout: c, onLayoutChange: l, typeFilter: u, onTypeFilterChange: d, typeLabels: f, className: p, "data-testid": m = "record-graph", "aria-label": _ = "Record connections", emptyLabel: y = ca, showIsolated: b = !1, focusKeys: x, ref: S }) {
+	let [C, w] = J("force"), [T, E] = J("all"), [D, O] = J(!1), [A, j] = J(!1), M = q(null), N = q(null), ee = q(null);
 	ve(S, () => ({
-		fitToFocus: () => te.current?.fitToFocus(),
-		fitAll: () => te.current?.fitAll()
+		fitToFocus: () => ee.current?.fitToFocus(),
+		fitAll: () => ee.current?.fitAll()
 	}), []);
-	let [N, ne] = J(null), P = c ?? C, F = u ?? T, re = K(() => Oi.map((e) => ({
+	let [P, te] = J(null), F = c ?? C, I = u ?? T, ne = K(() => Oi.map((e) => ({
 		value: e.value,
 		label: f?.[e.value] ?? e.label
-	})), [f]), I = K(() => Ai(e, r, F), [
+	})), [f]), L = K(() => Ai(e, r, I), [
 		e,
 		r,
-		F
-	]), L = K(() => Bi(I.records, I.edges, P, N ?? void 0), [
-		I,
-		P,
-		N
-	]), R = K(() => new Set(i), [i]), z = e.filter((e) => R.has(ki(e))), B = W((e) => {
+		I
+	]), re = K(() => qi(L.records, L.edges, F, P ?? void 0), [
+		L,
+		F,
+		P
+	]), R = K(() => new Set(i), [i]), z = e.filter((e) => R.has(ki(e))), ie = W((e) => {
 		a(R.has(e) ? i.filter((t) => t !== e) : [...i, e]);
 	}, [
 		a,
 		R,
 		i
-	]), V = I.records.map((e) => {
+	]), B = L.records.map((e) => {
 		let t = ki(e);
 		return {
 			id: t,
 			type: "record",
-			position: L.get(t),
+			position: re.get(t),
 			initialWidth: 140,
 			initialHeight: 104,
 			draggable: !1,
@@ -6500,16 +6564,16 @@ function Sa({ records: e, edges: r, selectedKeys: i, onSelectionChange: a, onAsk
 			data: {
 				record: e,
 				selected: R.has(t),
-				onToggle: () => B(t)
+				onToggle: () => ie(t)
 			}
 		};
-	}), ae = /* @__PURE__ */ new Set([...x ?? [], ...i]), oe = !ae.size && I.edges.length <= ma, se = (e) => {
-		let t = L.get(e);
+	}), oe = /* @__PURE__ */ new Set([...x ?? [], ...i]), H = !oe.size && L.edges.length <= Sa, se = (e) => {
+		let t = re.get(e);
 		return {
 			x: t.x + 70,
-			y: t.y + ua
+			y: t.y + va
 		};
-	}, U = I.edges.filter((e) => e.source !== e.target).map((e) => ({
+	}, U = L.edges.filter((e) => e.source !== e.target).map((e) => ({
 		id: e.id,
 		type: "record",
 		source: e.source,
@@ -6520,28 +6584,28 @@ function Sa({ records: e, edges: r, selectedKeys: i, onSelectionChange: a, onAsk
 			from: se(e.source),
 			to: se(e.target),
 			label: e.label,
-			related: ca.test(e.label),
-			labelShown: oe || ae.has(e.source) || ae.has(e.target)
+			related: ga.test(e.label),
+			labelShown: H || oe.has(e.source) || oe.has(e.target)
 		}
-	})), ce = `${P}:${N ? `${N.width}x${N.height}` : ""}:${I.records.map(ki).join("|")}:${I.edges.map((e) => e.id).join("|")}`, le = K(() => Di(I.records.map(ki), I.edges, x), [I, x]), ue = K(() => {
+	})), ce = `${F}:${P ? `${P.width}x${P.height}` : ""}:${L.records.map(ki).join("|")}:${L.edges.map((e) => e.id).join("|")}`, le = K(() => Di(L.records.map(ki), L.edges, x), [L, x]), ue = K(() => {
 		let e = new Set(le);
 		return (x ?? []).filter((t) => e.has(t));
-	}, [le, x]), de = I.records.length > 0 && (U.length > 0 || b);
+	}, [le, x]), de = L.records.length > 0 && (U.length > 0 || b);
 	G(() => {
-		let e = ee.current;
+		let e = N.current;
 		if (!e || typeof ResizeObserver > "u") return;
 		let t = new ResizeObserver((e) => {
 			let t = e[0]?.contentRect;
 			if (!t || t.width <= 0 || t.height <= 0) return;
 			let n = {
-				width: Math.round(t.width / ha) * ha,
-				height: Math.round(t.height / ha) * ha
+				width: Math.round(t.width / Ca) * Ca,
+				height: Math.round(t.height / Ca) * Ca
 			};
-			ne((e) => e && e.width === n.width && e.height === n.height ? e : n);
+			te((e) => e && e.width === n.width && e.height === n.height ? e : n);
 		});
 		return t.observe(e), () => t.disconnect();
 	}, [de]);
-	let fe = re.filter((e) => I.records.some((t) => t.type === e.value));
+	let fe = ne.filter((e) => L.records.some((t) => t.type === e.value));
 	G(() => {
 		if (typeof document > "u") return;
 		let e = () => O(document.fullscreenElement === M.current);
@@ -6569,7 +6633,7 @@ function Sa({ records: e, edges: r, selectedKeys: i, onSelectionChange: a, onAsk
 					/* @__PURE__ */ X(k, {
 						size: "sm",
 						"aria-label": "Connection layout",
-						value: P,
+						value: F,
 						options: [
 							{
 								value: "force",
@@ -6588,27 +6652,27 @@ function Sa({ records: e, edges: r, selectedKeys: i, onSelectionChange: a, onAsk
 							w(e), l?.(e);
 						}
 					}),
-					/* @__PURE__ */ X(H, {
+					/* @__PURE__ */ X(V, {
 						"aria-label": "Connection record type",
 						size: "sm",
 						className: "w-auto min-w-28",
-						value: F,
+						value: I,
 						options: [{
 							value: "all",
 							label: "All types"
-						}, ...re],
+						}, ...ne],
 						onChange: (e) => {
 							let t = e.target.value;
 							E(t), d?.(t);
 						}
 					}),
-					/* @__PURE__ */ Z(ie, {
+					/* @__PURE__ */ Z(ae, {
 						className: "text-xs text-text-secondary",
 						"data-testid": `${m}-counts`,
 						children: [
-							I.records.length,
+							L.records.length,
 							" records · ",
-							I.edges.length,
+							L.edges.length,
 							" connections"
 						]
 					}),
@@ -6617,7 +6681,7 @@ function Sa({ records: e, edges: r, selectedKeys: i, onSelectionChange: a, onAsk
 						align: "center",
 						className: "ml-auto",
 						children: [
-							/* @__PURE__ */ Z(ie, {
+							/* @__PURE__ */ Z(ae, {
 								className: "text-xs text-primary",
 								"aria-label": `${i.length} selected`,
 								children: [i.length, " selected"]
@@ -6645,23 +6709,23 @@ function Sa({ records: e, edges: r, selectedKeys: i, onSelectionChange: a, onAsk
 					})
 				]
 			}),
-			A && /* @__PURE__ */ X(ie, {
+			A && /* @__PURE__ */ X(ae, {
 				role: "status",
 				className: "px-2 py-1 text-xs text-text-secondary",
 				children: "Full screen is unavailable in this browser."
 			}),
-			I.records.length ? !U.length && !b ? /* @__PURE__ */ X(v, {
+			L.records.length ? !U.length && !b ? /* @__PURE__ */ X(v, {
 				title: y,
 				testId: `${m}-unconnected`
 			}) : /* @__PURE__ */ X(h, {
-				ref: ee,
+				ref: N,
 				gap: "none",
 				className: "relative min-h-40 flex-1 [--xy-background-color:var(--color-surface)]",
 				children: /* @__PURE__ */ X(Te, { children: /* @__PURE__ */ Z(we, {
-					nodes: V,
+					nodes: B,
 					edges: U,
-					nodeTypes: va,
-					edgeTypes: ya,
+					nodeTypes: Ea,
+					edgeTypes: Da,
 					minZoom: .15,
 					maxZoom: 2,
 					nodesDraggable: !1,
@@ -6676,13 +6740,13 @@ function Sa({ records: e, edges: r, selectedKeys: i, onSelectionChange: a, onAsk
 						color: "var(--color-border)",
 						gap: 22,
 						size: 1
-					}), /* @__PURE__ */ X(xa, {
+					}), /* @__PURE__ */ X(ka, {
 						graphKey: ce,
-						positions: L,
+						positions: re,
 						focusKeys: ue,
 						fitKeys: le,
-						canvasRef: ee,
-						apiRef: te,
+						canvasRef: N,
+						apiRef: ee,
 						legend: fe,
 						fullscreen: D,
 						onFullscreen: () => void pe(),
@@ -6699,18 +6763,18 @@ function Sa({ records: e, edges: r, selectedKeys: i, onSelectionChange: a, onAsk
 }
 //#endregion
 //#region src/components/graph/org/graphInsights.ts
-var Ca = {
+var ja = {
 	collaborates: "collaborates",
 	mentors: "mentors",
 	reports_to: "reports to",
 	expert_in_common: "shared expertise"
-}, wa = 2, Ta = 2, Ea = {
+}, Ma = 2, Na = 2, Pa = {
 	personMatches: [],
 	skillMatches: []
 };
-function Da(e, t) {
+function Fa(e, t) {
 	let n = t.trim().toLowerCase();
-	if (n.length < Ta) return Ea;
+	if (n.length < Na) return Pa;
 	let r = e.filter((e) => e.name.toLowerCase().includes(n) || e.title.toLowerCase().includes(n) || e.department.toLowerCase().includes(n)).slice(0, 6), i = /* @__PURE__ */ new Map();
 	for (let t of e) for (let e of t.skills) {
 		if (!e.toLowerCase().includes(n)) continue;
@@ -6725,7 +6789,7 @@ function Da(e, t) {
 		})).sort((e, t) => t.personIds.length - e.personIds.length).slice(0, 4)
 	};
 }
-function Oa(e) {
+function Ia(e) {
 	let t = /* @__PURE__ */ new Map();
 	for (let n of e) {
 		let e = t.get(n.department);
@@ -6733,7 +6797,7 @@ function Oa(e) {
 	}
 	return t;
 }
-function ka(e, t) {
+function La(e, t) {
 	let n = e.filter((e) => e.department === t), r = /* @__PURE__ */ new Map();
 	for (let e of n) for (let t of e.skills) r.set(t, (r.get(t) ?? 0) + 1);
 	let i = [...r.entries()].sort((e, t) => t[1] - e[1]).slice(0, 6), a = /* @__PURE__ */ new Map();
@@ -6751,13 +6815,13 @@ function ka(e, t) {
 		})).sort((e, t) => e.holderCount - t.holderCount).slice(0, 8)
 	};
 }
-function Aa(e) {
+function Ra(e) {
 	return e.split(" ")[0] ?? e;
 }
-function ja(e) {
+function za(e) {
 	return e ? e.split(",").map((e) => e.trim()).filter(Boolean) : [];
 }
-function Ma(e) {
+function Ba(e) {
 	let t = /* @__PURE__ */ new Map();
 	for (let n of e) for (let e of n.skills) {
 		let r = t.get(e);
@@ -6769,52 +6833,52 @@ function Ma(e) {
 		holderCount: t.length
 	}))).sort((e, t) => e.holderCount - t.holderCount || e.skill.localeCompare(t.skill)).slice(0, 16) };
 }
-var Na = "bus_factor", Pa = "/iq/work/findings";
-function Fa(e, t, n = Pa) {
+var Va = "bus_factor", Ha = "/iq/work/findings";
+function Ua(e, t, n = Ha) {
 	return `${n}?${(t ? new URLSearchParams({
-		sweep: Na,
+		sweep: Va,
 		finding: t
 	}) : new URLSearchParams({
-		sweep: Na,
+		sweep: Va,
 		q: e
 	})).toString()}`;
 }
-function Ia(e) {
+function Wa(e) {
 	let t = e.indexOf(":");
 	return t <= 0 || !e.slice(t + 1).trim().toLowerCase().includes("holder") ? null : e.slice(0, t).trim().toLowerCase();
 }
-function La(e) {
+function Ga(e) {
 	let t = /* @__PURE__ */ new Map();
 	for (let n of e) {
 		if (n.sweep !== "bus_factor" || n.entityType !== "skill") continue;
-		let e = Ia(n.title);
+		let e = Wa(n.title);
 		!e || t.has(e) || t.set(e, n);
 	}
 	return t;
 }
-function Ra(e, t) {
+function Ka(e, t) {
 	return e.get(t.trim().toLowerCase()) ?? null;
 }
-var za = 12, Ba = 18;
-function Va(e) {
+var qa = 12, Ja = 18;
+function Ya(e) {
 	return Number.isFinite(e) ? Math.max(0, Math.min(1, e)) : 0;
 }
-function Ha(e, t, n, r) {
-	return za + (e ? Va(t) : r > 0 ? Va(n / r) : 0) * Ba;
+function Xa(e, t, n, r) {
+	return qa + (e ? Ya(t) : r > 0 ? Ya(n / r) : 0) * Ja;
 }
-function Ua(e) {
+function Za(e) {
 	let t = /* @__PURE__ */ new Map(), n = (e) => t.set(e, (t.get(e) ?? 0) + 1);
 	for (let t of e) n(t.source), t.target !== t.source && n(t.target);
 	return t;
 }
-function Wa(e) {
+function Qa(e) {
 	let t = 0;
 	for (let n of e.values()) n > t && (t = n);
 	return t;
 }
 //#endregion
 //#region src/components/graph/org/presence.ts
-var Ga = {
+var $a = {
 	office: {
 		fill: i("success"),
 		stroke: "var(--color-surface)",
@@ -6850,15 +6914,15 @@ var Ga = {
 		stroke: "var(--color-border)",
 		label: "No check-in"
 	}
-}, Ka = [
+}, eo = [
 	"pto",
 	"vacation",
 	"sick"
 ];
-function qa(e, t) {
-	return t ? t === "office" ? e === "office" : t === "remote" ? e === "wfh" || e === "travel" : Ka.includes(e) : !0;
+function to(e, t) {
+	return t ? t === "office" ? e === "office" : t === "remote" ? e === "wfh" || e === "travel" : eo.includes(e) : !0;
 }
-var Ja = {
+var no = {
 	collaborates: {
 		color: "var(--color-text-tertiary)",
 		label: "Collaborates"
@@ -6879,8 +6943,8 @@ var Ja = {
 };
 //#endregion
 //#region src/components/graph/org/OrgGraphNode.tsx
-function Ya({ node: e, departments: t, isSelected: n, isHighlighted: r, onSelect: i, onHover: a, presenceFilter: o, showInfluence: s, degree: c, maxDegree: l, showLabel: u = !0 }) {
-	let d = t.find((t) => t.name === e.department)?.color ?? "var(--color-text-tertiary)", f = Ha(s, e.influenceScore, c, l), p = e.name.split(" ")[0] ?? e.name, m = e.presence ?? "unknown", h = Ga[m], g = r || n ? 1 : .3, _ = qa(m, o) ? g : .15, v = Math.max(2, f * .14), y = Math.PI * .25, b = (f - v * .4) * Math.cos(y), x = (f - v * .4) * Math.sin(y);
+function ro({ node: e, departments: t, isSelected: n, isHighlighted: r, onSelect: i, onHover: a, presenceFilter: o, showInfluence: s, degree: c, maxDegree: l, showLabel: u = !0 }) {
+	let d = t.find((t) => t.name === e.department)?.color ?? "var(--color-text-tertiary)", f = Xa(s, e.influenceScore, c, l), p = e.name.split(" ")[0] ?? e.name, m = e.presence ?? "unknown", h = $a[m], g = r || n ? 1 : .3, _ = to(m, o) ? g : .15, v = Math.max(2, f * .14), y = Math.PI * .25, b = (f - v * .4) * Math.cos(y), x = (f - v * .4) * Math.sin(y);
 	function S(t) {
 		(t.key === "Enter" || t.key === " " || t.key === "Spacebar") && (t.preventDefault(), i(e.id));
 	}
@@ -6903,7 +6967,7 @@ function Ya({ node: e, departments: t, isSelected: n, isHighlighted: r, onSelect
 			m === "wfh" && /* @__PURE__ */ X("circle", {
 				r: f + 3,
 				fill: "none",
-				stroke: Ga.wfh.fill,
+				stroke: $a.wfh.fill,
 				strokeWidth: 1.5,
 				strokeDasharray: "4 3",
 				opacity: .5
@@ -6969,8 +7033,8 @@ function Ya({ node: e, departments: t, isSelected: n, isHighlighted: r, onSelect
 }
 //#endregion
 //#region src/components/graph/org/OrgGraphEdge.tsx
-function Xa({ source: e, target: t, type: n, strength: r, isHighlighted: i, targetRadius: a, arrowMarkerId: o }) {
-	let s = Ja[n], c = s?.color ?? "var(--color-border-emphasis)", l = i ? .8 : .2, u = n === "reports_to" ? 1.5 : 1 + r * 1.5, d = t.x ?? 0, f = t.y ?? 0;
+function io({ source: e, target: t, type: n, strength: r, isHighlighted: i, targetRadius: a, arrowMarkerId: o }) {
+	let s = no[n], c = s?.color ?? "var(--color-border-emphasis)", l = i ? .8 : .2, u = n === "reports_to" ? 1.5 : 1 + r * 1.5, d = t.x ?? 0, f = t.y ?? 0;
 	if (n === "reports_to") {
 		let n = (a ?? 12 + (t.influenceScore ?? 0) * 18) + 15 + 2, r = (t.x ?? 0) - (e.x ?? 0), i = (t.y ?? 0) - (e.y ?? 0), o = Math.sqrt(r * r + i * i);
 		o > n && (d = (t.x ?? 0) - r / o * n, f = (t.y ?? 0) - i / o * n);
@@ -6991,9 +7055,9 @@ function Xa({ source: e, target: t, type: n, strength: r, isHighlighted: i, targ
 }
 //#endregion
 //#region src/components/graph/org/OrgGraphTooltip.tsx
-var Za = 220;
-function Qa({ node: e, departments: t, x: n, y: r, containerWidth: i, showInfluence: a }) {
-	let c = t.find((t) => t.name === e.department), l = Math.max(8, Math.min(n + 20, i - Za - 20)), u = Math.max(r - 40, 10);
+var ao = 220;
+function oo({ node: e, departments: t, x: n, y: r, containerWidth: i, showInfluence: a }) {
+	let c = t.find((t) => t.name === e.department), l = Math.max(8, Math.min(n + 20, i - ao - 20)), u = Math.max(r - 40, 10);
 	return /* @__PURE__ */ Z(o, {
 		role: "tooltip",
 		className: "pointer-events-none absolute z-[100] w-[220px] px-4 py-3 shadow-md",
@@ -7057,15 +7121,15 @@ function Qa({ node: e, departments: t, x: n, y: r, containerWidth: i, showInflue
 }
 //#endregion
 //#region src/components/graph/org/OrgGraphLegend.tsx
-var $a = [
+var so = [
 	"office",
 	"wfh",
 	"travel",
 	"pto",
 	"vacation",
 	"sick"
-], eo = 200;
-function to({ departments: e, filter: r, onFilter: i, presenceFilter: a, pinned: s = !1, className: c, "data-testid": l = "org-graph-legend" }) {
+], co = 200;
+function lo({ departments: e, filter: r, onFilter: i, presenceFilter: a, pinned: s = !1, className: c, "data-testid": l = "org-graph-legend" }) {
 	let [u, d] = J(!1);
 	return /* @__PURE__ */ Z(o, {
 		onMouseEnter: () => d(!0),
@@ -7107,7 +7171,7 @@ function to({ departments: e, filter: r, onFilter: i, presenceFilter: a, pinned:
 					gap: "none",
 					className: "mb-1.5 text-xs font-semibold text-text-primary",
 					children: "Relationships"
-				}), Object.entries(Ja).map(([e, t]) => /* @__PURE__ */ Z(g, {
+				}), Object.entries(no).map(([e, t]) => /* @__PURE__ */ Z(g, {
 					gap: "xs",
 					wrap: !1,
 					className: "mb-[3px]",
@@ -7146,14 +7210,14 @@ function to({ departments: e, filter: r, onFilter: i, presenceFilter: a, pinned:
 						className: "mb-[5px] text-xs font-semibold text-text-primary",
 						children: "Presence today"
 					}),
-					$a.map((e) => /* @__PURE__ */ Z(g, {
+					so.map((e) => /* @__PURE__ */ Z(g, {
 						gap: "xs",
 						wrap: !1,
 						className: "mb-[3px]",
 						children: [/* @__PURE__ */ X(O, {
-							color: Ga[e].fill,
+							color: $a[e].fill,
 							size: "xs"
-						}), /* @__PURE__ */ X("span", { children: Ga[e].label })]
+						}), /* @__PURE__ */ X("span", { children: $a[e].label })]
 					}, e)),
 					/* @__PURE__ */ Z(g, {
 						gap: "xs",
@@ -7174,7 +7238,7 @@ function to({ departments: e, filter: r, onFilter: i, presenceFilter: a, pinned:
 }
 //#endregion
 //#region src/components/graph/org/focusOrgGraph.ts
-function no(e, t) {
+function uo(e, t) {
 	let n = [...e].sort((e, t) => t.strength - e.strength), r = /* @__PURE__ */ new Map(), i = [];
 	for (let e of n) {
 		let n = r.get(e.source) ?? 0, a = r.get(e.target) ?? 0;
@@ -7182,9 +7246,9 @@ function no(e, t) {
 	}
 	return i;
 }
-function ro(e, t, n, { hops: r = 1, minStrength: i = 0, topK: a } = {}) {
+function fo(e, t, n, { hops: r = 1, minStrength: i = 0, topK: a } = {}) {
 	let o = new Set(e.map((e) => e.id)), s = t.filter((e) => e.strength >= i && o.has(e.source) && o.has(e.target));
-	a !== void 0 && (s = no(s, a));
+	a !== void 0 && (s = uo(s, a));
 	let c = [...n ?? []].filter((e) => o.has(e));
 	if (c.length === 0) {
 		let n = new Set(s);
@@ -7207,9 +7271,9 @@ function ro(e, t, n, { hops: r = 1, minStrength: i = 0, topK: a } = {}) {
 }
 //#endregion
 //#region src/components/graph/org/OrgGraph.tsx
-var io = .3, ao = 3, oo = 1.25, so = 32, co = 40;
-function lo(e, t) {
-	let n = Ua(e);
+var po = .3, mo = 3, ho = 1.25, go = 32, _o = 40;
+function vo(e, t) {
+	let n = Za(e);
 	if (t.size === 0) return n;
 	let r = 0;
 	return n.forEach((e, n) => {
@@ -7218,15 +7282,15 @@ function lo(e, t) {
 		n.has(e) && n.set(e, Math.min(n.get(e) ?? 0, r));
 	}), n;
 }
-function uo({ people: e, relationships: n, departments: r, onPersonSelect: i, multiSelectIds: a, onToggleMultiSelect: o, spotlightIds: s, layout: c, presenceFilter: l, showInfluence: u = !1, legend: d = !0, controls: f = !0, focusIds: p, focusHops: m = 1, fitInset: g, minFitZoom: _ = Qr, ref: v, className: y, "aria-label": b = "Org graph", "data-testid": x = "org-graph" }) {
+function yo({ people: e, relationships: n, departments: r, onPersonSelect: i, multiSelectIds: a, onToggleMultiSelect: o, spotlightIds: s, layout: c, presenceFilter: l, showInfluence: u = !1, legend: d = !0, controls: f = !0, focusIds: p, focusHops: m = 1, fitInset: g, minFitZoom: _ = Qr, ref: v, className: y, "aria-label": b = "Org graph", "data-testid": x = "org-graph" }) {
 	let S = q(null), C = `org-arrow-${_e().replace(/:/g, "")}`, [w, T] = J({
 		width: 800,
 		height: 600
-	}), [E, D] = J(null), [O, k] = J(null), [A, j] = J(null), [M, ee] = J({
+	}), [E, D] = J(null), [O, k] = J(null), [A, j] = J(null), [M, N] = J({
 		x: 0,
 		y: 0,
 		scale: 1
-	}), [te, N] = J(!1), ne = q({
+	}), [ee, P] = J(!1), te = q({
 		x: 0,
 		y: 0
 	});
@@ -7242,30 +7306,30 @@ function uo({ people: e, relationships: n, departments: r, onPersonSelect: i, mu
 		});
 		return t.observe(e), () => t.disconnect();
 	}, []);
-	let P = p ? [...p].sort().join("\0") : "", F = K(() => P ? ro(e, n, P.split("\0"), { hops: m }) : {
+	let F = p ? [...p].sort().join("\0") : "", I = K(() => F ? fo(e, n, F.split("\0"), { hops: m }) : {
 		people: e,
 		relationships: n
 	}, [
 		e,
 		n,
-		P,
-		m
-	]), re = K(() => new Set(P ? P.split("\0").filter((e) => F.people.some((t) => t.id === e)) : []), [P, F]), I = K(() => A ? F.people.filter((e) => e.department === A) : F.people, [F, A]), L = K(() => {
-		if (!A) return F.relationships;
-		let e = new Set(I.map((e) => e.id));
-		return F.relationships.filter((t) => e.has(t.source) && e.has(t.target));
-	}, [
 		F,
-		I,
-		A
-	]), R = K(() => {
-		let e = new Set(I.map((e) => e.id));
-		return lo(L.filter((t) => e.has(t.source) && e.has(t.target)), re);
+		m
+	]), ne = K(() => new Set(F ? F.split("\0").filter((e) => I.people.some((t) => t.id === e)) : []), [F, I]), L = K(() => A ? I.people.filter((e) => e.department === A) : I.people, [I, A]), re = K(() => {
+		if (!A) return I.relationships;
+		let e = new Set(L.map((e) => e.id));
+		return I.relationships.filter((t) => e.has(t.source) && e.has(t.target));
 	}, [
 		I,
 		L,
-		re
-	]), z = K(() => Wa(R), [R]), B = K(() => ({
+		A
+	]), R = K(() => {
+		let e = new Set(L.map((e) => e.id));
+		return vo(re.filter((t) => e.has(t.source) && e.has(t.target)), ne);
+	}, [
+		L,
+		re,
+		ne
+	]), z = K(() => Qa(R), [R]), ie = K(() => ({
 		left: g?.left ?? (d ? 200 : 0),
 		right: g?.right ?? 0,
 		top: g?.top ?? 0,
@@ -7276,68 +7340,68 @@ function uo({ people: e, relationships: n, departments: r, onPersonSelect: i, mu
 		g?.top,
 		g?.bottom,
 		d
-	]), V = K(() => f ? ti(B, w, ei) : B, [
-		B,
+	]), B = K(() => f ? ti(ie, w, ei) : ie, [
+		ie,
 		f,
 		w
-	]), ie = K(() => oi(w, B, f ? ei : null), [
+	]), ae = K(() => oi(w, ie, f ? ei : null), [
 		w,
-		B,
+		ie,
 		f
-	]), H = Math.max($r, _), ae = K(() => ({
-		width: Math.max(160, (w.width - V.left - V.right - 64) / H),
-		height: Math.max(120, (w.height - V.top - V.bottom - 64) / H)
+	]), V = Math.max($r, _), oe = K(() => ({
+		width: Math.max(160, (w.width - B.left - B.right - 64) / V),
+		height: Math.max(120, (w.height - B.top - B.bottom - 64) / V)
 	}), [
 		w,
-		V,
-		H
-	]), { nodes: oe, links: se, isSettled: U } = Zr({
-		people: I,
-		relationships: L,
+		B,
+		V
+	]), { nodes: H, links: se, isSettled: U } = Zr({
+		people: L,
+		relationships: re,
 		departments: r,
-		width: ae.width,
-		height: ae.height,
+		width: oe.width,
+		height: oe.height,
 		layout: c,
-		nodeRadiusOf: (e) => Ha(u, e.influenceScore, R.get(e.id) ?? 0, z)
-	}), ce = q(!0), le = q(!1), ue = K(() => I.map((e) => e.id).sort().join("\0"), [I]), de = K(() => oe.map((e) => e.id).sort().join("\0"), [oe]), fe = q(ue);
+		nodeRadiusOf: (e) => Xa(u, e.influenceScore, R.get(e.id) ?? 0, z)
+	}), ce = q(!0), le = q(!1), ue = K(() => L.map((e) => e.id).sort().join("\0"), [L]), de = K(() => H.map((e) => e.id).sort().join("\0"), [H]), fe = q(ue);
 	G(() => {
-		fe.current !== ue && (fe.current = ue, ce.current = !0, le.current = !1, ee({
+		fe.current !== ue && (fe.current = ue, ce.current = !0, le.current = !1, N({
 			x: 0,
 			y: 0,
 			scale: 1
 		}));
 	}, [ue]);
 	let pe = W((e) => {
-		let t = new Map(oe.map((e) => [e.id, e]));
+		let t = new Map(H.map((e) => [e.id, e]));
 		return di({
-			nodes: oe,
-			radiusOf: (e) => Ha(u, t.get(e)?.influenceScore ?? 0, R.get(e) ?? 0, z),
-			focus: re,
+			nodes: H,
+			radiusOf: (e) => Xa(u, t.get(e)?.influenceScore ?? 0, R.get(e) ?? 0, z),
+			focus: ne,
 			size: w,
-			inset: V,
-			overlays: ie,
+			inset: B,
+			overlays: ae,
 			layout: c ?? "force",
 			mode: e ? "all" : "auto",
-			floor: H,
-			padding: so,
-			maxZoom: oo
+			floor: V,
+			padding: go,
+			maxZoom: ho
 		});
 	}, [
-		oe,
+		H,
 		u,
 		R,
 		z,
-		re,
+		ne,
 		w,
-		V,
-		ie,
+		B,
+		ae,
 		c,
-		H
+		V
 	]);
 	G(() => {
 		if (!ce.current || !U || de !== ue) return;
 		let e = pe(le.current);
-		e && ee((t) => Math.abs(t.x - e.x) < .5 && Math.abs(t.y - e.y) < .5 && Math.abs(t.scale - e.scale) < .001 ? t : e);
+		e && N((t) => Math.abs(t.x - e.x) < .5 && Math.abs(t.y - e.y) < .5 && Math.abs(t.scale - e.scale) < .001 ? t : e);
 	}, [
 		pe,
 		U,
@@ -7346,7 +7410,7 @@ function uo({ people: e, relationships: n, departments: r, onPersonSelect: i, mu
 	]);
 	let me = W(() => {
 		let e = pe(!0);
-		e && (ce.current = !0, le.current = !0, ee(e));
+		e && (ce.current = !0, le.current = !0, N(e));
 	}, [pe]);
 	ve(v, () => ({ fitAll: me }), [me]);
 	let he = W((e) => {
@@ -7355,7 +7419,7 @@ function uo({ people: e, relationships: n, departments: r, onPersonSelect: i, mu
 		return se.forEach((n) => {
 			n.source.id === e && t.add(n.target.id), n.target.id === e && t.add(n.source.id);
 		}), t;
-	}, [se]), ge = O ?? E, Y = re.size > 0 ? /* @__PURE__ */ new Set([...s ?? [], ...re]) : s, ye = !!Y && Y.size > 0, be = ye ? /* @__PURE__ */ new Set([...Y ?? [], ...Array.from(he(ge))]) : he(ge), xe = W((t) => {
+	}, [se]), ge = O ?? E, Y = ne.size > 0 ? /* @__PURE__ */ new Set([...s ?? [], ...ne]) : s, ye = !!Y && Y.size > 0, be = ye ? /* @__PURE__ */ new Set([...Y ?? [], ...Array.from(he(ge))]) : he(ge), xe = W((t) => {
 		if (o) {
 			o(t);
 			return;
@@ -7372,19 +7436,19 @@ function uo({ people: e, relationships: n, departments: r, onPersonSelect: i, mu
 	]), Se = W((e) => {
 		ce.current = !1;
 		let t = e.deltaY > 0 ? .9 : 1.1;
-		ee((e) => fo(e, Math.max(io, Math.min(ao, e.scale * t)), w));
+		N((e) => bo(e, Math.max(po, Math.min(mo, e.scale * t)), w));
 	}, [w]), Q = W((e) => {
-		(e.target === e.currentTarget || e.target.tagName === "svg") && (N(!0), ce.current = !1, ne.current = {
+		(e.target === e.currentTarget || e.target.tagName === "svg") && (P(!0), ce.current = !1, te.current = {
 			x: e.clientX - M.x,
 			y: e.clientY - M.y
 		});
 	}, [M]), Ce = W((e) => {
-		te && ee((t) => ({
+		ee && N((t) => ({
 			...t,
-			x: e.clientX - ne.current.x,
-			y: e.clientY - ne.current.y
+			x: e.clientX - te.current.x,
+			y: e.clientY - te.current.y
 		}));
-	}, [te]), $ = W(() => N(!1), []), we = O ? oe.find((e) => e.id === O) : null, Te = (e, t) => Ha(u, t, R.get(e) ?? 0, z);
+	}, [ee]), $ = W(() => P(!1), []), we = O ? H.find((e) => e.id === O) : null, Te = (e, t) => Xa(u, t, R.get(e) ?? 0, z);
 	return /* @__PURE__ */ Z(h, {
 		ref: S,
 		gap: "none",
@@ -7401,7 +7465,7 @@ function uo({ people: e, relationships: n, departments: r, onPersonSelect: i, mu
 				onMouseMove: Ce,
 				onMouseUp: $,
 				onMouseLeave: $,
-				className: te ? "cursor-grabbing" : "cursor-grab",
+				className: ee ? "cursor-grabbing" : "cursor-grab",
 				children: [/* @__PURE__ */ X("defs", { children: /* @__PURE__ */ X("marker", {
 					id: C,
 					markerWidth: "14",
@@ -7416,7 +7480,7 @@ function uo({ people: e, relationships: n, departments: r, onPersonSelect: i, mu
 					})
 				}) }), /* @__PURE__ */ Z("g", {
 					transform: `translate(${M.x}, ${M.y}) scale(${M.scale})`,
-					children: [se.map((e) => /* @__PURE__ */ X(Xa, {
+					children: [se.map((e) => /* @__PURE__ */ X(io, {
 						source: e.source,
 						target: e.target,
 						type: e.type,
@@ -7424,9 +7488,9 @@ function uo({ people: e, relationships: n, departments: r, onPersonSelect: i, mu
 						targetRadius: Te(e.target.id, e.target.influenceScore),
 						arrowMarkerId: C,
 						isHighlighted: !ge || be.has(e.source.id) && be.has(e.target.id)
-					}, `${e.source.id}-${e.target.id}-${e.type}`)), oe.map((e) => {
-						let t = a ? a.has(e.id) : E === e.id, n = ye ? be.has(e.id) : !ge || be.has(e.id), i = n || t || oe.length <= co;
-						return /* @__PURE__ */ X(Ya, {
+					}, `${e.source.id}-${e.target.id}-${e.type}`)), H.map((e) => {
+						let t = a ? a.has(e.id) : E === e.id, n = ye ? be.has(e.id) : !ge || be.has(e.id), i = n || t || H.length <= _o;
+						return /* @__PURE__ */ X(ro, {
 							node: e,
 							departments: r,
 							isSelected: t,
@@ -7442,13 +7506,13 @@ function uo({ people: e, relationships: n, departments: r, onPersonSelect: i, mu
 					})]
 				})]
 			}),
-			d && /* @__PURE__ */ X(to, {
+			d && /* @__PURE__ */ X(lo, {
 				departments: r,
 				filter: A,
 				onFilter: j,
 				presenceFilter: l
 			}),
-			we && /* @__PURE__ */ X(Qa, {
+			we && /* @__PURE__ */ X(oo, {
 				node: we,
 				departments: r,
 				x: we.x * M.scale + M.x,
@@ -7459,13 +7523,13 @@ function uo({ people: e, relationships: n, departments: r, onPersonSelect: i, mu
 			f && /* @__PURE__ */ X(pt, {
 				className: "absolute bottom-3 right-3",
 				zoom: M.scale,
-				minZoom: io,
-				maxZoom: ao,
+				minZoom: po,
+				maxZoom: mo,
 				onZoomIn: () => {
-					ce.current = !1, ee((e) => fo(e, Math.min(ao, e.scale * 1.2), w));
+					ce.current = !1, N((e) => bo(e, Math.min(mo, e.scale * 1.2), w));
 				},
 				onZoomOut: () => {
-					ce.current = !1, ee((e) => fo(e, Math.max(io, e.scale * .8), w));
+					ce.current = !1, N((e) => bo(e, Math.max(po, e.scale * .8), w));
 				},
 				onFit: me,
 				"data-testid": `${x}-zoom`
@@ -7473,7 +7537,7 @@ function uo({ people: e, relationships: n, departments: r, onPersonSelect: i, mu
 		]
 	});
 }
-function fo(e, t, n) {
+function bo(e, t, n) {
 	let r = n.width / 2, i = n.height / 2, a = t / e.scale;
 	return {
 		x: r - (r - e.x) * a,
@@ -7483,7 +7547,7 @@ function fo(e, t, n) {
 }
 //#endregion
 //#region src/components/graph/org/graphOverlay.tsx
-function po({ children: e, "aria-label": t, "data-testid": n }) {
+function xo({ children: e, "aria-label": t, "data-testid": n }) {
 	return /* @__PURE__ */ X(g, {
 		gap: "md",
 		align: "center",
@@ -7495,7 +7559,7 @@ function po({ children: e, "aria-label": t, "data-testid": n }) {
 		children: e
 	});
 }
-function mo({ children: e, tone: n = "default", className: r }) {
+function So({ children: e, tone: n = "default", className: r }) {
 	return /* @__PURE__ */ X(R, {
 		className: t("whitespace-nowrap", n === "warning" && "text-warning", r),
 		children: e
@@ -7503,7 +7567,7 @@ function mo({ children: e, tone: n = "default", className: r }) {
 }
 //#endregion
 //#region src/components/graph/org/GraphSearchBox.tsx
-function ho({ people: e, onPickPerson: n, onPickSkill: r, placeholder: i = "Find a person or skill…", className: a }) {
+function Co({ people: e, onPickPerson: n, onPickSkill: r, placeholder: i = "Find a person or skill…", className: a }) {
 	let [o, s] = J(""), [c, l] = J(!1), [u, d] = J(0), f = q(null), p = `graph-search-${_e().replace(/:/g, "")}`;
 	G(() => {
 		if (!c) return;
@@ -7512,7 +7576,7 @@ function ho({ people: e, onPickPerson: n, onPickSkill: r, placeholder: i = "Find
 		};
 		return document.addEventListener("mousedown", e), () => document.removeEventListener("mousedown", e);
 	}, [c]);
-	let { personMatches: m, skillMatches: g } = K(() => Da(e, o), [o, e]), y = m.length + g.length, b = o.trim().length > 0;
+	let { personMatches: m, skillMatches: g } = K(() => Fa(e, o), [o, e]), y = m.length + g.length, b = o.trim().length > 0;
 	function x(e) {
 		if (e < m.length) {
 			let t = m[e];
@@ -7558,7 +7622,7 @@ function ho({ people: e, onPickPerson: n, onPickSkill: r, placeholder: i = "Find
 				"aria-label": "Matches",
 				className: "absolute left-0 top-[calc(100%+6px)] z-[120] max-h-[340px] w-[290px] overflow-y-auto rounded-lg border border-border bg-surface py-1 shadow-md",
 				children: [
-					m.map((e, t) => /* @__PURE__ */ X(F, {
+					m.map((e, t) => /* @__PURE__ */ X(I, {
 						id: `${p}-${t}`,
 						active: u === t,
 						onHighlight: () => d(t),
@@ -7570,11 +7634,11 @@ function ho({ people: e, onPickPerson: n, onPickSkill: r, placeholder: i = "Find
 						gap: "none",
 						className: "px-3 pb-1 pt-1.5",
 						role: "presentation",
-						children: /* @__PURE__ */ X(mo, { children: "Skills" })
+						children: /* @__PURE__ */ X(So, { children: "Skills" })
 					}),
 					g.map((e, t) => {
 						let n = m.length + t;
-						return /* @__PURE__ */ X(F, {
+						return /* @__PURE__ */ X(I, {
 							id: `${p}-${n}`,
 							active: u === n,
 							onHighlight: () => d(n),
@@ -7603,7 +7667,7 @@ function ho({ people: e, onPickPerson: n, onPickSkill: r, placeholder: i = "Find
 }
 //#endregion
 //#region src/components/graph/org/PersonDetailCard.tsx
-function go(e) {
+function wo(e) {
 	let t = Date.parse(e);
 	if (Number.isNaN(t)) return e;
 	let n = Math.max(0, (Date.now() - t) / 1e3);
@@ -7613,7 +7677,7 @@ function go(e) {
 		year: "numeric"
 	});
 }
-function _o({ person: e, evidence: r = [], loading: i = !1, error: a, onClose: l, onFocusPerson: u, onAsk: f, showInfluence: p = !1, formatTime: m = go, askLabel: _ = (e) => `Ask agent about ${Aa(e.name)} →`, className: v, "data-testid": y = "person-detail-card" }) {
+function To({ person: e, evidence: r = [], loading: i = !1, error: a, onClose: l, onFocusPerson: u, onAsk: f, showInfluence: p = !1, formatTime: m = wo, askLabel: _ = (e) => `Ask agent about ${Ra(e.name)} →`, className: v, "data-testid": y = "person-detail-card" }) {
 	let S = K(() => e ? [...e.connections].filter((e) => e.otherPerson).sort((e, t) => t.strength - e.strength).slice(0, 8) : [], [e]), C = Math.max(...S.map((e) => e.strength), .001);
 	return /* @__PURE__ */ X(o, {
 		padding: "md",
@@ -7653,7 +7717,7 @@ function _o({ person: e, evidence: r = [], loading: i = !1, error: a, onClose: l
 					children: /* @__PURE__ */ X(d, { size: 14 })
 				})]
 			}), e && /* @__PURE__ */ Z(Y, { children: [
-				/* @__PURE__ */ X(V, {
+				/* @__PURE__ */ X(B, {
 					size: "sm",
 					items: [
 						p && `influence ${e.influenceScore.toFixed(2)}`,
@@ -7679,11 +7743,11 @@ function _o({ person: e, evidence: r = [], loading: i = !1, error: a, onClose: l
 						gap: "none",
 						children: S.map((e, t) => {
 							let n = e.otherPerson;
-							return /* @__PURE__ */ X(L, {
+							return /* @__PURE__ */ X(re, {
 								onClick: () => u(n.id),
 								title: `Add ${n.name} to selection`,
 								label: n.name,
-								note: Ca[e.type] ?? e.type,
+								note: ja[e.type] ?? e.type,
 								meter: /* @__PURE__ */ X(x, {
 									value: e.strength / C,
 									tone: "info",
@@ -7725,7 +7789,7 @@ function _o({ person: e, evidence: r = [], loading: i = !1, error: a, onClose: l
 										children: ["×", e.mentionCount]
 									})
 								]
-							}), /* @__PURE__ */ X(V, {
+							}), /* @__PURE__ */ X(B, {
 								size: "xs",
 								items: [e.ingestedAt ? m(e.ingestedAt) : null]
 							})]
@@ -7745,13 +7809,13 @@ function _o({ person: e, evidence: r = [], loading: i = !1, error: a, onClose: l
 }
 //#endregion
 //#region src/components/graph/org/connectionPath.ts
-var vo = {
+var Eo = {
 	collaborates: "collaborates with",
 	mentors: "mentors",
 	reports_to: "reports to",
 	expert_in_common: "shares expertise with"
 };
-function yo(e, t, n, r) {
+function Do(e, t, n, r) {
 	if (n === r) return null;
 	let i = new Map(e.map((e) => [e.id, e]));
 	if (!i.has(n) || !i.has(r)) return null;
@@ -7800,9 +7864,9 @@ function yo(e, t, n, r) {
 }
 //#endregion
 //#region src/components/graph/org/ConnectionPathStrip.tsx
-function bo({ path: e, onHighlightPath: t }) {
+function Oo({ path: e, onHighlightPath: t }) {
 	let r = e.length - 2;
-	return /* @__PURE__ */ Z(po, {
+	return /* @__PURE__ */ Z(xo, {
 		"aria-label": "Connection path",
 		"data-testid": "connection-path-strip",
 		children: [
@@ -7824,7 +7888,7 @@ function bo({ path: e, onHighlightPath: t }) {
 						className: "whitespace-nowrap text-[10px] text-text-tertiary",
 						children: [
 							"—",
-							vo[t.viaType] ?? t.viaType,
+							Eo[t.viaType] ?? t.viaType,
 							"→"
 						]
 					}), /* @__PURE__ */ X("span", {
@@ -7847,8 +7911,8 @@ function bo({ path: e, onHighlightPath: t }) {
 }
 //#endregion
 //#region src/components/graph/org/DepartmentChips.tsx
-function xo({ departments: e, people: t, activeDepartment: n, onToggle: r, className: i }) {
-	let a = K(() => Oa(t), [t]);
+function ko({ departments: e, people: t, activeDepartment: n, onToggle: r, className: i }) {
+	let a = K(() => Ia(t), [t]);
 	return /* @__PURE__ */ X(g, {
 		gap: "xs",
 		align: "center",
@@ -7876,15 +7940,15 @@ function xo({ departments: e, people: t, activeDepartment: n, onToggle: r, class
 }
 //#endregion
 //#region src/components/graph/org/DepartmentInsightStrip.tsx
-function So({ department: e, people: t, onFocusPerson: r, busFactorFindings: i, busFactorFindingsUnavailable: a, findingHref: o = Fa, onNavigate: s }) {
-	let { members: c, topSkills: l, atRisk: u } = K(() => e ? ka(t, e) : {
+function Ao({ department: e, people: t, onFocusPerson: r, busFactorFindings: i, busFactorFindingsUnavailable: a, findingHref: o = Ua, onNavigate: s }) {
+	let { members: c, topSkills: l, atRisk: u } = K(() => e ? La(t, e) : {
 		members: t,
 		topSkills: [],
-		...Ma(t)
+		...Ba(t)
 	}, [e, t]), d = (e) => (t) => {
 		!s || t.defaultPrevented || t.button !== 0 || t.metaKey || t.ctrlKey || t.shiftKey || t.altKey || (t.preventDefault(), s(e, t));
 	};
-	return /* @__PURE__ */ Z(po, {
+	return /* @__PURE__ */ Z(xo, {
 		"aria-label": e ? `${e} insight` : "Org-wide rare skills",
 		"data-testid": "department-insight-strip",
 		children: [
@@ -7903,7 +7967,7 @@ function So({ department: e, people: t, onFocusPerson: r, busFactorFindings: i, 
 				wrap: !0,
 				as: "span",
 				className: "text-text-secondary",
-				children: [/* @__PURE__ */ X(mo, { children: "Top skills" }), l.map(([e, t]) => /* @__PURE__ */ Z("span", {
+				children: [/* @__PURE__ */ X(So, { children: "Top skills" }), l.map(([e, t]) => /* @__PURE__ */ Z("span", {
 					className: "whitespace-nowrap",
 					children: [
 						e,
@@ -7924,11 +7988,11 @@ function So({ department: e, people: t, onFocusPerson: r, busFactorFindings: i, 
 				align: "center",
 				wrap: !0,
 				as: "span",
-				children: [/* @__PURE__ */ X(mo, {
+				children: [/* @__PURE__ */ X(So, {
 					tone: "warning",
 					children: "⚠ rare skills"
 				}), u.map(({ skill: e, holder: t, holderCount: a }) => {
-					let s = i ? Ra(i, e) : void 0, c = s !== null, l = c ? o(e, s?.id) : "";
+					let s = i ? Ka(i, e) : void 0, c = s !== null, l = c ? o(e, s?.id) : "";
 					return /* @__PURE__ */ Z(g, {
 						gap: "none",
 						align: "center",
@@ -7943,9 +8007,9 @@ function So({ department: e, people: t, onFocusPerson: r, busFactorFindings: i, 
 							children: [
 								e,
 								" · ",
-								Aa(t.name)
+								Ra(t.name)
 							]
-						}), c ? /* @__PURE__ */ X(I, {
+						}), c ? /* @__PURE__ */ X(L, {
 							href: l,
 							onClick: d(l),
 							title: s ? `Open the bus-factor finding the sweep filed for ${e}` : `See the bus-factor finding for ${e}`,
@@ -7959,7 +8023,7 @@ function So({ department: e, people: t, onFocusPerson: r, busFactorFindings: i, 
 					}, `${e}-${t.id}`);
 				})]
 			}),
-			u.length > 0 && a && /* @__PURE__ */ X(V, {
+			u.length > 0 && a && /* @__PURE__ */ X(B, {
 				size: "xs",
 				tone: "secondary",
 				items: ["Could not read the bus-factor sweep — showing every rare skill from the live graph instead."]
@@ -7968,4 +8032,4 @@ function So({ department: e, people: t, onFocusPerson: r, busFactorFindings: i, 
 	});
 }
 //#endregion
-export { lr as $, Da as A, Ve as At, Di as B, La as C, ct as Ct, Ma as D, et as Dt, Ha as E, qe as Et, fi as F, ni as G, ei as H, Oi as I, Zr as J, Hr as K, Ai as L, hi as M, Re as Mt, mi as N, ze as Nt, ja as O, Xe as Ot, pi as P, or as Q, Bi as R, Aa as S, at as St, Oa as T, st as Tt, $r as U, ki as V, Qr as W, hr as X, Rr as Y, mr as Z, Na as _, gt as _t, yo as a, fn as at, ka as b, ut as bt, uo as c, tn as ct, to as d, Lt as dt, ir as et, Ga as f, Ft as ft, Pa as g, _t as gt, Ca as h, Et as ht, vo as i, pn as it, Sa as j, He as jt, Fa as k, Be as kt, ro as l, qt as lt, qa as m, Ot as mt, xo as n, Hn as nt, _o as o, _n as ot, Ja as p, kt as pt, Gr as q, bo as r, En as rt, ho as s, rn as st, So as t, Wn as tt, eo as u, Ht as ut, wa as v, pt as vt, Wa as w, ot as wt, Ra as x, lt as xt, Ua as y, dt as yt, Ei as z };
+export { lr as $, Fa as A, Ve as At, Di as B, Ga as C, ct as Ct, Ba as D, et as Dt, Xa as E, qe as Et, fi as F, ni as G, ei as H, Oi as I, Zr as J, Hr as K, Ai as L, hi as M, Re as Mt, mi as N, ze as Nt, za as O, Xe as Ot, pi as P, or as Q, qi as R, Ra as S, at as St, Ia as T, st as Tt, $r as U, ki as V, Qr as W, hr as X, Rr as Y, mr as Z, Va as _, gt as _t, Do as a, fn as at, La as b, ut as bt, yo as c, tn as ct, lo as d, Lt as dt, ir as et, $a as f, Ft as ft, Ha as g, _t as gt, ja as h, Et as ht, Eo as i, pn as it, Aa as j, He as jt, Ua as k, Be as kt, fo as l, qt as lt, to as m, Ot as mt, ko as n, Hn as nt, To as o, _n as ot, no as p, kt as pt, Gr as q, Oo as r, En as rt, Co as s, rn as st, Ao as t, Wn as tt, co as u, Ht as ut, Ma as v, pt as vt, Qa as w, ot as wt, Ka as x, lt as xt, Za as y, dt as yt, Ei as z };

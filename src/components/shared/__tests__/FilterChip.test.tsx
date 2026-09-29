@@ -41,3 +41,28 @@ describe('FilterChip', () => {
     expect(screen.getByRole('button')).toBeDisabled();
   });
 });
+
+describe('FilterChip label forwarding (2.406.4)', () => {
+  it('forwards aria-label and title to the button', () => {
+    render(
+      <FilterChip
+        active
+        onClick={() => {}}
+        aria-label="In: Design System API. Search entire workspace"
+        title="Search entire workspace"
+      >
+        In: Design System API ×
+      </FilterChip>,
+    );
+    const chip = screen.getByRole('button', { name: 'In: Design System API. Search entire workspace' });
+    expect(chip).toHaveAttribute('aria-label', 'In: Design System API. Search entire workspace');
+    expect(chip).toHaveAttribute('title', 'Search entire workspace');
+  });
+
+  it('draws no aria-label or title when none is passed', () => {
+    render(<FilterChip active={false} onClick={() => {}}>Failed</FilterChip>);
+    const chip = screen.getByRole('button', { name: 'Failed' });
+    expect(chip).not.toHaveAttribute('aria-label');
+    expect(chip).not.toHaveAttribute('title');
+  });
+});

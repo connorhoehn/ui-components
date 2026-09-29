@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ScopeHeader, type ScopeHeaderProps } from './ScopeHeader';
+import { FilterChip } from '../shared/FilterChip';
 import { Select } from '../forms/Select';
 import { DropdownMenu } from '../shared/DropdownMenu';
 
@@ -149,3 +150,39 @@ export const InlineCrumbsTitleTabsControls: Story = {
   },
 };
 
+/**
+ * 2.406.4 — a long trail in the inline row: the crumbs truncate inside their
+ * caps and give up width before the title; squeezed further, the middle
+ * crumbs collapse to "…". The row stays 48px at any width.
+ */
+export const InlineLongTrail: Story = {
+  name: 'Inline: long trail never wraps',
+  render: () => (
+    <div className="flex flex-col gap-6 bg-surface">
+      {['w-[1200px]', 'w-[900px]'].map((w) => (
+        <div key={w} className={w}>
+          <ScopeHeader
+            variant="inline"
+            breadcrumbs={[{ label: 'Org' }, { label: 'Search', href: '#' }, { label: 'Design System API', href: '#' }]}
+            title="component contracts"
+            tabs={[
+              { id: 'results', label: 'Results', count: 25 },
+              { id: 'answer', label: 'Answer' },
+              { id: 'connections', label: 'Connections' },
+            ]}
+            activeTab="results"
+            controls={
+              <>
+                {['People', 'Work', 'Decisions', 'Knowledge'].map((c) => (
+                  <FilterChip key={c} active={false} onClick={() => {}}>{c}</FilterChip>
+                ))}
+                <a href="#" className="whitespace-nowrap text-sm text-primary">Search entire workspace</a>
+              </>
+            }
+            className="border-b border-border"
+          />
+        </div>
+      ))}
+    </div>
+  ),
+};

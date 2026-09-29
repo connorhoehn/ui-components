@@ -25,7 +25,7 @@ import "./LoadingState-a2GlKOK1.js";
 import "./FormField-E8Z0ppOp.js";
 import { t as b } from "./Sparkline-Ci_cmVWU.js";
 import { i as x } from "./focusTrap-C5l9cvTe.js";
-import "./FilterChip-DaEogAC-.js";
+import "./FilterChip-0hc-J7iS.js";
 import "./SkeletonCard-CGe8XFPB.js";
 import { a as S, i as C, o as w } from "./ChannelHeader-qvaO7oMR.js";
 import "./Slider-izEq1bGO.js";
