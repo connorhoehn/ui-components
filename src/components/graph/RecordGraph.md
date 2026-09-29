@@ -76,11 +76,33 @@ controls: RECORD_GRAPH_CONTROLS_SIZE })`, passed to `recordGraphViewport` as
 costs less, so on the search canvas one bottom band clears both. A focus
 taller than the clear area keeps its whole boxes 16px inside the canvas, and
 when even that is too tall, its avatar circles. The automatic fit keeps the
-0.8 floor; the viewer's whole-graph fit (the second "Fit to view" press, or
+0.8 floor (since 2.403.7, except to show the whole graph at ≥ 0.7); the viewer's whole-graph fit (the second "Fit to view" press, or
 `fitAll()`) may zoom down to `RECORD_GRAPH_FIT_ALL_MIN_ZOOM` (0.5) so the whole
 graph is in view. Force pulls go as the aspect ratio squared once a set packs
 the canvas, and start from an ellipse of the canvas's shape, so 25 records on
 a 1160 × 418 canvas fill its width (~99%) rather than overflow its height.
+
+Automatic fit: everything when it is readable (2.403.7). On open, on a new
+drawing and on a canvas resize, the view shows the whole graph when it fits at
+`RECORD_GRAPH_READABLE_ZOOM` (0.7, 13px names at ~9px) or above; only
+otherwise does it fall back to the focus-centred fit at the 0.8 floor
+(`recordGraphViewport(…, { mode: 'auto', … })`). "Fit to view",
+`fitToFocus()` and `fitAll()` keep their meaning: the first press frames the
+focus at the floor, the second the whole graph. So a search result opens with
+nothing cut off, and the selection is one press away at a larger zoom. To make
+the ~25-record case qualify, Radial rings are spaced from the node box
+(128px between rings, the canvas's aspect sideways) and squeezed only as far as
+the outer ring's ellipse must be to fit the canvas at 0.7
+(`recordRadialRings(count, width, height)` — the fewest rings that hold
+everyone, filled in proportion to their perimeters, a record whose ring point
+is taken moving to the nearest free spot, so no boxes overlap; past ~30
+records the natural spacing returns). Hierarchy centres its column block on
+x = 0 and scales the column gaps to the canvas width and the column count (to
+fit at 0.7 when wide, to fill the canvas at 100% when there are few), with rows
+sized to the canvas at 0.7. Force keeps its shaping; a packed set a few
+percent taller than the readable area closes its rows up by at most 15%, never
+into a new box overlap. On the search canvas (1160 × 418) 25 records open at
+~71% in all three layouts.
 
 Edge labels (2.403.4) draw at rest only on edges that touch a selected or
 focused record; the others appear on hover. With nothing selected, a graph of
@@ -88,7 +110,7 @@ focused record; the others appear on hover. With nothing selected, a graph of
 so a crossing edge passes under the text.
 
 Storybook: Graph/RecordGraph (Default with the Auth Migration cast, Search
-result (25 records), 25 records, strip opens, Hierarchy, Radial, Empty,
+result (25 records), 25 records, strip opens, 25 records, all layouts, Hierarchy, Radial, Empty,
 Unconnected, ShowIsolated, Dark).
 
 The canvas keeps a 160px minimum height inside its pane; give the graph a taller host to draw larger, never a fixed height on the graph itself.

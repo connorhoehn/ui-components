@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.403.7
+
+- `RecordGraph` automatic fit: everything when it is readable, else the focus. Two journey walkers disagreed on the opening view of 25 records · 56 connections with three people selected on a 1160 × 418 canvas: the fit centred on the selection at the 0.8 floor, so Force opened with 23 of 25 records on the canvas, Radial 17 (the drawing 117% of the canvas height) and Hierarchy 9 (524px empty on the left), while "Fit to view" showed all 25 at 70% / 55% / 67%. On open, on a new drawing and on a resize the view now shows the whole graph when it fits at `RECORD_GRAPH_READABLE_ZOOM` (0.7, names ≈ 9px) or above, and only otherwise centres on the focus at the 0.8 floor as before. "Fit to view", `fitToFocus()` and `fitAll()` are unchanged.
+  - New in `recordGraphLayout.ts`: `RECORD_GRAPH_READABLE_ZOOM` (0.7), `recordRadialRings(count, width, height)` and its `RecordRadialRings` type. Not added to the `/graph` barrel.
+  - `recordGraphViewport` takes `mode: 'auto'` and an optional `readableZoom`.
+- `RecordGraph` Radial is compact. The rings were a fixed 128 × 307px step, so 25 records drew two rings 616 flow px tall. Ring spacing now starts from the node box and shrinks only until the outer ring's ellipse fits the canvas at 0.7 (the fewest rings that hold everyone, filled in proportion to their perimeters, the most connected record at the centre); where squeezed rings would stack boxes, a record moves to the nearest free spot inside the outer ring, so none overlap. Past ~30 records on the search canvas the natural spacing returns and the fit falls back to the focus.
+- `RecordGraph` Hierarchy is centred and fits. The column block is centred on x = 0; the gaps between columns scale with the canvas width and the column count (squeezed to fit at 0.7, or widened up to twice to fill the canvas at 100% when there are few), rows are sized to the canvas at 0.7 (row gap 12–20px), and tall ranks still wrap.
+- `RecordGraph` Force keeps its shaping; a packed set up to 15% taller than the area readable at 0.7 closes its rows up to fit, never into a new box overlap (the 25-record fixture was 505 flow px tall against 473).
+- Storybook: "25 records, all layouts".
+
 ## 2.403.6
 
 - `RecordGraph`: the canvas minimum height is 160px (was 256px). A host pane that shrinks — the Search page with its assistant conversation expanded left a 258px pane — no longer overflows by the difference and hides the legend and zoom controls under whatever sits below; the fit re-runs at the new size.

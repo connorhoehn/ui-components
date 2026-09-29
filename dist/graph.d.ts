@@ -391,7 +391,9 @@ export declare type LayoutMode = 'force' | 'radial';
  * `options` is the canvas the layout should fill (default 1160 × 420): the
  * force distances, the radial rings' shape and the hierarchy's column height
  * are all sized to it at the fit floor, so the drawing reads without zooming
- * below `RECORD_GRAPH_MIN_FIT_ZOOM`.
+ * below `RECORD_GRAPH_MIN_FIT_ZOOM`. Since 2.403.7 the radial rings and the
+ * hierarchy's columns are sized so a ~25-record result fits whole at
+ * `RECORD_GRAPH_READABLE_ZOOM` (`recordRadialRings`).
  */
 export declare function layoutRecordGraph(records: Pick<RecordGraphRecord, 'id' | 'type'>[], edges: Pick<RecordGraphEdge, 'source' | 'target'>[], layout: RecordGraphLayout, options?: RecordGraphLayoutOptions): Map<string, {
     x: number;
@@ -927,6 +929,8 @@ export declare interface RecordGraphProps {
      * Since 2.403.2. When the neighbourhood cannot fit at the floor, the fit
      * centres on these records so they are never clipped while they fit, and
      * "Fit" re-centres on them (a second press frames the whole graph) — 2.403.4.
+     * Since 2.403.7 the automatic fit first shows the whole graph when it fits
+     * at `RECORD_GRAPH_READABLE_ZOOM` (0.7); the focus framing is its fallback.
      */
     focusKeys?: readonly string[];
     /**
@@ -969,7 +973,13 @@ export declare interface RecordGraphViewportOptions {
      * whole graph, and where it overflows at the floor aligns it top-left so
      * the viewer pans.
      */
-    mode: 'focus' | 'all';
+    mode: 'focus' | 'all' | 'auto';
+    /**
+     * `auto` — the automatic fit (2.403.7): the whole graph when it fits at or
+     * above this zoom, else `focus` (or `all` at the floor, with no focus).
+     * Default `RECORD_GRAPH_READABLE_ZOOM`.
+     */
+    readableZoom?: number;
     /** The focus records themselves (usually the selection) — never clipped when they fit. */
     focusKeys?: readonly string[];
     /** Focus plus direct neighbours (`recordGraphFitKeys`). Framed first when it fits. */
@@ -1997,19 +2007,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -2022,6 +2019,19 @@ declare module '@tiptap/core' {
             setLineSpacing: (spacing: LineSpacing) => ReturnType;
             /** Return the paragraphs in the selection to the paper's own leading. */
             unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -2044,26 +2054,6 @@ declare global {
     interface Window {
         /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
         __pipelineEditor?: unknown;
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
     }
 }
 
@@ -2096,16 +2086,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
@@ -2119,9 +2099,39 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

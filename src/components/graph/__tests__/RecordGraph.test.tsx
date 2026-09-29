@@ -5,7 +5,7 @@ import { RecordGraph, type RecordGraphHandle, type RecordGraphProps } from '../R
 import {
   layoutRecordGraph, recordGraphFitKeys, recordGraphInset, recordGraphLegendSize, recordGraphViewport,
   RECORD_GRAPH_CONTROLS_SIZE, RECORD_GRAPH_FIT_ALL_MIN_ZOOM, RECORD_GRAPH_MIN_FIT_ZOOM,
-  RECORD_GRAPH_NODE_HEIGHT, RECORD_GRAPH_NODE_WIDTH, type RecordGraphEdge, type RecordGraphRecord,
+  RECORD_GRAPH_READABLE_ZOOM, RECORD_GRAPH_NODE_HEIGHT, RECORD_GRAPH_NODE_WIDTH, type RecordGraphEdge, type RecordGraphRecord,
 } from '../recordGraphLayout';
 
 const flow = {
@@ -112,8 +112,10 @@ describe('RecordGraph', () => {
     const before = screen.getByTestId('flow-node-initiative:auth').getAttribute('data-position');
     fireEvent.click(screen.getByRole('radio', { name: 'Hierarchy' }));
     expect(onLayoutChange).toHaveBeenCalledWith('hierarchy');
-    // Hierarchy puts the owner (a root) at rank 0 and the initiative at rank 1.
-    expect(screen.getByTestId('flow-node-person:vera').getAttribute('data-position')).toMatch(/^0,/);
+    // Hierarchy puts the owner (a root) at rank 0 and the initiative at rank 1
+    // (2.403.7: the block is centred on x = 0, so compare, not match 0).
+    const x = (key: string) => Number(screen.getByTestId(`flow-node-${key}`).getAttribute('data-position')!.split(',')[0]);
+    expect(x('person:vera')).toBeLessThan(x('initiative:auth'));
     expect(screen.getByTestId('flow-node-initiative:auth').getAttribute('data-position')).not.toBe(before);
   });
 
@@ -327,17 +329,23 @@ describe('RecordGraph', () => {
       expectInside(FOCUS);
     });
 
-    it('Radial at the floor still keeps the focus in view', async () => {
+    it('Radial opens on the whole graph at the readable zoom, the focus inside (2.403.7: was the focus at the floor)', async () => {
       setupMany({ layout: 'radial' });
       await frames();
-      expect(flow.viewport.zoom).toBeCloseTo(RECORD_GRAPH_MIN_FIT_ZOOM);
+      expect(flow.viewport.zoom).toBeGreaterThanOrEqual(RECORD_GRAPH_READABLE_ZOOM);
+      expectInside(KEYS);
       expectInside(FOCUS);
     });
 
     it('Fit re-centres on the focus, then a second press frames the whole graph top-left', async () => {
       setupMany();
       await frames();
+      const autoView = { ...flow.viewport };
+      // 2.403.7: the automatic fit shows everything; Fit still frames the focus first.
+      fireEvent.click(screen.getByRole('button', { name: 'Fit to view' }));
       const focusView = { ...flow.viewport };
+      expect(focusView).not.toEqual(autoView);
+      expect(focusView.zoom).toBeGreaterThanOrEqual(RECORD_GRAPH_MIN_FIT_ZOOM);
       flow.viewport = { x: -900, y: -700, zoom: 0.7 }; // panned away
       fireEvent.click(screen.getByRole('button', { name: 'Fit to view' }));
       expect(flow.viewport).toEqual(focusView);
@@ -374,7 +382,9 @@ describe('RecordGraph', () => {
       render(<RecordGraph ref={ref} records={MANY} edges={MANY_EDGES} selectedKeys={FOCUS} focusKeys={FOCUS}
         onSelectionChange={vi.fn()} onAskSelection={vi.fn()} />);
       await frames();
+      act(() => ref.current!.fitToFocus());
       const focusView = { ...flow.viewport };
+      expectInside(FOCUS);
       act(() => ref.current!.fitAll());
       expect(flow.viewport).not.toEqual(focusView);
       act(() => ref.current!.fitToFocus());
@@ -436,11 +446,55 @@ describe('RecordGraph', () => {
         render(<RecordGraph ref={ref} layout={layout} records={MANY} edges={MANY_EDGES} selectedKeys={FOCUS} focusKeys={FOCUS}
           onSelectionChange={vi.fn()} onAskSelection={vi.fn()} />);
         await frames();
-        expect(flow.viewport.zoom, layout).toBeGreaterThanOrEqual(RECORD_GRAPH_MIN_FIT_ZOOM);
+        expect(flow.viewport.zoom, layout).toBeGreaterThanOrEqual(RECORD_GRAPH_READABLE_ZOOM);
         act(() => ref.current!.fitAll());
         expect(flow.viewport.zoom, layout).toBeGreaterThanOrEqual(RECORD_GRAPH_FIT_ALL_MIN_ZOOM);
         expectInside(KEYS);
         KEYS.forEach((key) => overlays().forEach((o) => expect(intersects(onScreen(key), o), `${layout} ${key} under the ${o.name}`).toBe(false)));
+      }
+    });
+
+    // 2.403.7 — the journey walkers' disagreement: the automatic fit shows
+    // everything when everything is readable, else it centres on the focus.
+    it('25 records on 1160 × 418: the automatic fit shows every record at ≥ 70% in every layout, the selection whole', async () => {
+      for (const layout of ['force', 'radial', 'hierarchy'] as const) {
+        cleanup();
+        setupMany({ layout });
+        await frames();
+        expect(flow.viewport.zoom, layout).toBeGreaterThanOrEqual(RECORD_GRAPH_READABLE_ZOOM);
+        expect(flow.viewport.zoom, layout).toBeLessThanOrEqual(1);
+        expectInside(KEYS);
+        expectInside(FOCUS);
+        KEYS.forEach((key) => overlays().forEach((o) => expect(intersects(onScreen(key), o), `${layout} ${key} under the ${o.name}`).toBe(false)));
+      }
+    });
+
+    it('60 records cannot fit at 70%: the automatic fit falls back to the focus at the 80% floor', async () => {
+      const MORE: RecordGraphRecord[] = [
+        ...MANY.slice(0, 5),
+        ...Array.from({ length: 55 }, (_, i): RecordGraphRecord => ({ id: `m${i}`, type: 'work', title: `More ${i}`, href: `/m/${i}` })),
+      ];
+      const keys = MORE.map((record) => `${record.type}:${record.id}`);
+      const moreEdges: RecordGraphEdge[] = [
+        ...keys.slice(5).map((key, i) => ({ id: `inc-${i}`, source: keys[3 + (i % 2)]!, target: key, label: 'includes' })),
+        ...keys.slice(5).map((key, i) => ({ id: `asg-${i}`, source: keys[i % 3]!, target: key, label: 'assigned to' })),
+        ...keys.slice(5, 56).map((key, i) => ({ id: `rel-${i}`, source: key, target: keys[9 + i]!, label: 'related to' })),
+      ];
+      // One selected person: at 60 records Force spreads the three people
+      // hubs ~1300px apart, wider than the canvas at the floor, where the
+      // 2.403.5 rule keeps only their circles in view.
+      const SELECTED = ['person:vera'];
+      for (const layout of ['force', 'radial', 'hierarchy'] as const) {
+        cleanup();
+        setupMany({ layout, records: MORE, edges: moreEdges, selectedKeys: SELECTED, focusKeys: SELECTED });
+        await frames();
+        expect(flow.viewport.zoom, layout).toBeCloseTo(RECORD_GRAPH_MIN_FIT_ZOOM);
+        expectInside(SELECTED);
+        const outside = keys.filter((key) => {
+          const box = onScreen(key);
+          return box.x0 < 0 || box.y0 < 0 || box.x1 > size.width || box.y1 > size.height;
+        });
+        expect(outside.length, layout).toBeGreaterThan(0);
       }
     });
 

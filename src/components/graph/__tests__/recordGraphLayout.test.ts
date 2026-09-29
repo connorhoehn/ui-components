@@ -3,7 +3,8 @@
 import { expect, test } from 'vitest';
 import {
   filterRecordGraph, recordGraphKey, layoutRecordGraph, recordForceParams, recordGraphFitKeys,
-  RECORD_GRAPH_MIN_FIT_ZOOM, RECORD_GRAPH_NODE_HEIGHT as NODE_H, RECORD_GRAPH_NODE_WIDTH as NODE_W,
+  recordGraphInset, recordGraphLegendSize, recordGraphViewport, recordRadialRings,
+  RECORD_GRAPH_CONTROLS_SIZE, RECORD_GRAPH_MIN_FIT_ZOOM, RECORD_GRAPH_READABLE_ZOOM, RECORD_GRAPH_NODE_HEIGHT as NODE_H, RECORD_GRAPH_NODE_WIDTH as NODE_W,
   type RecordGraphEdge, type RecordGraphRecord, type RecordGraphType,
 } from '../recordGraphLayout';
 
@@ -175,4 +176,114 @@ test('recordGraphFitKeys is the drawn focus plus its direct neighbours', () => {
   expect(recordGraphFitKeys(keys, edges, ['initiative:shared'])).toEqual(['person:shared', 'initiative:shared', 'work:work']);
   expect(recordGraphFitKeys(keys, edges, ['person:missing'])).toEqual([]);
   expect(recordGraphFitKeys(keys, edges, undefined)).toEqual([]);
+});
+
+// ── 2.403.7: the automatic fit shows everything when it is readable ─────────
+
+/** The search canvas's clear area: 24px padding, the 48px legend/controls band + 8px gap at the bottom. */
+const CLEAR = { width: CANVAS.width - 48, height: CANVAS.height - 24 - (RECORD_GRAPH_CONTROLS_SIZE.height + 8) };
+const span = (positions: Map<string, { x: number; y: number }>) => {
+  const v = [...positions.values()];
+  const x0 = Math.min(...v.map(p => p.x)), x1 = Math.max(...v.map(p => p.x)) + NODE_W;
+  const y0 = Math.min(...v.map(p => p.y)), y1 = Math.max(...v.map(p => p.y)) + NODE_H;
+  return { x0, x1, y0, y1, w: x1 - x0, h: y1 - y0 };
+};
+/** Boxes that genuinely intersect (the full 140 × 104). */
+function boxOverlaps(positions: Map<string, { x: number; y: number }>) {
+  const v = [...positions.values()];
+  let count = 0;
+  for (let i = 0; i < v.length; i++) for (let j = i + 1; j < v.length; j++) {
+    if (Math.abs(v[i]!.x - v[j]!.x) < NODE_W && Math.abs(v[i]!.y - v[j]!.y) < NODE_H) count++;
+  }
+  return count;
+}
+
+/** The same shape at 60 records: 3 people, 2 initiatives, 55 work items. */
+function sixtyRecords() {
+  const all: RecordGraphRecord[] = [
+    ...(['person', 'person', 'person', 'initiative', 'initiative'] as RecordGraphType[]).map((type, i) => ({ id: `s${i}`, type, title: `S ${i}`, href: '' })),
+    ...Array.from({ length: 55 }, (_, i): RecordGraphRecord => ({ id: `w${i}`, type: 'work', title: `W ${i}`, href: '' })),
+  ];
+  const key = (i: number) => recordGraphKey(all[i]!);
+  const links: RecordGraphEdge[] = [];
+  for (let i = 5; i < 60; i++) links.push({ id: `inc-${i}`, source: key(3 + (i % 2)), target: key(i), label: 'includes' });
+  for (let i = 5; i < 60; i++) links.push({ id: `asg-${i}`, source: key(i % 3), target: key(i), label: 'assigned to' });
+  for (let i = 5; i < 56; i++) links.push({ id: `rel-${i}`, source: key(i), target: key(i + 4), label: 'related' });
+  return filterRecordGraph(all, links, 'all');
+}
+
+test('the readable zoom is 70%', () => {
+  expect(RECORD_GRAPH_READABLE_ZOOM).toBe(0.7);
+});
+
+test('radial: the outer ring\'s ellipse fits the canvas at 70% for 25 records, and no boxes overlap', () => {
+  const plan = recordRadialRings(25, CANVAS.width, CANVAS.height);
+  expect(plan.fits).toBe(true);
+  expect(plan.counts.reduce((a, b) => a + b, 0)).toBe(24);
+  // Rings are spaced from the node box (128px natural), squeezed to fit — not the old fixed 255px outer step.
+  expect(plan.stepY).toBeLessThan(NODE_H + 24);
+  const outer = { a: plan.rings * plan.stepX, b: plan.rings * plan.stepY };
+  expect((2 * outer.a + NODE_W) * RECORD_GRAPH_READABLE_ZOOM).toBeLessThanOrEqual(CLEAR.width);
+  expect((2 * outer.b + NODE_H) * RECORD_GRAPH_READABLE_ZOOM).toBeLessThanOrEqual(CLEAR.height);
+  // Inner rings hold fewer than outer ones (spread by perimeter, not a straggler outside).
+  plan.counts.slice(1).forEach((n, k) => expect(n).toBeGreaterThanOrEqual(plan.counts[k]!));
+  const full = searchResult();
+  const positions = layoutRecordGraph(full.records, full.edges, 'radial', CANVAS);
+  // The focus (best connected) at the centre, every record inside the outer ring's bounds.
+  expect([...positions.values()][0]).toEqual({ x: 0, y: 0 });
+  positions.forEach((p, key) => {
+    expect(Math.abs(p.x), key).toBeLessThanOrEqual(outer.a + 0.01);
+    expect(Math.abs(p.y), key).toBeLessThanOrEqual(outer.b + 0.01);
+  });
+  expect(boxOverlaps(positions)).toBe(0);
+  // A handful keeps the natural spacing; past ~30 nothing fits and the natural rings return.
+  expect(recordRadialRings(4, CANVAS.width, CANVAS.height)).toMatchObject({ rings: 1, stepY: NODE_H + 24, fits: true });
+  expect(recordRadialRings(60, CANVAS.width, CANVAS.height)).toMatchObject({ stepY: NODE_H + 24, fits: false });
+});
+
+test('hierarchy: the column block is centred on x = 0 and fits the canvas at 70% for 25 records', () => {
+  const full = searchResult();
+  const positions = layoutRecordGraph(full.records, full.edges, 'hierarchy', CANVAS);
+  const box = span(positions);
+  expect((box.x0 + box.x1) / 2).toBeCloseTo(0, 6);
+  expect(box.w * RECORD_GRAPH_READABLE_ZOOM).toBeLessThanOrEqual(CLEAR.width);
+  expect(box.h * RECORD_GRAPH_READABLE_ZOOM).toBeLessThanOrEqual(CLEAR.height);
+  expect(boxOverlaps(positions)).toBe(0);
+  // A few columns spread over a wide canvas at 100% rather than huddling in the middle.
+  const small = layoutRecordGraph(records, edges, 'hierarchy', CANVAS);
+  const smallBox = span(small);
+  expect((smallBox.x0 + smallBox.x1) / 2).toBeCloseTo(0, 6);
+  expect(smallBox.w).toBeLessThanOrEqual(CLEAR.width);
+  expect(smallBox.w).toBeGreaterThan(3 * NODE_W + 2 * 132);
+});
+
+test('the automatic fit shows all 25 records at ≥ 70% in every layout; 60 fall back to the focus at the floor', () => {
+  const inset = recordGraphInset(CANVAS, {
+    legend: recordGraphLegendSize(['People', 'Initiatives', 'Work', 'Decisions', 'Knowledge'], CANVAS.width),
+    controls: RECORD_GRAPH_CONTROLS_SIZE,
+  });
+  for (const count of [25, 60]) {
+    const graph = count === 25 ? searchResult() : sixtyRecords();
+    const keys = graph.records.map(recordGraphKey);
+    // Three people selected; at 60 one (Force spreads three hubs wider than the canvas at the floor).
+    const focusKeys = keys.slice(0, count === 25 ? 3 : 1);
+    const fitKeys = recordGraphFitKeys(keys, graph.edges, focusKeys);
+    for (const layout of ['force', 'radial', 'hierarchy'] as const) {
+      const positions = layoutRecordGraph(graph.records, graph.edges, layout, CANVAS);
+      const vp = recordGraphViewport(positions, CANVAS, { mode: 'auto', focusKeys, fitKeys, inset })!;
+      const inside = (key: string) => {
+        const p = positions.get(key)!;
+        const x0 = p.x * vp.zoom + vp.x, y0 = p.y * vp.zoom + vp.y;
+        return x0 >= -0.5 && y0 >= -0.5 && x0 + NODE_W * vp.zoom <= CANVAS.width + 0.5 && y0 + NODE_H * vp.zoom <= CANVAS.height + 0.5;
+      };
+      focusKeys.forEach(key => expect(inside(key), `${count} ${layout} ${key}`).toBe(true));
+      if (count === 25) {
+        expect(vp.zoom, layout).toBeGreaterThanOrEqual(RECORD_GRAPH_READABLE_ZOOM);
+        keys.forEach(key => expect(inside(key), `${layout} ${key}`).toBe(true));
+      } else {
+        expect(vp.zoom, layout).toBeCloseTo(RECORD_GRAPH_MIN_FIT_ZOOM);
+        expect(keys.every(inside), layout).toBe(false);
+      }
+    }
+  }
 });

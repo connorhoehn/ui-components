@@ -22,6 +22,12 @@
 // re-centres on the focus, and pressed again frames the whole graph from the
 // top-left. `ref` exposes `fitToFocus()` / `fitAll()` (`RecordGraphHandle`).
 //
+// Automatic fit (2.403.7): on open, on a new drawing and on a resize the view
+// shows the whole graph when it fits at `RECORD_GRAPH_READABLE_ZOOM` (0.7)
+// or above, and only otherwise centres on the focus at the 0.8 floor. The
+// radial and hierarchy layouts are compacted so a ~25-record search result
+// qualifies. "Fit to view" and `fitToFocus()` / `fitAll()` are unchanged.
+//
 // Keep-outs (2.403.5): the fit keeps the drawing clear of the legend's and
 // the controls' corners (`recordGraphInset`), a focus taller than the clear
 // area keeps its boxes 16px inside the canvas and then its circles
@@ -127,6 +133,8 @@ export interface RecordGraphProps {
    * Since 2.403.2. When the neighbourhood cannot fit at the floor, the fit
    * centres on these records so they are never clipped while they fit, and
    * "Fit" re-centres on them (a second press frames the whole graph) — 2.403.4.
+   * Since 2.403.7 the automatic fit first shows the whole graph when it fits
+   * at `RECORD_GRAPH_READABLE_ZOOM` (0.7); the focus framing is its fallback.
    */
   focusKeys?: readonly string[];
   /**
@@ -393,7 +401,7 @@ function CanvasChrome({
    * (`recordGraphInset`). `whole` is the viewer's whole-graph fit, which may
    * go below the readability floor (`RECORD_GRAPH_FIT_ALL_MIN_ZOOM`).
    */
-  const target = useCallback((mode: 'focus' | 'all', whole = false) => {
+  const target = useCallback((mode: 'focus' | 'all' | 'auto', whole = false) => {
     const rect = canvasRef.current?.getBoundingClientRect();
     if (!rect) return null;
     const { positions: pos, focusKeys: core, fitKeys: near, legendLabels: labels } = state.current;
@@ -403,13 +411,14 @@ function CanvasChrome({
       controls: RECORD_GRAPH_CONTROLS_SIZE,
     });
     return recordGraphViewport(pos, size, {
-      mode: core.length ? mode : 'all', focusKeys: core, fitKeys: near, inset,
+      mode: core.length || mode === 'auto' ? mode : 'all', focusKeys: core, fitKeys: near, inset,
       minZoom: whole && mode === 'all' ? RECORD_GRAPH_FIT_ALL_MIN_ZOOM : FIT.minZoom, maxZoom: FIT.maxZoom,
     });
   }, [canvasRef]);
-  const apply = useCallback((mode: 'focus' | 'all', animate = false) => {
+  const apply = useCallback((mode: 'focus' | 'all' | 'auto', animate = false) => {
     // An animated fit is one the viewer asked for: its whole-graph frame may
-    // go below the floor. The automatic fit never does.
+    // go below the floor. The automatic fit goes below it only as far as
+    // `RECORD_GRAPH_READABLE_ZOOM`, and only to show everything (2.403.7).
     const viewport = target(mode, animate);
     if (viewport) {
       void flow.setViewport(viewport, animate ? { duration: 200 } : undefined);
@@ -417,9 +426,10 @@ function CanvasChrome({
     }
     // Unmeasured canvas: let xyflow fit whatever it can see.
     const near = state.current.fitKeys;
-    void flow.fitView(mode === 'focus' && near.length ? { ...FIT, nodes: near.map((id) => ({ id })) } : FIT);
+    void flow.fitView(mode !== 'all' && near.length ? { ...FIT, nodes: near.map((id) => ({ id })) } : FIT);
   }, [flow, target]);
-  const autoFit = useCallback(() => apply('focus'), [apply]);
+  // Automatic: the whole graph when it is readable, else the focus (2.403.7).
+  const autoFit = useCallback(() => apply('auto'), [apply]);
 
   // "Fit": frame the focus — or, pressed while the view already is the focus
   // fit (or with no focus), the whole graph.

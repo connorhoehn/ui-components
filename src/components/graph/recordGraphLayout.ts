@@ -49,6 +49,31 @@ export const RECORD_GRAPH_NODE_HEIGHT = 104;
 export const RECORD_GRAPH_MIN_FIT_ZOOM = 0.8;
 /** Fit never zooms in past 100% (two records do not become two giant circles). */
 export const RECORD_GRAPH_MAX_FIT_ZOOM = 1;
+/**
+ * The automatic fit shows the whole graph when it fits at or above this zoom
+ * (13px titles at ~9.1px), and only otherwise falls back to centring on the
+ * focus at `RECORD_GRAPH_MIN_FIT_ZOOM`. The radial and hierarchy layouts are
+ * sized so a search-page result (~25 records on 1160 × 418) qualifies.
+ * Since 2.403.7.
+ */
+export const RECORD_GRAPH_READABLE_ZOOM = 0.7;
+
+/** The fit's default padding, px — kept in step with `recordGraphViewport`. */
+const LAYOUT_FIT_PADDING = 24;
+/** The bottom band the fit keeps clear of the legend and the zoom controls (48px + an 8px gap). */
+const LAYOUT_OVERLAY_BAND = 56;
+
+/**
+ * The flow-px area a layout aims its drawing at so the automatic fit can show
+ * all of it at `RECORD_GRAPH_READABLE_ZOOM`: the canvas less the fit's padding
+ * and the overlay band, at that zoom, with 2% to spare. Since 2.403.7.
+ */
+function readableArea(width: number, height: number): { width: number; height: number } {
+  return {
+    width: (Math.max(1, width - 2 * LAYOUT_FIT_PADDING) / RECORD_GRAPH_READABLE_ZOOM) * 0.98,
+    height: (Math.max(1, height - LAYOUT_FIT_PADDING - LAYOUT_OVERLAY_BAND) / RECORD_GRAPH_READABLE_ZOOM) * 0.98,
+  };
+}
 
 /** The canvas a layout aims to fill when the host has not measured one. */
 const DEFAULT_CANVAS = { width: 1160, height: 420 };
@@ -225,13 +250,18 @@ function longestPathRanks(ordered: string[], edges: Pick<RecordGraphEdge, 'sourc
  * Hierarchy positions. Columns are longest-path ranks; with no directed chain
  * at all (every record rank 0) the columns are record types instead (person →
  * initiative → work/decision/knowledge/asset), so it never collapses to one
- * column. A column taller than the canvas at the fit floor wraps into
- * side-by-side sub-columns, and each column is centred on y = 0.
+ * column. A column taller than the canvas at `RECORD_GRAPH_READABLE_ZOOM`
+ * wraps into side-by-side sub-columns, and each column is centred on y = 0.
+ * Since 2.403.7 the gaps between columns are scaled to the canvas's width and
+ * the column count — squeezed so a wide result fits at the readable zoom,
+ * widened (up to twice) so a few columns fill a wide canvas — and the block
+ * is centred on x = 0.
  */
 function hierarchyPositions(
   records: Pick<RecordGraphRecord, 'id' | 'type'>[],
   ordered: string[],
   edges: Pick<RecordGraphEdge, 'source' | 'target'>[],
+  width: number,
   height: number,
 ): Map<string, { x: number; y: number }> {
   let rank = longestPathRanks(ordered, edges);
@@ -240,7 +270,11 @@ function hierarchyPositions(
     const used = [...new Set(ordered.map(id => TYPE_RANK[typeOf.get(id)!]))].sort((a, b) => a - b);
     rank = new Map(ordered.map(id => [id, used.indexOf(TYPE_RANK[typeOf.get(id)!])]));
   }
-  const maxRows = clamp(Math.floor((height / RECORD_GRAPH_MIN_FIT_ZOOM) / HIERARCHY_ROW), 3, 12);
+  const area = readableArea(width, height);
+  // As many rows as the readable height holds, the row gap squeezed from 20
+  // to 12px if that buys a row.
+  const maxRows = clamp(Math.floor((area.height - RECORD_GRAPH_NODE_HEIGHT) / (RECORD_GRAPH_NODE_HEIGHT + 12)) + 1, 3, 12);
+  const rowPitch = clamp((area.height - RECORD_GRAPH_NODE_HEIGHT) / Math.max(1, maxRows - 1), RECORD_GRAPH_NODE_HEIGHT + 12, HIERARCHY_ROW);
   const columns = new Map<number, string[]>();
   ordered.forEach(id => {
     const r = rank.get(id)!;
@@ -251,9 +285,23 @@ function hierarchyPositions(
   const index = new Map<string, number>();
   const preds = new Map<string, string[]>();
   edges.forEach(edge => preds.set(edge.target, [...(preds.get(edge.target) ?? []), edge.source]));
+  const ranks = [...columns.keys()].sort((a, b) => a - b);
+  const subColumnsOf = (r: number) => Math.ceil(columns.get(r)!.length / maxRows);
+  const subColumns = ranks.reduce((sum, r) => sum + subColumnsOf(r), 0);
+  // Box-to-box gaps: within a rank and between ranks. Natural 36 / 132 px,
+  // scaled by one factor so the block spans the readable width (never below
+  // 16 / 48, never over twice natural, and a lone column stays put).
+  const innerGaps = subColumns - ranks.length, rankGaps = ranks.length - 1;
+  const INNER = HIERARCHY_COLUMN - RECORD_GRAPH_NODE_WIDTH, RANK = INNER + HIERARCHY_RANK_GAP;
+  const natural = innerGaps * INNER + rankGaps * RANK;
+  // A few columns fill the canvas at 100%; a wide result, the readable area.
+  const naturalWidth = subColumns * RECORD_GRAPH_NODE_WIDTH + natural;
+  const room = naturalWidth > Math.max(1, width - 2 * LAYOUT_FIT_PADDING) ? area.width : Math.max(1, width - 2 * LAYOUT_FIT_PADDING);
+  const scale = natural > 0 ? clamp((room - subColumns * RECORD_GRAPH_NODE_WIDTH) / natural, 0, 2) : 1;
+  const inner = Math.max(16, INNER * scale), rankGap = Math.max(48, RANK * scale);
   const positions = new Map<string, { x: number; y: number }>();
   let x = 0;
-  [...columns.keys()].sort((a, b) => a - b).forEach(r => {
+  ranks.forEach(r => {
     const ids = columns.get(r)!;
     const bary = (id: string) => {
       const placed = (preds.get(id) ?? []).filter(p => index.has(p));
@@ -261,17 +309,174 @@ function hierarchyPositions(
     };
     const sorted = r === 0 ? ids : [...ids].sort((a, b) => bary(a) - bary(b));
     sorted.forEach((id, i) => index.set(id, i));
-    const subColumns = Math.ceil(sorted.length / maxRows);
-    const rows = Math.ceil(sorted.length / subColumns);
+    const subs = subColumnsOf(r);
+    const rows = Math.ceil(sorted.length / subs);
     sorted.forEach((id, i) => {
       const sub = Math.floor(i / rows);
       const row = i % rows;
       const inThis = Math.min(rows, sorted.length - sub * rows);
-      positions.set(id, { x: x + sub * HIERARCHY_COLUMN, y: (row - (inThis - 1) / 2) * HIERARCHY_ROW });
+      positions.set(id, { x: x + sub * (RECORD_GRAPH_NODE_WIDTH + inner), y: (row - (inThis - 1) / 2) * rowPitch });
     });
-    x += subColumns * HIERARCHY_COLUMN + HIERARCHY_RANK_GAP;
+    x += subs * RECORD_GRAPH_NODE_WIDTH + (subs - 1) * inner + rankGap;
   });
+  // Centre the block on x = 0 (its boxes, not their left edges).
+  const blockWidth = x - rankGap;
+  positions.forEach(p => { p.x -= blockWidth / 2; });
   return positions;
+}
+
+/** Ramanujan's perimeter of an ellipse. */
+function ellipsePerimeter(a: number, b: number): number {
+  return Math.PI * (3 * (a + b) - Math.sqrt((3 * a + b) * (a + 3 * b)));
+}
+
+/** `count` points on an ellipse at equal arc lengths (not equal angles, which bunch up along its flat top and bottom). */
+function ellipsePoints(a: number, b: number, count: number, phase: number): { x: number; y: number }[] {
+  const STEPS = 720;
+  const at = (i: number) => {
+    const t = i * 2 * Math.PI / STEPS - Math.PI / 2;
+    return { x: Math.cos(t) * a, y: Math.sin(t) * b };
+  };
+  const arc: number[] = [0];
+  for (let i = 1; i <= STEPS; i++) {
+    const p = at(i - 1), q = at(i);
+    arc.push(arc[i - 1]! + Math.hypot(q.x - p.x, q.y - p.y));
+  }
+  const total = arc[STEPS]!;
+  const out: { x: number; y: number }[] = [];
+  let step = 0;
+  for (let index = 0; index < count; index++) {
+    const target = ((index + phase) / count) * total;
+    while (step < STEPS && arc[step + 1]! < target) step++;
+    out.push(at(step));
+  }
+  return out;
+}
+
+/** A radial ring plan: `rings` ellipses at k × (stepX, stepY), holding `counts[k-1]` records each. */
+export interface RecordRadialRings {
+  rings: number;
+  stepX: number;
+  stepY: number;
+  counts: number[];
+  /** Whether the outer ring fits the readable area (`RECORD_GRAPH_READABLE_ZOOM`). */
+  fits: boolean;
+}
+
+/** Arc length a record takes on a ring: its box width plus a gap. */
+const RADIAL_ARC = RECORD_GRAPH_NODE_WIDTH + 30;
+
+/**
+ * Rings for `count` records (one at the centre) on a `width` × `height`
+ * canvas. The spacing comes from the node box — 128px between rings
+ * vertically, the canvas's aspect (≤ 2.4) sideways — and shrinks only as far
+ * as it must for the outer ring's ellipse to sit inside the readable area
+ * (`RECORD_GRAPH_READABLE_ZOOM`): the fewest rings that hold everyone, at the
+ * widest spacing that fits. Records are shared among the rings in proportion
+ * to their perimeters, so the outer ring is not a lone straggler. Past about
+ * thirty records nothing fits and the natural spacing is kept (the automatic
+ * fit then centres on the focus). Since 2.403.7; was a fixed 128 × 307px step.
+ */
+export function recordRadialRings(count: number, width = DEFAULT_CANVAS.width, height = DEFAULT_CANVAS.height): RecordRadialRings {
+  return radialPlans(count, width, height)[0]!;
+}
+
+/** Every ring plan that fits the readable area, preferred first, then the natural fallback. */
+function radialPlans(count: number, width: number, height: number): RecordRadialRings[] {
+  const others = Math.max(0, count - 1);
+  if (!others) return [{ rings: 0, stepX: 0, stepY: 0, counts: [], fits: true }];
+  const area = readableArea(width, height);
+  // Half-extents of the node boxes' top-left corners that keep every box inside.
+  const maxX = Math.max(RECORD_GRAPH_NODE_WIDTH / 2, (area.width - RECORD_GRAPH_NODE_WIDTH) / 2);
+  const maxY = Math.max(RECORD_GRAPH_NODE_HEIGHT / 2, (area.height - RECORD_GRAPH_NODE_HEIGHT) / 2);
+  const aspect = clamp(width / height, 1, 2.4);
+  const naturalY = RECORD_GRAPH_NODE_HEIGHT + 24;
+  const naturalX = Math.max(RADIAL_ARC, naturalY * aspect);
+  const capacity = (rings: number, sx: number, sy: number) =>
+    Array.from({ length: rings }, (_, k) => Math.max(1, Math.floor(ellipsePerimeter((k + 1) * sx, (k + 1) * sy) / RADIAL_ARC)));
+  const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
+  const spread = (caps: number[]) => {
+    const total = sum(caps);
+    const counts = caps.map(c => Math.min(c, Math.floor((others * c) / total)));
+    let left = others - sum(counts);
+    for (let k = caps.length - 1; left > 0; k = (k - 1 + caps.length) % caps.length) {
+      if (counts[k]! < caps[k]!) { counts[k]!++; left--; }
+    }
+    return counts;
+  };
+  const plans: RecordRadialRings[] = [];
+  // The natural sideways step first, at any ring count; then the whole readable width.
+  for (const wide of [false, true]) {
+    for (let rings = 1; rings <= 6 && maxX / rings >= RADIAL_ARC / 2; rings++) {
+      const sy = Math.min(naturalY, maxY / rings);
+      const sx = wide ? maxX / rings : Math.min(naturalX, maxX / rings);
+      const caps = capacity(rings, sx, sy);
+      if (sum(caps) >= others) plans.push({ rings, stepX: sx, stepY: sy, counts: spread(caps), fits: true });
+    }
+  }
+  // Too many to fit: the natural spacing, as many rings as it takes.
+  let rings = 1;
+  while (sum(capacity(rings, naturalX, naturalY)) < others) rings++;
+  plans.push({ rings, stepX: naturalX, stepY: naturalY, counts: spread(capacity(rings, naturalX, naturalY)), fits: false });
+  return plans;
+}
+
+/**
+ * Radial positions: the best-connected record at the centre, the rest on
+ * `recordRadialRings` in degree order (the inner ring around the focus holds
+ * the most connected), spread at equal arc lengths. Rings squeezed to the
+ * readable area can sit closer than a node box, so a record whose ring point
+ * is taken moves to the nearest free spot inside the outer ring's bounds; when
+ * some record finds none, the next plan is tried (wider rings, then the
+ * natural spacing, which never overlaps). Since 2.403.7.
+ */
+function radialPositions(ordered: string[], width: number, height: number): Map<string, { x: number; y: number }> {
+  // The first plan whose records all find room; the natural spacing always does.
+  for (const plan of radialPlans(ordered.length, width, height)) {
+    const points = ringPoints(plan);
+    if (points) return new Map(ordered.map((id, i) => [id, points[i]!]));
+  }
+  return new Map();
+}
+
+/** A plan's positions (centre first), or null when a squeezed plan has no room for some record. */
+function ringPoints(plan: RecordRadialRings): { x: number; y: number }[] | null {
+  const points: { x: number; y: number }[] = [{ x: 0, y: 0 }];
+  plan.counts.forEach((n, k) => {
+    const ring = k + 1;
+    points.push(...ellipsePoints(ring * plan.stepX, ring * plan.stepY, n, ring % 2 ? 0.25 : 0.75));
+  });
+  if (plan.fits && plan.rings > 0) {
+    // Rings squeezed below a node box's height would stack boxes: place the
+    // records one at a time, inner ring first, each at its ring point or —
+    // when that box is taken — at the nearest free spot inside the outer
+    // ring's bounds (on a grid). Deterministic, and no two boxes overlap
+    // while there is room.
+    const boundX = plan.rings * plan.stepX, boundY = plan.rings * plan.stepY;
+    const needX = RECORD_GRAPH_NODE_WIDTH + 10, needY = RECORD_GRAPH_NODE_HEIGHT + 6;
+    const placed: { x: number; y: number }[] = [points[0]!];
+    const free = (x: number, y: number) => placed.every(q => Math.abs(q.x - x) >= needX || Math.abs(q.y - y) >= needY);
+    // A 4px grid, coarser on a big canvas so the search stays ~20k spots.
+    const GRID = Math.max(4, Math.sqrt((4 * boundX * boundY) / 20000));
+    for (let i = 1; i < points.length; i++) {
+      const want = points[i]!;
+      let best: { x: number; y: number } | null = free(want.x, want.y) ? want : null;
+      let bestCost = 0;
+      if (!best) {
+        for (let y = -boundY; y <= boundY + 0.01; y += GRID) {
+          for (let x = -boundX; x <= boundX + 0.01; x += GRID) {
+            const cost = ((x - want.x) / needX) ** 2 + ((y - want.y) / needY) ** 2;
+            if (best && cost >= bestCost) continue;
+            if (free(x, y)) { best = { x, y }; bestCost = cost; }
+          }
+        }
+      }
+      if (!best) return null;
+      points[i] = best;
+      placed.push(best);
+    }
+  }
+  return points;
 }
 
 /**
@@ -279,7 +484,9 @@ function hierarchyPositions(
  * `options` is the canvas the layout should fill (default 1160 × 420): the
  * force distances, the radial rings' shape and the hierarchy's column height
  * are all sized to it at the fit floor, so the drawing reads without zooming
- * below `RECORD_GRAPH_MIN_FIT_ZOOM`.
+ * below `RECORD_GRAPH_MIN_FIT_ZOOM`. Since 2.403.7 the radial rings and the
+ * hierarchy's columns are sized so a ~25-record result fits whole at
+ * `RECORD_GRAPH_READABLE_ZOOM` (`recordRadialRings`).
  */
 export function layoutRecordGraph(
   records: Pick<RecordGraphRecord, 'id' | 'type'>[],
@@ -299,42 +506,8 @@ export function layoutRecordGraph(
   });
   const ordered = [...ids].sort((a, b) => degree.get(b)! - degree.get(a)! || a.localeCompare(b));
   const positions = new Map<string, { x: number; y: number }>();
-  if (layout === 'radial') {
-    // Elliptical rings shaped to the canvas: a wide canvas gets wide rings.
-    // Each ring holds as many records as its perimeter has room for.
-    const aspect = clamp(width / height, 1, 2.4);
-    const ry = RECORD_GRAPH_NODE_HEIGHT + 24;
-    const rx = Math.max(RECORD_GRAPH_NODE_WIDTH + 30, ry * aspect);
-    positions.set(ordered[0]!, { x: 0, y: 0 });
-    let offset = 1;
-    for (let ring = 1; offset < ordered.length; ring++) {
-      const a = rx * ring, b = ry * ring;
-      // Ramanujan's perimeter of an ellipse.
-      const perimeter = Math.PI * (3 * (a + b) - Math.sqrt((3 * a + b) * (a + 3 * b)));
-      const count = Math.min(Math.max(1, Math.floor(perimeter / (RECORD_GRAPH_NODE_WIDTH + 30))), ordered.length - offset);
-      // Equal arc lengths, not equal angles — equal angles bunch records up
-      // along an ellipse's flat top and bottom.
-      const STEPS = 720;
-      const arc: number[] = [0];
-      const at = (i: number) => {
-        const t = i * 2 * Math.PI / STEPS - Math.PI / 2;
-        return { x: Math.cos(t) * a, y: Math.sin(t) * b };
-      };
-      for (let i = 1; i <= STEPS; i++) {
-        const p = at(i - 1), q = at(i);
-        arc.push(arc[i - 1]! + Math.hypot(q.x - p.x, q.y - p.y));
-      }
-      const total = arc[STEPS]!;
-      let step = 0;
-      for (let index = 0; index < count; index++) {
-        const target = ((index + (ring % 2 ? 0 : 0.5)) / count) * total;
-        while (step < STEPS && arc[step + 1]! < target) step++;
-        positions.set(ordered[offset++]!, at(step));
-      }
-    }
-    return positions;
-  }
-  if (layout === 'hierarchy') return hierarchyPositions(records, ordered, validEdges, height);
+  if (layout === 'radial') return radialPositions(ordered, width, height);
+  if (layout === 'hierarchy') return hierarchyPositions(records, ordered, validEdges, width, height);
   // Force: simulate with y stretched so the node box is square (collide is a
   // circle), then squash y back — boxes clear each other on both axes.
   const squash = RECORD_GRAPH_NODE_HEIGHT / RECORD_GRAPH_NODE_WIDTH;
@@ -365,7 +538,29 @@ export function layoutRecordGraph(
   // nothing else moves (2.403.5).
   simulation.force('link', null).force('charge', null).force('x', null).force('y', null).force('center', null);
   simulation.tick(80);
-  nodes.forEach(node => positions.set(node.id, { x: node.x, y: node.y * squash }));
+  // A packed set can still come out a few percent taller than the area the
+  // automatic fit shows at `RECORD_GRAPH_READABLE_ZOOM` (a 25-record result
+  // was 505 flow px against 473 on 1160 × 418). Close its rows up by at most
+  // 15%, only when that makes it fit, and never so any more boxes touch
+  // (2.403.7).
+  const ys = nodes.map(node => node.y * squash);
+  const span = Math.max(...ys) - Math.min(...ys) + RECORD_GRAPH_NODE_HEIGHT;
+  const want = (readableArea(width, height).height - RECORD_GRAPH_NODE_HEIGHT) / (span - RECORD_GRAPH_NODE_HEIGHT);
+  let factor = 1;
+  if (want < 1 && want >= 0.85) {
+    const touching = (f: number) => {
+      let count = 0;
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          if (Math.abs(nodes[i]!.x - nodes[j]!.x) < RECORD_GRAPH_NODE_WIDTH
+            && Math.abs(ys[i]! - ys[j]!) * f < RECORD_GRAPH_NODE_HEIGHT) count++;
+        }
+      }
+      return count;
+    };
+    if (touching(want) <= touching(1)) factor = want;
+  }
+  nodes.forEach((node, i) => positions.set(node.id, { x: node.x, y: ys[i]! * factor }));
   return positions;
 }
 
@@ -380,7 +575,8 @@ export interface RecordGraphViewport {
  * Floor of the whole-graph fit the viewer asks for — the second "Fit to view"
  * press and `RecordGraphHandle.fitAll()` — which, like the org graph's
  * `fitAll`, trades the readability floor for seeing everything at once. The
- * automatic fit keeps `RECORD_GRAPH_MIN_FIT_ZOOM`. Since 2.403.5.
+ * automatic fit keeps `RECORD_GRAPH_MIN_FIT_ZOOM`, except that since 2.403.7
+ * it shows the whole graph at down to `RECORD_GRAPH_READABLE_ZOOM`. Since 2.403.5.
  */
 export const RECORD_GRAPH_FIT_ALL_MIN_ZOOM = 0.5;
 
@@ -443,7 +639,13 @@ export interface RecordGraphViewportOptions {
    * whole graph, and where it overflows at the floor aligns it top-left so
    * the viewer pans.
    */
-  mode: 'focus' | 'all';
+  mode: 'focus' | 'all' | 'auto';
+  /**
+   * `auto` — the automatic fit (2.403.7): the whole graph when it fits at or
+   * above this zoom, else `focus` (or `all` at the floor, with no focus).
+   * Default `RECORD_GRAPH_READABLE_ZOOM`.
+   */
+  readableZoom?: number;
   /** The focus records themselves (usually the selection) — never clipped when they fit. */
   focusKeys?: readonly string[];
   /** Focus plus direct neighbours (`recordGraphFitKeys`). Framed first when it fits. */
@@ -492,14 +694,18 @@ function boxOf(positions: ReadonlyMap<string, { x: number; y: number }>, keys: I
  * or above `maxZoom` (default `RECORD_GRAPH_MAX_FIT_ZOOM`). Pure, so a host or
  * test can check what a fit shows. Null when nothing is positioned or the
  * canvas is unmeasured. Since 2.403.4; `inset` and the circles-first focus
- * fallback since 2.403.5.
+ * fallback since 2.403.5; `mode: 'auto'` (fit everything when it is readable,
+ * else focus) since 2.403.7.
  */
 export function recordGraphViewport(
   positions: ReadonlyMap<string, { x: number; y: number }>,
   size: { width: number; height: number },
   options: RecordGraphViewportOptions,
 ): RecordGraphViewport | null {
-  const { minZoom = RECORD_GRAPH_MIN_FIT_ZOOM, maxZoom = RECORD_GRAPH_MAX_FIT_ZOOM, inset = {} } = options;
+  const {
+    minZoom = RECORD_GRAPH_MIN_FIT_ZOOM, maxZoom = RECORD_GRAPH_MAX_FIT_ZOOM, inset = {},
+    readableZoom = RECORD_GRAPH_READABLE_ZOOM,
+  } = options;
   const padding = Math.max(FOCUS_EDGE_MARGIN, options.padding ?? 24);
   const all = boxOf(positions, positions.keys());
   if (!all || size.width <= 0 || size.height <= 0) return null;
@@ -512,7 +718,16 @@ export function recordGraphViewport(
   const availW = Math.max(1, clear.x1 - clear.x0);
   const availH = Math.max(1, clear.y1 - clear.y0);
   const rawZoom = (box: Box) => Math.min(availW / (box.x1 - box.x0), availH / (box.y1 - box.y0));
-  const focus = options.mode === 'focus' ? boxOf(positions, options.focusKeys ?? []) : null;
+  // Automatic: everything, when everything is readable (2.403.7).
+  if (options.mode === 'auto' && rawZoom(all) >= readableZoom) {
+    const zoom = Math.min(rawZoom(all), maxZoom);
+    return {
+      x: (clear.x0 + clear.x1) / 2 - ((all.x0 + all.x1) / 2) * zoom,
+      y: (clear.y0 + clear.y1) / 2 - ((all.y0 + all.y1) / 2) * zoom,
+      zoom,
+    };
+  }
+  const focus = options.mode !== 'all' ? boxOf(positions, options.focusKeys ?? []) : null;
   const circles = focus ? boxOf(positions, options.focusKeys ?? [], NODE_CIRCLE) : null;
   const near = focus ? boxOf(positions, options.fitKeys?.length ? options.fitKeys : options.focusKeys ?? []) : null;
   // Per axis: centre the first candidate that fits. When none does, a focus

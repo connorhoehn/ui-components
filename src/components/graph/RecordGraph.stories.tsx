@@ -96,9 +96,9 @@ const MANY_EDGES: RecordGraphEdge[] = [
 
 /**
  * Twenty-five records and 56 connections in the search page's 1160 × 418
- * canvas, with the three people selected and passed as `focusKeys`: the view
- * frames them and their neighbours at a readable zoom (never below 80%), the
- * rest is a pan away, and Fit frames everything at the same floor. Switch to
+ * canvas, with the three people selected and passed as `focusKeys`. Since
+ * 2.403.7 the view opens on all 25 (they fit at 70% or more); Fit frames the
+ * selection at the 80% floor, and pressed again everything. Switch to
  * Hierarchy for longest-path columns wrapped to the canvas height.
  */
 export const ManyRecords: Story = {
@@ -145,6 +145,32 @@ export const StripOpens: Story = {
           <Button size="sm" variant="secondary" onClick={() => graph.current?.fitAll()}>fitAll()</Button>
         </div>
       </>
+    );
+  },
+};
+
+/**
+ * The two journey walkers' disagreement, settled (2.403.7): the same 25
+ * records and three selected people in each layout, each in a 1160px frame
+ * whose canvas is ~418px tall under the toolbar. The automatic fit opens on
+ * every record at 70% or more in all three — Radial's rings and Hierarchy's
+ * column gaps are sized to that canvas — rather than centring on the
+ * selection at 80% with records cut off.
+ */
+export const AllLayouts25: Story = {
+  name: '25 records, all layouts',
+  args: { records: MANY, edges: MANY_EDGES },
+  render: (args) => {
+    const [selected, setSelected] = useState(['person:vera', 'person:nora-c', 'person:nora-d']);
+    return (
+      <div className="flex flex-col gap-4 p-4">
+        {(['force', 'radial', 'hierarchy'] as const).map((layout) => (
+          <div key={layout} className="flex h-[470px] w-[1160px] max-w-full flex-col border border-border">
+            <RecordGraph {...args} layout={layout} selectedKeys={selected} onSelectionChange={setSelected} focusKeys={selected}
+              data-testid={`record-graph-${layout}`} aria-label={`Record connections, ${layout}`} />
+          </div>
+        ))}
+      </div>
     );
   },
 };
