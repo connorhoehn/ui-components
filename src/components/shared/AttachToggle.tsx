@@ -42,7 +42,7 @@ export function AttachToggle({
       className={cn(
         'inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-lg font-medium transition-colors duration-100',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
-        size === 'sm' ? 'h-7 px-2.5 text-[13px]' : 'h-9 px-3 text-[15px]',
+        size === 'sm' ? 'h-7 px-2.5 text-[13px]' : 'h-9 px-3.5 text-[15px]',
         attached
           ? 'border border-transparent bg-primary-bg text-primary-fg hover:border-primary-border'
           : 'border border-border bg-surface text-text-primary hover:bg-surface-hover',

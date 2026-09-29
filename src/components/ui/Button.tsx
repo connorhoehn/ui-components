@@ -98,10 +98,16 @@ const TONE: Record<ButtonTone, Record<ButtonVariant, string>> = {
   code: codeVariantClasses,
 };
 
+// One box per size. The height is fixed rather than grown from padding +
+// content, because a grown box is not one size: a bordered button came out
+// 2px taller than a borderless one (26 vs 24 at `sm`), and an icon beside the
+// label pushed its button to 30px next to a 26px neighbour in the same header
+// (measured by realtime-examples' type audit, 2.407.14). The label and any
+// icon centre inside the box instead.
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: 'px-2.5 py-1 text-xs',
-  md: 'px-4 py-2 text-sm',
-  lg: 'px-5 py-2.5 text-sm',
+  sm: 'h-6.5 gap-1.5 px-2.5 text-xs',
+  md: 'h-9 gap-2 px-4 text-sm',
+  lg: 'h-10 gap-2 px-5 text-sm',
 };
 
 export function Button({
@@ -125,12 +131,16 @@ export function Button({
       ref={ref}
       type={type}
       disabled={disabled}
+      // Which step of the button scale this is — for audits and for hosts
+      // that need to find "every small ghost button" without parsing classes.
+      data-variant={variant}
+      data-size={isLink ? undefined : size}
       className={cn(
         isLink
           ? 'font-[inherit] transition-colors duration-150 ease-in-out'
           : // A caption never breaks mid-word: a narrow flex parent turned
             // "Remove" into "Rem / ove" (measured, in a 430px document pane).
-            'whitespace-nowrap font-semibold rounded-md font-[inherit] transition-colors duration-150 ease-in-out',
+            'inline-flex shrink-0 items-center justify-center whitespace-nowrap font-semibold rounded-md font-[inherit] transition-colors duration-150 ease-in-out',
         (TONE[tone] ?? variantClasses)[variant],
         !isLink && sizeClasses[size],
         disabled && 'opacity-50 cursor-not-allowed',

@@ -311,7 +311,6 @@ export function PipelinesListView({
     <div data-testid={testId} data-frame={frame} className={cn('flex h-full min-h-0 flex-col gap-4', className)}>
       <PageHeader
         title={title}
-        size="lg"
         badge={
           <Chip size="sm" tone="neutral" data-testid={`${testId}-count`} aria-label={`${count ?? visible.length} pipelines`}>
             {count ?? visible.length}

@@ -224,7 +224,7 @@ function EmptyState({
       ) : (
         <div
           className={cn(
-            small ? 'text-[14px] font-semibold' : large ? 'text-[24px] font-bold leading-8 tracking-[-0.01em]' : start ? 'text-lg font-semibold leading-7' : 'text-[17px] font-semibold',
+            small ? 'text-[14px] font-semibold' : large ? 'text-[24px] font-bold leading-8 tracking-[-0.01em]' : start ? 'text-lg font-semibold leading-7' : 'text-lg font-semibold',
             // A page-scale or start-aligned message is a heading in body ink,
             // not the muted slate of a placeholder.
             large || start ? 'text-text-primary' : palette.title,
@@ -266,9 +266,9 @@ function EmptyState({
             )}
       {details && !compact && (
         <div className={cn('flex w-full flex-col gap-1.5 border-t border-border', large ? 'mt-[22px] pt-8' : 'mt-5 pt-5', start ? 'items-start text-left' : 'items-center text-center')} data-testid={`${testId}-details`}>
-          <div className={cn('font-semibold leading-7 text-text-primary', large ? 'text-[19px]' : 'text-lg')}>{details.title}</div>
+          <div className={cn('font-semibold leading-7 text-text-primary', large ? 'text-xl' : 'text-lg')}>{details.title}</div>
           {details.body != null && (
-            <div className="text-[15px] leading-[25px] text-text-secondary">{details.body}</div>
+            <div className="text-sm leading-6 text-text-secondary">{details.body}</div>
           )}
           {details.action && (
             <div className="mt-3">
@@ -334,7 +334,7 @@ function GuidedAction({
     ? cn(
         'inline-flex items-center gap-1 self-start border-0 bg-transparent p-0 font-medium text-primary no-underline',
         'cursor-pointer hover:underline [font-family:inherit]',
-        large || start ? 'text-base' : 'text-[15px]',
+        large || start ? 'text-base' : 'text-sm',
       )
     : cn(
         'inline-flex items-center justify-center',

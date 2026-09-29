@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.407.14
+
+Type & control audit (realtime-examples `scripts/dev/type-audit.mjs`: every nav route at 1280×720 and 1640×960, light and dark). **Visual change for every consumer.**
+
+- **`Button` is one box per size.** `sm` 26px, `md` 36px, `lg` 40px tall (`h-6.5` / `h-9` / `h-10`), `inline-flex` with the label and any icon centred and a size gap (`gap-1.5` / `gap-2`). The height used to grow from padding + content, so one size drew three boxes: a bordered `sm` was 26px beside a borderless `primary` `sm` at 24px, and an icon in the label pushed a button to 30px next to 26px neighbours in the same header (Call / Transcribe vs Sign Out; Save vs New slide; Download .pptx vs Present). Padding is horizontal only now.
+- `Button` carries `data-variant` and `data-size` (no `data-size` on `variant="link"`), so an audit or a host can group buttons without parsing classes.
+- `ChannelHeader`: the conversation name is on the page-title step, `text-xl` (20px) — it was 15px, smaller than the app's 16px brand and off the type scale. `small` stays 13px.
+- `SectionLabel case="upper"` is 11px (was 10px): the same caps step as `RAIL_GROUP_LABEL` and every other caps label, so a screen has one caps-label size.
+- `EmptyState`: the default title is `text-lg` (18px, was 17px), the `lg` details title `text-xl` (20px, was 19px), and the default description and details body `text-sm` (14px, were 15px) — all on the scale.
+- `PipelinesListView`: the page title is `PageHeader` `md` (20px) like every other page; it was the only 28px `lg` title.
+- `AttachToggle` `md`: `px-3.5`, the padding of the header actions it sits beside (`FilePickerButton`, `DropdownMenu` secondary) — it was 12px against their 14px at the same 36px height.
+- `DocumentResultList` summary: `text-sm` (14px, was 14.5px). `DocumentRuler` labels: 10px (was 9px, under the micro step).
+
 ## 2.407.13
 
 - **One type scale on the Documents surface (visual change).** The Documents explorer drew 15px beside the Workspace `NavRail`'s 13px railType scale. New rail forms, all composing `railType`: `TreeView size="rail"` (md's row — tint, 18px indent, ⋯ over the meta — with `RAIL_ITEM_TEXT` 13px/500 titles on the 36px pitch and `RAIL_ITEM_COUNT` 12px meta) and `ConversationShelf size="rail"` (13px/500 labels on 36px rows). `WorkspaceRail heading="label"` ("DOCUMENTS 180") is now the rail group label — `RAIL_GROUP_LABEL` 11px semibold caps in secondary ink with a plain `RAIL_GROUP_COUNT` — instead of a 15px heading with a count chip (its only consumer is the realtime-examples Documents explorer).

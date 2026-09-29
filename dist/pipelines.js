@@ -4,18 +4,18 @@ import { t } from "./usePrefersReducedMotion-Cllucr7i.js";
 import { t as n } from "./cn-DhjIN-s0.js";
 import { n as r } from "./ToastProvider-BVUJvzmK.js";
 import { t as i } from "./useEventCallback-Cwx9QVSi.js";
-import { a, d as o, f as s, g as c, h as l, n as u, o as d, p as f, r as p, t as m, u as h } from "./FilterPopover-BFUGwu9X.js";
-import { _ as g, a as _, n as v } from "./overlayStack-CHdlnODN.js";
-import { t as y } from "./Chip-4IBrlduZ.js";
+import { a, d as o, f as s, g as c, h as l, n as u, o as d, p as f, r as p, t as m, u as h } from "./FilterPopover-6tU67YMO.js";
+import { _ as g, a as _, n as v } from "./overlayStack-DHAs60_m.js";
+import { t as y } from "./Chip-nf4Tf03G.js";
 import { t as b } from "./IconButton-DDeXW3mZ.js";
 import { t as x } from "./Banner-e3wgB68D.js";
-import { n as S, t as C } from "./Chart-DRtuaJHd.js";
-import { t as w } from "./Modal-DMFNRUDx.js";
-import { t as T } from "./ConfirmDialog-CSS_SMC6.js";
+import { n as S, t as C } from "./Chart-D9CSy-h4.js";
+import { t as w } from "./Modal-2CidNxzH.js";
+import { t as T } from "./ConfirmDialog-B-f4kYP-.js";
 import { t as E } from "./Input-DLknWXri.js";
-import { t as D } from "./EmptyState-zKbpAhFD.js";
+import { t as D } from "./EmptyState-DtHxzyCi.js";
 import { t as ee } from "./LoadingState-a2GlKOK1.js";
-import { i as O, t as k } from "./focusTrap-C5l9cvTe.js";
+import { i as O, t as k } from "./focusTrap-bnh1qi0w.js";
 import { n as A, t as te } from "./FilterChip-0hc-J7iS.js";
 import { t as ne } from "./SkeletonCard-CGe8XFPB.js";
 import { n as re, t as ie } from "./Slider-izEq1bGO.js";
@@ -23,11 +23,11 @@ import { t as j } from "./Textarea-Dz4doxTv.js";
 import { t as ae } from "./SearchInput-BqFaonBP.js";
 import { t as oe } from "./PageHeader-DOSl8dnN.js";
 import { t as se } from "./FileUploadDrop-Drndcvb1.js";
-import { t as ce } from "./DropdownMenu-dM1tsyrs.js";
+import { t as ce } from "./DropdownMenu-Bz3vBYi4.js";
 import { t as le } from "./StatusPill-C-aN2Pzz.js";
-import { t as M } from "./Select-D3fGI8SO.js";
+import { t as M } from "./Select-D9v37avj.js";
 import { t as N } from "./NumberInput-PlADgrip.js";
-import { t as P } from "./Checkbox-Dftwml_V.js";
+import { t as P } from "./Checkbox-DWpeFfD2.js";
 import { n as ue } from "./FileKindMark-XRAKQoRm.js";
 import { t as de } from "./activationKey-CjbL3LUv.js";
 import { n as fe, r as pe, t as me } from "./EventStreamContext-CLzG8O5_.js";
@@ -23240,7 +23240,6 @@ function fp({ entries: e, loading: t = !1, error: r = null, onRetry: i, query: a
 		children: [
 			/* @__PURE__ */ H(oe, {
 				title: _,
-				size: "lg",
 				badge: /* @__PURE__ */ H(y, {
 					size: "sm",
 					tone: "neutral",

@@ -172,14 +172,14 @@ export function ChannelHeader({
                 }}
                 className={cn(
                   'min-w-0 rounded border border-primary bg-surface px-1 py-0 font-semibold text-[var(--color-text-primary)] leading-tight outline-none',
-                  small ? 'text-[13px]' : 'text-[15px]',
+                  small ? 'text-[13px]' : 'text-xl',
                 )}
               />
             ) : (
               <h2
                 className={cn(
                   'font-semibold text-[var(--color-text-primary)] leading-tight truncate',
-                  small ? 'text-[13px]' : 'text-[15px]',
+                  small ? 'text-[13px]' : 'text-xl',
                   onRename && 'cursor-text',
                 )}
                 onDoubleClick={onRename ? () => setEditing(true) : undefined}

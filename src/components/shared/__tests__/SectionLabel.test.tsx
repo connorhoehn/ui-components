@@ -26,7 +26,7 @@ describe('SectionLabel', () => {
     // sizes again a year later.
     render(<SectionLabel data-testid="sl">Screenshot</SectionLabel>);
     const cls = screen.getByTestId('sl').className;
-    expect(cls).toContain('text-[10px]');
+    expect(cls).toContain('text-[11px]');
     expect(cls).toContain('uppercase');
     expect(cls).toContain('font-bold');
     expect(cls).toContain('tracking-[0.06em]');

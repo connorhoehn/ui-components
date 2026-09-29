@@ -177,7 +177,7 @@ export function DocumentRuler({
             <span
               key={`l${t.x}`}
               data-testid={`${testId}-label`}
-              className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 text-[9px] leading-none text-text-secondary"
+              className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] leading-none text-text-secondary"
               style={{ left: t.x }}
             >
               {t.label}

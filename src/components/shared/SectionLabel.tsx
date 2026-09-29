@@ -32,7 +32,9 @@ import type { ReactNode, ElementType } from 'react';
 import { cn } from '../../lib/cn';
 
 /**
- * `upper` — the 10px bold uppercase panel caption (default, unchanged).
+ * `upper` — the 11px bold uppercase panel caption (default) — the same step
+ * as a rail's group heading (`RAIL_GROUP_LABEL`), so every caps label on a
+ * screen is one size (10px until 2.407.14).
  * `sentence` — a 12px medium sentence-case caption at normal tracking, sized
  * and weighted to match `FormField`'s own label so it sits level with the
  * other labels in a config form.
@@ -40,7 +42,7 @@ import { cn } from '../../lib/cn';
 export type SectionLabelCase = 'upper' | 'sentence';
 
 const CASE_CLASSES: Record<SectionLabelCase, string> = {
-  upper: 'text-[10px] font-bold uppercase tracking-[0.06em] text-text-tertiary',
+  upper: 'text-[11px] font-bold uppercase tracking-[0.06em] text-text-tertiary',
   sentence: 'text-[12px] font-medium normal-case tracking-normal text-text-primary',
 };
 
