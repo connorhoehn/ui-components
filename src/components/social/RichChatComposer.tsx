@@ -2262,7 +2262,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         // the size a finger or a hurried cursor can hit. The row sheds whole
         // controls (see `roomFor`) rather than shaving every one of them.
         'grid shrink-0 place-items-center rounded leading-none',
-        docked ? 'h-9 w-9 text-[15px]' : 'h-7 w-7 text-sm',
+        // The docked strip is on ONE type step, the compact Send's 12px
+        // (text-xs, Button sm): mode label, format glyphs and "/ commands"
+        // drew 15px beside a 12px Send until 2.407.18. The typed text and the
+        // inline command chips stay 15px — they are the message, not controls.
+        docked ? 'h-9 w-9 text-xs' : 'h-7 w-7 text-sm',
         active ? 'bg-surface-hover text-text-primary' : cn(docked ? 'text-text-primary' : 'text-text-secondary', 'hover:bg-surface-hover'),
       )}
     >
@@ -2539,7 +2543,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             {singleMode ? (
               // One mode: its name, not a one-item switch.
               <span
-                className={cn('flex items-center gap-1.5 px-1.5 py-0.5 text-text-primary', basicBox ? 'gap-2 font-medium' : 'font-semibold', docked ? 'text-[15px]' : 'text-sm')}
+                className={cn('flex items-center gap-1.5 px-1.5 py-0.5 text-text-primary', basicBox ? 'gap-2 font-medium' : 'font-semibold', docked ? 'text-xs' : 'text-sm')}
                 data-testid={`${testId}-mode-pill`}
                 data-single-mode="true"
               >
@@ -2551,7 +2555,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               // in a menu with their shortcuts and, when off, the reason.
               <DropdownMenu
                 trigger={(
-                  <span className={cn('flex items-center gap-1.5 text-text-primary', basicBox ? 'gap-2 font-medium' : 'font-semibold', docked ? 'text-[15px]' : 'text-sm')} data-testid={`${testId}-mode-label`}>
+                  <span className={cn('flex items-center gap-1.5 text-text-primary', basicBox ? 'gap-2 font-medium' : 'font-semibold', docked ? 'text-xs' : 'text-sm')} data-testid={`${testId}-mode-label`}>
                     {!basicBox && <span aria-hidden="true" className={cn('flex justify-center text-primary', docked ? 'w-5' : 'w-4')}>{docked && activeMode === 'agent' ? <SparkleIcon size={18} /> : MODE_ICON[activeMode]}</span>}
                     {MODE_NAMES[activeMode]}
                     {docked
@@ -2564,7 +2568,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 triggerTestId={`${testId}-mode-menu`}
                 data-testid={`${testId}-mode-menu-list`}
                 align="start"
-                triggerClassName={basicBox ? 'h-8 rounded-md border border-border bg-surface px-3 hover:bg-surface-hover' : 'rounded-md border-0 bg-transparent px-1.5 py-0.5 hover:bg-surface-hover'}
+                triggerClassName={basicBox ? 'h-8 rounded-md border border-border bg-surface px-3 hover:bg-surface-hover' : 'rounded-md border-0 bg-transparent hover:bg-surface-hover'}
                 sections={[{
                   items: offeredModes.map((m, i) => {
                     const unavailable = isModeDisabled(m);
@@ -3086,7 +3090,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               muted `/ commands`, the way a code editor's status line names
               its palette. Wide only — narrow has no room and the `?` menu. */}
           {!collapsed && wide && !!commands?.length && !promptCard && (
-            <span className={cn('shrink-0 select-none text-text-tertiary', docked ? 'ml-3 text-[15px]' : 'ml-1 border-l border-border pl-2 text-xs')} data-testid={`${testId}-commands-hint`}>/ commands</span>
+            <span className={cn('shrink-0 select-none text-text-tertiary', docked ? 'ml-3 text-xs' : 'ml-1 border-l border-border pl-2 text-xs')} data-testid={`${testId}-commands-hint`}>/ commands</span>
           )}
 
           {!collapsed && !docked && ((!hintsInRow && !!resolvedHints.length) || suggestionsInMenu || (formatInHints && !!editor)) ? (

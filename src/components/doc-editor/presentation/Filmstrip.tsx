@@ -318,7 +318,7 @@ export function FilmstripThumb({
               trigger={<MoreGlyph />}
               triggerLabel={`Slide ${number} actions`}
               triggerTitle="Slide actions"
-              triggerClassName="bg-surface/90 px-1 py-0.5"
+              triggerClassName="h-auto bg-surface/90 px-1 py-0.5"
               triggerTestId={`${testIdPrefix}-menu-${slide.id}`}
               align="end"
               sections={[{ items: menuItems }]}

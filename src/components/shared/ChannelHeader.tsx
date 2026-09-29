@@ -43,7 +43,7 @@ export interface ChannelHeaderProps {
   description?: string;
   /**
    * Views of this channel — files, documents, recordings, pinned. Rendered
-   * inline beside the name; pass a <Tabs variant="underline" size="sm">.
+   * inline beside the name; pass a <Tabs variant="underline" size="md"> (14px, the app's one tab-row step).
    * The header owns no tab state: which one is active is the caller's.
    */
   tabs?: ReactNode;

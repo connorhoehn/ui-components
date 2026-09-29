@@ -30,7 +30,7 @@ export interface SearchInputProps {
   className?: string;
   /**
    * `sm` (default) is the 13px field. `md` (2.386.3) is the Documents
-   * explorer's: a 36px field, 15px text and an 18px glass. `lg` (2.389.6) is
+   * explorer's: a 36px field, 14px text (15px until 2.407.18 — off the type scale) and an 18px glass. `lg` (2.389.6) is
    * a page's primary search: a 44px field, 16px text, a 20px glass and a
    * larger clear ×.
    */
@@ -129,7 +129,7 @@ function SearchInput({
         data-testid={testId}
         className={cn(
           'w-full border focus:outline-none focus:ring-2 transition-colors',
-          size === 'lg' ? 'h-11 pl-12 pr-11 text-base rounded-lg' : size === 'md' ? 'h-9 pl-10 pr-7 text-[15px] rounded-md' : 'pl-8 pr-7 py-1.5 text-sm rounded-md',
+          size === 'lg' ? 'h-11 pl-12 pr-11 text-base rounded-lg' : size === 'md' ? 'h-9 pl-10 pr-7 text-sm rounded-md' : 'pl-8 pr-7 py-1.5 text-sm rounded-md',
           palette.field,
           inputClassName,
         )}

@@ -114,9 +114,13 @@ export interface DropdownMenuProps {
 }
 
 const TRIGGER_VARIANT: Record<NonNullable<DropdownMenuProps['triggerVariant']>, string> = {
-  default: 'rounded-md border border-[var(--color-border)] px-2 py-1 text-base leading-none text-[var(--color-text-secondary)] bg-transparent hover:bg-[var(--color-surface-hover)]',
-  primary: 'h-9 rounded-lg border-none px-3.5 text-[15px] font-semibold leading-none bg-primary text-on-primary hover:bg-primary-hover',
-  secondary: 'h-9 rounded-lg border border-border px-3.5 text-[15px] font-medium leading-none bg-surface text-text-primary hover:bg-surface-hover',
+  // `h-6.5`: the default trigger is the box of a `Button size="sm"` (26px),
+  // so a menu in a toolbar row is as tall as the buttons beside it. It grew
+  // from padding + content until 2.407.18 (22px with a 14px label, 26px
+  // with an 18px glyph).
+  default: 'h-6.5 rounded-md border border-[var(--color-border)] px-2 text-base leading-none text-[var(--color-text-secondary)] bg-transparent hover:bg-[var(--color-surface-hover)]',
+  primary: 'h-9 rounded-lg border-none px-3.5 text-sm font-semibold leading-none bg-primary text-on-primary hover:bg-primary-hover',
+  secondary: 'h-9 rounded-lg border border-border px-3.5 text-sm font-medium leading-none bg-surface text-text-primary hover:bg-surface-hover',
   link: 'rounded px-1 py-0.5 border-none text-sm leading-none bg-transparent text-text-secondary hover:text-text-primary hover:bg-surface-hover',
 };
 

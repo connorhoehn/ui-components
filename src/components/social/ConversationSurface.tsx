@@ -304,9 +304,11 @@ export function ConversationSurface({
         data-testid={`${testId}-header`}
         tabs={
           items.length > 1 ? (
+            // `md` (14px): the one tab-row step — the section band's NavTabs
+            // and EditorShell's tabs. `sm` (12px) until 2.407.18.
             <Tabs
               variant="underline"
-              size="sm"
+              size="md"
               aria-label="Views of this conversation"
               value={view}
               onValueChange={(id) => setView(id as ConversationFeature)}

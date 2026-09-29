@@ -43,7 +43,7 @@ export function FilePickerButton({
         data-testid={testId}
         onClick={() => input.current?.click()}
         className={cn(
-          'inline-flex h-9 cursor-pointer items-center gap-2 rounded-lg px-3.5 text-[15px] font-medium transition-colors duration-100',
+          'inline-flex h-9 cursor-pointer items-center gap-2 rounded-lg px-3.5 text-sm font-medium transition-colors duration-100',
           'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50',
           variant === 'primary'
             ? 'border-none bg-primary text-on-primary hover:bg-primary-hover'

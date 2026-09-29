@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.407.18
+
+Type audit, second pass — the composer strip, the 36px header actions and the tab rows. **Visual change for every consumer.**
+
+- **The docked composer strip is on one type step, 12px** (`text-xs`, the `Button sm` label and the compact Send's step). The mode label, the format glyphs (B / I / …) and the muted "/ commands" drew 15px in the expanded card beside the 66×24 Send's 12px, on every `ContextComposer` surface. 12px is the step the idle row already uses (mode pill and Send) — the small social row the user prefers — so the expanded card now matches it instead of the other way round; 15px is not on the type scale (railType 11/12/13, Tailwind 12/14/16…). The boxes are unchanged (36px format buttons), and the typed text and inline command chips stay 15px/24px: they are the message, not controls.
+- **`DropdownMenu` default trigger is the `Button sm` box** (`h-6.5`, 26px, `px-2`): a menu in a toolbar row is as tall as the buttons beside it. It grew from padding + content (22px with a 14px label, 26px with an 18px glyph). The composer's mode menu no longer overrides the padding. A trigger that wants its own box still passes `h-*` in `triggerClassName` (Filmstrip's thumbnail menu passes `h-auto`).
+- **The 36px header actions are 14px**, the `Button md` step at the same 36px height: `DropdownMenu` `primary` / `secondary` triggers, `FilePickerButton`, `AttachToggle md`, `SearchInput md` and `DocumentToolbar`'s roomy buttons (all 15px, off the scale).
+- **`ConversationSurface` tabs are `Tabs md` (14px)** — the one tab-row step, shared with the section band's `NavTabs` and `EditorShell` (2.407.13). They were `sm` (12px) beside the header's now 20px name. `ChannelHeader`'s doc names `size="md"`.
+
 ## 2.407.17
 
 - **`ScopeHeader variant="inline"`: the crumbs are exactly whole beside a long title (fix).** 2.407.15 made the title give up width first with `shrink-[100]`, but a flex shrink phase hands every item its proportional share — "Search" lost 0.23px and rendered as "Sear…" at device-pixel-ratio 2. The title is now `flex-1 min-w-[12rem]` (basis 0, grow 1): it takes what the trail has left after the crumbs and truncates inside it, and the crumbs enter no shrink phase until the title is at its 12rem floor. Measured at DPR 2 across 1672/1536/1280 for a short and a 170-character title: every crumb's box equals its text width.

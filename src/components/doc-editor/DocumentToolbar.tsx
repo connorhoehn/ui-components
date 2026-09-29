@@ -163,7 +163,7 @@ const SizeContext = createContext<DocumentToolbarSize>('wide');
  * editor's toolbar reads at. The compact bar in a chat pane keeps 28px.
  */
 const RoomyContext = createContext(false);
-const BTN_ROOMY = 'h-9 min-w-8 px-1.5 rounded-md text-[15px]';
+const BTN_ROOMY = 'h-9 min-w-8 px-1.5 rounded-md text-sm';
 const BTN_COMPACT = 'h-7 min-w-7 px-1.5 rounded text-xs';
 /** Glyph size for a drawn icon in the bar. */
 const useGlyph = () => (useContext(RoomyContext) ? 18 : 14);
