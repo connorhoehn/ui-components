@@ -1,6 +1,7 @@
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useDocumentComments } from '../useDocumentComments';
 import type { GatewayMessage } from '../../types/gateway';
+import { SOCIAL_API_URL } from '../../utils/socialApi';
 
 // ---------------------------------------------------------------------------
 // Setup
@@ -337,5 +338,207 @@ describe('unresolveThread', () => {
 
     expect(result.current.comments['s1'][0].resolved).toBe(false);
     expect(result.current.comments['s1'][0].resolvedBy).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Transport seam: baseUrl / commentsPath / fetcher
+// ---------------------------------------------------------------------------
+
+function okResponse(body: unknown): Response {
+  return { ok: true, status: 200, json: () => Promise.resolve(body) } as unknown as Response;
+}
+
+function headersOf(init: RequestInit | undefined): Record<string, string> {
+  return (init?.headers ?? {}) as Record<string, string>;
+}
+
+describe('default transport (unchanged)', () => {
+  it('GETs the build-time base with only the bearer header', async () => {
+    const fetchMock = stubFetch({ comments: [] });
+    vi.stubGlobal('fetch', fetchMock);
+    const ws = makeWs();
+    const { result } = renderHook(() => useDocumentComments(defaultOpts(ws)));
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(fetchMock).toHaveBeenCalledWith(`${SOCIAL_API_URL}/api/documents/${DOC_ID}/comments`, {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+    });
+  });
+
+  it('POSTs the same body and headers as before for a section comment', async () => {
+    const fetchMock = stubFetch({ comments: [] });
+    vi.stubGlobal('fetch', fetchMock);
+    const ws = makeWs();
+    const { result } = renderHook(() => useDocumentComments(defaultOpts(ws)));
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    fetchMock.mockResolvedValueOnce(okResponse({ comment: RAW_COMMENT }));
+    await act(async () => { await result.current.addComment('s1', 'Hi', 'p1'); });
+
+    const [url, init] = callWith(fetchMock, 'POST');
+    expect(url).toBe(`${SOCIAL_API_URL}/api/documents/${DOC_ID}/comments`);
+    expect(init.headers).toEqual({ 'Content-Type': 'application/json', Authorization: `Bearer ${TOKEN}` });
+    expect(init.body).toBe(JSON.stringify({ sectionId: 's1', text: 'Hi', parentCommentId: 'p1' }));
+  });
+
+  it('baseUrl overrides the build-time base', async () => {
+    const fetchMock = stubFetch({ comments: [] });
+    vi.stubGlobal('fetch', fetchMock);
+    const ws = makeWs();
+    const { result } = renderHook(() =>
+      useDocumentComments({ ...defaultOpts(ws), baseUrl: 'https://bff.example' }),
+    );
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(fetchMock.mock.calls[0][0]).toBe(`https://bff.example/api/documents/${DOC_ID}/comments`);
+  });
+});
+
+describe('host transport (fetcher + commentsPath)', () => {
+  const path = (id: string, commentId?: string) =>
+    `/api/host/comments${commentId ? `/${commentId}` : ''}?id=${encodeURIComponent(id)}`;
+
+  function setup(extra: Record<string, unknown> = {}) {
+    const globalFetch = stubFetch({ comments: [] });
+    vi.stubGlobal('fetch', globalFetch);
+    const fetcher = vi.fn().mockResolvedValue(okResponse({ comments: [RAW_COMMENT] }));
+    const ws = makeWs();
+    const hook = renderHook(() =>
+      useDocumentComments({
+        ...defaultOpts(ws),
+        idToken: null,
+        // Inline functions on purpose: a new identity each render must not refetch.
+        fetcher: (input: string, init: RequestInit) => fetcher(input, init),
+        commentsPath: (id: string, commentId?: string) => path(id, commentId),
+        ...extra,
+      }),
+    );
+    return { ...hook, fetcher, globalFetch };
+  }
+
+  it('loads with no idToken, through the fetcher, with no Authorization header', async () => {
+    const { result, fetcher, globalFetch } = setup();
+    await waitFor(() => expect(result.current.comments['s1']).toHaveLength(1));
+
+    expect(globalFetch).not.toHaveBeenCalled();
+    const [url, init] = fetcher.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe(`/api/host/comments?id=${DOC_ID}`);
+    expect(init.method).toBe('GET');
+    expect(headersOf(init).Authorization).toBeUndefined();
+  });
+
+  it('does not refetch on re-render with new inline transport functions', async () => {
+    const { result, fetcher, rerender } = setup();
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    const calls = fetcher.mock.calls.length;
+    rerender();
+    rerender();
+    expect(fetcher.mock.calls.length).toBe(calls);
+  });
+
+  it('ignores idToken for headers when a fetcher is supplied', async () => {
+    const { result, fetcher } = setup({ idToken: TOKEN });
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    fetcher.mockResolvedValueOnce(okResponse({ comment: { ...RAW_COMMENT, id: 'c9', commentId: 'c9' } }));
+    await act(async () => { await result.current.addComment('s1', 'x'); });
+    const [, init] = callWith(fetcher, 'POST');
+    expect(headersOf(init)).toEqual({ 'Content-Type': 'application/json' });
+    expect(fetcher.mock.calls.every((c) => headersOf(c[1] as RequestInit).Authorization === undefined)).toBe(true);
+  });
+
+  it('reply goes through the fetcher at the collection path', async () => {
+    const { result, fetcher } = setup();
+    await waitFor(() => expect(result.current.comments['s1']).toHaveLength(1));
+    const REPLY = { ...RAW_COMMENT, id: 'c2', commentId: 'c2', text: 'Re', parentCommentId: 'c1' };
+    fetcher.mockResolvedValueOnce(okResponse({ comment: REPLY }));
+
+    await act(async () => { await result.current.addComment('s1', 'Re', 'c1'); });
+
+    const [url, init] = callWith(fetcher, 'POST');
+    expect(url).toBe(`/api/host/comments?id=${DOC_ID}`);
+    expect(JSON.parse(init.body as string)).toEqual({ sectionId: 's1', text: 'Re', parentCommentId: 'c1' });
+    expect(headersOf(init).Authorization).toBeUndefined();
+    expect(result.current.comments['s1'][0].replies[0].id).toBe('c2');
+  });
+
+  it('resolve and unresolve PATCH the per-comment path through the fetcher', async () => {
+    const { result, fetcher } = setup();
+    await waitFor(() => expect(result.current.comments['s1']).toHaveLength(1));
+
+    fetcher.mockResolvedValueOnce(okResponse({ comment: { resolvedBy: 'u1', resolvedAt: 't' } }));
+    await act(async () => { await result.current.resolveThread('s1', 'c1'); });
+    expect(result.current.comments['s1'][0].resolved).toBe(true);
+
+    fetcher.mockResolvedValueOnce(okResponse({ comment: {} }));
+    await act(async () => { await result.current.unresolveThread('s1', 'c1'); });
+    expect(result.current.comments['s1'][0].resolved).toBe(false);
+
+    const patches = fetcher.mock.calls.filter((c) => (c[1] as RequestInit).method === 'PATCH');
+    expect(patches.map((c) => c[0])).toEqual([
+      `/api/host/comments/c1?id=${DOC_ID}`,
+      `/api/host/comments/c1?id=${DOC_ID}`,
+    ]);
+    expect(patches.map((c) => JSON.parse((c[1] as RequestInit).body as string))).toEqual([
+      { resolved: true },
+      { resolved: false },
+    ]);
+    expect(patches.every((c) => headersOf(c[1] as RequestInit).Authorization === undefined)).toBe(true);
+  });
+
+  it('prefixes commentsPath with an explicit baseUrl only', async () => {
+    const { result, fetcher } = setup({ baseUrl: 'https://bff.example' });
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(fetcher.mock.calls[0][0]).toBe(`https://bff.example/api/host/comments?id=${DOC_ID}`);
+  });
+});
+
+describe('document-wide and anchored comments', () => {
+  const DOC_COMMENT = { ...RAW_COMMENT, id: 'd1', commentId: 'd1', sectionId: undefined, scope: 'document' };
+
+  it('addDocumentComment POSTs scope:document with no sectionId', async () => {
+    const fetchMock = stubFetch({ comments: [] });
+    vi.stubGlobal('fetch', fetchMock);
+    const ws = makeWs();
+    const { result } = renderHook(() => useDocumentComments(defaultOpts(ws)));
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    fetchMock.mockResolvedValueOnce(okResponse({ comment: DOC_COMMENT }));
+    await act(async () => { await result.current.addDocumentComment('Overall'); });
+
+    const [, init] = callWith(fetchMock, 'POST');
+    expect(JSON.parse(init.body as string)).toEqual({ text: 'Overall', scope: 'document' });
+    expect(result.current.documentComments.map((c) => c.id)).toEqual(['d1']);
+    expect(result.current.comments['__document']).toBe(result.current.documentComments);
+  });
+
+  it('a reply to a document-wide comment omits sectionId and scope, and nests under it', async () => {
+    const REPLY = { ...RAW_COMMENT, id: 'd2', commentId: 'd2', sectionId: undefined, parentCommentId: 'd1' };
+    const fetchMock = stubFetch({ comments: [DOC_COMMENT] });
+    vi.stubGlobal('fetch', fetchMock);
+    const ws = makeWs();
+    const { result } = renderHook(() => useDocumentComments(defaultOpts(ws)));
+    await waitFor(() => expect(result.current.documentComments).toHaveLength(1));
+
+    fetchMock.mockResolvedValueOnce(okResponse({ comment: REPLY }));
+    await act(async () => { await result.current.addComment('__document', 'Re', 'd1'); });
+
+    const [, init] = callWith(fetchMock, 'POST');
+    expect(JSON.parse(init.body as string)).toEqual({ text: 'Re', parentCommentId: 'd1' });
+    expect(result.current.documentComments[0].replies.map((c) => c.id)).toEqual(['d2']);
+  });
+
+  it('passes an anchor through and does not mark it document-scoped', async () => {
+    const fetchMock = stubFetch({ comments: [] });
+    vi.stubGlobal('fetch', fetchMock);
+    const ws = makeWs();
+    const { result } = renderHook(() => useDocumentComments(defaultOpts(ws)));
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    const anchor = { v: 1, key: 'body', start: 'AA==', end: 'AQ==', quote: 'hello' };
+    fetchMock.mockResolvedValueOnce(okResponse({ comment: { ...RAW_COMMENT, id: 'a1', commentId: 'a1', sectionId: undefined, anchor } }));
+    await act(async () => { await result.current.addComment('', 'On this', null, { anchor }); });
+
+    const [, init] = callWith(fetchMock, 'POST');
+    expect(JSON.parse(init.body as string)).toEqual({ text: 'On this', anchor });
   });
 });

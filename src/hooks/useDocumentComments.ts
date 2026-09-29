@@ -3,31 +3,95 @@
 // REST + WebSocket hook for document comments. Fetches initial state from
 // social-api and applies real-time updates via the document-events WS service.
 // Completely independent of Y.js.
+//
+// Transport seam: by default the hook calls `${SOCIAL_API_URL}/api/documents/:id/comments`
+// with the user's `idToken` as a bearer. A host that fronts the document API with
+// its own BFF (cookie session, server-held document grant) passes `fetcher` (and
+// usually `commentsPath` / `baseUrl`); the hook then adds no Authorization header
+// and does not require an `idToken`.
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import type { GatewayMessage } from '../types/gateway';
-import type { CommentData, CommentThread } from '../types/document';
+import type { CommentData, CommentThread, DocumentCommentAnchor } from '../types/document';
 import { SOCIAL_API_URL } from '../utils/socialApi';
 
 // ---------------------------------------------------------------------------
 // Public types
 // ---------------------------------------------------------------------------
 
+/** Performs one comments request. Must resolve to a fetch `Response`. */
+export type DocumentCommentsFetcher = (input: string, init: RequestInit) => Promise<Response>;
+
+/**
+ * Builds the comments URL for a document. Called with no `commentId` for the
+ * collection (GET list / POST create) and with a `commentId` for one comment
+ * (PATCH resolve/unresolve), so a host whose route carries a query string can
+ * put the sub-resource before it.
+ */
+export type DocumentCommentsPath = (documentId: string, commentId?: string) => string;
+
 export interface UseDocumentCommentsOptions {
   documentId: string;
+  /**
+   * User bearer for the default transport. Without a `fetcher` the hook does
+   * nothing while this is null; with a `fetcher` it is ignored for requests.
+   */
   idToken: string | null;
   sendMessage: (msg: Record<string, unknown>) => void;
   onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
   connectionState: string;
+  /**
+   * Overrides the build-time `VITE_SOCIAL_API_URL` base. Prefixed to
+   * `/api/documents/:id/comments`, or to `commentsPath(...)` when that is given.
+   */
+  baseUrl?: string;
+  /**
+   * Replaces the `/api/documents/:id/comments[/:commentId]` path. The result is
+   * used as-is (prefixed only by an explicit `baseUrl`, never by the build-time base).
+   */
+  commentsPath?: DocumentCommentsPath;
+  /**
+   * Replaces global `fetch`. When supplied the host owns credentials: the hook
+   * sends no Authorization header (only `Content-Type` on writes) and does not
+   * need an `idToken`. Set `credentials: 'include'` etc. inside the fetcher.
+   */
+  fetcher?: DocumentCommentsFetcher;
+}
+
+export interface AddDocumentCommentOptions {
+  /** Canvas anchor for the new root comment. */
+  anchor?: DocumentCommentAnchor;
 }
 
 export interface UseDocumentCommentsReturn {
-  comments: Record<string, CommentThread[]>;  // sectionId -> threads
-  addComment: (sectionId: string, text: string, parentCommentId?: string | null) => Promise<void>;
+  /**
+   * sectionId -> threads. Document-wide (`scope: 'document'`) threads are keyed
+   * `'__document'`; replies with no sectionId inherit their parent's key.
+   */
+  comments: Record<string, CommentThread[]>;
+  /** The document-wide threads (same array as `comments['__document']`, or empty). */
+  documentComments: CommentThread[];
+  /**
+   * Create a comment or reply. Sends `sectionId` when it is a real section id.
+   * Pass `''` (or `'__document'`) as `sectionId` to omit it: with neither a
+   * parent nor an anchor that creates a document-wide comment (`scope:'document'`);
+   * with a parent it is a reply positioned by its thread.
+   */
+  addComment: (
+    sectionId: string,
+    text: string,
+    parentCommentId?: string | null,
+    options?: AddDocumentCommentOptions,
+  ) => Promise<void>;
+  /** Sugar for `addComment('', text)`: an unanchored, document-wide comment. */
+  addDocumentComment: (text: string) => Promise<void>;
   resolveThread: (sectionId: string, commentId: string) => Promise<void>;
   unresolveThread: (sectionId: string, commentId: string) => Promise<void>;
   loading: boolean;
 }
+
+/** Key in `comments` for document-wide threads. */
+const DOCUMENT_SCOPE_KEY = '__document';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -68,9 +132,24 @@ function normalizeComment(raw: Record<string, unknown>): CommentData & { section
 function groupBySectionAndBuildTrees(
   flatComments: CommentData[],
 ): Record<string, CommentThread[]> {
+  const byId = new Map<string, CommentData>();
+  for (const c of flatComments) byId.set(c.id, c);
+
+  // A reply may carry no sectionId (it is positioned by its thread), so walk up
+  // to the first ancestor that says where it lives. Bounded against cycles.
+  const keyFor = (c: CommentData): string => {
+    let cur: CommentData | undefined = c;
+    for (let depth = 0; cur && depth < 64; depth++) {
+      if (cur.sectionId) return cur.sectionId;
+      if (cur.scope === 'document') return DOCUMENT_SCOPE_KEY;
+      cur = cur.parentCommentId ? byId.get(cur.parentCommentId) : undefined;
+    }
+    return '__unknown';
+  };
+
   const bySection = new Map<string, CommentData[]>();
   for (const c of flatComments) {
-    const sid = (c as CommentData & { sectionId?: string }).sectionId ?? '__unknown';
+    const sid = keyFor(c);
     if (!bySection.has(sid)) bySection.set(sid, []);
     bySection.get(sid)!.push(c);
   }
@@ -89,7 +168,7 @@ function groupBySectionAndBuildTrees(
 export function useDocumentComments(
   options: UseDocumentCommentsOptions,
 ): UseDocumentCommentsReturn {
-  const { documentId, idToken, sendMessage, onMessage } = options;
+  const { documentId, idToken, sendMessage, onMessage, baseUrl, commentsPath, fetcher } = options;
 
   // ---- State ---------------------------------------------------------------
   // Store flat comments internally; derive trees via useMemo
@@ -103,20 +182,53 @@ export function useDocumentComments(
   const documentIdRef = useRef(documentId);
   useEffect(() => { documentIdRef.current = documentId; }, [documentId]);
 
+  // Transport functions are commonly passed inline; hold them in refs so a new
+  // identity each render does not refetch. The list URL (a string) is the dep.
+  const fetcherRef = useRef(fetcher);
+  fetcherRef.current = fetcher;
+  const commentsPathRef = useRef(commentsPath);
+  commentsPathRef.current = commentsPath;
+  const baseUrlRef = useRef(baseUrl);
+  baseUrlRef.current = baseUrl;
+  const hasFetcher = fetcher !== undefined;
+
+  /** Resolve the URL for the collection (no commentId) or one comment. */
+  const urlFor = useCallback((docId: string, commentId?: string): string => {
+    const path = commentsPathRef.current;
+    if (path) return `${baseUrlRef.current ?? ''}${path(docId, commentId)}`;
+    const base = baseUrlRef.current ?? SOCIAL_API_URL;
+    return commentId === undefined
+      ? `${base}/api/documents/${docId}/comments`
+      : `${base}/api/documents/${docId}/comments/${commentId}`;
+  }, []);
+
+  /** Route through the host fetcher when given, else global fetch. */
+  const send = useCallback(
+    (url: string, init: RequestInit): Promise<Response> =>
+      fetcherRef.current ? fetcherRef.current(url, init) : fetch(url, init),
+    [],
+  );
+
+  // A request can go out when the host owns the transport or we hold a token.
+  const canSend = hasFetcher || !!idToken;
+
   const authHeaders = useMemo((): Record<string, string> => {
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-    if (idToken) headers.Authorization = `Bearer ${idToken}`;
+    if (idToken && !hasFetcher) headers.Authorization = `Bearer ${idToken}`;
     return headers;
-  }, [idToken]);
+  }, [idToken, hasFetcher]);
+
+  const listUrl = documentId ? urlFor(documentId) : '';
 
   // ---- Fetch initial comments on mount / documentId change -----------------
   useEffect(() => {
-    if (!documentId || !idToken) return;
+    if (!documentId || !canSend) return;
 
     setLoading(true);
-    fetch(`${SOCIAL_API_URL}/api/documents/${documentId}/comments`, {
-      headers: { Authorization: `Bearer ${idToken}` },
-    })
+    send(
+      listUrl,
+      hasFetcher ? { method: 'GET' } : { headers: { Authorization: `Bearer ${idToken}` } },
+    )
       .then(async (res) => {
         if (!res.ok) throw new Error(`Failed to load comments (${res.status})`);
         return res.json() as Promise<{ comments: CommentData[] }>;
@@ -130,7 +242,7 @@ export function useDocumentComments(
       .finally(() => {
         setLoading(false);
       });
-  }, [documentId, idToken]);
+  }, [documentId, idToken, canSend, hasFetcher, listUrl, send]);
 
   // NOTE: document-events subscription is managed centrally by DocumentEditorPage,
   // not by individual hooks. This avoids one hook's cleanup unsubscribing all hooks.
@@ -198,24 +310,35 @@ export function useDocumentComments(
     () => groupBySectionAndBuildTrees(flatComments),
     [flatComments],
   );
+  const documentComments = useMemo(
+    () => comments[DOCUMENT_SCOPE_KEY] ?? [],
+    [comments],
+  );
 
   // ---- addComment -----------------------------------------------------------
   const addComment = useCallback(
-    async (sectionId: string, text: string, parentCommentId?: string | null): Promise<void> => {
-      if (!idToken) return;
+    async (
+      sectionId: string,
+      text: string,
+      parentCommentId?: string | null,
+      addOptions?: AddDocumentCommentOptions,
+    ): Promise<void> => {
+      if (!canSend) return;
 
-      const res = await fetch(
-        `${SOCIAL_API_URL}/api/documents/${documentIdRef.current}/comments`,
-        {
-          method: 'POST',
-          headers: authHeaders,
-          body: JSON.stringify({
-            sectionId,
-            text,
-            ...(parentCommentId ? { parentCommentId } : {}),
-          }),
-        },
-      );
+      const anchor = addOptions?.anchor;
+      const hasSection = sectionId !== '' && sectionId !== DOCUMENT_SCOPE_KEY;
+      // Key order kept as { sectionId, text, parentCommentId } so existing
+      // section comments send the exact same body as before.
+      const body: Record<string, unknown> = hasSection ? { sectionId, text } : { text };
+      if (parentCommentId) body.parentCommentId = parentCommentId;
+      if (anchor) body.anchor = anchor;
+      if (!hasSection && !parentCommentId && !anchor) body.scope = 'document';
+
+      const res = await send(urlFor(documentIdRef.current), {
+        method: 'POST',
+        headers: authHeaders,
+        body: JSON.stringify(body),
+      });
 
       if (!res.ok) {
         throw new Error(`Failed to add comment (${res.status})`);
@@ -229,22 +352,24 @@ export function useDocumentComments(
         return [...prev, normalized];
       });
     },
-    [idToken, authHeaders],
+    [canSend, authHeaders, send, urlFor],
+  );
+
+  const addDocumentComment = useCallback(
+    (text: string): Promise<void> => addComment('', text),
+    [addComment],
   );
 
   // ---- resolveThread --------------------------------------------------------
   const resolveThread = useCallback(
     async (_sectionId: string, commentId: string): Promise<void> => {
-      if (!idToken) return;
+      if (!canSend) return;
 
-      const res = await fetch(
-        `${SOCIAL_API_URL}/api/documents/${documentIdRef.current}/comments/${commentId}`,
-        {
-          method: 'PATCH',
-          headers: authHeaders,
-          body: JSON.stringify({ resolved: true }),
-        },
-      );
+      const res = await send(urlFor(documentIdRef.current, commentId), {
+        method: 'PATCH',
+        headers: authHeaders,
+        body: JSON.stringify({ resolved: true }),
+      });
 
       if (!res.ok) {
         throw new Error(`Failed to resolve thread (${res.status})`);
@@ -265,22 +390,19 @@ export function useDocumentComments(
         ),
       );
     },
-    [idToken, authHeaders],
+    [canSend, authHeaders, send, urlFor],
   );
 
   // ---- unresolveThread ------------------------------------------------------
   const unresolveThread = useCallback(
     async (_sectionId: string, commentId: string): Promise<void> => {
-      if (!idToken) return;
+      if (!canSend) return;
 
-      const res = await fetch(
-        `${SOCIAL_API_URL}/api/documents/${documentIdRef.current}/comments/${commentId}`,
-        {
-          method: 'PATCH',
-          headers: authHeaders,
-          body: JSON.stringify({ resolved: false }),
-        },
-      );
+      const res = await send(urlFor(documentIdRef.current, commentId), {
+        method: 'PATCH',
+        headers: authHeaders,
+        body: JSON.stringify({ resolved: false }),
+      });
 
       if (!res.ok) {
         throw new Error(`Failed to unresolve thread (${res.status})`);
@@ -295,8 +417,8 @@ export function useDocumentComments(
         ),
       );
     },
-    [idToken, authHeaders],
+    [canSend, authHeaders, send, urlFor],
   );
 
-  return { comments, addComment, resolveThread, unresolveThread, loading };
+  return { comments, documentComments, addComment, addDocumentComment, resolveThread, unresolveThread, loading };
 }

@@ -30,6 +30,13 @@ export { useCursors } from './useCursors';
 export { useCustomFieldTypes } from './useCustomFieldTypes';
 export { useDocTypeProposals } from './useDocTypeProposals';
 export { useDocumentComments } from './useDocumentComments';
+export type {
+  UseDocumentCommentsOptions,
+  UseDocumentCommentsReturn,
+  DocumentCommentsFetcher,
+  DocumentCommentsPath,
+  AddDocumentCommentOptions,
+} from './useDocumentComments';
 export { useDocumentExport } from './useDocumentExport';
 export { useDocumentItems } from './useDocumentItems';
 export { useDocumentMetadata } from './useDocumentMetadata';

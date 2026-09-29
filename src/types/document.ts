@@ -82,6 +82,31 @@ export interface CommentData {
   resolved?: boolean;
   resolvedBy?: string;
   resolvedAt?: string;
+  /** Legacy section position. Absent on document-wide and anchored comments. */
+  sectionId?: string;
+  /** `'document'` for an unanchored, document-wide comment (no section, anchor or parent). */
+  scope?: 'document';
+  /** Where in the prose the comment points (canvas documents). Opaque to the server. */
+  anchor?: DocumentCommentAnchor;
+}
+
+/**
+ * A Y.js relative-position range a canvas comment points at. Structurally
+ * mirrors platform-api's `DocumentCommentAnchor` (and realtime-modules'
+ * `CanvasAnchor`): encoded and resolved by the client, stored verbatim by the
+ * server.
+ */
+export interface DocumentCommentAnchor {
+  /** Encoding version. */
+  v: number;
+  /** The Y.js root the anchor is relative to (`'body'` for a canvas page). */
+  key: string;
+  /** base64 of the encoded relative position for the start of the range. */
+  start: string;
+  /** base64 of the encoded relative position for the end of the range. */
+  end: string;
+  /** The text the range covered when the comment was written. */
+  quote: string;
 }
 
 /** A comment with nested replies, assembled client-side. */
