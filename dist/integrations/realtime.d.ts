@@ -1425,6 +1425,49 @@ declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecti
 
 export declare const CONVERSATION_CAPABILITY_NAMES: Record<GatedConversationFeature, string>;
 
+export declare type ConversationCallDockComponent = (props: ConversationCallDockProps) => React.JSX.Element | null;
+
+/** The realtime-modules functions ConversationCallDock calls (spread `/client/video`). */
+export declare interface ConversationCallDockModules {
+    conversationCallDockProps: typeof RMVideo.conversationCallDockProps;
+    useAudioVideoSettings: typeof RMVideo.useAudioVideoSettings;
+}
+
+export declare interface ConversationCallDockProps {
+    /** `useConversationCall()`'s result, as-is. */
+    call: RMConversationCallSource;
+    /** The conversation's name (`#general`, `Alice Chen`, an initiative). */
+    title: string;
+    /** Opens the host's People panel (the dock's People button). */
+    onOpenPeople: () => void;
+    /** The People panel is open (the button reads pressed). */
+    peopleOpen?: boolean;
+    /**
+     * The host's own settings surface. Omitted, the dock opens its built-in
+     * "Call devices" dialog (AudioVideoSettingsForm bound to useAudioVideoSettings).
+     */
+    onOpenSettings?: () => void;
+    onPopOut?: () => void;
+    /** Host controls in the controls row, before the gear (reactions, recording chip). */
+    extras?: ReactNode;
+    /** Extra rows in the camera menu ("Blur background…"). */
+    cameraMenuItems?: {
+        label: string;
+        onSelect: () => void;
+    }[];
+    /** Override a participant's camera tile; `undefined` draws their initials. Default: StreamVideo on their stream. */
+    tile?: (p: RMConversationCallParticipant) => ReactNode | undefined;
+    /** An info line above the shelf while the call is on (e.g. who the call could not ring). */
+    notice?: ReactNode;
+    /** Name shown on the settings preview. */
+    selfName?: string;
+    /** 132 × 74 tiles instead of 176 × 88. */
+    compact?: boolean;
+    className?: string;
+    /** The dock's test id; the notice is `<id>-notice`, the settings dialog `<id>-settings`. Default `conversation-call-dock`. */
+    'data-testid'?: string;
+}
+
 /** The views a conversation can offer. `chat` is the transcript itself. */
 declare type ConversationFeature = 'chat' | 'files' | 'documents' | 'pins' | 'members' | 'mentions' | 'calls';
 
@@ -1592,6 +1635,9 @@ export declare function createCanvasDocumentPane(rm: CanvasDocumentPaneModules):
 
 /** `createCanvasExtensions` from `@…/realtime-modules/adapters/tiptap`, injected. */
 export declare type CreateCanvasExtensions = (parts: CanvasDocumentExtensionParts) => AnyExtension[];
+
+/** Bind ConversationCallDock to injected realtime-modules functions. Call once, at module scope. */
+export declare function createConversationCallDock(rm: ConversationCallDockModules): ConversationCallDockComponent;
 
 /**
  * Bind conversationFeaturesFor to an injected `lobbyForChannel` (the rule for
@@ -1833,6 +1879,18 @@ export declare interface FileUploadSummary {
     size?: number;
 }
 
+declare interface FloatingCardProps {
+    children: ReactNode;
+    /** Which corner of the viewport it sits in. Default bottom-right. */
+    corner?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+    /** Width in px. Default 160. */
+    width?: number;
+    /** Height cap in px; the card scrolls past it. Default 280. */
+    maxHeight?: number;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare type GatedConversationFeature = Exclude<ConversationFeature, UngatedConversationFeature>;
 
 /** A thread plus where it wants to sit, in pixels from the page top. */
@@ -1966,6 +2024,24 @@ export declare interface HangoutRoomsSectionProps {
         open: boolean;
         onClose: () => void;
     }) => React.ReactNode;
+}
+
+export declare function incomingCallTitle(ring: RMIncomingConversationCall): string;
+
+export declare function IncomingCallToast({ ring, onAccept, onDecline, corner, width, className, 'data-testid': testId, }: IncomingCallToastProps): JSX.Element;
+
+export declare interface IncomingCallToastProps {
+    /** One of `useIncomingConversationCalls().rings` (the head of the queue). */
+    ring: RMIncomingConversationCall;
+    onAccept: () => void;
+    onDecline: () => void;
+    /** Viewport corner. Default top-right. */
+    corner?: FloatingCardProps['corner'];
+    /** Card width in px. Default 360. */
+    width?: number;
+    className?: string;
+    /** Default `incoming-call-toast`; the answers are `incoming-call-accept` / `incoming-call-decline`. */
+    'data-testid'?: string;
 }
 
 /** Where a loop is. Mirrors the run status platform-api reports. */
@@ -2545,11 +2621,78 @@ export declare interface RMConnectionStateSource {
     connectionState: RMConnectionState;
 }
 
+/** Mirror of RM `ConversationCallParticipant`. */
+export declare interface RMConversationCallParticipant {
+    id: string;
+    userId: string;
+    displayName: string;
+    avatarUrl?: string;
+    isLocal: boolean;
+    state: 'in-call' | 'reconnecting' | 'ringing' | 'declined' | 'busy';
+    audioOn: boolean;
+    cameraOn: boolean;
+    screenSharing: boolean;
+    participantId: string | null;
+    stream: MediaStream | null;
+    screenStream: MediaStream | null;
+}
+
+/** Mirror of RM `ConversationCallPhase`. */
+export declare type RMConversationCallPhase = 'idle' | 'calling' | 'ringing' | 'connecting' | 'live' | 'reconnecting' | 'ended' | 'failed';
+
+/**
+ * The slice of RM `useConversationCall()`'s result the dock reads — pass the
+ * hook's result as-is.
+ */
+export declare interface RMConversationCallSource {
+    phase: RMConversationCallPhase;
+    call: {
+        participants: RMConversationCallParticipant[];
+        participantCount: number;
+    } | null;
+    error: {
+        message: string;
+    } | null;
+    callingTo: string | null;
+    elapsedMs: number | null;
+    activeSpeakerId: string | null;
+    self: {
+        audioOn: boolean;
+        cameraOn: boolean;
+        screenSharing: boolean;
+    };
+    devices: {
+        prefs: RMDevicePreferences;
+        set(next: RMDevicePreferences): void;
+        list: {
+            microphones: DeviceOption[];
+            cameras: DeviceOption[];
+            speakers: DeviceOption[];
+            permission: {
+                microphone: MediaPermission;
+                camera: MediaPermission;
+            };
+        };
+    };
+    toggleMic(): void;
+    toggleCamera(): void;
+    toggleScreenShare(): void;
+    leave(): void | Promise<void>;
+    rejoin(): void | Promise<void>;
+}
+
 export declare interface RMCreateRoomInput {
     name: string;
     description?: string;
     visibility?: RMRoomVisibility;
     settings?: Partial<RMRoomSettings>;
+}
+
+/** Mirror of RM `DevicePreferences`. */
+export declare interface RMDevicePreferences {
+    microphoneId?: string;
+    cameraId?: string;
+    speakerId?: string;
 }
 
 /** Mirror of realtime-modules/src/client/useFileUpload.ts FileUploadState */
@@ -2587,6 +2730,15 @@ export declare interface RMHangoutSession {
     id: string;
     type: string;
     createdAt: string;
+}
+
+/** Mirror of RM `IncomingConversationCall` — one entry of `useIncomingConversationCalls().rings`. */
+export declare interface RMIncomingConversationCall {
+    callId: string;
+    callerName: string;
+    /** `knock` = someone outside a call you are in asks to be let in. */
+    kind: 'invite' | 'knock';
+    audioOnly: boolean;
 }
 
 export declare interface RMJoinRoomResult {
@@ -3726,9 +3878,29 @@ declare global {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -3749,19 +3921,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -3788,16 +3950,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

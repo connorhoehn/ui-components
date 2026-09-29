@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.407.22
+
+- `integrations/realtime`: `createConversationCallDock({ conversationCallDockProps, useAudioVideoSettings })` and `IncomingCallToast` (new) — the conversation-call pair every page with a composer needs (an initiative, a search selection, a document): the dock takes realtime-modules' `conversationCallDockProps` mapping and adds video tiles, active-speaker detection, a notice line and its own device-settings dialog, rendering nothing while idle or ringing; the toast is the ring with Accept / Decline. Mirror-typed with a compile-time check against realtime-modules' real types, no runtime import of the package (`scopeAgnosticPackaging`); `integrations/realtime-modules` exports the canonically bound `ConversationCallDock`. Storybook story + 9 tests. First consumer: OrgIQ's initiative and Search pages (`portal/src/lib/conversationCall.tsx`).
+
 ## 2.407.21
 
 - `CanvasDocumentView.renderFrame` (new): `(frame: { toolbar, ruler, surface }) => ReactNode` hands the toolbar (with its find row) and the ruler to the host — an `EditorShell` `toolbar` slot — instead of drawing them inside the scroller; `toolbar` is null when read-only; default layout unchanged. A ruler placed outside the scroller can sit a scrollbar-width off the sheet.
