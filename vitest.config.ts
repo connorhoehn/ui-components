@@ -41,7 +41,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test-setup.ts'],
     globals: true,
-    exclude: ['tests/e2e/**', 'node_modules/**', '.claude/worktrees/**'],
+    exclude: ['tests/e2e/**', 'tests/storybook/**', 'node_modules/**', '.claude/worktrees/**'],
     maxWorkers,
     minWorkers: 1,
   },

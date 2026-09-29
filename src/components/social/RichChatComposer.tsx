@@ -2729,7 +2729,19 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             share a single row (attachments drop below via `order-last`). The
             editor stays in the same parent at every size — moving it would
             remount EditorContent and drop the caret on a resize. */}
-        <div className={cn(singleRow && 'uic-composer-single-row flex flex-wrap items-end')} data-testid={`${testId}-body`}>
+        {/* The idle row (`collapsed`) is ONE centred line: pill, references,
+            the input's own text box and the Send cluster are each centred on
+            the row, whatever their heights. It used to share the narrow row's
+            `items-end` with per-child bottom offsets (`mb-1.5 self-end`) tuned
+            for the 2rem single-row input; in the docked card
+            `.uic-composer-docked-input` (a 2.5rem box, 0.5rem padding) wins
+            that cascade, so the placeholder's centre sat 4px above the pill's
+            and 2px above Send's (2.407.0 onwards; 2.407.8/2.407.9 moved Send,
+            not the text). The narrow row (a draft that grows) keeps
+            `items-end`, so Send stays beside the last line.
+            Pinned by ContextComposerIdleRow.test.tsx and the Storybook check
+            tests/storybook/composer-idle-row.spec.ts. */}
+        <div className={cn(singleRow && 'uic-composer-single-row flex flex-wrap', collapsed ? 'items-center' : singleRow && 'items-end')} data-testid={`${testId}-body`} data-idle-row={collapsed || undefined}>
         {/* The placeholder is ONE ellipsised line (styles.css) — a long one,
             such as a disabled reason, used to wrap past the input and draw over
             the rows below. The whole text stays reachable as a tooltip while
@@ -2740,7 +2752,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             title={MODE_NAMES[activeMode]}
             data-testid={`${testId}-mode-pill`}
             data-single-mode="true"
-            className="mb-1.5 ml-1.5 flex shrink-0 items-center gap-1 self-end rounded-full bg-surface-inset px-2 py-0.5 text-xs font-semibold text-text-secondary"
+            className="ml-1.5 flex shrink-0 items-center gap-1 rounded-full bg-surface-inset px-2 py-0.5 text-xs font-semibold text-text-secondary"
           >
             <span aria-hidden="true" className="flex w-4 justify-center">{MODE_ICON[activeMode]}</span>
             {MODE_NAMES[activeMode]}
@@ -2755,7 +2767,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             onClick={() => editor?.commands.focus()}
             title={`${MODE_NAMES[activeMode]} — click to write`}
             data-testid={`${testId}-mode-pill`}
-            className="mb-1.5 ml-1.5 flex shrink-0 items-center gap-1 self-end rounded-full bg-surface-inset px-2 py-0.5 text-xs font-semibold text-text-secondary hover:text-text-primary"
+            className="ml-1.5 flex shrink-0 items-center gap-1 rounded-full bg-surface-inset px-2 py-0.5 text-xs font-semibold text-text-secondary hover:text-text-primary"
           >
             <span aria-hidden="true" className="flex w-4 justify-center">{MODE_ICON[activeMode]}</span>
             {MODE_NAMES[activeMode]}
@@ -2770,7 +2782,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             references={references}
             {...(onRemoveReference ? { onRemove: onRemoveReference } : {})}
             removeLabel={(reference) => `Remove ${reference.label} from this draft`}
-            className="mb-1.5 ml-1.5 min-w-0 max-w-[45%] shrink flex-nowrap self-end overflow-hidden p-0"
+            className="ml-1.5 min-w-0 max-w-[45%] shrink flex-nowrap overflow-hidden p-0"
             data-testid={`${testId}-references`}
           />
         )}
@@ -2841,6 +2853,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             basicBox && !singleRow && 'mx-3 mt-2 min-h-[58px] rounded-md border border-border bg-surface',
           )}
           data-basic-well={basicBox || undefined}
+          data-testid={`${testId}-input-box`}
           {...(empty && effectivePlaceholder ? { title: effectivePlaceholder } : {})}
           {...(terminalMode ? { hidden: true } : {})}
         >

@@ -3516,14 +3516,15 @@ var Oa = pe(function({ onSend: p, draft: h, onDraftChange: y, onCommand: x, onSe
 					}, e))
 				}),
 				/* @__PURE__ */ k("div", {
-					className: e(Z && "uic-composer-single-row flex flex-wrap items-end"),
+					className: e(Z && "uic-composer-single-row flex flex-wrap", X ? "items-center" : Z && "items-end"),
 					"data-testid": `${F}-body`,
+					"data-idle-row": X || void 0,
 					children: [
 						X && rn && /* @__PURE__ */ k("span", {
 							title: oa[B],
 							"data-testid": `${F}-mode-pill`,
 							"data-single-mode": "true",
-							className: "mb-1.5 ml-1.5 flex shrink-0 items-center gap-1 self-end rounded-full bg-surface-inset px-2 py-0.5 text-xs font-semibold text-text-secondary",
+							className: "ml-1.5 flex shrink-0 items-center gap-1 rounded-full bg-surface-inset px-2 py-0.5 text-xs font-semibold text-text-secondary",
 							children: [/* @__PURE__ */ O("span", {
 								"aria-hidden": "true",
 								className: "flex w-4 justify-center",
@@ -3535,7 +3536,7 @@ var Oa = pe(function({ onSend: p, draft: h, onDraftChange: y, onCommand: x, onSe
 							onClick: () => q?.commands.focus(),
 							title: `${oa[B]} — click to write`,
 							"data-testid": `${F}-mode-pill`,
-							className: "mb-1.5 ml-1.5 flex shrink-0 items-center gap-1 self-end rounded-full bg-surface-inset px-2 py-0.5 text-xs font-semibold text-text-secondary hover:text-text-primary",
+							className: "ml-1.5 flex shrink-0 items-center gap-1 rounded-full bg-surface-inset px-2 py-0.5 text-xs font-semibold text-text-secondary hover:text-text-primary",
 							children: [/* @__PURE__ */ O("span", {
 								"aria-hidden": "true",
 								className: "flex w-4 justify-center",
@@ -3546,7 +3547,7 @@ var Oa = pe(function({ onSend: p, draft: h, onDraftChange: y, onCommand: x, onSe
 							references: Re,
 							...Ue ? { onRemove: Ue } : {},
 							removeLabel: (e) => `Remove ${e.label} from this draft`,
-							className: "mb-1.5 ml-1.5 min-w-0 max-w-[45%] shrink flex-nowrap self-end overflow-hidden p-0",
+							className: "ml-1.5 min-w-0 max-w-[45%] shrink flex-nowrap overflow-hidden p-0",
 							"data-testid": `${F}-references`
 						}),
 						/* @__PURE__ */ k("div", {
@@ -3611,6 +3612,7 @@ var Oa = pe(function({ onSend: p, draft: h, onDraftChange: y, onCommand: x, onSe
 									ref: fr,
 									className: e((Z || Hr || Q) && "min-w-0 flex-1", Y && "uic-composer-docked-input", br && !Z && "mx-3 mt-2 min-h-[58px] rounded-md border border-border bg-surface"),
 									"data-basic-well": br || void 0,
+									"data-testid": `${F}-input-box`,
 									...Zt && H ? { title: H } : {},
 									...V ? { hidden: !0 } : {},
 									children: /* @__PURE__ */ O(ye, { editor: q })
