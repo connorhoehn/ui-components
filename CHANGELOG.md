@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.407.9
+
+- `RichChatComposer` / `ContextComposer`: the shared Send goes the small way. 2.407.8 made the split Send and the plain Send one size by taking the docked card's large button (`h-9 px-4 text-[15px]`, 93×36, idle rows 50 px); the size people prefer is the social row's small, collapsed one. Both now use the compact size on every context — docked: `inline-flex items-center gap-1 px-2.5 py-1 text-xs` with a 12 px arrow (the basic box's paper plane 12 px); the caret half `px-1.5 py-1 text-xs`. Measured in *Send — one size on every context*: the conversation's and the document's idle rows are both 42 px, and every Send (idle and expanded, both contexts) is 66×24. The chat-column and menu-row Sends are unchanged; the round prompt-card Send is unchanged. The 2.407.8 footer floor (`--dock-floor`) is unchanged: the 1280×720 story still gives the row 299 px with the expanded card fully inside.
+
 ## 2.407.8
 
 - `RichChatComposer` / `ContextComposer`: Send is one size on every context. With `sendOptions` + `onSendOption` (a conversation context always passes them) the split Send stayed `px-2.5 py-1 text-xs` (50×24) whatever `docked` said, while the plain docked Send is `h-9 px-4 text-[15px]` with an arrow (93×36) — so a conversation's idle row measured 42 px and a document's 50 px, and the expanded cards' Sends differed. The split's primary half now takes the same size and content as the plain Send (docked: `h-9 px-4 text-[15px]` + arrow; menu row: `px-3 py-1.5 text-sm` + →; otherwise unchanged), and the caret is as tall (`h-9` docked). Measured in the new story *Send — one size on every context*: both idle rows 50 px, every Send 93×36.

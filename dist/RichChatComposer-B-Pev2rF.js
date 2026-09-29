@@ -3046,14 +3046,14 @@ var Oa = pe(function({ onSend: p, draft: h, onDraftChange: y, onCommand: x, onSe
 		let t = e.getBoundingClientRect().width;
 		t > 0 && t !== Xn && nr(t), ir && dr.current === null && typeof document < "u" && (!document.activeElement || document.activeElement === document.body) && (ar(!1), ur(!1));
 	}), tr.current = na(Xn);
-	let mr = pt === "auto" ? tr.current : pt, hr = mr === "wide", gr = mr === "narrow", _r = mt === "compact", vr = en && !Ze && (A === "compact" || A === "menu" || gr), J = vr && A === "menu" && !gr, Y = J && (Ge === "editor" || Ge === "prompt" || Ge === "basic"), yr = Y && Ge === "prompt", br = Y && Ge === "basic", xr = Y ? "inline-flex h-9 items-center gap-2 px-4 text-[15px]" : J ? "px-3 py-1.5 text-sm" : "px-2.5 py-1 text-xs", Sr = /* @__PURE__ */ k(ve, { children: [
+	let mr = pt === "auto" ? tr.current : pt, hr = mr === "wide", gr = mr === "narrow", _r = mt === "compact", vr = en && !Ze && (A === "compact" || A === "menu" || gr), J = vr && A === "menu" && !gr, Y = J && (Ge === "editor" || Ge === "prompt" || Ge === "basic"), yr = Y && Ge === "prompt", br = Y && Ge === "basic", xr = Y ? "inline-flex items-center gap-1 px-2.5 py-1 text-xs" : J ? "px-3 py-1.5 text-sm" : "px-2.5 py-1 text-xs", Sr = /* @__PURE__ */ k(ve, { children: [
 		br && /* @__PURE__ */ O(_, {
-			size: 15,
+			size: 12,
 			"aria-hidden": "true"
 		}),
 		Vn,
 		Y ? !br && /* @__PURE__ */ O(f, {
-			size: 16,
+			size: 12,
 			"aria-hidden": "true"
 		}) : J && /* @__PURE__ */ O("span", {
 			"aria-hidden": "true",
@@ -3938,14 +3938,14 @@ var Oa = pe(function({ onSend: p, draft: h, onDraftChange: y, onCommand: x, onSe
 									}), /* @__PURE__ */ O(re, {
 										trigger: /* @__PURE__ */ O("span", {
 											"aria-hidden": "true",
-											className: e("leading-none", Y ? "text-sm" : "text-xs"),
+											className: "text-xs leading-none",
 											children: "▾"
 										}),
 										triggerLabel: "Other ways to send",
 										align: "end",
 										triggerTestId: `${F}-send-options`,
 										"data-testid": `${F}-send-menu`,
-										triggerClassName: e("rounded-l-none rounded-r-md border-0 border-l", Y ? "h-9 px-2" : "px-1.5 py-1", Hn ? "border-on-primary/40 bg-primary text-on-primary hover:bg-primary" : "border-border bg-surface-inset text-text-secondary hover:bg-surface-hover"),
+										triggerClassName: e("rounded-l-none rounded-r-md border-0 border-l", "px-1.5 py-1", Hn ? "border-on-primary/40 bg-primary text-on-primary hover:bg-primary" : "border-border bg-surface-inset text-text-secondary hover:bg-surface-hover"),
 										sections: [{ items: tt.map((e) => ({
 											label: e.label,
 											onSelect: () => nt(e.id)

@@ -365,7 +365,7 @@ describe('ContextComposer — # documents on every context', () => {
   });
 });
 
-describe('Send is one size on every context (2.407.8)', () => {
+describe('Send is one compact size on every context (2.407.9)', () => {
   // The sizing tokens of a Send: what sets its height, padding and type.
   const sizing = (el: Element) => el.className.split(/\s+/).filter((c) => /^(inline-flex|items-center|gap-|h-|px-|py-|text-(xs|sm|\[))/.test(c)).sort();
   const renderBoth = (expanded: boolean) => {
@@ -401,13 +401,14 @@ describe('Send is one size on every context (2.407.8)', () => {
     const convSend = screen.getByTestId('conv-send');
     const docSend = screen.getByTestId('doc-send');
     expect(sizing(convSend)).toEqual(sizing(docSend));
-    // The docked size, not the chat column's small one.
-    expect(sizing(convSend)).toEqual(['gap-2', 'h-9', 'inline-flex', 'items-center', 'px-4', 'text-[15px]']);
+    // The compact social size (the idle row stays 42px), not the editor's h-9.
+    expect(sizing(convSend)).toEqual(['gap-1', 'inline-flex', 'items-center', 'px-2.5', 'py-1', 'text-xs']);
     // Same content: label and arrow.
     expect(convSend.textContent).toBe(docSend.textContent);
     expect(convSend.querySelectorAll('svg')).toHaveLength(docSend.querySelectorAll('svg').length);
     // The caret half is as tall as Send.
-    expect(screen.getByTestId('conv-send-options').className).toContain('h-9');
+    expect(screen.getByTestId('conv-send-options').className).toContain('py-1');
+    expect(screen.getByTestId('conv-send-options').className).not.toContain('h-9');
   });
 
   it('expanded: both cards carry the same Send', () => {
@@ -415,6 +416,7 @@ describe('Send is one size on every context (2.407.8)', () => {
     expect(screen.getByTestId('conv')).toHaveAttribute('data-collapsed', 'false');
     expect(screen.getByTestId('doc')).toHaveAttribute('data-collapsed', 'false');
     expect(sizing(screen.getByTestId('conv-send'))).toEqual(sizing(screen.getByTestId('doc-send')));
-    expect(sizing(screen.getByTestId('conv-send'))).toContain('h-9');
+    expect(sizing(screen.getByTestId('conv-send'))).toContain('text-xs');
+    expect(sizing(screen.getByTestId('doc-send'))).not.toContain('h-9');
   });
 });

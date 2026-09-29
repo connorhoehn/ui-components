@@ -203,10 +203,10 @@ export const Privacy: Story = {
 };
 
 /**
- * One Send, one size (2.407.8): a conversation (split Send with its caret) and
- * a document (plain Send) side by side, idle and expanded. The two idle rows
- * measure the same height and the two cards the same Send — the split used to
- * stay `text-xs` whatever the card's size.
+ * One Send, one compact size (2.407.9): a conversation (split Send with its
+ * caret) and a document (plain Send) side by side, idle and expanded. Both idle
+ * rows are the small social row (42px) and both cards carry the same compact
+ * Send, with the arrow (and the conversation's caret).
  */
 export const SendOneSize: Story = {
   name: 'Send — one size on every context',

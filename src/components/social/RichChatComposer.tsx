@@ -2098,17 +2098,19 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // strip under it with no rule — the Initiatives mockup's composer.
   const basicBox = docked && toolbar === 'basic';
   // Send's size and content, shared by the plain Send and the split one's
-  // primary half — the split used to stay `text-xs` whatever `docked` said,
-  // so a conversation's idle row (split) was 42px and a document's (plain,
-  // docked) 50px.
-  const sendSize = docked ? 'inline-flex h-9 items-center gap-2 px-4 text-[15px]' : menuModeRow ? 'px-3 py-1.5 text-sm' : 'px-2.5 py-1 text-xs';
+  // primary half. Before 2.407.8 the split stayed `text-xs` whatever `docked`
+  // said while the plain docked Send was `h-9` (idle rows 42px vs 50px).
+  // Compact on every context (2.407.9): the social row's small Send — the
+  // idle row stays 42px on a conversation and a document alike; the docked
+  // card keeps its arrow, at the compact size.
+  const sendSize = docked ? 'inline-flex items-center gap-1 px-2.5 py-1 text-xs' : menuModeRow ? 'px-3 py-1.5 text-sm' : 'px-2.5 py-1 text-xs';
   // The basic box leads with a paper plane ("✈ Send"), as the Initiatives
   // mockup draws it; the editor dock keeps its arrow.
   const sendContent = (
     <>
-      {basicBox && <SendIcon size={15} aria-hidden="true" />}
+      {basicBox && <SendIcon size={12} aria-hidden="true" />}
       {sendLabel}
-      {docked ? (!basicBox && <ArrowRightIcon size={16} aria-hidden="true" />) : menuModeRow && <span aria-hidden="true" className="ml-1.5">→</span>}
+      {docked ? (!basicBox && <ArrowRightIcon size={12} aria-hidden="true" />) : menuModeRow && <span aria-hidden="true" className="ml-1.5">→</span>}
     </>
   );
   hideCommandPrefixRef.current = menuModeRow;
@@ -3133,9 +3135,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           )}
           {/* One Send, one size (2.407.8): the split Send (with its caret) and
               the plain one share these, so a conversation's composer and a
-              document's measure the same idle row and the same card. The
-              docked card's button is the editor's size, with the arrow the
-              mockup gives it; a chat column's stays small. */}
+              document's measure the same idle row and the same card. Compact
+              everywhere (2.407.9); the docked card adds its arrow. */}
           {sendOptions?.length && onSendOption ? (
             // A split button, not a second control: the primary press must
             // stay in the same place and do the same thing it always did, and
@@ -3151,7 +3152,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 {sendContent}
               </button>
               <DropdownMenu
-                trigger={<span aria-hidden="true" className={cn('leading-none', docked ? 'text-sm' : 'text-xs')}>▾</span>}
+                trigger={<span aria-hidden="true" className="text-xs leading-none">▾</span>}
                 triggerLabel="Other ways to send"
                 align="end"
                 triggerTestId={`${testId}-send-options`}
@@ -3163,9 +3164,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 // so the caret is not disabled with Send; it drops to the
                 // secondary style and joins the primary colour when Send does.
                 triggerClassName={cn(
-                  // The caret is as tall as the Send beside it (docked: h-9).
+                  // The caret is as tall as the Send beside it.
                   'rounded-l-none rounded-r-md border-0 border-l',
-                  docked ? 'h-9 px-2' : 'px-1.5 py-1',
+                  'px-1.5 py-1',
                   canSend
                     ? 'border-on-primary/40 bg-primary text-on-primary hover:bg-primary'
                     : 'border-border bg-surface-inset text-text-secondary hover:bg-surface-hover',
