@@ -27,8 +27,16 @@
 // every control: the labels collapse first (below 860px), then the controls
 // wrap onto further right-aligned lines. Settings, pop-out and Leave travel
 // as one unit, so Leave is always visible and always last.
+//
+// Render budget (2.407.7): the host re-renders the dock once a second for the
+// clock. Only the meta line (`CallDockMeta`) depends on `elapsedMs`; the tile
+// row sits behind `CallDockTiles` (memo on the participants, the speaker, the
+// followed person and the size) and each tile behind a memoised `DockTile`
+// (shallow on its participant), with `onTileClick` held in a ref so an inline
+// host handler does not break either. A clock tick renders no tile.
 
-import { useRef, useState, type ReactNode } from 'react';
+import { memo, useCallback, useRef, useState, type ReactNode } from 'react';
+import { noteCallDockRender } from './callDockRenderProbe';
 import { cn } from '../../lib/cn';
 import { Badge } from '../shared/Badge';
 import Banner from '../shared/Banner';
@@ -135,6 +143,87 @@ function peopleLabel(n: number): string {
   return n === 1 ? '1 person' : `${n} people`;
 }
 
+/** "4 people · 09:41" (or the calling / connecting / reconnecting line) — the only part a clock tick changes. */
+const CallDockMeta = memo(function CallDockMeta({
+  phase,
+  callingTo,
+  participantCount,
+  elapsedMs,
+}: {
+  phase: CallDockPhase;
+  callingTo: string | undefined;
+  participantCount: number;
+  elapsedMs: number | null;
+}) {
+  noteCallDockRender('meta');
+  let meta: ReactNode;
+  if (phase === 'calling') meta = callingTo ? `Calling ${callingTo}…` : 'Calling…';
+  else if (phase === 'connecting') meta = 'Connecting…';
+  else if (phase === 'reconnecting') meta = <span className="text-warning-fg">Reconnecting…</span>;
+  else meta = `${peopleLabel(participantCount)}${elapsedMs != null ? ` · ${formatCallElapsed(elapsedMs)}` : ''}`;
+  return (
+    <span className="shrink-0 whitespace-nowrap text-sm tabular-nums text-text-tertiary" data-testid="call-dock-meta">
+      {meta}
+    </span>
+  );
+});
+
+function toTile(p: CallDockParticipant, isLocal: boolean, reconnecting: boolean): CallTileParticipant {
+  return {
+    ...p,
+    id: p.userId,
+    isLocal,
+    isMuted: !p.audioOn,
+    // Camera off → the tile draws the initials, but the video element stays
+    // mounted (hidden): the person's audio rides the same stream.
+    videoElement: p.videoElement,
+    cameraOff: !p.cameraOn && !p.screenSharing,
+    audioElement: p.audioElement,
+    screenSharing: p.screenSharing,
+    reconnecting: reconnecting || p.connection === 'reconnecting',
+  };
+}
+
+/** The tile row, kept out of the clock's re-render: none of its props change on a tick. */
+const CallDockTiles = memo(function CallDockTiles({
+  participants,
+  localParticipantId,
+  activeSpeakerId,
+  followingUserId,
+  reconnecting,
+  compact,
+  onTileClick,
+  title,
+}: {
+  participants: CallDockParticipant[];
+  localParticipantId: string;
+  activeSpeakerId: string | null;
+  followingUserId: string | null;
+  reconnecting: boolean;
+  compact: boolean;
+  onTileClick: ((userId: string) => void) | undefined;
+  title: string;
+}) {
+  const local = participants.find((p) => p.userId === localParticipantId) ?? null;
+  const remotes = participants.filter((p) => p.userId !== localParticipantId);
+  return (
+    <CallTileRow
+      variant="dock"
+      participants={remotes.map((p) => toTile(p, false, reconnecting))}
+      localParticipant={local ? toTile(local, true, reconnecting) : null}
+      activeSpeakerId={activeSpeakerId}
+      highlightedId={followingUserId}
+      tileWidth={compact ? 132 : 176}
+      tileHeight={compact ? 74 : 88}
+      overflow="collapse"
+      maxVisible={compact ? 5 : 6}
+      {...(onTileClick ? { onParticipantClick: onTileClick } : {})}
+      title={title}
+      data-testid="call-dock-tile-row"
+    />
+  );
+});
+
 export function CallDock({
   title,
   participantCount,
@@ -171,6 +260,11 @@ export function CallDock({
 }: CallDockProps) {
   const leaveRef = useRef<HTMLButtonElement | null>(null);
   const [confirmLeave, setConfirmLeave] = useState(false);
+  // The host's handler, read at click time: an inline `onTileClick` gets a new
+  // identity every render and would otherwise re-render every tile on the clock.
+  const tileClickRef = useRef(onTileClick);
+  tileClickRef.current = onTileClick;
+  const stableTileClick = useCallback((userId: string) => tileClickRef.current?.(userId), []);
 
   if (phase === 'error' && error) {
     return (
@@ -220,30 +314,6 @@ export function CallDock({
   const calling = phase === 'calling';
   const connecting = phase === 'connecting';
   const reconnecting = phase === 'reconnecting';
-  const local = participants.find((p) => p.userId === localParticipantId) ?? null;
-  const remotes = participants.filter((p) => p.userId !== localParticipantId);
-  const toTile = (p: CallDockParticipant, isLocal: boolean): CallTileParticipant => ({
-    ...p,
-    id: p.userId,
-    isLocal,
-    isMuted: !p.audioOn,
-    // Camera off → the tile draws the initials, but the video element stays
-    // mounted (hidden): the person's audio rides the same stream.
-    videoElement: p.videoElement,
-    cameraOff: !p.cameraOn && !p.screenSharing,
-    audioElement: p.audioElement,
-    screenSharing: p.screenSharing,
-    reconnecting: reconnecting || p.connection === 'reconnecting',
-  });
-
-  let meta: ReactNode;
-  if (calling) meta = callingTo ? `Calling ${callingTo}…` : 'Calling…';
-  else if (connecting) meta = 'Connecting…';
-  else if (reconnecting) meta = <span className="text-warning-fg">Reconnecting…</span>;
-  else meta = `${peopleLabel(participantCount)}${elapsedMs != null ? ` · ${formatCallElapsed(elapsedMs)}` : ''}`;
-
-  const tileWidth = compact ? 132 : 176;
-  const tileHeight = compact ? 74 : 88;
   const leave = () => {
     if (!calling && canEndForEveryone && onEndForEveryone) setConfirmLeave(true);
     else onLeave();
@@ -274,9 +344,7 @@ export function CallDock({
           >
             {title}
           </button>
-          <span className="shrink-0 whitespace-nowrap text-sm tabular-nums text-text-tertiary" data-testid="call-dock-meta">
-            {meta}
-          </span>
+          <CallDockMeta phase={phase} callingTo={callingTo} participantCount={participantCount} elapsedMs={elapsedMs} />
           {documents.length > 0 && (
             <span className="hidden min-w-0 flex-1 items-center gap-4 overflow-hidden @min-[1240px]:flex" data-testid="call-dock-documents-chips">
               {documents.map((d) => (
@@ -451,19 +519,15 @@ export function CallDock({
             </div>
           </div>
         ) : (
-          <CallTileRow
-            variant="dock"
-            participants={remotes.map((p) => toTile(p, false))}
-            localParticipant={local ? toTile(local, true) : null}
+          <CallDockTiles
+            participants={participants}
+            localParticipantId={localParticipantId}
             activeSpeakerId={activeSpeakerId}
-            highlightedId={followingUserId}
-            tileWidth={tileWidth}
-            tileHeight={tileHeight}
-            overflow="collapse"
-            maxVisible={compact ? 5 : 6}
-            {...(onTileClick ? { onParticipantClick: onTileClick } : {})}
+            followingUserId={followingUserId}
+            reconnecting={reconnecting}
+            compact={compact}
+            onTileClick={onTileClick ? stableTileClick : undefined}
             title={title}
-            data-testid="call-dock-tile-row"
           />
         )}
       </div>

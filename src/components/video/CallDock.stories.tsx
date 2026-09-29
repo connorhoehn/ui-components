@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useActiveSpeaker } from '../../lib/video/useActiveSpeaker';
+import { Button } from '../ui/Button';
 import { CallDock, type CallDockParticipant, type CallDockProps } from './CallDock';
 import { StreamVideo } from './StreamVideo';
 import { SparklesIcon } from './MediaIcons';
@@ -343,3 +345,70 @@ export const Calling: Story = {
   ),
 };
 export const CallingDark: Story = { ...Calling, decorators: [themed('dark')] };
+
+/**
+ * Four simulated voices on the Web Audio graph, each changing loudness every
+ * 200 ms — everyone talking at once — fed to `useActiveSpeaker`, with the clock
+ * ticking every second. With the 600 ms hold (2.407.7) the green ring stays
+ * put until someone is clearly and steadily the loudest; "No hold" is the old
+ * behaviour, where it jumps on nearly every poll. The clock ticks re-render
+ * only the meta line, never the tiles. Press Start (audio needs a gesture);
+ * the voices are analysed, not played.
+ */
+function FourPeopleTalkingDemo(props: CallDockProps) {
+  const [started, setStarted] = useState(false);
+  const [hold, setHold] = useState(true);
+  const [elapsedMs, setElapsedMs] = useState(0);
+  const [streams, setStreams] = useState<MediaStream[] | null>(null);
+
+  useEffect(() => {
+    if (!started) return;
+    const ctx = new AudioContext();
+    const voices = PEOPLE.map((_, i) => {
+      const osc = ctx.createOscillator();
+      osc.frequency.value = 180 + i * 70;
+      const gain = ctx.createGain();
+      gain.gain.value = 0;
+      const out = ctx.createMediaStreamDestination();
+      osc.connect(gain).connect(out);
+      osc.start();
+      return { gain, stream: out.stream };
+    });
+    setStreams(voices.map((v) => v.stream));
+    const talk = setInterval(() => {
+      for (const v of voices) v.gain.gain.value = Math.random() < 0.7 ? 0.2 + Math.random() * 0.4 : 0;
+    }, 200);
+    const clock = setInterval(() => setElapsedMs((ms) => ms + 1000), 1000);
+    return () => {
+      clearInterval(talk);
+      clearInterval(clock);
+      void ctx.close();
+    };
+  }, [started]);
+
+  const speakers = useMemo(
+    () => (streams ? PEOPLE.map((p, i) => ({ participantId: p.userId, streams: [streams[i]!] })) : []),
+    [streams],
+  );
+  const { activeSpeakerId } = useActiveSpeaker({ participants: speakers, holdMs: hold ? 600 : 0 });
+
+  return (
+    <div className="flex w-[1312px] flex-col gap-3 border border-border p-3">
+      <div className="flex items-center gap-2">
+        <Button size="sm" onClick={() => setStarted(true)} disabled={started} data-testid="four-talking-start">
+          Start
+        </Button>
+        <Button size="sm" variant="ghost" onClick={() => setHold((h) => !h)} aria-pressed={hold} data-testid="four-talking-hold">
+          {hold ? 'Hold 600 ms (on)' : 'No hold'}
+        </Button>
+      </div>
+      <CallDock {...props} elapsedMs={elapsedMs} activeSpeakerId={activeSpeakerId} followingUserId={null} />
+    </div>
+  );
+}
+
+export const FourPeopleTalking: Story = {
+  args: base({ elapsedMs: 0 }),
+  decorators: [themed('light')],
+  render: (args) => <FourPeopleTalkingDemo {...args} />,
+};

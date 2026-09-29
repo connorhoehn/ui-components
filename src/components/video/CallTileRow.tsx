@@ -17,8 +17,9 @@
 // Purely presentational, like ParticipantTile: the host hands in the same
 // HangoutLayoutParticipant rows it hands the grid.
 
-import type { CSSProperties, ReactNode } from 'react';
+import { memo, type CSSProperties, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { noteCallDockRender } from './callDockRenderProbe';
 import { ParticipantTile } from './ParticipantTile';
 import { Avatar } from '../shared/Avatar';
 import type { HangoutLayoutParticipant } from './HangoutLayoutTypes';
@@ -132,7 +133,7 @@ export function CallTileRow({
             speaking={p.id === activeSpeakerId}
             highlighted={p.id === highlightedId}
             testId={`${tileTestIdPrefix}-${p.id}`}
-            {...(onParticipantClick ? { onClick: () => onParticipantClick(p.id) } : {})}
+            {...(onParticipantClick ? { onParticipantClick } : {})}
           />
         ))}
         {hidden > 0 && (
@@ -252,6 +253,42 @@ export function CallTileRow({
   );
 }
 
+interface DockTileProps {
+  participant: CallTileParticipant;
+  width: number;
+  height: number;
+  speaking: boolean;
+  highlighted: boolean;
+  testId: string;
+  /** Called with the tile's id; pass a stable function so the memo holds. */
+  onParticipantClick?: (id: string) => void;
+}
+
+function shallowEqualObjects(a: object, b: object): boolean {
+  if (a === b) return true;
+  const ka = Object.keys(a) as (keyof typeof a)[];
+  if (ka.length !== Object.keys(b).length) return false;
+  return ka.every((k) => Object.is(a[k], b[k]));
+}
+
+/**
+ * A dock tile re-renders only when what it draws changes: its own speaking /
+ * followed flags (computed per tile by the row, so a new active speaker
+ * re-renders two tiles, not all of them), its size, its click handler, or a
+ * field of its participant (shallow — a host's `videoElement` must keep its
+ * identity across renders, as a memoised element does). The dock's clock
+ * tick changes none of these.
+ */
+const DockTile = memo(DockTileImpl, (prev, next) =>
+  prev.width === next.width &&
+  prev.height === next.height &&
+  prev.speaking === next.speaking &&
+  prev.highlighted === next.highlighted &&
+  prev.testId === next.testId &&
+  prev.onParticipantClick === next.onParticipantClick &&
+  shallowEqualObjects(prev.participant, next.participant),
+);
+
 /**
  * One tile of the in-call dock: the person's video filling a rounded frame,
  * or — camera off — their initials on the dark tile colour; the name
@@ -259,23 +296,17 @@ export function CallTileRow({
  * read over any frame. The tile colours are the video tokens, dark in both
  * themes on purpose.
  */
-function DockTile({
+function DockTileImpl({
   participant: p,
   width,
   height,
   speaking,
   highlighted,
   testId,
-  onClick,
-}: {
-  participant: CallTileParticipant;
-  width: number;
-  height: number;
-  speaking: boolean;
-  highlighted: boolean;
-  testId: string;
-  onClick?: () => void;
-}) {
+  onParticipantClick,
+}: DockTileProps) {
+  noteCallDockRender('tile', p.id);
+  const onClick = onParticipantClick ? () => onParticipantClick(p.id) : undefined;
   const name = p.isLocal ? 'You' : p.displayName;
   const label = `${p.isLocal ? 'You' : p.displayName}${p.isMuted ? ', muted' : ''}${p.screenSharing ? ', sharing screen' : ''}`;
   return (
