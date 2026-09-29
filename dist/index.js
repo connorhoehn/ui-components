@@ -3824,7 +3824,7 @@ function ov({ label: e, testId: t, children: n }) {
 		onClick: () => i((e) => !e),
 		"data-testid": `${t}-controls-toggle`,
 		"data-scope-controls-toggle": "",
-		className: R("inline-flex shrink-0 cursor-pointer items-center gap-1 whitespace-nowrap rounded border-none bg-transparent px-1 py-0.5 text-sm leading-none text-text-secondary transition-colors duration-100 hover:bg-surface-hover hover:text-text-primary", r && "text-text-primary"),
+		className: R("inline-flex h-7 shrink-0 cursor-pointer items-center gap-1 whitespace-nowrap rounded-md border-none bg-transparent px-2 text-text-secondary transition-colors duration-100 hover:bg-surface-hover hover:text-text-primary", wo, r && "text-text-primary"),
 		children: [e, /* @__PURE__ */ Z("span", {
 			"aria-hidden": "true",
 			children: "▾"
@@ -3965,61 +3965,61 @@ function Sv({ item: e, last: t, testId: n }) {
 		children: e.label
 	});
 }
-function Cv({ crumbs: e, title: t, lg: n, testId: r }) {
-	let i = J(null), [a, o] = Y(!1), s = J(Infinity), c = e.length > 2, l = e.map((e) => e.label).join("\0"), u = og(() => {
-		let e = i.current;
+function Cv({ crumbs: e, title: t, titleHint: n, lg: r, testId: i }) {
+	let a = J(null), [o, s] = Y(!1), c = J(Infinity), l = e.length > 2, u = e.map((e) => e.label).join("\0"), d = og(() => {
+		let e = a.current;
 		if (!e) return;
-		if (a) {
-			e.clientWidth >= s.current && (delete e.dataset.fullWidth, o(!1));
+		if (o) {
+			e.clientWidth >= c.current && (delete e.dataset.fullWidth, s(!1));
 			return;
 		}
-		if (!c) return;
+		if (!l) return;
 		let t = 0;
 		e.querySelectorAll("[data-crumb]").forEach((e) => {
 			let n = parseFloat(getComputedStyle(e).maxWidth), r = Math.min(e.scrollWidth, Number.isFinite(n) ? n : Infinity);
 			e.clientWidth + 1 < r && (t += r - e.clientWidth);
-		}), t > 0 && (s.current = e.clientWidth + t, e.dataset.fullWidth = String(Math.ceil(s.current)), o(!0));
-	}, [a, c]);
+		}), t > 0 && (c.current = e.clientWidth + t, e.dataset.fullWidth = String(Math.ceil(c.current)), s(!0));
+	}, [o, l]);
 	cg(() => {
-		o(!1), s.current = Infinity, i.current && delete i.current.dataset.fullWidth;
-	}, [l]), cg(() => {
-		u();
-		let e = i.current;
+		s(!1), c.current = Infinity, a.current && delete a.current.dataset.fullWidth;
+	}, [u]), cg(() => {
+		d();
+		let e = a.current;
 		if (!e || typeof ResizeObserver > "u") return;
-		let t = new ResizeObserver(() => u());
+		let t = new ResizeObserver(() => d());
 		return t.observe(e), () => t.disconnect();
-	}, [u, l]);
-	let d = a && c ? e.slice(1, -1) : [], f = d.length > 0 ? [
+	}, [d, u]);
+	let f = o && l ? e.slice(1, -1) : [], p = f.length > 0 ? [
 		e[0],
 		null,
 		e[e.length - 1]
 	] : e;
 	return /* @__PURE__ */ Q("div", {
-		ref: i,
-		className: "flex min-w-0 flex-auto flex-nowrap items-center gap-1 overflow-hidden",
-		"data-testid": `${r}-trail`,
+		ref: a,
+		className: "flex min-w-0 flex-1 flex-nowrap items-center gap-1 overflow-hidden",
+		"data-testid": `${i}-trail`,
 		children: [
 			e.length > 0 && /* @__PURE__ */ Z("nav", {
 				"aria-label": "Breadcrumb",
-				"data-testid": `${r}-crumbs`,
-				"data-collapsed": d.length > 0 ? "true" : void 0,
-				className: "flex min-w-0 shrink-[100] items-center overflow-hidden",
+				"data-testid": `${i}-crumbs`,
+				"data-collapsed": f.length > 0 ? "true" : void 0,
+				className: "flex min-w-0 shrink items-center overflow-hidden",
 				children: /* @__PURE__ */ Z("ol", {
 					className: "m-0 flex min-w-0 list-none flex-nowrap items-center gap-1 p-0",
-					children: f.map((e, t) => /* @__PURE__ */ Q("li", {
+					children: p.map((e, t) => /* @__PURE__ */ Q("li", {
 						className: R("flex items-center gap-1", e && t > 0 ? "min-w-0" : "shrink-0"),
 						"data-crumb-item": t === 0 ? "first" : void 0,
 						children: [e ? /* @__PURE__ */ Z(Sv, {
 							item: e,
-							last: t === f.length - 1,
-							testId: r
+							last: t === p.length - 1,
+							testId: i
 						}) : /* @__PURE__ */ Z("span", {
 							className: R("shrink-0 select-none whitespace-nowrap text-text-secondary", "text-[13px] font-medium leading-5"),
-							title: d.map((e) => e.label).join(" › "),
-							"aria-label": `${d.length} hidden: ${d.map((e) => e.label).join(", ")}`,
-							"data-testid": `${r}-crumbs-more`,
+							title: f.map((e) => e.label).join(" › "),
+							"aria-label": `${f.length} hidden: ${f.map((e) => e.label).join(", ")}`,
+							"data-testid": `${i}-crumbs-more`,
 							children: "…"
-						}), t < f.length - 1 && /* @__PURE__ */ Z("span", {
+						}), t < p.length - 1 && /* @__PURE__ */ Z("span", {
 							"aria-hidden": "true",
 							className: xv,
 							children: "›"
@@ -4034,116 +4034,117 @@ function Cv({ crumbs: e, title: t, lg: n, testId: r }) {
 			}),
 			t && /* @__PURE__ */ Z("h1", {
 				"aria-current": "page",
-				title: t,
-				"data-testid": `${r}-title`,
-				className: R("m-0 min-w-0 max-w-[50%] shrink truncate whitespace-nowrap text-text-primary", n ? "text-[20px] font-bold leading-7 tracking-[-0.01em]" : "text-[18px] font-semibold leading-7"),
+				title: n ?? t,
+				"data-testid": `${i}-title`,
+				className: R("m-0 min-w-[12rem] shrink-[100] truncate whitespace-nowrap text-text-primary", r ? "text-[20px] font-bold leading-7 tracking-[-0.01em]" : "text-[18px] font-semibold leading-7"),
 				children: t
 			})
 		]
 	});
 }
-function wv({ breadcrumbs: e, title: t, controls: n, controlsMenu: r, controlsCollapseAt: i, controlsLabel: a, link: o, menu: s, menuLabel: c, linkStyle: l, tabs: u, activeTab: d, onTabChange: f, tabSize: p, titleSize: m = "md", className: h, "data-testid": g = "scope-header" }) {
-	let _ = e ?? [], v = _.length > 0 ? _[_.length - 1].label : void 0, y = t ?? v ?? "this scope", b = !!u && u.length > 0, x = b ? u.some((e) => e.id === d) ? d : u[0].id : void 0, S = n != null && n !== !1, C = S || !!o || !!s && s.some((e) => e.items.length > 0), w = m === "lg", T = J(null), [E, D] = Y(!1), [O, k] = Y(!1), A = J({
+function wv({ breadcrumbs: e, title: t, titleHint: n, controls: r, controlsMenu: i, controlsCollapseAt: a, controlsLabel: o, link: s, menu: c, menuLabel: l, linkStyle: u, tabs: d, activeTab: f, onTabChange: p, tabSize: m, titleSize: h = "md", className: g, "data-testid": _ = "scope-header" }) {
+	let v = e ?? [], y = v.length > 0 ? v[v.length - 1].label : void 0, b = t ?? y ?? "this scope", x = !!d && d.length > 0, S = x ? d.some((e) => e.id === f) ? f : d[0].id : void 0, C = r != null && r !== !1, w = C || !!s || !!c && c.some((e) => e.items.length > 0), T = h === "lg", E = J(null), [D, O] = Y(!1), [k, A] = Y(!1), j = J({
 		controls: null,
 		wanted: null,
 		collapsedAt: 0
-	}), j = J(!1), M = J(null), N = J(() => {}), ee = og(() => {
-		let e = T.current;
-		if (!e || !S) return;
+	}), M = J(!1), N = J(null), ee = J(() => {}), P = og(() => {
+		let e = E.current;
+		if (!e || !C) return;
 		let t = e.clientWidth;
 		if (t <= 0) return;
-		let n = typeof i == "number" && t < i, r = e.querySelector(`[data-testid="${g}-trail"]`);
-		if (E) {
+		let n = typeof a == "number" && t < a, r = e.querySelector(`[data-testid="${_}-trail"]`);
+		if (D) {
 			if (n) return;
-			let i = A.current.controls;
+			let i = j.current.controls;
 			if (i == null) {
 				let t = e.querySelector("[data-scope-controls-ghost] > *");
 				if (!t) {
-					k(!0);
+					A(!0);
 					return;
 				}
-				i = pv(t), A.current.controls = i, k(!1);
+				i = pv(t), j.current.controls = i, A(!1);
 			}
-			let a = Math.max(gv(e, r, i), A.current.wanted ?? 0);
-			t > A.current.collapsedAt && t >= a + _v && (j.current = !0, D(!1));
+			let a = Math.max(gv(e, r, i), j.current.wanted ?? 0);
+			t > j.current.collapsedAt && t >= a + _v && (M.current = !0, O(!1));
 			return;
 		}
 		if (n) {
-			A.current.collapsedAt = t, D(!0);
+			j.current.collapsedAt = t, O(!0);
 			return;
 		}
-		if (j.current && (M.current == null && typeof requestAnimationFrame == "function" ? M.current = requestAnimationFrame(() => {
-			M.current = null, j.current = !1, N.current();
-		}) : typeof requestAnimationFrame != "function" && (j.current = !1), j.current)) return;
-		let a = e.querySelector("[data-scope-controls]"), o = e.querySelector(`[data-testid="${g}-right"]`), s = a ? pv(a) : 0;
-		s > 0 && (A.current.controls = s);
-		let c = gv(e, r, s), l = c - t, u = a ? a.scrollWidth - a.clientWidth : 0, d = o ? o.scrollWidth - o.clientWidth : 0, f = r ? dv(r) - r.clientWidth : 0;
+		if (M.current && (N.current == null && typeof requestAnimationFrame == "function" ? N.current = requestAnimationFrame(() => {
+			N.current = null, M.current = !1, ee.current();
+		}) : typeof requestAnimationFrame != "function" && (M.current = !1), M.current)) return;
+		let i = e.querySelector("[data-scope-controls]"), o = e.querySelector(`[data-testid="${_}-right"]`), s = i ? pv(i) : 0;
+		s > 0 && (j.current.controls = s);
+		let c = gv(e, r, s), l = c - t, u = i ? i.scrollWidth - i.clientWidth : 0, d = o ? o.scrollWidth - o.clientWidth : 0, f = r ? dv(r) - r.clientWidth : 0;
 		if (Math.max(l, u, d, f) > _v) {
-			A.current.wanted = c, A.current.collapsedAt = t, D(!0);
+			j.current.wanted = c, j.current.collapsedAt = t, O(!0);
 			return;
 		}
-		A.current.wanted = null, A.current.collapsedAt = 0;
+		j.current.wanted = null, j.current.collapsedAt = 0;
 	}, [
-		S,
-		i,
-		E,
-		g
+		C,
+		a,
+		D,
+		_
 	]);
 	return cg(() => {
-		N.current = ee, ee();
-	}, [ee, O]), cg(() => {
-		let e = T.current;
+		ee.current = P, P();
+	}, [P, k]), cg(() => {
+		let e = E.current;
 		if (!e || typeof ResizeObserver > "u") return;
 		let t = new ResizeObserver(() => {
-			j.current = !1, N.current();
+			M.current = !1, ee.current();
 		});
 		return t.observe(e), () => {
-			t.disconnect(), M.current != null && typeof cancelAnimationFrame == "function" && cancelAnimationFrame(M.current), M.current = null;
+			t.disconnect(), N.current != null && typeof cancelAnimationFrame == "function" && cancelAnimationFrame(N.current), N.current = null;
 		};
 	}, []), /* @__PURE__ */ Q("div", {
-		ref: T,
-		"data-testid": g,
+		ref: E,
+		"data-testid": _,
 		"data-variant": "inline",
-		...S ? { "data-controls": E ? "collapsed" : "inline" } : {},
-		"data-title-size": m,
-		...p ? { "data-tab-size": p } : {},
-		className: R("flex h-12 min-w-0 flex-nowrap items-center gap-4 px-6", h),
+		...C ? { "data-controls": D ? "collapsed" : "inline" } : {},
+		"data-title-size": h,
+		...m ? { "data-tab-size": m } : {},
+		className: R("flex h-12 min-w-0 flex-nowrap items-center gap-4 px-6", g),
 		children: [
 			/* @__PURE__ */ Z(Cv, {
-				crumbs: _,
+				crumbs: v,
 				title: t,
-				lg: w,
-				testId: g
+				titleHint: n,
+				lg: T,
+				testId: _
 			}),
-			b && /* @__PURE__ */ Z(Sa, {
-				items: yv(u, g),
-				value: x,
-				onValueChange: (e) => f?.(e),
+			x && /* @__PURE__ */ Z(Sa, {
+				items: yv(d, _),
+				value: S,
+				onValueChange: (e) => p?.(e),
 				variant: "underline",
 				size: "md",
 				badgeStyle: "plain",
 				indicator: "bar",
-				...p === "md" ? { indicatorWeight: 3 } : {},
-				itemClassName: R("h-full py-0", p === "md" ? "gap-0 px-2 text-[15px]" : "gap-0"),
-				"aria-label": `${y} views`,
-				"data-testid": `${g}-tabs`,
+				...m === "md" ? { indicatorWeight: 3 } : {},
+				itemClassName: R("h-full py-0", m === "md" ? "gap-0 px-2 text-[15px]" : "gap-0"),
+				"aria-label": `${b} views`,
+				"data-testid": `${_}-tabs`,
 				className: "shrink-0 items-stretch self-stretch after:hidden"
 			}),
-			C && /* @__PURE__ */ Z("div", {
-				className: R("relative flex flex-nowrap items-center gap-3", E ? "shrink-0" : "min-w-0 shrink-[100]"),
-				"data-testid": `${g}-right`,
+			w && /* @__PURE__ */ Z("div", {
+				className: R("relative flex flex-nowrap items-center gap-3", D ? "shrink-0" : "min-w-0 shrink-[100]"),
+				"data-testid": `${_}-right`,
 				children: /* @__PURE__ */ Z(av, {
-					controls: n,
-					controlsMenu: r,
-					controlsLabel: a,
-					controlsMode: E ? "collapsed" : "shrink",
-					ghost: E && O,
-					link: o,
-					menu: s,
-					menuLabel: c,
-					title: y,
-					testId: g,
-					linkStyle: l
+					controls: r,
+					controlsMenu: i,
+					controlsLabel: o,
+					controlsMode: D ? "collapsed" : "shrink",
+					ghost: D && k,
+					link: s,
+					menu: c,
+					menuLabel: l,
+					title: b,
+					testId: _,
+					linkStyle: u
 				})
 			})
 		]

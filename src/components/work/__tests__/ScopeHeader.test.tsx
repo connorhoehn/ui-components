@@ -297,8 +297,10 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
         const trail = screen.getByTestId('scope-header-trail');
         expect(trail.className).toMatch(/\bmin-w-0\b/);
         expect(trail.className).toMatch(/\boverflow-hidden\b/);
-        // Crumbs give up width before the title.
-        expect(screen.getByTestId('scope-header-crumbs').className).toMatch(/shrink-\[100\]/);
+        // 2.407.15: the title gives up width before the crumbs (the reverse
+        // of 2.406.4), so a long title truncates while the crumbs stay whole.
+        expect(screen.getByTestId('scope-header-crumbs').className).not.toMatch(/shrink-\[100\]/);
+        expect(screen.getByTestId('scope-header-title').className).toMatch(/shrink-\[100\]/);
         const crumbs = screen.getAllByTestId('scope-header-crumb');
         expect(crumbs).toHaveLength(3);
         crumbs.forEach((c, i) => {
@@ -317,7 +319,8 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
         const right = screen.getByTestId('scope-header-right');
         expect(right.className).toMatch(/shrink-\[100\]/);
         expect(right.className).toMatch(/\bmin-w-0\b/);
-        expect(trail.className).toMatch(/\bflex-auto\b/);
+        // 2.407.15: basis 0 — the trail takes the free space and its content never pushes the right cluster.
+        expect(trail.className).toMatch(/\bflex-1\b/);
         const controls = screen.getByTestId('scope-header-controls');
         expect(controls.className).toMatch(/\bmin-w-0\b/);
         expect(controls.className).toMatch(/\boverflow-hidden\b/);
@@ -399,10 +402,11 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
         }
         const expectTitleFloor = () => {
           const title = screen.getByRole('heading', { level: 1, name: 'component contracts' });
-          // 2.407.10: capped at half the row and truncating — never a
-          // floor that could push it over the crumbs.
-          expect(title.className).toMatch(/max-w-\[50%\]/);
-          expect(title.className).toMatch(/\bmin-w-0\b/);
+          // 2.407.15: the 12rem floor is back, and the title gives up width
+          // first (shrink-[100]) so it truncates before a crumb is squeezed.
+          expect(title.className).toMatch(/min-w-\[12rem\]/);
+          expect(title.className).toMatch(/shrink-\[100\]/);
+          expect(title.className).not.toMatch(/max-w-\[50%\]/);
           expect(title.className).toMatch(/\btruncate\b/);
         };
         const expectTabsWhole = () => {
@@ -540,7 +544,7 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
             crumbs.forEach((c) => expect(c.clientWidth).toBeGreaterThanOrEqual(NATURAL[c.textContent ?? '']!));
             // The title keeps 12rem.
             const title = screen.getByRole('heading', { level: 1, name: 'component contracts' });
-            expect(title.className).toMatch(/max-w-\[50%\]/);
+            expect(title.className).toMatch(/min-w-\[12rem\]/);
             expect(title.clientWidth).toBeGreaterThanOrEqual(192);
             // Collapsed, the right cluster no longer shrinks: ⋯ stays inside the padding.
             expect(screen.getByTestId('scope-header-right').className).toMatch(/\bshrink-0\b/);
@@ -1102,12 +1106,16 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
         // The first crumb and the separator never shrink.
         expect(org.closest('li')!.className).toMatch(/\bshrink-0\b/);
         expect(sep.className).toMatch(/\bshrink-0\b/);
-        // The title: at most half the row, truncates, full text in `title`.
-        expect(title.className).toMatch(/max-w-\[50%\]/);
-        expect(title.className).toMatch(/\bmin-w-0\b/);
+        // The title (2.407.15): gives up width first, truncates to its 12rem
+        // floor, full text in `title`; the trail's basis is 0 so its length
+        // never reaches the tabs.
+        expect(title.className).toMatch(/shrink-\[100\]/);
+        expect(title.className).toMatch(/min-w-\[12rem\]/);
         expect(title.className).toMatch(/\btruncate\b/);
         expect(title.className).toMatch(/\bwhitespace-nowrap\b/);
-        expect(title.className).not.toMatch(/min-w-\[12rem\]/);
+        expect(title.className).not.toMatch(/max-w-\[50%\]/);
+        expect(trail.className).toMatch(/\bflex-1\b/);
+        expect(nav.className).not.toMatch(/shrink-\[100\]/);
         expect(title).toHaveAttribute('title', PROMPT);
         // Tabs and the right cluster are siblings of the trail, not inside it, and keep their width.
         const row = screen.getByTestId('scope-header');
@@ -1117,5 +1125,50 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
         expect(screen.getByRole('button', { name: 'Relevance ▾' })).toBeInTheDocument();
       });
     });
+  });
+});
+
+describe('ScopeHeader inline — 2.407.15', () => {
+  it('titleHint is the h1 hover text; the title stays the visible text', () => {
+    render(
+      <ScopeHeader
+        variant="inline"
+        breadcrumbs={[{ label: 'Org' }, { label: 'Search' }]}
+        title="Who can help finish Auth Migration before the cutover?"
+        titleHint="Who can help finish Auth Migration before the cutover? We need someone who shipped a Cognito migration."
+      />,
+    );
+    const h1 = screen.getByTestId('scope-header-title');
+    expect(h1).toHaveTextContent('Who can help finish Auth Migration before the cutover?');
+    expect(h1).toHaveAttribute('title', 'Who can help finish Auth Migration before the cutover? We need someone who shipped a Cognito migration.');
+  });
+
+  it('without titleHint the h1 hover text is the title', () => {
+    render(<ScopeHeader variant="inline" breadcrumbs={[{ label: 'Org' }]} title="Search" />);
+    expect(screen.getByTestId('scope-header-title')).toHaveAttribute('title', 'Search');
+  });
+
+  it('the collapsed Filters ▾ toggle is in the 28px 13px/500 control family', () => {
+    // jsdom lays nothing out: give the row a width so the floor collapses it.
+    const desc = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'clientWidth');
+    Object.defineProperty(HTMLElement.prototype, 'clientWidth', { configurable: true, get: () => 500 });
+    try {
+    render(
+      <ScopeHeader
+        variant="inline"
+        breadcrumbs={[{ label: 'Org' }]}
+        title="Search"
+        controls={<button type="button">Type ▾</button>}
+        controlsCollapseAt={100000}
+      />,
+    );
+    const toggle = screen.getByTestId('scope-header-controls-toggle');
+    expect(toggle.className).toMatch(/\bh-7\b/);
+    expect(toggle.className).toMatch(/text-\[13px\]/);
+    expect(toggle.className).toMatch(/\bfont-medium\b/);
+    expect(toggle.className).not.toMatch(/\btext-sm\b/);
+    } finally {
+      if (desc) Object.defineProperty(HTMLElement.prototype, 'clientWidth', desc); else delete (HTMLElement.prototype as any).clientWidth;
+    }
   });
 });

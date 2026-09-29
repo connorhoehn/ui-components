@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.407.15
+
+- **`ScopeHeader variant="inline"`: a long title truncates, the crumbs stay whole, and the title's length never collapses the controls (fix).** Three defects from the search-workspace journey walks (2026-09-29): (1) 2.407.10's `max-w-[50%]` capped the title at half the *trail*, which is `flex-auto` and carries the row's slack — "Who can help finish Auth Mig…" was cut at 261 of 302px with 168px empty beside it. (2) The trail's basis was its content, so a paragraph-length title widened it and squeezed the controls out of the row with room to spare (a fresh load at 1536 collapsed them with ~230px free). (3) The collapsed "Filters ▾" toggle was an 18px 14px/400 borderless text button beside 28px 13px/500 menu triggers. Now the trail is `flex-1` (basis 0: it takes the free space and its content cannot reach the tabs or controls), the title gives up width FIRST (`shrink-[100]` against the crumbs' `shrink`) down to its `min-w-[12rem]` floor — the reverse of 2.406.4's order, so "Org › Search › Auth Migration ›" stays whole ahead of a long title and the crumbs fold to "…" only once the title is at its floor — and the toggle is `h-7 px-2` on `RAIL_ITEM_TEXT` (13px/500). Measured against the portal at 1672/1536/1280: title whole at 302px, crumbs 80px whole at every width, controls inline at 1672 for a 170-character prompt.
+- `ScopeHeader.titleHint` (inline variant): the h1's `title` attribute, default `title`. A host that shows a cut-down title (a prompt's first sentence) passes the whole text so hovering reads all of it.
+
 ## 2.407.14
 
 Type & control audit (realtime-examples `scripts/dev/type-audit.mjs`: every nav route at 1280×720 and 1640×960, light and dark). **Visual change for every consumer.**

@@ -82,6 +82,13 @@ export interface ScopeHeaderProps {
    */
   title?: string;
   /**
+   * The title's hover text (`inline` variant, since 2.407.15): the h1's
+   * `title` attribute, default `title`. A host that shows a cut-down title (a
+   * prompt's first sentence) passes the whole text here so hovering the title
+   * reads all of it.
+   */
+  titleHint?: string;
+  /**
    * `default`: the full band — crumbs, an h1 title with status and stats, the
    * right-hand group, tabs.
    *
@@ -121,7 +128,7 @@ export interface ScopeHeaderProps {
    * "Filters" section when `controlsMenu` is given, else into a popover behind one "Filters ▾"
    * button. (b) Then the crumbs: each truncates inside its cap and the
    * middle collapses to "…". (c) The title is at most half the row
-   * (`max-w-[50%]`, 2.407.10) and truncates, with the full text in its
+   * (2.407.15: gives up width first, `min-w-[12rem]`) and truncates, with the full text (`titleHint`) in its
    * `title`; it never paints over the crumbs. The first crumb never goes
    * below its own width
    * (`shrink-0`). The tabs never shrink — they are the navigation.
@@ -379,7 +386,10 @@ function ControlsPopover({ label, testId, children }: { label: string; testId: s
         data-testid={`${testId}-controls-toggle`}
         data-scope-controls-toggle=""
         className={cn(
-          'inline-flex shrink-0 cursor-pointer items-center gap-1 whitespace-nowrap rounded border-none bg-transparent px-1 py-0.5 text-sm leading-none text-text-secondary transition-colors duration-100 hover:bg-surface-hover hover:text-text-primary',
+          // 2.407.15: the same family as the crumbs and a host's 28px
+          // menu triggers — 28px tall, 13px/500 — not a bare 14px text button.
+          'inline-flex h-7 shrink-0 cursor-pointer items-center gap-1 whitespace-nowrap rounded-md border-none bg-transparent px-2 text-text-secondary transition-colors duration-100 hover:bg-surface-hover hover:text-text-primary',
+          RAIL_ITEM_TEXT,
           open && 'text-text-primary',
         )}
       >
@@ -414,11 +424,10 @@ function ControlsPopover({ label, testId, children }: { label: string; testId: s
 }
 
 /**
- * The title's width in the collapse arithmetic: 12rem. Since 2.407.10 the
- * title's box is `min-w-0 max-w-[50%]` (it truncates rather than draw over
- * the crumbs), so this is no longer a CSS floor; the header still keeps its
- * controls inline only while the title could have 12rem — the same
- * thresholds as before.
+ * The title's width in the collapse arithmetic: 12rem — and, since 2.407.15,
+ * its CSS floor again (`min-w-[12rem]`; 2.407.10–13 had `min-w-0
+ * max-w-[50%]`). The header keeps its controls inline only while the title
+ * can have 12rem.
  */
 const TITLE_MIN_PX = 192;
 
@@ -488,8 +497,7 @@ function outOfFlow(el: HTMLElement): boolean {
  * The inline trail's wanted width from its content, not its box (2.407.5):
  * the crumb list at its natural width (every crumb whole inside its cap —
  * the nav's width plus any crumb's shortfall), the joiners, and the title at
- * 12rem (`titleWanted`; since 2.407.10 the box is `min-w-0 max-w-[50%]`,
- * no longer `min-w-[12rem]`, but the arithmetic keeps the 12rem). The trail is `flex-auto`, so its own `clientWidth`
+ * 12rem (`titleWanted`, its `min-w-[12rem]`). The trail is `flex-1`, so its own `clientWidth`
  * carries the row's slack — useless as a wanted width when the row has room.
  * A trail folded to "…" counts at least the width it needed unfolded
  * (`data-full-width`, recorded by the trail when it folded).
@@ -652,12 +660,15 @@ function InlineCrumb({ item, last, testId }: { item: BreadcrumbItem; last: boole
  * when a crumb is squeezed below its cap anyway the middle collapses to "…"
  * — first and last crumb kept — before the title loses any more. The
  * first crumb keeps its own width (2.407.2); the header moves its controls
- * out of the row before the trail gets that tight. Since 2.407.10 the title
- * is capped at half the trail (`max-w-[50%]`, `min-w-0`, truncating) and the
- * crumb list clips inside its own box (`overflow-hidden`), so a
- * paragraph-length title can never draw over a squeezed crumb.
+ * out of the row before the trail gets that tight. Since 2.407.15 the order
+ * inside the trail is the reverse of 2.406.4's: the title gives up width
+ * FIRST (`shrink-[100]`, truncating to its 12rem floor) and the crumbs only
+ * then — so "Org › Search › Auth Migration ›" stays whole ahead of a long
+ * title, and the trail's basis is 0 (`flex-1`) so the title's length never
+ * reaches the tabs or the controls. The crumb list clips inside its own box
+ * (`overflow-hidden`), so a squeezed crumb is never drawn over.
  */
-function InlineTrail({ crumbs, title, lg, testId }: { crumbs: BreadcrumbItem[]; title?: string; lg: boolean; testId: string }) {
+function InlineTrail({ crumbs, title, titleHint, lg, testId }: { crumbs: BreadcrumbItem[]; title?: string; titleHint?: string; lg: boolean; testId: string }) {
   const trailRef = useRef<HTMLDivElement | null>(null);
   const [collapsed, setCollapsed] = useState(false);
   // The trail width at which the full crumb list fits again.
@@ -711,15 +722,19 @@ function InlineTrail({ crumbs, title, lg, testId }: { crumbs: BreadcrumbItem[]; 
   const visible: Array<BreadcrumbItem | null> = hidden.length > 0 ? [crumbs[0]!, null, crumbs[crumbs.length - 1]!] : crumbs;
 
   return (
-    // flex-auto (2.407.2; was flex-1): the trail's basis is its content, so
-    // an over-full row shrinks the controls (shrink-[100]) before the trail.
-    <div ref={trailRef} className="flex min-w-0 flex-auto flex-nowrap items-center gap-1 overflow-hidden" data-testid={`${testId}-trail`}>
+    // flex-1 (2.407.15; flex-auto 2.407.2–2.407.13): the trail's basis is 0,
+    // so it takes the row's free space and its content can never push the
+    // tabs or the controls — a paragraph-length title used to widen the
+    // trail's basis and squeeze the controls out of the row with room to
+    // spare. The controls still leave the row when the trail's share drops
+    // under `inlineTrailMinimum` (the `short` guard).
+    <div ref={trailRef} className="flex min-w-0 flex-1 flex-nowrap items-center gap-1 overflow-hidden" data-testid={`${testId}-trail`}>
       {crumbs.length > 0 && (
         // Every crumb is a place to go: the title after them is the page.
         // overflow-hidden (2.407.10): a squeezed crumb list clips inside its
         // own box — the first crumb (shrink-0) used to overflow the nav and
         // paint under the start of a long title.
-        <nav aria-label="Breadcrumb" data-testid={`${testId}-crumbs`} data-collapsed={hidden.length > 0 ? 'true' : undefined} className="flex min-w-0 shrink-[100] items-center overflow-hidden">
+        <nav aria-label="Breadcrumb" data-testid={`${testId}-crumbs`} data-collapsed={hidden.length > 0 ? 'true' : undefined} className="flex min-w-0 shrink items-center overflow-hidden">
           <ol className="m-0 flex min-w-0 list-none flex-nowrap items-center gap-1 p-0">
             {visible.map((item, i) => (
               // The first crumb never goes below its own width (2.407.2).
@@ -750,17 +765,19 @@ function InlineTrail({ crumbs, title, lg, testId }: { crumbs: BreadcrumbItem[]; 
       {title && (
         <h1
           aria-current="page"
-          title={title}
+          title={titleHint ?? title}
           data-testid={`${testId}-title`}
           className={cn(
-            // 2.407.10: at most half the row (max-w-[50%] of the trail, which
-            // is never wider than the row), so a paragraph-length title (a
-            // whole prompt) leaves the crumbs and the right cluster their
-            // space and truncates; min-w-0 so it never forces an overlap.
-            // The `title` attribute carries the full text. The header still
-            // moves its controls out before the trail's 12rem-title minimum
-            // (`TITLE_MIN_PX`, the collapse arithmetic) is reached.
-            'm-0 min-w-0 max-w-[50%] shrink truncate whitespace-nowrap text-text-primary',
+            // 2.407.15: the title gives up width first (shrink-[100] against
+            // the crumbs' shrink), truncating down to its 12rem floor, so the
+            // crumbs stay whole while a long title truncates and the crumbs
+            // fold to "…" only once the title is at its floor. 2.407.10's
+            // max-w-[50%] capped it at half the TRAIL — the trail carries the
+            // row's slack, so a title was cut with empty space beside it.
+            // The `title` attribute carries the full text (`titleHint`). The
+            // header still moves its controls out before the trail drops
+            // under its minimum (`TITLE_MIN_PX`, the collapse arithmetic).
+            'm-0 min-w-[12rem] shrink-[100] truncate whitespace-nowrap text-text-primary',
             lg ? 'text-[20px] font-bold leading-7 tracking-[-0.01em]' : 'text-[18px] font-semibold leading-7',
           )}
         >
@@ -774,6 +791,7 @@ function InlineTrail({ crumbs, title, lg, testId }: { crumbs: BreadcrumbItem[]; 
 function ScopeHeaderInline({
   breadcrumbs,
   title,
+  titleHint,
   controls,
   controlsMenu,
   controlsCollapseAt,
@@ -930,7 +948,7 @@ function ScopeHeaderInline({
       {...(tabSize ? { 'data-tab-size': tabSize } : {})}
       className={cn('flex h-12 min-w-0 flex-nowrap items-center gap-4 px-6', className)}
     >
-      <InlineTrail crumbs={crumbs} title={title} lg={lg} testId={testId} />
+      <InlineTrail crumbs={crumbs} title={title} titleHint={titleHint} lg={lg} testId={testId} />
       {hasTabs && (
         <Tabs
           items={scopeTabItems(tabs!, testId)}
