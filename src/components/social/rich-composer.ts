@@ -71,3 +71,24 @@ export type { EmojiShortcode } from './emojiShortcodes';
 export { AgentComposerDock } from './AgentComposerDock';
 export type { AgentComposerDockProps, AgentComposerWorkflow, AgentComposerSendContext } from './AgentComposerDock';
 export { composerDraftOf } from './agentComposerDraft';
+
+// ContextComposer (2.407.0): the one composer — idle row, expanded card, its
+// features gated by what it is attached to. AgentComposerDock above is now a
+// deprecated preset over it.
+export { ContextComposer } from './ContextComposer';
+export type {
+  ContextComposerProps,
+  ContextComposerSendContext,
+  ComposerWorkflow,
+  ComposerReply,
+  ComposerTaskReport,
+} from './ContextComposer';
+export { composerContextPreset, identityDisplayName, COMPOSER_CONTEXT_KINDS, COMPOSER_CONTEXT_REASONS } from './composerContext';
+export type {
+  ComposerContext,
+  ComposerContextKind,
+  ComposerContextFeatures,
+  ComposerContextPreset,
+  ComposerContextWiring,
+  ComposerIdentity,
+} from './composerContext';

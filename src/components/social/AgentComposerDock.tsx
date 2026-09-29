@@ -1,6 +1,11 @@
 // AgentComposerDock — the agent composer a page docks under its content: the
 // Initiative Work page's composer, as one composite.
 //
+// DEPRECATED since 2.407.0: use `ContextComposer` with `context.kind`
+// 'initiative' | 'search'. This is now a thin preset over it (no idle
+// collapse, no console surface, its own defaults below) so existing hosts
+// keep their look and their test ids (`<id>-dock-slot`, `<id>-workflow`).
+//
 //   Agent ⌄  ⌥2                              ● Auth Migration ×
 //   Ask about this initiative…
 //   B  I  </>  🔗  •  ❝  📎 │ ⑂ Workflow ⌄  / commands          Send →
@@ -51,27 +56,23 @@
 // unavailable, with their `modeUnavailableReasons`. The Chat/Terminal
 // default-off applies only when `modes` is not given.
 
-import { useCallback, useRef, useState, type ReactNode, type Ref } from 'react';
-import { cn } from '../../lib/cn';
-import { DropdownMenu } from '../shared/DropdownMenu';
-import { BranchIcon, ChevronIcon } from '../ui/Icons';
-import { ComposerDockPlacementContext, FloatingComposerDock } from '../doc-editor/FloatingComposerDock';
-import {
-  RichChatComposer,
-  type ComposedMessage,
-  type ComposerCommand,
-  type ComposerHint,
-  type ComposerMode,
-  type ComposerStatus,
-  type DocumentCandidate,
-  type MentionCandidate,
-  type RichChatComposerHandle,
-  type RichChatComposerProps,
-  type RichChatDraft,
+import { useMemo } from 'react';
+import type {
+  ComposedMessage,
+  ComposerCommand,
+  ComposerHint,
+  ComposerMode,
+  ComposerStatus,
+  DocumentCandidate,
+  MentionCandidate,
+  RichChatComposerHandle,
+  RichChatComposerProps,
+  RichChatDraft,
 } from './RichChatComposer';
+import type { ReactNode, Ref } from 'react';
 import type { ComposerReference } from './ComposerReferences';
-import { matchComposerCommand } from './composerCommands';
-import { composerDraftOf } from './agentComposerDraft';
+import { ContextComposerBase } from './ContextComposer';
+import type { ComposerContextPreset } from './composerContext';
 
 /** One row of the `Workflow ⌄` menu. A disabled row shows its reason and cannot be picked. */
 export interface AgentComposerWorkflow {
@@ -183,201 +184,84 @@ const DEFAULT_REASONS: Partial<Record<ComposerMode, string>> = {
   chat: 'This view has no discussion thread — ask the agent instead',
   terminal: 'This view has no terminal',
 };
+const ALL_MODES: readonly ComposerMode[] = ['chat', 'agent', 'terminal'];
 
-function asDraft(value: string | RichChatDraft | undefined): RichChatDraft {
-  return typeof value === 'string' || value === undefined ? composerDraftOf(value ?? '') : value;
-}
-
-function assignRef<T>(ref: Ref<T> | undefined, value: T | null) {
-  if (typeof ref === 'function') ref(value);
-  else if (ref) (ref as { current: T | null }).current = value;
-}
-
+/**
+ * @deprecated Since 2.407.0 — use `ContextComposer` with
+ * `context={{ kind: 'initiative' | 'search', id, title }}`. Kept as a preset
+ * over it with the same props, look and test ids.
+ */
 export function AgentComposerDock({
   presentation = 'compact',
-  mode: modeProp,
   defaultMode = 'agent',
-  onModeChange,
-  placeholder,
-  modePlaceholders,
-  references,
-  onRemoveReference,
-  commands,
-  workflows,
-  onWorkflow,
   modes,
   disabledModes: disabledModesProp,
   modeUnavailableReasons,
-  dock,
-  draft: draftProp,
-  onDraftChange,
-  defaultDraft,
   draftKey = '',
-  onSend,
-  onSearchDocuments,
-  documentMenu,
-  onSearchPeople,
   allowAttachments = true,
-  allowEmoji,
-  disabled,
-  working,
-  status,
-  hints,
-  suggestions,
-  onSuggestion,
-  submitLabel,
-  maxInputHeight,
-  composerRef,
+  allowEmoji = false,
   label = 'Agent composer',
-  inputLabel = 'Message',
   className,
   'data-testid': testId = 'agent-composer-dock',
-  composerTestId,
+  onSend,
+  ...rest
 }: AgentComposerDockProps) {
   // Naming `modes` says what this surface serves, so the Chat/Terminal
   // default-off only applies when `modes` is not given.
   const disabledModes = disabledModesProp ?? (modes ? NONE : DEFAULT_DISABLED);
-  const [innerMode, setInnerMode] = useState<ComposerMode>(defaultMode);
-  const mode = modeProp ?? innerMode;
-  const handleModeChange = useCallback((next: ComposerMode) => {
-    if (modeProp === undefined) setInnerMode(next);
-    onModeChange?.(next);
-  }, [modeProp, onModeChange]);
-
-  // The draft, and the subject it was written against. A new `draftKey`
-  // restarts both (adjusted during render, so no frame shows the old text).
-  const [innerDraft, setInnerDraft] = useState<RichChatDraft>(() => asDraft(defaultDraft));
-  const [seed, setSeed] = useState(0);
-  const [keyOf, setKeyOf] = useState(draftKey);
-  if (keyOf !== draftKey) {
-    setKeyOf(draftKey);
-    setInnerDraft(asDraft(defaultDraft));
-    setSeed(0);
-  }
-  const controlled = draftProp !== undefined;
-  const draft = controlled ? draftProp : innerDraft;
-  const draftRef = useRef(draft);
-  draftRef.current = draft;
-
-  const handleDraftChange = useCallback((next: RichChatDraft, previous: RichChatDraft | undefined) => {
-    if (!controlled) setInnerDraft(next);
-    onDraftChange?.(next, previous);
-  }, [controlled, onDraftChange]);
-
-  const pickWorkflow = useCallback((id: string) => {
-    if (onWorkflow) { onWorkflow(id); return; }
-    const seeded = composerDraftOf(`/${id} `);
-    handleDraftChange(seeded, draftRef.current);
-    setSeed((n) => n + 1);
-  }, [onWorkflow, handleDraftChange]);
-
-  const handleRef = useRef<RichChatComposerHandle | null>(null);
-  const setHandle = useCallback((handle: RichChatComposerHandle | null) => {
-    handleRef.current = handle;
-    assignRef(composerRef, handle);
-  }, [composerRef]);
-
-  const send = useCallback((message: ComposedMessage) => {
-    // Hand back what was typed, not the chat router's `/agent …` form.
-    const typed = handleRef.current?.editor?.getText();
-    let out = message;
-    if (typed !== undefined && typed !== message.text) {
-      const cmd = matchComposerCommand(typed, commands);
-      const command = cmd
-        ? { trigger: cmd.trigger, ...(message.command?.trigger === cmd.trigger && message.command.argument ? { argument: message.command.argument } : {}) }
-        : undefined;
-      out = { ...message, text: typed, command };
-      if (!command) delete out.command;
-    }
-    return onSend(out, { mode: message.mode ?? mode });
-  }, [commands, mode, onSend]);
-
-  const placeholders: Partial<Record<ComposerMode, string>> = {
-    ...(placeholder ? { agent: placeholder } : {}),
-    ...modePlaceholders,
-  };
   const docPreset = presentation === 'document';
-  const rows = workflows ?? [];
+  const preset = useMemo<ComposerContextPreset>(() => ({
+    kind: 'initiative',
+    modes: modes ?? ALL_MODES,
+    defaultMode,
+    disabledModes,
+    modeUnavailableReasons: DEFAULT_REASONS,
+    modePlaceholders: {},
+    chipLabel: null,
+    regionLabel: label,
+    features: {
+      contextChip: false,
+      workflows: true,
+      workflowCommand: null,
+      pageActions: false,
+      sendOptions: false,
+      reply: false,
+      taskStrip: false,
+      offline: false,
+      modelUnavailable: false,
+      attachments: 'always',
+      emoji: true,
+      mentions: true,
+      typedText: true,
+    },
+  }), [modes, defaultMode, disabledModes, label]);
 
   return (
-    <ComposerDockPlacementContext.Provider value="pinned">
-      <FloatingComposerDock
-        label={label}
-        data-testid={testId}
-        className={cn('bg-surface pt-3 [--dock-inset:1.5rem]', className)}
-        composer={(
-          <>
-          {dock != null && dock !== false && (
-            <div className="shrink-0" data-testid={`${testId}-dock-slot`}>
-              {dock}
-            </div>
-          )}
-          <RichChatComposer
-            key={`${draftKey}:${seed}`}
-            ref={setHandle}
-            data-testid={composerTestId}
-            mode={mode}
-            onModeChange={handleModeChange}
-            modeControl="menu"
-            layout="auto"
-            toolbar={docPreset ? 'editor' : 'compact'}
-            density={docPreset ? 'comfortable' : 'compact'}
-            modeShortcuts
-            modeTriggers
-            backdropTone="none"
-            allowAttachments={allowAttachments}
-            allowEmoji={allowEmoji}
-            references={references}
-            onRemoveReference={onRemoveReference}
-            modes={modes}
-            disabledModes={disabledModes}
-            modeUnavailableReasons={{ ...DEFAULT_REASONS, ...modeUnavailableReasons }}
-            placeholder={placeholder}
-            inputLabel={inputLabel}
-            modePlaceholders={placeholders}
-            commands={commands}
-            onSearchDocuments={onSearchDocuments}
-            documentMenu={documentMenu}
-            onSearchPeople={onSearchPeople}
-            disabled={disabled}
-            working={working}
-            status={status}
-            hints={hints}
-            suggestions={suggestions}
-            onSuggestion={onSuggestion}
-            submitLabel={submitLabel}
-            maxInputHeight={maxInputHeight}
-            toolbarExtras={rows.length > 0 ? (
-              <DropdownMenu
-                trigger={(
-                  <span className="inline-flex items-center gap-2">
-                    <BranchIcon size={14} aria-hidden />
-                    Workflow
-                    <ChevronIcon dir="down" size={14} aria-hidden />
-                  </span>
-                )}
-                triggerLabel="Workflow"
-                triggerClassName="h-7 px-2 text-xs font-medium text-text-secondary"
-                triggerTestId={`${testId}-workflow`}
-                sections={[{
-                  items: rows.map((w) => ({
-                    label: w.label,
-                    description: w.description,
-                    disabled: w.disabled,
-                    disabledReason: w.disabledReason,
-                    onSelect: () => pickWorkflow(w.id),
-                  })),
-                }]}
-              />
-            ) : undefined}
-            draft={draft}
-            onDraftChange={handleDraftChange}
-            onSend={send}
-          />
-          </>
-        )}
-      />
-    </ComposerDockPlacementContext.Provider>
+    <ContextComposerBase
+      {...rest}
+      look={{
+        preset,
+        toolbar: docPreset ? 'editor' : 'compact',
+        density: docPreset ? 'comfortable' : 'compact',
+        collapseWhenIdle: false,
+        passModes: false,
+        className: 'bg-surface pt-3 [--dock-inset:1.5rem]',
+      }}
+      context={{ kind: 'initiative', id: draftKey, title: '' }}
+      contextChip={false}
+      defaultMode={defaultMode}
+      {...(modes ? { modes } : {})}
+      disabledModes={disabledModes}
+      modeUnavailableReasons={modeUnavailableReasons}
+      draftKey={draftKey}
+      allowAttachments={allowAttachments}
+      allowEmoji={allowEmoji}
+      console={false}
+      label={label}
+      {...(className ? { className } : {})}
+      data-testid={testId}
+      onSend={(message, context) => onSend(message, { mode: context.mode })}
+    />
   );
 }
 

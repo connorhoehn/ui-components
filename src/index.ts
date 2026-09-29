@@ -25,6 +25,28 @@ export { AgentComposerDock } from './components/social/AgentComposerDockLazy';
 export type { AgentComposerDockProps, AgentComposerWorkflow, AgentComposerSendContext } from './components/social/AgentComposerDock';
 export { composerDraftOf } from './components/social/agentComposerDraft';
 
+// ContextComposer (2.407.0): one composer for a conversation, a document, a
+// work item, a diagram, an initiative or a search — LAZY here for the same
+// reason as AgentComposerDock; the static component is on
+// `…/social/rich-composer`. The context table is pure and static.
+export { ContextComposer } from './components/social/ContextComposerLazy';
+export type {
+  ContextComposerProps,
+  ContextComposerSendContext,
+  ComposerWorkflow,
+  ComposerReply,
+  ComposerTaskReport,
+} from './components/social/ContextComposer';
+export { composerContextPreset, identityDisplayName, COMPOSER_CONTEXT_KINDS, COMPOSER_CONTEXT_REASONS } from './components/social/composerContext';
+export type {
+  ComposerContext,
+  ComposerContextKind,
+  ComposerContextFeatures,
+  ComposerContextPreset,
+  ComposerContextWiring,
+  ComposerIdentity,
+} from './components/social/composerContext';
+
 // ── Form primitives (Phase 5 + Phase 6) ──
 export { Input } from './components/forms/Input';
 export type { InputProps, InputSize, InputType } from './components/forms/Input';

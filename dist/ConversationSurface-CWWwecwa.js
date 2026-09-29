@@ -19,8 +19,9 @@ import { t as j } from "./StatusPill-C-aN2Pzz.js";
 import { i as M, n as N, r as P, t as F } from "./ReactionPickerPopover-DkcC4xmE.js";
 import { n as re } from "./useComputeProjects-ZSazDRet.js";
 import { g as I } from "./MediaIcons-_ai5Til2.js";
-import { t as L } from "./formatBytes-05ivRSJY.js";
-import { Fragment as ie, useEffect as R, useMemo as z, useRef as B, useState as V } from "react";
+import { t as L } from "./QuoteBlock-cbJ8wpPM.js";
+import { t as ie } from "./formatBytes-05ivRSJY.js";
+import { Fragment as ae, useEffect as R, useMemo as z, useRef as B, useState as V } from "react";
 import { Fragment as H, jsx as U, jsxs as W } from "react/jsx-runtime";
 //#region src/utils/identity.ts
 var G = [
@@ -40,30 +41,30 @@ var G = [
 	"#2F3542",
 	"#FF3838"
 ];
-function K(e) {
+function oe(e) {
 	let t = 0;
 	for (let n = 0; n < e.length; n++) t = e.charCodeAt(n) + ((t << 5) - t);
 	return G[Math.abs(t) % G.length];
 }
-function ae(e) {
+function se(e) {
 	if (!e) return "?";
 	let t = e.trim().split(/\s+/);
 	return t.length >= 2 ? ((t[0][0] ?? "") + (t[t.length - 1][0] ?? "")).toUpperCase() : e.slice(0, 2).toUpperCase();
 }
 //#endregion
 //#region src/components/social/dayBoundary.ts
-function oe(e) {
+function ce(e) {
 	let t = new Date(e);
 	return Number.isNaN(t.getTime()) ? "" : `${t.getFullYear().toString().padStart(4, "0")}-${(t.getMonth() + 1).toString().padStart(2, "0")}-${t.getDate().toString().padStart(2, "0")}`;
 }
-function se(e, t) {
-	let n = oe(e);
+function le(e, t) {
+	let n = ce(e);
 	if (!n) return !1;
 	if (t === void 0) return !0;
-	let r = oe(t);
+	let r = ce(t);
 	return r ? n !== r : !1;
 }
-function ce(e, t = /* @__PURE__ */ new Date()) {
+function ue(e, t = /* @__PURE__ */ new Date()) {
 	let n = new Date(e);
 	if (Number.isNaN(n.getTime())) return "";
 	let r = (e) => new Date(e.getFullYear(), e.getMonth(), e.getDate()).getTime(), i = Math.round((r(t) - r(n)) / 864e5);
@@ -78,7 +79,7 @@ function ce(e, t = /* @__PURE__ */ new Date()) {
 		...a ? {} : { year: "numeric" }
 	});
 }
-function le(e) {
+function de(e) {
 	let t = new Date(e);
 	return Number.isNaN(t.getTime()) ? "" : t.toLocaleDateString(void 0, {
 		weekday: "long",
@@ -87,7 +88,7 @@ function le(e) {
 		year: "numeric"
 	});
 }
-function q(e) {
+function K(e) {
 	let t = new Date(e);
 	return Number.isNaN(t.getTime()) ? "" : t.toLocaleString(void 0, {
 		weekday: "long",
@@ -98,7 +99,7 @@ function q(e) {
 		minute: "2-digit"
 	});
 }
-function ue(e, t = /* @__PURE__ */ new Date()) {
+function fe(e, t = /* @__PURE__ */ new Date()) {
 	let n = new Date(e);
 	if (Number.isNaN(n.getTime())) return "";
 	let r = (e) => new Date(e.getFullYear(), e.getMonth(), e.getDate()).getTime(), i = Math.round((r(t) - r(n)) / 864e5);
@@ -114,7 +115,7 @@ function ue(e, t = /* @__PURE__ */ new Date()) {
 }
 //#endregion
 //#region src/components/social/MessageRow.tsx
-function de(e) {
+function pe(e) {
 	try {
 		let t = new Date(e);
 		return isNaN(t.getTime()) ? "" : `${t.getHours().toString().padStart(2, "0")}:${t.getMinutes().toString().padStart(2, "0")}`;
@@ -122,8 +123,8 @@ function de(e) {
 		return "";
 	}
 }
-function fe({ author: t, content: n, timestamp: r, avatarUrl: i, hideAvatar: a = !1, hideAuthor: o = !1, mine: s = !1, footer: c, tone: l = "light", editedAt: u, contentLayout: d = "inline", className: f }) {
-	let p = l === "dark", m = de(r), h = !o || !!m;
+function me({ author: t, content: n, timestamp: r, avatarUrl: i, hideAvatar: a = !1, hideAuthor: o = !1, mine: s = !1, footer: c, tone: l = "light", editedAt: u, contentLayout: d = "inline", className: f }) {
+	let p = l === "dark", m = pe(r), h = !o || !!m;
 	return /* @__PURE__ */ W("div", {
 		"data-testid": "message-row",
 		"data-mine": s ? "true" : "false",
@@ -149,13 +150,13 @@ function fe({ author: t, content: n, timestamp: r, avatarUrl: i, hideAvatar: a =
 						m && /* @__PURE__ */ U("time", {
 							"data-testid": "message-row-time",
 							dateTime: r,
-							title: q(r),
+							title: K(r),
 							className: e("text-xs shrink-0", p ? "text-white/40" : "text-text-tertiary"),
 							children: m
 						}),
 						u && /* @__PURE__ */ U("span", {
 							"data-testid": "message-row-edited",
-							title: `Edited ${q(u)}`,
+							title: `Edited ${K(u)}`,
 							className: e("text-[11px] shrink-0", p ? "text-white/40" : "text-text-tertiary"),
 							children: "(edited)"
 						})
@@ -177,7 +178,7 @@ function fe({ author: t, content: n, timestamp: r, avatarUrl: i, hideAvatar: a =
 }
 //#endregion
 //#region src/components/social/MessageBody.tsx
-var pe = /* @__PURE__ */ new Set([
+var he = /* @__PURE__ */ new Set([
 	"P",
 	"BR",
 	"STRONG",
@@ -194,21 +195,21 @@ var pe = /* @__PURE__ */ new Set([
 	"BLOCKQUOTE",
 	"A",
 	"SPAN"
-]), me = /^(https?:|mailto:)/i;
-function he(e) {
+]), ge = /^(https?:|mailto:)/i;
+function _e(e) {
 	if (!e) return null;
 	let t = e.trim();
-	return t.startsWith("/") || t.startsWith("#") || me.test(t) ? t : null;
+	return t.startsWith("/") || t.startsWith("#") || ge.test(t) ? t : null;
 }
-function ge(e, t) {
+function ve(e, t) {
 	if (e.nodeType === Node.TEXT_NODE) return e.textContent;
 	if (e.nodeType !== Node.ELEMENT_NODE) return null;
-	let n = e, r = Array.from(n.childNodes).map((e, n) => ge(e, `${t}-${n}`));
-	if (!pe.has(n.tagName)) return /* @__PURE__ */ U("span", { children: r }, t);
+	let n = e, r = Array.from(n.childNodes).map((e, n) => ve(e, `${t}-${n}`));
+	if (!he.has(n.tagName)) return /* @__PURE__ */ U("span", { children: r }, t);
 	switch (n.tagName) {
 		case "BR": return /* @__PURE__ */ U("br", {}, t);
 		case "A": {
-			let e = he(n.getAttribute("href"));
+			let e = _e(n.getAttribute("href"));
 			return e ? /* @__PURE__ */ U("a", {
 				href: e,
 				target: "_blank",
@@ -232,11 +233,11 @@ function ge(e, t) {
 		}
 	}
 }
-var _e = /```([\s\S]*?)```|`([^`\n]+)`/g;
-function ve(e) {
+var ye = /```([\s\S]*?)```|`([^`\n]+)`/g;
+function be(e) {
 	if (!e || e.indexOf("`") === -1) return e;
 	let t = [], n = 0, r;
-	for (_e.lastIndex = 0; (r = _e.exec(e)) !== null;) {
+	for (ye.lastIndex = 0; (r = ye.exec(e)) !== null;) {
 		r.index > n && t.push(e.slice(n, r.index));
 		let i = r[1];
 		if (i !== void 0) {
@@ -253,12 +254,12 @@ function ve(e) {
 	}
 	return n < e.length && t.push(e.slice(n)), t.length === 1 && typeof t[0] == "string" ? t[0] : t;
 }
-function ye({ html: t, text: n, className: r, "data-testid": i = "message-body" }) {
+function xe({ html: t, text: n, className: r, "data-testid": i = "message-body" }) {
 	let a = z(() => {
 		if (!t) return null;
 		let e = new DOMParser().parseFromString(t, "text/html");
-		return Array.from(e.body.childNodes).map((e, t) => ge(e, `n${t}`));
-	}, [t]), o = z(() => ve(n ?? ""), [n]);
+		return Array.from(e.body.childNodes).map((e, t) => ve(e, `n${t}`));
+	}, [t]), o = z(() => be(n ?? ""), [n]);
 	return /* @__PURE__ */ U("div", {
 		"data-testid": i,
 		className: e("message-body", r),
@@ -267,10 +268,10 @@ function ye({ html: t, text: n, className: r, "data-testid": i = "message-body" 
 }
 //#endregion
 //#region src/components/social/DocumentActivityCard.tsx
-function be(e) {
+function Se(e) {
 	return e === "gone" ? "No longer available" : "You don’t have access";
 }
-function xe({ documentId: t, title: n, icon: r, createdBy: i, editors: a = [], onOpen: o, unavailable: s, className: c, "data-testid": l = "document-activity-card" }) {
+function Ce({ documentId: t, title: n, icon: r, createdBy: i, editors: a = [], onOpen: o, unavailable: s, className: c, "data-testid": l = "document-activity-card" }) {
 	let u = !s && a.length > 0;
 	return /* @__PURE__ */ W("div", {
 		"data-testid": l,
@@ -293,7 +294,7 @@ function xe({ documentId: t, title: n, icon: r, createdBy: i, editors: a = [], o
 				}), /* @__PURE__ */ U("span", {
 					className: "truncate text-[11px] text-text-tertiary",
 					"data-testid": s ? `${l}-unavailable` : void 0,
-					children: s ? be(s) : u ? `${Se(a)} editing now` : i ? `Created by ${i}` : "Document"
+					children: s ? Se(s) : u ? `${we(a)} editing now` : i ? `Created by ${i}` : "Document"
 				})]
 			}),
 			u && /* @__PURE__ */ U("span", {
@@ -320,7 +321,7 @@ function xe({ documentId: t, title: n, icon: r, createdBy: i, editors: a = [], o
 		]
 	});
 }
-function Se(e) {
+function we(e) {
 	let t = e.length, n = e.map((e) => e.displayName).filter(Boolean).slice(0, 2), r = t - n.length;
 	if (n.length === 0) return t === 1 ? "Someone is" : `${t} people are`;
 	if (r === 0) return n.length === 1 ? `${n[0]} is` : `${n[0]} and ${n[1]} are`;
@@ -329,8 +330,8 @@ function Se(e) {
 }
 //#endregion
 //#region src/components/social/DocumentChip.tsx
-function Ce({ documentId: t, label: n, icon: r, onOpen: i, unavailable: a, className: o, "data-testid": s = "chat-message-docref" }) {
-	let c = a ? void 0 : i, l = a ? be(a) : null;
+function Te({ documentId: t, label: n, icon: r, onOpen: i, unavailable: a, className: o, "data-testid": s = "chat-message-docref" }) {
+	let c = a ? void 0 : i, l = a ? Se(a) : null;
 	return /* @__PURE__ */ W("button", {
 		type: "button",
 		onClick: c ? () => c(t) : void 0,
@@ -364,18 +365,18 @@ function Ce({ documentId: t, label: n, icon: r, onOpen: i, unavailable: a, class
 }
 //#endregion
 //#region src/components/social/CallActivityCard.tsx
-function we(e) {
+function Ee(e) {
 	if (!Number.isFinite(e) || e < 0) return "";
 	let t = Math.round(e / 1e3), n = Math.floor(t / 3600), r = Math.floor(t % 3600 / 60), i = t % 60;
 	return n > 0 ? r > 0 ? `${n}h ${r}m` : `${n}h` : r > 0 ? i > 0 ? `${r}m ${i}s` : `${r}m` : `${i}s`;
 }
-function J(e, t) {
+function q(e, t) {
 	let n = e.length;
 	if (n === 0) return t ? "Nobody has joined yet" : "Nobody joined";
 	let r = e.map((e) => e.displayName).filter(Boolean).slice(0, 2), i = n - r.length, a = i === 1 ? "1 other" : `${i} others`, o;
 	return o = r.length === 0 ? n === 1 ? "Someone" : `${n} people` : i > 0 ? r.length === 1 ? `${r[0]} and ${a}` : `${r[0]}, ${r[1]} and ${a}` : r.length === 1 ? r[0] : `${r[0]} and ${r[1]}`, `${o} ${n === 1 ? t ? "is" : "was" : t ? "are" : "were"} in the call`;
 }
-function Te(e, t) {
+function De(e, t) {
 	let n = e ?? "";
 	if (n === "room-setting-off") {
 		let e = t?.startsWith("room:") ? t.slice(5) : "";
@@ -383,12 +384,12 @@ function Te(e, t) {
 	}
 	return n.startsWith("dm-not-opted-in") ? "Not recorded — both people must turn on 'Record my DM calls' in their profile." : "Not recorded.";
 }
-function Ee(e) {
+function Oe(e) {
 	if (!Number.isFinite(e) || e < 0) return "0:00";
 	let t = Math.floor(e / 1e3), n = Math.floor(t / 3600), r = Math.floor(t % 3600 / 60), i = t % 60, a = n > 0 ? String(r).padStart(2, "0") : String(r);
 	return `${n > 0 ? `${n}:` : ""}${a}:${String(i).padStart(2, "0")}`;
 }
-function De(e) {
+function ke(e) {
 	if (typeof e == "number") return Number.isFinite(e) ? e : null;
 	if (typeof e == "string" && e) {
 		let t = Date.parse(e);
@@ -396,8 +397,8 @@ function De(e) {
 	}
 	return null;
 }
-function Oe(e, t) {
-	let n = De(e), [r, i] = V(() => Date.now());
+function Ae(e, t) {
+	let n = ke(e), [r, i] = V(() => Date.now());
 	return R(() => {
 		if (!t || n === null) return;
 		i(Date.now());
@@ -405,12 +406,12 @@ function Oe(e, t) {
 		return () => clearInterval(e);
 	}, [t, n]), n === null ? null : Math.max(0, r - n);
 }
-function ke(e) {
+function je(e) {
 	return e === "declined" ? "Declined" : e === "no-answer" ? "No answer" : "Missed call";
 }
-function Ae({ callId: t, startedBy: n, participants: r = [], live: i = !1, durationMs: a, startedAt: o, outcome: s, recordingId: c, onOpenRecording: l, audioOnly: u, recorded: d, notRecordedReason: f, lobbyName: p, onJoin: m, className: h, "data-testid": g = "call-activity-card" }) {
-	let _ = i && !s, v = Oe(o, _), y = !_ && typeof a == "number" ? we(a) : "", b = u === void 0 ? "Call" : u ? "Audio call" : "Video call", x, S;
-	return s ? (x = ke(s), S = n ? `${n} called` : "Nobody answered") : _ ? (x = `${b} in progress`, S = J(r, !0)) : (x = y ? `${b} ended · ${y}` : `${b} ended`, S = n ? r.length === 0 ? `${n} started the call · Nobody joined` : `${n} started the call` : J(r, !1)), /* @__PURE__ */ W("div", {
+function Me({ callId: t, startedBy: n, participants: r = [], live: i = !1, durationMs: a, startedAt: o, outcome: s, recordingId: c, onOpenRecording: l, audioOnly: u, recorded: d, notRecordedReason: f, lobbyName: p, onJoin: m, className: h, "data-testid": g = "call-activity-card" }) {
+	let _ = i && !s, v = Ae(o, _), y = !_ && typeof a == "number" ? Ee(a) : "", b = u === void 0 ? "Call" : u ? "Audio call" : "Video call", x, S;
+	return s ? (x = je(s), S = n ? `${n} called` : "Nobody answered") : _ ? (x = `${b} in progress`, S = q(r, !0)) : (x = y ? `${b} ended · ${y}` : `${b} ended`, S = n ? r.length === 0 ? `${n} started the call · Nobody joined` : `${n} started the call` : q(r, !1)), /* @__PURE__ */ W("div", {
 		"data-testid": g,
 		"data-call-id": t,
 		"data-live": _ ? "true" : void 0,
@@ -440,7 +441,7 @@ function Ae({ callId: t, startedBy: n, participants: r = [], live: i = !1, durat
 								className: "shrink-0 font-semibold text-success",
 								"data-testid": `${g}-live`,
 								"aria-live": "off",
-								children: v === null ? "Live" : `Live · ${Ee(v)}`
+								children: v === null ? "Live" : `Live · ${Oe(v)}`
 							}),
 							_ && /* @__PURE__ */ U("span", {
 								"aria-hidden": !0,
@@ -456,7 +457,7 @@ function Ae({ callId: t, startedBy: n, participants: r = [], live: i = !1, durat
 					!_ && !s && d === !1 && /* @__PURE__ */ U("span", {
 						className: "truncate text-[11px] text-text-tertiary",
 						"data-testid": `${g}-not-recorded`,
-						children: Te(f, p)
+						children: De(f, p)
 					})
 				]
 			}),
@@ -493,7 +494,7 @@ function Ae({ callId: t, startedBy: n, participants: r = [], live: i = !1, durat
 }
 //#endregion
 //#region src/components/social/RecordingActivityCard.tsx
-var je = {
+var Ne = {
 	saving: {
 		state: "pending",
 		label: "Saving recording"
@@ -519,7 +520,7 @@ var je = {
 		label: "No longer available"
 	}
 };
-function Me(e) {
+function Pe(e) {
 	if (!e) return "";
 	let t = new Date(e);
 	return Number.isNaN(t.getTime()) ? "" : t.toLocaleString(void 0, {
@@ -529,7 +530,7 @@ function Me(e) {
 		minute: "2-digit"
 	});
 }
-function Ne(e) {
+function Fe(e) {
 	let t = new Date(e);
 	return Number.isNaN(t.getTime()) ? "" : t.toLocaleDateString(void 0, {
 		month: "short",
@@ -537,14 +538,14 @@ function Ne(e) {
 		year: "numeric"
 	});
 }
-function Pe(e, t) {
+function Ie(e, t) {
 	if (t <= 0) return "";
 	let [n] = e;
 	if (!n) return `${t} ${t === 1 ? "person" : "people"}`;
 	let r = t - 1;
 	return r <= 0 ? n.name : `${n.name} and ${r} ${r === 1 ? "other" : "others"}`;
 }
-function Y({ participants: t, total: n, testId: r }) {
+function J({ participants: t, total: n, testId: r }) {
 	let i = t.slice(0, n > 4 ? 3 : 4), a = n - i.length, o = i.length + +(a > 0) <= 1 ? "grid-cols-1" : "grid-cols-2";
 	return /* @__PURE__ */ W("div", {
 		className: e("grid h-full w-full gap-0.5 bg-black p-0.5", o),
@@ -579,10 +580,10 @@ function Y({ participants: t, total: n, testId: r }) {
 		]
 	});
 }
-function Fe({ recordingId: n, title: r = "Recording", recordedBy: i, participants: a = [], participantCount: s, startedAt: c, durationMs: l, thumbnailUrl: u, stage: d = "ready", transcriptReady: f = !1, summaryReady: p = !1, expiresAt: m, pinned: h = !1, onOpen: g, onCopyLink: _, onShare: v, onTogglePin: y, onDownload: b, onOpenTranscript: x, onManageExpiry: S, onParticipantClick: ee, className: te, "data-testid": C = "recording-activity-card" }) {
+function Le({ recordingId: n, title: r = "Recording", recordedBy: i, participants: a = [], participantCount: s, startedAt: c, durationMs: l, thumbnailUrl: u, stage: d = "ready", transcriptReady: f = !1, summaryReady: p = !1, expiresAt: m, pinned: h = !1, onOpen: g, onCopyLink: _, onShare: v, onTogglePin: y, onDownload: b, onOpenTranscript: x, onManageExpiry: S, onParticipantClick: ee, className: te, "data-testid": C = "recording-activity-card" }) {
 	let w = s ?? a.length, T = d === "gone", E = d !== "saving" && d !== "failed" && !T && !!g, D = () => {
 		g?.(n);
-	}, O = l != null && l > 0 ? we(l) : "", k = Me(c), M = Pe(a, w), { state: N, label: P } = je[d], F = [
+	}, O = l != null && l > 0 ? Ee(l) : "", k = Pe(c), M = Ie(a, w), { state: N, label: P } = Ne[d], F = [
 		...g && E ? [{
 			"data-testid": `${C}-menu-open`,
 			label: "Open",
@@ -639,7 +640,7 @@ function Fe({ recordingId: n, title: r = "Recording", recordedBy: i, participant
 						loading: "lazy",
 						className: "h-full w-full object-cover",
 						"data-testid": `${C}-thumbnail`
-					}) : /* @__PURE__ */ U(Y, {
+					}) : /* @__PURE__ */ U(J, {
 						participants: a,
 						total: w,
 						testId: C
@@ -750,7 +751,7 @@ function Fe({ recordingId: n, title: r = "Recording", recordedBy: i, participant
 		}), m && d !== "failed" && !T && /* @__PURE__ */ W("div", {
 			className: "flex items-center justify-between gap-2 border-t border-warning-border bg-warning-bg px-3 py-1.5 text-xs text-warning-fg",
 			"data-testid": `${C}-expiry`,
-			children: [/* @__PURE__ */ W("span", { children: ["Set to expire ", Ne(m)] }), S && /* @__PURE__ */ U(t, {
+			children: [/* @__PURE__ */ W("span", { children: ["Set to expire ", Fe(m)] }), S && /* @__PURE__ */ U(t, {
 				variant: "ghost",
 				size: "sm",
 				onClick: () => S(n),
@@ -762,21 +763,21 @@ function Fe({ recordingId: n, title: r = "Recording", recordedBy: i, participant
 }
 //#endregion
 //#region src/components/social/MembershipNotice.tsx
-function Ie(e) {
+function Re(e) {
 	return e.length <= 1 ? e[0] ?? "" : e.length === 2 ? `${e[0]} and ${e[1]}` : `${e.slice(0, -1).join(", ")} and ${e[e.length - 1]}`;
 }
-function Le(e) {
+function ze(e) {
 	return e ? e.mode === "all" ? "all history" : e.mode === "days" ? `history from the last ${e.days === 1 ? "day" : `${e.days ?? 7} days`}` : "no history" : "";
 }
-function Re(e, t) {
-	let n = e.names && e.names.length > 0 ? Ie(e.names) : e.userIds.length > 0 ? Ie(e.userIds) : "", r = e.actorName ?? e.actorId;
+function Be(e, t) {
+	let n = e.names && e.names.length > 0 ? Re(e.names) : e.userIds.length > 0 ? Re(e.userIds) : "", r = e.actorName ?? e.actorId;
 	if (!n) return t || (e.event === "added" ? `${r} added people` : `${r} removed people`);
 	if (e.event === "removed") return `${r} removed ${n}`;
-	let i = Le(e.history);
+	let i = ze(e.history);
 	return `${r} added ${n}${i ? ` · ${i}` : ""}`;
 }
-function ze({ membership: t, fallbackText: n, timestamp: r, className: i, "data-testid": a = "membership-notice" }) {
-	let o = Re(t, n);
+function Ve({ membership: t, fallbackText: n, timestamp: r, className: i, "data-testid": a = "membership-notice" }) {
+	let o = Be(t, n);
 	return /* @__PURE__ */ W("div", {
 		role: "status",
 		"data-testid": a,
@@ -798,7 +799,7 @@ function ze({ membership: t, fallbackText: n, timestamp: r, className: i, "data-
 }
 //#endregion
 //#region src/components/social/AgentRunCard.tsx
-var X = {
+var Y = {
 	planning: {
 		label: "Planning",
 		tone: "info",
@@ -847,18 +848,18 @@ var X = {
 		dot: "bg-warning",
 		busy: !1
 	}
-}, Be = {
+}, He = {
 	pending: "bg-border",
 	running: "animate-pulse bg-success motion-reduce:animate-none",
 	done: "bg-info",
 	failed: "bg-danger",
 	skipped: "bg-border"
 };
-function Ve(e) {
+function Ue(e) {
 	let t = Math.max(0, Math.floor(e / 1e3)), n = Math.floor(t / 60), r = t % 60;
 	return `${n}:${String(r).padStart(2, "0")}`;
 }
-function He(e) {
+function We(e) {
 	let t = e.steps ?? [], n = t.length, r = t.findIndex((e) => e.status === "running");
 	switch (e.phase) {
 		case "planning": return "Planning…";
@@ -872,11 +873,11 @@ function He(e) {
 		case "failed": return e.outcome ?? "The loop failed.";
 		case "stopped": return e.outcome ?? "Stopped";
 		case "budget": return e.outcome ?? "Stopped at its context budget";
-		default: return X[e.phase]?.label ?? "Running…";
+		default: return Y[e.phase]?.label ?? "Running…";
 	}
 }
-function Ue(e) {
-	let t = !!e && (X[e.phase]?.busy ?? !1), n = e?.startedAt ? Date.parse(e.startedAt) : NaN, r = t && !Number.isNaN(n), [i, a] = V(() => Date.now());
+function Ge(e) {
+	let t = !!e && (Y[e.phase]?.busy ?? !1), n = e?.startedAt ? Date.parse(e.startedAt) : NaN, r = t && !Number.isNaN(n), [i, a] = V(() => Date.now());
 	return R(() => {
 		if (!r) return;
 		a(Date.now());
@@ -884,7 +885,7 @@ function Ue(e) {
 		return () => clearInterval(e);
 	}, [r]), e ? r ? Math.max(0, i - n) : typeof e.elapsedMs == "number" ? e.elapsedMs : null : null;
 }
-var We = [
+var Ke = [
 	{
 		phase: "received",
 		label: "Received"
@@ -897,22 +898,22 @@ var We = [
 		phase: "completed",
 		label: "Updated"
 	}
-], Ge = {
+], qe = {
 	received: 0,
 	running: 1,
 	awaiting_approval: 1,
 	completed: 2,
 	rejected: 2,
 	failed: 2
-}, Ke = {
+}, Je = {
 	received: "Received",
 	running: "Processing",
 	awaiting_approval: "Needs approval",
 	completed: "Updated",
 	rejected: "Rejected",
 	failed: "Failed"
-}, qe = 6;
-function Je(e) {
+}, Ye = 6;
+function Xe(e) {
 	switch ((e ?? "").replace(/^\//, "").toLowerCase()) {
 		case "deck": return "the deck";
 		case "doc":
@@ -924,11 +925,11 @@ function Je(e) {
 		default: return "the result";
 	}
 }
-function Z(e, t) {
+function X(e, t) {
 	let n = (e ?? "").trim();
 	if (!n) return { summary: "The run failed." };
 	if (/^[A-Z][^]*[.!]$/.test(n)) return { summary: n };
-	let r = n.toLowerCase(), i = Je(t), a = /chat service|chat:|the join|conversation/.test(r);
+	let r = n.toLowerCase(), i = Xe(t), a = /chat service|chat:|the join|conversation/.test(r);
 	return /refused to post|refused to read|dm_forbidden|not a member|forbidden|not allowed|permission/.test(r) ? {
 		summary: `Couldn't post ${i} to this conversation — you're not a member of it.`,
 		technical: n
@@ -949,50 +950,50 @@ function Z(e, t) {
 		technical: n
 	} : { summary: n };
 }
-var Ye = "shrink-0 whitespace-nowrap underline underline-offset-2", Xe = `${Ye} hidden text-text-tertiary hover:text-text-primary @md:inline`;
-function Q(e, t = 60) {
+var Ze = "shrink-0 whitespace-nowrap underline underline-offset-2", Qe = `${Ze} hidden text-text-tertiary hover:text-text-primary @md:inline`;
+function Z(e, t = 60) {
 	let n = e.trim().replace(/\s+/g, " ");
 	return n.length > t ? `${n.slice(0, t - 1).trimEnd()}…` : n;
 }
-function Ze(e) {
+function $e(e) {
 	return typeof e == "number" ? String(e + 1) : "?";
 }
-function Qe(e) {
+function et(e) {
 	let t = e.text ?? "";
 	switch (e.op) {
-		case "setTitle": return `Renamed to “${Q(t)}”`;
+		case "setTitle": return `Renamed to “${Z(t)}”`;
 		case "appendBlock":
-		case "insertBlock": return e.kind === "horizontalRule" ? "Added a divider" : e.kind === "heading" ? t.trim() ? `Added heading “${Q(t)}”` : "Added an empty heading" : t.trim() ? `Added: “${Q(t)}”` : "Added an empty block";
-		case "replaceBlock": return `Rewrote block ${Ze(e.index)}`;
-		case "deleteBlock": return `Removed block ${Ze(e.index)}`;
-		case "appendMacro": return t ? `Added a ${Q(t, 40)}` : "Added a macro";
-		case "copyBlock": return `Carried block ${Ze(e.index)}`;
-		case "setDocumentType": return `Type: ${Q(t, 40)}`;
-		case "skip": return t ? Q(t, 120) : "Skipped";
-		default: return t ? `${e.op}: ${Q(t)}` : e.op;
+		case "insertBlock": return e.kind === "horizontalRule" ? "Added a divider" : e.kind === "heading" ? t.trim() ? `Added heading “${Z(t)}”` : "Added an empty heading" : t.trim() ? `Added: “${Z(t)}”` : "Added an empty block";
+		case "replaceBlock": return `Rewrote block ${$e(e.index)}`;
+		case "deleteBlock": return `Removed block ${$e(e.index)}`;
+		case "appendMacro": return t ? `Added a ${Z(t, 40)}` : "Added a macro";
+		case "copyBlock": return `Carried block ${$e(e.index)}`;
+		case "setDocumentType": return `Type: ${Z(t, 40)}`;
+		case "skip": return t ? Z(t, 120) : "Skipped";
+		default: return t ? `${e.op}: ${Z(t)}` : e.op;
 	}
 }
-function $e(e) {
+function tt(e) {
 	let t = Date.parse(e);
 	return Number.isNaN(t) ? null : new Date(t).toLocaleTimeString([], {
 		hour: "2-digit",
 		minute: "2-digit"
 	});
 }
-function et(e, t) {
+function Q(e, t) {
 	let n = Date.parse(t) - Date.parse(e);
 	if (Number.isNaN(n) || n < 0) return null;
 	let r = Math.round(n / 1e3);
 	return r < 600 ? `${r}s` : `${Math.round(r / 60)}m`;
 }
-function tt(e) {
+function nt(e) {
 	if (!e?.startedAt) return null;
-	let t = $e(e.startedAt);
+	let t = tt(e.startedAt);
 	if (!t) return null;
-	let n = e.completedAt ? et(e.startedAt, e.completedAt) : null;
+	let n = e.completedAt ? Q(e.startedAt, e.completedAt) : null;
 	return n ? `started ${t} · ${n}` : `started ${t}`;
 }
-var nt = {
+var rt = {
 	pending: "bg-border",
 	running: "animate-pulse bg-info",
 	completed: "bg-success",
@@ -1000,8 +1001,8 @@ var nt = {
 	skipped: "bg-border",
 	awaiting: "bg-warning"
 };
-function rt({ runId: t, loop: n, clock: r, onOpenLab: i, testId: a }) {
-	let o = X[n.phase] ?? X.running, s = n.phase === "planning" ? [] : n.steps ?? [], c = n.contextBudgetTokens ?? 0, l = n.contextTokens ?? 0, u = n.phase === "failed";
+function it({ runId: t, loop: n, clock: r, onOpenLab: i, testId: a }) {
+	let o = Y[n.phase] ?? Y.running, s = n.phase === "planning" ? [] : n.steps ?? [], c = n.contextBudgetTokens ?? 0, l = n.contextTokens ?? 0, u = n.phase === "failed";
 	return /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ W("div", {
 		className: "flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-text-secondary",
 		"data-testid": `${a}-loop`,
@@ -1014,13 +1015,13 @@ function rt({ runId: t, loop: n, clock: r, onOpenLab: i, testId: a }) {
 				className: e("min-w-0 flex-1 truncate", u && "text-danger"),
 				title: n.outcome,
 				"data-testid": `${a}-detail`,
-				children: He(n)
+				children: We(n)
 			}),
 			r !== null && o.busy && /* @__PURE__ */ U("span", {
 				className: "shrink-0 tabular-nums text-text-tertiary",
 				title: "Time since the loop started",
 				"data-testid": `${a}-clock`,
-				children: Ve(r)
+				children: Ue(r)
 			}),
 			c > 0 && /* @__PURE__ */ W("span", {
 				className: "flex shrink-0 items-center gap-1",
@@ -1044,7 +1045,7 @@ function rt({ runId: t, loop: n, clock: r, onOpenLab: i, testId: a }) {
 			i && /* @__PURE__ */ U("button", {
 				type: "button",
 				onClick: () => i(t),
-				className: e(Ye, "font-medium text-info"),
+				className: e(Ze, "font-medium text-info"),
 				"data-testid": `${a}-open-lab`,
 				children: "Open lab"
 			})
@@ -1059,7 +1060,7 @@ function rt({ runId: t, loop: n, clock: r, onOpenLab: i, testId: a }) {
 			className: "flex min-w-0 max-w-full items-center gap-1 rounded-full border border-border bg-surface-inset px-1.5 py-px leading-4",
 			children: [/* @__PURE__ */ U("span", {
 				"aria-hidden": "true",
-				className: e("inline-block h-1.5 w-1.5 shrink-0 rounded-full", Be[t.status] ?? Be.pending)
+				className: e("inline-block h-1.5 w-1.5 shrink-0 rounded-full", He[t.status] ?? He.pending)
 			}), /* @__PURE__ */ U("span", {
 				className: e("min-w-0 max-w-[12rem] truncate", t.status === "running" ? "text-text-primary" : t.status === "failed" ? "text-danger" : t.status === "skipped" ? "text-text-tertiary line-through" : "text-text-secondary"),
 				children: t.title
@@ -1067,8 +1068,8 @@ function rt({ runId: t, loop: n, clock: r, onOpenLab: i, testId: a }) {
 		}, t.id))
 	})] });
 }
-function it({ runId: n, instruction: a, agentName: o, requestedBy: s, command: c = "/doc", status: l, onOpenDocument: u, onOpenRun: d, result: f, onOpenResult: m, onDecide: h, suggestion: g, onReview: _, onRetry: v, documentTitle: b, defaultExpanded: x = !1, loop: S, onOpenLab: ee, className: te, "data-testid": C = "agent-run-card" }) {
-	let w = l?.phase ?? "received", [T, E] = V(x), D = Ue(S), O = w === "completed" ? l?.suggestion ?? g : void 0, k = w === "completed" ? l?.review : void 0, A = !!O && !k, ne = w === "completed" && l?.noop === !0, j = w === "completed" ? l?.result ?? f : void 0, M = j?.kind === "link" && j.label ? j.label : "Open", N = u && !(j?.kind === "document" && m), P = Ge[w], F = w === "failed" || w === "rejected", re = F ? "danger" : k ? k.decision === "accept" ? "success" : "neutral" : ne ? "warning" : w === "completed" ? O ? "warning" : "success" : w === "awaiting_approval" ? "warning" : "info", L = k ? "Reviewed" : A ? "Suggested" : ne ? "No change" : Ke[w], ie = k ? k.byName ?? k.by : void 0, R = k ? `${k.decision === "accept" ? "Accepted" : "Rejected"} by ${ie}` : void 0, z = w === "awaiting_approval", B = w === "failed" ? Z(l?.details?.error ?? l?.detail, c) : void 0, H = w === "running" ? l?.stepLabel ? `${o} — ${l.stepLabel}` : `${o} is working via the pipeline` : z ? `Waiting for approval${l?.detail ? ` — ${l.detail}` : ""}` : B ? B.summary : R ?? l?.detail ?? (A && l?.suggestion ? `${l.suggestion.applied} ${l.suggestion.applied === 1 ? "change" : "changes"} suggested` : w === "received" ? "Received" : L), G = l?.details, K = G?.ops ?? [], ae = G?.steps ?? [], oe = G?.document?.title || b || "Document", se = !!G?.document || !!u, ce = B ? B.technical : G?.error, le = tt(G), q = `${C}-details-${n}`, ue = !!(A && O && _ || z && h || j && m || j?.kind === "link" && !m);
+function at({ runId: n, instruction: a, agentName: o, requestedBy: s, command: c = "/doc", status: l, onOpenDocument: u, onOpenRun: d, result: f, onOpenResult: m, onDecide: h, suggestion: g, onReview: _, onRetry: v, documentTitle: b, defaultExpanded: x = !1, loop: S, onOpenLab: ee, className: te, "data-testid": C = "agent-run-card" }) {
+	let w = l?.phase ?? "received", [T, E] = V(x), D = Ge(S), O = w === "completed" ? l?.suggestion ?? g : void 0, k = w === "completed" ? l?.review : void 0, A = !!O && !k, ne = w === "completed" && l?.noop === !0, j = w === "completed" ? l?.result ?? f : void 0, M = j?.kind === "link" && j.label ? j.label : "Open", N = u && !(j?.kind === "document" && m), P = qe[w], F = w === "failed" || w === "rejected", re = F ? "danger" : k ? k.decision === "accept" ? "success" : "neutral" : ne ? "warning" : w === "completed" ? O ? "warning" : "success" : w === "awaiting_approval" ? "warning" : "info", L = k ? "Reviewed" : A ? "Suggested" : ne ? "No change" : Je[w], ie = k ? k.byName ?? k.by : void 0, ae = k ? `${k.decision === "accept" ? "Accepted" : "Rejected"} by ${ie}` : void 0, R = w === "awaiting_approval", z = w === "failed" ? X(l?.details?.error ?? l?.detail, c) : void 0, B = w === "running" ? l?.stepLabel ? `${o} — ${l.stepLabel}` : `${o} is working via the pipeline` : R ? `Waiting for approval${l?.detail ? ` — ${l.detail}` : ""}` : z ? z.summary : ae ?? l?.detail ?? (A && l?.suggestion ? `${l.suggestion.applied} ${l.suggestion.applied === 1 ? "change" : "changes"} suggested` : w === "received" ? "Received" : L), H = l?.details, G = H?.ops ?? [], oe = H?.steps ?? [], se = H?.document?.title || b || "Document", ce = !!H?.document || !!u, le = z ? z.technical : H?.error, ue = nt(H), de = `${C}-details-${n}`, K = !!(A && O && _ || R && h || j && m || j?.kind === "link" && !m);
 	return /* @__PURE__ */ W("div", {
 		className: e("@container flex w-full max-w-[36rem] cursor-default flex-col gap-0.5 rounded-md border border-border bg-surface px-2 py-1 text-left text-[12px]", te),
 		"data-testid": C,
@@ -1103,9 +1104,9 @@ function it({ runId: n, instruction: a, agentName: o, requestedBy: s, command: c
 					}),
 					S ? /* @__PURE__ */ U(r, {
 						size: "xs",
-						tone: X[S.phase]?.tone ?? "info",
+						tone: Y[S.phase]?.tone ?? "info",
 						"data-testid": `${C}-phase`,
-						children: X[S.phase]?.label ?? S.phase
+						children: Y[S.phase]?.label ?? S.phase
 					}) : /* @__PURE__ */ U(r, {
 						size: "xs",
 						tone: re,
@@ -1116,7 +1117,7 @@ function it({ runId: n, instruction: a, agentName: o, requestedBy: s, command: c
 						size: "sm",
 						"aria-label": T ? "Hide details" : "Show details",
 						"aria-expanded": T,
-						"aria-controls": T ? q : void 0,
+						"aria-controls": T ? de : void 0,
 						onClick: () => E((e) => !e),
 						className: "!h-5 !w-5 shrink-0 text-[10px] text-text-tertiary",
 						"data-testid": `${C}-toggle`,
@@ -1129,7 +1130,7 @@ function it({ runId: n, instruction: a, agentName: o, requestedBy: s, command: c
 					})
 				]
 			}),
-			S ? /* @__PURE__ */ U(rt, {
+			S ? /* @__PURE__ */ U(it, {
 				runId: n,
 				loop: S,
 				clock: D,
@@ -1139,12 +1140,12 @@ function it({ runId: n, instruction: a, agentName: o, requestedBy: s, command: c
 				className: "flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-text-secondary",
 				children: [
 					/* @__PURE__ */ W("div", {
-						className: e("flex min-w-0 grow items-center gap-1.5", ue && "basis-full @sm:basis-0"),
+						className: e("flex min-w-0 grow items-center gap-1.5", K && "basis-full @sm:basis-0"),
 						children: [/* @__PURE__ */ U("ol", {
 							className: "m-0 flex shrink-0 list-none items-center gap-1 p-0",
 							"aria-label": "Run progress",
 							"data-testid": `${C}-steps`,
-							children: We.map((t, n) => {
+							children: Ke.map((t, n) => {
 								let r = F ? n < P : n < P || n === P && w === "completed", i = n === P && w !== "completed" && !F, a = F && n === P;
 								return /* @__PURE__ */ W("li", {
 									className: "flex items-center",
@@ -1152,7 +1153,7 @@ function it({ runId: n, instruction: a, agentName: o, requestedBy: s, command: c
 									"data-state": a ? "failed" : r ? "done" : i ? "active" : "pending",
 									children: [/* @__PURE__ */ U("span", {
 										"aria-hidden": "true",
-										className: e("inline-block h-1.5 w-1.5 rounded-full", a ? "bg-danger" : r ? ne && n === P ? "bg-warning" : "bg-success" : i ? z ? "bg-warning" : "animate-pulse bg-info" : "bg-border")
+										className: e("inline-block h-1.5 w-1.5 rounded-full", a ? "bg-danger" : r ? ne && n === P ? "bg-warning" : "bg-success" : i ? R ? "bg-warning" : "animate-pulse bg-info" : "bg-border")
 									}), /* @__PURE__ */ U("span", {
 										className: "sr-only",
 										children: a ? L : t.label
@@ -1163,8 +1164,8 @@ function it({ runId: n, instruction: a, agentName: o, requestedBy: s, command: c
 							className: e("min-w-0 flex-1 truncate", k && (k.decision === "accept" ? "text-success" : "text-text-tertiary"), w === "failed" && "text-danger", ne && "text-warning-fg"),
 							"data-testid": `${C}-detail`,
 							"data-review": k?.decision,
-							title: B ? B.summary : l?.detail,
-							children: H
+							title: z ? z.summary : l?.detail,
+							children: B
 						})]
 					}),
 					A && O && _ && /* @__PURE__ */ W("span", {
@@ -1192,7 +1193,7 @@ function it({ runId: n, instruction: a, agentName: o, requestedBy: s, command: c
 							children: "Reject"
 						})]
 					}),
-					z && h && /* @__PURE__ */ W("span", {
+					R && h && /* @__PURE__ */ W("span", {
 						className: "flex shrink-0 items-center gap-1",
 						"data-testid": `${C}-decide`,
 						children: [/* @__PURE__ */ U(t, {
@@ -1222,7 +1223,7 @@ function it({ runId: n, instruction: a, agentName: o, requestedBy: s, command: c
 					j && m && /* @__PURE__ */ U("button", {
 						type: "button",
 						onClick: () => m(j),
-						className: e(Ye, "font-medium text-info"),
+						className: e(Ze, "font-medium text-info"),
 						"data-testid": `${C}-open-result`,
 						"data-result-kind": j.kind,
 						children: M
@@ -1231,7 +1232,7 @@ function it({ runId: n, instruction: a, agentName: o, requestedBy: s, command: c
 						href: j.href,
 						target: "_blank",
 						rel: "noopener noreferrer",
-						className: e(Ye, "font-medium text-info"),
+						className: e(Ze, "font-medium text-info"),
 						"data-testid": `${C}-open-result`,
 						"data-result-kind": "link",
 						children: M
@@ -1239,25 +1240,25 @@ function it({ runId: n, instruction: a, agentName: o, requestedBy: s, command: c
 					d && /* @__PURE__ */ U("button", {
 						type: "button",
 						onClick: () => d(n),
-						className: Xe,
+						className: Qe,
 						"data-testid": `${C}-open-run`,
 						children: "Open run"
 					}),
 					N && /* @__PURE__ */ U("button", {
 						type: "button",
 						onClick: u,
-						className: Xe,
+						className: Qe,
 						"data-testid": `${C}-open-document`,
 						children: "Open document"
 					})
 				]
 			}),
 			T && /* @__PURE__ */ W("div", {
-				id: q,
+				id: de,
 				className: "mt-1 flex flex-col gap-2 border-t border-border pt-1.5",
 				"data-testid": `${C}-details`,
 				children: [
-					se && /* @__PURE__ */ W("div", {
+					ce && /* @__PURE__ */ W("div", {
 						className: "flex items-start gap-2",
 						"data-testid": `${C}-details-document`,
 						children: [
@@ -1270,11 +1271,11 @@ function it({ runId: n, instruction: a, agentName: o, requestedBy: s, command: c
 								className: "min-w-0 flex-1",
 								children: [/* @__PURE__ */ U("span", {
 									className: "block truncate font-medium text-text-primary",
-									children: oe
-								}), G?.document?.snippet && /* @__PURE__ */ U("span", {
+									children: se
+								}), H?.document?.snippet && /* @__PURE__ */ U("span", {
 									className: "line-clamp-2 block text-[11px] text-text-secondary",
 									"data-testid": `${C}-details-snippet`,
-									children: G.document.snippet
+									children: H.document.snippet
 								})]
 							}),
 							u && /* @__PURE__ */ U(t, {
@@ -1287,7 +1288,7 @@ function it({ runId: n, instruction: a, agentName: o, requestedBy: s, command: c
 							})
 						]
 					}),
-					K.length > 0 && /* @__PURE__ */ W("div", {
+					G.length > 0 && /* @__PURE__ */ W("div", {
 						"data-testid": `${C}-details-ops`,
 						children: [
 							/* @__PURE__ */ U("div", {
@@ -1296,42 +1297,42 @@ function it({ runId: n, instruction: a, agentName: o, requestedBy: s, command: c
 							}),
 							/* @__PURE__ */ U("ul", {
 								className: "m-0 mt-0.5 list-none p-0 text-[11px] text-text-secondary",
-								children: K.slice(0, qe).map((e, t) => /* @__PURE__ */ U("li", {
+								children: G.slice(0, Ye).map((e, t) => /* @__PURE__ */ U("li", {
 									className: "truncate",
 									"data-op": e.op,
 									title: e.text,
-									children: Qe(e)
+									children: et(e)
 								}, t))
 							}),
-							K.length > qe && /* @__PURE__ */ W("div", {
+							G.length > Ye && /* @__PURE__ */ W("div", {
 								className: "text-[11px] text-text-tertiary",
 								"data-testid": `${C}-details-more-ops`,
 								children: [
 									"+",
-									K.length - qe,
+									G.length - Ye,
 									" more"
 								]
 							})
 						]
 					}),
-					ae.length > 0 && /* @__PURE__ */ U("ol", {
+					oe.length > 0 && /* @__PURE__ */ U("ol", {
 						className: "m-0 flex list-none flex-col gap-0.5 p-0 text-[11px]",
 						"aria-label": "Steps",
 						"data-testid": `${C}-details-steps`,
-						children: ae.map((t) => /* @__PURE__ */ W("li", {
+						children: oe.map((t) => /* @__PURE__ */ W("li", {
 							className: "flex items-center gap-1.5",
 							"data-step-id": t.id,
 							"data-status": t.status,
 							children: [/* @__PURE__ */ U("span", {
 								"aria-hidden": "true",
-								className: e("inline-block h-1.5 w-1.5 shrink-0 rounded-full", nt[t.status] ?? nt.pending)
+								className: e("inline-block h-1.5 w-1.5 shrink-0 rounded-full", rt[t.status] ?? rt.pending)
 							}), /* @__PURE__ */ U("span", {
 								className: e("min-w-0 truncate", t.status === "failed" ? "text-danger" : t.status === "skipped" ? "text-text-tertiary line-through" : t.status === "running" ? "text-text-primary" : "text-text-secondary"),
 								children: t.label
 							})]
 						}, t.id))
 					}),
-					ce && /* @__PURE__ */ W("div", {
+					le && /* @__PURE__ */ W("div", {
 						"data-testid": `${C}-details-error-block`,
 						children: [/* @__PURE__ */ U("div", {
 							className: "text-[10px] font-semibold uppercase tracking-wide text-text-tertiary",
@@ -1339,7 +1340,7 @@ function it({ runId: n, instruction: a, agentName: o, requestedBy: s, command: c
 						}), /* @__PURE__ */ U("div", {
 							className: "mt-0.5 break-words text-[11px] text-danger",
 							"data-testid": `${C}-details-error`,
-							children: ce
+							children: le
 						})]
 					}),
 					/* @__PURE__ */ W("div", {
@@ -1348,21 +1349,21 @@ function it({ runId: n, instruction: a, agentName: o, requestedBy: s, command: c
 							d && /* @__PURE__ */ U("button", {
 								type: "button",
 								onClick: () => d(n),
-								className: e(Ye, "hover:text-text-primary"),
+								className: e(Ze, "hover:text-text-primary"),
 								"data-testid": `${C}-details-open-run`,
 								children: "Open run in the pipeline"
 							}),
 							j && m && /* @__PURE__ */ U("button", {
 								type: "button",
 								onClick: () => m(j),
-								className: e(Ye, "font-medium text-info"),
+								className: e(Ze, "font-medium text-info"),
 								"data-testid": `${C}-details-open-result`,
 								children: M
 							}),
-							le && /* @__PURE__ */ U("span", {
+							ue && /* @__PURE__ */ U("span", {
 								className: "ml-auto min-w-0 truncate",
 								"data-testid": `${C}-details-timings`,
-								children: le
+								children: ue
 							})
 						]
 					})
@@ -1371,11 +1372,11 @@ function it({ runId: n, instruction: a, agentName: o, requestedBy: s, command: c
 		]
 	});
 }
-function at(e) {
+function ot(e) {
 	if (!e || e.kind !== "agent-run") return null;
 	let t = typeof e.runId == "string" ? e.runId : "", n = typeof e.documentId == "string" ? e.documentId : "";
 	if (!t) return null;
-	let r = ot(e.result);
+	let r = st(e.result);
 	return {
 		runId: t,
 		documentId: n,
@@ -1389,7 +1390,7 @@ function at(e) {
 		..."lab" in e && e.lab !== void 0 && e.lab !== !1 ? { lab: !0 } : {}
 	};
 }
-function ot(e) {
+function st(e) {
 	if (!e || typeof e != "object") return null;
 	let t = e;
 	if (t.kind === "document" && typeof t.documentId == "string" && t.documentId) return {
@@ -1422,7 +1423,7 @@ function ot(e) {
 }
 //#endregion
 //#region src/components/social/ReactionChips.tsx
-function st(e, t) {
+function ct(e, t) {
 	let n = [], r = /* @__PURE__ */ new Map(), i = /* @__PURE__ */ new Set();
 	for (let a of e) {
 		let e = `${a.emoji} ${a.userId}`;
@@ -1438,12 +1439,12 @@ function st(e, t) {
 	}
 	return n.map((e) => r.get(e));
 }
-function ct(e) {
+function lt(e) {
 	let t = e.mine ? ["You", ...e.names] : [...e.names];
 	return t.length === 0 ? "" : t.length === 1 ? t[0] : t.length <= 3 ? `${t.slice(0, -1).join(", ")} and ${t[t.length - 1]}` : `${t.slice(0, 2).join(", ")} and ${t.length - 2} others`;
 }
-function lt({ reactions: t, currentUserId: n, onToggle: r, className: i, "data-testid": a = "reaction-chips" }) {
-	let o = z(() => st(t, n), [t, n]);
+function ut({ reactions: t, currentUserId: n, onToggle: r, className: i, "data-testid": a = "reaction-chips" }) {
+	let o = z(() => ct(t, n), [t, n]);
 	return o.length === 0 ? null : /* @__PURE__ */ U("div", {
 		"data-testid": a,
 		className: e("mt-1 flex flex-wrap gap-1", i),
@@ -1454,7 +1455,7 @@ function lt({ reactions: t, currentUserId: n, onToggle: r, className: i, "data-t
 			"data-mine": String(t.mine),
 			"aria-pressed": t.mine,
 			"aria-label": `${t.emoji} ${t.count}${t.mine ? ", including you" : ""}`,
-			title: ct(t),
+			title: lt(t),
 			onClick: () => r(t.emoji),
 			className: e("flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-xs leading-none", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", t.mine ? "border-primary bg-primary-bg text-primary-fg" : "border-border bg-surface text-text-secondary hover:bg-surface-hover"),
 			children: [/* @__PURE__ */ U("span", {
@@ -1469,12 +1470,12 @@ function lt({ reactions: t, currentUserId: n, onToggle: r, className: i, "data-t
 }
 //#endregion
 //#region src/components/social/MessageActionBar.tsx
-var ut = [
+var dt = [
 	"👍",
 	"🎉",
 	"❤️"
-], dt = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
-function ft({ quickReactions: t = ut, onReact: n, onOpenReactionPicker: r, onReply: i, onForward: c, onTogglePin: l, pinned: u = !1, onCopyLink: p, onEdit: m, onDelete: h, className: g, "data-testid": y = "message-actions" }) {
+], ft = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
+function pt({ quickReactions: t = dt, onReact: n, onOpenReactionPicker: r, onReply: i, onForward: c, onTogglePin: l, pinned: u = !1, onCopyLink: p, onEdit: m, onDelete: h, className: g, "data-testid": y = "message-actions" }) {
 	let b = [], x = (e, t, n, r) => b.push({
 		key: e,
 		label: t,
@@ -1495,14 +1496,14 @@ function ft({ quickReactions: t = ut, onReact: n, onOpenReactionPicker: r, onRep
 			title: e.label,
 			"data-testid": `${y}-${e.key}`,
 			onClick: e.onClick,
-			className: `grid h-6 w-6 place-items-center rounded text-xs leading-none text-text-secondary hover:bg-surface-hover hover:text-text-primary ${dt}`,
+			className: `grid h-6 w-6 place-items-center rounded text-xs leading-none text-text-secondary hover:bg-surface-hover hover:text-text-primary ${ft}`,
 			children: e.glyph
 		}, e.key))
 	});
 }
 //#endregion
 //#region src/components/social/InlineMessageEditor.tsx
-function pt({ initialText: e, onSave: n, onCancel: r, "data-testid": i = "message-editor" }) {
+function mt({ initialText: e, onSave: n, onCancel: r, "data-testid": i = "message-editor" }) {
 	let [a, o] = V(e), [s, c] = V(!1), [l, u] = V(null), d = B(null);
 	R(() => {
 		let e = d.current;
@@ -1575,63 +1576,12 @@ function pt({ initialText: e, onSave: n, onCancel: r, "data-testid": i = "messag
 	});
 }
 //#endregion
-//#region src/components/social/QuoteBlock.tsx
-function mt(e, t = 120) {
-	let n = e.replace(/\s+/g, " ").trim();
-	if (n.length <= t) return n;
-	let r = n.slice(0, t), i = r.lastIndexOf(" ");
-	return `${(i > t * .6 ? r.slice(0, i) : r).trimEnd()}…`;
-}
-function ht(e) {
-	if (!e) return "";
-	let t = new Date(e);
-	return Number.isNaN(t.getTime()) ? "" : `${String(t.getHours()).padStart(2, "0")}:${String(t.getMinutes()).padStart(2, "0")}`;
-}
-function gt({ quote: t, onJump: n, onDismiss: r, className: i, "data-testid": a = "quote-block" }) {
-	let o = /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ W("span", {
-		className: "flex items-baseline gap-2",
-		children: [/* @__PURE__ */ U("span", {
-			className: "truncate text-xs font-semibold text-text-primary",
-			children: t.author
-		}), t.timestamp && /* @__PURE__ */ U("span", {
-			className: "shrink-0 text-[11px] tabular-nums text-text-tertiary",
-			children: ht(t.timestamp)
-		})]
-	}), /* @__PURE__ */ U("span", {
-		className: "block truncate text-xs text-text-secondary",
-		children: mt(t.text)
-	})] });
-	return /* @__PURE__ */ W("div", {
-		"data-testid": a,
-		"data-quoted-message-id": t.messageId,
-		className: e("flex items-start gap-2 rounded border-l-2 border-primary bg-surface-inset px-2 py-1", i),
-		children: [n ? /* @__PURE__ */ U("button", {
-			type: "button",
-			"data-testid": `${a}-jump`,
-			onClick: () => n(t.messageId),
-			"aria-label": `Go to the message from ${t.author}`,
-			className: "flex min-w-0 flex-1 flex-col items-start text-left hover:underline",
-			children: o
-		}) : /* @__PURE__ */ U("span", {
-			className: "flex min-w-0 flex-1 flex-col",
-			children: o
-		}), r && /* @__PURE__ */ U("button", {
-			type: "button",
-			"data-testid": `${a}-dismiss`,
-			"aria-label": "Remove quote",
-			onClick: r,
-			className: "grid h-5 w-5 shrink-0 place-items-center rounded text-text-tertiary hover:bg-surface-hover hover:text-text-primary",
-			children: "✕"
-		})]
-	});
-}
-//#endregion
 //#region src/components/social/ChatAttachment.tsx
-function _t(e) {
+function ht(e) {
 	return typeof e.contentType == "string" && e.contentType.startsWith("image/");
 }
-function vt({ attachment: t, src: n, onOpen: r, className: i }) {
-	let a = _t(t), o = n ?? t.preview, s = ({ label: n, className: i, children: a }) => r ? /* @__PURE__ */ U("button", {
+function gt({ attachment: t, src: n, onOpen: r, className: i }) {
+	let a = ht(t), o = n ?? t.preview, s = ({ label: n, className: i, children: a }) => r ? /* @__PURE__ */ U("button", {
 		type: "button",
 		onClick: () => r(t),
 		"aria-label": n,
@@ -1670,7 +1620,7 @@ function vt({ attachment: t, src: n, onOpen: r, className: i }) {
 				children: t.name
 			}), /* @__PURE__ */ U("span", {
 				className: "shrink-0 text-xs text-[var(--color-text-tertiary)]",
-				children: L(t.size)
+				children: ie(t.size)
 			})]
 		})]
 	}) : /* @__PURE__ */ U("div", {
@@ -1680,24 +1630,24 @@ function vt({ attachment: t, src: n, onOpen: r, className: i }) {
 		children: s({
 			label: `Download ${t.name}`,
 			className: e("flex w-full min-w-0 items-center gap-2 rounded-lg border px-2.5 py-2 text-left", "border-[var(--color-border)] bg-[var(--color-surface-inset)]", r && "hover:bg-[var(--color-surface-hover)]"),
-			children: /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(xt, {}), /* @__PURE__ */ W("span", {
+			children: /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(yt, {}), /* @__PURE__ */ W("span", {
 				className: "flex min-w-0 flex-col",
 				children: [/* @__PURE__ */ U("span", {
 					className: "min-w-0 break-all text-sm text-[var(--color-text-primary)]",
 					children: t.name
 				}), /* @__PURE__ */ U("span", {
 					className: "text-xs text-[var(--color-text-tertiary)]",
-					children: L(t.size)
+					children: ie(t.size)
 				})]
 			})] })
 		})
 	});
 }
-function yt(e, t, n) {
+function _t(e, t, n) {
 	return e.uploader ? !!t && e.uploader === t : !!n && e.actor === n;
 }
-function bt({ transfer: t, mine: n = !1, onCancel: r, className: i }) {
-	let { size: a, transferred: o, phase: s } = t, c = a > 0 ? Math.min(100, Math.round(o / a * 100)) : 0, l = s === "failed" || s === "cancelled", u = s === "failed" ? t.error ?? "Upload failed" : s === "cancelled" ? "Cancelled" : s === "verifying" ? "Verifying…" : a > 0 ? `${c}%` : L(o);
+function vt({ transfer: t, mine: n = !1, onCancel: r, className: i }) {
+	let { size: a, transferred: o, phase: s } = t, c = a > 0 ? Math.min(100, Math.round(o / a * 100)) : 0, l = s === "failed" || s === "cancelled", u = s === "failed" ? t.error ?? "Upload failed" : s === "cancelled" ? "Cancelled" : s === "verifying" ? "Verifying…" : a > 0 ? `${c}%` : ie(o);
 	return /* @__PURE__ */ W("div", {
 		"data-testid": "transfer-bubble",
 		"data-transfer-phase": s,
@@ -1710,7 +1660,7 @@ function bt({ transfer: t, mine: n = !1, onCancel: r, className: i }) {
 				"aria-hidden": "true",
 				"data-testid": "transfer-bubble-preview",
 				className: "h-9 w-9 shrink-0 rounded object-cover blur-[3px]"
-			}) : /* @__PURE__ */ U(xt, {}),
+			}) : /* @__PURE__ */ U(yt, {}),
 			/* @__PURE__ */ W("div", {
 				className: "flex min-w-0 grow flex-col gap-1",
 				children: [
@@ -1755,7 +1705,7 @@ function bt({ transfer: t, mine: n = !1, onCancel: r, className: i }) {
 		]
 	});
 }
-function xt() {
+function yt() {
 	return /* @__PURE__ */ U("svg", {
 		width: "20",
 		height: "20",
@@ -1774,13 +1724,13 @@ function xt() {
 }
 //#endregion
 //#region src/components/social/DaySeparator.tsx
-function St({ timestamp: t, now: n, tone: r = "light", className: i }) {
-	let a = ce(t, n);
+function bt({ timestamp: t, now: n, tone: r = "light", className: i }) {
+	let a = ue(t, n);
 	if (!a) return null;
 	let o = r === "dark";
 	return /* @__PURE__ */ W("div", {
 		role: "separator",
-		"aria-label": le(t),
+		"aria-label": de(t),
 		"data-testid": "chat-day-separator",
 		"data-day-label": a,
 		className: e("flex items-center gap-2 py-2 select-none", i),
@@ -1801,14 +1751,14 @@ function St({ timestamp: t, now: n, tone: r = "light", className: i }) {
 		]
 	});
 }
-function Ct(e, t = 64) {
+function xt(e, t = 64) {
 	return e.scrollHeight - e.scrollTop - e.clientHeight <= t;
 }
-function wt(e, t, n = 120) {
+function St(e, t, n = 120) {
 	let r = t.replace(/\s+/g, " ").trim();
 	return r ? `${e}: ${r.length > n ? `${r.slice(0, n)}…` : r}` : `${e} sent a message`;
 }
-function Tt(e) {
+function Ct(e) {
 	if (!e) return null;
 	if (e.kind === "document" && typeof e.documentId == "string" && e.documentId) return {
 		documentId: e.documentId,
@@ -1824,7 +1774,7 @@ function Tt(e) {
 		createdBy: typeof t.createdBy == "string" ? t.createdBy : void 0
 	} : null;
 }
-function Et(e) {
+function wt(e) {
 	if (!e || !Array.isArray(e.documents)) return [];
 	let t = /* @__PURE__ */ new Set(), n = [];
 	for (let r of e.documents) {
@@ -1838,27 +1788,27 @@ function Et(e) {
 	}
 	return n;
 }
-var Dt = {
+var Tt = {
 	attachments: "files",
 	html: "formatting",
 	mentions: "mentions",
 	replyTo: "the quoted reply"
 };
-function Ot(e) {
+function Et(e) {
 	if (!e || e._truncated !== !0) return null;
 	let t = (Array.isArray(e._droppedKeys) ? e._droppedKeys : []).filter((e) => typeof e == "string");
 	return {
 		droppedKeys: t,
-		labels: t.map((e) => Dt[e] ?? e)
+		labels: t.map((e) => Tt[e] ?? e)
 	};
 }
-function kt(e) {
+function Dt(e) {
 	return `Forwarded from ${e.channelLabel?.trim() || e.channel || "another conversation"} — ${e.author}`;
 }
-function At(e) {
-	return `${kt(e)}:`;
+function Ot(e) {
+	return `${Dt(e)}:`;
 }
-function jt(e, t) {
+function kt(e, t) {
 	let n, r;
 	try {
 		n = new DOMParser().parseFromString(e, "text/html"), r = n.createTreeWalker(n.body, NodeFilter.SHOW_TEXT).nextNode();
@@ -1876,15 +1826,15 @@ function jt(e, t) {
 	} else return null;
 	return (n.body.textContent ?? "").trim() ? n.body.innerHTML : null;
 }
-function Mt(e, t, n) {
+function At(e, t, n) {
 	if (!t) return {
 		body: e,
 		html: n,
 		stripped: !1
 	};
-	let r = At(t);
+	let r = Ot(t);
 	if (n) {
-		let t = jt(n, r);
+		let t = kt(n, r);
 		if (t === null) return {
 			body: e,
 			html: n,
@@ -1911,7 +1861,7 @@ function Mt(e, t, n) {
 		stripped: !1
 	};
 }
-function Nt(e) {
+function jt(e) {
 	let t = e?.forwardedFrom;
 	return !t || typeof t.messageId != "string" || !t.messageId || typeof t.author != "string" || !t.author ? null : {
 		messageId: t.messageId,
@@ -1922,7 +1872,7 @@ function Nt(e) {
 		...typeof t.timestamp == "string" ? { timestamp: t.timestamp } : {}
 	};
 }
-function Pt(e) {
+function Mt(e) {
 	if (!e || e.kind !== "call") return null;
 	let t = typeof e.callId == "string" ? e.callId : "";
 	if (!t) return null;
@@ -1947,7 +1897,7 @@ function Pt(e) {
 		participants: n
 	};
 }
-function Ft(e) {
+function Nt(e) {
 	if (!e || e.kind !== "recording") return null;
 	let t = typeof e.recordingId == "string" ? e.recordingId : "";
 	if (!t) return null;
@@ -1973,7 +1923,7 @@ function Ft(e) {
 		expiresAt: typeof e.expiresAt == "string" ? e.expiresAt : void 0
 	};
 }
-function It(e) {
+function Pt(e) {
 	if (!e || e.kind !== "membership") return null;
 	let t = e.event === "removed" ? "removed" : e.event === "added" ? "added" : null;
 	if (!t) return null;
@@ -1993,10 +1943,10 @@ function It(e) {
 		...s ? { history: s } : {}
 	};
 }
-function Lt(e) {
+function Ft(e) {
 	if (e) return e.kind === "message" ? e.message.timestamp : e.local.timestamp;
 }
-function Rt(e, t) {
+function It(e, t) {
 	let n = e.map((e) => ({
 		kind: "message",
 		message: e
@@ -2005,7 +1955,7 @@ function Rt(e, t) {
 	let r = [...t].sort((e, t) => (Date.parse(e.timestamp) || 0) - (Date.parse(t.timestamp) || 0));
 	for (let e of r) {
 		let t = Date.parse(e.timestamp), r = n.length;
-		for (; r > 0 && !Number.isNaN(t) && Date.parse(Lt(n[r - 1]) ?? "") > t;) --r;
+		for (; r > 0 && !Number.isNaN(t) && Date.parse(Ft(n[r - 1]) ?? "") > t;) --r;
 		n.splice(r, 0, {
 			kind: "local",
 			local: e
@@ -2013,22 +1963,22 @@ function Rt(e, t) {
 	}
 	return n;
 }
-function zt(e) {
+function Lt(e) {
 	return (e.kind === "message" ? e.message.id : e.local.id) || void 0;
 }
-function Bt(e) {
+function Rt(e) {
 	let t = (e.kind === "message" ? e.message.metadata : e.local.metadata)?.replyTo;
 	return typeof t?.messageId == "string" && t.messageId ? t.messageId : void 0;
 }
-function Vt(e) {
+function zt(e) {
 	let t = /* @__PURE__ */ new Set();
 	for (let n of e) {
-		let e = zt(n);
+		let e = Lt(n);
 		e && t.add(e);
 	}
 	let n = /* @__PURE__ */ new Map();
 	for (let r of e) {
-		let e = zt(r), i = Bt(r);
+		let e = Lt(r), i = Rt(r);
 		e && i && i !== e && t.has(i) && n.set(e, i);
 	}
 	let r = (e) => {
@@ -2041,7 +1991,7 @@ function Vt(e) {
 		return t;
 	}, i = [], a = /* @__PURE__ */ new Map();
 	for (let t of e) {
-		let e = zt(t);
+		let e = Lt(t);
 		if (e && r(e) !== e) continue;
 		let n = {
 			root: t,
@@ -2050,29 +2000,29 @@ function Vt(e) {
 		i.push(n), e && a.set(e, n);
 	}
 	for (let t of e) {
-		let e = zt(t);
+		let e = Lt(t);
 		if (!e) continue;
 		let n = r(e);
 		n !== e && a.get(n)?.replies.push(t);
 	}
 	return i;
 }
-var Ht = 3, Ut = 2, Wt = 3e5;
-function Gt(e) {
+var Bt = 3, Vt = 2, Ht = 3e5;
+function Ut(e) {
 	let t = e.userId;
 	return t ? `id:${t}` : e.displayName ? `name:${e.displayName}` : void 0;
 }
-function Kt(e) {
-	return e.metadata?.system === !0 || e.deletedAt || e.metadata?.deleted === !0 ? !1 : !(at(e.metadata) || Ft(e.metadata) || Pt(e.metadata) || Tt(e.metadata) || It(e.metadata));
+function Wt(e) {
+	return e.metadata?.system === !0 || e.deletedAt || e.metadata?.deleted === !0 ? !1 : !(ot(e.metadata) || Nt(e.metadata) || Mt(e.metadata) || Ct(e.metadata) || Pt(e.metadata));
 }
-function qt(e, t) {
+function Gt(e, t) {
 	if (!e || e.kind !== "message" || t.kind !== "message") return !1;
-	let n = e.message, r = t.message, i = Gt(r);
-	if (!i || i !== Gt(n) || !Kt(n) || !Kt(r) || r.editedAt || se(r.timestamp, n.timestamp)) return !1;
+	let n = e.message, r = t.message, i = Ut(r);
+	if (!i || i !== Ut(n) || !Wt(n) || !Wt(r) || r.editedAt || le(r.timestamp, n.timestamp)) return !1;
 	let a = Date.parse(n.timestamp), o = Date.parse(r.timestamp);
-	return !Number.isFinite(a) || !Number.isFinite(o) ? !1 : o >= a && o - a <= Wt;
+	return !Number.isFinite(a) || !Number.isFinite(o) ? !1 : o >= a && o - a <= Ht;
 }
-function Jt(e, t) {
+function Kt(e, t) {
 	if (!t) return -1;
 	let n = Date.parse(t);
 	if (!Number.isFinite(n)) return -1;
@@ -2082,7 +2032,7 @@ function Jt(e, t) {
 	}
 	return -1;
 }
-function Yt({ tone: t = "light" }) {
+function qt({ tone: t = "light" }) {
 	let n = t === "dark";
 	return /* @__PURE__ */ W("div", {
 		role: "separator",
@@ -2099,7 +2049,7 @@ function Yt({ tone: t = "light" }) {
 		})]
 	});
 }
-function Xt(e, t, n) {
+function Jt(e, t, n) {
 	let r = Date.parse(n);
 	return Number.isFinite(r) ? e.filter((e) => {
 		if (e.userId === t) return !1;
@@ -2107,46 +2057,46 @@ function Xt(e, t, n) {
 		return Number.isFinite(n) && n >= r;
 	}) : [];
 }
-function Zt(e) {
+function Yt(e) {
 	return e.displayName || e.userId;
 }
-function Qt(e, t, n) {
+function Xt(e, t, n) {
 	let r = /* @__PURE__ */ new Set();
 	for (let t of e) {
 		if (t.userId === n || t.metadata?.system === !0) continue;
-		let e = Gt(t);
+		let e = Ut(t);
 		e && r.add(e);
 	}
 	for (let e of t) e.userId !== n && r.add(`id:${e.userId}`);
 	return r.size;
 }
-function $t(e, t, n) {
+function Zt(e, t, n) {
 	let r = t?.(e.runId);
 	return {
 		...r ? { loop: r } : {},
 		...n && (r || e.lab) ? { onOpenLab: n } : {}
 	};
 }
-function en({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, onTyping: s, typingUsers: c = [], emptyState: l, composer: u, dock: d, currentUserId: f, reactionsFor: p, onToggleReaction: m, onReply: h, onForwardMessage: g, onCopyLink: v, onTogglePin: y, onEditMessage: S, onDeleteMessage: C, pinnedMessageIds: w, onJumpToMessage: E, highlightedMessageId: O, threaded: k = !1, alignOwnMessages: A = !0, documentEditors: ne, documentUnavailable: j, callParticipants: re, agentRunStatus: I, onOpenRun: L, agentLoopStatus: z, onOpenLab: G, onOpenResult: K, onDecideRun: ae, onReviewRun: oe, onRetryRun: ce, onJoinCall: le, onOpenRecording: ue, onCopyRecordingLink: de, onShareRecording: pe, onDownloadRecording: me, onOpenRecordingTranscript: he, onManageRecordingExpiry: ge, recordingStatus: _e, onOpenDocument: ve, renderMessageReferences: be, tone: Se = "light", showHeader: we, fill: J, onLoadMore: Te, hasMore: Ee, loadingMore: De = !1, onSendFiles: Oe, transfers: ke = [], currentActor: je, onCancelTransfer: Me, attachmentSrc: Ne, onOpenAttachment: Pe, acceptFiles: Y, maxFileSize: Ie, onFileError: Le, readReceipts: Re, readReceiptsEnabled: X = !0, unreadFrom: Be, emojis: Ve = F }) {
-	let [He, Ue] = V(null), [We, Ge] = V(null), Ke = B(null), [qe, Je] = V(null), Z = Se === "dark", Ye = T(), Xe = we ?? !(Ye?.hasHeader ?? !1), Q = J ?? Ye?.fillsHeight ?? !1, [Ze, Qe] = V(""), $e = B(null), et = B(null), tt = !!Te && Ee !== !1, nt = B(null), rt = B(null), [ot, st] = V(!1), ct = !!Oe && !a, ut = Rt(n, r), dt = k ? Vt(ut) : null, [mt, ht] = V(() => /* @__PURE__ */ new Set());
-	function _t(e) {
-		ht((t) => {
+function Qt({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, onTyping: s, typingUsers: c = [], emptyState: l, composer: u, dock: d, currentUserId: f, reactionsFor: p, onToggleReaction: m, onReply: h, onForwardMessage: g, onCopyLink: v, onTogglePin: y, onEditMessage: S, onDeleteMessage: C, pinnedMessageIds: w, onJumpToMessage: E, highlightedMessageId: O, threaded: k = !1, alignOwnMessages: A = !0, documentEditors: ne, documentUnavailable: j, callParticipants: re, agentRunStatus: I, onOpenRun: ie, agentLoopStatus: z, onOpenLab: G, onOpenResult: oe, onDecideRun: se, onReviewRun: ce, onRetryRun: ue, onJoinCall: de, onOpenRecording: fe, onCopyRecordingLink: pe, onShareRecording: he, onDownloadRecording: ge, onOpenRecordingTranscript: _e, onManageRecordingExpiry: ve, recordingStatus: ye, onOpenDocument: be, renderMessageReferences: Se, tone: we = "light", showHeader: Ee, fill: q, onLoadMore: De, hasMore: Oe, loadingMore: ke = !1, onSendFiles: Ae, transfers: je = [], currentActor: Ne, onCancelTransfer: Pe, attachmentSrc: Fe, onOpenAttachment: Ie, acceptFiles: J, maxFileSize: Re, onFileError: ze, readReceipts: Be, readReceiptsEnabled: Y = !0, unreadFrom: He, emojis: Ue = F }) {
+	let [We, Ge] = V(null), [Ke, qe] = V(null), Je = B(null), [Ye, Xe] = V(null), X = we === "dark", Ze = T(), Qe = Ee ?? !(Ze?.hasHeader ?? !1), Z = q ?? Ze?.fillsHeight ?? !1, [$e, et] = V(""), tt = B(null), Q = B(null), nt = !!De && Oe !== !1, rt = B(null), it = B(null), [st, ct] = V(!1), lt = !!Ae && !a, dt = It(n, r), ft = k ? zt(dt) : null, [ht, yt] = V(() => /* @__PURE__ */ new Set());
+	function Tt(e) {
+		yt((t) => {
 			let n = new Set(t);
 			return n.delete(e) || n.add(e), n;
 		});
 	}
-	let xt = B(void 0);
-	if (Be !== void 0) {
-		let e = xt.current;
-		if (e === void 0) xt.current = Be;
+	let Ot = B(void 0);
+	if (He !== void 0) {
+		let e = Ot.current;
+		if (e === void 0) Ot.current = He;
 		else {
-			let t = Date.parse(Be), n = Date.parse(e);
-			Number.isFinite(t) && Number.isFinite(n) && t < n && (xt.current = Be);
+			let t = Date.parse(He), n = Date.parse(e);
+			Number.isFinite(t) && Number.isFinite(n) && t < n && (Ot.current = He);
 		}
 	}
-	let Dt = xt.current, At = Dt === void 0 ? -1 : Jt(dt ? dt.map((e) => Lt(e.root)) : ut.map((e) => Lt(e)), Dt), jt = Re !== void 0, Bt = Re ?? [], Wt = X && f ? f : void 0, Gt = (() => {
-		if (Wt) for (let e = ut.length - 1; e >= 0; --e) {
-			let t = ut[e];
+	let kt = Ot.current, Rt = kt === void 0 ? -1 : Kt(ft ? ft.map((e) => Ft(e.root)) : dt.map((e) => Ft(e)), kt), Ht = Be !== void 0, Ut = Be ?? [], Wt = Y && f ? f : void 0, Qt = (() => {
+		if (Wt) for (let e = dt.length - 1; e >= 0; --e) {
+			let t = dt[e];
 			if (t.kind !== "message") continue;
 			let n = t.message;
 			if (!(n.userId !== Wt || !n.id) && !(n.deletedAt || n.metadata?.deleted === !0)) return {
@@ -2154,43 +2104,43 @@ function en({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 				timestamp: n.timestamp
 			};
 		}
-	})(), Kt = Gt && Wt ? Xt(Bt, Wt, Gt.timestamp) : [], en = Kt.length === 1 && !!Wt && Qt(n, Bt, Wt) === 1;
+	})(), en = Qt && Wt ? Jt(Ut, Wt, Qt.timestamp) : [], tn = en.length === 1 && !!Wt && Xt(n, Ut, Wt) === 1;
 	function nn() {
-		if (!Gt) return null;
-		if (Kt.length === 0) return jt ? /* @__PURE__ */ U("div", {
+		if (!Qt) return null;
+		if (en.length === 0) return Ht ? /* @__PURE__ */ U("div", {
 			"data-testid": "chat-read-receipts",
-			className: e("flex items-center gap-1 px-2 pb-1 text-[11px]", A ? "justify-end pr-1" : "justify-start pl-7", Z ? "text-white/50" : "text-text-tertiary"),
+			className: e("flex items-center gap-1 px-2 pb-1 text-[11px]", A ? "justify-end pr-1" : "justify-start pl-7", X ? "text-white/50" : "text-text-tertiary"),
 			children: /* @__PURE__ */ U("span", {
 				"data-testid": "chat-read-receipts-label",
 				children: "Sent"
 			})
 		}) : null;
-		let t = Kt.map(Zt), n = Kt.slice(0, 3);
+		let t = en.map(Yt), n = en.slice(0, 3);
 		return /* @__PURE__ */ W("div", {
 			"data-testid": "chat-read-receipts",
 			title: t.join(", "),
-			className: e("mt-0.5 flex items-center gap-1 text-[11px]", A ? "justify-end pr-1" : "justify-start pl-7", Z ? "text-white/50" : "text-text-tertiary"),
+			className: e("mt-0.5 flex items-center gap-1 text-[11px]", A ? "justify-end pr-1" : "justify-start pl-7", X ? "text-white/50" : "text-text-tertiary"),
 			children: [
-				Kt.length > 1 && /* @__PURE__ */ U("span", {
+				en.length > 1 && /* @__PURE__ */ U("span", {
 					className: "flex items-center gap-0.5",
 					"aria-hidden": "true",
 					children: n.map((e) => /* @__PURE__ */ U(D, {
-						name: Zt(e),
+						name: Yt(e),
 						size: 14
 					}, e.userId))
 				}),
 				/* @__PURE__ */ U("span", {
 					"data-testid": "chat-read-receipts-label",
-					children: en ? "Seen" : `Seen by ${Kt.length}`
+					children: tn ? "Seen" : `Seen by ${en.length}`
 				}),
 				/* @__PURE__ */ U("span", {
 					style: ee,
-					children: en ? ` by ${t[0]}` : `: ${t.join(", ")}`
+					children: tn ? ` by ${t[0]}` : `: ${t.join(", ")}`
 				})
 			]
 		});
 	}
-	let [rn, an] = V(0), [on, sn] = V(!1), $ = B(!0), cn = B(n.length), ln = n.length + r.length + ke.length, un = B(null), [dn, fn] = V(""), pn = B(null), mn = B(!1), hn = B(0);
+	let [rn, $] = V(0), [an, on] = V(!1), sn = B(!0), cn = B(n.length), ln = n.length + r.length + je.length, un = B(null), [dn, fn] = V(""), pn = B(null), mn = B(!1), hn = B(0);
 	R(() => {
 		let e = n[n.length - 1];
 		if (!e) return;
@@ -2202,104 +2152,104 @@ function en({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 		if (t === pn.current || (pn.current = t, f && e.userId === f)) return;
 		hn.current += 1;
 		let r = hn.current % 2 == 0 ? "​" : "";
-		fn(wt(e.displayName ?? e.clientId.slice(0, 8), e.content) + r);
+		fn(St(e.displayName ?? e.clientId.slice(0, 8), e.content) + r);
 	}, [n, f]);
 	function gn() {
-		let e = $e.current;
-		e && (e.scrollTop = e.scrollHeight, $.current = !0, an(0));
+		let e = tt.current;
+		e && (e.scrollTop = e.scrollHeight, sn.current = !0, $(0));
 	}
 	function _n() {
-		let e = $e.current;
+		let e = tt.current;
 		if (!e) return;
-		let t = Ct(e);
-		$.current = t, t && an(0), sn(e.scrollTop > 8);
+		let t = xt(e);
+		sn.current = t, t && $(0), on(e.scrollTop > 8);
 	}
 	R(() => {
-		let e = $e.current, t = cn.current, n = ln - t;
+		let e = tt.current, t = cn.current, n = ln - t;
 		if (cn.current = ln, !e) return;
 		let r = un.current;
 		if (r && n > 0) {
 			un.current = null, e.scrollTop = r.scrollTop + (e.scrollHeight - r.scrollHeight);
 			return;
 		}
-		$.current ? (e.scrollTop = e.scrollHeight, an(0), sn(e.scrollTop > 8)) : n > 0 && an((e) => e + n);
+		sn.current ? (e.scrollTop = e.scrollHeight, $(0), on(e.scrollTop > 8)) : n > 0 && $((e) => e + n);
 	}, [ln]);
 	function vn() {
-		let e = $e.current;
+		let e = tt.current;
 		e && (un.current = {
 			scrollHeight: e.scrollHeight,
 			scrollTop: e.scrollTop
-		}), Te?.();
+		}), De?.();
 	}
 	R(() => () => {
-		et.current && clearTimeout(et.current);
+		Q.current && clearTimeout(Q.current);
 	}, []);
 	function yn() {
-		let e = Ze.trim();
-		!e || a || (et.current && clearTimeout(et.current), et.current = null, s?.(!1), $.current = !0, i(e), Qe(""));
+		let e = $e.trim();
+		!e || a || (Q.current && clearTimeout(Q.current), Q.current = null, s?.(!1), sn.current = !0, i(e), et(""));
 	}
 	function bn(e) {
-		!ct || e.length === 0 || ($.current = !0, Oe?.(e));
+		!lt || e.length === 0 || (sn.current = !0, Ae?.(e));
 	}
 	function xn(e) {
-		if (!ct) return;
+		if (!lt) return;
 		let t = Array.from(e.clipboardData?.items ?? []).filter((e) => e.kind === "file").map((e) => e.getAsFile()).filter((e) => e !== null);
 		t.length !== 0 && (e.preventDefault(), bn(t));
 	}
 	function Sn(e) {
-		Qe((t) => t + e), st(!1);
+		et((t) => t + e), ct(!1);
 	}
 	function Cn() {
-		a || (s?.(!0), et.current && clearTimeout(et.current), et.current = setTimeout(() => s?.(!1), 2e3));
+		a || (s?.(!0), Q.current && clearTimeout(Q.current), Q.current = setTimeout(() => s?.(!1), 2e3));
 	}
 	function wn(e) {
-		Cn(), e.key === "Enter" && !a && Ze.trim() && yn();
+		Cn(), e.key === "Enter" && !a && $e.trim() && yn();
 	}
 	function Tn(n, r, i, a, s) {
-		let c = n.kind === "message" ? n.message.timestamp : n.local.timestamp, l = !s && r === At ? /* @__PURE__ */ U(Yt, { tone: Se }) : null, u = !l && qt(a, n), d = !s && se(c, i) ? /* @__PURE__ */ U(St, {
+		let c = n.kind === "message" ? n.message.timestamp : n.local.timestamp, l = !s && r === Rt ? /* @__PURE__ */ U(qt, { tone: we }) : null, u = !l && Gt(a, n), d = !s && le(c, i) ? /* @__PURE__ */ U(bt, {
 			timestamp: c,
-			tone: Se
+			tone: we
 		}, `day:${c}:${r}`) : null;
 		if (n.kind === "local") {
-			let r = n.local, i = at(r.metadata);
-			return /* @__PURE__ */ W(ie, { children: [
+			let r = n.local, i = ot(r.metadata);
+			return /* @__PURE__ */ W(ae, { children: [
 				d,
 				l,
 				/* @__PURE__ */ U("div", {
 					"data-testid": "chat-local-message",
 					"data-local-message-id": r.id,
 					className: "rounded-md",
-					children: /* @__PURE__ */ U(fe, {
+					children: /* @__PURE__ */ U(me, {
 						author: r.displayName,
 						timestamp: r.timestamp,
-						tone: Se,
+						tone: we,
 						mine: !0,
 						contentLayout: i ? "block" : "inline",
 						content: /* @__PURE__ */ W(H, { children: [
-							i ? /* @__PURE__ */ U(it, {
+							i ? /* @__PURE__ */ U(at, {
 								runId: i.runId,
 								instruction: i.instruction || r.content,
 								command: i.command,
 								agentName: i.agentName,
 								requestedBy: r.displayName,
 								status: I?.(i.runId),
-								onOpenDocument: ve && i.documentId ? () => ve(i.documentId) : void 0,
+								onOpenDocument: be && i.documentId ? () => be(i.documentId) : void 0,
 								documentTitle: i.documentTitle,
-								onOpenRun: L,
+								onOpenRun: ie,
 								result: i.result,
-								onOpenResult: K,
-								onDecide: ae,
+								onOpenResult: oe,
+								onDecide: se,
 								suggestion: i.suggestionKey ? {
 									key: i.suggestionKey,
 									...i.documentId ? { documentId: i.documentId } : {}
 								} : void 0,
-								onReview: oe,
-								onRetry: ce,
-								...$t(i, z, G)
-							}) : /* @__PURE__ */ U(ye, { text: r.content }),
+								onReview: ce,
+								onRetry: ue,
+								...Zt(i, z, G)
+							}) : /* @__PURE__ */ U(xe, { text: r.content }),
 							/* @__PURE__ */ U("div", {
 								"data-testid": "chat-local-message-note",
-								className: e("mt-1 text-[11px] italic", Z ? "text-white/50" : "text-text-tertiary"),
+								className: e("mt-1 text-[11px] italic", X ? "text-white/50" : "text-text-tertiary"),
 								children: r.note ?? "Only you can see this"
 							}),
 							r.actions && r.actions.length > 0 && /* @__PURE__ */ U("div", {
@@ -2318,35 +2268,35 @@ function en({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 				})
 			] }, `local:${r.id}`);
 		}
-		let { message: _ } = n, b = _.displayName ?? _.clientId.slice(0, 8), x = _.attachments ?? [], ee = _.metadata?.html, te = typeof ee == "string" ? ee : void 0, T = Nt(_.metadata), D = Mt(_.content, T, te), k = /* @__PURE__ */ U(ye, {
+		let { message: _ } = n, b = _.displayName ?? _.clientId.slice(0, 8), x = _.attachments ?? [], ee = _.metadata?.html, te = typeof ee == "string" ? ee : void 0, T = jt(_.metadata), D = At(_.content, T, te), k = /* @__PURE__ */ U(xe, {
 			html: D.html,
 			text: D.body
-		}), M = Tt(_.metadata), N = at(_.metadata), P = Pt(_.metadata), F = Ft(_.metadata), R = It(_.metadata), B = Ot(_.metadata), V = Et(_.metadata), we = N ? /* @__PURE__ */ U(it, {
+		}), M = Ct(_.metadata), N = ot(_.metadata), P = Mt(_.metadata), F = Nt(_.metadata), R = Pt(_.metadata), B = Et(_.metadata), V = wt(_.metadata), Ee = N ? /* @__PURE__ */ U(at, {
 			runId: N.runId,
 			instruction: N.instruction || _.content.replace(/^\/doc\s*/i, ""),
 			command: N.command,
 			agentName: N.agentName,
 			requestedBy: _.displayName,
 			status: I?.(N.runId),
-			onOpenDocument: ve && N.documentId ? () => ve(N.documentId) : void 0,
+			onOpenDocument: be && N.documentId ? () => be(N.documentId) : void 0,
 			documentTitle: N.documentTitle,
-			onOpenRun: L,
+			onOpenRun: ie,
 			result: N.result,
-			onOpenResult: K,
-			onDecide: ae,
+			onOpenResult: oe,
+			onDecide: se,
 			suggestion: N.suggestionKey ? {
 				key: N.suggestionKey,
 				...N.documentId ? { documentId: N.documentId } : {}
 			} : void 0,
-			onReview: oe,
-			onRetry: ce,
-			...$t(N, z, G)
+			onReview: ce,
+			onRetry: ue,
+			...Zt(N, z, G)
 		}) : F ? (() => {
-			let e = _e?.(F.recordingId), t = {
+			let e = ye?.(F.recordingId), t = {
 				...F,
 				...e ?? {}
 			};
-			return /* @__PURE__ */ U(Fe, {
+			return /* @__PURE__ */ U(Le, {
 				recordingId: t.recordingId,
 				title: t.title,
 				recordedBy: t.recordedBy ?? _.displayName,
@@ -2360,15 +2310,15 @@ function en({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 				summaryReady: t.summaryReady,
 				expiresAt: t.expiresAt,
 				pinned: !!_.id && !!w?.has(_.id),
-				onOpen: ue,
-				onCopyLink: de,
-				onShare: pe,
-				onDownload: me,
-				onOpenTranscript: he,
-				onManageExpiry: ge,
+				onOpen: fe,
+				onCopyLink: pe,
+				onShare: he,
+				onDownload: ge,
+				onOpenTranscript: _e,
+				onManageExpiry: ve,
 				onTogglePin: y ? () => y(_) : void 0
 			});
-		})() : P ? /* @__PURE__ */ U(Ae, {
+		})() : P ? /* @__PURE__ */ U(Me, {
 			callId: P.callId,
 			startedBy: (typeof _.metadata?.displayName == "string" ? _.metadata.displayName : void 0) ?? _.displayName,
 			participants: re?.(P.callId) ?? P.participants,
@@ -2377,72 +2327,72 @@ function en({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 			startedAt: P.startedAt,
 			outcome: P.outcome,
 			recordingId: P.recordingId,
-			onOpenRecording: ue,
+			onOpenRecording: fe,
 			audioOnly: P.audioOnly,
 			recorded: P.recorded,
 			notRecordedReason: P.notRecordedReason,
 			lobbyName: P.lobbyName,
-			onJoin: le
-		}) : M ? /* @__PURE__ */ U(xe, {
+			onJoin: de
+		}) : M ? /* @__PURE__ */ U(Ce, {
 			documentId: M.documentId,
 			title: M.title || _.content,
 			icon: M.icon,
 			createdBy: M.createdBy ?? (typeof _.metadata?.displayName == "string" ? _.metadata.displayName : void 0) ?? _.displayName,
 			editors: ne?.(M.documentId) ?? [],
-			onOpen: ve,
+			onOpen: be,
 			unavailable: j?.(M.documentId)
-		}) : x.length === 0 ? k : /* @__PURE__ */ W(H, { children: [(_.content || te) && k, x.map((e) => /* @__PURE__ */ U(vt, {
+		}) : x.length === 0 ? k : /* @__PURE__ */ W(H, { children: [(_.content || te) && k, x.map((e) => /* @__PURE__ */ U(gt, {
 			attachment: e,
-			src: Ne?.(e),
-			onOpen: Pe
-		}, e.id))] }), J = _.id ?? "", Te = J && p ? p(J) : [], Ee = _.metadata?.replyTo, De = !!s && !!Ee && Ee.messageId === s.rootId, Oe = !!Ee && !De, ke = !!J && !!w?.has(J), je = !!f && _.userId === f, Me = _.metadata?.system === !0, Y = !!_.deletedAt || _.metadata?.deleted === !0, Ie = !!(N || F || P || M || R), Le = !!(N || F || P || M || x.length > 0), Re = je && !Y && !Me && !Ie && !!J, X = !!J && !Y && !Me && !Ie && x.length === 0 && !!_.content.trim(), Be = Re && !!S && He === J, Ve = /* @__PURE__ */ W(H, { children: [
-			Oe && Ee && /* @__PURE__ */ U(gt, {
-				quote: Ee,
+			src: Fe?.(e),
+			onOpen: Ie
+		}, e.id))] }), q = _.id ?? "", De = q && p ? p(q) : [], Oe = _.metadata?.replyTo, ke = !!s && !!Oe && Oe.messageId === s.rootId, Ae = !!Oe && !ke, je = !!q && !!w?.has(q), Ne = !!f && _.userId === f, Pe = _.metadata?.system === !0, J = !!_.deletedAt || _.metadata?.deleted === !0, Re = !!(N || F || P || M || R), ze = !!(N || F || P || M || x.length > 0), Be = Ne && !J && !Pe && !Re && !!q, Y = !!q && !J && !Pe && !Re && x.length === 0 && !!_.content.trim(), He = Be && !!S && We === q, Ue = /* @__PURE__ */ W(H, { children: [
+			Ae && Oe && /* @__PURE__ */ U(L, {
+				quote: Oe,
 				onJump: E,
 				className: "mb-1"
 			}),
 			T && /* @__PURE__ */ W("span", {
 				className: "mb-0.5 block text-[11px] text-text-tertiary",
 				"data-testid": "forwarded-marker",
-				title: [kt(T), T.timestamp ? q(T.timestamp) : ""].filter(Boolean).join(" · "),
+				title: [Dt(T), T.timestamp ? K(T.timestamp) : ""].filter(Boolean).join(" · "),
 				children: [
 					/* @__PURE__ */ U("span", {
 						"aria-hidden": !0,
 						children: "↪"
 					}),
 					" ",
-					D.stripped ? kt(T) : "Forwarded"
+					D.stripped ? Dt(T) : "Forwarded"
 				]
 			}),
-			ke && /* @__PURE__ */ W("span", {
+			je && /* @__PURE__ */ W("span", {
 				className: "mb-0.5 block text-[11px] text-text-tertiary",
 				"data-testid": "pinned-marker",
 				children: [/* @__PURE__ */ U(o, { size: 11 }), " Pinned"]
 			}),
-			Y ? /* @__PURE__ */ U("span", {
+			J ? /* @__PURE__ */ U("span", {
 				className: "italic text-text-tertiary",
 				"data-testid": "message-deleted",
 				children: "This message was deleted."
-			}) : Be ? /* @__PURE__ */ U(pt, {
+			}) : He ? /* @__PURE__ */ U(mt, {
 				initialText: _.content,
 				onSave: async (e) => {
-					await S(_, e), Ue(null);
+					await S(_, e), Ge(null);
 				},
-				onCancel: () => Ue(null)
-			}) : we,
-			!Y && be?.(_),
-			!Y && V.length > 0 && /* @__PURE__ */ U("div", {
+				onCancel: () => Ge(null)
+			}) : Ee,
+			!J && Se?.(_),
+			!J && V.length > 0 && /* @__PURE__ */ U("div", {
 				className: "mt-1 flex flex-wrap gap-1",
 				"data-testid": "chat-message-docrefs",
-				children: V.map((e) => /* @__PURE__ */ U(Ce, {
+				children: V.map((e) => /* @__PURE__ */ U(Te, {
 					documentId: e.id,
 					label: e.label,
 					icon: e.icon,
-					onOpen: ve,
+					onOpen: be,
 					unavailable: j?.(e.id)
 				}, e.id))
 			}),
-			!Y && B && /* @__PURE__ */ W("div", {
+			!J && B && /* @__PURE__ */ W("div", {
 				"data-testid": "message-truncated",
 				className: "mt-1 text-[11px] text-warning-fg",
 				children: [
@@ -2451,57 +2401,57 @@ function en({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 					B.labels.length > 0 ? `Too large to send: ${B.labels.join(", ")}` : "Part of this message was too large to send"
 				]
 			}),
-			!Y && Te.length > 0 && f && m && /* @__PURE__ */ U(lt, {
-				reactions: Te,
+			!J && De.length > 0 && f && m && /* @__PURE__ */ U(ut, {
+				reactions: De,
 				currentUserId: f,
-				onToggle: (e) => m(J, e)
+				onToggle: (e) => m(q, e)
 			})
 		] });
-		return R ? /* @__PURE__ */ W(ie, { children: [
+		return R ? /* @__PURE__ */ W(ae, { children: [
 			d,
 			l,
-			/* @__PURE__ */ U(ze, {
+			/* @__PURE__ */ U(Ve, {
 				membership: R,
 				fallbackText: _.content,
 				timestamp: _.timestamp,
 				"data-testid": "membership-notice"
 			})
-		] }, _.id ?? r) : /* @__PURE__ */ W(ie, { children: [
+		] }, _.id ?? r) : /* @__PURE__ */ W(ae, { children: [
 			d,
 			l,
 			/* @__PURE__ */ W("div", {
 				"data-testid": "chat-message",
-				"data-message-id": J || void 0,
+				"data-message-id": q || void 0,
 				"data-continues": u ? "true" : void 0,
-				title: u ? q(_.timestamp) : void 0,
-				className: e("group relative rounded-md transition-colors hover:bg-surface-hover", J && J === O && "bg-surface-inset ring-1 ring-inset ring-primary transition-colors"),
-				children: [/* @__PURE__ */ U(fe, {
+				title: u ? K(_.timestamp) : void 0,
+				className: e("group relative rounded-md transition-colors hover:bg-surface-hover", q && q === O && "bg-surface-inset ring-1 ring-inset ring-primary transition-colors"),
+				children: [/* @__PURE__ */ U(me, {
 					author: b,
-					content: Ve,
+					content: Ue,
 					timestamp: u ? "" : _.timestamp,
-					editedAt: Y ? void 0 : _.editedAt,
+					editedAt: J ? void 0 : _.editedAt,
 					avatarUrl: _.avatarUrl,
 					hideAvatar: u,
 					hideAuthor: u,
-					tone: Se,
-					mine: je && A,
-					contentLayout: Le ? "block" : "inline"
-				}), J && !Y && !Be && (m || Re || X && g || !Me && (h || y || v)) && /* @__PURE__ */ U(ft, {
+					tone: we,
+					mine: Ne && A,
+					contentLayout: ze ? "block" : "inline"
+				}), q && !J && !He && (m || Be || Y && g || !Pe && (h || y || v)) && /* @__PURE__ */ U(pt, {
 					className: e("absolute -top-3 right-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100"),
-					onReact: m ? (e) => m(J, e) : void 0,
+					onReact: m ? (e) => m(q, e) : void 0,
 					onOpenReactionPicker: m ? (e) => {
-						Ke.current = e, Ge(J);
+						Je.current = e, qe(q);
 					} : void 0,
-					onReply: h && !Me ? () => h(s?.rootMessage ?? _) : void 0,
-					onForward: g && X ? (e) => g(_, e) : void 0,
-					onCopyLink: v && !Me && J ? () => v(_) : void 0,
-					onTogglePin: y && !Me ? () => y(_) : void 0,
+					onReply: h && !Pe ? () => h(s?.rootMessage ?? _) : void 0,
+					onForward: g && Y ? (e) => g(_, e) : void 0,
+					onCopyLink: v && !Pe && q ? () => v(_) : void 0,
+					onTogglePin: y && !Pe ? () => y(_) : void 0,
 					pinned: !!_.id && !!w?.has(_.id),
-					onEdit: Re && S ? () => Ue(J) : void 0,
-					onDelete: Re && C ? () => Je(J) : void 0
+					onEdit: Be && S ? () => Ge(q) : void 0,
+					onDelete: Be && C ? () => Xe(q) : void 0
 				})]
 			}),
-			!!Gt && J === Gt.id && nn()
+			!!Qt && q === Qt.id && nn()
 		] }, _.id ?? r);
 	}
 	function En(e) {
@@ -2510,17 +2460,17 @@ function en({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 	function Dn(e) {
 		if (!h || e.kind !== "message") return;
 		let t = e.message;
-		if (t.id && !(t.deletedAt || t.metadata?.deleted === !0) && t.metadata?.system !== !0 && !It(t.metadata)) return t;
+		if (t.id && !(t.deletedAt || t.metadata?.deleted === !0) && t.metadata?.system !== !0 && !Pt(t.metadata)) return t;
 	}
 	function On(t, n, r) {
-		let i = Lt(r?.root), a = r && r.replies.length === 0 && !Dn(r.root) ? r.root : void 0, o = Tn(t.root, n, i, a), s = Lt(t.root) ?? "", c = n > 0 && n !== At && !se(s, i) ? /* @__PURE__ */ U("div", {
+		let i = Ft(r?.root), a = r && r.replies.length === 0 && !Dn(r.root) ? r.root : void 0, o = Tn(t.root, n, i, a), s = Ft(t.root) ?? "", c = n > 0 && n !== Rt && !le(s, i) ? /* @__PURE__ */ U("div", {
 			"aria-hidden": "true",
 			"data-testid": "chat-post-boundary",
-			className: e("mt-3 border-t pt-3", Z ? "border-white/10" : "border-border-subtle")
+			className: e("mt-3 border-t pt-3", X ? "border-white/10" : "border-border-subtle")
 		}) : null, l = t.replies.length > 0 ? Dn(t.root) : null;
-		if (t.replies.length === 0 && !l) return c ? /* @__PURE__ */ W(ie, { children: [c, o] }, `post:${zt(t.root) ?? n}`) : o;
-		let u = zt(t.root) ?? "", d = t.root.kind === "message" ? t.root.message : void 0, f = !!u && t.replies.length > Ht, p = !f || mt.has(u), m = p ? t.replies : t.replies.slice(0, Ut), g = t.replies.length - m.length, _ = [...new Set(t.replies.slice(m.length).map(En))].slice(0, 3);
-		return /* @__PURE__ */ W(ie, { children: [c, /* @__PURE__ */ W("div", {
+		if (t.replies.length === 0 && !l) return c ? /* @__PURE__ */ W(ae, { children: [c, o] }, `post:${Lt(t.root) ?? n}`) : o;
+		let u = Lt(t.root) ?? "", d = t.root.kind === "message" ? t.root.message : void 0, f = !!u && t.replies.length > Bt, p = !f || ht.has(u), m = p ? t.replies : t.replies.slice(0, Vt), g = t.replies.length - m.length, _ = [...new Set(t.replies.slice(m.length).map(En))].slice(0, 3);
+		return /* @__PURE__ */ W(ae, { children: [c, /* @__PURE__ */ W("div", {
 			"data-testid": "chat-thread",
 			"data-thread-root": u || void 0,
 			className: "group/post",
@@ -2528,7 +2478,7 @@ function en({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 				o,
 				t.replies.length > 0 && /* @__PURE__ */ W("div", {
 					"data-testid": "chat-thread-replies",
-					className: e("ml-7 border-l pl-2", Z ? "border-white/20" : "border-border"),
+					className: e("ml-7 border-l pl-2", X ? "border-white/20" : "border-border"),
 					children: [m.map((e, t) => Tn(e, t, void 0, m[t - 1], {
 						rootId: u,
 						...d ? { rootMessage: d } : {}
@@ -2536,8 +2486,8 @@ function en({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 						type: "button",
 						"data-testid": "chat-thread-toggle",
 						"aria-expanded": p,
-						onClick: () => _t(u),
-						className: e("mt-0.5 flex items-center gap-1.5 rounded px-1 py-0.5 text-xs", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", Z ? "text-white/70 hover:bg-white/10" : "text-text-secondary hover:bg-surface-hover"),
+						onClick: () => Tt(u),
+						className: e("mt-0.5 flex items-center gap-1.5 rounded px-1 py-0.5 text-xs", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", X ? "text-white/70 hover:bg-white/10" : "text-text-secondary hover:bg-surface-hover"),
 						children: [!p && _.length > 0 && /* @__PURE__ */ U("span", {
 							className: "flex items-center gap-0.5",
 							children: _.map((e) => /* @__PURE__ */ U(D, {
@@ -2554,7 +2504,7 @@ function en({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 						"data-testid": "chat-thread-reply",
 						"aria-label": `Reply to ${En(t.root)}`,
 						onClick: () => h?.(l),
-						className: e("mt-0.5 rounded px-1 py-0.5 text-xs", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", Z ? "text-white/50 hover:bg-white/10 hover:text-white/80 focus-visible:text-white/80" : "text-text-tertiary hover:bg-surface-hover hover:text-text-secondary focus-visible:text-text-secondary"),
+						className: e("mt-0.5 rounded px-1 py-0.5 text-xs", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", X ? "text-white/50 hover:bg-white/10 hover:text-white/80 focus-visible:text-white/80" : "text-text-tertiary hover:bg-surface-hover hover:text-text-secondary focus-visible:text-text-secondary"),
 						children: "Reply"
 					})
 				})
@@ -2563,10 +2513,10 @@ function en({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 	}
 	let kn = /* @__PURE__ */ W("div", {
 		"data-testid": "chat-panel",
-		className: e(Q ? "flex h-full min-h-0 flex-col px-3 pb-3 pt-2" : e("border rounded p-3 mt-4", Z ? "border-white/10 bg-white/5" : "border-border")),
+		className: e(Z ? "flex h-full min-h-0 flex-col px-3 pb-3 pt-2" : e("border rounded p-3 mt-4", X ? "border-white/10 bg-white/5" : "border-border")),
 		children: [
-			Xe && /* @__PURE__ */ W("div", {
-				className: e("text-sm font-semibold mb-2 shrink-0", Z ? "text-white/90" : "text-text-primary"),
+			Qe && /* @__PURE__ */ W("div", {
+				className: e("text-sm font-semibold mb-2 shrink-0", X ? "text-white/90" : "text-text-primary"),
 				children: [
 					"Chat (",
 					n.length,
@@ -2581,63 +2531,63 @@ function en({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 				children: dn
 			}),
 			/* @__PURE__ */ W("div", {
-				className: e("relative flex flex-col mb-2", Q ? "min-h-0 flex-1" : ""),
+				className: e("relative flex flex-col mb-2", Z ? "min-h-0 flex-1" : ""),
 				children: [/* @__PURE__ */ U("div", {
-					ref: $e,
+					ref: tt,
 					onScroll: _n,
 					"data-testid": "chat-panel-messages",
 					role: "log",
 					"aria-live": "off",
 					"aria-label": "Message history",
 					tabIndex: 0,
-					className: e("relative scrollbar-none overflow-y-auto overflow-x-hidden flex flex-col", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset rounded", on && "fade-top", Q ? "min-h-0 flex-1" : "max-h-[200px]"),
+					className: e("relative scrollbar-none overflow-y-auto overflow-x-hidden flex flex-col", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset rounded", an && "fade-top", Z ? "min-h-0 flex-1" : "max-h-[200px]"),
 					children: /* @__PURE__ */ W("div", {
 						className: "mt-auto pb-4",
 						children: [
-							tt && n.length > 0 && /* @__PURE__ */ U("div", {
+							nt && n.length > 0 && /* @__PURE__ */ U("div", {
 								className: "flex justify-center pb-1",
 								children: /* @__PURE__ */ U("button", {
 									type: "button",
 									"data-testid": "chat-panel-load-more",
 									onClick: vn,
-									disabled: De,
-									className: e("rounded px-2 py-1 text-xs disabled:opacity-60", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", Z ? "text-white/70 hover:bg-white/10" : "text-text-secondary hover:bg-surface-hover"),
-									children: De ? "Loading…" : "Load earlier messages"
+									disabled: ke,
+									className: e("rounded px-2 py-1 text-xs disabled:opacity-60", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", X ? "text-white/70 hover:bg-white/10" : "text-text-secondary hover:bg-surface-hover"),
+									children: ke ? "Loading…" : "Load earlier messages"
 								})
 							}),
-							ut.length === 0 ? l ?? /* @__PURE__ */ U("div", {
-								className: e("text-sm", Z ? "text-white/40" : "text-text-secondary"),
+							dt.length === 0 ? l ?? /* @__PURE__ */ U("div", {
+								className: e("text-sm", X ? "text-white/40" : "text-text-secondary"),
 								children: "No messages yet"
-							}) : dt ? dt.map((e, t) => On(e, t, dt[t - 1])) : ut.map((e, t) => Tn(e, t, Lt(ut[t - 1]), ut[t - 1])),
+							}) : ft ? ft.map((e, t) => On(e, t, ft[t - 1])) : dt.map((e, t) => Tn(e, t, Ft(dt[t - 1]), dt[t - 1])),
 							m && /* @__PURE__ */ U(N, {
-								open: We !== null,
-								triggerRef: Ke,
-								emojis: Ve,
+								open: Ke !== null,
+								triggerRef: Je,
+								emojis: Ue,
 								onSelect: (e) => {
-									We && m(We, e), Ge(null);
+									Ke && m(Ke, e), qe(null);
 								},
-								onClose: () => Ge(null)
+								onClose: () => qe(null)
 							}),
 							C && /* @__PURE__ */ U(b, {
-								open: qe !== null,
+								open: Ye !== null,
 								tone: "destructive",
 								title: "Delete this message?",
 								body: "It will be removed for everyone in this conversation.",
 								confirmLabel: "Delete",
-								onCancel: () => Je(null),
+								onCancel: () => Xe(null),
 								onConfirm: () => {
-									let e = n.find((e) => e.id === qe);
-									Je(null), e && C(e);
+									let e = n.find((e) => e.id === Ye);
+									Xe(null), e && C(e);
 								}
 							}),
-							ke.map((e) => /* @__PURE__ */ U(fe, {
+							je.map((e) => /* @__PURE__ */ U(me, {
 								author: e.actor,
 								timestamp: "",
-								tone: Se,
-								content: /* @__PURE__ */ U(bt, {
+								tone: we,
+								content: /* @__PURE__ */ U(vt, {
 									transfer: e,
-									mine: yt(e, f, je),
-									onCancel: Me
+									mine: _t(e, f, Ne),
+									onCancel: Pe
 								})
 							}, e.transferId))
 						]
@@ -2646,7 +2596,7 @@ function en({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 					type: "button",
 					"data-testid": "chat-panel-new-messages",
 					onClick: gn,
-					className: e("absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-xs shadow-md", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", Z ? "bg-white/20 text-white" : "bg-primary text-on-primary"),
+					className: e("absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-xs shadow-md", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", X ? "bg-white/20 text-white" : "bg-primary text-on-primary"),
 					children: [
 						rn,
 						" new message",
@@ -2657,7 +2607,7 @@ function en({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 			}),
 			c.length > 0 && /* @__PURE__ */ U(te, {
 				names: c,
-				className: e("mb-1 mt-1 shrink-0 italic", Z ? "text-white/50" : "text-text-secondary")
+				className: e("mb-1 mt-1 shrink-0 italic", X ? "text-white/50" : "text-text-secondary")
 			}),
 			d != null && d !== !1 && /* @__PURE__ */ U("div", {
 				className: "shrink-0",
@@ -2672,61 +2622,61 @@ function en({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 			}) : /* @__PURE__ */ W("div", {
 				className: "flex flex-row items-center gap-2 shrink-0",
 				children: [
-					Oe && /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U("button", {
+					Ae && /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U("button", {
 						type: "button",
 						"data-testid": "chat-panel-attach",
 						"aria-label": "Attach a file",
 						title: "Attach a file",
-						disabled: !ct,
-						onClick: () => nt.current?.click(),
-						className: e("shrink-0 rounded p-1.5 disabled:opacity-40", Z ? "text-white/60 hover:bg-white/10" : "text-[var(--color-text-tertiary)] hover:bg-[var(--color-surface-hover)]", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"),
-						children: /* @__PURE__ */ U(tn, {})
+						disabled: !lt,
+						onClick: () => rt.current?.click(),
+						className: e("shrink-0 rounded p-1.5 disabled:opacity-40", X ? "text-white/60 hover:bg-white/10" : "text-[var(--color-text-tertiary)] hover:bg-[var(--color-surface-hover)]", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"),
+						children: /* @__PURE__ */ U($t, {})
 					}), /* @__PURE__ */ U(M, {
-						ref: nt,
+						ref: rt,
 						multiple: !0,
-						accept: Y,
+						accept: J,
 						onFiles: (e) => {
-							let t = Ie ? e.filter((e) => e.size > Ie) : [];
-							t.length > 0 && Le?.(`Skipped ${t.length} file(s) over the size limit.`), bn(e.filter((e) => !t.includes(e)));
+							let t = Re ? e.filter((e) => e.size > Re) : [];
+							t.length > 0 && ze?.(`Skipped ${t.length} file(s) over the size limit.`), bn(e.filter((e) => !t.includes(e)));
 						}
 					})] }),
 					/* @__PURE__ */ U("button", {
-						ref: rt,
+						ref: it,
 						type: "button",
 						"data-testid": "chat-panel-emoji",
 						"aria-label": "Insert emoji",
-						"aria-expanded": ot,
+						"aria-expanded": st,
 						title: "Insert emoji",
 						disabled: a,
-						onClick: () => st((e) => !e),
-						className: e("shrink-0 rounded p-1.5 text-base leading-none disabled:opacity-40", Z ? "hover:bg-white/10" : "hover:bg-[var(--color-surface-hover)]", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"),
+						onClick: () => ct((e) => !e),
+						className: e("shrink-0 rounded p-1.5 text-base leading-none disabled:opacity-40", X ? "hover:bg-white/10" : "hover:bg-[var(--color-surface-hover)]", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"),
 						children: /* @__PURE__ */ U(_, {
 							size: 16,
 							"aria-hidden": "true"
 						})
 					}),
 					/* @__PURE__ */ U(N, {
-						open: ot,
+						open: st,
 						onSelect: Sn,
-						onClose: () => st(!1),
-						triggerRef: rt,
-						emojis: Ve
+						onClose: () => ct(!1),
+						triggerRef: it,
+						emojis: Ue
 					}),
 					/* @__PURE__ */ U(x, {
 						size: "sm",
-						value: Ze,
-						onChange: (e) => Qe(e.target.value),
+						value: $e,
+						onChange: (e) => et(e.target.value),
 						onKeyDown: wn,
 						onPaste: xn,
 						disabled: a,
 						placeholder: a ? "Not connected" : "Type a message...",
-						className: e("flex-1 text-sm", Z && "border-white/20 bg-white/10 text-white placeholder:text-white/35 focus:border-white/40 focus:bg-white/10 focus:ring-white/20")
+						className: e("flex-1 text-sm", X && "border-white/20 bg-white/10 text-white placeholder:text-white/35 focus:border-white/40 focus:bg-white/10 focus:ring-white/20")
 					}),
 					/* @__PURE__ */ U(t, {
 						variant: "primary",
 						size: "sm",
 						onClick: yn,
-						disabled: a || !Ze.trim(),
+						disabled: a || !$e.trim(),
 						className: "text-sm px-3 shrink-0",
 						children: "Send"
 					})
@@ -2734,17 +2684,17 @@ function en({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 			})
 		]
 	});
-	return Oe ? /* @__PURE__ */ U(P, {
+	return Ae ? /* @__PURE__ */ U(P, {
 		onFiles: bn,
-		accept: Y,
-		maxSize: Ie,
-		onError: Le,
+		accept: J,
+		maxSize: Re,
+		onError: ze,
 		disabled: a,
-		className: Q ? "flex h-full min-h-0 flex-col" : void 0,
+		className: Z ? "flex h-full min-h-0 flex-col" : void 0,
 		children: kn
 	}) : kn;
 }
-function tn() {
+function $t() {
 	return /* @__PURE__ */ U("svg", {
 		width: "18",
 		height: "18",
@@ -2762,12 +2712,12 @@ function tn() {
 }
 //#endregion
 //#region src/components/social/presenceIdentity.ts
-function nn(e, t, n) {
+function en(e, t, n) {
 	return e || t || n || "";
 }
 //#endregion
 //#region src/components/social/PresencePanel.tsx
-function rn({ users: e, currentClientId: t }) {
+function tn({ users: e, currentClientId: t }) {
 	return /* @__PURE__ */ W("div", {
 		className: "border border-border rounded p-3 font-mono",
 		children: [/* @__PURE__ */ W("div", {
@@ -2781,7 +2731,7 @@ function rn({ users: e, currentClientId: t }) {
 			className: "text-text-tertiary text-xs",
 			children: "No other users connected"
 		}) : /* @__PURE__ */ U("div", { children: e.map((e) => {
-			let n = K(nn(e.metadata.userId ?? e.metadata.email, e.metadata.displayName, e.clientId)), r = ae(e.metadata.displayName ?? e.clientId.slice(0, 2)), i = e.metadata.isTyping === !0, a = e.clientId === t, o = e.metadata.displayName ?? (e.clientId.length > 12 ? e.clientId.slice(0, 12) + "..." : e.clientId);
+			let n = oe(en(e.metadata.userId ?? e.metadata.email, e.metadata.displayName, e.clientId)), r = se(e.metadata.displayName ?? e.clientId.slice(0, 2)), i = e.metadata.isTyping === !0, a = e.clientId === t, o = e.metadata.displayName ?? (e.clientId.length > 12 ? e.clientId.slice(0, 12) + "..." : e.clientId);
 			return /* @__PURE__ */ W("div", {
 				className: "flex items-center gap-2 py-1 text-xs",
 				children: [
@@ -2809,16 +2759,16 @@ function rn({ users: e, currentClientId: t }) {
 }
 //#endregion
 //#region src/components/social/FeedRow.tsx
-var an = "min-w-0 truncate", on = "shrink-0 text-[11px] tabular-nums text-text-tertiary";
-function sn({ leading: t, title: r, timestamp: i, timestampIso: a, timestampTitle: o, meta: s, metaTone: c, actions: l, onJump: u, jumpLabel: d, unread: f, className: p, "data-testid": m, ...h }) {
+var nn = "min-w-0 truncate", rn = "shrink-0 text-[11px] tabular-nums text-text-tertiary";
+function $({ leading: t, title: r, timestamp: i, timestampIso: a, timestampTitle: o, meta: s, metaTone: c, actions: l, onJump: u, jumpLabel: d, unread: f, className: p, "data-testid": m, ...h }) {
 	let g = i ? a ? /* @__PURE__ */ U("time", {
 		dateTime: a,
 		title: o,
-		className: on,
+		className: rn,
 		children: i
 	}) : /* @__PURE__ */ U("span", {
 		title: o,
-		className: on,
+		className: rn,
 		children: i
 	}) : null, _ = /* @__PURE__ */ W("span", {
 		className: "flex min-w-0 flex-1 flex-col gap-0.5 text-left",
@@ -2827,13 +2777,13 @@ function sn({ leading: t, title: r, timestamp: i, timestampIso: a, timestampTitl
 			children: [/* @__PURE__ */ U("span", {
 				"data-line": "primary",
 				title: r,
-				className: e(an, "flex-1 text-[13px] font-medium leading-snug text-text-primary"),
+				className: e(nn, "flex-1 text-[13px] font-medium leading-snug text-text-primary"),
 				children: r
 			}), g]
 		}), /* @__PURE__ */ U("span", {
 			"data-line": "secondary",
 			title: s,
-			className: e(an, "text-[11px] leading-snug", c ? n[c] : "text-text-tertiary"),
+			className: e(nn, "text-[11px] leading-snug", c ? n[c] : "text-text-tertiary"),
 			children: s
 		})]
 	});
@@ -2870,7 +2820,7 @@ function sn({ leading: t, title: r, timestamp: i, timestampIso: a, timestampTitl
 }
 //#endregion
 //#region src/components/social/ChannelViews.tsx
-function $(e) {
+function an(e) {
 	if (!e) return "";
 	let t = new Date(e);
 	if (Number.isNaN(t.getTime())) return "";
@@ -2880,7 +2830,7 @@ function $(e) {
 		day: "numeric"
 	})} ${i}`;
 }
-function cn({ children: t, empty: n, className: r, "data-testid": i }) {
+function on({ children: t, empty: n, className: r, "data-testid": i }) {
 	return /* @__PURE__ */ U("div", {
 		className: e("min-h-0 overflow-y-auto p-2", r),
 		"data-testid": i,
@@ -2890,8 +2840,8 @@ function cn({ children: t, empty: n, className: r, "data-testid": i }) {
 		})
 	});
 }
-function ln({ pins: e, onJump: t, onUnpin: n, className: r, "data-testid": i = "pinned-messages-panel" }) {
-	return /* @__PURE__ */ U(cn, {
+function sn({ pins: e, onJump: t, onUnpin: n, className: r, "data-testid": i = "pinned-messages-panel" }) {
+	return /* @__PURE__ */ U(on, {
 		empty: e.length === 0,
 		className: r,
 		"data-testid": i,
@@ -2900,8 +2850,8 @@ function ln({ pins: e, onJump: t, onUnpin: n, className: r, "data-testid": i = "
 			title: "Nothing pinned yet",
 			description: "Pin a message to keep it at the top of this channel for everyone."
 		}) : e.map((e) => {
-			let r = e.sentAt ?? e.pinnedAt, i = r ? e.sentAt && e.pinnedAt && e.pinnedAt !== e.sentAt ? `Sent ${q(e.sentAt)} · pinned ${q(e.pinnedAt)}` : q(r) : void 0;
-			return /* @__PURE__ */ U(sn, {
+			let r = e.sentAt ?? e.pinnedAt, i = r ? e.sentAt && e.pinnedAt && e.pinnedAt !== e.sentAt ? `Sent ${K(e.sentAt)} · pinned ${K(e.pinnedAt)}` : K(r) : void 0;
+			return /* @__PURE__ */ U($, {
 				"data-testid": "pinned-message",
 				leading: /* @__PURE__ */ U(D, {
 					name: e.author,
@@ -2909,7 +2859,7 @@ function ln({ pins: e, onJump: t, onUnpin: n, className: r, "data-testid": i = "
 				}),
 				title: e.preview,
 				meta: [e.author, e.pinnedBy && `pinned by ${e.pinnedBy}`].filter(Boolean).join(" · "),
-				timestamp: $(r),
+				timestamp: an(r),
 				timestampIso: r,
 				timestampTitle: i,
 				onJump: t ? () => t(e.messageId) : void 0,
@@ -2927,8 +2877,8 @@ function ln({ pins: e, onJump: t, onUnpin: n, className: r, "data-testid": i = "
 		})
 	});
 }
-function un({ files: e, thumbnailSrc: t, onJump: n, className: r, "data-testid": i = "channel-files-panel" }) {
-	return /* @__PURE__ */ U(cn, {
+function cn({ files: e, thumbnailSrc: t, onJump: n, className: r, "data-testid": i = "channel-files-panel" }) {
+	return /* @__PURE__ */ U(on, {
 		empty: e.length === 0,
 		className: r,
 		"data-testid": i,
@@ -2937,8 +2887,8 @@ function un({ files: e, thumbnailSrc: t, onJump: n, className: r, "data-testid":
 			title: "No files here yet",
 			description: "Drag a file into the conversation and it will show up in this list."
 		}) : e.map((e) => {
-			let r = t?.(e.attachment) ?? e.attachment.preview, i = _t(e.attachment);
-			return /* @__PURE__ */ U(sn, {
+			let r = t?.(e.attachment) ?? e.attachment.preview, i = ht(e.attachment);
+			return /* @__PURE__ */ U($, {
 				"data-testid": "channel-file",
 				leading: i && r ? /* @__PURE__ */ U("img", {
 					src: r,
@@ -2950,18 +2900,18 @@ function un({ files: e, thumbnailSrc: t, onJump: n, className: r, "data-testid":
 					children: /* @__PURE__ */ U(y, {})
 				}),
 				title: e.attachment.name,
-				meta: [e.author, L(e.attachment.size)].filter(Boolean).join(" · "),
-				timestamp: $(e.sentAt),
+				meta: [e.author, ie(e.attachment.size)].filter(Boolean).join(" · "),
+				timestamp: an(e.sentAt),
 				timestampIso: e.sentAt,
-				timestampTitle: e.sentAt ? q(e.sentAt) : void 0,
+				timestampTitle: e.sentAt ? K(e.sentAt) : void 0,
 				onJump: n ? () => n(e.messageId) : void 0,
 				jumpLabel: `Go to the message with ${e.attachment.name}`
 			}, `${e.messageId}:${e.attachment.id}`);
 		})
 	});
 }
-function dn({ mentions: e, onJump: t, className: n, "data-testid": r = "mentions-panel" }) {
-	return /* @__PURE__ */ U(cn, {
+function ln({ mentions: e, onJump: t, className: n, "data-testid": r = "mentions-panel" }) {
+	return /* @__PURE__ */ U(on, {
 		empty: e.length === 0,
 		className: n,
 		"data-testid": r,
@@ -2969,7 +2919,7 @@ function dn({ mentions: e, onJump: t, className: n, "data-testid": r = "mentions
 			icon: /* @__PURE__ */ U(h, { size: 40 }),
 			title: "No mentions",
 			description: "When somebody @-mentions you, it lands here."
-		}) : e.map((e) => /* @__PURE__ */ U(sn, {
+		}) : e.map((e) => /* @__PURE__ */ U($, {
 			"data-testid": "mention",
 			unread: e.unread,
 			leading: /* @__PURE__ */ U(D, {
@@ -2978,27 +2928,27 @@ function dn({ mentions: e, onJump: t, className: n, "data-testid": r = "mentions
 			}),
 			title: e.excerpt,
 			meta: [e.author, e.channelLabel ?? e.channel].filter(Boolean).join(" · "),
-			timestamp: $(e.at),
+			timestamp: an(e.at),
 			timestampIso: e.at,
-			timestampTitle: e.at ? q(e.at) : void 0,
+			timestampTitle: e.at ? K(e.at) : void 0,
 			onJump: t ? () => t(e.channel, e.messageId) : void 0,
 			jumpLabel: `Go to the mention from ${e.author}`
 		}, `${e.channel}:${e.messageId}`))
 	});
 }
-function fn(e) {
+function un(e) {
 	if (!e || e < 0) return "";
 	let t = Math.round(e / 1e3), n = Math.floor(t / 3600), r = Math.floor(t % 3600 / 60), i = t % 60, a = (e) => String(e).padStart(2, "0");
 	return n > 0 ? `${n}:${a(r)}:${a(i)}` : `${r}:${a(i)}`;
 }
-function pn(e) {
+function dn(e) {
 	let t = (e.participants ?? []).map((e) => e.displayName).filter(Boolean);
 	if (t.length > 0) return t.length <= 3 ? t.join(", ") : `${t.slice(0, 2).join(", ")} and ${t.length - 2} others`;
 	let n = e.participantCount ?? 0;
 	return n > 0 ? `${n} ${n === 1 ? "person" : "people"}` : "";
 }
-function mn({ recordings: e, onOpen: t, className: n, "data-testid": r = "channel-recordings-panel" }) {
-	return /* @__PURE__ */ U(cn, {
+function fn({ recordings: e, onOpen: t, className: n, "data-testid": r = "channel-recordings-panel" }) {
+	return /* @__PURE__ */ U(on, {
 		empty: e.length === 0,
 		className: n,
 		"data-testid": r,
@@ -3008,7 +2958,7 @@ function mn({ recordings: e, onOpen: t, className: n, "data-testid": r = "channe
 			description: "Calls recorded in this conversation show up here."
 		}) : e.map((e) => {
 			let n = e.playable === !1;
-			return /* @__PURE__ */ U(sn, {
+			return /* @__PURE__ */ U($, {
 				"data-testid": "channel-recording",
 				leading: e.thumbnailUrl ? /* @__PURE__ */ U("img", {
 					src: e.thumbnailUrl,
@@ -3019,15 +2969,15 @@ function mn({ recordings: e, onOpen: t, className: n, "data-testid": r = "channe
 					className: "grid h-8 w-12 place-items-center rounded bg-surface-inset text-text-tertiary",
 					children: /* @__PURE__ */ U(g, {})
 				}),
-				title: [$(e.startedAt), fn(e.durationMs)].filter(Boolean).join(" · ") || "Recording",
-				meta: n ? "Still being assembled" : pn(e),
+				title: [an(e.startedAt), un(e.durationMs)].filter(Boolean).join(" · ") || "Recording",
+				meta: n ? "Still being assembled" : dn(e),
 				onJump: t && !n ? () => t(e.recordingId) : void 0,
 				jumpLabel: "Play this recording"
 			}, e.recordingId);
 		})
 	});
 }
-function hn({ documents: t, onOpen: n, onCreate: r, onCreateWhiteboard: i, className: a, "data-testid": o = "channel-documents-panel" }) {
+function pn({ documents: t, onOpen: n, onCreate: r, onCreateWhiteboard: i, className: a, "data-testid": o = "channel-documents-panel" }) {
 	let s = (t, n, r, i, a = !1) => /* @__PURE__ */ W("button", {
 		type: "button",
 		onClick: n,
@@ -3061,7 +3011,7 @@ function hn({ documents: t, onOpen: n, onCreate: r, onCreateWhiteboard: i, class
 			}) : void 0
 		}) : /* @__PURE__ */ U("ul", {
 			className: "m-0 flex list-none flex-col gap-0.5 p-0",
-			children: t.map((e) => /* @__PURE__ */ U(sn, {
+			children: t.map((e) => /* @__PURE__ */ U($, {
 				"data-testid": "channel-document",
 				leading: /* @__PURE__ */ U("span", {
 					"aria-hidden": !0,
@@ -3070,9 +3020,9 @@ function hn({ documents: t, onOpen: n, onCreate: r, onCreateWhiteboard: i, class
 				}),
 				title: e.title || "Untitled",
 				meta: [e.createdBy, e.activeEditors ? `${e.activeEditors} editing` : ""].filter(Boolean).join(" · "),
-				timestamp: $(e.updatedAt),
+				timestamp: an(e.updatedAt),
 				timestampIso: e.updatedAt,
-				timestampTitle: e.updatedAt ? q(e.updatedAt) : void 0,
+				timestampTitle: e.updatedAt ? K(e.updatedAt) : void 0,
 				onJump: n ? () => n(e.documentId) : void 0,
 				jumpLabel: `Open ${e.title || "this document"}`
 			}, e.documentId))
@@ -3081,7 +3031,7 @@ function hn({ documents: t, onOpen: n, onCreate: r, onCreateWhiteboard: i, class
 }
 //#endregion
 //#region src/components/social/ConversationSurface.tsx
-var gn = [
+var mn = [
 	"chat",
 	"files",
 	"documents",
@@ -3089,7 +3039,7 @@ var gn = [
 	"members",
 	"mentions",
 	"calls"
-], _n = {
+], hn = {
 	chat: "Chat",
 	files: "Files",
 	documents: "Documents",
@@ -3098,15 +3048,15 @@ var gn = [
 	mentions: "Mentions",
 	calls: "Calls"
 };
-function vn({ name: t, description: n, online: r, avatarUrl: a, features: o = gn, children: s, canvas: c, members: l, memberCount: d, files: f = [], thumbnailSrc: p, documents: m = [], onOpenDocument: h, onRename: _, onCreateDocument: v, onCreateWhiteboard: y, pins: b = [], onUnpin: x, mentions: S = [], onOpenMention: ee, recordings: te = [], onOpenRecording: T, onJumpToMessage: E, onStartCall: D, callModeFixed: O = !1, onWatch: k, watchLabel: A, watchHint: ne, watchViewerCount: j, callInProgress: M = !1, headerActions: N, view: P, onViewChange: F, className: re, "data-testid": I = "conversation-surface" }) {
-	let L = new Set(o), [ie, R] = V("chat"), z = P ?? ie, B = L.has(z) ? z : o[0] ?? "chat", G = (e) => {
-		P === void 0 && R(e), F?.(e);
-	}, K = (e) => e || void 0, ae = o.filter((e) => _n[e]).map((e) => ({
+function gn({ name: t, description: n, online: r, avatarUrl: a, features: o = mn, children: s, canvas: c, members: l, memberCount: d, files: f = [], thumbnailSrc: p, documents: m = [], onOpenDocument: h, onRename: _, onCreateDocument: v, onCreateWhiteboard: y, pins: b = [], onUnpin: x, mentions: S = [], onOpenMention: ee, recordings: te = [], onOpenRecording: T, onJumpToMessage: E, onStartCall: D, callModeFixed: O = !1, onWatch: k, watchLabel: A, watchHint: ne, watchViewerCount: j, callInProgress: M = !1, headerActions: N, view: P, onViewChange: F, className: re, "data-testid": I = "conversation-surface" }) {
+	let L = new Set(o), [ie, ae] = V("chat"), R = P ?? ie, z = L.has(R) ? R : o[0] ?? "chat", B = (e) => {
+		P === void 0 && ae(e), F?.(e);
+	}, G = (e) => e || void 0, oe = o.filter((e) => hn[e]).map((e) => ({
 		id: e,
-		label: _n[e],
-		badge: e === "files" ? K(f.length) : e === "documents" ? K(m.length) : e === "pins" ? K(b.length) : e === "members" ? d == null ? void 0 : K(d) : e === "calls" ? K(te.length) : e === "mentions" ? K(S.filter((e) => e.unread).length) : void 0
-	})), oe = (e) => {
-		G("chat"), E?.(e);
+		label: hn[e],
+		badge: e === "files" ? G(f.length) : e === "documents" ? G(m.length) : e === "pins" ? G(b.length) : e === "members" ? d == null ? void 0 : G(d) : e === "calls" ? G(te.length) : e === "mentions" ? G(S.filter((e) => e.unread).length) : void 0
+	})), se = (e) => {
+		B("chat"), E?.(e);
 	};
 	return /* @__PURE__ */ W("section", {
 		className: e("flex min-w-0 flex-col", re),
@@ -3119,13 +3069,13 @@ function vn({ name: t, description: n, online: r, avatarUrl: a, features: o = gn
 				online: r,
 				avatarUrl: a,
 				"data-testid": `${I}-header`,
-				tabs: ae.length > 1 ? /* @__PURE__ */ U(w, {
+				tabs: oe.length > 1 ? /* @__PURE__ */ U(w, {
 					variant: "underline",
 					size: "sm",
 					"aria-label": "Views of this conversation",
-					value: B,
-					onValueChange: (e) => G(e),
-					items: ae
+					value: z,
+					onValueChange: (e) => B(e),
+					items: oe
 				}) : void 0,
 				actions: D || k || N ? /* @__PURE__ */ W(H, { children: [
 					D && (O ? /* @__PURE__ */ U(i, {
@@ -3149,7 +3099,7 @@ function vn({ name: t, description: n, online: r, avatarUrl: a, features: o = gn
 						onClick: () => D(!1),
 						children: /* @__PURE__ */ U(g, { size: 16 })
 					})] })),
-					k && /* @__PURE__ */ U(yn, {
+					k && /* @__PURE__ */ U(_n, {
 						testId: `${I}-watch`,
 						label: A,
 						hint: ne,
@@ -3159,38 +3109,38 @@ function vn({ name: t, description: n, online: r, avatarUrl: a, features: o = gn
 					N
 				] }) : void 0
 			}),
-			L.has("files") && B === "files" && /* @__PURE__ */ U(un, {
+			L.has("files") && z === "files" && /* @__PURE__ */ U(cn, {
 				className: "min-h-0 flex-1",
 				files: f,
 				thumbnailSrc: p,
-				onJump: E ? oe : void 0
+				onJump: E ? se : void 0
 			}),
-			L.has("documents") && B === "documents" && /* @__PURE__ */ U(hn, {
+			L.has("documents") && z === "documents" && /* @__PURE__ */ U(pn, {
 				className: "min-h-0 flex-1",
 				documents: m,
 				onOpen: h,
 				onCreate: v,
 				onCreateWhiteboard: y
 			}),
-			L.has("pins") && B === "pins" && /* @__PURE__ */ U(ln, {
+			L.has("pins") && z === "pins" && /* @__PURE__ */ U(sn, {
 				className: "min-h-0 flex-1",
 				pins: b,
 				onUnpin: x,
-				onJump: E ? oe : void 0
+				onJump: E ? se : void 0
 			}),
-			L.has("members") && B === "members" && /* @__PURE__ */ U("div", {
+			L.has("members") && z === "members" && /* @__PURE__ */ U("div", {
 				className: "flex min-h-0 flex-1 flex-col",
 				"data-testid": `${I}-members`,
 				children: l
 			}),
-			L.has("mentions") && B === "mentions" && /* @__PURE__ */ U(dn, {
+			L.has("mentions") && z === "mentions" && /* @__PURE__ */ U(ln, {
 				className: "min-h-0 flex-1",
 				mentions: S,
 				onJump: ee ? (e, t) => {
-					G("chat"), ee(e, t);
+					B("chat"), ee(e, t);
 				} : void 0
 			}),
-			L.has("calls") && B === "calls" && /* @__PURE__ */ U(mn, {
+			L.has("calls") && z === "calls" && /* @__PURE__ */ U(fn, {
 				className: "min-h-0 flex-1",
 				recordings: te,
 				onOpen: T
@@ -3198,7 +3148,7 @@ function vn({ name: t, description: n, online: r, avatarUrl: a, features: o = gn
 			L.has("chat") && /* @__PURE__ */ W("div", {
 				className: "flex min-h-0 flex-1 flex-col",
 				"data-testid": `${I}-chat`,
-				hidden: B !== "chat",
+				hidden: z !== "chat",
 				children: [c && /* @__PURE__ */ U("div", {
 					className: "shrink-0 px-3 pt-3",
 					"data-testid": `${I}-canvas`,
@@ -3211,14 +3161,14 @@ function vn({ name: t, description: n, online: r, avatarUrl: a, features: o = gn
 		]
 	});
 }
-function yn({ testId: e, label: n, hint: r, viewerCount: i, onClick: a }) {
+function _n({ testId: e, label: n, hint: r, viewerCount: i, onClick: a }) {
 	let o = n ?? "Watch", s = typeof i == "number" && Number.isFinite(i) && i >= 0;
 	return /* @__PURE__ */ W(t, {
 		variant: "secondary",
 		size: "sm",
 		"data-testid": e,
 		onClick: a,
-		title: r ?? bn,
+		title: r ?? vn,
 		"aria-label": s ? `${o} — ${i} watching` : o,
 		className: "inline-flex h-8 items-center gap-1.5",
 		children: [
@@ -3233,6 +3183,6 @@ function yn({ testId: e, label: n, hint: r, viewerCount: i, onClick: a }) {
 		]
 	});
 }
-var bn = "Watch without joining — near-realtime, scales to any audience, and you are not on camera.";
+var vn = "Watch without joining — near-realtime, scales to any audience, and you are not on camera.";
 //#endregion
-export { Ce as $, lt as A, Qe as B, vt as C, mt as D, gt as E, at as F, Fe as G, ze as H, ot as I, ke as J, Pe as K, tt as L, st as M, nt as N, pt as O, it as P, Oe as Q, He as R, St as S, _t as T, Re as U, Ve as V, Le as W, we as X, J as Y, Ee as Z, Nt as _, dn as a, ue as at, Ot as b, fn as c, le as ct, en as d, K as dt, xe as et, Pt as f, ae as ft, kt as g, At as h, un as i, de as it, ct as j, ft as k, sn as l, q as lt, Et as m, vn as n, ye as nt, mn as o, oe as ot, Tt as p, Ae as q, hn as r, fe as rt, ln as s, ce as st, gn as t, be as tt, rn as u, se as ut, It as v, bt as w, Mt as x, Ft as y, Z as z };
+export { Se as $, ct as A, Ve as B, gt as C, pt as D, mt as E, nt as F, Me as G, ze as H, We as I, Ee as J, je as K, X as L, at as M, ot as N, ut as O, st as P, Ce as Q, et as R, bt as S, ht as T, Le as U, Be as V, Ie as W, Ae as X, Oe as Y, Te as Z, jt as _, ln as a, ue as at, Et as b, un as c, le as ct, Qt as d, xe as et, Mt as f, Dt as g, Ot as h, cn as i, ce as it, rt as j, lt as k, $ as l, oe as lt, wt as m, gn as n, pe as nt, fn as o, de as ot, Ct as p, q, pn as r, fe as rt, sn as s, K as st, mn as t, me as tt, tn as u, se as ut, Pt as v, vt as w, At as x, Nt as y, Ue as z };

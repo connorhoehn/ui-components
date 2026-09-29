@@ -5,7 +5,12 @@ import { ReactNode } from 'react';
 import { Ref } from 'react';
 import { RefAttributes } from 'react';
 
-export declare function AgentComposerDock({ presentation, mode: modeProp, defaultMode, onModeChange, placeholder, modePlaceholders, references, onRemoveReference, commands, workflows, onWorkflow, modes, disabledModes: disabledModesProp, modeUnavailableReasons, dock, draft: draftProp, onDraftChange, defaultDraft, draftKey, onSend, onSearchDocuments, documentMenu, onSearchPeople, allowAttachments, allowEmoji, disabled, working, status, hints, suggestions, onSuggestion, submitLabel, maxInputHeight, composerRef, label, inputLabel, className, 'data-testid': testId, composerTestId, }: AgentComposerDockProps): JSX.Element;
+/**
+ * @deprecated Since 2.407.0 — use `ContextComposer` with
+ * `context={{ kind: 'initiative' | 'search', id, title }}`. Kept as a preset
+ * over it with the same props, look and test ids.
+ */
+export declare function AgentComposerDock({ presentation, defaultMode, modes, disabledModes: disabledModesProp, modeUnavailableReasons, draftKey, allowAttachments, allowEmoji, label, className, 'data-testid': testId, onSend, ...rest }: AgentComposerDockProps): JSX.Element;
 
 export declare interface AgentComposerDockProps {
     /** `document` (default `compact`): the full editor strip and comfortable density, for a full-width page. */
@@ -109,6 +114,9 @@ export declare interface AgentComposerWorkflow {
     disabledReason?: string;
 }
 
+/** Where an agent task is. Shared by `TaskStrip` and `AgentTaskCard`. */
+declare type AgentTaskStatus = 'queued' | 'running' | 'paused' | 'awaiting' | 'done' | 'failed' | 'stopped';
+
 /** What a console surface paints behind itself. `none` keeps the ordinary surface. */
 declare type BackdropTone = 'auto' | 'night' | 'graphite' | 'none';
 
@@ -211,6 +219,14 @@ export declare const COMPOSER_BREAKPOINTS: {
     readonly wide: 600;
 };
 
+export declare const COMPOSER_CONTEXT_KINDS: readonly ComposerContextKind[];
+
+export declare const COMPOSER_CONTEXT_REASONS: {
+    readonly terminal: "Attach an agent loop to use the terminal here";
+    readonly noThread: "This view has no discussion thread — ask the agent instead";
+    readonly diagramAgent: "The agent cannot edit diagrams yet — describe the change in Chat";
+};
+
 /** The order Option-1/2/3 and the compact `1 2 3` buttons follow. */
 export declare const COMPOSER_MODE_ORDER: readonly ComposerMode[];
 
@@ -280,6 +296,93 @@ export declare interface ComposerCommandArgument {
  */
 export declare function composerCommandArgumentText(draft: string, command: ComposerCommand): string;
 
+/** What the composer is attached to. */
+export declare type ComposerContext = {
+    kind: 'conversation';
+    id: string;
+    title: string; /** A one-to-one DM. */
+    dm?: boolean;
+} | {
+    kind: 'document' | 'work-item' | 'diagram';
+    id: string;
+    title: string;
+} | {
+    kind: 'initiative' | 'search';
+    id: string;
+    title: string;
+};
+
+/** Which optional rows and controls a context allows. */
+export declare interface ComposerContextFeatures {
+    /** The context chip ("● Roadmap") at the card's row end. */
+    contextChip: boolean;
+    /** The `Workflow ⌄` menu (and the workflow command). */
+    workflows: boolean;
+    /**
+     * The command a workflow pick writes: `/workflow <label>` with the pick as
+     * the command's argument. `null`: the pick writes `/<id> ` (a command per
+     * workflow, the initiative/search convention).
+     */
+    workflowCommand: string | null;
+    /** Page actions under `Agent ⌄` — "Make a deck" and the host's `moreActions`. */
+    pageActions: boolean;
+    /** Send options (the split Send) and "Share a document". */
+    sendOptions: boolean;
+    /** A reply quote above the row. */
+    reply: boolean;
+    /** The task strip joined to the composer's top edge. */
+    taskStrip: boolean;
+    /** The "you are offline" notice. */
+    offline: boolean;
+    /** The "the model is unreachable" notice. */
+    modelUnavailable: boolean;
+    /** `chat-only`: attachments only while composing a Chat message. */
+    attachments: 'always' | 'chat-only';
+    emoji: boolean;
+    mentions: boolean;
+    /**
+     * `onSend` receives what was TYPED (Agent mode's `/agent ` prefix removed,
+     * the command re-matched). `false`: the chat router's form, `/agent …`,
+     * which a conversation's command registry routes.
+     */
+    typedText: boolean;
+}
+
+export declare type ComposerContextKind = ComposerContext['kind'];
+
+export declare interface ComposerContextPreset {
+    kind: ComposerContextKind;
+    /** The modes offered here at all. */
+    modes: readonly ComposerMode[];
+    /** Where a fresh composer starts. */
+    defaultMode: ComposerMode;
+    /** Offered but off, with `modeUnavailableReasons`. */
+    disabledModes: readonly ComposerMode[];
+    modeUnavailableReasons: Partial<Record<ComposerMode, string>>;
+    modePlaceholders: Partial<Record<ComposerMode, string>>;
+    /** The context chip's label, or null for none. */
+    chipLabel: string | null;
+    /** Accessible name of the composer region. */
+    regionLabel: string;
+    features: ComposerContextFeatures;
+}
+
+/**
+ * The preset for a context: its modes, reasons, placeholders, chip and the
+ * rows it allows. Pure — the same context always gives the same preset.
+ */
+export declare function composerContextPreset(context: ComposerContext, wiring?: ComposerContextWiring): ComposerContextPreset;
+
+/** What the preset needs to know about the host's wiring. */
+export declare interface ComposerContextWiring {
+    /** A terminal is attached (`onShellCommand`). Without one, Terminal is off with a reason. */
+    terminal?: boolean;
+    /** Chat has somewhere to go. Default true except for `initiative`/`search`. */
+    chat?: boolean;
+    /** The agent is unavailable here — Agent is shown off with this reason. */
+    agentUnavailableReason?: string;
+}
+
 /** One paragraph holding `text` (newlines become `<br>`); `''` is an empty draft. */
 export declare function composerDraftOf(text: string): RichChatDraft;
 
@@ -290,6 +393,15 @@ export declare interface ComposerHint {
     label: string;
     /** Wired, the hint is a button rather than a label. */
     onSelect?: () => void;
+}
+
+/** Identity claims a composer may read a name from (an ID token, a BFF session). */
+export declare interface ComposerIdentity {
+    displayName?: string | null;
+    given_name?: string | null;
+    family_name?: string | null;
+    name?: string | null;
+    email?: string | null;
 }
 
 /** What the composer is for, right now. */
@@ -351,6 +463,18 @@ export declare interface ComposerReferencesProps {
     'data-testid'?: string;
 }
 
+/** The message being replied to — drawn as a `QuoteBlock` above the row. */
+export declare interface ComposerReply {
+    author: string;
+    /** Plain text of the original (excerpted for display). */
+    quote: string;
+    messageId?: string;
+    /** ISO timestamp of the original. */
+    timestamp?: string;
+    onDismiss?: () => void;
+    onJump?: (messageId: string) => void;
+}
+
 /** An alternative way to send, offered from the Send button's own menu. */
 export declare interface ComposerSendOption {
     id: string;
@@ -382,8 +506,160 @@ export declare interface ComposerStatus {
     'data-testid'?: string;
 }
 
+/** A task in flight, drawn as the `TaskStrip` joined to the composer. */
+export declare interface ComposerTaskReport {
+    label: string;
+    status: AgentTaskStatus;
+    phase?: string;
+    percent?: number;
+    onOpen?: () => void;
+    onStop?: () => void;
+    onDismiss?: () => void;
+}
+
 /** See `RichChatComposerProps.toolbar`. */
 export declare type ComposerToolbarPreset = 'full' | 'compact' | 'editor' | 'prompt' | 'basic';
+
+/** One row of the `Workflow ⌄` menu. A disabled row shows its reason and cannot be picked. */
+export declare interface ComposerWorkflow {
+    /** The pick's identity: `/<id> ` or the `/workflow` argument's id. */
+    id: string;
+    label: string;
+    /** Second line of the row. */
+    description?: string;
+    disabled?: boolean;
+    /** Second line and tooltip of a disabled row. */
+    disabledReason?: string;
+}
+
+export declare function ContextComposer(props: ContextComposerProps): JSX.Element;
+
+export declare interface ContextComposerProps {
+    /** What the composer is attached to. Decides modes, chip, and which features may render. */
+    context: ComposerContext;
+    /** `document`: comfortable density, for a full-width page. Default `compact`. */
+    presentation?: 'compact' | 'document';
+    /** Controlled mode. Pair with `onModeChange`. */
+    mode?: ComposerMode;
+    /** Uncontrolled starting mode. Default: the context's. */
+    defaultMode?: ComposerMode;
+    onModeChange?: (mode: ComposerMode) => void;
+    /** Which modes exist here. Default: the context's (a conversation: Chat, Agent). */
+    modes?: readonly ComposerMode[];
+    /** Shown but off. Default: the context's (Terminal until `onShellCommand`, a diagram's Agent). */
+    disabledModes?: readonly ComposerMode[];
+    /** Merged over the context's reasons. */
+    modeUnavailableReasons?: Partial<Record<ComposerMode, string>>;
+    /** The agent is unavailable here: Agent is shown off with this reason. */
+    agentUnavailableReason?: string;
+    /** Chat has somewhere to go. `false`: Chat is shown off with a reason. */
+    chatAvailable?: boolean;
+    /** Agent-mode placeholder. */
+    placeholder?: string;
+    /** Per-mode placeholders, over the context's. */
+    modePlaceholders?: Partial<Record<ComposerMode, string>>;
+    modeHints?: RichChatComposerProps['modeHints'];
+    hints?: readonly ComposerHint[];
+    submitLabel?: RichChatComposerProps['submitLabel'];
+    /** The context chip. `false` hides it; a string relabels it. Default: the context's. */
+    contextChip?: boolean | string;
+    /** Makes the context chip removable. */
+    onRemoveContext?: () => void;
+    /** More chips (work references, a comment hand-off). */
+    references?: readonly ComposerReference[];
+    onRemoveReference?: (id: string) => void;
+    commands?: ComposerCommand[];
+    /** An argument pick that IS the message (`onPick → 'execute'`). */
+    onCommand?: (command: ComposerCommand, argument: ComposerArgumentItem) => void;
+    /** The `Workflow ⌄` menu. Allowed in every context but a conversation. */
+    workflows?: readonly ComposerWorkflow[];
+    /** A workflow was picked. Default: write it into the draft. */
+    onWorkflow?: (id: string) => void;
+    /** Send's label while the draft holds the workflow command. Default "Prepare run". */
+    workflowSubmitLabel?: string;
+    onSearchPeople?: (query: string) => MentionCandidate[] | Promise<MentionCandidate[]>;
+    mentionMembers?: ReadonlySet<string>;
+    onMentionNonMember?: (userId: string) => void;
+    onSearchDocuments?: RichChatComposerProps['onSearchDocuments'];
+    documentMenu?: RichChatComposerProps['documentMenu'];
+    /** Default true (Chat mode only in a document-like context). */
+    allowAttachments?: boolean;
+    /** Default true. */
+    allowEmoji?: boolean;
+    onRequestLink?: RichChatComposerProps['onRequestLink'];
+    sendOptions?: readonly ComposerSendOption[];
+    onSendOption?: (id: string) => void;
+    /** "Share a document" on the strip. Receives the button, to anchor a picker. */
+    onShareDocument?: (anchor: HTMLElement) => void;
+    shareDocumentTestId?: string;
+    /** Offline / held-messages notice, above the row. */
+    offline?: string | null;
+    /** "Make a deck from this page", under `Agent ⌄`. */
+    onMakeDeck?: () => void;
+    makeDeckLabel?: string;
+    makeDeckTestId?: string;
+    /** More page actions under `Agent ⌄`. */
+    moreActions?: readonly DropdownMenuSection[];
+    moreActionsLabel?: string;
+    /** The call shelf, flush on the composer's top edge. Test id `<data-testid>-dock-slot`. */
+    dock?: ReactNode;
+    /** Notices above the row (an error banner). Forces the full card. */
+    above?: ReactNode;
+    /** A strip joined to the composer's top edge. Forces the full card. Wins over `task`. */
+    strip?: ReactNode;
+    /** A task in flight, as the `TaskStrip`. */
+    task?: ComposerTaskReport | null;
+    /** The message being replied to. Forces the full card. */
+    reply?: ComposerReply | null;
+    /** Rendered instead of the composer (a comment reply field), rows kept. */
+    replacement?: ReactNode;
+    /** The model is unreachable: a warning above the row. */
+    modelUnavailable?: string | null;
+    /** Controls on the strip after the built-in ones. */
+    toolbarExtras?: ReactNode;
+    processes?: readonly ComposerProcess[];
+    onQuickOpen?: () => void;
+    /** Where a Terminal line goes. Passing it turns Terminal on where the context offers it. */
+    onShellCommand?: (command: string) => void;
+    draft?: RichChatDraft;
+    onDraftChange?: (draft: RichChatDraft, previous: RichChatDraft | undefined) => void;
+    defaultDraft?: string | RichChatDraft;
+    /** The subject the draft belongs to. Default: the context's kind and id. */
+    draftKey?: string;
+    /** Return `false` to keep the draft. */
+    onSend: (message: ComposedMessage, context: ContextComposerSendContext) => void | boolean | Promise<void | boolean>;
+    /** Who is writing — `author` in the send context. */
+    identity?: ComposerIdentity | null;
+    /** Force the full card. */
+    expanded?: boolean;
+    /** An agent is mid-turn: the console drifts faster. */
+    working?: boolean;
+    /** Default true: Agent/Terminal paint the console surface. */
+    console?: boolean;
+    disabled?: boolean;
+    status?: ComposerStatus | null;
+    suggestions?: readonly string[];
+    onSuggestion?: (suggestion: string) => void;
+    maxInputHeight?: number | string;
+    composerRef?: Ref<RichChatComposerHandle>;
+    /** Accessible name of the region. Default: the context's. */
+    label?: string;
+    inputLabel?: string;
+    className?: string;
+    /** Default `context-composer`. */
+    'data-testid'?: string;
+    /** The composer's own test id. Default `rich-chat-composer`. */
+    composerTestId?: string;
+}
+
+export declare interface ContextComposerSendContext {
+    /** The mode the message was composed in. */
+    mode: ComposerMode;
+    /** What the composer is attached to. */
+    context: ComposerContext;
+    /** The sender's name from `identity` (displayName first). */
+    author?: string;
+}
 
 export declare interface DocumentCandidate {
     /** Stable identity — this is what travels in the message, not the label. */
@@ -516,6 +792,14 @@ export declare interface EmojiSuggestionsProps {
         emoji: string;
     }) => void;
 }
+
+/**
+ * The local participant's name from identity claims: `displayName` first
+ * (aws-agentcore's BFF tokens), then `given_name` + `family_name` (Cognito,
+ * and the gateway's `SKIP_AUTH` bypass), then `name`, then the email's local
+ * part. `undefined` when none of them says anything.
+ */
+export declare function identityDisplayName(identity: ComposerIdentity | null | undefined): string | undefined;
 
 /** The command a draft is addressing, or null. `/doc`, `/doc …`, never `/document`. */
 export declare function matchComposerCommand(draft: string, commands: readonly ComposerCommand[] | undefined): ComposerCommand | null;
@@ -941,6 +1225,14 @@ export declare interface RichChatComposerProps {
      */
     collapseWhenIdle?: boolean;
     /**
+     * With `collapseWhenIdle`: `true` forces the full card whatever the idle
+     * rule says — for host content the composer cannot see (a reply quote, a
+     * comment hand-off, a task strip above it), which would otherwise sit over
+     * a one-line row. `false`/absent is the idle rule unchanged. No effect
+     * without `collapseWhenIdle`. Since 2.407.0.
+     */
+    expanded?: boolean;
+    /**
      * Draws the `#` menu as an "Add context" card: a title, the typed query in
      * a search field with a clear button, results grouped under each
      * candidate's `group`, and the keys (↑↓ Choose · ↵ Insert · esc Close) at
@@ -1020,19 +1312,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -1052,22 +1331,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
         };
     }
 }
@@ -1078,6 +1347,16 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -1111,9 +1390,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -1121,9 +1400,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

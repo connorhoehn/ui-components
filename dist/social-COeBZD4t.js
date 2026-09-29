@@ -31,10 +31,11 @@ import { t as de } from "./InlinePlaceholder-51dbPRGn.js";
 import { n as fe, t as G } from "./PopoverForm-BCCYkHYg.js";
 import { t as pe } from "./DropdownMenu-dM1tsyrs.js";
 import { t as me } from "./Select-D3fGI8SO.js";
-import { B as he, L as ge, N as _e, at as ve, lt as ye, rt as be } from "./ConversationSurface-DLmbBKti.js";
+import { F as he, R as ge, j as _e, rt as ve, st as ye, tt as be } from "./ConversationSurface-CWWwecwa.js";
 import { t as xe } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as Se, t as Ce } from "./ReactionPickerPopover-DkcC4xmE.js";
 import { n as we } from "./useComputeProjects-ZSazDRet.js";
+import "./QuoteBlock-cbJ8wpPM.js";
 import { n as Te, t as Ee } from "./composerCommands-DSXH8omK.js";
 import { r as De } from "./PaneStatusLine-C0Ewhgab.js";
 import "./ChatSidePanelRegistry-DJ0XA4AR.js";
@@ -3823,7 +3824,7 @@ function an(e) {
 	return e.kind === "link" ? e.label ?? "Open link" : e.kind === "panel" ? e.panel.title ? `Open ${e.panel.title}` : "Open result" : "Open beside the chat";
 }
 function on({ data: e, onOpenFull: t, onOpenChat: n, onOpenDocument: r, onOpenResult: i, className: a, "data-testid": s = "run-summary-panel" }) {
-	let { status: c } = e, u = e.pipelineName || e.pipelineId, f = ge({
+	let { status: c } = e, u = e.pipelineName || e.pipelineId, f = he({
 		startedAt: e.startedAt,
 		completedAt: e.completedAt
 	}), p = e.ops ?? [], m = e.result && i && !(e.result.kind === "document" && e.document && r), h = e.document?.title || "Document", g = c === "failed" ? e.error || "The run failed" : void 0;
@@ -3921,7 +3922,7 @@ function on({ data: e, onOpenFull: t, onOpenChat: n, onOpenDocument: r, onOpenRe
 								className: "truncate",
 								"data-op": e.op,
 								title: e.text,
-								children: he(e)
+								children: ge(e)
 							}, t))
 						}),
 						p.length > rn && /* @__PURE__ */ $("div", {

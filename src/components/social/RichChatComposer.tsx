@@ -589,6 +589,14 @@ export interface RichChatComposerProps {
    */
   collapseWhenIdle?: boolean;
   /**
+   * With `collapseWhenIdle`: `true` forces the full card whatever the idle
+   * rule says — for host content the composer cannot see (a reply quote, a
+   * comment hand-off, a task strip above it), which would otherwise sit over
+   * a one-line row. `false`/absent is the idle rule unchanged. No effect
+   * without `collapseWhenIdle`. Since 2.407.0.
+   */
+  expanded?: boolean;
+  /**
    * Draws the `#` menu as an "Add context" card: a title, the typed query in
    * a search field with a clear button, results grouped under each
    * candidate's `group`, and the keys (↑↓ Choose · ↵ Insert · esc Close) at
@@ -992,6 +1000,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   referencesPlacement = 'end',
   referenceDrop,
   collapseWhenIdle = false,
+  expanded: forceExpanded = false,
   documentMenu,
   modeRowStart,
   sendShortcut = 'enter',
@@ -2094,7 +2103,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // Idle: one row (pill · input · Send). Anything worth reading — a status,
   // a running process, a staged file, a command, a notice, words in the box —
   // keeps the full composer, as does the caret in the input.
-  const collapsed = collapseWhenIdle && !engaged && empty && !status && !processes?.length
+  const collapsed = collapseWhenIdle && !forceExpanded && !engaged && empty && !status && !processes?.length
     && !staged.length && !activeCommand && !sendError && !modeNotice && !terminalMode
     && !linkState.open && !(onPrivacyChange && privacy === 'hidden');
   // Rows that appear on expanding fade up in place — opacity and transform

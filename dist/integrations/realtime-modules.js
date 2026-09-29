@@ -12,7 +12,7 @@ import { t as d } from "../PresenceAvatars-Dmtv09Kg.js";
 import { t as f } from "../FileUploadDrop-Drndcvb1.js";
 import { t as p } from "../ActivityFeed-ay5wcWka.js";
 import { n as m, r as h, t as g } from "../ReactionsOverlay-Ob1ecsgg.js";
-import { d as _, n as v, t as y, u as b } from "../ConversationSurface-DLmbBKti.js";
+import { d as _, n as v, t as y, u as b } from "../ConversationSurface-CWWwecwa.js";
 import { C as x, b as S, g as C, i as w, m as T, t as E, v as D, y as ee } from "../AudioVideoSettingsForm-BB7Zhn2S.js";
 import { a as te, i as ne, n as re, r as ie, t as ae } from "../useDocumentImageUpload-RRj5byEK.js";
 import { Component as oe, createContext as se, useCallback as O, useContext as ce, useEffect as k, useMemo as A, useRef as j, useState as M } from "react";

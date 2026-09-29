@@ -50,8 +50,17 @@ layer ships pre-wired wrappers — `<WrappedChatPanel>`,
 `<WrappedPresencePanel>`, `<WrappedReactionsOverlay>` — that take the
 channel name and handle the hook plumbing internally.
 
-## Agent composer dock
+## Context composer
 
+`ContextComposer` (2.407.0, `…/social/rich-composer`; lazy on the root) is the
+one composer for a conversation, a document, a work item, a diagram, an
+initiative or a search: one idle row (mode pill, chips, placeholder, Send)
+that expands to the `Agent ⌄` editor card, with each feature gated by its
+`context` — see `composerContextPreset` in `composerContext.ts` for the table.
+
+## Agent composer dock (deprecated)
+
+Deprecated since 2.407.0 — a thin preset over `ContextComposer`.
 `AgentComposerDock` (2.403.0, `…/social/rich-composer`; lazy on the root) is
 the pinned composer a page docks under its content — the rich composer with
 the mode menu, chips, `Workflow ⌄` and `/ commands` preset. See

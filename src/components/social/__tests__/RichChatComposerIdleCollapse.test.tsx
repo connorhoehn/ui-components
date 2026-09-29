@@ -4,7 +4,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { RichChatComposer } from '../RichChatComposer';
 
 afterEach(cleanup);
@@ -221,5 +221,90 @@ describe('collapseWhenIdle with a menu the composer opened', () => {
     expect(screen.getByTestId('menu-item')).toBeInTheDocument();
     await act(async () => { (document.activeElement as HTMLElement).blur(); await new Promise((r) => setTimeout(r, 0)); });
     expect(screen.getByTestId('composer')).toHaveAttribute('data-collapsed', 'true');
+  });
+});
+
+// 2.407.0: the ContextComposer look — the mode menu and the editor strip —
+// collapsed to the idle row, and `expanded` for host content above it.
+describe('collapseWhenIdle with the mode menu and the editor strip', () => {
+  // ProseMirror scrolls a focused selection into view; jsdom has no layout.
+  beforeAll(() => {
+    const rects = () => ({ length: 0, item: () => null, [Symbol.iterator]: [][Symbol.iterator] }) as unknown as DOMRectList;
+    const rect = () => ({ x: 0, y: 0, top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0, toJSON: () => ({}) }) as DOMRect;
+    for (const proto of [Range.prototype, Element.prototype]) {
+      if (!proto.getClientRects) Object.assign(proto, { getClientRects: rects });
+      if (!proto.getBoundingClientRect) Object.assign(proto, { getBoundingClientRect: rect });
+    }
+  });
+  const menu = { ...modes, modeControl: 'menu', toolbar: 'editor' } as const;
+  const leave = async () => {
+    await act(async () => { fireEvent.focusOut(input(), { relatedTarget: document.body }); await new Promise((r) => setTimeout(r, 0)); });
+  };
+
+  it('idle: pill, chips, input and Send on one row; no menu, no strip', () => {
+    render(<RichChatComposer {...menu} references={[{ id: 'd', label: 'Roadmap' }]} toolbarExtras={<span data-testid="extra">Workflow</span>} />);
+    expect(screen.getByTestId('composer')).toHaveAttribute('data-collapsed', 'true');
+    expect(screen.getByTestId('composer-mode-pill')).toHaveTextContent('Agent');
+    expect(screen.getByTestId('composer-body')).toContainElement(screen.getByTestId('composer-references'));
+    expect(screen.getByTestId('composer-send')).toBeInTheDocument();
+    expect(screen.queryByTestId('composer-mode-menu')).toBeNull();
+    expect(screen.queryByTestId('composer-format-toolbar')).toBeNull();
+    expect(screen.queryByTestId('extra')).toBeNull();
+  });
+
+  it('focus in expands to the docked card; typing keeps it; clear + blur collapses after one tick', async () => {
+    render(<RichChatComposer {...menu} toolbarExtras={<span data-testid="extra">Workflow</span>} />);
+    await act(async () => { input().focus(); fireEvent.focusIn(input()); });
+    const root = screen.getByTestId('composer');
+    expect(root).toHaveAttribute('data-collapsed', 'false');
+    expect(screen.getByTestId('composer-mode-menu')).toHaveTextContent('Agent');
+    expect(screen.getByTestId('composer-format-toolbar')).toBeInTheDocument();
+    expect(screen.getByTestId('extra')).toBeInTheDocument();
+    await leave();
+    expect(root).toHaveAttribute('data-collapsed', 'true');
+  });
+
+  it('words in the draft keep the card after blur', async () => {
+    render(<RichChatComposer {...menu} draft={{ html: '<p>half a thought</p>', files: [] }} onDraftChange={() => {}} />);
+    await act(async () => { input().focus(); fireEvent.focusIn(input()); });
+    await leave();
+    expect(screen.getByTestId('composer')).toHaveAttribute('data-collapsed', 'false');
+  });
+
+  it('opening the mode menu does not collapse it', async () => {
+    render(<RichChatComposer {...menu} />);
+    await act(async () => { input().focus(); fireEvent.focusIn(input()); });
+    await act(async () => { fireEvent.click(screen.getByTestId('composer-mode-menu')); });
+    const list = screen.getByTestId('composer-mode-menu-list');
+    const item = list.querySelector('[role=menuitem]') as HTMLElement;
+    await act(async () => { fireEvent.focusOut(input(), { relatedTarget: item }); item.focus(); fireEvent.focusIn(item); await new Promise((r) => setTimeout(r, 0)); });
+    expect(screen.getByTestId('composer')).toHaveAttribute('data-collapsed', 'false');
+    expect(screen.getByTestId('composer-mode-menu-list')).toBeInTheDocument();
+  });
+
+  it('a staged file, a command or a status keeps the card', () => {
+    const file = new File(['x'], 'notes.txt', { type: 'text/plain' });
+    const { unmount } = render(<RichChatComposer {...menu} draft={{ html: '', files: [file] }} onDraftChange={() => {}} />);
+    expect(screen.getByTestId('composer')).toHaveAttribute('data-collapsed', 'false');
+    unmount();
+    const { unmount: u2 } = render(<RichChatComposer {...menu} commands={[{ trigger: '/deck', label: 'Deck' }]} draft={{ html: '<p>/deck </p>', files: [] }} />);
+    expect(screen.getByTestId('composer')).toHaveAttribute('data-collapsed', 'false');
+    u2();
+    render(<RichChatComposer {...menu} status={{ text: 'Working…' }} />);
+    expect(screen.getByTestId('composer')).toHaveAttribute('data-collapsed', 'false');
+  });
+
+  it('expanded forces the card while idle; dropping it returns to the idle rule', () => {
+    const { rerender } = render(<RichChatComposer {...menu} expanded />);
+    expect(screen.getByTestId('composer')).toHaveAttribute('data-collapsed', 'false');
+    expect(screen.getByTestId('composer-mode-menu')).toBeInTheDocument();
+    rerender(<RichChatComposer {...menu} expanded={false} />);
+    expect(screen.getByTestId('composer')).toHaveAttribute('data-collapsed', 'true');
+  });
+
+  it('expanded without collapseWhenIdle changes nothing', () => {
+    const { collapseWhenIdle: _off, ...rest } = menu;
+    render(<RichChatComposer {...rest} expanded />);
+    expect(screen.getByTestId('composer')).not.toHaveAttribute('data-collapsed');
   });
 });
