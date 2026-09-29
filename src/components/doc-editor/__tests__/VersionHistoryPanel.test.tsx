@@ -220,3 +220,23 @@ describe('VersionHistoryPanel — version row keyboard activation', () => {
     expect(onPreview).not.toHaveBeenCalled();
   });
 });
+
+describe('VersionHistoryPanel — docked', () => {
+  it('renders inline where it is placed rather than portalled to the window edge', () => {
+    const { container } = render(<section data-testid="tab">{panel({ docked: true })}</section>);
+    const docked = screen.getByTestId('version-history-docked');
+    expect(container.contains(docked)).toBe(true);
+    expect(docked.className).not.toMatch(/\bfixed\b/);
+    expect(docked.className).toMatch(/\bh-full\b/);
+    expect(docked.style.width).toBe('');
+    expect(screen.getByText('Version History')).toBeInTheDocument();
+  });
+
+  it('still slides in over the page by default', () => {
+    const { container } = render(<section>{panel()}</section>);
+    const floating = screen.getByTestId('version-history-panel');
+    expect(container.contains(floating)).toBe(false);
+    expect(floating.className).toMatch(/\bfixed\b/);
+    expect(floating.style.width).toBe('320px');
+  });
+});

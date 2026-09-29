@@ -11,6 +11,13 @@ interface PanelProps {
   variant?: 'light' | 'dark';
   width?: number;
   style?: React.CSSProperties;
+  /**
+   * Render inline where it is placed, filling its parent, instead of fixed to
+   * the right edge of the window — for a panel that IS a view (an editor tab)
+   * rather than one that slides over it. `width` is ignored when docked.
+   */
+  docked?: boolean;
+  'data-testid'?: string;
 }
 
 export const Panel: React.FC<PanelProps> = ({
@@ -18,7 +25,20 @@ export const Panel: React.FC<PanelProps> = ({
   variant = 'light',
   width = 320,
   style,
+  docked = false,
+  'data-testid': testId,
 }) => {
+  if (docked) {
+    return (
+      <div
+        className={cn('relative flex h-full min-h-0 w-full flex-col', variant === 'dark' ? 'bg-call-chrome' : 'bg-surface')}
+        data-testid={testId}
+        {...(style ? { style } : {})}
+      >
+        {children}
+      </div>
+    );
+  }
   // Render into document.body so the panel escapes any ancestor stacking
   // context (AppLayout's main content area creates one via `zIndex: 1`,
   // which would otherwise trap Panel's z-index below the sticky header).
@@ -38,6 +58,7 @@ export const Panel: React.FC<PanelProps> = ({
         variant === 'dark' ? 'bg-call-chrome' : 'bg-surface'
       )}
       style={{ width, ...style }}
+      data-testid={testId}
     >
       {children}
     </div>,

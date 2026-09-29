@@ -2238,12 +2238,18 @@ function Ft({ followingUserId: e, participants: t, onStopFollow: n, location: r,
 }
 //#endregion
 //#region src/components/ui/Panel.tsx
-var It = ({ children: e, variant: t = "light", width: n = 320, style: r }) => typeof document > "u" ? null : xe(/* @__PURE__ */ U("div", {
+var It = ({ children: e, variant: t = "light", width: n = 320, style: r, docked: i = !1, "data-testid": a }) => i ? /* @__PURE__ */ U("div", {
+	className: p("relative flex h-full min-h-0 w-full flex-col", t === "dark" ? "bg-call-chrome" : "bg-surface"),
+	"data-testid": a,
+	...r ? { style: r } : {},
+	children: e
+}) : typeof document > "u" ? null : xe(/* @__PURE__ */ U("div", {
 	className: p("fixed right-0 top-0 h-full z-[60] flex flex-col shadow-[-4px_0_12px_rgba(0,0,0,0.08)]", t === "dark" ? "bg-call-chrome" : "bg-surface"),
 	style: {
 		width: n,
 		...r
 	},
+	"data-testid": a,
 	children: e
 }), document.body), Lt = ({ title: e, onClose: t, actions: n, variant: r = "light" }) => {
 	let i = r === "dark";
@@ -4837,24 +4843,26 @@ function ar(e) {
 	let a = Math.floor(i / 30);
 	return `${a} month${a === 1 ? "" : "s"} ago`;
 }
-function or({ versions: e, loading: t, previewTimestamp: n, onFetch: r, onPreview: i, onClearPreview: a, onClose: o, onSaveVersion: s, onCompare: c, onClearCompare: l, compareSections: u, compareTimestamp: d, currentSections: f, onRestore: m }) {
-	let h = () => {
+function or({ versions: e, loading: t, previewTimestamp: n, onFetch: r, onPreview: i, onClearPreview: a, onClose: o, onSaveVersion: s, onCompare: c, onClearCompare: l, compareSections: u, compareTimestamp: d, currentSections: f, onRestore: m, docked: h = !1 }) {
+	let g = () => {
 		a(), l(), o();
-	}, g = () => {
+	}, _ = () => {
 		let e = window.prompt("Enter a name for this version:");
 		e && e.trim() && s?.(e.trim());
-	}, _ = (e, t) => {
+	}, v = (e, t) => {
 		e.stopPropagation(), d === t ? l() : c?.(t);
-	}, v = (e) => e.type === "pre-restore" ? "Before restore" : e.type === "auto" ? "Auto-save" : "";
+	}, y = (e) => e.type === "pre-restore" ? "Before restore" : e.type === "auto" ? "Auto-save" : "";
 	return /* @__PURE__ */ W(It, {
 		width: 320,
+		docked: h,
+		"data-testid": h ? "version-history-docked" : "version-history-panel",
 		children: [
 			/* @__PURE__ */ U(Lt, {
 				title: "Version History",
-				onClose: h,
+				onClose: g,
 				actions: s ? /* @__PURE__ */ U(Vt, {
 					size: "sm",
-					onClick: g,
+					onClick: _,
 					children: "Save Version"
 				}) : void 0
 			}),
@@ -4886,7 +4894,7 @@ function or({ versions: e, loading: t, previewTimestamp: n, onFetch: r, onPrevie
 									className: p("flex items-center gap-1"),
 									children: [ar(e.age), e.type && e.type !== "manual" && /* @__PURE__ */ U("span", {
 										className: p("text-[10px] font-medium px-[5px] py-px rounded-[3px] ml-1.5", e.type === "pre-restore" ? "bg-warning-bg text-warning-fg" : e.type === "auto" ? "bg-surface-hover text-text-tertiary" : "bg-info-bg text-info-fg"),
-										children: v(e)
+										children: y(e)
 									})]
 								}),
 								e.author && /* @__PURE__ */ W("span", {
@@ -4901,7 +4909,7 @@ function or({ versions: e, loading: t, previewTimestamp: n, onFetch: r, onPrevie
 						}), c && /* @__PURE__ */ U("button", {
 							type: "button",
 							className: p("px-2 py-[3px] text-[11px] font-medium border rounded-[4px] cursor-pointer font-[inherit] whitespace-nowrap", d === e.timestamp ? "bg-info-bg border-info text-info-fg" : "bg-surface border-border text-text-secondary"),
-							onClick: (t) => _(t, e.timestamp),
+							onClick: (t) => v(t, e.timestamp),
 							children: d === e.timestamp ? "Hide Diff" : "Compare"
 						})]
 					}, e.timestamp))

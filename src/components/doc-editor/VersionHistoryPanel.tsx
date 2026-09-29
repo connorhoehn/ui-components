@@ -34,6 +34,12 @@ interface VersionHistoryPanelProps {
   currentSections: SnapshotSection[];
   /** Restore to a historical version. */
   onRestore?: (timestamp: number) => void;
+  /**
+   * Inline, filling the box it is placed in — a document editor's Versions tab
+   * inside `EditorShell` — instead of sliding in over the page from the right
+   * edge of the window.
+   */
+  docked?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -76,6 +82,7 @@ export default function VersionHistoryPanel({
   compareTimestamp,
   currentSections,
   onRestore,
+  docked = false,
 }: VersionHistoryPanelProps) {
   const handleClose = () => {
     onClearPreview();
@@ -106,7 +113,7 @@ export default function VersionHistoryPanel({
   };
 
   return (
-    <Panel width={320}>
+    <Panel width={320} docked={docked} data-testid={docked ? 'version-history-docked' : 'version-history-panel'}>
       {/* Header */}
       <PanelHeader
         title="Version History"
