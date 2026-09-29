@@ -6,7 +6,7 @@
 // deterministic starting points, so the same input always lands the same way.
 
 import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation, forceX, forceY } from 'd3-force';
-import { reserveCorner, type FitInset } from './org/fitTransform';
+import { clearOfOverlays, reserveCorner, type FitBounds, type FitInset, type ScreenRect } from './org/fitTransform';
 
 export type RecordGraphType = 'person' | 'initiative' | 'work' | 'decision' | 'knowledge' | 'asset';
 export type RecordGraphLayout = 'force' | 'radial' | 'hierarchy';
@@ -57,6 +57,14 @@ export const RECORD_GRAPH_MAX_FIT_ZOOM = 1;
  * Since 2.403.7.
  */
 export const RECORD_GRAPH_READABLE_ZOOM = 0.7;
+/**
+ * How far under `RECORD_GRAPH_READABLE_ZOOM` the automatic fit still takes
+ * the whole graph (2.407.4): 0.68 draws the 13px titles at ~8.8px, still
+ * readable, and a whole-graph fit at 0.694 (Hierarchy, 3 selected, on the
+ * 1160 × 583 canvas) is a better opening view than the selection-centred
+ * 0.8 frame it fell to, which put an unselected record under the controls.
+ */
+export const RECORD_GRAPH_READABLE_TOLERANCE = 0.02;
 /**
  * The automatic fit's second rung (2.403.8): when the whole graph is not
  * readable (`RECORD_GRAPH_READABLE_ZOOM`), the selection and its direct
@@ -848,8 +856,37 @@ export interface RecordGraphViewportOptions {
    * 8px gap where that is more, from each edge. Since 2.403.5.
    */
   inset?: FitInset;
+  /**
+   * The overlays' own boxes (2.407.4) — the bottom-left legend and the
+   * bottom-right controls, margins included, as `recordGraphInset` was
+   * given them. With them, a selection-centred fit on a canvas whose clear
+   * height is at least `RECORD_GRAPH_SHORT_FIT_CLEAR_HEIGHT` is shifted,
+   * nearest pan first, so no record sits under either while the selected
+   * boxes stay whole inside the canvas (the org graph's 2.405.1 rule,
+   * `clearOfOverlays`). A record pushed past the canvas edge is fine.
+   */
+  overlays?: { legend?: { width: number; height: number } | null; controls?: { width: number; height: number } | null };
   minZoom?: number;
   maxZoom?: number;
+}
+
+/**
+ * The legend's and the controls' screen rectangles on a `size` canvas —
+ * bottom-left and bottom-right corners. Since 2.407.4.
+ */
+export function recordGraphOverlayRects(
+  size: { width: number; height: number },
+  overlays: RecordGraphViewportOptions['overlays'],
+): ScreenRect[] {
+  const out: ScreenRect[] = [];
+  const { legend, controls } = overlays ?? {};
+  if (legend && legend.width > 0 && legend.height > 0) {
+    out.push({ left: 0, top: size.height - legend.height, right: legend.width, bottom: size.height });
+  }
+  if (controls && controls.width > 0 && controls.height > 0) {
+    out.push({ left: size.width - controls.width, top: size.height - controls.height, right: size.width, bottom: size.height });
+  }
+  return out;
 }
 
 interface Box { x0: number; y0: number; x1: number; y1: number }
@@ -917,8 +954,10 @@ export function recordGraphViewport(
     y: (clear.y0 + clear.y1) / 2 - ((all.y0 + all.y1) / 2) * zoom,
     zoom,
   });
-  // Automatic: everything, when everything is readable (2.403.7).
-  if (options.mode === 'auto' && rawZoom(all) >= readableZoom) return centreAll(Math.min(rawZoom(all), maxZoom));
+  // Automatic: everything, when everything is readable (2.403.7) — within
+  // `RECORD_GRAPH_READABLE_TOLERANCE` of it (2.407.4).
+  const readable = readableZoom - RECORD_GRAPH_READABLE_TOLERANCE;
+  if (options.mode === 'auto' && rawZoom(all) >= readable - 1e-9) return centreAll(Math.min(rawZoom(all), maxZoom));
   // Automatic with no focus drawn: nothing to centre on, so the whole-graph
   // fit, down to `fitAllMinZoom` (2.406.3 — the OrgGraph no-focus Radial rule
   // of 2.405.1). With a focus the ladder below is unchanged.
@@ -991,8 +1030,8 @@ export function recordGraphViewport(
     // short-canvas rings on the 1160 × 374 canvas) framed below it IS a
     // fit-all below the readable zoom (0.65, names 8.4px), so rung (b) is
     // skipped for it and the selection-centred rung (c) frames instead.
-    const nearIsAll = options.mode === 'auto' && nearZoom < readableZoom && rawZoom(all) >= nearZoom - 1e-9;
-    if (nearZoom >= nearFloor && !nearIsAll) return place(Math.min(nearZoom, maxZoom), [near]);
+    const nearIsAll = options.mode === 'auto' && nearZoom < readable && rawZoom(all) >= nearZoom - 1e-9;
+    if (nearZoom >= nearFloor && !nearIsAll) return clearFocusView(place(Math.min(nearZoom, maxZoom), [near]));
     // Rung (c) (2.403.8): zoom out below the floor, as far as `focusMinZoom`,
     // until the focus's full boxes fit the clear area — clear of the legend
     // and controls since 2.403.9 (was the canvas less 16px, which let a
@@ -1000,7 +1039,34 @@ export function recordGraphViewport(
     // the whole graph if it fits on an axis, else the neighbourhood, else the
     // focus itself, else the focus's circles.
     const selectionZoom = Math.min(availW / (whole.x1 - whole.x0), availH / (whole.y1 - whole.y0));
-    return place(Math.min(minZoom, Math.max(focusMinZoom, selectionZoom)), [all, near, focus]);
+    return clearFocusView(place(Math.min(minZoom, Math.max(focusMinZoom, selectionZoom)), [all, near, focus]));
   }
-  return place(clamp(rawZoom(all), minZoom, maxZoom), focus ? [all, focus] : [all]);
+  const fitted = place(clamp(rawZoom(all), minZoom, maxZoom), focus ? [all, focus] : [all]);
+  return focus ? clearFocusView(fitted) : fitted;
+
+  /**
+   * 2.407.4: a selection-centred view on a canvas with room to spare (clear
+   * height ≥ `RECORD_GRAPH_SHORT_FIT_CLEAR_HEIGHT`) is shifted so no record
+   * sits under the legend or the controls — nearest pans first, up to the
+   * overlay's size plus one node, along each axis where the drawing runs
+   * past the clear area — while the selected boxes stay whole in the canvas.
+   * A short canvas keeps the 2.403.8 rule (overlaps there are allowed).
+   */
+  function clearFocusView(view: RecordGraphViewport): RecordGraphViewport {
+    if (!whole || size.height - 2 * padding < RECORD_GRAPH_SHORT_FIT_CLEAR_HEIGHT) return view;
+    const rects = recordGraphOverlayRects(size, options.overlays);
+    if (!rects.length) return view;
+    const boxes: FitBounds[] = [];
+    for (const p of positions.values()) {
+      boxes.push({ minX: p.x, minY: p.y, maxX: p.x + RECORD_GRAPH_NODE_WIDTH, maxY: p.y + RECORD_GRAPH_NODE_HEIGHT });
+    }
+    const keep: FitBounds[] = [{ minX: whole.x0, minY: whole.y0, maxX: whole.x1, maxY: whole.y1 }];
+    const z = view.zoom;
+    const axes = {
+      x: all!.x0 * z + view.x < clear.x0 - 0.5 || all!.x1 * z + view.x > clear.x1 + 0.5,
+      y: all!.y0 * z + view.y < clear.y0 - 0.5 || all!.y1 * z + view.y > clear.y1 + 0.5,
+    };
+    const t = clearOfOverlays({ x: view.x, y: view.y, scale: z }, boxes, rects, size, { axes, keep });
+    return { x: t.x, y: t.y, zoom: z };
+  }
 }

@@ -3,7 +3,8 @@
 import { expect, test } from 'vitest';
 import {
   filterRecordGraph, recordGraphKey, layoutRecordGraph, recordForceParams, recordGraphFitKeys,
-  recordGraphInset, recordGraphLegendSize, recordGraphViewport, recordRadialRings,
+  recordGraphInset, recordGraphLegendSize, recordGraphViewport, recordRadialRings, recordGraphOverlayRects,
+  RECORD_GRAPH_READABLE_TOLERANCE,
   RECORD_GRAPH_CONTROLS_SIZE, RECORD_GRAPH_MIN_FIT_ZOOM, RECORD_GRAPH_READABLE_ZOOM,
   RECORD_GRAPH_NEIGHBOURHOOD_ZOOM, RECORD_GRAPH_FOCUS_MIN_ZOOM, RECORD_GRAPH_FIT_ALL_MIN_ZOOM, RECORD_GRAPH_FIT_ALL_SHORT_MIN_ZOOM, RECORD_GRAPH_NODE_HEIGHT as NODE_H, RECORD_GRAPH_NODE_WIDTH as NODE_W,
   type RecordGraphEdge, type RecordGraphRecord, type RecordGraphType,
@@ -683,4 +684,65 @@ test('no focus, Radial, 1098×270: the automatic fit still shows everything, bel
   const vp = recordGraphViewport(positions, size, { mode: 'auto', inset })!;
   expect(vp.zoom).toBeLessThan(RECORD_GRAPH_READABLE_ZOOM);
   for (const key of positions.keys()) expectWhole(screenSpan(positions, [key], vp), size, 16, key);
+});
+
+// 2.407.4 — the org-leader walk: Hierarchy, 3 selected, full 1160 × 583 canvas.
+const FULL = { width: 1160, height: 583 };
+const FULL_OVERLAYS = {
+  legend: recordGraphLegendSize(['People', 'Initiatives', 'Work'], FULL.width),
+  controls: RECORD_GRAPH_CONTROLS_SIZE,
+};
+const FULL_INSET = recordGraphInset(FULL, FULL_OVERLAYS);
+/** A row of `n` records whose whole-graph fit on FULL is `zoom`. */
+function rowAtZoom(n: number, zoom: number): Map<string, { x: number; y: number }> {
+  const availW = FULL.width - 2 * 24;
+  const span = availW / zoom - NODE_W;
+  return new Map(Array.from({ length: n }, (_, i) => [`r${i}`, { x: (span * i) / (n - 1), y: (i % 3) * 120 }]));
+}
+const under = (positions: Map<string, { x: number; y: number }>, vp: { x: number; y: number; zoom: number }, rects: ReturnType<typeof recordGraphOverlayRects>) =>
+  [...positions].filter(([, p]) => {
+    const l = p.x * vp.zoom + vp.x, r = (p.x + NODE_W) * vp.zoom + vp.x, t = p.y * vp.zoom + vp.y, b = (p.y + NODE_H) * vp.zoom + vp.y;
+    const onCanvas = l < FULL.width && r > 0 && t < FULL.height && b > 0;
+    return onCanvas && rects.some(o => l < o.right && r > o.left && t < o.bottom && b > o.top);
+  }).map(([k]) => k);
+
+test('auto takes the whole graph within RECORD_GRAPH_READABLE_TOLERANCE of the readable zoom (0.694 opens fit-all)', () => {
+  expect(RECORD_GRAPH_READABLE_TOLERANCE).toBe(0.02);
+  const positions = rowAtZoom(12, 0.694);
+  const focusKeys = ['r5', 'r6', 'r7'];
+  const vp = recordGraphViewport(positions, FULL, { mode: 'auto', inset: FULL_INSET, overlays: FULL_OVERLAYS, focusKeys, fitKeys: focusKeys })!;
+  expect(vp.zoom).toBeCloseTo(0.694, 3);
+  // Everything is drawn, and nothing under the legend or the controls.
+  for (const key of positions.keys()) expectWhole(screenSpan(positions, [key], vp), FULL, 16, key);
+  expect(under(positions, vp, recordGraphOverlayRects(FULL, FULL_OVERLAYS))).toEqual([]);
+  // Below the tolerance (0.67) the selection-centred ladder still frames.
+  const tighter = rowAtZoom(12, 0.67);
+  const vp2 = recordGraphViewport(tighter, FULL, { mode: 'auto', inset: FULL_INSET, overlays: FULL_OVERLAYS, focusKeys, fitKeys: focusKeys })!;
+  expect(vp2.zoom).toBeGreaterThan(RECORD_GRAPH_READABLE_ZOOM);
+});
+
+test('a selection-centred fit on a full canvas is shifted so no record sits under the controls, the selection whole', () => {
+  // The selection 'a' centred at 100%; 'b' lands on the bottom-right corner,
+  // under the Fit / Full-screen controls; the far records make the graph
+  // too wide for a whole-graph fit.
+  const positions = new Map([
+    ['a', { x: 0, y: 0 }], ['b', { x: 450, y: 280 }],
+    ['far-left', { x: -2000, y: 0 }], ['far-right', { x: 2000, y: 0 }],
+  ]);
+  const rects = recordGraphOverlayRects(FULL, FULL_OVERLAYS);
+  const opts = { mode: 'auto' as const, inset: FULL_INSET, focusKeys: ['a'], fitKeys: ['a'] };
+  // Without the overlays (the 2.407.3 behaviour) 'b' is under the controls.
+  const before = recordGraphViewport(positions, FULL, opts)!;
+  expect(under(positions, before, rects)).toEqual(['b']);
+  const vp = recordGraphViewport(positions, FULL, { ...opts, overlays: FULL_OVERLAYS })!;
+  expect(vp.zoom).toBe(before.zoom);
+  expect(under(positions, vp, rects)).toEqual([]);
+  // The nearest shift: within the controls' size plus one node.
+  expect(Math.hypot(vp.x - before.x, vp.y - before.y)).toBeLessThanOrEqual(RECORD_GRAPH_CONTROLS_SIZE.width + NODE_W);
+  // The selection stays whole inside the canvas.
+  expectWhole(screenSpan(positions, ['a'], vp), FULL, 0, 'a');
+  // A short canvas (clear height under 300) keeps the 2.403.8 rule: no shift.
+  const SHORT = { width: 1160, height: 320 };
+  const shortOpts = { ...opts, inset: recordGraphInset(SHORT, FULL_OVERLAYS) };
+  expect(recordGraphViewport(positions, SHORT, { ...shortOpts, overlays: FULL_OVERLAYS })).toEqual(recordGraphViewport(positions, SHORT, shortOpts));
 });

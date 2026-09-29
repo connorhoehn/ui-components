@@ -427,12 +427,14 @@ function CanvasChrome({
     if (!rect) return null;
     const { positions: pos, focusKeys: core, fitKeys: near, legendLabels: labels } = state.current;
     const size = { width: rect.width, height: rect.height };
-    const inset = recordGraphInset(size, {
+    const overlays = {
       legend: labels.length ? recordGraphLegendSize(labels, size.width) : null,
       controls: RECORD_GRAPH_CONTROLS_SIZE,
-    });
+    };
+    const inset = recordGraphInset(size, overlays);
     return recordGraphViewport(pos, size, {
-      mode: core.length || mode === 'auto' ? mode : 'all', focusKeys: core, fitKeys: near, inset,
+      // `overlays` (2.407.4): a selection-centred view is shifted clear of them.
+      mode: core.length || mode === 'auto' ? mode : 'all', focusKeys: core, fitKeys: near, inset, overlays,
       minZoom: whole && mode === 'all' ? RECORD_GRAPH_FIT_ALL_MIN_ZOOM : FIT.minZoom, maxZoom: FIT.maxZoom,
     });
   }, [canvasRef]);

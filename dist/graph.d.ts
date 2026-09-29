@@ -1030,6 +1030,25 @@ export declare interface RecordGraphViewportOptions {
      * 8px gap where that is more, from each edge. Since 2.403.5.
      */
     inset?: FitInset;
+    /**
+     * The overlays' own boxes (2.407.4) — the bottom-left legend and the
+     * bottom-right controls, margins included, as `recordGraphInset` was
+     * given them. With them, a selection-centred fit on a canvas whose clear
+     * height is at least `RECORD_GRAPH_SHORT_FIT_CLEAR_HEIGHT` is shifted,
+     * nearest pan first, so no record sits under either while the selected
+     * boxes stay whole inside the canvas (the org graph's 2.405.1 rule,
+     * `clearOfOverlays`). A record pushed past the canvas edge is fine.
+     */
+    overlays?: {
+        legend?: {
+            width: number;
+            height: number;
+        } | null;
+        controls?: {
+            width: number;
+            height: number;
+        } | null;
+    };
     minZoom?: number;
     maxZoom?: number;
 }
@@ -2088,27 +2107,6 @@ declare module '@tiptap/core' {
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
         hitlMacro: {
@@ -2147,9 +2145,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -2157,9 +2155,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -2171,5 +2182,13 @@ declare module '@tiptap/core' {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
+    }
+}
+
+
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
     }
 }

@@ -26,6 +26,7 @@ import { PresenceAvatars, type PresenceUser } from '../shared/PresenceAvatars';
 import { Tabs, type TabItem } from '../shared/Tabs';
 import { DropdownMenu, type DropdownMenuSection } from '../shared/DropdownMenu';
 import { InlinePopover } from '../shared/InlinePopover';
+import { Stack } from '../ui/Stack';
 import { ExternalLinkIcon, LinkIcon } from '../ui/Icons';
 import { TONE_SOLID_BG } from '../shared/tones';
 
@@ -110,9 +111,11 @@ export interface ScopeHeaderProps {
    * Squeeze order (2.407.2) — when the row is over-full it gives up space in
    * this order: (a) the `controls` cluster first: it is `min-w-0
    * overflow-hidden` and shrinks ahead of the trail (`shrink-[100]` against
-   * the trail's 1), its items allowed to shrink (a truncating chip
-   * ellipsises); once its content no longer fits — or the trail would drop
-   * under its minimum, or the row is under `controlsCollapseAt` — the
+   * the trail's 1); its items never shrink or wrap (2.407.4 — a chip keeps
+   * one line); once its content overflows — or the right cluster does, a
+   * crumb is cut below its natural width, the row's content at its wanted
+   * width exceeds the row (`inlineRowDeficit`), the trail would drop under
+   * its minimum, or the row is under `controlsCollapseAt` — the
    * controls leave the row: into the ⋯ menu as a "Filters" section when
    * `controlsMenu` is given, else into a popover behind one "Filters ▾"
    * button. (b) Then the crumbs: each truncates inside its cap and the
@@ -258,8 +261,14 @@ function RightGroup({
   /**
    * `fixed`: the controls keep their width (default, crumbs variants).
    * `shrink`: the inline row's first give (2.407.2) — the cluster may shrink
-   * to nothing, clipping, its items allowed to shrink. `collapsed`: the
-   * controls left the row — into the menu (`controlsMenu`) or a popover.
+   * to nothing, clipping. Since 2.407.4 its items do NOT shrink or wrap
+   * (`flex-nowrap`, `whitespace-nowrap`, items and a wrapper's items
+   * `shrink-0`): a chip, a menu trigger or a link keeps one line at its
+   * natural width, so an over-full cluster overflows (`scrollWidth >
+   * clientWidth`) and the row collapses it — before 2.407.4 the chips
+   * shrank by wrapping to two lines, nothing overflowed and the collapse
+   * never fired. `collapsed`: the controls left the row — into the menu
+   * (`controlsMenu`) or a popover.
    */
   controlsMode?: 'fixed' | 'shrink' | 'collapsed';
 }) {
@@ -278,7 +287,9 @@ function RightGroup({
         <div
           className={cn(
             'flex items-center gap-2',
-            controlsMode === 'shrink' ? 'min-w-0 shrink overflow-hidden [&>*]:min-w-0 [&>*]:shrink' : 'shrink-0',
+            controlsMode === 'shrink'
+              ? 'min-w-0 shrink flex-nowrap overflow-hidden whitespace-nowrap [&_*]:whitespace-nowrap [&>*]:shrink-0 [&>*]:flex-nowrap [&>*>*]:shrink-0'
+              : 'shrink-0',
           )}
           data-scope-controls=""
           data-testid={`${testId}-controls`}
@@ -321,7 +332,7 @@ function RightGroup({
           triggerTestId={`${testId}-menu`}
           align="end"
           sections={sections}
-          triggerClassName="h-8 w-8 border-transparent px-0 py-0 text-text-secondary hover:border-border"
+          triggerClassName="h-8 w-8 shrink-0 border-transparent px-0 py-0 text-text-secondary hover:border-border"
         />
       )}
     </>
@@ -331,6 +342,11 @@ function RightGroup({
 /**
  * The collapsed controls (2.407.2): one "Filters ▾" button, the host's
  * controls — unchanged, the same callbacks — in a popover under it.
+ *
+ * Since 2.407.4 the popover is a vertical `Stack` of full-width rows, at
+ * least 16rem wide, nothing in it wrapping: a chip keeps one line. A host
+ * that wraps its controls in one layout `<div>` (an `Inline` of chips) has
+ * that wrapper flattened (`display: contents`) so each control is a row.
  */
 function ControlsPopover({ label, testId, children }: { label: string; testId: string; children: ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -358,10 +374,22 @@ function ControlsPopover({ label, testId, children }: { label: string; testId: s
         onClose={() => setOpen(false)}
         placement="bottom-end"
         aria-label={label}
-        className="flex items-center gap-2 p-2"
+        className="p-2"
         data-testid={`${testId}-controls-popover`}
       >
-        {children}
+        <Stack
+          gap="sm"
+          align="stretch"
+          data-testid={`${testId}-controls-stack`}
+          className={cn(
+            'min-w-[16rem] whitespace-nowrap [&_*]:whitespace-nowrap',
+            // One wrapper div (the host's Inline) → its children are the rows.
+            '[&>div:only-child:has(>*+*)]:contents',
+            '[&>*]:shrink-0 [&>*]:justify-start [&>div:only-child>*]:shrink-0 [&>div:only-child>*]:justify-start',
+          )}
+        >
+          {children}
+        </Stack>
       </InlinePopover>
     </>
   );
@@ -390,6 +418,49 @@ export function inlineTrailMinimum(trail: HTMLElement): number {
   const first = crumbEls[0] ? natural(crumbEls[0]) : 0;
   const last = crumbEls.length > 1 ? Math.min(natural(crumbEls[crumbEls.length - 1]!), LAST_CRUMB_MIN_PX) : 0;
   return titleMin + first + last + (crumbEls.length > 0 ? TRAIL_JOINERS_PX : 0);
+}
+
+/** A crumb's natural width (inside its cap) less what it is given, sub-pixel. */
+function crumbShortfall(el: HTMLElement): number {
+  const cap = parseFloat(getComputedStyle(el).maxWidth);
+  const natural = Math.min(el.scrollWidth, Number.isFinite(cap) ? cap : Infinity);
+  const rect = el.getBoundingClientRect().width;
+  const given = rect > 0 ? rect : el.clientWidth;
+  return Math.max(0, natural - given);
+}
+
+/**
+ * How far the inline row's content, at its wanted width, is over the row
+ * (≤ 0: it fits). Wanted: the trail with every crumb whole inside its cap
+ * and the title at least 12rem, the tabs, and the right cluster's items at
+ * their natural widths (the controls box by its `scrollWidth`), plus the
+ * gaps. Exported for tests (2.407.4).
+ */
+export function inlineRowDeficit(row: HTMLElement, trail: HTMLElement | null): number {
+  const style = getComputedStyle(row);
+  const px = (v: string) => parseFloat(v) || 0;
+  const inner = row.clientWidth - px(style.paddingLeft) - px(style.paddingRight);
+  const gap = px(style.columnGap);
+  const natural = (el: HTMLElement) => Math.max(el.scrollWidth, el.offsetWidth || 0);
+  let need = 0;
+  const kids = Array.from(row.children) as HTMLElement[];
+  for (const kid of kids) {
+    if (kid === trail) {
+      let trailNeed = trail.clientWidth;
+      trail.querySelectorAll<HTMLElement>('[data-crumb]').forEach((el) => { trailNeed += crumbShortfall(el); });
+      const title = trail.querySelector<HTMLElement>('h1');
+      if (title) trailNeed += Math.max(0, Math.min(Math.max(title.scrollWidth, TITLE_MIN_PX), TITLE_MIN_PX) - title.clientWidth);
+      need += trailNeed;
+    } else if (kid.hasAttribute('data-testid') && kid.getAttribute('data-testid')!.endsWith('-right')) {
+      const items = Array.from(kid.children) as HTMLElement[];
+      const rightGap = px(getComputedStyle(kid).columnGap);
+      need += items.reduce((sum, el) => sum + natural(el), 0) + rightGap * Math.max(0, items.length - 1);
+    } else {
+      need += natural(kid);
+    }
+  }
+  need += gap * Math.max(0, kids.length - 1);
+  return need - inner;
 }
 
 function ScopeCrumbs({
@@ -455,8 +526,9 @@ const CRUMB_CLASS =
 
 function InlineCrumb({ item, last, testId }: { item: BreadcrumbItem; last: boolean; testId: string }) {
   // The last crumb is the scope the title sits in ("Design System API"), so
-  // it gets more room than the levels above it.
-  const cls = cn(CRUMB_CLASS, last ? 'max-w-[14rem]' : 'max-w-[10rem]');
+  // it gets more room than the levels above it — 15rem since 2.407.4 (was
+  // 14rem), so a label near the old cap keeps room for its whole text.
+  const cls = cn(CRUMB_CLASS, last ? 'max-w-[15rem]' : 'max-w-[10rem]');
   const common = { title: item.label, 'data-crumb': '', 'data-testid': `${testId}-crumb` } as const;
   if (item.href) {
     return (
@@ -632,11 +704,22 @@ function ScopeHeaderInline({
     }
     const box = row.querySelector<HTMLElement>('[data-scope-controls]');
     const trail = row.querySelector<HTMLElement>(`[data-testid="${testId}-trail"]`);
+    const right = row.querySelector<HTMLElement>(`[data-testid="${testId}-right"]`);
     const overflow = box ? box.scrollWidth - box.clientWidth : 0;
+    // 2.407.4: the whole right cluster too — a ⋯ or a link pushed past it.
+    const rightOverflow = right ? right.scrollWidth - right.clientWidth : 0;
     const short = trail ? inlineTrailMinimum(trail) - trail.clientWidth : 0;
-    if (overflow > 1 || short > 1) {
-      // Ratchet: never expand back at a width that just collapsed.
-      expandAt.current = Math.max(width + 1, width + Math.max(0, overflow) + Math.max(0, short));
+    // 2.407.4: the row's content at its wanted width against the row. The
+    // controls give before the crumbs, so a crumb cut below its natural
+    // width (inside its cap) counts, to the sub-pixel.
+    const rowDeficit = inlineRowDeficit(row, trail);
+    let crumbShort = 0;
+    trail?.querySelectorAll<HTMLElement>('[data-crumb]').forEach((el) => { crumbShort += crumbShortfall(el); });
+    if (overflow > 1 || rightOverflow > 1 || short > 1 || rowDeficit > 0.5 || crumbShort > 0.5) {
+      // Ratchet: never expand back at a width that just collapsed, and
+      // come back only with a couple of pixels to spare.
+      const need = Math.max(overflow, rightOverflow, rowDeficit, crumbShort, 0) + Math.max(0, short);
+      expandAt.current = Math.max(width + 1, Math.ceil(width + need + 2));
       setControlsCollapsed(true);
     }
   }, [hasControls, controlsCollapseAt, controlsCollapsed, testId]);
@@ -681,8 +764,13 @@ function ScopeHeaderInline({
       )}
       {hasRight && (
         // min-w-0 + shrink-[100] (2.407.2): this cluster gives up width before
-        // the trail (shrink 1); only the controls inside it shrink.
-        <div className="flex min-w-0 shrink-[100] items-center gap-3" data-testid={`${testId}-right`}>
+        // the trail (shrink 1); only the controls inside it shrink. Collapsed
+        // (2.407.4) it is shrink-0: Filters ▾ and ⋯ are all that is left, and
+        // they stay inside the row's padding.
+        <div
+          className={cn('flex flex-nowrap items-center gap-3', controlsCollapsed ? 'shrink-0' : 'min-w-0 shrink-[100]')}
+          data-testid={`${testId}-right`}
+        >
           <RightGroup
             controls={controls}
             controlsMenu={controlsMenu}

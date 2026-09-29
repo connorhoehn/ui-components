@@ -1,7 +1,10 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import type { ComponentProps } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { ScopeHeader, formatSpend, inlineTrailMinimum } from '../ScopeHeader';
+import { ScopeHeader, formatSpend, inlineRowDeficit, inlineTrailMinimum } from '../ScopeHeader';
+import { FilterChip } from '../../shared/FilterChip';
+import { DropdownMenu } from '../../shared/DropdownMenu';
+import { Inline } from '../../ui/Stack';
 import { formatCompactAge } from '../compactAge';
 
 afterEach(cleanup);
@@ -301,7 +304,7 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
         crumbs.forEach((c, i) => {
           expect(c.className).toMatch(/\btruncate\b/);
           expect(c.className).toMatch(/\bwhitespace-nowrap\b/);
-          expect(c.className).toMatch(i === crumbs.length - 1 ? /max-w-\[14rem\]/ : /max-w-\[10rem\]/);
+          expect(c.className).toMatch(i === crumbs.length - 1 ? /max-w-\[15rem\]/ : /max-w-\[10rem\]/);
           expect(c).toHaveAttribute('title', LONG[i]!.label);
         });
         // Nothing in the trail may wrap.
@@ -318,7 +321,13 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
         const controls = screen.getByTestId('scope-header-controls');
         expect(controls.className).toMatch(/\bmin-w-0\b/);
         expect(controls.className).toMatch(/\boverflow-hidden\b/);
-        expect(controls.className).toMatch(/\[&>\*\]:min-w-0/);
+        // 2.407.4: nothing in the cluster shrinks or wraps — it overflows instead.
+        expect(controls.className).toMatch(/\bflex-nowrap\b/);
+        expect(controls.className).toMatch(/\bwhitespace-nowrap\b/);
+        expect(controls.className).toMatch(/\[&_\*\]:whitespace-nowrap/);
+        expect(controls.className).toMatch(/\[&>\*\]:shrink-0/);
+        expect(controls.className).toMatch(/\[&>\*>\*\]:shrink-0/);
+        expect(controls.className).not.toMatch(/\[&>\*\]:shrink\b(?!-)/);
         unmount();
       });
 
@@ -450,6 +459,158 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
           } finally {
             restore();
           }
+        });
+
+        describe('the chips wrapped instead of overflowing (2.407.4)', () => {
+          // The portal's scoped fixture: one Inline of a FilterChip and two
+          // DropdownMenu triggers, and a ⋯ with Save search.
+          function renderPortal() {
+            const onClear = vi.fn();
+            render(
+              <ScopeHeader
+                variant="inline"
+                breadcrumbs={LONG}
+                title="component contracts"
+                tabs={TABS}
+                activeTab="results"
+                controls={
+                  <Inline gap="xs" align="center" wrap={false} data-testid="search-chips">
+                    <FilterChip active size="sm" aria-label="In: Design System API. Search entire workspace" onClick={onClear}>In: Design System API ×</FilterChip>
+                    <DropdownMenu align="end" triggerLabel="Add a filter" trigger={<span>+ Filter</span>} sections={[{ items: [{ label: 'Any type', onSelect: () => {} }] }]} />
+                    <DropdownMenu align="end" triggerLabel="Sort results" triggerTestId="search-sort" trigger={<span>Relevance ▾</span>} sections={[{ items: [{ label: 'Recent', onSelect: () => {} }] }]} />
+                  </Inline>
+                }
+                menuLabel="Search actions"
+                menu={[{ items: [{ label: 'Save search', onSelect: () => {} }] }]}
+              />,
+            );
+            return onClear;
+          }
+          /**
+           * What Chromium measured on the portal's scoped search (the journey
+           * log): row = viewport − 464px of rail, tabs 280, ⋯ 32. `wrapped`:
+           * the controls box reports no overflow (its chips wrapped inside it),
+           * the only signal is the crumbs cut by a sub-pixel.
+           */
+          function mockPortal(w: { row: number; trail: number; box: number; boxContent: number; crumbGiven: Record<string, number>; afterTrail: number }) {
+            const collapsed = () => document.querySelector('[data-testid="scope-header"]')?.getAttribute('data-controls') === 'collapsed';
+            const sw = vi.spyOn(HTMLElement.prototype, 'scrollWidth', 'get').mockImplementation(function (this: HTMLElement) {
+              if (this.hasAttribute('data-crumb')) return NATURAL[this.textContent ?? ''] ?? 0;
+              if (this.tagName === 'H1') return 180;
+              if (this.hasAttribute('data-scope-controls')) return w.boxContent;
+              return 0;
+            });
+            const cw = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
+              if (this.hasAttribute('data-crumb')) return collapsed() ? NATURAL[this.textContent ?? ''] ?? 0 : Math.round(w.crumbGiven[this.textContent ?? ''] ?? NATURAL[this.textContent ?? ''] ?? 0);
+              if (this.tagName === 'H1') return 192;
+              if (this.hasAttribute('data-scope-controls')) return w.box;
+              const id = this.getAttribute('data-testid');
+              if (id === 'scope-header') return w.row;
+              if (id === 'scope-header-trail') return collapsed() ? w.afterTrail : w.trail;
+              return 0;
+            });
+            const ow = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (this: HTMLElement) {
+              const id = this.getAttribute('data-testid');
+              if (id === 'scope-header-tabs') return 280;
+              if (this.getAttribute('aria-label') === 'Search actions') return 32;
+              return 0;
+            });
+            const rect = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
+              const width = this.hasAttribute('data-crumb') && !collapsed() ? w.crumbGiven[this.textContent ?? ''] ?? NATURAL[this.textContent ?? ''] ?? 0 : 0;
+              return { width, height: 0, x: 0, y: 0, top: 0, left: 0, right: width, bottom: 0, toJSON: () => ({}) } as DOMRect;
+            });
+            return () => { sw.mockRestore(); cw.mockRestore(); ow.mockRestore(); rect.mockRestore(); };
+          }
+          const expectReadable = () => {
+            const row = screen.getByTestId('scope-header');
+            expect(row).toHaveAttribute('data-controls', 'collapsed');
+            expect(screen.queryByTestId('scope-header-controls')).toBeNull();
+            expect(screen.getByTestId('scope-header-controls-toggle')).toHaveTextContent('Filters');
+            // Crumbs: first and last whole (every crumb given its natural width).
+            const crumbs = screen.getAllByTestId('scope-header-crumb');
+            expect(crumbs[0]).toHaveTextContent('Org');
+            expect(crumbs[crumbs.length - 1]).toHaveTextContent('Design System API');
+            crumbs.forEach((c) => expect(c.clientWidth).toBeGreaterThanOrEqual(NATURAL[c.textContent ?? '']!));
+            // The title keeps 12rem.
+            const title = screen.getByRole('heading', { level: 1, name: 'component contracts' });
+            expect(title.className).toMatch(/min-w-\[12rem\]/);
+            expect(title.clientWidth).toBeGreaterThanOrEqual(192);
+            // Collapsed, the right cluster no longer shrinks: ⋯ stays inside the padding.
+            expect(screen.getByTestId('scope-header-right').className).toMatch(/\bshrink-0\b/);
+            expect(screen.getByTestId('scope-header-right').className).not.toMatch(/shrink-\[100\]/);
+            expect(screen.getByTestId('scope-header-right')).toContainElement(screen.getByTestId('scope-header-menu'));
+          };
+
+          it('1536px: chips wrapped (no overflow in their box), crumbs cut by a sub-pixel → the controls collapse', () => {
+            // Row 1072 (1536 − 464); trail 424 (crumbs 488…, title 720–912);
+            // the box 251 reports 251 (wrapped); Search 44.6 of 45, Design System API 121.4 of 122.
+            const restore = mockPortal({ row: 1072, trail: 424, box: 251, boxContent: 251, crumbGiven: { Org: 24, Search: 44.6, 'Design System API': 121.4 }, afterTrail: 640 });
+            try {
+              renderPortal();
+              expectReadable();
+            } finally {
+              restore();
+            }
+          });
+
+          it('1600px: the nowrap chips overflow their box (321 in 280) → the controls collapse', () => {
+            const restore = mockPortal({ row: 1136, trail: 440, box: 280, boxContent: 321, crumbGiven: {}, afterTrail: 700 });
+            try {
+              renderPortal();
+              expectReadable();
+            } finally {
+              restore();
+            }
+          });
+
+          it('the row content at its wanted width is measured against the row (inlineRowDeficit)', () => {
+            // Nothing overflows its own box and no crumb is cut, but trail +
+            // tabs + the chips' natural width + ⋯ exceed the row.
+            const restore = mockPortal({ row: 900, trail: 420, box: 200, boxContent: 200, crumbGiven: {}, afterTrail: 560 });
+            const ow = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (this: HTMLElement) {
+              if (this.getAttribute('data-testid') === 'scope-header-tabs') return 280;
+              if (this.getAttribute('data-testid') === 'scope-header-controls') return 230;
+              if (this.getAttribute('aria-label') === 'Search actions') return 32;
+              return 0;
+            });
+            try {
+              renderPortal();
+              expect(screen.getByTestId('scope-header')).toHaveAttribute('data-controls', 'collapsed');
+              const row = screen.getByTestId('scope-header');
+              // Collapsed: 560 + 280 + the toggle and ⋯ fit the 900 row.
+              expect(inlineRowDeficit(row, screen.getByTestId('scope-header-trail'))).toBeLessThanOrEqual(0);
+            } finally {
+              ow.mockRestore();
+              restore();
+            }
+          });
+
+          it('1280px: the Filters popover is a vertical Stack of one-line, full-width rows at least 16rem wide', () => {
+            const restore = mockPortal({ row: 816, trail: 300, box: 120, boxContent: 321, crumbGiven: { Search: 10, 'Design System API': 60 }, afterTrail: 390 });
+            try {
+              const onClear = renderPortal();
+              fireEvent.click(screen.getByTestId('scope-header-controls-toggle'));
+              const stack = screen.getByTestId('scope-header-controls-stack');
+              expect(screen.getByTestId('scope-header-controls-popover')).toContainElement(stack);
+              expect(stack.className).toMatch(/\bflex-col\b/);
+              expect(stack.className).toMatch(/\bitems-stretch\b/);
+              expect(stack.className).toMatch(/min-w-\[16rem\]/);
+              expect(stack.className).toMatch(/\bwhitespace-nowrap\b/);
+              expect(stack.className).toMatch(/\[&_\*\]:whitespace-nowrap/);
+              // The host's one Inline wrapper is flattened so each control is a row.
+              expect(stack.className).toMatch(/\[&>div:only-child:has\(>\*\+\*\)\]:contents/);
+              expect(stack).toContainElement(screen.getByTestId('search-chips'));
+              ['In: Design System API. Search entire workspace', 'Add a filter', 'Sort results'].forEach((name) =>
+                expect(stack).toContainElement(screen.getByRole('button', { name })));
+              fireEvent.click(screen.getByRole('button', { name: 'In: Design System API. Search entire workspace' }));
+              expect(onClear).toHaveBeenCalledTimes(1);
+              // The last crumb's cap leaves room for "Design System API" and its ellipsis.
+              const crumbs = screen.getAllByTestId('scope-header-crumb');
+              expect(crumbs[crumbs.length - 1]!.className).toMatch(/max-w-\[15rem\]/);
+            } finally {
+              restore();
+            }
+          });
         });
 
         it('with controlsMenu, collapsed controls become a "Filters" section of the ⋯ menu with the same onSelect', () => {

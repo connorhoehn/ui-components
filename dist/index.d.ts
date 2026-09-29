@@ -16137,6 +16137,25 @@ export declare interface RecordGraphViewportOptions {
      * 8px gap where that is more, from each edge. Since 2.403.5.
      */
     inset?: FitInset;
+    /**
+     * The overlays' own boxes (2.407.4) — the bottom-left legend and the
+     * bottom-right controls, margins included, as `recordGraphInset` was
+     * given them. With them, a selection-centred fit on a canvas whose clear
+     * height is at least `RECORD_GRAPH_SHORT_FIT_CLEAR_HEIGHT` is shifted,
+     * nearest pan first, so no record sits under either while the selected
+     * boxes stay whole inside the canvas (the org graph's 2.405.1 rule,
+     * `clearOfOverlays`). A record pushed past the canvas edge is fine.
+     */
+    overlays?: {
+        legend?: {
+            width: number;
+            height: number;
+        } | null;
+        controls?: {
+            width: number;
+            height: number;
+        } | null;
+    };
     minZoom?: number;
     maxZoom?: number;
 }
@@ -17605,9 +17624,11 @@ export declare interface ScopeHeaderProps {
      * Squeeze order (2.407.2) — when the row is over-full it gives up space in
      * this order: (a) the `controls` cluster first: it is `min-w-0
      * overflow-hidden` and shrinks ahead of the trail (`shrink-[100]` against
-     * the trail's 1), its items allowed to shrink (a truncating chip
-     * ellipsises); once its content no longer fits — or the trail would drop
-     * under its minimum, or the row is under `controlsCollapseAt` — the
+     * the trail's 1); its items never shrink or wrap (2.407.4 — a chip keeps
+     * one line); once its content overflows — or the right cluster does, a
+     * crumb is cut below its natural width, the row's content at its wanted
+     * width exceeds the row (`inlineRowDeficit`), the trail would drop under
+     * its minimum, or the row is under `controlsCollapseAt` — the
      * controls leave the row: into the ⋯ menu as a "Filters" section when
      * `controlsMenu` is given, else into a popover behind one "Filters ▾"
      * button. (b) Then the crumbs: each truncates inside its cap and the
@@ -24502,27 +24523,6 @@ declare module '@tiptap/core' {
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
         hitlMacro: {
@@ -24561,9 +24561,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -24571,9 +24571,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -24585,5 +24598,13 @@ declare module '@tiptap/core' {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
+    }
+}
+
+
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
     }
 }

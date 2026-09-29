@@ -123,6 +123,17 @@ fit rules above where they differ.
   cannot show everything it centres on the selection, whole. `fitAll()` is the
   same fit; `fitToFocus()` is the explicit selection view for a host button.
 
+Since 2.407.4: rung (a) takes the whole graph within
+`RECORD_GRAPH_READABLE_TOLERANCE` (0.02) of the readable zoom, so a fit-all at
+0.68–0.7 (names ≈ 8.8px) wins over the selection-centred frame. And on a canvas
+whose clear height is at least 300px, every selection-centred view is shifted
+— nearest pan first, up to the overlay's size plus one node, along an axis
+where the drawing runs past the clear area — so no record sits under the
+legend or the controls while the selected boxes stay whole inside the canvas
+(`recordGraphViewport`'s `overlays` option; `RecordGraph` passes the legend and
+controls boxes it reserves). A record pushed past the canvas edge is fine. A
+short canvas keeps the 2.403.8 rule.
+
 On the search canvas (1160 wide), 25 records with three people ~430 flow px
 apart (Force laid out for 418px): the whole graph at ~71% at 418px, rung (b)
 at ~0.61 at 369px, and the selection whole at ~0.41 at 209px, where 2.403.7
