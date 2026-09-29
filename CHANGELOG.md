@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.407.11
+
+- `ContextComposer`: four host slots, passed straight to `RichChatComposer` — `submitLead` (a select beside Send, e.g. "Draft only ⌄"), `modeRowEnd` (a scope switch at the card's mode-row end), `referencesAction` (an "add another" control after the chips) and `referenceDrop` (the card as a drop target for a host payload). The first three render only on the expanded card, so the idle row stays the one 42 px line; `referenceDrop` works on the idle row too. They let the realtime-examples All documents, presentation and pipelines composers move onto `ContextComposer` without a `RichChatComposer` of their own.
+
 ## 2.407.10
 
 - `ScopeHeader variant="inline"`: one type scale across the row. The crumbs (links, buttons, plain labels) and the folded "…" drew 14px/400 in tertiary ink beside 14px/500 tabs, while the app's rails use 13px/500; they now use `RAIL_ITEM_TEXT` (13px, 500, 20px line) in `text-text-secondary` (hover → `text-text-primary`), and the "›" separators are 13px `text-text-tertiary`. The title (18px/600 at `titleSize="md"`, 20px/700 at `lg`) and the tabs are unchanged. The button crumb inherits only the font family now (`[font-family:inherit]`; `font-[inherit]` was merged away with the weight).

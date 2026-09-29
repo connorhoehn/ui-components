@@ -235,6 +235,20 @@ export interface ContextComposerProps {
   modelUnavailable?: string | null;
   /** Controls on the strip after the built-in ones. */
   toolbarExtras?: ReactNode;
+  /**
+   * Beside Send, before it — a select that says what Send will do ("Draft
+   * only ⌄"). Hidden on the idle row. Since 2.407.11.
+   */
+  submitLead?: ReactNode;
+  /** At the end of the card's mode row — a scope switch ("This slide · Whole deck"). Hidden on the idle row. Since 2.407.11. */
+  modeRowEnd?: ReactNode;
+  /** After the chips in the card's mode row — an "add another" control (a document picker). Hidden on the idle row. Since 2.407.11. */
+  referencesAction?: ReactNode;
+  /**
+   * Makes the card a drop target for a host payload (not files) — dragged
+   * documents joining the draft's chips. Works on the idle row too. Since 2.407.11.
+   */
+  referenceDrop?: RichChatComposerProps['referenceDrop'];
   processes?: readonly ComposerProcess[];
   onQuickOpen?: () => void;
   /** Where a Terminal line goes. Passing it turns Terminal on where the context offers it. */
@@ -390,6 +404,10 @@ export function ContextComposerBase({
   replacement,
   modelUnavailable,
   toolbarExtras,
+  submitLead,
+  modeRowEnd,
+  referencesAction,
+  referenceDrop,
   processes,
   onQuickOpen,
   onShellCommand,
@@ -708,6 +726,10 @@ export function ContextComposerBase({
                 submitLabel={workflowInDraft ? workflowSubmitLabel : submitLabel}
                 maxInputHeight={maxInputHeight}
                 toolbarExtras={extras}
+                submitLead={submitLead}
+                modeRowEnd={modeRowEnd}
+                referencesAction={referencesAction}
+                referenceDrop={referenceDrop}
                 draft={draft}
                 onDraftChange={handleDraftChange}
                 onSend={send}

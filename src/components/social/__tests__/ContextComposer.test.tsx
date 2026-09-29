@@ -420,3 +420,31 @@ describe('Send is one compact size on every context (2.407.9)', () => {
     expect(sizing(screen.getByTestId('doc-send'))).not.toContain('h-9');
   });
 });
+
+describe('ContextComposer — host slots (2.407.11)', () => {
+  it('submitLead, modeRowEnd and referencesAction show on the card, not on the idle row', async () => {
+    setup({
+      submitLead: <button type="button">Draft only</button>,
+      modeRowEnd: <span>This slide</span>,
+      referencesAction: <button type="button">Add document</button>,
+    });
+    expect(root()).toHaveAttribute('data-collapsed', 'true');
+    expect(screen.queryByTestId('composer-submit-lead')).toBeNull();
+    expect(screen.queryByTestId('composer-mode-row-end')).toBeNull();
+    expect(screen.queryByTestId('composer-references-action')).toBeNull();
+    await focus();
+    expect(screen.getByTestId('composer-submit-lead')).toHaveTextContent('Draft only');
+    expect(screen.getByTestId('composer-mode-row-end')).toHaveTextContent('This slide');
+    expect(screen.getByTestId('composer-references-action')).toHaveTextContent('Add document');
+  });
+
+  it('referenceDrop makes the idle row a drop target for the host payload', () => {
+    const onDrop = vi.fn();
+    setup({ context: { kind: 'search', id: 'docs', title: '' }, referenceDrop: { types: ['application/x-doc'], onDrop, hint: 'Drop to use together' } });
+    expect(root()).toHaveAttribute('data-collapsed', 'true');
+    expect(root()).toHaveAttribute('data-reference-drop', 'ready');
+    const dataTransfer = { types: ['application/x-doc'], getData: () => '', dropEffect: 'none' };
+    fireEvent.drop(root(), { dataTransfer });
+    expect(onDrop).toHaveBeenCalledTimes(1);
+  });
+});

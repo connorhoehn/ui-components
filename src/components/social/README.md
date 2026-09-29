@@ -57,6 +57,9 @@ one composer for a conversation, a document, a work item, a diagram, an
 initiative or a search: one idle row (mode pill, chips, placeholder, Send)
 that expands to the `Agent ⌄` editor card, with each feature gated by its
 `context` — see `composerContextPreset` in `composerContext.ts` for the table.
+A host's own controls go in four slots that stay off the idle row:
+`submitLead` (beside Send), `modeRowEnd` (a scope switch), `referencesAction`
+(after the chips) and `referenceDrop` (the card as a drop target, idle too).
 
 ## Agent composer dock (deprecated)
 
