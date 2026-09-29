@@ -126,6 +126,60 @@ describe('AgentComposerDock', () => {
     expect(screen.queryByTestId('agent-composer-dock-workflow')).toBeNull();
   });
 
+  it('dock: renders its children in a slot above the composer', () => {
+    setup({ dock: <div data-testid="shelf">Call shelf</div> });
+    const slot = screen.getByTestId('agent-composer-dock-dock-slot');
+    expect(within(slot).getByTestId('shelf')).toBeInTheDocument();
+    expect(slot).toHaveClass('shrink-0');
+    const composer = screen.getByTestId('composer-input');
+    expect(slot.compareDocumentPosition(composer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(screen.getByRole('region', { name: 'Agent composer' })).toContainElement(slot);
+  });
+
+  it('no dock, no slot element', () => {
+    setup();
+    expect(screen.queryByTestId('agent-composer-dock-dock-slot')).toBeNull();
+  });
+
+  async function modeRows() {
+    await act(async () => { fireEvent.click(screen.getByTestId('composer-mode-menu')); });
+    const list = screen.getByTestId('composer-mode-menu-list');
+    // The first group is the modes; later groups are hints (`/ for commands`).
+    const modes = within(list).getAllByRole('group')[0]!;
+    return within(modes).getAllByRole('menuitem').map((b) => b.textContent ?? '');
+  }
+
+  it('by default Chat and Terminal are listed, disabled with reasons', async () => {
+    setup();
+    const rows = await modeRows();
+    expect(rows).toHaveLength(3);
+    expect(rows.some((r) => r.includes('Chat'))).toBe(true);
+    expect(rows.some((r) => r.includes('Terminal'))).toBe(true);
+  });
+
+  it("modes={['agent']} hides the Chat and Terminal entries (absent, not disabled)", async () => {
+    setup({ modes: ['agent'] });
+    const rows = await modeRows();
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toContain('Agent');
+    expect(screen.queryByText('This view has no terminal')).toBeNull();
+  });
+
+  it("modes={['terminal']} alone is a working Terminal (no default disable)", async () => {
+    setup({ modes: ['terminal'], defaultMode: 'terminal' });
+    expect(screen.getByTestId('composer-mode-menu')).toHaveTextContent('Terminal');
+    const rows = await modeRows();
+    expect(rows).toEqual([expect.stringContaining('Terminal')]);
+    expect(rows[0]).not.toContain('This view has no terminal');
+  });
+
+  it('modes + disabledModes: an offered mode can still be shown off with its reason', async () => {
+    setup({ modes: ['agent', 'chat'], disabledModes: ['chat'], modeUnavailableReasons: { chat: 'Only SMEs can post' } });
+    const rows = await modeRows();
+    expect(rows).toHaveLength(2);
+    expect(rows.find((r) => r.includes('Chat'))).toContain('Only SMEs can post');
+  });
+
   it('the root (lazy) export renders the same dock', async () => {
     render(<LazyAgentComposerDock onSend={() => true} label="Search composer" />);
     expect(await screen.findByRole('region', { name: 'Search composer' })).toBeInTheDocument();

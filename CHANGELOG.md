@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.406.1
+
+- `AgentComposerDock` `dock?: ReactNode`: pinned to the composer's top edge inside the dock frame, full width of the composer card — the in-call shelf (`CallDock`) on initiative and document pages. Placed like `ChatPanel.dock` (`shrink-0`, flush on the composer) so a shelf looks the same over either composer; testid `<data-testid>-dock-slot`; absent, no element. Not `FloatingComposerDock.above` (shrinks, scrolls, gap) nor `strip` (squares the composer's top corners); it rides in the dock's composer row.
+- `AgentComposerDock` `modes?: readonly ComposerMode[]`, passed to `RichChatComposer`: a mode left out is absent (no row, shortcut or trigger); `disabledModes` still shows an offered mode off with its reason. When `modes` is given and `disabledModes` is not, nothing is disabled by default (the Chat/Terminal default-off applies only without `modes`), so `modes={['terminal']}` alone is a working Terminal. Existing callers (no `modes`) are unchanged.
+- Storybook: Social/AgentComposerDock "With a docked call shelf", "Terminal only".
+
 ## 2.406.0
 
 - `DocumentActivityCard` and `DocumentChip` take `unavailable?: 'gone' | 'forbidden'`: the card/chip stays as a record of the share but renders muted (dashed border, tertiary text), says "No longer available" (`gone`, the document was deleted) or "You don’t have access" (`forbidden`), and offers no way in — the card drops its Open button and live-editor faces, the chip is disabled. New attributes `data-unavailable`, testids `…-unavailable`. `ChatPanel` gains `documentUnavailable?: (documentId) => DocumentUnavailableReason | undefined`, asked per card and per `#` chip. Exported `DocumentUnavailableReason`, `documentUnavailableLabel()`. Why: a DM kept a live Open onto a document that platform-api answered 404 for, and opening it showed an empty pane.

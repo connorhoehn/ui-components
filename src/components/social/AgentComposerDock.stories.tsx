@@ -3,6 +3,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AgentComposerDock } from './AgentComposerDock';
 import type { ComposerReference } from './ComposerReferences';
 import type { DocumentCandidate } from './RichChatComposer';
+import { CallDock, type CallDockParticipant } from '../video/CallDock';
+import { CAST, DEVICES, noop } from '../video/documentCallStoryKit';
 
 const workflows = [
   { id: 'prioritize', label: 'Prioritize next work', description: 'Rank the open work and explain the tradeoffs' },
@@ -73,5 +75,45 @@ export const SearchLike: Story = {
       documentMenu={{ title: 'Add context', emptyLabel: 'No matching records' }}
       workflows={[{ id: 'summarize', label: 'Summarize the selection', description: 'What these records say together' }]}
       commands={[{ trigger: '/summarize', label: 'Summarize the selection' }]} />;
+  },
+};
+
+function participant(who: 'connor' | 'alice'): CallDockParticipant {
+  const c = CAST[who];
+  return {
+    id: c.userId, userId: c.userId, displayName: c.name,
+    cameraOn: false, audioOn: true, screenSharing: false, presenting: false, connection: 'connected',
+  };
+}
+
+/** A document page on a call: the live `CallDock` (two people) pinned above the document-preset composer via `dock`. */
+export const WithADockedCallShelf: Story = {
+  name: 'With a docked call shelf',
+  render: (args) => (
+    <AgentComposerDock {...args} presentation="document" placeholder="Ask about this document…"
+      modes={['agent', 'chat']}
+      references={[{ id: 'doc-adr', label: 'ADR: Aurora over Neptune', marker: 'dot' }]}
+      dock={(
+        <CallDock
+          title="ADR review" participantCount={2} elapsedMs={4 * 60_000 + 12_000} phase="active"
+          participants={[participant('connor'), participant('alice')]} localParticipantId={CAST.connor.userId}
+          mic={{ on: true, onToggle: noop, devices: DEVICES.microphones, selectedDeviceId: 'mbp-mic', onSelectDevice: noop, permission: 'granted' }}
+          camera={{ on: false, onToggle: noop, devices: DEVICES.cameras, selectedDeviceId: 'facetime', onSelectDevice: noop, permission: 'granted' }}
+          screenShare={{ on: false, onToggle: noop }}
+          onOpenPeople={noop} onOpenSettings={noop} onPopOut={noop} onLeave={noop}
+        />
+      )} />
+  ),
+};
+
+/** A devbox terminal: `modes={['terminal']}` offers Terminal alone (no Chat/Agent rows, no default disable). */
+export const TerminalOnly: Story = {
+  name: 'Terminal only',
+  args: {
+    presentation: 'document',
+    modes: ['terminal'],
+    defaultMode: 'terminal',
+    modePlaceholders: { terminal: 'Run a command on the box…' },
+    references: [{ id: 'box-1', label: 'devbox-7f2c', marker: 'dot' }],
   },
 };

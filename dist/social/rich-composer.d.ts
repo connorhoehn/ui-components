@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 import { Ref } from 'react';
 import { RefAttributes } from 'react';
 
-export declare function AgentComposerDock({ presentation, mode: modeProp, defaultMode, onModeChange, placeholder, modePlaceholders, references, onRemoveReference, commands, workflows, onWorkflow, disabledModes, modeUnavailableReasons, draft: draftProp, onDraftChange, defaultDraft, draftKey, onSend, onSearchDocuments, documentMenu, onSearchPeople, allowAttachments, allowEmoji, disabled, working, status, hints, suggestions, onSuggestion, submitLabel, maxInputHeight, composerRef, label, inputLabel, className, 'data-testid': testId, composerTestId, }: AgentComposerDockProps): JSX.Element;
+export declare function AgentComposerDock({ presentation, mode: modeProp, defaultMode, onModeChange, placeholder, modePlaceholders, references, onRemoveReference, commands, workflows, onWorkflow, modes, disabledModes: disabledModesProp, modeUnavailableReasons, dock, draft: draftProp, onDraftChange, defaultDraft, draftKey, onSend, onSearchDocuments, documentMenu, onSearchPeople, allowAttachments, allowEmoji, disabled, working, status, hints, suggestions, onSuggestion, submitLabel, maxInputHeight, composerRef, label, inputLabel, className, 'data-testid': testId, composerTestId, }: AgentComposerDockProps): JSX.Element;
 
 export declare interface AgentComposerDockProps {
     /** `document` (default `compact`): the full editor strip and comfortable density, for a full-width page. */
@@ -29,10 +29,27 @@ export declare interface AgentComposerDockProps {
     workflows?: readonly AgentComposerWorkflow[];
     /** A workflow was picked. Default: seed the draft with `/<id> ` and remount the editor. */
     onWorkflow?: (id: string) => void;
-    /** Default `['chat', 'terminal']`. */
+    /**
+     * Which modes this composer offers at all (default all three). A mode left
+     * out is ABSENT — no menu row, no shortcut, its trigger is plain text. Use
+     * `disabledModes` instead to show a mode with the reason it is off.
+     */
+    modes?: readonly ComposerMode[];
+    /**
+     * Shown but unavailable, with `modeUnavailableReasons`. Default
+     * `['chat', 'terminal']` — or none when `modes` is given (the host named
+     * what it serves; `modes={['terminal']}` alone is a working Terminal).
+     */
     disabledModes?: readonly ComposerMode[];
     /** Merged over the defaults for Chat and Terminal. */
     modeUnavailableReasons?: Partial<Record<ComposerMode, string>>;
+    /**
+     * Pinned to the composer's top edge, full width of the composer card — the
+     * in-call shelf (`CallDock`). Placed like `ChatPanel.dock`: `shrink-0`, flush
+     * on the composer. Absent (or `false`), nothing is drawn. Test id
+     * `<data-testid>-dock-slot`.
+     */
+    dock?: ReactNode;
     /** Controlled draft. Pair with `onDraftChange`. */
     draft?: RichChatDraft;
     onDraftChange?: (draft: RichChatDraft, previous: RichChatDraft | undefined) => void;
@@ -990,6 +1007,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -1022,12 +1052,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -1035,9 +1062,22 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -1071,22 +1111,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -1097,16 +1124,6 @@ declare module '@tiptap/core' {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

@@ -6888,7 +6888,7 @@ async function mb(e, t) {
 }
 //#endregion
 //#region src/components/social/AgentComposerDockLazy.tsx
-var hb = tg(() => import("./AgentComposerDock-UExyfp6R.js").then((e) => e.n).then((e) => ({ default: e.AgentComposerDock })));
+var hb = tg(() => import("./AgentComposerDock-DfCWx99G.js").then((e) => e.n).then((e) => ({ default: e.AgentComposerDock })));
 function gb(e) {
 	return /* @__PURE__ */ Z(Qh, {
 		fallback: null,

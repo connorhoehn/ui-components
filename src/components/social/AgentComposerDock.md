@@ -20,6 +20,22 @@ The host supplies words and callbacks: `placeholder`/`modePlaceholders`,
 default) the light card. Chat and Terminal are disabled by default with
 reasons; override with `disabledModes` / `modeUnavailableReasons`.
 
+- **Modes**: `modes` is which modes exist on this surface at all — a mode left
+  out is absent (no menu row, no `⌥n` shortcut, its trigger prefix is plain
+  text). `disabledModes` is which of the offered modes are shown but off, each
+  with its `modeUnavailableReasons` line. The Chat/Terminal default-off applies
+  only when `modes` is not given, so `modes={['terminal']}` alone is a working
+  Terminal and `modes={['agent', 'chat']}` offers both; add `disabledModes` to
+  show one of them off with a reason (2.405.3).
+- **Dock slot** (`dock`, 2.405.3): pinned to the composer's top edge inside the
+  dock frame, full width of the composer card — the in-call shelf
+  (`video/CallDock`). Placed exactly like `ChatPanel.dock` (a `shrink-0` row
+  flush on the composer, no gap), so a shelf looks the same over either
+  composer. It is not `FloatingComposerDock`'s `above` (that row shrinks and
+  scrolls, with a gap below — for a notice) nor its `strip` (that squares the
+  composer's top corners to join a `TaskStrip`); it rides in the dock's
+  composer row above the `RichChatComposer`. Absent (or `false`), no element is
+  drawn. Test id `<data-testid>-dock-slot`.
 - **Workflow pick** seeds the draft with `/<id> ` and remounts the editor
   (so the command chip shows); pass `onWorkflow` to do something else.
 - **Send** receives what was TYPED: the switchable Agent mode's `/agent `
@@ -51,4 +67,4 @@ reasons; override with `disabledModes` / `modeUnavailableReasons`.
   `composerTestId` (the composer's parts derive from it).
 
 Storybook: Social/AgentComposerDock (DocumentWithWorkflows, Compact,
-ChatDisabledWithReason, SearchLike).
+ChatDisabledWithReason, SearchLike, With a docked call shelf, Terminal only).

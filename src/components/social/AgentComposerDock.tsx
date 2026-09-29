@@ -34,8 +34,24 @@
 // `onDraftChange` to hold it yourself. A workflow pick replaces the draft and
 // remounts the editor with the command in place (the editor takes a new
 // command chip only on mount).
+//
+// ## Dock slot and modes
+//
+// `dock` is pinned to the composer's top edge inside the dock frame — the
+// in-call shelf (`CallDock`) of the call on this page, placed exactly as
+// `ChatPanel.dock` places it (a `shrink-0` row flush on the composer, no
+// gap), so a shelf looks the same over either composer. It is NOT
+// `FloatingComposerDock.above` (that row shrinks and scrolls, with a gap —
+// for a notice) nor `strip` (that squares the composer's top corners to join
+// a `TaskStrip` into one box): it rides in the dock's composer row, above the
+// `RichChatComposer`. Absent, nothing is drawn.
+//
+// `modes` is which modes exist here at all (a mode left out has no menu row,
+// shortcut or trigger); `disabledModes` is which of those are shown but
+// unavailable, with their `modeUnavailableReasons`. The Chat/Terminal
+// default-off applies only when `modes` is not given.
 
-import { useCallback, useRef, useState, type Ref } from 'react';
+import { useCallback, useRef, useState, type ReactNode, type Ref } from 'react';
 import { cn } from '../../lib/cn';
 import { DropdownMenu } from '../shared/DropdownMenu';
 import { BranchIcon, ChevronIcon } from '../ui/Icons';
@@ -96,10 +112,27 @@ export interface AgentComposerDockProps {
   workflows?: readonly AgentComposerWorkflow[];
   /** A workflow was picked. Default: seed the draft with `/<id> ` and remount the editor. */
   onWorkflow?: (id: string) => void;
-  /** Default `['chat', 'terminal']`. */
+  /**
+   * Which modes this composer offers at all (default all three). A mode left
+   * out is ABSENT — no menu row, no shortcut, its trigger is plain text. Use
+   * `disabledModes` instead to show a mode with the reason it is off.
+   */
+  modes?: readonly ComposerMode[];
+  /**
+   * Shown but unavailable, with `modeUnavailableReasons`. Default
+   * `['chat', 'terminal']` — or none when `modes` is given (the host named
+   * what it serves; `modes={['terminal']}` alone is a working Terminal).
+   */
   disabledModes?: readonly ComposerMode[];
   /** Merged over the defaults for Chat and Terminal. */
   modeUnavailableReasons?: Partial<Record<ComposerMode, string>>;
+  /**
+   * Pinned to the composer's top edge, full width of the composer card — the
+   * in-call shelf (`CallDock`). Placed like `ChatPanel.dock`: `shrink-0`, flush
+   * on the composer. Absent (or `false`), nothing is drawn. Test id
+   * `<data-testid>-dock-slot`.
+   */
+  dock?: ReactNode;
   /** Controlled draft. Pair with `onDraftChange`. */
   draft?: RichChatDraft;
   onDraftChange?: (draft: RichChatDraft, previous: RichChatDraft | undefined) => void;
@@ -145,6 +178,7 @@ export interface AgentComposerDockProps {
 export type { DocumentCandidate, MentionCandidate };
 
 const DEFAULT_DISABLED: readonly ComposerMode[] = ['chat', 'terminal'];
+const NONE: readonly ComposerMode[] = [];
 const DEFAULT_REASONS: Partial<Record<ComposerMode, string>> = {
   chat: 'This view has no discussion thread — ask the agent instead',
   terminal: 'This view has no terminal',
@@ -171,8 +205,10 @@ export function AgentComposerDock({
   commands,
   workflows,
   onWorkflow,
-  disabledModes = DEFAULT_DISABLED,
+  modes,
+  disabledModes: disabledModesProp,
   modeUnavailableReasons,
+  dock,
   draft: draftProp,
   onDraftChange,
   defaultDraft,
@@ -198,6 +234,9 @@ export function AgentComposerDock({
   'data-testid': testId = 'agent-composer-dock',
   composerTestId,
 }: AgentComposerDockProps) {
+  // Naming `modes` says what this surface serves, so the Chat/Terminal
+  // default-off only applies when `modes` is not given.
+  const disabledModes = disabledModesProp ?? (modes ? NONE : DEFAULT_DISABLED);
   const [innerMode, setInnerMode] = useState<ComposerMode>(defaultMode);
   const mode = modeProp ?? innerMode;
   const handleModeChange = useCallback((next: ComposerMode) => {
@@ -267,6 +306,12 @@ export function AgentComposerDock({
         data-testid={testId}
         className={cn('bg-surface pt-3 [--dock-inset:1.5rem]', className)}
         composer={(
+          <>
+          {dock != null && dock !== false && (
+            <div className="shrink-0" data-testid={`${testId}-dock-slot`}>
+              {dock}
+            </div>
+          )}
           <RichChatComposer
             key={`${draftKey}:${seed}`}
             ref={setHandle}
@@ -284,6 +329,7 @@ export function AgentComposerDock({
             allowEmoji={allowEmoji}
             references={references}
             onRemoveReference={onRemoveReference}
+            modes={modes}
             disabledModes={disabledModes}
             modeUnavailableReasons={{ ...DEFAULT_REASONS, ...modeUnavailableReasons }}
             placeholder={placeholder}
@@ -328,6 +374,7 @@ export function AgentComposerDock({
             onDraftChange={handleDraftChange}
             onSend={send}
           />
+          </>
         )}
       />
     </ComposerDockPlacementContext.Provider>
