@@ -133,6 +133,12 @@ export declare interface CommandSuggestionItem {
     hint?: string;
     /** The long form, shown under the list for the highlighted row only. */
     description?: string;
+    /**
+     * A command row whose command takes an argument (2.407.2). Enter on it
+     * always accepts it, even when the draft is exactly its trigger — see the
+     * note at the top.
+     */
+    takesArgument?: boolean;
 }
 
 export declare const CommandSuggestions: ForwardRefExoticComponent<CommandSuggestionsProps & RefAttributes<CommandSuggestionsHandle>>;
@@ -1331,6 +1337,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -1348,14 +1367,22 @@ declare module '@tiptap/core' {
 }
 
 
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
+    }
+}
+
+
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -1389,12 +1416,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -1405,16 +1429,6 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -1436,13 +1450,5 @@ declare module '@tiptap/core' {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
-    }
-}
-
-
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
     }
 }

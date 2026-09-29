@@ -1,6 +1,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import type { ComponentProps } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { ScopeHeader, formatSpend } from '../ScopeHeader';
+import { ScopeHeader, formatSpend, inlineTrailMinimum } from '../ScopeHeader';
 import { formatCompactAge } from '../compactAge';
 
 afterEach(cleanup);
@@ -285,7 +286,7 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
         );
       }
 
-      it.each([1200, 900])('keeps the %ipx row at 48px: trail min-w-0, crumbs truncate and capped, right cluster shrink-0', (width) => {
+      it.each([1200, 900])('keeps the %ipx row at 48px: trail min-w-0, crumbs truncate and capped, controls shrink ahead of the trail', (width) => {
         const { unmount } = renderLong(width);
         const row = screen.getByTestId('scope-header');
         expect(row.className).toMatch(/\bh-12\b/);
@@ -308,7 +309,16 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
         expect(trail.querySelector('ol')!.className).toMatch(/\bflex-nowrap\b/);
         expect(screen.getByTestId('scope-header-title').className).toMatch(/\btruncate\b/);
         expect(screen.getByTestId('scope-header-tabs').className).toMatch(/\bshrink-0\b/);
-        expect(screen.getByTestId('scope-header-right').className).toMatch(/\bshrink-0\b/);
+        // 2.407.2: the right cluster gives first (shrink-[100] against the
+        // trail's 1); only the controls inside it shrink, clipping.
+        const right = screen.getByTestId('scope-header-right');
+        expect(right.className).toMatch(/shrink-\[100\]/);
+        expect(right.className).toMatch(/\bmin-w-0\b/);
+        expect(trail.className).toMatch(/\bflex-auto\b/);
+        const controls = screen.getByTestId('scope-header-controls');
+        expect(controls.className).toMatch(/\bmin-w-0\b/);
+        expect(controls.className).toMatch(/\boverflow-hidden\b/);
+        expect(controls.className).toMatch(/\[&>\*\]:min-w-0/);
         unmount();
       });
 
@@ -333,6 +343,149 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
           sw.mockRestore();
           cw.mockRestore();
         }
+      });
+
+      describe('squeeze order: controls, then crumbs, then never the title below 12rem (2.407.2)', () => {
+        // The portal's scoped search header: Org › Search › Design System API ›
+        // component contracts, three tabs, four chips.
+        const CHIPS = ['In: Design System API ×', 'Type: Work ×', '+ Filter', 'Relevance ▾'];
+        const NATURAL: Record<string, number> = { Org: 24, Search: 45, 'Design System API': 122 };
+        /**
+         * jsdom has no layout: report the widths a browser measured at this
+         * viewport. `before` is the row with the chips in it, `after` once they
+         * have left it (the row's data-controls="collapsed").
+         */
+        function mockWidths(w: { row: number; before: { trail: number; controls: number; controlsContent: number; crumb?: Record<string, number> }; after: { trail: number } }) {
+          const collapsed = () => document.querySelector('[data-testid="scope-header"]')?.getAttribute('data-controls') === 'collapsed';
+          const sw = vi.spyOn(HTMLElement.prototype, 'scrollWidth', 'get').mockImplementation(function (this: HTMLElement) {
+            if (this.hasAttribute('data-crumb')) return NATURAL[this.textContent ?? ''] ?? 0;
+            if (this.tagName === 'H1') return 180;
+            if (this.hasAttribute('data-scope-controls')) return w.before.controlsContent;
+            return 0;
+          });
+          const cw = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
+            if (this.hasAttribute('data-crumb')) return w.before.crumb?.[this.textContent ?? ''] ?? NATURAL[this.textContent ?? ''] ?? 0;
+            if (this.hasAttribute('data-scope-controls')) return w.before.controls;
+            const id = this.getAttribute('data-testid');
+            if (id === 'scope-header') return w.row;
+            if (id === 'scope-header-trail') return collapsed() ? w.after.trail : w.before.trail;
+            return 0;
+          });
+          return () => { sw.mockRestore(); cw.mockRestore(); };
+        }
+        function renderScoped(extra: Partial<ComponentProps<typeof ScopeHeader>> = {}, onChip = vi.fn()) {
+          render(
+            <ScopeHeader
+              variant="inline"
+              breadcrumbs={LONG}
+              title="component contracts"
+              tabs={TABS}
+              activeTab="results"
+              controls={<>{CHIPS.map((c) => <button key={c} type="button" onClick={() => onChip(c)}>{c}</button>)}</>}
+              menu={[{ items: [{ label: 'Save search', onSelect: () => {} }] }]}
+              {...extra}
+            />,
+          );
+          return onChip;
+        }
+        const expectTitleFloor = () => {
+          const title = screen.getByRole('heading', { level: 1, name: 'component contracts' });
+          expect(title.className).toMatch(/min-w-\[12rem\]/);
+          expect(title.className).not.toMatch(/\bmin-w-0\b/);
+        };
+        const expectTabsWhole = () => {
+          expect(screen.getByTestId('scope-header-tabs').className).toMatch(/\bshrink-0\b/);
+          ['Results', 'Answer', 'Connections'].forEach((t) => expect(screen.getByRole('tab', { name: new RegExp(t) })).toBeInTheDocument());
+        };
+
+        it('1536px: the chips leave the row first; all three crumbs and the whole title stay', () => {
+          // 1024px row: tabs 272 + chips 330 (in a 250px box) + ⋯ leave the
+          // trail 330px, under its 328px-plus minimum once the chips overflow.
+          const restore = mockWidths({ row: 1024, before: { trail: 330, controls: 250, controlsContent: 330 }, after: { trail: 580 } });
+          try {
+            renderScoped();
+            const row = screen.getByTestId('scope-header');
+            expect(row).toHaveAttribute('data-controls', 'collapsed');
+            expect(screen.queryByTestId('scope-header-controls')).toBeNull();
+            expect(screen.getByTestId('scope-header-controls-toggle')).toHaveTextContent('Filters');
+            // The crumbs did not give: first and last readable, none folded.
+            expect(screen.getByTestId('scope-header-crumbs')).not.toHaveAttribute('data-collapsed');
+            expect(screen.getAllByTestId('scope-header-crumb').map((c) => c.textContent)).toEqual(['Org', 'Search', 'Design System API']);
+            expect(screen.getAllByTestId('scope-header-crumb')[0]!.closest('li')!.className).toMatch(/\bshrink-0\b/);
+            expectTitleFloor();
+            // What is left for the trail covers its minimum (title at 12rem included).
+            const trail = screen.getByTestId('scope-header-trail');
+            expect(inlineTrailMinimum(trail)).toBeGreaterThanOrEqual(192);
+            expect(inlineTrailMinimum(trail)).toBeLessThanOrEqual(trail.clientWidth);
+            expectTabsWhole();
+          } finally {
+            restore();
+          }
+        });
+
+        it('1280px: the chips are in the Filters popover (same callbacks), the crumbs fold to Org › … › Design System API, the title keeps 12rem', () => {
+          const restore = mockWidths({
+            row: 768,
+            before: { trail: 200, controls: 150, controlsContent: 330, crumb: { Org: 24, Search: 10, 'Design System API': 60 } },
+            after: { trail: 336 },
+          });
+          try {
+            const onChip = renderScoped();
+            expect(screen.getByTestId('scope-header')).toHaveAttribute('data-controls', 'collapsed');
+            expect(screen.queryByRole('button', { name: 'Relevance ▾' })).toBeNull();
+            expect(screen.getByTestId('scope-header-crumbs')).toHaveAttribute('data-collapsed', 'true');
+            expect(screen.getAllByTestId('scope-header-crumb').map((c) => c.textContent)).toEqual(['Org', 'Design System API']);
+            expectTitleFloor();
+            const trail = screen.getByTestId('scope-header-trail');
+            expect(inlineTrailMinimum(trail)).toBeLessThanOrEqual(trail.clientWidth);
+            expectTabsWhole();
+            // The chips, unchanged, behind one button.
+            const toggle = screen.getByTestId('scope-header-controls-toggle');
+            expect(toggle).toHaveAttribute('aria-expanded', 'false');
+            fireEvent.click(toggle);
+            const popover = screen.getByTestId('scope-header-controls-popover');
+            CHIPS.forEach((c) => expect(popover).toContainElement(screen.getByRole('button', { name: c })));
+            fireEvent.click(screen.getByRole('button', { name: 'Relevance ▾' }));
+            expect(onChip).toHaveBeenCalledWith('Relevance ▾');
+          } finally {
+            restore();
+          }
+        });
+
+        it('with controlsMenu, collapsed controls become a "Filters" section of the ⋯ menu with the same onSelect', () => {
+          const onRecent = vi.fn();
+          const restore = mockWidths({ row: 1024, before: { trail: 600, controls: 330, controlsContent: 330 }, after: { trail: 700 } });
+          try {
+            renderScoped({
+              controlsCollapseAt: 1100,
+              controlsMenu: [{ items: [{ label: 'Relevance', active: true, onSelect: () => {} }, { label: 'Recent', onSelect: onRecent }] }],
+            });
+            expect(screen.queryByTestId('scope-header-controls')).toBeNull();
+            expect(screen.queryByTestId('scope-header-controls-toggle')).toBeNull();
+            fireEvent.click(screen.getByTestId('scope-header-menu'));
+            expect(screen.getByText('Filters')).toBeInTheDocument();
+            expect(screen.getByRole('menuitem', { name: /Save search/ })).toBeInTheDocument();
+            fireEvent.click(screen.getByRole('menuitem', { name: /Recent/ }));
+            expect(onRecent).toHaveBeenCalledTimes(1);
+          } finally {
+            restore();
+          }
+        });
+
+        it('keeps the controls in the row when they fit (row at or above controlsCollapseAt, or nothing overflowing)', () => {
+          const restore = mockWidths({ row: 1200, before: { trail: 600, controls: 330, controlsContent: 330 }, after: { trail: 700 } });
+          try {
+            renderScoped({ controlsCollapseAt: 1100 });
+            expect(screen.getByTestId('scope-header')).toHaveAttribute('data-controls', 'inline');
+            expect(screen.getByTestId('scope-header-controls')).toBeInTheDocument();
+            cleanup();
+            renderScoped();
+            expect(screen.getByTestId('scope-header')).toHaveAttribute('data-controls', 'inline');
+            expect(screen.queryByTestId('scope-header-controls-toggle')).toBeNull();
+          } finally {
+            restore();
+          }
+        });
       });
 
       it('does not collapse a trail whose crumbs fit', () => {

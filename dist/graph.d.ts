@@ -999,7 +999,9 @@ export declare interface RecordGraphViewportOptions {
     /**
      * `auto` — the automatic fit ladder (2.403.7, rung (b) since 2.403.8):
      * (a) the whole graph when it fits at or above this zoom; else (b) the focus
-     * + neighbours when they fit at or above `neighbourhoodZoom`; else (c) the
+     * + neighbours when they fit at or above `neighbourhoodZoom` — unless that
+     * frame would hold the whole graph below this zoom (2.407.2: with a focus,
+     * fit-all only at or above it, in every layout); else (c) the
      * `focus` rule's selection fit. With no drawn `focusKeys` there is nothing
      * to centre on, so `auto` is `all` down to `fitAllMinZoom` (2.406.3; was
      * `all` at the 0.8 floor, which left 59 records under the legend and zoom
@@ -2056,6 +2058,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -2073,14 +2088,22 @@ declare module '@tiptap/core' {
 }
 
 
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
+    }
+}
+
+
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -2114,12 +2137,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -2130,16 +2150,6 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -2161,13 +2171,5 @@ declare module '@tiptap/core' {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
-    }
-}
-
-
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
     }
 }

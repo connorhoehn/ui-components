@@ -648,3 +648,39 @@ test('the short-canvas fit-all floor: below 0.25 to 0.1 only on a short canvas w
   // A floor above 0.25 (the automatic 0.8 fit) is not lowered.
   expect(recordGraphViewport(positions, short, { mode: 'all', inset: insetFor(short), minZoom: 0.8 })!.zoom).toBeCloseTo(0.8);
 });
+
+// ── 2.407.2: with a selection, no whole-graph frame below the readable zoom ──
+
+test('25 records, 3 selected people, 1160×374: the automatic fit is readable (≥ 0.7) or selection-centred at 0.8 in every layout — never a fit-all below 0.7', () => {
+  const graph = searchResult();
+  const keys = graph.records.map(recordGraphKey);
+  const focusKeys = keys.slice(0, 3);
+  const fitKeys = recordGraphFitKeys(keys, graph.edges, focusKeys);
+  const size = { width: 1160, height: 374 };
+  const inset = insetFor(size);
+  for (const layout of ['radial', 'force', 'hierarchy'] as const) {
+    const positions = layoutRecordGraph(graph.records, graph.edges, layout, size);
+    const vp = recordGraphViewport(positions, size, { mode: 'auto', focusKeys, fitKeys, inset })!;
+    const all = recordGraphViewport(positions, size, { mode: 'all', inset, minZoom: RECORD_GRAPH_FIT_ALL_MIN_ZOOM })!;
+    if (vp.zoom < RECORD_GRAPH_READABLE_ZOOM) {
+      // Below the readable zoom only to keep the selection whole — never the whole-graph frame.
+      expect(vp.zoom, layout).toBeGreaterThanOrEqual(RECORD_GRAPH_FOCUS_MIN_ZOOM);
+      expect(all.zoom, `${layout}: the whole graph does not fit at this zoom`).toBeLessThan(vp.zoom - 1e-6);
+    }
+    if (layout === 'radial') {
+      // Was 0.65 (all 25 at 8.4px names); the ladder's selection-centred view.
+      expect(vp.zoom, layout).toBeCloseTo(RECORD_GRAPH_MIN_FIT_ZOOM);
+    }
+    expectWhole(screenSpan(positions, focusKeys, vp), size, 16, `${layout} selection`);
+  }
+});
+
+test('no focus, Radial, 1098×270: the automatic fit still shows everything, below 0.7', () => {
+  const graph = sixtyFourRecords();
+  const size = { width: 1098, height: 270 };
+  const inset = insetFor(size);
+  const positions = layoutRecordGraph(graph.records, graph.edges, 'radial', size);
+  const vp = recordGraphViewport(positions, size, { mode: 'auto', inset })!;
+  expect(vp.zoom).toBeLessThan(RECORD_GRAPH_READABLE_ZOOM);
+  for (const key of positions.keys()) expectWhole(screenSpan(positions, [key], vp), size, 16, key);
+});

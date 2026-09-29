@@ -16106,7 +16106,9 @@ export declare interface RecordGraphViewportOptions {
     /**
      * `auto` — the automatic fit ladder (2.403.7, rung (b) since 2.403.8):
      * (a) the whole graph when it fits at or above this zoom; else (b) the focus
-     * + neighbours when they fit at or above `neighbourhoodZoom`; else (c) the
+     * + neighbours when they fit at or above `neighbourhoodZoom` — unless that
+     * frame would hold the whole graph below this zoom (2.407.2: with a focus,
+     * fit-all only at or above it, in every layout); else (c) the
      * `focus` rule's selection fit. With no drawn `focusKeys` there is nothing
      * to centre on, so `auto` is `all` down to `fitAllMinZoom` (2.406.3; was
      * `all` at the 0.8 floor, which left 59 records under the legend and zoom
@@ -17599,6 +17601,19 @@ export declare interface ScopeHeaderProps {
      * this variant — put a compact summary in `controls` if the row needs one.
      * The selected tab's bar sits on the row's bottom edge; give the header
      * the host rule (`className="border-b border-border"`) as with `default`.
+     *
+     * Squeeze order (2.407.2) — when the row is over-full it gives up space in
+     * this order: (a) the `controls` cluster first: it is `min-w-0
+     * overflow-hidden` and shrinks ahead of the trail (`shrink-[100]` against
+     * the trail's 1), its items allowed to shrink (a truncating chip
+     * ellipsises); once its content no longer fits — or the trail would drop
+     * under its minimum, or the row is under `controlsCollapseAt` — the
+     * controls leave the row: into the ⋯ menu as a "Filters" section when
+     * `controlsMenu` is given, else into a popover behind one "Filters ▾"
+     * button. (b) Then the crumbs: each truncates inside its cap and the
+     * middle collapses to "…". (c) The title never goes below 12rem
+     * (`min-w-[12rem]`) and the first crumb never below its own width
+     * (`shrink-0`). The tabs never shrink — they are the navigation.
      */
     variant?: 'default' | 'crumbs' | 'inline';
     /** The scope's own status — "In progress". */
@@ -17625,6 +17640,25 @@ export declare interface ScopeHeaderProps {
      * the right-hand group just before the link.
      */
     controls?: ReactNode;
+    /**
+     * `variant="inline"` only (since 2.407.2): the same controls as menu rows
+     * — the same `onSelect` callbacks the controls call. When the row is too
+     * narrow for `controls`, these join the ⋯ menu as a "Filters" section (the
+     * first section's `label` defaults to `controlsLabel`) and the controls
+     * leave the row. Without it the controls move into a popover behind one
+     * "Filters ▾" button instead. See `variant`'s squeeze order.
+     */
+    controlsMenu?: DropdownMenuSection[] | null;
+    /**
+     * `variant="inline"` only (since 2.407.2): the row width, px, below which
+     * the controls leave the row (into the ⋯ menu or the Filters popover).
+     * Absent: measured — they leave when their content no longer fits their
+     * shrunken box, or when the trail would drop under its minimum (the first
+     * crumb whole, "…", a readable last crumb, and the title at 12rem).
+     */
+    controlsCollapseAt?: number;
+    /** The collapsed controls' name — the popover button and the menu section. Default "Filters". Since 2.407.2. */
+    controlsLabel?: string;
     /** The ⋯ menu. Omitted or empty — no button. */
     menu?: DropdownMenuSection[] | null;
     menuLabel?: string;
@@ -24438,6 +24472,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -24455,14 +24502,22 @@ declare module '@tiptap/core' {
 }
 
 
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
+    }
+}
+
+
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -24496,12 +24551,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -24512,16 +24564,6 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -24543,13 +24585,5 @@ declare module '@tiptap/core' {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
-    }
-}
-
-
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
     }
 }

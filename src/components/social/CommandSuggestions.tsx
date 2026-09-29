@@ -22,8 +22,12 @@
 // highlighted row's trigger — `/summarize` typed out, nothing after it — a
 // pick would only re-insert `/summarize ` and demand a second Enter, so Enter
 // is given back to the editor and the composer's keymap sends. Tab still
-// completes, which is how you get the argument menu for a command that
-// takes one.
+// completes.
+//
+// Not for a command that takes an argument (2.407.2): `/agent` typed out is
+// not a message — sending it only earns "Choose an agent after /agent." — so
+// Enter accepts the row like Tab does, inserting `/agent ` and opening the
+// argument menu. Such rows carry `takesArgument`.
 
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { cn } from '../../lib/cn';
@@ -41,6 +45,12 @@ export interface CommandSuggestionItem {
   hint?: string;
   /** The long form, shown under the list for the highlighted row only. */
   description?: string;
+  /**
+   * A command row whose command takes an argument (2.407.2). Enter on it
+   * always accepts it, even when the draft is exactly its trigger — see the
+   * note at the top.
+   */
+  takesArgument?: boolean;
 }
 
 export interface CommandSuggestionsProps {
@@ -68,7 +78,7 @@ export interface CommandSuggestionsHandle {
 
 /** True when the draft, trimmed, is the row's trigger and nothing else. */
 function isExactlyTyped(item: CommandSuggestionItem | undefined, draft: string | undefined): boolean {
-  if (!item?.code || draft === undefined) return false;
+  if (!item?.code || item.takesArgument || draft === undefined) return false;
   return draft.trim().toLowerCase() === item.code.toLowerCase();
 }
 

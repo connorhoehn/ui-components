@@ -1282,7 +1282,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 const q = query.toLowerCase();
                 return (commandsRef.current ?? [])
                   .filter((c) => !c.disabled && c.trigger.slice(1).toLowerCase().startsWith(q))
-                  .map((c) => ({ id: c.trigger, code: c.trigger, label: c.label, hint: c.hint, description: c.description }));
+                  .map((c) => ({
+                    id: c.trigger, code: c.trigger, label: c.label, hint: c.hint, description: c.description,
+                    // Enter on `/agent` typed out accepts it rather than sending (2.407.2).
+                    ...(c.argument ? { takesArgument: true } : {}),
+                  }));
               },
               // The trigger plus its separator, so the argument menu (below)
               // can open on the very next keystroke.

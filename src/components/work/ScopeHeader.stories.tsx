@@ -186,3 +186,42 @@ export const InlineLongTrail: Story = {
     </div>
   ),
 };
+
+/**
+ * 2.407.2 — the squeeze order at 1536, 1280 and 1024 (the header's column):
+ * the controls leave the row first (into a "Filters ▾" popover here; into
+ * the ⋯ menu when `controlsMenu` is given), then the crumbs fold to "…",
+ * and the title never goes below 12rem. The tabs keep their labels.
+ */
+export const InlineSqueezeOrder: Story = {
+  name: 'Inline: squeeze order (controls, then crumbs, never the title)',
+  render: () => (
+    <div className="flex flex-col gap-6 bg-surface">
+      {['w-[1024px]', 'w-[768px]', 'w-[640px]'].map((w) => (
+        <div key={w} className={w}>
+          <ScopeHeader
+            variant="inline"
+            breadcrumbs={[{ label: 'Org' }, { label: 'Search', href: '#' }, { label: 'Design System API', href: '#' }]}
+            title="component contracts"
+            tabs={[
+              { id: 'results', label: 'Results', count: 3 },
+              { id: 'answer', label: 'Answer' },
+              { id: 'connections', label: 'Connections' },
+            ]}
+            activeTab="results"
+            controls={
+              <>
+                <FilterChip active size="sm" onClick={() => {}}>In: Design System API ×</FilterChip>
+                <FilterChip active size="sm" onClick={() => {}}>Type: Work ×</FilterChip>
+                <DropdownMenu align="end" triggerLabel="Add a filter" trigger={<span className="text-sm">+ Filter</span>} sections={[{ items: [{ label: 'Any type' }, { label: 'Work' }] }]} />
+                <DropdownMenu align="end" triggerLabel="Sort results" trigger={<span className="text-sm">Relevance ▾</span>} sections={[{ items: [{ label: 'Relevance', active: true }, { label: 'Recent' }] }]} />
+              </>
+            }
+            menu={[{ items: [{ label: 'Save search', onSelect: () => {} }] }]}
+            className="border-b border-border"
+          />
+        </div>
+      ))}
+    </div>
+  ),
+};

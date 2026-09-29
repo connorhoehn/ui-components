@@ -25,6 +25,7 @@ import { Avatar } from '../shared/Avatar';
 import { PresenceAvatars, type PresenceUser } from '../shared/PresenceAvatars';
 import { Tabs, type TabItem } from '../shared/Tabs';
 import { DropdownMenu, type DropdownMenuSection } from '../shared/DropdownMenu';
+import { InlinePopover } from '../shared/InlinePopover';
 import { ExternalLinkIcon, LinkIcon } from '../ui/Icons';
 import { TONE_SOLID_BG } from '../shared/tones';
 
@@ -105,6 +106,19 @@ export interface ScopeHeaderProps {
    * this variant — put a compact summary in `controls` if the row needs one.
    * The selected tab's bar sits on the row's bottom edge; give the header
    * the host rule (`className="border-b border-border"`) as with `default`.
+   *
+   * Squeeze order (2.407.2) — when the row is over-full it gives up space in
+   * this order: (a) the `controls` cluster first: it is `min-w-0
+   * overflow-hidden` and shrinks ahead of the trail (`shrink-[100]` against
+   * the trail's 1), its items allowed to shrink (a truncating chip
+   * ellipsises); once its content no longer fits — or the trail would drop
+   * under its minimum, or the row is under `controlsCollapseAt` — the
+   * controls leave the row: into the ⋯ menu as a "Filters" section when
+   * `controlsMenu` is given, else into a popover behind one "Filters ▾"
+   * button. (b) Then the crumbs: each truncates inside its cap and the
+   * middle collapses to "…". (c) The title never goes below 12rem
+   * (`min-w-[12rem]`) and the first crumb never below its own width
+   * (`shrink-0`). The tabs never shrink — they are the navigation.
    */
   variant?: 'default' | 'crumbs' | 'inline';
   /** The scope's own status — "In progress". */
@@ -124,6 +138,25 @@ export interface ScopeHeaderProps {
    * the right-hand group just before the link.
    */
   controls?: ReactNode;
+  /**
+   * `variant="inline"` only (since 2.407.2): the same controls as menu rows
+   * — the same `onSelect` callbacks the controls call. When the row is too
+   * narrow for `controls`, these join the ⋯ menu as a "Filters" section (the
+   * first section's `label` defaults to `controlsLabel`) and the controls
+   * leave the row. Without it the controls move into a popover behind one
+   * "Filters ▾" button instead. See `variant`'s squeeze order.
+   */
+  controlsMenu?: DropdownMenuSection[] | null;
+  /**
+   * `variant="inline"` only (since 2.407.2): the row width, px, below which
+   * the controls leave the row (into the ⋯ menu or the Filters popover).
+   * Absent: measured — they leave when their content no longer fits their
+   * shrunken box, or when the trail would drop under its minimum (the first
+   * crumb whole, "…", a readable last crumb, and the title at 12rem).
+   */
+  controlsCollapseAt?: number;
+  /** The collapsed controls' name — the popover button and the menu section. Default "Filters". Since 2.407.2. */
+  controlsLabel?: string;
   /** The ⋯ menu. Omitted or empty — no button. */
   menu?: DropdownMenuSection[] | null;
   menuLabel?: string;
@@ -218,14 +251,43 @@ export function ScopeHeader(props: ScopeHeaderProps) {
 /** The right-hand group both variants share: controls · link · ⋯. */
 function RightGroup({
   controls, link, menu, menuLabel, title, testId, linkStyle = 'inline',
-}: Pick<ScopeHeaderProps, 'controls' | 'link' | 'menu' | 'menuLabel' | 'linkStyle'> & { title: string; testId: string }) {
-  const hasMenu = !!menu && menu.some((s) => s.items.length > 0);
+  controlsMode = 'fixed', controlsMenu, controlsLabel = 'Filters',
+}: Pick<ScopeHeaderProps, 'controls' | 'link' | 'menu' | 'menuLabel' | 'linkStyle' | 'controlsMenu' | 'controlsLabel'> & {
+  title: string;
+  testId: string;
+  /**
+   * `fixed`: the controls keep their width (default, crumbs variants).
+   * `shrink`: the inline row's first give (2.407.2) — the cluster may shrink
+   * to nothing, clipping, its items allowed to shrink. `collapsed`: the
+   * controls left the row — into the menu (`controlsMenu`) or a popover.
+   */
+  controlsMode?: 'fixed' | 'shrink' | 'collapsed';
+}) {
+  const hasControls = controls != null && controls !== false;
+  const menuControls = controlsMode === 'collapsed' && !!controlsMenu && controlsMenu.some((s) => s.items.length > 0);
+  const sections: DropdownMenuSection[] = [
+    ...(menuControls
+      ? controlsMenu!.filter((s) => s.items.length > 0).map((s, i) => (i === 0 && !s.label ? { ...s, label: controlsLabel } : s))
+      : []),
+    ...(menu ?? []),
+  ];
+  const hasMenu = sections.some((s) => s.items.length > 0);
   return (
     <>
-      {controls != null && controls !== false && (
-        <div className="flex shrink-0 items-center gap-2" data-testid={`${testId}-controls`}>
+      {hasControls && controlsMode !== 'collapsed' && (
+        <div
+          className={cn(
+            'flex items-center gap-2',
+            controlsMode === 'shrink' ? 'min-w-0 shrink overflow-hidden [&>*]:min-w-0 [&>*]:shrink' : 'shrink-0',
+          )}
+          data-scope-controls=""
+          data-testid={`${testId}-controls`}
+        >
           {controls}
         </div>
+      )}
+      {hasControls && controlsMode === 'collapsed' && !menuControls && (
+        <ControlsPopover label={controlsLabel} testId={testId}>{controls}</ControlsPopover>
       )}
       {link && linkStyle === 'button' && (
         <a
@@ -258,12 +320,76 @@ function RightGroup({
           triggerLabel={menuLabel ?? `Actions for ${title}`}
           triggerTestId={`${testId}-menu`}
           align="end"
-          sections={menu!}
+          sections={sections}
           triggerClassName="h-8 w-8 border-transparent px-0 py-0 text-text-secondary hover:border-border"
         />
       )}
     </>
   );
+}
+
+/**
+ * The collapsed controls (2.407.2): one "Filters ▾" button, the host's
+ * controls — unchanged, the same callbacks — in a popover under it.
+ */
+function ControlsPopover({ label, testId, children }: { label: string; testId: string; children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  return (
+    <>
+      <button
+        ref={triggerRef}
+        type="button"
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+        data-testid={`${testId}-controls-toggle`}
+        className={cn(
+          'inline-flex shrink-0 cursor-pointer items-center gap-1 whitespace-nowrap rounded border-none bg-transparent px-1 py-0.5 text-sm leading-none text-text-secondary transition-colors duration-100 hover:bg-surface-hover hover:text-text-primary',
+          open && 'text-text-primary',
+        )}
+      >
+        {label}
+        <span aria-hidden="true">▾</span>
+      </button>
+      <InlinePopover
+        trigger={triggerRef}
+        open={open}
+        onClose={() => setOpen(false)}
+        placement="bottom-end"
+        aria-label={label}
+        className="flex items-center gap-2 p-2"
+        data-testid={`${testId}-controls-popover`}
+      >
+        {children}
+      </InlinePopover>
+    </>
+  );
+}
+
+/** The title's floor when the computed style is unavailable (jsdom): 12rem. */
+const TITLE_MIN_PX = 192;
+/** A collapsed trail's joiners: three "›" and the "…", with their gaps. */
+const TRAIL_JOINERS_PX = 64;
+/** The last crumb's readable minimum ("Desi…"). */
+const LAST_CRUMB_MIN_PX = 48;
+
+/**
+ * The narrowest the inline trail may be before the controls leave the row:
+ * the first crumb whole (inside its cap), "…", a readable last crumb and
+ * the title at its 12rem floor. Exported for tests.
+ */
+export function inlineTrailMinimum(trail: HTMLElement): number {
+  const crumbEls = Array.from(trail.querySelectorAll<HTMLElement>('[data-crumb]'));
+  const natural = (el: HTMLElement) => {
+    const cap = parseFloat(getComputedStyle(el).maxWidth);
+    return Math.min(el.scrollWidth, Number.isFinite(cap) ? cap : Infinity);
+  };
+  const title = trail.querySelector<HTMLElement>('h1');
+  const titleMin = title ? Math.min(parseFloat(getComputedStyle(title).minWidth) || TITLE_MIN_PX, Math.max(title.scrollWidth, TITLE_MIN_PX)) : 0;
+  const first = crumbEls[0] ? natural(crumbEls[0]) : 0;
+  const last = crumbEls.length > 1 ? Math.min(natural(crumbEls[crumbEls.length - 1]!), LAST_CRUMB_MIN_PX) : 0;
+  return titleMin + first + last + (crumbEls.length > 0 ? TRAIL_JOINERS_PX : 0);
 }
 
 function ScopeCrumbs({
@@ -354,7 +480,9 @@ function InlineCrumb({ item, last, testId }: { item: BreadcrumbItem; last: boole
  * grows: every crumb truncates inside its cap, the crumbs give up width
  * before the title does (`shrink-[100]` against the title's `shrink`), and
  * when a crumb is squeezed below its cap anyway the middle collapses to "…"
- * — first and last crumb kept — before the title loses any more.
+ * — first and last crumb kept — before the title loses any more. The
+ * title keeps 12rem and the first crumb its own width (2.407.2); the header
+ * moves its controls out of the row before the trail gets that tight.
  */
 function InlineTrail({ crumbs, title, lg, testId }: { crumbs: BreadcrumbItem[]; title?: string; lg: boolean; testId: string }) {
   const trailRef = useRef<HTMLDivElement | null>(null);
@@ -403,13 +531,16 @@ function InlineTrail({ crumbs, title, lg, testId }: { crumbs: BreadcrumbItem[]; 
   const visible: Array<BreadcrumbItem | null> = hidden.length > 0 ? [crumbs[0]!, null, crumbs[crumbs.length - 1]!] : crumbs;
 
   return (
-    <div ref={trailRef} className="flex min-w-0 flex-1 flex-nowrap items-center gap-1 overflow-hidden" data-testid={`${testId}-trail`}>
+    // flex-auto (2.407.2; was flex-1): the trail's basis is its content, so
+    // an over-full row shrinks the controls (shrink-[100]) before the trail.
+    <div ref={trailRef} className="flex min-w-0 flex-auto flex-nowrap items-center gap-1 overflow-hidden" data-testid={`${testId}-trail`}>
       {crumbs.length > 0 && (
         // Every crumb is a place to go: the title after them is the page.
         <nav aria-label="Breadcrumb" data-testid={`${testId}-crumbs`} data-collapsed={hidden.length > 0 ? 'true' : undefined} className="flex min-w-0 shrink-[100] items-center">
           <ol className="m-0 flex min-w-0 list-none flex-nowrap items-center gap-1 p-0">
             {visible.map((item, i) => (
-              <li key={item ? `${i}-${item.label}` : 'collapsed'} className={cn('flex items-center gap-1', item ? 'min-w-0' : 'shrink-0')}>
+              // The first crumb never goes below its own width (2.407.2).
+              <li key={item ? `${i}-${item.label}` : 'collapsed'} className={cn('flex items-center gap-1', item && i > 0 ? 'min-w-0' : 'shrink-0')} data-crumb-item={i === 0 ? 'first' : undefined}>
                 {item ? (
                   <InlineCrumb item={item} last={i === visible.length - 1} testId={testId} />
                 ) : (
@@ -439,7 +570,8 @@ function InlineTrail({ crumbs, title, lg, testId }: { crumbs: BreadcrumbItem[]; 
           title={title}
           data-testid={`${testId}-title`}
           className={cn(
-            'm-0 min-w-0 shrink truncate whitespace-nowrap text-text-primary',
+            // Never below 12rem (2.407.2): the controls and the crumbs give first.
+            'm-0 min-w-[12rem] shrink truncate whitespace-nowrap text-text-primary',
             lg ? 'text-[20px] font-bold leading-7 tracking-[-0.01em]' : 'text-[18px] font-semibold leading-7',
           )}
         >
@@ -454,6 +586,9 @@ function ScopeHeaderInline({
   breadcrumbs,
   title,
   controls,
+  controlsMenu,
+  controlsCollapseAt,
+  controlsLabel,
   link,
   menu,
   menuLabel,
@@ -471,12 +606,56 @@ function ScopeHeaderInline({
   const name = title ?? last ?? 'this scope';
   const hasTabs = !!tabs && tabs.length > 0;
   const currentTab = hasTabs ? (tabs!.some((t) => t.id === activeTab) ? activeTab! : tabs![0]!.id) : undefined;
-  const hasRight = (controls != null && controls !== false) || !!link || (!!menu && menu.some((s) => s.items.length > 0));
+  const hasControls = controls != null && controls !== false;
+  const hasRight = hasControls || !!link || (!!menu && menu.some((s) => s.items.length > 0));
   const lg = titleSize === 'lg';
+
+  // Squeeze step (a) (2.407.2): the controls leave the row when they no
+  // longer fit their shrunken box, the trail would drop under its minimum,
+  // or the row is under `controlsCollapseAt`.
+  const rowRef = useRef<HTMLDivElement | null>(null);
+  const [controlsCollapsed, setControlsCollapsed] = useState(false);
+  // The row width at which the full controls fit again (measured mode).
+  const expandAt = useRef<number>(Infinity);
+  const measure = useCallback(() => {
+    const row = rowRef.current;
+    if (!row || !hasControls) return;
+    const width = row.clientWidth;
+    if (width <= 0) return; // unmeasured (jsdom, display:none)
+    if (typeof controlsCollapseAt === 'number') {
+      setControlsCollapsed(width < controlsCollapseAt);
+      return;
+    }
+    if (controlsCollapsed) {
+      if (width >= expandAt.current) setControlsCollapsed(false);
+      return;
+    }
+    const box = row.querySelector<HTMLElement>('[data-scope-controls]');
+    const trail = row.querySelector<HTMLElement>(`[data-testid="${testId}-trail"]`);
+    const overflow = box ? box.scrollWidth - box.clientWidth : 0;
+    const short = trail ? inlineTrailMinimum(trail) - trail.clientWidth : 0;
+    if (overflow > 1 || short > 1) {
+      // Ratchet: never expand back at a width that just collapsed.
+      expandAt.current = Math.max(width + 1, width + Math.max(0, overflow) + Math.max(0, short));
+      setControlsCollapsed(true);
+    }
+  }, [hasControls, controlsCollapseAt, controlsCollapsed, testId]);
+
+  useLayoutEffect(() => {
+    measure();
+    const row = rowRef.current;
+    if (!row || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(() => measure());
+    ro.observe(row);
+    return () => ro.disconnect();
+  }, [measure]);
+
   return (
     <div
+      ref={rowRef}
       data-testid={testId}
       data-variant="inline"
+      {...(hasControls ? { 'data-controls': controlsCollapsed ? 'collapsed' : 'inline' } : {})}
       data-title-size={titleSize}
       {...(tabSize ? { 'data-tab-size': tabSize } : {})}
       className={cn('flex h-12 min-w-0 flex-nowrap items-center gap-4 px-6', className)}
@@ -501,8 +680,21 @@ function ScopeHeaderInline({
         />
       )}
       {hasRight && (
-        <div className="flex shrink-0 items-center gap-3" data-testid={`${testId}-right`}>
-          <RightGroup controls={controls} link={link} menu={menu} menuLabel={menuLabel} title={name} testId={testId} linkStyle={linkStyle} />
+        // min-w-0 + shrink-[100] (2.407.2): this cluster gives up width before
+        // the trail (shrink 1); only the controls inside it shrink.
+        <div className="flex min-w-0 shrink-[100] items-center gap-3" data-testid={`${testId}-right`}>
+          <RightGroup
+            controls={controls}
+            controlsMenu={controlsMenu}
+            controlsLabel={controlsLabel}
+            controlsMode={controlsCollapsed ? 'collapsed' : 'shrink'}
+            link={link}
+            menu={menu}
+            menuLabel={menuLabel}
+            title={name}
+            testId={testId}
+            linkStyle={linkStyle}
+          />
         </div>
       )}
     </div>

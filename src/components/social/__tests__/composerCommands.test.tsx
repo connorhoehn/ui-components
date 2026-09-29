@@ -145,6 +145,82 @@ describe('RichChatComposer `/` menu', () => {
   });
 });
 
+describe('RichChatComposer `/` menu — Enter on a command that takes an argument (2.407.2)', () => {
+  const AGENTS = [
+    { id: 'supervisor', label: 'Supervisor', icon: '🧭' },
+    { id: 'search', label: 'Search', icon: '🔎' },
+    { id: 'advisor', label: 'Advisor', icon: '💡' },
+  ];
+  function setupAgent() {
+    const onSend = vi.fn();
+    const search = vi.fn((q: string) => AGENTS.filter((a) => a.label.toLowerCase().startsWith(q.toLowerCase())));
+    const cmds: ComposerCommand[] = [
+      { trigger: '/agent', label: 'Ask a specific agent', argument: { placeholder: 'Choose an agent', search } },
+      { trigger: '/shrug', label: 'Append a shrug' },
+    ];
+    const ref = createRef<RichChatComposerHandle>();
+    render(<RichChatComposer ref={ref} onSend={onSend} commands={cmds} data-testid="composer" />);
+    const input = screen.getByTestId('composer-input');
+    return {
+      onSend, search, input,
+      type: (t: string) => act(() => { ref.current!.insertText(t); }),
+      key: (k: string) => fireEvent.keyDown(input, { key: k }),
+      text: () => ref.current!.editor!.getText(),
+    };
+  }
+
+  it('typed out, /agent + Enter accepts the command and opens the agent list instead of sending; then Advisor + Enter sends with it', async () => {
+    const { type, key, text, onSend, search } = setupAgent();
+    type('/agent');
+    await waitFor(() => expect(screen.getAllByTestId('command-option')).toHaveLength(1));
+    expect(screen.getByTestId('command-option')).toHaveTextContent('Ask a specific agent');
+    key('Enter');
+    expect(onSend).not.toHaveBeenCalled();
+    expect(text()).toBe('/agent ');
+    // The argument picker opens on the accepted command.
+    await waitFor(() => expect(search).toHaveBeenCalledWith(''));
+    await waitFor(() => expect(screen.getAllByTestId('command-option').map((o) => o.textContent)).toEqual([
+      expect.stringContaining('Supervisor'), expect.stringContaining('Search'), expect.stringContaining('Advisor'),
+    ]));
+    key('ArrowDown');
+    key('ArrowDown');
+    key('Enter');
+    expect(onSend).not.toHaveBeenCalled();
+    expect(text()).toBe('/agent Advisor ');
+    await waitFor(() => expect(screen.queryByTestId('command-suggestions')).toBeNull());
+    type('what should we cut?');
+    key('Enter');
+    expect(onSend).toHaveBeenCalledTimes(1);
+    expect(onSend.mock.calls[0][0].command.trigger).toBe('/agent');
+    expect(onSend.mock.calls[0][0].command.argument.id).toBe('advisor');
+  });
+
+  it('after ArrowUp/ArrowDown too; Escape closes the list and the next Enter sends as before', async () => {
+    const { type, key, onSend, text } = setupAgent();
+    type('/agent');
+    await waitFor(() => expect(screen.getAllByTestId('command-option')).toHaveLength(1));
+    key('ArrowDown');
+    key('ArrowUp');
+    key('Enter');
+    expect(onSend).not.toHaveBeenCalled();
+    expect(text()).toBe('/agent ');
+    await waitFor(() => expect(screen.getAllByTestId('command-option')).toHaveLength(3));
+    key('Escape');
+    await waitFor(() => expect(screen.queryByTestId('command-suggestions')).toBeNull());
+    type('hi');
+    key('Enter');
+    expect(onSend).toHaveBeenCalledTimes(1);
+  });
+
+  it('a typed-out command with no argument still sends on Enter', async () => {
+    const { type, key, onSend } = setupAgent();
+    type('/shrug');
+    await waitFor(() => expect(screen.getAllByTestId('command-option')).toHaveLength(1));
+    key('Enter');
+    expect(onSend).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe('RichChatComposer argument menu', () => {
   it('searches with the text after the trigger, and an execute pick clears the draft and calls onCommand', async () => {
     const { type, key, text, search, onCommand, onSend, cmds } = setup({ onPick: () => 'execute' });

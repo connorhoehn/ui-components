@@ -6221,10 +6221,10 @@ function sa(e, t, n) {
 		};
 	};
 	if (n.mode !== "all" && _ && y && b) {
-		let e = h(b);
-		if (e >= (n.mode === "auto" ? Math.min(s, r) : r)) return x(Math.min(e, i), [b]);
-		let t = Math.min(p / (y.x1 - y.x0), m / (y.y1 - y.y0));
-		return x(Math.min(r, Math.max(c, t)), [
+		let e = h(b), t = n.mode === "auto" ? Math.min(s, r) : r, a = n.mode === "auto" && e < o && h(u) >= e - 1e-9;
+		if (e >= t && !a) return x(Math.min(e, i), [b]);
+		let l = Math.min(p / (y.x1 - y.x0), m / (y.y1 - y.y0));
+		return x(Math.min(r, Math.max(c, l)), [
 			u,
 			b,
 			_
