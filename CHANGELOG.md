@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.407.27
+
+- `useDocumentComments` transport seam (new): `baseUrl`, `commentsPath` and `fetcher` options so a host can route document comments through its own BFF (OrgIQ calls platform-api with the BFF-held document grant, never a platform token in the browser), plus `addDocumentComment` and document-wide (`scope: 'document'`) as well as anchored comments in one hook. `useDocumentReviews` still needs the same seam. First consumer: the OrgIQ assessment workspace Comments tab.
+- Note: **2.407.25 and 2.407.26 are version-only bumps with no source change** — their release commits were cut before this seam had merged (a release chain ran on past a rebase conflict and a failed fast-forward); treat both as identical to 2.407.24.
+
 ## 2.407.24
 
 - **Every button renders semibold — a visual change for every consumer (fix).** `Button` was meant to be semibold (600) but rendered at the inherited 400 in every variant and size: tailwind-merge files an unlabelled `font-[inherit]` under font-*weight*, while Tailwind v4 compiles it to `font-family: inherit`, so `cn()` dropped `font-semibold` in favour of it. `cn` (`src/lib/cn.ts`) now files `font-[inherit]` as a font-family class, so a weight next to it survives everywhere in the library — any `cn('font-medium …', 'font-[inherit]')` call site now renders its weight too. New `BUTTON_WEIGHT` (`'font-semibold'`) is the one button weight: `Button` (all variants, `link` included), `DropdownMenu` triggers (all trigger variants; `secondary` was `font-medium`), `RichChatComposer`'s Send, split-send caret, Commands trigger and Context button, `ContextComposer`'s Workflow trigger, and `DeviceToggleSelect` use it. `font-medium`/`font-normal` overrides on library `Button`s were removed (`CallDock` People/Documents/Leave controls, `CallSettingsDrawer`, `StartCallDrawer`, `IncomingCallPopover`, `CallPeopleList`, `VolumeSlider`, `AudioVideoSettingsForm`, `FollowBanner`, `WorkspaceDocumentHeader`, `DocumentTypesPage`, and the `work/*` link buttons). Tabs are unchanged. Hosts that pass their own `font-*` class to `Button` still win. `ButtonWeight.test.tsx` (every tone × variant × size) and a `UI/Button › WeightGrid` story.

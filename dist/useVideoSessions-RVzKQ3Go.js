@@ -497,7 +497,8 @@ function k(t) {
 }
 //#endregion
 //#region src/hooks/useDocumentComments.ts
-function A(e) {
+var A = "__document";
+function j(e) {
 	let t = /* @__PURE__ */ new Map(), n = [];
 	for (let n of e) t.set(n.id, {
 		...n,
@@ -509,62 +510,90 @@ function A(e) {
 	}
 	return n;
 }
-function j(e) {
+function M(e) {
 	return {
 		...e,
 		id: e.id ?? e.commentId ?? ""
 	};
 }
-function M(e) {
-	let t = /* @__PURE__ */ new Map();
-	for (let n of e) {
-		let e = n.sectionId ?? "__unknown";
-		t.has(e) || t.set(e, []), t.get(e).push(n);
-	}
-	let n = {};
-	for (let [e, r] of t) n[e] = A(r);
-	return n;
-}
 function N(e) {
-	let { documentId: t, idToken: n, sendMessage: r, onMessage: l } = e, [u, d] = c([]), [f, p] = c(!1), m = s(r);
+	let t = /* @__PURE__ */ new Map();
+	for (let n of e) t.set(n.id, n);
+	let n = (e) => {
+		let n = e;
+		for (let e = 0; n && e < 64; e++) {
+			if (n.sectionId) return n.sectionId;
+			if (n.scope === "document") return A;
+			n = n.parentCommentId ? t.get(n.parentCommentId) : void 0;
+		}
+		return "__unknown";
+	}, r = /* @__PURE__ */ new Map();
+	for (let t of e) {
+		let e = n(t);
+		r.has(e) || r.set(e, []), r.get(e).push(t);
+	}
+	let i = {};
+	for (let [e, t] of r) i[e] = j(t);
+	return i;
+}
+function P(e) {
+	let { documentId: t, idToken: n, sendMessage: r, onMessage: l, baseUrl: u, commentsPath: d, fetcher: f } = e, [p, m] = c([]), [h, g] = c(!1), _ = s(r);
 	a(() => {
-		m.current = r;
+		_.current = r;
 	}, [r]);
-	let h = s(t);
+	let v = s(t);
 	a(() => {
-		h.current = t;
+		v.current = t;
 	}, [t]);
-	let g = o(() => {
+	let y = s(f);
+	y.current = f;
+	let b = s(d);
+	b.current = d;
+	let x = s(u);
+	x.current = u;
+	let S = f !== void 0, C = i((e, t) => {
+		let n = b.current;
+		if (n) return `${x.current ?? ""}${n(e, t)}`;
+		let r = x.current ?? "";
+		return t === void 0 ? `${r}/api/documents/${e}/comments` : `${r}/api/documents/${e}/comments/${t}`;
+	}, []), w = i((e, t) => y.current ? y.current(e, t) : fetch(e, t), []), T = S || !!n, E = o(() => {
 		let e = { "Content-Type": "application/json" };
-		return n && (e.Authorization = `Bearer ${n}`), e;
-	}, [n]);
-	return a(() => {
-		!t || !n || (p(!0), fetch(`/api/documents/${t}/comments`, { headers: { Authorization: `Bearer ${n}` } }).then(async (e) => {
+		return n && !S && (e.Authorization = `Bearer ${n}`), e;
+	}, [n, S]), D = t ? C(t) : "";
+	a(() => {
+		!t || !T || (g(!0), w(D, S ? { method: "GET" } : { headers: { Authorization: `Bearer ${n}` } }).then(async (e) => {
 			if (!e.ok) throw Error(`Failed to load comments (${e.status})`);
 			return e.json();
 		}).then((e) => {
-			d((e.comments ?? []).map((e) => j(e)));
+			m((e.comments ?? []).map((e) => M(e)));
 		}).catch((e) => {
 			console.warn("[useDocumentComments] fetch error:", e.message);
 		}).finally(() => {
-			p(!1);
+			g(!1);
 		}));
-	}, [t, n]), a(() => l((e) => {
+	}, [
+		t,
+		n,
+		T,
+		S,
+		D,
+		w
+	]), a(() => l((e) => {
 		let t = e.type, n = e.payload;
 		if (!n) return;
 		let r = n.documentId;
-		if (!(r && r !== h.current)) {
+		if (!(r && r !== v.current)) {
 			if (t === "doc:comment_added") {
 				let e = n.comment;
 				if (!e) return;
-				let t = j(e);
-				d((e) => e.some((e) => e.id === t.id) ? e : [...e, t]);
+				let t = M(e);
+				m((e) => e.some((e) => e.id === t.id) ? e : [...e, t]);
 				return;
 			}
 			if (t === "doc:comment_resolved") {
 				let e = n.commentId, t = n.resolved;
 				if (!e) return;
-				d((r) => r.map((r) => r.id === e ? {
+				m((r) => r.map((r) => r.id === e ? {
 					...r,
 					resolved: t,
 					...t ? {
@@ -580,64 +609,84 @@ function N(e) {
 			if (t === "doc:comment_deleted") {
 				let e = n.commentId;
 				if (!e) return;
-				d((t) => t.filter((t) => t.id !== e));
+				m((t) => t.filter((t) => t.id !== e));
 				return;
 			}
 		}
-	}), [l]), {
-		comments: o(() => M(u), [u]),
-		addComment: i(async (e, t, r) => {
-			if (!n) return;
-			let i = await fetch(`/api/documents/${h.current}/comments`, {
-				method: "POST",
-				headers: g,
-				body: JSON.stringify({
-					sectionId: e,
-					text: t,
-					...r ? { parentCommentId: r } : {}
-				})
-			});
-			if (!i.ok) throw Error(`Failed to add comment (${i.status})`);
-			let a = j((await i.json()).comment);
-			d((e) => e.some((e) => e.id === a.id) ? e : [...e, a]);
-		}, [n, g]),
+	}), [l]);
+	let O = o(() => N(p), [p]), k = o(() => O[A] ?? [], [O]), j = i(async (e, t, n, r) => {
+		if (!T) return;
+		let i = r?.anchor, a = e !== "" && e !== A, o = a ? {
+			sectionId: e,
+			text: t
+		} : { text: t };
+		n && (o.parentCommentId = n), i && (o.anchor = i), !a && !n && !i && (o.scope = "document");
+		let s = await w(C(v.current), {
+			method: "POST",
+			headers: E,
+			body: JSON.stringify(o)
+		});
+		if (!s.ok) throw Error(`Failed to add comment (${s.status})`);
+		let c = M((await s.json()).comment);
+		m((e) => e.some((e) => e.id === c.id) ? e : [...e, c]);
+	}, [
+		T,
+		E,
+		w,
+		C
+	]);
+	return {
+		comments: O,
+		documentComments: k,
+		addComment: j,
+		addDocumentComment: i((e) => j("", e), [j]),
 		resolveThread: i(async (e, t) => {
-			if (!n) return;
-			let r = await fetch(`/api/documents/${h.current}/comments/${t}`, {
+			if (!T) return;
+			let n = await w(C(v.current, t), {
 				method: "PATCH",
-				headers: g,
+				headers: E,
 				body: JSON.stringify({ resolved: !0 })
 			});
-			if (!r.ok) throw Error(`Failed to resolve thread (${r.status})`);
-			let i = await r.json();
-			d((e) => e.map((e) => e.id === t ? {
+			if (!n.ok) throw Error(`Failed to resolve thread (${n.status})`);
+			let r = await n.json();
+			m((e) => e.map((e) => e.id === t ? {
 				...e,
 				resolved: !0,
-				resolvedBy: i.comment.resolvedBy,
-				resolvedAt: i.comment.resolvedAt
+				resolvedBy: r.comment.resolvedBy,
+				resolvedAt: r.comment.resolvedAt
 			} : e));
-		}, [n, g]),
+		}, [
+			T,
+			E,
+			w,
+			C
+		]),
 		unresolveThread: i(async (e, t) => {
-			if (!n) return;
-			let r = await fetch(`/api/documents/${h.current}/comments/${t}`, {
+			if (!T) return;
+			let n = await w(C(v.current, t), {
 				method: "PATCH",
-				headers: g,
+				headers: E,
 				body: JSON.stringify({ resolved: !1 })
 			});
-			if (!r.ok) throw Error(`Failed to unresolve thread (${r.status})`);
-			d((e) => e.map((e) => e.id === t ? {
+			if (!n.ok) throw Error(`Failed to unresolve thread (${n.status})`);
+			m((e) => e.map((e) => e.id === t ? {
 				...e,
 				resolved: !1,
 				resolvedBy: void 0,
 				resolvedAt: void 0
 			} : e));
-		}, [n, g]),
-		loading: f
+		}, [
+			T,
+			E,
+			w,
+			C
+		]),
+		loading: h
 	};
 }
 //#endregion
 //#region src/hooks/useDocumentItems.ts
-function P(e) {
+function F(e) {
 	return {
 		id: e.id ?? e.itemId,
 		text: e.text ?? "",
@@ -657,7 +706,7 @@ function P(e) {
 		category: e.category
 	};
 }
-function F(e) {
+function I(e) {
 	let { documentId: t, sectionIds: n, idToken: r, sendMessage: l, onMessage: u } = e, [d, f] = c({}), [p, m] = c({}), [h, g] = c(!1), _ = s(l);
 	a(() => {
 		_.current = l;
@@ -679,7 +728,7 @@ function F(e) {
 				if (!n.ok) throw Error(`Failed to load items for section ${e} (${n.status})`);
 				return {
 					sectionId: e,
-					items: ((await n.json()).items ?? []).map(P),
+					items: ((await n.json()).items ?? []).map(F),
 					error: null
 				};
 			} catch (t) {
@@ -712,7 +761,7 @@ function F(e) {
 			if (t === "social:post" && n.type === "section:item:created") {
 				let e = n.sectionId, t = n.item;
 				if (!e || !t) return;
-				let r = P(t);
+				let r = F(t);
 				f((t) => {
 					let n = t[e] ?? [];
 					return n.some((e) => e.id === r.id) ? t : {
@@ -777,7 +826,7 @@ function F(e) {
 				body: JSON.stringify(t)
 			});
 			if (!n.ok) throw Error(`Failed to add item (${n.status})`);
-			let i = P((await n.json()).item);
+			let i = F((await n.json()).item);
 			f((t) => {
 				let n = t[e] ?? [];
 				return n.some((e) => e.id === i.id) ? t : {
@@ -794,7 +843,7 @@ function F(e) {
 				body: JSON.stringify(n)
 			});
 			if (!i.ok) throw Error(`Failed to update item (${i.status})`);
-			let a = P((await i.json()).item);
+			let a = F((await i.json()).item);
 			f((n) => {
 				let r = n[e];
 				return r ? {
@@ -825,7 +874,7 @@ function F(e) {
 				headers: y
 			});
 			if (!n.ok) throw Error(`Failed to acknowledge item (${n.status})`);
-			let i = P((await n.json()).item);
+			let i = F((await n.json()).item);
 			f((n) => {
 				let r = n[e];
 				return r ? {
@@ -840,7 +889,7 @@ function F(e) {
 }
 //#endregion
 //#region src/hooks/useDocumentReviews.ts
-function I(e) {
+function L(e) {
 	let t = {};
 	for (let n of e) {
 		let e = n.sectionId ?? "__unknown";
@@ -850,7 +899,7 @@ function I(e) {
 	}
 	return t;
 }
-function L(e) {
+function R(e) {
 	let { documentId: t, idToken: n, sendMessage: r, onMessage: l } = e, [u, d] = c({}), [f, p] = c(!1), m = s(r);
 	a(() => {
 		m.current = r;
@@ -868,7 +917,7 @@ function L(e) {
 			if (!e.ok) throw Error(`Failed to load reviews (${e.status})`);
 			return e.json();
 		}).then((e) => {
-			d(I(e.reviews ?? []));
+			d(L(e.reviews ?? []));
 		}).catch((e) => {
 			console.warn("[useDocumentReviews] fetch error:", e.message);
 		}).finally(() => {
@@ -917,7 +966,7 @@ function L(e) {
 }
 //#endregion
 //#region src/hooks/useMentionUsers.ts
-function R(e) {
+function z(e) {
 	return o(() => {
 		let t = /* @__PURE__ */ new Set(), i = [];
 		for (let r of e) {
@@ -954,22 +1003,22 @@ function R(e) {
 }
 //#endregion
 //#region src/hooks/useMyMentionsAndTasks.ts
-function z(e) {
+function B(e) {
 	let t = [];
-	for (let n of e) t.push(n), n.replies && n.replies.length > 0 && t.push(...z(n.replies));
+	for (let n of e) t.push(n), n.replies && n.replies.length > 0 && t.push(...B(n.replies));
 	return t;
 }
-function B(e, t) {
+function V(e, t) {
 	let n = t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 	return RegExp(`@${n}(?=\\s|$|[.!?,;:])`, "i").test(e);
 }
-function V({ sections: e, comments: t, displayName: n, userId: r }) {
+function H({ sections: e, comments: t, displayName: n, userId: r }) {
 	return o(() => {
 		let i = [], a = [];
 		for (let [a, o] of Object.entries(t)) {
 			if (!o) continue;
-			let t = e.find((e) => e.id === a), s = z(o);
-			for (let e of s) e.userId !== r && B(e.text, n) && i.push({
+			let t = e.find((e) => e.id === a), s = B(o);
+			for (let e of s) e.userId !== r && V(e.text, n) && i.push({
 				kind: "mention",
 				sectionId: a,
 				sectionTitle: t?.title ?? "",
@@ -1002,7 +1051,7 @@ function V({ sections: e, comments: t, displayName: n, userId: r }) {
 }
 //#endregion
 //#region src/hooks/useVersionHistory.ts
-function H(e) {
+function U(e) {
 	let t = e.getArray("sections"), n = [];
 	for (let e = 0; e < t.length; e++) {
 		let r = t.get(e);
@@ -1030,7 +1079,7 @@ function H(e) {
 	}
 	return n;
 }
-function U(e) {
+function W(e) {
 	let { channel: n, sendMessage: r, onMessage: o } = e, [u, d] = c([]), [f, p] = c(!1), [m, h] = c(null), [g, _] = c(null), [v, y] = c(null), [b, x] = c(null), S = s(null), C = s(null), w = s(!1);
 	return a(() => o((e) => {
 		if (e.type === "error" && e.service === "crdt") {
@@ -1048,7 +1097,7 @@ function U(e) {
 				let n = e.update;
 				if (!n) break;
 				let r = new l.Doc({ gc: !1 }), i = t(n);
-				l.applyUpdate(r, i), w.current ? (w.current = !1, C.current && C.current.destroy(), C.current = r, y(H(r))) : (S.current && S.current.destroy(), S.current = r, h(r));
+				l.applyUpdate(r, i), w.current ? (w.current = !1, C.current && C.current.destroy(), C.current = r, y(U(r))) : (S.current && S.current.destroy(), S.current = r, h(r));
 				break;
 			}
 			case "versionSaved":
@@ -1112,7 +1161,7 @@ function U(e) {
 				name: e
 			});
 		}, [n, r]),
-		extractSections: i((e) => H(e), []),
+		extractSections: i((e) => U(e), []),
 		compareSections: v,
 		compareTimestamp: b,
 		compareVersion: i((e) => {
@@ -1130,7 +1179,7 @@ function U(e) {
 }
 //#endregion
 //#region src/hooks/useVideoCall.ts
-function W(e) {
+function G(e) {
 	let { documentId: t, idToken: n, meta: r, updateMeta: o, sendMessage: l, displayName: u } = e, [d, f] = c("idle"), [p, m] = c(null), [h, g] = c(null), [_, v] = c(null), [y, b] = c(null), [x, S] = c(null), C = s(p);
 	a(() => {
 		C.current = p;
@@ -1249,7 +1298,7 @@ function W(e) {
 }
 //#endregion
 //#region src/hooks/useVideoSessions.ts
-function G(e, t) {
+function K(e, t) {
 	let [n, r] = c([]), [a, o] = c(!1);
 	return {
 		sessions: n,
@@ -1270,4 +1319,4 @@ function G(e, t) {
 	};
 }
 //#endregion
-export { R as a, N as c, C as d, g as f, f as h, V as i, k as l, p as m, W as n, L as o, m as p, U as r, F as s, G as t, D as u };
+export { z as a, P as c, C as d, g as f, f as h, H as i, k as l, p as m, G as n, R as o, m as p, W as r, I as s, K as t, D as u };

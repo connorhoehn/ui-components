@@ -570,6 +570,12 @@ declare interface CommentData {
     resolved?: boolean;
     resolvedBy?: string;
     resolvedAt?: string;
+    /** Legacy section position. Absent on document-wide and anchored comments. */
+    sectionId?: string;
+    /** `'document'` for an unanchored, document-wide comment (no section, anchor or parent). */
+    scope?: 'document';
+    /** Where in the prose the comment points (canvas documents). Opaque to the server. */
+    anchor?: DocumentCommentAnchor;
 }
 
 export declare function CommentGhostPopover({ threads, containerRef, hoverDelayMs, hoverEnabled, onOpenChange, onOpenThread, onResolve, ref, 'data-testid': testId, }: CommentGhostPopoverProps): JSX.Element;
@@ -993,6 +999,25 @@ export declare const DOCUMENT_TOOLBAR_BREAKPOINTS: {
     readonly narrow: 840;
     readonly wide: 1240;
 };
+
+/**
+ * A Y.js relative-position range a canvas comment points at. Structurally
+ * mirrors platform-api's `DocumentCommentAnchor` (and realtime-modules'
+ * `CanvasAnchor`): encoded and resolved by the client, stored verbatim by the
+ * server.
+ */
+declare interface DocumentCommentAnchor {
+    /** Encoding version. */
+    v: number;
+    /** The Y.js root the anchor is relative to (`'body'` for a canvas page). */
+    key: string;
+    /** base64 of the encoded relative position for the start of the range. */
+    start: string;
+    /** base64 of the encoded relative position for the end of the range. */
+    end: string;
+    /** The text the range covered when the comment was written. */
+    quote: string;
+}
 
 export declare function DocumentEditorPage({ documentId, documentType, ws, userId, displayName, color, onMessage, activityPublish, onBack, isVideoDocked, onDockVideo, onUndockVideo, idToken, }: DocumentEditorPageProps): JSX.Element;
 
@@ -4054,12 +4079,18 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
+        canvasLineSpacing: {
             /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
              */
-            insertDiagram: (id?: string) => ReturnType;
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
         };
     }
 }
@@ -4080,27 +4111,13 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
+        diagramMacro: {
             /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
              */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
+            insertDiagram: (id?: string) => ReturnType;
         };
-    }
-}
-
-
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
     }
 }
 
@@ -4133,9 +4150,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -4143,9 +4163,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -4163,12 +4183,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -4176,9 +4193,17 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
+    }
+}
+
+
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
     }
 }
