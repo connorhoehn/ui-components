@@ -117,7 +117,17 @@ export declare const CANVAS_SCHEMA_VERSION = 2;
  */
 export declare function canvasBody(ydoc: Doc | null | undefined): XmlFragment | null;
 
-export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, belowRuler, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, onHoverGutterItem, gutterVisible, showRuler, toolbarDensity, showStatusBar, zoomMode, toolbarStyle, pageMargin, onDocumentStats, fitHeight, showOutline, paginate, onToggleGutter, onInsertImage, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
+/** The parts `renderFrame` receives. */
+export declare interface CanvasDocumentFrame {
+    /** Formatting toolbar plus the find/replace row when open; null when there is nothing to edit. */
+    toolbar: ReactNode;
+    /** The page ruler, aligned to the sheet; null when `showRuler` is off. */
+    ruler: ReactNode;
+    /** Header, banners and the canvas workspace. */
+    surface: ReactNode;
+}
+
+export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, belowRuler, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, onHoverGutterItem, gutterVisible, showRuler, toolbarDensity, showStatusBar, zoomMode, toolbarStyle, pageMargin, onDocumentStats, fitHeight, showOutline, paginate, onToggleGutter, renderFrame, onInsertImage, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
 
 export declare interface CanvasDocumentViewProps {
     /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
@@ -382,6 +392,17 @@ export declare interface CanvasDocumentViewProps {
      * the answer.
      */
     onToggleGutter?: () => void;
+    /**
+     * Split the view so the host can place the chrome. Given a function, the view
+     * stops drawing its own toolbar (with the find row) and ruler inside the
+     * workspace and hands them over instead: put `toolbar` in `EditorShell`'s
+     * `toolbar` slot, `ruler` under it (or drop it), and `surface` — the header,
+     * banners and the canvas — in the body. `toolbar` and `ruler` are null until
+     * they apply (read-only, editor not ready, `showRuler` off). Omitted keeps the
+     * default single-frame layout unchanged. Same shape as the presentation
+     * editor's `renderFrame`.
+     */
+    renderFrame?: (frame: CanvasDocumentFrame) => ReactNode;
     /**
      * Forwarded to the toolbar's image button. See DocumentToolbar's prop docs:
      * the host owns the picker and the upload, this view only decides that the
@@ -4076,11 +4097,19 @@ declare module '@tiptap/core' {
 }
 
 
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
+    }
+}
+
+
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -4101,9 +4130,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -4151,13 +4180,5 @@ declare module '@tiptap/core' {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
-    }
-}
-
-
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
     }
 }

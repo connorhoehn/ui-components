@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.407.21
+
+- `CanvasDocumentView.renderFrame` (new): `(frame: { toolbar, ruler, surface }) => ReactNode` hands the toolbar (with its find row) and the ruler to the host — an `EditorShell` `toolbar` slot — instead of drawing them inside the scroller; `toolbar` is null when read-only; default layout unchanged. A ruler placed outside the scroller can sit a scrollbar-width off the sheet.
+- `integrations/realtime`: `createCanvasDocumentPane({ useGateway, useYjsDoc, useCanvasDocument })` (new) — the one canvas document assembly both apps used to compose by hand: shared extension list (`buildCanvasDocumentExtensions`, wrapping `Image` with the authenticated node view), recovery and its notices (`useCanvasRecovery`, encode/decode helpers), save-state line (`canvasDocumentSaveState`), wire-error alert, beforeunload guard, awareness identity, image provider and insert-image modal, loading / "migration incomplete" states, `canEditCanvasGrant`; no runtime import of realtime-modules (pinned by `scopeAgnosticPackaging`). `integrations/realtime-modules` exports a bound `CanvasDocumentPane` for the canonical scope. First consumer: the OrgIQ assessment workspace (`docs/assessment-documents-parity-goal.md` backlog 1–2).
+
 ## 2.407.20
 
 **`integrations/realtime` (new entry): the realtime integrations without a hard-coded install scope (fix for re-scoped consumers).** `integrations/realtime-modules` imports `@connorhoehn/realtime-modules/client`, `/client/video`, `/client/hangout-rooms` and `/call` by name at module top level, so an app that installs the library as `@connorhoehnslalom/realtime-modules` (aws-agentcore) could not resolve the entry, and any page importing even a pure adapter (`adaptPresenceRoster`, `WrappedChatPanel`) crashed.

@@ -1,3 +1,4 @@
+import { AnyExtension } from '@tiptap/core';
 import { Awareness } from 'y-protocols/awareness';
 import { Component } from 'react';
 import { Editor } from '@tiptap/react';
@@ -5,6 +6,7 @@ import { ErrorInfo } from 'react';
 import { HangoutConnectionState } from '@connorhoehn/realtime-modules/client/video';
 import { JSX } from 'react';
 import { MouseEvent as MouseEvent_2 } from 'react';
+import { Node as Node_2 } from '@tiptap/core';
 import { ReactNode } from 'react';
 import type * as RMCall from '@connorhoehn/realtime-modules/call';
 import type * as RMClient from '@connorhoehn/realtime-modules/client';
@@ -298,11 +300,139 @@ declare interface AudioVideoSettingsFormProps {
     'data-testid'?: string;
 }
 
+/**
+ * THE canvas extension list: realtime-modules' canonical factory over the app's
+ * parts, with the image node swapped for the authenticated one. Both apps build
+ * their list here so the schema cannot drift. Call once at module scope —
+ * ProseMirror reads extensions once, so a new array per render rebuilds the editor.
+ */
+export declare function buildCanvasDocumentExtensions(createCanvasExtensions: CreateCanvasExtensions, parts: CanvasDocumentExtensionParts): AnyExtension[];
+
 declare interface CallActivityParticipant {
     userId: string;
     displayName?: string;
     avatarUrl?: string;
 }
+
+/** Auth expiry is independent of whether a socket is open; the app adds its own mode rules. */
+export declare function canEditCanvasGrant(grant: {
+    canEdit: boolean;
+    expiresAt: number;
+}, accessValid: boolean, now?: number): boolean;
+
+/** The schema inputs an app supplies from its own installed packages (one module graph). */
+export declare interface CanvasDocumentExtensionParts {
+    MacroNode: AnyExtension;
+    HeadingAnchor: AnyExtension;
+    MarkdownClipboard: AnyExtension;
+    Callout: AnyExtension;
+    CanvasTextAlign: AnyExtension;
+    TextStyleKit: AnyExtension;
+    /** The BASE `@tiptap/extension-image`; it is wrapped with the authenticated node view here. */
+    Image: Node_2;
+    TableKit: AnyExtension;
+    /** Per-document comment/suggestion bindings; never replace shared node definitions. */
+    additional?: readonly AnyExtension[];
+}
+
+/** The parts `renderFrame` receives. */
+declare interface CanvasDocumentFrame {
+    /** Formatting toolbar plus the find/replace row when open; null when there is nothing to edit. */
+    toolbar: ReactNode;
+    /** The page ruler, aligned to the sheet; null when `showRuler` is off. */
+    ruler: ReactNode;
+    /** Header, banners and the canvas workspace. */
+    surface: ReactNode;
+}
+
+export declare type CanvasDocumentPaneComponent = (props: CanvasDocumentPaneProps) => ReactNode;
+
+/** The realtime-modules functions the pane calls. Spread the namespace you installed. */
+export declare interface CanvasDocumentPaneModules {
+    /** `/client` */
+    useGateway: () => CanvasPaneGateway;
+    /** `/client` — called with `ws: gateway`. */
+    useYjsDoc: (options: {
+        documentId: string;
+        ws: never;
+        onMessage: CanvasPaneGateway['onMessage'];
+        onUnpersistedChanges?: (snapshot: Uint8Array) => void;
+    }) => CanvasPaneYjsDoc;
+    /** `/client` */
+    useCanvasDocument: (options: {
+        ydoc: Y.Doc | null | undefined;
+    }) => {
+        isCanvas: boolean;
+        body: CanvasDocumentViewProps['body'];
+        exportMarkdown: () => string;
+    };
+}
+
+/** The pieces `layout` places. */
+export declare interface CanvasDocumentPaneParts {
+    /** Recovery, storage and wire-error alerts, plus `notices`. */
+    notices: ReactNode;
+    /** The canvas (or its loading / migration-incomplete state), with the image provider and modal. */
+    canvas: ReactNode;
+    /** Formatting toolbar; null until the editor is ready or when read-only. */
+    toolbar: ReactNode;
+    ruler: ReactNode;
+    /** For `EditorShell`'s `saveState`; undefined while idle. */
+    saveState: DocumentSaveState | undefined;
+    state: CanvasDocumentPaneState;
+}
+
+export declare interface CanvasDocumentPaneProps {
+    documentId: string;
+    /** Recovery is partitioned by these; also the awareness identity. */
+    tenant: string;
+    userId: string;
+    userName: string;
+    userColor?: string;
+    /** The app's permission verdict (role, grant expiry, lifecycle). The pane adds sync and connection. */
+    canEdit: boolean;
+    /** The user's edit toggle. Default true. */
+    editing?: boolean;
+    /** Build once at module scope with `buildCanvasDocumentExtensions`. */
+    extensions: readonly unknown[];
+    /** Authenticated image fetch. */
+    loadImage: DocumentImageLoader;
+    /** Which image URLs need `loadImage`; default is gateway uploads. */
+    isProtectedImage?: (src: string) => boolean;
+    /** Present ⇒ the toolbar's Insert image opens a picker that uploads and inserts. */
+    uploadImage?: (file: File) => Promise<string>;
+    /** Tell the app about unsaved edits (a navigation guard, say). */
+    onPendingChange?: (pendingUpdateCount: number) => void;
+    /** Alerts placed before the pane's own. */
+    notices?: ReactNode;
+    /** Rendered inside the image provider after the canvas — a context panel, say. */
+    children?: ReactNode;
+    /** Pass-through to the view; overrides the pane's defaults. */
+    viewProps?: Partial<Omit<CanvasDocumentViewProps, 'isCanvas' | 'body' | 'ydoc' | 'provider' | 'user' | 'editable' | 'extensions' | 'renderFrame'>>;
+    onEditorReady?: (editor: unknown) => void;
+    loadingLabel?: string;
+    /** Place the parts in a shell. Omitted: notices then canvas, in a column. */
+    layout?: (parts: CanvasDocumentPaneParts) => ReactNode;
+    keyPrefix?: string;
+}
+
+/** What the pane knows, for a host that lays out its own shell. */
+export declare interface CanvasDocumentPaneState {
+    editable: boolean;
+    online: boolean;
+    synced: boolean;
+    pendingUpdateCount: number;
+    persistenceState: CanvasPaneYjsDoc['persistenceState'];
+    docVersion: number;
+    ydoc: Y.Doc | null;
+    exportMarkdown: () => string;
+}
+
+/**
+ * Save-state line for a canvas document. Only a durable backend receipt may
+ * select `saved`; `idle` shows nothing.
+ */
+export declare function canvasDocumentSaveState(state: 'idle' | 'pending' | 'saved' | 'error', pending: number, online: boolean, retry: () => void): DocumentSaveState | undefined;
 
 declare interface CanvasDocumentViewProps {
     /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
@@ -568,6 +698,17 @@ declare interface CanvasDocumentViewProps {
      */
     onToggleGutter?: () => void;
     /**
+     * Split the view so the host can place the chrome. Given a function, the view
+     * stops drawing its own toolbar (with the find row) and ruler inside the
+     * workspace and hands them over instead: put `toolbar` in `EditorShell`'s
+     * `toolbar` slot, `ruler` under it (or drop it), and `surface` — the header,
+     * banners and the canvas — in the body. `toolbar` and `ruler` are null until
+     * they apply (read-only, editor not ready, `showRuler` off). Omitted keeps the
+     * default single-frame layout unchanged. Same shape as the presentation
+     * editor's `renderFrame`.
+     */
+    renderFrame?: (frame: CanvasDocumentFrame) => ReactNode;
+    /**
      * Forwarded to the toolbar's image button. See DocumentToolbar's prop docs:
      * the host owns the picker and the upload, this view only decides that the
      * control belongs on the bar rather than in the host's `toolbarActions`
@@ -586,6 +727,41 @@ declare interface CanvasDocumentViewProps {
     onEditorReady?: (editor: Parameters<typeof DocumentToolbar>[0]['editor'] | null) => void;
     'data-testid'?: string;
 }
+
+/** The gateway pieces the pane reads (`useGateway()`'s return, structurally). */
+export declare interface CanvasPaneGateway {
+    connectionState: string;
+    onMessage: (handler: (message: {
+        channel?: string;
+        type?: string;
+        error?: unknown;
+    }) => void) => () => void;
+}
+
+/** `useYjsDoc(...)`'s return, structurally. */
+export declare interface CanvasPaneYjsDoc {
+    ydoc: Y.Doc | null;
+    provider: (CanvasDocumentViewProps['provider'] & {
+        pendingUpdateCount: number;
+        awareness: {
+            setLocalStateField: (field: string, value: unknown) => void;
+        };
+    }) | null;
+    synced: boolean;
+    persistenceState: 'idle' | 'pending' | 'saved' | 'error';
+    pendingUpdateCount: number;
+    retryPersistence: () => void;
+    docVersion: number;
+}
+
+export declare interface CanvasRecovery {
+    version: 1;
+    savedAt: string;
+    snapshot: string;
+}
+
+/** Storage key partitioned by verified identity and document; a grant is never stored. */
+export declare function canvasRecoveryKey(tenant: string, subject: string, documentId: string, prefix?: string): string;
 
 /**
  * A form the ProseMirror schema could not express, surfaced rather than
@@ -1411,6 +1587,12 @@ declare interface ConversationSurfaceProps {
     'data-testid'?: string;
 }
 
+/** Bind the pane to the app's realtime-modules functions. Call once at module scope. */
+export declare function createCanvasDocumentPane(rm: CanvasDocumentPaneModules): CanvasDocumentPaneComponent;
+
+/** `createCanvasExtensions` from `@…/realtime-modules/adapters/tiptap`, injected. */
+export declare type CreateCanvasExtensions = (parts: CanvasDocumentExtensionParts) => AnyExtension[];
+
 /**
  * Bind conversationFeaturesFor to an injected `lobbyForChannel` (the rule for
  * "does this channel have a call lobby" lives in realtime-modules' `/call`).
@@ -1454,6 +1636,8 @@ export declare function createWrappedLVSHangoutLayout(rm: WrappedLVSHangoutLayou
 /** Bind WrappedStreamStage to injected LVS hooks. See `createRealtimeIntegrations`. */
 export declare function createWrappedStreamStage(rm: WrappedStreamStageModules): WrappedStreamStageComponent;
 
+export declare function decodeCanvasRecovery(value: unknown): Uint8Array | null;
+
 /**
  * Chat and presence only.
  *
@@ -1488,10 +1672,20 @@ export declare type DocumentFileUploadHook = (channel: string, options: {
     }>;
 };
 
+/** Fetch bytes using the current viewer's identity; credentials never enter the document. */
+declare type DocumentImageLoader = (src: string, signal: AbortSignal) => Promise<Blob>;
+
 export declare interface DocumentImageUpload {
     uploadImage: (file: File) => Promise<string>;
     uploadFile: (file: File) => Promise<UploadedDocumentFile>;
     accepts: (file: File) => boolean;
+}
+
+/** Only a durable backend receipt may select `saved`. Connection/sync is insufficient. */
+declare interface DocumentSaveState {
+    status: 'pending' | 'saved' | 'error' | 'offline';
+    detail?: string;
+    onRetry?: () => void;
 }
 
 declare function DocumentToolbar({ editor, actions, commentCount, suggestionCount, gutterVisible, onToggleGutter, onInsertImage, density, size: sizeProp, extras, zoomControl, 'data-testid': testId, }: DocumentToolbarProps): JSX.Element | null;
@@ -1610,6 +1804,8 @@ declare interface DocumentZoomControl {
     /** Absent when the host cannot fit — then offer no Fit option. */
     onFitWidth?: () => void;
 }
+
+export declare function encodeCanvasRecovery(bytes: Uint8Array): CanvasRecovery;
 
 declare interface EphemeralReaction {
     id: string;
@@ -2942,6 +3138,23 @@ export declare interface UploadedDocumentFile {
     type: string;
 }
 
+/**
+ * Tab-local recovery is partitioned by verified identity and document; it never
+ * stores grants. `keyPrefix` lets an app keep the storage keys it already wrote.
+ */
+export declare function useCanvasRecovery(tenant: string, subject: string, documentId: string, keyPrefix?: string): {
+    recovered: CanvasRecovery | null;
+    storageError: boolean;
+    retain: (bytes: Uint8Array) => void;
+    clear: () => void;
+    track: (ydoc: Y.Doc | null, provider: {
+        pendingUpdateCount: number;
+    } | null) => () => void;
+    acknowledged: () => void;
+    download: () => void;
+    restore: (ydoc: Y.Doc) => void;
+};
+
 /** Reference editor upload binding; waits for the server's stable asset URL, never a data URI. */
 export declare function useDocumentImageUpload(documentId: string | null | undefined, displayName: string, useFileUpload: DocumentFileUploadHook, timeoutMs?: number): DocumentImageUpload;
 
@@ -3503,11 +3716,19 @@ declare module '@tiptap/core' {
 }
 
 
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
+    }
+}
+
+
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -3528,9 +3749,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -3578,13 +3799,5 @@ declare module '@tiptap/core' {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
-    }
-}
-
-
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
     }
 }
