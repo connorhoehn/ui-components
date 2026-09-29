@@ -31,7 +31,7 @@ import { t as de } from "./InlinePlaceholder-51dbPRGn.js";
 import { n as fe, t as G } from "./PopoverForm-BCCYkHYg.js";
 import { t as pe } from "./DropdownMenu-dM1tsyrs.js";
 import { t as me } from "./Select-D3fGI8SO.js";
-import { B as he, L as ge, N as _e, ct as ve, it as ye, nt as be } from "./ConversationSurface-ByEmammF.js";
+import { B as he, L as ge, N as _e, at as ve, lt as ye, rt as be } from "./ConversationSurface-DLmbBKti.js";
 import { t as xe } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as Se, t as Ce } from "./ReactionPickerPopover-DkcC4xmE.js";
 import { n as we } from "./useComputeProjects-ZSazDRet.js";
@@ -953,7 +953,7 @@ function qe({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sec
 					"aria-label": e.collapsible ? void 0 : e.label,
 					"aria-labelledby": e.collapsible ? n : void 0,
 					children: e.shown.map((e) => {
-						let t = e.channel === u, n = e.channel === se, r = e.kind ?? (e.peers.length > 1 ? "group" : "dm"), i = r === "channel", a = r === "group", c = e.peers[0], l = i ? e.name ?? e.channel : e.peers.map((e) => e.displayName).join(", "), f = e.lastMessageAt ? ye(e.lastMessageAt) : "", m = e.lastMessageAt ? ve(e.lastMessageAt) : "", E = e.unreadCount ?? 0, D = !!e.mentioned, O = !!e.live, j = !!e.muted, M = `${A}-row-menu-${e.channel}`, N = [];
+						let t = e.channel === u, n = e.channel === se, r = e.kind ?? (e.peers.length > 1 ? "group" : "dm"), i = r === "channel", a = r === "group", c = e.peers[0], l = i ? e.name ?? e.channel : e.peers.map((e) => e.displayName).join(", "), f = e.lastMessageAt ? ve(e.lastMessageAt) : "", m = e.lastMessageAt ? ye(e.lastMessageAt) : "", E = e.unreadCount ?? 0, D = !!e.mentioned, O = !!e.live, j = !!e.muted, M = `${A}-row-menu-${e.channel}`, N = [];
 						return s && (N.push({
 							label: "Call",
 							icon: /* @__PURE__ */ Q(_, { size: 14 }),

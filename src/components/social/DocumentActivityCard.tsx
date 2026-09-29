@@ -46,8 +46,24 @@ export interface DocumentActivityCardProps {
    * button — a document the viewer cannot reach should not offer a way in.
    */
   onOpen?: (documentId: string) => void;
+  /**
+   * The document behind the card can no longer be reached: `gone` (it was
+   * deleted — the server answers 404) or `forbidden` (it exists but the viewer
+   * may not read it). The card stays as a record of what was shared, muted,
+   * says which, and offers no way in — a live "Open" onto a 404 is the bug.
+   * Since 2.406.0.
+   */
+  unavailable?: DocumentUnavailableReason;
   className?: string;
   'data-testid'?: string;
+}
+
+/** Why a referenced document cannot be opened. */
+export type DocumentUnavailableReason = 'gone' | 'forbidden';
+
+/** The words a card or chip uses for an unreachable document. */
+export function documentUnavailableLabel(reason: DocumentUnavailableReason): string {
+  return reason === 'gone' ? 'No longer available' : 'You don’t have access';
 }
 
 export function DocumentActivityCard({
@@ -57,18 +73,23 @@ export function DocumentActivityCard({
   createdBy,
   editors = [],
   onOpen,
+  unavailable,
   className,
   'data-testid': testId = 'document-activity-card',
 }: DocumentActivityCardProps) {
-  const live = editors.length > 0;
+  // Nobody is "editing now" in a document that is not there.
+  const live = !unavailable && editors.length > 0;
 
   return (
     <div
       data-testid={testId}
       data-document-id={documentId}
       data-editing={live ? 'true' : undefined}
+      data-unavailable={unavailable}
+      aria-disabled={unavailable ? 'true' : undefined}
       className={cn(
         'flex items-center gap-3 rounded-lg border border-border bg-surface-inset px-3 py-2',
+        unavailable && 'border-dashed opacity-60',
         className,
       )}
     >
@@ -85,11 +106,13 @@ export function DocumentActivityCard({
       </span>
 
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="truncate text-[13px] font-semibold text-text-primary">
+        <span className={cn('truncate text-[13px] font-semibold', unavailable ? 'text-text-tertiary' : 'text-text-primary')}>
           {title || 'Untitled'}
         </span>
-        <span className="truncate text-[11px] text-text-tertiary">
-          {live
+        <span className="truncate text-[11px] text-text-tertiary" data-testid={unavailable ? `${testId}-unavailable` : undefined}>
+          {unavailable
+            ? documentUnavailableLabel(unavailable)
+            : live
             // Present tense, because this is the state right now — and it is
             // the reason to open it before finishing the sentence you were
             // typing.
@@ -118,7 +141,7 @@ export function DocumentActivityCard({
         </span>
       )}
 
-      {onOpen && (
+      {onOpen && !unavailable && (
         <button
           type="button"
           data-testid={`${testId}-open`}

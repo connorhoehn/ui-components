@@ -3854,7 +3854,7 @@ export declare interface ChatMessage {
     deletedAt?: string;
 }
 
-export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, dock: dockSlot, currentUserId, reactionsFor, onToggleReaction, onReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, callParticipants, agentRunStatus, onOpenRun, agentLoopStatus, onOpenLab, onOpenResult, onDecideRun, onReviewRun, onRetryRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, dock: dockSlot, currentUserId, reactionsFor, onToggleReaction, onReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, documentUnavailable, callParticipants, agentRunStatus, onOpenRun, agentLoopStatus, onOpenLab, onOpenResult, onDecideRun, onReviewRun, onRetryRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -3989,6 +3989,13 @@ export declare interface ChatPanelProps {
      * document exists" and "two people are in it right now" shows up.
      */
     documentEditors?: (documentId: string) => readonly DocumentActivityEditor[];
+    /**
+     * Documents a message refers to that can no longer be reached, keyed by
+     * documentId: `'gone'` (deleted) or `'forbidden'` (not shared with the
+     * viewer); `undefined` when it is fine or not yet known. Their cards and
+     * chips render muted and labelled, with no way in. Since 2.406.0.
+     */
+    documentUnavailable?: (documentId: string) => DocumentUnavailableReason | undefined;
     /**
      * Who is in a call right now, keyed by callId. Overrides the participant
      * list frozen into the message metadata, which is only a snapshot of the
@@ -7125,7 +7132,7 @@ declare interface DocTypeProposalRow {
 
 export declare const DOCUMENT_TYPE_ICONS: string[];
 
-export declare function DocumentActivityCard({ documentId, title, icon, createdBy, editors, onOpen, className, 'data-testid': testId, }: DocumentActivityCardProps): JSX.Element;
+export declare function DocumentActivityCard({ documentId, title, icon, createdBy, editors, onOpen, unavailable, className, 'data-testid': testId, }: DocumentActivityCardProps): JSX.Element;
 
 export declare interface DocumentActivityCardProps {
     documentId: string;
@@ -7141,6 +7148,14 @@ export declare interface DocumentActivityCardProps {
      * button — a document the viewer cannot reach should not offer a way in.
      */
     onOpen?: (documentId: string) => void;
+    /**
+     * The document behind the card can no longer be reached: `gone` (it was
+     * deleted — the server answers 404) or `forbidden` (it exists but the viewer
+     * may not read it). The card stays as a record of what was shared, muted,
+     * says which, and offers no way in — a live "Open" onto a 404 is the bug.
+     * Since 2.406.0.
+     */
+    unavailable?: DocumentUnavailableReason;
     className?: string;
     'data-testid'?: string;
 }
@@ -7216,7 +7231,7 @@ declare interface DocumentCandidate {
     group?: string;
 }
 
-export declare function DocumentChip({ documentId, label, icon, onOpen, className, 'data-testid': testId }: DocumentChipProps): JSX.Element;
+export declare function DocumentChip({ documentId, label, icon, onOpen, unavailable, className, 'data-testid': testId }: DocumentChipProps): JSX.Element;
 
 export declare interface DocumentChipProps {
     documentId: string;
@@ -7225,6 +7240,12 @@ export declare interface DocumentChipProps {
     icon?: string;
     /** Open the document — beside the chat, or wherever the host puts documents. */
     onOpen?: (documentId: string) => void;
+    /**
+     * The document cannot be reached (`gone`: deleted; `forbidden`: not shared
+     * with the viewer). The chip stays, muted and labelled, and is not a link.
+     * Since 2.406.0.
+     */
+    unavailable?: DocumentUnavailableReason;
     className?: string;
     'data-testid'?: string;
 }
@@ -7410,6 +7431,12 @@ export declare interface DocumentTypePage {
 export declare interface DocumentTypePageConfig {
     showTableOfContents: boolean;
 }
+
+/** The words a card or chip uses for an unreachable document. */
+export declare function documentUnavailableLabel(reason: DocumentUnavailableReason): string;
+
+/** Why a referenced document cannot be opened. */
+export declare type DocumentUnavailableReason = 'gone' | 'forbidden';
 
 export declare function DotMeter({ label, value, segments, showPercent, note, warnAbove, tone, className, 'data-testid': testId, }: DotMeterProps): JSX.Element;
 
@@ -24063,19 +24090,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -24088,6 +24102,19 @@ declare module '@tiptap/core' {
             setLineSpacing: (spacing: LineSpacing) => ReturnType;
             /** Return the paragraphs in the selection to the paper's own leading. */
             unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
         };
     }
 }
@@ -24111,16 +24138,6 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -24160,6 +24177,16 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

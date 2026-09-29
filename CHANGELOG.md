@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.406.0
+
+- `DocumentActivityCard` and `DocumentChip` take `unavailable?: 'gone' | 'forbidden'`: the card/chip stays as a record of the share but renders muted (dashed border, tertiary text), says "No longer available" (`gone`, the document was deleted) or "You don’t have access" (`forbidden`), and offers no way in — the card drops its Open button and live-editor faces, the chip is disabled. New attributes `data-unavailable`, testids `…-unavailable`. `ChatPanel` gains `documentUnavailable?: (documentId) => DocumentUnavailableReason | undefined`, asked per card and per `#` chip. Exported `DocumentUnavailableReason`, `documentUnavailableLabel()`. Why: a DM kept a live Open onto a document that platform-api answered 404 for, and opening it showed an empty pane.
+
 ## 2.405.2
 
 - `ScopeHeader` `variant="inline"`: one row, at most 48px (`h-12`) — the crumbs, then the title as the trail's emphasised last segment (`Org › Search › **People & connections**`; an `h1` with `aria-current="page"`, 18px semibold, or 20px bold at `titleSize="lg"`; the crumbs before it are all links, `lastIsCurrent={false}`), then, right-aligned on the same row, the `tabs` (`activeTab`, `onTabChange`, `tabSize`, counts and dots as in `default`; `Tabs indicator="bar"` filling the row's height so the selected bar sits on the host's bottom rule) and after them `controls` / `link` / `menu`. `description`, `status`, `progress`, `spentUsd`, `stats` and `people` are not drawn in this variant. New testids `…-trail`, `…-tabs`. `default` and `crumbs` are unchanged (their tab items now come from a shared `scopeTabItems` helper; same output). Why: the Search workspace spent four rows (crumbs, title, search field, chips) before its tabs; the graph gets that height.

@@ -8,6 +8,7 @@
 
 import { cn } from '../../lib/cn';
 import { DocumentIcon } from '../ui/Icons';
+import { documentUnavailableLabel, type DocumentUnavailableReason } from './DocumentActivityCard';
 
 export interface DocumentChipProps {
   documentId: string;
@@ -16,22 +17,32 @@ export interface DocumentChipProps {
   icon?: string;
   /** Open the document — beside the chat, or wherever the host puts documents. */
   onOpen?: (documentId: string) => void;
+  /**
+   * The document cannot be reached (`gone`: deleted; `forbidden`: not shared
+   * with the viewer). The chip stays, muted and labelled, and is not a link.
+   * Since 2.406.0.
+   */
+  unavailable?: DocumentUnavailableReason;
   className?: string;
   'data-testid'?: string;
 }
 
-export function DocumentChip({ documentId, label, icon, onOpen, className, 'data-testid': testId = 'chat-message-docref' }: DocumentChipProps) {
+export function DocumentChip({ documentId, label, icon, onOpen, unavailable, className, 'data-testid': testId = 'chat-message-docref' }: DocumentChipProps) {
+  const open = unavailable ? undefined : onOpen;
+  const reason = unavailable ? documentUnavailableLabel(unavailable) : null;
   return (
     <button
       type="button"
-      onClick={onOpen ? () => onOpen(documentId) : undefined}
-      disabled={!onOpen}
-      title={label}
+      onClick={open ? () => open(documentId) : undefined}
+      disabled={!open}
+      title={reason ? `${label} — ${reason}` : label}
       data-testid={testId}
       data-document-id={documentId}
+      data-unavailable={unavailable}
       className={cn(
         'inline-flex max-w-full items-center gap-1 rounded-full border border-border bg-surface px-2 py-0.5 text-[11px] text-text-primary',
-        onOpen ? 'hover:border-primary hover:bg-surface-hover' : 'cursor-default',
+        open ? 'hover:border-primary hover:bg-surface-hover' : 'cursor-default',
+        unavailable && 'border-dashed text-text-tertiary opacity-70',
         className,
       )}
     >
@@ -44,6 +55,7 @@ export function DocumentChip({ documentId, label, icon, onOpen, className, 'data
         ? <span aria-hidden="true" className="shrink-0">{icon}</span>
         : <DocumentIcon size={12} className="shrink-0 text-text-tertiary" aria-hidden="true" />}
       <span className="min-w-0 truncate">{label}</span>
+      {reason && <span className="shrink-0" data-testid={`${testId}-unavailable`}>· {reason}</span>}
     </button>
   );
 }

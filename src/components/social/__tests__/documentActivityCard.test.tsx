@@ -2,6 +2,7 @@ import { render, screen, fireEvent, cleanup, within } from '@testing-library/rea
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DocumentActivityCard } from '../DocumentActivityCard';
 import { ChatPanel } from '../ChatPanel';
+import { DocumentChip } from '../DocumentChip';
 
 afterEach(cleanup);
 
@@ -236,5 +237,58 @@ describe('a document SHARED into the thread', () => {
       />,
     );
     expect(screen.queryByTestId('document-activity-card')).toBeNull();
+  });
+});
+
+// A document shared into a thread and later deleted — or never shared with
+// this reader — used to keep a live Open onto a 404. The card is history, so
+// it stays; it says why it is not a way in, and offers none.
+describe('an unavailable document', () => {
+  it('a gone card is muted, labelled "No longer available", with no Open', () => {
+    const onOpen = vi.fn();
+    render(<DocumentActivityCard documentId="d1" title="Probe" createdBy="Hank" editors={editors} onOpen={onOpen} unavailable="gone" />);
+    const card = screen.getByTestId('document-activity-card');
+    expect(card).toHaveAttribute('data-unavailable', 'gone');
+    expect(card).toHaveAttribute('aria-disabled', 'true');
+    expect(screen.getByTestId('document-activity-card-unavailable')).toHaveTextContent('No longer available');
+    expect(screen.queryByTestId('document-activity-card-open')).toBeNull();
+    // Nobody is "editing now" in a document that is not there.
+    expect(screen.queryByText(/editing now/)).toBeNull();
+  });
+
+  it('a forbidden card says the viewer has no access', () => {
+    render(<DocumentActivityCard documentId="d1" title="Notes" onOpen={vi.fn()} unavailable="forbidden" />);
+    expect(screen.getByTestId('document-activity-card-unavailable')).toHaveTextContent('You don’t have access');
+    expect(screen.queryByTestId('document-activity-card-open')).toBeNull();
+  });
+
+  it('a chip is disabled and labelled, and does not open', () => {
+    const onOpen = vi.fn();
+    render(<DocumentChip documentId="d2" label="Roadmap" onOpen={onOpen} unavailable="gone" />);
+    const chip = screen.getByTestId('chat-message-docref');
+    expect(chip).toBeDisabled();
+    expect(chip).toHaveAttribute('data-unavailable', 'gone');
+    expect(screen.getByTestId('chat-message-docref-unavailable')).toHaveTextContent('No longer available');
+    fireEvent.click(chip);
+    expect(onOpen).not.toHaveBeenCalled();
+  });
+
+  it('ChatPanel asks documentUnavailable per document, for cards and chips', () => {
+    const lookup = vi.fn((id: string) => (id === 'gone-doc' ? 'gone' as const : undefined));
+    render(
+      <ChatPanel
+        messages={[
+          { id: 'm1', clientId: 'c1', displayName: 'Hank', content: 'x', timestamp: '2026-09-24T10:00:00Z', metadata: { share: { kind: 'document', id: 'gone-doc', title: 'Probe' } } },
+          { id: 'm2', clientId: 'c1', displayName: 'Hank', content: 'see #Live', timestamp: '2026-09-24T10:01:00Z', metadata: { documents: [{ id: 'live-doc', label: 'Live' }, { id: 'gone-doc', label: 'Probe' }] } },
+        ]}
+        onSend={vi.fn()}
+        onOpenDocument={vi.fn()}
+        documentUnavailable={lookup}
+      />,
+    );
+    expect(screen.getByTestId('document-activity-card')).toHaveAttribute('data-unavailable', 'gone');
+    const chips = screen.getAllByTestId('chat-message-docref');
+    expect(chips.find((c) => c.getAttribute('data-document-id') === 'live-doc')).not.toHaveAttribute('data-unavailable');
+    expect(chips.find((c) => c.getAttribute('data-document-id') === 'gone-doc')).toHaveAttribute('data-unavailable', 'gone');
   });
 });

@@ -902,6 +902,13 @@ declare interface ChatPanelProps {
      */
     documentEditors?: (documentId: string) => readonly DocumentActivityEditor[];
     /**
+     * Documents a message refers to that can no longer be reached, keyed by
+     * documentId: `'gone'` (deleted) or `'forbidden'` (not shared with the
+     * viewer); `undefined` when it is fine or not yet known. Their cards and
+     * chips render muted and labelled, with no way in. Since 2.406.0.
+     */
+    documentUnavailable?: (documentId: string) => DocumentUnavailableReason | undefined;
+    /**
      * Who is in a call right now, keyed by callId. Overrides the participant
      * list frozen into the message metadata, which is only a snapshot of the
      * moment the event was written — people join a call after it starts, and a
@@ -1524,6 +1531,9 @@ declare interface DocumentToolbarProps {
 
 /** One-row layouts, widest first. */
 declare type DocumentToolbarSize = 'wide' | 'medium' | 'narrow';
+
+/** Why a referenced document cannot be opened. */
+declare type DocumentUnavailableReason = 'gone' | 'forbidden';
 
 export declare interface DocumentUploadCompletion {
     mine: boolean;
@@ -3335,19 +3345,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3360,6 +3357,19 @@ declare module '@tiptap/core' {
             setLineSpacing: (spacing: LineSpacing) => ReturnType;
             /** Return the paragraphs in the selection to the paper's own leading. */
             unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
         };
     }
 }
@@ -3383,16 +3393,6 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -3432,6 +3432,16 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }

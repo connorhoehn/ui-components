@@ -14,7 +14,7 @@ import { useDockedPanel } from '../shared/DockedPanelContext';
 import { Button } from '../ui/Button';
 import { ForwardIcon, PinIcon, SmileyIcon } from '../ui/Icons';
 import { MessageBody } from './MessageBody';
-import { DocumentActivityCard, type DocumentActivityEditor } from './DocumentActivityCard';
+import { DocumentActivityCard, type DocumentActivityEditor, type DocumentUnavailableReason } from './DocumentActivityCard';
 import { DocumentChip } from './DocumentChip';
 import { CallActivityCard, type CallActivityParticipant, type CallOutcome } from './CallActivityCard';
 import { RecordingActivityCard, type RecordingParticipant, type RecordingStage } from './RecordingActivityCard';
@@ -194,6 +194,13 @@ export interface ChatPanelProps {
    * document exists" and "two people are in it right now" shows up.
    */
   documentEditors?: (documentId: string) => readonly DocumentActivityEditor[];
+  /**
+   * Documents a message refers to that can no longer be reached, keyed by
+   * documentId: `'gone'` (deleted) or `'forbidden'` (not shared with the
+   * viewer); `undefined` when it is fine or not yet known. Their cards and
+   * chips render muted and labelled, with no way in. Since 2.406.0.
+   */
+  documentUnavailable?: (documentId: string) => DocumentUnavailableReason | undefined;
   /**
    * Who is in a call right now, keyed by callId. Overrides the participant
    * list frozen into the message metadata, which is only a snapshot of the
@@ -1387,6 +1394,7 @@ export function ChatPanel({
   threaded = false,
   alignOwnMessages = true,
   documentEditors,
+  documentUnavailable,
   callParticipants,
   agentRunStatus,
   onOpenRun,
@@ -2139,6 +2147,7 @@ export function ChatPanel({
       }
       editors={documentEditors?.(docRef.documentId) ?? []}
       onOpen={onOpenDocument}
+      unavailable={documentUnavailable?.(docRef.documentId)}
     />
   ) : files.length === 0 ? (
       text
@@ -2281,7 +2290,7 @@ export function ChatPanel({
       {!isDeleted && docRefs.length > 0 && (
         <div className="mt-1 flex flex-wrap gap-1" data-testid="chat-message-docrefs">
           {docRefs.map((d) => (
-            <DocumentChip key={d.id} documentId={d.id} label={d.label} icon={d.icon} onOpen={onOpenDocument} />
+            <DocumentChip key={d.id} documentId={d.id} label={d.label} icon={d.icon} onOpen={onOpenDocument} unavailable={documentUnavailable?.(d.id)} />
           ))}
         </div>
       )}

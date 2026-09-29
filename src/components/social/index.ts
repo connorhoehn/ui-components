@@ -123,8 +123,8 @@ export type { ConversationFeature, ConversationSurfaceProps } from './Conversati
 
 // A document as it appears INSIDE a conversation: what it is, who is in it
 // right now, and a way in that does not cost you the thread.
-export { DocumentActivityCard } from './DocumentActivityCard';
-export type { DocumentActivityCardProps, DocumentActivityEditor } from './DocumentActivityCard';
+export { DocumentActivityCard, documentUnavailableLabel } from './DocumentActivityCard';
+export type { DocumentActivityCardProps, DocumentActivityEditor, DocumentUnavailableReason } from './DocumentActivityCard';
 
 // DocumentChip — a `#Document` reference under a message, from the composer's
 // `#` menu. Tiptap-free, like the card above.
