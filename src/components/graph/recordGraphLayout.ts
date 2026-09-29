@@ -1040,7 +1040,7 @@ export function recordGraphViewport(
     // defect because a readable fit satisfying every other rule existed.
     const selectionZoom = Math.min(availW / (whole.x1 - whole.x0), availH / (whole.y1 - whole.y0));
     const rungC = Math.min(minZoom, Math.max(focusMinZoom, selectionZoom));
-    // 2.407.28: the readable selection view is searched against the CANVAS,
+    // 2.407.28/29: the readable selection view is searched against the CANVAS,
     // not the clear area. The clear area reserves the legend's and the
     // controls' whole bottom band, so on the 1160 × 333 connections canvas
     // the selection "fitted" only at 0.6 there while a 0.74–0.8 view with the
@@ -1074,37 +1074,52 @@ export function recordGraphViewport(
   function readableSelectionView(): RecordGraphViewport | null {
     if (!whole || !focus) return null;
     const rects = recordGraphOverlayRects(size, options.overlays);
-    const canvasW = Math.max(1, size.width - 2 * FOCUS_EDGE_MARGIN);
-    const canvasH = Math.max(1, size.height - 2 * FOCUS_EDGE_MARGIN);
+    const m = FOCUS_EDGE_MARGIN;
+    // A pixel of slack inside the margin on each axis: a fit that lands the
+    // selection exactly on the margin reads as outside it to a float compare.
+    const canvasW = Math.max(1, size.width - 2 * m - 1);
+    const canvasH = Math.max(1, size.height - 2 * m - 1);
     const top = Math.min(minZoom, maxZoom, canvasW / (whole.x1 - whole.x0), canvasH / (whole.y1 - whole.y0));
     if (top < readable - 1e-9) return null;
     const keys = options.focusKeys ?? [];
     // Each selected record's whole extent — box plus its selection ring and
     // avatar circle (`boxOf` with the default part), the ladder's own geometry.
-    const selectedBoxes = (z: number, v: { x: number; y: number }) => keys.flatMap((k) => {
+    const extents = keys.flatMap((k) => {
       const b = boxOf(positions, [k]);
       const c = boxOf(positions, [k], NODE_CIRCLE);
       if (!b) return [];
-      const x0 = Math.min(b.x0, c?.x0 ?? b.x0), y0 = Math.min(b.y0, c?.y0 ?? b.y0);
-      const x1 = Math.max(b.x1, c?.x1 ?? b.x1), y1 = Math.max(b.y1, c?.y1 ?? b.y1);
-      return [{ minX: x0 * z + v.x, minY: y0 * z + v.y, maxX: x1 * z + v.x, maxY: y1 * z + v.y }];
+      return [{ x0: Math.min(b.x0, c?.x0 ?? b.x0), y0: Math.min(b.y0, c?.y0 ?? b.y0), x1: Math.max(b.x1, c?.x1 ?? b.x1), y1: Math.max(b.y1, c?.y1 ?? b.y1) }];
     });
-    // Whole means the focus margin inside the canvas (16px), the same
-    // contract the ladder's other rungs keep for the selection.
-    const m = FOCUS_EDGE_MARGIN - 0.5;
-    const inside = (b: FitBounds) => b.minX >= m && b.minY >= m && b.maxX <= size.width - m && b.maxY <= size.height - m;
-    const underOverlay = (b: FitBounds) => rects.some((r) => b.minX < r.right && b.maxX > r.left && b.minY < r.bottom && b.maxY > r.top);
-    const allBoxes: FitBounds[] = [];
-    for (const p of positions.values()) allBoxes.push({ minX: p.x, minY: p.y, maxX: p.x + RECORD_GRAPH_NODE_WIDTH, maxY: p.y + RECORD_GRAPH_NODE_HEIGHT });
-    const keep: FitBounds[] = [{ minX: whole.x0, minY: whole.y0, maxX: whole.x1, maxY: whole.y1 }];
-    for (let z = top; z >= readable - 1e-9; z -= 0.02) {
-      const placed = place(z, near ? [all!, near, focus] : [all!, focus]);
-      const shifted = rects.length
-        ? clearOfOverlays({ x: placed.x, y: placed.y, scale: z }, allBoxes, rects, size, { axes: { x: true, y: true }, keep })
-        : { x: placed.x, y: placed.y, scale: z };
-      const view = { x: shifted.x, y: shifted.y, zoom: z };
-      const boxes = selectedBoxes(z, view);
-      if (boxes.length && boxes.every((b) => inside(b) && !underOverlay(b))) return view;
+    if (extents.length === 0) return null;
+    const clearAt = (z: number, x: number, y: number) => extents.every((e) => {
+      const b = { left: e.x0 * z + x, top: e.y0 * z + y, right: e.x1 * z + x, bottom: e.y1 * z + y };
+      if (b.left < m - 0.5 || b.top < m - 0.5 || b.right > size.width - m + 0.5 || b.bottom > size.height - m + 0.5) return false;
+      return !rects.some((r) => b.left < r.right && b.right > r.left && b.top < r.bottom && b.bottom > r.top);
+    });
+    // 2.407.29: the selection is placed directly — centred in the canvas,
+    // then the nearest offset inside the margins that clears every overlay
+    // — rather than through the ladder's placement (whole graph, then
+    // neighbourhood, then focus), which never landed the three records
+    // cleanly on the 333px canvas; and the zoom steps by 0.01, since 0.74
+    // missed that canvas by a pixel and 0.72 was never tried (0.73 fits).
+    const STEP = 8;
+    for (let z = top; z >= readable - 1e-9; z -= 0.01) {
+      const minX = m - whole.x0 * z, maxX = size.width - m - whole.x1 * z;
+      const minY = m - whole.y0 * z, maxY = size.height - m - whole.y1 * z;
+      if (minX > maxX + 0.5 || minY > maxY + 0.5) continue;
+      const cx = clamp((size.width - (whole.x0 + whole.x1) * z) / 2, minX, Math.max(minX, maxX));
+      const cy = clamp((size.height - (whole.y0 + whole.y1) * z) / 2, minY, Math.max(minY, maxY));
+      const reach = Math.ceil(Math.max(maxX - minX, maxY - minY) / STEP);
+      for (let ring = 0; ring <= reach; ring++) {
+        for (let dy = -ring; dy <= ring; dy++) {
+          for (let dx = -ring; dx <= ring; dx++) {
+            if (Math.max(Math.abs(dx), Math.abs(dy)) !== ring) continue;
+            const x = clamp(cx + dx * STEP, minX, Math.max(minX, maxX));
+            const y = clamp(cy + dy * STEP, minY, Math.max(minY, maxY));
+            if (clearAt(z, x, y)) return { x, y, zoom: z };
+          }
+        }
+      }
     }
     return null;
   }

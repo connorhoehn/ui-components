@@ -260,7 +260,7 @@ export function OrgGraph({
     height: Math.max(120, (dimensions.height - inset.top - inset.bottom - 2 * FIT_PADDING) / floor),
   }), [dimensions, inset, floor]);
 
-  const { nodes, links, isSettled } = useForceLayout({
+  const { nodes, links, isSettled, isDone } = useForceLayout({
     people: filteredPeople,
     relationships: filteredRels,
     departments,
@@ -310,6 +310,13 @@ export function OrgGraph({
     });
   }, [nodes, showInfluence, degrees, maxDeg, focusSet, dimensions, inset, overlays, layout, floor]);
 
+  // Frames when the layout has visibly settled (alpha under `SETTLED_ALPHA`)
+  // AND again when the simulation ends (2.407.29): between the two the nodes
+  // still drift a little, and a selected person framed at the first moment
+  // could end 40–60px past the canvas edge at the second (search journey
+  // walk, 2026-09-29: 3 of 26 opens of a two-person focus). The second
+  // framing is a no-op when nothing moved, and never runs once the viewer has
+  // panned or zoomed (`autoFit` is off by then).
   useEffect(() => {
     if (!autoFit.current || !isSettled || laidOutKey !== drawnKey) return;
     const next = computeFit(fitAllMode.current);
@@ -317,7 +324,7 @@ export function OrgGraph({
     setTransform(t => (
       Math.abs(t.x - next.x) < 0.5 && Math.abs(t.y - next.y) < 0.5 && Math.abs(t.scale - next.scale) < 0.001 ? t : next
     ));
-  }, [computeFit, isSettled, laidOutKey, drawnKey]);
+  }, [computeFit, isSettled, isDone, laidOutKey, drawnKey]);
 
   const fitAll = useCallback(() => {
     const next = computeFit(true);
