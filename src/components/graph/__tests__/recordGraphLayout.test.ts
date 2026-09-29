@@ -795,3 +795,38 @@ test('auto fit: a neighbourhood that frames readably is still taken (rung b unch
   expect((p.y + H) * view!.zoom + view!.y).toBeLessThanOrEqual(size.height + 0.5);
   expect(view!.zoom).toBeGreaterThanOrEqual(RECORD_GRAPH_READABLE_ZOOM - 1e-9);
 });
+
+// 2.407.28: the readable selection view is searched against the canvas with
+// the overlays as rectangles, not against a clear area that reserves their
+// whole bottom band. The 1160 × 333 expanded-conversation canvas: three
+// selected records in a row, a tall neighbourhood, the legend and controls in
+// the bottom corners.
+test('auto fit on a short canvas: a readable selection view clear of the overlay rectangles is taken', () => {
+  const size = { width: 1160, height: 333 };
+  const H = NODE_H;
+  const positions = new Map<string, { x: number; y: number }>([
+    ['a', { x: 0, y: 0 }], ['b', { x: 200, y: 0 }], ['c', { x: 400, y: 0 }],
+    ['d', { x: 0, y: 470 - H }],
+    ['e', { x: 3000, y: 0 }], ['f', { x: -3000, y: 0 }],
+  ]);
+  const legend = { width: 200, height: 96 };
+  const controls = RECORD_GRAPH_CONTROLS_SIZE;
+  const view = recordGraphViewport(positions, size, {
+    mode: 'auto', focusKeys: ['a', 'b', 'c'], fitKeys: ['a', 'b', 'c', 'd'],
+    overlays: { legend, controls },
+    inset: { bottom: Math.max(legend.height, controls.height) },
+  });
+  expect(view).not.toBeNull();
+  expect(view!.zoom).toBeGreaterThanOrEqual(RECORD_GRAPH_READABLE_ZOOM - 1e-9);
+  const rects = [
+    { left: 0, top: size.height - legend.height, right: legend.width, bottom: size.height },
+    { left: size.width - controls.width, top: size.height - controls.height, right: size.width, bottom: size.height },
+  ];
+  for (const k of ['a', 'b', 'c']) {
+    const p = positions.get(k)!;
+    const box = { left: p.x * view!.zoom + view!.x, top: p.y * view!.zoom + view!.y, right: (p.x + NODE_W) * view!.zoom + view!.x, bottom: (p.y + H) * view!.zoom + view!.y };
+    expect(box.left).toBeGreaterThanOrEqual(15.5); expect(box.top).toBeGreaterThanOrEqual(15.5);
+    expect(box.right).toBeLessThanOrEqual(size.width - 15.5); expect(box.bottom).toBeLessThanOrEqual(size.height - 15.5);
+    for (const r of rects) expect(box.left < r.right && box.right > r.left && box.top < r.bottom && box.bottom > r.top).toBe(false);
+  }
+});

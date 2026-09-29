@@ -6234,16 +6234,71 @@ function la(e, t, n) {
 		};
 	};
 	if (n.mode !== "all" && v && b && x) {
-		let e = h(x), t = n.mode === "auto" ? Math.min(s, r) : r, a = n.mode === "auto" && e < _ && h(u) >= e - 1e-9, o = Math.min(p / (b.x1 - b.x0), m / (b.y1 - b.y0)), l = Math.min(r, Math.max(c, o)), d = n.mode === "auto" && e < _ && l >= _ - 1e-9;
-		return w(e >= t && !a && !d ? S(Math.min(e, i), [x]) : S(l, [
+		let e = h(x), t = n.mode === "auto" ? Math.min(s, r) : r, a = n.mode === "auto" && e < _ && h(u) >= e - 1e-9, o = Math.min(p / (b.x1 - b.x0), m / (b.y1 - b.y0)), l = Math.min(r, Math.max(c, o)), d = n.mode === "auto" && e < _ ? w() : null, f = n.mode === "auto" && e < _ && (l >= _ - 1e-9 || d !== null);
+		return e >= t && !a && !f ? T(S(Math.min(e, i), [x])) : d || T(S(l, [
 			u,
 			x,
 			v
 		]));
 	}
 	let C = S(Ti(h(u), r, i), v ? [u, v] : [u]);
-	return v ? w(C) : C;
-	function w(r) {
+	return v ? T(C) : C;
+	function w() {
+		if (!b || !v) return null;
+		let a = aa(t, n.overlays), o = Math.max(1, t.width - 32), s = Math.max(1, t.height - 32), c = Math.min(r, i, o / (b.x1 - b.x0), s / (b.y1 - b.y0));
+		if (c < _ - 1e-9) return null;
+		let l = n.focusKeys ?? [], d = (t, n) => l.flatMap((r) => {
+			let i = ca(e, [r]), a = ca(e, [r], sa);
+			if (!i) return [];
+			let o = Math.min(i.x0, a?.x0 ?? i.x0), s = Math.min(i.y0, a?.y0 ?? i.y0), c = Math.max(i.x1, a?.x1 ?? i.x1), l = Math.max(i.y1, a?.y1 ?? i.y1);
+			return [{
+				minX: o * t + n.x,
+				minY: s * t + n.y,
+				maxX: c * t + n.x,
+				maxY: l * t + n.y
+			}];
+		}), f = 15.5, p = (e) => e.minX >= f && e.minY >= f && e.maxX <= t.width - f && e.maxY <= t.height - f, m = (e) => a.some((t) => e.minX < t.right && e.maxX > t.left && e.minY < t.bottom && e.maxY > t.top), h = [];
+		for (let t of e.values()) h.push({
+			minX: t.x,
+			minY: t.y,
+			maxX: t.x + 140,
+			maxY: t.y + 104
+		});
+		let g = [{
+			minX: b.x0,
+			minY: b.y0,
+			maxX: b.x1,
+			maxY: b.y1
+		}];
+		for (let e = c; e >= _ - 1e-9; e -= .02) {
+			let n = S(e, x ? [
+				u,
+				x,
+				v
+			] : [u, v]), r = a.length ? ui({
+				x: n.x,
+				y: n.y,
+				scale: e
+			}, h, a, t, {
+				axes: {
+					x: !0,
+					y: !0
+				},
+				keep: g
+			}) : {
+				x: n.x,
+				y: n.y,
+				scale: e
+			}, i = {
+				x: r.x,
+				y: r.y,
+				zoom: e
+			}, o = d(e, i);
+			if (o.length && o.every((e) => p(e) && !m(e))) return i;
+		}
+		return null;
+	}
+	function T(r) {
 		if (!b || t.height - 2 * l < 300) return r;
 		let i = aa(t, n.overlays);
 		if (!i.length) return r;

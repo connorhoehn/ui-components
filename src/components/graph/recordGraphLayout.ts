@@ -1040,8 +1040,19 @@ export function recordGraphViewport(
     // defect because a readable fit satisfying every other rule existed.
     const selectionZoom = Math.min(availW / (whole.x1 - whole.x0), availH / (whole.y1 - whole.y0));
     const rungC = Math.min(minZoom, Math.max(focusMinZoom, selectionZoom));
-    const nearUnreadableButSelectionReadable = options.mode === 'auto' && nearZoom < readable && rungC >= readable - 1e-9;
+    // 2.407.28: the readable selection view is searched against the CANVAS,
+    // not the clear area. The clear area reserves the legend's and the
+    // controls' whole bottom band, so on the 1160 × 333 connections canvas
+    // the selection "fitted" only at 0.6 there while a 0.74–0.8 view with the
+    // three records whole and clear of both overlays existed (journey walk,
+    // 2026-09-29). Candidate zooms from the selection's canvas fit down to
+    // the readable zoom; each is placed, shifted clear of the overlays with
+    // the selection kept whole, and taken when every selected box is inside
+    // the canvas and under no overlay.
+    const readableSelection = options.mode === 'auto' && nearZoom < readable ? readableSelectionView() : null;
+    const nearUnreadableButSelectionReadable = options.mode === 'auto' && nearZoom < readable && (rungC >= readable - 1e-9 || readableSelection !== null);
     if (nearZoom >= nearFloor && !nearIsAll && !nearUnreadableButSelectionReadable) return clearFocusView(place(Math.min(nearZoom, maxZoom), [near]));
+    if (readableSelection) return readableSelection;
     // Rung (c) (2.403.8): zoom out below the floor, as far as `focusMinZoom`,
     // until the focus's full boxes fit the clear area — clear of the legend
     // and controls since 2.403.9 (was the canvas less 16px, which let a
@@ -1052,6 +1063,51 @@ export function recordGraphViewport(
   }
   const fitted = place(clamp(rawZoom(all), minZoom, maxZoom), focus ? [all, focus] : [all]);
   return focus ? clearFocusView(fitted) : fitted;
+
+  /**
+   * 2.407.28: the first zoom, from the selection's fit in the canvas (16px
+   * margins) down to the readable zoom in 0.02 steps, at which the selection
+   * can be placed whole in the canvas and clear of every overlay rectangle —
+   * or null when none can. The view is the ladder's placement (whole graph,
+   * neighbourhood, focus) shifted by `clearOfOverlays` with the selection kept.
+   */
+  function readableSelectionView(): RecordGraphViewport | null {
+    if (!whole || !focus) return null;
+    const rects = recordGraphOverlayRects(size, options.overlays);
+    const canvasW = Math.max(1, size.width - 2 * FOCUS_EDGE_MARGIN);
+    const canvasH = Math.max(1, size.height - 2 * FOCUS_EDGE_MARGIN);
+    const top = Math.min(minZoom, maxZoom, canvasW / (whole.x1 - whole.x0), canvasH / (whole.y1 - whole.y0));
+    if (top < readable - 1e-9) return null;
+    const keys = options.focusKeys ?? [];
+    // Each selected record's whole extent — box plus its selection ring and
+    // avatar circle (`boxOf` with the default part), the ladder's own geometry.
+    const selectedBoxes = (z: number, v: { x: number; y: number }) => keys.flatMap((k) => {
+      const b = boxOf(positions, [k]);
+      const c = boxOf(positions, [k], NODE_CIRCLE);
+      if (!b) return [];
+      const x0 = Math.min(b.x0, c?.x0 ?? b.x0), y0 = Math.min(b.y0, c?.y0 ?? b.y0);
+      const x1 = Math.max(b.x1, c?.x1 ?? b.x1), y1 = Math.max(b.y1, c?.y1 ?? b.y1);
+      return [{ minX: x0 * z + v.x, minY: y0 * z + v.y, maxX: x1 * z + v.x, maxY: y1 * z + v.y }];
+    });
+    // Whole means the focus margin inside the canvas (16px), the same
+    // contract the ladder's other rungs keep for the selection.
+    const m = FOCUS_EDGE_MARGIN - 0.5;
+    const inside = (b: FitBounds) => b.minX >= m && b.minY >= m && b.maxX <= size.width - m && b.maxY <= size.height - m;
+    const underOverlay = (b: FitBounds) => rects.some((r) => b.minX < r.right && b.maxX > r.left && b.minY < r.bottom && b.maxY > r.top);
+    const allBoxes: FitBounds[] = [];
+    for (const p of positions.values()) allBoxes.push({ minX: p.x, minY: p.y, maxX: p.x + RECORD_GRAPH_NODE_WIDTH, maxY: p.y + RECORD_GRAPH_NODE_HEIGHT });
+    const keep: FitBounds[] = [{ minX: whole.x0, minY: whole.y0, maxX: whole.x1, maxY: whole.y1 }];
+    for (let z = top; z >= readable - 1e-9; z -= 0.02) {
+      const placed = place(z, near ? [all!, near, focus] : [all!, focus]);
+      const shifted = rects.length
+        ? clearOfOverlays({ x: placed.x, y: placed.y, scale: z }, allBoxes, rects, size, { axes: { x: true, y: true }, keep })
+        : { x: placed.x, y: placed.y, scale: z };
+      const view = { x: shifted.x, y: shifted.y, zoom: z };
+      const boxes = selectedBoxes(z, view);
+      if (boxes.length && boxes.every((b) => inside(b) && !underOverlay(b))) return view;
+    }
+    return null;
+  }
 
   /**
    * 2.407.4: a selection-centred view on a canvas with room to spare (clear

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.407.28
+
+- **`RecordGraph` automatic fit on a short canvas: the readable selection view is searched against the canvas, not the clear area (fix).** 2.407.23's rule compared the selection's fit inside the clear area, which reserves the legend's and the controls' whole bottom band, so on the 1160 × 333 connections canvas (answer strip and call row open) the selection "fitted" only at 0.6 and rung (b) still framed the neighbourhood at 0.62 — names 8.1px — while a 0.74–0.8 view with the three records whole (16px margin, ring and avatar included) and clear of both overlay rectangles existed (journey walks, 2026-09-29). Candidate zooms now run from the selection's canvas fit down to the readable zoom; each is placed by the ladder, shifted clear of the overlays with the selection kept whole, and the first whose selected records are inside the margin and under no overlay is taken; otherwise the ladder is unchanged. Test on that canvas in `recordGraphLayout.test.ts`; the 418/369/209px whole-selection contract in `RecordGraph.test.tsx` still holds.
+
 ## 2.407.27
 
 - `useDocumentComments` transport seam (new): `baseUrl`, `commentsPath` and `fetcher` options so a host can route document comments through its own BFF (OrgIQ calls platform-api with the BFF-held document grant, never a platform token in the browser), plus `addDocumentComment` and document-wide (`scope: 'document'`) as well as anchored comments in one hook. `useDocumentReviews` still needs the same seam. First consumer: the OrgIQ assessment workspace Comments tab.
