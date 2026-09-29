@@ -190,8 +190,9 @@ export const InlineLongTrail: Story = {
 /**
  * 2.407.2 — the squeeze order at 1536, 1280 and 1024 (the header's column):
  * the controls leave the row first (into a "Filters ▾" popover here; into
- * the ⋯ menu when `controlsMenu` is given), then the crumbs fold to "…",
- * and the title never goes below 12rem. The tabs keep their labels.
+ * the ⋯ menu when `controlsMenu` is given), then the crumbs fold to "…";
+ * the title truncates at half the row at most (2.407.10). The tabs keep
+ * their labels.
  */
 export const InlineSqueezeOrder: Story = {
   name: 'Inline: squeeze order (controls, then crumbs, never the title)',
@@ -224,4 +225,45 @@ export const InlineSqueezeOrder: Story = {
       ))}
     </div>
   ),
+};
+
+/**
+ * 2.407.10 — one type scale and a paragraph-length title. The crumbs (and a
+ * folded "…") draw the rails' item type (`RAIL_ITEM_TEXT`, 13px/500) in
+ * secondary ink, the "›" 13px tertiary; the title stays 18px/600. A whole
+ * prompt as the title is capped at half the row and truncates (full text in
+ * its `title` tooltip), so "Org ›" stays whole ahead of it — before, a
+ * squeezed crumb painted under the start of the title.
+ */
+export const InlineLongTitle: Story = {
+  name: 'Inline: paragraph-length title never covers the crumbs',
+  render: () => {
+    const prompt = 'Who on the platform team has shipped changes to the authentication service in the last quarter, '
+      + 'and which of them also reviewed the SOC2 evidence collection work, owns an on-call rotation, and has written an ADR '
+      + 'about session handling or token refresh that the rest of the org still links to today?';
+    return (
+      <div className="flex flex-col gap-6 bg-surface">
+        {['w-[1440px]', 'w-[1024px]'].map((w) => (
+          <div key={w} className={w}>
+            <ScopeHeader
+              variant="inline"
+              breadcrumbs={[{ label: 'Org', href: '#' }]}
+              title={prompt}
+              tabs={[
+                { id: 'results', label: 'Results', count: 25 },
+                { id: 'answer', label: 'Answer' },
+                { id: 'connections', label: 'Connections' },
+              ]}
+              activeTab="answer"
+              controls={
+                <DropdownMenu align="end" triggerLabel="Sort results" trigger={<span className="text-sm">Relevance ▾</span>} sections={[{ items: [{ label: 'Relevance', active: true }, { label: 'Recent' }] }]} />
+              }
+              menu={[{ items: [{ label: 'Save search', onSelect: () => {} }] }]}
+              className="border-b border-border"
+            />
+          </div>
+        ))}
+      </div>
+    );
+  },
 };

@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.407.10
+
+- `ScopeHeader variant="inline"`: one type scale across the row. The crumbs (links, buttons, plain labels) and the folded "…" drew 14px/400 in tertiary ink beside 14px/500 tabs, while the app's rails use 13px/500; they now use `RAIL_ITEM_TEXT` (13px, 500, 20px line) in `text-text-secondary` (hover → `text-text-primary`), and the "›" separators are 13px `text-text-tertiary`. The title (18px/600 at `titleSize="md"`, 20px/700 at `lg`) and the tabs are unchanged. The button crumb inherits only the font family now (`[font-family:inherit]`; `font-[inherit]` was merged away with the weight).
+- `ScopeHeader variant="inline"`: a paragraph-length title never draws over the crumbs. With a whole prompt as the title (~1350px), the crumb list shrank to nothing while its first crumb (`shrink-0`) overflowed it and painted under the start of the title. The crumb list is now `min-w-0 overflow-hidden` (each crumb still `truncate`; a folded trail still removes its hidden crumbs from the DOM), and the title is `min-w-0 max-w-[50%] truncate` — at most half the row, full text in its `title` attribute — instead of `min-w-[12rem]`, so the crumbs and the right cluster keep their space. The controls' collapse arithmetic still counts the title at 12rem, so the collapse thresholds are unchanged. New story *Inline: paragraph-length title never covers the crumbs*.
+
 ## 2.407.9
 
 - `RichChatComposer` / `ContextComposer`: the shared Send goes the small way. 2.407.8 made the split Send and the plain Send one size by taking the docked card's large button (`h-9 px-4 text-[15px]`, 93×36, idle rows 50 px); the size people prefer is the social row's small, collapsed one. Both now use the compact size on every context — docked: `inline-flex items-center gap-1 px-2.5 py-1 text-xs` with a 12 px arrow (the basic box's paper plane 12 px); the caret half `px-1.5 py-1 text-xs`. Measured in *Send — one size on every context*: the conversation's and the document's idle rows are both 42 px, and every Send (idle and expanded, both contexts) is 66×24. The chat-column and menu-row Sends are unchanged; the round prompt-card Send is unchanged. The 2.407.8 footer floor (`--dock-floor`) is unchanged: the 1280×720 story still gives the row 299 px with the expanded card fully inside.

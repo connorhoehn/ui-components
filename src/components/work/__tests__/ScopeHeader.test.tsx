@@ -399,8 +399,11 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
         }
         const expectTitleFloor = () => {
           const title = screen.getByRole('heading', { level: 1, name: 'component contracts' });
-          expect(title.className).toMatch(/min-w-\[12rem\]/);
-          expect(title.className).not.toMatch(/\bmin-w-0\b/);
+          // 2.407.10: capped at half the row and truncating — never a
+          // floor that could push it over the crumbs.
+          expect(title.className).toMatch(/max-w-\[50%\]/);
+          expect(title.className).toMatch(/\bmin-w-0\b/);
+          expect(title.className).toMatch(/\btruncate\b/);
         };
         const expectTabsWhole = () => {
           expect(screen.getByTestId('scope-header-tabs').className).toMatch(/\bshrink-0\b/);
@@ -537,7 +540,7 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
             crumbs.forEach((c) => expect(c.clientWidth).toBeGreaterThanOrEqual(NATURAL[c.textContent ?? '']!));
             // The title keeps 12rem.
             const title = screen.getByRole('heading', { level: 1, name: 'component contracts' });
-            expect(title.className).toMatch(/min-w-\[12rem\]/);
+            expect(title.className).toMatch(/max-w-\[50%\]/);
             expect(title.clientWidth).toBeGreaterThanOrEqual(192);
             // Collapsed, the right cluster no longer shrinks: ⋯ stays inside the padding.
             expect(screen.getByTestId('scope-header-right').className).toMatch(/\bshrink-0\b/);
@@ -1009,6 +1012,109 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
         renderLong(1200);
         expect(screen.getByTestId('scope-header-crumbs')).not.toHaveAttribute('data-collapsed');
         expect(screen.queryByTestId('scope-header-crumbs-more')).toBeNull();
+      });
+    });
+
+    describe('one type scale across the row (2.407.10)', () => {
+      it('draws crumbs and "…" at the rail item type (13px/500, secondary, hover primary), separators 13px tertiary; title and tabs unchanged', () => {
+        const sw = vi.spyOn(HTMLElement.prototype, 'scrollWidth', 'get').mockImplementation(function (this: HTMLElement) {
+          return this.hasAttribute('data-crumb') ? 200 : 0;
+        });
+        const cw = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
+          if (this.hasAttribute('data-crumb')) return 40;
+          return this.getAttribute('data-testid') === 'scope-header-trail' ? 300 : 0;
+        });
+        try {
+          render(
+            <ScopeHeader
+              variant="inline"
+              breadcrumbs={[{ label: 'Org' }, { label: 'Search', href: '/iq/search' }, { label: 'Design', onClick: () => {} }]}
+              title="component contracts"
+              tabs={TABS}
+              activeTab="results"
+            />,
+          );
+          const crumbs = screen.getAllByTestId('scope-header-crumb');
+          const more = screen.getByTestId('scope-header-crumbs-more');
+          [...crumbs, more].forEach((el) => {
+            expect(el.className).toMatch(/text-\[13px\]/);
+            expect(el.className).toMatch(/\bfont-medium\b/);
+            expect(el.className).toMatch(/\btext-text-secondary\b/);
+            expect(el.className).not.toMatch(/\btext-sm\b|\btext-text-tertiary\b/);
+          });
+          // Links and buttons brighten on hover.
+          crumbs.filter((c) => c.tagName !== 'SPAN').forEach((c) => expect(c.className).toMatch(/hover:text-text-primary/));
+          const seps = Array.from(screen.getByTestId('scope-header-trail').querySelectorAll('[aria-hidden="true"]')).filter((el) => el.textContent === '›');
+          expect(seps.length).toBeGreaterThan(0);
+          seps.forEach((el) => {
+            expect(el.className).toMatch(/text-\[13px\]/);
+            expect(el.className).toMatch(/\btext-text-tertiary\b/);
+            expect(el.className).not.toMatch(/\btext-sm\b/);
+          });
+          const title = screen.getByTestId('scope-header-title');
+          expect(title.className).toMatch(/text-\[18px\]/);
+          expect(title.className).toMatch(/\bfont-semibold\b/);
+        } finally {
+          sw.mockRestore();
+          cw.mockRestore();
+        }
+      });
+    });
+
+    describe('a paragraph-length title never draws over the crumbs (2.407.10)', () => {
+      const PROMPT = ('Who on the platform team has shipped changes to the authentication service in the last quarter, '
+        + 'and which of them also reviewed the SOC2 evidence collection work, owns an on-call rotation, and has written an ADR about ').padEnd(300, 'x');
+
+      it('keeps "Org" and "›" whole ahead of a truncated 300-character title; tabs and controls keep their width', () => {
+        expect(PROMPT).toHaveLength(300);
+        render(
+          <div style={{ width: 1280 }}>
+            <ScopeHeader
+              variant="inline"
+              breadcrumbs={[{ label: 'Org' }]}
+              title={PROMPT}
+              tabs={TABS}
+              activeTab="results"
+              controls={<button type="button">Relevance ▾</button>}
+              menu={[{ items: [{ label: 'Save search', onSelect: () => {} }] }]}
+            />
+          </div>,
+        );
+        const trail = screen.getByTestId('scope-header-trail');
+        const nav = screen.getByTestId('scope-header-crumbs');
+        const org = screen.getByTestId('scope-header-crumb');
+        const title = screen.getByTestId('scope-header-title');
+        const sep = Array.from(trail.children).find((el) => el.textContent === '›') as HTMLElement;
+        expect(org).toHaveTextContent('Org');
+        // DOM order (the flex order, since nothing reorders): crumb, "›",
+        // title — so the crumb's right edge is at or before the title's left.
+        expect(Array.from(trail.children)).toEqual([nav, sep, title]);
+        expect(org.compareDocumentPosition(sep) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+        expect(sep.compareDocumentPosition(title) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+        // Nothing positioned: no crumb or title is lifted out of the flow onto the other.
+        [nav, org, sep, title].forEach((el) => expect(el.className).not.toMatch(/\b(absolute|fixed|relative)\b|-ml-|-mr-/));
+        // The trail and the crumb list clip inside their own boxes; each crumb truncates.
+        expect(trail.className).toMatch(/\bmin-w-0\b/);
+        expect(trail.className).toMatch(/\boverflow-hidden\b/);
+        expect(nav.className).toMatch(/\bmin-w-0\b/);
+        expect(nav.className).toMatch(/\boverflow-hidden\b/);
+        expect(org.className).toMatch(/\btruncate\b/);
+        // The first crumb and the separator never shrink.
+        expect(org.closest('li')!.className).toMatch(/\bshrink-0\b/);
+        expect(sep.className).toMatch(/\bshrink-0\b/);
+        // The title: at most half the row, truncates, full text in `title`.
+        expect(title.className).toMatch(/max-w-\[50%\]/);
+        expect(title.className).toMatch(/\bmin-w-0\b/);
+        expect(title.className).toMatch(/\btruncate\b/);
+        expect(title.className).toMatch(/\bwhitespace-nowrap\b/);
+        expect(title.className).not.toMatch(/min-w-\[12rem\]/);
+        expect(title).toHaveAttribute('title', PROMPT);
+        // Tabs and the right cluster are siblings of the trail, not inside it, and keep their width.
+        const row = screen.getByTestId('scope-header');
+        expect(screen.getByTestId('scope-header-tabs').parentElement).toBe(row);
+        expect(screen.getByTestId('scope-header-tabs').className).toMatch(/\bshrink-0\b/);
+        expect(screen.getByTestId('scope-header-right').parentElement).toBe(row);
+        expect(screen.getByRole('button', { name: 'Relevance ▾' })).toBeInTheDocument();
       });
     });
   });
