@@ -6,6 +6,10 @@ import { HangoutConnectionState } from '@connorhoehn/realtime-modules/client/vid
 import { JSX } from 'react';
 import { MouseEvent as MouseEvent_2 } from 'react';
 import { ReactNode } from 'react';
+import type * as RMCall from '@connorhoehn/realtime-modules/call';
+import type * as RMClient from '@connorhoehn/realtime-modules/client';
+import type * as RMHangoutRooms from '@connorhoehn/realtime-modules/client/hangout-rooms';
+import type * as RMVideo from '@connorhoehn/realtime-modules/client/video';
 import { RoomsIndexSubscriber } from '@connorhoehn/realtime-modules/client/hangout-rooms';
 import { useEditor } from '@tiptap/react';
 import { XmlFragment } from 'yjs';
@@ -1248,6 +1252,11 @@ export declare const CONVERSATION_CAPABILITY_NAMES: Record<GatedConversationFeat
 /** The views a conversation can offer. `chat` is the transcript itself. */
 declare type ConversationFeature = 'chat' | 'files' | 'documents' | 'pins' | 'members' | 'mentions' | 'calls';
 
+declare type ConversationFeaturesFor = (opts: ConversationFeaturesForOptions) => ConversationFeature[];
+
+/** Which features a conversation is capable of — see ../realtime/WrappedConversationSurface. */
+export declare const conversationFeaturesFor: ConversationFeaturesFor;
+
 /**
  * Which features a conversation is CAPABLE of, before anyone asks the gateway
  * what it provisions.
@@ -1269,14 +1278,14 @@ declare type ConversationFeature = 'chat' | 'files' | 'documents' | 'pins' | 'me
  * per-channel tab for them claims a scope it does not have. They belong on a
  * shelf beside the conversation list.
  */
-export declare function conversationFeaturesFor(opts: {
+declare type ConversationFeaturesForOptions = {
     /** The conversation's channel id. Null before one is open. */
     channel?: string | null;
     /** False when the host ships without a documents provider. */
     hasDocuments?: boolean;
     /** Defaults to everything the surface knows how to render. */
     from?: readonly ConversationFeature[];
-}): ConversationFeature[];
+};
 
 declare interface ConversationSurfaceProps {
     /** Channel name, or the people in a DM. */
@@ -1401,6 +1410,15 @@ declare interface ConversationSurfaceProps {
     className?: string;
     'data-testid'?: string;
 }
+
+/**
+ * Bind the hook-bound integrations to `rm`. Props and test ids are identical to
+ * the same-named exports of `integrations/realtime-modules` (which is exactly
+ * this, applied to the canonical `@connorhoehn/realtime-modules` imports).
+ *
+ * Hooks are read from `rm` at render time, not captured here.
+ */
+export declare function createRealtimeIntegrations(rm: RealtimeClientModules): RealtimeIntegrations;
 
 /**
  * Chat and presence only.
@@ -1636,7 +1654,9 @@ declare interface HangoutLayoutParticipant {
 
 declare type HangoutMode = 'auto' | 'spotlight';
 
-export declare function HangoutRoomRow({ slug, name, participantId, occupancy, subscribeRoomsIndex, onClick, onContextMenu, onOpenConversation, kebab, className, 'data-testid': testId, }: HangoutRoomRowProps): JSX.Element;
+export declare const HangoutRoomRow: HangoutRoomRowComponent;
+
+declare type HangoutRoomRowComponent = (props: HangoutRoomRowProps) => React.JSX.Element;
 
 export declare interface HangoutRoomRowProps {
     /** Room slug (immutable identifier). */
@@ -1676,7 +1696,9 @@ export declare interface HangoutRoomRowProps {
     'data-testid'?: string;
 }
 
-export declare function HangoutRoomsSection({ rooms, occupancyFor, occupancyAdapter, participantId, onJoinRoom, onOpenConversation, onContextMenu, onBrowseAll, maxVisible, title, storageKey, renderCreateDialog, }: HangoutRoomsSectionProps): JSX.Element;
+export declare const HangoutRoomsSection: HangoutRoomsSectionComponent;
+
+declare type HangoutRoomsSectionComponent = (props: HangoutRoomsSectionProps) => React.JSX.Element;
 
 export declare interface HangoutRoomsSectionProps {
     /** Return value of `useHangoutRooms()` from realtime-modules. */
@@ -2041,7 +2063,9 @@ declare interface PresenceUser {
 
 export declare type RealtimeCapabilityName = keyof RealtimeCapabilitySet;
 
-export declare function RealtimeCapabilityProvider({ capabilities, channel, children, }: RealtimeCapabilityProviderProps): JSX.Element;
+export declare const RealtimeCapabilityProvider: RealtimeCapabilityProviderComponent;
+
+declare type RealtimeCapabilityProviderComponent = (props: RealtimeCapabilityProviderProps) => React.JSX.Element;
 
 export declare interface RealtimeCapabilityProviderProps {
     /**
@@ -2076,6 +2100,50 @@ export declare interface RealtimeCapabilitySet {
     files?: boolean;
     reactions?: boolean;
     recordings?: boolean;
+}
+
+/**
+ * Exactly the realtime-modules functions the hook-bound integrations call.
+ * Spread the namespaces you installed — see `createRealtimeIntegrations`.
+ */
+export declare interface RealtimeClientModules {
+    /** `/client` — RealtimeCapabilityProvider. */
+    useCapabilities: typeof RMClient.useCapabilities;
+    /** `/client/hangout-rooms` — HangoutRoomRow (and so HangoutRoomsSection, WrappedHangoutRoomsList). */
+    useRoomOccupancy: typeof RMHangoutRooms.useRoomOccupancy;
+    /** `/client/video` — WrappedLVSHangoutLayout. */
+    useLVSHangout: typeof RMVideo.useLVSHangout;
+    /** `/client/video` — WrappedStreamStage, realtime (WHEP) leg. */
+    useLVSSubscriber: typeof RMVideo.useLVSSubscriber;
+    /** `/client/video` — WrappedStreamStage, near-realtime (HLS) leg. */
+    useLVSLiveHls: typeof RMVideo.useLVSLiveHls;
+    /** `/client/video` — WrappedStreamStage, both legs. */
+    useLVSViewerCount: typeof RMVideo.useLVSViewerCount;
+    /** `/call` — conversationFeaturesFor (does this channel have a call lobby?). */
+    lobbyForChannel: typeof RMCall.lobbyForChannel;
+}
+
+/** Every integration that calls a realtime-modules function, bound to one bag. */
+export declare interface RealtimeIntegrations {
+    HangoutRoomRow: HangoutRoomRowComponent;
+    HangoutRoomsSection: HangoutRoomsSectionComponent;
+    WrappedHangoutRoomsList: WrappedHangoutRoomsListComponent;
+    RealtimeCapabilityProvider: RealtimeCapabilityProviderComponent;
+    conversationFeaturesFor: ConversationFeaturesFor;
+    WrappedStreamStage: WrappedStreamStageComponent;
+    WrappedLVSHangoutLayout: WrappedLVSHangoutLayoutComponent;
+}
+
+/** Bind the integrations once for a subtree; read them with `useRealtimeIntegrations()`. */
+export declare function RealtimeIntegrationsProvider({ modules, children }: RealtimeIntegrationsProviderProps): JSX.Element;
+
+export declare interface RealtimeIntegrationsProviderProps {
+    /**
+     * The realtime-modules functions to bind. Pass a stable object (module
+     * scope or memoised) — a new object each render re-binds and remounts.
+     */
+    modules: RealtimeClientModules;
+    children: ReactNode;
 }
 
 export declare function ReconnectingShim({ connectionState, children, onRetry, reconnectingLabel, disconnectedTitle, disconnectedDescription, retryLabel, connectingPlaceholder, disconnectedFallback, className, }: ReconnectingShimProps): JSX.Element;
@@ -2852,6 +2920,13 @@ export declare function useDocumentImageUpload(documentId: string | null | undef
  */
 export declare function useRealtimeCapabilities(): ResolvedCapabilities;
 
+/**
+ * The integrations bound by the nearest RealtimeIntegrationsProvider. Throws
+ * outside one: there is no canonical fallback in this entry (that would import
+ * the package this entry exists to avoid importing).
+ */
+export declare function useRealtimeIntegrations(): RealtimeIntegrations;
+
 export declare function WrappedActivityPanel({ activity, visibleCount, rotateMs, staggerMs, kindColors, className, }: WrappedActivityPanelProps): JSX.Element;
 
 export declare interface WrappedActivityPanelProps {
@@ -3104,7 +3179,9 @@ export declare interface WrappedHangoutLayoutProps {
     className?: string;
 }
 
-export declare function WrappedHangoutRoomsList({ hangoutRooms, subscribeRoomsIndex, occupancyFor, participantId, onJoin, onContextMenu, onBrowseAll, maxVisible, title, storageKey, renderEmpty, renderCreateDialog, wrapWithNetworkShim, }: WrappedHangoutRoomsListProps): JSX.Element;
+export declare const WrappedHangoutRoomsList: WrappedHangoutRoomsListComponent;
+
+declare type WrappedHangoutRoomsListComponent = (props: WrappedHangoutRoomsListProps) => React.JSX.Element;
 
 export declare interface WrappedHangoutRoomsListProps {
     /** Return value of `useHangoutRooms()` from realtime-modules. */
@@ -3169,7 +3246,9 @@ export declare interface WrappedHangoutState {
     remoteCount: number;
 }
 
-export declare function WrappedLVSHangoutLayout({ stageToken, participantId, userId, localClientId, getStageToken, overlay, spotlightContent, onParticipantClick, mode, activeSpeakerStrategy: _activeSpeakerStrategy, localTileLabel, showLocalAsTile, className, 'data-testid': testId, }: WrappedLVSHangoutLayoutProps): JSX.Element;
+export declare const WrappedLVSHangoutLayout: WrappedLVSHangoutLayoutComponent;
+
+declare type WrappedLVSHangoutLayoutComponent = (props: WrappedLVSHangoutLayoutProps) => React.JSX.Element;
 
 export declare interface WrappedLVSHangoutLayoutProps {
     /** Participant token from platform-api `/api/video/sessions/:id/join`.
@@ -3301,7 +3380,9 @@ export declare interface WrappedReactionsOverlayProps {
     ttlMs?: number;
 }
 
-export declare function WrappedStreamStage({ mode, ...props }: WrappedStreamStageProps): JSX.Element;
+export declare const WrappedStreamStage: WrappedStreamStageComponent;
+
+declare type WrappedStreamStageComponent = (props: WrappedStreamStageProps) => React.JSX.Element;
 
 export declare interface WrappedStreamStageProps extends Omit<StreamStageProps, 'stream' | 'playlistUrl' | 'live'> {
     /** Channel to watch. Null is idle — the stage shows its placeholder. */
@@ -3358,6 +3439,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3377,12 +3471,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -3390,9 +3481,32 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -3419,39 +3533,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

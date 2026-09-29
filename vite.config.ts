@@ -51,6 +51,10 @@ export default defineConfig({
         compute: resolve(import.meta.dirname, 'src/components/compute/index.ts'),
         video: resolve(import.meta.dirname, 'src/video.ts'),
         'video-ivs': resolve(import.meta.dirname, 'src/video-ivs.ts'),
+        // Scope-agnostic twin of the entry below: no runtime import of
+        // @connorhoehn/realtime-modules (hooks are injected), so it loads under
+        // any install scope. Guarded by src/integrations/realtime/__tests__/scopeAgnosticPackaging.test.ts.
+        'integrations/realtime': resolve(import.meta.dirname, 'src/integrations/realtime/index.ts'),
         'integrations/realtime-modules': resolve(import.meta.dirname, 'src/integrations/realtime-modules/index.ts'),
       },
       formats: ['es', 'cjs'],

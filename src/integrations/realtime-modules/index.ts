@@ -6,6 +6,13 @@
 //   1. Structural mirror types (RMChatMessage, RMPresenceEntry, …)
 //   2. Pure adapter functions (adaptChatMessage, adaptPresenceRoster, …)
 //   3. Wrapped components (WrappedChatPanel, WrappedPresencePanel, …)
+//
+// This entry imports `@connorhoehn/realtime-modules` BY NAME, so it only loads
+// in an app that installed the library under that scope. Everything here is
+// also in the scope-agnostic `integrations/realtime` entry; the hook-bound
+// pieces (HangoutRoomRow/Section/List, RealtimeCapabilityProvider,
+// conversationFeaturesFor, WrappedStreamStage, WrappedLVSHangoutLayout) are
+// that entry's factories applied to the canonical imports — see each file.
 
 // Types
 export type {
@@ -192,3 +199,16 @@ export type {
   RMMediaDevicesSource,
   RMAudioVideoSettingsSource,
 } from './WrappedAudioVideoSettingsForm';
+
+// The injection API, re-exported so an app on this entry can bind a second,
+// differently-scoped install without switching imports.
+export {
+  createRealtimeIntegrations,
+  RealtimeIntegrationsProvider,
+  useRealtimeIntegrations,
+} from '../realtime/createRealtimeIntegrations';
+export type {
+  RealtimeIntegrations,
+  RealtimeIntegrationsProviderProps,
+} from '../realtime/createRealtimeIntegrations';
+export type { RealtimeClientModules } from '../realtime/modules';

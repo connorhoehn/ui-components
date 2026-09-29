@@ -1,6 +1,6 @@
 {
   "name": "@connorhoehnslalom/ui-components",
-  "version": "2.407.19",
+  "version": "2.407.20",
   "description": "React component library for real-time collaborative applications — chat, presence, video, collaborative documents, pipeline editing and identity flows.",
   "keywords": [
     "react",
@@ -111,6 +111,11 @@
       "require": "./dist/video-ivs.cjs"
     },
     "./styles.css": "./dist/ui-components.css",
+    "./integrations/realtime": {
+      "types": "./dist/integrations/realtime.d.ts",
+      "import": "./dist/integrations/realtime.js",
+      "require": "./dist/integrations/realtime.cjs"
+    },
     "./integrations/realtime-modules": {
       "types": "./dist/integrations/realtime-modules.d.ts",
       "import": "./dist/integrations/realtime-modules.js",

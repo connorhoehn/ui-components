@@ -61,13 +61,44 @@ common hand-rolled patterns onto the canonical ui-components composites.
 | `/identity` | Auth flows (Login, Logout, MFA, Consent), admin identity panels, `IdentityContext` | **Stable** |
 | `/hooks` | `useWebSocket`, `useComments`, `useLikes`, `usePosts`, `useSocialProfile`, etc. | **Stable** |
 | `/styles.css` | Tailwind v4 `@theme` tokens + keyframes | **Stable** |
-| `/integrations/realtime-modules` | Adapters that wire ui-components composites to `@connorhoehn/realtime-modules` hooks (`WrappedChatPanel`, `WrappedPresencePanel`, `WrappedReactionsOverlay`, `WrappedFileUploadDrop`, `WrappedHangoutLayout`, `WrappedHangoutRoomsList`, `ReconnectingShim`, `NetworkErrorBoundary`) | **Stable** |
+| `/integrations/realtime-modules` | Adapters that wire ui-components composites to `@connorhoehn/realtime-modules` hooks, bound to the library **by that name** (canonical installs) (`WrappedChatPanel`, `WrappedPresencePanel`, `WrappedReactionsOverlay`, `WrappedFileUploadDrop`, `WrappedHangoutLayout`, `WrappedHangoutRoomsList`, `ReconnectingShim`, `NetworkErrorBoundary`) | **Stable** |
+| `/integrations/realtime` | The same integrations, **scope-agnostic**: no runtime import of realtime-modules. Pure adapters and props-driven wrappers as-is; hook-bound ones (`HangoutRoomRow`/`HangoutRoomsSection`/`WrappedHangoutRoomsList`, `RealtimeCapabilityProvider`, `conversationFeaturesFor`, `WrappedStreamStage`, `WrappedLVSHangoutLayout`) via `createRealtimeIntegrations(modules)` or `<RealtimeIntegrationsProvider modules>` | **Stable** |
 | `/doc-editor` | Tiptap collaborative rich-text editor + self-bootstrapping `StandaloneTiptap`, document modes (Ack/Review/Reader), comments, mentions, video panel | **Stable — API frozen** 2026-06-10 (hub #1066) |
 | `/pipelines` | Pipeline editor, canvas, runs, approvals, LLM nodes, DLQ | **Stable — API frozen** 2026-06-10 (hub #1062) |
 | `/agents` | AG-UI v0.1.x streaming chat, reasoning blocks, A2A flow canvas | **Stable API** (AG-UI v0.1.x types frozen 2026-06-06) |
 | `/compute` | Computer Lab — a tmux-style tiling workspace over AgentCore microVM sessions: pane-kind registry, `ShellTerminal` (xterm.js, optional peer dep), fleet/tail/task hooks, `ComputeClient` transport seam, project cost centres | **In-flux** — transport seam settled, pane-kind registry open by design |
 | `/observability` | Dashboard, events, metrics, node pages | **In-flux** — graduation-prepped v2.72.0; freezes when a real consumer and the distributed-core `ClusterDashboard` type exist |
 | `/ingest` | Data-ingest UI primitives | **In-flux** |
+
+### Realtime integrations under another install scope
+
+`/integrations/realtime-modules` imports `@connorhoehn/realtime-modules/...` by
+name, so an app that installed the library under a different scope (e.g.
+`@connorhoehnslalom/realtime-modules`) cannot load it. Use
+`/integrations/realtime` and hand it the functions from your install:
+
+```ts
+import * as client from '@connorhoehnslalom/realtime-modules/client';
+import * as video from '@connorhoehnslalom/realtime-modules/client/video';
+import * as hangoutRooms from '@connorhoehnslalom/realtime-modules/client/hangout-rooms';
+import * as call from '@connorhoehnslalom/realtime-modules/call';
+import {
+  createRealtimeIntegrations,
+  WrappedChatPanel, // pure: props-driven, no injection needed
+  adaptPresenceRoster,
+} from '@connorhoehnslalom/ui-components/integrations/realtime';
+
+// Once, at module scope — each call mints new component identities.
+export const rt = createRealtimeIntegrations({ ...client, ...video, ...hangoutRooms, ...call });
+// rt.WrappedStreamStage, rt.WrappedLVSHangoutLayout, rt.WrappedHangoutRoomsList,
+// rt.RealtimeCapabilityProvider, rt.conversationFeaturesFor, …
+```
+
+Or inject once for a tree with `<RealtimeIntegrationsProvider modules={…}>` and
+read the bound set with `useRealtimeIntegrations()`. The bag
+(`RealtimeClientModules`) is exactly `useCapabilities`, `useRoomOccupancy`,
+`useLVSHangout`, `useLVSSubscriber`, `useLVSLiveHls`, `useLVSViewerCount` and
+`lobbyForChannel`; props and test ids match the canonical entry's exports.
 
 ## Local development
 

@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.407.20
+
+**`integrations/realtime` (new entry): the realtime integrations without a hard-coded install scope (fix for re-scoped consumers).** `integrations/realtime-modules` imports `@connorhoehn/realtime-modules/client`, `/client/video`, `/client/hangout-rooms` and `/call` by name at module top level, so an app that installs the library as `@connorhoehnslalom/realtime-modules` (aws-agentcore) could not resolve the entry, and any page importing even a pure adapter (`adaptPresenceRoster`, `WrappedChatPanel`) crashed.
+
+- **`@connorhoehnslalom/ui-components/integrations/realtime`** never imports realtime-modules at runtime (types only, erased at build). It exports every pure adapter, mirror type and props-driven wrapper of the old entry unchanged, plus the hook-bound integrations as factories over an injected `RealtimeClientModules` bag — `{ useCapabilities, useRoomOccupancy, useLVSHangout, useLVSSubscriber, useLVSLiveHls, useLVSViewerCount, lobbyForChannel }`:
+  - `createRealtimeIntegrations(modules)` returns `{ HangoutRoomRow, HangoutRoomsSection, WrappedHangoutRoomsList, RealtimeCapabilityProvider, conversationFeaturesFor, WrappedStreamStage, WrappedLVSHangoutLayout }` with the same props and test ids as today's exports. Call it once at module scope.
+  - `<RealtimeIntegrationsProvider modules={…}>` + `useRealtimeIntegrations()` inject once per tree (bound once per `modules` object).
+  - Per-component factories (`createWrappedStreamStage`, `createHangoutRoomRow`, …) for an app that wants one.
+  - Recipe: `createRealtimeIntegrations({ ...client, ...video, ...hangoutRooms, ...call })` with the four namespaces imported from your install — see the README.
+- **`integrations/realtime-modules` is unchanged for canonical installs** (realtime-examples): same exports, now implemented as those factories applied to the canonical imports; it also re-exports the injection API. `CapabilityGate` / `useRealtimeCapabilities` read one shared context, so a provider from either entry feeds a gate from either.
+- Guarded by a packaging test that walks every chunk reachable from `dist/integrations/realtime.{js,cjs}` and fails on any `@connorhoehn/realtime-modules` import.
+
 ## 2.407.19
 
 - `ScopeHeader variant="inline"`: the collapsed "Filters ▾" toggle carries the 1px `border-border` and `px-2.5` of a `DropdownMenu` default trigger, so it matches the bordered 28px triggers it stands in for (journey walk, 2026-09-29: "no border, while the inline buttons it replaces have a 1px border").
