@@ -10,6 +10,7 @@
 // (RM `useMediaDevices` / `useAudioLevel`).
 
 import type { ReactNode } from 'react';
+import { BUTTON_WEIGHT } from '../ui/Button';
 import { cn } from '../../lib/cn';
 import { DropdownMenu, type DropdownMenuItem } from '../shared/DropdownMenu';
 import { ChevronIcon } from '../ui/Icons';
@@ -121,7 +122,8 @@ export function DeviceToggleSelect({
         title={reason ?? actionLabel}
         data-testid={testId}
         className={cn(
-          'inline-flex cursor-pointer items-center gap-2 rounded-l-md border-none bg-transparent font-[inherit] text-sm font-medium',
+          'inline-flex cursor-pointer items-center gap-2 rounded-l-md border-none bg-transparent font-[inherit] text-sm',
+          BUTTON_WEIGHT,
           'hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50',
           size === 'md' ? 'px-2.5' : 'px-2',
           showLabel && 'min-w-0 flex-1 justify-start gap-1.5 pr-2',

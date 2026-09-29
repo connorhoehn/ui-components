@@ -125,7 +125,7 @@ export function FollowBanner({
           size="sm"
           onClick={onStop}
           data-testid={`${testId}-stop`}
-          className="shrink-0 bg-surface font-medium"
+          className="shrink-0 bg-surface"
         >
           Stop following
         </Button>

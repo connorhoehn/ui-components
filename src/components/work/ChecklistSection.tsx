@@ -162,7 +162,7 @@ export function ChecklistSection({
   const canAdd = !!onAdd && !locked;
   const addLabel = addPlaceholder.charAt(0).toUpperCase() + addPlaceholder.slice(1);
   const addButton = (
-    <Button variant="link" size="sm" onClick={() => setAdding(true)} className="inline-flex items-center gap-1 text-[13px] font-medium" data-testid={`${testId}-add`}>
+    <Button variant="link" size="sm" onClick={() => setAdding(true)} className="inline-flex items-center gap-1 text-[13px]" data-testid={`${testId}-add`}>
       <PlusIcon size={12} aria-hidden="true" />
       {addLabel}
     </Button>

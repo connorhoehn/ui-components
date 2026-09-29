@@ -390,7 +390,7 @@ export function DocumentTypesPage({ idToken, onExportSchema, onCreateDocument, l
               data-testid="create-type-btn"
               onClick={handleCreateClick}
               title="Build a document type field by field"
-              className="py-[5px] px-3 text-xs font-medium bg-transparent text-text-secondary border border-border rounded-md cursor-pointer whitespace-nowrap"
+              className="py-[5px] px-3 text-xs bg-transparent text-text-secondary border border-border rounded-md cursor-pointer whitespace-nowrap"
             >
               {workspace ? 'New template' : 'From scratch'}
             </Button>

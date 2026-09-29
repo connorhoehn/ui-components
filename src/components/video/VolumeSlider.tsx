@@ -62,7 +62,7 @@ export function VolumeSlider({
           onClick={onTest}
           disabled={disabled || testing}
           data-testid={testButtonTestId}
-          className="shrink-0 font-medium"
+          className="shrink-0"
         >
           {testLabel}
         </Button>

@@ -96,3 +96,23 @@ export const CodeTone: Story = {
     </div>
   ),
 };
+
+const ALL_VARIANTS = ['primary', 'secondary', 'ghost', 'danger', 'danger-solid', 'success', 'info', 'link'] as const;
+const ALL_SIZES = ['sm', 'md', 'lg'] as const;
+
+/** Every variant × size — all at the one button weight (semibold). */
+export const WeightGrid: Story = {
+  args: { children: 'Button' },
+  render: () => (
+    <div className="grid grid-cols-[auto_repeat(3,auto)] items-center gap-3">
+      {ALL_VARIANTS.map((variant) => (
+        <div key={variant} className="contents">
+          <span className="text-xs text-text-secondary">{variant}</span>
+          {ALL_SIZES.map((size) => (
+            <Button key={size} variant={variant} size={size}>{`${variant} ${size}`}</Button>
+          ))}
+        </div>
+      ))}
+    </div>
+  ),
+};

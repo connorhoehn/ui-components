@@ -104,6 +104,14 @@ const TONE: Record<ButtonTone, Record<ButtonVariant, string>> = {
 // label pushed its button to 30px next to a 26px neighbour in the same header
 // (measured by realtime-examples' type audit, 2.407.14). The label and any
 // icon centre inside the box instead.
+/**
+ * The one weight every button-like control in the library renders at —
+ * `Button` of every variant and size, and the hand-rolled controls that
+ * cannot be a `Button` (a split Send, a menu trigger). Import this instead of
+ * writing `font-medium`/`font-semibold` so the app has one button weight.
+ */
+export const BUTTON_WEIGHT = 'font-semibold';
+
 const sizeClasses: Record<ButtonSize, string> = {
   sm: 'h-6.5 gap-1.5 px-2.5 text-xs',
   md: 'h-9 gap-2 px-4 text-sm',
@@ -122,9 +130,10 @@ export function Button({
   ref,
   ...rest
 }: ButtonProps) {
-  // `link` is inline text, not a boxed control: it skips the shared padding
-  // + font-weight base (and `sizeClasses`'s fixed padding/text-size) so it
-  // sits in prose at the inherited font size, underlining only on hover.
+  // `link` is inline text, not a boxed control: it skips the shared box
+  // (and `sizeClasses`'s fixed padding/text-size) so it sits in prose at the
+  // inherited font size, underlining only on hover. It keeps the one button
+  // weight, like every other variant.
   const isLink = variant === 'link';
   return (
     <button
@@ -140,7 +149,10 @@ export function Button({
           ? 'font-[inherit] transition-colors duration-150 ease-in-out'
           : // A caption never breaks mid-word: a narrow flex parent turned
             // "Remove" into "Rem / ove" (measured, in a 430px document pane).
-            'inline-flex shrink-0 items-center justify-center whitespace-nowrap font-semibold rounded-md font-[inherit] transition-colors duration-150 ease-in-out',
+            'inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-md font-[inherit] transition-colors duration-150 ease-in-out',
+        // After the family reset: `font-[inherit]` is a font-FAMILY class
+        // (see lib/cn), and the weight is the one button weight.
+        BUTTON_WEIGHT,
         (TONE[tone] ?? variantClasses)[variant],
         !isLink && sizeClasses[size],
         disabled && 'opacity-50 cursor-not-allowed',

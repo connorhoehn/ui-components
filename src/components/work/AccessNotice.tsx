@@ -76,7 +76,7 @@ export function AccessNotice({
             {actionContent}
           </Link>
         ) : (
-          <Button variant="link" onClick={action.onClick} className="shrink-0 text-[13px] font-medium">
+          <Button variant="link" onClick={action.onClick} className="shrink-0 text-[13px]">
             {actionContent}
           </Button>
         ))}

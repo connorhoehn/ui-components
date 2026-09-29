@@ -134,7 +134,7 @@ export function StartCallDrawer({
         {selectedLabel(selectedCount)}
       </span>
       <div className="flex items-center justify-between gap-3">
-        <Button variant="ghost" onClick={onCopyLink} data-testid="start-call-copy-link" className="inline-flex items-center gap-2 font-medium">
+        <Button variant="ghost" onClick={onCopyLink} data-testid="start-call-copy-link" className="inline-flex items-center gap-2">
           <LinkIcon size={16} />
           Copy invite link
         </Button>

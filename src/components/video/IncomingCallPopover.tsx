@@ -227,7 +227,7 @@ export function IncomingCallPopover({
         </div>
 
         <div className="flex items-center justify-end gap-3">
-          <Button variant="ghost" onClick={onDecline} data-testid="incoming-call-decline" className="border-transparent font-medium">
+          <Button variant="ghost" onClick={onDecline} data-testid="incoming-call-decline" className="border-transparent">
             Not now
           </Button>
           {primaryIsSwitch ? (

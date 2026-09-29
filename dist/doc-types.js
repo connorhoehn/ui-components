@@ -1,17 +1,17 @@
 import { n as e, t } from "./registry-DbX3MVAA.js";
 import { i as n, n as r, r as i } from "./documentType-rRZpKWbO.js";
 import { i as a } from "./useDocumentTypes-DCKwxXn8.js";
-import { t as o } from "./cn-DhjIN-s0.js";
-import { _ as s } from "./overlayStack-DHAs60_m.js";
-import { n as c } from "./Stack-CkiMw5K0.js";
-import { t as l } from "./Modal-2CidNxzH.js";
-import { t as u } from "./Input-DLknWXri.js";
-import { t as d } from "./EmptyState-DtHxzyCi.js";
-import { t as f } from "./Textarea-Dz4doxTv.js";
-import { t as p } from "./PageHeader-DOSl8dnN.js";
-import { t as m } from "./Select-D9v37avj.js";
-import { t as h } from "./Checkbox-DWpeFfD2.js";
-import { G as g, H as _, U as v, W as y } from "./renderers-vqBHtDwL.js";
+import { t as o } from "./cn-D4QmbyEy.js";
+import { v as s } from "./overlayStack-DWxp7Rsz.js";
+import { n as c } from "./Stack-DNMA-_4L.js";
+import { t as l } from "./Modal-R-ipbeZi.js";
+import { t as u } from "./Input-CpLq80dw.js";
+import { t as d } from "./EmptyState-DnbFBYDA.js";
+import { t as f } from "./Textarea-Drx4YDDG.js";
+import { t as p } from "./PageHeader-Dx_prus4.js";
+import { t as m } from "./Select-ErGXS9Yj.js";
+import { t as h } from "./Checkbox-BC03mkQI.js";
+import { G as g, H as _, U as v, W as y } from "./renderers-Doqpgh8C.js";
 import { useEffect as b, useId as x, useMemo as S, useRef as C, useState as w } from "react";
 import { Fragment as T, jsx as E, jsxs as D } from "react/jsx-runtime";
 import { DndContext as O, KeyboardSensor as k, PointerSensor as A, closestCorners as j, useSensor as M, useSensors as N } from "@dnd-kit/core";
@@ -1101,7 +1101,7 @@ function re({ idToken: e, onExportSchema: t, onCreateDocument: n, layout: r = "s
 								"data-testid": "create-type-btn",
 								onClick: N,
 								title: "Build a document type field by field",
-								className: "py-[5px] px-3 text-xs font-medium bg-transparent text-text-secondary border border-border rounded-md cursor-pointer whitespace-nowrap",
+								className: "py-[5px] px-3 text-xs bg-transparent text-text-secondary border border-border rounded-md cursor-pointer whitespace-nowrap",
 								children: U ? "New template" : "From scratch"
 							})]
 						})]

@@ -12,6 +12,7 @@
 // (role="menu"/"menuitem") and ArrowUp/ArrowDown/Home/End focus movement.
 
 import { useCallback, useRef, useState, type KeyboardEvent, type ReactNode, useEffect, useId } from 'react';
+import { BUTTON_WEIGHT } from '../ui/Button';
 import { InlinePopover } from './InlinePopover';
 import { ChevronIcon } from '../ui/Icons';
 import { cn } from '../../lib/cn';
@@ -119,8 +120,8 @@ const TRIGGER_VARIANT: Record<NonNullable<DropdownMenuProps['triggerVariant']>, 
   // from padding + content until 2.407.18 (22px with a 14px label, 26px
   // with an 18px glyph).
   default: 'h-6.5 rounded-md border border-[var(--color-border)] px-2 text-base leading-none text-[var(--color-text-secondary)] bg-transparent hover:bg-[var(--color-surface-hover)]',
-  primary: 'h-9 rounded-lg border-none px-3.5 text-sm font-semibold leading-none bg-primary text-on-primary hover:bg-primary-hover',
-  secondary: 'h-9 rounded-lg border border-border px-3.5 text-sm font-medium leading-none bg-surface text-text-primary hover:bg-surface-hover',
+  primary: 'h-9 rounded-lg border-none px-3.5 text-sm leading-none bg-primary text-on-primary hover:bg-primary-hover',
+  secondary: 'h-9 rounded-lg border border-border px-3.5 text-sm leading-none bg-surface text-text-primary hover:bg-surface-hover',
   link: 'rounded px-1 py-0.5 border-none text-sm leading-none bg-transparent text-text-secondary hover:text-text-primary hover:bg-surface-hover',
 };
 
@@ -187,6 +188,7 @@ export function DropdownMenu({
         data-variant={triggerVariant}
         className={cn(
           'inline-flex items-center justify-center gap-1.5 cursor-pointer transition-colors duration-100',
+          BUTTON_WEIGHT,
           TRIGGER_VARIANT[triggerVariant],
           open && TRIGGER_OPEN[triggerVariant],
           triggerClassName,

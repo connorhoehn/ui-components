@@ -64,7 +64,7 @@ export function OutcomeSection({
   };
 
   const actions = editable && !editing && text ? (
-    <Button variant="link" size="sm" className="text-[13px] font-medium" onClick={start} disabled={pending} aria-label={`Edit ${title.toLowerCase()}`}>
+    <Button variant="link" size="sm" className="text-[13px]" onClick={start} disabled={pending} aria-label={`Edit ${title.toLowerCase()}`}>
       Edit
     </Button>
   ) : undefined;

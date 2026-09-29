@@ -47,6 +47,7 @@
 // argument picker. Elsewhere a pick writes `/<id> `.
 
 import { useCallback, useMemo, useRef, useState, type ReactNode, type Ref } from 'react';
+import { BUTTON_WEIGHT } from '../ui/Button';
 import { cn } from '../../lib/cn';
 import { DropdownMenu, type DropdownMenuSection } from '../shared/DropdownMenu';
 import Banner from '../shared/Banner';
@@ -587,7 +588,7 @@ export function ContextComposerBase({
         </span>
       )}
       triggerLabel="Workflow"
-      triggerClassName="h-7 px-2 text-xs font-medium text-text-secondary"
+      triggerClassName={`h-7 px-2 text-xs text-text-secondary ${BUTTON_WEIGHT}`}
       triggerTestId={`${testId}-workflow`}
       sections={[{
         items: workflowRows.map((w) => ({

@@ -870,7 +870,7 @@ export default function WorkspaceDocumentHeader({
               variant="ghost"
               size="sm"
               onClick={onBack}
-              className="border-none px-0 py-0.5 text-[13px] font-normal text-primary"
+              className="border-none px-0 py-0.5 text-[13px] text-primary"
             >
               &larr; Documents
             </Button>

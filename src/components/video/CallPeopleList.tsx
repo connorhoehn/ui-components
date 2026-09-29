@@ -115,7 +115,7 @@ export function CallPeopleList({
         <div className="mb-2 flex items-center gap-2">
           <h3 className="m-0 text-base font-semibold text-text-primary">People</h3>
           <Badge variant="count" value={count} color="muted" aria-label={`${count} people`} />
-          <Button variant="ghost" size="md" onClick={onInvite} data-testid="call-invite" className="ml-auto font-medium">
+          <Button variant="ghost" size="md" onClick={onInvite} data-testid="call-invite" className="ml-auto">
             Invite...
           </Button>
         </div>

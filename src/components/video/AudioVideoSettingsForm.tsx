@@ -194,7 +194,7 @@ export function AudioVideoSettingsForm({
             onClick={() => void onTestMic()}
             disabled={micDenied || testMicState !== 'idle'}
             data-testid="settings-test-mic"
-            className="ml-auto shrink-0 font-medium"
+            className="ml-auto shrink-0"
           >
             {testMicLabel}
           </Button>

@@ -58,7 +58,7 @@ export function CommentList({
   const clock = now ?? Date.now();
 
   const actions = onViewAll && count > 0 ? (
-    <Button variant="link" size="sm" onClick={onViewAll} className="text-[13px] font-medium">View all ({count})</Button>
+    <Button variant="link" size="sm" onClick={onViewAll} className="text-[13px]">View all ({count})</Button>
   ) : undefined;
 
   return (

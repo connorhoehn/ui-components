@@ -390,7 +390,7 @@ export function CallDock({
             aria-label={screenShare.on ? 'Stop sharing' : 'Share'}
             aria-pressed={screenShare.on}
             data-testid="call-dock-share"
-            className="inline-flex h-8 items-center gap-1.5 bg-surface font-medium"
+            className="inline-flex h-8 items-center gap-1.5 bg-surface"
           >
             <ScreenShareIcon size={16} />
             <span className="hidden @min-[860px]:inline">{screenShare.on ? 'Stop sharing' : 'Share'}</span>
@@ -403,7 +403,7 @@ export function CallDock({
             aria-label={`People (${participantCount})`}
             aria-pressed={peopleOpen}
             data-testid="call-dock-people"
-            className={cn('inline-flex h-8 items-center gap-1.5 font-medium', !peopleOpen && 'bg-surface')}
+            className={cn('inline-flex h-8 items-center gap-1.5', !peopleOpen && 'bg-surface')}
           >
             <UsersIcon size={16} />
             <span className="hidden @min-[860px]:inline">People</span>
@@ -418,7 +418,7 @@ export function CallDock({
               aria-label={`Documents (${documents.length})`}
               aria-pressed={documentsOpen}
               data-testid="call-dock-documents"
-              className={cn('hidden h-8 items-center gap-1.5 font-medium @min-[980px]:inline-flex', !documentsOpen && 'bg-surface')}
+              className={cn('hidden h-8 items-center gap-1.5 @min-[980px]:inline-flex', !documentsOpen && 'bg-surface')}
             >
               <DocumentIcon size={16} />
               <span className="hidden @min-[860px]:inline">Documents</span>
@@ -458,7 +458,7 @@ export function CallDock({
               aria-haspopup={canEndForEveryone && !calling ? 'dialog' : undefined}
               title={calling ? 'Cancel the call' : undefined}
               data-testid="call-dock-leave"
-              className="inline-flex h-8 shrink-0 items-center gap-1.5 px-3.5 font-medium"
+              className="inline-flex h-8 shrink-0 items-center gap-1.5 px-3.5"
             >
               <PhoneOffIcon size={16} />
               {calling ? 'Cancel' : 'Leave'}

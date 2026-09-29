@@ -89,7 +89,7 @@ export function CallSettingsDrawer({
           ? 'No changes'
           : `${effectsFooter.changeCount} ${effectsFooter.changeCount === 1 ? 'change' : 'changes'}`}
       </span>
-      <Button variant="ghost" onClick={effectsFooter.onCancel} data-testid="effects-cancel" className="font-medium">
+      <Button variant="ghost" onClick={effectsFooter.onCancel} data-testid="effects-cancel">
         Cancel
       </Button>
       <Button

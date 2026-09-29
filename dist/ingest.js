@@ -2,16 +2,16 @@ import { t as e } from "./apiBaseUrl-DLrXlmVj.js";
 import { r as t } from "./IdentityContext-CQM1qwH6.js";
 import { a as n, c as r, i, l as a, n as o, o as s, r as c, s as l, t as u, u as d } from "./useSyncConflicts-BspqjVsW.js";
 import { i as f } from "./useDocumentTypes-DCKwxXn8.js";
-import { t as p } from "./cn-DhjIN-s0.js";
-import { _ as m, t as h } from "./overlayStack-DHAs60_m.js";
-import { t as g } from "./Chip-nf4Tf03G.js";
-import { t as _ } from "./Input-DLknWXri.js";
-import { t as v } from "./EmptyState-DtHxzyCi.js";
-import { n as y, r as b, t as x } from "./focusTrap-bnh1qi0w.js";
-import { t as S } from "./SkeletonCard-CGe8XFPB.js";
-import { t as C } from "./Select-D9v37avj.js";
+import { t as p } from "./cn-D4QmbyEy.js";
+import { t as m, v as h } from "./overlayStack-DWxp7Rsz.js";
+import { t as g } from "./Chip-QXPdpJoz.js";
+import { t as _ } from "./Input-CpLq80dw.js";
+import { t as v } from "./EmptyState-DnbFBYDA.js";
+import { n as y, r as b, t as x } from "./focusTrap-Cq08w2-T.js";
+import { t as S } from "./SkeletonCard-D3FL0TB7.js";
+import { t as C } from "./Select-ErGXS9Yj.js";
 import { t as w } from "./activationKey-CjbL3LUv.js";
-import { n as T, t as E } from "./ChangeReviewCard-D9XG1dQa.js";
+import { n as T, t as E } from "./ChangeReviewCard-DsUcPRIA.js";
 import { useCallback as D, useEffect as O, useId as k, useMemo as A, useRef as j, useState as M } from "react";
 import { Fragment as N, jsx as P, jsxs as F } from "react/jsx-runtime";
 import { useNavigate as I, useParams as L } from "react-router";
@@ -1681,7 +1681,7 @@ function $(e) {
 	return t < 6e4 ? "just now" : t < 36e5 ? `${Math.floor(t / 6e4)}m ago` : t < 864e5 ? `${Math.floor(t / 36e5)}h ago` : `${Math.floor(t / 864e5)}d ago`;
 }
 function be({ item: n, sourceName: r, onClose: i, onRetry: a, onSkip: o, idToken: c, baseUrl: l }) {
-	let u = t(), d = c === void 0 ? u?.idToken ?? null : c, f = l ?? e(), [m, _] = M(null), [v, S] = M(null), { events: C } = s(), w = j(null), T = j(null), E = h(n !== null);
+	let u = t(), d = c === void 0 ? u?.idToken ?? null : c, f = l ?? e(), [h, _] = M(null), [v, S] = M(null), { events: C } = s(), w = j(null), T = j(null), E = m(n !== null);
 	O(() => {
 		if (!n) return;
 		let e = (e) => {
@@ -1977,28 +1977,28 @@ function be({ item: n, sourceName: r, onClose: i, onRetry: a, onSkip: o, idToken
 					className: "px-4 py-4 border-t border-border flex gap-2 justify-end flex-wrap bg-surface sticky bottom-0",
 					children: [
 						/* @__PURE__ */ P("button", {
-							className: p("px-3.5 py-1.5 text-[13px] font-medium font-[inherit] rounded-md cursor-pointer bg-surface border border-border text-text-secondary", (m || n.status === "done") && "opacity-50 cursor-not-allowed"),
+							className: p("px-3.5 py-1.5 text-[13px] font-medium font-[inherit] rounded-md cursor-pointer bg-surface border border-border text-text-secondary", (h || n.status === "done") && "opacity-50 cursor-not-allowed"),
 							onClick: () => void B(),
-							disabled: !!m || n.status === "done",
+							disabled: !!h || n.status === "done",
 							"data-testid": "item-remap-btn",
 							title: "Re-run the mapping engine for this item",
-							children: m === "remap" ? "Re-mapping…" : "Re-map"
+							children: h === "remap" ? "Re-mapping…" : "Re-map"
 						}),
 						/* @__PURE__ */ P("button", {
-							className: p("px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] rounded-md cursor-pointer", m || !k ? "bg-surface border border-border text-text-secondary opacity-50 cursor-not-allowed" : "bg-primary border-none text-on-primary"),
+							className: p("px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] rounded-md cursor-pointer", h || !k ? "bg-surface border border-border text-text-secondary opacity-50 cursor-not-allowed" : "bg-primary border-none text-on-primary"),
 							onClick: () => void R(),
-							disabled: !!m || !k,
+							disabled: !!h || !k,
 							"data-testid": "item-retry-btn",
 							title: k ? "Retry this item from the beginning" : "Only failed items can be retried",
-							children: m === "retry" ? "Retrying…" : "Retry"
+							children: h === "retry" ? "Retrying…" : "Retry"
 						}),
 						/* @__PURE__ */ P("button", {
-							className: p("px-3.5 py-1.5 text-[13px] font-medium font-[inherit] rounded-md cursor-pointer", m || n.status === "done" ? "bg-surface border border-border text-text-secondary opacity-50 cursor-not-allowed" : "bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)]"),
+							className: p("px-3.5 py-1.5 text-[13px] font-medium font-[inherit] rounded-md cursor-pointer", h || n.status === "done" ? "bg-surface border border-border text-text-secondary opacity-50 cursor-not-allowed" : "bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)]"),
 							onClick: () => void z(),
-							disabled: !!m || n.status === "done",
+							disabled: !!h || n.status === "done",
 							"data-testid": "item-discard-btn",
 							title: "Skip / discard this item",
-							children: m === "skip" ? "Discarding…" : "Discard"
+							children: h === "skip" ? "Discarding…" : "Discard"
 						})
 					]
 				})
@@ -2534,7 +2534,7 @@ function Ne(e) {
 	return e.path && e.path.length > 0 ? e.path : e.field.split(".").slice(0, -1).map(Me);
 }
 function Pe() {
-	let { conflicts: e, loading: t, error: r, usingMock: i, refresh: a, resolveConflict: o, discardConflict: s, actionError: c, clearActionError: l } = u(), { sources: d } = n(), [f, p] = M({}), [h, y] = M({}), [b, x] = M(null), C = A(() => {
+	let { conflicts: e, loading: t, error: r, usingMock: i, refresh: a, resolveConflict: o, discardConflict: s, actionError: c, clearActionError: l } = u(), { sources: d } = n(), [f, p] = M({}), [m, y] = M({}), [b, x] = M(null), C = A(() => {
 		let e = /* @__PURE__ */ new Map();
 		for (let t of d) e.set(t.sourceId, t.name);
 		return e;
@@ -2555,7 +2555,7 @@ function Pe() {
 		try {
 			let t = {};
 			for (let n of e.fields) t[n.field] = D(e.conflictId, n.field);
-			let n = (h[e.conflictId] ?? "").trim(), r = {
+			let n = (m[e.conflictId] ?? "").trim(), r = {
 				pick: "source",
 				fieldChoices: t,
 				...n ? { note: n } : {}
@@ -2591,7 +2591,7 @@ function Pe() {
 						w.length === 1 ? "" : "s",
 						" waiting"
 					]
-				}), /* @__PURE__ */ P(m, {
+				}), /* @__PURE__ */ P(h, {
 					size: "sm",
 					variant: "ghost",
 					onClick: () => void a(),
@@ -2620,7 +2620,7 @@ function Pe() {
 				children: [/* @__PURE__ */ F("span", {
 					className: "text-[13px] font-medium text-danger-fg",
 					children: ["That conflict was not updated: ", c]
-				}), /* @__PURE__ */ P(m, {
+				}), /* @__PURE__ */ P(h, {
 					size: "sm",
 					variant: "ghost",
 					onClick: l,
@@ -2665,14 +2665,14 @@ function Pe() {
 							"aria-label": "Optional note (logged in audit trail)",
 							className: "min-w-[240px] flex-1",
 							placeholder: "Optional note (logged in audit trail)",
-							value: h[e.conflictId] ?? "",
+							value: m[e.conflictId] ?? "",
 							onChange: (t) => y((n) => ({
 								...n,
 								[e.conflictId]: t.target.value
 							})),
 							"data-testid": `conflict-note-${e.conflictId}`
 						}),
-						/* @__PURE__ */ P(m, {
+						/* @__PURE__ */ P(h, {
 							size: "sm",
 							variant: "ghost",
 							disabled: b === e.conflictId,
@@ -2680,7 +2680,7 @@ function Pe() {
 							"data-testid": `conflict-discard-${e.conflictId}`,
 							children: "Discard"
 						}),
-						/* @__PURE__ */ P(m, {
+						/* @__PURE__ */ P(h, {
 							size: "sm",
 							variant: "primary",
 							disabled: b === e.conflictId,

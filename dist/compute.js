@@ -1,15 +1,15 @@
-import { t as e } from "./cn-DhjIN-s0.js";
-import { t } from "./Chip-nf4Tf03G.js";
-import { t as n } from "./TitledFrame-D8PekrkI.js";
-import { t as r } from "./DotMeter-BDVkadI8.js";
-import { t as i } from "./StatusDot-Bgx2zxgC.js";
-import { t as a } from "./InlinePopover-CO_TmyX7.js";
-import { t as o } from "./SectionLabel-BV3MxP-8.js";
-import { t as s } from "./InlinePlaceholder-51dbPRGn.js";
-import { n as c } from "./FloatingPanel-6GL9dXGL.js";
+import { t as e } from "./cn-D4QmbyEy.js";
+import { t } from "./Chip-QXPdpJoz.js";
+import { t as n } from "./TitledFrame-B0QW93da.js";
+import { t as r } from "./DotMeter-KxyExwVb.js";
+import { t as i } from "./StatusDot-ClFcLvD7.js";
+import { t as a } from "./InlinePopover-DSiUnj-R.js";
+import { t as o } from "./SectionLabel-Bn8Vvb-K.js";
+import { t as s } from "./InlinePlaceholder-CbIBYc-_.js";
+import { n as c } from "./FloatingPanel-CeJO82Sr.js";
 import { a as l, i as u, n as d, r as f, t as p } from "./useComputeProjects-ZSazDRet.js";
-import { a as m, i as h, n as g, o as _, r as v, s as y, t as b } from "./PaneStatusLine-CLdRoeRf.js";
-import { A as x, B as S, C, D as w, E as ee, F as T, G as te, H as E, I as D, J as O, K as ne, L as k, M as A, N as j, O as M, P as re, R as ie, S as ae, T as N, U as oe, V as se, W as ce, Y as P, _ as le, a as ue, b as de, c as fe, d as pe, f as F, g as me, h as he, i as ge, j as I, k as _e, l as ve, m as ye, n as be, o as xe, p as Se, q as L, r as R, s as Ce, t as we, u as Te, v as Ee, w as De, x as Oe, y as ke, z as Ae } from "./ComputeContext-D7kWrZkh.js";
+import { a as m, i as h, n as g, o as _, r as v, s as y, t as b } from "./PaneStatusLine-DCV4mKSC.js";
+import { A as x, B as S, C, D as w, E as ee, F as T, G as te, H as E, I as D, J as O, K as ne, L as k, M as A, N as j, O as M, P as re, R as ie, S as ae, T as N, U as oe, V as se, W as ce, Y as P, _ as le, a as ue, b as de, c as fe, d as pe, f as F, g as me, h as he, i as ge, j as I, k as _e, l as ve, m as ye, n as be, o as xe, p as Se, q as L, r as R, s as Ce, t as we, u as Te, v as Ee, w as De, x as Oe, y as ke, z as Ae } from "./ComputeContext-BvLVnOve.js";
 import { Fragment as je, useCallback as z, useEffect as B, useMemo as V, useRef as H, useState as U, useSyncExternalStore as Me } from "react";
 import { Fragment as Ne, jsx as W, jsxs as G } from "react/jsx-runtime";
 //#region src/components/compute/lib/paneTree.ts

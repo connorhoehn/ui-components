@@ -89,7 +89,7 @@ export function LinkedItemsSection({
       aria-haspopup="dialog"
       aria-expanded={open}
       onClick={() => setOpen((o) => !o)}
-      className="inline-flex items-center gap-1 text-[13px] font-medium"
+      className="inline-flex items-center gap-1 text-[13px]"
     >
       <PlusIcon size={12} aria-hidden="true" />
       Add link

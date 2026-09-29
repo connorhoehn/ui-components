@@ -83,6 +83,7 @@ import {
   type ReactNode,
   type Ref,
 } from 'react';
+import { BUTTON_WEIGHT } from '../ui/Button';
 import { useEditor, EditorContent, ReactRenderer } from '@tiptap/react';
 import { Extension, type Editor } from '@tiptap/core';
 import { Plugin, PluginKey, TextSelection } from '@tiptap/pm/state';
@@ -2955,7 +2956,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 triggerTestId={`${testId}-commands-button`}
                 data-testid={`${testId}-commands-menu`}
                 align="start"
-                triggerClassName="h-7 rounded-md border border-border bg-surface-inset px-2.5 text-xs font-medium text-text-secondary hover:bg-surface-hover hover:text-text-primary"
+                triggerClassName={cn('h-7 rounded-md border border-border bg-surface-inset px-2.5 text-xs text-text-secondary hover:bg-surface-hover hover:text-text-primary', BUTTON_WEIGHT)}
                 sections={[{
                   label: 'Commands',
                   items: commands.map((c) => ({
@@ -2975,7 +2976,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 onClick={startContext}
                 disabled={blocked}
                 data-testid={`${testId}-context-button`}
-                className="inline-flex h-7 items-center gap-1.5 rounded-md border border-border bg-surface-inset px-2.5 text-xs font-medium text-text-secondary hover:bg-surface-hover hover:text-text-primary disabled:opacity-40"
+                className={cn('inline-flex h-7 items-center gap-1.5 rounded-md border border-border bg-surface-inset px-2.5 text-xs text-text-secondary hover:bg-surface-hover hover:text-text-primary disabled:opacity-40', BUTTON_WEIGHT)}
               >
                 <span aria-hidden="true" className="text-primary">#</span>Context
               </button>
@@ -3164,7 +3165,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 onClick={terminalMode ? submitShell : send}
                 disabled={!canSend}
                 data-testid={`${testId}-send`}
-                className={cn('shrink-0 rounded-l-md rounded-r-none bg-primary font-semibold text-on-primary disabled:opacity-40', sendSize)}
+                className={cn(`shrink-0 rounded-l-md rounded-r-none bg-primary ${BUTTON_WEIGHT} text-on-primary disabled:opacity-40`, sendSize)}
               >
                 {sendContent}
               </button>
@@ -3183,6 +3184,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 triggerClassName={cn(
                   // The caret is as tall as the Send beside it.
                   'rounded-l-none rounded-r-md border-0 border-l',
+                  BUTTON_WEIGHT,
                   'px-1.5 py-1',
                   canSend
                     ? 'border-on-primary/40 bg-primary text-on-primary hover:bg-primary'
@@ -3215,7 +3217,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               data-testid={`${testId}-send`}
               className={cn(
                 (submitLead == null || collapsed) && !(showMoreActions && !collapsed) && 'ml-auto',
-                'shrink-0 rounded bg-primary font-semibold text-on-primary disabled:opacity-40',
+                `shrink-0 rounded bg-primary ${BUTTON_WEIGHT} text-on-primary disabled:opacity-40`,
                 (docked || menuModeRow) && 'rounded-md',
                 sendSize,
               )}
