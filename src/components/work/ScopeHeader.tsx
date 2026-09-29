@@ -388,7 +388,9 @@ function ControlsPopover({ label, testId, children }: { label: string; testId: s
         className={cn(
           // 2.407.15: the same family as the crumbs and a host's 28px
           // menu triggers — 28px tall, 13px/500 — not a bare 14px text button.
-          'inline-flex h-7 shrink-0 cursor-pointer items-center gap-1 whitespace-nowrap rounded-md border-none bg-transparent px-2 text-text-secondary transition-colors duration-100 hover:bg-surface-hover hover:text-text-primary',
+          // 2.407.19: bordered like a `DropdownMenu` default trigger (1px
+          // border, md radius, transparent) — it stands in for those.
+          'inline-flex h-7 shrink-0 cursor-pointer items-center gap-1 whitespace-nowrap rounded-md border border-border bg-transparent px-2.5 text-text-secondary transition-colors duration-100 hover:bg-surface-hover hover:text-text-primary',
           RAIL_ITEM_TEXT,
           open && 'text-text-primary',
         )}

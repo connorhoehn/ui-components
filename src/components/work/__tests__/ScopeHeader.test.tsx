@@ -1167,6 +1167,9 @@ describe('ScopeHeader inline — 2.407.15', () => {
     expect(toggle.className).toMatch(/text-\[13px\]/);
     expect(toggle.className).toMatch(/\bfont-medium\b/);
     expect(toggle.className).not.toMatch(/\btext-sm\b/);
+    // 2.407.19: bordered like the DropdownMenu default triggers it replaces.
+    expect(toggle.className).toMatch(/\bborder-border\b/);
+    expect(toggle.className).not.toMatch(/\bborder-none\b/);
     } finally {
       if (desc) Object.defineProperty(HTMLElement.prototype, 'clientWidth', desc); else delete (HTMLElement.prototype as any).clientWidth;
     }

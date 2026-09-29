@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.407.19
+
+- `ScopeHeader variant="inline"`: the collapsed "Filters ▾" toggle carries the 1px `border-border` and `px-2.5` of a `DropdownMenu` default trigger, so it matches the bordered 28px triggers it stands in for (journey walk, 2026-09-29: "no border, while the inline buttons it replaces have a 1px border").
+
 ## 2.407.18
 
 Type audit, second pass — the composer strip, the 36px header actions and the tab rows. **Visual change for every consumer.**
