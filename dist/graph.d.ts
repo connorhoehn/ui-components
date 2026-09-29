@@ -865,12 +865,16 @@ export declare interface RecordGraphHandle {
     /**
      * Frame `focusKeys` + their neighbours; at the zoom floor, centre on them so
      * the focus is fully in view. Frames the whole graph when there is no focus.
+     * Since 2.403.8 a focus too tall or wide for the canvas at the floor zooms
+     * out (down to `RECORD_GRAPH_FOCUS_MIN_ZOOM`, 0.4) until its boxes are whole.
      */
     fitToFocus: () => void;
     /**
      * Frame the whole graph: centred when it fits, top-left aligned (pan for
      * the rest) when not. Since 2.403.5 it may zoom below the readability floor,
-     * down to `RECORD_GRAPH_FIT_ALL_MIN_ZOOM` (0.5), like "Fit to view"'s second press.
+     * down to `RECORD_GRAPH_FIT_ALL_MIN_ZOOM` (0.4 since 2.403.8), exactly as
+     * "Fit to view" does; where it still overflows it centres on the focus so
+     * the selection stays whole (2.403.8).
      */
     fitAll: () => void;
 }
@@ -928,9 +932,13 @@ export declare interface RecordGraphProps {
      * the pointer. Omit, or name nothing drawn, to fit the whole graph.
      * Since 2.403.2. When the neighbourhood cannot fit at the floor, the fit
      * centres on these records so they are never clipped while they fit, and
-     * "Fit" re-centres on them (a second press frames the whole graph) — 2.403.4.
+     * "Fit" re-centres on them (a second press frames the whole graph) — 2.403.4;
+     * since 2.403.8 "Fit" always frames the whole graph.
      * Since 2.403.7 the automatic fit first shows the whole graph when it fits
      * at `RECORD_GRAPH_READABLE_ZOOM` (0.7); the focus framing is its fallback.
+     * Since 2.403.8 the fallback is a ladder — these records + neighbours at
+     * ≥ `RECORD_GRAPH_NEIGHBOURHOOD_ZOOM` (0.6), else these records alone, zoomed
+     * out as far as `RECORD_GRAPH_FOCUS_MIN_ZOOM` (0.4) so they are never clipped.
      */
     focusKeys?: readonly string[];
     /**
@@ -965,21 +973,29 @@ export declare interface RecordGraphViewport {
 export declare interface RecordGraphViewportOptions {
     /**
      * `focus` frames `focusKeys` + their neighbours (`fitKeys`) when they fit at
-     * or above the floor; at the floor it centres on the largest of the whole
-     * graph, the neighbourhood and the focus itself that fits, per axis, so the
-     * focus is never clipped while it fits. When the focus's boxes do not fit
-     * the clear area they are kept 16px inside the canvas, and when they do not
-     * fit that either, its avatar circles are kept in view (2.403.5). `all` frames the
-     * whole graph, and where it overflows at the floor aligns it top-left so
-     * the viewer pans.
+     * or above the floor (`minZoom`). Otherwise (2.403.8) it zooms to
+     * min(floor, the zoom at which the focus's full boxes fit the canvas with a
+     * 16px margin), never below `focusMinZoom`, and centres on the largest of
+     * the whole graph, the neighbourhood and the focus itself that fits, per
+     * axis — so the focus is never clipped. When the focus's boxes do not fit
+     * the clear area they are kept 16px inside the canvas, and below
+     * `focusMinZoom` its avatar circles are kept in view (2.403.5). `all` frames
+     * the whole graph; where it overflows at the floor it centres on the focus
+     * (when `focusKeys` are given, 2.403.8) or aligns top-left so the viewer pans.
      */
     mode: 'focus' | 'all' | 'auto';
     /**
-     * `auto` — the automatic fit (2.403.7): the whole graph when it fits at or
-     * above this zoom, else `focus` (or `all` at the floor, with no focus).
+     * `auto` — the automatic fit ladder (2.403.7, rung (b) since 2.403.8):
+     * (a) the whole graph when it fits at or above this zoom; else (b) the focus
+     * + neighbours when they fit at or above `neighbourhoodZoom`; else (c) the
+     * `focus` rule's selection fit (or `all` at the floor, with no focus).
      * Default `RECORD_GRAPH_READABLE_ZOOM`.
      */
     readableZoom?: number;
+    /** Rung (b) of `auto`. Default `RECORD_GRAPH_NEIGHBOURHOOD_ZOOM`. Since 2.403.8. */
+    neighbourhoodZoom?: number;
+    /** How far a focus fit may zoom out to keep the selection's boxes whole. Default `RECORD_GRAPH_FOCUS_MIN_ZOOM`. Since 2.403.8. */
+    focusMinZoom?: number;
     /** The focus records themselves (usually the selection) — never clipped when they fit. */
     focusKeys?: readonly string[];
     /** Focus plus direct neighbours (`recordGraphFitKeys`). Framed first when it fits. */
@@ -2007,6 +2023,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -2026,19 +2055,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasListStyle: {
             /**
              * Make the caret's block a list of the style's kind (if it is not one
@@ -2050,10 +2066,45 @@ declare module '@tiptap/core' {
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
     }
 }
 
@@ -2086,39 +2137,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
@@ -2127,11 +2145,9 @@ declare module '@tiptap/core' {
 }
 
 
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
     }
 }

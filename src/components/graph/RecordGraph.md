@@ -54,7 +54,7 @@ host strip opening under it), one fit per animation frame. A selection click
 never moves it. At the floor the fit keeps the focus whole: it centres on the
 whole graph, the neighbourhood, or the focus itself, whichever fits
 (`recordGraphViewport(positions, { width, height }, { mode, focusKeys,
-fitKeys })`, pure). "Fit to view" re-centres on the focus. Pressed again, or
+fitKeys })`, pure). "Fit to view" re-centres on the focus (until 2.403.8). Pressed again, or
 with no `focusKeys`, it frames the whole graph, top-left aligned when that
 overflows.
 
@@ -77,7 +77,7 @@ costs less, so on the search canvas one bottom band clears both. A focus
 taller than the clear area keeps its whole boxes 16px inside the canvas, and
 when even that is too tall, its avatar circles. The automatic fit keeps the
 0.8 floor (since 2.403.7, except to show the whole graph at ≥ 0.7); the viewer's whole-graph fit (the second "Fit to view" press, or
-`fitAll()`) may zoom down to `RECORD_GRAPH_FIT_ALL_MIN_ZOOM` (0.5) so the whole
+`fitAll()`) may zoom down to `RECORD_GRAPH_FIT_ALL_MIN_ZOOM` (0.5; 0.4 since 2.403.8) so the whole
 graph is in view. Force pulls go as the aspect ratio squared once a set packs
 the canvas, and start from an ellipse of the canvas's shape, so 25 records on
 a 1160 × 418 canvas fill its width (~99%) rather than overflow its height.
@@ -88,7 +88,7 @@ drawing and on a canvas resize, the view shows the whole graph when it fits at
 otherwise does it fall back to the focus-centred fit at the 0.8 floor
 (`recordGraphViewport(…, { mode: 'auto', … })`). "Fit to view",
 `fitToFocus()` and `fitAll()` keep their meaning: the first press frames the
-focus at the floor, the second the whole graph. So a search result opens with
+focus at the floor, the second the whole graph (until 2.403.8 — see the fit ladder below). So a search result opens with
 nothing cut off, and the selection is one press away at a larger zoom. To make
 the ~25-record case qualify, Radial rings are spaced from the node box
 (128px between rings, the canvas's aspect sideways) and squeezed only as far as
@@ -103,6 +103,30 @@ sized to the canvas at 0.7. Force keeps its shaping; a packed set a few
 percent taller than the readable area closes its rows up by at most 15%, never
 into a new box overlap. On the search canvas (1160 × 418) 25 records open at
 ~71% in all three layouts.
+
+Fit ladder (2.403.8) — the selection is never clipped. This replaces the
+fit rules above where they differ.
+
+- **Automatic fit** (open, a new drawing, a canvas resize), first rung that
+  applies: (a) the whole graph, when it fits at `RECORD_GRAPH_READABLE_ZOOM`
+  (0.7) or above; (b) the selection + its direct neighbours, when they fit at
+  `RECORD_GRAPH_NEIGHBOURHOOD_ZOOM` (0.6) or above; (c) the selection alone.
+- **Selection fit** (rung (c), and `fitToFocus()` when the neighbourhood does
+  not fit at 0.8): the zoom is min(0.8, the zoom at which the selected records'
+  full boxes fit the canvas with a 16px margin), never below
+  `RECORD_GRAPH_FOCUS_MIN_ZOOM` (0.4); below that only their avatar circles
+  are kept whole. Only the selection is guaranteed — neighbours and the rest
+  of the graph are centred into view when they fit at that zoom.
+- **"Fit to view"** frames the whole graph at any zoom down to 0.4
+  (`RECORD_GRAPH_FIT_ALL_MIN_ZOOM`, now 0.4), and pressing it again re-fits
+  the same view — it no longer toggles to the selection view. Where even 0.4
+  cannot show everything it centres on the selection, whole. `fitAll()` is the
+  same fit; `fitToFocus()` is the explicit selection view for a host button.
+
+On the search canvas (1160 wide), 25 records with three people ~430 flow px
+apart (Force laid out for 418px): the whole graph at ~71% at 418px, rung (b)
+at ~0.61 at 369px, and the selection whole at ~0.41 at 209px, where 2.403.7
+held 0.8 and clipped one of them.
 
 Edge labels (2.403.4) draw at rest only on edges that touch a selected or
 focused record; the others appear on hover. With nothing selected, a graph of

@@ -4,7 +4,8 @@ import { expect, test } from 'vitest';
 import {
   filterRecordGraph, recordGraphKey, layoutRecordGraph, recordForceParams, recordGraphFitKeys,
   recordGraphInset, recordGraphLegendSize, recordGraphViewport, recordRadialRings,
-  RECORD_GRAPH_CONTROLS_SIZE, RECORD_GRAPH_MIN_FIT_ZOOM, RECORD_GRAPH_READABLE_ZOOM, RECORD_GRAPH_NODE_HEIGHT as NODE_H, RECORD_GRAPH_NODE_WIDTH as NODE_W,
+  RECORD_GRAPH_CONTROLS_SIZE, RECORD_GRAPH_MIN_FIT_ZOOM, RECORD_GRAPH_READABLE_ZOOM,
+  RECORD_GRAPH_NEIGHBOURHOOD_ZOOM, RECORD_GRAPH_FOCUS_MIN_ZOOM, RECORD_GRAPH_FIT_ALL_MIN_ZOOM, RECORD_GRAPH_NODE_HEIGHT as NODE_H, RECORD_GRAPH_NODE_WIDTH as NODE_W,
   type RecordGraphEdge, type RecordGraphRecord, type RecordGraphType,
 } from '../recordGraphLayout';
 
@@ -286,4 +287,127 @@ test('the automatic fit shows all 25 records at ≥ 70% in every layout; 60 fall
       }
     }
   }
+});
+
+// ── 2.403.8: the selection is never clipped; the automatic fit is a ladder ──
+
+const LEGEND = ['People', 'Initiatives', 'Work', 'Decisions', 'Knowledge'];
+const insetFor = (size: { width: number; height: number }) =>
+  recordGraphInset(size, { legend: recordGraphLegendSize(LEGEND, size.width), controls: RECORD_GRAPH_CONTROLS_SIZE });
+/** Screen box of these records (their 2px selection ring included) under a viewport. */
+function screenSpan(positions: Map<string, { x: number; y: number }>, keys: string[], vp: { x: number; y: number; zoom: number }) {
+  const ps = keys.map(key => positions.get(key)!);
+  return {
+    x0: Math.min(...ps.map(p => p.x)) * vp.zoom + vp.x, x1: (Math.max(...ps.map(p => p.x)) + NODE_W) * vp.zoom + vp.x,
+    y0: (Math.min(...ps.map(p => p.y)) - 2) * vp.zoom + vp.y, y1: (Math.max(...ps.map(p => p.y)) + NODE_H) * vp.zoom + vp.y,
+  };
+}
+function expectWhole(box: { x0: number; y0: number; x1: number; y1: number }, size: { width: number; height: number }, margin: number, label: string) {
+  expect(box.x0, label).toBeGreaterThanOrEqual(margin - 0.5);
+  expect(box.y0, label).toBeGreaterThanOrEqual(margin - 0.5);
+  expect(box.x1, label).toBeLessThanOrEqual(size.width - margin + 0.5);
+  expect(box.y1, label).toBeLessThanOrEqual(size.height - margin + 0.5);
+}
+
+test('the ladder thresholds: 0.7 readable, 0.6 neighbourhood, 0.4 focus minimum (also the whole-graph fit floor)', () => {
+  expect(RECORD_GRAPH_READABLE_ZOOM).toBe(0.7);
+  expect(RECORD_GRAPH_NEIGHBOURHOOD_ZOOM).toBe(0.6);
+  expect(RECORD_GRAPH_FOCUS_MIN_ZOOM).toBe(0.4);
+  expect(RECORD_GRAPH_FIT_ALL_MIN_ZOOM).toBe(RECORD_GRAPH_FOCUS_MIN_ZOOM);
+});
+
+test('25 records, 3 selected people: after the automatic fit the selected boxes are whole, 16px inside, on 1160 × 418, 369 and 209', () => {
+  const graph = searchResult();
+  const keys = graph.records.map(recordGraphKey);
+  const focusKeys = keys.slice(0, 3);
+  const fitKeys = recordGraphFitKeys(keys, graph.edges, focusKeys);
+  for (const layout of ['force', 'radial', 'hierarchy'] as const) {
+    // Laid out for each canvas, and — as when a host strip opens before the
+    // re-layout lands — for the 418px canvas and viewed on a shorter one.
+    for (const laidFor of [418, 369, 209]) {
+      const positions = layoutRecordGraph(graph.records, graph.edges, layout, { width: 1160, height: laidFor });
+      for (const height of [418, 369, 209]) {
+        const size = { width: 1160, height };
+        const label = `${layout} laid for ${laidFor}, viewed at ${height}`;
+        const vp = recordGraphViewport(positions, size, { mode: 'auto', focusKeys, fitKeys, inset: insetFor(size) })!;
+        expect(vp.zoom, label).toBeGreaterThanOrEqual(RECORD_GRAPH_FOCUS_MIN_ZOOM);
+        expect(vp.zoom, label).toBeLessThanOrEqual(1);
+        expectWhole(screenSpan(positions, focusKeys, vp), size, 16, label);
+      }
+    }
+  }
+});
+
+test('the member journey: three people ~430 flow px tall on the 209px canvas zoom below the floor rather than clip one', () => {
+  const graph = searchResult();
+  const keys = graph.records.map(recordGraphKey);
+  const focusKeys = keys.slice(0, 3);
+  const positions = layoutRecordGraph(graph.records, graph.edges, 'force', CANVAS);
+  const ys = focusKeys.map(key => positions.get(key)!.y);
+  const tall = Math.max(...ys) - Math.min(...ys) + NODE_H + 2;
+  const size = { width: 1160, height: 209 };
+  expect(tall * RECORD_GRAPH_MIN_FIT_ZOOM).toBeGreaterThan(size.height - 32); // clipped at the old 0.8 floor
+  for (const mode of ['auto', 'focus'] as const) {
+    const vp = recordGraphViewport(positions, size, {
+      mode, focusKeys, fitKeys: recordGraphFitKeys(keys, graph.edges, focusKeys), inset: insetFor(size),
+    })!;
+    expect(vp.zoom, mode).toBeLessThan(RECORD_GRAPH_MIN_FIT_ZOOM);
+    expect(vp.zoom, mode).toBeGreaterThanOrEqual(RECORD_GRAPH_FOCUS_MIN_ZOOM);
+    expectWhole(screenSpan(positions, focusKeys, vp), size, 16, mode);
+  }
+  // The viewer's whole-graph fit at 0.4 cannot show all 25 here; it keeps the selection whole instead of top-left aligning.
+  const all = recordGraphViewport(positions, size, { mode: 'all', focusKeys, inset: insetFor(size), minZoom: RECORD_GRAPH_FIT_ALL_MIN_ZOOM })!;
+  expect(all.zoom).toBeCloseTo(RECORD_GRAPH_FOCUS_MIN_ZOOM);
+  expectWhole(screenSpan(positions, focusKeys, all), size, 16, 'all');
+});
+
+test('Radial on 1160 × 418 where the whole graph needs < 0.7: rung (b) or (c), the selection whole', () => {
+  // Laid out for the 369px canvas (the answer strip open) and viewed at 418:
+  // the drawing's fit-all is 0.55, the portal's Radial number.
+  const graph = searchResult();
+  const keys = graph.records.map(recordGraphKey);
+  const focusKeys = keys.slice(0, 3);
+  const fitKeys = recordGraphFitKeys(keys, graph.edges, focusKeys);
+  const positions = layoutRecordGraph(graph.records, graph.edges, 'radial', { width: 1160, height: 369 });
+  const inset = insetFor(CANVAS);
+  const all = recordGraphViewport(positions, CANVAS, { mode: 'all', inset, minZoom: RECORD_GRAPH_FOCUS_MIN_ZOOM })!;
+  expect(all.zoom).toBeLessThan(RECORD_GRAPH_READABLE_ZOOM);
+  const vp = recordGraphViewport(positions, CANVAS, { mode: 'auto', focusKeys, fitKeys, inset })!;
+  expect(vp).not.toEqual(all); // not rung (a)
+  expect(vp.zoom).toBeGreaterThanOrEqual(RECORD_GRAPH_NEIGHBOURHOOD_ZOOM);
+  expect(vp.zoom).toBeLessThanOrEqual(RECORD_GRAPH_MIN_FIT_ZOOM);
+  expectWhole(screenSpan(positions, focusKeys, vp), CANVAS, 16, 'radial');
+});
+
+test('rung (b): the selection and its neighbours framed at 0.6–0.8 when the whole graph is not readable', () => {
+  // Two selected records with three neighbours in an 830 × 500 flow block; far records 3000px away.
+  const positions = new Map<string, { x: number; y: number }>([
+    ['person:a', { x: 0, y: 0 }], ['person:b', { x: 690, y: 396 }],
+    ['work:n1', { x: 345, y: 0 }], ['work:n2', { x: 0, y: 396 }], ['work:n3', { x: 690, y: 0 }],
+    ['work:far1', { x: -3000, y: 0 }], ['work:far2', { x: 3000, y: 900 }],
+  ]);
+  const focusKeys = ['person:a', 'person:b'];
+  const fitKeys = [...focusKeys, 'work:n1', 'work:n2', 'work:n3'];
+  const inset = insetFor(CANVAS);
+  const vp = recordGraphViewport(positions, CANVAS, { mode: 'auto', focusKeys, fitKeys, inset })!;
+  expect(vp.zoom).toBeGreaterThanOrEqual(RECORD_GRAPH_NEIGHBOURHOOD_ZOOM);
+  expect(vp.zoom).toBeLessThan(RECORD_GRAPH_MIN_FIT_ZOOM);
+  expectWhole(screenSpan(positions, fitKeys, vp), CANVAS, 16, 'neighbourhood');
+  // fitToFocus keeps its 0.8 floor for the neighbourhood, so it drops to the selection alone.
+  const focus = recordGraphViewport(positions, CANVAS, { mode: 'focus', focusKeys, fitKeys, inset })!;
+  expect(focus.zoom).toBeLessThanOrEqual(RECORD_GRAPH_MIN_FIT_ZOOM);
+  expectWhole(screenSpan(positions, focusKeys, focus), CANVAS, 16, 'focus');
+});
+
+test('below 0.4 the selection keeps its circles whole', () => {
+  // 466 flow px of boxes need 0.38 on 209px less 32; their circles (420px) fit at 0.4.
+  const positions = new Map<string, { x: number; y: number }>([
+    ['person:a', { x: 0, y: 0 }], ['person:b', { x: 0, y: 360 }], ['work:x', { x: 400, y: 700 }],
+  ]);
+  const size = { width: 1160, height: 209 };
+  const vp = recordGraphViewport(positions, size, { mode: 'auto', focusKeys: ['person:a', 'person:b'], inset: insetFor(size) })!;
+  expect(vp.zoom).toBeCloseTo(RECORD_GRAPH_FOCUS_MIN_ZOOM);
+  const top = (0 - 2) * vp.zoom + vp.y, bottom = (360 + 58) * vp.zoom + vp.y;
+  expect(top).toBeGreaterThanOrEqual(16 - 0.5);
+  expect(bottom).toBeLessThanOrEqual(size.height - 16 + 0.5);
 });

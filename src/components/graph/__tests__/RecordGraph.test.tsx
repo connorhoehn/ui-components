@@ -5,7 +5,7 @@ import { RecordGraph, type RecordGraphHandle, type RecordGraphProps } from '../R
 import {
   layoutRecordGraph, recordGraphFitKeys, recordGraphInset, recordGraphLegendSize, recordGraphViewport,
   RECORD_GRAPH_CONTROLS_SIZE, RECORD_GRAPH_FIT_ALL_MIN_ZOOM, RECORD_GRAPH_MIN_FIT_ZOOM,
-  RECORD_GRAPH_READABLE_ZOOM, RECORD_GRAPH_NODE_HEIGHT, RECORD_GRAPH_NODE_WIDTH, type RecordGraphEdge, type RecordGraphRecord,
+  RECORD_GRAPH_READABLE_ZOOM, RECORD_GRAPH_NEIGHBOURHOOD_ZOOM, RECORD_GRAPH_FOCUS_MIN_ZOOM, RECORD_GRAPH_NODE_HEIGHT, RECORD_GRAPH_NODE_WIDTH, type RecordGraphEdge, type RecordGraphRecord,
 } from '../recordGraphLayout';
 
 const flow = {
@@ -302,18 +302,14 @@ describe('RecordGraph', () => {
       resize(1160, 369); // the answer strip opens under the canvas
       await frames();
       expect(flow.setViewport.mock.calls.length).toBeGreaterThan(calls);
-      expect(flow.viewport.zoom).toBeGreaterThanOrEqual(RECORD_GRAPH_MIN_FIT_ZOOM);
+      // 2.403.8: the ladder may go below the 0.8 floor (to 0.6 for the
+      // neighbourhood, to 0.4 for the selection) — never clipping the focus.
+      expect(flow.viewport.zoom).toBeGreaterThanOrEqual(RECORD_GRAPH_FOCUS_MIN_ZOOM);
       expectInside(FOCUS);
       resize(1160, 256); // expanded conversation
       await frames();
-      // At 256px the three people may be taller than the canvas at the floor:
-      // then the focus is aligned to the top padding (the rest a pan away);
-      // either way the view is never zoomed below the floor.
-      expect(flow.viewport.zoom).toBeGreaterThanOrEqual(RECORD_GRAPH_MIN_FIT_ZOOM);
-      const boxes = FOCUS.map(onScreen);
-      const top = Math.min(...boxes.map((box) => box.y0)), bottom = Math.max(...boxes.map((box) => box.y1));
-      if (bottom - top <= 256 - 48) expectInside(FOCUS);
-      else expect(top).toBeCloseTo(24);
+      expect(flow.viewport.zoom).toBeGreaterThanOrEqual(RECORD_GRAPH_FOCUS_MIN_ZOOM);
+      expectInside(FOCUS);
     });
 
     it('a resize too small to re-lay out still re-fits (the ResizeObserver, not the layout key)', async () => {
@@ -337,32 +333,52 @@ describe('RecordGraph', () => {
       expectInside(FOCUS);
     });
 
-    it('Fit re-centres on the focus, then a second press frames the whole graph top-left', async () => {
+    it('Fit to view frames everything and is idempotent — it never toggles to the selection view (2.403.8)', async () => {
+      for (const layout of ['force', 'radial', 'hierarchy'] as const) {
+        cleanup();
+        const ref = createRef<RecordGraphHandle>();
+        measure(1160, 418);
+        flow.viewport = { x: 0, y: 0, zoom: 1 };
+        render(<RecordGraph ref={ref} layout={layout} records={MANY} edges={MANY_EDGES} selectedKeys={FOCUS} focusKeys={FOCUS}
+          onSelectionChange={vi.fn()} onAskSelection={vi.fn()} />);
+        await frames();
+        // The opening view already shows all 25 at ≥ 70%.
+        expectInside(KEYS);
+        const fit = () => fireEvent.click(screen.getByRole('button', { name: 'Fit to view' }));
+        fit();
+        const allView = { ...flow.viewport };
+        expect(allView.zoom, layout).toBeGreaterThanOrEqual(RECORD_GRAPH_FOCUS_MIN_ZOOM);
+        expectInside(KEYS);
+        expectInside(FOCUS);
+        // Pressed again (the org-leader journey: was a jump to the 80% selection view, 23 of 25 inside).
+        fit();
+        expect(flow.viewport, layout).toEqual(allView);
+        expectInside(KEYS);
+        // Panned away, Fit comes back to the same everything view.
+        flow.viewport = { x: -900, y: -700, zoom: 1.4 };
+        fit();
+        expect(flow.viewport, layout).toEqual(allView);
+        // The selection view stays one handle call away, and Fit returns from it.
+        act(() => ref.current!.fitToFocus());
+        expectInside(FOCUS);
+        fit();
+        expect(flow.viewport, layout).toEqual(allView);
+      }
+    });
+
+    it('on the expanded 209px canvas Fit to view shows as much as fits at ≥ 40% and keeps the selection whole', async () => {
       setupMany();
       await frames();
-      const autoView = { ...flow.viewport };
-      // 2.403.7: the automatic fit shows everything; Fit still frames the focus first.
-      fireEvent.click(screen.getByRole('button', { name: 'Fit to view' }));
-      const focusView = { ...flow.viewport };
-      expect(focusView).not.toEqual(autoView);
-      expect(focusView.zoom).toBeGreaterThanOrEqual(RECORD_GRAPH_MIN_FIT_ZOOM);
-      flow.viewport = { x: -900, y: -700, zoom: 0.7 }; // panned away
-      fireEvent.click(screen.getByRole('button', { name: 'Fit to view' }));
-      expect(flow.viewport).toEqual(focusView);
+      resize(1160, 209);
+      await frames();
+      const fit = () => fireEvent.click(screen.getByRole('button', { name: 'Fit to view' }));
+      fit();
+      const first = { ...flow.viewport };
+      expect(first.zoom).toBeGreaterThanOrEqual(RECORD_GRAPH_FOCUS_MIN_ZOOM);
       expectInside(FOCUS);
-      fireEvent.click(screen.getByRole('button', { name: 'Fit to view' }));
-      expect(flow.viewport).not.toEqual(focusView);
-      // Whole graph, top-left aligned where it overflows.
-      const tops = KEYS.map((key) => onScreen(key));
-      const minX = Math.min(...tops.map((box) => box.x0));
-      const minY = Math.min(...tops.map((box) => box.y0));
-      const maxX = Math.max(...tops.map((box) => box.x1));
-      const maxY = Math.max(...tops.map((box) => box.y1));
-      if (maxX - minX > size.width - 48) expect(minX).toBeCloseTo(24);
-      if (maxY - minY > size.height - 48) expect(minY).toBeCloseTo(24);
-      // Pressed again, back to the focus.
-      fireEvent.click(screen.getByRole('button', { name: 'Fit to view' }));
-      expect(flow.viewport).toEqual(focusView);
+      fit();
+      expect(flow.viewport).toEqual(first);
+      expectInside(FOCUS);
     });
 
     it('a selection click does not move the view', async () => {
@@ -419,7 +435,7 @@ describe('RecordGraph', () => {
         await frames();
         resize(1160, 369); // the answer strip opens under the canvas
         await frames();
-        expect(flow.viewport.zoom, layout).toBeGreaterThanOrEqual(RECORD_GRAPH_MIN_FIT_ZOOM);
+        expect(flow.viewport.zoom, layout).toBeGreaterThanOrEqual(RECORD_GRAPH_FOCUS_MIN_ZOOM);
         const boxes = FOCUS.map(onScreen);
         const span = Math.max(...boxes.map((b) => b.y1)) - Math.min(...boxes.map((b) => b.y0));
         if (span <= 369 - 32) {
@@ -495,6 +511,39 @@ describe('RecordGraph', () => {
           return box.x0 < 0 || box.y0 < 0 || box.x1 > size.width || box.y1 > size.height;
         });
         expect(outside.length, layout).toBeGreaterThan(0);
+      }
+    });
+
+    // 2.403.8 — the selection is never clipped. The member journey: Vera Green
+    // cut off on the 209px canvas (80%, "Fit" 50%), Radial opening at 80% with
+    // 17 of 25.
+    /** The selected boxes (with their 2px rings) 16px inside the canvas where they fit it less 32px, else on it. */
+    function expectSelectionWhole(keys: string[], label: string) {
+      const boxes = keys.map(onScreen);
+      const { zoom } = flow.viewport;
+      const top = Math.min(...boxes.map((b) => b.y0)) - 2 * zoom, bottom = Math.max(...boxes.map((b) => b.y1));
+      const left = Math.min(...boxes.map((b) => b.x0)), right = Math.max(...boxes.map((b) => b.x1));
+      const margin = bottom - top <= size.height - 32 && right - left <= size.width - 32 ? 16 : 0;
+      expect(top, label).toBeGreaterThanOrEqual(margin - 0.5);
+      expect(bottom, label).toBeLessThanOrEqual(size.height - margin + 0.5);
+      expect(left, label).toBeGreaterThanOrEqual(margin - 0.5);
+      expect(right, label).toBeLessThanOrEqual(size.width - margin + 0.5);
+      return margin;
+    }
+
+    it('the automatic fit keeps the three selected boxes whole at 418, 369 and 209px in every layout', async () => {
+      for (const layout of ['force', 'radial', 'hierarchy'] as const) {
+        cleanup();
+        setupMany({ layout });
+        await frames();
+        for (const height of [418, 369, 209]) {
+          if (height !== 418) { resize(1160, height); await frames(); }
+          const label = `${layout} ${height}`;
+          expect(flow.viewport.zoom, label).toBeGreaterThanOrEqual(RECORD_GRAPH_FOCUS_MIN_ZOOM);
+          expect(flow.viewport.zoom, label).toBeLessThanOrEqual(1);
+          // At 209px three people 350 flow px apart fit only below the 0.8 floor — and they do, with the margin.
+          expect(expectSelectionWhole(FOCUS, label), label).toBe(16);
+        }
       }
     });
 
@@ -578,16 +627,15 @@ describe('RecordGraph', () => {
         'person:nora-c': { x: 0, y: 0 }, 'person:vera': { x: 300, y: 440 - H }, 'person:nora-d': { x: 600, y: 150 },
       });
       const vp = recordGraphViewport(positions, CANVAS, { mode: 'focus', focusKeys, fitKeys: focusKeys, inset })!;
-      expect(vp.zoom).toBe(RECORD_GRAPH_MIN_FIT_ZOOM);
+      // 2.403.8: 352px of boxes (plus the 2px ring) cannot keep 16px margins
+      // in 369px at the 0.8 floor, so the fit zooms out until they do.
+      expect(vp.zoom).toBeCloseTo((CANVAS.height - 32) / 442, 6);
       focusKeys.forEach((key) => {
         const p = positions.get(key)!;
         const box = screenBox(p, vp);
-        // 352px of boxes cannot also keep 16px margins in 369px; the circles
-        // keep theirs and the boxes stay on the canvas (the old fit put
-        // Vera's box bottom at 376px).
         expect((p.y - 2) * vp.zoom + vp.y, key).toBeGreaterThanOrEqual(16 - 0.5);
-        expect(box.y0, key).toBeGreaterThanOrEqual(0);
-        expect(box.y1, key).toBeLessThanOrEqual(CANVAS.height + 1);
+        expect(box.y0, key).toBeGreaterThanOrEqual(16 - 0.5);
+        expect(box.y1, key).toBeLessThanOrEqual(CANVAS.height - 16 + 0.5);
       });
     });
 

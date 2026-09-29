@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.403.8
+
+- `RecordGraph` never clips the selection. The member search journey: with three people selected on the 25-record graph, the 209px canvas (conversation expanded) kept the 0.8 floor and cut Vera Green off at the bottom edge, and "Fit to view" (80% → 50%) still left her outside; Radial opened at 80% with 17 of 25 whenever the drawing's fit-all was below 0.7. `recordGraphViewport` now fits the selection at min(0.8, the zoom at which its full boxes — selection ring included — fit the canvas with a 16px margin), down to a hard minimum of 0.4, below which its circles are kept whole as before. Only the selection is guaranteed; neighbours are centred into view when they fit at that zoom.
+- `RecordGraph` automatic fit is a ladder: (a) the whole graph at ≥ 0.7; else (b) the selection + 1-hop neighbours when they fit at ≥ 0.6; else (c) the selection per the rule above.
+- `RecordGraph` "Fit to view" frames the whole graph at any zoom ≥ 0.4 and is idempotent: a second press re-fits the same view instead of toggling to the 80% selection view (the org-leader journey: from Force at 70% with all 25 inside, the press dropped to 23 of 25, Hierarchy to 12). Where 0.4 still cannot show everything it centres on the selection. `fitAll()` is the same fit; `fitToFocus()` keeps its meaning and is the way to the selection view.
+  - New in `recordGraphLayout.ts`: `RECORD_GRAPH_NEIGHBOURHOOD_ZOOM` (0.6), `RECORD_GRAPH_FOCUS_MIN_ZOOM` (0.4). Not added to the `/graph` barrel.
+  - `RecordGraphViewportOptions` gains `neighbourhoodZoom` and `focusMinZoom`. `mode: 'all'` with `focusKeys` centres an overflowing axis on the focus rather than top-left aligning.
+  - `RECORD_GRAPH_FIT_ALL_MIN_ZOOM` is 0.4 (was 0.5), equal to `RECORD_GRAPH_FOCUS_MIN_ZOOM`.
+
 ## 2.403.7
 
 - `RecordGraph` automatic fit: everything when it is readable, else the focus. Two journey walkers disagreed on the opening view of 25 records · 56 connections with three people selected on a 1160 × 418 canvas: the fit centred on the selection at the 0.8 floor, so Force opened with 23 of 25 records on the canvas, Radial 17 (the drawing 117% of the canvas height) and Hierarchy 9 (524px empty on the left), while "Fit to view" showed all 25 at 70% / 55% / 67%. On open, on a new drawing and on a resize the view now shows the whole graph when it fits at `RECORD_GRAPH_READABLE_ZOOM` (0.7, names ≈ 9px) or above, and only otherwise centres on the focus at the 0.8 floor as before. "Fit to view", `fitToFocus()` and `fitAll()` are unchanged.

@@ -20,13 +20,20 @@
 // opening under it), not only when the drawing changes. At the floor the fit
 // keeps the focus fully in view (`recordGraphViewport`); "Fit to view"
 // re-centres on the focus, and pressed again frames the whole graph from the
-// top-left. `ref` exposes `fitToFocus()` / `fitAll()` (`RecordGraphHandle`).
+// top-left (until 2.403.8, below). `ref` exposes `fitToFocus()` / `fitAll()` (`RecordGraphHandle`).
 //
 // Automatic fit (2.403.7): on open, on a new drawing and on a resize the view
 // shows the whole graph when it fits at `RECORD_GRAPH_READABLE_ZOOM` (0.7)
 // or above, and only otherwise centres on the focus at the 0.8 floor. The
 // radial and hierarchy layouts are compacted so a ~25-record search result
 // qualifies. "Fit to view" and `fitToFocus()` / `fitAll()` are unchanged.
+//
+// Fit ladder (2.403.8): the selection is never clipped. The automatic fit is
+// (a) everything at ≥ 0.7, else (b) the selection + neighbours at ≥ 0.6,
+// else (c) the selection alone at min(0.8, the zoom its full boxes fit the
+// canvas less 16px), down to 0.4 (then its circles). "Fit to view" always
+// frames everything at ≥ 0.4 and is idempotent — pressing it again re-fits,
+// never jumping to the selection view (`fitToFocus()` does that).
 //
 // Keep-outs (2.403.5): the fit keeps the drawing clear of the legend's and
 // the controls' corners (`recordGraphInset`), a focus taller than the clear
@@ -132,9 +139,13 @@ export interface RecordGraphProps {
    * the pointer. Omit, or name nothing drawn, to fit the whole graph.
    * Since 2.403.2. When the neighbourhood cannot fit at the floor, the fit
    * centres on these records so they are never clipped while they fit, and
-   * "Fit" re-centres on them (a second press frames the whole graph) — 2.403.4.
+   * "Fit" re-centres on them (a second press frames the whole graph) — 2.403.4;
+   * since 2.403.8 "Fit" always frames the whole graph.
    * Since 2.403.7 the automatic fit first shows the whole graph when it fits
    * at `RECORD_GRAPH_READABLE_ZOOM` (0.7); the focus framing is its fallback.
+   * Since 2.403.8 the fallback is a ladder — these records + neighbours at
+   * ≥ `RECORD_GRAPH_NEIGHBOURHOOD_ZOOM` (0.6), else these records alone, zoomed
+   * out as far as `RECORD_GRAPH_FOCUS_MIN_ZOOM` (0.4) so they are never clipped.
    */
   focusKeys?: readonly string[];
   /**
@@ -154,12 +165,16 @@ export interface RecordGraphHandle {
   /**
    * Frame `focusKeys` + their neighbours; at the zoom floor, centre on them so
    * the focus is fully in view. Frames the whole graph when there is no focus.
+   * Since 2.403.8 a focus too tall or wide for the canvas at the floor zooms
+   * out (down to `RECORD_GRAPH_FOCUS_MIN_ZOOM`, 0.4) until its boxes are whole.
    */
   fitToFocus: () => void;
   /**
    * Frame the whole graph: centred when it fits, top-left aligned (pan for
    * the rest) when not. Since 2.403.5 it may zoom below the readability floor,
-   * down to `RECORD_GRAPH_FIT_ALL_MIN_ZOOM` (0.5), like "Fit to view"'s second press.
+   * down to `RECORD_GRAPH_FIT_ALL_MIN_ZOOM` (0.4 since 2.403.8), exactly as
+   * "Fit to view" does; where it still overflows it centres on the focus so
+   * the selection stays whole (2.403.8).
    */
   fitAll: () => void;
 }
@@ -355,11 +370,6 @@ function FullscreenGlyph({ exit }: { exit: boolean }) {
   );
 }
 
-/** Two viewports this close are the same view (a Fit press would not move it). */
-function sameViewport(a: { x: number; y: number; zoom: number }, b: { x: number; y: number; zoom: number }): boolean {
-  return Math.abs(a.x - b.x) < 1 && Math.abs(a.y - b.y) < 1 && Math.abs(a.zoom - b.zoom) < 0.005;
-}
-
 /** Children of <ReactFlow>: the legend and zoom cluster, plus re-fit on change. */
 function CanvasChrome({
   graphKey,
@@ -431,13 +441,10 @@ function CanvasChrome({
   // Automatic: the whole graph when it is readable, else the focus (2.403.7).
   const autoFit = useCallback(() => apply('auto'), [apply]);
 
-  // "Fit": frame the focus — or, pressed while the view already is the focus
-  // fit (or with no focus), the whole graph.
-  const fit = useCallback(() => {
-    const focusView = state.current.focusKeys.length ? target('focus') : null;
-    const atFocus = focusView ? sameViewport(flow.getViewport(), focusView) : false;
-    apply(state.current.focusKeys.length && !atFocus ? 'focus' : 'all', true);
-  }, [apply, flow, target]);
+  // "Fit to view" (2.403.8): everything, down to `RECORD_GRAPH_FIT_ALL_MIN_ZOOM`
+  // (0.4), the selection kept whole where the graph overflows. Idempotent: a
+  // second press re-fits the same view rather than toggling to the focus.
+  const fit = useCallback(() => apply('all', true), [apply]);
 
   useEffect(() => {
     apiRef.current = { fitToFocus: () => apply('focus', true), fitAll: () => apply('all', true) };

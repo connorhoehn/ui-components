@@ -57,6 +57,20 @@ export const RECORD_GRAPH_MAX_FIT_ZOOM = 1;
  * Since 2.403.7.
  */
 export const RECORD_GRAPH_READABLE_ZOOM = 0.7;
+/**
+ * The automatic fit's second rung (2.403.8): when the whole graph is not
+ * readable (`RECORD_GRAPH_READABLE_ZOOM`), the selection and its direct
+ * neighbours are framed if they fit at or above this zoom (names ≈ 7.8px).
+ */
+export const RECORD_GRAPH_NEIGHBOURHOOD_ZOOM = 0.6;
+/**
+ * The hard minimum for keeping the selection whole (2.403.8): a focus fit
+ * zooms out below `RECORD_GRAPH_MIN_FIT_ZOOM` as far as this so the selected
+ * records' full boxes fit the canvas with a 16px margin; below it only their
+ * avatar circles are kept whole. Also the viewer's whole-graph fit floor
+ * ("Fit to view", `fitAll()`).
+ */
+export const RECORD_GRAPH_FOCUS_MIN_ZOOM = 0.4;
 
 /** The fit's default padding, px — kept in step with `recordGraphViewport`. */
 const LAYOUT_FIT_PADDING = 24;
@@ -572,13 +586,12 @@ export interface RecordGraphViewport {
 }
 
 /**
- * Floor of the whole-graph fit the viewer asks for — the second "Fit to view"
- * press and `RecordGraphHandle.fitAll()` — which, like the org graph's
- * `fitAll`, trades the readability floor for seeing everything at once. The
- * automatic fit keeps `RECORD_GRAPH_MIN_FIT_ZOOM`, except that since 2.403.7
- * it shows the whole graph at down to `RECORD_GRAPH_READABLE_ZOOM`. Since 2.403.5.
+ * Floor of the whole-graph fit the viewer asks for — "Fit to view" and
+ * `RecordGraphHandle.fitAll()` — which, like the org graph's `fitAll`, trades
+ * the readability floor for seeing everything at once. Since 2.403.5 (0.5);
+ * 0.4 since 2.403.8, the same as `RECORD_GRAPH_FOCUS_MIN_ZOOM`.
  */
-export const RECORD_GRAPH_FIT_ALL_MIN_ZOOM = 0.5;
+export const RECORD_GRAPH_FIT_ALL_MIN_ZOOM = RECORD_GRAPH_FOCUS_MIN_ZOOM;
 
 /**
  * The zoom cluster plus the full-screen button in the canvas's bottom-right
@@ -631,21 +644,29 @@ export function recordGraphInset(
 export interface RecordGraphViewportOptions {
   /**
    * `focus` frames `focusKeys` + their neighbours (`fitKeys`) when they fit at
-   * or above the floor; at the floor it centres on the largest of the whole
-   * graph, the neighbourhood and the focus itself that fits, per axis, so the
-   * focus is never clipped while it fits. When the focus's boxes do not fit
-   * the clear area they are kept 16px inside the canvas, and when they do not
-   * fit that either, its avatar circles are kept in view (2.403.5). `all` frames the
-   * whole graph, and where it overflows at the floor aligns it top-left so
-   * the viewer pans.
+   * or above the floor (`minZoom`). Otherwise (2.403.8) it zooms to
+   * min(floor, the zoom at which the focus's full boxes fit the canvas with a
+   * 16px margin), never below `focusMinZoom`, and centres on the largest of
+   * the whole graph, the neighbourhood and the focus itself that fits, per
+   * axis — so the focus is never clipped. When the focus's boxes do not fit
+   * the clear area they are kept 16px inside the canvas, and below
+   * `focusMinZoom` its avatar circles are kept in view (2.403.5). `all` frames
+   * the whole graph; where it overflows at the floor it centres on the focus
+   * (when `focusKeys` are given, 2.403.8) or aligns top-left so the viewer pans.
    */
   mode: 'focus' | 'all' | 'auto';
   /**
-   * `auto` — the automatic fit (2.403.7): the whole graph when it fits at or
-   * above this zoom, else `focus` (or `all` at the floor, with no focus).
+   * `auto` — the automatic fit ladder (2.403.7, rung (b) since 2.403.8):
+   * (a) the whole graph when it fits at or above this zoom; else (b) the focus
+   * + neighbours when they fit at or above `neighbourhoodZoom`; else (c) the
+   * `focus` rule's selection fit (or `all` at the floor, with no focus).
    * Default `RECORD_GRAPH_READABLE_ZOOM`.
    */
   readableZoom?: number;
+  /** Rung (b) of `auto`. Default `RECORD_GRAPH_NEIGHBOURHOOD_ZOOM`. Since 2.403.8. */
+  neighbourhoodZoom?: number;
+  /** How far a focus fit may zoom out to keep the selection's boxes whole. Default `RECORD_GRAPH_FOCUS_MIN_ZOOM`. Since 2.403.8. */
+  focusMinZoom?: number;
   /** The focus records themselves (usually the selection) — never clipped when they fit. */
   focusKeys?: readonly string[];
   /** Focus plus direct neighbours (`recordGraphFitKeys`). Framed first when it fits. */
@@ -695,7 +716,8 @@ function boxOf(positions: ReadonlyMap<string, { x: number; y: number }>, keys: I
  * test can check what a fit shows. Null when nothing is positioned or the
  * canvas is unmeasured. Since 2.403.4; `inset` and the circles-first focus
  * fallback since 2.403.5; `mode: 'auto'` (fit everything when it is readable,
- * else focus) since 2.403.7.
+ * else focus) since 2.403.7; the selection-never-clipped focus zoom (down to
+ * `focusMinZoom`) and `auto`'s neighbourhood rung since 2.403.8.
  */
 export function recordGraphViewport(
   positions: ReadonlyMap<string, { x: number; y: number }>,
@@ -704,7 +726,8 @@ export function recordGraphViewport(
 ): RecordGraphViewport | null {
   const {
     minZoom = RECORD_GRAPH_MIN_FIT_ZOOM, maxZoom = RECORD_GRAPH_MAX_FIT_ZOOM, inset = {},
-    readableZoom = RECORD_GRAPH_READABLE_ZOOM,
+    readableZoom = RECORD_GRAPH_READABLE_ZOOM, neighbourhoodZoom = RECORD_GRAPH_NEIGHBOURHOOD_ZOOM,
+    focusMinZoom = RECORD_GRAPH_FOCUS_MIN_ZOOM,
   } = options;
   const padding = Math.max(FOCUS_EDGE_MARGIN, options.padding ?? 24);
   const all = boxOf(positions, positions.keys());
@@ -727,8 +750,14 @@ export function recordGraphViewport(
       zoom,
     };
   }
-  const focus = options.mode !== 'all' ? boxOf(positions, options.focusKeys ?? []) : null;
+  // In `all` the focus only steers an overflowing axis (2.403.8).
+  const focus = boxOf(positions, options.focusKeys ?? []);
   const circles = focus ? boxOf(positions, options.focusKeys ?? [], NODE_CIRCLE) : null;
+  // The focus's boxes with their selection rings (which rise 2px above the box).
+  const whole = focus && circles ? {
+    x0: Math.min(focus.x0, circles.x0), y0: Math.min(focus.y0, circles.y0),
+    x1: Math.max(focus.x1, circles.x1), y1: Math.max(focus.y1, circles.y1),
+  } : null;
   const near = focus ? boxOf(positions, options.fitKeys?.length ? options.fitKeys : options.focusKeys ?? []) : null;
   // Per axis: centre the first candidate that fits. When none does, a focus
   // keeps its circles in view (in the clear area, else within 16px of the
@@ -740,13 +769,13 @@ export function recordGraphViewport(
         const span = (box[hi] - box[lo]) * zoom;
         if (span <= end - start + 0.5) return (start + end) / 2 - ((box[lo] + box[hi]) / 2) * zoom;
       }
-      if (focus && circles) {
+      if (focus && circles && whole) {
         // As centred on the focus as the first of these allows: its whole
         // boxes 16px inside the canvas (over an overlay's corner if need be),
         // then its circles in the clear area, then its circles 16px inside.
         const centred = (start + end) / 2 - ((focus[lo] + focus[hi]) / 2) * zoom;
         const inner: [number, number] = [FOCUS_EDGE_MARGIN, canvas - FOCUS_EDGE_MARGIN];
-        const tries: Array<[Box, number, number]> = [[focus, ...inner], [circles, start, end], [circles, ...inner]];
+        const tries: Array<[Box, number, number]> = [[whole, ...inner], [circles, start, end], [circles, ...inner]];
         for (const [box, s, e] of tries) {
           const min = s - box[lo] * zoom, max = e - box[hi] * zoom;
           if (min <= max + 0.5) return clamp(centred, min, Math.max(min, max));
@@ -761,12 +790,20 @@ export function recordGraphViewport(
       zoom,
     };
   };
-  if (focus && near) {
+  if (options.mode !== 'all' && focus && whole && near) {
     const nearZoom = rawZoom(near);
-    if (nearZoom >= minZoom) return place(Math.min(nearZoom, maxZoom), [near]);
-    // At the floor: the whole graph if it fits on an axis, else the
+    // `focus`: the neighbourhood at or above the floor; `auto` rung (b): at or above 0.6.
+    const nearFloor = options.mode === 'auto' ? Math.min(neighbourhoodZoom, minZoom) : minZoom;
+    if (nearZoom >= nearFloor) return place(Math.min(nearZoom, maxZoom), [near]);
+    // Rung (c) (2.403.8): zoom out below the floor, as far as `focusMinZoom`,
+    // until the focus's full boxes fit the canvas with a 16px margin; then
+    // centre on the whole graph if it fits on an axis, else the
     // neighbourhood, else the focus itself, else the focus's circles.
-    return place(minZoom, [all, near, focus]);
+    const selectionZoom = Math.min(
+      Math.max(1, size.width - 2 * FOCUS_EDGE_MARGIN) / (whole.x1 - whole.x0),
+      Math.max(1, size.height - 2 * FOCUS_EDGE_MARGIN) / (whole.y1 - whole.y0),
+    );
+    return place(Math.min(minZoom, Math.max(focusMinZoom, selectionZoom)), [all, near, focus]);
   }
-  return place(clamp(rawZoom(all), minZoom, maxZoom), [all]);
+  return place(clamp(rawZoom(all), minZoom, maxZoom), focus ? [all, focus] : [all]);
 }
