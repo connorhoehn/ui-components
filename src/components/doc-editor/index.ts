@@ -112,6 +112,7 @@ export { default as CanvasDocumentView } from './CanvasDocumentView';
 export type {
   CanvasDocumentViewProps,
   CanvasUnsupportedForm,
+  CanvasDocumentFrame,
 } from './CanvasDocumentView';
 
 export { default as DocumentToolbar, useDocumentToolbarSize, documentToolbarSize, DOCUMENT_TOOLBAR_BREAKPOINTS } from './DocumentToolbar';

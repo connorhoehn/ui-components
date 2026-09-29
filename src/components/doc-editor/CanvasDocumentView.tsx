@@ -204,6 +204,16 @@ export function canvasPaperStyle(zoom: number, minHeightPx: number | null): CSSP
   };
 }
 
+/** The parts `renderFrame` receives. */
+export interface CanvasDocumentFrame {
+  /** Formatting toolbar plus the find/replace row when open; null when there is nothing to edit. */
+  toolbar: ReactNode;
+  /** The page ruler, aligned to the sheet; null when `showRuler` is off. */
+  ruler: ReactNode;
+  /** Header, banners and the canvas workspace. */
+  surface: ReactNode;
+}
+
 export interface CanvasDocumentViewProps {
   /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
   isCanvas: boolean;
@@ -462,6 +472,17 @@ export interface CanvasDocumentViewProps {
    */
   onToggleGutter?: () => void;
   /**
+   * Split the view so the host can place the chrome. Given a function, the view
+   * stops drawing its own toolbar (with the find row) and ruler inside the
+   * workspace and hands them over instead: put `toolbar` in `EditorShell`'s
+   * `toolbar` slot, `ruler` under it (or drop it), and `surface` — the header,
+   * banners and the canvas — in the body. `toolbar` and `ruler` are null until
+   * they apply (read-only, editor not ready, `showRuler` off). Omitted keeps the
+   * default single-frame layout unchanged. Same shape as the presentation
+   * editor's `renderFrame`.
+   */
+  renderFrame?: (frame: CanvasDocumentFrame) => ReactNode;
+  /**
    * Forwarded to the toolbar's image button. See DocumentToolbar's prop docs:
    * the host owns the picker and the upload, this view only decides that the
    * control belongs on the bar rather than in the host's `toolbarActions`
@@ -512,6 +533,7 @@ export default function CanvasDocumentView({
   showOutline = false,
   paginate = true,
   onToggleGutter,
+  renderFrame,
   onInsertImage,
   onEditorReady,
   'data-testid': testId = 'canvas-document',
@@ -866,7 +888,149 @@ export default function CanvasDocumentView({
     }
   };
 
-  return (
+  // `renderFrame` mode: the host places the toolbar and ruler in its own
+  // chrome (EditorShell's `toolbar` slot) and the canvas fills the body. The
+  // default keeps both inside the workspace scroller, sticky.
+  const framed = !!renderFrame;
+  const toolbarNode: ReactNode = editable && editor ? (
+            <div ref={framed ? undefined : toolbarRef} data-testid={`${testId}-toolbar`} className={framed ? 'min-w-0' : 'sticky top-0 z-20'}>
+            <div
+              // The card sits in the column's gutter, `--dock-inset` (1rem
+              // unless the host says otherwise) — the same one the pinned
+              // composer dock and EditorShell's bar use, so the toolbar card's
+              // edges are the composer card's. A fixed px-3 left the composer
+              // 3px inside the toolbar on each side (visual audit
+              // dock-aligned-with-toolbar, page editor and Folders).
+              className={framed
+                ? undefined
+                : toolbarStyle === 'card'
+                ? 'bg-workspace px-[var(--dock-inset,1rem)] pb-2 pt-2'
+                : 'border-b border-border bg-surface-panel'}
+            >
+              {/* Full workspace width, NOT the sheet's 816px.
+
+                  Capping chrome at the PAPER width contradicts the comment
+                  above it: the toolbar belongs to the app, not to the page. It
+                  also broke as soon as the toolbar earned another control —
+                  `Insert diagram` pushed it past 816px, `flex-wrap` folded it
+                  onto a second row, and the result read as two unrelated
+                  toolbars stacked on top of each other (measured: the inner bar
+                  was 800px wide and 68px tall, i.e. two rows of controls, inside
+                  a 1372px workspace with room to spare).
+
+                  Word processors put the toolbar across the whole chrome for
+                  this reason — the sheet is centred beneath it, the controls are
+                  not. */}
+              <div className={framed ? 'w-full' : toolbarStyle === 'card' ? 'w-full rounded-lg border border-border bg-surface shadow-sm' : 'w-full px-3'} data-toolbar-style={toolbarStyle}>
+                <DocumentToolbar
+                  density={toolbarDensity}
+                  {...(toolbarStyle === 'card' ? { extras: 'overflow' as const } : {})}
+                  editor={editor}
+                  actions={toolbarActions}
+                  // Passed even when the gutter is hidden — that is precisely
+                  // when the count is the only remaining evidence that a
+                  // discussion exists.
+                  commentCount={gutterCounts.comments}
+                  suggestionCount={gutterCounts.suggestions}
+                  gutterVisible={gutterVisible}
+                  {...(onToggleGutter ? { onToggleGutter } : {})}
+                  {...(onInsertImage ? { onInsertImage } : {})}
+                  {...(zoomControl ? { zoomControl } : {})}
+                />
+              </div>
+            </div>
+            {findOpen && (
+              // `bg-workspace`, and opaque on purpose: this row is stuck to
+              // the top of the scrollport, so the document passes UNDER it.
+              // A transparent row would show text sliding through the gap
+              // beside the card.
+              <div
+                data-testid={`${testId}-find-row`}
+                className={framed ? 'flex justify-end pt-2' : 'flex justify-end bg-workspace px-[var(--dock-inset,1rem)] pb-2 pt-2'}
+              >
+                <DocumentFindBar
+                  editor={editor}
+                  canReplace={editable}
+                  focusNonce={findFocusNonce}
+                  onClose={() => { setFindOpen(false); editor.commands.focus(); }}
+                  data-testid={`${testId}-find`}
+                />
+              </div>
+            )}
+            </div>
+  ) : null;
+  const rulerNode: ReactNode = showRuler ? (
+            // A ROW WITH THE SAME SHAPE AS THE PAGE ROW, not a padded strip.
+            //
+            // The ruler used to centre itself over the workspace and subtract a
+            // rail's width in padding to compensate — which is a PREDICTION of
+            // where the sheet will land, and it is wrong exactly when the
+            // window is small enough for the prediction to matter. The page
+            // row's counterweight is `flex-1 max-w-[280px]`: it COLLAPSES when
+            // the row cannot afford it, and the sheet slides over by half of
+            // whatever it gave up, while the ruler's fixed padding did not
+            // move. Measured on a 1728px window at 150% with the gutter open:
+            // the sheet ran 152→1376 and the ruler track 140→1364, a 12px lie
+            // on top of everything else the ruler was already saying.
+            //
+            // Mirroring the row instead means the two are laid out by the same
+            // algorithm on the same free space, so they cannot disagree —
+            // whatever the rails do, they do it to both.
+            <div
+              data-testid={`${testId}-ruler-row`}
+              className={cn(
+                // Under the card toolbar its own 8px of workspace is the gap
+                // (2.386.11): the extra 12px pushed the sheet 15px below the
+                // Folders mockup's.
+                'flex px-2 sm:px-6',
+                framed ? 'pt-1' : editable && editor && toolbarStyle === 'card' ? 'pt-0' : 'pt-3',
+                (showGutter || showOutline) && 'gap-3 sm:gap-6',
+              )}
+            >
+              {showGutter && !showOutline && (
+                <div aria-hidden className="flex-1 max-w-[280px]" />
+              )}
+              {showOutline && <div aria-hidden className="w-[220px] shrink-0" />}
+              <DocumentRuler
+              // DOCUMENT pixels, all three of them, with `zoom` handed over
+              // separately — the ruler owns the one conversion to screen px.
+              //
+              // `paperWidth` is a `getBoundingClientRect` width, so it is
+              // already scaled; dividing by zoom puts it back on the page's
+              // own grid. Exactly the round trip `measurePages` makes for the
+              // page count, and for the same reason: a measurement is in
+              // visual pixels, and an inch is not.
+              //
+              // Measuring rather than assuming 816 is still what makes a
+              // CLAMPED page agree with its ruler — at 100% the sheet is
+              // `w-full max-w-[816px]` and a narrow workspace makes it
+              // narrower than a letter page.
+              //
+              // The margins are the plain one-inch figure now, NOT `96 * zoom`:
+              // pre-scaling them here is what left the tick grid measuring in
+              // screen pixels while the labels counted document inches, so a
+              // 150% page grew eleven inch labels and put "1" two thirds of an
+              // inch from the margin.
+              {...(paperWidth ? { pageWidth: paperWidth / zoom } : {})}
+              marginLeft={marginPx}
+              marginRight={marginPx}
+              zoom={zoom}
+              // The sheet's own slot in the row: auto margins to centre it in
+              // whatever the rails leave, a fixed width so it is the same box
+              // the paper is. The width is the MEASURED paper width — already
+              // in screen pixels — so the two match even when the sheet is
+              // clamped narrower than a letter page.
+              className="mx-auto shrink-0"
+              style={paperWidth === null ? undefined : { width: paperWidth }}
+            />
+              {showGutter && <div aria-hidden className="w-[280px] shrink-0" />}
+              {showOutline && !showGutter && (
+                <div aria-hidden className="flex-1 max-w-[280px]" />
+              )}
+            </div>
+  ) : null;
+
+  const surface = (
     <div data-testid={testId} data-fit-height={fitHeight} className={cn('flex flex-col gap-3', fitHeight === 'parent' && 'h-full min-h-0')}>
       {header}
 
@@ -938,71 +1102,7 @@ export default function CanvasDocumentView({
               grey rather than spanning the chrome) keeps it reading as a find
               box rather than as a second toolbar. The cost is one ~44px shift
               of the sheet on open, which does not recur while searching. */}
-          {editable && editor && (
-            <div ref={toolbarRef} data-testid={`${testId}-toolbar`} className="sticky top-0 z-20">
-            <div
-              // The card sits in the column's gutter, `--dock-inset` (1rem
-              // unless the host says otherwise) — the same one the pinned
-              // composer dock and EditorShell's bar use, so the toolbar card's
-              // edges are the composer card's. A fixed px-3 left the composer
-              // 3px inside the toolbar on each side (visual audit
-              // dock-aligned-with-toolbar, page editor and Folders).
-              className={toolbarStyle === 'card'
-                ? 'bg-workspace px-[var(--dock-inset,1rem)] pb-2 pt-2'
-                : 'border-b border-border bg-surface-panel'}
-            >
-              {/* Full workspace width, NOT the sheet's 816px.
-
-                  Capping chrome at the PAPER width contradicts the comment
-                  above it: the toolbar belongs to the app, not to the page. It
-                  also broke as soon as the toolbar earned another control —
-                  `Insert diagram` pushed it past 816px, `flex-wrap` folded it
-                  onto a second row, and the result read as two unrelated
-                  toolbars stacked on top of each other (measured: the inner bar
-                  was 800px wide and 68px tall, i.e. two rows of controls, inside
-                  a 1372px workspace with room to spare).
-
-                  Word processors put the toolbar across the whole chrome for
-                  this reason — the sheet is centred beneath it, the controls are
-                  not. */}
-              <div className={toolbarStyle === 'card' ? 'w-full rounded-lg border border-border bg-surface shadow-sm' : 'w-full px-3'} data-toolbar-style={toolbarStyle}>
-                <DocumentToolbar
-                  density={toolbarDensity}
-                  {...(toolbarStyle === 'card' ? { extras: 'overflow' as const } : {})}
-                  editor={editor}
-                  actions={toolbarActions}
-                  // Passed even when the gutter is hidden — that is precisely
-                  // when the count is the only remaining evidence that a
-                  // discussion exists.
-                  commentCount={gutterCounts.comments}
-                  suggestionCount={gutterCounts.suggestions}
-                  gutterVisible={gutterVisible}
-                  {...(onToggleGutter ? { onToggleGutter } : {})}
-                  {...(onInsertImage ? { onInsertImage } : {})}
-                  {...(zoomControl ? { zoomControl } : {})}
-                />
-              </div>
-            </div>
-            {findOpen && (
-              // `bg-workspace`, and opaque on purpose: this row is stuck to
-              // the top of the scrollport, so the document passes UNDER it.
-              // A transparent row would show text sliding through the gap
-              // beside the card.
-              <div
-                data-testid={`${testId}-find-row`}
-                className="flex justify-end bg-workspace px-[var(--dock-inset,1rem)] pb-2 pt-2"
-              >
-                <DocumentFindBar
-                  editor={editor}
-                  canReplace={editable}
-                  focusNonce={findFocusNonce}
-                  onClose={() => { setFindOpen(false); editor.commands.focus(); }}
-                  data-testid={`${testId}-find`}
-                />
-              </div>
-            )}
-            </div>
-          )}
+          {!framed && toolbarNode}
           {/* Status, not formatting: zoom and length describe the document and
               the view of it rather than acting on a selection, so they sit
               along the bottom edge like every word processor puts them,
@@ -1018,76 +1118,7 @@ export default function CanvasDocumentView({
               anything. It is the one place the page's geometry is nameable:
               without it the margins are visible but not measurable, and you
               cannot find the same measure twice. */}
-          {showRuler && (
-            // A ROW WITH THE SAME SHAPE AS THE PAGE ROW, not a padded strip.
-            //
-            // The ruler used to centre itself over the workspace and subtract a
-            // rail's width in padding to compensate — which is a PREDICTION of
-            // where the sheet will land, and it is wrong exactly when the
-            // window is small enough for the prediction to matter. The page
-            // row's counterweight is `flex-1 max-w-[280px]`: it COLLAPSES when
-            // the row cannot afford it, and the sheet slides over by half of
-            // whatever it gave up, while the ruler's fixed padding did not
-            // move. Measured on a 1728px window at 150% with the gutter open:
-            // the sheet ran 152→1376 and the ruler track 140→1364, a 12px lie
-            // on top of everything else the ruler was already saying.
-            //
-            // Mirroring the row instead means the two are laid out by the same
-            // algorithm on the same free space, so they cannot disagree —
-            // whatever the rails do, they do it to both.
-            <div
-              data-testid={`${testId}-ruler-row`}
-              className={cn(
-                // Under the card toolbar its own 8px of workspace is the gap
-                // (2.386.11): the extra 12px pushed the sheet 15px below the
-                // Folders mockup's.
-                'flex px-2 sm:px-6',
-                editable && editor && toolbarStyle === 'card' ? 'pt-0' : 'pt-3',
-                (showGutter || showOutline) && 'gap-3 sm:gap-6',
-              )}
-            >
-              {showGutter && !showOutline && (
-                <div aria-hidden className="flex-1 max-w-[280px]" />
-              )}
-              {showOutline && <div aria-hidden className="w-[220px] shrink-0" />}
-              <DocumentRuler
-              // DOCUMENT pixels, all three of them, with `zoom` handed over
-              // separately — the ruler owns the one conversion to screen px.
-              //
-              // `paperWidth` is a `getBoundingClientRect` width, so it is
-              // already scaled; dividing by zoom puts it back on the page's
-              // own grid. Exactly the round trip `measurePages` makes for the
-              // page count, and for the same reason: a measurement is in
-              // visual pixels, and an inch is not.
-              //
-              // Measuring rather than assuming 816 is still what makes a
-              // CLAMPED page agree with its ruler — at 100% the sheet is
-              // `w-full max-w-[816px]` and a narrow workspace makes it
-              // narrower than a letter page.
-              //
-              // The margins are the plain one-inch figure now, NOT `96 * zoom`:
-              // pre-scaling them here is what left the tick grid measuring in
-              // screen pixels while the labels counted document inches, so a
-              // 150% page grew eleven inch labels and put "1" two thirds of an
-              // inch from the margin.
-              {...(paperWidth ? { pageWidth: paperWidth / zoom } : {})}
-              marginLeft={marginPx}
-              marginRight={marginPx}
-              zoom={zoom}
-              // The sheet's own slot in the row: auto margins to centre it in
-              // whatever the rails leave, a fixed width so it is the same box
-              // the paper is. The width is the MEASURED paper width — already
-              // in screen pixels — so the two match even when the sheet is
-              // clamped narrower than a letter page.
-              className="mx-auto shrink-0"
-              style={paperWidth === null ? undefined : { width: paperWidth }}
-            />
-              {showGutter && <div aria-hidden className="w-[280px] shrink-0" />}
-              {showOutline && !showGutter && (
-                <div aria-hidden className="flex-1 max-w-[280px]" />
-              )}
-            </div>
-          )}
+          {!framed && rulerNode}
           {belowRuler != null && belowRuler !== false && (
             <div
               data-testid={`${testId}-below-ruler`}
@@ -1392,4 +1423,5 @@ export default function CanvasDocumentView({
       )}
     </div>
   );
+  return renderFrame ? <>{renderFrame({ toolbar: toolbarNode, ruler: rulerNode, surface })}</> : surface;
 }
