@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.407.23
+
+- **`RecordGraph` automatic fit: a readable selection beats an unreadable neighbourhood (fix).** Rung (b) framed the selection's neighbourhood whenever it fitted at or above 0.6, even between 0.6 and the readable zoom (0.68) — on the 1160 × 335 connections canvas (answer strip and a call row open) that drew names at 8.1px while the three selected records fitted whole at 0.8 (search journey walk, 2026-09-29). Rung (c)'s zoom is now computed first, and when the neighbourhood would frame below the readable zoom but the selection frames readably, the selection-centred fit is taken. A neighbourhood that frames readably is taken as before. Tests in `recordGraphLayout.test.ts`.
+
 ## 2.407.22
 
 - `integrations/realtime`: `createConversationCallDock({ conversationCallDockProps, useAudioVideoSettings })` and `IncomingCallToast` (new) — the conversation-call pair every page with a composer needs (an initiative, a search selection, a document): the dock takes realtime-modules' `conversationCallDockProps` mapping and adds video tiles, active-speaker detection, a notice line and its own device-settings dialog, rendering nothing while idle or ringing; the toast is the ring with Accept / Decline. Mirror-typed with a compile-time check against realtime-modules' real types, no runtime import of the package (`scopeAgnosticPackaging`); `integrations/realtime-modules` exports the canonically bound `ConversationCallDock`. Storybook story + 9 tests. First consumer: OrgIQ's initiative and Search pages (`portal/src/lib/conversationCall.tsx`).

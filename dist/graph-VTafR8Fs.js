@@ -6234,10 +6234,8 @@ function la(e, t, n) {
 		};
 	};
 	if (n.mode !== "all" && v && b && x) {
-		let e = h(x), t = n.mode === "auto" ? Math.min(s, r) : r, a = n.mode === "auto" && e < _ && h(u) >= e - 1e-9;
-		if (e >= t && !a) return w(S(Math.min(e, i), [x]));
-		let o = Math.min(p / (b.x1 - b.x0), m / (b.y1 - b.y0));
-		return w(S(Math.min(r, Math.max(c, o)), [
+		let e = h(x), t = n.mode === "auto" ? Math.min(s, r) : r, a = n.mode === "auto" && e < _ && h(u) >= e - 1e-9, o = Math.min(p / (b.x1 - b.x0), m / (b.y1 - b.y0)), l = Math.min(r, Math.max(c, o)), d = n.mode === "auto" && e < _ && l >= _ - 1e-9;
+		return w(e >= t && !a && !d ? S(Math.min(e, i), [x]) : S(l, [
 			u,
 			x,
 			v

@@ -1031,15 +1031,24 @@ export function recordGraphViewport(
     // fit-all below the readable zoom (0.65, names 8.4px), so rung (b) is
     // skipped for it and the selection-centred rung (c) frames instead.
     const nearIsAll = options.mode === 'auto' && nearZoom < readable && rawZoom(all) >= nearZoom - 1e-9;
-    if (nearZoom >= nearFloor && !nearIsAll) return clearFocusView(place(Math.min(nearZoom, maxZoom), [near]));
+    // Rung (c)'s zoom, computed first (2.407.23): a neighbourhood framed
+    // between 0.6 and the readable zoom is taken only when the selection
+    // itself cannot be framed readably. On the 1160 × 335 connections canvas
+    // (an answer strip plus a call row open) rung (b) fitted the
+    // neighbourhood at 0.62 — names 8.1px — while the three selected records
+    // fitted whole at 0.8; the protocol's readability rule calls that a
+    // defect because a readable fit satisfying every other rule existed.
+    const selectionZoom = Math.min(availW / (whole.x1 - whole.x0), availH / (whole.y1 - whole.y0));
+    const rungC = Math.min(minZoom, Math.max(focusMinZoom, selectionZoom));
+    const nearUnreadableButSelectionReadable = options.mode === 'auto' && nearZoom < readable && rungC >= readable - 1e-9;
+    if (nearZoom >= nearFloor && !nearIsAll && !nearUnreadableButSelectionReadable) return clearFocusView(place(Math.min(nearZoom, maxZoom), [near]));
     // Rung (c) (2.403.8): zoom out below the floor, as far as `focusMinZoom`,
     // until the focus's full boxes fit the clear area — clear of the legend
     // and controls since 2.403.9 (was the canvas less 16px, which let a
     // selected name sit under the legend on the 209px canvas); then centre on
     // the whole graph if it fits on an axis, else the neighbourhood, else the
     // focus itself, else the focus's circles.
-    const selectionZoom = Math.min(availW / (whole.x1 - whole.x0), availH / (whole.y1 - whole.y0));
-    return clearFocusView(place(Math.min(minZoom, Math.max(focusMinZoom, selectionZoom)), [all, near, focus]));
+    return clearFocusView(place(rungC, [all, near, focus]));
   }
   const fitted = place(clamp(rawZoom(all), minZoom, maxZoom), focus ? [all, focus] : [all]);
   return focus ? clearFocusView(fitted) : fitted;

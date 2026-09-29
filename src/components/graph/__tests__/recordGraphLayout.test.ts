@@ -746,3 +746,52 @@ test('a selection-centred fit on a full canvas is shifted so no record sits unde
   const shortOpts = { ...opts, inset: recordGraphInset(SHORT, FULL_OVERLAYS) };
   expect(recordGraphViewport(positions, SHORT, { ...shortOpts, overlays: FULL_OVERLAYS })).toEqual(recordGraphViewport(positions, SHORT, shortOpts));
 });
+
+// 2.407.23: rung (b) yields to rung (c) when the neighbourhood would frame
+// below the readable zoom but the selection alone frames readably. The
+// 1160 × 335 connections canvas (answer strip + call row open) took the
+// neighbourhood at 0.62 — names 8.1px — while the three selected records
+// fitted whole at 0.8.
+test('auto fit: a neighbourhood below the readable zoom yields to a readable selection fit', () => {
+  const size = { width: 1160, height: 335 };
+  const W = NODE_W, H = NODE_H;
+  const positions = new Map<string, { x: number; y: number }>([
+    ['a', { x: 0, y: 0 }], ['b', { x: 200, y: 0 }], ['c', { x: 400, y: 0 }],
+    // The neighbourhood's fourth record makes it ~460px tall: 287/460 ≈ 0.62.
+    ['d', { x: 0, y: 460 - H }],
+    // The rest of the drawing is far away: the whole graph is not readable.
+    ['e', { x: 3000, y: 0 }], ['f', { x: -3000, y: 0 }],
+  ]);
+  const view = recordGraphViewport(positions, size, {
+    mode: 'auto', focusKeys: ['a', 'b', 'c'], fitKeys: ['a', 'b', 'c', 'd'],
+  });
+  expect(view).not.toBeNull();
+  expect(view!.zoom).toBeGreaterThanOrEqual(RECORD_GRAPH_READABLE_ZOOM - 1e-9);
+  // The selection is whole in the canvas.
+  for (const k of ['a', 'b', 'c']) {
+    const p = positions.get(k)!;
+    expect(p.x * view!.zoom + view!.x).toBeGreaterThanOrEqual(0);
+    expect((p.x + W) * view!.zoom + view!.x).toBeLessThanOrEqual(size.width);
+    expect(p.y * view!.zoom + view!.y).toBeGreaterThanOrEqual(0);
+    expect((p.y + H) * view!.zoom + view!.y).toBeLessThanOrEqual(size.height);
+  }
+});
+
+test('auto fit: a neighbourhood that frames readably is still taken (rung b unchanged)', () => {
+  const size = { width: 1160, height: 335 };
+  const H = NODE_H;
+  const positions = new Map<string, { x: number; y: number }>([
+    ['a', { x: 0, y: 0 }], ['b', { x: 200, y: 0 }], ['c', { x: 400, y: 0 }],
+    // ~360px tall: 287/360 ≈ 0.8, readable.
+    ['d', { x: 0, y: 360 - H }],
+    ['e', { x: 3000, y: 0 }], ['f', { x: -3000, y: 0 }],
+  ]);
+  const view = recordGraphViewport(positions, size, {
+    mode: 'auto', focusKeys: ['a', 'b', 'c'], fitKeys: ['a', 'b', 'c', 'd'],
+  });
+  expect(view).not.toBeNull();
+  const p = positions.get('d')!;
+  // The neighbourhood (d included) is in the canvas.
+  expect((p.y + H) * view!.zoom + view!.y).toBeLessThanOrEqual(size.height + 0.5);
+  expect(view!.zoom).toBeGreaterThanOrEqual(RECORD_GRAPH_READABLE_ZOOM - 1e-9);
+});
