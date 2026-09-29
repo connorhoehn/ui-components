@@ -178,4 +178,90 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'Distillation' })).toBeInTheDocument();
     expect(screen.getByTestId('scope-header')).not.toHaveAttribute('data-variant');
   });
+
+  describe('variant="inline" (2.405.2)', () => {
+    const TABS = [
+      { id: 'results', label: 'Results', count: 25 },
+      { id: 'answer', label: 'Answer' },
+      { id: 'connections', label: 'Connections' },
+    ];
+    function renderInline(onTab = vi.fn()) {
+      render(
+        <ScopeHeader
+          variant="inline"
+          breadcrumbs={[{ label: 'Org' }, { label: 'Search', href: '/iq/search' }]}
+          title="People & connections"
+          description="should not draw"
+          stats={['should not draw either']}
+          people={[{ label: 'Owner', people }]}
+          status={{ label: 'In progress' }}
+          tabs={TABS}
+          activeTab="connections"
+          onTabChange={onTab}
+          controls={<button type="button">Relevance ▾</button>}
+        />,
+      );
+      return onTab;
+    }
+
+    it('lays crumbs, title, tabs and controls on one ≤48px row', () => {
+      renderInline();
+      const row = screen.getByTestId('scope-header');
+      expect(row).toHaveAttribute('data-variant', 'inline');
+      // One row: a no-wrap flex row, fixed at 48px (h-12), never a column.
+      expect(row.className).toMatch(/\bflex\b/);
+      expect(row.className).toMatch(/\bflex-nowrap\b/);
+      expect(row.className).toMatch(/\bh-12\b/);
+      expect(row.className).not.toMatch(/\bflex-col\b|\bflex-wrap\b/);
+      // Every piece is a direct child of that row — they share its band.
+      const trail = screen.getByTestId('scope-header-trail');
+      const tabs = screen.getByTestId('scope-header-tabs');
+      const right = screen.getByTestId('scope-header-right');
+      expect([trail, tabs, right].map((el) => el.parentElement)).toEqual([row, row, row]);
+      expect(trail).toContainElement(screen.getByTestId('scope-header-crumbs'));
+      expect(trail).toContainElement(screen.getByTestId('scope-header-title'));
+      // Order: trail, then tabs, then controls.
+      expect(trail.compareDocumentPosition(tabs) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+      expect(tabs.compareDocumentPosition(right) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    });
+
+    it('draws the title as the emphasised last segment, marked as the current page', () => {
+      renderInline();
+      const title = screen.getByRole('heading', { level: 1, name: 'People & connections' });
+      expect(title).toHaveAttribute('aria-current', 'page');
+      expect(title.className).toMatch(/text-\[18px\]/);
+      // The crumbs are all places to go; only the title is current.
+      expect(screen.getByTestId('scope-header-crumbs').querySelector('[aria-current]')).toBeNull();
+      expect(screen.getByRole('link', { name: 'Search' })).toHaveAttribute('href', '/iq/search');
+    });
+
+    it('caps the lg title at 20px', () => {
+      render(<ScopeHeader variant="inline" titleSize="lg" title="Search" />);
+      expect(screen.getByTestId('scope-header-title').className).toMatch(/text-\[20px\]/);
+    });
+
+    it('fires onTabChange and marks the active tab', () => {
+      const onTab = renderInline();
+      const active = screen.getByRole('tab', { name: 'Connections' });
+      expect(active).toHaveAttribute('aria-selected', 'true');
+      expect(screen.getByRole('tab', { name: /Results/ })).toHaveAttribute('aria-selected', 'false');
+      expect(screen.getByLabelText('25 in Results')).toBeInTheDocument();
+      fireEvent.click(screen.getByTestId('scope-header-tab-answer'));
+      expect(onTab).toHaveBeenCalledWith('answer');
+    });
+
+    it('renders the controls after the tabs', () => {
+      renderInline();
+      expect(screen.getByTestId('scope-header-controls')).toContainElement(screen.getByRole('button', { name: 'Relevance ▾' }));
+    });
+
+    it('does not draw description, stats, status or people', () => {
+      renderInline();
+      expect(screen.queryByText('should not draw')).toBeNull();
+      expect(screen.queryByText('should not draw either')).toBeNull();
+      expect(screen.queryByTestId('scope-header-status')).toBeNull();
+      expect(screen.queryByTestId('scope-header-people-owner')).toBeNull();
+      expect(screen.queryByTestId('scope-header-description')).toBeNull();
+    });
+  });
 });

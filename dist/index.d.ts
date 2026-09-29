@@ -9258,6 +9258,9 @@ export declare function graphGroupPalette(group: string | undefined, groups: str
 /** Groups in first-appearance order, the centre bucket excluded; undefined groups collapse to ''. */
 export declare function graphGroups(nodes: GraphNode[]): string[];
 
+/** Three joined nodes: a graph of connections, "how these relate". */
+export declare function GraphIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 /** Star colours for the graphite sky: zinc greys, so no blue cast sits on a white page. */
 export declare const GRAPHITE_PARTICLE_COLORS: readonly ["#f4f4f5", "#d4d4d8", "#a1a1aa"];
 
@@ -15576,6 +15579,39 @@ export declare function recordForceParams(count: number, width?: number, height?
 
 export declare function RecordGraph({ records, edges, selectedKeys, onSelectionChange, onAskSelection, onOpenRecord, layout: controlledLayout, onLayoutChange, typeFilter: controlledType, onTypeFilterChange, typeLabels, className, 'data-testid': testId, 'aria-label': ariaLabel, emptyLabel, showIsolated, focusKeys, ref, }: RecordGraphProps): JSX.Element;
 
+export declare function RecordGraphCard({ records, edges, selectedKeys, title, summary, expanded: controlledExpanded, onToggleExpanded, onOpen, onSelectionChange, onOpenRecord, onAskSelection, height, className, 'data-testid': testId, }: RecordGraphCardProps): JSX.Element;
+
+export declare interface RecordGraphCardProps {
+    records: RecordGraphRecord[];
+    /** `source`/`target` are `type:id` keys (`recordGraphKey`). */
+    edges: RecordGraphEdge[];
+    /**
+     * Selected `type:id` keys, shared with the host's other views. The
+     * collapsed header shows these records' marks (else the best-connected
+     * records); the expanded graph frames them (`focusKeys`).
+     */
+    selectedKeys?: string[];
+    /** The card's heading. Default "Connections". */
+    title?: string;
+    /** The line after the title. Default "N records · M connections". */
+    summary?: string;
+    /** Controlled expanded state. Omit to let the card hold it (starts collapsed). */
+    expanded?: boolean;
+    onToggleExpanded?: (next: boolean) => void;
+    /** "Open graph ↗" — the host switches to its full Connections view. Omitted, no button. */
+    onOpen?: () => void;
+    /** Selection changes from the expanded graph. Omitted, the card holds the selection itself. */
+    onSelectionChange?: (keys: string[]) => void;
+    /** "Open record ↗" in the expanded graph while one record is selected. */
+    onOpenRecord?: (record: RecordGraphRecord) => void;
+    /** "Ask about selection →" in the expanded graph. Omitted, no button. */
+    onAskSelection?: () => void;
+    /** The expanded canvas's height in px (the graph's toolbar included). Default 320. */
+    height?: number;
+    className?: string;
+    'data-testid'?: string;
+}
+
 /** A directed, labelled relationship. `source`/`target` are `type:id` keys. */
 export declare interface RecordGraphEdge {
     id: string;
@@ -15634,8 +15670,12 @@ export declare interface RecordGraphProps {
     /** Selected `type:id` keys — shared with the host's results and answer views. */
     selectedKeys: string[];
     onSelectionChange: (keys: string[]) => void;
-    /** "Ask about selection →". Disabled while nothing is selected. */
-    onAskSelection: () => void;
+    /**
+     * "Ask about selection →". Disabled while nothing is selected. Optional
+     * since 2.405.2: omitted, the button is not drawn (a graph embedded where
+     * asking is not offered — `RecordGraphCard` without `onAskSelection`).
+     */
+    onAskSelection?: () => void;
     /** Draws "Open record ↗" while exactly one record is selected. */
     onOpenRecord?: (record: RecordGraphRecord) => void;
     /** Controlled layout. Omit to let the graph hold it (default `force`). */
@@ -15697,6 +15737,9 @@ export declare interface RecordGraphRecord {
     href: string;
     avatarUrl?: string;
 }
+
+/** "25 records · 31 connections". Exported for hosts that echo it. */
+export declare function recordGraphSummary(records: number, connections: number): string;
 
 export declare type RecordGraphType = 'person' | 'initiative' | 'work' | 'decision' | 'knowledge' | 'asset';
 
@@ -17182,8 +17225,20 @@ export declare interface ScopeHeaderProps {
      * the band must sit over a pane whose own head starts with at least that
      * much top padding (an `EditorShell` header has 12px). `ExplorerLayout.paneHeader` spans only the pane since 2.389.4, so
      * the hang can never reach the aside.
+     *
+     * `inline` (since 2.405.2): ONE row, at most 48px tall — the crumbs, then
+     * the title as the trail's emphasised last segment ("Org › Search ›
+     * **People & connections**", 18px semibold, or 20px bold at
+     * `titleSize="lg"`), then, right-aligned on the same row, the `tabs`
+     * (honouring `activeTab`, `onTabChange`, `tabSize`, counts and dots) and
+     * after them `controls`, `link` and `menu`. For a workspace whose body (a
+     * graph, a result list) wants every pixel of height. `description`,
+     * `status`, `progress`, `spentUsd`, `stats` and `people` are NOT drawn in
+     * this variant — put a compact summary in `controls` if the row needs one.
+     * The selected tab's bar sits on the row's bottom edge; give the header
+     * the host rule (`className="border-b border-border"`) as with `default`.
      */
-    variant?: 'default' | 'crumbs';
+    variant?: 'default' | 'crumbs' | 'inline';
     /** The scope's own status — "In progress". */
     status?: {
         label: string;
@@ -24008,19 +24063,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasListStyle: {
             /**
              * Make the caret's block a list of the style's kind (if it is not one
@@ -24046,6 +24088,39 @@ declare module '@tiptap/core' {
             setLineSpacing: (spacing: LineSpacing) => ReturnType;
             /** Return the paragraphs in the selection to the paper's own leading. */
             unsetLineSpacing: () => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -24079,16 +24154,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
@@ -24102,9 +24167,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -24115,16 +24180,6 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

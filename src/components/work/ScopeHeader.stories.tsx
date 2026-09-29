@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ScopeHeader, type ScopeHeaderProps } from './ScopeHeader';
 import { Select } from '../forms/Select';
+import { DropdownMenu } from '../shared/DropdownMenu';
 
 const meta: Meta<typeof ScopeHeader> = {
   title: 'Work/ScopeHeader',
@@ -110,3 +111,41 @@ export const CrumbsOnly: Story = {
     </div>
   ),
 };
+
+/**
+ * 2.405.2 — `variant="inline"`: crumbs, the title as the emphasised last
+ * segment, the view tabs and a compact control on ONE 48px row, so the body
+ * below (a graph) takes the height a four-row header used to.
+ */
+export const InlineCrumbsTitleTabsControls: Story = {
+  name: 'Inline: crumbs + title + tabs + controls',
+  render: () => {
+    const [tab, setTab] = useState('connections');
+    return (
+      <div className="w-[1160px] bg-surface">
+        <ScopeHeader
+          variant="inline"
+          breadcrumbs={[{ label: 'Org' }, { label: 'Search', href: '#' }]}
+          title="People & connections"
+          tabs={[
+            { id: 'results', label: 'Results', count: 25 },
+            { id: 'answer', label: 'Answer' },
+            { id: 'connections', label: 'Connections' },
+          ]}
+          activeTab={tab}
+          onTabChange={setTab}
+          controls={
+            <DropdownMenu
+              align="end"
+              triggerLabel="Sort results"
+              trigger={<span className="text-sm">Relevance ▾</span>}
+              sections={[{ items: [{ label: 'Relevance', active: true }, { label: 'Recent' }] }]}
+            />
+          }
+          className="border-b border-border"
+        />
+      </div>
+    );
+  },
+};
+

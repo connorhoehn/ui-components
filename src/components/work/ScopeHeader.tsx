@@ -23,7 +23,7 @@ import { StatusPill, type StatusPillTone } from '../shared/StatusPill';
 import { MetaLine } from '../shared/MetaLine';
 import { Avatar } from '../shared/Avatar';
 import { PresenceAvatars, type PresenceUser } from '../shared/PresenceAvatars';
-import { Tabs } from '../shared/Tabs';
+import { Tabs, type TabItem } from '../shared/Tabs';
 import { DropdownMenu, type DropdownMenuSection } from '../shared/DropdownMenu';
 import { ExternalLinkIcon, LinkIcon } from '../ui/Icons';
 import { TONE_SOLID_BG } from '../shared/tones';
@@ -93,8 +93,20 @@ export interface ScopeHeaderProps {
    * the band must sit over a pane whose own head starts with at least that
    * much top padding (an `EditorShell` header has 12px). `ExplorerLayout.paneHeader` spans only the pane since 2.389.4, so
    * the hang can never reach the aside.
+   *
+   * `inline` (since 2.405.2): ONE row, at most 48px tall — the crumbs, then
+   * the title as the trail's emphasised last segment ("Org › Search ›
+   * **People & connections**", 18px semibold, or 20px bold at
+   * `titleSize="lg"`), then, right-aligned on the same row, the `tabs`
+   * (honouring `activeTab`, `onTabChange`, `tabSize`, counts and dots) and
+   * after them `controls`, `link` and `menu`. For a workspace whose body (a
+   * graph, a result list) wants every pixel of height. `description`,
+   * `status`, `progress`, `spentUsd`, `stats` and `people` are NOT drawn in
+   * this variant — put a compact summary in `controls` if the row needs one.
+   * The selected tab's bar sits on the row's bottom edge; give the header
+   * the host rule (`className="border-b border-border"`) as with `default`.
    */
-  variant?: 'default' | 'crumbs';
+  variant?: 'default' | 'crumbs' | 'inline';
   /** The scope's own status — "In progress". */
   status?: { label: string; tone?: StatusPillTone } | null;
   /** "18 / 52 points delivered". Not drawn when `total` is not above zero. */
@@ -199,6 +211,7 @@ export function formatSpend(usd: number): string {
 
 export function ScopeHeader(props: ScopeHeaderProps) {
   if (props.variant === 'crumbs') return <ScopeCrumbs {...props} />;
+  if (props.variant === 'inline') return <ScopeHeaderInline {...props} />;
   return <ScopeHeaderFull {...props} />;
 }
 
@@ -275,6 +288,114 @@ function ScopeCrumbs({
         // bit 2px into a long title). `relative z-10` keeps it above the next
         // row's background where it overhangs.
         <div className="relative z-10 -mb-[14px] ml-auto mt-3 flex shrink-0 items-center gap-4" data-hang="10" data-testid={`${testId}-right`}>
+          <RightGroup controls={controls} link={link} menu={menu} menuLabel={menuLabel} title={name} testId={testId} linkStyle={linkStyle} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** `ScopeHeaderTab[]` → `Tabs` items: the count and the attention dot as a plain badge. */
+function scopeTabItems(tabs: ScopeHeaderTab[], testId: string): TabItem[] {
+  return tabs.map((t) => ({
+    id: t.id,
+    label: t.label,
+    ...(t.disabled ? { disabled: true } : {}),
+    ...(typeof t.count === 'number' || t.dot
+      ? {
+          badge: (
+            <span className="inline-flex items-center gap-1.5">
+              {typeof t.count === 'number' && <span aria-label={`${t.count} in ${t.label}`}>{t.count}</span>}
+              {t.dot && (
+                <span
+                  role="img"
+                  aria-label={`${t.label} ${t.dot === true ? 'has updates' : DOT_WORD[t.dot]}`}
+                  data-testid={`${testId}-tab-${t.id}-dot`}
+                  data-dot={t.dot === true ? 'brand' : t.dot}
+                  className={cn('inline-block h-2 w-2 shrink-0 rounded-full', t.dot === true ? 'bg-primary' : DOT_CLASS[t.dot])}
+                />
+              )}
+            </span>
+          ),
+        }
+      : {}),
+    testId: `${testId}-tab-${t.id}`,
+  }));
+}
+
+function ScopeHeaderInline({
+  breadcrumbs,
+  title,
+  controls,
+  link,
+  menu,
+  menuLabel,
+  linkStyle,
+  tabs,
+  activeTab,
+  onTabChange,
+  tabSize,
+  titleSize = 'md',
+  className,
+  'data-testid': testId = 'scope-header',
+}: ScopeHeaderProps) {
+  const crumbs = breadcrumbs ?? [];
+  const last = crumbs.length > 0 ? crumbs[crumbs.length - 1]!.label : undefined;
+  const name = title ?? last ?? 'this scope';
+  const hasTabs = !!tabs && tabs.length > 0;
+  const currentTab = hasTabs ? (tabs!.some((t) => t.id === activeTab) ? activeTab! : tabs![0]!.id) : undefined;
+  const hasRight = (controls != null && controls !== false) || !!link || (!!menu && menu.some((s) => s.items.length > 0));
+  const lg = titleSize === 'lg';
+  return (
+    <div
+      data-testid={testId}
+      data-variant="inline"
+      data-title-size={titleSize}
+      {...(tabSize ? { 'data-tab-size': tabSize } : {})}
+      className={cn('flex h-12 min-w-0 flex-nowrap items-center gap-4 px-6', className)}
+    >
+      <div className="flex min-w-0 flex-1 items-center gap-1 overflow-hidden" data-testid={`${testId}-trail`}>
+        {crumbs.length > 0 && (
+          // Every crumb is a place to go: the title after them is the page.
+          <Breadcrumbs items={crumbs} separator="›" maxItems={4} lastIsCurrent={false} className="min-w-0 shrink [&_ol]:flex-nowrap" data-testid={`${testId}-crumbs`} />
+        )}
+        {crumbs.length > 0 && title && (
+          <span aria-hidden="true" className="shrink-0 select-none text-sm text-text-tertiary">›</span>
+        )}
+        {title && (
+          <h1
+            aria-current="page"
+            title={title}
+            data-testid={`${testId}-title`}
+            className={cn(
+              'm-0 min-w-0 truncate text-text-primary',
+              lg ? 'text-[20px] font-bold leading-7 tracking-[-0.01em]' : 'text-[18px] font-semibold leading-7',
+            )}
+          >
+            {title}
+          </h1>
+        )}
+      </div>
+      {hasTabs && (
+        <Tabs
+          items={scopeTabItems(tabs!, testId)}
+          value={currentTab!}
+          onValueChange={(id) => onTabChange?.(id)}
+          variant="underline"
+          size="md"
+          badgeStyle="plain"
+          indicator="bar"
+          {...(tabSize === 'md' ? { indicatorWeight: 3 as const } : {})}
+          // The tabs fill the row's height so the selected tab's bar sits on
+          // the row's bottom edge (the host's rule); no rule of their own.
+          itemClassName={cn('h-full py-0', tabSize === 'md' ? 'gap-0 px-2 text-[15px]' : 'gap-0')}
+          aria-label={`${name} views`}
+          data-testid={`${testId}-tabs`}
+          className="shrink-0 items-stretch self-stretch after:hidden"
+        />
+      )}
+      {hasRight && (
+        <div className="flex shrink-0 items-center gap-3" data-testid={`${testId}-right`}>
           <RightGroup controls={controls} link={link} menu={menu} menuLabel={menuLabel} title={name} testId={testId} linkStyle={linkStyle} />
         </div>
       )}
@@ -417,30 +538,7 @@ function ScopeHeaderFull({
       )}
       {hasTabs && (
         <Tabs
-          items={tabs!.map((t) => ({
-            id: t.id,
-            label: t.label,
-            ...(t.disabled ? { disabled: true } : {}),
-            ...(typeof t.count === 'number' || t.dot
-              ? {
-                  badge: (
-                    <span className="inline-flex items-center gap-1.5">
-                      {typeof t.count === 'number' && <span aria-label={`${t.count} in ${t.label}`}>{t.count}</span>}
-                      {t.dot && (
-                        <span
-                          role="img"
-                          aria-label={`${t.label} ${t.dot === true ? 'has updates' : DOT_WORD[t.dot]}`}
-                          data-testid={`${testId}-tab-${t.id}-dot`}
-                          data-dot={t.dot === true ? 'brand' : t.dot}
-                          className={cn('inline-block h-2 w-2 shrink-0 rounded-full', t.dot === true ? 'bg-primary' : DOT_CLASS[t.dot])}
-                        />
-                      )}
-                    </span>
-                  ),
-                }
-              : {}),
-            testId: `${testId}-tab-${t.id}`,
-          }))}
+          items={scopeTabItems(tabs!, testId)}
           value={currentTab!}
           onValueChange={(id) => onTabChange?.(id)}
           variant="underline"

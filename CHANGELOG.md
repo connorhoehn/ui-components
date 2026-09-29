@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.405.2
+
+- `ScopeHeader` `variant="inline"`: one row, at most 48px (`h-12`) — the crumbs, then the title as the trail's emphasised last segment (`Org › Search › **People & connections**`; an `h1` with `aria-current="page"`, 18px semibold, or 20px bold at `titleSize="lg"`; the crumbs before it are all links, `lastIsCurrent={false}`), then, right-aligned on the same row, the `tabs` (`activeTab`, `onTabChange`, `tabSize`, counts and dots as in `default`; `Tabs indicator="bar"` filling the row's height so the selected bar sits on the host's bottom rule) and after them `controls` / `link` / `menu`. `description`, `status`, `progress`, `spentUsd`, `stats` and `people` are not drawn in this variant. New testids `…-trail`, `…-tabs`. `default` and `crumbs` are unchanged (their tab items now come from a shared `scopeTabItems` helper; same output). Why: the Search workspace spent four rows (crumbs, title, search field, chips) before its tabs; the graph gets that height.
+- New `RecordGraphCard` (search, root export) and `recordGraphSummary(records, connections)`: a record graph as a card in a chat / Answer view. Collapsed: a graph glyph, the title (default "Connections"), the summary (default "N records · M connections"; edges to records not held are not counted), up to six `RecordMark`s of the selection or the best-connected records (+N), "Expand ⌄" and "Open graph ↗" (`onOpen`). Expanded: "Collapse ⌃" and a `RecordGraph` (`focusKeys` = the selection) in a `height`px canvas (default 320). With no connections: "No recorded connections", no Expand, no marks. `expanded` and `selectedKeys` are each controlled or held by the card. Props: `records`, `edges`, `selectedKeys?`, `title?`, `summary?`, `expanded?`, `onToggleExpanded?`, `onOpen?`, `onSelectionChange?`, `onOpenRecord?`, `onAskSelection?`, `height?`, `className?`, `data-testid?`.
+- `RecordGraph` `onAskSelection` is optional: omitted, the "Ask about selection →" button is not drawn. Existing callers are unchanged.
+- `GraphIcon` (three joined nodes) in `ui/Icons` — internal for now, not on the root barrel.
+- Storybook: Work/ScopeHeader "Inline: crumbs + title + tabs + controls"; Search/RecordGraphCard (collapsed, expanded, with a selection, no connections).
+
 ## 2.405.1
 
 - `OrgGraph` Radial with no focus opens with every ring in view. The member search journey: the whole org (56 people, no focus, no selection) in Radial on a 1160 × ~400 canvas opened at the 0.9 floor with 29 of 56 inside and the zoom cluster over two people. The automatic fit for `layout: 'radial'` with no `focusIds` now frames the whole drawn set like Fit to view (down to `ORG_FIT_ALL_MIN_ZOOM`, 0.3), legend column and zoom-cluster corner reserved; Fit to view lands on the same view. A focused Radial and Force keep the readability floor (`minFitZoom`).

@@ -110,8 +110,12 @@ export interface RecordGraphProps {
   /** Selected `type:id` keys — shared with the host's results and answer views. */
   selectedKeys: string[];
   onSelectionChange: (keys: string[]) => void;
-  /** "Ask about selection →". Disabled while nothing is selected. */
-  onAskSelection: () => void;
+  /**
+   * "Ask about selection →". Disabled while nothing is selected. Optional
+   * since 2.405.2: omitted, the button is not drawn (a graph embedded where
+   * asking is not offered — `RecordGraphCard` without `onAskSelection`).
+   */
+  onAskSelection?: () => void;
   /** Draws "Open record ↗" while exactly one record is selected. */
   onOpenRecord?: (record: RecordGraphRecord) => void;
   /** Controlled layout. Omit to let the graph hold it (default `force`). */
@@ -694,7 +698,7 @@ export function RecordGraph({
             <Button size="sm" variant="secondary" onClick={() => onOpenRecord(selectedRecords[0]!)}>Open record ↗</Button>
           )}
           <Button size="sm" variant="secondary" disabled={!selectedKeys.length} onClick={() => onSelectionChange([])}>Clear</Button>
-          <Button size="sm" disabled={!selectedRecords.length} onClick={onAskSelection}>Ask about selection →</Button>
+          {onAskSelection && <Button size="sm" disabled={!selectedRecords.length} onClick={onAskSelection}>Ask about selection →</Button>}
         </Inline>
       </Inline>
       {fullscreenError && <T role="status" className="px-2 py-1 text-xs text-text-secondary">Full screen is unavailable in this browser.</T>}

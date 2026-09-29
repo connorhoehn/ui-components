@@ -2,7 +2,7 @@
 
 Import these components from `@connorhoehnslalom/ui-components`.
 
-- `ScopeHeader`: initiative/scope title, people, status, repository link, and tabs.
+- `ScopeHeader`: initiative/scope title, people, status, repository link, and tabs. `variant="crumbs"` is a crumb line only; `variant="inline"` (2.405.2) puts crumbs, title, tabs and controls on one 48px row.
 - `WorkListView`: narrow selection rail, using `WorkListItem` and `WorkListGroup`.
 - [`WorkTableView`](./WorkTableView.md): full-width backlog using the same data contracts; grouped by status, owner, or type.
 - `WorkListToolbar` and `WorkListFilters`: reusable controlled search, sort, and filter controls.

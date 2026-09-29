@@ -5,6 +5,9 @@
 export { RecordResultList } from './RecordResultList';
 export type { RecordResultListProps, RecordResultGroup } from './RecordResultList';
 export { CitedRecordList, DEFAULT_CITED_SECTIONS } from './CitedRecordList';
+// 2.405.2: a record graph as a collapsible card in a chat / answer view.
+export { RecordGraphCard, recordGraphSummary } from './RecordGraphCard';
+export type { RecordGraphCardProps } from './RecordGraphCard';
 export type { CitedRecordListProps, CitedRecordItem, CitedRecordSection } from './CitedRecordList';
 export {
   RecordMark,

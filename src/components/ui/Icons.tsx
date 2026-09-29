@@ -347,6 +347,18 @@ export function BranchIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
+/** Three joined nodes: a graph of connections, "how these relate". */
+export function GraphIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <circle cx="3.5" cy="8" r="1.75" />
+      <circle cx="12.5" cy="3.5" r="1.75" />
+      <circle cx="12.5" cy="12.5" r="1.75" />
+      <path d="M5.1 7.2 10.9 4.3M5.1 8.8l5.8 2.9M12.5 5.25v5.5" />
+    </svg>
+  );
+}
+
 /** Bars on a baseline: measurements, "how much of this over time". */
 export function ChartIcon({ size = 16, ...rest }: GlyphProps) {
   return (
