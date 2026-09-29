@@ -47,6 +47,25 @@ export type {
   WrappedLVSHangoutLayoutComponent,
 } from './WrappedLVSHangoutLayout';
 
+// The canvas document assembly: extension list, authenticated images, recovery,
+// save state, insert-image — one composite over injected hooks.
+export { createCanvasDocumentPane } from './CanvasDocumentPane';
+export type {
+  CanvasDocumentPaneProps,
+  CanvasDocumentPaneParts,
+  CanvasDocumentPaneState,
+  CanvasDocumentPaneModules,
+  CanvasDocumentPaneComponent,
+  CanvasPaneGateway,
+  CanvasPaneYjsDoc,
+} from './CanvasDocumentPane';
+export { buildCanvasDocumentExtensions } from './canvasDocumentExtensions';
+export type { CanvasDocumentExtensionParts, CreateCanvasExtensions } from './canvasDocumentExtensions';
+export { useCanvasRecovery } from './useCanvasRecovery';
+export { canvasRecoveryKey, encodeCanvasRecovery, decodeCanvasRecovery } from './canvasRecovery';
+export type { CanvasRecovery } from './canvasRecovery';
+export { canvasDocumentSaveState, canEditCanvasGrant } from './canvasDocumentState';
+
 // Capabilities: the gate and the hook are pure (they read a shared context);
 // only the provider calls `useCapabilities`, so only it is a factory.
 export {

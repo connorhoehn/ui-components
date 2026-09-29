@@ -200,6 +200,27 @@ export type {
   RMAudioVideoSettingsSource,
 } from './WrappedAudioVideoSettingsForm';
 
+
+// The canvas document assembly: extension list, authenticated images, recovery,
+// save state, insert-image — one composite over injected hooks.
+export { CanvasDocumentPane } from './CanvasDocumentPane';
+export { createCanvasDocumentPane } from '../realtime/CanvasDocumentPane';
+export type {
+  CanvasDocumentPaneProps,
+  CanvasDocumentPaneParts,
+  CanvasDocumentPaneState,
+  CanvasDocumentPaneModules,
+  CanvasDocumentPaneComponent,
+  CanvasPaneGateway,
+  CanvasPaneYjsDoc,
+} from '../realtime/CanvasDocumentPane';
+export { buildCanvasDocumentExtensions } from '../realtime/canvasDocumentExtensions';
+export type { CanvasDocumentExtensionParts, CreateCanvasExtensions } from '../realtime/canvasDocumentExtensions';
+export { useCanvasRecovery } from '../realtime/useCanvasRecovery';
+export { canvasRecoveryKey, encodeCanvasRecovery, decodeCanvasRecovery } from '../realtime/canvasRecovery';
+export type { CanvasRecovery } from '../realtime/canvasRecovery';
+export { canvasDocumentSaveState, canEditCanvasGrant } from '../realtime/canvasDocumentState';
+
 // The injection API, re-exported so an app on this entry can bind a second,
 // differently-scoped install without switching imports.
 export {
