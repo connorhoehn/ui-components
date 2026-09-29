@@ -77,7 +77,7 @@ costs less, so on the search canvas one bottom band clears both. A focus
 taller than the clear area keeps its whole boxes 16px inside the canvas, and
 when even that is too tall, its avatar circles. The automatic fit keeps the
 0.8 floor (since 2.403.7, except to show the whole graph at ≥ 0.7); the viewer's whole-graph fit (the second "Fit to view" press, or
-`fitAll()`) may zoom down to `RECORD_GRAPH_FIT_ALL_MIN_ZOOM` (0.5; 0.4 since 2.403.8) so the whole
+`fitAll()`) may zoom down to `RECORD_GRAPH_FIT_ALL_MIN_ZOOM` (0.5; 0.4 since 2.403.8; 0.25 since 2.403.9) so the whole
 graph is in view. Force pulls go as the aspect ratio squared once a set packs
 the canvas, and start from an ellipse of the canvas's shape, so 25 records on
 a 1160 × 418 canvas fill its width (~99%) rather than overflow its height.
@@ -127,6 +127,33 @@ On the search canvas (1160 wide), 25 records with three people ~430 flow px
 apart (Force laid out for 418px): the whole graph at ~71% at 418px, rung (b)
 at ~0.61 at 369px, and the selection whole at ~0.41 at 209px, where 2.403.7
 held 0.8 and clipped one of them.
+
+Fit ladder, 2.403.9 changes — "Fit to view" shows everything on a short canvas:
+
+- **"Fit to view" / `fitAll()`** go down to `RECORD_GRAPH_FIT_ALL_MIN_ZOOM`,
+  now **0.25** (was 0.4, below the selection fit's 0.4). When the whole
+  drawing fits the clear area at any zoom at or above that, it is used and
+  the drawing is **centred** there; the selection never moves a drawing that
+  fits (2.403.8 applied its offset on the 209px canvas and clipped three
+  records at the top with empty canvas below). Only a drawing that does not
+  fit even at 0.25 centres on the selection, as in 2.403.8. Still idempotent.
+- **Short canvas keep-outs** (`recordGraphInset`): when the clear height
+  (the canvas less 24px top and bottom) is under 260px and the legend's and
+  controls' bottom bands would together take more than 40% of it, the legend
+  is reserved along the left edge and the controls along the right, so no
+  height is lost; if those two columns would take more than 60% of the width,
+  one bottom band as tall as the taller corner clears both instead.
+- **Every fit keeps the selection clear of the legend and controls**: the
+  selection fit (rung (c), `fitToFocus()`) sizes to the clear area rather than
+  the canvas less 16px, and keeps the selected boxes in the clear area first;
+  only a selection that cannot fit there falls back to 16px inside the canvas,
+  then to its circles.
+
+The same 25 records (all five legend types) at 209px: "Fit to view" 34% in all
+three layouts with every record on the canvas and the drawing vertically
+centred; the automatic fit 40% Force / ~49% Radial / ~55% Hierarchy with the
+three selected boxes clear of both corners. 418px and 369px are unchanged
+(~71% and ~61%).
 
 Edge labels (2.403.4) draw at rest only on edges that touch a selected or
 focused record; the others appear on hover. With nothing selected, a graph of

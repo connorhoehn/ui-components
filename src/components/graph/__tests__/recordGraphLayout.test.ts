@@ -309,11 +309,12 @@ function expectWhole(box: { x0: number; y0: number; x1: number; y1: number }, si
   expect(box.y1, label).toBeLessThanOrEqual(size.height - margin + 0.5);
 }
 
-test('the ladder thresholds: 0.7 readable, 0.6 neighbourhood, 0.4 focus minimum (also the whole-graph fit floor)', () => {
+test('the ladder thresholds: 0.7 readable, 0.6 neighbourhood, 0.4 focus minimum, 0.25 whole-graph fit floor', () => {
   expect(RECORD_GRAPH_READABLE_ZOOM).toBe(0.7);
   expect(RECORD_GRAPH_NEIGHBOURHOOD_ZOOM).toBe(0.6);
   expect(RECORD_GRAPH_FOCUS_MIN_ZOOM).toBe(0.4);
-  expect(RECORD_GRAPH_FIT_ALL_MIN_ZOOM).toBe(RECORD_GRAPH_FOCUS_MIN_ZOOM);
+  // 2.403.9: was equal to the focus minimum (0.4).
+  expect(RECORD_GRAPH_FIT_ALL_MIN_ZOOM).toBe(0.25);
 });
 
 test('25 records, 3 selected people: after the automatic fit the selected boxes are whole, 16px inside, on 1160 × 418, 369 and 209', () => {
@@ -355,9 +356,11 @@ test('the member journey: three people ~430 flow px tall on the 209px canvas zoo
     expect(vp.zoom, mode).toBeGreaterThanOrEqual(RECORD_GRAPH_FOCUS_MIN_ZOOM);
     expectWhole(screenSpan(positions, focusKeys, vp), size, 16, mode);
   }
-  // The viewer's whole-graph fit at 0.4 cannot show all 25 here; it keeps the selection whole instead of top-left aligning.
+  // The viewer's whole-graph fit: at 0.4 it could not show all 25 here (2.403.8);
+  // at the 0.25 floor it shows them all, the selection included (2.403.9).
   const all = recordGraphViewport(positions, size, { mode: 'all', focusKeys, inset: insetFor(size), minZoom: RECORD_GRAPH_FIT_ALL_MIN_ZOOM })!;
-  expect(all.zoom).toBeCloseTo(RECORD_GRAPH_FOCUS_MIN_ZOOM);
+  expect(all.zoom).toBeLessThan(RECORD_GRAPH_FOCUS_MIN_ZOOM);
+  expect(all.zoom).toBeGreaterThanOrEqual(RECORD_GRAPH_FIT_ALL_MIN_ZOOM);
   expectWhole(screenSpan(positions, focusKeys, all), size, 16, 'all');
 });
 
@@ -410,4 +413,115 @@ test('below 0.4 the selection keeps its circles whole', () => {
   const top = (0 - 2) * vp.zoom + vp.y, bottom = (360 + 58) * vp.zoom + vp.y;
   expect(top).toBeGreaterThanOrEqual(16 - 0.5);
   expect(bottom).toBeLessThanOrEqual(size.height - 16 + 0.5);
+});
+
+// ── 2.403.9: Fit to view shows everything on the 209px canvas ──────────────
+
+/** Screen box of every record under a viewport. */
+const drawnSpan = (positions: Map<string, { x: number; y: number }>, vp: { x: number; y: number; zoom: number }) =>
+  screenSpan(positions, [...positions.keys()], vp);
+/** Legend and controls rectangles, bottom-left and bottom-right, margins included. */
+function overlayRects(size: { width: number; height: number }) {
+  const legend = recordGraphLegendSize(LEGEND, size.width);
+  return [
+    { name: 'legend', x0: 0, x1: legend.width, y0: size.height - legend.height, y1: size.height },
+    { name: 'controls', x0: size.width - RECORD_GRAPH_CONTROLS_SIZE.width, x1: size.width, y0: size.height - RECORD_GRAPH_CONTROLS_SIZE.height, y1: size.height },
+  ];
+}
+const intersects = (a: { x0: number; y0: number; x1: number; y1: number }, b: { x0: number; y0: number; x1: number; y1: number }) =>
+  a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0;
+
+test('a short canvas reserves the legend and controls along the sides, not as bottom bands', () => {
+  // 209px: two bottom bands (≈ 50 + 56px) would take > 40% of the 161px clear height.
+  const short = insetFor({ width: 1160, height: 209 });
+  expect(short.top).toBe(0);
+  expect(short.bottom).toBe(0);
+  expect(short.left).toBe(recordGraphLegendSize(LEGEND, 1160).width);
+  expect(short.right).toBe(RECORD_GRAPH_CONTROLS_SIZE.width);
+  // Unchanged at 418 and 369: one bottom band clears both corners.
+  for (const height of [418, 369]) {
+    expect(insetFor({ width: 1160, height })).toEqual({ left: 0, right: 0, top: 0, bottom: RECORD_GRAPH_CONTROLS_SIZE.height });
+  }
+  // Short and narrow: the columns would take > 60% of the width, so one band as tall as the taller corner.
+  const narrow = recordGraphInset({ width: 700, height: 209 }, { legend: recordGraphLegendSize(LEGEND, 700), controls: RECORD_GRAPH_CONTROLS_SIZE });
+  expect(narrow).toEqual({ left: 0, right: 0, top: 0, bottom: Math.max(RECORD_GRAPH_CONTROLS_SIZE.height, recordGraphLegendSize(LEGEND, 700).height) });
+});
+
+test('25 records, 3 selected, laid out for 418 and viewed at 209: Fit to view shows all 25, centred, in every layout', () => {
+  const graph = searchResult();
+  const keys = graph.records.map(recordGraphKey);
+  const focusKeys = keys.slice(0, 3);
+  const size = { width: 1160, height: 209 };
+  for (const layout of ['force', 'radial', 'hierarchy'] as const) {
+    const positions = layoutRecordGraph(graph.records, graph.edges, layout, CANVAS);
+    const options = { mode: 'all' as const, focusKeys, inset: insetFor(size), minZoom: RECORD_GRAPH_FIT_ALL_MIN_ZOOM };
+    const vp = recordGraphViewport(positions, size, options)!;
+    expect(vp.zoom, layout).toBeGreaterThanOrEqual(RECORD_GRAPH_FIT_ALL_MIN_ZOOM);
+    // Every record whole on the canvas, none under the legend or controls.
+    for (const key of keys) {
+      const box = screenSpan(positions, [key], vp);
+      expectWhole(box, size, 0, `${layout} ${key}`);
+      overlayRects(size).forEach(r => expect(intersects(box, r), `${layout} ${key} under the ${r.name}`).toBe(false));
+    }
+    // Vertically centred — the focus offset is not applied to a drawing that fits (was 8px above, 12px below for Force).
+    const drawn = drawnSpan(positions, vp);
+    expect(Math.abs(drawn.y0 - (size.height - drawn.y1)), layout).toBeLessThanOrEqual(2);
+    // Idempotent: a second press is the same view.
+    expect(recordGraphViewport(positions, size, options), layout).toEqual(vp);
+  }
+});
+
+test('Fit to view at 418 and 369 is unchanged by 2.403.9: centred in the clear area above the bottom band, at ≥ 0.4', () => {
+  const graph = searchResult();
+  const keys = graph.records.map(recordGraphKey);
+  const focusKeys = keys.slice(0, 3);
+  for (const layout of ['force', 'radial', 'hierarchy'] as const) {
+    const positions = layoutRecordGraph(graph.records, graph.edges, layout, CANVAS);
+    for (const height of [418, 369]) {
+      const size = { width: 1160, height };
+      const vp = recordGraphViewport(positions, size, { mode: 'all', focusKeys, inset: insetFor(size), minZoom: RECORD_GRAPH_FIT_ALL_MIN_ZOOM })!;
+      expect(vp.zoom, `${layout} ${height}`).toBeGreaterThan(RECORD_GRAPH_FOCUS_MIN_ZOOM);
+      const drawn = drawnSpan(positions, vp);
+      // 24px padding above; the 48px band plus an 8px gap below.
+      expect(drawn.y0 + 2 * vp.zoom, `${layout} ${height}`).toBeGreaterThanOrEqual(24 - 0.5);
+      expect(drawn.y1, `${layout} ${height}`).toBeLessThanOrEqual(height - 56 + 0.5);
+      expect(Math.min(drawn.y0 + 2 * vp.zoom - 24, height - 56 - drawn.y1), `${layout} ${height}`).toBeLessThanOrEqual(0.5);
+    }
+  }
+});
+
+test('a drawing that does not fit even at 0.25 still centres on the selection (the 2.403.8 behaviour)', () => {
+  // Two selected people with a record 3000px below: 0.25 cannot hold the drawing on 209px.
+  const positions = new Map<string, { x: number; y: number }>([
+    ['person:a', { x: 0, y: 0 }], ['person:b', { x: 300, y: 100 }], ['work:far', { x: 150, y: 3000 }],
+  ]);
+  const size = { width: 1160, height: 209 };
+  const vp = recordGraphViewport(positions, size, {
+    mode: 'all', focusKeys: ['person:a', 'person:b'], inset: insetFor(size), minZoom: RECORD_GRAPH_FIT_ALL_MIN_ZOOM,
+  })!;
+  expect(vp.zoom).toBeCloseTo(RECORD_GRAPH_FIT_ALL_MIN_ZOOM);
+  expectWhole(screenSpan(positions, ['person:a', 'person:b'], vp), size, 16, 'selection');
+});
+
+test('209px, three selected: the automatic fit keeps every selected box clear of the legend and controls', () => {
+  const graph = searchResult();
+  const keys = graph.records.map(recordGraphKey);
+  const focusKeys = keys.slice(0, 3);
+  const fitKeys = recordGraphFitKeys(keys, graph.edges, focusKeys);
+  for (const layout of ['force', 'radial', 'hierarchy'] as const) {
+    for (const laidFor of [418, 209]) {
+      const positions = layoutRecordGraph(graph.records, graph.edges, layout, { width: 1160, height: laidFor });
+      for (const height of [209, 369]) {
+        const size = { width: 1160, height };
+        for (const mode of ['auto', 'focus'] as const) {
+          const vp = recordGraphViewport(positions, size, { mode, focusKeys, fitKeys, inset: insetFor(size) })!;
+          for (const key of focusKeys) {
+            const box = screenSpan(positions, [key], vp);
+            overlayRects(size).forEach(r =>
+              expect(intersects(box, r), `${layout} laid for ${laidFor} at ${height} ${mode}: ${key} under the ${r.name}`).toBe(false));
+          }
+        }
+      }
+    }
+  }
 });

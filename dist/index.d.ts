@@ -15540,9 +15540,10 @@ export declare interface RecordGraphHandle {
     /**
      * Frame the whole graph: centred when it fits, top-left aligned (pan for
      * the rest) when not. Since 2.403.5 it may zoom below the readability floor,
-     * down to `RECORD_GRAPH_FIT_ALL_MIN_ZOOM` (0.4 since 2.403.8), exactly as
-     * "Fit to view" does; where it still overflows it centres on the focus so
-     * the selection stays whole (2.403.8).
+     * down to `RECORD_GRAPH_FIT_ALL_MIN_ZOOM` (0.4 in 2.403.8, 0.25 since
+     * 2.403.9), exactly as "Fit to view" does; a drawing that fits is centred
+     * (2.403.9), and only where it still overflows does it centre on the focus
+     * so the selection stays whole (2.403.8).
      */
     fitAll: () => void;
 }
@@ -15648,8 +15649,10 @@ export declare interface RecordGraphViewportOptions {
      * axis — so the focus is never clipped. When the focus's boxes do not fit
      * the clear area they are kept 16px inside the canvas, and below
      * `focusMinZoom` its avatar circles are kept in view (2.403.5). `all` frames
-     * the whole graph; where it overflows at the floor it centres on the focus
-     * (when `focusKeys` are given, 2.403.8) or aligns top-left so the viewer pans.
+     * the whole graph, centred in the clear area whenever it fits at or above
+     * `minZoom` (2.403.9: the focus never moves a drawing that fits); only where
+     * it overflows at the floor does it centre on the focus (when `focusKeys`
+     * are given, 2.403.8) or align top-left so the viewer pans.
      */
     mode: 'focus' | 'all' | 'auto';
     /**
@@ -23950,25 +23953,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
-            /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
-             */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasListStyle: {
             /**
              * Make the caret's block a list of the style's kind (if it is not one
@@ -23982,32 +23966,18 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        canvasLineSpacing: {
+            /**
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
+             */
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
         };
     }
 }
@@ -24041,9 +24011,42 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }

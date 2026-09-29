@@ -67,8 +67,8 @@ export const RECORD_GRAPH_NEIGHBOURHOOD_ZOOM = 0.6;
  * The hard minimum for keeping the selection whole (2.403.8): a focus fit
  * zooms out below `RECORD_GRAPH_MIN_FIT_ZOOM` as far as this so the selected
  * records' full boxes fit the canvas with a 16px margin; below it only their
- * avatar circles are kept whole. Also the viewer's whole-graph fit floor
- * ("Fit to view", `fitAll()`).
+ * avatar circles are kept whole. It was also the viewer's whole-graph fit
+ * floor in 2.403.8; that is `RECORD_GRAPH_FIT_ALL_MIN_ZOOM` (0.25) since 2.403.9.
  */
 export const RECORD_GRAPH_FOCUS_MIN_ZOOM = 0.4;
 
@@ -589,9 +589,11 @@ export interface RecordGraphViewport {
  * Floor of the whole-graph fit the viewer asks for — "Fit to view" and
  * `RecordGraphHandle.fitAll()` — which, like the org graph's `fitAll`, trades
  * the readability floor for seeing everything at once. Since 2.403.5 (0.5);
- * 0.4 since 2.403.8, the same as `RECORD_GRAPH_FOCUS_MIN_ZOOM`.
+ * 0.4 in 2.403.8; 0.25 since 2.403.9, below `RECORD_GRAPH_FOCUS_MIN_ZOOM`, so
+ * a short canvas (the 209px expanded-conversation pane) still shows every
+ * record. Only a drawing that does not fit even here centres on the focus.
  */
-export const RECORD_GRAPH_FIT_ALL_MIN_ZOOM = RECORD_GRAPH_FOCUS_MIN_ZOOM;
+export const RECORD_GRAPH_FIT_ALL_MIN_ZOOM = 0.25;
 
 /**
  * The zoom cluster plus the full-screen button in the canvas's bottom-right
@@ -604,6 +606,15 @@ export const RECORD_GRAPH_CONTROLS_SIZE = { width: 212, height: 48 } as const;
 const OVERLAY_GAP = 8;
 /** Screen px a focus node's circle keeps from the canvas edge when nothing else fits. */
 const FOCUS_EDGE_MARGIN = 16;
+/**
+ * A canvas whose clear height (less the default 24px padding top and bottom)
+ * is under this is "short" for `recordGraphInset`. Since 2.403.9.
+ */
+const SHORT_CLEAR_HEIGHT = 260;
+/** On a short canvas, the most of its clear height the two bottom bands may take. Since 2.403.9. */
+const SHORT_BAND_SHARE = 0.4;
+/** On a short canvas, the most of its width the two side columns may take instead. Since 2.403.9. */
+const SHORT_SIDE_SHARE = 0.6;
 
 /**
  * The bottom-left legend's box for these type labels on a `canvasWidth`
@@ -627,12 +638,30 @@ export function recordGraphLegendSize(labels: readonly string[], canvasWidth: nu
  * the smaller share of the clear area (the org graph's `reserveCorner`,
  * mirrored for the left corner). On a wide canvas both land on the bottom, so
  * one band clears both. Since 2.403.5.
+ *
+ * On a short canvas (clear height under 260px) where the two corners' bottom
+ * bands would together take more than 40% of the clear height, reserving
+ * height is what makes a whole-graph fit impossible (the 209px expanded
+ * conversation pane), so each corner is reserved along its side edge — the
+ * legend on the left, the controls on the right — and no height is lost. Where
+ * those two columns would take more than 60% of the width, a single bottom band
+ * as tall as the taller corner clears both instead. Since 2.403.9.
  */
 export function recordGraphInset(
   size: { width: number; height: number },
   overlays: { legend?: { width: number; height: number } | null; controls?: { width: number; height: number } | null },
 ): Required<FitInset> {
   let inset: Required<FitInset> = { left: 0, right: 0, top: 0, bottom: 0 };
+  const { legend, controls } = overlays;
+  if (legend && legend.width > 0 && controls && controls.width > 0) {
+    const clearH = size.height - 2 * LAYOUT_FIT_PADDING;
+    const bands = legend.height + controls.height + 2 * OVERLAY_GAP;
+    if (clearH < SHORT_CLEAR_HEIGHT && bands > SHORT_BAND_SHARE * clearH) {
+      return legend.width + controls.width + 2 * OVERLAY_GAP <= SHORT_SIDE_SHARE * size.width
+        ? { ...inset, left: legend.width, right: controls.width }
+        : { ...inset, bottom: Math.max(legend.height, controls.height) };
+    }
+  }
   if (overlays.controls && overlays.controls.width > 0) inset = reserveCorner(inset, size, overlays.controls);
   if (overlays.legend && overlays.legend.width > 0) {
     const mirrored = reserveCorner({ ...inset, left: inset.right, right: inset.left }, size, overlays.legend);
@@ -651,8 +680,10 @@ export interface RecordGraphViewportOptions {
    * axis — so the focus is never clipped. When the focus's boxes do not fit
    * the clear area they are kept 16px inside the canvas, and below
    * `focusMinZoom` its avatar circles are kept in view (2.403.5). `all` frames
-   * the whole graph; where it overflows at the floor it centres on the focus
-   * (when `focusKeys` are given, 2.403.8) or aligns top-left so the viewer pans.
+   * the whole graph, centred in the clear area whenever it fits at or above
+   * `minZoom` (2.403.9: the focus never moves a drawing that fits); only where
+   * it overflows at the floor does it centre on the focus (when `focusKeys`
+   * are given, 2.403.8) or align top-left so the viewer pans.
    */
   mode: 'focus' | 'all' | 'auto';
   /**
@@ -717,7 +748,9 @@ function boxOf(positions: ReadonlyMap<string, { x: number; y: number }>, keys: I
  * canvas is unmeasured. Since 2.403.4; `inset` and the circles-first focus
  * fallback since 2.403.5; `mode: 'auto'` (fit everything when it is readable,
  * else focus) since 2.403.7; the selection-never-clipped focus zoom (down to
- * `focusMinZoom`) and `auto`'s neighbourhood rung since 2.403.8.
+ * `focusMinZoom`) and `auto`'s neighbourhood rung since 2.403.8; `all`
+ * centres a drawing that fits at or above `minZoom` and never applies the
+ * focus to it, since 2.403.9.
  */
 export function recordGraphViewport(
   positions: ReadonlyMap<string, { x: number; y: number }>,
@@ -741,16 +774,18 @@ export function recordGraphViewport(
   const availW = Math.max(1, clear.x1 - clear.x0);
   const availH = Math.max(1, clear.y1 - clear.y0);
   const rawZoom = (box: Box) => Math.min(availW / (box.x1 - box.x0), availH / (box.y1 - box.y0));
+  const centreAll = (zoom: number): RecordGraphViewport => ({
+    x: (clear.x0 + clear.x1) / 2 - ((all.x0 + all.x1) / 2) * zoom,
+    y: (clear.y0 + clear.y1) / 2 - ((all.y0 + all.y1) / 2) * zoom,
+    zoom,
+  });
   // Automatic: everything, when everything is readable (2.403.7).
-  if (options.mode === 'auto' && rawZoom(all) >= readableZoom) {
-    const zoom = Math.min(rawZoom(all), maxZoom);
-    return {
-      x: (clear.x0 + clear.x1) / 2 - ((all.x0 + all.x1) / 2) * zoom,
-      y: (clear.y0 + clear.y1) / 2 - ((all.y0 + all.y1) / 2) * zoom,
-      zoom,
-    };
-  }
-  // In `all` the focus only steers an overflowing axis (2.403.8).
+  if (options.mode === 'auto' && rawZoom(all) >= readableZoom) return centreAll(Math.min(rawZoom(all), maxZoom));
+  // The whole graph, when it fits the clear area at or above the floor: centred
+  // there, the focus never steering it (2.403.9 — the focus offset was applied
+  // on the 209px canvas although the drawing fitted, clipping three records).
+  if (options.mode === 'all' && rawZoom(all) >= minZoom) return centreAll(Math.min(rawZoom(all), maxZoom));
+  // In `all` the focus only steers an axis that overflows at the floor (2.403.8).
   const focus = boxOf(positions, options.focusKeys ?? []);
   const circles = focus ? boxOf(positions, options.focusKeys ?? [], NODE_CIRCLE) : null;
   // The focus's boxes with their selection rings (which rise 2px above the box).
@@ -771,11 +806,14 @@ export function recordGraphViewport(
       }
       if (focus && circles && whole) {
         // As centred on the focus as the first of these allows: its whole
-        // boxes 16px inside the canvas (over an overlay's corner if need be),
+        // boxes in the clear area, clear of the legend and controls (2.403.9),
+        // then 16px inside the canvas (over an overlay's corner if need be),
         // then its circles in the clear area, then its circles 16px inside.
         const centred = (start + end) / 2 - ((focus[lo] + focus[hi]) / 2) * zoom;
         const inner: [number, number] = [FOCUS_EDGE_MARGIN, canvas - FOCUS_EDGE_MARGIN];
-        const tries: Array<[Box, number, number]> = [[whole, ...inner], [circles, start, end], [circles, ...inner]];
+        const tries: Array<[Box, number, number]> = [
+          [whole, start, end], [whole, ...inner], [circles, start, end], [circles, ...inner],
+        ];
         for (const [box, s, e] of tries) {
           const min = s - box[lo] * zoom, max = e - box[hi] * zoom;
           if (min <= max + 0.5) return clamp(centred, min, Math.max(min, max));
@@ -796,13 +834,12 @@ export function recordGraphViewport(
     const nearFloor = options.mode === 'auto' ? Math.min(neighbourhoodZoom, minZoom) : minZoom;
     if (nearZoom >= nearFloor) return place(Math.min(nearZoom, maxZoom), [near]);
     // Rung (c) (2.403.8): zoom out below the floor, as far as `focusMinZoom`,
-    // until the focus's full boxes fit the canvas with a 16px margin; then
-    // centre on the whole graph if it fits on an axis, else the
-    // neighbourhood, else the focus itself, else the focus's circles.
-    const selectionZoom = Math.min(
-      Math.max(1, size.width - 2 * FOCUS_EDGE_MARGIN) / (whole.x1 - whole.x0),
-      Math.max(1, size.height - 2 * FOCUS_EDGE_MARGIN) / (whole.y1 - whole.y0),
-    );
+    // until the focus's full boxes fit the clear area — clear of the legend
+    // and controls since 2.403.9 (was the canvas less 16px, which let a
+    // selected name sit under the legend on the 209px canvas); then centre on
+    // the whole graph if it fits on an axis, else the neighbourhood, else the
+    // focus itself, else the focus's circles.
+    const selectionZoom = Math.min(availW / (whole.x1 - whole.x0), availH / (whole.y1 - whole.y0));
     return place(Math.min(minZoom, Math.max(focusMinZoom, selectionZoom)), [all, near, focus]);
   }
   return place(clamp(rawZoom(all), minZoom, maxZoom), focus ? [all, focus] : [all]);

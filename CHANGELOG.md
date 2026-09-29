@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.404.1
+
+- `RecordGraph` "Fit to view" shows everything on a short canvas. The member search journey: with the conversation expanded (canvas 1160 × 209), 25 records and three selected, Fit to view went to the 0.4 floor and Force showed 22 of 25 — three records clipped at the top with 45px of empty canvas below, because the 2.403.8 focus offset was applied although the 184px drawing fitted — and Radial 17 of 25 (1.17× the canvas height at 0.4). `recordGraphViewport` `mode: 'all'` now uses the whole drawing's own zoom whenever it fits the clear area at or above the floor and centres it there, never applying the focus; only a drawing that does not fit even at the floor centres on the selection, as before. Still idempotent across presses.
+  - `RECORD_GRAPH_FIT_ALL_MIN_ZOOM` is 0.25 (was 0.4); it no longer equals `RECORD_GRAPH_FOCUS_MIN_ZOOM` (0.4), which is unchanged.
+- `recordGraphInset`: on a short canvas (clear height under 260px) where the legend's and controls' bottom bands would together take more than 40% of the clear height, the legend is reserved along the left edge and the controls along the right, so no height is lost; where those columns would take more than 60% of the width, a single bottom band as tall as the taller corner clears both. 418px and 369px canvases are unchanged (one 48px bottom band).
+- `RecordGraph` keeps the selection clear of the legend and controls in every fit. The org-leader journey: at 209px the automatic fit put the selected Vera Green's name (Hierarchy) or role line (Force) under the legend, because the selection fit sized to the canvas less 16px rather than to the clear area. The selection fit (rung (c), `fitToFocus()`) now sizes to the clear area and keeps the selected boxes there first; only a selection that cannot fit there falls back to 16px inside the canvas, then its circles. At 369px the selection fit is correspondingly a little smaller (e.g. a 442-flow-px selection: 0.65, was 0.76).
+
 ## 2.404.0
 
 - `CallDock` controls fit a narrow column (A12). The controls group was one non-wrapping `shrink-0` line, so with a chat side pane open (~650px) mic ▾ … Leave ran past the dock's edge and Leave was clipped. The group now shrinks to the header's width and wraps onto further right-aligned lines (labels still collapse to icons below 860px first); `extras` render as `display: contents`, so each host control wraps on its own; settings, pop-out and Leave travel as one unshrinkable unit (`call-dock-end`), so Leave is always visible and always last. No viewport widths are assumed — only the dock's own `@container`.

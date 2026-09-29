@@ -35,6 +35,12 @@
 // frames everything at ≥ 0.4 and is idempotent — pressing it again re-fits,
 // never jumping to the selection view (`fitToFocus()` does that).
 //
+// 2.403.9: "Fit to view" goes down to 0.25 and centres a drawing that fits
+// (the selection never offsets it); only one that overflows even at 0.25
+// centres on the selection. On a short canvas the legend and controls are
+// reserved along the sides (`recordGraphInset`), and every fit keeps the
+// selection in the clear area — out from under both corners.
+//
 // Keep-outs (2.403.5): the fit keeps the drawing clear of the legend's and
 // the controls' corners (`recordGraphInset`), a focus taller than the clear
 // area keeps its boxes 16px inside the canvas and then its circles
@@ -172,9 +178,10 @@ export interface RecordGraphHandle {
   /**
    * Frame the whole graph: centred when it fits, top-left aligned (pan for
    * the rest) when not. Since 2.403.5 it may zoom below the readability floor,
-   * down to `RECORD_GRAPH_FIT_ALL_MIN_ZOOM` (0.4 since 2.403.8), exactly as
-   * "Fit to view" does; where it still overflows it centres on the focus so
-   * the selection stays whole (2.403.8).
+   * down to `RECORD_GRAPH_FIT_ALL_MIN_ZOOM` (0.4 in 2.403.8, 0.25 since
+   * 2.403.9), exactly as "Fit to view" does; a drawing that fits is centred
+   * (2.403.9), and only where it still overflows does it centre on the focus
+   * so the selection stays whole (2.403.8).
    */
   fitAll: () => void;
 }
@@ -442,7 +449,7 @@ function CanvasChrome({
   const autoFit = useCallback(() => apply('auto'), [apply]);
 
   // "Fit to view" (2.403.8): everything, down to `RECORD_GRAPH_FIT_ALL_MIN_ZOOM`
-  // (0.4), the selection kept whole where the graph overflows. Idempotent: a
+  // (0.25 since 2.403.9), centred when it fits; the selection kept whole where the graph overflows. Idempotent: a
   // second press re-fits the same view rather than toggling to the focus.
   const fit = useCallback(() => apply('all', true), [apply]);
 

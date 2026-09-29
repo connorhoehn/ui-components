@@ -366,19 +366,25 @@ describe('RecordGraph', () => {
       }
     });
 
-    it('on the expanded 209px canvas Fit to view shows as much as fits at ≥ 40% and keeps the selection whole', async () => {
-      setupMany();
-      await frames();
-      resize(1160, 209);
-      await frames();
-      const fit = () => fireEvent.click(screen.getByRole('button', { name: 'Fit to view' }));
-      fit();
-      const first = { ...flow.viewport };
-      expect(first.zoom).toBeGreaterThanOrEqual(RECORD_GRAPH_FOCUS_MIN_ZOOM);
-      expectInside(FOCUS);
-      fit();
-      expect(flow.viewport).toEqual(first);
-      expectInside(FOCUS);
+    it('on the expanded 209px canvas Fit to view shows all 25, centred, in every layout (2.403.9: was 22 / 17 of 25 at 40%)', async () => {
+      for (const layout of ['force', 'radial', 'hierarchy'] as const) {
+        cleanup();
+        setupMany({ layout });
+        await frames();
+        resize(1160, 209);
+        await frames();
+        const fit = () => fireEvent.click(screen.getByRole('button', { name: 'Fit to view' }));
+        fit();
+        const first = { ...flow.viewport };
+        expect(first.zoom, layout).toBeGreaterThanOrEqual(RECORD_GRAPH_FIT_ALL_MIN_ZOOM);
+        expectInside(KEYS);
+        const boxes = KEYS.map(onScreen);
+        const top = Math.min(...boxes.map((b) => b.y0)), bottom = Math.max(...boxes.map((b) => b.y1));
+        expect(Math.abs(top - (size.height - bottom)), layout).toBeLessThanOrEqual(2);
+        fit();
+        expect(flow.viewport, layout).toEqual(first);
+        expectInside(KEYS);
+      }
     });
 
     it('a selection click does not move the view', async () => {
@@ -628,8 +634,9 @@ describe('RecordGraph', () => {
       });
       const vp = recordGraphViewport(positions, CANVAS, { mode: 'focus', focusKeys, fitKeys: focusKeys, inset })!;
       // 2.403.8: 352px of boxes (plus the 2px ring) cannot keep 16px margins
-      // in 369px at the 0.8 floor, so the fit zooms out until they do.
-      expect(vp.zoom).toBeCloseTo((CANVAS.height - 32) / 442, 6);
+      // in 369px at the 0.8 floor, so the fit zooms out until they do — since
+      // 2.403.9 until they fit the clear area (24px above, the 48px band + 8px below).
+      expect(vp.zoom).toBeCloseTo((CANVAS.height - 24 - 56) / 442, 6);
       focusKeys.forEach((key) => {
         const p = positions.get(key)!;
         const box = screenBox(p, vp);
