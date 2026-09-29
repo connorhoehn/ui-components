@@ -415,7 +415,11 @@ export function EditorShell({
           // The cap lives here, on the surface's own row, so the percentage
           // resolves against the surface; the dock inside fills it and lets
           // what sits above its composer scroll.
-          <div className="relative z-20 flex max-h-[var(--dock-max-height,50%)] min-h-0 shrink-0 flex-col" data-testid={`${testId}-dock`}>
+          // A pinned dock writes `--dock-floor` here (what in the row cannot
+          // scroll: a call dock beside it, its composer card), and the cap
+          // never goes below it — the editor shrinks instead of the composer
+          // being cut off (2.407.8).
+          <div className="relative z-20 flex max-h-[max(var(--dock-max-height,50%),var(--dock-floor,0px))] min-h-0 shrink-0 flex-col" data-testid={`${testId}-dock`}>
             <ComposerDockPlacementContext.Provider value="pinned">{footer}</ComposerDockPlacementContext.Provider>
           </div>
         )}

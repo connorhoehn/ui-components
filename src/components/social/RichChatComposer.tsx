@@ -2097,6 +2097,20 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // picker ("Agent ⌄", no glyph), the input in its own bordered well, and the
   // strip under it with no rule — the Initiatives mockup's composer.
   const basicBox = docked && toolbar === 'basic';
+  // Send's size and content, shared by the plain Send and the split one's
+  // primary half — the split used to stay `text-xs` whatever `docked` said,
+  // so a conversation's idle row (split) was 42px and a document's (plain,
+  // docked) 50px.
+  const sendSize = docked ? 'inline-flex h-9 items-center gap-2 px-4 text-[15px]' : menuModeRow ? 'px-3 py-1.5 text-sm' : 'px-2.5 py-1 text-xs';
+  // The basic box leads with a paper plane ("✈ Send"), as the Initiatives
+  // mockup draws it; the editor dock keeps its arrow.
+  const sendContent = (
+    <>
+      {basicBox && <SendIcon size={15} aria-hidden="true" />}
+      {sendLabel}
+      {docked ? (!basicBox && <ArrowRightIcon size={16} aria-hidden="true" />) : menuModeRow && <span aria-hidden="true" className="ml-1.5">→</span>}
+    </>
+  );
   hideCommandPrefixRef.current = menuModeRow;
   hideBareTriggerRef.current = promptCard;
   // The plugin reads the ref on the next transaction; switching into or out
@@ -3117,6 +3131,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               {submitLead}
             </span>
           )}
+          {/* One Send, one size (2.407.8): the split Send (with its caret) and
+              the plain one share these, so a conversation's composer and a
+              document's measure the same idle row and the same card. The
+              docked card's button is the editor's size, with the arrow the
+              mockup gives it; a chat column's stays small. */}
           {sendOptions?.length && onSendOption ? (
             // A split button, not a second control: the primary press must
             // stay in the same place and do the same thing it always did, and
@@ -3127,12 +3146,12 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 onClick={terminalMode ? submitShell : send}
                 disabled={!canSend}
                 data-testid={`${testId}-send`}
-                className="shrink-0 rounded-l-md rounded-r-none bg-primary px-2.5 py-1 text-xs font-semibold text-on-primary disabled:opacity-40"
+                className={cn('shrink-0 rounded-l-md rounded-r-none bg-primary font-semibold text-on-primary disabled:opacity-40', sendSize)}
               >
-                {sendLabel}
+                {sendContent}
               </button>
               <DropdownMenu
-                trigger={<span aria-hidden="true" className="text-xs leading-none">▾</span>}
+                trigger={<span aria-hidden="true" className={cn('leading-none', docked ? 'text-sm' : 'text-xs')}>▾</span>}
                 triggerLabel="Other ways to send"
                 align="end"
                 triggerTestId={`${testId}-send-options`}
@@ -3144,7 +3163,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 // so the caret is not disabled with Send; it drops to the
                 // secondary style and joins the primary colour when Send does.
                 triggerClassName={cn(
-                  'rounded-l-none rounded-r-md border-0 border-l px-1.5 py-1',
+                  // The caret is as tall as the Send beside it (docked: h-9).
+                  'rounded-l-none rounded-r-md border-0 border-l',
+                  docked ? 'h-9 px-2' : 'px-1.5 py-1',
                   canSend
                     ? 'border-on-primary/40 bg-primary text-on-primary hover:bg-primary'
                     : 'border-border bg-surface-inset text-text-secondary hover:bg-surface-hover',
@@ -3177,16 +3198,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               className={cn(
                 (submitLead == null || collapsed) && !(showMoreActions && !collapsed) && 'ml-auto',
                 'shrink-0 rounded bg-primary font-semibold text-on-primary disabled:opacity-40',
-                // The docked card's button is the editor's size, with the arrow
-                // the mockup gives it; a chat column's stays small.
-                docked ? 'inline-flex h-9 items-center gap-2 rounded-md px-4 text-[15px]' : menuModeRow ? 'rounded-md px-3 py-1.5 text-sm' : 'px-2.5 py-1 text-xs',
+                (docked || menuModeRow) && 'rounded-md',
+                sendSize,
               )}
             >
-              {/* The basic box leads with a paper plane ("✈ Send"), as the
-                  Initiatives mockup draws it; the editor dock keeps its arrow. */}
-              {basicBox && <SendIcon size={15} aria-hidden="true" />}
-              {sendLabel}
-              {docked ? (!basicBox && <ArrowRightIcon size={16} aria-hidden="true" />) : menuModeRow && <span aria-hidden="true" className="ml-1.5">→</span>}
+              {sendContent}
             </button>
           )}
         </div>

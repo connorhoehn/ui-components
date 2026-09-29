@@ -328,3 +328,52 @@ describe('EditorShell participants', () => {
     });
   });
 });
+
+describe('a call dock beside an expanded composer in the footer (2.407.8)', () => {
+  // jsdom lays nothing out; give the parts the heights the composer check
+  // measured at 1280×720 (a 175px call dock, a 126px expanded card).
+  const HEIGHTS: Record<string, number> = { call: 175, 'floating-composer-dock-composer': 126, 'floating-composer-dock-above': 400 };
+  let restore: (() => void) | null = null;
+  afterEach(() => { restore?.(); restore = null; });
+  const stubHeights = () => {
+    const desc = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetHeight')!;
+    Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
+      configurable: true,
+      get(this: HTMLElement) { return HEIGHTS[this.dataset.testid ?? ''] ?? 0; },
+    });
+    restore = () => Object.defineProperty(HTMLElement.prototype, 'offsetHeight', desc);
+  };
+
+  it('the footer row is never capped below what cannot scroll: siblings plus the composer card (not `above`)', () => {
+    stubHeights();
+    const { unmount } = render(
+      <EditorShell
+        title="x"
+        footer={(
+          <>
+            <div data-testid="call">call</div>
+            <FloatingComposerDock above={<p>a long notice</p>} composer={<textarea aria-label="Message" />} />
+          </>
+        )}
+      >
+        <p />
+      </EditorShell>,
+    );
+    const row = screen.getByTestId('editor-shell-dock');
+    // The cap is the host's (half the surface) or the floor, whichever is taller…
+    expect(row.className).toContain('max-h-[max(var(--dock-max-height,50%),var(--dock-floor,0px))]');
+    // …and the floor is the call dock + the card: 175 + 126. The scrollable
+    // `above` is not in it — it still scrolls within the cap.
+    expect(row.style.getPropertyValue('--dock-floor')).toBe('301px');
+    // The composer card itself never shrinks.
+    expect(screen.getByTestId('floating-composer-dock-composer').className).toContain('shrink-0');
+    unmount();
+    expect(row.style.getPropertyValue('--dock-floor')).toBe('');
+  });
+
+  it('an overlay dock writes no floor', () => {
+    stubHeights();
+    render(<div data-testid="host"><FloatingComposerDock composer={<textarea aria-label="Message" />} /></div>);
+    expect(screen.getByTestId('host').style.getPropertyValue('--dock-floor')).toBe('');
+  });
+});

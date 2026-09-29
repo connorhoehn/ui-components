@@ -18,7 +18,7 @@ import { t as he } from "./DropdownMenu-dM1tsyrs.js";
 import { t as ge } from "./StatusPill-C-aN2Pzz.js";
 import { t as M } from "./activationKey-CjbL3LUv.js";
 import { O as _e } from "./renderers-DIPIkjU7.js";
-import { q as ve } from "./PresentationEditor-B_Tk-hX-.js";
+import { q as ve } from "./PresentationEditor-DlnNicf5.js";
 import { t as ye } from "./TiptapEditor-CajZRkz8.js";
 import { t as be } from "./useHangoutEmbed-ChkoGDC_.js";
 import { t as N } from "./useActiveSpeaker-BGKJU3Lb.js";

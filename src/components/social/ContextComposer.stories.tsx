@@ -4,6 +4,8 @@ import { ContextComposer, type ContextComposerProps } from './ContextComposer';
 import type { ComposerContext } from './composerContext';
 import { CallDock, type CallDockParticipant } from '../video/CallDock';
 import { CAST, DEVICES, noop } from '../video/documentCallStoryKit';
+import { EditorShell } from '../doc-editor/EditorShell';
+import EmptyState from '../shared/EmptyState';
 
 const workflows = [
   { id: 'presentation-deck', label: 'Presentation deck', description: 'Draft a deck that cites this page' },
@@ -198,4 +200,66 @@ export const Privacy: Story = {
       </div>
     );
   },
+};
+
+/**
+ * One Send, one size (2.407.8): a conversation (split Send with its caret) and
+ * a document (plain Send) side by side, idle and expanded. The two idle rows
+ * measure the same height and the two cards the same Send — the split used to
+ * stay `text-xs` whatever the card's size.
+ */
+export const SendOneSize: Story = {
+  name: 'Send — one size on every context',
+  render: () => (
+    <div className="grid grid-cols-1 gap-4 bg-surface p-4 lg:grid-cols-2">
+      {([false, true] as const).flatMap((expanded) => (['conversation', 'document'] as const).map((kind) => (
+        <Panel key={`${kind}-${expanded}`} theme="light" caption={`${kind} · ${expanded ? 'expanded' : 'idle'}`}>
+          <ContextComposer
+            {...wired}
+            {...(kind === 'document' ? { sendOptions: undefined, onSendOption: undefined } : {})}
+            context={CONTEXTS[kind]!}
+            expanded={expanded}
+            onSend={() => true}
+            data-testid={`send-${kind}-${expanded ? 'expanded' : 'idle'}`}
+          />
+        </Panel>
+      )))}
+    </div>
+  ),
+};
+
+/**
+ * A page with a call docked above its expanded composer, in EditorShell's
+ * footer, at 1280×720 (the viewport the composer check caught it at). The
+ * footer row used to cap at half the surface, so the call dock kept its height
+ * and the composer card was cut off below its input; now the row never caps
+ * below what cannot scroll and the editor above gives up the height.
+ */
+export const PageUnderCallDock: Story = {
+  name: 'Page — expanded under a call dock (1280×720)',
+  render: () => (
+    // 608px is the page's shell at a 1280×720 window once the app's own bar
+    // is taken: a 543px surface, so a 272px half-surface cap — the numbers
+    // the composer check measured.
+    <div className="flex h-[608px] min-h-0 flex-col" data-testid="page-under-call-dock">
+      <EditorShell
+        title="Composer verify page"
+        kind="page"
+        footer={(
+          <>
+            {shelf}
+            <ContextComposer
+              {...wired}
+              context={{ kind: 'document', id: 'doc-verify', title: 'Composer verify page' }}
+              expanded
+              onSend={() => true}
+              data-testid="page-composer"
+            />
+          </>
+        )}
+      >
+        <EmptyState title="Start writing…" body="The page's editor; it shrinks to make room for the call and the composer." />
+      </EditorShell>
+    </div>
+  ),
 };

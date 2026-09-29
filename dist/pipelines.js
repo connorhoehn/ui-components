@@ -35,7 +35,7 @@ import { $ as he, A as ge, B as _e, C as ve, D as ye, E as be, F as xe, G as Se,
 import { t as At } from "./rovingFocus-Bj5Y6kwY.js";
 /* empty css               */
 import { t as jt } from "./AnimatedEdge-OTHCEYJd.js";
-import { t as Mt } from "./FloatingComposerDock-DMUQCjea.js";
+import { t as Mt } from "./FloatingComposerDock-DvFguey-.js";
 import { t as Nt } from "./TraceTimeline-2C-0_L3C.js";
 import Pt, { createContext as Ft, memo as It, useCallback as I, useContext as Lt, useEffect as L, useId as Rt, useMemo as R, useRef as z, useState as B } from "react";
 import { Fragment as V, jsx as H, jsxs as U } from "react/jsx-runtime";

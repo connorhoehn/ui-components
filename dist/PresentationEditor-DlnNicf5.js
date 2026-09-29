@@ -29,7 +29,7 @@ import { t as N } from "./Select-D3fGI8SO.js";
 import { G as P, U as F } from "./renderers-DIPIkjU7.js";
 import { t as re } from "./useMeasuredWidth-BPrwD0q5.js";
 import { r as I } from "./composerCommands-DSXH8omK.js";
-import { i as ie, t as ae } from "./FloatingComposerDock-DMUQCjea.js";
+import { i as ie, t as ae } from "./FloatingComposerDock-DvFguey-.js";
 import { Component as oe, Suspense as se, lazy as ce, useCallback as L, useEffect as R, useId as le, useMemo as z, useRef as B, useState as V } from "react";
 import { Fragment as H, jsx as U, jsxs as W } from "react/jsx-runtime";
 //#region src/components/doc-editor/NewDocumentModal.tsx
@@ -1358,7 +1358,7 @@ function et(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
-var tt = ce(() => import("./SortableSlideList-BC-aZ9gK.js"));
+var tt = ce(() => import("./SortableSlideList-DW8yCH1Z.js"));
 function nt(e, t) {
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }
@@ -2536,7 +2536,7 @@ function At({ testIdPrefix: e }) {
 		children: "The agent box needs the rich-text composer (the optional @tiptap peers). Edit the slide by hand below."
 	});
 }
-var jt = ce(() => import("./PresentationAgentComposer-Dj6cSCFL.js").catch(() => ({ default: At })));
+var jt = ce(() => import("./PresentationAgentComposer-CoHf2CYm.js").catch(() => ({ default: At })));
 function Mt({ back: e }) {
 	return /* @__PURE__ */ U("svg", {
 		viewBox: "0 0 16 16",
@@ -3174,7 +3174,7 @@ function Pt({ spec: e, onChange: t, preview: n, onRequestPreview: a, onSaveRevis
 				children: [Dt, Bt]
 			}),
 			/* @__PURE__ */ U("div", {
-				className: "flex max-h-[var(--dock-max-height,50%)] min-h-0 shrink-0 flex-col",
+				className: "flex max-h-[max(var(--dock-max-height,50%),var(--dock-floor,0px))] min-h-0 shrink-0 flex-col",
 				"data-testid": `${F}-dock-row`,
 				children: /* @__PURE__ */ U(ae.Provider, {
 					value: "pinned",

@@ -83,6 +83,13 @@ export const DOCK_HEIGHT_VAR = '--dock-height';
  * the dock's edges line up with theirs.
  */
 export const DOCK_INSET_VAR = '--dock-inset';
+/**
+ * Written by a PINNED dock on its parent row: the height of what in that row
+ * cannot scroll (siblings such as a call dock, the strip, the composer card,
+ * the gutter). The row's cap is `max(var(--dock-max-height, 50%),
+ * var(--dock-floor, 0px))`, so the composer is never cut off.
+ */
+const DOCK_FLOOR_VAR = '--dock-floor';
 
 export function FloatingComposerDock({
   composer,
@@ -116,6 +123,58 @@ export function FloatingComposerDock({
     };
   }, [placement]);
 
+  // Pinned, the row that holds the dock caps itself at
+  // `var(--dock-max-height, 50%)` of the surface — but never below
+  // `--dock-floor`: the height of everything in that row that cannot scroll
+  // (a host's call dock beside this one, the strip, the composer card and the
+  // gutter under it). Without the floor a 175px call dock plus a 142px
+  // expanded composer in a 272px cap (1280×720) squeezed the dock to 97px and
+  // the card's toolbar row was cut off by the shell's overflow-hidden. With
+  // it the row grows to hold them and the editor above gives up the height;
+  // only what is above the composer (`above`) still scrolls within the cap.
+  useLayoutEffect(() => {
+    if (placement !== 'pinned') return;
+    const el = ref.current;
+    const parent = el?.parentElement;
+    if (!el || !parent) return;
+    const measure = () => {
+      let floor = 0;
+      for (const child of Array.from(parent.children)) {
+        if (child !== el && child instanceof HTMLElement) floor += child.offsetHeight;
+      }
+      const cs = getComputedStyle(el);
+      floor += (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.paddingBottom) || 0);
+      for (const part of Array.from(el.querySelectorAll<HTMLElement>('[data-dock-fixed]'))) floor += part.offsetHeight;
+      const above = el.querySelector<HTMLElement>('[data-dock-above]');
+      if (above) floor += parseFloat(getComputedStyle(above).marginBottom) || 0;
+      parent.style.setProperty(DOCK_FLOOR_VAR, `${Math.ceil(floor)}px`);
+    };
+    measure();
+    let ro: ResizeObserver | null = null;
+    let mo: MutationObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(measure);
+      const observeAll = () => {
+        ro!.disconnect();
+        for (const child of Array.from(parent.children)) if (child !== el) ro!.observe(child);
+        for (const part of Array.from(el.querySelectorAll('[data-dock-fixed]'))) ro!.observe(part);
+      };
+      observeAll();
+      // A call dock that comes or goes beside the composer, or a strip that
+      // appears, changes what the floor has to hold.
+      if (typeof MutationObserver !== 'undefined') {
+        mo = new MutationObserver(() => { observeAll(); measure(); });
+        mo.observe(parent, { childList: true });
+        mo.observe(el, { childList: true, subtree: true });
+      }
+    }
+    return () => {
+      ro?.disconnect();
+      mo?.disconnect();
+      parent.style.removeProperty(DOCK_FLOOR_VAR);
+    };
+  }, [placement]);
+
   return (
     <div
       ref={ref}
@@ -127,9 +186,9 @@ export function FloatingComposerDock({
         placement === 'pinned'
           ? // Capped by the row that pins it (`EditorShell`'s dock row, the
             // unframed PresentationEditor's): that row is at most
-            // `var(--dock-max-height, 50%)` of the surface, so however much the
-            // dock carries (a notice, a strip, a tall draft) the canvas keeps
-            // the rest. The dock fills the row; what is above the composer
+            // `var(--dock-max-height, 50%)` of the surface — never below
+            // `--dock-floor` (see above) — so however much the dock carries
+            // (a notice, a tall `above`) the canvas keeps the rest. The dock fills the row; what is above the composer
             // scrolls inside it; the composer itself never shrinks.
             // Sideways and below it sits in the column's gutter
             // (`--dock-inset`); no top padding — the gutter above is the
@@ -149,8 +208,8 @@ export function FloatingComposerDock({
         data-uic-keepout="bottom"
         className={cn('pointer-events-auto flex min-h-0 w-full min-w-0 flex-col', placement === 'pinned' ? 'max-w-none' : ['mx-auto', WIDTH[maxWidth]])}
       >
-        {above && <div className="mb-2 min-h-0 shrink overflow-y-auto" data-testid={`${testId}-above`}>{above}</div>}
-        {strip && <div className="shrink-0" data-testid={`${testId}-strip`}>{strip}</div>}
+        {above && <div className="mb-2 min-h-0 shrink overflow-y-auto" data-dock-above="" data-testid={`${testId}-above`}>{above}</div>}
+        {strip && <div className="shrink-0" data-dock-fixed="" data-testid={`${testId}-strip`}>{strip}</div>}
         {/* With a strip on top the two read as one box: the composer's top
             corners square off to meet the strip's bottom edge. Pinned, the
             composer keeps its own radius and hairline and loses its shadow —
@@ -162,6 +221,7 @@ export function FloatingComposerDock({
             placement === 'pinned' ? '[--composer-shadow:0_0_#0000]' : 'shadow-lg',
             strip && 'rounded-t-none [&_.chat-composer]:rounded-t-none',
           )}
+          data-dock-fixed=""
           data-testid={`${testId}-composer`}
         >
           {composer}

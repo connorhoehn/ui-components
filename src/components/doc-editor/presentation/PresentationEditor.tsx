@@ -1194,7 +1194,7 @@ export function PresentationEditor({
 
       {/* The footer is this column's last row, in normal flow — the same
           placement EditorShell gives it — so nothing scrolls under or over it. */}
-      <div className="flex max-h-[var(--dock-max-height,50%)] min-h-0 shrink-0 flex-col" data-testid={`${testId}-dock-row`}>
+      <div className="flex max-h-[max(var(--dock-max-height,50%),var(--dock-floor,0px))] min-h-0 shrink-0 flex-col" data-testid={`${testId}-dock-row`}>
         <ComposerDockPlacementContext.Provider value="pinned">{footerContent}</ComposerDockPlacementContext.Provider>
       </div>
     </div>

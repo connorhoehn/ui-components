@@ -364,3 +364,57 @@ describe('ContextComposer — # documents on every context', () => {
     await waitFor(() => expect(screen.getAllByTestId('document-option')).toHaveLength(1));
   });
 });
+
+describe('Send is one size on every context (2.407.8)', () => {
+  // The sizing tokens of a Send: what sets its height, padding and type.
+  const sizing = (el: Element) => el.className.split(/\s+/).filter((c) => /^(inline-flex|items-center|gap-|h-|px-|py-|text-(xs|sm|\[))/.test(c)).sort();
+  const renderBoth = (expanded: boolean) => {
+    render(
+      <>
+        <ContextComposer context={DM} expanded={expanded} sendOptions={[{ id: 'later', label: 'Send later' }]} onSendOption={vi.fn()} onSend={vi.fn(() => true)} composerTestId="conv" />
+        <ContextComposer context={DOC} expanded={expanded} onSend={vi.fn(() => true)} composerTestId="doc" />
+      </>,
+    );
+    return { conv: screen.getByTestId('conv'), doc: screen.getByTestId('doc') };
+  };
+
+  it('idle: a conversation (split Send) and a document (plain Send) give the same collapsed row and the same Send', () => {
+    const { conv, doc } = renderBoth(false);
+    // The conversation really does have the split (its caret), the document does not.
+    expect(screen.getByTestId('conv-send-options')).toBeInTheDocument();
+    expect(screen.queryByTestId('doc-send-options')).toBeNull();
+    // One row, built the same way: the box that holds both the input and
+    // Send is the same element with the same classes on both contexts.
+    const rowOf = (root: HTMLElement) => {
+      let el: HTMLElement | null = within(root).getByTestId(`${root.dataset.testid}-send`);
+      const input = root.querySelector('.ProseMirror');
+      while (el && !el.contains(input)) el = el.parentElement;
+      return el!;
+    };
+    for (const root of [conv, doc]) {
+      expect(root).toHaveAttribute('data-collapsed', 'true');
+      expect(rowOf(root)).not.toBe(root.parentElement);
+    }
+    expect(rowOf(conv).tagName).toBe(rowOf(doc).tagName);
+    expect(rowOf(conv).className).toBe(rowOf(doc).className);
+    expect(conv.getAttribute('data-composer-size')).toBe(doc.getAttribute('data-composer-size'));
+    const convSend = screen.getByTestId('conv-send');
+    const docSend = screen.getByTestId('doc-send');
+    expect(sizing(convSend)).toEqual(sizing(docSend));
+    // The docked size, not the chat column's small one.
+    expect(sizing(convSend)).toEqual(['gap-2', 'h-9', 'inline-flex', 'items-center', 'px-4', 'text-[15px]']);
+    // Same content: label and arrow.
+    expect(convSend.textContent).toBe(docSend.textContent);
+    expect(convSend.querySelectorAll('svg')).toHaveLength(docSend.querySelectorAll('svg').length);
+    // The caret half is as tall as Send.
+    expect(screen.getByTestId('conv-send-options').className).toContain('h-9');
+  });
+
+  it('expanded: both cards carry the same Send', () => {
+    renderBoth(true);
+    expect(screen.getByTestId('conv')).toHaveAttribute('data-collapsed', 'false');
+    expect(screen.getByTestId('doc')).toHaveAttribute('data-collapsed', 'false');
+    expect(sizing(screen.getByTestId('conv-send'))).toEqual(sizing(screen.getByTestId('doc-send')));
+    expect(sizing(screen.getByTestId('conv-send'))).toContain('h-9');
+  });
+});
