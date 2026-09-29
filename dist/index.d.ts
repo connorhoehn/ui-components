@@ -17625,12 +17625,12 @@ export declare interface ScopeHeaderProps {
      * this order: (a) the `controls` cluster first: it is `min-w-0
      * overflow-hidden` and shrinks ahead of the trail (`shrink-[100]` against
      * the trail's 1); its items never shrink or wrap (2.407.4 — a chip keeps
-     * one line); once its content overflows — or the right cluster does, a
-     * crumb is cut below its natural width, the row's content at its wanted
-     * width exceeds the row (`inlineRowDeficit`), the trail would drop under
-     * its minimum, or the row is under `controlsCollapseAt` — the
-     * controls leave the row: into the ⋯ menu as a "Filters" section when
-     * `controlsMenu` is given, else into a popover behind one "Filters ▾"
+     * one line); once its content overflows — or the right cluster does, the
+     * row's content at its wanted width (`inlineRowWanted`) exceeds the row,
+     * or the trail would drop under its minimum — by more than 2px (2.407.6:
+     * the same margin the way back needs), or the row is under
+     * `controlsCollapseAt`, the controls leave the row: into the ⋯ menu as a
+     * "Filters" section when `controlsMenu` is given, else into a popover behind one "Filters ▾"
      * button. (b) Then the crumbs: each truncates inside its cap and the
      * middle collapses to "…". (c) The title never goes below 12rem
      * (`min-w-[12rem]`) and the first crumb never below its own width
@@ -24480,12 +24480,18 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
+        canvasLineSpacing: {
             /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
              */
-            insertDiagram: (id?: string) => ReturnType;
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
         };
     }
 }
@@ -24506,18 +24512,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
+        diagramMacro: {
             /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
              */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -24549,6 +24549,16 @@ declare module '@tiptap/core' {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -24595,16 +24605,6 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

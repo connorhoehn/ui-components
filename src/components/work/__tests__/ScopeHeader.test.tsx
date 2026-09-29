@@ -492,6 +492,8 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
            * the controls box reports no overflow (its chips wrapped inside it),
            * the only signal is the crumbs cut by a sub-pixel.
            */
+          /** The crumb list at its natural width: Org 24 + Search 45 + Design System API 122 + the "›"s. */
+          const NAV_W = 219;
           function mockPortal(w: { row: number; trail: number; box: number; boxContent: number; crumbGiven: Record<string, number>; afterTrail: number }) {
             const collapsed = () => document.querySelector('[data-testid="scope-header"]')?.getAttribute('data-controls') === 'collapsed';
             const sw = vi.spyOn(HTMLElement.prototype, 'scrollWidth', 'get').mockImplementation(function (this: HTMLElement) {
@@ -512,6 +514,8 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
             const ow = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (this: HTMLElement) {
               const id = this.getAttribute('data-testid');
               if (id === 'scope-header-tabs') return 280;
+              if (id === 'scope-header-crumbs') return NAV_W;
+              if (this.tagName === 'SPAN' && this.parentElement?.getAttribute('data-testid') === 'scope-header-trail') return 14;
               if (this.getAttribute('aria-label') === 'Search actions') return 32;
               return 0;
             });
@@ -541,10 +545,23 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
             expect(screen.getByTestId('scope-header-right')).toContainElement(screen.getByTestId('scope-header-menu'));
           };
 
-          it('1536px: chips wrapped (no overflow in their box), crumbs cut by a sub-pixel → the controls collapse', () => {
-            // Row 1072 (1536 − 464); trail 424 (crumbs 488…, title 720–912);
-            // the box 251 reports 251 (wrapped); Search 44.6 of 45, Design System API 121.4 of 122.
-            const restore = mockPortal({ row: 1072, trail: 424, box: 251, boxContent: 251, crumbGiven: { Org: 24, Search: 44.6, 'Design System API': 121.4 }, afterTrail: 640 });
+          it('1536px: crumbs cut by a sub-pixel alone are noise (2.407.6); the row\'s wanted width over the row collapses', () => {
+            // Search 44.6 of 45, Design System API 121.4 of 122: a 1px
+            // shortfall, under the 2px margin. Row 1072 holds the wanted
+            // 220 + 14 + 192 + 280 + 251 + 32 = 989, so it stays inline — 2.407.4
+            // collapsed on this alone, and the portal's 1.25px of it re-collapsed
+            // every re-expand (2.407.5 → 2.407.6).
+            const cut = { Org: 24, Search: 44.6, 'Design System API': 121.4 };
+            let restore = mockPortal({ row: 1072, trail: 424, box: 251, boxContent: 251, crumbGiven: cut, afterTrail: 640 });
+            try {
+              renderPortal();
+              expect(screen.getByTestId('scope-header')).toHaveAttribute('data-controls', 'inline');
+            } finally {
+              restore();
+              cleanup();
+            }
+            // Row 980 (1536 less the rail, gaps and padding jsdom does not draw): 9px short → collapsed.
+            restore = mockPortal({ row: 980, trail: 424, box: 251, boxContent: 251, crumbGiven: cut, afterTrail: 640 });
             try {
               renderPortal();
               expectReadable();
@@ -564,11 +581,15 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
           });
 
           it('the row content at its wanted width is measured against the row (inlineRowDeficit)', () => {
-            // Nothing overflows its own box and no crumb is cut, but trail +
-            // tabs + the chips' natural width + ⋯ exceed the row.
+            // Nothing overflows its own box and no crumb is cut, but the trail's
+            // content (219 + 14 + 192) + tabs 280 + the chips' natural 230 + ⋯ 32
+            // = 967 exceed the 900 row. (2.407.6: the trail counts by its
+            // content, not its box — the box carries the row's slack.)
             const restore = mockPortal({ row: 900, trail: 420, box: 200, boxContent: 200, crumbGiven: {}, afterTrail: 560 });
             const ow = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (this: HTMLElement) {
               if (this.getAttribute('data-testid') === 'scope-header-tabs') return 280;
+              if (this.getAttribute('data-testid') === 'scope-header-crumbs') return NAV_W;
+              if (this.tagName === 'SPAN' && this.parentElement?.getAttribute('data-testid') === 'scope-header-trail') return 14;
               if (this.getAttribute('data-testid') === 'scope-header-controls') return 230;
               if (this.getAttribute('aria-label') === 'Search actions') return 32;
               return 0;
@@ -577,7 +598,7 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
               renderPortal();
               expect(screen.getByTestId('scope-header')).toHaveAttribute('data-controls', 'collapsed');
               const row = screen.getByTestId('scope-header');
-              // Collapsed: 560 + 280 + the toggle and ⋯ fit the 900 row.
+              // Collapsed: the trail's 425 + 280 + ⋯ fit the 900 row.
               expect(inlineRowDeficit(row, screen.getByTestId('scope-header-trail'))).toBeLessThanOrEqual(0);
             } finally {
               ow.mockRestore();
@@ -626,10 +647,13 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
             const TOGGLE_W = 58;
             const rowAt = (viewport: number) => viewport - 556;
             let row = 0;
+            // Extra width the chips report (a first-frame transient, or a real overflow).
+            let noise = 0;
             let observers: Array<() => void> = [];
             const RO = globalThis.ResizeObserver;
             function install(viewport: number) {
               row = rowAt(viewport);
+              noise = 0;
               observers = [];
               (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver = class {
                 cb: () => void;
@@ -644,9 +668,10 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
               const layout = () => {
                 if (collapsed()) return { trail: row - TABS_W - TOGGLE_W - MORE_W, box: 0, cut: 0 };
                 const free = row - TABS_W - MORE_W;
-                const box = Math.min(CHIPS_W, Math.max(0, free - TRAIL));
+                const box = Math.min(CHIPS_W + noise, Math.max(0, free - TRAIL));
                 const trail = free - box;
-                return { trail, box, cut: Math.max(0, TRAIL - trail) };
+                // The last crumb gives first, down to 0px (never negative).
+                return { trail, box, cut: Math.min(NATURAL['Design System API']!, Math.max(0, TRAIL - trail)) };
               };
               const isMore = (el: HTMLElement) => el.getAttribute('aria-label') === 'Search actions'
                 || (el.parentElement?.getAttribute('data-testid') === 'scope-header-right' && !!el.querySelector('[aria-label="Search actions"]'));
@@ -654,7 +679,7 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
                 vi.spyOn(HTMLElement.prototype, 'scrollWidth', 'get').mockImplementation(function (this: HTMLElement) {
                   if (this.hasAttribute('data-crumb')) return NATURAL[this.textContent ?? ''] ?? 0;
                   if (this.tagName === 'H1') return 180;
-                  if (this.hasAttribute('data-scope-controls')) return CHIPS_W;
+                  if (this.hasAttribute('data-scope-controls')) return CHIPS_W + noise;
                   return 0;
                 }),
                 vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
@@ -792,6 +817,123 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
               } finally {
                 restore();
               }
+            });
+
+            describe('re-expanding does not undo itself (2.407.6)', () => {
+              // The portal's 1672 → 1500 → 1672 walk on 2.407.5: the header went
+              // inline, its first inline frame read a 1.25px overflow on a row the
+              // parts fit with 45px to spare, it re-collapsed in the same frame
+              // and recorded the collapse at the current width, so every further
+              // widening repeated the flip. Frames are driven by hand here.
+              let frames: FrameRequestCallback[] = [];
+              function fakeFrames() {
+                frames = [];
+                const raf = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => { frames.push(cb); return frames.length; });
+                const caf = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {});
+                return () => { raf.mockRestore(); caf.mockRestore(); };
+              }
+              /** Run the next animation frame; `settle` is the chips' extra width from then on. */
+              const nextFrame = (settle = 0) => {
+                noise = settle;
+                const due = frames;
+                frames = [];
+                act(() => { due.forEach((cb) => cb(0)); });
+              };
+              // At 1672 the row is 1116 and the parts want 1058: 58px to spare.
+              const OVER_1_25 = 58 + 1.25;
+              const OVER_5 = 58 + 5;
+
+              it('1672 inline → 1500 collapsed → 1672 with a 1.25px first-frame overflow stays inline', () => {
+                const restore = install(1672);
+                const restoreFrames = fakeFrames();
+                try {
+                  renderPortal();
+                  expect(mode()).toBe('inline');
+                  resize(1500);
+                  expect(mode()).toBe('collapsed');
+                  noise = OVER_1_25;
+                  resize(1672);
+                  expect(mode()).toBe('inline');
+                  // The settled frame still reads 1.25px over: under the 2px margin, noise.
+                  nextFrame(OVER_1_25);
+                  expect(mode()).toBe('inline');
+                  expect(screen.getByRole('button', { name: 'Sort results' })).toBeInTheDocument();
+                  // …and it recorded no collapse at 1672: the next measure there stays put too.
+                  resize(1672);
+                  expect(mode()).toBe('inline');
+                } finally {
+                  restoreFrames();
+                  restore();
+                }
+              });
+
+              it('a first frame 5px over that settles on the next frame is not judged: stays inline', () => {
+                const restore = install(1672);
+                const restoreFrames = fakeFrames();
+                try {
+                  renderPortal();
+                  resize(1500);
+                  expect(mode()).toBe('collapsed');
+                  noise = OVER_5;
+                  resize(1672);
+                  expect(mode()).toBe('inline');
+                  expect(frames).toHaveLength(1);
+                  nextFrame(0);
+                  expect(mode()).toBe('inline');
+                } finally {
+                  restoreFrames();
+                  restore();
+                }
+              });
+
+              it('1672 → 1500 → 1672 → 1800 → 2000: inline at every width on the way back up', () => {
+                const restore = install(1672);
+                const restoreFrames = fakeFrames();
+                try {
+                  renderPortal();
+                  resize(1500);
+                  expect(mode()).toBe('collapsed');
+                  [1672, 1800, 2000].forEach((w) => {
+                    noise = OVER_1_25;
+                    resize(w);
+                    nextFrame(0);
+                    expect([w, mode()]).toEqual([w, 'inline']);
+                  });
+                } finally {
+                  restoreFrames();
+                  restore();
+                }
+              });
+
+              it('a genuine 5px overflow at 1672 still collapses — on a fresh load, and on the settled frame after a re-expand', () => {
+                let restore = install(1672);
+                noise = OVER_5;
+                try {
+                  renderPortal();
+                  expect(mode()).toBe('collapsed');
+                } finally {
+                  restore();
+                  cleanup();
+                }
+                restore = install(1672);
+                const restoreFrames = fakeFrames();
+                try {
+                  renderPortal();
+                  resize(1500);
+                  // The collapsed row still remembers the chips at 321: it re-expands at 1672…
+                  noise = OVER_5;
+                  resize(1672);
+                  expect(mode()).toBe('inline');
+                  // …and the settled frame, 5px over, collapses and stays so at that width.
+                  nextFrame(OVER_5);
+                  expect(mode()).toBe('collapsed');
+                  resize(1672);
+                  expect(mode()).toBe('collapsed');
+                } finally {
+                  restoreFrames();
+                  restore();
+                }
+              });
             });
 
             it('first render already collapsed by controlsCollapseAt: a hidden copy gives the chips’ width, and growing to 1672 expands', () => {

@@ -112,12 +112,12 @@ export interface ScopeHeaderProps {
    * this order: (a) the `controls` cluster first: it is `min-w-0
    * overflow-hidden` and shrinks ahead of the trail (`shrink-[100]` against
    * the trail's 1); its items never shrink or wrap (2.407.4 — a chip keeps
-   * one line); once its content overflows — or the right cluster does, a
-   * crumb is cut below its natural width, the row's content at its wanted
-   * width exceeds the row (`inlineRowDeficit`), the trail would drop under
-   * its minimum, or the row is under `controlsCollapseAt` — the
-   * controls leave the row: into the ⋯ menu as a "Filters" section when
-   * `controlsMenu` is given, else into a popover behind one "Filters ▾"
+   * one line); once its content overflows — or the right cluster does, the
+   * row's content at its wanted width (`inlineRowWanted`) exceeds the row,
+   * or the trail would drop under its minimum — by more than 2px (2.407.6:
+   * the same margin the way back needs), or the row is under
+   * `controlsCollapseAt`, the controls leave the row: into the ⋯ menu as a
+   * "Filters" section when `controlsMenu` is given, else into a popover behind one "Filters ▾"
    * button. (b) Then the crumbs: each truncates inside its cap and the
    * middle collapses to "…". (c) The title never goes below 12rem
    * (`min-w-[12rem]`) and the first crumb never below its own width
@@ -446,36 +446,17 @@ function crumbShortfall(el: HTMLElement): number {
 
 /**
  * How far the inline row's content, at its wanted width, is over the row
- * (≤ 0: it fits). Wanted: the trail with every crumb whole inside its cap
- * and the title at least 12rem, the tabs, and the right cluster's items at
- * their natural widths (the controls box by its `scrollWidth`), plus the
- * gaps. Exported for tests (2.407.4).
+ * (≤ 0: it fits). Since 2.407.6 this is `inlineRowWanted` (the controls at
+ * their natural width when they are in the row) less the row's width — the
+ * same sum the re-expand reads, so a collapse and an expand can never
+ * disagree about what the row wants. Before, it counted the trail by its
+ * box (`clientWidth`), which is `flex-auto` and carries the row's slack, so
+ * a fitting row "wanted" its own width plus any noise. Exported for tests
+ * (2.407.4).
  */
 export function inlineRowDeficit(row: HTMLElement, trail: HTMLElement | null): number {
-  const style = getComputedStyle(row);
-  const px = (v: string) => parseFloat(v) || 0;
-  const inner = row.clientWidth - px(style.paddingLeft) - px(style.paddingRight);
-  const gap = px(style.columnGap);
-  const natural = (el: HTMLElement) => Math.max(el.scrollWidth, el.offsetWidth || 0);
-  let need = 0;
-  const kids = Array.from(row.children) as HTMLElement[];
-  for (const kid of kids) {
-    if (kid === trail) {
-      let trailNeed = trail.clientWidth;
-      trail.querySelectorAll<HTMLElement>('[data-crumb]').forEach((el) => { trailNeed += crumbShortfall(el); });
-      const title = trail.querySelector<HTMLElement>('h1');
-      if (title) trailNeed += Math.max(0, Math.min(Math.max(title.scrollWidth, TITLE_MIN_PX), TITLE_MIN_PX) - title.clientWidth);
-      need += trailNeed;
-    } else if (kid.hasAttribute('data-testid') && kid.getAttribute('data-testid')!.endsWith('-right')) {
-      const items = Array.from(kid.children) as HTMLElement[];
-      const rightGap = px(getComputedStyle(kid).columnGap);
-      need += items.reduce((sum, el) => sum + natural(el), 0) + rightGap * Math.max(0, items.length - 1);
-    } else {
-      need += natural(kid);
-    }
-  }
-  need += gap * Math.max(0, kids.length - 1);
-  return need - inner;
+  const box = row.querySelector<HTMLElement>('[data-scope-controls]');
+  return inlineRowWanted(row, trail, box ? naturalWidth(box) : 0) - row.clientWidth;
 }
 
 /** An element's laid-out width, not less than its content (overflow hidden or not). */
@@ -551,8 +532,13 @@ export function inlineRowWanted(row: HTMLElement, trail: HTMLElement | null, con
   return need + px(style.columnGap) * Math.max(0, kids.length - 1);
 }
 
-/** The slack an expand needs: inline comes back only with 2px to spare. */
-const EXPAND_MARGIN_PX = 2;
+/**
+ * The hysteresis margin, both ways (2.407.6): inline comes back only with
+ * 2px to spare, and goes only when 2px or more short. A sub-2px deficit is
+ * layout noise (sub-pixel crumbs against integer `scrollWidth`s, a first
+ * frame after the controls are re-inserted), never a collapse.
+ */
+const FIT_MARGIN_PX = 2;
 
 function ScopeCrumbs({
   breadcrumbs, title, controls, link, menu, menuLabel, linkStyle, className, 'data-testid': testId = 'scope-header',
@@ -803,6 +789,12 @@ function ScopeHeaderInline({
   // row's wanted width; and the row width that last collapsed them (never
   // expand at or under it, so the two states cannot alternate at one width).
   const fit = useRef<{ controls: number | null; wanted: number | null; collapsedAt: number }>({ controls: null, wanted: null, collapsedAt: 0 });
+  // 2.407.6: the controls were just put back. Their first inline layout is
+  // not judged — fonts and flex settle first — so the check waits for the
+  // next animation frame (or the next row resize, whichever comes first).
+  const settling = useRef(false);
+  const settleFrame = useRef<number | null>(null);
+  const measureRef = useRef<() => void>(() => {});
   const measure = useCallback(() => {
     const row = rowRef.current;
     if (!row || !hasControls) return;
@@ -821,51 +813,79 @@ function ScopeHeaderInline({
         setGhost(false);
       }
       // Re-derived from the collapsed row with the controls put back, and
-      // never below what the last over-full inline row measured.
+      // never below what the last over-full inline row wanted (same sum).
       const wanted = Math.max(inlineRowWanted(row, trail, controlsWidth), fit.current.wanted ?? 0);
-      if (width > fit.current.collapsedAt && width >= wanted + EXPAND_MARGIN_PX) setControlsCollapsed(false);
+      if (width > fit.current.collapsedAt && width >= wanted + FIT_MARGIN_PX) {
+        settling.current = true;
+        setControlsCollapsed(false);
+      }
       return;
     }
-    fit.current.wanted = null;
     if (underFloor) {
       fit.current.collapsedAt = width;
       setControlsCollapsed(true);
       return;
     }
+    if (settling.current) {
+      if (settleFrame.current == null && typeof requestAnimationFrame === 'function') {
+        settleFrame.current = requestAnimationFrame(() => {
+          settleFrame.current = null;
+          settling.current = false;
+          measureRef.current();
+        });
+      } else if (typeof requestAnimationFrame !== 'function') {
+        settling.current = false;
+      }
+      if (settling.current) return;
+    }
     const box = row.querySelector<HTMLElement>('[data-scope-controls]');
     const right = row.querySelector<HTMLElement>(`[data-testid="${testId}-right"]`);
-    if (box && box.scrollWidth > 0) fit.current.controls = box.scrollWidth;
+    const controlsWidth = box ? naturalWidth(box) : 0;
+    if (controlsWidth > 0) fit.current.controls = controlsWidth;
+    // 2.407.6: one sum. The wanted width the collapse records is the one
+    // the re-expand re-derives (`inlineRowWanted`); the deficit is it less
+    // the row. The boxes' own overflows are kept as guards — each is a
+    // part of that same shortfall a box already shows — at the same margin.
+    const wanted = inlineRowWanted(row, trail, controlsWidth);
+    const deficit = wanted - width;
     const overflow = box ? box.scrollWidth - box.clientWidth : 0;
     // 2.407.4: the whole right cluster too — a ⋯ or a link pushed past it.
     const rightOverflow = right ? right.scrollWidth - right.clientWidth : 0;
     const short = trail ? inlineTrailMinimum(trail) - trail.clientWidth : 0;
-    // 2.407.4: the row's content at its wanted width against the row. The
-    // controls give before the crumbs, so a crumb cut below its natural
-    // width (inside its cap) counts, to the sub-pixel.
-    const rowDeficit = inlineRowDeficit(row, trail);
-    let crumbShort = 0;
-    trail?.querySelectorAll<HTMLElement>('[data-crumb]').forEach((el) => { crumbShort += crumbShortfall(el); });
-    // Each is its own estimate of the same shortfall; the largest wins (the
-    // trail's minimum is inside the row's wanted width, not added to it).
-    const need = Math.max(overflow, rightOverflow, rowDeficit, crumbShort, short);
-    if (overflow > 1 || rightOverflow > 1 || short > 1 || rowDeficit > 0.5 || crumbShort > 0.5) {
-      // Over-full, the trail has no slack, so width + need is the wanted
-      // width as laid out. (A fitting row's trail carries the slack — its
-      // width + need is just the row, so it is not remembered.)
-      fit.current.wanted = width + need;
+    if (Math.max(deficit, overflow, rightOverflow, short) > FIT_MARGIN_PX) {
+      fit.current.wanted = wanted;
       fit.current.collapsedAt = width;
       setControlsCollapsed(true);
+      return;
     }
+    // Inline and fitting on a settled frame: stable, so the last collapse
+    // no longer blocks a re-expand at its width.
+    fit.current.wanted = null;
+    fit.current.collapsedAt = 0;
   }, [hasControls, controlsCollapseAt, controlsCollapsed, testId]);
 
   useLayoutEffect(() => {
+    measureRef.current = measure;
     measure();
+  }, [measure, ghost]);
+
+  // One observer for the row's life: re-subscribing on every state change
+  // delivered an initial observation in the very frame the controls came
+  // back, which is the transient 2.407.6 stops judging.
+  useLayoutEffect(() => {
     const row = rowRef.current;
     if (!row || typeof ResizeObserver === 'undefined') return;
-    const ro = new ResizeObserver(() => measure());
+    const ro = new ResizeObserver(() => {
+      settling.current = false;
+      measureRef.current();
+    });
     ro.observe(row);
-    return () => ro.disconnect();
-  }, [measure, ghost]);
+    return () => {
+      ro.disconnect();
+      if (settleFrame.current != null && typeof cancelAnimationFrame === 'function') cancelAnimationFrame(settleFrame.current);
+      settleFrame.current = null;
+    };
+  }, []);
 
   return (
     <div
