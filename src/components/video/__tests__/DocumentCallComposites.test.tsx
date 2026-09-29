@@ -483,8 +483,119 @@ describe('CallDock header wraps instead of overlapping (2.403.2)', () => {
     expect(titleBlock.className).not.toContain('flex-1');
     expect(controls.parentElement).toBe(header);
     expect(controls.className).toContain('ml-auto');
-    expect(controls.className).toContain('shrink-0');
     expect(controls.contains(screen.getByTestId('call-dock-extras'))).toBe(true);
+  });
+});
+
+describe('CallDock controls fit a narrow column (A12)', () => {
+  // jsdom has no layout: assert the structure that keeps every control on
+  // screen — the group shrinks to the header and wraps, right-aligned, and
+  // settings / pop-out / Leave travel as one unclippable unit, Leave last.
+  function narrow() {
+    render(
+      <div className="w-[520px]">
+        <CallDock
+          {...dockBase}
+          documents={undefined}
+          onOpenDocuments={undefined}
+          compact
+          extras={
+            <>
+              <button type="button" data-testid="my-reactions">React</button>
+              <button type="button" data-testid="my-record">Rec</button>
+              <button type="button" data-testid="my-panels">Panels</button>
+            </>
+          }
+        />
+      </div>,
+    );
+  }
+
+  it('renders every control inside the wrapping group', () => {
+    narrow();
+    const controls = screen.getByTestId('call-dock-controls');
+    for (const id of [
+      'call-dock-mic',
+      'call-dock-camera',
+      'call-dock-share',
+      'call-dock-people',
+      'my-reactions',
+      'my-record',
+      'my-panels',
+      'call-dock-settings',
+      'call-dock-popout',
+      'call-dock-leave',
+    ]) {
+      expect(controls.contains(screen.getByTestId(id)), id).toBe(true);
+    }
+    const cls = controls.className.split(/\s+/);
+    expect(cls).toEqual(expect.arrayContaining(['flex-wrap', 'justify-end', 'min-w-0', 'max-w-full', 'ml-auto']));
+    expect(cls).not.toContain('shrink-0');
+    expect(cls.some((c) => c.startsWith('overflow-'))).toBe(false);
+    // Extras wrap one by one: their wrapper does not box them into one item.
+    expect(screen.getByTestId('call-dock-extras').className).toBe('contents');
+  });
+
+  it('keeps Leave last, unshrinkable and never in an overflow-hidden ancestor', () => {
+    narrow();
+    const controls = screen.getByTestId('call-dock-controls');
+    const end = screen.getByTestId('call-dock-end');
+    const leave = screen.getByTestId('call-dock-leave');
+    expect(end.parentElement).toBe(controls);
+    expect(end.className).toContain('shrink-0');
+    expect(end.className).not.toContain('flex-wrap');
+    expect(end.contains(screen.getByTestId('call-dock-settings'))).toBe(true);
+    expect(end.contains(screen.getByTestId('call-dock-popout'))).toBe(true);
+    // Leave is the last element child of the end unit, and the end unit the
+    // last visible item of the controls (the confirm popover portals out).
+    expect(end.lastElementChild).toBe(leave);
+    const items = Array.from(controls.children).filter((el) => el.getAttribute('data-testid') !== 'call-dock-leave-confirm');
+    expect(items[items.length - 1]).toBe(end);
+    expect(leave.className).toContain('shrink-0');
+    for (let el: HTMLElement | null = leave; el && el !== document.body; el = el.parentElement) {
+      expect(el.className.toString()).not.toMatch(/\boverflow-(hidden|clip)\b/);
+      expect(el.className.toString()).not.toMatch(/\bhidden\b/);
+    }
+  });
+});
+
+describe('CallDock calling (A11)', () => {
+  const calling: CallDockProps = {
+    ...dockBase,
+    phase: 'calling',
+    participantCount: 1,
+    elapsedMs: 33_000,
+    participants: [dockBase.participants[0]!],
+  };
+
+  it('names who is being called, with no clock and no head count', () => {
+    const { rerender } = render(<CallDock {...calling} callingTo="Frank Davis" />);
+    const meta = screen.getByTestId('call-dock-meta').textContent;
+    expect(meta).toBe('Calling Frank Davis…');
+    expect(meta).not.toMatch(/person|people|00:33/);
+    expect(screen.getByTestId('call-dock').getAttribute('data-phase')).toBe('calling');
+    rerender(<CallDock {...calling} />);
+    expect(screen.getByTestId('call-dock-meta').textContent).toBe('Calling…');
+  });
+
+  it('keeps mic and camera usable, disables Share with a reason, and Leave reads Cancel', () => {
+    const onLeave = vi.fn();
+    const onEndForEveryone = vi.fn();
+    render(<CallDock {...calling} callingTo="Frank Davis" onLeave={onLeave} canEndForEveryone onEndForEveryone={onEndForEveryone} />);
+    expect((screen.getByTestId('call-dock-mic') as HTMLButtonElement).disabled).toBe(false);
+    expect((screen.getByTestId('call-dock-camera') as HTMLButtonElement).disabled).toBe(false);
+    const share = screen.getByTestId('call-dock-share') as HTMLButtonElement;
+    expect(share.disabled).toBe(true);
+    expect(share.title).toBe('You can share once someone joins');
+    expect((screen.getByTestId('call-dock-people') as HTMLButtonElement).disabled).toBe(false);
+    expect((screen.getByTestId('call-dock-documents') as HTMLButtonElement).disabled).toBe(false);
+    const leave = screen.getByTestId('call-dock-leave');
+    expect(leave.textContent).toBe('Cancel');
+    // Nobody else is on: Cancel never asks "Others stay on".
+    fireEvent.click(leave);
+    expect(onLeave).toHaveBeenCalledTimes(1);
+    expect(onEndForEveryone).not.toHaveBeenCalled();
+    expect(screen.queryByText('Leave the call? Others stay on.')).toBeNull();
   });
 });
 

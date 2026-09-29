@@ -283,3 +283,63 @@ export const ConversationChatColumn904: Story = {
 };
 export const ConversationChatColumn904Dark: Story = { ...ConversationChatColumn904, decorators: [themed('dark')] };
 
+
+/**
+ * The chat column with a side pane open (~650px at 1280×720) and a phone-ish
+ * 520px column, with the host's full extras: the labels are already icons,
+ * so the controls wrap onto a second right-aligned line; settings, pop-out
+ * and Leave stay together and Leave is last and never clipped.
+ */
+export const ConversationChatColumn640: Story = {
+  args: base({
+    title: 'Carol Johnson (@e2e-carol-9vstoy)',
+    documents: undefined,
+    onOpenDocuments: undefined,
+    compact: true,
+    extras: conversationExtras,
+  }),
+  decorators: [themed('light')],
+  render: (args) => (
+    <div className="w-[640px] border border-border">
+      <Interactive {...args} />
+    </div>
+  ),
+};
+export const ConversationChatColumn640Dark: Story = { ...ConversationChatColumn640, decorators: [themed('dark')] };
+
+export const ConversationChatColumn520: Story = {
+  ...ConversationChatColumn640,
+  render: (args) => (
+    <div className="w-[520px] border border-border">
+      <Interactive {...args} />
+    </div>
+  ),
+};
+export const ConversationChatColumn520Dark: Story = { ...ConversationChatColumn520, decorators: [themed('dark')] };
+
+/**
+ * A 1:1 ring from the DM header before the callee answers: "Calling Frank
+ * Davis…", no clock and no head count, mic and camera usable, Share disabled
+ * until someone joins, and Leave reads Cancel.
+ */
+export const Calling: Story = {
+  args: base({
+    title: 'Frank Davis',
+    phase: 'calling',
+    callingTo: 'Frank Davis',
+    participantCount: 1,
+    elapsedMs: 33_000,
+    participants: [PEOPLE[0]!],
+    documents: undefined,
+    onOpenDocuments: undefined,
+    compact: true,
+    extras: conversationExtras,
+  }),
+  decorators: [themed('light')],
+  render: (args) => (
+    <div className="w-[760px] border border-border">
+      <Interactive {...args} />
+    </div>
+  ),
+};
+export const CallingDark: Story = { ...Calling, decorators: [themed('dark')] };

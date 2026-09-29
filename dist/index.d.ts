@@ -2181,7 +2181,7 @@ export declare interface CallControlsProps {
     className?: string;
 }
 
-export declare function CallDock({ title, participantCount, elapsedMs, phase, documents, participants, localParticipantId, activeSpeakerId, followingUserId, mic, camera, screenShare, onOpenPeople, onOpenDocuments, peopleOpen, documentsOpen, onOpenSettings, extras, onPopOut, onLeave, canEndForEveryone, onEndForEveryone, onTileClick, onTitleClick, onDocumentClick, endedSummary, error, onDismiss, compact, className, 'data-testid': testId, }: CallDockProps): JSX.Element;
+export declare function CallDock({ title, participantCount, elapsedMs, phase, callingTo, documents, participants, localParticipantId, activeSpeakerId, followingUserId, mic, camera, screenShare, onOpenPeople, onOpenDocuments, peopleOpen, documentsOpen, onOpenSettings, extras, onPopOut, onLeave, canEndForEveryone, onEndForEveryone, onTileClick, onTitleClick, onDocumentClick, endedSummary, error, onDismiss, compact, className, 'data-testid': testId, }: CallDockProps): JSX.Element;
 
 /** JSON written under {@link CALL_DOCK_DRAG_TYPE}. */
 export declare interface CallDockDragPayload {
@@ -2206,7 +2206,12 @@ export declare interface CallDockParticipant extends HangoutLayoutParticipant {
     audioElement?: ReactNode;
 }
 
-export declare type CallDockPhase = 'connecting' | 'active' | 'reconnecting' | 'ended' | 'error';
+/**
+ * `calling` is the caller's side of a ring before anyone answers: the call
+ * exists but nobody else is in it, so the meta names who is being called
+ * instead of "1 person · 00:33".
+ */
+export declare type CallDockPhase = 'calling' | 'connecting' | 'active' | 'reconnecting' | 'ended' | 'error';
 
 export declare interface CallDockProps {
     title: string;
@@ -2214,6 +2219,8 @@ export declare interface CallDockProps {
     /** Elapsed call time; null before the call has a start time. */
     elapsedMs: number | null;
     phase: CallDockPhase;
+    /** `phase: 'calling'`: who is being rung — the meta reads "Calling <name>…" (else "Calling…"). */
+    callingTo?: string;
     /** The review documents; omit (or pass []) with no `onOpenDocuments` for a call without documents. */
     documents?: {
         id: string;
@@ -23975,16 +23982,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
@@ -24008,9 +24005,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -24037,6 +24034,16 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

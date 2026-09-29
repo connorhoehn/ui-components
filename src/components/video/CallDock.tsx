@@ -11,7 +11,9 @@
 // the viewport's: the document chips go below a 1240px content width (they would truncate first), the Documents button
 // below 980px, and the People/Share labels shrink to icon + count below 860px.
 //
-// Phases: connecting (one skeleton tile, only Leave enabled), active,
+// Phases: calling (ringing the other side: "Calling Frank Davis…", no clock
+// or head count, mic/camera usable, Share disabled, Leave reads Cancel),
+// connecting (one skeleton tile, only Leave enabled), active,
 // reconnecting (veiled tiles, a warning meta), ended (a one-line summary with
 // Dismiss), error (a danger banner with Rejoin and Dismiss).
 //
@@ -20,6 +22,11 @@
 // and the Documents button are not rendered. `extras` carries the host's own
 // controls (reactions, recording chip, side-panel toggles) into the controls
 // row, before the settings gear.
+//
+// A narrow column (a chat pane with a side panel open, ~520–650px) keeps
+// every control: the labels collapse first (below 860px), then the controls
+// wrap onto further right-aligned lines. Settings, pop-out and Leave travel
+// as one unit, so Leave is always visible and always last.
 
 import { useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
@@ -56,7 +63,12 @@ export interface CallDockParticipant extends HangoutLayoutParticipant {
   audioElement?: ReactNode;
 }
 
-export type CallDockPhase = 'connecting' | 'active' | 'reconnecting' | 'ended' | 'error';
+/**
+ * `calling` is the caller's side of a ring before anyone answers: the call
+ * exists but nobody else is in it, so the meta names who is being called
+ * instead of "1 person · 00:33".
+ */
+export type CallDockPhase = 'calling' | 'connecting' | 'active' | 'reconnecting' | 'ended' | 'error';
 
 export interface CallDockProps {
   title: string;
@@ -64,6 +76,8 @@ export interface CallDockProps {
   /** Elapsed call time; null before the call has a start time. */
   elapsedMs: number | null;
   phase: CallDockPhase;
+  /** `phase: 'calling'`: who is being rung — the meta reads "Calling <name>…" (else "Calling…"). */
+  callingTo?: string;
   /** The review documents; omit (or pass []) with no `onOpenDocuments` for a call without documents. */
   documents?: { id: string; title: string; presenting?: boolean }[];
   /** Everyone in the call, the viewer included (matched by `localParticipantId`). */
@@ -126,6 +140,7 @@ export function CallDock({
   participantCount,
   elapsedMs,
   phase,
+  callingTo,
   documents = [],
   participants,
   localParticipantId,
@@ -202,6 +217,7 @@ export function CallDock({
     );
   }
 
+  const calling = phase === 'calling';
   const connecting = phase === 'connecting';
   const reconnecting = phase === 'reconnecting';
   const local = participants.find((p) => p.userId === localParticipantId) ?? null;
@@ -221,14 +237,15 @@ export function CallDock({
   });
 
   let meta: ReactNode;
-  if (connecting) meta = 'Connecting…';
+  if (calling) meta = callingTo ? `Calling ${callingTo}…` : 'Calling…';
+  else if (connecting) meta = 'Connecting…';
   else if (reconnecting) meta = <span className="text-warning-fg">Reconnecting…</span>;
   else meta = `${peopleLabel(participantCount)}${elapsedMs != null ? ` · ${formatCallElapsed(elapsedMs)}` : ''}`;
 
   const tileWidth = compact ? 132 : 176;
   const tileHeight = compact ? 74 : 88;
   const leave = () => {
-    if (canEndForEveryone && onEndForEveryone) setConfirmLeave(true);
+    if (!calling && canEndForEveryone && onEndForEveryone) setConfirmLeave(true);
     else onLeave();
   };
 
@@ -284,15 +301,24 @@ export function CallDock({
           )}
         </div>
 
-        <div className="ml-auto flex shrink-0 items-center gap-2" data-testid={`${testId}-controls`}>
+        {/* The controls shrink to the header's width and wrap (right-aligned)
+            rather than running past the dock's edge in a narrow column. */}
+        <div
+          className="ml-auto flex min-w-0 max-w-full flex-wrap items-center justify-end gap-2"
+          data-testid={`${testId}-controls`}
+        >
           <DeviceToggleSelect kind="microphone" {...mic} data-testid="call-dock-mic" {...(connecting ? { disabledReason: 'Connecting…' } : {})} />
           <DeviceToggleSelect kind="camera" {...camera} data-testid="call-dock-camera" {...(connecting ? { disabledReason: 'Connecting…' } : {})} />
           <Button
             variant={screenShare.on ? 'danger' : 'ghost'}
             size="sm"
             onClick={screenShare.onToggle}
-            disabled={connecting || Boolean(screenShare.disabledReason)}
-            title={screenShare.disabledReason ?? (screenShare.on ? 'Stop sharing' : 'Share your screen')}
+            disabled={connecting || calling || Boolean(screenShare.disabledReason)}
+            title={
+              calling
+                ? 'You can share once someone joins'
+                : (screenShare.disabledReason ?? (screenShare.on ? 'Stop sharing' : 'Share your screen'))
+            }
             aria-label={screenShare.on ? 'Stop sharing' : 'Share'}
             aria-pressed={screenShare.on}
             data-testid="call-dock-share"
@@ -332,39 +358,44 @@ export function CallDock({
             </Button>
           )}
           {extras != null && (
-            <div className="flex shrink-0 items-center gap-2" data-testid="call-dock-extras">
+            // `contents`: each host control is its own flex item, so they wrap one by one.
+            <div className="contents" data-testid="call-dock-extras">
               {extras}
             </div>
           )}
-          <IconButton
-            aria-label="Call settings"
-            title="Call settings"
-            variant="outline"
-            onClick={onOpenSettings}
-            icon={<SettingsGearIcon size={18} />}
-            data-testid="call-dock-settings"
-          />
-          <IconButton
-            aria-label="Pop out the call"
-            title="Pop out the call"
-            variant="outline"
-            onClick={onPopOut}
-            disabled={connecting}
-            icon={<ExpandIcon size={16} />}
-            data-testid="call-dock-popout"
-          />
-          <Button
-            ref={leaveRef}
-            variant="danger-solid"
-            size="sm"
-            onClick={leave}
-            aria-haspopup={canEndForEveryone ? 'dialog' : undefined}
-            data-testid="call-dock-leave"
-            className="inline-flex h-8 items-center gap-1.5 px-3.5 font-medium"
-          >
-            <PhoneOffIcon size={16} />
-            Leave
-          </Button>
+          {/* Settings, pop-out and Leave never separate: Leave stays last and on screen. */}
+          <div className="flex shrink-0 items-center gap-2" data-testid="call-dock-end">
+            <IconButton
+              aria-label="Call settings"
+              title="Call settings"
+              variant="outline"
+              onClick={onOpenSettings}
+              icon={<SettingsGearIcon size={18} />}
+              data-testid="call-dock-settings"
+            />
+            <IconButton
+              aria-label="Pop out the call"
+              title="Pop out the call"
+              variant="outline"
+              onClick={onPopOut}
+              disabled={connecting}
+              icon={<ExpandIcon size={16} />}
+              data-testid="call-dock-popout"
+            />
+            <Button
+              ref={leaveRef}
+              variant="danger-solid"
+              size="sm"
+              onClick={leave}
+              aria-haspopup={canEndForEveryone && !calling ? 'dialog' : undefined}
+              title={calling ? 'Cancel the call' : undefined}
+              data-testid="call-dock-leave"
+              className="inline-flex h-8 shrink-0 items-center gap-1.5 px-3.5 font-medium"
+            >
+              <PhoneOffIcon size={16} />
+              {calling ? 'Cancel' : 'Leave'}
+            </Button>
+          </div>
           <InlinePopover
             trigger={leaveRef}
             open={confirmLeave}

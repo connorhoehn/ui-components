@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.404.0
+
+- `CallDock` controls fit a narrow column (A12). The controls group was one non-wrapping `shrink-0` line, so with a chat side pane open (~650px) mic ▾ … Leave ran past the dock's edge and Leave was clipped. The group now shrinks to the header's width and wraps onto further right-aligned lines (labels still collapse to icons below 860px first); `extras` render as `display: contents`, so each host control wraps on its own; settings, pop-out and Leave travel as one unshrinkable unit (`call-dock-end`), so Leave is always visible and always last. No viewport widths are assumed — only the dock's own `@container`.
+- `CallDock` `phase: 'calling'` (A11): the caller's side of a ring before anyone answers. The meta reads "Calling <name>…" from the new `callingTo?: string` prop (else "Calling…"), with no clock and no people count; mic and camera stay usable (mute before they answer); Share is disabled with "You can share once someone joins"; People and Documents as usual; Leave reads "Cancel" (testid `call-dock-leave` unchanged) and never opens the host's "Others stay on" confirm. `CallDockPhase` gains `'calling'` — hosts that switch exhaustively on it need a case.
+- Storybook: CallDock "Conversation chat column 640" / "520" (light and dark, full extras), "Calling" / "Calling dark".
+
 ## 2.403.8
 
 - `RecordGraph` never clips the selection. The member search journey: with three people selected on the 25-record graph, the 209px canvas (conversation expanded) kept the 0.8 floor and cut Vera Green off at the bottom edge, and "Fit to view" (80% → 50%) still left her outside; Radial opened at 80% with 17 of 25 whenever the drawing's fit-all was below 0.7. `recordGraphViewport` now fits the selection at min(0.8, the zoom at which its full boxes — selection ring included — fit the canvas with a 16px margin), down to a hard minimum of 0.4, below which its circles are kept whole as before. Only the selection is guaranteed; neighbours are centred into view when they fit at that zoom.
