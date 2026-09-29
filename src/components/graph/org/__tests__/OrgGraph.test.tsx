@@ -2,7 +2,7 @@ import { act, createRef } from 'react';
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { OrgGraph, type OrgGraphHandle } from '../OrgGraph';
-import { ORG_CONTROLS_SIZE, ORG_FIT_ALL_MIN_ZOOM, ORG_FIT_MIN_ZOOM, orgGraphBounds } from '../fitTransform';
+import { ORG_CONTROLS_SIZE, ORG_FIT_ALL_MIN_ZOOM, ORG_FIT_MIN_ZOOM, orgGraphBounds, orgNodeBoxes, toScreen } from '../fitTransform';
 import type { GraphPerson, GraphRelationship } from '../types';
 import { ORG_LEGEND_INSET } from '../OrgGraphLegend';
 import { departments, people, relationships } from './fixtures';
@@ -22,6 +22,9 @@ const orgRels: GraphRelationship[] = org.map((p, i) => ({
   source: p.id, target: org[(i + 1) % 56]!.id, type: 'collaborates' as const, strength: 0.5,
 }));
 const whole = { people: org, relationships: orgRels, departments, layout: 'radial' as const };
+// The same whole org, focused on one person with every hop drawn — Radial
+// with a focus keeps the readability floor (2.404.2: without one it fits all).
+const wholeFocused = { ...whole, focusIds: ['o-0'], focusHops: 56 };
 
 function viewTransform() {
   const group = document.querySelector('svg[aria-label="Org graph"] > g')!;
@@ -39,6 +42,18 @@ function drawnScreenBox() {
   });
   const b = orgGraphBounds(nodes, id => nodes.find(n => n.id === id)!.r)!;
   return { left: b.minX * t.scale + t.x, right: b.maxX * t.scale + t.x, top: b.minY * t.scale + t.y, bottom: b.maxY * t.scale + t.y };
+}
+
+/** Screen box of each drawn node (circle + first-name pill; full name for `tall`). */
+function nodeScreenBoxes(tall?: ReadonlySet<string>) {
+  const t = viewTransform();
+  const nodes = screen.getAllByRole('button', { name: /·/ }).map((el) => {
+    const p = /translate\(([-\d.e]+), ([-\d.e]+)\)/.exec(el.getAttribute('transform')!)!;
+    const r = Number(el.querySelector('circle.org-node-main')!.getAttribute('r'));
+    const label = el.getAttribute('aria-label')!;
+    return { id: label, name: label.split(' · ')[0]!, x: Number(p[1]), y: Number(p[2]), r };
+  });
+  return orgNodeBoxes(nodes, id => nodes.find(n => n.id === id)!.r, tall).map(b => ({ id: b.id, ...toScreen(b, t) }));
 }
 
 describe('OrgGraph', () => {
@@ -200,7 +215,7 @@ describe('OrgGraph', () => {
   });
 
   it('the automatic fit holds the readability floor; Fit to view ignores it and shows everyone', () => {
-    render(<OrgGraph {...whole} />);
+    render(<OrgGraph {...wholeFocused} />);
     expect(viewTransform().scale).toBe(ORG_FIT_MIN_ZOOM);
     let box = drawnScreenBox();
     expect(box.right > 800 || box.bottom > 600).toBe(true); // overflows at the floor
@@ -216,13 +231,13 @@ describe('OrgGraph', () => {
   });
 
   it('minFitZoom tunes the automatic floor', () => {
-    render(<OrgGraph {...whole} minFitZoom={1.2} />);
+    render(<OrgGraph {...wholeFocused} minFitZoom={1.2} />);
     expect(viewTransform().scale).toBe(1.2);
   });
 
   it('ref.fitAll() fits the whole drawn set with no floor, like the control', () => {
     const ref = createRef<OrgGraphHandle>();
-    render(<OrgGraph {...whole} ref={ref} controls={false} />);
+    render(<OrgGraph {...wholeFocused} ref={ref} controls={false} />);
     expect(viewTransform().scale).toBe(ORG_FIT_MIN_ZOOM);
     act(() => ref.current!.fitAll());
     const box = drawnScreenBox();
@@ -293,5 +308,60 @@ describe('OrgGraph — Radial whole org (2.403.5)', () => {
     const w = Math.max(...pts.map((p) => p.x)) - Math.min(...pts.map((p) => p.x));
     const h = Math.max(...pts.map((p) => p.y)) - Math.min(...pts.map((p) => p.y));
     expect(w / h).toBeGreaterThan(2.5);
+  });
+
+  // The member journey (2.404.2): whole org, Radial, no focus, 1160 × ~400
+  // opened at the 0.9 floor with 29 of 56 inside and the zoom cluster over
+  // two people. Rings are meant to be seen whole.
+  const W = 1160, H = 400;
+  const legendRect = { left: 0, top: 0, right: ORG_LEGEND_INSET, bottom: H };
+  const controlsRect = { left: W - ORG_CONTROLS_SIZE.width, top: H - ORG_CONTROLS_SIZE.height, right: W, bottom: H };
+  type Box = { left: number; top: number; right: number; bottom: number };
+  const hit = (a: Box, b: Box) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+
+  it('56 people, Radial, no focus on 1160 × 400: the opening view shows every node, none under the legend or controls', () => {
+    canvas(W, H);
+    render(<OrgGraph {...whole} />);
+    const k = viewTransform().scale;
+    expect(k).toBeGreaterThanOrEqual(ORG_FIT_ALL_MIN_ZOOM);
+    expect(k).toBeLessThan(ORG_FIT_MIN_ZOOM);
+    const boxes = nodeScreenBoxes();
+    expect(boxes).toHaveLength(56);
+    for (const b of boxes) {
+      expect(b.left).toBeGreaterThanOrEqual(0);
+      expect(b.top).toBeGreaterThanOrEqual(0);
+      expect(b.right).toBeLessThanOrEqual(W);
+      expect(b.bottom).toBeLessThanOrEqual(H);
+      expect(hit(b, legendRect), `${b.id} under the legend`).toBe(false);
+      expect(hit(b, controlsRect), `${b.id} under the zoom cluster`).toBe(false);
+    }
+    // Fit to view lands on the same whole-org view.
+    const opening = viewTransform();
+    fireEvent.click(screen.getByRole('button', { name: 'Fit to view' }));
+    expect(viewTransform()).toEqual(opening);
+  });
+
+  it('a focused Radial keeps the readability floor, with the focus whole and clear of the overlays', () => {
+    canvas(W, H);
+    render(<OrgGraph {...wholeFocused} />);
+    expect(viewTransform().scale).toBe(ORG_FIT_MIN_ZOOM);
+    const boxes = nodeScreenBoxes(new Set());
+    // The drawing still overflows at the floor. Every ring of a whole org
+    // passes through the zoom cluster's corner at 0.9, so no pan clears every
+    // node here (Fit to view does); the pan keeps the fewest under an overlay.
+    expect(boxes.some(b => b.left < 0 || b.top < 0 || b.right > W || b.bottom > H)).toBe(true);
+    // The focus person is whole inside the canvas and clear of both overlays.
+    const focus = nodeScreenBoxes(new Set([screen.getByRole('button', { name: /^Person0 Doe/ }).getAttribute('aria-label')!]))
+      .find(b => b.id.startsWith('Person0 Doe'))!;
+    expect(focus.left).toBeGreaterThanOrEqual(0);
+    expect(focus.top).toBeGreaterThanOrEqual(0);
+    expect(focus.right).toBeLessThanOrEqual(W);
+    expect(focus.bottom).toBeLessThanOrEqual(H);
+    expect(hit(focus, legendRect) || hit(focus, controlsRect)).toBe(false);
+
+    // A one-person focus (plus neighbours) fits, at or above the floor.
+    cleanup();
+    render(<OrgGraph {...whole} focusIds={['o-0']} />);
+    expect(viewTransform().scale).toBeGreaterThanOrEqual(ORG_FIT_MIN_ZOOM);
   });
 });

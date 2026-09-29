@@ -1,8 +1,11 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   fitTransform, orgGraphBounds, orgLabelWidth, reserveCorner, ORG_CONTROLS_SIZE, ORG_FIT_ALL_MIN_ZOOM, ORG_FIT_MIN_ZOOM,
+  nodesUnderOverlays, orgGraphViewport, orgNodeBoxes, orgOverlayRects, toScreen,
 } from '../fitTransform';
-import { ORG_LABEL_BAND } from '../useForceLayout';
+import { createOrgSimulation, ORG_LABEL_BAND } from '../useForceLayout';
+import { ORG_LEGEND_INSET } from '../OrgGraphLegend';
+import type { GraphDepartment, GraphPerson, GraphRelationship } from '../types';
 
 const size = { width: 1000, height: 500 };
 
@@ -112,5 +115,113 @@ describe('orgGraphBounds', () => {
     expect(b.minX).toBe(-orgLabelWidth('Vera Green') / 2);
     expect(b.maxX).toBe(220); // "Bo" is narrower than the circle
     expect(orgGraphBounds([], () => 1)).toBeNull();
+  });
+});
+
+describe('orgGraphViewport — the opening view keeps nodes out from under the overlays (2.404.2)', () => {
+  const W = 1160, H = 400;
+  const size = { width: W, height: H };
+  const base = { left: ORG_LEGEND_INSET, right: 0, top: 0, bottom: 0 };
+  const inset = reserveCorner(base, size, ORG_CONTROLS_SIZE);
+  const overlays = orgOverlayRects(size, base, ORG_CONTROLS_SIZE);
+  const DEPTS: GraphDepartment[] = ['Platform Engineering', 'Data Platform', 'Product', 'Design Systems', 'ML / AI', 'Security']
+    .map((name, i) => ({ id: `d-${i}`, name, color: '#000000' }));
+
+  /** Deterministic Math.random for the force layout's start jitter. */
+  function seeded(seed: number) {
+    let a = seed >>> 0;
+    return () => {
+      a = (a + 0x6d2b79f5) >>> 0;
+      let t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  afterEach(() => vi.restoreAllMocks());
+
+  it('56 people, Force, 1160 × 400: stops at the floor, and no node sits under the legend or zoom cluster', () => {
+    const people: GraphPerson[] = Array.from({ length: 56 }, (_, i) => ({
+      id: `q-${i}`, name: `Person${i} Doe`, title: 'Engineer', department: DEPTS[i % 6]!.name,
+      skills: [], influenceScore: ((i * 37) % 100) / 100,
+    }));
+    const relationships: GraphRelationship[] = people.flatMap((p, i) => [
+      { source: p.id, target: people[(i + 6) % 56]!.id, type: 'mentors' as const, strength: 0.4 + ((i * 13) % 60) / 100 },
+      { source: p.id, target: people[(i + 1) % 56]!.id, type: 'collaborates' as const, strength: 0.5 },
+    ]);
+    const radius = (p: GraphPerson) => 12 + p.influenceScore * 18;
+    for (const seed of [1, 2, 3, 4, 5]) {
+      vi.spyOn(Math, 'random').mockImplementation(seeded(seed));
+      // Laid out exactly as OrgGraph does: the clear area at the floor.
+      const { sim, simNodes } = createOrgSimulation({
+        people, relationships, departments: DEPTS,
+        width: (W - inset.left - inset.right - 64) / ORG_FIT_MIN_ZOOM,
+        height: (H - inset.top - inset.bottom - 64) / ORG_FIT_MIN_ZOOM,
+        nodeRadiusOf: radius,
+      });
+      sim.stop();
+      sim.tick(300);
+      vi.restoreAllMocks();
+      const byId = new Map(simNodes.map(n => [n.id, n]));
+      const radiusOf = (id: string) => radius(byId.get(id)!);
+      const t = orgGraphViewport({
+        nodes: simNodes, radiusOf, focus: new Set(), size, inset, overlays, layout: 'force', mode: 'auto',
+      })!;
+      expect(t.scale).toBe(ORG_FIT_MIN_ZOOM);
+      // Nodes may run past the canvas edge; none may sit under an overlay.
+      const under = nodesUnderOverlays(orgNodeBoxes(simNodes, radiusOf), t, overlays, size);
+      expect(under.map(b => b.id), `seed ${seed}`).toEqual([]);
+    }
+  });
+
+  it('shifts an overflowing floor fit off the zoom cluster rather than leaving a node under it', () => {
+    // A 12 × 5 grid, 90px apart: 1080 × 450 world px — overflows both axes at 0.9.
+    const nodes = Array.from({ length: 60 }, (_, i) => ({ id: `g-${i}`, name: `G${i}`, x: (i % 12) * 90, y: Math.floor(i / 12) * 90 }));
+    const radiusOf = () => 14;
+    const boxes = orgNodeBoxes(nodes, radiusOf);
+    const plain = fitTransform(orgGraphBounds(nodes, radiusOf)!, size, 32, 1.25, ORG_FIT_MIN_ZOOM, inset);
+    expect(nodesUnderOverlays(boxes, plain, overlays, size).length).toBeGreaterThan(0);
+    const t = orgGraphViewport({ nodes, radiusOf, focus: new Set(), size, inset, overlays, layout: 'force', mode: 'auto' })!;
+    expect(t.scale).toBe(ORG_FIT_MIN_ZOOM);
+    expect(nodesUnderOverlays(boxes, t, overlays, size)).toEqual([]);
+    // Only the overflow moves: the pan stays within the overlays' size (+ a node box).
+    expect(Math.abs(t.x - plain.x)).toBeLessThanOrEqual(ORG_LEGEND_INSET + 60);
+    expect(Math.abs(t.y - plain.y)).toBeLessThanOrEqual(ORG_CONTROLS_SIZE.height + 60);
+  });
+
+  it('Radial with no focus frames every ring whole; with a focus it keeps the floor and centres the focus', () => {
+    // An 18-node ring 1400 × 500 world px.
+    const nodes = Array.from({ length: 18 }, (_, i) => ({
+      id: `r-${i}`, name: `R${i}`, x: 700 + 700 * Math.cos((i / 18) * 2 * Math.PI), y: 250 + 250 * Math.sin((i / 18) * 2 * Math.PI),
+    }));
+    const radiusOf = () => 14;
+    const boxes = orgNodeBoxes(nodes, radiusOf);
+    const all = orgGraphViewport({ nodes, radiusOf, focus: new Set(), size, inset, overlays, layout: 'radial', mode: 'auto' })!;
+    expect(all.scale).toBeLessThan(ORG_FIT_MIN_ZOOM);
+    expect(all.scale).toBeGreaterThanOrEqual(ORG_FIT_ALL_MIN_ZOOM);
+    for (const b of boxes) {
+      const s = toScreen(b, all);
+      expect(s.left).toBeGreaterThanOrEqual(0);
+      expect(s.right).toBeLessThanOrEqual(W);
+      expect(s.top).toBeGreaterThanOrEqual(0);
+      expect(s.bottom).toBeLessThanOrEqual(H);
+    }
+    expect(nodesUnderOverlays(boxes, all, overlays, size)).toEqual([]);
+    // Force with the same drawing keeps the floor.
+    expect(orgGraphViewport({ nodes, radiusOf, focus: new Set(), size, inset, overlays, layout: 'force', mode: 'auto' })!.scale)
+      .toBe(ORG_FIT_MIN_ZOOM);
+    // A focus on the ring's right-hand person: floor kept, focus whole and clear.
+    const focus = new Set(['r-0']);
+    const f = orgGraphViewport({ nodes, radiusOf, focus, size, inset, overlays, layout: 'radial', mode: 'auto' })!;
+    expect(f.scale).toBe(ORG_FIT_MIN_ZOOM);
+    const fb = toScreen(orgNodeBoxes(nodes, radiusOf, focus).find(b => b.id === 'r-0')!, f);
+    expect(fb.left).toBeGreaterThanOrEqual(0);
+    expect(fb.right).toBeLessThanOrEqual(W);
+    expect(fb.top).toBeGreaterThanOrEqual(0);
+    expect(fb.bottom).toBeLessThanOrEqual(H);
+    expect(nodesUnderOverlays(orgNodeBoxes(nodes, radiusOf, focus).filter(b => b.id === 'r-0'), f, overlays, size)).toEqual([]);
+    // Fit to view is the whole-set fit in either layout.
+    expect(orgGraphViewport({ nodes, radiusOf, focus, size, inset, overlays, layout: 'radial', mode: 'all' })!.scale)
+      .toBeLessThan(ORG_FIT_MIN_ZOOM);
   });
 });

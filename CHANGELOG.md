@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.405.1
+
+- `OrgGraph` Radial with no focus opens with every ring in view. The member search journey: the whole org (56 people, no focus, no selection) in Radial on a 1160 × ~400 canvas opened at the 0.9 floor with 29 of 56 inside and the zoom cluster over two people. The automatic fit for `layout: 'radial'` with no `focusIds` now frames the whole drawn set like Fit to view (down to `ORG_FIT_ALL_MIN_ZOOM`, 0.3), legend column and zoom-cluster corner reserved; Fit to view lands on the same view. A focused Radial and Force keep the readability floor (`minFitZoom`).
+- `OrgGraph`: when the automatic fit stops at the floor and the drawing overflows, an overflowing axis with a focus is centred on the focus (clamped to the drawing's ends; was start-aligned), and the view is then panned — nearest first, within the overlays' size plus a node box — so no node sits under the legend column, the zoom cluster or a `fitInset` card, keeping the focus whole in the canvas. Nodes beyond the canvas edge are allowed. Where no pan in reach is clear (a whole org's rings, focused, at 0.9) the pan with the fewest nodes under an overlay is used. Force at open is unchanged when nothing was under an overlay.
+- New pure helpers in `graph/org/fitTransform.ts` (not on the barrel): `orgGraphViewport` (OrgGraph's whole framing rule), `orgNodeBoxes`, `orgOverlayRects`, `nodesUnderOverlays`, `clearOfOverlays`, `toScreen`, `ScreenRect`, `OrgGraphViewportArgs`.
+
 ## 2.405.0
 
 - `ChatLabShell` `variant?: 'column' | 'pane'` (default `'column'`, unchanged). `'pane'` lays the lab out for a 400–560px side pane beside a conversation that stays on screen: the status line takes two rows (dot + status · model chip with the controls; `42k / 200k` meter · turns · title), the step rail wraps instead of scrolling sideways, and `onBackToChat` reads **Close** (testid `…-back` unchanged; Escape still closes). The root carries `data-variant`, the status line `data-layout="stacked" | "row"`. New type `ChatLabShellVariant`. Why: a host that swapped the chat column for the lab hid a docked call shelf and every realtime update for the planner's 20–40 s.

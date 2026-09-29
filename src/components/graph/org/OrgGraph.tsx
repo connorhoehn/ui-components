@@ -27,6 +27,11 @@
 // can choose to see everyone at once. The zoom cluster's corner is kept clear
 // by the fit. Radial rings (2.403.5) are ellipses shaped to the clear area and
 // spaced from the head count (`orgRadialRings`).
+//
+// Opening view clear of overlays (2.404.2): a Radial drawing with no focus is
+// framed whole by the automatic fit too (down to 0.3); Force and a focused
+// Radial keep the floor, and an overflow there is shifted so no node sits
+// under the legend, the zoom cluster or a host card (`orgGraphViewport`).
 
 import { useState, useRef, useCallback, useEffect, useId, useImperativeHandle, useMemo, type Ref } from 'react';
 import type { MouseEvent as ReactMouseEvent, WheelEvent as ReactWheelEvent } from 'react';
@@ -43,7 +48,7 @@ import { degreeMap as buildDegreeMap, maxDegree as maxOfDegreeMap, nodeRadius } 
 import type { PresenceFilter } from './presence';
 import { focusOrgGraph } from './focusOrgGraph';
 import {
-  fitTransform, orgGraphBounds, reserveCorner, ORG_CONTROLS_SIZE, ORG_FIT_ALL_MIN_ZOOM, ORG_FIT_MIN_ZOOM, type FitInset,
+  orgGraphViewport, orgOverlayRects, reserveCorner, ORG_CONTROLS_SIZE, ORG_FIT_ALL_MIN_ZOOM, ORG_FIT_MIN_ZOOM, type FitInset,
 } from './fitTransform';
 
 export interface OrgGraphProps {
@@ -96,6 +101,11 @@ export interface OrgGraphProps {
    * overflows and the viewer pans; "Fit to view" / `fitAll()` ignore it.
    * The layout is also spread for the clear area at this zoom. Default
    * `ORG_FIT_MIN_ZOOM` (0.9). Since 2.403.4.
+   *
+   * Since 2.404.2 the `radial` layout with no `focusIds` does not use it:
+   * its automatic fit frames every ring whole (down to `ORG_FIT_ALL_MIN_ZOOM`).
+   * Where the floor does hold and the drawing overflows, the view is shifted
+   * so no node sits under the legend, the zoom cluster or a `fitInset` card.
    */
   minFitZoom?: number;
   /** Imperative fit handle (`OrgGraphHandle`). Since 2.403.4. */
@@ -225,15 +235,22 @@ export function OrgGraph({
 
   // The clear area: the canvas less the legend / host card keep-outs.
   // With the zoom cluster on, its corner is reserved as well (`reserveCorner`).
-  const inset = useMemo(() => {
-    const base = {
-      left: fitInset?.left ?? (legend ? ORG_LEGEND_INSET : 0),
-      right: fitInset?.right ?? 0,
-      top: fitInset?.top ?? 0,
-      bottom: fitInset?.bottom ?? 0,
-    };
-    return controls ? reserveCorner(base, dimensions, ORG_CONTROLS_SIZE) : base;
-  }, [fitInset?.left, fitInset?.right, fitInset?.top, fitInset?.bottom, legend, controls, dimensions]);
+  const baseInset = useMemo(() => ({
+    left: fitInset?.left ?? (legend ? ORG_LEGEND_INSET : 0),
+    right: fitInset?.right ?? 0,
+    top: fitInset?.top ?? 0,
+    bottom: fitInset?.bottom ?? 0,
+  }), [fitInset?.left, fitInset?.right, fitInset?.top, fitInset?.bottom, legend]);
+  const inset = useMemo(
+    () => (controls ? reserveCorner(baseInset, dimensions, ORG_CONTROLS_SIZE) : baseInset),
+    [baseInset, controls, dimensions],
+  );
+  // What no node may sit under at a fitted view (2.404.2): the keep-out
+  // strips (legend column, host card) and the zoom cluster's own corner.
+  const overlays = useMemo(
+    () => orgOverlayRects(dimensions, baseInset, controls ? ORG_CONTROLS_SIZE : null),
+    [dimensions, baseInset, controls],
+  );
   // The forces fill the clear area as it will be drawn at the label floor
   // (`minFitZoom`), so the fit lands at a readable zoom rather than
   // shrinking a canvas-sized layout until the names are 6px.
@@ -272,20 +289,26 @@ export function OrgGraph({
   }, [drawnKey]);
 
   const computeFit = useCallback((all: boolean) => {
-    const bounds = orgGraphBounds(
+    const byId = new Map(nodes.map(n => [n.id, n]));
+    // The automatic fit holds the label floor — except a Radial drawing with
+    // no focus, which is framed whole like Fit to view (2.404.2). An overflow
+    // is shifted so no node sits under the legend / controls / host card.
+    // Room for the full-name label above the focus person; selection is left
+    // out so a click does not re-frame the drawing.
+    return orgGraphViewport({
       nodes,
-      id => nodeRadius(showInfluence, nodes.find(n => n.id === id)?.influenceScore ?? 0, degrees.get(id) ?? 0, maxDeg),
-      // Room for the full-name label above the focus person; selection is
-      // left out so a click does not re-frame the drawing.
-      focusSet,
-    );
-    // The automatic fit never goes below the label floor: a set too big for
-    // the clear area at it overflows (top / left aligned) and the viewer pans.
-    // Fit-all only stops at the hard minimum.
-    return bounds
-      ? fitTransform(bounds, dimensions, FIT_PADDING, FIT_MAX_ZOOM, all ? ORG_FIT_ALL_MIN_ZOOM : floor, inset)
-      : null;
-  }, [nodes, showInfluence, degrees, maxDeg, focusSet, dimensions, inset, floor]);
+      radiusOf: id => nodeRadius(showInfluence, byId.get(id)?.influenceScore ?? 0, degrees.get(id) ?? 0, maxDeg),
+      focus: focusSet,
+      size: dimensions,
+      inset,
+      overlays,
+      layout: layout ?? 'force',
+      mode: all ? 'all' : 'auto',
+      floor,
+      padding: FIT_PADDING,
+      maxZoom: FIT_MAX_ZOOM,
+    });
+  }, [nodes, showInfluence, degrees, maxDeg, focusSet, dimensions, inset, overlays, layout, floor]);
 
   useEffect(() => {
     if (!autoFit.current || !isSettled || laidOutKey !== drawnKey) return;

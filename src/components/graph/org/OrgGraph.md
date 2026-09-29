@@ -54,6 +54,17 @@ itself with a ResizeObserver, so give it a sized container.
   whichever of the bottom or right edge costs the smaller share of the clear
   area (the bottom on a 1160 × 400 canvas), unless `fitInset` already covers
   it (2.403.4).
+- Opening view clear of overlays (2.404.2): `layout: 'radial'` with no
+  `focusIds` is framed whole by the automatic fit as well (down to
+  `ORG_FIT_ALL_MIN_ZOOM`), since rings are meant to be seen whole — 56 people
+  on 1160 × 400 open with all 56 inside, none under the legend or zoom
+  cluster. Force and a focused Radial keep the floor. When the floor holds and
+  the drawing overflows, an overflowing axis is centred on the focus (if any),
+  then the view is panned within the overlays' size so no node sits under the
+  legend column, the zoom cluster or a `fitInset` card; a node beyond the
+  canvas edge is fine. If no such pan exists (a whole org's rings at 0.9), the
+  pan with the fewest nodes under an overlay is used and Fit to view clears
+  them all. The rule is `orgGraphViewport` in `fitTransform.ts`.
 - Labels sit on a surface pill under the circle; in a drawing of more than 40
   people, dimmed (not highlighted) people drop their label. Sizing by
   connection count caps a focused person at their best-connected neighbour's
