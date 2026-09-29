@@ -103,6 +103,25 @@ export type {
   ConversationFeaturesForModules,
 } from './WrappedConversationSurface';
 
+// Conversation calls (a DM / room call docked above a composer, rung over the
+// gateway): the shelf binds RM's `conversationCallDockProps` +
+// `useAudioVideoSettings`; the ring toast is props-driven.
+export { createConversationCallDock } from './ConversationCallDock';
+export type {
+  ConversationCallDockProps,
+  ConversationCallDockModules,
+  ConversationCallDockComponent,
+} from './ConversationCallDock';
+export { IncomingCallToast, incomingCallTitle } from './IncomingCallToast';
+export type { IncomingCallToastProps } from './IncomingCallToast';
+export type {
+  RMConversationCallPhase,
+  RMConversationCallParticipant,
+  RMConversationCallSource,
+  RMDevicePreferences,
+  RMIncomingConversationCall,
+} from './conversationCallTypes';
+
 // ── Pure: types, adapters, props-driven wrappers ──
 export type {
   RMChatMessage,

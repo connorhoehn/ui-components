@@ -221,6 +221,21 @@ export { canvasRecoveryKey, encodeCanvasRecovery, decodeCanvasRecovery } from '.
 export type { CanvasRecovery } from '../realtime/canvasRecovery';
 export { canvasDocumentSaveState, canEditCanvasGrant } from '../realtime/canvasDocumentState';
 
+// Conversation calls: the shelf bound to the canonical `/client/video`, and the
+// props-driven ring toast (implementation: ../realtime/).
+export { ConversationCallDock } from './ConversationCallDock';
+export { createConversationCallDock } from '../realtime/ConversationCallDock';
+export type { ConversationCallDockProps, ConversationCallDockModules } from '../realtime/ConversationCallDock';
+export { IncomingCallToast, incomingCallTitle } from '../realtime/IncomingCallToast';
+export type { IncomingCallToastProps } from '../realtime/IncomingCallToast';
+export type {
+  RMConversationCallPhase,
+  RMConversationCallParticipant,
+  RMConversationCallSource,
+  RMDevicePreferences,
+  RMIncomingConversationCall,
+} from '../realtime/conversationCallTypes';
+
 // The injection API, re-exported so an app on this entry can bind a second,
 // differently-scoped install without switching imports.
 export {
