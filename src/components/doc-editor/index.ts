@@ -193,6 +193,9 @@ export type { DocumentReviewEntry, DocumentReviewPanelProps } from './DocumentRe
 // and the composer dock that floats over its surface.
 export { EditorShell, DEFAULT_EDITOR_SHELL_TABS } from './EditorShell';
 export type { EditorShellProps, EditorShellTab } from './EditorShell';
+// An agent's pending edits to the open document, in EditorShell's `proposal` slot (2.408.0).
+export { ProposedEditStrip, proposedEditPreview, proposedEditPlacement } from './ProposedEditStrip';
+export type { ProposedEdit, ProposedEditStatus, ProposedEditStripProps } from './ProposedEditStrip';
 export { FloatingComposerDock, DOCK_HEIGHT_VAR, DOCK_INSET_VAR, ComposerDockPlacementContext } from './FloatingComposerDock';
 export type { FloatingComposerDockProps, FloatingComposerDockWidth, ComposerDockPlacement } from './FloatingComposerDock';
 

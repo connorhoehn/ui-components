@@ -12,6 +12,7 @@ import { AgentTaskCard } from '../layout/AgentTaskCard';
 import { Button } from '../ui/Button';
 import { IconButton } from '../ui/IconButton';
 import EmptyState from '../shared/EmptyState';
+import { ProposedEditStrip, type ProposedEdit } from './ProposedEditStrip';
 
 const meta = {
   title: 'DocEditor/EditorShell',
@@ -107,6 +108,62 @@ export const PageVariant: Story = {
           surface={tab === 'editor' ? 'workspace' : 'plain'}
         >
           {tab === 'editor' ? <PageSurface /> : <EmptyState title={`${tab} tab`} body="The host renders this tab's content." />}
+        </EditorShell>
+      </div>
+    );
+  },
+};
+
+const AGENT_EDITS: ProposedEdit[] = [
+  {
+    id: 'scope',
+    kind: 'replace',
+    anchor: { from: 12, to: 64 },
+    content: { text: 'Executive summary: the release ships the audit trail and the export path; risks are owned per section.' },
+    summary: 'Tightens the executive summary',
+    status: 'ready',
+  },
+  {
+    id: 'next-steps',
+    kind: 'insert',
+    anchor: 'cursor',
+    content: { html: '<p>Next steps: confirm owners by Friday.</p>' },
+    status: 'streaming',
+  },
+];
+
+/**
+ * Page variant with an agent's two pending edits in the `proposal` slot: drawn
+ * between the page and the dock, so the composer can collapse while they wait.
+ */
+export const PageWithProposedEdits: Story = {
+  args: { title: 'Release plan', children: null },
+  render: () => {
+    const [edits, setEdits] = useState(AGENT_EDITS);
+    const set = (id: string, status: ProposedEdit['status']) => setEdits((all) => all.map((e) => (e.id === id ? { ...e, status } : e)));
+    return (
+      <div className="h-[760px]">
+        <EditorShell
+          title="Release plan"
+          kind="page"
+          statusPill={<StatusPill state="neutral" label="Draft" size="sm" />}
+          saveState={{ status: 'saved' }}
+          tabs={DEFAULT_EDITOR_SHELL_TABS}
+          activeTab="editor"
+          toolbar={<span className="text-xs text-text-tertiary">DocumentToolbar goes here</span>}
+          proposal={
+            <ProposedEditStrip
+              proposals={edits}
+              onApply={(id) => set(id, 'applied')}
+              onDiscard={(id) => set(id, 'discarded')}
+              onRevise={(id) => set(id, 'streaming')}
+              onApplyAll={() => setEdits((all) => all.map((e) => (e.status === 'ready' ? { ...e, status: 'applied' } : e)))}
+              onDiscardAll={() => setEdits((all) => all.map((e) => ({ ...e, status: 'discarded' })))}
+            />
+          }
+          footer={<Dock agentLabel="Drafting next steps" />}
+        >
+          <PageSurface />
         </EditorShell>
       </div>
     );

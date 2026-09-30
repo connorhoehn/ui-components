@@ -201,6 +201,12 @@ export type {
   SlideLayout,
 } from './components/doc-editor/presentation/deckSpec';
 
+// An agent's pending edits to an open document (2.408.0). Named explicitly,
+// like PresentationEditor above: the strip imports only shared primitives, so
+// the root entry gains no editor dependency.
+export { ProposedEditStrip, proposedEditPreview, proposedEditPlacement } from './components/doc-editor/ProposedEditStrip';
+export type { ProposedEdit, ProposedEditStatus, ProposedEditStripProps } from './components/doc-editor/ProposedEditStrip';
+
 // ---------------------------------------------------------------------------
 // REST origin overrides
 // ---------------------------------------------------------------------------

@@ -122,6 +122,15 @@ export interface EditorShellProps {
    */
   footer?: ReactNode;
   /**
+   * An agent's pending edits — normally a `ProposedEditStrip`. Drawn between
+   * the scrolling surface and the `footer` dock, in the dock's gutter
+   * (`--dock-inset`), never scrolling and never inside the composer (which
+   * collapses when idle): a pending edit stays in view while the page it
+   * would change scrolls above it. Its own height is capped at 40% of the
+   * surface and scrolls past that. Since 2.408.0.
+   */
+  proposal?: ReactNode;
+  /**
    * `workspace` (default) paints the surface the neutral grey a page or a
    * slide floats on; `plain` leaves it the panel colour, for a list or a
    * history tab.
@@ -198,6 +207,7 @@ export function EditorShell({
   toolbar,
   children,
   footer,
+  proposal,
   surface = 'workspace',
   explorer,
   workbench,
@@ -416,6 +426,11 @@ export function EditorShell({
         >
           {children}
         </div>
+        {proposal != null && (
+          <div className="relative z-20 max-h-[40%] min-h-0 shrink-0 overflow-auto px-[var(--dock-inset,1rem)] pb-1 pt-2" data-testid={`${testId}-proposal`}>
+            {proposal}
+          </div>
+        )}
         {footer != null && (
           // The cap lives here, on the surface's own row, so the percentage
           // resolves against the surface; the dock inside fills it and lets
