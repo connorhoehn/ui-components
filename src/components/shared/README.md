@@ -22,6 +22,7 @@ import { Button, Card, Modal, EmptyState } from '@connorhoehnslalom/ui-component
 | Forms | `TextField`, `Select`, `Toggle`, `Slider`, `TagEditor`, `CodeEditor`, `FileUploadDrop`, `FormField` |
 | List rows | `SuggestionRow` (combobox option row), `MeterRow` (label + trailing meter) — 2.400.0 |
 | Data | `Table`, `DataTable`, `Tabs`, `ThumbnailCard`, `CatalogGrid`, `StatCard`, `KPIGrid`, `Chart` (recharts wrapper) |
+| Rails | `RailNavList` (flat views list), `StackedRail` (caption + collapsible groups + nested rows with meta, ⋯ slot, presence, drag pass-through, roving keyboard — the one left-rail look for trees too), `railType` constants |
 | Text | `Highlight` (matched-term `<mark>` for search rows, 2.400.0) |
 | Domain | `ChannelHeader`, `PageHeader`, `Breadcrumbs`, `PresenceAvatars`, `NotificationCenter`, `CommandPalette`, `Skeleton`, `Tooltip` |
 | Visualisation | `LogStream` / `TerminalLog`, `StackDiagram` / `LayerStack`, `HealthGrid` / `HealthCell`, `AlertList` / `AlertItem`, `CodeBlock` |

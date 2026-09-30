@@ -239,6 +239,17 @@ export {
   RAIL_CURRENT_FILL,
 } from './railType';
 export type { RailNavListProps, RailNavListItem } from './RailNavList';
+// The concise stacking left menu with groups, nesting, a ⋯ slot, presence and
+// drag pass-through — RailNavList rows on the rail pitch.
+export { StackedRail, STACKED_RAIL_ROW_CLASS } from './StackedRail';
+export type {
+  StackedRailProps,
+  StackedRailGroup,
+  StackedRailRow,
+  StackedRailAction,
+  StackedRailDragProps,
+  StackedRailDataAttributes,
+} from './StackedRail';
 
 // ── Deep application layout (2026-08) ──
 // SubNavLayout tops out at two rails; NavRailStack takes an array, so a route
