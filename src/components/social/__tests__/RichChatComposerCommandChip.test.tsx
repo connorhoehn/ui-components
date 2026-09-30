@@ -174,6 +174,20 @@ describe('the docked card chip names what the input hides (2.407.41)', () => {
     expect(screen.getByTestId('composer-input').textContent).toBe('/doc make sure to add your basic recipe style');
   });
 
+  it('the trigger alone stays visible, with no chip, until the space after it — then one hides and the chip names it', () => {
+    const { type, drafts } = host(undefined);
+    type('/doc');
+    // Hiding the whole line would leave the caret nowhere to type (2.403.1).
+    expect(hidden()).toBeNull();
+    expect(screen.queryByTestId('composer-command')).toBeNull();
+    expect(screen.getByTestId('composer-input').textContent).toBe('/doc');
+    type(' ');
+    expect(hidden()?.textContent).toBe('/doc');
+    expect(screen.getByTestId('composer-command').textContent).toBe('/doc');
+    type('make sure');
+    expect(drafts.at(-1)).toMatchObject({ html: '<p>/doc make sure</p>', command: { trigger: '/doc' } });
+  });
+
   it('send clears the command: no chip, no hidden prefix, the published draft has no command', () => {
     const { type, drafts, onSend } = host(undefined);
     type('/doc Edit the open document please');

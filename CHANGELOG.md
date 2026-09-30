@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.407.42
+
+- **`RichChatComposer` docked card: a bare trigger hides only once something follows it, and the inline chip shows only while it hides (fix to 2.407.41).** Live, typing `/doc` hid the whole line — nothing left rendered, so the next keystroke landed in a new paragraph ahead of the command (the 2.403.1 trap, now for a bare trigger) and the draft became "E" + "/docdit…". A bare trigger that is the entire line stays visible until the space after it; the chip (`data-command-chip="inline"`) renders only while the input hides the command, so the trigger is never on screen twice. Picked-argument hiding is unchanged. Test: `RichChatComposerCommandChip.test.tsx`.
+
 ## 2.407.41
 
 - **`RichChatComposer` / `ContextComposer`: the docked card's command chip names only what the input hides (fix).** In the editor dock (every `ContextComposer`), a command with no picked argument — `/doc make sure…` — showed the inline chip as the trigger plus the command's LABEL ("/doc Edit the open document with Haiku", truncated), while the typed `/doc` stayed visible after it: the trigger twice, and a label that read as the previous instruction carried over from the last send. Nothing was carried over — send already cleared the draft and its `command`. Now the docked card hides a bare trigger in the input the way the prompt card (2.390.0) does, and the chip is the trigger, the picked argument, or the argument's placeholder while it is blank; the label stays in the chip's title only. A restored draft whose `command` pick names a trigger its text no longer starts with is reconciled against the text. Tests: `RichChatComposerCommandChip.test.tsx` (send clears, no chip without the trigger, a second trigger is not duplicated, stale controlled `command`).

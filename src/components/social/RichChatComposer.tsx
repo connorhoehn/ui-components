@@ -853,7 +853,8 @@ function hiddenCommandPrefix(
   const cmd = matchComposerCommand(text, commands);
   if (!cmd) return null;
   let end: number;
-  if (pick && cmd.trigger === pick.trigger) {
+  const picked = !!pick && cmd.trigger === pick.trigger;
+  if (picked) {
     const argStart = text.length - text.trimStart().length + cmd.trigger.length + 1;
     const rest = text.slice(argStart);
     const spaces = rest.length - rest.replace(/^ +/, '').length;
@@ -872,6 +873,11 @@ function hiddenCommandPrefix(
   if (text.slice(end).trim() === '' && next?.isTextblock) {
     return { kind: 'block', from: 0, to: first.nodeSize, caret: first.nodeSize + 1 };
   }
+  // A bare trigger that IS the whole line, not even a space after it ("/doc"
+  // just typed): hiding it would leave nothing rendered, and the next keystroke
+  // would land in a new paragraph AHEAD of the command (the 2.403.1 trap,
+  // for a bare trigger — 2.407.41). It hides once the space is typed.
+  if (!picked && hideTo === text.length) return null;
   // Nothing typed after the command yet (a fresh argument pick is
   // "/agent Advisor "): leave its trailing space rendered. Hiding the whole
   // line leaves a paragraph with nothing rendered in it, so the browser has no
@@ -1169,6 +1175,12 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // in the draft — what the menu-mode card names in its command chip
   // ("/workflow ⟡ migration-plan"). Null once the label is edited away.
   const [pickedArgument, setPickedArgument] = useState<ComposerArgumentItem | null>(null);
+  // Whether the command line is hidden in the input right now. The docked
+  // card's inline chip shows only then: it names what the input hides, so the
+  // trigger is never on screen twice (2.407.41).
+  const [prefixHidden, setPrefixHidden] = useState(false);
+  const readPrefixHidden = (e: Editor) => hideCommandPrefixRef.current
+    && !!hiddenCommandPrefix(e.state.doc, commandsRef.current, argPickRef.current, hideBareTriggerRef.current);
   // The bar follows the DRAFT, not the render: re-derive whenever the host's
   // commands change (a document opened beside the chat), never clear on time.
   useEffect(() => {
@@ -1176,6 +1188,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     if (!e || e.isDestroyed) return;
     const hit = matchComposerCommand(e.getText(), commands);
     setActiveCommand((prev) => (prev?.trigger === hit?.trigger && prev?.disabled === hit?.disabled ? prev : hit));
+    setPrefixHidden(readPrefixHidden(e as unknown as Editor));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [commands]);
   const editorRef = useRef<{ getText: () => string } | null>(null);
@@ -1617,6 +1630,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         // A pick belongs to the command it was made for.
         if (argPickRef.current && argPickRef.current.trigger !== hit?.trigger) argPickRef.current = null;
         setPickedArgument(pickedArgumentFor(argPickRef.current, hit, text));
+        setPrefixHidden(readPrefixHidden(e));
         publishRef.current(e);
       },
       editorProps: { attributes: inputAttributes },
@@ -1815,6 +1829,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     setActiveCommand(hit);
     setArgumentEmpty(!hit || composerCommandArgumentText(text, hit).trim() === '');
     setPickedArgument(pickedArgumentFor(argPickRef.current, hit, text));
+    setPrefixHidden(readPrefixHidden(editor));
   }, [editor, draft, onDraftChange]);
 
   // Stamps `privacy` onto the published draft as soon as the CONTROLLED prop
@@ -2158,6 +2173,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   useEffect(() => {
     if (!editor || editor.isDestroyed) return;
     editor.view.dispatch(editor.state.tr.setMeta(commandPrefixKey, true));
+    setPrefixHidden(readPrefixHidden(editor));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor, menuModeRow, docked]);
   const referencesInModeRow = compactModeRow && (compact || menuModeRow);
   // Compact folds the hints row into `?` at every width.
@@ -2883,7 +2900,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               }]}
             />
           )}
-          {inlineCommand && activeCommand && !promptCard && (
+          {inlineCommand && activeCommand && !promptCard && prefixHidden && (
             <div
               role="status"
               title={activeCommand.description ?? activeCommand.hint ?? activeCommand.label}
