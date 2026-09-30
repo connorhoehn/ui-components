@@ -19,7 +19,8 @@ const tabNames = () => screen.queryAllByRole('tab').map((t) => t.textContent);
 describe('which views exist is data', () => {
   it('offers every view by default', () => {
     render(<ConversationSurface name="Hank" />);
-    expect(tabNames()).toEqual(['Chat', 'Files', 'Documents', 'Pinned', 'Members', 'Mentions', 'Calls']);
+    // Files are listed IN Documents: one tab for both.
+    expect(tabNames()).toEqual(['Chat', 'Documents', 'Pinned', 'Members', 'Mentions', 'Calls']);
   });
 
   // The chat-only embed. Not a greyed tab, not an upsell — absent.
@@ -50,16 +51,53 @@ describe('which views exist is data', () => {
   });
 });
 
-describe('counts on the tabs', () => {
-  it('says how much is behind a tab', () => {
-    render(<ConversationSurface name="Hank" files={[file]} documents={[doc]} pins={[pin]} recordings={[recording]} />);
-    expect(screen.getByRole('tab', { name: /Files/ }).textContent).toContain('1');
+describe('files and documents are one view', () => {
+  const later = { ...doc, documentId: 'd2', title: 'pizza oven', icon: '📄', updatedAt: '2026-09-29T12:00:00.000Z' };
+  const sent = { ...file, sentAt: '2026-09-29T10:00:00.000Z' };
+  const older = { ...doc, updatedAt: '2026-09-28T09:00:00.000Z' };
+
+  it('lists documents and files together, newest change first, each with its kind', () => {
+    render(<ConversationSurface name="Hank" view="documents" files={[sent]} documents={[older, later]} />);
+    const panel = screen.getByTestId('channel-documents-panel');
+    const rows = Array.from(panel.querySelectorAll('[data-kind]')).map((r) => `${r.getAttribute('data-kind')}:${r.textContent?.includes('pizza oven') ? 'pizza' : r.textContent?.includes('shape.png') ? 'shape' : 'rfc'}`);
+    expect(rows).toEqual(['document:pizza', 'file:shape', 'document:rfc']);
+    expect(screen.queryByTestId('channel-files-panel')).toBeNull();
   });
 
-  // "Files 0" is noise; the tab already says there is a files view.
+  // A `?tab=files` link, or a caller still holding 'files', lands on the merged list.
+  it('resolves the files view to the merged Documents tab', () => {
+    const onViewChange = vi.fn();
+    render(<ConversationSurface name="Hank" view="files" files={[sent]} documents={[later]} onViewChange={onViewChange} />);
+    expect(screen.getByTestId('channel-documents-panel')).toBeInTheDocument();
+    expect(screen.getAllByTestId('channel-file')).toHaveLength(1);
+    expect(screen.getByTestId('conversation-surface-tab-documents')).toHaveAttribute('aria-selected', 'true');
+    expect(screen.queryByTestId('conversation-surface-tab-files')).toBeNull();
+  });
+
+  it('keeps a Files tab for a deployment with files and no documents', () => {
+    render(<ConversationSurface name="Hank" features={['chat', 'files']} view="files" files={[file]} />);
+    expect(tabNames()).toEqual(['Chat', 'Files1']);
+    expect(screen.getByTestId('channel-files-panel')).toBeInTheDocument();
+  });
+
+  it('jumps from a file row back to its message', () => {
+    const onJumpToMessage = vi.fn();
+    render(<ConversationSurface name="Hank" view="documents" files={[sent]} onJumpToMessage={onJumpToMessage} />);
+    fireEvent.click(screen.getByTestId('channel-file-jump'));
+    expect(onJumpToMessage).toHaveBeenCalledWith('m1');
+  });
+});
+
+describe('counts on the tabs', () => {
+  it('says how much is behind a tab — Documents counts its files too', () => {
+    render(<ConversationSurface name="Hank" files={[file]} documents={[doc]} pins={[pin]} recordings={[recording]} />);
+    expect(screen.getByRole('tab', { name: /Documents/ }).textContent).toContain('2');
+  });
+
+  // "Documents 0" is noise; the tab already says there is a documents view.
   it('shows no badge rather than a zero', () => {
     render(<ConversationSurface name="Hank" />);
-    expect(screen.getByRole('tab', { name: /Files/ }).textContent).toBe('Files');
+    expect(screen.getByRole('tab', { name: /Documents/ }).textContent).toBe('Documents');
   });
 
   // Mentions you have already read are not waiting for you.

@@ -2,7 +2,8 @@
 //
 // ## What this is for
 //
-// The chat pane, the files shared in the thread, the documents written in it,
+// The chat pane, the documents written in it and the files shared in it (one
+// list when both are on),
 // the messages pinned to it, the calls recorded from it, the times you were
 // named in it — assembled once, so an app that wants a conversation gets all
 // of that instead of a message list plus a to-do list.
@@ -260,8 +261,18 @@ export function ConversationSurface({
   'data-testid': testId = 'conversation-surface',
 }: ConversationSurfaceProps) {
   const enabled = new Set(features);
+  // Files and Documents are ONE view when both are on: to the people in a
+  // conversation, the PDF somebody dropped in and the page the agent wrote are
+  // the same thing — what was made or shared here — and two tabs meant
+  // looking in the wrong one first. The list is the Documents panel with the
+  // files in it (newest change first). `files` stays a feature — a
+  // deployment with files and no documents keeps its Files tab — and a caller
+  // that asks for the `files` view (a `?tab=files` link) lands on the merged
+  // one.
+  const merged = enabled.has('files') && enabled.has('documents');
   const [uncontrolledView, setUncontrolledView] = useState<ConversationFeature>('chat');
-  const requested = controlledView ?? uncontrolledView;
+  const asked = controlledView ?? uncontrolledView;
+  const requested: ConversationFeature = merged && asked === 'files' ? 'documents' : asked;
   // A view that was turned off while it was open must not leave a blank pane.
   const view = enabled.has(requested) ? requested : (features[0] ?? 'chat');
 
@@ -274,13 +285,13 @@ export function ConversationSurface({
   // opening it is worth it. Zero is shown as no badge rather than "0".
   const count = (n: number) => n || undefined;
   const items: TabItem[] = features
-    .filter((f) => LABELS[f])
+    .filter((f) => LABELS[f] && !(merged && f === 'files'))
     .map((f) => ({
       id: f,
       label: LABELS[f],
       badge:
         f === 'files' ? count(files.length)
-        : f === 'documents' ? count(documents.length)
+        : f === 'documents' ? count(documents.length + (merged ? files.length : 0))
         : f === 'pins' ? count(pins.length)
         : f === 'members' ? (memberCount != null ? count(memberCount) : undefined)
         : f === 'calls' ? count(recordings.length)
@@ -310,6 +321,7 @@ export function ConversationSurface({
               variant="underline"
               size="md"
               aria-label="Views of this conversation"
+              getItemTestId={(item) => `${testId}-tab-${item.id}`}
               value={view}
               onValueChange={(id) => setView(id as ConversationFeature)}
               items={items}
@@ -388,6 +400,7 @@ export function ConversationSurface({
           onOpen={onOpenDocument}
           onCreate={onCreateDocument}
           onCreateWhiteboard={onCreateWhiteboard}
+          {...(merged ? { files, thumbnailSrc, onJumpToFile: onJumpToMessage ? jumpFromAnotherView : undefined } : {})}
         />
       )}
       {enabled.has('pins') && view === 'pins' && (

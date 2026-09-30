@@ -464,7 +464,7 @@ export declare interface ChannelDocumentItem {
     activeEditors?: number;
 }
 
-export declare function ChannelDocumentsPanel({ documents, onOpen, onCreate, onCreateWhiteboard, className, 'data-testid': testId, }: ChannelDocumentsPanelProps): JSX.Element;
+export declare function ChannelDocumentsPanel({ documents, onOpen, onCreate, onCreateWhiteboard, files, thumbnailSrc, onJumpToFile, className, 'data-testid': testId, }: ChannelDocumentsPanelProps): JSX.Element;
 
 export declare interface ChannelDocumentsPanelProps {
     documents: readonly ChannelDocumentItem[];
@@ -483,6 +483,21 @@ export declare interface ChannelDocumentsPanelProps {
      * Omit for a viewer who may not create one.
      */
     onCreateWhiteboard?: () => void;
+    /**
+     * The files shared in the conversation, listed WITH the documents.
+     *
+     * To the people in a conversation a PDF someone dropped in and a page the
+     * agent wrote are the same thing — "what did we make or share here" — and
+     * two tabs for them meant looking in the wrong one first. Given, the list
+     * is one list: documents, whiteboards and files together, newest change
+     * first (a document by its last edit, a file by when it was sent), each
+     * with its kind's glyph. Omit and the panel lists documents only.
+     */
+    files?: readonly ChannelFileItem[];
+    /** Resolves a file's image source (the download route is authenticated). */
+    thumbnailSrc?: (a: ChatAttachment) => string | null | undefined;
+    /** Where a file row goes: the message it arrived on. */
+    onJumpToFile?: (messageId: string) => void;
     className?: string;
     'data-testid'?: string;
 }
@@ -3742,6 +3757,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3761,12 +3789,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
+        diagramMacro: {
             /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
              */
-            setListStyle: (style: ListStyle) => ReturnType;
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -3774,12 +3802,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -3816,26 +3851,6 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

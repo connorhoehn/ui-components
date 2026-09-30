@@ -19,7 +19,7 @@ import { t as b } from "./PresenceAvatars-DlmKqodq.js";
 import { t as x } from "./FileUploadDrop-o7W15kEh.js";
 import { t as S } from "./ActivityFeed-CHYjJy8q.js";
 import { a as C, i as ee, n as te, o as ne } from "./DockedAside-C1MsqwIK.js";
-import { d as re, n as w, t as T, u as E } from "./ConversationSurface-C_DXCZwA.js";
+import { d as re, n as w, t as T, u as E } from "./ConversationSurface-0ux6abDE.js";
 import { C as D, E as O, S as k, _ as A, r as j, s as M, t as ie, x as N, y as ae } from "./CallDock-D1O9CmnZ.js";
 import { t as P } from "./useActiveSpeaker-BGKJU3Lb.js";
 import { c as oe, o as se, s as ce } from "./useDocumentImageUpload-Dvbsr3Mh.js";

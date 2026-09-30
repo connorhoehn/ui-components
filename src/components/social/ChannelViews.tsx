@@ -189,6 +189,49 @@ export interface ChannelFilesPanelProps {
   'data-testid'?: string;
 }
 
+/**
+ * One shared file as a row: the image itself when it is one, a paperclip when
+ * it is not, jumping back to the message it arrived on. Shared by the Files
+ * panel and the Documents panel's merged list, so a file reads the same in
+ * both.
+ */
+function ChannelFileRow({
+  file,
+  thumbnailSrc,
+  onJump,
+}: {
+  file: ChannelFileItem;
+  thumbnailSrc?: (a: ChatAttachment) => string | null | undefined;
+  onJump?: (messageId: string) => void;
+}) {
+  const src = thumbnailSrc?.(file.attachment) ?? file.attachment.preview;
+  const isImage = isImageAttachment(file.attachment);
+  return (
+    <FeedRow
+      data-testid="channel-file"
+      data-kind="file"
+      leading={
+        isImage && src ? (
+          <img src={src} alt="" className="h-8 w-8 rounded object-cover" />
+        ) : (
+          <span aria-hidden className="grid h-8 w-8 place-items-center rounded bg-surface-inset text-text-tertiary">
+            <PaperclipIcon />
+          </span>
+        )
+      }
+      // Filenames are user content and need not contain a space; the
+      // row truncates rather than letting one widen the panel.
+      title={file.attachment.name}
+      meta={[file.author, formatBytes(file.attachment.size)].filter(Boolean).join(' · ')}
+      timestamp={timeLabel(file.sentAt)}
+      timestampIso={file.sentAt}
+      timestampTitle={file.sentAt ? fullTimestampLabel(file.sentAt) : undefined}
+      onJump={onJump ? () => onJump(file.messageId) : undefined}
+      jumpLabel={`Go to the message with ${file.attachment.name}`}
+    />
+  );
+}
+
 export function ChannelFilesPanel({
   files,
   thumbnailSrc,
@@ -205,43 +248,9 @@ export function ChannelFilesPanel({
           description="Drag a file into the conversation and it will show up in this list."
         />
       ) : (
-        files.map((file) => {
-          const src = thumbnailSrc?.(file.attachment) ?? file.attachment.preview;
-          const isImage = isImageAttachment(file.attachment);
-          return (
-            <FeedRow
-              key={`${file.messageId}:${file.attachment.id}`}
-              data-testid="channel-file"
-              leading={
-                isImage && src ? (
-                  <img
-                    src={src}
-                    alt=""
-                    className="h-8 w-8 rounded object-cover"
-                  />
-                ) : (
-                  <span
-                    aria-hidden
-                    className="grid h-8 w-8 place-items-center rounded bg-surface-inset text-text-tertiary"
-                  >
-                    <DocumentIcon />
-                  </span>
-                )
-              }
-              // Filenames are user content and need not contain a space; the
-              // row truncates rather than letting one widen the panel.
-              title={file.attachment.name}
-              meta={[file.author, formatBytes(file.attachment.size)]
-                .filter(Boolean)
-                .join(' · ')}
-              timestamp={timeLabel(file.sentAt)}
-              timestampIso={file.sentAt}
-              timestampTitle={file.sentAt ? fullTimestampLabel(file.sentAt) : undefined}
-              onJump={onJump ? () => onJump(file.messageId) : undefined}
-              jumpLabel={`Go to the message with ${file.attachment.name}`}
-            />
-          );
-        })
+        files.map((file) => (
+          <ChannelFileRow key={`${file.messageId}:${file.attachment.id}`} file={file} thumbnailSrc={thumbnailSrc} onJump={onJump} />
+        ))
       )}
     </PanelShell>
   );
@@ -456,8 +465,33 @@ export interface ChannelDocumentsPanelProps {
    * Omit for a viewer who may not create one.
    */
   onCreateWhiteboard?: () => void;
+  /**
+   * The files shared in the conversation, listed WITH the documents.
+   *
+   * To the people in a conversation a PDF someone dropped in and a page the
+   * agent wrote are the same thing — "what did we make or share here" — and
+   * two tabs for them meant looking in the wrong one first. Given, the list
+   * is one list: documents, whiteboards and files together, newest change
+   * first (a document by its last edit, a file by when it was sent), each
+   * with its kind's glyph. Omit and the panel lists documents only.
+   */
+  files?: readonly ChannelFileItem[];
+  /** Resolves a file's image source (the download route is authenticated). */
+  thumbnailSrc?: (a: ChatAttachment) => string | null | undefined;
+  /** Where a file row goes: the message it arrived on. */
+  onJumpToFile?: (messageId: string) => void;
   className?: string;
   'data-testid'?: string;
+}
+
+/** Newest first; a row with no time sinks to the end rather than guessing. */
+function byLastChange(a: string | undefined, b: string | undefined): number {
+  const ta = a ? Date.parse(a) : NaN;
+  const tb = b ? Date.parse(b) : NaN;
+  if (Number.isNaN(ta) && Number.isNaN(tb)) return 0;
+  if (Number.isNaN(ta)) return 1;
+  if (Number.isNaN(tb)) return -1;
+  return tb - ta;
 }
 
 export function ChannelDocumentsPanel({
@@ -465,6 +499,9 @@ export function ChannelDocumentsPanel({
   onOpen,
   onCreate,
   onCreateWhiteboard,
+  files,
+  thumbnailSrc,
+  onJumpToFile,
   className,
   'data-testid': testId = 'channel-documents-panel',
 }: ChannelDocumentsPanelProps) {
@@ -515,48 +552,68 @@ export function ChannelDocumentsPanel({
 
   const canCreate = !!(onCreate || onCreateWhiteboard);
 
+  // Documents alone keep the order they were handed in (the caller's); with
+  // files, one list by last change.
+  type Entry = { kind: 'document'; doc: ChannelDocumentItem; at?: string } | { kind: 'file'; file: ChannelFileItem; at?: string };
+  const entries: Entry[] = files
+    ? [
+        ...documents.map((doc): Entry => ({ kind: 'document', doc, at: doc.updatedAt })),
+        ...files.map((file): Entry => ({ kind: 'file', file, at: file.sentAt })),
+      ].sort((a, b) => byLastChange(a.at, b.at))
+    : documents.map((doc): Entry => ({ kind: 'document', doc, at: doc.updatedAt }));
+
   return (
     <div className={cn('min-h-0 overflow-y-auto p-2', className)} data-testid={testId}>
-      {canCreate && documents.length > 0 && (
+      {canCreate && entries.length > 0 && (
         <div className="mb-1 flex flex-col">
           {onCreate && startRow('create', onCreate, <span aria-hidden>+</span>, 'New document in this conversation')}
           {onCreateWhiteboard
             && startRow('create-whiteboard', onCreateWhiteboard, <WhiteboardIcon size={15} />, 'New whiteboard in this conversation')}
         </div>
       )}
-      {documents.length === 0 ? (
+      {entries.length === 0 ? (
         <EmptyState
           icon={<DocumentIcon size={40} />}
-          title="No documents yet"
-          description="Documents and whiteboards started here stay with this conversation."
+          title={files ? 'Nothing here yet' : 'No documents yet'}
+          description={files
+            ? 'Documents, whiteboards and files shared here stay with this conversation.'
+            : 'Documents and whiteboards started here stay with this conversation.'}
           action={canCreate ? <div className="flex flex-wrap justify-center gap-2">{rows(true)}</div> : undefined}
         />
       ) : (
         <ul className="m-0 flex list-none flex-col gap-0.5 p-0">
-          {documents.map((d) => (
+          {entries.map((entry) => entry.kind === 'file' ? (
+            <ChannelFileRow
+              key={`file:${entry.file.messageId}:${entry.file.attachment.id}`}
+              file={entry.file}
+              thumbnailSrc={thumbnailSrc}
+              onJump={onJumpToFile}
+            />
+          ) : (
             <FeedRow
-              key={d.documentId}
+              key={entry.doc.documentId}
               data-testid="channel-document"
+              data-kind="document"
               leading={
                 <span aria-hidden className="grid h-8 w-8 place-items-center rounded bg-surface-inset text-sm text-text-tertiary">
-                  {d.icon || <DocumentIcon />}
+                  {entry.doc.icon || <DocumentIcon />}
                 </span>
               }
-              title={d.title || 'Untitled'}
+              title={entry.doc.title || 'Untitled'}
               meta={[
-                d.createdBy,
+                entry.doc.createdBy,
                 // Presence is the reason to open it NOW rather than later.
-                d.activeEditors ? `${d.activeEditors} editing` : '',
+                entry.doc.activeEditors ? `${entry.doc.activeEditors} editing` : '',
               ]
                 .filter(Boolean)
                 .join(' \u00b7 ')}
               // Last edited is what people scan this list by, so it gets the
               // column rather than third place in the meta line.
-              timestamp={timeLabel(d.updatedAt)}
-              timestampIso={d.updatedAt}
-              timestampTitle={d.updatedAt ? fullTimestampLabel(d.updatedAt) : undefined}
-              onJump={onOpen ? () => onOpen(d.documentId) : undefined}
-              jumpLabel={`Open ${d.title || 'this document'}`}
+              timestamp={timeLabel(entry.doc.updatedAt)}
+              timestampIso={entry.doc.updatedAt}
+              timestampTitle={entry.doc.updatedAt ? fullTimestampLabel(entry.doc.updatedAt) : undefined}
+              onJump={onOpen ? () => onOpen(entry.doc.documentId) : undefined}
+              jumpLabel={`Open ${entry.doc.title || 'this document'}`}
             />
           ))}
         </ul>

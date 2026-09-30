@@ -31,7 +31,7 @@ import { t as fe } from "./DropdownMenu-BWgk2cUe.js";
 import { t as pe } from "./InlinePlaceholder-CbIBYc-_.js";
 import { n as me, t as G } from "./PopoverForm-C1FhtwC7.js";
 import { t as he } from "./Select-ErGXS9Yj.js";
-import { F as ge, R as _e, j as ve, rt as ye, st as be, tt as xe } from "./ConversationSurface-C_DXCZwA.js";
+import { F as ge, R as _e, j as ve, rt as ye, st as be, tt as xe } from "./ConversationSurface-0ux6abDE.js";
 import { t as Se } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as Ce, t as we } from "./ReactionPickerPopover-CGha15Y2.js";
 import { n as Te } from "./useComputeProjects-ZSazDRet.js";

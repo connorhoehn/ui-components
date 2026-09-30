@@ -135,7 +135,8 @@ describe('when the capability query fails', () => {
         capabilitiesError={new Error('HTTP 500')}
       />,
     );
-    expect(tabNames()).toEqual(['Chat', 'Files', 'Documents']);
+    // Files are listed inside Documents when both are on.
+    expect(tabNames()).toEqual(['Chat', 'Documents']);
   });
 
   // A recovered query is authoritative again.
