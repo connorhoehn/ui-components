@@ -203,6 +203,8 @@ export { FileUploadDrop } from './FileUploadDrop';
 export type { FileUploadDropProps } from './FileUploadDrop';
 export { NotificationCenter } from './NotificationCenter';
 export type { NotificationCenterProps, NotificationItem } from './NotificationCenter';
+export { NotificationBell } from './NotificationBell';
+export type { NotificationBellProps, NotificationBellSize } from './NotificationBell';
 export { UserMenu } from './UserMenu';
 export type { UserMenuProps, UserMenuUser, UserMenuItem } from './UserMenu';
 export { Breadcrumbs } from './Breadcrumbs';

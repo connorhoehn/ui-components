@@ -1,14 +1,14 @@
-import { n as e, t } from "./useWebSocket-D4PAHlj8.js";
+import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
 import { t as n } from "./cn-D4QmbyEy.js";
 import { v as r } from "./overlayStack-DWxp7Rsz.js";
 import { t as i } from "./Card-CbTNNNkk.js";
 import { t as a } from "./Chip-QXPdpJoz.js";
 import { t as o } from "./IconButton-VqtspsS5.js";
-import { f as s, st as c, tt as l } from "./Icons-CCn6EnUZ.js";
+import { ct as s, nt as c, p as l } from "./Icons-_hcrQmPz.js";
 import { n as u, t as d } from "./Stack-DNMA-_4L.js";
 import { t as f } from "./Breadcrumbs-CjrGWjOa.js";
-import { t as p } from "./Badge-BCM8nNmE.js";
-import { t as m } from "./Banner-CMmGmL5f.js";
+import { t as p } from "./Badge-BV6tPLgZ.js";
+import { t as m } from "./Banner-CmrqvKtx.js";
 import { t as h } from "./Modal-R-ipbeZi.js";
 import { t as g } from "./Input-CpLq80dw.js";
 import { t as _ } from "./EmptyState-DnbFBYDA.js";
@@ -24,17 +24,17 @@ import { t as E } from "./ChangeDiff-BHerlwTS.js";
 import { r as D } from "./Text-DrPQe5RD.js";
 import { t as O } from "./Select-ErGXS9Yj.js";
 import { t as k } from "./Checkbox-BC03mkQI.js";
-import { n as ee } from "./FileKindMark-BwVpdd7J.js";
+import { n as ee } from "./FileKindMark-Cs3Q8iud.js";
 import { t as A } from "./activationKey-CjbL3LUv.js";
 import { A as te, k as j } from "./renderers-Doqpgh8C.js";
-import { A as M, B as N, C as P, D as F, E as ne, F as I, G as L, H as R, I as z, J as B, K as V, L as H, M as U, N as re, O as ie, P as ae, R as oe, S as se, T as W, U as ce, V as le, W as ue, Y as de, Z as fe, _ as pe, a as me, b as he, c as ge, d as _e, f as ve, g as ye, h as be, i as xe, j as Se, k as Ce, l as we, m as Te, n as Ee, o as De, p as Oe, q as ke, r as Ae, s as je, t as Me, u as Ne, v as Pe, w as Fe, x as Ie, y as Le, z as Re } from "./ProposedEditStrip-BLcx-FV-.js";
+import { A as M, B as N, C as P, D as F, E as ne, F as I, G as L, H as R, I as z, J as B, K as V, L as H, M as U, N as re, O as ie, P as ae, R as oe, S as se, T as W, U as ce, V as le, W as ue, Y as de, Z as fe, _ as pe, a as me, b as he, c as ge, d as _e, f as ve, g as ye, h as be, i as xe, j as Se, k as Ce, l as we, m as Te, n as Ee, o as De, p as Oe, q as ke, r as Ae, s as je, t as Me, u as Ne, v as Pe, w as Fe, x as Ie, y as Le, z as Re } from "./ProposedEditStrip-euB8pDpD.js";
 import { i as ze } from "./MediaIcons-_ai5Til2.js";
 import { o as Be, t as Ve } from "./VerdictChip-CSV5IQDb.js";
 import { a as He, c as Ue, d as We, f as Ge, h as Ke, i as qe, l as Je, m as Ye, n as Xe, o as Ze, p as Qe, r as $e, s as et, t as tt, u as nt } from "./TiptapEditor-BjjwDyPa.js";
 import { i as rt, n as it, r as at, t as ot } from "./FloatingComposerDock-ZezHreIm.js";
-import { A as st, B as ct, C as lt, D as ut, E as dt, F as ft, G as pt, H as mt, I as ht, J as gt, K as _t, L as vt, M as yt, N as bt, O as xt, P as St, R as Ct, S as wt, T as Tt, U as Et, V as Dt, W as Ot, _ as kt, a as At, b as jt, c as Mt, d as Nt, f as Pt, g as Ft, h as It, i as Lt, j as Rt, k as zt, l as Bt, m as Vt, o as Ht, p as Ut, q as Wt, r as Gt, s as Kt, t as qt, u as Jt, v as Yt, w as Xt, x as Zt, y as Qt, z as $t } from "./DocumentEditorPage-DD29w2DQ.js";
-import { C as en, S as tn, T as nn, _ as rn, a as an, b as on, c as sn, d as cn, f as ln, g as un, h as dn, i as fn, l as pn, m as mn, n as hn, o as gn, p as _n, r as vn, s as yn, t as bn, u as xn, v as Sn, w as Cn, x as wn, y as Tn } from "./useDocumentImageUpload-Bdl9jMDt.js";
-import { r as En } from "./RichChatComposer-BypvrY-k.js";
+import { A as st, B as ct, C as lt, D as ut, E as dt, F as ft, G as pt, H as mt, I as ht, J as gt, K as _t, L as vt, M as yt, N as bt, O as xt, P as St, R as Ct, S as wt, T as Tt, U as Et, V as Dt, W as Ot, _ as kt, a as At, b as jt, c as Mt, d as Nt, f as Pt, g as Ft, h as It, i as Lt, j as Rt, k as zt, l as Bt, m as Vt, o as Ht, p as Ut, q as Wt, r as Gt, s as Kt, t as qt, u as Jt, v as Yt, w as Xt, x as Zt, y as Qt, z as $t } from "./DocumentEditorPage-Dpl_o3ao.js";
+import { C as en, S as tn, T as nn, _ as rn, a as an, b as on, c as sn, d as cn, f as ln, g as un, h as dn, i as fn, l as pn, m as mn, n as hn, o as gn, p as _n, r as vn, s as yn, t as bn, u as xn, v as Sn, w as Cn, x as wn, y as Tn } from "./useDocumentImageUpload-Dvbsr3Mh.js";
+import { r as En } from "./RichChatComposer-DsxOIoDe.js";
 import { forwardRef as Dn, useCallback as G, useEffect as K, useId as On, useImperativeHandle as kn, useMemo as q, useRef as J, useState as Y } from "react";
 import { Fragment as X, jsx as Z, jsxs as Q } from "react/jsx-runtime";
 import * as An from "yjs";
@@ -2100,7 +2100,7 @@ function Vr({ filled: e }) {
 		children: /* @__PURE__ */ Z("path", { d: "M8 1.9l1.8 3.7 4.1.6-3 2.9.7 4.1L8 11.3l-3.6 1.9.7-4.1-3-2.9 4.1-.6L8 1.9Z" })
 	});
 }
-function Hr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: c, starred: l = !1, onStarredChange: u, statusPill: d, path: m, crumbsTrailing: h, subtitle: g, metaBar: _, participants: y, onParticipantClick: b, onFollowParticipant: x, followingParticipantId: S, meta: C, saveState: T, headActions: E, tabs: D, activeTab: O, onTabChange: k, toolbar: A, children: te, footer: j, proposal: M, surface: N = "workspace", explorer: P, workbench: F, label: ne = "Editor", variant: I = "document", itemType: L, itemKey: R, titleSize: z = "md", tabsTrailing: B, className: V, "data-testid": H = "editor-shell" }) {
+function Hr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: s, starred: c = !1, onStarredChange: u, statusPill: d, path: m, crumbsTrailing: h, subtitle: g, metaBar: _, participants: y, onParticipantClick: b, onFollowParticipant: x, followingParticipantId: S, meta: C, saveState: T, headActions: E, tabs: D, activeTab: O, onTabChange: k, toolbar: A, children: te, footer: j, proposal: M, surface: N = "workspace", explorer: P, workbench: F, label: ne = "Editor", variant: I = "document", itemType: L, itemKey: R, titleSize: z = "md", tabsTrailing: B, className: V, "data-testid": H = "editor-shell" }) {
 	let U = I === "work-item", re = U && (L || R) ? /* @__PURE__ */ Q(X, { children: [L && /* @__PURE__ */ Z(a, {
 		size: "sm",
 		tone: "info",
@@ -2150,7 +2150,7 @@ function Hr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 						className: "flex h-7 min-w-0 items-center gap-2 text-[13px] text-text-secondary",
 						"data-testid": `${H}-crumbs-row`,
 						children: [
-							/* @__PURE__ */ Z(s, {
+							/* @__PURE__ */ Z(l, {
 								dir: "right",
 								size: 12,
 								"aria-hidden": "true",
@@ -2207,8 +2207,8 @@ function Hr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 					/* @__PURE__ */ Q("div", {
 						className: "flex min-w-0 items-center gap-2",
 						children: [
-							c && !U && /* @__PURE__ */ Z(ee, {
-								kind: c,
+							s && !U && /* @__PURE__ */ Z(ee, {
+								kind: s,
 								size: "2xl",
 								variant: "outline",
 								className: "[@media(max-height:640px)]:h-8 [@media(max-height:640px)]:w-8",
@@ -2237,13 +2237,13 @@ function Hr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 													children: t
 												}), u && /* @__PURE__ */ Z(o, {
 													size: "sm",
-													"aria-label": l ? "Remove star" : "Star this file",
-													"aria-pressed": l,
-													title: l ? "Starred" : "Star",
-													onClick: () => u(!l),
-													className: l ? "shrink-0 text-primary" : "shrink-0 text-text-tertiary",
+													"aria-label": c ? "Remove star" : "Star this file",
+													"aria-pressed": c,
+													title: c ? "Starred" : "Star",
+													onClick: () => u(!c),
+													className: c ? "shrink-0 text-primary" : "shrink-0 text-text-tertiary",
 													"data-testid": `${H}-star`,
-													children: /* @__PURE__ */ Z(Vr, { filled: l })
+													children: /* @__PURE__ */ Z(Vr, { filled: c })
 												})]
 											}),
 											d,
@@ -2552,19 +2552,19 @@ var qr = Dn(function({ mentionUsers: e, onReply: t, onResolve: r, onAskAgent: i,
 });
 //#endregion
 //#region src/components/doc-editor/CommentHandoffBar.tsx
-function Jr({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1, onResolveOnApplyChange: a, onDismiss: o, className: s, "data-testid": u = "comment-handoff-bar" }) {
+function Jr({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1, onResolveOnApplyChange: a, onDismiss: o, className: l, "data-testid": u = "comment-handoff-bar" }) {
 	let d = r === "reply", f = d ? "Stop replying" : "Stop answering this comment";
 	return /* @__PURE__ */ Q("div", {
 		role: "status",
 		"data-testid": u,
 		"data-variant": r,
-		className: n("flex min-w-0 items-center gap-3 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-text-secondary shadow-sm", s),
+		className: n("flex min-w-0 items-center gap-3 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-text-secondary shadow-sm", l),
 		children: [
-			d ? /* @__PURE__ */ Z(l, {
+			d ? /* @__PURE__ */ Z(c, {
 				size: 14,
 				"aria-hidden": "true",
 				className: "shrink-0 text-primary"
-			}) : /* @__PURE__ */ Z(c, {
+			}) : /* @__PURE__ */ Z(s, {
 				size: 14,
 				"aria-hidden": "true",
 				className: "shrink-0 text-info-fg"

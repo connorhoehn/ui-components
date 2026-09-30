@@ -2044,6 +2044,8 @@ export declare interface IncomingCallToastProps {
     'data-testid'?: string;
 }
 
+declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right';
+
 /** Where a loop is. Mirrors the run status platform-api reports. */
 declare type LabStatus = 'planning' | 'starting' | 'running' | 'waiting' | 'done' | 'failed' | 'stopped' | 'budget';
 
@@ -2291,6 +2293,28 @@ export declare interface NewHangoutRoomDialogProps {
     /** Default visibility. Server defaults to 'org' if omitted. */
     defaultVisibility?: RMRoomVisibility;
 }
+
+declare interface NotificationBellProps {
+    /** The feed, in `NotificationCenter`'s shape. */
+    items: NotificationItem[];
+    /** Unread count on the badge and in the name. Default: items whose `read` is not `true`. */
+    unreadCount?: number;
+    /** A row was activated. The popover closes after the call. */
+    onItemClick?: (item: NotificationItem) => void;
+    onMarkAllRead?: () => void;
+    onClearAll?: () => void;
+    /** Accessible name of the button and the popover. Default "Activity". */
+    label?: string;
+    /** Where the popover opens. Default `bottom-end` (a bell at a header's right edge). */
+    placement?: InlinePopoverPlacement;
+    /** `sm` = 28px, the header-control family; `md` = 32px. Default `md`. */
+    size?: NotificationBellSize;
+    className?: string;
+    /** Root test id (default `notification-bell`); parts: `-button`, `-badge`, `-popover`, `-center`, `-empty`. */
+    'data-testid'?: string;
+}
+
+declare type NotificationBellSize = 'sm' | 'md';
 
 declare interface NotificationCenterProps {
     items: NotificationItem[];
@@ -3722,6 +3746,23 @@ export declare interface WrappedMediaEffectsTrayProps extends Pick<MediaEffectsT
     controller: RMMediaEffectsControllerSource;
 }
 
+export declare function WrappedNotificationBell({ notifications, onItemClick, unreadCount, ...rest }: WrappedNotificationBellProps): JSX.Element;
+
+export declare interface WrappedNotificationBellProps extends Omit<NotificationBellProps, 'items' | 'onItemClick' | 'onMarkAllRead' | 'onClearAll'> {
+    /** Return value of useNotifications(channel?) from realtime-modules */
+    notifications: RMUseNotificationsReturn;
+    /**
+     * Override item click handler (default: markAsRead on the clicked id).
+     *
+     * The SECOND argument is the original realtime-modules entry — see
+     * `WrappedNotificationCenterProps.onItemClick`: `NotificationItem` has no
+     * `channel`, `payload` or `action`, so the entry is what says where a
+     * notification points. Undefined only if the click arrives for an id the
+     * hook no longer holds.
+     */
+    onItemClick?: (item: NotificationItem, entry: RMNotificationEntry | undefined) => void;
+}
+
 export declare function WrappedNotificationCenter({ notifications, onItemClick, ...rest }: WrappedNotificationCenterProps): JSX.Element;
 
 export declare interface WrappedNotificationCenterProps extends Omit<NotificationCenterProps, 'items' | 'onItemClick' | 'onMarkAllRead' | 'onClearAll'> {
@@ -3825,19 +3866,6 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3868,52 +3896,14 @@ declare module '@tiptap/core' {
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
-    }
-}
-
-
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -3947,9 +3937,60 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
+    }
+}
+
+
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
     }
 }

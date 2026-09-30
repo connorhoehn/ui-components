@@ -1936,6 +1936,9 @@ export declare interface BBox {
     height: number;
 }
 
+/** A bell: "notifications", "activity" — the header's inbox trigger. Since 2.407.37. */
+export declare function BellIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 /** A bell with a slash through it: "notify me quietly". */
 export declare function BellMutedIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -13135,6 +13138,30 @@ export declare function normalizeApiHealth(body: unknown): {
  * relative paths, which a naive prefix would corrupt.
  */
 export declare function normalizeHref(raw: string): string;
+
+export declare function NotificationBell({ items, unreadCount, onItemClick, onMarkAllRead, onClearAll, label, placement, size, className, 'data-testid': testId, }: NotificationBellProps): JSX.Element;
+
+export declare interface NotificationBellProps {
+    /** The feed, in `NotificationCenter`'s shape. */
+    items: NotificationItem[];
+    /** Unread count on the badge and in the name. Default: items whose `read` is not `true`. */
+    unreadCount?: number;
+    /** A row was activated. The popover closes after the call. */
+    onItemClick?: (item: NotificationItem) => void;
+    onMarkAllRead?: () => void;
+    onClearAll?: () => void;
+    /** Accessible name of the button and the popover. Default "Activity". */
+    label?: string;
+    /** Where the popover opens. Default `bottom-end` (a bell at a header's right edge). */
+    placement?: InlinePopoverPlacement;
+    /** `sm` = 28px, the header-control family; `md` = 32px. Default `md`. */
+    size?: NotificationBellSize;
+    className?: string;
+    /** Root test id (default `notification-bell`); parts: `-button`, `-badge`, `-popover`, `-center`, `-empty`. */
+    'data-testid'?: string;
+}
+
+export declare type NotificationBellSize = 'sm' | 'md';
 
 export declare function NotificationCenter({ items, onItemClick, onMarkAllRead, onClearAll, className, 'data-testid': testId, }: NotificationCenterProps): JSX.Element;
 
@@ -24817,19 +24844,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -24860,52 +24874,14 @@ declare module '@tiptap/core' {
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
-    }
-}
-
-
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -24939,9 +24915,60 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
+    }
+}
+
+
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
     }
 }

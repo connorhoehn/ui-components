@@ -187,6 +187,8 @@ export { WrappedHangoutLayout } from '../realtime-modules/WrappedHangoutLayout';
 export type { WrappedHangoutLayoutProps } from '../realtime-modules/WrappedHangoutLayout';
 export { WrappedNotificationCenter } from '../realtime-modules/WrappedNotificationCenter';
 export type { WrappedNotificationCenterProps } from '../realtime-modules/WrappedNotificationCenter';
+export { WrappedNotificationBell } from '../realtime-modules/WrappedNotificationBell';
+export type { WrappedNotificationBellProps } from '../realtime-modules/WrappedNotificationBell';
 export { WrappedConnectionPill } from '../realtime-modules/WrappedConnectionPill';
 export type {
   WrappedConnectionPillProps,

@@ -204,6 +204,16 @@ export function FolderIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
+/** A bell: "notifications", "activity" — the header's inbox trigger. Since 2.407.37. */
+export function BellIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M4 11.5h8l-1-1.5V7a3 3 0 0 0-6 0v3z" />
+      <path d="M6.8 13.3a1.3 1.3 0 0 0 2.4 0" />
+    </svg>
+  );
+}
+
 /** A bell with a slash through it: "notify me quietly". */
 export function BellMutedIcon({ size = 16, ...rest }: GlyphProps) {
   return (

@@ -88,6 +88,8 @@ export type { WrappedHangoutLayoutProps } from './WrappedHangoutLayout';
 
 export { WrappedNotificationCenter } from './WrappedNotificationCenter';
 export type { WrappedNotificationCenterProps } from './WrappedNotificationCenter';
+export { WrappedNotificationBell } from './WrappedNotificationBell';
+export type { WrappedNotificationBellProps } from './WrappedNotificationBell';
 
 export { WrappedConnectionPill } from './WrappedConnectionPill';
 export type {
