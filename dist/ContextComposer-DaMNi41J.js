@@ -10,7 +10,7 @@ import { t as ie } from "./QuoteBlock-qqQqscMP.js";
 import { n as ae } from "./composerCommands-pkWHH8RU.js";
 import { a as oe, i as se, r as o } from "./composerContext-BLn1-Nao.js";
 import { i as ce, t as le } from "./FloatingComposerDock-ZezHreIm.js";
-import { r as ue } from "./RichChatComposer-BNi3Y6Dv.js";
+import { r as ue } from "./RichChatComposer-BypvrY-k.js";
 import { useCallback as s, useMemo as c, useRef as l, useState as u } from "react";
 import { Fragment as d, jsx as f, jsxs as p } from "react/jsx-runtime";
 //#region src/components/social/ContextComposer.tsx

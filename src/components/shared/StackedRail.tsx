@@ -14,6 +14,24 @@
 // first look: every row is a `RailNavList` row (same classes, same 32px
 // height, no gap between rows), and headings sit at that height too.
 //
+// ## Geometry: one gutter model
+//
+// Every row and every heading starts at RailNavList's 10px row inset
+// (`px-2.5`, part of the row class), then draws a run of 18px gutter cells
+// before its text: one per nesting level, plus one holding the caret when it
+// has children. A heading draws one cell — the caret, or an empty cell when
+// it does not collapse. So, with no other numbers:
+//
+// - a leaf at level d has its text at 10 + 18·d (level 0 = RailNavList's text);
+// - a row with children puts its caret in that column and its label one step
+//   in, where its children's text starts;
+// - a collapsible heading's caret sits in its level-0 rows' text column, and
+//   every heading's label (collapsible or not, and the rail caption) is at 28.
+//
+// (2.407.32; before, the heading button padded inside a padded row, rows with
+// a caret slot added it on top of an 18px/level `pl-*` table, and a heading
+// that did not collapse dropped its caret column.)
+//
 // ## Semantics
 //
 // A `<nav>` of groups. Each group is a `<section>` whose heading is a button
@@ -153,9 +171,21 @@ export const STACKED_RAIL_ROW_CLASS = RAIL_NAV_ITEM_CLASS;
 /** Vertical padding for headings and empty lines: RailNavList's row height. */
 const ROW_PAD_Y = 'py-[6px]';
 
-/** 10px base + 18px per nesting level, as static classes (no inline style). */
-const INDENT = ['pl-2.5', 'pl-[28px]', 'pl-[46px]', 'pl-[64px]', 'pl-[82px]', 'pl-[100px]', 'pl-[118px]', 'pl-[136px]'] as const;
-const indentFor = (depth: number) => INDENT[Math.min(depth, INDENT.length - 1)];
+/**
+ * One gutter cell: the single 18px indent step. A nesting level is one empty
+ * cell; a caret is one cell with the caret at its left edge (so the caret's x
+ * is the text x of a leaf at the same level). Exported for the geometry test.
+ */
+export const STACKED_RAIL_STEP_CLASS = 'flex h-5 w-[18px] shrink-0 items-center justify-start text-text-secondary';
+
+/**
+ * The run of gutter cells before a row's (or heading's) text. It cancels the
+ * flex gap that follows it, so the cells alone set the text x: the row class
+ * gaps by 10px (`gap-2.5`), a heading by 8px (`gap-2`).
+ */
+function Gutter({ cancelGap, children }: { cancelGap: '-mr-2.5' | '-mr-2'; children: ReactNode }) {
+  return <span className={cn('flex shrink-0', cancelGap)} data-rail-gutter="">{children}</span>;
+}
 
 /** Menu slot: hidden until the row is hovered or focused, or its menu is open. */
 const MENU_SLOT_CLASS =
@@ -315,7 +345,7 @@ export function StackedRail({
     }
   };
 
-  const renderRow = (row: StackedRailRow, depth: number, caretSlot: boolean): ReactNode => {
+  const renderRow = (row: StackedRailRow, depth: number): ReactNode => {
     const kids = row.children ?? [];
     const hasChildren = kids.length > 0;
     const open = hasChildren && isRowOpen(row);
@@ -335,22 +365,26 @@ export function StackedRail({
     };
     const body = (
       <>
-        {caretSlot && (
-          <span
-            className="flex h-5 w-3.5 shrink-0 items-center justify-center text-text-secondary"
-            data-testid={`${rowTestId}-caret`}
-            {...(hasChildren
-              ? {
-                  onClick: (event: MouseEvent) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    setRowOpen(row, !open);
-                  },
-                }
-              : {})}
-          >
-            {hasChildren && <RailCaretIcon open={open} />}
-          </span>
+        {(depth > 0 || hasChildren) && (
+          <Gutter cancelGap="-mr-2.5">
+            {Array.from({ length: depth }, (_, level) => (
+              <span key={level} className={STACKED_RAIL_STEP_CLASS} data-rail-step="indent" />
+            ))}
+            {hasChildren && (
+              <span
+                className={STACKED_RAIL_STEP_CLASS}
+                data-rail-step="caret"
+                data-testid={`${rowTestId}-caret`}
+                onClick={(event: MouseEvent) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  setRowOpen(row, !open);
+                }}
+              >
+                <RailCaretIcon open={open} />
+              </span>
+            )}
+          </Gutter>
         )}
         {row.icon != null && <span className="flex shrink-0 items-center text-text-secondary">{row.icon}</span>}
         <span className="min-w-0 flex-1 truncate" title={row.label}>{row.label}</span>
@@ -368,7 +402,6 @@ export function StackedRail({
     );
     const cls = cn(
       STACKED_RAIL_ROW_CLASS,
-      indentFor(depth),
       current ? 'font-semibold' : undefined,
       current && currentStyle === 'tint' && 'bg-primary/10',
       row.disabled ? 'cursor-default opacity-60 hover:bg-transparent' : 'cursor-pointer',
@@ -410,7 +443,7 @@ export function StackedRail({
         </div>
         {open && (
           <ul className="m-0 flex list-none flex-col p-0" data-testid={`${rowTestId}-children`}>
-            {kids.map((child) => renderRow(child, depth + 1, true))}
+            {kids.map((child) => renderRow(child, depth + 1))}
           </ul>
         )}
       </li>
@@ -425,6 +458,7 @@ export function StackedRail({
     <nav ref={rootRef} aria-label={ariaLabel} className={cn('flex min-w-0 flex-col', className)} data-testid={testId} onKeyDown={onKeyDown}>
       {title && (
         <div className="flex h-8 min-w-0 items-center gap-2 px-2.5">
+          <Gutter cancelGap="-mr-2"><span className={STACKED_RAIL_STEP_CLASS} data-rail-step="caption" /></Gutter>
           <span className={cn('min-w-0 truncate', RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK)} data-testid={heading}>{title}</span>
           {typeof count === 'number' && (
             <span className={cn('shrink-0', RAIL_GROUP_COUNT)} aria-label={`${count} items`} data-testid={`${testId}-count`}>{count}</span>
@@ -439,15 +473,15 @@ export function StackedRail({
         const groupTestId = group.testId ?? `${testId}-group-${group.id}`;
         const headerId = `${groupTestId}-header`;
         const key = `g:${group.id}`;
-        const caretSlot = group.rows.some((row) => (row.children?.length ?? 0) > 0);
         const label = (
           <>
-            {collapsible && (
-              <span className="grid h-5 w-3.5 shrink-0 place-items-center text-text-secondary">
-                <RailCaretIcon open={open} />
+            {/* Every heading keeps the caret cell, so all heading labels share one x. */}
+            <Gutter cancelGap="-mr-2">
+              <span className={STACKED_RAIL_STEP_CLASS} data-rail-step={collapsible ? 'caret' : 'caption'} data-testid={`${headerId}-caret`}>
+                {collapsible && <RailCaretIcon open={open} />}
               </span>
-            )}
-            <span className="min-w-0 truncate">{group.title}</span>
+            </Gutter>
+            <span className="min-w-0 truncate" data-testid={`${headerId}-label`}>{group.title}</span>
             {typeof group.count === 'number' && (
               <span className={cn('shrink-0', RAIL_GROUP_COUNT)} aria-label={`${group.count} items`} data-testid={`${groupTestId}-count`}>
                 {group.count}
@@ -501,11 +535,11 @@ export function StackedRail({
             {open && (
               <ul className="m-0 flex list-none flex-col p-0" data-testid={`${groupTestId}-rows`}>
                 {group.rows.length === 0 ? (
-                  <li className={cn('px-2.5 text-[13px] leading-5', ROW_PAD_Y, 'text-text-tertiary', collapsible && 'pl-[34px]')} data-testid={`${groupTestId}-empty`}>
+                  <li className={cn('px-2.5 text-[13px] leading-5', ROW_PAD_Y, 'text-text-tertiary')} data-testid={`${groupTestId}-empty`}>
                     {group.emptyLabel ?? 'Nothing here yet.'}
                   </li>
                 ) : (
-                  group.rows.map((row) => renderRow(row, 0, caretSlot))
+                  group.rows.map((row) => renderRow(row, 0))
                 )}
               </ul>
             )}

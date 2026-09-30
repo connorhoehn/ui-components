@@ -49,7 +49,7 @@ function DocumentsRail() {
         {
           id: 'handbook', label: 'Engineering handbook', meta: '3h', open: true, onSelect: pick('handbook'), menu: rowMenu('Engineering handbook'),
           children: [
-            { id: 'onboarding', label: 'Onboarding', meta: '2d', onSelect: pick('onboarding'), menu: rowMenu('Onboarding'), children: [
+            { id: 'onboarding', label: 'Onboarding', meta: '2d', open: true, onSelect: pick('onboarding'), menu: rowMenu('Onboarding'), children: [
               { id: 'day-one', label: 'Day one', meta: '5d', onSelect: pick('day-one') },
             ] },
             { id: 'oncall', label: 'On-call', meta: '1w', onSelect: pick('oncall'), pending: true },
@@ -75,7 +75,11 @@ function DocumentsRail() {
   );
 }
 
-/** The documents case beside a RailNavList, at the rail's ~220px width. */
+/**
+ * The documents case beside a RailNavList, at the rail's ~220px width. Three
+ * levels open (Engineering handbook → Onboarding → Day one) so the indent
+ * step and the caret column can be measured (tests/storybook/stacked-rail-geometry.spec.ts).
+ */
 export const Documents: Story = {
   args: { groups: [] },
   render: () => (

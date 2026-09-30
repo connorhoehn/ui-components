@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { StackedRail, STACKED_RAIL_ROW_CLASS, type StackedRailGroup } from '../StackedRail';
+import { StackedRail, STACKED_RAIL_ROW_CLASS, STACKED_RAIL_STEP_CLASS, type StackedRailGroup } from '../StackedRail';
 import { RailNavList, RAIL_NAV_ITEM_CLASS } from '../RailNavList';
 import { RAIL_GROUP_LABEL, RAIL_ITEM_COUNT, RAIL_ITEM_TEXT } from '../railType';
 
@@ -49,9 +49,10 @@ describe('StackedRail', () => {
     const navRow = screen.getByTestId('rail-nav-list-item-a');
     const stackedRow = screen.getByTestId('stacked-rail-row-a');
     expect(STACKED_RAIL_ROW_CLASS).toBe(RAIL_NAV_ITEM_CLASS);
-    // Everything but the nesting indent (pl-*) is RailNavList's class list.
-    const strip = (cls: string) => cls.split(' ').filter((c) => !c.startsWith('pl-')).sort().join(' ');
-    expect(strip(stackedRow.className)).toBe(strip(navRow.className));
+    // RailNavList's class list exactly, at every depth: nesting is gutter cells, not padding.
+    const sorted = (cls: string) => cls.split(' ').sort().join(' ');
+    expect(sorted(stackedRow.className)).toBe(sorted(navRow.className));
+    expect(sorted(screen.getByTestId('stacked-rail-row-b').className)).toBe(sorted(navRow.className));
     // Height: the vertical padding and line box that make a row 32px (6 + 20 + 6).
     const height = (el: HTMLElement) => el.className.split(' ').filter((c) => /^(py-|pt-|pb-|h-|min-h-|leading-)/.test(c)).sort();
     expect(height(navRow)).toEqual(['leading-5', 'py-[6px]']);
@@ -60,7 +61,7 @@ describe('StackedRail', () => {
     // Group headings: the same 6px padding around a 20px caret box.
     const header = screen.getByTestId('stacked-rail-group-g-header');
     expect(header).toHaveClass('py-[6px]');
-    expect(header.firstElementChild).toHaveClass('h-5');
+    expect(screen.getByTestId('stacked-rail-group-g-header-caret')).toHaveClass('h-5');
     expect(screen.getByTestId('stacked-rail-title').parentElement).toHaveClass('h-8');
     // No gap between rows, as in RailNavList.
     const gapless = (el: HTMLElement | null) => el?.className.split(' ').filter((c) => /^(gap-|space-y-)/.test(c)) ?? [];
@@ -74,15 +75,13 @@ describe('StackedRail', () => {
     const handbook = screen.getByTestId('stacked-rail-row-handbook');
     const onboarding = screen.getByTestId('stacked-rail-row-onboarding');
     expect(handbook).toHaveAttribute('data-depth', '0');
-    expect(handbook).toHaveClass('pl-2.5');
     expect(onboarding).toHaveAttribute('data-depth', '1');
-    expect(onboarding).toHaveClass('pl-[28px]');
     expect(handbook).toHaveAttribute('aria-expanded', 'true');
     expect(onboarding).toHaveAttribute('aria-expanded', 'false');
     expect(screen.getByTestId('stacked-rail-row-faq')).not.toHaveAttribute('aria-expanded');
     expect(screen.queryByTestId('stacked-rail-row-day-one')).toBeNull();
     fireEvent.click(screen.getByTestId('stacked-rail-row-onboarding-caret'));
-    expect(screen.getByTestId('stacked-rail-row-day-one')).toHaveClass('pl-[46px]');
+    expect(screen.getByTestId('stacked-rail-row-day-one')).toHaveAttribute('data-depth', '2');
     // A flat group reserves no caret slot, so its rows line up with RailNavList.
     expect(screen.queryByTestId('stacked-rail-row-all-caret')).toBeNull();
   });
