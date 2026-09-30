@@ -1759,6 +1759,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     setStaged(next);
     if (editor && !editor.isDestroyed) publishRef.current(editor);
   };
+  // The editor the derived state below was last read from — see the effect.
+  const syncedEditorRef = useRef<Editor | null>(null);
   useEffect(() => {
     // `isDestroyed` too: a composer revealed from a Suspense boundary (it is
     // lazy-loaded inside the presentation editor) has its effects reconnected
@@ -1769,21 +1771,39 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     // An external change may be a restored conversation or a send completion
     // from its previous composer. Do not rebuild the editor or move its caret
     // in response to our own onDraftChange echo.
-    if (onDraftChange && draft !== draftRef.current) {
+    const external = !!onDraftChange && draft !== draftRef.current;
+    // Our own echo on the same editor: NOTHING to do. `onUpdate` already set
+    // every piece of state below from this very text, and re-setting it here
+    // is not free — this effect runs in the passive phase of the keystroke's
+    // sync commit, so its setStates land at Default priority as a NESTED
+    // update. While keys arrive faster than that Default render (a heavy page,
+    // synthetic typing at delay 0) React never resets its nested-update count
+    // and throws "Maximum update depth exceeded" after ~50 keys (2.407.39).
+    if (!external && syncedEditorRef.current === editor) return;
+    syncedEditorRef.current = editor;
+    if (external) {
       draftRef.current = draft;
       // The pick first: the hidden-command plugin reads it while the new
       // content is applied.
       argPickRef.current = draft?.command?.argument ? { trigger: draft.command.trigger, item: draft.command.argument } : null;
-      editor.commands.setContent(draft?.html ?? '', { emitUpdate: false });
+      const html = draft?.html ?? '';
+      // Idempotent: a draft that already IS the editor's text (a host that
+      // copies the draft into a new object, a restore of what is on screen)
+      // keeps the editor, its caret and its history; the empty transaction
+      // lets the hidden-command plugin re-read the pick.
+      if (html === (editor.isEmpty ? '' : editor.getHTML())) editor.view.dispatch(editor.state.tr.setMeta(commandPrefixKey, true));
+      else editor.commands.setContent(html, { emitUpdate: false });
       const files = (draft?.files ?? []).map((file) => ({ id: `staged-${stagedSeq++}`, file }));
-      stagedRef.current = files; setStaged(files);
+      const sameFiles = files.length === stagedRef.current.length && files.every((item, i) => item.file === stagedRef.current[i]!.file);
+      if (!sameFiles) { stagedRef.current = files; setStaged(files); }
     }
     editorRef.current = editor;
+    const text = editor.getText();
     setEmpty(editor.isEmpty);
-    const hit = matchComposerCommand(editor.getText(), commandsRef.current);
+    const hit = matchComposerCommand(text, commandsRef.current);
     setActiveCommand(hit);
-    setArgumentEmpty(!hit || composerCommandArgumentText(editor.getText(), hit).trim() === '');
-    setPickedArgument(pickedArgumentFor(argPickRef.current, hit, editor.getText()));
+    setArgumentEmpty(!hit || composerCommandArgumentText(text, hit).trim() === '');
+    setPickedArgument(pickedArgumentFor(argPickRef.current, hit, text));
   }, [editor, draft, onDraftChange]);
 
   // Stamps `privacy` onto the published draft as soon as the CONTROLLED prop

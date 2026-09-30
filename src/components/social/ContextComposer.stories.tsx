@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ContextComposer, type ContextComposerProps } from './ContextComposer';
 import type { ComposerContext } from './composerContext';
+import type { ComposerMode, RichChatDraft } from './RichChatComposer';
 import { CallDock, type CallDockParticipant } from '../video/CallDock';
 import { CAST, DEVICES, noop } from '../video/documentCallStoryKit';
 import { EditorShell } from '../doc-editor/EditorShell';
@@ -262,4 +263,48 @@ export const PageUnderCallDock: Story = {
       </EditorShell>
     </div>
   ),
+};
+
+/**
+ * Stands in for the rest of a document page, which re-renders on every
+ * keystroke of a controlled draft (the draft is page state). Heavy on purpose:
+ * its commits outlast the gap between synthetic keys.
+ */
+function PageBody({ draft }: { draft: RichChatDraft | undefined }) {
+  const length = draft?.html.length ?? 0;
+  return (
+    <ol className="sr-only" aria-hidden>
+      {Array.from({ length: 4000 }, (_, i) => <li key={i}>{`${i}:${length}`}</li>)}
+    </ol>
+  );
+}
+
+/**
+ * A document page's composer as a host wires it: the draft and the mode are
+ * the host's state (`draft` + `onDraftChange`, `mode` + `onModeChange`), Agent
+ * first, and the page re-renders with every keystroke. The fast-typing
+ * Storybook spec types into this one at delay 0.
+ */
+export const ControlledAgent: Story = {
+  name: 'Document — controlled draft, Agent',
+  render: () => {
+    const [draft, setDraft] = useState<RichChatDraft | undefined>(undefined);
+    const [mode, setMode] = useState<ComposerMode>('agent');
+    return (
+      <div className="flex min-h-[20rem] flex-col justify-end gap-3 bg-workspace p-4">
+        <PageBody draft={draft} />
+        <ContextComposer
+          {...wired}
+          context={CONTEXTS.document!}
+          mode={mode}
+          onModeChange={setMode}
+          draft={draft}
+          onDraftChange={setDraft}
+          onSend={() => true}
+          data-testid="controlled-agent"
+        />
+        <output data-testid="controlled-agent-draft" className="text-xs text-text-secondary">{draft?.html ?? ''}</output>
+      </div>
+    );
+  },
 };
