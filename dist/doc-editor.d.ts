@@ -1585,7 +1585,7 @@ export declare interface DocumentZoomControl {
  */
 export declare function duplicateSlide(spec: DeckSpec, id: string): DeckSpec;
 
-export declare function EditorShell({ breadcrumbs, title, onTitleChange, titleLabel, kind, starred, onStarredChange, statusPill, path, crumbsTrailing, subtitle, metaBar, participants, onParticipantClick, onFollowParticipant, followingParticipantId, meta, saveState, headActions, tabs, activeTab, onTabChange, toolbar, children, footer, surface, explorer, workbench, label, variant, itemType, itemKey, titleSize, tabsTrailing, className, 'data-testid': testId, }: EditorShellProps): JSX.Element;
+export declare function EditorShell({ breadcrumbs, title, onTitleChange, titleLabel, kind, starred, onStarredChange, statusPill, path, crumbsTrailing, subtitle, metaBar, participants, onParticipantClick, onFollowParticipant, followingParticipantId, meta, saveState, headActions, tabs, activeTab, onTabChange, toolbar, children, footer, proposal, surface, explorer, workbench, label, variant, itemType, itemKey, titleSize, tabsTrailing, className, 'data-testid': testId, }: EditorShellProps): JSX.Element;
 
 export declare interface EditorShellProps {
     /** The trail above the title — "Sprint planning / Sprint review". */
@@ -1650,6 +1650,15 @@ export declare interface EditorShellProps {
      * renders below it. Since 2.365.0.
      */
     footer?: ReactNode;
+    /**
+     * An agent's pending edits — normally a `ProposedEditStrip`. Drawn between
+     * the scrolling surface and the `footer` dock, in the dock's gutter
+     * (`--dock-inset`), never scrolling and never inside the composer (which
+     * collapses when idle): a pending edit stays in view while the page it
+     * would change scrolls above it. Its own height is capped at 40% of the
+     * surface and scrolls past that. Since 2.408.0.
+     */
+    proposal?: ReactNode;
     /**
      * `workspace` (default) paints the surface the neutral grey a page or a
      * slide floats on; `plain` leaves it the panel colour, for a list or a
@@ -2763,6 +2772,53 @@ export declare type ProposalCardStatus = 'none' | 'drafting' | 'ready' | 'applie
 export declare type ProposalConfidence = 'high' | 'medium' | 'low';
 
 export declare type ProposalKind = 'field' | 'prose';
+
+export declare interface ProposedEdit {
+    /** Stable across re-renders; what the callbacks receive. */
+    id: string;
+    /** `insert` adds at the anchor; `replace` swaps the anchored range for the content. */
+    kind: 'insert' | 'replace';
+    /** A document range (editor positions) or the live cursor. */
+    anchor: {
+        from: number;
+        to: number;
+    } | 'cursor';
+    /** What would land. `text` is previewed as-is; `html` is previewed as its text. */
+    content: {
+        html?: string;
+        text?: string;
+    };
+    /** One line saying what the edit does — "Tightens the scope paragraph". */
+    summary?: string;
+    status: ProposedEditStatus;
+}
+
+/** Where the edit lands, in words. */
+export declare function proposedEditPlacement(edit: Pick<ProposedEdit, 'kind' | 'anchor'>): string;
+
+/** The text a proposal previews: `text` when given, else `html` without its markup. */
+export declare function proposedEditPreview(content: ProposedEdit['content']): string;
+
+export declare type ProposedEditStatus = 'streaming' | 'ready' | 'applying' | 'applied' | 'discarded';
+
+export declare function ProposedEditStrip({ proposals, onApply, onDiscard, onRevise, onApplyAll, onDiscardAll, title, className, 'data-testid': testId, }: ProposedEditStripProps): JSX.Element | null;
+
+export declare interface ProposedEditStripProps {
+    proposals: readonly ProposedEdit[];
+    onApply: (id: string) => void;
+    onDiscard: (id: string) => void;
+    /** Wired, a ready proposal offers "Revise…": a one-line instruction sent back with its id. */
+    onRevise?: (id: string, instruction: string) => void;
+    /** Shown as "Apply all" when more than one proposal is ready. */
+    onApplyAll?: () => void;
+    /** Shown as "Discard all" when more than one proposal is pending. */
+    onDiscardAll?: () => void;
+    /** Heading. Default "Proposed edit" / "N proposed edits". */
+    title?: string;
+    className?: string;
+    /** Default `proposed-edit-strip`. Items are `<id>-item`, actions `<id>-apply` etc. */
+    'data-testid'?: string;
+}
 
 /** CSS pixels per inch at the canvas's 96dpi page scale. */
 export declare const PX_PER_INCH = 96;
@@ -4079,12 +4135,12 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
+        canvasListStyle: {
             /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
              */
-            insertDiagram: (id?: string) => ReturnType;
+            setListStyle: (style: ListStyle) => ReturnType;
         };
     }
 }
@@ -4111,13 +4167,21 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
+        diagramMacro: {
             /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
              */
-            setListStyle: (style: ListStyle) => ReturnType;
+            insertDiagram: (id?: string) => ReturnType;
         };
+    }
+}
+
+
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
     }
 }
 
@@ -4127,26 +4191,6 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -4193,17 +4237,29 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
     }
 }

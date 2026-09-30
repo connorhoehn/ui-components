@@ -18,16 +18,16 @@ import { t as _ } from "./Modal-R-ipbeZi.js";
 import { t as v } from "./ConfirmDialog-DmA3u0Oq.js";
 import { t as y } from "./Input-CpLq80dw.js";
 import { t as b } from "./EmptyState-DnbFBYDA.js";
-import "./ErrorState-CinBNBGp.js";
+import { t as x } from "./ThinkingDots-BZOWJ3Fp.js";
 import "./Drawer--ORyFK8J.js";
 import "./Spinner-CYflBP-c.js";
-import { t as x } from "./StatusPill-c89IbU1L.js";
+import { t as S } from "./StatusPill-c89IbU1L.js";
 import "./FormField-BQhFpmZJ.js";
-import { t as S } from "./Sparkline-BIYPNDRu.js";
-import { i as C } from "./focusTrap-Cq08w2-T.js";
+import { t as C } from "./Sparkline-BIYPNDRu.js";
+import { i as w } from "./focusTrap-Cq08w2-T.js";
 import "./FilterChip-DJ7CPwFA.js";
 import "./SkeletonCard-D3FL0TB7.js";
-import { a as w, i as T, o as E } from "./ChannelHeader-DU7xbYcP.js";
+import { a as T, i as E } from "./ChannelHeader-Lm7dDa_U.js";
 import "./Slider-DEbQCKD1.js";
 import "./Tabs-BArH-7z_.js";
 import "./DockedPanelContext-pH9A5z1h.js";
@@ -845,7 +845,7 @@ function Ke({ targetId: e = "main-content", children: t = "Skip to main content"
 	return /* @__PURE__ */ K("a", {
 		href: `#${e}`,
 		className: n,
-		style: i ? Ge : w,
+		style: i ? Ge : E,
 		onFocus: () => a(!0),
 		onBlur: () => a(!1),
 		onClick: () => {
@@ -877,7 +877,7 @@ function qe(e, t) {
 }
 function Je({ message: e, politeness: t = "polite", atomic: n = !0, throttleMs: r = 0, role: i = "status", "data-testid": a }) {
 	let o = qe(e, r);
-	return /* @__PURE__ */ K(E, {
+	return /* @__PURE__ */ K(T, {
 		as: "div",
 		"data-testid": a,
 		children: /* @__PURE__ */ K("div", {
@@ -929,7 +929,7 @@ function Ze({ label: t, value: n, accent: r = !1, danger: i = !1, hint: a, title
 			children: [/* @__PURE__ */ K("div", {
 				className: e("text-[24px] font-bold leading-tight text-[var(--color-text-primary)]", f && "font-mono"),
 				children: n
-			}), _ && /* @__PURE__ */ K(S, {
+			}), _ && /* @__PURE__ */ K(C, {
 				data: _,
 				width: 80,
 				height: 20
@@ -2010,7 +2010,7 @@ function Pt({ role: t, content: n, toolCalls: r, streaming: i = !1, agentName: a
 				children: n ? s ? s(n) : /* @__PURE__ */ K("span", {
 					className: "whitespace-pre-wrap",
 					children: n
-				}) : i ? /* @__PURE__ */ K(T, {}) : null
+				}) : i ? /* @__PURE__ */ K(x, {}) : null
 			})
 		]
 	});
@@ -2041,11 +2041,11 @@ function Ft({ content: t, streaming: n = !1, defaultOpen: r = !1, className: i }
 					className: "text-[11px] font-semibold uppercase tracking-wide",
 					children: a
 				}),
-				n && !t && /* @__PURE__ */ K(T, { size: "sm" })
+				n && !t && /* @__PURE__ */ K(x, { size: "sm" })
 			]
 		}), /* @__PURE__ */ K("div", {
 			className: "px-3 py-2 text-xs text-[var(--color-text-secondary)] italic border-t border-[var(--color-border)] bg-surface whitespace-pre-wrap leading-relaxed",
-			children: t || /* @__PURE__ */ K(T, {})
+			children: t || /* @__PURE__ */ K(x, {})
 		})]
 	});
 }
@@ -2089,7 +2089,7 @@ function Lt({ user: t, items: n, className: r, "data-testid": i }) {
 			s.current && !s.current.contains(e.target) && c();
 		};
 		return document.addEventListener("mousedown", e), () => document.removeEventListener("mousedown", e);
-	}, [a, c]), C(a, c), /* @__PURE__ */ q("div", {
+	}, [a, c]), w(a, c), /* @__PURE__ */ q("div", {
 		ref: s,
 		"data-testid": i,
 		className: e("relative inline-block", r),
@@ -3250,7 +3250,7 @@ function Sn({ icon: t, label: n, subtitle: r, status: i = "neutral", statusLabel
 						className: "text-xs font-semibold text-text-primary truncate",
 						children: n
 					})]
-				}), /* @__PURE__ */ K(x, {
+				}), /* @__PURE__ */ K(S, {
 					state: i,
 					label: f,
 					size: "sm"

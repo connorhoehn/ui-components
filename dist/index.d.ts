@@ -15335,6 +15335,53 @@ export declare function promptContextStore(scope?: string): Omit<PromptContext, 
     get: () => readonly PromptContextItem[];
 };
 
+export declare interface ProposedEdit {
+    /** Stable across re-renders; what the callbacks receive. */
+    id: string;
+    /** `insert` adds at the anchor; `replace` swaps the anchored range for the content. */
+    kind: 'insert' | 'replace';
+    /** A document range (editor positions) or the live cursor. */
+    anchor: {
+        from: number;
+        to: number;
+    } | 'cursor';
+    /** What would land. `text` is previewed as-is; `html` is previewed as its text. */
+    content: {
+        html?: string;
+        text?: string;
+    };
+    /** One line saying what the edit does — "Tightens the scope paragraph". */
+    summary?: string;
+    status: ProposedEditStatus;
+}
+
+/** Where the edit lands, in words. */
+export declare function proposedEditPlacement(edit: Pick<ProposedEdit, 'kind' | 'anchor'>): string;
+
+/** The text a proposal previews: `text` when given, else `html` without its markup. */
+export declare function proposedEditPreview(content: ProposedEdit['content']): string;
+
+export declare type ProposedEditStatus = 'streaming' | 'ready' | 'applying' | 'applied' | 'discarded';
+
+export declare function ProposedEditStrip({ proposals, onApply, onDiscard, onRevise, onApplyAll, onDiscardAll, title, className, 'data-testid': testId, }: ProposedEditStripProps): JSX.Element | null;
+
+export declare interface ProposedEditStripProps {
+    proposals: readonly ProposedEdit[];
+    onApply: (id: string) => void;
+    onDiscard: (id: string) => void;
+    /** Wired, a ready proposal offers "Revise…": a one-line instruction sent back with its id. */
+    onRevise?: (id: string, instruction: string) => void;
+    /** Shown as "Apply all" when more than one proposal is ready. */
+    onApplyAll?: () => void;
+    /** Shown as "Discard all" when more than one proposal is pending. */
+    onDiscardAll?: () => void;
+    /** Heading. Default "Proposed edit" / "N proposed edits". */
+    title?: string;
+    className?: string;
+    /** Default `proposed-edit-strip`. Items are `<id>-item`, actions `<id>-apply` etc. */
+    'data-testid'?: string;
+}
+
 declare interface ProposedField {
     name: string;
     sectionType: string;
@@ -24734,12 +24781,12 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
+        canvasListStyle: {
             /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
              */
-            insertDiagram: (id?: string) => ReturnType;
+            setListStyle: (style: ListStyle) => ReturnType;
         };
     }
 }
@@ -24766,13 +24813,21 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
+        diagramMacro: {
             /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
              */
-            setListStyle: (style: ListStyle) => ReturnType;
+            insertDiagram: (id?: string) => ReturnType;
         };
+    }
+}
+
+
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
     }
 }
 
@@ -24782,26 +24837,6 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -24848,17 +24883,29 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
     }
 }
