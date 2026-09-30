@@ -4707,9 +4707,9 @@ export declare interface StackDiagramProps {
 }
 
 /**
- * The row control — exactly `RailNavList`'s row class: 32px tall (6px + a 20px
- * line + 6px), no gap between rows, so a StackedRail row is pixel-identical to
- * a RailNavList row. Group headings and the caption sit at the same 32px.
+ * The row control — the Org rail's (SubNavLayout) row: 13px/500 on a 36px
+ * pitch (8px + a 20px line + 8px, `RAIL_ROW_PITCH`), no gap between rows, no
+ * radius. Group headings and the caption sit at the same 36px.
  */
 export declare const STACKED_RAIL_ROW_CLASS: string;
 
@@ -4776,7 +4776,10 @@ export declare interface StackedRailProps {
     groups: StackedRailGroup[];
     /** The current row, in place of (or as well as) `row.current`. */
     selectedId?: string | null;
-    /** `tint` fills the current row too (a rail that also shows selections). */
+    /**
+     * The current row always wears the 3px primary edge. `tint` (default, the
+     * Org rail) adds the 8% primary fill; `weight` draws it semibold instead.
+     */
     currentStyle?: 'tint' | 'weight';
     /** The nav landmark's name. Default "Navigation". */
     'aria-label'?: string;
@@ -4797,6 +4800,11 @@ export declare interface StackedRailRow extends StackedRailDragProps {
     current?: boolean;
     /** Right-aligned muted meta: a number is a count ("0" shows), a string an age ("3h"). */
     meta?: number | string;
+    /**
+     * After `meta`, at the row's right edge: a small presence stack (20px
+     * avatars), a status dot. It never moves the text column or the 36px pitch.
+     */
+    trailing?: ReactNode;
     /** A small glyph before the label. None by default — the rail is words. */
     icon?: ReactNode;
     children?: StackedRailRow[];
@@ -6251,19 +6259,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -6281,10 +6276,15 @@ declare module '@tiptap/core' {
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
     }
 }
 
@@ -6294,6 +6294,26 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -6327,26 +6347,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
@@ -6364,5 +6364,13 @@ declare module '@tiptap/core' {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
+    }
+}
+
+
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
     }
 }

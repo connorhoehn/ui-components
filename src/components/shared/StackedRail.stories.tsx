@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { StackedRail, type StackedRailGroup } from './StackedRail';
-import { RailNavList } from './RailNavList';
+import { SubNavLayout } from './SubNavLayout';
 import { PresenceAvatars } from './PresenceAvatars';
 import { DropdownMenu } from './DropdownMenu';
 import { MoreIcon, PlusIcon, RepeatIcon } from '../ui/Icons';
@@ -55,7 +55,11 @@ function DocumentsRail() {
             { id: 'oncall', label: 'On-call', meta: '1w', onSelect: pick('oncall'), pending: true },
           ],
         },
-        { id: 'runbooks', label: 'Runbooks', meta: '6h', onSelect: pick('runbooks'), menu: rowMenu('Runbooks') },
+        {
+          id: 'runbooks', label: 'Runbooks', meta: '6h', onSelect: pick('runbooks'), menu: rowMenu('Runbooks'),
+          // Who has this page open: a small stack after the age, clear of the text column.
+          trailing: <PresenceAvatars size={20} maxVisible={2} users={[{ id: 'u1', name: 'Ada Lovelace' }, { id: 'u3', name: 'Alan Turing' }]} />,
+        },
       ],
     },
     {
@@ -76,9 +80,11 @@ function DocumentsRail() {
 }
 
 /**
- * The documents case beside a RailNavList, at the rail's ~220px width. Three
- * levels open (Engineering handbook → Onboarding → Day one) so the indent
- * step and the caret column can be measured (tests/storybook/stacked-rail-geometry.spec.ts).
+ * The documents case beside the Org rail (SubNavLayout, the reference), both
+ * 220px. Three levels open (Engineering handbook → Onboarding → Day one) and
+ * a row with an age plus a presence stack (Runbooks), so the 36px pitch, the
+ * indent step and the caret column can be measured
+ * (tests/storybook/stacked-rail-geometry.spec.ts).
  */
 export const Documents: Story = {
   args: { groups: [] },
@@ -87,11 +93,11 @@ export const Documents: Story = {
       <div className="w-[220px] bg-surface" data-testid="story-stacked">
         <DocumentsRail />
       </div>
-      <div className="w-[220px] bg-surface" data-testid="story-rail-nav-list">
-        <RailNavList currentStyle="tint" aria-label="Views" items={[
-          { id: 'all', label: 'All documents', count: 14 },
-          { id: 'recent', label: 'Recent', current: true },
-          { id: 'shared', label: 'Shared with me', count: 0 },
+      <div className="h-[420px] w-[440px]" data-testid="story-subnav">
+        <SubNavLayout title="Agent library" items={[
+          { path: '#all', label: 'All documents', count: 14 },
+          { path: '#recent', label: 'Recent' },
+          { path: '#reviewer', label: 'Code reviewer', count: 4, group: 'Kind' },
         ]} />
       </div>
     </div>

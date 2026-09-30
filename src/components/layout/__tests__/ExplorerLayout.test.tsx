@@ -32,6 +32,16 @@ describe('ExplorerLayout', () => {
     expect(screen.getByTestId('explorer-layout-rail').className).toContain('w-[240px]');
     expect(screen.getByTestId('explorer-layout-pane').className).not.toContain('px-8');
   });
+
+  it('railWidth="xs" is the Org rail’s 220px, one step under sm (240px)', () => {
+    const { rerender } = render(<ExplorerLayout rail={<p>tree</p>} railWidth="xs"><p>pane</p></ExplorerLayout>);
+    const rail = () => screen.getByTestId('explorer-layout-rail').className.split(' ').filter((c) => /^w-/.test(c));
+    expect(rail()).toEqual(['w-[220px]']);
+    rerender(<ExplorerLayout rail={<p>tree</p>} railWidth="sm"><p>pane</p></ExplorerLayout>);
+    expect(rail()).toEqual(['w-[240px]']);
+    rerender(<ExplorerLayout rail={<p>tree</p>} railWidth="xs" railCollapsed><p>pane</p></ExplorerLayout>);
+    expect(rail()).toEqual(['w-9']);
+  });
 });
 
 describe('ExplorerLayout asidePlacement', () => {

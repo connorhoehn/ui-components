@@ -8556,12 +8556,14 @@ export declare interface ExplorerLayoutProps {
     /** Optional right-hand context bar. Stacks below the pane under `2xl`, sits beside it at `2xl` and up. */
     aside?: ReactNode;
     /**
-     * Rail width. `md` is the 300px agentcore measured against; `sm` is 240px for
+     * Rail width. `md` is the 300px agentcore measured against; `xs` is 220px,
+     * the Org rail's own width (SubNavLayout's default), for a documents rail
+     * that should sit at it (since 2.407.33); `sm` is 240px for
      * a shallower tree; `lg` is 368px for a two-line work list with its toolbar
      * (the Documents Work column, measured against the redesign's 370px); `ms`
      * is 264px for a one-line title list (the Initiatives v2 rail, since 2.392.0).
      */
-    railWidth?: 'sm' | 'ms' | 'md' | 'ml' | 'lg';
+    railWidth?: 'xs' | 'sm' | 'ms' | 'md' | 'ml' | 'lg';
     /**
      * A band ABOVE all three columns — a scope header (breadcrumb, title, stats,
      * tabs) that names what the rail, the pane and the aside are all looking at.
@@ -18814,9 +18816,9 @@ export declare interface StackDiagramProps {
 }
 
 /**
- * The row control — exactly `RailNavList`'s row class: 32px tall (6px + a 20px
- * line + 6px), no gap between rows, so a StackedRail row is pixel-identical to
- * a RailNavList row. Group headings and the caption sit at the same 32px.
+ * The row control — the Org rail's (SubNavLayout) row: 13px/500 on a 36px
+ * pitch (8px + a 20px line + 8px, `RAIL_ROW_PITCH`), no gap between rows, no
+ * radius. Group headings and the caption sit at the same 36px.
  */
 export declare const STACKED_RAIL_ROW_CLASS: string;
 
@@ -18883,7 +18885,10 @@ export declare interface StackedRailProps {
     groups: StackedRailGroup[];
     /** The current row, in place of (or as well as) `row.current`. */
     selectedId?: string | null;
-    /** `tint` fills the current row too (a rail that also shows selections). */
+    /**
+     * The current row always wears the 3px primary edge. `tint` (default, the
+     * Org rail) adds the 8% primary fill; `weight` draws it semibold instead.
+     */
     currentStyle?: 'tint' | 'weight';
     /** The nav landmark's name. Default "Navigation". */
     'aria-label'?: string;
@@ -18904,6 +18909,11 @@ export declare interface StackedRailRow extends StackedRailDragProps {
     current?: boolean;
     /** Right-aligned muted meta: a number is a count ("0" shows), a string an age ("3h"). */
     meta?: number | string;
+    /**
+     * After `meta`, at the row's right edge: a small presence stack (20px
+     * avatars), a status dot. It never moves the text column or the 36px pitch.
+     */
+    trailing?: ReactNode;
     /** A small glyph before the label. None by default — the rail is words. */
     icon?: ReactNode;
     children?: StackedRailRow[];
@@ -24620,11 +24630,12 @@ declare interface UseActivityBusReturn {
       footer?: ReactNode;
       children: ReactNode;
       /**
-       * sm 240, ms 264 (a one-line title list — the Initiatives v2 rail, since
+       * xs 220 (the Org rail's width — SubNavLayout's default — for a documents
+       * rail beside it, since 2.407.33), sm 240, ms 264 (a one-line title list — the Initiatives v2 rail, since
        * 2.392.0), md 300, ml 320 (the Folders explorer, 2.386.0), lg 368 (a
        * two-line work list with a toolbar).
        */
-      width?: 'sm' | 'ms' | 'md' | 'ml' | 'lg';
+      width?: 'xs' | 'sm' | 'ms' | 'md' | 'ml' | 'lg';
       /**
        * A count beside the title ("Work 11"). Omit for none; zero shows "0" —
        * an empty list is a fact, not a missing number.
@@ -24736,19 +24747,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -24766,10 +24764,15 @@ declare module '@tiptap/core' {
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
     }
 }
 
@@ -24779,6 +24782,26 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -24812,26 +24835,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
@@ -24849,5 +24852,13 @@ declare module '@tiptap/core' {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
+    }
+}
+
+
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
     }
 }

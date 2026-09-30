@@ -15,8 +15,9 @@
 // same constants as SubNavLayout and GroupedList's rail rows, so the words
 // match every other rail. Only the height differs: a row is 32px (6px + a
 // 20px line + 6px) with no gap between rows, not the 36px rail pitch, because
-// the mockup draws these as a tight list of views above the rows. StackedRail
-// reuses this exact row class (`RAIL_NAV_ITEM_CLASS`), so its rows match.
+// the mockup draws these as a tight list of views above the rows. (StackedRail
+// drew this row until 2.407.33; it now draws the Org rail's 36px SubNavLayout
+// row, `RAIL_ROW_PITCH`.)
 //
 // ## Honest items
 //
@@ -57,7 +58,7 @@ export interface RailNavListProps {
   'data-testid'?: string;
 }
 
-/** The row control's classes. Not in the barrel: StackedRail composes it. */
+/** The row control's classes. Not in the barrel. */
 export const RAIL_NAV_ITEM_CLASS = cn(
   'flex w-full min-w-0 items-center gap-2.5 rounded-md border-0 bg-transparent px-2.5 py-[6px] text-left',
   RAIL_ITEM_TEXT,

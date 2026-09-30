@@ -11,22 +11,25 @@
 // pages → child pages, an age at the right, a ⋯ per row, presence on a
 // source, drag to move) reached for `TreeView size="rail"` and a card panel
 // instead, and so drew a second rail look. StackedRail is that tree in the
-// first look: every row is a `RailNavList` row (same classes, same 32px
-// height, no gap between rows), and headings sit at that height too.
+// first look: every row is a `SubNavLayout` row — the Org rail itself (13px
+// type, a 36px pitch of 8px + a 20px line + 8px, a 14px side inset behind a
+// 3px left edge that turns primary on the current row, over the 8% tint) —
+// and headings sit at that pitch too. (2.407.30–.32 drew RailNavList's 32px
+// row; since 2.407.33 the rows are the reference's 36px, `RAIL_ROW_PITCH`.)
 //
 // ## Geometry: one gutter model
 //
-// Every row and every heading starts at RailNavList's 10px row inset
-// (`px-2.5`, part of the row class), then draws a run of 18px gutter cells
+// Every row and every heading starts at SubNavLayout's row inset (a 3px edge
+// + 14px, so text at 17px; part of the row class), then draws a run of 18px gutter cells
 // before its text: one per nesting level, plus one holding the caret when it
 // has children. A heading draws one cell — the caret, or an empty cell when
 // it does not collapse. So, with no other numbers:
 //
-// - a leaf at level d has its text at 10 + 18·d (level 0 = RailNavList's text);
+// - a leaf at level d has its text at 17 + 18·d (level 0 = SubNavLayout's text);
 // - a row with children puts its caret in that column and its label one step
 //   in, where its children's text starts;
 // - a collapsible heading's caret sits in its level-0 rows' text column, and
-//   every heading's label (collapsible or not, and the rail caption) is at 28.
+//   every heading's label (collapsible or not, and the rail caption) is at 35.
 //
 // (2.407.32; before, the heading button padded inside a padded row, rows with
 // a caret slot added it on top of an 18px/level `pl-*` table, and a heading
@@ -58,13 +61,15 @@ import {
 } from 'react';
 import { cn } from '../../lib/cn';
 import { IconButton } from '../ui/IconButton';
-import { RAIL_NAV_ITEM_CLASS } from './RailNavList';
 import {
   RailCaretIcon,
+  RAIL_CURRENT_FILL,
   RAIL_GROUP_COUNT,
   RAIL_GROUP_LABEL,
   RAIL_GROUP_LABEL_INK,
   RAIL_ITEM_COUNT,
+  RAIL_ITEM_TEXT,
+  RAIL_ROW_PAD_Y,
 } from './railType';
 
 /** `data-*` attributes passed straight through to a row or group heading. */
@@ -96,6 +101,11 @@ export interface StackedRailRow extends StackedRailDragProps {
   current?: boolean;
   /** Right-aligned muted meta: a number is a count ("0" shows), a string an age ("3h"). */
   meta?: number | string;
+  /**
+   * After `meta`, at the row's right edge: a small presence stack (20px
+   * avatars), a status dot. It never moves the text column or the 36px pitch.
+   */
+  trailing?: ReactNode;
   /** A small glyph before the label. None by default — the rail is words. */
   icon?: ReactNode;
   children?: StackedRailRow[];
@@ -153,7 +163,10 @@ export interface StackedRailProps {
   groups: StackedRailGroup[];
   /** The current row, in place of (or as well as) `row.current`. */
   selectedId?: string | null;
-  /** `tint` fills the current row too (a rail that also shows selections). */
+  /**
+   * The current row always wears the 3px primary edge. `tint` (default, the
+   * Org rail) adds the 8% primary fill; `weight` draws it semibold instead.
+   */
   currentStyle?: 'tint' | 'weight';
   /** The nav landmark's name. Default "Navigation". */
   'aria-label'?: string;
@@ -162,14 +175,32 @@ export interface StackedRailProps {
 }
 
 /**
- * The row control — exactly `RailNavList`'s row class: 32px tall (6px + a 20px
- * line + 6px), no gap between rows, so a StackedRail row is pixel-identical to
- * a RailNavList row. Group headings and the caption sit at the same 32px.
+ * SubNavLayout's row inset: a 3px left edge (transparent; primary when
+ * current) then 14px, so text sits 17px in. Rows, headings, the caption and
+ * the empty line all start here.
  */
-export const STACKED_RAIL_ROW_CLASS = RAIL_NAV_ITEM_CLASS;
+const ROW_INSET = 'border-y-0 border-r-0 border-l-[3px] border-solid border-transparent px-[14px]';
 
-/** Vertical padding for headings and empty lines: RailNavList's row height. */
-const ROW_PAD_Y = 'py-[6px]';
+/**
+ * The row control — the Org rail's (SubNavLayout) row: 13px/500 on a 36px
+ * pitch (8px + a 20px line + 8px, `RAIL_ROW_PITCH`), no gap between rows, no
+ * radius. Group headings and the caption sit at the same 36px.
+ */
+export const STACKED_RAIL_ROW_CLASS = cn(
+  'flex w-full min-w-0 items-center gap-2.5 bg-transparent text-left',
+  ROW_INSET,
+  RAIL_ROW_PAD_Y,
+  RAIL_ITEM_TEXT,
+  'text-text-primary no-underline [font-family:inherit]',
+  'transition-colors duration-100 hover:bg-surface-hover',
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary',
+);
+
+/** The current row: the 3px primary edge (plus the tint or the weight). */
+const CURRENT_EDGE = 'border-l-primary';
+
+/** Vertical padding for headings and empty lines: the row's 36px pitch. */
+const ROW_PAD_Y = RAIL_ROW_PAD_Y;
 
 /**
  * One gutter cell: the single 18px indent step. A nesting level is one empty
@@ -248,7 +279,7 @@ export function StackedRail({
   actions,
   groups,
   selectedId = null,
-  currentStyle = 'weight',
+  currentStyle = 'tint',
   'aria-label': ariaLabel = 'Navigation',
   className,
   'data-testid': testId = 'stacked-rail',
@@ -398,12 +429,15 @@ export function StackedRail({
             {row.meta}
           </span>
         )}
+        {row.trailing != null && row.trailing !== false && (
+          <span className="flex h-5 shrink-0 items-center" data-testid={`${rowTestId}-trailing`}>{row.trailing}</span>
+        )}
       </>
     );
     const cls = cn(
       STACKED_RAIL_ROW_CLASS,
-      current ? 'font-semibold' : undefined,
-      current && currentStyle === 'tint' && 'bg-primary/10',
+      current && CURRENT_EDGE,
+      current && (currentStyle === 'tint' ? RAIL_CURRENT_FILL : 'font-semibold'),
       row.disabled ? 'cursor-default opacity-60 hover:bg-transparent' : 'cursor-pointer',
       row.pending && 'opacity-60',
     );
@@ -457,7 +491,7 @@ export function StackedRail({
   return (
     <nav ref={rootRef} aria-label={ariaLabel} className={cn('flex min-w-0 flex-col', className)} data-testid={testId} onKeyDown={onKeyDown}>
       {title && (
-        <div className="flex h-8 min-w-0 items-center gap-2 px-2.5">
+        <div className={cn('flex h-9 min-w-0 items-center gap-2', ROW_INSET)}>
           <Gutter cancelGap="-mr-2"><span className={STACKED_RAIL_STEP_CLASS} data-rail-step="caption" /></Gutter>
           <span className={cn('min-w-0 truncate', RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK)} data-testid={heading}>{title}</span>
           {typeof count === 'number' && (
@@ -490,7 +524,8 @@ export function StackedRail({
           </>
         );
         const headerClass = cn(
-          'flex min-w-0 flex-1 items-center gap-2 rounded-md border-0 bg-transparent px-2.5 text-left [font-family:inherit]',
+          'flex min-w-0 flex-1 items-center gap-2 bg-transparent text-left [font-family:inherit]',
+          ROW_INSET,
           ROW_PAD_Y,
           RAIL_GROUP_LABEL,
           RAIL_GROUP_LABEL_INK,
@@ -517,7 +552,7 @@ export function StackedRail({
                   tabIndex={tabKey === key ? 0 : -1}
                   onFocus={() => setFocusedKey(key)}
                   onClick={() => setGroupOpen(group, !open)}
-                  className={cn(headerClass, 'cursor-pointer hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary')}
+                  className={cn(headerClass, 'cursor-pointer hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary')}
                   {...dragProps(group)}
                 >
                   {label}
@@ -535,7 +570,7 @@ export function StackedRail({
             {open && (
               <ul className="m-0 flex list-none flex-col p-0" data-testid={`${groupTestId}-rows`}>
                 {group.rows.length === 0 ? (
-                  <li className={cn('px-2.5 text-[13px] leading-5', ROW_PAD_Y, 'text-text-tertiary')} data-testid={`${groupTestId}-empty`}>
+                  <li className={cn('text-[13px] leading-5', ROW_INSET, ROW_PAD_Y, 'text-text-tertiary')} data-testid={`${groupTestId}-empty`}>
                     {group.emptyLabel ?? 'Nothing here yet.'}
                   </li>
                 ) : (

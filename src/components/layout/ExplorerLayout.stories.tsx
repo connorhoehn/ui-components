@@ -36,6 +36,7 @@ import type { ComposerCommand } from '../social/composerCommands';
 import { ContextColumn, type ContextColumnState } from './ContextColumn';
 import { ConversationShelf } from '../social/ConversationShelf';
 import { TreeView } from '../shared/TreeView';
+import { StackedRail } from '../shared/StackedRail';
 
 const meta: Meta<typeof ExplorerLayout> = {
   title: 'Layout/ExplorerLayout',
@@ -903,4 +904,34 @@ export const DocumentsSurfaceOneTypeScaleDark: Story = {
   name: 'Documents surface — one type scale (dark)',
   parameters: { layout: 'fullscreen' },
   render: () => <div data-theme="dark"><DocumentsRailScaleFrame /></div>,
+};
+
+/**
+ * 2.407.33 — `railWidth="xs"` (220px): the Org rail's own width
+ * (SubNavLayout's default), so a documents rail sits at it. The Org rail
+ * (SubNavLayout, 220px) is drawn on the left for comparison.
+ */
+export const RailWidthXs: Story = {
+  name: 'Rail width xs (220px) beside the Org rail',
+  parameters: { layout: 'fullscreen' },
+  render: () => (
+    <div className="flex h-[480px]" data-testid="story-rail-width-xs">
+      <SubNavLayout title="Agent library" items={[
+        { path: '#all', label: 'All agents', count: 12 },
+        { path: '#reviewer', label: 'Code reviewer', count: 4, group: 'Kind' },
+        { path: '#triage', label: 'Bug triage', count: 2, group: 'Kind' },
+      ]} />
+      <ExplorerLayout railWidth="xs" railTitle="Documents" rail={
+        <StackedRail aria-label="Documents" selectedId="meetings" groups={[
+          { id: 'views', title: 'Views', collapsible: false, rows: [{ id: 'all', label: 'All documents', meta: 14 }] },
+          { id: 'sprint', title: 'Sprint planning', count: 2, rows: [
+            { id: 'meetings', label: 'Meetings', meta: '2d', open: true, children: [{ id: 'standup', label: 'Standup notes', meta: '3h' }] },
+            { id: 'retro', label: 'Retro', meta: '1w' },
+          ] },
+        ]} />
+      }>
+        <div className="p-6 text-sm text-text-secondary">Pane</div>
+      </ExplorerLayout>
+    </div>
+  ),
 };

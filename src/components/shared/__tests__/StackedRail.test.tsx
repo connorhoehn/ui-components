@@ -1,8 +1,8 @@
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { StackedRail, STACKED_RAIL_ROW_CLASS, STACKED_RAIL_STEP_CLASS, type StackedRailGroup } from '../StackedRail';
-import { RailNavList, RAIL_NAV_ITEM_CLASS } from '../RailNavList';
-import { RAIL_GROUP_LABEL, RAIL_ITEM_COUNT, RAIL_ITEM_TEXT } from '../railType';
+import { RAIL_CURRENT_FILL, RAIL_GROUP_LABEL, RAIL_ITEM_COUNT, RAIL_ITEM_TEXT, RAIL_ROW_PAD_Y, RAIL_ROW_PITCH } from '../railType';
+import { inactiveNavItemClassName } from '../SubNavLayout';
 
 afterEach(cleanup);
 
@@ -35,39 +35,63 @@ describe('StackedRail', () => {
     expect(screen.getByTestId('stacked-rail-count')).toHaveTextContent('14');
     expect(screen.getByTestId('stacked-rail-group-confluence-count')).toHaveTextContent('3');
     const row = screen.getByTestId('stacked-rail-row-all');
-    expect(row).toHaveClass(...RAIL_ITEM_TEXT.split(' '), 'py-[6px]');
+    expect(row).toHaveClass(...RAIL_ITEM_TEXT.split(' '), RAIL_ROW_PAD_Y);
     // A non-collapsible group is a heading, not a button.
     expect(screen.getByTestId('stacked-rail-group-views-header').tagName).toBe('H3');
     expect(screen.getByTestId('stacked-rail-group-confluence-header')).toHaveAttribute('aria-expanded', 'true');
   });
 
-  it('draws a row pixel-identical to a RailNavList row: same classes, same 32px height, no gap', () => {
-    render(<>
-      <RailNavList items={[{ id: 'a', label: 'A', count: 2 }]} />
-      <StackedRail title="T" groups={[{ id: 'g', title: 'G', rows: [{ id: 'a', label: 'A', meta: 2, children: [{ id: 'b', label: 'B' }], open: true }] }]} />
-    </>);
-    const navRow = screen.getByTestId('rail-nav-list-item-a');
-    const stackedRow = screen.getByTestId('stacked-rail-row-a');
-    expect(STACKED_RAIL_ROW_CLASS).toBe(RAIL_NAV_ITEM_CLASS);
-    // RailNavList's class list exactly, at every depth: nesting is gutter cells, not padding.
+  it('draws the Org rail’s row (SubNavLayout): 36px pitch, 3px edge + 14px inset, no gap', () => {
+    render(<StackedRail title="T" groups={[{ id: 'g', title: 'G', rows: [{ id: 'a', label: 'A', meta: 2, children: [{ id: 'b', label: 'B' }], open: true }] }]} />);
+    const row = screen.getByTestId('stacked-rail-row-a');
+    const child = screen.getByTestId('stacked-rail-row-b');
+    // Same class list at every depth: nesting is gutter cells, not padding.
     const sorted = (cls: string) => cls.split(' ').sort().join(' ');
-    expect(sorted(stackedRow.className)).toBe(sorted(navRow.className));
-    expect(sorted(screen.getByTestId('stacked-rail-row-b').className)).toBe(sorted(navRow.className));
-    // Height: the vertical padding and line box that make a row 32px (6 + 20 + 6).
+    expect(sorted(row.className)).toBe(sorted(STACKED_RAIL_ROW_CLASS + ' cursor-pointer'));
+    expect(sorted(child.className)).toBe(sorted(row.className));
+    // SubNavLayout's row inset and vertical padding.
+    for (const cls of ['px-[14px]', 'border-l-[3px]', 'border-transparent', RAIL_ROW_PAD_Y]) {
+      expect(inactiveNavItemClassName.split(' ')).toContain(cls);
+      expect(row).toHaveClass(cls);
+    }
+    // 36px = 8 + a 20px line + 8, on every row, heading and the caption.
+    expect(RAIL_ROW_PITCH).toBe(36);
+    expect(RAIL_ROW_PAD_Y).toBe('py-2');
     const height = (el: HTMLElement) => el.className.split(' ').filter((c) => /^(py-|pt-|pb-|h-|min-h-|leading-)/.test(c)).sort();
-    expect(height(navRow)).toEqual(['leading-5', 'py-[6px]']);
-    expect(height(stackedRow)).toEqual(height(navRow));
-    expect(height(screen.getByTestId('stacked-rail-row-b'))).toEqual(height(navRow));
-    // Group headings: the same 6px padding around a 20px caret box.
+    expect(height(row)).toEqual(['leading-5', 'py-2']);
+    expect(height(child)).toEqual(height(row));
     const header = screen.getByTestId('stacked-rail-group-g-header');
-    expect(header).toHaveClass('py-[6px]');
+    expect(header).toHaveClass('py-2', 'px-[14px]', 'border-l-[3px]');
     expect(screen.getByTestId('stacked-rail-group-g-header-caret')).toHaveClass('h-5');
-    expect(screen.getByTestId('stacked-rail-title').parentElement).toHaveClass('h-8');
-    // No gap between rows, as in RailNavList.
+    expect(screen.getByTestId('stacked-rail-title').parentElement).toHaveClass('h-9');
+    // No gap between rows.
     const gapless = (el: HTMLElement | null) => el?.className.split(' ').filter((c) => /^(gap-|space-y-)/.test(c)) ?? [];
-    expect(gapless(navRow.closest('ul'))).toEqual([]);
-    expect(gapless(stackedRow.closest('ul'))).toEqual([]);
-    expect(screen.getByTestId('stacked-rail-row-a-meta').className).toBe(screen.getByTestId('rail-nav-list-count-a').className);
+    expect(gapless(row.closest('ul'))).toEqual([]);
+    expect(screen.getByTestId('stacked-rail-row-a-meta')).toHaveClass(...RAIL_ITEM_COUNT.split(' '));
+  });
+
+  it('draws `trailing` after `meta` at the right, without moving the text column or the height', () => {
+    render(<StackedRail groups={[{ id: 'g', title: 'G', rows: [
+      { id: 'with', label: 'With', meta: '3h', trailing: <span data-testid="avatars">AL</span> },
+      { id: 'without', label: 'Without', meta: '3h' },
+    ] }]} />);
+    const withRow = screen.getByTestId('stacked-rail-row-with');
+    const withoutRow = screen.getByTestId('stacked-rail-row-without');
+    const trailing = screen.getByTestId('stacked-rail-row-with-trailing');
+    expect(trailing).toContainElement(screen.getByTestId('avatars'));
+    // Order: label, meta, trailing — the last thing in the row.
+    const kids = [...withRow.children];
+    expect(kids.indexOf(screen.getByTestId('stacked-rail-row-with-meta'))).toBe(kids.length - 2);
+    expect(kids.at(-1)).toBe(trailing);
+    // Right-aligned: the label is the flex-1 column before it; the slot never grows.
+    expect(withRow.querySelector('span[title]')).toHaveClass('flex-1');
+    expect(trailing).toHaveClass('shrink-0', 'h-5');
+    expect(trailing.className).not.toMatch(/(^| )(flex-1|grow|p[xylr]?-|m[xylr]?-)/);
+    // Same control classes (inset, pitch) and same content before the text.
+    expect(withRow.className).toBe(withoutRow.className);
+    expect(withRow.querySelector('span[title]')?.previousElementSibling ?? null).toBeNull();
+    expect(withoutRow.querySelector('span[title]')?.previousElementSibling ?? null).toBeNull();
+    expect(screen.queryByTestId('stacked-rail-row-without-trailing')).toBeNull();
   });
 
   it('nests rows 18px per level with a disclosure on rows that have children', () => {
@@ -137,13 +161,16 @@ describe('StackedRail', () => {
 
   it('selects on Enter/Space and marks the current row', () => {
     const select = vi.fn();
-    render(<StackedRail currentStyle="tint" groups={[{ id: 'g', title: 'G', rows: [
+    render(<StackedRail groups={[{ id: 'g', title: 'G', rows: [
       { id: 'a', label: 'A', onSelect: select, current: true },
       { id: 'b', label: 'B', href: '/b', onSelect: select, onNavigate: (event) => event.preventDefault() },
     ] }]} />);
     const a = screen.getByTestId('stacked-rail-row-a');
     expect(a).toHaveAttribute('aria-current', 'page');
-    expect(a).toHaveClass('font-semibold', 'bg-primary/10');
+    // The Org rail's current row: the 3px primary edge over the 8% tint (default).
+    expect(a).toHaveClass('border-l-primary', RAIL_CURRENT_FILL);
+    expect(a).not.toHaveClass('font-semibold');
+    expect(screen.getByTestId('stacked-rail-row-b')).not.toHaveClass('border-l-primary');
     fireEvent.click(a);
     expect(select).toHaveBeenCalledTimes(1);
     const b = screen.getByRole('link', { name: 'B' });

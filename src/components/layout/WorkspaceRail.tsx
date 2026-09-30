@@ -19,11 +19,12 @@ export interface WorkspaceRailProps {
   footer?: ReactNode;
   children: ReactNode;
   /**
-   * sm 240, ms 264 (a one-line title list — the Initiatives v2 rail, since
+   * xs 220 (the Org rail's width — SubNavLayout's default — for a documents
+   * rail beside it, since 2.407.33), sm 240, ms 264 (a one-line title list — the Initiatives v2 rail, since
    * 2.392.0), md 300, ml 320 (the Folders explorer, 2.386.0), lg 368 (a
    * two-line work list with a toolbar).
    */
-  width?: 'sm' | 'ms' | 'md' | 'ml' | 'lg';
+  width?: 'xs' | 'sm' | 'ms' | 'md' | 'ml' | 'lg';
   /**
    * A count beside the title ("Work 11"). Omit for none; zero shows "0" —
    * an empty list is a fact, not a missing number.
@@ -80,7 +81,7 @@ export function WorkspaceRail({
   const toggleName = toggleLabel ?? `${collapsed ? 'Show' : 'Hide'} ${label ?? title ?? 'the list'}`;
   return (
     <nav aria-label={label ?? title ?? 'Workspace'} data-testid={testId} data-collapsed={collapsed}
-      className={cn('flex h-full min-h-0 shrink-0 flex-col border-r border-border bg-surface-panel', collapsed ? 'w-9' : width === 'sm' ? 'w-[240px]' : width === 'ms' ? 'w-[264px]' : width === 'lg' ? 'w-[368px]' : width === 'ml' ? 'w-[320px]' : 'w-[300px]', className)}>
+      className={cn('flex h-full min-h-0 shrink-0 flex-col border-r border-border bg-surface-panel', collapsed ? 'w-9' : width === 'xs' ? 'w-[220px]' : width === 'sm' ? 'w-[240px]' : width === 'ms' ? 'w-[264px]' : width === 'lg' ? 'w-[368px]' : width === 'ml' ? 'w-[320px]' : 'w-[300px]', className)}>
       {back && !collapsed && (
         <div className={cn('flex shrink-0 items-center pt-4', heading !== 'compact' ? 'px-5' : 'px-3.5')} data-testid={`${testId}-back-row`}>
           {back.href ? (

@@ -1,6 +1,6 @@
 // StackedRail geometry gate — measured in a real browser against the
-// `Shared/StackedRail` Documents story, which draws the rail beside a
-// RailNavList at the same 220px width.
+// `Shared/StackedRail` Documents story, which draws the rail beside the Org
+// rail it copies (SubNavLayout — /iq/library) at the same 220px width.
 //
 // The faults this exists to stop (fixed in 2.407.32): the collapsible group
 // heading's caret sat a padding step right of the rows' text (the header button
@@ -13,8 +13,10 @@
 //   - its label is one 18px step further in — where its children's text is;
 //   - every caption's label (collapsible or not) shares one x (±1px);
 //   - each nesting level adds exactly 18px to a leaf's text x;
-//   - a level-0 leaf's text x is RailNavList's (same 10px row inset);
-//   - every row is RailNavList's row height.
+//   - a level-0 leaf's text x is SubNavLayout's (3px edge + 14px inset);
+//   - every row, heading and caption sits on SubNavLayout's 36px pitch
+//     (2.407.33; 2.407.32 drew RailNavList's 32px), a row with a trailing
+//     presence stack included.
 //
 // Run: `npm run test:e2e:storybook` (starts Storybook on :6006, or reuses one).
 
@@ -29,9 +31,11 @@ type Geometry = Awaited<ReturnType<typeof measure>>;
 async function measure(page: Page) {
   return page.evaluate(() => {
     const stacked = document.querySelector('[data-testid="story-stacked"]') as HTMLElement;
-    const navList = document.querySelector('[data-testid="story-rail-nav-list"]') as HTMLElement;
+    const subnav = document.querySelector('[data-testid="story-subnav"] aside') as HTMLElement;
     const x0 = stacked.getBoundingClientRect().left;
-    const nx0 = navList.getBoundingClientRect().left;
+    const nx0 = subnav.getBoundingClientRect().left;
+    const subnavLabel = subnav.querySelector('[data-testid="subnav-item-label"]')!;
+    const subnavRow = subnavLabel.closest('a')!;
     const rel = (el: Element | null, origin = x0) => {
       if (!el) throw new Error('missing element');
       return Math.round((el.getBoundingClientRect().left - origin) * 10) / 10;
@@ -61,9 +65,22 @@ async function measure(page: Page) {
       parent1Text: rowText('onboarding'),
       // level 2: a leaf (Day one)
       leaf2: rowText('day-one'),
-      navListText: rel(navList.querySelector('[data-testid="rail-nav-list-item-all"] span[title]'), nx0),
-      navListRowHeight: height(navList.querySelector('[data-testid="rail-nav-list-item-all"]')!),
+      subnavText: rel(subnavLabel, nx0),
+      subnavRowHeight: height(subnavRow),
       rowHeights: ['all', 'handbook', 'onboarding', 'day-one', 'oncall', 'runbooks'].map((id) => height(row(id))),
+      headingHeights: ['views', 'confluence', 'activity'].map((id) => height(header(id))),
+      captionHeight: height(stacked.querySelector('[data-testid="stacked-rail-title"]')!.parentElement!),
+      // Row tops, in order: the pitch between consecutive rows.
+      pitches: (() => {
+        const tops = ['handbook', 'onboarding', 'day-one', 'oncall', 'runbooks'].map((id) => row(id).getBoundingClientRect().top);
+        return tops.slice(1).map((t, i) => Math.round((t - tops[i]!) * 10) / 10);
+      })(),
+      trailingRight: (() => {
+        const r = row('runbooks');
+        const trailing = r.querySelector('[data-testid="stacked-rail-row-runbooks-trailing"]')!.getBoundingClientRect();
+        const meta = r.querySelector('[data-testid="stacked-rail-row-runbooks-meta"]')!.getBoundingClientRect();
+        return { afterMeta: trailing.left >= meta.right, height: Math.round(trailing.height) };
+      })(),
     };
   });
 }
@@ -71,15 +88,15 @@ async function measure(page: Page) {
 const near = (actual: number, expected: number, label: string) =>
   expect(Math.abs(actual - expected), `${label}: ${actual} vs ${expected}`).toBeLessThanOrEqual(1);
 
-test('StackedRail: one caret/text column model for captions and rows, 18px per level', async ({ page }) => {
+test('StackedRail: the Org rail pitch and inset, one caret/text column model, 18px per level', async ({ page }) => {
   await page.goto(STORY);
   await page.getByTestId('stacked-rail-row-day-one').waitFor();
   const g: Geometry = await measure(page);
   console.log('stacked-rail geometry', JSON.stringify(g));
 
-  // A level-0 leaf sits exactly where a RailNavList row's text does.
-  near(g.leaf0, g.navListText, 'level-0 leaf text vs RailNavList text');
-  near(g.viewsLeaf0, g.navListText, 'Views leaf text vs RailNavList text');
+  // A level-0 leaf sits exactly where the Org rail's row text does.
+  near(g.leaf0, g.subnavText, 'level-0 leaf text vs SubNavLayout text');
+  near(g.viewsLeaf0, g.subnavText, 'Views leaf text vs SubNavLayout text');
 
   // A collapsible caption's caret is in the text column of the rows under it.
   near(g.confluenceCaret, g.leaf0, 'caption caret vs level-0 leaf text');
@@ -100,7 +117,23 @@ test('StackedRail: one caret/text column model for captions and rows, 18px per l
   near(g.leaf2 - g.leaf1, STEP, 'level 2 − level 1');
   near(g.parent1Caret - g.parent0Caret, STEP, 'caret step');
 
-  // Row height unchanged: RailNavList's 32px.
-  expect(g.navListRowHeight).toBe(32);
-  for (const h of g.rowHeights) expect(h).toBe(g.navListRowHeight);
+  // The Org rail's 36px pitch: rows (the one with a presence stack too),
+  // headings and the caption, with no gap between rows.
+  expect(g.subnavRowHeight).toBe(36);
+  for (const h of [...g.rowHeights, ...g.headingHeights, g.captionHeight]) expect(h).toBe(g.subnavRowHeight);
+  for (const p of g.pitches) expect(p).toBe(36);
+  // The trailing slot sits after the meta, inside the 20px line.
+  expect(g.trailingRight.afterMeta).toBe(true);
+  expect(g.trailingRight.height).toBeLessThanOrEqual(20);
+});
+
+test('ExplorerLayout railWidth="xs" is the Org rail’s 220px', async ({ page }) => {
+  await page.goto('/iframe.html?id=layout-explorerlayout--rail-width-xs&viewMode=story');
+  const frame = page.getByTestId('story-rail-width-xs');
+  await frame.getByTestId('explorer-layout-rail').waitFor();
+  const org = await frame.locator('aside').first().boundingBox();
+  const rail = await frame.getByTestId('explorer-layout-rail').boundingBox();
+  console.log('rail widths', JSON.stringify({ org: org?.width, xs: rail?.width }));
+  expect(org?.width).toBe(220);
+  expect(rail?.width).toBe(220);
 });

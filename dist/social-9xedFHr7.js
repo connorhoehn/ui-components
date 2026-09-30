@@ -197,7 +197,7 @@ function Ie({ title: e, label: t, actions: n, header: r, footer: i, children: a,
 		"aria-label": t ?? e ?? "Workspace",
 		"data-testid": x,
 		"data-collapsed": m,
-		className: o("flex h-full min-h-0 shrink-0 flex-col border-r border-border bg-surface-panel", m ? "w-9" : s === "sm" ? "w-[240px]" : s === "ms" ? "w-[264px]" : s === "lg" ? "w-[368px]" : s === "ml" ? "w-[320px]" : "w-[300px]", y),
+		className: o("flex h-full min-h-0 shrink-0 flex-col border-r border-border bg-surface-panel", m ? "w-9" : s === "xs" ? "w-[220px]" : s === "sm" ? "w-[240px]" : s === "ms" ? "w-[264px]" : s === "lg" ? "w-[368px]" : s === "ml" ? "w-[320px]" : "w-[300px]", y),
 		children: [
 			p && !m && /* @__PURE__ */ Q("div", {
 				className: o("flex shrink-0 items-center pt-4", l === "compact" ? "px-3.5" : "px-5"),

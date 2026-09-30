@@ -39,12 +39,14 @@ export interface ExplorerLayoutProps {
   /** Optional right-hand context bar. Stacks below the pane under `2xl`, sits beside it at `2xl` and up. */
   aside?: ReactNode;
   /**
-   * Rail width. `md` is the 300px agentcore measured against; `sm` is 240px for
+   * Rail width. `md` is the 300px agentcore measured against; `xs` is 220px,
+   * the Org rail's own width (SubNavLayout's default), for a documents rail
+   * that should sit at it (since 2.407.33); `sm` is 240px for
    * a shallower tree; `lg` is 368px for a two-line work list with its toolbar
    * (the Documents Work column, measured against the redesign's 370px); `ms`
    * is 264px for a one-line title list (the Initiatives v2 rail, since 2.392.0).
    */
-  railWidth?: 'sm' | 'ms' | 'md' | 'ml' | 'lg';
+  railWidth?: 'xs' | 'sm' | 'ms' | 'md' | 'ml' | 'lg';
   /**
    * A band ABOVE all three columns — a scope header (breadcrumb, title, stats,
    * tabs) that names what the rail, the pane and the aside are all looking at.
