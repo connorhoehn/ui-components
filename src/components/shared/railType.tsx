@@ -16,7 +16,7 @@
 //
 // Deliberate exceptions, and why:
 // - `RailNavList` (the "All / Mine / Sprints" views list at the top of a rail)
-//   uses the item TYPE but a 34px pitch — the mockup draws it as a tighter
+//   uses the item TYPE but 32px rows (6px padding, no gap) — the mockup draws it as a tighter
 //   list of views above the rows, not as rows.
 // - `GroupedList` `rowStyle="ruled"` (the default) is a work list with
 //   sublines and meta, not a rail; its `size` still governs that list.

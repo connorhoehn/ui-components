@@ -11,8 +11,8 @@
 // pages → child pages, an age at the right, a ⋯ per row, presence on a
 // source, drag to move) reached for `TreeView size="rail"` and a card panel
 // instead, and so drew a second rail look. StackedRail is that tree in the
-// first look: every row is a `RailNavList` row (same text, padding, gap,
-// radius, current treatment, count) on the shared 36px rail pitch.
+// first look: every row is a `RailNavList` row (same classes, same 32px
+// height, no gap between rows), and headings sit at that height too.
 //
 // ## Semantics
 //
@@ -40,15 +40,13 @@ import {
 } from 'react';
 import { cn } from '../../lib/cn';
 import { IconButton } from '../ui/IconButton';
+import { RAIL_NAV_ITEM_CLASS } from './RailNavList';
 import {
   RailCaretIcon,
   RAIL_GROUP_COUNT,
   RAIL_GROUP_LABEL,
   RAIL_GROUP_LABEL_INK,
-  RAIL_GROUP_PAD_Y,
   RAIL_ITEM_COUNT,
-  RAIL_ITEM_TEXT,
-  RAIL_ROW_PAD_Y,
 } from './railType';
 
 /** `data-*` attributes passed straight through to a row or group heading. */
@@ -146,18 +144,14 @@ export interface StackedRailProps {
 }
 
 /**
- * The row control — `RailNavList`'s item class on the shared 36px rail pitch
- * (`RAIL_ROW_PAD_Y`). RailNavList draws a tighter views list (6px padding);
- * everything else here is its row.
+ * The row control — exactly `RailNavList`'s row class: 32px tall (6px + a 20px
+ * line + 6px), no gap between rows, so a StackedRail row is pixel-identical to
+ * a RailNavList row. Group headings and the caption sit at the same 32px.
  */
-export const STACKED_RAIL_ROW_CLASS = cn(
-  'flex w-full min-w-0 items-center gap-2.5 rounded-md border-0 bg-transparent px-2.5 text-left',
-  RAIL_ROW_PAD_Y,
-  RAIL_ITEM_TEXT,
-  'text-text-primary no-underline [font-family:inherit]',
-  'transition-colors duration-100 hover:bg-surface-hover',
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
-);
+export const STACKED_RAIL_ROW_CLASS = RAIL_NAV_ITEM_CLASS;
+
+/** Vertical padding for headings and empty lines: RailNavList's row height. */
+const ROW_PAD_Y = 'py-[6px]';
 
 /** 10px base + 18px per nesting level, as static classes (no inline style). */
 const INDENT = ['pl-2.5', 'pl-[28px]', 'pl-[46px]', 'pl-[64px]', 'pl-[82px]', 'pl-[100px]', 'pl-[118px]', 'pl-[136px]'] as const;
@@ -430,7 +424,7 @@ export function StackedRail({
   return (
     <nav ref={rootRef} aria-label={ariaLabel} className={cn('flex min-w-0 flex-col', className)} data-testid={testId} onKeyDown={onKeyDown}>
       {title && (
-        <div className={cn('flex min-w-0 items-center gap-2 px-2.5', RAIL_GROUP_PAD_Y)}>
+        <div className="flex h-8 min-w-0 items-center gap-2 px-2.5">
           <span className={cn('min-w-0 truncate', RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK)} data-testid={heading}>{title}</span>
           {typeof count === 'number' && (
             <span className={cn('shrink-0', RAIL_GROUP_COUNT)} aria-label={`${count} items`} data-testid={`${testId}-count`}>{count}</span>
@@ -463,7 +457,7 @@ export function StackedRail({
         );
         const headerClass = cn(
           'flex min-w-0 flex-1 items-center gap-2 rounded-md border-0 bg-transparent px-2.5 text-left [font-family:inherit]',
-          RAIL_GROUP_PAD_Y,
+          ROW_PAD_Y,
           RAIL_GROUP_LABEL,
           RAIL_GROUP_LABEL_INK,
         );
@@ -507,7 +501,7 @@ export function StackedRail({
             {open && (
               <ul className="m-0 flex list-none flex-col p-0" data-testid={`${groupTestId}-rows`}>
                 {group.rows.length === 0 ? (
-                  <li className={cn('px-2.5 py-2 text-[13px] leading-5 text-text-tertiary', collapsible && 'pl-[34px]')} data-testid={`${groupTestId}-empty`}>
+                  <li className={cn('px-2.5 text-[13px] leading-5', ROW_PAD_Y, 'text-text-tertiary', collapsible && 'pl-[34px]')} data-testid={`${groupTestId}-empty`}>
                     {group.emptyLabel ?? 'Nothing here yet.'}
                   </li>
                 ) : (

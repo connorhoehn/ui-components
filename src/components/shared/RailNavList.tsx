@@ -13,8 +13,10 @@
 //
 // Type scale (2.397.0): the item text and count come from ./railType, the
 // same constants as SubNavLayout and GroupedList's rail rows, so the words
-// match every other rail. Only the pitch differs — 34px, not 40px — because
-// the mockup draws these as a tight list of views above the rows.
+// match every other rail. Only the height differs: a row is 32px (6px + a
+// 20px line + 6px) with no gap between rows, not the 36px rail pitch, because
+// the mockup draws these as a tight list of views above the rows. StackedRail
+// reuses this exact row class (`RAIL_NAV_ITEM_CLASS`), so its rows match.
 //
 // ## Honest items
 //
@@ -55,7 +57,8 @@ export interface RailNavListProps {
   'data-testid'?: string;
 }
 
-const ITEM_CLASS = cn(
+/** The row control's classes. Not in the barrel: StackedRail composes it. */
+export const RAIL_NAV_ITEM_CLASS = cn(
   'flex w-full min-w-0 items-center gap-2.5 rounded-md border-0 bg-transparent px-2.5 py-[6px] text-left',
   RAIL_ITEM_TEXT,
   'text-text-primary no-underline [font-family:inherit]',
@@ -86,7 +89,7 @@ export function RailNavList({
               )}
             </>
           );
-          const cls = cn(ITEM_CLASS, item.current ? 'font-semibold' : undefined, item.current && currentStyle === 'tint' && 'bg-primary/10', item.disabled ? 'cursor-default opacity-60 hover:bg-transparent' : 'cursor-pointer');
+          const cls = cn(RAIL_NAV_ITEM_CLASS, item.current ? 'font-semibold' : undefined, item.current && currentStyle === 'tint' && 'bg-primary/10', item.disabled ? 'cursor-default opacity-60 hover:bg-transparent' : 'cursor-pointer');
           const common = {
             className: cls,
             'data-testid': `${testId}-item-${item.id}`,

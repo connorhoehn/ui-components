@@ -1,8 +1,8 @@
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { StackedRail, STACKED_RAIL_ROW_CLASS, type StackedRailGroup } from '../StackedRail';
-import { RailNavList } from '../RailNavList';
-import { RAIL_GROUP_LABEL, RAIL_ITEM_COUNT, RAIL_ITEM_TEXT, RAIL_ROW_PAD_Y } from '../railType';
+import { RailNavList, RAIL_NAV_ITEM_CLASS } from '../RailNavList';
+import { RAIL_GROUP_LABEL, RAIL_ITEM_COUNT, RAIL_ITEM_TEXT } from '../railType';
 
 afterEach(cleanup);
 
@@ -35,22 +35,37 @@ describe('StackedRail', () => {
     expect(screen.getByTestId('stacked-rail-count')).toHaveTextContent('14');
     expect(screen.getByTestId('stacked-rail-group-confluence-count')).toHaveTextContent('3');
     const row = screen.getByTestId('stacked-rail-row-all');
-    expect(row).toHaveClass(...RAIL_ITEM_TEXT.split(' '), ...RAIL_ROW_PAD_Y.split(' '));
+    expect(row).toHaveClass(...RAIL_ITEM_TEXT.split(' '), 'py-[6px]');
     // A non-collapsible group is a heading, not a button.
     expect(screen.getByTestId('stacked-rail-group-views-header').tagName).toBe('H3');
     expect(screen.getByTestId('stacked-rail-group-confluence-header')).toHaveAttribute('aria-expanded', 'true');
   });
 
-  it('draws a row with RailNavList’s row classes apart from the rail pitch', () => {
+  it('draws a row pixel-identical to a RailNavList row: same classes, same 32px height, no gap', () => {
     render(<>
       <RailNavList items={[{ id: 'a', label: 'A', count: 2 }]} />
-      <StackedRail groups={[{ id: 'g', title: 'G', collapsible: false, rows: [{ id: 'a', label: 'A', meta: 2 }] }]} />
+      <StackedRail title="T" groups={[{ id: 'g', title: 'G', rows: [{ id: 'a', label: 'A', meta: 2, children: [{ id: 'b', label: 'B' }], open: true }] }]} />
     </>);
     const navRow = screen.getByTestId('rail-nav-list-item-a');
     const stackedRow = screen.getByTestId('stacked-rail-row-a');
-    const strip = (cls: string) => cls.split(' ').filter((c) => !c.startsWith('py-') && !c.startsWith('pl-') && c !== 'px-2.5').sort().join(' ');
+    expect(STACKED_RAIL_ROW_CLASS).toBe(RAIL_NAV_ITEM_CLASS);
+    // Everything but the nesting indent (pl-*) is RailNavList's class list.
+    const strip = (cls: string) => cls.split(' ').filter((c) => !c.startsWith('pl-')).sort().join(' ');
     expect(strip(stackedRow.className)).toBe(strip(navRow.className));
-    expect(STACKED_RAIL_ROW_CLASS).toContain(RAIL_ROW_PAD_Y);
+    // Height: the vertical padding and line box that make a row 32px (6 + 20 + 6).
+    const height = (el: HTMLElement) => el.className.split(' ').filter((c) => /^(py-|pt-|pb-|h-|min-h-|leading-)/.test(c)).sort();
+    expect(height(navRow)).toEqual(['leading-5', 'py-[6px]']);
+    expect(height(stackedRow)).toEqual(height(navRow));
+    expect(height(screen.getByTestId('stacked-rail-row-b'))).toEqual(height(navRow));
+    // Group headings: the same 6px padding around a 20px caret box.
+    const header = screen.getByTestId('stacked-rail-group-g-header');
+    expect(header).toHaveClass('py-[6px]');
+    expect(header.firstElementChild).toHaveClass('h-5');
+    expect(screen.getByTestId('stacked-rail-title').parentElement).toHaveClass('h-8');
+    // No gap between rows, as in RailNavList.
+    const gapless = (el: HTMLElement | null) => el?.className.split(' ').filter((c) => /^(gap-|space-y-)/.test(c)) ?? [];
+    expect(gapless(navRow.closest('ul'))).toEqual([]);
+    expect(gapless(stackedRow.closest('ul'))).toEqual([]);
     expect(screen.getByTestId('stacked-rail-row-a-meta').className).toBe(screen.getByTestId('rail-nav-list-count-a').className);
   });
 
