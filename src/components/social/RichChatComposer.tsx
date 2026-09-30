@@ -222,6 +222,7 @@ export interface RichChatDraft {
 /** One thing a command can act on — a document, a room, a person. */
 export type { ComposerArgumentItem, ComposerCommandArgument, ComposerCommand } from './composerCommands';
 export { matchComposerCommand, composerCommandArgumentText } from './composerCommands';
+import { composerSendErrorReason } from './composerSendError';
 import { matchComposerCommand, composerCommandArgumentText, type ComposerArgumentItem, type ComposerCommandArgument, type ComposerCommand } from './composerCommands';
 
 /** What a host can do to the composer from outside — focus it, prefill it. */
@@ -234,7 +235,12 @@ export interface RichChatComposerHandle {
 }
 
 export interface RichChatComposerProps {
-  /** Resolve after accepting the send. Reject or return false to retain the draft. */
+  /**
+   * Resolve after accepting the send. Reject or return false to retain the
+   * draft. A rejection shows an alert above the composer; reject with a
+   * `ComposerSendError` to put its message there ("Upload failed: HTTP 500")
+   * instead of the generic "Unable to send".
+   */
   onSend: (message: ComposedMessage) => void | boolean | Promise<void | boolean>;
   /** Optional controlled draft; key the composer by conversation. */
   draft?: RichChatDraft;
@@ -1046,7 +1052,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const mountedRef = useRef(true);
   useEffect(() => { mountedRef.current = true; return () => { mountedRef.current = false; }; }, []);
   const [sending, setSending] = useState(false);
-  const [sendError, setSendError] = useState(false);
+  // false: no alert. true: a send failed for no reason the host gave. A
+  // string: the host's ComposerSendError message.
+  const [sendError, setSendError] = useState<boolean | string>(false);
   const blocked = disabled || sending;
   // Mirrors emptiness so the send button can disable. `editor.isEmpty` is not
   // reactive, so reading it during render leaves the button one keystroke stale.
@@ -1903,13 +1911,13 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
       const result = onSend(message);
       if (result && typeof result === 'object' && 'then' in result) {
         setSending(true);
-        void result.then(accepted, () => { if (mountedRef.current && !editor.isDestroyed) setSendError(true); }).finally(() => {
+        void result.then(accepted, (error: unknown) => { if (mountedRef.current && !editor.isDestroyed) setSendError(composerSendErrorReason(error) ?? true); }).finally(() => {
           sendingRef.current = false;
           if (mountedRef.current && !editor.isDestroyed) setSending(false);
         });
       } else { accepted(result); sendingRef.current = false; }
-    } catch {
-      sendingRef.current = false; setSendError(true);
+    } catch (error) {
+      sendingRef.current = false; setSendError(composerSendErrorReason(error) ?? true);
     }
   }, [editor, canSend, onSend, staged, privacy, terminalMode, activeMode, modesEnabled, fixedMode]);
 
@@ -2447,7 +2455,13 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[inherit]"
           data-testid={`${testId}-console`}
         />
-        {sendError && <p role="alert" className="px-2 py-1 text-sm text-danger-fg">Unable to send. Your draft and attachments are saved. Try again.</p>}
+        {sendError && (
+          <p role="alert" data-testid={`${testId}-send-error`} className="px-2 py-1 text-sm text-danger-fg">
+            {typeof sendError === 'string'
+              ? `${/[.!?]$/.test(sendError) ? sendError : `${sendError}.`} Your draft and attachments are saved.`
+              : 'Unable to send. Your draft and attachments are saved. Try again.'}
+          </p>
+        )}
         {activeCommand && !menuModeRow && (
           <div
             role="status"

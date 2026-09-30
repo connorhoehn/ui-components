@@ -721,4 +721,14 @@ function x(e, t) {
 	return e.trimStart().slice(t.trigger.length).replace(/^[ \n]/, "");
 }
 //#endregion
-export { g as a, _ as i, b as n, m as o, y as r, h as s, x as t };
+//#region src/components/social/composerSendError.ts
+var S = class extends Error {
+	constructor(e, t) {
+		super(e, t), this.name = "ComposerSendError";
+	}
+};
+function C(e) {
+	return !(e instanceof Error) || e.name !== "ComposerSendError" ? null : e.message.trim() || null;
+}
+//#endregion
+export { y as a, m as c, b as i, h as l, C as n, _ as o, x as r, g as s, S as t };

@@ -2,6 +2,7 @@ import { createRef, useState } from 'react';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { RichChatComposer, type RichChatComposerHandle, type RichChatDraft } from '../RichChatComposer';
+import { ComposerSendError } from '../composerSendError';
 
 afterEach(cleanup);
 const file = new File(['slides'], 'review.pptx', { type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation' });
@@ -51,6 +52,23 @@ describe('RichChatComposer conversation drafts and send acceptance', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('Your draft and attachments are saved');
     expect(state.saved()).toMatchObject({ html: '<p>Review this</p>', files: [file] });
     expect(screen.getByRole('button', { name: 'Send' })).toBeEnabled();
+  });
+
+  it('shows the reason a ComposerSendError carries, and only that kind of error', async () => {
+    // The generic sentence hid an upload 500 and a malformed upload URL
+    // behind the same words; the host knew the reason and had no way to say it.
+    const first = deferred();
+    const second = deferred();
+    const onSend = vi.fn().mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise);
+    host({ html: '<p>Screenshot</p>', files: [file] }, onSend);
+    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+    await act(async () => first.reject(new ComposerSendError('Upload failed: HTTP 500')));
+    expect(screen.getByTestId('composer-send-error')).toHaveTextContent('Upload failed: HTTP 500. Your draft and attachments are saved.');
+    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+    // An arbitrary Error is not written for the person typing — generic text.
+    await act(async () => second.reject(new Error('TypeError: x is undefined')));
+    expect(screen.getByRole('alert')).toHaveTextContent('Unable to send. Your draft and attachments are saved. Try again.');
+    expect(screen.getByRole('alert')).not.toHaveTextContent('TypeError');
   });
 
   it('clears an unchanged draft after its original composer unmounts', async () => {

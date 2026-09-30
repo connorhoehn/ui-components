@@ -160,6 +160,7 @@ export { AgentRunCard, agentRunRefFromMetadata, describeAgentRunOp, describeAgen
 export type { AgentRunCardProps, AgentRunLoop, AgentRunLoopPhase, AgentRunStatus, AgentRunPhase, AgentRunDecision, AgentRunReviewDecision, AgentRunSuggestion, AgentRunReview, AgentRunDetails, AgentRunStep, AgentRunStepStatus, AgentRunOp } from './AgentRunCard';
 export type { ComposerCommand, ComposerCommandArgument, ComposerArgumentItem } from './composerCommands';
 export { matchComposerCommand, composerCommandArgumentText } from './composerCommands';
+export { ComposerSendError, composerSendErrorReason } from './composerSendError';
 export type { AgentRunResult } from './AgentRunCard';
 export { agentRunResultFromMetadata } from './AgentRunCard';
 

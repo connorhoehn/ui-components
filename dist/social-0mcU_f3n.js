@@ -36,7 +36,7 @@ import { t as Se } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as Ce, t as we } from "./ReactionPickerPopover-CGha15Y2.js";
 import { n as Te } from "./useComputeProjects-ZSazDRet.js";
 import "./QuoteBlock-qqQqscMP.js";
-import { n as Ee, t as De } from "./composerCommands-B-Zn2aTG.js";
+import { i as Ee, r as De } from "./composerSendError-CD6a4eAE.js";
 import { r as Oe } from "./PaneStatusLine-DCV4mKSC.js";
 import "./ChatSidePanelRegistry-DH5wuXwN.js";
 import { Suspense as ke, createContext as Ae, lazy as je, useCallback as K, useContext as Me, useEffect as q, useId as Ne, useMemo as J, useRef as Y, useState as X } from "react";
