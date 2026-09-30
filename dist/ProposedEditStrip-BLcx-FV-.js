@@ -21,8 +21,8 @@ import { t as D } from "./SearchInput-8LpHL-oD.js";
 import { n as O } from "./RovingToolbar-B1Fai5PF.js";
 import { t as k } from "./InlineAlert-CBtteaVZ.js";
 import { t as A } from "./PresenceAvatars-DlmKqodq.js";
-import { t as j } from "./SectionLabel-Bn8Vvb-K.js";
-import { t as M } from "./DropdownMenu-DfuRPo2m.js";
+import { t as j } from "./DropdownMenu-DfuRPo2m.js";
+import { t as M } from "./SectionLabel-Bn8Vvb-K.js";
 import { n as N } from "./Text-DrPQe5RD.js";
 import { t as re } from "./Select-ErGXS9Yj.js";
 import { G as P, U as ie } from "./renderers-Doqpgh8C.js";
@@ -838,8 +838,8 @@ function Oe({ title: e, subtitle: t, revisions: n, olderRevisions: a, revisionId
 		} : {},
 		testId: `${E}-error`
 	});
-	let A = n.find((e) => e.id === o) ?? n[0], M = A?.slides ?? [];
-	if (_ === "empty" || !A || M.length === 0) return /* @__PURE__ */ W("div", {
+	let A = n.find((e) => e.id === o) ?? n[0], j = A?.slides ?? [];
+	if (_ === "empty" || !A || j.length === 0) return /* @__PURE__ */ W("div", {
 		className: r("flex min-h-0 flex-col gap-3 p-4", T),
 		"data-testid": E,
 		children: [/* @__PURE__ */ W("div", {
@@ -860,7 +860,7 @@ function Oe({ title: e, subtitle: t, revisions: n, olderRevisions: a, revisionId
 			testId: `${E}-empty`
 		})]
 	});
-	let P = M[Math.min(Math.max(c, 1), M.length) - 1];
+	let P = j[Math.min(Math.max(c, 1), j.length) - 1];
 	return /* @__PURE__ */ W("div", {
 		className: r("flex min-h-0 flex-col gap-3 p-4", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40", T),
 		ref: O,
@@ -868,12 +868,12 @@ function Oe({ title: e, subtitle: t, revisions: n, olderRevisions: a, revisionId
 		role: "group",
 		tabIndex: 0,
 		"aria-roledescription": "Slide deck",
-		"aria-label": `${e} — slide ${P.index} of ${M.length}. Use the left and right arrow keys to change slide.`,
+		"aria-label": `${e} — slide ${P.index} of ${j.length}. Use the left and right arrow keys to change slide.`,
 		onKeyDown: (e) => {
 			let t = we(e);
 			if (!t) return;
 			e.preventDefault();
-			let n = Te(t, P.index, M.length);
+			let n = Te(t, P.index, j.length);
 			n !== P.index && l(n);
 		},
 		children: [
@@ -960,14 +960,14 @@ function Oe({ title: e, subtitle: t, revisions: n, olderRevisions: a, revisionId
 							/* @__PURE__ */ U(N, {
 								className: "text-[13px] text-text-secondary",
 								"data-testid": `${E}-position`,
-								children: `Slide ${P.index} of ${M.length}`
+								children: `Slide ${P.index} of ${j.length}`
 							}),
 							/* @__PURE__ */ U(f, {
 								"aria-label": "Next slide",
 								variant: "ghost",
 								size: "sm",
 								icon: /* @__PURE__ */ U(De, {}),
-								disabled: P.index >= M.length,
+								disabled: P.index >= j.length,
 								onClick: () => l(P.index + 1),
 								"data-testid": `${E}-next`
 							}),
@@ -984,7 +984,7 @@ function Oe({ title: e, subtitle: t, revisions: n, olderRevisions: a, revisionId
 					className: "min-w-0 md:w-64",
 					"aria-labelledby": D,
 					"data-testid": `${E}-outline`,
-					children: [/* @__PURE__ */ U(j, {
+					children: [/* @__PURE__ */ U(M, {
 						as: "div",
 						className: "mb-1",
 						"data-testid": `${E}-outline-label`,
@@ -994,7 +994,7 @@ function Oe({ title: e, subtitle: t, revisions: n, olderRevisions: a, revisionId
 						})
 					}), /* @__PURE__ */ U("ol", {
 						className: "m-0 flex list-none flex-col gap-0.5 p-0",
-						children: M.map((e) => /* @__PURE__ */ U("li", { children: /* @__PURE__ */ W("button", {
+						children: j.map((e) => /* @__PURE__ */ U("li", { children: /* @__PURE__ */ W("button", {
 							type: "button",
 							onClick: () => l(e.index),
 							"aria-current": e.id === P.id ? "true" : void 0,
@@ -1357,7 +1357,7 @@ function tt(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
-var nt = I(() => import("./SortableSlideList-DqX9RWzq.js"));
+var nt = I(() => import("./SortableSlideList-BeBQuJtj.js"));
 function rt(e, t) {
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }
@@ -1598,7 +1598,7 @@ function ct({ slide: e, index: t, total: n, thumbnailSvg: i, selected: a, uncite
 				}),
 				!u && C.length > 0 && /* @__PURE__ */ U("span", {
 					className: r("absolute right-1 top-1 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100", a ? "opacity-100" : "opacity-0"),
-					children: /* @__PURE__ */ U(M, {
+					children: /* @__PURE__ */ U(j, {
 						trigger: /* @__PURE__ */ U(st, {}),
 						triggerLabel: `Slide ${S} actions`,
 						triggerTitle: "Slide actions",
@@ -1822,7 +1822,7 @@ function dt({ sources: e, onChange: t, options: n, onSearchSources: a, readOnly:
 		children: [/* @__PURE__ */ W("div", {
 			className: "flex min-w-0 flex-wrap items-center gap-2",
 			children: [
-				/* @__PURE__ */ U(j, {
+				/* @__PURE__ */ U(M, {
 					as: "div",
 					children: /* @__PURE__ */ U("span", {
 						id: h,
@@ -1855,7 +1855,7 @@ function dt({ sources: e, onChange: t, options: n, onSearchSources: a, readOnly:
 		className: "flex flex-col gap-1.5",
 		"data-testid": `${c}-sources`,
 		children: [
-			/* @__PURE__ */ U(j, {
+			/* @__PURE__ */ U(M, {
 				as: "div",
 				children: /* @__PURE__ */ U("span", {
 					id: h,
@@ -1896,7 +1896,7 @@ function pt({ label: e, bullets: t, onChange: n, readOnly: r, testIdPrefix: a })
 		className: "flex flex-col gap-1",
 		"data-testid": a,
 		children: [
-			/* @__PURE__ */ U(j, {
+			/* @__PURE__ */ U(M, {
 				as: "div",
 				children: e
 			}),
@@ -2345,13 +2345,13 @@ function kt({ slide: e, theme: t, onAddSlide: n, canAddSlide: a = !0, onLayoutCh
 			},
 			"data-testid": `${y}-theme-${e}`
 		}))
-	}, j = !E && e?.layout === "chart" && e.chart && c ? e.chart : null, re = j && c ? {
+	}, M = !E && e?.layout === "chart" && e.chart && c ? e.chart : null, re = M && c ? {
 		label: "Chart type",
 		items: ["bar", "line"].map((e) => ({
 			label: e === "bar" ? "Bar" : "Line",
-			checked: j.kind === e,
+			checked: M.kind === e,
 			onSelect: () => {
-				j.kind !== e && c(e);
+				M.kind !== e && c(e);
 			},
 			"data-testid": `${y}-chart-kind-${e}`
 		}))
@@ -2381,7 +2381,7 @@ function kt({ slide: e, theme: t, onAddSlide: n, canAddSlide: a = !0, onLayoutCh
 					children: [/* @__PURE__ */ U(p, { size: 12 }), "New slide"]
 				})
 			}),
-			T("layout") && D && e && /* @__PURE__ */ U(M, {
+			T("layout") && D && e && /* @__PURE__ */ U(j, {
 				trigger: /* @__PURE__ */ U(Ot, {
 					label: "Layout",
 					value: $[e.layout]
@@ -2392,7 +2392,7 @@ function kt({ slide: e, theme: t, onAddSlide: n, canAddSlide: a = !0, onLayoutCh
 				sections: [D],
 				"data-testid": `${y}-layout-menu`
 			}),
-			T("insert") && k && /* @__PURE__ */ U(M, {
+			T("insert") && k && /* @__PURE__ */ U(j, {
 				trigger: /* @__PURE__ */ U(Ot, { label: "Insert" }),
 				triggerLabel: "Insert a slide",
 				triggerClassName: "shrink-0 border-transparent",
@@ -2400,7 +2400,7 @@ function kt({ slide: e, theme: t, onAddSlide: n, canAddSlide: a = !0, onLayoutCh
 				sections: [k],
 				"data-testid": `${y}-insert-menu`
 			}),
-			T("theme") && A && /* @__PURE__ */ U(M, {
+			T("theme") && A && /* @__PURE__ */ U(j, {
 				trigger: /* @__PURE__ */ U(Ot, {
 					label: "Theme",
 					value: yt[t]
@@ -2411,9 +2411,9 @@ function kt({ slide: e, theme: t, onAddSlide: n, canAddSlide: a = !0, onLayoutCh
 				sections: [A],
 				"data-testid": `${y}-theme-menu`
 			}),
-			T("chart") && j && c && /* @__PURE__ */ U(ne, {
+			T("chart") && M && c && /* @__PURE__ */ U(ne, {
 				size: "sm",
-				value: j.kind,
+				value: M.kind,
 				onChange: (e) => c(e),
 				options: [{
 					value: "bar",
@@ -2449,7 +2449,7 @@ function kt({ slide: e, theme: t, onAddSlide: n, canAddSlide: a = !0, onLayoutCh
 					"data-testid": `${y}-redo`
 				})
 			] }),
-			P.length > 0 && /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(Dt, {}), /* @__PURE__ */ U(M, {
+			P.length > 0 && /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(Dt, {}), /* @__PURE__ */ U(j, {
 				trigger: /* @__PURE__ */ U("span", {
 					className: "text-[14px] leading-none",
 					"aria-hidden": "true",

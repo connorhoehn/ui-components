@@ -22,8 +22,8 @@ import { t as M } from "./CardHeader-C50GEAmo.js";
 import { t as N } from "./LogStream-Bk8DVIVb.js";
 import { a as ee, o as P, s as F } from "./backdropTone-BzPocySl.js";
 import { a as te, i as I, n as L, o as R, r as z, t as B } from "./MeterRow-DnfioGA3.js";
-import { t as V } from "./SectionLabel-Bn8Vvb-K.js";
-import { t as ne } from "./DropdownMenu-DfuRPo2m.js";
+import { t as V } from "./DropdownMenu-DfuRPo2m.js";
+import { t as ne } from "./SectionLabel-Bn8Vvb-K.js";
 import { r as re, t as H } from "./Text-DrPQe5RD.js";
 import { t as ie } from "./Select-ErGXS9Yj.js";
 import { t as ae } from "./Checkbox-BC03mkQI.js";
@@ -3931,7 +3931,7 @@ function ir({ compute: e, banner: n, className: r, "data-testid": i = "work-comp
 						"data-testid": `${i}-open-lab`,
 						children: "Open in Computer Lab"
 					}),
-					!!e.moreActions?.length && /* @__PURE__ */ X(ne, {
+					!!e.moreActions?.length && /* @__PURE__ */ X(V, {
 						trigger: /* @__PURE__ */ X("span", {
 							"aria-hidden": "true",
 							children: "…"
@@ -7647,7 +7647,7 @@ function Co({ children: e, "aria-label": t, "data-testid": n }) {
 	});
 }
 function wo({ children: e, tone: n = "default", className: r }) {
-	return /* @__PURE__ */ X(V, {
+	return /* @__PURE__ */ X(ne, {
 		className: t("whitespace-nowrap", n === "warning" && "text-warning", r),
 		children: e
 	});

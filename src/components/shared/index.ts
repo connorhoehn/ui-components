@@ -241,7 +241,7 @@ export {
 export type { RailNavListProps, RailNavListItem } from './RailNavList';
 // The concise stacking left menu with groups, nesting, a ⋯ slot, presence and
 // drag pass-through — RailNavList rows on the rail pitch.
-export { StackedRail, STACKED_RAIL_ROW_CLASS } from './StackedRail';
+export { StackedRail, STACKED_RAIL_ROW_CLASS, STACKED_RAIL_GROUP_ACTIONS_CLASS } from './StackedRail';
 export type {
   StackedRailProps,
   StackedRailGroup,

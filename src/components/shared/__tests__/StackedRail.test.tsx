@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { StackedRail, STACKED_RAIL_ROW_CLASS, STACKED_RAIL_STEP_CLASS, type StackedRailGroup } from '../StackedRail';
+import { StackedRail, STACKED_RAIL_GROUP_ACTIONS_CLASS, STACKED_RAIL_ROW_CLASS, STACKED_RAIL_STEP_CLASS, type StackedRailGroup } from '../StackedRail';
 import { RAIL_CURRENT_FILL, RAIL_GROUP_LABEL, RAIL_ITEM_COUNT, RAIL_ITEM_TEXT, RAIL_ROW_PAD_Y, RAIL_ROW_PITCH } from '../railType';
 import { inactiveNavItemClassName } from '../SubNavLayout';
 
@@ -248,5 +248,80 @@ describe('StackedRail', () => {
     fireEvent.click(screen.getByTestId('stacked-rail-group-g-header'));
     expect(onToggle).toHaveBeenCalledWith(true);
     expect(screen.queryByTestId('stacked-rail-row-a')).toBeNull();
+  });
+
+  describe('the 220px chrome budget (2.407.36)', () => {
+    const action = (label: string, onClick = () => {}) => ({ label, icon: <svg aria-hidden="true" />, onClick, 'data-testid': `a-${label}` });
+
+    it('group actions are revealed, not drawn: sr-only until hover / focus-visible / an open menu / a current group / a touch screen', () => {
+      render(<StackedRail groups={docs({ trailing: <span data-testid="presence">AB</span>, actions: [action('Pull')] })} />);
+      const slot = screen.getByTestId('stacked-rail-group-confluence-actions');
+      const classes = slot.className.split(' ');
+      expect(classes).toEqual(expect.arrayContaining(STACKED_RAIL_GROUP_ACTIONS_CLASS.split(' ')));
+      expect(classes).toContain('sr-only');
+      for (const reveal of [
+        'group-hover/head:not-sr-only',
+        'group-has-[:focus-visible]/head:not-sr-only',
+        'group-data-[current]/head:not-sr-only',
+        'has-[[aria-expanded=true]]:not-sr-only',
+        '[@media(hover:none)]:not-sr-only',
+      ]) expect(classes).toContain(reveal);
+      // Visually hidden, never display:none — the action stays a tab stop after the heading.
+      expect(classes).not.toContain('hidden');
+      expect(screen.getByTestId('stacked-rail-group-confluence-head')).toHaveClass('group/head');
+      const button = within(slot).getByRole('button', { name: 'Pull' });
+      expect(button).not.toHaveAttribute('tabindex', '-1');
+      // Presence and the count are not part of the reveal.
+      expect(slot).not.toContainElement(screen.getByTestId('presence'));
+      expect(slot).not.toContainElement(screen.getByTestId('stacked-rail-group-confluence-count'));
+      expect(screen.getByTestId('stacked-rail-group-confluence-trailing').className).not.toMatch(/sr-only/);
+      // The heading gives the label its right inset when chrome follows.
+      expect(screen.getByTestId('stacked-rail-group-confluence-header')).toHaveClass('pr-0');
+    });
+
+    it('the coarse-pointer rule: a touch screen (hover: none) always shows the actions', () => {
+      expect(STACKED_RAIL_GROUP_ACTIONS_CLASS.split(' ')).toContain('[@media(hover:none)]:not-sr-only');
+    });
+
+    it('a group is current when any row in it, at any depth, is current; `current` overrides', () => {
+      const { rerender } = render(<StackedRail selectedId="day-one" groups={docs({ actions: [action('Pull')] })} />);
+      expect(screen.getByTestId('stacked-rail-group-confluence-head')).toHaveAttribute('data-current');
+      rerender(<StackedRail selectedId="all" groups={docs({ actions: [action('Pull')] })} />);
+      expect(screen.getByTestId('stacked-rail-group-confluence-head')).not.toHaveAttribute('data-current');
+      rerender(<StackedRail selectedId="all" groups={docs({ actions: [action('Pull')], current: true })} />);
+      expect(screen.getByTestId('stacked-rail-group-confluence-head')).toHaveAttribute('data-current');
+    });
+
+    it('headings and the caption carry their full name in `title`; row labels always do', () => {
+      render(<StackedRail title="Documents" groups={docs({ title: 'Enterprise content platform' })} />);
+      expect(screen.getByTestId('stacked-rail-group-confluence-header')).toHaveAttribute('title', 'Enterprise content platform');
+      expect(screen.getByTestId('stacked-rail-group-views-header')).toHaveAttribute('title', 'Views');
+      expect(screen.getByTestId('stacked-rail-title')).toHaveAttribute('title', 'Documents');
+      for (const id of ['all', 'recent', 'handbook', 'faq']) {
+        const row = screen.getByTestId(`stacked-rail-row-${id}`);
+        expect(row.querySelector('span[title]')).toHaveAttribute('title', row.textContent?.replace(/\d+[hdm]?$/, '') ?? '');
+      }
+    });
+
+    it('caption: the count follows the title; two or more actions fold into one ⋯ below 240px', () => {
+      const onImport = vi.fn();
+      render(<StackedRail title="Documents" count={187} groups={docs()} actions={[action('New'), action('Import', onImport), action('Refresh')]} />);
+      const title = screen.getByTestId('stacked-rail-title');
+      expect(title.nextElementSibling).toBe(screen.getByTestId('stacked-rail-count'));
+      expect(title.parentElement).toHaveClass('@container');
+      expect(screen.getByTestId('stacked-rail-actions')).toHaveClass('@max-[15rem]:hidden');
+      expect(screen.getByTestId('stacked-rail-actions-fold')).toHaveClass('hidden', '@max-[15rem]:flex');
+      fireEvent.click(screen.getByTestId('stacked-rail-actions-menu'));
+      const items = screen.getAllByRole('menuitem').map((el) => el.textContent);
+      expect(items).toEqual(['New', 'Import', 'Refresh']);
+      fireEvent.click(screen.getByRole('menuitem', { name: 'Import' }));
+      expect(onImport).toHaveBeenCalledTimes(1);
+    });
+
+    it('caption: a single action stays inline with no fold', () => {
+      render(<StackedRail title="Documents" count={3} groups={docs()} actions={[action('New')]} />);
+      expect(screen.queryByTestId('stacked-rail-actions-fold')).toBeNull();
+      expect(screen.getByRole('button', { name: 'New' })).toBeInTheDocument();
+    });
   });
 });

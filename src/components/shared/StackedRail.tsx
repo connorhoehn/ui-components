@@ -45,6 +45,17 @@
 // into) a node, Left closes it (or steps to its parent), Enter/Space select.
 // The row ⋯ slot and group actions stay ordinary tab stops.
 //
+// ## The chrome budget (2.407.36)
+//
+// At the Org rail's 220px (`railWidth="xs"`) the label is the first thing to
+// give, so the chrome around it is rationed: a group heading's `actions` wait
+// for hover, keyboard focus (focus-visible — Tab onto the heading, or onto the
+// actions themselves), an open menu, or a current group, and are always out
+// on a touch screen (`@media (hover: none)`); `trailing` presence and the
+// count never hide or shrink. The caption's count sits right after its title,
+// and two or more caption actions fold into one ⋯ below 240px. Headings and
+// the caption carry their full name in `title`, as rows always have.
+//
 // ## Deliberately the host's
 //
 // Drag and drop is pass-through: the handlers and `data-*` attributes go on
@@ -61,6 +72,8 @@ import {
 } from 'react';
 import { cn } from '../../lib/cn';
 import { IconButton } from '../ui/IconButton';
+import { MoreIcon } from '../ui/Icons';
+import { DropdownMenu } from './DropdownMenu';
 import {
   RailCaretIcon,
   RAIL_CURRENT_FILL,
@@ -134,6 +147,7 @@ export interface StackedRailAction {
 
 export interface StackedRailGroup extends StackedRailDragProps {
   id: string;
+  /** The heading's label; also its `title`, so a truncated one reads whole on hover. */
   title: string;
   /** Plain count after the heading ("KIND 6"). */
   count?: number;
@@ -144,8 +158,23 @@ export interface StackedRailGroup extends StackedRailDragProps {
   onToggle?: (open: boolean) => void;
   /** Right of the heading — presence avatars, a status. */
   trailing?: ReactNode;
-  /** 28px icon buttons at the heading's right edge, or the host's own nodes. */
+  /**
+   * 28px icon buttons at the heading's right edge, or the host's own nodes (a
+   * ⋯ `DropdownMenu`). Revealed, not always drawn (2.407.36): they take no
+   * width until the heading is hovered, holds keyboard focus (Tab onto the
+   * heading or into the actions — `:focus-visible`, so a mouse click on the
+   * heading does not pin them), has a menu open (`aria-expanded="true"`
+   * inside), or the group is current; on a touch screen (`hover: none`)
+   * they are always out. Hidden they stay in the tab order and the
+   * accessibility tree (visually hidden, like `sr-only`), never `display:none`.
+   * `trailing` and `count` are not part of this and always show.
+   */
   actions?: StackedRailAction[] | ReactNode;
+  /**
+   * The group holds the view on screen: its actions stay out. Derived when
+   * any row in it (at any depth) is current; set it to force either way.
+   */
+  current?: boolean;
   rows: StackedRailRow[];
   /** The line an empty open group shows. Default "Nothing here yet." */
   emptyLabel?: ReactNode;
@@ -158,7 +187,17 @@ export interface StackedRailGroup extends StackedRailDragProps {
 export interface StackedRailProps {
   /** The rail's caption ("AGENT LIBRARY"). */
   title?: string;
+  /** Plain count directly after the caption ("DOCUMENTS 187"), like a group's. */
   count?: number;
+  /**
+   * The caption's actions. A `ReactNode`, or a single `StackedRailAction`,
+   * draws as-is at the right edge. Two or more `StackedRailAction`s draw as
+   * 28px icon buttons while the rail is 240px or wider (`railWidth="sm"` and
+   * up), and fold into one ⋯ menu (`${data-testid}-actions-menu`, one item
+   * per action, disabled carried over) below that — at `xs` (220px) three
+   * buttons would leave the caption "DOCUM… 187". A container query on the
+   * caption row decides, so the rail needs no width prop. (2.407.36)
+   */
   actions?: StackedRailAction[] | ReactNode;
   groups: StackedRailGroup[];
   /** The current row, in place of (or as well as) `row.current`. */
@@ -218,6 +257,23 @@ function Gutter({ cancelGap, children }: { cancelGap: '-mr-2.5' | '-mr-2'; child
   return <span className={cn('flex shrink-0', cancelGap)} data-rail-gutter="">{children}</span>;
 }
 
+/**
+ * A group heading's actions slot (2.407.36): visually hidden (`sr-only`, so
+ * it takes no width yet stays a tab stop and in the accessibility tree) until
+ * the heading strip (`group/head`) is hovered, holds a `:focus-visible`
+ * element (the heading or an action, reached by Tab), a menu inside is open,
+ * or the group is current (`data-current` on the strip); always out when the
+ * primary pointer cannot hover (touch). Exported for the test.
+ */
+export const STACKED_RAIL_GROUP_ACTIONS_CLASS = cn(
+  'sr-only flex shrink-0 items-center gap-0.5',
+  'group-hover/head:not-sr-only',
+  'group-has-[:focus-visible]/head:not-sr-only',
+  'group-data-[current]/head:not-sr-only',
+  'has-[[aria-expanded=true]]:not-sr-only',
+  '[@media(hover:none)]:not-sr-only',
+);
+
 /** Menu slot: hidden until the row is hovered or focused, or its menu is open. */
 const MENU_SLOT_CLASS =
   'hidden shrink-0 items-center pr-1 group-hover/row:flex group-focus-within/row:flex has-[[aria-expanded=true]]:flex';
@@ -239,12 +295,13 @@ function isActionList(actions: unknown): actions is StackedRailAction[] {
   return Array.isArray(actions) && actions.every((a) => a && typeof a === 'object' && 'label' in a && 'onClick' in a);
 }
 
-function Actions({ actions }: { actions: StackedRailAction[] | ReactNode }) {
+function Actions({ actions, className, testId }: { actions: StackedRailAction[] | ReactNode; className?: string; testId?: string }) {
   if (actions == null || actions === false) return null;
-  if (!isActionList(actions)) return <span className="flex shrink-0 items-center gap-0.5">{actions}</span>;
+  const slot = { className: className ?? 'flex shrink-0 items-center gap-0.5', ...(testId ? { 'data-testid': testId } : {}) };
+  if (!isActionList(actions)) return <span {...slot}>{actions}</span>;
   if (actions.length === 0) return null;
   return (
-    <span className="flex shrink-0 items-center gap-0.5">
+    <span {...slot}>
       {actions.map((action) => (
         <IconButton
           key={action.label}
@@ -261,6 +318,42 @@ function Actions({ actions }: { actions: StackedRailAction[] | ReactNode }) {
       ))}
     </span>
   );
+}
+
+/**
+ * The caption's actions: inline, or — two or more below 240px, the caption
+ * row being the `@container` — one ⋯ menu holding them all.
+ */
+function CaptionActions({ actions, title, testId }: { actions: StackedRailAction[] | ReactNode; title: string; testId: string }) {
+  if (!isActionList(actions) || actions.length < 2) return <Actions actions={actions} />;
+  return (
+    <>
+      <Actions actions={actions} className="flex shrink-0 items-center gap-0.5 @max-[15rem]:hidden" testId={`${testId}-actions`} />
+      <span className="hidden shrink-0 items-center @max-[15rem]:flex" data-testid={`${testId}-actions-fold`}>
+        <DropdownMenu
+          trigger={<MoreIcon size={14} />}
+          triggerLabel={`${title} actions`}
+          triggerTitle={`${title} actions`}
+          triggerTestId={`${testId}-actions-menu`}
+          align="end"
+          data-testid={`${testId}-actions-panel`}
+          sections={[{
+            items: actions.map((action) => ({
+              label: action.label,
+              icon: action.icon,
+              onSelect: action.onClick,
+              ...(action.disabled ? { disabled: true } : {}),
+              ...(action['data-testid'] ? { 'data-testid': `${action['data-testid']}-item` } : {}),
+            })),
+          }]}
+        />
+      </span>
+    </>
+  );
+}
+
+function rowsHaveCurrent(rows: StackedRailRow[], isCurrent: (row: StackedRailRow) => boolean): boolean {
+  return rows.some((row) => isCurrent(row) || rowsHaveCurrent(row.children ?? [], isCurrent));
 }
 
 /** Focus keys: `g:<groupId>` for a heading, `r:<rowId>` for a row. */
@@ -491,14 +584,14 @@ export function StackedRail({
   return (
     <nav ref={rootRef} aria-label={ariaLabel} className={cn('flex min-w-0 flex-col', className)} data-testid={testId} onKeyDown={onKeyDown}>
       {title && (
-        <div className={cn('flex h-9 min-w-0 items-center gap-2', ROW_INSET)}>
+        <div className={cn('@container flex h-9 min-w-0 items-center gap-2', ROW_INSET)}>
           <Gutter cancelGap="-mr-2"><span className={STACKED_RAIL_STEP_CLASS} data-rail-step="caption" /></Gutter>
-          <span className={cn('min-w-0 truncate', RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK)} data-testid={heading}>{title}</span>
+          <span className={cn('min-w-0 truncate', RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK)} title={title} data-testid={heading}>{title}</span>
           {typeof count === 'number' && (
             <span className={cn('shrink-0', RAIL_GROUP_COUNT)} aria-label={`${count} items`} data-testid={`${testId}-count`}>{count}</span>
           )}
           <span className="flex-1" />
-          {actions != null && <Actions actions={actions} />}
+          {actions != null && <CaptionActions actions={actions} title={title} testId={testId} />}
         </div>
       )}
       {groups.map((group) => {
@@ -523,9 +616,15 @@ export function StackedRail({
             )}
           </>
         );
+        const hasActions = group.actions != null && group.actions !== false && !(Array.isArray(group.actions) && group.actions.length === 0);
+        const hasTrailing = group.trailing != null && group.trailing !== false;
+        const groupCurrent = group.current ?? rowsHaveCurrent(group.rows, isCurrent);
         const headerClass = cn(
           'flex min-w-0 flex-1 items-center gap-2 bg-transparent text-left [font-family:inherit]',
           ROW_INSET,
+          // Chrome after the heading brings its own gap: the label keeps the
+          // 14px right inset for itself (2.407.36).
+          (hasActions || hasTrailing) && 'pr-0',
           ROW_PAD_Y,
           RAIL_GROUP_LABEL,
           RAIL_GROUP_LABEL_INK,
@@ -541,12 +640,17 @@ export function StackedRail({
             data-open={open}
             data-pending={group.pending || undefined}
           >
-            <div className="flex min-w-0 items-center gap-1 pr-1">
+            <div
+              className="group/head relative flex min-w-0 items-center gap-1 pr-1"
+              data-current={groupCurrent || undefined}
+              data-testid={`${groupTestId}-head`}
+            >
               {collapsible ? (
                 <button
                   type="button"
                   id={headerId}
                   data-testid={headerId}
+                  title={group.title}
                   data-rail-key={key}
                   aria-expanded={open}
                   tabIndex={tabKey === key ? 0 : -1}
@@ -558,14 +662,16 @@ export function StackedRail({
                   {label}
                 </button>
               ) : (
-                <h3 id={headerId} data-testid={headerId} className={cn('m-0', headerClass)} {...dragProps(group)}>
+                <h3 id={headerId} data-testid={headerId} title={group.title} className={cn('m-0', headerClass)} {...dragProps(group)}>
                   {label}
                 </h3>
               )}
-              {group.trailing != null && (
+              {hasTrailing && (
                 <span className="flex shrink-0 items-center" data-testid={`${groupTestId}-trailing`}>{group.trailing}</span>
               )}
-              {group.actions != null && <Actions actions={group.actions} />}
+              {hasActions && (
+                <Actions actions={group.actions} className={STACKED_RAIL_GROUP_ACTIONS_CLASS} testId={`${groupTestId}-actions`} />
+              )}
             </div>
             {open && (
               <ul className="m-0 flex list-none flex-col p-0" data-testid={`${groupTestId}-rows`}>

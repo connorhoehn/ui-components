@@ -4,7 +4,7 @@ import { StackedRail, type StackedRailGroup } from './StackedRail';
 import { SubNavLayout } from './SubNavLayout';
 import { PresenceAvatars } from './PresenceAvatars';
 import { DropdownMenu } from './DropdownMenu';
-import { MoreIcon, PlusIcon, RepeatIcon } from '../ui/Icons';
+import { MoreIcon, PlusIcon, RepeatIcon, UploadIcon } from '../ui/Icons';
 
 const meta = {
   title: 'Shared/StackedRail',
@@ -15,6 +15,17 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/** A group heading's ⋯ — the host's own node in `actions`. */
+const groupMenu = (label: string, testId: string) => (
+  <DropdownMenu
+    trigger={<MoreIcon size={14} />}
+    triggerLabel={`Actions for ${label}`}
+    triggerTestId={testId}
+    align="end"
+    sections={[{ items: [{ label: 'New page', onSelect: () => {} }, { label: 'Rename…', onSelect: () => {} }] }]}
+  />
+);
 
 const rowMenu = (label: string) => (
   <DropdownMenu
@@ -63,10 +74,20 @@ function DocumentsRail() {
       ],
     },
     {
+      // A long label + presence + a ⋯: at 220px the ⋯ waits for hover/focus
+      // so the label reads whole.
       id: 'drafts', title: 'Workspace drafts', count: 0,
-      actions: [{ label: 'New page', icon: <PlusIcon size={14} />, onClick: () => {} }],
+      trailing: <PresenceAvatars size={20} maxVisible={2} users={[{ id: 'u2', name: 'Grace Hopper' }, { id: 'u3', name: 'Alan Turing' }]} />,
+      actions: groupMenu('Workspace drafts', 'story-drafts-menu'),
       rows: [],
       emptyLabel: 'No drafts yet.',
+    },
+    {
+      // A folded folder with presence.
+      id: 'auth', title: 'Auth migration', count: 4, open: false,
+      trailing: <PresenceAvatars size={20} maxVisible={2} users={[{ id: 'u1', name: 'Ada Lovelace' }]} />,
+      actions: groupMenu('Auth migration', 'story-auth-menu'),
+      rows: [{ id: 'auth-plan', label: 'Rollout plan', meta: '1d', onSelect: pick('auth-plan') }],
     },
     {
       id: 'activity', title: 'Activity', collapsible: false,
@@ -74,8 +95,12 @@ function DocumentsRail() {
     },
   ];
   return (
-    <StackedRail title="Documents" count={14} aria-label="Documents" currentStyle="tint" selectedId={selected} groups={groups}
-      actions={[{ label: 'New document', icon: <PlusIcon size={14} />, onClick: () => {} }]} />
+    <StackedRail title="Documents" count={187} aria-label="Documents" currentStyle="tint" selectedId={selected} groups={groups}
+      actions={[
+        { label: 'New document', icon: <PlusIcon size={14} />, onClick: () => {}, 'data-testid': 'story-title-new' },
+        { label: 'Import', icon: <UploadIcon size={14} />, onClick: () => {}, 'data-testid': 'story-title-import' },
+        { label: 'Refresh', icon: <RepeatIcon size={14} />, onClick: () => {}, 'data-testid': 'story-title-refresh' },
+      ]} />
   );
 }
 
@@ -84,7 +109,10 @@ function DocumentsRail() {
  * 220px. Three levels open (Engineering handbook → Onboarding → Day one) and
  * a row with an age plus a presence stack (Runbooks), so the 36px pitch, the
  * indent step and the caret column can be measured
- * (tests/storybook/stacked-rail-geometry.spec.ts).
+ * (tests/storybook/stacked-rail-geometry.spec.ts). The caption carries a
+ * 3-digit count and three actions, and two headings a long label + presence
+ * + a ⋯ (Workspace drafts, and Auth migration folded) — the 220px chrome
+ * budget (tests/storybook/stacked-rail-actions.spec.ts).
  */
 export const Documents: Story = {
   args: { groups: [] },

@@ -27,9 +27,9 @@ import { t as ne } from "./LogStream-Bk8DVIVb.js";
 import { a as re, n as W, o as ie, s as ae, t as oe } from "./backdropTone-BzPocySl.js";
 import { t as se } from "./InlinePopover-DSiUnj-R.js";
 import { a as ce, d as le, i as ue, l as de } from "./railType-DaEA_kg6.js";
-import { t as fe } from "./InlinePlaceholder-CbIBYc-_.js";
-import { n as pe, t as G } from "./PopoverForm-C1FhtwC7.js";
-import { t as me } from "./DropdownMenu-DfuRPo2m.js";
+import { t as fe } from "./DropdownMenu-DfuRPo2m.js";
+import { t as pe } from "./InlinePlaceholder-CbIBYc-_.js";
+import { n as me, t as G } from "./PopoverForm-C1FhtwC7.js";
 import { t as he } from "./Select-ErGXS9Yj.js";
 import { F as ge, R as _e, j as ve, rt as ye, st as be, tt as xe } from "./ConversationSurface-B-i_gjrH.js";
 import { t as Se } from "./rovingFocus-Bj5Y6kwY.js";
@@ -1089,7 +1089,7 @@ function Je({ items: e, grouped: t = !1, sectionOrder: n = "channels-first", sec
 								]
 							}), N.length > 0 && /* @__PURE__ */ Q("span", {
 								className: o("absolute right-1 top-1/2 -translate-y-1/2 opacity-0 transition-opacity", "group-hover:opacity-100 group-focus-within:opacity-100", "has-[[aria-expanded=true]]:opacity-100", "[@media(hover:none)]:opacity-100"),
-								children: /* @__PURE__ */ Q(me, {
+								children: /* @__PURE__ */ Q(fe, {
 									trigger: /* @__PURE__ */ Q("span", {
 										"aria-hidden": !0,
 										className: "leading-none tracking-wide",
@@ -4334,7 +4334,7 @@ function In({ items: e, onPick: t, disabled: n, searchAbove: r, kind: i, testId:
 				placeholder: i === "room" ? "Find a room" : "Find a person",
 				"data-testid": `${a}-search`
 			})
-		}), c.length === 0 ? /* @__PURE__ */ $(fe, {
+		}), c.length === 0 ? /* @__PURE__ */ $(pe, {
 			"data-testid": `${a}-none`,
 			children: [
 				"Nothing matches “",
@@ -4478,7 +4478,7 @@ function Un({ open: e, conversationName: t, people: n, preselectedIds: r = [], b
 			}
 		}
 	};
-	return /* @__PURE__ */ $(pe, {
+	return /* @__PURE__ */ $(me, {
 		open: e,
 		anchor: a,
 		placement: s,
@@ -5031,7 +5031,7 @@ function nr({ teams: e, activeChannel: t = null, onSelectChannel: n, onToggleTea
 						f.length > 0 && /* @__PURE__ */ Q("span", {
 							onClick: (e) => e.stopPropagation(),
 							className: o("shrink-0 opacity-0 transition-opacity", "group-hover:opacity-100 group-focus-within:opacity-100", "has-[[aria-expanded=true]]:opacity-100", "[@media(hover:none)]:opacity-100"),
-							children: /* @__PURE__ */ Q(me, {
+							children: /* @__PURE__ */ Q(fe, {
 								trigger: /* @__PURE__ */ Q("span", {
 									"aria-hidden": !0,
 									className: "leading-none tracking-wide",
@@ -5147,7 +5147,7 @@ function ar({ open: e, teamName: t, busy: n = !1, anchor: r, placement: i = "rig
 			}
 		}
 	};
-	return /* @__PURE__ */ $(pe, {
+	return /* @__PURE__ */ $(me, {
 		open: e,
 		anchor: r,
 		placement: i,
@@ -5225,7 +5225,7 @@ function or({ open: e, candidates: t, anchor: n, placement: r = "bottom-start", 
 		confirmCountLabel: (e) => `Start chat with ${e}`,
 		confirmLoadingLabel: "Starting…",
 		"data-testid": `${c}-people`,
-		children: ({ list: t, confirm: o }) => /* @__PURE__ */ Q(pe, {
+		children: ({ list: t, confirm: o }) => /* @__PURE__ */ Q(me, {
 			open: e,
 			anchor: n,
 			placement: r,
@@ -5274,7 +5274,7 @@ function lr({ open: e, busy: t = !1, anchor: n, placement: r = "bottom-end", onC
 			}
 		}
 	};
-	return /* @__PURE__ */ $(pe, {
+	return /* @__PURE__ */ $(me, {
 		open: e,
 		anchor: n,
 		placement: r,

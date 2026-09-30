@@ -4707,6 +4707,16 @@ export declare interface StackDiagramProps {
 }
 
 /**
+ * A group heading's actions slot (2.407.36): visually hidden (`sr-only`, so
+ * it takes no width yet stays a tab stop and in the accessibility tree) until
+ * the heading strip (`group/head`) is hovered, holds a `:focus-visible`
+ * element (the heading or an action, reached by Tab), a menu inside is open,
+ * or the group is current (`data-current` on the strip); always out when the
+ * primary pointer cannot hover (touch). Exported for the test.
+ */
+export declare const STACKED_RAIL_GROUP_ACTIONS_CLASS: string;
+
+/**
  * The row control — the Org rail's (SubNavLayout) row: 13px/500 on a 36px
  * pitch (8px + a 20px line + 8px, `RAIL_ROW_PITCH`), no gap between rows, no
  * radius. Group headings and the caption sit at the same 36px.
@@ -4747,6 +4757,7 @@ export declare interface StackedRailDragProps {
 
 export declare interface StackedRailGroup extends StackedRailDragProps {
     id: string;
+    /** The heading's label; also its `title`, so a truncated one reads whole on hover. */
     title: string;
     /** Plain count after the heading ("KIND 6"). */
     count?: number;
@@ -4757,8 +4768,23 @@ export declare interface StackedRailGroup extends StackedRailDragProps {
     onToggle?: (open: boolean) => void;
     /** Right of the heading — presence avatars, a status. */
     trailing?: ReactNode;
-    /** 28px icon buttons at the heading's right edge, or the host's own nodes. */
+    /**
+     * 28px icon buttons at the heading's right edge, or the host's own nodes (a
+     * ⋯ `DropdownMenu`). Revealed, not always drawn (2.407.36): they take no
+     * width until the heading is hovered, holds keyboard focus (Tab onto the
+     * heading or into the actions — `:focus-visible`, so a mouse click on the
+     * heading does not pin them), has a menu open (`aria-expanded="true"`
+     * inside), or the group is current; on a touch screen (`hover: none`)
+     * they are always out. Hidden they stay in the tab order and the
+     * accessibility tree (visually hidden, like `sr-only`), never `display:none`.
+     * `trailing` and `count` are not part of this and always show.
+     */
     actions?: StackedRailAction[] | ReactNode;
+    /**
+     * The group holds the view on screen: its actions stay out. Derived when
+     * any row in it (at any depth) is current; set it to force either way.
+     */
+    current?: boolean;
     rows: StackedRailRow[];
     /** The line an empty open group shows. Default "Nothing here yet." */
     emptyLabel?: ReactNode;
@@ -4771,7 +4797,17 @@ export declare interface StackedRailGroup extends StackedRailDragProps {
 export declare interface StackedRailProps {
     /** The rail's caption ("AGENT LIBRARY"). */
     title?: string;
+    /** Plain count directly after the caption ("DOCUMENTS 187"), like a group's. */
     count?: number;
+    /**
+     * The caption's actions. A `ReactNode`, or a single `StackedRailAction`,
+     * draws as-is at the right edge. Two or more `StackedRailAction`s draw as
+     * 28px icon buttons while the rail is 240px or wider (`railWidth="sm"` and
+     * up), and fold into one ⋯ menu (`${data-testid}-actions-menu`, one item
+     * per action, disabled carried over) below that — at `xs` (220px) three
+     * buttons would leave the caption "DOCUM… 187". A container query on the
+     * caption row decides, so the rail needs no width prop. (2.407.36)
+     */
     actions?: StackedRailAction[] | ReactNode;
     groups: StackedRailGroup[];
     /** The current row, in place of (or as well as) `row.current`. */
@@ -6289,14 +6325,19 @@ declare module '@tiptap/core' {
 }
 
 
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
+    }
+}
+
+
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -6307,6 +6348,19 @@ declare module '@tiptap/core' {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -6350,27 +6404,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
-    }
-}
-
-
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
     }
 }
