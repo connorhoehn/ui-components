@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.407.31
+
+- `OrgGraph.pruneToFocus` (new, default `true` = unchanged): `false` draws every person in `people` and uses `focusIds` only to centre the automatic fit and keep the focus whole. For a host that has already chosen the drawn set itself — OrgIQ's Search people view builds and counts its own neighbourhood; passing `focusIds` so the fit centres on the selection made the library trim 3 of 11 people the counter and the person card still named (journey walk, 2026-09-29). Tests on the radial fixtures.
+
 ## 2.407.30
 
 - **`StackedRail` (new, `shared` + root barrel):** the concise stacking left menu for trees — the Org tenant's second-rail family (`ExplorerLayout` + `RailSection` + `RailNavList`) generalised to nested rows: an 11px caps caption (`RAIL_GROUP_LABEL`) with optional count and 28px actions; groups with a plain count, collapse, a `trailing` presence slot and `actions`; rows that are `RailNavList` rows by construction (its row class: 13px/500, 32px, no gap; `STACKED_RAIL_ROW_CLASS` exported), with `children` indented 18px per level behind a disclosure caret, a right `meta` that is a count or an age (`RAIL_ITEM_COUNT`, 12px), an optional small `icon` (default none), `pending`/`disabled`/`disabledReason`, a hover- and focus-revealed `menu` slot, roving-tabindex keyboard navigation (Up/Down, Left/Right, Enter/Space), caller `testId` on groups and rows (falling back to `<listTestId>-group-<id>` / `<listTestId>-row-<id>`), and complete drag pass-through (`draggable`, the six drag events, arbitrary `data-*`) on rows and group headers. First consumers: the documents rails of OrgIQ's assessment workspace and realtime-examples' `/documents`, which drew a wide card panel with icons, ages and avatars beside the Org rail (rail parity goal, 2026-09-29). Story: `Documents` beside a `RailNavList`, and `Catalog`.

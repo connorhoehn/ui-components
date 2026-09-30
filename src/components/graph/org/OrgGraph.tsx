@@ -84,6 +84,16 @@ export interface OrgGraphProps {
   /** How far out `focusIds` reaches. Default 1 (direct neighbours). Since 2.403.0. */
   focusHops?: number;
   /**
+   * Whether `focusIds` trims the drawing to the focus neighbourhood (default
+   * `true`, the 2.403.0 behaviour). `false` (since 2.407.31) draws every
+   * person in `people` and uses `focusIds` only to centre the automatic fit
+   * and to keep the focus whole — for a host that has already chosen the
+   * drawn set itself (OrgIQ's Search people view builds its own neighbourhood
+   * and counts it; with pruning on, the library trimmed 3 of 11 people the
+   * counter and the person card still named).
+   */
+  pruneToFocus?: boolean;
+  /**
    * Screen px along each edge the drawing keeps clear of — pass the width of
    * a card the host overlays (`{ right: 320 }`) so no person or line sits
    * under it. The layout is sized to, and the fit centred in, what is left.
@@ -172,6 +182,7 @@ export function OrgGraph({
   controls = true,
   focusIds,
   focusHops = 1,
+  pruneToFocus = true,
   fitInset,
   minFitZoom = ORG_FIT_MIN_ZOOM,
   ref,
@@ -206,8 +217,8 @@ export function OrgGraph({
   // filter within it. Keyed by content so an inline array does not re-lay out.
   const focusKey = focusIds ? [...focusIds].sort().join('\u0000') : '';
   const focused = useMemo(
-    () => (focusKey ? focusOrgGraph(people, relationships, focusKey.split('\u0000'), { hops: focusHops }) : { people, relationships }),
-    [people, relationships, focusKey, focusHops],
+    () => (focusKey && pruneToFocus ? focusOrgGraph(people, relationships, focusKey.split('\u0000'), { hops: focusHops }) : { people, relationships }),
+    [people, relationships, focusKey, focusHops, pruneToFocus],
   );
   const focusSet = useMemo(
     () => new Set(focusKey ? focusKey.split('\u0000').filter(id => focused.people.some(p => p.id === id)) : []),

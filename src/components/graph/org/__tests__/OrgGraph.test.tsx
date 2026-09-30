@@ -365,3 +365,18 @@ describe('OrgGraph — Radial whole org (2.403.5)', () => {
     expect(viewTransform().scale).toBeGreaterThanOrEqual(ORG_FIT_MIN_ZOOM);
   });
 });
+
+describe('OrgGraph pruneToFocus (2.407.31)', () => {
+  // Radial: static positions on first effect, like `base`. The fixtures'
+  // people; the focus is one of them with a one-hop neighbourhood smaller
+  // than the whole set.
+  const focus = people[0]!.id;
+  it('pruneToFocus={false} draws every person passed while focusIds still names the focus', () => {
+    render(<OrgGraph {...base} focusIds={[focus]} pruneToFocus={false} />);
+    expect(screen.getAllByRole('button', { name: /·/ })).toHaveLength(people.length);
+  });
+  it('the default still trims to the focus neighbourhood', () => {
+    render(<OrgGraph {...base} focusIds={[focus]} />);
+    expect(screen.getAllByRole('button', { name: /·/ }).length).toBeLessThan(people.length);
+  });
+});

@@ -13309,7 +13309,7 @@ export declare interface OrgForceParams {
     jitter: number;
 }
 
-export declare function OrgGraph({ people, relationships, departments, onPersonSelect, multiSelectIds, onToggleMultiSelect, spotlightIds, layout, presenceFilter, showInfluence, legend, controls, focusIds, focusHops, fitInset, minFitZoom, ref, className, 'aria-label': ariaLabel, 'data-testid': testId, }: OrgGraphProps): JSX.Element;
+export declare function OrgGraph({ people, relationships, departments, onPersonSelect, multiSelectIds, onToggleMultiSelect, spotlightIds, layout, presenceFilter, showInfluence, legend, controls, focusIds, focusHops, pruneToFocus, fitInset, minFitZoom, ref, className, 'aria-label': ariaLabel, 'data-testid': testId, }: OrgGraphProps): JSX.Element;
 
 /**
  * `ref` handle on `OrgGraph`. The graph already fits on its own when the drawn
@@ -13384,6 +13384,16 @@ export declare interface OrgGraphProps {
     focusIds?: ReadonlySet<string> | readonly string[];
     /** How far out `focusIds` reaches. Default 1 (direct neighbours). Since 2.403.0. */
     focusHops?: number;
+    /**
+     * Whether `focusIds` trims the drawing to the focus neighbourhood (default
+     * `true`, the 2.403.0 behaviour). `false` (since 2.407.31) draws every
+     * person in `people` and uses `focusIds` only to centre the automatic fit
+     * and to keep the focus whole — for a host that has already chosen the
+     * drawn set itself (OrgIQ's Search people view builds its own neighbourhood
+     * and counts it; with pruning on, the library trimmed 3 of 11 people the
+     * counter and the person card still named).
+     */
+    pruneToFocus?: boolean;
     /**
      * Screen px along each edge the drawing keeps clear of — pass the width of
      * a card the host overlays (`{ right: 320 }`) so no person or line sits
@@ -24713,19 +24723,6 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasListStyle: {
             /**
              * Make the caret's block a list of the style's kind (if it is not one
@@ -24758,19 +24755,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -24798,12 +24788,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -24830,6 +24817,29 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
