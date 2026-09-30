@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.407.30
+
+- **`StackedRail` (new, `shared` + root barrel):** the concise stacking left menu for trees — the Org tenant's second-rail family (`ExplorerLayout` + `RailSection` + `RailNavList`) generalised to nested rows: an 11px caps caption (`RAIL_GROUP_LABEL`) with optional count and 28px actions; groups with a plain count, collapse, a `trailing` presence slot and `actions`; rows that are `RailNavList` rows by construction (its row class: 13px/500, 32px, no gap; `STACKED_RAIL_ROW_CLASS` exported), with `children` indented 18px per level behind a disclosure caret, a right `meta` that is a count or an age (`RAIL_ITEM_COUNT`, 12px), an optional small `icon` (default none), `pending`/`disabled`/`disabledReason`, a hover- and focus-revealed `menu` slot, roving-tabindex keyboard navigation (Up/Down, Left/Right, Enter/Space), caller `testId` on groups and rows (falling back to `<listTestId>-group-<id>` / `<listTestId>-row-<id>`), and complete drag pass-through (`draggable`, the six drag events, arbitrary `data-*`) on rows and group headers. First consumers: the documents rails of OrgIQ's assessment workspace and realtime-examples' `/documents`, which drew a wide card panel with icons, ages and avatars beside the Org rail (rail parity goal, 2026-09-29). Story: `Documents` beside a `RailNavList`, and `Catalog`.
+- `RailNavList`/`railType`: the stale "34px" row comments now say 32px.
+
 ## 2.407.29
 
 - **`RecordGraph` automatic fit on a short canvas (fix, completes 2.407.28).** The readable selection view is now placed directly — the selection centred in the canvas, then the nearest offset inside the 16px margins that clears every overlay rectangle (selected records only; the ladder's whole-graph → neighbourhood → focus placement and the all-nodes overlay shift never landed it), the zoom stepping by 0.01 from the selection's canvas fit down to the readable zoom (0.02 steps missed the 1160 × 333 connections canvas, where 0.74 overflows by a pixel and 0.73 fits), with a pixel of slack inside the margin so a fit is never exactly on it. Journey walks, 2026-09-29: Force opened at 62% (names 8.1px) while 73% with the three selected records whole and clear of the legend and controls existed.

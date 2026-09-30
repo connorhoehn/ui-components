@@ -3,6 +3,7 @@ import { ButtonHTMLAttributes } from 'react';
 import { Context } from 'react';
 import { CSSProperties } from 'react';
 import { default as default_2 } from 'react';
+import { DragEventHandler } from 'react';
 import { ElementType } from 'react';
 import { ForwardRefExoticComponent } from 'react';
 import { HTMLAttributes } from 'react';
@@ -4705,10 +4706,113 @@ export declare interface StackDiagramProps {
     'data-testid'?: string;
 }
 
+/**
+ * The row control — exactly `RailNavList`'s row class: 32px tall (6px + a 20px
+ * line + 6px), no gap between rows, so a StackedRail row is pixel-identical to
+ * a RailNavList row. Group headings and the caption sit at the same 32px.
+ */
+export declare const STACKED_RAIL_ROW_CLASS: string;
+
 export declare function StackedAreaChart({ series, height, }: {
     series: LineSeries[];
     height?: number;
 }): JSX.Element;
+
+export declare function StackedRail({ title, count, actions, groups, selectedId, currentStyle, 'aria-label': ariaLabel, className, 'data-testid': testId, }: StackedRailProps): JSX.Element | null;
+
+/** A group heading action: a 28px ghost icon button. */
+export declare interface StackedRailAction {
+    label: string;
+    icon: ReactNode;
+    onClick: () => void;
+    disabled?: boolean;
+    'data-testid'?: string;
+}
+
+/** `data-*` attributes passed straight through to a row or group heading. */
+export declare type StackedRailDataAttributes = Record<`data-${string}`, string | number | boolean | undefined>;
+
+/** Drag pass-through: the host owns what a drag and a drop mean. */
+export declare interface StackedRailDragProps {
+    draggable?: boolean;
+    onDragStart?: DragEventHandler<HTMLElement>;
+    onDragOver?: DragEventHandler<HTMLElement>;
+    onDragEnter?: DragEventHandler<HTMLElement>;
+    onDragLeave?: DragEventHandler<HTMLElement>;
+    onDrop?: DragEventHandler<HTMLElement>;
+    onDragEnd?: DragEventHandler<HTMLElement>;
+    /** Extra `data-*` attributes for the element that carries the testid. */
+    data?: StackedRailDataAttributes;
+}
+
+export declare interface StackedRailGroup extends StackedRailDragProps {
+    id: string;
+    title: string;
+    /** Plain count after the heading ("KIND 6"). */
+    count?: number;
+    /** Default true. A non-collapsible group draws its heading as text. */
+    collapsible?: boolean;
+    /** Controlled open state (with `onToggle`), else the initial one. Default open. */
+    open?: boolean;
+    onToggle?: (open: boolean) => void;
+    /** Right of the heading — presence avatars, a status. */
+    trailing?: ReactNode;
+    /** 28px icon buttons at the heading's right edge, or the host's own nodes. */
+    actions?: StackedRailAction[] | ReactNode;
+    rows: StackedRailRow[];
+    /** The line an empty open group shows. Default "Nothing here yet." */
+    emptyLabel?: ReactNode;
+    /** Busy (the whole source mid-pull): translucent and `aria-busy`. */
+    pending?: boolean;
+    /** The group section's testid. Default `${listTestId}-group-${id}`. */
+    testId?: string;
+}
+
+export declare interface StackedRailProps {
+    /** The rail's caption ("AGENT LIBRARY"). */
+    title?: string;
+    count?: number;
+    actions?: StackedRailAction[] | ReactNode;
+    groups: StackedRailGroup[];
+    /** The current row, in place of (or as well as) `row.current`. */
+    selectedId?: string | null;
+    /** `tint` fills the current row too (a rail that also shows selections). */
+    currentStyle?: 'tint' | 'weight';
+    /** The nav landmark's name. Default "Navigation". */
+    'aria-label'?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface StackedRailRow extends StackedRailDragProps {
+    id: string;
+    label: string;
+    /** A link target. Without it the row is a button calling `onSelect`. */
+    href?: string;
+    /** Called on activation — also for `href` rows (the host's router). */
+    onSelect?: () => void;
+    /** Router interception; keep modified clicks native by checking the event. */
+    onNavigate?: (event: MouseEvent_2<HTMLAnchorElement>) => void;
+    /** The view on screen. Also set by `selectedId`. */
+    current?: boolean;
+    /** Right-aligned muted meta: a number is a count ("0" shows), a string an age ("3h"). */
+    meta?: number | string;
+    /** A small glyph before the label. None by default — the rail is words. */
+    icon?: ReactNode;
+    children?: StackedRailRow[];
+    /** Controlled disclosure. With `onToggle`, the host owns it; alone, the initial state. */
+    open?: boolean;
+    onToggle?: (open: boolean) => void;
+    disabled?: boolean;
+    /** Tooltip on a disabled row: why it cannot be opened. */
+    disabledReason?: string;
+    /** Busy (a move or pull in flight): translucent and `aria-busy`. */
+    pending?: boolean;
+    /** The hover/focus-revealed row menu slot (a ⋯ `DropdownMenu`, usually). */
+    menu?: ReactNode | ((row: StackedRailRow) => ReactNode);
+    /** The row control's testid. Default `${listTestId}-row-${id}`. */
+    testId?: string;
+}
 
 /** Spacing scale. Matches Tailwind's 4px base: xs=6, sm=8, md=12, lg=16, xl=24. */
 export declare type StackGap = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -6134,18 +6238,12 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasLineSpacing: {
+        diagramMacro: {
             /**
-             * Space the paragraphs in the selection.
-             *
-             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
-             * spacing carries no inline style at all and follows the paper — the same
-             * rule the font picker's "Default" and the alignment's unset follow, and
-             * the reason an untouched document stays untouched.
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
              */
-            setLineSpacing: (spacing: LineSpacing) => ReturnType;
-            /** Return the paragraphs in the selection to the paper's own leading. */
-            unsetLineSpacing: () => ReturnType;
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -6166,35 +6264,18 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
+        canvasLineSpacing: {
             /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
+             * Space the paragraphs in the selection.
+             *
+             * `'1'` UNSETS rather than storing `1`, so a paragraph returned to single
+             * spacing carries no inline style at all and follows the paper — the same
+             * rule the font picker's "Default" and the alignment's unset follow, and
+             * the reason an untouched document stays untouched.
              */
-            insertDiagram: (id?: string) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+            setLineSpacing: (spacing: LineSpacing) => ReturnType;
+            /** Return the paragraphs in the selection to the paper's own leading. */
+            unsetLineSpacing: () => ReturnType;
         };
     }
 }
@@ -6222,6 +6303,39 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -6241,16 +6355,6 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
