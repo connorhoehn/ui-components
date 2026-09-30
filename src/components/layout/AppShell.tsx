@@ -176,9 +176,15 @@ export function AppShell({
           </nav>
         )}
 
-        {/* Main content — offset by sidebar when present */}
+        {/* Main content — offset by sidebar when present. `min-w-0`: main is a
+            flex item of the body row, and without it its automatic minimum
+            width is its content's min-content — a truncated line, a toolbar
+            that measures its own room, a composer row — so one long nowrap
+            line made the whole page wider than the window (1587px at 1280 on
+            the Documents list). The page is the window's width; what does
+            not fit wraps, folds or scrolls inside its own pane. */}
         <main
-          className="relative z-[1] flex min-h-0 flex-1 flex-col bg-[var(--color-surface-panel)]"
+          className="relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col bg-[var(--color-surface-panel)]"
           style={sidebar ? { marginLeft: sidebarWidth, width: `calc(100% - ${sidebarWidth}px)` } : undefined}
         >
           <div

@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.407.35
+
+- **`AppShell`'s `<main>` is `min-w-0` (fix).** It is a `flex-1` item of the body row and had the automatic minimum width, which is its content's min-content — so one nowrap line anywhere in the page (a truncated list snippet, a `DocumentToolbar` that measures its own room, a composer row) made the whole page wider than the window. realtime-examples' Documents surfaces at 1280×720: `documentElement.scrollWidth` 1587 on the list and 1463 on an open page → 1280 on both; the page editor's toolbar now measures 978px of room and folds into ⋯ instead of reading the widened box. Truncation, toolbar folding and the docked composer all work inside the window-wide main now.
+- Tests: `AppShell.test.tsx` (main carries `min-w-0` and `flex-1`).
+
 ## 2.407.34
 
 - **`ProposedEditStrip` (new, `doc-editor` + root barrel):** an agent's pending edits to the open document, waiting on a human — "Proposed edit · Replace selection · Apply · Discard". `proposals: { id, kind: 'insert' | 'replace', anchor: { from, to } | 'cursor', content: { html?, text? }, summary?, status: 'streaming' | 'ready' | 'applying' | 'applied' | 'discarded' }[]`, `onApply(id)`, `onDiscard(id)`, optional `onRevise(id, instruction)` (a one-line inline field behind "Revise…", on ready proposals), `onApplyAll` / `onDiscardAll` (shown when more than one proposal is ready / pending), `title`, `data-testid` (default `proposed-edit-strip`; parts `-title`, `-item` with `data-status` + `data-proposal-id`, `-placement`, `-summary`, `-preview`, `-streaming`, `-apply`, `-discard`, `-revise`, `-revise-input`, `-revise-send`, `-applied`, `-apply-all`, `-discard-all`). `streaming` draws `ThinkingDots` + "Drafting…", Apply off, Discard reads Cancel; `applying` turns both off ("Applying…"); `applied` is a success chip; `discarded` is not drawn, and a strip with nothing to draw renders null. Purely presentational: the host performs Apply through its own editor. `proposedEditPreview(content)` (text, or html without markup) and `proposedEditPlacement(edit)` ("Replace selection", "Insert at cursor", …) are exported. First consumers: OrgIQ's assessment document dock and realtime-examples' `/documents` (agent mode on by default).

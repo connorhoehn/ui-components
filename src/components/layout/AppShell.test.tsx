@@ -77,4 +77,15 @@ describe('AppShell', () => {
     );
     expect(screen.getByTestId('cmd-palette')).toBeInTheDocument();
   });
+
+  it('main can shrink below its content (min-w-0) so a long line never widens the page', () => {
+    const { container } = render(
+      <AppShell header={<div>H</div>}>
+        <div>Content</div>
+      </AppShell>,
+    );
+    const main = container.querySelector('main');
+    expect(main?.className).toContain('min-w-0');
+    expect(main?.className).toContain('flex-1');
+  });
 });
