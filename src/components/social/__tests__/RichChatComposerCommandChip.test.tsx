@@ -2,9 +2,10 @@
 // its own line under the mode row — "/workflow ⟡ migration-plan" — and the
 // picked argument replaces the command's label while it is intact in the
 // draft (2.385.0). Other mode controls keep the tinted strip.
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { createRef, useState } from 'react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { RichChatComposer } from '../RichChatComposer';
+import { RichChatComposer, type RichChatComposerHandle, type RichChatDraft } from '../RichChatComposer';
 import type { ComposerCommand } from '../composerCommands';
 
 afterEach(cleanup);
@@ -135,5 +136,80 @@ describe('command chip in the docked card', () => {
       />,
     );
     expect(screen.getByTestId('composer-input').querySelector('[data-command-prefix]')).toBeNull();
+  });
+});
+
+// 2.407.41 — realtime-examples' DM composer (a ContextComposer: the docked
+// editor card) showed "/doc Edit the open document with Haiku" as the inline
+// chip — the command's LABEL, which read as the previous instruction — beside a
+// still-visible "/doc make sure…": the trigger twice. The chip names only what
+// the input hides: the trigger and a picked argument.
+describe('the docked card chip names what the input hides (2.407.41)', () => {
+  const doc: ComposerCommand = { trigger: '/doc', label: 'Edit the open document with Haiku', hint: 'Runs as a pipeline' };
+  const docked = { ...base, mode: 'chat' as const, toolbar: 'editor' as const, commands: [doc, workflow] };
+
+  function host(initial: RichChatDraft | undefined, onSend = vi.fn()) {
+    const ref = createRef<RichChatComposerHandle>();
+    const drafts: Array<RichChatDraft | undefined> = [];
+    function Host() {
+      const [draft, setDraft] = useState(initial);
+      return <RichChatComposer {...docked} ref={ref} onSend={onSend} draft={draft} onDraftChange={(next) => { drafts.push(next); setDraft(next); }} />;
+    }
+    render(<Host />);
+    const type = (text: string) => act(() => { ref.current!.editor!.chain().focus('end').insertContent(text).run(); });
+    return { ref, drafts, type, onSend };
+  }
+  const hidden = () => screen.getByTestId('composer-input').querySelector('[data-command-prefix]');
+
+  it('a bare command: the chip is the trigger alone, the trigger hides in the input, never the label', () => {
+    const { type } = host(undefined);
+    type('/doc make sure to add your basic recipe style');
+    const chip = screen.getByTestId('composer-command');
+    expect(chip).toHaveAttribute('data-command-chip', 'inline');
+    expect(chip.textContent).toBe('/doc');
+    expect(chip).not.toHaveTextContent('Edit the open document with Haiku');
+    expect(chip).toHaveAttribute('title', 'Runs as a pipeline');
+    expect(hidden()?.textContent).toBe('/doc ');
+    // The draft still carries the command for the host.
+    expect(screen.getByTestId('composer-input').textContent).toBe('/doc make sure to add your basic recipe style');
+  });
+
+  it('send clears the command: no chip, no hidden prefix, the published draft has no command', () => {
+    const { type, drafts, onSend } = host(undefined);
+    type('/doc Edit the open document please');
+    fireEvent.click(screen.getByRole('button', { name: /send/i }));
+    expect(onSend).toHaveBeenCalledWith(expect.objectContaining({ command: { trigger: '/doc' }, text: '/doc Edit the open document please' }));
+    expect(screen.queryByTestId('composer-command')).toBeNull();
+    expect(hidden()).toBeNull();
+    expect(drafts.at(-1)).toMatchObject({ html: '', files: [] });
+    expect(drafts.at(-1)!.command).toBeUndefined();
+  });
+
+  it('a second typed trigger after a send is one chip and one hidden trigger, nothing left of the first', () => {
+    const { type } = host(undefined);
+    type('/doc Edit the open document please');
+    fireEvent.click(screen.getByRole('button', { name: /send/i }));
+    type('/doc make sure to add your basic recipe style');
+    expect(screen.getAllByTestId('composer-command')).toHaveLength(1);
+    expect(screen.getByTestId('composer-command').textContent).toBe('/doc');
+    const input = screen.getByTestId('composer-input');
+    expect(input.textContent).toBe('/doc make sure to add your basic recipe style');
+    expect(input.textContent!.match(/\/doc/g)).toHaveLength(1);
+    expect(hidden()?.textContent).toBe('/doc ');
+  });
+
+  it('a draft whose text does not start with the trigger has no chip, whatever its stored command says', () => {
+    host({ html: '<p>make sure to add your basic recipe style</p>', files: [], command: { trigger: '/doc' } });
+    expect(screen.queryByTestId('composer-command')).toBeNull();
+    expect(hidden()).toBeNull();
+  });
+
+  it('a controlled draft with a stale command pick is reconciled against its text', () => {
+    const { drafts, type } = host({ html: '<p>/doc tidy up</p>', files: [], command: { trigger: '/workflow', argument: { id: 'migration-plan', label: 'migration-plan' } } });
+    const chip = screen.getByTestId('composer-command');
+    expect(chip.textContent).toBe('/doc');
+    expect(screen.queryByTestId('composer-command-argument')).toBeNull();
+    type(' now');
+    expect(drafts.at(-1)!.command).toEqual({ trigger: '/doc' });
   });
 });

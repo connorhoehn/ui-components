@@ -2935,7 +2935,7 @@ var Aa = me(function({ onSend: f, draft: g, onDraftChange: b, onCommand: S, onSe
 		let t = J.getText();
 		$t(J.isEmpty);
 		let n = ce(t, W.current);
-		wn(n), En(!n || fe(t, n).trim() === ""), On(Ea(G.current, n, t));
+		G.current && G.current.trigger !== n?.trigger && (G.current = null), wn(n), En(!n || fe(t, n).trim() === ""), On(Ea(G.current, n, t));
 	}, [
 		J,
 		g,
@@ -3068,12 +3068,12 @@ var Aa = me(function({ onSend: f, draft: g, onDraftChange: b, onCommand: S, onSe
 			children: "→"
 		})
 	] });
-	Sn.current = Y, Cn.current = xr, E(() => {
+	Sn.current = Y, Cn.current = X, E(() => {
 		!J || J.isDestroyed || J.view.dispatch(J.state.tr.setMeta(Ta, !0));
 	}, [
 		J,
 		Y,
-		xr
+		X
 	]);
 	let Tr = br && (yr || Y), Er = _r && !yr && j !== "menu", Dr = !!gt?.length && !!_t, Or = Dr && _r && Qt && or && !(wt && !dr), kr = Dr && !_r, Z = wt && !Tt && !dr && Qt && !F && !Ye?.length && !Ut.length && !K && !Xt && !cn && !H && !Bt.open && !(Fe && Pe === "hidden"), Ar = wt && "motion-safe:[animation:composerReveal_140ms_ease-out]", [jr, Mr] = O(!1), Q = vr && !jr || Z, Nr = Ke === "compact", $ = Ke === "basic", Pr = Ke === "editor" || Ke === "prompt" || $, Fr = !Nr && !Pr, Ir = _r && Fr, Lr = _r && !Nr, Rr = _r && Fr, zr = _r && !Nr && !$, Br = _r && !$, Vr = _r && !Fr, Hr = !!qe?.length && (!X || an), Ur = X && !!K && !Z && !H, Wr = xr && !Z && !H ? K ?? (kt ? Ne?.find((e) => e.trigger === kt) ?? null : null) : null, Gr = X ? [
 		...J && Vr ? [{
@@ -3332,50 +3332,59 @@ var Aa = me(function({ onSend: f, draft: g, onDraftChange: b, onCommand: S, onSe
 								"data-testid": `${I}-mode-label`,
 								children: ca[V]
 							})]
-						}) : Y ? yt && X ? null : /* @__PURE__ */ k(T, {
-							trigger: /* @__PURE__ */ A("span", {
-								className: e("flex items-center gap-1.5 text-text-primary", Sr ? "gap-2 font-medium" : "font-semibold", X ? "text-xs" : "text-sm"),
-								"data-testid": `${I}-mode-label`,
-								children: [
-									!Sr && /* @__PURE__ */ k("span", {
-										"aria-hidden": "true",
-										className: e("flex justify-center text-primary", X ? "w-5" : "w-4"),
-										children: X && V === "agent" ? /* @__PURE__ */ k(l, { size: 18 }) : la[V]
-									}),
-									ca[V],
-									X ? /* @__PURE__ */ k(m, {
-										size: 14,
-										"aria-hidden": "true",
-										className: "text-text-secondary"
-									}) : /* @__PURE__ */ k("span", {
-										"aria-hidden": "true",
-										className: "text-[11px] leading-none text-text-tertiary",
-										children: "▾"
-									})
-								]
-							}),
-							triggerLabel: `Composer mode: ${ca[V]}`,
-							triggerTitle: "Composer mode",
-							triggerTestId: `${I}-mode-menu`,
-							"data-testid": `${I}-mode-menu-list`,
-							align: "start",
-							triggerClassName: Sr ? "h-8 rounded-md border border-border bg-surface px-3 hover:bg-surface-hover" : "rounded-md border-0 bg-transparent hover:bg-surface-hover",
-							sections: [{ items: B.map((e, t) => {
-								let n = un(e) ? ot?.[e] : void 0;
-								return {
-									label: ca[e],
-									icon: X && e === "agent" ? /* @__PURE__ */ k(l, { size: 13 }) : la[e],
-									active: e === V,
-									...n ? { description: n } : {},
-									...M ? { trailing: /* @__PURE__ */ A("kbd", {
-										className: "rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary",
-										children: ["⌥", t + 1]
-									}) } : {},
-									onSelect: () => {
-										dn(e);
-									}
-								};
-							}) }, ...Gr]
+						}) : Y ? yt && X ? null : /* @__PURE__ */ A("span", {
+							className: "group/modemenu flex min-w-0 items-center gap-1.5",
+							"data-testid": `${I}-mode-control`,
+							children: [/* @__PURE__ */ k(T, {
+								trigger: /* @__PURE__ */ A("span", {
+									className: e("flex items-center gap-1.5 text-text-primary", Sr ? "gap-2 font-medium" : "font-semibold", X ? "text-xs" : "text-sm"),
+									"data-testid": `${I}-mode-label`,
+									children: [
+										!Sr && /* @__PURE__ */ k("span", {
+											"aria-hidden": "true",
+											className: e("flex justify-center text-primary", X ? "w-5" : "w-4"),
+											children: X && V === "agent" ? /* @__PURE__ */ k(l, { size: 18 }) : la[V]
+										}),
+										ca[V],
+										X ? /* @__PURE__ */ k(m, {
+											size: 14,
+											"aria-hidden": "true",
+											className: "text-text-secondary"
+										}) : /* @__PURE__ */ k("span", {
+											"aria-hidden": "true",
+											className: "text-[11px] leading-none text-text-tertiary",
+											children: "▾"
+										})
+									]
+								}),
+								triggerLabel: `Composer mode: ${ca[V]}`,
+								triggerTitle: "Composer mode",
+								triggerTestId: `${I}-mode-menu`,
+								"data-testid": `${I}-mode-menu-list`,
+								align: "start",
+								triggerClassName: Sr ? "h-8 rounded-md border border-border bg-surface px-3 hover:bg-surface-hover" : "rounded-md border-0 bg-transparent hover:bg-surface-hover",
+								sections: [{ items: B.map((e, t) => {
+									let n = un(e) ? ot?.[e] : void 0;
+									return {
+										label: ca[e],
+										icon: X && e === "agent" ? /* @__PURE__ */ k(l, { size: 13 }) : la[e],
+										active: e === V,
+										...n ? { description: n } : {},
+										...M ? { trailing: /* @__PURE__ */ A("kbd", {
+											className: "rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary",
+											children: ["⌥", t + 1]
+										}) } : {},
+										onSelect: () => {
+											dn(e);
+										}
+									};
+								}) }, ...Gr]
+							}), M && !vr && /* @__PURE__ */ A("kbd", {
+								className: e("hidden bg-surface-inset font-mono text-text-secondary group-hover/modemenu:inline-block group-focus-within/modemenu:inline-block", X ? "rounded-md px-1.5 py-0.5 text-xs" : "rounded border border-border px-1 py-0.5 text-[11px]"),
+								"data-testid": `${I}-mode-kbd`,
+								"data-reveal": "hover-focus",
+								children: ["⌥", B.indexOf(V) + 1]
+							})]
 						}) : /* @__PURE__ */ A("span", {
 							className: "flex items-center gap-1 font-semibold text-text-primary",
 							"data-testid": `${I}-mode-label`,
@@ -3405,8 +3414,8 @@ var Aa = me(function({ onSend: f, draft: g, onDraftChange: b, onCommand: S, onSe
 								}, t);
 							})
 						}),
-						M && !vr && !an && !(X && yt) && /* @__PURE__ */ A("kbd", {
-							className: e("bg-surface-inset font-mono text-text-secondary", X ? "rounded-md px-1.5 py-0.5 text-xs" : "rounded border border-border px-1", !X && (Y ? "py-0.5 text-[11px]" : "text-[10px]")),
+						M && !vr && !an && !Y && /* @__PURE__ */ A("kbd", {
+							className: "rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary",
 							"data-testid": `${I}-mode-kbd`,
 							children: ["⌥", B.indexOf(V) + 1]
 						}),
@@ -3611,10 +3620,7 @@ var Aa = me(function({ onSend: f, draft: g, onDraftChange: b, onCommand: S, onSe
 										"data-testid": `${I}-command-placeholder`,
 										className: "min-w-0 truncate italic opacity-80",
 										children: K.argument.placeholder
-									}) : /* @__PURE__ */ k("span", {
-										className: "min-w-0 truncate",
-										children: K.label
-									})]
+									}) : null]
 								}),
 								/* @__PURE__ */ k("div", {
 									ref: mr,

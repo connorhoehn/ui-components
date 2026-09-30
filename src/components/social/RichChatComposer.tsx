@@ -1809,6 +1809,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     const text = editor.getText();
     setEmpty(editor.isEmpty);
     const hit = matchComposerCommand(text, commandsRef.current);
+    // A restored draft's `command` is a claim about its text, not state: a
+    // pick for a trigger the text no longer starts with is dropped.
+    if (argPickRef.current && argPickRef.current.trigger !== hit?.trigger) argPickRef.current = null;
     setActiveCommand(hit);
     setArgumentEmpty(!hit || composerCommandArgumentText(text, hit).trim() === '');
     setPickedArgument(pickedArgumentFor(argPickRef.current, hit, text));
@@ -2143,14 +2146,19 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     </>
   );
   hideCommandPrefixRef.current = menuModeRow;
-  hideBareTriggerRef.current = promptCard;
+  // The docked card's inline chip names the command, so a bare trigger hides
+  // in the input too — before 2.407.41 only the prompt card hid it, and the
+  // editor dock showed "/doc Edit the open document with Haiku" (the chip, with
+  // the command's LABEL) beside a still-visible "/doc make sure…": the trigger
+  // twice, and a label that read like the previous instruction.
+  hideBareTriggerRef.current = docked;
   // The plugin reads the ref on the next transaction; switching into or out
   // of the docked card sends an empty one so the command line hides or shows
   // (and the caret moves past it) straight away.
   useEffect(() => {
     if (!editor || editor.isDestroyed) return;
     editor.view.dispatch(editor.state.tr.setMeta(commandPrefixKey, true));
-  }, [editor, menuModeRow, promptCard]);
+  }, [editor, menuModeRow, docked]);
   const referencesInModeRow = compactModeRow && (compact || menuModeRow);
   // Compact folds the hints row into `?` at every width.
   // The docked card (`menu`) keeps its hints in the `?` menu: the row of
@@ -2588,6 +2596,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             ) : menuModeRow ? (hideModeMenu && docked ? null : (
               // One control: the mode's glyph and name, a ▾, the other modes
               // in a menu with their shortcuts and, when off, the reason.
+              // The current mode's `⌥n` (2.377.0) shows only while the control
+              // is hovered or holds focus: a standing badge beside "Chat ▾"
+              // read as a stray element (2.407.41). The menu rows keep theirs.
+              <span className="group/modemenu flex min-w-0 items-center gap-1.5" data-testid={`${testId}-mode-control`}>
               <DropdownMenu
                 trigger={(
                   <span className={cn('flex items-center gap-1.5 text-text-primary', basicBox ? 'gap-2 font-medium' : 'font-semibold', docked ? 'text-xs' : 'text-sm')} data-testid={`${testId}-mode-label`}>
@@ -2619,6 +2631,16 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                   }),
                 }, ...dockedMenuSections]}
               />
+              {modeShortcuts && !narrow && (
+                <kbd
+                  className={cn('hidden bg-surface-inset font-mono text-text-secondary group-hover/modemenu:inline-block group-focus-within/modemenu:inline-block', docked ? 'rounded-md px-1.5 py-0.5 text-xs' : 'rounded border border-border px-1 py-0.5 text-[11px]')}
+                  data-testid={`${testId}-mode-kbd`}
+                  data-reveal="hover-focus"
+                >
+                  ⌥{offeredModes.indexOf(activeMode) + 1}
+                </kbd>
+              )}
+              </span>
             )) : (
             <span className="flex items-center gap-1 font-semibold text-text-primary" data-testid={`${testId}-mode-label`}>
               <span aria-hidden="true" className="flex w-4 justify-center text-text-secondary">{MODE_ICON[activeMode]}</span>
@@ -2653,8 +2675,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               })}
             </span>
             )}
-            {modeShortcuts && !narrow && !singleMode && !(docked && hideModeMenu) && (
-              <kbd className={cn('bg-surface-inset font-mono text-text-secondary', docked ? 'rounded-md px-1.5 py-0.5 text-xs' : 'rounded border border-border px-1', !docked && (menuModeRow ? 'py-0.5 text-[11px]' : 'text-[10px]'))} data-testid={`${testId}-mode-kbd`}>
+            {modeShortcuts && !narrow && !singleMode && !menuModeRow && (
+              <kbd className="rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary" data-testid={`${testId}-mode-kbd`}>
                 ⌥{offeredModes.indexOf(activeMode) + 1}
               </kbd>
             )}
@@ -2872,6 +2894,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 activeCommand.disabled ? 'bg-warning-bg text-warning-fg' : 'bg-info-bg text-info-fg',
               )}
             >
+              {/* The trigger and the picked argument — what the input hides —
+                  never the command's label: beside the instruction it reads as
+                  words the person wrote. The label stays in the title. */}
               <span>{activeCommand.trigger}</span>
               {pickedArgument ? (
                 <span className="min-w-0 truncate" data-testid={`${testId}-command-argument`}>{pickedArgument.label}</span>
@@ -2879,9 +2904,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 <span data-testid={`${testId}-command-placeholder`} className="min-w-0 truncate italic opacity-80">
                   {activeCommand.argument.placeholder}
                 </span>
-              ) : (
-                <span className="min-w-0 truncate">{activeCommand.label}</span>
-              )}
+              ) : null}
             </div>
           )}
         <div

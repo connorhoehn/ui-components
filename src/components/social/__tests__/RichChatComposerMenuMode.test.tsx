@@ -25,6 +25,12 @@ describe('modeControl="menu"', () => {
     expect(screen.getByTestId('composer-mode-menu')).toHaveTextContent('Agent');
     expect(screen.getByTestId('composer-mode-kbd')).toHaveTextContent('⌥2');
     expect(screen.queryByTestId('composer-mode-agent')).toBeNull();
+    // 2.407.41: the chip is the mode control's hint, shown only while the
+    // control is hovered or focused — never a standing badge beside "Agent ▾".
+    const kbd = screen.getByTestId('composer-mode-kbd');
+    expect(screen.getByTestId('composer-mode-control')).toContainElement(kbd);
+    expect(screen.getByTestId('composer-mode-control')).toContainElement(screen.getByTestId('composer-mode-menu'));
+    expect(kbd).toHaveClass('hidden', 'group-hover/modemenu:inline-block', 'group-focus-within/modemenu:inline-block');
     expect(screen.queryByRole('group', { name: 'Composer mode' })).toBeNull();
   });
 
