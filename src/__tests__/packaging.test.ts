@@ -295,14 +295,15 @@ describe('entry points and their transitive optional peers', () => {
       // importing the presentation editor does not require `@dnd-kit` on disk
       // for a consumer who never drags a slide. See SlideList.tsx's own note.
       //
-      // `@tiptap/extension-mention`, `@tiptap/pm` and `cmdk` are DYNAMIC for the
-      // same reason (2.361.0): the editor's agent box is the chat's
-      // `RichChatComposer`, reached through `React.lazy` in
-      // `PresentationEditor.tsx` (see `PresentationAgentComposer.tsx`), so a
-      // host that never passes `onInstruct` never loads the mention stack.
+      // PresentationAgentComposer's RichChatComposer remains lazy, but other
+      // exports reach that composer statically. A lazy path does not make
+      // peers optional when the same entry also has an eager path.
       'doc-editor': {
-        static: [...TIPTAP, 'yjs'].sort(),
-        dynamic: ['@dnd-kit/core', '@dnd-kit/sortable', '@tiptap/extension-mention', '@tiptap/pm', 'amazon-ivs-web-broadcast', 'cmdk'],
+        // The committed 2.407.40 package already reaches RichChatComposer
+        // statically from this entry. Walking its archived dist and the fresh
+        // build yields the same peer set; these three were misclassified.
+        static: [...TIPTAP, '@tiptap/extension-mention', '@tiptap/pm', 'cmdk', 'yjs'].sort(),
+        dynamic: ['@dnd-kit/core', '@dnd-kit/sortable', 'amazon-ivs-web-broadcast'],
       },
       // The root barrel re-exports nearly everything, so it needs nearly
       // everything. That is expected — subpaths are how a consumer opts out.

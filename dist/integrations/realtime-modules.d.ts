@@ -3368,7 +3368,7 @@ export declare interface WrappedCanvasDocumentProps extends Omit<CanvasDocumentV
     beforeConvert?: () => void | Promise<void>;
 }
 
-export declare function WrappedChatPanel({ chat, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, emojis, onReply, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, }: WrappedChatPanelProps): JSX.Element;
+export declare function WrappedChatPanel({ chat, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, renderMessageReferences, emojis, onReply, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, }: WrappedChatPanelProps): JSX.Element;
 
 export declare interface WrappedChatPanelProps {
     /** Return value of useChat(channel) from realtime-modules */
@@ -3479,6 +3479,8 @@ export declare interface WrappedChatPanelProps {
     hasMore?: boolean;
     loadingMore?: boolean;
     composer?: ReactNode;
+    /** Host-resolved references rendered after each adapted message. */
+    renderMessageReferences?: ChatPanelProps['renderMessageReferences'];
     emojis?: readonly string[];
     onReply?: (message: ChatMessage) => void;
     onJumpToMessage?: (messageId: string) => void;
@@ -3881,42 +3883,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -3950,9 +3929,32 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }

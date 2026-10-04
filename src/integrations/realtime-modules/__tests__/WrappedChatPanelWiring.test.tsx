@@ -36,6 +36,21 @@ function makeMsg(id: string, text = 'hello'): RMChatMessage {
   return { id, clientId: 'conn-a', channel: 'room-1', message: text, timestamp: TS };
 }
 
+it('renders host-resolved references from the adapted message and replaces them after an update', () => {
+  const first = { ...makeMsg('ref-1'), metadata: { pageReference: { kind: 'work-item', id: 'work-1' } } };
+  const renderer = vi.fn((message) => <button>{message.metadata?.pageReference?.id === 'work-1' ? 'Open work one' : 'Page unavailable'}</button>);
+  const { rerender } = render(<WrappedChatPanel chat={makeChat([first])} renderMessageReferences={renderer} />);
+  expect(screen.getByRole('button', { name: 'Open work one' })).toBeInTheDocument();
+  expect(renderer).toHaveBeenCalledWith(expect.objectContaining({ id: 'ref-1', metadata: first.metadata }));
+  rerender(<WrappedChatPanel chat={makeChat([{ ...first, metadata: { pageReference: { kind: 'work-item', id: 'missing' } } }])}
+    renderMessageReferences={renderer} />);
+  expect(screen.queryByRole('button', { name: 'Open work one' })).not.toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Page unavailable' })).toBeInTheDocument();
+  rerender(<WrappedChatPanel chat={makeChat([{ ...first, metadata: { ...first.metadata, deleted: true } }])} renderMessageReferences={renderer} />);
+  expect(screen.queryByRole('button', { name: 'Open work one' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Page unavailable' })).not.toBeInTheDocument();
+});
+
 // ChatPanel broadcasts typing from keyDown, not from the value change.
 function type(text: string) {
   const input = screen.getByPlaceholderText(/message/i);

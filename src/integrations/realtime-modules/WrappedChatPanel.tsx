@@ -173,6 +173,8 @@ export interface WrappedChatPanelProps {
   // forwarded rather than omitted so an embedder is not forced to abandon this
   // component the moment they want one of them.
   composer?: ReactNode;
+  /** Host-resolved references rendered after each adapted message. */
+  renderMessageReferences?: ChatPanelProps['renderMessageReferences'];
   emojis?: readonly string[];
   onReply?: (message: ChatMessage) => void;
   onJumpToMessage?: (messageId: string) => void;
@@ -218,6 +220,7 @@ export function WrappedChatPanel({
   hasMore,
   loadingMore,
   composer,
+  renderMessageReferences,
   emojis,
   onReply,
   onJumpToMessage,
@@ -392,6 +395,7 @@ export function WrappedChatPanel({
       callParticipants={callParticipants}
       onJoinCall={onJoinCall}
       onOpenDocument={onOpenDocument}
+      renderMessageReferences={renderMessageReferences}
       attachmentSrc={attachmentSrc}
       onOpenAttachment={onOpenAttachment}
       acceptFiles={acceptFiles}
