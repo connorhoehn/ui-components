@@ -1303,7 +1303,7 @@ function Z({ messages: t, isStreaming: r, streamingText: i = "", activeToolCalls
 	]);
 	function S() {
 		let e = _.trim();
-		!e || r || (d(e), v(""));
+		e && !r && (d(e), v(""));
 	}
 	return /* @__PURE__ */ p("div", {
 		className: e("flex flex-col border border-border rounded-lg bg-surface overflow-hidden", g),

@@ -312,6 +312,18 @@ describe('EditorShell participants', () => {
   });
 
   describe('titleSize + tabsTrailing (2.389.0)', () => {
+    it('allows a full record headline to wrap while preserving single-line titles by default', () => {
+      const title = 'Refresh loop when a grant is revoked mid-session';
+      const { rerender } = render(<EditorShell title={title}><p>body</p></EditorShell>);
+      expect(screen.getByRole('heading', { name: title })).toHaveClass('truncate');
+      rerender(<EditorShell title={title} variant="work-item" titleSize="lg" titleOverflow="wrap"><p>body</p></EditorShell>);
+      const heading = screen.getByRole('heading', { name: title });
+      expect(heading).toHaveClass('whitespace-normal', 'break-words', 'text-[26px]');
+      expect(heading).not.toHaveClass('truncate');
+      rerender(<EditorShell title={title} titleOverflow="truncate"><p>body</p></EditorShell>);
+      expect(screen.getByRole('heading', { name: title })).toHaveClass('truncate');
+    });
+
     it('default title stays 20px bold; titleSize="lg" draws 26px semibold on the h1', () => {
       const { unmount } = render(<EditorShell title="Record"><p>x</p></EditorShell>);
       expect(screen.getByTestId('editor-shell-title').className).toContain('text-xl');

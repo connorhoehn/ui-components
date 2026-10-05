@@ -1,4 +1,4 @@
-import { n as e, t } from "./useWebSocket-Cmv4zMFO.js";
+import { n as e, t } from "./useWebSocket-BQgHqMAQ.js";
 import { t as n } from "./cn-D4QmbyEy.js";
 import { v as r } from "./overlayStack-DWxp7Rsz.js";
 import { t as i } from "./Chip-QXPdpJoz.js";
@@ -7,14 +7,14 @@ import { t as o } from "./Textarea-Drx4YDDG.js";
 import { t as s } from "./Select-ErGXS9Yj.js";
 import { t as c } from "./Checkbox-BC03mkQI.js";
 import { t as l } from "./formatBytes-05ivRSJY.js";
-import { n as u, t as d } from "./useResolvedTheme-BjuNuUtW.js";
+import { n as u, t as d } from "./useResolvedTheme-DrOgtyt3.js";
 import { Suspense as f, createElement as p, lazy as m, useCallback as h, useEffect as g, useMemo as ee, useRef as _, useState as v } from "react";
 import { Fragment as y, jsx as b, jsxs as x } from "react/jsx-runtime";
 import { Extension as S } from "@tiptap/core";
 import { NodeSelection as te, Plugin as ne, PluginKey as re, TextSelection as ie } from "@tiptap/pm/state";
 import { createRoot as ae } from "react-dom/client";
 //#region src/components/diagram/CollaborativeExcalidraw.tsx
-var oe = m(() => import("./ExcalidrawCanvas-D7wfjqDD.js"));
+var oe = m(() => import("./ExcalidrawCanvas-B6IpnFD7.js"));
 function se({ label: e }) {
 	return /* @__PURE__ */ b("div", {
 		"data-testid": "diagram-loading",
@@ -62,7 +62,10 @@ function de({ gatewayUrl: r, diagramId: i, authToken: a, requireSync: o, loading
 		ws: g,
 		onMessage: d
 	});
-	return v && (o !== !0 || x) ? /* @__PURE__ */ b("div", {
+	return !v || o === !0 && !x ? /* @__PURE__ */ b("div", {
+		className: n("h-full w-full", c),
+		children: s ?? /* @__PURE__ */ b(se, { label: "Connecting…" })
+	}) : /* @__PURE__ */ b("div", {
 		className: n("h-full w-full", c),
 		children: /* @__PURE__ */ b(f, {
 			fallback: /* @__PURE__ */ b(se, { label: "Loading diagram editor…" }),
@@ -72,9 +75,6 @@ function de({ gatewayUrl: r, diagramId: i, authToken: a, requireSync: o, loading
 				...l
 			})
 		})
-	}) : /* @__PURE__ */ b("div", {
-		className: n("h-full w-full", c),
-		children: s ?? /* @__PURE__ */ b(se, { label: "Connecting…" })
 	});
 }
 //#endregion
@@ -2728,7 +2728,7 @@ var yr = class extends D {
 	}
 	resolvePreview() {
 		let { resolve: e } = this.options, t = this.attachment;
-		!e || !dr(t) || this.resolvedFor === t.url || (this.resolvedFor = t.url, e(t).then((e) => {
+		e && dr(t) && this.resolvedFor !== t.url && (this.resolvedFor = t.url, e(t).then((e) => {
 			this.resolvedFor === t.url && (this.previewSrc = e, this.schedule());
 		}, () => {
 			this.resolvedFor === t.url && (this.previewSrc = null);

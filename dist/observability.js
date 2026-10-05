@@ -104,7 +104,7 @@ function ae(n = {}) {
 				});
 			}, n);
 		}, i = () => {
-			!t || e !== null || r();
+			t && e === null && r();
 		};
 		D().finally(() => {
 			document.hidden || i();

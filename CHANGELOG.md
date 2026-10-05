@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.409.0
+
+- `EditorShell` adds `titleOverflow="wrap"` for a full record heading at narrow pane widths. The default remains a single-line truncated title, and the editable title keeps its existing fitted input. Story: `WrappedRecordTitle`; contract: `EditorShell.test.tsx`.
+
 ## 2.407.40
 
 - **`RichChatComposer`: a failed send can say why (feat).** The alert on a rejected `onSend` was always "Unable to send. Your draft and attachments are saved. Try again." — an upload 500, a malformed upload URL and a closed socket read the same. Reject with the new `ComposerSendError` (exported from the root, `social` and `social/rich-composer`) and the alert shows its message ("Upload failed: HTTP 500. Your draft and attachments are saved."); any other rejection keeps the generic sentence, since an arbitrary `Error` message is not written for the person typing. Matched by `name` (`composerSendErrorReason`), so two copies of the module still agree. The alert gains `data-testid="<testId>-send-error"`. `ContextComposer` passes rejections through unchanged, so it gets this too. Test: `RichChatComposerPersistence.test.tsx`.

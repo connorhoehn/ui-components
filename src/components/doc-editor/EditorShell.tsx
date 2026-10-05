@@ -164,6 +164,12 @@ export interface EditorShellProps {
    */
   titleSize?: 'md' | 'lg';
   /**
+   * A read-only heading may wrap onto multiple lines. `truncate` (default)
+   * keeps the existing single-line title. Editing still uses the fitted
+   * single-line title editor. Since 2.409.0.
+   */
+  titleOverflow?: 'truncate' | 'wrap';
+  /**
    * At the right end of the tab row, above the tabs' underline — "Sources 4",
    * "Open in Library ↗". Hangs from the same baseline as the tabs, so it
    * reads as belonging to the row, not the title. Since 2.389.0.
@@ -216,6 +222,7 @@ export function EditorShell({
   itemType,
   itemKey,
   titleSize = 'md',
+  titleOverflow = 'truncate',
   tabsTrailing,
   className,
   'data-testid': testId = 'editor-shell',
@@ -339,7 +346,8 @@ export function EditorShell({
                   data-testid={`${testId}-title`}
                 />
               ) : (
-                <h1 className={cn('m-0 min-w-0 max-w-full flex-initial truncate text-text-primary', titleClass)} data-testid={`${testId}-title`}>{title}</h1>
+                <h1 className={cn('m-0 min-w-0 max-w-full flex-initial text-text-primary', titleClass,
+                  titleOverflow === 'wrap' ? 'whitespace-normal break-words' : 'truncate')} data-testid={`${testId}-title`}>{title}</h1>
               )}
               {onStarredChange && (
                 <IconButton

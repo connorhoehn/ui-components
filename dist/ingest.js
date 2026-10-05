@@ -1,7 +1,7 @@
 import { t as e } from "./apiBaseUrl-DLrXlmVj.js";
 import { r as t } from "./IdentityContext-CQM1qwH6.js";
 import { a as n, c as r, i, l as a, n as o, o as s, r as c, s as l, t as u, u as d } from "./useSyncConflicts-BspqjVsW.js";
-import { i as f } from "./useDocumentTypes-DCKwxXn8.js";
+import { i as f } from "./useDocumentTypes-C2XnlxHz.js";
 import { t as p } from "./cn-D4QmbyEy.js";
 import { t as m, v as h } from "./overlayStack-DWxp7Rsz.js";
 import { t as g } from "./Chip-QXPdpJoz.js";
@@ -1118,7 +1118,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 	}, [m]), oe = D(() => {
 		T(!1);
 	}, []), X = D(async () => {
-		if (!(!m || !i)) {
+		if (m && i) {
 			z(!0);
 			try {
 				let e = {

@@ -3,7 +3,7 @@ import { t } from "./Chip-QXPdpJoz.js";
 import { t as n } from "./TitledFrame-B0QW93da.js";
 import { t as r } from "./DotMeter-KxyExwVb.js";
 import { t as i } from "./StatusDot-ClFcLvD7.js";
-import { t as a } from "./InlinePopover-DSiUnj-R.js";
+import { t as a } from "./InlinePopover-PfCtP6n9.js";
 import { t as o } from "./SectionLabel-Bn8Vvb-K.js";
 import { t as s } from "./InlinePlaceholder-CbIBYc-_.js";
 import { n as c } from "./FloatingPanel-CeJO82Sr.js";
@@ -1216,7 +1216,7 @@ function _t({ node: t, activePaneId: n, renderLeaf: r, onRatioChange: i }) {
 function vt({ open: t, onClose: n, focusComputerId: i = null, variant: a = "overlay", chrome: o = "app", keymap: s = et, leader: c = null, idleWindowMs: l = b, className: u }) {
 	let { computers: d, canManage: f, create: p, models: m, notify: h, refresh: g, paneKinds: _, projects: v } = be(), y = _[0]?.id ?? "agent", x = Ye(), [S, C] = U(!1), [w, ee] = U(""), [T, te] = U(!1), [E, D] = U(!1), [O, ne] = U(!1), [k, A] = U(!1), j = H(/* @__PURE__ */ new Map()), M = H(null), re = H(null), ie = H(null), ae = V(() => new Map(d.map((e) => [e.id, e])), [d]), N = x.panes.find((e) => e.id === x.activePaneId) ?? x.panes[0] ?? null, oe = N ? ae.get(N.computerId) ?? null : null, se = Qe(_, x.panes.map((e) => e.kindId), "shell"), ce = x.windows.length > 0, P = i && ae.has(i) ? i : null, le = P ?? d[0]?.id ?? null;
 	B(() => {
-		!t || ce || !le || x.ensureSeeded(le, y);
+		t && !ce && le && x.ensureSeeded(le, y);
 	}, [
 		t,
 		ce,
@@ -1244,7 +1244,7 @@ function vt({ open: t, onClose: n, focusComputerId: i = null, variant: a = "over
 	}, [t]);
 	let me = x.reconcile, he = V(() => d.map((e) => e.id), [d]);
 	B(() => {
-		!t || he.length === 0 || me(he);
+		t && he.length !== 0 && me(he);
 	}, [
 		t,
 		he,
@@ -2085,7 +2085,7 @@ function Mt({ hotkeys: e = !0, reconcile: t = !0, className: n = "" }) {
 	kt(e);
 	let a = V(() => (i?.computers ?? []).map((e) => e.sessionId), [i?.computers]);
 	if (B(() => {
-		!t || a.length === 0 || re(a);
+		t && a.length !== 0 && re(a);
 	}, [t, a]), r.mode === "hidden" || r.shells.length === 0) return null;
 	let o = S(r.mode), s = /* @__PURE__ */ G("div", {
 		style: ot,
@@ -2617,7 +2617,7 @@ function $t(e = {}) {
 	}
 	let r = !1;
 	return () => {
-		r || !Z || (r = !0, --Z.count, !(Z.count > 0) && (globalThis.WebSocket = Z.native, Z = null, Kt.clear()));
+		!r && Z && (r = !0, --Z.count, !(Z.count > 0) && (globalThis.WebSocket = Z.native, Z = null, Kt.clear()));
 	};
 }
 //#endregion
