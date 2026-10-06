@@ -2873,7 +2873,15 @@ export declare interface LocalChatMessage {
     /** ISO. Decides where in the thread the message sits. */
     timestamp: string;
     displayName: string;
+    /** Plain text. Drawn as the body unless `body` is set; keep it meaningful (a summary) either way. */
     content: string;
+    /**
+     * A host-rendered body in place of `content`: a React node, or a function
+     * called on each render (so it can close over live state). Lets an
+     * unpersisted private card carry markdown, a diagram, a document preview.
+     * Since 2.413.0.
+     */
+    body?: ReactNode | (() => ReactNode);
     metadata: Record<string, unknown>;
     actions?: Array<{
         id: string;
@@ -3925,16 +3933,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -3954,6 +3952,16 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

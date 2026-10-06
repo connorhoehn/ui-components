@@ -2084,7 +2084,15 @@ declare interface LocalChatMessage {
     /** ISO. Decides where in the thread the message sits. */
     timestamp: string;
     displayName: string;
+    /** Plain text. Drawn as the body unless `body` is set; keep it meaningful (a summary) either way. */
     content: string;
+    /**
+     * A host-rendered body in place of `content`: a React node, or a function
+     * called on each render (so it can close over live state). Lets an
+     * unpersisted private card carry markdown, a diagram, a document preview.
+     * Since 2.413.0.
+     */
+    body?: ReactNode | (() => ReactNode);
     metadata: Record<string, unknown>;
     actions?: Array<{
         id: string;
@@ -3454,7 +3462,7 @@ export declare interface WrappedChatPanelProps {
      * agent reply. Not sent anywhere. One whose `id` the channel's own history
      * also holds is dropped, so an optimistic message gives way to its echo.
      */
-    localMessages?: readonly ChatMessage[];
+    localMessages?: readonly WrappedLocalMessage[];
     /**
      * Return value of useFileUpload(channel). Supplying it enables drag-drop,
      * paste and the paperclip, and renders every in-flight transfer in the
@@ -3758,6 +3766,18 @@ export declare interface WrappedHangoutState {
     remoteCount: number;
 }
 
+/**
+ * A view-only message. With `body` it renders as a private card (the node, or
+ * what the function returns) with the "Only you can see this" note and its
+ * `actions`, in timestamp order; `content` stays the plain-text summary.
+ * Without `body` it is an ordinary transcript row. Since 2.413.0.
+ */
+declare type WrappedLocalMessage = ChatMessage & {
+    body?: ReactNode | (() => ReactNode);
+    actions?: LocalChatMessage['actions'];
+    note?: string;
+};
+
 export declare type WrappedLVSHangoutLayoutComponent = (props: WrappedLVSHangoutLayoutProps) => React.JSX.Element;
 
 /** The realtime-modules functions WrappedLVSHangoutLayout calls. */
@@ -4012,16 +4032,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -4041,6 +4051,16 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

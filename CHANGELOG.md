@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.413.0
+
+- **`ContextComposer`** forwards `modeRowStart` (drawn on the idle row too) and `sendWithReferencesOnly` to `RichChatComposer`. The context chip counts as a reference.
+- **`WrappedChatPanel` / `ChatPanel` private cards.** A `localMessages` entry may carry `body` (a React node, or a function returning one) in place of its text, plus `actions` and `note`; it renders as an unpersisted private card, ordered by timestamp, deduplicated by `id` against the channel and itself. `LocalChatMessage.body` and the `WrappedLocalMessage` type are new.
+- **`HuddleBar`:** a `reconnecting` phase; visible wording for non-live phases (`statusLabel` overrides, `null` hides); `onToggleMedia` / `mediaOpen` / `mediaToggleLabel` add a media-panel toggle button with `aria-expanded`.
+
 ## 2.412.0
 
 - **New exports (additive).** `CloudIcon` and `MonitorIcon` from `/shared`; `HuddleBar` from `/video`; `useDeckPresence` from `/doc-editor`.

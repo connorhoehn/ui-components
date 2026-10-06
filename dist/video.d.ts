@@ -1616,7 +1616,7 @@ export declare type HlsPhase =
 /** Unplayable. `error` carries the wording. */
 | 'error';
 
-export declare function HuddleBar({ name, phase, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onLeave, leaveLabel, extras, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
+export declare function HuddleBar({ name, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onLeave, leaveLabel, extras, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
 
 /** One media control: the toggle, and an optional device list behind a caret. */
 export declare interface HuddleBarMedia {
@@ -1632,13 +1632,19 @@ export declare interface HuddleBarMedia {
     disabledReason?: string;
 }
 
-export declare type HuddleBarPhase = 'live' | 'connecting' | 'ringing' | 'ended';
+export declare type HuddleBarPhase = 'live' | 'connecting' | 'ringing' | 'reconnecting' | 'ended';
 
 export declare interface HuddleBarProps {
     /** The call's name: the place or person it is with. */
     name: string;
     /** Default `live`. */
     phase?: HuddleBarPhase;
+    /**
+     * Visible wording for the current phase ("Calling Mira…", "Reconnecting…").
+     * Default: "Connecting…", "Ringing…", "Reconnecting…" or "Ended" for a phase
+     * that is not `live`; nothing while live. Pass `null` to draw none. Since 2.413.0.
+     */
+    statusLabel?: string | null;
     /** Epoch ms the call went live. Draws a ticking timer while `live`. */
     startedAt?: number | null;
     /** People in the call now. */
@@ -1654,6 +1660,11 @@ export declare interface HuddleBarProps {
     chatOpen?: boolean;
     /** Unread chat count on the toggle. */
     chatUnread?: number;
+    /** Toggles the call's media panel (tiles, roster). Absent: no button. Since 2.413.0. */
+    onToggleMedia?: () => void;
+    mediaOpen?: boolean;
+    /** Accessible name and tooltip of the media toggle. Default "Participants". */
+    mediaToggleLabel?: string;
     onLeave: () => void;
     /** Default "Leave". */
     leaveLabel?: string;
@@ -3156,16 +3167,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -3185,6 +3186,16 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

@@ -6100,6 +6100,14 @@ export declare interface ContextComposerProps {
     submitLead?: ReactNode;
     /** At the end of the card's mode row — a scope switch ("This slide · Whole deck"). Hidden on the idle row. Since 2.407.11. */
     modeRowEnd?: ReactNode;
+    /** At the START of the card's mode row, and on the idle row — a "Chat" label or the host's own mode select. Forwarded to `RichChatComposer`. Since 2.413.0. */
+    modeRowStart?: ReactNode;
+    /**
+     * Send acts on an empty draft that has references (a message that is only
+     * "this page"). The context chip counts as a reference. Forwarded to
+     * `RichChatComposer`. Since 2.413.0.
+     */
+    sendWithReferencesOnly?: boolean;
     /** After the chips in the card's mode row — an "add another" control (a document picker). Hidden on the idle row. Since 2.407.11. */
     referencesAction?: ReactNode;
     /**
@@ -10526,7 +10534,7 @@ export declare type HlsPhase =
 /** Unplayable. `error` carries the wording. */
 | 'error';
 
-export declare function HuddleBar({ name, phase, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onLeave, leaveLabel, extras, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
+export declare function HuddleBar({ name, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onLeave, leaveLabel, extras, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
 
 /** One media control: the toggle, and an optional device list behind a caret. */
 export declare interface HuddleBarMedia {
@@ -10542,13 +10550,19 @@ export declare interface HuddleBarMedia {
     disabledReason?: string;
 }
 
-export declare type HuddleBarPhase = 'live' | 'connecting' | 'ringing' | 'ended';
+export declare type HuddleBarPhase = 'live' | 'connecting' | 'ringing' | 'reconnecting' | 'ended';
 
 export declare interface HuddleBarProps {
     /** The call's name: the place or person it is with. */
     name: string;
     /** Default `live`. */
     phase?: HuddleBarPhase;
+    /**
+     * Visible wording for the current phase ("Calling Mira…", "Reconnecting…").
+     * Default: "Connecting…", "Ringing…", "Reconnecting…" or "Ended" for a phase
+     * that is not `live`; nothing while live. Pass `null` to draw none. Since 2.413.0.
+     */
+    statusLabel?: string | null;
     /** Epoch ms the call went live. Draws a ticking timer while `live`. */
     startedAt?: number | null;
     /** People in the call now. */
@@ -10564,6 +10578,11 @@ export declare interface HuddleBarProps {
     chatOpen?: boolean;
     /** Unread chat count on the toggle. */
     chatUnread?: number;
+    /** Toggles the call's media panel (tiles, roster). Absent: no button. Since 2.413.0. */
+    onToggleMedia?: () => void;
+    mediaOpen?: boolean;
+    /** Accessible name and tooltip of the media toggle. Default "Participants". */
+    mediaToggleLabel?: string;
     onLeave: () => void;
     /** Default "Leave". */
     leaveLabel?: string;
@@ -12061,7 +12080,15 @@ export declare interface LocalChatMessage {
     /** ISO. Decides where in the thread the message sits. */
     timestamp: string;
     displayName: string;
+    /** Plain text. Drawn as the body unless `body` is set; keep it meaningful (a summary) either way. */
     content: string;
+    /**
+     * A host-rendered body in place of `content`: a React node, or a function
+     * called on each render (so it can close over live state). Lets an
+     * unpersisted private card carry markdown, a diagram, a document preview.
+     * Since 2.413.0.
+     */
+    body?: ReactNode | (() => ReactNode);
     metadata: Record<string, unknown>;
     actions?: Array<{
         id: string;
@@ -25191,16 +25218,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         hitlMacro: {
             /** Inserts an agent -> human callout at the selection. */
             insertHitl: (draft: HitlDraft) => ReturnType;
@@ -25220,6 +25237,16 @@ declare module '@tiptap/core' {
                 answeredBy?: string;
                 answeredAt?: string;
             }) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }

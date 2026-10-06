@@ -2225,7 +2225,7 @@ function Zt({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 						timestamp: r.timestamp,
 						tone: we,
 						mine: !0,
-						contentLayout: i ? "block" : "inline",
+						contentLayout: i || r.body != null ? "block" : "inline",
 						content: /* @__PURE__ */ K(W, { children: [
 							i ? /* @__PURE__ */ G(at, {
 								runId: i.runId,
@@ -2247,7 +2247,11 @@ function Zt({ messages: n, localMessages: r = [], onSend: i, disabled: a = !1, o
 								onReview: ce,
 								onRetry: le,
 								...Xt(i, ie, J)
-							}) : /* @__PURE__ */ G(ve, { text: r.content }),
+							}) : r.body == null ? /* @__PURE__ */ G(ve, { text: r.content }) : /* @__PURE__ */ G("div", {
+								"data-testid": "chat-local-message-body",
+								className: "min-w-0",
+								children: typeof r.body == "function" ? r.body() : r.body
+							}),
 							/* @__PURE__ */ G("div", {
 								"data-testid": "chat-local-message-note",
 								className: e("mt-1 text-[11px] italic", Z ? "text-white/50" : "text-text-tertiary"),
