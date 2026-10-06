@@ -1,40 +1,40 @@
-import { n as e, t } from "./useWebSocket-BQgHqMAQ.js";
+import { n as e, t } from "./useWebSocket-DLEDPGrr.js";
 import { t as n } from "./cn-D4QmbyEy.js";
-import { v as r } from "./overlayStack-DWxp7Rsz.js";
+import { n as r } from "./Button-C2OEUpX-.js";
 import { t as i } from "./Card-CbTNNNkk.js";
-import { t as a } from "./Chip-QXPdpJoz.js";
+import { t as a } from "./Chip-0zFpfJ52.js";
 import { t as o } from "./IconButton-VqtspsS5.js";
 import { ct as s, nt as c, p as l } from "./Icons-_hcrQmPz.js";
 import { n as u, t as d } from "./Stack-DNMA-_4L.js";
-import { t as f } from "./Breadcrumbs-ZdYJODLL.js";
-import { t as p } from "./Badge-BV6tPLgZ.js";
+import { t as f } from "./Breadcrumbs-Zks2hOES.js";
+import { t as p } from "./Badge-D6_ss75S.js";
 import { t as m } from "./Banner-CmrqvKtx.js";
-import { t as h } from "./Modal-R-ipbeZi.js";
+import { t as h } from "./Modal-CjgKqXl7.js";
 import { t as g } from "./Input-CpLq80dw.js";
 import { t as _ } from "./EmptyState-DnbFBYDA.js";
 import { n as v } from "./Tabs-BArH-7z_.js";
 import { t as y } from "./Textarea-Drx4YDDG.js";
-import { t as b } from "./Avatar-k-lopdn-.js";
-import { t as x } from "./SegmentedControl-Buix_cko.js";
+import { t as b } from "./Avatar-CmYYkk9C.js";
+import { t as x } from "./SegmentedControl-Blx221jS.js";
 import { t as S } from "./InlineAlert-CBtteaVZ.js";
 import { t as C } from "./CardHeader-C50GEAmo.js";
-import { t as w } from "./PresenceAvatars-DlmKqodq.js";
-import { t as T } from "./InlinePopover-PfCtP6n9.js";
+import { t as w } from "./PresenceAvatars-DAgxQ3PF.js";
+import { t as T } from "./InlinePopover-Nn2oovSj.js";
 import { t as E } from "./ChangeDiff-BHerlwTS.js";
-import { r as D } from "./Text-DrPQe5RD.js";
-import { t as O } from "./Select-ErGXS9Yj.js";
-import { t as k } from "./Checkbox-BC03mkQI.js";
+import { t as D } from "./MetaLine-BtHTTScI.js";
+import { t as O } from "./Select-C6OGjVyH.js";
+import { t as k } from "./Checkbox-C70AGFS5.js";
 import { n as ee } from "./FileKindMark-Cs3Q8iud.js";
 import { t as A } from "./activationKey-CjbL3LUv.js";
-import { A as te, k as j } from "./renderers-B4G34vmP.js";
-import { A as M, B as N, C as P, D as F, E as ne, F as I, G as L, H as R, I as z, J as B, K as V, L as re, M as H, N as U, O as ie, P as W, R as ae, S as oe, T as se, U as G, V as ce, W as le, Y as ue, Z as de, _ as fe, a as pe, b as me, c as he, d as ge, f as _e, g as ve, h as ye, i as be, j as xe, k as Se, l as Ce, m as we, n as Te, o as Ee, p as De, q as Oe, r as ke, s as Ae, t as je, u as Me, v as Ne, w as Pe, x as Fe, y as Ie, z as Le } from "./ProposedEditStrip-CZ43IwHS.js";
+import { A as te, k as j } from "./renderers-DS5eZtXk.js";
+import { A as M, B as N, C as P, D as F, E as ne, F as I, G as L, H as R, I as z, J as B, K as V, L as re, M as H, N as U, O as ie, P as W, R as ae, S as oe, T as se, U as G, V as ce, W as le, Y as ue, Z as de, _ as fe, a as pe, b as me, c as he, d as ge, f as _e, g as ve, h as ye, i as be, j as xe, k as Se, l as Ce, m as we, n as Te, o as Ee, p as De, q as Oe, r as ke, s as Ae, t as je, u as Me, v as Ne, w as Pe, x as Fe, y as Ie, z as Le } from "./ProposedEditStrip-BIafxYfO.js";
 import { i as Re } from "./MediaIcons-_ai5Til2.js";
-import { o as ze, t as Be } from "./VerdictChip-CSV5IQDb.js";
-import { a as Ve, c as He, d as Ue, f as We, h as Ge, i as Ke, l as qe, m as Je, n as Ye, o as Xe, p as Ze, r as Qe, s as $e, t as et, u as tt } from "./TiptapEditor-D4GkRCY3.js";
+import { o as ze, t as Be } from "./VerdictChip-B8JaUpcJ.js";
+import { a as Ve, c as He, d as Ue, f as We, h as Ge, i as Ke, l as qe, m as Je, n as Ye, o as Xe, p as Ze, r as Qe, s as $e, t as et, u as tt } from "./TiptapEditor-BjjwDyPa.js";
 import { i as nt, n as rt, r as it, t as at } from "./FloatingComposerDock-ZezHreIm.js";
-import { A as ot, B as st, C as ct, D as lt, E as ut, F as dt, G as ft, H as pt, I as mt, J as ht, K as gt, L as _t, M as vt, N as yt, O as bt, P as xt, R as St, S as Ct, T as wt, U as Tt, V as Et, W as Dt, _ as Ot, a as kt, b as At, c as jt, d as Mt, f as Nt, g as Pt, h as Ft, i as It, j as Lt, k as Rt, l as zt, m as Bt, o as Vt, p as Ht, q as Ut, r as Wt, s as Gt, t as Kt, u as qt, v as Jt, w as Yt, x as Xt, y as Zt, z as Qt } from "./DocumentEditorPage-8naEAZL9.js";
-import { C as $t, S as en, T as tn, _ as nn, a as rn, b as an, c as on, d as sn, f as cn, g as ln, h as un, i as dn, l as fn, m as pn, n as mn, o as hn, p as gn, r as _n, s as vn, t as yn, u as bn, v as xn, w as Sn, x as Cn, y as wn } from "./useDocumentImageUpload-Davah7mv.js";
-import { r as Tn } from "./RichChatComposer-Ch2_Ok4_.js";
+import { A as ot, B as st, C as ct, D as lt, E as ut, F as dt, G as ft, H as pt, I as mt, J as ht, K as gt, L as _t, M as vt, N as yt, O as bt, P as xt, R as St, S as Ct, T as wt, U as Tt, V as Et, W as Dt, _ as Ot, a as kt, b as At, c as jt, d as Mt, f as Nt, g as Pt, h as Ft, i as It, j as Lt, k as Rt, l as zt, m as Bt, o as Vt, p as Ht, q as Ut, r as Wt, s as Gt, t as Kt, u as qt, v as Jt, w as Yt, x as Xt, y as Zt, z as Qt } from "./DocumentEditorPage-B6wIlmCf.js";
+import { C as $t, S as en, T as tn, _ as nn, a as rn, b as an, c as on, d as sn, f as cn, g as ln, h as un, i as dn, l as fn, m as pn, n as mn, o as hn, p as gn, r as _n, s as vn, t as yn, u as bn, v as xn, w as Sn, x as Cn, y as wn } from "./useDocumentImageUpload-C7P4G7cM.js";
+import { r as Tn } from "./RichChatComposer-BseizH0c.js";
 import { forwardRef as En, useCallback as K, useEffect as q, useId as Dn, useImperativeHandle as On, useMemo as J, useRef as Y, useState as X } from "react";
 import { Fragment as Z, jsx as Q, jsxs as $ } from "react/jsx-runtime";
 import * as kn from "yjs";
@@ -1274,7 +1274,7 @@ function gr({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 		if (!e) return;
 		let r = (e) => e instanceof Element ? e.closest(fr) : null, a = (e) => {
 			let t = r(e.target), n = t?.getAttribute("data-comment-id");
-			if (t && n) {
+			if (!(!t || !n)) {
 				if (h.current?.id === n) {
 					y();
 					return;
@@ -1284,7 +1284,7 @@ function gr({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 		}, o = (e) => {
 			if (!i) return;
 			let t = r(e.target), a = t?.getAttribute("data-comment-id");
-			t && a && (v(), h.current?.id !== a && (m.current = setTimeout(() => x(a, t, "hover"), n)));
+			!t || !a || (v(), h.current?.id !== a && (m.current = setTimeout(() => x(a, t, "hover"), n)));
 		}, s = (e) => {
 			i && r(e.target) && (v(), m.current = setTimeout(() => {
 				h.current?.via === "hover" && y();
@@ -1525,7 +1525,7 @@ var Cr = [
 function Tr({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a = "restricted", orgName: o = "your organisation", onChangeGeneralAccess: s, onChangeRole: c, onInvite: l, onCopyLink: u, notice: d, "data-testid": f = "document-share-dialog" }) {
 	let [p, m] = X(""), g = () => {
 		let e = p.trim();
-		e && l && (l(e), m(""));
+		!e || !l || (l(e), m(""));
 	};
 	return /* @__PURE__ */ Q(h, {
 		open: e,
@@ -1980,7 +1980,7 @@ function Lr({ request: e, onDecide: t, onWithdraw: n }) {
 function Rr({ requests: e, reviewers: t = [], currentUserId: n, loading: i, error: a, onRefresh: o, onRequest: s, onDecide: c, onWithdraw: l }) {
 	let [f, p] = X(""), [m, h] = X(""), [g, _] = X(!0), [v, b] = X(!1), [x, C] = X(null), w = Y(!1);
 	async function T() {
-		if (s && t.some((e) => e.id === f) && !w.current) {
+		if (!(!s || !t.some((e) => e.id === f) || w.current)) {
 			w.current = !0, b(!0), C(null);
 			try {
 				await s({

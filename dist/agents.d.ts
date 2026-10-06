@@ -542,6 +542,8 @@ declare interface ToolCallRendererProps {
     className?: string;
 }
 
+export declare type TraceScale = 'time' | 'duration';
+
 export declare interface TraceSpan {
     traceId: string;
     spanId: string;
@@ -555,7 +557,7 @@ export declare interface TraceSpan {
     attributes: Record<string, string | number | boolean>;
 }
 
-export declare function TraceTimeline({ trace, className, title, legendKinds }: TraceTimelineProps): JSX.Element;
+export declare function TraceTimeline({ trace, className, title, legendKinds, scale: scaleProp, onScaleChange, scaleToggle, colorByStatus, durationColumn, errorText, }: TraceTimelineProps): JSX.Element;
 
 export declare interface TraceTimelineProps {
     trace: TraceTimelineType;
@@ -577,6 +579,29 @@ export declare interface TraceTimelineProps {
      * because a legend entry with no possible referent reads as missing data.
      */
     legendKinds?: SpanKind[];
+    /**
+     * Bar geometry. `'time'` (default) places each bar on the trace's real time
+     * axis, so gaps between bars show deliberation. `'duration'` starts every bar
+     * at 0 and scales to the longest span, which ranks spans by cost alone.
+     * Controlled when `onScaleChange` is given; otherwise this is the initial mode.
+     */
+    scale?: TraceScale;
+    onScaleChange?: (scale: TraceScale) => void;
+    /** Render the "By time / By duration" toggle in the header. Default false. */
+    scaleToggle?: boolean;
+    /**
+     * Colour bars by pass/fail (`status === 'error'` -> danger, otherwise success)
+     * instead of by span kind, and swap the legend for Passed / Failed.
+     */
+    colorByStatus?: boolean;
+    /** Show durations in a fixed right-hand column instead of trailing the bar. */
+    durationColumn?: boolean;
+    /**
+     * Error text for a failed span. Defaults to the span's `error.message`,
+     * `errorMessage` or `error` attribute. Shown in the row tooltip and the
+     * detail panel.
+     */
+    errorText?: (span: TraceSpan) => string | undefined;
 }
 
 export declare interface TraceTimelineType {
@@ -695,19 +720,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -725,53 +737,23 @@ declare module '@tiptap/core' {
 }
 
 
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
 declare global {
     interface Window {
         /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
         __pipelineEditor?: unknown;
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
     }
 }
 
@@ -804,9 +786,52 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

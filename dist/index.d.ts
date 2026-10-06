@@ -51,6 +51,16 @@ export declare interface A2ASession {
     status: 'active' | 'completed' | 'failed';
 }
 
+/** The full-height coloured edge of a card (`<Card className="flex overflow-hidden">`). */
+export declare function AccentStripe({ accent, className, 'data-testid': testId }: AccentStripeProps): JSX.Element;
+
+export declare interface AccentStripeProps {
+    accent?: DataAccent;
+    /** Stripe thickness in px class terms; default the 5px card edge. */
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function AccessNotice({ tone, title, body, action, className, 'data-testid': testId, }: AccessNoticeProps): JSX.Element;
 
 export declare interface AccessNoticeAction {
@@ -375,6 +385,31 @@ export declare interface ActivityResponse {
 export declare interface AddDocumentCommentOptions {
     /** Canvas anchor for the new root comment. */
     anchor?: DocumentCommentAnchor;
+}
+
+export declare function AddPeoplePicker({ open, onClose, candidates, onAdd, title, searchPlaceholder, emptyMessage, confirmLabel, busy, error, 'data-testid': testId, }: AddPeoplePickerProps): JSX.Element;
+
+export declare interface AddPeoplePickerCandidate {
+    userId: string;
+    displayName: string;
+    /** Role, email or team — a second line under the name. */
+    subtitle?: string;
+}
+
+export declare interface AddPeoplePickerProps {
+    open: boolean;
+    onClose: () => void;
+    candidates: readonly AddPeoplePickerCandidate[];
+    onAdd: (userIds: string[]) => void | Promise<void>;
+    title?: string;
+    searchPlaceholder?: string;
+    emptyMessage?: string;
+    /** Confirm button label; the count is appended. */
+    confirmLabel?: string;
+    busy?: boolean;
+    /** A refusal from the server, shown in place. */
+    error?: string | null;
+    'data-testid'?: string;
 }
 
 /** Insert a fresh slide after `afterIndex` (-1 puts it first). */
@@ -1929,6 +1964,25 @@ export declare interface BarChartDatum extends Record<string, unknown> {
     tone?: Tone;
 }
 
+declare interface BaseProps {
+    options: readonly ComboboxOption[];
+    placeholder?: string;
+    'aria-label'?: string;
+    size?: 'sm' | 'md';
+    disabled?: boolean;
+    /** Commit typed text that matches no option on Enter. */
+    allowCustom?: boolean;
+    /** Cap on rendered suggestions (default 8). */
+    maxOptions?: number;
+    emptyMessage?: string;
+    /** Custom matcher; default is a case-insensitive substring on label. */
+    filter?: (option: ComboboxOption, query: string) => boolean;
+    /** Called as the query changes (for hosts that fetch suggestions). */
+    onQueryChange?: (query: string) => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare interface BBox {
     x: number;
     y: number;
@@ -2381,6 +2435,34 @@ export declare interface CallInterruptedNoticeProps {
     description: ReactNode;
     /** The buttons. Rendered in a centred row under the description. */
     actions?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface CallLogEntry {
+    id: string;
+    who: string;
+    /** "Incoming", "Outgoing", "Room" … */
+    direction: string;
+    /** "Answered", "Missed", "Declined" … */
+    outcome: string;
+    missed: boolean;
+    startedAt: string;
+    /** Already formatted ("4m 12s"). */
+    duration: string;
+}
+
+export declare function CallLogList({ rows, onCallBack, callBackLabel, callBackDisabled, formatWhen, defaultFilter, className, 'data-testid': testId, }: CallLogListProps): JSX.Element;
+
+export declare interface CallLogListProps {
+    rows: readonly CallLogEntry[];
+    onCallBack?: (row: CallLogEntry) => void;
+    /** Label per row for the action ("Call back", "Open room"). */
+    callBackLabel?: (row: CallLogEntry) => string;
+    callBackDisabled?: boolean;
+    formatWhen?: (iso: string) => string;
+    /** Initial filter. */
+    defaultFilter?: 'all' | 'missed';
     className?: string;
     'data-testid'?: string;
 }
@@ -3333,6 +3415,41 @@ export declare interface ChangeReviewVerdict {
 /** An agent's judgement on a single proposed change. */
 export declare type ChangeVerdict = 'pass' | 'concern' | 'fail';
 
+export declare interface ChannelBindingChoice {
+    value: string;
+    label: string;
+}
+
+export declare function ChannelBindingStrip({ label, channel, latest, notice, openLabel, onOpen, openDisabled, choices, onBind, onUnbind, busy, error, unboundLabel, className, 'data-testid': testId, }: ChannelBindingStripProps): JSX.Element;
+
+export declare interface ChannelBindingStripProps {
+    /** Leading label, e.g. "Discussion". */
+    label: string;
+    /** The bound channel; omit when nothing is bound. */
+    channel?: {
+        name: string;
+        privacy?: 'public' | 'private';
+    };
+    /** Newest line, already summarised ("Mira: shipping Friday"). */
+    latest?: string | null;
+    /** Shown beside the channel when the viewer is not a member. */
+    notice?: string;
+    openLabel?: string;
+    /** Cross into the channel's own workspace. Hidden when omitted. */
+    onOpen?: () => void;
+    openDisabled?: boolean;
+    /** Channels that could be bound. Binding UI renders only with `onBind`. */
+    choices?: readonly ChannelBindingChoice[];
+    onBind?: (value: string) => void | Promise<void>;
+    /** Unbind button renders only when provided. */
+    onUnbind?: () => void | Promise<void>;
+    busy?: boolean;
+    error?: string | null;
+    unboundLabel?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare interface ChannelDocumentItem {
     documentId: string;
     title: string;
@@ -3913,7 +4030,7 @@ export declare interface ChatMessage {
     deletedAt?: string;
 }
 
-export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, dock: dockSlot, currentUserId, reactionsFor, onToggleReaction, onReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, documentUnavailable, callParticipants, agentRunStatus, onOpenRun, agentLoopStatus, onOpenLab, onOpenResult, onDecideRun, onReviewRun, onRetryRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, dock: dockSlot, currentUserId, reactionsFor, onToggleReaction, onReply, reply, onCancelReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, documentUnavailable, callParticipants, agentRunStatus, onOpenRun, agentLoopStatus, onOpenLab, onOpenResult, onDecideRun, onReviewRun, onRetryRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -3965,6 +4082,16 @@ export declare interface ChatPanelProps {
     onToggleReaction?: (messageId: string, emoji: string) => void;
     /** Starts a quote-reply. Presence of this enables the reply control. */
     onReply?: (message: ChatMessage) => void;
+    /**
+     * The message being answered. Renders a dismissible quote strip directly above
+     * the built-in input row. Ignored when `composer` is supplied (that slot owns
+     * its own reply UI, e.g. ContextComposer's `reply`). The panel does not stamp
+     * `metadata.replyTo` on the outgoing message: the host does, from the same
+     * value, in whatever `onSend` path it owns.
+     */
+    reply?: QuotedMessage | null;
+    /** Called by the quote strip's dismiss control. Omit for a quote with no dismiss. */
+    onCancelReply?: () => void;
     /**
      * Send this message to ANOTHER conversation. Presence of this enables the
      * Forward control; absent, nothing renders and every existing caller is
@@ -5006,6 +5133,17 @@ export declare interface Column<T> {
     width?: string;
     align?: 'left' | 'right' | 'center';
 }
+
+export declare function Combobox(props: ComboboxProps): JSX.Element;
+
+export declare interface ComboboxOption {
+    value: string;
+    label: string;
+    description?: string;
+    disabled?: boolean;
+}
+
+export declare type ComboboxProps = SingleComboboxProps | MultiComboboxProps;
 
 export declare interface Command {
     id: string;
@@ -6781,6 +6919,19 @@ export declare interface CustomFieldTypeDisplay {
  * brand indigo (#646cff lightened for dark surfaces) — it had drifted to a
  * plain blue (#60a5fa) from the pre-#646cff era. */
 export declare const darkTheme: ThemeTokens;
+
+export declare const DATA_ACCENT_SLOTS: readonly DataAccentSlot[];
+
+/** A slot number, or any CSS colour value (`var(--color-x)`, `#2563eb`, `teal`). */
+export declare type DataAccent = DataAccentSlot | (string & {});
+
+/** Spread onto an element; children paint with `bg-[var(--data-accent)]` etc. */
+export declare function dataAccentProps(accent: DataAccent | undefined): {
+    'data-accent'?: string;
+    style?: CSSProperties;
+};
+
+export declare type DataAccentSlot = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 export declare function DataTable<T>({ data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, striped, className, 'data-testid': testId, }: DataTableProps<T>): JSX.Element;
 
@@ -10273,6 +10424,21 @@ export declare function highlightSegments(text: string, terms: readonly string[]
     match: boolean;
 }>;
 
+export declare function Histogram({ buckets, labels, accent, height, className, 'aria-label': ariaLabel, 'data-testid': testId }: HistogramProps): JSX.Element;
+
+export declare interface HistogramProps {
+    /** Counts per bucket, left to right. */
+    buckets: readonly number[];
+    /** Per-bucket labels; used for the tooltip and the accessible description. */
+    labels?: readonly string[];
+    accent?: DataAccent;
+    /** Plot height in px (default 48). */
+    height?: number;
+    className?: string;
+    'aria-label'?: string;
+    'data-testid'?: string;
+}
+
 export declare const HISTORY_DAYS_DEFAULT = 7;
 
 export declare const HISTORY_DAYS_MAX = 3650;
@@ -12833,6 +12999,12 @@ export declare function MoreIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** Move the slide at `from` so it lands at `to`. Out-of-range moves are no-ops. */
 export declare function moveSlide(spec: DeckSpec, from: number, to: number): DeckSpec;
+
+export declare interface MultiComboboxProps extends BaseProps {
+    multiple: true;
+    value: readonly string[];
+    onChange: (value: string[]) => void;
+}
 
 export declare function MuteWhileTalkingToast({ show, label, }: MuteWhileTalkingToastProps): JSX.Element | null;
 
@@ -18625,6 +18797,12 @@ export declare interface SignoffPanelProps {
     emptyHint?: string;
     className?: string;
     'data-testid'?: string;
+}
+
+export declare interface SingleComboboxProps extends BaseProps {
+    multiple?: false;
+    value: string;
+    onChange: (value: string) => void;
 }
 
 export declare function SkeletonCard({ width, height, rounded }: SkeletonCardProps): JSX.Element;
@@ -24892,19 +25070,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -24922,53 +25087,23 @@ declare module '@tiptap/core' {
 }
 
 
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
 declare global {
     interface Window {
         /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
         __pipelineEditor?: unknown;
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
     }
 }
 
@@ -25001,9 +25136,52 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

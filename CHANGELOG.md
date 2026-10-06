@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.410.0
+
+- Merges the OrgIQ parity work. `WrappedChatPanel` gains `readReceipts`, `readReceiptsEnabled`, `unreadFrom`, `threaded`, `reply` and `onCancelReply`; `ChatPanel` shows a reply strip. New `CursorOverlay` (collaboration) and `WrappedCursorOverlay` (integrations). `TraceTimeline` gains `scale`, `colorByStatus`, `durationColumn` and `errorText`.
+- New shared primitives: `Combobox`, `Histogram`, `AccentStripe`, `dataAccentProps`, `DATA_ACCENT_SLOTS` (with matching `styles.css` rules). New social composites: `ChannelBindingStrip`, `CallLogList`, `AddPeoplePicker`.
+
 ## 2.409.0
 
 - `EditorShell` adds `titleOverflow="wrap"` for a full record heading at narrow pane widths. The default remains a single-line truncated title, and the editable title keeps its existing fitted input. Story: `WrappedRecordTitle`; contract: `EditorShell.test.tsx`.

@@ -1001,6 +1001,16 @@ declare interface ChatPanelProps {
     /** Starts a quote-reply. Presence of this enables the reply control. */
     onReply?: (message: ChatMessage) => void;
     /**
+     * The message being answered. Renders a dismissible quote strip directly above
+     * the built-in input row. Ignored when `composer` is supplied (that slot owns
+     * its own reply UI, e.g. ContextComposer's `reply`). The panel does not stamp
+     * `metadata.replyTo` on the outgoing message: the host does, from the same
+     * value, in whatever `onSend` path it owns.
+     */
+    reply?: QuotedMessage | null;
+    /** Called by the quote strip's dismiss control. Omit for a quote with no dismiss. */
+    onCancelReply?: () => void;
+    /**
      * Send this message to ANOTHER conversation. Presence of this enables the
      * Forward control; absent, nothing renders and every existing caller is
      * untouched.
@@ -1651,6 +1661,8 @@ export declare function createConversationCallDock(rm: ConversationCallDockModul
  * Hooks are read from `rm` at render time, not captured here.
  */
 export declare function createRealtimeIntegrations(rm: RealtimeClientModules): RealtimeIntegrations;
+
+declare type CursorCoordinates = 'pixels' | 'fraction';
 
 export declare function decodeCanvasRecovery(value: unknown): Uint8Array | null;
 
@@ -2361,6 +2373,15 @@ declare interface PresenceUser {
     location?: string;
 }
 
+declare interface QuotedMessage {
+    messageId: string;
+    author: string;
+    /** ISO timestamp of the quoted message. */
+    timestamp?: string;
+    /** Plain text of the original. Trimmed for display; the full text is not needed. */
+    text: string;
+}
+
 export declare type RealtimeCapabilityName = keyof RealtimeCapabilitySet;
 
 export declare const RealtimeCapabilityProvider: RealtimeCapabilityProviderComponent;
@@ -2682,6 +2703,19 @@ export declare interface RMCreateRoomInput {
     settings?: Partial<RMRoomSettings>;
 }
 
+/** Mirror of realtime-modules/src/client/types.ts CursorEntry */
+export declare interface RMCursorEntry {
+    clientId: string;
+    channel: string;
+    position: Record<string, unknown>;
+    metadata: Record<string, unknown> & {
+        mode?: string;
+        userInitials?: string;
+        userColor?: string;
+    };
+    timestamp: string;
+}
+
 /** Mirror of RM `DevicePreferences`. */
 export declare interface RMDevicePreferences {
     microphoneId?: string;
@@ -2959,6 +2993,15 @@ export declare interface RMUseChatReturn {
      */
     sendMessage: (text: string, metadata?: Record<string, unknown>) => void;
     loadHistory: (limit?: number) => void;
+}
+
+/** Return shape of `useCursor(channel)` from realtime-modules (singular hook). */
+export declare interface RMUseCursorReturn {
+    /** Live cursors for the channel, excluding your own. */
+    cursors: RMCursorEntry[];
+    /** Publish your position (throttled by the hook). */
+    move: (position: Record<string, unknown>, metadata?: Record<string, unknown>) => void;
+    refresh?: () => void;
 }
 
 export declare interface RMUseFileUploadReturn {
@@ -3368,7 +3411,7 @@ export declare interface WrappedCanvasDocumentProps extends Omit<CanvasDocumentV
     beforeConvert?: () => void | Promise<void>;
 }
 
-export declare function WrappedChatPanel({ chat, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, renderMessageReferences, emojis, onReply, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, }: WrappedChatPanelProps): JSX.Element;
+export declare function WrappedChatPanel({ chat, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, renderMessageReferences, emojis, onReply, reply, onCancelReply, readReceipts, readReceiptsEnabled, unreadFrom, threaded, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, }: WrappedChatPanelProps): JSX.Element;
 
 export declare interface WrappedChatPanelProps {
     /** Return value of useChat(channel) from realtime-modules */
@@ -3483,6 +3526,27 @@ export declare interface WrappedChatPanelProps {
     renderMessageReferences?: ChatPanelProps['renderMessageReferences'];
     emojis?: readonly string[];
     onReply?: (message: ChatMessage) => void;
+    /**
+     * The message currently being answered, shown as a dismissible quote above
+     * the built-in input row (pair with `onReply`). The host also stamps
+     * `replyTo` into `sendMetadata` so the sent message carries it. Ignored when
+     * `composer` is supplied.
+     */
+    reply?: ChatPanelProps['reply'];
+    onCancelReply?: () => void;
+    /**
+     * Who has read up to the newest message. Forwarded to ChatPanel, which draws
+     * one "Seen by" line. Feed it from `useChatReadReceipts(channel, ...)`
+     * (realtime-examples `DocumentChatPanel.tsx:416`, named at `:625`,
+     * passed at `:855`).
+     */
+    readReceipts?: ChatPanelProps['readReceipts'];
+    /** False when the server keeps no receipts here: renders nothing. Default true. */
+    readReceiptsEnabled?: boolean;
+    /** ISO timestamp of the viewer's own read cursor: draws the "new" line. */
+    unreadFrom?: string;
+    /** Nest replies under their root message (realtime-examples `DocumentChatPanel.tsx:856`). */
+    threaded?: boolean;
     onJumpToMessage?: (messageId: string) => void;
     highlightedMessageId?: string | null;
     documentEditors?: ChatPanelProps['documentEditors'];
@@ -3536,6 +3600,24 @@ export declare interface WrappedConversationSurfaceProps extends Omit<Conversati
     /** Remap capability names when the host's CRDs are named differently. */
     capabilityNames?: Partial<Record<GatedConversationFeature, string>>;
     children?: ReactNode;
+}
+
+export declare function WrappedCursorOverlay({ cursor, coordinates, publish, selfClientId, children, className, }: WrappedCursorOverlayProps): JSX.Element;
+
+export declare interface WrappedCursorOverlayProps {
+    /** Return value of useCursor(channel) from realtime-modules. */
+    cursor: RMUseCursorReturn;
+    /**
+     * `'fraction'` (default) publishes and reads 0..1 positions so pointers line
+     * up across different viewport sizes. `'pixels'` uses raw offsets.
+     */
+    coordinates?: CursorCoordinates;
+    /** Publish the local pointer. Default true; false renders others only. */
+    publish?: boolean;
+    /** Your own client id; a cursor carrying it is hidden. */
+    selfClientId?: string;
+    children?: ReactNode;
+    className?: string;
 }
 
 export declare function WrappedFileUploadDrop({ fileUpload, accept, maxSize, multiple, disabled, label, className, uploadMetadata, onError, }: WrappedFileUploadDropProps): JSX.Element;
@@ -3851,19 +3933,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3881,53 +3950,23 @@ declare module '@tiptap/core' {
 }
 
 
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
 declare global {
     interface Window {
         /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
         __pipelineEditor?: unknown;
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
     }
 }
 
@@ -3960,9 +3999,52 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

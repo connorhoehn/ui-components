@@ -1,15 +1,15 @@
 import { t as e } from "./cn-D4QmbyEy.js";
-import { t } from "./Chip-QXPdpJoz.js";
+import { t } from "./Chip-0zFpfJ52.js";
 import { t as n } from "./TitledFrame-B0QW93da.js";
 import { t as r } from "./DotMeter-KxyExwVb.js";
 import { t as i } from "./StatusDot-ClFcLvD7.js";
-import { t as a } from "./InlinePopover-PfCtP6n9.js";
+import { t as a } from "./InlinePopover-Nn2oovSj.js";
 import { t as o } from "./SectionLabel-Bn8Vvb-K.js";
 import { t as s } from "./InlinePlaceholder-CbIBYc-_.js";
 import { n as c } from "./FloatingPanel-CeJO82Sr.js";
 import { a as l, i as u, n as d, r as f, t as p } from "./useComputeProjects-ZSazDRet.js";
-import { a as m, i as h, n as g, o as _, r as v, s as y, t as b } from "./PaneStatusLine-DCV4mKSC.js";
-import { A as x, B as S, C, D as w, E as ee, F as T, G as te, H as E, I as D, J as O, K as ne, L as k, M as A, N as j, O as M, P as re, R as ie, S as ae, T as N, U as oe, V as se, W as ce, Y as P, _ as le, a as ue, b as de, c as fe, d as pe, f as F, g as me, h as he, i as ge, j as I, k as _e, l as ve, m as ye, n as be, o as xe, p as Se, q as L, r as R, s as Ce, t as we, u as Te, v as Ee, w as De, x as Oe, y as ke, z as Ae } from "./ComputeContext-BvLVnOve.js";
+import { a as m, i as h, n as g, o as _, r as v, s as y, t as b } from "./PaneStatusLine-Duj-X9IP.js";
+import { A as x, B as S, C, D as w, E as ee, F as T, G as te, H as E, I as D, J as O, K as ne, L as k, M as A, N as j, O as M, P as re, R as ie, S as ae, T as N, U as oe, V as se, W as ce, Y as P, _ as le, a as ue, b as de, c as fe, d as pe, f as F, g as me, h as he, i as ge, j as I, k as _e, l as ve, m as ye, n as be, o as xe, p as Se, q as L, r as R, s as Ce, t as we, u as Te, v as Ee, w as De, x as Oe, y as ke, z as Ae } from "./ComputeContext-Bcpsvd8S.js";
 import { Fragment as je, useCallback as z, useEffect as B, useMemo as V, useRef as H, useState as U, useSyncExternalStore as Me } from "react";
 import { Fragment as Ne, jsx as W, jsxs as G } from "react/jsx-runtime";
 //#region src/components/compute/lib/paneTree.ts
@@ -1216,7 +1216,7 @@ function _t({ node: t, activePaneId: n, renderLeaf: r, onRatioChange: i }) {
 function vt({ open: t, onClose: n, focusComputerId: i = null, variant: a = "overlay", chrome: o = "app", keymap: s = et, leader: c = null, idleWindowMs: l = b, className: u }) {
 	let { computers: d, canManage: f, create: p, models: m, notify: h, refresh: g, paneKinds: _, projects: v } = be(), y = _[0]?.id ?? "agent", x = Ye(), [S, C] = U(!1), [w, ee] = U(""), [T, te] = U(!1), [E, D] = U(!1), [O, ne] = U(!1), [k, A] = U(!1), j = H(/* @__PURE__ */ new Map()), M = H(null), re = H(null), ie = H(null), ae = V(() => new Map(d.map((e) => [e.id, e])), [d]), N = x.panes.find((e) => e.id === x.activePaneId) ?? x.panes[0] ?? null, oe = N ? ae.get(N.computerId) ?? null : null, se = Qe(_, x.panes.map((e) => e.kindId), "shell"), ce = x.windows.length > 0, P = i && ae.has(i) ? i : null, le = P ?? d[0]?.id ?? null;
 	B(() => {
-		t && !ce && le && x.ensureSeeded(le, y);
+		!t || ce || !le || x.ensureSeeded(le, y);
 	}, [
 		t,
 		ce,
@@ -1244,7 +1244,7 @@ function vt({ open: t, onClose: n, focusComputerId: i = null, variant: a = "over
 	}, [t]);
 	let me = x.reconcile, he = V(() => d.map((e) => e.id), [d]);
 	B(() => {
-		t && he.length !== 0 && me(he);
+		!t || he.length === 0 || me(he);
 	}, [
 		t,
 		he,
@@ -2085,7 +2085,7 @@ function Mt({ hotkeys: e = !0, reconcile: t = !0, className: n = "" }) {
 	kt(e);
 	let a = V(() => (i?.computers ?? []).map((e) => e.sessionId), [i?.computers]);
 	if (B(() => {
-		t && a.length !== 0 && re(a);
+		!t || a.length === 0 || re(a);
 	}, [t, a]), r.mode === "hidden" || r.shells.length === 0) return null;
 	let o = S(r.mode), s = /* @__PURE__ */ G("div", {
 		style: ot,
@@ -2617,7 +2617,7 @@ function $t(e = {}) {
 	}
 	let r = !1;
 	return () => {
-		!r && Z && (r = !0, --Z.count, !(Z.count > 0) && (globalThis.WebSocket = Z.native, Z = null, Kt.clear()));
+		r || !Z || (r = !0, --Z.count, !(Z.count > 0) && (globalThis.WebSocket = Z.native, Z = null, Kt.clear()));
 	};
 }
 //#endregion

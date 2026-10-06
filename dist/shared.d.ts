@@ -23,6 +23,16 @@ import { TdHTMLAttributes } from 'react';
 import { TextareaHTMLAttributes } from 'react';
 import { ThHTMLAttributes } from 'react';
 
+/** The full-height coloured edge of a card (`<Card className="flex overflow-hidden">`). */
+export declare function AccentStripe({ accent, className, 'data-testid': testId }: AccentStripeProps): JSX.Element;
+
+export declare interface AccentStripeProps {
+    accent?: DataAccent;
+    /** Stripe thickness in px class terms; default the 5px card edge. */
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare const activeNavItemClassName = "block px-[14px] py-2 border-l-[3px] border-primary bg-primary/8 text-text-primary no-underline cursor-pointer";
 
 export declare const activeNavItemStyle: CSSProperties;
@@ -349,6 +359,25 @@ export declare interface BarChartDatum extends Record<string, unknown> {
      * as the default variant.
      */
     tone?: Tone;
+}
+
+declare interface BaseProps {
+    options: readonly ComboboxOption[];
+    placeholder?: string;
+    'aria-label'?: string;
+    size?: 'sm' | 'md';
+    disabled?: boolean;
+    /** Commit typed text that matches no option on Enter. */
+    allowCustom?: boolean;
+    /** Cap on rendered suggestions (default 8). */
+    maxOptions?: number;
+    emptyMessage?: string;
+    /** Custom matcher; default is a case-insensitive substring on label. */
+    filter?: (option: ComboboxOption, query: string) => boolean;
+    /** Called as the query changes (for hosts that fetch suggestions). */
+    onQueryChange?: (query: string) => void;
+    className?: string;
+    'data-testid'?: string;
 }
 
 /** A bell: "notifications", "activity" — the header's inbox trigger. Since 2.407.37. */
@@ -1039,6 +1068,17 @@ export declare interface CollapsibleSectionProps {
     'data-testid'?: string;
 }
 
+export declare function Combobox(props: ComboboxProps): JSX.Element;
+
+export declare interface ComboboxOption {
+    value: string;
+    label: string;
+    description?: string;
+    disabled?: boolean;
+}
+
+export declare type ComboboxProps = SingleComboboxProps | MultiComboboxProps;
+
 export declare interface Command {
     id: string;
     label: string;
@@ -1265,6 +1305,19 @@ export declare interface ConsultCardProps {
 
 /** Two stacked pages: "make a copy". Since 2.390.3. */
 export declare function CopyIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+export declare const DATA_ACCENT_SLOTS: readonly DataAccentSlot[];
+
+/** A slot number, or any CSS colour value (`var(--color-x)`, `#2563eb`, `teal`). */
+export declare type DataAccent = DataAccentSlot | (string & {});
+
+/** Spread onto an element; children paint with `bg-[var(--data-accent)]` etc. */
+export declare function dataAccentProps(accent: DataAccent | undefined): {
+    'data-accent'?: string;
+    style?: CSSProperties;
+};
+
+export declare type DataAccentSlot = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 export declare function DataTable<T>({ data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, striped, className, 'data-testid': testId, }: DataTableProps<T>): JSX.Element;
 
@@ -2579,6 +2632,21 @@ export declare function highlightSegments(text: string, terms: readonly string[]
     match: boolean;
 }>;
 
+export declare function Histogram({ buckets, labels, accent, height, className, 'aria-label': ariaLabel, 'data-testid': testId }: HistogramProps): JSX.Element;
+
+export declare interface HistogramProps {
+    /** Counts per bucket, left to right. */
+    buckets: readonly number[];
+    /** Per-bucket labels; used for the tooltip and the accessible description. */
+    labels?: readonly string[];
+    accent?: DataAccent;
+    /** Plot height in px (default 48). */
+    height?: number;
+    className?: string;
+    'aria-label'?: string;
+    'data-testid'?: string;
+}
+
 /** A clock: history, "when". */
 export declare function HistoryIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -3216,6 +3284,12 @@ export declare function MoonIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** Three dots in a row: "more". Since 2.386.5. */
 export declare function MoreIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+export declare interface MultiComboboxProps extends BaseProps {
+    multiple: true;
+    value: readonly string[];
+    onChange: (value: string[]) => void;
+}
 
 export declare function nameToColor(name: string): string;
 
@@ -4606,6 +4680,12 @@ export declare interface SignoffPanelProps {
     emptyHint?: string;
     className?: string;
     'data-testid'?: string;
+}
+
+export declare interface SingleComboboxProps extends BaseProps {
+    multiple?: false;
+    value: string;
+    onChange: (value: string) => void;
 }
 
 export declare function SkeletonCard({ width, height, rounded }: SkeletonCardProps): JSX.Element;
@@ -6322,19 +6402,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -6352,53 +6419,23 @@ declare module '@tiptap/core' {
 }
 
 
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
 declare global {
     interface Window {
         /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
         __pipelineEditor?: unknown;
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
     }
 }
 
@@ -6431,9 +6468,52 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

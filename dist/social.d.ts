@@ -89,6 +89,31 @@ export declare interface ActivityResponse {
     nextKey: string | null;
 }
 
+export declare function AddPeoplePicker({ open, onClose, candidates, onAdd, title, searchPlaceholder, emptyMessage, confirmLabel, busy, error, 'data-testid': testId, }: AddPeoplePickerProps): JSX.Element;
+
+export declare interface AddPeoplePickerCandidate {
+    userId: string;
+    displayName: string;
+    /** Role, email or team — a second line under the name. */
+    subtitle?: string;
+}
+
+export declare interface AddPeoplePickerProps {
+    open: boolean;
+    onClose: () => void;
+    candidates: readonly AddPeoplePickerCandidate[];
+    onAdd: (userIds: string[]) => void | Promise<void>;
+    title?: string;
+    searchPlaceholder?: string;
+    emptyMessage?: string;
+    /** Confirm button label; the count is appended. */
+    confirmLabel?: string;
+    busy?: boolean;
+    /** A refusal from the server, shown in place. */
+    error?: string | null;
+    'data-testid'?: string;
+}
+
 export declare function AddToChatDialog({ open, conversationName, people, preselectedIds, busy, anchor, placement, onAdd, onClose, 'data-testid': testId, historyChoice, }: AddToChatDialogProps): JSX.Element;
 
 export declare interface AddToChatDialogProps {
@@ -434,6 +459,34 @@ export declare interface CallActivityParticipant {
     avatarUrl?: string;
 }
 
+export declare interface CallLogEntry {
+    id: string;
+    who: string;
+    /** "Incoming", "Outgoing", "Room" … */
+    direction: string;
+    /** "Answered", "Missed", "Declined" … */
+    outcome: string;
+    missed: boolean;
+    startedAt: string;
+    /** Already formatted ("4m 12s"). */
+    duration: string;
+}
+
+export declare function CallLogList({ rows, onCallBack, callBackLabel, callBackDisabled, formatWhen, defaultFilter, className, 'data-testid': testId, }: CallLogListProps): JSX.Element;
+
+export declare interface CallLogListProps {
+    rows: readonly CallLogEntry[];
+    onCallBack?: (row: CallLogEntry) => void;
+    /** Label per row for the action ("Call back", "Open room"). */
+    callBackLabel?: (row: CallLogEntry) => string;
+    callBackDisabled?: boolean;
+    formatWhen?: (iso: string) => string;
+    /** Initial filter. */
+    defaultFilter?: 'all' | 'missed';
+    className?: string;
+    'data-testid'?: string;
+}
+
 /** How an invite that never became a call ended. */
 export declare type CallOutcome = 'cancelled' | 'declined' | 'no-answer';
 
@@ -450,6 +503,41 @@ export declare function callRefFromMetadata(metadata: Record<string, unknown> | 
     lobbyName?: string;
     participants: CallActivityParticipant[];
 } | null;
+
+export declare interface ChannelBindingChoice {
+    value: string;
+    label: string;
+}
+
+export declare function ChannelBindingStrip({ label, channel, latest, notice, openLabel, onOpen, openDisabled, choices, onBind, onUnbind, busy, error, unboundLabel, className, 'data-testid': testId, }: ChannelBindingStripProps): JSX.Element;
+
+export declare interface ChannelBindingStripProps {
+    /** Leading label, e.g. "Discussion". */
+    label: string;
+    /** The bound channel; omit when nothing is bound. */
+    channel?: {
+        name: string;
+        privacy?: 'public' | 'private';
+    };
+    /** Newest line, already summarised ("Mira: shipping Friday"). */
+    latest?: string | null;
+    /** Shown beside the channel when the viewer is not a member. */
+    notice?: string;
+    openLabel?: string;
+    /** Cross into the channel's own workspace. Hidden when omitted. */
+    onOpen?: () => void;
+    openDisabled?: boolean;
+    /** Channels that could be bound. Binding UI renders only with `onBind`. */
+    choices?: readonly ChannelBindingChoice[];
+    onBind?: (value: string) => void | Promise<void>;
+    /** Unbind button renders only when provided. */
+    onUnbind?: () => void | Promise<void>;
+    busy?: boolean;
+    error?: string | null;
+    unboundLabel?: string;
+    className?: string;
+    'data-testid'?: string;
+}
 
 export declare interface ChannelDocumentItem {
     documentId: string;
@@ -926,7 +1014,7 @@ declare interface ChatMessage {
     deletedAt?: string;
 }
 
-export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, dock: dockSlot, currentUserId, reactionsFor, onToggleReaction, onReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, documentUnavailable, callParticipants, agentRunStatus, onOpenRun, agentLoopStatus, onOpenLab, onOpenResult, onDecideRun, onReviewRun, onRetryRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, dock: dockSlot, currentUserId, reactionsFor, onToggleReaction, onReply, reply, onCancelReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, documentUnavailable, callParticipants, agentRunStatus, onOpenRun, agentLoopStatus, onOpenLab, onOpenResult, onDecideRun, onReviewRun, onRetryRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -978,6 +1066,16 @@ export declare interface ChatPanelProps {
     onToggleReaction?: (messageId: string, emoji: string) => void;
     /** Starts a quote-reply. Presence of this enables the reply control. */
     onReply?: (message: ChatMessage) => void;
+    /**
+     * The message being answered. Renders a dismissible quote strip directly above
+     * the built-in input row. Ignored when `composer` is supplied (that slot owns
+     * its own reply UI, e.g. ContextComposer's `reply`). The panel does not stamp
+     * `metadata.replyTo` on the outgoing message: the host does, from the same
+     * value, in whatever `onSend` path it owns.
+     */
+    reply?: QuotedMessage | null;
+    /** Called by the quote strip's dismiss control. Omit for a quote with no dismiss. */
+    onCancelReply?: () => void;
     /**
      * Send this message to ANOTHER conversation. Presence of this enables the
      * Forward control; absent, nothing renders and every existing caller is
@@ -3785,19 +3883,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         canvasLineSpacing: {
             /**
              * Space the paragraphs in the selection.
@@ -3815,53 +3900,23 @@ declare module '@tiptap/core' {
 }
 
 
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
 declare global {
     interface Window {
         /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
         __pipelineEditor?: unknown;
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
     }
 }
 
@@ -3894,9 +3949,52 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

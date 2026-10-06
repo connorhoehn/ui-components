@@ -1,17 +1,17 @@
 import { n as e, t } from "./registry-DbX3MVAA.js";
 import { i as n, n as r, r as i } from "./documentType-rRZpKWbO.js";
-import { i as a } from "./useDocumentTypes-C2XnlxHz.js";
+import { i as a } from "./useDocumentTypes-DCKwxXn8.js";
 import { t as o } from "./cn-D4QmbyEy.js";
-import { v as s } from "./overlayStack-DWxp7Rsz.js";
+import { n as s } from "./Button-C2OEUpX-.js";
 import { n as c } from "./Stack-DNMA-_4L.js";
-import { t as l } from "./Modal-R-ipbeZi.js";
+import { t as l } from "./Modal-CjgKqXl7.js";
 import { t as u } from "./Input-CpLq80dw.js";
 import { t as d } from "./EmptyState-DnbFBYDA.js";
 import { t as f } from "./Textarea-Drx4YDDG.js";
 import { t as p } from "./PageHeader-Dx_prus4.js";
-import { t as m } from "./Select-ErGXS9Yj.js";
-import { t as h } from "./Checkbox-BC03mkQI.js";
-import { G as g, H as _, U as v, W as y } from "./renderers-B4G34vmP.js";
+import { t as m } from "./Select-C6OGjVyH.js";
+import { t as h } from "./Checkbox-C70AGFS5.js";
+import { G as g, H as _, U as v, W as y } from "./renderers-DS5eZtXk.js";
 import { useEffect as b, useId as x, useMemo as S, useRef as C, useState as w } from "react";
 import { Fragment as T, jsx as E, jsxs as D } from "react/jsx-runtime";
 import { DndContext as O, KeyboardSensor as k, PointerSensor as A, closestCorners as j, useSensor as M, useSensors as N } from "@dnd-kit/core";
@@ -400,7 +400,7 @@ function q({ fields: t, setFields: r, pages: i, setPages: a, pageConfig: o, setP
 		let { active: t, over: n } = e;
 		if (!n) return;
 		let r = String(t.id), o = String(n.id), s = C(r), c = C(o);
-		s && c && s !== c && (i.some((e) => e.id === r) || a(i.map((e) => e.id === s ? {
+		!s || !c || s !== c && (i.some((e) => e.id === r) || a(i.map((e) => e.id === s ? {
 			...e,
 			sectionIds: e.sectionIds.filter((e) => e !== r)
 		} : e.id === c ? {
