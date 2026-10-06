@@ -1,14 +1,14 @@
-import { n as e, t } from "./useWebSocket-DLEDPGrr.js";
+import { n as e, t } from "./useWebSocket-Cmv4zMFO.js";
 import { t as n } from "./cn-D4QmbyEy.js";
 import { n as r } from "./Button-C2OEUpX-.js";
 import { t as i } from "./Card-CbTNNNkk.js";
 import { t as a } from "./Chip-0zFpfJ52.js";
 import { t as o } from "./IconButton-VqtspsS5.js";
-import { ct as s, nt as c, p as l } from "./Icons-_hcrQmPz.js";
+import { m as s, pt as c, st as l } from "./Icons-D2Jd38B6.js";
 import { n as u, t as d } from "./Stack-DNMA-_4L.js";
-import { t as f } from "./Breadcrumbs-Zks2hOES.js";
-import { t as p } from "./Badge-D6_ss75S.js";
-import { t as m } from "./Banner-CmrqvKtx.js";
+import { t as f } from "./Breadcrumbs-fgxXbCuj.js";
+import { t as p } from "./Badge-CraaUTit.js";
+import { t as m } from "./Banner-Bya4ng_Y.js";
 import { t as h } from "./Modal-CjgKqXl7.js";
 import { t as g } from "./Input-CpLq80dw.js";
 import { t as _ } from "./EmptyState-DnbFBYDA.js";
@@ -19,22 +19,22 @@ import { t as x } from "./SegmentedControl-Blx221jS.js";
 import { t as S } from "./InlineAlert-CBtteaVZ.js";
 import { t as C } from "./CardHeader-C50GEAmo.js";
 import { t as w } from "./PresenceAvatars-DAgxQ3PF.js";
-import { t as T } from "./InlinePopover-Nn2oovSj.js";
+import { n as T } from "./DropdownMenu-zZZX4CFi.js";
 import { t as E } from "./ChangeDiff-BHerlwTS.js";
 import { t as D } from "./MetaLine-BtHTTScI.js";
 import { t as O } from "./Select-C6OGjVyH.js";
 import { t as k } from "./Checkbox-C70AGFS5.js";
-import { n as ee } from "./FileKindMark-Cs3Q8iud.js";
+import { n as ee } from "./FileKindMark-CVQGHZF6.js";
 import { t as A } from "./activationKey-CjbL3LUv.js";
 import { A as te, k as j } from "./renderers-DS5eZtXk.js";
-import { A as M, B as N, C as P, D as F, E as ne, F as I, G as L, H as R, I as z, J as B, K as V, L as re, M as H, N as U, O as ie, P as W, R as ae, S as oe, T as se, U as G, V as ce, W as le, Y as ue, Z as de, _ as fe, a as pe, b as me, c as he, d as ge, f as _e, g as ve, h as ye, i as be, j as xe, k as Se, l as Ce, m as we, n as Te, o as Ee, p as De, q as Oe, r as ke, s as Ae, t as je, u as Me, v as Ne, w as Pe, x as Fe, y as Ie, z as Le } from "./ProposedEditStrip-BIafxYfO.js";
+import { A as M, B as N, C as P, D as F, E as ne, F as I, G as L, H as R, I as z, J as B, K as V, L as re, M as H, N as U, O as ie, P as W, R as ae, S as oe, T as se, U as G, V as ce, W as le, Y as ue, Z as de, _ as fe, a as pe, b as me, c as he, d as ge, f as _e, g as ve, h as ye, i as be, j as xe, k as Se, l as Ce, m as we, n as Te, o as Ee, p as De, q as Oe, r as ke, s as Ae, t as je, u as Me, v as Ne, w as Pe, x as Fe, y as Ie, z as Le } from "./ProposedEditStrip-BSyq3B65.js";
 import { i as Re } from "./MediaIcons-_ai5Til2.js";
 import { o as ze, t as Be } from "./VerdictChip-B8JaUpcJ.js";
 import { a as Ve, c as He, d as Ue, f as We, h as Ge, i as Ke, l as qe, m as Je, n as Ye, o as Xe, p as Ze, r as Qe, s as $e, t as et, u as tt } from "./TiptapEditor-BjjwDyPa.js";
 import { i as nt, n as rt, r as it, t as at } from "./FloatingComposerDock-ZezHreIm.js";
-import { A as ot, B as st, C as ct, D as lt, E as ut, F as dt, G as ft, H as pt, I as mt, J as ht, K as gt, L as _t, M as vt, N as yt, O as bt, P as xt, R as St, S as Ct, T as wt, U as Tt, V as Et, W as Dt, _ as Ot, a as kt, b as At, c as jt, d as Mt, f as Nt, g as Pt, h as Ft, i as It, j as Lt, k as Rt, l as zt, m as Bt, o as Vt, p as Ht, q as Ut, r as Wt, s as Gt, t as Kt, u as qt, v as Jt, w as Yt, x as Xt, y as Zt, z as Qt } from "./DocumentEditorPage-B6wIlmCf.js";
-import { C as $t, S as en, T as tn, _ as nn, a as rn, b as an, c as on, d as sn, f as cn, g as ln, h as un, i as dn, l as fn, m as pn, n as mn, o as hn, p as gn, r as _n, s as vn, t as yn, u as bn, v as xn, w as Sn, x as Cn, y as wn } from "./useDocumentImageUpload-C7P4G7cM.js";
-import { r as Tn } from "./RichChatComposer-BseizH0c.js";
+import { A as ot, B as st, C as ct, D as lt, E as ut, F as dt, G as ft, H as pt, I as mt, J as ht, K as gt, L as _t, M as vt, N as yt, O as bt, P as xt, R as St, S as Ct, T as wt, U as Tt, V as Et, W as Dt, _ as Ot, a as kt, b as At, c as jt, d as Mt, f as Nt, g as Pt, h as Ft, i as It, j as Lt, k as Rt, l as zt, m as Bt, o as Vt, p as Ht, q as Ut, r as Wt, s as Gt, t as Kt, u as qt, v as Jt, w as Yt, x as Xt, y as Zt, z as Qt } from "./DocumentEditorPage-BF9GXG43.js";
+import { C as $t, S as en, T as tn, _ as nn, a as rn, b as an, c as on, d as sn, f as cn, g as ln, h as un, i as dn, l as fn, m as pn, n as mn, o as hn, p as gn, r as _n, s as vn, t as yn, u as bn, v as xn, w as Sn, x as Cn, y as wn } from "./useDocumentImageUpload-35yojVhF.js";
+import { r as Tn } from "./RichChatComposer-BHWvYPlw.js";
 import { forwardRef as En, useCallback as K, useEffect as q, useId as Dn, useImperativeHandle as On, useMemo as J, useRef as Y, useState as X } from "react";
 import { Fragment as Z, jsx as Q, jsxs as $ } from "react/jsx-runtime";
 import * as kn from "yjs";
@@ -2100,7 +2100,7 @@ function Br({ filled: e }) {
 		children: /* @__PURE__ */ Q("path", { d: "M8 1.9l1.8 3.7 4.1.6-3 2.9.7 4.1L8 11.3l-3.6 1.9.7-4.1-3-2.9 4.1-.6L8 1.9Z" })
 	});
 }
-function Vr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: s, starred: c = !1, onStarredChange: u, statusPill: d, path: m, crumbsTrailing: h, subtitle: g, metaBar: _, participants: y, onParticipantClick: b, onFollowParticipant: x, followingParticipantId: S, meta: C, saveState: T, headActions: E, tabs: D, activeTab: O, onTabChange: k, toolbar: A, children: te, footer: j, proposal: M, surface: N = "workspace", explorer: P, workbench: F, label: ne = "Editor", variant: I = "document", itemType: L, itemKey: R, titleSize: z = "md", titleOverflow: B = "truncate", tabsTrailing: V, className: re, "data-testid": H = "editor-shell" }) {
+function Vr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: c, starred: l = !1, onStarredChange: u, statusPill: d, path: m, crumbsTrailing: h, subtitle: g, metaBar: _, participants: y, onParticipantClick: b, onFollowParticipant: x, followingParticipantId: S, meta: C, saveState: T, headActions: E, tabs: D, activeTab: O, onTabChange: k, toolbar: A, children: te, footer: j, proposal: M, surface: N = "workspace", explorer: P, workbench: F, label: ne = "Editor", variant: I = "document", itemType: L, itemKey: R, titleSize: z = "md", titleOverflow: B = "truncate", tabsTrailing: V, className: re, "data-testid": H = "editor-shell" }) {
 	let U = I === "work-item", ie = U && (L || R) ? /* @__PURE__ */ $(Z, { children: [L && /* @__PURE__ */ Q(a, {
 		size: "sm",
 		tone: "info",
@@ -2150,7 +2150,7 @@ function Vr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 						className: "flex h-7 min-w-0 items-center gap-2 text-[13px] text-text-secondary",
 						"data-testid": `${H}-crumbs-row`,
 						children: [
-							/* @__PURE__ */ Q(l, {
+							/* @__PURE__ */ Q(s, {
 								dir: "right",
 								size: 12,
 								"aria-hidden": "true",
@@ -2207,8 +2207,8 @@ function Vr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 					/* @__PURE__ */ $("div", {
 						className: "flex min-w-0 items-center gap-2",
 						children: [
-							s && !U && /* @__PURE__ */ Q(ee, {
-								kind: s,
+							c && !U && /* @__PURE__ */ Q(ee, {
+								kind: c,
 								size: "2xl",
 								variant: "outline",
 								className: "[@media(max-height:640px)]:h-8 [@media(max-height:640px)]:w-8",
@@ -2237,13 +2237,13 @@ function Vr({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 													children: t
 												}), u && /* @__PURE__ */ Q(o, {
 													size: "sm",
-													"aria-label": c ? "Remove star" : "Star this file",
-													"aria-pressed": c,
-													title: c ? "Starred" : "Star",
-													onClick: () => u(!c),
-													className: c ? "shrink-0 text-primary" : "shrink-0 text-text-tertiary",
+													"aria-label": l ? "Remove star" : "Star this file",
+													"aria-pressed": l,
+													title: l ? "Starred" : "Star",
+													onClick: () => u(!l),
+													className: l ? "shrink-0 text-primary" : "shrink-0 text-text-tertiary",
 													"data-testid": `${H}-star`,
-													children: /* @__PURE__ */ Q(Br, { filled: c })
+													children: /* @__PURE__ */ Q(Br, { filled: l })
 												})]
 											}),
 											d,
@@ -2552,19 +2552,19 @@ var qr = En(function({ mentionUsers: e, onReply: t, onResolve: r, onAskAgent: i,
 });
 //#endregion
 //#region src/components/doc-editor/CommentHandoffBar.tsx
-function Jr({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1, onResolveOnApplyChange: a, onDismiss: o, className: l, "data-testid": u = "comment-handoff-bar" }) {
+function Jr({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1, onResolveOnApplyChange: a, onDismiss: o, className: s, "data-testid": u = "comment-handoff-bar" }) {
 	let d = r === "reply", f = d ? "Stop replying" : "Stop answering this comment";
 	return /* @__PURE__ */ $("div", {
 		role: "status",
 		"data-testid": u,
 		"data-variant": r,
-		className: n("flex min-w-0 items-center gap-3 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-text-secondary shadow-sm", l),
+		className: n("flex min-w-0 items-center gap-3 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-text-secondary shadow-sm", s),
 		children: [
-			d ? /* @__PURE__ */ Q(c, {
+			d ? /* @__PURE__ */ Q(l, {
 				size: 14,
 				"aria-hidden": "true",
 				className: "shrink-0 text-primary"
-			}) : /* @__PURE__ */ Q(s, {
+			}) : /* @__PURE__ */ Q(c, {
 				size: 14,
 				"aria-hidden": "true",
 				className: "shrink-0 text-info-fg"

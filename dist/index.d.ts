@@ -2031,6 +2031,9 @@ export declare const borderRadius: {
     readonly full: string;
 };
 
+/** A robot head: an agent at work on a computer. Since 2.411.0. */
+export declare function BotIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 /** A trunk with a branch leaving it: a flow that splits — a pipeline, a branch. */
 export declare function BranchIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -7224,6 +7227,9 @@ export declare function describeReactors(group: ReactionGroup): string;
 /** "Mia Zhao and 2 others" — the sentence beside the avatar row. */
 export declare function describeRecordingParticipants(participants: readonly RecordingParticipant[], total: number): string;
 
+/** A monitor on a stand: a computer — a provisioned box. Since 2.411.0. */
+export declare function DesktopIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare function DetailHeader({ title, badge, description, meta, aside, asideWidth, as: Heading, className, 'data-testid': testId, }: DetailHeaderProps): JSX.Element;
 
 export declare interface DetailHeaderProps {
@@ -11542,6 +11548,9 @@ export declare interface JsonPathSample {
     value: string;
 }
 
+/** A keyboard: shortcuts. Since 2.411.0. */
+export declare function KeyboardIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 declare interface KeyboardShortcut {
     /** Key to match (case-insensitive, e.g., 's', 'Enter', 'Escape') */
     key: string;
@@ -11669,6 +11678,9 @@ export declare interface LabStep {
     iterations?: number;
     contextTokens?: number;
 }
+
+/** An open laptop: somebody's own machine rather than a provisioned box. Since 2.411.0. */
+export declare function LaptopIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** Alias kept for diagrams better described as a stack of horizontal layers. */
 export declare const LayerStack: typeof StackDiagram;
@@ -12193,6 +12205,9 @@ export declare const MAX_DECK_SLIDES = 40;
 
 /** Largest value in a degree map, or 0 for an empty graph. */
 export declare function maxDegree(map: Map<string, number>): number;
+
+/** Four corners pushed outward: "expand to fill". Since 2.411.0. */
+export declare function MaximizeIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare interface McpToolNodeData {
     type: 'mcp-tool';
@@ -19080,6 +19095,9 @@ export declare interface SplitPaneProps {
     'data-testid'?: string;
 }
 
+/** A frame split into a main pane and two stacked ones: "split layout". Since 2.411.0. */
+export declare function SplitViewIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 /** Vertical flex column with a scale gap. */
 export declare function Stack({ children, gap, align, justify, wrap, as: As, className, ref, ...rest }: StackProps): JSX.Element;
 
@@ -25057,12 +25075,12 @@ declare interface UseActivityBusReturn {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
+        canvasListStyle: {
             /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
              */
-            insertDiagram: (id?: string) => ReturnType;
+            setListStyle: (style: ListStyle) => ReturnType;
         };
     }
 }
@@ -25089,12 +25107,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
+        diagramMacro: {
             /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
              */
-            setListStyle: (style: ListStyle) => ReturnType;
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -25149,6 +25167,16 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
@@ -25172,16 +25200,6 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }

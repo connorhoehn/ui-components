@@ -4,6 +4,35 @@ import { ReactNode } from 'react';
 import { RefAttributes } from 'react';
 
 /**
+ * The agent's current run as a checklist — done, in flight, elapsed. Free:
+ * it reads the same tail stream.
+ */
+export declare const AGENT_PANE_KIND: PaneKind;
+
+/** Statuses a person reads as "an agent is in play here". */
+export declare const AGENT_STATUSES: readonly ComputeStatus[];
+
+export declare function AgentPane({ computer, registerPane, className }: AgentPaneProps): JSX.Element;
+
+export declare interface AgentPaneProps {
+    computer: Computer;
+    registerPane?: PaneKindContext['registerPane'];
+    className?: string;
+}
+
+/**
+ * Rebuild a tree from its own leaves in a named arrangement.
+ *
+ * Panes keep their ids, computers and kinds — only the splits are new — so a
+ * terminal reattaches to the same PTY and focus stays where it was. Returns
+ * the root unchanged for a single pane, which has nothing to arrange.
+ */
+export declare function arrangePanes(root: PaneNode, arrangement: PaneArrangement, nextSplitId: () => string): PaneNode;
+
+/** Boxes that want attention first, then busy ones, then the rest. */
+export declare const ATTENTION_ORDER: Record<ComputeStatus, number>;
+
+/**
  * Build a tree from `find -printf "%y %p"` output.
  *
  * Markers: `d` directory, `f` (and anything else) file, `p` a directory that
@@ -12,6 +41,17 @@ import { RefAttributes } from 'react';
  * directory and an unlisted one look identical otherwise.
  */
 export declare function buildWorkspaceTree(lines: string[]): WorkspaceNode[];
+
+export declare function byAttention(a: Computer, b: Computer): number;
+
+/**
+ * Bytes per second over the trailing window, from the steps' own timestamps.
+ *
+ * Measured on the text that arrived, not guessed from a frame count: "2.4
+ * KB/s" means that much log reached this pane in the last ten seconds, and a
+ * stream that has gone quiet reads 0 B/s rather than its lifetime average.
+ */
+export declare function byteRate(steps: readonly TaskStep[], now: number, windowMs?: number): number;
 
 export declare type ChooserRow = {
     kind: 'pane';
@@ -33,6 +73,9 @@ declare type ChromeTone = 'code' | 'app';
 
 /** Clear everything this module persists. For a tenant or account switch. */
 export declare function clearComputeStorage(): void;
+
+/** `08:08:41` — the log's own clock, local time, seconds resolution. */
+export declare function clockTime(at: number): string;
 
 /**
  * What to do about a close code, and what to tell the operator.
@@ -357,9 +400,23 @@ export declare interface Computer {
     contextUsed?: number;
     /** Model the last (or current) run resolved to, as reported by the runtime. */
     activeModel?: string;
+    /**
+     * What sort of computer this is. Absent means `microvm`, the provisioned
+     * AgentCore box every field above was written for.
+     *
+     * `local` is a developer's paired machine riding the same fleet: it can take
+     * work and stream a log, but it has no PTY and is never provisioned or
+     * stopped from here. Pane kinds read this through `appliesTo` so a laptop is
+     * never handed a terminal it cannot back, and the workspace rail draws it
+     * with a laptop glyph instead of a status dot.
+     */
+    kind?: ComputerKind;
 }
 
-export declare function ComputerLab({ open, onClose, focusComputerId, variant, chrome: chromeTone, keymap, leader, idleWindowMs, className, }: ComputerLabProps): JSX.Element | null;
+/** See `Computer.kind`. */
+export declare type ComputerKind = 'microvm' | 'local';
+
+export declare function ComputerLab({ open, onClose, focusComputerId, variant, chrome: chromeTone, keymap, leader, idleWindowMs, appearance, title, headerActions, onInstruct, className, }: ComputerLabProps): JSX.Element | null;
 
 export declare interface ComputerLabProps {
     open: boolean;
@@ -429,6 +486,31 @@ export declare interface ComputerLabProps {
      * @see `../lib/chromeTokens` for the map itself and where it may be applied.
      */
     chrome?: ChromeTone;
+    /**
+     * `classic` (default) is the tmux-shaped lab: window tabs, a two-list rail,
+     * code-family frames and a broadcast prompt. `workspace` is the same
+     * multiplexer under host-themed chrome — a header with the fleet's status
+     * pills, + Computer and Keys; a tabbed, searchable, numbered rail grouped by
+     * project; card panes with a kind menu and a status badge; and an
+     * instruction bar that targets the focused pane, a selection, or the whole
+     * fleet. Keyboard, layout persistence and pane kinds are shared.
+     */
+    appearance?: 'classic' | 'workspace';
+    /** Workspace header title. `null` drops it when the host titles the page. Default `Computer Lab`. */
+    title?: ReactNode | null;
+    /** Workspace header: host actions after + Computer and Keys. */
+    headerActions?: ReactNode;
+    /**
+     * Workspace instruction bar, `Nudge` mode: deliver an instruction to the
+     * computers in scope through the host's own route (a governed dispatch, a
+     * queue). Resolve with how many took it; reject to report a refusal (a 403,
+     * a budget brake) and the text is kept for a retry.
+     *
+     * Absent, the lab runs it as an agent task on each targeted microVM through
+     * the provider's client (`runTask`, resume on). Laptops are skipped on that
+     * path: they have no runtime session to resume.
+     */
+    onInstruct?: (instruction: LabInstruction) => Promise<LabInstructionOutcome | void>;
     className?: string;
 }
 
@@ -491,6 +573,15 @@ export declare interface CreateComputerInput {
     projectId?: string;
 }
 
+/**
+ * The current run's steps — everything since the last run boundary.
+ *
+ * A box that has run five tasks has five runs in its tail; the checklist is
+ * about the one in front of you. A boundary is a dispatcher job start or a
+ * `task_started` meta step, whichever came last.
+ */
+export declare function currentRun(steps: readonly TaskStep[]): TaskStep[];
+
 /** Cycle docked → grid → stack → floating, so one key reaches every layout. */
 export declare function cycleLayout(): void;
 
@@ -518,7 +609,19 @@ export declare const DEFAULT_IDLE_WINDOW_MS: number;
  */
 export declare const DEFAULT_KEYMAP: readonly KeyBinding[];
 
+/**
+ * Terminal first (the default for a new pane), then the classic activity tail,
+ * then the workspace lab's two readings of the same stream. Appended rather
+ * than reordered so a saved layout and the toggle's first step are unchanged.
+ */
 export declare const DEFAULT_PANE_KINDS: readonly PaneKind[];
+
+/**
+ * The kind a new pane on this computer gets: the first registered kind that
+ * applies to it, falling back to the first kind outright so a registry whose
+ * every kind refuses still renders something rather than a blank frame.
+ */
+export declare function defaultKindFor(registry: PaneKindRegistry, computer: Computer | null | undefined): PaneKind | null;
 
 /** Ctrl-] detaches: drop the socket, leave the shell alive. */
 export declare const DETACH_BYTE = 29;
@@ -572,6 +675,67 @@ export declare interface DockState {
     activeId: string | null;
     geometry: DockGeometry;
 }
+
+declare interface DropdownMenuItem {
+    /** Visible item label. */
+    label: string;
+    /** Optional leading icon / glyph. */
+    icon?: ReactNode;
+    /** Highlight this item as the currently-active selection. */
+    active?: boolean;
+    /** Style this item as destructive. */
+    danger?: boolean;
+    /** Fires on click / Enter; the menu closes afterwards. Not needed on a row with a `submenu`. */
+    onSelect?: () => void;
+    /** Right-aligned hint after the label — a shortcut (`⌘P`), a count. */
+    trailing?: ReactNode;
+    /** A second, quieter line under the label. */
+    description?: string;
+    /** A setting that is on: a check leads the row (menuitemcheckbox). */
+    checked?: boolean;
+    /**
+     * A flyout of further choices, opened from this row — "Share to ›",
+     * "Download as ›". Opens on hover, click or ArrowRight; the row itself
+     * runs no `onSelect`.
+     */
+    submenu?: DropdownMenuSection[];
+    /**
+     * Shown but not actionable: muted, `aria-disabled="true"` yet still
+     * focusable (WAI-ARIA menu practice, so a screen reader can reach it and
+     * hear why), and click / Enter / Space never run `onSelect` — the menu
+     * stays open. A disabled row with a `submenu` does not open it. Since 2.390.3.
+     */
+    disabled?: boolean;
+    /**
+     * Why it is disabled — shown as the row's secondary line (in place of
+     * `description`), its hover tooltip, and its `aria-describedby`.
+     * Since 2.390.3; the visible line since 2.390.4.
+     */
+    disabledReason?: string;
+    /** A hook for the spec that addresses this row. Without one the row is reachable by its label. */
+    'data-testid'?: string;
+}
+
+declare interface DropdownMenuSection {
+    /** Optional uppercase section heading. */
+    label?: string;
+    items: DropdownMenuItem[];
+    /**
+     * The group scrolls in place (`uic-menu-group-scroll`) so the sections
+     * after it stay put. For a generated list — one row per room — that would
+     * otherwise push the fixed actions below the fold.
+     */
+    scroll?: boolean;
+    /**
+     * A quiet line under the group's rows — what the group does as a whole
+     * ("Creates a new document."). Since 2.390.3.
+     */
+    caption?: string;
+    'data-testid'?: string;
+}
+
+/** `4:12`, `1:02:09` — elapsed time as a run clock reads it. */
+export declare function elapsed(ms: number): string;
 
 /** The split whose child contains `paneId` along `axis` — the one a resize moves. */
 export declare function enclosingSplit(root: PaneNode, paneId: string, axis: SplitDirection): {
@@ -643,7 +807,17 @@ export declare const fixtureWorkspace: WorkspaceSnapshot;
 /** Mirror of the server-owned fleet, for first paint and re-adoption. */
 export declare const FLEET_STORAGE_KEY = "ui-components.computeFleet.v1";
 
+export declare interface FleetSummary {
+    computers: number;
+    agents: number;
+    needsYou: number;
+    running: number;
+    error: number;
+}
+
 export declare function focusShell(id: string): void;
+
+export declare function formatRate(bytesPerSecond: number): string;
 
 /** `84.2k`, `1.3M` — a token count is scale, not an exact figure. */
 export declare function formatTokens(tokens: number): string;
@@ -672,6 +846,25 @@ export declare function groupBindings(keymap: readonly KeyBinding[]): Array<{
     bindings: KeyBinding[];
 }>;
 
+/**
+ * "6 computers · $0.46 / $95 · 5 bots" — every clause only when known. A
+ * project with no allocation shows its spend alone, and a bucket with no bots
+ * says nothing about bots rather than "0 bots".
+ */
+export declare function groupQuickLine(project: Pick<ProjectRollup, 'budgetUsd' | 'spentUsd' | 'liveSpendUsd' | 'botCount'>, count: number): string;
+
+/**
+ * Is there an agent in play on this computer?
+ *
+ * A run in flight, a question pending, or a failure to read. Deliberately not
+ * "has a `currentTask`": an idle box keeps the line of its last task, and a
+ * paired laptop uses the field for its worker state ("Waiting for work"), so
+ * counting it made every computer an agent and the count said nothing. With
+ * this rule the Agents count is exactly needs-you + running + error — the
+ * three pills beside it.
+ */
+export declare function hasAgent(computer: Computer): boolean;
+
 export declare const HEARTBEAT_MS = 30000;
 
 /**
@@ -696,6 +889,9 @@ export declare function installMockTailSource(options?: MockTailOptions): () => 
 /** Does this keystroke arm the leader? */
 export declare function isLeaderKey(leader: LeaderConfig | null | undefined, event: KeyboardEvent): boolean;
 
+/** A paired laptop rather than a provisioned microVM. */
+export declare function isLocalComputer(computer: Computer): boolean;
+
 export declare interface KeyBinding {
     command: LabCommand;
     /** `KeyboardEvent.key`, compared case-insensitively. */
@@ -717,6 +913,9 @@ export declare interface KeyBinding {
      */
     leaderKey?: string;
 }
+
+/** Kinds that can render this computer, in registration order. */
+export declare function kindsFor(registry: PaneKindRegistry, computer: Computer | null | undefined): PaneKind[];
 
 /** Lab windows and their pane trees. */
 export declare const LAB_LAYOUT_STORAGE_KEY = "ui-components.computerLab.v1";
@@ -756,6 +955,90 @@ export declare type LabCommand = 'focus-left' | 'focus-right' | 'focus-up' | 'fo
 
 /** Look up a chord's display label, for a button's tooltip. */
 export declare function labelFor(keymap: readonly KeyBinding[], command: LabCommand): string | null;
+
+export declare function LabFleetRail({ computers, activeComputerId, openComputerIds, selectedIds, onSelect, onOpenInPane, statusFilter, onStatusFilterChange, tab: controlledTab, onTabChange, className, }: LabFleetRailProps): JSX.Element;
+
+export declare interface LabFleetRailProps {
+    computers: Computer[];
+    /** Computer bound to the focused pane. */
+    activeComputerId: string | null;
+    /** Computers on screen in some pane. */
+    openComputerIds: readonly string[];
+    /** Computers picked as instruction targets (⌘/Ctrl-click a row). */
+    selectedIds?: ReadonlySet<string>;
+    /** Plain click retargets the focused pane; `toggle` is a ⌘/Ctrl-click. */
+    onSelect: (computer: Computer, options: {
+        toggle: boolean;
+    }) => void;
+    /** Open in a new pane (the row's detail action, middle-click, ⌘⏎). */
+    onOpenInPane?: (computer: Computer) => void;
+    /** Show only computers in this status — the top bar's pills set it. */
+    statusFilter?: ComputeStatus | null;
+    onStatusFilterChange?: (status: ComputeStatus | null) => void;
+    tab?: LabFleetTab;
+    onTabChange?: (tab: LabFleetTab) => void;
+    className?: string;
+}
+
+export declare type LabFleetTab = 'computers' | 'agents';
+
+export declare function LabHeader({ title, summary, statusFilter, onStatusFilter, canCreate, onCreate, onKeys, keysOpen, keysChord, actions, leaderLabel, }: LabHeaderProps): JSX.Element;
+
+export declare interface LabHeaderProps {
+    /** Leading title. `null` drops it when the host already titles the page. */
+    title: ReactNode | null;
+    summary: FleetSummary;
+    statusFilter: ComputeStatus | null;
+    onStatusFilter: (status: ComputeStatus | null) => void;
+    /** Render + Computer — the viewer may provision. */
+    canCreate: boolean;
+    onCreate: () => void;
+    onKeys: () => void;
+    keysOpen: boolean;
+    keysChord?: string | null;
+    /** Host actions after the built-in ones. */
+    actions?: ReactNode;
+    /** An armed tmux leader, when one is configured. */
+    leaderLabel?: string | null;
+}
+
+/** What the workspace lab's instruction bar hands the host. */
+export declare interface LabInstruction {
+    text: string;
+    /** The computers in scope, laptops included — the host decides what reaches them. */
+    computers: Computer[];
+    scope: LabInstructionScope;
+}
+
+/** The host's answer: how many computers took the instruction, and why the rest did not. */
+export declare interface LabInstructionOutcome {
+    delivered: number;
+    detail?: string;
+}
+
+/** Which computers an instruction reaches. */
+export declare type LabInstructionScope = 'focused' | 'selected' | 'all';
+
+export declare function LabPaneToolbar({ panes, onFocusPane, onAddPane, canAddPane, shellsOpen, maxShells, onArrange, zoomed, onToggleZoom, moreSections, }: LabPaneToolbarProps): JSX.Element;
+
+export declare interface LabPaneToolbarProps {
+    panes: {
+        id: string;
+        label: string;
+        kind: string;
+        active: boolean;
+    }[];
+    onFocusPane: (paneId: string) => void;
+    onAddPane: () => void;
+    canAddPane: boolean;
+    shellsOpen: number;
+    maxShells: number;
+    onArrange: (arrangement: PaneArrangement) => void;
+    zoomed: boolean;
+    onToggleZoom: () => void;
+    /** Window list and the lab's other commands, for the ⋯ menu. */
+    moreSections: DropdownMenuSection[];
+}
 
 export declare function LabRail({ computers, activeComputerId, openComputerIds, onSelect, onOpenInPane, onWatch, onCreate, onOpenMenu, showAllActivity, onToggleShowAll, canManage, models, className, }: LabRailProps): JSX.Element;
 
@@ -823,6 +1106,22 @@ export declare interface LeaderConfig {
 }
 
 export declare function listLeaves(node: PaneNode): PaneLeaf[];
+
+declare type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+
+/**
+ * The box's output as timestamped log lines — follow or pause, filter by
+ * source, search, live byte rate. Free: it reads the same tail stream.
+ */
+export declare const LOGS_PANE_KIND: PaneKind;
+
+export declare function LogsPane({ computer, registerPane, className }: LogsPaneProps): JSX.Element;
+
+export declare interface LogsPaneProps {
+    computer: Computer;
+    registerPane?: PaneKindContext['registerPane'];
+    className?: string;
+}
 
 /** How the machine's local memory sidecar stands against the shared mesh. */
 export declare type MachineMemoryMode = 'synced' | 'pending' | 'offline' | 'disabled';
@@ -899,6 +1198,16 @@ export declare function makeLeaf(id: string, computerId: string, kindId: string)
  * the browser uses for history navigation — silently moves pane focus.
  */
 export declare function matchBinding(keymap: readonly KeyBinding[], event: KeyboardEvent): LabCommand | null;
+
+/**
+ * Does a computer match a free-text query?
+ *
+ * Matches the fields a person would type: the box's name, what it is charged
+ * to, and what it is doing. Case-insensitive, every word must match somewhere
+ * — "auth tests" finds the auth box running tests, not every box that says
+ * either word.
+ */
+export declare function matchesQuery(computer: Computer, query: string): boolean;
 
 /**
  * Which command follows an armed leader, or null.
@@ -989,7 +1298,7 @@ export declare function mockTailUrl(boxId: string, scriptId?: string): string;
 export declare function neighborPane(root: PaneNode, paneId: string, direction: Direction): string | null;
 
 /** The next kind in registration order — what the toggle key cycles through. */
-export declare function nextKind(registry: PaneKindRegistry, id: string): PaneKind | null;
+export declare function nextKind(registry: PaneKindRegistry, id: string, computer?: Computer | null): PaneKind | null;
 
 /**
  * Open a shell for a computer, or focus the one already open for it.
@@ -1012,6 +1321,16 @@ export declare type OpenShellOutcome = {
     ok: false;
     reason: 'at-capacity';
 };
+
+/**
+ * Ways to re-flow a window's panes in one move.
+ *
+ * `rows` stacks them (a list you read top to bottom), `columns` puts them side
+ * by side, and `main` gives the first pane the left half and stacks the rest
+ * on the right — the editor-and-two-watchers shape a multiplexer settles into
+ * most often, and the one the workspace lab's split toggle means.
+ */
+export declare type PaneArrangement = 'rows' | 'columns' | 'main';
 
 /**
  * What a pane exposes back to the lab.
@@ -1068,6 +1387,26 @@ export declare interface PaneKind {
     inputSuffix?: string;
     /** Right-hand text in the pane's status line, e.g. `pty` or `resume on`. */
     statusMode?: string;
+    /**
+     * Glyph for the kind, shown before its label in the workspace pane header
+     * and its kind menu. Optional — a kind without one is named by label alone.
+     */
+    icon?: ReactNode;
+    /**
+     * Header label in the workspace lab, when it should read differently from
+     * the short `label` the classic frame and the cycle order use — `Bot logs`
+     * rather than `logs`. Defaults to `label`.
+     */
+    title?: string;
+    /**
+     * Whether this kind can render this computer at all.
+     *
+     * Absent means "any computer". A terminal answers false for a paired laptop
+     * (no PTY), so a new pane on a laptop lands on the first kind that does
+     * apply, the kind menu leaves the terminal out, and retargeting a terminal
+     * pane at a laptop switches it rather than painting `error · Forbidden`.
+     */
+    appliesTo?: (computer: Computer) => boolean;
     render: (context: PaneKindContext) => ReactNode;
 }
 
@@ -1136,7 +1475,7 @@ export declare interface PaneSplit {
     b: PaneNode;
 }
 
-export declare function PaneStatusLine({ computer, modelId, models, idleWindowMs, broadcasting, mode, className, 'data-testid': testId, }: PaneStatusLineProps): JSX.Element;
+export declare function PaneStatusLine({ computer, modelId, models, idleWindowMs, broadcasting, mode, variant, extra, className, 'data-testid': testId, }: PaneStatusLineProps): JSX.Element;
 
 export declare interface PaneStatusLineProps {
     computer: Computer;
@@ -1149,11 +1488,20 @@ export declare interface PaneStatusLineProps {
     broadcasting?: boolean;
     /** Right-hand mode text, e.g. `resume on`. */
     mode?: string;
+    /**
+     * `full` (default) is the three-row status bar under a classic pane.
+     * `meta` is one quiet line of the same facts — model · ctx · cost ·
+     * auto-stop · mode — for the workspace lab's pane header, which carries the
+     * status as a badge of its own and has no room for a meter.
+     */
+    variant?: 'full' | 'meta';
+    /** Extra trailing fields for `meta` — an agent pane's elapsed time, say. */
+    extra?: ReactNode;
     className?: string;
     'data-testid'?: string;
 }
 
-export declare function PaneTreeView({ node, activePaneId, zoomedPaneId, renderLeaf, onRatioChange, className, }: PaneTreeViewProps): JSX.Element;
+export declare function PaneTreeView({ node, activePaneId, zoomedPaneId, renderLeaf, onRatioChange, gutter, className, }: PaneTreeViewProps): JSX.Element;
 
 export declare interface PaneTreeViewProps {
     node: PaneNode;
@@ -1166,6 +1514,11 @@ export declare interface PaneTreeViewProps {
     zoomedPaneId?: string | null;
     renderLeaf: (leaf: PaneLeaf) => ReactNode;
     onRatioChange: (splitId: string, ratio: number) => void;
+    /**
+     * Space between panes. `tight` (default) is the classic multiplexer's 4px
+     * rule; `roomy` is 8px, for panes that are cards with their own borders.
+     */
+    gutter?: 'tight' | 'roomy';
     className?: string;
 }
 
@@ -1378,10 +1731,18 @@ export declare function statusOf(computer: {
     status?: ComputeStatus;
 } | null | undefined): ComputeStatus;
 
+/** Severity of a step, read the way a log reader expects it. */
+export declare function stepLevel(step: TaskStep): LogLevel;
+
+/** What emitted a step — the source column and the filter's vocabulary. */
+export declare function stepSource(step: TaskStep): string;
+
 /** A decoded SSE frame. Frames that are not JSON are dropped, not thrown. */
 export declare type StreamEvent = Record<string, unknown>;
 
 export declare function subscribeDock(listener: () => void): () => void;
+
+export declare function summarizeFleet(computers: readonly Computer[]): FleetSummary;
 
 /**
  * One-line summary of a tool call.
@@ -1574,6 +1935,8 @@ export declare interface UseLabLayoutResult {
     move: (direction: Direction) => void;
     cycle: (delta: number) => void;
     toggleZoom: () => void;
+    /** Re-flow the active window's panes — see `arrangePanes`. Drops zoom. */
+    arrange: (arrangement: PaneArrangement) => void;
     newWindow: (computerId: string, kindId: string) => void;
     closeWindow: (windowId: string) => void;
     selectWindow: (windowId: string) => void;
@@ -1627,6 +1990,25 @@ export declare interface WorkspaceNode {
     children: WorkspaceNode[];
 }
 
+export declare function WorkspacePane({ computer, kind, kinds, onSwitchKind, active, zoomed, broadcasting, models, onFocus, onClose, onToggleZoom, moreSections, children, }: WorkspacePaneProps): JSX.Element;
+
+export declare interface WorkspacePaneProps {
+    computer: Computer;
+    kind: PaneKind;
+    /** Kinds this computer can switch to, for the kind menu. */
+    kinds: readonly PaneKind[];
+    onSwitchKind: (kind: PaneKind) => void;
+    active: boolean;
+    zoomed: boolean;
+    broadcasting: boolean;
+    models: ComputeModel[];
+    onFocus: () => void;
+    onClose: () => void;
+    onToggleZoom: () => void;
+    moreSections: DropdownMenuSection[];
+    children: ReactNode;
+}
+
 export declare interface WorkspaceSnapshot {
     tree: WorkspaceNode[];
     /** Git one-liners: recent log plus short status. Empty when not a repo. */
@@ -1640,12 +2022,12 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
+        canvasListStyle: {
             /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
              */
-            insertDiagram: (id?: string) => ReturnType;
+            setListStyle: (style: ListStyle) => ReturnType;
         };
     }
 }
@@ -1672,12 +2054,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
+        diagramMacro: {
             /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
              */
-            setListStyle: (style: ListStyle) => ReturnType;
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -1732,6 +2114,16 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         attachmentMacro: {
             /** Inserts a file card at the selection. Requires `name` and `url`. */
             insertAttachment: (draft: AttachmentDraft) => ReturnType;
@@ -1755,16 +2147,6 @@ declare module '@tiptap/core' {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
