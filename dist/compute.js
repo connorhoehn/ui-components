@@ -456,12 +456,12 @@ function Lt(e, t) {
 	let n = [`${t} ${t === 1 ? "computer" : "computers"}`], r = e.spentUsd ?? e.liveSpendUsd;
 	return typeof e.budgetUsd == "number" && e.budgetUsd > 0 ? n.push(`${It(r, !0)} / ${It(e.budgetUsd, !1)}`) : r > 0 && n.push(It(r, !0)), e.botCount && n.push(`${e.botCount} ${e.botCount === 1 ? "bot" : "bots"}`), n.join(" · ");
 }
-function Rt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds: i, onSelect: a, onOpenInPane: s, statusFilter: c = null, onStatusFilterChange: d, tab: f, onTabChange: m, className: h }) {
-	let [g, _] = q("computers"), v = f ?? g, b = (e) => {
-		_(e), m?.(e);
-	}, [S, C] = q(""), [ee, te] = q(/* @__PURE__ */ new Set()), w = G(() => new Set(r), [r]), T = Je(), E = T?.projects ?? [], re = T?.projectsAbsent ?? !0, ie = G(() => {
-		let e = E.filter((e) => e.id !== "__unassigned__" && e.computers.length > 0);
-		if (re || e.length === 0) return [{
+function Rt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds: i, onSelect: a, onOpenInPane: s, statusFilter: c = null, onStatusFilterChange: d, tab: f, onTabChange: m, onCreate: h, className: g }) {
+	let [_, v] = q("computers"), b = f ?? _, S = (e) => {
+		v(e), m?.(e);
+	}, [C, ee] = q(""), [te, w] = q(/* @__PURE__ */ new Set()), T = G(() => new Set(r), [r]), E = Je(), re = E?.projects ?? [], ie = E?.projectsAbsent ?? !0, O = G(() => {
+		let e = re.filter((e) => e.id !== "__unassigned__" && e.computers.length > 0);
+		if (ie || e.length === 0) return [{
 			id: "__all",
 			name: "",
 			quickLine: "",
@@ -474,7 +474,7 @@ function Rt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds
 			computers: e.computers
 		})), r = new Set(n.flatMap((e) => e.computers.map((e) => e.id))), i = t.filter((e) => !r.has(e.id));
 		if (i.length > 0) {
-			let e = E.find((e) => e.id === ne);
+			let e = re.find((e) => e.id === ne);
 			n.push({
 				id: ne,
 				name: "Unassigned",
@@ -489,14 +489,14 @@ function Rt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds
 		}
 		return n;
 	}, [
-		E,
 		re,
+		ie,
 		t
-	]), O = G(() => {
+	]), ae = G(() => {
 		let e = /* @__PURE__ */ new Map(), t = 0;
-		for (let n of ie) for (let r of n.computers) e.set(r.id, t += 1);
+		for (let n of O) for (let r of n.computers) e.set(r.id, t += 1);
 		return e;
-	}, [ie]), ae = U((e) => N(e, S) && (!c || k(e) === c), [S, c]), oe = G(() => t.filter(A).sort(Ce), [t]), se = [{
+	}, [O]), oe = U((e) => N(e, C) && (!c || k(e) === c), [C, c]), se = G(() => t.filter(A).sort(Ce), [t]), ce = [{
 		label: "Show",
 		items: [{
 			label: "Every status",
@@ -513,35 +513,55 @@ function Rt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds
 			checked: c === e,
 			onSelect: () => d?.(c === e ? null : e)
 		}))]
-	}];
+	}], le = t.length === 0, ue = /* @__PURE__ */ Y("div", {
+		"data-testid": "lab-fleet-empty",
+		className: "px-3 py-4 flex flex-col items-start gap-2",
+		children: [
+			/* @__PURE__ */ J("div", {
+				className: "text-[13px] font-semibold text-text-primary",
+				children: "No computers in the lab"
+			}),
+			/* @__PURE__ */ J("div", {
+				className: "text-[12px] text-text-secondary",
+				children: h ? "Start a computer and it opens here in a pane." : "Nothing in the fleet is shared with you yet."
+			}),
+			h && /* @__PURE__ */ J("button", {
+				type: "button",
+				onClick: h,
+				"data-testid": "lab-fleet-empty-create",
+				className: "text-[12px] font-semibold rounded-md px-3 py-1 cursor-pointer border border-primary text-primary bg-transparent hover:bg-surface-hover",
+				children: "+ New computer"
+			})
+		]
+	});
 	return /* @__PURE__ */ Y("div", {
 		"data-testid": "lab-fleet-rail",
-		className: e("flex flex-col h-full min-h-0 border-r border-border bg-surface", h),
+		className: e("flex flex-col h-full min-h-0 border-r border-border bg-surface", g),
 		children: [
 			/* @__PURE__ */ Y("div", {
 				role: "tablist",
 				"aria-label": "Fleet",
 				className: "flex shrink-0 border-b border-border",
 				children: [/* @__PURE__ */ J(zt, {
-					selected: v === "computers",
-					onSelect: () => b("computers"),
+					selected: b === "computers",
+					onSelect: () => S("computers"),
 					icon: /* @__PURE__ */ J(u, { size: 14 }),
 					label: "Computers",
 					count: t.length
 				}), /* @__PURE__ */ J(zt, {
-					selected: v === "agents",
-					onSelect: () => b("agents"),
+					selected: b === "agents",
+					onSelect: () => S("agents"),
 					icon: /* @__PURE__ */ J(l, { size: 14 }),
 					label: "Agents",
-					count: oe.length
+					count: se.length
 				})]
 			}),
 			/* @__PURE__ */ Y("div", {
 				className: "flex items-center gap-1.5 px-2 py-2 shrink-0",
 				children: [/* @__PURE__ */ J(y, {
-					value: S,
-					onChange: C,
-					onClear: () => C(""),
+					value: C,
+					onChange: ee,
+					onClear: () => ee(""),
 					placeholder: "Find computer or agent…",
 					className: "flex-1 min-w-0"
 				}), d && /* @__PURE__ */ J(x, {
@@ -550,23 +570,24 @@ function Rt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds
 					triggerTitle: c ? `Showing ${D[c].label}` : "Filter by status",
 					triggerClassName: e(c && "text-primary border-primary"),
 					align: "end",
-					sections: se,
+					sections: ce,
 					"data-testid": "lab-fleet-filter"
 				})]
 			}),
-			v === "computers" ? /* @__PURE__ */ J(Bt, {
+			b === "computers" ? /* @__PURE__ */ J(Bt, {
 				label: "computers",
-				children: ie.map((t) => {
-					let r = t.computers.filter(ae);
+				emptyState: le ? ue : void 0,
+				children: O.map((t) => {
+					let r = t.computers.filter(oe);
 					if (r.length === 0) return null;
-					let o = ee.has(t.id) && !S;
+					let o = te.has(t.id) && !C;
 					return /* @__PURE__ */ Y("div", {
 						role: "presentation",
 						children: [t.name && /* @__PURE__ */ Y("button", {
 							type: "button",
 							tabIndex: -1,
 							"aria-expanded": !o,
-							onClick: () => te((e) => {
+							onClick: () => w((e) => {
 								let n = new Set(e);
 								return n.has(t.id) ? n.delete(t.id) : n.add(t.id), n;
 							}),
@@ -587,10 +608,10 @@ function Rt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds
 							})]
 						}), !o && r.map((e) => /* @__PURE__ */ J(Vt, {
 							computer: e,
-							number: O.get(e.id) ?? 0,
+							number: ae.get(e.id) ?? 0,
 							active: e.id === n,
 							selected: i?.has(e.id) ?? !1,
-							open: w.has(e.id),
+							open: T.has(e.id),
 							onSelect: a,
 							onOpenInPane: s
 						}, e.id))]
@@ -598,12 +619,12 @@ function Rt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds
 				})
 			}) : /* @__PURE__ */ J(Bt, {
 				label: "agents",
-				children: oe.filter(ae).map((e) => /* @__PURE__ */ J(Vt, {
+				children: se.filter(oe).map((e) => /* @__PURE__ */ J(Vt, {
 					computer: e,
-					number: O.get(e.id) ?? 0,
+					number: ae.get(e.id) ?? 0,
 					active: e.id === n,
 					selected: i?.has(e.id) ?? !1,
-					open: w.has(e.id),
+					open: T.has(e.id),
 					onSelect: a,
 					onOpenInPane: s,
 					showTask: !0
@@ -629,27 +650,27 @@ function zt({ selected: t, onSelect: n, icon: r, label: i, count: a }) {
 		]
 	});
 }
-function Bt({ label: e, children: t }) {
-	let n = K(null), r = U((e) => {
+function Bt({ label: e, children: t, emptyState: n }) {
+	let r = K(null), i = U((e) => {
 		if (![
 			"ArrowDown",
 			"ArrowUp",
 			"Home",
 			"End"
 		].includes(e.key)) return;
-		let t = Array.from(n.current?.querySelectorAll("[data-rail-row]") ?? []);
+		let t = Array.from(r.current?.querySelectorAll("[data-rail-row]") ?? []);
 		if (t.length === 0) return;
 		e.preventDefault();
-		let r = t.findIndex((e) => e === document.activeElement);
-		t[e.key === "Home" ? 0 : e.key === "End" ? t.length - 1 : r < 0 ? 0 : (r + (e.key === "ArrowDown" ? 1 : -1) + t.length) % t.length]?.focus();
-	}, []), i = Array.isArray(t) ? t.every((e) => !e) : !t;
+		let n = t.findIndex((e) => e === document.activeElement);
+		t[e.key === "Home" ? 0 : e.key === "End" ? t.length - 1 : n < 0 ? 0 : (n + (e.key === "ArrowDown" ? 1 : -1) + t.length) % t.length]?.focus();
+	}, []), a = Array.isArray(t) ? t.every((e) => !e) : !t;
 	return /* @__PURE__ */ J("div", {
-		ref: n,
+		ref: r,
 		role: "listbox",
 		"aria-label": e,
-		onKeyDown: r,
+		onKeyDown: i,
 		className: "flex-1 min-h-0 overflow-y-auto pb-2",
-		children: i ? /* @__PURE__ */ J("div", {
+		children: a ? n ?? /* @__PURE__ */ J("div", {
 			className: "px-3 py-2 text-[12px] text-text-tertiary",
 			children: "Nothing matches."
 		}) : t
@@ -2336,6 +2357,7 @@ function hn({ open: t, onClose: n, focusComputerId: r = null, variant: i = "over
 							selectedIds: D,
 							statusFilter: ne,
 							onStatusFilterChange: re,
+							onCreate: g ? () => We() : void 0,
 							onSelect: (e, { toggle: t }) => {
 								if (t) {
 									ie((t) => {

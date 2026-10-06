@@ -761,6 +761,7 @@ export function ComputerLab({
               selectedIds={selectedIds}
               statusFilter={statusFilter}
               onStatusFilterChange={setStatusFilter}
+              onCreate={canManage ? () => provision() : undefined}
               onSelect={(computer, { toggle }) => {
                 if (toggle) {
                   setSelectedIds((prev) => {

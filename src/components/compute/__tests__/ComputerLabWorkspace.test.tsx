@@ -349,3 +349,31 @@ describe('AgentPane over a replayed tail', () => {
     }
   });
 });
+
+describe('ComputerLab appearance="workspace" empty fleet', () => {
+  it('says there are no computers, and how to get one, on an empty fleet with no filter', async () => {
+    renderWorkspace({}, stubClient({ listComputers: async () => [] }));
+    const empty = await screen.findByTestId('lab-fleet-empty');
+    expect(empty.textContent).toContain('No computers in the lab');
+    expect(empty.textContent).toContain('Start a computer');
+    expect(screen.queryByText('Nothing matches.')).toBeNull();
+    expect(screen.getByTestId('lab-fleet-empty-create')).toBeTruthy();
+  });
+
+  it('tells a viewer who cannot provision that nothing is shared, with no create button', async () => {
+    renderWorkspace({}, stubClient({ listComputers: async () => [] }), false);
+    const empty = await screen.findByTestId('lab-fleet-empty');
+    expect(empty.textContent).toContain('Nothing in the fleet is shared with you yet.');
+    expect(screen.queryByTestId('lab-fleet-empty-create')).toBeNull();
+  });
+
+  it('says "Nothing matches." only when a search hides computers that exist', async () => {
+    renderWorkspace();
+    await rail();
+    await waitFor(async () => expect((await rows('computers')).length).toBeGreaterThan(0));
+    expect(screen.queryByTestId('lab-fleet-empty')).toBeNull();
+    fireEvent.change(screen.getByPlaceholderText('Find computer or agent…'), { target: { value: 'zzz-no-such-box' } });
+    expect(await screen.findByText('Nothing matches.')).toBeTruthy();
+    expect(screen.queryByTestId('lab-fleet-empty')).toBeNull();
+  });
+});

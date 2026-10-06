@@ -53,6 +53,8 @@ export interface LabFleetRailProps {
   onStatusFilterChange?: (status: ComputeStatus | null) => void;
   tab?: LabFleetTab;
   onTabChange?: (tab: LabFleetTab) => void;
+  /** Start a computer. Offered in the empty-fleet state when present. */
+  onCreate?: () => void;
   className?: string;
 }
 
@@ -96,6 +98,7 @@ export function LabFleetRail({
   onStatusFilterChange,
   tab: controlledTab,
   onTabChange,
+  onCreate,
   className,
 }: LabFleetRailProps) {
   const [ownTab, setOwnTab] = useState<LabFleetTab>('computers');
@@ -170,6 +173,31 @@ export function LabFleetRail({
     ],
   }];
 
+  // An empty fleet is not a filter miss: say there is nothing here and how to
+  // get a computer, the way the classic lab does. "Nothing matches." is only
+  // for a search or status filter hiding computers that exist.
+  const noComputers = computers.length === 0;
+  const emptyFleet = (
+    <div data-testid="lab-fleet-empty" className="px-3 py-4 flex flex-col items-start gap-2">
+      <div className="text-[13px] font-semibold text-text-primary">No computers in the lab</div>
+      <div className="text-[12px] text-text-secondary">
+        {onCreate
+          ? 'Start a computer and it opens here in a pane.'
+          : 'Nothing in the fleet is shared with you yet.'}
+      </div>
+      {onCreate && (
+        <button
+          type="button"
+          onClick={onCreate}
+          data-testid="lab-fleet-empty-create"
+          className="text-[12px] font-semibold rounded-md px-3 py-1 cursor-pointer border border-primary text-primary bg-transparent hover:bg-surface-hover"
+        >
+          + New computer
+        </button>
+      )}
+    </div>
+  );
+
   return (
     <div
       data-testid="lab-fleet-rail"
@@ -214,7 +242,7 @@ export function LabFleetRail({
       </div>
 
       {tab === 'computers' ? (
-        <RovingList label="computers">
+        <RovingList label="computers" emptyState={noComputers ? emptyFleet : undefined}>
           {allGroups.map((group) => {
             const rows = group.computers.filter(visible);
             if (rows.length === 0) return null;
@@ -304,7 +332,7 @@ function RailTab({ selected, onSelect, icon, label, count }: {
   );
 }
 
-function RovingList({ label, children }: { label: string; children: ReactNode }) {
+function RovingList({ label, children, emptyState }: { label: string; children: ReactNode; emptyState?: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
   const onKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
     if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
@@ -328,7 +356,9 @@ function RovingList({ label, children }: { label: string; children: ReactNode })
       onKeyDown={onKeyDown}
       className="flex-1 min-h-0 overflow-y-auto pb-2"
     >
-      {empty ? <div className="px-3 py-2 text-[12px] text-text-tertiary">Nothing matches.</div> : children}
+      {empty
+        ? (emptyState ?? <div className="px-3 py-2 text-[12px] text-text-tertiary">Nothing matches.</div>)
+        : children}
     </div>
   );
 }

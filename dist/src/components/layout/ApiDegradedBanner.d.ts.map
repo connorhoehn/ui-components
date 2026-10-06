@@ -1,0 +1,1 @@
+{"version":3,"file":"ApiDegradedBanner.d.ts","sourceRoot":"","sources":["../../../../src/components/layout/ApiDegradedBanner.tsx"],"names":[],"mappings":"AAOA,OAAO,EAA2B,KAAK,iBAAiB,EAAE,MAAM,0BAA0B,CAAC;AAG3F,UAAU,sBAAsB;IAC9B,MAAM,EAAE,iBAAiB,CAAC;CAC3B;AAED,wBAAgB,iBAAiB,CAAC,EAAE,MAAM,EAAE,EAAE,sBAAsB,sCA6BnE"}

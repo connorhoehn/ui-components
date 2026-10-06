@@ -1,0 +1,58 @@
+export type PipelineMetricsSource = 'bridge' | 'stub' | 'error';
+/**
+ * Snapshot returned by `GET /api/pipelines/metrics`. Numeric fields are
+ * nullable because the bridge-sourced response leaves unsupported fields as
+ * `null` until distributed-core grows the surface — UI must render "—" for
+ * those, NOT zeros.
+ */
+export interface PipelineMetrics {
+    runsStarted: number | null;
+    runsCompleted: number | null;
+    runsFailed: number | null;
+    runsActive: number | null;
+    runsAwaitingApproval: number | null;
+    avgDurationMs: number | null;
+    llmTokensIn: number | null;
+    llmTokensOut: number | null;
+    estimatedCostUsd: number | null;
+    /**
+     * Average first-token latency (ms) across LLM steps. Sourced from
+     * distributed-core v0.3.7+ via `PipelineModule.getMetrics()`. Older bridge
+     * builds (and the stub fixture) leave this `null`; the UI must render an
+     * em-dash, never zero.
+     */
+    avgFirstTokenLatencyMs: number | null;
+    asOf: string;
+    /** Discriminator describing where the values came from. */
+    source: PipelineMetricsSource;
+}
+export interface UsePipelineMetricsResult {
+    metrics: PipelineMetrics | null;
+    loading: boolean;
+    error: string | null;
+    lastUpdatedAt: string | null;
+    refresh: () => Promise<void>;
+    /** True once at least one successful fetch has populated `metrics`. */
+    isLiveData: boolean;
+    /**
+     * Discriminator from the most recent snapshot, or `null` before the first
+     * fetch resolves. Mirrors `metrics?.source` for convenient destructuring.
+     */
+    source: PipelineMetricsSource | null;
+}
+export interface UsePipelineMetricsOptions {
+    /**
+     * Poll cadence in ms. Defaults to `POLL_INTERVAL_MS` (10s). Pass `null` (or
+     * a non-positive number) to stop polling after the initial fetch — that is
+     * what MetricsPage's "Refresh: Off" selection maps to. Failure backoff still
+     * applies on top of whatever cadence is set.
+     */
+    pollIntervalMs?: number | null;
+    /** Wins over this library's `useIdentityContext().idToken`. */
+    idToken?: string | null;
+    /** Wins over the build-time `VITE_SOCIAL_API_URL` / module `setApiBaseUrl`. */
+    baseUrl?: string;
+}
+export declare function usePipelineMetrics(options?: UsePipelineMetricsOptions): UsePipelineMetricsResult;
+export default usePipelineMetrics;
+//# sourceMappingURL=usePipelineMetrics.d.ts.map

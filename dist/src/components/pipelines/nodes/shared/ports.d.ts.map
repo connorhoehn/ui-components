@@ -1,0 +1,1 @@
+{"version":3,"file":"ports.d.ts","sourceRoot":"","sources":["../../../../../../src/components/pipelines/nodes/shared/ports.ts"],"names":[],"mappings":"AAgBA,MAAM,MAAM,WAAW,GAAG,OAAO,GAAG,MAAM,GAAG,MAAM,GAAG,SAAS,GAAG,OAAO,CAAC;AAE1E,eAAO,MAAM,QAAQ,EAAE,MAAM,CAAC,WAAW,EAAE,MAAM,CAMhD,CAAC;AAEF,wBAAgB,OAAO,CAAC,OAAO,EAAE,WAAW,GAAG,MAAM,CAEpD"}

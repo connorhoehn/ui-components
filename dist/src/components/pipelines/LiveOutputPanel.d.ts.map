@@ -1,0 +1,1 @@
+{"version":3,"file":"LiveOutputPanel.d.ts","sourceRoot":"","sources":["../../../../src/components/pipelines/LiveOutputPanel.tsx"],"names":[],"mappings":"AAyBA,MAAM,WAAW,oBAAoB;IACnC,KAAK,EAAE,MAAM,GAAG,IAAI,CAAC;IACrB,OAAO,EAAE,OAAO,CAAC;CAClB;AAyBD,MAAM,CAAC,OAAO,UAAU,eAAe,CAAC,EAAE,KAAK,EAAE,OAAO,EAAE,EAAE,oBAAoB,sCA+O/E"}

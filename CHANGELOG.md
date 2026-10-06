@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.419.0
+
+- Merge of the parallel 2.417.0 and 2.418.0 releases (both forked from 2.416.0).
+- **`ComputerLab` (from 2.417.0):** the workspace rail shows the real empty state on an empty fleet; "Nothing matches" appears only for a filter miss.
+- **`RecordGraph` (from 2.418.0):** the node button sets `pointer-events-auto` so a mouse can click and hover a record; a selected record prints its whole title and draws above its neighbours.
+
 ## 2.418.0
 
 - **`RecordGraph`:** a mouse can click and hover a record again. xyflow computes `pointer-events: none` on a node wrapper that is neither draggable nor selectable and has no node-level handler (this graph turns both off), and the node `button` inherited it, so only Enter/Space reached `onToggle`; the button now sets `pointer-events-auto`.
