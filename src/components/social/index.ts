@@ -267,3 +267,11 @@ export type { CreateTeamDialogProps, CreateTeamDialogInput, TeamVisibility } fro
 // the host's documents and toggle them in the shared prompt context (2.389.x).
 export { PromptContextPicker } from './PromptContextPicker';
 export type { PromptContextPickerProps } from './PromptContextPicker';
+
+// ChannelBindingStrip, CallLogList, AddPeoplePicker (parity-b).
+export { ChannelBindingStrip } from './ChannelBindingStrip';
+export type { ChannelBindingStripProps, ChannelBindingChoice } from './ChannelBindingStrip';
+export { CallLogList } from './CallLogList';
+export type { CallLogListProps, CallLogEntry } from './CallLogList';
+export { AddPeoplePicker } from './AddPeoplePicker';
+export type { AddPeoplePickerProps, AddPeoplePickerCandidate } from './AddPeoplePicker';
