@@ -1,13 +1,13 @@
 import { useCallback as e, useEffect as t, useRef as n, useState as r } from "react";
 import * as i from "yjs";
-//#region node_modules/lib0/map.js
+//#region ../../projects/ui-components/node_modules/lib0/map.js
 var a = () => /* @__PURE__ */ new Map(), o = (e, t, n) => {
 	let r = e.get(t);
 	return r === void 0 && e.set(t, r = n()), r;
 }, s = () => /* @__PURE__ */ new Set(), c = Array.from;
 Array.isArray;
 //#endregion
-//#region node_modules/lib0/observable.js
+//#region ../../projects/ui-components/node_modules/lib0/observable.js
 /* c8 ignore start */
 var l = class {
 	constructor() {
@@ -35,11 +35,11 @@ var l = class {
 }, u = Math.floor, d = (e, t) => e < t ? e : t, f = (e, t) => e > t ? e : t;
 Number.isNaN;
 //#endregion
-//#region node_modules/lib0/number.js
+//#region ../../projects/ui-components/node_modules/lib0/number.js
 var p = 2 ** 53 - 1;
 Number.isInteger, Number.isNaN, Number.parseInt;
 //#endregion
-//#region node_modules/lib0/string.js
+//#region ../../projects/ui-components/node_modules/lib0/string.js
 var m = String.fromCharCode;
 String.fromCodePoint, m(65535);
 var h = (e) => e.toLowerCase(), g = /^\s*/g, _ = (e) => e.replace(g, ""), v = /([A-Z])/g, y = (e, t) => _(e.replace(v, (e) => `${t}${h(e)}`)), b = (e) => {
@@ -55,7 +55,7 @@ C && C.decode(/* @__PURE__ */ new Uint8Array()).length === 1 &&
 /* c8 ignore next */
 (C = null);
 //#endregion
-//#region node_modules/lib0/encoding.js
+//#region ../../projects/ui-components/node_modules/lib0/encoding.js
 var w = class {
 	constructor() {
 		this.cpos = 0, this.cbuf = /* @__PURE__ */ new Uint8Array(100), this.bufs = [];
@@ -292,7 +292,7 @@ J("production"), U && L(process.env.FORCE_COLOR, [
 ]) || !K("--no-colors") && !J("no-color") && (!U || process.stdout.isTTY) && (!U || K("--color") || q("COLORTERM") !== null || (q("TERM") || "").includes("color"));
 /* c8 ignore stop */
 //#endregion
-//#region node_modules/lib0/buffer.js
+//#region ../../projects/ui-components/node_modules/lib0/buffer.js
 var ye = (e) => new Uint8Array(e), be = (e, t, n) => new Uint8Array(e, t, n), xe = (e) => {
 	let t = "";
 	for (let n = 0; n < e.byteLength; n++) t += m(e[n]);

@@ -89,4 +89,24 @@ describe('HuddleBar', () => {
     fireEvent.click(btn);
     expect(toggle).toHaveBeenCalledTimes(1);
   });
+
+  it('idle: context name, Huddle start and chat; no timer, counts or Leave', () => {
+    const start = vi.fn(); const chat = vi.fn();
+    render(<HuddleBar name="Auth Migration" phase="idle" onStart={start} onToggleChat={chat} chatLabel="Message" onLeave={() => {}} />);
+    expect(screen.getByTestId('huddle-bar')).toHaveAttribute('data-phase', 'idle');
+    expect(screen.queryByTestId('huddle-bar-leave')).toBeNull();
+    expect(screen.queryByTestId('huddle-bar-timer')).toBeNull();
+    fireEvent.click(screen.getByTestId('huddle-bar-start'));
+    fireEvent.click(screen.getByRole('button', { name: 'Message' }));
+    expect(start).toHaveBeenCalledTimes(1); expect(chat).toHaveBeenCalledTimes(1);
+  });
+
+  it('idle: disabled reasons ride as tooltips and block the click', () => {
+    const start = vi.fn();
+    render(<HuddleBar name="No huddle here" phase="idle" onStart={start} startDisabledReason="Open a page with a huddle" onToggleChat={() => {}} chatDisabledReason="No huddle to message" />);
+    const btn = screen.getByTestId('huddle-bar-start');
+    expect(btn).toBeDisabled(); expect(btn).toHaveAttribute('title', 'Open a page with a huddle');
+    expect(screen.getByTestId('huddle-bar-chat')).toBeDisabled();
+    fireEvent.click(btn); expect(start).not.toHaveBeenCalled();
+  });
 });

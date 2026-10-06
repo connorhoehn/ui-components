@@ -10534,7 +10534,7 @@ export declare type HlsPhase =
 /** Unplayable. `error` carries the wording. */
 | 'error';
 
-export declare function HuddleBar({ name, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onLeave, leaveLabel, extras, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
+export declare function HuddleBar({ name, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, startDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, extras, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
 
 /** One media control: the toggle, and an optional device list behind a caret. */
 export declare interface HuddleBarMedia {
@@ -10550,12 +10550,16 @@ export declare interface HuddleBarMedia {
     disabledReason?: string;
 }
 
-export declare type HuddleBarPhase = 'live' | 'connecting' | 'ringing' | 'reconnecting' | 'ended';
+export declare type HuddleBarPhase = 'idle' | 'live' | 'connecting' | 'ringing' | 'reconnecting' | 'ended';
 
 export declare interface HuddleBarProps {
     /** The call's name: the place or person it is with. */
     name: string;
-    /** Default `live`. */
+    /**
+     * Default `live`. `idle` is the pre-call bar: `name` is the page's context,
+     * the bar draws `onStart` and the chat button (and no timer, counts, media
+     * or Leave). Since 2.416.0.
+     */
     phase?: HuddleBarPhase;
     /**
      * Visible wording for the current phase ("Calling Mira…", "Reconnecting…").
@@ -10583,7 +10587,18 @@ export declare interface HuddleBarProps {
     mediaOpen?: boolean;
     /** Accessible name and tooltip of the media toggle. Default "Participants". */
     mediaToggleLabel?: string;
-    onLeave: () => void;
+    /** Idle only: the Huddle action that starts the page's call. Absent: no start button. Since 2.416.0. */
+    onStart?: () => void;
+    /** Idle only: label of the start button. Default "Huddle". */
+    startLabel?: string;
+    /** Idle only: disables the start button and is its tooltip. */
+    startDisabledReason?: string;
+    /** Wording of the chat button (the icon alone below the bar's `@lg` width). Default "Chat". Since 2.416.0. */
+    chatLabel?: string;
+    /** Disables the chat button and is its tooltip. Since 2.416.0. */
+    chatDisabledReason?: string;
+    /** Not drawn while `idle`. */
+    onLeave?: () => void;
     /** Default "Leave". */
     leaveLabel?: string;
     /** Extra controls before Leave. */
@@ -25208,9 +25223,25 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
+        hitlMacro: {
+            /** Inserts an agent -> human callout at the selection. */
+            insertHitl: (draft: HitlDraft) => ReturnType;
+            /**
+             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
+             * answered from an inbox by somebody who never opened this page.
+             *
+             * The same one-range edit answering in the page makes, addressed by
+             * the callout's `id` instead of by a node view. Returns false when
+             * no callout carries that id, when the body is not one
+             * `answerHitlEdit` will write to, and — deliberately — when the
+             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
+             */
+            answerHitl: (params: {
+                id: string;
+                answer: string;
+                answeredBy?: string;
+                answeredAt?: string;
+            }) => ReturnType;
         };
     }
 }
@@ -25228,12 +25259,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -25261,34 +25289,13 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        hitlMacro: {
-            /** Inserts an agent -> human callout at the selection. */
-            insertHitl: (draft: HitlDraft) => ReturnType;
-            /**
-             * Records an answer that was given SOMEWHERE ELSE — the mirror row,
-             * answered from an inbox by somebody who never opened this page.
-             *
-             * The same one-range edit answering in the page makes, addressed by
-             * the callout's `id` instead of by a node view. Returns false when
-             * no callout carries that id, when the body is not one
-             * `answerHitlEdit` will write to, and — deliberately — when the
-             * body ALREADY carries an answer: see `HITL_CONVERGENCE`.
-             */
-            answerHitl: (params: {
-                id: string;
-                answer: string;
-                answeredBy?: string;
-                answeredAt?: string;
-            }) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
-    }
-}
-
-
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
     }
 }
 
@@ -25311,5 +25318,13 @@ declare module '@tiptap/core' {
             /** Move the selection onto a suggestion. */
             selectSuggestion: (id: SuggestionIdentity) => ReturnType;
         };
+    }
+}
+
+
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
     }
 }

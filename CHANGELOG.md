@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.416.0
+
+- **`HuddleBar`:** an `idle` phase for the pre-call bar (`name` is the page's context; draws `onStart` / `startLabel` / `startDisabledReason`, and no timer, counts, media or Leave); `chatLabel` and `chatDisabledReason` on the chat button; `onLeave` is optional (unused while idle).
+
+---
+
 ## 2.415.0
 
 - **`WorkActivityNode`:** the truncated header carries a native `title` with the full node title, so a clipped name stays readable on hover.

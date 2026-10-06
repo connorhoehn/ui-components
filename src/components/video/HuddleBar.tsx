@@ -15,15 +15,16 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
-import { ChatIcon, PeopleIcon } from '../ui/Icons';
+import { ChatIcon, PeopleIcon, PhoneIcon } from '../ui/Icons';
 import { PresenceDot, type PresenceState } from '../shared/PresenceDot';
 import { DeviceToggleSelect, type DeviceOption, type MediaPermission } from './DeviceToggleSelect';
 import { PhoneOffIcon } from './MediaIcons';
 import { formatCallElapsed } from './CallDock';
 
-export type HuddleBarPhase = 'live' | 'connecting' | 'ringing' | 'reconnecting' | 'ended';
+export type HuddleBarPhase = 'idle' | 'live' | 'connecting' | 'ringing' | 'reconnecting' | 'ended';
 
 const PHASE_DOT: Record<HuddleBarPhase, PresenceState> = {
+  idle: 'offline',
   live: 'online',
   connecting: 'away',
   ringing: 'away',
@@ -32,6 +33,7 @@ const PHASE_DOT: Record<HuddleBarPhase, PresenceState> = {
 };
 
 const PHASE_LABEL: Record<HuddleBarPhase, string> = {
+  idle: 'No call',
   live: 'Live',
   connecting: 'Connecting',
   ringing: 'Ringing',
@@ -41,6 +43,7 @@ const PHASE_LABEL: Record<HuddleBarPhase, string> = {
 
 /** The visible wording beside the name for a phase that is not live. */
 const PHASE_TEXT: Record<HuddleBarPhase, string | null> = {
+  idle: null,
   live: null,
   connecting: 'Connecting…',
   ringing: 'Ringing…',
@@ -65,7 +68,11 @@ export interface HuddleBarMedia {
 export interface HuddleBarProps {
   /** The call's name: the place or person it is with. */
   name: string;
-  /** Default `live`. */
+  /**
+   * Default `live`. `idle` is the pre-call bar: `name` is the page's context,
+   * the bar draws `onStart` and the chat button (and no timer, counts, media
+   * or Leave). Since 2.416.0.
+   */
   phase?: HuddleBarPhase;
   /**
    * Visible wording for the current phase ("Calling Mira…", "Reconnecting…").
@@ -93,7 +100,18 @@ export interface HuddleBarProps {
   mediaOpen?: boolean;
   /** Accessible name and tooltip of the media toggle. Default "Participants". */
   mediaToggleLabel?: string;
-  onLeave: () => void;
+  /** Idle only: the Huddle action that starts the page's call. Absent: no start button. Since 2.416.0. */
+  onStart?: () => void;
+  /** Idle only: label of the start button. Default "Huddle". */
+  startLabel?: string;
+  /** Idle only: disables the start button and is its tooltip. */
+  startDisabledReason?: string;
+  /** Wording of the chat button (the icon alone below the bar's `@lg` width). Default "Chat". Since 2.416.0. */
+  chatLabel?: string;
+  /** Disables the chat button and is its tooltip. Since 2.416.0. */
+  chatDisabledReason?: string;
+  /** Not drawn while `idle`. */
+  onLeave?: () => void;
   /** Default "Leave". */
   leaveLabel?: string;
   /** Extra controls before Leave. */
@@ -134,6 +152,11 @@ export function HuddleBar({
   onToggleMedia,
   mediaOpen = false,
   mediaToggleLabel = 'Participants',
+  onStart,
+  startLabel = 'Huddle',
+  startDisabledReason,
+  chatLabel = 'Chat',
+  chatDisabledReason,
   onLeave,
   leaveLabel = 'Leave',
   extras,
@@ -161,7 +184,7 @@ export function HuddleBar({
   return (
     <div
       role="group"
-      aria-label={`${name} huddle`}
+      aria-label={phase === 'idle' ? name : `${name} huddle`}
       data-testid={testId}
       data-phase={phase}
       className={cn('@container flex min-w-0 items-center gap-3 px-3 py-1.5', className)}
@@ -208,6 +231,20 @@ export function HuddleBar({
             {participantCount !== undefined && <span className="tabular-nums">{participantCount}</span>}
           </Button>
         )}
+        {phase === 'idle' && onStart && (
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={onStart}
+            disabled={startDisabledReason !== undefined}
+            title={startDisabledReason}
+            data-testid={`${testId}-start`}
+            className="gap-1.5"
+          >
+            <PhoneIcon size={14} />
+            {startLabel}
+          </Button>
+        )}
         {onToggleChat && (
           <span className="relative inline-flex">
             <Button
@@ -215,12 +252,14 @@ export function HuddleBar({
               size="sm"
               onClick={onToggleChat}
               aria-pressed={chatOpen}
-              aria-label="Chat"
+              aria-label={chatLabel}
+              disabled={chatDisabledReason !== undefined}
+              title={chatDisabledReason}
               data-testid={`${testId}-chat`}
               className="gap-1.5"
             >
               <ChatIcon size={14} />
-              <span className="hidden @lg:inline">Chat</span>
+              <span className="hidden @lg:inline">{chatLabel}</span>
             </Button>
             {chatUnread > 0 && (
               <span
@@ -233,10 +272,10 @@ export function HuddleBar({
           </span>
         )}
         {extras}
-        <Button variant="danger-solid" size="sm" onClick={onLeave} aria-label={leaveLabel} data-testid={`${testId}-leave`} className="gap-1.5">
+        {phase !== 'idle' && onLeave && <Button variant="danger-solid" size="sm" onClick={onLeave} aria-label={leaveLabel} data-testid={`${testId}-leave`} className="gap-1.5">
           <PhoneOffIcon size={14} />
           <span className="hidden @lg:inline">{leaveLabel}</span>
-        </Button>
+        </Button>}
       </div>
     </div>
   );
