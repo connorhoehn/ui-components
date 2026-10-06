@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.422.0
+
+- **Types build:** `npm run build:types` failed with TS5011 under TypeScript 7 (no explicit `rootDir`); `tsconfig.build.json` now sets `rootDir: ./src`. The shipped `dist/*.d.ts` come from `npm run build` (the dts bundle), which appended its ambient `declare module '@tiptap/core'` / `declare global` blocks in worker-completion order, so every build reshuffled ~700 lines per entry and a block missed by the harvest vanished silently. New `scripts/normalize-dts-ambient.mjs` (run by `build`) sorts the blocks and fails if an entry lacks any ambient block that src declares. No type changes versus 2.421.0 apart from block order.
+
 ## 2.421.0
 
 - **`AddPeoplePicker`:** the effect that prunes the picked list when candidates change returned a fresh array on every run, so each parent render with a new-but-equal `candidates` array caused an extra state update and commit (a burst of presence frames multiplied into effect-driven renders). It now returns the same array when nothing was dropped, so React bails out. Regression test renders 50 times with equal-content arrays.
