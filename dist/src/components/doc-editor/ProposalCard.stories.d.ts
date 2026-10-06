@@ -1,0 +1,21 @@
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { ProposalCard } from './ProposalCard';
+declare const meta: Meta<typeof ProposalCard>;
+export default meta;
+type Story = StoryObj<typeof ProposalCard>;
+export declare const Reviewed: Story;
+export declare const ReviewedDark: Story;
+export declare const Concern: Story;
+export declare const NotReviewed: Story;
+export declare const Stale: Story;
+export declare const StaleDark: Story;
+export declare const ReviewPending: Story;
+export declare const ReviewFailed: Story;
+export declare const ProseEdits: Story;
+export declare const Unplaced: Story;
+export declare const Healed: Story;
+export declare const Drafting: Story;
+export declare const DraftFailed: Story;
+export declare const Applied: Story;
+export declare const ApplyRefused: Story;
+//# sourceMappingURL=ProposalCard.stories.d.ts.map

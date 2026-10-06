@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.417.0
+
+- **`ComputerLab` (workspace appearance):** an empty fleet now shows the lab's own empty state in the rail ("No computers in the lab", how to start one, `+ New computer` when the viewer can provision) instead of "Nothing matches.", which now appears only when a search or status filter hides computers that exist. `LabFleetRail` gains an optional `onCreate`.
+
+---
+
 ## 2.416.0
 
 - **`HuddleBar`:** an `idle` phase for the pre-call bar (`name` is the page's context; draws `onStart` / `startLabel` / `startDisabledReason`, and no timer, counts, media or Leave); `chatLabel` and `chatDisabledReason` on the chat button; `onLeave` is optional (unused while idle).
