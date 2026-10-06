@@ -15,9 +15,11 @@ import {
   makeLeaf,
   neighborPane,
   setRatio,
+  arrangePanes,
   splitPane,
   updateLeaf,
   type Direction,
+  type PaneArrangement,
   type PaneNode,
   type SplitDirection,
 } from '../lib/paneTree';
@@ -72,6 +74,8 @@ export interface UseLabLayoutResult {
   move: (direction: Direction) => void;
   cycle: (delta: number) => void;
   toggleZoom: () => void;
+  /** Re-flow the active window's panes — see `arrangePanes`. Drops zoom. */
+  arrange: (arrangement: PaneArrangement) => void;
   newWindow: (computerId: string, kindId: string) => void;
   closeWindow: (windowId: string) => void;
   selectWindow: (windowId: string) => void;
@@ -215,6 +219,14 @@ export function useLabLayout(): UseLabLayoutResult {
     }));
   }, []);
 
+  const arrange = useCallback(
+    (arrangement: PaneArrangement) => mapActive(
+      (root) => arrangePanes(root, arrangement, () => nextId('split')),
+      () => ({ zoomedPaneId: null }),
+    ),
+    [mapActive],
+  );
+
   const newWindow = useCallback((computerId: string, kindId: string) => {
     const leaf = makeLeaf(nextId('pane'), computerId, kindId);
     const window: LabWindow = { id: nextId('win'), root: leaf };
@@ -334,6 +346,7 @@ export function useLabLayout(): UseLabLayoutResult {
     move,
     cycle,
     toggleZoom,
+    arrange,
     newWindow,
     closeWindow,
     selectWindow,

@@ -185,7 +185,12 @@ export function useComputeTail({
       const reduced = reduceFrame(frame);
       if (reduced.steps.length > 0) {
         setSteps((prev) => {
-          const next = [...prev, ...reduced.steps.map((s) => ({ ...s, at: Date.now() }))];
+          // The frame's own `ts` when it carries one: a replayed buffer
+          // arrives all at once, and stamping it with arrival time would give
+          // a whole run one timestamp. Live frames without `ts` keep arrival.
+          const stamped = Date.parse(String(frame['ts'] ?? ''));
+          const at = Number.isFinite(stamped) ? stamped : Date.now();
+          const next = [...prev, ...reduced.steps.map((s) => ({ ...s, at }))];
           return next.length > maxRef.current ? next.slice(next.length - maxRef.current) : next;
         });
       }

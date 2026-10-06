@@ -21,6 +21,7 @@
 // boundary the whole lab uses is the frame border, and this sits inside it.
 // See `../lib/chromeTokens` for where the remap is applied.
 
+import { Fragment, type ReactNode } from 'react';
 import { cn } from '../../../lib/cn';
 import DotMeter from '../../shared/DotMeter';
 import Chip from '../../shared/Chip';
@@ -66,6 +67,15 @@ export interface PaneStatusLineProps {
   broadcasting?: boolean;
   /** Right-hand mode text, e.g. `resume on`. */
   mode?: string;
+  /**
+   * `full` (default) is the three-row status bar under a classic pane.
+   * `meta` is one quiet line of the same facts — model · ctx · cost ·
+   * auto-stop · mode — for the workspace lab's pane header, which carries the
+   * status as a badge of its own and has no room for a meter.
+   */
+  variant?: 'full' | 'meta';
+  /** Extra trailing fields for `meta` — an agent pane's elapsed time, say. */
+  extra?: ReactNode;
   className?: string;
   'data-testid'?: string;
 }
@@ -77,9 +87,56 @@ export function PaneStatusLine({
   idleWindowMs = DEFAULT_IDLE_WINDOW_MS,
   broadcasting = false,
   mode,
+  variant = 'full',
+  extra,
   className,
   'data-testid': testId,
 }: PaneStatusLineProps) {
+  if (variant === 'meta') {
+    const result = computer.lastResult;
+    const cost = result?.costUsd ?? computer.spendUsd;
+    const fields: ReactNode[] = [
+      <span key="model">{shortModelName(computer.activeModel ?? modelId ?? null, models)}</span>,
+    ];
+    if (computer.contextUsed != null) {
+      fields.push(
+        <span
+          key="ctx"
+          title="Share of the agent's context window in use"
+          className={cn('tabular-nums', computer.contextUsed > 0.85 && 'text-warning')}
+        >
+          ctx {Math.round(computer.contextUsed * 100)}%
+        </span>,
+      );
+    }
+    // Absent stays absent: "$—" says "not reported", a confident $0 would
+    // say "free".
+    fields.push(<span key="cost" className="tabular-nums">{cost != null ? `$${cost.toFixed(4)}` : '$—'}</span>);
+    if (computer.stopsInMs != null) {
+      fields.push(
+        <span key="stop" className="tabular-nums" title="Until the reaper stops this computer">
+          auto-stop {formatDuration(computer.stopsInMs)}
+        </span>,
+      );
+    }
+    if (extra) fields.push(<span key="extra" className="tabular-nums">{extra}</span>);
+    if (broadcasting) fields.push(<span key="bc" className="text-warning">broadcast</span>);
+    if (mode) fields.push(<span key="mode" className="uppercase">{mode}</span>);
+    return (
+      <span
+        data-testid={testId}
+        className={cn('inline-flex items-center gap-1.5 min-w-0 text-[11px] text-text-tertiary truncate', className)}
+      >
+        {fields.map((field, i) => (
+          <Fragment key={i}>
+            {i > 0 && <span aria-hidden="true">·</span>}
+            {field}
+          </Fragment>
+        ))}
+      </span>
+    );
+  }
+
   const status = statusOf(computer);
   const meta = COMPUTE_STATUS[status];
   const result = computer.lastResult;

@@ -15,7 +15,21 @@ export type { ComputeClient, ComputeClientOptions, CreateComputerInput, StreamEv
 
 // Computer Lab
 export { ComputerLab } from './components/ComputerLab';
-export type { ComputerLabProps } from './components/ComputerLab';
+export type {
+  ComputerLabProps, LabInstruction, LabInstructionOutcome, LabInstructionScope,
+} from './components/ComputerLab';
+export { LabFleetRail, groupQuickLine } from './components/LabFleetRail';
+export type { LabFleetRailProps, LabFleetTab } from './components/LabFleetRail';
+export { LabHeader, LabPaneToolbar, WorkspacePane } from './components/LabWorkspaceChrome';
+export type { LabHeaderProps, LabPaneToolbarProps, WorkspacePaneProps } from './components/LabWorkspaceChrome';
+export {
+  LogsPane, AgentPane, byteRate, formatRate, stepLevel, stepSource, currentRun, clockTime, elapsed,
+} from './components/WorkspacePanes';
+export type { LogsPaneProps, AgentPaneProps } from './components/WorkspacePanes';
+export {
+  summarizeFleet, hasAgent, matchesQuery, byAttention, isLocalComputer, AGENT_STATUSES, ATTENTION_ORDER,
+} from './lib/fleetSummary';
+export type { FleetSummary } from './lib/fleetSummary';
 export { LabRail } from './components/LabRail';
 export type { LabRailProps } from './components/LabRail';
 export { LabChooser, fuzzyScore } from './components/LabChooser';
@@ -61,10 +75,10 @@ export type { UseLabLayoutResult, LabWindow } from './hooks/useLabLayout';
 // Pane tree
 export {
   makeLeaf, listLeaves, findLeaf, countPanes, splitPane, closePane, setRatio,
-  updateLeaf, layoutRects, neighborPane, cyclePane, enclosingSplit, ratioOf,
+  updateLeaf, layoutRects, neighborPane, cyclePane, enclosingSplit, ratioOf, arrangePanes,
   MIN_RATIO, MAX_RATIO,
 } from './lib/paneTree';
-export type { PaneNode, PaneLeaf, PaneSplit, PaneRect, SplitDirection, Direction } from './lib/paneTree';
+export type { PaneNode, PaneLeaf, PaneSplit, PaneRect, SplitDirection, Direction, PaneArrangement } from './lib/paneTree';
 
 // Keyboard — plain Mac chords, fully overridable
 export {
@@ -75,9 +89,11 @@ export type { KeyBinding, LabCommand, LeaderConfig } from './lib/keymap';
 
 // Pane kinds — the open registry that decides what a pane can be. Register
 // alongside the built-ins to add a kind of your own.
-export { resolveKind, nextKind, quotaUsage } from './lib/paneKinds';
+export { resolveKind, nextKind, quotaUsage, kindsFor, defaultKindFor } from './lib/paneKinds';
 export type { PaneKind, PaneKindContext, PaneKindRegistry, PaneHandle, PaneInput, PaneQuota } from './lib/paneKinds';
-export { DEFAULT_PANE_KINDS, SHELL_PANE_KIND, TAIL_PANE_KIND } from './components/defaultPaneKinds';
+export {
+  DEFAULT_PANE_KINDS, SHELL_PANE_KIND, TAIL_PANE_KIND, LOGS_PANE_KIND, AGENT_PANE_KIND,
+} from './components/defaultPaneKinds';
 
 // Dock store
 export {
@@ -124,7 +140,7 @@ export type { MockShellOptions } from './fixtures/mockShell';
 
 // Types
 export type {
-  Computer, ComputeStatus, ComputeRunResult, ComputeRuntimeStatus, ComputeModel, ComputeProject,
+  Computer, ComputerKind, ComputeStatus, ComputeRunResult, ComputeRuntimeStatus, ComputeModel, ComputeProject,
   ComputeSource, ShellStatus, WorkspaceNode, WorkspaceSnapshot,
   MachineNode, MachineSession, MachineMemoryState, MachineMemoryMode, MachinePresenceStatus,
 } from './types';

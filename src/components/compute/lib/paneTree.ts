@@ -229,3 +229,51 @@ export function ratioOf(root: PaneNode, splitId: string): number | null {
   if (root.id === splitId) return root.ratio;
   return ratioOf(root.a, splitId) ?? ratioOf(root.b, splitId);
 }
+
+/**
+ * Ways to re-flow a window's panes in one move.
+ *
+ * `rows` stacks them (a list you read top to bottom), `columns` puts them side
+ * by side, and `main` gives the first pane the left half and stacks the rest
+ * on the right — the editor-and-two-watchers shape a multiplexer settles into
+ * most often, and the one the workspace lab's split toggle means.
+ */
+export type PaneArrangement = 'rows' | 'columns' | 'main';
+
+/** An evenly divided chain of panes along one axis. */
+function chain(leaves: PaneLeaf[], direction: SplitDirection, nextSplitId: () => string): PaneNode {
+  const [first, ...rest] = leaves;
+  if (!first) throw new Error('chain() needs at least one pane');
+  if (rest.length === 0) return first;
+  // 1/n for the head makes every pane the same size: the tail chain divides
+  // its share the same way, all the way down.
+  const ratio = Math.min(MAX_RATIO, Math.max(MIN_RATIO, 1 / leaves.length));
+  return { kind: 'split', id: nextSplitId(), direction, ratio, a: first, b: chain(rest, direction, nextSplitId) };
+}
+
+/**
+ * Rebuild a tree from its own leaves in a named arrangement.
+ *
+ * Panes keep their ids, computers and kinds — only the splits are new — so a
+ * terminal reattaches to the same PTY and focus stays where it was. Returns
+ * the root unchanged for a single pane, which has nothing to arrange.
+ */
+export function arrangePanes(
+  root: PaneNode,
+  arrangement: PaneArrangement,
+  nextSplitId: () => string,
+): PaneNode {
+  const leaves = listLeaves(root);
+  if (leaves.length < 2) return root;
+  if (arrangement === 'rows') return chain(leaves, 'column', nextSplitId);
+  if (arrangement === 'columns') return chain(leaves, 'row', nextSplitId);
+  const [main, ...rest] = leaves;
+  return {
+    kind: 'split',
+    id: nextSplitId(),
+    direction: 'row',
+    ratio: 0.5,
+    a: main!,
+    b: chain(rest, 'column', nextSplitId),
+  };
+}

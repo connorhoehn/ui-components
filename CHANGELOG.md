@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.411.0
+
+- **`ComputerLab appearance="workspace"` (feat).** The same multiplexer — keys, saved layout, pane kinds, shell quota — under host-themed chrome: a header with `title` (or `null`), "N computers · N agents", the fleet's needs-you / running / error pills (each a rail filter), **+ Computer** and **Keys**, plus `headerActions`; a tabbed rail (`LabFleetRail`: Computers / Agents, search, status filter, project groups headed "6 computers · $0.46 / $95 · 5 bots", numbered rows stable across tabs, a laptop glyph for a paired machine, ⌘-click to select); card panes (`WorkspacePane`) with a kind menu, status badge and a one-line meta (`PaneStatusLine variant="meta"`), shedding quieter parts in a narrow split (container queries); a toolbar (`LabPaneToolbar`: "N panes ▾", +, "x / 8 shells", arrange as list / split, expand, ⋯ windows); and an instruction bar — **Nudge** (an instruction to each computer's agent, through `onInstruct` or, by default, a resumed `runTask` per targeted microVM, laptops skipped) or **Type** (keystrokes into the open panes), aimed at the focused pane, the ⌘-click selection or all computers. The classic appearance is the default and unchanged apart from the kind rules below.
+- **Two more built-in pane kinds** reading the same tail stream: `LOGS_PANE_KIND` ("Bot logs": `LogStream` follow / pause with a missed-line count, source filter, search, live byte-rate footer) and `AGENT_PANE_KIND` (the current run as a ✓ / ◌ checklist with elapsed time). `DEFAULT_PANE_KINDS` appends them; the toggle now cycles shell → tail → logs → agent.
+- **`Computer.kind?: 'microvm' | 'local'`** and **`PaneKind.appliesTo`** (plus `icon`, `title`): `SHELL_PANE_KIND` refuses a laptop, a new or retargeted pane lands on the first kind that applies (`defaultKindFor`, `kindsFor`), and the toggle skips kinds that do not.
+- `useLabLayout().arrange('rows' | 'columns' | 'main')` / `arrangePanes`; `PaneTreeView gutter="roomy"`; `summarizeFleet`, `hasAgent`, `matchesQuery`; `useComputeTail` stamps a step with its frame's `ts` when present, so a replayed buffer keeps its own times.
+- The mock shell answers `ls` with `tests/` and `logs/`, and gains `head` / `tail [-n N]` over `logs/agent.log`, `tools.log` and `runtime.log`.
+- New glyphs: `DesktopIcon`, `LaptopIcon`, `SplitViewIcon`, `MaximizeIcon`, `KeyboardIcon`, `BotIcon`. Story: `Compute/ComputerLab → Workspace`; tests: `ComputerLabWorkspace.test.tsx`, `mockShellLogs.test.ts`.
+
 ## 2.410.0
 
 - Merges the OrgIQ parity work. `WrappedChatPanel` gains `readReceipts`, `readReceiptsEnabled`, `unreadFrom`, `threaded`, `reply` and `onCancelReply`; `ChatPanel` shows a reply strip. New `CursorOverlay` (collaboration) and `WrappedCursorOverlay` (integrations). `TraceTimeline` gains `scale`, `colorByStatus`, `durationColumn` and `errorText`.

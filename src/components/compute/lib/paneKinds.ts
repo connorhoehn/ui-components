@@ -98,6 +98,26 @@ export interface PaneKind {
   inputSuffix?: string;
   /** Right-hand text in the pane's status line, e.g. `pty` or `resume on`. */
   statusMode?: string;
+  /**
+   * Glyph for the kind, shown before its label in the workspace pane header
+   * and its kind menu. Optional — a kind without one is named by label alone.
+   */
+  icon?: ReactNode;
+  /**
+   * Header label in the workspace lab, when it should read differently from
+   * the short `label` the classic frame and the cycle order use — `Bot logs`
+   * rather than `logs`. Defaults to `label`.
+   */
+  title?: string;
+  /**
+   * Whether this kind can render this computer at all.
+   *
+   * Absent means "any computer". A terminal answers false for a paired laptop
+   * (no PTY), so a new pane on a laptop lands on the first kind that does
+   * apply, the kind menu leaves the terminal out, and retargeting a terminal
+   * pane at a laptop switches it rather than painting `error · Forbidden`.
+   */
+  appliesTo?: (computer: Computer) => boolean;
   render: (context: PaneKindContext) => ReactNode;
 }
 
@@ -111,11 +131,29 @@ export function resolveKind(registry: PaneKindRegistry, id: string): PaneKind | 
   return registry.find((kind) => kind.id === id) ?? registry[0] ?? null;
 }
 
+/** Kinds that can render this computer, in registration order. */
+export function kindsFor(registry: PaneKindRegistry, computer: Computer | null | undefined): PaneKind[] {
+  if (!computer) return [...registry];
+  return registry.filter((kind) => !kind.appliesTo || kind.appliesTo(computer));
+}
+
+/**
+ * The kind a new pane on this computer gets: the first registered kind that
+ * applies to it, falling back to the first kind outright so a registry whose
+ * every kind refuses still renders something rather than a blank frame.
+ */
+export function defaultKindFor(registry: PaneKindRegistry, computer: Computer | null | undefined): PaneKind | null {
+  return kindsFor(registry, computer)[0] ?? registry[0] ?? null;
+}
+
 /** The next kind in registration order — what the toggle key cycles through. */
-export function nextKind(registry: PaneKindRegistry, id: string): PaneKind | null {
-  if (registry.length === 0) return null;
-  const index = registry.findIndex((kind) => kind.id === id);
-  return registry[(index + 1) % registry.length] ?? null;
+export function nextKind(registry: PaneKindRegistry, id: string, computer?: Computer | null): PaneKind | null {
+  // With a computer, cycle only through the kinds that apply to it — the
+  // toggle must not land a laptop on a terminal.
+  const usable = computer ? kindsFor(registry, computer) : registry;
+  if (usable.length === 0) return null;
+  const index = usable.findIndex((kind) => kind.id === id);
+  return usable[(index + 1) % usable.length] ?? null;
 }
 
 /** How many panes in a window consume a given quota. */

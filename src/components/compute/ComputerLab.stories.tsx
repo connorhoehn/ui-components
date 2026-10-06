@@ -208,3 +208,44 @@ export const Inline: Story = {
     </div>
   ),
 };
+
+// ── The workspace appearance ───────────────────────────────────────────────
+
+/**
+ * Three panes on three computers — a terminal, a bot's logs and an agent's
+ * checklist — the shape the workspace lab settles into.
+ */
+const WORKSPACE_SEED = {
+  windows: [{
+    id: 'w-workspace',
+    root: {
+      kind: 'split', id: 'ws-root', direction: 'row', ratio: 0.5,
+      a: { kind: 'leaf', id: 'ws-shell', computerId: 'demo-1', kindId: 'shell' },
+      b: {
+        kind: 'split', id: 'ws-right', direction: 'column', ratio: 0.5,
+        a: { kind: 'leaf', id: 'ws-logs', computerId: 'demo-2', kindId: 'logs' },
+        b: { kind: 'leaf', id: 'ws-agent', computerId: 'demo-1', kindId: 'agent' },
+      },
+    },
+  }],
+  activeWindowId: 'w-workspace',
+  activePaneId: 'ws-shell',
+  zoomedPaneId: null,
+};
+
+/**
+ * `appearance="workspace"`: the fleet's status pills (each a rail filter),
+ * + Computer and Keys in the header; a tabbed, searchable, numbered rail
+ * grouped by project; card panes with a kind menu and a status badge; and an
+ * instruction bar aimed at the focused pane, a ⌘-click selection, or the
+ * whole fleet. Host-themed throughout — flip the theme toolbar.
+ */
+export const Workspace: Story = {
+  args: { open: true, onClose: () => {}, variant: 'inline', appearance: 'workspace' },
+  parameters: { layout: 'fullscreen', labLayout: WORKSPACE_SEED },
+  render: (args) => (
+    <div className="h-screen p-4 bg-surface">
+      <ComputerLab {...args} />
+    </div>
+  ),
+};

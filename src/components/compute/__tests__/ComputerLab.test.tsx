@@ -220,13 +220,16 @@ describe('ComputerLab', () => {
   it('cycles a pane through every registered kind', async () => {
     renderLab();
     await summary();
-    // Built-ins are [shell, tail], so the cycle is shell -> tail -> shell.
+    // Built-ins are [shell, tail, logs, agent], so the cycle visits each and
+    // comes back round to shell.
     // Queried as a button because the label also appears in the status line.
     expect(await screen.findByRole('button', { name: 'shell' })).toBeTruthy();
-    cmdShift('e');
-    expect(await screen.findByRole('button', { name: 'tail' })).toBeTruthy();
-    cmdShift('e');
-    expect(await screen.findByRole('button', { name: 'shell' })).toBeTruthy();
+    for (const label of ['tail', 'logs', 'agent', 'shell']) {
+      cmdShift('e');
+      // A wider wait than the default: four switches each remount a pane,
+      // and under a parallel suite one remount can outlast a second.
+      expect(await screen.findByRole('button', { name: label }, { timeout: 4_000 })).toBeTruthy();
+    }
   });
 
   it('moves the keyboard into the pane it just focused', async () => {

@@ -13,6 +13,9 @@
 // do: watch a run nobody in this browser started.
 
 import { TailPane } from './TailPane';
+import { AgentPane, LogsPane } from './WorkspacePanes';
+import { BotIcon, DesktopIcon, DocumentIcon, ActivityIcon } from '../../ui/Icons';
+import { isLocalComputer } from '../lib/fleetSummary';
 import { ShellTerminal, type ShellTerminalHandle } from './ShellTerminal';
 import { useEffect, useRef } from 'react';
 import type { PaneKind, PaneKindContext } from '../lib/paneKinds';
@@ -31,6 +34,10 @@ export const SHELL_PANE_KIND: PaneKind = {
   // instruction typed once, entered in every pane.
   inputSuffix: '\n',
   statusMode: 'pty',
+  icon: <DesktopIcon size={14} />,
+  title: 'Shell',
+  // A paired laptop has no PTY to attach to — see `Computer.kind`.
+  appliesTo: (computer) => !isLocalComputer(computer),
   render: (context) => <ShellPaneKind {...context} />,
 };
 
@@ -43,10 +50,45 @@ export const TAIL_PANE_KIND: PaneKind = {
   label: 'tail',
   description: 'Watch what is running here, including runs started elsewhere. Costs no shell slot.',
   statusMode: 'read-only',
+  icon: <ActivityIcon size={14} />,
+  title: 'Activity',
   render: ({ computer, registerPane }) => <TailPane computer={computer} registerPane={registerPane} />,
 };
 
-export const DEFAULT_PANE_KINDS: readonly PaneKind[] = [SHELL_PANE_KIND, TAIL_PANE_KIND];
+/**
+ * The box's output as timestamped log lines — follow or pause, filter by
+ * source, search, live byte rate. Free: it reads the same tail stream.
+ */
+export const LOGS_PANE_KIND: PaneKind = {
+  id: 'logs',
+  label: 'logs',
+  title: 'Bot logs',
+  description: 'Follow this computer’s output as log lines. Pause, filter and search. Costs no shell slot.',
+  statusMode: 'read-only',
+  icon: <DocumentIcon size={14} />,
+  render: ({ computer, registerPane }) => <LogsPane computer={computer} registerPane={registerPane} />,
+};
+
+/**
+ * The agent's current run as a checklist — done, in flight, elapsed. Free:
+ * it reads the same tail stream.
+ */
+export const AGENT_PANE_KIND: PaneKind = {
+  id: 'agent',
+  label: 'agent',
+  title: 'Agent',
+  description: 'Watch the agent’s current run step by step. Costs no shell slot.',
+  statusMode: 'watching',
+  icon: <BotIcon size={14} />,
+  render: ({ computer, registerPane }) => <AgentPane computer={computer} registerPane={registerPane} />,
+};
+
+/**
+ * Terminal first (the default for a new pane), then the classic activity tail,
+ * then the workspace lab's two readings of the same stream. Appended rather
+ * than reordered so a saved layout and the toggle's first step are unchanged.
+ */
+export const DEFAULT_PANE_KINDS: readonly PaneKind[] = [SHELL_PANE_KIND, TAIL_PANE_KIND, LOGS_PANE_KIND, AGENT_PANE_KIND];
 
 function ShellPaneKind({ computer, paneId, registerPane }: PaneKindContext) {
   const ref = useRef<ShellTerminalHandle>(null);
