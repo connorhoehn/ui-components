@@ -15,6 +15,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
+import { T } from '../shared/Text';
 import { ChatIcon, PeopleIcon, PhoneIcon } from '../ui/Icons';
 import { PresenceDot, type PresenceState } from '../shared/PresenceDot';
 import { DeviceToggleSelect, type DeviceOption, type MediaPermission } from './DeviceToggleSelect';
@@ -191,30 +192,30 @@ export function HuddleBar({
     >
       <div className="flex min-w-0 items-center gap-2" data-testid={`${testId}-status`}>
         <PresenceDot state={PHASE_DOT[phase]} ariaLabel={PHASE_LABEL[phase]} data-testid={`${testId}-dot`} />
-        <span className="min-w-0 truncate text-sm font-semibold text-text-primary" title={name} data-testid={`${testId}-name`}>
+        <T className="min-w-0 truncate" size="xs" weight={phase === 'idle' ? 'normal' : 'medium'} tone={phase === 'idle' ? 'secondary' : 'primary'} title={name} data-testid={`${testId}-name`}>
           {name}
-        </span>
+        </T>
         {statusText != null && (
-          <span className="shrink-0 text-xs text-text-secondary" data-testid={`${testId}-phase`}>
+          <T className="shrink-0" size="xs" tone="secondary" data-testid={`${testId}-phase`}>
             {statusText}
-          </span>
+          </T>
         )}
         {elapsed !== null && (
-          <span className="hidden shrink-0 text-xs tabular-nums text-text-tertiary @md:inline" data-testid={`${testId}-timer`}>
+          <T className="hidden shrink-0 @md:inline" size="xs" tone="tertiary" tabular data-testid={`${testId}-timer`}>
             {formatCallElapsed(elapsed)}
-          </span>
+          </T>
         )}
         {participantCount !== undefined && (
-          <span className="hidden shrink-0 text-xs text-text-secondary @md:inline" data-testid={`${testId}-people`}>
+          <T className="hidden shrink-0 @md:inline" size="xs" tone="secondary" data-testid={`${testId}-people`}>
             {peopleText(participantCount, ringingCount)}
-          </span>
+          </T>
         )}
       </div>
 
       <div className="ml-auto flex shrink-0 items-center gap-2">
         {mic && media('microphone', mic)}
         {camera && media('camera', camera)}
-        {shareSlot != null && <span className="flex items-center" data-testid={`${testId}-share`}>{shareSlot}</span>}
+        {shareSlot != null && <T className="items-center" data-testid={`${testId}-share`}>{shareSlot}</T>}
         {onToggleMedia && (
           <Button
             variant={mediaOpen ? 'secondary' : 'ghost'}
@@ -227,8 +228,8 @@ export function HuddleBar({
             data-testid={`${testId}-media`}
             className="gap-1.5"
           >
-            <PeopleIcon size={14} />
-            {participantCount !== undefined && <span className="tabular-nums">{participantCount}</span>}
+            <PeopleIcon size={16} />
+            {participantCount !== undefined && <T tabular>{participantCount}</T>}
           </Button>
         )}
         {phase === 'idle' && onStart && (
@@ -241,12 +242,12 @@ export function HuddleBar({
             data-testid={`${testId}-start`}
             className="gap-1.5"
           >
-            <PhoneIcon size={14} />
+            <PhoneIcon size={16} />
             {startLabel}
           </Button>
         )}
         {onToggleChat && (
-          <span className="relative inline-flex">
+          <T className="relative inline-flex">
             <Button
               variant={chatOpen ? 'secondary' : 'ghost'}
               size="sm"
@@ -258,23 +259,24 @@ export function HuddleBar({
               data-testid={`${testId}-chat`}
               className="gap-1.5"
             >
-              <ChatIcon size={14} />
-              <span className="hidden @lg:inline">{chatLabel}</span>
+              <ChatIcon size={16} />
+              <T className="hidden @lg:inline">{chatLabel}</T>
             </Button>
             {chatUnread > 0 && (
-              <span
-                className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-danger px-1 text-[10px] font-semibold leading-none text-white"
+              <T
+                className="absolute -right-1 -top-1 h-4 min-w-4 justify-center rounded-full bg-danger px-1 text-[10px] leading-none text-white"
+                weight="semibold"
                 data-testid={`${testId}-chat-unread`}
               >
                 {chatUnread > 99 ? '99+' : chatUnread}
-              </span>
+              </T>
             )}
-          </span>
+          </T>
         )}
         {extras}
         {phase !== 'idle' && onLeave && <Button variant="danger-solid" size="sm" onClick={onLeave} aria-label={leaveLabel} data-testid={`${testId}-leave`} className="gap-1.5">
-          <PhoneOffIcon size={14} />
-          <span className="hidden @lg:inline">{leaveLabel}</span>
+          <PhoneOffIcon size={16} />
+          <T className="hidden @lg:inline">{leaveLabel}</T>
         </Button>}
       </div>
     </div>

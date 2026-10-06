@@ -110,3 +110,36 @@ describe('HuddleBar', () => {
     fireEvent.click(btn); expect(start).not.toHaveBeenCalled();
   });
 });
+
+describe('HuddleBar typography', () => {
+  const RAW = /\b(text-(xs|sm|base|lg)|font-(medium|semibold|bold))\b/;
+  const own = (root: HTMLElement) => [root, ...Array.from(root.querySelectorAll<HTMLElement>('*'))]
+    // Button and device toggles own their classes; the bar's own text nodes are what is audited.
+    .filter(el => !el.closest('button'));
+
+  it('idle: every text is the Text primitive at the status-bar scale, name not semibold', () => {
+    render(<HuddleBar name="No huddle here" phase="idle" onStart={() => {}} onToggleChat={() => {}} />);
+    const name = screen.getByTestId('huddle-bar-name');
+    expect(name).toHaveClass('text-xs', 'font-normal', 'text-text-secondary');
+    expect(name).not.toHaveClass('font-semibold');
+    for (const el of own(screen.getByTestId('huddle-bar'))) {
+      if (el.tagName === 'SPAN' || el.tagName === 'DIV') expect(el.className).not.toMatch(/\btext-(sm|base|lg)\b/);
+    }
+  });
+
+  it('live: name, phase, timer and people come from Text; no raw type utility on the bar markup', () => {
+    render(<HuddleBar name="Standup" startedAt={Date.now()} participantCount={2} onLeave={() => {}} onToggleChat={() => {}} chatUnread={3} />);
+    expect(screen.getByTestId('huddle-bar-name')).toHaveClass('text-xs', 'font-medium');
+    expect(screen.getByTestId('huddle-bar-timer')).toHaveClass('text-xs', 'tabular-nums');
+    expect(screen.getByTestId('huddle-bar-people')).toHaveClass('text-xs');
+    expect(screen.getByTestId('huddle-bar-chat-unread')).toHaveClass('font-semibold');
+  });
+
+  it('the source file carries no raw text-size/font-weight class and no bare span', async () => {
+    const { readFileSync } = await import('node:fs');
+    const src = readFileSync('src/components/video/HuddleBar.tsx', 'utf8')
+      .split('\n').filter(l => !l.trim().startsWith('//') && !l.trim().startsWith('*')).join('\n');
+    expect(src).not.toMatch(RAW);
+    expect(src).not.toMatch(/<span\b/);
+  });
+});

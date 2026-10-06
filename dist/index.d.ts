@@ -20729,7 +20729,7 @@ export declare const TerminalLog: typeof LogStream;
 
 export declare type TerminalRendererStatus = keyof typeof TERMINAL_DECISIONS;
 
-declare function Text_2({ as, className, title, children, wrap, ...rest }: TextProps): JSX.Element;
+declare function Text_2({ as, className, title, children, wrap, size, weight, tone, tabular, ...rest }: TextProps): JSX.Element;
 export { Text_2 as Text }
 
 export declare const Textarea: ForwardRefExoticComponent<TextareaProps & RefAttributes<HTMLTextAreaElement>>;
@@ -20753,6 +20753,14 @@ export declare function TextEditorRenderer(props: SectionRendererProps): JSX.Ele
 export declare const textFieldType: FieldTypeDefinition;
 
 export declare interface TextProps {
+    /** Type scale step. Since 2.420.0; omitted: inherits. */
+    size?: TextSize;
+    /** Font weight. Since 2.420.0; omitted: inherits. */
+    weight?: TextWeight;
+    /** Text colour token. Since 2.420.0. */
+    tone?: TextTone;
+    /** Draw numerals at equal width (timers, counts). Since 2.420.0. */
+    tabular?: boolean;
     /** Element to render as. Default `'span'`. */
     as?: 'span' | 'div' | 'p' | 'li';
     className?: string;
@@ -20776,6 +20784,12 @@ declare interface TextSelectionData {
     end: number;
     text: string;
 }
+
+declare type TextSize = 'xs' | 'sm' | 'base' | 'lg';
+
+declare type TextTone = 'primary' | 'secondary' | 'tertiary' | 'inherit';
+
+declare type TextWeight = 'normal' | 'medium' | 'semibold' | 'bold';
 
 declare type Theme = 'light' | 'dark';
 
@@ -25223,42 +25237,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         actionItemsMacro: {
             /** Inserts an action-items block at the selection. */
             insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
         };
     }
 }
@@ -25292,18 +25283,33 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
     }
 }
 
@@ -25326,5 +25332,13 @@ declare module '@tiptap/core' {
             /** Move the selection onto a suggestion. */
             selectSuggestion: (id: SuggestionIdentity) => ReturnType;
         };
+    }
+}
+
+
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
     }
 }
