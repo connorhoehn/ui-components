@@ -66,4 +66,27 @@ describe('HuddleBar', () => {
     render(<HuddleBar name="x" onLeave={() => {}} />);
     expect(screen.queryByTestId('huddle-bar-chat')).toBeNull();
   });
+
+  it('words non-live phases and lets the host override the wording', () => {
+    const { rerender } = render(<HuddleBar name="Mira" phase="reconnecting" onLeave={() => {}} />);
+    expect(screen.getByTestId('huddle-bar-phase')).toHaveTextContent('Reconnecting…');
+    rerender(<HuddleBar name="Mira" phase="ringing" statusLabel="Calling Mira…" onLeave={() => {}} />);
+    expect(screen.getByTestId('huddle-bar-phase')).toHaveTextContent('Calling Mira…');
+    rerender(<HuddleBar name="Mira" phase="connecting" statusLabel={null} onLeave={() => {}} />);
+    expect(screen.queryByTestId('huddle-bar-phase')).toBeNull();
+    rerender(<HuddleBar name="Mira" onLeave={() => {}} />);
+    expect(screen.queryByTestId('huddle-bar-phase')).toBeNull();
+  });
+
+  it('draws a media-panel toggle only when asked, with aria-expanded', () => {
+    const toggle = vi.fn();
+    const { rerender } = render(<HuddleBar name="x" onLeave={() => {}} />);
+    expect(screen.queryByTestId('huddle-bar-media')).toBeNull();
+    rerender(<HuddleBar name="x" participantCount={3} onToggleMedia={toggle} mediaOpen onLeave={() => {}} />);
+    const btn = screen.getByTestId('huddle-bar-media');
+    expect(btn).toHaveAttribute('aria-expanded', 'true');
+    expect(btn).toHaveAccessibleName('Participants');
+    fireEvent.click(btn);
+    expect(toggle).toHaveBeenCalledTimes(1);
+  });
 });

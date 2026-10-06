@@ -71,7 +71,7 @@ export type { FileUploadSummary, UIMessageReaction } from './adapters';
 
 // Wrapped components
 export { WrappedChatPanel } from './WrappedChatPanel';
-export type { WrappedChatPanelProps, RMUsePinsReturn } from './WrappedChatPanel';
+export type { WrappedChatPanelProps, WrappedLocalMessage, RMUsePinsReturn } from './WrappedChatPanel';
 
 export { WrappedPresencePanel } from './WrappedPresencePanel';
 export type { WrappedPresencePanelProps } from './WrappedPresencePanel';

@@ -15,18 +15,19 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
-import { ChatIcon } from '../ui/Icons';
+import { ChatIcon, PeopleIcon } from '../ui/Icons';
 import { PresenceDot, type PresenceState } from '../shared/PresenceDot';
 import { DeviceToggleSelect, type DeviceOption, type MediaPermission } from './DeviceToggleSelect';
 import { PhoneOffIcon } from './MediaIcons';
 import { formatCallElapsed } from './CallDock';
 
-export type HuddleBarPhase = 'live' | 'connecting' | 'ringing' | 'ended';
+export type HuddleBarPhase = 'live' | 'connecting' | 'ringing' | 'reconnecting' | 'ended';
 
 const PHASE_DOT: Record<HuddleBarPhase, PresenceState> = {
   live: 'online',
   connecting: 'away',
   ringing: 'away',
+  reconnecting: 'away',
   ended: 'offline',
 };
 
@@ -34,6 +35,16 @@ const PHASE_LABEL: Record<HuddleBarPhase, string> = {
   live: 'Live',
   connecting: 'Connecting',
   ringing: 'Ringing',
+  reconnecting: 'Reconnecting',
+  ended: 'Ended',
+};
+
+/** The visible wording beside the name for a phase that is not live. */
+const PHASE_TEXT: Record<HuddleBarPhase, string | null> = {
+  live: null,
+  connecting: 'Connecting…',
+  ringing: 'Ringing…',
+  reconnecting: 'Reconnecting…',
   ended: 'Ended',
 };
 
@@ -56,6 +67,12 @@ export interface HuddleBarProps {
   name: string;
   /** Default `live`. */
   phase?: HuddleBarPhase;
+  /**
+   * Visible wording for the current phase ("Calling Mira…", "Reconnecting…").
+   * Default: "Connecting…", "Ringing…", "Reconnecting…" or "Ended" for a phase
+   * that is not `live`; nothing while live. Pass `null` to draw none. Since 2.413.0.
+   */
+  statusLabel?: string | null;
   /** Epoch ms the call went live. Draws a ticking timer while `live`. */
   startedAt?: number | null;
   /** People in the call now. */
@@ -71,6 +88,11 @@ export interface HuddleBarProps {
   chatOpen?: boolean;
   /** Unread chat count on the toggle. */
   chatUnread?: number;
+  /** Toggles the call's media panel (tiles, roster). Absent: no button. Since 2.413.0. */
+  onToggleMedia?: () => void;
+  mediaOpen?: boolean;
+  /** Accessible name and tooltip of the media toggle. Default "Participants". */
+  mediaToggleLabel?: string;
   onLeave: () => void;
   /** Default "Leave". */
   leaveLabel?: string;
@@ -99,6 +121,7 @@ function peopleText(joined: number, ringing: number): string {
 export function HuddleBar({
   name,
   phase = 'live',
+  statusLabel,
   startedAt,
   participantCount,
   ringingCount = 0,
@@ -108,6 +131,9 @@ export function HuddleBar({
   onToggleChat,
   chatOpen = false,
   chatUnread = 0,
+  onToggleMedia,
+  mediaOpen = false,
+  mediaToggleLabel = 'Participants',
   onLeave,
   leaveLabel = 'Leave',
   extras,
@@ -115,6 +141,7 @@ export function HuddleBar({
   'data-testid': testId = 'huddle-bar',
 }: HuddleBarProps) {
   const elapsed = useElapsed(startedAt, phase === 'live');
+  const statusText = statusLabel === undefined ? PHASE_TEXT[phase] : statusLabel;
   const media = (kind: 'microphone' | 'camera', m: HuddleBarMedia) => (
     <DeviceToggleSelect
       kind={kind}
@@ -144,6 +171,11 @@ export function HuddleBar({
         <span className="min-w-0 truncate text-sm font-semibold text-text-primary" title={name} data-testid={`${testId}-name`}>
           {name}
         </span>
+        {statusText != null && (
+          <span className="shrink-0 text-xs text-text-secondary" data-testid={`${testId}-phase`}>
+            {statusText}
+          </span>
+        )}
         {elapsed !== null && (
           <span className="hidden shrink-0 text-xs tabular-nums text-text-tertiary @md:inline" data-testid={`${testId}-timer`}>
             {formatCallElapsed(elapsed)}
@@ -160,6 +192,22 @@ export function HuddleBar({
         {mic && media('microphone', mic)}
         {camera && media('camera', camera)}
         {shareSlot != null && <span className="flex items-center" data-testid={`${testId}-share`}>{shareSlot}</span>}
+        {onToggleMedia && (
+          <Button
+            variant={mediaOpen ? 'secondary' : 'ghost'}
+            size="sm"
+            onClick={onToggleMedia}
+            aria-pressed={mediaOpen}
+            aria-expanded={mediaOpen}
+            aria-label={mediaToggleLabel}
+            title={mediaToggleLabel}
+            data-testid={`${testId}-media`}
+            className="gap-1.5"
+          >
+            <PeopleIcon size={14} />
+            {participantCount !== undefined && <span className="tabular-nums">{participantCount}</span>}
+          </Button>
+        )}
         {onToggleChat && (
           <span className="relative inline-flex">
             <Button

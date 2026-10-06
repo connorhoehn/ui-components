@@ -28,7 +28,7 @@ import type {
 } from './types';
 import { adaptChatMessages, adaptMessageReactions } from './adapters';
 import { ChatPanel } from '../../components/social/ChatPanel';
-import type { ChatPanelProps } from '../../components/social/ChatPanel';
+import type { ChatPanelProps, LocalChatMessage } from '../../components/social/ChatPanel';
 import type { ChatMessage } from '../../hooks/useChat';
 import type { ChatAttachment, ChatTransfer } from '../../components/social/ChatAttachment';
 import { applyNetworkShim, type NetworkShimOptions } from './networkShim';
@@ -58,6 +58,18 @@ export interface RMUsePinsReturn {
   unpin: (messageId: string) => Promise<void>;
 }
 
+/**
+ * A view-only message. With `body` it renders as a private card (the node, or
+ * what the function returns) with the "Only you can see this" note and its
+ * `actions`, in timestamp order; `content` stays the plain-text summary.
+ * Without `body` it is an ordinary transcript row. Since 2.413.0.
+ */
+export type WrappedLocalMessage = ChatMessage & {
+  body?: ReactNode | (() => ReactNode);
+  actions?: LocalChatMessage['actions'];
+  note?: string;
+};
+
 export interface WrappedChatPanelProps {
   /** Return value of useChat(channel) from realtime-modules */
   chat: RMUseChatReturn;
@@ -69,7 +81,7 @@ export interface WrappedChatPanelProps {
    * agent reply. Not sent anywhere. One whose `id` the channel's own history
    * also holds is dropped, so an optimistic message gives way to its echo.
    */
-  localMessages?: readonly ChatMessage[];
+  localMessages?: readonly WrappedLocalMessage[];
   /**
    * Return value of useFileUpload(channel). Supplying it enables drag-drop,
    * paste and the paperclip, and renders every in-flight transfer in the
@@ -266,18 +278,44 @@ export function WrappedChatPanel({
   onOpenDocument,
   wrapWithNetworkShim,
 }: WrappedChatPanelProps) {
+  const adaptedMessages = useMemo(() => adaptChatMessages(chat.messages), [chat.messages]);
+  // Local messages with a `body` are private cards; ChatPanel orders them.
+  const cardMessages = useMemo<LocalChatMessage[]>(() => {
+    if (!localMessages?.length) return [];
+    const held = new Set(adaptedMessages.flatMap((m) => (m.id ? [m.id] : [])));
+    const seen = new Set<string>();
+    const out: LocalChatMessage[] = [];
+    for (const m of localMessages) {
+      if (m.body === undefined) continue;
+      if (m.id) {
+        if (held.has(m.id) || seen.has(m.id)) continue;
+        seen.add(m.id);
+      }
+      out.push({
+        id: m.id ?? '',
+        timestamp: m.timestamp,
+        displayName: m.displayName ?? 'You',
+        content: m.content,
+        body: m.body,
+        metadata: {},
+        ...(m.actions ? { actions: m.actions } : {}),
+        ...(m.note !== undefined ? { note: m.note } : {}),
+      });
+    }
+    return out;
+  }, [adaptedMessages, localMessages]);
   const messages = useMemo(() => {
-    const adapted = adaptChatMessages(chat.messages);
+    const adapted = adaptedMessages;
     if (!localMessages?.length) return adapted;
     const held = new Set(adapted.flatMap((m) => (m.id ? [m.id] : [])));
-    const extra = localMessages.filter((m) => !m.id || !held.has(m.id));
+    const extra = localMessages.filter((m) => m.body === undefined && (!m.id || !held.has(m.id)));
     if (extra.length === 0) return adapted;
     // A stable merge: ties keep the channel's messages first.
     return [...adapted, ...extra]
       .map((m, i) => ({ m, i }))
       .sort((a, b) => (Date.parse(a.m.timestamp) - Date.parse(b.m.timestamp)) || a.i - b.i)
       .map(({ m }) => m);
-  }, [chat.messages, localMessages]);
+  }, [adaptedMessages, localMessages]);
 
   // Derive typing users from presence roster when available. Exclude the
   // viewer: their own name in the banner reads as a bug, and it appears the
@@ -405,6 +443,7 @@ export function WrappedChatPanel({
   const panel = (
     <ChatPanel
       messages={messages}
+      {...(cardMessages.length ? { localMessages: cardMessages } : {})}
       onSend={handleSend}
       disabled={disabled}
       typingUsers={typingUsers}

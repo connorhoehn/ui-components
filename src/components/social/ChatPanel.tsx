@@ -58,7 +58,15 @@ export interface LocalChatMessage {
   /** ISO. Decides where in the thread the message sits. */
   timestamp: string;
   displayName: string;
+  /** Plain text. Drawn as the body unless `body` is set; keep it meaningful (a summary) either way. */
   content: string;
+  /**
+   * A host-rendered body in place of `content`: a React node, or a function
+   * called on each render (so it can close over live state). Lets an
+   * unpersisted private card carry markdown, a diagram, a document preview.
+   * Since 2.413.0.
+   */
+  body?: ReactNode | (() => ReactNode);
   metadata: Record<string, unknown>;
   actions?: Array<{ id: string; label: string; onSelect: () => void; primary?: boolean }>;
   /** Replaces the default "Only you can see this". */
@@ -1971,7 +1979,7 @@ export function ChatPanel({
             // intrinsic inline size 0) — the default shrink-to-fit bubble
             // gives it 0px and its contents wrap letter-by-letter. See
             // MessageRow's `contentLayout` doc comment.
-            contentLayout={localRef ? 'block' : 'inline'}
+            contentLayout={localRef || local.body != null ? 'block' : 'inline'}
             content={
               <>
                 {localRef ? (
@@ -1993,6 +2001,10 @@ export function ChatPanel({
                     onRetry={onRetryRun}
                     {...loopCardProps(localRef, agentLoopStatus, onOpenLab)}
                   />
+                ) : local.body != null ? (
+                  <div data-testid="chat-local-message-body" className="min-w-0">
+                    {typeof local.body === 'function' ? (local.body as () => ReactNode)() : local.body}
+                  </div>
                 ) : (
                   <MessageBody text={local.content} />
                 )}

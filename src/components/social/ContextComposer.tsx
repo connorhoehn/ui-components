@@ -243,6 +243,14 @@ export interface ContextComposerProps {
   submitLead?: ReactNode;
   /** At the end of the card's mode row — a scope switch ("This slide · Whole deck"). Hidden on the idle row. Since 2.407.11. */
   modeRowEnd?: ReactNode;
+  /** At the START of the card's mode row, and on the idle row — a "Chat" label or the host's own mode select. Forwarded to `RichChatComposer`. Since 2.413.0. */
+  modeRowStart?: ReactNode;
+  /**
+   * Send acts on an empty draft that has references (a message that is only
+   * "this page"). The context chip counts as a reference. Forwarded to
+   * `RichChatComposer`. Since 2.413.0.
+   */
+  sendWithReferencesOnly?: boolean;
   /** After the chips in the card's mode row — an "add another" control (a document picker). Hidden on the idle row. Since 2.407.11. */
   referencesAction?: ReactNode;
   /**
@@ -407,6 +415,8 @@ export function ContextComposerBase({
   toolbarExtras,
   submitLead,
   modeRowEnd,
+  modeRowStart,
+  sendWithReferencesOnly,
   referencesAction,
   referenceDrop,
   processes,
@@ -729,6 +739,8 @@ export function ContextComposerBase({
                 toolbarExtras={extras}
                 submitLead={submitLead}
                 modeRowEnd={modeRowEnd}
+                modeRowStart={modeRowStart}
+                sendWithReferencesOnly={sendWithReferencesOnly}
                 referencesAction={referencesAction}
                 referenceDrop={referenceDrop}
                 draft={draft}
