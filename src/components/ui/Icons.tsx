@@ -856,3 +856,12 @@ export function BotIcon({ size = 16, ...rest }: GlyphProps) {
     </svg>
   );
 }
+
+/** A cloud: a hosted / cloud computer, beside `MonitorIcon` (a local one) in a fleet indicator. */
+export function CloudIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M4.5 12.5a3 3 0 0 1-.4-5.97A4 4 0 0 1 11.9 5.6a3.4 3.4 0 0 1-.4 6.9z" />
+    </svg>
+  );
+}

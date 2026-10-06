@@ -6,6 +6,8 @@ export * from '../ui/Table';
 export * from '../ui/PageSection';
 export * from '../ui/IconButton';
 export * from '../ui/Icons';
+// The call set's monitor glyph, reachable from /shared for hosts that only import the shared entry.
+export { MonitorIcon } from '../video/MediaIcons';
 export * from '../ui/Stack';
 export * from '../ui/SelectableCard';
 // Since 2.390.0: the native <details> collapsible, reachable from /shared too

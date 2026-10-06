@@ -626,6 +626,12 @@ export interface RichChatComposerProps {
    */
   modeRowStart?: ReactNode;
   /**
+   * Let Send act while the input is empty if the draft has `references` the
+   * host will send with it (a message that is only "this page"). Default
+   * false: an empty draft with a reference chip stays unsendable.
+   */
+  sendWithReferencesOnly?: boolean;
+  /**
    * Which key sends. `enter` (default): Enter sends, Shift+Enter is a
    * newline — the chat convention. `mod-enter`: ⌘/Ctrl+Enter sends and Enter
    * is a newline — for a prompt that is written, not chatted. Since 2.390.0.
@@ -1020,6 +1026,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   expanded: forceExpanded = false,
   documentMenu,
   modeRowStart,
+  sendWithReferencesOnly = false,
   sendShortcut = 'enter',
   defaultCommand,
   className,
@@ -1739,7 +1746,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
 
   const canSend = terminalMode
     ? !blocked && !!onShellCommand && shellDraft.trim().length > 0
-    : !blocked && (!empty || staged.length > 0);
+    : !blocked && (!empty || staged.length > 0 || (sendWithReferencesOnly && !!references?.length));
 
   // Publish synchronously so a conversation switch in the same event never
   // unmounts the editor before its latest text or file selection is retained.
@@ -2785,6 +2792,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             such as a disabled reason, used to wrap past the input and draw over
             the rows below. The whole text stays reachable as a tooltip while
             the box is empty. */}
+        {collapsed && modeRowStart != null && (
+          // The host's row-start content (a "Chat" label, its own mode select)
+          // is drawn on the idle row too, not only once the card expands.
+          <span className="ml-1.5 flex shrink-0 items-center" data-testid={`${testId}-mode-row-start`}>{modeRowStart}</span>
+        )}
         {collapsed && singleMode && (
           // One mode: the same pill, as a label — nothing to switch to.
           <span

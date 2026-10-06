@@ -64,6 +64,13 @@ export interface WrappedChatPanelProps {
   /** Optional presence hook return — used to derive typingUsers */
   presence?: RMUsePresenceReturn;
   /**
+   * Messages that exist only in this view and are merged into the transcript
+   * by timestamp: a "Huddle started" notice, an optimistic send, a local
+   * agent reply. Not sent anywhere. One whose `id` the channel's own history
+   * also holds is dropped, so an optimistic message gives way to its echo.
+   */
+  localMessages?: readonly ChatMessage[];
+  /**
    * Return value of useFileUpload(channel). Supplying it enables drag-drop,
    * paste and the paperclip, and renders every in-flight transfer in the
    * channel — including other participants'. Omit it and the panel shows no
@@ -214,6 +221,7 @@ export interface WrappedChatPanelProps {
 
 export function WrappedChatPanel({
   chat,
+  localMessages,
   presence,
   upload,
   reactions,
@@ -258,7 +266,18 @@ export function WrappedChatPanel({
   onOpenDocument,
   wrapWithNetworkShim,
 }: WrappedChatPanelProps) {
-  const messages = useMemo(() => adaptChatMessages(chat.messages), [chat.messages]);
+  const messages = useMemo(() => {
+    const adapted = adaptChatMessages(chat.messages);
+    if (!localMessages?.length) return adapted;
+    const held = new Set(adapted.flatMap((m) => (m.id ? [m.id] : [])));
+    const extra = localMessages.filter((m) => !m.id || !held.has(m.id));
+    if (extra.length === 0) return adapted;
+    // A stable merge: ties keep the channel's messages first.
+    return [...adapted, ...extra]
+      .map((m, i) => ({ m, i }))
+      .sort((a, b) => (Date.parse(a.m.timestamp) - Date.parse(b.m.timestamp)) || a.i - b.i)
+      .map(({ m }) => m);
+  }, [chat.messages, localMessages]);
 
   // Derive typing users from presence roster when available. Exclude the
   // viewer: their own name in the banner reads as a bug, and it appears the

@@ -42,6 +42,11 @@ export interface DeviceToggleSelectProps {
   extraItems?: DropdownMenuItem[];
   /** Disables the toggle with this as its title (e.g. "Microphone blocked in the browser"). */
   disabledReason?: string;
+  /**
+   * Draw the device caret and its menu. Default true. `false` gives a bare
+   * icon toggle (the shell footer), the host picking the device elsewhere.
+   */
+  deviceMenu?: boolean;
   className?: string;
   /** Test id on the toggle; the chevron gets `<id>-menu`. */
   'data-testid'?: string;
@@ -68,6 +73,7 @@ export function DeviceToggleSelect({
   showLabel = false,
   extraItems,
   disabledReason,
+  deviceMenu = true,
   className,
   'data-testid': testId = `device-toggle-${kind}`,
 }: DeviceToggleSelectProps) {
@@ -122,7 +128,8 @@ export function DeviceToggleSelect({
         title={reason ?? actionLabel}
         data-testid={testId}
         className={cn(
-          'inline-flex cursor-pointer items-center gap-2 rounded-l-md border-none bg-transparent font-[inherit] text-sm',
+          'inline-flex cursor-pointer items-center gap-2 border-none bg-transparent font-[inherit] text-sm',
+          deviceMenu ? 'rounded-l-md' : 'rounded-md',
           BUTTON_WEIGHT,
           'hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50',
           size === 'md' ? 'px-2.5' : 'px-2',
@@ -133,15 +140,16 @@ export function DeviceToggleSelect({
         {icon}
         {showLabel && <span className="min-w-0 truncate whitespace-nowrap">{stateLabel}</span>}
       </button>
-      <DropdownMenu
-        trigger={<ChevronIcon size={14} />}
-        triggerLabel={`Choose ${DEVICE_NOUN[kind]}`}
-        triggerTitle={`Choose ${DEVICE_NOUN[kind]}`}
-        triggerTestId={`${testId}-menu`}
-        triggerVariant="link"
-        triggerClassName={cn(
-          'h-full shrink-0 rounded-none rounded-r-md px-2 text-text-secondary',
-          size === 'md' && 'px-2',
+      {deviceMenu && (
+        <DropdownMenu
+          trigger={<ChevronIcon size={14} />}
+          triggerLabel={`Choose ${DEVICE_NOUN[kind]}`}
+          triggerTitle={`Choose ${DEVICE_NOUN[kind]}`}
+          triggerTestId={`${testId}-menu`}
+          triggerVariant="link"
+          triggerClassName={cn(
+            'h-full shrink-0 rounded-none rounded-r-md px-2 text-text-secondary',
+            size === 'md' && 'px-2',
         )}
         align="end"
         data-testid={`${testId}-menu-panel`}
@@ -150,6 +158,7 @@ export function DeviceToggleSelect({
           ...(extraItems?.length ? [{ items: extraItems }] : []),
         ]}
       />
+      )}
     </div>
   );
 }

@@ -411,3 +411,27 @@ describe('a call dock beside an expanded composer in the footer (2.407.8)', () =
     expect(screen.getByTestId('host').style.getPropertyValue('--dock-floor')).toBe('');
   });
 });
+
+describe('EditorShell narrow-pane layout', () => {
+  it('lets headActions wrap under the title instead of squeezing it', () => {
+    render(
+      <EditorShell title="North Star" headActions={<button type="button">Share to Social</button>}>
+        <p>page</p>
+      </EditorShell>,
+    );
+    expect(screen.getByTestId('editor-shell-head-row').className).toContain('flex-wrap');
+    expect(screen.getByTestId('editor-shell-actions').className).toContain('flex-wrap');
+  });
+
+  it('gives the page a floor and lets the proposal strip shrink', () => {
+    render(
+      <EditorShell title="Doc" proposal={<div>strip</div>}>
+        <p>page</p>
+      </EditorShell>,
+    );
+    expect(screen.getByTestId('editor-shell-scroller').className).toContain('min-h-28');
+    const strip = screen.getByTestId('editor-shell-proposal').className;
+    expect(strip).toContain('shrink');
+    expect(strip).not.toContain('shrink-0');
+  });
+});

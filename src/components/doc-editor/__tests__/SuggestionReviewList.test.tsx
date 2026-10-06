@@ -45,3 +45,10 @@ describe('SuggestionReviewList pane variant', () => {
     expect(screen.getByTestId('srl').getAttribute('data-variant')).toBe('pane');
   });
 });
+
+describe('SuggestionReviewList acceptLabel', () => {
+  it('relabels the accept-all button', () => {
+    render(<SuggestionReviewList count={2} onAcceptAll={() => {}} acceptLabel="Add selected as follow-ups" />);
+    expect(screen.getByTestId('suggestion-review-list-accept-all')).toHaveTextContent('Add selected as follow-ups');
+  });
+});

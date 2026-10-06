@@ -97,3 +97,14 @@ describe('ChannelHeader — the member count', () => {
     expect(screen.getByTestId('channel-header-members')).toHaveTextContent('1 member');
   });
 });
+
+describe('ChannelHeader tab row', () => {
+  it('never shrinks the tabs below their width at full size', () => {
+    render(<ChannelHeader name="general" tabs={<span data-testid="t">Chat Documents Pinned Calls</span>} />);
+    expect(screen.getByTestId('t').parentElement!.className).toContain('flex-[1_0_auto]');
+  });
+  it('keeps the shrinking row in the small variant', () => {
+    render(<ChannelHeader name="general" size="sm" tabs={<span data-testid="t">Chat</span>} />);
+    expect(screen.getByTestId('t').parentElement!.className).toContain('min-w-0');
+  });
+});

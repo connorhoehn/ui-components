@@ -290,15 +290,14 @@ export function FloatingPanel({
     setZOrder(nextZOrder());
   }, []);
 
+  // Set once the person has moved the panel this session (drag, snap or a
+  // keyboard nudge). Until then a viewport resize re-places it from its anchor;
+  // after, a resize only clamps where they put it.
+  const movedRef = useRef(false);
+
   // Initial placement (before paint): persisted anchor re-resolved against
   // the CURRENT viewport — else the requested anchor.
-  useLayoutEffect(() => {
-    if (!open) return;
-    const el = rootRef.current;
-    if (!el || typeof window === 'undefined') return;
-    const rect = el.getBoundingClientRect();
-    const { width, height } = rect;
-
+  const place = useCallback((width: number, height: number) => {
     const key = persistKeyRef.current;
     const stored = key ? readStoredPlacement(key) : null;
     if (stored) {
@@ -321,7 +320,32 @@ export function FloatingPanel({
       return;
     }
     setPos(resolveAnchorPosition(anchor, width, height));
-  }, [open, persistPosition]);
+  }, [persistPosition]);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    const el = rootRef.current;
+    if (!el || typeof window === 'undefined') return;
+    movedRef.current = false;
+    const { width, height } = el.getBoundingClientRect();
+    place(width, height);
+  }, [open, place]);
+
+  // Re-clamp on viewport resize: a panel opened at 1440×900 and then met by a
+  // 1024×768 window used to keep its y and overflow the bottom edge.
+  useEffect(() => {
+    if (!open || typeof window === 'undefined') return;
+    const onResize = () => {
+      const el = rootRef.current;
+      if (!el) return;
+      const { width, height } = el.getBoundingClientRect();
+      const p = posRef.current;
+      if (movedRef.current && p) setPos(clampToViewport(p.x, p.y, width, height));
+      else place(width, height);
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [open, place]);
 
   const handleHeaderPointerDown = useCallback((e: React.PointerEvent) => {
     // Left button only for mice; touch/pen always drag.
@@ -339,6 +363,7 @@ export function FloatingPanel({
       height: rect.height,
     };
     setIsSnapping(false);
+    movedRef.current = true;
     setIsDragging(true);
     e.preventDefault();
   }, []);
@@ -414,6 +439,7 @@ export function FloatingPanel({
     const p = posRef.current;
     if (!el || !p) return;
     e.preventDefault();
+    movedRef.current = true;
     const rect = el.getBoundingClientRect();
     const step = e.shiftKey ? 1 : KEYBOARD_NUDGE_PX;
     const next = clampToViewport(

@@ -19,6 +19,8 @@
 import { cn } from '../../lib/cn';
 import Avatar from '../shared/Avatar';
 import { Button } from '../ui/Button';
+import { Checkbox } from '../forms/Checkbox';
+import type { ReactNode } from 'react';
 
 /** What kind of change is being proposed. */
 export type SuggestionCardKind = 'insert' | 'delete' | 'replace' | 'modify';
@@ -96,6 +98,20 @@ export interface SuggestionCardProps {
    */
   onAccept?: () => void;
   onReject?: () => void;
+  /** Label of the Accept button. Default "Accept". */
+  acceptLabel?: string;
+  /**
+   * Draw a checkbox at the start of the header for choosing a subset (accept
+   * the ticked ones together). Controlled: pass `selected` AND
+   * `onSelectedChange`; with `onSelectedChange` absent no checkbox is drawn.
+   */
+  selected?: boolean;
+  onSelectedChange?: (selected: boolean) => void;
+  /**
+   * A status chip or run-progress line in the header, before the kind label
+   * ("Drafting…", "Ready", "Failed").
+   */
+  status?: ReactNode;
   className?: string;
   'data-testid'?: string;
 }
@@ -149,6 +165,10 @@ export function SuggestionCard({
   onFocus,
   onAccept,
   onReject,
+  acceptLabel = 'Accept',
+  selected = false,
+  onSelectedChange,
+  status,
   className,
   'data-testid': testId = 'suggestion-card',
 }: SuggestionCardProps) {
@@ -165,6 +185,7 @@ export function SuggestionCard({
       data-testid={testId}
       data-kind={kind}
       data-active={active ? 'true' : 'false'}
+      data-selected={onSelectedChange ? (selected ? 'true' : 'false') : undefined}
       className={cn(
         'flex flex-col gap-2.5 border-b border-border px-4 py-3 text-sm last:border-b-0',
         active && 'bg-surface-inset',
@@ -172,6 +193,14 @@ export function SuggestionCard({
       )}
     >
       <div className="flex items-center gap-2">
+        {onSelectedChange && (
+          <Checkbox
+            checked={selected}
+            onChange={(next) => onSelectedChange(next)}
+            aria-label={`Select suggestion by ${author.trim() || 'unknown author'}`}
+            data-testid={`${testId}-select`}
+          />
+        )}
         <Avatar name={who} size={20} />
         {/* The person, and only the person, gets the row's flexible space.
             This card lives in a 280px margin gutter where the row also carries
@@ -188,8 +217,11 @@ export function SuggestionCard({
         {when !== null && (
           <span className="shrink-0 text-xs tabular-nums text-text-tertiary">{formatWhen(when)}</span>
         )}
+        {status != null && (
+          <span className="ml-auto flex shrink-0 items-center" data-testid={`${testId}-status`}>{status}</span>
+        )}
         <span
-          className={cn('ml-auto shrink-0 text-[11px] font-medium', KIND_TEXT[kind])}
+          className={cn(status == null && 'ml-auto', 'shrink-0 text-[11px] font-medium', KIND_TEXT[kind])}
           data-testid={`${testId}-kind`}
         >
           {KIND_LABEL[kind]}
@@ -241,7 +273,7 @@ export function SuggestionCard({
           )}
           {onAccept && (
             <Button variant="primary" size="sm" onClick={onAccept} data-testid={`${testId}-accept`}>
-              Accept
+              {acceptLabel}
             </Button>
           )}
         </div>

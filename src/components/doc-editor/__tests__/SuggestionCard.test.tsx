@@ -147,3 +147,23 @@ describe('SuggestionCard', () => {
     expect(screen.queryByTestId('suggestion-card-body')).toBeNull();
   });
 });
+
+describe('SuggestionCard selection, status and accept label', () => {
+  it('draws a controlled checkbox only when onSelectedChange is given', () => {
+    const onSelectedChange = vi.fn();
+    const { rerender } = render(<SuggestionCard kind="insert" author="Eve" insertedText="x" />);
+    expect(screen.queryByTestId('suggestion-card-select')).toBeNull();
+    rerender(<SuggestionCard kind="insert" author="Eve" insertedText="x" selected onSelectedChange={onSelectedChange} />);
+    const box = screen.getByTestId('suggestion-card-select') as HTMLInputElement;
+    expect(box.checked).toBe(true);
+    expect(screen.getByTestId('suggestion-card')).toHaveAttribute('data-selected', 'true');
+    fireEvent.click(box);
+    expect(onSelectedChange).toHaveBeenCalledWith(false);
+  });
+
+  it('shows a status slot and a custom accept label', () => {
+    render(<SuggestionCard kind="insert" author="Eve" insertedText="x" status={<span>Drafting</span>} onAccept={() => {}} acceptLabel="Add" />);
+    expect(screen.getByTestId('suggestion-card-status')).toHaveTextContent('Drafting');
+    expect(screen.getByTestId('suggestion-card-accept')).toHaveTextContent('Add');
+  });
+});

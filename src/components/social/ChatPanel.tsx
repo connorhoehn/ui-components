@@ -2285,8 +2285,8 @@ export function ChatPanel({
         </span>
       )}
       {isPinned && (
-        <span className="mb-0.5 block text-[11px] text-text-tertiary" data-testid="pinned-marker">
-          <PinIcon size={11} /> Pinned
+        <span className="mb-0.5 flex items-center gap-1 text-[11px] text-text-tertiary" data-testid="pinned-marker">
+          <PinIcon size={11} className="shrink-0" /> Pinned
         </span>
       )}
       {isDeleted ? (
