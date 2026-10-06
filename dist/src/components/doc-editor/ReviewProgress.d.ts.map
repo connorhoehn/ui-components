@@ -1,1 +1,0 @@
-{"version":3,"file":"ReviewProgress.d.ts","sourceRoot":"","sources":["../../../../src/components/doc-editor/ReviewProgress.tsx"],"names":[],"mappings":"AAMA,UAAU,mBAAmB;IAC3B,OAAO,EAAE,MAAM,CAAC;IAChB,KAAK,EAAE,MAAM,CAAC;CACf;AAED,MAAM,CAAC,OAAO,UAAU,cAAc,CAAC,EAAE,OAAO,EAAE,KAAK,EAAE,EAAE,mBAAmB,+BAiB7E"}
