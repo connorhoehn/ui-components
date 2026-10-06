@@ -43,7 +43,14 @@ export function AddPeoplePicker({
 
   // A fresh open starts clean; an added person leaving the candidate list drops from the selection.
   useEffect(() => { if (!open) { setQuery(''); setPicked([]); } }, [open]);
-  useEffect(() => { setPicked((p) => p.filter((id) => candidates.some((c) => c.userId === id))); }, [candidates]);
+  // Return the SAME array when nothing was dropped so React bails out; a fresh array every time
+  // turned each parent render (new-but-equal candidates) into an extra state update and commit.
+  useEffect(() => {
+    setPicked((p) => {
+      const next = p.filter((id) => candidates.some((c) => c.userId === id));
+      return next.length === p.length ? p : next;
+    });
+  }, [candidates]);
 
   const q = query.trim().toLowerCase();
   const shown = useMemo(

@@ -1,3 +1,4 @@
+import { Profiler } from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ChannelBindingStrip } from '../ChannelBindingStrip';
 import { CallLogList, type CallLogEntry } from '../CallLogList';
@@ -55,6 +56,20 @@ describe('AddPeoplePicker', () => {
     expect(screen.getByTestId('add-people-selected')).toHaveTextContent('Bo Kim');
     fireEvent.click(screen.getByTestId('add-people-confirm'));
     expect(onAdd).toHaveBeenCalledWith(['b']);
+  });
+  it('equal-content new candidate arrays cause no extra commits across 50 renders', () => {
+    let commits = 0;
+    const ui = (list: typeof cands) => (
+      <Profiler id="p" onRender={() => { commits += 1; }}>
+        <AddPeoplePicker open onClose={() => {}} candidates={list} onAdd={() => {}} />
+      </Profiler>
+    );
+    const { rerender } = render(ui([...cands]));
+    fireEvent.click(screen.getByText('Bo Kim'));
+    commits = 0;
+    for (let i = 0; i < 50; i += 1) rerender(ui(cands.map((c) => ({ ...c }))));
+    expect(commits).toBeLessThanOrEqual(51);
+    expect(screen.getByTestId('add-people-selected')).toHaveTextContent('Bo Kim');
   });
   it('confirm disabled with nothing picked; empty message', () => {
     render(<AddPeoplePicker open onClose={() => {}} candidates={[]} onAdd={() => {}} emptyMessage="Everyone is here." />);

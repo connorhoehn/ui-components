@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.421.0
+
+- **`AddPeoplePicker`:** the effect that prunes the picked list when candidates change returned a fresh array on every run, so each parent render with a new-but-equal `candidates` array caused an extra state update and commit (a burst of presence frames multiplied into effect-driven renders). It now returns the same array when nothing was dropped, so React bails out. Regression test renders 50 times with equal-content arrays.
+
 ## 2.420.0
 
 - **`HuddleBar` typography:** every text (name, phase, timer, people, chat/leave label, unread badge, share/chat wrappers) now goes through `Text`; no raw `text-*`/`font-*` utility remains in the file. Idle name is `xs` / normal / secondary (was `sm` semibold) so it reads as one row with a status footer's `Messages` and `0 online`; live name is `xs` / medium / primary. Bar icons are 16px like the footer's Social button.
