@@ -2440,6 +2440,7 @@ function Cn({ node: e, detail: n, selected: r, selectedRevisionId: i, live: a, o
 								children: yn[e.kind]
 							}),
 							/* @__PURE__ */ X("span", {
+								title: p,
 								className: t("min-w-0 flex-1 truncate text-[12px] font-semibold", h ? "text-text-secondary" : "text-text-primary"),
 								children: p
 							}),

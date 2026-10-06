@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.415.0
+
+- **`WorkActivityNode`:** the truncated header carries a native `title` with the full node title, so a clipped name stays readable on hover.
+
+---
+
 ## 2.414.0
 
 - **Suggestion marks (`/doc-editor`).** The Tiptap "track changes" engine, no React context: `SuggestionInsert` / `SuggestionDelete` / `SuggestionModify` / `SuggestionMarks`, the `SuggestChanges` extension (`setSuggestionMode`, `toggleSuggestionMode`, `Mod-Shift-e`), `authorSuggestionsAs`, `proposalAuthor`, the readers `listSuggestions`, `finalDoc`, `originalDoc`, `docForViewMode`, `previewStateForViewMode`, `viewModeClassName`, `SUGGESTION_VIEW_MODES`, the author encoding (`formatSuggestionAuthor`, `parseSuggestionAuthor`, `suggestionAuthorLabel`) and the identity helpers (`createSuggestionIdentity`, `suggestionKey`, ...). The transaction rewriting is a vendored `@handlewithcare/prosemirror-suggest-changes` 0.1.8 under `suggestions/vendor`; mark styling is in `styles.css`. Hosts must keep `@tiptap/pm` to one copy (Vite `optimizeDeps.exclude`). Ported from realtime-examples; its React provider and review panel are not included.

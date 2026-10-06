@@ -104,7 +104,7 @@ export function WorkActivityNode({ node, detail, selected, selectedRevisionId, l
         <span aria-hidden="true" className={cn('absolute inset-y-0 left-0 w-[3px]', failed ? 'bg-danger' : ready ? 'bg-success' : current ? 'bg-info' : accent.bar)} />
         <header className="flex items-center gap-2 border-b border-border bg-surface-panel py-1.5 pl-3.5 pr-2.5">
           <span aria-hidden="true" className={cn('flex h-5 w-5 shrink-0 items-center justify-center rounded text-[11px] leading-none', accent.chip)}>{ICONS[node.kind]}</span>
-          <span className={cn('min-w-0 flex-1 truncate text-[12px] font-semibold', muted ? 'text-text-secondary' : 'text-text-primary')}>{title}</span>
+          <span title={title} className={cn('min-w-0 flex-1 truncate text-[12px] font-semibold', muted ? 'text-text-secondary' : 'text-text-primary')}>{title}</span>
           <span aria-hidden="true" className={cn('h-2 w-2 shrink-0 rounded-full', muted ? 'bg-border-emphasis' : DOT[node.status])} />
         </header>
         <div className={cn('space-y-1.5 py-2 pl-3.5 pr-2.5 text-[11px] leading-snug', muted ? 'text-text-tertiary' : 'text-text-secondary')}>
