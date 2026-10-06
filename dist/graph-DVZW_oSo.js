@@ -6408,7 +6408,7 @@ function Ea({ data: e }) {
 				"aria-pressed": r,
 				"aria-label": `${da[n.type]}: ${n.title}${n.status ? `, ${_a(n.status)}` : ""}`,
 				title: n.description ?? n.title,
-				className: t("nodrag nopan flex h-full w-full cursor-pointer flex-col items-center gap-1 rounded-lg border-none bg-transparent px-2 pb-1 pt-1 text-center", "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"),
+				className: t("nodrag nopan pointer-events-auto flex h-full w-full cursor-pointer flex-col items-center gap-1 rounded-lg border-none bg-transparent px-2 pb-1 pt-1 text-center", "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"),
 				children: [
 					/* @__PURE__ */ Z("span", {
 						className: "relative inline-flex shrink-0",
@@ -6429,7 +6429,8 @@ function Ea({ data: e }) {
 						})]
 					}),
 					/* @__PURE__ */ X("span", {
-						className: "line-clamp-2 rounded-sm bg-surface px-1 text-[13px] font-medium leading-tight text-text-primary",
+						"data-testid": r ? "record-graph-selected-title" : void 0,
+						className: t("rounded-sm bg-surface px-1 text-[13px] font-medium leading-tight text-text-primary", r ? "relative z-10 w-max max-w-[220px] break-words shadow-sm" : "line-clamp-2"),
 						children: n.title
 					}),
 					d ? /* @__PURE__ */ X(k, {
@@ -6649,6 +6650,7 @@ function Ma({ records: e, edges: r, selectedKeys: i, onSelectionChange: a, onAsk
 			connectable: !1,
 			selectable: !1,
 			focusable: !1,
+			zIndex: +!!B.has(t),
 			data: {
 				record: e,
 				selected: B.has(t),

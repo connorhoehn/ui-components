@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.418.0
+
+- **`RecordGraph`:** a mouse can click and hover a record again. xyflow computes `pointer-events: none` on a node wrapper that is neither draggable nor selectable and has no node-level handler (this graph turns both off), and the node `button` inherited it, so only Enter/Space reached `onToggle`; the button now sets `pointer-events-auto`.
+- **`RecordGraph`:** a selected record prints its whole title (no two-line clamp, up to 220px wide) on its surface halo, and the selected node draws above its neighbours (`zIndex`).
+
 ## 2.416.0
 
 - **`HuddleBar`:** an `idle` phase for the pre-call bar (`name` is the page's context; draws `onStart` / `startLabel` / `startDisabledReason`, and no timer, counts, media or Leave); `chatLabel` and `chatDisabledReason` on the chat button; `onLeave` is optional (unused while idle).

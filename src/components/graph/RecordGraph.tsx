@@ -269,8 +269,13 @@ function RecordNodeView({ data }: NodeProps<RecordFlowNode>) {
         aria-pressed={selected}
         aria-label={`${TYPE_SINGULAR[record.type]}: ${record.title}${record.status ? `, ${statusLabel(record.status)}` : ''}`}
         title={record.description ?? record.title}
+        // `pointer-events-auto` (2.418.0): xyflow gives a node wrapper
+        // `pointer-events: none` when the node is neither draggable nor
+        // selectable and carries no node-level handler — this graph is both
+        // off by design — and the button inherited it, so a mouse could not
+        // click or hover a record (keyboard only).
         className={cn(
-          'nodrag nopan flex h-full w-full cursor-pointer flex-col items-center gap-1 rounded-lg border-none bg-transparent px-2 pb-1 pt-1 text-center',
+          'nodrag nopan pointer-events-auto flex h-full w-full cursor-pointer flex-col items-center gap-1 rounded-lg border-none bg-transparent px-2 pb-1 pt-1 text-center',
           'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
         )}
       >
@@ -295,7 +300,17 @@ function RecordNodeView({ data }: NodeProps<RecordFlowNode>) {
             </span>
           )}
         </span>
-        <span className="line-clamp-2 rounded-sm bg-surface px-1 text-[13px] font-medium leading-tight text-text-primary">{record.title}</span>
+        {/* A selected record prints its whole title (2.418.0) on the surface
+            halo, drawn over its neighbours; the rest clamp to two lines. */}
+        <span
+          data-testid={selected ? 'record-graph-selected-title' : undefined}
+          className={cn(
+            'rounded-sm bg-surface px-1 text-[13px] font-medium leading-tight text-text-primary',
+            selected ? 'relative z-10 w-max max-w-[220px] break-words shadow-sm' : 'line-clamp-2',
+          )}
+        >
+          {record.title}
+        </span>
         {dotted ? (
           <StatusDot
             size="xs"
@@ -597,6 +612,8 @@ export function RecordGraph({
       connectable: false,
       selectable: false,
       focusable: false,
+      // A selected record's uncut title draws over its neighbours (2.418.0).
+      zIndex: selected.has(id) ? 1 : 0,
       data: { record, selected: selected.has(id), onToggle: () => toggle(id) },
     };
   });
