@@ -1,0 +1,60 @@
+This directory is a VENDORED FORK of:
+
+    @handlewithcare/prosemirror-suggest-changes
+    version 0.1.8
+    https://github.com/handlewithcarecollective/prosemirror-suggest-changes
+
+It is vendored rather than depended on because the suggestion mark specs had to
+be replaced wholesale (see ../../editor/suggestions/marks.ts). Under Yjs,
+y-prosemirror's `gatherMarks` resolves marks BY NAME, so upstream's `insertion` /
+`deletion` / `modification` names shadow y-prosemirror's own `y-attributed-*`
+handling and silently corrupt authorship attribution. Our marks are named
+`suggestionInsert` / `suggestionDelete` / `suggestionModify`.
+
+Changes made to upstream 0.1.8 in this fork:
+
+  1. Mark specs removed. Marks are looked up from the schema by the names in
+     `markNames.ts`; the specs themselves are declared as Tiptap extensions in
+     ../../editor/suggestions/marks.ts.
+  2. `generateId.ts` (numeric/string suggestion ids) replaced by `identity.ts`.
+     A suggestion is identified by the mark attrs `{ user, username, date }`,
+     where `date` is bucketed to 10 minutes — the Fiduswriter convention. Two
+     marks with the same identity are `Mark.eq`-equal, so a burst of edits by
+     one author auto-joins into one suggestion instead of fragmenting.
+  3. Every `mark.attrs["id"]` read/compare became `suggestionIdentityOf(mark)` /
+     `sameSuggestion(a, b)`, and every `markType.create({ id })` became
+     `markType.create({ ...identity })`.
+  4. Mark lookups that used `MarkType.isInSet` (returns only the FIRST mark of a
+     type) became `findSuggestionMark`, which searches the whole mark set for a
+     matching identity. Without this, two authors' overlapping suggestions on
+     the same text node cannot be accepted/rejected independently.
+  5. Accept/reject now remove the specific `Mark` instance rather than every
+     mark of that type, so one author's decision does not erase the other's.
+  6. Ported from the published ESM build to TypeScript sources, importing
+     ProseMirror through `@tiptap/pm/*` so there is exactly one PM instance.
+
+Upstream license follows verbatim.
+
+--------------------------------------------------------------------------------
+
+MIT License
+
+Copyright (c) 2025 Handle with Care Collective
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

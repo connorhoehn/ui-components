@@ -52,3 +52,13 @@ describe('SuggestionReviewList acceptLabel', () => {
     expect(screen.getByTestId('suggestion-review-list-accept-all')).toHaveTextContent('Add selected as follow-ups');
   });
 });
+
+describe('SuggestionReviewList selectedCount', () => {
+  it('counts the ticked cards on the accept button and disables it at zero', () => {
+    const { rerender } = render(<SuggestionReviewList count={3} onAcceptAll={() => {}} acceptLabel="Add selected" selectedCount={2} />);
+    expect(screen.getByTestId('suggestion-review-list-accept-all')).toHaveTextContent('Add selected (2)');
+    expect(screen.getByTestId('suggestion-review-list-accept-all')).not.toBeDisabled();
+    rerender(<SuggestionReviewList count={3} onAcceptAll={() => {}} acceptLabel="Add selected" selectedCount={0} />);
+    expect(screen.getByTestId('suggestion-review-list-accept-all')).toBeDisabled();
+  });
+});

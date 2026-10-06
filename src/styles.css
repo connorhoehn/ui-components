@@ -2191,3 +2191,117 @@
 [data-accent="6"] { --data-accent: var(--color-cat-ai); }
 [data-accent="7"] { --data-accent: var(--color-cat-human); }
 [data-accent="8"] { --data-accent: var(--color-cat-source); }
+
+/* ── Suggestion marks (doc-editor/suggestions) ─────────────────────────── */
+.ProseMirror .suggestion {
+  border-radius: 2px;
+  /* Tinted underline, so overlapping suggestions from two authors are still
+     both legible. */
+  text-decoration-thickness: 1px;
+}
+
+.ProseMirror .suggestion--insert {
+  color: var(--color-success-fg);
+  background: var(--color-success-bg);
+  text-decoration: underline;
+}
+
+.ProseMirror .suggestion--delete {
+  color: var(--color-danger-fg);
+  background: var(--color-danger-bg);
+  text-decoration: line-through;
+}
+
+.ProseMirror .suggestion--modify {
+  color: var(--color-info-fg);
+  background: var(--color-info-bg);
+  border-bottom: 1px dashed var(--color-info-border);
+}
+
+/* Block-level suggestions, marked with node decorations by the plugin. */
+.ProseMirror [data-node-insertion='true'] {
+  border-left: 3px solid var(--color-success-border);
+  padding-left: 6px;
+}
+
+.ProseMirror [data-node-deletion='true'] {
+  border-left: 3px solid var(--color-danger-border);
+  padding-left: 6px;
+}
+
+/* The pilcrow widget marking a suggested paragraph break. */
+.ProseMirror .suggestion-pilcrow {
+  opacity: 0.55;
+  user-select: none;
+}
+
+/* Attribution, in the prose.
+ *
+ * The mark already renders `data-suggestion-username`, so the author's name can
+ * be shown from CSS alone — no node view, no React, nothing that could disagree
+ * with the mark it describes. It is the answer to "who proposed this?" without
+ * having to open a panel, which matters because an unreviewed suggestion is
+ * visible to everyone the moment it exists and the name on it is the only thing
+ * separating a proposal from an agreed edit.
+ *
+ * `position: relative` on the mark itself would break the inline layout of a
+ * suggestion that wraps across lines, so the anchor is a wrapper-free absolute
+ * box positioned against the editor and revealed on hover only. */
+.ProseMirror .suggestion[data-suggestion-username] {
+  position: relative;
+}
+
+.ProseMirror .suggestion[data-suggestion-username]:hover::after {
+  content: attr(data-suggestion-username);
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  z-index: 5;
+  white-space: nowrap;
+  pointer-events: none;
+  font-size: 11px;
+  line-height: 1.4;
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+
+/* Currently focused suggestion — set by the review panel via selectSuggestion. */
+.ProseMirror .suggestion--active {
+  outline: 2px solid var(--color-accent-border);
+  outline-offset: 1px;
+}
+
+/* ---------------------------------------------------------------------------
+ * View modes. See viewModes.ts — 'final' and 'original' render a DIFFERENT,
+ * throwaway document, so they need no rules. These two render the live doc and
+ * differ only here.
+ * ------------------------------------------------------------------------- */
+
+/* Word's "Simple Markup": the result reads clean; a change bar in the margin is
+   the only hint that a suggestion is there. */
+.suggestion-view-simple-markup .ProseMirror .suggestion--insert {
+  color: inherit;
+  background: none;
+  text-decoration: none;
+}
+
+.suggestion-view-simple-markup .ProseMirror .suggestion--delete {
+  /* Deleted text is not part of the resulting document, so hide it outright
+     rather than striking it through. */
+  display: none;
+}
+
+.suggestion-view-simple-markup .ProseMirror .suggestion--modify {
+  color: inherit;
+  background: none;
+  border-bottom: none;
+}
+
+.suggestion-view-simple-markup .ProseMirror [data-node-insertion='true'],
+.suggestion-view-simple-markup .ProseMirror [data-node-deletion='true'] {
+  border-left-color: var(--color-neutral-border);
+}

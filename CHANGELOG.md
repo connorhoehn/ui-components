@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.414.0
+
+- **Suggestion marks (`/doc-editor`).** The Tiptap "track changes" engine, no React context: `SuggestionInsert` / `SuggestionDelete` / `SuggestionModify` / `SuggestionMarks`, the `SuggestChanges` extension (`setSuggestionMode`, `toggleSuggestionMode`, `Mod-Shift-e`), `authorSuggestionsAs`, `proposalAuthor`, the readers `listSuggestions`, `finalDoc`, `originalDoc`, `docForViewMode`, `previewStateForViewMode`, `viewModeClassName`, `SUGGESTION_VIEW_MODES`, the author encoding (`formatSuggestionAuthor`, `parseSuggestionAuthor`, `suggestionAuthorLabel`) and the identity helpers (`createSuggestionIdentity`, `suggestionKey`, ...). The transaction rewriting is a vendored `@handlewithcare/prosemirror-suggest-changes` 0.1.8 under `suggestions/vendor`; mark styling is in `styles.css`. Hosts must keep `@tiptap/pm` to one copy (Vite `optimizeDeps.exclude`). Ported from realtime-examples; its React provider and review panel are not included.
+- **`parseDeckText`, `deckTitleFrom`, `recordingIdFor`** (`/doc-editor`): the pure `/deck <what> [--from ...] [--preview]` grammar, title and recording choice.
+- **`SuggestionReviewList selectedCount`:** with per-card `selected`, the accept-all button counts the ticked cards and disables at zero.
+- `useDeckPresence` and `SuggestionCard` selection/status shipped in 2.412.0.
+
 ## 2.413.0
 
 - **`ContextComposer`** forwards `modeRowStart` (drawn on the idle row too) and `sendWithReferencesOnly` to `RichChatComposer`. The context chip counts as a reference.
