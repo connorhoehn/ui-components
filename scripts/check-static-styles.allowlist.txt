@@ -1,6 +1,7 @@
 src/components/agents/components/TraceTimeline.tsx
 src/components/collaboration/CanvasCursorBoard.tsx
 src/components/collaboration/CursorCanvas.tsx
+src/components/collaboration/CursorOverlay.tsx
 src/components/collaboration/ReactionsOverlay.tsx
 src/components/collaboration/TableCursorGrid.tsx
 src/components/collaboration/TextCursorEditor.tsx

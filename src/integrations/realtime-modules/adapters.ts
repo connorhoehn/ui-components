@@ -7,7 +7,9 @@
 // on plain structural types so the package stays an optional peer dep.
 // Use the type imports in types.ts for the structural contracts.
 
+import type { CursorOverlayEntry } from '../../components/collaboration/CursorOverlay';
 import type {
+  RMCursorEntry,
   RMChatMessage,
   RMPresenceEntry,
   RMReaction,
@@ -512,4 +514,27 @@ export function adaptNotification(n: RMNotificationEntry): UINotificationItem {
 
 export function adaptNotifications(entries: RMNotificationEntry[]): UINotificationItem[] {
   return entries.map(adaptNotification);
+}
+
+/**
+ * Cursor entries -> overlay entries. Only freeform/canvas positions (numeric
+ * x and y) can be drawn over content; table/text cursors are skipped. The
+ * service-assigned `userColor` is kept: it is what tells collaborators apart.
+ */
+export function adaptCursors(cursors: readonly RMCursorEntry[]): CursorOverlayEntry[] {
+  const out: CursorOverlayEntry[] = [];
+  for (const c of cursors) {
+    const { x, y } = c.position as { x?: unknown; y?: unknown };
+    if (typeof x !== 'number' || typeof y !== 'number') continue;
+    const m = c.metadata ?? {};
+    const name = typeof m.displayName === 'string' ? m.displayName : undefined;
+    out.push({
+      clientId: c.clientId,
+      x,
+      y,
+      label: name ?? (typeof m.userInitials === 'string' ? m.userInitials : undefined),
+      color: typeof m.userColor === 'string' ? m.userColor : undefined,
+    });
+  }
+  return out;
 }

@@ -41,6 +41,28 @@ export interface RMPresenceEntry {
   lastHeartbeat: number;
 }
 
+/** Mirror of realtime-modules/src/client/types.ts CursorEntry */
+export interface RMCursorEntry {
+  clientId: string;
+  channel: string;
+  position: Record<string, unknown>;
+  metadata: Record<string, unknown> & {
+    mode?: string;
+    userInitials?: string;
+    userColor?: string;
+  };
+  timestamp: string;
+}
+
+/** Return shape of `useCursor(channel)` from realtime-modules (singular hook). */
+export interface RMUseCursorReturn {
+  /** Live cursors for the channel, excluding your own. */
+  cursors: RMCursorEntry[];
+  /** Publish your position (throttled by the hook). */
+  move: (position: Record<string, unknown>, metadata?: Record<string, unknown>) => void;
+  refresh?: () => void;
+}
+
 /** Mirror of realtime-modules/src/client/types.ts Reaction */
 export interface RMReaction {
   id: string;

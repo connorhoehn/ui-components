@@ -177,6 +177,27 @@ export interface WrappedChatPanelProps {
   renderMessageReferences?: ChatPanelProps['renderMessageReferences'];
   emojis?: readonly string[];
   onReply?: (message: ChatMessage) => void;
+  /**
+   * The message currently being answered, shown as a dismissible quote above
+   * the built-in input row (pair with `onReply`). The host also stamps
+   * `replyTo` into `sendMetadata` so the sent message carries it. Ignored when
+   * `composer` is supplied.
+   */
+  reply?: ChatPanelProps['reply'];
+  onCancelReply?: () => void;
+  /**
+   * Who has read up to the newest message. Forwarded to ChatPanel, which draws
+   * one "Seen by" line. Feed it from `useChatReadReceipts(channel, ...)`
+   * (realtime-examples `DocumentChatPanel.tsx:416`, named at `:625`,
+   * passed at `:855`).
+   */
+  readReceipts?: ChatPanelProps['readReceipts'];
+  /** False when the server keeps no receipts here: renders nothing. Default true. */
+  readReceiptsEnabled?: boolean;
+  /** ISO timestamp of the viewer's own read cursor: draws the "new" line. */
+  unreadFrom?: string;
+  /** Nest replies under their root message (realtime-examples `DocumentChatPanel.tsx:856`). */
+  threaded?: boolean;
   onJumpToMessage?: (messageId: string) => void;
   highlightedMessageId?: string | null;
   documentEditors?: ChatPanelProps['documentEditors'];
@@ -223,6 +244,12 @@ export function WrappedChatPanel({
   renderMessageReferences,
   emojis,
   onReply,
+  reply,
+  onCancelReply,
+  readReceipts,
+  readReceiptsEnabled,
+  unreadFrom,
+  threaded,
   onJumpToMessage,
   highlightedMessageId,
   documentEditors,
@@ -389,6 +416,12 @@ export function WrappedChatPanel({
         ? { pinnedMessageIds: pins.pinnedIds, onTogglePin }
         : {})}
       onReply={onReply}
+      reply={reply}
+      onCancelReply={onCancelReply}
+      readReceipts={readReceipts}
+      readReceiptsEnabled={readReceiptsEnabled}
+      unreadFrom={unreadFrom}
+      threaded={threaded}
       onJumpToMessage={onJumpToMessage}
       highlightedMessageId={highlightedMessageId}
       documentEditors={documentEditors}
