@@ -895,9 +895,31 @@ export declare interface DeckImage {
     alt: string;
 }
 
+export declare interface DeckPresence {
+    /** Everyone else on the deck, one per person (their most recent tab), by name. */
+    viewers: DeckViewer[];
+    /** The same people as `FollowModeBar` participants (`currentSectionId` = their slide id). */
+    participants: Participant[];
+    /** Slide id → the people on it, for the filmstrip. */
+    slideViewers: Record<string, DeckViewer[]>;
+    /** I have unsaved edits to this deck in another tab. */
+    editingElsewhere: boolean;
+}
+
+export declare const deckPresenceChannel: (documentId: string) => string;
+
 export declare interface DeckQuote {
     text: string;
     by: string;
+}
+
+/** The slice of a gateway presence entry this reads. Structural: any roster entry fits. */
+export declare interface DeckRosterEntry {
+    clientId: string;
+    status?: string;
+    metadata?: Record<string, unknown> | undefined;
+    timestamp?: string | number;
+    lastSeen?: string | number;
 }
 
 export declare interface DeckSlide {
@@ -929,6 +951,27 @@ export declare interface DeckSpec {
 }
 
 export declare type DeckTheme = 'product' | 'engineering' | 'plain';
+
+export declare interface DeckViewer {
+    /** The person's id (their user id, else the socket's client id). */
+    id: string;
+    clientId: string;
+    name: string;
+    avatarUrl?: string;
+    idle?: boolean;
+    /** "editing this deck" / "on this deck" / "viewing this deck". */
+    detail: string;
+    /** The title of the slide they are on, when `slideTitle` knows it. */
+    location?: string;
+    slideId?: string;
+    editing?: boolean;
+}
+
+/** The roster as viewers: others only, one per person, the newest entry winning. */
+export declare function deckViewersOf(roster: readonly DeckRosterEntry[], documentId: string, ownClientId: string | null, slideTitle?: (slideId: string) => string | undefined): DeckViewer[];
+
+/** A viewer as the `FollowModeBar` participant it follows. */
+export declare function deckViewerToParticipant(viewer: DeckViewer, entry?: DeckRosterEntry): Participant;
 
 /** The handoff's four tabs, for a host that has all of them. */
 export declare const DEFAULT_EDITOR_SHELL_TABS: readonly EditorShellTab[];
@@ -1585,6 +1628,9 @@ export declare interface DocumentZoomControl {
  */
 export declare function duplicateSlide(spec: DeckSpec, id: string): DeckSpec;
 
+/** True when another tab of mine (same user, another socket) has unsaved edits to this deck. */
+export declare function editingInMyOtherTab(roster: readonly DeckRosterEntry[], documentId: string, ownClientId: string | null): boolean;
+
 export declare function EditorShell({ breadcrumbs, title, onTitleChange, titleLabel, kind, starred, onStarredChange, statusPill, path, crumbsTrailing, subtitle, metaBar, participants, onParticipantClick, onFollowParticipant, followingParticipantId, meta, saveState, headActions, tabs, activeTab, onTabChange, toolbar, children, footer, proposal, surface, explorer, workbench, label, variant, itemType, itemKey, titleSize, titleOverflow, tabsTrailing, className, 'data-testid': testId, }: EditorShellProps): JSX.Element;
 
 export declare interface EditorShellProps {
@@ -1656,7 +1702,8 @@ export declare interface EditorShellProps {
      * (`--dock-inset`), never scrolling and never inside the composer (which
      * collapses when idle): a pending edit stays in view while the page it
      * would change scrolls above it. Its own height is capped at 40% of the
-     * surface and scrolls past that. Since 2.408.0.
+     * surface and scrolls past that, and it shrinks (to 4rem) before the page above
+     * it drops below 7rem, so a short window keeps some of the document. Since 2.408.0.
      */
     proposal?: ReactNode;
     /**
@@ -1721,6 +1768,8 @@ export declare function EditorToolbar({ editor }: EditorToolbarProps): JSX.Eleme
 declare interface EditorToolbarProps {
     editor: Editor | null;
 }
+
+export declare const EMPTY_DECK_PRESENCE: DeckPresence;
 
 export declare function ExecutiveSummaryCard({ bullets, contentText, fragment, ydoc, provider, }: {
     bullets: string[];
@@ -3438,7 +3487,7 @@ export declare const SUGGESTION_AUTHORING_MODES: {
 /** What the reader's typing currently does. */
 export declare type SuggestionAuthoringMode = 'editing' | 'suggesting' | 'viewing';
 
-export declare function SuggestionCard({ kind, author, when, context, deletedText, insertedText, insertedBlocks, deletedBlocks, active, onFocus, onAccept, onReject, className, 'data-testid': testId, }: SuggestionCardProps): JSX.Element;
+export declare function SuggestionCard({ kind, author, when, context, deletedText, insertedText, insertedBlocks, deletedBlocks, active, onFocus, onAccept, onReject, acceptLabel, selected, onSelectedChange, status, className, 'data-testid': testId, }: SuggestionCardProps): JSX.Element;
 
 /** What kind of change is being proposed. */
 export declare type SuggestionCardKind = 'insert' | 'delete' | 'replace' | 'modify';
@@ -3475,6 +3524,20 @@ export declare interface SuggestionCardProps {
      */
     onAccept?: () => void;
     onReject?: () => void;
+    /** Label of the Accept button. Default "Accept". */
+    acceptLabel?: string;
+    /**
+     * Draw a checkbox at the start of the header for choosing a subset (accept
+     * the ticked ones together). Controlled: pass `selected` AND
+     * `onSelectedChange`; with `onSelectedChange` absent no checkbox is drawn.
+     */
+    selected?: boolean;
+    onSelectedChange?: (selected: boolean) => void;
+    /**
+     * A status chip or run-progress line in the header, before the kind label
+     * ("Drafting…", "Ready", "Failed").
+     */
+    status?: ReactNode;
     className?: string;
     'data-testid'?: string;
 }
@@ -3506,7 +3569,7 @@ export declare interface SuggestionModeControlProps {
     'data-testid'?: string;
 }
 
-export declare function SuggestionReviewList({ count, children, onAcceptAll, onRejectAll, error, headerExtra, emptyTitle, emptyBody, title, variant, className, 'data-testid': testId, }: SuggestionReviewListProps): JSX.Element;
+export declare function SuggestionReviewList({ count, children, onAcceptAll, onRejectAll, acceptLabel, error, headerExtra, emptyTitle, emptyBody, title, variant, className, 'data-testid': testId, }: SuggestionReviewListProps): JSX.Element;
 
 export declare interface SuggestionReviewListProps {
     /** How many are open — the count in the header. */
@@ -3516,6 +3579,8 @@ export declare interface SuggestionReviewListProps {
     /** Present, the header offers Accept all / Reject all. Absent for a reader who cannot resolve. */
     onAcceptAll?: () => void;
     onRejectAll?: () => void;
+    /** Label of the accept-all button. Default "Accept all" — e.g. "Add selected as follow-ups" for a chosen subset. */
+    acceptLabel?: string;
     /** Something a resolution just refused, above the list. */
     error?: string | null;
     /** Something else the header should carry — a mode switch, say. */
@@ -3675,6 +3740,28 @@ export declare interface UploadedDocumentFile {
 }
 
 export declare function useCommentMarginPreference({ storageKey, defaultVisible, }?: CommentMarginPreferenceOptions): CommentMarginPreference;
+
+/**
+ * Publishes this tab's slide and editing state, and derives everyone else's.
+ * Leaving (unmount) clears both so peers are told.
+ */
+export declare function useDeckPresence(options: UseDeckPresenceOptions): DeckPresence;
+
+export declare interface UseDeckPresenceOptions {
+    /** The `doc:<documentId>` channel's roster (from realtime-modules `usePresence`). */
+    roster: readonly DeckRosterEntry[];
+    /** This socket's client id (`useGateway().clientId`). */
+    ownClientId: string | null;
+    /** Merges into this socket's presence metadata (`usePresence(...).updateMetadata`). Keep it referentially stable. */
+    updateMetadata: (metadata: Record<string, unknown>) => void;
+    documentId: string;
+    /** The slide on this tab's stage; `null` for none. */
+    selectedSlideId: string | null;
+    /** "Slide 3 · Delivery", for the byline card. Keep it referentially stable. */
+    slideTitle?: (slideId: string) => string | undefined;
+    /** This tab has unsaved edits — peers' Save warns while it does. */
+    editing?: boolean;
+}
 
 export declare function useDocumentActions({ documentId, userId, ws, updateMeta, addSection, exportJSON, getSectionFragment, getCanvasFragment, isCanvas, comments, }: UseDocumentActionsArgs): {
     demoLoaded: boolean;
@@ -4141,6 +4228,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasListStyle: {
             /**
              * Make the caret's block a list of the style's kind (if it is not one
@@ -4173,21 +4273,20 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
     }
 }
 
@@ -4220,12 +4319,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -4233,9 +4329,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -4251,21 +4350,9 @@ declare module '@tiptap/core' {
 }
 
 
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
     }
 }

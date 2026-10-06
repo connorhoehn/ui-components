@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.412.0
+
+- **New exports (additive).** `CloudIcon` and `MonitorIcon` from `/shared`; `HuddleBar` from `/video`; `useDeckPresence` from `/doc-editor`.
+- **`DeviceToggleSelect deviceMenu={false}`** renders the toggle without the device menu.
+- **`RichChatComposer`:** `modeRowStart` now renders on the idle row too, and `sendWithReferencesOnly` allows sending a message that carries only references.
+- **`SuggestionCard`:** `selected`, `onSelectedChange`, `status` and `acceptLabel`; `SuggestionReviewList` passes `acceptLabel` through.
+- **`WrappedChatPanel`:** `localMessages` prop for host-held messages shown with the hook's.
+- **Fixes:** deck header actions wrap at narrow widths; conversation tabs no longer clip; the pinned marker renders; `FloatingPanel` re-clamps to the viewport when it or the window resizes; `EditorShell` keeps a floor height for the proposal strip.
+
 ## 2.411.0
 
 - **`ComputerLab appearance="workspace"` (feat).** The same multiplexer — keys, saved layout, pane kinds, shell quota — under host-themed chrome: a header with `title` (or `null`), "N computers · N agents", the fleet's needs-you / running / error pills (each a rail filter), **+ Computer** and **Keys**, plus `headerActions`; a tabbed rail (`LabFleetRail`: Computers / Agents, search, status filter, project groups headed "6 computers · $0.46 / $95 · 5 bots", numbered rows stable across tabs, a laptop glyph for a paired machine, ⌘-click to select); card panes (`WorkspacePane`) with a kind menu, status badge and a one-line meta (`PaneStatusLine variant="meta"`), shedding quieter parts in a narrow split (container queries); a toolbar (`LabPaneToolbar`: "N panes ▾", +, "x / 8 shells", arrange as list / split, expand, ⋯ windows); and an instruction bar — **Nudge** (an instruction to each computer's agent, through `onInstruct` or, by default, a resumed `runTask` per targeted microVM, laptops skipped) or **Type** (keystrokes into the open panes), aimed at the focused pane, the ⌘-click selection or all computers. The classic appearance is the default and unchanged apart from the kind rules below.

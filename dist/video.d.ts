@@ -982,7 +982,7 @@ export declare interface DeviceSettingsPanelProps {
     'data-testid'?: string;
 }
 
-export declare function DeviceToggleSelect({ kind, on, onToggle, devices, selectedDeviceId, onSelectDevice, permission, level, size, showLabel, extraItems, disabledReason, className, 'data-testid': testId, }: DeviceToggleSelectProps): JSX.Element;
+export declare function DeviceToggleSelect({ kind, on, onToggle, devices, selectedDeviceId, onSelectDevice, permission, level, size, showLabel, extraItems, disabledReason, deviceMenu, className, 'data-testid': testId, }: DeviceToggleSelectProps): JSX.Element;
 
 export declare interface DeviceToggleSelectProps {
     kind: 'microphone' | 'camera';
@@ -1002,6 +1002,11 @@ export declare interface DeviceToggleSelectProps {
     extraItems?: DropdownMenuItem[];
     /** Disables the toggle with this as its title (e.g. "Microphone blocked in the browser"). */
     disabledReason?: string;
+    /**
+     * Draw the device caret and its menu. Default true. `false` gives a bare
+     * icon toggle (the shell footer), the host picking the device elsewhere.
+     */
+    deviceMenu?: boolean;
     className?: string;
     /** Test id on the toggle; the chevron gets `<id>-menu`. */
     'data-testid'?: string;
@@ -1610,6 +1615,53 @@ export declare type HlsPhase =
 | 'stalled'
 /** Unplayable. `error` carries the wording. */
 | 'error';
+
+export declare function HuddleBar({ name, phase, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onLeave, leaveLabel, extras, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
+
+/** One media control: the toggle, and an optional device list behind a caret. */
+export declare interface HuddleBarMedia {
+    on: boolean;
+    onToggle: () => void;
+    permission?: MediaPermission;
+    /** With a list (and `onSelectDevice`) the toggle gets its device caret; without, it is a bare icon toggle. */
+    devices?: DeviceOption[];
+    selectedDeviceId?: string;
+    onSelectDevice?: (deviceId: string) => void;
+    /** 0..1 input level (microphone). */
+    level?: number;
+    disabledReason?: string;
+}
+
+export declare type HuddleBarPhase = 'live' | 'connecting' | 'ringing' | 'ended';
+
+export declare interface HuddleBarProps {
+    /** The call's name: the place or person it is with. */
+    name: string;
+    /** Default `live`. */
+    phase?: HuddleBarPhase;
+    /** Epoch ms the call went live. Draws a ticking timer while `live`. */
+    startedAt?: number | null;
+    /** People in the call now. */
+    participantCount?: number;
+    /** Invitees still ringing, counted apart from `participantCount`. */
+    ringingCount?: number;
+    mic?: HuddleBarMedia;
+    camera?: HuddleBarMedia;
+    /** The share-page control (a host's "Share page" button, or a menu). Drawn after the media toggles. */
+    shareSlot?: ReactNode;
+    /** The chat toggle. Absent: no chat button. */
+    onToggleChat?: () => void;
+    chatOpen?: boolean;
+    /** Unread chat count on the toggle. */
+    chatUnread?: number;
+    onLeave: () => void;
+    /** Default "Leave". */
+    leaveLabel?: string;
+    /** Extra controls before Leave. */
+    extras?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
 
 export declare interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'children'> {
     size?: number;
@@ -3049,6 +3101,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasListStyle: {
             /**
              * Make the caret's block a list of the style's kind (if it is not one
@@ -3081,21 +3146,20 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
     }
 }
 
@@ -3128,12 +3192,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -3141,9 +3202,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -3159,21 +3223,9 @@ declare module '@tiptap/core' {
 }
 
 
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
     }
 }

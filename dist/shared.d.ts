@@ -969,6 +969,9 @@ export declare interface ChoiceRowProps {
 /** An X: "close", "dismiss". */
 export declare function CloseIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+/** A cloud: a hosted / cloud computer, beside `MonitorIcon` (a local one) in a fleet indicator. */
+export declare function CloudIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 /**
  * `TONE_SOFT` in the code family. One background for all tones — the code
  * palette carries meaning in the foreground, the way syntax highlighting
@@ -2686,6 +2689,10 @@ export declare interface IconPickerProps {
     curated?: string[];
 }
 
+declare interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'children'> {
+    size?: number;
+}
+
 /** A framed picture with a sun and a hill: "image". Since 2.386.5. */
 export declare function ImageIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -3293,6 +3300,9 @@ export declare interface ModalProps {
      */
     rawChildren?: boolean;
 }
+
+/** A monitor: "present this document" / someone is presenting. */
+export declare function MonitorIcon({ size, ...rest }: IconProps): JSX.Element;
 
 /** A crescent: the dark theme — "switch to (or currently in) dark mode". */
 export declare function MoonIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -6407,6 +6417,19 @@ export { }
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         canvasListStyle: {
             /**
              * Make the caret's block a list of the style's kind (if it is not one
@@ -6439,21 +6462,20 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
     }
 }
 
@@ -6486,12 +6508,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
         };
     }
 }
@@ -6499,9 +6518,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
         };
     }
 }
@@ -6517,21 +6539,9 @@ declare module '@tiptap/core' {
 }
 
 
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
     }
 }

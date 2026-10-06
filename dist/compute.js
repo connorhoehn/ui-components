@@ -1,18 +1,18 @@
 import { t as e } from "./cn-D4QmbyEy.js";
 import { n as t } from "./Button-C2OEUpX-.js";
 import { t as n } from "./Chip-0zFpfJ52.js";
-import { D as r, G as i, H as a, I as o, J as s, L as c, et as l, h as u, m as d, mt as f, tt as p, y as m, z as h } from "./Icons-D2Jd38B6.js";
+import { B as r, K as i, L as a, O as o, R as s, U as c, Y as l, b as u, h as d, ht as f, m as p, nt as m, tt as h } from "./Icons-B_xESAH3.js";
 import { t as g } from "./TitledFrame-B0QW93da.js";
 import { t as _ } from "./DotMeter-KxyExwVb.js";
 import { t as v } from "./StatusDot-ClFcLvD7.js";
 import { t as y } from "./SearchInput-8LpHL-oD.js";
-import { n as b, t as x } from "./DropdownMenu-zZZX4CFi.js";
+import { n as b, t as x } from "./DropdownMenu-BS-H0H0p.js";
 import { t as S } from "./SectionLabel-Bn8Vvb-K.js";
 import { t as C } from "./InlinePlaceholder-CbIBYc-_.js";
-import { n as ee } from "./FloatingPanel-CeJO82Sr.js";
+import { n as ee } from "./FloatingPanel-CP5vaOcJ.js";
 import { a as te, i as w, n as T, r as E, t as ne } from "./useComputeProjects-ZSazDRet.js";
 import { a as re, i as D, n as ie, o as O, r as ae, s as k, t as oe } from "./PaneStatusLine-m8wKbLkz.js";
-import { $ as se, A as ce, B as le, C as A, D as ue, E as de, F as fe, G as pe, H as me, I as he, J as j, K as M, L as ge, M as _e, N as ve, O as ye, P as be, Q as xe, R as Se, S as Ce, T as N, U as P, V as F, W as we, X as Te, Y as I, Z as Ee, _ as De, a as Oe, at as ke, b as Ae, c as je, ct as Me, d as Ne, dt as Pe, et as L, f as Fe, ft as Ie, g as R, h as Le, i as Re, it as z, j as B, k as ze, l as Be, lt as Ve, m as V, n as He, nt as Ue, o as We, ot as Ge, p as H, pt as Ke, q as qe, r as Je, rt as Ye, s as Xe, st as Ze, t as Qe, tt as $e, u as et, ut as tt, v as nt, w as rt, x as it, y as at, z as ot } from "./ComputeContext-7GgPw594.js";
+import { $ as se, A as ce, B as le, C as A, D as ue, E as de, F as fe, G as pe, H as me, I as he, J as j, K as M, L as ge, M as _e, N as ve, O as ye, P as be, Q as xe, R as Se, S as Ce, T as N, U as P, V as F, W as we, X as Te, Y as I, Z as Ee, _ as De, a as Oe, at as ke, b as Ae, c as je, ct as Me, d as Ne, dt as Pe, et as L, f as Fe, ft as Ie, g as R, h as Le, i as Re, it as z, j as B, k as ze, l as Be, lt as Ve, m as V, n as He, nt as Ue, o as We, ot as Ge, p as H, pt as Ke, q as qe, r as Je, rt as Ye, s as Xe, st as Ze, t as Qe, tt as $e, u as et, ut as tt, v as nt, w as rt, x as it, y as at, z as ot } from "./ComputeContext-ByG0RfLD.js";
 import { Fragment as st, useCallback as U, useEffect as W, useMemo as G, useRef as K, useState as q, useSyncExternalStore as ct } from "react";
 import { Fragment as lt, jsx as J, jsxs as Y } from "react/jsx-runtime";
 //#region src/components/compute/lib/paneTree.ts
@@ -456,10 +456,10 @@ function Lt(e, t) {
 	let n = [`${t} ${t === 1 ? "computer" : "computers"}`], r = e.spentUsd ?? e.liveSpendUsd;
 	return typeof e.budgetUsd == "number" && e.budgetUsd > 0 ? n.push(`${It(r, !0)} / ${It(e.budgetUsd, !1)}`) : r > 0 && n.push(It(r, !0)), e.botCount && n.push(`${e.botCount} ${e.botCount === 1 ? "bot" : "bots"}`), n.join(" · ");
 }
-function Rt({ computers: t, activeComputerId: n, openComputerIds: i, selectedIds: a, onSelect: o, onOpenInPane: c, statusFilter: l = null, onStatusFilterChange: u, tab: f, onTabChange: p, className: h }) {
+function Rt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds: i, onSelect: a, onOpenInPane: s, statusFilter: c = null, onStatusFilterChange: d, tab: f, onTabChange: m, className: h }) {
 	let [g, _] = q("computers"), v = f ?? g, b = (e) => {
-		_(e), p?.(e);
-	}, [S, C] = q(""), [ee, te] = q(/* @__PURE__ */ new Set()), w = G(() => new Set(i), [i]), T = Je(), E = T?.projects ?? [], re = T?.projectsAbsent ?? !0, ie = G(() => {
+		_(e), m?.(e);
+	}, [S, C] = q(""), [ee, te] = q(/* @__PURE__ */ new Set()), w = G(() => new Set(r), [r]), T = Je(), E = T?.projects ?? [], re = T?.projectsAbsent ?? !0, ie = G(() => {
 		let e = E.filter((e) => e.id !== "__unassigned__" && e.computers.length > 0);
 		if (re || e.length === 0) return [{
 			id: "__all",
@@ -496,12 +496,12 @@ function Rt({ computers: t, activeComputerId: n, openComputerIds: i, selectedIds
 		let e = /* @__PURE__ */ new Map(), t = 0;
 		for (let n of ie) for (let r of n.computers) e.set(r.id, t += 1);
 		return e;
-	}, [ie]), ae = U((e) => N(e, S) && (!l || k(e) === l), [S, l]), oe = G(() => t.filter(A).sort(Ce), [t]), se = [{
+	}, [ie]), ae = U((e) => N(e, S) && (!c || k(e) === c), [S, c]), oe = G(() => t.filter(A).sort(Ce), [t]), se = [{
 		label: "Show",
 		items: [{
 			label: "Every status",
-			checked: !l,
-			onSelect: () => u?.(null)
+			checked: !c,
+			onSelect: () => d?.(null)
 		}, ...[
 			"waiting",
 			"running",
@@ -510,8 +510,8 @@ function Rt({ computers: t, activeComputerId: n, openComputerIds: i, selectedIds
 			"stopped"
 		].map((e) => ({
 			label: D[e].label,
-			checked: l === e,
-			onSelect: () => u?.(l === e ? null : e)
+			checked: c === e,
+			onSelect: () => d?.(c === e ? null : e)
 		}))]
 	}];
 	return /* @__PURE__ */ Y("div", {
@@ -525,13 +525,13 @@ function Rt({ computers: t, activeComputerId: n, openComputerIds: i, selectedIds
 				children: [/* @__PURE__ */ J(zt, {
 					selected: v === "computers",
 					onSelect: () => b("computers"),
-					icon: /* @__PURE__ */ J(m, { size: 14 }),
+					icon: /* @__PURE__ */ J(u, { size: 14 }),
 					label: "Computers",
 					count: t.length
 				}), /* @__PURE__ */ J(zt, {
 					selected: v === "agents",
 					onSelect: () => b("agents"),
-					icon: /* @__PURE__ */ J(s, { size: 14 }),
+					icon: /* @__PURE__ */ J(l, { size: 14 }),
 					label: "Agents",
 					count: oe.length
 				})]
@@ -544,11 +544,11 @@ function Rt({ computers: t, activeComputerId: n, openComputerIds: i, selectedIds
 					onClear: () => C(""),
 					placeholder: "Find computer or agent…",
 					className: "flex-1 min-w-0"
-				}), u && /* @__PURE__ */ J(x, {
-					trigger: /* @__PURE__ */ J(r, { size: 14 }),
+				}), d && /* @__PURE__ */ J(x, {
+					trigger: /* @__PURE__ */ J(o, { size: 14 }),
 					triggerLabel: "Filter by status",
-					triggerTitle: l ? `Showing ${D[l].label}` : "Filter by status",
-					triggerClassName: e(l && "text-primary border-primary"),
+					triggerTitle: c ? `Showing ${D[c].label}` : "Filter by status",
+					triggerClassName: e(c && "text-primary border-primary"),
 					align: "end",
 					sections: se,
 					"data-testid": "lab-fleet-filter"
@@ -559,22 +559,22 @@ function Rt({ computers: t, activeComputerId: n, openComputerIds: i, selectedIds
 				children: ie.map((t) => {
 					let r = t.computers.filter(ae);
 					if (r.length === 0) return null;
-					let i = ee.has(t.id) && !S;
+					let o = ee.has(t.id) && !S;
 					return /* @__PURE__ */ Y("div", {
 						role: "presentation",
 						children: [t.name && /* @__PURE__ */ Y("button", {
 							type: "button",
 							tabIndex: -1,
-							"aria-expanded": !i,
+							"aria-expanded": !o,
 							onClick: () => te((e) => {
 								let n = new Set(e);
 								return n.has(t.id) ? n.delete(t.id) : n.add(t.id), n;
 							}),
 							"data-testid": "lab-fleet-group",
 							className: "w-full flex items-start gap-1.5 px-2 pt-2.5 pb-1 text-left bg-transparent border-none cursor-pointer hover:bg-surface-hover",
-							children: [/* @__PURE__ */ J(d, {
+							children: [/* @__PURE__ */ J(p, {
 								size: 12,
-								className: e("mt-0.5 shrink-0 text-text-tertiary transition-transform", i && "-rotate-90")
+								className: e("mt-0.5 shrink-0 text-text-tertiary transition-transform", o && "-rotate-90")
 							}), /* @__PURE__ */ Y("span", {
 								className: "min-w-0 flex-1",
 								children: [/* @__PURE__ */ J("span", {
@@ -585,14 +585,14 @@ function Rt({ computers: t, activeComputerId: n, openComputerIds: i, selectedIds
 									children: t.quickLine
 								})]
 							})]
-						}), !i && r.map((e) => /* @__PURE__ */ J(Vt, {
+						}), !o && r.map((e) => /* @__PURE__ */ J(Vt, {
 							computer: e,
 							number: O.get(e.id) ?? 0,
 							active: e.id === n,
-							selected: a?.has(e.id) ?? !1,
+							selected: i?.has(e.id) ?? !1,
 							open: w.has(e.id),
-							onSelect: o,
-							onOpenInPane: c
+							onSelect: a,
+							onOpenInPane: s
 						}, e.id))]
 					}, t.id);
 				})
@@ -602,10 +602,10 @@ function Rt({ computers: t, activeComputerId: n, openComputerIds: i, selectedIds
 					computer: e,
 					number: O.get(e.id) ?? 0,
 					active: e.id === n,
-					selected: a?.has(e.id) ?? !1,
+					selected: i?.has(e.id) ?? !1,
 					open: w.has(e.id),
-					onSelect: o,
-					onOpenInPane: c,
+					onSelect: a,
+					onOpenInPane: s,
 					showTask: !0
 				}, e.id))
 			})
@@ -655,7 +655,7 @@ function Bt({ label: e, children: t }) {
 		}) : t
 	});
 }
-function Vt({ computer: t, number: n, active: r, selected: i, open: a, onSelect: o, onOpenInPane: s, showTask: l = !1 }) {
+function Vt({ computer: t, number: n, active: r, selected: i, open: a, onSelect: o, onOpenInPane: c, showTask: l = !1 }) {
 	let u = k(t), d = D[u], f = rt(t);
 	return /* @__PURE__ */ Y("div", {
 		role: "presentation",
@@ -670,10 +670,10 @@ function Vt({ computer: t, number: n, active: r, selected: i, open: a, onSelect:
 			title: `${t.label} — ${d.label}${t.currentTask ? ` · ${t.currentTask}` : ""}`,
 			onClick: (e) => o(t, { toggle: e.metaKey || e.ctrlKey }),
 			onAuxClick: (e) => {
-				e.button === 1 && s && (e.preventDefault(), s(t));
+				e.button === 1 && c && (e.preventDefault(), c(t));
 			},
 			onKeyDown: (e) => {
-				e.key === "Enter" && (e.metaKey || e.ctrlKey) && s && (e.preventDefault(), s(t));
+				e.key === "Enter" && (e.metaKey || e.ctrlKey) && c && (e.preventDefault(), c(t));
 			},
 			className: e("min-w-0 flex-1 text-left flex items-start gap-2 pl-2 pr-1 py-1.5 border-l-2 cursor-pointer bg-transparent border-y-0 border-r-0", "focus:outline-none focus-visible:ring-1 focus-visible:ring-primary focus-visible:ring-inset", r ? "border-primary" : i ? "border-border-emphasis" : "border-transparent"),
 			children: [
@@ -683,7 +683,7 @@ function Vt({ computer: t, number: n, active: r, selected: i, open: a, onSelect:
 				}),
 				/* @__PURE__ */ J("span", {
 					className: "w-3.5 shrink-0 flex justify-center leading-5 pt-[5px]",
-					children: f ? /* @__PURE__ */ J(c, {
+					children: f ? /* @__PURE__ */ J(s, {
 						size: 14,
 						"aria-label": `laptop · ${d.label}`,
 						className: e("-mt-[2px]", Ft[u])
@@ -719,14 +719,14 @@ function Vt({ computer: t, number: n, active: r, selected: i, open: a, onSelect:
 					children: "▣"
 				})
 			]
-		}), s && /* @__PURE__ */ J("button", {
+		}), c && /* @__PURE__ */ J("button", {
 			type: "button",
 			tabIndex: -1,
-			onClick: () => s(t),
+			onClick: () => c(t),
 			"aria-label": `Open ${t.label} in a new pane`,
 			title: "Open in a new pane",
 			className: e("px-2 shrink-0 bg-transparent border-none cursor-pointer text-text-tertiary hover:text-primary", r ? "opacity-100" : "opacity-0 group-hover:opacity-100 focus-visible:opacity-100"),
-			children: /* @__PURE__ */ J(p, { size: 13 })
+			children: /* @__PURE__ */ J(m, { size: 13 })
 		})]
 	});
 }
@@ -756,7 +756,7 @@ var Ht = [
 	running: "running",
 	error: "error"
 };
-function Wt({ title: r, summary: i, statusFilter: a, onStatusFilter: s, canCreate: c, onCreate: u, onKeys: d, keysOpen: f, keysChord: p, actions: m, leaderLabel: h }) {
+function Wt({ title: r, summary: i, statusFilter: o, onStatusFilter: s, canCreate: c, onCreate: l, onKeys: u, keysOpen: d, keysChord: f, actions: p, leaderLabel: m }) {
 	return /* @__PURE__ */ Y("div", {
 		"data-testid": "lab-header",
 		className: "flex flex-wrap items-center gap-x-3 gap-y-1.5 px-3 py-2 shrink-0 border-b border-border bg-surface",
@@ -789,8 +789,8 @@ function Wt({ title: r, summary: i, statusFilter: a, onStatusFilter: s, canCreat
 				role: "group",
 				"aria-label": "Fleet status",
 				className: "flex items-center gap-1.5",
-				children: Ht.map(({ status: t, word: r, tone: o, hint: c }) => {
-					let l = i[Ut[t]], u = a === t;
+				children: Ht.map(({ status: t, word: r, tone: a, hint: c }) => {
+					let l = i[Ut[t]], u = o === t;
 					return /* @__PURE__ */ J("button", {
 						type: "button",
 						"aria-pressed": u,
@@ -800,7 +800,7 @@ function Wt({ title: r, summary: i, statusFilter: a, onStatusFilter: s, canCreat
 						className: e("rounded-full p-0 bg-transparent border-none cursor-pointer", "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary", l === 0 && !u && "opacity-60"),
 						children: /* @__PURE__ */ Y(n, {
 							size: "sm",
-							tone: o,
+							tone: a,
 							dot: "static",
 							outline: u ? void 0 : "soft",
 							solid: u,
@@ -814,32 +814,32 @@ function Wt({ title: r, summary: i, statusFilter: a, onStatusFilter: s, canCreat
 					}, t);
 				})
 			}),
-			h && /* @__PURE__ */ J("span", {
+			m && /* @__PURE__ */ J("span", {
 				"data-testid": "leader-armed",
 				className: "animate-pulse",
 				children: /* @__PURE__ */ Y(n, {
 					size: "sm",
 					tone: "caution",
-					children: [h, " …"]
+					children: [m, " …"]
 				})
 			}),
 			c && /* @__PURE__ */ Y(t, {
 				size: "sm",
 				variant: "primary",
-				onClick: u,
+				onClick: l,
 				"data-testid": "lab-create",
-				children: [/* @__PURE__ */ J(l, { size: 14 }), " Computer"]
+				children: [/* @__PURE__ */ J(h, { size: 14 }), " Computer"]
 			}),
 			/* @__PURE__ */ Y(t, {
 				size: "sm",
 				variant: "secondary",
-				onClick: d,
-				"aria-pressed": f,
-				title: `Keyboard shortcuts${p ? ` · ${p}` : ""}`,
+				onClick: u,
+				"aria-pressed": d,
+				title: `Keyboard shortcuts${f ? ` · ${f}` : ""}`,
 				"data-testid": "lab-keys",
-				children: [/* @__PURE__ */ J(o, { size: 14 }), " Keys"]
+				children: [/* @__PURE__ */ J(a, { size: 14 }), " Keys"]
 			}),
-			m
+			p
 		]
 	});
 }
@@ -856,7 +856,7 @@ function Gt({ label: t, onClick: n, pressed: r, disabled: i, children: a, testId
 		children: a
 	});
 }
-function Kt({ panes: t, onFocusPane: n, onAddPane: r, canAddPane: o, shellsOpen: s, maxShells: c, onArrange: u, zoomed: d, onToggleZoom: p, moreSections: m }) {
+function Kt({ panes: t, onFocusPane: n, onAddPane: a, canAddPane: o, shellsOpen: s, maxShells: l, onArrange: u, zoomed: d, onToggleZoom: p, moreSections: m }) {
 	return /* @__PURE__ */ Y("div", {
 		"data-testid": "lab-pane-toolbar",
 		className: "flex items-center gap-1.5 px-2 py-1.5 shrink-0",
@@ -885,20 +885,20 @@ function Kt({ panes: t, onFocusPane: n, onAddPane: r, canAddPane: o, shellsOpen:
 			}),
 			/* @__PURE__ */ J(Gt, {
 				label: "Add a pane",
-				onClick: r,
+				onClick: a,
 				disabled: !o,
 				testId: "lab-add-pane",
-				children: /* @__PURE__ */ J(l, { size: 14 })
+				children: /* @__PURE__ */ J(h, { size: 14 })
 			}),
 			/* @__PURE__ */ J("span", { className: "flex-1" }),
 			/* @__PURE__ */ Y("span", {
 				"data-testid": "lab-shell-count",
 				title: "Open terminals hold a real shell against the runtime's limit",
-				className: e("text-[12px] tabular-nums", s >= c ? "text-warning" : "text-text-tertiary"),
+				className: e("text-[12px] tabular-nums", s >= l ? "text-warning" : "text-text-tertiary"),
 				children: [
 					s,
 					" / ",
-					c,
+					l,
 					" shells"
 				]
 			}),
@@ -906,7 +906,7 @@ function Kt({ panes: t, onFocusPane: n, onAddPane: r, canAddPane: o, shellsOpen:
 				label: "Arrange as a list",
 				onClick: () => u("rows"),
 				testId: "lab-arrange-rows",
-				children: /* @__PURE__ */ J(h, { size: 14 })
+				children: /* @__PURE__ */ J(r, { size: 14 })
 			}),
 			/* @__PURE__ */ J(Gt, {
 				label: "Arrange as a split",
@@ -919,7 +919,7 @@ function Kt({ panes: t, onFocusPane: n, onAddPane: r, canAddPane: o, shellsOpen:
 				onClick: p,
 				pressed: d,
 				testId: "lab-zoom",
-				children: /* @__PURE__ */ J(a, { size: 14 })
+				children: /* @__PURE__ */ J(c, { size: 14 })
 			}),
 			/* @__PURE__ */ J(x, {
 				trigger: /* @__PURE__ */ J(i, { size: 14 }),
@@ -953,15 +953,15 @@ var qt = {
 		tone: "neutral"
 	}
 };
-function Jt({ computer: t, kind: r, kinds: o, onSwitchKind: s, active: c, zoomed: l, broadcasting: d, models: f, onFocus: p, onClose: m, onToggleZoom: h, moreSections: g, children: _ }) {
+function Jt({ computer: t, kind: r, kinds: a, onSwitchKind: o, active: s, zoomed: l, broadcasting: u, models: f, onFocus: p, onClose: m, onToggleZoom: h, moreSections: g, children: _ }) {
 	let y = k(t), b = D[y], S = qt[y];
 	return /* @__PURE__ */ Y("section", {
 		"aria-label": `${r.title ?? r.label} · ${t.label}`,
 		"data-testid": "lab-pane",
-		"data-active": c || void 0,
+		"data-active": s || void 0,
 		onMouseDown: p,
 		onFocusCapture: p,
-		className: e("@container flex flex-col flex-1 min-w-0 min-h-0 h-full rounded-lg border overflow-hidden bg-surface", c ? "border-primary" : "border-border"),
+		className: e("@container flex flex-col flex-1 min-w-0 min-h-0 h-full rounded-lg border overflow-hidden bg-surface", s ? "border-primary" : "border-border"),
 		children: [/* @__PURE__ */ Y("header", {
 			className: "shrink-0 flex flex-col gap-0.5 px-2.5 py-1.5 border-b border-border",
 			children: [/* @__PURE__ */ Y("div", {
@@ -984,12 +984,12 @@ function Jt({ computer: t, kind: r, kinds: o, onSwitchKind: s, active: c, zoomed
 						triggerTestId: "lab-pane-kind",
 						sections: [{
 							label: "Show this computer as",
-							items: o.map((e) => ({
+							items: a.map((e) => ({
 								label: e.title ?? e.label,
 								icon: e.icon,
 								description: e.description,
 								active: e.id === r.id,
-								onSelect: () => s(e)
+								onSelect: () => o(e)
 							}))
 						}]
 					}),
@@ -1030,7 +1030,7 @@ function Jt({ computer: t, kind: r, kinds: o, onSwitchKind: s, active: c, zoomed
 						"aria-label": l ? `Restore ${t.label}` : `Expand ${t.label}`,
 						title: l ? "Restore" : "Expand",
 						className: "hidden @[16rem]:inline-flex p-1 rounded bg-transparent border-none cursor-pointer text-text-tertiary hover:text-text-primary hover:bg-surface-hover",
-						children: /* @__PURE__ */ J(a, { size: 13 })
+						children: /* @__PURE__ */ J(c, { size: 13 })
 					}),
 					/* @__PURE__ */ J(x, {
 						trigger: /* @__PURE__ */ J(i, { size: 13 }),
@@ -1045,14 +1045,14 @@ function Jt({ computer: t, kind: r, kinds: o, onSwitchKind: s, active: c, zoomed
 						"aria-label": `Close pane ${t.label}`,
 						title: "Close pane",
 						className: "p-1 rounded bg-transparent border-none cursor-pointer text-text-tertiary hover:text-danger hover:bg-surface-hover",
-						children: /* @__PURE__ */ J(u, { size: 13 })
+						children: /* @__PURE__ */ J(d, { size: 13 })
 					})
 				]
 			}), /* @__PURE__ */ J(ie, {
 				variant: "meta",
 				computer: t,
 				models: f,
-				broadcasting: d,
+				broadcasting: u,
 				mode: r.statusMode ?? r.label,
 				"data-testid": "lab-pane-meta"
 			})]
