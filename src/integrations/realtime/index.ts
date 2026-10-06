@@ -138,6 +138,8 @@ export type {
   RMUseChatReturn,
   RMUsePresenceReturn,
   RMUseReactionsReturn,
+  RMUseCursorReturn,
+  RMCursorEntry,
   RMUseActivityReturn,
   RMUseFileUploadReturn,
   RMUseVideoHangoutReturn,
@@ -179,6 +181,8 @@ export { WrappedPresencePanel } from '../realtime-modules/WrappedPresencePanel';
 export type { WrappedPresencePanelProps } from '../realtime-modules/WrappedPresencePanel';
 export { WrappedActivityPanel } from '../realtime-modules/WrappedActivityPanel';
 export type { WrappedActivityPanelProps } from '../realtime-modules/WrappedActivityPanel';
+export { WrappedCursorOverlay } from '../realtime-modules/WrappedCursorOverlay';
+export type { WrappedCursorOverlayProps } from '../realtime-modules/WrappedCursorOverlay';
 export { WrappedReactionsOverlay } from '../realtime-modules/WrappedReactionsOverlay';
 export type { WrappedReactionsOverlayProps } from '../realtime-modules/WrappedReactionsOverlay';
 export { WrappedFileUploadDrop } from '../realtime-modules/WrappedFileUploadDrop';

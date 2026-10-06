@@ -24,7 +24,7 @@ import { ReactionChips } from './ReactionChips';
 import { MessageActionBar } from './MessageActionBar';
 import { InlineMessageEditor } from './InlineMessageEditor';
 import ConfirmDialog from '../shared/ConfirmDialog';
-import { QuoteBlock } from './QuoteBlock';
+import { QuoteBlock, type QuotedMessage } from './QuoteBlock';
 import {
   AttachmentBubble,
   TransferBubble,
@@ -111,6 +111,16 @@ export interface ChatPanelProps {
   onToggleReaction?: (messageId: string, emoji: string) => void;
   /** Starts a quote-reply. Presence of this enables the reply control. */
   onReply?: (message: ChatMessage) => void;
+  /**
+   * The message being answered. Renders a dismissible quote strip directly above
+   * the built-in input row. Ignored when `composer` is supplied (that slot owns
+   * its own reply UI, e.g. ContextComposer's `reply`). The panel does not stamp
+   * `metadata.replyTo` on the outgoing message: the host does, from the same
+   * value, in whatever `onSend` path it owns.
+   */
+  reply?: QuotedMessage | null;
+  /** Called by the quote strip's dismiss control. Omit for a quote with no dismiss. */
+  onCancelReply?: () => void;
   /**
    * Send this message to ANOTHER conversation. Presence of this enables the
    * Forward control; absent, nothing renders and every existing caller is
@@ -1383,6 +1393,8 @@ export function ChatPanel({
   reactionsFor,
   onToggleReaction,
   onReply,
+  reply,
+  onCancelReply,
   onForwardMessage,
   onCopyLink,
   onTogglePin,
@@ -3005,6 +3017,14 @@ export function ChatPanel({
           {composer}
         </div>
       ) : (
+      <div className="flex shrink-0 flex-col gap-1">
+      {reply && (
+        <QuoteBlock
+          quote={reply}
+          onDismiss={onCancelReply}
+          data-testid="chat-panel-pending-reply"
+        />
+      )}
       <div className="flex flex-row items-center gap-2 shrink-0">
         {onSendFiles && (
           <>
@@ -3088,6 +3108,7 @@ export function ChatPanel({
         >
           Send
         </Button>
+      </div>
       </div>
       )}
     </div>

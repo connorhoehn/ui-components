@@ -30,6 +30,8 @@ export type {
   RMUseChatReturn,
   RMUsePresenceReturn,
   RMUseReactionsReturn,
+  RMUseCursorReturn,
+  RMCursorEntry,
   RMUseActivityReturn,
   RMUseFileUploadReturn,
   RMUseVideoHangoutReturn,
@@ -77,6 +79,8 @@ export type { WrappedPresencePanelProps } from './WrappedPresencePanel';
 export { WrappedActivityPanel } from './WrappedActivityPanel';
 export type { WrappedActivityPanelProps } from './WrappedActivityPanel';
 
+export { WrappedCursorOverlay } from './WrappedCursorOverlay';
+export type { WrappedCursorOverlayProps } from './WrappedCursorOverlay';
 export { WrappedReactionsOverlay } from './WrappedReactionsOverlay';
 export type { WrappedReactionsOverlayProps } from './WrappedReactionsOverlay';
 
