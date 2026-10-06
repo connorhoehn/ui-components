@@ -470,3 +470,12 @@ export type { MeterRowProps } from './MeterRow';
 // Search workspace — matched-term marking for result rows. Since 2.400.0.
 export { Highlight, highlightSegments } from './Highlight';
 export type { HighlightProps } from './Highlight';
+
+// Combobox, Histogram and data-colour accents (parity-b): a searchable select,
+// a bare bucket histogram and runtime-colour accents without inline styles.
+export { Combobox } from './Combobox';
+export type { ComboboxProps, ComboboxOption, SingleComboboxProps, MultiComboboxProps } from './Combobox';
+export { Histogram } from './Histogram';
+export type { HistogramProps } from './Histogram';
+export { AccentStripe, dataAccentProps, DATA_ACCENT_SLOTS } from './dataAccent';
+export type { AccentStripeProps, DataAccent, DataAccentSlot } from './dataAccent';

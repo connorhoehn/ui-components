@@ -141,3 +141,4 @@ src/components/shared/RisingParticles.tsx # generated star fields: a 1300-point 
 src/components/video/CallTileRow.tsx             # prop-driven tile width/height (tileWidth/tileHeight; 176×88 or 132×74 in the dock)
 # 2.400.0 — OrgGraphTooltip: left/top computed from the hovered node's on-screen position.
 src/components/graph/org/OrgGraphTooltip.tsx
+src/components/shared/dataAccent.tsx # sets the --data-accent custom property for a raw runtime colour (slots need no style)
