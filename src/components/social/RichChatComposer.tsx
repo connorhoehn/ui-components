@@ -605,6 +605,19 @@ export interface RichChatComposerProps {
    */
   collapseWhenIdle?: boolean;
   /**
+   * `pane` (since 2.431.0): a simplified responsive mode for a composer in a
+   * side pane beside a page (a conversation pane in a four-column shell).
+   * Chosen by the composer's OWN measured width, never the viewport: below
+   * the `wide` breakpoint (`COMPOSER_BREAKPOINTS.wide`) the card is ONE input
+   * row — the mode and the draft's first reference folded into a single
+   * small leading chip ("Chat · Observability Platform", truncated in the
+   * middle, its × on hover or focus; the mode switch is the chip's menu),
+   * an icon-only Send, and a 1px focus border instead of the 2px ring. `Aa`,
+   * `?`, `⋯` and `modeRowEnd` appear only while focus is inside, on a second
+   * row at most. Wide, nothing changes. Default: off.
+   */
+  responsive?: 'pane';
+  /**
    * With `collapseWhenIdle`: `true` forces the full card whatever the idle
    * rule says — for host content the composer cannot see (a reply quote, a
    * comment hand-off, a task strip above it), which would otherwise sit over
@@ -1023,6 +1036,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   referencesPlacement = 'end',
   referenceDrop,
   collapseWhenIdle = false,
+  responsive,
   expanded: forceExpanded = false,
   documentMenu,
   modeRowStart,
@@ -2114,12 +2128,14 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const size: ComposerSize = layout === 'auto' ? renderedSize.current : layout;
   const wide = size === 'wide';
   const narrow = size === 'narrow';
+  // The pane mode (2.431.0): one input row below `wide`, by the composer's own width.
+  const pane = responsive === 'pane' && !wide;
   const compact = density === 'compact';
   const compactModeRow = modesEnabled && !fixedMode && (modeControl === 'compact' || modeControl === 'menu' || narrow);
   // `menu` puts the mode in a dropdown and the draft's references at the
   // row's END (a document chip on the right, the way an editor's dock reads);
   // otherwise references ride the compact row only at compact density.
-  const menuModeRow = compactModeRow && modeControl === 'menu' && !narrow;
+  const menuModeRow = compactModeRow && modeControl === 'menu' && !narrow && !pane;
   // The editor dock (menu + the `editor` strip) is the Folders mockup's card
   // (2.386.0): `✦ Agent ⌄` whose menu also holds what `?` and `⋯` held, the
   // picked command as a chip at the START of the instruction line, a
@@ -2180,7 +2196,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // Narrow keeps the toolbar behind a toggle. Opening it is a per-composer
   // choice that survives a resize (someone who opened it wants it open).
   const [formatOpen, setFormatOpen] = useState(false);
-  const singleRow = (narrow && !formatOpen) || collapsed;
+  const singleRow = ((narrow || pane) && !formatOpen) || collapsed;
   // Strikethrough, code, lists and quote: inline when wide, in the `⋯` menu otherwise.
   // The compact preset keeps only the bulleted list of those inline at wide
   // width and files the other four under `?` → Formatting (`formatInHints`).
@@ -2336,6 +2352,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         data-mode={modesEnabled ? activeMode : undefined}
         data-console={consoleSurface ? 'true' : undefined}
         data-composer-size={size}
+        data-responsive={pane ? 'pane' : undefined}
         data-backdrop-tone={consoleSurface ? tone : undefined}
         data-console-sky={consoleSurface ? (skyInherited ? 'inherited' : 'own') : undefined}
         data-working={working ? 'true' : undefined}
@@ -2433,6 +2450,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           // The editor dock's card keeps a 1px edge that tints toward the
           // primary while it is in use, rather than a 2px ring (the mockup).
           docked && 'rounded-lg focus-within:ring-0',
+          // The pane mode marks focus with the 1px border alone.
+          pane && 'focus-within:ring-0',
           docked && !activeCommand?.disabled && (activeCommand ? 'border-primary/25 focus-within:border-primary/35' : 'focus-within:border-primary/35'),
           referenceDragDepth > 0 && 'border-primary bg-primary-bg ring-2 ring-primary/40',
         )}
@@ -2513,7 +2532,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         )}
         {/* Above the words, because a reference is part of what is about to
             be said rather than a control for saying it. */}
-        {!referencesInModeRow && !collapsed && <ComposerReferences
+        {!referencesInModeRow && !collapsed && !pane && <ComposerReferences
           references={references ?? []}
           {...(onRemoveReference ? { onRemove: onRemoveReference } : {})}
           removeLabel={(reference) => `Remove ${reference.label} from this draft`}
@@ -2577,7 +2596,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             it changes what Enter DOES, which is not a formatting choice. */}
         {/* Narrow always takes the compact pill: three segmented tabs with
             labels do not fit beside anything at that width. */}
-        {compactModeRow && !collapsed && (
+        {compactModeRow && !collapsed && !pane && (
           <div className={cn('flex min-w-0 items-center gap-1.5 text-xs', docked ? 'px-3 pt-2' : 'px-2 pt-1', compact && 'flex-wrap', reveal)} data-testid={`${testId}-modes`} data-mode-control={menuModeRow ? 'menu' : 'compact'}>
             {docked && modeRowStart != null && (
               <span className="flex shrink-0 items-center" data-testid={`${testId}-mode-row-start`}>{modeRowStart}</span>
@@ -2716,7 +2735,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             </div>
           </div>
         )}
-        {modesEnabled && !fixedMode && !compactModeRow && !collapsed && (
+        {modesEnabled && !fixedMode && !compactModeRow && !collapsed && !pane && (
           <div className={cn('flex items-center gap-2 px-2 pt-1.5', reveal)} data-testid={`${testId}-modes`}>
             {/* Lit while it is not on Chat: the control that changed what Enter
                 does should be the one thing on the surface that glows. */}
@@ -2792,12 +2811,12 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             such as a disabled reason, used to wrap past the input and draw over
             the rows below. The whole text stays reachable as a tooltip while
             the box is empty. */}
-        {collapsed && modeRowStart != null && (
+        {collapsed && !pane && modeRowStart != null && (
           // The host's row-start content (a "Chat" label, its own mode select)
           // is drawn on the idle row too, not only once the card expands.
           <span className="ml-1.5 flex shrink-0 items-center" data-testid={`${testId}-mode-row-start`}>{modeRowStart}</span>
         )}
-        {collapsed && singleMode && (
+        {collapsed && !pane && singleMode && (
           // One mode: the same pill, as a label — nothing to switch to.
           <span
             title={MODE_NAMES[activeMode]}
@@ -2809,7 +2828,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             {MODE_NAMES[activeMode]}
           </span>
         )}
-        {collapsed && modesEnabled && !fixedMode && !singleMode && (
+        {collapsed && !pane && modesEnabled && !fixedMode && !singleMode && (
           // The idle row's mode pill: which mode Enter is in, at a glance.
           // Pressing it puts the caret in the input (the full composer, mode
           // switch included, comes back) — on click, after the pointer is up.
@@ -2824,7 +2843,63 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             {MODE_NAMES[activeMode]}
           </button>
         )}
-        {collapsed && !!references?.length && (
+        {pane && (modesEnabled || !!references?.length) && (
+          // The pane's context chip: mode · subject on ONE line. The subject
+          // keeps both ends ("Org › Initi…on Platform") so the leaf survives.
+          <span
+            data-testid={`${testId}-context-chip`}
+            title={[modesEnabled ? MODE_NAMES[activeMode] : null, references?.[0]?.title ?? references?.[0]?.label].filter(Boolean).join(' · ')}
+            className="group/chip ml-1.5 flex min-w-0 max-w-[60%] shrink items-center gap-1 self-center whitespace-nowrap rounded-full bg-surface-inset px-2 py-0.5 text-xs text-text-secondary"
+          >
+            {modesEnabled && (switchable && offeredModes.length > 1 ? (
+              <DropdownMenu
+                trigger={<span className="flex items-center gap-1 font-semibold text-text-primary" data-testid={`${testId}-mode-label`}><span aria-hidden="true" className="flex w-3.5 justify-center">{MODE_ICON[activeMode]}</span>{MODE_NAMES[activeMode]}</span>}
+                triggerLabel={`Composer mode: ${MODE_NAMES[activeMode]}`}
+                triggerTitle="Composer mode"
+                triggerTestId={`${testId}-mode-menu`}
+                data-testid={`${testId}-mode-menu-list`}
+                align="start"
+                triggerClassName="h-auto shrink-0 rounded border-0 bg-transparent p-0 hover:bg-transparent"
+                sections={[{
+                  items: offeredModes.map((m) => {
+                    const reason = isModeDisabled(m) ? modeUnavailableReasons?.[m] : undefined;
+                    return { label: MODE_NAMES[m], icon: MODE_ICON[m], active: m === activeMode, ...(reason ? { description: reason } : {}), onSelect: () => { requestMode(m); } };
+                  }),
+                }]}
+              />
+            ) : (
+              <span className="flex shrink-0 items-center gap-1 font-semibold text-text-primary" data-testid={`${testId}-mode-label`}>
+                <span aria-hidden="true" className="flex w-3.5 justify-center">{MODE_ICON[activeMode]}</span>{MODE_NAMES[activeMode]}
+              </span>
+            ))}
+            {!!references?.length && (() => {
+              const label = references[0]!.label;
+              const tail = label.length > 18 ? label.slice(-12) : '';
+              return (
+                <>
+                  {modesEnabled && <span aria-hidden="true" className="shrink-0 text-text-tertiary">·</span>}
+                  <span className="flex min-w-0 items-center" data-testid={`${testId}-context-label`}>
+                    <span className="min-w-0 truncate">{tail ? label.slice(0, -12) : label}</span>
+                    {tail && <span className="shrink-0">{tail}</span>}
+                  </span>
+                  {references.length > 1 && <span className="shrink-0 text-text-tertiary">+{references.length - 1}</span>}
+                  {onRemoveReference && (
+                    <button
+                      type="button"
+                      aria-label={`Remove ${label} from this draft`}
+                      onClick={() => onRemoveReference(references[0]!.id)}
+                      data-testid={`${testId}-context-remove`}
+                      className="-mr-1 grid h-4 w-4 shrink-0 place-items-center rounded-full border-0 bg-transparent p-0 text-[11px] leading-none text-text-tertiary opacity-0 hover:text-text-primary focus:opacity-100 group-hover/chip:opacity-100"
+                    >
+                      ×
+                    </button>
+                  )}
+                </>
+              );
+            })()}
+          </span>
+        )}
+        {collapsed && !pane && !!references?.length && (
           // What the draft is ABOUT is part of the draft, idle or not: a
           // reference added from elsewhere ("Reference in chat") must be
           // visible before anyone focuses the box. In the idle row, beside the
@@ -2975,7 +3050,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           )}
           data-testid={`${testId}-toolbar`}
         >
-          {narrow && !collapsed && toolbarButton(
+          {(narrow || pane) && !collapsed && (!pane || focusWithin) && toolbarButton(
             formatOpen ? 'Hide formatting' : 'Show formatting',
             formatOpen,
             () => setFormatOpen((v) => !v),
@@ -3140,7 +3215,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             <span className={cn('shrink-0 select-none text-text-tertiary', docked ? 'ml-3 text-xs' : 'ml-1 border-l border-border pl-2 text-xs')} data-testid={`${testId}-commands-hint`}>/ commands</span>
           )}
 
-          {!collapsed && !docked && ((!hintsInRow && !!resolvedHints.length) || suggestionsInMenu || (formatInHints && !!editor)) ? (
+          {!collapsed && !docked && (!pane || focusWithin) && ((!hintsInRow && !!resolvedHints.length) || suggestionsInMenu || (formatInHints && !!editor)) ? (
             <DropdownMenu
               trigger={<span aria-hidden="true" className="text-xs font-semibold leading-none">?</span>}
               triggerLabel="Keyboard hints"
@@ -3178,7 +3253,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             />
           ) : null}
 
-          {showMoreActions && !collapsed && (
+          {pane && focusWithin && modeRowEnd != null && (
+            <span className="flex shrink-0 items-center" data-testid={`${testId}-mode-row-end`}>{modeRowEnd}</span>
+          )}
+          {showMoreActions && !collapsed && (!pane || focusWithin) && (
             <span className="ml-auto flex shrink-0 items-center pr-1" data-testid={`${testId}-more-actions`}>
               <DropdownMenu
                 trigger={<span aria-hidden="true" className="text-sm leading-none">⋯</span>}
@@ -3261,14 +3339,15 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               onClick={terminalMode ? submitShell : send}
               disabled={!canSend}
               data-testid={`${testId}-send`}
+              {...(pane ? { title: sendShortcut === 'mod-enter' ? `${sendLabel} (⌘ Return)` : sendLabel, 'data-icon-only': 'true' } : {})}
               className={cn(
-                (submitLead == null || collapsed) && !(showMoreActions && !collapsed) && 'ml-auto',
+                (submitLead == null || collapsed) && !(showMoreActions && !collapsed && (!pane || focusWithin)) && 'ml-auto',
                 `shrink-0 rounded bg-primary ${BUTTON_WEIGHT} text-on-primary disabled:opacity-40`,
                 (docked || menuModeRow) && 'rounded-md',
-                sendSize,
+                pane ? 'grid h-7 w-7 place-items-center rounded-md p-0' : sendSize,
               )}
             >
-              {sendContent}
+              {pane ? <><SendIcon size={14} aria-hidden="true" /><span className="sr-only">{sendLabel}</span></> : sendContent}
             </button>
           )}
         </div>

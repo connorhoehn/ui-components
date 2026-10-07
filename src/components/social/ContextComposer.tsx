@@ -277,6 +277,13 @@ export interface ContextComposerProps {
   // ── state ──
   /** Force the full card. */
   expanded?: boolean;
+  /**
+   * `pane` (since 2.431.0): the simplified responsive mode for a composer in
+   * a side pane — one input row with a single mode · subject chip, icon-only
+   * Send and a 1px focus border, chosen by the composer's own width (below
+   * the wide breakpoint). See `RichChatComposerProps.responsive`.
+   */
+  responsive?: 'pane';
   /** An agent is mid-turn: the console drifts faster. */
   working?: boolean;
   /** Default true: Agent/Terminal paint the console surface. */
@@ -429,6 +436,7 @@ export function ContextComposerBase({
   onSend,
   identity,
   expanded,
+  responsive,
   working,
   console: consoleOn = true,
   disabled,
@@ -696,6 +704,7 @@ export function ContextComposerBase({
                 density={look.density}
                 collapseWhenIdle={look.collapseWhenIdle}
                 expanded={forceExpanded}
+                {...(responsive ? { responsive } : {})}
                 modeShortcuts
                 modeTriggers
                 backdropTone={consoleOn ? 'auto' : 'none'}

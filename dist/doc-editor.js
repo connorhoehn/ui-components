@@ -13,14 +13,14 @@ import { t as h } from "./Banner-8ngXUtJu.js";
 import { t as g } from "./Modal-CjgKqXl7.js";
 import { t as _ } from "./Input-CpLq80dw.js";
 import { t as v } from "./EmptyState-DnbFBYDA.js";
-import { n as y } from "./Tabs-BArH-7z_.js";
-import { t as b } from "./Textarea-Drx4YDDG.js";
-import { t as x } from "./Avatar-CmYYkk9C.js";
-import { t as S } from "./SegmentedControl-Blx221jS.js";
-import { t as C } from "./InlineAlert-CBtteaVZ.js";
-import { t as w } from "./CardHeader-C50GEAmo.js";
-import { t as T } from "./PresenceAvatars-DAgxQ3PF.js";
-import { n as E } from "./DropdownMenu-BS-H0H0p.js";
+import { n as y } from "./DropdownMenu-BS-H0H0p.js";
+import { n as b } from "./Tabs-dGMxKqVQ.js";
+import { t as x } from "./Textarea-Drx4YDDG.js";
+import { t as S } from "./Avatar-CmYYkk9C.js";
+import { t as C } from "./SegmentedControl-Blx221jS.js";
+import { t as w } from "./InlineAlert-CBtteaVZ.js";
+import { t as T } from "./CardHeader-C50GEAmo.js";
+import { t as E } from "./PresenceAvatars-DAgxQ3PF.js";
 import { t as ee } from "./ChangeDiff-BHerlwTS.js";
 import { t as te } from "./MetaLine-BtHTTScI.js";
 import { t as ne } from "./Select-C6OGjVyH.js";
@@ -28,13 +28,13 @@ import { t as D } from "./Checkbox-C70AGFS5.js";
 import { n as re } from "./FileKindMark-DhjYpKjg.js";
 import { t as ie } from "./activationKey-CjbL3LUv.js";
 import { A as O, k } from "./renderers-DS5eZtXk.js";
-import { A as ae, B as A, C as j, D as oe, E as M, F as N, G as se, H as P, I as ce, J as le, K as ue, L as F, M as I, N as de, O as fe, P as pe, R as me, S as he, T as ge, U as _e, V as ve, W as ye, Y as be, Z as xe, _ as Se, a as Ce, b as we, c as Te, d as Ee, f as De, g as Oe, h as ke, i as Ae, j as je, k as Me, l as Ne, m as Pe, n as Fe, o as Ie, p as Le, q as Re, r as ze, s as Be, t as Ve, u as He, v as Ue, w as We, x as Ge, y as Ke, z as qe } from "./ProposedEditStrip-BsBLANDU.js";
+import { A as ae, B as A, C as j, D as oe, E as M, F as N, G as se, H as P, I as ce, J as le, K as ue, L as F, M as I, N as de, O as fe, P as pe, R as me, S as he, T as ge, U as _e, V as ve, W as ye, Y as be, Z as xe, _ as Se, a as Ce, b as we, c as Te, d as Ee, f as De, g as Oe, h as ke, i as Ae, j as je, k as Me, l as Ne, m as Pe, n as Fe, o as Ie, p as Le, q as Re, r as ze, s as Be, t as Ve, u as He, v as Ue, w as We, x as Ge, y as Ke, z as qe } from "./ProposedEditStrip-t2Uh3wM_.js";
 import { o as Je, t as Ye } from "./VerdictChip-B8JaUpcJ.js";
 import { a as Xe, c as Ze, d as Qe, f as $e, h as et, i as tt, l as nt, m as rt, n as it, o as at, p as ot, r as st, s as ct, t as lt, u as ut } from "./TiptapEditor-BjjwDyPa.js";
 import { i as dt, n as ft, r as pt, t as mt } from "./FloatingComposerDock-ZezHreIm.js";
-import { A as ht, B as gt, C as _t, D as vt, E as yt, F as bt, G as xt, H as St, I as Ct, J as wt, K as Tt, L as Et, M as Dt, N as Ot, O as kt, P as At, R as jt, S as Mt, T as Nt, U as Pt, V as Ft, W as It, _ as Lt, a as Rt, b as zt, c as Bt, d as Vt, f as Ht, g as Ut, h as Wt, i as Gt, j as Kt, k as qt, l as Jt, m as Yt, o as Xt, p as Zt, q as Qt, r as $t, s as en, t as tn, u as nn, v as rn, w as an, x as on, y as sn, z as cn } from "./DocumentEditorPage-BNkF2g8I.js";
-import { C as ln, S as un, T as dn, _ as fn, a as pn, b as mn, c as hn, d as gn, f as _n, g as vn, h as yn, i as bn, l as xn, m as Sn, n as Cn, o as wn, p as Tn, r as En, s as Dn, t as On, u as kn, v as An, w as jn, x as Mn, y as Nn } from "./useDocumentImageUpload-DySteVsb.js";
-import { r as Pn } from "./RichChatComposer-Bw6nGk-f.js";
+import { A as ht, B as gt, C as _t, D as vt, E as yt, F as bt, G as xt, H as St, I as Ct, J as wt, K as Tt, L as Et, M as Dt, N as Ot, O as kt, P as At, R as jt, S as Mt, T as Nt, U as Pt, V as Ft, W as It, _ as Lt, a as Rt, b as zt, c as Bt, d as Vt, f as Ht, g as Ut, h as Wt, i as Gt, j as Kt, k as qt, l as Jt, m as Yt, o as Xt, p as Zt, q as Qt, r as $t, s as en, t as tn, u as nn, v as rn, w as an, x as on, y as sn, z as cn } from "./DocumentEditorPage-CT-Xa6-9.js";
+import { C as ln, S as un, T as dn, _ as fn, a as pn, b as mn, c as hn, d as gn, f as _n, g as vn, h as yn, i as bn, l as xn, m as Sn, n as Cn, o as wn, p as Tn, r as En, s as Dn, t as On, u as kn, v as An, w as jn, x as Mn, y as Nn } from "./useDocumentImageUpload-c0bjAGdI.js";
+import { r as Pn } from "./RichChatComposer-YYRe66QZ.js";
 import { forwardRef as Fn, useCallback as L, useEffect as R, useId as In, useImperativeHandle as Ln, useMemo as z, useRef as B, useState as V } from "react";
 import { Fragment as H, jsx as U, jsxs as W } from "react/jsx-runtime";
 import * as Rn from "yjs";
@@ -544,7 +544,7 @@ function xr({ item: e, onAck: t, onReject: r }) {
 				]
 			}), i && /* @__PURE__ */ W("div", {
 				className: n("mt-2"),
-				children: [/* @__PURE__ */ U(b, {
+				children: [/* @__PURE__ */ U(x, {
 					value: o,
 					onChange: (e) => s(e.target.value),
 					onKeyDown: (e) => {
@@ -993,7 +993,7 @@ var Wr = {
 	field: "Field change",
 	prose: "Body text"
 };
-function Gr({ utterance: e, kind: t, status: i, confidence: o, attachState: s, targetLabel: c, targetReason: l, before: u, after: d, edits: f, rationale: p, draftError: m, author: h, category: g, path: v, locationHint: y, verdict: b, verdictStatus: S = "idle", verdictError: C, revision: w, onRereview: T, onAccept: E, onReject: te, onRedraft: ne, onReattach: D, onConfirmAttachment: re, className: ie, "data-testid": O = "proposal-card" }) {
+function Gr({ utterance: e, kind: t, status: i, confidence: o, attachState: s, targetLabel: c, targetReason: l, before: u, after: d, edits: f, rationale: p, draftError: m, author: h, category: g, path: v, locationHint: y, verdict: b, verdictStatus: x = "idle", verdictError: C, revision: w, onRereview: T, onAccept: E, onReject: te, onRedraft: ne, onReattach: D, onConfirmAttachment: re, className: ie, "data-testid": O = "proposal-card" }) {
 	let [k, ae] = V(!1), [A, j] = V(null), [oe, M] = V(!1), [N, se] = V(""), P = i === "applied", ce = i === "rejected", le = P || ce;
 	async function ue() {
 		ae(!0), j(null);
@@ -1030,7 +1030,7 @@ function Gr({ utterance: e, kind: t, status: i, confidence: o, attachState: s, t
 					h && /* @__PURE__ */ W("span", {
 						className: "flex min-w-0 items-center gap-1.5",
 						"data-testid": `${O}-requester`,
-						children: [/* @__PURE__ */ U(x, {
+						children: [/* @__PURE__ */ U(S, {
 							name: h.name,
 							size: 18,
 							...h.avatarUrl ? { src: h.avatarUrl } : {}
@@ -1115,7 +1115,7 @@ function Gr({ utterance: e, kind: t, status: i, confidence: o, attachState: s, t
 			}),
 			i !== "drafting" && /* @__PURE__ */ U(Ye, {
 				verdict: b,
-				status: S,
+				status: x,
 				error: C,
 				revision: w,
 				"data-testid": `${O}-verdict`
@@ -1348,9 +1348,9 @@ function Zr({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 	_.current = g;
 	let v = L(() => {
 		m.current !== null && (clearTimeout(m.current), m.current = null);
-	}, []), y = L(() => {
+	}, []), b = L(() => {
 		v(), f(null);
-	}, [v]), b = L((e, n, r) => {
+	}, [v]), x = L((e, n, r) => {
 		if (v(), !_.current.has(e)) return;
 		let i = n ?? t?.current?.querySelector(`[data-comment-id="${Yr(e)}"]`) ?? null;
 		i instanceof HTMLElement && (p.current = i, f({
@@ -1359,31 +1359,31 @@ function Zr({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 		}));
 	}, [v, t]);
 	Ln(l, () => ({
-		openComment: (e, t) => b(e, t, "click"),
-		close: y
-	}), [b, y]);
-	let S = B(null), C = d?.id ?? null;
+		openComment: (e, t) => x(e, t, "click"),
+		close: b
+	}), [x, b]);
+	let C = B(null), w = d?.id ?? null;
 	R(() => {
-		S.current !== C && (S.current = C, o?.(C));
-	}, [C, o]), R(() => v, [v]), R(() => {
+		C.current !== w && (C.current = w, o?.(w));
+	}, [w, o]), R(() => v, [v]), R(() => {
 		let e = t?.current;
 		if (!e) return;
 		let r = (e) => e instanceof Element ? e.closest(qr) : null, a = (e) => {
 			let t = r(e.target), n = t?.getAttribute("data-comment-id");
 			if (!(!t || !n)) {
 				if (h.current?.id === n) {
-					y();
+					b();
 					return;
 				}
-				b(n, t, "click");
+				x(n, t, "click");
 			}
 		}, o = (e) => {
 			if (!i) return;
 			let t = r(e.target), a = t?.getAttribute("data-comment-id");
-			!t || !a || (v(), h.current?.id !== a && (m.current = setTimeout(() => b(a, t, "hover"), n)));
+			!t || !a || (v(), h.current?.id !== a && (m.current = setTimeout(() => x(a, t, "hover"), n)));
 		}, s = (e) => {
 			i && r(e.target) && (v(), m.current = setTimeout(() => {
-				h.current?.via === "hover" && y();
+				h.current?.via === "hover" && b();
 			}, Jr));
 		};
 		return e.addEventListener("click", a), e.addEventListener("mouseover", o), e.addEventListener("mouseout", s), () => {
@@ -1393,81 +1393,81 @@ function Zr({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 		t,
 		i,
 		n,
+		x,
 		b,
-		y,
 		v
 	]);
-	let w = C ? g.get(C) ?? null : null, T = (e) => () => {
-		w && (e?.(w.id), y());
+	let T = w ? g.get(w) ?? null : null, E = (e) => () => {
+		T && (e?.(T.id), b());
 	};
-	return /* @__PURE__ */ U(E, {
+	return /* @__PURE__ */ U(y, {
 		trigger: p,
-		open: !!w,
-		onClose: y,
+		open: !!T,
+		onClose: b,
 		placement: "bottom-start",
 		className: "w-72 p-0",
-		"aria-label": w ? `Comment by ${w.author}` : void 0,
+		"aria-label": T ? `Comment by ${T.author}` : void 0,
 		"data-testid": u,
-		children: w && /* @__PURE__ */ W("div", {
+		children: T && /* @__PURE__ */ W("div", {
 			"data-testid": `${u}-card`,
-			"data-comment-id": w.id,
+			"data-comment-id": T.id,
 			className: "flex flex-col gap-2 p-3",
 			onMouseEnter: v,
 			onMouseLeave: () => {
 				v(), m.current = setTimeout(() => {
-					h.current?.via === "hover" && y();
+					h.current?.via === "hover" && b();
 				}, Jr);
 			},
 			children: [
 				/* @__PURE__ */ W("div", {
 					className: "flex items-center gap-2",
 					children: [
-						/* @__PURE__ */ U(x, {
-							name: w.author,
+						/* @__PURE__ */ U(S, {
+							name: T.author,
 							size: 20,
-							color: w.color
+							color: T.color
 						}),
 						/* @__PURE__ */ U("span", {
 							className: "truncate text-[13px] font-semibold text-text-primary",
-							children: w.author
+							children: T.author
 						}),
-						w.timestamp && /* @__PURE__ */ U("span", {
+						T.timestamp && /* @__PURE__ */ U("span", {
 							className: "text-[11px] text-text-tertiary",
-							children: Mt(w.timestamp)
+							children: Mt(T.timestamp)
 						}),
-						w.resolved && /* @__PURE__ */ U(a, {
+						T.resolved && /* @__PURE__ */ U(a, {
 							tone: "success",
 							size: "xs",
 							children: "Resolved"
 						})
 					]
 				}),
-				w.quote && /* @__PURE__ */ U("div", {
+				T.quote && /* @__PURE__ */ U("div", {
 					className: "border-l-2 border-border pl-2 text-[11px] italic text-text-tertiary line-clamp-2",
-					children: w.quote
+					children: T.quote
 				}),
 				/* @__PURE__ */ U("div", {
 					className: "whitespace-pre-wrap text-[13px] leading-snug text-text-primary line-clamp-4",
-					children: w.text
+					children: T.text
 				}),
 				/* @__PURE__ */ W("div", {
 					className: "flex items-center justify-between gap-2",
 					children: [/* @__PURE__ */ U("span", {
 						"data-testid": `${u}-replies`,
 						className: "text-[11px] text-text-tertiary",
-						children: Xr(w.replyCount ?? 0)
+						children: Xr(T.replyCount ?? 0)
 					}), /* @__PURE__ */ W("span", {
 						className: "flex gap-1.5",
 						children: [s && /* @__PURE__ */ U(r, {
 							size: "sm",
 							variant: "ghost",
-							onClick: T(s),
+							onClick: E(s),
 							"data-testid": `${u}-open`,
 							children: "Open thread"
-						}), c && !w.resolved && /* @__PURE__ */ U(r, {
+						}), c && !T.resolved && /* @__PURE__ */ U(r, {
 							size: "sm",
 							variant: "ghost",
-							onClick: T(c),
+							onClick: E(c),
 							"data-testid": `${u}-resolve`,
 							children: "Resolve"
 						})]
@@ -1664,7 +1664,7 @@ function oi({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 						className: "flex items-center gap-2",
 						"data-testid": `${f}-person`,
 						children: [
-							/* @__PURE__ */ U(x, {
+							/* @__PURE__ */ U(S, {
 								name: e.displayName,
 								size: 26,
 								...e.avatarUrl ? { src: e.avatarUrl } : {}
@@ -1757,7 +1757,7 @@ function ci({ mode: e, onModeChange: t, showViewing: r = !0, openCount: i = null
 		"data-mode": e,
 		title: l?.hint,
 		className: n("inline-flex items-center gap-2", a && "pointer-events-none opacity-50", o),
-		children: [/* @__PURE__ */ U(S, {
+		children: [/* @__PURE__ */ U(C, {
 			options: c,
 			value: e,
 			size: "sm",
@@ -1820,7 +1820,7 @@ function hi({ lines: e, tone: t, testId: r }) {
 	});
 }
 function gi({ kind: e, author: t, when: i = null, context: a, deletedText: o = "", insertedText: s = "", insertedBlocks: c, deletedBlocks: l, active: u = !1, onFocus: d, onAccept: f, onReject: p, acceptLabel: m = "Accept", selected: h = !1, onSelectedChange: g, status: _, className: v, "data-testid": y = "suggestion-card" }) {
-	let { person: b, model: S } = pi(t.trim() === "" ? "Unknown author" : t.trim()), C = c && c.length > 0 ? c : s ? [s] : [], w = l && l.length > 0 ? l : o ? [o] : [], T = C.length > 0 || w.length > 0;
+	let { person: b, model: x } = pi(t.trim() === "" ? "Unknown author" : t.trim()), C = c && c.length > 0 ? c : s ? [s] : [], w = l && l.length > 0 ? l : o ? [o] : [], T = C.length > 0 || w.length > 0;
 	return /* @__PURE__ */ W("div", {
 		"data-testid": y,
 		"data-kind": e,
@@ -1837,7 +1837,7 @@ function gi({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 						"aria-label": `Select suggestion by ${t.trim() || "unknown author"}`,
 						"data-testid": `${y}-select`
 					}),
-					/* @__PURE__ */ U(x, {
+					/* @__PURE__ */ U(S, {
 						name: b,
 						size: 20
 					}),
@@ -1863,14 +1863,14 @@ function gi({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 					})
 				]
 			}),
-			(S || a) && /* @__PURE__ */ W("div", {
+			(x || a) && /* @__PURE__ */ W("div", {
 				className: "flex flex-wrap items-center gap-x-1.5 text-xs text-text-tertiary",
 				children: [
-					S && /* @__PURE__ */ W("span", {
+					x && /* @__PURE__ */ W("span", {
 						"data-testid": `${y}-model`,
-						children: ["powered by ", S]
+						children: ["powered by ", x]
 					}),
-					S && a && /* @__PURE__ */ U("span", {
+					x && a && /* @__PURE__ */ U("span", {
 						"aria-hidden": "true",
 						children: "·"
 					}),
@@ -2731,7 +2731,7 @@ function Ea({ count: e, children: t, onAcceptAll: o, onRejectAll: s, acceptLabel
 		padding: "none",
 		className: n("overflow-hidden", _),
 		"data-testid": y,
-		children: [/* @__PURE__ */ U(w, {
+		children: [/* @__PURE__ */ U(T, {
 			title: m,
 			meta: /* @__PURE__ */ U(a, {
 				tone: "neutral",
@@ -2792,11 +2792,11 @@ function Da({ request: e, onDecide: t, onWithdraw: n }) {
 					className: "m-0 text-sm text-text-secondary whitespace-pre-wrap",
 					children: e.comment
 				}),
-				l && /* @__PURE__ */ U(C, {
+				l && /* @__PURE__ */ U(w, {
 					tone: "error",
 					children: l
 				}),
-				t && e.state === "pending" && /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(b, {
+				t && e.state === "pending" && /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(x, {
 					value: i,
 					onChange: (e) => o(e.target.value),
 					rows: 2,
@@ -2832,10 +2832,10 @@ function Da({ request: e, onDecide: t, onWithdraw: n }) {
 	});
 }
 function Oa({ requests: e, reviewers: t = [], currentUserId: n, loading: i, error: a, onRefresh: o, onRequest: s, onDecide: c, onWithdraw: l }) {
-	let [u, p] = V(""), [m, h] = V(""), [g, _] = V(!0), [v, y] = V(!1), [x, S] = V(null), w = B(!1);
+	let [u, p] = V(""), [m, h] = V(""), [g, _] = V(!0), [v, y] = V(!1), [b, S] = V(null), C = B(!1);
 	async function T() {
-		if (!(!s || !t.some((e) => e.id === u) || w.current)) {
-			w.current = !0, y(!0), S(null);
+		if (!(!s || !t.some((e) => e.id === u) || C.current)) {
+			C.current = !0, y(!0), S(null);
 			try {
 				await s({
 					reviewerId: u,
@@ -2845,14 +2845,14 @@ function Oa({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 			} catch (e) {
 				S(e instanceof Error ? e.message : "The review could not be requested.");
 			} finally {
-				w.current = !1, y(!1);
+				C.current = !1, y(!1);
 			}
 		}
 	}
 	return /* @__PURE__ */ W(d, {
 		gap: "md",
 		children: [
-			a && /* @__PURE__ */ U(C, {
+			a && /* @__PURE__ */ U(w, {
 				tone: "error",
 				children: a
 			}),
@@ -2870,7 +2870,7 @@ function Oa({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 						})),
 						onChange: (e) => p(e.target.value)
 					}),
-					/* @__PURE__ */ U(b, {
+					/* @__PURE__ */ U(x, {
 						"aria-label": "Review request note",
 						placeholder: "What should they review?",
 						rows: 2,
@@ -2888,9 +2888,9 @@ function Oa({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 							disabled: v
 						}), "Required review"]
 					}),
-					x && /* @__PURE__ */ U(C, {
+					b && /* @__PURE__ */ U(w, {
 						tone: "error",
-						children: x
+						children: b
 					}),
 					/* @__PURE__ */ U(r, {
 						size: "sm",
@@ -2954,7 +2954,7 @@ function Aa({ filled: e }) {
 		children: /* @__PURE__ */ U("path", { d: "M8 1.9l1.8 3.7 4.1.6-3 2.9.7 4.1L8 11.3l-3.6 1.9.7-4.1-3-2.9 4.1-.6L8 1.9Z" })
 	});
 }
-function ja({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: s, starred: l = !1, onStarredChange: u, statusPill: d, path: f, crumbsTrailing: h, subtitle: g, metaBar: _, participants: v, onParticipantClick: b, onFollowParticipant: x, followingParticipantId: S, meta: C, saveState: w, headActions: E, tabs: ee, activeTab: te, onTabChange: ne, toolbar: D, children: ie, footer: O, proposal: k, surface: ae = "workspace", explorer: A, workbench: j, label: oe = "Editor", variant: M = "document", itemType: N, itemKey: se, titleSize: P = "md", titleOverflow: ce = "truncate", tabsTrailing: le, className: ue, "data-testid": F = "editor-shell" }) {
+function ja({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: s, starred: l = !1, onStarredChange: u, statusPill: d, path: f, crumbsTrailing: h, subtitle: g, metaBar: _, participants: v, onParticipantClick: y, onFollowParticipant: x, followingParticipantId: S, meta: C, saveState: w, headActions: T, tabs: ee, activeTab: te, onTabChange: ne, toolbar: D, children: ie, footer: O, proposal: k, surface: ae = "workspace", explorer: A, workbench: j, label: oe = "Editor", variant: M = "document", itemType: N, itemKey: se, titleSize: P = "md", titleOverflow: ce = "truncate", tabsTrailing: le, className: ue, "data-testid": F = "editor-shell" }) {
 	let I = M === "work-item", de = I && (N || se) ? /* @__PURE__ */ W(H, { children: [N && /* @__PURE__ */ U(a, {
 		size: "sm",
 		tone: "info",
@@ -2964,7 +2964,7 @@ function ja({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 		className: "font-mono text-[12px] text-text-secondary",
 		"data-testid": `${F}-item-key`,
 		children: se
-	})] }) : null, fe = de || h != null ? /* @__PURE__ */ W(H, { children: [de, h] }) : null, pe = I && (e && e.length > 0 || fe != null), me = P === "lg" ? "text-[26px] font-semibold leading-8" : I ? "text-[22px] font-bold leading-7" : "text-xl font-bold leading-6", he = `${F}-${In().replace(/:/g, "")}`, ge = !!ee && ee.length > 0, _e = ge ? ee.some((e) => e.id === te) ? te : ee[0].id : void 0, ve = v && v.length > 0 || C != null || !!w, ye = (e) => /* @__PURE__ */ U(y, {
+	})] }) : null, fe = de || h != null ? /* @__PURE__ */ W(H, { children: [de, h] }) : null, pe = I && (e && e.length > 0 || fe != null), me = P === "lg" ? "text-[26px] font-semibold leading-8" : I ? "text-[22px] font-bold leading-7" : "text-xl font-bold leading-6", he = `${F}-${In().replace(/:/g, "")}`, ge = !!ee && ee.length > 0, _e = ge ? ee.some((e) => e.id === te) ? te : ee[0].id : void 0, ve = v && v.length > 0 || C != null || !!w, ye = (e) => /* @__PURE__ */ U(b, {
 		items: ee.map((e) => ({
 			id: e.id,
 			label: e.label,
@@ -3029,10 +3029,10 @@ function ja({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 								children: fe
 							}),
 							/* @__PURE__ */ U("span", { className: "flex-1" }),
-							E && /* @__PURE__ */ U("div", {
+							T && /* @__PURE__ */ U("div", {
 								className: "flex shrink-0 items-center gap-2",
 								"data-testid": `${F}-actions`,
-								children: E
+								children: T
 							})
 						]
 					}),
@@ -3125,11 +3125,11 @@ function ja({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 										className: "flex min-w-0 flex-wrap items-center gap-2 text-[13px] text-text-tertiary [@media(max-height:640px)]:max-w-[50%] [@media(max-height:640px)]:flex-nowrap",
 										"data-testid": `${F}-byline`,
 										children: [
-											v && v.length > 0 && /* @__PURE__ */ U(T, {
+											v && v.length > 0 && /* @__PURE__ */ U(E, {
 												users: v,
 												size: 22,
 												maxVisible: 4,
-												...b ? { onUserClick: b } : {},
+												...y ? { onUserClick: y } : {},
 												...x ? {
 													onFollowUser: x,
 													followingUserId: S ?? null
@@ -3147,10 +3147,10 @@ function ja({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 									})
 								]
 							}),
-							E && !pe && /* @__PURE__ */ U("div", {
+							T && !pe && /* @__PURE__ */ U("div", {
 								className: "ml-auto flex shrink-0 flex-wrap items-center gap-3",
 								"data-testid": `${F}-actions`,
-								children: E
+								children: T
 							})
 						]
 					}),

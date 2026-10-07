@@ -6173,6 +6173,13 @@ export declare interface ContextComposerProps {
     identity?: ComposerIdentity | null;
     /** Force the full card. */
     expanded?: boolean;
+    /**
+     * `pane` (since 2.431.0): the simplified responsive mode for a composer in
+     * a side pane — one input row with a single mode · subject chip, icon-only
+     * Send and a 1px focus border, chosen by the composer's own width (below
+     * the wide breakpoint). See `RichChatComposerProps.responsive`.
+     */
+    responsive?: 'pane';
     /** An agent is mid-turn: the console drifts faster. */
     working?: boolean;
     /** Default true: Agent/Terminal paint the console surface. */
@@ -17631,6 +17638,19 @@ declare interface RichChatComposerProps {
      */
     collapseWhenIdle?: boolean;
     /**
+     * `pane` (since 2.431.0): a simplified responsive mode for a composer in a
+     * side pane beside a page (a conversation pane in a four-column shell).
+     * Chosen by the composer's OWN measured width, never the viewport: below
+     * the `wide` breakpoint (`COMPOSER_BREAKPOINTS.wide`) the card is ONE input
+     * row — the mode and the draft's first reference folded into a single
+     * small leading chip ("Chat · Observability Platform", truncated in the
+     * middle, its × on hover or focus; the mode switch is the chip's menu),
+     * an icon-only Send, and a 1px focus border instead of the 2px ring. `Aa`,
+     * `?`, `⋯` and `modeRowEnd` appear only while focus is inside, on a second
+     * row at most. Wide, nothing changes. Default: off.
+     */
+    responsive?: 'pane';
+    /**
      * With `collapseWhenIdle`: `true` forces the full card whatever the idle
      * rule says — for host content the composer cannot see (a reply quote, a
      * comment hand-off, a task strip above it), which would otherwise sit over
@@ -20497,7 +20517,7 @@ export declare interface TabPanelProps {
     children?: ReactNode;
 }
 
-export declare function Tabs({ items, value, onValueChange, variant, size, badgeStyle, className, style, 'aria-label': ariaLabel, idPrefix: idPrefixProp, getItemTestId, stretch, itemClassName, 'data-testid': testId, indicator, indicatorWeight, }: TabsProps): JSX.Element;
+export declare function Tabs({ items, value, onValueChange, variant, size, badgeStyle, className, style, 'aria-label': ariaLabel, idPrefix: idPrefixProp, getItemTestId, stretch, itemClassName, 'data-testid': testId, indicator, indicatorWeight, overflowBelow, }: TabsProps): JSX.Element;
 
 export declare interface TabsProps {
     items: TabItem[];
@@ -20550,6 +20570,16 @@ export declare interface TabsProps {
     indicator?: 'border' | 'bar';
     /** The `bar` indicator's thickness in px. Default 2. Since 2.396.0. */
     indicatorWeight?: 2 | 3;
+    /**
+     * Container-driven fold (since 2.431.0): while the element the tab bar
+     * sits in is narrower than this many px, only the first tab and the
+     * selected one stay in the bar and the rest move into a `More ▾` menu at
+     * its end (each row keeps the tab's `testId`; the trigger is
+     * `<data-testid>-more`, or `tabs-more`). Measured on the PARENT, not the
+     * viewport — a conversation pane beside a page folds while the window is
+     * wide. Default: never folds.
+     */
+    overflowBelow?: number;
 }
 
 export declare type TabsVariant = 'underline' | 'pill' | 'segmented';

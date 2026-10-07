@@ -5525,7 +5525,7 @@ export declare interface TabPanelProps {
     children?: ReactNode;
 }
 
-export declare function Tabs({ items, value, onValueChange, variant, size, badgeStyle, className, style, 'aria-label': ariaLabel, idPrefix: idPrefixProp, getItemTestId, stretch, itemClassName, 'data-testid': testId, indicator, indicatorWeight, }: TabsProps): JSX.Element;
+export declare function Tabs({ items, value, onValueChange, variant, size, badgeStyle, className, style, 'aria-label': ariaLabel, idPrefix: idPrefixProp, getItemTestId, stretch, itemClassName, 'data-testid': testId, indicator, indicatorWeight, overflowBelow, }: TabsProps): JSX.Element;
 
 export declare interface TabsProps {
     items: TabItem[];
@@ -5578,6 +5578,16 @@ export declare interface TabsProps {
     indicator?: 'border' | 'bar';
     /** The `bar` indicator's thickness in px. Default 2. Since 2.396.0. */
     indicatorWeight?: 2 | 3;
+    /**
+     * Container-driven fold (since 2.431.0): while the element the tab bar
+     * sits in is narrower than this many px, only the first tab and the
+     * selected one stay in the bar and the rest move into a `More ▾` menu at
+     * its end (each row keeps the tab's `testId`; the trigger is
+     * `<data-testid>-more`, or `tabs-more`). Measured on the PARENT, not the
+     * viewport — a conversation pane beside a page folds while the window is
+     * wide. Default: never folds.
+     */
+    overflowBelow?: number;
 }
 
 export declare type TabsVariant = 'underline' | 'pill' | 'segmented';

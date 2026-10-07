@@ -685,6 +685,13 @@ export declare interface ContextComposerProps {
     identity?: ComposerIdentity | null;
     /** Force the full card. */
     expanded?: boolean;
+    /**
+     * `pane` (since 2.431.0): the simplified responsive mode for a composer in
+     * a side pane — one input row with a single mode · subject chip, icon-only
+     * Send and a 1px focus border, chosen by the composer's own width (below
+     * the wide breakpoint). See `RichChatComposerProps.responsive`.
+     */
+    responsive?: 'pane';
     /** An agent is mid-turn: the console drifts faster. */
     working?: boolean;
     /** Default true: Agent/Terminal paint the console surface. */
@@ -1291,6 +1298,19 @@ export declare interface RichChatComposerProps {
      * one, in which case the row keeps that tint. Default off.
      */
     collapseWhenIdle?: boolean;
+    /**
+     * `pane` (since 2.431.0): a simplified responsive mode for a composer in a
+     * side pane beside a page (a conversation pane in a four-column shell).
+     * Chosen by the composer's OWN measured width, never the viewport: below
+     * the `wide` breakpoint (`COMPOSER_BREAKPOINTS.wide`) the card is ONE input
+     * row — the mode and the draft's first reference folded into a single
+     * small leading chip ("Chat · Observability Platform", truncated in the
+     * middle, its × on hover or focus; the mode switch is the chip's menu),
+     * an icon-only Send, and a 1px focus border instead of the 2px ring. `Aa`,
+     * `?`, `⋯` and `modeRowEnd` appear only while focus is inside, on a second
+     * row at most. Wide, nothing changes. Default: off.
+     */
+    responsive?: 'pane';
     /**
      * With `collapseWhenIdle`: `true` forces the full card whatever the idle
      * rule says — for host content the composer cannot see (a reply quote, a

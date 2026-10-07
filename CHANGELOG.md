@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.431.0
+
+- **A simplified responsive mode for a composer in a side pane** (additive): `responsive="pane"` on `RichChatComposer` and `ContextComposer`. Chosen by the composer's OWN measured width, never the viewport — below the `wide` breakpoint (600px) the card is one input row: the mode and the draft's first reference fold into one small leading chip ("Chat · Org › Initi…on Platform", truncated in the middle so the leaf survives, its × on hover/focus, the mode switch as the chip's menu), Send is icon-only (its label stays as screen-reader text), and focus is the 1px primary border instead of the 2px ring. `Aa`, `?`, `⋯` and `modeRowEnd` appear only while focus is inside, so the card is at most two rows. Wide, nothing changes. `data-responsive="pane"` marks it; `<testId>-context-chip`, `-context-label`, `-context-remove`.
+- **`Tabs` folds by its container** (additive): `overflowBelow={px}` — while the tab bar's parent is narrower, only the first and the selected tab stay and the rest move into a `More ▾` menu (rows keep each tab's `testId`; trigger `<data-testid>-more`). `data-folded` marks the state.
+
 ## 2.430.0
 
 - **`ChatSidePanelFrame` on the compact type step** (additive): `size="sm"` gives the header a 14px semibold title and a 12px subtitle (the `PageSection size="sm"` / `DetailSection size="sm"` step from 2.429.0) with 16px side padding, for a page's conversation pane beside a tabbed page; `data-size="sm"` marks it. `closeLabel` names the × control (default "Close panel") so a pane that collapses rather than closes can say so. Default `xs` is unchanged.
