@@ -8627,6 +8627,9 @@ export declare interface EmptyStateProps {
  * `md` is the page-body block (220px minimum, 52px glyph). `sm` is for a
  * lane or list group that is one of several on the page: no minimum height,
  * a 28px glyph and a 14px title, so three empty lanes fit above the fold.
+ * Since 2.436.1 `sm` is the app's body step throughout: 14/600 title, 14/400
+ * description (was 13px), a `Button size="sm"`-sized CTA (26px, 12/600 — was
+ * a 38px padded button) and a 14/600 details heading (was 18px).
  */
 export declare type EmptyStateSize = 'md' | 'sm' | 'lg';
 

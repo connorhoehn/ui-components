@@ -200,3 +200,28 @@ describe('EmptyState density="compact"', () => {
     expect(screen.getByTestId('empty-state').className).not.toContain('flex-col');
   });
 });
+
+describe('EmptyState size="sm" is the app body step (2.436.1)', () => {
+  it('draws a 14/600 title, a 14px description, a Button-sm CTA and a 14px details heading', () => {
+    const onAction = vi.fn();
+    render(<EmptyState size="sm" align="start" title="Ask an admin" description="One line of explanation."
+      actionLabel="Open Calls" onAction={onAction} actionTestId="cta" details={{ title: 'How this works', body: 'More.' }} />);
+    expect(screen.getByText('Ask an admin').className).toContain('text-[14px]');
+    const description = screen.getByText('One line of explanation.').className;
+    expect(description).toContain('text-sm');
+    expect(description).not.toContain('text-[13px]');
+    const cta = screen.getByTestId('cta').className;
+    expect(cta).toContain('h-6.5');
+    expect(cta).toContain('text-xs');
+    expect(cta).not.toContain('py-[9px]');
+    fireEvent.click(screen.getByTestId('cta'));
+    expect(onAction).toHaveBeenCalledOnce();
+    expect(screen.getByText('How this works').className).toContain('text-sm');
+  });
+
+  it('leaves md unchanged: 13px centred description and the padded CTA', () => {
+    render(<EmptyState title="Empty" description="Body." actionLabel="Go" onAction={() => {}} actionTestId="cta" />);
+    expect(screen.getByText('Body.').className).toContain('text-[13px]');
+    expect(screen.getByTestId('cta').className).toContain('py-[9px]');
+  });
+});

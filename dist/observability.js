@@ -6,7 +6,7 @@ import { t as i } from "./Chip-0zFpfJ52.js";
 import { n as a, r as o, t as s } from "./Chart-kepXlehS.js";
 import { t as c } from "./Modal-CjgKqXl7.js";
 import { t as l } from "./Input-CpLq80dw.js";
-import { t as u } from "./EmptyState-DnbFBYDA.js";
+import { t as u } from "./EmptyState-BupZX4UK.js";
 import { n as d, t as f } from "./Sparkline-BIYPNDRu.js";
 import { t as p } from "./StatusDot-ClFcLvD7.js";
 import { t as m } from "./CardHeader-C50GEAmo.js";

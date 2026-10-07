@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.436.1
+
+- `EmptyState size="sm"` is the app's body step throughout: the description is 14px (`text-sm`, was 13px), the `actionLabel` CTA is `Button size="sm"`-sized (26px tall, 12/600, was a 38px padded button) and the `details` heading is 14/600 (was 18px). The title was already 14/600. `md` and `lg` are unchanged. For a host's "no access" or empty landing that sits in a page at the 20 / 14 / 12 type scale.
+
 ## 2.436.0
 
 - Ringing invitees as placeholder tiles: `ConversationCallDock` draws the people a call is still ringing (RM participants in state `ringing`) after the people in the call, from the caller's first ring through the call — their avatar, dimmed and pulsing, with "Ringing…" in place of the mic state (`data-ringing="true"`, accessible name "<name>, ringing"). An answer turns the placeholder into their real tile; a decline or timeout drops it. They never count toward the "N people" head count. Under it: `CallDockParticipant.connection` accepts `'ringing'` and `CallTileParticipant` gains `ringing` (`dock`/`grid` variants), so a host feeding `CallDock` directly can draw the same placeholder.
