@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.436.1
+
+- `CallTileRow variant="dock"` (the `CallDock` shelf) collapses to the tiles that fit its measured width instead of clipping the last tile at the row's edge — four 240px tiles in a ~950px content column now read three tiles and `+2` (`overflow="collapse"`; `maxVisible` stays the upper bound; `data-visible-count` on the row; `dockTilesThatFit(width, tileWidth)`). People folded into the `+N` tile keep their video/audio elements mounted in a 1px sink, so their voice keeps playing (before, a folded person's camera element — which carries their audio — unmounted). The `+N` tile's tooltip names them.
+
 ## 2.436.0
 
 - Ringing invitees as placeholder tiles: `ConversationCallDock` draws the people a call is still ringing (RM participants in state `ringing`) after the people in the call, from the caller's first ring through the call — their avatar, dimmed and pulsing, with "Ringing…" in place of the mic state (`data-ringing="true"`, accessible name "<name>, ringing"). An answer turns the placeholder into their real tile; a decline or timeout drops it. They never count toward the "N people" head count. Under it: `CallDockParticipant.connection` accepts `'ringing'` and `CallTileParticipant` gains `ringing` (`dock`/`grid` variants), so a host feeding `CallDock` directly can draw the same placeholder.
