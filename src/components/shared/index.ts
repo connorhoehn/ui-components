@@ -149,6 +149,25 @@ export { default as CardHeader } from './CardHeader';
 export * from './CardHeader';
 export { default as PageHeader } from './PageHeader';
 export * from './PageHeader';
+// Density (2.437.0): the library's one density vocabulary.
+export { DensityProvider, useDensity, DENSITIES } from './Density';
+export type { Density, DensityProviderProps } from './Density';
+// HoverCard (2.437.0): the non-modal, non-trapping card with the one hover timing.
+export { HoverCard, HOVER_CARD_OPEN_MS, HOVER_CARD_CLOSE_MS } from './HoverCard';
+export type { HoverCardProps, HoverCardTriggerProps, HoverCardWidth } from './HoverCard';
+// Header density (2.437.0): PageHeader/ScopeHeader at each Density, the
+// collapsed state, the hook that picks both, and the pieces they draw.
+export {
+  HeaderCollapseToggle, HeaderTrailFold, HeaderDescriptionInfo, HeaderPeople,
+  foldTitleIntoTrail, headerDefaults, isRichHeaderContent, visibleHeaderPeople, headerDensityStorageKey,
+  RICH_HEADER_CONTENT, HEADER_DENSITY_STORAGE_PREFIX, HEADER_COMPACT_BELOW_PX, HEADER_COLLAPSE_BELOW_PX,
+} from './headerDensity';
+export type {
+  HeaderContentKind, HeaderCollapseToggleProps, HeaderTrailFoldProps, HeaderDescriptionInfoProps,
+  HeaderPerson, HeaderPeopleGroup,
+} from './headerDensity';
+export { useHeaderDensity, HEADER_SCROLL_COLLAPSE_PX } from './useHeaderDensity';
+export type { UseHeaderDensityOptions, HeaderDensityState } from './useHeaderDensity';
 export * from './ThinkingDots';
 export { default as TypingIndicator } from './TypingIndicator';
 export * from './TypingIndicator';

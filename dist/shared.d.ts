@@ -5,10 +5,12 @@ import { CSSProperties } from 'react';
 import { default as default_2 } from 'react';
 import { DragEventHandler } from 'react';
 import { ElementType } from 'react';
+import { FocusEvent as FocusEvent_2 } from 'react';
 import { ForwardRefExoticComponent } from 'react';
 import { HTMLAttributes } from 'react';
 import { InputHTMLAttributes } from 'react';
 import { JSX } from 'react';
+import { KeyboardEvent as KeyboardEvent_2 } from 'react';
 import { MouseEvent as MouseEvent_2 } from 'react';
 import { MouseEventHandler } from 'react';
 import { ReactElement } from 'react';
@@ -16,6 +18,7 @@ import { ReactNode } from 'react';
 import { ReactPortal } from 'react';
 import { Ref } from 'react';
 import { RefAttributes } from 'react';
+import { RefCallback } from 'react';
 import { RefObject } from 'react';
 import { SelectHTMLAttributes } from 'react';
 import { SVGProps } from 'react';
@@ -1400,6 +1403,18 @@ export declare interface DataTableProps<T> {
 
 export declare const DEFAULT_PIPELINE_ICONS: string[];
 
+export declare const DENSITIES: readonly Density[];
+
+export declare type Density = 'comfortable' | 'compact';
+
+/** Sets the density for everything under it that reads `useDensity()`. */
+export declare function DensityProvider({ value, children }: DensityProviderProps): JSX.Element;
+
+export declare interface DensityProviderProps {
+    value: Density;
+    children: ReactNode;
+}
+
 /** A monitor on a stand: a computer — a provisioned box. Since 2.411.0. */
 export declare function DesktopIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -2340,6 +2355,13 @@ export declare interface FloatingPanelProps {
  */
 export declare function FolderIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+/**
+ * The trail with the title folded in as its last crumb. A trail that already
+ * ends with the title (the initiative trail ends "… › Observability
+ * Platform") is returned as is; an empty trail becomes the title alone.
+ */
+export declare function foldTitleIntoTrail(crumbs: readonly BreadcrumbItem[] | undefined, title: string | undefined): BreadcrumbItem[];
+
 export declare function FollowBanner({ name, onStop, autoStopOnInteract, autoStop, autoStopScope, location, appearance, className, 'data-testid': testId, }: FollowBannerProps): JSX.Element | null;
 
 export declare interface FollowBannerProps {
@@ -2626,6 +2648,127 @@ export declare interface GroupedListRow {
     meta?: ReactNode;
 }
 
+/** Below this container height a rich page starts collapsed. */
+export declare const HEADER_COLLAPSE_BELOW_PX = 480;
+
+/** Below this container height a plain page drops to compact. */
+export declare const HEADER_COMPACT_BELOW_PX = 640;
+
+/** Where the chevron is remembered: `uic:header-density:<headerId>:<rich|plain>`. */
+export declare const HEADER_DENSITY_STORAGE_PREFIX = "uic:header-density:";
+
+/** Scrolled this far down (px), a rich page's header collapses. */
+export declare const HEADER_SCROLL_COLLAPSE_PX = 48;
+
+/**
+ * The header's chevron. Collapsed: "Expand header" (points down). Otherwise:
+ * "Collapse header" (points up). `aria-expanded` says which.
+ */
+export declare function HeaderCollapseToggle({ collapsed, onToggle, className, 'data-testid': testId }: HeaderCollapseToggleProps): JSX.Element;
+
+export declare interface HeaderCollapseToggleProps {
+    /** True when the header is collapsed: the chevron points down and expands it. */
+    collapsed: boolean;
+    onToggle: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** What the page's body holds. Rich kinds ask for a compact header. */
+export declare type HeaderContentKind = 'canvas' | 'graph' | 'conversation' | 'document' | 'list' | 'detail';
+
+/**
+ * A page's header before any scroll or chevron. Density: the host's
+ * `preference` when given; else rich content → compact, plain → comfortable,
+ * and a plain page under `HEADER_COMPACT_BELOW_PX` → compact. Collapsed: a
+ * rich page under `HEADER_COLLAPSE_BELOW_PX`. A height of 0 or less (not
+ * measured yet) is ignored.
+ */
+export declare function headerDefaults({ contentKind, containerHeight, preference }: {
+    contentKind?: HeaderContentKind;
+    containerHeight?: number | null;
+    preference?: Density | null;
+}): {
+    density: Density;
+    collapsed: boolean;
+};
+
+export declare interface HeaderDensityState {
+    density: Density;
+    collapsed: boolean;
+    /** Collapsed → open (forgotten); open → collapsed (remembered). */
+    toggleCollapsed: () => void;
+    /** Callback ref for the content region whose scroll collapses the header. */
+    contentRef: (node: HTMLElement | null) => void;
+    /** Spread onto `PageHeader` / `ScopeHeader`. */
+    headerProps: {
+        density: Density;
+        collapsed: boolean;
+        onToggleCollapsed: () => void;
+    };
+}
+
+export declare function headerDensityStorageKey(headerId: string, kind: HeaderContentKind | undefined): string;
+
+/**
+ * Compact density's home for the description: an info glyph after the title
+ * opening the library `HoverCard` — hover or keyboard focus shows it, Enter
+ * pins it, Escape closes it, focus never leaves the glyph.
+ */
+export declare function HeaderDescriptionInfo({ title, description, 'data-testid': testId }: HeaderDescriptionInfoProps): JSX.Element;
+
+export declare interface HeaderDescriptionInfoProps {
+    /** Who the description is about — the trigger reads "About <title>". */
+    title: string;
+    description: ReactNode;
+    'data-testid'?: string;
+}
+
+/**
+ * The people in a header. Comfortable: the muted label, then a 32px avatar
+ * and the name per person. Compact: 24px avatars only, each name and its
+ * group in a tooltip ("Nora DaSilva · Owner"), groups ruled apart.
+ */
+export declare function HeaderPeople({ groups, density, 'data-testid': testId }: {
+    groups: readonly HeaderPeopleGroup[];
+    density: Density;
+    'data-testid'?: string;
+}): JSX.Element | null;
+
+export declare interface HeaderPeopleGroup {
+    /** "Owner", "SMEs". */
+    label: string;
+    people: HeaderPerson[];
+    /** Beside the group — a "change owner" control. Keeps an empty group drawn. */
+    action?: ReactNode;
+}
+
+export declare interface HeaderPerson {
+    id: string;
+    name: string;
+    avatarUrl?: string;
+    color?: string;
+}
+
+/**
+ * The collapsed header: one trail row, the title as its last crumb, then the
+ * badge and the expand chevron; actions on the right.
+ */
+export declare function HeaderTrailFold({ breadcrumbs, title, badge, onExpand, actions, className, 'data-testid': testId, }: HeaderTrailFoldProps): JSX.Element;
+
+export declare interface HeaderTrailFoldProps {
+    breadcrumbs?: BreadcrumbItem[];
+    title?: string;
+    /** After the folded title — a status, kept small. */
+    badge?: ReactNode;
+    /** The expand chevron's handler. Absent: no chevron. */
+    onExpand?: () => void;
+    /** Right of the trail — the header's actions stay reachable when collapsed. */
+    actions?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
 declare function Highlight_2({ text, terms, className, markClassName, 'data-testid': testId }: HighlightProps): ReactNode;
 export { Highlight_2 as Highlight }
 
@@ -2671,6 +2814,43 @@ export declare interface HistogramProps {
 
 /** A clock: history, "when". */
 export declare function HistoryIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+export declare const HOVER_CARD_CLOSE_MS = 250;
+
+export declare const HOVER_CARD_OPEN_MS = 300;
+
+export declare function HoverCard({ label, content, children, width, openOnFocus, pinOnKey, onOpenChange, className, 'data-testid': testId, }: HoverCardProps): JSX.Element;
+
+export declare interface HoverCardProps {
+    /** The card's accessible name. */
+    label: string;
+    /** What the card shows. Rendered only while open. */
+    content: ReactNode;
+    children: (trigger: HoverCardTriggerProps) => ReactNode;
+    width?: HoverCardWidth;
+    /** Open on keyboard focus. Default true. */
+    openOnFocus?: boolean;
+    /** Enter/Space on the trigger pins the card. Default true. */
+    pinOnKey?: boolean;
+    /** Told whenever the card opens or closes (lazy-load its content). */
+    onOpenChange?: (open: boolean) => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface HoverCardTriggerProps {
+    ref: RefCallback<HTMLElement>;
+    onMouseEnter: (e: MouseEvent_2<HTMLElement>) => void;
+    onMouseLeave: (e: MouseEvent_2<HTMLElement>) => void;
+    onFocus: (e: FocusEvent_2<HTMLElement>) => void;
+    onBlur: (e: FocusEvent_2<HTMLElement>) => void;
+    onKeyDown: (e: KeyboardEvent_2<HTMLElement>) => void;
+    'aria-expanded': boolean;
+    'aria-controls': string | undefined;
+    'aria-describedby': string | undefined;
+}
+
+export declare type HoverCardWidth = 'sm' | 'md' | 'lg';
 
 export declare function IconButton({ 'aria-label': ariaLabel, icon, children, disabled, variant, tone, size, className, ...rest }: IconButtonProps): JSX.Element;
 
@@ -2916,6 +3096,8 @@ declare const INTENSITY_SCALE: {
     readonly medium: 1;
     readonly high: 1.75;
 };
+
+export declare function isRichHeaderContent(kind: HeaderContentKind | undefined): boolean;
 
 /** A keyboard: shortcuts. Since 2.411.0. */
 export declare function KeyboardIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -3581,7 +3763,7 @@ export declare interface NumberInputProps {
     'data-testid'?: string;
 }
 
-export declare function PageHeader({ title, description, actions, back, badge, size, className, }: PageHeaderProps): default_2.JSX.Element;
+export declare function PageHeader({ title, description, actions, back, badge, size, breadcrumbs, density: densityProp, collapsed, onToggleCollapsed, people, info, meta, tabs, activeTab, onTabChange, className, 'data-testid': testId, }: PageHeaderProps): default_2.JSX.Element;
 
 export declare interface PageHeaderBack {
     label: string;
@@ -3601,10 +3783,67 @@ export declare interface PageHeaderProps {
     /**
      * Title size. `md` (default) is the 20px heading every page has had;
      * `lg` is a 28px directory title — a page that IS the list, not a page
-     * about one thing.
+     * about one thing. Comfortable density only.
      */
     size?: 'md' | 'lg';
+    /**
+     * Since 2.437.0 — the trail as the header's first row ("Plan › Initiatives
+     * › Observability Platform"). Owned here so a collapsed header can fold the
+     * title into it. With a trail the header draws its own top padding (12px
+     * comfortable, 8px compact/collapsed); the host keeps the side gutter.
+     */
+    breadcrumbs?: BreadcrumbItem[];
+    /**
+     * Since 2.437.0 — the library `Density` (default: the nearest
+     * `DensityProvider`, else comfortable). Comfortable: trail, the title row,
+     * the description, the people row, the tabs. Compact: trail, ONE 28px row
+     * — the title at 14/600, `badge`, `info`, the people as a 24px avatar
+     * cluster (names in tooltips), the collapse chevron, `actions` — and the
+     * tabs; the description moves into `info` or, without one, the built-in
+     * info `HoverCard`. Usually `useHeaderDensity().headerProps`.
+     */
+    density?: Density;
+    /**
+     * Since 2.437.0 — a STATE, not a density: the trail row only, the title
+     * folded into its last crumb with `badge` and the expand chevron, `actions`
+     * on the right, then the tabs. No trail given: the title alone is the row.
+     */
+    collapsed?: boolean;
+    /** Draws the chevron: "Collapse header" on the title row, "Expand header" when collapsed. Since 2.437.0. */
+    onToggleCollapsed?: () => void;
+    /**
+     * Labelled people — `[{ label: 'Owner', people, action }]`. Comfortable:
+     * their own row under the description (32px avatar + name). Compact: the
+     * avatar cluster on the title row. Since 2.437.0.
+     */
+    people?: HeaderPeopleGroup[];
+    /**
+     * The title's info trigger (a details `HoverCard`), after the badge. A host
+     * `info` is trusted to show the description, so in compact density the
+     * built-in description card is not drawn. Since 2.437.0.
+     */
+    info?: default_2.ReactNode;
+    /**
+     * The header's summary under the people (a stat strip, a certification
+     * line). Comfortable only: compact moves it into the built-in description
+     * card with the description; collapsed drops it. Since 2.437.0.
+     */
+    meta?: default_2.ReactNode;
+    /** View tabs under the header, in every density and state. Since 2.437.0. */
+    tabs?: PageHeaderTab[];
+    activeTab?: string;
+    onTabChange?: (id: string) => void;
     className?: string;
+    'data-testid'?: string;
+}
+
+/** A view tab under the header (since 2.437.0). */
+export declare interface PageHeaderTab {
+    id: string;
+    label: string;
+    /** Drawn after the label ("Work 11"). */
+    count?: number;
+    disabled?: boolean;
 }
 
 export declare function PageSection({ title, description, actions, children, count, countTone, size, className, 'data-testid': testId, }: PageSectionProps): JSX.Element;
@@ -4353,6 +4592,8 @@ export declare interface ReviewThreadProps {
     className?: string;
     'data-testid'?: string;
 }
+
+export declare const RICH_HEADER_CONTENT: readonly HeaderContentKind[];
 
 export declare function RippleGridBackground({ active, enableRainbow, gridColor, rippleIntensity, gridSize, gridThickness, fadeDistance, vignetteStrength, glowIntensity, opacity, edgeFade, gridRotation, mouseInteraction, mouseInteractionRadius, lightMode, pixelRatio, className, 'data-testid': testId, }: RippleGridBackgroundProps): JSX.Element;
 
@@ -6250,6 +6491,9 @@ export declare function UploadIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function useCommandPalette(): CommandPaletteController;
 
+/** The density to draw at: `override` when given, else the provider's, else `comfortable`. */
+export declare function useDensity(override?: Density | null): Density;
+
 /**
  * Read the surrounding dock, if any. `null` means "standalone" — the body
  * owns its own header and sizing.
@@ -6274,6 +6518,21 @@ export declare function useFollowAutoStop(active: boolean, onStop: () => void, {
     enabled?: boolean;
     scope?: RefObject<HTMLElement | null> | undefined;
 }): void;
+
+export declare function useHeaderDensity({ contentKind, containerHeight, preference, headerId, scrollCollapse, }?: UseHeaderDensityOptions): HeaderDensityState;
+
+export declare interface UseHeaderDensityOptions {
+    /** What the page's body holds. Default `detail`. */
+    contentKind?: HeaderContentKind;
+    /** The page's available height (px), when the host measures it. */
+    containerHeight?: number | null;
+    /** The host's own density; wins over the content kind. */
+    preference?: Density | null;
+    /** Names the header in the storage key ("initiative", "search"). Default "page". */
+    headerId?: string;
+    /** Collapse on scroll of the content region (rich content only). Default true. */
+    scrollCollapse?: boolean;
+}
 
 export declare function UserChip({ name, label, avatarSize, avatarColor, presence, onClick, className, style, title, labelClassName, 'data-testid': testId, }: UserChipProps): JSX.Element;
 
@@ -6418,6 +6677,9 @@ export declare function useToastOptional(): ToastContextValue | null;
 
 /** A camera body: start a video call. Distinct from video/MediaIcons' VideoIcon, which is a call CONTROL. */
 export declare function VideoCallIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+/** Groups worth drawing: people in them, or an action to add some. */
+export declare function visibleHeaderPeople(groups: readonly HeaderPeopleGroup[] | undefined): HeaderPeopleGroup[];
 
 /**
  * The canonical visually-hidden clip. Not `display: none` and not

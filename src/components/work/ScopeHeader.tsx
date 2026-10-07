@@ -30,6 +30,8 @@ import { InlinePopover } from '../shared/InlinePopover';
 import { Stack } from '../ui/Stack';
 import { ExternalLinkIcon, LinkIcon } from '../ui/Icons';
 import { TONE_SOLID_BG } from '../shared/tones';
+import { HeaderCollapseToggle, HeaderDescriptionInfo, foldTitleIntoTrail } from '../shared/headerDensity';
+import { useDensity, type Density } from '../shared/Density';
 
 /**
  * A tab's attention dot. `true` is the brand dot ("something new"); a tone
@@ -243,6 +245,29 @@ export interface ScopeHeaderProps {
    * Since 2.390.0.
    */
   statsPlacement?: 'inline' | 'below';
+  /**
+   * Since 2.437.0 — the header density contract shared with `PageHeader`
+   * (`headerDensity.tsx`; usually `useHeaderDensity().headerProps`). The
+   * library `Density`; default: the nearest `DensityProvider`, else
+   * comfortable.
+   *
+   * `default` variant: `compact` is one title row — the title at 14/600,
+   * the status, the description in an info `HoverCard`, `people` as avatars
+   * on the right whatever `peopleStyle` says, stats inline — then the tabs.
+   * `inline` variant: `compact` draws the title at 14/600 on a 40px row.
+   * `crumbs` variant: density changes nothing (it has no title row).
+   */
+  density?: Density;
+  /**
+   * Since 2.437.0 — a STATE, not a density. `default`: the trail row only,
+   * the title folded into its last crumb with the status and the expand
+   * chevron, the right-hand group kept; the tabs stay under it. `crumbs`:
+   * `title` folds into the trail with the expand chevron. `inline`: the
+   * controls move into the menu/Filters popover.
+   */
+  collapsed?: boolean;
+  /** Draws the chevron: "Collapse header" on the title row, "Expand header" when collapsed. Since 2.437.0. */
+  onToggleCollapsed?: () => void;
   className?: string;
   'data-testid'?: string;
 }
@@ -565,17 +590,20 @@ export function inlineRowWanted(row: HTMLElement, trail: HTMLElement | null, con
 const FIT_MARGIN_PX = 2;
 
 function ScopeCrumbs({
-  breadcrumbs, title, controls, link, menu, menuLabel, linkStyle, className, 'data-testid': testId = 'scope-header',
+  breadcrumbs, title, controls, link, menu, menuLabel, linkStyle, collapsed = false, onToggleCollapsed, className, 'data-testid': testId = 'scope-header',
 }: ScopeHeaderProps) {
   const last = breadcrumbs && breadcrumbs.length > 0 ? breadcrumbs[breadcrumbs.length - 1]!.label : undefined;
   const name = title ?? (typeof last === 'string' ? last : 'this scope');
   const hasRight = (controls != null && controls !== false) || !!link || (!!menu && menu.some((s) => s.items.length > 0));
+  const folded = collapsed;
+  const trail = folded ? foldTitleIntoTrail(breadcrumbs, title) : breadcrumbs ?? [];
   return (
-    <div data-testid={testId} data-variant="crumbs" className={cn('flex min-w-0 items-start gap-4 px-6 pb-1 pt-2', className)}>
-      <div className="flex h-5 min-w-0 flex-1 items-center">
-        {breadcrumbs && breadcrumbs.length > 0 && (
-          <Breadcrumbs items={breadcrumbs} separator="›" maxItems={5} className="min-w-0" data-testid={`${testId}-crumbs`} />
+    <div data-testid={testId} data-variant="crumbs" data-collapsed={folded ? 'true' : 'false'} className={cn('flex min-w-0 items-start gap-4 px-6 pb-1 pt-2', className)}>
+      <div className="flex h-5 min-w-0 flex-1 items-center gap-2">
+        {trail.length > 0 && (
+          <Breadcrumbs items={trail} separator="›" maxItems={5} className="min-w-0" data-testid={`${testId}-crumbs`} />
         )}
+        {folded && onToggleCollapsed && <HeaderCollapseToggle collapsed onToggle={onToggleCollapsed} data-testid={`${testId}-collapse-toggle`} />}
       </div>
       {hasRight && (
         // Hung below the crumb line (mt-3) with a negative bottom margin, so it
@@ -672,7 +700,7 @@ function InlineCrumb({ item, last, testId }: { item: BreadcrumbItem; last: boole
  * reaches the tabs or the controls. The crumb list clips inside its own box
  * (`overflow-hidden`), so a squeezed crumb is never drawn over.
  */
-function InlineTrail({ crumbs, title, titleHint, lg, testId }: { crumbs: BreadcrumbItem[]; title?: string; titleHint?: string; lg: boolean; testId: string }) {
+function InlineTrail({ crumbs, title, titleHint, lg, sm = false, after, testId }: { crumbs: BreadcrumbItem[]; title?: string; titleHint?: string; lg: boolean; sm?: boolean; after?: ReactNode; testId: string }) {
   const trailRef = useRef<HTMLDivElement | null>(null);
   const [collapsed, setCollapsed] = useState(false);
   // The trail width at which the full crumb list fits again.
@@ -787,12 +815,14 @@ function InlineTrail({ crumbs, title, titleHint, lg, testId }: { crumbs: Breadcr
             // crumbs are not in a shrink phase at all until the title is at
             // its 12rem floor.
             'm-0 min-w-[12rem] flex-1 truncate whitespace-nowrap text-text-primary',
-            lg ? 'text-[20px] font-bold leading-7 tracking-[-0.01em]' : 'text-[18px] font-semibold leading-7',
+            // 2.437.0: compact/collapsed density — the sm scale's 14/600 heading.
+            sm ? 'text-sm font-semibold leading-5' : lg ? 'text-[20px] font-bold leading-7 tracking-[-0.01em]' : 'text-[18px] font-semibold leading-7',
           )}
         >
           {title}
         </h1>
       )}
+      {after}
     </div>
   );
 }
@@ -814,10 +844,16 @@ function ScopeHeaderInline({
   onTabChange,
   tabSize,
   titleSize = 'md',
+  density: densityProp,
+  collapsed = false,
+  onToggleCollapsed,
   className,
   'data-testid': testId = 'scope-header',
 }: ScopeHeaderProps) {
   const crumbs = breadcrumbs ?? [];
+  const density = useDensity(densityProp);
+  const dense = density === 'compact' || collapsed;
+  const folded = collapsed;
   const last = crumbs.length > 0 ? crumbs[crumbs.length - 1]!.label : undefined;
   const name = title ?? last ?? 'this scope';
   const hasTabs = !!tabs && tabs.length > 0;
@@ -954,10 +990,13 @@ function ScopeHeaderInline({
       data-variant="inline"
       {...(hasControls ? { 'data-controls': controlsCollapsed ? 'collapsed' : 'inline' } : {})}
       data-title-size={titleSize}
+      data-density={density}
+      data-collapsed={folded ? 'true' : 'false'}
       {...(tabSize ? { 'data-tab-size': tabSize } : {})}
-      className={cn('flex h-12 min-w-0 flex-nowrap items-center gap-4 px-6', className)}
+      className={cn('flex min-w-0 flex-nowrap items-center gap-4 px-6', dense ? 'h-10' : 'h-12', className)}
     >
-      <InlineTrail crumbs={crumbs} title={title} titleHint={titleHint} lg={lg} testId={testId} />
+      <InlineTrail crumbs={crumbs} title={title} titleHint={titleHint} lg={lg} sm={dense} testId={testId}
+        after={onToggleCollapsed ? <HeaderCollapseToggle collapsed={folded} onToggle={onToggleCollapsed} data-testid={`${testId}-collapse-toggle`} /> : undefined} />
       {hasTabs && (
         <Tabs
           items={scopeTabItems(tabs!, testId)}
@@ -982,15 +1021,15 @@ function ScopeHeaderInline({
         // (2.407.4) it is shrink-0: Filters ▾ and ⋯ are all that is left, and
         // they stay inside the row's padding.
         <div
-          className={cn('relative flex flex-nowrap items-center gap-3', controlsCollapsed ? 'shrink-0' : 'min-w-0 shrink-[100]')}
+          className={cn('relative flex flex-nowrap items-center gap-3', controlsCollapsed || folded ? 'shrink-0' : 'min-w-0 shrink-[100]')}
           data-testid={`${testId}-right`}
         >
           <RightGroup
             controls={controls}
             controlsMenu={controlsMenu}
             controlsLabel={controlsLabel}
-            controlsMode={controlsCollapsed ? 'collapsed' : 'shrink'}
-            ghost={controlsCollapsed && ghost}
+            controlsMode={controlsCollapsed || folded ? 'collapsed' : 'shrink'}
+            ghost={controlsCollapsed && !folded && ghost}
             link={link}
             menu={menu}
             menuLabel={menuLabel}
@@ -1027,9 +1066,15 @@ function ScopeHeaderFull({
   tabSize,
   tabsRule = 'host',
   descriptionSize = 'md',
+  density: densityProp,
+  collapsed = false,
+  onToggleCollapsed,
   className,
   'data-testid': testId = 'scope-header',
 }: ScopeHeaderProps) {
+  const density = useDensity(densityProp);
+  const dense = density === 'compact' || collapsed;
+  const folded = collapsed;
   const statItems: ReactNode[] = [];
   if (progress && progress.total > 0 && Number.isFinite(progress.done)) {
     statItems.push(
@@ -1050,12 +1095,15 @@ function ScopeHeaderFull({
   });
 
   const groups = (people ?? []).filter((g) => g.people.length > 0);
-  const namesLine = peopleStyle === 'names' && groups.length > 0;
-  const inlinePeople = peopleStyle === 'inline' && groups.length > 0;
+  // Compact/collapsed (2.437.0): people are avatars on the right, stats
+  // inline, the description in the title's info popover.
+  const namesLine = !dense && peopleStyle === 'names' && groups.length > 0;
+  const inlinePeople = !dense && peopleStyle === 'inline' && groups.length > 0;
   const peopleInRight = !namesLine && !inlinePeople;
-  const lg = titleSize === 'lg';
-  const statsBelow = statsPlacement === 'below';
-  const hasDescription = description != null && description !== false;
+  const lg = !dense && titleSize === 'lg';
+  const statsBelow = !dense && statsPlacement === 'below';
+  const describable = description != null && description !== false;
+  const hasDescription = !dense && describable;
   const statsNode = statItems.length > 0 ? (
     <MetaLine
       items={statItems}
@@ -1068,36 +1116,92 @@ function ScopeHeaderFull({
   const hasTabs = !!tabs && tabs.length > 0;
   const currentTab = hasTabs ? (tabs!.some((t) => t.id === activeTab) ? activeTab! : tabs![0]!.id) : undefined;
 
+  const statusNode = status ? (
+    <StatusPill label={status.label} state={status.tone ?? 'info'} variant={dense ? 'text' : 'label'} className="shrink-0" data-testid={`${testId}-status`} />
+  ) : null;
+  const tabsNode = hasTabs ? (
+    <Tabs
+      items={scopeTabItems(tabs!, testId)}
+      value={currentTab!}
+      onValueChange={(id) => onTabChange?.(id)}
+      variant="underline"
+      size={dense ? 'sm' : 'md'}
+      badgeStyle="plain"
+      {...(tabSize === 'md' ? { indicator: 'bar' as const, indicatorWeight: 3 as const } : {})}
+      // lg: the count sits 10px after its label ("Work 11"), as the
+      // Initiatives mockup draws it — the button's own 6px gap is dropped
+      // and only the badge's margin remains. tabSize="md" (2.392.0) is
+      // the same 15px/10px at any title size, with 8px side padding,
+      // 28px between tabs and the first label 4px in from the title.
+      {...(dense
+        ? {}
+        : tabSize === 'md'
+          ? { itemClassName: 'gap-0 pb-4 pl-1 pr-3 pt-2 text-[15px]' }
+          : tabSize === 'sm'
+            ? {}
+            : lg ? { itemClassName: 'gap-0 text-[15px]' } : {})}
+      aria-label={`${title} views`}
+      className={cn(
+        // host: the row sits on the host's rule (-mb-px) and draws none of
+        // its own. inset: the row's own rule, inside the header's gutter.
+        tabsRule === 'inset' ? '' : tabSize === 'md' ? '-mb-px after:hidden' : '-mb-px border-b-0',
+        tabSize === 'md' && !dense && 'gap-7',
+        dense
+          ? 'mt-1'
+          : inlinePeople
+            ? (tabSize === 'md' ? 'mt-5' : 'mt-4')
+            : lg ? (hasDescription || namesLine ? 'mt-5' : 'mt-2') : hasDescription || namesLine ? 'mt-3' : 'mt-1',
+      )}
+    />
+  ) : null;
+  const rightGroup = <RightGroup controls={controls} link={link} menu={menu} menuLabel={menuLabel} title={title} testId={testId} linkStyle={linkStyle} />;
+
+  // Collapsed (2.437.0): the trail row only, the title folded into it.
+  if (folded) {
+    const trail = foldTitleIntoTrail(breadcrumbs, title);
+    return (
+      <div data-testid={testId} data-title-size={titleSize} data-density={density} data-collapsed="true" className={cn('flex min-w-0 flex-col gap-1 px-6 pt-2', !hasTabs && 'pb-2', className)}>
+        <div className="flex h-7 min-w-0 items-center gap-2">
+          {trail.length > 0 && <Breadcrumbs items={trail} separator="›" maxItems={5} className="min-w-0" data-testid={`${testId}-crumbs`} />}
+          {statusNode}
+          {onToggleCollapsed && <HeaderCollapseToggle collapsed onToggle={onToggleCollapsed} data-testid={`${testId}-collapse-toggle`} />}
+          <div className="ml-auto flex shrink-0 items-center gap-3">{rightGroup}</div>
+        </div>
+        {tabsNode}
+      </div>
+    );
+  }
+
   return (
-    <div data-testid={testId} data-title-size={titleSize} {...(tabSize ? { 'data-tab-size': tabSize } : {})} {...(hasTabs && tabsRule === 'inset' ? { 'data-tabs-rule': 'inset' } : {})} className={cn('flex min-w-0 flex-col gap-1.5 px-6 pt-3', lg && 'gap-0 pt-4', !hasTabs && (lg ? 'pb-4' : 'pb-3'), className)}>
+    <div data-testid={testId} data-title-size={titleSize} data-density={density} data-collapsed="false" {...(tabSize ? { 'data-tab-size': tabSize } : {})} {...(hasTabs && tabsRule === 'inset' ? { 'data-tabs-rule': 'inset' } : {})} className={cn('flex min-w-0 flex-col gap-1.5 px-6 pt-3', dense && 'gap-1 pt-2', lg && 'gap-0 pt-4', !hasTabs && (lg ? 'pb-4' : dense ? 'pb-2' : 'pb-3'), className)}>
       {breadcrumbs && breadcrumbs.length > 0 && (
         <Breadcrumbs items={breadcrumbs} separator="›" maxItems={5} className="min-w-0" data-testid={`${testId}-crumbs`} />
       )}
-      <div className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2">
+      <div className={cn('flex min-w-0 items-center gap-x-4 gap-y-2', dense ? 'h-7 flex-nowrap' : 'flex-wrap')}>
         <div className="flex min-w-0 items-center gap-3">
           <h1
             className={cn(
               'm-0 min-w-0 truncate text-text-primary',
-              lg ? 'text-[28px] font-bold leading-9 tracking-[-0.01em]' : 'text-[22px] font-semibold leading-8',
+              dense ? 'text-sm font-semibold leading-5' : lg ? 'text-[28px] font-bold leading-9 tracking-[-0.01em]' : 'text-[22px] font-semibold leading-8',
             )}
             title={title}
             data-testid={`${testId}-title`}
           >
             {title}
           </h1>
-          {status && (
-            <StatusPill label={status.label} state={status.tone ?? 'info'} variant="label" className="shrink-0" data-testid={`${testId}-status`} />
-          )}
+          {statusNode}
+          {dense && describable && <HeaderDescriptionInfo title={title} description={description} data-testid={`${testId}-description`} />}
+          {onToggleCollapsed && <HeaderCollapseToggle collapsed={false} onToggle={onToggleCollapsed} data-testid={`${testId}-collapse-toggle`} />}
         </div>
         {!statsBelow && statsNode}
         <div className={cn('ml-auto flex shrink-0 items-center', linkStyle === 'button' ? 'gap-3' : 'gap-5')}>
           {peopleInRight && groups.map((g) => (
             <div key={g.label} className="flex items-center gap-2" data-testid={`${testId}-people-${g.label.toLowerCase()}`}>
               <span className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">{g.label}</span>
-              <PresenceAvatars users={g.people} size={26} maxVisible={4} />
+              <PresenceAvatars users={g.people} size={dense ? 24 : 26} maxVisible={4} />
             </div>
           ))}
-          <RightGroup controls={controls} link={link} menu={menu} menuLabel={menuLabel} title={title} testId={testId} linkStyle={linkStyle} />
+          {rightGroup}
         </div>
       </div>
       {statsBelow && statsNode}
@@ -1137,37 +1241,7 @@ function ScopeHeaderFull({
           ))}
         </div>
       )}
-      {hasTabs && (
-        <Tabs
-          items={scopeTabItems(tabs!, testId)}
-          value={currentTab!}
-          onValueChange={(id) => onTabChange?.(id)}
-          variant="underline"
-          size="md"
-          badgeStyle="plain"
-          {...(tabSize === 'md' ? { indicator: 'bar' as const, indicatorWeight: 3 as const } : {})}
-          // lg: the count sits 10px after its label ("Work 11"), as the
-          // Initiatives mockup draws it — the button's own 6px gap is dropped
-          // and only the badge's margin remains. tabSize="md" (2.392.0) is
-          // the same 15px/10px at any title size, with 8px side padding,
-          // 28px between tabs and the first label 4px in from the title.
-          {...(tabSize === 'md'
-            ? { itemClassName: 'gap-0 pb-4 pl-1 pr-3 pt-2 text-[15px]' }
-            : tabSize === 'sm'
-              ? {}
-              : lg ? { itemClassName: 'gap-0 text-[15px]' } : {})}
-          aria-label={`${title} views`}
-          className={cn(
-            // host: the row sits on the host's rule (-mb-px) and draws none of
-            // its own. inset: the row's own rule, inside the header's gutter.
-            tabsRule === 'inset' ? '' : tabSize === 'md' ? '-mb-px after:hidden' : '-mb-px border-b-0',
-            tabSize === 'md' && 'gap-7',
-            inlinePeople
-              ? (tabSize === 'md' ? 'mt-5' : 'mt-4')
-              : lg ? (hasDescription || namesLine ? 'mt-5' : 'mt-2') : hasDescription || namesLine ? 'mt-3' : 'mt-1',
-          )}
-        />
-      )}
+      {tabsNode}
     </div>
   );
 }
