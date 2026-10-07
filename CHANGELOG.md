@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.433.0
+
+- `CallDock` `layout="stack"`: the call bar for a conversation composer in a side pane — title, meta, mic ▾, camera ▾ and Leave on the bar; Share, People, Documents, settings and pop-out in one "⋯" menu (`call-dock-more`, rows keep their `call-dock-*` test ids); the tiles as the reflowing grid, at most two to a row. Calling keeps Cancel and disables Share with its reason.
+- `CallDock` `tileSize` (`sm` 132 × 74 = `compact`, `md` 176 × 88 default, `lg` 240 × 135): the larger tiles above a full-width conversation composer. `data-tile-size` on the shelf.
+- `CallTileRow` `maxColumns` (grid variant): caps `gridCols`.
+- `ConversationCallDock` forwards `tileSize`, `layout="stack"`, and the call's `documents` / `onOpenDocuments` / `documentsOpen` / `onDocumentClick`, so a document's huddle draws its chips and "Documents N" like `CallDock`.
+
 ## 2.432.1
 
 - `ConversationShelf layout="bar"`: each button's name is real screen-reader text ("Mentions, 3 waiting") instead of an `aria-label`, so the bar's text still reads the destinations (a rail judge reading `textContent`, a find-in-page).

@@ -134,6 +134,24 @@ describe('ConversationCallDock', () => {
     expect(screen.getByTestId('call-dock-leave')).toBeInTheDocument();
   });
 
+  it('forwards layout="stack", tileSize and the call\'s documents (2.432.0)', () => {
+    const { Dock } = bind();
+    const onOpenDocuments = vi.fn();
+    const { rerender } = render(<Dock call={fakeCall()} title="Auth Migration" onOpenPeople={() => {}} layout="stack" data-testid="shell-dock"
+      documents={[{ id: 'd1', title: 'Auth architecture' }, { id: 'd2', title: 'Migration brief' }]} onOpenDocuments={onOpenDocuments} />);
+    expect(screen.getByTestId('shell-dock')).toHaveAttribute('data-layout', 'stack');
+    expect(screen.getByTestId('call-dock-tile-row')).toHaveAttribute('data-variant', 'grid');
+    expect(screen.getByTestId('call-dock-leave')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('call-dock-more'));
+    fireEvent.click(screen.getByTestId('call-dock-documents'));
+    expect(onOpenDocuments).toHaveBeenCalledOnce();
+    rerender(<Dock call={fakeCall()} title="Auth Migration" onOpenPeople={() => {}} tileSize="lg" data-testid="shell-dock"
+      documents={[{ id: 'd1', title: 'Auth architecture' }]} onOpenDocuments={onOpenDocuments} />);
+    expect(screen.getByTestId('shell-dock')).toHaveAttribute('data-tile-size', 'lg');
+    expect(screen.getByTestId('call-dock-document-d1')).toHaveTextContent('Auth architecture');
+    expect(screen.getByTestId('call-dock-documents')).toHaveAttribute('aria-label', 'Documents (1)');
+  });
+
   it('opens its own device settings, previewing only while open, and keeps the call in step', () => {
     const { Dock, rm, settings } = bind();
     const call = fakeCall();

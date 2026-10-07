@@ -90,6 +90,8 @@ export interface CallTileRowProps {
    * `overflow` and `maxVisible` are ignored.
    */
   variant?: 'floating' | 'bar' | 'dock' | 'grid';
+  /** `grid` only (2.432.0): never more columns than this — a narrow pane keeps two tiles to a row. */
+  maxColumns?: number;
   className?: string;
   style?: CSSProperties;
   'data-testid'?: string;
@@ -109,13 +111,14 @@ export function CallTileRow({
   maxVisible = 6,
   tileHeight = 84,
   tileTestIdPrefix = 'call-tile',
+  maxColumns,
   className,
   style,
   'data-testid': testId = 'call-tile-row',
 }: CallTileRowProps) {
   if (variant === 'grid') {
     const all = localParticipant ? [localParticipant, ...participants] : participants;
-    const cols = gridCols(all.length);
+    const cols = maxColumns ? Math.max(1, Math.min(gridCols(all.length), maxColumns)) : gridCols(all.length);
     return (
       <div
         className={cn('grid w-full min-w-0 gap-2', GRID_COLUMNS[cols] ?? GRID_COLUMNS[4], className)}

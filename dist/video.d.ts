@@ -201,7 +201,7 @@ export declare interface CallControlsProps {
     className?: string;
 }
 
-export declare function CallDock({ title, participantCount, elapsedMs, phase, callingTo, documents, participants, localParticipantId, activeSpeakerId, followingUserId, mic, camera, screenShare, onOpenPeople, onOpenDocuments, peopleOpen, documentsOpen, onOpenSettings, extras, onPopOut, onLeave, canEndForEveryone, onEndForEveryone, onTileClick, onTitleClick, onDocumentClick, endedSummary, error, onDismiss, compact, layout, className, 'data-testid': testId, }: CallDockProps): JSX.Element;
+export declare function CallDock({ title, participantCount, elapsedMs, phase, callingTo, documents, participants, localParticipantId, activeSpeakerId, followingUserId, mic, camera, screenShare, onOpenPeople, onOpenDocuments, peopleOpen, documentsOpen, onOpenSettings, extras, onPopOut, onLeave, canEndForEveryone, onEndForEveryone, onTileClick, onTitleClick, onDocumentClick, endedSummary, error, onDismiss, compact, tileSize, layout, className, 'data-testid': testId, }: CallDockProps): JSX.Element;
 
 /** JSON written under {@link CALL_DOCK_DRAG_TYPE}. */
 export declare interface CallDockDragPayload {
@@ -293,6 +293,12 @@ export declare interface CallDockProps {
     /** 132 × 74 tiles (a 1280 × 720 window) instead of 176 × 88 (the mockup's 166 × 84 at its 1.054 scale). */
     compact?: boolean;
     /**
+     * Shelf tile size (2.432.0): `sm` 132 × 74 (what `compact` picks), `md`
+     * 176 × 88 (the default), `lg` 240 × 135 — the tiles above a full-width
+     * conversation composer. Wins over `compact` when both are given.
+     */
+    tileSize?: CallDockTileSize;
+    /**
      * `shelf` (default): the header row (title, meta, device controls, Leave)
      * over a row of fixed-size tiles. `grid` (2.423.0): the call's media
      * panel — ONLY the tile stage, as a reflowing grid of fluid 16:9 tiles
@@ -300,8 +306,12 @@ export declare interface CallDockProps {
      * meta or controls render: the host's bar (e.g. `HuddleBar`) owns mic,
      * camera and Leave. Connecting draws one fluid skeleton; reconnecting keeps
      * its badge; the ended and error phases render as they do for `shelf`.
+     * `stack` (2.432.0): the narrow form of `shelf` — the header (title, meta,
+     * mic ▾, camera ▾, a "⋯" menu holding Share, People, Documents, settings
+     * and pop-out, then Leave) over the reflowing tile grid, at most two tiles
+     * to a row. For a conversation composer in a side pane.
      */
-    layout?: 'shelf' | 'grid';
+    layout?: 'shelf' | 'grid' | 'stack';
     className?: string;
     'data-testid'?: string;
 }
@@ -311,6 +321,8 @@ export declare interface CallDockTarget {
     id: string;
     label: string;
 }
+
+export declare type CallDockTileSize = 'sm' | 'md' | 'lg';
 
 export declare function CallingStatusPill({ show, label }: CallingStatusPillProps): JSX.Element | null;
 
@@ -694,7 +706,7 @@ export declare interface CallTileParticipant extends HangoutLayoutParticipant {
     audioElement?: ReactNode;
 }
 
-export declare function CallTileRow({ participants, localParticipant, activeSpeakerId, tileWidth, controls, title, onParticipantClick, variant, highlightedId, overflow, maxVisible, tileHeight, tileTestIdPrefix, className, style, 'data-testid': testId, }: CallTileRowProps): JSX.Element;
+export declare function CallTileRow({ participants, localParticipant, activeSpeakerId, tileWidth, controls, title, onParticipantClick, variant, highlightedId, overflow, maxVisible, tileHeight, tileTestIdPrefix, maxColumns, className, style, 'data-testid': testId, }: CallTileRowProps): JSX.Element;
 
 export declare interface CallTileRowProps {
     participants: CallTileParticipant[];
@@ -744,6 +756,8 @@ export declare interface CallTileRowProps {
      * `overflow` and `maxVisible` are ignored.
      */
     variant?: 'floating' | 'bar' | 'dock' | 'grid';
+    /** `grid` only (2.432.0): never more columns than this — a narrow pane keeps two tiles to a row. */
+    maxColumns?: number;
     className?: string;
     style?: CSSProperties;
     'data-testid'?: string;

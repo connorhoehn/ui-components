@@ -314,6 +314,8 @@ declare interface CallActivityParticipant {
     avatarUrl?: string;
 }
 
+declare type CallDockTileSize = 'sm' | 'md' | 'lg';
+
 /** Auth expiry is independent of whether a socket is open; the app adds its own mode rules. */
 export declare function canEditCanvasGrant(grant: {
     canEdit: boolean;
@@ -1481,14 +1483,31 @@ export declare interface ConversationCallDockProps {
     selfName?: string;
     /** 132 × 74 tiles instead of 176 × 88. */
     compact?: boolean;
+    /** Shelf tile size (2.432.0): `sm` 132 × 74, `md` 176 × 88 (default), `lg` 240 × 135. Wins over `compact`. */
+    tileSize?: CallDockTileSize;
+    /**
+     * The documents the call is about (2.432.0): the bar draws them as chips
+     * after the meta (≥ 1240px of dock width) and, with `onOpenDocuments`, a
+     * "Documents N" button. Omitted: a conversation call without documents.
+     */
+    documents?: {
+        id: string;
+        title: string;
+        presenting?: boolean;
+    }[];
+    onOpenDocuments?: () => void;
+    documentsOpen?: boolean;
+    onDocumentClick?: (id: string) => void;
     /**
      * `shelf` (default): the dock's header, device controls and Leave over a
      * row of tiles. `grid` (2.423.0): the call's media panel — only the tiles,
      * in a grid that reflows with the head count (1 / 2 / 2×2 / 3 columns), the
      * viewer first as "You". The host's bar keeps mic, camera and Leave. The
      * same single dock (and its media elements) serves either layout.
+     * `stack` (2.432.0): the narrow `shelf` for a side pane — mic ▾, camera ▾
+     * and Leave on the bar, the rest in its "⋯" menu, the tiles two to a row.
      */
-    layout?: 'shelf' | 'grid';
+    layout?: 'shelf' | 'grid' | 'stack';
     className?: string;
     /** The dock's test id; the notice is `<id>-notice`, the settings dialog `<id>-settings`. Default `conversation-call-dock`. */
     'data-testid'?: string;

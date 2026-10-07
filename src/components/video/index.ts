@@ -312,7 +312,7 @@ export type {
 export { StartCallDrawer } from './StartCallDrawer';
 export type { StartCallDrawerProps, StartCallPeople } from './StartCallDrawer';
 export { CallDock, formatCallElapsed } from './CallDock';
-export type { CallDockProps, CallDockParticipant, CallDockPhase } from './CallDock';
+export type { CallDockProps, CallDockParticipant, CallDockPhase, CallDockTileSize } from './CallDock';
 export { IncomingCallPopover } from './IncomingCallPopover';
 export type { IncomingCallPopoverProps } from './IncomingCallPopover';
 export { DocumentCallPanel } from './DocumentCallPanel';
