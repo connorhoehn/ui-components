@@ -2849,7 +2849,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           <span
             data-testid={`${testId}-context-chip`}
             title={[modesEnabled ? MODE_NAMES[activeMode] : null, references?.[0]?.title ?? references?.[0]?.label].filter(Boolean).join(' · ')}
-            className="group/chip ml-1.5 flex min-w-0 max-w-[55%] shrink items-center gap-1 self-center whitespace-nowrap rounded-full bg-surface-inset px-2 py-0.5 text-xs text-text-secondary"
+            className="group/chip ml-1.5 flex min-w-0 max-w-[45%] shrink items-center gap-1 self-center whitespace-nowrap rounded-full bg-surface-inset px-2 py-0.5 text-xs text-text-secondary"
           >
             {modesEnabled && (switchable && offeredModes.length > 1 ? (
               <DropdownMenu
@@ -2975,8 +2975,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           ref={inputBoxRef}
           className={cn(
             (singleRow || inlineCommand || chipCommand) && 'min-w-0 flex-1',
-            // The pane row keeps room to write: under ~9rem the toolbar wraps below, not the text.
-            pane && 'min-w-[9rem]',
+            // The pane row keeps room to write: under ~6rem the toolbar wraps below, not the text.
+            pane && 'min-w-[6rem]',
             docked && 'uic-composer-docked-input',
             basicBox && !singleRow && 'mx-3 mt-2 min-h-[58px] rounded-md border border-border bg-surface',
           )}
@@ -3047,6 +3047,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             'flex min-w-0 items-center',
             docked ? 'px-2 py-1.5' : 'px-1.5 py-1',
             singleRow ? 'shrink-0' : basicBox ? 'pt-1' : 'border-t border-border',
+            // Wrapped under the input (focus brought Aa / ? back), the cluster stays at the right.
+            pane && 'ml-auto',
             narrow && !singleRow && 'flex-wrap gap-y-1',
             !singleRow && reveal,
           )}

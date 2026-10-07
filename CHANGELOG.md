@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.431.2
+
+- `responsive="pane"`: idle is truly one row at a 380px pane (the 9rem input floor plus a 55% chip wrapped Send under it); the input floor is 6rem, the chip caps at 45%, and a wrapped Aa / ? / Send cluster sits at the right.
+
 ## 2.431.1
 
 - `responsive="pane"`: the input keeps at least 9rem, so on focus the `Aa` / `?` / Send cluster wraps to a second row instead of squeezing the text to a letter a line (measured live at 381px: "hell / o"); the chip's mode label is on the chip's 12px step (it inherited the menu trigger's 16px); the chip caps at 55% of the row.

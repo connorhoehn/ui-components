@@ -3560,7 +3560,7 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 						q && (z || !!k?.length) && /* @__PURE__ */ O("span", {
 							"data-testid": `${F}-context-chip`,
 							title: [z ? $[V] : null, k?.[0]?.title ?? k?.[0]?.label].filter(Boolean).join(" · "),
-							className: "group/chip ml-1.5 flex min-w-0 max-w-[55%] shrink items-center gap-1 self-center whitespace-nowrap rounded-full bg-surface-inset px-2 py-0.5 text-xs text-text-secondary",
+							className: "group/chip ml-1.5 flex min-w-0 max-w-[45%] shrink items-center gap-1 self-center whitespace-nowrap rounded-full bg-surface-inset px-2 py-0.5 text-xs text-text-secondary",
 							children: [z && (sn && B.length > 1 ? /* @__PURE__ */ D(x, {
 								trigger: /* @__PURE__ */ O("span", {
 									className: "flex items-center gap-1 font-semibold text-text-primary",
@@ -3698,7 +3698,7 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 								}),
 								/* @__PURE__ */ D("div", {
 									ref: vr,
-									className: e((Z || Jr || Q) && "min-w-0 flex-1", q && "min-w-[9rem]", Y && "uic-composer-docked-input", Er && !Z && "mx-3 mt-2 min-h-[58px] rounded-md border border-border bg-surface"),
+									className: e((Z || Jr || Q) && "min-w-0 flex-1", q && "min-w-[6rem]", Y && "uic-composer-docked-input", Er && !Z && "mx-3 mt-2 min-h-[58px] rounded-md border border-border bg-surface"),
 									"data-basic-well": Er || void 0,
 									"data-testid": `${F}-input-box`,
 									...tn && on ? { title: on } : {},
@@ -3767,7 +3767,7 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 							})
 						}),
 						/* @__PURE__ */ O("div", {
-							className: e("flex min-w-0 items-center", Y ? "px-2 py-1.5" : "px-1.5 py-1", Z ? "shrink-0" : Er ? "pt-1" : "border-t border-border", Sr && !Z && "flex-wrap gap-y-1", !Z && Pr),
+							className: e("flex min-w-0 items-center", Y ? "px-2 py-1.5" : "px-1.5 py-1", Z ? "shrink-0" : Er ? "pt-1" : "border-t border-border", q && "ml-auto", Sr && !Z && "flex-wrap gap-y-1", !Z && Pr),
 							"data-testid": `${F}-toolbar`,
 							children: [
 								(Sr || q) && !X && (!q || ur) && ii(Fr ? "Hide formatting" : "Show formatting", Fr, () => Ir((e) => !e), /* @__PURE__ */ D("span", {
