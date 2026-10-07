@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.437.1
+
+- Header density fit, from the first consumer walk (the initiative Activity tab at the four-pane width): compact/collapsed tabs sit on the stack's 4px gap (trail + row + tabs is 96px, was 100px); the compact row's people cluster gives up width before the title (it clips, each avatar keeps its tooltip), so a long title is not cut to "Observability P…" while the avatars stay whole; the collapsed trail never wraps (the crumbs clip, the folded title stays on the row with its badge and chevron); the collapsed stack keeps a 4px gap above its tabs. `HoverCard width="xl"` (32rem, inside the viewport) and `HeaderDescriptionInfo width`; `PageHeader` uses `xl` when the compact card carries `meta` (a stat strip read in a 20rem card overlapped its labels).
+
 ## 2.437.0
 
 - **One density vocabulary.** `Density = 'comfortable' | 'compact'` with `DensityProvider` and `useDensity(override?)` (`/shared`, root). A component with a denser form reads its own prop, else the nearest provider, else comfortable. `PageHeader` and `ScopeHeader` are the first consumers; folding the other per-component `size` props into it is the density-system lane's.

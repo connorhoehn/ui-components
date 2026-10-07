@@ -29,8 +29,8 @@ import { cn } from '../../lib/cn';
 export const HOVER_CARD_OPEN_MS = 300;
 export const HOVER_CARD_CLOSE_MS = 250;
 
-export type HoverCardWidth = 'sm' | 'md' | 'lg';
-const WIDTH: Record<HoverCardWidth, string> = { sm: 'w-64', md: 'w-72', lg: 'w-80' };
+export type HoverCardWidth = 'sm' | 'md' | 'lg' | 'xl';
+const WIDTH: Record<HoverCardWidth, string> = { sm: 'w-64', md: 'w-72', lg: 'w-80', xl: 'w-[32rem] max-w-[calc(100vw-16px)]' };
 
 export interface HoverCardTriggerProps {
   ref: RefCallback<HTMLElement>;

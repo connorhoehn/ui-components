@@ -22,7 +22,7 @@ import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { Avatar } from './Avatar';
 import { Breadcrumbs, type BreadcrumbItem } from './Breadcrumbs';
-import { HoverCard } from './HoverCard';
+import { HoverCard, type HoverCardWidth } from './HoverCard';
 import { Tooltip } from './Tooltip';
 import { Text } from './Text';
 import type { Density } from './Density';
@@ -135,8 +135,9 @@ export function HeaderTrailFold({
   const trail = foldTitleIntoTrail(breadcrumbs, title);
   return (
     <div className={cn('flex h-7 min-w-0 items-center gap-2', className)} data-testid={testId}>
-      {trail.length > 0 && <Breadcrumbs items={trail} separator="›" maxItems={5} className="min-w-0" data-testid={`${testId}-crumbs`} />}
-      {badge}
+      {/* One line: the crumbs never wrap; they clip before the badge and chevron do. */}
+      {trail.length > 0 && <Breadcrumbs items={trail} separator="›" maxItems={5} className="min-w-0 shrink overflow-hidden whitespace-nowrap [&>ol]:flex-nowrap" data-testid={`${testId}-crumbs`} />}
+      {badge && <div className="flex shrink-0 items-center">{badge}</div>}
       {onExpand && <HeaderCollapseToggle collapsed onToggle={onExpand} data-testid={`${testId}-toggle`} />}
       {actions && <div className="ml-auto flex shrink-0 items-center gap-2">{actions}</div>}
     </div>
@@ -147,6 +148,8 @@ export interface HeaderDescriptionInfoProps {
   /** Who the description is about — the trigger reads "About <title>". */
   title: string;
   description: ReactNode;
+  /** The card's width. Default `lg`; `xl` for a summary that carries a stat strip. Since 2.437.1. */
+  width?: HoverCardWidth;
   'data-testid'?: string;
 }
 
@@ -155,9 +158,9 @@ export interface HeaderDescriptionInfoProps {
  * opening the library `HoverCard` — hover or keyboard focus shows it, Enter
  * pins it, Escape closes it, focus never leaves the glyph.
  */
-export function HeaderDescriptionInfo({ title, description, 'data-testid': testId = 'header-description' }: HeaderDescriptionInfoProps) {
+export function HeaderDescriptionInfo({ title, description, width = 'lg', 'data-testid': testId = 'header-description' }: HeaderDescriptionInfoProps) {
   return (
-    <HoverCard label={`About ${title}`} width="lg" data-testid={`${testId}-card`}
+    <HoverCard label={`About ${title}`} width={width} data-testid={`${testId}-card`}
       content={(
         <div className="flex flex-col gap-1">
           <Text as="p" size="sm" weight="semibold" tone="primary" wrap>{title}</Text>

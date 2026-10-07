@@ -25,7 +25,8 @@ function w(e) {
 var T = 300, E = 250, D = {
 	sm: "w-64",
 	md: "w-72",
-	lg: "w-80"
+	lg: "w-80",
+	xl: "w-[32rem] max-w-[calc(100vw-16px)]"
 };
 function O({ label: t, content: n, children: r, width: i = "md", openOnFocus: a = !0, pinOnKey: o = !0, onOpenChange: s, className: c, "data-testid": l = "hover-card" }) {
 	let [d, x] = g(!1), [S, C] = g(!1), w = d || S, T = h(null), E = h(null), O = h(null), k = p(), A = u(() => {
@@ -160,10 +161,13 @@ function R({ breadcrumbs: t, title: n, badge: r, onExpand: i, actions: a, classN
 				items: l,
 				separator: "›",
 				maxItems: 5,
-				className: "min-w-0",
+				className: "min-w-0 shrink overflow-hidden whitespace-nowrap [&>ol]:flex-nowrap",
 				"data-testid": `${c}-crumbs`
 			}),
-			r,
+			r && /* @__PURE__ */ v("div", {
+				className: "flex shrink-0 items-center",
+				children: r
+			}),
 			i && /* @__PURE__ */ v(L, {
 				collapsed: !0,
 				onToggle: i,
@@ -176,11 +180,11 @@ function R({ breadcrumbs: t, title: n, badge: r, onExpand: i, actions: a, classN
 		]
 	});
 }
-function z({ title: e, description: t, "data-testid": i = "header-description" }) {
+function z({ title: e, description: t, width: i = "lg", "data-testid": a = "header-description" }) {
 	return /* @__PURE__ */ v(O, {
 		label: `About ${e}`,
-		width: "lg",
-		"data-testid": `${i}-card`,
+		width: i,
+		"data-testid": `${a}-card`,
 		content: /* @__PURE__ */ y("div", {
 			className: "flex flex-col gap-1",
 			children: [/* @__PURE__ */ v(c, {
@@ -192,7 +196,7 @@ function z({ title: e, description: t, "data-testid": i = "header-description" }
 				children: e
 			}), /* @__PURE__ */ v("div", {
 				className: "whitespace-pre-line text-xs text-text-secondary",
-				"data-testid": `${i}-text`,
+				"data-testid": `${a}-text`,
 				children: t
 			})]
 		}),
@@ -203,7 +207,7 @@ function z({ title: e, description: t, "data-testid": i = "header-description" }
 			size: "sm",
 			icon: /* @__PURE__ */ v(r, { size: 14 }),
 			className: "shrink-0 text-text-secondary",
-			"data-testid": `${i}-trigger`
+			"data-testid": `${a}-trigger`
 		})
 	});
 }
@@ -299,7 +303,7 @@ function H({ title: n, description: r, actions: i, back: a, badge: o, size: c = 
 		indicator: "bar",
 		indicatorWeight: 3,
 		"aria-label": `${n} views`,
-		className: e("gap-0", d || T === "compact" ? "mt-1" : "mt-3"),
+		className: e("gap-0", d || T === "compact" ? "mt-0" : "mt-3"),
 		"data-testid": `${C}-tabs`
 	}) : null, k = D ? /* @__PURE__ */ v(s, {
 		items: l,
@@ -313,7 +317,7 @@ function H({ title: n, description: r, actions: i, back: a, badge: o, size: c = 
 		"data-testid": `${C}-collapse-toggle`
 	}) : null;
 	return d ? /* @__PURE__ */ y("div", {
-		className: e("flex min-w-0 flex-col", D && "pt-2", S),
+		className: e("flex min-w-0 flex-col gap-1", D && "pt-2", S),
 		"data-testid": C,
 		"data-density": T,
 		"data-collapsed": "true",
@@ -346,16 +350,20 @@ function H({ title: n, description: r, actions: i, back: a, badge: o, size: c = 
 						o,
 						m ?? (r || h ? /* @__PURE__ */ v(z, {
 							title: n,
+							width: h ? "xl" : "lg",
 							description: /* @__PURE__ */ y(_, { children: [r, h && /* @__PURE__ */ v("div", {
 								className: "mt-2 whitespace-normal",
 								children: h
 							})] }),
 							"data-testid": `${C}-description`
 						}) : null),
-						E.length > 0 && /* @__PURE__ */ v(V, {
-							groups: E,
-							density: "compact",
-							"data-testid": `${C}-people`
+						E.length > 0 && /* @__PURE__ */ v("div", {
+							className: "flex min-w-0 shrink-[8] overflow-hidden",
+							children: /* @__PURE__ */ v(V, {
+								groups: E,
+								density: "compact",
+								"data-testid": `${C}-people`
+							})
 						}),
 						A
 					]

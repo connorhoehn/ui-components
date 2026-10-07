@@ -2715,12 +2715,14 @@ export declare function headerDensityStorageKey(headerId: string, kind: HeaderCo
  * opening the library `HoverCard` — hover or keyboard focus shows it, Enter
  * pins it, Escape closes it, focus never leaves the glyph.
  */
-export declare function HeaderDescriptionInfo({ title, description, 'data-testid': testId }: HeaderDescriptionInfoProps): JSX.Element;
+export declare function HeaderDescriptionInfo({ title, description, width, 'data-testid': testId }: HeaderDescriptionInfoProps): JSX.Element;
 
 export declare interface HeaderDescriptionInfoProps {
     /** Who the description is about — the trigger reads "About <title>". */
     title: string;
     description: ReactNode;
+    /** The card's width. Default `lg`; `xl` for a summary that carries a stat strip. Since 2.437.1. */
+    width?: HoverCardWidth;
     'data-testid'?: string;
 }
 
@@ -2850,7 +2852,7 @@ export declare interface HoverCardTriggerProps {
     'aria-describedby': string | undefined;
 }
 
-export declare type HoverCardWidth = 'sm' | 'md' | 'lg';
+export declare type HoverCardWidth = 'sm' | 'md' | 'lg' | 'xl';
 
 export declare function IconButton({ 'aria-label': ariaLabel, icon, children, disabled, variant, tone, size, className, ...rest }: IconButtonProps): JSX.Element;
 

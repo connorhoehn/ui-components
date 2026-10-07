@@ -129,7 +129,9 @@ function PageHeader({
       onValueChange={(id) => onTabChange?.(id)}
       variant="underline" size="md" badgeStyle="plain" indicator="bar" indicatorWeight={3}
       aria-label={`${title} views`}
-      className={cn('gap-0', collapsed || density === 'compact' ? 'mt-1' : 'mt-3')}
+      // Compact/collapsed: the tabs sit right under the row (the stack's 4px
+      // gap) so trail + row + tabs is 96px; comfortable keeps 12px.
+      className={cn('gap-0', collapsed || density === 'compact' ? 'mt-0' : 'mt-3')}
       data-testid={`${testId}-tabs`}
     />
   ) : null;
@@ -140,7 +142,7 @@ function PageHeader({
 
   if (collapsed) {
     return (
-      <div className={cn('flex min-w-0 flex-col', hasTrail && 'pt-2', className)} data-testid={testId} data-density={density} data-collapsed="true">
+      <div className={cn('flex min-w-0 flex-col gap-1', hasTrail && 'pt-2', className)} data-testid={testId} data-density={density} data-collapsed="true">
         <HeaderTrailFold breadcrumbs={breadcrumbs} title={title} badge={badge} actions={actions} data-testid={`${testId}-fold`}
           {...(onToggleCollapsed ? { onExpand: onToggleCollapsed } : {})} />
         {tabStrip}
@@ -158,8 +160,9 @@ function PageHeader({
               {title}
             </h1>
             {badge}
-            {info ?? (description || meta ? <HeaderDescriptionInfo title={title} description={<>{description}{meta && <div className="mt-2 whitespace-normal">{meta}</div>}</>} data-testid={`${testId}-description`} /> : null)}
-            {groups.length > 0 && <HeaderPeople groups={groups} density="compact" data-testid={`${testId}-people`} />}
+            {info ?? (description || meta ? <HeaderDescriptionInfo title={title} width={meta ? 'xl' : 'lg'} description={<>{description}{meta && <div className="mt-2 whitespace-normal">{meta}</div>}</>} data-testid={`${testId}-description`} /> : null)}
+            {/* The people give up width before the title does (they clip; each keeps its tooltip). */}
+            {groups.length > 0 && <div className="flex min-w-0 shrink-[8] overflow-hidden"><HeaderPeople groups={groups} density="compact" data-testid={`${testId}-people`} /></div>}
             {chevron}
           </div>
           {actions && <div className="flex flex-shrink-0 items-center gap-2">{actions}</div>}
