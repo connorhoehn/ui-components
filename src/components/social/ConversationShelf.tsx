@@ -95,7 +95,6 @@ export function ConversationShelf({
               <button
                 type="button"
                 onClick={() => onSelect(item.id)}
-                aria-label={name}
                 title={item.label}
                 data-testid={`${testId}-${item.id}`}
                 data-active={active ? 'true' : 'false'}
@@ -109,6 +108,8 @@ export function ConversationShelf({
                 <span aria-hidden className="grid h-[18px] w-[18px] place-items-center [&>svg]:h-[18px] [&>svg]:w-[18px]">
                   {item.icon ?? <span className="h-1.5 w-1.5 rounded-full bg-current" />}
                 </span>
+                {/* The name is real text (screen-reader only), so the bar still reads "Activity, Mentions, …". */}
+                <span className="sr-only">{name}</span>
                 {count > 0 && (
                   <span
                     aria-hidden

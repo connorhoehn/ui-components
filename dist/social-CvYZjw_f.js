@@ -3150,22 +3150,28 @@ function Ht({ items: e, activeId: t, onSelect: n, compact: r = !1, iconOnly: i =
 			return /* @__PURE__ */ Q("li", { children: /* @__PURE__ */ $("button", {
 				type: "button",
 				onClick: () => n(e.id),
-				"aria-label": a,
 				title: e.label,
 				"data-testid": `${u}-${e.id}`,
 				"data-active": r ? "true" : "false",
 				"aria-current": r ? "true" : void 0,
 				className: o("relative grid h-8 w-8 cursor-pointer place-items-center rounded-md border-none bg-transparent p-0 text-text-secondary", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", r ? "bg-primary-bg text-primary-fg" : "hover:bg-surface-hover hover:text-text-primary"),
-				children: [/* @__PURE__ */ Q("span", {
-					"aria-hidden": !0,
-					className: "grid h-[18px] w-[18px] place-items-center [&>svg]:h-[18px] [&>svg]:w-[18px]",
-					children: e.icon ?? /* @__PURE__ */ Q("span", { className: "h-1.5 w-1.5 rounded-full bg-current" })
-				}), i > 0 && /* @__PURE__ */ Q("span", {
-					"aria-hidden": !0,
-					"data-testid": `${u}-${e.id}-count`,
-					className: o("absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full px-1 text-[10px] font-semibold leading-none text-white", e.urgent ? "bg-danger" : "bg-primary"),
-					children: i > 99 ? "99+" : i
-				})]
+				children: [
+					/* @__PURE__ */ Q("span", {
+						"aria-hidden": !0,
+						className: "grid h-[18px] w-[18px] place-items-center [&>svg]:h-[18px] [&>svg]:w-[18px]",
+						children: e.icon ?? /* @__PURE__ */ Q("span", { className: "h-1.5 w-1.5 rounded-full bg-current" })
+					}),
+					/* @__PURE__ */ Q("span", {
+						className: "sr-only",
+						children: a
+					}),
+					i > 0 && /* @__PURE__ */ Q("span", {
+						"aria-hidden": !0,
+						"data-testid": `${u}-${e.id}-count`,
+						className: o("absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full px-1 text-[10px] font-semibold leading-none text-white", e.urgent ? "bg-danger" : "bg-primary"),
+						children: i > 99 ? "99+" : i
+					})
+				]
 			}) }, e.id);
 		})
 	});
@@ -4844,7 +4850,8 @@ function Qn({ members: e, open: t = !1, canManage: n = !1, currentUserId: r, onA
 var $n = 40, er = {
 	online: "online",
 	busy: "busy",
-	away: "away"
+	away: "away",
+	offline: "offline"
 }, tr = "flex w-full min-w-0 flex-col items-center gap-1 rounded-lg p-1 text-center", nr = "cursor-pointer border-0 bg-transparent hover:bg-surface-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1";
 function rr(e) {
 	let t = e.trim();

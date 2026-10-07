@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.432.1
+
+- `ConversationShelf layout="bar"`: each button's name is real screen-reader text ("Mentions, 3 waiting") instead of an `aria-label`, so the bar's text still reads the destinations (a rail judge reading `textContent`, a find-in-page).
+- `ActivePeopleGrid`: `ActivePerson.status` takes `offline` — a roster shown whole (a team's members) no longer puts a green dot on someone who is not here. Omitted still reads as online.
+
 ## 2.432.0
 
 - **`ConversationRail` reader layout** (additive): `shelfLayout="bar"` draws Activity / Mentions / Calls / Recordings as ONE row of named icon buttons with their counts under the header (`ConversationShelf layout="bar"`, `data-layout="bar"`, each button named "Mentions, 3 waiting"), so the conversations start under the header instead of four rows down. `search={{ value, onChange, placeholder?, label? }}` puts the find field behind a search button in the header (`<testId>-search-toggle`): hidden until toggled or while it holds text, focused when it opens, Escape clears and closes it and returns focus to the button. `sections` + `sectionLayout` + `onSectionLayoutChange` place host sections and the rail's own Direct messages (`dms`) and Channels (`channels`) in the reader's order, with "Arrange sections…" (↑/↓ per section) and "Reset layout" in the header's ⋯ (`<testId>-options`); `arrangeRailSections(defaultOrder, stored)` reconciles a stored order with the sections present. One inset: sections sit in the rail's 8px gutter and draw their own 8px (`RAIL_SECTION_GUTTER`, `RAIL_SECTION_CONTENT_INSET` for a host section's content), so every heading caret, row glyph and the bar's first icon start 16px from the rail's edge.

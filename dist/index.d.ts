@@ -261,7 +261,12 @@ export declare interface ActivePerson {
     activity?: string;
     /** In a live call right now: the bubble gets a ring and the tile a small live marker. */
     inCall?: boolean;
-    status?: 'online' | 'busy' | 'away';
+    /**
+     * Presence. Omitted reads as online (the grid's original subject: who is
+     * here now). `offline` (2.432.1) is for a roster the host shows whole — a
+     * team's members — so someone not here does not wear a green dot.
+     */
+    status?: 'online' | 'busy' | 'away' | 'offline';
     /** Voluntary work sharing is independent from presence and call state. */
     workSharing?: {
         state: 'active' | 'historical';
