@@ -1446,7 +1446,7 @@ export declare interface ChatSidePanelApi {
  * the title on the left and the way out on the right, and a body that fills
  * the rest and scrolls on its own.
  */
-export declare function ChatSidePanelFrame({ title, subtitle, onClose, onOpenFullPage, actions, expanded, onToggleExpanded, children, className, 'data-testid': testId, }: ChatSidePanelFrameProps): JSX.Element;
+export declare function ChatSidePanelFrame({ title, subtitle, onClose, onOpenFullPage, actions, expanded, onToggleExpanded, size, closeLabel, children, className, 'data-testid': testId, }: ChatSidePanelFrameProps): JSX.Element;
 
 export declare interface ChatSidePanelFrameProps {
     title: string;
@@ -1461,6 +1461,15 @@ export declare interface ChatSidePanelFrameProps {
     expanded?: boolean;
     /** When supplied, offers an expand/restore control beside the title. */
     onToggleExpanded?: () => void;
+    /**
+     * Type step for the header (since 2.430.0). `xs` (default): the 12px
+     * semibold caption and 11px subtitle. `sm`: the app's body step beside
+     * `PageSection size="sm"` — a 14px semibold title and a 12px subtitle, for
+     * a pane that sits next to a tabbed page (a page's conversation pane).
+     */
+    size?: 'xs' | 'sm';
+    /** Names the × control (default "Close panel"); a pane that collapses says so. */
+    closeLabel?: string;
     children: ReactNode;
     className?: string;
     'data-testid'?: string;

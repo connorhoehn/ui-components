@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.430.0
+
+- **`ChatSidePanelFrame` on the compact type step** (additive): `size="sm"` gives the header a 14px semibold title and a 12px subtitle (the `PageSection size="sm"` / `DetailSection size="sm"` step from 2.429.0) with 16px side padding, for a page's conversation pane beside a tabbed page; `data-size="sm"` marks it. `closeLabel` names the × control (default "Close panel") so a pane that collapses rather than closes can say so. Default `xs` is unchanged.
+
 ## 2.429.0
 
 - **A compact type step for the overview composites** (additive, `size="sm"`): `PageSection` (14px semibold h2, 12px count pill, 14px actions), `DetailSection variant="heading"` (14px heading, 12px hint and description), `ActionRowList` (14px medium titles and cells, 12px descriptions and meta, 14px semibold action, 40px rows) and `StatStrip variant="line"` (14px semibold values, 14px labels and separators). Each is the app's body step — `T size="sm"` / `T size="xs"` — for a section inside a tabbed pane, where the mockup's 15–16px read a size up from the 14px tabs and 13–14px rails beside it. Defaults are unchanged; `data-size="sm"` marks the compact form.

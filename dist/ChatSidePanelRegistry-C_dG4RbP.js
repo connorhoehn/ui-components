@@ -25,13 +25,15 @@ var _ = {};
 function v(e) {
 	return g()[e] ?? null;
 }
-function y({ title: r, subtitle: a, onClose: s, onOpenFullPage: c, actions: l, expanded: u = !1, onToggleExpanded: m, children: h, className: g, "data-testid": _ = "chat-side-panel" }) {
+function y({ title: r, subtitle: a, onClose: s, onOpenFullPage: c, actions: l, expanded: u = !1, onToggleExpanded: m, size: h = "xs", closeLabel: g = "Close panel", children: _, className: v, "data-testid": y = "chat-side-panel" }) {
+	let b = h === "sm";
 	return /* @__PURE__ */ p("section", {
 		"aria-label": r,
-		"data-testid": _,
-		className: e("flex h-full min-h-0 flex-col border-l border-border bg-surface", g),
+		"data-testid": y,
+		"data-size": b ? "sm" : void 0,
+		className: e("flex h-full min-h-0 flex-col border-l border-border bg-surface", v),
 		children: [/* @__PURE__ */ p("header", {
-			className: "flex shrink-0 items-center justify-between gap-2 border-b border-border px-3 py-1.5",
+			className: e("flex shrink-0 items-center justify-between gap-2 border-b border-border", b ? "px-4 py-2" : "px-3 py-1.5"),
 			children: [/* @__PURE__ */ p(i, {
 				gap: "sm",
 				align: "center",
@@ -40,12 +42,12 @@ function y({ title: r, subtitle: a, onClose: s, onOpenFullPage: c, actions: l, e
 				children: [/* @__PURE__ */ p("span", {
 					className: "flex min-w-0 flex-col",
 					children: [/* @__PURE__ */ f("span", {
-						className: "truncate text-[12px] font-semibold text-text-secondary",
-						"data-testid": `${_}-title`,
+						className: e("truncate font-semibold", b ? "text-sm leading-5 text-text-primary" : "text-[12px] text-text-secondary"),
+						"data-testid": `${y}-title`,
 						children: r
 					}), a && /* @__PURE__ */ f("span", {
-						className: "truncate text-[11px] text-text-tertiary",
-						"data-testid": `${_}-subtitle`,
+						className: e("truncate", b ? "text-xs leading-4 text-text-secondary" : "text-[11px] text-text-tertiary"),
+						"data-testid": `${y}-subtitle`,
 						children: a
 					})]
 				}), /* @__PURE__ */ p(i, {
@@ -62,7 +64,7 @@ function y({ title: r, subtitle: a, onClose: s, onOpenFullPage: c, actions: l, e
 								"aria-label": u ? "Show chat" : "Expand board",
 								"aria-pressed": u,
 								onClick: m,
-								"data-testid": `${_}-expand`,
+								"data-testid": `${y}-expand`,
 								children: /* @__PURE__ */ f("svg", {
 									width: "16",
 									height: "16",
@@ -90,7 +92,7 @@ function y({ title: r, subtitle: a, onClose: s, onOpenFullPage: c, actions: l, e
 								size: "md",
 								"aria-label": "Open full page",
 								onClick: c,
-								"data-testid": `${_}-open-full`,
+								"data-testid": `${y}-open-full`,
 								children: /* @__PURE__ */ f("svg", {
 									width: "16",
 									height: "16",
@@ -109,20 +111,20 @@ function y({ title: r, subtitle: a, onClose: s, onOpenFullPage: c, actions: l, e
 					]
 				})]
 			}), /* @__PURE__ */ f(o, {
-				content: "Close panel",
+				content: g,
 				placement: "bottom",
 				children: /* @__PURE__ */ f(t, {
 					size: "md",
-					"aria-label": "Close panel",
+					"aria-label": g,
 					onClick: s,
-					"data-testid": `${_}-close`,
+					"data-testid": `${y}-close`,
 					className: "shrink-0",
 					children: /* @__PURE__ */ f(n, {})
 				})
 			})]
 		}), /* @__PURE__ */ f("div", {
 			className: "min-h-0 flex-1 overflow-auto",
-			children: h
+			children: _
 		})]
 	});
 }

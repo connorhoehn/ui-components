@@ -40,7 +40,7 @@ import { n as Oe } from "./useComputeProjects-ZSazDRet.js";
 import "./QuoteBlock-qqQqscMP.js";
 import { i as ke, r as Ae } from "./composerSendError-CMnZJzVf.js";
 import { r as je } from "./PaneStatusLine-DcOID_Ic.js";
-import "./ChatSidePanelRegistry-Bqz4nPgw.js";
+import "./ChatSidePanelRegistry-C_dG4RbP.js";
 import { Suspense as Me, createContext as Ne, lazy as Pe, useCallback as K, useContext as Fe, useEffect as q, useId as Ie, useMemo as J, useRef as Y, useState as X } from "react";
 import { Fragment as Z, jsx as Q, jsxs as $ } from "react/jsx-runtime";
 //#region src/components/hangout/InviteCandidateList.tsx

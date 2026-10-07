@@ -44,3 +44,20 @@ describe('compact type step (size="sm")', () => {
     expect(screen.getByTestId('stat-strip-separator').className).toContain('text-sm');
   });
 });
+
+describe('ChatSidePanelFrame size="sm" (2.430.0)', () => {
+  it('puts the title on 14px semibold and the subtitle on 12px; the default keeps 12/11', async () => {
+    const { ChatSidePanelFrame } = await import('../../social/ChatSidePanelRegistry');
+    const { unmount } = render(<ChatSidePanelFrame size="sm" title="Discussion" subtitle="Auth Migration" closeLabel="Collapse discussion" onClose={() => {}} data-testid="p">x</ChatSidePanelFrame>);
+    expect(screen.getByTestId('p-title').className).toContain('text-sm');
+    expect(screen.getByTestId('p-title').className).toContain('font-semibold');
+    expect(screen.getByTestId('p-subtitle').className).toContain('text-xs');
+    expect(screen.getByTestId('p').getAttribute('data-size')).toBe('sm');
+    expect(screen.getByRole('button', { name: 'Collapse discussion' })).toBeTruthy();
+    unmount();
+    render(<ChatSidePanelFrame title="Huddle chat" subtitle="2 participants" onClose={() => {}} data-testid="q">x</ChatSidePanelFrame>);
+    expect(screen.getByTestId('q-title').className).toContain('text-[12px]');
+    expect(screen.getByTestId('q-subtitle').className).toContain('text-[11px]');
+    expect(screen.getByRole('button', { name: 'Close panel' })).toBeTruthy();
+  });
+});

@@ -35,7 +35,7 @@ import { t as U } from "./useMeasuredWidth-BPrwD0q5.js";
 import { n as W } from "./useComputeProjects-ZSazDRet.js";
 import { t as se } from "./formatBytes-05ivRSJY.js";
 import { n as ce, r as le } from "./PaneStatusLine-DcOID_Ic.js";
-import { n as ue } from "./ChatSidePanelRegistry-Bqz4nPgw.js";
+import { n as ue } from "./ChatSidePanelRegistry-C_dG4RbP.js";
 /* empty css               */
 import { t as de } from "./AnimatedEdge-DnsfF8-D.js";
 import { Suspense as fe, createContext as pe, lazy as me, useCallback as G, useContext as he, useEffect as K, useId as ge, useImperativeHandle as _e, useMemo as q, useRef as J, useState as Y } from "react";
