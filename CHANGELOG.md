@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.431.1
+
+- `responsive="pane"`: the input keeps at least 9rem, so on focus the `Aa` / `?` / Send cluster wraps to a second row instead of squeezing the text to a letter a line (measured live at 381px: "hell / o"); the chip's mode label is on the chip's 12px step (it inherited the menu trigger's 16px); the chip caps at 55% of the row.
+
 ## 2.431.0
 
 - **A simplified responsive mode for a composer in a side pane** (additive): `responsive="pane"` on `RichChatComposer` and `ContextComposer`. Chosen by the composer's OWN measured width, never the viewport — below the `wide` breakpoint (600px) the card is one input row: the mode and the draft's first reference fold into one small leading chip ("Chat · Org › Initi…on Platform", truncated in the middle so the leaf survives, its × on hover/focus, the mode switch as the chip's menu), Send is icon-only (its label stays as screen-reader text), and focus is the 1px primary border instead of the 2px ring. `Aa`, `?`, `⋯` and `modeRowEnd` appear only while focus is inside, so the card is at most two rows. Wide, nothing changes. `data-responsive="pane"` marks it; `<testId>-context-chip`, `-context-label`, `-context-remove`.

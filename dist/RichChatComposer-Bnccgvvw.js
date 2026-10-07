@@ -3560,7 +3560,7 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 						q && (z || !!k?.length) && /* @__PURE__ */ O("span", {
 							"data-testid": `${F}-context-chip`,
 							title: [z ? $[V] : null, k?.[0]?.title ?? k?.[0]?.label].filter(Boolean).join(" · "),
-							className: "group/chip ml-1.5 flex min-w-0 max-w-[60%] shrink items-center gap-1 self-center whitespace-nowrap rounded-full bg-surface-inset px-2 py-0.5 text-xs text-text-secondary",
+							className: "group/chip ml-1.5 flex min-w-0 max-w-[55%] shrink items-center gap-1 self-center whitespace-nowrap rounded-full bg-surface-inset px-2 py-0.5 text-xs text-text-secondary",
 							children: [z && (sn && B.length > 1 ? /* @__PURE__ */ D(x, {
 								trigger: /* @__PURE__ */ O("span", {
 									className: "flex items-center gap-1 font-semibold text-text-primary",
@@ -3576,7 +3576,7 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 								triggerTestId: `${F}-mode-menu`,
 								"data-testid": `${F}-mode-menu-list`,
 								align: "start",
-								triggerClassName: "h-auto shrink-0 rounded border-0 bg-transparent p-0 hover:bg-transparent",
+								triggerClassName: "h-auto shrink-0 rounded border-0 bg-transparent p-0 text-xs leading-4 hover:bg-transparent",
 								sections: [{ items: B.map((e) => {
 									let t = pn(e) ? st?.[e] : void 0;
 									return {
@@ -3698,7 +3698,7 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 								}),
 								/* @__PURE__ */ D("div", {
 									ref: vr,
-									className: e((Z || Jr || Q) && "min-w-0 flex-1", Y && "uic-composer-docked-input", Er && !Z && "mx-3 mt-2 min-h-[58px] rounded-md border border-border bg-surface"),
+									className: e((Z || Jr || Q) && "min-w-0 flex-1", q && "min-w-[9rem]", Y && "uic-composer-docked-input", Er && !Z && "mx-3 mt-2 min-h-[58px] rounded-md border border-border bg-surface"),
 									"data-basic-well": Er || void 0,
 									"data-testid": `${F}-input-box`,
 									...tn && on ? { title: on } : {},

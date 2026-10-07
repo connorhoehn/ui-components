@@ -2849,7 +2849,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           <span
             data-testid={`${testId}-context-chip`}
             title={[modesEnabled ? MODE_NAMES[activeMode] : null, references?.[0]?.title ?? references?.[0]?.label].filter(Boolean).join(' · ')}
-            className="group/chip ml-1.5 flex min-w-0 max-w-[60%] shrink items-center gap-1 self-center whitespace-nowrap rounded-full bg-surface-inset px-2 py-0.5 text-xs text-text-secondary"
+            className="group/chip ml-1.5 flex min-w-0 max-w-[55%] shrink items-center gap-1 self-center whitespace-nowrap rounded-full bg-surface-inset px-2 py-0.5 text-xs text-text-secondary"
           >
             {modesEnabled && (switchable && offeredModes.length > 1 ? (
               <DropdownMenu
@@ -2859,7 +2859,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 triggerTestId={`${testId}-mode-menu`}
                 data-testid={`${testId}-mode-menu-list`}
                 align="start"
-                triggerClassName="h-auto shrink-0 rounded border-0 bg-transparent p-0 hover:bg-transparent"
+                triggerClassName="h-auto shrink-0 rounded border-0 bg-transparent p-0 text-xs leading-4 hover:bg-transparent"
                 sections={[{
                   items: offeredModes.map((m) => {
                     const reason = isModeDisabled(m) ? modeUnavailableReasons?.[m] : undefined;
@@ -2975,6 +2975,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           ref={inputBoxRef}
           className={cn(
             (singleRow || inlineCommand || chipCommand) && 'min-w-0 flex-1',
+            // The pane row keeps room to write: under ~9rem the toolbar wraps below, not the text.
+            pane && 'min-w-[9rem]',
             docked && 'uic-composer-docked-input',
             basicBox && !singleRow && 'mx-3 mt-2 min-h-[58px] rounded-md border border-border bg-surface',
           )}
