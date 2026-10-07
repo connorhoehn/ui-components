@@ -17,7 +17,7 @@
 // Purely presentational, like ParticipantTile: the host hands in the same
 // HangoutLayoutParticipant rows it hands the grid.
 
-import { memo, type CSSProperties, type ReactNode } from 'react';
+import { memo, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { noteCallDockRender } from './callDockRenderProbe';
 import { ParticipantTile } from './ParticipantTile';
@@ -154,50 +154,22 @@ export function CallTileRow({
   }
 
   if (variant === 'dock') {
-    const all = localParticipant ? [localParticipant, ...participants] : participants;
-    const collapse = overflow === 'collapse' && all.length > maxVisible;
-    // Keep the room for the +N tile inside maxVisible, so the row never grows past it.
-    const shown = collapse ? all.slice(0, Math.max(1, maxVisible - 1)) : all;
-    const hidden = all.length - shown.length;
     return (
-      <div
-        className={cn(
-          'flex min-w-0 items-center gap-2',
-          overflow === 'scroll' ? 'overflow-x-auto' : 'overflow-hidden',
-          className,
-        )}
-        style={style}
-        role="group"
-        aria-label={typeof title === 'string' ? `Call: ${title}` : 'Call participants'}
-        data-testid={testId}
-        data-variant="dock"
-        data-tile-count={all.length}
-      >
-        {shown.map((p) => (
-          <DockTile
-            key={p.id}
-            participant={p}
-            width={tileWidth}
-            height={tileHeight}
-            speaking={p.id === activeSpeakerId}
-            highlighted={p.id === highlightedId}
-            testId={`${tileTestIdPrefix}-${p.id}`}
-            {...(onParticipantClick ? { onParticipantClick } : {})}
-          />
-        ))}
-        {hidden > 0 && (
-          <div
-            className="flex shrink-0 items-center justify-center rounded-md bg-video-tile text-white"
-            // Tile size is a prop (74px at 1280, 84px at 1672) — not a static class.
-            style={{ width: tileWidth, height: tileHeight }}
-            data-testid={`${tileTestIdPrefix}-overflow`}
-            aria-label={`${hidden} more`}
-            role="img"
-          >
-            <Avatar name={`+ ${hidden}`} initials={`+${hidden}`} size={40} color="rgba(255,255,255,0.18)" showTitle={false} />
-          </div>
-        )}
-      </div>
+      <DockRow
+        all={localParticipant ? [localParticipant, ...participants] : participants}
+        activeSpeakerId={activeSpeakerId ?? null}
+        highlightedId={highlightedId}
+        tileWidth={tileWidth}
+        tileHeight={tileHeight}
+        overflow={overflow}
+        maxVisible={maxVisible}
+        tileTestIdPrefix={tileTestIdPrefix}
+        title={title}
+        {...(onParticipantClick ? { onParticipantClick } : {})}
+        {...(className ? { className } : {})}
+        {...(style ? { style } : {})}
+        testId={testId}
+      />
     );
   }
 
@@ -309,6 +281,105 @@ const GRID_COLUMNS: Record<number, string> = {
   3: 'grid-cols-3',
   4: 'grid-cols-4',
 };
+
+/** The dock gap (`gap-2`) the fit calculation assumes. */
+const DOCK_GAP_PX = 8;
+
+/**
+ * How many dock tiles fit a row `width` px wide (2.436.0): the row collapses
+ * to this many (the last one the `+N` tile) instead of clipping a tile at its
+ * edge. 0 width (not laid out yet, or a test DOM) means "unknown": no cap.
+ */
+export function dockTilesThatFit(width: number, tileWidth: number): number {
+  if (!(width > 0)) return Number.POSITIVE_INFINITY;
+  return Math.max(1, Math.floor((width + DOCK_GAP_PX) / (tileWidth + DOCK_GAP_PX)));
+}
+
+interface DockRowProps {
+  all: CallTileParticipant[];
+  activeSpeakerId: string | null;
+  highlightedId: string | null;
+  tileWidth: number;
+  tileHeight: number;
+  overflow: 'scroll' | 'collapse';
+  maxVisible: number;
+  tileTestIdPrefix: string;
+  title: ReactNode;
+  onParticipantClick?: (id: string) => void;
+  className?: string;
+  style?: CSSProperties;
+  testId: string;
+}
+
+function DockRow({ all, activeSpeakerId, highlightedId, tileWidth, tileHeight, overflow, maxVisible, tileTestIdPrefix, title, onParticipantClick, className, style, testId }: DockRowProps) {
+  const rowRef = useRef<HTMLDivElement | null>(null);
+  const [width, setWidth] = useState(0);
+  useLayoutEffect(() => {
+    const row = rowRef.current;
+    if (!row || overflow !== 'collapse' || typeof ResizeObserver === 'undefined') return undefined;
+    const measure = () => setWidth(row.clientWidth);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(row);
+    return () => observer.disconnect();
+  }, [overflow]);
+  // Never more than fit the row: a tile cut off at the edge reads as a bug.
+  const cap = overflow === 'collapse' ? Math.min(maxVisible, dockTilesThatFit(width, tileWidth)) : Number.POSITIVE_INFINITY;
+  const collapse = all.length > cap;
+  // Keep the room for the +N tile inside the cap, so the row never grows past it.
+  const shown = collapse ? all.slice(0, Math.max(1, cap - 1)) : all;
+  const folded = all.slice(shown.length);
+  return (
+    <div
+      ref={rowRef}
+      className={cn(
+        'flex min-w-0 items-center gap-2',
+        overflow === 'scroll' ? 'overflow-x-auto' : 'overflow-hidden',
+        className,
+      )}
+      style={style}
+      role="group"
+      aria-label={typeof title === 'string' ? `Call: ${title}` : 'Call participants'}
+      data-testid={testId}
+      data-variant="dock"
+      data-tile-count={all.length}
+      data-visible-count={shown.length}
+    >
+      {shown.map((p) => (
+        <DockTile
+          key={p.id}
+          participant={p}
+          width={tileWidth}
+          height={tileHeight}
+          speaking={p.id === activeSpeakerId}
+          highlighted={p.id === highlightedId}
+          testId={`${tileTestIdPrefix}-${p.id}`}
+          {...(onParticipantClick ? { onParticipantClick } : {})}
+        />
+      ))}
+      {folded.length > 0 && (
+        <div
+          className="relative flex shrink-0 items-center justify-center rounded-md bg-video-tile text-white"
+          // Tile size is a prop (74px at 1280, 84px at 1672) — not a static class.
+          style={{ width: tileWidth, height: tileHeight }}
+          data-testid={`${tileTestIdPrefix}-overflow`}
+          aria-label={`${folded.length} more`}
+          title={folded.map((p) => p.displayName).join(', ')}
+          role="img"
+        >
+          {/* Folded people keep playing: their voice rides the same stream as their video. */}
+          {folded.map((p) => (p.videoElement != null || p.audioElement != null) && (
+            <div key={p.id} className="pointer-events-none absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true" data-testid={`${tileTestIdPrefix}-${p.id}-media-sink`}>
+              {p.videoElement}
+              {p.audioElement}
+            </div>
+          ))}
+          <Avatar name={`+ ${folded.length}`} initials={`+${folded.length}`} size={40} color="rgba(255,255,255,0.18)" showTitle={false} />
+        </div>
+      )}
+    </div>
+  );
+}
 
 interface DockTileProps {
   participant: CallTileParticipant;

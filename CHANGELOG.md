@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.436.2
+
+- `CallTileRow variant="dock"` (the `CallDock` shelf) collapses to the tiles that fit its measured width instead of clipping the last tile at the row's edge — four 240px tiles in a ~950px content column now read three tiles and `+2` (`overflow="collapse"`; `maxVisible` stays the upper bound; `data-visible-count` on the row; `dockTilesThatFit(width, tileWidth)`). People folded into the `+N` tile keep their video/audio elements mounted in a 1px sink, so their voice keeps playing (before, a folded person's camera element — which carries their audio — unmounted). The `+N` tile's tooltip names them.
+
 ## 2.436.1
 
 - `EmptyState size="sm"` is the app's body step throughout: the description is 14px (`text-sm`, was 13px), the `actionLabel` CTA is `Button size="sm"`-sized (26px tall, 12/600, was a 38px padded button) and the `details` heading is 14/600 (was 18px). The title was already 14/600. `md` and `lg` are unchanged. For a host's "no access" or empty landing that sits in a page at the 20 / 14 / 12 type scale.
