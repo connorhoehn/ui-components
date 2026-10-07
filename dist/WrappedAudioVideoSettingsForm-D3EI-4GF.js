@@ -20,7 +20,7 @@ import { t as x } from "./FileUploadDrop-D3wVrrzM.js";
 import { t as S } from "./ActivityFeed-CkPp9rsm.js";
 import { a as C, i as w, n as T, o as ee } from "./DockedAside-Cp8f4XKs.js";
 import { d as E, dt as D, lt as te, n as O, t as k, u as A, ut as j } from "./ConversationSurface-BsOT0jpm.js";
-import { C as M, E as N, S as ne, g as re, i as P, m as ie, t as ae, v as oe, x as se } from "./AudioVideoSettingsForm-DQBCs5g5.js";
+import { C as M, E as N, S as ne, g as re, i as P, m as ie, t as ae, v as oe, x as se } from "./AudioVideoSettingsForm-B-2U-L27.js";
 import { t as F } from "./useActiveSpeaker-BGKJU3Lb.js";
 import { c as ce, o as le, s as I } from "./useDocumentImageUpload-B7lWRtSk.js";
 import { Component as ue, createContext as L, createElement as de, useCallback as R, useContext as z, useEffect as B, useMemo as V, useRef as H, useState as U } from "react";

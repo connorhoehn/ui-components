@@ -313,18 +313,29 @@ interface DockRowProps {
 
 function DockRow({ all, activeSpeakerId, highlightedId, tileWidth, tileHeight, overflow, maxVisible, tileTestIdPrefix, title, onParticipantClick, className, style, testId }: DockRowProps) {
   const rowRef = useRef<HTMLDivElement | null>(null);
-  const [width, setWidth] = useState(0);
+  // How many tiles the row's box holds — set only once the row is seen to
+  // overflow it. A host that sizes the dock to its content never overflows,
+  // and measuring that row's own width would feed back (fewer tiles → a
+  // narrower row → fewer tiles), so it is left uncapped.
+  const [fit, setFit] = useState(Number.POSITIVE_INFINITY);
+  const fitRef = useRef(fit);
+  fitRef.current = fit;
   useLayoutEffect(() => {
     const row = rowRef.current;
-    if (!row || overflow !== 'collapse' || typeof ResizeObserver === 'undefined') return undefined;
-    const measure = () => setWidth(row.clientWidth);
+    if (!row || overflow !== 'collapse') return undefined;
+    const measure = () => {
+      const constrained = Number.isFinite(fitRef.current) || row.scrollWidth > row.clientWidth + 1;
+      const next = constrained ? dockTilesThatFit(row.clientWidth, tileWidth) : Number.POSITIVE_INFINITY;
+      if (next !== fitRef.current) setFit(next);
+    };
     measure();
+    if (typeof ResizeObserver === 'undefined') return undefined;
     const observer = new ResizeObserver(measure);
     observer.observe(row);
     return () => observer.disconnect();
-  }, [overflow]);
+  }, [overflow, tileWidth, all.length]);
   // Never more than fit the row: a tile cut off at the edge reads as a bug.
-  const cap = overflow === 'collapse' ? Math.min(maxVisible, dockTilesThatFit(width, tileWidth)) : Number.POSITIVE_INFINITY;
+  const cap = overflow === 'collapse' ? Math.min(maxVisible, fit) : Number.POSITIVE_INFINITY;
   const collapse = all.length > cap;
   // Keep the room for the +N tile inside the cap, so the row never grows past it.
   const shown = collapse ? all.slice(0, Math.max(1, cap - 1)) : all;

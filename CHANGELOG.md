@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.436.3
+
+- Fix 2.436.2's dock fit for a host that sizes the dock to its content (a block that shrink-wraps the call bar): the row measured its own width, so once it folded a tile it could never grow back (1 → `+1` and stuck as people walked in). The row now caps only after it is seen to overflow its box, and re-measures when the head count changes.
+
 ## 2.436.2
 
 - `CallTileRow variant="dock"` (the `CallDock` shelf) collapses to the tiles that fit its measured width instead of clipping the last tile at the row's edge — four 240px tiles in a ~950px content column now read three tiles and `+2` (`overflow="collapse"`; `maxVisible` stays the upper bound; `data-visible-count` on the row; `dockTilesThatFit(width, tileWidth)`). People folded into the `+N` tile keep their video/audio elements mounted in a 1px sink, so their voice keeps playing (before, a folded person's camera element — which carries their audio — unmounted). The `+N` tile's tooltip names them.

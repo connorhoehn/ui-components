@@ -61,7 +61,9 @@ describe('CallTileRow', () => {
     expect(dockTilesThatFit(952, 240)).toBe(3);
     expect(dockTilesThatFit(984, 240)).toBe(4);
     expect(dockTilesThatFit(100, 240)).toBe(1);
+    // A row held to 952px whose four tiles need 984px.
     const width = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(952);
+    const scroll = vi.spyOn(HTMLElement.prototype, 'scrollWidth', 'get').mockReturnValue(984);
     try {
       render(
         <CallTileRow
@@ -74,6 +76,7 @@ describe('CallTileRow', () => {
       );
     } finally {
       width.mockRestore();
+      scroll.mockRestore();
     }
     const row = screen.getByTestId('call-tile-row');
     expect(row.getAttribute('data-tile-count')).toBe('4');
@@ -84,5 +87,20 @@ describe('CallTileRow', () => {
     expect(overflow.getAttribute('title')).toBe('Bob, Cy');
     // Cy's video (which carries Cy's voice) stays mounted, invisibly, in the +N tile.
     expect(screen.getByTestId('call-tile-c-media-sink')).toContainElement(screen.getByTestId('cy-video'));
+  });
+
+  it('dock: a row sized to its content (no overflow) is never capped by its own width', () => {
+    const width = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(240);
+    const scroll = vi.spyOn(HTMLElement.prototype, 'scrollWidth', 'get').mockReturnValue(240);
+    try {
+      const people = [p('a', 'Ada'), p('b', 'Bob')];
+      const { rerender } = render(<CallTileRow variant="dock" tileWidth={240} tileHeight={135} localParticipant={p('me', 'Me', { isLocal: true })} participants={[]} />);
+      rerender(<CallTileRow variant="dock" tileWidth={240} tileHeight={135} localParticipant={p('me', 'Me', { isLocal: true })} participants={people} />);
+    } finally {
+      width.mockRestore();
+      scroll.mockRestore();
+    }
+    expect(screen.getByTestId('call-tile-row').getAttribute('data-visible-count')).toBe('3');
+    expect(screen.queryByTestId('call-tile-overflow')).toBeNull();
   });
 });
