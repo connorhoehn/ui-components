@@ -58,6 +58,14 @@ export interface ConversationShelfProps {
    * mockup's All documents / Recent / Shared with me. Since 2.389.2.
    */
   plain?: boolean;
+  /**
+   * `bar` (2.432.0): the destinations as ONE row of icon buttons with their
+   * counts — Activity, Mentions, Calls, Recordings at the rail's top — so the
+   * conversations start right under the header instead of four rows down.
+   * Each button is named by its label (and says its count); the active one
+   * takes the selected tint. `list` (default) is the stacked rows.
+   */
+  layout?: 'list' | 'bar';
   className?: string;
   'data-testid'?: string;
 }
@@ -70,10 +78,56 @@ export function ConversationShelf({
   iconOnly = false,
   size = 'sm',
   plain = false,
+  layout = 'list',
   className,
   'data-testid': testId = 'conversation-shelf',
 }: ConversationShelfProps) {
   if (items.length === 0) return null;
+  if (layout === 'bar') {
+    return (
+      <ul data-testid={testId} data-layout="bar" className={cn('m-0 flex list-none items-center gap-1 p-0', className)}>
+        {items.map((item) => {
+          const active = item.id === activeId;
+          const count = item.count ?? 0;
+          const name = count > 0 ? `${item.label}, ${count > 99 ? '99+' : count} ${item.urgent ? 'waiting' : 'new'}` : item.label;
+          return (
+            <li key={item.id}>
+              <button
+                type="button"
+                onClick={() => onSelect(item.id)}
+                aria-label={name}
+                title={item.label}
+                data-testid={`${testId}-${item.id}`}
+                data-active={active ? 'true' : 'false'}
+                aria-current={active ? 'true' : undefined}
+                className={cn(
+                  'relative grid h-8 w-8 cursor-pointer place-items-center rounded-md border-none bg-transparent p-0 text-text-secondary',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                  active ? 'bg-primary-bg text-primary-fg' : 'hover:bg-surface-hover hover:text-text-primary',
+                )}
+              >
+                <span aria-hidden className="grid h-[18px] w-[18px] place-items-center [&>svg]:h-[18px] [&>svg]:w-[18px]">
+                  {item.icon ?? <span className="h-1.5 w-1.5 rounded-full bg-current" />}
+                </span>
+                {count > 0 && (
+                  <span
+                    aria-hidden
+                    data-testid={`${testId}-${item.id}-count`}
+                    className={cn(
+                      'absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full px-1 text-[10px] font-semibold leading-none text-white',
+                      item.urgent ? 'bg-danger' : 'bg-primary',
+                    )}
+                  >
+                    {count > 99 ? '99+' : count}
+                  </span>
+                )}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    );
+  }
   // `rail` keeps md's row (icon box, plain indent) on the rail scale.
   const rail = size === 'rail';
   const md = size === 'md' || rail;

@@ -26,6 +26,7 @@ import { useMemo, useState, type MouseEvent } from 'react';
 import type { RoomsIndexSubscriber } from '@connorhoehn/realtime-modules/client/hangout-rooms';
 import { SidebarSection } from '../../components/sidebar/SidebarSection';
 import { SidebarRow } from '../../components/sidebar/SidebarRow';
+import { RailSectionHeader } from '../../components/social/RailSectionHeader';
 import EmptyState from '../../components/shared/EmptyState';
 import { Button } from '../../components/ui/Button';
 import { IconButton } from '../../components/ui/IconButton';
@@ -69,6 +70,14 @@ export interface HangoutRoomsSectionProps {
   title?: string;
   /** Section storageKey override (collapse persistence). */
   storageKey?: string;
+  /**
+   * Rail header (2.432.0). With `onToggleCollapse` the section is headed by
+   * the rail's `RailSectionHeader` (caret, label, count, +) at the rail's one
+   * inset, and folds under the host's control; without it the classic
+   * `SidebarSection` header and its own localStorage memory stay.
+   */
+  collapsed?: boolean;
+  onToggleCollapse?: (next: boolean) => void;
   /** Custom create renderer — when omitted the built-in dialog is used. */
   renderCreateDialog?: (props: { open: boolean; onClose: () => void }) => React.ReactNode;
 }
@@ -98,6 +107,8 @@ function HangoutRoomsSectionView(HangoutRoomRow: HangoutRoomRowComponent, {
   maxVisible = 10,
   title = 'Rooms',
   storageKey,
+  collapsed = false,
+  onToggleCollapse,
   renderCreateDialog,
 }: HangoutRoomsSectionProps) {
   const [createOpen, setCreateOpen] = useState(false);
@@ -150,14 +161,9 @@ function HangoutRoomsSectionView(HangoutRoomRow: HangoutRoomRowComponent, {
     />
   );
 
-  return (
+  const railHeader = onToggleCollapse !== undefined;
+  const body = (
     <>
-      <SidebarSection
-        title={title}
-        storageKey={storageKey}
-        actions={actions}
-        data-testid="rooms-section"
-      >
         {rooms.isLoading && (
           <div className="flex flex-col gap-1 px-1 py-1" data-testid="hangout-rooms-loading">
             {[0, 1, 2].map((i) => (
@@ -241,7 +247,34 @@ function HangoutRoomsSectionView(HangoutRoomRow: HangoutRoomRowComponent, {
             )}
           </div>
         )}
-      </SidebarSection>
+    </>
+  );
+
+  return (
+    <>
+      {railHeader ? (
+        <div data-testid="rooms-section" data-collapsed={collapsed ? 'true' : 'false'} className="flex flex-col">
+          <RailSectionHeader
+            label={title}
+            presentational={false}
+            collapsed={collapsed}
+            onToggleCollapse={onToggleCollapse}
+            count={activeRooms.length}
+            actions={[{ label: 'New room', onClick: openCreate, 'data-testid': 'new-room-button' }]}
+            data-testid="rooms-section-header"
+          />
+          {!collapsed && body}
+        </div>
+      ) : (
+        <SidebarSection
+          title={title}
+          storageKey={storageKey}
+          actions={actions}
+          data-testid="rooms-section"
+        >
+          {body}
+        </SidebarSection>
+      )}
 
       {renderCreateDialog
         ? renderCreateDialog({ open: createOpen, onClose: closeCreate })

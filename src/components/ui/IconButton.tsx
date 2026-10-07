@@ -2,7 +2,7 @@
 //
 // Icon-only button with proper aria-label for accessibility.
 
-import { type ButtonHTMLAttributes, type ReactNode } from 'react';
+import { type ButtonHTMLAttributes, type ReactNode, type Ref } from 'react';
 import { cn } from '../../lib/cn';
 import type { SurfaceTone } from '../shared/tones';
 
@@ -23,6 +23,8 @@ export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonEle
    */
   tone?: IconButtonTone;
   size?: 'sm' | 'md' | 'lg';
+  /** The button element (React 19 passes `ref` as a prop; 2.432.0 names it in the type). */
+  ref?: Ref<HTMLButtonElement>;
 }
 
 const variantClasses: Record<IconButtonVariant, string> = {

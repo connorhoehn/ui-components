@@ -154,8 +154,10 @@ export type { ConversationShelfItem, ConversationShelfProps } from './Conversati
 
 // ConversationRail — shelf + conversation list under ONE selection, so a host
 // cannot end up with two highlighted rows and one pane.
-export { ConversationRail } from './ConversationRail';
-export type { ConversationRailProps, RailSelection } from './ConversationRail';
+export {
+  ConversationRail, arrangeRailSections, RAIL_DMS_SECTION, RAIL_CHANNELS_SECTION, RAIL_SECTION_GUTTER, RAIL_SECTION_CONTENT_INSET,
+} from './ConversationRail';
+export type { ConversationRailProps, ConversationRailSection, RailSelection } from './ConversationRail';
 export { AgentRunCard, agentRunRefFromMetadata, describeAgentRunOp, describeAgentRunFailure, describeAgentLoop, formatLoopClock, agentRunTimings, AGENT_RUN_STEP_DOT } from './AgentRunCard';
 export type { AgentRunCardProps, AgentRunLoop, AgentRunLoopPhase, AgentRunStatus, AgentRunPhase, AgentRunDecision, AgentRunReviewDecision, AgentRunSuggestion, AgentRunReview, AgentRunDetails, AgentRunStep, AgentRunStepStatus, AgentRunOp } from './AgentRunCard';
 export type { ComposerCommand, ComposerCommandArgument, ComposerArgumentItem } from './composerCommands';

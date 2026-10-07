@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.432.0
+
+- **`ConversationRail` reader layout** (additive): `shelfLayout="bar"` draws Activity / Mentions / Calls / Recordings as ONE row of named icon buttons with their counts under the header (`ConversationShelf layout="bar"`, `data-layout="bar"`, each button named "Mentions, 3 waiting"), so the conversations start under the header instead of four rows down. `search={{ value, onChange, placeholder?, label? }}` puts the find field behind a search button in the header (`<testId>-search-toggle`): hidden until toggled or while it holds text, focused when it opens, Escape clears and closes it and returns focus to the button. `sections` + `sectionLayout` + `onSectionLayoutChange` place host sections and the rail's own Direct messages (`dms`) and Channels (`channels`) in the reader's order, with "Arrange sections…" (↑/↓ per section) and "Reset layout" in the header's ⋯ (`<testId>-options`); `arrangeRailSections(defaultOrder, stored)` reconciles a stored order with the sections present. One inset: sections sit in the rail's 8px gutter and draw their own 8px (`RAIL_SECTION_GUTTER`, `RAIL_SECTION_CONTENT_INSET` for a host section's content), so every heading caret, row glyph and the bar's first icon start 16px from the rail's edge.
+- **Rooms in a rail** (additive): `HangoutRoomsSection` / `WrappedHangoutRoomsList` take `collapsed` + `onToggleCollapse`; given, the section is headed by `RailSectionHeader` (caret, label, count, + "New room") at the rail inset and folds under the host's control instead of its own localStorage key.
+- `IconButton` names `ref` in its props (React 19 passes it through).
+
 ## 2.431.3
 
 - `responsive="pane"`: Aa / ? / ⋯ / the row end show while focus is inside OR the draft holds text. Keyed on focus alone, pressing Send on an unfocused draft brought them in on mousedown, wrapped Send to the next row, and the mouseup missed it (a retry after a failed send did nothing).

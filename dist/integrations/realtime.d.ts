@@ -2047,6 +2047,14 @@ export declare interface HangoutRoomsSectionProps {
     title?: string;
     /** Section storageKey override (collapse persistence). */
     storageKey?: string;
+    /**
+     * Rail header (2.432.0). With `onToggleCollapse` the section is headed by
+     * the rail's `RailSectionHeader` (caret, label, count, +) at the rail's one
+     * inset, and folds under the host's control; without it the classic
+     * `SidebarSection` header and its own localStorage memory stay.
+     */
+    collapsed?: boolean;
+    onToggleCollapse?: (next: boolean) => void;
     /** Custom create renderer — when omitted the built-in dialog is used. */
     renderCreateDialog?: (props: {
         open: boolean;
@@ -3779,6 +3787,14 @@ export declare interface WrappedHangoutRoomsListProps {
      * control over the no-rooms UI (e.g. an onboarding upsell).
      */
     renderEmpty?: ReactNode;
+    /**
+     * Rail header (2.432.0): with `onToggleCollapse` the section heads itself
+     * with the rail's `RailSectionHeader` — the same inset, type and disclosure
+     * as Teams, Direct messages and Channels — and the host owns the collapsed
+     * state instead of the section's own localStorage key.
+     */
+    collapsed?: boolean;
+    onToggleCollapse?: (next: boolean) => void;
     /** Custom create-dialog renderer — forwarded to HangoutRoomsSection. */
     renderCreateDialog?: (props: {
         open: boolean;

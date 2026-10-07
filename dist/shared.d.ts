@@ -2676,6 +2676,8 @@ export declare interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLB
      */
     tone?: IconButtonTone;
     size?: 'sm' | 'md' | 'lg';
+    /** The button element (React 19 passes `ref` as a prop; 2.432.0 names it in the type). */
+    ref?: Ref<HTMLButtonElement>;
 }
 
 /** @see SurfaceTone — which colour family the button paints in. */

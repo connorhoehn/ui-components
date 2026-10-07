@@ -1426,6 +1426,13 @@ export declare interface AppShellProps {
     sidebarFullHeight?: boolean;
 }
 
+/**
+ * Reconcile a stored order with the sections present now: known ids in the
+ * stored order, then any new ones in their default place. Pure, exported for
+ * hosts that persist the order.
+ */
+export declare function arrangeRailSections(defaultOrder: readonly string[], stored: readonly string[] | null | undefined): string[];
+
 /** An arrow pointing right: "go on" — a link action, "Prepare run →". Since 2.385.0. */
 export declare function ArrowRightIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -6451,7 +6458,7 @@ export declare interface ConversationPeer {
     online?: boolean;
 }
 
-export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, sectionActions, collapsedSections, onToggleSection, onStartCall, maxVisible, emptyLabel, header, title, actions, beforeList, footer, onTogglePin, onToggleMute, onMarkUnread, onRename, canRename, onSetSection, collapsible, collapsed, onToggleCollapse, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
+export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, sectionActions, collapsedSections, onToggleSection, onStartCall, maxVisible, emptyLabel, header, title, actions, beforeList, footer, onTogglePin, onToggleMute, onMarkUnread, onRename, canRename, onSetSection, collapsible, collapsed, onToggleCollapse, shelfLayout, search, sections, sectionLayout, onSectionLayoutChange, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
 
 export declare interface ConversationRailProps {
     /**
@@ -6532,11 +6539,53 @@ export declare interface ConversationRailProps {
     collapsed?: boolean;
     /** Fires with the state the host should switch to when the toggle is used. */
     onToggleCollapse?: (next: boolean) => void;
+    /**
+     * `bar` (2.432.0): the shelf as one row of icon buttons with counts under
+     * the header, so the conversations are not pushed four rows down. `list`
+     * (default) keeps the stacked rows.
+     */
+    shelfLayout?: 'list' | 'bar';
+    /**
+     * The rail's find field, behind a search button in the header (2.432.0):
+     * the field shows only once toggled (and while it holds text), takes the
+     * caret when it opens, and Escape clears and closes it. Prefer this to
+     * putting a SearchInput in `header`, which keeps it on screen for good.
+     */
+    search?: {
+        value: string;
+        onChange: (value: string) => void;
+        placeholder?: string;
+        /** The button's and the field's name. Default "Find a chat". */
+        label?: string;
+        'data-testid'?: string;
+    };
+    /**
+     * Host sections placed in an order the reader can change (2.432.0), around
+     * the rail's own Direct messages (`dms`) and Channels (`channels`). With
+     * this, `beforeList` still renders first, above every arrangeable section.
+     */
+    sections?: readonly ConversationRailSection[];
+    /** The reader's order of section ids (`sections` + `dms` + `channels`); unknown ids are ignored. */
+    sectionLayout?: readonly string[] | null;
+    /**
+     * The reader moved a section. Given, the header's ⋯ offers "Arrange
+     * sections" (↑/↓ per section, then Done) and "Reset layout".
+     */
+    onSectionLayoutChange?: (order: string[] | null) => void;
     className?: string;
     'data-testid'?: string;
 }
 
-export declare function ConversationShelf({ items, activeId, onSelect, compact, iconOnly, size, plain, className, 'data-testid': testId, }: ConversationShelfProps): JSX.Element | null;
+/** A host section placed in the rail's arrangeable order (2.432.0). */
+export declare interface ConversationRailSection {
+    /** Stable id — what `sectionLayout` stores. `dms` and `channels` are the rail's own. */
+    id: string;
+    /** The heading it goes by — what "Arrange sections" lists. */
+    label: string;
+    node: ReactNode;
+}
+
+export declare function ConversationShelf({ items, activeId, onSelect, compact, iconOnly, size, plain, layout, className, 'data-testid': testId, }: ConversationShelfProps): JSX.Element | null;
 
 export declare interface ConversationShelfItem {
     id: string;
@@ -6580,6 +6629,14 @@ export declare interface ConversationShelfProps {
      * mockup's All documents / Recent / Shared with me. Since 2.389.2.
      */
     plain?: boolean;
+    /**
+     * `bar` (2.432.0): the destinations as ONE row of icon buttons with their
+     * counts — Activity, Mentions, Calls, Recordings at the rail's top — so the
+     * conversations start right under the header instead of four rows down.
+     * Each button is named by its label (and says its count); the active one
+     * takes the selected tint. `list` (default) is the stacked rows.
+     */
+    layout?: 'list' | 'bar';
     className?: string;
     'data-testid'?: string;
 }
@@ -10674,6 +10731,8 @@ export declare interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLB
      */
     tone?: IconButtonTone;
     size?: 'sm' | 'md' | 'lg';
+    /** The button element (React 19 passes `ref` as a prop; 2.432.0 names it in the type). */
+    ref?: Ref<HTMLButtonElement>;
 }
 
 /** @see SurfaceTone — which colour family the button paints in. */
@@ -15907,8 +15966,13 @@ export declare interface RadioOption<T extends string = string> {
 /** A rail's caption ("INITIATIVES 11"): 12px semibold uppercase, spaced. */
 export declare const RAIL_CAPTION = "text-[12px] font-semibold uppercase tracking-[0.06em]";
 
+export declare const RAIL_CHANNELS_SECTION = "channels";
+
 /** The selected row's fill. The 3px primary edge bar goes with it. */
 export declare const RAIL_CURRENT_FILL = "bg-primary/8";
+
+/** The rail's own conversation groups, as arrangeable sections. */
+export declare const RAIL_DMS_SECTION = "dms";
 
 /**
  * A group heading's count ("IN PROGRESS … 9"): plain muted text at the label's
@@ -15940,6 +16004,19 @@ export declare const RAIL_ROW_PAD_Y = "py-2";
 
 /** The one-line row pitch in px, for hosts that cap a list by row count. */
 export declare const RAIL_ROW_PITCH = 36;
+
+export declare const RAIL_SECTION_CONTENT_INSET = "px-2";
+
+/**
+ * The rail's one horizontal inset (2.432.0): every section heading's caret,
+ * every row's leading glyph or avatar, the shelf bar's first icon and a host
+ * section's own content start 16px from the rail's left edge. Sections sit in
+ * an 8px gutter (`RAIL_SECTION_GUTTER`) and draw their own 8px inside it, the
+ * way `RailSectionHeader` and the conversation rows already do; a host
+ * section that is not built from those (a grid, a note) takes
+ * `RAIL_SECTION_CONTENT_INSET` on its content.
+ */
+export declare const RAIL_SECTION_GUTTER = "px-2";
 
 /** The disclosure caret every rail group heading wears: 14px, down when open. */
 export declare function RailCaretIcon({ open, className }: {

@@ -78,6 +78,14 @@ export interface WrappedHangoutRoomsListProps {
    * control over the no-rooms UI (e.g. an onboarding upsell).
    */
   renderEmpty?: ReactNode;
+  /**
+   * Rail header (2.432.0): with `onToggleCollapse` the section heads itself
+   * with the rail's `RailSectionHeader` — the same inset, type and disclosure
+   * as Teams, Direct messages and Channels — and the host owns the collapsed
+   * state instead of the section's own localStorage key.
+   */
+  collapsed?: boolean;
+  onToggleCollapse?: (next: boolean) => void;
   /** Custom create-dialog renderer — forwarded to HangoutRoomsSection. */
   renderCreateDialog?: (props: { open: boolean; onClose: () => void }) => ReactNode;
   /**
@@ -111,6 +119,8 @@ function WrappedHangoutRoomsListView(HangoutRoomsSection: HangoutRoomsSectionCom
   title,
   storageKey,
   renderEmpty,
+  collapsed,
+  onToggleCollapse,
   renderCreateDialog,
   wrapWithNetworkShim,
 }: WrappedHangoutRoomsListProps) {
@@ -141,6 +151,8 @@ function WrappedHangoutRoomsListView(HangoutRoomsSection: HangoutRoomsSectionCom
       maxVisible={maxVisible}
       title={title}
       storageKey={storageKey}
+      collapsed={collapsed}
+      onToggleCollapse={onToggleCollapse}
       renderCreateDialog={renderCreateDialog}
     />
   );
