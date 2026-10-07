@@ -722,7 +722,7 @@ function le({ label: e, spacing: n = "md", className: r, "data-testid": i }) {
 //#region src/components/shared/DetailSection.tsx
 function ue({ title: e, hint: n, actions: r, first: i = !1, variant: a = "label", size: o = "md", description: s, children: c, className: l, "data-testid": u }) {
 	if (a === "heading") {
-		let i = o === "lg", a = s != null && s !== !1;
+		let i = o === "lg", a = o === "sm", d = s != null && s !== !1;
 		return /* @__PURE__ */ D("section", {
 			className: t("group/section", l),
 			"data-variant": "heading",
@@ -730,14 +730,14 @@ function ue({ title: e, hint: n, actions: r, first: i = !1, variant: a = "label"
 			...u ? { "data-testid": u } : {},
 			children: [
 				/* @__PURE__ */ D("div", {
-					className: t("flex items-center gap-2", i ? "h-7" : "h-6", i ? a ? "mb-0" : "mb-2" : "mb-0.5"),
+					className: t("flex items-center gap-2", i ? "h-7" : "h-6", i ? d ? "mb-0" : "mb-2" : "mb-0.5"),
 					children: [
 						/* @__PURE__ */ E("h3", {
-							className: t("m-0 font-semibold text-text-primary", i ? "text-[19px] leading-7" : "text-base leading-6"),
+							className: t("m-0 font-semibold text-text-primary", i ? "text-[19px] leading-7" : a ? "text-sm leading-5" : "text-base leading-6"),
 							children: e
 						}),
 						n != null && /* @__PURE__ */ E("span", {
-							className: "min-w-0 truncate text-[13px] text-text-tertiary",
+							className: t("min-w-0 truncate text-text-tertiary", a ? "text-xs" : "text-[13px]"),
 							children: n
 						}),
 						r != null && /* @__PURE__ */ D(T, { children: [/* @__PURE__ */ E("span", { className: "flex-1" }), /* @__PURE__ */ E("span", {
@@ -746,8 +746,8 @@ function ue({ title: e, hint: n, actions: r, first: i = !1, variant: a = "label"
 						})] })
 					]
 				}),
-				a && /* @__PURE__ */ E("p", {
-					className: t("m-0 text-text-secondary", i ? "-mt-1 mb-2 text-[15px] leading-6" : "mb-2 text-[13px] leading-5"),
+				d && /* @__PURE__ */ E("p", {
+					className: t("m-0 text-text-secondary", i ? "-mt-1 mb-2 text-[15px] leading-6" : a ? "mb-2 text-xs leading-4" : "mb-2 text-[13px] leading-5"),
 					"data-testid": u ? `${u}-description` : void 0,
 					children: s
 				}),

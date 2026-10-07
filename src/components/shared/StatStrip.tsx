@@ -87,6 +87,13 @@ export interface StatStripProps {
    * The line wraps between clusters, never inside one.
    */
   variant?: 'default' | 'inline' | 'line';
+  /**
+   * `line` only. `md` (default): 16px semibold values over 15px labels. `sm`
+   * (since 2.429.0): the app's body step — 14px semibold values and 14px
+   * labels (`T size="sm"`) — for a stats line under a tab strip, where 15–16px
+   * reads a size up from the 14px tabs.
+   */
+  size?: 'md' | 'sm';
   className?: string;
   'aria-label'?: string;
   'data-testid'?: string;
@@ -125,13 +132,13 @@ function InlineCluster({ item, first, last }: { item: StatStripItem; first: bool
   );
 }
 
-function LineCluster({ item }: { item: StatStripItem }) {
+function LineCluster({ item, sm = false }: { item: StatStripItem; sm?: boolean }) {
   const bar = item.progress && item.progress.max > 0 && Number.isFinite(item.progress.value);
   return (
     <span className="flex min-w-0 items-center whitespace-nowrap" data-testid="stat-strip-cluster">
       <span className="flex min-w-0 items-baseline gap-1.5">
-        <span className={cn('text-[16px] font-semibold leading-6 tabular-nums', VALUE_TONE[item.tone ?? 'default'])}>{item.value}</span>
-        <span className="min-w-0 truncate text-[15px] leading-6 text-text-secondary">{item.label}</span>
+        <span className={cn('font-semibold tabular-nums', sm ? 'text-sm leading-5' : 'text-[16px] leading-6', VALUE_TONE[item.tone ?? 'default'])}>{item.value}</span>
+        <span className={cn('min-w-0 truncate text-text-secondary', sm ? 'text-sm leading-5' : 'text-[15px] leading-6')}>{item.label}</span>
       </span>
       {bar && (
         <ProgressBar
@@ -208,6 +215,7 @@ export function StatStrip({
   frameless = false,
   connectors,
   variant = 'default',
+  size = 'md',
   className,
   'aria-label': ariaLabel,
   'data-testid': testId,
@@ -218,13 +226,14 @@ export function StatStrip({
       <div
         role="group"
         data-variant="line"
+        {...(size === 'sm' ? { 'data-size': 'sm' } : {})}
         className={cn('flex min-w-0 flex-wrap items-center gap-y-1', className)}
         {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}
         {...(testId ? { 'data-testid': testId } : {})}
       >
         {items.map((item, i) => {
           const tip = item.title ? { title: item.title } : {};
-          const inner = <LineCluster item={item} />;
+          const inner = <LineCluster item={item} sm={size === 'sm'} />;
           let cluster: ReactNode;
           if (item.href) {
             cluster = <a href={item.href} className="min-w-0 rounded no-underline hover:underline" {...tip}>{inner}</a>;
@@ -240,7 +249,7 @@ export function StatStrip({
           return (
             <Fragment key={item.label}>
               {i > 0 && (
-                <span aria-hidden="true" className="mx-5 text-[15px] leading-6 text-text-secondary" data-testid="stat-strip-separator">•</span>
+                <span aria-hidden="true" className={cn('mx-5 text-text-secondary', size === 'sm' ? 'text-sm leading-5' : 'text-[15px] leading-6')} data-testid="stat-strip-separator">•</span>
               )}
               {cluster}
             </Fragment>

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.429.0
+
+- **A compact type step for the overview composites** (additive, `size="sm"`): `PageSection` (14px semibold h2, 12px count pill, 14px actions), `DetailSection variant="heading"` (14px heading, 12px hint and description), `ActionRowList` (14px medium titles and cells, 12px descriptions and meta, 14px semibold action, 40px rows) and `StatStrip variant="line"` (14px semibold values, 14px labels and separators). Each is the app's body step — `T size="sm"` / `T size="xs"` — for a section inside a tabbed pane, where the mockup's 15–16px read a size up from the 14px tabs and 13–14px rails beside it. Defaults are unchanged; `data-size="sm"` marks the compact form.
+
 ## 2.428.0
 
 - **Computer Lab tells a multi-agent story** (`…/compute`, additive). New `provisioning` `ComputeStatus` (minted, microVM not up): `COMPUTE_STATUS.provisioning` (info, pulsing), `ATTENTION_ORDER` between running and idle, `summarizeFleet()` gains a `provisioning` count (not an agent), a workspace header pill (`lab-pill-provisioning`) drawn only while above zero, and rail/filter/badge entries.

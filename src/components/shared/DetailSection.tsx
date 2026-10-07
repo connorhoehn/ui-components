@@ -35,9 +35,12 @@ export interface DetailSectionProps {
   /**
    * `heading` only. `md` (default) is the 16px heading. `lg` (since 2.390.0)
    * is a page's section heading — 19px semibold on a 28px row, sentence case
-   * ("What needs attention", "Plan next", "Why this matters").
+   * ("What needs attention", "Plan next", "Why this matters"). `sm` (since
+   * 2.429.0) is the body step — a 14px semibold heading over a 12px
+   * description (`T size="sm"` / `T size="xs"`) — for a section inside a
+   * tabbed pane beside `PageSection size="sm"`.
    */
-  size?: 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg';
   /**
    * `heading` only: one line under the heading, before the content — what
    * the section is for ("Add enough detail for an engineer or agent to know
@@ -54,14 +57,15 @@ export function DetailSection({
 }: DetailSectionProps) {
   if (variant === 'heading') {
     const lg = size === 'lg';
+    const sm = size === 'sm';
     const hasDescription = description != null && description !== false;
     return (
       <section className={cn('group/section', className)} data-variant="heading" data-size={size} {...(testId ? { 'data-testid': testId } : {})}>
         {/* A fixed 24px row: a hover action may be taller, but never pushes
             the body down (the mockup's heading → text pitch is 24px). */}
         <div className={cn('flex items-center gap-2', lg ? 'h-7' : 'h-6', lg ? (hasDescription ? 'mb-0' : 'mb-2') : 'mb-0.5')}>
-          <h3 className={cn('m-0 font-semibold text-text-primary', lg ? 'text-[19px] leading-7' : 'text-base leading-6')}>{title}</h3>
-          {hint != null && <span className="min-w-0 truncate text-[13px] text-text-tertiary">{hint}</span>}
+          <h3 className={cn('m-0 font-semibold text-text-primary', lg ? 'text-[19px] leading-7' : sm ? 'text-sm leading-5' : 'text-base leading-6')}>{title}</h3>
+          {hint != null && <span className={cn('min-w-0 truncate text-text-tertiary', sm ? 'text-xs' : 'text-[13px]')}>{hint}</span>}
           {actions != null && (
             <>
               <span className="flex-1" />
@@ -72,7 +76,7 @@ export function DetailSection({
           )}
         </div>
         {hasDescription && (
-          <p className={cn('m-0 text-text-secondary', lg ? '-mt-1 mb-2 text-[15px] leading-6' : 'mb-2 text-[13px] leading-5')} data-testid={testId ? `${testId}-description` : undefined}>
+          <p className={cn('m-0 text-text-secondary', lg ? '-mt-1 mb-2 text-[15px] leading-6' : sm ? 'mb-2 text-xs leading-4' : 'mb-2 text-[13px] leading-5')} data-testid={testId ? `${testId}-description` : undefined}>
             {description}
           </p>
         )}

@@ -1,13 +1,13 @@
 import { t as e } from "./cn-D4QmbyEy.js";
 import "./ToastProvider-CJAceUvq.js";
 import { c as t } from "./usePromptContext-CUNhKC01.js";
-import "./FilterPopover-DeX1hI-H.js";
+import "./FilterPopover-C0FWVnZR.js";
 import { n } from "./Button-C2OEUpX-.js";
 import { t as r } from "./Card-CbTNNNkk.js";
 import "./Table-CPSPcCzr.js";
 import { c as i, f as a, h as o, l as s, p as c, t as l, u } from "./overlayStack-D0Hf2ZrU.js";
 import { t as d } from "./Chip-0zFpfJ52.js";
-import "./PageSection-g_nPOakI.js";
+import "./PageSection-zp2tnYke.js";
 import { t as f } from "./IconButton-VqtspsS5.js";
 import { K as p, et as m, f as h, k as g } from "./Icons-B_xESAH3.js";
 import "./MediaIcons-_ai5Til2.js";
@@ -3670,21 +3670,21 @@ function Un({ item: t, first: n, last: r }) {
 		]
 	});
 }
-function Wn({ item: t }) {
-	let n = t.progress && t.progress.max > 0 && Number.isFinite(t.progress.value);
+function Wn({ item: t, sm: n = !1 }) {
+	let r = t.progress && t.progress.max > 0 && Number.isFinite(t.progress.value);
 	return /* @__PURE__ */ q("span", {
 		className: "flex min-w-0 items-center whitespace-nowrap",
 		"data-testid": "stat-strip-cluster",
 		children: [/* @__PURE__ */ q("span", {
 			className: "flex min-w-0 items-baseline gap-1.5",
 			children: [/* @__PURE__ */ K("span", {
-				className: e("text-[16px] font-semibold leading-6 tabular-nums", Q[t.tone ?? "default"]),
+				className: e("font-semibold tabular-nums", n ? "text-sm leading-5" : "text-[16px] leading-6", Q[t.tone ?? "default"]),
 				children: t.value
 			}), /* @__PURE__ */ K("span", {
-				className: "min-w-0 truncate text-[15px] leading-6 text-text-secondary",
+				className: e("min-w-0 truncate text-text-secondary", n ? "text-sm leading-5" : "text-[15px] leading-6"),
 				children: t.label
 			})]
-		}), n && /* @__PURE__ */ K(A, {
+		}), r && /* @__PURE__ */ K(A, {
 			value: t.progress.value,
 			max: t.progress.max,
 			size: "sm",
@@ -3758,44 +3758,48 @@ function Kn({ connector: t }) {
 		})]
 	});
 }
-function qn({ items: t, frameless: n = !1, connectors: r, variant: i = "default", className: a, "aria-label": o, "data-testid": s }) {
-	let c = !!r && r.length > 0;
+function qn({ items: t, frameless: n = !1, connectors: r, variant: i = "default", size: a = "md", className: o, "aria-label": s, "data-testid": c }) {
+	let l = !!r && r.length > 0;
 	return i === "line" ? /* @__PURE__ */ K("div", {
 		role: "group",
 		"data-variant": "line",
-		className: e("flex min-w-0 flex-wrap items-center gap-y-1", a),
-		...o ? { "aria-label": o } : {},
-		...s ? { "data-testid": s } : {},
-		children: t.map((e, t) => {
-			let n = e.title ? { title: e.title } : {}, r = /* @__PURE__ */ K(Wn, { item: e }), i;
-			return i = e.href ? /* @__PURE__ */ K("a", {
-				href: e.href,
+		...a === "sm" ? { "data-size": "sm" } : {},
+		className: e("flex min-w-0 flex-wrap items-center gap-y-1", o),
+		...s ? { "aria-label": s } : {},
+		...c ? { "data-testid": c } : {},
+		children: t.map((t, n) => {
+			let r = t.title ? { title: t.title } : {}, i = /* @__PURE__ */ K(Wn, {
+				item: t,
+				sm: a === "sm"
+			}), o;
+			return o = t.href ? /* @__PURE__ */ K("a", {
+				href: t.href,
 				className: "min-w-0 rounded no-underline hover:underline",
-				...n,
-				children: r
-			}) : e.onSelect ? /* @__PURE__ */ K("button", {
+				...r,
+				children: i
+			}) : t.onSelect ? /* @__PURE__ */ K("button", {
 				type: "button",
-				onClick: e.onSelect,
+				onClick: t.onSelect,
 				className: "min-w-0 cursor-pointer rounded border-none bg-transparent p-0 text-left hover:underline",
-				...n,
-				children: r
+				...r,
+				children: i
 			}) : /* @__PURE__ */ K("span", {
 				className: "min-w-0",
-				...n,
-				children: r
-			}), /* @__PURE__ */ q(se, { children: [t > 0 && /* @__PURE__ */ K("span", {
+				...r,
+				children: i
+			}), /* @__PURE__ */ q(se, { children: [n > 0 && /* @__PURE__ */ K("span", {
 				"aria-hidden": "true",
-				className: "mx-5 text-[15px] leading-6 text-text-secondary",
+				className: e("mx-5 text-text-secondary", a === "sm" ? "text-sm leading-5" : "text-[15px] leading-6"),
 				"data-testid": "stat-strip-separator",
 				children: "•"
-			}), i] }, e.label);
+			}), o] }, t.label);
 		})
 	}) : i === "inline" ? /* @__PURE__ */ K("div", {
 		role: "group",
 		"data-variant": "inline",
-		className: e("flex items-center divide-x divide-border overflow-x-auto border-b border-border pb-1", a),
-		...o ? { "aria-label": o } : {},
-		...s ? { "data-testid": s } : {},
+		className: e("flex items-center divide-x divide-border overflow-x-auto border-b border-border pb-1", o),
+		...s ? { "aria-label": s } : {},
+		...c ? { "data-testid": c } : {},
 		children: t.map((e, n) => {
 			let r = e.title ? { title: e.title } : {}, i = /* @__PURE__ */ K(Un, {
 				item: e,
@@ -3821,9 +3825,9 @@ function qn({ items: t, frameless: n = !1, connectors: r, variant: i = "default"
 		})
 	}) : /* @__PURE__ */ K("div", {
 		role: "group",
-		className: e("flex overflow-x-auto", c ? "items-stretch" : "divide-x divide-border", !n && "rounded-lg border border-border bg-surface", a),
-		...o ? { "aria-label": o } : {},
-		...s ? { "data-testid": s } : {},
+		className: e("flex overflow-x-auto", l ? "items-stretch" : "divide-x divide-border", !n && "rounded-lg border border-border bg-surface", o),
+		...s ? { "aria-label": s } : {},
+		...c ? { "data-testid": c } : {},
 		children: t.map((e, i) => {
 			let a = n ? t.length === 1 ? "both" : i === 0 ? "start" : i === t.length - 1 ? "end" : void 0 : void 0, o = e.title ? { title: e.title } : {}, s;
 			return s = e.href ? /* @__PURE__ */ K("a", {
@@ -3850,7 +3854,7 @@ function qn({ items: t, frameless: n = !1, connectors: r, variant: i = "default"
 					item: e,
 					flush: a
 				})
-			}), /* @__PURE__ */ q(se, { children: [s, c && i < t.length - 1 && /* @__PURE__ */ K(Kn, { connector: r[i] })] }, e.label);
+			}), /* @__PURE__ */ q(se, { children: [s, l && i < t.length - 1 && /* @__PURE__ */ K(Kn, { connector: r[i] })] }, e.label);
 		})
 	});
 }

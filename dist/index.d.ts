@@ -140,7 +140,7 @@ export declare interface ActionRowItem {
     action?: string;
 }
 
-export declare function ActionRowList({ items, onOpen, footer, emptyLabel, columns, tone, accent, action, 'aria-label': ariaLabel, className, 'data-testid': testId, }: ActionRowListProps): JSX.Element | null;
+export declare function ActionRowList({ items, onOpen, footer, emptyLabel, columns, tone, accent, action, size, 'aria-label': ariaLabel, className, 'data-testid': testId, }: ActionRowListProps): JSX.Element | null;
 
 export declare interface ActionRowListProps {
     items: ActionRowItem[];
@@ -165,6 +165,14 @@ export declare interface ActionRowListProps {
     accent?: 'none' | 'bar';
     /** Every row's worded target in place of the chevron ("Open"). Since 2.392.0. */
     action?: string;
+    /**
+     * Type step. `md` (default): the Initiatives v2 mockup's 15px rows. `sm`
+     * (since 2.429.0): the app's body step — 14px medium titles and cells,
+     * 12px descriptions and meta, a 14px semibold action (`T size="sm"` /
+     * `T size="xs"`) — so a list in a tabbed pane reads like the rails and
+     * lists beside it.
+     */
+    size?: 'md' | 'sm';
     'aria-label'?: string;
     className?: string;
     'data-testid'?: string;
@@ -7308,9 +7316,12 @@ export declare interface DetailSectionProps {
     /**
      * `heading` only. `md` (default) is the 16px heading. `lg` (since 2.390.0)
      * is a page's section heading — 19px semibold on a 28px row, sentence case
-     * ("What needs attention", "Plan next", "Why this matters").
+     * ("What needs attention", "Plan next", "Why this matters"). `sm` (since
+     * 2.429.0) is the body step — a 14px semibold heading over a 12px
+     * description (`T size="sm"` / `T size="xs"`) — for a section inside a
+     * tabbed pane beside `PageSection size="sm"`.
      */
-    size?: 'md' | 'lg';
+    size?: 'sm' | 'md' | 'lg';
     /**
      * `heading` only: one line under the heading, before the content — what
      * the section is for ("Add enough detail for an engineer or agent to know
@@ -13880,9 +13891,12 @@ export declare interface PageSectionProps {
      * `lg` (default): the page's own 20px h1 with 24px to its content. `md`
      * (since 2.392.0): a 16px semibold h2 over a section of a page — "Needs
      * attention", "Up next" — with 8px to its content, the actions vertically
-     * centred on the title.
+     * centred on the title. `sm` (since 2.429.0): the same h2 at the app's
+     * body step — 14px semibold (`T size="sm" weight="semibold"`), a 12px count
+     * pill and 14px actions — for a section inside a tabbed pane, where 16px
+     * reads a size up from the 14px tabs and the 13–14px rails beside it.
      */
-    size?: 'lg' | 'md';
+    size?: 'lg' | 'md' | 'sm';
     className?: string;
     'data-testid'?: string;
 }
@@ -19627,7 +19641,7 @@ export declare interface StatsCardProps {
     style?: CSSProperties;
 }
 
-export declare function StatStrip({ items, frameless, connectors, variant, className, 'aria-label': ariaLabel, 'data-testid': testId, }: StatStripProps): JSX.Element;
+export declare function StatStrip({ items, frameless, connectors, variant, size, className, 'aria-label': ariaLabel, 'data-testid': testId, }: StatStripProps): JSX.Element;
 
 /** A labelled arrow between two clusters — "Compact", "Publish". */
 export declare interface StatStripConnector {
@@ -19694,6 +19708,13 @@ export declare interface StatStripProps {
      * The line wraps between clusters, never inside one.
      */
     variant?: 'default' | 'inline' | 'line';
+    /**
+     * `line` only. `md` (default): 16px semibold values over 15px labels. `sm`
+     * (since 2.429.0): the app's body step — 14px semibold values and 14px
+     * labels (`T size="sm"`) — for a stats line under a tab strip, where 15–16px
+     * reads a size up from the 14px tabs.
+     */
+    size?: 'md' | 'sm';
     className?: string;
     'aria-label'?: string;
     'data-testid'?: string;

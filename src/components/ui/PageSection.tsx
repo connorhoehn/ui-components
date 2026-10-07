@@ -26,9 +26,12 @@ export interface PageSectionProps {
    * `lg` (default): the page's own 20px h1 with 24px to its content. `md`
    * (since 2.392.0): a 16px semibold h2 over a section of a page — "Needs
    * attention", "Up next" — with 8px to its content, the actions vertically
-   * centred on the title.
+   * centred on the title. `sm` (since 2.429.0): the same h2 at the app's
+   * body step — 14px semibold (`T size="sm" weight="semibold"`), a 12px count
+   * pill and 14px actions — for a section inside a tabbed pane, where 16px
+   * reads a size up from the 14px tabs and the 13–14px rails beside it.
    */
-  size?: 'lg' | 'md';
+  size?: 'lg' | 'md' | 'sm';
   className?: string;
   'data-testid'?: string;
 }
@@ -44,13 +47,15 @@ export function PageSection({
   className,
   'data-testid': testId,
 }: PageSectionProps) {
-  const md = size === 'md';
+  const sm = size === 'sm';
+  // `sm` is `md`'s layout at the body type step.
+  const md = size === 'md' || sm;
   const Heading = md ? 'h2' : 'h1';
   return (
-    <section className={cn('flex flex-col', md ? 'gap-2' : 'gap-6', className)} {...(testId ? { 'data-testid': testId } : {})} data-size={md ? 'md' : undefined}>
+    <section className={cn('flex flex-col', md ? 'gap-2' : 'gap-6', className)} {...(testId ? { 'data-testid': testId } : {})} data-size={md ? size : undefined}>
       <div className={cn('flex justify-between gap-4', md ? 'items-center' : 'items-start')}>
         <div className="min-w-0">
-          <Heading className={cn('m-0 text-text-primary', md ? 'flex min-w-0 items-center gap-2.5 text-[16px] font-semibold leading-6' : 'text-xl font-semibold')}>
+          <Heading className={cn('m-0 text-text-primary', md ? cn('flex min-w-0 items-center gap-2.5 font-semibold', sm ? 'text-sm leading-5' : 'text-[16px] leading-6') : 'text-xl font-semibold')}>
             {md ? <span className="min-w-0 truncate">{title}</span> : title}
             {typeof count === 'number' && (
               <Chip
@@ -59,7 +64,7 @@ export function PageSection({
                 className={cn(
                   'shrink-0',
                   !md && 'ml-2.5 align-middle',
-                  countTone === 'primary' && 'rounded-md bg-primary-bg text-[13px] font-medium leading-[18px] text-primary-fg',
+                  countTone === 'primary' && cn('rounded-md bg-primary-bg font-medium text-primary-fg', sm ? 'text-xs leading-4' : 'text-[13px] leading-[18px]'),
                 )}
                 aria-label={`${count} items`} {...(testId ? { 'data-testid': `${testId}-count` } : {})}>
                 {count}
@@ -70,7 +75,7 @@ export function PageSection({
             <p className="text-sm text-neutral mt-1 mb-0">{description}</p>
           )}
         </div>
-        {actions && <div className="flex items-center gap-2 shrink-0">{actions}</div>}
+        {actions && <div className={cn('flex items-center gap-2 shrink-0', sm && 'text-sm')}>{actions}</div>}
       </div>
       {children}
     </section>
