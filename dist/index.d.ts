@@ -7073,7 +7073,7 @@ export declare function dataAccentProps(accent: DataAccent | undefined): {
 
 export declare type DataAccentSlot = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
-export declare function DataTable<T>({ data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, striped, className, 'data-testid': testId, }: DataTableProps<T>): JSX.Element;
+export declare function DataTable<T>({ data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, className, 'data-testid': testId, }: DataTableProps<T>): JSX.Element;
 
 export declare interface DataTableColumn<T> {
     /** Stable id for the column. When `accessor` is omitted, used as the data key on T. */
@@ -7097,6 +7097,8 @@ export declare interface DataTableColumn<T> {
     filterable?: boolean;
     width?: string;
     align?: 'left' | 'right' | 'center';
+    /** A number column: right-aligned header and cells, tabular figures. Since 2.434.0. */
+    numeric?: boolean;
     className?: string;
 }
 
@@ -7135,6 +7137,11 @@ export declare interface DataTableProps<T> {
      * Both are tokens, so the relationship holds in dark mode too.
      */
     striped?: boolean;
+    /**
+     * Row density, forwarded to `Table`. `sm` (since 2.434.0): every row 44px
+     * on one line, a 12px semibold caps header — the app's list step.
+     */
+    size?: TableSize;
     className?: string;
     'data-testid'?: string;
 }
@@ -20560,7 +20567,7 @@ export declare interface TabItem {
     testId?: string;
 }
 
-export declare function Table({ children, className, ...rest }: TableProps): JSX.Element;
+export declare function Table({ children, className, size, ...rest }: TableProps): JSX.Element;
 
 export declare function TableBody({ children, className, ...rest }: TableBodyProps): JSX.Element;
 
@@ -20576,6 +20583,8 @@ export declare interface TableHeadProps extends HTMLAttributes<HTMLTableSectionE
 
 export declare interface TableProps extends HTMLAttributes<HTMLTableElement> {
     children: ReactNode;
+    /** Row density for every cell inside. Default `md`. Since 2.434.0. */
+    size?: TableSize;
 }
 
 export declare function TableRow({ children, clickable, className, ...rest }: TableRowProps): JSX.Element;
@@ -20585,18 +20594,32 @@ export declare interface TableRowProps extends HTMLAttributes<HTMLTableRowElemen
     clickable?: boolean;
 }
 
-export declare function TableTd({ children, className, ...rest }: TableTdProps): JSX.Element;
+/**
+ * Row density. `md` (default) is the original 12px-padded cell. `sm` (since
+ * 2.434.0) is the app's list step: every body row exactly 44px tall on one
+ * line (cells do not wrap — truncate or move detail to a tooltip), 14px body
+ * text, a 12px semibold uppercase header, and 12px side padding. A row that
+ * stacks a caption or a bar under its value cannot fit 44px; put the bar
+ * inline beside the value and the caption in a `title`.
+ */
+export declare type TableSize = 'md' | 'sm';
+
+export declare function TableTd({ children, numeric, className, ...rest }: TableTdProps): JSX.Element;
 
 export declare interface TableTdProps extends TdHTMLAttributes<HTMLTableCellElement> {
     children?: ReactNode;
+    /** A number cell: right-aligned tabular figures. Since 2.434.0. */
+    numeric?: boolean;
 }
 
-export declare function TableTh({ children, sortable, sortDirection, className, ...rest }: TableThProps): JSX.Element;
+export declare function TableTh({ children, sortable, sortDirection, numeric, className, ...rest }: TableThProps): JSX.Element;
 
 export declare interface TableThProps extends ThHTMLAttributes<HTMLTableCellElement> {
     children?: ReactNode;
     sortable?: boolean;
     sortDirection?: 'asc' | 'desc' | null;
+    /** A number column: right-aligned, so header and figures share an edge. Since 2.434.0. */
+    numeric?: boolean;
 }
 
 export declare function TabPanel({ id, when, idPrefix, className, style, children }: TabPanelProps): JSX.Element | null;

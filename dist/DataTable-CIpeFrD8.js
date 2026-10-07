@@ -1,5 +1,5 @@
 import { t as e } from "./cn-D4QmbyEy.js";
-import { a as t, i as n, n as r, o as i, r as a, t as o } from "./Table-CPSPcCzr.js";
+import { a as t, i as n, n as r, o as i, r as a, t as o } from "./Table-CG6ZfYj8.js";
 import { isValidElement as s, useMemo as c, useState as l } from "react";
 import { jsx as u, jsxs as d } from "react/jsx-runtime";
 //#region src/components/shared/DataTable.tsx
@@ -36,47 +36,47 @@ function g(e) {
 	if (e === "right") return "text-right";
 	if (e === "center") return "text-center";
 }
-function _({ data: s, columns: p, keyField: m, onRowClick: _, rowActions: v, searchable: y = !1, searchPlaceholder: b = "Search…", pageSize: x, emptyMessage: S = "No records.", loading: C = !1, loadingRows: w = 5, frameless: T = !1, striped: E = !1, className: D, "data-testid": O }) {
-	let k = Array.isArray(s) ? s : [], A = Array.isArray(p) ? p : [], [j, M] = l(null), [N, P] = l("asc"), [F, I] = l(""), [L, R] = l(0), z = (e) => {
-		j === e ? P((e) => e === "asc" ? "desc" : "asc") : (M(e), P("asc"));
-	}, B = c(() => {
-		if (!y || F.trim() === "") return k;
-		let e = F.trim().toLowerCase();
-		return k.filter((t, n) => A.some((r) => r.filterable !== !1 && h(r, t, n).toLowerCase().includes(e)));
+function _({ data: s, columns: p, keyField: m, onRowClick: _, rowActions: v, searchable: y = !1, searchPlaceholder: b = "Search…", pageSize: x, emptyMessage: S = "No records.", loading: C = !1, loadingRows: w = 5, frameless: T = !1, size: E = "md", striped: D = !1, className: O, "data-testid": k }) {
+	let A = Array.isArray(s) ? s : [], j = Array.isArray(p) ? p : [], [M, N] = l(null), [P, F] = l("asc"), [I, L] = l(""), [R, z] = l(0), B = (e) => {
+		M === e ? F((e) => e === "asc" ? "desc" : "asc") : (N(e), F("asc"));
+	}, V = c(() => {
+		if (!y || I.trim() === "") return A;
+		let e = I.trim().toLowerCase();
+		return A.filter((t, n) => j.some((r) => r.filterable !== !1 && h(r, t, n).toLowerCase().includes(e)));
 	}, [
-		k,
-		A,
-		F,
-		y
-	]), V = c(() => {
-		if (!j) return B;
-		let e = A.find((e) => e.key === j);
-		if (!e || !e.sortable) return B;
-		let t = e.compare ?? ((t, n) => f(t[e.key], n[e.key])), n = [...B];
-		return n.sort((e, n) => N === "asc" ? t(e, n) : -t(e, n)), n;
-	}, [
-		B,
 		A,
 		j,
-		N
-	]), H = x && x > 0 ? Math.max(1, Math.ceil(V.length / x)) : 1, U = Math.min(L, H - 1), W = c(() => {
-		if (!x || x <= 0) return V;
-		let e = U * x;
-		return V.slice(e, e + x);
+		I,
+		y
+	]), H = c(() => {
+		if (!M) return V;
+		let e = j.find((e) => e.key === M);
+		if (!e || !e.sortable) return V;
+		let t = e.compare ?? ((t, n) => f(t[e.key], n[e.key])), n = [...V];
+		return n.sort((e, n) => P === "asc" ? t(e, n) : -t(e, n)), n;
 	}, [
 		V,
+		j,
+		M,
+		P
+	]), U = x && x > 0 ? Math.max(1, Math.ceil(H.length / x)) : 1, W = Math.min(R, U - 1), G = c(() => {
+		if (!x || x <= 0) return H;
+		let e = W * x;
+		return H.slice(e, e + x);
+	}, [
+		H,
 		x,
-		U
+		W
 	]);
 	return /* @__PURE__ */ d("div", {
-		className: e("flex flex-col gap-3", D),
-		"data-testid": O,
+		className: e("flex flex-col gap-3", O),
+		"data-testid": k,
 		children: [
 			y && /* @__PURE__ */ u("input", {
 				type: "text",
-				value: F,
+				value: I,
 				onChange: (e) => {
-					I(e.target.value), R(0);
+					L(e.target.value), z(0);
 				},
 				placeholder: b,
 				"aria-label": "Search",
@@ -86,15 +86,17 @@ function _({ data: s, columns: p, keyField: m, onRowClick: _, rowActions: v, sea
 			/* @__PURE__ */ u("div", {
 				className: "w-full max-w-full overflow-x-auto",
 				children: /* @__PURE__ */ d(o, {
+					size: E,
 					className: T ? void 0 : "border border-border rounded-lg overflow-hidden",
-					children: [/* @__PURE__ */ u(a, { children: /* @__PURE__ */ d("tr", { children: [A.map((t) => {
-						let n = t.sortable && j === t.key;
+					children: [/* @__PURE__ */ u(a, { children: /* @__PURE__ */ d("tr", { children: [j.map((t) => {
+						let n = t.sortable && M === t.key;
 						return /* @__PURE__ */ u(i, {
 							sortable: t.sortable,
-							sortDirection: n ? N : null,
+							sortDirection: n ? P : null,
 							style: t.width ? { width: t.width } : void 0,
+							numeric: t.numeric,
 							className: e(g(t.align), t.className),
-							onClick: t.sortable ? () => z(t.key) : void 0,
+							onClick: t.sortable ? () => B(t.key) : void 0,
 							"data-testid": t.sortable ? `datatable-header-${t.key}` : void 0,
 							children: t.header
 						}, t.key);
@@ -103,27 +105,29 @@ function _({ data: s, columns: p, keyField: m, onRowClick: _, rowActions: v, sea
 						children: "Actions"
 					})] }) }), /* @__PURE__ */ u(r, { children: C ? Array.from({ length: w }).map((e, r) => /* @__PURE__ */ d(n, {
 						"data-testid": "datatable-loading-row",
-						children: [A.map((e) => /* @__PURE__ */ u(t, {
+						children: [j.map((e) => /* @__PURE__ */ u(t, {
+							numeric: e.numeric,
 							className: g(e.align),
 							children: /* @__PURE__ */ u("div", { className: "h-4 w-3/4 animate-pulse rounded bg-surface-hover" })
 						}, e.key)), v && /* @__PURE__ */ u(t, {
 							className: "text-right",
 							children: /* @__PURE__ */ u("div", { className: "ml-auto h-4 w-16 animate-pulse rounded bg-surface-hover" })
 						})]
-					}, `skeleton-${r}`)) : W.length === 0 ? /* @__PURE__ */ u(n, { children: /* @__PURE__ */ u(t, {
-						colSpan: A.length + +!!v,
+					}, `skeleton-${r}`)) : G.length === 0 ? /* @__PURE__ */ u(n, { children: /* @__PURE__ */ u(t, {
+						colSpan: j.length + +!!v,
 						className: "text-center text-text-secondary py-8",
 						children: S
-					}) }) : W.map((r, i) => /* @__PURE__ */ d(n, {
+					}) }) : G.map((r, i) => /* @__PURE__ */ d(n, {
 						clickable: !!_,
-						className: e(E && i % 2 == 1 ? "bg-surface-inset" : void 0, _ && "focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"),
+						className: e(D && i % 2 == 1 ? "bg-surface-inset" : void 0, _ && "focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"),
 						tabIndex: _ ? 0 : void 0,
 						"aria-rowindex": _ ? i + 2 : void 0,
 						onClick: _ ? () => _(r) : void 0,
 						onKeyDown: _ ? (e) => {
 							(e.key === "Enter" || e.key === " ") && (e.preventDefault(), _(r));
 						} : void 0,
-						children: [A.map((n) => /* @__PURE__ */ u(t, {
+						children: [j.map((n) => /* @__PURE__ */ u(t, {
+							numeric: n.numeric,
 							className: e(g(n.align), n.className),
 							children: n.render ? n.render(r, i) : String(r[n.key] ?? "")
 						}, n.key)), v && /* @__PURE__ */ u(t, {
@@ -137,32 +141,32 @@ function _({ data: s, columns: p, keyField: m, onRowClick: _, rowActions: v, sea
 					}, m(r))) })]
 				})
 			}),
-			x && x > 0 && V.length > x && /* @__PURE__ */ d("div", {
+			x && x > 0 && H.length > x && /* @__PURE__ */ d("div", {
 				className: "flex items-center justify-between text-xs text-text-secondary",
 				children: [/* @__PURE__ */ d("span", {
 					"data-testid": "datatable-page-summary",
 					children: [
 						"Page ",
-						U + 1,
+						W + 1,
 						" of ",
-						H,
+						U,
 						" · ",
-						V.length,
+						H.length,
 						" total"
 					]
 				}), /* @__PURE__ */ d("div", {
 					className: "flex gap-2",
 					children: [/* @__PURE__ */ u("button", {
 						type: "button",
-						onClick: () => R(Math.max(0, U - 1)),
-						disabled: U === 0,
+						onClick: () => z(Math.max(0, W - 1)),
+						disabled: W === 0,
 						"data-testid": "datatable-prev",
 						className: "rounded border border-border bg-surface px-2 py-1 text-xs text-text-primary disabled:cursor-not-allowed disabled:opacity-50 hover:bg-surface-panel",
 						children: "Prev"
 					}), /* @__PURE__ */ u("button", {
 						type: "button",
-						onClick: () => R(Math.min(H - 1, U + 1)),
-						disabled: U >= H - 1,
+						onClick: () => z(Math.min(U - 1, W + 1)),
+						disabled: W >= U - 1,
 						"data-testid": "datatable-next",
 						className: "rounded border border-border bg-surface px-2 py-1 text-xs text-text-primary disabled:cursor-not-allowed disabled:opacity-50 hover:bg-surface-panel",
 						children: "Next"

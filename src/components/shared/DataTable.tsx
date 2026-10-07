@@ -16,6 +16,7 @@ import {
   TableRow,
   TableTh,
   TableTd,
+  type TableSize,
 } from '../ui/Table';
 
 export interface DataTableColumn<T> {
@@ -40,6 +41,8 @@ export interface DataTableColumn<T> {
   filterable?: boolean;
   width?: string;
   align?: 'left' | 'right' | 'center';
+  /** A number column: right-aligned header and cells, tabular figures. Since 2.434.0. */
+  numeric?: boolean;
   className?: string;
 }
 
@@ -78,6 +81,11 @@ export interface DataTableProps<T> {
    * Both are tokens, so the relationship holds in dark mode too.
    */
   striped?: boolean;
+  /**
+   * Row density, forwarded to `Table`. `sm` (since 2.434.0): every row 44px
+   * on one line, a 12px semibold caps header — the app's list step.
+   */
+  size?: TableSize;
   className?: string;
   'data-testid'?: string;
 }
@@ -186,6 +194,7 @@ export function DataTable<T>({
   loading = false,
   loadingRows = 5,
   frameless = false,
+  size = 'md',
   striped = false,
   className,
   'data-testid': testId,
@@ -269,7 +278,7 @@ export function DataTable<T>({
           sits beside it (a rail, a sidebar). This keeps that spill inside the
           table's own box. */}
       <div className="w-full max-w-full overflow-x-auto">
-        <Table className={frameless ? undefined : 'border border-border rounded-lg overflow-hidden'}>
+        <Table size={size} className={frameless ? undefined : 'border border-border rounded-lg overflow-hidden'}>
         <TableHead>
           <tr>
             {columns.map((col) => {
@@ -280,6 +289,7 @@ export function DataTable<T>({
                   sortable={col.sortable}
                   sortDirection={isSorted ? sortDir : null}
                   style={col.width ? { width: col.width } : undefined}
+                  numeric={col.numeric}
                   className={cn(alignClass(col.align), col.className)}
                   onClick={col.sortable ? () => toggleSort(col.key) : undefined}
                   data-testid={col.sortable ? `datatable-header-${col.key}` : undefined}
@@ -296,7 +306,7 @@ export function DataTable<T>({
             ? Array.from({ length: loadingRows }).map((_, i) => (
                 <TableRow key={`skeleton-${i}`} data-testid="datatable-loading-row">
                   {columns.map((col) => (
-                    <TableTd key={col.key} className={alignClass(col.align)}>
+                    <TableTd key={col.key} numeric={col.numeric} className={alignClass(col.align)}>
                       <div className="h-4 w-3/4 animate-pulse rounded bg-surface-hover" />
                     </TableTd>
                   ))}
@@ -353,6 +363,7 @@ export function DataTable<T>({
                     {columns.map((col) => (
                       <TableTd
                         key={col.key}
+                        numeric={col.numeric}
                         className={cn(alignClass(col.align), col.className)}
                       >
                         {col.render

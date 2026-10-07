@@ -1,7 +1,7 @@
 import { n as e, r as t, t as n } from "./useDocumentTypes-DCKwxXn8.js";
 import { t as r } from "./cn-D4QmbyEy.js";
 import { n as i } from "./Button-C2OEUpX-.js";
-import { a, i as o, n as s, o as c, r as l, t as u } from "./Table-CPSPcCzr.js";
+import { a, i as o, n as s, o as c, r as l, t as u } from "./Table-CG6ZfYj8.js";
 import { t as d } from "./Chip-0zFpfJ52.js";
 import { t as f } from "./IconButton-VqtspsS5.js";
 import { m as p, tt as m } from "./Icons-B_xESAH3.js";
@@ -1357,7 +1357,7 @@ function tt(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
-var nt = I(() => import("./SortableSlideList-Bcel2W21.js"));
+var nt = I(() => import("./SortableSlideList-CRMuIfjQ.js"));
 function rt(e, t) {
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }

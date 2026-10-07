@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.434.0
+
+- `Table` `size="sm"` (and `DataTable` `size="sm"`, forwarded): the app's list step — every body cell exactly 44px tall on one line (`h-11`, no padding block, `whitespace-nowrap`), 14px body, a 12px semibold uppercase header (`text-xs`), 12px side padding. `data-size="sm"` on the `<table>`. Default `md` is unchanged.
+- `TableTh`/`TableTd` `numeric` and `DataTableColumn.numeric`: right-aligned header and cells with tabular figures, so a money/count column's header and values share an edge.
+
 ## 2.433.0
 
 - `CallDock` `layout="stack"`: the call bar for a conversation composer in a side pane — title, meta, mic ▾, camera ▾ and Leave on the bar; Share, People, Documents, settings and pop-out in one "⋯" menu (`call-dock-more`, rows keep their `call-dock-*` test ids); the tiles as the reflowing grid, at most two to a row. Calling keeps Cancel and disables Share with its reason.

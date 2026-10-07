@@ -11,7 +11,7 @@ import { n as D, t as O } from "./Stack-DNMA-_4L.js";
 import { t as k } from "./Banner-8ngXUtJu.js";
 import { t as A } from "./Modal-CjgKqXl7.js";
 import { t as j } from "./Input-CpLq80dw.js";
-import { t as M } from "./DataTable-Dqko2xDg.js";
+import { t as M } from "./DataTable-CIpeFrD8.js";
 import { t as N } from "./EmptyState-DnbFBYDA.js";
 import { n as P } from "./ThinkingDots-BZOWJ3Fp.js";
 import { n as F } from "./StatusPill-c89IbU1L.js";
