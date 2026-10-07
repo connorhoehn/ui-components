@@ -108,3 +108,33 @@ export const Empty: Story = {
     </div>
   ),
 };
+
+/** `paneFooter` docks a composer under the detail pane; the pane above keeps
+ *  its own scrolling. */
+export const WithPaneFooter: Story = {
+  args: baseArgs,
+  render: () => {
+    const [selected, setSelected] = useState<string | null>(DIMENSIONS[0].id);
+    return (
+      <div className="h-[420px]">
+        <MasterDetail
+          items={DIMENSIONS}
+          keyOf={(d) => d.id}
+          selectedKey={selected}
+          onSelect={setSelected}
+          railTitle="5 Dimensions"
+          renderRow={(d) => <div className="px-3 py-2.5 text-sm font-medium text-text-primary">{d.title}</div>}
+          renderDetail={(d) => (
+            <div className="p-5 text-sm text-text-secondary">
+              <h3 className="text-lg font-bold text-text-primary">{d.title}</h3>
+              {Array.from({ length: 24 }, (_, n) => (
+                <p key={n} className="mt-2">Detail line {n + 1} for {d.title}.</p>
+              ))}
+            </div>
+          )}
+          paneFooter={<div className="border-t border-border p-3 text-sm text-text-tertiary">Docked composer</div>}
+        />
+      </div>
+    );
+  },
+};

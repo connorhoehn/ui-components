@@ -3157,7 +3157,7 @@ export declare interface MarkdownViewProps {
 
 export declare type MarkdownViewScale = 'sm' | 'md' | 'lg';
 
-export declare function MasterDetail<T>({ items, keyOf, selectedKey, onSelect, renderRow, renderCompactRow, renderDetail, railTitle, railWidth, compactWidth, storageKey, emptyDetail, className, 'data-testid': testId, }: MasterDetailProps<T>): JSX.Element;
+export declare function MasterDetail<T>({ items, keyOf, selectedKey, onSelect, renderRow, renderCompactRow, renderDetail, railTitle, railWidth, compactWidth, storageKey, emptyDetail, paneFooter, className, 'data-testid': testId, }: MasterDetailProps<T>): JSX.Element;
 
 export declare interface MasterDetailProps<T> {
     items: T[];
@@ -3178,6 +3178,10 @@ export declare interface MasterDetailProps<T> {
     storageKey?: string;
     /** Rendered in the detail pane when nothing resolves from `selectedKey`. */
     emptyDetail?: ReactNode;
+    /** Docked under the detail pane (a composer, a call strip). It reserves its
+     *  own height and stays put while the pane above it scrolls, whatever the
+     *  selection — mirrors ExplorerLayout's `paneFooter`. The rail is unaffected. */
+    paneFooter?: ReactNode;
     className?: string;
     'data-testid'?: string;
 }

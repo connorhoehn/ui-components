@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.427.0
+
+- **`MasterDetail` `paneFooter`:** a ReactNode docked under the detail pane (`data-testid="<id>-pane-footer"`, inside a `<id>-pane-column`). It reserves its own height and the pane above keeps its `overflow-y-auto` scrolling (`<id>-detail`), so a composer no longer needs `sticky` plus class overrides that release the shell's clipping. Mirrors `ExplorerLayout`'s `paneFooter`; omitted, the markup is unchanged.
+
 ## 2.426.0
 
 - **Complete, verified `dist`:** 2.425.0 committed a per-file `tsc` declaration emit (`npm run build:types` wrote into `dist/`) over the rolled-up types: `dist/index.d.ts` was 7 KB with no `StackedRail`, and ~3,000 stray `.d.ts`/`.map` files shipped. Runtime JS was fine, so the runtime-only export snapshot stayed green. `build:types` now emits to `node_modules/.cache/types-check`, `prepare` runs the full `npm run build`, and `export-surface.test.ts` checks every entrypoint's `.d.ts` is a self-contained rollup naming every snapshot export. Rebuilt; every `.d.ts` is byte-identical to 2.424.0 (2.425.0 changed no types). Note `RecordGraphCard` is exported from the root entry, not `/graph`.

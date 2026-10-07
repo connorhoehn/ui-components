@@ -4019,43 +4019,43 @@ function $n({ index: t, selected: n }) {
 		children: t + 1
 	});
 }
-function er({ items: t, keyOf: n, selectedKey: r, onSelect: i, renderRow: a, renderCompactRow: o, renderDetail: s, railTitle: c, railWidth: l = 340, compactWidth: u = 72, storageKey: d, emptyDetail: f, className: p, "data-testid": m = "master-detail" }) {
-	let [h, g] = W(() => Xn(d)), _ = z(() => {
-		g((e) => {
+function er({ items: t, keyOf: n, selectedKey: r, onSelect: i, renderRow: a, renderCompactRow: o, renderDetail: s, railTitle: c, railWidth: l = 340, compactWidth: u = 72, storageKey: d, emptyDetail: f, paneFooter: p, className: m, "data-testid": h = "master-detail" }) {
+	let [g, _] = W(() => Xn(d)), v = z(() => {
+		_((e) => {
 			let t = !e;
 			return Zn(d, t), t;
 		});
-	}, [d]), v = H(() => t.findIndex((e) => n(e) === r), [
+	}, [d]), y = H(() => t.findIndex((e) => n(e) === r), [
 		t,
 		n,
 		r
-	]), y = v >= 0 ? t[v] : null;
+	]), b = y >= 0 ? t[y] : null, x = (e) => {
+		if (e.key !== "ArrowDown" && e.key !== "ArrowUp" || t.length === 0) return;
+		e.preventDefault();
+		let r = e.key === "ArrowDown" ? 1 : -1;
+		i(n(t[((y >= 0 ? y : r > 0 ? -1 : 0) + r + t.length) % t.length]));
+	}, S = b ? s(b, y) : f;
 	return /* @__PURE__ */ q("div", {
-		className: e("flex overflow-hidden rounded-lg border border-border bg-surface", p),
-		"data-testid": m,
+		className: e("flex overflow-hidden rounded-lg border border-border bg-surface", m),
+		"data-testid": h,
 		children: [/* @__PURE__ */ q("nav", {
 			className: "flex flex-shrink-0 flex-col overflow-y-auto border-r border-border",
-			style: { width: h ? u : l },
-			onKeyDown: (e) => {
-				if (e.key !== "ArrowDown" && e.key !== "ArrowUp" || t.length === 0) return;
-				e.preventDefault();
-				let r = e.key === "ArrowDown" ? 1 : -1;
-				i(n(t[((v >= 0 ? v : r > 0 ? -1 : 0) + r + t.length) % t.length]));
-			},
+			style: { width: g ? u : l },
+			onKeyDown: x,
 			"aria-label": typeof c == "string" ? c : "Items",
-			"data-testid": `${m}-rail`,
+			"data-testid": `${h}-rail`,
 			children: [/* @__PURE__ */ q("div", {
-				className: e("flex items-center gap-1 border-b border-border px-3 py-2", h ? "justify-center" : "justify-between"),
-				children: [!h && c && /* @__PURE__ */ K("span", {
+				className: e("flex items-center gap-1 border-b border-border px-3 py-2", g ? "justify-center" : "justify-between"),
+				children: [!g && c && /* @__PURE__ */ K("span", {
 					className: "truncate text-xs font-semibold uppercase tracking-wide text-text-tertiary",
 					children: c
 				}), /* @__PURE__ */ K("button", {
 					type: "button",
-					onClick: _,
-					"aria-label": h ? "Expand list" : "Collapse list",
-					"data-testid": `${m}-toggle`,
+					onClick: v,
+					"aria-label": g ? "Expand list" : "Collapse list",
+					"data-testid": `${h}-toggle`,
 					className: "flex-shrink-0 rounded-md p-1 text-text-tertiary transition-colors hover:bg-surface-hover hover:text-text-primary",
-					children: /* @__PURE__ */ K(Qn, { direction: h ? "right" : "left" })
+					children: /* @__PURE__ */ K(Qn, { direction: g ? "right" : "left" })
 				})]
 			}), /* @__PURE__ */ K("div", {
 				className: "flex flex-col",
@@ -4069,9 +4069,9 @@ function er({ items: t, keyOf: n, selectedKey: r, onSelect: i, renderRow: a, ren
 						onKeyDown: (e) => {
 							(e.key === "Enter" || e.key === " ") && (e.preventDefault(), i(c));
 						},
-						"data-testid": `${m}-row-${c}`,
+						"data-testid": `${h}-row-${c}`,
 						className: e("cursor-pointer border-l-2 text-left transition-colors", l ? "border-primary bg-surface-hover" : "border-transparent hover:bg-surface-hover"),
-						children: h ? o?.(t, s, l) ?? /* @__PURE__ */ K("div", {
+						children: g ? o?.(t, s, l) ?? /* @__PURE__ */ K("div", {
 							className: "flex justify-center py-2.5",
 							children: /* @__PURE__ */ K($n, {
 								index: s,
@@ -4081,10 +4081,22 @@ function er({ items: t, keyOf: n, selectedKey: r, onSelect: i, renderRow: a, ren
 					}, c);
 				})
 			})]
-		}), /* @__PURE__ */ K("div", {
+		}), p == null ? /* @__PURE__ */ K("div", {
 			className: "min-w-0 flex-1 overflow-y-auto",
-			"data-testid": `${m}-detail`,
-			children: y ? s(y, v) : f
+			"data-testid": `${h}-detail`,
+			children: S
+		}) : /* @__PURE__ */ q("div", {
+			className: "flex min-h-0 min-w-0 flex-1 flex-col",
+			"data-testid": `${h}-pane-column`,
+			children: [/* @__PURE__ */ K("div", {
+				className: "min-h-0 flex-1 overflow-y-auto",
+				"data-testid": `${h}-detail`,
+				children: S
+			}), /* @__PURE__ */ K("div", {
+				className: "shrink-0 bg-surface",
+				"data-testid": `${h}-pane-footer`,
+				children: p
+			})]
 		})]
 	});
 }
