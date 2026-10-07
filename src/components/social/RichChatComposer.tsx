@@ -2197,6 +2197,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // choice that survives a resize (someone who opened it wants it open).
   const [formatOpen, setFormatOpen] = useState(false);
   const singleRow = ((narrow || pane) && !formatOpen) || collapsed;
+  // The pane's Aa / ? / ⋯ / row end: while focus is inside OR the draft holds
+  // something. Keyed on focus alone, pressing Send on an unfocused draft
+  // brought them in on mousedown, wrapped Send to the next row and the
+  // mouseup missed it (2.431.3).
+  const paneTools = focusWithin || !empty;
   // Strikethrough, code, lists and quote: inline when wide, in the `⋯` menu otherwise.
   // The compact preset keeps only the bulleted list of those inline at wide
   // width and files the other four under `?` → Formatting (`formatInHints`).
@@ -3054,7 +3059,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           )}
           data-testid={`${testId}-toolbar`}
         >
-          {(narrow || pane) && !collapsed && (!pane || focusWithin) && toolbarButton(
+          {(narrow || pane) && !collapsed && (!pane || paneTools) && toolbarButton(
             formatOpen ? 'Hide formatting' : 'Show formatting',
             formatOpen,
             () => setFormatOpen((v) => !v),
@@ -3219,7 +3224,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             <span className={cn('shrink-0 select-none text-text-tertiary', docked ? 'ml-3 text-xs' : 'ml-1 border-l border-border pl-2 text-xs')} data-testid={`${testId}-commands-hint`}>/ commands</span>
           )}
 
-          {!collapsed && !docked && (!pane || focusWithin) && ((!hintsInRow && !!resolvedHints.length) || suggestionsInMenu || (formatInHints && !!editor)) ? (
+          {!collapsed && !docked && (!pane || paneTools) && ((!hintsInRow && !!resolvedHints.length) || suggestionsInMenu || (formatInHints && !!editor)) ? (
             <DropdownMenu
               trigger={<span aria-hidden="true" className="text-xs font-semibold leading-none">?</span>}
               triggerLabel="Keyboard hints"
@@ -3257,10 +3262,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             />
           ) : null}
 
-          {pane && focusWithin && modeRowEnd != null && (
+          {pane && paneTools && modeRowEnd != null && (
             <span className="flex shrink-0 items-center" data-testid={`${testId}-mode-row-end`}>{modeRowEnd}</span>
           )}
-          {showMoreActions && !collapsed && (!pane || focusWithin) && (
+          {showMoreActions && !collapsed && (!pane || paneTools) && (
             <span className="ml-auto flex shrink-0 items-center pr-1" data-testid={`${testId}-more-actions`}>
               <DropdownMenu
                 trigger={<span aria-hidden="true" className="text-sm leading-none">⋯</span>}
@@ -3345,7 +3350,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               data-testid={`${testId}-send`}
               {...(pane ? { title: sendShortcut === 'mod-enter' ? `${sendLabel} (⌘ Return)` : sendLabel, 'data-icon-only': 'true' } : {})}
               className={cn(
-                (submitLead == null || collapsed) && !(showMoreActions && !collapsed && (!pane || focusWithin)) && 'ml-auto',
+                (submitLead == null || collapsed) && !(showMoreActions && !collapsed && (!pane || paneTools)) && 'ml-auto',
                 `shrink-0 rounded bg-primary ${BUTTON_WEIGHT} text-on-primary disabled:opacity-40`,
                 (docked || menuModeRow) && 'rounded-md',
                 pane ? 'grid h-7 w-7 place-items-center rounded-md p-0' : sendSize,

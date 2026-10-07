@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.431.3
+
+- `responsive="pane"`: Aa / ? / ⋯ / the row end show while focus is inside OR the draft holds text. Keyed on focus alone, pressing Send on an unfocused draft brought them in on mousedown, wrapped Send to the next row, and the mouseup missed it (a retry after a failed send did nothing).
+
 ## 2.431.2
 
 - `responsive="pane"`: idle is truly one row at a 380px pane (the 9rem input floor plus a 55% chip wrapped Send under it); the input floor is 6rem, the chip caps at 45%, and a wrapped Aa / ? / Send cluster sits at the right.

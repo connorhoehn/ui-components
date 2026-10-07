@@ -1207,7 +1207,7 @@ function Lr(e) {
 	return !Mr() || typeof ShadowRoot > "u" ? !1 : e instanceof ShadowRoot || e instanceof X(e).ShadowRoot;
 }
 function Rr(e) {
-	let { overflow: t, overflowX: n, overflowY: r, display: i } = Q(e);
+	let { overflow: t, overflowX: n, overflowY: r, display: i } = Yr(e);
 	return /auto|scroll|overlay|hidden|clip/.test(t + r + n) && i !== "inline" && i !== "contents";
 }
 function zr(e) {
@@ -1225,7 +1225,7 @@ function Br(e) {
 }
 var Vr = /transform|translate|scale|rotate|perspective|filter/, Hr = /paint|layout|strict|content/, Ur = (e) => !!e && e !== "none", Wr;
 function Gr(e) {
-	let t = Ir(e) ? Q(e) : e;
+	let t = Ir(e) ? Yr(e) : e;
 	return Ur(t.transform) || Ur(t.translate) || Ur(t.scale) || Ur(t.rotate) || Ur(t.perspective) || !qr() && (Ur(t.backdropFilter) || Ur(t.filter)) || Vr.test(t.willChange || "") || Hr.test(t.contain || "");
 }
 function Kr(e) {
@@ -1243,10 +1243,10 @@ function qr() {
 function Jr(e) {
 	return /^(html|body|#document)$/.test(Nr(e));
 }
-function Q(e) {
+function Yr(e) {
 	return X(e).getComputedStyle(e);
 }
-function Yr(e) {
+function Q(e) {
 	return Ir(e) ? {
 		scrollLeft: e.scrollLeft,
 		scrollTop: e.scrollTop
@@ -1279,7 +1279,7 @@ function $r(e) {
 //#endregion
 //#region ../../../../../../../Users/connorhoehn/projects/ui-components/node_modules/@floating-ui/dom/dist/floating-ui.dom.mjs
 function ei(e) {
-	let t = Q(e), n = parseFloat(t.width) || 0, r = parseFloat(t.height) || 0, i = Z(e), a = i ? e.offsetWidth : n, o = i ? e.offsetHeight : r, s = rr(n) !== a || rr(r) !== o;
+	let t = Yr(e), n = parseFloat(t.width) || 0, r = parseFloat(t.height) || 0, i = Z(e), a = i ? e.offsetWidth : n, o = i ? e.offsetHeight : r, s = rr(n) !== a || rr(r) !== o;
 	return s && (n = a, r = o), {
 		width: n,
 		height: r,
@@ -1317,7 +1317,7 @@ function oi(e, t, n, r) {
 	if (a && r) {
 		let e = X(a), t = Ir(r) ? X(r) : r, n = e, i = $r(n);
 		for (; i && t !== n;) {
-			let e = ni(i), t = i.getBoundingClientRect(), r = Q(i), a = t.left + (i.clientLeft + parseFloat(r.paddingLeft)) * e.x, o = t.top + (i.clientTop + parseFloat(r.paddingTop)) * e.y;
+			let e = ni(i), t = i.getBoundingClientRect(), r = Yr(i), a = t.left + (i.clientLeft + parseFloat(r.paddingLeft)) * e.x, o = t.top + (i.clientTop + parseFloat(r.paddingTop)) * e.y;
 			c *= e.x, l *= e.y, u *= e.x, d *= e.y, c += a, l += o, n = X(i), i = $r(n);
 		}
 	}
@@ -1329,7 +1329,7 @@ function oi(e, t, n, r) {
 	});
 }
 function si(e, t) {
-	let n = Yr(e).scrollLeft;
+	let n = Q(e).scrollLeft;
 	return t ? t.left + n : oi(Pr(e)).left + n;
 }
 function ci(e, t) {
@@ -1346,7 +1346,7 @@ function li(e) {
 		scrollLeft: 0,
 		scrollTop: 0
 	}, l = ar(1), u = ar(0), d = Z(r);
-	if ((d || !a) && ((Nr(r) !== "body" || Rr(o)) && (c = Yr(r)), d)) {
+	if ((d || !a) && ((Nr(r) !== "body" || Rr(o)) && (c = Q(r)), d)) {
 		let e = oi(r);
 		l = ni(r), u.x = e.x + r.clientLeft, u.y = e.y + r.clientTop;
 	}
@@ -1362,8 +1362,8 @@ function ui(e) {
 	return e.getClientRects ? Array.from(e.getClientRects()) : [];
 }
 function di(e) {
-	let t = Yr(e), n = e.ownerDocument.body, r = nr(e.scrollWidth, e.clientWidth, n.scrollWidth, n.clientWidth), i = nr(e.scrollHeight, e.clientHeight, n.scrollHeight, n.clientHeight), a = -t.scrollLeft + si(e), o = -t.scrollTop;
-	return Q(n).direction === "rtl" && (a += nr(e.clientWidth, n.clientWidth) - r), {
+	let t = Q(e), n = e.ownerDocument.body, r = nr(e.scrollWidth, e.clientWidth, n.scrollWidth, n.clientWidth), i = nr(e.scrollHeight, e.clientHeight, n.scrollHeight, n.clientHeight), a = -t.scrollLeft + si(e), o = -t.scrollTop;
+	return Yr(n).direction === "rtl" && (a += nr(e.clientWidth, n.clientWidth) - r), {
 		width: r,
 		height: i,
 		x: a,
@@ -1417,9 +1417,9 @@ function hi(e, t, n) {
 function gi(e, t) {
 	let n = t.get(e);
 	if (n) return n;
-	let r = Qr(e, [], !1).filter((e) => Ir(e) && Nr(e) !== "body"), i = null, a = Q(e).position === "fixed", o = a ? Xr(e) : e;
+	let r = Qr(e, [], !1).filter((e) => Ir(e) && Nr(e) !== "body"), i = null, a = Yr(e).position === "fixed", o = a ? Xr(e) : e;
 	for (; Ir(o) && !Jr(o);) {
-		let e = Q(o), t = Gr(o), n = i ? i.position : a ? "fixed" : "";
+		let e = Yr(o), t = Gr(o), n = i ? i.position : a ? "fixed" : "";
 		!t && (n === "fixed" || n === "absolute" && e.position === "static") ? r = r.filter((e) => e !== o) : i = e, o = Xr(o);
 	}
 	return t.set(e, r), r;
@@ -1449,7 +1449,7 @@ function yi(e, t, n) {
 		scrollLeft: 0,
 		scrollTop: 0
 	}, c = ar(0);
-	if ((r || !a) && ((Nr(t) !== "body" || Rr(i)) && (s = Yr(t)), r)) {
+	if ((r || !a) && ((Nr(t) !== "body" || Rr(i)) && (s = Q(t)), r)) {
 		let e = oi(t, !0, a, t);
 		c.x = e.x + t.clientLeft, c.y = e.y + t.clientTop;
 	}
@@ -1463,10 +1463,10 @@ function yi(e, t, n) {
 	};
 }
 function bi(e) {
-	return Q(e).position === "static";
+	return Yr(e).position === "static";
 }
 function xi(e, t) {
-	if (!Z(e) || Q(e).position === "fixed") return null;
+	if (!Z(e) || Yr(e).position === "fixed") return null;
 	if (t) return t(e);
 	let n = e.offsetParent;
 	return Pr(e) === n && (n = n.ownerDocument.body), n;
@@ -1499,7 +1499,7 @@ var Ci = async function(e) {
 	};
 };
 function wi(e) {
-	return Q(e).direction === "rtl";
+	return Yr(e).direction === "rtl";
 }
 var Ti = {
 	convertOffsetParentRelativeRectToViewportRelativeRect: li,
@@ -3075,8 +3075,8 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 		J,
 		Tr
 	]);
-	let kr = wr && (Cr || J), Ar = xr && !Cr && A !== "menu", jr = !!_t?.length && !!vt, Mr = jr && xr && tn && ur && !(Tt && !hr), Nr = jr && !xr, X = Tt && !Dt && !hr && tn && !P && !Xe?.length && !Kt.length && !W && !L && !dn && !H && !Ut.open && !(Le && Ie === "hidden"), Pr = Tt && "motion-safe:[animation:composerReveal_140ms_ease-out]", [Fr, Ir] = E(!1), Z = (Sr || q) && !Fr || X, Lr = qe === "compact", Rr = qe === "basic", zr = qe === "editor" || qe === "prompt" || Rr, Br = !Lr && !zr, Vr = xr && Br, Hr = xr && !Lr, Ur = xr && Br, Wr = xr && !Lr && !Rr, Gr = xr && !Rr, Kr = xr && !Br, qr = !!Je?.length && (!Y || cn), Jr = Y && !!W && !X && !H, Q = Tr && !X && !H ? W ?? (Mt ? Fe?.find((e) => e.trigger === Mt) ?? null : null) : null, Yr = Y ? [
-		...K && Kr ? [{
+	let kr = wr && (Cr || J), Ar = xr && !Cr && A !== "menu", jr = !!_t?.length && !!vt, Mr = jr && xr && tn && ur && !(Tt && !hr), Nr = jr && !xr, X = Tt && !Dt && !hr && tn && !P && !Xe?.length && !Kt.length && !W && !L && !dn && !H && !Ut.open && !(Le && Ie === "hidden"), Pr = Tt && "motion-safe:[animation:composerReveal_140ms_ease-out]", [Fr, Ir] = E(!1), Z = (Sr || q) && !Fr || X, Lr = ur || !tn, Rr = qe === "compact", zr = qe === "basic", Br = qe === "editor" || qe === "prompt" || zr, Vr = !Rr && !Br, Hr = xr && Vr, Ur = xr && !Rr, Wr = xr && Vr, Gr = xr && !Rr && !zr, Kr = xr && !zr, qr = xr && !Vr, Jr = !!Je?.length && (!Y || cn), Yr = Y && !!W && !X && !H, Q = Tr && !X && !H ? W ?? (Mt ? Fe?.find((e) => e.trigger === Mt) ?? null : null) : null, Xr = Y ? [
+		...K && qr ? [{
 			label: "Formatting",
 			items: [
 				{
@@ -3086,7 +3086,7 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 						K.chain().focus().toggleStrike().run();
 					}
 				},
-				...Rr ? [{
+				...zr ? [{
 					label: "Bulleted list",
 					checked: K.isActive("bulletList"),
 					onSelect: () => {
@@ -3100,7 +3100,7 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 						K.chain().focus().toggleOrderedList().run();
 					}
 				},
-				...Rr ? [{
+				...zr ? [{
 					label: "Quote",
 					checked: K.isActive("blockquote"),
 					onSelect: () => {
@@ -3121,9 +3121,9 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 				...e.onSelect ? { onSelect: e.onSelect } : {}
 			}))
 		}] : []
-	] : [], Xr = te(lr, ft, an), Zr = ne(), Qr = an && Xr !== "none" && !(X && !Zr?.painting), $r = Qr && !!Zr?.painting, ei = Qr && !$r, ti = pt ?? Zr?.working ?? !1, ni = {};
-	dt && (ni["--composer-radius"] = oa[dt]), mt !== void 0 && (ni["--composer-input-max"] = typeof mt == "number" ? `${mt}px` : mt);
-	let ri = ti ? 30 : 22, ii = (t, n, r, i, a, o) => /* @__PURE__ */ D("button", {
+	] : [], Zr = te(lr, ft, an), Qr = ne(), $r = an && Zr !== "none" && !(X && !Qr?.painting), ei = $r && !!Qr?.painting, ti = $r && !ei, ni = pt ?? Qr?.working ?? !1, ri = {};
+	dt && (ri["--composer-radius"] = oa[dt]), mt !== void 0 && (ri["--composer-input-max"] = typeof mt == "number" ? `${mt}px` : mt);
+	let ii = ni ? 30 : 22, ai = (t, n, r, i, a, o) => /* @__PURE__ */ D("button", {
 		ref: a,
 		type: "button",
 		"aria-label": t,
@@ -3149,12 +3149,12 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 			"data-suggestion-boundary": gt,
 			"data-command": W?.trigger,
 			"data-mode": z ? V : void 0,
-			"data-console": Qr ? "true" : void 0,
+			"data-console": $r ? "true" : void 0,
 			"data-composer-size": br,
 			"data-responsive": q ? "pane" : void 0,
-			"data-backdrop-tone": Qr ? Xr : void 0,
-			"data-console-sky": Qr ? $r ? "inherited" : "own" : void 0,
-			"data-working": ti ? "true" : void 0,
+			"data-backdrop-tone": $r ? Zr : void 0,
+			"data-console-sky": $r ? ei ? "inherited" : "own" : void 0,
+			"data-working": ni ? "true" : void 0,
 			ref: yr,
 			"data-density": gt,
 			"data-collapsed": Tt ? X ? "true" : "false" : void 0,
@@ -3167,8 +3167,8 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 					_r.current = null, dr(!1), gr(!1);
 				}, 0));
 			},
-			...Object.keys(ni).length ? { style: ni } : {},
-			...Qr ? { "data-theme": "dark" } : {},
+			...Object.keys(ri).length ? { style: ri } : {},
+			...$r ? { "data-theme": "dark" } : {},
 			...wt ? {
 				onDragEnter: (e) => {
 					mr(e.dataTransfer) && (e.preventDefault(), e.stopPropagation(), pr((e) => e + 1));
@@ -3193,7 +3193,7 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 				].indexOf(e.code);
 				t < 0 || t >= B.length || (e.preventDefault(), e.stopPropagation(), mn(B[t]));
 			} } : {},
-			className: e("uic-composer chat-composer relative isolate w-full min-w-0 max-w-full rounded-[var(--composer-radius,12px)] border bg-surface shadow-[var(--composer-shadow,var(--uic-composer-shadow))] transition-colors duration-300 focus-within:ring-2 motion-reduce:transition-none", Qr && "uic-chat-console", $r && "bg-surface-inset", W ? W.disabled ? "border-warning focus-within:border-warning focus-within:ring-warning" : "border-info focus-within:border-info focus-within:ring-info" : "border-border focus-within:border-primary focus-within:ring-primary", Y && "rounded-lg focus-within:ring-0", q && "focus-within:ring-0", Y && !W?.disabled && (W ? "border-primary/25 focus-within:border-primary/35" : "focus-within:border-primary/35"), fr > 0 && "border-primary bg-primary-bg ring-2 ring-primary/40"),
+			className: e("uic-composer chat-composer relative isolate w-full min-w-0 max-w-full rounded-[var(--composer-radius,12px)] border bg-surface shadow-[var(--composer-shadow,var(--uic-composer-shadow))] transition-colors duration-300 focus-within:ring-2 motion-reduce:transition-none", $r && "uic-chat-console", ei && "bg-surface-inset", W ? W.disabled ? "border-warning focus-within:border-warning focus-within:ring-warning" : "border-info focus-within:border-info focus-within:ring-info" : "border-border focus-within:border-primary focus-within:ring-primary", Y && "rounded-lg focus-within:ring-0", q && "focus-within:ring-0", Y && !W?.disabled && (W ? "border-primary/25 focus-within:border-primary/35" : "focus-within:border-primary/35"), fr > 0 && "border-primary bg-primary-bg ring-2 ring-primary/40"),
 			children: [
 				fr > 0 && /* @__PURE__ */ D("span", {
 					role: "status",
@@ -3202,15 +3202,15 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 					children: wt?.hint ?? "Drop to add"
 				}),
 				/* @__PURE__ */ D(ae, {
-					active: ei,
-					tone: Xr === "graphite" ? "graphite" : "night",
-					particleCount: ti ? 180 : 120,
-					density: ri,
-					speed: ti ? .15 : .09,
+					active: ti,
+					tone: Zr === "graphite" ? "graphite" : "night",
+					particleCount: ni ? 180 : 120,
+					density: ii,
+					speed: ni ? .15 : .09,
 					alphaParticles: !0,
-					particleColors: Xr === "graphite" ? re : ie,
-					particleBaseSize: (Xr === "graphite" ? 80 : 90) + (ti ? 15 : 0),
-					fallbackIntensity: ti ? "medium" : "low",
+					particleColors: Zr === "graphite" ? re : ie,
+					particleBaseSize: (Zr === "graphite" ? 80 : 90) + (ni ? 15 : 0),
+					fallbackIntensity: ni ? "medium" : "low",
 					className: "pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[inherit]",
 					"data-testid": `${F}-console`
 				}),
@@ -3376,7 +3376,7 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 										mn(e);
 									}
 								};
-							}) }, ...Yr]
+							}) }, ...Xr]
 						}) : /* @__PURE__ */ O("span", {
 							className: "flex items-center gap-1 font-semibold text-text-primary",
 							"data-testid": `${F}-mode-label`,
@@ -3475,7 +3475,7 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 					className: e("flex items-center gap-2 px-2 pt-1.5", Pr),
 					"data-testid": `${F}-modes`,
 					children: /* @__PURE__ */ D("div", {
-						className: e("rounded-md transition-shadow duration-300 motion-reduce:transition-none", Qr && "ring-1 ring-primary/60"),
+						className: e("rounded-md transition-shadow duration-300 motion-reduce:transition-none", $r && "ring-1 ring-primary/60"),
 						children: /* @__PURE__ */ D(ee, {
 							items: [
 								{
@@ -3639,7 +3639,7 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 							"data-testid": `${F}-references`
 						}),
 						/* @__PURE__ */ O("div", {
-							className: Jr || Q ? "flex min-w-0 items-start" : "contents",
+							className: Yr || Q ? "flex min-w-0 items-start" : "contents",
 							"data-testid": `${F}-input-line`,
 							children: [
 								Q && /* @__PURE__ */ D(x, {
@@ -3677,7 +3677,7 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 										}))
 									}]
 								}),
-								Jr && W && !Tr && /* @__PURE__ */ O("div", {
+								Yr && W && !Tr && /* @__PURE__ */ O("div", {
 									role: "status",
 									title: W.description ?? W.hint ?? W.label,
 									"data-testid": `${F}-command`,
@@ -3698,7 +3698,7 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 								}),
 								/* @__PURE__ */ D("div", {
 									ref: vr,
-									className: e((Z || Jr || Q) && "min-w-0 flex-1", q && "min-w-[6rem]", Y && "uic-composer-docked-input", Er && !Z && "mx-3 mt-2 min-h-[58px] rounded-md border border-border bg-surface"),
+									className: e((Z || Yr || Q) && "min-w-0 flex-1", q && "min-w-[6rem]", Y && "uic-composer-docked-input", Er && !Z && "mx-3 mt-2 min-h-[58px] rounded-md border border-border bg-surface"),
 									"data-basic-well": Er || void 0,
 									"data-testid": `${F}-input-box`,
 									...tn && on ? { title: on } : {},
@@ -3770,7 +3770,7 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 							className: e("flex min-w-0 items-center", Y ? "px-2 py-1.5" : "px-1.5 py-1", Z ? "shrink-0" : Er ? "pt-1" : "border-t border-border", q && "ml-auto", Sr && !Z && "flex-wrap gap-y-1", !Z && Pr),
 							"data-testid": `${F}-toolbar`,
 							children: [
-								(Sr || q) && !X && (!q || ur) && ii(Fr ? "Hide formatting" : "Show formatting", Fr, () => Ir((e) => !e), /* @__PURE__ */ D("span", {
+								(Sr || q) && !X && (!q || Lr) && ai(Fr ? "Hide formatting" : "Show formatting", Fr, () => Ir((e) => !e), /* @__PURE__ */ D("span", {
 									className: "text-xs font-semibold",
 									children: "Aa"
 								}), void 0, `${F}-format-toggle`),
@@ -3830,24 +3830,24 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 									"data-testid": `${F}-format-toolbar`,
 									children: [
 										K && [
-											ii("Bold", K.isActive("bold"), () => K.chain().focus().toggleBold().run(), /* @__PURE__ */ D("b", { children: "B" })),
-											ii("Italic", K.isActive("italic"), () => K.chain().focus().toggleItalic().run(), /* @__PURE__ */ D("i", { children: "I" })),
-											Vr && ii("Strikethrough", K.isActive("strike"), () => K.chain().focus().toggleStrike().run(), /* @__PURE__ */ D("s", { children: "S" })),
-											Hr && ii("Code", K.isActive("code"), () => K.chain().focus().toggleCode().run(), Y ? /* @__PURE__ */ D(c, { size: 18 }) : /* @__PURE__ */ D("span", {
+											ai("Bold", K.isActive("bold"), () => K.chain().focus().toggleBold().run(), /* @__PURE__ */ D("b", { children: "B" })),
+											ai("Italic", K.isActive("italic"), () => K.chain().focus().toggleItalic().run(), /* @__PURE__ */ D("i", { children: "I" })),
+											Hr && ai("Strikethrough", K.isActive("strike"), () => K.chain().focus().toggleStrike().run(), /* @__PURE__ */ D("s", { children: "S" })),
+											Ur && ai("Code", K.isActive("code"), () => K.chain().focus().toggleCode().run(), Y ? /* @__PURE__ */ D(c, { size: 18 }) : /* @__PURE__ */ D("span", {
 												className: "font-mono text-[11px]",
 												children: "<>"
 											})),
-											ii(K.isActive("link") ? "Edit link" : "Add link", K.isActive("link"), () => Xn(), /* @__PURE__ */ D(b, { size: Y ? 18 : 16 })),
-											Ur && /* @__PURE__ */ D("span", {
+											ai(K.isActive("link") ? "Edit link" : "Add link", K.isActive("link"), () => Xn(), /* @__PURE__ */ D(b, { size: Y ? 18 : 16 })),
+											Wr && /* @__PURE__ */ D("span", {
 												"aria-hidden": !0,
 												className: "mx-1 h-4 w-px shrink-0 bg-border"
 											}, "sep1"),
-											Gr && ii("Bulleted list", K.isActive("bulletList"), () => K.chain().focus().toggleBulletList().run(), Y ? /* @__PURE__ */ D(r, { size: 18 }) : /* @__PURE__ */ D("span", { children: "•" })),
-											Ur && ii("Numbered list", K.isActive("orderedList"), () => K.chain().focus().toggleOrderedList().run(), /* @__PURE__ */ D("span", {
+											Kr && ai("Bulleted list", K.isActive("bulletList"), () => K.chain().focus().toggleBulletList().run(), Y ? /* @__PURE__ */ D(r, { size: 18 }) : /* @__PURE__ */ D("span", { children: "•" })),
+											Wr && ai("Numbered list", K.isActive("orderedList"), () => K.chain().focus().toggleOrderedList().run(), /* @__PURE__ */ D("span", {
 												className: "text-[11px]",
 												children: "1."
 											})),
-											Wr && ii("Quote", K.isActive("blockquote"), () => K.chain().focus().toggleBlockquote().run(), /* @__PURE__ */ D(l, { size: Y ? 18 : 16 })),
+											Gr && ai("Quote", K.isActive("blockquote"), () => K.chain().focus().toggleBlockquote().run(), /* @__PURE__ */ D(l, { size: Y ? 18 : 16 })),
 											!xr && /* @__PURE__ */ D(x, {
 												trigger: /* @__PURE__ */ D("span", {
 													"aria-hidden": "true",
@@ -3889,13 +3889,13 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 												] }]
 											}, "format-more")
 										],
-										(je || rn || !!Le) && Br && /* @__PURE__ */ D("span", {
+										(je || rn || !!Le) && Vr && /* @__PURE__ */ D("span", {
 											"aria-hidden": !0,
 											className: "mx-1 h-4 w-px shrink-0 bg-border"
 										}),
 										je && K && /* @__PURE__ */ O("span", {
 											className: "relative",
-											children: [ii("Emoji", Vt, () => Ht((e) => !e), /* @__PURE__ */ D(_, { size: 16 }), Bt), /* @__PURE__ */ D(se, {
+											children: [ai("Emoji", Vt, () => Ht((e) => !e), /* @__PURE__ */ D(_, { size: 16 }), Bt), /* @__PURE__ */ D(se, {
 												open: Vt,
 												triggerRef: Bt,
 												onClose: () => Ht(!1),
@@ -3904,7 +3904,7 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 												}
 											})]
 										}),
-										rn && /* @__PURE__ */ O(xe, { children: [ii("Attach files", !1, () => zt.current?.click(), /* @__PURE__ */ D(o, { size: Y ? 18 : 16 })), /* @__PURE__ */ D(oe, {
+										rn && /* @__PURE__ */ O(xe, { children: [ai("Attach files", !1, () => zt.current?.click(), /* @__PURE__ */ D(o, { size: Y ? 18 : 16 })), /* @__PURE__ */ D(oe, {
 											ref: zt,
 											multiple: !0,
 											"data-testid": `${F}-file-input`,
@@ -3915,9 +3915,9 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 												...sa,
 												...Re
 											}, t = Ie === "hidden";
-											return ii(t ? e.hidden : e.visible, t, () => Le(t ? "visible" : "hidden"), D(t ? i : a, { size: 16 }), void 0, `${F}-privacy-toggle`);
+											return ai(t ? e.hidden : e.visible, t, () => Le(t ? "visible" : "hidden"), D(t ? i : a, { size: 16 }), void 0, `${F}-privacy-toggle`);
 										})(),
-										zr && Ke != null && /* @__PURE__ */ D("span", {
+										Br && Ke != null && /* @__PURE__ */ D("span", {
 											"aria-hidden": !0,
 											className: e("shrink-0 bg-border", Y ? "mx-2.5 h-6 w-px" : "mx-1 h-4 w-px"),
 											"data-testid": `${F}-extras-divider`
@@ -3930,7 +3930,7 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 									"data-testid": `${F}-commands-hint`,
 									children: "/ commands"
 								}),
-								!X && !Y && (!q || ur) && (!Ar && Gn.length || Nr || Kr && K) ? /* @__PURE__ */ D(x, {
+								!X && !Y && (!q || Lr) && (!Ar && Gn.length || Nr || qr && K) ? /* @__PURE__ */ D(x, {
 									trigger: /* @__PURE__ */ D("span", {
 										"aria-hidden": "true",
 										className: "text-xs font-semibold leading-none",
@@ -3943,7 +3943,7 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 									align: "end",
 									triggerClassName: "grid h-7 w-7 shrink-0 place-items-center rounded text-text-tertiary hover:bg-surface-hover hover:text-text-primary border-0 p-0",
 									sections: [
-										...Kr && K ? [{
+										...qr && K ? [{
 											label: "Formatting",
 											items: [
 												{
@@ -3951,12 +3951,12 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 													checked: K.isActive("strike"),
 													onSelect: () => K.chain().focus().toggleStrike().run()
 												},
-												...Lr ? [{
+												...Rr ? [{
 													label: "Code",
 													checked: K.isActive("code"),
 													onSelect: () => K.chain().focus().toggleCode().run()
 												}] : [],
-												...Rr ? [{
+												...zr ? [{
 													label: "Bulleted list",
 													checked: K.isActive("bulletList"),
 													onSelect: () => K.chain().focus().toggleBulletList().run()
@@ -3966,7 +3966,7 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 													checked: K.isActive("orderedList"),
 													onSelect: () => K.chain().focus().toggleOrderedList().run()
 												},
-												...Lr || Rr ? [{
+												...Rr || zr ? [{
 													label: "Quote",
 													checked: K.isActive("blockquote"),
 													onSelect: () => K.chain().focus().toggleBlockquote().run()
@@ -3981,7 +3981,7 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 											}))
 										}] : [],
 										...!Ar && Gn.length ? [{
-											...Nr || Kr ? { label: "Keys" } : {},
+											...Nr || qr ? { label: "Keys" } : {},
 											items: Gn.map((e) => ({
 												label: e.label,
 												trailing: /* @__PURE__ */ D("kbd", {
@@ -3993,12 +3993,12 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 										}] : []
 									]
 								}) : null,
-								q && ur && yt != null && /* @__PURE__ */ D("span", {
+								q && Lr && yt != null && /* @__PURE__ */ D("span", {
 									className: "flex shrink-0 items-center",
 									"data-testid": `${F}-mode-row-end`,
 									children: yt
 								}),
-								qr && !X && (!q || ur) && /* @__PURE__ */ D("span", {
+								Jr && !X && (!q || Lr) && /* @__PURE__ */ D("span", {
 									className: "ml-auto flex shrink-0 items-center pr-1",
 									"data-testid": `${F}-more-actions`,
 									children: /* @__PURE__ */ D(x, {
@@ -4017,12 +4017,12 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 									})
 								}),
 								lt != null && !X && /* @__PURE__ */ D("span", {
-									className: e(!(qr && !X) && "ml-auto", "flex shrink-0 items-center pr-1.5 text-text-secondary", J ? "text-sm" : "text-xs"),
+									className: e(!(Jr && !X) && "ml-auto", "flex shrink-0 items-center pr-1.5 text-text-secondary", J ? "text-sm" : "text-xs"),
 									"data-testid": `${F}-submit-lead`,
 									children: lt
 								}),
 								rt?.length && it ? /* @__PURE__ */ O("span", {
-									className: e((lt == null || X) && !(qr && !X) && "ml-auto", "flex shrink-0 items-stretch"),
+									className: e((lt == null || X) && !(Jr && !X) && "ml-auto", "flex shrink-0 items-stretch"),
 									children: [/* @__PURE__ */ D("button", {
 										type: "button",
 										onClick: H ? Hn : Qn,
@@ -4067,7 +4067,7 @@ var Aa = ge(function({ onSend: s, draft: d, onDraftChange: p, onCommand: S, onSe
 										title: jt === "mod-enter" ? `${Kn} (⌘ Return)` : Kn,
 										"data-icon-only": "true"
 									} : {},
-									className: e((lt == null || X) && !(qr && !X && (!q || ur)) && "ml-auto", `shrink-0 rounded bg-primary ${t} text-on-primary disabled:opacity-40`, (Y || J) && "rounded-md", q ? "grid h-7 w-7 place-items-center rounded-md p-0" : Dr),
+									className: e((lt == null || X) && !(Jr && !X && (!q || Lr)) && "ml-auto", `shrink-0 rounded bg-primary ${t} text-on-primary disabled:opacity-40`, (Y || J) && "rounded-md", q ? "grid h-7 w-7 place-items-center rounded-md p-0" : Dr),
 									children: q ? /* @__PURE__ */ O(xe, { children: [/* @__PURE__ */ D(y, {
 										size: 14,
 										"aria-hidden": "true"
