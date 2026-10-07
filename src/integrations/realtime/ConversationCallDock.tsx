@@ -100,6 +100,39 @@ const defaultTile = (p: RMConversationCallParticipant): ReactNode | undefined =>
 const speakerSelectionSupported = (): boolean =>
   typeof HTMLMediaElement !== 'undefined' && 'setSinkId' in HTMLMediaElement.prototype;
 
+/**
+ * Invitees whose phones are still ringing, after the people in the call, as
+ * placeholder tiles (2.436.0): the caller sees who the call is reaching from
+ * the first ring, not an empty row beside their own tile. RM's mapping keeps
+ * only people in the call; ringing ones are drawn here, while the call is
+ * being placed or is on. An answer moves the person into the call (a real
+ * tile); a decline or timeout drops them.
+ */
+function withRingingInvitees(
+  inCall: CallDockProps['participants'],
+  everyone: readonly RMConversationCallParticipant[],
+  phase: CallDockProps['phase'],
+): CallDockProps['participants'] {
+  if (phase !== 'calling' && phase !== 'connecting' && phase !== 'active' && phase !== 'reconnecting') return inCall;
+  const seen = new Set(inCall.map((p) => p.userId));
+  const ringing = everyone
+    .filter((p) => !p.isLocal && p.state === 'ringing' && !seen.has(p.id))
+    .map((p) => ({
+      id: p.id,
+      userId: p.id,
+      displayName: p.displayName,
+      ...(p.avatarUrl ? { avatarUrl: p.avatarUrl } : {}),
+      isLocal: false,
+      isMuted: false,
+      cameraOn: false,
+      audioOn: true,
+      screenSharing: false,
+      presenting: false,
+      connection: 'ringing' as const,
+    }));
+  return ringing.length ? [...inCall, ...ringing] : inCall;
+}
+
 /** Remote in-call streams, keyed so the analyser set is rebuilt only when a stream changes. */
 function useSpeakerStreams(call: RMConversationCallSource['call']) {
   const remote = (call?.participants ?? []).filter(
@@ -158,6 +191,7 @@ function ConversationCallDockImpl(
   if (!dock) return null;
   const dockProps: CallDockProps = {
     ...dock,
+    participants: withRingingInvitees(dock.participants as CallDockProps['participants'], call.call?.participants ?? [], dock.phase),
     layout,
     ...(tileSize ? { tileSize } : {}),
     ...(documents ? { documents } : {}),

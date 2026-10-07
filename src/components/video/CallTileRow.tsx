@@ -40,6 +40,12 @@ export interface CallTileParticipant extends HangoutLayoutParticipant {
   cameraOff?: boolean;
   /** An audio sink (e.g. `<audio autoPlay>`), always mounted and never shown. `dock`/`grid` only. */
   audioElement?: ReactNode;
+  /**
+   * Invited and still ringing (2.436.0): a placeholder tile — the person's
+   * avatar, dimmed, with "Ringing…" in place of the mic state — until they
+   * answer. `dock`/`grid` only.
+   */
+  ringing?: boolean;
 }
 
 export interface CallTileRowProps {
@@ -363,7 +369,9 @@ function DockTileImpl({
   noteCallDockRender('tile', p.id);
   const onClick = onParticipantClick ? () => onParticipantClick(p.id) : undefined;
   const name = p.isLocal ? 'You' : p.displayName;
-  const label = `${p.isLocal ? 'You' : p.displayName}${p.isMuted ? ', muted' : ''}${p.screenSharing ? ', sharing screen' : ''}`;
+  const label = p.ringing
+    ? `${p.displayName}, ringing`
+    : `${p.isLocal ? 'You' : p.displayName}${p.isMuted ? ', muted' : ''}${p.screenSharing ? ', sharing screen' : ''}`;
   return (
     <div
       className={cn(
@@ -390,6 +398,7 @@ function DockTileImpl({
       data-highlighted={highlighted ? 'true' : 'false'}
       data-speaking={speaking ? 'true' : 'false'}
       data-track-kind={p.videoElement && !p.cameraOff ? 'camera' : 'avatar'}
+      data-ringing={p.ringing ? 'true' : undefined}
     >
       {p.videoElement && p.cameraOff && (
         // Kept playing for its audio; 1px and transparent rather than
@@ -411,6 +420,7 @@ function DockTileImpl({
             {...(p.avatarUrl ? { src: p.avatarUrl } : {})}
             color="rgba(71,80,92,0.28)"
             showTitle={false}
+            {...(p.ringing ? { className: 'animate-pulse' } : {})}
           />
         </div>
       )}
@@ -419,8 +429,14 @@ function DockTileImpl({
       )}
       <div className="absolute inset-x-0 bottom-0 flex items-center gap-1 bg-gradient-to-t from-black/70 to-transparent px-1.5 pb-1 pt-3 text-xs">
         <span className="min-w-0 flex-1 truncate font-medium">{name}</span>
-        {p.screenSharing && <ScreenShareIcon size={13} className="shrink-0" />}
-        {p.isMuted ? <MicOffIcon size={14} className="shrink-0" /> : <MicIcon size={14} className="shrink-0" />}
+        {p.ringing ? (
+          <span className="shrink-0 text-white/80" data-testid={`${testId}-ringing`}>Ringing…</span>
+        ) : (
+          <>
+            {p.screenSharing && <ScreenShareIcon size={13} className="shrink-0" />}
+            {p.isMuted ? <MicOffIcon size={14} className="shrink-0" /> : <MicIcon size={14} className="shrink-0" />}
+          </>
+        )}
       </div>
       {(highlighted || speaking) && (
         // The ring is drawn INSIDE the tile, on top of the video (2.395.3): an

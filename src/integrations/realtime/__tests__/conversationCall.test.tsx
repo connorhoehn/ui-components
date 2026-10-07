@@ -105,6 +105,32 @@ describe('ConversationCallDock', () => {
     expect(call.leave).toHaveBeenCalledTimes(1);
   });
 
+  it('draws ringing invitees as placeholder tiles after the caller, and drops them once they answer (2.436.0)', () => {
+    const { Dock } = bind();
+    const ring = (id: string, name: string): RMConversationCallParticipant => ({ ...person(id, name), state: 'ringing' });
+    const calling = fakeCall({
+      phase: 'calling', callingTo: 'Nora DaSilva',
+      call: { participants: [person('u-vera', 'Vera Green', true), ring('u-nora', 'Nora DaSilva'), ring('u-ian', 'Ian Park'),
+        { ...person('u-sam', 'Sam Lee'), state: 'declined' }], participantCount: 1 },
+    });
+    const { rerender } = render(<Dock call={calling} title="Observability" onOpenPeople={() => {}} />);
+    const row = screen.getByTestId('call-dock-tile-row');
+    expect(row).toHaveAttribute('data-tile-count', '3');
+    const tiles = row.querySelectorAll('[data-peer-id]');
+    expect(tiles[0]).toHaveAttribute('data-is-local', 'true');
+    const ringing = row.querySelectorAll('[data-ringing="true"]');
+    expect([...ringing].map(t => t.getAttribute('data-peer-id'))).toEqual(['u-nora', 'u-ian']);
+    expect(ringing[0]).toHaveAttribute('aria-label', 'Nora DaSilva, ringing');
+    expect(ringing[0]).toHaveTextContent('Ringing…');
+    // The head count is the people in the call, never the invitees.
+    expect(screen.getByTestId('call-dock-meta')).toHaveTextContent('Calling Nora DaSilva…');
+    rerender(<Dock call={fakeCall({ call: { participants: [person('u-vera', 'Vera Green', true), person('u-nora', 'Nora DaSilva'), ring('u-ian', 'Ian Park')], participantCount: 2 } })}
+      title="Observability" onOpenPeople={() => {}} />);
+    expect(screen.getByTestId('call-dock-meta')).toHaveTextContent('2 people');
+    expect([...screen.getByTestId('call-dock-tile-row').querySelectorAll('[data-ringing="true"]')].map(t => t.getAttribute('data-peer-id'))).toEqual(['u-ian']);
+    expect(screen.getByTestId('call-dock-tile-row')).toHaveAttribute('data-tile-count', '3');
+  });
+
   it('live: the head count, one tile per person in the call, and the notice above the shelf', () => {
     const { Dock, rm } = bind();
     const onOpenPeople = vi.fn();

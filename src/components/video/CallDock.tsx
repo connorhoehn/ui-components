@@ -70,7 +70,12 @@ export interface CallDockParticipant extends HangoutLayoutParticipant {
   audioOn: boolean;
   screenSharing: boolean;
   presenting: boolean;
-  connection: 'connected' | 'reconnecting';
+  /**
+   * `ringing` (2.436.0): an invitee whose phone is still ringing — drawn as a
+   * placeholder tile (their avatar, "Ringing…", no mic state) until they
+   * answer. A ringing participant never counts toward `participantCount`.
+   */
+  connection: 'connected' | 'reconnecting' | 'ringing';
   /**
    * An audio sink independent of the camera (an `<audio autoPlay>` on the
    * person's stream). Optional: with camera off the dock keeps `videoElement`
@@ -216,6 +221,7 @@ function toTile(p: CallDockParticipant, isLocal: boolean, reconnecting: boolean)
     audioElement: p.audioElement,
     screenSharing: p.screenSharing,
     reconnecting: reconnecting || p.connection === 'reconnecting',
+    ringing: p.connection === 'ringing',
   };
 }
 

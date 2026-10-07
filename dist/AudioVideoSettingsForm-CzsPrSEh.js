@@ -364,7 +364,7 @@ function ie(e, t) {
 var ae = M(J, (e, t) => e.width === t.width && e.height === t.height && e.fluid === t.fluid && e.speaking === t.speaking && e.highlighted === t.highlighted && e.testId === t.testId && e.onParticipantClick === t.onParticipantClick && ie(e.participant, t.participant));
 function J({ participant: t, width: n, height: r, fluid: i = !1, speaking: a, highlighted: o, testId: s, onParticipantClick: c }) {
 	ne("tile", t.id);
-	let u = c ? () => c(t.id) : void 0, d = t.isLocal ? "You" : t.displayName, m = `${t.isLocal ? "You" : t.displayName}${t.isMuted ? ", muted" : ""}${t.screenSharing ? ", sharing screen" : ""}`;
+	let u = c ? () => c(t.id) : void 0, d = t.isLocal ? "You" : t.displayName, m = t.ringing ? `${t.displayName}, ringing` : `${t.isLocal ? "You" : t.displayName}${t.isMuted ? ", muted" : ""}${t.screenSharing ? ", sharing screen" : ""}`;
 	return /* @__PURE__ */ B("div", {
 		className: e("relative shrink-0 overflow-hidden rounded-md text-white", i && "aspect-video w-full", t.videoElement && !t.cameraOff ? "bg-video-tile" : "bg-video-tile-off", "[&_video]:h-full [&_video]:w-full [&_video]:object-cover", u && "cursor-pointer"),
 		style: i ? void 0 : {
@@ -386,6 +386,7 @@ function J({ participant: t, width: n, height: r, fluid: i = !1, speaking: a, hi
 		"data-highlighted": o ? "true" : "false",
 		"data-speaking": a ? "true" : "false",
 		"data-track-kind": t.videoElement && !t.cameraOff ? "camera" : "avatar",
+		"data-ringing": t.ringing ? "true" : void 0,
 		children: [
 			t.videoElement && t.cameraOff && /* @__PURE__ */ z("div", {
 				className: "pointer-events-none absolute left-0 top-0 h-px w-px overflow-hidden opacity-0",
@@ -406,7 +407,8 @@ function J({ participant: t, width: n, height: r, fluid: i = !1, speaking: a, hi
 					size: i ? 56 : Math.round(Math.min(40, r * .48)),
 					...t.avatarUrl ? { src: t.avatarUrl } : {},
 					color: "rgba(71,80,92,0.28)",
-					showTitle: !1
+					showTitle: !1,
+					...t.ringing ? { className: "animate-pulse" } : {}
 				})
 			}),
 			t.reconnecting && /* @__PURE__ */ z("div", {
@@ -416,23 +418,23 @@ function J({ participant: t, width: n, height: r, fluid: i = !1, speaking: a, hi
 			}),
 			/* @__PURE__ */ B("div", {
 				className: "absolute inset-x-0 bottom-0 flex items-center gap-1 bg-gradient-to-t from-black/70 to-transparent px-1.5 pb-1 pt-3 text-xs",
-				children: [
-					/* @__PURE__ */ z("span", {
-						className: "min-w-0 flex-1 truncate font-medium",
-						children: d
-					}),
-					t.screenSharing && /* @__PURE__ */ z(p, {
-						size: 13,
-						className: "shrink-0"
-					}),
-					t.isMuted ? /* @__PURE__ */ z(l, {
-						size: 14,
-						className: "shrink-0"
-					}) : /* @__PURE__ */ z(f, {
-						size: 14,
-						className: "shrink-0"
-					})
-				]
+				children: [/* @__PURE__ */ z("span", {
+					className: "min-w-0 flex-1 truncate font-medium",
+					children: d
+				}), t.ringing ? /* @__PURE__ */ z("span", {
+					className: "shrink-0 text-white/80",
+					"data-testid": `${s}-ringing`,
+					children: "Ringing…"
+				}) : /* @__PURE__ */ B(R, { children: [t.screenSharing && /* @__PURE__ */ z(p, {
+					size: 13,
+					className: "shrink-0"
+				}), t.isMuted ? /* @__PURE__ */ z(l, {
+					size: 14,
+					className: "shrink-0"
+				}) : /* @__PURE__ */ z(f, {
+					size: 14,
+					className: "shrink-0"
+				})] })]
 			}),
 			(o || a) && /* @__PURE__ */ z("span", {
 				"aria-hidden": "true",
@@ -813,7 +815,8 @@ function xe(e, t, n) {
 		cameraOff: !e.cameraOn && !e.screenSharing,
 		audioElement: e.audioElement,
 		screenSharing: e.screenSharing,
-		reconnecting: n || e.connection === "reconnecting"
+		reconnecting: n || e.connection === "reconnecting",
+		ringing: e.connection === "ringing"
 	};
 }
 var Se = M(function({ participants: e, localParticipantId: t, activeSpeakerId: n, followingUserId: r, reconnecting: i, size: a, grid: o = !1, maxColumns: s, onTileClick: c, title: l }) {

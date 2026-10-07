@@ -217,7 +217,12 @@ export declare interface CallDockParticipant extends HangoutLayoutParticipant {
     audioOn: boolean;
     screenSharing: boolean;
     presenting: boolean;
-    connection: 'connected' | 'reconnecting';
+    /**
+     * `ringing` (2.436.0): an invitee whose phone is still ringing — drawn as a
+     * placeholder tile (their avatar, "Ringing…", no mic state) until they
+     * answer. A ringing participant never counts toward `participantCount`.
+     */
+    connection: 'connected' | 'reconnecting' | 'ringing';
     /**
      * An audio sink independent of the camera (an `<audio autoPlay>` on the
      * person's stream). Optional: with camera off the dock keeps `videoElement`
@@ -704,6 +709,12 @@ export declare interface CallTileParticipant extends HangoutLayoutParticipant {
     cameraOff?: boolean;
     /** An audio sink (e.g. `<audio autoPlay>`), always mounted and never shown. `dock`/`grid` only. */
     audioElement?: ReactNode;
+    /**
+     * Invited and still ringing (2.436.0): a placeholder tile — the person's
+     * avatar, dimmed, with "Ringing…" in place of the mic state — until they
+     * answer. `dock`/`grid` only.
+     */
+    ringing?: boolean;
 }
 
 export declare function CallTileRow({ participants, localParticipant, activeSpeakerId, tileWidth, controls, title, onParticipantClick, variant, highlightedId, overflow, maxVisible, tileHeight, tileTestIdPrefix, maxColumns, className, style, 'data-testid': testId, }: CallTileRowProps): JSX.Element;
