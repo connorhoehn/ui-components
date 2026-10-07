@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.425.0
+
+- **A deleted message row names the person, not the socket:** a soft-deleted message arrives with its metadata stripped, so `adaptChatMessages` left `displayName` unset and `ChatPanel` fell back to the first characters of the client id (`c_muxlj2`). The adapter now resolves the sender through `userId` from any live message in the transcript that carries their name, and otherwise says `a removed member` (`REMOVED_MEMBER_LABEL`). Never an id.
+
 ## 2.424.0
 
 - **Message edit/delete through `WrappedChatPanel`:** `ChatPanel` already had `onEditMessage`/`onDeleteMessage`, but the wrapper never forwarded them, so no hook-bound panel offered either. It now maps them onto `chat.editMessage`/`chat.deleteMessage` (realtime-modules >= 0.100; `RMUseChatReturn` gains both as optional members), on by default when the hook has them (`editable={false}` turns them off). The edit sends matching `metadata.html` so the thread does not keep rendering the old rich body. The adapter now carries `editedAt`/`deletedAt`, which it used to drop, so the "(edited)" marker and the deleted placeholder appear from the live `messageUpdated`/`messageDeleted` frames. `canEdit(message)`/`canDelete(message)` replace the own-messages-only default (`ChatPanel` `canEditMessage`/`canDeleteMessage`); the gateway stays the authority. `onForwardMessage` is forwarded too.

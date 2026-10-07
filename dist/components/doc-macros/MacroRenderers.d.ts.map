@@ -1,0 +1,1 @@
+{"version":3,"file":"MacroRenderers.d.ts","sourceRoot":"","sources":["../../../src/components/doc-macros/MacroRenderers.ts"],"names":[],"mappings":"AAoBA,OAAO,EAAE,SAAS,EAAE,MAAM,cAAc,CAAC;AAEzC,OAAO,EAIH,KAAK,aAAa,EAClB,KAAK,oBAAoB,EAC5B,MAAM,YAAY,CAAC;AAEpB,MAAM,WAAW,qBAAqB;IAClC,6EAA6E;IAC7E,SAAS,EAAE,aAAa,EAAE,CAAC;CAC9B;AAED,eAAO,MAAM,cAAc,wDAYzB,CAAC;eAEY,cAAc"}

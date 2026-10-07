@@ -1,0 +1,1 @@
+{"version":3,"file":"capabilities.d.ts","sourceRoot":"","sources":["../../../src/integrations/realtime-modules/capabilities.tsx"],"names":[],"mappings":"AAOA,OAAO,EACL,cAAc,EACd,uBAAuB,EACvB,yBAAyB,EACzB,6BAA6B,GAC9B,MAAM,0BAA0B,CAAC;AAClC,YAAY,EACV,qBAAqB,EACrB,sBAAsB,EACtB,oBAAoB,EACpB,+BAA+B,EAC/B,mBAAmB,GACpB,MAAM,0BAA0B,CAAC;AAElC,eAAO,MAAM,0BAA0B,2DAA2C,CAAC"}

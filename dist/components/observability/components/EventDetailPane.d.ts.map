@@ -1,0 +1,1 @@
+{"version":3,"file":"EventDetailPane.d.ts","sourceRoot":"","sources":["../../../../src/components/observability/components/EventDetailPane.tsx"],"names":[],"mappings":"AAOA,OAAO,KAAK,EAAE,SAAS,EAAE,MAAM,iBAAiB,CAAC;AAEjD,MAAM,WAAW,oBAAoB;IACnC,KAAK,EAAE,SAAS,GAAG,IAAI,CAAC;CACzB;AAUD,iBAAS,eAAe,CAAC,EAAE,KAAK,EAAE,EAAE,oBAAoB,+BAyFvD;eAEc,eAAe"}

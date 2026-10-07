@@ -54,6 +54,21 @@ describe('WrappedChatPanel edit/delete', () => {
     expect(screen.getByTestId('message-deleted')).toBeInTheDocument();
   });
 
+  it('names a deleted row by the person, never the socket client id', () => {
+    const del = { deletedAt: '2026-01-01T00:02:00Z', metadata: { deleted: true } };
+    const { chat } = make([
+      msg('m1', 'alice', 'hi', { clientId: 'c_live', metadata: { displayName: 'Alice Ng' } }),
+      msg('m2', 'alice', '', { clientId: 'c_muxlj2', ...del }),
+      msg('m3', 'ghost', '', { clientId: 'c_zzz999', ...del }),
+    ]);
+    const { container } = render(<WrappedChatPanel chat={chat} currentUserId="me" />);
+    const text = container.textContent ?? '';
+    expect(text).not.toContain('c_muxlj2');
+    expect(text).not.toContain('c_zzz999');
+    expect(text.match(/Alice Ng/g)?.length).toBeGreaterThanOrEqual(1);
+    expect(text).toContain('a removed member');
+  });
+
   it('offers nothing when the hook has no edit/delete or editable=false', () => {
     const a = make([msg('m1', 'me', 'mine')], false);
     const { unmount } = render(<WrappedChatPanel chat={a.chat} currentUserId="me" />);

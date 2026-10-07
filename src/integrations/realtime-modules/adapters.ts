@@ -124,8 +124,24 @@ export function adaptChatMessage(msg: RMChatMessage): UIChatMessage {
   };
 }
 
+/** Shown for a deleted row whose sender no live message in the transcript can name. */
+export const REMOVED_MEMBER_LABEL = 'a removed member';
+
 export function adaptChatMessages(messages: RMChatMessage[]): UIChatMessage[] {
-  return messages.map(adaptChatMessage);
+  // A soft-deleted message arrives with its metadata stripped, so the row has
+  // no displayName and the panel would fall back to the SOCKET client id.
+  // Name it the way the live rows are named: through the person (userId),
+  // using any other message in the transcript that carries their name.
+  const names = new Map<string, string>();
+  for (const m of messages) {
+    const n = str(m.metadata?.displayName);
+    if (m.userId && n && !m.deletedAt) names.set(m.userId, n);
+  }
+  return messages.map((m) => {
+    const out = adaptChatMessage(m);
+    if (out.displayName || !m.deletedAt) return out;
+    return { ...out, displayName: (m.userId && names.get(m.userId)) || REMOVED_MEMBER_LABEL };
+  });
 }
 
 // ---------------------------------------------------------------------------
