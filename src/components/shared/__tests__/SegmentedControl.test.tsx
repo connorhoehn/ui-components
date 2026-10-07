@@ -106,3 +106,24 @@ describe('SegmentedControl', () => {
     expect(screen.getByRole('radiogroup')).toHaveAccessibleName('Who can find you');
   });
 });
+
+describe('SegmentedControl — iconOnly (2.434.0)', () => {
+  const VIEWS = [
+    { label: 'Chat', value: 'chat', icon: <svg data-testid="i-chat" /> },
+    { label: 'Pinned', value: 'pins', icon: <svg data-testid="i-pin" />, badge: 3, testId: 'view-pins' },
+  ];
+  it('shows icons, names each option by its label (and badge), and hides the visible label', () => {
+    render(<SegmentedControl iconOnly size="sm" aria-label="Conversation views" options={VIEWS} value="chat" onChange={() => {}} />);
+    expect(screen.getByRole('radio', { name: 'Chat' })).toHaveAttribute('aria-checked', 'true');
+    const pins = screen.getByRole('radio', { name: 'Pinned, 3' });
+    expect(pins).toHaveAttribute('data-testid', 'view-pins');
+    expect(pins.textContent).toBe('3');
+    expect(screen.queryByText('Chat')).toBeNull();
+  });
+  it('still moves and chooses with the arrow keys', () => {
+    const onChange = vi.fn();
+    render(<SegmentedControl iconOnly options={VIEWS} value="chat" onChange={onChange} />);
+    fireEvent.keyDown(screen.getByRole('radio', { name: 'Chat' }), { key: 'ArrowRight' });
+    expect(onChange).toHaveBeenCalledWith('pins');
+  });
+});

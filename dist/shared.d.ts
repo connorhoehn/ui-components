@@ -3835,6 +3835,16 @@ export declare function PlusIcon({ size, ...rest }: GlyphProps): JSX.Element;
 export declare function PopOutIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /**
+ * The attribute a bounded surface — a conversation pane beside a page, a side
+ * panel — puts on itself so a popover opened from INSIDE it stays inside it
+ * horizontally (since 2.434.0). Without it a `bottom-end` menu from a control
+ * near the pane's left edge hung its panel left over the page beside the pane
+ * (the folded "More ▾" of a narrow pane's tab bar covered the content column).
+ * The nearest such ancestor of the trigger wins; the viewport still applies.
+ */
+export declare const POPOVER_BOUNDARY_ATTR = "data-uic-popover-boundary";
+
+/**
  * The attribute a pinned surface — a composer dock at the foot of an editor —
  * puts on itself so popovers never cover it. A popover anchored ABOVE such a
  * surface treats its top edge as the bottom of the screen: it flips up, or
@@ -3842,6 +3852,12 @@ export declare function PopOutIcon({ size, ...rest }: GlyphProps): JSX.Element;
  * (its own menus) is unaffected.
  */
 export declare const POPOVER_KEEPOUT_ATTR = "data-uic-keepout";
+
+/** The horizontal span a popover anchored at `trigger` must stay within: its nearest boundary ancestor, else the viewport. */
+export declare function popoverBounds(trigger: HTMLElement | null, viewportWidth: number): {
+    left: number;
+    right: number;
+};
 
 /** A field in a PopoverForm: a small label over its control, tightly. */
 export declare function PopoverField({ label, hint, children, 'data-testid': testId, }: {
@@ -4529,7 +4545,7 @@ export declare interface SectionLabelProps {
     'data-testid'?: string;
 }
 
-export declare function SegmentedControl({ options, value, onChange, size, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, disabled, fullWidth, tone, className, 'data-testid': testId, }: SegmentedControlProps): JSX.Element;
+export declare function SegmentedControl({ options, value, onChange, size, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, disabled, fullWidth, tone, iconOnly, className, 'data-testid': testId, }: SegmentedControlProps): JSX.Element;
 
 export declare interface SegmentedControlProps {
     options: SegmentOption[];
@@ -4564,6 +4580,14 @@ export declare interface SegmentedControlProps {
      * the brand's soft fill and text — the start-a-call Video | Audio switch.
      */
     tone?: 'neutral' | 'accent';
+    /**
+     * Icon-only segments (since 2.434.0): each option shows its `icon`, its
+     * `label` becomes the button's accessible name and a hover/focus tooltip.
+     * For a compact view switcher on a pane's header row — Chat / Pinned /
+     * Files / Calls beside a pane's own tabs — where a second labelled row
+     * would stack two tab bars. Options without an icon fall back to the label.
+     */
+    iconOnly?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -4572,6 +4596,14 @@ export declare interface SegmentOption {
     label: string;
     value: string;
     icon?: ReactNode;
+    /**
+     * A count or marker after the option (since 2.434.0) — "Pinned 3". With
+     * `iconOnly` it sits as a small superscript count on the icon, and the
+     * option's accessible name carries it ("Pinned, 3").
+     */
+    badge?: ReactNode;
+    /** `data-testid` for this option's button; overrides `<data-testid>-<value>`. */
+    testId?: string;
 }
 
 export declare const Select: ForwardRefExoticComponent<SelectProps & RefAttributes<HTMLSelectElement>>;

@@ -289,7 +289,7 @@ export { default as InlinePlaceholder } from './InlinePlaceholder';
 export type { InlinePlaceholderProps, InlinePlaceholderTone } from './InlinePlaceholder';
 export { PopoverForm, PopoverField } from './PopoverForm';
 export type { PopoverFormProps, PopoverFormWidth } from './PopoverForm';
-export { InlinePopover, popoverFloor, POPOVER_KEEPOUT_ATTR } from './InlinePopover';
+export { InlinePopover, popoverFloor, popoverBounds, POPOVER_KEEPOUT_ATTR, POPOVER_BOUNDARY_ATTR } from './InlinePopover';
 export type { InlinePopoverProps, InlinePopoverPlacement } from './InlinePopover';
 export { InlineMenu } from './InlineMenu';
 export type { InlineMenuProps, InlineMenuPlacement } from './InlineMenu';

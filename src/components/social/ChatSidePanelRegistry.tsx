@@ -96,6 +96,8 @@ export function ChatSidePanelFrame({
       aria-label={title}
       data-testid={testId}
       data-size={sm ? 'sm' : undefined}
+      // Menus opened inside the panel stay inside it (2.434.0, InlinePopover POPOVER_BOUNDARY_ATTR).
+      data-uic-popover-boundary=""
       className={cn('flex h-full min-h-0 flex-col border-l border-border bg-surface', className)}
     >
       <header className={cn('flex shrink-0 items-center justify-between gap-2 border-b border-border', sm ? 'px-4 py-2' : 'px-3 py-1.5')}>

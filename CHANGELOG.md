@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.435.0
+
+- `SegmentedControl` `iconOnly`: each option shows its `icon`; its `label` is the button's accessible name and a hover/focus `Tooltip`. For a compact view switcher on a pane's header row (Chat / Pinned / Files / Calls beside the pane's own tabs) instead of a second labelled tab bar. Options gain `badge` (a superscript count on the icon, carried in the name: "Pinned, 3") and `testId`.
+- `InlinePopover` boundary: a surface marked `data-uic-popover-boundary` (`POPOVER_BOUNDARY_ATTR`, `popoverBounds`) keeps popovers opened inside it within its left/right edges — a `bottom-end` menu from a control near a pane's left edge (the folded `Tabs` "More ▾") no longer hangs over the page beside the pane. Applies to every `DropdownMenu`. `ChatSidePanelFrame` marks itself as one.
+
 ## 2.434.0
 
 - `Table` `size="sm"` (and `DataTable` `size="sm"`, forwarded): the app's list step — every body cell exactly 44px tall on one line (`h-11`, no padding block, `whitespace-nowrap`), 14px body, a 12px semibold uppercase header (`text-xs`), 12px side padding. `data-size="sm"` on the `<table>`. Default `md` is unchanged.
