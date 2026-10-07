@@ -28,6 +28,13 @@ export interface StatusMeta {
 }
 
 export const COMPUTE_STATUS: Record<ComputeStatus, StatusMeta> = {
+  provisioning: {
+    tone: 'info',
+    label: 'provisioning',
+    help: 'The box has been minted and its microVM is starting. It takes work once it is up.',
+    color: 'var(--color-info)',
+    pulse: true,
+  },
   idle: {
     tone: 'success',
     label: 'idle',

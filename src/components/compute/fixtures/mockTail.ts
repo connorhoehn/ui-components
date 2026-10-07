@@ -108,6 +108,73 @@ const DRIFT: MockTailScript = {
 
 export const MOCK_TAIL_SCRIPTS: MockTailScript[] = [AUDIT, TRIAGE, DRIFT];
 
+const plan = (...items: [string, 'pending' | 'in_progress' | 'completed', string?][]): Record<string, unknown> =>
+  uses('TodoWrite', {
+    todos: items.map(([content, status, activeForm]) => ({ content, status, ...(activeForm ? { activeForm } : {}) })),
+  });
+
+/**
+ * A run that plans, works its plan, and posts its change for review — the
+ * multi-agent story the Agent pane is built to tell. The plan is written
+ * three times; each one replaces the last.
+ */
+const DELIVERY: MockTailScript = {
+  id: 'lab-demo-delivery',
+  label: 'lab-demo-delivery',
+  frames: [
+    { afterMs: 400, data: { type: 'job_started', title: 'Add rate limiting to the login route', kind: 'devbox:task' } },
+    { afterMs: 200, data: { type: 'task_started', prompt: 'Add rate limiting to POST /login and open a PR.' } },
+    { afterMs: 700, data: plan(
+      ['Read the login route', 'in_progress', 'Reading the login route'],
+      ['Add a limiter middleware', 'pending'],
+      ['Write tests', 'pending'],
+      ['Open a pull request', 'pending'],
+    ) },
+    { afterMs: 900, data: uses('Read', { file_path: 'src/routes/login.ts' }) },
+    { afterMs: 1100, data: plan(
+      ['Read the login route', 'completed'],
+      ['Add a limiter middleware', 'in_progress', 'Adding the limiter middleware'],
+      ['Write tests', 'pending'],
+      ['Open a pull request', 'pending'],
+    ) },
+    { afterMs: 1300, data: uses('Edit', { file_path: 'src/routes/login.ts' }) },
+    { afterMs: 1200, data: uses('Bash', { command: 'npm test -- login' }) },
+    { afterMs: 1400, data: plan(
+      ['Read the login route', 'completed'],
+      ['Add a limiter middleware', 'completed'],
+      ['Write tests', 'completed'],
+      ['Open a pull request', 'in_progress', 'Opening the pull request'],
+    ) },
+    { afterMs: 900, data: { type: 'delivery', workItemId: 'wi-demo-1', title: 'Rate-limit POST /login', branch: 'demo/rate-limit-login', commitSha: '4f2c9a1e7b3d', prUrl: 'https://example.com/demo/pull/42', prNumber: 42 } },
+    { afterMs: 400, data: { type: 'result', subtype: 'success', num_turns: 9, duration_ms: 14100, total_cost_usd: 0.0517, result: 'Limiter added at 5 attempts per minute per IP; PR #42 is up.' } },
+    { afterMs: 300, data: { type: 'devbox_end' } },
+    { afterMs: 200, data: { type: 'job_finished', ok: true } },
+  ],
+};
+
+/** A governed dispatch held at a budget gate — the 409 body verbatim, nothing ran. */
+const GATE_HELD: MockTailScript = {
+  id: 'lab-demo-gate-held',
+  label: 'lab-demo-gate-held',
+  frames: [
+    { afterMs: 400, data: {
+      type: 'gate_refused', status: 409, gate: 'envelope', confirmFlag: 'confirmOverEnvelope',
+      error: 'This run would take the sprint envelope past its $40.00 grant ($38.20 spent).',
+      workItemId: 'wi-demo-2', workItemTitle: 'Migrate session store to Redis',
+    } },
+  ],
+};
+
+/**
+ * Scripts that tell the demo's story — a plan worked to a posted change, and
+ * a dispatch held at a gate. Reachable by `mockTailUrl(boxId, id)` only; they
+ * are kept out of the per-box rotation so existing stories keep their runs.
+ */
+/** A box still provisioning: the stream opens and stays quiet until the microVM is up. */
+const PROVISIONING: MockTailScript = { id: 'lab-demo-provisioning', label: 'lab-demo-provisioning', frames: [] };
+
+export const MOCK_TAIL_DEMO_SCRIPTS: MockTailScript[] = [DELIVERY, GATE_HELD, PROVISIONING];
+
 /** The URL a mock client should hand back from `tail(boxId)`. */
 export function mockTailUrl(boxId: string, scriptId?: string): string {
   const script = scriptId ? `?script=${encodeURIComponent(scriptId)}` : '';
@@ -117,7 +184,7 @@ export function mockTailUrl(boxId: string, scriptId?: string): string {
 function scriptFor(url: string): MockTailScript {
   const requested = /script=([^&]+)/.exec(url)?.[1];
   if (requested) {
-    const found = MOCK_TAIL_SCRIPTS.find((s) => s.id === decodeURIComponent(requested));
+    const found = [...MOCK_TAIL_SCRIPTS, ...MOCK_TAIL_DEMO_SCRIPTS].find((s) => s.id === decodeURIComponent(requested));
     if (found) return found;
   }
   // Deterministic per box, so two panes on different boxes show different runs

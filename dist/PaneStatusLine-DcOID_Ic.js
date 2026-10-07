@@ -5,6 +5,13 @@ import { Fragment as r } from "react";
 import { Fragment as i, jsx as a, jsxs as o } from "react/jsx-runtime";
 //#region src/components/compute/lib/status.ts
 var s = {
+	provisioning: {
+		tone: "info",
+		label: "provisioning",
+		help: "The box has been minted and its microVM is starting. It takes work once it is up.",
+		color: "var(--color-info)",
+		pulse: !0
+	},
 	idle: {
 		tone: "success",
 		label: "idle",

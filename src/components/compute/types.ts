@@ -11,8 +11,12 @@
  * the operator a question, so the box is idle but the work is not finished.
  * It reads as a distinct state because the action it wants — reply — is
  * different from the action an `idle` box wants.
+ *
+ * `provisioning` is a box that has been minted but whose microVM is not up
+ * yet: it cannot take a shell or a task, and it is not idle either. It turns
+ * `running` on the box's first `task_started`.
  */
-export type ComputeStatus = 'idle' | 'running' | 'waiting' | 'stopped' | 'error';
+export type ComputeStatus = 'provisioning' | 'idle' | 'running' | 'waiting' | 'stopped' | 'error';
 
 /** Outcome of the last agent run on a box. */
 export interface ComputeRunResult {

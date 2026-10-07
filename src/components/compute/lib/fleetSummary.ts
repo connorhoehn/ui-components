@@ -32,6 +32,8 @@ export interface FleetSummary {
   needsYou: number;
   running: number;
   error: number;
+  /** Boxes minted whose microVM is not up yet. Not counted as agents: nothing is running. */
+  provisioning: number;
 }
 
 export function summarizeFleet(computers: readonly Computer[]): FleetSummary {
@@ -39,14 +41,16 @@ export function summarizeFleet(computers: readonly Computer[]): FleetSummary {
   let needsYou = 0;
   let running = 0;
   let error = 0;
+  let provisioning = 0;
   for (const computer of computers) {
     const status = statusOf(computer);
     if (hasAgent(computer)) agents += 1;
     if (status === 'waiting') needsYou += 1;
     else if (status === 'running') running += 1;
     else if (status === 'error') error += 1;
+    else if (status === 'provisioning') provisioning += 1;
   }
-  return { computers: computers.length, agents, needsYou, running, error };
+  return { computers: computers.length, agents, needsYou, running, error, provisioning };
 }
 
 /** Boxes that want attention first, then busy ones, then the rest. */
@@ -54,8 +58,10 @@ export const ATTENTION_ORDER: Record<ComputeStatus, number> = {
   waiting: 0,
   error: 1,
   running: 2,
-  idle: 3,
-  stopped: 4,
+  // Coming up: worth seeing before the quiet boxes, never above live work.
+  provisioning: 3,
+  idle: 4,
+  stopped: 5,
 };
 
 export function byAttention(a: Computer, b: Computer): number {

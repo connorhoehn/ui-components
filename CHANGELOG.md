@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.428.0
+
+- **Computer Lab tells a multi-agent story** (`…/compute`, additive). New `provisioning` `ComputeStatus` (minted, microVM not up): `COMPUTE_STATUS.provisioning` (info, pulsing), `ATTENTION_ORDER` between running and idle, `summarizeFleet()` gains a `provisioning` count (not an agent), a workspace header pill (`lab-pill-provisioning`) drawn only while above zero, and rail/filter/badge entries.
+- **Agent pane:** the latest `TodoWrite` tool_use is the run's plan checklist above the steps (`agent-pane-plan`; completed / in progress with `activeForm` / pending; a later TodoWrite replaces the earlier one and is not repeated as a step row). New tail frames `gate_refused` (warning row: "Held at the <gate> gate", error, "needs <confirmFlag>") and `delivery` (success row: "Change posted for review", title, short sha, `PR #n` linked through `Link external` when `prUrl`). When the computer is `waiting`, the agent's last words (last assistant text or the `result` summary, else `currentTask`) show as a callout with an inline reply (`agent-pane-reply`) that takes the Nudge route: the lab's `onInstruct` with `scope: 'focused'` when given, otherwise a resumed `client.runTask(sessionId, { prompt, resume: true })`. No new `ComputerLab` prop.
+- **Bot logs and the classic `TailPane`** read the same frames: gate lines log at `warn` from source `gate`, deliveries from `delivery`; the tail pane draws `tail-banner-gate` / `tail-banner-delivery`. Unknown frame types stay ignored.
+- New exports: `latestPlan`, `pendingQuestion`, `reduceTailFrame`, `parsePlan`, `toolStep`, `gateStep`, `deliveryStep`, `LabInstructContext`, `useLabInstruct`, `runInstructionAsTasks`, `MOCK_TAIL_DEMO_SCRIPTS`; types `PlanItem`, `GateRefusal`, `RunDelivery`, `LabInstructRoute`. `TaskStep` gains `plan`, `gate`, `delivery`, `summary`; `TaskStepKind` gains `gate`, `delivery` (an exhaustive `Record<TaskStepKind, …>` in a consumer needs two entries). Stories: `Compute/AgentPane`, `Compute/ComputerLab › MultiAgentDemo`.
+
 ## 2.427.0
 
 - **`MasterDetail` `paneFooter`:** a ReactNode docked under the detail pane (`data-testid="<id>-pane-footer"`, inside a `<id>-pane-column`). It reserves its own height and the pane above keeps its `overflow-y-auto` scrolling (`<id>-detail`), so a composer no longer needs `sticky` plus class overrides that release the shell's clipping. Mirrors `ExplorerLayout`'s `paneFooter`; omitted, the markup is unchanged.

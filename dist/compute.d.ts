@@ -1,3 +1,4 @@
+import { Context } from 'react';
 import { ForwardRefExoticComponent } from 'react';
 import { JSX } from 'react';
 import { ReactNode } from 'react';
@@ -557,8 +558,12 @@ export declare type ComputeSource = 'fixture' | 'remote' | 'provided';
  * the operator a question, so the box is idle but the work is not finished.
  * It reads as a distinct state because the action it wants — reply — is
  * different from the action an `idle` box wants.
+ *
+ * `provisioning` is a box that has been minted but whose microVM is not up
+ * yet: it cannot take a shell or a task, and it is not idle either. It turns
+ * `running` on the box's first `task_started`.
  */
-export declare type ComputeStatus = 'idle' | 'running' | 'waiting' | 'stopped' | 'error';
+export declare type ComputeStatus = 'provisioning' | 'idle' | 'running' | 'waiting' | 'stopped' | 'error';
 
 /** Total descendants, for the collapsed-directory count. */
 export declare function countDescendants(node: WorkspaceNode): number;
@@ -622,6 +627,9 @@ export declare const DEFAULT_PANE_KINDS: readonly PaneKind[];
  * every kind refuses still renders something rather than a blank frame.
  */
 export declare function defaultKindFor(registry: PaneKindRegistry, computer: Computer | null | undefined): PaneKind | null;
+
+/** A `delivery` frame as a step: "Change posted for review · title · abc1234 · PR #12". */
+export declare function deliveryStep(event: Record<string, unknown>): Omit<TaskStep, 'at'>;
 
 /** Ctrl-] detaches: drop the socket, leave the shell alive. */
 export declare const DETACH_BYTE = 29;
@@ -813,6 +821,8 @@ export declare interface FleetSummary {
     needsYou: number;
     running: number;
     error: number;
+    /** Boxes minted whose microVM is not up yet. Not counted as agents: nothing is running. */
+    provisioning: number;
 }
 
 export declare function focusShell(id: string): void;
@@ -837,6 +847,20 @@ declare interface Frame {
  * order is whatever the array happened to be in.
  */
 export declare function fuzzyScore(text: string, query: string): number | null;
+
+/** A dispatch held at a budget gate — the 409 body of a governed dispatch. */
+export declare interface GateRefusal {
+    /** `run-budget` / `allocation` / `envelope`, or whatever gate the host names. */
+    gate: string;
+    /** The flag that would clear it, e.g. `confirmOverEnvelope`. */
+    confirmFlag?: string;
+    error: string;
+    workItemId?: string;
+    workItemTitle?: string;
+}
+
+/** A `gate_refused` frame as a step: "Held at the envelope gate — … · needs confirmOverEnvelope". */
+export declare function gateStep(event: Record<string, unknown>): Omit<TaskStep, 'at'>;
 
 export declare function getDock(): DockState;
 
@@ -1004,6 +1028,8 @@ export declare interface LabHeaderProps {
     leaderLabel?: string | null;
 }
 
+export declare const LabInstructContext: Context<LabInstructRoute | null>;
+
 /** What the workspace lab's instruction bar hands the host. */
 export declare interface LabInstruction {
     text: string;
@@ -1015,11 +1041,15 @@ export declare interface LabInstruction {
 /** The host's answer: how many computers took the instruction, and why the rest did not. */
 export declare interface LabInstructionOutcome {
     delivered: number;
+    /** One line on the ones that did not — "2 refused · 1 laptop skipped". */
     detail?: string;
 }
 
 /** Which computers an instruction reaches. */
 export declare type LabInstructionScope = 'focused' | 'selected' | 'all';
+
+/** Deliver one instruction to these computers. Rejects on a refusal the caller should report. */
+export declare type LabInstructRoute = (text: string, computers: readonly Computer[]) => Promise<LabInstructionOutcome | void>;
 
 export declare function LabPaneToolbar({ panes, onFocusPane, onAddPane, canAddPane, shellsOpen, maxShells, onArrange, zoomed, onToggleZoom, moreSections, }: LabPaneToolbarProps): JSX.Element;
 
@@ -1080,6 +1110,13 @@ export declare interface LabWindow {
     name?: string;
     root: PaneNode;
 }
+
+/**
+ * The run's plan: the latest `TodoWrite` in these steps. A later one
+ * replaces an earlier one outright — the agent rewrites the whole list each
+ * time, so merging would resurrect items it dropped.
+ */
+export declare function latestPlan(steps: readonly TaskStep[]): PlanItem[] | null;
 
 /** Flatten the tree into leaf rectangles in unit space. */
 export declare function layoutRects(node: PaneNode, frame?: {
@@ -1246,6 +1283,8 @@ export declare const MIN_RATIO = 0.1;
 
 /** URLs with this scheme are simulated; everything else is dialled for real. */
 export declare const MOCK_SHELL_SCHEME = "mock-shell:";
+
+export declare const MOCK_TAIL_DEMO_SCRIPTS: MockTailScript[];
 
 /** URLs beginning with this are answered by the simulator. */
 export declare const MOCK_TAIL_SCHEME = "mock-tail:";
@@ -1524,6 +1563,29 @@ export declare interface PaneTreeViewProps {
     className?: string;
 }
 
+/**
+ * Read a `TodoWrite` input as a plan. Items that are not plan-shaped are
+ * dropped rather than guessed at; an unknown status reads as pending.
+ */
+export declare function parsePlan(input: Record<string, unknown>): PlanItem[] | null;
+
+/**
+ * What the agent last said — the question a `waiting` box is waiting on.
+ *
+ * The fleet marks a box `waiting` when its run's last words end with `?`;
+ * those words are the last assistant text, or the `result` frame's own
+ * summary when the run closed on it. Null when the run said nothing.
+ */
+export declare function pendingQuestion(steps: readonly TaskStep[]): string | null;
+
+/** One item of an agent's plan — the `TodoWrite` tool's own input shape. */
+export declare interface PlanItem {
+    content: string;
+    /** Present-tense wording for the item in flight ("Running the tests"). */
+    activeForm?: string;
+    status: 'pending' | 'in_progress' | 'completed';
+}
+
 /** A project with the live fleet folded in. */
 export declare interface ProjectRollup extends ComputeProject {
     computers: Computer[];
@@ -1572,6 +1634,21 @@ export declare function ratioOf(root: PaneNode, splitId: string): number | null;
 export declare function reconcileDock(liveSessionIds: readonly string[]): void;
 
 /**
+ * Reduce one raw frame to zero or more renderable steps.
+ *
+ * Shared vocabulary with `useComputeTask` — the tail sees everything the task
+ * stream does, plus `task_started`, `job_started` and `job_finished`, which
+ * only ever appear here (a run driven from this browser doesn't need a
+ * dispatcher to announce its own start or end to itself).
+ */
+export declare function reduceTailFrame(event: StreamEvent): {
+    steps: Omit<TaskStep, 'at'>[];
+    result?: ComputeRunResult;
+    running?: boolean;
+    error?: string;
+};
+
+/**
  * Report what a shell is doing.
  *
  * `sawOutput` is true when the call was triggered by bytes arriving, which is
@@ -1590,6 +1667,27 @@ export declare function resolveKind(registry: PaneKindRegistry, id: string): Pan
  * without another subscription, and so the join is testable on plain data.
  */
 export declare function rollUpProjects(projects: readonly ComputeProject[], computers: readonly Computer[]): ProjectRollup[];
+
+/** A run's change, captured and posted for review. */
+export declare interface RunDelivery {
+    title: string;
+    workItemId?: string;
+    branch?: string;
+    commitSha?: string;
+    prUrl?: string;
+    prNumber?: number;
+    captureId?: string;
+}
+
+/**
+ * The default Nudge route: a resumed agent task on each targeted microVM.
+ *
+ * A task stream lasts as long as the run, so this does not wait for it to
+ * finish — only long enough to hear an immediate refusal (a 403, a missing
+ * session). A run still going after that counts as delivered. Laptops are
+ * skipped: they have no runtime session to resume.
+ */
+export declare function runInstructionAsTasks(client: ComputeClient, text: string, targetComputers: readonly Computer[], graceMs?: number): Promise<LabInstructionOutcome>;
 
 export declare function selectShellByIndex(index: number): void;
 
@@ -1789,10 +1887,18 @@ export declare interface TaskStep {
     jobOk?: boolean;
     /** `result` only: the structured tally, so the view renders cost chips instead of re-parsing `text`. */
     result?: ComputeRunResult;
+    /** `result` only: the run's final words (the frame's `result` string), when it carried any. */
+    summary?: string;
+    /** `tool` only, for a `TodoWrite` call: the plan it wrote. The latest one is the run's plan. */
+    plan?: PlanItem[];
+    /** `gate` only. */
+    gate?: GateRefusal;
+    /** `delivery` only. */
+    delivery?: RunDelivery;
     at: number;
 }
 
-export declare type TaskStepKind = 'text' | 'tool' | 'result' | 'error' | 'meta' | 'job' | 'job_end';
+export declare type TaskStepKind = 'text' | 'tool' | 'result' | 'error' | 'meta' | 'job' | 'job_end' | 'gate' | 'delivery';
 
 /** tmux's prefix, for a host that wants to switch leader mode on. */
 export declare const TMUX_LEADER: LeaderConfig;
@@ -1802,6 +1908,12 @@ export declare function toggleFloating(): void;
 declare type Tone = (typeof TONES)[number];
 
 declare const TONES: readonly ["neutral", "success", "warning", "danger", "info", "caution", "accent"];
+
+/**
+ * One `tool_use` block as a step. A `TodoWrite` carries its plan; its line
+ * says how far along the plan is, which is what a log reader wants from it.
+ */
+export declare function toolStep(name: string, input: Record<string, unknown>): Omit<TaskStep, 'at'>;
 
 /** Boxes with no project are still real; they get a bucket rather than vanishing. */
 export declare const UNASSIGNED_PROJECT_ID = "__unassigned__";
@@ -1916,6 +2028,9 @@ export declare interface UseComputeTaskResult {
     clear: () => void;
     push: (step: Omit<TaskStep, 'at'>) => void;
 }
+
+/** The enclosing lab's instruction route, or null outside a lab. */
+export declare function useLabInstruct(): LabInstructRoute | null;
 
 export declare function useLabLayout(): UseLabLayoutResult;
 

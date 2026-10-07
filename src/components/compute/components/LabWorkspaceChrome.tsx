@@ -33,15 +33,26 @@ import { PaneStatusLine } from './PaneStatusLine';
 
 // Tones follow the rail's dots (`COMPUTE_STATUS`): a pill and the rows it
 // filters to must be the same colour or the filter reads as a different set.
-const PILLS: { status: ComputeStatus; word: (n: number) => string; tone: 'warning' | 'danger' | 'info'; hint: string }[] = [
+type PillStatus = 'waiting' | 'running' | 'provisioning' | 'error';
+
+const PILLS: {
+  status: PillStatus;
+  word: (n: number) => string;
+  tone: 'warning' | 'danger' | 'info';
+  hint: string;
+  /** Drawn only while the count is above zero — a transient state, not a standing filter. */
+  onlyWhenPresent?: boolean;
+}[] = [
   { status: 'waiting', word: (n) => (n === 1 ? 'needs you' : 'need you'), tone: 'warning', hint: 'Show only computers waiting on an answer' },
   { status: 'running', word: () => 'running', tone: 'info', hint: 'Show only computers with a run in flight' },
+  { status: 'provisioning', word: () => 'provisioning', tone: 'info', hint: 'Show only computers still starting up', onlyWhenPresent: true },
   { status: 'error', word: (n) => (n === 1 ? 'error' : 'errors'), tone: 'danger', hint: 'Show only computers whose last run failed' },
 ];
 
-const PILL_COUNT: Record<'waiting' | 'running' | 'error', keyof FleetSummary> = {
+const PILL_COUNT: Record<PillStatus, keyof FleetSummary> = {
   waiting: 'needsYou',
   running: 'running',
+  provisioning: 'provisioning',
   error: 'error',
 };
 
@@ -82,9 +93,11 @@ export function LabHeader({
       </div>
       <span className="flex-1" />
       <div role="group" aria-label="Fleet status" className="flex items-center gap-1.5">
-        {PILLS.map(({ status, word, tone, hint }) => {
-          const count = summary[PILL_COUNT[status as 'waiting' | 'running' | 'error']] as number;
+        {PILLS.map(({ status, word, tone, hint, onlyWhenPresent }) => {
+          // `?? 0`: a host may hand in a summary computed before `provisioning` existed.
+          const count = (summary[PILL_COUNT[status]] as number | undefined) ?? 0;
           const on = statusFilter === status;
+          if (onlyWhenPresent && count === 0 && !on) return null;
           return (
             <button
               key={status}
@@ -224,6 +237,7 @@ export function LabPaneToolbar({
 
 /** Status badge wording — sentence case for a badge, not the rail's lowercase. */
 const BADGE: Record<ComputeStatus, { label: string; tone: 'warning' | 'info' | 'danger' | 'success' | 'neutral' }> = {
+  provisioning: { label: 'Provisioning', tone: 'info' },
   waiting: { label: 'Needs you', tone: 'warning' },
   running: { label: 'Running', tone: 'info' },
   error: { label: 'Error', tone: 'danger' },

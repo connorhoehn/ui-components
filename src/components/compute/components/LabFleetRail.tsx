@@ -27,6 +27,7 @@ import type { Computer, ComputeStatus } from '../types';
 
 /** Status ink as a class, for glyphs and words that take the dot's colour. */
 const STATUS_TEXT: Record<ComputeStatus, string> = {
+  provisioning: 'text-info',
   waiting: 'text-warning',
   running: 'text-primary',
   error: 'text-danger',
@@ -165,7 +166,7 @@ export function LabFleetRail({
     label: 'Show',
     items: [
       { label: 'Every status', checked: !statusFilter, onSelect: () => onStatusFilterChange?.(null) },
-      ...(['waiting', 'running', 'error', 'idle', 'stopped'] as const).map((status) => ({
+      ...(['waiting', 'running', 'provisioning', 'error', 'idle', 'stopped'] as const).map((status) => ({
         label: COMPUTE_STATUS[status].label,
         checked: statusFilter === status,
         onSelect: () => onStatusFilterChange?.(statusFilter === status ? null : status),

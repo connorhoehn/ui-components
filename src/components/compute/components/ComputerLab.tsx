@@ -30,7 +30,10 @@ import {
   defaultKindFor, kindsFor, nextKind, quotaUsage, resolveKind,
   type PaneHandle, type PaneKind, type PaneKindRegistry,
 } from '../lib/paneKinds';
-import { isLocalComputer, summarizeFleet } from '../lib/fleetSummary';
+import { summarizeFleet } from '../lib/fleetSummary';
+import {
+  LabInstructContext, runInstructionAsTasks, type LabInstructionOutcome, type LabInstructRoute,
+} from '../context/LabInstructContext';
 import type { DropdownMenuSection } from '../../shared/DropdownMenu';
 import { DropdownMenu } from '../../shared/DropdownMenu';
 import { LabFleetRail } from './LabFleetRail';
@@ -58,11 +61,9 @@ export interface LabInstruction {
   scope: LabInstructionScope;
 }
 
-/** The host's answer: how many computers took the instruction, and why the rest did not. */
-export interface LabInstructionOutcome {
-  delivered: number;
-  detail?: string;
-}
+// Defined beside the shared route so the Nudge bar and the Agent pane's reply
+// cannot drift apart; re-exported here where hosts have always imported it.
+export type { LabInstructionOutcome } from '../context/LabInstructContext';
 
 export interface ComputerLabProps {
   open: boolean;
@@ -338,31 +339,21 @@ export function ComputerLab({
     return layout.panes.filter((p) => ids.has(p.computerId));
   }, [scope, activePane, scopedComputers, layout.panes]);
 
-  /**
-   * The default Nudge route: a resumed agent task on each targeted microVM.
-   *
-   * A task stream lasts as long as the run, so this does not wait for it to
-   * finish — only long enough to hear an immediate refusal (a 403, a missing
-   * session). A run still going after that counts as delivered.
-   */
+  /** The default Nudge route: a resumed agent task on each targeted microVM. */
   const runAsTasks = useCallback(
-    async (text: string, targetComputers: readonly Computer[]): Promise<LabInstructionOutcome> => {
-      const boxes = targetComputers.filter((c) => !isLocalComputer(c));
-      const skipped = targetComputers.length - boxes.length;
-      const verdicts = await Promise.all(boxes.map((box) => {
-        const run = client.runTask(box.sessionId, { prompt: text, resume: true }, () => {});
-        return Promise.race([
-          run.then(() => true, () => false),
-          new Promise<boolean>((resolve) => { setTimeout(() => resolve(true), 1_500); }),
-        ]);
-      }));
-      const delivered = verdicts.filter(Boolean).length;
-      const notes: string[] = [];
-      if (delivered < boxes.length) notes.push(`${boxes.length - delivered} refused`);
-      if (skipped > 0) notes.push(`${skipped} ${skipped === 1 ? 'laptop' : 'laptops'} skipped — no runtime session`);
-      return { delivered, ...(notes.length ? { detail: notes.join(' · ') } : {}) };
-    },
+    (text: string, targetComputers: readonly Computer[]) => runInstructionAsTasks(client, text, targetComputers),
     [client],
+  );
+
+  /**
+   * The route a pane's inline reply takes — the same one Nudge takes, aimed
+   * at that pane's computer alone.
+   */
+  const paneInstruct = useCallback<LabInstructRoute>(
+    (text, targetComputers) => (onInstruct
+      ? onInstruct({ text, computers: [...targetComputers], scope: 'focused' })
+      : runAsTasks(text, targetComputers)),
+    [onInstruct, runAsTasks],
   );
 
   const sendInstruction = useCallback(async () => {
@@ -707,6 +698,7 @@ export function ComputerLab({
     const scopedIds = new Set(scopedComputers.map((c) => c.id));
 
     return (
+      <LabInstructContext.Provider value={paneInstruct}>
       <div
         ref={rootRef}
         {...(variant === 'overlay'
@@ -963,10 +955,12 @@ export function ComputerLab({
           <ShortcutSheet keymap={keymap} leader={leader} chrome={chromeTone} onClose={() => setShowHelp(false)} />
         )}
       </div>
+      </LabInstructContext.Provider>
     );
   }
 
   return (
+    <LabInstructContext.Provider value={paneInstruct}>
     <div
       ref={rootRef}
       {...(variant === 'overlay'
@@ -1330,6 +1324,7 @@ export function ComputerLab({
         />
       )}
     </div>
+    </LabInstructContext.Provider>
   );
 }
 

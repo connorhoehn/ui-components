@@ -249,3 +249,71 @@ export const Workspace: Story = {
     </div>
   ),
 };
+
+// ── The multi-agent demo ───────────────────────────────────────────────────
+
+/** Four boxes, each telling one part of the story through its own tail. */
+const DEMO_FLEET = [
+  { ...fixtureComputers[0]!, status: 'running' as const, currentTask: 'Add rate limiting to the login route' },
+  { ...fixtureComputers[1]!, status: 'waiting' as const },
+  { ...fixtureComputers[2]!, status: 'idle' as const, currentTask: 'Migrate session store to Redis' },
+  {
+    id: 'demo-new', label: 'demo-echo', sessionId: 'demo-session-echo-000000000000000000000000',
+    createdAt: '2026-08-26T14:40:00.000Z', status: 'provisioning' as const, projectId: 'proj-auth', project: 'Auth migration',
+  },
+];
+
+const DEMO_SCRIPT: Record<string, string> = {
+  'demo-1': 'lab-demo-delivery',
+  'demo-2': 'flaky-test-triage',
+  'demo-3': 'lab-demo-gate-held',
+  'demo-new': 'lab-demo-provisioning',
+};
+
+const demoClient: ComputeClient = {
+  ...storyClient,
+  listComputers: async () => DEMO_FLEET,
+  tail: (boxId) => ({ url: mockTailUrl(boxId, DEMO_SCRIPT[boxId]), withCredentials: false, headers: {} }),
+};
+
+const DEMO_SEED = {
+  windows: [{
+    id: 'w-demo',
+    root: {
+      kind: 'split', id: 'demo-root', direction: 'row', ratio: 0.5,
+      a: { kind: 'leaf', id: 'demo-a', computerId: 'demo-1', kindId: 'agent' },
+      b: {
+        kind: 'split', id: 'demo-right', direction: 'column', ratio: 0.5,
+        a: { kind: 'leaf', id: 'demo-b', computerId: 'demo-2', kindId: 'agent' },
+        b: { kind: 'leaf', id: 'demo-c', computerId: 'demo-3', kindId: 'logs' },
+      },
+    },
+  }],
+  activeWindowId: 'w-demo',
+  activePaneId: 'demo-a',
+  zoomedPaneId: null,
+};
+
+/**
+ * Several agents at once, read from their tails: demo-alpha works a
+ * `TodoWrite` plan to a change posted for review (PR link), demo-bravo ended
+ * on a question and answers inline from its Agent pane, demo-charlie's
+ * dispatch was held at the envelope gate, and demo-echo is still
+ * provisioning — the header grows a pill for it.
+ */
+export const MultiAgentDemo: Story = {
+  args: { open: true, onClose: () => {}, variant: 'inline', appearance: 'workspace' },
+  parameters: { layout: 'fullscreen', labLayout: DEMO_SEED },
+  decorators: [
+    (Story) => (
+      <ComputeProvider client={demoClient} computers={DEMO_FLEET} models={fixtureModels} canManage pollIntervalMs={0}>
+        <Story />
+      </ComputeProvider>
+    ),
+  ],
+  render: (args) => (
+    <div className="h-screen p-4 bg-surface">
+      <ComputerLab {...args} />
+    </div>
+  ),
+};

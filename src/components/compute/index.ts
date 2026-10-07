@@ -24,7 +24,12 @@ export { LabHeader, LabPaneToolbar, WorkspacePane } from './components/LabWorksp
 export type { LabHeaderProps, LabPaneToolbarProps, WorkspacePaneProps } from './components/LabWorkspaceChrome';
 export {
   LogsPane, AgentPane, byteRate, formatRate, stepLevel, stepSource, currentRun, clockTime, elapsed,
+  latestPlan, pendingQuestion,
 } from './components/WorkspacePanes';
+export {
+  LabInstructContext, useLabInstruct, runInstructionAsTasks,
+} from './context/LabInstructContext';
+export type { LabInstructRoute } from './context/LabInstructContext';
 export type { LogsPaneProps, AgentPaneProps } from './components/WorkspacePanes';
 export {
   summarizeFleet, hasAgent, matchesQuery, byAttention, isLocalComputer, AGENT_STATUSES, ATTENTION_ORDER,
@@ -58,8 +63,10 @@ export type { TailPaneProps } from './components/TailPane';
 // Hooks
 export { useComputeFleet } from './hooks/useComputeFleet';
 export type { UseComputeFleetOptions, UseComputeFleetResult } from './hooks/useComputeFleet';
-export { useComputeTask, summarizeTool } from './hooks/useComputeTask';
-export { useComputeTail } from './hooks/useComputeTail';
+export {
+  useComputeTask, summarizeTool, parsePlan, toolStep, gateStep, deliveryStep,
+} from './hooks/useComputeTask';
+export { useComputeTail, reduceTailFrame } from './hooks/useComputeTail';
 export {
   useComputeProjects, useProjectRollups, rollUpProjects, formatTokens,
   UNASSIGNED_PROJECT_ID,
@@ -68,7 +75,9 @@ export type {
   UseComputeProjectsOptions, UseComputeProjectsResult, ProjectRollup,
 } from './hooks/useComputeProjects';
 export type { UseComputeTailOptions, UseComputeTailResult } from './hooks/useComputeTail';
-export type { UseComputeTaskOptions, UseComputeTaskResult, TaskStep, TaskStepKind } from './hooks/useComputeTask';
+export type {
+  UseComputeTaskOptions, UseComputeTaskResult, TaskStep, TaskStepKind, PlanItem, GateRefusal, RunDelivery,
+} from './hooks/useComputeTask';
 export { useLabLayout } from './hooks/useLabLayout';
 export type { UseLabLayoutResult, LabWindow } from './hooks/useLabLayout';
 
@@ -133,7 +142,7 @@ export {
 } from './fixtures/computeFixture';
 export { installMockShellSocket, mockShellUrl, MOCK_SHELL_SCHEME } from './fixtures/mockShell';
 export {
-  installMockTailSource, mockTailUrl, MOCK_TAIL_SCHEME, MOCK_TAIL_SCRIPTS,
+  installMockTailSource, mockTailUrl, MOCK_TAIL_SCHEME, MOCK_TAIL_SCRIPTS, MOCK_TAIL_DEMO_SCRIPTS,
 } from './fixtures/mockTail';
 export type { MockTailOptions, MockTailScript } from './fixtures/mockTail';
 export type { MockShellOptions } from './fixtures/mockShell';

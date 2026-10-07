@@ -11,7 +11,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ComputeClient, StreamEvent } from '../lib/computeClient';
 import type { ComputeRunResult } from '../types';
-import { summarizeTool, type TaskStep } from './useComputeTask';
+import { deliveryStep, gateStep, toolStep, type TaskStep } from './useComputeTask';
 
 export interface UseComputeTailOptions {
   client: ComputeClient;
@@ -40,7 +40,7 @@ export interface UseComputeTailResult {
  * only ever appear here (a run driven from this browser doesn't need a
  * dispatcher to announce its own start or end to itself).
  */
-function reduceFrame(event: StreamEvent): { steps: Omit<TaskStep, 'at'>[]; result?: ComputeRunResult; running?: boolean; error?: string } {
+export function reduceTailFrame(event: StreamEvent): { steps: Omit<TaskStep, 'at'>[]; result?: ComputeRunResult; running?: boolean; error?: string } {
   const type = event['type'];
 
   // The dispatcher's own frame, wrapping the box from OUTSIDE the CLI
@@ -83,7 +83,7 @@ function reduceFrame(event: StreamEvent): { steps: Omit<TaskStep, 'at'>[]; resul
     for (const block of content) {
       if (block['type'] === 'tool_use') {
         const tool = String(block['name'] ?? 'tool');
-        steps.push({ kind: 'tool', tool, text: summarizeTool(tool, (block['input'] ?? {}) as Record<string, unknown>) });
+        steps.push(toolStep(tool, (block['input'] ?? {}) as Record<string, unknown>));
       } else if (block['type'] === 'text') {
         const text = String(block['text'] ?? '').trim();
         if (text) steps.push({ kind: 'text', text });
@@ -96,6 +96,14 @@ function reduceFrame(event: StreamEvent): { steps: Omit<TaskStep, 'at'>[]; resul
     const text = String(event['text'] ?? '').trim();
     return { steps: text ? [{ kind: 'text', text }] : [] };
   }
+
+  // A governed dispatch held at a budget gate. Not an error: nothing ran,
+  // and the run is waiting on a person to raise a limit or confirm past it.
+  if (type === 'gate_refused') return { steps: [gateStep(event)], running: false };
+
+  // The run's change, captured for review. Arrives around the run's close;
+  // it says nothing about whether the run is still going.
+  if (type === 'delivery') return { steps: [deliveryStep(event)] };
 
   if (type === 'devbox_error') {
     const message = String(event['error'] ?? 'the box reported an error');
@@ -124,17 +132,21 @@ function reduceFrame(event: StreamEvent): { steps: Omit<TaskStep, 'at'>[]; resul
       durationMs: Number(event['duration_ms'] ?? 0),
       costUsd: Number(event['total_cost_usd'] ?? 0),
     };
+    const summary = typeof event['result'] === 'string' ? event['result'].trim() : '';
     return {
       steps: [{
         kind: 'result',
         text: `${result.turns} turns · ${(result.durationMs / 1000).toFixed(0)}s · $${result.costUsd.toFixed(4)}`,
         result,
+        ...(summary ? { summary } : {}),
       }],
       result,
       running: false,
     };
   }
 
+  // Anything else — a frame type this version does not know — is ignored,
+  // never rendered as a guess and never an error.
   return { steps: [] };
 }
 
@@ -182,7 +194,7 @@ export function useComputeTail({
       } catch {
         return; // a keepalive or a partial frame
       }
-      const reduced = reduceFrame(frame);
+      const reduced = reduceTailFrame(frame);
       if (reduced.steps.length > 0) {
         setSteps((prev) => {
           // The frame's own `ts` when it carries one: a replayed buffer

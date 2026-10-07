@@ -13,6 +13,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { cn } from '../../../lib/cn';
 import Chip from '../../shared/Chip';
+import { Link } from '../../shared/Link';
 import RisingParticles from '../../shared/RisingParticles';
 import { useCompute } from '../context/ComputeContext';
 import { useComputeTail } from '../hooks/useComputeTail';
@@ -32,6 +33,8 @@ const STEP_TONE: Record<TaskStep['kind'], string> = {
   error: 'text-code-red',
   job: 'text-code-blue',
   job_end: 'text-code-green',
+  gate: 'text-code-peach',
+  delivery: 'text-code-green',
 };
 
 const STEP_GLYPH: Record<TaskStep['kind'], string> = {
@@ -42,6 +45,8 @@ const STEP_GLYPH: Record<TaskStep['kind'], string> = {
   error: '✗',
   job: '▶',
   job_end: '✓',
+  gate: '⚠',
+  delivery: '⇪',
 };
 
 // A long-running bot can produce thousands of tool steps; keeping every one
@@ -246,6 +251,53 @@ export function TailPane({ computer, registerPane, className }: TailPaneProps) {
                   >
                     <span aria-hidden="true" className="shrink-0 text-code-red">✗</span>
                     <span className="min-w-0 break-words font-semibold text-code-red">{step.text}</span>
+                  </div>
+                );
+              }
+
+              // A dispatch held at a budget gate: nothing ran, and a person
+              // has to raise a limit or confirm past it. A warning, not an
+              // error — the gate did its job.
+              if (step.kind === 'gate' && step.gate) {
+                return (
+                  <div
+                    key={i}
+                    data-testid="tail-banner-gate"
+                    className="my-0.5 flex items-start gap-2 rounded border border-code-peach/50 bg-code-peach/10 px-2 py-1"
+                  >
+                    <span aria-hidden="true" className="shrink-0 text-code-peach">{STEP_GLYPH.gate}</span>
+                    <span className="min-w-0 break-words text-code-peach">
+                      <span className="font-semibold">Held at the {step.gate.gate} gate</span>
+                      {step.gate.workItemTitle && <span className="text-code-subtle"> · {step.gate.workItemTitle}</span>}
+                      <span className="block text-code-subtle">{step.gate.error}</span>
+                      {step.gate.confirmFlag && <span className="block text-code-comment">needs {step.gate.confirmFlag}</span>}
+                    </span>
+                  </div>
+                );
+              }
+
+              // The run's change, captured and posted for review.
+              if (step.kind === 'delivery' && step.delivery) {
+                const d = step.delivery;
+                return (
+                  <div
+                    key={i}
+                    data-testid="tail-banner-delivery"
+                    className="my-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 rounded border border-code-green/40 bg-code-green/10 px-2 py-1"
+                  >
+                    <span aria-hidden="true" className="shrink-0 text-code-green">{STEP_GLYPH.delivery}</span>
+                    <span className="font-semibold text-code-green">Change posted for review</span>
+                    <span className="min-w-0 break-words text-code-subtle">{d.title}</span>
+                    {d.commitSha && (
+                      <Chip size="xs" mono palette="code" tone="neutral">{d.commitSha.slice(0, 7)}</Chip>
+                    )}
+                    {d.prUrl ? (
+                      <Link href={d.prUrl} external className="text-code-blue">
+                        {d.prNumber !== undefined ? `PR #${d.prNumber}` : 'Open PR'}
+                      </Link>
+                    ) : d.prNumber !== undefined ? (
+                      <span className="text-code-comment">PR #{d.prNumber}</span>
+                    ) : null}
                   </div>
                 );
               }

@@ -187,7 +187,16 @@ saved layout, pane kinds, quota — under host-themed chrome:
 
 Two more built-in kinds read the same tail stream: `LOGS_PANE_KIND` ("Bot
 logs" — follow/pause, source filter, search, live byte rate) and
-`AGENT_PANE_KIND` (the current run as a checklist). A kind may declare
+`AGENT_PANE_KIND` (the current run as a checklist). The Agent pane draws the
+latest `TodoWrite` as the run's plan above its steps (a later one replaces
+it), a `gate_refused` frame as "Held at the <gate> gate" with the flag that
+clears it, and a `delivery` frame as "Change posted for review" with the
+short sha and a PR link. On a `waiting` box it shows the agent's question
+with an inline reply that takes the Nudge route (`onInstruct`, scope
+`focused`, inside a lab; a resumed `runTask` otherwise — `LabInstructContext`).
+The `provisioning` status (minted, microVM not up) sorts between running and
+idle, is counted in `summarizeFleet().provisioning` and gets a header pill
+while above zero. Unknown frame types are ignored. A kind may declare
 `appliesTo(computer)`; `SHELL_PANE_KIND` refuses laptops, so a new pane on one
 lands on the first kind that applies (`defaultKindFor`), and the kind menu
 and toggle skip it.

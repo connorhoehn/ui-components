@@ -169,26 +169,8 @@ function _({ active: c = !0, enableRainbow: p = !1, gridColor: m = "#ffffff", ri
 	});
 }
 //#endregion
-//#region src/components/shared/Link.tsx
-var v = "text-primary no-underline hover:underline";
-function y(e) {
-	let t = new Set((e ?? "").split(/\s+/).filter(Boolean));
-	return t.add("noopener"), t.add("noreferrer"), [...t].join(" ");
-}
-function b({ href: e, children: t, external: n = !1, unstyled: i = !1, target: a, rel: o, className: c, ...l }) {
-	let u = n ? "_blank" : a, d = u === "_blank";
-	return /* @__PURE__ */ s("a", {
-		...l,
-		href: e,
-		target: u,
-		rel: d ? y(o) : o,
-		className: r(!i && v, c),
-		children: t
-	});
-}
-//#endregion
 //#region src/components/shared/SuggestionRow.tsx
-function x({ active: e, onHighlight: t, onPick: n, primary: i, secondary: a, leading: o, id: l, className: u, "data-testid": d }) {
+function v({ active: e, onHighlight: t, onPick: n, primary: i, secondary: a, leading: o, id: l, className: u, "data-testid": d }) {
 	return /* @__PURE__ */ c("button", {
 		type: "button",
 		role: "option",
@@ -216,7 +198,7 @@ function x({ active: e, onHighlight: t, onPick: n, primary: i, secondary: a, lea
 }
 //#endregion
 //#region src/components/shared/MeterRow.tsx
-function S({ onClick: e, title: t, label: n, note: i, meter: a, meterWidth: o = "sm", className: l, "aria-label": u, "data-testid": d }) {
+function y({ onClick: e, title: t, label: n, note: i, meter: a, meterWidth: o = "sm", className: l, "aria-label": u, "data-testid": d }) {
 	return /* @__PURE__ */ c("button", {
 		type: "button",
 		onClick: e,
@@ -240,4 +222,4 @@ function S({ onClick: e, title: t, label: n, note: i, meter: a, meterWidth: o = 
 	});
 }
 //#endregion
-export { m as a, p as i, x as n, _ as o, b as r, S as t };
+export { _ as a, m as i, v as n, p as r, y as t };

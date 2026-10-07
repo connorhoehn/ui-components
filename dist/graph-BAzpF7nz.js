@@ -22,9 +22,10 @@ import { t as j } from "./InlineAlert-CBtteaVZ.js";
 import { t as M } from "./CardHeader-C50GEAmo.js";
 import { t as N } from "./LogStream-Bk8DVIVb.js";
 import { a as ee, o as P, s as F } from "./backdropTone-BzPocySl.js";
-import { a as te, i as I, n as L, o as R, r as z, t as B } from "./MeterRow-DnfioGA3.js";
-import { t as V } from "./DropdownMenu-BS-H0H0p.js";
-import { t as ne } from "./SectionLabel-Bn8Vvb-K.js";
+import { a as te, i as I, n as L, r as R, t as z } from "./MeterRow-7m0okaBy.js";
+import { t as B } from "./DropdownMenu-BS-H0H0p.js";
+import { t as V } from "./SectionLabel-Bn8Vvb-K.js";
+import { t as ne } from "./Link-h2c9gcsw.js";
 import { t as re } from "./MetaLine-BtHTTScI.js";
 import { t as H } from "./Select-C6OGjVyH.js";
 import { t as ie } from "./Checkbox-C70AGFS5.js";
@@ -33,7 +34,7 @@ import { t as oe } from "./Text-CrEXEvGa.js";
 import { t as U } from "./useMeasuredWidth-BPrwD0q5.js";
 import { n as W } from "./useComputeProjects-ZSazDRet.js";
 import { t as se } from "./formatBytes-05ivRSJY.js";
-import { n as ce, r as le } from "./PaneStatusLine-m8wKbLkz.js";
+import { n as ce, r as le } from "./PaneStatusLine-DcOID_Ic.js";
 import { n as ue } from "./ChatSidePanelRegistry-Bqz4nPgw.js";
 /* empty css               */
 import { t as de } from "./AnimatedEdge-DnsfF8-D.js";
@@ -3082,8 +3083,8 @@ function Ln(e) {
 		"data-background": u,
 		"data-backdrop-ink": fe ? pe === "night" ? "dark" : "light" : void 0,
 		children: [
-			fe && /* @__PURE__ */ X(R, {
-				...pe === "night" ? te : I,
+			fe && /* @__PURE__ */ X(te, {
+				...pe === "night" ? I : R,
 				className: "absolute inset-0 -z-10",
 				"data-testid": "work-activity-ripple"
 			}),
@@ -3502,7 +3503,7 @@ function Wn({ node: e, artifact: r, selection: i, onSelectionChange: a, onOpen: 
 }
 //#endregion
 //#region src/components/graph/work/WorkComputePane.tsx
-var Gn = me(() => import("./ChatLabTerminal-Coj12Em8.js")), Kn = {
+var Gn = me(() => import("./ChatLabTerminal-C74q4q6g.js")), Kn = {
 	planning: {
 		label: "PLANNING",
 		pill: "info",
@@ -3934,7 +3935,7 @@ function ir({ compute: e, banner: r, className: i, "data-testid": a = "work-comp
 						"data-testid": `${a}-open-lab`,
 						children: "Open in Computer Lab"
 					}),
-					!!e.moreActions?.length && /* @__PURE__ */ X(V, {
+					!!e.moreActions?.length && /* @__PURE__ */ X(B, {
 						trigger: /* @__PURE__ */ X("span", {
 							"aria-hidden": "true",
 							children: "…"
@@ -7652,7 +7653,7 @@ function Co({ children: e, "aria-label": t, "data-testid": n }) {
 	});
 }
 function wo({ children: e, tone: n = "default", className: r }) {
-	return /* @__PURE__ */ X(ne, {
+	return /* @__PURE__ */ X(V, {
 		className: t("whitespace-nowrap", n === "warning" && "text-warning", r),
 		children: e
 	});
@@ -7835,7 +7836,7 @@ function Do({ person: e, evidence: i = [], loading: a = !1, error: o, onClose: l
 						gap: "none",
 						children: x.map((e, t) => {
 							let n = e.otherPerson;
-							return /* @__PURE__ */ X(B, {
+							return /* @__PURE__ */ X(z, {
 								onClick: () => u(n.id),
 								title: `Add ${n.name} to selection`,
 								label: n.name,
@@ -8101,7 +8102,7 @@ function Mo({ department: e, people: t, onFocusPerson: r, busFactorFindings: i, 
 								" · ",
 								Ba(t.name)
 							]
-						}), c ? /* @__PURE__ */ X(z, {
+						}), c ? /* @__PURE__ */ X(ne, {
 							href: l,
 							onClick: d(l),
 							title: s ? `Open the bus-factor finding the sweep filed for ${e}` : `See the bus-factor finding for ${e}`,

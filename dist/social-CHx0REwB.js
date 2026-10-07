@@ -39,7 +39,7 @@ import { n as Ee, t as De } from "./ReactionPickerPopover-CGha15Y2.js";
 import { n as Oe } from "./useComputeProjects-ZSazDRet.js";
 import "./QuoteBlock-qqQqscMP.js";
 import { i as ke, r as Ae } from "./composerSendError-CMnZJzVf.js";
-import { r as je } from "./PaneStatusLine-m8wKbLkz.js";
+import { r as je } from "./PaneStatusLine-DcOID_Ic.js";
 import "./ChatSidePanelRegistry-Bqz4nPgw.js";
 import { Suspense as Me, createContext as Ne, lazy as Pe, useCallback as K, useContext as Fe, useEffect as q, useId as Ie, useMemo as J, useRef as Y, useState as X } from "react";
 import { Fragment as Z, jsx as Q, jsxs as $ } from "react/jsx-runtime";
@@ -3310,7 +3310,7 @@ function Wt({ shelf: e = [], conversations: t, selected: n = null, onSelect: r, 
 }
 //#endregion
 //#region src/components/social/ChatLabShell.tsx
-var Gt = Pe(() => import("./ChatLabTerminal-Coj12Em8.js")), Kt = {
+var Gt = Pe(() => import("./ChatLabTerminal-C74q4q6g.js")), Kt = {
 	planning: {
 		label: "Planning",
 		dot: "bg-code-mauve",

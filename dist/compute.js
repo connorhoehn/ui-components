@@ -10,14 +10,14 @@ import { n as b, t as x } from "./DropdownMenu-BS-H0H0p.js";
 import { t as S } from "./SectionLabel-Bn8Vvb-K.js";
 import { t as C } from "./InlinePlaceholder-CbIBYc-_.js";
 import { n as ee } from "./FloatingPanel-CP5vaOcJ.js";
-import { a as te, i as w, n as T, r as E, t as ne } from "./useComputeProjects-ZSazDRet.js";
-import { a as re, i as D, n as ie, o as O, r as ae, s as k, t as oe } from "./PaneStatusLine-m8wKbLkz.js";
-import { $ as se, A as ce, B as le, C as A, D as ue, E as de, F as fe, G as pe, H as me, I as he, J as j, K as M, L as ge, M as _e, N as ve, O as ye, P as be, Q as xe, R as Se, S as Ce, T as N, U as P, V as F, W as we, X as Te, Y as I, Z as Ee, _ as De, a as Oe, at as ke, b as Ae, c as je, ct as Me, d as Ne, dt as Pe, et as L, f as Fe, ft as Ie, g as R, h as Le, i as Re, it as z, j as B, k as ze, l as Be, lt as Ve, m as V, n as He, nt as Ue, o as We, ot as Ge, p as H, pt as Ke, q as qe, r as Je, rt as Ye, s as Xe, st as Ze, t as Qe, tt as $e, u as et, ut as tt, v as nt, w as rt, x as it, y as at, z as ot } from "./ComputeContext-ByG0RfLD.js";
-import { Fragment as st, useCallback as U, useEffect as W, useMemo as G, useRef as K, useState as q, useSyncExternalStore as ct } from "react";
-import { Fragment as lt, jsx as J, jsxs as Y } from "react/jsx-runtime";
+import { a as te, i as w, n as T, r as E, t as D } from "./useComputeProjects-ZSazDRet.js";
+import { a as ne, i as O, n as re, o as k, r as ie, s as A, t as ae } from "./PaneStatusLine-DcOID_Ic.js";
+import { $ as oe, A as se, B as ce, C as le, Ct as ue, D as de, E as fe, F as pe, G as me, H as he, I as j, J as M, K as ge, L as _e, M as ve, N as ye, O as be, P as xe, Q as Se, R as Ce, S as we, St as N, T as P, U as F, V as Te, W as Ee, X as De, Y as Oe, Z as ke, _ as Ae, _t as je, a as Me, at as Ne, b as Pe, bt as Fe, c as Ie, ct as I, d as Le, dt as Re, et as L, f as ze, ft as Be, g as R, gt as z, h as Ve, ht as He, i as Ue, it as We, j as Ge, k as Ke, l as qe, lt as Je, m as B, mt as V, n as Ye, nt as Xe, o as Ze, ot as Qe, p as $e, pt as et, q as tt, r as nt, rt, s as it, st as at, t as ot, tt as st, u as ct, ut as lt, v as ut, vt as dt, w as ft, x as pt, xt as mt, y as ht, yt as gt, z as _t } from "./ComputeContext-6E0xoA6i.js";
+import { Fragment as vt, useCallback as H, useEffect as U, useMemo as W, useRef as G, useState as K, useSyncExternalStore as yt } from "react";
+import { Fragment as bt, jsx as q, jsxs as J } from "react/jsx-runtime";
 //#region src/components/compute/lib/paneTree.ts
-var ut = .1, dt = .9;
-function ft(e, t, n) {
+var xt = .1, St = .9;
+function Ct(e, t, n) {
 	return {
 		kind: "leaf",
 		id: e,
@@ -25,16 +25,16 @@ function ft(e, t, n) {
 		kindId: n
 	};
 }
-function X(e) {
-	return e.kind === "leaf" ? [e] : [...X(e.a), ...X(e.b)];
+function Y(e) {
+	return e.kind === "leaf" ? [e] : [...Y(e.a), ...Y(e.b)];
 }
-function pt(e, t) {
-	return X(e).find((e) => e.id === t) ?? null;
+function wt(e, t) {
+	return Y(e).find((e) => e.id === t) ?? null;
 }
-function mt(e) {
-	return X(e).length;
+function Tt(e) {
+	return Y(e).length;
 }
-function ht(e, t, n, r, i) {
+function Et(e, t, n, r, i) {
 	let a = (e) => e.kind === "leaf" ? e.id === t ? {
 		kind: "split",
 		id: i,
@@ -49,7 +49,7 @@ function ht(e, t, n, r, i) {
 	};
 	return a(e);
 }
-function gt(e, t) {
+function Dt(e, t) {
 	if (e.kind === "leaf") return e;
 	let n = (e) => {
 		if (e.kind === "leaf") return e.id === t ? null : e;
@@ -62,8 +62,8 @@ function gt(e, t) {
 	};
 	return n(e) ?? e;
 }
-function _t(e, t, n) {
-	let r = Math.min(dt, Math.max(ut, n)), i = (e) => e.kind === "leaf" ? e : e.id === t ? {
+function Ot(e, t, n) {
+	let r = Math.min(St, Math.max(xt, n)), i = (e) => e.kind === "leaf" ? e : e.id === t ? {
 		...e,
 		ratio: r
 	} : {
@@ -73,7 +73,7 @@ function _t(e, t, n) {
 	};
 	return i(e);
 }
-function vt(e, t, n) {
+function kt(e, t, n) {
 	let r = (e) => e.kind === "leaf" ? e.id === t ? {
 		...e,
 		...n
@@ -84,7 +84,7 @@ function vt(e, t, n) {
 	};
 	return r(e);
 }
-function yt(e, t = {
+function At(e, t = {
 	x: 0,
 	y: 0,
 	width: 1,
@@ -97,27 +97,27 @@ function yt(e, t = {
 	let { direction: n, ratio: r } = e;
 	if (n === "row") {
 		let n = t.width * r;
-		return [...yt(e.a, {
+		return [...At(e.a, {
 			...t,
 			width: n
-		}), ...yt(e.b, {
+		}), ...At(e.b, {
 			...t,
 			x: t.x + n,
 			width: t.width - n
 		})];
 	}
 	let i = t.height * r;
-	return [...yt(e.a, {
+	return [...At(e.a, {
 		...t,
 		height: i
-	}), ...yt(e.b, {
+	}), ...At(e.b, {
 		...t,
 		y: t.y + i,
 		height: t.height - i
 	})];
 }
-function bt(e, t, n) {
-	let r = yt(e), i = r.find((e) => e.id === t);
+function jt(e, t, n) {
+	let r = At(e), i = r.find((e) => e.id === t);
 	if (!i) return null;
 	let a = {
 		x: i.x + i.width / 2,
@@ -138,13 +138,13 @@ function bt(e, t, n) {
 	};
 	return s.reduce((e, t) => c(t) < c(e) ? t : e).id;
 }
-function xt(e, t, n) {
-	let r = yt(e);
+function Mt(e, t, n) {
+	let r = At(e);
 	if (r.length < 2) return null;
 	let i = r.findIndex((e) => e.id === t);
 	return i < 0 ? r[0]?.id ?? null : r[(i + n + r.length) % r.length]?.id ?? null;
 }
-function St(e, t, n) {
+function Nt(e, t, n) {
 	let r = null, i = (e, a) => {
 		if (e.kind === "leaf") {
 			e.id === t && (r = a);
@@ -161,28 +161,28 @@ function St(e, t, n) {
 	};
 	return i(e, null), r;
 }
-function Ct(e, t) {
-	return e.kind === "leaf" ? null : e.id === t ? e.ratio : Ct(e.a, t) ?? Ct(e.b, t);
+function Pt(e, t) {
+	return e.kind === "leaf" ? null : e.id === t ? e.ratio : Pt(e.a, t) ?? Pt(e.b, t);
 }
-function wt(e, t, n) {
+function Ft(e, t, n) {
 	let [r, ...i] = e;
 	if (!r) throw Error("chain() needs at least one pane");
 	if (i.length === 0) return r;
-	let a = Math.min(dt, Math.max(ut, 1 / e.length));
+	let a = Math.min(St, Math.max(xt, 1 / e.length));
 	return {
 		kind: "split",
 		id: n(),
 		direction: t,
 		ratio: a,
 		a: r,
-		b: wt(i, t, n)
+		b: Ft(i, t, n)
 	};
 }
-function Tt(e, t, n) {
-	let r = X(e);
+function It(e, t, n) {
+	let r = Y(e);
 	if (r.length < 2) return e;
-	if (t === "rows") return wt(r, "column", n);
-	if (t === "columns") return wt(r, "row", n);
+	if (t === "rows") return Ft(r, "column", n);
+	if (t === "columns") return Ft(r, "row", n);
 	let [i, ...a] = r;
 	return {
 		kind: "split",
@@ -190,13 +190,13 @@ function Tt(e, t, n) {
 		direction: "row",
 		ratio: .5,
 		a: i,
-		b: wt(a, "column", n)
+		b: Ft(a, "column", n)
 	};
 }
 //#endregion
 //#region src/components/compute/hooks/useLabLayout.ts
-var Et = 0, Dt = (e) => `${e}-${(Et += 1).toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
-function Ot() {
+var Lt = 0, Rt = (e) => `${e}-${(Lt += 1).toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+function zt() {
 	let e = {
 		windows: [],
 		activeWindowId: null,
@@ -204,7 +204,7 @@ function Ot() {
 		zoomedPaneId: null
 	};
 	try {
-		let t = globalThis.localStorage?.getItem(Pe);
+		let t = globalThis.localStorage?.getItem(mt);
 		if (!t) return e;
 		let n = JSON.parse(t);
 		return Array.isArray(n.windows) ? {
@@ -216,14 +216,14 @@ function Ot() {
 		return e;
 	}
 }
-function kt() {
-	let [e, t] = q(Ot);
-	W(() => {
+function Bt() {
+	let [e, t] = K(zt);
+	U(() => {
 		try {
-			globalThis.localStorage?.setItem(Pe, JSON.stringify(e));
+			globalThis.localStorage?.setItem(mt, JSON.stringify(e));
 		} catch {}
 	}, [e]);
-	let n = G(() => e.windows.find((t) => t.id === e.activeWindowId) ?? e.windows[0] ?? null, [e.windows, e.activeWindowId]), r = G(() => n ? X(n.root) : [], [n]), i = G(() => [...new Set(r.map((e) => e.computerId))], [r]), a = U((e, n) => {
+	let n = W(() => e.windows.find((t) => t.id === e.activeWindowId) ?? e.windows[0] ?? null, [e.windows, e.activeWindowId]), r = W(() => n ? Y(n.root) : [], [n]), i = W(() => [...new Set(r.map((e) => e.computerId))], [r]), a = H((e, n) => {
 		t((t) => {
 			let r = t.windows.find((e) => e.id === t.activeWindowId) ?? t.windows[0];
 			if (!r) return t;
@@ -237,34 +237,34 @@ function kt() {
 				...n?.(i) ?? {}
 			};
 		});
-	}, []), o = U((e) => {
+	}, []), o = H((e) => {
 		t((t) => ({
 			...t,
 			activePaneId: e
 		}));
-	}, []), s = U((t, n, r) => {
-		let i = ft(Dt("pane"), n, r);
+	}, []), s = H((t, n, r) => {
+		let i = Ct(Rt("pane"), n, r);
 		a((n) => {
-			let r = e.activePaneId && pt(n, e.activePaneId) ? e.activePaneId : X(n)[0]?.id;
-			return r ? ht(n, r, t, i, Dt("split")) : n;
+			let r = e.activePaneId && wt(n, e.activePaneId) ? e.activePaneId : Y(n)[0]?.id;
+			return r ? Et(n, r, t, i, Rt("split")) : n;
 		}, () => ({
 			activePaneId: i.id,
 			zoomedPaneId: null
 		}));
-	}, [a, e.activePaneId]), c = U(() => {
+	}, [a, e.activePaneId]), c = H(() => {
 		t((e) => {
 			let t = e.windows.find((t) => t.id === e.activeWindowId) ?? e.windows[0];
 			if (!t || !e.activePaneId) return e;
-			if (mt(t.root) <= 1) {
+			if (Tt(t.root) <= 1) {
 				let n = e.windows.filter((e) => e.id !== t.id), r = n[0] ?? null;
 				return {
 					windows: n,
 					activeWindowId: r?.id ?? null,
-					activePaneId: r ? X(r.root)[0]?.id ?? null : null,
+					activePaneId: r ? Y(r.root)[0]?.id ?? null : null,
 					zoomedPaneId: null
 				};
 			}
-			let n = gt(t.root, e.activePaneId), r = X(n);
+			let n = Dt(t.root, e.activePaneId), r = Y(n);
 			return {
 				...e,
 				windows: e.windows.map((e) => e.id === t.id ? {
@@ -275,36 +275,36 @@ function kt() {
 				zoomedPaneId: null
 			};
 		});
-	}, []), l = U((e, t) => a((n) => vt(n, e, { computerId: t })), [a]), u = U((e, t) => a((n) => vt(n, e, { kindId: t })), [a]), d = U((e, t) => a((n) => _t(n, e, t)), [a]), f = U((e) => {
+	}, []), l = H((e, t) => a((n) => kt(n, e, { computerId: t })), [a]), u = H((e, t) => a((n) => kt(n, e, { kindId: t })), [a]), d = H((e, t) => a((n) => Ot(n, e, t)), [a]), f = H((e) => {
 		t((t) => {
 			let n = t.windows.find((e) => e.id === t.activeWindowId) ?? t.windows[0];
 			if (!n || !t.activePaneId) return t;
-			let r = bt(n.root, t.activePaneId, e);
+			let r = jt(n.root, t.activePaneId, e);
 			return r ? {
 				...t,
 				activePaneId: r,
 				zoomedPaneId: null
 			} : t;
 		});
-	}, []), p = U((e) => {
+	}, []), p = H((e) => {
 		t((t) => {
 			let n = t.windows.find((e) => e.id === t.activeWindowId) ?? t.windows[0];
 			if (!n || !t.activePaneId) return t;
-			let r = xt(n.root, t.activePaneId, e);
+			let r = Mt(n.root, t.activePaneId, e);
 			return r ? {
 				...t,
 				activePaneId: r,
 				zoomedPaneId: null
 			} : t;
 		});
-	}, []), m = U(() => {
+	}, []), m = H(() => {
 		t((e) => ({
 			...e,
 			zoomedPaneId: e.zoomedPaneId ? null : e.activePaneId
 		}));
-	}, []), h = U((e) => a((t) => Tt(t, e, () => Dt("split")), () => ({ zoomedPaneId: null })), [a]), g = U((e, n) => {
-		let r = ft(Dt("pane"), e, n), i = {
-			id: Dt("win"),
+	}, []), h = H((e) => a((t) => It(t, e, () => Rt("split")), () => ({ zoomedPaneId: null })), [a]), g = H((e, n) => {
+		let r = Ct(Rt("pane"), e, n), i = {
+			id: Rt("win"),
 			root: r
 		};
 		t((e) => ({
@@ -313,7 +313,7 @@ function kt() {
 			activePaneId: r.id,
 			zoomedPaneId: null
 		}));
-	}, []), _ = U((e) => {
+	}, []), _ = H((e) => {
 		t((t) => {
 			let n = t.windows.filter((t) => t.id !== e);
 			if (t.activeWindowId !== e) return {
@@ -324,32 +324,32 @@ function kt() {
 			return {
 				windows: n,
 				activeWindowId: r?.id ?? null,
-				activePaneId: r ? X(r.root)[0]?.id ?? null : null,
+				activePaneId: r ? Y(r.root)[0]?.id ?? null : null,
 				zoomedPaneId: null
 			};
 		});
-	}, []), v = U((e) => {
+	}, []), v = H((e) => {
 		t((t) => {
 			let n = t.windows.find((t) => t.id === e);
 			return n ? {
 				...t,
 				activeWindowId: e,
-				activePaneId: X(n.root)[0]?.id ?? null,
+				activePaneId: Y(n.root)[0]?.id ?? null,
 				zoomedPaneId: null
 			} : t;
 		});
-	}, []), y = U((e) => {
+	}, []), y = H((e) => {
 		t((t) => {
 			if (t.windows.length < 2) return t;
 			let n = t.windows.findIndex((e) => e.id === t.activeWindowId), r = t.windows[(n + e + t.windows.length) % t.windows.length];
 			return r ? {
 				...t,
 				activeWindowId: r.id,
-				activePaneId: X(r.root)[0]?.id ?? null,
+				activePaneId: Y(r.root)[0]?.id ?? null,
 				zoomedPaneId: null
 			} : t;
 		});
-	}, []), b = U((e, n) => {
+	}, []), b = H((e, n) => {
 		e && t((t) => {
 			if (t.windows.length > 0) {
 				if (t.activePaneId) return t;
@@ -357,11 +357,11 @@ function kt() {
 				return e ? {
 					...t,
 					activeWindowId: e.id,
-					activePaneId: X(e.root)[0]?.id ?? null
+					activePaneId: Y(e.root)[0]?.id ?? null
 				} : t;
 			}
-			let r = ft(Dt("pane"), e, n), i = {
-				id: Dt("win"),
+			let r = Ct(Rt("pane"), e, n), i = {
+				id: Rt("win"),
 				root: r
 			};
 			return {
@@ -371,14 +371,14 @@ function kt() {
 				zoomedPaneId: null
 			};
 		});
-	}, []), x = U((e) => {
+	}, []), x = H((e) => {
 		let n = new Set(e);
 		t((e) => {
 			let t = !1, r = [];
 			for (let i of e.windows) {
 				let e = i.root;
-				for (let r of X(i.root)) n.has(r.computerId) || (t = !0, e = mt(e) <= 1 ? e : gt(e, r.id));
-				if (mt(e) === 1 && !n.has(X(e)[0].computerId)) {
+				for (let r of Y(i.root)) n.has(r.computerId) || (t = !0, e = Tt(e) <= 1 ? e : Dt(e, r.id));
+				if (Tt(e) === 1 && !n.has(Y(e)[0].computerId)) {
 					t = !0;
 					continue;
 				}
@@ -388,7 +388,7 @@ function kt() {
 				});
 			}
 			if (!t) return e;
-			let i = r.find((t) => t.id === e.activeWindowId) ?? r[0] ?? null, a = i ? X(i.root) : [];
+			let i = r.find((t) => t.id === e.activeWindowId) ?? r[0] ?? null, a = i ? Y(i.root) : [];
 			return {
 				windows: r,
 				activeWindowId: i?.id ?? null,
@@ -424,44 +424,45 @@ function kt() {
 }
 //#endregion
 //#region src/components/compute/lib/paneKinds.ts
-function At(e, t) {
+function Vt(e, t) {
 	return e.find((e) => e.id === t) ?? e[0] ?? null;
 }
-function jt(e, t) {
+function Ht(e, t) {
 	return t ? e.filter((e) => !e.appliesTo || e.appliesTo(t)) : [...e];
 }
-function Mt(e, t) {
-	return jt(e, t)[0] ?? e[0] ?? null;
+function Ut(e, t) {
+	return Ht(e, t)[0] ?? e[0] ?? null;
 }
-function Nt(e, t, n) {
-	let r = n ? jt(e, n) : e;
+function Wt(e, t, n) {
+	let r = n ? Ht(e, n) : e;
 	return r.length === 0 ? null : r[(r.findIndex((e) => e.id === t) + 1) % r.length] ?? null;
 }
-function Pt(e, t, n) {
-	return t.filter((t) => At(e, t)?.quota === n).length;
+function Gt(e, t, n) {
+	return t.filter((t) => Vt(e, t)?.quota === n).length;
 }
 //#endregion
 //#region src/components/compute/components/LabFleetRail.tsx
-var Ft = {
+var Kt = {
+	provisioning: "text-info",
 	waiting: "text-warning",
 	running: "text-primary",
 	error: "text-danger",
 	idle: "text-success",
 	stopped: "text-text-tertiary"
 };
-function It(e, t) {
+function qt(e, t) {
 	return t || !Number.isInteger(e) ? `$${e.toFixed(2)}` : `$${e.toFixed(0)}`;
 }
-function Lt(e, t) {
+function Jt(e, t) {
 	let n = [`${t} ${t === 1 ? "computer" : "computers"}`], r = e.spentUsd ?? e.liveSpendUsd;
-	return typeof e.budgetUsd == "number" && e.budgetUsd > 0 ? n.push(`${It(r, !0)} / ${It(e.budgetUsd, !1)}`) : r > 0 && n.push(It(r, !0)), e.botCount && n.push(`${e.botCount} ${e.botCount === 1 ? "bot" : "bots"}`), n.join(" · ");
+	return typeof e.budgetUsd == "number" && e.budgetUsd > 0 ? n.push(`${qt(r, !0)} / ${qt(e.budgetUsd, !1)}`) : r > 0 && n.push(qt(r, !0)), e.botCount && n.push(`${e.botCount} ${e.botCount === 1 ? "bot" : "bots"}`), n.join(" · ");
 }
-function Rt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds: i, onSelect: a, onOpenInPane: s, statusFilter: c = null, onStatusFilterChange: d, tab: f, onTabChange: m, onCreate: h, className: g }) {
-	let [_, v] = q("computers"), b = f ?? _, S = (e) => {
+function Yt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds: i, onSelect: a, onOpenInPane: s, statusFilter: c = null, onStatusFilterChange: d, tab: f, onTabChange: m, onCreate: h, className: g }) {
+	let [_, v] = K("computers"), b = f ?? _, S = (e) => {
 		v(e), m?.(e);
-	}, [C, ee] = q(""), [te, w] = q(/* @__PURE__ */ new Set()), T = G(() => new Set(r), [r]), E = Je(), re = E?.projects ?? [], ie = E?.projectsAbsent ?? !0, O = G(() => {
-		let e = re.filter((e) => e.id !== "__unassigned__" && e.computers.length > 0);
-		if (ie || e.length === 0) return [{
+	}, [C, ee] = K(""), [te, w] = K(/* @__PURE__ */ new Set()), T = W(() => new Set(r), [r]), E = nt(), ne = E?.projects ?? [], re = E?.projectsAbsent ?? !0, k = W(() => {
+		let e = ne.filter((e) => e.id !== "__unassigned__" && e.computers.length > 0);
+		if (re || e.length === 0) return [{
 			id: "__all",
 			name: "",
 			quickLine: "",
@@ -470,15 +471,15 @@ function Rt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds
 		let n = e.map((e) => ({
 			id: e.id,
 			name: e.name,
-			quickLine: Lt(e, e.computers.length),
+			quickLine: Jt(e, e.computers.length),
 			computers: e.computers
 		})), r = new Set(n.flatMap((e) => e.computers.map((e) => e.id))), i = t.filter((e) => !r.has(e.id));
 		if (i.length > 0) {
-			let e = re.find((e) => e.id === ne);
+			let e = ne.find((e) => e.id === D);
 			n.push({
-				id: ne,
+				id: D,
 				name: "Unassigned",
-				quickLine: Lt({
+				quickLine: Jt({
 					budgetUsd: void 0,
 					spentUsd: void 0,
 					liveSpendUsd: 0,
@@ -489,14 +490,14 @@ function Rt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds
 		}
 		return n;
 	}, [
+		ne,
 		re,
-		ie,
 		t
-	]), ae = G(() => {
+	]), ie = W(() => {
 		let e = /* @__PURE__ */ new Map(), t = 0;
-		for (let n of O) for (let r of n.computers) e.set(r.id, t += 1);
+		for (let n of k) for (let r of n.computers) e.set(r.id, t += 1);
 		return e;
-	}, [O]), oe = U((e) => N(e, C) && (!c || k(e) === c), [C, c]), se = G(() => t.filter(A).sort(Ce), [t]), ce = [{
+	}, [k]), ae = H((e) => _t(e, C) && (!c || A(e) === c), [C, c]), oe = W(() => t.filter(_e).sort(j), [t]), se = [{
 		label: "Show",
 		items: [{
 			label: "Every status",
@@ -505,27 +506,28 @@ function Rt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds
 		}, ...[
 			"waiting",
 			"running",
+			"provisioning",
 			"error",
 			"idle",
 			"stopped"
 		].map((e) => ({
-			label: D[e].label,
+			label: O[e].label,
 			checked: c === e,
 			onSelect: () => d?.(c === e ? null : e)
 		}))]
-	}], le = t.length === 0, ue = /* @__PURE__ */ Y("div", {
+	}], ce = t.length === 0, le = /* @__PURE__ */ J("div", {
 		"data-testid": "lab-fleet-empty",
 		className: "px-3 py-4 flex flex-col items-start gap-2",
 		children: [
-			/* @__PURE__ */ J("div", {
+			/* @__PURE__ */ q("div", {
 				className: "text-[13px] font-semibold text-text-primary",
 				children: "No computers in the lab"
 			}),
-			/* @__PURE__ */ J("div", {
+			/* @__PURE__ */ q("div", {
 				className: "text-[12px] text-text-secondary",
 				children: h ? "Start a computer and it opens here in a pane." : "Nothing in the fleet is shared with you yet."
 			}),
-			h && /* @__PURE__ */ J("button", {
+			h && /* @__PURE__ */ q("button", {
 				type: "button",
 				onClick: h,
 				"data-testid": "lab-fleet-empty-create",
@@ -534,56 +536,56 @@ function Rt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds
 			})
 		]
 	});
-	return /* @__PURE__ */ Y("div", {
+	return /* @__PURE__ */ J("div", {
 		"data-testid": "lab-fleet-rail",
 		className: e("flex flex-col h-full min-h-0 border-r border-border bg-surface", g),
 		children: [
-			/* @__PURE__ */ Y("div", {
+			/* @__PURE__ */ J("div", {
 				role: "tablist",
 				"aria-label": "Fleet",
 				className: "flex shrink-0 border-b border-border",
-				children: [/* @__PURE__ */ J(zt, {
+				children: [/* @__PURE__ */ q(Xt, {
 					selected: b === "computers",
 					onSelect: () => S("computers"),
-					icon: /* @__PURE__ */ J(u, { size: 14 }),
+					icon: /* @__PURE__ */ q(u, { size: 14 }),
 					label: "Computers",
 					count: t.length
-				}), /* @__PURE__ */ J(zt, {
+				}), /* @__PURE__ */ q(Xt, {
 					selected: b === "agents",
 					onSelect: () => S("agents"),
-					icon: /* @__PURE__ */ J(l, { size: 14 }),
+					icon: /* @__PURE__ */ q(l, { size: 14 }),
 					label: "Agents",
-					count: se.length
+					count: oe.length
 				})]
 			}),
-			/* @__PURE__ */ Y("div", {
+			/* @__PURE__ */ J("div", {
 				className: "flex items-center gap-1.5 px-2 py-2 shrink-0",
-				children: [/* @__PURE__ */ J(y, {
+				children: [/* @__PURE__ */ q(y, {
 					value: C,
 					onChange: ee,
 					onClear: () => ee(""),
 					placeholder: "Find computer or agent…",
 					className: "flex-1 min-w-0"
-				}), d && /* @__PURE__ */ J(x, {
-					trigger: /* @__PURE__ */ J(o, { size: 14 }),
+				}), d && /* @__PURE__ */ q(x, {
+					trigger: /* @__PURE__ */ q(o, { size: 14 }),
 					triggerLabel: "Filter by status",
-					triggerTitle: c ? `Showing ${D[c].label}` : "Filter by status",
+					triggerTitle: c ? `Showing ${O[c].label}` : "Filter by status",
 					triggerClassName: e(c && "text-primary border-primary"),
 					align: "end",
-					sections: ce,
+					sections: se,
 					"data-testid": "lab-fleet-filter"
 				})]
 			}),
-			b === "computers" ? /* @__PURE__ */ J(Bt, {
+			b === "computers" ? /* @__PURE__ */ q(Zt, {
 				label: "computers",
-				emptyState: le ? ue : void 0,
-				children: O.map((t) => {
-					let r = t.computers.filter(oe);
+				emptyState: ce ? le : void 0,
+				children: k.map((t) => {
+					let r = t.computers.filter(ae);
 					if (r.length === 0) return null;
 					let o = te.has(t.id) && !C;
-					return /* @__PURE__ */ Y("div", {
+					return /* @__PURE__ */ J("div", {
 						role: "presentation",
-						children: [t.name && /* @__PURE__ */ Y("button", {
+						children: [t.name && /* @__PURE__ */ J("button", {
 							type: "button",
 							tabIndex: -1,
 							"aria-expanded": !o,
@@ -593,22 +595,22 @@ function Rt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds
 							}),
 							"data-testid": "lab-fleet-group",
 							className: "w-full flex items-start gap-1.5 px-2 pt-2.5 pb-1 text-left bg-transparent border-none cursor-pointer hover:bg-surface-hover",
-							children: [/* @__PURE__ */ J(p, {
+							children: [/* @__PURE__ */ q(p, {
 								size: 12,
 								className: e("mt-0.5 shrink-0 text-text-tertiary transition-transform", o && "-rotate-90")
-							}), /* @__PURE__ */ Y("span", {
+							}), /* @__PURE__ */ J("span", {
 								className: "min-w-0 flex-1",
-								children: [/* @__PURE__ */ J("span", {
+								children: [/* @__PURE__ */ q("span", {
 									className: "block text-[12px] font-semibold text-text-primary truncate",
 									children: t.name
-								}), /* @__PURE__ */ J("span", {
+								}), /* @__PURE__ */ q("span", {
 									className: "block text-[11px] text-text-tertiary truncate tabular-nums",
 									children: t.quickLine
 								})]
 							})]
-						}), !o && r.map((e) => /* @__PURE__ */ J(Vt, {
+						}), !o && r.map((e) => /* @__PURE__ */ q(Qt, {
 							computer: e,
-							number: ae.get(e.id) ?? 0,
+							number: ie.get(e.id) ?? 0,
 							active: e.id === n,
 							selected: i?.has(e.id) ?? !1,
 							open: T.has(e.id),
@@ -617,11 +619,11 @@ function Rt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds
 						}, e.id))]
 					}, t.id);
 				})
-			}) : /* @__PURE__ */ J(Bt, {
+			}) : /* @__PURE__ */ q(Zt, {
 				label: "agents",
-				children: se.filter(oe).map((e) => /* @__PURE__ */ J(Vt, {
+				children: oe.filter(ae).map((e) => /* @__PURE__ */ q(Qt, {
 					computer: e,
-					number: ae.get(e.id) ?? 0,
+					number: ie.get(e.id) ?? 0,
 					active: e.id === n,
 					selected: i?.has(e.id) ?? !1,
 					open: T.has(e.id),
@@ -633,8 +635,8 @@ function Rt({ computers: t, activeComputerId: n, openComputerIds: r, selectedIds
 		]
 	});
 }
-function zt({ selected: t, onSelect: n, icon: r, label: i, count: a }) {
-	return /* @__PURE__ */ Y("button", {
+function Xt({ selected: t, onSelect: n, icon: r, label: i, count: a }) {
+	return /* @__PURE__ */ J("button", {
 		type: "button",
 		role: "tab",
 		"aria-selected": t,
@@ -643,15 +645,15 @@ function zt({ selected: t, onSelect: n, icon: r, label: i, count: a }) {
 		children: [
 			r,
 			i,
-			/* @__PURE__ */ J("span", {
+			/* @__PURE__ */ q("span", {
 				className: "text-[11px] font-normal text-text-tertiary tabular-nums",
 				children: a
 			})
 		]
 	});
 }
-function Bt({ label: e, children: t, emptyState: n }) {
-	let r = K(null), i = U((e) => {
+function Zt({ label: e, children: t, emptyState: n }) {
+	let r = G(null), i = H((e) => {
 		if (![
 			"ArrowDown",
 			"ArrowUp",
@@ -664,24 +666,24 @@ function Bt({ label: e, children: t, emptyState: n }) {
 		let n = t.findIndex((e) => e === document.activeElement);
 		t[e.key === "Home" ? 0 : e.key === "End" ? t.length - 1 : n < 0 ? 0 : (n + (e.key === "ArrowDown" ? 1 : -1) + t.length) % t.length]?.focus();
 	}, []), a = Array.isArray(t) ? t.every((e) => !e) : !t;
-	return /* @__PURE__ */ J("div", {
+	return /* @__PURE__ */ q("div", {
 		ref: r,
 		role: "listbox",
 		"aria-label": e,
 		onKeyDown: i,
 		className: "flex-1 min-h-0 overflow-y-auto pb-2",
-		children: a ? n ?? /* @__PURE__ */ J("div", {
+		children: a ? n ?? /* @__PURE__ */ q("div", {
 			className: "px-3 py-2 text-[12px] text-text-tertiary",
 			children: "Nothing matches."
 		}) : t
 	});
 }
-function Vt({ computer: t, number: n, active: r, selected: i, open: a, onSelect: o, onOpenInPane: c, showTask: l = !1 }) {
-	let u = k(t), d = D[u], f = rt(t);
-	return /* @__PURE__ */ Y("div", {
+function Qt({ computer: t, number: n, active: r, selected: i, open: a, onSelect: o, onOpenInPane: c, showTask: l = !1 }) {
+	let u = A(t), d = O[u], f = Ce(t);
+	return /* @__PURE__ */ J("div", {
 		role: "presentation",
 		className: e("group relative flex items-stretch", r ? "bg-primary-bg" : i ? "bg-surface-hover" : "hover:bg-surface-hover"),
-		children: [/* @__PURE__ */ Y("button", {
+		children: [/* @__PURE__ */ J("button", {
 			"data-rail-row": !0,
 			type: "button",
 			role: "option",
@@ -698,62 +700,62 @@ function Vt({ computer: t, number: n, active: r, selected: i, open: a, onSelect:
 			},
 			className: e("min-w-0 flex-1 text-left flex items-start gap-2 pl-2 pr-1 py-1.5 border-l-2 cursor-pointer bg-transparent border-y-0 border-r-0", "focus:outline-none focus-visible:ring-1 focus-visible:ring-primary focus-visible:ring-inset", r ? "border-primary" : i ? "border-border-emphasis" : "border-transparent"),
 			children: [
-				/* @__PURE__ */ J("span", {
+				/* @__PURE__ */ q("span", {
 					className: "w-5 shrink-0 text-right text-[11px] text-text-tertiary tabular-nums leading-5",
 					children: n
 				}),
-				/* @__PURE__ */ J("span", {
+				/* @__PURE__ */ q("span", {
 					className: "w-3.5 shrink-0 flex justify-center leading-5 pt-[5px]",
-					children: f ? /* @__PURE__ */ J(s, {
+					children: f ? /* @__PURE__ */ q(s, {
 						size: 14,
 						"aria-label": `laptop · ${d.label}`,
-						className: e("-mt-[2px]", Ft[u])
-					}) : /* @__PURE__ */ J(v, {
+						className: e("-mt-[2px]", Kt[u])
+					}) : /* @__PURE__ */ q(v, {
 						size: "xs",
 						color: d.color,
 						pulse: d.pulse,
 						"aria-label": d.label
 					})
 				}),
-				/* @__PURE__ */ Y("span", {
+				/* @__PURE__ */ J("span", {
 					className: "min-w-0 flex-1",
-					children: [/* @__PURE__ */ J("span", {
+					children: [/* @__PURE__ */ q("span", {
 						className: e("block text-[12.5px] leading-5 truncate font-mono", r ? "text-text-primary font-semibold" : "text-text-secondary"),
 						children: t.label
-					}), l && /* @__PURE__ */ Y("span", {
+					}), l && /* @__PURE__ */ J("span", {
 						className: "block text-[11px] text-text-tertiary truncate",
-						children: [/* @__PURE__ */ J("span", {
-							className: e("font-semibold", Ft[u]),
+						children: [/* @__PURE__ */ q("span", {
+							className: e("font-semibold", Kt[u]),
 							children: d.label
 						}), t.currentTask ? ` · ${t.currentTask}` : ""]
 					})]
 				}),
-				i && /* @__PURE__ */ J("span", {
+				i && /* @__PURE__ */ q("span", {
 					"aria-label": "selected as a target",
 					className: "text-[11px] text-primary leading-5",
 					children: "✓"
 				}),
-				a && /* @__PURE__ */ J("span", {
+				a && /* @__PURE__ */ q("span", {
 					"aria-label": "open in a pane",
 					title: "Open in a pane",
 					className: "text-[9px] text-primary leading-5",
 					children: "▣"
 				})
 			]
-		}), c && /* @__PURE__ */ J("button", {
+		}), c && /* @__PURE__ */ q("button", {
 			type: "button",
 			tabIndex: -1,
 			onClick: () => c(t),
 			"aria-label": `Open ${t.label} in a new pane`,
 			title: "Open in a new pane",
 			className: e("px-2 shrink-0 bg-transparent border-none cursor-pointer text-text-tertiary hover:text-primary", r ? "opacity-100" : "opacity-0 group-hover:opacity-100 focus-visible:opacity-100"),
-			children: /* @__PURE__ */ J(m, { size: 13 })
+			children: /* @__PURE__ */ q(m, { size: 13 })
 		})]
 	});
 }
 //#endregion
 //#region src/components/compute/components/LabWorkspaceChrome.tsx
-var Ht = [
+var $t = [
 	{
 		status: "waiting",
 		word: (e) => e === 1 ? "needs you" : "need you",
@@ -767,31 +769,39 @@ var Ht = [
 		hint: "Show only computers with a run in flight"
 	},
 	{
+		status: "provisioning",
+		word: () => "provisioning",
+		tone: "info",
+		hint: "Show only computers still starting up",
+		onlyWhenPresent: !0
+	},
+	{
 		status: "error",
 		word: (e) => e === 1 ? "error" : "errors",
 		tone: "danger",
 		hint: "Show only computers whose last run failed"
 	}
-], Ut = {
+], en = {
 	waiting: "needsYou",
 	running: "running",
+	provisioning: "provisioning",
 	error: "error"
 };
-function Wt({ title: r, summary: i, statusFilter: o, onStatusFilter: s, canCreate: c, onCreate: l, onKeys: u, keysOpen: d, keysChord: f, actions: p, leaderLabel: m }) {
-	return /* @__PURE__ */ Y("div", {
+function tn({ title: r, summary: i, statusFilter: o, onStatusFilter: s, canCreate: c, onCreate: l, onKeys: u, keysOpen: d, keysChord: f, actions: p, leaderLabel: m }) {
+	return /* @__PURE__ */ J("div", {
 		"data-testid": "lab-header",
 		className: "flex flex-wrap items-center gap-x-3 gap-y-1.5 px-3 py-2 shrink-0 border-b border-border bg-surface",
 		children: [
-			/* @__PURE__ */ Y("div", {
+			/* @__PURE__ */ J("div", {
 				className: "flex items-baseline gap-2 min-w-0",
-				children: [r !== null && /* @__PURE__ */ J("span", {
+				children: [r !== null && /* @__PURE__ */ q("span", {
 					className: "text-[14px] font-semibold text-text-primary truncate",
 					children: r
-				}), /* @__PURE__ */ Y("span", {
+				}), /* @__PURE__ */ J("span", {
 					"data-testid": "lab-summary",
 					className: "text-[12px] text-text-tertiary tabular-nums whitespace-nowrap",
 					children: [
-						r !== null && /* @__PURE__ */ J("span", {
+						r !== null && /* @__PURE__ */ q("span", {
 							"aria-hidden": "true",
 							children: "· "
 						}),
@@ -805,67 +815,67 @@ function Wt({ title: r, summary: i, statusFilter: o, onStatusFilter: s, canCreat
 					]
 				})]
 			}),
-			/* @__PURE__ */ J("span", { className: "flex-1" }),
-			/* @__PURE__ */ J("div", {
+			/* @__PURE__ */ q("span", { className: "flex-1" }),
+			/* @__PURE__ */ q("div", {
 				role: "group",
 				"aria-label": "Fleet status",
 				className: "flex items-center gap-1.5",
-				children: Ht.map(({ status: t, word: r, tone: a, hint: c }) => {
-					let l = i[Ut[t]], u = o === t;
-					return /* @__PURE__ */ J("button", {
+				children: $t.map(({ status: t, word: r, tone: a, hint: c, onlyWhenPresent: l }) => {
+					let u = i[en[t]] ?? 0, d = o === t;
+					return l && u === 0 && !d ? null : /* @__PURE__ */ q("button", {
 						type: "button",
-						"aria-pressed": u,
-						onClick: () => s(u ? null : t),
-						title: u ? "Show every computer" : c,
+						"aria-pressed": d,
+						onClick: () => s(d ? null : t),
+						title: d ? "Show every computer" : c,
 						"data-testid": `lab-pill-${t}`,
-						className: e("rounded-full p-0 bg-transparent border-none cursor-pointer", "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary", l === 0 && !u && "opacity-60"),
-						children: /* @__PURE__ */ Y(n, {
+						className: e("rounded-full p-0 bg-transparent border-none cursor-pointer", "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary", u === 0 && !d && "opacity-60"),
+						children: /* @__PURE__ */ J(n, {
 							size: "sm",
 							tone: a,
 							dot: "static",
-							outline: u ? void 0 : "soft",
-							solid: u,
+							outline: d ? void 0 : "soft",
+							solid: d,
 							className: "tabular-nums",
 							children: [
-								l,
+								u,
 								" ",
-								r(l)
+								r(u)
 							]
 						})
 					}, t);
 				})
 			}),
-			m && /* @__PURE__ */ J("span", {
+			m && /* @__PURE__ */ q("span", {
 				"data-testid": "leader-armed",
 				className: "animate-pulse",
-				children: /* @__PURE__ */ Y(n, {
+				children: /* @__PURE__ */ J(n, {
 					size: "sm",
 					tone: "caution",
 					children: [m, " …"]
 				})
 			}),
-			c && /* @__PURE__ */ Y(t, {
+			c && /* @__PURE__ */ J(t, {
 				size: "sm",
 				variant: "primary",
 				onClick: l,
 				"data-testid": "lab-create",
-				children: [/* @__PURE__ */ J(h, { size: 14 }), " Computer"]
+				children: [/* @__PURE__ */ q(h, { size: 14 }), " Computer"]
 			}),
-			/* @__PURE__ */ Y(t, {
+			/* @__PURE__ */ J(t, {
 				size: "sm",
 				variant: "secondary",
 				onClick: u,
 				"aria-pressed": d,
 				title: `Keyboard shortcuts${f ? ` · ${f}` : ""}`,
 				"data-testid": "lab-keys",
-				children: [/* @__PURE__ */ J(a, { size: 14 }), " Keys"]
+				children: [/* @__PURE__ */ q(a, { size: 14 }), " Keys"]
 			}),
 			p
 		]
 	});
 }
-function Gt({ label: t, onClick: n, pressed: r, disabled: i, children: a, testId: o }) {
-	return /* @__PURE__ */ J("button", {
+function nn({ label: t, onClick: n, pressed: r, disabled: i, children: a, testId: o }) {
+	return /* @__PURE__ */ q("button", {
 		type: "button",
 		onClick: n,
 		"aria-label": t,
@@ -877,13 +887,13 @@ function Gt({ label: t, onClick: n, pressed: r, disabled: i, children: a, testId
 		children: a
 	});
 }
-function Kt({ panes: t, onFocusPane: n, onAddPane: a, canAddPane: o, shellsOpen: s, maxShells: l, onArrange: u, zoomed: d, onToggleZoom: p, moreSections: m }) {
-	return /* @__PURE__ */ Y("div", {
+function rn({ panes: t, onFocusPane: n, onAddPane: a, canAddPane: o, shellsOpen: s, maxShells: l, onArrange: u, zoomed: d, onToggleZoom: p, moreSections: m }) {
+	return /* @__PURE__ */ J("div", {
 		"data-testid": "lab-pane-toolbar",
 		className: "flex items-center gap-1.5 px-2 py-1.5 shrink-0",
 		children: [
-			/* @__PURE__ */ J(x, {
-				trigger: /* @__PURE__ */ Y("span", {
+			/* @__PURE__ */ q(x, {
+				trigger: /* @__PURE__ */ J("span", {
 					className: "text-[12px]",
 					children: [
 						t.length,
@@ -904,15 +914,15 @@ function Kt({ panes: t, onFocusPane: n, onAddPane: a, canAddPane: o, shellsOpen:
 					}))
 				}]
 			}),
-			/* @__PURE__ */ J(Gt, {
+			/* @__PURE__ */ q(nn, {
 				label: "Add a pane",
 				onClick: a,
 				disabled: !o,
 				testId: "lab-add-pane",
-				children: /* @__PURE__ */ J(h, { size: 14 })
+				children: /* @__PURE__ */ q(h, { size: 14 })
 			}),
-			/* @__PURE__ */ J("span", { className: "flex-1" }),
-			/* @__PURE__ */ Y("span", {
+			/* @__PURE__ */ q("span", { className: "flex-1" }),
+			/* @__PURE__ */ J("span", {
 				"data-testid": "lab-shell-count",
 				title: "Open terminals hold a real shell against the runtime's limit",
 				className: e("text-[12px] tabular-nums", s >= l ? "text-warning" : "text-text-tertiary"),
@@ -923,27 +933,27 @@ function Kt({ panes: t, onFocusPane: n, onAddPane: a, canAddPane: o, shellsOpen:
 					" shells"
 				]
 			}),
-			/* @__PURE__ */ J(Gt, {
+			/* @__PURE__ */ q(nn, {
 				label: "Arrange as a list",
 				onClick: () => u("rows"),
 				testId: "lab-arrange-rows",
-				children: /* @__PURE__ */ J(r, { size: 14 })
+				children: /* @__PURE__ */ q(r, { size: 14 })
 			}),
-			/* @__PURE__ */ J(Gt, {
+			/* @__PURE__ */ q(nn, {
 				label: "Arrange as a split",
 				onClick: () => u("main"),
 				testId: "lab-arrange-main",
-				children: /* @__PURE__ */ J(f, { size: 14 })
+				children: /* @__PURE__ */ q(f, { size: 14 })
 			}),
-			/* @__PURE__ */ J(Gt, {
+			/* @__PURE__ */ q(nn, {
 				label: d ? "Restore panes" : "Expand the focused pane",
 				onClick: p,
 				pressed: d,
 				testId: "lab-zoom",
-				children: /* @__PURE__ */ J(c, { size: 14 })
+				children: /* @__PURE__ */ q(c, { size: 14 })
 			}),
-			/* @__PURE__ */ J(x, {
-				trigger: /* @__PURE__ */ J(i, { size: 14 }),
+			/* @__PURE__ */ q(x, {
+				trigger: /* @__PURE__ */ q(i, { size: 14 }),
 				triggerLabel: "More lab commands",
 				align: "end",
 				sections: m,
@@ -952,7 +962,11 @@ function Kt({ panes: t, onFocusPane: n, onAddPane: a, canAddPane: o, shellsOpen:
 		]
 	});
 }
-var qt = {
+var an = {
+	provisioning: {
+		label: "Provisioning",
+		tone: "info"
+	},
 	waiting: {
 		label: "Needs you",
 		tone: "warning"
@@ -974,26 +988,26 @@ var qt = {
 		tone: "neutral"
 	}
 };
-function Jt({ computer: t, kind: r, kinds: a, onSwitchKind: o, active: s, zoomed: l, broadcasting: u, models: f, onFocus: p, onClose: m, onToggleZoom: h, moreSections: g, children: _ }) {
-	let y = k(t), b = D[y], S = qt[y];
-	return /* @__PURE__ */ Y("section", {
+function on({ computer: t, kind: r, kinds: a, onSwitchKind: o, active: s, zoomed: l, broadcasting: u, models: f, onFocus: p, onClose: m, onToggleZoom: h, moreSections: g, children: _ }) {
+	let y = A(t), b = O[y], S = an[y];
+	return /* @__PURE__ */ J("section", {
 		"aria-label": `${r.title ?? r.label} · ${t.label}`,
 		"data-testid": "lab-pane",
 		"data-active": s || void 0,
 		onMouseDown: p,
 		onFocusCapture: p,
 		className: e("@container flex flex-col flex-1 min-w-0 min-h-0 h-full rounded-lg border overflow-hidden bg-surface", s ? "border-primary" : "border-border"),
-		children: [/* @__PURE__ */ Y("header", {
+		children: [/* @__PURE__ */ J("header", {
 			className: "shrink-0 flex flex-col gap-0.5 px-2.5 py-1.5 border-b border-border",
-			children: [/* @__PURE__ */ Y("div", {
+			children: [/* @__PURE__ */ J("div", {
 				className: "flex items-center gap-1.5 min-w-0",
 				children: [
-					/* @__PURE__ */ J(x, {
-						trigger: /* @__PURE__ */ Y("span", {
+					/* @__PURE__ */ q(x, {
+						trigger: /* @__PURE__ */ J("span", {
 							className: "inline-flex items-center gap-1 text-[12px] font-semibold text-text-primary whitespace-nowrap",
 							children: [
 								r.icon,
-								/* @__PURE__ */ J("span", {
+								/* @__PURE__ */ q("span", {
 									className: "hidden @[18rem]:inline",
 									children: r.title ?? r.label
 								}),
@@ -1014,62 +1028,62 @@ function Jt({ computer: t, kind: r, kinds: a, onSwitchKind: o, active: s, zoomed
 							}))
 						}]
 					}),
-					/* @__PURE__ */ J("span", {
+					/* @__PURE__ */ q("span", {
 						"aria-hidden": "true",
 						className: "text-text-tertiary",
 						children: "·"
 					}),
-					/* @__PURE__ */ J(v, {
+					/* @__PURE__ */ q(v, {
 						size: "xs",
 						color: b.color,
 						pulse: b.pulse,
 						"aria-label": b.label
 					}),
-					/* @__PURE__ */ J("span", {
+					/* @__PURE__ */ q("span", {
 						className: "min-w-[3rem] text-[12px] font-mono text-text-primary truncate",
 						title: t.project ?? t.label,
 						children: t.label
 					}),
-					/* @__PURE__ */ J("span", {
+					/* @__PURE__ */ q("span", {
 						className: "hidden @[20rem]:inline-flex shrink-0",
 						"data-testid": "lab-pane-status",
-						children: /* @__PURE__ */ J(n, {
+						children: /* @__PURE__ */ q(n, {
 							size: "xs",
 							tone: S.tone,
 							outline: "soft",
 							children: S.label
 						})
 					}),
-					l && /* @__PURE__ */ J("span", {
+					l && /* @__PURE__ */ q("span", {
 						className: "text-[11px] text-text-tertiary",
 						children: "expanded"
 					}),
-					/* @__PURE__ */ J("span", { className: "flex-1" }),
-					/* @__PURE__ */ J("button", {
+					/* @__PURE__ */ q("span", { className: "flex-1" }),
+					/* @__PURE__ */ q("button", {
 						type: "button",
 						onClick: h,
 						"aria-label": l ? `Restore ${t.label}` : `Expand ${t.label}`,
 						title: l ? "Restore" : "Expand",
 						className: "hidden @[16rem]:inline-flex p-1 rounded bg-transparent border-none cursor-pointer text-text-tertiary hover:text-text-primary hover:bg-surface-hover",
-						children: /* @__PURE__ */ J(c, { size: 13 })
+						children: /* @__PURE__ */ q(c, { size: 13 })
 					}),
-					/* @__PURE__ */ J(x, {
-						trigger: /* @__PURE__ */ J(i, { size: 13 }),
+					/* @__PURE__ */ q(x, {
+						trigger: /* @__PURE__ */ q(i, { size: 13 }),
 						triggerLabel: `More for ${t.label}`,
 						triggerVariant: "link",
 						align: "end",
 						sections: g
 					}),
-					/* @__PURE__ */ J("button", {
+					/* @__PURE__ */ q("button", {
 						type: "button",
 						onClick: m,
 						"aria-label": `Close pane ${t.label}`,
 						title: "Close pane",
 						className: "p-1 rounded bg-transparent border-none cursor-pointer text-text-tertiary hover:text-danger hover:bg-surface-hover",
-						children: /* @__PURE__ */ J(d, { size: 13 })
+						children: /* @__PURE__ */ q(d, { size: 13 })
 					})
 				]
-			}), /* @__PURE__ */ J(ie, {
+			}), /* @__PURE__ */ q(re, {
 				variant: "meta",
 				computer: t,
 				models: f,
@@ -1077,7 +1091,7 @@ function Jt({ computer: t, kind: r, kinds: a, onSwitchKind: o, active: s, zoomed
 				mode: r.statusMode ?? r.label,
 				"data-testid": "lab-pane-meta"
 			})]
-		}), /* @__PURE__ */ J("div", {
+		}), /* @__PURE__ */ q("div", {
 			className: "flex-1 min-h-0 flex flex-col",
 			children: _
 		})]
@@ -1085,11 +1099,11 @@ function Jt({ computer: t, kind: r, kinds: a, onSwitchKind: o, active: s, zoomed
 }
 //#endregion
 //#region src/components/compute/lib/keymap.ts
-var Yt = {
+var sn = {
 	key: "b",
 	ctrl: !0,
 	label: "⌃B"
-}, Xt = [
+}, cn = [
 	{
 		command: "focus-left",
 		leaderKey: "h",
@@ -1244,19 +1258,19 @@ var Yt = {
 		group: "lab"
 	}
 ];
-function Zt(e, t) {
+function ln(e, t) {
 	return !e || e.key.toLowerCase() !== t.key.toLowerCase() ? !1 : !!e.ctrl === t.ctrlKey && !!e.meta === t.metaKey && !!e.alt === t.altKey;
 }
-function Qt(e, t) {
+function un(e, t) {
 	let n = t.key.toLowerCase();
 	return e.find((e) => e.leaderKey && e.leaderKey.toLowerCase() === n)?.command ?? null;
 }
-function $t(e, t) {
+function dn(e, t) {
 	let n = t.metaKey || t.ctrlKey;
 	for (let r of e) if (r.key.toLowerCase() === t.key.toLowerCase() && !!(r.meta || r.ctrl) === n && !!r.shift === t.shiftKey && !!r.alt === t.altKey) return r.command;
 	return null;
 }
-function en(e) {
+function fn(e) {
 	return [
 		"panes",
 		"navigate",
@@ -1266,12 +1280,12 @@ function en(e) {
 		bindings: e.filter((e) => e.group === t)
 	})).filter((e) => e.bindings.length > 0);
 }
-function tn(e, t) {
+function pn(e, t) {
 	return e.find((e) => e.command === t)?.label ?? null;
 }
 //#endregion
 //#region src/components/compute/lib/chromeTokens.ts
-var nn = {
+var mn = {
 	"--color-code-bg": "var(--color-surface)",
 	"--color-code-panel": "var(--color-surface-panel)",
 	"--color-code-surface": "var(--color-surface-hover)",
@@ -1288,56 +1302,56 @@ var nn = {
 	"--color-code-mauve": "var(--color-primary)",
 	"--color-code-yellow": "var(--color-warning)"
 };
-function rn(e) {
-	return e === "app" ? nn : void 0;
+function hn(e) {
+	return e === "app" ? mn : void 0;
 }
 //#endregion
 //#region src/components/compute/components/ProjectSummary.tsx
-function an(e) {
+function gn(e) {
 	let t = Math.max(0, Math.round(e / 6e4));
 	return t < 60 ? `${t}m` : `${Math.floor(t / 60)}h ${String(t % 60).padStart(2, "0")}m`;
 }
-function on({ project: t, showMeter: r = !0, className: i, "data-testid": a }) {
-	let { budgetUsd: o, spentUsd: s, maintenanceUsd: c, tokensUsed: l, tokenBudget: u } = t, d = typeof o == "number" && o > 0, f = s ?? t.liveSpendUsd, p = d ? f / o : 0, m = d && c ? c / o : null, h = t.computers.length, g = t.id === ne;
-	return /* @__PURE__ */ Y("div", {
+function _n({ project: t, showMeter: r = !0, className: i, "data-testid": a }) {
+	let { budgetUsd: o, spentUsd: s, maintenanceUsd: c, tokensUsed: l, tokenBudget: u } = t, d = typeof o == "number" && o > 0, f = s ?? t.liveSpendUsd, p = d ? f / o : 0, m = d && c ? c / o : null, h = t.computers.length, g = t.id === D;
+	return /* @__PURE__ */ J("div", {
 		"data-testid": a,
 		className: e("flex flex-col gap-1 font-mono min-w-0", i),
 		children: [
-			/* @__PURE__ */ Y("div", {
+			/* @__PURE__ */ J("div", {
 				className: "flex items-center gap-2 text-[10px] leading-none min-w-0 flex-wrap",
 				children: [
-					d ? /* @__PURE__ */ Y("span", {
+					d ? /* @__PURE__ */ J("span", {
 						className: "text-code-subtle tabular-nums shrink-0",
 						children: [
 							"$",
 							f.toFixed(2),
-							/* @__PURE__ */ Y("span", {
+							/* @__PURE__ */ J("span", {
 								className: "text-code-muted",
 								children: [" / $", o.toFixed(0)]
 							})
 						]
-					}) : /* @__PURE__ */ J("span", {
+					}) : /* @__PURE__ */ q("span", {
 						className: "text-code-subtle tabular-nums shrink-0",
 						children: f > 0 ? `$${f.toFixed(2)}` : "$—"
 					}),
-					l != null && /* @__PURE__ */ Y(lt, { children: [/* @__PURE__ */ J("span", {
+					l != null && /* @__PURE__ */ J(bt, { children: [/* @__PURE__ */ q("span", {
 						"aria-hidden": "true",
 						className: "text-code-raised",
 						children: "│"
-					}), /* @__PURE__ */ Y("span", {
+					}), /* @__PURE__ */ J("span", {
 						className: "text-code-muted tabular-nums shrink-0",
 						title: u ? `${l} of ${u} tokens` : `${l} tokens`,
 						children: [
 							T(l),
-							u ? /* @__PURE__ */ Y("span", {
+							u ? /* @__PURE__ */ J("span", {
 								className: "text-code-raised",
 								children: ["/", T(u)]
 							}) : null,
 							" tok"
 						]
 					})] }),
-					/* @__PURE__ */ J("span", { className: "flex-1 min-w-0" }),
-					t.botCount != null && t.botCount > 0 && /* @__PURE__ */ Y(n, {
+					/* @__PURE__ */ q("span", { className: "flex-1 min-w-0" }),
+					t.botCount != null && t.botCount > 0 && /* @__PURE__ */ J(n, {
 						size: "xs",
 						mono: !0,
 						tone: "neutral",
@@ -1348,7 +1362,7 @@ function on({ project: t, showMeter: r = !0, className: i, "data-testid": a }) {
 							t.botCount === 1 ? "bot" : "bots"
 						]
 					}),
-					h > 0 && /* @__PURE__ */ Y(n, {
+					h > 0 && /* @__PURE__ */ J(n, {
 						size: "xs",
 						mono: !0,
 						tone: t.activeCount > 0 ? "info" : "neutral",
@@ -1356,22 +1370,22 @@ function on({ project: t, showMeter: r = !0, className: i, "data-testid": a }) {
 						title: t.activeCount > 0 ? `${t.activeCount} of ${h} doing something right now` : `${h} idle`,
 						children: [t.activeCount > 0 ? `${t.activeCount}/${h}` : h, " ▣"]
 					}),
-					t.soonestExpiryMs != null && /* @__PURE__ */ Y(n, {
+					t.soonestExpiryMs != null && /* @__PURE__ */ J(n, {
 						size: "xs",
 						mono: !0,
 						tone: t.soonestExpiryMs < 3e5 ? "warning" : "neutral",
 						title: "Time until the first of these computers stops on its own",
-						children: ["⟳ ", an(t.soonestExpiryMs)]
+						children: ["⟳ ", gn(t.soonestExpiryMs)]
 					})
 				]
 			}),
-			r && d && /* @__PURE__ */ J(_, {
+			r && d && /* @__PURE__ */ q(_, {
 				label: "budget",
 				value: p,
 				note: m == null ? t.periodResetsAt ? `⟳ ${new Date(t.periodResetsAt).toLocaleDateString()}` : void 0 : `${Math.round(m * 100)}% is upkeep`,
 				tone: "code"
 			}),
-			g && /* @__PURE__ */ J("span", {
+			g && /* @__PURE__ */ q("span", {
 				className: "text-[10px] text-code-raised",
 				children: "not charged to any project"
 			})
@@ -1380,45 +1394,45 @@ function on({ project: t, showMeter: r = !0, className: i, "data-testid": a }) {
 }
 //#endregion
 //#region src/components/compute/components/LabRail.tsx
-var sn = {
+var vn = {
 	waiting: 0,
 	error: 1,
 	running: 2,
 	idle: 3,
 	stopped: 4
 };
-function cn({ computers: t, activeComputerId: r, openComputerIds: i, onSelect: a, onOpenInPane: o, onWatch: s, onCreate: c, onOpenMenu: l, showAllActivity: u, onToggleShowAll: d, canManage: f = !1, models: p = [], className: m }) {
+function yn({ computers: t, activeComputerId: r, openComputerIds: i, onSelect: a, onOpenInPane: o, onWatch: s, onCreate: c, onOpenMenu: l, showAllActivity: u, onToggleShowAll: d, canManage: f = !1, models: p = [], className: m }) {
 	let h = new Set(i), g = t.filter((e) => {
-		let t = k(e);
-		return t === "running" || t === "waiting" || t === "error";
-	}), _ = [...u ? t : g].sort((e, t) => (sn[k(e)] ?? 9) - (sn[k(t)] ?? 9)), v = Je(), y = v?.projects ?? [], b = v?.projectsAbsent ?? !0, x = y.filter((e) => e.id !== "__unassigned__" && e.computers.length > 0), S = y.find((e) => e.id === ne), C = !b && x.length > 0 ? [...x.map((e) => ({
+		let t = A(e);
+		return t === "running" || t === "waiting" || t === "error" || t === "provisioning";
+	}), _ = [...u ? t : g].sort((e, t) => (vn[A(e)] ?? 9) - (vn[A(t)] ?? 9)), v = nt(), y = v?.projects ?? [], b = v?.projectsAbsent ?? !0, x = y.filter((e) => e.id !== "__unassigned__" && e.computers.length > 0), S = y.find((e) => e.id === D), C = !b && x.length > 0 ? [...x.map((e) => ({
 		id: e.id,
 		computers: e.computers,
-		heading: /* @__PURE__ */ Y("div", {
+		heading: /* @__PURE__ */ J("div", {
 			role: "presentation",
 			className: "px-3 pt-2 pb-1 border-t border-code-border first:border-t-0 first:pt-1",
-			children: [/* @__PURE__ */ J("span", {
+			children: [/* @__PURE__ */ q("span", {
 				className: "block text-[11px] font-mono text-code-subtle truncate",
 				children: e.name
-			}), /* @__PURE__ */ J(on, {
+			}), /* @__PURE__ */ q(_n, {
 				project: e,
 				showMeter: !1,
 				className: "mt-0.5"
 			})]
 		})
 	})), ...S && S.computers.length > 0 ? [{
-		id: ne,
+		id: D,
 		computers: S.computers,
-		heading: /* @__PURE__ */ J("div", {
+		heading: /* @__PURE__ */ q("div", {
 			role: "presentation",
 			className: "px-3 pt-2 pb-1 text-[10px] font-mono text-code-raised lowercase tracking-wide border-t border-code-border",
 			children: "unassigned"
 		})
 	}] : []] : null;
-	return /* @__PURE__ */ Y("div", {
+	return /* @__PURE__ */ J("div", {
 		className: e("flex flex-col h-full min-h-0 bg-code-panel border-r border-code-border", m),
 		children: [
-			/* @__PURE__ */ J(ln, {
+			/* @__PURE__ */ q(bn, {
 				title: "computers",
 				count: t.length,
 				rows: t,
@@ -1429,20 +1443,20 @@ function cn({ computers: t, activeComputerId: r, openComputerIds: i, onSelect: a
 				open: h,
 				renderSub: null
 			}),
-			/* @__PURE__ */ Y("div", {
+			/* @__PURE__ */ J("div", {
 				className: "flex items-center px-3 py-1.5 border-y border-code-border shrink-0",
 				children: [
-					f && c ? /* @__PURE__ */ J("button", {
+					f && c ? /* @__PURE__ */ q("button", {
 						type: "button",
 						onClick: c,
 						className: "text-[11px] font-mono text-code-green bg-transparent border-none cursor-pointer p-0 hover:underline",
 						children: "new"
-					}) : /* @__PURE__ */ J("span", {
+					}) : /* @__PURE__ */ q("span", {
 						className: "text-[11px] font-mono text-code-raised",
 						children: "new"
 					}),
-					/* @__PURE__ */ J("span", { className: "flex-1" }),
-					/* @__PURE__ */ J("button", {
+					/* @__PURE__ */ q("span", { className: "flex-1" }),
+					/* @__PURE__ */ q("button", {
 						type: "button",
 						onClick: l,
 						"aria-label": "Keyboard shortcuts",
@@ -1452,7 +1466,7 @@ function cn({ computers: t, activeComputerId: r, openComputerIds: i, onSelect: a
 					})
 				]
 			}),
-			/* @__PURE__ */ J(ln, {
+			/* @__PURE__ */ q(bn, {
 				title: "agents",
 				count: g.length,
 				rows: _,
@@ -1460,7 +1474,7 @@ function cn({ computers: t, activeComputerId: r, openComputerIds: i, onSelect: a
 				onSelect: a,
 				onOpenInPane: o ?? null,
 				open: h,
-				action: /* @__PURE__ */ J("button", {
+				action: /* @__PURE__ */ q("button", {
 					type: "button",
 					onClick: d,
 					"aria-pressed": u,
@@ -1470,30 +1484,30 @@ function cn({ computers: t, activeComputerId: r, openComputerIds: i, onSelect: a
 				}),
 				onWatch: s ?? null,
 				renderSub: (e) => {
-					let t = k(e), r = e.lastResult ? ae(null, p) : null;
-					return /* @__PURE__ */ Y("span", {
+					let t = A(e), r = e.lastResult ? ie(null, p) : null;
+					return /* @__PURE__ */ J("span", {
 						className: "flex items-center gap-1 truncate",
 						children: [
-							/* @__PURE__ */ J(n, {
+							/* @__PURE__ */ q(n, {
 								size: "xs",
 								mono: !0,
-								tone: D[t].tone,
+								tone: O[t].tone,
 								className: "bg-transparent px-0",
-								children: D[t].label
+								children: O[t].label
 							}),
-							e.currentTask && /* @__PURE__ */ Y(lt, { children: [/* @__PURE__ */ J("span", {
+							e.currentTask && /* @__PURE__ */ J(bt, { children: [/* @__PURE__ */ q("span", {
 								"aria-hidden": "true",
 								className: "text-code-raised",
 								children: "·"
-							}), /* @__PURE__ */ J("span", {
+							}), /* @__PURE__ */ q("span", {
 								className: "truncate text-code-comment",
 								children: e.currentTask
 							})] }),
-							!e.currentTask && r && /* @__PURE__ */ Y(lt, { children: [/* @__PURE__ */ J("span", {
+							!e.currentTask && r && /* @__PURE__ */ J(bt, { children: [/* @__PURE__ */ q("span", {
 								"aria-hidden": "true",
 								className: "text-code-raised",
 								children: "·"
-							}), /* @__PURE__ */ J("span", {
+							}), /* @__PURE__ */ q("span", {
 								className: "text-code-comment",
 								children: r
 							})] })
@@ -1504,8 +1518,8 @@ function cn({ computers: t, activeComputerId: r, openComputerIds: i, onSelect: a
 		]
 	});
 }
-function ln({ title: t, count: n, rows: r, activeId: i, open: a, onSelect: o, onOpenInPane: s, action: c, renderSub: l, onWatch: u = null, groups: d = null }) {
-	let f = K(null), p = U((e) => {
+function bn({ title: t, count: n, rows: r, activeId: i, open: a, onSelect: o, onOpenInPane: s, action: c, renderSub: l, onWatch: u = null, groups: d = null }) {
+	let f = G(null), p = H((e) => {
 		if (![
 			"ArrowDown",
 			"ArrowUp",
@@ -1517,43 +1531,43 @@ function ln({ title: t, count: n, rows: r, activeId: i, open: a, onSelect: o, on
 		let n = t.findIndex((e) => e === document.activeElement);
 		e.preventDefault(), t[e.key === "Home" ? 0 : e.key === "End" ? t.length - 1 : n < 0 ? 0 : (n + (e.key === "ArrowDown" ? 1 : -1) + t.length) % t.length]?.focus();
 	}, []);
-	return /* @__PURE__ */ Y("div", {
+	return /* @__PURE__ */ J("div", {
 		className: "flex flex-col min-h-0 flex-1",
-		children: [/* @__PURE__ */ Y("div", {
+		children: [/* @__PURE__ */ J("div", {
 			className: "flex items-center gap-2 px-3 py-2 shrink-0",
 			children: [
-				/* @__PURE__ */ J("span", {
+				/* @__PURE__ */ q("span", {
 					className: "text-[11px] font-mono text-code-subtle lowercase tracking-wide",
 					children: t
 				}),
-				/* @__PURE__ */ J("span", {
+				/* @__PURE__ */ q("span", {
 					className: "text-[10px] font-mono text-code-raised tabular-nums",
 					children: n
 				}),
-				/* @__PURE__ */ J("span", { className: "flex-1" }),
+				/* @__PURE__ */ q("span", { className: "flex-1" }),
 				c
 			]
-		}), r.length === 0 ? /* @__PURE__ */ J("div", {
+		}), r.length === 0 ? /* @__PURE__ */ q("div", {
 			className: "px-3 pb-3 text-[11px] font-mono text-code-raised",
 			children: "nothing here"
-		}) : /* @__PURE__ */ J("div", {
+		}) : /* @__PURE__ */ q("div", {
 			ref: f,
 			role: "listbox",
 			"aria-label": t,
 			onKeyDown: p,
 			className: "flex-1 min-h-0 overflow-y-auto pb-1",
-			children: d ? d.map((e) => /* @__PURE__ */ Y("div", {
+			children: d ? d.map((e) => /* @__PURE__ */ J("div", {
 				role: "presentation",
 				children: [e.heading, e.computers.map(m)]
 			}, e.id)) : r.map(m)
 		})]
 	});
 	function m(t) {
-		let n = k(t), r = D[n], c = t.id === i;
-		return /* @__PURE__ */ Y("div", {
+		let n = A(t), r = O[n], c = t.id === i;
+		return /* @__PURE__ */ J("div", {
 			role: "presentation",
 			className: e("group relative flex items-stretch", c ? "bg-code-surface" : "hover:bg-code-surface/60"),
-			children: [/* @__PURE__ */ Y("button", {
+			children: [/* @__PURE__ */ J("button", {
 				"data-rail-row": !0,
 				type: "button",
 				role: "option",
@@ -1569,31 +1583,31 @@ function ln({ title: t, count: n, rows: r, activeId: i, open: a, onSelect: o, on
 				},
 				className: e("min-w-0 flex-1 text-left flex items-start gap-2 px-3 py-1.5 border-l-2 cursor-pointer bg-transparent transition-colors", "focus:outline-none focus-visible:ring-1 focus-visible:ring-code-blue focus-visible:ring-inset", c ? "border-code-blue" : "border-transparent"),
 				children: [
-					/* @__PURE__ */ J(v, {
+					/* @__PURE__ */ q(v, {
 						size: "xs",
 						color: r.color,
 						pulse: r.pulse,
 						className: "mt-[5px]",
 						"aria-label": r.label
 					}),
-					/* @__PURE__ */ Y("span", {
+					/* @__PURE__ */ J("span", {
 						className: "min-w-0 flex-1",
-						children: [/* @__PURE__ */ J("span", {
+						children: [/* @__PURE__ */ q("span", {
 							className: e("block text-[12px] font-mono truncate", c ? "text-code-text" : "text-code-subtle"),
 							children: t.label
-						}), l && /* @__PURE__ */ J("span", {
+						}), l && /* @__PURE__ */ q("span", {
 							className: "block text-[10px] font-mono truncate",
 							children: l(t)
 						})]
 					}),
-					a.has(t.id) && /* @__PURE__ */ J("span", {
+					a.has(t.id) && /* @__PURE__ */ q("span", {
 						"aria-label": "open in a pane",
 						title: "Open in a pane",
 						className: "mt-[3px] text-[9px] font-mono text-code-blue shrink-0",
 						children: "▣"
 					})
 				]
-			}), u && /* @__PURE__ */ J("button", {
+			}), u && /* @__PURE__ */ q("button", {
 				type: "button",
 				tabIndex: -1,
 				onClick: () => u(t),
@@ -1607,7 +1621,7 @@ function ln({ title: t, count: n, rows: r, activeId: i, open: a, onSelect: o, on
 }
 //#endregion
 //#region src/components/compute/components/LabChooser.tsx
-function un(e, t) {
+function xn(e, t) {
 	if (!t) return 0;
 	let n = e.toLowerCase(), r = t.toLowerCase(), i = 0, a = 0, o = -1;
 	for (let e of r) {
@@ -1617,13 +1631,13 @@ function un(e, t) {
 	}
 	return a;
 }
-function dn({ open: t, onClose: r, computers: i, panes: a, onJumpToPane: o, onRetarget: s, onOpenInSplit: c, projects: l = [], onSelectProject: u, chrome: d = "code" }) {
-	let [f, p] = q(""), [m, h] = q(0), g = K(null), _ = K(null), y = G(() => new Map(i.map((e) => [e.id, e])), [i]), b = G(() => {
+function Sn({ open: t, onClose: r, computers: i, panes: a, onJumpToPane: o, onRetarget: s, onOpenInSplit: c, projects: l = [], onSelectProject: u, chrome: d = "code" }) {
+	let [f, p] = K(""), [m, h] = K(0), g = G(null), _ = G(null), y = W(() => new Map(i.map((e) => [e.id, e])), [i]), b = W(() => {
 		let e = [];
 		for (let t of a) {
 			let n = y.get(t.computerId);
 			if (!n) continue;
-			let r = un(`${n.label} ${t.kindId}`, f);
+			let r = xn(`${n.label} ${t.kindId}`, f);
 			r != null && e.push({
 				row: {
 					kind: "pane",
@@ -1637,7 +1651,7 @@ function dn({ open: t, onClose: r, computers: i, panes: a, onJumpToPane: o, onRe
 		let t = new Set(a.map((e) => e.computerId)), n = [];
 		for (let e of i) {
 			if (t.has(e.id)) continue;
-			let r = un(`${e.label} ${e.sessionId}`, f);
+			let r = xn(`${e.label} ${e.sessionId}`, f);
 			r != null && n.push({
 				row: {
 					kind: "computer",
@@ -1649,7 +1663,7 @@ function dn({ open: t, onClose: r, computers: i, panes: a, onJumpToPane: o, onRe
 		}
 		let r = [];
 		if (u && f.trim()) for (let e of l) {
-			let t = un(e.name, f);
+			let t = xn(e.name, f);
 			t != null && r.push({
 				row: {
 					kind: "project",
@@ -1673,38 +1687,38 @@ function dn({ open: t, onClose: r, computers: i, panes: a, onJumpToPane: o, onRe
 		l,
 		u
 	]);
-	if (W(() => {
+	if (U(() => {
 		if (t) {
 			p(""), h(0);
 			let e = setTimeout(() => g.current?.focus(), 0);
 			return () => clearTimeout(e);
 		}
-	}, [t]), W(() => {
+	}, [t]), U(() => {
 		h((e) => Math.min(e, Math.max(0, b.length - 1)));
-	}, [b.length]), W(() => {
+	}, [b.length]), U(() => {
 		_.current?.querySelector("[data-highlighted=\"true\"]")?.scrollIntoView({ block: "nearest" });
 	}, [m]), !t) return null;
 	let x = (e, t) => {
 		e && (e.kind === "project" ? u?.(e.project) : e.kind === "pane" ? o(e.pane.id) : t ? c(e.computer) : s(e.computer), r());
 	};
-	return /* @__PURE__ */ J("div", {
+	return /* @__PURE__ */ q("div", {
 		className: "absolute inset-0 z-20 flex items-start justify-center pt-[12vh] bg-code-bg/70",
 		onClick: r,
-		children: /* @__PURE__ */ Y("div", {
-			style: rn(d),
+		children: /* @__PURE__ */ J("div", {
+			style: hn(d),
 			onClick: (e) => e.stopPropagation(),
 			role: "dialog",
 			"aria-label": "Jump to a computer, pane or project",
 			className: "w-[480px] max-w-[92vw] rounded-lg border border-code-border bg-code-panel overflow-hidden font-mono shadow-2xl",
-			children: [/* @__PURE__ */ Y("div", {
+			children: [/* @__PURE__ */ J("div", {
 				className: "flex items-center gap-2 px-3 py-2 border-b border-code-border",
 				children: [
-					/* @__PURE__ */ J("span", {
+					/* @__PURE__ */ q("span", {
 						"aria-hidden": "true",
 						className: "text-code-green text-[12px]",
 						children: "/"
 					}),
-					/* @__PURE__ */ J("input", {
+					/* @__PURE__ */ q("input", {
 						ref: g,
 						value: f,
 						onChange: (e) => {
@@ -1717,17 +1731,17 @@ function dn({ open: t, onClose: r, computers: i, panes: a, onJumpToPane: o, onRe
 						"aria-label": "Filter computers, panes and projects",
 						className: "flex-1 min-w-0 bg-transparent border-none outline-none text-[12px] text-code-text placeholder:text-code-raised"
 					}),
-					/* @__PURE__ */ J("span", {
+					/* @__PURE__ */ q("span", {
 						className: "text-[10px] text-code-raised shrink-0 hidden sm:inline",
 						children: "⏎ jump · ⇧⏎ split"
 					})
 				]
-			}), /* @__PURE__ */ J("div", {
+			}), /* @__PURE__ */ q("div", {
 				ref: _,
 				role: "listbox",
 				"aria-label": "Results",
 				className: "max-h-[46vh] overflow-y-auto",
-				children: b.length === 0 ? /* @__PURE__ */ Y("div", {
+				children: b.length === 0 ? /* @__PURE__ */ J("div", {
 					className: "px-3 py-4 text-[11px] text-code-raised",
 					children: [
 						"nothing matches “",
@@ -1736,33 +1750,33 @@ function dn({ open: t, onClose: r, computers: i, panes: a, onJumpToPane: o, onRe
 					]
 				}) : b.map((t, r) => {
 					let i = r === m;
-					if (t.kind === "project") return /* @__PURE__ */ Y("div", {
+					if (t.kind === "project") return /* @__PURE__ */ J("div", {
 						role: "option",
 						"aria-selected": i,
 						"data-highlighted": i,
 						onMouseEnter: () => h(r),
 						onClick: () => x(t, !1),
 						className: e("flex flex-col gap-0.5 px-3 py-1.5 cursor-pointer border-l-2", i ? "bg-code-surface border-code-mauve" : "bg-transparent border-transparent"),
-						children: [/* @__PURE__ */ Y("div", {
+						children: [/* @__PURE__ */ J("div", {
 							className: "flex items-center gap-2 min-w-0",
-							children: [/* @__PURE__ */ J(n, {
+							children: [/* @__PURE__ */ q(n, {
 								size: "xs",
 								mono: !0,
 								tone: "accent",
 								className: "shrink-0",
 								children: "project"
-							}), /* @__PURE__ */ J("span", {
+							}), /* @__PURE__ */ q("span", {
 								className: e("text-[12px] truncate", i ? "text-code-text" : "text-code-subtle"),
 								children: t.project.name
 							})]
-						}), /* @__PURE__ */ J(on, {
+						}), /* @__PURE__ */ q(_n, {
 							project: t.project,
 							showMeter: !1,
 							className: "pl-1"
 						})]
 					}, t.id);
-					let a = k(t.computer), o = D[a];
-					return /* @__PURE__ */ Y("div", {
+					let a = A(t.computer), o = O[a];
+					return /* @__PURE__ */ J("div", {
 						role: "option",
 						"aria-selected": i,
 						"data-highlighted": i,
@@ -1770,24 +1784,24 @@ function dn({ open: t, onClose: r, computers: i, panes: a, onJumpToPane: o, onRe
 						onClick: (e) => x(t, e.shiftKey),
 						className: e("flex items-center gap-2 px-3 py-1.5 cursor-pointer border-l-2", i ? "bg-code-surface border-code-blue" : "bg-transparent border-transparent"),
 						children: [
-							/* @__PURE__ */ J(v, {
+							/* @__PURE__ */ q(v, {
 								size: "xs",
 								color: o.color,
 								pulse: o.pulse,
 								"aria-label": o.label
 							}),
-							/* @__PURE__ */ J("span", {
+							/* @__PURE__ */ q("span", {
 								className: e("text-[12px] truncate", i ? "text-code-text" : "text-code-subtle"),
 								children: t.computer.label
 							}),
-							/* @__PURE__ */ J("span", { className: "flex-1" }),
-							t.kind === "pane" ? /* @__PURE__ */ Y(n, {
+							/* @__PURE__ */ q("span", { className: "flex-1" }),
+							t.kind === "pane" ? /* @__PURE__ */ J(n, {
 								size: "xs",
 								mono: !0,
 								tone: "info",
 								className: "shrink-0",
 								children: ["on screen · ", t.pane.kindId]
-							}) : /* @__PURE__ */ J(n, {
+							}) : /* @__PURE__ */ q(n, {
 								size: "xs",
 								mono: !0,
 								tone: o.tone,
@@ -1803,17 +1817,17 @@ function dn({ open: t, onClose: r, computers: i, panes: a, onJumpToPane: o, onRe
 }
 //#endregion
 //#region src/components/compute/components/PaneTreeView.tsx
-function fn({ node: t, activePaneId: n, zoomedPaneId: r = null, renderLeaf: i, onRatioChange: a, gutter: o = "tight", className: s }) {
+function Cn({ node: t, activePaneId: n, zoomedPaneId: r = null, renderLeaf: i, onRatioChange: a, gutter: o = "tight", className: s }) {
 	if (r) {
-		let n = pn(t, r);
-		if (n) return /* @__PURE__ */ J("div", {
+		let n = wn(t, r);
+		if (n) return /* @__PURE__ */ q("div", {
 			className: e("flex min-h-0 min-w-0", s),
 			children: i(n)
 		});
 	}
-	return /* @__PURE__ */ J("div", {
+	return /* @__PURE__ */ q("div", {
 		className: e("flex min-h-0 min-w-0", s),
-		children: /* @__PURE__ */ J(mn, {
+		children: /* @__PURE__ */ q(Tn, {
 			node: t,
 			activePaneId: n,
 			renderLeaf: i,
@@ -1822,11 +1836,11 @@ function fn({ node: t, activePaneId: n, zoomedPaneId: r = null, renderLeaf: i, o
 		})
 	});
 }
-function pn(e, t) {
-	return e.kind === "leaf" ? e.id === t ? e : null : pn(e.a, t) ?? pn(e.b, t);
+function wn(e, t) {
+	return e.kind === "leaf" ? e.id === t ? e : null : wn(e.a, t) ?? wn(e.b, t);
 }
-function mn({ node: t, activePaneId: n, renderLeaf: r, onRatioChange: i, gutter: a }) {
-	let o = K(null), s = U((e) => {
+function Tn({ node: t, activePaneId: n, renderLeaf: r, onRatioChange: i, gutter: a }) {
+	let o = G(null), s = H((e) => {
 		if (t.kind !== "split") return;
 		let n = o.current;
 		if (!n) return;
@@ -1835,12 +1849,12 @@ function mn({ node: t, activePaneId: n, renderLeaf: r, onRatioChange: i, gutter:
 			let a = n.getBoundingClientRect(), o = r ? a.width : a.height;
 			if (o <= 0) return;
 			let s = r ? e.clientX - a.left : e.clientY - a.top;
-			i(t.id, Math.min(dt, Math.max(ut, s / o)));
+			i(t.id, Math.min(St, Math.max(xt, s / o)));
 		}, s = () => {
 			globalThis.removeEventListener("pointermove", a), globalThis.removeEventListener("pointerup", s), globalThis.removeEventListener("pointercancel", s);
 		};
 		globalThis.addEventListener("pointermove", a), globalThis.addEventListener("pointerup", s), globalThis.addEventListener("pointercancel", s);
-	}, [t, i]), c = U((e) => {
+	}, [t, i]), c = H((e) => {
 		if (t.kind !== "split") return;
 		let n = t.direction === "row", r = n ? "ArrowLeft" : "ArrowUp", a = n ? "ArrowRight" : "ArrowDown";
 		if (e.key !== r && e.key !== a) return;
@@ -1848,23 +1862,23 @@ function mn({ node: t, activePaneId: n, renderLeaf: r, onRatioChange: i, gutter:
 		let o = e.shiftKey ? .1 : .02;
 		i(t.id, t.ratio + (e.key === a ? o : -o));
 	}, [t, i]);
-	if (t.kind === "leaf") return /* @__PURE__ */ J("div", {
+	if (t.kind === "leaf") return /* @__PURE__ */ q("div", {
 		className: "flex-1 min-w-0 min-h-0 flex",
 		children: r(t)
 	});
 	let l = t.direction === "row", u = Math.round(t.ratio * 1e3) / 10;
-	return /* @__PURE__ */ Y("div", {
+	return /* @__PURE__ */ J("div", {
 		ref: o,
 		className: e("flex flex-1 min-w-0 min-h-0", l ? "flex-row" : "flex-col"),
 		children: [
-			/* @__PURE__ */ J("div", {
+			/* @__PURE__ */ q("div", {
 				className: "flex min-w-0 min-h-0",
 				style: {
 					flexBasis: `${u}%`,
 					flexGrow: 0,
 					flexShrink: 0
 				},
-				children: /* @__PURE__ */ J(mn, {
+				children: /* @__PURE__ */ q(Tn, {
 					node: t.a,
 					activePaneId: n,
 					renderLeaf: r,
@@ -1872,21 +1886,21 @@ function mn({ node: t, activePaneId: n, renderLeaf: r, onRatioChange: i, gutter:
 					gutter: a
 				})
 			}),
-			/* @__PURE__ */ J("div", {
+			/* @__PURE__ */ q("div", {
 				role: "separator",
 				"aria-orientation": l ? "vertical" : "horizontal",
 				"aria-label": `Resize ${l ? "columns" : "rows"}`,
 				"aria-valuenow": u,
-				"aria-valuemin": ut * 100,
-				"aria-valuemax": dt * 100,
+				"aria-valuemin": xt * 100,
+				"aria-valuemax": St * 100,
 				tabIndex: 0,
 				onPointerDown: s,
 				onKeyDown: c,
 				className: e("shrink-0 bg-transparent hover:bg-code-blue/40 focus-visible:bg-code-blue/60 focus:outline-none transition-colors", l ? e(a === "roomy" ? "w-2" : "w-1", "cursor-col-resize my-0.5") : e(a === "roomy" ? "h-2" : "h-1", "cursor-row-resize mx-0.5"))
 			}),
-			/* @__PURE__ */ J("div", {
+			/* @__PURE__ */ q("div", {
 				className: "flex flex-1 min-w-0 min-h-0",
-				children: /* @__PURE__ */ J(mn, {
+				children: /* @__PURE__ */ q(Tn, {
 					node: t.b,
 					activePaneId: n,
 					renderLeaf: r,
@@ -1899,75 +1913,75 @@ function mn({ node: t, activePaneId: n, renderLeaf: r, onRatioChange: i, gutter:
 }
 //#endregion
 //#region src/components/compute/components/ComputerLab.tsx
-function hn({ open: t, onClose: n, focusComputerId: r = null, variant: i = "overlay", chrome: a = "app", keymap: o = Xt, leader: s = null, idleWindowMs: c = oe, appearance: l = "classic", title: u = "Computer Lab", headerActions: d, onInstruct: f, className: p }) {
-	let { client: m, computers: h, canManage: g, create: v, models: y, notify: b, refresh: S, paneKinds: C, projects: ee } = He(), te = C[0]?.id ?? "agent", w = U((e) => Mt(C, e)?.id ?? te, [C, te]), T = kt(), E = l === "workspace", [ne, re] = q(null), [D, ie] = q(() => /* @__PURE__ */ new Set()), [O, ae] = q("nudge"), [k, se] = q("focused"), [ce, le] = q(!1), [A, ue] = q(!1), [fe, pe] = q(""), [me, he] = q(!1), [j, M] = q(!1), [ge, _e] = q(!1), [ve, ye] = q(!1), be = K(/* @__PURE__ */ new Map()), xe = K(null), Se = K(null), Ce = K(null), N = G(() => new Map(h.map((e) => [e.id, e])), [h]), P = T.panes.find((e) => e.id === T.activePaneId) ?? T.panes[0] ?? null, F = P ? N.get(P.computerId) ?? null : null, we = Pt(C, T.panes.map((e) => e.kindId), "shell"), Te = T.windows.length > 0, I = r && N.has(r) ? r : null, Ee = I ?? h[0]?.id ?? null, De = w(Ee ? N.get(Ee) : null);
-	W(() => {
-		!t || Te || !Ee || T.ensureSeeded(Ee, De);
+function En({ open: t, onClose: n, focusComputerId: r = null, variant: i = "overlay", chrome: a = "app", keymap: o = cn, leader: s = null, idleWindowMs: c = ae, appearance: l = "classic", title: u = "Computer Lab", headerActions: d, onInstruct: f, className: p }) {
+	let { client: m, computers: h, canManage: g, create: v, models: y, notify: b, refresh: S, paneKinds: C, projects: ee } = Ye(), te = C[0]?.id ?? "agent", w = H((e) => Ut(C, e)?.id ?? te, [C, te]), T = Bt(), E = l === "workspace", [D, ne] = K(null), [O, re] = K(() => /* @__PURE__ */ new Set()), [k, ie] = K("nudge"), [A, oe] = K("focused"), [se, le] = K(!1), [ue, de] = K(!1), [fe, pe] = K(""), [me, he] = K(!1), [j, M] = K(!1), [ge, _e] = K(!1), [ye, be] = K(!1), xe = G(/* @__PURE__ */ new Map()), Se = G(null), Ce = G(null), we = G(null), N = W(() => new Map(h.map((e) => [e.id, e])), [h]), P = T.panes.find((e) => e.id === T.activePaneId) ?? T.panes[0] ?? null, F = P ? N.get(P.computerId) ?? null : null, Te = Gt(C, T.panes.map((e) => e.kindId), "shell"), Ee = T.windows.length > 0, De = r && N.has(r) ? r : null, Oe = De ?? h[0]?.id ?? null, ke = w(Oe ? N.get(Oe) : null);
+	U(() => {
+		!t || Ee || !Oe || T.ensureSeeded(Oe, ke);
 	}, [
 		t,
-		Te,
 		Ee,
-		De,
+		Oe,
+		ke,
 		T.ensureSeeded
 	]);
-	let Oe = K(null), { focusPane: ke, setPaneComputer: Ae, panes: je, activePaneId: Me } = T;
-	W(() => {
-		if (!t || !I || Oe.current === I) return;
-		let e = je.find((e) => e.computerId === I);
-		if (e) ke(e.id);
-		else if (Me) Ae(Me, I);
+	let Ae = G(null), { focusPane: je, setPaneComputer: Me, panes: Ne, activePaneId: Pe } = T;
+	U(() => {
+		if (!t || !De || Ae.current === De) return;
+		let e = Ne.find((e) => e.computerId === De);
+		if (e) je(e.id);
+		else if (Pe) Me(Pe, De);
 		else return;
-		Oe.current = I;
+		Ae.current = De;
 	}, [
 		t,
-		I,
-		je,
-		Me,
-		ke,
-		Ae
-	]), W(() => {
-		t || (Oe.current = null);
-	}, [t]);
-	let Ne = T.reconcile, Pe = G(() => h.map((e) => e.id), [h]);
-	W(() => {
-		!t || Pe.length === 0 || Ne(Pe);
-	}, [
-		t,
+		De,
+		Ne,
 		Pe,
-		Ne
+		je,
+		Me
+	]), U(() => {
+		t || (Ae.current = null);
+	}, [t]);
+	let Fe = T.reconcile, Ie = W(() => h.map((e) => e.id), [h]);
+	U(() => {
+		!t || Ie.length === 0 || Fe(Ie);
+	}, [
+		t,
+		Ie,
+		Fe
 	]);
-	let L = U((e, t) => {
+	let I = H((e, t) => {
 		let n = T.panes.find((t) => t.id === e);
 		T.setPaneComputer(e, t.id);
-		let r = n ? At(C, n.kindId) : null;
+		let r = n ? Vt(C, n.kindId) : null;
 		r?.appliesTo && !r.appliesTo(t) && T.setPaneKind(e, w(t));
 	}, [
 		T,
 		C,
 		w
-	]), Fe = U((e) => {
-		let t = P ? At(C, P.kindId) : null;
+	]), Le = H((e) => {
+		let t = P ? Vt(C, P.kindId) : null;
 		return t && e && (!t.appliesTo || t.appliesTo(e)) ? t.id : w(e);
 	}, [
 		P,
 		C,
 		w
-	]), Ie = U((e, t, n) => {
-		n ? be.current.set(e, {
+	]), Re = H((e, t, n) => {
+		n ? xe.current.set(e, {
 			handle: n,
 			kind: t
-		}) : be.current.delete(e);
-	}, []), R = A ? T.panes : P ? [P] : [], Le = U((e, t) => {
+		}) : xe.current.delete(e);
+	}, []), L = ue ? T.panes : P ? [P] : [], ze = H((e, t) => {
 		let n = 0;
 		for (let r of t) {
-			let t = be.current.get(r.id);
+			let t = xe.current.get(r.id);
 			t?.handle.send && t.handle.send(`${e}${t.kind.inputSuffix ?? ""}`) && (n += 1);
 		}
 		return n;
-	}, []), Re = U(() => {
+	}, []), Be = H(() => {
 		let e = fe.trim();
-		if (!e || R.length === 0) return;
-		let t = Le(e, R);
+		if (!e || L.length === 0) return;
+		let t = ze(e, L);
 		if (t === 0) {
 			b({
 				tone: "error",
@@ -1976,49 +1990,39 @@ function hn({ open: t, onClose: n, focusComputerId: r = null, variant: i = "over
 			});
 			return;
 		}
-		pe(""), t < R.length && b({
+		pe(""), t < L.length && b({
 			tone: "info",
-			title: `Sent to ${t} of ${R.length} panes`,
+			title: `Sent to ${t} of ${L.length} panes`,
 			detail: "The rest were not connected."
 		});
 	}, [
 		fe,
-		R,
+		L,
 		b,
-		Le
-	]), z = G(() => k === "all" ? h : k === "selected" ? h.filter((e) => D.has(e.id)) : F ? [F] : [], [
-		k,
+		ze
+	]), R = W(() => A === "all" ? h : A === "selected" ? h.filter((e) => O.has(e.id)) : F ? [F] : [], [
+		A,
 		h,
-		D,
+		O,
 		F
-	]), B = G(() => {
-		if (k === "focused") return P ? [P] : [];
-		let e = new Set(z.map((e) => e.id));
+	]), z = W(() => {
+		if (A === "focused") return P ? [P] : [];
+		let e = new Set(R.map((e) => e.id));
 		return T.panes.filter((t) => e.has(t.computerId));
 	}, [
-		k,
+		A,
 		P,
-		z,
+		R,
 		T.panes
-	]), ze = U(async (e, t) => {
-		let n = t.filter((e) => !rt(e)), r = t.length - n.length, i = (await Promise.all(n.map((t) => {
-			let n = m.runTask(t.sessionId, {
-				prompt: e,
-				resume: !0
-			}, () => {});
-			return Promise.race([n.then(() => !0, () => !1), new Promise((e) => {
-				setTimeout(() => e(!0), 1500);
-			})]);
-		}))).filter(Boolean).length, a = [];
-		return i < n.length && a.push(`${n.length - i} refused`), r > 0 && a.push(`${r} ${r === 1 ? "laptop" : "laptops"} skipped — no runtime session`), {
-			delivered: i,
-			...a.length ? { detail: a.join(" · ") } : {}
-		};
-	}, [m]), Be = U(async () => {
+	]), Ve = H((e, t) => ve(m, e, t), [m]), He = H((e, t) => f ? f({
+		text: e,
+		computers: [...t],
+		scope: "focused"
+	}) : Ve(e, t), [f, Ve]), Ue = H(async () => {
 		let e = fe.trim();
-		if (!(!e || ce)) {
-			if (O === "type") {
-				if (B.length === 0) {
+		if (!(!e || se)) {
+			if (k === "type") {
+				if (z.length === 0) {
 					b({
 						tone: "info",
 						title: "No open pane to type into",
@@ -2026,7 +2030,7 @@ function hn({ open: t, onClose: n, focusComputerId: r = null, variant: i = "over
 					});
 					return;
 				}
-				let t = Le(e, B);
+				let t = ze(e, z);
 				if (t === 0) {
 					b({
 						tone: "error",
@@ -2035,24 +2039,24 @@ function hn({ open: t, onClose: n, focusComputerId: r = null, variant: i = "over
 					});
 					return;
 				}
-				pe(""), t < B.length && b({
+				pe(""), t < z.length && b({
 					tone: "info",
-					title: `Typed into ${t} of ${B.length} panes`,
+					title: `Typed into ${t} of ${z.length} panes`,
 					detail: "The rest do not take input."
 				});
 				return;
 			}
-			if (z.length !== 0) {
+			if (R.length !== 0) {
 				le(!0);
 				try {
 					let t = f ? await f({
 						text: e,
-						computers: z,
-						scope: k
-					}) : await ze(e, z), n = t?.delivered ?? z.length;
+						computers: R,
+						scope: A
+					}) : await Ve(e, R), n = t?.delivered ?? R.length;
 					n > 0 && pe(""), b({
 						tone: n > 0 ? "success" : "error",
-						title: n > 0 ? `Sent to ${n} of ${z.length} ${z.length === 1 ? "computer" : "computers"}` : "No computer took that",
+						title: n > 0 ? `Sent to ${n} of ${R.length} ${R.length === 1 ? "computer" : "computers"}` : "No computer took that",
 						...t?.detail ? { detail: t.detail } : {}
 					});
 				} catch (e) {
@@ -2068,16 +2072,16 @@ function hn({ open: t, onClose: n, focusComputerId: r = null, variant: i = "over
 		}
 	}, [
 		fe,
-		ce,
-		O,
-		B,
-		z,
+		se,
 		k,
+		z,
+		R,
+		A,
 		f,
+		Ve,
 		ze,
-		Le,
 		b
-	]), Ve = U((e) => {
+	]), We = H((e) => {
 		let t = P?.computerId ?? h[0]?.id;
 		t && T.split(e, t, P?.kindId ?? w(N.get(t)));
 	}, [
@@ -2086,10 +2090,10 @@ function hn({ open: t, onClose: n, focusComputerId: r = null, variant: i = "over
 		T,
 		w,
 		N
-	]), V = U((e, t, n) => {
+	]), Ke = H((e, t, n) => {
 		if (!n || n.id === t) return;
-		let r = At(C, t);
-		if (n.quota === "shell" && r?.quota !== "shell" && we >= 8) {
+		let r = Vt(C, t);
+		if (n.quota === "shell" && r?.quota !== "shell" && Te >= 8) {
 			b({
 				tone: "error",
 				title: "No shell slots left",
@@ -2101,16 +2105,16 @@ function hn({ open: t, onClose: n, focusComputerId: r = null, variant: i = "over
 	}, [
 		T,
 		C,
-		we,
+		Te,
 		b
-	]), Ue = U(() => {
-		P && V(P.id, P.kindId, Nt(C, P.kindId, N.get(P.computerId)));
+	]), qe = H(() => {
+		P && Ke(P.id, P.kindId, Wt(C, P.kindId, N.get(P.computerId)));
 	}, [
 		P,
 		C,
-		V,
+		Ke,
 		N
-	]), We = U((e) => {
+	]), Je = H((e) => {
 		v(e ? { projectId: e } : void 0).then((e) => {
 			T.newWindow(e.id, w(e)), b({
 				tone: "success",
@@ -2130,9 +2134,9 @@ function hn({ open: t, onClose: n, focusComputerId: r = null, variant: i = "over
 		b,
 		w
 	]);
-	W(() => {
+	U(() => {
 		if (!t || !T.activePaneId || ge || j) return;
-		let e = T.activePaneId, n = requestAnimationFrame(() => be.current.get(e)?.handle.focus?.());
+		let e = T.activePaneId, n = requestAnimationFrame(() => xe.current.get(e)?.handle.focus?.());
 		return () => cancelAnimationFrame(n);
 	}, [
 		t,
@@ -2141,7 +2145,7 @@ function hn({ open: t, onClose: n, focusComputerId: r = null, variant: i = "over
 		ge,
 		j
 	]);
-	let Ge = U((e) => {
+	let B = H((e) => {
 		let t = {
 			"focus-left": "left",
 			"focus-right": "right",
@@ -2154,10 +2158,10 @@ function hn({ open: t, onClose: n, focusComputerId: r = null, variant: i = "over
 		}
 		switch (e) {
 			case "split-right":
-				Ve("row");
+				We("row");
 				return;
 			case "split-down":
-				Ve("column");
+				We("column");
 				return;
 			case "close-pane":
 				T.closeActivePane();
@@ -2166,42 +2170,42 @@ function hn({ open: t, onClose: n, focusComputerId: r = null, variant: i = "over
 				T.toggleZoom();
 				return;
 			case "next-kind":
-				Ue();
+				qe();
 				return;
 			case "jump":
 				_e(!0);
 				return;
 			case "focus-composer":
-				xe.current?.focus();
+				Se.current?.focus();
 				return;
 			case "leave-pane":
-				xe.current?.focus();
+				Se.current?.focus();
 				return;
 			case "focus-rail": {
-				let e = Se.current;
+				let e = Ce.current;
 				if (!e) return;
 				let t = (t) => e.querySelector(`[role="listbox"][aria-label="${t}"] [data-rail-row][tabindex="0"]`) ?? e.querySelector(`[role="listbox"][aria-label="${t}"] [data-rail-row]`), n = document.activeElement, r = (t) => !!n && !!e.querySelector(`[role="listbox"][aria-label="${t}"]`)?.contains(n);
 				if (r("computers")) {
 					let e = t("agents");
-					e ? e.focus() : P && be.current.get(P.id)?.handle.focus?.();
+					e ? e.focus() : P && xe.current.get(P.id)?.handle.focus?.();
 					return;
 				}
 				if (r("agents")) {
-					P && be.current.get(P.id)?.handle.focus?.();
+					P && xe.current.get(P.id)?.handle.focus?.();
 					return;
 				}
 				(t("computers") ?? t("agents"))?.focus();
 				return;
 			}
 			case "toggle-broadcast":
-				E ? se((e) => e === "all" ? "focused" : "all") : ue((e) => !e);
+				E ? oe((e) => e === "all" ? "focused" : "all") : de((e) => !e);
 				return;
 			case "help":
 				M((e) => !e);
 				return;
 			case "exit":
-				if (Se.current?.contains(document.activeElement)) {
-					P && be.current.get(P.id)?.handle.focus?.();
+				if (Ce.current?.contains(document.activeElement)) {
+					P && xe.current.get(P.id)?.handle.focus?.();
 					return;
 				}
 				i === "overlay" && n();
@@ -2209,33 +2213,33 @@ function hn({ open: t, onClose: n, focusComputerId: r = null, variant: i = "over
 		}
 	}, [
 		T,
-		Ve,
-		Ue,
+		We,
+		qe,
 		n,
 		i,
 		P,
 		E
 	]);
-	if (W(() => {
+	if (U(() => {
 		if (!t) return;
 		let e = (e) => {
-			if (ve) {
-				e.preventDefault(), e.stopPropagation(), ye(!1);
-				let t = Qt(o, e);
-				t && Ge(t);
+			if (ye) {
+				e.preventDefault(), e.stopPropagation(), be(!1);
+				let t = un(o, e);
+				t && B(t);
 				return;
 			}
-			if (Zt(s, e)) {
-				e.preventDefault(), e.stopPropagation(), ye(!0);
+			if (ln(s, e)) {
+				e.preventDefault(), e.stopPropagation(), be(!0);
 				return;
 			}
-			let t = $t(o, e);
+			let t = dn(o, e);
 			if (t) {
 				if (t === "exit") {
 					let t = e.target;
 					if (t?.closest?.(".xterm")) return;
-					if (t === xe.current) {
-						xe.current?.blur(), e.preventDefault();
+					if (t === Se.current) {
+						Se.current?.blur(), e.preventDefault();
 						return;
 					}
 					if (ge || j) {
@@ -2243,7 +2247,7 @@ function hn({ open: t, onClose: n, focusComputerId: r = null, variant: i = "over
 						return;
 					}
 				}
-				e.preventDefault(), e.stopPropagation(), Ge(t);
+				e.preventDefault(), e.stopPropagation(), B(t);
 			}
 		};
 		return globalThis.addEventListener("keydown", e, !0), () => globalThis.removeEventListener("keydown", e, !0);
@@ -2251,32 +2255,32 @@ function hn({ open: t, onClose: n, focusComputerId: r = null, variant: i = "over
 		t,
 		o,
 		s,
-		ve,
-		Ge,
+		ye,
+		B,
 		ge,
 		j
-	]), W(() => {
-		if (!ve) return;
-		let e = setTimeout(() => ye(!1), s?.timeoutMs ?? 3e3);
+	]), U(() => {
+		if (!ye) return;
+		let e = setTimeout(() => be(!1), s?.timeoutMs ?? 3e3);
 		return () => clearTimeout(e);
-	}, [ve, s?.timeoutMs]), !t) return null;
-	let H = (e) => tn(o, e), Ke = rn(a), qe = a === "app", Je = i === "inline", Ye = O === "type" ? `Type into ${B.length} ${B.length === 1 ? "pane" : "panes"} — ⏎ to send` : k === "focused" ? `Instruction for ${F?.label ?? "the focused computer"} — ⏎ to send` : `Instruction for ${z.length} ${z.length === 1 ? "computer" : "computers"} — ⏎ to send`, Xe = /* @__PURE__ */ J("textarea", {
-		ref: xe,
+	}, [ye, s?.timeoutMs]), !t) return null;
+	let V = (e) => pn(o, e), Xe = hn(a), Ze = a === "app", Qe = i === "inline", $e = k === "type" ? `Type into ${z.length} ${z.length === 1 ? "pane" : "panes"} — ⏎ to send` : A === "focused" ? `Instruction for ${F?.label ?? "the focused computer"} — ⏎ to send` : `Instruction for ${R.length} ${R.length === 1 ? "computer" : "computers"} — ⏎ to send`, et = /* @__PURE__ */ q("textarea", {
+		ref: Se,
 		rows: 1,
 		value: fe,
 		onChange: (e) => pe(e.target.value),
 		onKeyDown: (e) => {
-			e.key === "Enter" && !e.shiftKey && (e.preventDefault(), E ? Be() : Re()), e.key === "Escape" && e.currentTarget.blur();
+			e.key === "Enter" && !e.shiftKey && (e.preventDefault(), E ? Ue() : Be()), e.key === "Escape" && e.currentTarget.blur();
 		},
-		placeholder: E ? Ye : A ? `instruction for all ${R.length} panes — ⏎ to send` : `instruction for ${F?.label ?? "the focused pane"} — ⏎ to send`,
+		placeholder: E ? $e : ue ? `instruction for all ${L.length} panes — ⏎ to send` : `instruction for ${F?.label ?? "the focused pane"} — ⏎ to send`,
 		"aria-label": E ? "Instruction" : "Broadcast instruction",
-		disabled: E && ce,
+		disabled: E && se,
 		className: e("flex-1 min-w-0 resize-none bg-transparent border-none outline-none text-[12px] leading-6", E ? "font-mono text-text-primary caret-primary placeholder:text-text-tertiary disabled:opacity-60" : "text-code-text caret-code-blue placeholder:text-code-raised")
 	});
 	if (E) {
-		let t = de(h), r = (e) => N.get(e.computerId) ?? null, c = (e) => {
-			let t = r(e), n = At(C, e.kindId);
-			return n && t && n.appliesTo && !n.appliesTo(t) ? Mt(C, t) : n;
+		let t = ce(h), r = (e) => N.get(e.computerId) ?? null, c = (e) => {
+			let t = r(e), n = Vt(C, e.kindId);
+			return n && t && n.appliesTo && !n.appliesTo(t) ? Ut(C, t) : n;
 		}, l = [{
 			label: "Windows",
 			items: [...T.windows.map((e, t) => ({
@@ -2293,7 +2297,7 @@ function hn({ open: t, onClose: n, focusComputerId: r = null, variant: i = "over
 		}, { items: [
 			{
 				label: "Jump to a computer…",
-				trailing: H("jump") ?? void 0,
+				trailing: V("jump") ?? void 0,
 				onSelect: () => _e(!0)
 			},
 			{
@@ -2302,7 +2306,7 @@ function hn({ open: t, onClose: n, focusComputerId: r = null, variant: i = "over
 			},
 			{
 				label: "Keyboard shortcuts",
-				trailing: H("help") ?? void 0,
+				trailing: V("help") ?? void 0,
 				onSelect: () => M(!0)
 			}
 		] }], m = {
@@ -2311,254 +2315,487 @@ function hn({ open: t, onClose: n, focusComputerId: r = null, variant: i = "over
 			all: "All computers"
 		}, _ = {
 			focused: +!!F,
-			selected: D.size,
+			selected: O.size,
 			all: h.length
-		}, v = O === "type" ? B.length : z.length, b = new Set(z.map((e) => e.id));
-		return /* @__PURE__ */ Y("div", {
-			ref: Ce,
+		}, v = k === "type" ? z.length : R.length, b = new Set(R.map((e) => e.id));
+		return /* @__PURE__ */ q(Ge.Provider, {
+			value: He,
+			children: /* @__PURE__ */ J("div", {
+				ref: we,
+				...i === "overlay" ? {
+					role: "dialog",
+					"aria-modal": !0
+				} : { role: "region" },
+				"aria-label": "Computer Lab",
+				"data-appearance": "workspace",
+				style: Xe,
+				className: e("flex flex-col bg-surface text-text-primary", i === "overlay" ? "fixed inset-0 z-[150]" : "relative h-full min-h-0 w-full rounded-lg border border-border overflow-hidden", p),
+				children: [
+					/* @__PURE__ */ q(tn, {
+						title: u,
+						summary: t,
+						statusFilter: D,
+						onStatusFilter: ne,
+						canCreate: g,
+						onCreate: () => Je(),
+						onKeys: () => M((e) => !e),
+						keysOpen: j,
+						keysChord: V("help"),
+						actions: /* @__PURE__ */ J(bt, { children: [d, i === "overlay" && /* @__PURE__ */ q("button", {
+							type: "button",
+							onClick: n,
+							title: `Leave the lab${V("exit") ? ` · ${V("exit")}` : ""}`,
+							className: "text-[12px] text-text-tertiary bg-transparent border-none cursor-pointer hover:text-danger",
+							children: "✕"
+						})] }),
+						leaderLabel: ye && s ? s.label : null
+					}),
+					/* @__PURE__ */ J("div", {
+						className: "flex flex-1 min-h-0",
+						children: [/* @__PURE__ */ q("div", {
+							ref: Ce,
+							className: "contents",
+							children: /* @__PURE__ */ q(Yt, {
+								className: "w-[224px] xl:w-[300px] shrink-0",
+								computers: h,
+								activeComputerId: F?.id ?? null,
+								openComputerIds: T.openComputerIds,
+								selectedIds: O,
+								statusFilter: D,
+								onStatusFilterChange: ne,
+								onCreate: g ? () => Je() : void 0,
+								onSelect: (e, { toggle: t }) => {
+									if (t) {
+										re((t) => {
+											let n = new Set(t);
+											return n.has(e.id) ? n.delete(e.id) : n.add(e.id), n;
+										});
+										return;
+									}
+									let n = T.panes.find((t) => t.computerId === e.id);
+									if (n) {
+										T.focusPane(n.id);
+										return;
+									}
+									P && I(P.id, e);
+								},
+								onOpenInPane: (e) => T.split("row", e.id, Le(e))
+							})
+						}), /* @__PURE__ */ J("div", {
+							className: "flex flex-col flex-1 min-w-0 min-h-0 bg-surface-inset",
+							children: [
+								/* @__PURE__ */ q(rn, {
+									panes: T.panes.map((e) => ({
+										id: e.id,
+										label: N.get(e.computerId)?.label ?? "gone",
+										kind: c(e)?.title ?? c(e)?.label ?? e.kindId,
+										active: e.id === T.activePaneId
+									})),
+									onFocusPane: T.focusPane,
+									onAddPane: () => We(T.panes.length % 2 == 1 ? "row" : "column"),
+									canAddPane: !!P,
+									shellsOpen: Te,
+									maxShells: 8,
+									onArrange: T.arrange,
+									zoomed: !!T.zoomedPaneId,
+									onToggleZoom: T.toggleZoom,
+									moreSections: l
+								}),
+								/* @__PURE__ */ q("div", {
+									className: "flex-1 min-h-0 flex px-2 pb-2",
+									children: T.activeWindow && P ? /* @__PURE__ */ q(Cn, {
+										className: "flex-1 h-full",
+										gutter: "roomy",
+										node: T.activeWindow.root,
+										activePaneId: T.activePaneId,
+										zoomedPaneId: T.zoomedPaneId,
+										onRatioChange: T.resize,
+										renderLeaf: (e) => {
+											let t = r(e), n = c(e), i = e.id === T.activePaneId;
+											return !t || !n ? /* @__PURE__ */ q("div", {
+												className: "flex-1 flex items-center justify-center rounded-lg border border-border bg-surface text-[12px] text-text-tertiary",
+												children: t ? "No pane kind is registered." : "This computer is gone."
+											}) : /* @__PURE__ */ q(on, {
+												computer: t,
+												kind: n,
+												kinds: Ht(C, t),
+												onSwitchKind: (t) => {
+													T.focusPane(e.id), Ke(e.id, n.id, t);
+												},
+												active: i,
+												zoomed: T.zoomedPaneId === e.id,
+												broadcasting: A !== "focused" && b.has(t.id),
+												models: y,
+												onFocus: () => {
+													i || T.focusPane(e.id);
+												},
+												onClose: () => {
+													T.focusPane(e.id), T.closeActivePane();
+												},
+												onToggleZoom: () => {
+													T.focusPane(e.id), T.toggleZoom();
+												},
+												moreSections: [{ items: [
+													{
+														label: "Split right",
+														onSelect: () => T.split("row", t.id, n.id)
+													},
+													{
+														label: "Split down",
+														onSelect: () => T.split("column", t.id, n.id)
+													},
+													{
+														label: "Open in a new window",
+														onSelect: () => T.newWindow(t.id, n.id)
+													}
+												] }],
+												children: /* @__PURE__ */ q(On, {
+													kind: n,
+													paneId: e.id,
+													computer: t,
+													active: i,
+													onRegisterPane: Re,
+													onSettled: () => void S()
+												})
+											}, e.id);
+										}
+									}) : /* @__PURE__ */ J("div", {
+										className: "flex-1 flex flex-col items-center justify-center gap-3 text-center rounded-lg border border-dashed border-border",
+										children: [/* @__PURE__ */ q("div", {
+											className: "text-[14px] font-semibold text-text-primary",
+											children: "No computers in the lab"
+										}), /* @__PURE__ */ q("div", {
+											className: "text-[12px] text-text-secondary max-w-sm",
+											children: g ? "Start a computer and it opens here in a pane." : "Nothing in the fleet is shared with you yet."
+										})]
+									})
+								}),
+								/* @__PURE__ */ J("div", {
+									"data-testid": "lab-instruction-bar",
+									className: "shrink-0 border-t border-border bg-surface px-2 pt-1.5 pb-1",
+									children: [/* @__PURE__ */ J("div", {
+										className: "flex items-center gap-1.5 rounded-lg border border-border bg-surface px-1.5 py-1 focus-within:border-primary",
+										children: [
+											/* @__PURE__ */ q(x, {
+												trigger: /* @__PURE__ */ J("span", {
+													className: "text-[12px] font-semibold",
+													children: [k === "nudge" ? "Nudge" : "Type", " ▾"]
+												}),
+												triggerLabel: "Instruction mode",
+												triggerVariant: "link",
+												triggerTestId: "lab-instruct-mode",
+												sections: [{ items: [{
+													label: "Nudge",
+													description: "An instruction for each computer's agent",
+													active: k === "nudge",
+													disabled: !g && !f,
+													disabledReason: "Needs permission to run work on these computers",
+													onSelect: () => ie("nudge")
+												}, {
+													label: "Type",
+													description: "Keystrokes into the panes open on them",
+													active: k === "type",
+													onSelect: () => ie("type")
+												}] }]
+											}),
+											/* @__PURE__ */ q("span", {
+												"aria-hidden": "true",
+												className: "h-4 w-px bg-border"
+											}),
+											/* @__PURE__ */ q(x, {
+												trigger: /* @__PURE__ */ J("span", {
+													className: "text-[12px] tabular-nums",
+													children: [
+														m[A],
+														" · ",
+														_[A],
+														" ▾"
+													]
+												}),
+												triggerLabel: "Instruction targets",
+												triggerVariant: "link",
+												triggerTestId: "lab-instruct-scope",
+												sections: [{
+													label: "Send to",
+													items: [
+														"focused",
+														"selected",
+														"all"
+													].map((e) => ({
+														label: `${m[e]} · ${_[e]}`,
+														active: A === e,
+														...e === "selected" && O.size === 0 ? {
+															disabled: !0,
+															disabledReason: "⌘-click computers in the rail to select them"
+														} : {},
+														onSelect: () => oe(e)
+													}))
+												}]
+											}),
+											/* @__PURE__ */ q("span", {
+												"aria-hidden": "true",
+												className: "font-mono text-[12px] text-text-tertiary pl-1",
+												children: ">"
+											}),
+											et,
+											/* @__PURE__ */ q("button", {
+												type: "button",
+												onClick: () => void Ue(),
+												disabled: !fe.trim() || v === 0 || se,
+												"aria-label": "Send instruction",
+												title: "Send · ⏎",
+												className: "shrink-0 h-6.5 px-2 rounded-md border-none bg-primary text-on-primary text-[12px] cursor-pointer hover:bg-primary-hover disabled:opacity-40 disabled:cursor-not-allowed",
+												children: "⏎"
+											})
+										]
+									}), /* @__PURE__ */ J("div", {
+										"data-testid": "lab-instruction-caption",
+										className: "px-1 pt-0.5 text-[11px] text-text-tertiary tabular-nums",
+										children: [
+											k === "type" ? "Shell input" : "Agent instruction",
+											" · ",
+											v,
+											" ",
+											v === 1 ? "target" : "targets",
+											se && " · sending…"
+										]
+									})]
+								})
+							]
+						})]
+					}),
+					/* @__PURE__ */ q(Sn, {
+						open: ge,
+						onClose: () => _e(!1),
+						chrome: a,
+						computers: h,
+						panes: T.panes,
+						onJumpToPane: T.focusPane,
+						onRetarget: (e) => {
+							P && I(P.id, e);
+						},
+						onOpenInSplit: (e) => T.split("row", e.id, Le(e)),
+						projects: ee,
+						onSelectProject: (e) => {
+							let t = e.computers[0];
+							if (t) {
+								P && I(P.id, t);
+								return;
+							}
+							g && Je(e.id);
+						}
+					}),
+					j && /* @__PURE__ */ q(kn, {
+						keymap: o,
+						leader: s,
+						chrome: a,
+						onClose: () => M(!1)
+					})
+				]
+			})
+		});
+	}
+	return /* @__PURE__ */ q(Ge.Provider, {
+		value: He,
+		children: /* @__PURE__ */ J("div", {
+			ref: we,
 			...i === "overlay" ? {
 				role: "dialog",
 				"aria-modal": !0
 			} : { role: "region" },
 			"aria-label": "Computer Lab",
-			"data-appearance": "workspace",
-			style: Ke,
-			className: e("flex flex-col bg-surface text-text-primary", i === "overlay" ? "fixed inset-0 z-[150]" : "relative h-full min-h-0 w-full rounded-lg border border-border overflow-hidden", p),
+			style: Xe,
+			className: e("flex flex-col", Ze ? "bg-surface text-text-primary" : "bg-code-bg text-code-text", i === "overlay" ? "fixed inset-0 z-[150]" : e("relative h-full min-h-0 w-full", Ze && "rounded-lg border border-border overflow-hidden"), p),
 			children: [
-				/* @__PURE__ */ J(Wt, {
-					title: u,
-					summary: t,
-					statusFilter: ne,
-					onStatusFilter: re,
-					canCreate: g,
-					onCreate: () => We(),
-					onKeys: () => M((e) => !e),
-					keysOpen: j,
-					keysChord: H("help"),
-					actions: /* @__PURE__ */ Y(lt, { children: [d, i === "overlay" && /* @__PURE__ */ J("button", {
-						type: "button",
-						onClick: n,
-						title: `Leave the lab${H("exit") ? ` · ${H("exit")}` : ""}`,
-						className: "text-[12px] text-text-tertiary bg-transparent border-none cursor-pointer hover:text-danger",
-						children: "✕"
-					})] }),
-					leaderLabel: ve && s ? s.label : null
+				/* @__PURE__ */ J("div", {
+					className: e("flex items-center gap-3 px-3 shrink-0 border-b border-code-border bg-code-panel", Qe ? "h-9" : "h-10"),
+					children: [
+						/* @__PURE__ */ q("span", {
+							className: "text-[11px] font-mono font-semibold tracking-wide text-code-mauve select-none",
+							children: "LAB"
+						}),
+						/* @__PURE__ */ J("span", {
+							"data-testid": "lab-summary",
+							className: "text-[10px] font-mono text-code-muted tabular-nums",
+							children: [
+								h.length,
+								" ",
+								h.length === 1 ? "computer" : "computers",
+								" · ",
+								T.panes.length,
+								" ",
+								T.panes.length === 1 ? "pane" : "panes"
+							]
+						}),
+						/* @__PURE__ */ J("div", {
+							className: "flex items-center gap-1 ml-2",
+							children: [T.windows.map((t, n) => {
+								let r = t.id === T.activeWindow?.id;
+								return /* @__PURE__ */ q("button", {
+									type: "button",
+									onClick: () => T.selectWindow(t.id),
+									title: `Window ${n + 1}`,
+									"aria-current": r ? "true" : void 0,
+									className: e("px-2 py-0.5 rounded-sm text-[11px] font-mono cursor-pointer border-none transition-colors", r ? "bg-code-blue text-code-bg font-semibold" : "bg-code-surface text-code-muted hover:text-code-text"),
+									children: t.name ?? n + 1
+								}, t.id);
+							}), /* @__PURE__ */ q("button", {
+								type: "button",
+								onClick: () => P && T.newWindow(P.computerId, w(N.get(P.computerId))),
+								disabled: !P,
+								title: "New window",
+								"aria-label": "New window",
+								className: "px-1.5 py-0.5 text-[11px] font-mono text-code-muted bg-transparent border-none cursor-pointer hover:text-code-text disabled:opacity-40 disabled:cursor-not-allowed",
+								children: "+"
+							})]
+						}),
+						/* @__PURE__ */ q("span", { className: "flex-1" }),
+						/* @__PURE__ */ q(_, {
+							label: "shells",
+							value: Te / 8,
+							segments: 8,
+							showPercent: !1,
+							note: `${Te} of 8 open`,
+							warnAbove: .74,
+							tone: Ze ? "surface" : "code",
+							className: "hidden md:flex"
+						}),
+						ye && s && /* @__PURE__ */ J("span", {
+							"data-testid": "leader-armed",
+							className: "px-2 py-0.5 rounded-sm text-[10px] font-mono font-semibold bg-code-peach text-code-bg animate-pulse",
+							children: [s.label, " …"]
+						}),
+						/* @__PURE__ */ q("button", {
+							type: "button",
+							onClick: () => M((e) => !e),
+							"aria-pressed": j,
+							title: `Shortcuts${V("help") ? ` · ${V("help")}` : ""}`,
+							className: "text-[11px] font-mono text-code-muted bg-transparent border-none cursor-pointer hover:text-code-text",
+							children: "?"
+						}),
+						i === "overlay" && /* @__PURE__ */ q("button", {
+							type: "button",
+							onClick: n,
+							title: `Leave the lab${V("exit") ? ` · ${V("exit")}` : ""}`,
+							className: "text-[11px] font-mono text-code-muted bg-transparent border-none cursor-pointer hover:text-code-red",
+							children: "✕"
+						})
+					]
 				}),
-				/* @__PURE__ */ Y("div", {
+				/* @__PURE__ */ J("div", {
 					className: "flex flex-1 min-h-0",
-					children: [/* @__PURE__ */ J("div", {
-						ref: Se,
+					children: [/* @__PURE__ */ q("div", {
+						ref: Ce,
 						className: "contents",
-						children: /* @__PURE__ */ J(Rt, {
-							className: "w-[224px] xl:w-[300px] shrink-0",
+						children: /* @__PURE__ */ q(yn, {
+							className: "w-[210px] shrink-0",
 							computers: h,
 							activeComputerId: F?.id ?? null,
 							openComputerIds: T.openComputerIds,
-							selectedIds: D,
-							statusFilter: ne,
-							onStatusFilterChange: re,
-							onCreate: g ? () => We() : void 0,
-							onSelect: (e, { toggle: t }) => {
-								if (t) {
-									ie((t) => {
-										let n = new Set(t);
-										return n.has(e.id) ? n.delete(e.id) : n.add(e.id), n;
-									});
+							showAllActivity: me,
+							onToggleShowAll: () => he((e) => !e),
+							canManage: g,
+							models: y,
+							onCreate: () => Je(),
+							onOpenMenu: () => M((e) => !e),
+							onSelect: (e) => {
+								P && I(P.id, e);
+							},
+							onOpenInPane: (e) => T.split("row", e.id, Le(e)),
+							onWatch: (e) => {
+								let t = C.find((e) => e.id === "tail");
+								if (!t) {
+									P && I(P.id, e);
 									return;
 								}
-								let n = T.panes.find((t) => t.computerId === e.id);
+								let n = T.panes.find((n) => n.computerId === e.id && n.kindId === t.id);
 								if (n) {
 									T.focusPane(n.id);
 									return;
 								}
-								P && L(P.id, e);
-							},
-							onOpenInPane: (e) => T.split("row", e.id, Fe(e))
+								T.split("row", e.id, t.id);
+							}
 						})
-					}), /* @__PURE__ */ Y("div", {
-						className: "flex flex-col flex-1 min-w-0 min-h-0 bg-surface-inset",
-						children: [
-							/* @__PURE__ */ J(Kt, {
-								panes: T.panes.map((e) => ({
-									id: e.id,
-									label: N.get(e.computerId)?.label ?? "gone",
-									kind: c(e)?.title ?? c(e)?.label ?? e.kindId,
-									active: e.id === T.activePaneId
-								})),
-								onFocusPane: T.focusPane,
-								onAddPane: () => Ve(T.panes.length % 2 == 1 ? "row" : "column"),
-								canAddPane: !!P,
-								shellsOpen: we,
-								maxShells: 8,
-								onArrange: T.arrange,
-								zoomed: !!T.zoomedPaneId,
-								onToggleZoom: T.toggleZoom,
-								moreSections: l
-							}),
-							/* @__PURE__ */ J("div", {
-								className: "flex-1 min-h-0 flex px-2 pb-2",
-								children: T.activeWindow && P ? /* @__PURE__ */ J(fn, {
-									className: "flex-1 h-full",
-									gutter: "roomy",
-									node: T.activeWindow.root,
-									activePaneId: T.activePaneId,
-									zoomedPaneId: T.zoomedPaneId,
-									onRatioChange: T.resize,
-									renderLeaf: (e) => {
-										let t = r(e), n = c(e), i = e.id === T.activePaneId;
-										return !t || !n ? /* @__PURE__ */ J("div", {
-											className: "flex-1 flex items-center justify-center rounded-lg border border-border bg-surface text-[12px] text-text-tertiary",
-											children: t ? "No pane kind is registered." : "This computer is gone."
-										}) : /* @__PURE__ */ J(Jt, {
-											computer: t,
-											kind: n,
-											kinds: jt(C, t),
-											onSwitchKind: (t) => {
-												T.focusPane(e.id), V(e.id, n.id, t);
-											},
-											active: i,
-											zoomed: T.zoomedPaneId === e.id,
-											broadcasting: k !== "focused" && b.has(t.id),
-											models: y,
-											onFocus: () => {
-												i || T.focusPane(e.id);
-											},
-											onClose: () => {
-												T.focusPane(e.id), T.closeActivePane();
-											},
-											onToggleZoom: () => {
-												T.focusPane(e.id), T.toggleZoom();
-											},
-											moreSections: [{ items: [
-												{
-													label: "Split right",
-													onSelect: () => T.split("row", t.id, n.id)
-												},
-												{
-													label: "Split down",
-													onSelect: () => T.split("column", t.id, n.id)
-												},
-												{
-													label: "Open in a new window",
-													onSelect: () => T.newWindow(t.id, n.id)
-												}
-											] }],
-											children: /* @__PURE__ */ J(_n, {
-												kind: n,
-												paneId: e.id,
-												computer: t,
-												active: i,
-												onRegisterPane: Ie,
-												onSettled: () => void S()
-											})
-										}, e.id);
-									}
-								}) : /* @__PURE__ */ Y("div", {
-									className: "flex-1 flex flex-col items-center justify-center gap-3 text-center rounded-lg border border-dashed border-border",
-									children: [/* @__PURE__ */ J("div", {
-										className: "text-[14px] font-semibold text-text-primary",
-										children: "No computers in the lab"
-									}), /* @__PURE__ */ J("div", {
-										className: "text-[12px] text-text-secondary max-w-sm",
-										children: g ? "Start a computer and it opens here in a pane." : "Nothing in the fleet is shared with you yet."
-									})]
+					}), /* @__PURE__ */ q("div", {
+						className: e("flex-1 min-w-0 min-h-0", Qe ? "p-1.5" : "p-2", Ze ? "bg-surface" : "bg-code-bg"),
+						children: T.activeWindow && P ? /* @__PURE__ */ q(Cn, {
+							className: "flex-1 h-full",
+							node: T.activeWindow.root,
+							activePaneId: T.activePaneId,
+							zoomedPaneId: T.zoomedPaneId,
+							onRatioChange: T.resize,
+							renderLeaf: (e) => {
+								let t = N.get(e.computerId), n = e.id === T.activePaneId;
+								return /* @__PURE__ */ q(Dn, {
+									pane: e,
+									computer: t ?? null,
+									active: n,
+									broadcasting: ue,
+									idleWindowMs: c,
+									zoomed: T.zoomedPaneId === e.id,
+									onFocus: () => T.focusPane(e.id),
+									onClose: () => {
+										T.focusPane(e.id), T.closeActivePane();
+									},
+									kinds: C,
+									onToggleKind: () => {
+										T.focusPane(e.id), Ke(e.id, e.kindId, Wt(C, e.kindId, t));
+									},
+									onRegisterPane: Re,
+									onSettled: () => void S()
+								}, e.id);
+							}
+						}) : /* @__PURE__ */ J("div", {
+							className: "h-full flex flex-col items-center justify-center gap-3 text-center",
+							children: [
+								/* @__PURE__ */ q("div", {
+									className: "text-[13px] font-mono text-code-subtle",
+									children: "No computers to lab"
+								}),
+								/* @__PURE__ */ q("div", {
+									className: "text-[11px] font-mono text-code-muted max-w-sm",
+									children: "Computer Lab multiplexes a fleet. Provision at least one computer and it will open in a pane."
+								}),
+								g && /* @__PURE__ */ q("button", {
+									type: "button",
+									onClick: () => Je(),
+									className: "text-[11px] font-mono rounded px-3 py-1 cursor-pointer border border-code-green/60 bg-code-green/15 text-code-green hover:bg-code-green/30",
+									children: "+ new computer"
 								})
-							}),
-							/* @__PURE__ */ Y("div", {
-								"data-testid": "lab-instruction-bar",
-								className: "shrink-0 border-t border-border bg-surface px-2 pt-1.5 pb-1",
-								children: [/* @__PURE__ */ Y("div", {
-									className: "flex items-center gap-1.5 rounded-lg border border-border bg-surface px-1.5 py-1 focus-within:border-primary",
-									children: [
-										/* @__PURE__ */ J(x, {
-											trigger: /* @__PURE__ */ Y("span", {
-												className: "text-[12px] font-semibold",
-												children: [O === "nudge" ? "Nudge" : "Type", " ▾"]
-											}),
-											triggerLabel: "Instruction mode",
-											triggerVariant: "link",
-											triggerTestId: "lab-instruct-mode",
-											sections: [{ items: [{
-												label: "Nudge",
-												description: "An instruction for each computer's agent",
-												active: O === "nudge",
-												disabled: !g && !f,
-												disabledReason: "Needs permission to run work on these computers",
-												onSelect: () => ae("nudge")
-											}, {
-												label: "Type",
-												description: "Keystrokes into the panes open on them",
-												active: O === "type",
-												onSelect: () => ae("type")
-											}] }]
-										}),
-										/* @__PURE__ */ J("span", {
-											"aria-hidden": "true",
-											className: "h-4 w-px bg-border"
-										}),
-										/* @__PURE__ */ J(x, {
-											trigger: /* @__PURE__ */ Y("span", {
-												className: "text-[12px] tabular-nums",
-												children: [
-													m[k],
-													" · ",
-													_[k],
-													" ▾"
-												]
-											}),
-											triggerLabel: "Instruction targets",
-											triggerVariant: "link",
-											triggerTestId: "lab-instruct-scope",
-											sections: [{
-												label: "Send to",
-												items: [
-													"focused",
-													"selected",
-													"all"
-												].map((e) => ({
-													label: `${m[e]} · ${_[e]}`,
-													active: k === e,
-													...e === "selected" && D.size === 0 ? {
-														disabled: !0,
-														disabledReason: "⌘-click computers in the rail to select them"
-													} : {},
-													onSelect: () => se(e)
-												}))
-											}]
-										}),
-										/* @__PURE__ */ J("span", {
-											"aria-hidden": "true",
-											className: "font-mono text-[12px] text-text-tertiary pl-1",
-											children: ">"
-										}),
-										Xe,
-										/* @__PURE__ */ J("button", {
-											type: "button",
-											onClick: () => void Be(),
-											disabled: !fe.trim() || v === 0 || ce,
-											"aria-label": "Send instruction",
-											title: "Send · ⏎",
-											className: "shrink-0 h-6.5 px-2 rounded-md border-none bg-primary text-on-primary text-[12px] cursor-pointer hover:bg-primary-hover disabled:opacity-40 disabled:cursor-not-allowed",
-											children: "⏎"
-										})
-									]
-								}), /* @__PURE__ */ Y("div", {
-									"data-testid": "lab-instruction-caption",
-									className: "px-1 pt-0.5 text-[11px] text-text-tertiary tabular-nums",
-									children: [
-										O === "type" ? "Shell input" : "Agent instruction",
-										" · ",
-										v,
-										" ",
-										v === 1 ? "target" : "targets",
-										ce && " · sending…"
-									]
-								})]
-							})
-						]
+							]
+						})
 					})]
 				}),
-				/* @__PURE__ */ J(dn, {
+				/* @__PURE__ */ J("div", {
+					className: e("flex items-center gap-2 px-3 shrink-0 border-t font-mono transition-colors", Qe ? "py-1" : "py-1.5", ue ? "border-code-peach bg-code-peach/10" : "border-code-border bg-code-panel focus-within:border-code-blue"),
+					children: [
+						/* @__PURE__ */ q("button", {
+							type: "button",
+							onClick: () => de((e) => !e),
+							"aria-pressed": ue,
+							title: `Send the prompt to every pane${V("toggle-broadcast") ? ` · ${V("toggle-broadcast")}` : ""}`,
+							className: e("text-[10px] px-1.5 py-0.5 rounded-sm cursor-pointer border transition-colors shrink-0", ue ? "border-code-peach bg-code-peach/25 text-code-peach font-semibold" : "border-code-border text-code-muted bg-transparent hover:text-code-text"),
+							children: ue ? "▶▶ all panes" : "▶ focused pane"
+						}),
+						/* @__PURE__ */ J("span", {
+							className: "text-[10px] text-code-muted tabular-nums shrink-0 hidden sm:inline",
+							children: [
+								L.length,
+								" ",
+								L.length === 1 ? "target" : "targets"
+							]
+						}),
+						et,
+						/* @__PURE__ */ q("button", {
+							type: "button",
+							onClick: Be,
+							disabled: !fe.trim() || L.length === 0,
+							className: e("shrink-0 text-[11px] px-2 py-0.5 rounded-sm border cursor-pointer transition-colors", "border-code-green/60 bg-code-green/15 text-code-green hover:bg-code-green/30", "disabled:border-code-border disabled:bg-transparent disabled:opacity-50 disabled:cursor-not-allowed"),
+							children: "send"
+						})
+					]
+				}),
+				/* @__PURE__ */ q(Sn, {
 					open: ge,
 					onClose: () => _e(!1),
 					chrome: a,
@@ -2566,314 +2803,87 @@ function hn({ open: t, onClose: n, focusComputerId: r = null, variant: i = "over
 					panes: T.panes,
 					onJumpToPane: T.focusPane,
 					onRetarget: (e) => {
-						P && L(P.id, e);
+						P && I(P.id, e);
 					},
-					onOpenInSplit: (e) => T.split("row", e.id, Fe(e)),
+					onOpenInSplit: (e) => T.split("row", e.id, Le(e)),
 					projects: ee,
 					onSelectProject: (e) => {
 						let t = e.computers[0];
 						if (t) {
-							P && L(P.id, t);
+							P && I(P.id, t);
 							return;
 						}
-						g && We(e.id);
+						if (!g) {
+							b({
+								tone: "info",
+								title: `${e.name} has no computers`,
+								detail: "You do not have permission to start one."
+							});
+							return;
+						}
+						Je(e.id);
 					}
 				}),
-				j && /* @__PURE__ */ J(vn, {
+				j && /* @__PURE__ */ q(kn, {
 					keymap: o,
 					leader: s,
 					chrome: a,
 					onClose: () => M(!1)
 				})
 			]
-		});
-	}
-	return /* @__PURE__ */ Y("div", {
-		ref: Ce,
-		...i === "overlay" ? {
-			role: "dialog",
-			"aria-modal": !0
-		} : { role: "region" },
-		"aria-label": "Computer Lab",
-		style: Ke,
-		className: e("flex flex-col", qe ? "bg-surface text-text-primary" : "bg-code-bg text-code-text", i === "overlay" ? "fixed inset-0 z-[150]" : e("relative h-full min-h-0 w-full", qe && "rounded-lg border border-border overflow-hidden"), p),
-		children: [
-			/* @__PURE__ */ Y("div", {
-				className: e("flex items-center gap-3 px-3 shrink-0 border-b border-code-border bg-code-panel", Je ? "h-9" : "h-10"),
-				children: [
-					/* @__PURE__ */ J("span", {
-						className: "text-[11px] font-mono font-semibold tracking-wide text-code-mauve select-none",
-						children: "LAB"
-					}),
-					/* @__PURE__ */ Y("span", {
-						"data-testid": "lab-summary",
-						className: "text-[10px] font-mono text-code-muted tabular-nums",
-						children: [
-							h.length,
-							" ",
-							h.length === 1 ? "computer" : "computers",
-							" · ",
-							T.panes.length,
-							" ",
-							T.panes.length === 1 ? "pane" : "panes"
-						]
-					}),
-					/* @__PURE__ */ Y("div", {
-						className: "flex items-center gap-1 ml-2",
-						children: [T.windows.map((t, n) => {
-							let r = t.id === T.activeWindow?.id;
-							return /* @__PURE__ */ J("button", {
-								type: "button",
-								onClick: () => T.selectWindow(t.id),
-								title: `Window ${n + 1}`,
-								"aria-current": r ? "true" : void 0,
-								className: e("px-2 py-0.5 rounded-sm text-[11px] font-mono cursor-pointer border-none transition-colors", r ? "bg-code-blue text-code-bg font-semibold" : "bg-code-surface text-code-muted hover:text-code-text"),
-								children: t.name ?? n + 1
-							}, t.id);
-						}), /* @__PURE__ */ J("button", {
-							type: "button",
-							onClick: () => P && T.newWindow(P.computerId, w(N.get(P.computerId))),
-							disabled: !P,
-							title: "New window",
-							"aria-label": "New window",
-							className: "px-1.5 py-0.5 text-[11px] font-mono text-code-muted bg-transparent border-none cursor-pointer hover:text-code-text disabled:opacity-40 disabled:cursor-not-allowed",
-							children: "+"
-						})]
-					}),
-					/* @__PURE__ */ J("span", { className: "flex-1" }),
-					/* @__PURE__ */ J(_, {
-						label: "shells",
-						value: we / 8,
-						segments: 8,
-						showPercent: !1,
-						note: `${we} of 8 open`,
-						warnAbove: .74,
-						tone: qe ? "surface" : "code",
-						className: "hidden md:flex"
-					}),
-					ve && s && /* @__PURE__ */ Y("span", {
-						"data-testid": "leader-armed",
-						className: "px-2 py-0.5 rounded-sm text-[10px] font-mono font-semibold bg-code-peach text-code-bg animate-pulse",
-						children: [s.label, " …"]
-					}),
-					/* @__PURE__ */ J("button", {
-						type: "button",
-						onClick: () => M((e) => !e),
-						"aria-pressed": j,
-						title: `Shortcuts${H("help") ? ` · ${H("help")}` : ""}`,
-						className: "text-[11px] font-mono text-code-muted bg-transparent border-none cursor-pointer hover:text-code-text",
-						children: "?"
-					}),
-					i === "overlay" && /* @__PURE__ */ J("button", {
-						type: "button",
-						onClick: n,
-						title: `Leave the lab${H("exit") ? ` · ${H("exit")}` : ""}`,
-						className: "text-[11px] font-mono text-code-muted bg-transparent border-none cursor-pointer hover:text-code-red",
-						children: "✕"
-					})
-				]
-			}),
-			/* @__PURE__ */ Y("div", {
-				className: "flex flex-1 min-h-0",
-				children: [/* @__PURE__ */ J("div", {
-					ref: Se,
-					className: "contents",
-					children: /* @__PURE__ */ J(cn, {
-						className: "w-[210px] shrink-0",
-						computers: h,
-						activeComputerId: F?.id ?? null,
-						openComputerIds: T.openComputerIds,
-						showAllActivity: me,
-						onToggleShowAll: () => he((e) => !e),
-						canManage: g,
-						models: y,
-						onCreate: () => We(),
-						onOpenMenu: () => M((e) => !e),
-						onSelect: (e) => {
-							P && L(P.id, e);
-						},
-						onOpenInPane: (e) => T.split("row", e.id, Fe(e)),
-						onWatch: (e) => {
-							let t = C.find((e) => e.id === "tail");
-							if (!t) {
-								P && L(P.id, e);
-								return;
-							}
-							let n = T.panes.find((n) => n.computerId === e.id && n.kindId === t.id);
-							if (n) {
-								T.focusPane(n.id);
-								return;
-							}
-							T.split("row", e.id, t.id);
-						}
-					})
-				}), /* @__PURE__ */ J("div", {
-					className: e("flex-1 min-w-0 min-h-0", Je ? "p-1.5" : "p-2", qe ? "bg-surface" : "bg-code-bg"),
-					children: T.activeWindow && P ? /* @__PURE__ */ J(fn, {
-						className: "flex-1 h-full",
-						node: T.activeWindow.root,
-						activePaneId: T.activePaneId,
-						zoomedPaneId: T.zoomedPaneId,
-						onRatioChange: T.resize,
-						renderLeaf: (e) => {
-							let t = N.get(e.computerId), n = e.id === T.activePaneId;
-							return /* @__PURE__ */ J(gn, {
-								pane: e,
-								computer: t ?? null,
-								active: n,
-								broadcasting: A,
-								idleWindowMs: c,
-								zoomed: T.zoomedPaneId === e.id,
-								onFocus: () => T.focusPane(e.id),
-								onClose: () => {
-									T.focusPane(e.id), T.closeActivePane();
-								},
-								kinds: C,
-								onToggleKind: () => {
-									T.focusPane(e.id), V(e.id, e.kindId, Nt(C, e.kindId, t));
-								},
-								onRegisterPane: Ie,
-								onSettled: () => void S()
-							}, e.id);
-						}
-					}) : /* @__PURE__ */ Y("div", {
-						className: "h-full flex flex-col items-center justify-center gap-3 text-center",
-						children: [
-							/* @__PURE__ */ J("div", {
-								className: "text-[13px] font-mono text-code-subtle",
-								children: "No computers to lab"
-							}),
-							/* @__PURE__ */ J("div", {
-								className: "text-[11px] font-mono text-code-muted max-w-sm",
-								children: "Computer Lab multiplexes a fleet. Provision at least one computer and it will open in a pane."
-							}),
-							g && /* @__PURE__ */ J("button", {
-								type: "button",
-								onClick: () => We(),
-								className: "text-[11px] font-mono rounded px-3 py-1 cursor-pointer border border-code-green/60 bg-code-green/15 text-code-green hover:bg-code-green/30",
-								children: "+ new computer"
-							})
-						]
-					})
-				})]
-			}),
-			/* @__PURE__ */ Y("div", {
-				className: e("flex items-center gap-2 px-3 shrink-0 border-t font-mono transition-colors", Je ? "py-1" : "py-1.5", A ? "border-code-peach bg-code-peach/10" : "border-code-border bg-code-panel focus-within:border-code-blue"),
-				children: [
-					/* @__PURE__ */ J("button", {
-						type: "button",
-						onClick: () => ue((e) => !e),
-						"aria-pressed": A,
-						title: `Send the prompt to every pane${H("toggle-broadcast") ? ` · ${H("toggle-broadcast")}` : ""}`,
-						className: e("text-[10px] px-1.5 py-0.5 rounded-sm cursor-pointer border transition-colors shrink-0", A ? "border-code-peach bg-code-peach/25 text-code-peach font-semibold" : "border-code-border text-code-muted bg-transparent hover:text-code-text"),
-						children: A ? "▶▶ all panes" : "▶ focused pane"
-					}),
-					/* @__PURE__ */ Y("span", {
-						className: "text-[10px] text-code-muted tabular-nums shrink-0 hidden sm:inline",
-						children: [
-							R.length,
-							" ",
-							R.length === 1 ? "target" : "targets"
-						]
-					}),
-					Xe,
-					/* @__PURE__ */ J("button", {
-						type: "button",
-						onClick: Re,
-						disabled: !fe.trim() || R.length === 0,
-						className: e("shrink-0 text-[11px] px-2 py-0.5 rounded-sm border cursor-pointer transition-colors", "border-code-green/60 bg-code-green/15 text-code-green hover:bg-code-green/30", "disabled:border-code-border disabled:bg-transparent disabled:opacity-50 disabled:cursor-not-allowed"),
-						children: "send"
-					})
-				]
-			}),
-			/* @__PURE__ */ J(dn, {
-				open: ge,
-				onClose: () => _e(!1),
-				chrome: a,
-				computers: h,
-				panes: T.panes,
-				onJumpToPane: T.focusPane,
-				onRetarget: (e) => {
-					P && L(P.id, e);
-				},
-				onOpenInSplit: (e) => T.split("row", e.id, Fe(e)),
-				projects: ee,
-				onSelectProject: (e) => {
-					let t = e.computers[0];
-					if (t) {
-						P && L(P.id, t);
-						return;
-					}
-					if (!g) {
-						b({
-							tone: "info",
-							title: `${e.name} has no computers`,
-							detail: "You do not have permission to start one."
-						});
-						return;
-					}
-					We(e.id);
-				}
-			}),
-			j && /* @__PURE__ */ J(vn, {
-				keymap: o,
-				leader: s,
-				chrome: a,
-				onClose: () => M(!1)
-			})
-		]
+		})
 	});
 }
-function gn({ pane: e, computer: t, active: n, broadcasting: r, zoomed: i, idleWindowMs: a, kinds: o, onFocus: s, onClose: c, onToggleKind: l, onRegisterPane: u, onSettled: d }) {
-	let f = At(o, e.kindId), p = f && t && f.appliesTo && !f.appliesTo(t) ? Mt(o, t) : f, m = U((t) => {
+function Dn({ pane: e, computer: t, active: n, broadcasting: r, zoomed: i, idleWindowMs: a, kinds: o, onFocus: s, onClose: c, onToggleKind: l, onRegisterPane: u, onSettled: d }) {
+	let f = Vt(o, e.kindId), p = f && t && f.appliesTo && !f.appliesTo(t) ? Ut(o, t) : f, m = H((t) => {
 		p && u(e.id, p, t);
 	}, [
 		u,
 		e.id,
 		p
 	]);
-	if (!t || !p) return /* @__PURE__ */ J(g, {
+	if (!t || !p) return /* @__PURE__ */ q(g, {
 		title: "unbound",
 		active: n,
 		className: "flex-1 min-w-0",
 		onActivate: s,
-		children: /* @__PURE__ */ J("div", {
+		children: /* @__PURE__ */ q("div", {
 			className: "h-full flex items-center justify-center text-[11px] font-mono text-code-subtle",
 			children: t ? "no pane kind registered" : "this computer is gone"
 		})
 	});
-	let h = k(t), _ = D[h];
-	return /* @__PURE__ */ Y(g, {
+	let h = A(t), _ = O[h];
+	return /* @__PURE__ */ J(g, {
 		active: n,
 		onActivate: s,
 		className: "flex-1 min-w-0",
 		bodyClassName: "flex flex-col min-h-0",
-		title: /* @__PURE__ */ Y("span", {
+		title: /* @__PURE__ */ J("span", {
 			className: "inline-flex items-center gap-1.5",
 			children: [
-				/* @__PURE__ */ J(v, {
+				/* @__PURE__ */ q(v, {
 					size: "xs",
 					color: _.color,
 					pulse: _.pulse,
 					"aria-label": _.label
 				}),
 				t.label,
-				i && /* @__PURE__ */ J("span", {
+				i && /* @__PURE__ */ q("span", {
 					className: "text-code-peach",
 					title: "Zoomed",
 					children: "⤢"
 				})
 			]
 		}),
-		titleAction: /* @__PURE__ */ Y("span", {
+		titleAction: /* @__PURE__ */ J("span", {
 			className: "inline-flex items-center gap-1.5",
-			children: [/* @__PURE__ */ J("button", {
+			children: [/* @__PURE__ */ q("button", {
 				type: "button",
 				onClick: l,
-				title: Nt(o, e.kindId)?.description ?? "Switch pane kind",
+				title: Wt(o, e.kindId)?.description ?? "Switch pane kind",
 				className: "text-[9px] font-mono text-code-muted bg-transparent border-none cursor-pointer hover:text-code-text",
 				children: p.label
-			}), /* @__PURE__ */ J("button", {
+			}), /* @__PURE__ */ q("button", {
 				type: "button",
 				onClick: c,
 				"aria-label": `Close pane ${t.label}`,
@@ -2881,7 +2891,7 @@ function gn({ pane: e, computer: t, active: n, broadcasting: r, zoomed: i, idleW
 				children: "×"
 			})]
 		}),
-		children: [/* @__PURE__ */ J("div", {
+		children: [/* @__PURE__ */ q("div", {
 			className: "flex-1 min-h-0",
 			children: p.render({
 				computer: t,
@@ -2890,7 +2900,7 @@ function gn({ pane: e, computer: t, active: n, broadcasting: r, zoomed: i, idleW
 				registerPane: m,
 				onSettled: d
 			})
-		}), /* @__PURE__ */ J(ie, {
+		}), /* @__PURE__ */ q(re, {
 			className: "rounded-b-[3px]",
 			computer: t,
 			idleWindowMs: a,
@@ -2899,13 +2909,13 @@ function gn({ pane: e, computer: t, active: n, broadcasting: r, zoomed: i, idleW
 		})]
 	});
 }
-function _n({ kind: e, paneId: t, computer: n, active: r, onRegisterPane: i, onSettled: a }) {
-	let o = U((n) => i(t, e, n), [
+function On({ kind: e, paneId: t, computer: n, active: r, onRegisterPane: i, onSettled: a }) {
+	let o = H((n) => i(t, e, n), [
 		i,
 		t,
 		e
 	]);
-	return /* @__PURE__ */ J(lt, { children: e.render({
+	return /* @__PURE__ */ q(bt, { children: e.render({
 		computer: n,
 		paneId: t,
 		active: r,
@@ -2913,35 +2923,35 @@ function _n({ kind: e, paneId: t, computer: n, active: r, onRegisterPane: i, onS
 		onSettled: a
 	}) });
 }
-function vn({ keymap: e, leader: t, chrome: n = "app", onClose: r }) {
+function kn({ keymap: e, leader: t, chrome: n = "app", onClose: r }) {
 	let i = {
 		panes: "Panes",
 		navigate: "Getting around",
 		lab: "The lab"
 	};
-	return /* @__PURE__ */ J("div", {
+	return /* @__PURE__ */ q("div", {
 		role: "dialog",
 		"aria-label": "Keyboard shortcuts",
 		className: "absolute inset-0 z-10 flex items-center justify-center bg-code-bg/80",
 		onClick: r,
-		children: /* @__PURE__ */ Y("div", {
-			style: rn(n),
+		children: /* @__PURE__ */ J("div", {
+			style: hn(n),
 			onClick: (e) => e.stopPropagation(),
 			className: "w-[560px] max-w-[92vw] max-h-[80vh] overflow-y-auto rounded-lg border border-code-border bg-code-panel p-5 shadow-2xl",
 			children: [
-				/* @__PURE__ */ Y("div", {
+				/* @__PURE__ */ J("div", {
 					className: "flex items-baseline gap-2 mb-4",
 					children: [
-						/* @__PURE__ */ J("span", {
+						/* @__PURE__ */ q("span", {
 							className: "text-[13px] font-semibold text-code-text",
 							children: "Keyboard shortcuts"
 						}),
-						t && /* @__PURE__ */ Y("span", {
+						t && /* @__PURE__ */ J("span", {
 							className: "text-[10px] font-mono text-code-muted",
 							children: [t.label, " prefix is on"]
 						}),
-						/* @__PURE__ */ J("span", { className: "flex-1" }),
-						/* @__PURE__ */ J("button", {
+						/* @__PURE__ */ q("span", { className: "flex-1" }),
+						/* @__PURE__ */ q("button", {
 							type: "button",
 							onClick: r,
 							className: "text-[11px] font-mono text-code-muted bg-transparent border-none cursor-pointer hover:text-code-text",
@@ -2949,16 +2959,16 @@ function vn({ keymap: e, leader: t, chrome: n = "app", onClose: r }) {
 						})
 					]
 				}),
-				/* @__PURE__ */ J("div", {
+				/* @__PURE__ */ q("div", {
 					className: "flex flex-col gap-4",
-					children: en(e).map(({ group: e, bindings: n }) => /* @__PURE__ */ Y("div", { children: [/* @__PURE__ */ J("div", {
+					children: fn(e).map(({ group: e, bindings: n }) => /* @__PURE__ */ J("div", { children: [/* @__PURE__ */ q("div", {
 						className: "text-[10px] uppercase tracking-wide text-code-mauve mb-1.5",
 						children: i[e]
-					}), /* @__PURE__ */ J("dl", {
+					}), /* @__PURE__ */ q("dl", {
 						className: "grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 m-0",
-						children: n.map((e) => /* @__PURE__ */ Y(st, { children: [/* @__PURE__ */ Y("dt", {
+						children: n.map((e) => /* @__PURE__ */ J(vt, { children: [/* @__PURE__ */ J("dt", {
 							className: "m-0 font-mono text-[11px] text-code-green whitespace-nowrap",
-							children: [e.label, t && e.leaderKey && /* @__PURE__ */ Y("span", {
+							children: [e.label, t && e.leaderKey && /* @__PURE__ */ J("span", {
 								className: "text-code-muted",
 								children: [
 									" or ",
@@ -2967,13 +2977,13 @@ function vn({ keymap: e, leader: t, chrome: n = "app", onClose: r }) {
 									e.leaderKey
 								]
 							})]
-						}), /* @__PURE__ */ J("dd", {
+						}), /* @__PURE__ */ q("dd", {
 							className: "m-0 text-[11px] text-code-subtle",
 							children: e.description
 						})] }, `${e.command}-${e.label}`))
 					})] }, e))
 				}),
-				/* @__PURE__ */ Y("div", {
+				/* @__PURE__ */ J("div", {
 					className: "mt-4 pt-3 border-t border-code-border text-[10px] text-code-muted leading-relaxed",
 					children: [
 						"⌘T, ⌘N and ⌘W are not available — the browser keeps those for its own tabs and windows, and never forwards them to a page. Agent panes stream over SSE and are free to keep open; terminal panes hold a real shell against the runtime's limit of ",
@@ -2987,94 +2997,94 @@ function vn({ keymap: e, leader: t, chrome: n = "app", onClose: r }) {
 }
 //#endregion
 //#region src/components/compute/components/MachinePresenceMenu.tsx
-var yn = {
+var An = {
 	connected: "success",
 	stale: "caution",
 	offline: "neutral"
-}, bn = {
+}, jn = {
 	connected: "connected",
 	stale: "stale",
 	offline: "offline"
 };
-function xn(e) {
+function Mn(e) {
 	return !e || e.mode === "disabled" ? "— sync off" : e.mode === "offline" ? "○ offline — queuing" : e.mode === "pending" ? `◐ ${e.pendingOps ?? "?"} pending` : "● synced";
 }
-function Sn(e, t = []) {
-	let n = e.modelProvider === "bedrock" ? ae(e.model, t) : e.model ?? "—";
+function Nn(e, t = []) {
+	let n = e.modelProvider === "bedrock" ? ie(e.model, t) : e.model ?? "—";
 	return e.modelProvider ? `${e.modelProvider} · ${n}` : n;
 }
-function Cn(e) {
+function Pn(e) {
 	return e.reduce((e, t) => e + t.sessions.length, 0);
 }
-function wn({ session: e, models: t }) {
+function Fn({ session: e, models: t }) {
 	let r = e.projectName ?? e.projectId ?? e.repo ?? "—", i = e.branch ? `${r} · ${e.branch}` : r, a = e.modelProvider != null && e.modelProvider !== "bedrock";
-	return /* @__PURE__ */ Y("li", {
+	return /* @__PURE__ */ J("li", {
 		"data-testid": "machine-session-row",
 		className: "flex flex-col gap-1 rounded-md px-2 py-1.5 hover:bg-surface-hover",
 		children: [
-			/* @__PURE__ */ Y("div", {
+			/* @__PURE__ */ J("div", {
 				className: "flex items-center gap-2 min-w-0",
 				children: [
-					/* @__PURE__ */ J("span", {
+					/* @__PURE__ */ q("span", {
 						className: "text-xs font-medium text-text-primary truncate",
 						title: e.worktree ?? i,
 						children: i
 					}),
-					/* @__PURE__ */ J("span", { className: "flex-1" }),
-					/* @__PURE__ */ J(n, {
+					/* @__PURE__ */ q("span", { className: "flex-1" }),
+					/* @__PURE__ */ q(n, {
 						size: "xs",
 						mono: !0,
 						tone: a ? "accent" : "neutral",
 						className: "shrink-0",
-						children: Sn(e, t)
+						children: Nn(e, t)
 					})
 				]
 			}),
-			e.intent && /* @__PURE__ */ J("div", {
+			e.intent && /* @__PURE__ */ q("div", {
 				className: "text-[11px] text-text-tertiary truncate",
 				title: e.intent,
 				children: e.intent
 			}),
-			/* @__PURE__ */ Y("div", {
+			/* @__PURE__ */ J("div", {
 				className: "flex items-center gap-3 min-w-0",
-				children: [e.contextUsed != null && /* @__PURE__ */ J(_, {
+				children: [e.contextUsed != null && /* @__PURE__ */ q(_, {
 					label: "ctx",
 					value: e.contextUsed,
 					tone: "surface",
 					segments: 8,
 					className: "shrink-0"
-				}), /* @__PURE__ */ J("span", {
+				}), /* @__PURE__ */ q("span", {
 					className: "text-[10px] font-mono text-text-tertiary truncate",
 					title: e.memory?.pullCursorAgeS == null ? void 0 : `read replica ${e.memory.pullCursorAgeS}s behind the mesh`,
-					children: xn(e.memory)
+					children: Mn(e.memory)
 				})]
 			})
 		]
 	});
 }
-function Tn({ nodes: t, models: r = [], onOpenLab: i, onManage: a, className: o, "data-testid": s = "machine-presence-menu" }) {
-	let c = K(null), [l, u] = q(!1);
+function In({ nodes: t, models: r = [], onOpenLab: i, onManage: a, className: o, "data-testid": s = "machine-presence-menu" }) {
+	let c = G(null), [l, u] = K(!1);
 	if (t.length === 0) return null;
-	let d = Cn(t), f = t.some((e) => e.status === "connected") ? "connected" : t.some((e) => e.status === "stale") ? "stale" : "offline", p = t.length === 1 ? t[0].label : `${t.length} machines`, m = f === "connected" && d > 0;
-	return /* @__PURE__ */ Y(lt, { children: [/* @__PURE__ */ J("button", {
+	let d = Pn(t), f = t.some((e) => e.status === "connected") ? "connected" : t.some((e) => e.status === "stale") ? "stale" : "offline", p = t.length === 1 ? t[0].label : `${t.length} machines`, m = f === "connected" && d > 0;
+	return /* @__PURE__ */ J(bt, { children: [/* @__PURE__ */ q("button", {
 		ref: c,
 		type: "button",
 		"aria-haspopup": "dialog",
 		"aria-expanded": l,
-		"aria-label": `Local machines: ${p}, ${d} active session${d === 1 ? "" : "s"}, ${bn[f]}`,
-		title: `${p} — ${bn[f]}`,
+		"aria-label": `Local machines: ${p}, ${d} active session${d === 1 ? "" : "s"}, ${jn[f]}`,
+		title: `${p} — ${jn[f]}`,
 		onClick: () => u((e) => !e),
 		"data-testid": s,
 		className: e("inline-flex items-center cursor-pointer rounded-md border border-border px-2 py-1", "bg-transparent hover:bg-surface-hover transition-colors duration-100", l && "bg-surface-hover", o),
-		children: /* @__PURE__ */ J(n, {
+		children: /* @__PURE__ */ q(n, {
 			size: "xs",
 			mono: !0,
-			tone: yn[f],
+			tone: An[f],
 			dot: m ? "pulse" : "static",
 			className: "bg-transparent px-0",
 			children: d === 0 ? `⌂ ${p}` : `⌂ ${p} · ${d}`
 		})
-	}), /* @__PURE__ */ J(b, {
+	}), /* @__PURE__ */ q(b, {
 		trigger: c,
 		open: l,
 		onClose: () => u(!1),
@@ -3082,41 +3092,41 @@ function Tn({ nodes: t, models: r = [], onOpenLab: i, onManage: a, className: o,
 		"aria-label": "Local machine sessions",
 		className: "w-[320px] p-2",
 		"data-testid": `${s}-panel`,
-		children: /* @__PURE__ */ Y("div", {
+		children: /* @__PURE__ */ J("div", {
 			className: "flex flex-col gap-2",
-			children: [t.map((e) => /* @__PURE__ */ Y("div", {
+			children: [t.map((e) => /* @__PURE__ */ J("div", {
 				className: "flex flex-col gap-1",
-				children: [/* @__PURE__ */ Y("div", {
+				children: [/* @__PURE__ */ J("div", {
 					className: "flex items-center gap-2",
 					children: [
-						/* @__PURE__ */ J(S, { children: e.label }),
-						e.platform && /* @__PURE__ */ J("span", {
+						/* @__PURE__ */ q(S, { children: e.label }),
+						e.platform && /* @__PURE__ */ q("span", {
 							className: "text-[10px] font-mono text-text-tertiary",
 							children: e.platform
 						}),
-						/* @__PURE__ */ J("span", { className: "flex-1" }),
-						/* @__PURE__ */ J(n, {
+						/* @__PURE__ */ q("span", { className: "flex-1" }),
+						/* @__PURE__ */ q(n, {
 							size: "xs",
 							uppercase: !0,
-							tone: yn[e.status],
+							tone: An[e.status],
 							dot: "static",
-							children: bn[e.status]
+							children: jn[e.status]
 						})
 					]
-				}), e.sessions.length > 0 ? /* @__PURE__ */ J("ul", {
+				}), e.sessions.length > 0 ? /* @__PURE__ */ q("ul", {
 					className: "flex flex-col",
-					children: e.sessions.map((e) => /* @__PURE__ */ J(wn, {
+					children: e.sessions.map((e) => /* @__PURE__ */ q(Fn, {
 						session: e,
 						models: r
 					}, e.id))
-				}) : /* @__PURE__ */ J(C, {
+				}) : /* @__PURE__ */ q(C, {
 					"data-testid": "machine-no-sessions",
 					children: e.status === "offline" ? "machine offline" : "no active sessions"
 				})]
-			}, e.id)), (i || a) && /* @__PURE__ */ Y("div", {
+			}, e.id)), (i || a) && /* @__PURE__ */ J("div", {
 				className: "flex items-center gap-2 border-t border-border pt-2",
 				children: [
-					i && /* @__PURE__ */ J("button", {
+					i && /* @__PURE__ */ q("button", {
 						type: "button",
 						onClick: () => {
 							u(!1), i();
@@ -3124,8 +3134,8 @@ function Tn({ nodes: t, models: r = [], onOpenLab: i, onManage: a, className: o,
 						className: "text-[11px] font-medium text-primary hover:underline cursor-pointer bg-transparent border-0 p-0",
 						children: "Open Computer Lab"
 					}),
-					/* @__PURE__ */ J("span", { className: "flex-1" }),
-					a && /* @__PURE__ */ J("button", {
+					/* @__PURE__ */ q("span", { className: "flex-1" }),
+					a && /* @__PURE__ */ q("button", {
 						type: "button",
 						onClick: () => {
 							u(!1), a();
@@ -3140,64 +3150,64 @@ function Tn({ nodes: t, models: r = [], onOpenLab: i, onManage: a, className: o,
 }
 //#endregion
 //#region src/components/compute/components/ComputeDock.tsx
-var En = {
+var Ln = {
 	docked: "▭",
 	grid: "▦",
 	stack: "▤",
 	floating: "▢"
 };
-function Dn(e) {
-	W(() => {
+function Rn(e) {
+	U(() => {
 		if (!e) return;
 		let t = (e) => {
 			let t = e.metaKey || e.ctrlKey;
 			if (t && (e.key === "'" || e.key === "\"")) {
-				e.preventDefault(), e.stopPropagation(), e.shiftKey ? qe() : $e(Te().mode === "hidden");
+				e.preventDefault(), e.stopPropagation(), e.shiftKey ? rt() : Re(Qe().mode === "hidden");
 				return;
 			}
-			if (Te().mode !== "hidden") {
+			if (Qe().mode !== "hidden") {
 				if (e.altKey && !t && /^[1-9]$/.test(e.key)) {
-					e.preventDefault(), e.stopPropagation(), L(Number(e.key) - 1);
+					e.preventDefault(), e.stopPropagation(), lt(Number(e.key) - 1);
 					return;
 				}
-				e.ctrlKey && e.key === "Tab" && (e.preventDefault(), e.stopPropagation(), j(e.shiftKey ? -1 : 1));
+				e.ctrlKey && e.key === "Tab" && (e.preventDefault(), e.stopPropagation(), We(e.shiftKey ? -1 : 1));
 			}
 		};
 		return window.addEventListener("keydown", t, !0), () => window.removeEventListener("keydown", t, !0);
 	}, [e]);
 }
-function On({ status: e }) {
-	let t = re[e];
-	return /* @__PURE__ */ J("span", {
+function zn({ status: e }) {
+	let t = ne[e];
+	return /* @__PURE__ */ q("span", {
 		"aria-hidden": "true",
 		title: t.help,
 		className: `w-1.5 h-1.5 rounded-full shrink-0 ${t.pulse ? "animate-pulse" : ""}`,
 		style: { background: t.color }
 	});
 }
-function kn({ shell: e, active: t, labelled: n }) {
-	return /* @__PURE__ */ Y("div", {
+function Bn({ shell: e, active: t, labelled: n }) {
+	return /* @__PURE__ */ J("div", {
 		className: "flex flex-col min-h-0 h-full",
-		children: [n && /* @__PURE__ */ Y("div", {
+		children: [n && /* @__PURE__ */ J("div", {
 			className: "flex items-center gap-1.5 px-2 py-1 border-b shrink-0 bg-code-surface border-code-border",
 			children: [
-				/* @__PURE__ */ J(On, { status: e.status }),
-				/* @__PURE__ */ J("span", {
+				/* @__PURE__ */ q(zn, { status: e.status }),
+				/* @__PURE__ */ q("span", {
 					className: "text-[10px] font-mono text-code-muted",
 					children: e.label
 				}),
-				/* @__PURE__ */ J("div", { className: "flex-1" }),
-				/* @__PURE__ */ J("button", {
+				/* @__PURE__ */ q("div", { className: "flex-1" }),
+				/* @__PURE__ */ q("button", {
 					type: "button",
-					onClick: () => M(e.id),
+					onClick: () => Xe(e.id),
 					"aria-label": `Close ${e.label}`,
 					className: "text-[10px] bg-transparent border-none cursor-pointer px-1 leading-none text-code-muted hover:text-code-red",
 					children: "×"
 				})
 			]
-		}), /* @__PURE__ */ J("div", {
+		}), /* @__PURE__ */ q("div", {
 			className: "flex-1 min-h-0",
-			children: /* @__PURE__ */ J(Be, {
+			children: /* @__PURE__ */ q(qe, {
 				sessionId: e.sessionId,
 				shellId: e.id,
 				label: e.label,
@@ -3205,45 +3215,45 @@ function kn({ shell: e, active: t, labelled: n }) {
 				chrome: !1,
 				fillHeight: !0,
 				autoConnect: t,
-				onStatus: (t, n) => se(e.id, t, n)
+				onStatus: (t, n) => Je(e.id, t, n)
 			})
 		})]
 	});
 }
-function An({ hotkeys: e = !0, reconcile: t = !0, className: n = "" }) {
-	let r = ct(ke, Te, Te), i = Je();
-	Dn(e);
-	let a = G(() => (i?.computers ?? []).map((e) => e.sessionId), [i?.computers]);
-	if (W(() => {
-		!t || a.length === 0 || xe(a);
+function Vn({ hotkeys: e = !0, reconcile: t = !0, className: n = "" }) {
+	let r = yt(He, Qe, Qe), i = nt();
+	Rn(e);
+	let a = W(() => (i?.computers ?? []).map((e) => e.sessionId), [i?.computers]);
+	if (U(() => {
+		!t || a.length === 0 || I(a);
 	}, [t, a]), r.mode === "hidden" || r.shells.length === 0) return null;
-	let o = z(r.mode), s = /* @__PURE__ */ Y("div", {
-		style: nn,
+	let o = V(r.mode), s = /* @__PURE__ */ J("div", {
+		style: mn,
 		className: "flex flex-col h-full min-h-0",
-		children: [/* @__PURE__ */ Y("div", {
+		children: [/* @__PURE__ */ J("div", {
 			className: "flex items-center gap-1 px-1.5 py-1 border-b shrink-0 overflow-x-auto bg-terminal-bg border-code-border",
 			children: [
 				r.shells.map((e, t) => {
 					let n = e.id === r.activeId;
-					return /* @__PURE__ */ Y("div", {
+					return /* @__PURE__ */ J("div", {
 						className: `group flex items-center gap-1.5 pl-2 pr-1 py-1 rounded shrink-0 ${n ? "bg-code-surface" : "bg-transparent hover:bg-code-surface/60"}`,
-						children: [/* @__PURE__ */ Y("button", {
+						children: [/* @__PURE__ */ J("button", {
 							type: "button",
-							onClick: () => I(e.id),
+							onClick: () => Ne(e.id),
 							title: `${e.label} · ⌥${t + 1}`,
 							"aria-current": n ? "true" : void 0,
 							className: `flex items-center gap-1.5 text-[11px] font-mono cursor-pointer border-none bg-transparent p-0 ${n ? "text-code-text" : "text-code-muted hover:text-code-text"}`,
 							children: [
-								/* @__PURE__ */ J(On, { status: e.status }),
+								/* @__PURE__ */ q(zn, { status: e.status }),
 								e.label,
-								e.unread && !n && /* @__PURE__ */ J("span", {
+								e.unread && !n && /* @__PURE__ */ q("span", {
 									className: "w-1 h-1 rounded-full bg-code-blue",
 									title: "new output while you were away"
 								})
 							]
-						}), /* @__PURE__ */ J("button", {
+						}), /* @__PURE__ */ q("button", {
 							type: "button",
-							onClick: () => M(e.id),
+							onClick: () => Xe(e.id),
 							"aria-label": `Close ${e.label}`,
 							title: `Close ${e.label} — the shell is killed`,
 							className: "opacity-0 group-hover:opacity-100 focus:opacity-100 bg-transparent border-none cursor-pointer px-1 leading-none text-code-muted hover:text-code-red",
@@ -3251,41 +3261,41 @@ function An({ hotkeys: e = !0, reconcile: t = !0, className: n = "" }) {
 						})]
 					}, e.id);
 				}),
-				/* @__PURE__ */ J("div", { className: "flex-1" }),
-				r.shells.length >= 8 && /* @__PURE__ */ J("span", {
+				/* @__PURE__ */ q("div", { className: "flex-1" }),
+				r.shells.length >= 8 && /* @__PURE__ */ q("span", {
 					className: "text-[10px] mr-1 shrink-0 text-code-peach",
 					title: "AgentCore allows 10 shells per runtime",
 					children: "max shells"
 				}),
-				/* @__PURE__ */ J("div", {
+				/* @__PURE__ */ q("div", {
 					className: "flex rounded border overflow-hidden mr-1 shrink-0 border-code-border",
-					children: Object.keys(En).map((e) => /* @__PURE__ */ J("button", {
+					children: Object.keys(Ln).map((e) => /* @__PURE__ */ q("button", {
 						type: "button",
-						onClick: () => Ye(e),
+						onClick: () => et(e),
 						title: `${e} layout — ⌘⇧' cycles`,
 						"aria-pressed": r.mode === e,
 						className: `px-1.5 py-0.5 text-[10px] cursor-pointer border-none ${r.mode === e ? "bg-code-border text-code-text" : "bg-transparent text-code-muted hover:text-code-text"}`,
-						children: En[e]
+						children: Ln[e]
 					}, e))
 				}),
-				/* @__PURE__ */ J("button", {
+				/* @__PURE__ */ q("button", {
 					type: "button",
-					onClick: () => $e(!1),
+					onClick: () => Re(!1),
 					title: "Hide — ⌘'. The shells keep running.",
 					className: "text-[11px] px-1.5 py-0.5 bg-transparent border-none cursor-pointer shrink-0 text-code-muted hover:text-code-text",
 					children: "▾"
 				})
 			]
-		}), /* @__PURE__ */ J("div", {
+		}), /* @__PURE__ */ q("div", {
 			className: `flex-1 min-h-0 ${o ? `p-1.5 gap-1.5 overflow-auto ${r.mode === "grid" ? "grid grid-cols-1 md:grid-cols-2 auto-rows-fr" : "flex flex-col"}` : "relative"}`,
 			children: r.shells.map((e) => {
 				let t = e.id === r.activeId;
-				return /* @__PURE__ */ J("div", {
-					onMouseDown: () => I(e.id),
+				return /* @__PURE__ */ q("div", {
+					onMouseDown: () => Ne(e.id),
 					"aria-hidden": !o && !t,
 					className: o ? `min-h-[160px] rounded border overflow-hidden flex flex-col ${t ? "border-code-green/50" : "border-code-border"}` : "absolute inset-0",
 					style: o ? void 0 : { visibility: t ? "visible" : "hidden" },
-					children: /* @__PURE__ */ J(kn, {
+					children: /* @__PURE__ */ q(Bn, {
 						shell: e,
 						active: o || t,
 						labelled: o
@@ -3294,9 +3304,9 @@ function An({ hotkeys: e = !0, reconcile: t = !0, className: n = "" }) {
 			})
 		})]
 	});
-	if (r.mode === "floating") return /* @__PURE__ */ J(ee, {
+	if (r.mode === "floating") return /* @__PURE__ */ q(ee, {
 		open: !0,
-		onClose: () => $e(!1),
+		onClose: () => Re(!1),
 		title: "Terminals",
 		defaultPosition: "bottom-right",
 		persistKey: "ui-components.computeDock.anchor.v1",
@@ -3308,11 +3318,11 @@ function An({ hotkeys: e = !0, reconcile: t = !0, className: n = "" }) {
 		children: s
 	});
 	let c = r.mode === "stack" ? "fixed top-0 right-0 bottom-0 w-[26rem] max-w-[92vw] border-l" : "fixed left-0 right-0 bottom-0 border-t";
-	return /* @__PURE__ */ J("div", {
+	return /* @__PURE__ */ q("div", {
 		"data-testid": "compute-dock",
 		className: `${c} z-[120] flex flex-col bg-terminal-bg border-code-border ${n}`,
-		style: r.mode === "stack" ? nn : {
-			...nn,
+		style: r.mode === "stack" ? mn : {
+			...mn,
 			height: r.geometry.dockHeight
 		},
 		children: s
@@ -3320,8 +3330,8 @@ function An({ hotkeys: e = !0, reconcile: t = !0, className: n = "" }) {
 }
 //#endregion
 //#region src/components/compute/lib/workspaceTree.ts
-var jn = String.raw`find . -maxdepth 3 \( -name .git -o -name node_modules -o -name .venv -o -name __pycache__ -o -name dist \) -prune -printf "p %p\n" -o -printf "%y %p\n" 2>/dev/null | head -400`, Mn = "git log --oneline -3 2>/dev/null; git status --short 2>/dev/null | head -5", Nn = 400;
-function Pn(e) {
+var Hn = String.raw`find . -maxdepth 3 \( -name .git -o -name node_modules -o -name .venv -o -name __pycache__ -o -name dist \) -prune -printf "p %p\n" -o -printf "%y %p\n" 2>/dev/null | head -400`, Un = "git log --oneline -3 2>/dev/null; git status --short 2>/dev/null | head -5", Wn = 400;
+function Gn(e) {
 	let t = [], n = /* @__PURE__ */ new Map(), r = (e) => {
 		if (!e) return null;
 		let i = n.get(e);
@@ -3354,26 +3364,26 @@ function Pn(e) {
 		};
 		n.set(o, l), (c ? c.children : t).push(l);
 	}
-	return Fn(t), t;
+	return Kn(t), t;
 }
-function Fn(e) {
+function Kn(e) {
 	e.sort((e, t) => e.kind === t.kind ? e.name.localeCompare(t.name) : e.kind === "dir" ? -1 : 1);
-	for (let t of e) Fn(t.children);
+	for (let t of e) Kn(t.children);
 }
-function In(e) {
-	return e.children.reduce((e, t) => e + 1 + In(t), 0);
+function qn(e) {
+	return e.children.reduce((e, t) => e + 1 + qn(t), 0);
 }
-function Ln(e, t, n = 0) {
+function Jn(e, t, n = 0) {
 	let r = [];
 	for (let i of e) r.push({
 		node: i,
 		depth: n
-	}), i.kind === "dir" && !i.pruned && t.has(i.path) && r.push(...Ln(i.children, t, n + 1));
+	}), i.kind === "dir" && !i.pruned && t.has(i.path) && r.push(...Jn(i.children, t, n + 1));
 	return r;
 }
 //#endregion
 //#region src/components/compute/fixtures/mockShell.ts
-var Rn = "mock-shell:", Z = "/mnt/workspace", zn = "bedrock_agentcore", Q = {
+var Yn = "mock-shell:", X = "/mnt/workspace", Xn = "bedrock_agentcore", Z = {
 	reset: "\x1B[0m",
 	bold: "\x1B[1m",
 	dim: "\x1B[2m",
@@ -3384,29 +3394,29 @@ var Rn = "mock-shell:", Z = "/mnt/workspace", zn = "bedrock_agentcore", Q = {
 	magenta: "\x1B[35m",
 	cyan: "\x1B[36m",
 	clear: "\x1B[2J\x1B[H"
-}, Bn = {
-	[Z]: [
+}, Zn = {
+	[X]: [
 		".git/",
 		"README.md",
 		"src/",
 		"tests/",
 		"logs/"
 	],
-	[`${Z}/src`]: ["main.py"],
-	[`${Z}/tests`]: ["test_main.py"],
-	[`${Z}/logs`]: [
+	[`${X}/src`]: ["main.py"],
+	[`${X}/tests`]: ["test_main.py"],
+	[`${X}/logs`]: [
 		"agent.log",
 		"tools.log",
 		"runtime.log"
 	],
-	[`${Z}/.git`]: [
+	[`${X}/.git`]: [
 		"HEAD",
 		"config",
 		"objects/",
 		"refs/"
 	]
-}, Vn = {
-	[`${Z}/README.md`]: [
+}, Qn = {
+	[`${X}/README.md`]: [
 		"# workspace",
 		"",
 		"One agent computer: a Firecracker microVM with this directory",
@@ -3416,7 +3426,7 @@ var Rn = "mock-shell:", Z = "/mnt/workspace", zn = "bedrock_agentcore", Q = {
 		"Treat it as a cache, not a durable store — a runtime version update",
 		"wipes it."
 	].join("\n"),
-	[`${Z}/src/main.py`]: [
+	[`${X}/src/main.py`]: [
 		"\"\"\"Ingest entrypoint the agent has been editing.\"\"\"",
 		"",
 		"",
@@ -3424,14 +3434,14 @@ var Rn = "mock-shell:", Z = "/mnt/workspace", zn = "bedrock_agentcore", Q = {
 		"    body = event.get(\"body\") or {}",
 		"    return {\"statusCode\": 200, \"body\": body}"
 	].join("\n"),
-	[`${Z}/tests/test_main.py`]: [
+	[`${X}/tests/test_main.py`]: [
 		"from src.main import handler",
 		"",
 		"",
 		"def test_handler_echoes_body():",
 		"    assert handler({\"body\": {\"a\": 1}}, None)[\"body\"] == {\"a\": 1}"
 	].join("\n"),
-	[`${Z}/logs/agent.log`]: [
+	[`${X}/logs/agent.log`]: [
 		"08:08:12 INFO  session resumed · model haiku-4.5",
 		"08:08:14 INFO  read_file src/main.py",
 		"08:08:21 INFO  grep \"def handler\" · 1 file",
@@ -3440,30 +3450,30 @@ var Rn = "mock-shell:", Z = "/mnt/workspace", zn = "bedrock_agentcore", Q = {
 		"08:08:41 INFO  run_tests pytest -q · 4 passed in 0.62s",
 		"08:08:44 INFO  turn complete · waiting for the next instruction"
 	].join("\n"),
-	[`${Z}/logs/tools.log`]: [
+	[`${X}/logs/tools.log`]: [
 		"08:08:14 read_file   src/main.py            ok   3ms",
 		"08:08:21 grep        def handler            ok  11ms",
 		"08:08:33 edit_file   src/main.py            ok   5ms",
 		"08:08:41 run_tests   pytest -q              ok 620ms"
 	].join("\n"),
-	[`${Z}/logs/runtime.log`]: [
+	[`${X}/logs/runtime.log`]: [
 		"08:00:02 INFO  microVM up · /mnt/workspace mounted",
 		"08:00:03 INFO  shell slots 1/10",
 		"08:07:58 WARN  idle 7m · auto-stop in 13m"
 	].join("\n"),
-	[`${Z}/.git/HEAD`]: "ref: refs/heads/main",
-	[`${Z}/.git/config`]: [
+	[`${X}/.git/HEAD`]: "ref: refs/heads/main",
+	[`${X}/.git/config`]: [
 		"[core]",
 		"	repositoryformatversion = 0",
 		"[remote \"origin\"]",
 		"	url = git@github.com:acme/ingest.git"
 	].join("\n")
-}, Hn = [
+}, $n = [
 	["Read", "src/main.py"],
 	["Grep", "\"def handler\" (1 file)"],
 	["Edit", "src/main.py · +1 -1"],
 	["Bash", "pytest -q → 4 passed in 0.62s"]
-], Un = [
+], er = [
 	"This box understands:",
 	"",
 	"  help                  this list",
@@ -3477,21 +3487,21 @@ var Rn = "mock-shell:", Z = "/mnt/workspace", zn = "bedrock_agentcore", Q = {
 	"  claude \"<prompt>\"     run an agent turn here",
 	"  clear                 clear the screen",
 	"  exit                  end the shell"
-], Wn = /* @__PURE__ */ new Map();
-function Gn(e, t) {
+], tr = /* @__PURE__ */ new Map();
+function nr(e, t) {
 	let n = t ?? `mock-${Math.random().toString(36).slice(2, 8)}`;
 	return {
-		url: `${Rn}//${e}?shell=${encodeURIComponent(n)}`,
+		url: `${Yn}//${e}?shell=${encodeURIComponent(n)}`,
 		shellId: n
 	};
 }
-function Kn(e) {
+function rr(e) {
 	let t = [], n = /"([^"]*)"|'([^']*)'|(\S+)/g, r = n.exec(e);
 	for (; r;) t.push(r[1] ?? r[2] ?? r[3] ?? ""), r = n.exec(e);
 	return t;
 }
-function qn(e, t) {
-	let n = t === "~" ? Z : t.startsWith("~/") ? `${Z}/${t.slice(2)}` : t, r = n.startsWith("/") ? "" : e, i = [];
+function ir(e, t) {
+	let n = t === "~" ? X : t.startsWith("~/") ? `${X}/${t.slice(2)}` : t, r = n.startsWith("/") ? "" : e, i = [];
 	for (let e of `${r}/${n}`.split("/")) if (e !== "" && e !== ".") {
 		if (e === "..") {
 			i.pop();
@@ -3501,10 +3511,10 @@ function qn(e, t) {
 	}
 	return `/${i.join("/")}`;
 }
-function Jn(e) {
-	return e.endsWith("/") ? `${Q.bold}${Q.blue}${e.slice(0, -1)}${Q.reset}` : e;
+function ar(e) {
+	return e.endsWith("/") ? `${Z.bold}${Z.blue}${e.slice(0, -1)}${Z.reset}` : e;
 }
-var Yn = class extends EventTarget {
+var or = class extends EventTarget {
 	static CONNECTING = 0;
 	static OPEN = 1;
 	static CLOSING = 2;
@@ -3534,21 +3544,21 @@ var Yn = class extends EventTarget {
 	constructor(e) {
 		super(), this.url = e;
 		let t = e.indexOf("?");
-		this.shellId = new URLSearchParams(t < 0 ? "" : e.slice(t + 1)).get("shell") ?? "mock-shell", this.session = Wn.get(this.shellId) ?? {
-			cwd: Z,
+		this.shellId = new URLSearchParams(t < 0 ? "" : e.slice(t + 1)).get("shell") ?? "mock-shell", this.session = tr.get(this.shellId) ?? {
+			cwd: X,
 			attached: !1
-		}, Wn.set(this.shellId, this.session), this.later(() => this.handshake(), 60);
+		}, tr.set(this.shellId, this.session), this.later(() => this.handshake(), 60);
 	}
 	send(e) {
 		if (this.readyState !== this.OPEN) return;
-		let t = Xn(e);
+		let t = sr(e);
 		if (!t || t.length === 0) return;
 		let n = t[0];
-		if (n === V.CLOSE) {
+		if (n === B.CLOSE) {
 			this.exit(0);
 			return;
 		}
-		n === V.STDIN && this.feed(this.decoder.decode(t.subarray(1)));
+		n === B.STDIN && this.feed(this.decoder.decode(t.subarray(1)));
 	}
 	close(e = 1e3, t = "") {
 		if (this.readyState !== this.CLOSED) {
@@ -3565,12 +3575,12 @@ var Yn = class extends EventTarget {
 		}
 	}
 	handshake() {
-		this.readyState = this.OPEN, this.frame(V.STATUS, JSON.stringify({ metadata: {
+		this.readyState = this.OPEN, this.frame(B.STATUS, JSON.stringify({ metadata: {
 			shellId: this.shellId,
 			reconnected: this.session.attached
-		} })), this.write(this.session.attached ? `${Q.dim}reattached to ${this.shellId}${Q.reset}\r\n` : [
-			`${Q.green}AgentCore devbox${Q.reset} ${Q.dim}· simulated shell, no runtime attached${Q.reset}`,
-			`${Q.dim}Type ${Q.reset}help${Q.dim} for what this box understands.${Q.reset}`,
+		} })), this.write(this.session.attached ? `${Z.dim}reattached to ${this.shellId}${Z.reset}\r\n` : [
+			`${Z.green}AgentCore devbox${Z.reset} ${Z.dim}· simulated shell, no runtime attached${Z.reset}`,
+			`${Z.dim}Type ${Z.reset}help${Z.dim} for what this box understands.${Z.reset}`,
 			""
 		].join("\r\n")), this.session.attached = !0, this.prompt();
 		let e = new Event("open");
@@ -3584,13 +3594,13 @@ var Yn = class extends EventTarget {
 		this.onmessage?.(i), this.dispatchEvent(i);
 	}
 	write(e) {
-		this.frame(V.STDOUT, e);
+		this.frame(B.STDOUT, e);
 	}
 	fail(e) {
-		this.frame(V.STDERR, `${Q.red}${e}${Q.reset}\r\n`);
+		this.frame(B.STDERR, `${Z.red}${e}${Z.reset}\r\n`);
 	}
 	prompt() {
-		this.write(`${Q.green}${zn}${Q.reset}:${Q.bold}${Q.blue}${this.session.cwd}${Q.reset}$ `);
+		this.write(`${Z.green}${Xn}${Z.reset}:${Z.bold}${Z.blue}${this.session.cwd}${Z.reset}$ `);
 	}
 	later(e, t) {
 		let n = setTimeout(() => {
@@ -3602,10 +3612,10 @@ var Yn = class extends EventTarget {
 		return new Promise((t) => this.later(t, e));
 	}
 	exit(e) {
-		this.frame(V.STATUS, JSON.stringify({ details: { causes: [{
+		this.frame(B.STATUS, JSON.stringify({ details: { causes: [{
 			reason: "ExitCode",
 			message: String(e)
-		}] } })), Wn.delete(this.shellId), this.close(1e3, "shell exited");
+		}] } })), tr.delete(this.shellId), this.close(1e3, "shell exited");
 	}
 	feed(e) {
 		for (let t = 0; t < e.length; t += 1) {
@@ -3631,7 +3641,7 @@ var Yn = class extends EventTarget {
 					continue;
 				}
 				if (n === "\f") {
-					this.write(Q.clear), this.prompt(), this.write(this.line);
+					this.write(Z.clear), this.prompt(), this.write(this.line);
 					continue;
 				}
 				n < " " || (this.line += n, this.write(n));
@@ -3646,7 +3656,7 @@ var Yn = class extends EventTarget {
 		}
 		this.busy = !0, this.cancelled = !1;
 		try {
-			await this.dispatch(Kn(t));
+			await this.dispatch(rr(t));
 		} finally {
 			this.busy = !1, this.readyState === this.OPEN && this.prompt();
 		}
@@ -3655,10 +3665,10 @@ var Yn = class extends EventTarget {
 		let [t, ...n] = e;
 		switch (t) {
 			case "help":
-				this.write(`${Un.join("\r\n")}\r\n`);
+				this.write(`${er.join("\r\n")}\r\n`);
 				return;
 			case "clear":
-				this.write(Q.clear);
+				this.write(Z.clear);
 				return;
 			case "pwd":
 				this.write(`${this.session.cwd}\r\n`);
@@ -3686,13 +3696,13 @@ var Yn = class extends EventTarget {
 			case "logout":
 				this.write("logout\r\n"), this.exit(0);
 				return;
-			default: this.fail(`bash: ${t}: command not found`), this.write(`${Q.dim}exit 127${Q.reset}\r\n`);
+			default: this.fail(`bash: ${t}: command not found`), this.write(`${Z.dim}exit 127${Z.reset}\r\n`);
 		}
 	}
 	list(e) {
-		let t = qn(this.session.cwd, e.find((e) => !e.startsWith("-")) ?? "."), n = Bn[t];
+		let t = ir(this.session.cwd, e.find((e) => !e.startsWith("-")) ?? "."), n = Zn[t];
 		if (!n) {
-			if (Vn[t] !== void 0) {
+			if (Qn[t] !== void 0) {
 				this.write(`${t}\r\n`);
 				return;
 			}
@@ -3700,11 +3710,11 @@ var Yn = class extends EventTarget {
 			return;
 		}
 		let r = e.some((e) => e.startsWith("-") && e.includes("a")) ? n : n.filter((e) => !e.startsWith("."));
-		this.write(`${r.map(Jn).join("  ")}\r\n`);
+		this.write(`${r.map(ar).join("  ")}\r\n`);
 	}
 	chdir(e) {
-		let t = qn(this.session.cwd, e[0] ?? "~");
-		if (!Bn[t]) {
+		let t = ir(this.session.cwd, e[0] ?? "~");
+		if (!Zn[t]) {
 			this.fail(`cd: ${e[0] ?? t}: No such file or directory`);
 			return;
 		}
@@ -3716,9 +3726,9 @@ var Yn = class extends EventTarget {
 			return;
 		}
 		for (let t of e) {
-			let e = qn(this.session.cwd, t), n = Vn[e];
+			let e = ir(this.session.cwd, t), n = Qn[e];
 			if (n === void 0) {
-				this.fail(Bn[e] ? `cat: ${t}: Is a directory` : `cat: ${t}: No such file or directory`);
+				this.fail(Zn[e] ? `cat: ${t}: Is a directory` : `cat: ${t}: No such file or directory`);
 				continue;
 			}
 			this.write(`${n.replace(/\n/g, "\r\n")}\r\n`);
@@ -3743,9 +3753,9 @@ var Yn = class extends EventTarget {
 			return;
 		}
 		for (let t of r) {
-			let r = qn(this.session.cwd, t), i = Vn[r];
+			let r = ir(this.session.cwd, t), i = Qn[r];
 			if (i === void 0) {
-				this.fail(`${e}: cannot open '${t}' for reading: ${Bn[r] ? "Is a directory" : "No such file or directory"}`);
+				this.fail(`${e}: cannot open '${t}' for reading: ${Zn[r] ? "Is a directory" : "No such file or directory"}`);
 				continue;
 			}
 			let a = i.split("\n"), o = e === "head" ? a.slice(0, n) : a.slice(Math.max(0, a.length - n));
@@ -3759,8 +3769,8 @@ var Yn = class extends EventTarget {
 				"Your branch is up to date with 'origin/main'.",
 				"",
 				"Changes not staged for commit:",
-				`  ${Q.dim}(use "git add <file>..." to update what will be committed)${Q.reset}`,
-				`\t${Q.red}modified:   src/main.py${Q.reset}`,
+				`  ${Z.dim}(use "git add <file>..." to update what will be committed)${Z.reset}`,
+				`\t${Z.red}modified:   src/main.py${Z.reset}`,
 				"",
 				"no changes added to commit",
 				""
@@ -3769,9 +3779,9 @@ var Yn = class extends EventTarget {
 		}
 		if (e[0] === "log") {
 			this.write([
-				`${Q.yellow}9f2c1ab${Q.reset} wire up the ingest handler`,
-				`${Q.yellow}3ad77e0${Q.reset} cover the empty-body case`,
-				`${Q.yellow}b41e902${Q.reset} scaffold the service`,
+				`${Z.yellow}9f2c1ab${Z.reset} wire up the ingest handler`,
+				`${Z.yellow}3ad77e0${Z.reset} cover the empty-body case`,
+				`${Z.yellow}b41e902${Z.reset} scaffold the service`,
 				""
 			].join("\r\n"));
 			return;
@@ -3784,56 +3794,56 @@ var Yn = class extends EventTarget {
 			this.fail("claude: expected a prompt, e.g. claude \"fix the handler\"");
 			return;
 		}
-		this.write(`${Q.magenta}✻${Q.reset} ${Q.dim}${t}${Q.reset}\r\n`);
-		for (let [e, t] of Hn) {
+		this.write(`${Z.magenta}✻${Z.reset} ${Z.dim}${t}${Z.reset}\r\n`);
+		for (let [e, t] of $n) {
 			if (await this.wait(520), this.cancelled || this.readyState !== this.OPEN) return;
-			this.write(`  ${Q.cyan}⏺${Q.reset} ${Q.bold}${e}${Q.reset}(${t})\r\n`);
+			this.write(`  ${Z.cyan}⏺${Z.reset} ${Z.bold}${e}${Z.reset}(${t})\r\n`);
 		}
-		await this.wait(420), !(this.cancelled || this.readyState !== this.OPEN) && this.write(`${Q.green}✓${Q.reset} done · ${Hn.length + 1} turns · 6.4s · ${Q.yellow}$0.0184${Q.reset}\r\n`);
+		await this.wait(420), !(this.cancelled || this.readyState !== this.OPEN) && this.write(`${Z.green}✓${Z.reset} done · ${$n.length + 1} turns · 6.4s · ${Z.yellow}$0.0184${Z.reset}\r\n`);
 	}
 };
-function Xn(e) {
+function sr(e) {
 	return ArrayBuffer.isView(e) ? new Uint8Array(e.buffer, e.byteOffset, e.byteLength) : e instanceof ArrayBuffer ? new Uint8Array(e) : null;
 }
-var Zn = null;
-function Qn(e = {}) {
+var cr = null;
+function lr(e = {}) {
 	let t = e.scheme ?? "mock-shell:", n = globalThis.WebSocket;
 	if (typeof n != "function") return () => {};
-	if (Zn) Zn.count += 1;
+	if (cr) cr.count += 1;
 	else {
 		class e extends n {
 			constructor(e, n) {
 				let r = typeof e == "string" ? e : e.href;
-				if (r.startsWith(t)) return new Yn(r);
+				if (r.startsWith(t)) return new or(r);
 				super(e, n);
 			}
 		}
-		globalThis.WebSocket = e, Zn = {
+		globalThis.WebSocket = e, cr = {
 			native: n,
 			count: 1
 		};
 	}
 	let r = !1;
 	return () => {
-		r || !Zn || (r = !0, --Zn.count, !(Zn.count > 0) && (globalThis.WebSocket = Zn.native, Zn = null, Wn.clear()));
+		r || !cr || (r = !0, --cr.count, !(cr.count > 0) && (globalThis.WebSocket = cr.native, cr = null, tr.clear()));
 	};
 }
 //#endregion
 //#region src/components/compute/fixtures/mockTail.ts
-var $n = "mock-tail:", er = (e) => ({
+var ur = "mock-tail:", dr = (e) => ({
 	type: "assistant",
 	message: { content: [{
 		type: "text",
 		text: e
 	}] }
-}), tr = (e, t) => ({
+}), Q = (e, t) => ({
 	type: "assistant",
 	message: { content: [{
 		type: "tool_use",
 		name: e,
 		input: t
 	}] }
-}), nr = [
+}), fr = [
 	{
 		id: "nightly-dependency-audit",
 		label: "nightly-dependency-audit",
@@ -3855,27 +3865,27 @@ var $n = "mock-tail:", er = (e) => ({
 			},
 			{
 				afterMs: 900,
-				data: er("Reading the lockfile and resolving the dependency graph.")
+				data: dr("Reading the lockfile and resolving the dependency graph.")
 			},
 			{
 				afterMs: 1300,
-				data: tr("Bash", { command: "npm audit --json" })
+				data: Q("Bash", { command: "npm audit --json" })
 			},
 			{
 				afterMs: 2100,
-				data: er("3 advisories: 1 high, 2 moderate. Checking whether the high one is reachable.")
+				data: dr("3 advisories: 1 high, 2 moderate. Checking whether the high one is reachable.")
 			},
 			{
 				afterMs: 1700,
-				data: tr("Grep", { pattern: "serialize-javascript" })
+				data: Q("Grep", { pattern: "serialize-javascript" })
 			},
 			{
 				afterMs: 2400,
-				data: er("Reachable from the report renderer only. Bumping it and pinning the transitive.")
+				data: dr("Reachable from the report renderer only. Bumping it and pinning the transitive.")
 			},
 			{
 				afterMs: 1400,
-				data: tr("Edit", { file: "package.json" })
+				data: Q("Edit", { file: "package.json" })
 			},
 			{
 				afterMs: 2200,
@@ -3922,19 +3932,19 @@ var $n = "mock-tail:", er = (e) => ({
 			},
 			{
 				afterMs: 800,
-				data: er("Pulling the last 40 CI runs.")
+				data: dr("Pulling the last 40 CI runs.")
 			},
 			{
 				afterMs: 1500,
-				data: tr("Bash", { command: "gh run list --limit 40" })
+				data: Q("Bash", { command: "gh run list --limit 40" })
 			},
 			{
 				afterMs: 2300,
-				data: er("Two suites flap: session-epoch and the canary rollup. Both look time-dependent.")
+				data: dr("Two suites flap: session-epoch and the canary rollup. Both look time-dependent.")
 			},
 			{
 				afterMs: 1900,
-				data: tr("Read", { file: "src/lib/__tests__/session-epoch.test.ts" })
+				data: Q("Read", { file: "src/lib/__tests__/session-epoch.test.ts" })
 			},
 			{
 				afterMs: 2600,
@@ -3981,15 +3991,15 @@ var $n = "mock-tail:", er = (e) => ({
 			},
 			{
 				afterMs: 900,
-				data: er("Dumping the live schema.")
+				data: dr("Dumping the live schema.")
 			},
 			{
 				afterMs: 1600,
-				data: tr("Bash", { command: "psql -c \"\\d+ public.*\"" })
+				data: Q("Bash", { command: "psql -c \"\\d+ public.*\"" })
 			},
 			{
 				afterMs: 2400,
-				data: er("One table differs: environments has a column the checked-in DDL does not.")
+				data: dr("One table differs: environments has a column the checked-in DDL does not.")
 			},
 			{
 				afterMs: 2e3,
@@ -4007,21 +4017,138 @@ var $n = "mock-tail:", er = (e) => ({
 			}
 		]
 	}
+], pr = (...e) => Q("TodoWrite", { todos: e.map(([e, t, n]) => ({
+	content: e,
+	status: t,
+	...n ? { activeForm: n } : {}
+})) }), mr = [
+	{
+		id: "lab-demo-delivery",
+		label: "lab-demo-delivery",
+		frames: [
+			{
+				afterMs: 400,
+				data: {
+					type: "job_started",
+					title: "Add rate limiting to the login route",
+					kind: "devbox:task"
+				}
+			},
+			{
+				afterMs: 200,
+				data: {
+					type: "task_started",
+					prompt: "Add rate limiting to POST /login and open a PR."
+				}
+			},
+			{
+				afterMs: 700,
+				data: pr([
+					"Read the login route",
+					"in_progress",
+					"Reading the login route"
+				], ["Add a limiter middleware", "pending"], ["Write tests", "pending"], ["Open a pull request", "pending"])
+			},
+			{
+				afterMs: 900,
+				data: Q("Read", { file_path: "src/routes/login.ts" })
+			},
+			{
+				afterMs: 1100,
+				data: pr(["Read the login route", "completed"], [
+					"Add a limiter middleware",
+					"in_progress",
+					"Adding the limiter middleware"
+				], ["Write tests", "pending"], ["Open a pull request", "pending"])
+			},
+			{
+				afterMs: 1300,
+				data: Q("Edit", { file_path: "src/routes/login.ts" })
+			},
+			{
+				afterMs: 1200,
+				data: Q("Bash", { command: "npm test -- login" })
+			},
+			{
+				afterMs: 1400,
+				data: pr(["Read the login route", "completed"], ["Add a limiter middleware", "completed"], ["Write tests", "completed"], [
+					"Open a pull request",
+					"in_progress",
+					"Opening the pull request"
+				])
+			},
+			{
+				afterMs: 900,
+				data: {
+					type: "delivery",
+					workItemId: "wi-demo-1",
+					title: "Rate-limit POST /login",
+					branch: "demo/rate-limit-login",
+					commitSha: "4f2c9a1e7b3d",
+					prUrl: "https://example.com/demo/pull/42",
+					prNumber: 42
+				}
+			},
+			{
+				afterMs: 400,
+				data: {
+					type: "result",
+					subtype: "success",
+					num_turns: 9,
+					duration_ms: 14100,
+					total_cost_usd: .0517,
+					result: "Limiter added at 5 attempts per minute per IP; PR #42 is up."
+				}
+			},
+			{
+				afterMs: 300,
+				data: { type: "devbox_end" }
+			},
+			{
+				afterMs: 200,
+				data: {
+					type: "job_finished",
+					ok: !0
+				}
+			}
+		]
+	},
+	{
+		id: "lab-demo-gate-held",
+		label: "lab-demo-gate-held",
+		frames: [{
+			afterMs: 400,
+			data: {
+				type: "gate_refused",
+				status: 409,
+				gate: "envelope",
+				confirmFlag: "confirmOverEnvelope",
+				error: "This run would take the sprint envelope past its $40.00 grant ($38.20 spent).",
+				workItemId: "wi-demo-2",
+				workItemTitle: "Migrate session store to Redis"
+			}
+		}]
+	},
+	{
+		id: "lab-demo-provisioning",
+		label: "lab-demo-provisioning",
+		frames: []
+	}
 ];
-function rr(e, t) {
-	return `${$n}//${e}${t ? `?script=${encodeURIComponent(t)}` : ""}`;
+function hr(e, t) {
+	return `${ur}//${e}${t ? `?script=${encodeURIComponent(t)}` : ""}`;
 }
-function ir(e) {
+function gr(e) {
 	let t = /script=([^&]+)/.exec(e)?.[1];
 	if (t) {
-		let e = nr.find((e) => e.id === decodeURIComponent(t));
+		let e = [...fr, ...mr].find((e) => e.id === decodeURIComponent(t));
 		if (e) return e;
 	}
 	let n = e.slice(10).replace(/^\/+/, "").split("?")[0] ?? "", r = 0;
 	for (let e of n) r = r * 31 + e.charCodeAt(0) >>> 0;
-	return nr[r % nr.length];
+	return fr[r % fr.length];
 }
-var ar = class {
+var _r = class {
 	static CONNECTING = 0;
 	static OPEN = 1;
 	static CLOSED = 2;
@@ -4036,7 +4163,7 @@ var ar = class {
 	closed = !1;
 	constructor(e, t) {
 		this.url = e, this.withCredentials = !!t?.withCredentials;
-		let n = ir(e), r = 0;
+		let n = gr(e), r = 0;
 		this.schedule(0, () => {
 			this.readyState = 1;
 			let e = new Event("open");
@@ -4074,7 +4201,7 @@ var ar = class {
 		this.timers = [];
 	}
 }, $ = null;
-function or(e = {}) {
+function vr(e = {}) {
 	let t = e.scheme ?? "mock-tail:", n = globalThis.EventSource;
 	if ($) $.count += 1;
 	else {
@@ -4083,7 +4210,7 @@ function or(e = {}) {
 			count: 1
 		};
 		let e = function(e, r) {
-			if (typeof e == "string" && e.startsWith(t)) return new ar(e, r);
+			if (typeof e == "string" && e.startsWith(t)) return new _r(e, r);
 			if (typeof n != "function") throw TypeError("EventSource is not available in this environment");
 			return new n(e, r);
 		};
@@ -4098,4 +4225,4 @@ function or(e = {}) {
 	};
 }
 //#endregion
-export { Re as AGENT_PANE_KIND, Ae as AGENT_STATUSES, it as ATTENTION_ORDER, ue as AgentPane, D as COMPUTE_STATUS, Me as COMPUTE_STORAGE_KEYS, An as ComputeDock, Qe as ComputeProvider, hn as ComputerLab, oe as DEFAULT_IDLE_WINDOW_MS, Xt as DEFAULT_KEYMAP, Oe as DEFAULT_PANE_KINDS, et as DETACH_BYTE, Ve as DOCK_STORAGE_KEY, tt as FLEET_STORAGE_KEY, Ne as HEARTBEAT_MS, Pe as LAB_LAYOUT_STORAGE_KEY, We as LOGS_PANE_KIND, dn as LabChooser, Rt as LabFleetRail, Wt as LabHeader, Kt as LabPaneToolbar, cn as LabRail, ye as LogsPane, Fe as MAX_FRAME_BYTES, dt as MAX_RATIO, H as MAX_RETRIES, pe as MAX_SHELLS, ut as MIN_RATIO, Rn as MOCK_SHELL_SCHEME, $n as MOCK_TAIL_SCHEME, nr as MOCK_TAIL_SCRIPTS, Tn as MachinePresenceMenu, ie as PaneStatusLine, fn as PaneTreeView, on as ProjectSummary, V as SHELL_CHANNEL, Xe as SHELL_PANE_KIND, re as SHELL_STATUS, Be as ShellTerminal, je as TAIL_PANE_KIND, Yt as TMUX_LEADER, he as TailPane, ne as UNASSIGNED_PROJECT_ID, Nn as WORKSPACE_ENTRY_CAP, jn as WORKSPACE_FIND_COMMAND, Mn as WORKSPACE_GIT_COMMAND, Jt as WorkspacePane, Tt as arrangePanes, Pn as buildWorkspaceTree, Ce as byAttention, ze as byteRate, Ie as clearComputeStorage, ce as clockTime, Le as closeAdvice, gt as closePane, M as closeShell, In as countDescendants, mt as countPanes, Ke as createComputeClient, B as currentRun, qe as cycleLayout, xt as cyclePane, j as cycleShell, Mt as defaultKindFor, _e as elapsed, St as enclosingSplit, R as encodeFrame, De as encodeResize, nt as exhaustedAdvice, at as exitCodeOf, O as expiryPressure, pt as findLeaf, le as fixtureComputers, F as fixtureMachines, me as fixtureModels, P as fixtureRuntimeStatus, we as fixtureWorkspace, I as focusShell, ve as formatRate, T as formatTokens, un as fuzzyScore, Te as getDock, en as groupBindings, Lt as groupQuickLine, A as hasAgent, Qn as installMockShellSocket, or as installMockTailSource, Zt as isLeaderKey, rt as isLocalComputer, jt as kindsFor, tn as labelFor, yt as layoutRects, X as listLeaves, ft as makeLeaf, $t as matchBinding, Qt as matchLeaderBinding, N as matchesQuery, xn as memorySummary, Gn as mockShellUrl, rr as mockTailUrl, bt as neighborPane, Nt as nextKind, Ee as openShell, Sn as providerSummary, Pt as quotaUsage, Ct as ratioOf, xe as reconcileDock, se as reportShellStatus, At as resolveKind, E as rollUpProjects, L as selectShellByIndex, $e as setDockVisible, Ue as setGeometry, Ye as setMode, _t as setRatio, ae as shortModelName, z as showsAllPanes, ht as splitPane, k as statusOf, be as stepLevel, fe as stepSource, ke as subscribeDock, de as summarizeFleet, Se as summarizeTool, Ge as toggleFloating, vt as updateLeaf, He as useCompute, Ze as useComputeFleet, Je as useComputeOptional, w as useComputeProjects, ge as useComputeTail, ot as useComputeTask, kt as useLabLayout, te as useProjectRollups, Ln as visibleRows };
+export { Ue as AGENT_PANE_KIND, xe as AGENT_STATUSES, pe as ATTENTION_ORDER, Pe as AgentPane, O as COMPUTE_STATUS, dt as COMPUTE_STORAGE_KEYS, Vn as ComputeDock, ot as ComputeProvider, En as ComputerLab, ae as DEFAULT_IDLE_WINDOW_MS, cn as DEFAULT_KEYMAP, Me as DEFAULT_PANE_KINDS, ct as DETACH_BYTE, gt as DOCK_STORAGE_KEY, Fe as FLEET_STORAGE_KEY, Le as HEARTBEAT_MS, mt as LAB_LAYOUT_STORAGE_KEY, Ze as LOGS_PANE_KIND, Sn as LabChooser, Yt as LabFleetRail, tn as LabHeader, Ge as LabInstructContext, rn as LabPaneToolbar, yn as LabRail, pt as LogsPane, ze as MAX_FRAME_BYTES, St as MAX_RATIO, $e as MAX_RETRIES, st as MAX_SHELLS, xt as MIN_RATIO, Yn as MOCK_SHELL_SCHEME, mr as MOCK_TAIL_DEMO_SCRIPTS, ur as MOCK_TAIL_SCHEME, fr as MOCK_TAIL_SCRIPTS, In as MachinePresenceMenu, re as PaneStatusLine, Cn as PaneTreeView, _n as ProjectSummary, B as SHELL_CHANNEL, it as SHELL_PANE_KIND, ne as SHELL_STATUS, qe as ShellTerminal, Ie as TAIL_PANE_KIND, sn as TMUX_LEADER, Te as TailPane, D as UNASSIGNED_PROJECT_ID, Wn as WORKSPACE_ENTRY_CAP, Hn as WORKSPACE_FIND_COMMAND, Un as WORKSPACE_GIT_COMMAND, on as WorkspacePane, It as arrangePanes, Gn as buildWorkspaceTree, j as byAttention, we as byteRate, N as clearComputeStorage, le as clockTime, Ve as closeAdvice, Dt as closePane, Xe as closeShell, qn as countDescendants, Tt as countPanes, ue as createComputeClient, ft as currentRun, rt as cycleLayout, Mt as cyclePane, We as cycleShell, Ut as defaultKindFor, Ee as deliveryStep, P as elapsed, Nt as enclosingSplit, R as encodeFrame, Ae as encodeResize, ut as exhaustedAdvice, ht as exitCodeOf, k as expiryPressure, wt as findLeaf, De as fixtureComputers, ke as fixtureMachines, Se as fixtureModels, oe as fixtureRuntimeStatus, L as fixtureWorkspace, Ne as focusShell, fe as formatRate, T as formatTokens, xn as fuzzyScore, me as gateStep, Qe as getDock, fn as groupBindings, Jt as groupQuickLine, _e as hasAgent, lr as installMockShellSocket, vr as installMockTailSource, ln as isLeaderKey, Ce as isLocalComputer, Ht as kindsFor, pn as labelFor, de as latestPlan, At as layoutRects, Y as listLeaves, Ct as makeLeaf, dn as matchBinding, un as matchLeaderBinding, _t as matchesQuery, Mn as memorySummary, nr as mockShellUrl, hr as mockTailUrl, jt as neighborPane, Wt as nextKind, at as openShell, ge as parsePlan, be as pendingQuestion, Nn as providerSummary, Gt as quotaUsage, Pt as ratioOf, I as reconcileDock, he as reduceTailFrame, Je as reportShellStatus, Vt as resolveKind, E as rollUpProjects, ve as runInstructionAsTasks, lt as selectShellByIndex, Re as setDockVisible, Be as setGeometry, et as setMode, Ot as setRatio, ie as shortModelName, V as showsAllPanes, Et as splitPane, A as statusOf, Ke as stepLevel, se as stepSource, He as subscribeDock, ce as summarizeFleet, tt as summarizeTool, z as toggleFloating, M as toolStep, kt as updateLeaf, Ye as useCompute, je as useComputeFleet, nt as useComputeOptional, w as useComputeProjects, F as useComputeTail, Oe as useComputeTask, ye as useLabInstruct, Bt as useLabLayout, te as useProjectRollups, Jn as visibleRows };
