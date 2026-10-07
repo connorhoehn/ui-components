@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.426.0
+
+- **Complete, verified `dist`:** 2.425.0 committed a per-file `tsc` declaration emit (`npm run build:types` wrote into `dist/`) over the rolled-up types: `dist/index.d.ts` was 7 KB with no `StackedRail`, and ~3,000 stray `.d.ts`/`.map` files shipped. Runtime JS was fine, so the runtime-only export snapshot stayed green. `build:types` now emits to `node_modules/.cache/types-check`, `prepare` runs the full `npm run build`, and `export-surface.test.ts` checks every entrypoint's `.d.ts` is a self-contained rollup naming every snapshot export. Rebuilt; every `.d.ts` is byte-identical to 2.424.0 (2.425.0 changed no types). Note `RecordGraphCard` is exported from the root entry, not `/graph`.
+
 ## 2.425.0
 
 - **A deleted message row names the person, not the socket:** a soft-deleted message arrives with its metadata stripped, so `adaptChatMessages` left `displayName` unset and `ChatPanel` fell back to the first characters of the client id (`c_muxlj2`). The adapter now resolves the sender through `userId` from any live message in the transcript that carries their name, and otherwise says `a removed member` (`REMOVED_MEMBER_LABEL`). Never an id.

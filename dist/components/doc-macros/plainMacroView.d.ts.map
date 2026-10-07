@@ -1,1 +1,0 @@
-{"version":3,"file":"plainMacroView.d.ts","sourceRoot":"","sources":["../../../src/components/doc-macros/plainMacroView.ts"],"names":[],"mappings":"AAkBA,OAAO,KAAK,EAAE,IAAI,IAAI,MAAM,EAAE,MAAM,kBAAkB,CAAC;AACvD,OAAO,KAAK,EAAE,QAAQ,EAAE,MAAM,iBAAiB,CAAC;AAEhD,qEAAqE;AACrE,wBAAgB,cAAc,CAAC,IAAI,EAAE,MAAM,GAAG,QAAQ,CAMrD;eAEc,cAAc"}

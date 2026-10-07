@@ -1,1 +1,0 @@
-{"version":3,"file":"PiPButton.d.ts","sourceRoot":"","sources":["../../../src/components/video/PiPButton.tsx"],"names":[],"mappings":"AAMA,MAAM,WAAW,cAAc;IAC7B,kEAAkE;IAClE,eAAe,EAAE,MAAM,gBAAgB,GAAG,IAAI,CAAC;IAC/C,SAAS,CAAC,EAAE,MAAM,CAAC;IACnB,KAAK,CAAC,EAAE,MAAM,CAAC;CAChB;AAED,wBAAgB,SAAS,CAAC,EACxB,eAAe,EACf,SAAS,EACT,KAAK,GACN,EAAE,cAAc,+BAkEhB;eAEc,SAAS"}

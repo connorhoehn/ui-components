@@ -1,1 +1,0 @@
-{"version":3,"file":"useIdleDetector.d.ts","sourceRoot":"","sources":["../../src/hooks/useIdleDetector.ts"],"names":[],"mappings":"AAWA,MAAM,WAAW,sBAAsB;IACrC,kEAAkE;IAClE,SAAS,CAAC,EAAE,MAAM,CAAC;CACpB;AAED,MAAM,WAAW,qBAAqB;IACpC,MAAM,EAAE,OAAO,CAAC;CACjB;AAED,wBAAgB,eAAe,CAC7B,OAAO,GAAE,sBAA2B,GACnC,qBAAqB,CAoEvB"}

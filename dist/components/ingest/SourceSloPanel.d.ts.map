@@ -1,1 +1,0 @@
-{"version":3,"file":"SourceSloPanel.d.ts","sourceRoot":"","sources":["../../../src/components/ingest/SourceSloPanel.tsx"],"names":[],"mappings":"AAqDA,UAAU,KAAK;IACb,QAAQ,EAAE,MAAM,CAAC;IACjB,+DAA+D;IAC/D,OAAO,CAAC,EAAE,MAAM,GAAG,IAAI,CAAC;IACxB,+EAA+E;IAC/E,OAAO,CAAC,EAAE,MAAM,CAAC;CAClB;AAED,MAAM,CAAC,OAAO,UAAU,cAAc,CAAC,EAAE,QAAQ,EAAE,OAAO,EAAE,OAAO,EAAE,EAAE,KAAK,+BA8D3E"}

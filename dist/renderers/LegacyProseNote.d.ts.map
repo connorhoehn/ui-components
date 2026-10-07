@@ -1,1 +1,0 @@
-{"version":3,"file":"LegacyProseNote.d.ts","sourceRoot":"","sources":["../../src/renderers/LegacyProseNote.tsx"],"names":[],"mappings":"AAOA,OAAO,KAAK,EAAE,WAAW,EAAE,MAAM,KAAK,CAAC;AAGvC,MAAM,CAAC,OAAO,UAAU,eAAe,CAAC,EACtC,SAAS,EACT,QAAQ,GACT,EAAE;IACD,SAAS,EAAE,MAAM,CAAC;IAClB,QAAQ,CAAC,EAAE,WAAW,GAAG,IAAI,CAAC;CAC/B,sCAYA"}

@@ -1,1 +1,0 @@
-{"version":3,"file":"SourceDetailPage.d.ts","sourceRoot":"","sources":["../../../src/components/ingest/SourceDetailPage.tsx"],"names":[],"mappings":"AAsGA,MAAM,WAAW,qBAAqB;IACpC;;;;;OAKG;IACH,OAAO,CAAC,EAAE,MAAM,GAAG,IAAI,CAAC;IACxB,2IAA2I;IAC3I,OAAO,CAAC,EAAE,MAAM,CAAC;CAClB;AAED,MAAM,CAAC,OAAO,UAAU,gBAAgB,CAAC,EAAE,OAAO,EAAE,WAAW,EAAE,OAAO,EAAE,GAAE,qBAA0B,sCAwhBrG"}
