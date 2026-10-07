@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.423.0
+
+- **Call media panel grid:** `CallDock` and `ConversationCallDock` take `layout?: 'shelf' | 'grid'` (default `shelf`, unchanged). `grid` renders only the tile stage — no header, meta, device controls or Leave (the host's bar, e.g. `HuddleBar`, owns those) — as a reflowing grid of fluid 16:9 tiles; root `data-layout="grid"` (shelf roots now carry `data-layout="shelf"`). Tiles come from the new `CallTileRow variant="grid"`: the dock tile (camera-off initials with the media kept playing in a 1px sink, audio sink, name, mic/mute state, speaking/followed ring, reconnecting veil), columns from `gridCols` via static classes (1 → 1, 2–4 → 2, 5–9 → 3, 10+ → 4; `data-columns`, `data-tile-count`), the viewer first and inline as "You" (never a PiP), no `+N` collapse. Connecting draws one fluid skeleton; ended/error render as before. One dock instance serves either layout, so a host moving its single media sink between a footer shelf and a panel opens no second subscription.
+
 ## 2.422.0
 
 - **Types build:** `npm run build:types` failed with TS5011 under TypeScript 7 (no explicit `rootDir`); `tsconfig.build.json` now sets `rootDir: ./src`. The shipped `dist/*.d.ts` come from `npm run build` (the dts bundle), which appended its ambient `declare module '@tiptap/core'` / `declare global` blocks in worker-completion order, so every build reshuffled ~700 lines per entry and a block missed by the harvest vanished silently. New `scripts/normalize-dts-ambient.mjs` (run by `build`) sorts the blocks and fails if an entry lacks any ambient block that src declares. No type changes versus 2.421.0 apart from block order.

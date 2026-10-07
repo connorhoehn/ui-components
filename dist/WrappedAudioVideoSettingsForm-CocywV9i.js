@@ -20,7 +20,7 @@ import { t as x } from "./FileUploadDrop-D3wVrrzM.js";
 import { t as S } from "./ActivityFeed-CkPp9rsm.js";
 import { a as C, i as ee, n as te, o as ne } from "./DockedAside-Cp8f4XKs.js";
 import { d as re, lt as w, n as ie, t as T, u as E, ut as D } from "./ConversationSurface-D1KfSHZ7.js";
-import { C as O, E as k, S as A, g as j, i as ae, m as oe, t as M, v as se, x as ce } from "./AudioVideoSettingsForm-BhfipLo8.js";
+import { C as O, E as k, S as A, g as j, i as ae, m as oe, t as M, v as se, x as ce } from "./AudioVideoSettingsForm-CLxv_soU.js";
 import { t as le } from "./useActiveSpeaker-BGKJU3Lb.js";
 import { c as ue, o as de, s as N } from "./useDocumentImageUpload-DySteVsb.js";
 import { Component as P, createContext as F, createElement as fe, useCallback as I, useContext as L, useEffect as R, useMemo as z, useRef as B, useState as V } from "react";
@@ -1068,41 +1068,42 @@ function nt(e) {
 		streams: [e.stream]
 	})), [n]);
 }
-function rt(e, { call: t, title: n, onOpenPeople: r, peopleOpen: i, onOpenSettings: a, onPopOut: o, extras: s, cameraMenuItems: l, tile: u = et, notice: d, selfName: f, compact: p = !1, className: m, "data-testid": h = "conversation-call-dock" }) {
-	let [_, v] = V(!1), y = e.useAudioVideoSettings({ preview: _ }), { activeSpeakerId: b } = le({ participants: nt(t.call) }), x = e.conversationCallDockProps(t, {
+function rt(e, { call: t, title: n, onOpenPeople: r, peopleOpen: i, onOpenSettings: a, onPopOut: o, extras: s, cameraMenuItems: l, tile: u = et, notice: d, selfName: f, compact: p = !1, layout: m = "shelf", className: h, "data-testid": _ = "conversation-call-dock" }) {
+	let [v, y] = V(!1), b = e.useAudioVideoSettings({ preview: v }), { activeSpeakerId: x } = le({ participants: nt(t.call) }), S = e.conversationCallDockProps(t, {
 		title: n,
 		onOpenPeople: r,
 		...i === void 0 ? {} : { peopleOpen: i },
-		onOpenSettings: a ?? (() => v(!0)),
+		onOpenSettings: a ?? (() => y(!0)),
 		...o ? { onPopOut: o } : {},
 		...s === void 0 ? {} : { extras: s },
 		...l ? { cameraMenuItems: l } : {},
 		tile: u,
-		activeSpeakerId: b ?? t.activeSpeakerId,
+		activeSpeakerId: x ?? t.activeSpeakerId,
 		compact: p,
-		"data-testid": h
+		"data-testid": _
 	});
-	if (!x) return null;
-	let S = {
-		...x,
-		...m ? { className: m } : {}
+	if (!S) return null;
+	let C = {
+		...S,
+		layout: m,
+		...h ? { className: h } : {}
 	};
 	return /* @__PURE__ */ W(H, { children: [
 		d ? /* @__PURE__ */ U(g, {
 			tone: "info",
-			"data-testid": `${h}-notice`,
+			"data-testid": `${_}-notice`,
 			children: d
 		}) : null,
-		/* @__PURE__ */ U(se, { ...S }),
+		/* @__PURE__ */ U(se, { ...C }),
 		!a && /* @__PURE__ */ U(c, {
-			open: _,
-			onClose: () => v(!1),
+			open: v,
+			onClose: () => y(!1),
 			title: "Call devices",
 			children: /* @__PURE__ */ U(M, {
-				"data-testid": `${h}-settings`,
-				value: y.settings,
+				"data-testid": `${_}-settings`,
+				value: b.settings,
 				onChange: (e) => {
-					y.update(e), t.devices.set({
+					b.update(e), t.devices.set({
 						...t.devices.prefs,
 						...e.microphoneId ? { microphoneId: e.microphoneId } : {},
 						...e.cameraId ? { cameraId: e.cameraId } : {},
@@ -1115,13 +1116,13 @@ function rt(e, { call: t, title: n, onOpenPeople: r, peopleOpen: i, onOpenSettin
 					speakers: t.devices.list.speakers
 				},
 				permission: t.devices.list.permission,
-				micLevel: y.micLevel,
-				previewStream: y.previewStream,
+				micLevel: b.micLevel,
+				previewStream: b.previewStream,
 				cameraOn: t.self.cameraOn,
 				speakerSelectionSupported: tt(),
-				onTestMic: y.testMic,
-				onTestSound: y.testSound,
-				testMicState: y.testMicState,
+				onTestMic: b.testMic,
+				onTestSound: b.testSound,
+				testMicState: b.testMicState,
 				...f === void 0 ? {} : { selfName: f }
 			})
 		})

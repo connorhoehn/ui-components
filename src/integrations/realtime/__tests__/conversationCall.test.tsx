@@ -122,6 +122,18 @@ describe('ConversationCallDock', () => {
     expect(ui.tile(person('u-x', 'X'))).toBeUndefined();
   });
 
+  it('forwards layout="grid": the tiles only, in a grid, the bar keeps the controls', () => {
+    const { Dock } = bind();
+    const { rerender } = render(<Dock call={fakeCall()} title="Auth Migration" onOpenPeople={() => {}} layout="grid" data-testid="shell-dock" />);
+    expect(screen.getByTestId('shell-dock')).toHaveAttribute('data-layout', 'grid');
+    expect(screen.getByTestId('call-dock-tile-row')).toHaveAttribute('data-variant', 'grid');
+    expect(screen.getByTestId('call-dock-tile-row')).toHaveAttribute('data-tile-count', '2');
+    expect(screen.queryByTestId('call-dock-leave')).toBeNull();
+    rerender(<Dock call={fakeCall()} title="Auth Migration" onOpenPeople={() => {}} data-testid="shell-dock" />);
+    expect(screen.getByTestId('shell-dock')).toHaveAttribute('data-layout', 'shelf');
+    expect(screen.getByTestId('call-dock-leave')).toBeInTheDocument();
+  });
+
   it('opens its own device settings, previewing only while open, and keeps the call in step', () => {
     const { Dock, rm, settings } = bind();
     const call = fakeCall();

@@ -124,6 +124,16 @@ export interface CallDockProps {
   onDismiss?: () => void;
   /** 132 × 74 tiles (a 1280 × 720 window) instead of 176 × 88 (the mockup's 166 × 84 at its 1.054 scale). */
   compact?: boolean;
+  /**
+   * `shelf` (default): the header row (title, meta, device controls, Leave)
+   * over a row of fixed-size tiles. `grid` (2.423.0): the call's media
+   * panel — ONLY the tile stage, as a reflowing grid of fluid 16:9 tiles
+   * (`CallTileRow variant="grid"`, the viewer first as "You"). No header,
+   * meta or controls render: the host's bar (e.g. `HuddleBar`) owns mic,
+   * camera and Leave. Connecting draws one fluid skeleton; reconnecting keeps
+   * its badge; the ended and error phases render as they do for `shelf`.
+   */
+  layout?: 'shelf' | 'grid';
   className?: string;
   'data-testid'?: string;
 }
@@ -192,6 +202,7 @@ const CallDockTiles = memo(function CallDockTiles({
   followingUserId,
   reconnecting,
   compact,
+  grid = false,
   onTileClick,
   title,
 }: {
@@ -201,6 +212,7 @@ const CallDockTiles = memo(function CallDockTiles({
   followingUserId: string | null;
   reconnecting: boolean;
   compact: boolean;
+  grid?: boolean;
   onTileClick: ((userId: string) => void) | undefined;
   title: string;
 }) {
@@ -208,7 +220,7 @@ const CallDockTiles = memo(function CallDockTiles({
   const remotes = participants.filter((p) => p.userId !== localParticipantId);
   return (
     <CallTileRow
-      variant="dock"
+      variant={grid ? 'grid' : 'dock'}
       participants={remotes.map((p) => toTile(p, false, reconnecting))}
       localParticipant={local ? toTile(local, true, reconnecting) : null}
       activeSpeakerId={activeSpeakerId}
@@ -255,6 +267,7 @@ export function CallDock({
   error,
   onDismiss,
   compact = false,
+  layout = 'shelf',
   className,
   'data-testid': testId = 'call-dock',
 }: CallDockProps) {
@@ -318,6 +331,60 @@ export function CallDock({
     if (!calling && canEndForEveryone && onEndForEveryone) setConfirmLeave(true);
     else onLeave();
   };
+  const grid = layout === 'grid';
+
+  const tiles = (
+    <div className="relative" data-testid="call-dock-tiles">
+      {reconnecting && (
+        <div
+          className="mb-2 inline-flex rounded-full bg-warning-bg px-3 py-1 text-xs font-medium text-warning-fg"
+          role="status"
+          data-testid="call-dock-reconnecting"
+        >
+          Reconnecting…
+        </div>
+      )}
+      {connecting ? (
+        <div className="flex gap-2" data-testid="call-dock-connecting">
+          <div
+            className={cn(
+              'shrink-0 overflow-hidden rounded-md',
+              grid ? 'aspect-video w-full' : compact ? 'h-[74px] w-[132px]' : 'h-[88px] w-[176px]',
+            )}
+          >
+            <SkeletonCard height="100%" rounded="md" />
+          </div>
+        </div>
+      ) : (
+        <CallDockTiles
+          participants={participants}
+          localParticipantId={localParticipantId}
+          activeSpeakerId={activeSpeakerId}
+          followingUserId={followingUserId}
+          reconnecting={reconnecting}
+          compact={compact}
+          grid={grid}
+          onTileClick={onTileClick ? stableTileClick : undefined}
+          title={title}
+        />
+      )}
+    </div>
+  );
+
+  if (grid) {
+    return (
+      <section
+        className={cn('flex min-w-0 flex-col gap-2 bg-surface p-3', className)}
+        aria-label={`Call: ${title}`}
+        data-testid={testId}
+        data-phase={phase}
+        data-layout="grid"
+        data-compact={compact ? 'true' : 'false'}
+      >
+        {tiles}
+      </section>
+    );
+  }
 
   return (
     <section
@@ -325,6 +392,7 @@ export function CallDock({
       aria-label={`Call: ${title}`}
       data-testid={testId}
       data-phase={phase}
+      data-layout="shelf"
       data-compact={compact ? 'true' : 'false'}
     >
       {/* The header wraps rather than overlaps: the title block's basis is its
@@ -502,35 +570,7 @@ export function CallDock({
         </div>
       </div>
 
-      <div className="relative" data-testid="call-dock-tiles">
-        {reconnecting && (
-          <div
-            className="mb-2 inline-flex rounded-full bg-warning-bg px-3 py-1 text-xs font-medium text-warning-fg"
-            role="status"
-            data-testid="call-dock-reconnecting"
-          >
-            Reconnecting…
-          </div>
-        )}
-        {connecting ? (
-          <div className="flex gap-2" data-testid="call-dock-connecting">
-            <div className={cn('shrink-0 overflow-hidden rounded-md', compact ? 'h-[74px] w-[132px]' : 'h-[88px] w-[176px]')}>
-              <SkeletonCard height="100%" rounded="md" />
-            </div>
-          </div>
-        ) : (
-          <CallDockTiles
-            participants={participants}
-            localParticipantId={localParticipantId}
-            activeSpeakerId={activeSpeakerId}
-            followingUserId={followingUserId}
-            reconnecting={reconnecting}
-            compact={compact}
-            onTileClick={onTileClick ? stableTileClick : undefined}
-            title={title}
-          />
-        )}
-      </div>
+      {tiles}
     </section>
   );
 }

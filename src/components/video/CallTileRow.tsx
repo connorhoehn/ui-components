@@ -21,11 +21,12 @@ import { memo, type CSSProperties, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { noteCallDockRender } from './callDockRenderProbe';
 import { ParticipantTile } from './ParticipantTile';
+import { gridCols } from './HangoutGrid';
 import { Avatar } from '../shared/Avatar';
 import type { HangoutLayoutParticipant } from './HangoutLayoutTypes';
 import { MicIcon, MicOffIcon, ScreenShareIcon } from './MediaIcons';
 
-/** A row participant. The two extra flags are read by the `dock` variant only. */
+/** A row participant. The extra flags are read by the `dock` and `grid` variants only. */
 export interface CallTileParticipant extends HangoutLayoutParticipant {
   /** Draws the screen-share glyph on the tile (the shared stream is the host's `videoElement`). */
   screenSharing?: boolean;
@@ -34,10 +35,10 @@ export interface CallTileParticipant extends HangoutLayoutParticipant {
   /**
    * Camera off, but keep `videoElement` MOUNTED (invisible) and draw the
    * initials. A remote person's audio rides the same MediaStream as their
-   * video, so unmounting the element on camera-off silences them. `dock` only.
+   * video, so unmounting the element on camera-off silences them. `dock`/`grid` only.
    */
   cameraOff?: boolean;
-  /** An audio sink (e.g. `<audio autoPlay>`), always mounted and never shown. `dock` only. */
+  /** An audio sink (e.g. `<audio autoPlay>`), always mounted and never shown. `dock`/`grid` only. */
   audioElement?: ReactNode;
 }
 
@@ -79,8 +80,16 @@ export interface CallTileRowProps {
    * diagram, not like a panel someone laid along the bottom edge. `bar`
    * keeps them in one dark strip with the controls at the end, for a dock
    * that is itself a panel.
+   *
+   * `grid` (2.423.0): the call's media panel — the same dock tiles (camera-off
+   * initials with the media kept playing, audio sink, name, mic state,
+   * speaking/followed ring, reconnecting veil), fluid 16:9 tiles in a grid
+   * that reflows with the head count (`gridCols`: 1 → 1 column, 2–4 → 2,
+   * 5–9 → 3, 10+ → 4). The viewer's tile is first, inline, as "You" — never
+   * a PiP — and nobody is collapsed into `+N`. `tileWidth`, `tileHeight`,
+   * `overflow` and `maxVisible` are ignored.
    */
-  variant?: 'floating' | 'bar' | 'dock';
+  variant?: 'floating' | 'bar' | 'dock' | 'grid';
   className?: string;
   style?: CSSProperties;
   'data-testid'?: string;
@@ -104,6 +113,37 @@ export function CallTileRow({
   style,
   'data-testid': testId = 'call-tile-row',
 }: CallTileRowProps) {
+  if (variant === 'grid') {
+    const all = localParticipant ? [localParticipant, ...participants] : participants;
+    const cols = gridCols(all.length);
+    return (
+      <div
+        className={cn('grid w-full min-w-0 gap-2', GRID_COLUMNS[cols] ?? GRID_COLUMNS[4], className)}
+        style={style}
+        role="group"
+        aria-label={typeof title === 'string' ? `Call: ${title}` : 'Call participants'}
+        data-testid={testId}
+        data-variant="grid"
+        data-tile-count={all.length}
+        data-columns={cols}
+      >
+        {all.map((p) => (
+          <DockTile
+            key={p.id}
+            participant={p}
+            width={0}
+            height={0}
+            fluid
+            speaking={p.id === activeSpeakerId}
+            highlighted={p.id === highlightedId}
+            testId={`${tileTestIdPrefix}-${p.id}`}
+            {...(onParticipantClick ? { onParticipantClick } : {})}
+          />
+        ))}
+      </div>
+    );
+  }
+
   if (variant === 'dock') {
     const all = localParticipant ? [localParticipant, ...participants] : participants;
     const collapse = overflow === 'collapse' && all.length > maxVisible;
@@ -253,10 +293,20 @@ export function CallTileRow({
   );
 }
 
+/** Static column classes for the `grid` variant, keyed by `gridCols`. */
+const GRID_COLUMNS: Record<number, string> = {
+  1: 'grid-cols-1',
+  2: 'grid-cols-2',
+  3: 'grid-cols-3',
+  4: 'grid-cols-4',
+};
+
 interface DockTileProps {
   participant: CallTileParticipant;
   width: number;
   height: number;
+  /** `grid`: fill the grid cell at 16:9 instead of `width` × `height`. */
+  fluid?: boolean;
   speaking: boolean;
   highlighted: boolean;
   testId: string;
@@ -282,6 +332,7 @@ function shallowEqualObjects(a: object, b: object): boolean {
 const DockTile = memo(DockTileImpl, (prev, next) =>
   prev.width === next.width &&
   prev.height === next.height &&
+  prev.fluid === next.fluid &&
   prev.speaking === next.speaking &&
   prev.highlighted === next.highlighted &&
   prev.testId === next.testId &&
@@ -300,6 +351,7 @@ function DockTileImpl({
   participant: p,
   width,
   height,
+  fluid = false,
   speaking,
   highlighted,
   testId,
@@ -313,6 +365,7 @@ function DockTileImpl({
     <div
       className={cn(
         'relative shrink-0 overflow-hidden rounded-md text-white',
+        fluid && 'aspect-video w-full',
         // Camera off: the soft grey tile with initials (mockup 02); a live
         // frame sits on the dark video tile.
         p.videoElement && !p.cameraOff ? 'bg-video-tile' : 'bg-video-tile-off',
@@ -320,7 +373,7 @@ function DockTileImpl({
         onClick && 'cursor-pointer',
       )}
       // Tile size is a prop (74px tall at 1280, 84px at 1672) — not a static class.
-      style={{ width, height }}
+      style={fluid ? undefined : { width, height }}
       title={label}
       aria-label={label}
       role={onClick ? 'button' : 'img'}
@@ -351,7 +404,7 @@ function DockTileImpl({
         <div className="absolute inset-0 flex items-center justify-center">
           <Avatar
             name={p.displayName}
-            size={Math.round(Math.min(40, height * 0.48))}
+            size={fluid ? 56 : Math.round(Math.min(40, height * 0.48))}
             {...(p.avatarUrl ? { src: p.avatarUrl } : {})}
             color="rgba(71,80,92,0.28)"
             showTitle={false}

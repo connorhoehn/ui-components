@@ -1477,6 +1477,14 @@ export declare interface ConversationCallDockProps {
     selfName?: string;
     /** 132 × 74 tiles instead of 176 × 88. */
     compact?: boolean;
+    /**
+     * `shelf` (default): the dock's header, device controls and Leave over a
+     * row of tiles. `grid` (2.423.0): the call's media panel — only the tiles,
+     * in a grid that reflows with the head count (1 / 2 / 2×2 / 3 columns), the
+     * viewer first as "You". The host's bar keeps mic, camera and Leave. The
+     * same single dock (and its media elements) serves either layout.
+     */
+    layout?: 'shelf' | 'grid';
     className?: string;
     /** The dock's test id; the notice is `<id>-notice`, the settings dialog `<id>-settings`. Default `conversation-call-dock`. */
     'data-testid'?: string;

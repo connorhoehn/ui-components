@@ -2318,7 +2318,7 @@ export declare interface CallControlsProps {
     className?: string;
 }
 
-export declare function CallDock({ title, participantCount, elapsedMs, phase, callingTo, documents, participants, localParticipantId, activeSpeakerId, followingUserId, mic, camera, screenShare, onOpenPeople, onOpenDocuments, peopleOpen, documentsOpen, onOpenSettings, extras, onPopOut, onLeave, canEndForEveryone, onEndForEveryone, onTileClick, onTitleClick, onDocumentClick, endedSummary, error, onDismiss, compact, className, 'data-testid': testId, }: CallDockProps): JSX.Element;
+export declare function CallDock({ title, participantCount, elapsedMs, phase, callingTo, documents, participants, localParticipantId, activeSpeakerId, followingUserId, mic, camera, screenShare, onOpenPeople, onOpenDocuments, peopleOpen, documentsOpen, onOpenSettings, extras, onPopOut, onLeave, canEndForEveryone, onEndForEveryone, onTileClick, onTitleClick, onDocumentClick, endedSummary, error, onDismiss, compact, layout, className, 'data-testid': testId, }: CallDockProps): JSX.Element;
 
 /** JSON written under {@link CALL_DOCK_DRAG_TYPE}. */
 export declare interface CallDockDragPayload {
@@ -2409,6 +2409,16 @@ export declare interface CallDockProps {
     onDismiss?: () => void;
     /** 132 × 74 tiles (a 1280 × 720 window) instead of 176 × 88 (the mockup's 166 × 84 at its 1.054 scale). */
     compact?: boolean;
+    /**
+     * `shelf` (default): the header row (title, meta, device controls, Leave)
+     * over a row of fixed-size tiles. `grid` (2.423.0): the call's media
+     * panel — ONLY the tile stage, as a reflowing grid of fluid 16:9 tiles
+     * (`CallTileRow variant="grid"`, the viewer first as "You"). No header,
+     * meta or controls render: the host's bar (e.g. `HuddleBar`) owns mic,
+     * camera and Leave. Connecting draws one fluid skeleton; reconnecting keeps
+     * its badge; the ended and error phases render as they do for `shelf`.
+     */
+    layout?: 'shelf' | 'grid';
     className?: string;
     'data-testid'?: string;
 }
@@ -2852,7 +2862,7 @@ export declare interface CallStripParticipant {
     isSpeaking?: boolean;
 }
 
-/** A row participant. The two extra flags are read by the `dock` variant only. */
+/** A row participant. The extra flags are read by the `dock` and `grid` variants only. */
 export declare interface CallTileParticipant extends HangoutLayoutParticipant {
     /** Draws the screen-share glyph on the tile (the shared stream is the host's `videoElement`). */
     screenSharing?: boolean;
@@ -2861,10 +2871,10 @@ export declare interface CallTileParticipant extends HangoutLayoutParticipant {
     /**
      * Camera off, but keep `videoElement` MOUNTED (invisible) and draw the
      * initials. A remote person's audio rides the same MediaStream as their
-     * video, so unmounting the element on camera-off silences them. `dock` only.
+     * video, so unmounting the element on camera-off silences them. `dock`/`grid` only.
      */
     cameraOff?: boolean;
-    /** An audio sink (e.g. `<audio autoPlay>`), always mounted and never shown. `dock` only. */
+    /** An audio sink (e.g. `<audio autoPlay>`), always mounted and never shown. `dock`/`grid` only. */
     audioElement?: ReactNode;
 }
 
@@ -2908,8 +2918,16 @@ export declare interface CallTileRowProps {
      * diagram, not like a panel someone laid along the bottom edge. `bar`
      * keeps them in one dark strip with the controls at the end, for a dock
      * that is itself a panel.
+     *
+     * `grid` (2.423.0): the call's media panel — the same dock tiles (camera-off
+     * initials with the media kept playing, audio sink, name, mic state,
+     * speaking/followed ring, reconnecting veil), fluid 16:9 tiles in a grid
+     * that reflows with the head count (`gridCols`: 1 → 1 column, 2–4 → 2,
+     * 5–9 → 3, 10+ → 4). The viewer's tile is first, inline, as "You" — never
+     * a PiP — and nobody is collapsed into `+N`. `tileWidth`, `tileHeight`,
+     * `overflow` and `maxVisible` are ignored.
      */
-    variant?: 'floating' | 'bar' | 'dock';
+    variant?: 'floating' | 'bar' | 'dock' | 'grid';
     className?: string;
     style?: CSSProperties;
     'data-testid'?: string;
