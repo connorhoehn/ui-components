@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.424.0
+
+- **Message edit/delete through `WrappedChatPanel`:** `ChatPanel` already had `onEditMessage`/`onDeleteMessage`, but the wrapper never forwarded them, so no hook-bound panel offered either. It now maps them onto `chat.editMessage`/`chat.deleteMessage` (realtime-modules >= 0.100; `RMUseChatReturn` gains both as optional members), on by default when the hook has them (`editable={false}` turns them off). The edit sends matching `metadata.html` so the thread does not keep rendering the old rich body. The adapter now carries `editedAt`/`deletedAt`, which it used to drop, so the "(edited)" marker and the deleted placeholder appear from the live `messageUpdated`/`messageDeleted` frames. `canEdit(message)`/`canDelete(message)` replace the own-messages-only default (`ChatPanel` `canEditMessage`/`canDeleteMessage`); the gateway stays the authority. `onForwardMessage` is forwarded too.
+
 ## 2.423.0
 
 - **Call media panel grid:** `CallDock` and `ConversationCallDock` take `layout?: 'shelf' | 'grid'` (default `shelf`, unchanged). `grid` renders only the tile stage — no header, meta, device controls or Leave (the host's bar, e.g. `HuddleBar`, owns those) — as a reflowing grid of fluid 16:9 tiles; root `data-layout="grid"` (shelf roots now carry `data-layout="shelf"`). Tiles come from the new `CallTileRow variant="grid"`: the dock tile (camera-off initials with the media kept playing in a 1px sink, audio sink, name, mic/mute state, speaking/followed ring, reconnecting veil), columns from `gridCols` via static classes (1 → 1, 2–4 → 2, 5–9 → 3, 10+ → 4; `data-columns`, `data-tile-count`), the viewer first and inline as "You" (never a PiP), no `+N` collapse. Connecting draws one fluid skeleton; ended/error render as before. One dock instance serves either layout, so a host moving its single media sink between a footer shelf and a panel opens no second subscription.

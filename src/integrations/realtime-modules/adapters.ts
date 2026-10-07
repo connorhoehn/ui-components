@@ -119,6 +119,8 @@ export function adaptChatMessage(msg: RMChatMessage): UIChatMessage {
     avatarUrl: str(msg.metadata?.avatarUrl),
     ...(attachments && attachments.length > 0 ? { attachments } : {}),
     ...(metadata ? { metadata } : {}),
+    ...(msg.editedAt ? { editedAt: msg.editedAt } : {}),
+    ...(msg.deletedAt ? { deletedAt: msg.deletedAt } : {}),
   };
 }
 

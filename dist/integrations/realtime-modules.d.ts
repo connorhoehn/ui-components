@@ -1079,6 +1079,14 @@ declare interface ChatPanelProps {
     onEditMessage?: (message: ChatMessage, text: string) => Promise<void> | void;
     /** Remove one of the viewer's own messages, after a confirm. Same gate as `onEditMessage`. */
     onDeleteMessage?: (message: ChatMessage) => Promise<void> | void;
+    /**
+     * Who may edit. Default: the viewer's own messages only. A host that knows
+     * more (it is the server that decides) passes a predicate; it REPLACES the
+     * own-message default for Edit, and cards/notices/deleted rows stay excluded.
+     */
+    canEditMessage?: (message: ChatMessage) => boolean;
+    /** Who may delete. Default own messages; a moderator-grant host widens it. */
+    canDeleteMessage?: (message: ChatMessage) => boolean;
     /** Message ids currently pinned in this channel. */
     pinnedMessageIds?: ReadonlySet<string>;
     /**
@@ -2638,6 +2646,10 @@ export declare interface RMChatMessage {
     message: string;
     metadata?: Record<string, unknown>;
     timestamp: string;
+    /** Set by the gateway's `messageUpdated` frame. */
+    editedAt?: string;
+    /** Set by `messageDeleted`: a soft delete, the row stays as a placeholder. */
+    deletedAt?: string;
 }
 
 /**
@@ -3009,6 +3021,10 @@ export declare interface RMUseChatReturn {
      */
     sendMessage: (text: string, metadata?: Record<string, unknown>) => void;
     loadHistory: (limit?: number) => void;
+    /** Change one of your own messages (realtime-modules >= 0.100). Optional: older hooks lack it. */
+    editMessage?: (messageId: string, text: string, metadata?: Record<string, unknown>) => void;
+    /** Soft-delete one of your own messages. Optional like `editMessage`. */
+    deleteMessage?: (messageId: string) => void;
 }
 
 /** Return shape of `useCursor(channel)` from realtime-modules (singular hook). */
@@ -3427,7 +3443,7 @@ export declare interface WrappedCanvasDocumentProps extends Omit<CanvasDocumentV
     beforeConvert?: () => void | Promise<void>;
 }
 
-export declare function WrappedChatPanel({ chat, localMessages, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, renderMessageReferences, emojis, onReply, reply, onCancelReply, readReceipts, readReceiptsEnabled, unreadFrom, threaded, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, }: WrappedChatPanelProps): JSX.Element;
+export declare function WrappedChatPanel({ chat, localMessages, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, renderMessageReferences, emojis, onReply, reply, onCancelReply, readReceipts, readReceiptsEnabled, unreadFrom, threaded, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, editable, canEdit, canDelete, onForwardMessage, }: WrappedChatPanelProps): JSX.Element;
 
 export declare interface WrappedChatPanelProps {
     /** Return value of useChat(channel) from realtime-modules */
@@ -3582,6 +3598,20 @@ export declare interface WrappedChatPanelProps {
      * callback. Omit for no wrapping (default).
      */
     wrapWithNetworkShim?: NetworkShimOptions;
+    /**
+     * Edit / delete through `chat.editMessage` / `chat.deleteMessage`. On by
+     * default when the hook has them; `false` turns the controls off. Since
+     * 2.424.0. The gateway stays the authority (its `authorize` and an
+     * author-only check run on every edit/delete), so this only decides what the
+     * UI OFFERS.
+     */
+    editable?: boolean;
+    /** Who gets an Edit control. Default: the viewer's own messages. Replaces that default. */
+    canEdit?: (message: ChatMessage) => boolean;
+    /** Who gets a Delete control. Default: own messages; a moderator-grant host widens it. */
+    canDelete?: (message: ChatMessage) => boolean;
+    /** Forwarded to ChatPanel: the hover bar's Forward, with the trigger for a picker. */
+    onForwardMessage?: ChatPanelProps['onForwardMessage'];
 }
 
 export declare function WrappedConnectionPill({ socket, ...rest }: WrappedConnectionPillProps): JSX.Element;

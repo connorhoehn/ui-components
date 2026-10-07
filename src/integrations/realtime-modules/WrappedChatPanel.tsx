@@ -229,6 +229,20 @@ export interface WrappedChatPanelProps {
    * callback. Omit for no wrapping (default).
    */
   wrapWithNetworkShim?: NetworkShimOptions;
+  /**
+   * Edit / delete through `chat.editMessage` / `chat.deleteMessage`. On by
+   * default when the hook has them; `false` turns the controls off. Since
+   * 2.424.0. The gateway stays the authority (its `authorize` and an
+   * author-only check run on every edit/delete), so this only decides what the
+   * UI OFFERS.
+   */
+  editable?: boolean;
+  /** Who gets an Edit control. Default: the viewer's own messages. Replaces that default. */
+  canEdit?: (message: ChatMessage) => boolean;
+  /** Who gets a Delete control. Default: own messages; a moderator-grant host widens it. */
+  canDelete?: (message: ChatMessage) => boolean;
+  /** Forwarded to ChatPanel: the hover bar's Forward, with the trigger for a picker. */
+  onForwardMessage?: ChatPanelProps['onForwardMessage'];
 }
 
 export function WrappedChatPanel({
@@ -277,6 +291,10 @@ export function WrappedChatPanel({
   onJoinCall,
   onOpenDocument,
   wrapWithNetworkShim,
+  editable = true,
+  canEdit,
+  canDelete,
+  onForwardMessage,
 }: WrappedChatPanelProps) {
   const adaptedMessages = useMemo(() => adaptChatMessages(chat.messages), [chat.messages]);
   // Local messages with a `body` are private cards; ChatPanel orders them.
@@ -440,6 +458,28 @@ export function WrappedChatPanel({
     [pins],
   );
 
+  // ── Edit / delete ────────────────────────────────────────────────────────
+  const editMessage = chat.editMessage;
+  const deleteMessage = chat.deleteMessage;
+  const onEditMessage = useCallback(
+    (m: ChatMessage, text: string) => {
+      const next = text.trim();
+      if (!m.id || !next) return;
+      // The thread renders `metadata.html` over the plain text, so an edit that
+      // changed only the words would keep showing the old ones. The inline
+      // editor is plain text: send matching html (what realtime-examples does).
+      const html = `<p>${next.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')}</p>`;
+      editMessage?.(m.id, next, { html });
+    },
+    [editMessage],
+  );
+  const onDeleteMessage = useCallback(
+    (m: ChatMessage) => {
+      if (m.id) deleteMessage?.(m.id);
+    },
+    [deleteMessage],
+  );
+
   const panel = (
     <ChatPanel
       messages={messages}
@@ -473,6 +513,9 @@ export function WrappedChatPanel({
       {...(pins
         ? { pinnedMessageIds: pins.pinnedIds, onTogglePin }
         : {})}
+      {...(editable && editMessage ? { onEditMessage, ...(canEdit ? { canEditMessage: canEdit } : {}) } : {})}
+      {...(editable && deleteMessage ? { onDeleteMessage, ...(canDelete ? { canDeleteMessage: canDelete } : {}) } : {})}
+      onForwardMessage={onForwardMessage}
       onReply={onReply}
       reply={reply}
       onCancelReply={onCancelReply}

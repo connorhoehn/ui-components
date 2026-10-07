@@ -198,6 +198,14 @@ export interface ChatPanelProps {
   onEditMessage?: (message: ChatMessage, text: string) => Promise<void> | void;
   /** Remove one of the viewer's own messages, after a confirm. Same gate as `onEditMessage`. */
   onDeleteMessage?: (message: ChatMessage) => Promise<void> | void;
+  /**
+   * Who may edit. Default: the viewer's own messages only. A host that knows
+   * more (it is the server that decides) passes a predicate; it REPLACES the
+   * own-message default for Edit, and cards/notices/deleted rows stay excluded.
+   */
+  canEditMessage?: (message: ChatMessage) => boolean;
+  /** Who may delete. Default own messages; a moderator-grant host widens it. */
+  canDeleteMessage?: (message: ChatMessage) => boolean;
   /** Message ids currently pinned in this channel. */
   pinnedMessageIds?: ReadonlySet<string>;
   /**
@@ -1408,6 +1416,8 @@ export function ChatPanel({
   onTogglePin,
   onEditMessage,
   onDeleteMessage,
+  canEditMessage,
+  canDeleteMessage,
   pinnedMessageIds,
   onJumpToMessage,
   highlightedMessageId,
@@ -2246,7 +2256,10 @@ export function ChatPanel({
   // (`canForward` already excludes it on its own `files.length === 0` check).
   const hasCardBody = !!(agentRef || recordingRef || callRef || docRef || files.length > 0);
   // Own, plain, still there: the only messages a person may edit or delete.
-  const canEditDelete = isMine && !isDeleted && !isActivityNotice && !isCard && !!messageId;
+  const editableShape = !isDeleted && !isActivityNotice && !isCard && !!messageId;
+  const canEditOnly = editableShape && (canEditMessage ? canEditMessage(message) : isMine);
+  const canDeleteOnly = editableShape && (canDeleteMessage ? canDeleteMessage(message) : isMine);
+  const canEditDelete = canEditOnly || canDeleteOnly;
   // Anyone's, but only WORDS. See the `onForwardMessage` prop for why the
   // exclusion set is wider than Reply's: a card's buttons and an attachment's
   // download URL are both scoped to the conversation they were posted in, so
@@ -2260,7 +2273,7 @@ export function ChatPanel({
     && !isCard
     && files.length === 0
     && !!message.content.trim();
-  const editing = canEditDelete && !!onEditMessage && editingId === messageId;
+  const editing = canEditOnly && !!onEditMessage && editingId === messageId;
 
   // The quote, the message, its reactions — one unit. Rendering
   // them as siblings of the row would let a reaction drift away
@@ -2477,8 +2490,8 @@ export function ChatPanel({
             onTogglePin && !isActivityNotice ? () => onTogglePin(message) : undefined
           }
           pinned={!!message.id && !!pinnedMessageIds?.has(message.id)}
-          onEdit={canEditDelete && onEditMessage ? () => setEditingId(messageId) : undefined}
-          onDelete={canEditDelete && onDeleteMessage ? () => setDeletingId(messageId) : undefined}
+          onEdit={canEditOnly && onEditMessage ? () => setEditingId(messageId) : undefined}
+          onDelete={canDeleteOnly && onDeleteMessage ? () => setDeletingId(messageId) : undefined}
         />
       )}
     </div>

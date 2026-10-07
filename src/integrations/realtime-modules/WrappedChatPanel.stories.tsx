@@ -112,6 +112,24 @@ export const WithMessages: Story = {
   },
 };
 
+/** Edit/delete wired to the hook: own messages only, an edited marker and a deleted placeholder. */
+export const EditAndDelete: Story = {
+  args: {
+    currentUserId: 'me',
+    chat: {
+      ...baseChat,
+      editMessage: noop,
+      deleteMessage: noop,
+      messages: [
+        { id: 'e1', clientId: 'c1', userId: 'me', channel: 'general', message: 'Mine: hover for Edit / Delete', metadata: { displayName: 'You' }, timestamp: past(6) },
+        { id: 'e2', clientId: 'c2', userId: 'alice', channel: 'general', message: 'Alice: no controls on someone else\'s message', metadata: { displayName: 'Alice' }, timestamp: past(5) },
+        { id: 'e3', clientId: 'c1', userId: 'me', channel: 'general', message: 'Fixed typo', metadata: { displayName: 'You' }, timestamp: past(4), editedAt: past(3) },
+        { id: 'e4', clientId: 'c2', userId: 'alice', channel: 'general', message: '', metadata: { displayName: 'Alice', deleted: true }, timestamp: past(2), deletedAt: past(1) },
+      ],
+    },
+  },
+};
+
 export const WithTypingFromPresence: Story = {
   name: 'With typing indicator (presence-derived)',
   args: {
