@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { CallTileRow, dockTilesThatFit } from '../CallTileRow';
+import { CallTileRow, wrappedDockItems } from '../CallTileRow';
 
 const p = (id: string, displayName: string, over: Record<string, unknown> = {}) => ({ id, displayName, ...over });
 
@@ -56,14 +56,17 @@ describe('CallTileRow', () => {
     expect(screen.getByTestId('call-tile-row-controls').className).toContain('opacity-0');
   });
 
-  it('dock: collapses to the tiles that fit the measured row width, folded people keep their media mounted (2.436.0)', () => {
-    expect(dockTilesThatFit(0, 240)).toBe(Number.POSITIVE_INFINITY);
-    expect(dockTilesThatFit(952, 240)).toBe(3);
-    expect(dockTilesThatFit(984, 240)).toBe(4);
-    expect(dockTilesThatFit(100, 240)).toBe(1);
-    // A row held to 952px whose four tiles need 984px.
-    const width = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(952);
-    const scroll = vi.spyOn(HTMLElement.prototype, 'scrollWidth', 'get').mockReturnValue(984);
+  it('dock: the tiles past the row width wrap out of sight, stay mounted, and a +N badge names them (2.436.4)', () => {
+    expect(wrappedDockItems([])).toEqual([]);
+    expect(wrappedDockItems([{ offsetTop: 0 }, { offsetTop: 0 }, { offsetTop: 143 }, { offsetTop: 143 }])).toEqual([2, 3]);
+    // Bob and Cy are on the clipped second line; the row is 3 tiles' worth wide.
+    const top = vi.spyOn(HTMLElement.prototype, 'offsetTop', 'get').mockImplementation(function (this: HTMLElement) {
+      return ['b', 'c'].includes(this.dataset.peerId ?? '') ? 143 : 0;
+    });
+    const left = vi.spyOn(HTMLElement.prototype, 'offsetLeft', 'get').mockImplementation(function (this: HTMLElement) {
+      return this.dataset.peerId === 'a' ? 248 : 0;
+    });
+    const width = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(240);
     try {
       render(
         <CallTileRow
@@ -75,32 +78,33 @@ describe('CallTileRow', () => {
         />,
       );
     } finally {
+      top.mockRestore();
+      left.mockRestore();
       width.mockRestore();
-      scroll.mockRestore();
     }
     const row = screen.getByTestId('call-tile-row');
     expect(row.getAttribute('data-tile-count')).toBe('4');
-    expect(row.getAttribute('data-visible-count')).toBe('2');
-    expect([...row.querySelectorAll('[data-peer-id]')].map((t) => t.getAttribute('data-peer-id'))).toEqual(['me', 'a']);
-    const overflow = screen.getByTestId('call-tile-overflow');
-    expect(overflow.getAttribute('aria-label')).toBe('2 more');
-    expect(overflow.getAttribute('title')).toBe('Bob, Cy');
-    // Cy's video (which carries Cy's voice) stays mounted, invisibly, in the +N tile.
-    expect(screen.getByTestId('call-tile-c-media-sink')).toContainElement(screen.getByTestId('cy-video'));
+    expect(row.getAttribute('data-hidden-count')).toBe('2');
+    expect(row.style.height).toBe('135px');
+    // Everyone stays mounted (Cy's video carries Cy's voice); the badge sits at Ada's right edge.
+    expect([...row.querySelectorAll('[data-peer-id]')].map((t) => t.getAttribute('data-peer-id'))).toEqual(['me', 'a', 'b', 'c']);
+    expect(screen.getByTestId('cy-video')).toBeInTheDocument();
+    const badge = screen.getByTestId('call-tile-wrapped');
+    expect(badge).toHaveTextContent('+2');
+    expect(badge.getAttribute('aria-label')).toBe('2 more: Bob, Cy');
+    expect(badge.style.left).toBe('484px');
   });
 
-  it('dock: a row sized to its content (no overflow) is never capped by its own width', () => {
-    const width = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(240);
-    const scroll = vi.spyOn(HTMLElement.prototype, 'scrollWidth', 'get').mockReturnValue(240);
-    try {
-      const people = [p('a', 'Ada'), p('b', 'Bob')];
-      const { rerender } = render(<CallTileRow variant="dock" tileWidth={240} tileHeight={135} localParticipant={p('me', 'Me', { isLocal: true })} participants={[]} />);
-      rerender(<CallTileRow variant="dock" tileWidth={240} tileHeight={135} localParticipant={p('me', 'Me', { isLocal: true })} participants={people} />);
-    } finally {
-      width.mockRestore();
-      scroll.mockRestore();
-    }
-    expect(screen.getByTestId('call-tile-row').getAttribute('data-visible-count')).toBe('3');
-    expect(screen.queryByTestId('call-tile-overflow')).toBeNull();
+  it('dock: nothing wraps in a row sized to its content — no badge', () => {
+    render(<CallTileRow variant="dock" tileWidth={240} tileHeight={135} localParticipant={p('me', 'Me', { isLocal: true })} participants={[p('a', 'Ada'), p('b', 'Bob')]} />);
+    expect(screen.getByTestId('call-tile-row').getAttribute('data-hidden-count')).toBe('0');
+    expect(screen.queryByTestId('call-tile-wrapped')).toBeNull();
+  });
+
+  it('dock: past maxVisible the +N tile still folds the rest, keeping their media mounted', () => {
+    const people = Array.from({ length: 7 }, (_, i) => p(`p${i}`, `Person ${i}`, i === 6 ? { videoElement: <video data-testid="p6-video" /> } : {}));
+    render(<CallTileRow variant="dock" participants={people} maxVisible={6} />);
+    expect(screen.getByTestId('call-tile-overflow').getAttribute('aria-label')).toBe('2 more');
+    expect(screen.getByTestId('call-tile-p6-media-sink')).toContainElement(screen.getByTestId('p6-video'));
   });
 });

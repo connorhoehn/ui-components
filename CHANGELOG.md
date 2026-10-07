@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.436.4
+
+- Replaces 2.436.2/2.436.3's measured dock fit, which could still stick at one tile in a host that sizes the dock to its content (the row measured itself). `CallTileRow variant="dock"` under `overflow="collapse"` now wraps: the row is one tile tall with its overflow clipped, the tiles past its width sit on the clipped second line — still mounted, so their audio keeps playing — and a `+N` badge on the right edge of the last tile that fits counts and names them (`data-testid="<prefix>-wrapped"`, accessible name "N more: …"; `data-hidden-count` on the row). Finding them reads offsets only and changes no layout, so a content-sized host (nothing wraps) and a column-held one settle at once. `dockTilesThatFit` and `data-visible-count` are gone; `wrappedDockItems` is the pure helper. `maxVisible`'s `+N` tile is unchanged and keeps its folded people's media mounted.
+
 ## 2.436.3
 
 - Fix 2.436.2's dock fit for a host that sizes the dock to its content (a block that shrink-wraps the call bar): the row measured its own width, so once it folded a tile it could never grow back (1 → `+1` and stuck as people walked in). The row now caps only after it is seen to overflow its box, and re-measures when the head count changes.

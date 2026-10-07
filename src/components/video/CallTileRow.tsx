@@ -282,17 +282,17 @@ const GRID_COLUMNS: Record<number, string> = {
   4: 'grid-cols-4',
 };
 
-/** The dock gap (`gap-2`) the fit calculation assumes. */
-const DOCK_GAP_PX = 8;
-
 /**
- * How many dock tiles fit a row `width` px wide (2.436.0): the row collapses
- * to this many (the last one the `+N` tile) instead of clipping a tile at its
- * edge. 0 width (not laid out yet, or a test DOM) means "unknown": no cap.
+ * Elements of a wrapped dock row that sit below its first line (2.436.4):
+ * the row is one tile tall with its overflow clipped, so they are the ones
+ * that did not fit its width. Read from offsets only — finding them changes
+ * no layout, so a host that sizes the dock to its content (nothing wraps)
+ * and one that holds it to a column (the extras wrap) both settle at once.
  */
-export function dockTilesThatFit(width: number, tileWidth: number): number {
-  if (!(width > 0)) return Number.POSITIVE_INFINITY;
-  return Math.max(1, Math.floor((width + DOCK_GAP_PX) / (tileWidth + DOCK_GAP_PX)));
+export function wrappedDockItems(items: readonly { offsetTop: number }[]): number[] {
+  if (!items.length) return [];
+  const firstLine = items[0]!.offsetTop;
+  return items.flatMap((item, index) => (item.offsetTop > firstLine + 1 ? [index] : []));
 }
 
 interface DockRowProps {
@@ -311,82 +311,109 @@ interface DockRowProps {
   testId: string;
 }
 
+interface DockRowFold { hidden: number; names: string; left: number }
+
 function DockRow({ all, activeSpeakerId, highlightedId, tileWidth, tileHeight, overflow, maxVisible, tileTestIdPrefix, title, onParticipantClick, className, style, testId }: DockRowProps) {
+  const collapse = overflow === 'collapse' && all.length > maxVisible;
+  // Keep the room for the +N tile inside maxVisible, so the row never grows past it.
+  const shown = collapse ? all.slice(0, Math.max(1, maxVisible - 1)) : all;
+  const folded = all.slice(shown.length);
   const rowRef = useRef<HTMLDivElement | null>(null);
-  // How many tiles the row's box holds — set only once the row is seen to
-  // overflow it. A host that sizes the dock to its content never overflows,
-  // and measuring that row's own width would feed back (fewer tiles → a
-  // narrower row → fewer tiles), so it is left uncapped.
-  const [fit, setFit] = useState(Number.POSITIVE_INFINITY);
-  const fitRef = useRef(fit);
-  fitRef.current = fit;
+  // Under `collapse` the row wraps instead of clipping a tile at its edge;
+  // the tiles past its width sit on the clipped second line, still mounted
+  // (their audio rides their video element), and a +N badge on the last
+  // tile that fits counts them.
+  const [fold, setFold] = useState<DockRowFold | null>(null);
+  const shownKey = shown.map((p) => p.id).join('|');
   useLayoutEffect(() => {
     const row = rowRef.current;
     if (!row || overflow !== 'collapse') return undefined;
     const measure = () => {
-      const constrained = Number.isFinite(fitRef.current) || row.scrollWidth > row.clientWidth + 1;
-      const next = constrained ? dockTilesThatFit(row.clientWidth, tileWidth) : Number.POSITIVE_INFINITY;
-      if (next !== fitRef.current) setFit(next);
+      const items = [...row.children].filter((child): child is HTMLElement => child instanceof HTMLElement && child.dataset.dockItem === 'true');
+      const wrapped = wrappedDockItems(items);
+      if (!wrapped.length) { setFold((current) => (current ? null : current)); return; }
+      const names: string[] = [];
+      let hidden = 0;
+      for (const index of wrapped) {
+        const item = items[index]!;
+        if (item.dataset.dockOverflow === 'true') { hidden += folded.length; names.push(...folded.map((p) => p.displayName)); }
+        else { hidden += 1; names.push(item.dataset.dockName ?? ''); }
+      }
+      const last = items[wrapped[0]! - 1];
+      const left = last ? last.offsetLeft + last.offsetWidth : 0;
+      const next = { hidden, names: names.join(', '), left };
+      setFold((current) => (current && current.hidden === next.hidden && current.left === next.left && current.names === next.names ? current : next));
     };
     measure();
     if (typeof ResizeObserver === 'undefined') return undefined;
     const observer = new ResizeObserver(measure);
     observer.observe(row);
     return () => observer.disconnect();
-  }, [overflow, tileWidth, all.length]);
-  // Never more than fit the row: a tile cut off at the edge reads as a bug.
-  const cap = overflow === 'collapse' ? Math.min(maxVisible, fit) : Number.POSITIVE_INFINITY;
-  const collapse = all.length > cap;
-  // Keep the room for the +N tile inside the cap, so the row never grows past it.
-  const shown = collapse ? all.slice(0, Math.max(1, cap - 1)) : all;
-  const folded = all.slice(shown.length);
+  }, [overflow, shownKey, folded.length]); // eslint-disable-line react-hooks/exhaustive-deps
+  const wraps = overflow === 'collapse';
   return (
-    <div
-      ref={rowRef}
-      className={cn(
-        'flex min-w-0 items-center gap-2',
-        overflow === 'scroll' ? 'overflow-x-auto' : 'overflow-hidden',
-        className,
-      )}
-      style={style}
-      role="group"
-      aria-label={typeof title === 'string' ? `Call: ${title}` : 'Call participants'}
-      data-testid={testId}
-      data-variant="dock"
-      data-tile-count={all.length}
-      data-visible-count={shown.length}
-    >
-      {shown.map((p) => (
-        <DockTile
-          key={p.id}
-          participant={p}
-          width={tileWidth}
-          height={tileHeight}
-          speaking={p.id === activeSpeakerId}
-          highlighted={p.id === highlightedId}
-          testId={`${tileTestIdPrefix}-${p.id}`}
-          {...(onParticipantClick ? { onParticipantClick } : {})}
-        />
-      ))}
-      {folded.length > 0 && (
-        <div
-          className="relative flex shrink-0 items-center justify-center rounded-md bg-video-tile text-white"
-          // Tile size is a prop (74px at 1280, 84px at 1672) — not a static class.
-          style={{ width: tileWidth, height: tileHeight }}
-          data-testid={`${tileTestIdPrefix}-overflow`}
-          aria-label={`${folded.length} more`}
-          title={folded.map((p) => p.displayName).join(', ')}
-          role="img"
+    <div className={cn('relative min-w-0', className)} style={style}>
+      <div
+        ref={rowRef}
+        className={cn(
+          'flex min-w-0 items-center gap-2',
+          wraps ? 'flex-wrap overflow-hidden' : 'overflow-x-auto',
+        )}
+        // One tile tall: the tiles that wrap are clipped, not shown on a second line.
+        style={wraps ? { height: tileHeight } : undefined}
+        role="group"
+        aria-label={typeof title === 'string' ? `Call: ${title}` : 'Call participants'}
+        data-testid={testId}
+        data-variant="dock"
+        data-tile-count={all.length}
+        data-hidden-count={fold?.hidden ?? 0}
+      >
+        {shown.map((p) => (
+          <DockTile
+            key={p.id}
+            participant={p}
+            width={tileWidth}
+            height={tileHeight}
+            speaking={p.id === activeSpeakerId}
+            highlighted={p.id === highlightedId}
+            testId={`${tileTestIdPrefix}-${p.id}`}
+            {...(onParticipantClick ? { onParticipantClick } : {})}
+          />
+        ))}
+        {folded.length > 0 && (
+          <div
+            className="relative flex shrink-0 items-center justify-center rounded-md bg-video-tile text-white"
+            // Tile size is a prop (74px at 1280, 84px at 1672) — not a static class.
+            style={{ width: tileWidth, height: tileHeight }}
+            data-testid={`${tileTestIdPrefix}-overflow`}
+            data-dock-item="true"
+            data-dock-overflow="true"
+            aria-label={`${folded.length} more`}
+            title={folded.map((p) => p.displayName).join(', ')}
+            role="img"
+          >
+            {/* Folded people keep playing: their voice rides the same stream as their video. */}
+            {folded.map((p) => (p.videoElement != null || p.audioElement != null) && (
+              <div key={p.id} className="pointer-events-none absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true" data-testid={`${tileTestIdPrefix}-${p.id}-media-sink`}>
+                {p.videoElement}
+                {p.audioElement}
+              </div>
+            ))}
+            <Avatar name={`+ ${folded.length}`} initials={`+${folded.length}`} size={40} color="rgba(255,255,255,0.18)" showTitle={false} />
+          </div>
+        )}
+      </div>
+      {fold && (
+        <span
+          className="pointer-events-none absolute top-1 z-20 -translate-x-full rounded-full bg-surface-inverse/70 px-2 py-0.5 text-xs font-medium text-white"
+          // Placed at the right edge of the last tile that fits — a measured offset, not a static class.
+          style={{ left: fold.left - 4 }}
+          title={fold.names}
+          aria-label={`${fold.hidden} more: ${fold.names}`}
+          data-testid={`${tileTestIdPrefix}-wrapped`}
         >
-          {/* Folded people keep playing: their voice rides the same stream as their video. */}
-          {folded.map((p) => (p.videoElement != null || p.audioElement != null) && (
-            <div key={p.id} className="pointer-events-none absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true" data-testid={`${tileTestIdPrefix}-${p.id}-media-sink`}>
-              {p.videoElement}
-              {p.audioElement}
-            </div>
-          ))}
-          <Avatar name={`+ ${folded.length}`} initials={`+${folded.length}`} size={40} color="rgba(255,255,255,0.18)" showTitle={false} />
-        </div>
+          +{fold.hidden}
+        </span>
       )}
     </div>
   );
@@ -475,6 +502,8 @@ function DockTileImpl({
       onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') onClick(); } : undefined}
       data-testid={testId}
       data-peer-id={p.id}
+      data-dock-item="true"
+      data-dock-name={p.displayName}
       data-is-local={p.isLocal ? 'true' : 'false'}
       data-is-muted={p.isMuted ? 'true' : 'false'}
       data-highlighted={highlighted ? 'true' : 'false'}
