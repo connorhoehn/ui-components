@@ -241,3 +241,34 @@ export type {
   RMMediaDevicesSource,
   RMAudioVideoSettingsSource,
 } from '../realtime-modules/WrappedAudioVideoSettingsForm';
+
+// The call block (2.439.0): one conversation call and one media sink for the
+// whole shell, the pre-join check, rings, and `useCallBlock(channel)` for the
+// composer's `callBlock` slot — bound once to the installed call hooks.
+export { createCallBlockHost } from './CallBlockHost';
+export type {
+  CallBlockHost,
+  CallBlockModules,
+  CallBlockCall,
+  CallBlockRing,
+  CallBlockProps,
+  CallBlockView,
+  CallHostValue,
+  CallHostProviderProps,
+  CallHostEvent,
+  CallHostEventKind,
+  OnCallHostEvent,
+  CallLobby,
+  CallMediaPanelState,
+  CallMediaOutletProps,
+  UseCallBlockOptions,
+} from './CallBlockHost';
+export { callDrawn, callCounts, pageHuddleStart } from './callBlockModel';
+export type {
+  CallPhase,
+  CallBlockPlacement,
+  CallBlockClaimPlacement,
+  CallBlockDocument,
+  PreJoinChoice,
+  PreJoinKind,
+} from './callBlockModel';

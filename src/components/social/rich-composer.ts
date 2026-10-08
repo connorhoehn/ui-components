@@ -93,3 +93,39 @@ export type {
   ComposerContextWiring,
   ComposerIdentity,
 } from './composerContext';
+
+// ConversationComposer (2.439.0): the ONE conversation composer — ContextComposer
+// plus capabilities, To: recipients, the page reference, slash commands with
+// handlers, typing, uploads (realtime-modules `useFileUpload`, injected), draft
+// persistence, one input per conversation and the call block slot.
+export { createConversationComposer, useConversationUploads } from './ConversationComposer';
+export type {
+  ConversationComposerProps,
+  ConversationComposerOwnProps,
+  ConversationComposerModules,
+  ConversationComposerComponent,
+  ConversationCompletedTransfer,
+  ConversationChat,
+  ConversationReply,
+  ConversationCommand,
+} from './ConversationComposer';
+export { attachmentOnlyText } from './conversationComposerModel';
+export type {
+  ConversationComposerCapabilities,
+  ConversationReference,
+  ConversationRecipient,
+  ConversationOutgoing,
+  ConversationCommandInput,
+  ConversationCommandResult,
+  ChatAttachmentDescriptor,
+} from './conversationComposerModel';
+// One input per conversation, and the shell's focus requests (2.439.0).
+export {
+  ConversationInputProvider,
+  useThreadInput,
+  useComposerFocusReveal,
+  useComposerFocus,
+  ThreadInputHandoff,
+} from './ConversationInputs';
+export type { ThreadInput, ThreadInputHandoffProps } from './ConversationInputs';
+export type { ComposerFocusTarget, ComposerFocusRequest, ThreadInputOwner } from './conversationInputRegistry';

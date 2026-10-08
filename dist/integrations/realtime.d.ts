@@ -1,6 +1,7 @@
 import { AnyExtension } from '@tiptap/core';
 import { Awareness } from 'y-protocols/awareness';
 import { Component } from 'react';
+import { ComponentType } from 'react';
 import { Editor } from '@tiptap/react';
 import { ErrorInfo } from 'react';
 import { HangoutConnectionState } from '@connorhoehn/realtime-modules/client/video';
@@ -314,7 +315,218 @@ declare interface CallActivityParticipant {
     avatarUrl?: string;
 }
 
+/** The call the host drives: RM `useConversationCall()`'s result, restated to what is read here. */
+export declare interface CallBlockCall extends RMConversationCallSource {
+    call: (NonNullable<RMConversationCallSource['call']> & {
+        callId: string;
+        host?: string | null;
+        startedAt?: number | null;
+    }) | null;
+    start(targets: {
+        userId: string;
+        displayName?: string;
+    }[], opts?: {
+        audioOnly?: boolean;
+    }): Promise<void>;
+    accept(ring?: never): Promise<void>;
+    rejoin(): Promise<void>;
+    leave(): Promise<void>;
+}
+
+export declare type CallBlockClaimPlacement = Exclude<CallBlockPlacement, 'footer'>;
+
+/** What a call is about, drawn as the bar's document chips. */
+export declare interface CallBlockDocument {
+    id: string;
+    title: string;
+    href?: string;
+}
+
+export declare type CallBlockHost<M extends CallBlockModules> = ReturnType<typeof createCallBlockHost<M>>;
+
+/** The realtime-modules functions the host calls (spread `/client/video`). */
+export declare interface CallBlockModules extends ConversationCallDockModules {
+    LVSProvider: ComponentType<{
+        baseUrl: string;
+        getAuthToken: () => string;
+        children: ReactNode;
+    }>;
+    useConversationCall(opts: {
+        lobbyName: string;
+        channel?: string | null;
+        self: {
+            userId: string;
+            displayName: string;
+            avatarUrl?: string;
+        };
+        platformApi: {
+            baseUrl: string;
+            getIdToken: () => string | Promise<string>;
+        };
+        gateway?: never;
+        discover?: boolean;
+        onCallStarted?(e: never): void;
+        onCallEnded?(e: never): void;
+        onCallMissed?(e: never): void;
+    }): CallBlockCall;
+    useIncomingConversationCalls(opts: {
+        gateway?: never;
+        self: {
+            userId: string | null;
+            displayName?: string;
+        };
+        onAccept?(ring: never): void;
+    }): {
+        rings: CallBlockRing[];
+        accept(ring: never): void;
+        decline(ring: never): void;
+    };
+    useMediaDevices(opts?: {
+        requestOnMount?: boolean;
+    }): RMMediaDevicesSource;
+}
+
+/** Where the one call-media sink draws. */
+export declare type CallBlockPlacement = 'composer' | 'page' | 'block' | 'pane' | 'footer';
+
+export declare interface CallBlockProps {
+    placement: CallBlockClaimPlacement;
+    /** The narrow bar (mic, camera, Leave; the rest in ⋯) over tiles two to a row. Composer placement only. */
+    compact?: boolean;
+    documents?: readonly CallBlockDocument[];
+    className?: string;
+}
+
+/** One ring, as RM `useIncomingConversationCalls()` reports it. */
+export declare interface CallBlockRing extends RMIncomingConversationCall {
+    lobbyName: string;
+    channel: string | null;
+}
+
+export declare interface CallBlockView {
+    /** The bar and tiles for `ConversationComposer callBlock`; undefined while the call is not this conversation's. */
+    block: ReactNode;
+    /** The call is this conversation's and drawn. */
+    holds: boolean;
+    /** The shell's call is bound to this conversation's lobby. */
+    here: boolean;
+    /** A huddle is on in this lobby that you are not in (the host discovered it). */
+    live: boolean;
+}
+
+/** People in the call (the server's distinct count), kept apart from invitees still ringing. */
+export declare function callCounts(call: {
+    participantCount: number;
+    participants: readonly {
+        state: string;
+    }[];
+} | null): {
+    joined: number;
+    ringing: number;
+};
+
 declare type CallDockTileSize = 'sm' | 'md' | 'lg';
+
+/** A call is drawn from the caller's first ring until the ended notice clears; an incoming ring is the toast's. */
+export declare function callDrawn(phase: CallPhase | string, hasLobby: boolean): boolean;
+
+export declare interface CallHostEvent {
+    callId: string;
+    lobbyName: string;
+    channel: string | null;
+    peerUserIds: string[];
+    direction?: 'outgoing' | 'incoming';
+    durationMs?: number | null;
+    [key: string]: unknown;
+}
+
+/** A call event, for an app that keeps a call log. */
+export declare type CallHostEventKind = 'started' | 'ended' | 'missed';
+
+export declare interface CallHostProviderProps {
+    self: {
+        userId: string;
+        displayName: string;
+        avatarUrl?: string;
+    } | null;
+    tenant: string | null;
+    /** Actor and tenant: a change tears media down; refreshing the same identity does not. */
+    scopeKey: string;
+    /** platform-api base URL the browser can reach, or null (calls unavailable). */
+    platformApiUrl: string | null;
+    getIdToken: () => string | Promise<string>;
+    /** The SFU's URL; latched within one scope, so a token refresh without it cannot move a call. */
+    videoUrl: string | null;
+    /** The gateway socket the app holds (RM `ConversationCallGateway`). */
+    gateway: unknown;
+    gatewayConfigured: boolean;
+    connectionState: string;
+    /** Accept was pressed on a ring: open the page the call is about. */
+    onAccept?: (ring: CallBlockRing) => void;
+    onCallEvent?: OnCallHostEvent;
+    /** Where the pre-join choices persist (one key per device). */
+    preJoinStorageKey?: string;
+    children: ReactNode;
+}
+
+export declare interface CallHostValue<C extends CallBlockCall> {
+    call: C;
+    /** The lobby the call is bound to; null until a page binds one or a ring is answered. */
+    lobby: CallLobby | null;
+    /** Bind this page's lobby. Ignored while a call is in progress or a ring is being answered. */
+    bind(lobby: CallLobby, starter?: {
+        start(): void;
+    }): void;
+    /** The page leaves: drops its lobby while no call is in progress. */
+    unbind(lobbyName: string): void;
+    /** Runs the bound page's own start (null when the page registered none) — the footer's idle Huddle. */
+    startBound: (() => void) | null;
+    self: {
+        userId: string;
+        displayName: string;
+    } | null;
+    tenant: string | null;
+    gatewayConfigured: boolean;
+    connectionState: string;
+    platformApiUrl: string | null;
+    /** Why no call can start here at all (no gateway, no platform-api, signed out, connecting), or null. */
+    unavailableReason: string | null;
+    /** Opens the device check on request (clears the remembered skip). */
+    checkDevices(): void;
+}
+
+/** A page's lobby: what the call host binds while nothing is in progress. */
+export declare interface CallLobby {
+    lobbyName: string;
+    /** What the bar's title says (the initiative's name, the people on Search). */
+    title: string;
+    /** Rides the invite, so the callee's Accept can open what the call is about. */
+    channel: string | null;
+    /** Why the page cannot start its call right now; absent = it can. */
+    startBlockedReason?: string;
+}
+
+export declare interface CallMediaOutletProps {
+    /** The footer's collapsed shelf id (for its toggle's aria-controls). */
+    id?: string;
+    /** Opens the call's People (e.g. the page's contributors). */
+    onOpenPeople?: (lobby: CallLobby, tenant: string | null) => void;
+    /** A document chip was clicked. */
+    onOpenDocument?: (document: CallBlockDocument) => void;
+    /** Drawn over the tiles wherever the sink draws (floating reactions). */
+    overlay?: ReactNode;
+    /** The dock's test id for a lobby (default `conversation-call-dock`). */
+    dockTestId?: (lobby: CallLobby, tenant: string | null) => string;
+}
+
+/** The media panel (the side pane's tile grid): open or collapsed. Opens by itself once per call. */
+export declare interface CallMediaPanelState {
+    open: boolean;
+    setOpen(open: boolean): void;
+    toggle(): void;
+}
+
+export declare type CallPhase = 'idle' | 'calling' | 'ringing' | 'connecting' | 'live' | 'reconnecting' | 'ended' | 'failed';
 
 /** Auth expiry is independent of whether a socket is open; the app adds its own mode rules. */
 export declare function canEditCanvasGrant(grant: {
@@ -1675,6 +1887,39 @@ declare interface ConversationSurfaceProps {
     'data-testid'?: string;
 }
 
+/** Bind the host to the installed realtime-modules call hooks. Call once, at module scope. */
+export declare function createCallBlockHost<M extends CallBlockModules>(rm: M): {
+    CallHostProvider: ({ scopeKey, videoUrl, children, ...rest }: CallHostProviderProps) => JSX.Element;
+    CallMediaOutlet: ({ id, onOpenPeople, onOpenDocument, overlay, dockTestId }: CallMediaOutletProps) => JSX.Element | null;
+    CallBlock: ({ placement, compact, documents, className }: CallBlockProps) => JSX.Element;
+    PreJoinDialog: ({ kind, title, selfName, initial, onJoin, onCancel }: {
+        kind: PreJoinKind;
+        title: string;
+        selfName: string;
+        initial: PreJoinChoice;
+        onJoin(choice: PreJoinChoice, devices: {
+            microphoneId?: string;
+            cameraId?: string;
+            speakerId?: string;
+        }): void;
+        onCancel(): void;
+    }) => JSX.Element;
+    ConversationCallDock: ConversationCallDockComponent;
+    useCallHost: () => CallHostValue<ReturnType<M["useConversationCall"]>> | null;
+    useCallBlock: (conversations: string | null | readonly (string | null | undefined)[], options?: UseCallBlockOptions) => CallBlockView;
+    useCallLobby: (lobby: CallLobby | null, start?: () => void) => {
+        here: boolean;
+        live: boolean;
+    };
+    useCallMediaPanel: () => CallMediaPanelState | null;
+    useCallBlockPlacement: () => CallBlockPlacement;
+    useCallBlockPageClaimed: () => boolean;
+    useClaimCallBlock: (target: HTMLElement | null, placement: CallBlockClaimPlacement, enabled?: boolean, options?: {
+        compact?: boolean;
+        documents?: readonly CallBlockDocument[];
+    }) => boolean;
+};
+
 /** Bind the pane to the app's realtime-modules functions. Call once at module scope. */
 export declare function createCanvasDocumentPane(rm: CanvasDocumentPaneModules): CanvasDocumentPaneComponent;
 
@@ -2400,6 +2645,25 @@ declare interface NotificationItem {
     category?: string;
 }
 
+export declare type OnCallHostEvent = (kind: CallHostEventKind, event: CallHostEvent, ctx: {
+    host: string | null;
+    selfId: string;
+}) => void;
+
+/**
+ * A page's huddle: walk into the huddle that is on (discovered while idle),
+ * else open one with nobody rung. What a page's bound start does by default.
+ */
+export declare function pageHuddleStart(call: {
+    phase: string;
+    call: unknown;
+    rejoin(): unknown;
+    start(targets: {
+        userId: string;
+        displayName: string;
+    }[]): unknown;
+}): 'rejoin' | 'start' | null;
+
 declare interface PinnedMessageItem {
     messageId: string;
     /** Who wrote the message. */
@@ -2423,6 +2687,15 @@ declare interface PinnedMessageItem {
     /** Display name of whoever pinned it. */
     pinnedBy?: string;
 }
+
+/** What this person last chose for how they enter a call. Device ids live in the call's own device preferences. */
+export declare interface PreJoinChoice {
+    micOn: boolean;
+    cameraOn: boolean;
+    remember: boolean;
+}
+
+export declare type PreJoinKind = 'start' | 'join' | 'accept' | 'check';
 
 declare type PresenceMode = 'editor' | 'reviewer' | 'reader';
 
@@ -3414,6 +3687,27 @@ export declare interface UploadedDocumentFile {
     name: string;
     size: number;
     type: string;
+}
+
+export declare interface UseCallBlockOptions {
+    /** Draw the block while the call is this conversation's (default true). */
+    enabled?: boolean;
+    /** A narrow host (a side pane). */
+    compact?: boolean;
+    /** The bar's document chips. */
+    documents?: readonly CallBlockDocument[];
+    /**
+     * Bind this conversation's lobby so the footer's Huddle starts it: the lobby
+     * defaults to the channel, the start to "walk into the huddle that is on,
+     * else open one with nobody rung".
+     */
+    bind?: {
+        title: string;
+        lobbyName?: string | null;
+        channel?: string | null;
+        blockedReason?: string | null;
+        start?: () => void;
+    } | null;
 }
 
 /**

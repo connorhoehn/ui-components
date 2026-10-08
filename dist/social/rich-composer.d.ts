@@ -117,8 +117,22 @@ export declare interface AgentComposerWorkflow {
 /** Where an agent task is. Shared by `TaskStrip` and `AgentTaskCard`. */
 declare type AgentTaskStatus = 'queued' | 'running' | 'paused' | 'awaiting' | 'done' | 'failed' | 'stopped';
 
+/** Message text for a send whose body is empty: the names of what was shared. */
+export declare function attachmentOnlyText(attachments: readonly ChatAttachmentDescriptor[]): string;
+
 /** What a console surface paints behind itself. `none` keeps the ordinary surface. */
 declare type BackdropTone = 'auto' | 'night' | 'graphite' | 'none';
+
+/** One uploaded file as it rides in `metadata.attachments` (no preview: chat metadata is size-capped). */
+export declare interface ChatAttachmentDescriptor {
+    id: string;
+    name: string;
+    size: number;
+    contentType: string;
+    url: string;
+    width?: number;
+    height?: number;
+}
 
 /** One row. Both a command and a command's argument fit this shape. */
 export declare interface CommandSuggestionItem {
@@ -391,6 +405,24 @@ export declare interface ComposerContextWiring {
 
 /** One paragraph holding `text` (newlines become `<br>`); `''` is an empty draft. */
 export declare function composerDraftOf(text: string): RichChatDraft;
+
+export declare interface ComposerFocusRequest {
+    mode: 'chat' | 'agent';
+    target?: ComposerFocusTarget;
+}
+
+/** What a focus request addresses. `discussion` is the page's own thread. */
+export declare type ComposerFocusTarget = {
+    kind: 'huddle';
+} | {
+    kind: 'discussion';
+} | {
+    kind: 'person';
+    userId: string;
+} | {
+    kind: 'channel';
+    channel: string;
+};
 
 /** One key and what it does, for the row under the editor. */
 export declare interface ComposerHint {
@@ -721,6 +753,245 @@ export declare interface ContextComposerSendContext {
     author?: string;
 }
 
+/** The slice of realtime-modules `useChat(channel)` the composer sends and types through. */
+export declare interface ConversationChat {
+    sendMessage: (text: string, metadata?: Record<string, unknown>) => void;
+    setTyping?: (typing: boolean) => void;
+}
+
+/** A slash command and its handler. */
+export declare interface ConversationCommand {
+    trigger: string;
+    label: string;
+    hint?: string;
+    description?: string;
+    icon?: ReactNode;
+    disabled?: boolean;
+    argument?: ComposerCommand['argument'];
+    /** Where it is offered. Default: every mode the composer has. */
+    modes?: readonly ComposerMode[];
+    run: (input: ConversationCommandInput) => ConversationCommandResult | Promise<ConversationCommandResult>;
+}
+
+/**
+ * What a command handler is told. `argumentText` is what follows the trigger;
+ * `argument` the item picked from its argument menu, when there was one.
+ */
+export declare interface ConversationCommandInput {
+    trigger: string;
+    text: string;
+    argumentText: string;
+    argument?: {
+        id: string;
+        label: string;
+    };
+    mode: ComposerMode;
+    reference: ConversationReference | null;
+    recipientId: string | null;
+    /** The whole composed message: html, `#` documents, mentions, files. */
+    message: ComposedMessage;
+}
+
+/**
+ * A slash command and what it does. `run` resolves `true` (or nothing) when
+ * done — the draft clears; `false` keeps the draft; a string is a refusal the
+ * composer shows, keeping the draft.
+ */
+export declare type ConversationCommandResult = boolean | string | void;
+
+/** A transfer the gateway reports finished (realtime-modules `CompletedTransfer`, restated). */
+export declare interface ConversationCompletedTransfer {
+    transferId: string;
+    /** True on the sender's client only. */
+    mine: boolean;
+    filename: string;
+    size: number;
+    contentType: string;
+    downloadUrl: string;
+    width?: number;
+    height?: number;
+}
+
+/** What the server decided this reader may do here. */
+export declare interface ConversationComposerCapabilities {
+    /** The reader may post to the conversation. Required; there is no default. */
+    maySend: boolean;
+    /** Why not, when `maySend` is false (the off Chat mode and its placeholder say it). */
+    readOnlyReason?: string | null;
+    /**
+     * Agent mode. Omitted: the composer has no Agent mode. `allowed` is the
+     * server's per-subject answer (never a role-wide guess).
+     */
+    agent?: {
+        allowed: boolean;
+        reason?: string | null;
+    } | null;
+    /** Files may be attached. Missing means no. */
+    mayAttach?: boolean;
+}
+
+export declare type ConversationComposerComponent = (props: ConversationComposerProps) => React.JSX.Element;
+
+/** The realtime-modules hook the composer calls: `useFileUpload` from `/client`, as installed. */
+export declare interface ConversationComposerModules {
+    useFileUpload: (channel: string, options?: {
+        displayName?: string;
+        onComplete?: (transfer: ConversationCompletedTransfer) => void;
+    }) => {
+        upload: (file: File) => Promise<{
+            status: string;
+            transferId?: string;
+            error?: string;
+        }>;
+    };
+}
+
+export declare interface ConversationComposerOwnProps {
+    /** The conversation this composer writes to (its thread). Null: no thread (an agent-only search box). */
+    channel: string | null;
+    /** The host's `useChat(channel)` — one join per channel, shared with the thread. */
+    chat?: ConversationChat | null;
+    /** What the composer is attached to, and the page reference its Chat sends carry. */
+    context: ComposerContext & {
+        reference?: ConversationReference | null;
+    };
+    /** The server's answer for this reader. Required. */
+    capabilities: ConversationComposerCapabilities;
+    /** Who is writing: `displayName` is stamped on every message. */
+    identity?: {
+        userId: string;
+        displayName: string;
+    } | null;
+    /** Why the gateway cannot take a message now (offline); turns Chat and Agent off with it. */
+    offline?: string | null;
+    /** To: destinations. Default: the conversation itself. */
+    recipients?: readonly ConversationRecipient[];
+    /** The recipient a fresh draft goes to (default: the first that can take a message). */
+    defaultRecipient?: string;
+    /** Controlled To: (the chosen recipient's id). Pair with `onRecipientChange`. */
+    recipient?: string | null;
+    onRecipientChange?: (id: string) => void;
+    /** Slash commands with handlers (`/deck`, `/summarize`, `/doc`, `/agent`). */
+    commands?: readonly ConversationCommand[];
+    /** Agent-mode text that is no command. Without it, the `/agent` command (if any) takes it. */
+    onAgent?: (text: string, input: ConversationCommandInput) => ConversationCommandResult | Promise<ConversationCommandResult>;
+    /** The call bar and tiles, flush on the composer's top edge (`useCallBlock(channel).block`). */
+    callBlock?: ReactNode;
+    /** The quote-reply started in the thread; it travels with a Chat send to the conversation. */
+    reply?: ConversationReply | null;
+    /** Controlled mode. */
+    mode?: ComposerMode;
+    onModeChange?: (mode: ComposerMode) => void;
+    /** The draft's subject (default: the channel, else the context). A new key starts a new draft. */
+    draftKey?: string;
+    /** Remember the draft per conversation on this device (default true; ignored for a controlled `draft`). */
+    persistDraft?: boolean;
+    /**
+     * Claim this conversation's input (and every recipient's), so a thread pane
+     * on the same conversation draws the thread only. `label` names this
+     * composer in that pane's hand-off.
+     */
+    claim?: {
+        label: string;
+        replies?: boolean;
+        enabled?: boolean;
+    } | false;
+    /** Take the shell's focus requests (the footer's Message) while mounted. */
+    answersFocus?: boolean;
+    /** Bring this composer on screen before it takes the caret (a tab switch). */
+    onReveal?: () => void;
+    /** Disable input regardless of mode (a host-side lock). */
+    disabled?: boolean;
+    /**
+     * Modes listed but never available here, each with why ("Search has no
+     * terminal"): shown off in the mode menu so the reader learns they exist.
+     * Never turns a mode ON — capabilities do that.
+     */
+    offModes?: Partial<Record<ComposerMode, string>>;
+}
+
+export declare type ConversationComposerProps = ConversationComposerOwnProps & Omit<ContextComposerProps, Owned>;
+
+/** One registry for everything under it: claims, thread hand-offs and focus requests. */
+export declare function ConversationInputProvider({ children }: {
+    children: ReactNode;
+}): JSX.Element;
+
+/** What a Chat send hands a recipient. */
+export declare interface ConversationOutgoing {
+    text: string;
+    html: string;
+    /** Files staged in the draft, before upload (a recipient with its own `send` uploads them itself). */
+    files: readonly File[];
+    /** Metadata for `chat.sendMessage`: displayName, replyTo, pageReference and the uploaded attachments. */
+    metadata: Record<string, unknown>;
+    /** The page reference the draft still carries, or null. */
+    reference: ConversationReference | null;
+}
+
+/** A To: destination. The first one is the default unless `defaultRecipient` names another. */
+export declare interface ConversationRecipient {
+    /** Stable id: `discussion`, `huddle:<callId>`, `person:<userId>`. */
+    id: string;
+    label: string;
+    /** Groups the To: menu ("Direct message"). */
+    group?: string;
+    /** The chat channel this recipient's messages land in: typing and the one-input claim follow it. */
+    channel?: string | null;
+    /** Why it cannot take a message right now (said under To:, Send is off). */
+    unavailableReason?: string | null;
+    /** Chat-mode placeholder while it is chosen. */
+    placeholder?: string;
+    /** Carries the page reference (default true). */
+    carriesReference?: boolean;
+    /** Accepts files (default false). The capability `mayAttach` still has to allow them. */
+    attachments?: boolean;
+    /** Listed but not choosable (a huddle that has ended). */
+    disabled?: boolean;
+    /** A failure the destination reports (a refused send), said under To:. */
+    error?: string | null;
+    /**
+     * Claim this recipient's channel for the composer (default true). `false`: a
+     * thread elsewhere keeps its own input for it, and a focus request for it
+     * goes past this composer (a huddle whose chat is the shell's pane).
+     */
+    claim?: boolean;
+    /** Chosen in To: (open the pane that shows this destination's thread). */
+    onSelect?: () => void;
+    /**
+     * The recipient's own confirmed send. Resolve `false` to keep the draft; a
+     * rejection keeps it and shows its message. Default: the composer's `chat`.
+     */
+    send?: (message: ConversationOutgoing) => boolean | Promise<boolean>;
+}
+
+/** The page the draft is about — a chip in the card, carried as `{kind,id}` only. */
+export declare interface ConversationReference {
+    /** Stable id of the chip. */
+    id: string;
+    /** Composed by the host from what THIS viewer may see ("Org › Initiatives › Auth Migration"). */
+    label: string;
+    /** What a Chat send stores (`metadata.pageReference`); titles never travel. Null: display only. */
+    page?: {
+        kind: string;
+        id: string;
+    } | null;
+}
+
+/** A pending quote-reply, from the thread beside the composer. */
+export declare interface ConversationReply {
+    reply: {
+        messageId: string;
+        author: string;
+        text: string;
+        timestamp?: string;
+    } | null;
+    clear: () => void;
+}
+
+/** Bind the composer to the installed realtime-modules `useFileUpload`. Call once, at module scope. */
+export declare function createConversationComposer(rm: ConversationComposerModules): ConversationComposerComponent;
+
 export declare interface DocumentCandidate {
     /** Stable identity — this is what travels in the message, not the label. */
     id: string;
@@ -906,6 +1177,8 @@ export declare interface MentionSuggestionsProps {
     /** Picked a non-member: no mention is inserted; the host opens its add flow. */
     onPickNonMember?: (userId: string) => void;
 }
+
+declare type Owned = 'context' | 'modes' | 'disabledModes' | 'modeUnavailableReasons' | 'chatAvailable' | 'agentUnavailableReason' | 'onSend' | 'commands' | 'onCommand' | 'dock' | 'reply' | 'allowAttachments' | 'responsive' | 'mode' | 'onModeChange' | 'draftKey' | 'disabled';
 
 export declare const RichChatComposer: ForwardRefExoticComponent<RichChatComposerProps & RefAttributes<RichChatComposerHandle>>;
 
@@ -1386,6 +1659,50 @@ export declare interface StagedFile {
     id: string;
     file: File;
 }
+
+export declare type ThreadInput = ThreadInputOwner & {
+    /** The thread's send intent: the claiming composer takes the caret. False when none claims it. */
+    focus(reply?: boolean): boolean;
+};
+
+/**
+ * Where a thread's own input would be when a composer elsewhere on the page
+ * owns it: one button naming that composer, which puts the caret there. Not an
+ * input — one per conversation.
+ */
+export declare function ThreadInputHandoff({ label, onFocus, 'data-testid': testId }: ThreadInputHandoffProps): JSX.Element;
+
+export declare interface ThreadInputHandoffProps {
+    /** The composer that owns this conversation's input ("the document composer"). */
+    label: string;
+    onFocus(): void;
+    'data-testid'?: string;
+}
+
+/** Who owns the input for a thread bound to one channel. */
+export declare type ThreadInputOwner = {
+    readonly owner: 'thread';
+} | {
+    readonly owner: 'composer';
+    readonly claimId: number;
+    readonly label: string;
+    readonly replies: boolean;
+};
+
+/** `request(…)`: true when a mounted composer took it; `present`: is one mounted to take it. */
+export declare function useComposerFocus(): {
+    request(request: ComposerFocusRequest): boolean;
+    present: boolean;
+};
+
+/** Bring a surface on screen before any composer answers (a collapsed side pane). */
+export declare function useComposerFocusReveal(revealer: (request: ComposerFocusRequest) => void, enabled?: boolean): void;
+
+/** Uploads files to `channel` through the gateway and resolves each once the gateway says it landed. */
+export declare function useConversationUploads(rm: ConversationComposerModules, channel: string | null, displayName: string, timeoutMs?: number): (files: readonly File[]) => Promise<ChatAttachmentDescriptor[]>;
+
+/** Who owns the input for the thread bound to `channel`. */
+export declare function useThreadInput(channel: string | null | undefined): ThreadInput;
 
 export { }
 
