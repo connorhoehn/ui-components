@@ -2057,6 +2057,12 @@ export declare const borderRadius: {
 /** A robot head: an agent at work on a computer. Since 2.411.0. */
 export declare function BotIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+/** The ratio that keeps a width-bounded pane inside its bounds at this split width; the ratio otherwise. */
+export declare function boundedSidePaneRatio(ratio: number, splitWidthPx: number | null, widthPx?: {
+    min: number;
+    max: number;
+} | null): number;
+
 /** A trunk with a branch leaving it: a flow that splits — a pipeline, a branch. */
 export declare function BranchIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -2108,6 +2114,30 @@ export declare interface BreadcrumbsProps {
      */
     size?: BreadcrumbSize;
     className?: string;
+    'data-testid'?: string;
+}
+
+/** A data section for `ConversationRail sections`: the heading's count, the rows, the empty line. */
+export declare function buildRailSection<T>(o: BuildRailSectionOptions<T>): ConversationRailSection;
+
+export declare interface BuildRailSectionOptions<T> {
+    id: string;
+    label: string;
+    items: readonly T[];
+    /** The rail's find text; rows whose name does not contain it are left out. */
+    query?: string;
+    /** The row key — what `onSelect` hands back. Unique across the rail. */
+    key: (item: T) => string;
+    /** The row's name (and what the find filter matches). */
+    name: (item: T) => string;
+    /** The rest of the row: second line, unread, live marker. */
+    row?: (item: T) => Partial<Omit<ConversationItem, 'channel' | 'name'>>;
+    /** The open row's key. */
+    active?: string | null;
+    onSelect: (key: string) => void;
+    state?: RailSectionState;
+    /** Rows before "Show N more". Default 8. */
+    maxVisible?: number;
     'data-testid'?: string;
 }
 
@@ -6609,13 +6639,42 @@ export declare interface ConversationRailProps {
     'data-testid'?: string;
 }
 
-/** A host section placed in the rail's arrangeable order (2.432.0). */
+/**
+ * A host section placed in the rail's arrangeable order (2.432.0).
+ *
+ * Two forms. DATA (2.438.0, the rail model): give `rows` and the rail draws
+ * the heading — its fold (`collapsedSections` / `onToggleSection`, keyed by
+ * `label` like the rail's own groups) and its `count` — and the rows, with
+ * the open row marked and `emptyLabel` / `note` when there are none; build
+ * one with `buildRailSection`. NODE: give `node` for content that is not a
+ * conversation list (a people grid, a team tree); with `heading` the rail
+ * still draws the heading, its fold and count over it.
+ */
 export declare interface ConversationRailSection {
     /** Stable id — what `sectionLayout` stores. `dms` and `channels` are the rail's own. */
     id: string;
-    /** The heading it goes by — what "Arrange sections" lists. */
+    /** The heading it goes by — what "Arrange sections" lists, and its fold key. */
     label: string;
-    node: ReactNode;
+    /** Custom content, drawn as given (under the rail's heading when `heading`). */
+    node?: ReactNode;
+    /** Draw the rail's heading (fold + count) over `node`. Data sections always have it. */
+    heading?: boolean;
+    /** The heading's count: the records the host holds, not the rows the find filter left. */
+    count?: number;
+    /** Data form: the section's rows. */
+    rows?: ConversationItem[];
+    /** The open row (its `channel` key). */
+    activeRow?: string | null;
+    /** A row was chosen: its key. */
+    onSelectRow?: (key: string) => void;
+    /** Shown when `rows` is empty. */
+    emptyLabel?: string;
+    /** One line instead of the rows (an account that cannot have any). */
+    note?: string;
+    /** Rows before "Show N more". */
+    maxVisible?: number;
+    /** Root test id: the section is `<id>-section`, its rows `<id>`, its note `<id>-note`. */
+    'data-testid'?: string;
 }
 
 export declare function ConversationShelf({ items, activeId, onSelect, compact, iconOnly, size, plain, layout, className, 'data-testid': testId, }: ConversationShelfProps): JSX.Element | null;
@@ -12331,6 +12390,57 @@ export declare function listPipelineRuns(pipelineId: string, options?: {
     cursor?: string;
 }): Promise<ListRunsResponse>;
 
+/** A list rail, as data: what `ListRailLayout` (and an `ExplorerLayout`) draws in its rail. */
+export declare interface ListRail {
+    /** Caption title in the rail's head row ("All initiatives", "Pending"). */
+    title: string;
+    /**
+     * The count after the title — the rows the host holds. Omit when unknown
+     * or capped (a full page has no honest total; say "100+" in the footer).
+     */
+    count?: number;
+    /** Head-row controls (a ⋯ sort/filter menu). */
+    actions?: ReactNode;
+    /** Under the head row: search, a filter popover, view links. */
+    header?: ReactNode;
+    /** The scrolling rows (a `GroupedList`, or the loading/empty/error state). */
+    body: ReactNode;
+    /** The fixed footer: "7 pending", "14 initiatives". */
+    footer?: ReactNode;
+    /** What the rail holds, for its accessible names ("initiatives"). */
+    label: string;
+    /** A parent link over the title ("‹ Initiatives"). */
+    back?: WorkspaceRailBack | null;
+}
+
+export declare function ListRailLayout({ list, header, children, aside, footer, fold, railWidth, countStyle, className, 'data-testid': testId, }: ListRailLayoutProps): JSX.Element;
+
+export declare interface ListRailLayoutProps {
+    list: ListRail;
+    /** The band over the pane: the trail and the title (the content column's first rows). */
+    header?: ReactNode;
+    /** The record. It scrolls; the header and footer do not. */
+    children: ReactNode;
+    /** Right of the record (a `ContextColumn`), always beside it. */
+    aside?: ReactNode;
+    /** Docked under the record — a composer. */
+    footer?: ReactNode;
+    /**
+     * The reader's fold of the list (`useRailFold`). Given, the rail gets a «
+     * control and folds to a strip with one » control.
+     */
+    fold?: {
+        folded: boolean;
+        onToggle: () => void;
+    };
+    /** Rail width; default `ms` (264px, one-line rows). `md` for a two-line work list. */
+    railWidth?: ExplorerLayoutProps['railWidth'];
+    /** How the count reads; default `chip`. */
+    countStyle?: ExplorerLayoutProps['railCountStyle'];
+    className?: string;
+    'data-testid'?: string;
+}
+
 /**
  * @deprecated The (sectionType × viewMode) renderer registry only serves the
  * legacy SECTIONED document editor (`SectionBlock`), which is deprecated
@@ -12630,6 +12740,9 @@ export declare interface MasterDetailProps<T> {
 /** The command a draft is addressing, or null. `/doc`, `/doc …`, never `/document`. */
 export declare function matchComposerCommand(draft: string, commands: readonly ComposerCommand[] | undefined): ComposerCommand | null;
 
+/** Whether `name` matches the rail's find text (case-insensitive substring). */
+export declare function matchesRailQuery(name: string, query: string | null | undefined): boolean;
+
 export declare function matchHotkey(e: KeyboardEvent, spec: string): boolean;
 
 /**
@@ -12654,6 +12767,13 @@ export declare interface McpToolNodeData {
     outputKey?: string;
     timeoutMs?: number;
     retryPolicy?: RetryPolicy;
+}
+
+export declare interface MeasuredWidth<T extends HTMLElement> {
+    /** Attach to the element to measure. Also fills `forward`. */
+    ref: (el: T | null) => void;
+    /** Content-box width in px; `null` before the first measurement. */
+    width: number | null;
 }
 
 export declare function MediaControlsBar({ audioOn, videoOn, screenSharing, onToggleAudio, onToggleVideo, onToggleScreenShare, onLeave, audioDisabled, videoDisabled, screenShareDisabled, extras, leaveLabel, size, className, 'data-testid': testId, }: MediaControlsBarProps): JSX.Element;
@@ -14257,6 +14377,70 @@ export declare interface PageSectionProps {
     'data-testid'?: string;
 }
 
+/**
+ * The pane's tab row: underline tabs whose first label starts on the pane's
+ * 16px inset (the frame title's edge), a trailing slot on the same row, one
+ * rule under it.
+ */
+export declare function PaneHeader({ tabs, value, onValueChange, trailing, label, 'data-testid': testId }: PaneHeaderProps): JSX.Element;
+
+export declare interface PaneHeaderProps {
+    /** The pane's sections. One tab row — the only tablist in the pane. */
+    tabs: readonly TabItem[];
+    value: string;
+    onValueChange: (id: string) => void;
+    /** Right end of the row (a view switcher), on the row's own line. */
+    trailing?: ReactNode;
+    /** Names the tablist. Default "Pane sections". */
+    label?: string;
+    'data-testid'?: string;
+}
+
+export declare interface PaneRecord {
+    kind: string;
+    id: string;
+}
+
+export declare function paneRecordKey(record: PaneRecord): string;
+
+export declare interface PaneState {
+    tab: string;
+    record: PaneRecord | null;
+}
+
+export declare interface PaneStateControl extends PaneState {
+    /** The tabs to list (`Tabs items`). */
+    tabs: TabItem[];
+    /** The URL names a tab or record (anything but the resting tab). */
+    away: boolean;
+    /**
+     * Open a tab. A record tab shows `record`; a plain tab drops the record
+     * unless `keepRecord` (then `record` replaces it when given, `null` drops it).
+     */
+    open(tab: string, record?: PaneRecord | null): void;
+    /** The tab row's handler: a record tab keeps its record. */
+    select(tab: string): void;
+    /** Back to the resting tab. */
+    clear(): void;
+}
+
+export declare interface PaneTabSpec {
+    id: string;
+    label: string;
+    /** Restored per device on arrival (a resting choice: Details, Docs). */
+    remember?: boolean;
+    /** A record tab: the record kinds it shows. Listed only while one is named. */
+    recordKinds?: readonly string[];
+    badge?: TabItem['badge'];
+}
+
+export declare interface PaneUrlOptions {
+    /** Default `pane`. */
+    urlKey?: string;
+    /** Default `paneRecord`. */
+    recordKey?: string;
+}
+
 /** A paperclip: a file came along with this. */
 export declare function PaperclipIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -14271,6 +14455,9 @@ export declare function parseChatCommand<C extends ComposerCommand = ChatCommand
  *  / "Show all N in Explore" round-trip) alike; trims whitespace and drops
  *  empties so a trailing comma or stray space never adds a blank selection. */
 export declare function parseFocusIds(focus: string | null): string[];
+
+/** `run:job-7` → `{kind:'run', id:'job-7'}`; null for anything malformed. */
+export declare function parsePaneRecord(raw: string | null | undefined): PaneRecord | null;
 
 /** The two halves of a run panel id, split at the first `:`; null when either half is missing. */
 export declare function parseRunPanelId(id: string): {
@@ -16271,6 +16458,12 @@ export declare const RAIL_CURRENT_FILL = "bg-primary/8";
 /** The rail's own conversation groups, as arrangeable sections. */
 export declare const RAIL_DMS_SECTION = "dms";
 
+/** Under this window width the primary rail folds at any depth (rail + section rail + content + an aside do not fit). */
+export declare const RAIL_FOLD_PRIMARY_BELOW = 1180;
+
+/** Under this width a section rail folds too — always after the primary rail. */
+export declare const RAIL_FOLD_SECTION_BELOW = 768;
+
 /**
  * A group heading's count ("IN PROGRESS … 9"): plain muted text at the label's
  * size, never a pill — the heading already says what it counts.
@@ -16315,11 +16508,59 @@ export declare const RAIL_SECTION_CONTENT_INSET = "px-2";
  */
 export declare const RAIL_SECTION_GUTTER = "px-2";
 
+export declare type RailBand = 'shallow' | 'deep';
+
+export declare function railBand(depth: number): RailBand;
+
+/** The band every `useRailFold` under it remembers its fold in (the host computes it once from `railDepth`). */
+export declare function RailBandProvider({ band, children }: {
+    band: RailBand;
+    children: ReactNode;
+}): JSX.Element;
+
 /** The disclosure caret every rail group heading wears: 14px, down when open. */
 export declare function RailCaretIcon({ open, className }: {
     open: boolean;
     className?: string;
 }): JSX.Element;
+
+/**
+ * How deep a route sits under its section: `/iq/projects` 1, `/iq/projects/p-x`
+ * 2, `/iq/projects/p-x?item=wi` 3, a page with its side pane exploring a
+ * selection +2.
+ */
+export declare function railDepth(location: {
+    pathname: string;
+    search?: string;
+}, spec?: RailDepthSpec): number;
+
+export declare interface RailDepthSpec {
+    /** Leading path segments that name an app/tenant, not a level (`iq`, `admin`). */
+    prefixes?: readonly string[];
+    /** Query params whose presence opens a record beside the page's list (`item`, `run`): one level. */
+    drillParams?: readonly string[];
+    /** Routes that are always a record: depth 3 at least. */
+    leafRoutes?: readonly RegExp[];
+    /**
+     * The side pane shows a selection of this page (a record tab, a detail):
+     * two levels — the selection, then the pane beside it — unless a drill
+     * param already counts the record.
+     */
+    explored?: boolean;
+}
+
+export declare interface RailFold {
+    folded: boolean;
+    /** Flip the fold and remember the choice in the current band. */
+    toggle: () => void;
+    /** The band the fold is read from. */
+    band: RailBand;
+    /** The reader chose this band's fold by hand (it overrides `defaultFolded`). */
+    remembered: boolean;
+}
+
+/** The storage key a rail's fold is remembered under in a band. */
+export declare function railFoldKey(storageKey: string, band: RailBand): string;
 
 export declare function RailLayout({ children, rail, railWidth, className, 'data-testid': testId }: RailLayoutProps): JSX.Element;
 
@@ -16438,10 +16679,45 @@ export declare interface RailSectionHeaderProps {
     'data-testid'?: string;
 }
 
+export declare interface RailSectionMemory {
+    /** Folded state by label (stored over the defaults). */
+    collapsedSections: Readonly<Record<string, boolean>>;
+    isFolded: (label: string) => boolean;
+    setFolded: (label: string, next: boolean) => void;
+    sectionLayout: string[] | null;
+    setSectionLayout: (order: string[] | null) => void;
+    /** Spread onto `ConversationRail`. */
+    railProps: {
+        collapsedSections: Readonly<Record<string, boolean>>;
+        onToggleSection: (label: string, next: boolean) => void;
+        sectionLayout: string[] | null;
+        onSectionLayoutChange: (order: string[] | null) => void;
+    };
+}
+
+export declare interface RailSectionMemoryOptions {
+    /** Sections folded until the reader opens them, by label. */
+    defaultFolded?: Readonly<Record<string, boolean>>;
+    /** Labels the page is about (Teams on a teams route): open unless the reader folded them. */
+    opened?: readonly string[];
+}
+
 export declare interface RailSectionProps {
     title: string;
     children: ReactNode;
     className?: string;
+}
+
+export declare interface RailSectionState {
+    loading?: boolean;
+    /** The read failed: the section says so rather than "nothing here". */
+    error?: string | null;
+    /** The plural noun for the empty and error lines ("initiatives"). */
+    noun?: string;
+    /** The empty line when there is nothing at all. Default "You are not on any <noun> yet." */
+    emptyLabel?: string;
+    /** One honest line instead of the rows (an account that cannot have any). */
+    note?: string | null;
 }
 
 /**
@@ -16761,8 +17037,20 @@ export declare function readableAvatarForeground(background: string): string | n
 
 export declare function readDocumentIdFromUrl(): string | null;
 
+/** The tab and record the URL names, against the registry; the default tab for anything unknown. */
+export declare function readPaneState(params: URLSearchParams, tabs: readonly PaneTabSpec[], defaultTab: string, opts?: PaneUrlOptions): PaneState;
+
 /** The items a drop carried, cleaned; [] for any other drop. */
 export declare function readPromptContextDrag(dataTransfer: DataTransfer | null | undefined): PromptContextItem[];
+
+/** A stored fold: `collapsed` / `open`, anything else nothing. */
+export declare function readRailFold(raw: string | null | undefined): boolean | null;
+
+/** The stored open choice ('1' / '0'), else the default. */
+export declare function readSidePaneOpen(stored: string | null | undefined, defaultOpen?: boolean): boolean;
+
+/** A stored ratio inside the bounds, else the default. */
+export declare function readSidePaneRatio(stored: string | null | undefined, bounds?: SidePaneBounds): number;
 
 export declare function ReconnectingBanner({ show, label }: ReconnectingBannerProps): JSX.Element | null;
 
@@ -19323,6 +19611,8 @@ export declare interface ShortcutsHelpSection {
     shortcuts?: ShortcutsHelpRow[];
 }
 
+export declare const SIDE_PANE_BOUNDS: SidePaneBounds;
+
 export declare function SidebarRow({ icon, label, trailing, active, onClick, onContextMenu, href, kebab, disabled, 'aria-label': ariaLabel, className, 'data-testid': testId, dataAttrs, }: SidebarRowProps): JSX.Element;
 
 export declare interface SidebarRowProps {
@@ -19374,6 +19664,48 @@ export declare interface SidebarSectionProps {
     'data-testid'?: string;
 }
 
+/**
+ * A page's pane, registered with the shell's `SidePaneProvider` and portaled
+ * into its right column. Outside a host it renders nothing (the page's own
+ * column is unchanged).
+ */
+export declare function SidePane({ title, subtitle, closeLabel, onClose, widthPx, explores, tabs, value, onValueChange, trailing, footer, density, children, 'data-testid': testId, }: SidePaneProps): ReactPortal | null;
+
+export declare interface SidePaneBounds {
+    /** The split's ratio (page share) when nothing is remembered. Default 0.72. */
+    defaultRatio: number;
+    /** The remembered ratio is kept inside [ratioMin, ratioMax]. Defaults 0.4 / 0.85. */
+    ratioMin: number;
+    ratioMax: number;
+    /** The page's floor while dragging (px). Default 520. */
+    minPrimaryPx: number;
+    /** The pane's floor (px). Default 300. */
+    minSecondaryPx: number;
+    /**
+     * The page needs this much beside an open pane (px) — a section rail and a
+     * readable content column — or the pane waits for `reveal()`. Default 860.
+     */
+    fitPrimaryPx: number;
+}
+
+/** The split is wide enough for the page beside the pane. Unmeasured (first paint): it fits. */
+export declare function sidePaneFits(splitWidthPx: number | null, bounds?: SidePaneBounds): boolean;
+
+export declare interface SidePaneHostState {
+    /** A page has registered a pane. */
+    registered: boolean;
+    /** The pane is asked for (registered and open, or page-owned) — on screen or waiting for room. */
+    asked: boolean;
+    /** On screen now. */
+    shown: boolean;
+    /** Asked for, and showing a selection of the page: two rail-depth levels (`railDepth` `explored`). */
+    explored: boolean;
+    /** Open (and remember open) and show it even in a narrow window. */
+    reveal(): void;
+    /** Close it (remembered); a page-owned pane's × is the page's. */
+    collapse(): void;
+}
+
 /** Reads the panel a query string names, `doc` first; null when it names none. */
 export declare function sidePanelFromSearch(search: string | URLSearchParams | undefined): ChatSidePanelRef | null;
 
@@ -19383,6 +19715,72 @@ export declare function sidePanelFromSearch(search: string | URLSearchParams | u
  * `panel.*` entry.
  */
 export declare function sidePanelToSearch(panel: ChatSidePanelRef | null, search?: string | URLSearchParams): URLSearchParams;
+
+export declare interface SidePaneProps extends SidePaneRegistration {
+    /** The pane's sections (`usePaneState().tabs`); none, no tab row. */
+    tabs?: readonly TabItem[];
+    value?: string;
+    onValueChange?: (id: string) => void;
+    /** Right end of the tab row. */
+    trailing?: ReactNode;
+    /** Docked under the body: the pane's one composer. */
+    footer?: ReactNode;
+    /** The pane's density; default `compact`. */
+    density?: Density;
+    children: ReactNode;
+    /** The pane content's root; its tab row is `<id>-header-row`, its tabs `<id>-tab-<tab>`, its footer `<id>-footer`. */
+    'data-testid'?: string;
+}
+
+export declare function SidePaneProvider({ storageKey, defaultOpen, bounds: boundsOverride, children }: SidePaneProviderProps): JSX.Element;
+
+export declare interface SidePaneProviderProps {
+    /** Per-device memory: `<storageKey>.open` and `<storageKey>.ratio`. Default `uic.side-pane`. */
+    storageKey?: string;
+    /** Open when nothing is remembered. Default true. */
+    defaultOpen?: boolean;
+    bounds?: Partial<SidePaneBounds>;
+    children: ReactNode;
+}
+
+export declare interface SidePaneRegistration {
+    /** The frame's title ("Discussion", "Details"). */
+    title: string;
+    /** The second line: what the pane is about. */
+    subtitle?: string;
+    /** Names the frame's × ("Collapse discussion"); default `Collapse <title>`. */
+    closeLabel?: string;
+    /** The page owns the open state: the pane shows while registered and × calls this. */
+    onClose?: () => void;
+    /** Bounds the pane's width (px) whatever the remembered ratio. */
+    widthPx?: {
+        min: number;
+        max: number;
+    };
+    /** The pane shows a selection of the page (a record, a detail) — a rail-depth level of its own. */
+    explores?: boolean;
+}
+
+/**
+ * Where the page renders, with its pane on the right. Under a
+ * `SidePaneProvider` it uses that host (the shell reads it); alone it hosts
+ * itself.
+ */
+export declare function SidePaneSplit(props: SidePaneSplitProps): JSX.Element;
+
+export declare interface SidePaneSplitProps {
+    /** The page. */
+    children: ReactNode;
+    /** Stacked above the page's pane in the same column (a call's media grid). */
+    before?: ReactNode;
+    /** Stacked below it (a huddle's chat). Alone, it takes the column. */
+    after?: ReactNode;
+    /** The registered pane's frame test id (its title `-title`, subtitle `-subtitle`, × `-close`). */
+    paneTestId?: string;
+    dividerLabel?: string;
+    className?: string;
+    'data-testid'?: string;
+}
 
 export declare interface SignoffEntry {
     name: string;
@@ -20653,7 +21051,7 @@ export declare interface SubNavItem {
     groupScrollAfter?: number;
 }
 
-export declare function SubNavLayout({ title, items, titleAction, railHeader, railWidth, storageKey, secondaryTitle, secondaryItems, secondaryStorageKey, secondaryRailWidth, renderNavItem, railLabel, contentAs, contentLabel, children, }: SubNavLayoutProps): JSX.Element;
+export declare function SubNavLayout({ title, items, titleAction, railHeader, railWidth, storageKey, secondaryTitle, secondaryItems, secondaryStorageKey, secondaryRailWidth, renderNavItem, railLabel, contentAs, contentLabel, collapsed, children, }: SubNavLayoutProps): JSX.Element;
 
 export declare interface SubNavLayoutProps {
     /** Section title shown at top of the rail. */
@@ -20719,6 +21117,14 @@ export declare interface SubNavLayoutProps {
     /** `aria-label` for the content pane. Only meaningful (and recommended)
      *  when `contentAs` is `'section'`, so the named region reads as one. */
     contentLabel?: string;
+    /**
+     * The primary rail folded to a 44px strip holding only `titleAction` — the
+     * control that brings it back (2.438.0). Controlled: the host decides when
+     * (`useRailFold`, docs: the rail model) and owns the toggle. The strip's
+     * header row takes the height of the rail beside it, so a compact (36px)
+     * section rail's header and the strip's control sit on one row.
+     */
+    collapsed?: boolean;
     /**
      * The main content area. When used with React Router, omit this and pass an
      * `<Outlet />` as children, or leave empty if the router renders children
@@ -23251,6 +23657,12 @@ declare interface UseActivityBusReturn {
      skip: (itemId: string) => Promise<void>;
  }
 
+ /**
+  * Measures an element's content-box width. `forward` is another ref (a
+  * roving-toolbar hook's, say) that needs the same element.
+  */
+ export declare function useMeasuredWidth<T extends HTMLElement>(forward?: Ref<T>): MeasuredWidth<T>;
+
  export declare function useMediaDevices(): MediaDevices_2;
 
  /**
@@ -23309,6 +23721,37 @@ declare interface UseActivityBusReturn {
   * provider instead.
   */
  export declare function useOptionalPresenceContext(): PresenceContextValue | null;
+
+ export declare function usePaneState({ tabs, defaultTab, params, setParams, rememberKey, restore, onOpen, keepRecord, ...url }: UsePaneStateOptions): PaneStateControl;
+
+ export declare interface UsePaneStateOptions extends PaneUrlOptions {
+     tabs: readonly PaneTabSpec[];
+     /** The resting tab — no params. */
+     defaultTab: string;
+     params: URLSearchParams;
+     setParams: (next: URLSearchParams, options?: {
+         replace?: boolean;
+     }) => void;
+     /** Per-device memory of the last `remember` tab. */
+     rememberKey?: string;
+     /**
+      * When to restore the remembered tab (the pane is on screen), and for
+      * what (the page's subject): restored once per subject, in place.
+      */
+     restore?: {
+         when: boolean;
+         subject: string | null;
+     };
+     /** Called whenever a tab is opened (bring the pane on screen). */
+     onOpen?: () => void;
+     /**
+      * A named record stays while the reader moves to a plain tab (Search: the
+      * person rides along as a tab beside the conversation). Default false: a
+      * plain tab drops the record (an initiative's Log closes when the reader
+      * goes back to Details).
+      */
+     keepRecord?: boolean;
+ }
 
  export declare function usePipelineDefs(options?: UsePipelineDefsOptions): UsePipelineDefsReturn;
 
@@ -23392,6 +23835,28 @@ declare interface UseActivityBusReturn {
  }
 
  export declare function usePromptContext(scope?: string): PromptContext;
+
+ /** The band set by the nearest `RailBandProvider`; `shallow` outside one. */
+ export declare function useRailBand(): RailBand;
+
+ /** A rail's fold in the current band: the reader's remembered choice, else the host's default. */
+ export declare function useRailFold({ storageKey, band: bandOverride, defaultFolded }: UseRailFoldOptions): RailFold;
+
+ export declare interface UseRailFoldOptions {
+     /** Names the rail: the fold is stored under `<storageKey>.<band>`. */
+     storageKey: string;
+     /** The band to remember in; default the nearest `RailBandProvider`'s. */
+     band?: RailBand;
+     /** Folded when the reader has chosen nothing in this band (the host's rule: deep, narrow…). Default false. */
+     defaultFolded?: boolean;
+ }
+
+ /**
+  * The rail's per-device memory under `<storageKey>.folded` (labels → folded)
+  * and `<storageKey>.layout` (the reader's section order). A preference, not
+  * state: private mode or blocked storage still folds, just forgets.
+  */
+ export declare function useRailSectionMemory(storageKey: string, options?: RailSectionMemoryOptions): RailSectionMemory;
 
  export declare function UserChip({ name, label, avatarSize, avatarColor, presence, onClick, className, style, title, labelClassName, 'data-testid': testId, }: UserChipProps): JSX.Element;
 
@@ -23678,6 +24143,16 @@ declare interface UseActivityBusReturn {
      unresolveThread: (sectionId: string, commentId: string) => void;
  }
 
+ /** The page's view of its pane: on screen (focus waits for it), how to bring it back, and whether it is attached. */
+ export declare function useSidePane(): {
+     visible: boolean;
+     reveal(): void;
+     attached(): boolean;
+ };
+
+ /** What the shell reads: whether a pane is asked for, shown, exploring a selection. */
+ export declare function useSidePaneHost(): SidePaneHostState;
+
  export declare function useSocialProfile({ idToken }: UseSocialProfileOptions): UseSocialProfileReturn;
 
  declare interface UseSocialProfileOptions {
@@ -23875,6 +24350,9 @@ declare interface UseActivityBusReturn {
       loading: boolean;
       fetchSessions: () => Promise<void>;
   };
+
+  /** The window's inner width, live. 1680 on the server. */
+  export declare function useViewportWidth(): number;
 
   export declare function useWebGLCanvas<S>(options: UseWebGLCanvasOptions<S>): WebGLCanvas;
 
@@ -24175,6 +24653,9 @@ declare interface UseActivityBusReturn {
 
   /** Groups worth drawing: people in them, or an action to add some. */
   export declare function visibleHeaderPeople(groups: readonly HeaderPeopleGroup[] | undefined): HeaderPeopleGroup[];
+
+  /** The tabs to list: every plain tab, and a record tab while its record is named. */
+  export declare function visiblePaneTabs(tabs: readonly PaneTabSpec[], state: PaneState): TabItem[];
 
   /**
    * The canonical visually-hidden clip. Not `display: none` and not
@@ -25714,6 +26195,9 @@ declare interface UseActivityBusReturn {
       transcript: NonNullable<WorkActivityNodeDetail['transcript']>;
       onSelect?: (selection: Exclude<WorkGraphSelection, null>) => void;
   }): JSX.Element;
+
+  /** The params for a pane state: the default tab with no record drops both. */
+  export declare function writePaneState(params: URLSearchParams, state: PaneState, defaultTab: string, opts?: PaneUrlOptions): URLSearchParams;
 
   /** Sets a drag's payload: the prompt-context MIME (JSON) plus the titles as plain text. */
   export declare function writePromptContextDrag(dataTransfer: DataTransfer, items: readonly PromptContextItem[]): void;

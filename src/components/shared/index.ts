@@ -243,6 +243,15 @@ export {
   inactiveNavItemClassName,
 } from './SubNavLayout';
 export type { SubNavItem, SubNavLayoutProps } from './SubNavLayout';
+// The rail model's fold (2.438.0): depth → band, each rail's fold remembered per band.
+export {
+  railDepth, railBand, railFoldKey, readRailFold, RailBandProvider, useRailBand, useRailFold, useViewportWidth,
+  RAIL_FOLD_PRIMARY_BELOW, RAIL_FOLD_SECTION_BELOW,
+} from './railFold';
+export type { RailBand, RailDepthSpec, UseRailFoldOptions, RailFold } from './railFold';
+// The width of an element's own box (H10 of the 2026-10-07 audit): one measuring hook, not one per consumer.
+export { useMeasuredWidth } from '../doc-editor/useMeasuredWidth';
+export type { MeasuredWidth } from '../doc-editor/useMeasuredWidth';
 // A rail's scope list ("All initiatives / My initiatives / Sprints"). 2.392.0.
 export { RailNavList } from './RailNavList';
 // The one type scale every rail draws from (2.397.0) — SubNavLayout,

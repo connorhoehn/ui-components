@@ -3390,6 +3390,13 @@ export declare function matchHotkey(e: KeyboardEvent, spec: string): boolean;
 /** Four corners pushed outward: "expand to fill". Since 2.411.0. */
 export declare function MaximizeIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+export declare interface MeasuredWidth<T extends HTMLElement> {
+    /** Attach to the element to measure. Also fills `forward`. */
+    ref: (el: T | null) => void;
+    /** Content-box width in px; `null` before the first measurement. */
+    width: number | null;
+}
+
 /** Three stacked bars: "open the menu", or "unfold the rail this collapsed into". */
 export declare function MenuIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -4413,6 +4420,12 @@ export declare const RAIL_CAPTION = "text-[12px] font-semibold uppercase trackin
 /** The selected row's fill. The 3px primary edge bar goes with it. */
 export declare const RAIL_CURRENT_FILL = "bg-primary/8";
 
+/** Under this window width the primary rail folds at any depth (rail + section rail + content + an aside do not fit). */
+export declare const RAIL_FOLD_PRIMARY_BELOW = 1180;
+
+/** Under this width a section rail folds too — always after the primary rail. */
+export declare const RAIL_FOLD_SECTION_BELOW = 768;
+
 /**
  * A group heading's count ("IN PROGRESS … 9"): plain muted text at the label's
  * size, never a pill — the heading already says what it counts.
@@ -4444,11 +4457,59 @@ export declare const RAIL_ROW_PAD_Y = "py-2";
 /** The one-line row pitch in px, for hosts that cap a list by row count. */
 export declare const RAIL_ROW_PITCH = 36;
 
+export declare type RailBand = 'shallow' | 'deep';
+
+export declare function railBand(depth: number): RailBand;
+
+/** The band every `useRailFold` under it remembers its fold in (the host computes it once from `railDepth`). */
+export declare function RailBandProvider({ band, children }: {
+    band: RailBand;
+    children: ReactNode;
+}): JSX.Element;
+
 /** The disclosure caret every rail group heading wears: 14px, down when open. */
 export declare function RailCaretIcon({ open, className }: {
     open: boolean;
     className?: string;
 }): JSX.Element;
+
+/**
+ * How deep a route sits under its section: `/iq/projects` 1, `/iq/projects/p-x`
+ * 2, `/iq/projects/p-x?item=wi` 3, a page with its side pane exploring a
+ * selection +2.
+ */
+export declare function railDepth(location: {
+    pathname: string;
+    search?: string;
+}, spec?: RailDepthSpec): number;
+
+export declare interface RailDepthSpec {
+    /** Leading path segments that name an app/tenant, not a level (`iq`, `admin`). */
+    prefixes?: readonly string[];
+    /** Query params whose presence opens a record beside the page's list (`item`, `run`): one level. */
+    drillParams?: readonly string[];
+    /** Routes that are always a record: depth 3 at least. */
+    leafRoutes?: readonly RegExp[];
+    /**
+     * The side pane shows a selection of this page (a record tab, a detail):
+     * two levels — the selection, then the pane beside it — unless a drill
+     * param already counts the record.
+     */
+    explored?: boolean;
+}
+
+export declare interface RailFold {
+    folded: boolean;
+    /** Flip the fold and remember the choice in the current band. */
+    toggle: () => void;
+    /** The band the fold is read from. */
+    band: RailBand;
+    /** The reader chose this band's fold by hand (it overrides `defaultFolded`). */
+    remembered: boolean;
+}
+
+/** The storage key a rail's fold is remembered under in a band. */
+export declare function railFoldKey(storageKey: string, band: RailBand): string;
 
 export declare function RailLayout({ children, rail, railWidth, className, 'data-testid': testId }: RailLayoutProps): JSX.Element;
 
@@ -4524,6 +4585,9 @@ export declare const railType: {
  * for the palette's own colours; above it, dark text wins.
  */
 export declare function readableAvatarForeground(background: string): string | null;
+
+/** A stored fold: `collapsed` / `open`, anything else nothing. */
+export declare function readRailFold(raw: string | null | undefined): boolean | null;
 
 /** A curved arrow forward: "redo". Since 2.386.5. */
 export declare function RedoIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -5598,7 +5662,7 @@ export declare interface SubNavItem {
     groupScrollAfter?: number;
 }
 
-export declare function SubNavLayout({ title, items, titleAction, railHeader, railWidth, storageKey, secondaryTitle, secondaryItems, secondaryStorageKey, secondaryRailWidth, renderNavItem, railLabel, contentAs, contentLabel, children, }: SubNavLayoutProps): JSX.Element;
+export declare function SubNavLayout({ title, items, titleAction, railHeader, railWidth, storageKey, secondaryTitle, secondaryItems, secondaryStorageKey, secondaryRailWidth, renderNavItem, railLabel, contentAs, contentLabel, collapsed, children, }: SubNavLayoutProps): JSX.Element;
 
 export declare interface SubNavLayoutProps {
     /** Section title shown at top of the rail. */
@@ -5664,6 +5728,14 @@ export declare interface SubNavLayoutProps {
     /** `aria-label` for the content pane. Only meaningful (and recommended)
      *  when `contentAs` is `'section'`, so the named region reads as one. */
     contentLabel?: string;
+    /**
+     * The primary rail folded to a 44px strip holding only `titleAction` — the
+     * control that brings it back (2.438.0). Controlled: the host decides when
+     * (`useRailFold`, docs: the rail model) and owns the toggle. The strip's
+     * header row takes the height of the rail beside it, so a compact (36px)
+     * section rail's header and the strip's control sit on one row.
+     */
+    collapsed?: boolean;
     /**
      * The main content area. When used with React Router, omit this and pass an
      * `<Outlet />` as children, or leave empty if the router renders children
@@ -6536,6 +6608,27 @@ export declare interface UseHeaderDensityOptions {
     scrollCollapse?: boolean;
 }
 
+/**
+ * Measures an element's content-box width. `forward` is another ref (a
+ * roving-toolbar hook's, say) that needs the same element.
+ */
+export declare function useMeasuredWidth<T extends HTMLElement>(forward?: Ref<T>): MeasuredWidth<T>;
+
+/** The band set by the nearest `RailBandProvider`; `shallow` outside one. */
+export declare function useRailBand(): RailBand;
+
+/** A rail's fold in the current band: the reader's remembered choice, else the host's default. */
+export declare function useRailFold({ storageKey, band: bandOverride, defaultFolded }: UseRailFoldOptions): RailFold;
+
+export declare interface UseRailFoldOptions {
+    /** Names the rail: the fold is stored under `<storageKey>.<band>`. */
+    storageKey: string;
+    /** The band to remember in; default the nearest `RailBandProvider`'s. */
+    band?: RailBand;
+    /** Folded when the reader has chosen nothing in this band (the host's rule: deep, narrow…). Default false. */
+    defaultFolded?: boolean;
+}
+
 export declare function UserChip({ name, label, avatarSize, avatarColor, presence, onClick, className, style, title, labelClassName, 'data-testid': testId, }: UserChipProps): JSX.Element;
 
 export declare interface UserChipProps {
@@ -6676,6 +6769,9 @@ export declare function useToast(): ToastContextValue;
  * notification is simply skipped rather than crashing the subtree.
  */
 export declare function useToastOptional(): ToastContextValue | null;
+
+/** The window's inner width, live. 1680 on the server. */
+export declare function useViewportWidth(): number;
 
 /** A camera body: start a video call. Distinct from video/MediaIcons' VideoIcon, which is a call CONTROL. */
 export declare function VideoCallIcon({ size, ...rest }: GlyphProps): JSX.Element;

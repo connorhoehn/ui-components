@@ -3,6 +3,7 @@ import { cn } from '../../lib/cn';
 import { IconButton } from '../ui/IconButton';
 import { ChevronIcon } from '../ui/Icons';
 import Chip from '../shared/Chip';
+import { useReportRailHeader } from '../shared/SubNavLayout';
 import { RAIL_CAPTION, RAIL_GROUP_COUNT, RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK } from '../shared/railType';
 
 export interface WorkspaceRailBack {
@@ -78,6 +79,9 @@ export function WorkspaceRail({
   'data-testid': testId = 'workspace-rail',
 }: WorkspaceRailProps) {
   const plainCount = countStyle === 'plain' || heading === 'label';
+  const hasHeader = !!(title || actions || onToggle);
+  // A folded shell strip beside this rail aligns its header row with ours (SubNavLayout `collapsed`).
+  useReportRailHeader(hasHeader && heading === 'compact');
   const toggleName = toggleLabel ?? `${collapsed ? 'Show' : 'Hide'} ${label ?? title ?? 'the list'}`;
   return (
     <nav aria-label={label ?? title ?? 'Workspace'} data-testid={testId} data-collapsed={collapsed}
@@ -97,7 +101,7 @@ export function WorkspaceRail({
           )}
         </div>
       )}
-      {(title || actions || onToggle) && (
+      {hasHeader && (
         <div className={cn('flex shrink-0 items-center gap-1', heading !== 'compact' ? 'h-14' : 'h-9 border-b border-border', collapsed ? 'justify-center' : heading !== 'compact' ? 'pl-5 pr-3' : 'pl-3.5 pr-1.5')} data-testid={`${testId}-header`}>
           {!collapsed && (title ? (
             <h2 className={cn('m-0 flex min-w-0 flex-1 items-center gap-2 text-text-primary', heading === 'prominent' ? 'text-[18px] font-semibold' : heading === 'label' ? cn(RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK) : heading === 'caption' ? RAIL_CAPTION : 'text-[12px] font-semibold')} data-testid={`${testId}-title`}>

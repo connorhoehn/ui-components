@@ -158,6 +158,9 @@ export {
   ConversationRail, arrangeRailSections, RAIL_DMS_SECTION, RAIL_CHANNELS_SECTION, RAIL_SECTION_GUTTER, RAIL_SECTION_CONTENT_INSET,
 } from './ConversationRail';
 export type { ConversationRailProps, ConversationRailSection, RailSelection } from './ConversationRail';
+// The conversation rail's model (2.438.0): sections as data, one builder, one per-device memory.
+export { buildRailSection, matchesRailQuery, useRailSectionMemory } from './railSections';
+export type { BuildRailSectionOptions, RailSectionState, RailSectionMemory, RailSectionMemoryOptions } from './railSections';
 export { AgentRunCard, agentRunRefFromMetadata, describeAgentRunOp, describeAgentRunFailure, describeAgentLoop, formatLoopClock, agentRunTimings, AGENT_RUN_STEP_DOT } from './AgentRunCard';
 export type { AgentRunCardProps, AgentRunLoop, AgentRunLoopPhase, AgentRunStatus, AgentRunPhase, AgentRunDecision, AgentRunReviewDecision, AgentRunSuggestion, AgentRunReview, AgentRunDetails, AgentRunStep, AgentRunStepStatus, AgentRunOp } from './AgentRunCard';
 export type { ComposerCommand, ComposerCommandArgument, ComposerArgumentItem } from './composerCommands';

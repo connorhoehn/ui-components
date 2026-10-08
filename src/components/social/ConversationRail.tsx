@@ -33,6 +33,8 @@ import { SearchInput } from '../shared/SearchInput';
 import { DropdownMenu } from '../shared/DropdownMenu';
 import { cn } from '../../lib/cn';
 import { RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK } from '../shared/railType';
+import { RailSectionHeader } from './RailSectionHeader';
+import { T } from '../shared/Text';
 import { ConversationList, type ConversationItem } from './ConversationList';
 import { ConversationShelf, type ConversationShelfItem } from './ConversationShelf';
 import type { RailSectionAction } from './RailSectionHeader';
@@ -49,13 +51,42 @@ import type { RailSectionAction } from './RailSectionHeader';
 export const RAIL_SECTION_GUTTER = 'px-2';
 export const RAIL_SECTION_CONTENT_INSET = 'px-2';
 
-/** A host section placed in the rail's arrangeable order (2.432.0). */
+/**
+ * A host section placed in the rail's arrangeable order (2.432.0).
+ *
+ * Two forms. DATA (2.438.0, the rail model): give `rows` and the rail draws
+ * the heading — its fold (`collapsedSections` / `onToggleSection`, keyed by
+ * `label` like the rail's own groups) and its `count` — and the rows, with
+ * the open row marked and `emptyLabel` / `note` when there are none; build
+ * one with `buildRailSection`. NODE: give `node` for content that is not a
+ * conversation list (a people grid, a team tree); with `heading` the rail
+ * still draws the heading, its fold and count over it.
+ */
 export interface ConversationRailSection {
   /** Stable id — what `sectionLayout` stores. `dms` and `channels` are the rail's own. */
   id: string;
-  /** The heading it goes by — what "Arrange sections" lists. */
+  /** The heading it goes by — what "Arrange sections" lists, and its fold key. */
   label: string;
-  node: ReactNode;
+  /** Custom content, drawn as given (under the rail's heading when `heading`). */
+  node?: ReactNode;
+  /** Draw the rail's heading (fold + count) over `node`. Data sections always have it. */
+  heading?: boolean;
+  /** The heading's count: the records the host holds, not the rows the find filter left. */
+  count?: number;
+  /** Data form: the section's rows. */
+  rows?: ConversationItem[];
+  /** The open row (its `channel` key). */
+  activeRow?: string | null;
+  /** A row was chosen: its key. */
+  onSelectRow?: (key: string) => void;
+  /** Shown when `rows` is empty. */
+  emptyLabel?: string;
+  /** One line instead of the rows (an account that cannot have any). */
+  note?: string;
+  /** Rows before "Show N more". */
+  maxVisible?: number;
+  /** Root test id: the section is `<id>-section`, its rows `<id>`, its note `<id>-note`. */
+  'data-testid'?: string;
 }
 
 /** The rail's own conversation groups, as arrangeable sections. */
@@ -292,7 +323,28 @@ export function ConversationRail({
       );
     }
     const section = byId.get(id);
-    return section ? <div key={id} className={cn('shrink-0', RAIL_SECTION_GUTTER)} data-rail-section={id}>{section.node}</div> : null;
+    if (!section) return null;
+    const sectionTestId = section['data-testid'];
+    const folded = !!collapsedSections?.[section.label];
+    const heading = (section.rows || section.heading) && (
+      <RailSectionHeader label={section.label} presentational={false} {...(typeof section.count === 'number' ? { count: section.count } : {})}
+        {...(onToggleSection ? { collapsed: folded, onToggleCollapse: (next: boolean) => onToggleSection(section.label, next) } : {})}
+        {...(sectionTestId ? { controls: sectionTestId } : {})} />
+    );
+    const body = section.rows
+      ? (section.note
+        ? <T as="div" size="xs" tone="tertiary" wrap className={RAIL_SECTION_CONTENT_INSET} {...(sectionTestId ? { 'data-testid': `${sectionTestId}-note` } : {})}>{section.note}</T>
+        : <ConversationList items={section.rows} activeChannel={section.activeRow ?? null} onSelect={(key) => section.onSelectRow?.(key)}
+            grouped={false} sortByRecency={false} {...(section.maxVisible ? { maxVisible: section.maxVisible } : {})}
+            {...(section.emptyLabel ? { emptyLabel: section.emptyLabel } : {})} {...(sectionTestId ? { 'data-testid': sectionTestId } : {})} />)
+      : section.node;
+    return (
+      <div key={id} className={cn('shrink-0', RAIL_SECTION_GUTTER)} data-rail-section={id}
+        {...(sectionTestId && heading ? { 'data-testid': `${sectionTestId}-section` } : {})}>
+        {heading}
+        {heading && onToggleSection && folded ? null : body}
+      </div>
+    );
   };
 
   const railActions = (search || onSectionLayoutChange || actions != null) ? (

@@ -399,6 +399,30 @@ export declare interface AttachmentBubbleProps {
 /** What a console surface paints behind itself. `none` keeps the ordinary surface. */
 declare type BackdropTone = 'auto' | 'night' | 'graphite' | 'none';
 
+/** A data section for `ConversationRail sections`: the heading's count, the rows, the empty line. */
+export declare function buildRailSection<T>(o: BuildRailSectionOptions<T>): ConversationRailSection;
+
+export declare interface BuildRailSectionOptions<T> {
+    id: string;
+    label: string;
+    items: readonly T[];
+    /** The rail's find text; rows whose name does not contain it are left out. */
+    query?: string;
+    /** The row key — what `onSelect` hands back. Unique across the rail. */
+    key: (item: T) => string;
+    /** The row's name (and what the find filter matches). */
+    name: (item: T) => string;
+    /** The rest of the row: second line, unread, live marker. */
+    row?: (item: T) => Partial<Omit<ConversationItem, 'channel' | 'name'>>;
+    /** The open row's key. */
+    active?: string | null;
+    onSelect: (key: string) => void;
+    state?: RailSectionState;
+    /** Rows before "Show N more". Default 8. */
+    maxVisible?: number;
+    'data-testid'?: string;
+}
+
 export declare function CallActivityCard({ callId, startedBy, participants, live, durationMs, startedAt, outcome, recordingId, onOpenRecording, audioOnly, recorded, notRecordedReason, lobbyName, onJoin, className, 'data-testid': testId, }: CallActivityCardProps): JSX.Element;
 
 export declare interface CallActivityCardProps {
@@ -2044,13 +2068,42 @@ export declare interface ConversationRailProps {
     'data-testid'?: string;
 }
 
-/** A host section placed in the rail's arrangeable order (2.432.0). */
+/**
+ * A host section placed in the rail's arrangeable order (2.432.0).
+ *
+ * Two forms. DATA (2.438.0, the rail model): give `rows` and the rail draws
+ * the heading — its fold (`collapsedSections` / `onToggleSection`, keyed by
+ * `label` like the rail's own groups) and its `count` — and the rows, with
+ * the open row marked and `emptyLabel` / `note` when there are none; build
+ * one with `buildRailSection`. NODE: give `node` for content that is not a
+ * conversation list (a people grid, a team tree); with `heading` the rail
+ * still draws the heading, its fold and count over it.
+ */
 export declare interface ConversationRailSection {
     /** Stable id — what `sectionLayout` stores. `dms` and `channels` are the rail's own. */
     id: string;
-    /** The heading it goes by — what "Arrange sections" lists. */
+    /** The heading it goes by — what "Arrange sections" lists, and its fold key. */
     label: string;
-    node: ReactNode;
+    /** Custom content, drawn as given (under the rail's heading when `heading`). */
+    node?: ReactNode;
+    /** Draw the rail's heading (fold + count) over `node`. Data sections always have it. */
+    heading?: boolean;
+    /** The heading's count: the records the host holds, not the rows the find filter left. */
+    count?: number;
+    /** Data form: the section's rows. */
+    rows?: ConversationItem[];
+    /** The open row (its `channel` key). */
+    activeRow?: string | null;
+    /** A row was chosen: its key. */
+    onSelectRow?: (key: string) => void;
+    /** Shown when `rows` is empty. */
+    emptyLabel?: string;
+    /** One line instead of the rows (an account that cannot have any). */
+    note?: string;
+    /** Rows before "Show N more". */
+    maxVisible?: number;
+    /** Root test id: the section is `<id>-section`, its rows `<id>`, its note `<id>-note`. */
+    'data-testid'?: string;
 }
 
 export declare function ConversationShelf({ items, activeId, onSelect, compact, iconOnly, size, plain, layout, className, 'data-testid': testId, }: ConversationShelfProps): JSX.Element | null;
@@ -2975,6 +3028,9 @@ export declare interface LocalChatMessage {
 /** The command a draft is addressing, or null. `/doc`, `/doc …`, never `/document`. */
 export declare function matchComposerCommand(draft: string, commands: readonly ComposerCommand[] | undefined): ComposerCommand | null;
 
+/** Whether `name` matches the rail's find text (case-insensitive substring). */
+export declare function matchesRailQuery(name: string, query: string | null | undefined): boolean;
+
 export declare interface MembershipHistory {
     mode: MembershipHistoryMode;
     days?: number;
@@ -3460,6 +3516,41 @@ export declare interface RailSectionHeaderProps {
     'data-testid'?: string;
 }
 
+export declare interface RailSectionMemory {
+    /** Folded state by label (stored over the defaults). */
+    collapsedSections: Readonly<Record<string, boolean>>;
+    isFolded: (label: string) => boolean;
+    setFolded: (label: string, next: boolean) => void;
+    sectionLayout: string[] | null;
+    setSectionLayout: (order: string[] | null) => void;
+    /** Spread onto `ConversationRail`. */
+    railProps: {
+        collapsedSections: Readonly<Record<string, boolean>>;
+        onToggleSection: (label: string, next: boolean) => void;
+        sectionLayout: string[] | null;
+        onSectionLayoutChange: (order: string[] | null) => void;
+    };
+}
+
+export declare interface RailSectionMemoryOptions {
+    /** Sections folded until the reader opens them, by label. */
+    defaultFolded?: Readonly<Record<string, boolean>>;
+    /** Labels the page is about (Teams on a teams route): open unless the reader folded them. */
+    opened?: readonly string[];
+}
+
+export declare interface RailSectionState {
+    loading?: boolean;
+    /** The read failed: the section says so rather than "nothing here". */
+    error?: string | null;
+    /** The plural noun for the empty and error lines ("initiatives"). */
+    noun?: string;
+    /** The empty line when there is nothing at all. Default "You are not on any <noun> yet." */
+    emptyLabel?: string;
+    /** One honest line instead of the rows (an account that cannot have any). */
+    note?: string | null;
+}
+
 /**
  * What the rail currently points at. One value, because one pane.
  */
@@ -3914,6 +4005,13 @@ export declare function useChatSidePanelRenderers(): ChatSidePanelRenderers;
  * without a number rather than counting from a made-up zero.
  */
 export declare function useElapsedMs(startedAt: string | number | undefined, running: boolean): number | null;
+
+/**
+ * The rail's per-device memory under `<storageKey>.folded` (labels → folded)
+ * and `<storageKey>.layout` (the reader's section order). A preference, not
+ * state: private mode or blocked storage still folds, just forgets.
+ */
+export declare function useRailSectionMemory(storageKey: string, options?: RailSectionMemoryOptions): RailSectionMemory;
 
 /**
  * Adds `commands` to the nearest provider while the caller is mounted. Pass a
