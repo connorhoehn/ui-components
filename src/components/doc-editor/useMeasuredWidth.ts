@@ -11,9 +11,11 @@
 // pass a fixed size instead of relying on this.
 //
 // Shared by `DocumentToolbar` and `SlidesToolbar`; one mechanism, one set of
-// caveats.
+// caveats. Since 2.440.0 it is `useContainerDensity` (shared/ContainerDensity)
+// read for its content-box width — the library's one measuring primitive.
 
-import { useCallback, useRef, useState, type MutableRefObject, type Ref } from 'react';
+import type { Ref } from 'react';
+import { useContainerDensity } from '../shared/ContainerDensity';
 
 export interface MeasuredWidth<T extends HTMLElement> {
   /** Attach to the element to measure. Also fills `forward`. */
@@ -27,22 +29,8 @@ export interface MeasuredWidth<T extends HTMLElement> {
  * roving-toolbar hook's, say) that needs the same element.
  */
 export function useMeasuredWidth<T extends HTMLElement>(forward?: Ref<T>): MeasuredWidth<T> {
-  const [width, setWidth] = useState<number | null>(null);
-  const observer = useRef<ResizeObserver | null>(null);
-  const ref = useCallback((el: T | null) => {
-    if (typeof forward === 'function') forward(el);
-    else if (forward) (forward as MutableRefObject<T | null>).current = el;
-    observer.current?.disconnect();
-    observer.current = null;
-    if (!el || typeof ResizeObserver === 'undefined') return;
-    const ro = new ResizeObserver((entries) => {
-      const w = entries[0]?.contentRect.width;
-      if (w != null) setWidth(w);
-    });
-    ro.observe(el);
-    observer.current = ro;
-  }, [forward]);
-  return { ref, width };
+  const { ref, size } = useContainerDensity<T>(forward ? { forward } : {});
+  return { ref, width: size };
 }
 
 export default useMeasuredWidth;

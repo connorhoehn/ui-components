@@ -12,6 +12,7 @@ import { Stack } from '../../ui/Stack';
 import { OverlineLabel } from './graphOverlay';
 import { searchGraph } from './graphInsights';
 import type { GraphPerson } from './types';
+import { DensityProvider } from '../../shared/Density';
 
 export interface GraphSearchBoxProps {
   people: GraphPerson[];
@@ -132,13 +133,12 @@ export function GraphSearchBox({
           role="status"
           className="absolute left-0 top-[calc(100%+6px)] z-[120] w-[290px] rounded-lg border border-border bg-surface shadow-md"
         >
-          <EmptyState
-            size="sm"
+          <DensityProvider density="compact"><EmptyState
             title={`No matches for "${q}"`}
             body="Try a different name, title, department, or skill."
             actionLabel="Clear search"
             onAction={() => { setQ(''); setOpen(false); }}
-          />
+          /></DensityProvider>
         </Stack>
       )}
     </Stack>

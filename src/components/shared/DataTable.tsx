@@ -194,7 +194,7 @@ export function DataTable<T>({
   loading = false,
   loadingRows = 5,
   frameless = false,
-  size = 'md',
+  size,
   striped = false,
   className,
   'data-testid': testId,
@@ -278,7 +278,7 @@ export function DataTable<T>({
           sits beside it (a rail, a sidebar). This keeps that spill inside the
           table's own box. */}
       <div className="w-full max-w-full overflow-x-auto">
-        <Table size={size} className={frameless ? undefined : 'border border-border rounded-lg overflow-hidden'}>
+        <Table {...(size ? { size } : {})} className={frameless ? undefined : 'border border-border rounded-lg overflow-hidden'}>
         <TableHead>
           <tr>
             {columns.map((col) => {

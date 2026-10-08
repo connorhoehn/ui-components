@@ -26,6 +26,7 @@ import { HoverCard, type HoverCardWidth } from './HoverCard';
 import { Tooltip } from './Tooltip';
 import { Text } from './Text';
 import type { Density } from './Density';
+import { CONTAINER_COMPACT_BELOW, containerDensity } from './ContainerDensity';
 import { IconButton } from '../ui/IconButton';
 import { ChevronIcon, InfoIcon } from '../ui/Icons';
 
@@ -46,7 +47,7 @@ export function headerDensityStorageKey(headerId: string, kind: HeaderContentKin
 }
 
 /** Below this container height a plain page drops to compact. */
-export const HEADER_COMPACT_BELOW_PX = 640;
+export const HEADER_COMPACT_BELOW_PX = CONTAINER_COMPACT_BELOW.header;
 /** Below this container height a rich page starts collapsed. */
 export const HEADER_COLLAPSE_BELOW_PX = 480;
 
@@ -64,7 +65,8 @@ export function headerDefaults({ contentKind, containerHeight, preference }: {
 }): { density: Density; collapsed: boolean } {
   const h = containerHeight != null && containerHeight > 0 ? containerHeight : null;
   const rich = isRichHeaderContent(contentKind);
-  const density: Density = preference ?? (rich || (h != null && h < HEADER_COMPACT_BELOW_PX) ? 'compact' : 'comfortable');
+  // The container's height becomes a density through the one rule (`containerDensity`).
+  const density: Density = preference ?? (rich || containerDensity(h, HEADER_COMPACT_BELOW_PX) === 'compact' ? 'compact' : 'comfortable');
   return { density, collapsed: rich && h != null && h < HEADER_COLLAPSE_BELOW_PX };
 }
 

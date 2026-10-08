@@ -11,6 +11,7 @@ import { Button } from '../ui/Button';
 import { IconButton } from '../ui/IconButton';
 import { CloseIcon, PlusIcon } from '../ui/Icons';
 import { cn } from '../../lib/cn';
+import { DensityProvider } from '../shared/Density';
 
 export interface ChatMember {
   id: string;
@@ -69,8 +70,7 @@ export function MembersPanel({
         )}
       </div>
       {open && members.length === 0 ? (
-        <EmptyState
-          size="sm"
+        <DensityProvider density="compact"><EmptyState
           title="Everyone can read this channel."
           body="Add people to make it members-only."
           // The empty state's action reports no element, so a host that
@@ -78,7 +78,7 @@ export function MembersPanel({
           // rather than pointing a popover at nothing.
           {...(onAdd ? { actionLabel: 'Add people', onAction: () => onAdd() } : {})}
           testId={`${testId}-empty`}
-        />
+        /></DensityProvider>
       ) : (
         <ul className="m-0 min-h-0 flex-1 list-none overflow-y-auto p-0" data-testid={`${testId}-list`}>
           {sorted.map((m) => {

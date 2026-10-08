@@ -4,6 +4,7 @@
 
 import { createContext, useContext, type HTMLAttributes, type TdHTMLAttributes, type ThHTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { useDensitySize } from '../shared/Density';
 
 /**
  * Row density. `md` (default) is the original 12px-padded cell. `sm` (since
@@ -27,7 +28,8 @@ export interface TableProps extends HTMLAttributes<HTMLTableElement> {
   size?: TableSize;
 }
 
-export function Table({ children, className, size = 'md', ...rest }: TableProps) {
+export function Table({ children, className, size: sizeProp, ...rest }: TableProps) {
+  const size = useDensitySize<TableSize>('Table', sizeProp, { comfortable: 'md', compact: 'sm' });
   return (
     <TableSizeContext.Provider value={size}>
       <table className={cn('w-full text-sm', className)} data-size={size === 'sm' ? 'sm' : undefined} {...rest}>

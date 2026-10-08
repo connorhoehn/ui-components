@@ -21,6 +21,7 @@
 
 import { useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { useDensitySize } from './Density';
 import type { SurfaceTone } from './tones';
 
 /** @see SurfaceTone — which colour family the empty state paints in. */
@@ -157,9 +158,20 @@ export interface EmptyStateProps {
    * small for the 220px block, reach for `InlinePlaceholder`.
    */
   className?: string;
-  /** Block scale. Default `md`. See `EmptyStateSize`. */
+  /**
+   * Block scale. Default: the density's — `sm` under the compact density
+   * (`DensityProvider density="compact"`, since 2.440.0), else `md`. An
+   * explicit `size="sm"` is a deprecated override; `md` and `lg` stay.
+   * See `EmptyStateSize`.
+   */
   size?: EmptyStateSize;
-  /** Layout density. Default `default`. See `EmptyStateDensity`. */
+  /**
+   * `block` (default): the glyph over the title over the description.
+   * `line`: the single quiet line (see `EmptyStateDensity`). Since 2.440.0 —
+   * the layout is not a density, so it no longer borrows the word.
+   */
+  layout?: 'block' | 'line';
+  /** @deprecated since 2.440.0 — `layout="line"` (`compact`) / `layout="block"` (`default`). */
   density?: EmptyStateDensity;
   /**
    * `center` (default): the centred block. `start`: left-aligned, with no
@@ -184,14 +196,15 @@ export interface EmptyStateProps {
 function EmptyState({
   icon, title, body, description, actionLabel, onAction, action, actions,
   testId = 'empty-state', actionTestId = 'empty-state-action',
-  tone = 'surface', className, size = 'md', density = 'default',
+  tone = 'surface', className, size: sizeProp, layout, density = 'default',
   align = 'center', actionsDirection = 'column', details,
 }: EmptyStateProps) {
   const resolvedDescription = description ?? body;
   const palette: Palette = TONE[tone] ?? TONE.surface;
+  const size = useDensitySize<EmptyStateSize>('EmptyState', sizeProp, { comfortable: 'md', compact: 'sm' });
   const small = size === 'sm';
   const large = size === 'lg';
-  const compact = density === 'compact';
+  const compact = (layout ?? (density === 'compact' ? 'line' : 'block')) === 'line';
   const start = align === 'start' && !compact;
   return (
     <div

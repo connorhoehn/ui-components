@@ -143,7 +143,7 @@ export declare interface ActionRowItem {
     action?: string;
 }
 
-export declare function ActionRowList({ items, onOpen, footer, emptyLabel, columns, tone, accent, action, size, 'aria-label': ariaLabel, className, 'data-testid': testId, }: ActionRowListProps): JSX.Element | null;
+export declare function ActionRowList({ items, onOpen, footer, emptyLabel, columns, tone, accent, action, size: sizeProp, 'aria-label': ariaLabel, className, 'data-testid': testId, }: ActionRowListProps): JSX.Element | null;
 
 export declare interface ActionRowListProps {
     items: ActionRowItem[];
@@ -4561,7 +4561,7 @@ export declare interface ChatSidePanelApi {
  * the title on the left and the way out on the right, and a body that fills
  * the rest and scrolls on its own.
  */
-export declare function ChatSidePanelFrame({ title, subtitle, onClose, onOpenFullPage, actions, expanded, onToggleExpanded, size, closeLabel, children, className, 'data-testid': testId, }: ChatSidePanelFrameProps): JSX.Element;
+export declare function ChatSidePanelFrame({ title, subtitle, onClose, onOpenFullPage, actions, expanded, onToggleExpanded, size: sizeProp, closeLabel, children, className, 'data-testid': testId, }: ChatSidePanelFrameProps): JSX.Element;
 
 export declare interface ChatSidePanelFrameProps {
     title: string;
@@ -4978,6 +4978,12 @@ export declare interface CitedRecordItem extends RecordResultItem {
     n: number;
     /** Source numbers this row cites; default `[n]`. */
     citations?: number[];
+    /**
+     * The source's full text (since 2.440.0): the native tooltip of its
+     * numbered Sources button and of the row's title line, both of which
+     * truncate. Default: the title, then ` · <subtitle>` when there is one.
+     */
+    sourceTitle?: string;
 }
 
 export declare function CitedRecordList({ records, sections, onOpen, onViewConnections, viewConnectionsLabel, sourcesLabel, footnote, className, 'data-testid': testId, }: CitedRecordListProps): JSX.Element | null;
@@ -5002,6 +5008,9 @@ export declare interface CitedRecordSection {
     type: RecordResultType;
     title: string;
 }
+
+/** The full reading of a cited source — its tooltip where the row truncates. */
+export declare function citedSourceTitle(record: CitedRecordItem): string;
 
 /** An X: "close", "dismiss". */
 export declare function CloseIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -6026,6 +6035,41 @@ export declare interface ConsultCardProps {
     flush?: boolean;
     className?: string;
     'data-testid'?: string;
+}
+
+/** The library's container thresholds, in one place (px). */
+export declare const CONTAINER_COMPACT_BELOW: {
+    /** A composer's `wide` breakpoint: below it `responsive="pane"` is one row. */
+    readonly pane: 600;
+    /** A plain page's header drops to compact below this container height. */
+    readonly header: 640;
+};
+
+/** THE rule: `size` under `compactBelow` is compact; unmeasured (null / ≤ 0) or no threshold is comfortable. */
+export declare function containerDensity(size: number | null | undefined, compactBelow: number | null | undefined): Density;
+
+export declare interface ContainerDensityOptions<T extends HTMLElement> {
+    /** The threshold for `density`. Omitted: `density` is always `comfortable` (the size is still measured). */
+    compactBelow?: number | null;
+    /** Measure the element itself (default) or its parent — the room it is given. */
+    of?: 'self' | 'parent';
+    /** Default `width`. */
+    axis?: 'width' | 'height';
+    /** `content` (default, the observer's content rect) or `border` (`getBoundingClientRect`). */
+    box?: 'content' | 'border';
+    /** Turn the observer off (nothing is measured; `size` holds its last value). Default true. */
+    enabled?: boolean;
+    /** Another ref that needs the same element (a roving-toolbar hook's, a forwarded ref). */
+    forward?: Ref<T>;
+}
+
+export declare interface ContainerDensityState<T extends HTMLElement> {
+    /** Attach to the element. Also fills `forward`. */
+    ref: (el: T | null) => void;
+    /** The measured size in px; `null` before the first measurement. */
+    size: number | null;
+    /** `containerDensity(size, compactBelow)`. */
+    density: Density;
 }
 
 /** The CSS variable fixed overlays read to stay clear of an open ContextColumn. */
@@ -7358,11 +7402,20 @@ export declare const DENSITIES: readonly Density[];
 
 export declare type Density = 'comfortable' | 'compact';
 
-/** Sets the density for everything under it that reads `useDensity()`. */
-export declare function DensityProvider({ value, children }: DensityProviderProps): JSX.Element;
+/** Sets the density for everything under it. See the module comment. */
+export declare function DensityProvider({ density, value, children }: DensityProviderProps): JSX.Element;
 
 export declare interface DensityProviderProps {
-    value: Density;
+    /**
+     * The scale for everything under it (since 2.440.0): the type step, row and
+     * control heights. What an app shell sets once. Leaves the form inherited.
+     */
+    density?: Density;
+    /**
+     * The scale AND the form (2.437.0): a region whose chrome folds — a side
+     * pane, a canvas column. Wins over `density` when both are given.
+     */
+    value?: Density;
     children: ReactNode;
 }
 
@@ -7479,7 +7532,7 @@ export declare interface DetailHeaderProps {
     'data-testid'?: string;
 }
 
-export declare function DetailSection({ title, hint, actions, first, variant, size, description, children, className, 'data-testid': testId, }: DetailSectionProps): JSX.Element;
+export declare function DetailSection({ title, hint, actions, first, variant, size: sizeProp, description, children, className, 'data-testid': testId, }: DetailSectionProps): JSX.Element;
 
 export declare interface DetailSectionProps {
     title: string;
@@ -8581,7 +8634,7 @@ export declare interface EmojiShortcode {
     keywords?: readonly string[];
 }
 
-export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, actions, testId, actionTestId, tone, className, size, density, align, actionsDirection, details, }: EmptyStateProps): JSX.Element;
+export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, actions, testId, actionTestId, tone, className, size: sizeProp, layout, density, align, actionsDirection, details, }: EmptyStateProps): JSX.Element;
 
 export declare interface EmptyStateAction {
     /** Visible label on the action button or link. */
@@ -8673,9 +8726,20 @@ export declare interface EmptyStateProps {
      * small for the 220px block, reach for `InlinePlaceholder`.
      */
     className?: string;
-    /** Block scale. Default `md`. See `EmptyStateSize`. */
+    /**
+     * Block scale. Default: the density's — `sm` under the compact density
+     * (`DensityProvider density="compact"`, since 2.440.0), else `md`. An
+     * explicit `size="sm"` is a deprecated override; `md` and `lg` stay.
+     * See `EmptyStateSize`.
+     */
     size?: EmptyStateSize;
-    /** Layout density. Default `default`. See `EmptyStateDensity`. */
+    /**
+     * `block` (default): the glyph over the title over the description.
+     * `line`: the single quiet line (see `EmptyStateDensity`). Since 2.440.0 —
+     * the layout is not a density, so it no longer borrows the word.
+     */
+    layout?: 'block' | 'line';
+    /** @deprecated since 2.440.0 — `layout="line"` (`compact`) / `layout="block"` (`default`). */
     density?: EmptyStateDensity;
     /**
      * `center` (default): the centred block. `start`: left-aligned, with no
@@ -10653,7 +10717,7 @@ export declare interface HangoutSpotlightProps {
 export declare const HEADER_COLLAPSE_BELOW_PX = 480;
 
 /** Below this container height a plain page drops to compact. */
-export declare const HEADER_COMPACT_BELOW_PX = 640;
+export declare const HEADER_COMPACT_BELOW_PX: 640;
 
 /** Where the chevron is remembered: `uic:header-density:<headerId>:<rich|plain>`. */
 export declare const HEADER_DENSITY_STORAGE_PREFIX = "uic:header-density:";
@@ -14345,7 +14409,7 @@ export declare interface PageHeaderTab {
     disabled?: boolean;
 }
 
-export declare function PageSection({ title, description, actions, children, count, countTone, size, className, 'data-testid': testId, }: PageSectionProps): JSX.Element;
+export declare function PageSection({ title, description, actions, children, count, countTone, size: sizeProp, className, 'data-testid': testId, }: PageSectionProps): JSX.Element;
 
 export declare interface PageSectionProps {
     title: string;
@@ -19280,7 +19344,7 @@ export declare interface SectionReview {
 /** Specialized section renderer type — extends beyond the base `type` for richer UIs. */
 export declare type SectionType = 'tasks' | 'rich-text' | 'decisions' | 'timeline' | 'checklist' | 'rating' | 'voting';
 
-export declare function SegmentedControl({ options, value, onChange, size, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, disabled, fullWidth, tone, iconOnly, className, 'data-testid': testId, }: SegmentedControlProps): JSX.Element;
+export declare function SegmentedControl({ options, value, onChange, size: sizeProp, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, disabled, fullWidth, tone, iconOnly, className, 'data-testid': testId, }: SegmentedControlProps): JSX.Element;
 
 export declare interface SegmentedControlProps {
     options: SegmentOption[];
@@ -20501,7 +20565,7 @@ export declare interface StatsCardProps {
     style?: CSSProperties;
 }
 
-export declare function StatStrip({ items, frameless, connectors, variant, size, className, 'aria-label': ariaLabel, 'data-testid': testId, }: StatStripProps): JSX.Element;
+export declare function StatStrip({ items, frameless, connectors, variant, size: sizeProp, className, 'aria-label': ariaLabel, 'data-testid': testId, }: StatStripProps): JSX.Element;
 
 /** A labelled arrow between two clusters — "Compact", "Publish". */
 export declare interface StatStripConnector {
@@ -20530,6 +20594,13 @@ export declare interface StatStripItem {
         value: number;
         max: number;
     } | null;
+    /**
+     * `line` only (since 2.440.0): a small inline track drawn after the label
+     * in place of the `progress` bar — a compact `WorkflowStepper` reading
+     * "L1 ✓ — L2 ● — L3 ○" where a bar against a level ladder would be a
+     * continuous reading of a stepped fact. Wins over `progress`.
+     */
+    track?: ReactNode;
 }
 
 export declare interface StatStripProps {
@@ -21303,7 +21374,7 @@ export declare interface TabItem {
     testId?: string;
 }
 
-export declare function Table({ children, className, size, ...rest }: TableProps): JSX.Element;
+export declare function Table({ children, className, size: sizeProp, ...rest }: TableProps): JSX.Element;
 
 export declare function TableBody({ children, className, ...rest }: TableBodyProps): JSX.Element;
 
@@ -22933,6 +23004,9 @@ declare interface UseActivityBusReturn {
      error: string | null;
  }
 
+ /** Measures an element (or its parent) and gives the density its room implies. */
+ export declare function useContainerDensity<T extends HTMLElement>(options?: ContainerDensityOptions<T>): ContainerDensityState<T>;
+
  export declare function useCRDT(options: UseCRDTOptions): UseCRDTReturn;
 
  declare interface UseCRDTOptions {
@@ -22980,8 +23054,27 @@ declare interface UseActivityBusReturn {
      deleteType: (id: string) => void;
  }
 
- /** The density to draw at: `override` when given, else the provider's, else `comfortable`. */
+ /** The scale to draw at: `override` when given, else the provider's, else `comfortable`. */
  export declare function useDensity(override?: Density | null): Density;
+
+ /**
+  * The form to draw at (since 2.440.0): `override` when given, else the
+  * nearest `DensityProvider value`, else `comfortable`. Read by chrome that
+  * folds (a header's one row, a composer's pane form) — never by the shell's
+  * `density` alone.
+  */
+ export declare function useDensityForm(override?: Density | null): Density;
+
+ /**
+  * The size a composite draws at. An explicit `size` wins (an override); when
+  * it is the size the compact density names, it is deprecated and warns once
+  * in development. Otherwise the scale picks `sizes.compact` or
+  * `sizes.comfortable`.
+  */
+ export declare function useDensitySize<S extends string>(component: string, size: S | undefined, sizes: {
+     comfortable: S;
+     compact: S;
+ }): S;
 
  /**
   * Read the surrounding dock, if any. `null` means "standalone" — the body
@@ -25597,11 +25690,18 @@ declare interface UseActivityBusReturn {
       active: boolean;
   }
 
-  export declare function WorkflowStepper({ steps, size, className, 'data-testid': testId }: WorkflowStepperProps): JSX.Element;
+  export declare function WorkflowStepper({ steps, size: sizeProp, className, 'aria-label': ariaLabel, 'data-testid': testId }: WorkflowStepperProps): JSX.Element;
 
   export declare interface WorkflowStepperProps {
       steps: WorkflowStep[];
-      size?: 'sm' | 'md';
+      /**
+       * Default: the density's — `compact` under `DensityProvider density="compact"`,
+       * else `md`. `sm` (10px labels, off the app's scale) is deprecated since
+       * 2.440.0; `compact` and `md` stay as explicit overrides.
+       */
+      size?: 'sm' | 'md' | 'compact';
+      /** Names the track for assistive tech ("Level L1 of target L3"). */
+      'aria-label'?: string;
       className?: string;
       'data-testid'?: string;
   }

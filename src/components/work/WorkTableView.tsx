@@ -13,6 +13,7 @@ import { IconButton } from '../ui/IconButton';
 import { CheckIcon, ChevronIcon } from '../ui/Icons';
 import { Table, TableBody, TableHead, TableTd as Td, TableTh as Th, TableRow as Tr } from '../ui/Table';
 import { WorkListToolbar, type WorkListItem, type WorkListToolbarProps, type WorkListViewProps } from './WorkListView';
+import { DensityProvider } from '../shared/Density';
 
 export type WorkTableGrouping = 'status' | 'owner' | 'type';
 
@@ -75,7 +76,7 @@ export function WorkTableView({
       toolbarLayout="inline" filters={filters} filterFacets={filterFacets} activeFilterCount={activeFilterCount}
       onClearFilters={onClearFilters} className="mb-3 max-w-[420px]" />
     {loading ? <LoadingState label="Loading work…" /> : error ? <ErrorState title="Work unavailable" body={error}
-      action={onRetry ? <Button size="sm" onClick={onRetry}>Try again</Button> : undefined} /> : !items.length ? <EmptyState size="sm" title={emptyLabel} /> : <>
+      action={onRetry ? <Button size="sm" onClick={onRetry}>Try again</Button> : undefined} /> : !items.length ? <DensityProvider density="compact"><EmptyState title={emptyLabel} /></DensityProvider> : <>
       <div className="overflow-x-auto">
         <Table className="min-w-[620px] border-collapse text-left" aria-label={`Work items grouped by ${groupBy}`}>
           <TableHead className="border-t border-border bg-transparent"><Tr>

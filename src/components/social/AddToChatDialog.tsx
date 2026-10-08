@@ -16,6 +16,7 @@ import { Avatar } from '../shared/Avatar';
 import { CloseIcon } from '../ui/Icons';
 import { cn } from '../../lib/cn';
 import type { MembershipHistory, MembershipHistoryMode } from './MembershipNotice';
+import { DensityProvider } from '../shared/Density';
 
 export interface AddToChatPerson {
   id: string;
@@ -220,8 +221,7 @@ export function AddToChatDialog({
           hint={mode === 'days' ? undefined : HISTORY_HINT[mode]}
           data-testid={`${testId}-history-field`}
         >
-          <SegmentedControl
-            size="sm"
+          <DensityProvider density="compact"><SegmentedControl
             fullWidth
             disabled={inert}
             aria-label="How much chat history they get"
@@ -229,7 +229,7 @@ export function AddToChatDialog({
             value={mode}
             onChange={(v) => setMode(v as MembershipHistoryMode)}
             data-testid={`${testId}-history`}
-          />
+          /></DensityProvider>
         </PopoverField>
       )}
 

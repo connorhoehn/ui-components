@@ -1,14 +1,14 @@
 import { t as e } from "../cn-D4QmbyEy.js";
 import { n as t } from "../Button-C2OEUpX-.js";
-import { i as n, r } from "../Tabs-DqkWBCTi.js";
-import { r as i } from "../Density-Bm-JmcDy.js";
-import { n as a } from "../Text-BA4t3u5l.js";
+import { i as n } from "../Density-BgubVeSf.js";
+import { o as r, s as i } from "../Tabs-5OOt62a7.js";
+import { n as a } from "../Text-82JZ-0H8.js";
 import { t as o } from "../Select-C6OGjVyH.js";
 import { a as s, c, i as l, l as u, n as ee, r as d, t as f } from "../composerSendError-D9zJtYFp.js";
 import { a as p, i as m, n as te, r as ne, t as h } from "../composerContext-BLn1-Nao.js";
-import { a as re, c as ie, i as g, l as _, n as ae, o as v, r as oe, s as y, t as b, u as se } from "../RichChatComposer-BV9NS6eU.js";
-import { t as ce } from "../ContextComposer-Cafk4c1I.js";
-import { t as le } from "../AgentComposerDock-DcWx3MYj.js";
+import { a as re, c as ie, i as g, l as _, n as ae, o as v, r as oe, s as y, t as b, u as se } from "../RichChatComposer-C1MzXjUD.js";
+import { t as ce } from "../ContextComposer-C-Hbo0Lb.js";
+import { t as le } from "../AgentComposerDock-Bd1qkWte.js";
 import { createContext as ue, useCallback as x, useContext as de, useEffect as S, useMemo as C, useRef as w, useState as T, useSyncExternalStore as E } from "react";
 import { jsx as D, jsxs as O } from "react/jsx-runtime";
 //#region src/components/social/conversationInputRegistry.ts
@@ -135,18 +135,18 @@ function I() {
 		present: t
 	};
 }
-function ge({ label: e, onFocus: r, "data-testid": i = "pane-input-handoff" }) {
-	return /* @__PURE__ */ D(n, {
+function ge({ label: e, onFocus: n, "data-testid": r = "pane-input-handoff" }) {
+	return /* @__PURE__ */ D(i, {
 		gap: "none",
 		className: "border-t border-border px-3 py-2",
-		"data-testid": i,
+		"data-testid": r,
 		children: /* @__PURE__ */ O(t, {
 			variant: "secondary",
 			size: "sm",
 			fullWidth: !0,
-			onClick: r,
+			onClick: n,
 			title: `Write in ${e}`,
-			"data-testid": `${i}-focus`,
+			"data-testid": `${r}-focus`,
 			children: ["Reply in ", e]
 		})
 	});
@@ -374,7 +374,7 @@ function H(e) {
 	return t.displayName = "ConversationComposer", t;
 }
 function Ie({ rm: t, channel: o, chat: c, context: l, capabilities: u, identity: ee, offline: d, recipients: p, defaultRecipient: m, recipient: te, onRecipientChange: ne, commands: h = [], onAgent: re, callBlock: ie, reply: g, mode: _, onModeChange: ae, defaultMode: v, draftKey: oe, persistDraft: y = !0, claim: b = !1, answersFocus: se = !1, onReveal: le, disabled: ue, offModes: de, composerRef: E, onDraftChange: k, defaultDraft: A, draft: j, above: M, modeRowEnd: N, references: P, onRemoveReference: F, modePlaceholders: pe, contextChip: he, sendWithReferencesOnly: I, console: ge, "data-testid": L = "conversation-composer", ...Ce }) {
-	let z = i() === "compact", B = ee?.displayName || "You", V = oe ?? o ?? `${l.kind}:${l.id}`, De = u.readOnlyReason || "You can read this conversation but not post to it.", H = C(() => {
+	let z = n() === "compact", B = ee?.displayName || "You", V = oe ?? o ?? `${l.kind}:${l.id}`, De = u.readOnlyReason || "You can read this conversation but not post to it.", H = C(() => {
 		let e = p ?? (o ? [{
 			id: "discussion",
 			label: l.title || "This conversation",
@@ -565,7 +565,7 @@ function Ie({ rm: t, channel: o, chat: c, context: l, capabilities: u, identity:
 		size: "md",
 		className: "min-w-0 max-w-[max(9rem,min(30rem,calc(100cqw-22rem)))] flex-nowrap p-0",
 		"data-testid": "rich-chat-composer-references"
-	}) : null, ft = Re && W ? [...H, W] : H, pt = K === "chat" && ft.length > 1, mt = K === "chat" && J && qe && Je && Ke, ht = K === "chat" && ft.length > 1 ? W?.unavailableReason ?? (W ? null : "Choose a destination.") : null, gt = K === "chat" ? W?.error ?? null : null, _t = pt || ht || tt || mt || gt || M != null && M !== !1 ? /* @__PURE__ */ O(n, {
+	}) : null, ft = Re && W ? [...H, W] : H, pt = K === "chat" && ft.length > 1, mt = K === "chat" && J && qe && Je && Ke, ht = K === "chat" && ft.length > 1 ? W?.unavailableReason ?? (W ? null : "Choose a destination.") : null, gt = K === "chat" ? W?.error ?? null : null, _t = pt || ht || tt || mt || gt || M != null && M !== !1 ? /* @__PURE__ */ O(i, {
 		gap: "xs",
 		children: [
 			M,

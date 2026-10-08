@@ -48,6 +48,7 @@ import {
   type PipelinesGroupBy,
   type PipelinesListEntry,
 } from './catalog';
+import { DensityProvider } from '../../shared/Density';
 
 export interface PipelinesListViewProps {
   entries: PipelinesListEntry[];
@@ -267,9 +268,8 @@ export function PipelinesListView({
     );
   } else if (visible.length === 0) {
     body = (
-      <EmptyState
+      <DensityProvider density="compact"><EmptyState
         testId={`${testId}-no-match`}
-        size="sm"
         title="No pipelines match"
         body={narrowed ? 'Try a different search, or clear the filters.' : undefined}
         actionLabel={narrowed ? 'Clear search and filters' : undefined}
@@ -281,7 +281,7 @@ export function PipelinesListView({
               }
             : undefined
         }
-      />
+      /></DensityProvider>
     );
   } else {
     body = (

@@ -307,7 +307,7 @@ function SplitInner({ children, before, after, paneTestId = 'side-pane', divider
   const extra = before != null || after != null;
   const title = registration?.title ?? '';
   const pane = shown && registration
-    ? <ChatSidePanelFrame size="sm" title={registration.title} {...(registration.subtitle ? { subtitle: registration.subtitle } : {})}
+    ? <DensityProvider density="compact"><ChatSidePanelFrame title={registration.title} {...(registration.subtitle ? { subtitle: registration.subtitle } : {})}
         closeLabel={registration.closeLabel ?? `Collapse ${registration.title.toLowerCase()}`} onClose={registration.onClose ?? host.collapse}
         actions={<Tooltip content={`Minimize ${title.toLowerCase()} to the edge`} placement="bottom">
           <IconButton size="md" aria-label={`Minimize ${title.toLowerCase()}`} aria-expanded onClick={host.toggleFolded}
@@ -315,7 +315,7 @@ function SplitInner({ children, before, after, paneTestId = 'side-pane', divider
         </Tooltip>}
         className="min-h-0 flex-1 border-l border-border bg-surface" data-testid={paneTestId}>
         <div ref={setSlot} className="flex h-full min-h-0 flex-col" data-testid={`${paneTestId}-slot`} />
-      </ChatSidePanelFrame>
+      </ChatSidePanelFrame></DensityProvider>
     : null;
   // Folded: the column gives way to a 44px strip with one control that
   // restores it (the folded primary rail's strip); the page takes the width.

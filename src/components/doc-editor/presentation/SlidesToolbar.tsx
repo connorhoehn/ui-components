@@ -47,6 +47,7 @@ import {
   type DeckTheme,
   type SlideLayout,
 } from './deckSpec';
+import { DensityProvider } from '../../shared/Density';
 
 /** The layouts the Insert menu offers, in the order a person reaches for them. */
 export const SLIDE_INSERTS: readonly SlideLayout[] = ['chart', 'quote', 'image', 'two-column'];
@@ -288,8 +289,7 @@ export function SlidesToolbar({
       )}
 
       {on('chart') && chart && onChartKindChange && (
-        <SegmentedControl
-          size="sm"
+        <DensityProvider density="compact"><SegmentedControl
           value={chart.kind}
           onChange={(value) => onChartKindChange(value as DeckChart['kind'])}
           options={[
@@ -299,7 +299,7 @@ export function SlidesToolbar({
           aria-label="Chart type"
           className="shrink-0"
           data-testid={`${testIdPrefix}-chart-kind`}
-        />
+        /></DensityProvider>
       )}
 
       {(onUndo || onRedo) && (

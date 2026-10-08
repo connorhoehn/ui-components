@@ -67,6 +67,7 @@
 // command (in warning colours, with its hint) to anyone who types it out, and a
 // menu that offers rows which cannot be picked teaches people to distrust it.
 
+import { CONTAINER_COMPACT_BELOW, containerDensity } from '../shared/ContainerDensity';
 import {
   forwardRef,
   useCallback,
@@ -678,13 +679,15 @@ export type ComposerRadius = 'none' | 'sm' | 'md' | 'lg' | 'xl';
  * - narrow (< 380): input and Send share ONE row; the toolbar sits behind an
  *   `Aa` toggle; the mode switch is the compact `1 2 3` pill.
  */
-export const COMPOSER_BREAKPOINTS = { narrow: 380, wide: 600 } as const;
+export const COMPOSER_BREAKPOINTS = { narrow: 380, wide: CONTAINER_COMPACT_BELOW.pane } as const;
 
 /** `null` — not measured yet — is wide: a first paint that hides controls and then shows them is worse than one frame of overflow. */
 export function composerSizeFor(width: number | null): ComposerSize {
   if (width === null) return 'wide';
   if (width < COMPOSER_BREAKPOINTS.narrow) return 'narrow';
-  if (width < COMPOSER_BREAKPOINTS.wide) return 'medium';
+  // Below `wide` is the container's compact density (the one rule,
+  // `containerDensity`): `responsive="pane"` folds to one row there.
+  if (containerDensity(width, COMPOSER_BREAKPOINTS.wide) === 'compact') return 'medium';
   return 'wide';
 }
 

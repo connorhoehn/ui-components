@@ -37,6 +37,7 @@
 
 import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { useDensitySize } from '../shared/Density';
 import { ArrowRightIcon, ChevronIcon } from '../ui/Icons';
 import type { Tone } from '../shared/tones';
 import { Avatar } from '../shared/Avatar';
@@ -241,11 +242,12 @@ export function ActionRowList({
   tone = 'neutral',
   accent = 'none',
   action,
-  size = 'md',
+  size: sizeProp,
   'aria-label': ariaLabel,
   className,
   'data-testid': testId = 'action-row-list',
 }: ActionRowListProps) {
+  const size = useDensitySize('ActionRowList', sizeProp, { comfortable: 'md', compact: 'sm' });
   if (items.length === 0 && emptyLabel == null && footer == null) return null;
   const toned = tone !== 'neutral';
   const hasColumns = !!columns && columns.length > 0;

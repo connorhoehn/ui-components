@@ -26,6 +26,17 @@ export interface CitedRecordItem extends RecordResultItem {
   n: number;
   /** Source numbers this row cites; default `[n]`. */
   citations?: number[];
+  /**
+   * The source's full text (since 2.440.0): the native tooltip of its
+   * numbered Sources button and of the row's title line, both of which
+   * truncate. Default: the title, then ` · <subtitle>` when there is one.
+   */
+  sourceTitle?: string;
+}
+
+/** The full reading of a cited source — its tooltip where the row truncates. */
+export function citedSourceTitle(record: CitedRecordItem): string {
+  return record.sourceTitle ?? (record.subtitle ? `${record.title} · ${record.subtitle}` : record.title);
 }
 
 export interface CitedRecordSection {
@@ -97,7 +108,7 @@ function CitedRow({ record, byNumber, onOpen }: { record: CitedRecordItem; byNum
     >
       <RecordMark record={record} size={person ? 36 : 32} />
       <Stack gap="none" className="min-w-0 flex-1">
-        <span className="truncate text-sm">
+        <span className="truncate text-sm" title={citedSourceTitle(record)}>
           <a
             href={record.href}
             className="font-medium text-text-primary hover:text-primary"
@@ -113,7 +124,7 @@ function CitedRow({ record, byNumber, onOpen }: { record: CitedRecordItem; byNum
           </a>
           {person && record.subtitle && <span className="text-text-secondary"> · {record.subtitle}</span>}
         </span>
-        {line && <span className="truncate text-xs text-text-tertiary">{line}</span>}
+        {line && <span className="truncate text-xs text-text-tertiary" {...(typeof line === 'string' ? { title: line } : {})}>{line}</span>}
       </Stack>
       {!person && record.status && <RecordStatus status={record.status} className="shrink-0" />}
       <Citations numbers={record.citations?.length ? record.citations : [record.n]} byNumber={byNumber} onOpen={onOpen} />
@@ -180,6 +191,7 @@ export function CitedRecordList({
                   className="gap-2"
                   onClick={() => onOpen(r)}
                   aria-label={`Source ${r.n}: ${r.title}`}
+                  title={citedSourceTitle(r)}
                 >
                   <Chip size="xs" tone="neutral">{r.n}</Chip>
                   <span className="max-w-56 truncate">{r.title}</span>

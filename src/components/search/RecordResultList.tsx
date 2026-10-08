@@ -26,6 +26,7 @@ import { IconButton } from '../ui/IconButton';
 import { ArrowRightIcon, ChevronIcon, ExternalLinkIcon, InfoIcon } from '../ui/Icons';
 import { Inline, Stack } from '../ui/Stack';
 import { RecordMark, RecordStatus, recordResultKey, type RecordResultItem } from './recordMarks';
+import { DensityProvider } from '../shared/Density';
 
 export interface RecordResultGroup {
   id: string;
@@ -267,7 +268,7 @@ export function RecordResultList({
   } else if (loading) {
     body = <LoadingState label="Searching…" />;
   } else if (!groups.some((g) => g.count > 0 || g.records.length > 0)) {
-    body = <EmptyState title={emptyState?.title ?? 'No matching records'} description={emptyState?.description} size="sm" />;
+    body = <DensityProvider density="compact"><EmptyState title={emptyState?.title ?? 'No matching records'} description={emptyState?.description} /></DensityProvider>;
   } else {
     const selected = new Set(selectedKeys);
     body = groups

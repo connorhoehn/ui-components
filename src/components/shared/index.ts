@@ -150,8 +150,11 @@ export * from './CardHeader';
 export { default as PageHeader } from './PageHeader';
 export * from './PageHeader';
 // Density (2.437.0): the library's one density vocabulary.
-export { DensityProvider, useDensity, DENSITIES } from './Density';
+export { DensityProvider, useDensity, useDensityForm, useDensitySize, DENSITIES } from './Density';
 export type { Density, DensityProviderProps } from './Density';
+// ContainerDensity (2.440.0): the one measuring primitive and the one rule from room to density.
+export { useContainerDensity, containerDensity, CONTAINER_COMPACT_BELOW } from './ContainerDensity';
+export type { ContainerDensityOptions, ContainerDensityState } from './ContainerDensity';
 // HoverCard (2.437.0): the non-modal, non-trapping card with the one hover timing.
 export { HoverCard, HOVER_CARD_OPEN_MS, HOVER_CARD_CLOSE_MS } from './HoverCard';
 export type { HoverCardProps, HoverCardTriggerProps, HoverCardWidth } from './HoverCard';
