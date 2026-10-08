@@ -529,6 +529,22 @@ export interface WorkActivityPresentation {
   /** Offers the close control. The host owns dismissal. */
   onClose?: () => void;
   /**
+   * Extra controls in the renderer's header row, before expand / pop-out /
+   * close — `WorkActivityHeader`'s `actions`. Drawn only with `title`.
+   */
+  headerActions?: ReactNode;
+  /**
+   * The header's quiet clause beside the activities control —
+   * `WorkActivityHeader`'s `viewNote`. Drawn only with `title`.
+   */
+  viewNote?: ReactNode;
+  /**
+   * Puts `WorkKindLegend` in the header row (after `headerActions`): every
+   * kind of work in `nodes` with its card chip and count, and the
+   * "N items · M links" count. Drawn only with `title`.
+   */
+  kindLegend?: boolean;
+  /**
    * "← Earlier work". The host shifts the window earlier; without it the
    * renderer steps the current window back by its own duration.
    */

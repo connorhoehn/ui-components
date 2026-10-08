@@ -3,28 +3,8 @@ import { IconButton } from '../../ui/IconButton';
 import { ChatIcon } from '../../ui/Icons';
 import { cn } from '../../../lib/cn';
 import { workPauseLabel } from './WorkStatus';
+import { WORK_NODE_KIND_ACCENT as ACCENT, WORK_NODE_KIND_ICONS as ICONS } from './workKinds';
 import type { WorkActivityNodeDetail, WorkGraphNodeData, WorkGraphSelection } from './types';
-
-const ICONS: Record<WorkGraphNodeData['kind'], string> = { project: '▱', terminal: '⌘', agent: '✦', run: '▶', document: '▤', change: '⌥', conversation: '◌', meeting: '◉', transcript: '▤', task: '☑' };
-
-/**
- * The accent bar says what KIND of work this is — the one channel that never
- * moves. Status owns the dot and, when something is wrong or in flight, the
- * border. Keeping them apart is why a finished meeting still reads as a
- * meeting.
- */
-const ACCENT: Record<WorkGraphNodeData['kind'], { bar: string; chip: string }> = {
-  meeting: { bar: 'bg-cat-human', chip: 'bg-cat-human/10 text-cat-human' },
-  conversation: { bar: 'bg-cat-human', chip: 'bg-cat-human/10 text-cat-human' },
-  transcript: { bar: 'bg-cat-sink', chip: 'bg-cat-sink/10 text-cat-sink' },
-  terminal: { bar: 'bg-cat-sink', chip: 'bg-cat-sink/10 text-cat-sink' },
-  document: { bar: 'bg-cat-source', chip: 'bg-cat-source/10 text-cat-source' },
-  project: { bar: 'bg-cat-source', chip: 'bg-cat-source/10 text-cat-source' },
-  task: { bar: 'bg-cat-source', chip: 'bg-cat-source/10 text-cat-source' },
-  run: { bar: 'bg-cat-ai', chip: 'bg-cat-ai/10 text-cat-ai' },
-  agent: { bar: 'bg-cat-ai', chip: 'bg-cat-ai/10 text-cat-ai' },
-  change: { bar: 'bg-cat-transform', chip: 'bg-cat-transform/10 text-cat-transform' },
-};
 
 /**
  * The host's preview is its own artwork at its own size. Give it the box and

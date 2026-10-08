@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.438.2
+
+- **Work graph — what the canvas is showing.** `WorkKindLegend` (`/graph`): every kind of work present, each with its card chip (the same accent map and glyph as `WorkActivityNode`, now shared in `workKinds`), its name and how many, plus the "N items · M links" count; kind names fold away in a narrow `@container` and stay as each item's accessible label and tooltip. `WORK_NODE_KIND_LABELS` and `workNodeKindCounts` exported. `WorkActivityPresentation` gains `headerActions`, `viewNote` and `kindLegend`, which the renderer's header row (drawn with `title`) passes to `WorkActivityHeader`'s `actions` / `viewNote` — so a host outside `ChatSidePanelFrame` gets the legend, its own controls and the clause without composing a second header. `WorkActivityHeader`'s title row is a container.
+
 ## 2.438.1
 
 - `SidePane`, from the consumer's first walk (the user: "keep the chat in the main content… just keep the dialogue thread there… collapse the panes and make the chat pane wider"): the pane **minimizes to a 44px strip** at the split's edge with one Restore control (the folded rail's strip), remembered per device (`<storageKey>.folded`); the frame's Minimize button, Enter/Space on the focused divider (`SplitPane onDividerActivate`) and the strip's Restore toggle it, and the page never remounts. The pane is **wider on demand**: its floor is 320px (`minSecondaryPx`) and its ceiling 60% of the split (`ratioMin` 0.4); the width is remembered **per pane** (`paneId`: `<storageKey>.ratio` for `page`, `<storageKey>.ratio.<paneId>` otherwise), and `widthPx` is now the opening width until the reader sizes it rather than a cap. `fitPrimaryPx` 840 keeps the fit threshold at a 1160px split. `useSidePaneHost()` adds `folded`, `toggleFolded` and `paneWidthPx` (the drawn width, so a canvas beside it can re-fit).

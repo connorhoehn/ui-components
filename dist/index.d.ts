@@ -24897,6 +24897,9 @@ declare interface UseActivityBusReturn {
    */
   export declare const WORK_ACTIVITY_DEFAULT_MAX_EFFORTS = 2;
 
+  /** What a reader calls each kind, in the legend's order (work, then who/where, then output). */
+  export declare const WORK_NODE_KIND_LABELS: Record<WorkGraphNodeKind, string>;
+
   /**
    * Asking a transcript a question. The graph renders the exchange and nothing
    * else: the host owns the model call, the grounding and the refusal.
@@ -25233,6 +25236,22 @@ declare interface UseActivityBusReturn {
       onPopOut?: () => void;
       /** Offers the close control. The host owns dismissal. */
       onClose?: () => void;
+      /**
+       * Extra controls in the renderer's header row, before expand / pop-out /
+       * close — `WorkActivityHeader`'s `actions`. Drawn only with `title`.
+       */
+      headerActions?: ReactNode;
+      /**
+       * The header's quiet clause beside the activities control —
+       * `WorkActivityHeader`'s `viewNote`. Drawn only with `title`.
+       */
+      viewNote?: ReactNode;
+      /**
+       * Puts `WorkKindLegend` in the header row (after `headerActions`): every
+       * kind of work in `nodes` with its card chip and count, and the
+       * "N items · M links" count. Drawn only with `title`.
+       */
+      kindLegend?: boolean;
       /**
        * "← Earlier work". The host shifts the window earlier; without it the
        * renderer steps the current window back by its own duration.
@@ -25768,6 +25787,24 @@ declare interface UseActivityBusReturn {
       className?: string;
   }
 
+  /**
+   * What the cards' colours and glyphs mean, and how much is on the canvas:
+   * every kind of work present (its card chip, its name, how many) and the
+   * "N items · M links" count. Painted from the same accent map as the cards.
+   *
+   * The kind names fold away in a narrow container (an ancestor `@container`,
+   * such as the activity header) — the chips keep their counts, and each item
+   * keeps its full name as its accessible label and tooltip.
+   */
+  export declare function WorkKindLegend({ nodes, edges, className, 'data-testid': testId }: WorkKindLegendProps): JSX.Element;
+
+  export declare interface WorkKindLegendProps {
+      nodes: readonly Pick<WorkGraphNodeData, 'kind'>[];
+      edges: readonly unknown[] | readonly WorkGraphEdgeData[];
+      className?: string;
+      'data-testid'?: string;
+  }
+
   export declare interface WorkListChip {
       label: string;
       tone?: ChipTone;
@@ -25958,6 +25995,12 @@ declare interface UseActivityBusReturn {
   }
 
   export declare function WorkNode({ node, selected, sharingFresh, onSelect, onOpen }: WorkNodeProps): JSX.Element;
+
+  /** The kinds present in `nodes`, in legend order, each with how many there are. */
+  export declare function workNodeKindCounts(nodes: readonly Pick<WorkGraphNodeData, 'kind'>[]): Array<{
+      kind: WorkGraphNodeKind;
+      count: number;
+  }>;
 
   /**
    * The detail pane for one selected node: chrome, a state banner, whichever
