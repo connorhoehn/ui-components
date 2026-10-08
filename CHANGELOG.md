@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.438.3
+
+- `ComposerReferences size="md"` (the full composer card's page-reference chip) draws its label at the 12px meta step (was 13px), on the app's one type scale — the chip is meta beside a 14px body, and a composer docked in a page's content column (the pane model's rule since 2.438) put it on every page's type sweep.
+
 ## 2.438.2
 
 - **Work graph — what the canvas is showing.** `WorkKindLegend` (`/graph`): every kind of work present, each with its card chip (the same accent map and glyph as `WorkActivityNode`, now shared in `workKinds`), its name and how many, plus the "N items · M links" count; kind names fold away in a narrow `@container` and stay as each item's accessible label and tooltip. `WORK_NODE_KIND_LABELS` and `workNodeKindCounts` exported. `WorkActivityPresentation` gains `headerActions`, `viewNote` and `kindLegend`, which the renderer's header row (drawn with `title`) passes to `WorkActivityHeader`'s `actions` / `viewNote` — so a host outside `ChatSidePanelFrame` gets the legend, its own controls and the clause without composing a second header. `WorkActivityHeader`'s title row is a container.

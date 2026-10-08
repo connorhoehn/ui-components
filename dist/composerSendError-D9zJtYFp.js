@@ -643,7 +643,7 @@ function y({ references: t, onRemove: a, removeLabel: o = v, className: c, size:
 		"data-testid": u,
 		className: e("flex flex-wrap items-center gap-1 px-2 py-1.5", c),
 		children: t.map((t) => {
-			let c = l === "md" ? "gap-1.5 rounded-md bg-surface-inset py-1 pl-2.5 pr-1.5 text-[13px]" : l === "sm" ? "py-1 text-xs" : "py-0.5 text-[11px]", m = t.icon ? /* @__PURE__ */ f("span", {
+			let c = l === "md" ? "gap-1.5 rounded-md bg-surface-inset py-1 pl-2.5 pr-1.5 text-xs" : l === "sm" ? "py-1 text-xs" : "py-0.5 text-[11px]", m = t.icon ? /* @__PURE__ */ f("span", {
 				"aria-hidden": "true",
 				className: "shrink-0",
 				children: t.icon

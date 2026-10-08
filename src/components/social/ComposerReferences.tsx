@@ -84,7 +84,7 @@ export function ComposerReferences({
     >
       {references.map((reference) => {
         const chipSize = size === 'md'
-          ? 'gap-1.5 rounded-md bg-surface-inset py-1 pl-2.5 pr-1.5 text-[13px]'
+          ? 'gap-1.5 rounded-md bg-surface-inset py-1 pl-2.5 pr-1.5 text-xs'
           : size === 'sm' ? 'py-1 text-xs' : 'py-0.5 text-[11px]';
         // A thing's own icon is data and is rendered as given; the fallback
         // glyph means "none chosen" and takes the colour of the text.

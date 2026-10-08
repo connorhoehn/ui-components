@@ -7,10 +7,10 @@ import { t as te } from "./Banner-8ngXUtJu.js";
 import { t as ne } from "./DropdownMenu-M27Ly7by.js";
 import { r as re } from "./TaskStrip-D9k1daM1.js";
 import { t as ie } from "./QuoteBlock-qqQqscMP.js";
-import { i as ae } from "./composerSendError-DYBOFD37.js";
+import { i as ae } from "./composerSendError-D9zJtYFp.js";
 import { a as o, i as oe, r as s } from "./composerContext-BLn1-Nao.js";
 import { i as se, t as ce } from "./FloatingComposerDock-ZezHreIm.js";
-import { r as le } from "./RichChatComposer-Cc5SJB7-.js";
+import { r as le } from "./RichChatComposer-C-Bjb8Vp.js";
 import { useCallback as c, useMemo as ue, useRef as l, useState as u } from "react";
 import { Fragment as d, jsx as f, jsxs as p } from "react/jsx-runtime";
 //#region src/components/social/ContextComposer.tsx
