@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.438.1
+
+- `SidePane`, from the consumer's first walk (the user: "keep the chat in the main content… just keep the dialogue thread there… collapse the panes and make the chat pane wider"): the pane **minimizes to a 44px strip** at the split's edge with one Restore control (the folded rail's strip), remembered per device (`<storageKey>.folded`); the frame's Minimize button, Enter/Space on the focused divider (`SplitPane onDividerActivate`) and the strip's Restore toggle it, and the page never remounts. The pane is **wider on demand**: its floor is 320px (`minSecondaryPx`) and its ceiling 60% of the split (`ratioMin` 0.4); the width is remembered **per pane** (`paneId`: `<storageKey>.ratio` for `page`, `<storageKey>.ratio.<paneId>` otherwise), and `widthPx` is now the opening width until the reader sizes it rather than a cap. `fitPrimaryPx` 840 keeps the fit threshold at a 1160px split. `useSidePaneHost()` adds `folded`, `toggleFolded` and `paneWidthPx` (the drawn width, so a canvas beside it can re-fit).
+
 ## 2.438.0
 
 The pane and rail models (train B of the 2026-10-07 consumer audit): one right-pane model and one rail model, so a consumer stops keeping four of each.

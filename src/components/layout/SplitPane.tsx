@@ -40,6 +40,8 @@ export interface SplitPaneProps {
   minSecondaryPx?: number;
   /** Names the divider for assistive tech, e.g. "Resize conversation and document". */
   dividerLabel?: string;
+  /** Enter / Space on the focused divider (2.438.1): a host's fold of the secondary pane. */
+  onDividerActivate?: () => void;
   className?: string;
   'data-testid'?: string;
 }
@@ -55,6 +57,7 @@ export function SplitPane({
   minPrimaryPx = 280,
   minSecondaryPx = 360,
   dividerLabel = 'Resize panes',
+  onDividerActivate,
   className,
   'data-testid': testId = 'split-pane',
 }: SplitPaneProps) {
@@ -98,6 +101,7 @@ export function SplitPane({
     else if (e.key === 'ArrowRight') { e.preventDefault(); setRatio(ratio + step); }
     else if (e.key === 'Home') { e.preventDefault(); setRatio(0); }
     else if (e.key === 'End') { e.preventDefault(); setRatio(1); }
+    else if ((e.key === 'Enter' || e.key === ' ') && onDividerActivate) { e.preventDefault(); onDividerActivate(); }
   };
 
   // A window that shrinks under a fixed ratio can push a pane below its floor;

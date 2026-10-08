@@ -44,6 +44,9 @@ import { SplitPane } from './SplitPane';
 import { ChatSidePanelFrame } from '../social/ChatSidePanelRegistry';
 import { DensityProvider, type Density } from '../shared/Density';
 import { Tabs, type TabItem } from '../shared/Tabs';
+import { Tooltip } from '../shared/Tooltip';
+import { IconButton } from '../ui/IconButton';
+import { ChevronIcon } from '../ui/Icons';
 
 // ─── Bounds ─────────────────────────────────────────────────────────────────
 
@@ -55,17 +58,17 @@ export interface SidePaneBounds {
   ratioMax: number;
   /** The page's floor while dragging (px). Default 520. */
   minPrimaryPx: number;
-  /** The pane's floor (px). Default 300. */
+  /** The pane's floor (px). Default 320. Its ceiling is `1 - ratioMin` of the split (60%). */
   minSecondaryPx: number;
   /**
    * The page needs this much beside an open pane (px) — a section rail and a
-   * readable content column — or the pane waits for `reveal()`. Default 860.
+   * readable content column — or the pane waits for `reveal()`. Default 840 (with the 320px pane: a 1160px split).
    */
   fitPrimaryPx: number;
 }
 
 export const SIDE_PANE_BOUNDS: SidePaneBounds = {
-  defaultRatio: 0.72, ratioMin: 0.4, ratioMax: 0.85, minPrimaryPx: 520, minSecondaryPx: 300, fitPrimaryPx: 860,
+  defaultRatio: 0.72, ratioMin: 0.4, ratioMax: 0.85, minPrimaryPx: 520, minSecondaryPx: 320, fitPrimaryPx: 840,
 };
 
 /** A stored ratio inside the bounds, else the default. */
@@ -104,8 +107,14 @@ export interface SidePaneRegistration {
   closeLabel?: string;
   /** The page owns the open state: the pane shows while registered and × calls this. */
   onClose?: () => void;
-  /** Bounds the pane's width (px) whatever the remembered ratio. */
+  /**
+   * The pane's width (px) until the reader sizes it: Search opens at 320–380px
+   * so its graph keeps the width. A drag (or the divider's arrow keys) is
+   * remembered per `paneId` and then wins, within 320px–60% of the split.
+   */
   widthPx?: { min: number; max: number };
+  /** Names the pane's remembered width (`<storageKey>.ratio.<paneId>`; `page` → `<storageKey>.ratio`). Default `page`. */
+  paneId?: string;
   /** The pane shows a selection of the page (a record, a detail) — a rail-depth level of its own. */
   explores?: boolean;
 }
@@ -120,10 +129,15 @@ interface HostValue {
   ratio: number;
   width: number | null;
   bounds: SidePaneBounds;
+  /** The reader sized this pane (its ratio is remembered). */
+  sized: boolean;
+  /** Folded to the 44px strip at the split's edge. */
+  folded: boolean;
   setWidth(width: number | null): void;
   setRatio(ratio: number): void;
   reveal(): void;
   collapse(): void;
+  toggleFolded(): void;
 }
 
 const HostContext = createContext<HostValue | null>(null);
@@ -137,7 +151,11 @@ function writeStored(key: string, value: string): void {
 }
 
 export interface SidePaneProviderProps {
-  /** Per-device memory: `<storageKey>.open` and `<storageKey>.ratio`. Default `uic.side-pane`. */
+  /**
+   * Per-device memory: `<storageKey>.open` (`1|0`), `<storageKey>.folded`
+   * (`1|0`, the 44px strip) and the width per pane, `<storageKey>.ratio`
+   * (`paneId` `page`) or `<storageKey>.ratio.<paneId>`. Default `uic.side-pane`.
+   */
   storageKey?: string;
   /** Open when nothing is remembered. Default true. */
   defaultOpen?: boolean;
@@ -146,7 +164,8 @@ export interface SidePaneProviderProps {
 }
 
 export function SidePaneProvider({ storageKey = 'uic.side-pane', defaultOpen = true, bounds: boundsOverride, children }: SidePaneProviderProps) {
-  const openKey = `${storageKey}.open`, ratioKey = `${storageKey}.ratio`;
+  const openKey = `${storageKey}.open`, foldKey = `${storageKey}.folded`;
+  const ratioKey = (paneId: string) => (paneId === 'page' ? `${storageKey}.ratio` : `${storageKey}.ratio.${paneId}`);
   const bounds = useMemo<SidePaneBounds>(() => ({ ...SIDE_PANE_BOUNDS, ...(boundsOverride ?? {}) }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [boundsOverride?.defaultRatio, boundsOverride?.ratioMin, boundsOverride?.ratioMax, boundsOverride?.minPrimaryPx, boundsOverride?.minSecondaryPx, boundsOverride?.fitPrimaryPx]);
@@ -162,7 +181,14 @@ export function SidePaneProvider({ storageKey = 'uic.side-pane', defaultOpen = t
     return () => setRegistration((current) => (current === next ? null : current));
   }, []);
   const [open, setOpen] = useState(() => readSidePaneOpen(readStored(openKey), defaultOpen));
-  const [ratio, setRatioState] = useState(() => readSidePaneRatio(readStored(ratioKey), bounds));
+  const [folded, setFolded] = useState(() => readStored(foldKey) === '1');
+  // Each pane's own remembered width: a drag on Search's pane is not the initiative's.
+  const paneId = registration?.paneId ?? 'page';
+  const [ratios, setRatios] = useState<Record<string, number | null>>({});
+  const storedRaw = paneId in ratios ? null : readStored(ratioKey(paneId));
+  const stored = paneId in ratios ? ratios[paneId]! : (storedRaw == null || storedRaw === '' ? null : readSidePaneRatio(storedRaw, bounds));
+  const sized = stored != null;
+  const ratio = stored ?? bounds.defaultRatio;
   const [revealed, setRevealed] = useState(false);
   const [width, setWidth] = useState<number | null>(null);
   const fits = sidePaneFits(width, bounds);
@@ -170,12 +196,22 @@ export function SidePaneProvider({ storageKey = 'uic.side-pane', defaultOpen = t
   useEffect(() => { setRevealed(false); }, [fits]);
   const pageOwned = !!registration?.onClose;
   const shown = !!registration && (open || pageOwned) && (fits || revealed);
-  const reveal = useCallback(() => { setOpen(true); writeStored(openKey, '1'); setRevealed(true); }, [openKey]);
+  const reveal = useCallback(() => {
+    setOpen(true); writeStored(openKey, '1'); setRevealed(true);
+    setFolded(false); writeStored(foldKey, '0');
+  }, [openKey, foldKey]);
   const collapse = useCallback(() => { setOpen(false); writeStored(openKey, '0'); setRevealed(false); }, [openKey]);
-  const setRatio = useCallback((next: number) => { setRatioState(next); writeStored(ratioKey, String(next)); }, [ratioKey]);
+  const toggleFolded = useCallback(() => setFolded((was) => { writeStored(foldKey, was ? '0' : '1'); return !was; }), [foldKey]);
+  const setRatio = useCallback((next: number) => {
+    const clamped = Math.min(bounds.ratioMax, Math.max(bounds.ratioMin, next));
+    setRatios((was) => ({ ...was, [paneId]: clamped }));
+    writeStored(ratioKey(paneId), String(clamped));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bounds.ratioMax, bounds.ratioMin, paneId, storageKey]);
   const value = useMemo<HostValue>(() => ({
-    node, registration, register, open: open || pageOwned, shown, fits, ratio, width, bounds, setWidth, setRatio, reveal, collapse,
-  }), [node, registration, register, open, pageOwned, shown, fits, ratio, width, bounds, setRatio, reveal, collapse]);
+    node, registration, register, open: open || pageOwned, shown, fits, ratio, width, bounds, sized, folded,
+    setWidth, setRatio, reveal, collapse, toggleFolded,
+  }), [node, registration, register, open, pageOwned, shown, fits, ratio, width, bounds, sized, folded, setRatio, reveal, collapse, toggleFolded]);
   return <HostContext.Provider value={value}>{children}</HostContext.Provider>;
 }
 
@@ -192,9 +228,17 @@ export interface SidePaneHostState {
   reveal(): void;
   /** Close it (remembered); a page-owned pane's × is the page's. */
   collapse(): void;
+  /** Folded to the 44px strip at the split's edge (remembered). */
+  folded: boolean;
+  /** Fold to the strip / restore from it. */
+  toggleFolded(): void;
+  /** The pane's drawn width in px (0 while folded or off screen, null unmeasured) — a canvas beside it re-fits when it changes. */
+  paneWidthPx: number | null;
 }
 
-const NO_HOST: SidePaneHostState = { registered: false, asked: false, shown: false, explored: false, reveal: () => {}, collapse: () => {} };
+const NO_HOST: SidePaneHostState = {
+  registered: false, asked: false, shown: false, explored: false, reveal: () => {}, collapse: () => {}, folded: false, toggleFolded: () => {}, paneWidthPx: 0,
+};
 
 /** What the shell reads: whether a pane is asked for, shown, exploring a selection. */
 export function useSidePaneHost(): SidePaneHostState {
@@ -203,7 +247,12 @@ export function useSidePaneHost(): SidePaneHostState {
     if (!host) return NO_HOST;
     const registered = !!host.registration;
     const asked = registered && host.open;
-    return { registered, asked, shown: host.shown, explored: asked && !!host.registration?.explores, reveal: host.reveal, collapse: host.collapse };
+    const effective = host.sized ? host.ratio : boundedSidePaneRatio(host.ratio, host.width, host.registration?.widthPx);
+    const paneWidthPx = !host.shown || host.folded ? 0 : host.width == null ? null : Math.round((1 - effective) * host.width);
+    return {
+      registered, asked, shown: host.shown, explored: asked && !!host.registration?.explores, reveal: host.reveal, collapse: host.collapse,
+      folded: host.folded, toggleFolded: host.toggleFolded, paneWidthPx,
+    };
   }, [host]);
 }
 
@@ -256,23 +305,47 @@ function SplitInner({ children, before, after, paneTestId = 'side-pane', divider
     else node.remove();
   }, [node, slot, shown]);
   const extra = before != null || after != null;
+  const title = registration?.title ?? '';
   const pane = shown && registration
     ? <ChatSidePanelFrame size="sm" title={registration.title} {...(registration.subtitle ? { subtitle: registration.subtitle } : {})}
         closeLabel={registration.closeLabel ?? `Collapse ${registration.title.toLowerCase()}`} onClose={registration.onClose ?? host.collapse}
+        actions={<Tooltip content={`Minimize ${title.toLowerCase()} to the edge`} placement="bottom">
+          <IconButton size="md" aria-label={`Minimize ${title.toLowerCase()}`} aria-expanded onClick={host.toggleFolded}
+            icon={<ChevronIcon dir="right" size={14} />} data-testid={`${paneTestId}-minimize`} />
+        </Tooltip>}
         className="min-h-0 flex-1 border-l border-border bg-surface" data-testid={paneTestId}>
         <div ref={setSlot} className="flex h-full min-h-0 flex-col" data-testid={`${paneTestId}-slot`} />
       </ChatSidePanelFrame>
     : null;
-  const secondary = pane || extra
+  // Folded: the column gives way to a 44px strip with one control that
+  // restores it (the folded primary rail's strip); the page takes the width.
+  const folded = host.folded && (shown || extra);
+  const secondary = folded ? null : pane || extra
     ? (pane && !extra ? pane
       : <div className="flex h-full min-h-0 flex-col bg-surface" data-testid={`${testId}-stack`}>{before}{pane}{after}</div>)
     : null;
-  const ratio = shown ? boundedSidePaneRatio(host.ratio, width, registration?.widthPx) : host.ratio;
+  // Until the reader sizes it, a width-bounded pane opens inside its bounds.
+  const ratio = shown && !host.sized ? boundedSidePaneRatio(host.ratio, width, registration?.widthPx) : host.ratio;
+  // One tree whether or not the pane is folded, so the page never remounts.
   return (
-    <div ref={setMeasured} className={cn('flex h-full min-h-0 min-w-0 flex-col', className)}>
-      <SplitPane primary={children} secondary={secondary} ratio={ratio} onRatioChange={host.setRatio}
-        minPrimaryPx={host.bounds.minPrimaryPx} minSecondaryPx={host.bounds.minSecondaryPx} dividerLabel={dividerLabel}
-        className="h-full min-h-0" data-testid={testId} />
+    <div ref={setMeasured} className={cn('flex h-full min-h-0 min-w-0 flex-row', className)}>
+      <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col">
+        <SplitPane primary={children} secondary={secondary} ratio={ratio} onRatioChange={host.setRatio}
+          onDividerActivate={host.toggleFolded}
+          minPrimaryPx={host.bounds.minPrimaryPx} minSecondaryPx={host.bounds.minSecondaryPx} dividerLabel={dividerLabel}
+          className="h-full min-h-0" data-testid={testId} />
+      </div>
+      {folded && (
+        // Folded: a 44px strip with one control that restores the column (the
+        // folded primary rail's strip); the page takes the width.
+        <aside aria-label={`${title || 'Side pane'} (minimized)`} className="flex w-11 min-w-11 shrink-0 flex-col items-center border-l border-border bg-surface py-1.5"
+          data-testid={`${paneTestId}-strip`}>
+          <Tooltip content={`Restore ${title.toLowerCase() || 'the pane'}`} placement="left">
+            <IconButton size="md" variant="ghost" aria-label={`Restore ${title.toLowerCase() || 'the pane'}`} aria-expanded={false}
+              onClick={host.toggleFolded} icon={<ChevronIcon dir="left" size={14} />} data-testid={`${paneTestId}-restore`} />
+          </Tooltip>
+        </aside>
+      )}
     </div>
   );
 }
@@ -340,7 +413,7 @@ export interface SidePaneProps extends SidePaneRegistration {
  * column is unchanged).
  */
 export function SidePane({
-  title, subtitle, closeLabel, onClose, widthPx, explores = false,
+  title, subtitle, closeLabel, onClose, widthPx, paneId, explores = false,
   tabs, value, onValueChange, trailing, footer, density = 'compact', children, 'data-testid': testId = 'side-pane-content',
 }: SidePaneProps) {
   const host = useContext(HostContext);
@@ -350,10 +423,10 @@ export function SidePane({
   const owned = !!onClose;
   const wMin = widthPx?.min, wMax = widthPx?.max;
   useEffect(() => register?.({
-    title, ...(subtitle ? { subtitle } : {}), ...(closeLabel ? { closeLabel } : {}), explores,
+    title, ...(subtitle ? { subtitle } : {}), ...(closeLabel ? { closeLabel } : {}), ...(paneId ? { paneId } : {}), explores,
     ...(owned ? { onClose: () => closeRef.current?.() } : {}),
     ...(wMin != null && wMax != null ? { widthPx: { min: wMin, max: wMax } } : {}),
-  }), [register, title, subtitle, closeLabel, explores, owned, wMin, wMax]);
+  }), [register, title, subtitle, closeLabel, paneId, explores, owned, wMin, wMax]);
   if (!host?.node) return null;
   const tabRow = tabs && tabs.length > 0 && value != null && onValueChange
     ? <PaneHeader tabs={tabs.map((t) => ({ ...t, testId: t.testId ?? `${testId}-tab-${t.id}` }))} value={value} onValueChange={onValueChange}

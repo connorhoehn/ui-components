@@ -19669,7 +19669,7 @@ export declare interface SidebarSectionProps {
  * into its right column. Outside a host it renders nothing (the page's own
  * column is unchanged).
  */
-export declare function SidePane({ title, subtitle, closeLabel, onClose, widthPx, explores, tabs, value, onValueChange, trailing, footer, density, children, 'data-testid': testId, }: SidePaneProps): ReactPortal | null;
+export declare function SidePane({ title, subtitle, closeLabel, onClose, widthPx, paneId, explores, tabs, value, onValueChange, trailing, footer, density, children, 'data-testid': testId, }: SidePaneProps): ReactPortal | null;
 
 export declare interface SidePaneBounds {
     /** The split's ratio (page share) when nothing is remembered. Default 0.72. */
@@ -19679,11 +19679,11 @@ export declare interface SidePaneBounds {
     ratioMax: number;
     /** The page's floor while dragging (px). Default 520. */
     minPrimaryPx: number;
-    /** The pane's floor (px). Default 300. */
+    /** The pane's floor (px). Default 320. Its ceiling is `1 - ratioMin` of the split (60%). */
     minSecondaryPx: number;
     /**
      * The page needs this much beside an open pane (px) — a section rail and a
-     * readable content column — or the pane waits for `reveal()`. Default 860.
+     * readable content column — or the pane waits for `reveal()`. Default 840 (with the 320px pane: a 1160px split).
      */
     fitPrimaryPx: number;
 }
@@ -19704,6 +19704,12 @@ export declare interface SidePaneHostState {
     reveal(): void;
     /** Close it (remembered); a page-owned pane's × is the page's. */
     collapse(): void;
+    /** Folded to the 44px strip at the split's edge (remembered). */
+    folded: boolean;
+    /** Fold to the strip / restore from it. */
+    toggleFolded(): void;
+    /** The pane's drawn width in px (0 while folded or off screen, null unmeasured) — a canvas beside it re-fits when it changes. */
+    paneWidthPx: number | null;
 }
 
 /** Reads the panel a query string names, `doc` first; null when it names none. */
@@ -19735,7 +19741,11 @@ export declare interface SidePaneProps extends SidePaneRegistration {
 export declare function SidePaneProvider({ storageKey, defaultOpen, bounds: boundsOverride, children }: SidePaneProviderProps): JSX.Element;
 
 export declare interface SidePaneProviderProps {
-    /** Per-device memory: `<storageKey>.open` and `<storageKey>.ratio`. Default `uic.side-pane`. */
+    /**
+     * Per-device memory: `<storageKey>.open` (`1|0`), `<storageKey>.folded`
+     * (`1|0`, the 44px strip) and the width per pane, `<storageKey>.ratio`
+     * (`paneId` `page`) or `<storageKey>.ratio.<paneId>`. Default `uic.side-pane`.
+     */
     storageKey?: string;
     /** Open when nothing is remembered. Default true. */
     defaultOpen?: boolean;
@@ -19752,11 +19762,17 @@ export declare interface SidePaneRegistration {
     closeLabel?: string;
     /** The page owns the open state: the pane shows while registered and × calls this. */
     onClose?: () => void;
-    /** Bounds the pane's width (px) whatever the remembered ratio. */
+    /**
+     * The pane's width (px) until the reader sizes it: Search opens at 320–380px
+     * so its graph keeps the width. A drag (or the divider's arrow keys) is
+     * remembered per `paneId` and then wins, within 320px–60% of the split.
+     */
     widthPx?: {
         min: number;
         max: number;
     };
+    /** Names the pane's remembered width (`<storageKey>.ratio.<paneId>`; `page` → `<storageKey>.ratio`). Default `page`. */
+    paneId?: string;
     /** The pane shows a selection of the page (a record, a detail) — a rail-depth level of its own. */
     explores?: boolean;
 }
@@ -20064,7 +20080,7 @@ export declare function splitEffectLabel(label: string): {
     text: string;
 };
 
-export declare function SplitPane({ primary, secondary, defaultRatio, ratio: controlled, onRatioChange, minPrimaryPx, minSecondaryPx, dividerLabel, className, 'data-testid': testId, }: SplitPaneProps): JSX.Element;
+export declare function SplitPane({ primary, secondary, defaultRatio, ratio: controlled, onRatioChange, minPrimaryPx, minSecondaryPx, dividerLabel, onDividerActivate, className, 'data-testid': testId, }: SplitPaneProps): JSX.Element;
 
 export declare interface SplitPaneProps {
     primary: ReactNode;
@@ -20080,6 +20096,8 @@ export declare interface SplitPaneProps {
     minSecondaryPx?: number;
     /** Names the divider for assistive tech, e.g. "Resize conversation and document". */
     dividerLabel?: string;
+    /** Enter / Space on the focused divider (2.438.1): a host's fold of the secondary pane. */
+    onDividerActivate?: () => void;
     className?: string;
     'data-testid'?: string;
 }

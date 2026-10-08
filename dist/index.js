@@ -2438,56 +2438,56 @@ function Rv({ rail: e, children: t, aside: n, railWidth: r = "md", header: i, pa
 //#endregion
 //#region src/components/layout/SplitPane.tsx
 var zv = (e, t, n) => Math.min(n, Math.max(t, e));
-function Bv({ primary: e, secondary: t, defaultRatio: n = .55, ratio: r, onRatioChange: i, minPrimaryPx: a = 280, minSecondaryPx: o = 360, dividerLabel: s = "Resize panes", className: c, "data-testid": l = "split-pane" }) {
-	let u = J(null), [d, f] = Y(n), p = r ?? d, m = J(!1), h = W((e) => {
-		let t = u.current?.getBoundingClientRect().width ?? 0, n = t > 0 ? a / t : .15, s = t > 0 ? 1 - o / t : .85, c = Math.round(zv(e, Math.min(n, s), Math.max(n, s)) * 1e3) / 1e3;
-		r === void 0 && f(c), i?.(c);
+function Bv({ primary: e, secondary: t, defaultRatio: n = .55, ratio: r, onRatioChange: i, minPrimaryPx: a = 280, minSecondaryPx: o = 360, dividerLabel: s = "Resize panes", onDividerActivate: c, className: l, "data-testid": u = "split-pane" }) {
+	let d = J(null), [f, p] = Y(n), m = r ?? f, h = J(!1), g = W((e) => {
+		let t = d.current?.getBoundingClientRect().width ?? 0, n = t > 0 ? a / t : .15, s = t > 0 ? 1 - o / t : .85, c = Math.round(zv(e, Math.min(n, s), Math.max(n, s)) * 1e3) / 1e3;
+		r === void 0 && p(c), i?.(c);
 	}, [
 		r,
 		a,
 		o,
 		i
-	]), g = (e) => {
-		m.current = !0, e.currentTarget.setPointerCapture(e.pointerId), e.preventDefault();
-	}, _ = (e) => {
-		if (!m.current) return;
-		let t = u.current?.getBoundingClientRect();
-		!t || t.width === 0 || h((e.clientX - t.left) / t.width);
+	]), _ = (e) => {
+		h.current = !0, e.currentTarget.setPointerCapture(e.pointerId), e.preventDefault();
 	}, v = (e) => {
-		if (m.current) {
-			m.current = !1;
+		if (!h.current) return;
+		let t = d.current?.getBoundingClientRect();
+		!t || t.width === 0 || g((e.clientX - t.left) / t.width);
+	}, y = (e) => {
+		if (h.current) {
+			h.current = !1;
 			try {
 				e.currentTarget.releasePointerCapture(e.pointerId);
 			} catch {}
 		}
-	}, y = (e) => {
+	}, b = (e) => {
 		let t = e.shiftKey ? .1 : .02;
-		e.key === "ArrowLeft" ? (e.preventDefault(), h(p - t)) : e.key === "ArrowRight" ? (e.preventDefault(), h(p + t)) : e.key === "Home" ? (e.preventDefault(), h(0)) : e.key === "End" && (e.preventDefault(), h(1));
+		e.key === "ArrowLeft" ? (e.preventDefault(), g(m - t)) : e.key === "ArrowRight" ? (e.preventDefault(), g(m + t)) : e.key === "Home" ? (e.preventDefault(), g(0)) : e.key === "End" ? (e.preventDefault(), g(1)) : (e.key === "Enter" || e.key === " ") && c && (e.preventDefault(), c());
 	};
 	if (G(() => {
-		let e = () => h(p);
+		let e = () => g(m);
 		return window.addEventListener("resize", e), () => window.removeEventListener("resize", e);
-	}, [p, h]), t == null) return /* @__PURE__ */ Z("div", {
-		ref: u,
-		"data-testid": l,
-		className: B("flex h-full min-h-0 min-w-0", c),
+	}, [m, g]), t == null) return /* @__PURE__ */ Z("div", {
+		ref: d,
+		"data-testid": u,
+		className: B("flex h-full min-h-0 min-w-0", l),
 		children: /* @__PURE__ */ Z("div", {
-			"data-testid": `${l}-primary`,
+			"data-testid": `${u}-primary`,
 			className: "flex min-h-0 min-w-0 flex-1 flex-col",
 			children: e
 		})
 	});
-	let b = Math.round(p * 1e3) / 10;
+	let x = Math.round(m * 1e3) / 10;
 	return /* @__PURE__ */ Q("div", {
-		ref: u,
-		"data-testid": l,
-		className: B("flex h-full min-h-0 min-w-0", c),
+		ref: d,
+		"data-testid": u,
+		className: B("flex h-full min-h-0 min-w-0", l),
 		children: [
 			/* @__PURE__ */ Z("div", {
-				"data-testid": `${l}-primary`,
+				"data-testid": `${u}-primary`,
 				className: "flex min-h-0 min-w-0 flex-col",
 				style: {
-					flexBasis: `${b}%`,
+					flexBasis: `${x}%`,
 					flexGrow: 0,
 					flexShrink: 0
 				},
@@ -2499,19 +2499,19 @@ function Bv({ primary: e, secondary: t, defaultRatio: n = .55, ratio: r, onRatio
 				"aria-label": s,
 				"aria-valuemin": 0,
 				"aria-valuemax": 100,
-				"aria-valuenow": Math.round(b),
+				"aria-valuenow": Math.round(x),
 				tabIndex: 0,
-				"data-testid": `${l}-divider`,
-				onPointerDown: g,
-				onPointerMove: _,
-				onPointerUp: v,
-				onPointerCancel: v,
-				onKeyDown: y,
+				"data-testid": `${u}-divider`,
+				onPointerDown: _,
+				onPointerMove: v,
+				onPointerUp: y,
+				onPointerCancel: y,
+				onKeyDown: b,
 				className: "group relative w-2 shrink-0 cursor-col-resize select-none touch-none bg-transparent outline-none focus-visible:bg-primary/20",
 				children: /* @__PURE__ */ Z("div", { className: "absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border transition-colors group-hover:bg-primary group-focus-visible:bg-primary" })
 			}),
 			/* @__PURE__ */ Z("div", {
-				"data-testid": `${l}-secondary`,
+				"data-testid": `${u}-secondary`,
 				className: "flex min-h-0 min-w-0 flex-1 flex-col",
 				children: t
 			})
@@ -2525,8 +2525,8 @@ var Vv = {
 	ratioMin: .4,
 	ratioMax: .85,
 	minPrimaryPx: 520,
-	minSecondaryPx: 300,
-	fitPrimaryPx: 860
+	minSecondaryPx: 320,
+	fitPrimaryPx: 840
 };
 function Hv(e, t = Vv) {
 	let n = e == null || e === "" ? NaN : Number(e);
@@ -2556,7 +2556,7 @@ function Jv(e, t) {
 	} catch {}
 }
 function Yv({ storageKey: e = "uic.side-pane", defaultOpen: t = !0, bounds: n, children: r }) {
-	let i = `${e}.open`, a = `${e}.ratio`, o = q(() => ({
+	let i = `${e}.open`, a = `${e}.folded`, o = (t) => t === "page" ? `${e}.ratio` : `${e}.ratio.${t}`, s = q(() => ({
 		...Vv,
 		...n ?? {}
 	}), [
@@ -2566,51 +2566,66 @@ function Yv({ storageKey: e = "uic.side-pane", defaultOpen: t = !0, bounds: n, c
 		n?.minPrimaryPx,
 		n?.minSecondaryPx,
 		n?.fitPrimaryPx
-	]), [s] = Y(() => {
+	]), [c] = Y(() => {
 		if (typeof document > "u") return null;
 		let e = document.createElement("div");
 		return e.className = "flex h-full min-h-0 flex-col", e;
-	}), [c, l] = Y(null), u = W((e) => (l(e), () => l((t) => t === e ? null : t)), []), [d, f] = Y(() => Uv(qv(i), t)), [p, m] = Y(() => Hv(qv(a), o)), [h, g] = Y(!1), [_, v] = Y(null), y = Wv(_, o);
+	}), [l, u] = Y(null), d = W((e) => (u(e), () => u((t) => t === e ? null : t)), []), [f, p] = Y(() => Uv(qv(i), t)), [m, h] = Y(() => qv(a) === "1"), g = l?.paneId ?? "page", [_, v] = Y({}), y = g in _ ? null : qv(o(g)), b = g in _ ? _[g] : y == null || y === "" ? null : Hv(y, s), x = b != null, S = b ?? s.defaultRatio, [C, w] = Y(!1), [T, E] = Y(null), D = Wv(T, s);
 	G(() => {
-		g(!1);
-	}, [y]);
-	let b = !!c?.onClose, x = !!c && (d || b) && (y || h), S = W(() => {
-		f(!0), Jv(i, "1"), g(!0);
-	}, [i]), C = W(() => {
-		f(!1), Jv(i, "0"), g(!1);
-	}, [i]), w = W((e) => {
-		m(e), Jv(a, String(e));
-	}, [a]), T = q(() => ({
-		node: s,
-		registration: c,
-		register: u,
-		open: d || b,
-		shown: x,
-		fits: y,
-		ratio: p,
-		width: _,
-		bounds: o,
-		setWidth: v,
-		setRatio: w,
-		reveal: S,
-		collapse: C
+		w(!1);
+	}, [D]);
+	let O = !!l?.onClose, k = !!l && (f || O) && (D || C), A = W(() => {
+		p(!0), Jv(i, "1"), w(!0), h(!1), Jv(a, "0");
+	}, [i, a]), j = W(() => {
+		p(!1), Jv(i, "0"), w(!1);
+	}, [i]), M = W(() => h((e) => (Jv(a, e ? "0" : "1"), !e)), [a]), N = W((e) => {
+		let t = Math.min(s.ratioMax, Math.max(s.ratioMin, e));
+		v((e) => ({
+			...e,
+			[g]: t
+		})), Jv(o(g), String(t));
+	}, [
+		s.ratioMax,
+		s.ratioMin,
+		g,
+		e
+	]), ee = q(() => ({
+		node: c,
+		registration: l,
+		register: d,
+		open: f || O,
+		shown: k,
+		fits: D,
+		ratio: S,
+		width: T,
+		bounds: s,
+		sized: x,
+		folded: m,
+		setWidth: E,
+		setRatio: N,
+		reveal: A,
+		collapse: j,
+		toggleFolded: M
 	}), [
-		s,
 		c,
-		u,
+		l,
 		d,
-		b,
-		x,
-		y,
-		p,
-		_,
-		o,
-		w,
+		f,
+		O,
+		k,
+		D,
 		S,
-		C
+		T,
+		s,
+		x,
+		m,
+		N,
+		A,
+		j,
+		M
 	]);
 	return /* @__PURE__ */ Z(Kv.Provider, {
-		value: T,
+		value: ee,
 		children: r
 	});
 }
@@ -2620,20 +2635,26 @@ var Xv = {
 	shown: !1,
 	explored: !1,
 	reveal: () => {},
-	collapse: () => {}
+	collapse: () => {},
+	folded: !1,
+	toggleFolded: () => {},
+	paneWidthPx: 0
 };
 function Zv() {
 	let e = w_(Kv);
 	return q(() => {
 		if (!e) return Xv;
-		let t = !!e.registration, n = t && e.open;
+		let t = !!e.registration, n = t && e.open, r = e.sized ? e.ratio : Gv(e.ratio, e.width, e.registration?.widthPx), i = !e.shown || e.folded ? 0 : e.width == null ? null : Math.round((1 - r) * e.width);
 		return {
 			registered: t,
 			asked: n,
 			shown: e.shown,
 			explored: n && !!e.registration?.explores,
 			reveal: e.reveal,
-			collapse: e.collapse
+			collapse: e.collapse,
+			folded: e.folded,
+			toggleFolded: e.toggleFolded,
+			paneWidthPx: i
 		};
 	}, [e]);
 }
@@ -2669,12 +2690,27 @@ function $v({ children: e, before: t, after: n, paneTestId: r = "side-pane", div
 		f,
 		g
 	]);
-	let _ = t != null || n != null, v = g && h ? /* @__PURE__ */ Z(Pf, {
+	let _ = t != null || n != null, v = h?.title ?? "", y = g && h ? /* @__PURE__ */ Z(Pf, {
 		size: "sm",
 		title: h.title,
 		...h.subtitle ? { subtitle: h.subtitle } : {},
 		closeLabel: h.closeLabel ?? `Collapse ${h.title.toLowerCase()}`,
 		onClose: h.onClose ?? s.collapse,
+		actions: /* @__PURE__ */ Z(Uo, {
+			content: `Minimize ${v.toLowerCase()} to the edge`,
+			placement: "bottom",
+			children: /* @__PURE__ */ Z(H, {
+				size: "md",
+				"aria-label": `Minimize ${v.toLowerCase()}`,
+				"aria-expanded": !0,
+				onClick: s.toggleFolded,
+				icon: /* @__PURE__ */ Z(U, {
+					dir: "right",
+					size: 14
+				}),
+				"data-testid": `${r}-minimize`
+			})
+		}),
 		className: "min-h-0 flex-1 border-l border-border bg-surface",
 		"data-testid": r,
 		children: /* @__PURE__ */ Z("div", {
@@ -2682,29 +2718,53 @@ function $v({ children: e, before: t, after: n, paneTestId: r = "side-pane", div
 			className: "flex h-full min-h-0 flex-col",
 			"data-testid": `${r}-slot`
 		})
-	}) : null, y = v || _ ? v && !_ ? v : /* @__PURE__ */ Q("div", {
+	}) : null, b = s.folded && (g || _), x = b ? null : y || _ ? y && !_ ? y : /* @__PURE__ */ Q("div", {
 		className: "flex h-full min-h-0 flex-col bg-surface",
 		"data-testid": `${o}-stack`,
 		children: [
 			t,
-			v,
+			y,
 			n
 		]
-	}) : null, b = g ? Gv(s.ratio, d, h?.widthPx) : s.ratio;
-	return /* @__PURE__ */ Z("div", {
+	}) : null, S = g && !s.sized ? Gv(s.ratio, d, h?.widthPx) : s.ratio;
+	return /* @__PURE__ */ Q("div", {
 		ref: l,
-		className: B("flex h-full min-h-0 min-w-0 flex-col", a),
-		children: /* @__PURE__ */ Z(Bv, {
-			primary: e,
-			secondary: y,
-			ratio: b,
-			onRatioChange: s.setRatio,
-			minPrimaryPx: s.bounds.minPrimaryPx,
-			minSecondaryPx: s.bounds.minSecondaryPx,
-			dividerLabel: i,
-			className: "h-full min-h-0",
-			"data-testid": o
-		})
+		className: B("flex h-full min-h-0 min-w-0 flex-row", a),
+		children: [/* @__PURE__ */ Z("div", {
+			className: "flex h-full min-h-0 min-w-0 flex-1 flex-col",
+			children: /* @__PURE__ */ Z(Bv, {
+				primary: e,
+				secondary: x,
+				ratio: S,
+				onRatioChange: s.setRatio,
+				onDividerActivate: s.toggleFolded,
+				minPrimaryPx: s.bounds.minPrimaryPx,
+				minSecondaryPx: s.bounds.minSecondaryPx,
+				dividerLabel: i,
+				className: "h-full min-h-0",
+				"data-testid": o
+			})
+		}), b && /* @__PURE__ */ Z("aside", {
+			"aria-label": `${v || "Side pane"} (minimized)`,
+			className: "flex w-11 min-w-11 shrink-0 flex-col items-center border-l border-border bg-surface py-1.5",
+			"data-testid": `${r}-strip`,
+			children: /* @__PURE__ */ Z(Uo, {
+				content: `Restore ${v.toLowerCase() || "the pane"}`,
+				placement: "left",
+				children: /* @__PURE__ */ Z(H, {
+					size: "md",
+					variant: "ghost",
+					"aria-label": `Restore ${v.toLowerCase() || "the pane"}`,
+					"aria-expanded": !1,
+					onClick: s.toggleFolded,
+					icon: /* @__PURE__ */ Z(U, {
+						dir: "left",
+						size: 14
+					}),
+					"data-testid": `${r}-restore`
+				})
+			})
+		})]
 	});
 }
 function ey(e) {
@@ -2726,59 +2786,61 @@ function ty({ tabs: e, value: t, onValueChange: n, trailing: r, label: i = "Pane
 		}), r]
 	});
 }
-function ny({ title: e, subtitle: t, closeLabel: n, onClose: r, widthPx: i, explores: a = !1, tabs: o, value: s, onValueChange: c, trailing: l, footer: u, density: d = "compact", children: f, "data-testid": p = "side-pane-content" }) {
-	let m = w_(Kv), h = m?.register, g = J(r);
-	g.current = r;
-	let _ = !!r, v = i?.min, y = i?.max;
-	if (G(() => h?.({
+function ny({ title: e, subtitle: t, closeLabel: n, onClose: r, widthPx: i, paneId: a, explores: o = !1, tabs: s, value: c, onValueChange: l, trailing: u, footer: d, density: f = "compact", children: p, "data-testid": m = "side-pane-content" }) {
+	let h = w_(Kv), g = h?.register, _ = J(r);
+	_.current = r;
+	let v = !!r, y = i?.min, b = i?.max;
+	if (G(() => g?.({
 		title: e,
 		...t ? { subtitle: t } : {},
 		...n ? { closeLabel: n } : {},
-		explores: a,
-		..._ ? { onClose: () => g.current?.() } : {},
-		...v != null && y != null ? { widthPx: {
-			min: v,
-			max: y
+		...a ? { paneId: a } : {},
+		explores: o,
+		...v ? { onClose: () => _.current?.() } : {},
+		...y != null && b != null ? { widthPx: {
+			min: y,
+			max: b
 		} } : {}
 	}), [
-		h,
+		g,
 		e,
 		t,
 		n,
 		a,
-		_,
+		o,
 		v,
-		y
-	]), !m?.node) return null;
-	let b = o && o.length > 0 && s != null && c ? /* @__PURE__ */ Z(ty, {
-		tabs: o.map((e) => ({
+		y,
+		b
+	]), !h?.node) return null;
+	let x = s && s.length > 0 && c != null && l ? /* @__PURE__ */ Z(ty, {
+		tabs: s.map((e) => ({
 			...e,
-			testId: e.testId ?? `${p}-tab-${e.id}`
+			testId: e.testId ?? `${m}-tab-${e.id}`
 		})),
-		value: s,
-		onValueChange: c,
-		...l ? { trailing: l } : {},
-		"data-testid": `${p}-header-row`
+		value: c,
+		onValueChange: l,
+		...u ? { trailing: u } : {},
+		"data-testid": `${m}-header-row`
 	}) : null;
 	return k_(/* @__PURE__ */ Z(vs, {
-		value: d,
+		value: f,
 		children: /* @__PURE__ */ Q("div", {
 			className: "flex h-full min-h-0 min-w-0 flex-col",
-			"data-testid": p,
+			"data-testid": m,
 			children: [
-				b,
+				x,
 				/* @__PURE__ */ Z("div", {
 					className: "flex min-h-0 min-w-0 flex-1 flex-col",
-					children: f
+					children: p
 				}),
-				u != null && /* @__PURE__ */ Z("div", {
+				d != null && /* @__PURE__ */ Z("div", {
 					className: "shrink-0 min-w-0",
-					"data-testid": `${p}-footer`,
-					children: u
+					"data-testid": `${m}-footer`,
+					children: d
 				})
 			]
 		})
-	}), m.node);
+	}), h.node);
 }
 //#endregion
 //#region src/components/layout/paneState.ts

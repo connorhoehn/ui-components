@@ -133,3 +133,42 @@ describe('SidePane in a host', () => {
     expect(probe().registered).toBe(false);
   });
 });
+
+describe('SidePane fold and width (2.438.1)', () => {
+  it('minimizes to a 44px strip and restores, remembered per device, without remounting the page', () => {
+    function Draft() { const [v, setV] = useState(''); return <input aria-label="Page draft" value={v} onChange={(e) => setV(e.target.value)} />; }
+    render(
+      <SidePaneProvider storageKey="t.pane">
+        <SidePaneSplit paneTestId="the-pane"><Draft /><SidePane title="Discussion"><p>thread</p></SidePane></SidePaneSplit>
+        <HostProbe />
+      </SidePaneProvider>,
+    );
+    fireEvent.change(screen.getByLabelText('Page draft'), { target: { value: 'kept' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Minimize discussion' }));
+    expect(screen.queryByTestId('the-pane')).toBeNull();
+    expect(screen.getByTestId('the-pane-strip').className).toContain('w-11');
+    expect(window.localStorage.getItem('t.pane.folded')).toBe('1');
+    expect((screen.getByLabelText('Page draft') as HTMLInputElement).value).toBe('kept');
+    fireEvent.click(screen.getByRole('button', { name: 'Restore discussion' }));
+    expect(screen.getByTestId('the-pane')).toBeTruthy();
+    expect(window.localStorage.getItem('t.pane.folded')).toBe('0');
+    // Enter on the focused divider folds it too.
+    fireEvent.keyDown(screen.getByRole('separator'), { key: 'Enter' });
+    expect(screen.getByTestId('the-pane-strip')).toBeTruthy();
+  });
+
+  it('remembers each pane’s width by paneId, bounded to 60% of the split', () => {
+    render(
+      <SidePaneProvider storageKey="t.pane">
+        <SidePaneSplit paneTestId="the-pane"><p>page</p><SidePane title="Org Assistant" paneId="search" widthPx={{ min: 320, max: 380 }}><p>a</p></SidePane></SidePaneSplit>
+      </SidePaneProvider>,
+    );
+    const divider = screen.getByRole('separator');
+    fireEvent.keyDown(divider, { key: 'ArrowLeft', shiftKey: true });
+    const stored = Number(window.localStorage.getItem('t.pane.ratio.search'));
+    expect(stored).toBeGreaterThanOrEqual(0.4);
+    expect(window.localStorage.getItem('t.pane.ratio')).toBeNull();
+    fireEvent.keyDown(divider, { key: 'Home' });
+    expect(Number(window.localStorage.getItem('t.pane.ratio.search'))).toBe(0.4);
+  });
+});
