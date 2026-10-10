@@ -4,7 +4,7 @@ import { t as r } from "../Modal-CjgKqXl7.js";
 import { n as i } from "../Slider-DEbQCKD1.js";
 import { n as a } from "../Text-BA4t3u5l.js";
 import { i as o, n as s, r as c, t as l } from "../useDocumentImageUpload-k2Cs0Dzj.js";
-import { $ as u, A as d, B as f, C as p, D as m, E as h, F as g, G as _, H as v, I as y, J as b, K as x, L as S, M as C, N as w, O as T, P as E, Q as D, R as O, S as k, T as A, U as j, V as M, W as N, X as P, Y as F, Z as I, _ as L, a as ee, at as te, b as R, c as z, ct as B, d as V, et as ne, f as H, g as re, h as ie, i as ae, it as oe, j as se, k as ce, l as le, lt as ue, m as de, n as fe, nt as pe, o as me, ot as he, p as ge, q as _e, r as ve, rt as ye, s as be, st as xe, t as Se, tt as Ce, u as we, ut as Te, v as Ee, w as De, x as Oe, y as ke, z as Ae } from "../WrappedAudioVideoSettingsForm-DzunSmfJ.js";
+import { $ as u, A as d, B as f, C as p, D as m, E as h, F as g, G as _, H as v, I as y, J as b, K as x, L as S, M as C, N as w, O as T, P as E, Q as D, R as O, S as k, T as A, U as j, V as ee, W as M, X as N, Y as P, Z as F, _ as te, a as I, at as ne, b as L, c as R, ct as z, d as B, et as V, f as re, g as H, h as ie, i as ae, it as oe, j as se, k as ce, l as le, lt as ue, m as de, n as fe, nt as pe, o as me, ot as he, p as ge, q as _e, r as ve, rt as ye, s as be, st as xe, t as Se, tt as Ce, u as we, ut as Te, v as Ee, w as De, x as Oe, y as ke, z as Ae } from "../WrappedAudioVideoSettingsForm-C4S5E6YQ.js";
 import { createContext as U, useCallback as W, useContext as G, useEffect as K, useLayoutEffect as je, useMemo as q, useRef as J, useState as Y, useSyncExternalStore as Me } from "react";
 import { jsx as X, jsxs as Z } from "react/jsx-runtime";
 import { createPortal as Ne } from "react-dom";
@@ -108,34 +108,28 @@ function qe(e) {
 function Je(e) {
 	return e === "accept" ? Ue : null;
 }
-function Ye(e, t) {
-	return {
-		toggleMic: !e.micOn && t.audioOn,
-		toggleCamera: !e.cameraOn && t.cameraOn
-	};
-}
-function Xe(e) {
+function Ye(e) {
 	return {
 		micOn: e.micOn,
 		cameraOn: e.cameraOn,
 		remember: e.remember
 	};
 }
-function Ze(e) {
+function Xe(e) {
 	return Math.max(0, Math.ceil(e / 1e3));
 }
 //#endregion
 //#region src/integrations/realtime/CallBlockHost.tsx
-var Qe = {
+var Ze = {
 	start: "Start the huddle",
 	join: "Join the huddle",
 	accept: "Answer the call",
 	check: "Check devices"
-}, $e = "__unbound__", et = () => "", tt = () => () => {}, nt = () => null, rt = () => "footer", it = () => !1, at = [], ot = () => at, st = "ui.call-prejoin.v1";
-function ct(e) {
+}, Qe = "__unbound__", $e = () => "", et = () => () => {}, tt = () => null, nt = () => "footer", rt = () => !1, it = [], at = () => it, ot = "ui.call-prejoin.v1";
+function st(e) {
 	return e.gatewayConfigured ? e.platformApiUrl ? e.signedIn ? e.connectionState === "connected" ? null : "Connecting to the realtime gateway…" : "Sign in to start a call" : "Calls need platform-api — the middleware returned no platformApiUrl (REALTIME_PLATFORM_PUBLIC_URL) and VITE_PLATFORM_API_URL is not set" : "Calls need the realtime gateway — the middleware returned no gatewayUrl and VITE_GATEWAY_URL is not set";
 }
-function lt(e) {
+function ct(e) {
 	let [t, n] = Y(0);
 	return je(() => {
 		if (!e) {
@@ -148,23 +142,24 @@ function lt(e) {
 		return r.observe(e), () => r.disconnect();
 	}, [e]), t;
 }
-function ut(e) {
+function lt(e) {
 	try {
 		return We(window.localStorage.getItem(e));
 	} catch {
 		return We(null);
 	}
 }
-function dt(e, t) {
+function ut(e, t) {
 	try {
-		window.localStorage.setItem(e, JSON.stringify(Xe(t)));
+		window.localStorage.setItem(e, JSON.stringify(Ye(t)));
 	} catch {}
 }
-function ft(o) {
+function dt(o) {
 	let s = U(null), c = U(null), l = U(null), u = E(o), { LVSProvider: d } = o;
 	function f({ kind: s, title: c, selfName: l, initial: u, onJoin: d, onCancel: f }) {
-		let [p, m] = Y(u), h = o.useMediaDevices({ requestOnMount: !0 }), g = o.useAudioVideoSettings({
-			preview: !0,
+		let [p, m] = Y(u), h = o.useMediaDevices({ requestOnMount: !1 }), g = o.useAudioVideoSettings({
+			preview: p.micOn || p.cameraOn,
+			previewAudio: p.micOn,
 			previewVideo: p.cameraOn
 		}), _ = Je(s), [v, y] = Y(_), b = J(!1), x = J({
 			choice: p,
@@ -208,7 +203,7 @@ function ft(o) {
 		}, [_]), /* @__PURE__ */ X(r, {
 			open: !0,
 			onClose: f,
-			title: `${Qe[s]} — ${c}`,
+			title: `${Ze[s]} — ${c}`,
 			maxWidth: 560,
 			backdropTestId: "prejoin-backdrop",
 			footer: /* @__PURE__ */ Z(n, {
@@ -222,7 +217,7 @@ function ft(o) {
 				}), /* @__PURE__ */ X(e, {
 					onClick: S,
 					"data-testid": "prejoin-join",
-					children: v === null ? s === "check" ? "Save" : "Join" : `Join as last time (${Ze(v)})`
+					children: v === null ? s === "check" ? "Save" : "Join" : `Join as last time (${Xe(v)})`
 				})]
 			}),
 			children: /* @__PURE__ */ Z(t, {
@@ -288,7 +283,7 @@ function ft(o) {
 			})
 		});
 	}
-	function p({ self: e, tenant: t, platformApiUrl: n, getIdToken: r, gateway: i, gatewayConfigured: a, connectionState: c, onAccept: l, onCallEvent: u, preJoinStorageKey: d = st, children: p }) {
+	function p({ self: e, tenant: t, platformApiUrl: n, getIdToken: r, gateway: i, gatewayConfigured: a, connectionState: c, onAccept: l, onCallEvent: u, preJoinStorageKey: d = ot, children: p }) {
 		let [m, h] = Y(null), g = J(null), _ = J(null), v = J(u);
 		v.current = u;
 		let y = (t, n) => {
@@ -296,8 +291,8 @@ function ft(o) {
 				host: _.current,
 				selfId: e?.userId ?? ""
 			});
-		}, b = o.useConversationCall({
-			lobbyName: m?.lobbyName ?? $e,
+		}, [b, x] = Y(() => lt(d)), S = o.useConversationCall({
+			lobbyName: m?.lobbyName ?? Qe,
 			channel: m?.channel ?? null,
 			self: e ?? {
 				userId: "",
@@ -309,69 +304,68 @@ function ft(o) {
 			},
 			gateway: i,
 			discover: !!m && a,
+			initialMedia: {
+				micOn: b.micOn,
+				cameraOn: b.cameraOn
+			},
 			...u ? {
 				onCallStarted: (e) => y("started", e),
 				onCallEnded: (e) => y("ended", e),
 				onCallMissed: (e) => y("missed", e)
 			} : {}
-		}), x = J(b);
-		x.current = b;
-		let [S, w] = Y(null), [T, E] = Y(null), D = J(null), O = W((e, t, n) => {
-			let r = ut(d);
+		}), w = J(S);
+		w.current = S;
+		let [T, E] = Y(null), [D, O] = Y(null), k = W((e, t, n) => {
+			let r = lt(d);
 			if (!Ke(r, e)) {
-				D.current = r, t(x.current);
+				x(r), O({ run: t });
 				return;
 			}
-			w((i) => i ?? {
+			E((i) => i ?? {
 				kind: e,
 				run: t,
 				...n ? { cancel: n } : {},
 				initial: r
 			});
-		}, [d]), k = W((e, t) => Ge("start", x.current.phase, !!x.current.call) ? (O("start", (n) => {
+		}, [d]), A = W((e, t) => Ge("start", w.current.phase, !!w.current.call) ? (k("start", (n) => {
 			n.start(e, t);
-		}), Promise.resolve()) : x.current.start(e, t), [O]), A = W(() => {
-			let e = x.current;
-			return Ge("rejoin", e.phase, !!e.call) ? (O("join", (e) => {
+		}), Promise.resolve()) : w.current.start(e, t), [k]), j = W(() => {
+			let e = w.current;
+			return Ge("rejoin", e.phase, !!e.call) ? (k("join", (e) => {
 				e.rejoin();
 			}), Promise.resolve()) : e.rejoin();
-		}, [O]), j = W(() => {
-			w((e) => e ?? {
+		}, [k]), ee = W(() => {
+			E((e) => e ?? {
 				kind: "check",
 				run: () => {},
-				initial: qe(ut(d))
+				initial: qe(lt(d))
 			});
 		}, [d]), M = q(() => ({
-			...b,
-			start: k,
-			rejoin: A
+			...S,
+			start: A,
+			rejoin: j
 		}), [
-			b,
-			k,
-			A
+			S,
+			A,
+			j
 		]);
 		K(() => {
-			T && (T.run(x.current), E(null));
-		}, [T]), K(() => {
-			let e = D.current;
-			if (!e || !["connecting", "live"].includes(b.phase)) return;
-			let { toggleMic: t, toggleCamera: n } = Ye(e, b.self);
-			t && b.toggleMic(), n && b.toggleCamera(), b.phase === "live" && (D.current = null);
-		}, [b]), _.current = M.call?.host ?? _.current, M.phase === "idle" && (_.current = null);
+			D && (D.run(w.current), O(null));
+		}, [D]), _.current = M.call?.host ?? _.current, M.phase === "idle" && (_.current = null);
 		let N = J(M.phase);
 		N.current = M.phase;
-		let P = J(null), F = J(null), I = W((e, t) => {
+		let P = J(null), F = J(null), te = W((e, t) => {
 			if (g.current) return;
 			let n = N.current;
 			(n === "idle" || n === "ringing") && (P.current = t ?? null, F.current = e.lobbyName, h((t) => t && t.lobbyName === e.lobbyName && t.title === e.title && t.channel === e.channel && t.startBlockedReason === e.startBlockedReason ? t : e));
-		}, []), L = W((e) => {
+		}, []), I = W((e) => {
 			if (g.current) return;
 			let t = N.current;
 			(t === "idle" || t === "ringing") && F.current === e && (F.current = null, P.current = null, h((t) => t && t.lobbyName === e ? null : t));
-		}, []), ee = W(() => {
+		}, []), ne = W(() => {
 			P.current?.start();
-		}, []), te = J(l);
-		te.current = l;
+		}, []), L = J(l);
+		L.current = l;
 		let R = o.useIncomingConversationCalls({
 			gateway: i,
 			self: {
@@ -383,23 +377,23 @@ function ft(o) {
 					lobbyName: e.lobbyName,
 					title: e.callerName,
 					channel: e.channel
-				}), te.current?.(e);
+				}), L.current?.(e);
 			})
 		}), z = J(null);
 		K(() => {
 			let e = g.current;
-			!e || m?.lobbyName !== e.lobbyName || z.current !== e.callId && (z.current = e.callId, O("accept", (t) => {
+			!e || m?.lobbyName !== e.lobbyName || z.current !== e.callId && (z.current = e.callId, k("accept", (t) => {
 				g.current = null, t.accept(e);
 			}, () => {
-				g.current = null, R.decline(e), L(e.lobbyName);
+				g.current = null, R.decline(e), I(e.lobbyName);
 			}));
 		}, [
 			m,
-			O,
+			k,
 			R,
-			L
+			I
 		]);
-		let B = ct({
+		let B = st({
 			gatewayConfigured: a,
 			platformApiUrl: n,
 			signedIn: !!e,
@@ -407,52 +401,52 @@ function ft(o) {
 		}), V = q(() => e ? {
 			userId: e.userId,
 			displayName: e.displayName
-		} : null, [e?.userId, e?.displayName]), ne = q(() => ({
+		} : null, [e?.userId, e?.displayName]), re = q(() => ({
 			call: M,
 			lobby: m,
-			bind: I,
-			unbind: L,
-			startBound: m && P.current ? ee : null,
+			bind: te,
+			unbind: I,
+			startBound: m && P.current ? ne : null,
 			self: V,
 			tenant: t,
 			gatewayConfigured: a,
 			connectionState: c,
 			platformApiUrl: n,
 			unavailableReason: B,
-			checkDevices: j
+			checkDevices: ee
 		}), [
 			M,
 			m,
+			te,
 			I,
-			L,
-			ee,
+			ne,
 			V,
 			t,
 			a,
 			c,
 			n,
 			B,
-			j
+			ee
 		]), H = R.rings[0] ?? null;
 		return /* @__PURE__ */ Z(s.Provider, {
-			value: ne,
+			value: re,
 			children: [
 				p,
-				S && /* @__PURE__ */ X(f, {
-					kind: S.kind,
+				T && /* @__PURE__ */ X(f, {
+					kind: T.kind,
 					title: m?.title ?? "this huddle",
 					selfName: e?.displayName ?? "",
-					initial: S.initial,
+					initial: T.initial,
 					onCancel: () => {
-						let e = S;
-						w(null), e.cancel?.();
+						let e = T;
+						E(null), e.cancel?.();
 					},
 					onJoin: (e, t) => {
-						let n = S;
-						dt(d, e), x.current.devices.set({
-							...x.current.devices.prefs,
+						let n = T;
+						ut(d, e), w.current.devices.set({
+							...w.current.devices.prefs,
 							...t
-						}), w(null), n.kind !== "check" && (D.current = e, E({ run: n.run }));
+						}), E(null), n.kind !== "check" && (x(e), O({ run: n.run }));
 					}
 				}),
 				H && /* @__PURE__ */ X(C, {
@@ -491,7 +485,7 @@ function ft(o) {
 		let [i] = Y(() => new Ie());
 		return /* @__PURE__ */ X(d, {
 			baseUrl: r.current ?? "",
-			getAuthToken: et,
+			getAuthToken: $e,
 			children: /* @__PURE__ */ X(p, {
 				...n,
 				children: /* @__PURE__ */ X(c.Provider, {
@@ -509,13 +503,13 @@ function ft(o) {
 	}
 	function y(e, t) {
 		let n = G(c), r = n ? e(n) : t;
-		return Me(n?.subscribe ?? tt, r, r);
+		return Me(n?.subscribe ?? et, r, r);
 	}
 	function b() {
-		return y((e) => e.placement, rt);
+		return y((e) => e.placement, nt);
 	}
 	function x() {
-		return y((e) => e.pageClaimed, it);
+		return y((e) => e.pageClaimed, rt);
 	}
 	function S(e, t, n = !0, r = {}) {
 		let i = G(c), a = !!r.compact, o = JSON.stringify(r.documents ?? []), s = q(() => JSON.parse(o), [o]);
@@ -530,11 +524,11 @@ function ft(o) {
 			a,
 			s
 		]);
-		let l = y((e) => e.current, nt);
+		let l = y((e) => e.current, tt);
 		return !!e && l === e;
 	}
 	function w({ placement: e, compact: n = !1, documents: r, className: i }) {
-		let a = G(s), o = G(l), [c, u] = Y(null), d = lt(c), f = !!a?.lobby && Q(a.call.phase, !0), p = e === "composer" ? d > 0 : e === "pane" || f && !!o?.open && d > 0, m = e === "composer" && (n || Re(d)), h = S(c, e, p, {
+		let a = G(s), o = G(l), [c, u] = Y(null), d = ct(c), f = !!a?.lobby && Q(a.call.phase, !0), p = e === "composer" ? d > 0 : e === "pane" || f && !!o?.open && d > 0, m = e === "composer" && (n || Re(d)), h = S(c, e, p, {
 			compact: m,
 			...r ? { documents: r } : {}
 		});
@@ -601,7 +595,7 @@ function ft(o) {
 		};
 	}
 	function O({ id: e, onOpenPeople: n, onOpenDocument: r, overlay: i, dockTestId: a }) {
-		let o = G(s), c = y((e) => e.current, nt), l = y((e) => e.placement, rt), d = y((e) => e.compact, it), f = y((e) => e.documents, ot), p = !!o?.lobby && Q(o.call.phase, !0), m = !!c && l === "composer", h = !!c && l !== "pane", g = Le(c ? l : "footer", d), _ = o?.lobby ?? null, v = p && _ && o ? /* @__PURE__ */ X(u, {
+		let o = G(s), c = y((e) => e.current, tt), l = y((e) => e.placement, nt), d = y((e) => e.compact, rt), f = y((e) => e.documents, at), p = !!o?.lobby && Q(o.call.phase, !0), m = !!c && l === "composer", h = !!c && l !== "pane", g = Le(c ? l : "footer", d), _ = o?.lobby ?? null, v = p && _ && o ? /* @__PURE__ */ X(u, {
 			call: o.call,
 			title: _.title,
 			onOpenPeople: () => n?.(_, o.tenant),
@@ -656,4 +650,4 @@ function ft(o) {
 	};
 }
 //#endregion
-export { D as ALL_REALTIME_CAPABILITIES, b as CONVERSATION_CAPABILITY_NAMES, me as CapabilityBoundary, u as CapabilityGate, ne as DEFAULT_REALTIME_CAPABILITIES, C as IncomingCallToast, l as MAX_ATTACHMENT_BYTES, s as MAX_IMAGE_BYTES, he as NetworkErrorBoundary, B as NewHangoutRoomDialog, j as RealtimeIntegrationsProvider, te as ReconnectingShim, de as WrappedActivityPanel, Se as WrappedAudioVideoSettingsForm, fe as WrappedCanvasDocument, re as WrappedChatPanel, be as WrappedConnectionPill, F as WrappedConversationSurface, ge as WrappedCursorOverlay, V as WrappedFileUploadDrop, we as WrappedHangoutLayout, ve as WrappedMediaEffectsPreviewPanel, ee as WrappedMediaEffectsTray, z as WrappedNotificationBell, le as WrappedNotificationCenter, ie as WrappedPresencePanel, H as WrappedReactionsOverlay, c as acceptsDocumentImage, L as adaptActivityEvent, Ee as adaptActivityEvents, ke as adaptChatMessage, R as adaptChatMessages, Oe as adaptFileUploadState, k as adaptFileUploads, p as adaptHangoutParticipant, De as adaptHangoutParticipants, A as adaptMessageReactions, h as adaptNotification, m as adaptNotifications, T as adaptPresenceEntry, ce as adaptPresenceRoster, d as adaptReaction, se as adaptReactions, oe as applyNetworkShim, g as buildCanvasDocumentExtensions, Ve as callCounts, Q as callDrawn, S as canEditCanvasGrant, O as canvasDocumentSaveState, f as canvasRecoveryKey, P as capabilityNamesFor, ft as createCallBlockHost, y as createCanvasDocumentPane, E as createConversationCallDock, I as createConversationFeaturesFor, Te as createHangoutRoomRow, xe as createHangoutRoomsSection, Ce as createRealtimeCapabilityProvider, N as createRealtimeIntegrations, ye as createWrappedHangoutRoomsList, x as createWrappedLVSHangoutLayout, _e as createWrappedStreamStage, M as decodeCanvasRecovery, v as encodeCanvasRecovery, w as incomingCallTitle, ae as mediaEffectsChangeCount, He as pageHuddleStart, ue as slugifyRoomName, Ae as useCanvasRecovery, o as useDocumentImageUpload, pe as useRealtimeCapabilities, _ as useRealtimeIntegrations };
+export { D as ALL_REALTIME_CAPABILITIES, b as CONVERSATION_CAPABILITY_NAMES, me as CapabilityBoundary, u as CapabilityGate, V as DEFAULT_REALTIME_CAPABILITIES, C as IncomingCallToast, l as MAX_ATTACHMENT_BYTES, s as MAX_IMAGE_BYTES, he as NetworkErrorBoundary, z as NewHangoutRoomDialog, j as RealtimeIntegrationsProvider, ne as ReconnectingShim, de as WrappedActivityPanel, Se as WrappedAudioVideoSettingsForm, fe as WrappedCanvasDocument, H as WrappedChatPanel, be as WrappedConnectionPill, P as WrappedConversationSurface, ge as WrappedCursorOverlay, B as WrappedFileUploadDrop, we as WrappedHangoutLayout, ve as WrappedMediaEffectsPreviewPanel, I as WrappedMediaEffectsTray, R as WrappedNotificationBell, le as WrappedNotificationCenter, ie as WrappedPresencePanel, re as WrappedReactionsOverlay, c as acceptsDocumentImage, te as adaptActivityEvent, Ee as adaptActivityEvents, ke as adaptChatMessage, L as adaptChatMessages, Oe as adaptFileUploadState, k as adaptFileUploads, p as adaptHangoutParticipant, De as adaptHangoutParticipants, A as adaptMessageReactions, h as adaptNotification, m as adaptNotifications, T as adaptPresenceEntry, ce as adaptPresenceRoster, d as adaptReaction, se as adaptReactions, oe as applyNetworkShim, g as buildCanvasDocumentExtensions, Ve as callCounts, Q as callDrawn, S as canEditCanvasGrant, O as canvasDocumentSaveState, f as canvasRecoveryKey, N as capabilityNamesFor, dt as createCallBlockHost, y as createCanvasDocumentPane, E as createConversationCallDock, F as createConversationFeaturesFor, Te as createHangoutRoomRow, xe as createHangoutRoomsSection, Ce as createRealtimeCapabilityProvider, M as createRealtimeIntegrations, ye as createWrappedHangoutRoomsList, x as createWrappedLVSHangoutLayout, _e as createWrappedStreamStage, ee as decodeCanvasRecovery, v as encodeCanvasRecovery, w as incomingCallTitle, ae as mediaEffectsChangeCount, He as pageHuddleStart, ue as slugifyRoomName, Ae as useCanvasRecovery, o as useDocumentImageUpload, pe as useRealtimeCapabilities, _ as useRealtimeIntegrations };

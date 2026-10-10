@@ -365,6 +365,10 @@ export declare interface CallBlockModules extends ConversationCallDockModules {
         };
         gateway?: never;
         discover?: boolean;
+        initialMedia?: {
+            micOn: boolean;
+            cameraOn: boolean;
+        };
         onCallStarted?(e: never): void;
         onCallEnded?(e: never): void;
         onCallMissed?(e: never): void;
@@ -3026,6 +3030,10 @@ export declare interface RMConversationCallSource {
     error: {
         message: string;
     } | null;
+    /** Optional native device-capture feedback; never a fatal call error. */
+    media?: {
+        captureError?: string | null;
+    };
     callingTo: string | null;
     elapsedMs: number | null;
     activeSpeakerId: string | null;

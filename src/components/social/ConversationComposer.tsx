@@ -27,7 +27,8 @@
 //   - Attachments through realtime-modules' `useFileUpload` (injected): files
 //     land first, the message cites only what the gateway confirmed, a failed
 //     or stuck upload keeps the draft.
-//   - Quote-reply (`reply`), the draft remembered per conversation per device,
+//   - Quote-reply (`reply`), the draft remembered per actor and conversation
+//     on this device (unknown identities never restore a stored draft),
 //     and a "sent; your newer draft was kept" note when the draft moved on
 //     while a send was being confirmed.
 //   - One input per conversation: with `claim`, it claims its channels
@@ -166,7 +167,7 @@ export interface ConversationComposerOwnProps {
   onModeChange?: (mode: ComposerMode) => void;
   /** The draft's subject (default: the channel, else the context). A new key starts a new draft. */
   draftKey?: string;
-  /** Remember the draft per conversation on this device (default true; ignored for a controlled `draft`). */
+  /** Remember the draft per known `identity.userId` and conversation on this device (default true; ignored for a controlled `draft`). Unknown identities never read/write stored drafts. */
   persistDraft?: boolean;
   /**
    * Claim this conversation's input (and every recipient's), so a thread pane
@@ -378,19 +379,36 @@ function ConversationComposerImpl({
   // ── draft (remembered per conversation) ──
   const generation = useRef(0);
   const controlled = draftProp !== undefined;
+  const actorId = identity?.userId?.trim() || null;
+  // A logical conversation key is not an actor boundary. Old un-attributed
+  // device drafts remain untouched; guessing their owner would expose them.
+  const storedDraftKey = actorId ? JSON.stringify(['actor', actorId, draftKey]) : null;
+  const editorDraftKey = persistDraft && !controlled
+    ? JSON.stringify(['actor', actorId, draftKey])
+    : draftKey;
+  // A receipt belongs to the scope that submitted it, even if this component
+  // remains mounted as the host changes actor, conversation or destination.
+  const scopeKey = JSON.stringify([draftKey, channel ?? null, identity?.userId ?? null, recipient?.id ?? null, recipient?.channel ?? null]);
+  const currentScope = useRef(scopeKey);
+  if (currentScope.current !== scopeKey) {
+    currentScope.current = scopeKey;
+    generation.current += 1;
+  }
+  const currentControlledDraft = useRef(draftProp);
+  currentControlledDraft.current = draftProp;
   const initialDraft = useMemo<string | RichChatDraft | undefined>(() => {
-    if (controlled || !persistDraft) return defaultDraft;
-    const stored = readStoredDraft(storage(), draftKey);
+    if (controlled || !persistDraft || !storedDraftKey) return defaultDraft;
+    const stored = readStoredDraft(storage(), storedDraftKey);
     return stored ? { html: stored, files: [] } : defaultDraft;
-  }, [draftKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [editorDraftKey, controlled, persistDraft]); // eslint-disable-line react-hooks/exhaustive-deps
   const lastHtml = useRef('');
   const handleDraftChange = useCallback((next: RichChatDraft, previous: RichChatDraft | undefined) => {
     generation.current += 1;
     lastHtml.current = next.html;
-    if (persistDraft && !controlled) writeStoredDraft(storage(), draftKey, next.html);
+    if (persistDraft && !controlled && storedDraftKey) writeStoredDraft(storage(), storedDraftKey, next.html);
     chat?.setTyping?.(typingFor({ html: next.html, mode, recipientChannel: recipient?.channel, channel }));
     onDraftChange?.(next, previous);
-  }, [persistDraft, controlled, draftKey, chat, mode, recipient?.channel, channel, onDraftChange]);
+  }, [persistDraft, controlled, storedDraftKey, chat, mode, recipient?.channel, channel, onDraftChange]);
   // Leaving Chat, or this channel, ends the typing announcement.
   useEffect(() => {
     if (!typingFor({ html: lastHtml.current, mode, recipientChannel: recipient?.channel, channel })) chat?.setTyping?.(false);
@@ -521,6 +539,7 @@ function ConversationComposerImpl({
     if (message.files.length && !uploadChannel) return false;
     chat?.setTyping?.(false);
     const started = generation.current;
+    const startedScope = currentScope.current;
     const uploaded = message.files.length ? await uploadAll(message.files) : [];
     const toConversation = !!recipient.channel && recipient.channel === channel;
     const metadata = outgoingMetadata({
@@ -535,9 +554,15 @@ function ConversationComposerImpl({
     if (recipient.send) sent = await recipient.send(out);
     else if (chat) { chat.sendMessage(body, metadata); sent = true; } else sent = false;
     if (!sent) return false;
+    // Keep the editor AND its saved draft together when a newer revision or
+    // scope arrived while sending. Clearing storage first loses that newer
+    // draft on reload even though RichChatComposer correctly keeps it visible.
+    if (generation.current !== started || currentControlledDraft.current !== draftProp) {
+      if (currentScope.current === startedScope) setNote(SENT_KEPT);
+      return false;
+    }
     if (toConversation) reply?.clear();
-    if (persistDraft && !controlled) writeStoredDraft(storage(), draftKey, '');
-    if (generation.current !== started) { setNote(SENT_KEPT); return false; }
+    if (persistDraft && !controlled && storedDraftKey) writeStoredDraft(storage(), storedDraftKey, '');
     return true;
   };
 
@@ -615,7 +640,7 @@ function ConversationComposerImpl({
       allowAttachments={!!uploadChannel}
       {...(sendWithReferencesOnly !== undefined ? { sendWithReferencesOnly } : {})}
       disabled={!!hostDisabled || !!offline || chatBlocked || (mode === 'agent' && !capabilities.agent?.allowed)}
-      draftKey={draftKey}
+      draftKey={editorDraftKey}
       {...(controlled ? { draft: draftProp } : {})}
       {...(initialDraft !== undefined ? { defaultDraft: initialDraft } : {})}
       onDraftChange={handleDraftChange}

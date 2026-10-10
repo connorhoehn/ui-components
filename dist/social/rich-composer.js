@@ -4,17 +4,17 @@ import { i as n, r } from "../Tabs-DqkWBCTi.js";
 import { r as i } from "../Density-Bm-JmcDy.js";
 import { n as a } from "../Text-BA4t3u5l.js";
 import { t as o } from "../Select-C6OGjVyH.js";
-import { a as s, c, i as l, l as u, n as ee, r as d, t as f } from "../composerSendError-D9zJtYFp.js";
-import { a as p, i as m, n as te, r as ne, t as h } from "../composerContext-BLn1-Nao.js";
-import { a as re, c as ie, i as g, l as _, n as ae, o as v, r as oe, s as y, t as b, u as se } from "../RichChatComposer-BV9NS6eU.js";
-import { t as ce } from "../ContextComposer-Cafk4c1I.js";
-import { t as le } from "../AgentComposerDock-DcWx3MYj.js";
-import { createContext as ue, useCallback as x, useContext as de, useEffect as S, useMemo as C, useRef as w, useState as T, useSyncExternalStore as E } from "react";
-import { jsx as D, jsxs as O } from "react/jsx-runtime";
+import { a as s, c, i as l, l as u, n as d, r as f, t as p } from "../composerSendError-D9zJtYFp.js";
+import { a as m, i as ee, n as h, r as te, t as g } from "../composerContext-BLn1-Nao.js";
+import { a as ne, c as re, i as _, l as v, n as ie, o as y, r as ae, s as b, t as x, u as oe } from "../RichChatComposer-CoJBAQzx.js";
+import { t as se } from "../ContextComposer-0GvwmTR4.js";
+import { t as ce } from "../AgentComposerDock-B6cpCVPP.js";
+import { createContext as le, useCallback as S, useContext as ue, useEffect as C, useMemo as w, useRef as T, useState as E, useSyncExternalStore as D } from "react";
+import { jsx as O, jsxs as k } from "react/jsx-runtime";
 //#region src/components/social/conversationInputRegistry.ts
-var k = { owner: "thread" };
-function A(e, t) {
-	if (!e) return k;
+var A = { owner: "thread" };
+function j(e, t) {
+	if (!e) return A;
 	for (let n = t.length - 1; n >= 0; --n) {
 		let r = t[n];
 		if (r.channels.includes(e)) return {
@@ -24,9 +24,9 @@ function A(e, t) {
 			replies: r.replies
 		};
 	}
-	return k;
+	return A;
 }
-var j = class {
+var M = class {
 	entries = [];
 	claimsValue = [];
 	listeners = /* @__PURE__ */ new Set();
@@ -49,7 +49,7 @@ var j = class {
 		};
 	}
 	focusThread(e) {
-		let t = A(e.channel, this.claimsValue);
+		let t = j(e.channel, this.claimsValue);
 		if (t.owner !== "composer") return !1;
 		let n = this.entries.find((e) => e.claim.id === t.claimId);
 		return n ? n.focus(e) : !1;
@@ -80,22 +80,22 @@ var j = class {
 		e.length === this.claimsValue.length && e.every((e, t) => e === this.claimsValue[t]) || (this.claimsValue = e);
 		for (let e of this.listeners) e();
 	}
-}, M = new j(), N = ue(M);
-function P({ children: e }) {
-	let [t] = T(() => new j());
-	return /* @__PURE__ */ D(N.Provider, {
+}, N = new M(), de = le(N);
+function fe({ children: e }) {
+	let [t] = E(() => new M());
+	return /* @__PURE__ */ O(de.Provider, {
 		value: t,
 		children: e
 	});
 }
-function F() {
-	return de(N);
+function P() {
+	return ue(de);
 }
-function fe(e) {
-	let t = F(), n = w(e.focus);
+function pe(e) {
+	let t = P(), n = T(e.focus);
 	n.current = e.focus;
 	let r = e.channels.filter((e) => !!e), i = r.join("\n"), a = e.enabled !== !1 && r.length > 0;
-	S(() => {
+	C(() => {
 		if (a) return t.claim({
 			channels: i.split("\n"),
 			label: e.label,
@@ -110,37 +110,37 @@ function fe(e) {
 		e.replies
 	]);
 }
-function pe(e) {
-	let t = F(), n = E(t.subscribe, t.claims, t.claims), r = C(() => A(e, n), [e, n]), i = x((n) => !!e && t.focusThread({
+function me(e) {
+	let t = P(), n = D(t.subscribe, t.claims, t.claims), r = w(() => j(e, n), [e, n]), i = S((n) => !!e && t.focusThread({
 		channel: e,
 		...n ? { reply: n } : {}
 	}), [t, e]);
-	return C(() => ({
+	return w(() => ({
 		...r,
 		focus: i
 	}), [r, i]);
 }
-function me(e, t = !0) {
-	let n = F(), r = w(e);
-	r.current = e, S(() => t ? n.onFocusRequest((e) => r.current(e)) : void 0, [n, t]);
-}
 function he(e, t = !0) {
-	let n = F(), r = w(e);
-	r.current = e, S(() => t ? n.onReveal((e) => r.current(e)) : void 0, [n, t]);
+	let n = P(), r = T(e);
+	r.current = e, C(() => t ? n.onFocusRequest((e) => r.current(e)) : void 0, [n, t]);
 }
-function I() {
-	let e = F(), t = E(e.subscribe, e.composerPresent, e.composerPresent);
+function ge(e, t = !0) {
+	let n = P(), r = T(e);
+	r.current = e, C(() => t ? n.onReveal((e) => r.current(e)) : void 0, [n, t]);
+}
+function F() {
+	let e = P(), t = D(e.subscribe, e.composerPresent, e.composerPresent);
 	return {
-		request: x((t) => e.requestFocus(t), [e]),
+		request: S((t) => e.requestFocus(t), [e]),
 		present: t
 	};
 }
-function ge({ label: e, onFocus: r, "data-testid": i = "pane-input-handoff" }) {
-	return /* @__PURE__ */ D(n, {
+function _e({ label: e, onFocus: r, "data-testid": i = "pane-input-handoff" }) {
+	return /* @__PURE__ */ O(n, {
 		gap: "none",
 		className: "border-t border-border px-3 py-2",
 		"data-testid": i,
-		children: /* @__PURE__ */ O(t, {
+		children: /* @__PURE__ */ k(t, {
 			variant: "secondary",
 			size: "sm",
 			fullWidth: !0,
@@ -151,7 +151,7 @@ function ge({ label: e, onFocus: r, "data-testid": i = "pane-input-handoff" }) {
 		})
 	});
 }
-function _e(e) {
+function ve(e) {
 	let { capabilities: t, offline: n } = e, r = [], i = {};
 	if (e.hasChat) {
 		r.push("chat");
@@ -169,7 +169,7 @@ function _e(e) {
 		reasons: i
 	};
 }
-function ve(e, t, n) {
+function ye(e, t, n) {
 	if (t) {
 		let n = e.find((e) => e.id === t);
 		if (n) return n;
@@ -180,16 +180,16 @@ function ve(e, t, n) {
 	}
 	return e.find((e) => !e.disabled) ?? null;
 }
-function ye(e, t) {
+function be(e, t) {
 	return [...new Set([e, ...t.map((e) => e.channel)].filter((e) => !!e))];
 }
-function L(e) {
+function I(e) {
 	return e.replace(/<[^>]*>/g, "").trim();
 }
-function be(e) {
-	return e.mode === "chat" && !!e.channel && e.recipientChannel === e.channel && L(e.html).length > 0;
-}
 function xe(e) {
+	return e.mode === "chat" && !!e.channel && e.recipientChannel === e.channel && I(e.html).length > 0;
+}
+function Se(e) {
 	return {
 		displayName: e.displayName,
 		...e.reply ? { replyTo: e.reply } : {},
@@ -200,11 +200,11 @@ function xe(e) {
 		...e.attachments?.length ? { attachments: [...e.attachments] } : {}
 	};
 }
-function Se(e) {
+function Ce(e) {
 	let t = e.trim();
 	return /^\/agent\s+/i.test(t) ? t.replace(/^\/agent\s+/i, "") : t;
 }
-function R(e, t) {
+function L(e, t) {
 	let n = e.trim(), r = n.toLowerCase();
 	for (let e of t) {
 		let t = e.trigger.toLowerCase();
@@ -215,38 +215,38 @@ function R(e, t) {
 	}
 	return null;
 }
-var Ce = "ui.conversation-draft:";
-function z(e) {
-	return `${Ce}${e}`;
+var we = "ui.conversation-draft:";
+function R(e) {
+	return `${we}${e}`;
 }
-function we(e, t) {
+function Te(e, t) {
 	try {
-		let n = e?.getItem(z(t));
+		let n = e?.getItem(R(t));
 		if (!n) return null;
 		let r = JSON.parse(n);
-		return r && typeof r.html == "string" && L(r.html) ? r.html : null;
+		return r && typeof r.html == "string" && I(r.html) ? r.html : null;
 	} catch {
 		return null;
 	}
 }
-function Te(e, t, n) {
+function Ee(e, t, n) {
 	try {
-		L(n) ? e?.setItem(z(t), JSON.stringify({ html: n })) : e?.removeItem(z(t));
+		I(n) ? e?.setItem(R(t), JSON.stringify({ html: n })) : e?.removeItem(R(t));
 	} catch {}
 }
-var B = "Conversation changed; draft retained.";
-function V(e) {
+var z = "Conversation changed; draft retained.";
+function B(e) {
 	return `Upload failed: ${(e ?? "").replace(/^upload failed:?\s*/i, "").trim() || "unknown error"}`;
 }
-function Ee(e) {
+function De(e) {
 	return e.map((e) => e.name).join(", ");
 }
-var De = class {
+var Oe = class {
 	pending = /* @__PURE__ */ new Map();
 	wait(e, t, n) {
 		return new Promise((r, i) => {
 			let a = setTimeout(() => {
-				this.pending.delete(e) && i(Error(V(`timed out (${n})`)));
+				this.pending.delete(e) && i(Error(B(`timed out (${n})`)));
 			}, t);
 			this.pending.set(e, {
 				resolve: r,
@@ -266,11 +266,11 @@ var De = class {
 	get size() {
 		return this.pending.size;
 	}
-}, Oe = "Message sent. Your current draft has been kept.", ke = "This destination is no longer available. Choose a current destination.", Ae = "This view has no page to attach.";
-function je(e, t) {
+}, ke = "Message sent. Your current draft has been kept.", Ae = "This destination is no longer available. Choose a current destination.", je = "This view has no page to attach.";
+function Me(e, t) {
 	typeof e == "function" ? e(t) : e && (e.current = t);
 }
-function Me(e, t) {
+function Ne(e, t) {
 	if (!t) return e;
 	let n = Object.keys(t).filter((n) => !e.modes.includes(n) && t[n]);
 	return n.length ? {
@@ -282,16 +282,16 @@ function Me(e, t) {
 		}
 	} : e;
 }
-function Ne() {
+function Pe() {
 	try {
 		return typeof window > "u" ? null : window.localStorage;
 	} catch {
 		return null;
 	}
 }
-function Pe(e, t, n, r = 6e4) {
-	let i = w(new De()), a = w(t);
-	a.current = t, S(() => () => i.current.rejectAll(B), [t]);
+function Fe(e, t, n, r = 6e4) {
+	let i = T(new Oe()), a = T(t);
+	a.current = t, C(() => () => i.current.rejectAll(z), [t]);
 	let { upload: o } = e.useFileUpload(t ?? "chat:no-conversation", {
 		displayName: n,
 		onComplete: (e) => {
@@ -305,27 +305,27 @@ function Pe(e, t, n, r = 6e4) {
 				...e.height ? { height: e.height } : {}
 			});
 		}
-	}), s = x(async (e) => {
+	}), s = S(async (e) => {
 		let t = a.current;
-		if (!t) throw new f("This conversation cannot take files yet.");
+		if (!t) throw new p("This conversation cannot take files yet.");
 		let n;
 		try {
 			n = await o(e);
 		} catch (e) {
-			throw new f(V(e instanceof Error ? e.message : String(e)));
+			throw new p(B(e instanceof Error ? e.message : String(e)));
 		}
-		if (a.current !== t) throw Error(B);
-		if (n.status === "failed") throw new f(V(n.error));
-		if (!n.transferId) throw new f(V(`no transfer id for ${e.name}`));
+		if (a.current !== t) throw Error(z);
+		if (n.status === "failed") throw new p(B(n.error));
+		if (!n.transferId) throw new p(B(`no transfer id for ${e.name}`));
 		try {
 			return await i.current.wait(n.transferId, r, e.name);
 		} catch (e) {
-			throw e instanceof Error && e.message === "Conversation changed; draft retained." ? e : new f(e instanceof Error ? e.message : V(void 0));
+			throw e instanceof Error && e.message === "Conversation changed; draft retained." ? e : new p(e instanceof Error ? e.message : B(void 0));
 		}
 	}, [o, r]);
-	return x((e) => Promise.all(e.map(s)), [s]);
+	return S((e) => Promise.all(e.map(s)), [s]);
 }
-function Fe({ id: e, value: t, recipients: n, onChange: i, "data-testid": s }) {
+function Ie({ id: e, value: t, recipients: n, onChange: i, "data-testid": s }) {
 	let c = n.filter((e) => !e.group).map((e) => ({
 		value: e.id,
 		label: e.label,
@@ -338,17 +338,17 @@ function Fe({ id: e, value: t, recipients: n, onChange: i, "data-testid": s }) {
 			...e.disabled ? { disabled: !0 } : {}
 		}))
 	}));
-	return /* @__PURE__ */ O(r, {
+	return /* @__PURE__ */ k(r, {
 		gap: "xs",
 		align: "center",
 		wrap: !1,
 		className: "ml-1 min-w-0 self-start rounded-md border border-border bg-surface pl-2",
-		children: [/* @__PURE__ */ D(a, {
+		children: [/* @__PURE__ */ O(a, {
 			size: "xs",
 			tone: "secondary",
 			className: "shrink-0",
 			children: "To:"
-		}), /* @__PURE__ */ D(o, {
+		}), /* @__PURE__ */ O(o, {
 			id: e,
 			"aria-label": "Chat recipient",
 			value: t ?? "",
@@ -364,18 +364,18 @@ function Fe({ id: e, value: t, recipients: n, onChange: i, "data-testid": s }) {
 		})]
 	});
 }
-function H(e) {
+function V(e) {
 	function t(t) {
-		return /* @__PURE__ */ D(Ie, {
+		return /* @__PURE__ */ O(Le, {
 			rm: e,
 			...t
 		});
 	}
 	return t.displayName = "ConversationComposer", t;
 }
-function Ie({ rm: t, channel: o, chat: c, context: l, capabilities: u, identity: ee, offline: d, recipients: p, defaultRecipient: m, recipient: te, onRecipientChange: ne, commands: h = [], onAgent: re, callBlock: ie, reply: g, mode: _, onModeChange: ae, defaultMode: v, draftKey: oe, persistDraft: y = !0, claim: b = !1, answersFocus: se = !1, onReveal: le, disabled: ue, offModes: de, composerRef: E, onDraftChange: k, defaultDraft: A, draft: j, above: M, modeRowEnd: N, references: P, onRemoveReference: F, modePlaceholders: pe, contextChip: he, sendWithReferencesOnly: I, console: ge, "data-testid": L = "conversation-composer", ...Ce }) {
-	let z = i() === "compact", B = ee?.displayName || "You", V = oe ?? o ?? `${l.kind}:${l.id}`, De = u.readOnlyReason || "You can read this conversation but not post to it.", H = C(() => {
-		let e = p ?? (o ? [{
+function Le({ rm: t, channel: o, chat: c, context: l, capabilities: u, identity: d, offline: f, recipients: m, defaultRecipient: ee, recipient: h, onRecipientChange: te, commands: g = [], onAgent: ne, callBlock: re, reply: _, mode: v, onModeChange: ie, defaultMode: y, draftKey: ae, persistDraft: b = !0, claim: x = !1, answersFocus: oe = !1, onReveal: ce, disabled: le, offModes: ue, composerRef: D, onDraftChange: A, defaultDraft: j, draft: M, above: N, modeRowEnd: de, references: fe, onRemoveReference: P, modePlaceholders: me, contextChip: ge, sendWithReferencesOnly: F, console: _e, "data-testid": I = "conversation-composer", ...we }) {
+	let R = i() === "compact", z = d?.displayName || "You", B = ae ?? o ?? `${l.kind}:${l.id}`, Oe = u.readOnlyReason || "You can read this conversation but not post to it.", V = w(() => {
+		let e = m ?? (o ? [{
 			id: "discussion",
 			label: l.title || "This conversation",
 			channel: o,
@@ -383,115 +383,137 @@ function Ie({ rm: t, channel: o, chat: c, context: l, capabilities: u, identity:
 		}] : []);
 		return e.map((t) => t.channel && t.channel === o && !u.maySend ? {
 			...t,
-			unavailableReason: t.unavailableReason ?? De,
+			unavailableReason: t.unavailableReason ?? Oe,
 			disabled: e.length > 1 || t.disabled
 		} : t);
 	}, [
-		p,
+		m,
 		o,
 		l.title,
 		u.maySend,
-		De
-	]), [Ie, Le] = T(null), U = te === void 0 ? Ie : te, Re = !!U && !H.some((e) => e.id === U), W = Re ? {
-		id: U,
+		Oe
+	]), [Le, Re] = E(null), H = h === void 0 ? Le : h, ze = !!H && !V.some((e) => e.id === H), U = ze ? {
+		id: H,
 		label: "Previous destination",
 		disabled: !0,
-		unavailableReason: ke
-	} : ve(H, U, m), ze = H.filter((e) => !e.disabled && !e.unavailableReason).length, Be = H.length > 0, G = Me(_e({
+		unavailableReason: Ae
+	} : ye(V, H, ee), Be = V.filter((e) => !e.disabled && !e.unavailableReason).length, Ve = V.length > 0, W = Ne(ve({
 		capabilities: u,
-		hasChat: Be,
-		choosable: ze,
-		offline: d ?? null,
-		chatOffReason: W?.unavailableReason ?? null
-	}), de), Ve = v && G.modes.includes(v) ? v : G.modes.find((e) => !G.disabledModes.includes(e)) ?? G.modes[0] ?? "chat", [He, Ue] = T(Ve), K = _ ?? He, q = x((e) => {
-		_ === void 0 && Ue(e), ae?.(e);
-	}, [_, ae]), We = `${G.modes.join(",")}|${G.disabledModes.join(",")}`;
-	S(() => {
-		if (G.modes.includes(K) && !G.disabledModes.includes(K)) return;
-		let e = G.modes.find((e) => !G.disabledModes.includes(e));
-		e && e !== K && q(e);
+		hasChat: Ve,
+		choosable: Be,
+		offline: f ?? null,
+		chatOffReason: U?.unavailableReason ?? null
+	}), ue), He = y && W.modes.includes(y) ? y : W.modes.find((e) => !W.disabledModes.includes(e)) ?? W.modes[0] ?? "chat", [Ue, We] = E(He), G = v ?? Ue, K = S((e) => {
+		v === void 0 && We(e), ie?.(e);
+	}, [v, ie]), Ge = `${W.modes.join(",")}|${W.disabledModes.join(",")}`;
+	C(() => {
+		if (W.modes.includes(G) && !W.disabledModes.includes(G)) return;
+		let e = W.modes.find((e) => !W.disabledModes.includes(e));
+		e && e !== G && K(e);
 	}, [
-		We,
-		K,
-		q
+		Ge,
+		G,
+		K
 	]);
-	let [J, Ge] = T(!0), Y = l.reference ?? null;
-	S(() => {
-		Ge(!0);
-	}, [Y?.id]);
-	let Ke = !!W && W.carriesReference !== !1, qe = !!Y && !Y.page, Je = !!W && W.channel !== o, Ye = !!Y && J && !(K === "chat" && (!Ke || qe && Je)), X = K === "chat" && Ke && J && !(qe && Je) ? Y : null, Z = w(0), Q = j !== void 0, Xe = C(() => {
-		if (Q || !y) return A;
-		let e = we(Ne(), V);
+	let [q, Ke] = E(!0), J = l.reference ?? null;
+	C(() => {
+		Ke(!0);
+	}, [J?.id]);
+	let qe = !!U && U.carriesReference !== !1, Je = !!J && !J.page, Ye = !!U && U.channel !== o, Xe = !!J && q && !(G === "chat" && (!qe || Je && Ye)), Y = G === "chat" && qe && q && !(Je && Ye) ? J : null, X = T(0), Z = M !== void 0, Ze = d?.userId?.trim() || null, Q = Ze ? JSON.stringify([
+		"actor",
+		Ze,
+		B
+	]) : null, Qe = b && !Z ? JSON.stringify([
+		"actor",
+		Ze,
+		B
+	]) : B, $e = JSON.stringify([
+		B,
+		o ?? null,
+		d?.userId ?? null,
+		U?.id ?? null,
+		U?.channel ?? null
+	]), et = T($e);
+	et.current !== $e && (et.current = $e, X.current += 1);
+	let tt = T(M);
+	tt.current = M;
+	let nt = w(() => {
+		if (Z || !b || !Q) return j;
+		let e = Te(Pe(), Q);
 		return e ? {
 			html: e,
 			files: []
-		} : A;
-	}, [V]), Ze = w(""), Qe = x((e, t) => {
-		Z.current += 1, Ze.current = e.html, y && !Q && Te(Ne(), V, e.html), c?.setTyping?.(be({
-			html: e.html,
-			mode: K,
-			recipientChannel: W?.channel,
-			channel: o
-		})), k?.(e, t);
+		} : j;
 	}, [
-		y,
+		Qe,
+		Z,
+		b
+	]), rt = T(""), it = S((e, t) => {
+		X.current += 1, rt.current = e.html, b && !Z && Q && Ee(Pe(), Q, e.html), c?.setTyping?.(xe({
+			html: e.html,
+			mode: G,
+			recipientChannel: U?.channel,
+			channel: o
+		})), A?.(e, t);
+	}, [
+		b,
+		Z,
 		Q,
-		V,
 		c,
-		K,
-		W?.channel,
+		G,
+		U?.channel,
 		o,
-		k
+		A
 	]);
-	S(() => {
-		be({
-			html: Ze.current,
-			mode: K,
-			recipientChannel: W?.channel,
+	C(() => {
+		xe({
+			html: rt.current,
+			mode: G,
+			recipientChannel: U?.channel,
 			channel: o
 		}) || c?.setTyping?.(!1);
 	}, [
-		K,
-		W?.channel,
+		G,
+		U?.channel,
 		o
 	]);
-	let $e = K === "chat" && u.mayAttach && W?.attachments && W.channel ? W.channel : null, et = Pe(t, $e, B), [tt, nt] = T(null), rt = w(null), it = x((e) => {
-		rt.current = e, je(E, e);
-	}, [E]), $ = x(() => {
-		le?.();
+	let at = G === "chat" && u.mayAttach && U?.attachments && U.channel ? U.channel : null, ot = Fe(t, at, z), [st, ct] = E(null), lt = T(null), ut = S((e) => {
+		lt.current = e, Me(D, e);
+	}, [D]), $ = S(() => {
+		ce?.();
 		let e = 20, t = () => {
-			rt.current ? rt.current.focus() : e-- > 0 && requestAnimationFrame(t);
+			lt.current ? lt.current.focus() : e-- > 0 && requestAnimationFrame(t);
 		};
 		requestAnimationFrame(t);
-	}, [le]), at = x((e) => {
-		Le(e), ne?.(e), Z.current += 1, nt(null), H.find((t) => t.id === e)?.onSelect?.();
-	}, [H, ne]), ot = H.filter((e) => e.claim !== !1);
-	fe({
-		channels: b ? ye(u.maySend || p === void 0 ? o : null, ot) : [],
-		label: b ? b.label : "",
-		replies: b ? !!b.replies : !1,
-		enabled: !!b && b.enabled !== !1,
+	}, [ce]), dt = S((e) => {
+		Re(e), te?.(e), X.current += 1, ct(null), V.find((t) => t.id === e)?.onSelect?.();
+	}, [V, te]), ft = V.filter((e) => e.claim !== !1);
+	pe({
+		channels: x ? be(u.maySend || m === void 0 ? o : null, ft) : [],
+		label: x ? x.label : "",
+		replies: x ? !!x.replies : !1,
+		enabled: !!x && x.enabled !== !1,
 		focus: (e) => {
-			let t = ot.find((t) => t.channel === e.channel);
-			return q("chat"), t && at(t.id), $(), !0;
+			let t = ft.find((t) => t.channel === e.channel);
+			return K("chat"), t && dt(t.id), $(), !0;
 		}
-	}), me(x((e) => {
-		if (e.mode === "agent") return !G.modes.includes("agent") || G.disabledModes.includes("agent") ? !1 : (q("agent"), $(), !0);
-		if (!G.modes.includes("chat") || G.disabledModes.includes("chat")) return !1;
-		let t = e.target, n = t ? t.kind === "discussion" ? H.find((e) => e.channel && e.channel === o) ?? (p ? H.find((e) => e.id === "discussion") : W) : t.kind === "huddle" ? ot.find((e) => e.id.startsWith("huddle:")) ?? null : t.kind === "person" ? H.find((e) => e.id === `person:${t.userId}`) ?? null : H.find((e) => e.channel === t.channel) ?? null : W;
-		return !n || n.disabled ? !1 : (n.id !== W?.id && at(n.id), q("chat"), $(), !0);
+	}), he(S((e) => {
+		if (e.mode === "agent") return !W.modes.includes("agent") || W.disabledModes.includes("agent") ? !1 : (K("agent"), $(), !0);
+		if (!W.modes.includes("chat") || W.disabledModes.includes("chat")) return !1;
+		let t = e.target, n = t ? t.kind === "discussion" ? V.find((e) => e.channel && e.channel === o) ?? (m ? V.find((e) => e.id === "discussion") : U) : t.kind === "huddle" ? ft.find((e) => e.id.startsWith("huddle:")) ?? null : t.kind === "person" ? V.find((e) => e.id === `person:${t.userId}`) ?? null : V.find((e) => e.channel === t.channel) ?? null : U;
+		return !n || n.disabled ? !1 : (n.id !== U?.id && dt(n.id), K("chat"), $(), !0);
 	}, [
-		G,
-		q,
-		$,
 		W,
-		H,
-		p,
-		ot,
+		K,
+		$,
+		U,
+		V,
+		m,
+		ft,
 		o,
-		at
-	]), se);
-	let st = C(() => h.filter((e) => !e.modes || e.modes.includes(K)), [h, K]), ct = C(() => st.map((e) => ({
+		dt
+	]), oe);
+	let pt = w(() => g.filter((e) => !e.modes || e.modes.includes(G)), [g, G]), mt = w(() => pt.map((e) => ({
 		trigger: e.trigger,
 		label: e.label,
 		...e.hint ? { hint: e.hint } : {},
@@ -499,18 +521,18 @@ function Ie({ rm: t, channel: o, chat: c, context: l, capabilities: u, identity:
 		...e.icon ? { icon: e.icon } : {},
 		...e.disabled ? { disabled: !0 } : {},
 		...e.argument ? { argument: e.argument } : {}
-	})), [st]), lt = (e) => {
-		if (typeof e == "string") throw new f(e);
+	})), [pt]), ht = (e) => {
+		if (typeof e == "string") throw new p(e);
 		return e !== !1;
-	}, ut = async (e, t) => {
-		nt(null);
+	}, gt = async (e, t) => {
+		ct(null);
 		let n = (n, r, i) => ({
 			trigger: r,
 			text: n,
 			argumentText: i,
 			mode: t,
-			reference: X ?? (J ? Y : null),
-			recipientId: W?.id ?? null,
+			reference: Y ?? (q ? J : null),
+			recipientId: U?.id ?? null,
 			message: e,
 			...e.command?.argument ? { argument: {
 				id: e.command.argument.id,
@@ -518,148 +540,148 @@ function Ie({ rm: t, channel: o, chat: c, context: l, capabilities: u, identity:
 			} } : {}
 		});
 		if (t === "agent") {
-			if (!u.agent?.allowed || d) return !1;
+			if (!u.agent?.allowed || f) return !1;
 			let t = e.text.trim();
 			if (!t) return !1;
-			let r = h.filter((e) => !e.modes || e.modes.includes("agent")), i = Se(t), a = R(t, r) ?? (i === t ? null : R(i, r));
+			let r = g.filter((e) => !e.modes || e.modes.includes("agent")), i = Ce(t), a = L(t, r) ?? (i === t ? null : L(i, r));
 			if (a) {
-				let e = R(t, [a.command]) ? t : i;
-				return !a.command.disabled && lt(await a.command.run(n(e, a.command.trigger, a.argumentText)));
+				let e = L(t, [a.command]) ? t : i;
+				return !a.command.disabled && ht(await a.command.run(n(e, a.command.trigger, a.argumentText)));
 			}
 			if (!i) return !1;
-			if (re) return lt(await re(i, n(i, "", i)));
+			if (ne) return ht(await ne(i, n(i, "", i)));
 			let o = r.find((e) => e.trigger === "/agent");
-			return o ? lt(await o.run(n(`/agent ${i}`, "/agent", i))) : !1;
+			return o ? ht(await o.run(n(`/agent ${i}`, "/agent", i))) : !1;
 		}
 		if (!e.files.length) {
-			let t = R(e.text, h.filter((e) => !e.modes || e.modes.includes("chat")));
-			if (t) return !t.command.disabled && (c?.setTyping?.(!1), lt(await t.command.run(n(e.text.trim(), t.command.trigger, t.argumentText))));
+			let t = L(e.text, g.filter((e) => !e.modes || e.modes.includes("chat")));
+			if (t) return !t.command.disabled && (c?.setTyping?.(!1), ht(await t.command.run(n(e.text.trim(), t.command.trigger, t.argumentText))));
 		}
-		if (!W || W.disabled || W.unavailableReason || d) return !1;
-		let r = e.text.trim(), i = !r && !e.files.length && !!I && (!!X || (P?.length ?? 0) > 0);
-		if (!r && !e.files.length && !i || e.files.length && !$e) return !1;
+		if (!U || U.disabled || U.unavailableReason || f) return !1;
+		let r = e.text.trim(), i = !r && !e.files.length && !!F && (!!Y || (fe?.length ?? 0) > 0);
+		if (!r && !e.files.length && !i || e.files.length && !at) return !1;
 		c?.setTyping?.(!1);
-		let a = Z.current, s = e.files.length ? await et(e.files) : [], l = !!W.channel && W.channel === o, ee = xe({
-			displayName: B,
-			reply: l ? g?.reply ?? null : null,
-			reference: X,
-			attachments: s
-		}), f = r || Ee(s), p = {
-			text: f,
+		let a = X.current, s = et.current, l = e.files.length ? await ot(e.files) : [], d = !!U.channel && U.channel === o, p = Se({
+			displayName: z,
+			reply: d ? _?.reply ?? null : null,
+			reference: Y,
+			attachments: l
+		}), m = r || De(l), ee = {
+			text: m,
 			html: e.html,
 			files: e.files,
-			metadata: ee,
-			reference: X
-		}, m;
-		return W.send ? m = await W.send(p) : c ? (c.sendMessage(f, ee), m = !0) : m = !1, m ? (l && g?.clear(), y && !Q && Te(Ne(), V, ""), Z.current === a || (nt(Oe), !1)) : !1;
-	}, dt = Ye && Y ? /* @__PURE__ */ D(s, {
+			metadata: p,
+			reference: Y
+		}, h;
+		return U.send ? h = await U.send(ee) : c ? (c.sendMessage(m, p), h = !0) : h = !1, h ? X.current !== a || tt.current !== M ? (et.current === s && ct(ke), !1) : (d && _?.clear(), b && !Z && Q && Ee(Pe(), Q, ""), !0) : !1;
+	}, _t = Xe && J ? /* @__PURE__ */ O(s, {
 		references: [{
-			id: Y.id,
-			label: z ? Y.label.split(" › ").pop() ?? Y.label : Y.label,
-			title: Y.label
+			id: J.id,
+			label: R ? J.label.split(" › ").pop() ?? J.label : J.label,
+			title: J.label
 		}],
 		onRemove: () => {
-			Ge(!1), Z.current += 1, F?.(Y.id);
+			Ke(!1), X.current += 1, P?.(J.id);
 		},
 		removeLabel: (e) => `Remove ${e.label} from this draft`,
 		size: "md",
 		className: "min-w-0 max-w-[max(9rem,min(30rem,calc(100cqw-22rem)))] flex-nowrap p-0",
 		"data-testid": "rich-chat-composer-references"
-	}) : null, ft = Re && W ? [...H, W] : H, pt = K === "chat" && ft.length > 1, mt = K === "chat" && J && qe && Je && Ke, ht = K === "chat" && ft.length > 1 ? W?.unavailableReason ?? (W ? null : "Choose a destination.") : null, gt = K === "chat" ? W?.error ?? null : null, _t = pt || ht || tt || mt || gt || M != null && M !== !1 ? /* @__PURE__ */ O(n, {
+	}) : null, vt = ze && U ? [...V, U] : V, yt = G === "chat" && vt.length > 1, bt = G === "chat" && q && Je && Ye && qe, xt = G === "chat" && vt.length > 1 ? U?.unavailableReason ?? (U ? null : "Choose a destination.") : null, St = G === "chat" ? U?.error ?? null : null, Ct = yt || xt || st || bt || St || N != null && N !== !1 ? /* @__PURE__ */ k(n, {
 		gap: "xs",
 		children: [
-			M,
-			pt && /* @__PURE__ */ D(Fe, {
-				id: `${V}-recipient`,
-				value: W?.id ?? null,
-				recipients: ft,
-				onChange: at,
-				"data-testid": `${L}-recipient`
+			N,
+			yt && /* @__PURE__ */ O(Ie, {
+				id: `${B}-recipient`,
+				value: U?.id ?? null,
+				recipients: vt,
+				onChange: dt,
+				"data-testid": `${I}-recipient`
 			}),
-			ht && /* @__PURE__ */ D(a, {
+			xt && /* @__PURE__ */ O(a, {
 				size: "xs",
 				tone: "tertiary",
 				wrap: !0,
-				"data-testid": `${L}-recipient-unavailable`,
-				children: ht
+				"data-testid": `${I}-recipient-unavailable`,
+				children: xt
 			}),
-			mt && /* @__PURE__ */ D(a, {
+			bt && /* @__PURE__ */ O(a, {
 				size: "xs",
 				tone: "tertiary",
 				wrap: !0,
-				children: Ae
+				children: je
 			}),
-			tt && /* @__PURE__ */ D(a, {
+			st && /* @__PURE__ */ O(a, {
 				size: "xs",
 				tone: "secondary",
 				wrap: !0,
-				"data-testid": `${L}-note`,
-				children: tt
+				"data-testid": `${I}-note`,
+				children: st
 			}),
-			gt && /* @__PURE__ */ D(a, {
+			St && /* @__PURE__ */ O(a, {
 				size: "xs",
 				className: "text-error",
 				wrap: !0,
-				"data-testid": `${L}-recipient-error`,
-				children: gt
+				"data-testid": `${I}-recipient-error`,
+				children: St
 			})
 		]
-	}) : void 0, vt = !z, yt = vt && dt || N ? /* @__PURE__ */ O(r, {
+	}) : void 0, wt = !R, Tt = wt && _t || de ? /* @__PURE__ */ k(r, {
 		gap: "xs",
 		align: "center",
 		wrap: !1,
 		className: "min-w-0",
-		children: [vt ? dt : null, N]
-	}) : void 0, bt = !vt && Ye && Y ? [{
-		id: Y.id,
-		label: Y.label.split(" › ").pop() ?? Y.label,
-		title: Y.label
-	}, ...P ?? []] : P, xt = (e) => {
-		Y && e === Y.id && (Ge(!1), Z.current += 1), F?.(e);
-	}, St = {
-		...pe,
-		...K === "chat" && W?.placeholder ? { chat: W.placeholder } : {}
-	}, Ct = K === "chat" && (!W || !!W.unavailableReason || !!W.disabled);
-	return /* @__PURE__ */ D(ce, {
-		...Ce,
+		children: [wt ? _t : null, de]
+	}) : void 0, Et = !wt && Xe && J ? [{
+		id: J.id,
+		label: J.label.split(" › ").pop() ?? J.label,
+		title: J.label
+	}, ...fe ?? []] : fe, Dt = (e) => {
+		J && e === J.id && (Ke(!1), X.current += 1), P?.(e);
+	}, Ot = {
+		...me,
+		...G === "chat" && U?.placeholder ? { chat: U.placeholder } : {}
+	}, kt = G === "chat" && (!U || !!U.unavailableReason || !!U.disabled);
+	return /* @__PURE__ */ O(se, {
+		...we,
 		context: l,
-		composerRef: it,
-		"data-testid": L,
-		...z ? { responsive: "pane" } : {},
-		console: ge ?? !!ie,
-		dock: ie,
-		mode: K,
-		onModeChange: q,
-		modes: G.modes,
-		disabledModes: G.disabledModes,
-		modeUnavailableReasons: G.reasons,
-		chatAvailable: Be && !G.reasons.chat,
-		contextChip: he ?? (!Y && void 0),
-		..._t ? { above: _t } : {},
-		...yt ? { modeRowEnd: yt } : {},
-		...bt ? {
-			references: bt,
-			onRemoveReference: xt
+		composerRef: ut,
+		"data-testid": I,
+		...R ? { responsive: "pane" } : {},
+		console: _e ?? !!re,
+		dock: re,
+		mode: G,
+		onModeChange: K,
+		modes: W.modes,
+		disabledModes: W.disabledModes,
+		modeUnavailableReasons: W.reasons,
+		chatAvailable: Ve && !W.reasons.chat,
+		contextChip: ge ?? (!J && void 0),
+		...Ct ? { above: Ct } : {},
+		...Tt ? { modeRowEnd: Tt } : {},
+		...Et ? {
+			references: Et,
+			onRemoveReference: Dt
 		} : {},
-		modePlaceholders: St,
-		commands: ct,
-		reply: K === "chat" && g?.reply && W?.channel === o ? {
-			author: g.reply.author,
-			quote: g.reply.text,
-			messageId: g.reply.messageId,
-			...g.reply.timestamp ? { timestamp: g.reply.timestamp } : {},
-			onDismiss: g.clear
+		modePlaceholders: Ot,
+		commands: mt,
+		reply: G === "chat" && _?.reply && U?.channel === o ? {
+			author: _.reply.author,
+			quote: _.reply.text,
+			messageId: _.reply.messageId,
+			..._.reply.timestamp ? { timestamp: _.reply.timestamp } : {},
+			onDismiss: _.clear
 		} : null,
-		allowAttachments: !!$e,
-		...I === void 0 ? {} : { sendWithReferencesOnly: I },
-		disabled: !!ue || !!d || Ct || K === "agent" && !u.agent?.allowed,
-		draftKey: V,
-		...Q ? { draft: j } : {},
-		...Xe === void 0 ? {} : { defaultDraft: Xe },
-		onDraftChange: Qe,
-		onSend: (e, t) => ut(e, t.mode),
-		className: e(Ce.className)
+		allowAttachments: !!at,
+		...F === void 0 ? {} : { sendWithReferencesOnly: F },
+		disabled: !!le || !!f || kt || G === "agent" && !u.agent?.allowed,
+		draftKey: Qe,
+		...Z ? { draft: M } : {},
+		...nt === void 0 ? {} : { defaultDraft: nt },
+		onDraftChange: it,
+		onSend: (e, t) => gt(e, t.mode),
+		className: e(we.className)
 	});
 }
 //#endregion
-export { le as AgentComposerDock, b as COMPOSER_BREAKPOINTS, h as COMPOSER_CONTEXT_KINDS, te as COMPOSER_CONTEXT_REASONS, ae as COMPOSER_MODE_ORDER, v as CommandSuggestions, se as ComposerAttachments, s as ComposerReferences, f as ComposerSendError, ce as ContextComposer, P as ConversationInputProvider, ie as DocumentSuggestions, c as EMOJI_SHORTCODES, y as EmojiSuggestions, _ as MentionSuggestions, oe as RichChatComposer, ge as ThreadInputHandoff, Ee as attachmentOnlyText, d as composerCommandArgumentText, ne as composerContextPreset, p as composerDraftOf, ee as composerSendErrorReason, g as composerSizeFor, H as createConversationComposer, m as identityDisplayName, l as matchComposerCommand, re as matchesModeTrigger, u as searchEmoji, I as useComposerFocus, he as useComposerFocusReveal, Pe as useConversationUploads, pe as useThreadInput };
+export { ce as AgentComposerDock, x as COMPOSER_BREAKPOINTS, g as COMPOSER_CONTEXT_KINDS, h as COMPOSER_CONTEXT_REASONS, ie as COMPOSER_MODE_ORDER, y as CommandSuggestions, oe as ComposerAttachments, s as ComposerReferences, p as ComposerSendError, se as ContextComposer, fe as ConversationInputProvider, re as DocumentSuggestions, c as EMOJI_SHORTCODES, b as EmojiSuggestions, v as MentionSuggestions, ae as RichChatComposer, _e as ThreadInputHandoff, De as attachmentOnlyText, f as composerCommandArgumentText, te as composerContextPreset, m as composerDraftOf, d as composerSendErrorReason, _ as composerSizeFor, V as createConversationComposer, ee as identityDisplayName, l as matchComposerCommand, ne as matchesModeTrigger, u as searchEmoji, F as useComposerFocus, ge as useComposerFocusReveal, Fe as useConversationUploads, me as useThreadInput };

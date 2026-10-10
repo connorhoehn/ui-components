@@ -22,7 +22,7 @@
 //     binds the ring's lobby, tells the app (`onAccept`, to open the page the
 //     call is about) and answers once the hook is bound.
 //   - The pre-join device check before every start, join and accept, with
-//     "remember" and "join muted / camera off" applied once media is up.
+//     remembered capture intentions passed before any device or media join.
 //   - The media sink's CLAIMS (callBlockModel.ts): a composer's call block, a
 //     page's block, the shell's block, the side pane's media panel, else the
 //     footer — the one dock moves, it is never mounted twice.
@@ -66,7 +66,6 @@ import {
   checkDevicesInitial,
   conversationHoldsCall,
   countdownSeconds,
-  mediaFixups,
   nextPreJoin,
   pageHuddleStart,
   parsePreJoin,
@@ -121,6 +120,7 @@ export interface CallBlockModules extends ConversationCallDockModules {
     platformApi: { baseUrl: string; getIdToken: () => string | Promise<string> };
     gateway?: never;
     discover?: boolean;
+    initialMedia?: { micOn: boolean; cameraOn: boolean };
     onCallStarted?(e: never): void;
     onCallEnded?(e: never): void;
     onCallMissed?(e: never): void;
@@ -296,8 +296,8 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
     onCancel(): void;
   }) {
     const [choice, setChoice] = useState(initial);
-    const devices = rm.useMediaDevices({ requestOnMount: true });
-    const settings = rm.useAudioVideoSettings({ preview: true, previewVideo: choice.cameraOn } as never) as unknown as RMAudioVideoSettingsSource;
+    const devices = rm.useMediaDevices({ requestOnMount: false });
+    const settings = rm.useAudioVideoSettings({ preview: choice.micOn || choice.cameraOn, previewAudio: choice.micOn, previewVideo: choice.cameraOn } as never) as unknown as RMAudioVideoSettingsSource;
     const total = preJoinCountdownMs(kind);
     const [remaining, setRemaining] = useState<number | null>(total);
     const stopped = useRef(false);
@@ -363,6 +363,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
     const emit = (kind: CallHostEventKind, event: CallHostEvent) => {
       eventRef.current?.(kind, event, { host: hostRef.current, selfId: self?.userId ?? '' });
     };
+    const [initialMedia, setInitialMedia] = useState(() => readChoice(preJoinStorageKey));
     const rawCall = rm.useConversationCall({
       lobbyName: lobby?.lobbyName ?? UNBOUND,
       channel: lobby?.channel ?? null,
@@ -370,6 +371,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
       platformApi: { baseUrl: platformApiUrl ?? '', getIdToken },
       gateway: gateway as never,
       discover: !!lobby && gatewayConfigured,
+      initialMedia: { micOn: initialMedia.micOn, cameraOn: initialMedia.cameraOn },
       ...(onCallEvent ? {
         onCallStarted: (e: never) => emit('started', e as CallHostEvent),
         onCallEnded: (e: never) => emit('ended', e as CallHostEvent),
@@ -381,10 +383,9 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
     callRef.current = rawCall;
     const [prompt, setPrompt] = useState<PreJoinRequest | null>(null);
     const [go, setGo] = useState<{ run(call: Call): void } | null>(null);
-    const fixups = useRef<PreJoinChoice | null>(null);
     const request = useCallback((kind: PreJoinKind, run: (call: Call) => void, cancel?: () => void) => {
       const initial = readChoice(preJoinStorageKey);
-      if (!shouldShowPreJoin(initial, kind)) { fixups.current = initial; run(callRef.current); return; }
+      if (!shouldShowPreJoin(initial, kind)) { setInitialMedia(initial); setGo({ run }); return; }
       setPrompt((current) => current ?? { kind, run, ...(cancel ? { cancel } : {}), initial });
     }, [preJoinStorageKey]);
     const gatedStart = useCallback<Call['start']>((targets, opts) => {
@@ -407,15 +408,8 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
       go.run(callRef.current);
       setGo(null);
     }, [go]);
-    // "Join muted / camera off": once this person's media is up, toggle to the chosen state.
-    useEffect(() => {
-      const choice = fixups.current;
-      if (!choice || !['connecting', 'live'].includes(rawCall.phase)) return;
-      const { toggleMic, toggleCamera } = mediaFixups(choice, rawCall.self);
-      if (toggleMic) rawCall.toggleMic();
-      if (toggleCamera) rawCall.toggleCamera();
-      if (rawCall.phase === 'live') fixups.current = null;
-    }, [rawCall]);
+    // The native hook receives the selected capture intent on the render before go.run.
+    // No post-capture mute: an off device must never be opened just to turn it off.
     hostRef.current = call.call?.host ?? hostRef.current;
     if (call.phase === 'idle') hostRef.current = null;
     const phaseRef = useRef(call.phase);
@@ -496,7 +490,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
             callRef.current.devices.set({ ...callRef.current.devices.prefs, ...devices });
             setPrompt(null);
             if (p.kind === 'check') return;
-            fixups.current = choice;
+            setInitialMedia(choice);
             setGo({ run: p.run });
           }}
         />}

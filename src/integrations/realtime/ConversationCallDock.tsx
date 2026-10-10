@@ -23,7 +23,7 @@
 // — and nothing here imports the package at runtime. `integrations/realtime-modules`
 // exports it bound to the canonical install.
 
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import type * as RMVideo from '@connorhoehn/realtime-modules/client/video';
 import { CallDock, type CallDockProps, type CallDockTileSize } from '../../components/video/CallDock';
 import { StreamVideo } from '../../components/video/StreamVideo';
@@ -168,6 +168,9 @@ function ConversationCallDockImpl(
   }: ConversationCallDockProps,
 ) {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const captureError = call.media?.captureError ?? null;
+  const [dismissedCaptureError, setDismissedCaptureError] = useState<string | null>(null);
+  useEffect(() => { if (!captureError) setDismissedCaptureError(null); }, [captureError]);
   // Same storage as the call's device preferences; the preview (camera + mic
   // level) runs only while the dialog is open.
   const avs = rm.useAudioVideoSettings({ preview: settingsOpen });
@@ -204,6 +207,10 @@ function ConversationCallDockImpl(
   return (
     <>
       {notice ? <InlineAlert tone="info" data-testid={`${testId}-notice`}>{notice}</InlineAlert> : null}
+      {captureError && captureError !== dismissedCaptureError ? <InlineAlert tone="warning"
+        data-testid={`${testId}-capture-error`} onDismiss={() => setDismissedCaptureError(captureError)}>
+        {captureError} You can keep listening. Check browser device access, then turn the device on to retry.
+      </InlineAlert> : null}
       <CallDock {...dockProps} />
       {!onOpenSettings && (
         <Modal open={settingsOpen} onClose={() => setSettingsOpen(false)} title="Call devices">

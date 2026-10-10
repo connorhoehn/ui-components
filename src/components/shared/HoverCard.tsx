@@ -103,18 +103,48 @@ export function HoverCard({
     return () => { document.removeEventListener('keydown', onKey); document.removeEventListener('mousedown', onDown); };
   }, [open, dismiss]);
 
-  // Placed before paint under the trigger, inside the viewport.
+  // Prefer below the trigger, then above; bound long or asynchronously loaded
+  // content to the viewport. A pinned card follows its anchor across scrolls
+  // and layout changes without changing disclosure or focus ownership.
   useLayoutEffect(() => {
     if (!open) return;
     const a = anchor.current, p = panel.current;
     if (!a || !p) return;
-    const r = a.getBoundingClientRect();
-    const w = p.offsetWidth || 0;
-    const left = Math.max(8, Math.min(r.left, window.innerWidth - w - 8));
     p.style.position = 'fixed';
-    p.style.top = `${r.bottom + 6}px`;
-    p.style.left = `${left}px`;
     p.style.zIndex = '9500';
+    p.style.overflowY = 'auto';
+    let frame = 0;
+    const place = () => {
+      const gutter = 8, gap = 6;
+      const width = document.documentElement.clientWidth || window.innerWidth;
+      const height = document.documentElement.clientHeight || window.innerHeight;
+      p.style.maxWidth = `${Math.max(1, width - gutter * 2)}px`;
+      p.style.maxHeight = `${Math.max(1, height - gutter * 2)}px`;
+      const r = a.getBoundingClientRect();
+      const below = r.bottom + gap, above = r.top - gap - p.offsetHeight;
+      const lastTop = height - gutter - p.offsetHeight;
+      const placement = below >= gutter && below <= lastTop ? 'below'
+        : above >= gutter && above <= lastTop ? 'above' : 'bounded';
+      const top = placement === 'below' ? below : placement === 'above' ? above
+        : Math.max(gutter, Math.min(below, lastTop));
+      p.style.top = `${top}px`;
+      p.style.left = `${Math.max(gutter, Math.min(r.left, width - gutter - p.offsetWidth))}px`;
+      p.dataset.viewportPlacement = placement;
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(() => { frame = 0; place(); });
+    };
+    place();
+    const observer = new ResizeObserver(place);
+    observer.observe(p); observer.observe(a);
+    window.addEventListener('resize', schedule);
+    document.addEventListener('scroll', schedule, true);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', schedule);
+      document.removeEventListener('scroll', schedule, true);
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, [open]);
 
   const trigger: HoverCardTriggerProps = {
