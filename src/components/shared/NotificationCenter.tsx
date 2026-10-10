@@ -2,7 +2,10 @@
 //
 // Tabs: Unread | All. Uses EmptyState when empty.
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
+import { Button } from '../ui/Button';
+import { Tabs, TabPanel } from './Tabs';
+import { T } from './Text';
 import EmptyState from './EmptyState';
 import { cn } from '../../lib/cn';
 
@@ -50,73 +53,33 @@ export function NotificationCenter({
   'data-testid': testId,
 }: NotificationCenterProps) {
   const [tab, setTab] = useState<Tab>('unread');
+  const tabsId = useId();
 
   const unread = items.filter(n => !n.read);
   const displayed = tab === 'unread' ? unread : items;
   const hasUnread = unread.length > 0;
 
-  const tabCls = (active: boolean) => cn(
-    'px-3 py-1.5 text-sm border-none rounded-md cursor-pointer font-[inherit] transition-colors duration-100',
-    active
-      ? 'bg-primary-bg text-text-primary font-semibold'
-      : 'bg-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)]',
-  );
-
   return (
-    <div
-      data-testid={testId}
-      className={cn(
-        'flex flex-col bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl shadow-md overflow-hidden',
-        className,
-      )}
-    >
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 pt-3 pb-2 border-b border-[var(--color-border)]">
-        <span className="text-sm font-semibold text-[var(--color-text-primary)]">
-          Notifications
-          {hasUnread && (
-            <span className="ml-2 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[11px] font-bold bg-danger text-white leading-none">
-              {unread.length}
-            </span>
-          )}
-        </span>
+    <section data-testid={testId} aria-label="Notifications"
+      className={cn('flex min-h-0 flex-col bg-surface text-text-primary', className)}>
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3">
+        <h2><T as="span" size="sm" weight="semibold">
+          Notifications {hasUnread && <span className="ml-2 text-xs text-primary" aria-label={`${unread.length} unread`}>{unread.length}</span>}
+        </T></h2>
         <div className="flex items-center gap-2">
-          {onMarkAllRead && hasUnread && (
-            <button
-              type="button"
-              onClick={onMarkAllRead}
-              className="text-xs text-info-fg bg-transparent border-none cursor-pointer hover:underline"
-            >
-              Mark all read
-            </button>
-          )}
-          {onClearAll && items.length > 0 && (
-            <button
-              type="button"
-              onClick={onClearAll}
-              className="text-xs text-[var(--color-text-tertiary)] bg-transparent border-none cursor-pointer hover:underline"
-            >
-              Clear all
-            </button>
-          )}
+          {onMarkAllRead && hasUnread && <Button variant="ghost" size="sm" onClick={onMarkAllRead}>Mark all read</Button>}
+          {onClearAll && items.length > 0 && <Button variant="ghost" size="sm" onClick={onClearAll}>Clear all</Button>}
         </div>
       </div>
-
-      {/* Tabs */}
-      <div className="flex items-center gap-1 px-3 pt-2">
-        <button type="button" className={tabCls(tab === 'unread')} onClick={() => setTab('unread')}>
-          Unread {unread.length > 0 && `(${unread.length})`}
-        </button>
-        <button type="button" className={tabCls(tab === 'all')} onClick={() => setTab('all')}>
-          All
-        </button>
-      </div>
+      <Tabs idPrefix={tabsId} className="mx-4 shrink-0" aria-label="Notification filter" value={tab}
+        onValueChange={value => setTab(value as Tab)} size="md" variant="underline"
+        items={[{ id: 'unread', label: `Unread${unread.length ? ` (${unread.length})` : ''}` }, { id: 'all', label: 'All' }]} />
 
       {/* Feed */}
-      <div className="flex flex-col overflow-y-auto max-h-[420px] py-2">
+      <TabPanel id={tab} when={tab} idPrefix={tabsId} className="flex min-h-0 flex-1 flex-col overflow-y-auto py-2">
         {displayed.length === 0 ? (
           <EmptyState
-            icon={tab === 'unread' ? '✓' : '🔔'}
+            size="sm" align="start"
             title={tab === 'unread' ? 'All caught up' : 'No notifications'}
             body={tab === 'unread' ? 'No unread notifications.' : 'Notifications will appear here.'}
           />
@@ -135,12 +98,12 @@ export function NotificationCenter({
               type={onItemClick ? 'button' : undefined}
               onClick={onItemClick ? () => onItemClick(item) : undefined}
               className={cn(
-                'flex items-start gap-3 px-4 py-3 text-left border-none',
+                'flex items-start gap-3 px-4 py-3 text-left border-0 border-b border-solid border-border/50 last:border-b-0',
                 'transition-colors duration-100 font-[inherit] w-full',
-                onItemClick && 'cursor-pointer',
+                onItemClick && 'cursor-pointer focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-[-2px]',
                 item.read
                   ? cn('bg-transparent', onItemClick && 'hover:bg-[var(--color-surface-hover)]')
-                  : cn('bg-[rgba(59,130,246,0.05)]', onItemClick && 'hover:bg-[rgba(59,130,246,0.1)]'),
+                  : cn('bg-primary/5', onItemClick && 'hover:bg-surface-hover'),
               )}
             >
               {item.icon && (
@@ -152,7 +115,7 @@ export function NotificationCenter({
                 <div className="flex items-center justify-between gap-2">
                   <span
                     className={cn(
-                      'text-sm leading-snug truncate',
+                      'text-sm leading-5 line-clamp-2',
                       item.read
                         ? 'text-[var(--color-text-secondary)] font-normal'
                         : 'text-[var(--color-text-primary)] font-medium',
@@ -162,18 +125,18 @@ export function NotificationCenter({
                   </span>
                   {!item.read && (
                     <span
-                      className="shrink-0 w-1.5 h-1.5 rounded-full bg-info"
+                      className="shrink-0 w-1.5 h-1.5 rounded-full bg-primary"
                       aria-label="Unread"
                     />
                   )}
                 </div>
                 {item.body && (
-                  <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5 leading-snug line-clamp-2">
+                  <p className="text-sm text-text-secondary mt-1 leading-5 line-clamp-2">
                     {item.body}
                   </p>
                 )}
                 {item.timestamp != null && (
-                  <p className="text-[11px] text-[var(--color-text-tertiary)] mt-1 font-mono">
+                  <p className="text-xs text-text-tertiary mt-1">
                     {formatTime(item.timestamp)}
                   </p>
                 )}
@@ -182,8 +145,8 @@ export function NotificationCenter({
             );
           })
         )}
-      </div>
-    </div>
+      </TabPanel>
+    </section>
   );
 }
 

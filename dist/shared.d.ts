@@ -5646,6 +5646,10 @@ export declare interface SubNavItem {
     label: string;
     /** Optional small badge (e.g. live count) shown right-aligned. */
     count?: number | string;
+    /** Observed activity supplied by the host, never inferred from availability. */
+    activity?: {
+        label: string;
+    };
     /** Optional dim subtitle below the label. */
     hint?: string;
     /** Optional group heading. When set on any item, the layout renders

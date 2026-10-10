@@ -1241,6 +1241,9 @@ declare interface ChatPanelProps {
      *  demos expect), TRUE inside a dock, whose column has a definite
      *  height that the body must match or leave a dead band behind. */
     fill?: boolean;
+    /** In a filling panel with a custom composer, let its backdrop meet the
+     *  parent edges while message history keeps a 16px reading gutter. */
+    flushComposer?: boolean;
     /** Called when the reader asks for older messages. When present (and
      *  `hasMore` is not false) a "Load earlier messages" button renders
      *  above the first message. The panel preserves the reader's scroll
@@ -1672,6 +1675,8 @@ declare interface ConversationSurfaceProps {
     callModeFixed?: boolean;
     /** Extra header controls, to the right of the call buttons. */
     headerActions?: ReactNode;
+    /** Optional host gutter adjustment; identity, tabs and actions remain native. */
+    headerClassName?: string;
     /** Controlled view. Omit to let the surface keep its own. */
     view?: ConversationFeature;
     onViewChange?: (view: ConversationFeature) => void;

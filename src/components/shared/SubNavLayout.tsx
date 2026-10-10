@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { ActivityIcon } from '../ui/Icons';
 import {
   RailCaretIcon,
   RAIL_CURRENT_FILL,
@@ -41,6 +42,8 @@ export interface SubNavItem {
   label: string;
   /** Optional small badge (e.g. live count) shown right-aligned. */
   count?: number | string;
+  /** Observed activity supplied by the host, never inferred from availability. */
+  activity?: { label: string };
   /** Optional dim subtitle below the label. */
   hint?: string;
   /** Optional group heading. When set on any item, the layout renders
@@ -419,6 +422,7 @@ function ItemLink({
         >
           {item.label}
         </span>
+        {item.activity && <span className="ml-auto shrink-0 text-primary" role="img" aria-label={item.activity.label} title={item.activity.label} data-testid="subnav-item-activity"><ActivityIcon size={13} /></span>}
         {item.count !== undefined && (
           <span className={cn('shrink-0', RAIL_ITEM_COUNT)} data-testid="subnav-item-count">
             {item.count}

@@ -1,9 +1,9 @@
 import { n as e, t } from "./useWebSocket-ycV-byRn.js";
 import { t as n } from "./cn-D4QmbyEy.js";
-import { n as r } from "./Button-C2OEUpX-.js";
+import { n as r } from "./Button-BEOshFFZ.js";
 import { t as i } from "./Card-CbTNNNkk.js";
-import { t as a } from "./Chip-0zFpfJ52.js";
-import { a as o, i as s, n as c, r as l } from "./Tabs-DqkWBCTi.js";
+import { t as a } from "./Chip-D2jKHd4a.js";
+import { a as o, i as s, o as c, s as l } from "./Text-WZBlGWvc.js";
 import { ct as u, m as d, mt as f } from "./Icons-B_xESAH3.js";
 import { i as p } from "./MediaIcons-_ai5Til2.js";
 import { t as m } from "./Badge-POenI45X.js";
@@ -11,13 +11,13 @@ import { t as h } from "./Banner-8ngXUtJu.js";
 import { t as g } from "./Modal-CjgKqXl7.js";
 import { t as _ } from "./Input-CpLq80dw.js";
 import { t as v } from "./EmptyState-BupZX4UK.js";
-import { n as y } from "./DropdownMenu-M27Ly7by.js";
+import { n as y } from "./DropdownMenu-DR9iVi2Z.js";
 import { t as b } from "./Textarea-Drx4YDDG.js";
 import { t as x } from "./Avatar-CmYYkk9C.js";
 import { t as S } from "./SegmentedControl-C2b-qya3.js";
 import { t as C } from "./InlineAlert-CBtteaVZ.js";
 import { t as w } from "./CardHeader-C50GEAmo.js";
-import { n as T } from "./NumberInput-axCowEor.js";
+import { n as T } from "./NumberInput-DfHkxDUc.js";
 import { t as E } from "./PresenceAvatars-DAgxQ3PF.js";
 import { t as ee } from "./ChangeDiff-BHerlwTS.js";
 import { t as te } from "./MetaLine-BtHTTScI.js";
@@ -25,14 +25,14 @@ import { t as ne } from "./Select-C6OGjVyH.js";
 import { t as D } from "./Checkbox-C70AGFS5.js";
 import { n as re } from "./FileKindMark-DhjYpKjg.js";
 import { t as ie } from "./activationKey-CjbL3LUv.js";
-import { A as O, k } from "./renderers-cv5TKsG8.js";
-import { A as ae, B as A, C as j, D as oe, E as M, F as N, G as se, H as P, I as ce, J as le, K as ue, L as F, M as I, N as de, O as fe, P as pe, R as me, S as he, T as ge, U as _e, V as ve, W as ye, Y as be, Z as xe, _ as Se, a as Ce, b as we, c as Te, d as Ee, f as De, g as Oe, h as ke, i as Ae, j as je, k as Me, l as Ne, m as Pe, n as Fe, o as Ie, p as Le, q as Re, r as ze, s as Be, t as Ve, u as He, v as Ue, w as We, x as Ge, y as Ke, z as qe } from "./ProposedEditStrip-D9aRw10h.js";
-import { o as Je, t as Ye } from "./VerdictChip-B8JaUpcJ.js";
+import { A as O, k } from "./renderers-soBo-YRi.js";
+import { A as ae, B as A, C as j, D as oe, E as M, F as N, G as se, H as P, I as ce, J as le, K as ue, L as F, M as I, N as de, O as fe, P as pe, R as me, S as he, T as ge, U as _e, V as ve, W as ye, Y as be, Z as xe, _ as Se, a as Ce, b as we, c as Te, d as Ee, f as De, g as Oe, h as ke, i as Ae, j as je, k as Me, l as Ne, m as Pe, n as Fe, o as Ie, p as Le, q as Re, r as ze, s as Be, t as Ve, u as He, v as Ue, w as We, x as Ge, y as Ke, z as qe } from "./ProposedEditStrip-MG9Kxwqa.js";
+import { o as Je, t as Ye } from "./VerdictChip-Cc4Ej-AU.js";
 import { a as Xe, c as Ze, d as Qe, f as $e, h as et, i as tt, l as nt, m as rt, n as it, o as at, p as ot, r as st, s as ct, t as lt, u as ut } from "./TiptapEditor-BjjwDyPa.js";
 import { i as dt, n as ft, r as pt, t as mt } from "./FloatingComposerDock-ZezHreIm.js";
-import { A as ht, B as gt, C as _t, D as vt, E as yt, F as bt, G as xt, H as St, I as Ct, J as wt, K as Tt, L as Et, M as Dt, N as Ot, O as kt, P as At, R as jt, S as Mt, T as Nt, U as Pt, V as Ft, W as It, _ as Lt, a as Rt, b as zt, c as Bt, d as Vt, f as Ht, g as Ut, h as Wt, i as Gt, j as Kt, k as qt, l as Jt, m as Yt, o as Xt, p as Zt, q as Qt, r as $t, s as en, t as tn, u as nn, v as rn, w as an, x as on, y as sn, z as cn } from "./DocumentEditorPage-D21A6Jwx.js";
-import { C as ln, S as un, T as dn, _ as fn, a as pn, b as mn, c as hn, d as gn, f as _n, g as vn, h as yn, i as bn, l as xn, m as Sn, n as Cn, o as wn, p as Tn, r as En, s as Dn, t as On, u as kn, v as An, w as jn, x as Mn, y as Nn } from "./useDocumentImageUpload-k2Cs0Dzj.js";
-import { r as Pn } from "./RichChatComposer-CoJBAQzx.js";
+import { A as ht, B as gt, C as _t, D as vt, E as yt, F as bt, G as xt, H as St, I as Ct, J as wt, K as Tt, L as Et, M as Dt, N as Ot, O as kt, P as At, R as jt, S as Mt, T as Nt, U as Pt, V as Ft, W as It, _ as Lt, a as Rt, b as zt, c as Bt, d as Vt, f as Ht, g as Ut, h as Wt, i as Gt, j as Kt, k as qt, l as Jt, m as Yt, o as Xt, p as Zt, q as Qt, r as $t, s as en, t as tn, u as nn, v as rn, w as an, x as on, y as sn, z as cn } from "./DocumentEditorPage-DqEbLAwp.js";
+import { C as ln, S as un, T as dn, _ as fn, a as pn, b as mn, c as hn, d as gn, f as _n, g as vn, h as yn, i as bn, l as xn, m as Sn, n as Cn, o as wn, p as Tn, r as En, s as Dn, t as On, u as kn, v as An, w as jn, x as Mn, y as Nn } from "./useDocumentImageUpload-NgQ_75FW.js";
+import { r as Pn } from "./RichChatComposer-C-aCfCxy.js";
 import { forwardRef as Fn, useCallback as L, useEffect as R, useId as In, useImperativeHandle as Ln, useMemo as z, useRef as B, useState as V } from "react";
 import { Fragment as H, jsx as U, jsxs as W } from "react/jsx-runtime";
 import * as Rn from "yjs";
@@ -1495,7 +1495,7 @@ function Qr() {
 		})]
 	});
 }
-function $r({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint: a = "Drop the call here to read alongside it", undockLabel: s = "Pop video back out", onRequestUndock: c, compact: l = !1, onDragOver: u, onDragLeave: d, onDrop: f, className: p, children: m, "data-testid": h = "video-dock-slot" }) {
+function $r({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint: a = "Drop the call here to read alongside it", undockLabel: o = "Pop video back out", onRequestUndock: s, compact: c = !1, onDragOver: u, onDragLeave: d, onDrop: f, className: p, children: m, "data-testid": h = "video-dock-slot" }) {
 	let [g, _] = V(!1), v = L((e) => {
 		e.preventDefault(), t && _(!0), u?.(e);
 	}, [t, u]), y = L((e) => {
@@ -1507,7 +1507,7 @@ function $r({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint:
 	return !e && !t ? null : /* @__PURE__ */ U("div", {
 		"data-testid": h,
 		"data-docked": String(e),
-		"data-compact": l ? "true" : void 0,
+		"data-compact": c ? "true" : void 0,
 		"data-drag-over": String(g),
 		"data-call-dock-target": t && r ? r : void 0,
 		onDragOver: v,
@@ -1517,12 +1517,12 @@ function $r({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint:
 		children: e ? /* @__PURE__ */ W("div", {
 			"data-testid": `${h}-content`,
 			className: "relative w-full",
-			children: [m, c && /* @__PURE__ */ U("div", {
+			children: [m, s && /* @__PURE__ */ U("div", {
 				className: "absolute right-1 top-1 z-10 rounded bg-black/45 backdrop-blur-sm",
-				children: /* @__PURE__ */ U(o, {
-					"aria-label": s,
+				children: /* @__PURE__ */ U(l, {
+					"aria-label": o,
 					size: "sm",
-					onClick: c,
+					onClick: s,
 					"data-testid": `${h}-undock`,
 					icon: /* @__PURE__ */ U(Qr, {}),
 					className: "text-white hover:bg-white/20"
@@ -1532,7 +1532,7 @@ function $r({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint:
 			role: "region",
 			"aria-label": i,
 			"data-testid": `${h}-dropzone`,
-			className: n(l ? "flex h-10 w-full flex-row items-center justify-center gap-2" : "flex aspect-video w-full flex-col items-center justify-center gap-1", "rounded-lg border-2 border-dashed px-3 text-center", g ? "border-primary bg-surface-hover" : "border-border"),
+			className: n(c ? "flex h-10 w-full flex-row items-center justify-center gap-2" : "flex aspect-video w-full flex-col items-center justify-center gap-1", "rounded-lg border-2 border-dashed px-3 text-center", g ? "border-primary bg-surface-hover" : "border-border"),
 			children: [/* @__PURE__ */ U("span", {
 				className: "text-xs font-medium text-text-secondary",
 				children: i
@@ -2744,12 +2744,12 @@ function Ea({ count: e, children: t, onAcceptAll: o, onRejectAll: s, acceptLabel
 //#endregion
 //#region src/components/doc-editor/DocumentReviewPanel.tsx
 function Da({ request: e, onDecide: t, onWithdraw: n }) {
-	let [i, o] = V(""), [c, u] = V(!1), [d, f] = V(null), p = B(!1);
+	let [i, s] = V(""), [l, u] = V(!1), [d, f] = V(null), p = B(!1);
 	async function m(e) {
 		if (!p.current) {
 			p.current = !0, u(!0), f(null);
 			try {
-				await e(), o("");
+				await e(), s("");
 			} catch (e) {
 				f(e instanceof Error ? e.message : "The review could not be updated.");
 			} finally {
@@ -2760,11 +2760,11 @@ function Da({ request: e, onDecide: t, onWithdraw: n }) {
 	let h = e.reviewerName || e.reviewerId, g = e.state.replace(/_/g, " "), _ = g.charAt(0).toUpperCase() + g.slice(1);
 	return /* @__PURE__ */ U(be, {
 		"aria-label": `Review by ${h}`,
-		"aria-busy": c,
-		children: /* @__PURE__ */ W(s, {
+		"aria-busy": l,
+		children: /* @__PURE__ */ W(c, {
 			gap: "sm",
 			children: [
-				/* @__PURE__ */ W(l, {
+				/* @__PURE__ */ W(o, {
 					gap: "sm",
 					wrap: !0,
 					children: [
@@ -2796,24 +2796,24 @@ function Da({ request: e, onDecide: t, onWithdraw: n }) {
 				}),
 				t && e.state === "pending" && /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(b, {
 					value: i,
-					onChange: (e) => o(e.target.value),
+					onChange: (e) => s(e.target.value),
 					rows: 2,
-					disabled: c,
+					disabled: l,
 					"aria-label": `Review comment for ${h}`,
 					placeholder: "Add a comment (optional)"
-				}), /* @__PURE__ */ W(l, {
+				}), /* @__PURE__ */ W(o, {
 					gap: "sm",
 					wrap: !0,
 					children: [/* @__PURE__ */ U(r, {
 						size: "sm",
 						variant: "secondary",
-						disabled: c,
+						disabled: l,
 						onClick: () => void m(() => t(e.requestKey, "changes_requested", i)),
 						children: "Request changes"
 					}), /* @__PURE__ */ U(r, {
 						size: "sm",
 						variant: "primary",
-						disabled: c,
+						disabled: l,
 						onClick: () => void m(() => t(e.requestKey, "approved", i)),
 						children: "Approve review"
 					})]
@@ -2821,7 +2821,7 @@ function Da({ request: e, onDecide: t, onWithdraw: n }) {
 				n && e.state === "pending" && /* @__PURE__ */ U(r, {
 					size: "sm",
 					variant: "ghost",
-					disabled: c,
+					disabled: l,
 					onClick: () => void m(() => n(e.requestKey)),
 					children: "Withdraw review"
 				})
@@ -2829,13 +2829,13 @@ function Da({ request: e, onDecide: t, onWithdraw: n }) {
 		})
 	});
 }
-function Oa({ requests: e, reviewers: t = [], currentUserId: n, loading: i, error: a, onRefresh: o, onRequest: c, onDecide: u, onWithdraw: d }) {
+function Oa({ requests: e, reviewers: t = [], currentUserId: n, loading: i, error: a, onRefresh: s, onRequest: l, onDecide: u, onWithdraw: d }) {
 	let [f, p] = V(""), [m, h] = V(""), [g, _] = V(!0), [v, y] = V(!1), [x, S] = V(null), w = B(!1);
 	async function T() {
-		if (!(!c || !t.some((e) => e.id === f) || w.current)) {
+		if (!(!l || !t.some((e) => e.id === f) || w.current)) {
 			w.current = !0, y(!0), S(null);
 			try {
-				await c({
+				await l({
 					reviewerId: f,
 					note: m.trim(),
 					required: g
@@ -2847,14 +2847,14 @@ function Oa({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 			}
 		}
 	}
-	return /* @__PURE__ */ W(s, {
+	return /* @__PURE__ */ W(c, {
 		gap: "md",
 		children: [
 			a && /* @__PURE__ */ U(C, {
 				tone: "error",
 				children: a
 			}),
-			c && /* @__PURE__ */ W(s, {
+			l && /* @__PURE__ */ W(c, {
 				gap: "sm",
 				children: [
 					/* @__PURE__ */ U(ne, {
@@ -2876,7 +2876,7 @@ function Oa({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 						disabled: v,
 						onChange: (e) => h(e.target.value)
 					}),
-					/* @__PURE__ */ W(l, {
+					/* @__PURE__ */ W(o, {
 						as: "label",
 						gap: "sm",
 						align: "center",
@@ -2906,7 +2906,7 @@ function Oa({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 					size: "sm",
 					variant: "ghost",
 					disabled: i,
-					onClick: o,
+					onClick: s,
 					children: "Refresh reviews"
 				}),
 				empty: { title: i ? "Loading reviews…" : a ? "Reviews unavailable" : "No reviews requested" },
@@ -2952,7 +2952,7 @@ function Aa({ filled: e }) {
 		children: /* @__PURE__ */ U("path", { d: "M8 1.9l1.8 3.7 4.1.6-3 2.9.7 4.1L8 11.3l-3.6 1.9.7-4.1-3-2.9 4.1-.6L8 1.9Z" })
 	});
 }
-function ja({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: s, starred: l = !1, onStarredChange: u, statusPill: f, path: p, crumbsTrailing: h, subtitle: g, metaBar: _, participants: v, onParticipantClick: y, onFollowParticipant: b, followingParticipantId: x, meta: S, saveState: C, headActions: w, tabs: ee, activeTab: te, onTabChange: ne, toolbar: D, children: ie, footer: O, proposal: k, surface: ae = "workspace", explorer: A, workbench: j, label: oe = "Editor", variant: M = "document", itemType: N, itemKey: se, titleSize: P = "md", titleOverflow: ce = "truncate", tabsTrailing: le, className: ue, "data-testid": F = "editor-shell" }) {
+function ja({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: o, starred: c = !1, onStarredChange: u, statusPill: f, path: p, crumbsTrailing: h, subtitle: g, metaBar: _, participants: v, onParticipantClick: y, onFollowParticipant: b, followingParticipantId: x, meta: S, saveState: C, headActions: w, tabs: ee, activeTab: te, onTabChange: ne, toolbar: D, children: ie, footer: O, proposal: k, surface: ae = "workspace", explorer: A, workbench: j, label: oe = "Editor", variant: M = "document", itemType: N, itemKey: se, titleSize: P = "md", titleOverflow: ce = "truncate", tabsTrailing: le, className: ue, "data-testid": F = "editor-shell" }) {
 	let I = M === "work-item", de = I && (N || se) ? /* @__PURE__ */ W(H, { children: [N && /* @__PURE__ */ U(a, {
 		size: "sm",
 		tone: "info",
@@ -2962,7 +2962,7 @@ function ja({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 		className: "font-mono text-[12px] text-text-secondary",
 		"data-testid": `${F}-item-key`,
 		children: se
-	})] }) : null, fe = de || h != null ? /* @__PURE__ */ W(H, { children: [de, h] }) : null, pe = I && (e && e.length > 0 || fe != null), me = P === "lg" ? "text-[26px] font-semibold leading-8" : I ? "text-[22px] font-bold leading-7" : "text-xl font-bold leading-6", he = `${F}-${In().replace(/:/g, "")}`, ge = !!ee && ee.length > 0, _e = ge ? ee.some((e) => e.id === te) ? te : ee[0].id : void 0, ve = v && v.length > 0 || S != null || !!C, ye = (e) => /* @__PURE__ */ U(c, {
+	})] }) : null, fe = de || h != null ? /* @__PURE__ */ W(H, { children: [de, h] }) : null, pe = I && (e && e.length > 0 || fe != null), me = P === "lg" ? "text-[26px] font-semibold leading-8" : I ? "text-[22px] font-bold leading-7" : "text-xl font-bold leading-6", he = `${F}-${In().replace(/:/g, "")}`, ge = !!ee && ee.length > 0, _e = ge ? ee.some((e) => e.id === te) ? te : ee[0].id : void 0, ve = v && v.length > 0 || S != null || !!C, ye = (e) => /* @__PURE__ */ U(s, {
 		items: ee.map((e) => ({
 			id: e.id,
 			label: e.label,
@@ -3060,8 +3060,8 @@ function ja({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 						className: "flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1",
 						"data-testid": `${F}-head-row`,
 						children: [
-							s && !I && /* @__PURE__ */ U(re, {
-								kind: s,
+							o && !I && /* @__PURE__ */ U(re, {
+								kind: o,
 								size: "2xl",
 								variant: "outline",
 								className: "[@media(max-height:640px)]:h-8 [@media(max-height:640px)]:w-8",
@@ -3088,15 +3088,15 @@ function ja({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 													className: n("m-0 min-w-0 max-w-full flex-initial text-text-primary", me, ce === "wrap" ? "whitespace-normal break-words" : "truncate"),
 													"data-testid": `${F}-title`,
 													children: t
-												}), u && /* @__PURE__ */ U(o, {
+												}), u && /* @__PURE__ */ U(l, {
 													size: "sm",
-													"aria-label": l ? "Remove star" : "Star this file",
-													"aria-pressed": l,
-													title: l ? "Starred" : "Star",
-													onClick: () => u(!l),
-													className: l ? "shrink-0 text-primary" : "shrink-0 text-text-tertiary",
+													"aria-label": c ? "Remove star" : "Star this file",
+													"aria-pressed": c,
+													title: c ? "Starred" : "Star",
+													onClick: () => u(!c),
+													className: c ? "shrink-0 text-primary" : "shrink-0 text-text-tertiary",
 													"data-testid": `${F}-star`,
-													children: /* @__PURE__ */ U(Aa, { filled: l })
+													children: /* @__PURE__ */ U(Aa, { filled: c })
 												})]
 											}),
 											f,

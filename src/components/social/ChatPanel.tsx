@@ -359,6 +359,9 @@ export interface ChatPanelProps {
    *  demos expect), TRUE inside a dock, whose column has a definite
    *  height that the body must match or leave a dead band behind. */
   fill?: boolean;
+  /** In a filling panel with a custom composer, let its backdrop meet the
+   *  parent edges while message history keeps a 16px reading gutter. */
+  flushComposer?: boolean;
   /** Called when the reader asks for older messages. When present (and
    *  `hasMore` is not false) a "Load earlier messages" button renders
    *  above the first message. The panel preserves the reader's scroll
@@ -1447,6 +1450,7 @@ export function ChatPanel({
   tone = 'light',
   showHeader,
   fill,
+  flushComposer = false,
   onLoadMore,
   hasMore,
   loadingMore = false,
@@ -2800,7 +2804,7 @@ export function ChatPanel({
         // top margin — that margin plus the card's padding was the empty
         // strip between the dock's tab bar and the first message.
         fills
-          ? 'flex h-full min-h-0 flex-col px-3 pb-3 pt-2'
+          ? cn('flex h-full min-h-0 flex-col pt-2', flushComposer && composer ? 'px-0 pb-0' : 'px-3 pb-3')
           : cn('border rounded p-3 mt-4', dark ? 'border-white/10 bg-white/5' : 'border-border'),
       )}
     >
@@ -2839,7 +2843,7 @@ export function ChatPanel({
           stays on the bottom edge and the slack goes to the messages.
           Wrapped so the "new messages" affordance can float over its
           bottom edge without joining the scroll content. */}
-      <div className={cn('relative flex flex-col mb-2', fills ? 'min-h-0 flex-1' : '')}>
+      <div className={cn('relative flex flex-col mb-2', fills ? 'min-h-0 flex-1' : '', fills && flushComposer && composer && 'mx-4')}>
         <div
           ref={listRef}
           onScroll={handleListScroll}

@@ -368,7 +368,7 @@ export interface PaneHeaderProps {
   tabs: readonly TabItem[];
   value: string;
   onValueChange: (id: string) => void;
-  /** Right end of the row (a view switcher), on the row's own line. */
+  /** Right end of the row (a view switcher); wraps below the tabs when needed. */
   trailing?: ReactNode;
   /** Names the tablist. Default "Pane sections". */
   label?: string;
@@ -377,16 +377,16 @@ export interface PaneHeaderProps {
 
 /**
  * The pane's tab row: underline tabs whose first label starts on the pane's
- * 16px inset (the frame title's edge), a trailing slot on the same row, one
- * rule under it.
+ * 16px inset (the frame title's edge), a trailing slot that wraps beneath
+ * the tabs when a narrow pane cannot fit both, and one rule under it.
  */
 export function PaneHeader({ tabs, value, onValueChange, trailing, label = 'Pane sections', 'data-testid': testId = 'pane-header' }: PaneHeaderProps) {
   return (
-    // pl-1.5: the first tab's own 10px padding brings its label to 16px.
-    <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border pl-1.5 pr-4" data-testid={testId}>
-      <Tabs size="sm" variant="underline" indicator="bar" aria-label={label} className="min-w-0 after:hidden"
+    // pl-1 + the tab's own 12px padding aligns its label with the 16px body inset.
+    <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-2 gap-y-1 border-b border-border pl-1 pr-4" data-testid={testId}>
+      <Tabs size="md" variant="underline" indicator="bar" aria-label={label} className="min-w-0 max-w-full shrink-0 after:hidden" overflowBelow={360}
         items={[...tabs]} value={value} onValueChange={onValueChange} />
-      {trailing}
+      {trailing && <div className="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-1 py-1" data-testid={`${testId}-actions`}>{trailing}</div>}
     </div>
   );
 }

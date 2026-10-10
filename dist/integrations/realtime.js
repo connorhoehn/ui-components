@@ -1,10 +1,9 @@
-import { n as e } from "../Button-C2OEUpX-.js";
-import { i as t, r as n } from "../Tabs-DqkWBCTi.js";
-import { t as r } from "../Modal-CjgKqXl7.js";
-import { n as i } from "../Slider-DEbQCKD1.js";
-import { n as a } from "../Text-BA4t3u5l.js";
-import { i as o, n as s, r as c, t as l } from "../useDocumentImageUpload-k2Cs0Dzj.js";
-import { $ as u, A as d, B as f, C as p, D as m, E as h, F as g, G as _, H as v, I as y, J as b, K as x, L as S, M as C, N as w, O as T, P as E, Q as D, R as O, S as k, T as A, U as j, V as ee, W as M, X as N, Y as P, Z as F, _ as te, a as I, at as ne, b as L, c as R, ct as z, d as B, et as V, f as re, g as H, h as ie, i as ae, it as oe, j as se, k as ce, l as le, lt as ue, m as de, n as fe, nt as pe, o as me, ot as he, p as ge, q as _e, r as ve, rt as ye, s as be, st as xe, t as Se, tt as Ce, u as we, ut as Te, v as Ee, w as De, x as Oe, y as ke, z as Ae } from "../WrappedAudioVideoSettingsForm-C4S5E6YQ.js";
+import { n as e } from "../Button-BEOshFFZ.js";
+import { a as t, n, o as r } from "../Text-WZBlGWvc.js";
+import { t as i } from "../Modal-CjgKqXl7.js";
+import { n as a } from "../Slider-DEbQCKD1.js";
+import { i as o, n as s, r as c, t as l } from "../useDocumentImageUpload-NgQ_75FW.js";
+import { $ as u, A as d, B as f, C as p, D as m, E as h, F as g, G as _, H as v, I as y, J as b, K as x, L as S, M as C, N as w, O as T, P as E, Q as D, R as O, S as k, T as A, U as j, V as ee, W as M, X as N, Y as P, Z as F, _ as te, a as I, at as ne, b as L, c as R, ct as z, d as B, et as V, f as re, g as H, h as ie, i as ae, it as oe, j as se, k as ce, l as le, lt as ue, m as de, n as fe, nt as pe, o as me, ot as he, p as ge, q as _e, r as ve, rt as ye, s as be, st as xe, t as Se, tt as Ce, u as we, ut as Te, v as Ee, w as De, x as Oe, y as ke, z as Ae } from "../WrappedAudioVideoSettingsForm-Cy-FxANy.js";
 import { createContext as U, useCallback as W, useContext as G, useEffect as K, useLayoutEffect as je, useMemo as q, useRef as J, useState as Y, useSyncExternalStore as Me } from "react";
 import { jsx as X, jsxs as Z } from "react/jsx-runtime";
 import { createPortal as Ne } from "react-dom";
@@ -200,13 +199,13 @@ function dt(o) {
 				y(n);
 			}, 250);
 			return () => window.clearInterval(t);
-		}, [_]), /* @__PURE__ */ X(r, {
+		}, [_]), /* @__PURE__ */ X(i, {
 			open: !0,
 			onClose: f,
 			title: `${Ze[s]} — ${c}`,
 			maxWidth: 560,
 			backdropTestId: "prejoin-backdrop",
-			footer: /* @__PURE__ */ Z(n, {
+			footer: /* @__PURE__ */ Z(t, {
 				gap: "sm",
 				justify: "end",
 				children: [/* @__PURE__ */ X(e, {
@@ -220,7 +219,7 @@ function dt(o) {
 					children: v === null ? s === "check" ? "Save" : "Join" : `Join as last time (${Xe(v)})`
 				})]
 			}),
-			children: /* @__PURE__ */ Z(t, {
+			children: /* @__PURE__ */ Z(r, {
 				gap: "md",
 				"data-testid": "prejoin-dialog",
 				children: [
@@ -231,11 +230,11 @@ function dt(o) {
 						selfName: l,
 						"data-testid": "prejoin-devices"
 					}),
-					/* @__PURE__ */ Z(n, {
+					/* @__PURE__ */ Z(t, {
 						gap: "md",
 						align: "center",
 						children: [
-							/* @__PURE__ */ X(i, {
+							/* @__PURE__ */ X(a, {
 								checked: p.micOn,
 								onChange: (e) => m((t) => ({
 									...t,
@@ -244,11 +243,11 @@ function dt(o) {
 								"aria-label": "Join with microphone on",
 								"data-testid": "prejoin-mic"
 							}),
-							/* @__PURE__ */ X(a, {
+							/* @__PURE__ */ X(n, {
 								size: "sm",
 								children: "Microphone on"
 							}),
-							/* @__PURE__ */ X(i, {
+							/* @__PURE__ */ X(a, {
 								checked: p.cameraOn,
 								onChange: (e) => m((t) => ({
 									...t,
@@ -257,16 +256,16 @@ function dt(o) {
 								"aria-label": "Join with camera on",
 								"data-testid": "prejoin-camera"
 							}),
-							/* @__PURE__ */ X(a, {
+							/* @__PURE__ */ X(n, {
 								size: "sm",
 								children: "Camera on"
 							})
 						]
 					}),
-					/* @__PURE__ */ Z(n, {
+					/* @__PURE__ */ Z(t, {
 						gap: "sm",
 						align: "center",
-						children: [/* @__PURE__ */ X(i, {
+						children: [/* @__PURE__ */ X(a, {
 							checked: p.remember,
 							onChange: (e) => m((t) => ({
 								...t,
@@ -274,7 +273,7 @@ function dt(o) {
 							})),
 							"aria-label": "Remember and skip this check next time",
 							"data-testid": "prejoin-remember"
-						}), /* @__PURE__ */ X(a, {
+						}), /* @__PURE__ */ X(n, {
 							size: "sm",
 							children: "Remember these choices and skip this check next time"
 						})]
@@ -527,12 +526,12 @@ function dt(o) {
 		let l = y((e) => e.current, tt);
 		return !!e && l === e;
 	}
-	function w({ placement: e, compact: n = !1, documents: r, className: i }) {
-		let a = G(s), o = G(l), [c, u] = Y(null), d = ct(c), f = !!a?.lobby && Q(a.call.phase, !0), p = e === "composer" ? d > 0 : e === "pane" || f && !!o?.open && d > 0, m = e === "composer" && (n || Re(d)), h = S(c, e, p, {
+	function w({ placement: e, compact: t = !1, documents: n, className: i }) {
+		let a = G(s), o = G(l), [c, u] = Y(null), d = ct(c), f = !!a?.lobby && Q(a.call.phase, !0), p = e === "composer" ? d > 0 : e === "pane" || f && !!o?.open && d > 0, m = e === "composer" && (t || Re(d)), h = S(c, e, p, {
 			compact: m,
-			...r ? { documents: r } : {}
+			...n ? { documents: n } : {}
 		});
-		return /* @__PURE__ */ X(t, {
+		return /* @__PURE__ */ X(r, {
 			ref: u,
 			gap: "none",
 			className: i ?? (e === "composer" ? "min-w-0" : "shrink-0 min-w-0"),
@@ -594,11 +593,11 @@ function dt(o) {
 			...l
 		};
 	}
-	function O({ id: e, onOpenPeople: n, onOpenDocument: r, overlay: i, dockTestId: a }) {
+	function O({ id: e, onOpenPeople: t, onOpenDocument: n, overlay: i, dockTestId: a }) {
 		let o = G(s), c = y((e) => e.current, tt), l = y((e) => e.placement, nt), d = y((e) => e.compact, rt), f = y((e) => e.documents, at), p = !!o?.lobby && Q(o.call.phase, !0), m = !!c && l === "composer", h = !!c && l !== "pane", g = Le(c ? l : "footer", d), _ = o?.lobby ?? null, v = p && _ && o ? /* @__PURE__ */ X(u, {
 			call: o.call,
 			title: _.title,
-			onOpenPeople: () => n?.(_, o.tenant),
+			onOpenPeople: () => t?.(_, o.tenant),
 			selfName: o.self?.displayName ?? "",
 			compact: !h || d,
 			...h && !d ? { tileSize: "lg" } : {},
@@ -609,13 +608,13 @@ function dt(o) {
 				})),
 				onDocumentClick: (e) => {
 					let t = f.find((t) => t.id === e);
-					t && r?.(t);
+					t && n?.(t);
 				}
 			} : {},
 			layout: g,
 			"data-testid": a ? a(_, o.tenant) : "conversation-call-dock"
 		}) : null;
-		return v ? c ? Ne(/* @__PURE__ */ Z(t, {
+		return v ? c ? Ne(/* @__PURE__ */ Z(r, {
 			gap: "none",
 			className: "relative",
 			"data-testid": "shell-call-media",
@@ -623,7 +622,7 @@ function dt(o) {
 			"data-layout": g,
 			"data-expanded": "true",
 			children: [v, i]
-		}), c) : /* @__PURE__ */ X(t, {
+		}), c) : /* @__PURE__ */ X(r, {
 			id: e,
 			gap: "none",
 			className: "hidden",

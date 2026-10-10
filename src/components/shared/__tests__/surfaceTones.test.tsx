@@ -82,7 +82,7 @@ describe('Button tone', () => {
 describe('IconButton tone', () => {
   it('keeps the app tokens by default', () => {
     render(<IconButton aria-label="Close">✕</IconButton>);
-    expect(screen.getByRole('button')).toHaveClass('bg-transparent', 'text-text-primary');
+    expect(screen.getByRole('button')).toHaveClass('bg-transparent', 'text-text-secondary');
   });
 
   it('paints in the code family', () => {

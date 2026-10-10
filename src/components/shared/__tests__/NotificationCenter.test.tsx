@@ -11,6 +11,17 @@ const makeItems = (n: number, read = false): NotificationItem[] =>
   }));
 
 describe('NotificationCenter', () => {
+  it('links each selected filter to its named content panel', () => {
+    render(<NotificationCenter items={makeItems(1)} />);
+    for (const name of [/Unread/, /^All$/]) {
+      const tab = screen.getByRole('tab', { name });
+      fireEvent.click(tab);
+      const panel = screen.getByRole('tabpanel');
+      expect(tab).toHaveAttribute('aria-controls', panel.id);
+      expect(panel).toHaveAttribute('aria-labelledby', tab.id);
+      expect(tab).toHaveAttribute('aria-selected', 'true');
+    }
+  });
   it('renders unread tab by default', () => {
     render(<NotificationCenter items={makeItems(3)} />);
     expect(screen.getByText(/^Unread/)).toBeInTheDocument();

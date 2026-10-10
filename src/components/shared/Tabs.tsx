@@ -174,6 +174,7 @@ export function Tabs({
   const autoPrefix = useId();
   const idPrefix = idPrefixProp ?? autoPrefix;
   const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const pendingFocus = useRef<{ id: string; origin: Element | null } | null>(null);
 
   const enabledIds = useMemo(() => items.filter((i) => !i.disabled).map((i) => i.id), [items]);
 
@@ -181,6 +182,15 @@ export function Tabs({
     const el = tabRefs.current.get(id);
     el?.focus();
   }, []);
+
+  // Folded keyboard navigation can select a tab that is not mounted yet.
+  // Focus after the controlled selection commits, without stealing focus
+  // when a caller delays the update and the user has moved elsewhere.
+  useLayoutEffect(() => {
+    const pending = pendingFocus.current;
+    pendingFocus.current = null;
+    if (pending?.id === value && (document.activeElement === pending.origin || document.activeElement === document.body)) focusTab(value);
+  }, [value, folded, focusTab]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLButtonElement>, currentId: string) => {
@@ -213,6 +223,7 @@ export function Tabs({
       if (nextIdx !== null) {
         e.preventDefault();
         const nextId = enabledIds[nextIdx];
+        pendingFocus.current = tabRefs.current.has(nextId) ? null : { id: nextId, origin: document.activeElement };
         onValueChange(nextId);
         focusTab(nextId);
       }

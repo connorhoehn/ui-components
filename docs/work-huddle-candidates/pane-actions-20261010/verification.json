@@ -1,0 +1,518 @@
+{
+  "schema": "native-pane-actions-package/v1",
+  "baseCommit": "ffcd62652a1e7ad4fc2365425701265b8ba2810a",
+  "package": "connorhoehnslalom-ui-components-2.439.0-pane-actions-notifications-gutters.tgz",
+  "sha256": "4fdad7b1f979e61aea59e3d6f0d4c179c6f6d9fe7e863dd5f9d46c271b58eb9e",
+  "bytes": 2921756,
+  "toolchain": {
+    "node": "v25.9.0",
+    "npm": "11.12.1",
+    "vite": "8.2.2",
+    "vitest": "4.1.11",
+    "TypeScriptDeclarationRollup": "5.9.3"
+  },
+  "source": [
+    {
+      "path": "src/components/layout/SidePane.tsx",
+      "sha256": "10655a072aa2aeccd9b1211b7bdd6be90ab9189b0b73d2342c64d636ee4a1d00"
+    },
+    {
+      "path": "src/components/layout/__tests__/PaneHeader.test.tsx",
+      "sha256": "bd6e54546ec017a06aa47a4029a6388d80ba44c9909332b82dce0d8f2609a06e"
+    },
+    {
+      "path": "src/components/shared/NotificationCenter.tsx",
+      "sha256": "d7cc488856bd08c64c8408d8c3310c7ea8de3d53beaf38c0e0b4f3c12c8c428e"
+    },
+    {
+      "path": "src/components/shared/SubNavLayout.tsx",
+      "sha256": "8ab94241781360343245c9464fa73f37eb505b41b1f8431bbc0529219d8cc4f1"
+    },
+    {
+      "path": "src/components/shared/Tabs.tsx",
+      "sha256": "034a9be71854f978902d100867c03034b9f8d026e116090ec93fd4f110a18486"
+    },
+    {
+      "path": "src/components/shared/__tests__/NotificationCenter.test.tsx",
+      "sha256": "4073faf792ede06afbd6d9a0c22d281d58839e43a36f973dae768efe1e1bd57e"
+    },
+    {
+      "path": "src/components/shared/__tests__/SubNavLayout.test.tsx",
+      "sha256": "a49a82344528f62954918f009c2761b0ca7480f20f50b36168f1c622dd3f5bff"
+    },
+    {
+      "path": "src/components/shared/__tests__/surfaceTones.test.tsx",
+      "sha256": "ebad2efac2869afa1d32486df39f6813c69b71f59de54b0c365597d51fd1f15c"
+    },
+    {
+      "path": "src/components/social/ChatPanel.tsx",
+      "sha256": "d1a03d5d5047c2aede1d49465b320a93158d9183d19d1c8f1132f8d8da841c47"
+    },
+    {
+      "path": "src/components/social/ConversationSurface.tsx",
+      "sha256": "37a95cea134d45283a1b3e75b12a02ac0cf9d3ab6fe32bf5daf48409e8387955"
+    },
+    {
+      "path": "src/components/social/__tests__/conversationGutters.test.tsx",
+      "sha256": "df37c4e3e5e516a5ca29a50cc180894b7543bfb752afccd0661a2c9335eb7747"
+    },
+    {
+      "path": "src/components/ui/Button.tsx",
+      "sha256": "ab57e2007884c950ad43fa6424a5681831d569ef03fa22f9616ac2b807f8d4b7"
+    },
+    {
+      "path": "src/components/ui/IconButton.tsx",
+      "sha256": "90087601b61deb99ae124dcab774639b5242c2270913c29884c7bc8ed56e8029"
+    },
+    {
+      "path": "src/components/ui/__tests__/ButtonActions.test.tsx",
+      "sha256": "b7f458e9366645fe8c7c7c918b1239499c1152a880aa6576190608cff6afcf73"
+    },
+    {
+      "path": "src/components/ui/__tests__/ui-primitives.behavior.test.tsx",
+      "sha256": "1511d958a3ba42ab9d90dd033bfce771f764280b38646e96c60b5fb56fc018e0"
+    }
+  ],
+  "exportPaths": [
+    {
+      "export": ".",
+      "kind": "types",
+      "path": "./dist/index.d.ts",
+      "present": true
+    },
+    {
+      "export": ".",
+      "kind": "import",
+      "path": "./dist/index.js",
+      "present": true
+    },
+    {
+      "export": ".",
+      "kind": "require",
+      "path": "./dist/index.cjs",
+      "present": true
+    },
+    {
+      "export": "./pipelines",
+      "kind": "types",
+      "path": "./dist/pipelines.d.ts",
+      "present": true
+    },
+    {
+      "export": "./pipelines",
+      "kind": "import",
+      "path": "./dist/pipelines.js",
+      "present": true
+    },
+    {
+      "export": "./pipelines",
+      "kind": "require",
+      "path": "./dist/pipelines.cjs",
+      "present": true
+    },
+    {
+      "export": "./ingest",
+      "kind": "types",
+      "path": "./dist/ingest.d.ts",
+      "present": true
+    },
+    {
+      "export": "./ingest",
+      "kind": "import",
+      "path": "./dist/ingest.js",
+      "present": true
+    },
+    {
+      "export": "./ingest",
+      "kind": "require",
+      "path": "./dist/ingest.cjs",
+      "present": true
+    },
+    {
+      "export": "./observability",
+      "kind": "types",
+      "path": "./dist/observability.d.ts",
+      "present": true
+    },
+    {
+      "export": "./observability",
+      "kind": "import",
+      "path": "./dist/observability.js",
+      "present": true
+    },
+    {
+      "export": "./observability",
+      "kind": "require",
+      "path": "./dist/observability.cjs",
+      "present": true
+    },
+    {
+      "export": "./doc-editor",
+      "kind": "types",
+      "path": "./dist/doc-editor.d.ts",
+      "present": true
+    },
+    {
+      "export": "./doc-editor",
+      "kind": "import",
+      "path": "./dist/doc-editor.js",
+      "present": true
+    },
+    {
+      "export": "./doc-editor",
+      "kind": "require",
+      "path": "./dist/doc-editor.cjs",
+      "present": true
+    },
+    {
+      "export": "./doc-types",
+      "kind": "types",
+      "path": "./dist/doc-types.d.ts",
+      "present": true
+    },
+    {
+      "export": "./doc-types",
+      "kind": "import",
+      "path": "./dist/doc-types.js",
+      "present": true
+    },
+    {
+      "export": "./doc-types",
+      "kind": "require",
+      "path": "./dist/doc-types.cjs",
+      "present": true
+    },
+    {
+      "export": "./diagram",
+      "kind": "types",
+      "path": "./dist/diagram.d.ts",
+      "present": true
+    },
+    {
+      "export": "./diagram",
+      "kind": "import",
+      "path": "./dist/diagram.js",
+      "present": true
+    },
+    {
+      "export": "./diagram",
+      "kind": "require",
+      "path": "./dist/diagram.cjs",
+      "present": true
+    },
+    {
+      "export": "./social",
+      "kind": "types",
+      "path": "./dist/social.d.ts",
+      "present": true
+    },
+    {
+      "export": "./social",
+      "kind": "import",
+      "path": "./dist/social.js",
+      "present": true
+    },
+    {
+      "export": "./social",
+      "kind": "require",
+      "path": "./dist/social.cjs",
+      "present": true
+    },
+    {
+      "export": "./graph",
+      "kind": "types",
+      "path": "./dist/graph.d.ts",
+      "present": true
+    },
+    {
+      "export": "./graph",
+      "kind": "import",
+      "path": "./dist/graph.js",
+      "present": true
+    },
+    {
+      "export": "./graph",
+      "kind": "require",
+      "path": "./dist/graph.cjs",
+      "present": true
+    },
+    {
+      "export": "./social/rich-composer",
+      "kind": "types",
+      "path": "./dist/social/rich-composer.d.ts",
+      "present": true
+    },
+    {
+      "export": "./social/rich-composer",
+      "kind": "import",
+      "path": "./dist/social/rich-composer.js",
+      "present": true
+    },
+    {
+      "export": "./social/rich-composer",
+      "kind": "require",
+      "path": "./dist/social/rich-composer.cjs",
+      "present": true
+    },
+    {
+      "export": "./hooks",
+      "kind": "types",
+      "path": "./dist/hooks.d.ts",
+      "present": true
+    },
+    {
+      "export": "./hooks",
+      "kind": "import",
+      "path": "./dist/hooks.js",
+      "present": true
+    },
+    {
+      "export": "./hooks",
+      "kind": "require",
+      "path": "./dist/hooks.cjs",
+      "present": true
+    },
+    {
+      "export": "./types",
+      "kind": "types",
+      "path": "./dist/types.d.ts",
+      "present": true
+    },
+    {
+      "export": "./types",
+      "kind": "import",
+      "path": "./dist/types.js",
+      "present": true
+    },
+    {
+      "export": "./types",
+      "kind": "require",
+      "path": "./dist/types.cjs",
+      "present": true
+    },
+    {
+      "export": "./shared",
+      "kind": "types",
+      "path": "./dist/shared.d.ts",
+      "present": true
+    },
+    {
+      "export": "./shared",
+      "kind": "import",
+      "path": "./dist/shared.js",
+      "present": true
+    },
+    {
+      "export": "./shared",
+      "kind": "require",
+      "path": "./dist/shared.cjs",
+      "present": true
+    },
+    {
+      "export": "./identity",
+      "kind": "types",
+      "path": "./dist/identity.d.ts",
+      "present": true
+    },
+    {
+      "export": "./identity",
+      "kind": "import",
+      "path": "./dist/identity.js",
+      "present": true
+    },
+    {
+      "export": "./identity",
+      "kind": "require",
+      "path": "./dist/identity.cjs",
+      "present": true
+    },
+    {
+      "export": "./agents",
+      "kind": "types",
+      "path": "./dist/agents.d.ts",
+      "present": true
+    },
+    {
+      "export": "./agents",
+      "kind": "import",
+      "path": "./dist/agents.js",
+      "present": true
+    },
+    {
+      "export": "./agents",
+      "kind": "require",
+      "path": "./dist/agents.cjs",
+      "present": true
+    },
+    {
+      "export": "./compute",
+      "kind": "types",
+      "path": "./dist/compute.d.ts",
+      "present": true
+    },
+    {
+      "export": "./compute",
+      "kind": "import",
+      "path": "./dist/compute.js",
+      "present": true
+    },
+    {
+      "export": "./compute",
+      "kind": "require",
+      "path": "./dist/compute.cjs",
+      "present": true
+    },
+    {
+      "export": "./video",
+      "kind": "types",
+      "path": "./dist/video.d.ts",
+      "present": true
+    },
+    {
+      "export": "./video",
+      "kind": "import",
+      "path": "./dist/video.js",
+      "present": true
+    },
+    {
+      "export": "./video",
+      "kind": "require",
+      "path": "./dist/video.cjs",
+      "present": true
+    },
+    {
+      "export": "./video-ivs",
+      "kind": "types",
+      "path": "./dist/video-ivs.d.ts",
+      "present": true
+    },
+    {
+      "export": "./video-ivs",
+      "kind": "import",
+      "path": "./dist/video-ivs.js",
+      "present": true
+    },
+    {
+      "export": "./video-ivs",
+      "kind": "require",
+      "path": "./dist/video-ivs.cjs",
+      "present": true
+    },
+    {
+      "export": "./styles.css",
+      "kind": "default",
+      "path": "./dist/ui-components.css",
+      "present": true
+    },
+    {
+      "export": "./integrations/realtime",
+      "kind": "types",
+      "path": "./dist/integrations/realtime.d.ts",
+      "present": true
+    },
+    {
+      "export": "./integrations/realtime",
+      "kind": "import",
+      "path": "./dist/integrations/realtime.js",
+      "present": true
+    },
+    {
+      "export": "./integrations/realtime",
+      "kind": "require",
+      "path": "./dist/integrations/realtime.cjs",
+      "present": true
+    },
+    {
+      "export": "./integrations/realtime-modules",
+      "kind": "types",
+      "path": "./dist/integrations/realtime-modules.d.ts",
+      "present": true
+    },
+    {
+      "export": "./integrations/realtime-modules",
+      "kind": "import",
+      "path": "./dist/integrations/realtime-modules.js",
+      "present": true
+    },
+    {
+      "export": "./integrations/realtime-modules",
+      "kind": "require",
+      "path": "./dist/integrations/realtime-modules.cjs",
+      "present": true
+    },
+    {
+      "export": "./package.json",
+      "kind": "default",
+      "path": "./package.json",
+      "present": true
+    }
+  ],
+  "relativeChunkReferences": 1958,
+  "missingPaths": [],
+  "missingRelativeChunks": [],
+  "cssRules": {
+    ".bg-primary\\/5": true,
+    ".border-primary\\/20": true,
+    ".enabled\\:hover\\:bg-primary\\/12": true,
+    ".enabled\\:hover\\:bg-primary\\/10": true,
+    ".aria-pressed\\:bg-primary\\/12": true,
+    ".focus-visible\\:outline-2": true,
+    ".text-on-primary": true
+  },
+  "priorFixesPreserved": [
+    {
+      "path": "src/components/social/ConversationComposer.tsx",
+      "sha256": "943657526884f39e2b9b244a8ebeca0f910101bbde91697afda061c5862e63fb",
+      "matchesExactBase": true
+    },
+    {
+      "path": "src/components/shared/HoverCard.tsx",
+      "sha256": "034e8efe4866bcb412ba7df16bc979c0b1970677d27962eaaa235392fbcec91b",
+      "matchesExactBase": true
+    }
+  ],
+  "checks": {
+    "lint": "PASS (library+demo)",
+    "build": "PASS final NotificationCenter linkage + Social gutter seams",
+    "nativeWholeSuite": {
+      "filesPassed": 983,
+      "testsPassed": 10834,
+      "testsSkipped": 2,
+      "initialFailures": 3,
+      "resolution": "Two superseded old style assertions and one concurrent NotificationCenter source/test revision; latest-source focused suites pass. Whole rerun stopped by parent test-economy instruction."
+    },
+    "focusedOwned": {
+      "suites": 5,
+      "testsPassed": 96
+    },
+    "focusedSupersededAndNotification": {
+      "suites": 3,
+      "testsPassed": 69
+    },
+    "focusedPackageSubNavWrapper": {
+      "suites": 3,
+      "testsPassed": 28
+    },
+    "socialGutters": {
+      "testsPassed": 19,
+      "verifiedBy": "shared_ui_update; new4 + existing native dock/wrapped surface"
+    },
+    "browserInert": {
+      "testsPassed": 11,
+      "lastPortalArrowRemovalRecheck": 2,
+      "scope": "Actual portal Details and built native UI; inert conversation adapters and mocked API reads; no real actors or calls."
+    }
+  },
+  "activation": "Build-time candidate; consumer activation receipt is tracked separately in aws-agentcore rehearsal guide.",
+  "packedDistByteEquality": {
+    "filesChecked": 329,
+    "mismatches": 0
+  },
+  "declarationContract": {
+    "flushComposer?: boolean": true,
+    "headerClassName?: string": true,
+    "PaneHeader": true,
+    "activity?:": true
+  },
+  "nativeSourceShaInventoryStable": true
+}

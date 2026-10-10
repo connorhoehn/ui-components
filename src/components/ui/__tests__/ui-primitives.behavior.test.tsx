@@ -51,7 +51,7 @@ describe('Button styling contract', () => {
 
   it.each([
     ['primary', 'bg-primary'],
-    ['secondary', 'bg-surface-inset'],
+    ['secondary', 'bg-primary/5'],
     ['ghost', 'bg-transparent'],
     ['danger', 'text-danger-fg'],
     ['danger-solid', 'bg-danger'],

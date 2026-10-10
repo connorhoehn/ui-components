@@ -1,14 +1,13 @@
 import { t as e } from "../cn-D4QmbyEy.js";
-import { n as t } from "../Button-C2OEUpX-.js";
-import { i as n, r } from "../Tabs-DqkWBCTi.js";
-import { r as i } from "../Density-Bm-JmcDy.js";
-import { n as a } from "../Text-BA4t3u5l.js";
+import { n as t } from "../Button-BEOshFFZ.js";
+import { a as n, n as r, o as i } from "../Text-WZBlGWvc.js";
+import { r as a } from "../Density-Bm-JmcDy.js";
 import { t as o } from "../Select-C6OGjVyH.js";
-import { a as s, c, i as l, l as u, n as d, r as f, t as p } from "../composerSendError-D9zJtYFp.js";
+import { a as s, c, i as l, l as u, n as d, r as f, t as p } from "../composerSendError-B44odLGG.js";
 import { a as m, i as ee, n as h, r as te, t as g } from "../composerContext-BLn1-Nao.js";
-import { a as ne, c as re, i as _, l as v, n as ie, o as y, r as ae, s as b, t as x, u as oe } from "../RichChatComposer-CoJBAQzx.js";
-import { t as se } from "../ContextComposer-0GvwmTR4.js";
-import { t as ce } from "../AgentComposerDock-B6cpCVPP.js";
+import { a as ne, c as re, i as _, l as v, n as ie, o as y, r as ae, s as b, t as x, u as oe } from "../RichChatComposer-C-aCfCxy.js";
+import { t as se } from "../ContextComposer-R47ea6VD.js";
+import { t as ce } from "../AgentComposerDock-DqSKMxLo.js";
 import { createContext as le, useCallback as S, useContext as ue, useEffect as C, useMemo as w, useRef as T, useState as E, useSyncExternalStore as D } from "react";
 import { jsx as O, jsxs as k } from "react/jsx-runtime";
 //#region src/components/social/conversationInputRegistry.ts
@@ -135,18 +134,18 @@ function F() {
 		present: t
 	};
 }
-function _e({ label: e, onFocus: r, "data-testid": i = "pane-input-handoff" }) {
-	return /* @__PURE__ */ O(n, {
+function _e({ label: e, onFocus: n, "data-testid": r = "pane-input-handoff" }) {
+	return /* @__PURE__ */ O(i, {
 		gap: "none",
 		className: "border-t border-border px-3 py-2",
-		"data-testid": i,
+		"data-testid": r,
 		children: /* @__PURE__ */ k(t, {
 			variant: "secondary",
 			size: "sm",
 			fullWidth: !0,
-			onClick: r,
+			onClick: n,
 			title: `Write in ${e}`,
-			"data-testid": `${i}-focus`,
+			"data-testid": `${r}-focus`,
 			children: ["Reply in ", e]
 		})
 	});
@@ -325,25 +324,25 @@ function Fe(e, t, n, r = 6e4) {
 	}, [o, r]);
 	return S((e) => Promise.all(e.map(s)), [s]);
 }
-function Ie({ id: e, value: t, recipients: n, onChange: i, "data-testid": s }) {
-	let c = n.filter((e) => !e.group).map((e) => ({
+function Ie({ id: e, value: t, recipients: i, onChange: a, "data-testid": s }) {
+	let c = i.filter((e) => !e.group).map((e) => ({
 		value: e.id,
 		label: e.label,
 		...e.disabled ? { disabled: !0 } : {}
-	})), l = [...new Set(n.filter((e) => e.group).map((e) => e.group))].map((e) => ({
+	})), l = [...new Set(i.filter((e) => e.group).map((e) => e.group))].map((e) => ({
 		label: e,
-		options: n.filter((t) => t.group === e).map((e) => ({
+		options: i.filter((t) => t.group === e).map((e) => ({
 			value: e.id,
 			label: e.label,
 			...e.disabled ? { disabled: !0 } : {}
 		}))
 	}));
-	return /* @__PURE__ */ k(r, {
+	return /* @__PURE__ */ k(n, {
 		gap: "xs",
 		align: "center",
 		wrap: !1,
 		className: "ml-1 min-w-0 self-start rounded-md border border-border bg-surface pl-2",
-		children: [/* @__PURE__ */ O(a, {
+		children: [/* @__PURE__ */ O(r, {
 			size: "xs",
 			tone: "secondary",
 			className: "shrink-0",
@@ -360,7 +359,7 @@ function Ie({ id: e, value: t, recipients: n, onChange: i, "data-testid": s }) {
 			groups: l,
 			chevron: "custom",
 			...s ? { "data-testid": s } : {},
-			onChange: (e) => i(e.target.value)
+			onChange: (e) => a(e.target.value)
 		})]
 	});
 }
@@ -374,7 +373,7 @@ function V(e) {
 	return t.displayName = "ConversationComposer", t;
 }
 function Le({ rm: t, channel: o, chat: c, context: l, capabilities: u, identity: d, offline: f, recipients: m, defaultRecipient: ee, recipient: h, onRecipientChange: te, commands: g = [], onAgent: ne, callBlock: re, reply: _, mode: v, onModeChange: ie, defaultMode: y, draftKey: ae, persistDraft: b = !0, claim: x = !1, answersFocus: oe = !1, onReveal: ce, disabled: le, offModes: ue, composerRef: D, onDraftChange: A, defaultDraft: j, draft: M, above: N, modeRowEnd: de, references: fe, onRemoveReference: P, modePlaceholders: me, contextChip: ge, sendWithReferencesOnly: F, console: _e, "data-testid": I = "conversation-composer", ...we }) {
-	let R = i() === "compact", z = d?.displayName || "You", B = ae ?? o ?? `${l.kind}:${l.id}`, Oe = u.readOnlyReason || "You can read this conversation but not post to it.", V = w(() => {
+	let R = a() === "compact", z = d?.displayName || "You", B = ae ?? o ?? `${l.kind}:${l.id}`, Oe = u.readOnlyReason || "You can read this conversation but not post to it.", V = w(() => {
 		let e = m ?? (o ? [{
 			id: "discussion",
 			label: l.title || "This conversation",
@@ -587,7 +586,7 @@ function Le({ rm: t, channel: o, chat: c, context: l, capabilities: u, identity:
 		size: "md",
 		className: "min-w-0 max-w-[max(9rem,min(30rem,calc(100cqw-22rem)))] flex-nowrap p-0",
 		"data-testid": "rich-chat-composer-references"
-	}) : null, vt = ze && U ? [...V, U] : V, yt = G === "chat" && vt.length > 1, bt = G === "chat" && q && Je && Ye && qe, xt = G === "chat" && vt.length > 1 ? U?.unavailableReason ?? (U ? null : "Choose a destination.") : null, St = G === "chat" ? U?.error ?? null : null, Ct = yt || xt || st || bt || St || N != null && N !== !1 ? /* @__PURE__ */ k(n, {
+	}) : null, vt = ze && U ? [...V, U] : V, yt = G === "chat" && vt.length > 1, bt = G === "chat" && q && Je && Ye && qe, xt = G === "chat" && vt.length > 1 ? U?.unavailableReason ?? (U ? null : "Choose a destination.") : null, St = G === "chat" ? U?.error ?? null : null, Ct = yt || xt || st || bt || St || N != null && N !== !1 ? /* @__PURE__ */ k(i, {
 		gap: "xs",
 		children: [
 			N,
@@ -598,27 +597,27 @@ function Le({ rm: t, channel: o, chat: c, context: l, capabilities: u, identity:
 				onChange: dt,
 				"data-testid": `${I}-recipient`
 			}),
-			xt && /* @__PURE__ */ O(a, {
+			xt && /* @__PURE__ */ O(r, {
 				size: "xs",
 				tone: "tertiary",
 				wrap: !0,
 				"data-testid": `${I}-recipient-unavailable`,
 				children: xt
 			}),
-			bt && /* @__PURE__ */ O(a, {
+			bt && /* @__PURE__ */ O(r, {
 				size: "xs",
 				tone: "tertiary",
 				wrap: !0,
 				children: je
 			}),
-			st && /* @__PURE__ */ O(a, {
+			st && /* @__PURE__ */ O(r, {
 				size: "xs",
 				tone: "secondary",
 				wrap: !0,
 				"data-testid": `${I}-note`,
 				children: st
 			}),
-			St && /* @__PURE__ */ O(a, {
+			St && /* @__PURE__ */ O(r, {
 				size: "xs",
 				className: "text-error",
 				wrap: !0,
@@ -626,7 +625,7 @@ function Le({ rm: t, channel: o, chat: c, context: l, capabilities: u, identity:
 				children: St
 			})
 		]
-	}) : void 0, wt = !R, Tt = wt && _t || de ? /* @__PURE__ */ k(r, {
+	}) : void 0, wt = !R, Tt = wt && _t || de ? /* @__PURE__ */ k(n, {
 		gap: "xs",
 		align: "center",
 		wrap: !1,

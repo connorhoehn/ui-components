@@ -204,6 +204,8 @@ export interface ConversationSurfaceProps {
 
   /** Extra header controls, to the right of the call buttons. */
   headerActions?: ReactNode;
+  /** Optional host gutter adjustment; identity, tabs and actions remain native. */
+  headerClassName?: string;
 
   /** Controlled view. Omit to let the surface keep its own. */
   view?: ConversationFeature;
@@ -255,6 +257,7 @@ export function ConversationSurface({
   watchViewerCount,
   callInProgress = false,
   headerActions,
+  headerClassName,
   view: controlledView,
   onViewChange,
   className,
@@ -307,6 +310,7 @@ export function ConversationSurface({
   return (
     <section className={cn('flex min-w-0 flex-col', className)} data-testid={testId}>
       <ChannelHeader
+        className={headerClassName}
         name={name}
         onRename={onRename}
         description={description}
