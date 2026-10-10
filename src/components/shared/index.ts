@@ -512,3 +512,6 @@ export { Histogram } from './Histogram';
 export type { HistogramProps } from './Histogram';
 export { AccentStripe, dataAccentProps, DATA_ACCENT_SLOTS } from './dataAccent';
 export type { AccentStripeProps, DataAccent, DataAccentSlot } from './dataAccent';
+
+export { ActivityTicker } from './ActivityTicker';
+export type { ActivityTickerProps, ActivityTickerItem, ActivityTickerPreferences } from './ActivityTicker';

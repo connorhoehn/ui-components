@@ -47,7 +47,7 @@ const modules: CallBlockModules = {
 const calls = createCallBlockHost(modules);
 
 function Shell({ children }: { children: ReactNode }) {
-  return <calls.CallHostProvider self={{ userId: 'u-vera', displayName: 'Vera Green' }} tenant="orgiq" scopeKey="orgiq|u-vera"
+  return <calls.CallHostProvider self={{ userId: 'u-vera', displayName: 'Vera Green', avatarUrl: '/inert-vera-avatar.svg' }} tenant="orgiq" scopeKey="orgiq|u-vera"
     platformApiUrl="http://platform" getIdToken={() => 'token'} videoUrl="http://sfu" gateway={null} gatewayConfigured connectionState="connected">
     {children}
   </calls.CallHostProvider>;
@@ -78,6 +78,23 @@ describe('CallBlockHost', () => {
     expect(start).not.toHaveBeenCalled();
     await act(async () => { screen.getByTestId('prejoin-join').click(); });
     expect(start).toHaveBeenCalledWith([], undefined);
+  });
+
+  it('the native prejoin shows the actor preview and truthful toggles before joining', async () => {
+    phase = 'idle';
+    render(<Shell><Page channel="pipelines:run:r-1" /></Shell>);
+    await act(async () => { screen.getByTestId('huddle').click(); });
+    expect(screen.getByRole('dialog', { name: 'Start a huddle' })).toBeInTheDocument();
+    expect(screen.getByText('Joining as Vera Green')).toBeInTheDocument();
+    expect(screen.getByTestId('prejoin-devices')).toHaveAttribute('data-layout', 'prejoin');
+    await act(async () => { screen.getByTestId('prejoin-camera').click(); screen.getByTestId('prejoin-mic').click(); });
+    expect(screen.getByText('Camera off')).toBeInTheDocument();
+    expect(screen.getByText('Microphone off')).toBeInTheDocument();
+    expect(screen.getByTestId('settings-preview-off').querySelector('img')).toHaveAttribute('src', '/inert-vera-avatar.svg');
+    expect(previewRequests.at(-1)).toEqual({ preview: false, previewAudio: false, previewVideo: false });
+    expect(start).not.toHaveBeenCalled();
+    await act(async () => { screen.getByTestId('prejoin-join').click(); });
+    expect(captureAtEntry.at(-1)).toEqual({ micOn: false, cameraOn: false });
   });
 
   it('unmounting the page unbinds while nothing is on', () => {

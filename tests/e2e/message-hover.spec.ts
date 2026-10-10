@@ -68,3 +68,28 @@ for (const theme of ['light', 'dark']) for (const width of [980, 360, 280]) {
     expect(unexpected).toEqual([]);
   });
 }
+
+for (const theme of ['light', 'dark']) for (const width of [980, 360]) {
+  test(`${theme} ${width}px native prejoin preserves device controls in fitting columns`, async ({ page }, testInfo) => {
+    await page.setViewportSize({ width, height: 860 });
+    const unexpected: string[] = [];
+    await page.route('**/api/**', route => { unexpected.push(route.request().url()); return route.abort(); });
+    const path = resolve(process.cwd(), 'tests/e2e/fixtures/prejoin-native.tsx');
+    await page.route('**/__native-prejoin?*', route => route.fulfill({ contentType: 'text/html', body: `<div id="root"></div><script type="module">import RefreshRuntime from "/@react-refresh";RefreshRuntime.injectIntoGlobalHook(window);window.$RefreshReg$=()=>{};window.$RefreshSig$=()=>type=>type;window.__vite_plugin_react_preamble_installed__=true;</script><script type="module" src="/@fs${path}"></script>` }));
+    await page.goto(`/__native-prejoin?theme=${theme}`);
+    const form = page.getByTestId('audio-video-settings-form');
+    await expect(form).toHaveAttribute('data-layout', 'prejoin');
+    const preview = await box(page.getByTestId('settings-preview')), mic = await box(page.getByTestId('settings-mic-select')), dialog = await box(page.getByRole('dialog'));
+    expect(dialog.x).toBeGreaterThanOrEqual(0);
+    expect(dialog.x + dialog.width).toBeLessThanOrEqual(width + .5);
+    expect(dialog.y).toBeGreaterThanOrEqual(0);
+    expect(dialog.y + dialog.height).toBeLessThanOrEqual(860 + .5);
+    if (width > 768) expect(preview.x + preview.width).toBeLessThan(mic.x);
+    else { expect(Math.abs(preview.x - mic.x)).toBeLessThan(1); expect(preview.y).toBeGreaterThan(mic.y); }
+    await page.getByTestId('settings-quality').selectOption('720p');
+    await expect(page.getByTestId('fixture-settings')).toHaveText('720p');
+    await expect(page.getByTestId('settings-preview-off').locator('img')).toHaveAttribute('src', /^data:image/);
+    await page.screenshot({ path: testInfo.outputPath('native-prejoin.png'), fullPage: true });
+    expect(unexpected).toEqual([]);
+  });
+}

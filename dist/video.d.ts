@@ -55,7 +55,7 @@ export declare interface AudioVideoSettings {
     rememberDevices: boolean;
 }
 
-export declare function AudioVideoSettingsForm({ value, onChange, devices, permission, micLevel, previewStream, cameraOn, speakerSelectionSupported, onTestMic, onTestSound, testMicState, selfName, selfAvatarUrl, className, 'data-testid': testId, }: AudioVideoSettingsFormProps): JSX.Element;
+export declare function AudioVideoSettingsForm({ value, onChange, devices, permission, micLevel, previewStream, cameraOn, speakerSelectionSupported, onTestMic, onTestSound, testMicState, selfName, selfAvatarUrl, layout, className, 'data-testid': testId, }: AudioVideoSettingsFormProps): JSX.Element;
 
 export declare interface AudioVideoSettingsFormProps {
     value: AudioVideoSettings;
@@ -81,6 +81,8 @@ export declare interface AudioVideoSettingsFormProps {
     /** Who the preview placeholder shows when the camera is off. */
     selfName?: string;
     selfAvatarUrl?: string;
+    /** Two-column device setup; the default stack remains the call-settings form. */
+    layout?: 'stack' | 'prejoin';
     className?: string;
     'data-testid'?: string;
 }
@@ -1659,7 +1661,7 @@ export declare type HlsPhase =
 /** Unplayable. `error` carries the wording. */
 | 'error';
 
-export declare function HuddleBar({ name, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, startDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, extras, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
+export declare function HuddleBar({ name, showContext, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, startDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, extras, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
 
 /** One media control: the toggle, and an optional device list behind a caret. */
 export declare interface HuddleBarMedia {
@@ -1680,6 +1682,8 @@ export declare type HuddleBarPhase = 'idle' | 'live' | 'connecting' | 'ringing' 
 export declare interface HuddleBarProps {
     /** The call's name: the place or person it is with. */
     name: string;
+    /** Hide the visible context/status cluster while keeping the group name accessible. */
+    showContext?: boolean;
     /**
      * Default `live`. `idle` is the pre-call bar: `name` is the page's context,
      * the bar draws `onStart` and the chat button (and no timer, counts, media

@@ -1,13 +1,13 @@
 import { t as e } from "../cn-D4QmbyEy.js";
 import { n as t } from "../Button-BEOshFFZ.js";
-import { a as n, n as r, o as i } from "../Text-WZBlGWvc.js";
-import { r as a } from "../Density-Bm-JmcDy.js";
+import { i as n } from "../Density-BgubVeSf.js";
+import { c as r, l as i, n as a } from "../Text-CEkn6rLG.js";
 import { t as o } from "../Select-C6OGjVyH.js";
 import { a as s, c, i as l, l as u, n as d, r as f, t as p } from "../composerSendError-B44odLGG.js";
 import { a as m, i as ee, n as h, r as te, t as g } from "../composerContext-BLn1-Nao.js";
-import { a as ne, c as re, i as _, l as v, n as ie, o as y, r as ae, s as b, t as x, u as oe } from "../RichChatComposer-C-aCfCxy.js";
-import { t as se } from "../ContextComposer-R47ea6VD.js";
-import { t as ce } from "../AgentComposerDock-DqSKMxLo.js";
+import { a as ne, c as re, i as _, l as v, n as ie, o as y, r as ae, s as b, t as x, u as oe } from "../RichChatComposer-CGHbHeIK.js";
+import { t as se } from "../ContextComposer-CT_sLHwr.js";
+import { t as ce } from "../AgentComposerDock-C-LIMfMh.js";
 import { createContext as le, useCallback as S, useContext as ue, useEffect as C, useMemo as w, useRef as T, useState as E, useSyncExternalStore as D } from "react";
 import { jsx as O, jsxs as k } from "react/jsx-runtime";
 //#region src/components/social/conversationInputRegistry.ts
@@ -324,25 +324,25 @@ function Fe(e, t, n, r = 6e4) {
 	}, [o, r]);
 	return S((e) => Promise.all(e.map(s)), [s]);
 }
-function Ie({ id: e, value: t, recipients: i, onChange: a, "data-testid": s }) {
-	let c = i.filter((e) => !e.group).map((e) => ({
+function Ie({ id: e, value: t, recipients: n, onChange: i, "data-testid": s }) {
+	let c = n.filter((e) => !e.group).map((e) => ({
 		value: e.id,
 		label: e.label,
 		...e.disabled ? { disabled: !0 } : {}
-	})), l = [...new Set(i.filter((e) => e.group).map((e) => e.group))].map((e) => ({
+	})), l = [...new Set(n.filter((e) => e.group).map((e) => e.group))].map((e) => ({
 		label: e,
-		options: i.filter((t) => t.group === e).map((e) => ({
+		options: n.filter((t) => t.group === e).map((e) => ({
 			value: e.id,
 			label: e.label,
 			...e.disabled ? { disabled: !0 } : {}
 		}))
 	}));
-	return /* @__PURE__ */ k(n, {
+	return /* @__PURE__ */ k(r, {
 		gap: "xs",
 		align: "center",
 		wrap: !1,
 		className: "ml-1 min-w-0 self-start rounded-md border border-border bg-surface pl-2",
-		children: [/* @__PURE__ */ O(r, {
+		children: [/* @__PURE__ */ O(a, {
 			size: "xs",
 			tone: "secondary",
 			className: "shrink-0",
@@ -359,7 +359,7 @@ function Ie({ id: e, value: t, recipients: i, onChange: a, "data-testid": s }) {
 			groups: l,
 			chevron: "custom",
 			...s ? { "data-testid": s } : {},
-			onChange: (e) => a(e.target.value)
+			onChange: (e) => i(e.target.value)
 		})]
 	});
 }
@@ -373,7 +373,7 @@ function V(e) {
 	return t.displayName = "ConversationComposer", t;
 }
 function Le({ rm: t, channel: o, chat: c, context: l, capabilities: u, identity: d, offline: f, recipients: m, defaultRecipient: ee, recipient: h, onRecipientChange: te, commands: g = [], onAgent: ne, callBlock: re, reply: _, mode: v, onModeChange: ie, defaultMode: y, draftKey: ae, persistDraft: b = !0, claim: x = !1, answersFocus: oe = !1, onReveal: ce, disabled: le, offModes: ue, composerRef: D, onDraftChange: A, defaultDraft: j, draft: M, above: N, modeRowEnd: de, references: fe, onRemoveReference: P, modePlaceholders: me, contextChip: ge, sendWithReferencesOnly: F, console: _e, "data-testid": I = "conversation-composer", ...we }) {
-	let R = a() === "compact", z = d?.displayName || "You", B = ae ?? o ?? `${l.kind}:${l.id}`, Oe = u.readOnlyReason || "You can read this conversation but not post to it.", V = w(() => {
+	let R = n() === "compact", z = d?.displayName || "You", B = ae ?? o ?? `${l.kind}:${l.id}`, Oe = u.readOnlyReason || "You can read this conversation but not post to it.", V = w(() => {
 		let e = m ?? (o ? [{
 			id: "discussion",
 			label: l.title || "This conversation",
@@ -597,27 +597,27 @@ function Le({ rm: t, channel: o, chat: c, context: l, capabilities: u, identity:
 				onChange: dt,
 				"data-testid": `${I}-recipient`
 			}),
-			xt && /* @__PURE__ */ O(r, {
+			xt && /* @__PURE__ */ O(a, {
 				size: "xs",
 				tone: "tertiary",
 				wrap: !0,
 				"data-testid": `${I}-recipient-unavailable`,
 				children: xt
 			}),
-			bt && /* @__PURE__ */ O(r, {
+			bt && /* @__PURE__ */ O(a, {
 				size: "xs",
 				tone: "tertiary",
 				wrap: !0,
 				children: je
 			}),
-			st && /* @__PURE__ */ O(r, {
+			st && /* @__PURE__ */ O(a, {
 				size: "xs",
 				tone: "secondary",
 				wrap: !0,
 				"data-testid": `${I}-note`,
 				children: st
 			}),
-			St && /* @__PURE__ */ O(r, {
+			St && /* @__PURE__ */ O(a, {
 				size: "xs",
 				className: "text-error",
 				wrap: !0,
@@ -625,7 +625,7 @@ function Le({ rm: t, channel: o, chat: c, context: l, capabilities: u, identity:
 				children: St
 			})
 		]
-	}) : void 0, wt = !R, Tt = wt && _t || de ? /* @__PURE__ */ k(n, {
+	}) : void 0, wt = !R, Tt = wt && _t || de ? /* @__PURE__ */ k(r, {
 		gap: "xs",
 		align: "center",
 		wrap: !1,

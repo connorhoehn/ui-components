@@ -1485,7 +1485,7 @@ export declare interface ChatSidePanelApi {
  * the title on the left and the way out on the right, and a body that fills
  * the rest and scrolls on its own.
  */
-export declare function ChatSidePanelFrame({ title, subtitle, onClose, onOpenFullPage, actions, expanded, onToggleExpanded, size, closeLabel, children, className, 'data-testid': testId, }: ChatSidePanelFrameProps): JSX.Element;
+export declare function ChatSidePanelFrame({ title, subtitle, onClose, onOpenFullPage, actions, expanded, onToggleExpanded, size: sizeProp, closeLabel, children, className, 'data-testid': testId, }: ChatSidePanelFrameProps): JSX.Element;
 
 export declare interface ChatSidePanelFrameProps {
     title: string;
@@ -3179,7 +3179,7 @@ export declare interface MessageReaction {
     displayName?: string;
 }
 
-export declare function MessageRow({ author, content, timestamp, avatarUrl, hideAvatar, hideAuthor, mine, footer, tone, editedAt, contentLayout, className, }: MessageRowProps): JSX.Element;
+export declare function MessageRow({ author, content, timestamp, avatarUrl, hideAvatar, hideAuthor, mine, footer, actions, tone, editedAt, contentLayout, className, }: MessageRowProps): JSX.Element;
 
 export declare interface MessageRowProps {
     /** Display name shown next to the message; required even for anonymous rows (use a fallback). */
@@ -3212,6 +3212,9 @@ export declare interface MessageRowProps {
      * Indented under the content so it lines up under text, not under the avatar.
      */
     footer?: ReactNode;
+    /** Message actions in the header, beside metadata or on a wrapped line.
+     *  Keep the slot mounted while hiding its controls to avoid hover layout shifts. */
+    actions?: ReactNode;
     /** Surface the row renders on. 'light' (default) keeps the theme tokens;
      *  'dark' swaps to white/alpha classes for dark call chrome — without it
      *  the message text renders dark-on-dark and disappears. Mirrors

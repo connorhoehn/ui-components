@@ -1,9 +1,9 @@
 import { n as e } from "../Button-BEOshFFZ.js";
-import { a as t, n, o as r } from "../Text-WZBlGWvc.js";
+import { c as t, l as n, n as r } from "../Text-CEkn6rLG.js";
 import { t as i } from "../Modal-CjgKqXl7.js";
 import { n as a } from "../Slider-DEbQCKD1.js";
-import { i as o, n as s, r as c, t as l } from "../useDocumentImageUpload-NgQ_75FW.js";
-import { $ as u, A as d, B as f, C as p, D as m, E as h, F as g, G as _, H as v, I as y, J as b, K as x, L as S, M as C, N as w, O as T, P as E, Q as D, R as O, S as k, T as A, U as j, V as ee, W as M, X as N, Y as P, Z as F, _ as te, a as I, at as ne, b as L, c as R, ct as z, d as B, et as V, f as re, g as H, h as ie, i as ae, it as oe, j as se, k as ce, l as le, lt as ue, m as de, n as fe, nt as pe, o as me, ot as he, p as ge, q as _e, r as ve, rt as ye, s as be, st as xe, t as Se, tt as Ce, u as we, ut as Te, v as Ee, w as De, x as Oe, y as ke, z as Ae } from "../WrappedAudioVideoSettingsForm-Cy-FxANy.js";
+import { i as o, n as s, r as c, t as l } from "../useDocumentImageUpload-CRitYKdw.js";
+import { $ as u, A as d, B as f, C as p, D as m, E as h, F as g, G as _, H as v, I as y, J as b, K as x, L as S, M as C, N as w, O as T, P as E, Q as D, R as O, S as k, T as A, U as j, V as ee, W as M, X as N, Y as P, Z as F, _ as te, a as I, at as ne, b as L, c as R, ct as z, d as B, et as V, f as re, g as H, h as ie, i as ae, it as oe, j as se, k as ce, l as le, lt as ue, m as de, n as fe, nt as pe, o as me, ot as he, p as ge, q as _e, r as ve, rt as ye, s as be, st as xe, t as Se, tt as Ce, u as we, ut as Te, v as Ee, w as De, x as Oe, y as ke, z as Ae } from "../WrappedAudioVideoSettingsForm-Buf2nX40.js";
 import { createContext as U, useCallback as W, useContext as G, useEffect as K, useLayoutEffect as je, useMemo as q, useRef as J, useState as Y, useSyncExternalStore as Me } from "react";
 import { jsx as X, jsxs as Z } from "react/jsx-runtime";
 import { createPortal as Ne } from "react-dom";
@@ -120,10 +120,10 @@ function Xe(e) {
 //#endregion
 //#region src/integrations/realtime/CallBlockHost.tsx
 var Ze = {
-	start: "Start the huddle",
+	start: "Start a huddle",
 	join: "Join the huddle",
-	accept: "Answer the call",
-	check: "Check devices"
+	accept: "Join the huddle",
+	check: "Check your devices"
 }, Qe = "__unbound__", $e = () => "", et = () => () => {}, tt = () => null, nt = () => "footer", rt = () => !1, it = [], at = () => it, ot = "ui.call-prejoin.v1";
 function st(e) {
 	return e.gatewayConfigured ? e.platformApiUrl ? e.signedIn ? e.connectionState === "connected" ? null : "Connecting to the realtime gateway…" : "Sign in to start a call" : "Calls need platform-api — the middleware returned no platformApiUrl (REALTIME_PLATFORM_PUBLIC_URL) and VITE_PLATFORM_API_URL is not set" : "Calls need the realtime gateway — the middleware returned no gatewayUrl and VITE_GATEWAY_URL is not set";
@@ -155,79 +155,99 @@ function ut(e, t) {
 }
 function dt(o) {
 	let s = U(null), c = U(null), l = U(null), u = E(o), { LVSProvider: d } = o;
-	function f({ kind: s, title: c, selfName: l, initial: u, onJoin: d, onCancel: f }) {
-		let [p, m] = Y(u), h = o.useMediaDevices({ requestOnMount: !1 }), g = o.useAudioVideoSettings({
-			preview: p.micOn || p.cameraOn,
-			previewAudio: p.micOn,
-			previewVideo: p.cameraOn
-		}), _ = Je(s), [v, y] = Y(_), b = J(!1), x = J({
-			choice: p,
-			settings: g.settings
+	function f({ kind: s, title: c, selfName: l, selfAvatarUrl: u, initial: d, onJoin: f, onCancel: p }) {
+		let [m, h] = Y(d), g = o.useMediaDevices({ requestOnMount: !1 }), _ = o.useAudioVideoSettings({
+			preview: m.micOn || m.cameraOn,
+			previewAudio: m.micOn,
+			previewVideo: m.cameraOn
+		}), v = Je(s), [y, b] = Y(v), x = J(!1), S = J({
+			choice: m,
+			settings: _.settings
 		});
-		x.current = {
-			choice: p,
-			settings: g.settings
+		S.current = {
+			choice: m,
+			settings: _.settings
 		};
-		let S = () => {
-			let { choice: e, settings: t } = x.current;
-			d(e, {
+		let C = () => {
+			let { choice: e, settings: t } = S.current;
+			f(e, {
 				...t.microphoneId ? { microphoneId: t.microphoneId } : {},
 				...t.cameraId ? { cameraId: t.cameraId } : {},
 				...t.speakerId ? { speakerId: t.speakerId } : {}
 			});
-		}, C = J(S);
-		C.current = S;
-		let w = J(!0);
+		}, w = J(C);
+		w.current = C;
+		let T = J(!0);
 		return K(() => {
-			if (w.current) {
-				w.current = !1;
+			if (T.current) {
+				T.current = !1;
 				return;
 			}
-			b.current = !0, y(null);
-		}, [p, g.settings]), K(() => {
-			if (_ === null) return;
+			x.current = !0, b(null);
+		}, [m, _.settings]), K(() => {
+			if (v === null) return;
 			let e = Date.now(), t = window.setInterval(() => {
-				if (b.current) {
+				if (x.current) {
 					window.clearInterval(t);
 					return;
 				}
-				let n = _ - (Date.now() - e);
+				let n = v - (Date.now() - e);
 				if (n <= 0) {
-					window.clearInterval(t), C.current();
+					window.clearInterval(t), w.current();
 					return;
 				}
-				y(n);
+				b(n);
 			}, 250);
 			return () => window.clearInterval(t);
-		}, [_]), /* @__PURE__ */ X(i, {
+		}, [v]), /* @__PURE__ */ X(i, {
 			open: !0,
-			onClose: f,
-			title: `${Ze[s]} — ${c}`,
-			maxWidth: 560,
+			onClose: p,
+			title: Ze[s],
+			maxWidth: 900,
+			rawChildren: !0,
+			cardClassName: "flex max-h-[88vh] flex-col overflow-hidden border border-border border-t-4 border-t-primary",
 			backdropTestId: "prejoin-backdrop",
 			footer: /* @__PURE__ */ Z(t, {
 				gap: "sm",
 				justify: "end",
 				children: [/* @__PURE__ */ X(e, {
 					variant: "secondary",
-					onClick: f,
+					onClick: p,
 					"data-testid": "prejoin-cancel",
 					children: s === "accept" ? "Decline" : "Cancel"
 				}), /* @__PURE__ */ X(e, {
-					onClick: S,
+					onClick: C,
 					"data-testid": "prejoin-join",
-					children: v === null ? s === "check" ? "Save" : "Join" : `Join as last time (${Xe(v)})`
+					children: y === null ? s === "check" ? "Save" : "Join" : `Join as last time (${Xe(y)})`
 				})]
 			}),
-			children: /* @__PURE__ */ Z(r, {
+			children: /* @__PURE__ */ Z(n, {
 				gap: "md",
+				className: "min-h-0 overflow-y-auto",
 				"data-testid": "prejoin-dialog",
 				children: [
+					/* @__PURE__ */ Z(t, {
+						justify: "between",
+						align: "center",
+						gap: "md",
+						className: "rounded-md border border-border bg-surface-panel px-3 py-2",
+						children: [/* @__PURE__ */ X(r, {
+							size: "sm",
+							weight: "semibold",
+							children: c
+						}), /* @__PURE__ */ Z(r, {
+							size: "xs",
+							tone: "secondary",
+							children: ["Joining as ", l]
+						})]
+					}),
 					/* @__PURE__ */ X(Se, {
-						devices: h,
-						settings: g,
-						cameraOn: p.cameraOn,
+						devices: g,
+						settings: _,
+						cameraOn: m.cameraOn,
 						selfName: l,
+						selfAvatarUrl: u,
+						layout: "prejoin",
 						"data-testid": "prejoin-devices"
 					}),
 					/* @__PURE__ */ Z(t, {
@@ -235,30 +255,30 @@ function dt(o) {
 						align: "center",
 						children: [
 							/* @__PURE__ */ X(a, {
-								checked: p.micOn,
-								onChange: (e) => m((t) => ({
+								checked: m.micOn,
+								onChange: (e) => h((t) => ({
 									...t,
 									micOn: e
 								})),
 								"aria-label": "Join with microphone on",
 								"data-testid": "prejoin-mic"
 							}),
-							/* @__PURE__ */ X(n, {
+							/* @__PURE__ */ X(r, {
 								size: "sm",
-								children: "Microphone on"
+								children: m.micOn ? "Microphone on" : "Microphone off"
 							}),
 							/* @__PURE__ */ X(a, {
-								checked: p.cameraOn,
-								onChange: (e) => m((t) => ({
+								checked: m.cameraOn,
+								onChange: (e) => h((t) => ({
 									...t,
 									cameraOn: e
 								})),
 								"aria-label": "Join with camera on",
 								"data-testid": "prejoin-camera"
 							}),
-							/* @__PURE__ */ X(n, {
+							/* @__PURE__ */ X(r, {
 								size: "sm",
-								children: "Camera on"
+								children: m.cameraOn ? "Camera on" : "Camera off"
 							})
 						]
 					}),
@@ -266,16 +286,16 @@ function dt(o) {
 						gap: "sm",
 						align: "center",
 						children: [/* @__PURE__ */ X(a, {
-							checked: p.remember,
-							onChange: (e) => m((t) => ({
+							checked: m.remember,
+							onChange: (e) => h((t) => ({
 								...t,
 								remember: e
 							})),
 							"aria-label": "Remember and skip this check next time",
 							"data-testid": "prejoin-remember"
-						}), /* @__PURE__ */ X(n, {
+						}), /* @__PURE__ */ X(r, {
 							size: "sm",
-							children: "Remember these choices and skip this check next time"
+							children: "Skip device setup next time"
 						})]
 					})
 				]
@@ -435,6 +455,7 @@ function dt(o) {
 					kind: T.kind,
 					title: m?.title ?? "this huddle",
 					selfName: e?.displayName ?? "",
+					selfAvatarUrl: e?.avatarUrl,
 					initial: T.initial,
 					onCancel: () => {
 						let e = T;
@@ -526,12 +547,12 @@ function dt(o) {
 		let l = y((e) => e.current, tt);
 		return !!e && l === e;
 	}
-	function w({ placement: e, compact: t = !1, documents: n, className: i }) {
+	function w({ placement: e, compact: t = !1, documents: r, className: i }) {
 		let a = G(s), o = G(l), [c, u] = Y(null), d = ct(c), f = !!a?.lobby && Q(a.call.phase, !0), p = e === "composer" ? d > 0 : e === "pane" || f && !!o?.open && d > 0, m = e === "composer" && (t || Re(d)), h = S(c, e, p, {
 			compact: m,
-			...n ? { documents: n } : {}
+			...r ? { documents: r } : {}
 		});
-		return /* @__PURE__ */ X(r, {
+		return /* @__PURE__ */ X(n, {
 			ref: u,
 			gap: "none",
 			className: i ?? (e === "composer" ? "min-w-0" : "shrink-0 min-w-0"),
@@ -593,7 +614,7 @@ function dt(o) {
 			...l
 		};
 	}
-	function O({ id: e, onOpenPeople: t, onOpenDocument: n, overlay: i, dockTestId: a }) {
+	function O({ id: e, onOpenPeople: t, onOpenDocument: r, overlay: i, dockTestId: a }) {
 		let o = G(s), c = y((e) => e.current, tt), l = y((e) => e.placement, nt), d = y((e) => e.compact, rt), f = y((e) => e.documents, at), p = !!o?.lobby && Q(o.call.phase, !0), m = !!c && l === "composer", h = !!c && l !== "pane", g = Le(c ? l : "footer", d), _ = o?.lobby ?? null, v = p && _ && o ? /* @__PURE__ */ X(u, {
 			call: o.call,
 			title: _.title,
@@ -608,13 +629,13 @@ function dt(o) {
 				})),
 				onDocumentClick: (e) => {
 					let t = f.find((t) => t.id === e);
-					t && n?.(t);
+					t && r?.(t);
 				}
 			} : {},
 			layout: g,
 			"data-testid": a ? a(_, o.tenant) : "conversation-call-dock"
 		}) : null;
-		return v ? c ? Ne(/* @__PURE__ */ Z(r, {
+		return v ? c ? Ne(/* @__PURE__ */ Z(n, {
 			gap: "none",
 			className: "relative",
 			"data-testid": "shell-call-media",
@@ -622,7 +643,7 @@ function dt(o) {
 			"data-layout": g,
 			"data-expanded": "true",
 			children: [v, i]
-		}), c) : /* @__PURE__ */ X(r, {
+		}), c) : /* @__PURE__ */ X(n, {
 			id: e,
 			gap: "none",
 			className: "hidden",

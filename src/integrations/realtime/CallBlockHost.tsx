@@ -237,7 +237,7 @@ export interface CallMediaOutletProps {
   dockTestId?: (lobby: CallLobby, tenant: string | null) => string;
 }
 
-const VERB: Record<PreJoinKind, string> = { start: 'Start the huddle', join: 'Join the huddle', accept: 'Answer the call', check: 'Check devices' };
+const PREJOIN_TITLE: Record<PreJoinKind, string> = { start: 'Start a huddle', join: 'Join the huddle', accept: 'Join the huddle', check: 'Check your devices' };
 const UNBOUND = '__unbound__';
 const noToken = (): string => '';
 const noSubscribe = () => () => {};
@@ -290,8 +290,8 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
 
   // ── the device check ──
 
-  function PreJoinDialog({ kind, title, selfName, initial, onJoin, onCancel }: {
-    kind: PreJoinKind; title: string; selfName: string; initial: PreJoinChoice;
+  function PreJoinDialog({ kind, title, selfName, selfAvatarUrl, initial, onJoin, onCancel }: {
+    kind: PreJoinKind; title: string; selfName: string; selfAvatarUrl?: string; initial: PreJoinChoice;
     onJoin(choice: PreJoinChoice, devices: { microphoneId?: string; cameraId?: string; speakerId?: string }): void;
     onCancel(): void;
   }) {
@@ -328,22 +328,26 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
       return () => window.clearInterval(timer);
     }, [total]);
     return (
-      <Modal open onClose={onCancel} title={`${VERB[kind]} — ${title}`} maxWidth={560} backdropTestId="prejoin-backdrop"
+      <Modal open onClose={onCancel} title={PREJOIN_TITLE[kind]} maxWidth={900} rawChildren
+        cardClassName="flex max-h-[88vh] flex-col overflow-hidden border border-border border-t-4 border-t-primary" backdropTestId="prejoin-backdrop"
         footer={<Inline gap="sm" justify="end">
           <Button variant="secondary" onClick={onCancel} data-testid="prejoin-cancel">{kind === 'accept' ? 'Decline' : 'Cancel'}</Button>
           <Button onClick={join} data-testid="prejoin-join">{remaining !== null ? `Join as last time (${countdownSeconds(remaining)})` : kind === 'check' ? 'Save' : 'Join'}</Button>
         </Inline>}>
-        <Stack gap="md" data-testid="prejoin-dialog">
-          <WrappedAudioVideoSettingsForm devices={devices} settings={settings} cameraOn={choice.cameraOn} selfName={selfName} data-testid="prejoin-devices" />
+        <Stack gap="md" className="min-h-0 overflow-y-auto" data-testid="prejoin-dialog">
+          <Inline justify="between" align="center" gap="md" className="rounded-md border border-border bg-surface-panel px-3 py-2">
+            <Text size="sm" weight="semibold">{title}</Text><Text size="xs" tone="secondary">Joining as {selfName}</Text>
+          </Inline>
+          <WrappedAudioVideoSettingsForm devices={devices} settings={settings} cameraOn={choice.cameraOn} selfName={selfName} selfAvatarUrl={selfAvatarUrl} layout="prejoin" data-testid="prejoin-devices" />
           <Inline gap="md" align="center">
             <Switch checked={choice.micOn} onChange={(micOn: boolean) => setChoice((c) => ({ ...c, micOn }))} aria-label="Join with microphone on" data-testid="prejoin-mic" />
-            <Text size="sm">Microphone on</Text>
+            <Text size="sm">{choice.micOn ? 'Microphone on' : 'Microphone off'}</Text>
             <Switch checked={choice.cameraOn} onChange={(cameraOn: boolean) => setChoice((c) => ({ ...c, cameraOn }))} aria-label="Join with camera on" data-testid="prejoin-camera" />
-            <Text size="sm">Camera on</Text>
+            <Text size="sm">{choice.cameraOn ? 'Camera on' : 'Camera off'}</Text>
           </Inline>
           <Inline gap="sm" align="center">
             <Switch checked={choice.remember} onChange={(remember: boolean) => setChoice((c) => ({ ...c, remember }))} aria-label="Remember and skip this check next time" data-testid="prejoin-remember" />
-            <Text size="sm">Remember these choices and skip this check next time</Text>
+            <Text size="sm">Skip device setup next time</Text>
           </Inline>
         </Stack>
       </Modal>
@@ -482,6 +486,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
           kind={prompt.kind}
           title={lobby?.title ?? 'this huddle'}
           selfName={self?.displayName ?? ''}
+          selfAvatarUrl={self?.avatarUrl}
           initial={prompt.initial}
           onCancel={() => { const p = prompt; setPrompt(null); p.cancel?.(); }}
           onJoin={(choice, devices) => {

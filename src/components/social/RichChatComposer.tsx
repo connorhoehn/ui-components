@@ -96,6 +96,7 @@ import Mention from '@tiptap/extension-mention';
 import Link from '@tiptap/extension-link';
 import Suggestion from '@tiptap/suggestion';
 import type { SuggestionProps, SuggestionKeyDownProps } from '@tiptap/suggestion';
+import { visibleSuggestionRect } from './composerSuggestionPosition';
 import { cn } from '../../lib/cn';
 import { FileInput } from '../forms/FileInput';
 import { DropdownMenu, type DropdownMenuSection } from '../shared/DropdownMenu';
@@ -778,6 +779,9 @@ function mountSuggestionMenu() {
       document.body.appendChild(el);
     },
     place(rect: DOMRect | null | undefined, boundary?: Element | null) {
+      // A hidden prefix has no visible caret box; use its editor boundary.
+      // A genuine caret (zero width, positive height) keeps its exact position.
+      rect = visibleSuggestionRect(rect, boundary);
       if (!host || !rect) return;
       host.style.position = 'absolute';
       host.style.zIndex = '9600';
@@ -865,9 +869,7 @@ function hiddenCommandPrefix(
   doc: PMNode,
   commands: readonly ComposerCommand[] | undefined,
   pick: { trigger: string; item: ComposerArgumentItem } | null,
-  bare = false,
 ): { kind: 'inline' | 'block'; from: number; to: number; caret: number } | null {
-  if (!pick && !bare) return null;
   const first = doc.firstChild;
   if (!first || !first.isTextblock) return null;
   // One character per inline leaf, so text offsets are doc offsets.
@@ -882,12 +884,10 @@ function hiddenCommandPrefix(
     const spaces = rest.length - rest.replace(/^ +/, '').length;
     if (!rest.slice(spaces).startsWith(pick.item.label)) return null;
     end = argStart + spaces + pick.item.label.length;
-  } else if (bare) {
-    // The prompt card (2.390.0): a command with no argument — "/adjust" —
-    // is named by its chip, so the trigger itself hides too.
-    end = text.length - text.trimStart().length + cmd.trigger.length;
   } else {
-    return null;
+    // The command chip names the typed trigger once its space/continuation
+    // leaves a visible caret. The origin/main bare-line safeguard stays below.
+    end = text.length - text.trimStart().length + cmd.trigger.length;
   }
   const hideTo = end;
   if (text[end] === ' ') end += 1;
@@ -1186,7 +1186,6 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // chip, in which case the command line it names is hidden in the input.
   // Assigned once `menuModeRow` is known, below; read by a ProseMirror plugin.
   const hideCommandPrefixRef = useRef(false);
-  const hideBareTriggerRef = useRef(false);
   // The argument picked from the menu in this draft, if any. A ref, not state:
   // the Suggestion plugin reads it inside ProseMirror's state transitions,
   // where a React state value would be one render stale. Cleared on send and
@@ -1204,7 +1203,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // trigger is never on screen twice (2.407.41).
   const [prefixHidden, setPrefixHidden] = useState(false);
   const readPrefixHidden = (e: Editor) => hideCommandPrefixRef.current
-    && !!hiddenCommandPrefix(e.state.doc, commandsRef.current, argPickRef.current, hideBareTriggerRef.current);
+    && !!hiddenCommandPrefix(e.state.doc, commandsRef.current, argPickRef.current);
   // The bar follows the DRAFT, not the render: re-derive whenever the host's
   // commands change (a document opened beside the chat), never clear on time.
   useEffect(() => {
@@ -1418,7 +1417,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         name: 'commandPrefixHidden',
         addProseMirrorPlugins() {
           const find = (doc: PMNode) => (hideCommandPrefixRef.current
-            ? hiddenCommandPrefix(doc, commandsRef.current, argPickRef.current, hideBareTriggerRef.current)
+            ? hiddenCommandPrefix(doc, commandsRef.current, argPickRef.current)
             : null);
           return [
             new Plugin({
@@ -2187,12 +2186,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     </>
   );
   hideCommandPrefixRef.current = menuModeRow;
-  // The docked card's inline chip names the command, so a bare trigger hides
-  // in the input too — before 2.407.41 only the prompt card hid it, and the
-  // editor dock showed "/doc Edit the open document with Haiku" (the chip, with
-  // the command's LABEL) beside a still-visible "/doc make sure…": the trigger
-  // twice, and a label that read like the previous instruction.
-  hideBareTriggerRef.current = docked;
+  // Every menu-mode command chip replaces its typed prefix once a visible
+  // continuation remains; a bare trigger alone stays rendered for the caret.
   // The plugin reads the ref on the next transaction; switching into or out
   // of the docked card sends an empty one so the command line hides or shows
   // (and the caret moves past it) straight away.

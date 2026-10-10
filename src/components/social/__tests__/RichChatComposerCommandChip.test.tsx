@@ -227,3 +227,14 @@ describe('the docked card chip names what the input hides (2.407.41)', () => {
     expect(drafts.at(-1)!.command).toEqual({ trigger: '/doc' });
   });
 });
+
+describe('typed command prefixes outside the editor toolbar', () => {
+  it('a recognized typed trigger is visually replaced without losing its execution text', () => {
+    const ref = createRef<RichChatComposerHandle>(), onSend = vi.fn();
+    render(<RichChatComposer {...base} ref={ref} mode="chat" toolbar="compact" onSend={onSend} commands={[{ trigger: '/doc', label: 'Document' }]} />);
+    act(() => { ref.current!.editor!.chain().focus('end').insertContent('/doc summarize the notes').run(); });
+    expect(screen.getByTestId('composer-input').querySelector('[data-command-prefix]')?.textContent).toBe('/doc ');
+    fireEvent.click(screen.getByRole('button', { name: /send/i }));
+    expect(onSend).toHaveBeenCalledWith(expect.objectContaining({ text: '/doc summarize the notes', command: { trigger: '/doc' } }));
+  });
+});

@@ -142,3 +142,5 @@ src/components/video/CallTileRow.tsx             # prop-driven tile width/height
 # 2.400.0 — OrgGraphTooltip: left/top computed from the hovered node's on-screen position.
 src/components/graph/org/OrgGraphTooltip.tsx
 src/components/shared/dataAccent.tsx # sets the --data-accent custom property for a raw runtime colour (slots need no style)
+
+src/components/shared/ActivityTicker.tsx # floating toolbar left/bottom measured from the trigger DOM rect and viewport

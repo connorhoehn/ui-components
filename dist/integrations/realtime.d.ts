@@ -297,6 +297,8 @@ declare interface AudioVideoSettingsFormProps {
     /** Who the preview placeholder shows when the camera is off. */
     selfName?: string;
     selfAvatarUrl?: string;
+    /** Two-column device setup; the default stack remains the call-settings form. */
+    layout?: 'stack' | 'prejoin';
     className?: string;
     'data-testid'?: string;
 }
@@ -1901,10 +1903,11 @@ export declare function createCallBlockHost<M extends CallBlockModules>(rm: M): 
     CallHostProvider: ({ scopeKey, videoUrl, children, ...rest }: CallHostProviderProps) => JSX.Element;
     CallMediaOutlet: ({ id, onOpenPeople, onOpenDocument, overlay, dockTestId }: CallMediaOutletProps) => JSX.Element | null;
     CallBlock: ({ placement, compact, documents, className }: CallBlockProps) => JSX.Element;
-    PreJoinDialog: ({ kind, title, selfName, initial, onJoin, onCancel }: {
+    PreJoinDialog: ({ kind, title, selfName, selfAvatarUrl, initial, onJoin, onCancel }: {
         kind: PreJoinKind;
         title: string;
         selfName: string;
+        selfAvatarUrl?: string;
         initial: PreJoinChoice;
         onJoin(choice: PreJoinChoice, devices: {
             microphoneId?: string;
@@ -3037,6 +3040,8 @@ export declare interface RMConversationCallSource {
     } | null;
     /** Optional native device-capture feedback; never a fatal call error. */
     media?: {
+        /** Present in the original native media result, including SDKs before capture feedback. */
+        error?: string | null;
         captureError?: string | null;
     };
     callingTo: string | null;
@@ -3774,7 +3779,7 @@ export declare interface WrappedActivityPanelProps {
 
 export declare function WrappedAudioVideoSettingsForm({ devices, settings, cameraOn, ...rest }: WrappedAudioVideoSettingsFormProps): JSX.Element;
 
-export declare interface WrappedAudioVideoSettingsFormProps extends Pick<AudioVideoSettingsFormProps, 'selfName' | 'selfAvatarUrl' | 'className' | 'data-testid'> {
+export declare interface WrappedAudioVideoSettingsFormProps extends Pick<AudioVideoSettingsFormProps, 'selfName' | 'selfAvatarUrl' | 'layout' | 'className' | 'data-testid'> {
     devices: RMMediaDevicesSource;
     settings: RMAudioVideoSettingsSource;
     /** Whether the viewer's camera is on (the preview shows "Camera is off" otherwise). */
@@ -3807,7 +3812,7 @@ export declare interface WrappedCanvasDocumentProps extends Omit<CanvasDocumentV
     beforeConvert?: () => void | Promise<void>;
 }
 
-export declare function WrappedChatPanel({ chat, localMessages, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, renderMessageReferences, emojis, onReply, reply, onCancelReply, readReceipts, readReceiptsEnabled, unreadFrom, threaded, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, editable, canEdit, canDelete, onForwardMessage, }: WrappedChatPanelProps): JSX.Element;
+export declare function WrappedChatPanel({ chat, localMessages, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, flushComposer, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, renderMessageReferences, emojis, onReply, reply, onCancelReply, readReceipts, readReceiptsEnabled, unreadFrom, threaded, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, editable, canEdit, canDelete, onForwardMessage, }: WrappedChatPanelProps): JSX.Element;
 
 export declare interface WrappedChatPanelProps {
     /** Return value of useChat(channel) from realtime-modules */
@@ -3898,6 +3903,8 @@ export declare interface WrappedChatPanelProps {
     tone?: 'light' | 'dark';
     /** Forwarded to ChatPanel — fill the parent's height. */
     fill?: boolean;
+    /** Forwarded to ChatPanel — full-width custom composer in a filling pane. */
+    flushComposer?: boolean;
     /** Forwarded to ChatPanel — suppress its own "Chat (n)" heading when the
      *  host already names the region. */
     showHeader?: boolean;

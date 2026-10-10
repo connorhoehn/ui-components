@@ -59,6 +59,8 @@ export interface AudioVideoSettingsFormProps {
   /** Who the preview placeholder shows when the camera is off. */
   selfName?: string;
   selfAvatarUrl?: string;
+  /** Two-column device setup; the default stack remains the call-settings form. */
+  layout?: 'stack' | 'prejoin';
   className?: string;
   'data-testid'?: string;
 }
@@ -131,6 +133,7 @@ export function AudioVideoSettingsForm({
   testMicState = 'idle',
   selfName = 'You',
   selfAvatarUrl,
+  layout = 'stack',
   className,
   'data-testid': testId = 'audio-video-settings-form',
 }: AudioVideoSettingsFormProps) {
@@ -167,8 +170,8 @@ export function AudioVideoSettingsForm({
   }
 
   return (
-    <div className={cn('flex flex-col', className)} data-testid={testId}>
-      <Section>
+    <div className={cn(layout === 'prejoin' ? 'grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-x-6' : 'flex flex-col', className)} data-testid={testId} data-layout={layout}>
+      <Section divided={layout !== 'prejoin'} className={layout === 'prejoin' ? 'md:col-start-2 md:row-start-1 py-0' : undefined}>
         <FieldLabel htmlFor={`${testId}-mic`}>Microphone</FieldLabel>
         {micDenied ? (
           <InlineAlert tone="error" data-testid="settings-mic-denied">
@@ -213,7 +216,7 @@ export function AudioVideoSettingsForm({
         </div>
       </Section>
 
-      <Section>
+      <Section divided={layout !== 'prejoin'} className={layout === 'prejoin' ? 'md:col-start-2 md:row-start-2 py-0' : undefined}>
         {speakerSelectionSupported && (
           <>
             <FieldLabel htmlFor={`${testId}-speaker`}>Speakers</FieldLabel>
@@ -233,7 +236,7 @@ export function AudioVideoSettingsForm({
         <VolumeSlider value={value.volume} onChange={(v) => set({ volume: v })} onTest={() => void onTestSound()} />
       </Section>
 
-      <Section>
+      <Section divided={layout !== 'prejoin'} className={layout === 'prejoin' ? 'md:col-start-1 md:row-start-1 md:row-span-3 py-0' : undefined}>
         <FieldLabel htmlFor={`${testId}-camera`}>Camera</FieldLabel>
         {camDenied ? (
           <InlineAlert tone="error" data-testid="settings-camera-denied">
@@ -252,7 +255,7 @@ export function AudioVideoSettingsForm({
               data-testid="settings-camera-select"
             />
             <div
-              className="relative aspect-[338/156] w-full overflow-hidden rounded-lg bg-video-stage"
+              className={layout === 'prejoin' ? 'relative aspect-video w-full overflow-hidden rounded-xl border border-border bg-video-stage' : 'relative aspect-[338/156] w-full overflow-hidden rounded-lg bg-video-stage'}
               data-testid="settings-preview"
               data-mirrored={value.mirrorPreview ? 'true' : 'false'}
             >
@@ -283,7 +286,7 @@ export function AudioVideoSettingsForm({
         </div>
       </Section>
 
-      <Section className="py-1.5">
+      <Section divided={layout !== 'prejoin'} className={layout === 'prejoin' ? 'md:col-start-2 md:row-start-3 py-0' : 'py-1.5'}>
         <Disclosure
           summary="Advanced"
           variant="plain"
@@ -329,7 +332,7 @@ export function AudioVideoSettingsForm({
         </Disclosure>
       </Section>
 
-      <Section divided={false} className="pt-2.5 pb-0">
+      <Section divided={false} className={layout === 'prejoin' ? 'hidden' : 'pt-2.5 pb-0'}>
         <CheckRow checked={value.rememberDevices} onChange={(v) => set({ rememberDevices: v })} testId="settings-remember">
           Use these devices next time
         </CheckRow>
