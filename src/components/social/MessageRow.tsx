@@ -38,6 +38,9 @@ export interface MessageRowProps {
    * Indented under the content so it lines up under text, not under the avatar.
    */
   footer?: ReactNode;
+  /** Message actions in the header, beside metadata or on a wrapped line.
+   *  Keep the slot mounted while hiding its controls to avoid hover layout shifts. */
+  actions?: ReactNode;
   /** Surface the row renders on. 'light' (default) keeps the theme tokens;
    *  'dark' swaps to white/alpha classes for dark call chrome — without it
    *  the message text renders dark-on-dark and disappears. Mirrors
@@ -95,6 +98,7 @@ export function MessageRow({
   hideAuthor = false,
   mine = false,
   footer,
+  actions,
   tone = 'light',
   editedAt,
   contentLayout = 'inline',
@@ -123,43 +127,51 @@ export function MessageRow({
         {!hideAvatar && <Avatar name={author} src={avatarUrl} size={20} />}
       </div>
       <div className={cn('flex grow flex-col min-w-0', mine && 'items-end')}>
-        {metaVisible && (
-          <div className={cn('flex items-baseline gap-2 min-w-0', mine && 'flex-row-reverse')}>
-            {!hideAuthor && (
-              <span
-                data-testid="message-row-author"
-                className={cn(
-                  'text-xs font-semibold truncate',
-                  dark ? 'text-white/70' : 'text-text-secondary',
-                )}
-              >
-                {author}
-              </span>
-            )}
-            {time && (
-              // A real <time>, and a title carrying the full local date.
-              // HH:MM alone cannot say WHICH day, and the day separators
-              // above only state it once per block — this is what answers
-              // the question for one specific row without adding a second
-              // date to every line of the transcript.
-              <time
-                data-testid="message-row-time"
-                dateTime={timestamp}
-                title={fullTimestampLabel(timestamp)}
-                className={cn('text-xs shrink-0', dark ? 'text-white/40' : 'text-text-tertiary')}
-              >
-                {time}
-              </time>
-            )}
-            {editedAt && (
-              <span
-                data-testid="message-row-edited"
-                title={`Edited ${fullTimestampLabel(editedAt)}`}
-                className={cn('text-[11px] shrink-0', dark ? 'text-white/40' : 'text-text-tertiary')}
-              >
-                (edited)
-              </span>
-            )}
+        {(metaVisible || actions) && (
+          <div
+            data-testid="message-row-header"
+            className={cn(actions && 'mb-1 flex w-full min-w-0 flex-wrap items-center justify-between gap-x-2 gap-y-1', actions && mine && 'flex-row-reverse')}
+          >
+          {metaVisible && (
+            <div className={cn('flex items-baseline gap-2 min-w-0 max-w-full', actions && 'shrink-0', mine && 'flex-row-reverse')}>
+              {!hideAuthor && (
+                <span
+                  data-testid="message-row-author"
+                  className={cn(
+                    'text-xs font-semibold truncate',
+                    dark ? 'text-white/70' : 'text-text-secondary',
+                  )}
+                >
+                  {author}
+                </span>
+              )}
+              {time && (
+                // A real <time>, and a title carrying the full local date.
+                // HH:MM alone cannot say WHICH day, and the day separators
+                // above only state it once per block — this is what answers
+                // the question for one specific row without adding a second
+                // date to every line of the transcript.
+                <time
+                  data-testid="message-row-time"
+                  dateTime={timestamp}
+                  title={fullTimestampLabel(timestamp)}
+                  className={cn('text-xs shrink-0', dark ? 'text-white/40' : 'text-text-tertiary')}
+                >
+                  {time}
+                </time>
+              )}
+              {editedAt && (
+                <span
+                  data-testid="message-row-edited"
+                  title={`Edited ${fullTimestampLabel(editedAt)}`}
+                  className={cn('text-[11px] shrink-0', dark ? 'text-white/40' : 'text-text-tertiary')}
+                >
+                  (edited)
+                </span>
+              )}
+            </div>
+          )}
+          {actions && <div data-testid="message-row-actions" className="max-w-full shrink-0">{actions}</div>}
           </div>
         )}
         {/* `break-words` + `min-w-0` are what stop a 400-char unbroken

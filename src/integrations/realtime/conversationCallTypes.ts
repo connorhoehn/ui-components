@@ -53,7 +53,11 @@ export interface RMConversationCallSource {
   call: { participants: RMConversationCallParticipant[]; participantCount: number } | null;
   error: { message: string } | null;
   /** Optional native device-capture feedback; never a fatal call error. */
-  media?: { captureError?: string | null };
+  media?: {
+    /** Present in the original native media result, including SDKs before capture feedback. */
+    error?: string | null;
+    captureError?: string | null;
+  };
   callingTo: string | null;
   elapsedMs: number | null;
   activeSpeakerId: string | null;

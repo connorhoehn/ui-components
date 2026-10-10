@@ -32,6 +32,8 @@ function Harness() {
 
 beforeEach(() => {
   triggerRect = { top: 100, left: 60 };
+  Object.defineProperty(window, 'innerWidth', { value: 1024, configurable: true });
+  Object.defineProperty(window, 'innerHeight', { value: 768, configurable: true });
   Object.defineProperty(window, 'scrollY', { value: SCROLL_Y, configurable: true });
   Object.defineProperty(window, 'scrollX', { value: SCROLL_X, configurable: true });
   vi.spyOn(HTMLButtonElement.prototype, 'getBoundingClientRect').mockImplementation(
@@ -51,6 +53,20 @@ describe('ReactionPickerPopover anchoring on a scrolled page', () => {
     expect(popover.style.position).toBe('fixed');
     expect(popover.style.top).toBe('88px');
     expect(popover.style.left).toBe('60px');
+  });
+
+  it('flips below a first-row trigger and stays within a narrow viewport', () => {
+    Object.defineProperty(window, 'innerWidth', { value: 280, configurable: true });
+    Object.defineProperty(window, 'innerHeight', { value: 600, configurable: true });
+    vi.spyOn(HTMLDivElement.prototype, 'getBoundingClientRect').mockReturnValue({ top: 0, left: 0, right: 288, bottom: 320, width: 288, height: 320, x: 0, y: 0, toJSON: () => ({}) } as DOMRect);
+    vi.mocked(HTMLButtonElement.prototype.getBoundingClientRect).mockReturnValue({ top: 20, bottom: 44, left: 250, right: 274, width: 24, height: 24, x: 250, y: 20, toJSON: () => ({}) } as DOMRect);
+    render(<Harness />);
+    const popover = screen.getByTestId('reaction-picker-popover');
+    expect(popover.style.top).toBe('50px');
+    expect(popover.style.left).toBe('8px');
+    expect(popover.style.maxWidth).toBe('264px');
+    expect(popover.style.transform).toBe('');
+    expect(popover.parentElement).toBe(document.body);
   });
 
   it('re-measures while open so it does not drift when the page scrolls', () => {

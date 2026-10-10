@@ -5,6 +5,13 @@ import { HuddleBar } from '../HuddleBar';
 afterEach(() => { cleanup(); vi.useRealTimers(); });
 
 describe('HuddleBar', () => {
+  it('can omit idle context without removing named controls', () => {
+    render(<HuddleBar name="Huddle actions" phase="idle" showContext={false} onStart={() => {}} />);
+    expect(screen.queryByTestId('huddle-bar-status')).toBeNull();
+    expect(screen.getByRole('group', { name: 'Huddle actions' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Huddle' })).toBeInTheDocument();
+  });
+
   it('shows status, name, joined and ringing counts apart', () => {
     render(<HuddleBar name="Standup" participantCount={3} ringingCount={1} onLeave={() => {}} />);
     expect(screen.getByTestId('huddle-bar-name')).toHaveTextContent('Standup');

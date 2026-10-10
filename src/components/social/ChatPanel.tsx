@@ -2380,17 +2380,14 @@ export function ChatPanel({
       data-message-id={messageId || undefined}
       data-continues={continues ? 'true' : undefined}
       // A continued row drops the whole meta line, timestamp included, so the
-      // native tooltip is where its time went. That is the honest limit of
-      // what this component can do from here: MessageRow has no hover-gutter
-      // slot, and inventing one in the panel would put a second time element
-      // on the page that the row itself knows nothing about. The full local
+      // native tooltip is where its time went. The full local
       // date and time is in the title, on the row, reachable by pointer — and
       // the headed row a few lines above still states the clock time plainly.
       title={continues ? fullTimestampLabel(message.timestamp) : undefined}
-      // `group` drives the hover reveal; `focus-within` is what
-      // keeps the bar reachable without a pointer.
+      // `group` drives the hover reveal; keyboard focus reveals the same
+      // reserved controls without changing the row geometry.
       className={cn(
-        'group relative rounded-md transition-colors hover:bg-surface-hover',
+        'group relative rounded-md px-2 py-1 transition-colors hover:bg-surface-hover',
         // `ring-inset`: an outset ring is drawn OUTSIDE the row's
         // box, and the scroll container clips overflow — so the
         // right edge of the highlight was cut off against the
@@ -2409,8 +2406,8 @@ export function ChatPanel({
         // keeping the time would trade a name for a stray HH:MM and leave the
         // row two lines tall — half the repetition and none of the density
         // this is for. `formatChatTime('')` yields '', so nothing is rendered
-        // and no invalid `dateTime` reaches the DOM. A `hideMeta` prop on
-        // MessageRow would say this outright; that file is out of scope here.
+        // and no invalid `dateTime` reaches the DOM. Actions retain their own
+        // header space when the repeated metadata is hidden.
         timestamp={continues ? '' : message.timestamp}
         editedAt={isDeleted ? undefined : message.editedAt}
         avatarUrl={message.avatarUrl}
@@ -2431,29 +2428,14 @@ export function ChatPanel({
         // doc comment: a card/attachment body sizes itself to its container
         // and collapses inside the default shrink-to-fit bubble.
         contentLayout={hasCardBody ? 'block' : 'inline'}
-      />
-      {messageId && !isDeleted && !editing && (onToggleReaction || canEditDelete || (canForward && onForwardMessage) || (!isActivityNotice && (onReply || onTogglePin || onCopyLink))) && (
+        actions={messageId && !isDeleted && !editing && (onToggleReaction || canEditDelete || (canForward && onForwardMessage) || (!isActivityNotice && (onReply || onTogglePin || onCopyLink))) ? (
         <MessageActionBar
-          // Top-RIGHT of the row, the way Slack and Teams place
-          // it, and the hovered row is tinted so the bar and the
-          // message it acts on read as one thing however wide the
-          // pane is. It used to sit at the message column's left
-          // edge, lifted onto the row's top — which put it over
-          // the author's name and the timestamp ("Caro…"), the
-          // one line that says whose message you are about to
-          // react to. `-top-3` lifts it into the gap above the
-          // row, where there is no text on the right.
-          //
-          // `group-has-[:focus-visible]` rather than
-          // `group-focus-within`: focus-within is true after a
-          // MOUSE click too, so clicking a reaction left that row's
-          // bar stuck open after the pointer moved away — two bars
-          // on screen at once, one of them for a message you were
-          // no longer pointing at. focus-visible is keyboard-only,
-          // which is the case the reveal-on-focus exists for.
-          className={cn(
-            'absolute -top-3 right-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100',
-          )}
+          // The row header reserves this geometry even while controls are
+          // hidden. Metadata and actions wrap instead of overlapping, and the
+          // first visible row has no negative-positioned toolbar to be clipped.
+          // Keyboard-only focus reveal avoids a mouse reaction leaving an old
+          // bar stuck open after the pointer has moved to another message.
+          className="max-w-full flex-wrap opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100"
           onReact={onToggleReaction ? (e) => onToggleReaction(messageId, e) : undefined}
           onOpenReactionPicker={
             onToggleReaction
@@ -2497,7 +2479,9 @@ export function ChatPanel({
           onEdit={canEditOnly && onEditMessage ? () => setEditingId(messageId) : undefined}
           onDelete={canDeleteOnly && onDeleteMessage ? () => setDeletingId(messageId) : undefined}
         />
-      )}
+        ) : undefined}
+      />
+
     </div>
     {/* Inside the list rather than pinned to the pane, so it scrolls away with
         the message it describes — a receipt floating above the composer while

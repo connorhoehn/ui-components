@@ -69,6 +69,8 @@ export interface HuddleBarMedia {
 export interface HuddleBarProps {
   /** The call's name: the place or person it is with. */
   name: string;
+  /** Hide the visible context/status cluster while keeping the group name accessible. */
+  showContext?: boolean;
   /**
    * Default `live`. `idle` is the pre-call bar: `name` is the page's context,
    * the bar draws `onStart` and the chat button (and no timer, counts, media
@@ -139,6 +141,7 @@ function peopleText(joined: number, ringing: number): string {
 
 export function HuddleBar({
   name,
+  showContext = true,
   phase = 'live',
   statusLabel,
   startedAt,
@@ -190,7 +193,7 @@ export function HuddleBar({
       data-phase={phase}
       className={cn('@container flex min-w-0 items-center gap-3 px-3 py-1.5', className)}
     >
-      <div className="flex min-w-0 items-center gap-2" data-testid={`${testId}-status`}>
+      {showContext && <div className="flex min-w-0 items-center gap-2" data-testid={`${testId}-status`}>
         <PresenceDot state={PHASE_DOT[phase]} ariaLabel={PHASE_LABEL[phase]} data-testid={`${testId}-dot`} />
         <T className="min-w-0 truncate" size="xs" weight={phase === 'idle' ? 'normal' : 'medium'} tone={phase === 'idle' ? 'secondary' : 'primary'} title={name} data-testid={`${testId}-name`}>
           {name}
@@ -210,7 +213,7 @@ export function HuddleBar({
             {peopleText(participantCount, ringingCount)}
           </T>
         )}
-      </div>
+      </div>}
 
       <div className="ml-auto flex shrink-0 items-center gap-2">
         {mic && media('microphone', mic)}

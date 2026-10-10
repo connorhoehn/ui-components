@@ -70,20 +70,20 @@ describe('NotificationCenter', () => {
   it('calls onMarkAllRead when button clicked', () => {
     const onMarkAllRead = vi.fn();
     render(<NotificationCenter items={makeItems(2)} onMarkAllRead={onMarkAllRead} />);
-    fireEvent.click(screen.getByText('Mark all read'));
+    fireEvent.click(screen.getByRole('button', { name: 'Mark all read' }));
     expect(onMarkAllRead).toHaveBeenCalledTimes(1);
   });
 
   it('does not show Mark all read when no unread items', () => {
     render(<NotificationCenter items={makeItems(2, true)} onMarkAllRead={vi.fn()} />);
-    expect(screen.queryByText('Mark all read')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Mark all read' })).not.toBeInTheDocument();
   });
 
   it('calls onClearAll when Clear all is clicked', () => {
     const onClearAll = vi.fn();
     render(<NotificationCenter items={makeItems(2)} onClearAll={onClearAll} />);
     fireEvent.click(screen.getByText('All'));
-    fireEvent.click(screen.getByText('Clear all'));
+    fireEvent.click(screen.getByRole('button', { name: 'Clear all' }));
     expect(onClearAll).toHaveBeenCalledTimes(1);
   });
 

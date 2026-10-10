@@ -3,7 +3,9 @@
 // Tabs: Unread | All. Uses EmptyState when empty.
 
 import { useId, useState } from 'react';
-import { Button } from '../ui/Button';
+import { IconButton } from '../ui/IconButton';
+import { ChecklistIcon, TrashIcon } from '../ui/Icons';
+import { Tooltip } from './Tooltip';
 import { Tabs, TabPanel } from './Tabs';
 import { T } from './Text';
 import EmptyState from './EmptyState';
@@ -67,8 +69,8 @@ export function NotificationCenter({
           Notifications {hasUnread && <span className="ml-2 text-xs text-primary" aria-label={`${unread.length} unread`}>{unread.length}</span>}
         </T></h2>
         <div className="flex items-center gap-2">
-          {onMarkAllRead && hasUnread && <Button variant="ghost" size="sm" onClick={onMarkAllRead}>Mark all read</Button>}
-          {onClearAll && items.length > 0 && <Button variant="ghost" size="sm" onClick={onClearAll}>Clear all</Button>}
+          {onMarkAllRead && hasUnread && <Tooltip content="Mark all read" placement="bottom"><IconButton aria-label="Mark all read" icon={<ChecklistIcon size={16} />} onClick={onMarkAllRead} /></Tooltip>}
+          {onClearAll && items.length > 0 && <Tooltip content="Clear all" placement="bottom"><IconButton aria-label="Clear all" icon={<TrashIcon size={16} />} onClick={onClearAll} /></Tooltip>}
         </div>
       </div>
       <Tabs idPrefix={tabsId} className="mx-4 shrink-0" aria-label="Notification filter" value={tab}

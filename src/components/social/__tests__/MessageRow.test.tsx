@@ -49,6 +49,17 @@ describe('MessageRow', () => {
     expect(screen.getByTestId('custom-footer')).toBeInTheDocument();
   });
 
+  it('keeps actions in the header before the body, independently of metadata', () => {
+    const { rerender } = render(<MessageRow {...baseProps} actions={<button>Reply</button>} />);
+    const header = screen.getByTestId('message-row-header');
+    expect(header).toContainElement(screen.getByTestId('message-row-author'));
+    expect(header).toContainElement(screen.getByRole('button', { name: 'Reply' }));
+    expect(header.compareDocumentPosition(screen.getByTestId('message-row-content')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    rerender(<MessageRow {...baseProps} hideAuthor hideAvatar timestamp="" actions={<button>Reply</button>} />);
+    expect(screen.queryByTestId('message-row-author')).toBeNull();
+    expect(screen.getByTestId('message-row-header')).toContainElement(screen.getByRole('button', { name: 'Reply' }));
+  });
+
   it('accepts ReactNode content (e.g. inline mention chips)', () => {
     render(
       <MessageRow
