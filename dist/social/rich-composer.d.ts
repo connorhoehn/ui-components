@@ -884,7 +884,7 @@ export declare interface ConversationComposerOwnProps {
     onModeChange?: (mode: ComposerMode) => void;
     /** The draft's subject (default: the channel, else the context). A new key starts a new draft. */
     draftKey?: string;
-    /** Remember the draft per conversation on this device (default true; ignored for a controlled `draft`). */
+    /** Remember the draft per known `identity.userId` and conversation on this device (default true; ignored for a controlled `draft`). Unknown identities never read/write stored drafts. */
     persistDraft?: boolean;
     /**
      * Claim this conversation's input (and every recipient's), so a thread pane

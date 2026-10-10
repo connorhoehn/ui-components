@@ -63,6 +63,20 @@ function setup(overrides: Partial<RecordGraphProps> = {}) {
 }
 
 describe('RecordGraph', () => {
+  it('selects and opens an attached recording without converting it to knowledge', () => {
+    const recording: RecordGraphRecord = { id: 'rec-7', type: 'recording', title: 'Auth Migration huddle', href: '/iq/projects/auth?tab=docs&recording=rec-7' };
+    const onSelectionChange = vi.fn(), onOpenRecord = vi.fn();
+    const props = setup({ records: [...records, recording], edges: [...edges, { id: 'rec-edge', source: 'initiative:auth', target: 'recording:rec-7', label: 'Recorded huddle' }], onSelectionChange, onOpenRecord }).props;
+    expect(screen.getByTestId('record-graph-legend')).toHaveTextContent('Recordings');
+    fireEvent.click(screen.getByRole('button', { name: 'Recording: Auth Migration huddle' }));
+    expect(onSelectionChange).toHaveBeenCalledWith(['recording:rec-7']);
+    cleanup();
+    render(<RecordGraph {...props} selectedKeys={['recording:rec-7']} typeFilter="recording" />);
+    expect(screen.getByTestId('record-graph-counts')).toHaveTextContent('1 records · 0 connections');
+    fireEvent.click(screen.getByRole('button', { name: 'Open record ↗' }));
+    expect(onOpenRecord).toHaveBeenCalledWith(recording);
+  });
+
   it('draws every record, labelled edges with dashed related ones, counts and a legend of present types', () => {
     setup();
     expect(screen.getByTestId('record-graph-counts')).toHaveTextContent('4 records · 3 connections');

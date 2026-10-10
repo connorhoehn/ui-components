@@ -7,9 +7,9 @@ import type { ReactNode } from 'react';
 import { Avatar } from '../shared/Avatar';
 import { StatusDot } from '../shared/StatusDot';
 import { toneVar, type Tone } from '../shared/tones';
-import { BranchIcon, ChecklistIcon, DocumentIcon, FolderIcon, SparkleIcon, WarningIcon } from '../ui/Icons';
+import { BranchIcon, ChecklistIcon, DocumentIcon, FolderIcon, PlayCircleIcon, SparkleIcon, WarningIcon } from '../ui/Icons';
 
-export type RecordResultType = 'person' | 'initiative' | 'work' | 'decision' | 'knowledge' | 'asset';
+export type RecordResultType = 'person' | 'initiative' | 'work' | 'decision' | 'knowledge' | 'recording' | 'asset';
 
 /** One typed org record, as a search read model returns it. */
 export interface RecordResultItem {
@@ -39,6 +39,7 @@ export const RECORD_TYPE_LABELS: Record<RecordResultType, string> = {
   work: 'Work',
   decision: 'Decisions',
   knowledge: 'Knowledge',
+  recording: 'Recordings',
   asset: 'Agent library',
 };
 
@@ -64,6 +65,7 @@ const KIND: Record<Exclude<RecordResultType, 'person'>, { tone: Tone; icon: (siz
   work: { tone: 'info', icon: (s) => <ChecklistIcon size={s} /> },
   decision: { tone: 'warning', icon: (s) => <BranchIcon size={s} /> },
   knowledge: { tone: 'accent', icon: (s) => <DocumentIcon size={s} /> },
+  recording: { tone: 'info', icon: (s) => <PlayCircleIcon size={s} /> },
   asset: { tone: 'success', icon: (s) => <SparkleIcon size={s} /> },
 };
 

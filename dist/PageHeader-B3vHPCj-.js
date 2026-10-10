@@ -49,8 +49,22 @@ function C({ label: t, content: n, children: r, width: i = "md", openOnFocus: a 
 		if (!T) return;
 		let e = E.current, t = D.current;
 		if (!e || !t) return;
-		let n = e.getBoundingClientRect(), r = t.offsetWidth || 0, i = Math.max(8, Math.min(n.left, window.innerWidth - r - 8));
-		t.style.position = "fixed", t.style.top = `${n.bottom + 6}px`, t.style.left = `${i}px`, t.style.zIndex = "9500";
+		t.style.position = "fixed", t.style.zIndex = "9500", t.style.overflowY = "auto";
+		let n = 0, r = () => {
+			let n = document.documentElement.clientWidth || window.innerWidth, r = document.documentElement.clientHeight || window.innerHeight;
+			t.style.maxWidth = `${Math.max(1, n - 16)}px`, t.style.maxHeight = `${Math.max(1, r - 16)}px`;
+			let i = e.getBoundingClientRect(), a = i.bottom + 6, o = i.top - 6 - t.offsetHeight, s = r - 8 - t.offsetHeight, c = a >= 8 && a <= s ? "below" : o >= 8 && o <= s ? "above" : "bounded", l = c === "below" ? a : c === "above" ? o : Math.max(8, Math.min(a, s));
+			t.style.top = `${l}px`, t.style.left = `${Math.max(8, Math.min(i.left, n - 8 - t.offsetWidth))}px`, t.dataset.viewportPlacement = c;
+		}, i = () => {
+			n ||= requestAnimationFrame(() => {
+				n = 0, r();
+			});
+		};
+		r();
+		let a = new ResizeObserver(r);
+		return a.observe(t), a.observe(e), window.addEventListener("resize", i), document.addEventListener("scroll", i, !0), () => {
+			a.disconnect(), window.removeEventListener("resize", i), document.removeEventListener("scroll", i, !0), n && cancelAnimationFrame(n);
+		};
 	}, [T]), /* @__PURE__ */ v(g, { children: [r({
 		ref: (e) => {
 			E.current = e;

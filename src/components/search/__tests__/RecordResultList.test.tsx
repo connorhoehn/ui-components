@@ -28,6 +28,19 @@ function setup(overrides: Partial<RecordResultListProps> = {}) {
 }
 
 describe('RecordResultList', () => {
+  it('keeps a recording as its own selectable result with its canonical asset link', () => {
+    const recording: RecordResultItem = { id: 'rec-7', type: 'recording', title: 'Auth Migration huddle', description: 'Transcript: agree on the rollback window.', href: '/iq/projects/auth?tab=docs&recording=rec-7' };
+    const props = setup({ groups: [{ id: 'recording', label: 'Recordings', count: 1, records: [recording] }], selectedKeys: ['recording:rec-7'], openLabel: () => 'Open recording' });
+    expect(document.querySelector('[data-record-mark="recording"]')).toBeInTheDocument();
+    expect(screen.getByLabelText('Select Auth Migration huddle')).toBeChecked();
+    const open = screen.getByRole('link', { name: 'Open recording' });
+    expect(open).toHaveAttribute('href', recording.href);
+    fireEvent.click(open);
+    expect(props.onOpen).toHaveBeenCalledWith(recording);
+    fireEvent.click(screen.getByLabelText('Select Auth Migration huddle'));
+    expect(props.onToggleSelect).toHaveBeenCalledWith(recording);
+  });
+
   it('draws group headings with counts and a See all when the host holds more', () => {
     const props = setup();
     const work = screen.getByRole('region', { name: 'Work' });

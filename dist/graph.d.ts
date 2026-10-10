@@ -981,7 +981,7 @@ export declare interface RecordGraphRecord {
     avatarUrl?: string;
 }
 
-export declare type RecordGraphType = 'person' | 'initiative' | 'work' | 'decision' | 'knowledge' | 'asset';
+export declare type RecordGraphType = 'person' | 'initiative' | 'work' | 'decision' | 'knowledge' | 'recording' | 'asset';
 
 /** A pan/zoom viewport in xyflow's terms: screen = flow × zoom + (x, y). */
 export declare interface RecordGraphViewport {
