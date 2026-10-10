@@ -41,6 +41,7 @@ import { SegmentedControl } from '../shared/SegmentedControl';
 import { Select } from '../forms/Select';
 import { StatusPill } from '../shared/StatusPill';
 import { Text } from '../shared/Text';
+import { DensityProvider } from '../shared/Density';
 
 const REVISION_SEGMENTS_MAX = 5;
 
@@ -258,14 +259,13 @@ export function PresentationView({
               data-testid={`${testId}-revision-select`}
             />
           ) : revisions.length > 1 && (
-            <SegmentedControl
+            <DensityProvider density="compact"><SegmentedControl
               aria-label="Revision"
-              size="sm"
               value={revision.id}
               onChange={onRevisionChange}
               options={revisions.map((candidate) => ({ label: candidate.label, value: candidate.id }))}
               data-testid={`${testId}-revisions`}
-            />
+            /></DensityProvider>
           )}
           {pending && (
             <StatusPill

@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { useRef } from 'react';
 import { cn } from '../../lib/cn';
+import { useDensitySize } from './Density';
 import { Tooltip } from './Tooltip';
 
 // ## Why it is a radiogroup and not a row of toggles
@@ -97,7 +98,7 @@ export function SegmentedControl({
   options,
   value,
   onChange,
-  size = 'md',
+  size: sizeProp,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
   disabled = false,
@@ -107,6 +108,7 @@ export function SegmentedControl({
   className,
   'data-testid': testId,
 }: SegmentedControlProps) {
+  const size = useDensitySize<'sm' | 'md'>('SegmentedControl', sizeProp, { comfortable: 'md', compact: 'sm' });
   const ref = useRef<HTMLDivElement>(null);
   const enabled = options.filter((o) => !disabled);
   const index = options.findIndex((o) => o.value === value);

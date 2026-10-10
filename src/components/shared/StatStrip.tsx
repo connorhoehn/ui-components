@@ -15,6 +15,7 @@
 
 import { Fragment, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { useDensitySize } from './Density';
 import { TONE_SOLID_BG, TONE_TEXT, type Tone } from './tones';
 import { ProgressBar } from './ProgressBar';
 
@@ -42,6 +43,13 @@ export interface StatStripItem {
    * drawn for "we do not know"). Since 2.390.0.
    */
   progress?: { value: number; max: number } | null;
+  /**
+   * `line` only (since 2.440.0): a small inline track drawn after the label
+   * in place of the `progress` bar — a compact `WorkflowStepper` reading
+   * "L1 ✓ — L2 ● — L3 ○" where a bar against a level ladder would be a
+   * continuous reading of a stepped fact. Wins over `progress`.
+   */
+  track?: ReactNode;
 }
 
 /** A labelled arrow between two clusters — "Compact", "Publish". */
@@ -140,7 +148,9 @@ function LineCluster({ item, sm = false }: { item: StatStripItem; sm?: boolean }
         <span className={cn('font-semibold tabular-nums', sm ? 'text-sm leading-5' : 'text-[16px] leading-6', VALUE_TONE[item.tone ?? 'default'])}>{item.value}</span>
         <span className={cn('min-w-0 truncate text-text-secondary', sm ? 'text-sm leading-5' : 'text-[15px] leading-6')}>{item.label}</span>
       </span>
-      {bar && (
+      {item.track != null ? (
+        <span className="ml-[18px] flex shrink-0 items-center" data-testid="stat-strip-track">{item.track}</span>
+      ) : bar && (
         <ProgressBar
           value={item.progress!.value}
           max={item.progress!.max}
@@ -215,11 +225,12 @@ export function StatStrip({
   frameless = false,
   connectors,
   variant = 'default',
-  size = 'md',
+  size: sizeProp,
   className,
   'aria-label': ariaLabel,
   'data-testid': testId,
 }: StatStripProps) {
+  const size = useDensitySize('StatStrip', sizeProp, { comfortable: 'md', compact: 'sm' });
   const flow = !!connectors && connectors.length > 0;
   if (variant === 'line') {
     return (

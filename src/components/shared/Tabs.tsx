@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from 'react';
 import { cn } from '../../lib/cn';
+import { useContainerDensity } from './ContainerDensity';
 import { DropdownMenu } from './DropdownMenu';
 
 export type TabsVariant = 'underline' | 'pill' | 'segmented';
@@ -153,22 +154,11 @@ export function Tabs({
   overflowBelow,
 }: TabsProps) {
   const bar = variant === 'underline' && indicator === 'bar';
-  const rootRef = useRef<HTMLDivElement | null>(null);
-  const [folded, setFolded] = useState(false);
-  useLayoutEffect(() => {
-    const host = rootRef.current?.parentElement;
-    if (!overflowBelow || !host) { setFolded(false); return undefined; }
-    const measure = () => {
-      const width = host.getBoundingClientRect().width;
-      // Zero is "not laid out" (a detached or hidden subtree), not "very narrow".
-      if (width > 0) setFolded(width < overflowBelow);
-    };
-    measure();
-    if (typeof ResizeObserver === 'undefined') return undefined;
-    const observer = new ResizeObserver(measure);
-    observer.observe(host);
-    return () => observer.disconnect();
-  }, [overflowBelow]);
+  // The fold is the container's density (`useContainerDensity`, 2.440.0):
+  // the parent's border-box width under `overflowBelow` is compact. Zero is
+  // "not laid out" (a detached or hidden subtree), not "very narrow".
+  const room = useContainerDensity<HTMLDivElement>({ compactBelow: overflowBelow ?? null, of: 'parent', box: 'border', enabled: !!overflowBelow });
+  const folded = !!overflowBelow && room.density === 'compact';
   const shownItems = folded ? items.filter((item, i) => i === 0 || item.id === value) : items;
   const foldedItems = folded ? items.filter((item) => !shownItems.includes(item)) : [];
   const autoPrefix = useId();
@@ -233,7 +223,7 @@ export function Tabs({
 
   return (
     <div
-      ref={rootRef}
+      ref={room.ref}
       role="tablist"
       aria-label={ariaLabel}
       data-testid={testId}

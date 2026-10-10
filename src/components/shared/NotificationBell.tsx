@@ -20,6 +20,7 @@ import { Badge } from './Badge';
 import EmptyState from './EmptyState';
 import { InlinePopover, type InlinePopoverPlacement } from './InlinePopover';
 import { NotificationCenter, type NotificationItem } from './NotificationCenter';
+import { DensityProvider } from './Density';
 
 export type NotificationBellSize = 'sm' | 'md';
 
@@ -110,13 +111,12 @@ export function NotificationBell({
         }
       >
         {empty ? (
-          <EmptyState
-            size="sm"
+          <DensityProvider density="compact"><EmptyState
             icon={<BellIcon size={24} />}
             title="Nothing new"
             description="Activity will appear here."
             testId={`${testId}-empty`}
-          />
+          /></DensityProvider>
         ) : (
           <NotificationCenter
             items={items}

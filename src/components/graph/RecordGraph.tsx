@@ -102,6 +102,7 @@ import {
   type RecordGraphRecord,
   type RecordGraphType,
 } from './recordGraphLayout';
+import { DensityProvider } from '../shared/Density';
 
 export interface RecordGraphProps {
   records: RecordGraphRecord[];
@@ -692,13 +693,12 @@ export function RecordGraph({
       className={cn('min-h-0 flex-1 bg-surface [&:fullscreen]:h-full [&:fullscreen]:p-4', className)}
     >
       <Inline gap="sm" align="center" className="shrink-0 border-b border-border px-1 py-2" data-testid={`${testId}-toolbar`}>
-        <SegmentedControl
-          size="sm"
+        <DensityProvider density="compact"><SegmentedControl
           aria-label="Connection layout"
           value={layout}
           options={[{ value: 'force', label: 'Force' }, { value: 'radial', label: 'Radial' }, { value: 'hierarchy', label: 'Hierarchy' }]}
           onChange={(value) => { setLocalLayout(value as RecordGraphLayout); onLayoutChange?.(value as RecordGraphLayout); }}
-        />
+        /></DensityProvider>
         <Select
           aria-label="Connection record type"
           size="sm"

@@ -45,7 +45,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode, type Ref } from 'react';
 import { cn } from '../../lib/cn';
-import { useDensity } from '../shared/Density';
+import { useDensityForm } from '../shared/Density';
 import { Select } from '../forms/Select';
 import { Inline, Stack } from '../ui/Stack';
 import { Text } from '../shared/Text';
@@ -324,7 +324,7 @@ function ConversationComposerImpl({
   'data-testid': testId = 'conversation-composer',
   ...rest
 }: ConversationComposerProps & { rm: ConversationComposerModules }) {
-  const compact = useDensity() === 'compact';
+  const compact = useDensityForm() === 'compact';
   const displayName = identity?.displayName || 'You';
   const draftKey = draftKeyProp ?? channel ?? `${context.kind}:${context.id}`;
 

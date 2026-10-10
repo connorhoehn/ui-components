@@ -46,6 +46,7 @@ import { Checkbox } from '../forms/Checkbox';
 import { Select, type SelectOption } from '../forms/Select';
 import { FilterChip } from '../shared/FilterChip';
 import { DropdownMenu } from '../shared/DropdownMenu';
+import { DensityProvider } from '../shared/Density';
 
 export interface WorkListPerson {
   id: string;
@@ -595,12 +596,11 @@ export function WorkListView({
   if (loading && items.length === 0) {
     body = <LoadingState label="Loading work…" spinnerSize="md" testId={`${testId}-loading`} />;
   } else if (items.length === 0) {
-    body = error ? null : <EmptyState testId={`${testId}-empty`} size="sm" title={emptyLabel} />;
+    body = error ? null : <DensityProvider density="compact"><EmptyState testId={`${testId}-empty`} title={emptyLabel} /></DensityProvider>;
   } else if (visible.length === 0) {
     body = (
-      <EmptyState
+      <DensityProvider density="compact"><EmptyState
         testId={`${testId}-no-match`}
-        size="sm"
         title="No work matches"
         body={narrowed ? 'Try a different search, or clear the filters.' : undefined}
         actionLabel={narrowed ? 'Clear search and filters' : undefined}
@@ -612,7 +612,7 @@ export function WorkListView({
               }
             : undefined
         }
-      />
+      /></DensityProvider>
     );
   } else {
     body = (

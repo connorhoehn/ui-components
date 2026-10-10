@@ -116,6 +116,7 @@ import {
   type DeckSpec,
   type SlideLayout,
 } from './deckSpec';
+import { DensityProvider } from '../../shared/Density';
 
 /** Rendered when the composer's optional tiptap peers are not installed. */
 function AgentComposerUnavailable({ testIdPrefix }: { testIdPrefix: string }) {
@@ -722,23 +723,21 @@ export function PresentationEditor({
     // state here would be about an older spec, not this one.
     if (selected && uncited.has(selected.id)) {
       return (
-        <EmptyState
-          size="sm"
+        <DensityProvider density="compact"><EmptyState
           title="Add a source to preview this slide"
           description="A slide renders once it cites the document or transcript it draws from. Pick one under Sources used."
           testId={`${testId}-preview-needs-source`}
-        />
+        /></DensityProvider>
       );
     }
     const uriForSelected = selected ? svgDataUri(previewById.get(selected.id)) : undefined;
     if (!renderable && !uriForSelected) {
       return (
-        <EmptyState
-          size="sm"
+        <DensityProvider density="compact"><EmptyState
           title="The preview waits for every slide's source"
           description="The deck renders as a whole, so it draws once each slide cites what it draws from."
           testId={`${testId}-preview-needs-source`}
-        />
+        /></DensityProvider>
       );
     }
     if (preview === 'loading' && previewById.size === 0) {

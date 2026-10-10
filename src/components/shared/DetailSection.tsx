@@ -14,6 +14,7 @@
 
 import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { useDensitySize } from './Density';
 import { Divider } from './Divider';
 
 export interface DetailSectionProps {
@@ -53,8 +54,9 @@ export interface DetailSectionProps {
 }
 
 export function DetailSection({
-  title, hint, actions, first = false, variant = 'label', size = 'md', description, children, className, 'data-testid': testId,
+  title, hint, actions, first = false, variant = 'label', size: sizeProp, description, children, className, 'data-testid': testId,
 }: DetailSectionProps) {
+  const size = useDensitySize<'sm' | 'md' | 'lg'>('DetailSection', sizeProp, { comfortable: 'md', compact: 'sm' });
   if (variant === 'heading') {
     const lg = size === 'lg';
     const sm = size === 'sm';

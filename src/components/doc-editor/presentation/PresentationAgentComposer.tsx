@@ -21,6 +21,7 @@
 import { RichChatComposer, type ComposedMessage, type ComposerProcess } from '../../social/RichChatComposer';
 import { FollowUpChips } from '../../shared/FollowUpChips';
 import SegmentedControl from '../../shared/SegmentedControl';
+import { DensityProvider } from '../../shared/Density';
 
 export type PresentationInstructScope = 'slide' | 'deck';
 
@@ -65,8 +66,7 @@ export function PresentationAgentComposer({
   return (
     <div className="flex flex-col gap-1.5" data-testid={`${testIdPrefix}-agent`}>
       <div className="flex flex-wrap items-center gap-2">
-        <SegmentedControl
-          size="sm"
+        <DensityProvider density="compact"><SegmentedControl
           value={scope}
           onChange={(value) => onScopeChange(value as PresentationInstructScope)}
           options={[
@@ -76,7 +76,7 @@ export function PresentationAgentComposer({
           disabled={busy}
           aria-label="What the agent may change"
           data-testid={`${testIdPrefix}-agent-scope`}
-        />
+        /></DensityProvider>
         {!!suggestions?.length && !busy && (
           <div className="min-w-0" data-testid={`${testIdPrefix}-agent-suggestions`}>
             <FollowUpChips

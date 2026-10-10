@@ -10,6 +10,7 @@ import type { InlinePopoverPlacement } from '../shared/InlinePopover';
 import { Input } from '../forms/Input';
 import { Textarea } from '../forms/Textarea';
 import { LockIcon } from '../ui/Icons';
+import { DensityProvider } from '../shared/Density';
 
 export type TeamVisibility = 'org' | 'private';
 
@@ -127,8 +128,7 @@ export function CreateTeamDialog({
         hint={visibility === 'private' ? 'People need an invitation.' : 'Anyone in the org can join.'}
         data-testid={`${testId}-visibility-field`}
       >
-        <SegmentedControl
-          size="sm"
+        <DensityProvider density="compact"><SegmentedControl
           fullWidth
           disabled={inert}
           aria-label="Team visibility"
@@ -136,7 +136,7 @@ export function CreateTeamDialog({
           value={visibility}
           onChange={(v) => setVisibility(v as TeamVisibility)}
           data-testid={`${testId}-visibility`}
-        />
+        /></DensityProvider>
       </PopoverField>
     </PopoverForm>
   );

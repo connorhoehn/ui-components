@@ -30,6 +30,7 @@ import { useId, type HTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import Chip, { type ChipTone } from '../shared/Chip';
 import EmptyState from '../shared/EmptyState';
+import { DensityProvider } from '../shared/Density';
 
 export interface InboxSectionEmpty {
   /** A small glyph above the title. An emoji string is fine. */
@@ -106,13 +107,12 @@ export function InboxSection({
       </div>
 
       {isEmpty && empty ? (
-        <EmptyState
-          size="sm"
+        <DensityProvider density="compact"><EmptyState
           testId={empty.testId ?? (testId ? `${testId}-empty` : 'inbox-section-empty')}
           {...(empty.icon != null ? { icon: empty.icon } : {})}
           title={empty.title}
           {...(empty.body ? { body: empty.body } : {})}
-        />
+        /></DensityProvider>
       ) : (
         <ul className="m-0 list-none divide-y divide-border p-0">{children}</ul>
       )}

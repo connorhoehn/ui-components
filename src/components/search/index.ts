@@ -4,7 +4,7 @@
 // selection state, URL state and navigation; these own presentation.
 export { RecordResultList } from './RecordResultList';
 export type { RecordResultListProps, RecordResultGroup } from './RecordResultList';
-export { CitedRecordList, DEFAULT_CITED_SECTIONS } from './CitedRecordList';
+export { CitedRecordList, DEFAULT_CITED_SECTIONS, citedSourceTitle } from './CitedRecordList';
 // 2.405.2: a record graph as a collapsible card in a chat / answer view.
 export { RecordGraphCard, recordGraphSummary } from './RecordGraphCard';
 export type { RecordGraphCardProps } from './RecordGraphCard';

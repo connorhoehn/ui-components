@@ -13,6 +13,7 @@ import Chip from '../shared/Chip';
 import Banner from '../shared/Banner';
 import EmptyState from '../shared/EmptyState';
 import { Button } from '../ui/Button';
+import { DensityProvider } from '../shared/Density';
 
 export interface SuggestionReviewListProps {
   /** How many are open — the count in the header. */
@@ -95,7 +96,7 @@ export function SuggestionReviewList({
         </div>
       )}
       {count === 0 ? (
-        <EmptyState size="sm" title={emptyTitle} body={emptyBody} testId={`${testId}-empty`} />
+        <DensityProvider density="compact"><EmptyState title={emptyTitle} body={emptyBody} testId={`${testId}-empty`} /></DensityProvider>
       ) : (
         <ul className="m-0 list-none p-0" data-testid={`${testId}-list`}>
           {children}

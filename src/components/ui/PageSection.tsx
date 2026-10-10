@@ -4,6 +4,7 @@
 
 import { type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { useDensitySize } from '../shared/Density';
 import Chip from '../shared/Chip';
 
 export interface PageSectionProps {
@@ -43,10 +44,11 @@ export function PageSection({
   children,
   count,
   countTone = 'neutral',
-  size = 'lg',
+  size: sizeProp,
   className,
   'data-testid': testId,
 }: PageSectionProps) {
+  const size = useDensitySize('PageSection', sizeProp, { comfortable: 'lg', compact: 'sm' });
   const sm = size === 'sm';
   // `sm` is `md`'s layout at the body type step.
   const md = size === 'md' || sm;

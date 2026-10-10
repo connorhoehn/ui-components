@@ -14,6 +14,7 @@ import type { InlinePopoverPlacement } from '../shared/InlinePopover';
 import { Input } from '../forms/Input';
 import { Textarea } from '../forms/Textarea';
 import { LockIcon } from '../ui/Icons';
+import { DensityProvider } from '../shared/Density';
 
 export type ChannelPrivacy = 'standard' | 'private';
 
@@ -136,8 +137,7 @@ export function CreateChannelDialog({
         hint={privacy === 'private' ? 'Only people you add can see it.' : 'Everyone on the team can see it.'}
         data-testid={`${testId}-privacy-field`}
       >
-        <SegmentedControl
-          size="sm"
+        <DensityProvider density="compact"><SegmentedControl
           fullWidth
           disabled={inert}
           aria-label="Channel privacy"
@@ -145,7 +145,7 @@ export function CreateChannelDialog({
           value={privacy}
           onChange={(v) => setPrivacy(v as ChannelPrivacy)}
           data-testid={`${testId}-privacy`}
-        />
+        /></DensityProvider>
       </PopoverField>
     </PopoverForm>
   );

@@ -31,7 +31,7 @@ import { Stack } from '../ui/Stack';
 import { ExternalLinkIcon, LinkIcon } from '../ui/Icons';
 import { TONE_SOLID_BG } from '../shared/tones';
 import { HeaderCollapseToggle, HeaderDescriptionInfo, foldTitleIntoTrail } from '../shared/headerDensity';
-import { useDensity, type Density } from '../shared/Density';
+import { useDensityForm, type Density } from '../shared/Density';
 
 /**
  * A tab's attention dot. `true` is the brand dot ("something new"); a tone
@@ -851,7 +851,7 @@ function ScopeHeaderInline({
   'data-testid': testId = 'scope-header',
 }: ScopeHeaderProps) {
   const crumbs = breadcrumbs ?? [];
-  const density = useDensity(densityProp);
+  const density = useDensityForm(densityProp);
   const dense = density === 'compact' || collapsed;
   const folded = collapsed;
   const last = crumbs.length > 0 ? crumbs[crumbs.length - 1]!.label : undefined;
@@ -1072,7 +1072,7 @@ function ScopeHeaderFull({
   className,
   'data-testid': testId = 'scope-header',
 }: ScopeHeaderProps) {
-  const density = useDensity(densityProp);
+  const density = useDensityForm(densityProp);
   const dense = density === 'compact' || collapsed;
   const folded = collapsed;
   const statItems: ReactNode[] = [];

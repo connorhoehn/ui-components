@@ -15,6 +15,7 @@ import { IconButton } from '../ui/IconButton';
 import { Inline } from '../ui/Stack';
 import EmptyState from '../shared/EmptyState';
 import type { ChatSidePanelRef } from './chatCommands';
+import { DensityProvider, useDensitySize } from '../shared/Density';
 
 export interface ChatSidePanelApi {
   close: () => void;
@@ -88,8 +89,9 @@ export interface ChatSidePanelFrameProps {
  * the rest and scrolls on its own.
  */
 export function ChatSidePanelFrame({
-  title, subtitle, onClose, onOpenFullPage, actions, expanded = false, onToggleExpanded, size = 'xs', closeLabel = 'Close panel', children, className, 'data-testid': testId = 'chat-side-panel',
+  title, subtitle, onClose, onOpenFullPage, actions, expanded = false, onToggleExpanded, size: sizeProp, closeLabel = 'Close panel', children, className, 'data-testid': testId = 'chat-side-panel',
 }: ChatSidePanelFrameProps) {
+  const size = useDensitySize('ChatSidePanelFrame', sizeProp, { comfortable: 'xs', compact: 'sm' });
   const sm = size === 'sm';
   return (
     <section
@@ -195,13 +197,12 @@ export function ChatSidePanel({ panel, onClose, onOpenFullPage, subtitle, action
           {renderer(panel, api)}
         </div>
       ) : (
-        <EmptyState
-          size="sm"
+        <DensityProvider density="compact"><EmptyState
           icon={<PuzzleIcon size={28} />}
           title={`No view registered for ${panel.kind}`}
           body="Register a renderer for this kind with ChatSidePanelProvider."
           testId={`${testId}-empty`}
-        />
+        /></DensityProvider>
       )}
     </ChatSidePanelFrame>
   );

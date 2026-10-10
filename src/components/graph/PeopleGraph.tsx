@@ -16,6 +16,7 @@ import { Card } from '../ui/Card';
 import { NodeGraph, graphGroupPalette } from './NodeGraph';
 import { graphGroups } from './layout';
 import type { GraphEdge, GraphNode } from './types';
+import { DensityProvider } from '../shared/Density';
 
 export interface GraphPerson {
   id: string;
@@ -86,14 +87,13 @@ export function PeopleGraph({
 
   if (people.length === 0) {
     return (
-      <EmptyState
-        size="sm"
+      <DensityProvider density="compact"><EmptyState
         icon="🕸️"
         title="No people found"
         body={query ? `Nothing matched “${query}”.` : 'There is nobody to show yet.'}
         testId={`${testId}-empty`}
         className={className}
-      />
+      /></DensityProvider>
     );
   }
 

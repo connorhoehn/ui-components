@@ -25,6 +25,7 @@
 
 import { SegmentedControl } from '../shared/SegmentedControl';
 import { cn } from '../../lib/cn';
+import { DensityProvider } from '../shared/Density';
 
 /** What the reader's typing currently does. */
 export type SuggestionAuthoringMode = 'editing' | 'suggesting' | 'viewing';
@@ -91,10 +92,9 @@ export function SuggestionModeControl({
       title={active?.hint}
       className={cn('inline-flex items-center gap-2', disabled && 'pointer-events-none opacity-50', className)}
     >
-      <SegmentedControl
+      <DensityProvider density="compact"><SegmentedControl
         options={options}
         value={mode}
-        size="sm"
         // Measured on a live document: the three segments announced as
         // "Editing, toggle button, pressed" inside an unnamed group, so a
         // reader was told what they had pressed and never that the three are
@@ -107,7 +107,7 @@ export function SuggestionModeControl({
           const chosen = next as SuggestionAuthoringMode;
           if (chosen !== mode) onModeChange(chosen);
         }}
-      />
+      /></DensityProvider>
       {openCount !== null && openCount > 0 && (
         <span
           data-testid={`${testId}-count`}

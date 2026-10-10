@@ -8,7 +8,7 @@ import React from 'react';
 import { cn } from '../../lib/cn';
 import { Breadcrumbs, type BreadcrumbItem } from './Breadcrumbs';
 import { Tabs } from './Tabs';
-import { useDensity, type Density } from './Density';
+import { useDensityForm, type Density } from './Density';
 import {
   HeaderCollapseToggle, HeaderDescriptionInfo, HeaderPeople, HeaderTrailFold, visibleHeaderPeople,
   type HeaderPeopleGroup,
@@ -115,7 +115,7 @@ function PageHeader({
   className,
   'data-testid': testId = 'page-header',
 }: PageHeaderProps) {
-  const density = useDensity(densityProp);
+  const density = useDensityForm(densityProp);
   const groups = visibleHeaderPeople(people);
   const hasTrail = !!breadcrumbs && breadcrumbs.length > 0;
   const hasTabs = !!tabs && tabs.length > 0;
