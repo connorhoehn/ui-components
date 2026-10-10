@@ -6,6 +6,8 @@ export * from '../ui/Table';
 export * from '../ui/PageSection';
 export * from '../ui/IconButton';
 export * from '../ui/Icons';
+// The call set's monitor glyph, reachable from /shared for hosts that only import the shared entry.
+export { MonitorIcon } from '../video/MediaIcons';
 export * from '../ui/Stack';
 export * from '../ui/SelectableCard';
 // Since 2.390.0: the native <details> collapsible, reachable from /shared too
@@ -147,6 +149,25 @@ export { default as CardHeader } from './CardHeader';
 export * from './CardHeader';
 export { default as PageHeader } from './PageHeader';
 export * from './PageHeader';
+// Density (2.437.0): the library's one density vocabulary.
+export { DensityProvider, useDensity, DENSITIES } from './Density';
+export type { Density, DensityProviderProps } from './Density';
+// HoverCard (2.437.0): the non-modal, non-trapping card with the one hover timing.
+export { HoverCard, HOVER_CARD_OPEN_MS, HOVER_CARD_CLOSE_MS } from './HoverCard';
+export type { HoverCardProps, HoverCardTriggerProps, HoverCardWidth } from './HoverCard';
+// Header density (2.437.0): PageHeader/ScopeHeader at each Density, the
+// collapsed state, the hook that picks both, and the pieces they draw.
+export {
+  HeaderCollapseToggle, HeaderTrailFold, HeaderDescriptionInfo, HeaderPeople,
+  foldTitleIntoTrail, headerDefaults, isRichHeaderContent, visibleHeaderPeople, headerDensityStorageKey,
+  RICH_HEADER_CONTENT, HEADER_DENSITY_STORAGE_PREFIX, HEADER_COMPACT_BELOW_PX, HEADER_COLLAPSE_BELOW_PX,
+} from './headerDensity';
+export type {
+  HeaderContentKind, HeaderCollapseToggleProps, HeaderTrailFoldProps, HeaderDescriptionInfoProps,
+  HeaderPerson, HeaderPeopleGroup,
+} from './headerDensity';
+export { useHeaderDensity, HEADER_SCROLL_COLLAPSE_PX } from './useHeaderDensity';
+export type { UseHeaderDensityOptions, HeaderDensityState } from './useHeaderDensity';
 export * from './ThinkingDots';
 export { default as TypingIndicator } from './TypingIndicator';
 export * from './TypingIndicator';
@@ -222,6 +243,15 @@ export {
   inactiveNavItemClassName,
 } from './SubNavLayout';
 export type { SubNavItem, SubNavLayoutProps } from './SubNavLayout';
+// The rail model's fold (2.438.0): depth → band, each rail's fold remembered per band.
+export {
+  railDepth, railBand, railFoldKey, readRailFold, RailBandProvider, useRailBand, useRailFold, useViewportWidth,
+  RAIL_FOLD_PRIMARY_BELOW, RAIL_FOLD_SECTION_BELOW,
+} from './railFold';
+export type { RailBand, RailDepthSpec, UseRailFoldOptions, RailFold } from './railFold';
+// The width of an element's own box (H10 of the 2026-10-07 audit): one measuring hook, not one per consumer.
+export { useMeasuredWidth } from '../doc-editor/useMeasuredWidth';
+export type { MeasuredWidth } from '../doc-editor/useMeasuredWidth';
 // A rail's scope list ("All initiatives / My initiatives / Sprints"). 2.392.0.
 export { RailNavList } from './RailNavList';
 // The one type scale every rail draws from (2.397.0) — SubNavLayout,
@@ -287,7 +317,7 @@ export { default as InlinePlaceholder } from './InlinePlaceholder';
 export type { InlinePlaceholderProps, InlinePlaceholderTone } from './InlinePlaceholder';
 export { PopoverForm, PopoverField } from './PopoverForm';
 export type { PopoverFormProps, PopoverFormWidth } from './PopoverForm';
-export { InlinePopover, popoverFloor, POPOVER_KEEPOUT_ATTR } from './InlinePopover';
+export { InlinePopover, popoverFloor, popoverBounds, POPOVER_KEEPOUT_ATTR, POPOVER_BOUNDARY_ATTR } from './InlinePopover';
 export type { InlinePopoverProps, InlinePopoverPlacement } from './InlinePopover';
 export { InlineMenu } from './InlineMenu';
 export type { InlineMenuProps, InlineMenuPlacement } from './InlineMenu';
@@ -470,3 +500,12 @@ export type { MeterRowProps } from './MeterRow';
 // Search workspace — matched-term marking for result rows. Since 2.400.0.
 export { Highlight, highlightSegments } from './Highlight';
 export type { HighlightProps } from './Highlight';
+
+// Combobox, Histogram and data-colour accents (parity-b): a searchable select,
+// a bare bucket histogram and runtime-colour accents without inline styles.
+export { Combobox } from './Combobox';
+export type { ComboboxProps, ComboboxOption, SingleComboboxProps, MultiComboboxProps } from './Combobox';
+export { Histogram } from './Histogram';
+export type { HistogramProps } from './Histogram';
+export { AccentStripe, dataAccentProps, DATA_ACCENT_SLOTS } from './dataAccent';
+export type { AccentStripeProps, DataAccent, DataAccentSlot } from './dataAccent';

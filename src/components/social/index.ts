@@ -154,8 +154,13 @@ export type { ConversationShelfItem, ConversationShelfProps } from './Conversati
 
 // ConversationRail — shelf + conversation list under ONE selection, so a host
 // cannot end up with two highlighted rows and one pane.
-export { ConversationRail } from './ConversationRail';
-export type { ConversationRailProps, RailSelection } from './ConversationRail';
+export {
+  ConversationRail, arrangeRailSections, RAIL_DMS_SECTION, RAIL_CHANNELS_SECTION, RAIL_SECTION_GUTTER, RAIL_SECTION_CONTENT_INSET,
+} from './ConversationRail';
+export type { ConversationRailProps, ConversationRailSection, RailSelection } from './ConversationRail';
+// The conversation rail's model (2.438.0): sections as data, one builder, one per-device memory.
+export { buildRailSection, matchesRailQuery, useRailSectionMemory } from './railSections';
+export type { BuildRailSectionOptions, RailSectionState, RailSectionMemory, RailSectionMemoryOptions } from './railSections';
 export { AgentRunCard, agentRunRefFromMetadata, describeAgentRunOp, describeAgentRunFailure, describeAgentLoop, formatLoopClock, agentRunTimings, AGENT_RUN_STEP_DOT } from './AgentRunCard';
 export type { AgentRunCardProps, AgentRunLoop, AgentRunLoopPhase, AgentRunStatus, AgentRunPhase, AgentRunDecision, AgentRunReviewDecision, AgentRunSuggestion, AgentRunReview, AgentRunDetails, AgentRunStep, AgentRunStepStatus, AgentRunOp } from './AgentRunCard';
 export type { ComposerCommand, ComposerCommandArgument, ComposerArgumentItem } from './composerCommands';
@@ -267,3 +272,11 @@ export type { CreateTeamDialogProps, CreateTeamDialogInput, TeamVisibility } fro
 // the host's documents and toggle them in the shared prompt context (2.389.x).
 export { PromptContextPicker } from './PromptContextPicker';
 export type { PromptContextPickerProps } from './PromptContextPicker';
+
+// ChannelBindingStrip, CallLogList, AddPeoplePicker (parity-b).
+export { ChannelBindingStrip } from './ChannelBindingStrip';
+export type { ChannelBindingStripProps, ChannelBindingChoice } from './ChannelBindingStrip';
+export { CallLogList } from './CallLogList';
+export type { CallLogListProps, CallLogEntry } from './CallLogList';
+export { AddPeoplePicker } from './AddPeoplePicker';
+export type { AddPeoplePickerProps, AddPeoplePickerCandidate } from './AddPeoplePicker';

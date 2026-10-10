@@ -1,6 +1,6 @@
 {
   "name": "@connorhoehnslalom/ui-components",
-  "version": "2.407.42",
+  "version": "2.439.0",
   "description": "React component library for real-time collaborative applications — chat, presence, video, collaborative documents, pipeline editing and identity flows.",
   "keywords": [
     "react",
@@ -127,10 +127,11 @@
     "dist"
   ],
   "scripts": {
-    "build": "node scripts/vite-build.mjs && npm run build:fix-subpath-dts",
+    "build": "node scripts/vite-build.mjs && npm run build:fix-subpath-dts && npm run build:normalize-dts",
+    "build:normalize-dts": "node scripts/normalize-dts-ambient.mjs",
     "build:fix-subpath-dts": "node scripts/fix-subpath-dts.mjs",
-    "build:types": "node scripts/tsc.mjs --project tsconfig.build.json",
-    "prepare": "test -f dist/index.js || (vite build && npm run build:fix-subpath-dts && node scripts/tsc.mjs --project tsconfig.build.json)",
+    "build:types": "node scripts/tsc.mjs --project tsconfig.build.json --declarationDir node_modules/.cache/types-check",
+    "prepare": "test -f dist/index.js || npm run build",
     "dev": "vite build --watch",
     "test": "vitest run",
     "test:watch": "vitest",

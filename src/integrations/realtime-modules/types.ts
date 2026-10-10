@@ -24,6 +24,10 @@ export interface RMChatMessage {
   message: string;
   metadata?: Record<string, unknown>;
   timestamp: string;
+  /** Set by the gateway's `messageUpdated` frame. */
+  editedAt?: string;
+  /** Set by `messageDeleted`: a soft delete, the row stays as a placeholder. */
+  deletedAt?: string;
 }
 
 /** Mirror of realtime-modules/src/client/types.ts PresenceStatus */
@@ -39,6 +43,28 @@ export interface RMPresenceEntry {
   timestamp: string;
   lastSeen: string;
   lastHeartbeat: number;
+}
+
+/** Mirror of realtime-modules/src/client/types.ts CursorEntry */
+export interface RMCursorEntry {
+  clientId: string;
+  channel: string;
+  position: Record<string, unknown>;
+  metadata: Record<string, unknown> & {
+    mode?: string;
+    userInitials?: string;
+    userColor?: string;
+  };
+  timestamp: string;
+}
+
+/** Return shape of `useCursor(channel)` from realtime-modules (singular hook). */
+export interface RMUseCursorReturn {
+  /** Live cursors for the channel, excluding your own. */
+  cursors: RMCursorEntry[];
+  /** Publish your position (throttled by the hook). */
+  move: (position: Record<string, unknown>, metadata?: Record<string, unknown>) => void;
+  refresh?: () => void;
 }
 
 /** Mirror of realtime-modules/src/client/types.ts Reaction */
@@ -163,6 +189,10 @@ export interface RMUseChatReturn {
    */
   sendMessage: (text: string, metadata?: Record<string, unknown>) => void;
   loadHistory: (limit?: number) => void;
+  /** Change one of your own messages (realtime-modules >= 0.100). Optional: older hooks lack it. */
+  editMessage?: (messageId: string, text: string, metadata?: Record<string, unknown>) => void;
+  /** Soft-delete one of your own messages. Optional like `editMessage`. */
+  deleteMessage?: (messageId: string) => void;
 }
 
 export interface RMUsePresenceReturn {

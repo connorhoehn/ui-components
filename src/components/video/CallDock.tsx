@@ -23,6 +23,13 @@
 // controls (reactions, recording chip, side-panel toggles) into the controls
 // row, before the settings gear.
 //
+// `layout="stack"` (2.432.0) is the same header over a reflowing tile grid,
+// for a narrow host (the shell's right pane, a popped-out chat): mic ▾,
+// camera ▾ and Leave stay on the bar; Share, People, Documents, settings and
+// pop-out fold into one "⋯" menu; the tiles wrap two to a row. `tileSize`
+// (2.432.0) picks the shelf's tile size: `sm` 132 × 74 (= `compact`), `md`
+// 176 × 88 (default), `lg` 240 × 135 above a full-width composer.
+//
 // A narrow column (a chat pane with a side panel open, ~520–650px) keeps
 // every control: the labels collapse first (below 860px), then the controls
 // wrap onto further right-aligned lines. Settings, pop-out and Leave travel
@@ -44,7 +51,8 @@ import { InlinePopover } from '../shared/InlinePopover';
 import SkeletonCard from '../shared/SkeletonCard';
 import { Button } from '../ui/Button';
 import { IconButton } from '../ui/IconButton';
-import { DocumentIcon } from '../ui/Icons';
+import { DocumentIcon, MoreIcon } from '../ui/Icons';
+import { DropdownMenu, type DropdownMenuItem } from '../shared/DropdownMenu';
 import { CallTileRow, type CallTileParticipant } from './CallTileRow';
 import { DeviceToggleSelect, type DeviceToggleSelectProps } from './DeviceToggleSelect';
 import {
@@ -62,7 +70,12 @@ export interface CallDockParticipant extends HangoutLayoutParticipant {
   audioOn: boolean;
   screenSharing: boolean;
   presenting: boolean;
-  connection: 'connected' | 'reconnecting';
+  /**
+   * `ringing` (2.436.0): an invitee whose phone is still ringing — drawn as a
+   * placeholder tile (their avatar, "Ringing…", no mic state) until they
+   * answer. A ringing participant never counts toward `participantCount`.
+   */
+  connection: 'connected' | 'reconnecting' | 'ringing';
   /**
    * An audio sink independent of the camera (an `<audio autoPlay>` on the
    * person's stream). Optional: with camera off the dock keeps `videoElement`
@@ -124,9 +137,36 @@ export interface CallDockProps {
   onDismiss?: () => void;
   /** 132 × 74 tiles (a 1280 × 720 window) instead of 176 × 88 (the mockup's 166 × 84 at its 1.054 scale). */
   compact?: boolean;
+  /**
+   * Shelf tile size (2.432.0): `sm` 132 × 74 (what `compact` picks), `md`
+   * 176 × 88 (the default), `lg` 240 × 135 — the tiles above a full-width
+   * conversation composer. Wins over `compact` when both are given.
+   */
+  tileSize?: CallDockTileSize;
+  /**
+   * `shelf` (default): the header row (title, meta, device controls, Leave)
+   * over a row of fixed-size tiles. `grid` (2.423.0): the call's media
+   * panel — ONLY the tile stage, as a reflowing grid of fluid 16:9 tiles
+   * (`CallTileRow variant="grid"`, the viewer first as "You"). No header,
+   * meta or controls render: the host's bar (e.g. `HuddleBar`) owns mic,
+   * camera and Leave. Connecting draws one fluid skeleton; reconnecting keeps
+   * its badge; the ended and error phases render as they do for `shelf`.
+   * `stack` (2.432.0): the narrow form of `shelf` — the header (title, meta,
+   * mic ▾, camera ▾, a "⋯" menu holding Share, People, Documents, settings
+   * and pop-out, then Leave) over the reflowing tile grid, at most two tiles
+   * to a row. For a conversation composer in a side pane.
+   */
+  layout?: 'shelf' | 'grid' | 'stack';
   className?: string;
   'data-testid'?: string;
 }
+
+export type CallDockTileSize = 'sm' | 'md' | 'lg';
+const TILE_PX: Record<CallDockTileSize, { w: number; h: number; box: string; visible: number }> = {
+  sm: { w: 132, h: 74, box: 'h-[74px] w-[132px]', visible: 5 },
+  md: { w: 176, h: 88, box: 'h-[88px] w-[176px]', visible: 6 },
+  lg: { w: 240, h: 135, box: 'h-[135px] w-[240px]', visible: 6 },
+};
 
 /** "09:41", or "1:02:03" past an hour. */
 export function formatCallElapsed(ms: number): string {
@@ -181,6 +221,7 @@ function toTile(p: CallDockParticipant, isLocal: boolean, reconnecting: boolean)
     audioElement: p.audioElement,
     screenSharing: p.screenSharing,
     reconnecting: reconnecting || p.connection === 'reconnecting',
+    ringing: p.connection === 'ringing',
   };
 }
 
@@ -191,7 +232,9 @@ const CallDockTiles = memo(function CallDockTiles({
   activeSpeakerId,
   followingUserId,
   reconnecting,
-  compact,
+  size,
+  grid = false,
+  maxColumns,
   onTileClick,
   title,
 }: {
@@ -200,7 +243,9 @@ const CallDockTiles = memo(function CallDockTiles({
   activeSpeakerId: string | null;
   followingUserId: string | null;
   reconnecting: boolean;
-  compact: boolean;
+  size: CallDockTileSize;
+  grid?: boolean;
+  maxColumns?: number;
   onTileClick: ((userId: string) => void) | undefined;
   title: string;
 }) {
@@ -208,15 +253,16 @@ const CallDockTiles = memo(function CallDockTiles({
   const remotes = participants.filter((p) => p.userId !== localParticipantId);
   return (
     <CallTileRow
-      variant="dock"
+      variant={grid ? 'grid' : 'dock'}
       participants={remotes.map((p) => toTile(p, false, reconnecting))}
       localParticipant={local ? toTile(local, true, reconnecting) : null}
       activeSpeakerId={activeSpeakerId}
       highlightedId={followingUserId}
-      tileWidth={compact ? 132 : 176}
-      tileHeight={compact ? 74 : 88}
+      tileWidth={TILE_PX[size].w}
+      tileHeight={TILE_PX[size].h}
       overflow="collapse"
-      maxVisible={compact ? 5 : 6}
+      maxVisible={TILE_PX[size].visible}
+      {...(maxColumns ? { maxColumns } : {})}
       {...(onTileClick ? { onParticipantClick: onTileClick } : {})}
       title={title}
       data-testid="call-dock-tile-row"
@@ -255,9 +301,12 @@ export function CallDock({
   error,
   onDismiss,
   compact = false,
+  tileSize,
+  layout = 'shelf',
   className,
   'data-testid': testId = 'call-dock',
 }: CallDockProps) {
+  const size: CallDockTileSize = tileSize ?? (compact ? 'sm' : 'md');
   const leaveRef = useRef<HTMLButtonElement | null>(null);
   const [confirmLeave, setConfirmLeave] = useState(false);
   // The host's handler, read at click time: an inline `onTileClick` gets a new
@@ -318,6 +367,75 @@ export function CallDock({
     if (!calling && canEndForEveryone && onEndForEveryone) setConfirmLeave(true);
     else onLeave();
   };
+  const grid = layout === 'grid';
+  const stack = layout === 'stack';
+  // `stack`: what the wide bar draws inline, as menu rows (mic, camera and Leave stay on the bar).
+  const shareReason = calling ? 'You can share once someone joins' : connecting ? 'Connecting…' : screenShare.disabledReason;
+  const stackMenuItems: DropdownMenuItem[] = [
+    { label: screenShare.on ? 'Stop sharing' : 'Share your screen', icon: <ScreenShareIcon size={16} />, onSelect: screenShare.onToggle,
+      ...(shareReason ? { disabled: true, disabledReason: shareReason } : {}), 'data-testid': 'call-dock-share' },
+    { label: `People (${participantCount})`, icon: <UsersIcon size={16} />, onSelect: onOpenPeople, ...(peopleOpen ? { active: true } : {}),
+      ...(connecting ? { disabled: true, disabledReason: 'Connecting…' } : {}), 'data-testid': 'call-dock-people' },
+    ...(onOpenDocuments ? [{ label: `Documents (${documents.length})`, icon: <DocumentIcon size={16} />, onSelect: onOpenDocuments,
+      ...(documentsOpen ? { active: true } : {}), ...(connecting ? { disabled: true, disabledReason: 'Connecting…' } : {}), 'data-testid': 'call-dock-documents' }] : []),
+    { label: 'Call settings', icon: <SettingsGearIcon size={16} />, onSelect: onOpenSettings, 'data-testid': 'call-dock-settings' },
+    { label: 'Pop out the call', icon: <ExpandIcon size={16} />, onSelect: onPopOut,
+      ...(connecting ? { disabled: true, disabledReason: 'Connecting…' } : {}), 'data-testid': 'call-dock-popout' },
+  ];
+
+  const tiles = (
+    <div className="relative" data-testid="call-dock-tiles">
+      {reconnecting && (
+        <div
+          className="mb-2 inline-flex rounded-full bg-warning-bg px-3 py-1 text-xs font-medium text-warning-fg"
+          role="status"
+          data-testid="call-dock-reconnecting"
+        >
+          Reconnecting…
+        </div>
+      )}
+      {connecting ? (
+        <div className="flex gap-2" data-testid="call-dock-connecting">
+          <div
+            className={cn(
+              'shrink-0 overflow-hidden rounded-md',
+              grid || stack ? 'aspect-video w-full' : TILE_PX[size].box,
+            )}
+          >
+            <SkeletonCard height="100%" rounded="md" />
+          </div>
+        </div>
+      ) : (
+        <CallDockTiles
+          participants={participants}
+          localParticipantId={localParticipantId}
+          activeSpeakerId={activeSpeakerId}
+          followingUserId={followingUserId}
+          reconnecting={reconnecting}
+          size={size}
+          grid={grid || stack}
+          {...(stack ? { maxColumns: 2 } : {})}
+          onTileClick={onTileClick ? stableTileClick : undefined}
+          title={title}
+        />
+      )}
+    </div>
+  );
+
+  if (grid) {
+    return (
+      <section
+        className={cn('flex min-w-0 flex-col gap-2 bg-surface p-3', className)}
+        aria-label={`Call: ${title}`}
+        data-testid={testId}
+        data-phase={phase}
+        data-layout="grid"
+        data-compact={size === 'sm' ? 'true' : 'false'}
+      >
+        {tiles}
+      </section>
+    );
+  }
 
   return (
     <section
@@ -325,7 +443,9 @@ export function CallDock({
       aria-label={`Call: ${title}`}
       data-testid={testId}
       data-phase={phase}
-      data-compact={compact ? 'true' : 'false'}
+      data-layout={stack ? 'stack' : 'shelf'}
+      data-compact={size === 'sm' || stack ? 'true' : 'false'}
+      data-tile-size={stack ? undefined : size}
     >
       {/* The header wraps rather than overlaps: the title block's basis is its
           content (`flex-auto`, not `flex-1`), so when title + meta + controls
@@ -377,6 +497,7 @@ export function CallDock({
         >
           <DeviceToggleSelect kind="microphone" {...mic} data-testid="call-dock-mic" {...(connecting ? { disabledReason: 'Connecting…' } : {})} />
           <DeviceToggleSelect kind="camera" {...camera} data-testid="call-dock-camera" {...(connecting ? { disabledReason: 'Connecting…' } : {})} />
+          {!stack && (<>
           <Button
             variant={screenShare.on ? 'danger' : 'ghost'}
             size="sm"
@@ -425,6 +546,7 @@ export function CallDock({
               <Badge variant="count" value={documents.length} color="muted" aria-label={`${documents.length} documents`} />
             </Button>
           )}
+          </>)}
           {extras != null && (
             // `contents`: each host control is its own flex item, so they wrap one by one.
             <div className="contents" data-testid="call-dock-extras">
@@ -433,6 +555,18 @@ export function CallDock({
           )}
           {/* Settings, pop-out and Leave never separate: Leave stays last and on screen. */}
           <div className="flex shrink-0 items-center gap-2" data-testid="call-dock-end">
+            {stack ? (
+              <DropdownMenu
+                trigger={<MoreIcon size={16} />}
+                triggerLabel="More call controls"
+                triggerTitle="More"
+                triggerTestId="call-dock-more"
+                triggerClassName="h-8 w-8 px-0 py-0"
+                align="end"
+                sections={[{ items: stackMenuItems }]}
+                data-testid="call-dock-more-menu"
+              />
+            ) : (<>
             <IconButton
               aria-label="Call settings"
               title="Call settings"
@@ -450,6 +584,7 @@ export function CallDock({
               icon={<ExpandIcon size={16} />}
               data-testid="call-dock-popout"
             />
+            </>)}
             <Button
               ref={leaveRef}
               variant="danger-solid"
@@ -502,35 +637,7 @@ export function CallDock({
         </div>
       </div>
 
-      <div className="relative" data-testid="call-dock-tiles">
-        {reconnecting && (
-          <div
-            className="mb-2 inline-flex rounded-full bg-warning-bg px-3 py-1 text-xs font-medium text-warning-fg"
-            role="status"
-            data-testid="call-dock-reconnecting"
-          >
-            Reconnecting…
-          </div>
-        )}
-        {connecting ? (
-          <div className="flex gap-2" data-testid="call-dock-connecting">
-            <div className={cn('shrink-0 overflow-hidden rounded-md', compact ? 'h-[74px] w-[132px]' : 'h-[88px] w-[176px]')}>
-              <SkeletonCard height="100%" rounded="md" />
-            </div>
-          </div>
-        ) : (
-          <CallDockTiles
-            participants={participants}
-            localParticipantId={localParticipantId}
-            activeSpeakerId={activeSpeakerId}
-            followingUserId={followingUserId}
-            reconnecting={reconnecting}
-            compact={compact}
-            onTileClick={onTileClick ? stableTileClick : undefined}
-            title={title}
-          />
-        )}
-      </div>
+      {tiles}
     </section>
   );
 }

@@ -24,6 +24,16 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+/** A long record headline in the space left beside desktop navigation. */
+export const WrappedRecordTitle: Story = {
+  args: {
+    title: 'Refresh loop when a grant is revoked mid-session',
+    variant: 'work-item', titleSize: 'lg', titleOverflow: 'wrap',
+    itemType: 'Bug', itemKey: 'wi-auth-e1-b4', children: <p>The full record title stays readable.</p>,
+  },
+  render: (args) => <div style={{ width: 480, height: 500 }}><EditorShell {...args} /></div>,
+};
+
 const PEOPLE = [
   { id: 'ak', name: 'Alex Kim' },
   { id: 'mt', name: 'Maria Torres' },

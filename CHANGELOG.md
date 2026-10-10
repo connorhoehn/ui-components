@@ -6,6 +6,224 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.439.0
+
+The composer and the call block (train C of the 2026-10-07 consumer audit): one conversation composer and one call block, so a consumer stops keeping five composer wrappers and a hand-wired call host.
+
+- **`ConversationComposer` (`/social/rich-composer`, `createConversationComposer({ useFileUpload })`).** `ContextComposer` with the conversation's wiring, bound once to the installed realtime-modules `useFileUpload` (injected, scope-agnostic). A host passes `channel`, the thread's `chat` (its `useChat(channel)` — one join per channel), `context` (with an optional page `reference`: a removable chip, stored on a Chat send as `pageReference: {kind,id}` only), **`capabilities` (required: `maySend` has no default; Agent exists only when `agent` is passed and is on only when `agent.allowed`; `mayAttach` missing means no)** and its command handlers. It owns: modes and their reasons from the capabilities and `offline`; `offModes` (a mode listed off with why, never on); To: `recipients` (a To: select; the conversation's own recipient always gated by `maySend`, each with its own reason, error, confirmed `send`, `claim` and `onSelect`; controlled `recipient` / `onRecipientChange`; a chosen destination that disappears stays chosen, off, with why — a draft is never silently redirected); slash `commands` with `run` handlers (`true` clears, `false` keeps, a string is a refusal shown above the draft) and `onAgent` for Agent text that is no command (handlers receive the composed message); typing (`chat.setTyping`) while a Chat draft for this channel has words; uploads (`useConversationUploads`: files land first, the message cites only what the gateway confirmed; a stuck upload or a conversation change keeps the draft); quote-reply (`reply`); the draft remembered per conversation per device (`ui.conversation-draft:<key>`, `persistDraft`); a "sent; your newer draft was kept" note; the call block slot (`callBlock`); the one-row pane form under `DensityProvider value="compact"` (no size prop). `attachmentOnlyText` and the model types are exported.
+- **One input per conversation (`/social/rich-composer`).** `ConversationInputProvider` (one registry per shell, replacing a consumer's module globals): a composer with `claim` claims its channels, and a thread asks `useThreadInput(channel)` whether a composer elsewhere owns its input (`ThreadInputHandoff` draws the "Reply in …" hand-off); `answersFocus` makes a composer take the shell's focus requests (`useComposerFocus().request({ mode, target })` — the footer's Message; `present` says whether one is mounted), and `useComposerFocusReveal` brings a collapsed pane on screen first.
+- **The call block (`integrations/realtime`, `createCallBlockHost(video)`).** One conversation call and one media sink for the whole shell, bound once to the installed `/client/video`: `CallHostProvider` (one `useConversationCall` across routes, a lobby a page `bind`s while nothing is on, incoming rings and the toast, Accept binding the ring's lobby, the pre-join device check before every start, join and accept with "remember" and join muted / camera off, the SFU URL latched per actor scope, `onCallEvent` for a call log, `onAccept` for navigation), `useCallBlock(channel, { bind, compact, documents, enabled })` (the bar and tiles for a composer's `callBlock` while the call is that conversation's, and the page lobby's binding — the server's lobby guard decides admission, nothing here does), `useCallLobby`, `CallBlock placement="composer" | "page" | "block" | "pane"` (claims the one sink; a composer's block takes the narrow form below 640px), `CallMediaOutlet` (the one dock, drawn into the claimant or collapsed in the footer), `useCallHost`, `useCallMediaPanel`, `useCallBlockPlacement`, `useCallBlockPageClaimed`, `useClaimCallBlock`. `callDrawn`, `callCounts` and `pageHuddleStart` exported. A page that unbinds and re-binds in one commit (a remount) ends bound.
+
+## 2.438.3
+
+- `ComposerReferences size="md"` (the full composer card's page-reference chip) draws its label at the 12px meta step (was 13px), on the app's one type scale — the chip is meta beside a 14px body, and a composer docked in a page's content column (the pane model's rule since 2.438) put it on every page's type sweep.
+
+## 2.438.2
+
+- **Work graph — what the canvas is showing.** `WorkKindLegend` (`/graph`): every kind of work present, each with its card chip (the same accent map and glyph as `WorkActivityNode`, now shared in `workKinds`), its name and how many, plus the "N items · M links" count; kind names fold away in a narrow `@container` and stay as each item's accessible label and tooltip. `WORK_NODE_KIND_LABELS` and `workNodeKindCounts` exported. `WorkActivityPresentation` gains `headerActions`, `viewNote` and `kindLegend`, which the renderer's header row (drawn with `title`) passes to `WorkActivityHeader`'s `actions` / `viewNote` — so a host outside `ChatSidePanelFrame` gets the legend, its own controls and the clause without composing a second header. `WorkActivityHeader`'s title row is a container.
+
+## 2.438.1
+
+- `SidePane`, from the consumer's first walk (the user: "keep the chat in the main content… just keep the dialogue thread there… collapse the panes and make the chat pane wider"): the pane **minimizes to a 44px strip** at the split's edge with one Restore control (the folded rail's strip), remembered per device (`<storageKey>.folded`); the frame's Minimize button, Enter/Space on the focused divider (`SplitPane onDividerActivate`) and the strip's Restore toggle it, and the page never remounts. The pane is **wider on demand**: its floor is 320px (`minSecondaryPx`) and its ceiling 60% of the split (`ratioMin` 0.4); the width is remembered **per pane** (`paneId`: `<storageKey>.ratio` for `page`, `<storageKey>.ratio.<paneId>` otherwise), and `widthPx` is now the opening width until the reader sizes it rather than a cap. `fitPrimaryPx` 840 keeps the fit threshold at a 1160px split. `useSidePaneHost()` adds `folded`, `toggleFolded` and `paneWidthPx` (the drawn width, so a canvas beside it can re-fit).
+
+## 2.438.0
+
+The pane and rail models (train B of the 2026-10-07 consumer audit): one right-pane model and one rail model, so a consumer stops keeping four of each.
+
+- **Pane model — `SidePane`, `SidePaneProvider`, `SidePaneSplit`, `PaneHeader`, `useSidePane`, `useSidePaneHost` (root).** One right pane per page, the fourth column beside the rails and the content. The shell mounts `SidePaneProvider` (above its rails) and `SidePaneSplit` (where the page renders, with `before` / `after` slots stacked in the same column — a call's media grid, a huddle chat); a page registers its pane with `<SidePane title subtitle tabs value onValueChange trailing footer explores onClose widthPx>`. Its children are portaled into a stable element that stays mounted while the pane is off screen, so a collapse never drops a thread's subscription or a draft. Open state and split ratio are remembered per device (`<storageKey>.open` `1|0`, `<storageKey>.ratio`, bounded `0.4–0.85`, default `0.72`); the split must fit `fitPrimaryPx (860) + minSecondaryPx (300)` or the pane waits for `reveal()`, which holds until the window changes band; `widthPx` bounds a pane whatever the ratio; a page-owned pane (`onClose`) shows while registered. `useSidePaneHost()` publishes `registered / asked / shown / explored` — `explored` (the pane shows a selection of the page) is what a rail rule counts, so no host reads pane state through a global. The pane draws at `compact` density, its frame is a popover boundary, and `PaneHeader` is its one tab row: underline tabs whose first label sits on the 16px inset, a trailing slot (a view switcher) on the same row. Pure rules exported: `SIDE_PANE_BOUNDS`, `readSidePaneOpen`, `readSidePaneRatio`, `sidePaneFits`, `boundedSidePaneRatio`.
+- **The pane URL contract — `usePaneState` (root).** `?pane=<tab>` names a tab, `?pane=<tab>&paneRecord=<kind>:<id>` a record tab and its record; the resting tab is the absence of both. Tabs are a registry `{ id, label, remember?, recordKinds? }`: a record tab is listed only while a record of its kind is named; `remember` tabs are restored per device (`rememberKey`, once per `restore.subject`, in place); `keepRecord` keeps a record beside a plain tab. Router-agnostic (pass the router's params and setter); `readPaneState`, `writePaneState`, `visiblePaneTabs`, `parsePaneRecord`, `paneRecordKey` for links and batched URL writes. `paneRecord` is never a page selection — a page's canvas selection keeps its own param.
+- **Rail model — fold.** `SubNavLayout collapsed`: the primary rail folds to a 44px strip holding only `titleAction`; folded beside a compact (36px-header) rail, the strip's header takes that row's height (`WorkspaceRail` reports its header to the `SubNavLayout` it sits in — no consumer CSS reaching into the rail's DOM). `railDepth(location, { prefixes, drillParams, leafRoutes, explored })` (pure; the host declares its routes), `railBand` (1–2 shallow, 3+ deep), `RailBandProvider` / `useRailBand`, and `useRailFold({ storageKey, band?, defaultFolded })` — every rail's fold remembered per band under `<storageKey>.<shallow|deep>` = `collapsed|open` (one storage convention; band-less legacy values are ignored, so a fold set on a list page never folds a deep page). `RAIL_FOLD_PRIMARY_BELOW` (1180), `RAIL_FOLD_SECTION_BELOW` (768), `useViewportWidth` (`/shared`, root).
+- **Rail model — list rail.** `ListRailLayout` with one `ListRail` value (`title`, `count`, `actions`, `header`, `body`, `footer`, `label`, `back`): the page's list as a flush 264px caption rail with a count chip beside the section rail, then the pane header (trail, title), the record, an aside beside it and a docked footer; `fold` takes a `useRailFold`. Upstreamed from two consumer copies of the same `ExplorerLayout` configuration. The root carries `data-list-rail`.
+- **Rail model — conversation sections as data.** `ConversationRailSection` gains a data form — `rows`, `count`, `activeRow`, `onSelectRow`, `emptyLabel`, `note`, `maxVisible`, `data-testid` — drawn by the rail as the heading (fold keyed by `label` like the rail's own groups, the count) over a `ConversationList`; a `node` section with `heading` gets the same heading over its own content. `buildRailSection({ id, label, items, query, key, name, row, active, onSelect, state })` is the one section builder: the count is the records held, the rows the ones the find text matches, and loading / failure / nothing-yet / a note are said honestly (`matchesRailQuery`). `useRailSectionMemory(storageKey, { defaultFolded, opened })` keeps the rail's per-device folds and section order (`<storageKey>.folded`, `<storageKey>.layout`) and returns `railProps` to spread onto `ConversationRail`.
+- `useMeasuredWidth` is exported from `/shared` (one measuring hook, not one per consumer).
+
+## 2.437.1
+
+- Header density fit, from the first consumer walk (the initiative Activity tab at the four-pane width): compact/collapsed tabs sit on the stack's 4px gap (trail + row + tabs is 96px, was 100px); the compact row's people cluster gives up width before the title (it clips, each avatar keeps its tooltip), so a long title is not cut to "Observability P…" while the avatars stay whole; the collapsed trail never wraps (the crumbs clip, the folded title stays on the row with its badge and chevron); the collapsed stack keeps a 4px gap above its tabs. `HoverCard width="xl"` (32rem, inside the viewport) and `HeaderDescriptionInfo width`; `PageHeader` uses `xl` when the compact card carries `meta` (a stat strip read in a 20rem card overlapped its labels).
+
+## 2.437.0
+
+- **One density vocabulary.** `Density = 'comfortable' | 'compact'` with `DensityProvider` and `useDensity(override?)` (`/shared`, root). A component with a denser form reads its own prop, else the nearest provider, else comfortable. `PageHeader` and `ScopeHeader` are the first consumers; folding the other per-component `size` props into it is the density-system lane's.
+- **Header density.** `PageHeader` gains slots `breadcrumbs` (the trail as its first row), `people` (labelled groups with an optional `action`), `info` (the title's info trigger), `meta` (a summary under the people), `tabs`/`activeTab`/`onTabChange`, plus `density` and the `collapsed` state with `onToggleCollapsed`. Comfortable is the full stack (unchanged without the new slots; the title row now wraps instead of overflowing). Compact is the trail, ONE 28px row — the title at 14/600, badge, info, a 24px avatar cluster with each name in a tooltip, the collapse chevron, actions — and the tabs; the description (and `meta`) move into the info `HoverCard`. Collapsed is a state, not a density: the trail row only, the title folded into its last crumb with the badge and an "Expand header" chevron, actions kept, tabs kept. `ScopeHeader` takes the same `density` / `collapsed` / `onToggleCollapsed` on all three variants (default: one compact row or the folded trail; `crumbs`: folds `title` into the trail; `inline`: 14/600 title on a 40px row, collapsed moves the controls into the menu/popover).
+- `useHeaderDensity({ contentKind, containerHeight, preference, headerId })` picks both: `canvas`/`graph`/`conversation`/`document` → compact, `list`/`detail` → comfortable (compact under 640px of container); a reader's scroll of rich content past 48px collapses (programmatic scrolls do not count) and the top opens it; the chevron is remembered per device under `uic:header-density:<headerId>:<rich|plain>`. Returns `headerProps` to spread and a `contentRef` for the scroll region. Pieces: `HeaderCollapseToggle`, `HeaderTrailFold`, `HeaderDescriptionInfo`, `HeaderPeople`, `foldTitleIntoTrail`, `headerDefaults`.
+- **`HoverCard`** — an anchored, non-modal, non-trapping card with the library's one hover timing (open 300ms, close 250ms): hover or keyboard focus opens it (`openOnFocus`), Enter/Space pins it (`pinOnKey`), Escape or a click outside closes it, focus never leaves the trigger. The trigger is a render prop (`{(trigger) => <IconButton {...trigger} />}`); `width` `sm|md|lg`; `onOpenChange` for lazy content.
+
+## 2.436.4
+
+- Replaces 2.436.2/2.436.3's measured dock fit, which could still stick at one tile in a host that sizes the dock to its content (the row measured itself). `CallTileRow variant="dock"` under `overflow="collapse"` now wraps: the row is one tile tall with its overflow clipped, the tiles past its width sit on the clipped second line — still mounted, so their audio keeps playing — and a `+N` badge on the right edge of the last tile that fits counts and names them (`data-testid="<prefix>-wrapped"`, accessible name "N more: …"; `data-hidden-count` on the row). Finding them reads offsets only and changes no layout, so a content-sized host (nothing wraps) and a column-held one settle at once. `dockTilesThatFit` and `data-visible-count` are gone; `wrappedDockItems` is the pure helper. `maxVisible`'s `+N` tile is unchanged and keeps its folded people's media mounted.
+
+## 2.436.3
+
+- Fix 2.436.2's dock fit for a host that sizes the dock to its content (a block that shrink-wraps the call bar): the row measured its own width, so once it folded a tile it could never grow back (1 → `+1` and stuck as people walked in). The row now caps only after it is seen to overflow its box, and re-measures when the head count changes.
+
+## 2.436.2
+
+- `CallTileRow variant="dock"` (the `CallDock` shelf) collapses to the tiles that fit its measured width instead of clipping the last tile at the row's edge — four 240px tiles in a ~950px content column now read three tiles and `+2` (`overflow="collapse"`; `maxVisible` stays the upper bound; `data-visible-count` on the row; `dockTilesThatFit(width, tileWidth)`). People folded into the `+N` tile keep their video/audio elements mounted in a 1px sink, so their voice keeps playing (before, a folded person's camera element — which carries their audio — unmounted). The `+N` tile's tooltip names them.
+
+## 2.436.1
+
+- `EmptyState size="sm"` is the app's body step throughout: the description is 14px (`text-sm`, was 13px), the `actionLabel` CTA is `Button size="sm"`-sized (26px tall, 12/600, was a 38px padded button) and the `details` heading is 14/600 (was 18px). The title was already 14/600. `md` and `lg` are unchanged. For a host's "no access" or empty landing that sits in a page at the 20 / 14 / 12 type scale.
+
+## 2.436.0
+
+- Ringing invitees as placeholder tiles: `ConversationCallDock` draws the people a call is still ringing (RM participants in state `ringing`) after the people in the call, from the caller's first ring through the call — their avatar, dimmed and pulsing, with "Ringing…" in place of the mic state (`data-ringing="true"`, accessible name "<name>, ringing"). An answer turns the placeholder into their real tile; a decline or timeout drops it. They never count toward the "N people" head count. Under it: `CallDockParticipant.connection` accepts `'ringing'` and `CallTileParticipant` gains `ringing` (`dock`/`grid` variants), so a host feeding `CallDock` directly can draw the same placeholder.
+
+## 2.435.0
+
+- `SegmentedControl` `iconOnly`: each option shows its `icon`; its `label` is the button's accessible name and a hover/focus `Tooltip`. For a compact view switcher on a pane's header row (Chat / Pinned / Files / Calls beside the pane's own tabs) instead of a second labelled tab bar. Options gain `badge` (a superscript count on the icon, carried in the name: "Pinned, 3") and `testId`.
+- `InlinePopover` boundary: a surface marked `data-uic-popover-boundary` (`POPOVER_BOUNDARY_ATTR`, `popoverBounds`) keeps popovers opened inside it within its left/right edges — a `bottom-end` menu from a control near a pane's left edge (the folded `Tabs` "More ▾") no longer hangs over the page beside the pane. Applies to every `DropdownMenu`. `ChatSidePanelFrame` marks itself as one.
+
+## 2.434.0
+
+- `Table` `size="sm"` (and `DataTable` `size="sm"`, forwarded): the app's list step — every body cell exactly 44px tall on one line (`h-11`, no padding block, `whitespace-nowrap`), 14px body, a 12px semibold uppercase header (`text-xs`), 12px side padding. `data-size="sm"` on the `<table>`. Default `md` is unchanged.
+- `TableTh`/`TableTd` `numeric` and `DataTableColumn.numeric`: right-aligned header and cells with tabular figures, so a money/count column's header and values share an edge.
+
+## 2.433.0
+
+- `CallDock` `layout="stack"`: the call bar for a conversation composer in a side pane — title, meta, mic ▾, camera ▾ and Leave on the bar; Share, People, Documents, settings and pop-out in one "⋯" menu (`call-dock-more`, rows keep their `call-dock-*` test ids); the tiles as the reflowing grid, at most two to a row. Calling keeps Cancel and disables Share with its reason.
+- `CallDock` `tileSize` (`sm` 132 × 74 = `compact`, `md` 176 × 88 default, `lg` 240 × 135): the larger tiles above a full-width conversation composer. `data-tile-size` on the shelf.
+- `CallTileRow` `maxColumns` (grid variant): caps `gridCols`.
+- `ConversationCallDock` forwards `tileSize`, `layout="stack"`, and the call's `documents` / `onOpenDocuments` / `documentsOpen` / `onDocumentClick`, so a document's huddle draws its chips and "Documents N" like `CallDock`.
+
+## 2.432.1
+
+- `ConversationShelf layout="bar"`: each button's name is real screen-reader text ("Mentions, 3 waiting") instead of an `aria-label`, so the bar's text still reads the destinations (a rail judge reading `textContent`, a find-in-page).
+- `ActivePeopleGrid`: `ActivePerson.status` takes `offline` — a roster shown whole (a team's members) no longer puts a green dot on someone who is not here. Omitted still reads as online.
+
+## 2.432.0
+
+- **`ConversationRail` reader layout** (additive): `shelfLayout="bar"` draws Activity / Mentions / Calls / Recordings as ONE row of named icon buttons with their counts under the header (`ConversationShelf layout="bar"`, `data-layout="bar"`, each button named "Mentions, 3 waiting"), so the conversations start under the header instead of four rows down. `search={{ value, onChange, placeholder?, label? }}` puts the find field behind a search button in the header (`<testId>-search-toggle`): hidden until toggled or while it holds text, focused when it opens, Escape clears and closes it and returns focus to the button. `sections` + `sectionLayout` + `onSectionLayoutChange` place host sections and the rail's own Direct messages (`dms`) and Channels (`channels`) in the reader's order, with "Arrange sections…" (↑/↓ per section) and "Reset layout" in the header's ⋯ (`<testId>-options`); `arrangeRailSections(defaultOrder, stored)` reconciles a stored order with the sections present. One inset: sections sit in the rail's 8px gutter and draw their own 8px (`RAIL_SECTION_GUTTER`, `RAIL_SECTION_CONTENT_INSET` for a host section's content), so every heading caret, row glyph and the bar's first icon start 16px from the rail's edge.
+- **Rooms in a rail** (additive): `HangoutRoomsSection` / `WrappedHangoutRoomsList` take `collapsed` + `onToggleCollapse`; given, the section is headed by `RailSectionHeader` (caret, label, count, + "New room") at the rail inset and folds under the host's control instead of its own localStorage key.
+- `IconButton` names `ref` in its props (React 19 passes it through).
+
+## 2.431.3
+
+- `responsive="pane"`: Aa / ? / ⋯ / the row end show while focus is inside OR the draft holds text. Keyed on focus alone, pressing Send on an unfocused draft brought them in on mousedown, wrapped Send to the next row, and the mouseup missed it (a retry after a failed send did nothing).
+
+## 2.431.2
+
+- `responsive="pane"`: idle is truly one row at a 380px pane (the 9rem input floor plus a 55% chip wrapped Send under it); the input floor is 6rem, the chip caps at 45%, and a wrapped Aa / ? / Send cluster sits at the right.
+
+## 2.431.1
+
+- `responsive="pane"`: the input keeps at least 9rem, so on focus the `Aa` / `?` / Send cluster wraps to a second row instead of squeezing the text to a letter a line (measured live at 381px: "hell / o"); the chip's mode label is on the chip's 12px step (it inherited the menu trigger's 16px); the chip caps at 55% of the row.
+
+## 2.431.0
+
+- **A simplified responsive mode for a composer in a side pane** (additive): `responsive="pane"` on `RichChatComposer` and `ContextComposer`. Chosen by the composer's OWN measured width, never the viewport — below the `wide` breakpoint (600px) the card is one input row: the mode and the draft's first reference fold into one small leading chip ("Chat · Org › Initi…on Platform", truncated in the middle so the leaf survives, its × on hover/focus, the mode switch as the chip's menu), Send is icon-only (its label stays as screen-reader text), and focus is the 1px primary border instead of the 2px ring. `Aa`, `?`, `⋯` and `modeRowEnd` appear only while focus is inside, so the card is at most two rows. Wide, nothing changes. `data-responsive="pane"` marks it; `<testId>-context-chip`, `-context-label`, `-context-remove`.
+- **`Tabs` folds by its container** (additive): `overflowBelow={px}` — while the tab bar's parent is narrower, only the first and the selected tab stay and the rest move into a `More ▾` menu (rows keep each tab's `testId`; trigger `<data-testid>-more`). `data-folded` marks the state.
+
+## 2.430.0
+
+- **`ChatSidePanelFrame` on the compact type step** (additive): `size="sm"` gives the header a 14px semibold title and a 12px subtitle (the `PageSection size="sm"` / `DetailSection size="sm"` step from 2.429.0) with 16px side padding, for a page's conversation pane beside a tabbed page; `data-size="sm"` marks it. `closeLabel` names the × control (default "Close panel") so a pane that collapses rather than closes can say so. Default `xs` is unchanged.
+
+## 2.429.0
+
+- **A compact type step for the overview composites** (additive, `size="sm"`): `PageSection` (14px semibold h2, 12px count pill, 14px actions), `DetailSection variant="heading"` (14px heading, 12px hint and description), `ActionRowList` (14px medium titles and cells, 12px descriptions and meta, 14px semibold action, 40px rows) and `StatStrip variant="line"` (14px semibold values, 14px labels and separators). Each is the app's body step — `T size="sm"` / `T size="xs"` — for a section inside a tabbed pane, where the mockup's 15–16px read a size up from the 14px tabs and 13–14px rails beside it. Defaults are unchanged; `data-size="sm"` marks the compact form.
+
+## 2.428.0
+
+- **Computer Lab tells a multi-agent story** (`…/compute`, additive). New `provisioning` `ComputeStatus` (minted, microVM not up): `COMPUTE_STATUS.provisioning` (info, pulsing), `ATTENTION_ORDER` between running and idle, `summarizeFleet()` gains a `provisioning` count (not an agent), a workspace header pill (`lab-pill-provisioning`) drawn only while above zero, and rail/filter/badge entries.
+- **Agent pane:** the latest `TodoWrite` tool_use is the run's plan checklist above the steps (`agent-pane-plan`; completed / in progress with `activeForm` / pending; a later TodoWrite replaces the earlier one and is not repeated as a step row). New tail frames `gate_refused` (warning row: "Held at the <gate> gate", error, "needs <confirmFlag>") and `delivery` (success row: "Change posted for review", title, short sha, `PR #n` linked through `Link external` when `prUrl`). When the computer is `waiting`, the agent's last words (last assistant text or the `result` summary, else `currentTask`) show as a callout with an inline reply (`agent-pane-reply`) that takes the Nudge route: the lab's `onInstruct` with `scope: 'focused'` when given, otherwise a resumed `client.runTask(sessionId, { prompt, resume: true })`. No new `ComputerLab` prop.
+- **Bot logs and the classic `TailPane`** read the same frames: gate lines log at `warn` from source `gate`, deliveries from `delivery`; the tail pane draws `tail-banner-gate` / `tail-banner-delivery`. Unknown frame types stay ignored.
+- New exports: `latestPlan`, `pendingQuestion`, `reduceTailFrame`, `parsePlan`, `toolStep`, `gateStep`, `deliveryStep`, `LabInstructContext`, `useLabInstruct`, `runInstructionAsTasks`, `MOCK_TAIL_DEMO_SCRIPTS`; types `PlanItem`, `GateRefusal`, `RunDelivery`, `LabInstructRoute`. `TaskStep` gains `plan`, `gate`, `delivery`, `summary`; `TaskStepKind` gains `gate`, `delivery` (an exhaustive `Record<TaskStepKind, …>` in a consumer needs two entries). Stories: `Compute/AgentPane`, `Compute/ComputerLab › MultiAgentDemo`.
+
+## 2.427.0
+
+- **`MasterDetail` `paneFooter`:** a ReactNode docked under the detail pane (`data-testid="<id>-pane-footer"`, inside a `<id>-pane-column`). It reserves its own height and the pane above keeps its `overflow-y-auto` scrolling (`<id>-detail`), so a composer no longer needs `sticky` plus class overrides that release the shell's clipping. Mirrors `ExplorerLayout`'s `paneFooter`; omitted, the markup is unchanged.
+
+## 2.426.0
+
+- **Complete, verified `dist`:** 2.425.0 committed a per-file `tsc` declaration emit (`npm run build:types` wrote into `dist/`) over the rolled-up types: `dist/index.d.ts` was 7 KB with no `StackedRail`, and ~3,000 stray `.d.ts`/`.map` files shipped. Runtime JS was fine, so the runtime-only export snapshot stayed green. `build:types` now emits to `node_modules/.cache/types-check`, `prepare` runs the full `npm run build`, and `export-surface.test.ts` checks every entrypoint's `.d.ts` is a self-contained rollup naming every snapshot export. Rebuilt; every `.d.ts` is byte-identical to 2.424.0 (2.425.0 changed no types). Note `RecordGraphCard` is exported from the root entry, not `/graph`.
+
+## 2.425.0
+
+- **A deleted message row names the person, not the socket:** a soft-deleted message arrives with its metadata stripped, so `adaptChatMessages` left `displayName` unset and `ChatPanel` fell back to the first characters of the client id (`c_muxlj2`). The adapter now resolves the sender through `userId` from any live message in the transcript that carries their name, and otherwise says `a removed member` (`REMOVED_MEMBER_LABEL`). Never an id.
+
+## 2.424.0
+
+- **Message edit/delete through `WrappedChatPanel`:** `ChatPanel` already had `onEditMessage`/`onDeleteMessage`, but the wrapper never forwarded them, so no hook-bound panel offered either. It now maps them onto `chat.editMessage`/`chat.deleteMessage` (realtime-modules >= 0.100; `RMUseChatReturn` gains both as optional members), on by default when the hook has them (`editable={false}` turns them off). The edit sends matching `metadata.html` so the thread does not keep rendering the old rich body. The adapter now carries `editedAt`/`deletedAt`, which it used to drop, so the "(edited)" marker and the deleted placeholder appear from the live `messageUpdated`/`messageDeleted` frames. `canEdit(message)`/`canDelete(message)` replace the own-messages-only default (`ChatPanel` `canEditMessage`/`canDeleteMessage`); the gateway stays the authority. `onForwardMessage` is forwarded too.
+
+## 2.423.0
+
+- **Call media panel grid:** `CallDock` and `ConversationCallDock` take `layout?: 'shelf' | 'grid'` (default `shelf`, unchanged). `grid` renders only the tile stage — no header, meta, device controls or Leave (the host's bar, e.g. `HuddleBar`, owns those) — as a reflowing grid of fluid 16:9 tiles; root `data-layout="grid"` (shelf roots now carry `data-layout="shelf"`). Tiles come from the new `CallTileRow variant="grid"`: the dock tile (camera-off initials with the media kept playing in a 1px sink, audio sink, name, mic/mute state, speaking/followed ring, reconnecting veil), columns from `gridCols` via static classes (1 → 1, 2–4 → 2, 5–9 → 3, 10+ → 4; `data-columns`, `data-tile-count`), the viewer first and inline as "You" (never a PiP), no `+N` collapse. Connecting draws one fluid skeleton; ended/error render as before. One dock instance serves either layout, so a host moving its single media sink between a footer shelf and a panel opens no second subscription.
+
+## 2.422.0
+
+- **Types build:** `npm run build:types` failed with TS5011 under TypeScript 7 (no explicit `rootDir`); `tsconfig.build.json` now sets `rootDir: ./src`. The shipped `dist/*.d.ts` come from `npm run build` (the dts bundle), which appended its ambient `declare module '@tiptap/core'` / `declare global` blocks in worker-completion order, so every build reshuffled ~700 lines per entry and a block missed by the harvest vanished silently. New `scripts/normalize-dts-ambient.mjs` (run by `build`) sorts the blocks and fails if an entry lacks any ambient block that src declares. No type changes versus 2.421.0 apart from block order.
+
+## 2.421.0
+
+- **`AddPeoplePicker`:** the effect that prunes the picked list when candidates change returned a fresh array on every run, so each parent render with a new-but-equal `candidates` array caused an extra state update and commit (a burst of presence frames multiplied into effect-driven renders). It now returns the same array when nothing was dropped, so React bails out. Regression test renders 50 times with equal-content arrays.
+
+## 2.420.0
+
+- **`HuddleBar` typography:** every text (name, phase, timer, people, chat/leave label, unread badge, share/chat wrappers) now goes through `Text`; no raw `text-*`/`font-*` utility remains in the file. Idle name is `xs` / normal / secondary (was `sm` semibold) so it reads as one row with a status footer's `Messages` and `0 online`; live name is `xs` / medium / primary. Bar icons are 16px like the footer's Social button.
+- **`Text`:** new optional `size`, `weight`, `tone`, `tabular` props carry the type tokens.
+
+## 2.419.0
+
+- Merge of the parallel 2.417.0 and 2.418.0 releases (both forked from 2.416.0).
+- **`ComputerLab` (from 2.417.0):** the workspace rail shows the real empty state on an empty fleet; "Nothing matches" appears only for a filter miss.
+- **`RecordGraph` (from 2.418.0):** the node button sets `pointer-events-auto` so a mouse can click and hover a record; a selected record prints its whole title and draws above its neighbours.
+
+## 2.418.0
+
+- **`RecordGraph`:** a mouse can click and hover a record again. xyflow computes `pointer-events: none` on a node wrapper that is neither draggable nor selectable and has no node-level handler (this graph turns both off), and the node `button` inherited it, so only Enter/Space reached `onToggle`; the button now sets `pointer-events-auto`.
+- **`RecordGraph`:** a selected record prints its whole title (no two-line clamp, up to 220px wide) on its surface halo, and the selected node draws above its neighbours (`zIndex`).
+
+## 2.416.0
+
+- **`HuddleBar`:** an `idle` phase for the pre-call bar (`name` is the page's context; draws `onStart` / `startLabel` / `startDisabledReason`, and no timer, counts, media or Leave); `chatLabel` and `chatDisabledReason` on the chat button; `onLeave` is optional (unused while idle).
+
+---
+
+## 2.415.0
+
+- **`WorkActivityNode`:** the truncated header carries a native `title` with the full node title, so a clipped name stays readable on hover.
+
+---
+
+## 2.414.0
+
+- **Suggestion marks (`/doc-editor`).** The Tiptap "track changes" engine, no React context: `SuggestionInsert` / `SuggestionDelete` / `SuggestionModify` / `SuggestionMarks`, the `SuggestChanges` extension (`setSuggestionMode`, `toggleSuggestionMode`, `Mod-Shift-e`), `authorSuggestionsAs`, `proposalAuthor`, the readers `listSuggestions`, `finalDoc`, `originalDoc`, `docForViewMode`, `previewStateForViewMode`, `viewModeClassName`, `SUGGESTION_VIEW_MODES`, the author encoding (`formatSuggestionAuthor`, `parseSuggestionAuthor`, `suggestionAuthorLabel`) and the identity helpers (`createSuggestionIdentity`, `suggestionKey`, ...). The transaction rewriting is a vendored `@handlewithcare/prosemirror-suggest-changes` 0.1.8 under `suggestions/vendor`; mark styling is in `styles.css`. Hosts must keep `@tiptap/pm` to one copy (Vite `optimizeDeps.exclude`). Ported from realtime-examples; its React provider and review panel are not included.
+- **`parseDeckText`, `deckTitleFrom`, `recordingIdFor`** (`/doc-editor`): the pure `/deck <what> [--from ...] [--preview]` grammar, title and recording choice.
+- **`SuggestionReviewList selectedCount`:** with per-card `selected`, the accept-all button counts the ticked cards and disables at zero.
+- `useDeckPresence` and `SuggestionCard` selection/status shipped in 2.412.0.
+
+## 2.413.0
+
+- **`ContextComposer`** forwards `modeRowStart` (drawn on the idle row too) and `sendWithReferencesOnly` to `RichChatComposer`. The context chip counts as a reference.
+- **`WrappedChatPanel` / `ChatPanel` private cards.** A `localMessages` entry may carry `body` (a React node, or a function returning one) in place of its text, plus `actions` and `note`; it renders as an unpersisted private card, ordered by timestamp, deduplicated by `id` against the channel and itself. `LocalChatMessage.body` and the `WrappedLocalMessage` type are new.
+- **`HuddleBar`:** a `reconnecting` phase; visible wording for non-live phases (`statusLabel` overrides, `null` hides); `onToggleMedia` / `mediaOpen` / `mediaToggleLabel` add a media-panel toggle button with `aria-expanded`.
+
+## 2.412.0
+
+- **New exports (additive).** `CloudIcon` and `MonitorIcon` from `/shared`; `HuddleBar` from `/video`; `useDeckPresence` from `/doc-editor`.
+- **`DeviceToggleSelect deviceMenu={false}`** renders the toggle without the device menu.
+- **`RichChatComposer`:** `modeRowStart` now renders on the idle row too, and `sendWithReferencesOnly` allows sending a message that carries only references.
+- **`SuggestionCard`:** `selected`, `onSelectedChange`, `status` and `acceptLabel`; `SuggestionReviewList` passes `acceptLabel` through.
+- **`WrappedChatPanel`:** `localMessages` prop for host-held messages shown with the hook's.
+- **Fixes:** deck header actions wrap at narrow widths; conversation tabs no longer clip; the pinned marker renders; `FloatingPanel` re-clamps to the viewport when it or the window resizes; `EditorShell` keeps a floor height for the proposal strip.
+
+## 2.411.0
+
+- **`ComputerLab appearance="workspace"` (feat).** The same multiplexer — keys, saved layout, pane kinds, shell quota — under host-themed chrome: a header with `title` (or `null`), "N computers · N agents", the fleet's needs-you / running / error pills (each a rail filter), **+ Computer** and **Keys**, plus `headerActions`; a tabbed rail (`LabFleetRail`: Computers / Agents, search, status filter, project groups headed "6 computers · $0.46 / $95 · 5 bots", numbered rows stable across tabs, a laptop glyph for a paired machine, ⌘-click to select); card panes (`WorkspacePane`) with a kind menu, status badge and a one-line meta (`PaneStatusLine variant="meta"`), shedding quieter parts in a narrow split (container queries); a toolbar (`LabPaneToolbar`: "N panes ▾", +, "x / 8 shells", arrange as list / split, expand, ⋯ windows); and an instruction bar — **Nudge** (an instruction to each computer's agent, through `onInstruct` or, by default, a resumed `runTask` per targeted microVM, laptops skipped) or **Type** (keystrokes into the open panes), aimed at the focused pane, the ⌘-click selection or all computers. The classic appearance is the default and unchanged apart from the kind rules below.
+- **Two more built-in pane kinds** reading the same tail stream: `LOGS_PANE_KIND` ("Bot logs": `LogStream` follow / pause with a missed-line count, source filter, search, live byte-rate footer) and `AGENT_PANE_KIND` (the current run as a ✓ / ◌ checklist with elapsed time). `DEFAULT_PANE_KINDS` appends them; the toggle now cycles shell → tail → logs → agent.
+- **`Computer.kind?: 'microvm' | 'local'`** and **`PaneKind.appliesTo`** (plus `icon`, `title`): `SHELL_PANE_KIND` refuses a laptop, a new or retargeted pane lands on the first kind that applies (`defaultKindFor`, `kindsFor`), and the toggle skips kinds that do not.
+- `useLabLayout().arrange('rows' | 'columns' | 'main')` / `arrangePanes`; `PaneTreeView gutter="roomy"`; `summarizeFleet`, `hasAgent`, `matchesQuery`; `useComputeTail` stamps a step with its frame's `ts` when present, so a replayed buffer keeps its own times.
+- The mock shell answers `ls` with `tests/` and `logs/`, and gains `head` / `tail [-n N]` over `logs/agent.log`, `tools.log` and `runtime.log`.
+- New glyphs: `DesktopIcon`, `LaptopIcon`, `SplitViewIcon`, `MaximizeIcon`, `KeyboardIcon`, `BotIcon`. Story: `Compute/ComputerLab → Workspace`; tests: `ComputerLabWorkspace.test.tsx`, `mockShellLogs.test.ts`.
+
+## 2.410.0
+
+- Merges the OrgIQ parity work. `WrappedChatPanel` gains `readReceipts`, `readReceiptsEnabled`, `unreadFrom`, `threaded`, `reply` and `onCancelReply`; `ChatPanel` shows a reply strip. New `CursorOverlay` (collaboration) and `WrappedCursorOverlay` (integrations). `TraceTimeline` gains `scale`, `colorByStatus`, `durationColumn` and `errorText`.
+- New shared primitives: `Combobox`, `Histogram`, `AccentStripe`, `dataAccentProps`, `DATA_ACCENT_SLOTS` (with matching `styles.css` rules). New social composites: `ChannelBindingStrip`, `CallLogList`, `AddPeoplePicker`.
+
+## 2.409.0
+
+- `EditorShell` adds `titleOverflow="wrap"` for a full record heading at narrow pane widths. The default remains a single-line truncated title, and the editable title keeps its existing fitted input. Story: `WrappedRecordTitle`; contract: `EditorShell.test.tsx`.
+
 ## 2.407.42
 
 - **`RichChatComposer` docked card: a bare trigger hides only once something follows it, and the inline chip shows only while it hides (fix to 2.407.41).** Live, typing `/doc` hid the whole line — nothing left rendered, so the next keystroke landed in a new paragraph ahead of the command (the 2.403.1 trap, now for a bare trigger) and the draft became "E" + "/docdit…". A bare trigger that is the entire line stays visible until the space after it; the chip (`data-command-chip="inline"`) renders only while the input hides the command, so the trigger is never on screen twice. Picked-argument hiding is unchanged. Test: `RichChatComposerCommandChip.test.tsx`.

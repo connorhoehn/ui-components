@@ -71,8 +71,8 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
 // different colour from the brand --color-primary.)
 const variantClasses: Record<ButtonVariant, string> = {
   primary: 'bg-primary text-on-primary border-none hover:bg-primary-hover',
-  secondary: 'bg-surface-inset text-text-primary border border-border hover:bg-surface-hover',
-  ghost: 'bg-transparent text-text-primary border border-border hover:bg-surface-hover',
+  secondary: 'bg-primary/5 text-text-primary border border-primary/20 enabled:hover:bg-primary/12 enabled:hover:border-primary/30 aria-pressed:bg-primary/12 aria-pressed:text-primary',
+  ghost: 'bg-transparent text-text-primary border border-transparent enabled:hover:bg-primary/10 enabled:hover:text-primary aria-pressed:bg-primary/12 aria-pressed:text-primary',
   danger: 'bg-transparent text-danger-fg border border-danger-border hover:bg-danger-bg',
   'danger-solid': 'bg-danger text-white border-none hover:bg-danger/90',
   success: 'bg-transparent text-success-fg border border-success-border hover:bg-success-bg',
@@ -153,6 +153,7 @@ export function Button({
         // After the family reset: `font-[inherit]` is a font-FAMILY class
         // (see lib/cn), and the weight is the one button weight.
         BUTTON_WEIGHT,
+        tone === 'code' ? 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-code-blue' : 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
         (TONE[tone] ?? variantClasses)[variant],
         !isLink && sizeClasses[size],
         disabled && 'opacity-50 cursor-not-allowed',

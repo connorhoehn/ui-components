@@ -68,6 +68,15 @@ export interface ChatSidePanelFrameProps {
   expanded?: boolean;
   /** When supplied, offers an expand/restore control beside the title. */
   onToggleExpanded?: () => void;
+  /**
+   * Type step for the header (since 2.430.0). `xs` (default): the 12px
+   * semibold caption and 11px subtitle. `sm`: the app's body step beside
+   * `PageSection size="sm"` — a 14px semibold title and a 12px subtitle, for
+   * a pane that sits next to a tabbed page (a page's conversation pane).
+   */
+  size?: 'xs' | 'sm';
+  /** Names the × control (default "Close panel"); a pane that collapses says so. */
+  closeLabel?: string;
   children: ReactNode;
   className?: string;
   'data-testid'?: string;
@@ -79,19 +88,23 @@ export interface ChatSidePanelFrameProps {
  * the rest and scrolls on its own.
  */
 export function ChatSidePanelFrame({
-  title, subtitle, onClose, onOpenFullPage, actions, expanded = false, onToggleExpanded, children, className, 'data-testid': testId = 'chat-side-panel',
+  title, subtitle, onClose, onOpenFullPage, actions, expanded = false, onToggleExpanded, size = 'xs', closeLabel = 'Close panel', children, className, 'data-testid': testId = 'chat-side-panel',
 }: ChatSidePanelFrameProps) {
+  const sm = size === 'sm';
   return (
     <section
       aria-label={title}
       data-testid={testId}
+      data-size={sm ? 'sm' : undefined}
+      // Menus opened inside the panel stay inside it (2.434.0, InlinePopover POPOVER_BOUNDARY_ATTR).
+      data-uic-popover-boundary=""
       className={cn('flex h-full min-h-0 flex-col border-l border-border bg-surface', className)}
     >
-      <header className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-3 py-1.5">
+      <header className={cn('flex shrink-0 items-center justify-between gap-2 border-b border-border', sm ? 'px-4 py-2' : 'px-3 py-1.5')}>
         <Inline gap="sm" align="center" wrap={false} className="min-w-0">
           <span className="flex min-w-0 flex-col">
-            <span className="truncate text-[12px] font-semibold text-text-secondary" data-testid={`${testId}-title`}>{title}</span>
-            {subtitle && <span className="truncate text-[11px] text-text-tertiary" data-testid={`${testId}-subtitle`}>{subtitle}</span>}
+            <span className={cn('truncate font-semibold', sm ? 'text-sm leading-5 text-text-primary' : 'text-[12px] text-text-secondary')} data-testid={`${testId}-title`}>{title}</span>
+            {subtitle && <span className={cn('truncate', sm ? 'text-xs leading-4 text-text-secondary' : 'text-[11px] text-text-tertiary')} data-testid={`${testId}-subtitle`}>{subtitle}</span>}
           </span>
           <Inline gap="xs" align="center" wrap={false} className="shrink-0">
             {onToggleExpanded && (
@@ -115,8 +128,8 @@ export function ChatSidePanelFrame({
             {actions}
           </Inline>
         </Inline>
-        <Tooltip content="Close panel" placement="bottom">
-          <IconButton size="md" aria-label="Close panel" onClick={onClose} data-testid={`${testId}-close`} className="shrink-0"><CloseIcon /></IconButton>
+        <Tooltip content={closeLabel} placement="bottom">
+          <IconButton size="md" aria-label={closeLabel} onClick={onClose} data-testid={`${testId}-close`} className="shrink-0"><CloseIcon /></IconButton>
         </Tooltip>
       </header>
       <div className="min-h-0 flex-1 overflow-auto">{children}</div>

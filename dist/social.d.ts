@@ -29,7 +29,12 @@ export declare interface ActivePerson {
     activity?: string;
     /** In a live call right now: the bubble gets a ring and the tile a small live marker. */
     inCall?: boolean;
-    status?: 'online' | 'busy' | 'away';
+    /**
+     * Presence. Omitted reads as online (the grid's original subject: who is
+     * here now). `offline` (2.432.1) is for a roster the host shows whole — a
+     * team's members — so someone not here does not wear a green dot.
+     */
+    status?: 'online' | 'busy' | 'away' | 'offline';
     /** Voluntary work sharing is independent from presence and call state. */
     workSharing?: {
         state: 'active' | 'historical';
@@ -87,6 +92,31 @@ export declare interface ActivityPanelProps {
 export declare interface ActivityResponse {
     items: ActivityItem[];
     nextKey: string | null;
+}
+
+export declare function AddPeoplePicker({ open, onClose, candidates, onAdd, title, searchPlaceholder, emptyMessage, confirmLabel, busy, error, 'data-testid': testId, }: AddPeoplePickerProps): JSX.Element;
+
+export declare interface AddPeoplePickerCandidate {
+    userId: string;
+    displayName: string;
+    /** Role, email or team — a second line under the name. */
+    subtitle?: string;
+}
+
+export declare interface AddPeoplePickerProps {
+    open: boolean;
+    onClose: () => void;
+    candidates: readonly AddPeoplePickerCandidate[];
+    onAdd: (userIds: string[]) => void | Promise<void>;
+    title?: string;
+    searchPlaceholder?: string;
+    emptyMessage?: string;
+    /** Confirm button label; the count is appended. */
+    confirmLabel?: string;
+    busy?: boolean;
+    /** A refusal from the server, shown in place. */
+    error?: string | null;
+    'data-testid'?: string;
 }
 
 export declare function AddToChatDialog({ open, conversationName, people, preselectedIds, busy, anchor, placement, onAdd, onClose, 'data-testid': testId, historyChoice, }: AddToChatDialogProps): JSX.Element;
@@ -337,6 +367,13 @@ export declare function agentRunTimings(details: Pick<AgentRunDetails, 'startedA
 
 export declare const ALL_CONVERSATION_FEATURES: readonly ConversationFeature[];
 
+/**
+ * Reconcile a stored order with the sections present now: known ids in the
+ * stored order, then any new ones in their default place. Pure, exported for
+ * hosts that persist the order.
+ */
+export declare function arrangeRailSections(defaultOrder: readonly string[], stored: readonly string[] | null | undefined): string[];
+
 export declare function AttachmentBubble({ attachment, src, onOpen, className }: AttachmentBubbleProps): JSX.Element;
 
 export declare interface AttachmentBubbleProps {
@@ -361,6 +398,30 @@ export declare interface AttachmentBubbleProps {
 
 /** What a console surface paints behind itself. `none` keeps the ordinary surface. */
 declare type BackdropTone = 'auto' | 'night' | 'graphite' | 'none';
+
+/** A data section for `ConversationRail sections`: the heading's count, the rows, the empty line. */
+export declare function buildRailSection<T>(o: BuildRailSectionOptions<T>): ConversationRailSection;
+
+export declare interface BuildRailSectionOptions<T> {
+    id: string;
+    label: string;
+    items: readonly T[];
+    /** The rail's find text; rows whose name does not contain it are left out. */
+    query?: string;
+    /** The row key — what `onSelect` hands back. Unique across the rail. */
+    key: (item: T) => string;
+    /** The row's name (and what the find filter matches). */
+    name: (item: T) => string;
+    /** The rest of the row: second line, unread, live marker. */
+    row?: (item: T) => Partial<Omit<ConversationItem, 'channel' | 'name'>>;
+    /** The open row's key. */
+    active?: string | null;
+    onSelect: (key: string) => void;
+    state?: RailSectionState;
+    /** Rows before "Show N more". Default 8. */
+    maxVisible?: number;
+    'data-testid'?: string;
+}
 
 export declare function CallActivityCard({ callId, startedBy, participants, live, durationMs, startedAt, outcome, recordingId, onOpenRecording, audioOnly, recorded, notRecordedReason, lobbyName, onJoin, className, 'data-testid': testId, }: CallActivityCardProps): JSX.Element;
 
@@ -434,6 +495,34 @@ export declare interface CallActivityParticipant {
     avatarUrl?: string;
 }
 
+export declare interface CallLogEntry {
+    id: string;
+    who: string;
+    /** "Incoming", "Outgoing", "Room" … */
+    direction: string;
+    /** "Answered", "Missed", "Declined" … */
+    outcome: string;
+    missed: boolean;
+    startedAt: string;
+    /** Already formatted ("4m 12s"). */
+    duration: string;
+}
+
+export declare function CallLogList({ rows, onCallBack, callBackLabel, callBackDisabled, formatWhen, defaultFilter, className, 'data-testid': testId, }: CallLogListProps): JSX.Element;
+
+export declare interface CallLogListProps {
+    rows: readonly CallLogEntry[];
+    onCallBack?: (row: CallLogEntry) => void;
+    /** Label per row for the action ("Call back", "Open room"). */
+    callBackLabel?: (row: CallLogEntry) => string;
+    callBackDisabled?: boolean;
+    formatWhen?: (iso: string) => string;
+    /** Initial filter. */
+    defaultFilter?: 'all' | 'missed';
+    className?: string;
+    'data-testid'?: string;
+}
+
 /** How an invite that never became a call ended. */
 export declare type CallOutcome = 'cancelled' | 'declined' | 'no-answer';
 
@@ -450,6 +539,41 @@ export declare function callRefFromMetadata(metadata: Record<string, unknown> | 
     lobbyName?: string;
     participants: CallActivityParticipant[];
 } | null;
+
+export declare interface ChannelBindingChoice {
+    value: string;
+    label: string;
+}
+
+export declare function ChannelBindingStrip({ label, channel, latest, notice, openLabel, onOpen, openDisabled, choices, onBind, onUnbind, busy, error, unboundLabel, className, 'data-testid': testId, }: ChannelBindingStripProps): JSX.Element;
+
+export declare interface ChannelBindingStripProps {
+    /** Leading label, e.g. "Discussion". */
+    label: string;
+    /** The bound channel; omit when nothing is bound. */
+    channel?: {
+        name: string;
+        privacy?: 'public' | 'private';
+    };
+    /** Newest line, already summarised ("Mira: shipping Friday"). */
+    latest?: string | null;
+    /** Shown beside the channel when the viewer is not a member. */
+    notice?: string;
+    openLabel?: string;
+    /** Cross into the channel's own workspace. Hidden when omitted. */
+    onOpen?: () => void;
+    openDisabled?: boolean;
+    /** Channels that could be bound. Binding UI renders only with `onBind`. */
+    choices?: readonly ChannelBindingChoice[];
+    onBind?: (value: string) => void | Promise<void>;
+    /** Unbind button renders only when provided. */
+    onUnbind?: () => void | Promise<void>;
+    busy?: boolean;
+    error?: string | null;
+    unboundLabel?: string;
+    className?: string;
+    'data-testid'?: string;
+}
 
 export declare interface ChannelDocumentItem {
     documentId: string;
@@ -926,7 +1050,7 @@ declare interface ChatMessage {
     deletedAt?: string;
 }
 
-export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, dock: dockSlot, currentUserId, reactionsFor, onToggleReaction, onReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, documentUnavailable, callParticipants, agentRunStatus, onOpenRun, agentLoopStatus, onOpenLab, onOpenResult, onDecideRun, onReviewRun, onRetryRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, tone, showHeader, fill, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, dock: dockSlot, currentUserId, reactionsFor, onToggleReaction, onReply, reply, onCancelReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, canEditMessage, canDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, documentUnavailable, callParticipants, agentRunStatus, onOpenRun, agentLoopStatus, onOpenLab, onOpenResult, onDecideRun, onReviewRun, onRetryRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, tone, showHeader, fill, flushComposer, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -978,6 +1102,16 @@ export declare interface ChatPanelProps {
     onToggleReaction?: (messageId: string, emoji: string) => void;
     /** Starts a quote-reply. Presence of this enables the reply control. */
     onReply?: (message: ChatMessage) => void;
+    /**
+     * The message being answered. Renders a dismissible quote strip directly above
+     * the built-in input row. Ignored when `composer` is supplied (that slot owns
+     * its own reply UI, e.g. ContextComposer's `reply`). The panel does not stamp
+     * `metadata.replyTo` on the outgoing message: the host does, from the same
+     * value, in whatever `onSend` path it owns.
+     */
+    reply?: QuotedMessage | null;
+    /** Called by the quote strip's dismiss control. Omit for a quote with no dismiss. */
+    onCancelReply?: () => void;
     /**
      * Send this message to ANOTHER conversation. Presence of this enables the
      * Forward control; absent, nothing renders and every existing caller is
@@ -1047,6 +1181,14 @@ export declare interface ChatPanelProps {
     onEditMessage?: (message: ChatMessage, text: string) => Promise<void> | void;
     /** Remove one of the viewer's own messages, after a confirm. Same gate as `onEditMessage`. */
     onDeleteMessage?: (message: ChatMessage) => Promise<void> | void;
+    /**
+     * Who may edit. Default: the viewer's own messages only. A host that knows
+     * more (it is the server that decides) passes a predicate; it REPLACES the
+     * own-message default for Edit, and cards/notices/deleted rows stay excluded.
+     */
+    canEditMessage?: (message: ChatMessage) => boolean;
+    /** Who may delete. Default own messages; a moderator-grant host widens it. */
+    canDeleteMessage?: (message: ChatMessage) => boolean;
     /** Message ids currently pinned in this channel. */
     pinnedMessageIds?: ReadonlySet<string>;
     /**
@@ -1199,6 +1341,9 @@ export declare interface ChatPanelProps {
      *  demos expect), TRUE inside a dock, whose column has a definite
      *  height that the body must match or leave a dead band behind. */
     fill?: boolean;
+    /** In a filling panel with a custom composer, let its backdrop meet the
+     *  parent edges while message history keeps a 16px reading gutter. */
+    flushComposer?: boolean;
     /** Called when the reader asks for older messages. When present (and
      *  `hasMore` is not false) a "Load earlier messages" button renders
      *  above the first message. The panel preserves the reader's scroll
@@ -1340,7 +1485,7 @@ export declare interface ChatSidePanelApi {
  * the title on the left and the way out on the right, and a body that fills
  * the rest and scrolls on its own.
  */
-export declare function ChatSidePanelFrame({ title, subtitle, onClose, onOpenFullPage, actions, expanded, onToggleExpanded, children, className, 'data-testid': testId, }: ChatSidePanelFrameProps): JSX.Element;
+export declare function ChatSidePanelFrame({ title, subtitle, onClose, onOpenFullPage, actions, expanded, onToggleExpanded, size, closeLabel, children, className, 'data-testid': testId, }: ChatSidePanelFrameProps): JSX.Element;
 
 export declare interface ChatSidePanelFrameProps {
     title: string;
@@ -1355,6 +1500,15 @@ export declare interface ChatSidePanelFrameProps {
     expanded?: boolean;
     /** When supplied, offers an expand/restore control beside the title. */
     onToggleExpanded?: () => void;
+    /**
+     * Type step for the header (since 2.430.0). `xs` (default): the 12px
+     * semibold caption and 11px subtitle. `sm`: the app's body step beside
+     * `PageSection size="sm"` — a 14px semibold title and a 12px subtitle, for
+     * a pane that sits next to a tabbed page (a page's conversation pane).
+     */
+    size?: 'xs' | 'sm';
+    /** Names the × control (default "Close panel"); a pane that collapses says so. */
+    closeLabel?: string;
     children: ReactNode;
     className?: string;
     'data-testid'?: string;
@@ -1799,7 +1953,7 @@ export declare interface ConversationPeer {
     online?: boolean;
 }
 
-export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, sectionActions, collapsedSections, onToggleSection, onStartCall, maxVisible, emptyLabel, header, title, actions, beforeList, footer, onTogglePin, onToggleMute, onMarkUnread, onRename, canRename, onSetSection, collapsible, collapsed, onToggleCollapse, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
+export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, sectionActions, collapsedSections, onToggleSection, onStartCall, maxVisible, emptyLabel, header, title, actions, beforeList, footer, onTogglePin, onToggleMute, onMarkUnread, onRename, canRename, onSetSection, collapsible, collapsed, onToggleCollapse, shelfLayout, search, sections, sectionLayout, onSectionLayoutChange, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
 
 export declare interface ConversationRailProps {
     /**
@@ -1880,11 +2034,82 @@ export declare interface ConversationRailProps {
     collapsed?: boolean;
     /** Fires with the state the host should switch to when the toggle is used. */
     onToggleCollapse?: (next: boolean) => void;
+    /**
+     * `bar` (2.432.0): the shelf as one row of icon buttons with counts under
+     * the header, so the conversations are not pushed four rows down. `list`
+     * (default) keeps the stacked rows.
+     */
+    shelfLayout?: 'list' | 'bar';
+    /**
+     * The rail's find field, behind a search button in the header (2.432.0):
+     * the field shows only once toggled (and while it holds text), takes the
+     * caret when it opens, and Escape clears and closes it. Prefer this to
+     * putting a SearchInput in `header`, which keeps it on screen for good.
+     */
+    search?: {
+        value: string;
+        onChange: (value: string) => void;
+        placeholder?: string;
+        /** The button's and the field's name. Default "Find a chat". */
+        label?: string;
+        'data-testid'?: string;
+    };
+    /**
+     * Host sections placed in an order the reader can change (2.432.0), around
+     * the rail's own Direct messages (`dms`) and Channels (`channels`). With
+     * this, `beforeList` still renders first, above every arrangeable section.
+     */
+    sections?: readonly ConversationRailSection[];
+    /** The reader's order of section ids (`sections` + `dms` + `channels`); unknown ids are ignored. */
+    sectionLayout?: readonly string[] | null;
+    /**
+     * The reader moved a section. Given, the header's ⋯ offers "Arrange
+     * sections" (↑/↓ per section, then Done) and "Reset layout".
+     */
+    onSectionLayoutChange?: (order: string[] | null) => void;
     className?: string;
     'data-testid'?: string;
 }
 
-export declare function ConversationShelf({ items, activeId, onSelect, compact, iconOnly, size, plain, className, 'data-testid': testId, }: ConversationShelfProps): JSX.Element | null;
+/**
+ * A host section placed in the rail's arrangeable order (2.432.0).
+ *
+ * Two forms. DATA (2.438.0, the rail model): give `rows` and the rail draws
+ * the heading — its fold (`collapsedSections` / `onToggleSection`, keyed by
+ * `label` like the rail's own groups) and its `count` — and the rows, with
+ * the open row marked and `emptyLabel` / `note` when there are none; build
+ * one with `buildRailSection`. NODE: give `node` for content that is not a
+ * conversation list (a people grid, a team tree); with `heading` the rail
+ * still draws the heading, its fold and count over it.
+ */
+export declare interface ConversationRailSection {
+    /** Stable id — what `sectionLayout` stores. `dms` and `channels` are the rail's own. */
+    id: string;
+    /** The heading it goes by — what "Arrange sections" lists, and its fold key. */
+    label: string;
+    /** Custom content, drawn as given (under the rail's heading when `heading`). */
+    node?: ReactNode;
+    /** Draw the rail's heading (fold + count) over `node`. Data sections always have it. */
+    heading?: boolean;
+    /** The heading's count: the records the host holds, not the rows the find filter left. */
+    count?: number;
+    /** Data form: the section's rows. */
+    rows?: ConversationItem[];
+    /** The open row (its `channel` key). */
+    activeRow?: string | null;
+    /** A row was chosen: its key. */
+    onSelectRow?: (key: string) => void;
+    /** Shown when `rows` is empty. */
+    emptyLabel?: string;
+    /** One line instead of the rows (an account that cannot have any). */
+    note?: string;
+    /** Rows before "Show N more". */
+    maxVisible?: number;
+    /** Root test id: the section is `<id>-section`, its rows `<id>`, its note `<id>-note`. */
+    'data-testid'?: string;
+}
+
+export declare function ConversationShelf({ items, activeId, onSelect, compact, iconOnly, size, plain, layout, className, 'data-testid': testId, }: ConversationShelfProps): JSX.Element | null;
 
 export declare interface ConversationShelfItem {
     id: string;
@@ -1928,6 +2153,14 @@ export declare interface ConversationShelfProps {
      * mockup's All documents / Recent / Shared with me. Since 2.389.2.
      */
     plain?: boolean;
+    /**
+     * `bar` (2.432.0): the destinations as ONE row of icon buttons with their
+     * counts — Activity, Mentions, Calls, Recordings at the rail's top — so the
+     * conversations start right under the header instead of four rows down.
+     * Each button is named by its label (and says its count); the active one
+     * takes the selected tint. `list` (default) is the stacked rows.
+     */
+    layout?: 'list' | 'bar';
     className?: string;
     'data-testid'?: string;
 }
@@ -1999,7 +2232,7 @@ export declare interface ConversationStartReceipt {
     onAction?: () => void;
 }
 
-export declare function ConversationSurface({ name, description, online, avatarUrl, features, children, canvas, members, memberCount, files, thumbnailSrc, documents, onOpenDocument, onRename, onCreateDocument, onCreateWhiteboard, pins, onUnpin, mentions, onOpenMention, recordings, onOpenRecording, onJumpToMessage, onStartCall, callModeFixed, onWatch, watchLabel, watchHint, watchViewerCount, callInProgress, headerActions, view: controlledView, onViewChange, className, 'data-testid': testId, }: ConversationSurfaceProps): JSX.Element;
+export declare function ConversationSurface({ name, description, online, avatarUrl, features, children, canvas, members, memberCount, files, thumbnailSrc, documents, onOpenDocument, onRename, onCreateDocument, onCreateWhiteboard, pins, onUnpin, mentions, onOpenMention, recordings, onOpenRecording, onJumpToMessage, onStartCall, callModeFixed, onWatch, watchLabel, watchHint, watchViewerCount, callInProgress, headerActions, headerClassName, view: controlledView, onViewChange, className, 'data-testid': testId, }: ConversationSurfaceProps): JSX.Element;
 
 export declare interface ConversationSurfaceProps {
     /** Channel name, or the people in a DM. */
@@ -2118,6 +2351,8 @@ export declare interface ConversationSurfaceProps {
     callModeFixed?: boolean;
     /** Extra header controls, to the right of the call buttons. */
     headerActions?: ReactNode;
+    /** Optional host gutter adjustment; identity, tabs and actions remain native. */
+    headerClassName?: string;
     /** Controlled view. Omit to let the surface keep its own. */
     view?: ConversationFeature;
     onViewChange?: (view: ConversationFeature) => void;
@@ -2775,7 +3010,15 @@ export declare interface LocalChatMessage {
     /** ISO. Decides where in the thread the message sits. */
     timestamp: string;
     displayName: string;
+    /** Plain text. Drawn as the body unless `body` is set; keep it meaningful (a summary) either way. */
     content: string;
+    /**
+     * A host-rendered body in place of `content`: a React node, or a function
+     * called on each render (so it can close over live state). Lets an
+     * unpersisted private card carry markdown, a diagram, a document preview.
+     * Since 2.413.0.
+     */
+    body?: ReactNode | (() => ReactNode);
     metadata: Record<string, unknown>;
     actions?: Array<{
         id: string;
@@ -2789,6 +3032,9 @@ export declare interface LocalChatMessage {
 
 /** The command a draft is addressing, or null. `/doc`, `/doc …`, never `/document`. */
 export declare function matchComposerCommand(draft: string, commands: readonly ComposerCommand[] | undefined): ComposerCommand | null;
+
+/** Whether `name` matches the rail's find text (case-insensitive substring). */
+export declare function matchesRailQuery(name: string, query: string | null | undefined): boolean;
 
 export declare interface MembershipHistory {
     mode: MembershipHistoryMode;
@@ -3188,6 +3434,24 @@ export declare interface QuotedMessage {
     text: string;
 }
 
+export declare const RAIL_CHANNELS_SECTION = "channels";
+
+/** The rail's own conversation groups, as arrangeable sections. */
+export declare const RAIL_DMS_SECTION = "dms";
+
+export declare const RAIL_SECTION_CONTENT_INSET = "px-2";
+
+/**
+ * The rail's one horizontal inset (2.432.0): every section heading's caret,
+ * every row's leading glyph or avatar, the shelf bar's first icon and a host
+ * section's own content start 16px from the rail's left edge. Sections sit in
+ * an 8px gutter (`RAIL_SECTION_GUTTER`) and draw their own 8px inside it, the
+ * way `RailSectionHeader` and the conversation rows already do; a host
+ * section that is not built from those (a grid, a note) takes
+ * `RAIL_SECTION_CONTENT_INSET` on its content.
+ */
+export declare const RAIL_SECTION_GUTTER = "px-2";
+
 export declare interface RailSectionAction {
     /** The accessible name and the tooltip — "Create a channel", not "+". */
     label: string;
@@ -3255,6 +3519,41 @@ export declare interface RailSectionHeaderProps {
     dark?: boolean;
     className?: string;
     'data-testid'?: string;
+}
+
+export declare interface RailSectionMemory {
+    /** Folded state by label (stored over the defaults). */
+    collapsedSections: Readonly<Record<string, boolean>>;
+    isFolded: (label: string) => boolean;
+    setFolded: (label: string, next: boolean) => void;
+    sectionLayout: string[] | null;
+    setSectionLayout: (order: string[] | null) => void;
+    /** Spread onto `ConversationRail`. */
+    railProps: {
+        collapsedSections: Readonly<Record<string, boolean>>;
+        onToggleSection: (label: string, next: boolean) => void;
+        sectionLayout: string[] | null;
+        onSectionLayoutChange: (order: string[] | null) => void;
+    };
+}
+
+export declare interface RailSectionMemoryOptions {
+    /** Sections folded until the reader opens them, by label. */
+    defaultFolded?: Readonly<Record<string, boolean>>;
+    /** Labels the page is about (Teams on a teams route): open unless the reader folded them. */
+    opened?: readonly string[];
+}
+
+export declare interface RailSectionState {
+    loading?: boolean;
+    /** The read failed: the section says so rather than "nothing here". */
+    error?: string | null;
+    /** The plural noun for the empty and error lines ("initiatives"). */
+    noun?: string;
+    /** The empty line when there is nothing at all. Default "You are not on any <noun> yet." */
+    emptyLabel?: string;
+    /** One honest line instead of the rows (an account that cannot have any). */
+    note?: string | null;
 }
 
 /**
@@ -3713,6 +4012,13 @@ export declare function useChatSidePanelRenderers(): ChatSidePanelRenderers;
 export declare function useElapsedMs(startedAt: string | number | undefined, running: boolean): number | null;
 
 /**
+ * The rail's per-device memory under `<storageKey>.folded` (labels → folded)
+ * and `<storageKey>.layout` (the reader's section order). A preference, not
+ * state: private mode or blocked storage still folds, just forgets.
+ */
+export declare function useRailSectionMemory(storageKey: string, options?: RailSectionMemoryOptions): RailSectionMemory;
+
+/**
  * Adds `commands` to the nearest provider while the caller is mounted. Pass a
  * stable array (module-level or memoised): a new array each render is a
  * re-registration each render.
@@ -3770,14 +4076,19 @@ export declare function withoutForwardAttribution(content: string, from: Forward
 export { }
 
 
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
+    }
+}
+
+
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -3785,12 +4096,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -3817,6 +4125,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
@@ -3827,12 +4148,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -3843,26 +4164,6 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -3894,9 +4195,36 @@ declare module '@tiptap/core' {
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        suggestChanges: {
+            /** Turn suggestion mode on or off. */
+            setSuggestionMode: (enabled: boolean) => ReturnType;
+            /** Flip suggestion mode. */
+            toggleSuggestionMode: () => ReturnType;
+            /** Accept one suggestion: keep its insertions, remove its deletions. */
+            acceptSuggestion: (id: SuggestionIdentity) => ReturnType;
+            /** Reject one suggestion: drop its insertions, restore its deletions. */
+            rejectSuggestion: (id: SuggestionIdentity) => ReturnType;
+            /** Accept every suggestion in the document. */
+            acceptAllSuggestions: () => ReturnType;
+            /** Reject every suggestion in the document. */
+            rejectAllSuggestions: () => ReturnType;
+            /** Move the selection onto a suggestion. */
+            selectSuggestion: (id: SuggestionIdentity) => ReturnType;
+        };
     }
 }

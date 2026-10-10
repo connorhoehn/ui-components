@@ -24,7 +24,7 @@ import { ReactionChips } from './ReactionChips';
 import { MessageActionBar } from './MessageActionBar';
 import { InlineMessageEditor } from './InlineMessageEditor';
 import ConfirmDialog from '../shared/ConfirmDialog';
-import { QuoteBlock } from './QuoteBlock';
+import { QuoteBlock, type QuotedMessage } from './QuoteBlock';
 import {
   AttachmentBubble,
   TransferBubble,
@@ -58,7 +58,15 @@ export interface LocalChatMessage {
   /** ISO. Decides where in the thread the message sits. */
   timestamp: string;
   displayName: string;
+  /** Plain text. Drawn as the body unless `body` is set; keep it meaningful (a summary) either way. */
   content: string;
+  /**
+   * A host-rendered body in place of `content`: a React node, or a function
+   * called on each render (so it can close over live state). Lets an
+   * unpersisted private card carry markdown, a diagram, a document preview.
+   * Since 2.413.0.
+   */
+  body?: ReactNode | (() => ReactNode);
   metadata: Record<string, unknown>;
   actions?: Array<{ id: string; label: string; onSelect: () => void; primary?: boolean }>;
   /** Replaces the default "Only you can see this". */
@@ -111,6 +119,16 @@ export interface ChatPanelProps {
   onToggleReaction?: (messageId: string, emoji: string) => void;
   /** Starts a quote-reply. Presence of this enables the reply control. */
   onReply?: (message: ChatMessage) => void;
+  /**
+   * The message being answered. Renders a dismissible quote strip directly above
+   * the built-in input row. Ignored when `composer` is supplied (that slot owns
+   * its own reply UI, e.g. ContextComposer's `reply`). The panel does not stamp
+   * `metadata.replyTo` on the outgoing message: the host does, from the same
+   * value, in whatever `onSend` path it owns.
+   */
+  reply?: QuotedMessage | null;
+  /** Called by the quote strip's dismiss control. Omit for a quote with no dismiss. */
+  onCancelReply?: () => void;
   /**
    * Send this message to ANOTHER conversation. Presence of this enables the
    * Forward control; absent, nothing renders and every existing caller is
@@ -180,6 +198,14 @@ export interface ChatPanelProps {
   onEditMessage?: (message: ChatMessage, text: string) => Promise<void> | void;
   /** Remove one of the viewer's own messages, after a confirm. Same gate as `onEditMessage`. */
   onDeleteMessage?: (message: ChatMessage) => Promise<void> | void;
+  /**
+   * Who may edit. Default: the viewer's own messages only. A host that knows
+   * more (it is the server that decides) passes a predicate; it REPLACES the
+   * own-message default for Edit, and cards/notices/deleted rows stay excluded.
+   */
+  canEditMessage?: (message: ChatMessage) => boolean;
+  /** Who may delete. Default own messages; a moderator-grant host widens it. */
+  canDeleteMessage?: (message: ChatMessage) => boolean;
   /** Message ids currently pinned in this channel. */
   pinnedMessageIds?: ReadonlySet<string>;
   /**
@@ -333,6 +359,9 @@ export interface ChatPanelProps {
    *  demos expect), TRUE inside a dock, whose column has a definite
    *  height that the body must match or leave a dead band behind. */
   fill?: boolean;
+  /** In a filling panel with a custom composer, let its backdrop meet the
+   *  parent edges while message history keeps a 16px reading gutter. */
+  flushComposer?: boolean;
   /** Called when the reader asks for older messages. When present (and
    *  `hasMore` is not false) a "Load earlier messages" button renders
    *  above the first message. The panel preserves the reader's scroll
@@ -1383,11 +1412,15 @@ export function ChatPanel({
   reactionsFor,
   onToggleReaction,
   onReply,
+  reply,
+  onCancelReply,
   onForwardMessage,
   onCopyLink,
   onTogglePin,
   onEditMessage,
   onDeleteMessage,
+  canEditMessage,
+  canDeleteMessage,
   pinnedMessageIds,
   onJumpToMessage,
   highlightedMessageId,
@@ -1417,6 +1450,7 @@ export function ChatPanel({
   tone = 'light',
   showHeader,
   fill,
+  flushComposer = false,
   onLoadMore,
   hasMore,
   loadingMore = false,
@@ -1959,7 +1993,7 @@ export function ChatPanel({
             // intrinsic inline size 0) — the default shrink-to-fit bubble
             // gives it 0px and its contents wrap letter-by-letter. See
             // MessageRow's `contentLayout` doc comment.
-            contentLayout={localRef ? 'block' : 'inline'}
+            contentLayout={localRef || local.body != null ? 'block' : 'inline'}
             content={
               <>
                 {localRef ? (
@@ -1981,6 +2015,10 @@ export function ChatPanel({
                     onRetry={onRetryRun}
                     {...loopCardProps(localRef, agentLoopStatus, onOpenLab)}
                   />
+                ) : local.body != null ? (
+                  <div data-testid="chat-local-message-body" className="min-w-0">
+                    {typeof local.body === 'function' ? (local.body as () => ReactNode)() : local.body}
+                  </div>
                 ) : (
                   <MessageBody text={local.content} />
                 )}
@@ -2222,7 +2260,10 @@ export function ChatPanel({
   // (`canForward` already excludes it on its own `files.length === 0` check).
   const hasCardBody = !!(agentRef || recordingRef || callRef || docRef || files.length > 0);
   // Own, plain, still there: the only messages a person may edit or delete.
-  const canEditDelete = isMine && !isDeleted && !isActivityNotice && !isCard && !!messageId;
+  const editableShape = !isDeleted && !isActivityNotice && !isCard && !!messageId;
+  const canEditOnly = editableShape && (canEditMessage ? canEditMessage(message) : isMine);
+  const canDeleteOnly = editableShape && (canDeleteMessage ? canDeleteMessage(message) : isMine);
+  const canEditDelete = canEditOnly || canDeleteOnly;
   // Anyone's, but only WORDS. See the `onForwardMessage` prop for why the
   // exclusion set is wider than Reply's: a card's buttons and an attachment's
   // download URL are both scoped to the conversation they were posted in, so
@@ -2236,7 +2277,7 @@ export function ChatPanel({
     && !isCard
     && files.length === 0
     && !!message.content.trim();
-  const editing = canEditDelete && !!onEditMessage && editingId === messageId;
+  const editing = canEditOnly && !!onEditMessage && editingId === messageId;
 
   // The quote, the message, its reactions — one unit. Rendering
   // them as siblings of the row would let a reaction drift away
@@ -2273,8 +2314,8 @@ export function ChatPanel({
         </span>
       )}
       {isPinned && (
-        <span className="mb-0.5 block text-[11px] text-text-tertiary" data-testid="pinned-marker">
-          <PinIcon size={11} /> Pinned
+        <span className="mb-0.5 flex items-center gap-1 text-[11px] text-text-tertiary" data-testid="pinned-marker">
+          <PinIcon size={11} className="shrink-0" /> Pinned
         </span>
       )}
       {isDeleted ? (
@@ -2339,17 +2380,14 @@ export function ChatPanel({
       data-message-id={messageId || undefined}
       data-continues={continues ? 'true' : undefined}
       // A continued row drops the whole meta line, timestamp included, so the
-      // native tooltip is where its time went. That is the honest limit of
-      // what this component can do from here: MessageRow has no hover-gutter
-      // slot, and inventing one in the panel would put a second time element
-      // on the page that the row itself knows nothing about. The full local
+      // native tooltip is where its time went. The full local
       // date and time is in the title, on the row, reachable by pointer — and
       // the headed row a few lines above still states the clock time plainly.
       title={continues ? fullTimestampLabel(message.timestamp) : undefined}
-      // `group` drives the hover reveal; `focus-within` is what
-      // keeps the bar reachable without a pointer.
+      // `group` drives the hover reveal; keyboard focus reveals the same
+      // reserved controls without changing the row geometry.
       className={cn(
-        'group relative rounded-md transition-colors hover:bg-surface-hover',
+        'group relative rounded-md px-2 py-1 transition-colors hover:bg-surface-hover',
         // `ring-inset`: an outset ring is drawn OUTSIDE the row's
         // box, and the scroll container clips overflow — so the
         // right edge of the highlight was cut off against the
@@ -2368,8 +2406,8 @@ export function ChatPanel({
         // keeping the time would trade a name for a stray HH:MM and leave the
         // row two lines tall — half the repetition and none of the density
         // this is for. `formatChatTime('')` yields '', so nothing is rendered
-        // and no invalid `dateTime` reaches the DOM. A `hideMeta` prop on
-        // MessageRow would say this outright; that file is out of scope here.
+        // and no invalid `dateTime` reaches the DOM. Actions retain their own
+        // header space when the repeated metadata is hidden.
         timestamp={continues ? '' : message.timestamp}
         editedAt={isDeleted ? undefined : message.editedAt}
         avatarUrl={message.avatarUrl}
@@ -2390,29 +2428,14 @@ export function ChatPanel({
         // doc comment: a card/attachment body sizes itself to its container
         // and collapses inside the default shrink-to-fit bubble.
         contentLayout={hasCardBody ? 'block' : 'inline'}
-      />
-      {messageId && !isDeleted && !editing && (onToggleReaction || canEditDelete || (canForward && onForwardMessage) || (!isActivityNotice && (onReply || onTogglePin || onCopyLink))) && (
+        actions={messageId && !isDeleted && !editing && (onToggleReaction || canEditDelete || (canForward && onForwardMessage) || (!isActivityNotice && (onReply || onTogglePin || onCopyLink))) ? (
         <MessageActionBar
-          // Top-RIGHT of the row, the way Slack and Teams place
-          // it, and the hovered row is tinted so the bar and the
-          // message it acts on read as one thing however wide the
-          // pane is. It used to sit at the message column's left
-          // edge, lifted onto the row's top — which put it over
-          // the author's name and the timestamp ("Caro…"), the
-          // one line that says whose message you are about to
-          // react to. `-top-3` lifts it into the gap above the
-          // row, where there is no text on the right.
-          //
-          // `group-has-[:focus-visible]` rather than
-          // `group-focus-within`: focus-within is true after a
-          // MOUSE click too, so clicking a reaction left that row's
-          // bar stuck open after the pointer moved away — two bars
-          // on screen at once, one of them for a message you were
-          // no longer pointing at. focus-visible is keyboard-only,
-          // which is the case the reveal-on-focus exists for.
-          className={cn(
-            'absolute -top-3 right-3 z-10 opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100',
-          )}
+          // The row header reserves this geometry even while controls are
+          // hidden. Metadata and actions wrap instead of overlapping, and the
+          // first visible row has no negative-positioned toolbar to be clipped.
+          // Keyboard-only focus reveal avoids a mouse reaction leaving an old
+          // bar stuck open after the pointer has moved to another message.
+          className="max-w-full flex-wrap opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100"
           onReact={onToggleReaction ? (e) => onToggleReaction(messageId, e) : undefined}
           onOpenReactionPicker={
             onToggleReaction
@@ -2453,10 +2476,12 @@ export function ChatPanel({
             onTogglePin && !isActivityNotice ? () => onTogglePin(message) : undefined
           }
           pinned={!!message.id && !!pinnedMessageIds?.has(message.id)}
-          onEdit={canEditDelete && onEditMessage ? () => setEditingId(messageId) : undefined}
-          onDelete={canEditDelete && onDeleteMessage ? () => setDeletingId(messageId) : undefined}
+          onEdit={canEditOnly && onEditMessage ? () => setEditingId(messageId) : undefined}
+          onDelete={canDeleteOnly && onDeleteMessage ? () => setDeletingId(messageId) : undefined}
         />
-      )}
+        ) : undefined}
+      />
+
     </div>
     {/* Inside the list rather than pinned to the pane, so it scrolls away with
         the message it describes — a receipt floating above the composer while
@@ -2763,7 +2788,7 @@ export function ChatPanel({
         // top margin — that margin plus the card's padding was the empty
         // strip between the dock's tab bar and the first message.
         fills
-          ? 'flex h-full min-h-0 flex-col px-3 pb-3 pt-2'
+          ? cn('flex h-full min-h-0 flex-col pt-2', flushComposer && composer ? 'px-0 pb-0' : 'px-3 pb-3')
           : cn('border rounded p-3 mt-4', dark ? 'border-white/10 bg-white/5' : 'border-border'),
       )}
     >
@@ -2802,7 +2827,7 @@ export function ChatPanel({
           stays on the bottom edge and the slack goes to the messages.
           Wrapped so the "new messages" affordance can float over its
           bottom edge without joining the scroll content. */}
-      <div className={cn('relative flex flex-col mb-2', fills ? 'min-h-0 flex-1' : '')}>
+      <div className={cn('relative flex flex-col mb-2', fills ? 'min-h-0 flex-1' : '', fills && flushComposer && composer && 'mx-4')}>
         <div
           ref={listRef}
           onScroll={handleListScroll}
@@ -3005,6 +3030,14 @@ export function ChatPanel({
           {composer}
         </div>
       ) : (
+      <div className="flex shrink-0 flex-col gap-1">
+      {reply && (
+        <QuoteBlock
+          quote={reply}
+          onDismiss={onCancelReply}
+          data-testid="chat-panel-pending-reply"
+        />
+      )}
       <div className="flex flex-row items-center gap-2 shrink-0">
         {onSendFiles && (
           <>
@@ -3088,6 +3121,7 @@ export function ChatPanel({
         >
           Send
         </Button>
+      </div>
       </div>
       )}
     </div>

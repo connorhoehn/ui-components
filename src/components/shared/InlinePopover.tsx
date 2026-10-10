@@ -135,6 +135,25 @@ export function popoverFloor(anchor: DOMRect | null, viewportHeight: number, doc
   return floor;
 }
 
+/**
+ * The attribute a bounded surface — a conversation pane beside a page, a side
+ * panel — puts on itself so a popover opened from INSIDE it stays inside it
+ * horizontally (since 2.434.0). Without it a `bottom-end` menu from a control
+ * near the pane's left edge hung its panel left over the page beside the pane
+ * (the folded "More ▾" of a narrow pane's tab bar covered the content column).
+ * The nearest such ancestor of the trigger wins; the viewport still applies.
+ */
+export const POPOVER_BOUNDARY_ATTR = 'data-uic-popover-boundary';
+
+/** The horizontal span a popover anchored at `trigger` must stay within: its nearest boundary ancestor, else the viewport. */
+export function popoverBounds(trigger: HTMLElement | null, viewportWidth: number): { left: number; right: number } {
+  const host = trigger?.closest<HTMLElement>(`[${POPOVER_BOUNDARY_ATTR}]`) ?? null;
+  if (!host) return { left: 0, right: viewportWidth };
+  const r = host.getBoundingClientRect();
+  if (r.width === 0) return { left: 0, right: viewportWidth };
+  return { left: Math.max(0, r.left), right: Math.min(viewportWidth, r.right) };
+}
+
 // Open order of popover panels. A submenu is portalled on its own, so to its
 // parent it looks like "outside": a mousedown on a submenu row closed the
 // parent, which unmounted the submenu before the click landed, and the row's
@@ -236,12 +255,17 @@ export function InlinePopover({
       top = margin;
       changed = true;
     }
-    if (r.right > window.innerWidth - margin) {
-      left = Math.max(margin, window.innerWidth - margin - r.width);
+    // Horizontally inside the trigger's boundary (a pane), else the viewport;
+    // a panel wider than the boundary keeps its left edge in it.
+    const bounds = popoverBounds(trigger.current, window.innerWidth);
+    const minLeft = bounds.left + margin;
+    const maxRight = bounds.right - margin;
+    if (r.right > maxRight) {
+      left = Math.max(minLeft, maxRight - r.width);
       changed = true;
     }
-    if (left < margin) {
-      left = margin;
+    if (left < minLeft) {
+      left = minLeft;
       changed = true;
     }
     if (!changed) return;

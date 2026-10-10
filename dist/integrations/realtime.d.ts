@@ -1,6 +1,7 @@
 import { AnyExtension } from '@tiptap/core';
 import { Awareness } from 'y-protocols/awareness';
 import { Component } from 'react';
+import { ComponentType } from 'react';
 import { Editor } from '@tiptap/react';
 import { ErrorInfo } from 'react';
 import { HangoutConnectionState } from '@connorhoehn/realtime-modules/client/video';
@@ -313,6 +314,223 @@ declare interface CallActivityParticipant {
     displayName?: string;
     avatarUrl?: string;
 }
+
+/** The call the host drives: RM `useConversationCall()`'s result, restated to what is read here. */
+export declare interface CallBlockCall extends RMConversationCallSource {
+    call: (NonNullable<RMConversationCallSource['call']> & {
+        callId: string;
+        host?: string | null;
+        startedAt?: number | null;
+    }) | null;
+    start(targets: {
+        userId: string;
+        displayName?: string;
+    }[], opts?: {
+        audioOnly?: boolean;
+    }): Promise<void>;
+    accept(ring?: never): Promise<void>;
+    rejoin(): Promise<void>;
+    leave(): Promise<void>;
+}
+
+export declare type CallBlockClaimPlacement = Exclude<CallBlockPlacement, 'footer'>;
+
+/** What a call is about, drawn as the bar's document chips. */
+export declare interface CallBlockDocument {
+    id: string;
+    title: string;
+    href?: string;
+}
+
+export declare type CallBlockHost<M extends CallBlockModules> = ReturnType<typeof createCallBlockHost<M>>;
+
+/** The realtime-modules functions the host calls (spread `/client/video`). */
+export declare interface CallBlockModules extends ConversationCallDockModules {
+    LVSProvider: ComponentType<{
+        baseUrl: string;
+        getAuthToken: () => string;
+        children: ReactNode;
+    }>;
+    useConversationCall(opts: {
+        lobbyName: string;
+        channel?: string | null;
+        self: {
+            userId: string;
+            displayName: string;
+            avatarUrl?: string;
+        };
+        platformApi: {
+            baseUrl: string;
+            getIdToken: () => string | Promise<string>;
+        };
+        gateway?: never;
+        discover?: boolean;
+        initialMedia?: {
+            micOn: boolean;
+            cameraOn: boolean;
+        };
+        onCallStarted?(e: never): void;
+        onCallEnded?(e: never): void;
+        onCallMissed?(e: never): void;
+    }): CallBlockCall;
+    useIncomingConversationCalls(opts: {
+        gateway?: never;
+        self: {
+            userId: string | null;
+            displayName?: string;
+        };
+        onAccept?(ring: never): void;
+    }): {
+        rings: CallBlockRing[];
+        accept(ring: never): void;
+        decline(ring: never): void;
+    };
+    useMediaDevices(opts?: {
+        requestOnMount?: boolean;
+    }): RMMediaDevicesSource;
+}
+
+/** Where the one call-media sink draws. */
+export declare type CallBlockPlacement = 'composer' | 'page' | 'block' | 'pane' | 'footer';
+
+export declare interface CallBlockProps {
+    placement: CallBlockClaimPlacement;
+    /** The narrow bar (mic, camera, Leave; the rest in ⋯) over tiles two to a row. Composer placement only. */
+    compact?: boolean;
+    documents?: readonly CallBlockDocument[];
+    className?: string;
+}
+
+/** One ring, as RM `useIncomingConversationCalls()` reports it. */
+export declare interface CallBlockRing extends RMIncomingConversationCall {
+    lobbyName: string;
+    channel: string | null;
+}
+
+export declare interface CallBlockView {
+    /** The bar and tiles for `ConversationComposer callBlock`; undefined while the call is not this conversation's. */
+    block: ReactNode;
+    /** The call is this conversation's and drawn. */
+    holds: boolean;
+    /** The shell's call is bound to this conversation's lobby. */
+    here: boolean;
+    /** A huddle is on in this lobby that you are not in (the host discovered it). */
+    live: boolean;
+}
+
+/** People in the call (the server's distinct count), kept apart from invitees still ringing. */
+export declare function callCounts(call: {
+    participantCount: number;
+    participants: readonly {
+        state: string;
+    }[];
+} | null): {
+    joined: number;
+    ringing: number;
+};
+
+declare type CallDockTileSize = 'sm' | 'md' | 'lg';
+
+/** A call is drawn from the caller's first ring until the ended notice clears; an incoming ring is the toast's. */
+export declare function callDrawn(phase: CallPhase | string, hasLobby: boolean): boolean;
+
+export declare interface CallHostEvent {
+    callId: string;
+    lobbyName: string;
+    channel: string | null;
+    peerUserIds: string[];
+    direction?: 'outgoing' | 'incoming';
+    durationMs?: number | null;
+    [key: string]: unknown;
+}
+
+/** A call event, for an app that keeps a call log. */
+export declare type CallHostEventKind = 'started' | 'ended' | 'missed';
+
+export declare interface CallHostProviderProps {
+    self: {
+        userId: string;
+        displayName: string;
+        avatarUrl?: string;
+    } | null;
+    tenant: string | null;
+    /** Actor and tenant: a change tears media down; refreshing the same identity does not. */
+    scopeKey: string;
+    /** platform-api base URL the browser can reach, or null (calls unavailable). */
+    platformApiUrl: string | null;
+    getIdToken: () => string | Promise<string>;
+    /** The SFU's URL; latched within one scope, so a token refresh without it cannot move a call. */
+    videoUrl: string | null;
+    /** The gateway socket the app holds (RM `ConversationCallGateway`). */
+    gateway: unknown;
+    gatewayConfigured: boolean;
+    connectionState: string;
+    /** Accept was pressed on a ring: open the page the call is about. */
+    onAccept?: (ring: CallBlockRing) => void;
+    onCallEvent?: OnCallHostEvent;
+    /** Where the pre-join choices persist (one key per device). */
+    preJoinStorageKey?: string;
+    children: ReactNode;
+}
+
+export declare interface CallHostValue<C extends CallBlockCall> {
+    call: C;
+    /** The lobby the call is bound to; null until a page binds one or a ring is answered. */
+    lobby: CallLobby | null;
+    /** Bind this page's lobby. Ignored while a call is in progress or a ring is being answered. */
+    bind(lobby: CallLobby, starter?: {
+        start(): void;
+    }): void;
+    /** The page leaves: drops its lobby while no call is in progress. */
+    unbind(lobbyName: string): void;
+    /** Runs the bound page's own start (null when the page registered none) — the footer's idle Huddle. */
+    startBound: (() => void) | null;
+    self: {
+        userId: string;
+        displayName: string;
+    } | null;
+    tenant: string | null;
+    gatewayConfigured: boolean;
+    connectionState: string;
+    platformApiUrl: string | null;
+    /** Why no call can start here at all (no gateway, no platform-api, signed out, connecting), or null. */
+    unavailableReason: string | null;
+    /** Opens the device check on request (clears the remembered skip). */
+    checkDevices(): void;
+}
+
+/** A page's lobby: what the call host binds while nothing is in progress. */
+export declare interface CallLobby {
+    lobbyName: string;
+    /** What the bar's title says (the initiative's name, the people on Search). */
+    title: string;
+    /** Rides the invite, so the callee's Accept can open what the call is about. */
+    channel: string | null;
+    /** Why the page cannot start its call right now; absent = it can. */
+    startBlockedReason?: string;
+}
+
+export declare interface CallMediaOutletProps {
+    /** The footer's collapsed shelf id (for its toggle's aria-controls). */
+    id?: string;
+    /** Opens the call's People (e.g. the page's contributors). */
+    onOpenPeople?: (lobby: CallLobby, tenant: string | null) => void;
+    /** A document chip was clicked. */
+    onOpenDocument?: (document: CallBlockDocument) => void;
+    /** Drawn over the tiles wherever the sink draws (floating reactions). */
+    overlay?: ReactNode;
+    /** The dock's test id for a lobby (default `conversation-call-dock`). */
+    dockTestId?: (lobby: CallLobby, tenant: string | null) => string;
+}
+
+/** The media panel (the side pane's tile grid): open or collapsed. Opens by itself once per call. */
+export declare interface CallMediaPanelState {
+    open: boolean;
+    setOpen(open: boolean): void;
+    toggle(): void;
+}
+
+export declare type CallPhase = 'idle' | 'calling' | 'ringing' | 'connecting' | 'live' | 'reconnecting' | 'ended' | 'failed';
 
 /** Auth expiry is independent of whether a socket is open; the app adds its own mode rules. */
 export declare function canEditCanvasGrant(grant: {
@@ -999,6 +1217,16 @@ declare interface ChatPanelProps {
     /** Starts a quote-reply. Presence of this enables the reply control. */
     onReply?: (message: ChatMessage) => void;
     /**
+     * The message being answered. Renders a dismissible quote strip directly above
+     * the built-in input row. Ignored when `composer` is supplied (that slot owns
+     * its own reply UI, e.g. ContextComposer's `reply`). The panel does not stamp
+     * `metadata.replyTo` on the outgoing message: the host does, from the same
+     * value, in whatever `onSend` path it owns.
+     */
+    reply?: QuotedMessage | null;
+    /** Called by the quote strip's dismiss control. Omit for a quote with no dismiss. */
+    onCancelReply?: () => void;
+    /**
      * Send this message to ANOTHER conversation. Presence of this enables the
      * Forward control; absent, nothing renders and every existing caller is
      * untouched.
@@ -1067,6 +1295,14 @@ declare interface ChatPanelProps {
     onEditMessage?: (message: ChatMessage, text: string) => Promise<void> | void;
     /** Remove one of the viewer's own messages, after a confirm. Same gate as `onEditMessage`. */
     onDeleteMessage?: (message: ChatMessage) => Promise<void> | void;
+    /**
+     * Who may edit. Default: the viewer's own messages only. A host that knows
+     * more (it is the server that decides) passes a predicate; it REPLACES the
+     * own-message default for Edit, and cards/notices/deleted rows stay excluded.
+     */
+    canEditMessage?: (message: ChatMessage) => boolean;
+    /** Who may delete. Default own messages; a moderator-grant host widens it. */
+    canDeleteMessage?: (message: ChatMessage) => boolean;
     /** Message ids currently pinned in this channel. */
     pinnedMessageIds?: ReadonlySet<string>;
     /**
@@ -1219,6 +1455,9 @@ declare interface ChatPanelProps {
      *  demos expect), TRUE inside a dock, whose column has a definite
      *  height that the body must match or leave a dead band behind. */
     fill?: boolean;
+    /** In a filling panel with a custom composer, let its backdrop meet the
+     *  parent edges while message history keeps a 16px reading gutter. */
+    flushComposer?: boolean;
     /** Called when the reader asks for older messages. When present (and
      *  `hasMore` is not false) a "Load earlier messages" button renders
      *  above the first message. The panel preserves the reader's scroll
@@ -1463,6 +1702,31 @@ export declare interface ConversationCallDockProps {
     selfName?: string;
     /** 132 × 74 tiles instead of 176 × 88. */
     compact?: boolean;
+    /** Shelf tile size (2.432.0): `sm` 132 × 74, `md` 176 × 88 (default), `lg` 240 × 135. Wins over `compact`. */
+    tileSize?: CallDockTileSize;
+    /**
+     * The documents the call is about (2.432.0): the bar draws them as chips
+     * after the meta (≥ 1240px of dock width) and, with `onOpenDocuments`, a
+     * "Documents N" button. Omitted: a conversation call without documents.
+     */
+    documents?: {
+        id: string;
+        title: string;
+        presenting?: boolean;
+    }[];
+    onOpenDocuments?: () => void;
+    documentsOpen?: boolean;
+    onDocumentClick?: (id: string) => void;
+    /**
+     * `shelf` (default): the dock's header, device controls and Leave over a
+     * row of tiles. `grid` (2.423.0): the call's media panel — only the tiles,
+     * in a grid that reflows with the head count (1 / 2 / 2×2 / 3 columns), the
+     * viewer first as "You". The host's bar keeps mic, camera and Leave. The
+     * same single dock (and its media elements) serves either layout.
+     * `stack` (2.432.0): the narrow `shelf` for a side pane — mic ▾, camera ▾
+     * and Leave on the bar, the rest in its "⋯" menu, the tiles two to a row.
+     */
+    layout?: 'shelf' | 'grid' | 'stack';
     className?: string;
     /** The dock's test id; the notice is `<id>-notice`, the settings dialog `<id>-settings`. Default `conversation-call-dock`. */
     'data-testid'?: string;
@@ -1623,12 +1887,47 @@ declare interface ConversationSurfaceProps {
     callModeFixed?: boolean;
     /** Extra header controls, to the right of the call buttons. */
     headerActions?: ReactNode;
+    /** Optional host gutter adjustment; identity, tabs and actions remain native. */
+    headerClassName?: string;
     /** Controlled view. Omit to let the surface keep its own. */
     view?: ConversationFeature;
     onViewChange?: (view: ConversationFeature) => void;
     className?: string;
     'data-testid'?: string;
 }
+
+/** Bind the host to the installed realtime-modules call hooks. Call once, at module scope. */
+export declare function createCallBlockHost<M extends CallBlockModules>(rm: M): {
+    CallHostProvider: ({ scopeKey, videoUrl, children, ...rest }: CallHostProviderProps) => JSX.Element;
+    CallMediaOutlet: ({ id, onOpenPeople, onOpenDocument, overlay, dockTestId }: CallMediaOutletProps) => JSX.Element | null;
+    CallBlock: ({ placement, compact, documents, className }: CallBlockProps) => JSX.Element;
+    PreJoinDialog: ({ kind, title, selfName, initial, onJoin, onCancel }: {
+        kind: PreJoinKind;
+        title: string;
+        selfName: string;
+        initial: PreJoinChoice;
+        onJoin(choice: PreJoinChoice, devices: {
+            microphoneId?: string;
+            cameraId?: string;
+            speakerId?: string;
+        }): void;
+        onCancel(): void;
+    }) => JSX.Element;
+    ConversationCallDock: ConversationCallDockComponent;
+    useCallHost: () => CallHostValue<ReturnType<M["useConversationCall"]>> | null;
+    useCallBlock: (conversations: string | null | readonly (string | null | undefined)[], options?: UseCallBlockOptions) => CallBlockView;
+    useCallLobby: (lobby: CallLobby | null, start?: () => void) => {
+        here: boolean;
+        live: boolean;
+    };
+    useCallMediaPanel: () => CallMediaPanelState | null;
+    useCallBlockPlacement: () => CallBlockPlacement;
+    useCallBlockPageClaimed: () => boolean;
+    useClaimCallBlock: (target: HTMLElement | null, placement: CallBlockClaimPlacement, enabled?: boolean, options?: {
+        compact?: boolean;
+        documents?: readonly CallBlockDocument[];
+    }) => boolean;
+};
 
 /** Bind the pane to the app's realtime-modules functions. Call once at module scope. */
 export declare function createCanvasDocumentPane(rm: CanvasDocumentPaneModules): CanvasDocumentPaneComponent;
@@ -1681,6 +1980,8 @@ export declare function createWrappedLVSHangoutLayout(rm: WrappedLVSHangoutLayou
 
 /** Bind WrappedStreamStage to injected LVS hooks. See `createRealtimeIntegrations`. */
 export declare function createWrappedStreamStage(rm: WrappedStreamStageModules): WrappedStreamStageComponent;
+
+declare type CursorCoordinates = 'pixels' | 'fraction';
 
 export declare function decodeCanvasRecovery(value: unknown): Uint8Array | null;
 
@@ -2019,6 +2320,14 @@ export declare interface HangoutRoomsSectionProps {
     title?: string;
     /** Section storageKey override (collapse persistence). */
     storageKey?: string;
+    /**
+     * Rail header (2.432.0). With `onToggleCollapse` the section is headed by
+     * the rail's `RailSectionHeader` (caret, label, count, +) at the rail's one
+     * inset, and folds under the host's control; without it the classic
+     * `SidebarSection` header and its own localStorage memory stay.
+     */
+    collapsed?: boolean;
+    onToggleCollapse?: (next: boolean) => void;
     /** Custom create renderer — when omitted the built-in dialog is used. */
     renderCreateDialog?: (props: {
         open: boolean;
@@ -2072,7 +2381,15 @@ declare interface LocalChatMessage {
     /** ISO. Decides where in the thread the message sits. */
     timestamp: string;
     displayName: string;
+    /** Plain text. Drawn as the body unless `body` is set; keep it meaningful (a summary) either way. */
     content: string;
+    /**
+     * A host-rendered body in place of `content`: a React node, or a function
+     * called on each render (so it can close over live state). Lets an
+     * unpersisted private card carry markdown, a diagram, a document preview.
+     * Since 2.413.0.
+     */
+    body?: ReactNode | (() => ReactNode);
     metadata: Record<string, unknown>;
     actions?: Array<{
         id: string;
@@ -2337,6 +2654,25 @@ declare interface NotificationItem {
     category?: string;
 }
 
+export declare type OnCallHostEvent = (kind: CallHostEventKind, event: CallHostEvent, ctx: {
+    host: string | null;
+    selfId: string;
+}) => void;
+
+/**
+ * A page's huddle: walk into the huddle that is on (discovered while idle),
+ * else open one with nobody rung. What a page's bound start does by default.
+ */
+export declare function pageHuddleStart(call: {
+    phase: string;
+    call: unknown;
+    rejoin(): unknown;
+    start(targets: {
+        userId: string;
+        displayName: string;
+    }[]): unknown;
+}): 'rejoin' | 'start' | null;
+
 declare interface PinnedMessageItem {
     messageId: string;
     /** Who wrote the message. */
@@ -2360,6 +2696,15 @@ declare interface PinnedMessageItem {
     /** Display name of whoever pinned it. */
     pinnedBy?: string;
 }
+
+/** What this person last chose for how they enter a call. Device ids live in the call's own device preferences. */
+export declare interface PreJoinChoice {
+    micOn: boolean;
+    cameraOn: boolean;
+    remember: boolean;
+}
+
+export declare type PreJoinKind = 'start' | 'join' | 'accept' | 'check';
 
 declare type PresenceMode = 'editor' | 'reviewer' | 'reader';
 
@@ -2388,6 +2733,15 @@ declare interface PresenceUser {
     /** Where in the surface the user is — a section title, a pane name.
      *  Rendered under the detail line on the hover card. */
     location?: string;
+}
+
+declare interface QuotedMessage {
+    messageId: string;
+    author: string;
+    /** ISO timestamp of the quoted message. */
+    timestamp?: string;
+    /** Plain text of the original. Trimmed for display; the full text is not needed. */
+    text: string;
 }
 
 export declare type RealtimeCapabilityName = keyof RealtimeCapabilitySet;
@@ -2631,6 +2985,10 @@ export declare interface RMChatMessage {
     message: string;
     metadata?: Record<string, unknown>;
     timestamp: string;
+    /** Set by the gateway's `messageUpdated` frame. */
+    editedAt?: string;
+    /** Set by `messageDeleted`: a soft delete, the row stays as a placeholder. */
+    deletedAt?: string;
 }
 
 /**
@@ -2677,6 +3035,10 @@ export declare interface RMConversationCallSource {
     error: {
         message: string;
     } | null;
+    /** Optional native device-capture feedback; never a fatal call error. */
+    media?: {
+        captureError?: string | null;
+    };
     callingTo: string | null;
     elapsedMs: number | null;
     activeSpeakerId: string | null;
@@ -2710,6 +3072,19 @@ export declare interface RMCreateRoomInput {
     description?: string;
     visibility?: RMRoomVisibility;
     settings?: Partial<RMRoomSettings>;
+}
+
+/** Mirror of realtime-modules/src/client/types.ts CursorEntry */
+export declare interface RMCursorEntry {
+    clientId: string;
+    channel: string;
+    position: Record<string, unknown>;
+    metadata: Record<string, unknown> & {
+        mode?: string;
+        userInitials?: string;
+        userColor?: string;
+    };
+    timestamp: string;
 }
 
 /** Mirror of RM `DevicePreferences`. */
@@ -2989,6 +3364,19 @@ export declare interface RMUseChatReturn {
      */
     sendMessage: (text: string, metadata?: Record<string, unknown>) => void;
     loadHistory: (limit?: number) => void;
+    /** Change one of your own messages (realtime-modules >= 0.100). Optional: older hooks lack it. */
+    editMessage?: (messageId: string, text: string, metadata?: Record<string, unknown>) => void;
+    /** Soft-delete one of your own messages. Optional like `editMessage`. */
+    deleteMessage?: (messageId: string) => void;
+}
+
+/** Return shape of `useCursor(channel)` from realtime-modules (singular hook). */
+export declare interface RMUseCursorReturn {
+    /** Live cursors for the channel, excluding your own. */
+    cursors: RMCursorEntry[];
+    /** Publish your position (throttled by the hook). */
+    move: (position: Record<string, unknown>, metadata?: Record<string, unknown>) => void;
+    refresh?: () => void;
 }
 
 export declare interface RMUseFileUploadReturn {
@@ -3314,6 +3702,27 @@ export declare interface UploadedDocumentFile {
     type: string;
 }
 
+export declare interface UseCallBlockOptions {
+    /** Draw the block while the call is this conversation's (default true). */
+    enabled?: boolean;
+    /** A narrow host (a side pane). */
+    compact?: boolean;
+    /** The bar's document chips. */
+    documents?: readonly CallBlockDocument[];
+    /**
+     * Bind this conversation's lobby so the footer's Huddle starts it: the lobby
+     * defaults to the channel, the start to "walk into the huddle that is on,
+     * else open one with nobody rung".
+     */
+    bind?: {
+        title: string;
+        lobbyName?: string | null;
+        channel?: string | null;
+        blockedReason?: string | null;
+        start?: () => void;
+    } | null;
+}
+
 /**
  * Tab-local recovery is partitioned by verified identity and document; it never
  * stores grants. `keyPrefix` lets an app keep the storage keys it already wrote.
@@ -3398,13 +3807,20 @@ export declare interface WrappedCanvasDocumentProps extends Omit<CanvasDocumentV
     beforeConvert?: () => void | Promise<void>;
 }
 
-export declare function WrappedChatPanel({ chat, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, emojis, onReply, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, }: WrappedChatPanelProps): JSX.Element;
+export declare function WrappedChatPanel({ chat, localMessages, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, renderMessageReferences, emojis, onReply, reply, onCancelReply, readReceipts, readReceiptsEnabled, unreadFrom, threaded, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, editable, canEdit, canDelete, onForwardMessage, }: WrappedChatPanelProps): JSX.Element;
 
 export declare interface WrappedChatPanelProps {
     /** Return value of useChat(channel) from realtime-modules */
     chat: RMUseChatReturn;
     /** Optional presence hook return — used to derive typingUsers */
     presence?: RMUsePresenceReturn;
+    /**
+     * Messages that exist only in this view and are merged into the transcript
+     * by timestamp: a "Huddle started" notice, an optimistic send, a local
+     * agent reply. Not sent anywhere. One whose `id` the channel's own history
+     * also holds is dropped, so an optimistic message gives way to its echo.
+     */
+    localMessages?: readonly WrappedLocalMessage[];
     /**
      * Return value of useFileUpload(channel). Supplying it enables drag-drop,
      * paste and the paperclip, and renders every in-flight transfer in the
@@ -3509,8 +3925,31 @@ export declare interface WrappedChatPanelProps {
     hasMore?: boolean;
     loadingMore?: boolean;
     composer?: ReactNode;
+    /** Host-resolved references rendered after each adapted message. */
+    renderMessageReferences?: ChatPanelProps['renderMessageReferences'];
     emojis?: readonly string[];
     onReply?: (message: ChatMessage) => void;
+    /**
+     * The message currently being answered, shown as a dismissible quote above
+     * the built-in input row (pair with `onReply`). The host also stamps
+     * `replyTo` into `sendMetadata` so the sent message carries it. Ignored when
+     * `composer` is supplied.
+     */
+    reply?: ChatPanelProps['reply'];
+    onCancelReply?: () => void;
+    /**
+     * Who has read up to the newest message. Forwarded to ChatPanel, which draws
+     * one "Seen by" line. Feed it from `useChatReadReceipts(channel, ...)`
+     * (realtime-examples `DocumentChatPanel.tsx:416`, named at `:625`,
+     * passed at `:855`).
+     */
+    readReceipts?: ChatPanelProps['readReceipts'];
+    /** False when the server keeps no receipts here: renders nothing. Default true. */
+    readReceiptsEnabled?: boolean;
+    /** ISO timestamp of the viewer's own read cursor: draws the "new" line. */
+    unreadFrom?: string;
+    /** Nest replies under their root message (realtime-examples `DocumentChatPanel.tsx:856`). */
+    threaded?: boolean;
     onJumpToMessage?: (messageId: string) => void;
     highlightedMessageId?: string | null;
     documentEditors?: ChatPanelProps['documentEditors'];
@@ -3523,6 +3962,20 @@ export declare interface WrappedChatPanelProps {
      * callback. Omit for no wrapping (default).
      */
     wrapWithNetworkShim?: NetworkShimOptions;
+    /**
+     * Edit / delete through `chat.editMessage` / `chat.deleteMessage`. On by
+     * default when the hook has them; `false` turns the controls off. Since
+     * 2.424.0. The gateway stays the authority (its `authorize` and an
+     * author-only check run on every edit/delete), so this only decides what the
+     * UI OFFERS.
+     */
+    editable?: boolean;
+    /** Who gets an Edit control. Default: the viewer's own messages. Replaces that default. */
+    canEdit?: (message: ChatMessage) => boolean;
+    /** Who gets a Delete control. Default: own messages; a moderator-grant host widens it. */
+    canDelete?: (message: ChatMessage) => boolean;
+    /** Forwarded to ChatPanel: the hover bar's Forward, with the trigger for a picker. */
+    onForwardMessage?: ChatPanelProps['onForwardMessage'];
 }
 
 export declare function WrappedConnectionPill({ socket, ...rest }: WrappedConnectionPillProps): JSX.Element;
@@ -3564,6 +4017,24 @@ export declare interface WrappedConversationSurfaceProps extends Omit<Conversati
     /** Remap capability names when the host's CRDs are named differently. */
     capabilityNames?: Partial<Record<GatedConversationFeature, string>>;
     children?: ReactNode;
+}
+
+export declare function WrappedCursorOverlay({ cursor, coordinates, publish, selfClientId, children, className, }: WrappedCursorOverlayProps): JSX.Element;
+
+export declare interface WrappedCursorOverlayProps {
+    /** Return value of useCursor(channel) from realtime-modules. */
+    cursor: RMUseCursorReturn;
+    /**
+     * `'fraction'` (default) publishes and reads 0..1 positions so pointers line
+     * up across different viewport sizes. `'pixels'` uses raw offsets.
+     */
+    coordinates?: CursorCoordinates;
+    /** Publish the local pointer. Default true; false renders others only. */
+    publish?: boolean;
+    /** Your own client id; a cursor carrying it is hidden. */
+    selfClientId?: string;
+    children?: ReactNode;
+    className?: string;
 }
 
 export declare function WrappedFileUploadDrop({ fileUpload, accept, maxSize, multiple, disabled, label, className, uploadMetadata, onError, }: WrappedFileUploadDropProps): JSX.Element;
@@ -3642,6 +4113,14 @@ export declare interface WrappedHangoutRoomsListProps {
      * control over the no-rooms UI (e.g. an onboarding upsell).
      */
     renderEmpty?: ReactNode;
+    /**
+     * Rail header (2.432.0): with `onToggleCollapse` the section heads itself
+     * with the rail's `RailSectionHeader` — the same inset, type and disclosure
+     * as Teams, Direct messages and Channels — and the host owns the collapsed
+     * state instead of the section's own localStorage key.
+     */
+    collapsed?: boolean;
+    onToggleCollapse?: (next: boolean) => void;
     /** Custom create-dialog renderer — forwarded to HangoutRoomsSection. */
     renderCreateDialog?: (props: {
         open: boolean;
@@ -3666,6 +4145,18 @@ export declare interface WrappedHangoutState {
     participantCount: number;
     remoteCount: number;
 }
+
+/**
+ * A view-only message. With `body` it renders as a private card (the node, or
+ * what the function returns) with the "Only you can see this" note and its
+ * `actions`, in timestamp order; `content` stays the plain-text summary.
+ * Without `body` it is an ordinary transcript row. Since 2.413.0.
+ */
+declare type WrappedLocalMessage = ChatMessage & {
+    body?: ReactNode | (() => ReactNode);
+    actions?: LocalChatMessage['actions'];
+    note?: string;
+};
 
 export declare type WrappedLVSHangoutLayoutComponent = (props: WrappedLVSHangoutLayoutProps) => React.JSX.Element;
 
@@ -3864,14 +4355,19 @@ export declare interface WrappedStreamStageProps extends Omit<StreamStageProps, 
 export { }
 
 
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
+    }
+}
+
+
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -3879,12 +4375,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -3911,6 +4404,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
@@ -3921,12 +4427,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -3937,26 +4443,6 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -3988,9 +4474,36 @@ declare module '@tiptap/core' {
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        suggestChanges: {
+            /** Turn suggestion mode on or off. */
+            setSuggestionMode: (enabled: boolean) => ReturnType;
+            /** Flip suggestion mode. */
+            toggleSuggestionMode: () => ReturnType;
+            /** Accept one suggestion: keep its insertions, remove its deletions. */
+            acceptSuggestion: (id: SuggestionIdentity) => ReturnType;
+            /** Reject one suggestion: drop its insertions, restore its deletions. */
+            rejectSuggestion: (id: SuggestionIdentity) => ReturnType;
+            /** Accept every suggestion in the document. */
+            acceptAllSuggestions: () => ReturnType;
+            /** Reject every suggestion in the document. */
+            rejectAllSuggestions: () => ReturnType;
+            /** Move the selection onto a suggestion. */
+            selectSuggestion: (id: SuggestionIdentity) => ReturnType;
+        };
     }
 }

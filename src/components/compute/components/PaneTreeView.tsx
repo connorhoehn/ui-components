@@ -21,6 +21,11 @@ export interface PaneTreeViewProps {
   zoomedPaneId?: string | null;
   renderLeaf: (leaf: PaneLeaf) => ReactNode;
   onRatioChange: (splitId: string, ratio: number) => void;
+  /**
+   * Space between panes. `tight` (default) is the classic multiplexer's 4px
+   * rule; `roomy` is 8px, for panes that are cards with their own borders.
+   */
+  gutter?: 'tight' | 'roomy';
   className?: string;
 }
 
@@ -30,6 +35,7 @@ export function PaneTreeView({
   zoomedPaneId = null,
   renderLeaf,
   onRatioChange,
+  gutter = 'tight',
   className,
 }: PaneTreeViewProps) {
   if (zoomedPaneId) {
@@ -43,6 +49,7 @@ export function PaneTreeView({
         activePaneId={activePaneId}
         renderLeaf={renderLeaf}
         onRatioChange={onRatioChange}
+        gutter={gutter}
       />
     </div>
   );
@@ -58,9 +65,10 @@ interface TreeNodeProps {
   activePaneId: string | null;
   renderLeaf: (leaf: PaneLeaf) => ReactNode;
   onRatioChange: (splitId: string, ratio: number) => void;
+  gutter: 'tight' | 'roomy';
 }
 
-function TreeNode({ node, activePaneId, renderLeaf, onRatioChange }: TreeNodeProps) {
+function TreeNode({ node, activePaneId, renderLeaf, onRatioChange, gutter }: TreeNodeProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const startDrag = useCallback(
@@ -120,7 +128,7 @@ function TreeNode({ node, activePaneId, renderLeaf, onRatioChange }: TreeNodePro
       className={cn('flex flex-1 min-w-0 min-h-0', horizontal ? 'flex-row' : 'flex-col')}
     >
       <div className="flex min-w-0 min-h-0" style={{ flexBasis: `${percent}%`, flexGrow: 0, flexShrink: 0 }}>
-        <TreeNode node={node.a} activePaneId={activePaneId} renderLeaf={renderLeaf} onRatioChange={onRatioChange} />
+        <TreeNode node={node.a} activePaneId={activePaneId} renderLeaf={renderLeaf} onRatioChange={onRatioChange} gutter={gutter} />
       </div>
 
       <div
@@ -137,12 +145,14 @@ function TreeNode({ node, activePaneId, renderLeaf, onRatioChange }: TreeNodePro
           'shrink-0 bg-transparent hover:bg-code-blue/40 focus-visible:bg-code-blue/60 focus:outline-none transition-colors',
           // Wider hit area than visual weight: a 2px divider is honest about
           // the layout and impossible to grab.
-          horizontal ? 'w-1 cursor-col-resize my-0.5' : 'h-1 cursor-row-resize mx-0.5',
+          horizontal
+            ? cn(gutter === 'roomy' ? 'w-2' : 'w-1', 'cursor-col-resize my-0.5')
+            : cn(gutter === 'roomy' ? 'h-2' : 'h-1', 'cursor-row-resize mx-0.5'),
         )}
       />
 
       <div className="flex flex-1 min-w-0 min-h-0">
-        <TreeNode node={node.b} activePaneId={activePaneId} renderLeaf={renderLeaf} onRatioChange={onRatioChange} />
+        <TreeNode node={node.b} activePaneId={activePaneId} renderLeaf={renderLeaf} onRatioChange={onRatioChange} gutter={gutter} />
       </div>
     </div>
   );

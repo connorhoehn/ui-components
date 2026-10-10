@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { useRef } from 'react';
 import { cn } from '../../lib/cn';
+import { Tooltip } from './Tooltip';
 
 // ## Why it is a radiogroup and not a row of toggles
 //
@@ -19,6 +20,14 @@ export interface SegmentOption {
   label: string;
   value: string;
   icon?: ReactNode;
+  /**
+   * A count or marker after the option (since 2.434.0) — "Pinned 3". With
+   * `iconOnly` it sits as a small superscript count on the icon, and the
+   * option's accessible name carries it ("Pinned, 3").
+   */
+  badge?: ReactNode;
+  /** `data-testid` for this option's button; overrides `<data-testid>-<value>`. */
+  testId?: string;
 }
 
 export interface SegmentedControlProps {
@@ -54,9 +63,22 @@ export interface SegmentedControlProps {
    * the brand's soft fill and text — the start-a-call Video | Audio switch.
    */
   tone?: 'neutral' | 'accent';
+  /**
+   * Icon-only segments (since 2.434.0): each option shows its `icon`, its
+   * `label` becomes the button's accessible name and a hover/focus tooltip.
+   * For a compact view switcher on a pane's header row — Chat / Pinned /
+   * Files / Calls beside a pane's own tabs — where a second labelled row
+   * would stack two tab bars. Options without an icon fall back to the label.
+   */
+  iconOnly?: boolean;
   className?: string;
   'data-testid'?: string;
 }
+
+const ICON_SIZE_CLASSES: Record<'sm' | 'md', string> = {
+  sm: 'h-6 min-w-6 px-1 [&_svg]:size-3.5',
+  md: 'h-7 min-w-7 px-1.5 [&_svg]:size-4',
+};
 
 const SIZE_CLASSES: Record<'sm' | 'md', string> = {
   sm: 'px-2.5 py-1 text-xs',
@@ -81,6 +103,7 @@ export function SegmentedControl({
   disabled = false,
   fullWidth = false,
   tone = 'neutral',
+  iconOnly = false,
   className,
   'data-testid': testId,
 }: SegmentedControlProps) {
@@ -114,7 +137,9 @@ export function SegmentedControl({
     >
       {options.map((option, i) => {
         const active = option.value === value;
-        return (
+        const compact = iconOnly && option.icon != null;
+        const hasBadge = option.badge !== undefined && option.badge !== null && option.badge !== false;
+        const button = (
           <button
             key={option.value}
             type="button"
@@ -136,21 +161,28 @@ export function SegmentedControl({
               step(back ? -1 : 1);
             }}
             disabled={disabled}
-            data-testid={testId ? `${testId}-${option.value}` : undefined}
+            data-testid={option.testId ?? (testId ? `${testId}-${option.value}` : undefined)}
+            {...(compact ? { 'aria-label': hasBadge && (typeof option.badge === 'string' || typeof option.badge === 'number') ? `${option.label}, ${option.badge}` : option.label } : {})}
             className={cn(
               'inline-flex items-center justify-center gap-1.5 rounded-md font-medium transition-all cursor-pointer',
               fullWidth && 'flex-1',
               disabled && 'cursor-not-allowed opacity-60',
-              SIZE_CLASSES[size],
+              compact ? cn('relative', ICON_SIZE_CLASSES[size]) : SIZE_CLASSES[size],
               active ? (tone === 'accent' ? ACCENT_ACTIVE_CLASSES : ACTIVE_CLASSES) : INACTIVE_CLASSES,
               tone === 'accent' && 'h-[30px] py-0 text-[15px]',
               tone === 'accent' && !active && 'text-text-primary',
             )}
           >
             {option.icon}
-            {option.label}
+            {!compact && option.label}
+            {hasBadge && (compact
+              ? <span aria-hidden="true" className="absolute -right-0.5 -top-0.5 min-w-3.5 rounded-full bg-primary px-1 text-center text-[10px] font-semibold leading-3.5 text-on-primary">{option.badge}</span>
+              : <span className="text-[var(--color-text-tertiary)] tabular-nums">{option.badge}</span>)}
           </button>
         );
+        return compact
+          ? <Tooltip key={option.value} content={option.label} placement="bottom">{button}</Tooltip>
+          : button;
       })}
     </div>
   );

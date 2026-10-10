@@ -89,6 +89,25 @@ describe('RecordGraph', () => {
     expect(onSelectionChange).toHaveBeenLastCalledWith(['initiative:auth']);
   });
 
+  it('node buttons take the pointer back from the xyflow wrapper (2.418.0)', () => {
+    // xyflow computes `pointer-events: none` on a non-draggable,
+    // non-selectable node wrapper with no node handler; the button must
+    // re-enable it or a mouse can neither click nor hover a record.
+    setup();
+    for (const button of screen.getAllByRole('button', { name: /^(Person|Initiative|Work|Knowledge): / })) {
+      expect(button.className).toContain('pointer-events-auto');
+    }
+  });
+
+  it('a selected record prints its whole title above its neighbours; the rest clamp (2.418.0)', () => {
+    setup({ selectedKeys: ['work:cutover'] });
+    const title = screen.getByTestId('record-graph-selected-title');
+    expect(title).toHaveTextContent('Tenant-by-tenant cutover');
+    expect(title.className).not.toContain('line-clamp-2');
+    expect(screen.getByText('Vera Green').className).toContain('line-clamp-2');
+    expect(screen.getByTestId('flow-node-work:cutover').firstElementChild).toBeTruthy();
+  });
+
   it('Clear empties the selection, Ask fires, and Open record appears for exactly one', () => {
     const onSelectionChange = vi.fn(), onAskSelection = vi.fn(), onOpenRecord = vi.fn();
     const { rerender, props } = setup({ onSelectionChange, onAskSelection, onOpenRecord });

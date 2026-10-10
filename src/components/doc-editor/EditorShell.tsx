@@ -127,7 +127,8 @@ export interface EditorShellProps {
    * (`--dock-inset`), never scrolling and never inside the composer (which
    * collapses when idle): a pending edit stays in view while the page it
    * would change scrolls above it. Its own height is capped at 40% of the
-   * surface and scrolls past that. Since 2.408.0.
+   * surface and scrolls past that, and it shrinks (to 4rem) before the page above
+   * it drops below 7rem, so a short window keeps some of the document. Since 2.408.0.
    */
   proposal?: ReactNode;
   /**
@@ -163,6 +164,12 @@ export interface EditorShellProps {
    * band. Hosts must not style the title themselves. Since 2.389.0.
    */
   titleSize?: 'md' | 'lg';
+  /**
+   * A read-only heading may wrap onto multiple lines. `truncate` (default)
+   * keeps the existing single-line title. Editing still uses the fitted
+   * single-line title editor. Since 2.409.0.
+   */
+  titleOverflow?: 'truncate' | 'wrap';
   /**
    * At the right end of the tab row, above the tabs' underline — "Sources 4",
    * "Open in Library ↗". Hangs from the same baseline as the tabs, so it
@@ -216,6 +223,7 @@ export function EditorShell({
   itemType,
   itemKey,
   titleSize = 'md',
+  titleOverflow = 'truncate',
   tabsTrailing,
   className,
   'data-testid': testId = 'editor-shell',
@@ -296,7 +304,11 @@ export function EditorShell({
             <span className="flex shrink-0 items-center gap-2" data-testid={`${testId}-crumbs-trailing`}>{crumbsTrailing}</span>
           </div>
         )}
-        <div className="flex min-w-0 items-center gap-2">
+        {/* Wraps: when the title block (floor 18rem) and `headActions` do not both
+            fit — a presentation head with revisions, Save, Download and Share
+            is ~620px — the actions drop under the title instead of leaving it
+            one word per line. */}
+        <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1" data-testid={`${testId}-head-row`}>
           {/* The kind mark stands BESIDE the title and its save line, a 40px
               outline glyph with no tinted box (2.386.5) — so the title, the
               pill and "Saved 3 hours ago" share one left edge, and the mark
@@ -305,7 +317,7 @@ export function EditorShell({
           {/* A short window (under 640 px tall — a 1280×720 laptop window has a
               577 px viewport) puts the byline BESIDE the title instead of under
               it: one row, ~26 px back for the canvas below (a slide stage). */}
-          <div className="flex min-w-0 flex-1 flex-col gap-0 [@media(max-height:640px)]:flex-row [@media(max-height:640px)]:items-center [@media(max-height:640px)]:gap-3">
+          <div className="flex min-w-0 flex-[1_1_18rem] flex-col gap-0 [@media(max-height:640px)]:flex-row [@media(max-height:640px)]:items-center [@media(max-height:640px)]:gap-3">
             {/* The title sizes to its words (truncating when long), so the
                 status pill sits right beside it — with or without a folder
                 path after it — rather than at the row's far end (2.385.4).
@@ -339,7 +351,8 @@ export function EditorShell({
                   data-testid={`${testId}-title`}
                 />
               ) : (
-                <h1 className={cn('m-0 min-w-0 max-w-full flex-initial truncate text-text-primary', titleClass)} data-testid={`${testId}-title`}>{title}</h1>
+                <h1 className={cn('m-0 min-w-0 max-w-full flex-initial text-text-primary', titleClass,
+                  titleOverflow === 'wrap' ? 'whitespace-normal break-words' : 'truncate')} data-testid={`${testId}-title`}>{title}</h1>
               )}
               {onStarredChange && (
                 <IconButton
@@ -384,7 +397,7 @@ export function EditorShell({
               </div>
             )}
           </div>
-          {headActions && !crumbsRow && <div className="flex shrink-0 items-center gap-3" data-testid={`${testId}-actions`}>{headActions}</div>}
+          {headActions && !crumbsRow && <div className="ml-auto flex shrink-0 flex-wrap items-center gap-3" data-testid={`${testId}-actions`}>{headActions}</div>}
         </div>
         {metaBar != null && (
           <div className={cn('flex min-w-0 items-center', workItem ? (titleSize === 'lg' ? 'pb-2 pt-1' : 'pb-2 pt-3') : 'py-2')} data-testid={`${testId}-meta-bar`}>{metaBar}</div>
@@ -421,13 +434,15 @@ export function EditorShell({
           {...(hasTabs
             ? { role: 'tabpanel', id: `${idPrefix}-panel-${currentTab}`, 'aria-labelledby': `${idPrefix}-tab-${currentTab}` }
             : {})}
-          className="min-h-0 flex-1 overflow-auto"
+          // A floor: the strip above and the dock below (a toast, a composer)
+          // yield to it, so a short window never ends with no page at all.
+          className={cn('flex-1 overflow-auto', proposal != null || footer != null ? 'min-h-28' : 'min-h-0')}
           data-testid={`${testId}-scroller`}
         >
           {children}
         </div>
         {proposal != null && (
-          <div className="relative z-20 max-h-[40%] min-h-0 shrink-0 overflow-auto px-[var(--dock-inset,1rem)] pb-1 pt-2" data-testid={`${testId}-proposal`}>
+          <div className="relative z-20 max-h-[40%] min-h-16 shrink overflow-auto px-[var(--dock-inset,1rem)] pb-1 pt-2" data-testid={`${testId}-proposal`}>
             {proposal}
           </div>
         )}

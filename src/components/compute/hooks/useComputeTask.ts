@@ -17,7 +17,41 @@ import type { ComputeRunResult } from '../types';
 // did this start" — you already know — so `useComputeTask`'s own reducer
 // does not emit these; they exist on the shared union because `useComputeTail`
 // (which watches runs nobody in this browser started) does.
-export type TaskStepKind = 'text' | 'tool' | 'result' | 'error' | 'meta' | 'job' | 'job_end';
+//
+// `gate` / `delivery` are also tail-only: a governed dispatch refused at a
+// budget gate (`gate_refused`, the 409 body verbatim) and a run's change
+// captured for review (`delivery`). See `gateStep` / `deliveryStep`.
+export type TaskStepKind = 'text' | 'tool' | 'result' | 'error' | 'meta' | 'job' | 'job_end' | 'gate' | 'delivery';
+
+/** One item of an agent's plan — the `TodoWrite` tool's own input shape. */
+export interface PlanItem {
+  content: string;
+  /** Present-tense wording for the item in flight ("Running the tests"). */
+  activeForm?: string;
+  status: 'pending' | 'in_progress' | 'completed';
+}
+
+/** A dispatch held at a budget gate — the 409 body of a governed dispatch. */
+export interface GateRefusal {
+  /** `run-budget` / `allocation` / `envelope`, or whatever gate the host names. */
+  gate: string;
+  /** The flag that would clear it, e.g. `confirmOverEnvelope`. */
+  confirmFlag?: string;
+  error: string;
+  workItemId?: string;
+  workItemTitle?: string;
+}
+
+/** A run's change, captured and posted for review. */
+export interface RunDelivery {
+  title: string;
+  workItemId?: string;
+  branch?: string;
+  commitSha?: string;
+  prUrl?: string;
+  prNumber?: number;
+  captureId?: string;
+}
 
 export interface TaskStep {
   kind: TaskStepKind;
@@ -30,7 +64,87 @@ export interface TaskStep {
   jobOk?: boolean;
   /** `result` only: the structured tally, so the view renders cost chips instead of re-parsing `text`. */
   result?: ComputeRunResult;
+  /** `result` only: the run's final words (the frame's `result` string), when it carried any. */
+  summary?: string;
+  /** `tool` only, for a `TodoWrite` call: the plan it wrote. The latest one is the run's plan. */
+  plan?: PlanItem[];
+  /** `gate` only. */
+  gate?: GateRefusal;
+  /** `delivery` only. */
+  delivery?: RunDelivery;
   at: number;
+}
+
+const PLAN_STATUSES = new Set<PlanItem['status']>(['pending', 'in_progress', 'completed']);
+
+/**
+ * Read a `TodoWrite` input as a plan. Items that are not plan-shaped are
+ * dropped rather than guessed at; an unknown status reads as pending.
+ */
+export function parsePlan(input: Record<string, unknown>): PlanItem[] | null {
+  const todos = input['todos'];
+  if (!Array.isArray(todos)) return null;
+  const plan: PlanItem[] = [];
+  for (const todo of todos) {
+    if (!todo || typeof todo !== 'object') continue;
+    const t = todo as Record<string, unknown>;
+    const content = typeof t['content'] === 'string' ? t['content'].trim() : '';
+    if (!content) continue;
+    const status = PLAN_STATUSES.has(t['status'] as PlanItem['status']) ? (t['status'] as PlanItem['status']) : 'pending';
+    const activeForm = typeof t['activeForm'] === 'string' && t['activeForm'].trim() ? t['activeForm'].trim() : undefined;
+    plan.push({ content, status, ...(activeForm ? { activeForm } : {}) });
+  }
+  return plan;
+}
+
+/**
+ * One `tool_use` block as a step. A `TodoWrite` carries its plan; its line
+ * says how far along the plan is, which is what a log reader wants from it.
+ */
+export function toolStep(name: string, input: Record<string, unknown>): Omit<TaskStep, 'at'> {
+  if (name === 'TodoWrite') {
+    const plan = parsePlan(input);
+    if (plan) {
+      const done = plan.filter((item) => item.status === 'completed').length;
+      return { kind: 'tool', tool: name, text: `plan · ${done} of ${plan.length} done`, plan };
+    }
+  }
+  return { kind: 'tool', tool: name, text: summarizeTool(name, input) };
+}
+
+const str = (value: unknown): string | undefined => (typeof value === 'string' && value.trim() ? value.trim() : undefined);
+
+/** A `gate_refused` frame as a step: "Held at the envelope gate — … · needs confirmOverEnvelope". */
+export function gateStep(event: Record<string, unknown>): Omit<TaskStep, 'at'> {
+  const gate: GateRefusal = {
+    gate: str(event['gate']) ?? 'budget',
+    error: str(event['error']) ?? 'the dispatch was refused',
+    ...(str(event['confirmFlag']) ? { confirmFlag: str(event['confirmFlag']) } : {}),
+    ...(str(event['workItemId']) ? { workItemId: str(event['workItemId']) } : {}),
+    ...(str(event['workItemTitle']) ? { workItemTitle: str(event['workItemTitle']) } : {}),
+  };
+  const parts = [`Held at the ${gate.gate} gate`, gate.error];
+  if (gate.confirmFlag) parts.push(`needs ${gate.confirmFlag}`);
+  return { kind: 'gate', text: parts.join(' · '), gate };
+}
+
+/** A `delivery` frame as a step: "Change posted for review · title · abc1234 · PR #12". */
+export function deliveryStep(event: Record<string, unknown>): Omit<TaskStep, 'at'> {
+  const prNumber = typeof event['prNumber'] === 'number' && Number.isFinite(event['prNumber']) ? event['prNumber'] : undefined;
+  const delivery: RunDelivery = {
+    title: str(event['title']) ?? 'Change captured',
+    ...(str(event['workItemId']) ? { workItemId: str(event['workItemId']) } : {}),
+    ...(str(event['branch']) ? { branch: str(event['branch']) } : {}),
+    ...(str(event['commitSha']) ? { commitSha: str(event['commitSha']) } : {}),
+    ...(str(event['prUrl']) ? { prUrl: str(event['prUrl']) } : {}),
+    ...(prNumber !== undefined ? { prNumber } : {}),
+    ...(str(event['captureId']) ? { captureId: str(event['captureId']) } : {}),
+  };
+  const parts = ['Change posted for review', delivery.title];
+  if (delivery.commitSha) parts.push(delivery.commitSha.slice(0, 7));
+  if (delivery.prNumber !== undefined) parts.push(`PR #${delivery.prNumber}`);
+  else if (delivery.prUrl) parts.push(delivery.prUrl);
+  return { kind: 'delivery', text: parts.join(' · '), delivery };
 }
 
 /**
@@ -143,11 +257,7 @@ export function useComputeTask({
               for (const block of content) {
                 if (block['type'] === 'tool_use') {
                   const tool = String(block['name'] ?? 'tool');
-                  push({
-                    kind: 'tool',
-                    tool,
-                    text: summarizeTool(tool, (block['input'] ?? {}) as Record<string, unknown>),
-                  });
+                  push(toolStep(tool, (block['input'] ?? {}) as Record<string, unknown>));
                   setToolCount((n) => n + 1);
                 } else if (block['type'] === 'text') {
                   const text = String(block['text'] ?? '').trim();
@@ -215,10 +325,12 @@ export function useComputeTask({
                 costUsd: Number(event['total_cost_usd'] ?? 0),
               };
               setResult(tally);
+              const summary = typeof event['result'] === 'string' ? event['result'].trim() : '';
               push({
                 kind: 'result',
                 text: `${tally.turns} turns · ${(tally.durationMs / 1000).toFixed(0)}s · $${tally.costUsd.toFixed(4)}`,
                 result: tally,
+                ...(summary ? { summary } : {}),
               });
             }
           },

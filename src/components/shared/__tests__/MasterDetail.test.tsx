@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { MasterDetail } from '../MasterDetail';
@@ -13,7 +14,7 @@ const ITEMS: Item[] = [
   { id: 'c', title: 'Charlie' },
 ];
 
-function Harness({ selectedKey, storageKey }: { selectedKey: string | null; storageKey?: string }) {
+function Harness({ selectedKey, storageKey, paneFooter }: { selectedKey: string | null; storageKey?: string; paneFooter?: ReactNode }) {
   return (
     <MasterDetail
       items={ITEMS}
@@ -21,6 +22,7 @@ function Harness({ selectedKey, storageKey }: { selectedKey: string | null; stor
       selectedKey={selectedKey}
       onSelect={() => {}}
       storageKey={storageKey}
+      paneFooter={paneFooter}
       renderRow={(i, _idx, sel) => <span data-testid={`row-${i.id}`}>{sel ? `> ${i.title}` : i.title}</span>}
       renderDetail={(i) => <div data-testid="detail">{i.title} detail</div>}
       emptyDetail={<div data-testid="empty">Nothing selected</div>}
@@ -107,5 +109,28 @@ describe('MasterDetail', () => {
     );
     fireEvent.keyDown(screen.getByTestId('master-detail-rail'), { key: 'ArrowDown' });
     expect(seen).toEqual(['b']);
+  });
+
+  it('docks paneFooter under the detail pane without taking over its scrolling', () => {
+    render(<Harness selectedKey="a" paneFooter={<div data-testid="footer-content">Composer</div>} />);
+    const footer = screen.getByTestId('master-detail-pane-footer');
+    const detail = screen.getByTestId('master-detail-detail');
+    expect(footer).toContainElement(screen.getByTestId('footer-content'));
+    expect(footer.className).toContain('shrink-0');
+    expect(detail.className).toContain('overflow-y-auto');
+    expect(detail.className).toContain('min-h-0');
+    expect(detail).toHaveTextContent('Alpha detail');
+    expect(footer.parentElement).toBe(detail.parentElement);
+  });
+
+  it('keeps the footer when nothing is selected', () => {
+    render(<Harness selectedKey={null} paneFooter={<span>Composer</span>} />);
+    expect(screen.getByTestId('empty')).toBeInTheDocument();
+    expect(screen.getByTestId('master-detail-pane-footer')).toBeInTheDocument();
+  });
+
+  it('renders no footer wrapper without paneFooter', () => {
+    render(<Harness selectedKey="a" />);
+    expect(screen.queryByTestId('master-detail-pane-footer')).toBeNull();
   });
 });

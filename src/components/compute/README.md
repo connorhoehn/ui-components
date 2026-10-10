@@ -162,6 +162,51 @@ longer knows falls back to the first kind rather than rendering a blank pane.
 
 ---
 
+## The workspace appearance
+
+`<ComputerLab appearance="workspace" />` is the same multiplexer — keyboard,
+saved layout, pane kinds, quota — under host-themed chrome:
+
+- **Header**: optional `title`, "18 computers · 12 agents", the fleet's own
+  status pills (needs you / running / error — counted by `summarizeFleet`,
+  and each one filters the rail), **+ Computer** (provision; only with
+  `canManage`) and **Keys** (the shortcut sheet). `headerActions` appends.
+- **Rail** (`LabFleetRail`): Computers / Agents tabs, a search, a status
+  filter, project groups headed "6 computers · $0.46 / $95 · 5 bots"
+  (`groupQuickLine`), numbered rows whose number is stable across tabs, and a
+  laptop glyph for `Computer.kind === 'local'`. ⌘/Ctrl-click selects a row
+  as an instruction target.
+- **Panes** (`WorkspacePane`): a kind menu, the computer and a status badge,
+  one meta line (`PaneStatusLine variant="meta"`), expand / ⋯ / close. The
+  toolbar (`LabPaneToolbar`) has "N panes ▾", +, "1 / 8 shells", arrange as a
+  list or a split (`arrangePanes`), and expand.
+- **Instruction bar**: Nudge (an instruction for each computer's agent) or
+  Type (keystrokes into the panes open on them), aimed at the focused pane,
+  the selection, or all computers. Nudge goes through `onInstruct` when the
+  host gives one, else as a resumed `runTask` on each targeted microVM.
+
+Two more built-in kinds read the same tail stream: `LOGS_PANE_KIND` ("Bot
+logs" — follow/pause, source filter, search, live byte rate) and
+`AGENT_PANE_KIND` (the current run as a checklist). The Agent pane draws the
+latest `TodoWrite` as the run's plan above its steps (a later one replaces
+it), a `gate_refused` frame as "Held at the <gate> gate" with the flag that
+clears it, and a `delivery` frame as "Change posted for review" with the
+short sha and a PR link. On a `waiting` box it shows the agent's question
+with an inline reply that takes the Nudge route (`onInstruct`, scope
+`focused`, inside a lab; a resumed `runTask` otherwise — `LabInstructContext`).
+The `provisioning` status (minted, microVM not up) sorts between running and
+idle, is counted in `summarizeFleet().provisioning` and gets a header pill
+while above zero. Unknown frame types are ignored. A kind may declare
+`appliesTo(computer)`; `SHELL_PANE_KIND` refuses laptops, so a new pane on one
+lands on the first kind that applies (`defaultKindFor`), and the kind menu
+and toggle skip it.
+
+```tsx
+import { ComputerLab } from '@connorhoehnslalom/ui-components/compute';
+
+<ComputerLab open variant="inline" appearance="workspace" title={null} onClose={() => {}} />
+```
+
 ## Exports
 
 ### Components

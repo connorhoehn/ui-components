@@ -78,7 +78,7 @@ export function LabRail({
   const open = new Set(openComputerIds);
   const active = computers.filter((c) => {
     const status = statusOf(c);
-    return status === 'running' || status === 'waiting' || status === 'error';
+    return status === 'running' || status === 'waiting' || status === 'error' || status === 'provisioning';
   });
   const activity = showAllActivity ? computers : active;
   const sorted = [...activity].sort(

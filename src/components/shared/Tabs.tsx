@@ -1,13 +1,16 @@
 import {
   useCallback,
   useId,
+  useLayoutEffect,
   useMemo,
   useRef,
+  useState,
   type CSSProperties,
   type KeyboardEvent,
   type ReactNode,
 } from 'react';
 import { cn } from '../../lib/cn';
+import { DropdownMenu } from './DropdownMenu';
 
 export type TabsVariant = 'underline' | 'pill' | 'segmented';
 
@@ -72,6 +75,16 @@ export interface TabsProps {
   indicator?: 'border' | 'bar';
   /** The `bar` indicator's thickness in px. Default 2. Since 2.396.0. */
   indicatorWeight?: 2 | 3;
+  /**
+   * Container-driven fold (since 2.431.0): while the element the tab bar
+   * sits in is narrower than this many px, only the first tab and the
+   * selected one stay in the bar and the rest move into a `More ▾` menu at
+   * its end (each row keeps the tab's `testId`; the trigger is
+   * `<data-testid>-more`, or `tabs-more`). Measured on the PARENT, not the
+   * viewport — a conversation pane beside a page folds while the window is
+   * wide. Default: never folds.
+   */
+  overflowBelow?: number;
 }
 
 const SIZE: Record<'sm' | 'md', string> = {
@@ -137,11 +150,31 @@ export function Tabs({
   'data-testid': testId,
   indicator = 'border',
   indicatorWeight = 2,
+  overflowBelow,
 }: TabsProps) {
   const bar = variant === 'underline' && indicator === 'bar';
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const [folded, setFolded] = useState(false);
+  useLayoutEffect(() => {
+    const host = rootRef.current?.parentElement;
+    if (!overflowBelow || !host) { setFolded(false); return undefined; }
+    const measure = () => {
+      const width = host.getBoundingClientRect().width;
+      // Zero is "not laid out" (a detached or hidden subtree), not "very narrow".
+      if (width > 0) setFolded(width < overflowBelow);
+    };
+    measure();
+    if (typeof ResizeObserver === 'undefined') return undefined;
+    const observer = new ResizeObserver(measure);
+    observer.observe(host);
+    return () => observer.disconnect();
+  }, [overflowBelow]);
+  const shownItems = folded ? items.filter((item, i) => i === 0 || item.id === value) : items;
+  const foldedItems = folded ? items.filter((item) => !shownItems.includes(item)) : [];
   const autoPrefix = useId();
   const idPrefix = idPrefixProp ?? autoPrefix;
   const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const pendingFocus = useRef<{ id: string; origin: Element | null } | null>(null);
 
   const enabledIds = useMemo(() => items.filter((i) => !i.disabled).map((i) => i.id), [items]);
 
@@ -149,6 +182,15 @@ export function Tabs({
     const el = tabRefs.current.get(id);
     el?.focus();
   }, []);
+
+  // Folded keyboard navigation can select a tab that is not mounted yet.
+  // Focus after the controlled selection commits, without stealing focus
+  // when a caller delays the update and the user has moved elsewhere.
+  useLayoutEffect(() => {
+    const pending = pendingFocus.current;
+    pendingFocus.current = null;
+    if (pending?.id === value && (document.activeElement === pending.origin || document.activeElement === document.body)) focusTab(value);
+  }, [value, folded, focusTab]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLButtonElement>, currentId: string) => {
@@ -181,6 +223,7 @@ export function Tabs({
       if (nextIdx !== null) {
         e.preventDefault();
         const nextId = enabledIds[nextIdx];
+        pendingFocus.current = tabRefs.current.has(nextId) ? null : { id: nextId, origin: document.activeElement };
         onValueChange(nextId);
         focusTab(nextId);
       }
@@ -190,14 +233,16 @@ export function Tabs({
 
   return (
     <div
+      ref={rootRef}
       role="tablist"
       aria-label={ariaLabel}
       data-testid={testId}
+      data-folded={overflowBelow ? (folded ? 'true' : 'false') : undefined}
       {...(bar ? { 'data-indicator': 'bar' } : {})}
       className={cn(variantContainerClasses(variant, bar), className)}
       style={style}
     >
-      {items.map((item) => {
+      {shownItems.map((item) => {
         const active = item.id === value;
         return (
           <button
@@ -252,6 +297,25 @@ export function Tabs({
           </button>
         );
       })}
+      {foldedItems.length > 0 && (
+        <DropdownMenu
+          trigger={<span className={cn('inline-flex items-center gap-1 font-medium', size === 'sm' ? 'text-xs' : 'text-sm')}>More<span aria-hidden="true" className="text-[10px] leading-none">▾</span></span>}
+          triggerLabel={`More views: ${foldedItems.map((item) => (typeof item.label === 'string' ? item.label : item.id)).join(', ')}`}
+          triggerTestId={`${testId ?? 'tabs'}-more`}
+          triggerClassName={cn('border-0 bg-transparent', SIZE[size], 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]')}
+          align="end"
+          data-testid={`${testId ?? 'tabs'}-more-menu`}
+          sections={[{
+            items: foldedItems.map((item) => ({
+              label: typeof item.label === 'string' ? item.label : item.id,
+              ...(item.badge !== undefined && item.badge !== null ? { trailing: item.badge } : {}),
+              ...(item.disabled ? { disabled: true } : {}),
+              onSelect: () => onValueChange(item.id),
+              ...((item.testId ?? getItemTestId?.(item)) ? { 'data-testid': item.testId ?? getItemTestId?.(item) } : {}),
+            })),
+          }]}
+        />
+      )}
     </div>
   );
 }

@@ -30,6 +30,8 @@ export type {
   RMUseChatReturn,
   RMUsePresenceReturn,
   RMUseReactionsReturn,
+  RMUseCursorReturn,
+  RMCursorEntry,
   RMUseActivityReturn,
   RMUseFileUploadReturn,
   RMUseVideoHangoutReturn,
@@ -69,7 +71,7 @@ export type { FileUploadSummary, UIMessageReaction } from './adapters';
 
 // Wrapped components
 export { WrappedChatPanel } from './WrappedChatPanel';
-export type { WrappedChatPanelProps, RMUsePinsReturn } from './WrappedChatPanel';
+export type { WrappedChatPanelProps, WrappedLocalMessage, RMUsePinsReturn } from './WrappedChatPanel';
 
 export { WrappedPresencePanel } from './WrappedPresencePanel';
 export type { WrappedPresencePanelProps } from './WrappedPresencePanel';
@@ -77,6 +79,8 @@ export type { WrappedPresencePanelProps } from './WrappedPresencePanel';
 export { WrappedActivityPanel } from './WrappedActivityPanel';
 export type { WrappedActivityPanelProps } from './WrappedActivityPanel';
 
+export { WrappedCursorOverlay } from './WrappedCursorOverlay';
+export type { WrappedCursorOverlayProps } from './WrappedCursorOverlay';
 export { WrappedReactionsOverlay } from './WrappedReactionsOverlay';
 export type { WrappedReactionsOverlayProps } from './WrappedReactionsOverlay';
 

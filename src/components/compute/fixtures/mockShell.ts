@@ -39,8 +39,12 @@ const ANSI = {
 
 /** Trailing `/` marks a directory — the same shorthand `ls -F` uses. */
 const DIRS: Record<string, readonly string[]> = {
-  [WORKSPACE]: ['.git/', 'README.md', 'src/'],
+  [WORKSPACE]: ['.git/', 'README.md', 'src/', 'tests/', 'logs/'],
   [`${WORKSPACE}/src`]: ['main.py'],
+  [`${WORKSPACE}/tests`]: ['test_main.py'],
+  // The agent's own logs, so `ls logs` / `tail -n 5 logs/agent.log` — the
+  // first thing anyone types at a box an agent has been working in — answer.
+  [`${WORKSPACE}/logs`]: ['agent.log', 'tools.log', 'runtime.log'],
   [`${WORKSPACE}/.git`]: ['HEAD', 'config', 'objects/', 'refs/'],
 };
 
@@ -62,6 +66,33 @@ const FILES: Record<string, string> = {
     'def handler(event, context):',
     '    body = event.get("body") or {}',
     '    return {"statusCode": 200, "body": body}',
+  ].join('\n'),
+  [`${WORKSPACE}/tests/test_main.py`]: [
+    'from src.main import handler',
+    '',
+    '',
+    'def test_handler_echoes_body():',
+    '    assert handler({"body": {"a": 1}}, None)["body"] == {"a": 1}',
+  ].join('\n'),
+  [`${WORKSPACE}/logs/agent.log`]: [
+    '08:08:12 INFO  session resumed · model haiku-4.5',
+    '08:08:14 INFO  read_file src/main.py',
+    '08:08:21 INFO  grep "def handler" · 1 file',
+    '08:08:29 WARN  context at 61% — summarising earlier turns',
+    '08:08:33 INFO  edit_file src/main.py · +1 -1',
+    '08:08:41 INFO  run_tests pytest -q · 4 passed in 0.62s',
+    '08:08:44 INFO  turn complete · waiting for the next instruction',
+  ].join('\n'),
+  [`${WORKSPACE}/logs/tools.log`]: [
+    '08:08:14 read_file   src/main.py            ok   3ms',
+    '08:08:21 grep        def handler            ok  11ms',
+    '08:08:33 edit_file   src/main.py            ok   5ms',
+    '08:08:41 run_tests   pytest -q              ok 620ms',
+  ].join('\n'),
+  [`${WORKSPACE}/logs/runtime.log`]: [
+    '08:00:02 INFO  microVM up · /mnt/workspace mounted',
+    '08:00:03 INFO  shell slots 1/10',
+    '08:07:58 WARN  idle 7m · auto-stop in 13m',
   ].join('\n'),
   [`${WORKSPACE}/.git/HEAD`]: 'ref: refs/heads/main',
   [`${WORKSPACE}/.git/config`]: [
@@ -88,6 +119,7 @@ const HELP = [
   '  pwd                   where you are',
   '  cd <path>             move',
   '  cat <file>            print a file',
+  '  head|tail [-n N] <f>  the start or end of a file',
   '  git status            what changed',
   '  git log --oneline     recent commits',
   '  claude "<prompt>"     run an agent turn here',
@@ -391,6 +423,10 @@ class SimulatedShellSocket extends EventTarget {
       case 'cat':
         this.cat(args);
         return;
+      case 'head':
+      case 'tail':
+        this.slice(command, args);
+        return;
       case 'git':
         this.git(args);
         return;
@@ -451,6 +487,34 @@ class SimulatedShellSocket extends EventTarget {
         continue;
       }
       this.write(`${body.replace(/\n/g, '\r\n')}\r\n`);
+    }
+  }
+
+  /** `head`/`tail [-n N] <file>` — ten lines by default, as coreutils does. */
+  private slice(command: 'head' | 'tail', args: string[]): void {
+    let count = 10;
+    const files: string[] = [];
+    for (let i = 0; i < args.length; i += 1) {
+      const arg = args[i]!;
+      if (arg === '-n') { count = Number(args[(i += 1)] ?? 10); continue; }
+      if (/^-\d+$/.test(arg)) { count = Number(arg.slice(1)); continue; }
+      if (arg === '-f') continue;
+      files.push(arg);
+    }
+    if (files.length === 0) {
+      this.fail(`${command}: missing operand`);
+      return;
+    }
+    for (const arg of files) {
+      const target = resolvePath(this.session.cwd, arg);
+      const body = FILES[target];
+      if (body === undefined) {
+        this.fail(`${command}: cannot open '${arg}' for reading: ${DIRS[target] ? 'Is a directory' : 'No such file or directory'}`);
+        continue;
+      }
+      const lines = body.split('\n');
+      const picked = command === 'head' ? lines.slice(0, count) : lines.slice(Math.max(0, lines.length - count));
+      this.write(`${picked.join('\r\n')}\r\n`);
     }
   }
 

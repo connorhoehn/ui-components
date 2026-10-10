@@ -7,13 +7,14 @@ import {
   useEffect,
   useId,
   useLayoutEffect,
-  useMemo,
   useRef,
   useState,
   type CSSProperties,
   type RefObject,
 } from 'react';
 import { Command as Cmdk } from 'cmdk';
+import { createPortal } from 'react-dom';
+import { popoverBounds, popoverFloor } from '../shared/InlinePopover';
 import { cn } from '../../lib/cn';
 
 export const DEFAULT_PICKER_EMOJIS = [
@@ -48,43 +49,36 @@ export interface ReactionPickerPopoverProps {
   style?: CSSProperties;
 }
 
-function useAnchor(triggerRef: ReactionPickerPopoverProps['triggerRef'], open: boolean) {
-  const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
+function useAnchor(triggerRef: ReactionPickerPopoverProps['triggerRef'], panelRef: RefObject<HTMLDivElement | null>, open: boolean) {
+  const [coords, setCoords] = useState<CSSProperties | null>(null);
   useLayoutEffect(() => {
-    if (!open || !triggerRef?.current) {
-      setCoords(null);
-      return;
-    }
+    if (!open || !triggerRef?.current) { setCoords(null); return; }
     const measure = () => {
-      const el = triggerRef.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      // VIEWPORT coordinates, paired with `position: fixed` below.
-      //
-      // This used to add `window.scrollY` / `window.scrollX` to build
-      // DOCUMENT-space coordinates, then apply them with `position: absolute`
-      // — which resolves against the nearest positioned ancestor, and the one
-      // shipped caller (`ReactionsBar`) wraps the picker in a
-      // `relative inline-flex` div. So the popover was offset by that
-      // wrapper's own page position AND by the scroll offset: on a feed
-      // scrolled a few screens down, clicking "add reaction" put the picker
-      // hundreds of pixels below the message it belonged to, usually outside
-      // the viewport entirely.
-      setCoords({
-        top: Math.max(8, rect.top - 12),
-        left: rect.left,
-      });
+      const trigger = triggerRef.current, panel = panelRef.current;
+      if (!trigger || !panel) return;
+      const rect = trigger.getBoundingClientRect();
+      const bounds = popoverBounds(trigger, window.innerWidth);
+      const floor = popoverFloor(rect, window.innerHeight);
+      const maxWidth = Math.max(1, bounds.right - bounds.left - 16);
+      const maxHeight = Math.max(1, floor - 16);
+      // Apply available space before measurement; this also lets a previously
+      // narrow picker regain its natural width when the viewport grows.
+      panel.style.maxWidth = `${maxWidth}px`;
+      panel.style.maxHeight = `${maxHeight}px`;
+      const size = panel.getBoundingClientRect();
+      const width = Math.min(size.width, maxWidth), height = Math.min(size.height, maxHeight);
+      const above = rect.top - 12 - height, below = rect.bottom + 6;
+      const top = above >= 8 ? above : below + height <= floor - 8 ? below : Math.max(8, floor - 8 - height);
+      const next = { position: 'fixed' as const, top, left: Math.max(bounds.left + 8, Math.min(rect.left, bounds.right - 8 - width)), maxWidth, maxHeight };
+      setCoords(previous => previous?.top === next.top && previous.left === next.left && previous.maxWidth === maxWidth && previous.maxHeight === maxHeight ? previous : next);
     };
     measure();
-    // `fixed` does not scroll with the page, so re-measure while open rather
-    // than letting the picker drift away from its trigger.
+    const observer = new ResizeObserver(measure);
+    if (panelRef.current) observer.observe(panelRef.current);
     window.addEventListener('scroll', measure, true);
     window.addEventListener('resize', measure);
-    return () => {
-      window.removeEventListener('scroll', measure, true);
-      window.removeEventListener('resize', measure);
-    };
-  }, [open, triggerRef]);
+    return () => { observer.disconnect(); window.removeEventListener('scroll', measure, true); window.removeEventListener('resize', measure); };
+  }, [open, triggerRef, panelRef]);
   return coords;
 }
 
@@ -100,7 +94,7 @@ export function ReactionPickerPopover({
 }: ReactionPickerPopoverProps) {
   const popoverRef = useRef<HTMLDivElement | null>(null);
   const id = useId();
-  const anchor = useAnchor(triggerRef, open);
+  const anchor = useAnchor(triggerRef, popoverRef, open);
 
   // Close on click outside (ignore clicks on the trigger itself).
   useEffect(() => {
@@ -173,16 +167,9 @@ export function ReactionPickerPopover({
     [onSelect, onClose],
   );
 
-  const positionStyle = useMemo<CSSProperties>(() => {
-    if (anchor) {
-      return { position: 'fixed', top: anchor.top, left: anchor.left, transform: 'translateY(-100%)' };
-    }
-    return { position: 'absolute' };
-  }, [anchor]);
-
   if (!open) return null;
 
-  return (
+  const panel = (
     <div
       ref={popoverRef}
       role="dialog"
@@ -190,10 +177,10 @@ export function ReactionPickerPopover({
       data-testid="reaction-picker-popover"
       className={cn(
         'z-50 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] shadow-lg p-2',
-        'w-[18rem]',
+        'w-[18rem] overflow-y-auto',
         className,
       )}
-      style={{ ...positionStyle, ...style }}
+      style={{ ...(anchor ?? { position: 'absolute' }), ...style }}
     >
       <Cmdk
         label="Pick a reaction"
@@ -243,6 +230,9 @@ export function ReactionPickerPopover({
       </Cmdk>
     </div>
   );
+  // Fixed viewport positioning must not inherit a clipped/transformed message
+  // ancestor. Unanchored legacy callers retain their local absolute fallback.
+  return triggerRef?.current ? createPortal(panel, document.body) : panel;
 }
 
 export default ReactionPickerPopover;

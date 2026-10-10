@@ -15,7 +15,26 @@ export type { ComputeClient, ComputeClientOptions, CreateComputerInput, StreamEv
 
 // Computer Lab
 export { ComputerLab } from './components/ComputerLab';
-export type { ComputerLabProps } from './components/ComputerLab';
+export type {
+  ComputerLabProps, LabInstruction, LabInstructionOutcome, LabInstructionScope,
+} from './components/ComputerLab';
+export { LabFleetRail, groupQuickLine } from './components/LabFleetRail';
+export type { LabFleetRailProps, LabFleetTab } from './components/LabFleetRail';
+export { LabHeader, LabPaneToolbar, WorkspacePane } from './components/LabWorkspaceChrome';
+export type { LabHeaderProps, LabPaneToolbarProps, WorkspacePaneProps } from './components/LabWorkspaceChrome';
+export {
+  LogsPane, AgentPane, byteRate, formatRate, stepLevel, stepSource, currentRun, clockTime, elapsed,
+  latestPlan, pendingQuestion,
+} from './components/WorkspacePanes';
+export {
+  LabInstructContext, useLabInstruct, runInstructionAsTasks,
+} from './context/LabInstructContext';
+export type { LabInstructRoute } from './context/LabInstructContext';
+export type { LogsPaneProps, AgentPaneProps } from './components/WorkspacePanes';
+export {
+  summarizeFleet, hasAgent, matchesQuery, byAttention, isLocalComputer, AGENT_STATUSES, ATTENTION_ORDER,
+} from './lib/fleetSummary';
+export type { FleetSummary } from './lib/fleetSummary';
 export { LabRail } from './components/LabRail';
 export type { LabRailProps } from './components/LabRail';
 export { LabChooser, fuzzyScore } from './components/LabChooser';
@@ -44,8 +63,10 @@ export type { TailPaneProps } from './components/TailPane';
 // Hooks
 export { useComputeFleet } from './hooks/useComputeFleet';
 export type { UseComputeFleetOptions, UseComputeFleetResult } from './hooks/useComputeFleet';
-export { useComputeTask, summarizeTool } from './hooks/useComputeTask';
-export { useComputeTail } from './hooks/useComputeTail';
+export {
+  useComputeTask, summarizeTool, parsePlan, toolStep, gateStep, deliveryStep,
+} from './hooks/useComputeTask';
+export { useComputeTail, reduceTailFrame } from './hooks/useComputeTail';
 export {
   useComputeProjects, useProjectRollups, rollUpProjects, formatTokens,
   UNASSIGNED_PROJECT_ID,
@@ -54,17 +75,19 @@ export type {
   UseComputeProjectsOptions, UseComputeProjectsResult, ProjectRollup,
 } from './hooks/useComputeProjects';
 export type { UseComputeTailOptions, UseComputeTailResult } from './hooks/useComputeTail';
-export type { UseComputeTaskOptions, UseComputeTaskResult, TaskStep, TaskStepKind } from './hooks/useComputeTask';
+export type {
+  UseComputeTaskOptions, UseComputeTaskResult, TaskStep, TaskStepKind, PlanItem, GateRefusal, RunDelivery,
+} from './hooks/useComputeTask';
 export { useLabLayout } from './hooks/useLabLayout';
 export type { UseLabLayoutResult, LabWindow } from './hooks/useLabLayout';
 
 // Pane tree
 export {
   makeLeaf, listLeaves, findLeaf, countPanes, splitPane, closePane, setRatio,
-  updateLeaf, layoutRects, neighborPane, cyclePane, enclosingSplit, ratioOf,
+  updateLeaf, layoutRects, neighborPane, cyclePane, enclosingSplit, ratioOf, arrangePanes,
   MIN_RATIO, MAX_RATIO,
 } from './lib/paneTree';
-export type { PaneNode, PaneLeaf, PaneSplit, PaneRect, SplitDirection, Direction } from './lib/paneTree';
+export type { PaneNode, PaneLeaf, PaneSplit, PaneRect, SplitDirection, Direction, PaneArrangement } from './lib/paneTree';
 
 // Keyboard — plain Mac chords, fully overridable
 export {
@@ -75,9 +98,11 @@ export type { KeyBinding, LabCommand, LeaderConfig } from './lib/keymap';
 
 // Pane kinds — the open registry that decides what a pane can be. Register
 // alongside the built-ins to add a kind of your own.
-export { resolveKind, nextKind, quotaUsage } from './lib/paneKinds';
+export { resolveKind, nextKind, quotaUsage, kindsFor, defaultKindFor } from './lib/paneKinds';
 export type { PaneKind, PaneKindContext, PaneKindRegistry, PaneHandle, PaneInput, PaneQuota } from './lib/paneKinds';
-export { DEFAULT_PANE_KINDS, SHELL_PANE_KIND, TAIL_PANE_KIND } from './components/defaultPaneKinds';
+export {
+  DEFAULT_PANE_KINDS, SHELL_PANE_KIND, TAIL_PANE_KIND, LOGS_PANE_KIND, AGENT_PANE_KIND,
+} from './components/defaultPaneKinds';
 
 // Dock store
 export {
@@ -117,14 +142,14 @@ export {
 } from './fixtures/computeFixture';
 export { installMockShellSocket, mockShellUrl, MOCK_SHELL_SCHEME } from './fixtures/mockShell';
 export {
-  installMockTailSource, mockTailUrl, MOCK_TAIL_SCHEME, MOCK_TAIL_SCRIPTS,
+  installMockTailSource, mockTailUrl, MOCK_TAIL_SCHEME, MOCK_TAIL_SCRIPTS, MOCK_TAIL_DEMO_SCRIPTS,
 } from './fixtures/mockTail';
 export type { MockTailOptions, MockTailScript } from './fixtures/mockTail';
 export type { MockShellOptions } from './fixtures/mockShell';
 
 // Types
 export type {
-  Computer, ComputeStatus, ComputeRunResult, ComputeRuntimeStatus, ComputeModel, ComputeProject,
+  Computer, ComputerKind, ComputeStatus, ComputeRunResult, ComputeRuntimeStatus, ComputeModel, ComputeProject,
   ComputeSource, ShellStatus, WorkspaceNode, WorkspaceSnapshot,
   MachineNode, MachineSession, MachineMemoryState, MachineMemoryMode, MachinePresenceStatus,
 } from './types';

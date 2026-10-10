@@ -234,7 +234,10 @@ export function ChannelHeader({
         // Narrow bar (a chat pane beside a document): the tabs take a full row
         // of their own UNDER the name. Scroll within that row when the split
         // is narrower than the tabs; never force the pane beyond its width.
-        <div className="flex min-w-0 max-w-full flex-1 items-center overflow-x-auto overscroll-x-contain whitespace-nowrap [&>*]:shrink-0 @max-3xl:order-last @max-3xl:basis-full">
+        // Full size: the tabs never shrink below their own width (`flex-[1_0_auto]`);
+        // when identity + tabs + actions do not fit, the row wraps and the tabs
+        // drop to a line of their own instead of the last one clipping to "Call".
+        <div className={cn('flex max-w-full items-center overflow-x-auto overscroll-x-contain whitespace-nowrap [&>*]:shrink-0 @max-3xl:order-last @max-3xl:basis-full', small ? 'min-w-0 flex-1' : 'flex-[1_0_auto]')}>
           {tabs}
         </div>
       )}

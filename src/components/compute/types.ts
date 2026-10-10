@@ -11,8 +11,12 @@
  * the operator a question, so the box is idle but the work is not finished.
  * It reads as a distinct state because the action it wants — reply — is
  * different from the action an `idle` box wants.
+ *
+ * `provisioning` is a box that has been minted but whose microVM is not up
+ * yet: it cannot take a shell or a task, and it is not idle either. It turns
+ * `running` on the box's first `task_started`.
  */
-export type ComputeStatus = 'idle' | 'running' | 'waiting' | 'stopped' | 'error';
+export type ComputeStatus = 'provisioning' | 'idle' | 'running' | 'waiting' | 'stopped' | 'error';
 
 /** Outcome of the last agent run on a box. */
 export interface ComputeRunResult {
@@ -76,7 +80,21 @@ export interface Computer {
   contextUsed?: number;
   /** Model the last (or current) run resolved to, as reported by the runtime. */
   activeModel?: string;
+  /**
+   * What sort of computer this is. Absent means `microvm`, the provisioned
+   * AgentCore box every field above was written for.
+   *
+   * `local` is a developer's paired machine riding the same fleet: it can take
+   * work and stream a log, but it has no PTY and is never provisioned or
+   * stopped from here. Pane kinds read this through `appliesTo` so a laptop is
+   * never handed a terminal it cannot back, and the workspace rail draws it
+   * with a laptop glyph instead of a status dot.
+   */
+  kind?: ComputerKind;
 }
+
+/** See `Computer.kind`. */
+export type ComputerKind = 'microvm' | 'local';
 
 /** Runtime-wide state — one per deployment, not per computer. */
 export interface ComputeRuntimeStatus {

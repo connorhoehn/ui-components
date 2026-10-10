@@ -14,7 +14,25 @@
 import type { MouseEventHandler, ReactNode } from 'react';
 import { Inline } from '../ui/Stack';
 
+export type TextSize = 'xs' | 'sm' | 'base' | 'lg';
+export type TextWeight = 'normal' | 'medium' | 'semibold' | 'bold';
+export type TextTone = 'primary' | 'secondary' | 'tertiary' | 'inherit';
+
+const SIZE: Record<TextSize, string> = { xs: 'text-xs', sm: 'text-sm', base: 'text-base', lg: 'text-lg' };
+const WEIGHT: Record<TextWeight, string> = { normal: 'font-normal', medium: 'font-medium', semibold: 'font-semibold', bold: 'font-bold' };
+const TONE: Record<TextTone, string> = {
+  primary: 'text-text-primary', secondary: 'text-text-secondary', tertiary: 'text-text-tertiary', inherit: '',
+};
+
 export interface TextProps {
+  /** Type scale step. Since 2.420.0; omitted: inherits. */
+  size?: TextSize;
+  /** Font weight. Since 2.420.0; omitted: inherits. */
+  weight?: TextWeight;
+  /** Text colour token. Since 2.420.0. */
+  tone?: TextTone;
+  /** Draw numerals at equal width (timers, counts). Since 2.420.0. */
+  tabular?: boolean;
   /** Element to render as. Default `'span'`. */
   as?: 'span' | 'div' | 'p' | 'li';
   className?: string;
@@ -37,10 +55,16 @@ export function Text({
   title,
   children,
   wrap = false,
+  size,
+  weight,
+  tone,
+  tabular = false,
   ...rest
 }: TextProps) {
+  const classes = [size && SIZE[size], weight && WEIGHT[weight], tone && TONE[tone], tabular && 'tabular-nums', className]
+    .filter(Boolean).join(' ') || undefined;
   return (
-    <Inline as={as} gap="none" wrap={wrap} className={className} title={title} {...rest}>
+    <Inline as={as} gap="none" wrap={wrap} className={classes} title={title} {...rest}>
       {children}
     </Inline>
   );

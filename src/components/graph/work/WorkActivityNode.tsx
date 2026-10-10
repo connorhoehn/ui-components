@@ -3,28 +3,8 @@ import { IconButton } from '../../ui/IconButton';
 import { ChatIcon } from '../../ui/Icons';
 import { cn } from '../../../lib/cn';
 import { workPauseLabel } from './WorkStatus';
+import { WORK_NODE_KIND_ACCENT as ACCENT, WORK_NODE_KIND_ICONS as ICONS } from './workKinds';
 import type { WorkActivityNodeDetail, WorkGraphNodeData, WorkGraphSelection } from './types';
-
-const ICONS: Record<WorkGraphNodeData['kind'], string> = { project: '▱', terminal: '⌘', agent: '✦', run: '▶', document: '▤', change: '⌥', conversation: '◌', meeting: '◉', transcript: '▤', task: '☑' };
-
-/**
- * The accent bar says what KIND of work this is — the one channel that never
- * moves. Status owns the dot and, when something is wrong or in flight, the
- * border. Keeping them apart is why a finished meeting still reads as a
- * meeting.
- */
-const ACCENT: Record<WorkGraphNodeData['kind'], { bar: string; chip: string }> = {
-  meeting: { bar: 'bg-cat-human', chip: 'bg-cat-human/10 text-cat-human' },
-  conversation: { bar: 'bg-cat-human', chip: 'bg-cat-human/10 text-cat-human' },
-  transcript: { bar: 'bg-cat-sink', chip: 'bg-cat-sink/10 text-cat-sink' },
-  terminal: { bar: 'bg-cat-sink', chip: 'bg-cat-sink/10 text-cat-sink' },
-  document: { bar: 'bg-cat-source', chip: 'bg-cat-source/10 text-cat-source' },
-  project: { bar: 'bg-cat-source', chip: 'bg-cat-source/10 text-cat-source' },
-  task: { bar: 'bg-cat-source', chip: 'bg-cat-source/10 text-cat-source' },
-  run: { bar: 'bg-cat-ai', chip: 'bg-cat-ai/10 text-cat-ai' },
-  agent: { bar: 'bg-cat-ai', chip: 'bg-cat-ai/10 text-cat-ai' },
-  change: { bar: 'bg-cat-transform', chip: 'bg-cat-transform/10 text-cat-transform' },
-};
 
 /**
  * The host's preview is its own artwork at its own size. Give it the box and
@@ -104,7 +84,7 @@ export function WorkActivityNode({ node, detail, selected, selectedRevisionId, l
         <span aria-hidden="true" className={cn('absolute inset-y-0 left-0 w-[3px]', failed ? 'bg-danger' : ready ? 'bg-success' : current ? 'bg-info' : accent.bar)} />
         <header className="flex items-center gap-2 border-b border-border bg-surface-panel py-1.5 pl-3.5 pr-2.5">
           <span aria-hidden="true" className={cn('flex h-5 w-5 shrink-0 items-center justify-center rounded text-[11px] leading-none', accent.chip)}>{ICONS[node.kind]}</span>
-          <span className={cn('min-w-0 flex-1 truncate text-[12px] font-semibold', muted ? 'text-text-secondary' : 'text-text-primary')}>{title}</span>
+          <span title={title} className={cn('min-w-0 flex-1 truncate text-[12px] font-semibold', muted ? 'text-text-secondary' : 'text-text-primary')}>{title}</span>
           <span aria-hidden="true" className={cn('h-2 w-2 shrink-0 rounded-full', muted ? 'bg-border-emphasis' : DOT[node.status])} />
         </header>
         <div className={cn('space-y-1.5 py-2 pl-3.5 pr-2.5 text-[11px] leading-snug', muted ? 'text-text-tertiary' : 'text-text-secondary')}>

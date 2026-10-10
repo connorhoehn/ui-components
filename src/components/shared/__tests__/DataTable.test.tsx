@@ -399,3 +399,27 @@ describe('DataTable', () => {
     expect(scroller.className).toContain('overflow-x-auto');
   });
 });
+describe('DataTable size="sm" (2.434.0)', () => {
+  it('draws one-line 44px cells, a 12px caps header and right-aligned numeric columns', () => {
+    const cols: DataTableColumn<Row>[] = [
+      { key: 'name', header: 'Name' },
+      { key: 'count', header: 'Count', numeric: true },
+    ];
+    const { container } = render(<DataTable data={rows} columns={cols} keyField={(r) => r.id} size="sm" />);
+    expect(container.querySelector('table')?.getAttribute('data-size')).toBe('sm');
+    const th = container.querySelectorAll('thead th');
+    expect(th[0]!.className).toContain('text-xs');
+    expect(th[1]!.className).toContain('text-right');
+    const td = container.querySelector('tbody tr')!.querySelectorAll('td');
+    expect(td[0]!.className).toContain('h-11');
+    expect(td[0]!.className).toContain('whitespace-nowrap');
+    expect(td[1]!.className).toContain('text-right');
+    expect(td[1]!.className).toContain('tabular-nums');
+  });
+
+  it('keeps the md cell by default', () => {
+    const { container } = render(<DataTable data={rows} columns={columns} keyField={(r) => r.id} />);
+    expect(container.querySelector('table')?.hasAttribute('data-size')).toBe(false);
+    expect(container.querySelector('tbody td')!.className).toContain('py-3');
+  });
+});

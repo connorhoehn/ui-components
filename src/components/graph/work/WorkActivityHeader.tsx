@@ -52,7 +52,7 @@ export function WorkActivityHeader({
     { value: ALL_VALUE, label: `All ${effortCount} activities` },
   ];
   const bar = (
-    <header data-testid={testId} className={cn('flex shrink-0 items-center justify-between gap-2 border-b border-border bg-surface px-3 py-1.5', className)}>
+    <header data-testid={testId} className={cn('@container flex shrink-0 items-center justify-between gap-2 border-b border-border bg-surface px-3 py-1.5', className)}>
       <span className="flex min-w-0 flex-col">
         <span className="truncate text-[12px] font-semibold text-text-secondary" data-testid={`${testId}-title`}>{title}</span>
         {subtitle && <span className="truncate text-[11px] text-text-tertiary" data-testid={`${testId}-subtitle`}>{subtitle}</span>}

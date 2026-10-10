@@ -22,6 +22,14 @@ export interface SuggestionReviewListProps {
   /** Present, the header offers Accept all / Reject all. Absent for a reader who cannot resolve. */
   onAcceptAll?: () => void;
   onRejectAll?: () => void;
+  /** Label of the accept-all button. Default "Accept all" — e.g. "Add selected as follow-ups" for a chosen subset. */
+  acceptLabel?: string;
+  /**
+   * Per-item selection: how many cards are ticked (`SuggestionCard` `selected`). When given,
+   * the accept-all button counts them ("Add selected (2)") and is disabled at zero, so it
+   * acts on the chosen subset rather than everything.
+   */
+  selectedCount?: number;
   /** Something a resolution just refused, above the list. */
   error?: string | null;
   /** Something else the header should carry — a mode switch, say. */
@@ -46,6 +54,8 @@ export function SuggestionReviewList({
   children,
   onAcceptAll,
   onRejectAll,
+  acceptLabel = 'Accept all',
+  selectedCount,
   error = null,
   headerExtra,
   emptyTitle = 'No suggestions',
@@ -65,8 +75,14 @@ export function SuggestionReviewList({
         </Button>
       )}
       {resolvable && onAcceptAll && (
-        <Button variant="secondary" size="sm" onClick={onAcceptAll} data-testid={`${testId}-accept-all`}>
-          Accept all
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={onAcceptAll}
+          disabled={selectedCount === 0}
+          data-testid={`${testId}-accept-all`}
+        >
+          {selectedCount === undefined ? acceptLabel : `${acceptLabel} (${selectedCount})`}
         </Button>
       )}
     </span>

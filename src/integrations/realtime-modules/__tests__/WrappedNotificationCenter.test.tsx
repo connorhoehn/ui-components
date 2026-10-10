@@ -88,7 +88,7 @@ describe('WrappedNotificationCenter', () => {
     const entries = [makeEntry()];
     const hook = makeHook(entries);
     render(<WrappedNotificationCenter notifications={hook} />);
-    fireEvent.click(screen.getByText('Mark all read'));
+    fireEvent.click(screen.getByRole('button', { name: 'Mark all read' }));
     expect(hook.markAllRead).toHaveBeenCalledTimes(1);
   });
 
@@ -97,7 +97,7 @@ describe('WrappedNotificationCenter', () => {
     const hook = makeHook(entries);
     render(<WrappedNotificationCenter notifications={hook} />);
     fireEvent.click(screen.getByText('All'));
-    fireEvent.click(screen.getByText('Clear all'));
+    fireEvent.click(screen.getByRole('button', { name: 'Clear all' }));
     expect(hook.clearAll).toHaveBeenCalledTimes(1);
   });
 

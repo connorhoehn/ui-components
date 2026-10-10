@@ -16,6 +16,15 @@ const FLAT: SubNavItem[] = [
 describe('SubNavLayout', () => {
   beforeEach(() => window.localStorage.clear());
 
+  it('announces host-supplied activity without inventing it for other routes', () => {
+    render(<SubNavLayout title="Social" items={[
+      { path: '/dms', label: 'Direct messages', activity: { label: '2 unread direct message notifications' } },
+      { path: '/channels', label: 'Channels' },
+    ]}>Content</SubNavLayout>);
+    expect(screen.getByRole('img', { name: '2 unread direct message notifications' })).toBeInTheDocument();
+    expect(screen.getAllByTestId('subnav-item-activity')).toHaveLength(1);
+  });
+
   it('renders the rail title and the content children', () => {
     render(
       <SubNavLayout title="Ingest" items={FLAT}>

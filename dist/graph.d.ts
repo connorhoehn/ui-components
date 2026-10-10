@@ -1224,6 +1224,9 @@ export declare const WORK_ACTIVITY_ALL_EFFORTS = 0;
  */
 export declare const WORK_ACTIVITY_DEFAULT_MAX_EFFORTS = 2;
 
+/** What a reader calls each kind, in the legend's order (work, then who/where, then output). */
+export declare const WORK_NODE_KIND_LABELS: Record<WorkGraphNodeKind, string>;
+
 /**
  * Asking a transcript a question. The graph renders the exchange and nothing
  * else: the host owns the model call, the grounding and the refusal.
@@ -1525,6 +1528,22 @@ export declare interface WorkActivityPresentation {
     onPopOut?: () => void;
     /** Offers the close control. The host owns dismissal. */
     onClose?: () => void;
+    /**
+     * Extra controls in the renderer's header row, before expand / pop-out /
+     * close — `WorkActivityHeader`'s `actions`. Drawn only with `title`.
+     */
+    headerActions?: ReactNode;
+    /**
+     * The header's quiet clause beside the activities control —
+     * `WorkActivityHeader`'s `viewNote`. Drawn only with `title`.
+     */
+    viewNote?: ReactNode;
+    /**
+     * Puts `WorkKindLegend` in the header row (after `headerActions`): every
+     * kind of work in `nodes` with its card chip and count, and the
+     * "N items · M links" count. Drawn only with `title`.
+     */
+    kindLegend?: boolean;
     /**
      * "← Earlier work". The host shifts the window earlier; without it the
      * renderer steps the current window back by its own duration.
@@ -1920,7 +1939,31 @@ export declare interface WorkInspectorProps {
     onRequestCollaboration?: (selection: Exclude<WorkGraphSelection, null>, capability: WorkGraphCapability) => void;
 }
 
+/**
+ * What the cards' colours and glyphs mean, and how much is on the canvas:
+ * every kind of work present (its card chip, its name, how many) and the
+ * "N items · M links" count. Painted from the same accent map as the cards.
+ *
+ * The kind names fold away in a narrow container (an ancestor `@container`,
+ * such as the activity header) — the chips keep their counts, and each item
+ * keeps its full name as its accessible label and tooltip.
+ */
+export declare function WorkKindLegend({ nodes, edges, className, 'data-testid': testId }: WorkKindLegendProps): JSX.Element;
+
+export declare interface WorkKindLegendProps {
+    nodes: readonly Pick<WorkGraphNodeData, 'kind'>[];
+    edges: readonly unknown[] | readonly WorkGraphEdgeData[];
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function WorkNode({ node, selected, sharingFresh, onSelect, onOpen }: WorkNodeProps): JSX.Element;
+
+/** The kinds present in `nodes`, in legend order, each with how many there are. */
+export declare function workNodeKindCounts(nodes: readonly Pick<WorkGraphNodeData, 'kind'>[]): Array<{
+    kind: WorkGraphNodeKind;
+    count: number;
+}>;
 
 /**
  * The detail pane for one selected node: chrome, a state banner, whichever
@@ -2072,14 +2115,19 @@ export declare function WorkTranscriptPanel({ transcript, onSelect }: {
 export { }
 
 
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
+    }
+}
+
+
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -2087,12 +2135,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -2119,6 +2164,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
@@ -2129,12 +2187,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -2145,26 +2203,6 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -2196,9 +2234,36 @@ declare module '@tiptap/core' {
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        suggestChanges: {
+            /** Turn suggestion mode on or off. */
+            setSuggestionMode: (enabled: boolean) => ReturnType;
+            /** Flip suggestion mode. */
+            toggleSuggestionMode: () => ReturnType;
+            /** Accept one suggestion: keep its insertions, remove its deletions. */
+            acceptSuggestion: (id: SuggestionIdentity) => ReturnType;
+            /** Reject one suggestion: drop its insertions, restore its deletions. */
+            rejectSuggestion: (id: SuggestionIdentity) => ReturnType;
+            /** Accept every suggestion in the document. */
+            acceptAllSuggestions: () => ReturnType;
+            /** Reject every suggestion in the document. */
+            rejectAllSuggestions: () => ReturnType;
+            /** Move the selection onto a suggestion. */
+            selectSuggestion: (id: SuggestionIdentity) => ReturnType;
+        };
     }
 }

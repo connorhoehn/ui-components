@@ -5,10 +5,12 @@ import { CSSProperties } from 'react';
 import { default as default_2 } from 'react';
 import { DragEventHandler } from 'react';
 import { ElementType } from 'react';
+import { FocusEvent as FocusEvent_2 } from 'react';
 import { ForwardRefExoticComponent } from 'react';
 import { HTMLAttributes } from 'react';
 import { InputHTMLAttributes } from 'react';
 import { JSX } from 'react';
+import { KeyboardEvent as KeyboardEvent_2 } from 'react';
 import { MouseEvent as MouseEvent_2 } from 'react';
 import { MouseEventHandler } from 'react';
 import { ReactElement } from 'react';
@@ -16,12 +18,23 @@ import { ReactNode } from 'react';
 import { ReactPortal } from 'react';
 import { Ref } from 'react';
 import { RefAttributes } from 'react';
+import { RefCallback } from 'react';
 import { RefObject } from 'react';
 import { SelectHTMLAttributes } from 'react';
 import { SVGProps } from 'react';
 import { TdHTMLAttributes } from 'react';
 import { TextareaHTMLAttributes } from 'react';
 import { ThHTMLAttributes } from 'react';
+
+/** The full-height coloured edge of a card (`<Card className="flex overflow-hidden">`). */
+export declare function AccentStripe({ accent, className, 'data-testid': testId }: AccentStripeProps): JSX.Element;
+
+export declare interface AccentStripeProps {
+    accent?: DataAccent;
+    /** Stripe thickness in px class terms; default the 5px card edge. */
+    className?: string;
+    'data-testid'?: string;
+}
 
 export declare const activeNavItemClassName = "block px-[14px] py-2 border-l-[3px] border-primary bg-primary/8 text-text-primary no-underline cursor-pointer";
 
@@ -351,6 +364,25 @@ export declare interface BarChartDatum extends Record<string, unknown> {
     tone?: Tone;
 }
 
+declare interface BaseProps {
+    options: readonly ComboboxOption[];
+    placeholder?: string;
+    'aria-label'?: string;
+    size?: 'sm' | 'md';
+    disabled?: boolean;
+    /** Commit typed text that matches no option on Enter. */
+    allowCustom?: boolean;
+    /** Cap on rendered suggestions (default 8). */
+    maxOptions?: number;
+    emptyMessage?: string;
+    /** Custom matcher; default is a case-insensitive substring on label. */
+    filter?: (option: ComboboxOption, query: string) => boolean;
+    /** Called as the query changes (for hosts that fetch suggestions). */
+    onQueryChange?: (query: string) => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
 /** A bell: "notifications", "activity" — the header's inbox trigger. Since 2.407.37. */
 export declare function BellIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -377,6 +409,9 @@ export declare interface BoardColumnProps {
     className?: string;
     'data-testid'?: string;
 }
+
+/** A robot head: an agent at work on a computer. Since 2.411.0. */
+export declare function BotIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** A trunk with a branch leaving it: a flow that splits — a pipeline, a branch. */
 export declare function BranchIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -937,6 +972,9 @@ export declare interface ChoiceRowProps {
 /** An X: "close", "dismiss". */
 export declare function CloseIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+/** A cloud: a hosted / cloud computer, beside `MonitorIcon` (a local one) in a fleet indicator. */
+export declare function CloudIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 /**
  * `TONE_SOFT` in the code family. One background for all tones — the code
  * palette carries meaning in the foreground, the way syntax highlighting
@@ -1038,6 +1076,17 @@ export declare interface CollapsibleSectionProps {
     /** Lands on the header button — the thing tests and contrast probes read. */
     'data-testid'?: string;
 }
+
+export declare function Combobox(props: ComboboxProps): JSX.Element;
+
+export declare interface ComboboxOption {
+    value: string;
+    label: string;
+    description?: string;
+    disabled?: boolean;
+}
+
+export declare type ComboboxProps = SingleComboboxProps | MultiComboboxProps;
 
 export declare interface Command {
     id: string;
@@ -1266,7 +1315,20 @@ export declare interface ConsultCardProps {
 /** Two stacked pages: "make a copy". Since 2.390.3. */
 export declare function CopyIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function DataTable<T>({ data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, striped, className, 'data-testid': testId, }: DataTableProps<T>): JSX.Element;
+export declare const DATA_ACCENT_SLOTS: readonly DataAccentSlot[];
+
+/** A slot number, or any CSS colour value (`var(--color-x)`, `#2563eb`, `teal`). */
+export declare type DataAccent = DataAccentSlot | (string & {});
+
+/** Spread onto an element; children paint with `bg-[var(--data-accent)]` etc. */
+export declare function dataAccentProps(accent: DataAccent | undefined): {
+    'data-accent'?: string;
+    style?: CSSProperties;
+};
+
+export declare type DataAccentSlot = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+
+export declare function DataTable<T>({ data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, className, 'data-testid': testId, }: DataTableProps<T>): JSX.Element;
 
 export declare interface DataTableColumn<T> {
     /** Stable id for the column. When `accessor` is omitted, used as the data key on T. */
@@ -1290,6 +1352,8 @@ export declare interface DataTableColumn<T> {
     filterable?: boolean;
     width?: string;
     align?: 'left' | 'right' | 'center';
+    /** A number column: right-aligned header and cells, tabular figures. Since 2.434.0. */
+    numeric?: boolean;
     className?: string;
 }
 
@@ -1328,11 +1392,31 @@ export declare interface DataTableProps<T> {
      * Both are tokens, so the relationship holds in dark mode too.
      */
     striped?: boolean;
+    /**
+     * Row density, forwarded to `Table`. `sm` (since 2.434.0): every row 44px
+     * on one line, a 12px semibold caps header — the app's list step.
+     */
+    size?: TableSize;
     className?: string;
     'data-testid'?: string;
 }
 
 export declare const DEFAULT_PIPELINE_ICONS: string[];
+
+export declare const DENSITIES: readonly Density[];
+
+export declare type Density = 'comfortable' | 'compact';
+
+/** Sets the density for everything under it that reads `useDensity()`. */
+export declare function DensityProvider({ value, children }: DensityProviderProps): JSX.Element;
+
+export declare interface DensityProviderProps {
+    value: Density;
+    children: ReactNode;
+}
+
+/** A monitor on a stand: a computer — a provisioned box. Since 2.411.0. */
+export declare function DesktopIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function DetailHeader({ title, badge, description, meta, aside, asideWidth, as: Heading, className, 'data-testid': testId, }: DetailHeaderProps): JSX.Element;
 
@@ -1375,9 +1459,12 @@ export declare interface DetailSectionProps {
     /**
      * `heading` only. `md` (default) is the 16px heading. `lg` (since 2.390.0)
      * is a page's section heading — 19px semibold on a 28px row, sentence case
-     * ("What needs attention", "Plan next", "Why this matters").
+     * ("What needs attention", "Plan next", "Why this matters"). `sm` (since
+     * 2.429.0) is the body step — a 14px semibold heading over a 12px
+     * description (`T size="sm"` / `T size="xs"`) — for a section inside a
+     * tabbed pane beside `PageSection size="sm"`.
      */
-    size?: 'md' | 'lg';
+    size?: 'sm' | 'md' | 'lg';
     /**
      * `heading` only: one line under the heading, before the content — what
      * the section is for ("Add enough detail for an engineer or agent to know
@@ -1939,6 +2026,9 @@ export declare interface EmptyStateProps {
  * `md` is the page-body block (220px minimum, 52px glyph). `sm` is for a
  * lane or list group that is one of several on the page: no minimum height,
  * a 28px glyph and a 14px title, so three empty lanes fit above the fold.
+ * Since 2.436.1 `sm` is the app's body step throughout: 14/600 title, 14/400
+ * description (was 13px), a `Button size="sm"`-sized CTA (26px, 12/600 — was
+ * a 38px padded button) and a 14/600 details heading (was 18px).
  */
 export declare type EmptyStateSize = 'md' | 'sm' | 'lg';
 
@@ -2265,6 +2355,13 @@ export declare interface FloatingPanelProps {
  */
 export declare function FolderIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+/**
+ * The trail with the title folded in as its last crumb. A trail that already
+ * ends with the title (the initiative trail ends "… › Observability
+ * Platform") is returned as is; an empty trail becomes the title alone.
+ */
+export declare function foldTitleIntoTrail(crumbs: readonly BreadcrumbItem[] | undefined, title: string | undefined): BreadcrumbItem[];
+
 export declare function FollowBanner({ name, onStop, autoStopOnInteract, autoStop, autoStopScope, location, appearance, className, 'data-testid': testId, }: FollowBannerProps): JSX.Element | null;
 
 export declare interface FollowBannerProps {
@@ -2551,6 +2648,129 @@ export declare interface GroupedListRow {
     meta?: ReactNode;
 }
 
+/** Below this container height a rich page starts collapsed. */
+export declare const HEADER_COLLAPSE_BELOW_PX = 480;
+
+/** Below this container height a plain page drops to compact. */
+export declare const HEADER_COMPACT_BELOW_PX = 640;
+
+/** Where the chevron is remembered: `uic:header-density:<headerId>:<rich|plain>`. */
+export declare const HEADER_DENSITY_STORAGE_PREFIX = "uic:header-density:";
+
+/** Scrolled this far down (px), a rich page's header collapses. */
+export declare const HEADER_SCROLL_COLLAPSE_PX = 48;
+
+/**
+ * The header's chevron. Collapsed: "Expand header" (points down). Otherwise:
+ * "Collapse header" (points up). `aria-expanded` says which.
+ */
+export declare function HeaderCollapseToggle({ collapsed, onToggle, className, 'data-testid': testId }: HeaderCollapseToggleProps): JSX.Element;
+
+export declare interface HeaderCollapseToggleProps {
+    /** True when the header is collapsed: the chevron points down and expands it. */
+    collapsed: boolean;
+    onToggle: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** What the page's body holds. Rich kinds ask for a compact header. */
+export declare type HeaderContentKind = 'canvas' | 'graph' | 'conversation' | 'document' | 'list' | 'detail';
+
+/**
+ * A page's header before any scroll or chevron. Density: the host's
+ * `preference` when given; else rich content → compact, plain → comfortable,
+ * and a plain page under `HEADER_COMPACT_BELOW_PX` → compact. Collapsed: a
+ * rich page under `HEADER_COLLAPSE_BELOW_PX`. A height of 0 or less (not
+ * measured yet) is ignored.
+ */
+export declare function headerDefaults({ contentKind, containerHeight, preference }: {
+    contentKind?: HeaderContentKind;
+    containerHeight?: number | null;
+    preference?: Density | null;
+}): {
+    density: Density;
+    collapsed: boolean;
+};
+
+export declare interface HeaderDensityState {
+    density: Density;
+    collapsed: boolean;
+    /** Collapsed → open (forgotten); open → collapsed (remembered). */
+    toggleCollapsed: () => void;
+    /** Callback ref for the content region whose scroll collapses the header. */
+    contentRef: (node: HTMLElement | null) => void;
+    /** Spread onto `PageHeader` / `ScopeHeader`. */
+    headerProps: {
+        density: Density;
+        collapsed: boolean;
+        onToggleCollapsed: () => void;
+    };
+}
+
+export declare function headerDensityStorageKey(headerId: string, kind: HeaderContentKind | undefined): string;
+
+/**
+ * Compact density's home for the description: an info glyph after the title
+ * opening the library `HoverCard` — hover or keyboard focus shows it, Enter
+ * pins it, Escape closes it, focus never leaves the glyph.
+ */
+export declare function HeaderDescriptionInfo({ title, description, width, 'data-testid': testId }: HeaderDescriptionInfoProps): JSX.Element;
+
+export declare interface HeaderDescriptionInfoProps {
+    /** Who the description is about — the trigger reads "About <title>". */
+    title: string;
+    description: ReactNode;
+    /** The card's width. Default `lg`; `xl` for a summary that carries a stat strip. Since 2.437.1. */
+    width?: HoverCardWidth;
+    'data-testid'?: string;
+}
+
+/**
+ * The people in a header. Comfortable: the muted label, then a 32px avatar
+ * and the name per person. Compact: 24px avatars only, each name and its
+ * group in a tooltip ("Nora DaSilva · Owner"), groups ruled apart.
+ */
+export declare function HeaderPeople({ groups, density, 'data-testid': testId }: {
+    groups: readonly HeaderPeopleGroup[];
+    density: Density;
+    'data-testid'?: string;
+}): JSX.Element | null;
+
+export declare interface HeaderPeopleGroup {
+    /** "Owner", "SMEs". */
+    label: string;
+    people: HeaderPerson[];
+    /** Beside the group — a "change owner" control. Keeps an empty group drawn. */
+    action?: ReactNode;
+}
+
+export declare interface HeaderPerson {
+    id: string;
+    name: string;
+    avatarUrl?: string;
+    color?: string;
+}
+
+/**
+ * The collapsed header: one trail row, the title as its last crumb, then the
+ * badge and the expand chevron; actions on the right.
+ */
+export declare function HeaderTrailFold({ breadcrumbs, title, badge, onExpand, actions, className, 'data-testid': testId, }: HeaderTrailFoldProps): JSX.Element;
+
+export declare interface HeaderTrailFoldProps {
+    breadcrumbs?: BreadcrumbItem[];
+    title?: string;
+    /** After the folded title — a status, kept small. */
+    badge?: ReactNode;
+    /** The expand chevron's handler. Absent: no chevron. */
+    onExpand?: () => void;
+    /** Right of the trail — the header's actions stay reachable when collapsed. */
+    actions?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
 declare function Highlight_2({ text, terms, className, markClassName, 'data-testid': testId }: HighlightProps): ReactNode;
 export { Highlight_2 as Highlight }
 
@@ -2579,8 +2799,60 @@ export declare function highlightSegments(text: string, terms: readonly string[]
     match: boolean;
 }>;
 
+export declare function Histogram({ buckets, labels, accent, height, className, 'aria-label': ariaLabel, 'data-testid': testId }: HistogramProps): JSX.Element;
+
+export declare interface HistogramProps {
+    /** Counts per bucket, left to right. */
+    buckets: readonly number[];
+    /** Per-bucket labels; used for the tooltip and the accessible description. */
+    labels?: readonly string[];
+    accent?: DataAccent;
+    /** Plot height in px (default 48). */
+    height?: number;
+    className?: string;
+    'aria-label'?: string;
+    'data-testid'?: string;
+}
+
 /** A clock: history, "when". */
 export declare function HistoryIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+export declare const HOVER_CARD_CLOSE_MS = 250;
+
+export declare const HOVER_CARD_OPEN_MS = 300;
+
+export declare function HoverCard({ label, content, children, width, openOnFocus, pinOnKey, onOpenChange, className, 'data-testid': testId, }: HoverCardProps): JSX.Element;
+
+export declare interface HoverCardProps {
+    /** The card's accessible name. */
+    label: string;
+    /** What the card shows. Rendered only while open. */
+    content: ReactNode;
+    children: (trigger: HoverCardTriggerProps) => ReactNode;
+    width?: HoverCardWidth;
+    /** Open on keyboard focus. Default true. */
+    openOnFocus?: boolean;
+    /** Enter/Space on the trigger pins the card. Default true. */
+    pinOnKey?: boolean;
+    /** Told whenever the card opens or closes (lazy-load its content). */
+    onOpenChange?: (open: boolean) => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface HoverCardTriggerProps {
+    ref: RefCallback<HTMLElement>;
+    onMouseEnter: (e: MouseEvent_2<HTMLElement>) => void;
+    onMouseLeave: (e: MouseEvent_2<HTMLElement>) => void;
+    onFocus: (e: FocusEvent_2<HTMLElement>) => void;
+    onBlur: (e: FocusEvent_2<HTMLElement>) => void;
+    onKeyDown: (e: KeyboardEvent_2<HTMLElement>) => void;
+    'aria-expanded': boolean;
+    'aria-controls': string | undefined;
+    'aria-describedby': string | undefined;
+}
+
+export declare type HoverCardWidth = 'sm' | 'md' | 'lg' | 'xl';
 
 export declare function IconButton({ 'aria-label': ariaLabel, icon, children, disabled, variant, tone, size, className, ...rest }: IconButtonProps): JSX.Element;
 
@@ -2596,6 +2868,8 @@ export declare interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLB
      */
     tone?: IconButtonTone;
     size?: 'sm' | 'md' | 'lg';
+    /** The button element (React 19 passes `ref` as a prop; 2.432.0 names it in the type). */
+    ref?: Ref<HTMLButtonElement>;
 }
 
 /** @see SurfaceTone — which colour family the button paints in. */
@@ -2610,6 +2884,10 @@ export declare interface IconPickerProps {
     value: string;
     onChange: (emoji: string) => void;
     curated?: string[];
+}
+
+declare interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'children'> {
+    size?: number;
 }
 
 /** A framed picture with a sun and a hill: "image". Since 2.386.5. */
@@ -2821,6 +3099,11 @@ declare const INTENSITY_SCALE: {
     readonly high: 1.75;
 };
 
+export declare function isRichHeaderContent(kind: HeaderContentKind | undefined): boolean;
+
+/** A keyboard: shortcuts. Since 2.411.0. */
+export declare function KeyboardIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare function KeyValue({ items, layout, labelWidth, divided, className, 'aria-label': ariaLabel, 'data-testid': testId, }: KeyValueProps): JSX.Element | null;
 
 export declare interface KeyValueItem {
@@ -2900,6 +3183,9 @@ export declare interface KPIGridProps {
     style?: CSSProperties;
     'data-testid'?: string;
 }
+
+/** An open laptop: somebody's own machine rather than a provisioned box. Since 2.411.0. */
+export declare function LaptopIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** Alias kept for diagrams better described as a stack of horizontal layers. */
 export declare const LayerStack: typeof StackDiagram;
@@ -3070,7 +3356,7 @@ export declare interface MarkdownViewProps {
 
 export declare type MarkdownViewScale = 'sm' | 'md' | 'lg';
 
-export declare function MasterDetail<T>({ items, keyOf, selectedKey, onSelect, renderRow, renderCompactRow, renderDetail, railTitle, railWidth, compactWidth, storageKey, emptyDetail, className, 'data-testid': testId, }: MasterDetailProps<T>): JSX.Element;
+export declare function MasterDetail<T>({ items, keyOf, selectedKey, onSelect, renderRow, renderCompactRow, renderDetail, railTitle, railWidth, compactWidth, storageKey, emptyDetail, paneFooter, className, 'data-testid': testId, }: MasterDetailProps<T>): JSX.Element;
 
 export declare interface MasterDetailProps<T> {
     items: T[];
@@ -3091,11 +3377,25 @@ export declare interface MasterDetailProps<T> {
     storageKey?: string;
     /** Rendered in the detail pane when nothing resolves from `selectedKey`. */
     emptyDetail?: ReactNode;
+    /** Docked under the detail pane (a composer, a call strip). It reserves its
+     *  own height and stays put while the pane above it scrolls, whatever the
+     *  selection — mirrors ExplorerLayout's `paneFooter`. The rail is unaffected. */
+    paneFooter?: ReactNode;
     className?: string;
     'data-testid'?: string;
 }
 
 export declare function matchHotkey(e: KeyboardEvent, spec: string): boolean;
+
+/** Four corners pushed outward: "expand to fill". Since 2.411.0. */
+export declare function MaximizeIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+export declare interface MeasuredWidth<T extends HTMLElement> {
+    /** Attach to the element to measure. Also fills `forward`. */
+    ref: (el: T | null) => void;
+    /** Content-box width in px; `null` before the first measurement. */
+    width: number | null;
+}
 
 /** Three stacked bars: "open the menu", or "unfold the rail this collapsed into". */
 export declare function MenuIcon({ size, ...rest }: GlyphProps): JSX.Element;
@@ -3211,11 +3511,20 @@ export declare interface ModalProps {
     rawChildren?: boolean;
 }
 
+/** A monitor: "present this document" / someone is presenting. */
+export declare function MonitorIcon({ size, ...rest }: IconProps): JSX.Element;
+
 /** A crescent: the dark theme — "switch to (or currently in) dark mode". */
 export declare function MoonIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** Three dots in a row: "more". Since 2.386.5. */
 export declare function MoreIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+export declare interface MultiComboboxProps extends BaseProps {
+    multiple: true;
+    value: readonly string[];
+    onChange: (value: string[]) => void;
+}
 
 export declare function nameToColor(name: string): string;
 
@@ -3463,7 +3772,7 @@ export declare interface NumberInputProps {
     'data-testid'?: string;
 }
 
-export declare function PageHeader({ title, description, actions, back, badge, size, className, }: PageHeaderProps): default_2.JSX.Element;
+export declare function PageHeader({ title, description, actions, back, badge, size, breadcrumbs, density: densityProp, collapsed, onToggleCollapsed, people, info, meta, tabs, activeTab, onTabChange, className, 'data-testid': testId, }: PageHeaderProps): default_2.JSX.Element;
 
 export declare interface PageHeaderBack {
     label: string;
@@ -3483,10 +3792,67 @@ export declare interface PageHeaderProps {
     /**
      * Title size. `md` (default) is the 20px heading every page has had;
      * `lg` is a 28px directory title — a page that IS the list, not a page
-     * about one thing.
+     * about one thing. Comfortable density only.
      */
     size?: 'md' | 'lg';
+    /**
+     * Since 2.437.0 — the trail as the header's first row ("Plan › Initiatives
+     * › Observability Platform"). Owned here so a collapsed header can fold the
+     * title into it. With a trail the header draws its own top padding (12px
+     * comfortable, 8px compact/collapsed); the host keeps the side gutter.
+     */
+    breadcrumbs?: BreadcrumbItem[];
+    /**
+     * Since 2.437.0 — the library `Density` (default: the nearest
+     * `DensityProvider`, else comfortable). Comfortable: trail, the title row,
+     * the description, the people row, the tabs. Compact: trail, ONE 28px row
+     * — the title at 14/600, `badge`, `info`, the people as a 24px avatar
+     * cluster (names in tooltips), the collapse chevron, `actions` — and the
+     * tabs; the description moves into `info` or, without one, the built-in
+     * info `HoverCard`. Usually `useHeaderDensity().headerProps`.
+     */
+    density?: Density;
+    /**
+     * Since 2.437.0 — a STATE, not a density: the trail row only, the title
+     * folded into its last crumb with `badge` and the expand chevron, `actions`
+     * on the right, then the tabs. No trail given: the title alone is the row.
+     */
+    collapsed?: boolean;
+    /** Draws the chevron: "Collapse header" on the title row, "Expand header" when collapsed. Since 2.437.0. */
+    onToggleCollapsed?: () => void;
+    /**
+     * Labelled people — `[{ label: 'Owner', people, action }]`. Comfortable:
+     * their own row under the description (32px avatar + name). Compact: the
+     * avatar cluster on the title row. Since 2.437.0.
+     */
+    people?: HeaderPeopleGroup[];
+    /**
+     * The title's info trigger (a details `HoverCard`), after the badge. A host
+     * `info` is trusted to show the description, so in compact density the
+     * built-in description card is not drawn. Since 2.437.0.
+     */
+    info?: default_2.ReactNode;
+    /**
+     * The header's summary under the people (a stat strip, a certification
+     * line). Comfortable only: compact moves it into the built-in description
+     * card with the description; collapsed drops it. Since 2.437.0.
+     */
+    meta?: default_2.ReactNode;
+    /** View tabs under the header, in every density and state. Since 2.437.0. */
+    tabs?: PageHeaderTab[];
+    activeTab?: string;
+    onTabChange?: (id: string) => void;
     className?: string;
+    'data-testid'?: string;
+}
+
+/** A view tab under the header (since 2.437.0). */
+export declare interface PageHeaderTab {
+    id: string;
+    label: string;
+    /** Drawn after the label ("Work 11"). */
+    count?: number;
+    disabled?: boolean;
 }
 
 export declare function PageSection({ title, description, actions, children, count, countTone, size, className, 'data-testid': testId, }: PageSectionProps): JSX.Element;
@@ -3511,9 +3877,12 @@ export declare interface PageSectionProps {
      * `lg` (default): the page's own 20px h1 with 24px to its content. `md`
      * (since 2.392.0): a 16px semibold h2 over a section of a page — "Needs
      * attention", "Up next" — with 8px to its content, the actions vertically
-     * centred on the title.
+     * centred on the title. `sm` (since 2.429.0): the same h2 at the app's
+     * body step — 14px semibold (`T size="sm" weight="semibold"`), a 12px count
+     * pill and 14px actions — for a section inside a tabbed pane, where 16px
+     * reads a size up from the 14px tabs and the 13–14px rails beside it.
      */
-    size?: 'lg' | 'md';
+    size?: 'lg' | 'md' | 'sm';
     className?: string;
     'data-testid'?: string;
 }
@@ -3717,6 +4086,16 @@ export declare function PlusIcon({ size, ...rest }: GlyphProps): JSX.Element;
 export declare function PopOutIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /**
+ * The attribute a bounded surface — a conversation pane beside a page, a side
+ * panel — puts on itself so a popover opened from INSIDE it stays inside it
+ * horizontally (since 2.434.0). Without it a `bottom-end` menu from a control
+ * near the pane's left edge hung its panel left over the page beside the pane
+ * (the folded "More ▾" of a narrow pane's tab bar covered the content column).
+ * The nearest such ancestor of the trigger wins; the viewport still applies.
+ */
+export declare const POPOVER_BOUNDARY_ATTR = "data-uic-popover-boundary";
+
+/**
  * The attribute a pinned surface — a composer dock at the foot of an editor —
  * puts on itself so popovers never cover it. A popover anchored ABOVE such a
  * surface treats its top edge as the bottom of the screen: it flips up, or
@@ -3724,6 +4103,12 @@ export declare function PopOutIcon({ size, ...rest }: GlyphProps): JSX.Element;
  * (its own menus) is unaffected.
  */
 export declare const POPOVER_KEEPOUT_ATTR = "data-uic-keepout";
+
+/** The horizontal span a popover anchored at `trigger` must stay within: its nearest boundary ancestor, else the viewport. */
+export declare function popoverBounds(trigger: HTMLElement | null, viewportWidth: number): {
+    left: number;
+    right: number;
+};
 
 /** A field in a PopoverForm: a small label over its control, tightly. */
 export declare function PopoverField({ label, hint, children, 'data-testid': testId, }: {
@@ -4035,6 +4420,12 @@ export declare const RAIL_CAPTION = "text-[12px] font-semibold uppercase trackin
 /** The selected row's fill. The 3px primary edge bar goes with it. */
 export declare const RAIL_CURRENT_FILL = "bg-primary/8";
 
+/** Under this window width the primary rail folds at any depth (rail + section rail + content + an aside do not fit). */
+export declare const RAIL_FOLD_PRIMARY_BELOW = 1180;
+
+/** Under this width a section rail folds too — always after the primary rail. */
+export declare const RAIL_FOLD_SECTION_BELOW = 768;
+
 /**
  * A group heading's count ("IN PROGRESS … 9"): plain muted text at the label's
  * size, never a pill — the heading already says what it counts.
@@ -4066,11 +4457,59 @@ export declare const RAIL_ROW_PAD_Y = "py-2";
 /** The one-line row pitch in px, for hosts that cap a list by row count. */
 export declare const RAIL_ROW_PITCH = 36;
 
+export declare type RailBand = 'shallow' | 'deep';
+
+export declare function railBand(depth: number): RailBand;
+
+/** The band every `useRailFold` under it remembers its fold in (the host computes it once from `railDepth`). */
+export declare function RailBandProvider({ band, children }: {
+    band: RailBand;
+    children: ReactNode;
+}): JSX.Element;
+
 /** The disclosure caret every rail group heading wears: 14px, down when open. */
 export declare function RailCaretIcon({ open, className }: {
     open: boolean;
     className?: string;
 }): JSX.Element;
+
+/**
+ * How deep a route sits under its section: `/iq/projects` 1, `/iq/projects/p-x`
+ * 2, `/iq/projects/p-x?item=wi` 3, a page with its side pane exploring a
+ * selection +2.
+ */
+export declare function railDepth(location: {
+    pathname: string;
+    search?: string;
+}, spec?: RailDepthSpec): number;
+
+export declare interface RailDepthSpec {
+    /** Leading path segments that name an app/tenant, not a level (`iq`, `admin`). */
+    prefixes?: readonly string[];
+    /** Query params whose presence opens a record beside the page's list (`item`, `run`): one level. */
+    drillParams?: readonly string[];
+    /** Routes that are always a record: depth 3 at least. */
+    leafRoutes?: readonly RegExp[];
+    /**
+     * The side pane shows a selection of this page (a record tab, a detail):
+     * two levels — the selection, then the pane beside it — unless a drill
+     * param already counts the record.
+     */
+    explored?: boolean;
+}
+
+export declare interface RailFold {
+    folded: boolean;
+    /** Flip the fold and remember the choice in the current band. */
+    toggle: () => void;
+    /** The band the fold is read from. */
+    band: RailBand;
+    /** The reader chose this band's fold by hand (it overrides `defaultFolded`). */
+    remembered: boolean;
+}
+
+/** The storage key a rail's fold is remembered under in a band. */
+export declare function railFoldKey(storageKey: string, band: RailBand): string;
 
 export declare function RailLayout({ children, rail, railWidth, className, 'data-testid': testId }: RailLayoutProps): JSX.Element;
 
@@ -4147,6 +4586,9 @@ export declare const railType: {
  */
 export declare function readableAvatarForeground(background: string): string | null;
 
+/** A stored fold: `collapsed` / `open`, anything else nothing. */
+export declare function readRailFold(raw: string | null | undefined): boolean | null;
+
 /** A curved arrow forward: "redo". Since 2.386.5. */
 export declare function RedoIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -4216,6 +4658,8 @@ export declare interface ReviewThreadProps {
     className?: string;
     'data-testid'?: string;
 }
+
+export declare const RICH_HEADER_CONTENT: readonly HeaderContentKind[];
 
 export declare function RippleGridBackground({ active, enableRainbow, gridColor, rippleIntensity, gridSize, gridThickness, fadeDistance, vignetteStrength, glowIntensity, opacity, edgeFade, gridRotation, mouseInteraction, mouseInteractionRadius, lightMode, pixelRatio, className, 'data-testid': testId, }: RippleGridBackgroundProps): JSX.Element;
 
@@ -4411,7 +4855,7 @@ export declare interface SectionLabelProps {
     'data-testid'?: string;
 }
 
-export declare function SegmentedControl({ options, value, onChange, size, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, disabled, fullWidth, tone, className, 'data-testid': testId, }: SegmentedControlProps): JSX.Element;
+export declare function SegmentedControl({ options, value, onChange, size, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, disabled, fullWidth, tone, iconOnly, className, 'data-testid': testId, }: SegmentedControlProps): JSX.Element;
 
 export declare interface SegmentedControlProps {
     options: SegmentOption[];
@@ -4446,6 +4890,14 @@ export declare interface SegmentedControlProps {
      * the brand's soft fill and text — the start-a-call Video | Audio switch.
      */
     tone?: 'neutral' | 'accent';
+    /**
+     * Icon-only segments (since 2.434.0): each option shows its `icon`, its
+     * `label` becomes the button's accessible name and a hover/focus tooltip.
+     * For a compact view switcher on a pane's header row — Chat / Pinned /
+     * Files / Calls beside a pane's own tabs — where a second labelled row
+     * would stack two tab bars. Options without an icon fall back to the label.
+     */
+    iconOnly?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -4454,6 +4906,14 @@ export declare interface SegmentOption {
     label: string;
     value: string;
     icon?: ReactNode;
+    /**
+     * A count or marker after the option (since 2.434.0) — "Pinned 3". With
+     * `iconOnly` it sits as a small superscript count on the icon, and the
+     * option's accessible name carries it ("Pinned, 3").
+     */
+    badge?: ReactNode;
+    /** `data-testid` for this option's button; overrides `<data-testid>-<value>`. */
+    testId?: string;
 }
 
 export declare const Select: ForwardRefExoticComponent<SelectProps & RefAttributes<HTMLSelectElement>>;
@@ -4608,6 +5068,12 @@ export declare interface SignoffPanelProps {
     'data-testid'?: string;
 }
 
+export declare interface SingleComboboxProps extends BaseProps {
+    multiple?: false;
+    value: string;
+    onChange: (value: string) => void;
+}
+
 export declare function SkeletonCard({ width, height, rounded }: SkeletonCardProps): JSX.Element;
 
 export declare interface SkeletonCardProps {
@@ -4710,6 +5176,9 @@ export declare interface SpinnerProps {
 }
 
 export declare type SpinnerSize = 'sm' | 'md' | 'lg';
+
+/** A frame split into a main pane and two stacked ones: "split layout". Since 2.411.0. */
+export declare function SplitViewIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** Vertical flex column with a scale gap. */
 export declare function Stack({ children, gap, align, justify, wrap, as: As, className, ref, ...rest }: StackProps): JSX.Element;
@@ -5013,7 +5482,7 @@ export declare interface StatCardProps {
     'data-testid'?: string;
 }
 
-export declare function StatStrip({ items, frameless, connectors, variant, className, 'aria-label': ariaLabel, 'data-testid': testId, }: StatStripProps): JSX.Element;
+export declare function StatStrip({ items, frameless, connectors, variant, size, className, 'aria-label': ariaLabel, 'data-testid': testId, }: StatStripProps): JSX.Element;
 
 /** A labelled arrow between two clusters — "Compact", "Publish". */
 export declare interface StatStripConnector {
@@ -5080,6 +5549,13 @@ export declare interface StatStripProps {
      * The line wraps between clusters, never inside one.
      */
     variant?: 'default' | 'inline' | 'line';
+    /**
+     * `line` only. `md` (default): 16px semibold values over 15px labels. `sm`
+     * (since 2.429.0): the app's body step — 14px semibold values and 14px
+     * labels (`T size="sm"`) — for a stats line under a tab strip, where 15–16px
+     * reads a size up from the 14px tabs.
+     */
+    size?: 'md' | 'sm';
     className?: string;
     'aria-label'?: string;
     'data-testid'?: string;
@@ -5170,6 +5646,10 @@ export declare interface SubNavItem {
     label: string;
     /** Optional small badge (e.g. live count) shown right-aligned. */
     count?: number | string;
+    /** Observed activity supplied by the host, never inferred from availability. */
+    activity?: {
+        label: string;
+    };
     /** Optional dim subtitle below the label. */
     hint?: string;
     /** Optional group heading. When set on any item, the layout renders
@@ -5186,7 +5666,7 @@ export declare interface SubNavItem {
     groupScrollAfter?: number;
 }
 
-export declare function SubNavLayout({ title, items, titleAction, railHeader, railWidth, storageKey, secondaryTitle, secondaryItems, secondaryStorageKey, secondaryRailWidth, renderNavItem, railLabel, contentAs, contentLabel, children, }: SubNavLayoutProps): JSX.Element;
+export declare function SubNavLayout({ title, items, titleAction, railHeader, railWidth, storageKey, secondaryTitle, secondaryItems, secondaryStorageKey, secondaryRailWidth, renderNavItem, railLabel, contentAs, contentLabel, collapsed, children, }: SubNavLayoutProps): JSX.Element;
 
 export declare interface SubNavLayoutProps {
     /** Section title shown at top of the rail. */
@@ -5252,6 +5732,14 @@ export declare interface SubNavLayoutProps {
     /** `aria-label` for the content pane. Only meaningful (and recommended)
      *  when `contentAs` is `'section'`, so the named region reads as one. */
     contentLabel?: string;
+    /**
+     * The primary rail folded to a 44px strip holding only `titleAction` — the
+     * control that brings it back (2.438.0). Controlled: the host decides when
+     * (`useRailFold`, docs: the rail model) and owns the toggle. The strip's
+     * header row takes the height of the rail beside it, so a compact (36px)
+     * section rail's header and the strip's control sit on one row.
+     */
+    collapsed?: boolean;
     /**
      * The main content area. When used with React Router, omit this and pass an
      * `<Outlet />` as children, or leave empty if the router renders children
@@ -5347,7 +5835,7 @@ export declare interface TabItem {
     testId?: string;
 }
 
-export declare function Table({ children, className, ...rest }: TableProps): JSX.Element;
+export declare function Table({ children, className, size, ...rest }: TableProps): JSX.Element;
 
 export declare function TableBody({ children, className, ...rest }: TableBodyProps): JSX.Element;
 
@@ -5363,6 +5851,8 @@ export declare interface TableHeadProps extends HTMLAttributes<HTMLTableSectionE
 
 export declare interface TableProps extends HTMLAttributes<HTMLTableElement> {
     children: ReactNode;
+    /** Row density for every cell inside. Default `md`. Since 2.434.0. */
+    size?: TableSize;
 }
 
 export declare function TableRow({ children, clickable, className, ...rest }: TableRowProps): JSX.Element;
@@ -5372,18 +5862,32 @@ export declare interface TableRowProps extends HTMLAttributes<HTMLTableRowElemen
     clickable?: boolean;
 }
 
-export declare function TableTd({ children, className, ...rest }: TableTdProps): JSX.Element;
+/**
+ * Row density. `md` (default) is the original 12px-padded cell. `sm` (since
+ * 2.434.0) is the app's list step: every body row exactly 44px tall on one
+ * line (cells do not wrap — truncate or move detail to a tooltip), 14px body
+ * text, a 12px semibold uppercase header, and 12px side padding. A row that
+ * stacks a caption or a bar under its value cannot fit 44px; put the bar
+ * inline beside the value and the caption in a `title`.
+ */
+export declare type TableSize = 'md' | 'sm';
+
+export declare function TableTd({ children, numeric, className, ...rest }: TableTdProps): JSX.Element;
 
 export declare interface TableTdProps extends TdHTMLAttributes<HTMLTableCellElement> {
     children?: ReactNode;
+    /** A number cell: right-aligned tabular figures. Since 2.434.0. */
+    numeric?: boolean;
 }
 
-export declare function TableTh({ children, sortable, sortDirection, className, ...rest }: TableThProps): JSX.Element;
+export declare function TableTh({ children, sortable, sortDirection, numeric, className, ...rest }: TableThProps): JSX.Element;
 
 export declare interface TableThProps extends ThHTMLAttributes<HTMLTableCellElement> {
     children?: ReactNode;
     sortable?: boolean;
     sortDirection?: 'asc' | 'desc' | null;
+    /** A number column: right-aligned, so header and figures share an edge. Since 2.434.0. */
+    numeric?: boolean;
 }
 
 export declare function TabPanel({ id, when, idPrefix, className, style, children }: TabPanelProps): JSX.Element | null;
@@ -5400,7 +5904,7 @@ export declare interface TabPanelProps {
     children?: ReactNode;
 }
 
-export declare function Tabs({ items, value, onValueChange, variant, size, badgeStyle, className, style, 'aria-label': ariaLabel, idPrefix: idPrefixProp, getItemTestId, stretch, itemClassName, 'data-testid': testId, indicator, indicatorWeight, }: TabsProps): JSX.Element;
+export declare function Tabs({ items, value, onValueChange, variant, size, badgeStyle, className, style, 'aria-label': ariaLabel, idPrefix: idPrefixProp, getItemTestId, stretch, itemClassName, 'data-testid': testId, indicator, indicatorWeight, overflowBelow, }: TabsProps): JSX.Element;
 
 export declare interface TabsProps {
     items: TabItem[];
@@ -5453,6 +5957,16 @@ export declare interface TabsProps {
     indicator?: 'border' | 'bar';
     /** The `bar` indicator's thickness in px. Default 2. Since 2.396.0. */
     indicatorWeight?: 2 | 3;
+    /**
+     * Container-driven fold (since 2.431.0): while the element the tab bar
+     * sits in is narrower than this many px, only the first tab and the
+     * selected one stay in the bar and the rest move into a `More ▾` menu at
+     * its end (each row keeps the tab's `testId`; the trigger is
+     * `<data-testid>-more`, or `tabs-more`). Measured on the PARENT, not the
+     * viewport — a conversation pane beside a page folds while the window is
+     * wide. Default: never folds.
+     */
+    overflowBelow?: number;
 }
 
 export declare type TabsVariant = 'underline' | 'pill' | 'segmented';
@@ -5559,7 +6073,7 @@ export declare function TemplateIcon({ size, ...rest }: GlyphProps): JSX.Element
 /** Alias kept for clarity in contexts where "terminal log" reads better. */
 export declare const TerminalLog: typeof LogStream;
 
-declare function Text_2({ as, className, title, children, wrap, ...rest }: TextProps): JSX.Element;
+declare function Text_2({ as, className, title, children, wrap, size, weight, tone, tabular, ...rest }: TextProps): JSX.Element;
 export { Text_2 as Text }
 
 export declare const Textarea: ForwardRefExoticComponent<TextareaProps & RefAttributes<HTMLTextAreaElement>>;
@@ -5579,6 +6093,14 @@ export declare interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLT
 }
 
 export declare interface TextProps {
+    /** Type scale step. Since 2.420.0; omitted: inherits. */
+    size?: TextSize;
+    /** Font weight. Since 2.420.0; omitted: inherits. */
+    weight?: TextWeight;
+    /** Text colour token. Since 2.420.0. */
+    tone?: TextTone;
+    /** Draw numerals at equal width (timers, counts). Since 2.420.0. */
+    tabular?: boolean;
     /** Element to render as. Default `'span'`. */
     as?: 'span' | 'div' | 'p' | 'li';
     className?: string;
@@ -5594,6 +6116,12 @@ export declare interface TextProps {
     id?: string;
     children?: ReactNode;
 }
+
+declare type TextSize = 'xs' | 'sm' | 'base' | 'lg';
+
+declare type TextTone = 'primary' | 'secondary' | 'tertiary' | 'inherit';
+
+declare type TextWeight = 'normal' | 'medium' | 'semibold' | 'bold';
 
 /**
  * A collapsible `<details>` block for showing chain-of-thought reasoning.
@@ -6041,6 +6569,9 @@ export declare function UploadIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function useCommandPalette(): CommandPaletteController;
 
+/** The density to draw at: `override` when given, else the provider's, else `comfortable`. */
+export declare function useDensity(override?: Density | null): Density;
+
 /**
  * Read the surrounding dock, if any. `null` means "standalone" — the body
  * owns its own header and sizing.
@@ -6065,6 +6596,42 @@ export declare function useFollowAutoStop(active: boolean, onStop: () => void, {
     enabled?: boolean;
     scope?: RefObject<HTMLElement | null> | undefined;
 }): void;
+
+export declare function useHeaderDensity({ contentKind, containerHeight, preference, headerId, scrollCollapse, }?: UseHeaderDensityOptions): HeaderDensityState;
+
+export declare interface UseHeaderDensityOptions {
+    /** What the page's body holds. Default `detail`. */
+    contentKind?: HeaderContentKind;
+    /** The page's available height (px), when the host measures it. */
+    containerHeight?: number | null;
+    /** The host's own density; wins over the content kind. */
+    preference?: Density | null;
+    /** Names the header in the storage key ("initiative", "search"). Default "page". */
+    headerId?: string;
+    /** Collapse on scroll of the content region (rich content only). Default true. */
+    scrollCollapse?: boolean;
+}
+
+/**
+ * Measures an element's content-box width. `forward` is another ref (a
+ * roving-toolbar hook's, say) that needs the same element.
+ */
+export declare function useMeasuredWidth<T extends HTMLElement>(forward?: Ref<T>): MeasuredWidth<T>;
+
+/** The band set by the nearest `RailBandProvider`; `shallow` outside one. */
+export declare function useRailBand(): RailBand;
+
+/** A rail's fold in the current band: the reader's remembered choice, else the host's default. */
+export declare function useRailFold({ storageKey, band: bandOverride, defaultFolded }: UseRailFoldOptions): RailFold;
+
+export declare interface UseRailFoldOptions {
+    /** Names the rail: the fold is stored under `<storageKey>.<band>`. */
+    storageKey: string;
+    /** The band to remember in; default the nearest `RailBandProvider`'s. */
+    band?: RailBand;
+    /** Folded when the reader has chosen nothing in this band (the host's rule: deep, narrow…). Default false. */
+    defaultFolded?: boolean;
+}
 
 export declare function UserChip({ name, label, avatarSize, avatarColor, presence, onClick, className, style, title, labelClassName, 'data-testid': testId, }: UserChipProps): JSX.Element;
 
@@ -6207,8 +6774,14 @@ export declare function useToast(): ToastContextValue;
  */
 export declare function useToastOptional(): ToastContextValue | null;
 
+/** The window's inner width, live. 1680 on the server. */
+export declare function useViewportWidth(): number;
+
 /** A camera body: start a video call. Distinct from video/MediaIcons' VideoIcon, which is a call CONTROL. */
 export declare function VideoCallIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+/** Groups worth drawing: people in them, or an action to add some. */
+export declare function visibleHeaderPeople(groups: readonly HeaderPeopleGroup[] | undefined): HeaderPeopleGroup[];
 
 /**
  * The canonical visually-hidden clip. Not `display: none` and not
@@ -6307,14 +6880,19 @@ export declare interface WorkflowStepperProps {
 export { }
 
 
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
+    }
+}
+
+
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -6322,12 +6900,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -6354,6 +6929,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
@@ -6364,12 +6952,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -6380,26 +6968,6 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -6431,9 +6999,36 @@ declare module '@tiptap/core' {
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        suggestChanges: {
+            /** Turn suggestion mode on or off. */
+            setSuggestionMode: (enabled: boolean) => ReturnType;
+            /** Flip suggestion mode. */
+            toggleSuggestionMode: () => ReturnType;
+            /** Accept one suggestion: keep its insertions, remove its deletions. */
+            acceptSuggestion: (id: SuggestionIdentity) => ReturnType;
+            /** Reject one suggestion: drop its insertions, restore its deletions. */
+            rejectSuggestion: (id: SuggestionIdentity) => ReturnType;
+            /** Accept every suggestion in the document. */
+            acceptAllSuggestions: () => ReturnType;
+            /** Reject every suggestion in the document. */
+            rejectAllSuggestions: () => ReturnType;
+            /** Move the selection onto a suggestion. */
+            selectSuggestion: (id: SuggestionIdentity) => ReturnType;
+        };
     }
 }

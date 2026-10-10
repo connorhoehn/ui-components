@@ -797,3 +797,71 @@ export function TemplateIcon({ size = 16, ...rest }: GlyphProps) {
     </svg>
   );
 }
+
+/** A monitor on a stand: a computer — a provisioned box. Since 2.411.0. */
+export function DesktopIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <rect x="2" y="2.75" width="12" height="8.5" rx="1.25" />
+      <path d="M6 14h4M8 11.25V14" />
+    </svg>
+  );
+}
+
+/** An open laptop: somebody's own machine rather than a provisioned box. Since 2.411.0. */
+export function LaptopIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <rect x="3.25" y="3.5" width="9.5" height="6.75" rx="1" />
+      <path d="M1.75 12.5h12.5" />
+    </svg>
+  );
+}
+
+/** A frame split into a main pane and two stacked ones: "split layout". Since 2.411.0. */
+export function SplitViewIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <rect x="2" y="2.5" width="12" height="11" rx="1.25" />
+      <path d="M8 2.5v11M8 8h6" />
+    </svg>
+  );
+}
+
+/** Four corners pushed outward: "expand to fill". Since 2.411.0. */
+export function MaximizeIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M2.5 6V2.5H6M10 2.5h3.5V6M13.5 10v3.5H10M6 13.5H2.5V10" />
+    </svg>
+  );
+}
+
+/** A keyboard: shortcuts. Since 2.411.0. */
+export function KeyboardIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <rect x="1.75" y="4" width="12.5" height="8" rx="1.25" />
+      <path d="M4.5 6.75h.01M7 6.75h.01M9.5 6.75h.01M12 6.75h.01M5.5 9.5h5" strokeWidth={1.4} />
+    </svg>
+  );
+}
+
+/** A robot head: an agent at work on a computer. Since 2.411.0. */
+export function BotIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <rect x="3" y="5" width="10" height="8" rx="2" />
+      <path d="M8 5V2.75M6 8.75h.01M10 8.75h.01M6.25 11h3.5" />
+    </svg>
+  );
+}
+
+/** A cloud: a hosted / cloud computer, beside `MonitorIcon` (a local one) in a fleet indicator. */
+export function CloudIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M4.5 12.5a3 3 0 0 1-.4-5.97A4 4 0 0 1 11.9 5.6a3.4 3.4 0 0 1-.4 6.9z" />
+    </svg>
+  );
+}

@@ -59,6 +59,15 @@ export { default as ActivityFeed } from './ActivityFeed';
 export { default as AttachmentsPanel } from './AttachmentsPanel';
 export { default as FollowModeBar } from './FollowModeBar';
 export type { FollowModeBarProps } from './FollowModeBar';
+export {
+  useDeckPresence,
+  deckViewersOf,
+  editingInMyOtherTab,
+  deckViewerToParticipant,
+  deckPresenceChannel,
+  EMPTY_DECK_PRESENCE,
+} from './useDeckPresence';
+export type { DeckPresence, DeckViewer, DeckRosterEntry, UseDeckPresenceOptions } from './useDeckPresence';
 export { default as ParticipantAvatars } from './ParticipantAvatars';
 export { default as VersionHistoryPanel } from './VersionHistoryPanel';
 export { default as VideoCallPanel } from './VideoCallPanel';
@@ -178,6 +187,9 @@ export { SuggestionModeControl, SUGGESTION_AUTHORING_MODES } from './SuggestionM
 export type { SuggestionModeControlProps, SuggestionAuthoringMode } from './SuggestionModeControl';
 export { SuggestionCard } from './SuggestionCard';
 export type { SuggestionCardProps, SuggestionCardKind } from './SuggestionCard';
+export { parseDeckText, deckTitleFrom, recordingIdFor } from './deckText';
+export type { DeckRecordingOption, ParsedDeckCommand } from './deckText';
+export * from './suggestions';
 export { SuggestionReviewList } from './SuggestionReviewList';
 export type { SuggestionReviewListProps } from './SuggestionReviewList';
 

@@ -1,0 +1,71 @@
+{
+  "baseCommit": "ba49377c690cd94d80e9d034867f95515a2a9a97",
+  "status": "source-validated-awaiting-consolidated-dist-build",
+  "tests": {
+    "relatedNative": {
+      "suites": 13,
+      "cases": 179,
+      "status": "passed"
+    },
+    "reactionPicker": {
+      "suites": 3,
+      "cases": 15,
+      "status": "passed"
+    },
+    "finalHuddleAndAnchor": {
+      "suites": 2,
+      "cases": 16,
+      "status": "passed"
+    },
+    "exactInstalledSdkTsc": "passed source; previous dist repro fails as expected, final packed declarations pending",
+    "libraryAndDemoTypecheck": "passed",
+    "inertBrowser": {
+      "cases": 6,
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "widths": [
+        980,
+        360,
+        280
+      ],
+      "status": "passed",
+      "evidence": "/private/tmp/native-message-hover-20261010/browser-source06"
+    }
+  },
+  "behavior": [
+    "Reserved actions header never overlays author/time/body or changes geometry on hover",
+    "Balanced8px top/bottom message inset",
+    "Native reaction picker measured shared popover bounds/floor, flips below firstrow, width capped in narrow pane, portal avoids clipping",
+    "Keyboard roving reactions preserve clicked message identity and focus-return semantics",
+    "Original SDK generic host retains native device/invitation fields via shared media.error structural overlap",
+    "WrappedChatPanel forwards additive flushComposer",
+    "Notification actions accessible native iconbuttons",
+    "HuddleBar context optional, default preserved"
+  ],
+  "sourceHashes": {
+    "src/components/shared/NotificationCenter.tsx": "b42904cfa58396a20ba079891b0422fd7b6022da5335e96b74470c62fb1375ea",
+    "src/components/shared/__tests__/NotificationCenter.test.tsx": "6fffa584781d8eacef8b1651c8e51b4cb6114162b8dfbf048c1798a59a578eaf",
+    "src/components/social/ChatPanel.tsx": "17f53fd11dfb60d7636f45381b8ccf9a15f3c15540d4c09ea1a2b2800aa31225",
+    "src/components/social/MessageRow.tsx": "668eea6fce67fb5c2ae82e804e5058cf52ad5457702836fb525b3c7d7b8be120",
+    "src/components/social/ReactionPickerPopover.tsx": "6b2e7e84265f4266bc05448c822e60ae0342b1719c52829b78e05abcdf381326",
+    "src/components/social/__tests__/MessageRow.test.tsx": "26d97ccdc48a9935c234b1ef9ac9640fa334952cc05ab058c911b5ff0a5215a0",
+    "src/components/social/__tests__/ReactionPickerPopover.anchor.test.tsx": "b33426fe337aa5bf1401dd7307acc3d119a897f247f6d72b8e786421e14b5b6b",
+    "src/components/social/__tests__/conversationGutters.test.tsx": "ee110b7b9e82b89f0a4a82b0f16391c75fb963b8f24972e72d3081506980307b",
+    "src/components/video/HuddleBar.tsx": "528734dc2c7320797c782d81d511c494ad835b69a23f6245046b8164c99f92a1",
+    "src/components/video/__tests__/HuddleBar.test.tsx": "c6d8bd6ee3592bb1d5a63eb47ccf4f4a3f308dcb64c7c779e1803cfc0d871f35",
+    "src/integrations/realtime-modules/WrappedChatPanel.tsx": "f9692efe8dce392af898bde4884f9b733a6251fe3ea017b86b639a622f2bc648",
+    "src/integrations/realtime-modules/__tests__/WrappedNotificationCenter.test.tsx": "75af067ea9fe9c8f20414a03e65be0f1dda660350410d0e48062269dd14e44e9",
+    "src/integrations/realtime/conversationCallTypes.ts": "daee5ea498f4271501f10de6604d6915513b071271c3a53ea4c7c1de0fc686bd",
+    "src/integrations/realtime/__tests__/CallBlockConsumerTypes.test.ts": "4a0ccdaef263f588e3c0a8c655e5529c016ce4e11f29222e787b4886e18c4f61",
+    "tests/e2e/fixtures/message-hover.tsx": "3188ba9286812172f17b007efe946867535b854ca6c34af1b8f7f6fa88e69a10",
+    "tests/e2e/message-hover.config.ts": "59a199b214be06bc7e440b1601a6ce219f2201ffecf74549f2cdd207d9142a0d",
+    "tests/e2e/message-hover.spec.ts": "44a84726fa5fdc8de4682fa82ed054638bf523803261028a9ae186e90dbf5274"
+  },
+  "limitations": [
+    "Browser fixture is inert: no API/gateway/messages/calls; source fixture with existing CSS build",
+    "Final consolidated source/dist package and primary install/typecheck still required"
+  ],
+  "failedEvidencePreserved": "/private/tmp/native-message-hover-20261010/browser-source01..04; corrected fixture preamble/scroll baseline/fill prop and real native picker overflow"
+}

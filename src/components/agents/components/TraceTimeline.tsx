@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { cn } from '../../../lib/cn';
+import { Button } from '../../ui/Button';
 import type { TraceTimeline as TraceTimelineType, TraceSpan, SpanKind } from '../../../types/agents';
 
 export interface TraceTimelineProps {
@@ -22,6 +23,45 @@ export interface TraceTimelineProps {
    * because a legend entry with no possible referent reads as missing data.
    */
   legendKinds?: SpanKind[];
+  /**
+   * Bar geometry. `'time'` (default) places each bar on the trace's real time
+   * axis, so gaps between bars show deliberation. `'duration'` starts every bar
+   * at 0 and scales to the longest span, which ranks spans by cost alone.
+   * Controlled when `onScaleChange` is given; otherwise this is the initial mode.
+   */
+  scale?: TraceScale;
+  onScaleChange?: (scale: TraceScale) => void;
+  /** Render the "By time / By duration" toggle in the header. Default false. */
+  scaleToggle?: boolean;
+  /**
+   * Colour bars by pass/fail (`status === 'error'` -> danger, otherwise success)
+   * instead of by span kind, and swap the legend for Passed / Failed.
+   */
+  colorByStatus?: boolean;
+  /** Show durations in a fixed right-hand column instead of trailing the bar. */
+  durationColumn?: boolean;
+  /**
+   * Error text for a failed span. Defaults to the span's `error.message`,
+   * `errorMessage` or `error` attribute. Shown in the row tooltip and the
+   * detail panel.
+   */
+  errorText?: (span: TraceSpan) => string | undefined;
+}
+
+export type TraceScale = 'time' | 'duration';
+
+function defaultErrorText(span: TraceSpan): string | undefined {
+  if (span.status !== 'error') return undefined;
+  for (const key of ['error.message', 'errorMessage', 'error']) {
+    const v = span.attributes[key];
+    if (typeof v === 'string' && v) return v;
+  }
+  return undefined;
+}
+
+function barColor(span: TraceSpan, byStatus: boolean): string {
+  if (!byStatus) return KIND_COLORS[span.kind];
+  return span.status === 'error' ? 'bg-danger' : 'bg-success';
 }
 
 const KIND_COLORS: Record<SpanKind, string> = {
@@ -49,11 +89,22 @@ interface SpanRowProps {
   startOffset: number;
   onSelect: (span: TraceSpan) => void;
   selected: boolean;
+  scale: TraceScale;
+  maxDurationMs: number;
+  byStatus: boolean;
+  durationColumn: boolean;
+  error?: string;
 }
 
-function SpanRow({ span, depth, totalMs, startOffset, onSelect, selected }: SpanRowProps) {
-  const leftPct = totalMs > 0 ? (startOffset / totalMs) * 100 : 0;
-  const widthPct = totalMs > 0 ? Math.max((span.durationMs / totalMs) * 100, 0.5) : 0;
+function SpanRow({
+  span, depth, totalMs, startOffset, onSelect, selected,
+  scale, maxDurationMs, byStatus, durationColumn, error,
+}: SpanRowProps) {
+  const byDuration = scale === 'duration';
+  const leftPct = byDuration ? 0 : totalMs > 0 ? (startOffset / totalMs) * 100 : 0;
+  const base = byDuration ? maxDurationMs : totalMs;
+  const widthPct = base > 0 ? Math.max((span.durationMs / base) * 100, 0.5) : 0;
+  const color = barColor(span, byStatus);
 
   return (
     <button
@@ -63,24 +114,38 @@ function SpanRow({ span, depth, totalMs, startOffset, onSelect, selected }: Span
         selected && 'bg-info-bg',
       )}
       onClick={() => onSelect(span)}
+      title={error ? `${span.name} - ${error} (${span.durationMs}ms)` : undefined}
     >
       <div className="w-[200px] shrink-0 flex items-center gap-1 px-2 overflow-hidden">
         <span style={{ marginLeft: depth * 12 }} className="shrink-0" />
-        <span className={cn('w-2 h-2 rounded-sm shrink-0', KIND_COLORS[span.kind])} />
+        <span className={cn('w-2 h-2 rounded-sm shrink-0', color)} />
         <span className="text-[11px] text-text-primary truncate">{span.name}</span>
       </div>
       <div className="flex-1 relative h-full flex items-center">
         <div
-          className={cn('absolute h-4 rounded-sm opacity-80', KIND_COLORS[span.kind])}
+          className={cn('absolute h-4 rounded-sm opacity-80', color)}
           style={{ left: `${leftPct}%`, width: `${widthPct}%`, minWidth: 2 }}
         />
+        {!durationColumn && (
+          <span
+            className="absolute text-[10px] text-neutral"
+            style={{ left: `${leftPct + widthPct + 0.5}%` }}
+          >
+            {span.durationMs}ms
+          </span>
+        )}
+      </div>
+      {durationColumn && (
         <span
-          className="absolute text-[10px] text-neutral"
-          style={{ left: `${leftPct + widthPct + 0.5}%` }}
+          data-testid="trace-duration"
+          className={cn(
+            'w-20 shrink-0 px-2 text-right font-mono text-[10px] whitespace-nowrap',
+            error ? 'text-danger-fg' : 'text-text-tertiary',
+          )}
         >
           {span.durationMs}ms
         </span>
-      </div>
+      )}
     </button>
   );
 }
@@ -114,8 +179,19 @@ function buildTree(spans: TraceSpan[], rootId: string): { span: TraceSpan; depth
   return result;
 }
 
-export function TraceTimeline({ trace, className, title, legendKinds }: TraceTimelineProps) {
+export function TraceTimeline({
+  trace, className, title, legendKinds,
+  scale: scaleProp = 'time', onScaleChange, scaleToggle = false,
+  colorByStatus = false, durationColumn = false, errorText = defaultErrorText,
+}: TraceTimelineProps) {
   const [selectedSpan, setSelectedSpan] = useState<TraceSpan | null>(null);
+  const [localScale, setLocalScale] = useState<TraceScale>(scaleProp);
+  const scale = onScaleChange ? scaleProp : localScale;
+  const setScale = (next: TraceScale) => {
+    setLocalScale(next);
+    onScaleChange?.(next);
+  };
+  const maxDurationMs = Math.max(1, ...trace.spans.map((s) => s.durationMs));
   const tree = buildTree(trace.spans, trace.rootSpanId);
   const traceStart = new Date(trace.startedAt).getTime();
 
@@ -127,17 +203,48 @@ export function TraceTimeline({ trace, className, title, legendKinds }: TraceTim
           <span className="text-xs font-medium text-text-primary">{title ?? 'Trace'}</span>
           <span className="text-[10px] font-mono text-text-tertiary">{trace.traceId}</span>
         </div>
-        <span className="text-xs text-neutral">{trace.totalDurationMs}ms total</span>
+        <div className="flex items-center gap-2">
+          {scaleToggle && (
+            <div role="group" aria-label="Bar scale" className="flex items-center gap-1">
+              <Button
+                size="sm"
+                variant={scale === 'time' ? 'primary' : 'secondary'}
+                aria-pressed={scale === 'time'}
+                title="Positions bars on real time. Gaps between bars are time spent between spans."
+                onClick={() => setScale('time')}
+              >
+                By time
+              </Button>
+              <Button
+                size="sm"
+                variant={scale === 'duration' ? 'primary' : 'secondary'}
+                aria-pressed={scale === 'duration'}
+                title="Every bar starts at 0 and scales to the longest span."
+                onClick={() => setScale('duration')}
+              >
+                By duration
+              </Button>
+            </div>
+          )}
+          <span className="text-xs text-neutral">{trace.totalDurationMs}ms total</span>
+        </div>
       </div>
 
       {/* Legend */}
       <div className="flex items-center gap-3 px-3 py-1.5 border-b border-border-subtle">
-        {(legendKinds ?? (Object.keys(KIND_COLORS) as SpanKind[])).map((kind) => (
-          <div key={kind} className="flex items-center gap-1">
-            <span className={cn('w-2 h-2 rounded-sm', KIND_COLORS[kind])} />
-            <span className="text-[10px] text-neutral">{KIND_LABELS[kind]}</span>
-          </div>
-        ))}
+        {colorByStatus
+          ? ([['bg-success', 'Passed'], ['bg-danger', 'Failed']] as const).map(([c, label]) => (
+              <div key={label} className="flex items-center gap-1">
+                <span className={cn('w-2 h-2 rounded-sm', c)} />
+                <span className="text-[10px] text-neutral">{label}</span>
+              </div>
+            ))
+          : (legendKinds ?? (Object.keys(KIND_COLORS) as SpanKind[])).map((kind) => (
+              <div key={kind} className="flex items-center gap-1">
+                <span className={cn('w-2 h-2 rounded-sm', KIND_COLORS[kind])} />
+                <span className="text-[10px] text-neutral">{KIND_LABELS[kind]}</span>
+              </div>
+            ))}
       </div>
 
       {/* Spans */}
@@ -153,6 +260,11 @@ export function TraceTimeline({ trace, className, title, legendKinds }: TraceTim
               startOffset={startOffset}
               onSelect={setSelectedSpan}
               selected={selectedSpan?.spanId === span.spanId}
+              scale={scale}
+              maxDurationMs={maxDurationMs}
+              byStatus={colorByStatus}
+              durationColumn={durationColumn}
+              error={errorText(span)}
             />
           );
         })}
@@ -181,6 +293,12 @@ export function TraceTimeline({ trace, className, title, legendKinds }: TraceTim
               selectedSpan.status === 'ok' && 'text-success-fg',
               selectedSpan.status === 'error' && 'text-danger-fg',
             )}>{selectedSpan.status}</div>
+            {errorText(selectedSpan) && (
+              <>
+                <div className="text-neutral">Error</div>
+                <div className="text-danger-fg">{errorText(selectedSpan)}</div>
+              </>
+            )}
             <div className="text-neutral">Span ID</div>
             <div className="text-text-primary font-mono">{selectedSpan.spanId}</div>
           </div>

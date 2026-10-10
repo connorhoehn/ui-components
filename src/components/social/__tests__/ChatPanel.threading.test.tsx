@@ -258,6 +258,8 @@ describe('ChatPanel threading', () => {
       />,
     );
     expect(rowOf('m3').querySelector('[data-testid="pinned-marker"]')).toBeTruthy();
+    // The pin glyph and "Pinned" share one line (preflight makes an svg a block).
+    expect(rowOf('m3').querySelector('[data-testid="pinned-marker"]')!.className).toContain('flex');
     fireEvent.click(rowOf('m3').querySelector('[aria-label="Unpin"]')!);
     expect(onTogglePin.mock.calls[0][0].id).toBe('m3');
   });

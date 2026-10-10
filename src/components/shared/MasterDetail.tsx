@@ -37,6 +37,10 @@ export interface MasterDetailProps<T> {
   storageKey?: string;
   /** Rendered in the detail pane when nothing resolves from `selectedKey`. */
   emptyDetail?: ReactNode;
+  /** Docked under the detail pane (a composer, a call strip). It reserves its
+   *  own height and stays put while the pane above it scrolls, whatever the
+   *  selection — mirrors ExplorerLayout's `paneFooter`. The rail is unaffected. */
+  paneFooter?: ReactNode;
   className?: string;
   'data-testid'?: string;
 }
@@ -105,6 +109,7 @@ export function MasterDetail<T>({
   compactWidth = 72,
   storageKey,
   emptyDetail,
+  paneFooter,
   className,
   'data-testid': testId = 'master-detail',
 }: MasterDetailProps<T>) {
@@ -133,6 +138,8 @@ export function MasterDetail<T>({
     const next = (base + delta + items.length) % items.length;
     onSelect(keyOf(items[next]));
   };
+
+  const detail = selectedItem ? renderDetail(selectedItem, selectedIndex) : emptyDetail;
 
   return (
     <div
@@ -203,9 +210,18 @@ export function MasterDetail<T>({
         </div>
       </nav>
 
-      <div className="min-w-0 flex-1 overflow-y-auto" data-testid={`${testId}-detail`}>
-        {selectedItem ? renderDetail(selectedItem, selectedIndex) : emptyDetail}
-      </div>
+      {paneFooter != null ? (
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col" data-testid={`${testId}-pane-column`}>
+          <div className="min-h-0 flex-1 overflow-y-auto" data-testid={`${testId}-detail`}>
+            {detail}
+          </div>
+          <div className="shrink-0 bg-surface" data-testid={`${testId}-pane-footer`}>{paneFooter}</div>
+        </div>
+      ) : (
+        <div className="min-w-0 flex-1 overflow-y-auto" data-testid={`${testId}-detail`}>
+          {detail}
+        </div>
+      )}
     </div>
   );
 }

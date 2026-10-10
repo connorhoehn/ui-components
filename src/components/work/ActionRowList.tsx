@@ -141,6 +141,14 @@ export interface ActionRowListProps {
   accent?: 'none' | 'bar';
   /** Every row's worded target in place of the chevron ("Open"). Since 2.392.0. */
   action?: string;
+  /**
+   * Type step. `md` (default): the Initiatives v2 mockup's 15px rows. `sm`
+   * (since 2.429.0): the app's body step — 14px medium titles and cells,
+   * 12px descriptions and meta, a 14px semibold action (`T size="sm"` /
+   * `T size="xs"`) — so a list in a tabbed pane reads like the rails and
+   * lists beside it.
+   */
+  size?: 'md' | 'sm';
   'aria-label'?: string;
   className?: string;
   'data-testid'?: string;
@@ -152,7 +160,8 @@ const ROW_CLASS = cn(
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary',
 );
 
-function RowBody({ item, columns, action }: { item: ActionRowItem; columns?: ActionRowColumn[]; action?: string }) {
+function RowBody({ item, columns, action, size = 'md' }: { item: ActionRowItem; columns?: ActionRowColumn[]; action?: string; size?: 'md' | 'sm' }) {
+  const sm = size === 'sm';
   const hasColumns = !!columns && columns.length > 0;
   const hasDescription = item.description != null && item.description !== false;
   return (
@@ -161,13 +170,13 @@ function RowBody({ item, columns, action }: { item: ActionRowItem; columns?: Act
         <span className="flex shrink-0 items-center" data-testid="action-row-leading">{item.leading}</span>
       )}
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className={cn('truncate text-[15px] leading-6 text-text-primary', hasColumns ? (hasDescription ? 'font-semibold' : 'font-normal') : 'font-medium')} title={hasColumns ? item.title : undefined}>{item.title}</span>
+        <span className={cn('truncate text-text-primary', sm ? 'text-sm font-medium leading-5' : cn('text-[15px] leading-6', hasColumns ? (hasDescription ? 'font-semibold' : 'font-normal') : 'font-medium'))} title={hasColumns ? item.title : undefined}>{item.title}</span>
         {hasDescription && (
-          <span className={cn('truncate text-text-secondary', hasColumns ? 'text-[13px] leading-[18px]' : 'text-sm leading-5')} data-testid="action-row-description">{item.description}</span>
+          <span className={cn('truncate text-text-secondary', sm ? 'text-xs leading-4' : hasColumns ? 'text-[13px] leading-[18px]' : 'text-sm leading-5')} data-testid="action-row-description">{item.description}</span>
         )}
       </span>
       {item.meta != null && item.meta !== false && (
-        <span className="shrink-0 whitespace-nowrap text-[13px] text-text-secondary" data-testid="action-row-meta">{item.meta}</span>
+        <span className={cn('shrink-0 whitespace-nowrap text-text-secondary', sm ? 'text-xs' : 'text-[13px]')} data-testid="action-row-meta">{item.meta}</span>
       )}
       {hasColumns && (
         <span className="flex shrink-0 items-center" data-testid="action-row-cells">
@@ -178,7 +187,7 @@ function RowBody({ item, columns, action }: { item: ActionRowItem; columns?: Act
               <span key={col.id} className="flex shrink-0 items-center">
                 {divider && <span aria-hidden="true" className="h-6 w-px shrink-0 bg-border" data-testid="action-row-divider" />}
                 <span
-                  className={cn('flex min-w-0 items-center truncate whitespace-nowrap text-[15px] leading-6 text-text-secondary', COLUMN_WIDTH[col.width], divider && 'pl-5', col.align === 'end' && 'justify-end')}
+                  className={cn('flex min-w-0 items-center truncate whitespace-nowrap text-text-secondary', sm ? 'text-sm leading-5' : 'text-[15px] leading-6', COLUMN_WIDTH[col.width], divider && 'pl-5', col.align === 'end' && 'justify-end')}
                   data-testid={`action-row-cell-${col.id}`}
                   data-width={col.width}
                 >
@@ -191,7 +200,7 @@ function RowBody({ item, columns, action }: { item: ActionRowItem; columns?: Act
         </span>
       )}
       {action ? (
-        <span className="ml-2 inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-[15px] font-medium leading-6 text-primary" data-testid="action-row-action">
+        <span className={cn('ml-2 inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-primary', sm ? 'text-sm font-semibold leading-5' : 'text-[15px] font-medium leading-6')} data-testid="action-row-action">
           {action}
           <ArrowRightIcon size={16} aria-hidden="true" />
         </span>
@@ -232,6 +241,7 @@ export function ActionRowList({
   tone = 'neutral',
   accent = 'none',
   action,
+  size = 'md',
   'aria-label': ariaLabel,
   className,
   'data-testid': testId = 'action-row-list',
@@ -240,7 +250,7 @@ export function ActionRowList({
   const toned = tone !== 'neutral';
   const hasColumns = !!columns && columns.length > 0;
   return (
-    <div className={cn('flex min-w-0 flex-col', className)} data-testid={testId}>
+    <div className={cn('flex min-w-0 flex-col', className)} data-testid={testId} {...(size === 'sm' ? { 'data-size': 'sm' } : {})}>
       {items.length === 0 ? (
         emptyLabel != null && <p className="m-0 py-2 text-sm text-text-tertiary" data-testid={`${testId}-empty`}>{emptyLabel}</p>
       ) : (
@@ -251,12 +261,12 @@ export function ActionRowList({
             const rowAction = item.action ?? action;
             const rowClass = cn(
               ROW_CLASS,
-              hasColumns && 'min-h-[45px] py-[3px]',
+              hasColumns && cn(size === 'sm' ? 'min-h-10' : 'min-h-[45px]', 'py-[3px]'),
               hasColumns && item.leading != null && 'pl-5',
               rowTone !== 'neutral' && cn(TONE_ROW[rowTone], 'rounded-r-md'),
               rowAccent === 'bar' && TONE_BAR[rowTone],
             );
-            const body = <RowBody item={item} {...(hasColumns ? { columns } : {})} {...(rowAction ? { action: rowAction } : {})} />;
+            const body = <RowBody item={item} {...(hasColumns ? { columns } : {})} {...(rowAction ? { action: rowAction } : {})} size={size} />;
             return (
             <li key={item.id} className={toned ? undefined : 'border-b border-border'} data-testid={`${testId}-row-${item.id}`} {...(rowTone !== 'neutral' ? { 'data-tone': rowTone } : {})} {...(rowAccent === 'bar' ? { 'data-accent': 'bar' } : {})}>
               {item.href && !item.disabled ? (

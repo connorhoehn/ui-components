@@ -1,6 +1,7 @@
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { ActivityIcon } from '../ui/Icons';
 import {
   RailCaretIcon,
   RAIL_CURRENT_FILL,
@@ -41,6 +42,8 @@ export interface SubNavItem {
   label: string;
   /** Optional small badge (e.g. live count) shown right-aligned. */
   count?: number | string;
+  /** Observed activity supplied by the host, never inferred from availability. */
+  activity?: { label: string };
   /** Optional dim subtitle below the label. */
   hint?: string;
   /** Optional group heading. When set on any item, the layout renders
@@ -121,6 +124,14 @@ export interface SubNavLayoutProps {
   /** `aria-label` for the content pane. Only meaningful (and recommended)
    *  when `contentAs` is `'section'`, so the named region reads as one. */
   contentLabel?: string;
+  /**
+   * The primary rail folded to a 44px strip holding only `titleAction` — the
+   * control that brings it back (2.438.0). Controlled: the host decides when
+   * (`useRailFold`, docs: the rail model) and owns the toggle. The strip's
+   * header row takes the height of the rail beside it, so a compact (36px)
+   * section rail's header and the strip's control sit on one row.
+   */
+  collapsed?: boolean;
   /**
    * The main content area. When used with React Router, omit this and pass an
    * `<Outlet />` as children, or leave empty if the router renders children
@@ -207,30 +218,44 @@ export function SubNavLayout({
   railLabel,
   contentAs = 'main',
   contentLabel,
+  collapsed = false,
   children,
 }: SubNavLayoutProps) {
   const Content = contentAs;
   const hasSecondary = secondaryItems && secondaryItems.length > 0;
+  // How many compact (36px-header) rails sit in the content beside this rail.
+  const [compactNeighbours, setCompactNeighbours] = useState(0);
+  const report = useCallback((compact: boolean) => {
+    if (!compact) return () => {};
+    setCompactNeighbours((n) => n + 1);
+    return () => setCompactNeighbours((n) => n - 1);
+  }, []);
+  const alignHeader = collapsed && compactNeighbours > 0;
 
   return (
     <div className="flex h-full min-h-0">
-      {/* Primary rail — width is prop-driven, keep inline */}
+      {/* Primary rail — width is prop-driven, keep inline (the folded strip is a fixed 44px) */}
       <aside
-        className="flex-none border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col overflow-hidden"
-        style={{ width: railWidth }}
+        className={cn('flex-none border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col overflow-hidden', collapsed && 'w-11 min-w-11')}
+        style={collapsed ? undefined : { width: railWidth }}
+        data-collapsed={collapsed ? 'true' : undefined}
       >
-        <div className="flex items-center justify-between px-4 py-[14px] border-b border-[var(--color-border)]">
-          <span className="text-[11px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-[0.05em]">
-            {title}
-          </span>
+        <div className={cn('flex items-center border-b border-[var(--color-border)]',
+          collapsed ? 'justify-center px-0' : 'justify-between px-4',
+          alignHeader ? 'h-9 py-0' : 'py-[14px]')}>
+          {!collapsed && (
+            <span className="text-[11px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-[0.05em]">
+              {title}
+            </span>
+          )}
           {titleAction}
         </div>
-        {railHeader && (
+        {railHeader && !collapsed && (
           <div className="px-3 py-2 border-b border-[var(--color-border)]">
             {railHeader}
           </div>
         )}
-        <RailNav items={items} storageKey={storageKey} title={title} renderNavItem={renderNavItem} railLabel={railLabel} />
+        {!collapsed && <RailNav items={items} storageKey={storageKey} title={title} renderNavItem={renderNavItem} railLabel={railLabel} />}
       </aside>
 
       {/* Secondary rail — width is prop-driven, keep inline */}
@@ -254,10 +279,23 @@ export function SubNavLayout({
       )}
 
       <Content aria-label={contentLabel} className="flex-1 min-w-0 overflow-auto p-6">
-        {children}
+        <RailHeaderAlignContext.Provider value={report}>{children}</RailHeaderAlignContext.Provider>
       </Content>
     </div>
   );
+}
+
+// A rail in the content reports whether its header row is the compact 36px
+// one, so a folded SubNavLayout strip can put its control on the same row.
+const RailHeaderAlignContext = createContext<((compact: boolean) => () => void) | null>(null);
+
+/**
+ * Called by a rail drawn inside a `SubNavLayout`'s content (`WorkspaceRail`):
+ * a compact (36px) header row makes the folded strip's header the same height.
+ */
+export function useReportRailHeader(compact: boolean): void {
+  const report = useContext(RailHeaderAlignContext);
+  useLayoutEffect(() => (report ? report(compact) : undefined), [report, compact]);
 }
 
 function FlatItems({
@@ -384,6 +422,7 @@ function ItemLink({
         >
           {item.label}
         </span>
+        {item.activity && <span className="ml-auto shrink-0 text-primary" role="img" aria-label={item.activity.label} title={item.activity.label} data-testid="subnav-item-activity"><ActivityIcon size={13} /></span>}
         {item.count !== undefined && (
           <span className={cn('shrink-0', RAIL_ITEM_COUNT)} data-testid="subnav-item-count">
             {item.count}

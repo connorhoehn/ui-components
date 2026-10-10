@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { TraceTimeline } from '../TraceTimeline';
 import type {
@@ -194,5 +195,74 @@ describe('TraceTimeline', () => {
 
     fireEvent.click(row);
     expect(screen.getByText('Span ID')).toBeInTheDocument();
+  });
+});
+
+describe('TraceTimeline waterfall options', () => {
+  const spans = [
+    makeSpan({ spanId: 'root', name: 'root', durationMs: 1000 }),
+    makeSpan({
+      spanId: 'a', parentSpanId: 'root', name: 'fast_tool', kind: 'tool',
+      startTime: '2026-05-17T00:00:00.800Z', durationMs: 100,
+    }),
+    makeSpan({
+      spanId: 'b', parentSpanId: 'root', name: 'bad_tool', kind: 'tool', status: 'error',
+      startTime: '2026-05-17T00:00:00.100Z', durationMs: 500,
+      attributes: { 'error.message': 'upstream 503' },
+    }),
+  ];
+  const trace = makeTrace({ rootSpanId: 'root', spans, totalDurationMs: 1000 });
+  const bar = (name: string) =>
+    screen.getByText(name).closest('button')!.querySelector<HTMLElement>('.absolute.h-4')!;
+
+  it('defaults to the real time axis', () => {
+    render(<TraceTimeline trace={trace} />);
+    expect(bar('fast_tool').style.left).toBe('80%');
+  });
+
+  it('by-duration mode starts every bar at 0 and scales to the longest span', () => {
+    render(<TraceTimeline trace={trace} scale="duration" />);
+    expect(bar('fast_tool').style.left).toBe('0%');
+    expect(bar('fast_tool').style.width).toBe('10%');
+    expect(bar('root').style.width).toBe('100%');
+  });
+
+  it('toggle switches between By time and By duration', () => {
+    render(<TraceTimeline trace={trace} scaleToggle />);
+    fireEvent.click(screen.getByRole('button', { name: 'By duration' }));
+    expect(bar('fast_tool').style.left).toBe('0%');
+    fireEvent.click(screen.getByRole('button', { name: 'By time' }));
+    expect(bar('fast_tool').style.left).toBe('80%');
+  });
+
+  it('is controlled when onScaleChange is given', () => {
+    const onScaleChange = vi.fn();
+    render(<TraceTimeline trace={trace} scaleToggle scale="time" onScaleChange={onScaleChange} />);
+    fireEvent.click(screen.getByRole('button', { name: 'By duration' }));
+    expect(onScaleChange).toHaveBeenCalledWith('duration');
+    expect(bar('fast_tool').style.left).toBe('80%');
+  });
+
+  it('colours bars by pass/fail and swaps the legend', () => {
+    render(<TraceTimeline trace={trace} colorByStatus />);
+    expect(bar('bad_tool').className).toContain('bg-danger');
+    expect(bar('fast_tool').className).toContain('bg-success');
+    expect(screen.getByText('Failed')).toBeInTheDocument();
+    expect(screen.queryByText('Retrieval')).not.toBeInTheDocument();
+  });
+
+  it('carries the error text in the row tooltip and the detail panel', () => {
+    render(<TraceTimeline trace={trace} colorByStatus />);
+    const row = screen.getByText('bad_tool').closest('button')!;
+    expect(row.title).toBe('bad_tool - upstream 503 (500ms)');
+    fireEvent.click(row);
+    expect(screen.getByText('Error')).toBeInTheDocument();
+    expect(screen.getAllByText('upstream 503').length).toBeGreaterThan(0);
+  });
+
+  it('supports a custom errorText and a right-hand duration column', () => {
+    render(<TraceTimeline trace={trace} durationColumn errorText={(s) => (s.status === 'error' ? 'custom' : undefined)} />);
+    expect(screen.getAllByTestId('trace-duration')).toHaveLength(3);
+    expect(screen.getByText('bad_tool').closest('button')!.title).toContain('custom');
   });
 });

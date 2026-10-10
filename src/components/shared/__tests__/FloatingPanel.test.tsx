@@ -534,3 +534,35 @@ describe('FloatingPanel', () => {
     });
   });
 });
+
+describe('FloatingPanel viewport resize', () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+    setViewport(VW, VH);
+  });
+
+  it('re-clamps a default point into a smaller window', () => {
+    renderPanel({ defaultPosition: { x: 100, y: 700 } });
+    expect(panelStyle().top).toBe('700px');
+    act(() => { setViewport(VW, 400); window.dispatchEvent(new Event('resize')); });
+    expect(panelStyle().top).toBe('384px');
+  });
+
+  it('re-resolves an anchor placement until the panel has been moved', () => {
+    renderPanel({ defaultPosition: 'bottom-right' });
+    expect(panelStyle().top).toBe(`${VH - MARGIN}px`);
+    act(() => { setViewport(800, 500); window.dispatchEvent(new Event('resize')); });
+    expect(panelStyle().top).toBe(`${500 - MARGIN}px`);
+    expect(panelStyle().left).toBe(`${800 - MARGIN}px`);
+  });
+
+  it('only clamps, not re-anchors, after the person dragged it', () => {
+    renderPanel({ defaultPosition: 'top-left', snapEnabled: false });
+    dragHeader(0, 300);
+    expect(panelStyle().top).toBe('316px');
+    act(() => { setViewport(VW, 600); window.dispatchEvent(new Event('resize')); });
+    expect(panelStyle().top).toBe('316px');
+    act(() => { setViewport(VW, 200); window.dispatchEvent(new Event('resize')); });
+    expect(panelStyle().top).toBe('184px');
+  });
+});

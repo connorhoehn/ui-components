@@ -201,7 +201,7 @@ export declare interface CallControlsProps {
     className?: string;
 }
 
-export declare function CallDock({ title, participantCount, elapsedMs, phase, callingTo, documents, participants, localParticipantId, activeSpeakerId, followingUserId, mic, camera, screenShare, onOpenPeople, onOpenDocuments, peopleOpen, documentsOpen, onOpenSettings, extras, onPopOut, onLeave, canEndForEveryone, onEndForEveryone, onTileClick, onTitleClick, onDocumentClick, endedSummary, error, onDismiss, compact, className, 'data-testid': testId, }: CallDockProps): JSX.Element;
+export declare function CallDock({ title, participantCount, elapsedMs, phase, callingTo, documents, participants, localParticipantId, activeSpeakerId, followingUserId, mic, camera, screenShare, onOpenPeople, onOpenDocuments, peopleOpen, documentsOpen, onOpenSettings, extras, onPopOut, onLeave, canEndForEveryone, onEndForEveryone, onTileClick, onTitleClick, onDocumentClick, endedSummary, error, onDismiss, compact, tileSize, layout, className, 'data-testid': testId, }: CallDockProps): JSX.Element;
 
 /** JSON written under {@link CALL_DOCK_DRAG_TYPE}. */
 export declare interface CallDockDragPayload {
@@ -217,7 +217,12 @@ export declare interface CallDockParticipant extends HangoutLayoutParticipant {
     audioOn: boolean;
     screenSharing: boolean;
     presenting: boolean;
-    connection: 'connected' | 'reconnecting';
+    /**
+     * `ringing` (2.436.0): an invitee whose phone is still ringing — drawn as a
+     * placeholder tile (their avatar, "Ringing…", no mic state) until they
+     * answer. A ringing participant never counts toward `participantCount`.
+     */
+    connection: 'connected' | 'reconnecting' | 'ringing';
     /**
      * An audio sink independent of the camera (an `<audio autoPlay>` on the
      * person's stream). Optional: with camera off the dock keeps `videoElement`
@@ -292,6 +297,26 @@ export declare interface CallDockProps {
     onDismiss?: () => void;
     /** 132 × 74 tiles (a 1280 × 720 window) instead of 176 × 88 (the mockup's 166 × 84 at its 1.054 scale). */
     compact?: boolean;
+    /**
+     * Shelf tile size (2.432.0): `sm` 132 × 74 (what `compact` picks), `md`
+     * 176 × 88 (the default), `lg` 240 × 135 — the tiles above a full-width
+     * conversation composer. Wins over `compact` when both are given.
+     */
+    tileSize?: CallDockTileSize;
+    /**
+     * `shelf` (default): the header row (title, meta, device controls, Leave)
+     * over a row of fixed-size tiles. `grid` (2.423.0): the call's media
+     * panel — ONLY the tile stage, as a reflowing grid of fluid 16:9 tiles
+     * (`CallTileRow variant="grid"`, the viewer first as "You"). No header,
+     * meta or controls render: the host's bar (e.g. `HuddleBar`) owns mic,
+     * camera and Leave. Connecting draws one fluid skeleton; reconnecting keeps
+     * its badge; the ended and error phases render as they do for `shelf`.
+     * `stack` (2.432.0): the narrow form of `shelf` — the header (title, meta,
+     * mic ▾, camera ▾, a "⋯" menu holding Share, People, Documents, settings
+     * and pop-out, then Leave) over the reflowing tile grid, at most two tiles
+     * to a row. For a conversation composer in a side pane.
+     */
+    layout?: 'shelf' | 'grid' | 'stack';
     className?: string;
     'data-testid'?: string;
 }
@@ -301,6 +326,8 @@ export declare interface CallDockTarget {
     id: string;
     label: string;
 }
+
+export declare type CallDockTileSize = 'sm' | 'md' | 'lg';
 
 export declare function CallingStatusPill({ show, label }: CallingStatusPillProps): JSX.Element | null;
 
@@ -668,7 +695,7 @@ export declare interface CallStripParticipant {
     isSpeaking?: boolean;
 }
 
-/** A row participant. The two extra flags are read by the `dock` variant only. */
+/** A row participant. The extra flags are read by the `dock` and `grid` variants only. */
 export declare interface CallTileParticipant extends HangoutLayoutParticipant {
     /** Draws the screen-share glyph on the tile (the shared stream is the host's `videoElement`). */
     screenSharing?: boolean;
@@ -677,14 +704,20 @@ export declare interface CallTileParticipant extends HangoutLayoutParticipant {
     /**
      * Camera off, but keep `videoElement` MOUNTED (invisible) and draw the
      * initials. A remote person's audio rides the same MediaStream as their
-     * video, so unmounting the element on camera-off silences them. `dock` only.
+     * video, so unmounting the element on camera-off silences them. `dock`/`grid` only.
      */
     cameraOff?: boolean;
-    /** An audio sink (e.g. `<audio autoPlay>`), always mounted and never shown. `dock` only. */
+    /** An audio sink (e.g. `<audio autoPlay>`), always mounted and never shown. `dock`/`grid` only. */
     audioElement?: ReactNode;
+    /**
+     * Invited and still ringing (2.436.0): a placeholder tile — the person's
+     * avatar, dimmed, with "Ringing…" in place of the mic state — until they
+     * answer. `dock`/`grid` only.
+     */
+    ringing?: boolean;
 }
 
-export declare function CallTileRow({ participants, localParticipant, activeSpeakerId, tileWidth, controls, title, onParticipantClick, variant, highlightedId, overflow, maxVisible, tileHeight, tileTestIdPrefix, className, style, 'data-testid': testId, }: CallTileRowProps): JSX.Element;
+export declare function CallTileRow({ participants, localParticipant, activeSpeakerId, tileWidth, controls, title, onParticipantClick, variant, highlightedId, overflow, maxVisible, tileHeight, tileTestIdPrefix, maxColumns, className, style, 'data-testid': testId, }: CallTileRowProps): JSX.Element;
 
 export declare interface CallTileRowProps {
     participants: CallTileParticipant[];
@@ -724,8 +757,18 @@ export declare interface CallTileRowProps {
      * diagram, not like a panel someone laid along the bottom edge. `bar`
      * keeps them in one dark strip with the controls at the end, for a dock
      * that is itself a panel.
+     *
+     * `grid` (2.423.0): the call's media panel — the same dock tiles (camera-off
+     * initials with the media kept playing, audio sink, name, mic state,
+     * speaking/followed ring, reconnecting veil), fluid 16:9 tiles in a grid
+     * that reflows with the head count (`gridCols`: 1 → 1 column, 2–4 → 2,
+     * 5–9 → 3, 10+ → 4). The viewer's tile is first, inline, as "You" — never
+     * a PiP — and nobody is collapsed into `+N`. `tileWidth`, `tileHeight`,
+     * `overflow` and `maxVisible` are ignored.
      */
-    variant?: 'floating' | 'bar' | 'dock';
+    variant?: 'floating' | 'bar' | 'dock' | 'grid';
+    /** `grid` only (2.432.0): never more columns than this — a narrow pane keeps two tiles to a row. */
+    maxColumns?: number;
     className?: string;
     style?: CSSProperties;
     'data-testid'?: string;
@@ -982,7 +1025,7 @@ export declare interface DeviceSettingsPanelProps {
     'data-testid'?: string;
 }
 
-export declare function DeviceToggleSelect({ kind, on, onToggle, devices, selectedDeviceId, onSelectDevice, permission, level, size, showLabel, extraItems, disabledReason, className, 'data-testid': testId, }: DeviceToggleSelectProps): JSX.Element;
+export declare function DeviceToggleSelect({ kind, on, onToggle, devices, selectedDeviceId, onSelectDevice, permission, level, size, showLabel, extraItems, disabledReason, deviceMenu, className, 'data-testid': testId, }: DeviceToggleSelectProps): JSX.Element;
 
 export declare interface DeviceToggleSelectProps {
     kind: 'microphone' | 'camera';
@@ -1002,6 +1045,11 @@ export declare interface DeviceToggleSelectProps {
     extraItems?: DropdownMenuItem[];
     /** Disables the toggle with this as its title (e.g. "Microphone blocked in the browser"). */
     disabledReason?: string;
+    /**
+     * Draw the device caret and its menu. Default true. `false` gives a bare
+     * icon toggle (the shell footer), the host picking the device elsewhere.
+     */
+    deviceMenu?: boolean;
     className?: string;
     /** Test id on the toggle; the chevron gets `<id>-menu`. */
     'data-testid'?: string;
@@ -1610,6 +1658,79 @@ export declare type HlsPhase =
 | 'stalled'
 /** Unplayable. `error` carries the wording. */
 | 'error';
+
+export declare function HuddleBar({ name, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, startDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, extras, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
+
+/** One media control: the toggle, and an optional device list behind a caret. */
+export declare interface HuddleBarMedia {
+    on: boolean;
+    onToggle: () => void;
+    permission?: MediaPermission;
+    /** With a list (and `onSelectDevice`) the toggle gets its device caret; without, it is a bare icon toggle. */
+    devices?: DeviceOption[];
+    selectedDeviceId?: string;
+    onSelectDevice?: (deviceId: string) => void;
+    /** 0..1 input level (microphone). */
+    level?: number;
+    disabledReason?: string;
+}
+
+export declare type HuddleBarPhase = 'idle' | 'live' | 'connecting' | 'ringing' | 'reconnecting' | 'ended';
+
+export declare interface HuddleBarProps {
+    /** The call's name: the place or person it is with. */
+    name: string;
+    /**
+     * Default `live`. `idle` is the pre-call bar: `name` is the page's context,
+     * the bar draws `onStart` and the chat button (and no timer, counts, media
+     * or Leave). Since 2.416.0.
+     */
+    phase?: HuddleBarPhase;
+    /**
+     * Visible wording for the current phase ("Calling Mira…", "Reconnecting…").
+     * Default: "Connecting…", "Ringing…", "Reconnecting…" or "Ended" for a phase
+     * that is not `live`; nothing while live. Pass `null` to draw none. Since 2.413.0.
+     */
+    statusLabel?: string | null;
+    /** Epoch ms the call went live. Draws a ticking timer while `live`. */
+    startedAt?: number | null;
+    /** People in the call now. */
+    participantCount?: number;
+    /** Invitees still ringing, counted apart from `participantCount`. */
+    ringingCount?: number;
+    mic?: HuddleBarMedia;
+    camera?: HuddleBarMedia;
+    /** The share-page control (a host's "Share page" button, or a menu). Drawn after the media toggles. */
+    shareSlot?: ReactNode;
+    /** The chat toggle. Absent: no chat button. */
+    onToggleChat?: () => void;
+    chatOpen?: boolean;
+    /** Unread chat count on the toggle. */
+    chatUnread?: number;
+    /** Toggles the call's media panel (tiles, roster). Absent: no button. Since 2.413.0. */
+    onToggleMedia?: () => void;
+    mediaOpen?: boolean;
+    /** Accessible name and tooltip of the media toggle. Default "Participants". */
+    mediaToggleLabel?: string;
+    /** Idle only: the Huddle action that starts the page's call. Absent: no start button. Since 2.416.0. */
+    onStart?: () => void;
+    /** Idle only: label of the start button. Default "Huddle". */
+    startLabel?: string;
+    /** Idle only: disables the start button and is its tooltip. */
+    startDisabledReason?: string;
+    /** Wording of the chat button (the icon alone below the bar's `@lg` width). Default "Chat". Since 2.416.0. */
+    chatLabel?: string;
+    /** Disables the chat button and is its tooltip. Since 2.416.0. */
+    chatDisabledReason?: string;
+    /** Not drawn while `idle`. */
+    onLeave?: () => void;
+    /** Default "Leave". */
+    leaveLabel?: string;
+    /** Extra controls before Leave. */
+    extras?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
 
 export declare interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'children'> {
     size?: number;
@@ -3047,14 +3168,19 @@ export declare interface VolumeSliderProps {
 export { }
 
 
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
+    }
+}
+
+
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -3062,12 +3188,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -3094,6 +3217,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
@@ -3104,12 +3240,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -3120,26 +3256,6 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -3171,9 +3287,36 @@ declare module '@tiptap/core' {
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        suggestChanges: {
+            /** Turn suggestion mode on or off. */
+            setSuggestionMode: (enabled: boolean) => ReturnType;
+            /** Flip suggestion mode. */
+            toggleSuggestionMode: () => ReturnType;
+            /** Accept one suggestion: keep its insertions, remove its deletions. */
+            acceptSuggestion: (id: SuggestionIdentity) => ReturnType;
+            /** Reject one suggestion: drop its insertions, restore its deletions. */
+            rejectSuggestion: (id: SuggestionIdentity) => ReturnType;
+            /** Accept every suggestion in the document. */
+            acceptAllSuggestions: () => ReturnType;
+            /** Reject every suggestion in the document. */
+            rejectAllSuggestions: () => ReturnType;
+            /** Move the selection onto a suggestion. */
+            selectSuggestion: (id: SuggestionIdentity) => ReturnType;
+        };
     }
 }

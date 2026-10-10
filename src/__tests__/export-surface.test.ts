@@ -107,6 +107,33 @@ describe('public export surface (every package.json "exports" entrypoint)', () =
     ).toEqual(snapshotKeys);
   });
 
+  // The runtime checks below cannot see a broken TYPES artifact. 2.425.0
+  // committed a per-file `tsc` emit over the rolled-up dist/index.d.ts
+  // (7 KB, no StackedRail, ~3,000 stray d.ts files) while every runtime
+  // assertion stayed green. So: each entrypoint's declaration file must be a
+  // self-contained rollup (no relative imports) that names every runtime
+  // export in the snapshot.
+  for (const [key] of entries) {
+    it(`entrypoint "${key}" ships a complete rolled-up .d.ts naming every snapshot export`, async () => {
+      const { readFileSync, existsSync } = await import('node:fs');
+      const path = await import('node:path');
+      const exportsMap = (pkg as unknown as { exports: Record<string, { types?: string }> }).exports;
+      const rel = exportsMap[key]?.types;
+      expect(rel, `exports["${key}"] declares no "types"`).toBeTruthy();
+      const file = path.resolve(import.meta.dirname, '../..', rel as string);
+      expect(existsSync(file), `${rel} is missing from dist/`).toBe(true);
+      const text = readFileSync(file, 'utf8');
+      const relative = text.match(/(?:from|import\()\s*['"]\.\.?\/[^'"]*['"]/g) ?? [];
+      expect(
+        relative.slice(0, 3),
+        `${rel} has relative imports: it is a per-file tsc emit, not the rolled-up bundle`,
+      ).toEqual([]);
+      const idents = new Set(text.match(/[A-Za-z_$][\w$]*/g));
+      const missing = (snapshot[key] ?? []).filter((n) => n !== 'default' && !idents.has(n));
+      expect(missing, `${rel} does not mention these runtime exports: ${missing.slice(0, 20).join(', ')}`).toEqual([]);
+    });
+  }
+
   for (const [key, distPath] of entries) {
     describe(`entrypoint "${key}"`, () => {
       it('loads without throwing and exposes a non-empty named export surface', async () => {

@@ -2,7 +2,7 @@
 //
 // Icon-only button with proper aria-label for accessibility.
 
-import { type ButtonHTMLAttributes, type ReactNode } from 'react';
+import { type ButtonHTMLAttributes, type ReactNode, type Ref } from 'react';
 import { cn } from '../../lib/cn';
 import type { SurfaceTone } from '../shared/tones';
 
@@ -23,13 +23,15 @@ export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonEle
    */
   tone?: IconButtonTone;
   size?: 'sm' | 'md' | 'lg';
+  /** The button element (React 19 passes `ref` as a prop; 2.432.0 names it in the type). */
+  ref?: Ref<HTMLButtonElement>;
 }
 
 const variantClasses: Record<IconButtonVariant, string> = {
-  ghost: 'bg-transparent text-text-primary hover:bg-surface-hover',
-  primary: 'bg-info text-white hover:bg-info',
+  ghost: 'bg-transparent text-text-secondary enabled:hover:bg-primary/10 enabled:hover:text-primary aria-pressed:bg-primary/12 aria-pressed:text-primary',
+  primary: 'bg-primary text-on-primary enabled:hover:bg-primary-hover',
   danger: 'bg-danger text-white hover:bg-danger',
-  outline: 'bg-surface text-text-secondary border border-solid border-border hover:bg-surface-hover hover:text-text-primary',
+  outline: 'bg-primary/5 text-text-secondary border border-solid border-primary/20 enabled:hover:bg-primary/12 enabled:hover:text-primary aria-pressed:bg-primary/12 aria-pressed:text-primary',
 };
 
 // Pastel accents take dark text; see the note in Button.tsx.
@@ -67,9 +69,12 @@ export function IconButton({
       type="button"
       aria-label={ariaLabel}
       disabled={disabled}
+      data-variant={variant}
+      data-size={size}
       className={cn(
         'inline-flex items-center justify-center border-none rounded-md',
         'transition-colors duration-150 ease-in-out',
+        tone === 'code' ? 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-code-blue' : 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
         (TONE[tone] ?? variantClasses)[variant],
         sizeClasses[size],
         disabled && 'opacity-50 cursor-not-allowed',

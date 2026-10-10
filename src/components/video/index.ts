@@ -177,6 +177,8 @@ export type {
   CircularIconToggleSize,
 } from './CircularIconToggle';
 
+export { HuddleBar } from './HuddleBar';
+export type { HuddleBarProps, HuddleBarMedia, HuddleBarPhase } from './HuddleBar';
 export { default as MediaControlsBar } from './MediaControlsBar';
 export type { MediaControlsBarProps } from './MediaControlsBar';
 
@@ -310,7 +312,7 @@ export type {
 export { StartCallDrawer } from './StartCallDrawer';
 export type { StartCallDrawerProps, StartCallPeople } from './StartCallDrawer';
 export { CallDock, formatCallElapsed } from './CallDock';
-export type { CallDockProps, CallDockParticipant, CallDockPhase } from './CallDock';
+export type { CallDockProps, CallDockParticipant, CallDockPhase, CallDockTileSize } from './CallDock';
 export { IncomingCallPopover } from './IncomingCallPopover';
 export type { IncomingCallPopoverProps } from './IncomingCallPopover';
 export { DocumentCallPanel } from './DocumentCallPanel';

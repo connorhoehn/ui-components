@@ -130,3 +130,79 @@ describe('WrappedChatPanel carries the message through whole', () => {
     );
   });
 });
+
+describe('WrappedChatPanel pass-through (receipts, unread, threads, pending reply)', () => {
+  const own = (id: string, text: string): RMChatMessage => ({
+    ...makeMsg(id, text),
+    userId: 'me',
+  } as RMChatMessage);
+
+  it('forwards readReceipts and names the readers, excluding the viewer', () => {
+    render(
+      <WrappedChatPanel
+        chat={makeChat([own('m1', 'mine')])}
+        currentUserId="me"
+        readReceipts={[
+          { userId: 'u2', displayName: 'Ada', readAt: '2026-05-30T10:05:00.000Z' },
+          { userId: 'me', displayName: 'Me', readAt: '2026-05-30T10:06:00.000Z' },
+        ]}
+      />,
+    );
+    expect(screen.getByText(/Seen/)).toBeInTheDocument();
+  });
+
+  it('renders no receipt line when readReceiptsEnabled is false', () => {
+    render(
+      <WrappedChatPanel
+        chat={makeChat([own('m1', 'mine')])}
+        currentUserId="me"
+        readReceiptsEnabled={false}
+        readReceipts={[{ userId: 'u2', displayName: 'Ada', readAt: '2026-05-30T10:05:00.000Z' }]}
+      />,
+    );
+    expect(screen.queryByText(/Seen/)).not.toBeInTheDocument();
+  });
+
+  it('forwards unreadFrom as the unread separator', () => {
+    const chat = makeChat([
+      { ...makeMsg('m1', 'old'), timestamp: '2026-05-30T09:00:00.000Z' },
+      { ...makeMsg('m2', 'new'), timestamp: '2026-05-30T11:00:00.000Z' },
+    ]);
+    render(<WrappedChatPanel chat={chat} unreadFrom="2026-05-30T10:00:00.000Z" />);
+    expect(screen.getByTestId('chat-unread-separator')).toBeInTheDocument();
+  });
+
+  it('forwards threaded so a reply nests under its root', () => {
+    const chat = makeChat([
+      makeMsg('m1', 'root'),
+      {
+        ...makeMsg('m2', 'answer'),
+        metadata: { replyTo: { messageId: 'm1', author: 'A', text: 'root' } },
+      } as RMChatMessage,
+    ]);
+    render(<WrappedChatPanel chat={chat} threaded />);
+    expect(screen.getByTestId('chat-thread')).toBeInTheDocument();
+  });
+
+  it('shows a pending reply above the built-in composer and dismisses it', () => {
+    const onCancelReply = vi.fn();
+    render(
+      <WrappedChatPanel
+        chat={makeChat([])}
+        reply={{ messageId: 'm1', author: 'Ada', text: 'quote me' }}
+        onCancelReply={onCancelReply}
+      />,
+    );
+    const strip = screen.getByTestId('chat-panel-pending-reply');
+    expect(strip).toHaveTextContent('quote me');
+    const dismiss = strip.querySelector('button');
+    expect(dismiss).not.toBeNull();
+    dismiss!.click();
+    expect(onCancelReply).toHaveBeenCalled();
+  });
+
+  it('shows no pending reply when none is set', () => {
+    render(<WrappedChatPanel chat={makeChat([])} />);
+    expect(screen.queryByTestId('chat-panel-pending-reply')).not.toBeInTheDocument();
+  });
+});

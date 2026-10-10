@@ -17,7 +17,7 @@
 // for shells is the same idea as sending one instruction to five agents, and
 // it is the reason to be here at all.
 
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../../lib/cn';
 import { StatusDot } from '../../shared/StatusDot';
 import { TitledFrame } from '../../shared/TitledFrame';
@@ -26,7 +26,18 @@ import { useCompute } from '../context/ComputeContext';
 import { useLabLayout } from '../hooks/useLabLayout';
 import { COMPUTE_STATUS, statusOf } from '../lib/status';
 import { MAX_SHELLS } from '../lib/dockStore';
-import { nextKind, quotaUsage, resolveKind, type PaneHandle, type PaneKind, type PaneKindRegistry } from '../lib/paneKinds';
+import {
+  defaultKindFor, kindsFor, nextKind, quotaUsage, resolveKind,
+  type PaneHandle, type PaneKind, type PaneKindRegistry,
+} from '../lib/paneKinds';
+import { summarizeFleet } from '../lib/fleetSummary';
+import {
+  LabInstructContext, runInstructionAsTasks, type LabInstructionOutcome, type LabInstructRoute,
+} from '../context/LabInstructContext';
+import type { DropdownMenuSection } from '../../shared/DropdownMenu';
+import { DropdownMenu } from '../../shared/DropdownMenu';
+import { LabFleetRail } from './LabFleetRail';
+import { LabHeader, LabPaneToolbar, WorkspacePane } from './LabWorkspaceChrome';
 import {
   DEFAULT_KEYMAP, groupBindings, isLeaderKey, labelFor, matchBinding, matchLeaderBinding,
   type KeyBinding, type LabCommand, type LeaderConfig,
@@ -37,7 +48,22 @@ import { LabRail } from './LabRail';
 import { LabChooser } from './LabChooser';
 import { PaneTreeView } from './PaneTreeView';
 import { PaneStatusLine, DEFAULT_IDLE_WINDOW_MS } from './PaneStatusLine';
-import type { Computer } from '../types';
+import type { Computer, ComputeStatus } from '../types';
+
+/** Which computers an instruction reaches. */
+export type LabInstructionScope = 'focused' | 'selected' | 'all';
+
+/** What the workspace lab's instruction bar hands the host. */
+export interface LabInstruction {
+  text: string;
+  /** The computers in scope, laptops included — the host decides what reaches them. */
+  computers: Computer[];
+  scope: LabInstructionScope;
+}
+
+// Defined beside the shared route so the Nudge bar and the Agent pane's reply
+// cannot drift apart; re-exported here where hosts have always imported it.
+export type { LabInstructionOutcome } from '../context/LabInstructContext';
 
 export interface ComputerLabProps {
   open: boolean;
@@ -107,6 +133,31 @@ export interface ComputerLabProps {
    * @see `../lib/chromeTokens` for the map itself and where it may be applied.
    */
   chrome?: ChromeTone;
+  /**
+   * `classic` (default) is the tmux-shaped lab: window tabs, a two-list rail,
+   * code-family frames and a broadcast prompt. `workspace` is the same
+   * multiplexer under host-themed chrome — a header with the fleet's status
+   * pills, + Computer and Keys; a tabbed, searchable, numbered rail grouped by
+   * project; card panes with a kind menu and a status badge; and an
+   * instruction bar that targets the focused pane, a selection, or the whole
+   * fleet. Keyboard, layout persistence and pane kinds are shared.
+   */
+  appearance?: 'classic' | 'workspace';
+  /** Workspace header title. `null` drops it when the host titles the page. Default `Computer Lab`. */
+  title?: ReactNode | null;
+  /** Workspace header: host actions after + Computer and Keys. */
+  headerActions?: ReactNode;
+  /**
+   * Workspace instruction bar, `Nudge` mode: deliver an instruction to the
+   * computers in scope through the host's own route (a governed dispatch, a
+   * queue). Resolve with how many took it; reject to report a refusal (a 403,
+   * a budget brake) and the text is kept for a retry.
+   *
+   * Absent, the lab runs it as an agent task on each targeted microVM through
+   * the provider's client (`runTask`, resume on). Laptops are skipped on that
+   * path: they have no runtime session to resume.
+   */
+  onInstruct?: (instruction: LabInstruction) => Promise<LabInstructionOutcome | void>;
   className?: string;
 }
 
@@ -119,11 +170,26 @@ export function ComputerLab({
   keymap = DEFAULT_KEYMAP,
   leader = null,
   idleWindowMs = DEFAULT_IDLE_WINDOW_MS,
+  appearance = 'classic',
+  title = 'Computer Lab',
+  headerActions,
+  onInstruct,
   className,
 }: ComputerLabProps) {
-  const { computers, canManage, create, models, notify, refresh, paneKinds, projects } = useCompute();
+  const { client, computers, canManage, create, models, notify, refresh, paneKinds, projects } = useCompute();
   const defaultKindId = paneKinds[0]?.id ?? 'agent';
+  /** The kind a new pane on this computer gets — a laptop never gets a PTY. */
+  const kindIdFor = useCallback(
+    (computer: Computer | null | undefined) => defaultKindFor(paneKinds, computer)?.id ?? defaultKindId,
+    [paneKinds, defaultKindId],
+  );
   const layout = useLabLayout();
+  const workspace = appearance === 'workspace';
+  const [statusFilter, setStatusFilter] = useState<ComputeStatus | null>(null);
+  const [selectedIds, setSelectedIds] = useState<ReadonlySet<string>>(() => new Set());
+  const [instructMode, setInstructMode] = useState<'nudge' | 'type'>('nudge');
+  const [scope, setScope] = useState<LabInstructionScope>('focused');
+  const [instructing, setInstructing] = useState(false);
 
   const [broadcast, setBroadcast] = useState(false);
   const [broadcastText, setBroadcastText] = useState('');
@@ -155,10 +221,11 @@ export function ComputerLab({
   const hasWindows = layout.windows.length > 0;
   const linked = focusComputerId && byId.has(focusComputerId) ? focusComputerId : null;
   const firstComputerId = linked ?? computers[0]?.id ?? null;
+  const firstKindId = kindIdFor(firstComputerId ? byId.get(firstComputerId) : null);
   useEffect(() => {
     if (!open || hasWindows || !firstComputerId) return;
-    layout.ensureSeeded(firstComputerId, defaultKindId);
-  }, [open, hasWindows, firstComputerId, defaultKindId, layout.ensureSeeded]);
+    layout.ensureSeeded(firstComputerId, firstKindId);
+  }, [open, hasWindows, firstComputerId, firstKindId, layout.ensureSeeded]);
 
   // Land a deep link. Fires per distinct id — following one link, moving away,
   // then following the same link again re-lands you, which is what a link
@@ -190,6 +257,30 @@ export function ComputerLab({
     reconcile(computerIds);
   }, [open, computerIds, reconcile]);
 
+  /**
+   * Point a pane at another computer, switching its kind when the current one
+   * cannot render that computer (a terminal retargeted at a laptop).
+   */
+  const retarget = useCallback(
+    (paneId: string, computer: Computer) => {
+      const pane = layout.panes.find((p) => p.id === paneId);
+      layout.setPaneComputer(paneId, computer.id);
+      const kind = pane ? resolveKind(paneKinds, pane.kindId) : null;
+      if (kind?.appliesTo && !kind.appliesTo(computer)) layout.setPaneKind(paneId, kindIdFor(computer));
+    },
+    [layout, paneKinds, kindIdFor],
+  );
+
+  /** A kind for a new pane on `computer`: keep the focused pane's kind when it applies. */
+  const kindForNewPane = useCallback(
+    (computer: Computer | null | undefined) => {
+      const current = activePane ? resolveKind(paneKinds, activePane.kindId) : null;
+      if (current && computer && (!current.appliesTo || current.appliesTo(computer))) return current.id;
+      return kindIdFor(computer);
+    },
+    [activePane, paneKinds, kindIdFor],
+  );
+
   const registerPane = useCallback((paneId: string, kind: PaneKind, handle: PaneHandle | null) => {
     if (handle) panesRef.current.set(paneId, { handle, kind });
     else panesRef.current.delete(paneId);
@@ -198,11 +289,10 @@ export function ComputerLab({
   /** Panes broadcast reaches. Everything in the window, or just the focused one. */
   const targets = broadcast ? layout.panes : activePane ? [activePane] : [];
 
-  const sendBroadcast = useCallback(() => {
-    const text = broadcastText.trim();
-    if (!text || targets.length === 0) return;
+  /** Type `text` into each pane that will take it; the count that did. */
+  const deliverToPanes = useCallback((text: string, panes: readonly PaneLeaf[]) => {
     let delivered = 0;
-    for (const pane of targets) {
+    for (const pane of panes) {
       const entry = panesRef.current.get(pane.id);
       if (!entry?.handle.send) continue;
       // Whether the text needs a trailing newline is a property of the kind
@@ -210,6 +300,13 @@ export function ComputerLab({
       // rather than branched on here.
       if (entry.handle.send(`${text}${entry.kind.inputSuffix ?? ''}`)) delivered += 1;
     }
+    return delivered;
+  }, []);
+
+  const sendBroadcast = useCallback(() => {
+    const text = broadcastText.trim();
+    if (!text || targets.length === 0) return;
+    const delivered = deliverToPanes(text, targets);
     if (delivered === 0) {
       notify({ tone: 'error', title: 'Nothing received that', detail: 'No pane was ready to accept input.' });
       return;
@@ -222,15 +319,96 @@ export function ComputerLab({
         detail: 'The rest were not connected.',
       });
     }
-  }, [broadcastText, targets, notify]);
+  }, [broadcastText, targets, notify, deliverToPanes]);
+
+  // ── Workspace instruction bar ───────────────────────────────────────────
+  // The same composer, aimed by scope rather than by a broadcast toggle. Two
+  // modes: Nudge hands an instruction to each computer's agent (the host's
+  // route, or a resumed agent task); Type sends keystrokes into the panes
+  // already open on those computers, which is the classic broadcast.
+
+  const scopedComputers = useMemo(() => {
+    if (scope === 'all') return computers;
+    if (scope === 'selected') return computers.filter((c) => selectedIds.has(c.id));
+    return activeComputer ? [activeComputer] : [];
+  }, [scope, computers, selectedIds, activeComputer]);
+
+  const scopedPanes = useMemo(() => {
+    if (scope === 'focused') return activePane ? [activePane] : [];
+    const ids = new Set(scopedComputers.map((c) => c.id));
+    return layout.panes.filter((p) => ids.has(p.computerId));
+  }, [scope, activePane, scopedComputers, layout.panes]);
+
+  /** The default Nudge route: a resumed agent task on each targeted microVM. */
+  const runAsTasks = useCallback(
+    (text: string, targetComputers: readonly Computer[]) => runInstructionAsTasks(client, text, targetComputers),
+    [client],
+  );
+
+  /**
+   * The route a pane's inline reply takes — the same one Nudge takes, aimed
+   * at that pane's computer alone.
+   */
+  const paneInstruct = useCallback<LabInstructRoute>(
+    (text, targetComputers) => (onInstruct
+      ? onInstruct({ text, computers: [...targetComputers], scope: 'focused' })
+      : runAsTasks(text, targetComputers)),
+    [onInstruct, runAsTasks],
+  );
+
+  const sendInstruction = useCallback(async () => {
+    const text = broadcastText.trim();
+    if (!text || instructing) return;
+    if (instructMode === 'type') {
+      if (scopedPanes.length === 0) {
+        notify({ tone: 'info', title: 'No open pane to type into', detail: 'Open a pane on one of these computers first.' });
+        return;
+      }
+      const delivered = deliverToPanes(text, scopedPanes);
+      if (delivered === 0) {
+        notify({ tone: 'error', title: 'Nothing received that', detail: 'No pane was ready to accept input.' });
+        return;
+      }
+      setBroadcastText('');
+      if (delivered < scopedPanes.length) {
+        notify({ tone: 'info', title: `Typed into ${delivered} of ${scopedPanes.length} panes`, detail: 'The rest do not take input.' });
+      }
+      return;
+    }
+    if (scopedComputers.length === 0) return;
+    setInstructing(true);
+    try {
+      const outcome = onInstruct
+        ? await onInstruct({ text, computers: scopedComputers, scope })
+        : await runAsTasks(text, scopedComputers);
+      const delivered = outcome?.delivered ?? scopedComputers.length;
+      if (delivered > 0) setBroadcastText('');
+      notify({
+        tone: delivered > 0 ? 'success' : 'error',
+        title: delivered > 0
+          ? `Sent to ${delivered} of ${scopedComputers.length} ${scopedComputers.length === 1 ? 'computer' : 'computers'}`
+          : 'No computer took that',
+        ...(outcome?.detail ? { detail: outcome.detail } : {}),
+      });
+    } catch (err) {
+      // Kept in the bar: a refusal (a permission, a budget brake) is usually
+      // fixed elsewhere and then retried as written.
+      notify({ tone: 'error', title: 'Instruction not sent', detail: err instanceof Error ? err.message : undefined });
+    } finally {
+      setInstructing(false);
+    }
+  }, [
+    broadcastText, instructing, instructMode, scopedPanes, scopedComputers, scope, onInstruct, runAsTasks,
+    deliverToPanes, notify,
+  ]);
 
   const splitWith = useCallback(
     (direction: 'row' | 'column') => {
       const computerId = activePane?.computerId ?? computers[0]?.id;
       if (!computerId) return;
-      layout.split(direction, computerId, activePane?.kindId ?? defaultKindId);
+      layout.split(direction, computerId, activePane?.kindId ?? kindIdFor(byId.get(computerId)));
     },
-    [activePane, computers, layout, defaultKindId],
+    [activePane, computers, layout, kindIdFor, byId],
   );
 
   /** Switch a pane to a kind, refusing if that kind's quota is spent. */
@@ -255,13 +433,13 @@ export function ComputerLab({
   /** ⌃B e — advance the focused pane to the next registered kind. */
   const cycleActiveKind = useCallback(() => {
     if (!activePane) return;
-    switchKind(activePane.id, activePane.kindId, nextKind(paneKinds, activePane.kindId));
-  }, [activePane, paneKinds, switchKind]);
+    switchKind(activePane.id, activePane.kindId, nextKind(paneKinds, activePane.kindId, byId.get(activePane.computerId)));
+  }, [activePane, paneKinds, switchKind, byId]);
 
   const provision = useCallback((projectId?: string) => {
     void create(projectId ? { projectId } : undefined)
       .then((box) => {
-        layout.newWindow(box.id, defaultKindId);
+        layout.newWindow(box.id, kindIdFor(box));
         notify({ tone: 'success', title: `${box.label} ready`, detail: 'microVM session live · workspace persists' });
       })
       .catch((err: unknown) => {
@@ -271,7 +449,7 @@ export function ComputerLab({
           detail: err instanceof Error ? err.message : undefined,
         });
       });
-  }, [create, layout, notify, defaultKindId]);
+  }, [create, layout, notify, kindIdFor]);
 
   // ── Keyboard ───────────────────────────────────────────────────────────
   // Capture phase, because xterm swallows nearly everything once a terminal
@@ -342,7 +520,10 @@ export function ComputerLab({
           (rowIn('computers') ?? rowIn('agents'))?.focus();
           return;
         }
-        case 'toggle-broadcast': setBroadcast((v) => !v); return;
+        case 'toggle-broadcast':
+          if (workspace) setScope((v) => (v === 'all' ? 'focused' : 'all'));
+          else setBroadcast((v) => !v);
+          return;
         case 'help': setShowHelp((v) => !v); return;
         // Esc from the rail returns to the panes first — leaving the rail
         // and leaving the lab are different sizes of "get me out", and
@@ -360,7 +541,7 @@ export function ComputerLab({
         }
       }
     },
-    [layout, splitWith, cycleActiveKind, onClose, variant, activePane],
+    [layout, splitWith, cycleActiveKind, onClose, variant, activePane, workspace],
   );
 
   // Capture phase, because xterm swallows nearly everything once a terminal
@@ -427,7 +608,359 @@ export function ComputerLab({
   // the looser rhythm it was designed at.
   const dense = variant === 'inline';
 
+  // One composer element serves both bars: a second textarea would be a
+  // second focus target for the `focus-composer` / `leave-pane` commands.
+  const instructionPlaceholder = instructMode === 'type'
+    ? `Type into ${scopedPanes.length} ${scopedPanes.length === 1 ? 'pane' : 'panes'} — ⏎ to send`
+    : scope === 'focused'
+      ? `Instruction for ${activeComputer?.label ?? 'the focused computer'} — ⏎ to send`
+      : `Instruction for ${scopedComputers.length} ${scopedComputers.length === 1 ? 'computer' : 'computers'} — ⏎ to send`;
+  const composer = (
+    <textarea
+      ref={composerRef}
+      rows={1}
+      value={broadcastText}
+      onChange={(e) => setBroadcastText(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          if (workspace) void sendInstruction();
+          else sendBroadcast();
+        }
+        if (e.key === 'Escape') e.currentTarget.blur();
+      }}
+      placeholder={
+        workspace
+          ? instructionPlaceholder
+          : broadcast
+            ? `instruction for all ${targets.length} panes — ⏎ to send`
+            : `instruction for ${activeComputer?.label ?? 'the focused pane'} — ⏎ to send`
+      }
+      aria-label={workspace ? 'Instruction' : 'Broadcast instruction'}
+      disabled={workspace && instructing}
+      className={cn(
+        'flex-1 min-w-0 resize-none bg-transparent border-none outline-none text-[12px] leading-6',
+        workspace
+          ? 'font-mono text-text-primary caret-primary placeholder:text-text-tertiary disabled:opacity-60'
+          : 'text-code-text caret-code-blue placeholder:text-code-raised',
+      )}
+    />
+  );
+
+  if (workspace) {
+    const summary = summarizeFleet(computers);
+    const paneComputer = (pane: PaneLeaf) => byId.get(pane.computerId) ?? null;
+    const paneKindOf = (pane: PaneLeaf): PaneKind | null => {
+      const computer = paneComputer(pane);
+      const resolved = resolveKind(paneKinds, pane.kindId);
+      if (resolved && computer && resolved.appliesTo && !resolved.appliesTo(computer)) {
+        return defaultKindFor(paneKinds, computer);
+      }
+      return resolved;
+    };
+    const windowSections: DropdownMenuSection[] = [
+      {
+        label: 'Windows',
+        items: [
+          ...layout.windows.map((w, i) => ({
+            label: w.name ?? `Window ${i + 1}`,
+            active: w.id === layout.activeWindow?.id,
+            onSelect: () => layout.selectWindow(w.id),
+          })),
+          {
+            label: 'New window',
+            disabled: !activePane,
+            onSelect: () => {
+              if (activePane) layout.newWindow(activePane.computerId, kindIdFor(byId.get(activePane.computerId)));
+            },
+          },
+        ],
+      },
+      {
+        items: [
+          { label: 'Jump to a computer…', trailing: chord('jump') ?? undefined, onSelect: () => setShowChooser(true) },
+          { label: 'Arrange side by side', onSelect: () => layout.arrange('columns') },
+          { label: 'Keyboard shortcuts', trailing: chord('help') ?? undefined, onSelect: () => setShowHelp(true) },
+        ],
+      },
+    ];
+    const scopeLabel: Record<LabInstructionScope, string> = {
+      focused: 'Focused pane',
+      selected: 'Selected',
+      all: 'All computers',
+    };
+    const scopeCount: Record<LabInstructionScope, number> = {
+      focused: activeComputer ? 1 : 0,
+      selected: selectedIds.size,
+      all: computers.length,
+    };
+    const targetCount = instructMode === 'type' ? scopedPanes.length : scopedComputers.length;
+    const scopedIds = new Set(scopedComputers.map((c) => c.id));
+
+    return (
+      <LabInstructContext.Provider value={paneInstruct}>
+      <div
+        ref={rootRef}
+        {...(variant === 'overlay'
+          ? { role: 'dialog' as const, 'aria-modal': true }
+          : { role: 'region' as const })}
+        aria-label="Computer Lab"
+        data-appearance="workspace"
+        style={chromeVars}
+        className={cn(
+          'flex flex-col bg-surface text-text-primary',
+          variant === 'overlay'
+            ? 'fixed inset-0 z-[150]'
+            : 'relative h-full min-h-0 w-full rounded-lg border border-border overflow-hidden',
+          className,
+        )}
+      >
+        <LabHeader
+          title={title}
+          summary={summary}
+          statusFilter={statusFilter}
+          onStatusFilter={setStatusFilter}
+          canCreate={canManage}
+          onCreate={() => provision()}
+          onKeys={() => setShowHelp((v) => !v)}
+          keysOpen={showHelp}
+          keysChord={chord('help')}
+          actions={(
+            <>
+              {headerActions}
+              {variant === 'overlay' && (
+                <button
+                  type="button"
+                  onClick={onClose}
+                  title={`Leave the lab${chord('exit') ? ` · ${chord('exit')}` : ''}`}
+                  className="text-[12px] text-text-tertiary bg-transparent border-none cursor-pointer hover:text-danger"
+                >
+                  ✕
+                </button>
+              )}
+            </>
+          )}
+          leaderLabel={leaderArmed && leader ? leader.label : null}
+        />
+
+        <div className="flex flex-1 min-h-0">
+          <div ref={railRef} className="contents">
+            <LabFleetRail
+              className="w-[224px] xl:w-[300px] shrink-0"
+              computers={computers}
+              activeComputerId={activeComputer?.id ?? null}
+              openComputerIds={layout.openComputerIds}
+              selectedIds={selectedIds}
+              statusFilter={statusFilter}
+              onStatusFilterChange={setStatusFilter}
+              onCreate={canManage ? () => provision() : undefined}
+              onSelect={(computer, { toggle }) => {
+                if (toggle) {
+                  setSelectedIds((prev) => {
+                    const next = new Set(prev);
+                    if (next.has(computer.id)) next.delete(computer.id); else next.add(computer.id);
+                    return next;
+                  });
+                  return;
+                }
+                // Already on screen: go to it rather than duplicating it here.
+                const existing = layout.panes.find((p) => p.computerId === computer.id);
+                if (existing) { layout.focusPane(existing.id); return; }
+                if (activePane) retarget(activePane.id, computer);
+              }}
+              onOpenInPane={(computer) => layout.split('row', computer.id, kindForNewPane(computer))}
+            />
+          </div>
+
+          <div className="flex flex-col flex-1 min-w-0 min-h-0 bg-surface-inset">
+            <LabPaneToolbar
+              panes={layout.panes.map((p) => ({
+                id: p.id,
+                label: byId.get(p.computerId)?.label ?? 'gone',
+                kind: paneKindOf(p)?.title ?? paneKindOf(p)?.label ?? p.kindId,
+                active: p.id === layout.activePaneId,
+              }))}
+              onFocusPane={layout.focusPane}
+              onAddPane={() => splitWith(layout.panes.length % 2 === 1 ? 'row' : 'column')}
+              canAddPane={!!activePane}
+              shellsOpen={shellPanes}
+              maxShells={MAX_SHELLS}
+              onArrange={layout.arrange}
+              zoomed={!!layout.zoomedPaneId}
+              onToggleZoom={layout.toggleZoom}
+              moreSections={windowSections}
+            />
+
+            <div className="flex-1 min-h-0 flex px-2 pb-2">
+              {layout.activeWindow && activePane ? (
+                <PaneTreeView
+                  className="flex-1 h-full"
+                  gutter="roomy"
+                  node={layout.activeWindow.root}
+                  activePaneId={layout.activePaneId}
+                  zoomedPaneId={layout.zoomedPaneId}
+                  onRatioChange={layout.resize}
+                  renderLeaf={(pane) => {
+                    const computer = paneComputer(pane);
+                    const kind = paneKindOf(pane);
+                    const isActive = pane.id === layout.activePaneId;
+                    if (!computer || !kind) {
+                      return (
+                        <div className="flex-1 flex items-center justify-center rounded-lg border border-border bg-surface text-[12px] text-text-tertiary">
+                          {computer ? 'No pane kind is registered.' : 'This computer is gone.'}
+                        </div>
+                      );
+                    }
+                    return (
+                      <WorkspacePane
+                        key={pane.id}
+                        computer={computer}
+                        kind={kind}
+                        kinds={kindsFor(paneKinds, computer)}
+                        onSwitchKind={(target) => {
+                          layout.focusPane(pane.id);
+                          switchKind(pane.id, kind.id, target);
+                        }}
+                        active={isActive}
+                        zoomed={layout.zoomedPaneId === pane.id}
+                        broadcasting={scope !== 'focused' && scopedIds.has(computer.id)}
+                        models={models}
+                        onFocus={() => { if (!isActive) layout.focusPane(pane.id); }}
+                        onClose={() => {
+                          layout.focusPane(pane.id);
+                          layout.closeActivePane();
+                        }}
+                        onToggleZoom={() => {
+                          layout.focusPane(pane.id);
+                          layout.toggleZoom();
+                        }}
+                        moreSections={[{
+                          items: [
+                            { label: 'Split right', onSelect: () => layout.split('row', computer.id, kind.id) },
+                            { label: 'Split down', onSelect: () => layout.split('column', computer.id, kind.id) },
+                            { label: 'Open in a new window', onSelect: () => layout.newWindow(computer.id, kind.id) },
+                          ],
+                        }]}
+                      >
+                        <WorkspacePaneBody
+                          kind={kind}
+                          paneId={pane.id}
+                          computer={computer}
+                          active={isActive}
+                          onRegisterPane={registerPane}
+                          onSettled={() => void refresh()}
+                        />
+                      </WorkspacePane>
+                    );
+                  }}
+                />
+              ) : (
+                <div className="flex-1 flex flex-col items-center justify-center gap-3 text-center rounded-lg border border-dashed border-border">
+                  <div className="text-[14px] font-semibold text-text-primary">No computers in the lab</div>
+                  <div className="text-[12px] text-text-secondary max-w-sm">
+                    {canManage
+                      ? 'Start a computer and it opens here in a pane.'
+                      : 'Nothing in the fleet is shared with you yet.'}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div
+              data-testid="lab-instruction-bar"
+              className="shrink-0 border-t border-border bg-surface px-2 pt-1.5 pb-1"
+            >
+              <div className="flex items-center gap-1.5 rounded-lg border border-border bg-surface px-1.5 py-1 focus-within:border-primary">
+                <DropdownMenu
+                  trigger={<span className="text-[12px] font-semibold">{instructMode === 'nudge' ? 'Nudge' : 'Type'} ▾</span>}
+                  triggerLabel="Instruction mode"
+                  triggerVariant="link"
+                  triggerTestId="lab-instruct-mode"
+                  sections={[{
+                    items: [
+                      {
+                        label: 'Nudge',
+                        description: "An instruction for each computer's agent",
+                        active: instructMode === 'nudge',
+                        disabled: !canManage && !onInstruct,
+                        disabledReason: 'Needs permission to run work on these computers',
+                        onSelect: () => setInstructMode('nudge'),
+                      },
+                      {
+                        label: 'Type',
+                        description: 'Keystrokes into the panes open on them',
+                        active: instructMode === 'type',
+                        onSelect: () => setInstructMode('type'),
+                      },
+                    ],
+                  }]}
+                />
+                <span aria-hidden="true" className="h-4 w-px bg-border" />
+                <DropdownMenu
+                  trigger={<span className="text-[12px] tabular-nums">{scopeLabel[scope]} · {scopeCount[scope]} ▾</span>}
+                  triggerLabel="Instruction targets"
+                  triggerVariant="link"
+                  triggerTestId="lab-instruct-scope"
+                  sections={[{
+                    label: 'Send to',
+                    items: (['focused', 'selected', 'all'] as const).map((value) => ({
+                      label: `${scopeLabel[value]} · ${scopeCount[value]}`,
+                      active: scope === value,
+                      ...(value === 'selected' && selectedIds.size === 0
+                        ? { disabled: true, disabledReason: '⌘-click computers in the rail to select them' }
+                        : {}),
+                      onSelect: () => setScope(value),
+                    })),
+                  }]}
+                />
+                <span aria-hidden="true" className="font-mono text-[12px] text-text-tertiary pl-1">&gt;</span>
+                {composer}
+                <button
+                  type="button"
+                  onClick={() => void sendInstruction()}
+                  disabled={!broadcastText.trim() || targetCount === 0 || instructing}
+                  aria-label="Send instruction"
+                  title="Send · ⏎"
+                  className="shrink-0 h-6.5 px-2 rounded-md border-none bg-primary text-on-primary text-[12px] cursor-pointer hover:bg-primary-hover disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  ⏎
+                </button>
+              </div>
+              <div data-testid="lab-instruction-caption" className="px-1 pt-0.5 text-[11px] text-text-tertiary tabular-nums">
+                {instructMode === 'type' ? 'Shell input' : 'Agent instruction'} · {targetCount} {targetCount === 1 ? 'target' : 'targets'}
+                {instructing && ' · sending…'}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <LabChooser
+          open={showChooser}
+          onClose={() => setShowChooser(false)}
+          chrome={chromeTone}
+          computers={computers}
+          panes={layout.panes}
+          onJumpToPane={layout.focusPane}
+          onRetarget={(computer) => { if (activePane) retarget(activePane.id, computer); }}
+          onOpenInSplit={(computer) => layout.split('row', computer.id, kindForNewPane(computer))}
+          projects={projects}
+          onSelectProject={(project) => {
+            const first = project.computers[0];
+            if (first) { if (activePane) retarget(activePane.id, first); return; }
+            if (canManage) provision(project.id);
+          }}
+        />
+
+        {showHelp && (
+          <ShortcutSheet keymap={keymap} leader={leader} chrome={chromeTone} onClose={() => setShowHelp(false)} />
+        )}
+      </div>
+      </LabInstructContext.Provider>
+    );
+  }
+
   return (
+    <LabInstructContext.Provider value={paneInstruct}>
     <div
       ref={rootRef}
       {...(variant === 'overlay'
@@ -497,7 +1030,7 @@ export function ComputerLab({
           })}
           <button
             type="button"
-            onClick={() => activePane && layout.newWindow(activePane.computerId, defaultKindId)}
+            onClick={() => activePane && layout.newWindow(activePane.computerId, kindIdFor(byId.get(activePane.computerId)))}
             disabled={!activePane}
             title="New window"
             aria-label="New window"
@@ -586,9 +1119,9 @@ export function ComputerLab({
             // Retarget the focused pane rather than opening another one: the
             // rail is navigation, and a rail that spawns a pane per click
             // fills the window in six clicks.
-            if (activePane) layout.setPaneComputer(activePane.id, computer.id);
+            if (activePane) retarget(activePane.id, computer);
           }}
-          onOpenInPane={(computer) => layout.split('row', computer.id, activePane?.kindId ?? defaultKindId)}
+          onOpenInPane={(computer) => layout.split('row', computer.id, kindForNewPane(computer))}
           // Watching opens a TAIL pane, not another shell. The activity list is
           // boxes something else is driving, so the question is what it is
           // doing — and a tail costs no shell against the runtime's quota, so
@@ -601,7 +1134,7 @@ export function ComputerLab({
           // behaviour instead of doing nothing.
           onWatch={(computer) => {
             const tailKind = paneKinds.find((k) => k.id === 'tail');
-            if (!tailKind) { if (activePane) layout.setPaneComputer(activePane.id, computer.id); return; }
+            if (!tailKind) { if (activePane) retarget(activePane.id, computer); return; }
             const existing = layout.panes.find(
               (p) => p.computerId === computer.id && p.kindId === tailKind.id,
             );
@@ -653,7 +1186,7 @@ export function ComputerLab({
                     kinds={paneKinds}
                     onToggleKind={() => {
                       layout.focusPane(pane.id);
-                      switchKind(pane.id, pane.kindId, nextKind(paneKinds, pane.kindId));
+                      switchKind(pane.id, pane.kindId, nextKind(paneKinds, pane.kindId, computer));
                     }}
                     onRegisterPane={registerPane}
                     onSettled={() => void refresh()}
@@ -725,26 +1258,7 @@ export function ComputerLab({
           {targets.length} {targets.length === 1 ? 'target' : 'targets'}
         </span>
 
-        <textarea
-          ref={composerRef}
-          rows={1}
-          value={broadcastText}
-          onChange={(e) => setBroadcastText(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault();
-              sendBroadcast();
-            }
-            if (e.key === 'Escape') e.currentTarget.blur();
-          }}
-          placeholder={
-            broadcast
-              ? `instruction for all ${targets.length} panes — ⏎ to send`
-              : `instruction for ${activeComputer?.label ?? 'the focused pane'} — ⏎ to send`
-          }
-          aria-label="Broadcast instruction"
-          className="flex-1 min-w-0 resize-none bg-transparent border-none outline-none text-[12px] leading-6 text-code-text caret-code-blue placeholder:text-code-raised"
-        />
+        {composer}
 
         <button
           type="button"
@@ -775,9 +1289,9 @@ export function ComputerLab({
         panes={layout.panes}
         onJumpToPane={layout.focusPane}
         onRetarget={(computer) => {
-          if (activePane) layout.setPaneComputer(activePane.id, computer.id);
+          if (activePane) retarget(activePane.id, computer);
         }}
-        onOpenInSplit={(computer) => layout.split('row', computer.id, activePane?.kindId ?? defaultKindId)}
+        onOpenInSplit={(computer) => layout.split('row', computer.id, kindForNewPane(computer))}
         projects={projects}
         onSelectProject={(project) => {
           // A project with computers means "show me one of them". A project
@@ -786,7 +1300,7 @@ export function ComputerLab({
           // project rather than a box.
           const first = project.computers[0];
           if (first) {
-            if (activePane) layout.setPaneComputer(activePane.id, first.id);
+            if (activePane) retarget(activePane.id, first);
             return;
           }
           if (!canManage) {
@@ -810,6 +1324,7 @@ export function ComputerLab({
         />
       )}
     </div>
+    </LabInstructContext.Provider>
   );
 }
 
@@ -834,7 +1349,12 @@ function LabPane({
   pane, computer, active, broadcasting, zoomed, idleWindowMs, kinds,
   onFocus, onClose, onToggleKind, onRegisterPane, onSettled,
 }: LabPaneProps) {
-  const kind = resolveKind(kinds, pane.kindId);
+  // A saved layout can hold a kind that does not apply to this computer (a
+  // terminal pane later pointed at a laptop): render its default instead.
+  const resolved = resolveKind(kinds, pane.kindId);
+  const kind = resolved && computer && resolved.appliesTo && !resolved.appliesTo(computer)
+    ? defaultKindFor(kinds, computer)
+    : resolved;
 
   // Bound to the kind so a pane that changes kind republishes: the sinks take
   // input differently (a PTY wants a line, an agent wants a prompt), and a
@@ -930,6 +1450,26 @@ function LabPane({
       />
     </TitledFrame>
   );
+}
+
+// ── Workspace pane body ─────────────────────────────────────────────────────
+
+/** A kind's body, publishing its handle under the kind it was rendered as. */
+function WorkspacePaneBody({
+  kind, paneId, computer, active, onRegisterPane, onSettled,
+}: {
+  kind: PaneKind;
+  paneId: string;
+  computer: Computer;
+  active: boolean;
+  onRegisterPane: (paneId: string, kind: PaneKind, handle: PaneHandle | null) => void;
+  onSettled: () => void;
+}) {
+  const registerPane = useCallback(
+    (handle: PaneHandle | null) => onRegisterPane(paneId, kind, handle),
+    [onRegisterPane, paneId, kind],
+  );
+  return <>{kind.render({ computer, paneId, active, registerPane, onSettled })}</>;
 }
 
 // ── Key reference ───────────────────────────────────────────────────────────

@@ -27,6 +27,19 @@ export { ExplorerLayout } from './ExplorerLayout';
 export type { ExplorerLayoutProps } from './ExplorerLayout';
 export { SplitPane } from './SplitPane';
 export type { SplitPaneProps } from './SplitPane';
+// The pane model (2.438.0): one right pane per page, one URL contract for its tabs.
+export {
+  SidePane, SidePaneProvider, SidePaneSplit, PaneHeader, useSidePane, useSidePaneHost,
+  SIDE_PANE_BOUNDS, readSidePaneOpen, readSidePaneRatio, sidePaneFits, boundedSidePaneRatio,
+} from './SidePane';
+export type {
+  SidePaneProps, SidePaneProviderProps, SidePaneSplitProps, SidePaneRegistration, SidePaneHostState, SidePaneBounds, PaneHeaderProps,
+} from './SidePane';
+export { usePaneState, readPaneState, writePaneState, visiblePaneTabs, parsePaneRecord, paneRecordKey } from './paneState';
+export type { PaneTabSpec, PaneRecord, PaneState, PaneUrlOptions, UsePaneStateOptions, PaneStateControl } from './paneState';
+// The list rail (2.438.0): a page's list as a flush rail beside the section rail.
+export { ListRailLayout } from './ListRailLayout';
+export type { ListRail, ListRailLayoutProps } from './ListRailLayout';
 export { CanvasPaneLayout, canvasPaneGeometry, CANVAS_PANE_RAIL_PX } from './CanvasPaneLayout';
 export { useCanvasPaneInset, CanvasPaneInsetContext } from './canvasPaneInset';
 export type { CanvasPaneInset } from './canvasPaneInset';

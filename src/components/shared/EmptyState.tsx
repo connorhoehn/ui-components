@@ -30,6 +30,9 @@ export type EmptyStateTone = SurfaceTone;
  * `md` is the page-body block (220px minimum, 52px glyph). `sm` is for a
  * lane or list group that is one of several on the page: no minimum height,
  * a 28px glyph and a 14px title, so three empty lanes fit above the fold.
+ * Since 2.436.1 `sm` is the app's body step throughout: 14/600 title, 14/400
+ * description (was 13px), a `Button size="sm"`-sized CTA (26px, 12/600 — was
+ * a 38px padded button) and a 14/600 details heading (was 18px).
  */
 export type EmptyStateSize = 'md' | 'sm' | 'lg';
 
@@ -240,7 +243,8 @@ function EmptyState({
           <div
             className={cn(
               start ? 'text-left' : 'text-center max-w-[340px]',
-              large ? 'text-base leading-[25px] text-text-secondary' : start && !small ? 'text-base leading-6 text-text-secondary' : cn('text-[13px] leading-normal', palette.description),
+              large ? 'text-base leading-[25px] text-text-secondary' : start && !small ? 'text-base leading-6 text-text-secondary'
+                : cn(small ? 'text-sm leading-normal' : 'text-[13px] leading-normal', palette.description),
             )}
           >
             {resolvedDescription}
@@ -256,8 +260,10 @@ function EmptyState({
                 data-testid={actionTestId}
                 onClick={onAction}
                 className={cn(
-                  'mt-2.5 px-[22px] py-[9px] text-sm font-semibold',
-                  'border-none rounded-lg cursor-pointer font-[inherit]',
+                  small
+                    ? 'mt-2 inline-flex h-6.5 items-center px-2.5 text-xs font-semibold rounded-md'
+                    : 'mt-2.5 px-[22px] py-[9px] text-sm font-semibold rounded-lg',
+                  'border-none cursor-pointer font-[inherit]',
                   palette.cta,
                 )}
               >
@@ -266,7 +272,7 @@ function EmptyState({
             )}
       {details && !compact && (
         <div className={cn('flex w-full flex-col gap-1.5 border-t border-border', large ? 'mt-[22px] pt-8' : 'mt-5 pt-5', start ? 'items-start text-left' : 'items-center text-center')} data-testid={`${testId}-details`}>
-          <div className={cn('font-semibold leading-7 text-text-primary', large ? 'text-xl' : 'text-lg')}>{details.title}</div>
+          <div className={cn('font-semibold text-text-primary', large ? 'text-xl leading-7' : small ? 'text-sm leading-normal' : 'text-lg leading-7')}>{details.title}</div>
           {details.body != null && (
             <div className="text-sm leading-6 text-text-secondary">{details.body}</div>
           )}

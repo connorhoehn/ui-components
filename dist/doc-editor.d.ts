@@ -6,11 +6,16 @@ import { default as default_2 } from 'react';
 import { Doc } from 'yjs';
 import { DragEvent as DragEvent_2 } from 'react';
 import { Editor } from '@tiptap/react';
+import { Editor as Editor_2 } from '@tiptap/core';
+import { EditorState } from '@tiptap/pm/state';
 import { Extension } from '@tiptap/core';
 import { ForwardRefExoticComponent } from 'react';
 import { JSX } from 'react';
+import { Mark } from '@tiptap/core';
+import { Mark as Mark_2 } from '@tiptap/pm/model';
 import { MutableRefObject } from 'react';
 import { Node as Node_2 } from '@tiptap/core';
+import { Node as Node_3 } from '@tiptap/pm/model';
 import { NodeViewProps } from '@tiptap/react';
 import { ReactNode } from 'react';
 import { Ref } from 'react';
@@ -89,11 +94,41 @@ declare interface AttachmentsPanelProps {
 /** Shared node view extracted from the reference document editor. */
 export declare function AuthenticatedDocumentImageView({ node, selected }: NodeViewProps): JSX.Element;
 
+/**
+ * Run `edit` with its suggestions attributed to `author` instead of the editor's
+ * own user, turning suggestion mode on for the duration if it was off.
+ *
+ * Two separate problems make this necessary, and both are silent if unhandled.
+ *
+ * ATTRIBUTION. An AI proposal is applied by whichever browser is looking at the
+ * document. Without an override the marks would carry that person's identity,
+ * and the document would show a human proposing an edit they never wrote. Every
+ * collaborator sees unreviewed marks the moment they exist — Gemini keeps its
+ * own private until approved and we do not — so the only thing standing between
+ * "a proposal" and "an agreed edit" is the name on it. It has to be right.
+ *
+ * SEPARATION. A suggestion's identity is `user@date` with the date floored to a
+ * ten-minute bucket, deliberately, so a burst of typing reads as one suggestion.
+ * That is right for a person and wrong for us: two AI proposals drafted eight
+ * minutes apart would land in the same bucket, share an identity, merge into one
+ * un-separable suggestion, and a human accepting one would accept both. Passing
+ * `ai:<proposalId>` as the id makes every proposal its own author and the
+ * bucketing irrelevant.
+ *
+ * `edit` must be synchronous. The override is a single mutable slot on the
+ * editor, and an async callback would leave it set while unrelated keystrokes
+ * were dispatched.
+ */
+export declare function authorSuggestionsAs(editor: Editor_2, author: SuggestionUser, edit: () => void): void;
+
 declare interface BreadcrumbItem {
     label: string;
     href?: string;
     onClick?: (e: React.MouseEvent) => void;
 }
+
+/** Floor an epoch-ms timestamp to the start of its ten-minute bucket. */
+export declare function bucketSuggestionDate(epochMs?: number): number;
 
 export declare const BULLET_STYLES: readonly ["disc", "circle", "square"];
 
@@ -875,6 +910,9 @@ export declare function countAllComments(threads: CommentThread[]): number;
 /** Inject the caller's image extension to preserve one TipTap module graph. */
 export declare function createAuthenticatedDocumentImage(image: Node_2): Node_2;
 
+/** Build the identity a new suggestion mark should carry right now. */
+export declare function createSuggestionIdentity(user: string, username: string, at?: number): SuggestionIdentity;
+
 export declare const DECK_THEMES: readonly DeckTheme[];
 
 export declare interface DeckChart {
@@ -895,9 +933,37 @@ export declare interface DeckImage {
     alt: string;
 }
 
+export declare interface DeckPresence {
+    /** Everyone else on the deck, one per person (their most recent tab), by name. */
+    viewers: DeckViewer[];
+    /** The same people as `FollowModeBar` participants (`currentSectionId` = their slide id). */
+    participants: Participant[];
+    /** Slide id → the people on it, for the filmstrip. */
+    slideViewers: Record<string, DeckViewer[]>;
+    /** I have unsaved edits to this deck in another tab. */
+    editingElsewhere: boolean;
+}
+
+export declare const deckPresenceChannel: (documentId: string) => string;
+
 export declare interface DeckQuote {
     text: string;
     by: string;
+}
+
+export declare interface DeckRecordingOption {
+    recordingId: string;
+    label: string;
+    hint?: string;
+}
+
+/** The slice of a gateway presence entry this reads. Structural: any roster entry fits. */
+export declare interface DeckRosterEntry {
+    clientId: string;
+    status?: string;
+    metadata?: Record<string, unknown> | undefined;
+    timestamp?: string | number;
+    lastSeen?: string | number;
 }
 
 export declare interface DeckSlide {
@@ -929,6 +995,39 @@ export declare interface DeckSpec {
 }
 
 export declare type DeckTheme = 'product' | 'engineering' | 'plain';
+
+/**
+ * "Sprint review — the release risks" → the deck's title and its subject.
+ *
+ * Only an em dash or en dash ends the title — NOT a bare colon. A colon shows
+ * up in ordinary text that has nothing to do with naming a deck (a time like
+ * "08:30 AM", a `key:value` option value) and splitting on it there truncates
+ * the title mid-sentence. A title that really means "name: subject" keeps its
+ * colon; there is no way to tell that case apart from a timestamp without
+ * requiring the em/en dash instead, so this only recognises the dash.
+ */
+export declare function deckTitleFrom(prompt: string, conversationName?: string): string;
+
+export declare interface DeckViewer {
+    /** The person's id (their user id, else the socket's client id). */
+    id: string;
+    clientId: string;
+    name: string;
+    avatarUrl?: string;
+    idle?: boolean;
+    /** "editing this deck" / "on this deck" / "viewing this deck". */
+    detail: string;
+    /** The title of the slide they are on, when `slideTitle` knows it. */
+    location?: string;
+    slideId?: string;
+    editing?: boolean;
+}
+
+/** The roster as viewers: others only, one per person, the newest entry winning. */
+export declare function deckViewersOf(roster: readonly DeckRosterEntry[], documentId: string, ownClientId: string | null, slideTitle?: (slideId: string) => string | undefined): DeckViewer[];
+
+/** A viewer as the `FollowModeBar` participant it follows. */
+export declare function deckViewerToParticipant(viewer: DeckViewer, entry?: DeckRosterEntry): Participant;
 
 /** The handoff's four tabs, for a host that has all of them. */
 export declare const DEFAULT_EDITOR_SHELL_TABS: readonly EditorShellTab[];
@@ -963,6 +1062,15 @@ declare interface DiffViewerProps {
     /** Called when the user dismisses the diff view. */
     onClose: () => void;
 }
+
+/**
+ * The doc to render for a given view mode.
+ *
+ * 'all-markup' and 'simple-markup' both render the live doc — they differ only
+ * in CSS (simple markup hides the inline strike/underline and shows a change
+ * bar in the margin), which is why they share a document here.
+ */
+export declare function docForViewMode(doc: Node_3, mode: SuggestionViewMode): Node_3;
 
 /** The custom property the dock writes on its parent. */
 export declare const DOCK_HEIGHT_VAR = "--dock-height";
@@ -1585,7 +1693,10 @@ export declare interface DocumentZoomControl {
  */
 export declare function duplicateSlide(spec: DeckSpec, id: string): DeckSpec;
 
-export declare function EditorShell({ breadcrumbs, title, onTitleChange, titleLabel, kind, starred, onStarredChange, statusPill, path, crumbsTrailing, subtitle, metaBar, participants, onParticipantClick, onFollowParticipant, followingParticipantId, meta, saveState, headActions, tabs, activeTab, onTabChange, toolbar, children, footer, proposal, surface, explorer, workbench, label, variant, itemType, itemKey, titleSize, tabsTrailing, className, 'data-testid': testId, }: EditorShellProps): JSX.Element;
+/** True when another tab of mine (same user, another socket) has unsaved edits to this deck. */
+export declare function editingInMyOtherTab(roster: readonly DeckRosterEntry[], documentId: string, ownClientId: string | null): boolean;
+
+export declare function EditorShell({ breadcrumbs, title, onTitleChange, titleLabel, kind, starred, onStarredChange, statusPill, path, crumbsTrailing, subtitle, metaBar, participants, onParticipantClick, onFollowParticipant, followingParticipantId, meta, saveState, headActions, tabs, activeTab, onTabChange, toolbar, children, footer, proposal, surface, explorer, workbench, label, variant, itemType, itemKey, titleSize, titleOverflow, tabsTrailing, className, 'data-testid': testId, }: EditorShellProps): JSX.Element;
 
 export declare interface EditorShellProps {
     /** The trail above the title — "Sprint planning / Sprint review". */
@@ -1656,7 +1767,8 @@ export declare interface EditorShellProps {
      * (`--dock-inset`), never scrolling and never inside the composer (which
      * collapses when idle): a pending edit stays in view while the page it
      * would change scrolls above it. Its own height is capped at 40% of the
-     * surface and scrolls past that. Since 2.408.0.
+     * surface and scrolls past that, and it shrinks (to 4rem) before the page above
+     * it drops below 7rem, so a short window keeps some of the document. Since 2.408.0.
      */
     proposal?: ReactNode;
     /**
@@ -1693,6 +1805,12 @@ export declare interface EditorShellProps {
      */
     titleSize?: 'md' | 'lg';
     /**
+     * A read-only heading may wrap onto multiple lines. `truncate` (default)
+     * keeps the existing single-line title. Editing still uses the fitted
+     * single-line title editor. Since 2.409.0.
+     */
+    titleOverflow?: 'truncate' | 'wrap';
+    /**
      * At the right end of the tab row, above the tabs' underline — "Sources 4",
      * "Open in Library ↗". Hangs from the same baseline as the tabs, so it
      * reads as belonging to the row, not the title. Since 2.389.0.
@@ -1715,6 +1833,8 @@ export declare function EditorToolbar({ editor }: EditorToolbarProps): JSX.Eleme
 declare interface EditorToolbarProps {
     editor: Editor | null;
 }
+
+export declare const EMPTY_DECK_PRESENCE: DeckPresence;
 
 export declare function ExecutiveSummaryCard({ bullets, contentText, fragment, ydoc, provider, }: {
     bullets: string[];
@@ -1766,6 +1886,9 @@ export declare interface FilmstripProps {
 
 /** One slide in the strip. Takes `SlideRowProps` so both lists can render it. */
 export declare function FilmstripThumb({ slide, index, total, thumbnailSvg, selected, uncited, changed, generating, viewers, readOnly, onSelect, onMove, onDuplicate, onDelete, canDuplicate, canDelete, dragHandle, rowRef, dragging, testIdPrefix, }: SlideRowProps): JSX.Element;
+
+/** The document as it would read with every suggestion accepted. */
+export declare function finalDoc(doc: Node_3): Node_3;
 
 /**
  * The element a target points at, on whichever shape this document is.
@@ -1879,6 +2002,9 @@ export declare interface FollowModeBarProps {
     'data-testid'?: string;
 }
 
+/** Compose the display name an agent run should write onto its marks. */
+export declare function formatSuggestionAuthor({ person, model }: SuggestionAuthor): string;
+
 /** Error received from the gateway (matches server error-codes.js format) */
 declare interface GatewayError {
     /** Standardized error code (e.g. AUTH_TOKEN_EXPIRED, AUTHZ_CHANNEL_DENIED) */
@@ -1949,6 +2075,8 @@ export declare function HeaderBanner({ meta, participantCount, }: {
 export declare function isCanvasDocument(ydoc: Doc | null | undefined): boolean;
 
 export declare function isLineSpacing(value: unknown): value is LineSpacing;
+
+export declare function isSuggestChangesEnabled(state: EditorState): boolean;
 
 /**
  * @deprecated Part of the legacy SECTIONED document editor, which is deprecated
@@ -2062,6 +2190,16 @@ export declare function lineSpacingAttributes(value: unknown): Record<string, st
 export declare const LIST_STYLE_LABELS: Record<ListStyle, string>;
 
 export declare type ListStyle = BulletStyle | NumberStyle | MultilevelStyle;
+
+/**
+ * Every suggestion in `doc`, in document order.
+ *
+ * Marks are grouped by identity, not by position: one author's run of edits in
+ * the same ten-minute bucket is one entry here even when the marks are split
+ * across several text nodes, which is what makes the review list readable
+ * rather than one row per keystroke.
+ */
+export declare function listSuggestions(doc: Node_3): SuggestionSummary[];
 
 /** Which list node a style belongs to. */
 export declare function listTypeFor(style: ListStyle): 'bulletList' | 'orderedList';
@@ -2291,6 +2429,9 @@ export declare interface OlderRevisions {
     onLoad: () => void;
 }
 
+/** The document as it read before any suggestion was made. */
+export declare function originalDoc(doc: Node_3): Node_3;
+
 /**
  * The slice of a Tiptap editor this needs.
  *
@@ -2328,6 +2469,29 @@ declare interface OutlineNodeLike {
     textContent?: string;
 }
 
+export declare interface ParsedDeckCommand {
+    /** The instruction with the flags removed — what the deck is about. */
+    prompt: string;
+    preview: boolean;
+    from?: 'transcript' | 'documents';
+    /**
+     * The recording, when `--from` named one directly as `recording:<id>` —
+     * the token the picker inserts. Set alongside `from: 'transcript'`.
+     */
+    recordingId?: string;
+}
+
+/**
+ * The same grammar `parseDeckCommand` implements on the server, read here only
+ * to know what to SEND. Anything unrecognised stays in the prompt rather than
+ * being dropped, so a typo reaches the server as text instead of vanishing.
+ *
+ * `--preview` and `--from` are recognised WHEREVER they fall in the text, not
+ * only trailing — every word is scanned, so appending `--preview` after a
+ * picked recording (or any other free text) still lands.
+ */
+export declare function parseDeckText(argumentText: string): ParsedDeckCommand;
+
 /**
  * The stored value for something read off the DOM, or `null` for anything else.
  *
@@ -2339,6 +2503,14 @@ declare interface OutlineNodeLike {
 export declare function parseLineSpacing(value: unknown): LineSpacing | null;
 
 export declare function parseListStyle(value: unknown): ListStyle | null;
+
+/**
+ * Split a mark's `username` into the person and the model.
+ *
+ * A name with no suffix is a person, which is what makes this safe to run over
+ * every suggestion including the ones a human typed by hand.
+ */
+export declare function parseSuggestionAuthor(username: string | null | undefined): SuggestionAuthor;
 
 declare interface Participant {
     clientId: string;
@@ -2674,6 +2846,15 @@ export declare interface PresentationViewProps {
     'data-testid'?: string;
 }
 
+/**
+ * A throwaway, non-editable EditorState for previewing `mode`.
+ *
+ * Feed this to a read-only EditorView. It shares the schema with the live state
+ * but nothing else — no plugins, no history, no y-sync — so nothing it does can
+ * leak back into the collaborative document.
+ */
+export declare function previewStateForViewMode(state: EditorState, mode: SuggestionViewMode): EditorState;
+
 /** What the host reports back after trying to apply. */
 export declare interface ProposalApplyOutcome {
     ok: boolean;
@@ -2688,6 +2869,9 @@ export declare interface ProposalApplyOutcome {
 
 /** Where the item currently sits relative to the document. */
 export declare type ProposalAttachState = 'attached' | 'author_only' | 'inbox' | 'healed';
+
+/** The author id every proposal's marks carry. One per proposal, never shared. */
+export declare function proposalAuthor(proposalId: string, label?: string): SuggestionUser;
 
 export declare function ProposalCard({ utterance, kind, status, confidence, attachState, targetLabel, targetReason, before, after, edits, rationale, draftError, author, category, path, locationHint, verdict, verdictStatus, verdictError, revision, onRereview, onAccept, onReject, onRedraft, onReattach, onConfirmAttachment, className, 'data-testid': testId, }: ProposalCardProps): JSX.Element;
 
@@ -2862,6 +3046,16 @@ export declare function readOutline(editor: OutlineEditorLike | null): OutlineEn
  */
 export declare function readSchemaVersion(ydoc: Doc | null | undefined): number;
 
+/**
+ * Which recording a `--from transcript` deck reads.
+ *
+ * The person's own pick first — it is the only unambiguous answer. Failing
+ * that, the conversation's single recording, because "the transcript" has one
+ * meaning when there is exactly one. With several and no pick, none: guessing
+ * which meeting a deck is about is the error worth refusing.
+ */
+export declare function recordingIdFor(picked: string | undefined, recordings: readonly DeckRecordingOption[]): string | undefined;
+
 export declare function relativeTime(iso: string): string;
 
 /** Drop a slide. The last slide cannot be removed — a deck of none is not a deck. */
@@ -2944,6 +3138,14 @@ export declare function revisionPickerOptions(revisions: readonly {
     label: string;
     disabled?: boolean;
 }>;
+
+/**
+ * Do two identities denote the same suggestion?
+ *
+ * `username` is deliberately NOT compared: it's denormalised display data and a
+ * rename mid-session must not split one suggestion in two.
+ */
+export declare function sameSuggestion(a: SuggestionIdentity | null | undefined, b: SuggestionIdentity | null | undefined): boolean;
 
 /**
  * Scroll to the target and flash it.
@@ -3422,6 +3624,27 @@ export declare interface StandaloneTiptapUser {
     color: string;
 }
 
+export declare const SuggestChanges: Extension<SuggestChangesOptions, any>;
+
+export declare interface SuggestChangesOptions {
+    /** Author every suggestion made through this editor is attributed to. */
+    user: SuggestionUser;
+    /** Whether suggestion mode starts on. */
+    enabled: boolean;
+    /** Clock seam, so tests can drive the ten-minute bucketing deterministically. */
+    now: () => number;
+    /**
+     * Called with this editor instance on create; the returned function runs on
+     * destroy. This is how a DOCUMENT-level suggestion toggle reaches every
+     * section: a document renders N independent section editors, suggestion
+     * mode lives in each one's ProseMirror plugin state, and the host adapter
+     * (realtime-modules' TiptapEditor) exposes no editor handle. Registering
+     * from inside the extension keeps that coordination here instead of
+     * requiring a new prop on the adapter.
+     */
+    register?: (editor: Editor_2) => (() => void) | void;
+}
+
 export declare const SUGGESTION_AUTHORING_MODES: {
     value: SuggestionAuthoringMode;
     label: string;
@@ -3429,10 +3652,40 @@ export declare const SUGGESTION_AUTHORING_MODES: {
     hint: string;
 }[];
 
+/** Suggestions by one author within the same bucket join into one suggestion. */
+export declare const SUGGESTION_DATE_BUCKET_MS: number;
+
+export declare const SUGGESTION_VIEW_MODES: {
+    value: SuggestionViewMode;
+    label: string;
+}[];
+
+export declare interface SuggestionAuthor {
+    /** The person the suggestion belongs to — who to talk to about the change. */
+    person: string;
+    /** The model that drafted it, when an agent run produced it. */
+    model?: string;
+}
+
 /** What the reader's typing currently does. */
 export declare type SuggestionAuthoringMode = 'editing' | 'suggesting' | 'viewing';
 
-export declare function SuggestionCard({ kind, author, when, context, deletedText, insertedText, insertedBlocks, deletedBlocks, active, onFocus, onAccept, onReject, className, 'data-testid': testId, }: SuggestionCardProps): JSX.Element;
+/**
+ * The string every suggestion surface hands `SuggestionCard`'s `author`.
+ *
+ * One function for all three surfaces — the margin bubble, the Suggestions pane
+ * and the review panel — because a card that says "Eve" in the gutter and
+ * "Haiku" in the pane is worse than either alone: the reader cannot tell which
+ * one is lying and has no way to find out.
+ *
+ * The card splits this back apart to lay it out, so the person is what survives
+ * a narrow column. Composed rather than passed as two props because the card is
+ * consumed from a published build of ui-components and the person/model split
+ * has to work against the version already installed.
+ */
+export declare function suggestionAuthorLabel(id: Pick<SuggestionIdentity, 'username'>): string;
+
+export declare function SuggestionCard({ kind, author, when, context, deletedText, insertedText, insertedBlocks, deletedBlocks, active, onFocus, onAccept, onReject, acceptLabel, selected, onSelectedChange, status, className, 'data-testid': testId, }: SuggestionCardProps): JSX.Element;
 
 /** What kind of change is being proposed. */
 export declare type SuggestionCardKind = 'insert' | 'delete' | 'replace' | 'modify';
@@ -3469,9 +3722,49 @@ export declare interface SuggestionCardProps {
      */
     onAccept?: () => void;
     onReject?: () => void;
+    /** Label of the Accept button. Default "Accept". */
+    acceptLabel?: string;
+    /**
+     * Draw a checkbox at the start of the header for choosing a subset (accept
+     * the ticked ones together). Controlled: pass `selected` AND
+     * `onSelectedChange`; with `onSelectedChange` absent no checkbox is drawn.
+     */
+    selected?: boolean;
+    onSelectedChange?: (selected: boolean) => void;
+    /**
+     * A status chip or run-progress line in the header, before the kind label
+     * ("Drafting…", "Ready", "Failed").
+     */
+    status?: ReactNode;
     className?: string;
     'data-testid'?: string;
 }
+
+/** Text the author has suggested removing. Still present until accepted. */
+export declare const SuggestionDelete: Mark<any, any>;
+
+export declare interface SuggestionIdentity {
+    /** Stable user id. The attribution key — never a display name. */
+    user: string;
+    /** Display name, denormalised onto the mark so review chrome needs no lookup. */
+    username: string;
+    /** Epoch ms, floored to SUGGESTION_DATE_BUCKET_MS. */
+    date: number;
+}
+
+/** Read the identity off a suggestion mark, or null if it isn't one. */
+export declare function suggestionIdentityOf(mark: Mark_2 | null | undefined): SuggestionIdentity | null;
+
+/** Text the author has suggested adding. */
+export declare const SuggestionInsert: Mark<any, any>;
+
+/** Stable string form, for React keys, decoration keys and Map lookups. */
+export declare function suggestionKey(id: SuggestionIdentity): string;
+
+export declare type SuggestionKind = 'insert' | 'delete' | 'replace' | 'modify';
+
+/** All three suggestion marks, ready to spread into an extension list. */
+export declare const SuggestionMarks: Mark<any, any>[];
 
 export declare function SuggestionModeControl({ mode, onModeChange, showViewing, openCount, disabled, className, 'data-testid': testId, }: SuggestionModeControlProps): JSX.Element;
 
@@ -3500,7 +3793,14 @@ export declare interface SuggestionModeControlProps {
     'data-testid'?: string;
 }
 
-export declare function SuggestionReviewList({ count, children, onAcceptAll, onRejectAll, error, headerExtra, emptyTitle, emptyBody, title, variant, className, 'data-testid': testId, }: SuggestionReviewListProps): JSX.Element;
+/**
+ * A suggested change to a node's attributes, marks or type (bold, heading
+ * level, list type...). Carries the identity attrs plus enough of the old value
+ * to roll the change back on reject.
+ */
+export declare const SuggestionModify: Mark<any, any>;
+
+export declare function SuggestionReviewList({ count, children, onAcceptAll, onRejectAll, acceptLabel, selectedCount, error, headerExtra, emptyTitle, emptyBody, title, variant, className, 'data-testid': testId, }: SuggestionReviewListProps): JSX.Element;
 
 export declare interface SuggestionReviewListProps {
     /** How many are open — the count in the header. */
@@ -3510,6 +3810,14 @@ export declare interface SuggestionReviewListProps {
     /** Present, the header offers Accept all / Reject all. Absent for a reader who cannot resolve. */
     onAcceptAll?: () => void;
     onRejectAll?: () => void;
+    /** Label of the accept-all button. Default "Accept all" — e.g. "Add selected as follow-ups" for a chosen subset. */
+    acceptLabel?: string;
+    /**
+     * Per-item selection: how many cards are ticked (`SuggestionCard` `selected`). When given,
+     * the accept-all button counts them ("Add selected (2)") and is disabled at zero, so it
+     * acts on the chosen subset rather than everything.
+     */
+    selectedCount?: number;
     /** Something a resolution just refused, above the list. */
     error?: string | null;
     /** Something else the header should carry — a mode switch, say. */
@@ -3528,6 +3836,45 @@ export declare interface SuggestionReviewListProps {
     className?: string;
     'data-testid'?: string;
 }
+
+export declare interface SuggestionSummary {
+    /** Who and when — the identity carried by every mark in this suggestion. */
+    id: SuggestionIdentity;
+    /** Stable string form of `id`, for React keys. */
+    key: string;
+    kind: SuggestionKind;
+    /** Document range the suggestion spans, for scroll-to and range commands. */
+    from: number;
+    to: number;
+    /** Text the author proposes adding — every block run together, for search and tests. */
+    insertedText: string;
+    /**
+     * The same, one entry per BLOCK the insertion touches. A suggestion is one
+     * key — `${user}@${date}`, bucketed to ten minutes — so an agent appending
+     * a rule, a paragraph and a second paragraph is ONE suggestion, and joined
+     * flat it read as "| Column 1 | Column 2 ||--------|| | |Placeholder text".
+     */
+    insertedBlocks: string[];
+    /** Text the author proposes removing. */
+    deletedText: string;
+}
+
+export declare interface SuggestionUser {
+    /** Stable user id — the attribution key. */
+    id: string;
+    /** Display name. */
+    name: string;
+}
+
+export declare type SuggestionViewMode = 
+/** Word's "All Markup" — the live doc, every suggestion visible. */
+'all-markup'
+/** Word's "Simple Markup" — the accepted result, with change bars. */
+| 'simple-markup'
+/** Word's "No Markup" — as the document would read if all were accepted. */
+| 'final'
+/** Word's "Original" — as it read before any suggestion. */
+| 'original';
 
 /** `data:` URI for an `<img src>`, or `undefined` for an empty/absent source. */
 export declare function svgDataUri(svg: string | undefined): string | undefined;
@@ -3669,6 +4016,28 @@ export declare interface UploadedDocumentFile {
 }
 
 export declare function useCommentMarginPreference({ storageKey, defaultVisible, }?: CommentMarginPreferenceOptions): CommentMarginPreference;
+
+/**
+ * Publishes this tab's slide and editing state, and derives everyone else's.
+ * Leaving (unmount) clears both so peers are told.
+ */
+export declare function useDeckPresence(options: UseDeckPresenceOptions): DeckPresence;
+
+export declare interface UseDeckPresenceOptions {
+    /** The `doc:<documentId>` channel's roster (from realtime-modules `usePresence`). */
+    roster: readonly DeckRosterEntry[];
+    /** This socket's client id (`useGateway().clientId`). */
+    ownClientId: string | null;
+    /** Merges into this socket's presence metadata (`usePresence(...).updateMetadata`). Keep it referentially stable. */
+    updateMetadata: (metadata: Record<string, unknown>) => void;
+    documentId: string;
+    /** The slide on this tab's stage; `null` for none. */
+    selectedSlideId: string | null;
+    /** "Slide 3 · Delivery", for the byline card. Keep it referentially stable. */
+    slideTitle?: (slideId: string) => string | undefined;
+    /** This tab has unsaved edits — peers' Save warns while it does. */
+    editing?: boolean;
+}
 
 export declare function useDocumentActions({ documentId, userId, ws, updateMeta, addSection, exportJSON, getSectionFragment, getCanvasFragment, isCanvas, comments, }: UseDocumentActionsArgs): {
     demoLoaded: boolean;
@@ -3925,6 +4294,9 @@ declare interface VideoSessionParticipant {
 
 declare type ViewMode = 'editor' | 'ack' | 'reader';
 
+/** CSS class the editor container carries for a given view mode. */
+export declare function viewModeClassName(mode: SuggestionViewMode): string;
+
 /**
  * Move a slide's layout, keeping everything the new layout can still use.
  *
@@ -4133,14 +4505,19 @@ export declare const ZOOM_STEPS: readonly [0.5, 0.75, 0.9, 1, 1.25, 1.5, 2];
 export { }
 
 
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
+    }
+}
+
+
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        diagramMacro: {
-            /**
-             * Inserts a diagram block at the selection, minting an id unless one
-             * is supplied.
-             */
-            insertDiagram: (id?: string) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -4148,12 +4525,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -4180,6 +4554,19 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         decisionMacro: {
             /** Inserts a decision record at the selection. */
             insertDecision: (draft: DecisionDraft) => ReturnType;
@@ -4190,12 +4577,12 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        linksMacro: {
-            /** Inserts a links block at the selection. */
-            insertLinks: (rows?: readonly {
-                label?: string;
-                url?: string;
-            }[]) => ReturnType;
+        diagramMacro: {
+            /**
+             * Inserts a diagram block at the selection, minting an id unless one
+             * is supplied.
+             */
+            insertDiagram: (id?: string) => ReturnType;
         };
     }
 }
@@ -4206,26 +4593,6 @@ declare module '@tiptap/core' {
         fieldMacro: {
             /** Inserts a typed field at the selection. */
             insertField: (draft: FieldDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -4257,9 +4624,36 @@ declare module '@tiptap/core' {
 }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        linksMacro: {
+            /** Inserts a links block at the selection. */
+            insertLinks: (rows?: readonly {
+                label?: string;
+                url?: string;
+            }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        suggestChanges: {
+            /** Turn suggestion mode on or off. */
+            setSuggestionMode: (enabled: boolean) => ReturnType;
+            /** Flip suggestion mode. */
+            toggleSuggestionMode: () => ReturnType;
+            /** Accept one suggestion: keep its insertions, remove its deletions. */
+            acceptSuggestion: (id: SuggestionIdentity) => ReturnType;
+            /** Reject one suggestion: drop its insertions, restore its deletions. */
+            rejectSuggestion: (id: SuggestionIdentity) => ReturnType;
+            /** Accept every suggestion in the document. */
+            acceptAllSuggestions: () => ReturnType;
+            /** Reject every suggestion in the document. */
+            rejectAllSuggestions: () => ReturnType;
+            /** Move the selection onto a suggestion. */
+            selectSuggestion: (id: SuggestionIdentity) => ReturnType;
+        };
     }
 }
