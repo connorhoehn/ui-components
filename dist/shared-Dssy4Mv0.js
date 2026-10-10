@@ -4430,7 +4430,7 @@ function wr({ steps: t, size: n, className: r, "aria-label": i, "data-testid": s
 	n === "sm" && a("WorkflowStepper", "sm");
 	let l = n ?? (c === "compact" ? "compact" : "md"), u = l === "compact";
 	return /* @__PURE__ */ q("ol", {
-		className: e(u ? "m-0 inline-flex list-none items-center p-0" : "flex items-center overflow-x-auto", r),
+		className: e(u ? "m-0 inline-flex max-w-full list-none items-center overflow-x-auto p-0" : "flex items-center overflow-x-auto", r),
 		"data-testid": s,
 		...u ? { "data-density": "compact" } : {},
 		...i ? { "aria-label": i } : {},

@@ -114,7 +114,7 @@ describe('WorkflowStepper compact', () => {
     expect(track).toHaveAttribute('data-density', 'compact');
     expect(track).toHaveAttribute('aria-label', 'Level L1 of target L3');
     expect(track.className).toContain('inline-flex');
-    expect(track.className).not.toContain('overflow-x-auto');
+    expect(track.className).toContain('max-w-full');
     expect(getByText('L2').className).toMatch(/text-xs/);
     expect(getByText('L2').className).toMatch(/font-semibold/);
   });

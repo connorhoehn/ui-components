@@ -5,7 +5,8 @@
 //
 // Compact (since 2.440.0, the compact density's form): a content-width track
 // on the app's meta step — 16px nodes, 12/600 labels, short fixed connectors —
-// that sits inline in a stat line or a table cell ("L1 ✓ — L2 ● — L3 ○", the
+// that sits inline in a stat line or a table cell, scrolling only when it
+// outgrows its container ("L1 ✓ — L2 ● — L3 ○", the
 // scorecard's level track) instead of stretching to its container.
 
 import { cn } from '../../lib/cn';
@@ -61,7 +62,7 @@ export function WorkflowStepper({ steps, size: sizeProp, className, 'aria-label'
   const compact = size === 'compact';
   return (
     <ol
-      className={cn(compact ? 'm-0 inline-flex list-none items-center p-0' : 'flex items-center overflow-x-auto', className)}
+      className={cn(compact ? 'm-0 inline-flex max-w-full list-none items-center overflow-x-auto p-0' : 'flex items-center overflow-x-auto', className)}
       data-testid={testId}
       {...(compact ? { 'data-density': 'compact' } : {})}
       {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}
