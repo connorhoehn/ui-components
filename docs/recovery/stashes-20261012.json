@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-12",
+  "purpose": "Preserve original stash commits, index, and any untracked-file parent before cleanup. Recovery tags are pushed with main.",
+  "restore": "Fetch the recovery tag, then git stash apply <recoveryTag> in a clean disposable checkout of <recoveryTag>^1. Original untracked files are retained in the third parent where present.",
+  "stashes": [
+    {
+      "commit": "ee98bf8c960fe820da3da774cc9be1d53d02ec9c",
+      "recoveryTag": "recovery/2026-10-12/stash-0-ee98bf8c",
+      "subject": "WIP on pane-dedupe-1790141250: 2aab5ede feat(presentation): the deck editor keeps its stage at 720 px \u2014 compact composer (status line, focus-only suggestions, mode-row end), capped pinned dock, stage fitted to its column; collision-aware presence card (2.372.0)",
+      "disposition": "Integrated: WorkNodePane detail deduplication and WORK-144 test remain in main; later pane releases supersede generated dist and version bumps."
+    },
+    {
+      "commit": "c76c50622aa75847e820d627461e7367815a4304",
+      "recoveryTag": "recovery/2026-10-12/stash-1-c76c5062",
+      "subject": "On main: backup: local split-panel build before merging call-dock branch",
+      "disposition": "Integrated: ChannelHeader horizontal overflow and ChatSidePanelFrame expand, navigation, and close controls remain in main with newer density support."
+    },
+    {
+      "commit": "1183aba3585dac8821c9267c20ad57751c8b7f6c",
+      "recoveryTag": "recovery/2026-10-12/stash-2-1183aba3",
+      "subject": "WIP on main: b1843d22 release 2.239.0: RunSummaryPanel \u2014 a run, condensed and read-only, beside the chat",
+      "disposition": "Superseded: lockfile version-only update to 2.239.0; main is 2.440.0."
+    },
+    {
+      "commit": "967aae69e6674fea347e0f4f7365a043e1413f49",
+      "recoveryTag": "recovery/2026-10-12/stash-3-967aae69",
+      "subject": "WIP on main: e042b930 social: viewer-only cards in ChatPanel (`localMessages`), `visibility: 'private'` on a run outcome",
+      "disposition": "Superseded: lockfile version-only update to 2.235.0; main is 2.440.0."
+    },
+    {
+      "commit": "9cf8fbaed18968f3255dd79721413144089c2770",
+      "recoveryTag": "recovery/2026-10-12/stash-4-9cf8fbae",
+      "subject": "WIP on main: 7323e2cc social: chat commands are a layered registry with pipeline runs and a side-panel frame",
+      "disposition": "Superseded: lockfile version-only update to 2.232.0; main is 2.440.0."
+    }
+  ]
+}
