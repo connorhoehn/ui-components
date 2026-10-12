@@ -94,7 +94,9 @@ The runner waits for the adapter, fonts and two animation frames, then measures
 twice. Unstable measurements are coverage failures. It does not use networkidle:
 realtime connections and background polling make that an unreliable readiness
 signal. An adapter should wait for known loading rows to disappear and expected
-content/empty/error state to render. Do not add long sleeps or silence instability.
+content/empty/error state to render. Spinner absence alone can pass before a
+lazy page mounts; require a positive control or view marker before classifying
+its composer policy. Do not add long sleeps or silence instability.
 
 ## Fast loop and CI
 
@@ -196,8 +198,14 @@ The `composer-presence` rule counts visible `$composers` and requires a visible
 contenteditable/textarea/textbox inside a matched surface. An empty particle
 wrapper or unrelated page textbox does not satisfy it; disabled/read-only visible
 inputs still count. Required + zero surfaces or zero contained inputs is a
-violation. Exempt requires a nonempty trimmed reason; a blank reason or invalid
-mode is a coverage failure. An exemption permits absence, but does not disable
+violation. Exempt requires a nonempty trimmed contextual reason. Blank/non-string
+reasons and standalone placeholders (`TODO`, `TBD`, `N/A`, `none`, `exempt`,
+`not applicable`, `coming soon`, punctuation) are coverage failures. This is a
+placeholder guard, not an automated judgment of whether a written rationale is
+appropriate; review the route context. An explicit policy must be an object with
+`required`, `exempt` or `unclassified` mode. Missing mode, unknown mode and scalar/array
+policies fail coverage even in advisory mode. Omitted/null policy remains
+unclassified. An exemption permits absence, but does not disable
 geometry/style checks on any composer that is present. Missing policy is recorded
 as `unclassified`, displayed as PARTIAL in console output and listed in
 `report.unclassified` and `summary.txt`; it is not an automatic demand for a
@@ -208,10 +216,18 @@ DOM violations or increase `report.failures`. `report.strictCoverage` records th
 chosen policy and `report.exitCode` the outcome. Use this flag for reviewed
 acceptance/CI matrices; do not invent exemptions merely to make strict mode pass.
 
-Initial Work enforcement covers the inspected RunsLedger pages `/pipelines/runs`,
-`/iq/runs`, `/assessment/runs`, and the shared Contacts collection at
-`/social/contacts`, plus existing DM/initiative contextual
-composers. Channel membership-required and shared-work-only views use documented
+Work enforcement covers the inspected RunsLedger pages `/pipelines/runs`,
+`/iq/runs`, `/assessment/runs`, the shared Contacts collection at
+`/social/contacts`, Pipeline Definitions, Runbooks, Queues, Artifacts, Approvals
+and source registries, plus existing DM/initiative contextual composers.
+Pipeline view policies live in the frontend adapter’s `ui-dom-audit.policies.ts`.
+Exceptions require positive rendered evidence (graph controls, communication
+directory, configuration form or unavailable settings feature). A report’s
+missing-record state requires both a real 404 and its visible load-error view;
+this does not establish coverage of a loaded editor. Verify SPA navigation after
+readiness, including supplied query values, so a redirect or discarded view
+selection cannot certify a different page. Only explicit
+route aliases, such as `/pipelines` opening Runs, are accepted. Channel membership-required and shared-work-only views use documented
 state exemptions. Other page families remain unclassified until their context is
 reviewed; never attach a blanket exemption to a tenant. New tenant collection
 pages should reuse the shared composer for natural-language search/actions unless

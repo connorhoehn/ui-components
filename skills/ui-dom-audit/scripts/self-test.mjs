@@ -98,10 +98,25 @@ try {
   assert.ok(exempt.coverage.some(c => c.rule === 'composer.presence' && c.status === 'exempt' && c.reason.includes('Read-only')));
   const undocumented = await page.evaluate(measureDOM, { ...absencePayload, composerExpectation: { mode: 'exempt', reason: '  ' } });
   assert.ok(undocumented.issues.some(i => i.rule === 'composer.presence' && i.property === 'exemption reason' && i.category === 'coverage'), 'blank exemption must fail coverage');
+  for (const reason of ['TODO', ' tbd. ', 'N/A', 'None', 'exempt', 'Not applicable', '...', 42, {}]) {
+    const placeholder = await page.evaluate(measureDOM, { ...absencePayload, composerExpectation: { mode: 'exempt', reason } });
+    assert.ok(placeholder.issues.some(i => i.rule === 'composer.presence' && i.property === 'exemption reason' && i.category === 'coverage'), `placeholder exemption must fail: ${JSON.stringify(reason)}`);
+  }
+  for (const composerExpectation of [{}, { mode: null }, { mode: 'require' }, { mode: false }, 'exempt', []]) {
+    const malformed = await page.evaluate(measureDOM, { ...absencePayload, composerExpectation });
+    assert.ok(malformed.issues.some(i => i.rule === 'composer.presence' && i.property === 'presence policy' && i.category === 'coverage'), `malformed policy must fail: ${JSON.stringify(composerExpectation)}`);
+    assert.ok(malformed.coverage.some(c => c.rule === 'composer.presence' && c.status === 'invalid'), 'malformed policy is distinguished from unreviewed coverage');
+  }
+  await page.setContent(html);
+  await page.evaluate(() => document.querySelector('#shelf-wrapper').style.paddingLeft = '24px');
+  const exemptButMisaligned = await page.evaluate(measureDOM, { ...absencePayload, composerExpectation: { mode: 'exempt', reason: 'Read-only archived conversation does not accept new messages.' } });
+  assert.ok(exemptButMisaligned.issues.some(i => i.rule === 'composer.surface'), 'an exemption cannot bypass geometry checks on a rendered composer');
+  await page.setContent(html);
+  await page.evaluate(() => document.querySelector('#shelf').remove());
   const unknown = await page.evaluate(measureDOM, { ...absencePayload, composerExpectation: undefined });
   assert.ok(unknown.coverage.some(c => c.rule === 'composer.presence' && c.status === 'unclassified'), 'unreviewed pages remain visibly unclassified');
   assert.equal(unknown.issues.length, 0, 'an unreviewed page is not automatically required to have a composer');
-  console.log('PASS required composer, documented exemption, blank exemption rejection and unclassified policy coverage');
+  console.log('PASS composer policy: required, contextual exemption, geometry under exemption, malformed modes, placeholder rejection and unclassified coverage');
   await page.close();
   const adapter = {
     baseURL: 'http://audit.test', selectors,
@@ -155,17 +170,21 @@ try {
   fs.writeFileSync(path.join(temp, 'cli-adapter.mjs'), `export default {
     baseURL: 'http://audit.test', selectors: ${JSON.stringify(selectors)},
     authenticate: async context => context.route('**/*', route => route.fulfill({ contentType: 'text/html', body: ${JSON.stringify(html)} })),
-    cases: async options => [{ tenant: 'fixture', path: '/good', composerExpectation: options.path === 'required' ? {mode:'required'} : undefined }],
+    cases: async options => [{ tenant: 'fixture', path: '/good', composerExpectation: ({ required: {mode:'required'}, exempt: {mode:'exempt',reason:'Archived conversation does not accept new messages.'}, placeholder: {mode:'exempt',reason:'TODO'}, malformed: {}, typo: {mode:'requried'} })[options.path] }],
     ready: async p => p.locator('#header').waitFor(), theme: async () => {},
   };`);
-  for (const [name, flags, expectedExit] of [
+  for (const [name, flags, expectedExit, expectedFailures = 0] of [
     ['advisory', [], 0], ['strict-unclassified', ['--strict-coverage'], 1], ['strict-classified', ['--strict-coverage', '--path', 'required'], 0],
+    ['strict-exempt', ['--strict-coverage', '--path', 'exempt'], 0],
+    ['advisory-placeholder', ['--path', 'placeholder'], 1, 1],
+    ['advisory-malformed', ['--path', 'malformed'], 1, 1],
+    ['advisory-typo', ['--path', 'typo'], 1, 1],
   ]) {
     const out = path.join(temp, name);
     const cli = spawnSync(process.execPath, [fileURLToPath(new URL('./audit.mjs', import.meta.url)), ...cliBase, '--out', out, '--themes', 'light', '--widths', '1280', '--states', 'default', '--no-screenshots', ...flags], { encoding: 'utf8', timeout: 60000 });
     assert.equal(cli.status, expectedExit, `${name} CLI exit: ${cli.stdout} ${cli.stderr}`);
     const receipt = JSON.parse(fs.readFileSync(path.join(out, 'report.json'), 'utf8'));
-    assert.equal(receipt.failures, 0, 'strict coverage failure is separate from DOM findings');
+    assert.equal(receipt.failures, expectedFailures, 'invalid policies fail coverage even in advisory mode; omitted policies stay separate from DOM findings');
     assert.equal(receipt.exitCode, expectedExit);
   }
   console.log('PASS CLI strict coverage propagation, validation and real exit codes; failed readiness cannot resolve prior findings');

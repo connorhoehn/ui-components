@@ -72,11 +72,13 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
       coverage.push({ rule: rule.id, matched: nodes.length, excluded });
       if (rule.required && nodes.length === 0) { add(rule, null, 'rendered count', '>= 1', 0, 'coverage'); continue; }
       if (rule.kind === 'composer-presence') {
-        const mode = composerExpectation?.mode ?? 'unclassified';
+        // Omitted policy is unreviewed; an explicitly malformed policy is an adapter defect.
+        const mode = composerExpectation == null ? 'unclassified' : composerExpectation.mode;
+        const validPolicy = composerExpectation == null || (typeof composerExpectation === 'object' && !Array.isArray(composerExpectation) && ['required', 'exempt', 'unclassified'].includes(mode));
         const reason = typeof composerExpectation?.reason === 'string' ? composerExpectation.reason.trim() : '';
-        Object.assign(coverage.at(-1), { status: mode, ...(reason ? { reason } : {}) });
+        Object.assign(coverage.at(-1), { status: validPolicy ? mode : 'invalid', ...(reason ? { reason } : {}) });
         samples.push({ rule: rule.id, selector: css(rule.selector), property: 'presence policy', actual: nodes.length, expected: mode, ...(reason ? { reason } : {}) });
-        if (!['required', 'exempt', 'unclassified'].includes(mode)) add(rule, null, 'presence policy', 'required or exempt', mode, 'coverage');
+        if (!validPolicy) add(rule, null, 'presence policy', 'object with required, exempt or unclassified mode', mode ?? composerExpectation, 'coverage');
         else if (mode === 'required') {
           if (nodes.length === 0) add(rule, null, 'composer count', '>= 1', 0);
           else {
@@ -85,7 +87,9 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
             if (!inputs.length) add(rule, nodes[0], 'composer input count', '>= 1 visible input inside composer', 0);
           }
         }
-        else if (mode === 'exempt' && !reason) add(rule, null, 'exemption reason', 'nonempty documented context', reason, 'coverage');
+        else if (mode === 'exempt' && (!reason || /^(?:todo|tbd|n\/?a|none|null|undefined|exempt|not applicable|coming soon|[-?.…]+)[.!?]*$/i.test(reason))) {
+          add(rule, null, 'exemption reason', 'documented contextual reason, not blank or a placeholder', reason, 'coverage');
+        }
       }
       else if (rule.kind === 'text') {
         const labels = new Set();

@@ -11,7 +11,8 @@ audit request. Source searches and screenshots help diagnosis; they
 are not the pass/fail oracle.
 
 Shared collection/chat pages need an explicit composer policy: required, or a
-documented contextual exemption. Unreviewed pages remain visibly unclassified;
+documented contextual exemption (a placeholder such as `TODO` is rejected).
+Malformed policy declarations fail even without strict coverage. Unreviewed pages remain visibly unclassified;
 geometry checks alone cannot certify a composer that is absent. See the
 [composer policy contract](references/contracts.md#composer-presence-policy) when
 adding a route family.
