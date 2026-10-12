@@ -1,0 +1,426 @@
+{
+  "version": 1,
+  "name": "Work shared UI compact layout",
+  "tolerance": 1,
+  "rules": [
+    {
+      "id": "shell.header.count",
+      "kind": "count",
+      "selector": "$header",
+      "expected": 1,
+      "owner": "shell"
+    },
+    {
+      "id": "shell.footer.count",
+      "kind": "count",
+      "selector": "$footer",
+      "expected": 1,
+      "owner": "shell"
+    },
+    {
+      "id": "shell.header.height",
+      "kind": "box",
+      "selector": "$header",
+      "properties": {
+        "height": {
+          "min": 40,
+          "max": 56
+        }
+      },
+      "owner": "shell"
+    },
+    {
+      "id": "shell.footer.height",
+      "kind": "box",
+      "selector": "$footerRow",
+      "properties": {
+        "height": {
+          "min": 40,
+          "max": 48
+        }
+      },
+      "owner": "SocialFooter"
+    },
+    {
+      "id": "shell.viewport",
+      "kind": "viewport",
+      "owner": "shell / scroll containment"
+    },
+    {
+      "id": "shell.columns",
+      "kind": "columns",
+      "selector": "$shellColumns",
+      "children": ":scope > aside, :scope > main",
+      "min": 2,
+      "max": 3,
+      "maxGap": 1,
+      "required": true,
+      "owner": "SubNavLayout"
+    },
+    {
+      "id": "workspace.columns",
+      "kind": "columns",
+      "selector": "$workspaceColumns",
+      "children": ":scope > *",
+      "min": 2,
+      "max": 3,
+      "maxGap": 1,
+      "owner": "workspace rail + content layout"
+    },
+    {
+      "id": "subnav.columns",
+      "kind": "columns",
+      "selector": "$nestedColumns",
+      "children": ":scope > aside, :scope > [data-subnav-content]",
+      "min": 2,
+      "max": 3,
+      "maxGap": 1,
+      "owner": "SubNavLayout nested rail + content"
+    },
+    {
+      "id": "pane.columns",
+      "kind": "columns",
+      "selector": "$splitColumns",
+      "children": ":scope > [data-testid$='-primary'], :scope > [data-testid$='-secondary']",
+      "min": 1,
+      "max": 2,
+      "maxGap": 8,
+      "owner": "SplitPane / SidePane"
+    },
+    {
+      "id": "control.font-family",
+      "kind": "text",
+      "selector": "$controls",
+      "properties": {
+        "fontFamily": {
+          "from": "body",
+          "property": "fontFamily"
+        }
+      },
+      "owner": "Button / IconButton / forms",
+      "exclude": [
+        {
+          "selector": "$keyboardHints",
+          "reason": "Keyboard hints use the explicit monospace typography rule"
+        },
+        {
+          "selector": "$decorativeText",
+          "reason": "Aria-hidden glyphs are icons rather than readable labels"
+        },
+        {
+          "selector": "$codeLabels",
+          "reason": "Code identifiers have their own monospace profile"
+        }
+      ],
+      "tolerance": 0.1
+    },
+    {
+      "id": "control.font-size",
+      "kind": "text",
+      "selector": "$controls",
+      "properties": {
+        "fontSize": [
+          12,
+          14
+        ]
+      },
+      "tolerance": 0.1,
+      "exclude": [
+        {
+          "selector": "$railHeaders",
+          "reason": "Navigation group captions use their shared rail typography contract"
+        },
+        {
+          "selector": "$tenantControl",
+          "reason": "Tenant identity uses the explicit shell brand typography rule"
+        },
+        {
+          "selector": "$tickerControl",
+          "reason": "The compact footer ticker uses the explicit ticker typography rule"
+        },
+        {
+          "selector": "$avatarControl",
+          "reason": "Avatar initials and overflow counts use the separate avatar readability rule"
+        },
+        {
+          "selector": "$keyboardHints",
+          "reason": "Keyboard hints use the explicit compact hint typography rule"
+        },
+        {
+          "selector": "$captions",
+          "reason": "Secondary role captions use the explicit caption typography rule"
+        },
+        {
+          "selector": "$decorativeText",
+          "reason": "Aria-hidden glyphs are icons rather than readable labels"
+        },
+        {
+          "selector": "$codeLabels",
+          "reason": "Code identifiers have their own monospace profile"
+        },
+        {
+          "selector": "$railCaptionLabels",
+          "reason": "RailSectionHeader / railType has an explicit 11px profile"
+        },
+        {
+          "selector": "$conversationLabels",
+          "reason": "ConversationList has an explicit 13px profile"
+        },
+        {
+          "selector": "$conversationMetadata",
+          "reason": "ConversationList has an explicit 11px profile"
+        },
+        {
+          "selector": "$rowMenuGlyphs",
+          "reason": "ConversationList has an explicit 13px profile"
+        }
+      ],
+      "owner": "Button / IconButton / forms"
+    },
+    {
+      "id": "control.border-style",
+      "kind": "style",
+      "selector": "$controls",
+      "properties": {
+        "borderTopStyle": [
+          "solid",
+          "none"
+        ]
+      },
+      "owner": "Button / IconButton / forms"
+    },
+    {
+      "id": "toolbar.control-height",
+      "kind": "box",
+      "selector": "$toolbarControls",
+      "properties": {
+        "height": {
+          "token": "--ui-control-sm"
+        }
+      },
+      "owner": "controlMetrics / CollectionToolbar"
+    },
+    {
+      "id": "collection.gutter",
+      "kind": "style",
+      "selector": "$collections",
+      "properties": {
+        "paddingLeft": 0,
+        "paddingRight": 0
+      },
+      "owner": "CollectionPage; shell supplies outer gutter"
+    },
+    {
+      "id": "section.gutter",
+      "kind": "style",
+      "selector": "$sectionTitles",
+      "properties": {
+        "paddingLeft": {
+          "token": "--ui-page-gutter"
+        },
+        "paddingRight": {
+          "token": "--ui-page-gutter"
+        }
+      },
+      "owner": "SectionHeader"
+    },
+    {
+      "id": "toolbar.inset",
+      "kind": "style",
+      "selector": "$collectionToolbars",
+      "properties": {
+        "paddingLeft": {
+          "token": "--ui-table-inset"
+        },
+        "paddingRight": {
+          "token": "--ui-table-inset"
+        }
+      },
+      "owner": "CollectionToolbar"
+    },
+    {
+      "id": "table.geometry",
+      "kind": "table",
+      "selector": "$tables",
+      "rowHeight": {
+        "token": "--ui-table-row"
+      },
+      "cellInset": {
+        "token": "--ui-table-inset"
+      },
+      "headerFontSize": 12,
+      "headerFontWeight": 600,
+      "owner": "DataTable / Table",
+      "bodyFontSize": 14,
+      "bodyFontFamily": {
+        "property": "fontFamily",
+        "from": "body"
+      }
+    },
+    {
+      "id": "composer.surface",
+      "kind": "composer",
+      "selector": "$composers",
+      "input": "[contenteditable='true'], textarea",
+      "boundary": "$composerBoundary",
+      "inset": {
+        "token": "--ui-content-gutter"
+      },
+      "owner": "ComposerSurface / conversation host"
+    },
+    {
+      "id": "composer.nesting",
+      "kind": "count",
+      "selector": "$nestedComposers",
+      "expected": 0,
+      "owner": "ComposerSurface"
+    },
+    {
+      "id": "rail.accordion-font",
+      "kind": "style",
+      "selector": "$railHeaders",
+      "properties": {
+        "fontFamily": {
+          "from": "body",
+          "property": "fontFamily"
+        },
+        "fontWeight": 600,
+        "fontSize": 11
+      },
+      "owner": "SubNavLayout / rail typography"
+    },
+    {
+      "id": "app.font-family",
+      "kind": "style",
+      "selector": "body",
+      "properties": {
+        "fontFamily": "system-ui, -apple-system, sans-serif"
+      },
+      "owner": "shared app typography"
+    },
+    {
+      "id": "identity.font-size",
+      "kind": "text",
+      "selector": "$tenantControl",
+      "properties": {
+        "fontSize": 16
+      },
+      "owner": "TenantSwitcher",
+      "tolerance": 0.1
+    },
+    {
+      "id": "ticker.font-size",
+      "kind": "text",
+      "selector": "$tickerControl",
+      "properties": {
+        "fontSize": 11,
+        "fontWeight": 400
+      },
+      "owner": "ActivityTicker",
+      "tolerance": 0.1
+    },
+    {
+      "id": "avatar.readability",
+      "kind": "text",
+      "selector": "$avatarControl",
+      "properties": {
+        "fontSize": {
+          "min": 9,
+          "max": 16
+        }
+      },
+      "owner": "PresenceAvatars",
+      "tolerance": 0.1
+    },
+    {
+      "id": "keyboard.typography",
+      "kind": "text",
+      "selector": "$keyboardHints",
+      "properties": {
+        "fontFamily": {
+          "contains": "monospace"
+        },
+        "fontSize": 11
+      },
+      "owner": "keyboard hint",
+      "tolerance": 0.1
+    },
+    {
+      "id": "caption.typography",
+      "kind": "text",
+      "selector": "$captions",
+      "properties": {
+        "fontSize": 11
+      },
+      "owner": "secondary caption",
+      "tolerance": 0.1
+    },
+    {
+      "id": "rail.accordion-height",
+      "kind": "box",
+      "selector": "$railHeaders",
+      "properties": {
+        "height": 36
+      },
+      "owner": "SubNavLayout / rail row geometry"
+    },
+    {
+      "id": "rail.disclosure-label",
+      "kind": "text",
+      "selector": "$railCaptionLabels",
+      "properties": {
+        "fontSize": 11
+      },
+      "tolerance": 0.1,
+      "owner": "RailSectionHeader / railType"
+    },
+    {
+      "id": "conversation.label",
+      "kind": "text",
+      "selector": "$conversationLabels",
+      "properties": {
+        "fontSize": 13
+      },
+      "tolerance": 0.1,
+      "owner": "ConversationList"
+    },
+    {
+      "id": "conversation.metadata",
+      "kind": "text",
+      "selector": "$conversationMetadata",
+      "properties": {
+        "fontSize": 11
+      },
+      "tolerance": 0.1,
+      "owner": "ConversationList"
+    },
+    {
+      "id": "conversation.menu-glyph",
+      "kind": "text",
+      "selector": "$rowMenuGlyphs",
+      "properties": {
+        "fontSize": 13
+      },
+      "tolerance": 0.1,
+      "owner": "ConversationList"
+    },
+    {
+      "id": "code.typography",
+      "kind": "text",
+      "selector": "$codeLabels",
+      "properties": {
+        "fontFamily": {
+          "contains": "monospace"
+        },
+        "fontSize": [
+          10,
+          11,
+          12,
+          14
+        ]
+      },
+      "tolerance": 0.1,
+      "owner": "code identifier / inline code"
+    }
+  ]
+}

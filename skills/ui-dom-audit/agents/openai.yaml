@@ -1,0 +1,4 @@
+interface:
+  display_name: "UI DOM Audit"
+  short_description: "Measure UI consistency across tenants and repositories"
+  default_prompt: "Use $ui-dom-audit to measure rendered UI contracts across tenants and turn reported layout defects into deterministic regression checks."
