@@ -6,6 +6,8 @@
 
 import React from 'react';
 import { cn } from '../../lib/cn';
+import { ChevronIcon } from '../ui/Icons';
+import { Tooltip } from './Tooltip';
 import { Breadcrumbs, type BreadcrumbItem } from './Breadcrumbs';
 import { Tabs } from './Tabs';
 import { useDensityForm, type Density } from './Density';
@@ -140,11 +142,20 @@ function PageHeader({
     ? <HeaderCollapseToggle collapsed={collapsed} onToggle={onToggleCollapsed} data-testid={`${testId}-collapse-toggle`} />
     : null;
 
+  // Compact/collapsed headers must retain the route back to their list.
+  const compactBack = back ? <Tooltip content={back.label}><a href={back.to} onClick={back.onClick}
+    aria-label={back.label} className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-text-secondary hover:bg-primary/10 hover:text-primary focus-visible:outline-2 focus-visible:outline-primary">
+    <ChevronIcon dir="left" size={16} />
+  </a></Tooltip> : null;
+
   if (collapsed) {
     return (
       <div className={cn('flex min-w-0 flex-col gap-1', hasTrail && 'pt-2', className)} data-testid={testId} data-density={density} data-collapsed="true">
-        <HeaderTrailFold breadcrumbs={breadcrumbs} title={title} badge={badge} actions={actions} data-testid={`${testId}-fold`}
-          {...(onToggleCollapsed ? { onExpand: onToggleCollapsed } : {})} />
+        <div className="flex min-w-0 items-center gap-2">
+          {compactBack}
+          <div className="min-w-0 flex-1"><HeaderTrailFold breadcrumbs={breadcrumbs} title={title} badge={badge} actions={actions} data-testid={`${testId}-fold`}
+            {...(onToggleCollapsed ? { onExpand: onToggleCollapsed } : {})} /></div>
+        </div>
         {tabStrip}
       </div>
     );
@@ -155,6 +166,7 @@ function PageHeader({
       <div className={cn('flex min-w-0 flex-col gap-1', hasTrail && 'pt-2', className)} data-testid={testId} data-density="compact" data-collapsed="false">
         {trail}
         <div className="flex h-7 min-w-0 items-center gap-3" data-testid={`${testId}-row`}>
+          {compactBack}
           <div className="flex min-w-0 flex-1 items-center gap-2">
             <h1 className="m-0 min-w-0 truncate text-sm font-semibold leading-5 text-[var(--color-text-primary)]" title={title}>
               {title}

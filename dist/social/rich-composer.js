@@ -1,13 +1,13 @@
 import { t as e } from "../cn-D4QmbyEy.js";
 import { n as t } from "../Button-BEOshFFZ.js";
 import { i as n } from "../Density-BgubVeSf.js";
-import { c as r, l as i, n as a } from "../Text-CEkn6rLG.js";
+import { c as r, l as i, n as a } from "../Text-Dp6koIMo.js";
 import { t as o } from "../Select-C6OGjVyH.js";
 import { a as s, c, i as l, l as u, n as d, r as f, t as p } from "../composerSendError-B44odLGG.js";
 import { a as m, i as ee, n as h, r as te, t as g } from "../composerContext-BLn1-Nao.js";
-import { a as ne, c as re, i as _, l as v, n as ie, o as y, r as ae, s as b, t as x, u as oe } from "../RichChatComposer-CGHbHeIK.js";
-import { t as se } from "../ContextComposer-CT_sLHwr.js";
-import { t as ce } from "../AgentComposerDock-C-LIMfMh.js";
+import { a as ne, c as re, i as _, l as v, n as ie, o as y, r as ae, s as b, t as x, u as oe } from "../RichChatComposer-hMOlEPPU.js";
+import { t as se } from "../ContextComposer-cDbUvfOc.js";
+import { t as ce } from "../AgentComposerDock-DMjO4cOz.js";
 import { createContext as le, useCallback as S, useContext as ue, useEffect as C, useMemo as w, useRef as T, useState as E, useSyncExternalStore as D } from "react";
 import { jsx as O, jsxs as k } from "react/jsx-runtime";
 //#region src/components/social/conversationInputRegistry.ts

@@ -9,6 +9,9 @@
 
 import { isValidElement, useMemo, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { IconButton } from '../ui/IconButton';
+import { ChevronIcon } from '../ui/Icons';
+import { Tooltip } from './Tooltip';
 import {
   Table,
   TableHead,
@@ -257,7 +260,7 @@ export function DataTable<T>({
   }, [sorted, pageSize, safePage]);
 
   return (
-    <div className={cn('flex flex-col gap-3', className)} data-testid={testId}>
+    <div className={cn('flex min-w-0 flex-col gap-3', className)} data-testid={testId}>
       {searchable && (
         <input
           type="text"
@@ -388,30 +391,11 @@ export function DataTable<T>({
           <span data-testid="datatable-page-summary">
             Page {safePage + 1} of {totalPages} · {sorted.length} total
           </span>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              // Step from `safePage`, not the raw `page`. When `data` shrinks
-              // under a stale page index the two diverge (page=5, safePage=1),
-              // and stepping the raw value leaves `safePage` pinned at the
-              // clamp — Prev renders "Page 2 of 2" over and over while the user
-              // clicks. See the "stale page index" regression test.
-              onClick={() => setPage(Math.max(0, safePage - 1))}
-              disabled={safePage === 0}
-              data-testid="datatable-prev"
-              className="rounded border border-border bg-surface px-2 py-1 text-xs text-text-primary disabled:cursor-not-allowed disabled:opacity-50 hover:bg-surface-panel"
-            >
-              Prev
-            </button>
-            <button
-              type="button"
-              onClick={() => setPage(Math.min(totalPages - 1, safePage + 1))}
-              disabled={safePage >= totalPages - 1}
-              data-testid="datatable-next"
-              className="rounded border border-border bg-surface px-2 py-1 text-xs text-text-primary disabled:cursor-not-allowed disabled:opacity-50 hover:bg-surface-panel"
-            >
-              Next
-            </button>
+          <div className="flex gap-1" role="group" aria-label="Pagination">
+            <Tooltip content="Previous page"><IconButton size="sm" aria-label="Previous page" icon={<ChevronIcon dir="left" />}
+              onClick={() => setPage(Math.max(0, safePage - 1))} disabled={safePage === 0} data-testid="datatable-prev" /></Tooltip>
+            <Tooltip content="Next page"><IconButton size="sm" aria-label="Next page" icon={<ChevronIcon dir="right" />}
+              onClick={() => setPage(Math.min(totalPages - 1, safePage + 1))} disabled={safePage >= totalPages - 1} data-testid="datatable-next" /></Tooltip>
           </div>
         </div>
       )}

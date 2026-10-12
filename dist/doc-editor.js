@@ -1,12 +1,13 @@
-import { n as e, t } from "./useWebSocket-Cmv4zMFO.js";
+import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
 import { t as n } from "./cn-D4QmbyEy.js";
 import { n as r } from "./Button-BEOshFFZ.js";
 import { t as i } from "./Card-CbTNNNkk.js";
 import { n as a } from "./Density-BgubVeSf.js";
 import { t as o } from "./Chip-D2jKHd4a.js";
-import { c as s, i as c, l, u } from "./Text-CEkn6rLG.js";
-import { ct as d, m as f, mt as p } from "./Icons-B_xESAH3.js";
-import { i as m } from "./MediaIcons-_ai5Til2.js";
+import { t as s } from "./IconButton-IiLzRH-W.js";
+import { ct as c, m as l, mt as u } from "./Icons-B_xESAH3.js";
+import { i as d } from "./MediaIcons-_ai5Til2.js";
+import { c as f, i as p, l as m } from "./Text-Dp6koIMo.js";
 import { t as h } from "./Badge-POenI45X.js";
 import { t as g } from "./Banner-8ngXUtJu.js";
 import { t as _ } from "./Modal-CjgKqXl7.js";
@@ -27,13 +28,13 @@ import { t as re } from "./Checkbox-C70AGFS5.js";
 import { n as ie } from "./FileKindMark-DhjYpKjg.js";
 import { t as O } from "./activationKey-CjbL3LUv.js";
 import { A as k, k as ae } from "./renderers-soBo-YRi.js";
-import { A, B as j, C as oe, D as M, E as N, F as se, G as P, H as ce, I as le, J as ue, K as F, L as I, M as de, N as fe, O as pe, P as me, R as he, S as ge, T as _e, U as ve, V as ye, W as be, Y as xe, Z as Se, _ as Ce, a as we, b as Te, c as Ee, d as De, f as Oe, g as ke, h as Ae, i as je, j as Me, k as Ne, l as Pe, m as Fe, n as Ie, o as Le, p as Re, q as ze, r as Be, s as Ve, t as He, u as Ue, v as We, w as Ge, x as Ke, y as qe, z as Je } from "./ProposedEditStrip-C7nYJmMc.js";
+import { A, B as j, C as oe, D as M, E as N, F as se, G as P, H as ce, I as le, J as ue, K as F, L as I, M as de, N as fe, O as pe, P as me, R as he, S as ge, T as _e, U as ve, V as ye, W as be, Y as xe, Z as Se, _ as Ce, a as we, b as Te, c as Ee, d as De, f as Oe, g as ke, h as Ae, i as je, j as Me, k as Ne, l as Pe, m as Fe, n as Ie, o as Le, p as Re, q as ze, r as Be, s as Ve, t as He, u as Ue, v as We, w as Ge, x as Ke, y as qe, z as Je } from "./ProposedEditStrip-BdVBmV2R.js";
 import { o as Ye, t as Xe } from "./VerdictChip-Cc4Ej-AU.js";
 import { a as Ze, c as Qe, d as $e, f as et, h as tt, i as nt, l as rt, m as it, n as at, o as ot, p as st, r as ct, s as lt, t as ut, u as dt } from "./TiptapEditor-BjjwDyPa.js";
 import { i as ft, n as pt, r as mt, t as ht } from "./FloatingComposerDock-ZezHreIm.js";
-import { A as gt, B as _t, C as vt, D as yt, E as bt, F as xt, G as St, H as Ct, I as wt, J as Tt, K as Et, L as Dt, M as Ot, N as kt, O as At, P as jt, R as Mt, S as Nt, T as Pt, U as Ft, V as It, W as Lt, _ as Rt, a as zt, b as Bt, c as Vt, d as Ht, f as Ut, g as Wt, h as Gt, i as Kt, j as qt, k as Jt, l as Yt, m as Xt, o as Zt, p as Qt, q as $t, r as en, s as tn, t as nn, u as rn, v as an, w as on, x as sn, y as cn, z as ln } from "./DocumentEditorPage-d1ECZug3.js";
-import { C as un, S as dn, T as fn, _ as pn, a as mn, b as hn, c as gn, d as _n, f as vn, g as yn, h as bn, i as xn, l as Sn, m as Cn, n as wn, o as Tn, p as En, r as Dn, s as On, t as kn, u as An, v as jn, w as Mn, x as Nn, y as Pn } from "./useDocumentImageUpload-CRitYKdw.js";
-import { r as Fn } from "./RichChatComposer-CGHbHeIK.js";
+import { A as gt, B as _t, C as vt, D as yt, E as bt, F as xt, G as St, H as Ct, I as wt, J as Tt, K as Et, L as Dt, M as Ot, N as kt, O as At, P as jt, R as Mt, S as Nt, T as Pt, U as Ft, V as It, W as Lt, _ as Rt, a as zt, b as Bt, c as Vt, d as Ht, f as Ut, g as Wt, h as Gt, i as Kt, j as qt, k as Jt, l as Yt, m as Xt, o as Zt, p as Qt, q as $t, r as en, s as tn, t as nn, u as rn, v as an, w as on, x as sn, y as cn, z as ln } from "./DocumentEditorPage-DSPnyV8_.js";
+import { C as un, S as dn, T as fn, _ as pn, a as mn, b as hn, c as gn, d as _n, f as vn, g as yn, h as bn, i as xn, l as Sn, m as Cn, n as wn, o as Tn, p as En, r as Dn, s as On, t as kn, u as An, v as jn, w as Mn, x as Nn, y as Pn } from "./useDocumentImageUpload-BjzsExgt.js";
+import { r as Fn } from "./RichChatComposer-hMOlEPPU.js";
 import { forwardRef as In, useCallback as L, useEffect as R, useId as Ln, useImperativeHandle as Rn, useMemo as z, useRef as B, useState as V } from "react";
 import { Fragment as H, jsx as U, jsxs as W } from "react/jsx-runtime";
 import * as zn from "yjs";
@@ -1496,10 +1497,10 @@ function $r() {
 		})]
 	});
 }
-function ei({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint: a = "Drop the call here to read alongside it", undockLabel: o = "Pop video back out", onRequestUndock: s, compact: c = !1, onDragOver: l, onDragLeave: d, onDrop: f, className: p, children: m, "data-testid": h = "video-dock-slot" }) {
+function ei({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint: a = "Drop the call here to read alongside it", undockLabel: o = "Pop video back out", onRequestUndock: c, compact: l = !1, onDragOver: u, onDragLeave: d, onDrop: f, className: p, children: m, "data-testid": h = "video-dock-slot" }) {
 	let [g, _] = V(!1), v = L((e) => {
-		e.preventDefault(), t && _(!0), l?.(e);
-	}, [t, l]), y = L((e) => {
+		e.preventDefault(), t && _(!0), u?.(e);
+	}, [t, u]), y = L((e) => {
 		let t = e.relatedTarget;
 		t instanceof Node && e.currentTarget.contains(t) || (_(!1), d?.(e));
 	}, [d]), b = L((e) => {
@@ -1508,7 +1509,7 @@ function ei({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint:
 	return !e && !t ? null : /* @__PURE__ */ U("div", {
 		"data-testid": h,
 		"data-docked": String(e),
-		"data-compact": c ? "true" : void 0,
+		"data-compact": l ? "true" : void 0,
 		"data-drag-over": String(g),
 		"data-call-dock-target": t && r ? r : void 0,
 		onDragOver: v,
@@ -1518,12 +1519,12 @@ function ei({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint:
 		children: e ? /* @__PURE__ */ W("div", {
 			"data-testid": `${h}-content`,
 			className: "relative w-full",
-			children: [m, s && /* @__PURE__ */ U("div", {
+			children: [m, c && /* @__PURE__ */ U("div", {
 				className: "absolute right-1 top-1 z-10 rounded bg-black/45 backdrop-blur-sm",
-				children: /* @__PURE__ */ U(u, {
+				children: /* @__PURE__ */ U(s, {
 					"aria-label": o,
 					size: "sm",
-					onClick: s,
+					onClick: c,
 					"data-testid": `${h}-undock`,
 					icon: /* @__PURE__ */ U($r, {}),
 					className: "text-white hover:bg-white/20"
@@ -1533,7 +1534,7 @@ function ei({ docked: e, canAccept: t, dockId: r, label: i = "Video dock", hint:
 			role: "region",
 			"aria-label": i,
 			"data-testid": `${h}-dropzone`,
-			className: n(c ? "flex h-10 w-full flex-row items-center justify-center gap-2" : "flex aspect-video w-full flex-col items-center justify-center gap-1", "rounded-lg border-2 border-dashed px-3 text-center", g ? "border-primary bg-surface-hover" : "border-border"),
+			className: n(l ? "flex h-10 w-full flex-row items-center justify-center gap-2" : "flex aspect-video w-full flex-col items-center justify-center gap-1", "rounded-lg border-2 border-dashed px-3 text-center", g ? "border-primary bg-surface-hover" : "border-border"),
 			children: [/* @__PURE__ */ U("span", {
 				className: "text-xs font-medium text-text-secondary",
 				children: i
@@ -2749,27 +2750,27 @@ function Da({ count: e, children: t, onAcceptAll: s, onRejectAll: c, acceptLabel
 //#endregion
 //#region src/components/doc-editor/DocumentReviewPanel.tsx
 function Oa({ request: e, onDecide: t, onWithdraw: n }) {
-	let [i, a] = V(""), [c, u] = V(!1), [d, f] = V(null), p = B(!1);
-	async function m(e) {
-		if (!p.current) {
-			p.current = !0, u(!0), f(null);
+	let [i, a] = V(""), [s, c] = V(!1), [l, u] = V(null), d = B(!1);
+	async function p(e) {
+		if (!d.current) {
+			d.current = !0, c(!0), u(null);
 			try {
 				await e(), a("");
 			} catch (e) {
-				f(e instanceof Error ? e.message : "The review could not be updated.");
+				u(e instanceof Error ? e.message : "The review could not be updated.");
 			} finally {
-				p.current = !1, u(!1);
+				d.current = !1, c(!1);
 			}
 		}
 	}
 	let h = e.reviewerName || e.reviewerId, g = e.state.replace(/_/g, " "), _ = g.charAt(0).toUpperCase() + g.slice(1);
 	return /* @__PURE__ */ U(xe, {
 		"aria-label": `Review by ${h}`,
-		"aria-busy": c,
-		children: /* @__PURE__ */ W(l, {
+		"aria-busy": s,
+		children: /* @__PURE__ */ W(m, {
 			gap: "sm",
 			children: [
-				/* @__PURE__ */ W(s, {
+				/* @__PURE__ */ W(f, {
 					gap: "sm",
 					wrap: !0,
 					children: [
@@ -2795,56 +2796,56 @@ function Oa({ request: e, onDecide: t, onWithdraw: n }) {
 					className: "m-0 text-sm text-text-secondary whitespace-pre-wrap",
 					children: e.comment
 				}),
-				d && /* @__PURE__ */ U(w, {
+				l && /* @__PURE__ */ U(w, {
 					tone: "error",
-					children: d
+					children: l
 				}),
 				t && e.state === "pending" && /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(x, {
 					value: i,
 					onChange: (e) => a(e.target.value),
 					rows: 2,
-					disabled: c,
+					disabled: s,
 					"aria-label": `Review comment for ${h}`,
 					placeholder: "Add a comment (optional)"
-				}), /* @__PURE__ */ W(s, {
+				}), /* @__PURE__ */ W(f, {
 					gap: "sm",
 					wrap: !0,
 					children: [/* @__PURE__ */ U(r, {
 						size: "sm",
 						variant: "secondary",
-						disabled: c,
-						onClick: () => void m(() => t(e.requestKey, "changes_requested", i)),
+						disabled: s,
+						onClick: () => void p(() => t(e.requestKey, "changes_requested", i)),
 						children: "Request changes"
 					}), /* @__PURE__ */ U(r, {
 						size: "sm",
 						variant: "primary",
-						disabled: c,
-						onClick: () => void m(() => t(e.requestKey, "approved", i)),
+						disabled: s,
+						onClick: () => void p(() => t(e.requestKey, "approved", i)),
 						children: "Approve review"
 					})]
 				})] }),
 				n && e.state === "pending" && /* @__PURE__ */ U(r, {
 					size: "sm",
 					variant: "ghost",
-					disabled: c,
-					onClick: () => void m(() => n(e.requestKey)),
+					disabled: s,
+					onClick: () => void p(() => n(e.requestKey)),
 					children: "Withdraw review"
 				})
 			]
 		})
 	});
 }
-function ka({ requests: e, reviewers: t = [], currentUserId: n, loading: i, error: a, onRefresh: o, onRequest: c, onDecide: u, onWithdraw: d }) {
-	let [f, p] = V(""), [m, h] = V(""), [g, _] = V(!0), [v, y] = V(!1), [b, S] = V(null), C = B(!1);
+function ka({ requests: e, reviewers: t = [], currentUserId: n, loading: i, error: a, onRefresh: o, onRequest: s, onDecide: c, onWithdraw: l }) {
+	let [u, d] = V(""), [p, h] = V(""), [g, _] = V(!0), [v, y] = V(!1), [b, S] = V(null), C = B(!1);
 	async function T() {
-		if (!(!c || !t.some((e) => e.id === f) || C.current)) {
+		if (!(!s || !t.some((e) => e.id === u) || C.current)) {
 			C.current = !0, y(!0), S(null);
 			try {
-				await c({
-					reviewerId: f,
-					note: m.trim(),
+				await s({
+					reviewerId: u,
+					note: p.trim(),
 					required: g
-				}), h(""), p("");
+				}), h(""), d("");
 			} catch (e) {
 				S(e instanceof Error ? e.message : "The review could not be requested.");
 			} finally {
@@ -2852,36 +2853,36 @@ function ka({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 			}
 		}
 	}
-	return /* @__PURE__ */ W(l, {
+	return /* @__PURE__ */ W(m, {
 		gap: "md",
 		children: [
 			a && /* @__PURE__ */ U(w, {
 				tone: "error",
 				children: a
 			}),
-			c && /* @__PURE__ */ W(l, {
+			s && /* @__PURE__ */ W(m, {
 				gap: "sm",
 				children: [
 					/* @__PURE__ */ U(D, {
 						"aria-label": "Reviewer",
 						placeholder: "Choose a reviewer",
-						value: f,
+						value: u,
 						disabled: v || i,
 						options: t.map((e) => ({
 							value: e.id,
 							label: e.displayName
 						})),
-						onChange: (e) => p(e.target.value)
+						onChange: (e) => d(e.target.value)
 					}),
 					/* @__PURE__ */ U(x, {
 						"aria-label": "Review request note",
 						placeholder: "What should they review?",
 						rows: 2,
-						value: m,
+						value: p,
 						disabled: v,
 						onChange: (e) => h(e.target.value)
 					}),
-					/* @__PURE__ */ W(s, {
+					/* @__PURE__ */ W(f, {
 						as: "label",
 						gap: "sm",
 						align: "center",
@@ -2897,7 +2898,7 @@ function ka({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 					}),
 					/* @__PURE__ */ U(r, {
 						size: "sm",
-						disabled: v || i || !t.some((e) => e.id === f),
+						disabled: v || i || !t.some((e) => e.id === u),
 						onClick: () => void T(),
 						children: v ? "Requesting…" : "Request review"
 					})
@@ -2917,8 +2918,8 @@ function ka({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 				empty: { title: i ? "Loading reviews…" : a ? "Reviews unavailable" : "No reviews requested" },
 				children: e.map((e) => /* @__PURE__ */ U(Oa, {
 					request: e,
-					onDecide: e.reviewerId === n ? u : void 0,
-					onWithdraw: d
+					onDecide: e.reviewerId === n ? c : void 0,
+					onWithdraw: l
 				}, e.requestKey))
 			})
 		]
@@ -2957,7 +2958,7 @@ function ja({ filled: e }) {
 		children: /* @__PURE__ */ U("path", { d: "M8 1.9l1.8 3.7 4.1.6-3 2.9.7 4.1L8 11.3l-3.6 1.9.7-4.1-3-2.9 4.1-.6L8 1.9Z" })
 	});
 }
-function Ma({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: a, starred: s = !1, onStarredChange: l, statusPill: d, path: p, crumbsTrailing: m, subtitle: g, metaBar: _, participants: v, onParticipantClick: y, onFollowParticipant: b, followingParticipantId: x, meta: S, saveState: C, headActions: w, tabs: T, activeTab: te, onTabChange: ne, toolbar: D, children: re, footer: O, proposal: k, surface: ae = "workspace", explorer: A, workbench: j, label: oe = "Editor", variant: M = "document", itemType: N, itemKey: se, titleSize: P = "md", titleOverflow: ce = "truncate", tabsTrailing: le, className: ue, "data-testid": F = "editor-shell" }) {
+function Ma({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: a, starred: c = !1, onStarredChange: u, statusPill: d, path: f, crumbsTrailing: m, subtitle: g, metaBar: _, participants: v, onParticipantClick: y, onFollowParticipant: b, followingParticipantId: x, meta: S, saveState: C, headActions: w, tabs: T, activeTab: te, onTabChange: ne, toolbar: D, children: re, footer: O, proposal: k, surface: ae = "workspace", explorer: A, workbench: j, label: oe = "Editor", variant: M = "document", itemType: N, itemKey: se, titleSize: P = "md", titleOverflow: ce = "truncate", tabsTrailing: le, className: ue, "data-testid": F = "editor-shell" }) {
 	let I = M === "work-item", de = I && (N || se) ? /* @__PURE__ */ W(H, { children: [N && /* @__PURE__ */ U(o, {
 		size: "sm",
 		tone: "info",
@@ -2967,7 +2968,7 @@ function Ma({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 		className: "font-mono text-[12px] text-text-secondary",
 		"data-testid": `${F}-item-key`,
 		children: se
-	})] }) : null, fe = de || m != null ? /* @__PURE__ */ W(H, { children: [de, m] }) : null, pe = I && (e && e.length > 0 || fe != null), me = P === "lg" ? "text-[26px] font-semibold leading-8" : I ? "text-[22px] font-bold leading-7" : "text-xl font-bold leading-6", he = `${F}-${Ln().replace(/:/g, "")}`, ge = !!T && T.length > 0, _e = ge ? T.some((e) => e.id === te) ? te : T[0].id : void 0, ve = v && v.length > 0 || S != null || !!C, ye = (e) => /* @__PURE__ */ U(c, {
+	})] }) : null, fe = de || m != null ? /* @__PURE__ */ W(H, { children: [de, m] }) : null, pe = I && (e && e.length > 0 || fe != null), me = P === "lg" ? "text-[26px] font-semibold leading-8" : I ? "text-[22px] font-bold leading-7" : "text-xl font-bold leading-6", he = `${F}-${Ln().replace(/:/g, "")}`, ge = !!T && T.length > 0, _e = ge ? T.some((e) => e.id === te) ? te : T[0].id : void 0, ve = v && v.length > 0 || S != null || !!C, ye = (e) => /* @__PURE__ */ U(p, {
 		items: T.map((e) => ({
 			id: e.id,
 			label: e.label,
@@ -3007,7 +3008,7 @@ function Ma({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 						className: "flex h-7 min-w-0 items-center gap-2 text-[13px] text-text-secondary",
 						"data-testid": `${F}-crumbs-row`,
 						children: [
-							/* @__PURE__ */ U(f, {
+							/* @__PURE__ */ U(l, {
 								dir: "right",
 								size: 12,
 								"aria-hidden": "true",
@@ -3093,23 +3094,23 @@ function Ma({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 													className: n("m-0 min-w-0 max-w-full flex-initial text-text-primary", me, ce === "wrap" ? "whitespace-normal break-words" : "truncate"),
 													"data-testid": `${F}-title`,
 													children: t
-												}), l && /* @__PURE__ */ U(u, {
+												}), u && /* @__PURE__ */ U(s, {
 													size: "sm",
-													"aria-label": s ? "Remove star" : "Star this file",
-													"aria-pressed": s,
-													title: s ? "Starred" : "Star",
-													onClick: () => l(!s),
-													className: s ? "shrink-0 text-primary" : "shrink-0 text-text-tertiary",
+													"aria-label": c ? "Remove star" : "Star this file",
+													"aria-pressed": c,
+													title: c ? "Starred" : "Star",
+													onClick: () => u(!c),
+													className: c ? "shrink-0 text-primary" : "shrink-0 text-text-tertiary",
 													"data-testid": `${F}-star`,
-													children: /* @__PURE__ */ U(ja, { filled: s })
+													children: /* @__PURE__ */ U(ja, { filled: c })
 												})]
 											}),
 											d,
-											p && p.length > 0 && /* @__PURE__ */ U("span", {
+											f && f.length > 0 && /* @__PURE__ */ U("span", {
 												className: "flex min-w-0 flex-1 items-center border-l border-border pl-3",
 												"data-testid": `${F}-path`,
 												children: /* @__PURE__ */ U(E, {
-													items: p,
+													items: f,
 													maxItems: 4,
 													lastIsCurrent: !1,
 													size: "sm",
@@ -3242,13 +3243,13 @@ function Pa(e, t, n) {
 	return n || (e === "unsupported" ? "Dictation needs a microphone and a secure page" : t ? "Listening — release to insert" : e === "transcribing" ? "Transcribing…" : e === "starting" ? "Starting the microphone…" : "Hold to dictate");
 }
 function Fa({ state: e, micActive: t, unavailableReason: r, onStart: i, onStop: a, className: o, "data-testid": s = "dictation-button" }) {
-	let c = B(null), l = Pa(e, t, r), u = e === "transcribing" || e === "starting", d = () => {
+	let c = B(null), l = Pa(e, t, r), u = e === "transcribing" || e === "starting", f = () => {
 		if (t) {
 			a(), c.current = null;
 			return;
 		}
 		c.current = Date.now(), i();
-	}, f = () => {
+	}, p = () => {
 		let e = c.current;
 		e !== null && (c.current = null, !(Date.now() - e < 250) && a());
 	};
@@ -3260,18 +3261,18 @@ function Fa({ state: e, micActive: t, unavailableReason: r, onStart: i, onStop: 
 		"data-state": t ? "listening" : e,
 		"data-testid": s,
 		onPointerDown: (e) => {
-			e.button === 0 && (e.preventDefault(), d());
+			e.button === 0 && (e.preventDefault(), f());
 		},
-		onPointerUp: f,
-		onPointerLeave: f,
+		onPointerUp: p,
+		onPointerLeave: p,
 		onKeyDown: (e) => {
-			(e.key === " " || e.key === "Enter") && !e.repeat && (e.preventDefault(), d());
+			(e.key === " " || e.key === "Enter") && !e.repeat && (e.preventDefault(), f());
 		},
 		onKeyUp: (e) => {
-			(e.key === " " || e.key === "Enter") && (e.preventDefault(), f());
+			(e.key === " " || e.key === "Enter") && (e.preventDefault(), p());
 		},
 		className: n("grid h-7 w-7 shrink-0 place-items-center rounded-md border-0 p-0 transition-colors", t ? "bg-danger text-white" : "bg-transparent text-text-secondary hover:bg-surface-hover hover:text-text-primary", u && "animate-pulse", (r || e === "unsupported") && "opacity-60", o),
-		children: /* @__PURE__ */ U(m, {
+		children: /* @__PURE__ */ U(d, {
 			size: 15,
 			"aria-hidden": "true"
 		})
@@ -3410,19 +3411,19 @@ var Ra = In(function({ mentionUsers: e, onReply: t, onResolve: r, onAskAgent: i,
 });
 //#endregion
 //#region src/components/doc-editor/CommentHandoffBar.tsx
-function za({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1, onResolveOnApplyChange: a, onDismiss: o, className: s, "data-testid": c = "comment-handoff-bar" }) {
-	let l = r === "reply", u = l ? "Stop replying" : "Stop answering this comment";
+function za({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1, onResolveOnApplyChange: a, onDismiss: o, className: s, "data-testid": l = "comment-handoff-bar" }) {
+	let d = r === "reply", f = d ? "Stop replying" : "Stop answering this comment";
 	return /* @__PURE__ */ W("div", {
 		role: "status",
-		"data-testid": c,
+		"data-testid": l,
 		"data-variant": r,
 		className: n("flex min-w-0 items-center gap-3 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-text-secondary shadow-sm", s),
 		children: [
-			l ? /* @__PURE__ */ U(d, {
+			d ? /* @__PURE__ */ U(c, {
 				size: 14,
 				"aria-hidden": "true",
 				className: "shrink-0 text-primary"
-			}) : /* @__PURE__ */ U(p, {
+			}) : /* @__PURE__ */ U(u, {
 				size: 14,
 				"aria-hidden": "true",
 				className: "shrink-0 text-info-fg"
@@ -3430,12 +3431,12 @@ function za({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1,
 			/* @__PURE__ */ W("span", {
 				className: "min-w-0 flex-1 truncate",
 				children: [
-					l ? "Replying to " : "Answering ",
+					d ? "Replying to " : "Answering ",
 					/* @__PURE__ */ U("span", {
 						className: "font-semibold text-text-primary",
 						children: e
 					}),
-					l ? null : "’s comment",
+					d ? null : "’s comment",
 					t ? /* @__PURE__ */ W("span", {
 						className: "text-text-tertiary",
 						children: [
@@ -3446,7 +3447,7 @@ function za({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1,
 					}) : null
 				]
 			}),
-			l ? /* @__PURE__ */ U("span", {
+			d ? /* @__PURE__ */ U("span", {
 				className: "hidden shrink-0 text-text-tertiary sm:inline",
 				children: "Esc to go back"
 			}) : /* @__PURE__ */ W("label", {
@@ -3454,15 +3455,15 @@ function za({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1,
 				children: [/* @__PURE__ */ U(re, {
 					checked: i,
 					onChange: (e) => a?.(e),
-					"data-testid": `${c}-resolve`
+					"data-testid": `${l}-resolve`
 				}), "Resolve when applied"]
 			}),
 			/* @__PURE__ */ U("button", {
 				type: "button",
 				onClick: o,
-				"aria-label": u,
-				title: u,
-				"data-testid": `${c}-dismiss`,
+				"aria-label": f,
+				title: f,
+				"data-testid": `${l}-dismiss`,
 				className: "grid h-6 w-6 shrink-0 place-items-center rounded border-0 bg-transparent p-0 text-text-tertiary hover:bg-surface-hover hover:text-text-primary",
 				children: /* @__PURE__ */ U("span", {
 					"aria-hidden": "true",

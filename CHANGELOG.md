@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.440.1
+
+- Keep back navigation available in compact and collapsed page headers, with a labeled icon and tooltip.
+- Use shared icon buttons and tooltips for table pagination; contain wide tables within their parent layout.
+
 ## 2.440.0
 
 One density system (the library-hygiene lane of the 2026-10-07 consumer audit): the seven per-component `size="sm"` props, the three density vocabularies and the four container-responsive mechanisms become one value, one provider and one measuring rule.

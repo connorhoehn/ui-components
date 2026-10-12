@@ -31,3 +31,11 @@ describe('PageHeader', () => {
     expect(onClick).toHaveBeenCalled();
   });
 });
+
+it.each([{ density: 'compact' as const }, { collapsed: true }])('retains back navigation when the header folds (%j)', props => {
+  const onClick = vi.fn(event => event.preventDefault());
+  render(<PageHeader {...props} title="Run" back={{ label: 'Runs', to: '/pipelines/runs', onClick }} />);
+  const link = screen.getByRole('link', { name: 'Runs' });
+  expect(link).toHaveAttribute('href', '/pipelines/runs');
+  fireEvent.click(link); expect(onClick).toHaveBeenCalledOnce();
+});
