@@ -3,6 +3,8 @@
 // Shared button component with consistent variants.
 
 import { type ButtonHTMLAttributes, type ReactNode, type Ref } from 'react';
+import { useDensity } from '../shared/Density';
+import { CONTROL_HEIGHT } from '../shared/controlMetrics';
 import { cn } from '../../lib/cn';
 import type { SurfaceTone } from '../shared/tones';
 
@@ -113,14 +115,14 @@ const TONE: Record<ButtonTone, Record<ButtonVariant, string>> = {
 export const BUTTON_WEIGHT = 'font-semibold';
 
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: 'h-6.5 gap-1.5 px-2.5 text-xs',
-  md: 'h-9 gap-2 px-4 text-sm',
-  lg: 'h-10 gap-2 px-5 text-sm',
+  sm: `${CONTROL_HEIGHT.sm} gap-1.5 px-2.5 text-xs`,
+  md: `${CONTROL_HEIGHT.md} gap-2 px-3 text-sm`,
+  lg: `${CONTROL_HEIGHT.lg} gap-2 px-4 text-sm`,
 };
 
 export function Button({
   variant = 'primary',
-  size = 'md',
+  size: requestedSize,
   tone = 'surface',
   disabled = false,
   fullWidth = false,
@@ -130,6 +132,8 @@ export function Button({
   ref,
   ...rest
 }: ButtonProps) {
+  const density = useDensity();
+  const size = requestedSize ?? (density === 'compact' ? 'sm' : 'md');
   // `link` is inline text, not a boxed control: it skips the shared box
   // (and `sizeClasses`'s fixed padding/text-size) so it sits in prose at the
   // inherited font size, underlining only on hover. It keeps the one button

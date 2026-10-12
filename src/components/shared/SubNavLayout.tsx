@@ -278,7 +278,7 @@ export function SubNavLayout({
         </aside>
       )}
 
-      <Content aria-label={contentLabel} className="flex-1 min-w-0 overflow-auto p-6">
+      <Content aria-label={contentLabel} data-subnav-content className="flex-1 min-w-0 overflow-auto p-[var(--ui-page-gutter,1.5rem)]">
         <RailHeaderAlignContext.Provider value={report}>{children}</RailHeaderAlignContext.Provider>
       </Content>
     </div>

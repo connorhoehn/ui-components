@@ -15,6 +15,8 @@ import { useCallback, useRef, useState, type KeyboardEvent, type ReactNode, useE
 import { BUTTON_WEIGHT } from '../ui/Button';
 import { InlinePopover } from './InlinePopover';
 import { ChevronIcon } from '../ui/Icons';
+import { useDensity } from './Density';
+import { CONTROL_HEIGHT } from './controlMetrics';
 import { cn } from '../../lib/cn';
 
 export interface DropdownMenuItem {
@@ -119,9 +121,9 @@ const TRIGGER_VARIANT: Record<NonNullable<DropdownMenuProps['triggerVariant']>, 
   // so a menu in a toolbar row is as tall as the buttons beside it. It grew
   // from padding + content until 2.407.18 (22px with a 14px label, 26px
   // with an 18px glyph).
-  default: 'h-6.5 rounded-md border border-[var(--color-border)] px-2 text-base leading-none text-[var(--color-text-secondary)] bg-transparent hover:bg-[var(--color-surface-hover)]',
-  primary: 'h-9 rounded-lg border-none px-3.5 text-sm leading-none bg-primary text-on-primary hover:bg-primary-hover',
-  secondary: 'h-9 rounded-lg border border-border px-3.5 text-sm leading-none bg-surface text-text-primary hover:bg-surface-hover',
+  default: ' rounded-md border border-[var(--color-border)] px-2 text-xs leading-none text-[var(--color-text-secondary)] bg-transparent hover:bg-[var(--color-surface-hover)]',
+  primary: ' rounded-lg border-none px-3.5 text-sm leading-none bg-primary text-on-primary hover:bg-primary-hover',
+  secondary: ' rounded-lg border border-border px-3.5 text-sm leading-none bg-surface text-text-primary hover:bg-surface-hover',
   link: 'rounded px-1 py-0.5 border-none text-sm leading-none bg-transparent text-text-secondary hover:text-text-primary hover:bg-surface-hover',
 };
 
@@ -145,6 +147,7 @@ export function DropdownMenu({
   className,
   'data-testid': testId = 'dropdown-menu',
 }: DropdownMenuProps) {
+  const controlSize = useDensity() === 'compact' ? 'sm' : 'md';
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -190,6 +193,7 @@ export function DropdownMenu({
           'inline-flex items-center justify-center gap-1.5 cursor-pointer transition-colors duration-100',
           BUTTON_WEIGHT,
           TRIGGER_VARIANT[triggerVariant],
+          triggerVariant !== 'link' && CONTROL_HEIGHT[controlSize],
           open && TRIGGER_OPEN[triggerVariant],
           triggerClassName,
         )}

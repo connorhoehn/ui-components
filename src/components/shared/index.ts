@@ -515,3 +515,7 @@ export type { AccentStripeProps, DataAccent, DataAccentSlot } from './dataAccent
 
 export { ActivityTicker } from './ActivityTicker';
 export type { ActivityTickerProps, ActivityTickerItem, ActivityTickerPreferences } from './ActivityTicker';
+
+export * from './CollectionToolbar';
+export * from './CollectionPage';
+export * from './ComposerSurface';

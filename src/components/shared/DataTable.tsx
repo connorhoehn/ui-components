@@ -9,6 +9,7 @@
 
 import { isValidElement, useMemo, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { CollectionToolbar } from './CollectionToolbar';
 import { IconButton } from '../ui/IconButton';
 import { ChevronIcon } from '../ui/Icons';
 import { Tooltip } from './Tooltip';
@@ -261,20 +262,7 @@ export function DataTable<T>({
 
   return (
     <div className={cn('flex min-w-0 flex-col gap-3', className)} data-testid={testId}>
-      {searchable && (
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => {
-            setQuery(e.target.value);
-            setPage(0);
-          }}
-          placeholder={searchPlaceholder}
-          aria-label="Search"
-          data-testid="datatable-search"
-          className="w-full max-w-xs rounded-md border border-border-field bg-surface px-3 py-1.5 text-sm text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none"
-        />
-      )}
+      {searchable && <CollectionToolbar label="Table controls" search={{ value: query, onChange: value => { setQuery(value); setPage(0); }, placeholder: searchPlaceholder, 'aria-label': 'Search', 'data-testid': 'datatable-search' }} />}
       {/* A table is the one thing on a page that legitimately outgrows its
           column — many columns, long cells. Without a scroller of its own it
           simply overflows, painting its trailing columns on top of whatever

@@ -3,16 +3,16 @@ import { r as t } from "./IdentityContext-CQM1qwH6.js";
 import { a as n, c as r, i, l as a, n as o, o as s, r as c, s as l, t as u, u as d } from "./useSyncConflicts-BspqjVsW.js";
 import { i as f } from "./useDocumentTypes-DCKwxXn8.js";
 import { t as p } from "./cn-D4QmbyEy.js";
-import { n as m } from "./Button-BEOshFFZ.js";
+import { n as m } from "./Button-DZuk8L0q.js";
 import { t as h } from "./overlayStack-D0Hf2ZrU.js";
-import { t as g } from "./Chip-D2jKHd4a.js";
-import { t as _ } from "./Input-CpLq80dw.js";
-import { t as v } from "./EmptyState-ClSHRgi-.js";
-import { n as y, r as b, t as x } from "./focusTrap-Cj-AL49l.js";
-import { t as S } from "./SkeletonCard-D3FL0TB7.js";
-import { t as C } from "./Select-C6OGjVyH.js";
+import { t as g } from "./Chip-C_-AY6W4.js";
+import { t as _ } from "./Input-DKVe8Hp7.js";
+import { t as v } from "./Select-DbhTbkTN.js";
+import { t as y } from "./EmptyState-DJ3e4WMf.js";
+import { n as b, r as x, t as S } from "./focusTrap-Cj-AL49l.js";
+import { t as C } from "./SkeletonCard-D3FL0TB7.js";
 import { t as w } from "./activationKey-CjbL3LUv.js";
-import { n as T, t as E } from "./ChangeReviewCard-CyprjUND.js";
+import { n as T, t as E } from "./ChangeReviewCard-CwXceVv1.js";
 import { useCallback as D, useEffect as O, useId as k, useMemo as A, useRef as j, useState as M } from "react";
 import { Fragment as N, jsx as P, jsxs as F } from "react/jsx-runtime";
 import { useNavigate as I, useParams as L } from "react-router";
@@ -35,10 +35,10 @@ function ne({ idToken: r, baseUrl: i } = {}) {
 	let { sources: c, loading: u, error: d, refresh: f } = n({
 		idToken: s,
 		baseUrl: i
-	}), { items: m, loading: h, error: _, refresh: y } = l({
+	}), { items: m, loading: h, error: _, refresh: v } = l({
 		idToken: s,
 		baseUrl: i
-	}), b = u || h, x = d || _, C = A(() => {
+	}), b = u || h, x = d || _, S = A(() => {
 		let e = c.filter((e) => e.status === "active").length, t = c.filter((e) => e.status === "paused").length, n = c.filter((e) => e.status === "error").length, r = m.filter((e) => e.status !== "done" && e.status !== "failed").length, i = m.filter((e) => e.status === "done" && H(e.updatedAt)).length, a = m.filter((e) => e.status === "failed").length;
 		return {
 			total: c.length,
@@ -65,15 +65,15 @@ function ne({ idToken: r, baseUrl: i } = {}) {
 				message: `Last-hour failure rate is ${(r * 100).toFixed(0)}% (${n} of ${t.length} items failed).`
 			});
 		}
-		return C.queued > W && e.push({
+		return S.queued > W && e.push({
 			id: "queue-depth",
 			level: "warning",
-			message: `Queue depth is ${C.queued} items — sources may be ingesting faster than the engine can drain.`
+			message: `Queue depth is ${S.queued} items — sources may be ingesting faster than the engine can drain.`
 		}), e;
 	}, [
 		c,
 		m,
-		C.queued
+		S.queued
 	]);
 	return b && c.length === 0 && m.length === 0 ? /* @__PURE__ */ F("div", {
 		"data-testid": "ingest-dashboard",
@@ -89,13 +89,13 @@ function ne({ idToken: r, baseUrl: i } = {}) {
 			/* @__PURE__ */ F("div", {
 				className: "grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-3 mb-5",
 				children: [
-					/* @__PURE__ */ P(S, { height: 90 }),
-					/* @__PURE__ */ P(S, { height: 90 }),
-					/* @__PURE__ */ P(S, { height: 90 }),
-					/* @__PURE__ */ P(S, { height: 90 })
+					/* @__PURE__ */ P(C, { height: 90 }),
+					/* @__PURE__ */ P(C, { height: 90 }),
+					/* @__PURE__ */ P(C, { height: 90 }),
+					/* @__PURE__ */ P(C, { height: 90 })
 				]
 			}),
-			/* @__PURE__ */ P(S, { height: 200 })
+			/* @__PURE__ */ P(C, { height: 200 })
 		]
 	}) : /* @__PURE__ */ F("div", {
 		"data-testid": "ingest-dashboard",
@@ -124,7 +124,7 @@ function ne({ idToken: r, baseUrl: i } = {}) {
 					children: "Failed to load ingest data."
 				}), /* @__PURE__ */ P("button", {
 					onClick: () => {
-						f(), y();
+						f(), v();
 					},
 					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]",
 					children: "Retry"
@@ -155,16 +155,16 @@ function ne({ idToken: r, baseUrl: i } = {}) {
 							}),
 							/* @__PURE__ */ P("span", {
 								className: "text-[28px] font-bold text-text-primary leading-none",
-								children: C.total
+								children: S.total
 							}),
 							/* @__PURE__ */ F("span", {
 								className: "text-xs text-text-tertiary",
 								children: [
-									C.active,
+									S.active,
 									" active, ",
-									C.paused,
+									S.paused,
 									" paused",
-									C.errored > 0 ? `, ${C.errored} error` : ""
+									S.errored > 0 ? `, ${S.errored} error` : ""
 								]
 							})
 						]
@@ -177,8 +177,8 @@ function ne({ idToken: r, baseUrl: i } = {}) {
 								children: "In Queue"
 							}),
 							/* @__PURE__ */ P("span", {
-								className: p("text-[28px] font-bold leading-none", C.queued > 0 ? "text-[var(--color-state-awaiting)]" : "text-text-primary"),
-								children: C.queued
+								className: p("text-[28px] font-bold leading-none", S.queued > 0 ? "text-[var(--color-state-awaiting)]" : "text-text-primary"),
+								children: S.queued
 							}),
 							/* @__PURE__ */ P("span", {
 								className: "text-xs text-text-tertiary",
@@ -194,8 +194,8 @@ function ne({ idToken: r, baseUrl: i } = {}) {
 								children: "Completed (24h)"
 							}),
 							/* @__PURE__ */ P("span", {
-								className: p("text-[28px] font-bold leading-none", C.recentDone > 0 ? "text-[var(--color-state-completed)]" : "text-text-primary"),
-								children: C.recentDone
+								className: p("text-[28px] font-bold leading-none", S.recentDone > 0 ? "text-[var(--color-state-completed)]" : "text-text-primary"),
+								children: S.recentDone
 							}),
 							/* @__PURE__ */ P("span", {
 								className: "text-xs text-text-tertiary",
@@ -211,8 +211,8 @@ function ne({ idToken: r, baseUrl: i } = {}) {
 								children: "Errors"
 							}),
 							/* @__PURE__ */ P("span", {
-								className: p("text-[28px] font-bold leading-none", C.failed > 0 ? "text-[var(--color-state-failed)]" : "text-text-primary"),
-								children: C.failed
+								className: p("text-[28px] font-bold leading-none", S.failed > 0 ? "text-[var(--color-state-failed)]" : "text-text-primary"),
+								children: S.failed
 							}),
 							/* @__PURE__ */ P("span", {
 								className: "text-xs text-text-tertiary",
@@ -227,7 +227,7 @@ function ne({ idToken: r, baseUrl: i } = {}) {
 				children: [/* @__PURE__ */ P("div", {
 					className: "text-sm font-semibold text-text-primary mb-3",
 					children: "Recent Activity"
-				}), w.length === 0 ? /* @__PURE__ */ P(v, {
+				}), w.length === 0 ? /* @__PURE__ */ P(y, {
 					icon: "📥",
 					title: "No recent activity",
 					body: "Completed ingest items will appear here."
@@ -308,9 +308,9 @@ function J() {
 					children: "Sources"
 				})
 			}),
-			/* @__PURE__ */ P(S, { height: 48 }),
-			/* @__PURE__ */ P(S, { height: 48 }),
-			/* @__PURE__ */ P(S, { height: 48 })
+			/* @__PURE__ */ P(C, { height: 48 }),
+			/* @__PURE__ */ P(C, { height: 48 }),
+			/* @__PURE__ */ P(C, { height: 48 })
 		]
 	}) : /* @__PURE__ */ F("div", {
 		"data-testid": "sources-page",
@@ -360,7 +360,7 @@ function J() {
 					children: "Dismiss"
 				})]
 			}),
-			!i && t.length === 0 ? /* @__PURE__ */ P(v, {
+			!i && t.length === 0 ? /* @__PURE__ */ P(y, {
 				icon: "📂",
 				title: "No sources configured",
 				body: "Add a data source to start ingesting files into the system.",
@@ -483,17 +483,17 @@ var Y = [
 	"startsWith"
 ];
 function ae({ rules: n, onChange: r, readOnly: i = !1, idToken: a, baseUrl: o }) {
-	let s = t(), c = a === void 0 ? s?.idToken ?? null : a, l = o ?? e(), [u, d] = M(null), [f, m] = M(""), [h, g] = M(null), [v, y] = M(!1), [b, x] = M(null), S = D((e) => {
-		d(e), x({ ...n[e] });
+	let s = t(), c = a === void 0 ? s?.idToken ?? null : a, l = o ?? e(), [u, d] = M(null), [f, m] = M(""), [h, g] = M(null), [y, b] = M(!1), [x, S] = M(null), C = D((e) => {
+		d(e), S({ ...n[e] });
 	}, [n]), w = D(() => {
-		d(null), x(null);
+		d(null), S(null);
 	}, []), T = D(() => {
-		if (u === null || !b) return;
+		if (u === null || !x) return;
 		let e = [...n];
-		e[u] = b, r(e), d(null), x(null);
+		e[u] = x, r(e), d(null), S(null);
 	}, [
 		u,
-		b,
+		x,
 		n,
 		r
 	]), E = D(() => {
@@ -502,15 +502,15 @@ function ae({ rules: n, onChange: r, readOnly: i = !1, idToken: a, baseUrl: o })
 			documentTypeId: "",
 			priority: n.length > 0 ? Math.max(...n.map((e) => e.priority)) + 1 : 1
 		}, t = [...n, e];
-		r(t), d(t.length - 1), x(e);
+		r(t), d(t.length - 1), S(e);
 	}, [n, r]), O = D((e) => {
-		r(n.filter((t, n) => n !== e)), u === e ? (d(null), x(null)) : u !== null && u > e && d(u - 1);
+		r(n.filter((t, n) => n !== e)), u === e ? (d(null), S(null)) : u !== null && u > e && d(u - 1);
 	}, [
 		n,
 		r,
 		u
 	]), k = D((e) => {
-		x((t) => t && {
+		S((t) => t && {
 			...t,
 			priority: e
 		});
@@ -550,7 +550,7 @@ function ae({ rules: n, onChange: r, readOnly: i = !1, idToken: a, baseUrl: o })
 		k
 	]), N = D(async () => {
 		if (f.trim()) {
-			y(!0), g(null);
+			b(!0), g(null);
 			try {
 				let e = { "Content-Type": "application/json" };
 				c && (e.Authorization = `Bearer ${c}`);
@@ -568,7 +568,7 @@ function ae({ rules: n, onChange: r, readOnly: i = !1, idToken: a, baseUrl: o })
 			} catch (e) {
 				g(`Error: ${e instanceof Error ? e.message : String(e)}`);
 			} finally {
-				y(!1);
+				b(!1);
 			}
 		}
 	}, [
@@ -621,9 +621,9 @@ function ae({ rules: n, onChange: r, readOnly: i = !1, idToken: a, baseUrl: o })
 							children: "Actions"
 						})
 					] }) }), /* @__PURE__ */ P("tbody", { children: n.map((e, t) => {
-						let r = !i && u === t && b !== null, a = I(e.pattern);
+						let r = !i && u === t && x !== null, a = I(e.pattern);
 						if (r) {
-							let e = I(b.pattern);
+							let e = I(x.pattern);
 							return /* @__PURE__ */ F("tr", {
 								className: "border-b border-border",
 								children: [
@@ -634,9 +634,9 @@ function ae({ rules: n, onChange: r, readOnly: i = !1, idToken: a, baseUrl: o })
 											size: "sm",
 											className: "w-[50px]",
 											type: "number",
-											value: b.priority,
-											onChange: (e) => x({
-												...b,
+											value: x.priority,
+											onChange: (e) => S({
+												...x,
 												priority: Number(e.target.value)
 											})
 										})
@@ -646,13 +646,13 @@ function ae({ rules: n, onChange: r, readOnly: i = !1, idToken: a, baseUrl: o })
 										children: /* @__PURE__ */ F("div", {
 											className: "flex gap-1 items-center flex-wrap",
 											children: [
-												/* @__PURE__ */ P(C, {
+												/* @__PURE__ */ P(v, {
 													"aria-label": "Match field",
 													size: "sm",
 													className: "w-auto min-w-[90px]",
 													value: e.field,
-													onChange: (t) => x({
-														...b,
+													onChange: (t) => S({
+														...x,
 														pattern: L(t.target.value, e.op, e.value)
 													}),
 													options: Y.map((e) => ({
@@ -660,13 +660,13 @@ function ae({ rules: n, onChange: r, readOnly: i = !1, idToken: a, baseUrl: o })
 														label: e
 													}))
 												}),
-												/* @__PURE__ */ P(C, {
+												/* @__PURE__ */ P(v, {
 													"aria-label": "Match operator",
 													size: "sm",
 													className: "w-auto min-w-[90px]",
 													value: e.op,
-													onChange: (t) => x({
-														...b,
+													onChange: (t) => S({
+														...x,
 														pattern: L(e.field, t.target.value, e.value)
 													}),
 													options: ie.map((e) => ({
@@ -680,8 +680,8 @@ function ae({ rules: n, onChange: r, readOnly: i = !1, idToken: a, baseUrl: o })
 													className: "min-w-[100px]",
 													value: e.value,
 													placeholder: "value",
-													onChange: (t) => x({
-														...b,
+													onChange: (t) => S({
+														...x,
 														pattern: L(e.field, e.op, t.target.value)
 													})
 												})
@@ -694,10 +694,10 @@ function ae({ rules: n, onChange: r, readOnly: i = !1, idToken: a, baseUrl: o })
 											"aria-label": "Target Type ID",
 											size: "sm",
 											className: "min-w-[80px]",
-											value: b.documentTypeId,
+											value: x.documentTypeId,
 											placeholder: "document type id",
-											onChange: (e) => x({
-												...b,
+											onChange: (e) => S({
+												...x,
 												documentTypeId: e.target.value
 											})
 										})
@@ -708,10 +708,10 @@ function ae({ rules: n, onChange: r, readOnly: i = !1, idToken: a, baseUrl: o })
 											"aria-label": "Pipeline",
 											size: "sm",
 											className: "min-w-[80px]",
-											value: b.pipelineId ?? "",
+											value: x.pipelineId ?? "",
 											placeholder: "(optional)",
-											onChange: (e) => x({
-												...b,
+											onChange: (e) => S({
+												...x,
 												pipelineId: e.target.value || void 0
 											})
 										})
@@ -787,7 +787,7 @@ function ae({ rules: n, onChange: r, readOnly: i = !1, idToken: a, baseUrl: o })
 											}),
 											/* @__PURE__ */ P("button", {
 												className: "px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary",
-												onClick: () => S(t),
+												onClick: () => C(t),
 												children: "Edit"
 											}),
 											/* @__PURE__ */ P("button", {
@@ -821,10 +821,10 @@ function ae({ rules: n, onChange: r, readOnly: i = !1, idToken: a, baseUrl: o })
 					onChange: (e) => m(e.target.value),
 					placeholder: "Enter a file path to preview mapping..."
 				}), /* @__PURE__ */ P("button", {
-					className: p("px-3.5 py-1.5 text-xs font-medium border border-primary rounded-md bg-info-bg cursor-pointer font-[inherit] text-primary self-start", (v || !f.trim()) && "opacity-50 cursor-not-allowed"),
+					className: p("px-3.5 py-1.5 text-xs font-medium border border-primary rounded-md bg-info-bg cursor-pointer font-[inherit] text-primary self-start", (y || !f.trim()) && "opacity-50 cursor-not-allowed"),
 					onClick: () => void N(),
-					disabled: v || !f.trim(),
-					children: v ? "Checking..." : "Preview"
+					disabled: y || !f.trim(),
+					children: y ? "Checking..." : "Preview"
 				})]
 			}),
 			h && /* @__PURE__ */ P("div", {
@@ -907,7 +907,7 @@ function se({ sourceId: e, idToken: t, baseUrl: n }) {
 						r,
 						")"
 					]
-				}), /* @__PURE__ */ P(C, {
+				}), /* @__PURE__ */ P(v, {
 					"data-testid": "slo-window-picker",
 					"aria-label": "Window",
 					className: "w-auto min-w-[100px]",
@@ -1079,12 +1079,12 @@ function he({ idToken: n, baseUrl: r } = {}) {
 	}), { types: d } = f({
 		idToken: s,
 		baseUrl: r
-	}), [m, h] = M(null), [v, y] = M(!0), [b, x] = M(null), [w, T] = M(!1), E = k(), [A, j] = M(!1), [R, z] = M(!1), [B, ee] = M({}), [V, te] = M([]), [H, U] = M(""), [W, ne] = M(""), [G, K] = M({}), [q, re] = M(!1), J = D(() => {
+	}), [m, h] = M(null), [y, b] = M(!0), [x, S] = M(null), [w, T] = M(!1), E = k(), [A, j] = M(!1), [R, z] = M(!1), [B, ee] = M({}), [V, te] = M([]), [H, U] = M(""), [W, ne] = M(""), [G, K] = M({}), [q, re] = M(!1), J = D(() => {
 		let e = { "Content-Type": "application/json" };
 		return s && (e.Authorization = `Bearer ${s}`), e;
 	}, [s]), Y = D(async (e) => {
 		if (i) {
-			y(!0), x(null);
+			b(!0), S(null);
 			try {
 				let t = await fetch(`${l}/api/ingest/sources/${i}`, {
 					headers: J(),
@@ -1100,9 +1100,9 @@ function he({ idToken: n, baseUrl: r } = {}) {
 				h(r);
 			} catch (t) {
 				if (e?.aborted) return;
-				x(t instanceof Error ? t.message : String(t));
+				S(t instanceof Error ? t.message : String(t));
 			} finally {
-				e?.aborted || y(!1);
+				e?.aborted || b(!1);
 			}
 		}
 	}, [
@@ -1137,7 +1137,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 				let n = await t.json();
 				h(n), T(!1);
 			} catch (e) {
-				x(e instanceof Error ? e.message : String(e));
+				S(e instanceof Error ? e.message : String(e));
 			} finally {
 				z(!1);
 			}
@@ -1171,7 +1171,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 				if (!e.ok) throw Error(`HTTP ${e.status}`);
 				await Y();
 			} catch (e) {
-				x(e instanceof Error ? e.message : String(e));
+				S(e instanceof Error ? e.message : String(e));
 			} finally {
 				j(!1);
 			}
@@ -1194,7 +1194,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 			let n = await t.json();
 			h(n);
 		} catch (e) {
-			x(e instanceof Error ? e.message : String(e));
+			S(e instanceof Error ? e.message : String(e));
 		}
 	}, [
 		m,
@@ -1202,7 +1202,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 		J,
 		l
 	]);
-	return v && !m ? /* @__PURE__ */ F("div", {
+	return y && !m ? /* @__PURE__ */ F("div", {
 		"data-testid": "source-detail-page",
 		className: "p-6 flex flex-col gap-3",
 		children: [
@@ -1213,11 +1213,11 @@ function he({ idToken: n, baseUrl: r } = {}) {
 					children: "Source Detail"
 				})
 			}),
-			/* @__PURE__ */ P(S, { height: 120 }),
-			/* @__PURE__ */ P(S, { height: 200 }),
-			/* @__PURE__ */ P(S, { height: 100 })
+			/* @__PURE__ */ P(C, { height: 120 }),
+			/* @__PURE__ */ P(C, { height: 200 }),
+			/* @__PURE__ */ P(C, { height: 100 })
 		]
-	}) : b && !m ? /* @__PURE__ */ F("div", {
+	}) : x && !m ? /* @__PURE__ */ F("div", {
 		"data-testid": "source-detail-page",
 		className: "p-6 flex flex-col gap-3",
 		children: [/* @__PURE__ */ P("div", {
@@ -1232,7 +1232,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 			role: "alert",
 			children: [/* @__PURE__ */ F("span", {
 				className: "text-[13px] font-medium",
-				children: ["Failed to load source: ", b]
+				children: ["Failed to load source: ", x]
 			}), /* @__PURE__ */ P("button", {
 				onClick: () => void Y(),
 				className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]",
@@ -1292,14 +1292,14 @@ function he({ idToken: n, baseUrl: r } = {}) {
 					})
 				})]
 			}),
-			b && /* @__PURE__ */ F("div", {
+			x && /* @__PURE__ */ F("div", {
 				className: "px-4 py-3 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3",
 				role: "alert",
 				children: [/* @__PURE__ */ P("span", {
 					className: "text-[13px] font-medium",
-					children: b
+					children: x
 				}), /* @__PURE__ */ P("button", {
-					onClick: () => x(null),
+					onClick: () => S(null),
 					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]",
 					children: "Dismiss"
 				})]
@@ -1459,7 +1459,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 							role: "group",
 							"aria-labelledby": `${E}-schedule-label`,
 							className: "flex gap-2 flex-1 flex-wrap",
-							children: [/* @__PURE__ */ P(C, {
+							children: [/* @__PURE__ */ P(v, {
 								"aria-label": "Schedule preset",
 								className: "w-auto min-w-[160px]",
 								value: ce.some((e) => e.cron === H) ? H : "__custom__",
@@ -1491,7 +1491,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 							htmlFor: `${E}-default-pipeline`,
 							className: "text-xs font-semibold text-text-tertiary min-w-[140px]",
 							children: "Default Pipeline"
-						}), /* @__PURE__ */ P(C, {
+						}), /* @__PURE__ */ P(v, {
 							id: `${E}-default-pipeline`,
 							className: "flex-1",
 							value: W,
@@ -1544,7 +1544,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 											className: "flex-[0_0_160px] text-[13px]",
 											children: d.find((t) => t.id === e)?.name ?? e
 										}),
-										/* @__PURE__ */ P(C, {
+										/* @__PURE__ */ P(v, {
 											"aria-label": `Pipeline for ${d.find((t) => t.id === e)?.name ?? e}`,
 											"data-testid": `overrides-pipeline-${e}`,
 											className: "flex-1",
@@ -1569,7 +1569,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 											children: "Remove"
 										})
 									]
-								}, e)), /* @__PURE__ */ P(C, {
+								}, e)), /* @__PURE__ */ P(v, {
 									"aria-label": "Add override for type",
 									"data-testid": "overrides-add-type",
 									className: "w-auto self-start",
@@ -1682,7 +1682,7 @@ function $(e) {
 	return t < 6e4 ? "just now" : t < 36e5 ? `${Math.floor(t / 6e4)}m ago` : t < 864e5 ? `${Math.floor(t / 36e5)}h ago` : `${Math.floor(t / 864e5)}d ago`;
 }
 function be({ item: n, sourceName: r, onClose: i, onRetry: a, onSkip: o, idToken: c, baseUrl: l }) {
-	let u = t(), d = c === void 0 ? u?.idToken ?? null : c, f = l ?? e(), [m, _] = M(null), [v, S] = M(null), { events: C } = s(), w = j(null), T = j(null), E = h(n !== null);
+	let u = t(), d = c === void 0 ? u?.idToken ?? null : c, f = l ?? e(), [m, _] = M(null), [v, y] = M(null), { events: C } = s(), w = j(null), T = j(null), E = h(n !== null);
 	O(() => {
 		if (!n) return;
 		let e = (e) => {
@@ -1691,7 +1691,7 @@ function be({ item: n, sourceName: r, onClose: i, onRetry: a, onSkip: o, idToken
 					i();
 					return;
 				}
-				b(e, w.current);
+				x(e, w.current);
 			}
 		};
 		return window.addEventListener("keydown", e), () => window.removeEventListener("keydown", e);
@@ -1700,8 +1700,8 @@ function be({ item: n, sourceName: r, onClose: i, onRetry: a, onSkip: o, idToken
 		i,
 		E
 	]), O(() => {
-		if (n) return T.current = typeof document < "u" ? document.activeElement : null, x(w.current), () => {
-			y(T.current), T.current = null;
+		if (n) return T.current = typeof document < "u" ? document.activeElement : null, S(w.current), () => {
+			b(T.current), T.current = null;
 		};
 	}, [n]);
 	let D = A(() => {
@@ -1726,7 +1726,7 @@ function be({ item: n, sourceName: r, onClose: i, onRetry: a, onSkip: o, idToken
 			_(null);
 		}
 	}, B = async () => {
-		_("remap"), S(null);
+		_("remap"), y(null);
 		try {
 			let e = { "Content-Type": "application/json" };
 			d && (e.Authorization = `Bearer ${d}`);
@@ -1737,7 +1737,7 @@ function be({ item: n, sourceName: r, onClose: i, onRetry: a, onSkip: o, idToken
 			if (!t.ok) throw Error(`HTTP ${t.status}`);
 			i();
 		} catch (e) {
-			S(e instanceof Error ? e.message : String(e));
+			y(e instanceof Error ? e.message : String(e));
 		} finally {
 			_(null);
 		}
@@ -2043,11 +2043,11 @@ function Te() {
 	let [e, t] = M(null), [r, i] = M(null), [a, o] = M(null), { sources: s } = n(), { items: c, loading: u, error: d, refresh: f, retryItem: p, skipItem: m, actionError: h, clearActionError: _ } = l({
 		sourceId: e,
 		status: r
-	}), y = a ? c.find((e) => e.itemId === a.itemId) ?? a : null, b = A(() => {
+	}), b = a ? c.find((e) => e.itemId === a.itemId) ?? a : null, x = A(() => {
 		let e = /* @__PURE__ */ new Map();
 		for (let t of s) e.set(t.sourceId, t.name);
 		return e;
-	}, [s]), x = D(async (e) => p(e), [p]), T = D(async (e) => m(e), [m]);
+	}, [s]), S = D(async (e) => p(e), [p]), T = D(async (e) => m(e), [m]);
 	return u && c.length === 0 ? /* @__PURE__ */ F("div", {
 		"data-testid": "ingest-items-page",
 		className: "p-6 flex flex-col gap-3",
@@ -2059,9 +2059,9 @@ function Te() {
 					children: "Ingest Items"
 				})
 			}),
-			/* @__PURE__ */ P(S, { height: 48 }),
-			/* @__PURE__ */ P(S, { height: 48 }),
-			/* @__PURE__ */ P(S, { height: 48 })
+			/* @__PURE__ */ P(C, { height: 48 }),
+			/* @__PURE__ */ P(C, { height: 48 }),
+			/* @__PURE__ */ P(C, { height: 48 })
 		]
 	}) : /* @__PURE__ */ F("div", {
 		"data-testid": "ingest-items-page",
@@ -2084,7 +2084,7 @@ function Te() {
 			/* @__PURE__ */ F("div", {
 				className: "flex gap-2.5 items-center mb-3 flex-wrap",
 				children: [
-					/* @__PURE__ */ P(C, {
+					/* @__PURE__ */ P(v, {
 						"aria-label": "Filter by source",
 						className: "w-auto",
 						value: e ?? "",
@@ -2098,7 +2098,7 @@ function Te() {
 							label: e.name
 						}))]
 					}),
-					/* @__PURE__ */ P(C, {
+					/* @__PURE__ */ P(v, {
 						"aria-label": "Filter by status",
 						className: "w-auto",
 						value: r ?? "",
@@ -2145,7 +2145,7 @@ function Te() {
 					children: "Dismiss"
 				})]
 			}),
-			!d && c.length === 0 ? /* @__PURE__ */ P(v, {
+			!d && c.length === 0 ? /* @__PURE__ */ P(y, {
 				icon: "📋",
 				title: "No items found",
 				body: "No ingest items match the current filters."
@@ -2201,7 +2201,7 @@ function Te() {
 							}),
 							/* @__PURE__ */ P("td", {
 								className: "p-2 text-text-secondary",
-								children: b.get(e.sourceId) ?? e.sourceId.slice(0, 8)
+								children: x.get(e.sourceId) ?? e.sourceId.slice(0, 8)
 							}),
 							/* @__PURE__ */ P("td", {
 								className: "p-2",
@@ -2241,7 +2241,7 @@ function Te() {
 									className: "flex gap-1.5 justify-end",
 									children: [e.status === "failed" && /* @__PURE__ */ P("button", {
 										className: "px-2.5 py-1 text-[11px] font-medium border border-border rounded-[5px] bg-surface cursor-pointer font-[inherit] text-text-secondary",
-										onClick: () => void x(e.itemId),
+										onClick: () => void S(e.itemId),
 										"data-testid": `retry-${e.itemId}`,
 										children: "Retry"
 									}), e.status !== "done" && /* @__PURE__ */ P("button", {
@@ -2257,10 +2257,10 @@ function Te() {
 				})
 			}),
 			/* @__PURE__ */ P(be, {
-				item: y,
-				sourceName: y ? b.get(y.sourceId) : void 0,
+				item: b,
+				sourceName: b ? x.get(b.sourceId) : void 0,
 				onClose: () => o(null),
-				onRetry: x,
+				onRetry: S,
 				onSkip: T
 			})
 		]
@@ -2363,7 +2363,7 @@ function Oe() {
 						className: "text-[11px] text-text-tertiary mr-1",
 						children: "Time"
 					}),
-					/* @__PURE__ */ P(C, {
+					/* @__PURE__ */ P(v, {
 						id: `${l}-time`,
 						"data-testid": "audit-time-range",
 						className: "w-auto min-w-[140px]",
@@ -2379,7 +2379,7 @@ function Oe() {
 						className: "text-[11px] text-text-tertiary mr-1",
 						children: "Event"
 					}),
-					/* @__PURE__ */ P(C, {
+					/* @__PURE__ */ P(v, {
 						id: `${l}-event`,
 						"data-testid": "audit-event-type",
 						className: "w-auto min-w-[140px]",
@@ -2424,7 +2424,7 @@ function Oe() {
 				className: "px-3 py-2 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg mb-3",
 				children: ["Couldn't load audit log: ", h]
 			}) : null,
-			m && p.length === 0 ? /* @__PURE__ */ P("div", { children: /* @__PURE__ */ P(S, { height: 200 }) }) : p.length === 0 && !h ? /* @__PURE__ */ P(v, {
+			m && p.length === 0 ? /* @__PURE__ */ P("div", { children: /* @__PURE__ */ P(C, { height: 200 }) }) : p.length === 0 && !h ? /* @__PURE__ */ P(y, {
 				icon: "📜",
 				title: "No audit entries",
 				body: "Mapping decisions, source changes, and write-back attempts will appear here once instrumentation is wired (hub#2215).",
@@ -2535,7 +2535,7 @@ function Ne(e) {
 	return e.path && e.path.length > 0 ? e.path : e.field.split(".").slice(0, -1).map(Me);
 }
 function Pe() {
-	let { conflicts: e, loading: t, error: r, usingMock: i, refresh: a, resolveConflict: o, discardConflict: s, actionError: c, clearActionError: l } = u(), { sources: d } = n(), [f, p] = M({}), [h, y] = M({}), [b, x] = M(null), C = A(() => {
+	let { conflicts: e, loading: t, error: r, usingMock: i, refresh: a, resolveConflict: o, discardConflict: s, actionError: c, clearActionError: l } = u(), { sources: d } = n(), [f, p] = M({}), [h, v] = M({}), [b, x] = M(null), S = A(() => {
 		let e = /* @__PURE__ */ new Map();
 		for (let t of d) e.set(t.sourceId, t.name);
 		return e;
@@ -2576,7 +2576,7 @@ function Pe() {
 	return t && e.length === 0 ? /* @__PURE__ */ F("div", {
 		"data-testid": "conflicts-page",
 		className: "flex flex-col gap-3 p-6",
-		children: [/* @__PURE__ */ P(S, { height: 48 }), /* @__PURE__ */ P(S, { height: 200 })]
+		children: [/* @__PURE__ */ P(C, { height: 48 }), /* @__PURE__ */ P(C, { height: 200 })]
 	}) : /* @__PURE__ */ F("div", {
 		"data-testid": "conflicts-page",
 		className: "flex flex-col gap-6 p-6",
@@ -2628,7 +2628,7 @@ function Pe() {
 					children: "Dismiss"
 				})]
 			}),
-			w.length === 0 ? /* @__PURE__ */ P(v, {
+			w.length === 0 ? /* @__PURE__ */ P(y, {
 				icon: "✅",
 				title: "No pending conflicts",
 				body: "Write-back conflicts that need operator intervention will appear here."
@@ -2636,7 +2636,7 @@ function Pe() {
 				documentTitle: e.documentTitle ?? e.documentId,
 				changeCount: e.fields.length,
 				documentMeta: /* @__PURE__ */ F(N, { children: [
-					C.get(e.sourceId) ?? e.sourceId,
+					S.get(e.sourceId) ?? e.sourceId,
 					" · detected",
 					" ",
 					Ae(e.detectedAt)
@@ -2667,7 +2667,7 @@ function Pe() {
 							className: "min-w-[240px] flex-1",
 							placeholder: "Optional note (logged in audit trail)",
 							value: h[e.conflictId] ?? "",
-							onChange: (t) => y((n) => ({
+							onChange: (t) => v((n) => ({
 								...n,
 								[e.conflictId]: t.target.value
 							})),
@@ -2807,11 +2807,11 @@ function Le() {
 			t && e.length === 0 ? /* @__PURE__ */ F("div", {
 				className: "flex flex-col gap-3",
 				children: [
-					/* @__PURE__ */ P(S, { height: 96 }),
-					/* @__PURE__ */ P(S, { height: 96 }),
-					/* @__PURE__ */ P(S, { height: 96 })
+					/* @__PURE__ */ P(C, { height: 96 }),
+					/* @__PURE__ */ P(C, { height: 96 }),
+					/* @__PURE__ */ P(C, { height: 96 })
 				]
-			}) : e.length === 0 && !n ? /* @__PURE__ */ P(v, {
+			}) : e.length === 0 && !n ? /* @__PURE__ */ P(y, {
 				icon: "🧹",
 				title: "DLQ is empty",
 				body: "Failed items will land here. Replay re-enqueues into the source queue; drop purges without retry.",
@@ -2913,8 +2913,8 @@ function ze() {
 			}) : null,
 			t && e.length === 0 ? /* @__PURE__ */ F("div", {
 				className: "flex flex-col gap-3",
-				children: [/* @__PURE__ */ P(S, { height: 120 }), /* @__PURE__ */ P(S, { height: 120 })]
-			}) : e.length === 0 && !n ? /* @__PURE__ */ P(v, {
+				children: [/* @__PURE__ */ P(C, { height: 120 }), /* @__PURE__ */ P(C, { height: 120 })]
+			}) : e.length === 0 && !n ? /* @__PURE__ */ P(y, {
 				icon: "🧬",
 				title: "No proposals waiting",
 				body: "When the LLM mapper sees N similar files of an unknown shape, the proposed DocType lands here.",
@@ -2996,7 +2996,7 @@ function Ve({ idToken: e, baseUrl: n } = {}) {
 	}), { types: p } = f({
 		idToken: a,
 		baseUrl: n
-	}), [m, h] = M({}), [g, _] = M(null), y = (e) => {
+	}), [m, h] = M({}), [g, _] = M(null), v = (e) => {
 		_(null), e.catch((e) => {
 			_(e instanceof Error ? e.message : String(e));
 		});
@@ -3041,11 +3041,11 @@ function Ve({ idToken: e, baseUrl: n } = {}) {
 			c && o.length === 0 ? /* @__PURE__ */ F("div", {
 				className: "flex flex-col gap-3",
 				children: [
-					/* @__PURE__ */ P(S, { height: 96 }),
-					/* @__PURE__ */ P(S, { height: 96 }),
-					/* @__PURE__ */ P(S, { height: 96 })
+					/* @__PURE__ */ P(C, { height: 96 }),
+					/* @__PURE__ */ P(C, { height: 96 }),
+					/* @__PURE__ */ P(C, { height: 96 })
 				]
-			}) : o.length === 0 && !l ? /* @__PURE__ */ P(v, {
+			}) : o.length === 0 && !l ? /* @__PURE__ */ P(y, {
 				icon: "✨",
 				title: "No items need review",
 				body: "When the LLM mapper produces a low-confidence match, it'll show up here for your call.",
@@ -3062,13 +3062,13 @@ function Ve({ idToken: e, baseUrl: n } = {}) {
 						[e.itemId]: t
 					})),
 					onAccept: () => {
-						e.documentTypeId && y(u(e.itemId, e.documentTypeId));
+						e.documentTypeId && v(u(e.itemId, e.documentTypeId));
 					},
 					onRemap: () => {
 						let t = m[e.itemId];
-						t && y(u(e.itemId, t));
+						t && v(u(e.itemId, t));
 					},
-					onDiscard: () => y(d(e.itemId))
+					onDiscard: () => v(d(e.itemId))
 				}, e.itemId))
 			})
 		]
@@ -3110,7 +3110,7 @@ function He({ item: e, docTypes: t, remapTypeId: n, onPickRemapType: r, onAccept
 						title: e.documentTypeId ? "Commit the suggested type" : "No suggestion to accept",
 						children: "Accept suggestion"
 					}),
-					/* @__PURE__ */ P(C, {
+					/* @__PURE__ */ P(v, {
 						"aria-label": `Re-map ${e.sourcePath ?? e.itemId} to document type`,
 						"data-testid": `review-remap-picker-${e.itemId}`,
 						className: "w-auto min-w-[200px]",
@@ -3363,7 +3363,7 @@ function Je() {
 					}), /* @__PURE__ */ F("div", {
 						className: "flex items-center gap-2 flex-wrap",
 						children: [
-							/* @__PURE__ */ P(C, {
+							/* @__PURE__ */ P(v, {
 								"data-testid": "event-source-filter",
 								"aria-label": "Filter by source",
 								className: "w-auto min-w-[140px]",
@@ -3377,7 +3377,7 @@ function Je() {
 									label: e.slice(0, 12)
 								}))]
 							}),
-							/* @__PURE__ */ P(C, {
+							/* @__PURE__ */ P(v, {
 								"data-testid": "event-type-filter",
 								"aria-label": "Filter by event type",
 								className: "w-auto min-w-[110px]",

@@ -1050,7 +1050,7 @@ declare interface ChatMessage {
     deletedAt?: string;
 }
 
-export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, dock: dockSlot, currentUserId, reactionsFor, onToggleReaction, onReply, reply, onCancelReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, canEditMessage, canDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, documentUnavailable, callParticipants, agentRunStatus, onOpenRun, agentLoopStatus, onOpenLab, onOpenResult, onDecideRun, onReviewRun, onRetryRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, tone, showHeader, fill, flushComposer, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, dock: dockSlot, currentUserId, reactionsFor, onToggleReaction, onReply, reply, onCancelReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, canEditMessage, canDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, documentUnavailable, callParticipants, agentRunStatus, onOpenRun, agentLoopStatus, onOpenLab, onOpenResult, onDecideRun, onReviewRun, onRetryRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, tone, showHeader, fill, flushComposer, contentAlign, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -1344,6 +1344,8 @@ export declare interface ChatPanelProps {
     /** In a filling panel with a custom composer, let its backdrop meet the
      *  parent edges while message history keeps a 16px reading gutter. */
     flushComposer?: boolean;
+    /** Discussion logs start at the top; live conversations rest against their input. */
+    contentAlign?: 'start' | 'end';
     /** Called when the reader asks for older messages. When present (and
      *  `hasMore` is not false) a "Load earlier messages" button renders
      *  above the first message. The panel preserves the reader's scroll

@@ -362,6 +362,8 @@ export interface ChatPanelProps {
   /** In a filling panel with a custom composer, let its backdrop meet the
    *  parent edges while message history keeps a 16px reading gutter. */
   flushComposer?: boolean;
+  /** Discussion logs start at the top; live conversations rest against their input. */
+  contentAlign?: 'start' | 'end';
   /** Called when the reader asks for older messages. When present (and
    *  `hasMore` is not false) a "Load earlier messages" button renders
    *  above the first message. The panel preserves the reader's scroll
@@ -1451,6 +1453,7 @@ export function ChatPanel({
   showHeader,
   fill,
   flushComposer = false,
+  contentAlign = 'end',
   onLoadMore,
   hasMore,
   loadingMore = false,
@@ -2827,7 +2830,7 @@ export function ChatPanel({
           stays on the bottom edge and the slack goes to the messages.
           Wrapped so the "new messages" affordance can float over its
           bottom edge without joining the scroll content. */}
-      <div className={cn('relative flex flex-col mb-2', fills ? 'min-h-0 flex-1' : '', fills && flushComposer && composer && 'mx-4')}>
+      <div className={cn('relative flex flex-col mb-2', fills ? 'min-h-0 flex-1' : '', fills && flushComposer && composer && 'mx-[var(--ui-content-gutter,1rem)]')}>
         <div
           ref={listRef}
           onScroll={handleListScroll}
@@ -2886,7 +2889,7 @@ export function ChatPanel({
               not decoration — the newest message is the one you are reading
               while you type a reply, and a line of text hard against a focused
               input reads as part of the input. */}
-          <div className="mt-auto pb-4">
+          <div data-chat-content className={cn('pb-[var(--ui-chat-gap,1rem)]', contentAlign === 'end' ? 'mt-auto' : 'pt-2')}>
           {canLoadMore && messages.length > 0 && (
             <div className="flex justify-center pb-1">
               <button

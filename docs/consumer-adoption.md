@@ -384,3 +384,45 @@ adding `<X>` to ui-components solves it forever, for every consumer.
   — adapter prop-shape contract for the `/integrations/realtime-modules`
   subpath.
 - [`ROADMAP.md`](../ROADMAP.md) — the 5-wave plan for current work.
+
+## Collection and composer inheritance (2.440.2)
+
+Use `DensityProvider density="compact"` around the real application shell,
+not only test fixtures. Button, IconButton, Input, Select, SearchInput,
+DropdownMenu and FilterChip inherit density when size is omitted. Explicit
+sizes remain available for intentional exceptions and use the same metrics.
+
+`CollectionPage` owns title/toolbar/content spacing. Pass search state,
+filters, summary, notices and actions through its `toolbar` prop. It uses
+`CollectionToolbar`, which can also be used by reusable domain collections.
+Actions are named icon buttons with tooltips; filter fields live in one
+popover; long explanatory notices live behind an information button. Keep
+blocking errors and action-required warnings visible in page content.
+
+```tsx
+<CollectionPage title="Runs" toolbar={{
+  label: 'Run filters',
+  search: { value: query, onChange: setQuery, 'aria-label': 'Search runs' },
+  summary: `${rows.length} runs`,
+  onRefresh: refresh,
+  refreshing: loading,
+}}>
+  <DataTable data={rows} columns={columns} keyField="id" />
+</CollectionPage>
+```
+
+A simple `DataTable searchable` uses CollectionToolbar internally. Do not add
+another search toolbar above it. Consumers own fetching, permission checks,
+row schemas, filtering and navigation; the library owns visual policy.
+
+`ComposerSurface` owns the full-width shelf background, insets, particle
+motion and readable composer width. Wrap the whole composer shelf, including
+any dock content; nested surfaces reuse their ancestor without doubling the
+background. `ChatPanel contentAlign="start"` aligns a conversation from the
+top when a separate page composer owns the input; the default is end-aligned.
+Do not reproduce these rules with selectors targeting test IDs.
+
+Shared geometry tokens: `--ui-control-sm/md/lg`, `--ui-page-gutter`,
+`--ui-content-gutter`, `--ui-section-gap`, `--ui-table-inset`,
+`--ui-table-row`, and `--ui-composer-max-width`. Change their defaults in the
+library rather than repeating page-specific padding and control heights.

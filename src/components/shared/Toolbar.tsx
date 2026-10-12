@@ -39,6 +39,8 @@ export interface ToolbarProps {
   /** Right-aligned content — the low-frequency verbs (refresh, overflow ⋯). */
   end?: ReactNode;
   tone?: ToolbarTone;
+  /** Collection rows sit on the page surface with the same inset as table cells. */
+  variant?: 'surface' | 'collection';
   /** `sm` (default) is the shell scale; `md` is for a toolbar that owns a pane. */
   size?: 'sm' | 'md';
   /**
@@ -92,6 +94,7 @@ export function Toolbar({
   children,
   end,
   tone = 'surface',
+  variant = 'surface',
   size = 'sm',
   sticky = false,
   bordered = true,
@@ -148,6 +151,7 @@ export function Toolbar({
       aria-label={ariaLabel}
       aria-orientation="horizontal"
       data-testid={testId}
+      data-toolbar-variant={variant}
       onKeyDown={onKeyDown}
       className={cn(
         'flex flex-none',
@@ -159,8 +163,8 @@ export function Toolbar({
         // right edge instead of dropping to a line of its own.
         wrap ? 'flex-wrap items-start py-1.5' : 'items-center',
         SIZE[size],
-        TONE[tone],
-        bordered && 'border-b',
+        variant === 'collection' ? 'bg-transparent text-text-primary px-[var(--ui-table-inset,0.75rem)]' : TONE[tone],
+        bordered && variant !== 'collection' && 'border-b',
         sticky && 'sticky top-0 z-20',
         className,
       )}

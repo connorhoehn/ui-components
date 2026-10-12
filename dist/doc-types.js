@@ -2,16 +2,16 @@ import { n as e, t } from "./registry-DbX3MVAA.js";
 import { i as n, n as r, r as i } from "./documentType-rRZpKWbO.js";
 import { i as a } from "./useDocumentTypes-DCKwxXn8.js";
 import { t as o } from "./cn-D4QmbyEy.js";
-import { n as s } from "./Button-BEOshFFZ.js";
-import { l as c } from "./Text-Dp6koIMo.js";
+import { n as s } from "./Button-DZuk8L0q.js";
+import { l as c } from "./Text-3v1iMImu.js";
 import { t as l } from "./Modal-CjgKqXl7.js";
-import { t as u } from "./Input-CpLq80dw.js";
-import { t as d } from "./EmptyState-ClSHRgi-.js";
-import { t as f } from "./Textarea-Drx4YDDG.js";
-import { t as p } from "./PageHeader-BJv_cqUA.js";
-import { t as m } from "./Select-C6OGjVyH.js";
+import { t as u } from "./Input-DKVe8Hp7.js";
+import { t as d } from "./Select-DbhTbkTN.js";
+import { t as f } from "./EmptyState-DJ3e4WMf.js";
+import { t as p } from "./Textarea-Drx4YDDG.js";
+import { t as m } from "./PageHeader-s_0JutYN.js";
 import { t as h } from "./Checkbox-C70AGFS5.js";
-import { G as g, H as _, U as v, W as y } from "./renderers-soBo-YRi.js";
+import { G as g, H as _, U as v, W as y } from "./renderers-Tj2vs6-X.js";
 import { useEffect as b, useId as x, useMemo as S, useRef as C, useState as w } from "react";
 import { Fragment as T, jsx as E, jsxs as D } from "react/jsx-runtime";
 import { DndContext as O, KeyboardSensor as k, PointerSensor as A, closestCorners as j, useSensor as M, useSensors as N } from "@dnd-kit/core";
@@ -91,7 +91,7 @@ function H({ step: e, totalSteps: t, canAdvance: n, isEditing: r, onCancel: i, o
 }
 //#endregion
 //#region src/components/doc-types/FieldDefinitionEditor.tsx
-function U({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemove: c, onMoveUp: l, onMoveDown: d, onToggleRequired: f, onToggleCollapsed: p }) {
+function U({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemove: c, onMoveUp: l, onMoveDown: f, onToggleRequired: p, onToggleCollapsed: m }) {
 	let h = t(n.sectionType), g = e(), _ = n.name.trim() || `Section ${r + 1}`;
 	return /* @__PURE__ */ D("div", {
 		className: "flex items-center gap-2 py-2 px-2.5 rounded-lg bg-surface-panel border border-border mb-1.5",
@@ -109,7 +109,7 @@ function U({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemov
 				}), /* @__PURE__ */ E("button", {
 					type: "button",
 					disabled: r === i - 1,
-					onClick: d,
+					onClick: f,
 					"data-testid": `field-down-${n.id}`,
 					"aria-label": `Move ${n.name} down`,
 					className: o("px-1 py-px text-[10px] leading-none font-semibold rounded-[7px] font-inherit border-none bg-transparent", r === i - 1 ? "text-neutral opacity-50 cursor-not-allowed" : "text-neutral cursor-pointer"),
@@ -128,7 +128,7 @@ function U({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemov
 				onChange: (e) => a(e.target.value),
 				className: "flex-1 min-w-0 bg-transparent border-transparent focus:border-accent-border focus:bg-surface"
 			}),
-			/* @__PURE__ */ E(m, {
+			/* @__PURE__ */ E(d, {
 				"aria-label": `${_} type`,
 				"data-testid": `field-type-${n.id}`,
 				size: "sm",
@@ -142,7 +142,7 @@ function U({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemov
 			}),
 			/* @__PURE__ */ E("button", {
 				type: "button",
-				onClick: f,
+				onClick: p,
 				"data-testid": `field-required-${n.id}`,
 				title: "Required",
 				className: o("px-2 py-[3px] text-[11px] font-semibold rounded-[7px] font-inherit shrink-0 cursor-pointer", n.required ? "bg-accent-bg text-accent-fg border border-accent-border" : "bg-surface-panel text-text-tertiary border border-border"),
@@ -150,7 +150,7 @@ function U({ field: n, index: r, total: i, onRename: a, onChangeType: s, onRemov
 			}),
 			/* @__PURE__ */ E("button", {
 				type: "button",
-				onClick: p,
+				onClick: m,
 				"data-testid": `field-collapsed-${n.id}`,
 				title: "Collapsed by default",
 				className: o("px-2 py-[3px] text-[11px] font-semibold rounded-[7px] font-inherit shrink-0 cursor-pointer", n.defaultCollapsed ? "bg-success-bg text-success-fg border border-success-border" : "bg-surface-panel text-text-tertiary border border-border"),
@@ -194,7 +194,7 @@ function W({ name: e, setName: t, description: n, setDescription: r }) {
 			htmlFor: `${i}-description`,
 			className: "block text-xs font-semibold text-text-primary mb-[5px] tracking-wide",
 			children: "Description"
-		}), /* @__PURE__ */ E(f, {
+		}), /* @__PURE__ */ E(p, {
 			id: `${i}-description`,
 			"data-testid": "description-input",
 			className: "min-h-[72px] resize-y",
@@ -292,14 +292,14 @@ function G({ page: e, pageIdx: t, totalPages: n, isActive: r, setActivePageId: i
 	});
 }
 function K({ sectionId: e, page: t, idx: n, pages: r, renderRow: i, moveSectionToPage: a }) {
-	let { attributes: o, listeners: s, setNodeRef: c, transform: l, transition: u, isDragging: d } = L({ id: e }), f = {
+	let { attributes: o, listeners: s, setNodeRef: c, transform: l, transition: u, isDragging: f } = L({ id: e }), p = {
 		transform: z.Transform.toString(l),
 		transition: u,
-		opacity: d ? .4 : 1
+		opacity: f ? .4 : 1
 	};
 	return /* @__PURE__ */ D("div", {
 		ref: c,
-		style: f,
+		style: p,
 		className: "flex items-center gap-1.5",
 		children: [
 			/* @__PURE__ */ E("button", {
@@ -315,7 +315,7 @@ function K({ sectionId: e, page: t, idx: n, pages: r, renderRow: i, moveSectionT
 				className: "flex-1",
 				children: i(e, t, n)
 			}),
-			r.length > 1 && /* @__PURE__ */ E(m, {
+			r.length > 1 && /* @__PURE__ */ E(d, {
 				"data-testid": `section-move-page-${e}`,
 				size: "sm",
 				className: "w-auto text-[11px]",
@@ -560,7 +560,7 @@ function J({ field: e, mode: n, onToggleHidden: r, onOverrideChange: i }) {
 						children: a ? "Hidden" : "Visible"
 					})]
 				}),
-				!a && c.length > 0 && /* @__PURE__ */ E(m, {
+				!a && c.length > 0 && /* @__PURE__ */ E(d, {
 					"aria-label": `${e.name} renderer in ${n} mode`,
 					"data-testid": `renderer-${e.id}-${n}`,
 					size: "sm",
@@ -994,12 +994,12 @@ function ne({ type: e, active: t, onSelect: n, onDeleteRequest: r, onCreateDocum
 	});
 }
 function re({ idToken: e, onExportSchema: t, onCreateDocument: n, layout: r = "split", processingAction: i } = {}) {
-	let { types: l, source: u, error: f, createType: m, updateType: h, deleteType: g } = a({ idToken: e }), [_, v] = w("idle"), [y, b] = w(null), [x, S] = w(null), [C, T] = w(!1), [O, k] = w(!1), [A, j] = w(null), M = y ? l.find((e) => e.id === y) : void 0, N = () => {
+	let { types: l, source: u, error: d, createType: p, updateType: h, deleteType: g } = a({ idToken: e }), [_, v] = w("idle"), [y, b] = w(null), [x, S] = w(null), [C, T] = w(!1), [O, k] = w(!1), [A, j] = w(null), M = y ? l.find((e) => e.id === y) : void 0, N = () => {
 		b(null), v("create"), j(null);
 	}, P = (e) => {
 		b(e.id), v("edit"), j(null);
 	}, F = async (e) => {
-		let t = _ === "edit" && y ? "updated" : "created", n = _ === "edit" && y ? await h(y, e) : await m(e);
+		let t = _ === "edit" && y ? "updated" : "created", n = _ === "edit" && y ? await h(y, e) : await p(e);
 		if (n.status === "rejected") {
 			j({
 				text: `"${e.name}" NOT saved — server rejected it (${n.error})`,
@@ -1041,7 +1041,7 @@ function re({ idToken: e, onExportSchema: t, onCreateDocument: n, layout: r = "s
 		if (!O) {
 			k(!0), j(null);
 			try {
-				let t = e.build(), n = await m(t);
+				let t = e.build(), n = await p(t);
 				j(n.status === "rejected" ? {
 					text: `"${t.name}" NOT added — server rejected it (${n.error})`,
 					key: Date.now(),
@@ -1072,7 +1072,7 @@ function re({ idToken: e, onExportSchema: t, onCreateDocument: n, layout: r = "s
 			U && /* @__PURE__ */ E(c, {
 				gap: "sm",
 				className: "shrink-0 px-5 pt-4 pb-3",
-				children: /* @__PURE__ */ E(p, {
+				children: /* @__PURE__ */ E(m, {
 					title: "Templates",
 					description: "Create and manage reusable document templates. Pick a starter below or build your own.",
 					actions: i
@@ -1133,7 +1133,7 @@ function re({ idToken: e, onExportSchema: t, onCreateDocument: n, layout: r = "s
 						className: "py-2 px-3.5 border-t border-warning-border bg-warning-bg text-xs text-warning-fg font-medium",
 						children: [
 							"⚠ Offline — showing cached types (",
-							f ?? "server unreachable",
+							d ?? "server unreachable",
 							")"
 						]
 					}),
@@ -1154,7 +1154,7 @@ function re({ idToken: e, onExportSchema: t, onCreateDocument: n, layout: r = "s
 				children: [_ === "idle" && /* @__PURE__ */ D("div", {
 					"data-testid": "known-types-panel",
 					className: "flex flex-col gap-4",
-					children: [!U && /* @__PURE__ */ E(d, {
+					children: [!U && /* @__PURE__ */ E(f, {
 						testId: "idle-panel",
 						className: "min-h-0 p-0 gap-1",
 						icon: "📋",
@@ -1210,7 +1210,7 @@ function re({ idToken: e, onExportSchema: t, onCreateDocument: n, layout: r = "s
 				open: C,
 				onClose: () => T(!1),
 				onCreated: B,
-				createType: m
+				createType: p
 			})
 		]
 	});

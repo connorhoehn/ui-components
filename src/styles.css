@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./styles/composerSurface.css";
 
 @theme {
   /* #5a61ff, not #646cff: white text on the old value measured 4.09:1 —
@@ -2304,4 +2305,17 @@
 .suggestion-view-simple-markup .ProseMirror [data-node-insertion='true'],
 .suggestion-view-simple-markup .ProseMirror [data-node-deletion='true'] {
   border-left-color: var(--color-neutral-border);
+}
+
+/* Layout metrics: hosts customize these once at their shell, never on individual pages. */
+:root {
+  --ui-page-gutter: 1.5rem;
+  --ui-content-gutter: 1rem;
+  --ui-section-gap: .75rem;
+  --ui-table-inset: .75rem;
+  --ui-table-row: 2.75rem;
+  --ui-control-sm: 1.75rem;
+  --ui-control-md: 2.25rem;
+  --ui-control-lg: 2.5rem;
+  --ui-chat-gap: 1rem;
 }

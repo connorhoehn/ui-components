@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react';
+import { CONTROL_HEIGHT } from './controlMetrics';
 import { cn } from '../../lib/cn';
 
 export interface FilterChipProps {
@@ -29,16 +30,16 @@ export interface FilterChipProps {
 }
 
 const SIZE_CLASSES: Record<'md' | 'sm' | 'xs', string> = {
-  md: 'px-3 py-1 text-[12.5px]',
-  sm: 'px-2.5 py-0.5 text-[11px]',
-  xs: 'px-2 py-px text-[10px]',
+  md: `${CONTROL_HEIGHT.md} px-3 text-sm`,
+  sm: `${CONTROL_HEIGHT.sm} px-2.5 text-xs`,
+  xs: `${CONTROL_HEIGHT.sm} px-2 text-xs`,
 };
 
 const INACTIVE_CLASSES =
   'bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)] hover:border-[var(--color-border-emphasis)]';
 
 const ACTIVE_DEFAULT_CLASSES =
-  'bg-[var(--color-primary)] border-[var(--color-primary)] text-white hover:opacity-90';
+  'bg-[var(--color-primary)] border-[var(--color-primary)] text-on-primary hover:opacity-90';
 
 const ACTIVE_COLORED_CLASSES =
   'border-[var(--color-border-emphasis)] text-[var(--color-text-primary)]';

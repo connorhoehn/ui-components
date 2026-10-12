@@ -5,6 +5,7 @@
 // used across the portal pages.
 
 import React from 'react';
+import { CONTROL_HEIGHT } from './controlMetrics';
 import { cn } from '../../lib/cn';
 import type { SurfaceTone } from './tones';
 
@@ -129,7 +130,7 @@ function SearchInput({
         data-testid={testId}
         className={cn(
           'w-full border focus:outline-none focus:ring-2 transition-colors',
-          size === 'lg' ? 'h-11 pl-12 pr-11 text-base rounded-lg' : size === 'md' ? 'h-9 pl-10 pr-7 text-sm rounded-md' : 'pl-8 pr-7 py-1.5 text-sm rounded-md',
+          size === 'lg' ? `${CONTROL_HEIGHT.lg} pl-12 pr-11 text-sm rounded-lg` : size === 'md' ? `${CONTROL_HEIGHT.md} pl-10 pr-7 text-sm rounded-md` : `${CONTROL_HEIGHT.sm} pl-8 pr-7 text-xs rounded-md`,
           palette.field,
           inputClassName,
         )}

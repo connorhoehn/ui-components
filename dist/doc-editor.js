@@ -1,40 +1,39 @@
 import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
 import { t as n } from "./cn-D4QmbyEy.js";
-import { n as r } from "./Button-BEOshFFZ.js";
-import { t as i } from "./Card-CbTNNNkk.js";
-import { n as a } from "./Density-BgubVeSf.js";
-import { t as o } from "./Chip-D2jKHd4a.js";
-import { t as s } from "./IconButton-IiLzRH-W.js";
+import { n as r, o as i } from "./Button-DZuk8L0q.js";
+import { t as a } from "./Card-CbTNNNkk.js";
+import { t as o } from "./Chip-C_-AY6W4.js";
+import { t as s } from "./IconButton-CjSMY5sV.js";
 import { ct as c, m as l, mt as u } from "./Icons-B_xESAH3.js";
 import { i as d } from "./MediaIcons-_ai5Til2.js";
-import { c as f, i as p, l as m } from "./Text-Dp6koIMo.js";
+import { c as f, i as p, l as m } from "./Text-3v1iMImu.js";
 import { t as h } from "./Badge-POenI45X.js";
 import { t as g } from "./Banner-8ngXUtJu.js";
 import { t as _ } from "./Modal-CjgKqXl7.js";
-import { t as v } from "./Input-CpLq80dw.js";
-import { t as y } from "./EmptyState-ClSHRgi-.js";
-import { n as b } from "./DropdownMenu-DR9iVi2Z.js";
-import { t as x } from "./Textarea-Drx4YDDG.js";
-import { t as S } from "./Avatar-CmYYkk9C.js";
-import { t as C } from "./SegmentedControl-CkpFmSce.js";
-import { t as w } from "./InlineAlert-CBtteaVZ.js";
-import { t as T } from "./CardHeader-C50GEAmo.js";
-import { n as E } from "./NumberInput-DfHkxDUc.js";
-import { t as ee } from "./PresenceAvatars-DAgxQ3PF.js";
-import { t as te } from "./ChangeDiff-BHerlwTS.js";
-import { t as ne } from "./MetaLine-BtHTTScI.js";
-import { t as D } from "./Select-C6OGjVyH.js";
-import { t as re } from "./Checkbox-C70AGFS5.js";
+import { t as v } from "./Input-DKVe8Hp7.js";
+import { t as y } from "./Select-DbhTbkTN.js";
+import { t as b } from "./InlinePopover-MVLSEiUg.js";
+import { t as x } from "./EmptyState-DJ3e4WMf.js";
+import { t as S } from "./Textarea-Drx4YDDG.js";
+import { t as C } from "./Avatar-CmYYkk9C.js";
+import { t as w } from "./SegmentedControl-Diq428zk.js";
+import { t as T } from "./InlineAlert-CBtteaVZ.js";
+import { t as E } from "./CardHeader-C50GEAmo.js";
+import { n as ee } from "./NumberInput-C1QnmDGJ.js";
+import { t as te } from "./PresenceAvatars-DAgxQ3PF.js";
+import { t as ne } from "./ChangeDiff-BHerlwTS.js";
+import { t as re } from "./MetaLine-BtHTTScI.js";
+import { t as D } from "./Checkbox-C70AGFS5.js";
 import { n as ie } from "./FileKindMark-DhjYpKjg.js";
 import { t as O } from "./activationKey-CjbL3LUv.js";
-import { A as k, k as ae } from "./renderers-soBo-YRi.js";
-import { A, B as j, C as oe, D as M, E as N, F as se, G as P, H as ce, I as le, J as ue, K as F, L as I, M as de, N as fe, O as pe, P as me, R as he, S as ge, T as _e, U as ve, V as ye, W as be, Y as xe, Z as Se, _ as Ce, a as we, b as Te, c as Ee, d as De, f as Oe, g as ke, h as Ae, i as je, j as Me, k as Ne, l as Pe, m as Fe, n as Ie, o as Le, p as Re, q as ze, r as Be, s as Ve, t as He, u as Ue, v as We, w as Ge, x as Ke, y as qe, z as Je } from "./ProposedEditStrip-BdVBmV2R.js";
-import { o as Ye, t as Xe } from "./VerdictChip-Cc4Ej-AU.js";
+import { A as k, k as ae } from "./renderers-Tj2vs6-X.js";
+import { A, B as j, C as oe, D as M, E as N, F as se, G as P, H as ce, I as le, J as ue, K as F, L as I, M as de, N as fe, O as pe, P as me, R as he, S as ge, T as _e, U as ve, V as ye, W as be, Y as xe, Z as Se, _ as Ce, a as we, b as Te, c as Ee, d as De, f as Oe, g as ke, h as Ae, i as je, j as Me, k as Ne, l as Pe, m as Fe, n as Ie, o as Le, p as Re, q as ze, r as Be, s as Ve, t as He, u as Ue, v as We, w as Ge, x as Ke, y as qe, z as Je } from "./ProposedEditStrip-B7LHW6n5.js";
+import { o as Ye, t as Xe } from "./VerdictChip-_JG-PtEn.js";
 import { a as Ze, c as Qe, d as $e, f as et, h as tt, i as nt, l as rt, m as it, n as at, o as ot, p as st, r as ct, s as lt, t as ut, u as dt } from "./TiptapEditor-BjjwDyPa.js";
-import { i as ft, n as pt, r as mt, t as ht } from "./FloatingComposerDock-ZezHreIm.js";
-import { A as gt, B as _t, C as vt, D as yt, E as bt, F as xt, G as St, H as Ct, I as wt, J as Tt, K as Et, L as Dt, M as Ot, N as kt, O as At, P as jt, R as Mt, S as Nt, T as Pt, U as Ft, V as It, W as Lt, _ as Rt, a as zt, b as Bt, c as Vt, d as Ht, f as Ut, g as Wt, h as Gt, i as Kt, j as qt, k as Jt, l as Yt, m as Xt, o as Zt, p as Qt, q as $t, r as en, s as tn, t as nn, u as rn, v as an, w as on, x as sn, y as cn, z as ln } from "./DocumentEditorPage-DSPnyV8_.js";
-import { C as un, S as dn, T as fn, _ as pn, a as mn, b as hn, c as gn, d as _n, f as vn, g as yn, h as bn, i as xn, l as Sn, m as Cn, n as wn, o as Tn, p as En, r as Dn, s as On, t as kn, u as An, v as jn, w as Mn, x as Nn, y as Pn } from "./useDocumentImageUpload-BjzsExgt.js";
-import { r as Fn } from "./RichChatComposer-hMOlEPPU.js";
+import { i as ft, n as pt, r as mt, t as ht } from "./FloatingComposerDock-D10uQ4k3.js";
+import { A as gt, B as _t, C as vt, D as yt, E as bt, F as xt, G as St, H as Ct, I as wt, J as Tt, K as Et, L as Dt, M as Ot, N as kt, O as At, P as jt, R as Mt, S as Nt, T as Pt, U as Ft, V as It, W as Lt, _ as Rt, a as zt, b as Bt, c as Vt, d as Ht, f as Ut, g as Wt, h as Gt, i as Kt, j as qt, k as Jt, l as Yt, m as Xt, o as Zt, p as Qt, q as $t, r as en, s as tn, t as nn, u as rn, v as an, w as on, x as sn, y as cn, z as ln } from "./DocumentEditorPage-CBOwd0Zz.js";
+import { C as un, S as dn, T as fn, _ as pn, a as mn, b as hn, c as gn, d as _n, f as vn, g as yn, h as bn, i as xn, l as Sn, m as Cn, n as wn, o as Tn, p as En, r as Dn, s as On, t as kn, u as An, v as jn, w as Mn, x as Nn, y as Pn } from "./useDocumentImageUpload-BAQkVbln.js";
+import { r as Fn } from "./RichChatComposer-F-tJCOXU.js";
 import { forwardRef as In, useCallback as L, useEffect as R, useId as Ln, useImperativeHandle as Rn, useMemo as z, useRef as B, useState as V } from "react";
 import { Fragment as H, jsx as U, jsxs as W } from "react/jsx-runtime";
 import * as zn from "yjs";
@@ -544,7 +543,7 @@ function Sr({ item: e, onAck: t, onReject: r }) {
 				]
 			}), i && /* @__PURE__ */ W("div", {
 				className: n("mt-2"),
-				children: [/* @__PURE__ */ U(x, {
+				children: [/* @__PURE__ */ U(S, {
 					value: o,
 					onChange: (e) => s(e.target.value),
 					onKeyDown: (e) => {
@@ -993,7 +992,7 @@ var Gr = {
 	field: "Field change",
 	prose: "Body text"
 };
-function Kr({ utterance: e, kind: t, status: i, confidence: a, attachState: s, targetLabel: c, targetReason: l, before: u, after: d, edits: f, rationale: p, draftError: m, author: h, category: g, path: _, locationHint: y, verdict: b, verdictStatus: x = "idle", verdictError: C, revision: w, onRereview: T, onAccept: E, onReject: ee, onRedraft: ne, onReattach: D, onConfirmAttachment: re, className: ie, "data-testid": O = "proposal-card" }) {
+function Kr({ utterance: e, kind: t, status: i, confidence: a, attachState: s, targetLabel: c, targetReason: l, before: u, after: d, edits: f, rationale: p, draftError: m, author: h, category: g, path: _, locationHint: y, verdict: b, verdictStatus: x = "idle", verdictError: S, revision: w, onRereview: T, onAccept: E, onReject: ee, onRedraft: te, onReattach: re, onConfirmAttachment: D, className: ie, "data-testid": O = "proposal-card" }) {
 	let [k, ae] = V(!1), [A, j] = V(null), [oe, M] = V(!1), [N, se] = V(""), P = i === "applied", ce = i === "rejected", le = P || ce;
 	async function ue() {
 		ae(!0), j(null);
@@ -1030,7 +1029,7 @@ function Kr({ utterance: e, kind: t, status: i, confidence: a, attachState: s, t
 					h && /* @__PURE__ */ W("span", {
 						className: "flex min-w-0 items-center gap-1.5",
 						"data-testid": `${O}-requester`,
-						children: [/* @__PURE__ */ U(S, {
+						children: [/* @__PURE__ */ U(C, {
 							name: h.name,
 							size: 18,
 							...h.avatarUrl ? { src: h.avatarUrl } : {}
@@ -1109,14 +1108,14 @@ function Kr({ utterance: e, kind: t, status: i, confidence: a, attachState: s, t
 				"data-testid": `${O}-draft-error`,
 				children: m
 			}),
-			i !== "drafting" && !m && F.length > 0 && /* @__PURE__ */ U(te, {
+			i !== "drafting" && !m && F.length > 0 && /* @__PURE__ */ U(ne, {
 				pairs: F,
 				"data-testid": `${O}-diff`
 			}),
 			i !== "drafting" && /* @__PURE__ */ U(Xe, {
 				verdict: b,
 				status: x,
-				error: C,
+				error: S,
 				revision: w,
 				"data-testid": `${O}-verdict`
 			}),
@@ -1157,11 +1156,11 @@ function Kr({ utterance: e, kind: t, status: i, confidence: a, attachState: s, t
 						"data-testid": `${O}-reject`,
 						children: "Reject"
 					}),
-					ne && /* @__PURE__ */ U(r, {
+					te && /* @__PURE__ */ U(r, {
 						size: "sm",
 						variant: "ghost",
 						disabled: k,
-						onClick: ne,
+						onClick: te,
 						"data-testid": `${O}-redraft`,
 						children: "Re-draft"
 					}),
@@ -1173,19 +1172,19 @@ function Kr({ utterance: e, kind: t, status: i, confidence: a, attachState: s, t
 						"data-testid": `${O}-rereview`,
 						children: "Re-run review"
 					}),
-					D && /* @__PURE__ */ U(r, {
+					re && /* @__PURE__ */ U(r, {
 						size: "sm",
 						variant: "ghost",
 						disabled: k,
-						onClick: D,
+						onClick: re,
 						"data-testid": `${O}-reattach`,
 						children: "Move…"
 					}),
-					re && s === "author_only" && /* @__PURE__ */ U(r, {
+					D && s === "author_only" && /* @__PURE__ */ U(r, {
 						size: "sm",
 						variant: "secondary",
 						disabled: k,
-						onClick: re,
+						onClick: D,
 						"data-testid": `${O}-confirm`,
 						children: "Right place"
 					})
@@ -1230,9 +1229,9 @@ function Kr({ utterance: e, kind: t, status: i, confidence: a, attachState: s, t
 }
 //#endregion
 //#region src/components/doc-editor/WorkItemRow.tsx
-function qr({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: s, reason: c, contextSplit: l, drafting: u = !1, draftError: d, candidates: f, sections: p, onPropose: m, onAttach: h, onDismiss: g, className: _, "data-testid": v = `work-item-${e}` }) {
-	let y = [...f ?? []].sort((e, t) => t.score - e.score), b = new Set(y.map((e) => e.sectionId)), x = p.filter((e) => !b.has(e.id));
-	return /* @__PURE__ */ U(i, {
+function qr({ itemId: e, utterance: t, unplaced: i = !1, targetLabel: s, reason: c, contextSplit: l, drafting: u = !1, draftError: d, candidates: f, sections: p, onPropose: m, onAttach: h, onDismiss: g, className: _, "data-testid": v = `work-item-${e}` }) {
+	let b = [...f ?? []].sort((e, t) => t.score - e.score), x = new Set(b.map((e) => e.sectionId)), S = p.filter((e) => !x.has(e.id));
+	return /* @__PURE__ */ U(a, {
 		padding: "sm",
 		className: _,
 		"data-testid": v,
@@ -1243,10 +1242,10 @@ function qr({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: s, reason:
 				/* @__PURE__ */ W("div", {
 					className: "flex flex-wrap items-center gap-1.5",
 					children: [/* @__PURE__ */ U(o, {
-						tone: a ? "neutral" : "success",
+						tone: i ? "neutral" : "success",
 						size: "sm",
 						uppercase: !0,
-						children: a ? "Unplaced" : s ?? "Placed"
+						children: i ? "Unplaced" : s ?? "Placed"
 					}), l && /* @__PURE__ */ U(o, {
 						tone: "caution",
 						size: "sm",
@@ -1288,12 +1287,12 @@ function qr({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: s, reason:
 						children: "Not useful"
 					})]
 				}),
-				a && y.length > 0 && /* @__PURE__ */ W("div", {
+				i && b.length > 0 && /* @__PURE__ */ W("div", {
 					className: "flex flex-col gap-1",
 					children: [/* @__PURE__ */ U("span", {
 						className: "text-[11px] uppercase tracking-wide text-text-tertiary",
 						children: "Best guesses"
-					}), y.map((e) => /* @__PURE__ */ W(r, {
+					}), b.map((e) => /* @__PURE__ */ W(r, {
 						size: "sm",
 						variant: "secondary",
 						onClick: () => h(e.sectionId),
@@ -1305,16 +1304,16 @@ function qr({ itemId: e, utterance: t, unplaced: a = !1, targetLabel: s, reason:
 						]
 					}, e.sectionId))]
 				}),
-				a && x.length > 0 && /* @__PURE__ */ W("label", {
+				i && S.length > 0 && /* @__PURE__ */ W("label", {
 					className: "flex flex-col gap-1",
 					children: [/* @__PURE__ */ U("span", {
 						className: "text-[11px] uppercase tracking-wide text-text-tertiary",
 						children: "Or file it under"
-					}), /* @__PURE__ */ U(D, {
+					}), /* @__PURE__ */ U(y, {
 						size: "sm",
 						value: "",
 						placeholder: "Choose a section…",
-						options: x.map((e) => ({
+						options: S.map((e) => ({
 							value: e.id,
 							label: e.title || e.id
 						})),
@@ -1362,9 +1361,9 @@ function Qr({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 		openComment: (e, t) => x(e, t, "click"),
 		close: y
 	}), [x, y]);
-	let C = B(null), w = d?.id ?? null;
+	let S = B(null), w = d?.id ?? null;
 	R(() => {
-		C.current !== w && (C.current = w, a?.(w));
+		S.current !== w && (S.current = w, a?.(w));
 	}, [w, a]), R(() => v, [v]), R(() => {
 		let e = t?.current;
 		if (!e) return;
@@ -1422,7 +1421,7 @@ function Qr({ threads: e, containerRef: t, hoverDelayMs: n = 140, hoverEnabled: 
 				/* @__PURE__ */ W("div", {
 					className: "flex items-center gap-2",
 					children: [
-						/* @__PURE__ */ U(S, {
+						/* @__PURE__ */ U(C, {
 							name: T.author,
 							size: 20,
 							color: T.color
@@ -1664,7 +1663,7 @@ function si({ open: e, onClose: t, documentTitle: n, people: i, generalAccess: a
 						className: "flex items-center gap-2",
 						"data-testid": `${f}-person`,
 						children: [
-							/* @__PURE__ */ U(S, {
+							/* @__PURE__ */ U(C, {
 								name: e.displayName,
 								size: 26,
 								...e.avatarUrl ? { src: e.avatarUrl } : {}
@@ -1747,7 +1746,7 @@ var ci = [
 		hint: "Read the document without changing it."
 	}
 ];
-function li({ mode: e, onModeChange: t, showViewing: r = !0, openCount: i = null, disabled: o = !1, className: s, "data-testid": c = "suggestion-mode-control" }) {
+function li({ mode: e, onModeChange: t, showViewing: r = !0, openCount: a = null, disabled: o = !1, className: s, "data-testid": c = "suggestion-mode-control" }) {
 	let l = ci.filter((e) => r || e.value !== "viewing").map((e) => ({
 		label: e.label,
 		value: e.value
@@ -1757,9 +1756,9 @@ function li({ mode: e, onModeChange: t, showViewing: r = !0, openCount: i = null
 		"data-mode": e,
 		title: u?.hint,
 		className: n("inline-flex items-center gap-2", o && "pointer-events-none opacity-50", s),
-		children: [/* @__PURE__ */ U(a, {
+		children: [/* @__PURE__ */ U(i, {
 			density: "compact",
-			children: /* @__PURE__ */ U(C, {
+			children: /* @__PURE__ */ U(w, {
 				options: l,
 				value: e,
 				"aria-label": "What your typing does",
@@ -1768,10 +1767,10 @@ function li({ mode: e, onModeChange: t, showViewing: r = !0, openCount: i = null
 					r !== e && t(r);
 				}
 			})
-		}), i !== null && i > 0 && /* @__PURE__ */ U("span", {
+		}), a !== null && a > 0 && /* @__PURE__ */ U("span", {
 			"data-testid": `${c}-count`,
 			className: "rounded-full bg-surface-inset px-2 py-0.5 text-xs tabular-nums text-text-secondary",
-			children: i === 1 ? "1 suggestion" : `${i} suggestions`
+			children: a === 1 ? "1 suggestion" : `${a} suggestions`
 		})]
 	});
 }
@@ -1822,7 +1821,7 @@ function gi({ lines: e, tone: t, testId: r }) {
 	});
 }
 function _i({ kind: e, author: t, when: i = null, context: a, deletedText: o = "", insertedText: s = "", insertedBlocks: c, deletedBlocks: l, active: u = !1, onFocus: d, onAccept: f, onReject: p, acceptLabel: m = "Accept", selected: h = !1, onSelectedChange: g, status: _, className: v, "data-testid": y = "suggestion-card" }) {
-	let { person: b, model: x } = mi(t.trim() === "" ? "Unknown author" : t.trim()), C = c && c.length > 0 ? c : s ? [s] : [], w = l && l.length > 0 ? l : o ? [o] : [], T = C.length > 0 || w.length > 0;
+	let { person: b, model: x } = mi(t.trim() === "" ? "Unknown author" : t.trim()), S = c && c.length > 0 ? c : s ? [s] : [], w = l && l.length > 0 ? l : o ? [o] : [], T = S.length > 0 || w.length > 0;
 	return /* @__PURE__ */ W("div", {
 		"data-testid": y,
 		"data-kind": e,
@@ -1833,13 +1832,13 @@ function _i({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 			/* @__PURE__ */ W("div", {
 				className: "flex items-center gap-2",
 				children: [
-					g && /* @__PURE__ */ U(re, {
+					g && /* @__PURE__ */ U(D, {
 						checked: h,
 						onChange: (e) => g(e),
 						"aria-label": `Select suggestion by ${t.trim() || "unknown author"}`,
 						"data-testid": `${y}-select`
 					}),
-					/* @__PURE__ */ U(S, {
+					/* @__PURE__ */ U(C, {
 						name: b,
 						size: 20
 					}),
@@ -1892,8 +1891,8 @@ function _i({ kind: e, author: t, when: i = null, context: a, deletedText: o = "
 					lines: w,
 					tone: "delete",
 					testId: `${y}-deleted`
-				}), C.length > 0 && /* @__PURE__ */ U(gi, {
-					lines: C,
+				}), S.length > 0 && /* @__PURE__ */ U(gi, {
+					lines: S,
 					tone: "insert",
 					testId: `${y}-inserted`
 				})]
@@ -2675,24 +2674,24 @@ function Ea(e) {
 }
 //#endregion
 //#region src/components/doc-editor/SuggestionReviewList.tsx
-function Da({ count: e, children: t, onAcceptAll: s, onRejectAll: c, acceptLabel: l = "Accept all", selectedCount: u, error: d = null, headerExtra: f, emptyTitle: p = "No suggestions", emptyBody: m = "Proposed changes to this document show up here for review.", title: h = "Suggestions", variant: _ = "card", className: v, "data-testid": b = "suggestion-review-list" }) {
-	let x = e > 0 && (s || c), S = x || f ? /* @__PURE__ */ W("span", {
+function Da({ count: e, children: t, onAcceptAll: s, onRejectAll: c, acceptLabel: l = "Accept all", selectedCount: u, error: d = null, headerExtra: f, emptyTitle: p = "No suggestions", emptyBody: m = "Proposed changes to this document show up here for review.", title: h = "Suggestions", variant: _ = "card", className: v, "data-testid": y = "suggestion-review-list" }) {
+	let b = e > 0 && (s || c), S = b || f ? /* @__PURE__ */ W("span", {
 		className: "flex items-center gap-1.5",
 		children: [
 			f,
-			x && c && /* @__PURE__ */ U(r, {
+			b && c && /* @__PURE__ */ U(r, {
 				variant: "ghost",
 				size: "sm",
 				onClick: c,
-				"data-testid": `${b}-reject-all`,
+				"data-testid": `${y}-reject-all`,
 				children: "Reject all"
 			}),
-			x && s && /* @__PURE__ */ U(r, {
+			b && s && /* @__PURE__ */ U(r, {
 				variant: "secondary",
 				size: "sm",
 				onClick: s,
 				disabled: u === 0,
-				"data-testid": `${b}-accept-all`,
+				"data-testid": `${y}-accept-all`,
 				children: u === void 0 ? l : `${l} (${u})`
 			})
 		]
@@ -2701,41 +2700,41 @@ function Da({ count: e, children: t, onAcceptAll: s, onRejectAll: c, acceptLabel
 		children: /* @__PURE__ */ U(g, {
 			variant: "error",
 			layout: "stacked",
-			"data-testid": `${b}-error`,
+			"data-testid": `${y}-error`,
 			children: d
 		})
-	}), e === 0 ? /* @__PURE__ */ U(a, {
+	}), e === 0 ? /* @__PURE__ */ U(i, {
 		density: "compact",
-		children: /* @__PURE__ */ U(y, {
+		children: /* @__PURE__ */ U(x, {
 			title: p,
 			body: m,
-			testId: `${b}-empty`
+			testId: `${y}-empty`
 		})
 	}) : /* @__PURE__ */ U("ul", {
 		className: "m-0 list-none p-0",
-		"data-testid": `${b}-list`,
+		"data-testid": `${y}-list`,
 		children: t
 	})] });
 	return _ === "pane" ? /* @__PURE__ */ W("div", {
 		className: n("flex min-h-0 flex-1 flex-col", v),
-		"data-testid": b,
+		"data-testid": y,
 		"data-variant": "pane",
 		children: [/* @__PURE__ */ W("div", {
 			className: "flex shrink-0 items-center justify-between gap-2 border-b border-border px-3 py-1.5",
 			children: [/* @__PURE__ */ U("span", {
 				className: "text-xs text-tertiary",
-				"data-testid": `${b}-count`,
+				"data-testid": `${y}-count`,
 				children: e === 0 ? "None open" : e === 1 ? "1 open" : `${e} open`
 			}), S]
 		}), /* @__PURE__ */ U("div", {
 			className: "min-h-0 flex-1 overflow-y-auto px-3",
 			children: C
 		})]
-	}) : /* @__PURE__ */ W(i, {
+	}) : /* @__PURE__ */ W(a, {
 		padding: "none",
 		className: n("overflow-hidden", v),
-		"data-testid": b,
-		children: [/* @__PURE__ */ U(T, {
+		"data-testid": y,
+		children: [/* @__PURE__ */ U(E, {
 			title: h,
 			meta: /* @__PURE__ */ U(o, {
 				tone: "neutral",
@@ -2787,7 +2786,7 @@ function Oa({ request: e, onDecide: t, onWithdraw: n }) {
 						})
 					]
 				}),
-				/* @__PURE__ */ U(ne, { items: [`Requested by ${e.requestedByName || e.requestedBy}`, e.dueDate ? `Due ${e.dueDate}` : null] }),
+				/* @__PURE__ */ U(re, { items: [`Requested by ${e.requestedByName || e.requestedBy}`, e.dueDate ? `Due ${e.dueDate}` : null] }),
 				e.note && /* @__PURE__ */ U("p", {
 					className: "m-0 text-sm text-text-primary whitespace-pre-wrap",
 					children: e.note
@@ -2796,11 +2795,11 @@ function Oa({ request: e, onDecide: t, onWithdraw: n }) {
 					className: "m-0 text-sm text-text-secondary whitespace-pre-wrap",
 					children: e.comment
 				}),
-				l && /* @__PURE__ */ U(w, {
+				l && /* @__PURE__ */ U(T, {
 					tone: "error",
 					children: l
 				}),
-				t && e.state === "pending" && /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(x, {
+				t && e.state === "pending" && /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(S, {
 					value: i,
 					onChange: (e) => a(e.target.value),
 					rows: 2,
@@ -2836,10 +2835,10 @@ function Oa({ request: e, onDecide: t, onWithdraw: n }) {
 	});
 }
 function ka({ requests: e, reviewers: t = [], currentUserId: n, loading: i, error: a, onRefresh: o, onRequest: s, onDecide: c, onWithdraw: l }) {
-	let [u, d] = V(""), [p, h] = V(""), [g, _] = V(!0), [v, y] = V(!1), [b, S] = V(null), C = B(!1);
-	async function T() {
-		if (!(!s || !t.some((e) => e.id === u) || C.current)) {
-			C.current = !0, y(!0), S(null);
+	let [u, d] = V(""), [p, h] = V(""), [g, _] = V(!0), [v, b] = V(!1), [x, C] = V(null), w = B(!1);
+	async function E() {
+		if (!(!s || !t.some((e) => e.id === u) || w.current)) {
+			w.current = !0, b(!0), C(null);
 			try {
 				await s({
 					reviewerId: u,
@@ -2847,23 +2846,23 @@ function ka({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 					required: g
 				}), h(""), d("");
 			} catch (e) {
-				S(e instanceof Error ? e.message : "The review could not be requested.");
+				C(e instanceof Error ? e.message : "The review could not be requested.");
 			} finally {
-				C.current = !1, y(!1);
+				w.current = !1, b(!1);
 			}
 		}
 	}
 	return /* @__PURE__ */ W(m, {
 		gap: "md",
 		children: [
-			a && /* @__PURE__ */ U(w, {
+			a && /* @__PURE__ */ U(T, {
 				tone: "error",
 				children: a
 			}),
 			s && /* @__PURE__ */ W(m, {
 				gap: "sm",
 				children: [
-					/* @__PURE__ */ U(D, {
+					/* @__PURE__ */ U(y, {
 						"aria-label": "Reviewer",
 						placeholder: "Choose a reviewer",
 						value: u,
@@ -2874,7 +2873,7 @@ function ka({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 						})),
 						onChange: (e) => d(e.target.value)
 					}),
-					/* @__PURE__ */ U(x, {
+					/* @__PURE__ */ U(S, {
 						"aria-label": "Review request note",
 						placeholder: "What should they review?",
 						rows: 2,
@@ -2886,20 +2885,20 @@ function ka({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 						as: "label",
 						gap: "sm",
 						align: "center",
-						children: [/* @__PURE__ */ U(re, {
+						children: [/* @__PURE__ */ U(D, {
 							checked: g,
 							onChange: _,
 							disabled: v
 						}), "Required review"]
 					}),
-					b && /* @__PURE__ */ U(w, {
+					x && /* @__PURE__ */ U(T, {
 						tone: "error",
-						children: b
+						children: x
 					}),
 					/* @__PURE__ */ U(r, {
 						size: "sm",
 						disabled: v || i || !t.some((e) => e.id === u),
-						onClick: () => void T(),
+						onClick: () => void E(),
 						children: v ? "Requesting…" : "Request review"
 					})
 				]
@@ -2958,7 +2957,7 @@ function ja({ filled: e }) {
 		children: /* @__PURE__ */ U("path", { d: "M8 1.9l1.8 3.7 4.1.6-3 2.9.7 4.1L8 11.3l-3.6 1.9.7-4.1-3-2.9 4.1-.6L8 1.9Z" })
 	});
 }
-function Ma({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: a, starred: c = !1, onStarredChange: u, statusPill: d, path: f, crumbsTrailing: m, subtitle: g, metaBar: _, participants: v, onParticipantClick: y, onFollowParticipant: b, followingParticipantId: x, meta: S, saveState: C, headActions: w, tabs: T, activeTab: te, onTabChange: ne, toolbar: D, children: re, footer: O, proposal: k, surface: ae = "workspace", explorer: A, workbench: j, label: oe = "Editor", variant: M = "document", itemType: N, itemKey: se, titleSize: P = "md", titleOverflow: ce = "truncate", tabsTrailing: le, className: ue, "data-testid": F = "editor-shell" }) {
+function Ma({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: a, starred: c = !1, onStarredChange: u, statusPill: d, path: f, crumbsTrailing: m, subtitle: g, metaBar: _, participants: v, onParticipantClick: y, onFollowParticipant: b, followingParticipantId: x, meta: S, saveState: C, headActions: w, tabs: T, activeTab: E, onTabChange: ne, toolbar: re, children: D, footer: O, proposal: k, surface: ae = "workspace", explorer: A, workbench: j, label: oe = "Editor", variant: M = "document", itemType: N, itemKey: se, titleSize: P = "md", titleOverflow: ce = "truncate", tabsTrailing: le, className: ue, "data-testid": F = "editor-shell" }) {
 	let I = M === "work-item", de = I && (N || se) ? /* @__PURE__ */ W(H, { children: [N && /* @__PURE__ */ U(o, {
 		size: "sm",
 		tone: "info",
@@ -2968,7 +2967,7 @@ function Ma({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 		className: "font-mono text-[12px] text-text-secondary",
 		"data-testid": `${F}-item-key`,
 		children: se
-	})] }) : null, fe = de || m != null ? /* @__PURE__ */ W(H, { children: [de, m] }) : null, pe = I && (e && e.length > 0 || fe != null), me = P === "lg" ? "text-[26px] font-semibold leading-8" : I ? "text-[22px] font-bold leading-7" : "text-xl font-bold leading-6", he = `${F}-${Ln().replace(/:/g, "")}`, ge = !!T && T.length > 0, _e = ge ? T.some((e) => e.id === te) ? te : T[0].id : void 0, ve = v && v.length > 0 || S != null || !!C, ye = (e) => /* @__PURE__ */ U(p, {
+	})] }) : null, fe = de || m != null ? /* @__PURE__ */ W(H, { children: [de, m] }) : null, pe = I && (e && e.length > 0 || fe != null), me = P === "lg" ? "text-[26px] font-semibold leading-8" : I ? "text-[22px] font-bold leading-7" : "text-xl font-bold leading-6", he = `${F}-${Ln().replace(/:/g, "")}`, ge = !!T && T.length > 0, _e = ge ? T.some((e) => e.id === E) ? E : T[0].id : void 0, ve = v && v.length > 0 || S != null || !!C, ye = (e) => /* @__PURE__ */ U(p, {
 		items: T.map((e) => ({
 			id: e.id,
 			label: e.label,
@@ -3014,7 +3013,7 @@ function Ma({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 								"aria-hidden": "true",
 								className: "-ml-1 shrink-0 text-text-tertiary"
 							}),
-							e && e.length > 0 && /* @__PURE__ */ U(E, {
+							e && e.length > 0 && /* @__PURE__ */ U(ee, {
 								items: e,
 								maxItems: 4,
 								lastIsCurrent: !1,
@@ -3040,7 +3039,7 @@ function Ma({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 							})
 						]
 					}),
-					!I && e && e.length > 0 && !m && /* @__PURE__ */ U(E, {
+					!I && e && e.length > 0 && !m && /* @__PURE__ */ U(ee, {
 						items: e,
 						maxItems: 4,
 						size: "sm",
@@ -3050,7 +3049,7 @@ function Ma({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 					!I && m && /* @__PURE__ */ W("div", {
 						className: "flex min-w-0 items-center gap-2 text-xs [@media(max-height:640px)]:hidden",
 						"data-testid": `${F}-crumbs-row`,
-						children: [e && e.length > 0 && /* @__PURE__ */ U(E, {
+						children: [e && e.length > 0 && /* @__PURE__ */ U(ee, {
 							items: e,
 							maxItems: 4,
 							size: "sm",
@@ -3109,7 +3108,7 @@ function Ma({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 											f && f.length > 0 && /* @__PURE__ */ U("span", {
 												className: "flex min-w-0 flex-1 items-center border-l border-border pl-3",
 												"data-testid": `${F}-path`,
-												children: /* @__PURE__ */ U(E, {
+												children: /* @__PURE__ */ U(ee, {
 													items: f,
 													maxItems: 4,
 													lastIsCurrent: !1,
@@ -3129,7 +3128,7 @@ function Ma({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 										className: "flex min-w-0 flex-wrap items-center gap-2 text-[13px] text-text-tertiary [@media(max-height:640px)]:max-w-[50%] [@media(max-height:640px)]:flex-nowrap",
 										"data-testid": `${F}-byline`,
 										children: [
-											v && v.length > 0 && /* @__PURE__ */ U(ee, {
+											v && v.length > 0 && /* @__PURE__ */ U(te, {
 												users: v,
 												size: 22,
 												maxVisible: 4,
@@ -3180,10 +3179,10 @@ function Ma({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 					})
 				]
 			}),
-			D && /* @__PURE__ */ U("div", {
+			re && /* @__PURE__ */ U("div", {
 				className: "flex min-w-0 items-center gap-1 border-b border-border px-[var(--dock-inset,1rem)] py-1.5",
 				"data-testid": `${F}-toolbar`,
-				children: D
+				children: re
 			}),
 			/* @__PURE__ */ W("div", {
 				className: n("relative flex min-h-0 flex-1 flex-col", ae === "workspace" ? "bg-workspace" : "bg-surface"),
@@ -3197,7 +3196,7 @@ function Ma({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 						} : {},
 						className: n("flex-1 overflow-auto", k != null || O != null ? "min-h-28" : "min-h-0"),
 						"data-testid": `${F}-scroller`,
-						children: re
+						children: D
 					}),
 					k != null && /* @__PURE__ */ U("div", {
 						className: "relative z-20 max-h-[40%] min-h-16 shrink overflow-auto px-[var(--dock-inset,1rem)] pb-1 pt-2",
@@ -3452,7 +3451,7 @@ function za({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1,
 				children: "Esc to go back"
 			}) : /* @__PURE__ */ W("label", {
 				className: "inline-flex shrink-0 cursor-pointer items-center gap-1.5 text-text-primary",
-				children: [/* @__PURE__ */ U(re, {
+				children: [/* @__PURE__ */ U(D, {
 					checked: i,
 					onChange: (e) => a?.(e),
 					"data-testid": `${l}-resolve`

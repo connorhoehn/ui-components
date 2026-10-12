@@ -3,6 +3,8 @@
 // Icon-only button with proper aria-label for accessibility.
 
 import { type ButtonHTMLAttributes, type ReactNode, type Ref } from 'react';
+import { useDensity } from '../shared/Density';
+import { CONTROL_HEIGHT, CONTROL_SQUARE } from '../shared/controlMetrics';
 import { cn } from '../../lib/cn';
 import type { SurfaceTone } from '../shared/tones';
 
@@ -48,9 +50,9 @@ const TONE: Record<IconButtonTone, Record<IconButtonVariant, string>> = {
 };
 
 const sizeClasses: Record<'sm' | 'md' | 'lg', string> = {
-  sm: 'w-6 h-6 text-sm',
-  md: 'w-8 h-8 text-base',
-  lg: 'w-10 h-10 text-lg',
+  sm: `${CONTROL_HEIGHT.sm} ${CONTROL_SQUARE.sm} shrink-0 text-sm [&_svg]:size-4`,
+  md: `${CONTROL_HEIGHT.md} ${CONTROL_SQUARE.md} shrink-0 text-sm [&_svg]:size-4`,
+  lg: `${CONTROL_HEIGHT.lg} ${CONTROL_SQUARE.lg} shrink-0 text-sm [&_svg]:size-4`,
 };
 
 export function IconButton({
@@ -60,10 +62,12 @@ export function IconButton({
   disabled = false,
   variant = 'ghost',
   tone = 'surface',
-  size = 'md',
+  size: requestedSize,
   className,
   ...rest
 }: IconButtonProps) {
+  const density = useDensity();
+  const size = requestedSize ?? (density === 'compact' ? 'sm' : 'md');
   return (
     <button
       type="button"

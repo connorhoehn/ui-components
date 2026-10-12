@@ -102,16 +102,16 @@ export function ChatSidePanelFrame({
       data-uic-popover-boundary=""
       className={cn('flex h-full min-h-0 flex-col border-l border-border bg-surface', className)}
     >
-      <header className={cn('flex shrink-0 items-center justify-between gap-2 border-b border-border', sm ? 'px-4 py-2' : 'px-3 py-1.5')}>
-        <Inline gap="sm" align="center" wrap={false} className="min-w-0">
-          <span className="flex min-w-0 flex-col">
+      <header className={cn('flex shrink-0 items-center justify-between gap-2 border-b border-border', sm ? 'px-[var(--ui-content-gutter,1rem)] py-1.5' : 'px-3 py-1.5')}>
+        <Inline gap="sm" align="center" wrap={false} className="min-w-0 flex-1">
+          <span className="flex min-w-0 flex-1 flex-col">
             <span className={cn('truncate font-semibold', sm ? 'text-sm leading-5 text-text-primary' : 'text-[12px] text-text-secondary')} data-testid={`${testId}-title`}>{title}</span>
             {subtitle && <span className={cn('truncate', sm ? 'text-xs leading-4 text-text-secondary' : 'text-[11px] text-text-tertiary')} data-testid={`${testId}-subtitle`}>{subtitle}</span>}
           </span>
           <Inline gap="xs" align="center" wrap={false} className="shrink-0">
             {onToggleExpanded && (
               <Tooltip content={expanded ? 'Show chat' : 'Expand board'} placement="bottom">
-                <IconButton size="md" aria-label={expanded ? 'Show chat' : 'Expand board'} aria-pressed={expanded} onClick={onToggleExpanded} data-testid={`${testId}-expand`}>
+                <IconButton aria-label={expanded ? 'Show chat' : 'Expand board'} aria-pressed={expanded} onClick={onToggleExpanded} data-testid={`${testId}-expand`}>
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     {expanded ? <><rect x="2" y="2.5" width="12" height="11" rx="1.5" /><path d="M6 2.5v11" /></> : <path d="M6 2H2v4M10 2h4v4M14 10v4h-4M6 14H2v-4" />}
                   </svg>
@@ -120,7 +120,7 @@ export function ChatSidePanelFrame({
             )}
             {onOpenFullPage && (
               <Tooltip content="Open full page" placement="bottom">
-                <IconButton size="md" aria-label="Open full page" onClick={onOpenFullPage} data-testid={`${testId}-open-full`}>
+                <IconButton aria-label="Open full page" onClick={onOpenFullPage} data-testid={`${testId}-open-full`}>
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M9 2h5v5M14 2 7 9M6 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-3" />
                   </svg>
@@ -131,7 +131,7 @@ export function ChatSidePanelFrame({
           </Inline>
         </Inline>
         <Tooltip content={closeLabel} placement="bottom">
-          <IconButton size="md" aria-label={closeLabel} onClick={onClose} data-testid={`${testId}-close`} className="shrink-0"><CloseIcon /></IconButton>
+          <IconButton aria-label={closeLabel} onClick={onClose} data-testid={`${testId}-close`} className="shrink-0"><CloseIcon /></IconButton>
         </Tooltip>
       </header>
       <div className="min-h-0 flex-1 overflow-auto">{children}</div>

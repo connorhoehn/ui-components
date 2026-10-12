@@ -508,7 +508,7 @@ export declare interface BreadcrumbsProps {
 /** Three dotted lines: "bulleted list". Since 2.386.5. */
 export declare function BulletListIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function Button({ variant, size, tone, disabled, fullWidth, children, type, className, ref, ...rest }: ButtonProps): JSX.Element;
+export declare function Button({ variant, size: requestedSize, tone, disabled, fullWidth, children, type, className, ref, ...rest }: ButtonProps): JSX.Element;
 
 /**
  * The one weight every button-like control in the library renders at —
@@ -1115,6 +1115,55 @@ export declare interface CollapsibleSectionProps {
     'data-testid'?: string;
 }
 
+export declare interface CollectionAction {
+    id: string;
+    label: string;
+    icon: ReactNode;
+    onClick: () => void;
+    disabled?: boolean;
+    'data-testid'?: string;
+}
+
+export declare interface CollectionFilter {
+    id: string;
+    label: string;
+    value: string;
+    options: SelectOption[];
+    onChange: (value: string) => void;
+    /** Value meaning no restriction. Defaults to the empty string. */
+    emptyValue?: string;
+}
+
+/** Collection layout policy belongs here. A page supplies content and state;
+ * it does not reproduce Stack/PageHeader/Toolbar spacing at each route. */
+export declare function CollectionPage({ title, description, headerActions, toolbar, back, children, className, ...rest }: CollectionPageProps): JSX.Element;
+
+export declare interface CollectionPageProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'children'> {
+    title: string;
+    description?: string;
+    headerActions?: ReactNode;
+    toolbar?: CollectionToolbarProps;
+    children: ReactNode;
+    back?: PageHeaderProps['back'];
+}
+
+/** One collection control row: filters, count, notices and named icon actions.
+ * Hosts supply state and commands, never control geometry or presentation. */
+export declare function CollectionToolbar({ label, search, filters, summary, notices, actions, onRefresh, refreshing, children }: CollectionToolbarProps): JSX.Element;
+
+export declare interface CollectionToolbarProps {
+    label: string;
+    search?: Pick<SearchInputProps, 'value' | 'onChange' | 'placeholder' | 'aria-label' | 'data-testid'>;
+    filters?: CollectionFilter[];
+    summary?: ReactNode;
+    /** Explanations belong behind an info control, never in the filter row. */
+    notices?: ReactNode[];
+    actions?: CollectionAction[];
+    onRefresh?: () => void;
+    refreshing?: boolean;
+    children?: ReactNode;
+}
+
 export declare function Combobox(props: ComboboxProps): JSX.Element;
 
 export declare interface ComboboxOption {
@@ -1232,6 +1281,12 @@ export declare interface ComposerSuggestion {
     meta?: ReactNode;
     context?: string;
 }
+
+/** The full-width composer shelf. Owns backdrop, insets and readable width.
+ * Nested composers reuse their containing shelf rather than painting twice. */
+export declare function ComposerSurface({ children, className, compact, ...rest }: HTMLAttributes<HTMLDivElement> & {
+    compact?: boolean;
+}): JSX.Element;
 
 export declare function ConfirmDialog({ open, onConfirm, onCancel, title, body, confirmLabel, cancelLabel, confirmDisabled, tone, children, }: ConfirmDialogProps): JSX.Element;
 
@@ -2358,7 +2413,7 @@ export declare interface FilterChipProps {
 /** A funnel: "filter this list". Since 2.385.0. */
 export declare function FilterIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function FilterPopover({ children, label, activeCount, onClear, clearLabel, open: controlledOpen, onOpenChange, placement, size, trigger, panelLabel, className, panelClassName, icon, 'data-testid': testId, }: FilterPopoverProps): JSX.Element;
+export declare function FilterPopover({ children, label, activeCount, onClear, clearLabel, open: controlledOpen, onOpenChange, placement, size: requestedSize, trigger, panelLabel, className, panelClassName, icon, 'data-testid': testId, }: FilterPopoverProps): JSX.Element;
 
 export declare interface FilterPopoverProps {
     /** The filter controls. */
@@ -2947,7 +3002,7 @@ export declare interface HoverCardTriggerProps {
 
 export declare type HoverCardWidth = 'sm' | 'md' | 'lg' | 'xl';
 
-export declare function IconButton({ 'aria-label': ariaLabel, icon, children, disabled, variant, tone, size, className, ...rest }: IconButtonProps): JSX.Element;
+export declare function IconButton({ 'aria-label': ariaLabel, icon, children, disabled, variant, tone, size: requestedSize, className, ...rest }: IconButtonProps): JSX.Element;
 
 export declare interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
     'aria-label': string;
@@ -6394,7 +6449,7 @@ export declare const TONES: readonly ["neutral", "success", "warning", "danger",
  */
 export declare function toneVar(tone: ToneOrAlias): string;
 
-export declare function Toolbar({ children, end, tone, size, sticky, bordered, wrap, className, 'aria-label': ariaLabel, 'data-testid': testId, }: ToolbarProps): JSX.Element;
+export declare function Toolbar({ children, end, tone, variant, size, sticky, bordered, wrap, className, 'aria-label': ariaLabel, 'data-testid': testId, }: ToolbarProps): JSX.Element;
 
 export declare function ToolbarGroup({ children, divided, tone, className, 'aria-label': ariaLabel, }: ToolbarGroupProps): JSX.Element;
 
@@ -6427,6 +6482,8 @@ export declare interface ToolbarProps {
     /** Right-aligned content — the low-frequency verbs (refresh, overflow ⋯). */
     end?: ReactNode;
     tone?: ToolbarTone;
+    /** Collection rows sit on the page surface with the same inset as table cells. */
+    variant?: 'surface' | 'collection';
     /** `sm` (default) is the shell scale; `md` is for a toolbar that owns a pane. */
     size?: 'sm' | 'md';
     /**

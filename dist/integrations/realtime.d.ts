@@ -1460,6 +1460,8 @@ declare interface ChatPanelProps {
     /** In a filling panel with a custom composer, let its backdrop meet the
      *  parent edges while message history keeps a 16px reading gutter. */
     flushComposer?: boolean;
+    /** Discussion logs start at the top; live conversations rest against their input. */
+    contentAlign?: 'start' | 'end';
     /** Called when the reader asks for older messages. When present (and
      *  `hasMore` is not false) a "Load earlier messages" button renders
      *  above the first message. The panel preserves the reader's scroll
@@ -3812,7 +3814,7 @@ export declare interface WrappedCanvasDocumentProps extends Omit<CanvasDocumentV
     beforeConvert?: () => void | Promise<void>;
 }
 
-export declare function WrappedChatPanel({ chat, localMessages, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, flushComposer, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, renderMessageReferences, emojis, onReply, reply, onCancelReply, readReceipts, readReceiptsEnabled, unreadFrom, threaded, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, editable, canEdit, canDelete, onForwardMessage, }: WrappedChatPanelProps): JSX.Element;
+export declare function WrappedChatPanel({ chat, localMessages, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, flushComposer, contentAlign, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, renderMessageReferences, emojis, onReply, reply, onCancelReply, readReceipts, readReceiptsEnabled, unreadFrom, threaded, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, editable, canEdit, canDelete, onForwardMessage, }: WrappedChatPanelProps): JSX.Element;
 
 export declare interface WrappedChatPanelProps {
     /** Return value of useChat(channel) from realtime-modules */
@@ -3905,6 +3907,7 @@ export declare interface WrappedChatPanelProps {
     fill?: boolean;
     /** Forwarded to ChatPanel — full-width custom composer in a filling pane. */
     flushComposer?: boolean;
+    contentAlign?: 'start' | 'end';
     /** Forwarded to ChatPanel — suppress its own "Chat (n)" heading when the
      *  host already names the region. */
     showHeader?: boolean;

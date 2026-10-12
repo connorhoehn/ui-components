@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.440.2
+
+- Add CollectionPage and CollectionToolbar: one layout for list headers, filter panels, summaries, advisory popovers, refresh and named icon actions. DataTable search uses the same toolbar.
+- Buttons, icon buttons, inputs and selects inherit the shared density. Control heights, table insets/row height, page gutters and composer gutters read shared CSS metrics; filter/menu triggers follow the same scale.
+- Add ComposerSurface with one full-width themed particle backdrop, shared readable width and nested-surface suppression. ChatPanel exposes contentAlign through the realtime wrapper; panel headers own their spacing and controls.
+
 ## 2.440.1
 
 - Keep back navigation available in compact and collapsed page headers, with a labeled icon and tooltip.

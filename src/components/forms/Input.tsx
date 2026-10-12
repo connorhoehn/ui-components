@@ -5,6 +5,8 @@
 // for units, search icons, etc.
 
 import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react';
+import { useDensity } from '../shared/Density';
+import { CONTROL_HEIGHT } from '../shared/controlMetrics';
 import { cn } from '../../lib/cn';
 
 export type InputSize = 'sm' | 'md';
@@ -27,8 +29,8 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
 }
 
 const sizeClasses: Record<InputSize, string> = {
-  sm: 'h-7 px-2 text-[12px]',
-  md: 'h-9 px-2.5 text-[13px]',
+  sm: `${CONTROL_HEIGHT.sm} px-2 text-xs`,
+  md: `${CONTROL_HEIGHT.md} px-2.5 text-sm`,
 };
 
 const slotSizeClasses: Record<InputSize, string> = {
@@ -39,7 +41,7 @@ const slotSizeClasses: Record<InputSize, string> = {
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   {
     type = 'text',
-    size = 'md',
+    size: requestedSize,
     prefix,
     suffix,
     invalid = false,
@@ -52,6 +54,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   },
   ref,
 ) {
+  const density = useDensity();
+  const size = requestedSize ?? (density === 'compact' ? 'sm' : 'md');
   const hasPrefix = prefix != null;
   const hasSuffix = suffix != null;
   // `invalid` used to be styling only — a red border and nothing in the
@@ -118,9 +122,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           'flex-1 min-w-0 bg-transparent font-inherit text-text-primary outline-none',
           'placeholder:text-text-tertiary',
           'disabled:cursor-not-allowed',
-          hasPrefix ? 'pl-0' : sizeClasses[size].split(' ')[1],
-          hasSuffix ? 'pr-0' : sizeClasses[size].split(' ')[2],
-          size === 'sm' ? 'h-7 text-[12px]' : 'h-9 text-[13px]',
+          hasPrefix ? 'pl-0' : size === 'sm' ? 'pl-2' : 'pl-2.5',
+          hasSuffix ? 'pr-0' : size === 'sm' ? 'pr-2' : 'pr-2.5',
+          size === 'sm' ? `${CONTROL_HEIGHT.sm} text-xs` : `${CONTROL_HEIGHT.md} text-sm`,
           mono && 'font-mono',
           className,
         )}

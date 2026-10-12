@@ -1,0 +1,49 @@
+import { useState } from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { CollectionToolbar } from '../CollectionToolbar';
+import { ComposerSurface } from '../ComposerSurface';
+import { DensityProvider } from '../Density';
+import { Button } from '../../ui/Button';
+import { IconButton } from '../../ui/IconButton';
+import { Input } from '../../forms/Input';
+import { Select } from '../../forms/Select';
+
+function Filtered() {
+  const [status, setStatus] = useState('');
+  return <DensityProvider density="compact"><CollectionToolbar label="Run filters" filters={[{ id: 'status', label: 'Status', value: status, onChange: setStatus, options: [{ value: '', label: 'Any status' }, { value: 'running', label: 'Running' }] }]} summary="193 runs" notices={['196 traces have no run id.']} /></DensityProvider>;
+}
+describe('collection design inheritance', () => {
+  it('keeps filters and advisory text out of the resting row, and exposes state and clear in the panel', () => {
+    render(<Filtered />);
+    expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
+    expect(screen.queryByText('196 traces have no run id.')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Filters' }));
+    fireEvent.change(screen.getByRole('combobox', { name: 'Status' }), { target: { value: 'running' } });
+    expect(screen.getByRole('button', { name: 'Filters (1 active)' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Clear filters' }));
+    expect(screen.getByRole('combobox')).toHaveValue('');
+    fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Escape' });
+    fireEvent.click(screen.getByRole('button', { name: 'About these results' }));
+    expect(screen.getByText('196 traces have no run id.')).toBeVisible();
+  });
+  it('executes named actions and disables refresh during loading', () => {
+    const run = vi.fn();
+    render(<CollectionToolbar label="Records" onRefresh={run} refreshing actions={[{ id: 'open', label: 'Open graph', icon: 'G', onClick: run }]} />);
+    expect(screen.getByRole('button', { name: 'Refresh' })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Open graph' }));
+    expect(run).toHaveBeenCalledOnce();
+  });
+  it('inherits the compact control scale without page-level size props', () => {
+    render(<DensityProvider density="compact"><Button>Save</Button><IconButton aria-label="Refresh" /><Input aria-label="Name" prefix="$" /><Select aria-label="Kind" options={[]} /></DensityProvider>);
+    expect(screen.getByRole('button', { name: 'Save' })).toHaveAttribute('data-size', 'sm');
+    expect(screen.getByRole('button', { name: 'Refresh' })).toHaveAttribute('data-size', 'sm');
+    expect(screen.getByRole('textbox')).toHaveClass('h-[var(--ui-control-sm,1.75rem)]');
+    expect(screen.getByRole('combobox')).toHaveClass('h-[var(--ui-control-sm,1.75rem)]');
+  });
+  it('paints one full-width composer surface even when both the layout and bound composer request it', () => {
+    const { container } = render(<ComposerSurface><ComposerSurface><textarea aria-label="Message" /></ComposerSurface></ComposerSurface>);
+    expect(container.querySelectorAll('[data-composer-surface]')).toHaveLength(1);
+    expect(screen.getByRole('textbox')).toBeInTheDocument();
+  });
+});

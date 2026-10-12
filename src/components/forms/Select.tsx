@@ -4,6 +4,8 @@
 // Tailwind class strings in node config panels (LLMConfig, ForkConfig, etc.).
 
 import { forwardRef, type SelectHTMLAttributes } from 'react';
+import { useDensity } from '../shared/Density';
+import { CONTROL_HEIGHT } from '../shared/controlMetrics';
 import { cn } from '../../lib/cn';
 import {
   TONE_BG,
@@ -80,8 +82,8 @@ export interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement
 }
 
 const sizeClasses: Record<SelectSize, string> = {
-  sm: 'h-7 px-2 text-[12px]',
-  md: 'h-9 px-2.5 text-[13px]',
+  sm: `${CONTROL_HEIGHT.sm} px-2 text-xs`,
+  md: `${CONTROL_HEIGHT.md} px-2.5 text-sm`,
 };
 
 // Right padding leaves room for the chevron, which is absolutely positioned
@@ -102,7 +104,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
     options,
     groups,
     placeholder,
-    size = 'md',
+    size: requestedSize,
     variant = 'default',
     tone = 'neutral',
     invalid = false,
@@ -117,6 +119,8 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
   },
   ref,
 ) {
+  const density = useDensity();
+  const size = requestedSize ?? (density === 'compact' ? 'sm' : 'md');
   // Same gap as Input: `invalid` painted a red border but never reached the
   // accessibility tree. An explicit caller-supplied value still wins.
   const ariaInvalid = ariaInvalidProp ?? (invalid || undefined);

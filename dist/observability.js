@@ -2,15 +2,15 @@ import { t as e } from "./apiBaseUrl-DLrXlmVj.js";
 import { r as t } from "./IdentityContext-CQM1qwH6.js";
 import { t as n } from "./cn-D4QmbyEy.js";
 import { t as r } from "./Card-CbTNNNkk.js";
-import { t as i } from "./Chip-D2jKHd4a.js";
+import { t as i } from "./Chip-C_-AY6W4.js";
 import { n as a, r as o, t as s } from "./Chart-kepXlehS.js";
 import { t as c } from "./Modal-CjgKqXl7.js";
-import { t as l } from "./Input-CpLq80dw.js";
-import { t as u } from "./EmptyState-ClSHRgi-.js";
-import { n as d, t as f } from "./Sparkline-BIYPNDRu.js";
-import { t as p } from "./StatusDot-ClFcLvD7.js";
-import { t as m } from "./CardHeader-C50GEAmo.js";
-import { t as h } from "./Select-C6OGjVyH.js";
+import { t as l } from "./Input-DKVe8Hp7.js";
+import { t as u } from "./Select-DbhTbkTN.js";
+import { t as d } from "./EmptyState-DJ3e4WMf.js";
+import { n as f, t as p } from "./Sparkline-BIYPNDRu.js";
+import { t as m } from "./StatusDot-ClFcLvD7.js";
+import { t as h } from "./CardHeader-C50GEAmo.js";
 import { t as g } from "./Checkbox-C70AGFS5.js";
 import { t as _ } from "./activationKey-CjbL3LUv.js";
 import { n as v } from "./EventStreamContext-CLzG8O5_.js";
@@ -159,7 +159,7 @@ function I({ title: e, value: t, delta: r, sparklineData: i, onClick: a }) {
 				children: [/* @__PURE__ */ O("div", {
 					className: "text-[28px] font-bold text-text-primary leading-[1.1]",
 					children: oe(t)
-				}), i && i.length > 0 && /* @__PURE__ */ O(f, {
+				}), i && i.length > 0 && /* @__PURE__ */ O(p, {
 					data: i,
 					width: 80,
 					height: 20,
@@ -294,7 +294,7 @@ function le({ node: e, selected: t, onClick: r, onKill: i }) {
 			}),
 			/* @__PURE__ */ O("div", {
 				className: "mt-auto",
-				children: /* @__PURE__ */ O(f, {
+				children: /* @__PURE__ */ O(p, {
 					data: e.cpuHistory,
 					width: 176,
 					height: 18,
@@ -606,7 +606,7 @@ function Ce({ events: e, onViewAll: t }) {
 			children: "No recent events"
 		}) : /* @__PURE__ */ O("div", {
 			className: "flex flex-col gap-0.5",
-			children: e.slice(0, 20).map((e) => /* @__PURE__ */ O(d, {
+			children: e.slice(0, 20).map((e) => /* @__PURE__ */ O(f, {
 				timestamp: e.timestamp,
 				type: e.type,
 				summary: e.summary,
@@ -834,27 +834,27 @@ var U = [
 		label: "60s"
 	}
 ];
-function W({ seeds: e, liveSeries: t, cols: r, isLiveData: i, failedColor: c, onResetZoom: l, onExportCsv: u, timeRange: d, onTimeRangeChange: f, refreshInterval: p, onRefreshIntervalChange: m }) {
-	let g = d !== void 0 && f !== void 0, _ = p !== void 0 && m !== void 0, v = g ? U.find((e) => e.value === d)?.label ?? "" : void 0, y = (e) => e == null;
+function W({ seeds: e, liveSeries: t, cols: r, isLiveData: i, failedColor: c, onResetZoom: l, onExportCsv: d, timeRange: f, onTimeRangeChange: p, refreshInterval: m, onRefreshIntervalChange: h }) {
+	let g = f !== void 0 && p !== void 0, _ = m !== void 0 && h !== void 0, v = g ? U.find((e) => e.value === f)?.label ?? "" : void 0, y = (e) => e == null;
 	return /* @__PURE__ */ k(D, { children: [/* @__PURE__ */ k("div", {
 		className: "flex items-center gap-3 px-4 py-2.5 border-b border-border bg-surface-panel",
 		children: [
-			g && /* @__PURE__ */ O(h, {
+			g && /* @__PURE__ */ O(u, {
 				"data-testid": "metrics-time-range",
 				"aria-label": "Time range",
-				value: d,
-				onChange: (e) => f(e.target.value),
+				value: f,
+				onChange: (e) => p(e.target.value),
 				className: "w-auto min-w-[120px]",
 				options: U.map((e) => ({
 					value: e.value,
 					label: e.label
 				}))
 			}),
-			_ && /* @__PURE__ */ O(h, {
+			_ && /* @__PURE__ */ O(u, {
 				"data-testid": "metrics-refresh-interval",
 				"aria-label": "Refresh interval",
-				value: p,
-				onChange: (e) => m(e.target.value),
+				value: m,
+				onChange: (e) => h(e.target.value),
 				className: "w-auto min-w-[100px]",
 				options: ke.map((e) => ({
 					value: e.value,
@@ -867,9 +867,9 @@ function W({ seeds: e, liveSeries: t, cols: r, isLiveData: i, failedColor: c, on
 				className: "px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0",
 				children: "Reset zoom"
 			}),
-			u && /* @__PURE__ */ O("button", {
+			d && /* @__PURE__ */ O("button", {
 				"data-testid": "metrics-export-csv",
-				onClick: u,
+				onClick: d,
 				className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-on-primary border-none rounded-md cursor-pointer font-[inherit] shrink-0",
 				children: "Export CSV"
 			}),
@@ -1246,7 +1246,7 @@ function Fe({ events: e, selectedId: t, onSelect: r, live: i = !1 }) {
 		o
 	]), e.length === 0 ? /* @__PURE__ */ O("div", {
 		className: "flex-1 flex",
-		children: /* @__PURE__ */ O(u, {
+		children: /* @__PURE__ */ O(d, {
 			icon: "📡",
 			title: "No events yet",
 			body: "Trigger a pipeline to see activity here."
@@ -1263,7 +1263,7 @@ function Fe({ events: e, selectedId: t, onSelect: r, live: i = !1 }) {
 				s(!t);
 			},
 			className: "flex-1 overflow-y-auto py-1.5 font-[inherit]",
-			children: e.map((e) => /* @__PURE__ */ O(d, {
+			children: e.map((e) => /* @__PURE__ */ O(f, {
 				timestamp: e.timestamp,
 				type: e.type,
 				summary: e.summary,
@@ -1406,14 +1406,14 @@ var Ke = {
 	timeRange: "1h"
 };
 function qe() {
-	let [e, t] = E([]), [r, i] = E(null), [a, o] = E(!1), [s, c] = E(Ke), [u, d] = E(!1), f = C(), p = T(a);
-	p.current = a;
-	let m = T(0), _ = x((e) => {
-		if (p.current) return;
+	let [e, t] = E([]), [r, i] = E(null), [a, o] = E(!1), [s, c] = E(Ke), [d, f] = E(!1), p = C(), m = T(a);
+	m.current = a;
+	let h = T(0), _ = x((e) => {
+		if (m.current) return;
 		let n = e, r = n?.eventType ?? "unknown", i = n?.payload ?? n;
-		m.current += 1;
+		h.current += 1;
 		let a = Date.now(), o = {
-			id: `ev-${a}-${m.current}`,
+			id: `ev-${a}-${h.current}`,
 			timestamp: Ge(new Date(a)),
 			receivedAt: a,
 			type: r,
@@ -1484,7 +1484,7 @@ function qe() {
 					className: n("px-3 py-[5px] text-xs font-semibold rounded-md cursor-pointer font-[inherit]", a ? "bg-surface-hover text-text-secondary border border-border" : "bg-state-completed text-white border border-state-completed"),
 					children: a ? "■ Paused" : "● Live"
 				}),
-				/* @__PURE__ */ O(h, {
+				/* @__PURE__ */ O(u, {
 					"data-testid": "events-time-range",
 					"aria-label": "Time range",
 					value: s.timeRange,
@@ -1514,25 +1514,25 @@ function qe() {
 			children: [
 				/* @__PURE__ */ k("aside", {
 					"data-testid": "events-filter-rail",
-					className: n("shrink-0 border-r border-border bg-surface-panel overflow-y-auto transition-[width] duration-150 ease-in-out", u ? "w-9" : "w-60"),
+					className: n("shrink-0 border-r border-border bg-surface-panel overflow-y-auto transition-[width] duration-150 ease-in-out", d ? "w-9" : "w-60"),
 					children: [/* @__PURE__ */ k("div", {
 						className: "flex items-center justify-between px-3.5 py-2.5 border-b border-border",
-						children: [!u && /* @__PURE__ */ O("div", {
+						children: [!d && /* @__PURE__ */ O("div", {
 							className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary",
 							children: "FILTERS"
 						}), /* @__PURE__ */ O("button", {
-							onClick: () => d((e) => !e),
-							"aria-label": u ? "Expand filters" : "Collapse filters",
+							onClick: () => f((e) => !e),
+							"aria-label": d ? "Expand filters" : "Collapse filters",
 							className: "border-none bg-transparent text-text-tertiary cursor-pointer text-xs p-0.5 font-[inherit]",
-							children: u ? "›" : "‹"
+							children: d ? "›" : "‹"
 						})]
-					}), !u && /* @__PURE__ */ k(D, { children: [
+					}), !d && /* @__PURE__ */ k(D, { children: [
 						/* @__PURE__ */ k("div", {
 							role: "group",
-							"aria-labelledby": `${f}-event-type`,
+							"aria-labelledby": `${p}-event-type`,
 							className: "flex flex-col gap-1.5 px-3.5 py-3 border-b border-border",
 							children: [/* @__PURE__ */ O("div", {
-								id: `${f}-event-type`,
+								id: `${p}-event-type`,
 								className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase",
 								children: "Event type"
 							}), Re.map((e) => /* @__PURE__ */ k("label", {
@@ -1546,11 +1546,11 @@ function qe() {
 						/* @__PURE__ */ k("div", {
 							className: "flex flex-col gap-1.5 px-3.5 py-3 border-b border-border",
 							children: [/* @__PURE__ */ O("label", {
-								htmlFor: `${f}-runs`,
+								htmlFor: `${p}-runs`,
 								className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase",
 								children: "Runs"
 							}), /* @__PURE__ */ O(l, {
-								id: `${f}-runs`,
+								id: `${p}-runs`,
 								"data-testid": "events-filter-runs",
 								placeholder: "runId (comma-separated)",
 								value: s.runIds,
@@ -1564,11 +1564,11 @@ function qe() {
 						/* @__PURE__ */ k("div", {
 							className: "flex flex-col gap-1.5 px-3.5 py-3 border-b border-border",
 							children: [/* @__PURE__ */ O("label", {
-								htmlFor: `${f}-pipelines`,
+								htmlFor: `${p}-pipelines`,
 								className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase",
 								children: "Pipelines"
 							}), /* @__PURE__ */ O(l, {
-								id: `${f}-pipelines`,
+								id: `${p}-pipelines`,
 								"data-testid": "events-filter-pipelines",
 								placeholder: "pipelineId (comma-separated)",
 								value: s.pipelineIds,
@@ -1581,10 +1581,10 @@ function qe() {
 						}),
 						/* @__PURE__ */ k("div", {
 							role: "group",
-							"aria-labelledby": `${f}-nodes`,
+							"aria-labelledby": `${p}-nodes`,
 							className: "flex flex-col gap-1.5 px-3.5 py-3 border-b border-border",
 							children: [/* @__PURE__ */ O("div", {
-								id: `${f}-nodes`,
+								id: `${p}-nodes`,
 								className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase",
 								children: "Nodes"
 							}), Y.map((e) => /* @__PURE__ */ k("label", {
@@ -1597,10 +1597,10 @@ function qe() {
 						}),
 						/* @__PURE__ */ k("div", {
 							role: "group",
-							"aria-labelledby": `${f}-severity`,
+							"aria-labelledby": `${p}-severity`,
 							className: "flex flex-col gap-1.5 px-3.5 py-3 border-b border-border",
 							children: [/* @__PURE__ */ O("div", {
-								id: `${f}-severity`,
+								id: `${p}-severity`,
 								className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase",
 								children: "Severity"
 							}), Ve.map((e) => /* @__PURE__ */ k("label", {
@@ -2100,7 +2100,7 @@ function at({ title: e, data: t, series: r, yLabel: i, sparkWidth: a = 180, spar
 					className: "text-[11px] text-text-secondary w-20 shrink-0 overflow-hidden text-ellipsis whitespace-nowrap",
 					title: e.label,
 					children: e.label
-				}), /* @__PURE__ */ O(f, {
+				}), /* @__PURE__ */ O(p, {
 					data: e.data,
 					width: a,
 					height: o,
@@ -2135,7 +2135,7 @@ function lt({ severity: e, title: t, description: r, timestamp: a, resolved: o =
 		children: [/* @__PURE__ */ k("div", {
 			className: "flex items-center gap-1.5",
 			children: [
-				/* @__PURE__ */ O(p, {
+				/* @__PURE__ */ O(m, {
 					size: "xs",
 					color: o ? "var(--color-text-tertiary)" : ot[e],
 					"aria-label": o ? "Resolved" : e
@@ -2187,7 +2187,7 @@ function ft({ items: e, title: t = "Alerts", headerSlot: a, loading: o = !1, emp
 		style: u,
 		children: [/* @__PURE__ */ O("div", {
 			className: "px-4 py-3 border-b border-[var(--color-border)]",
-			children: /* @__PURE__ */ O(m, {
+			children: /* @__PURE__ */ O(h, {
 				title: t,
 				meta: a ?? p
 			})
@@ -2228,7 +2228,7 @@ function ht({ status: e, label: t, reason: r, dense: i = !1, className: a, style
 		style: o,
 		children: [/* @__PURE__ */ k("div", {
 			className: "flex items-center gap-1.5",
-			children: [/* @__PURE__ */ O(p, {
+			children: [/* @__PURE__ */ O(m, {
 				size: "xs",
 				color: pt[e],
 				"aria-label": e
@@ -2274,7 +2274,7 @@ function vt({ items: e, columns: t = 3, dense: i = !1, title: a, headerSlot: o, 
 		style: l,
 		children: [/* @__PURE__ */ O("div", {
 			className: "px-4 py-3 border-b border-[var(--color-border)]",
-			children: /* @__PURE__ */ O(m, {
+			children: /* @__PURE__ */ O(h, {
 				title: a,
 				meta: o
 			})

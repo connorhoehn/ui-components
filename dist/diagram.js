@@ -1,20 +1,20 @@
 import { n as e, t } from "./useWebSocket-CGc0yRhM.js";
 import { t as n } from "./cn-D4QmbyEy.js";
-import { n as r } from "./Button-BEOshFFZ.js";
-import { t as i } from "./Chip-D2jKHd4a.js";
-import { t as a } from "./Input-CpLq80dw.js";
-import { t as o } from "./Textarea-Drx4YDDG.js";
-import { t as s } from "./Select-C6OGjVyH.js";
+import { n as r } from "./Button-DZuk8L0q.js";
+import { t as i } from "./Chip-C_-AY6W4.js";
+import { t as a } from "./Input-DKVe8Hp7.js";
+import { t as o } from "./Select-DbhTbkTN.js";
+import { t as s } from "./Textarea-Drx4YDDG.js";
 import { t as c } from "./Checkbox-C70AGFS5.js";
 import { t as l } from "./formatBytes-05ivRSJY.js";
-import { n as u, t as d } from "./useResolvedTheme-DCc1JSlJ.js";
+import { n as u, t as d } from "./useResolvedTheme-qlOTTAhy.js";
 import { Suspense as f, createElement as p, lazy as m, useCallback as h, useEffect as g, useMemo as ee, useRef as _, useState as v } from "react";
 import { Fragment as y, jsx as b, jsxs as x } from "react/jsx-runtime";
 import { Extension as S } from "@tiptap/core";
 import { NodeSelection as te, Plugin as ne, PluginKey as re, TextSelection as ie } from "@tiptap/pm/state";
 import { createRoot as ae } from "react-dom/client";
 //#region src/components/diagram/CollaborativeExcalidraw.tsx
-var oe = m(() => import("./ExcalidrawCanvas-DV07AjZW.js"));
+var oe = m(() => import("./ExcalidrawCanvas-DdGRxz6T.js"));
 function se({ label: e }) {
 	return /* @__PURE__ */ b("div", {
 		"data-testid": "diagram-loading",
@@ -662,7 +662,7 @@ function at({ item: e, editable: t, onToggle: r, testId: i }) {
 }
 function ot({ value: e, people: t, onAssign: n, testId: r }) {
 	let i = e ?? "", a = t.some((e) => e.id === i);
-	return /* @__PURE__ */ b(s, {
+	return /* @__PURE__ */ b(o, {
 		size: "sm",
 		"data-testid": `${r}-assign`,
 		"aria-label": "Assign this action item",
@@ -1265,7 +1265,7 @@ function Vt({ option: e, disabled: t, onPick: n, testId: i }) {
 }
 function Ht({ value: e, people: t, disabled: n, onAssign: r, testId: i }) {
 	let a = t.some((t) => t.id === e);
-	return /* @__PURE__ */ b(s, {
+	return /* @__PURE__ */ b(o, {
 		size: "sm",
 		"data-testid": `${i}-assign`,
 		"aria-label": "Who is being asked",
@@ -1289,12 +1289,12 @@ function Ht({ value: e, people: t, disabled: n, onAssign: r, testId: i }) {
 	});
 }
 function Ut({ onAnswer: e, busy: t, testId: n }) {
-	let [i, a] = v(""), s = i.trim().length > 0 && !t, c = () => {
-		s && (e(i.trim()), a(""));
+	let [i, a] = v(""), o = i.trim().length > 0 && !t, c = () => {
+		o && (e(i.trim()), a(""));
 	};
 	return /* @__PURE__ */ x("div", {
 		className: "flex flex-col gap-1.5",
-		children: [/* @__PURE__ */ b(o, {
+		children: [/* @__PURE__ */ b(s, {
 			"data-testid": `${n}-draft`,
 			value: i,
 			rows: 2,
@@ -1310,7 +1310,7 @@ function Ut({ onAnswer: e, busy: t, testId: n }) {
 			children: /* @__PURE__ */ b(r, {
 				size: "sm",
 				"data-testid": `${n}-send`,
-				disabled: !s,
+				disabled: !o,
 				onClick: c,
 				children: t ? "Sending…" : "Send answer"
 			})
@@ -2123,7 +2123,7 @@ var Rn = {
 	number: "not a number",
 	boolean: "not yes / no"
 };
-function Bn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, onTypeChange: o, onRemove: l, testId: u = "field-block" }) {
+function Bn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, onTypeChange: s, onRemove: l, testId: u = "field-block" }) {
 	let [d, f, p] = I(null), [m, h, g] = I(null), ee = e.value === void 0 ? "empty" : e.valid ? "set" : "invalid";
 	if (!t) {
 		let t = kn(e);
@@ -2264,7 +2264,7 @@ function Bn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, on
 				className: "rounded px-1 text-[12px] text-text-tertiary hover:text-text-primary",
 				children: "Clear"
 			}),
-			/* @__PURE__ */ b(s, {
+			/* @__PURE__ */ b(o, {
 				size: "sm",
 				"aria-label": "Field type",
 				"data-testid": `${u}-type`,
@@ -2274,7 +2274,7 @@ function Bn({ field: e, editable: t = !1, onValueChange: n, onLabelChange: r, on
 					value: e,
 					label: Rn[e]
 				})),
-				onChange: (e) => o?.(e.target.value)
+				onChange: (e) => s?.(e.target.value)
 			}),
 			/* @__PURE__ */ b("span", { className: "flex-1" }),
 			l && /* @__PURE__ */ b("button", {

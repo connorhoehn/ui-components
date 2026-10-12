@@ -91,7 +91,7 @@ export function WorkArea({
         </div>
       )}
       {toolbar}
-      <div className={cn('min-h-0 flex-1 overflow-auto', padded && 'p-6', bodyClassName)}>
+      <div className={cn('min-h-0 flex-1 overflow-auto', padded && 'p-[var(--ui-page-gutter,1.5rem)]', bodyClassName)}>
         {children}
       </div>
       {status && (

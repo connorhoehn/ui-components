@@ -310,7 +310,7 @@ function SplitInner({ children, before, after, paneTestId = 'side-pane', divider
     ? <DensityProvider density="compact"><ChatSidePanelFrame title={registration.title} {...(registration.subtitle ? { subtitle: registration.subtitle } : {})}
         closeLabel={registration.closeLabel ?? `Collapse ${registration.title.toLowerCase()}`} onClose={registration.onClose ?? host.collapse}
         actions={<Tooltip content={`Minimize ${title.toLowerCase()} to the edge`} placement="bottom">
-          <IconButton size="md" aria-label={`Minimize ${title.toLowerCase()}`} aria-expanded onClick={host.toggleFolded}
+          <IconButton aria-label={`Minimize ${title.toLowerCase()}`} aria-expanded onClick={host.toggleFolded}
             icon={<ChevronIcon dir="right" size={14} />} data-testid={`${paneTestId}-minimize`} />
         </Tooltip>}
         className="min-h-0 flex-1 border-l border-border bg-surface" data-testid={paneTestId}>
@@ -341,7 +341,7 @@ function SplitInner({ children, before, after, paneTestId = 'side-pane', divider
         <aside aria-label={`${title || 'Side pane'} (minimized)`} className="flex w-11 min-w-11 shrink-0 flex-col items-center border-l border-border bg-surface py-1.5"
           data-testid={`${paneTestId}-strip`}>
           <Tooltip content={`Restore ${title.toLowerCase() || 'the pane'}`} placement="left">
-            <IconButton size="md" variant="ghost" aria-label={`Restore ${title.toLowerCase() || 'the pane'}`} aria-expanded={false}
+            <IconButton variant="ghost" aria-label={`Restore ${title.toLowerCase() || 'the pane'}`} aria-expanded={false}
               onClick={host.toggleFolded} icon={<ChevronIcon dir="left" size={14} />} data-testid={`${paneTestId}-restore`} />
           </Tooltip>
         </aside>
@@ -383,7 +383,7 @@ export interface PaneHeaderProps {
 export function PaneHeader({ tabs, value, onValueChange, trailing, label = 'Pane sections', 'data-testid': testId = 'pane-header' }: PaneHeaderProps) {
   return (
     // pl-1 + the tab's own 12px padding aligns its label with the 16px body inset.
-    <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-2 gap-y-1 border-b border-border pl-1 pr-4" data-testid={testId}>
+    <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-3 gap-y-1 min-h-11 py-1.5 border-b border-border pl-1 pr-[var(--ui-content-gutter,1rem)]" data-testid={testId}>
       <Tabs size="md" variant="underline" indicator="bar" aria-label={label} className="min-w-0 max-w-full shrink-0 after:hidden" overflowBelow={360}
         items={[...tabs]} value={value} onValueChange={onValueChange} />
       {trailing && <div className="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-1 py-1" data-testid={`${testId}-actions`}>{trailing}</div>}

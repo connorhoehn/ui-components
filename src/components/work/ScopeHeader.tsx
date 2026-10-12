@@ -598,7 +598,7 @@ function ScopeCrumbs({
   const folded = collapsed;
   const trail = folded ? foldTitleIntoTrail(breadcrumbs, title) : breadcrumbs ?? [];
   return (
-    <div data-testid={testId} data-variant="crumbs" data-collapsed={folded ? 'true' : 'false'} className={cn('flex min-w-0 items-start gap-4 px-6 pb-1 pt-2', className)}>
+    <div data-testid={testId} data-variant="crumbs" data-collapsed={folded ? 'true' : 'false'} className={cn('flex min-w-0 items-start gap-4 px-[var(--ui-page-gutter,1.5rem)] pb-1 pt-2', className)}>
       <div className="flex h-5 min-w-0 flex-1 items-center gap-2">
         {trail.length > 0 && (
           <Breadcrumbs items={trail} separator="›" maxItems={5} className="min-w-0" data-testid={`${testId}-crumbs`} />
@@ -993,7 +993,7 @@ function ScopeHeaderInline({
       data-density={density}
       data-collapsed={folded ? 'true' : 'false'}
       {...(tabSize ? { 'data-tab-size': tabSize } : {})}
-      className={cn('flex min-w-0 flex-nowrap items-center gap-4 px-6', dense ? 'h-10' : 'h-12', className)}
+      className={cn('flex min-w-0 flex-nowrap items-center gap-4 px-[var(--ui-page-gutter,1.5rem)]', dense ? 'h-10' : 'h-12', className)}
     >
       <InlineTrail crumbs={crumbs} title={title} titleHint={titleHint} lg={lg} sm={dense} testId={testId}
         after={onToggleCollapsed ? <HeaderCollapseToggle collapsed={folded} onToggle={onToggleCollapsed} data-testid={`${testId}-collapse-toggle`} /> : undefined} />
@@ -1160,7 +1160,7 @@ function ScopeHeaderFull({
   if (folded) {
     const trail = foldTitleIntoTrail(breadcrumbs, title);
     return (
-      <div data-testid={testId} data-title-size={titleSize} data-density={density} data-collapsed="true" className={cn('flex min-w-0 flex-col gap-1 px-6 pt-2', !hasTabs && 'pb-2', className)}>
+      <div data-testid={testId} data-title-size={titleSize} data-density={density} data-collapsed="true" className={cn('flex min-w-0 flex-col gap-1 px-[var(--ui-page-gutter,1.5rem)] pt-2', !hasTabs && 'pb-2', className)}>
         <div className="flex h-7 min-w-0 items-center gap-2">
           {trail.length > 0 && <Breadcrumbs items={trail} separator="›" maxItems={5} className="min-w-0" data-testid={`${testId}-crumbs`} />}
           {statusNode}
@@ -1173,7 +1173,7 @@ function ScopeHeaderFull({
   }
 
   return (
-    <div data-testid={testId} data-title-size={titleSize} data-density={density} data-collapsed="false" {...(tabSize ? { 'data-tab-size': tabSize } : {})} {...(hasTabs && tabsRule === 'inset' ? { 'data-tabs-rule': 'inset' } : {})} className={cn('flex min-w-0 flex-col gap-1.5 px-6 pt-3', dense && 'gap-1 pt-2', lg && 'gap-0 pt-4', !hasTabs && (lg ? 'pb-4' : dense ? 'pb-2' : 'pb-3'), className)}>
+    <div data-testid={testId} data-title-size={titleSize} data-density={density} data-collapsed="false" {...(tabSize ? { 'data-tab-size': tabSize } : {})} {...(hasTabs && tabsRule === 'inset' ? { 'data-tabs-rule': 'inset' } : {})} className={cn('flex min-w-0 flex-col gap-1.5 px-[var(--ui-page-gutter,1.5rem)] pt-3', dense && 'gap-1 pt-2', lg && 'gap-0 pt-4', !hasTabs && (lg ? 'pb-4' : dense ? 'pb-2' : 'pb-3'), className)}>
       {breadcrumbs && breadcrumbs.length > 0 && (
         <Breadcrumbs items={breadcrumbs} separator="›" maxItems={5} className="min-w-0" data-testid={`${testId}-crumbs`} />
       )}

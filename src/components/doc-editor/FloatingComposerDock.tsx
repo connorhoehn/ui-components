@@ -180,6 +180,7 @@ export function FloatingComposerDock({
       ref={ref}
       role="region"
       aria-label={label}
+      data-floating-composer-dock
       data-testid={testId}
       data-placement={placement}
       className={cn(

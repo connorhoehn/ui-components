@@ -1,13 +1,12 @@
 import { t as e } from "../cn-D4QmbyEy.js";
-import { n as t } from "../Button-BEOshFFZ.js";
-import { i as n } from "../Density-BgubVeSf.js";
-import { c as r, l as i, n as a } from "../Text-Dp6koIMo.js";
-import { t as o } from "../Select-C6OGjVyH.js";
-import { a as s, c, i as l, l as u, n as d, r as f, t as p } from "../composerSendError-B44odLGG.js";
+import { c as t, n } from "../Button-DZuk8L0q.js";
+import { c as r, l as i, n as a } from "../Text-3v1iMImu.js";
+import { t as o } from "../Select-DbhTbkTN.js";
+import { a as s, c, i as l, l as u, n as d, r as f, t as p } from "../composerSendError-CUHmc3vg.js";
 import { a as m, i as ee, n as h, r as te, t as g } from "../composerContext-BLn1-Nao.js";
-import { a as ne, c as re, i as _, l as v, n as ie, o as y, r as ae, s as b, t as x, u as oe } from "../RichChatComposer-hMOlEPPU.js";
-import { t as se } from "../ContextComposer-cDbUvfOc.js";
-import { t as ce } from "../AgentComposerDock-DMjO4cOz.js";
+import { a as ne, c as re, i as _, l as v, n as ie, o as y, r as ae, s as b, t as x, u as oe } from "../RichChatComposer-F-tJCOXU.js";
+import { t as se } from "../ContextComposer-kQyrA5E_.js";
+import { t as ce } from "../AgentComposerDock-CQfX7pPM.js";
 import { createContext as le, useCallback as S, useContext as ue, useEffect as C, useMemo as w, useRef as T, useState as E, useSyncExternalStore as D } from "react";
 import { jsx as O, jsxs as k } from "react/jsx-runtime";
 //#region src/components/social/conversationInputRegistry.ts
@@ -134,16 +133,16 @@ function F() {
 		present: t
 	};
 }
-function _e({ label: e, onFocus: n, "data-testid": r = "pane-input-handoff" }) {
+function _e({ label: e, onFocus: t, "data-testid": r = "pane-input-handoff" }) {
 	return /* @__PURE__ */ O(i, {
 		gap: "none",
 		className: "border-t border-border px-3 py-2",
 		"data-testid": r,
-		children: /* @__PURE__ */ k(t, {
+		children: /* @__PURE__ */ k(n, {
 			variant: "secondary",
 			size: "sm",
 			fullWidth: !0,
-			onClick: n,
+			onClick: t,
 			title: `Write in ${e}`,
 			"data-testid": `${r}-focus`,
 			children: ["Reply in ", e]
@@ -372,8 +371,8 @@ function V(e) {
 	}
 	return t.displayName = "ConversationComposer", t;
 }
-function Le({ rm: t, channel: o, chat: c, context: l, capabilities: u, identity: d, offline: f, recipients: m, defaultRecipient: ee, recipient: h, onRecipientChange: te, commands: g = [], onAgent: ne, callBlock: re, reply: _, mode: v, onModeChange: ie, defaultMode: y, draftKey: ae, persistDraft: b = !0, claim: x = !1, answersFocus: oe = !1, onReveal: ce, disabled: le, offModes: ue, composerRef: D, onDraftChange: A, defaultDraft: j, draft: M, above: N, modeRowEnd: de, references: fe, onRemoveReference: P, modePlaceholders: me, contextChip: ge, sendWithReferencesOnly: F, console: _e, "data-testid": I = "conversation-composer", ...we }) {
-	let R = n() === "compact", z = d?.displayName || "You", B = ae ?? o ?? `${l.kind}:${l.id}`, Oe = u.readOnlyReason || "You can read this conversation but not post to it.", V = w(() => {
+function Le({ rm: n, channel: o, chat: c, context: l, capabilities: u, identity: d, offline: f, recipients: m, defaultRecipient: ee, recipient: h, onRecipientChange: te, commands: g = [], onAgent: ne, callBlock: re, reply: _, mode: v, onModeChange: ie, defaultMode: y, draftKey: ae, persistDraft: b = !0, claim: x = !1, answersFocus: oe = !1, onReveal: ce, disabled: le, offModes: ue, composerRef: D, onDraftChange: A, defaultDraft: j, draft: M, above: N, modeRowEnd: de, references: fe, onRemoveReference: P, modePlaceholders: me, contextChip: ge, sendWithReferencesOnly: F, console: _e, "data-testid": I = "conversation-composer", ...we }) {
+	let R = t() === "compact", z = d?.displayName || "You", B = ae ?? o ?? `${l.kind}:${l.id}`, Oe = u.readOnlyReason || "You can read this conversation but not post to it.", V = w(() => {
 		let e = m ?? (o ? [{
 			id: "discussion",
 			label: l.title || "This conversation",
@@ -476,7 +475,7 @@ function Le({ rm: t, channel: o, chat: c, context: l, capabilities: u, identity:
 		U?.channel,
 		o
 	]);
-	let at = G === "chat" && u.mayAttach && U?.attachments && U.channel ? U.channel : null, ot = Fe(t, at, z), [st, ct] = E(null), lt = T(null), ut = S((e) => {
+	let at = G === "chat" && u.mayAttach && U?.attachments && U.channel ? U.channel : null, ot = Fe(n, at, z), [st, ct] = E(null), lt = T(null), ut = S((e) => {
 		lt.current = e, Me(D, e);
 	}, [D]), $ = S(() => {
 		ce?.();

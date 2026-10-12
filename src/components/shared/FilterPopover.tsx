@@ -22,6 +22,9 @@
 
 import { useId, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { IconButton } from '../ui/IconButton';
+import { Tooltip } from './Tooltip';
+import { useDensity } from './Density';
 import { Button, type ButtonSize } from '../ui/Button';
 import { InlinePopover, type InlinePopoverPlacement } from './InlinePopover';
 import type { InlineMenuPlacement } from './InlineMenu';
@@ -89,7 +92,7 @@ export function FilterPopover({
   open: controlledOpen,
   onOpenChange,
   placement = 'bottom-start',
-  size = 'md',
+  size: requestedSize,
   trigger = 'label',
   panelLabel = 'Filters',
   className,
@@ -97,6 +100,8 @@ export function FilterPopover({
   icon,
   'data-testid': testId = 'filter-popover',
 }: FilterPopoverProps) {
+  const density = useDensity();
+  const size = requestedSize ?? (density === 'compact' ? 'sm' : 'md');
   const [ownOpen, setOwnOpen] = useState(false);
   const open = controlledOpen ?? ownOpen;
   const setOpen = (next: boolean) => {
@@ -109,39 +114,18 @@ export function FilterPopover({
 
   return (
     <span className={cn('inline-flex shrink-0', className)} data-testid={`${testId}-root`}>
-      <Button
-        ref={triggerRef}
-        type="button"
-        variant="secondary"
-        size={size}
-        aria-haspopup="dialog"
-        aria-expanded={open}
-        aria-controls={open ? panelId : undefined}
-        data-testid={`${testId}-trigger`}
-        data-active={active || undefined}
-        onClick={() => setOpen(!open)}
-        {...(trigger === 'icon'
-          ? { 'aria-label': active ? `${label} (${activeCount} active)` : label, title: label }
-          : {})}
-        className={cn(
-          'inline-flex items-center gap-2 whitespace-nowrap',
-          trigger === 'icon' && (size === 'lg'
-            ? 'relative h-11 w-11 justify-center rounded-lg px-0 py-0 text-text-secondary [&_svg]:h-5 [&_svg]:w-5'
-            : 'relative h-9 w-9 justify-center px-0 py-0 text-text-secondary [&_svg]:h-[18px] [&_svg]:w-[18px]'),
-          active && 'border-primary-border text-primary-fg',
-        )}
-      >
-        {icon ?? <FunnelIcon />}
-        {trigger === 'label' && <span>{label}</span>}
-        {trigger === 'icon' && active && (
-          <span aria-hidden="true" data-testid={`${testId}-dot`} className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-primary" />
-        )}
-        {trigger === 'label' && active && (
-          <Chip size="xs" tone="accent" solid data-testid={`${testId}-count`} aria-label={`${activeCount} active filters`}>
-            {activeCount}
-          </Chip>
-        )}
-      </Button>
+      {trigger === 'icon' ? <Tooltip content={label}><IconButton
+        ref={triggerRef} size={size} aria-label={active ? `${label} (${activeCount} active)` : label}
+        aria-haspopup="dialog" aria-expanded={open} aria-controls={open ? panelId : undefined}
+        data-testid={`${testId}-trigger`} data-active={active || undefined}
+        aria-pressed={active} onClick={() => setOpen(!open)} className="relative"
+        icon={<>{icon ?? <FunnelIcon />}{active && <span aria-hidden="true" data-testid={`${testId}-dot`} className="absolute right-0.5 top-0.5 h-1.5 w-1.5 rounded-full bg-primary" />}</>}
+      /></Tooltip> : <Button ref={triggerRef} variant="secondary" size={size}
+        aria-haspopup="dialog" aria-expanded={open} aria-controls={open ? panelId : undefined}
+        data-testid={`${testId}-trigger`} data-active={active || undefined} onClick={() => setOpen(!open)}>
+        {icon ?? <FunnelIcon />}<span>{label}</span>
+        {active && <Chip size="xs" tone="accent" solid data-testid={`${testId}-count`} aria-label={`${activeCount} active filters`}>{activeCount}</Chip>}
+      </Button>}
       <InlinePopover
         open={open}
         onClose={() => setOpen(false)}

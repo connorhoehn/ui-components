@@ -4,40 +4,40 @@ import { t } from "./usePrefersReducedMotion-Cllucr7i.js";
 import { t as n } from "./cn-D4QmbyEy.js";
 import { n as r } from "./ToastProvider-CJAceUvq.js";
 import { t as i } from "./useEventCallback-Cwx9QVSi.js";
-import { a, d as o, f as s, g as c, h as l, n as u, o as d, p as f, r as p, t as m, u as h } from "./FilterPopover-By_jh0BH.js";
-import { n as g } from "./Button-BEOshFFZ.js";
-import { n as _ } from "./Density-BgubVeSf.js";
-import { a as v, n as y } from "./overlayStack-D0Hf2ZrU.js";
-import { t as b } from "./Chip-D2jKHd4a.js";
-import { t as x } from "./IconButton-IiLzRH-W.js";
-import { t as S } from "./Banner-8ngXUtJu.js";
-import { n as C, t as w } from "./Chart-kepXlehS.js";
-import { t as T } from "./Modal-CjgKqXl7.js";
-import { t as E } from "./ConfirmDialog-D5LLBfII.js";
-import { t as D } from "./Input-CpLq80dw.js";
-import { t as O } from "./EmptyState-ClSHRgi-.js";
-import { n as ee, t as k } from "./StatusPill-c89IbU1L.js";
-import { i as A, t as te } from "./focusTrap-Cj-AL49l.js";
-import { n as ne, t as re } from "./FilterChip-DJ7CPwFA.js";
-import { t as ie } from "./SkeletonCard-D3FL0TB7.js";
-import { n as j, t as M } from "./Slider-DEbQCKD1.js";
-import { t as ae } from "./DropdownMenu-DR9iVi2Z.js";
+import { a, c as o, d as s, i as c, n as l, o as u, s as d, t as f, u as p } from "./GroupedList-U8arz33v.js";
+import { n as m, o as h } from "./Button-DZuk8L0q.js";
+import { a as g, n as _ } from "./overlayStack-D0Hf2ZrU.js";
+import { t as v } from "./Chip-C_-AY6W4.js";
+import { t as y } from "./IconButton-CjSMY5sV.js";
+import { t as b } from "./Banner-8ngXUtJu.js";
+import { n as x, t as S } from "./Chart-kepXlehS.js";
+import { t as C } from "./Modal-CjgKqXl7.js";
+import { t as w } from "./ConfirmDialog-D5LLBfII.js";
+import { t as T } from "./Input-DKVe8Hp7.js";
+import { t as E } from "./Select-DbhTbkTN.js";
+import { a as D, t as ee } from "./Toolbar-brFewbKK.js";
+import { t as O } from "./SearchInput-BiSqItX5.js";
+import { t as k } from "./EmptyState-DJ3e4WMf.js";
+import { n as te, t as ne } from "./StatusPill-c89IbU1L.js";
+import { i as A, t as re } from "./focusTrap-Cj-AL49l.js";
+import { n as ie, t as j } from "./FilterChip-BgXcbLqs.js";
+import { t as M } from "./SkeletonCard-D3FL0TB7.js";
+import { n as ae, t as oe } from "./Slider-DEbQCKD1.js";
+import { t as se } from "./DropdownMenu-BELOa3yT.js";
 import { t as N } from "./Textarea-Drx4YDDG.js";
-import { t as oe } from "./SearchInput-8LpHL-oD.js";
-import { t as P } from "./NumberInput-DfHkxDUc.js";
-import { t as se } from "./PageHeader-BJv_cqUA.js";
-import { t as ce } from "./FileUploadDrop-D3wVrrzM.js";
-import { t as F } from "./Select-C6OGjVyH.js";
+import { t as P } from "./NumberInput-C1QnmDGJ.js";
+import { t as ce } from "./PageHeader-s_0JutYN.js";
+import { t as F } from "./FileUploadDrop-D3wVrrzM.js";
 import { t as le } from "./Checkbox-C70AGFS5.js";
 import { n as ue } from "./FileKindMark-DhjYpKjg.js";
 import { t as de } from "./activationKey-CjbL3LUv.js";
 import { n as fe, r as pe, t as me } from "./EventStreamContext-CLzG8O5_.js";
-import { $ as he, A as ge, B as _e, C as ve, D as ye, E as be, F as xe, G as Se, H as Ce, I as we, J as Te, K as Ee, L as De, M as Oe, N as ke, O as Ae, P as je, Q as Me, S as Ne, T as Pe, U as Fe, V as I, W as Ie, X as Le, Z as Re, _ as ze, _t as Be, a as Ve, at as He, b as Ue, bt as We, c as Ge, ct as Ke, d as qe, dt as Je, et as Ye, f as Xe, ft as Ze, g as Qe, h as $e, ht as et, i as tt, it as nt, j as rt, k as it, l as at, lt as ot, mt as st, n as ct, nt as lt, o as ut, ot as dt, p as ft, pt, r as mt, rt as ht, s as gt, st as _t, t as vt, tt as yt, u as bt, ut as xt, v as St, vt as Ct, w as wt, x as Tt, xt as Et, y as Dt, yt as Ot, z as kt } from "./services-BrRU8Xu8.js";
+import { $ as he, A as ge, B as _e, C as ve, D as ye, E as be, F as xe, G as Se, H as Ce, I as we, J as Te, K as Ee, L as De, M as Oe, N as ke, O as Ae, P as je, Q as Me, S as Ne, T as Pe, U as Fe, V as I, W as Ie, X as Le, Z as Re, _ as ze, _t as Be, a as Ve, at as He, b as Ue, bt as We, c as Ge, ct as Ke, d as qe, dt as Je, et as Ye, f as Xe, ft as Ze, g as Qe, h as $e, ht as et, i as tt, it as nt, j as rt, k as it, l as at, lt as ot, mt as st, n as ct, nt as lt, o as ut, ot as dt, p as ft, pt, r as mt, rt as ht, s as gt, st as _t, t as vt, tt as yt, u as bt, ut as xt, v as St, vt as Ct, w as wt, x as Tt, xt as Et, y as Dt, yt as Ot, z as kt } from "./services-B_K0agRp.js";
 import { t as At } from "./rovingFocus-Bj5Y6kwY.js";
 /* empty css               */
 import { t as jt } from "./AnimatedEdge-DnsfF8-D.js";
-import { t as Mt } from "./FloatingComposerDock-ZezHreIm.js";
-import { t as Nt } from "./TraceTimeline-DgyPDlqP.js";
+import { t as Mt } from "./FloatingComposerDock-D10uQ4k3.js";
+import { t as Nt } from "./TraceTimeline-BcJ6-RpN.js";
 import Pt, { createContext as Ft, memo as It, useCallback as L, useContext as Lt, useEffect as R, useId as Rt, useMemo as z, useRef as B, useState as V } from "react";
 import { Fragment as H, jsx as U, jsxs as W } from "react/jsx-runtime";
 import { Navigate as zt, useNavigate as Bt, useParams as Vt, useSearchParams as Ht } from "react-router";
@@ -1079,44 +1079,44 @@ function Ln({ id: e, data: t, selected: n }) {
 //#region src/components/pipelines/nodes/image-source/ImageSourceNode.tsx
 var Rn = (e) => e.stopPropagation();
 function zn(e) {
-	let { id: t, data: r, selected: i } = e, [a, o] = V(!1), s = I(t), c = s?.status === "cancelled" ? "failed" : s?.status, l = (r._state && r._state !== "idle" ? r._state : void 0) ?? c ?? r._state ?? "idle", u = ct(), d = s?.images?.[0]?.imageId ?? s?.output?.imageId ?? r.imageId, p = d ? /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U("button", {
+	let { id: t, data: r, selected: i } = e, [a, s] = V(!1), c = I(t), l = c?.status === "cancelled" ? "failed" : c?.status, u = (r._state && r._state !== "idle" ? r._state : void 0) ?? l ?? r._state ?? "idle", d = ct(), f = c?.images?.[0]?.imageId ?? c?.output?.imageId ?? r.imageId, p = f ? /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U("button", {
 		type: "button",
 		"aria-label": "View source image",
 		className: n("block w-full rounded border-none bg-transparent p-0 cursor-zoom-in", "focus:outline-none focus-visible:ring-2 focus-visible:ring-info"),
 		onMouseDown: Rn,
 		onClick: (e) => {
-			e.stopPropagation(), o(!0);
+			e.stopPropagation(), s(!0);
 		},
 		children: /* @__PURE__ */ U("img", {
-			src: u(d),
+			src: d(f),
 			alt: "Source image",
 			className: n("w-full h-20 object-cover rounded block", "border border-border-field bg-surface-hover"),
 			"data-testid": "image-source-thumb"
 		})
-	}), /* @__PURE__ */ U(f, {
+	}), /* @__PURE__ */ U(o, {
 		images: [{
-			src: u(d),
+			src: d(f),
 			alt: "Source image"
 		}],
 		openIndex: a ? 0 : null,
-		onClose: () => o(!1)
+		onClose: () => s(!1)
 	})] }) : /* @__PURE__ */ U("div", {
 		className: n("w-full h-20 rounded flex items-center justify-center", "border border-dashed border-border-field bg-surface-hover", "text-[11px] text-text-secondary"),
 		"data-testid": "image-source-placeholder",
 		children: "No image configured"
-	}), m = d ? /* @__PURE__ */ W("span", {
+	}), m = f ? /* @__PURE__ */ W("span", {
 		className: "font-mono text-[11px] text-text-secondary",
-		children: [d.slice(0, 16), "…"]
+		children: [f.slice(0, 16), "…"]
 	}) : void 0;
 	return /* @__PURE__ */ W(q, {
 		icon: "🖼",
 		subtitle: "image-source",
-		state: l,
+		state: u,
 		category: J("image-source"),
 		body: p,
 		footer: m,
 		selected: i,
-		ariaLabel: `Image Source node, state: ${l}`,
+		ariaLabel: `Image Source node, state: ${u}`,
 		hasBreakpoint: r._hasBreakpoint,
 		pausedAtBreakpoint: r._pausedAtBreakpoint,
 		children: [/* @__PURE__ */ U(G, {
@@ -1136,45 +1136,45 @@ function zn(e) {
 //#region src/components/pipelines/nodes/shared/NodeThumbStrip.tsx
 var Bn = (e) => e.stopPropagation(), Vn = n("h-[38px] w-[38px] shrink-0 overflow-hidden rounded border border-border bg-surface-inset", "p-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-info");
 function Hn({ images: e, max: t = 4, "data-testid": r = "node-thumb-strip" }) {
-	let i = ct(), [a, o] = V(null);
+	let i = ct(), [a, s] = V(null);
 	if (e.length === 0) return null;
-	let s = e.length > t, c = s ? e.slice(0, t - 1) : e, l = e.length - c.length, u = (e) => (t) => {
-		t.stopPropagation(), o(e);
+	let c = e.length > t, l = c ? e.slice(0, t - 1) : e, u = e.length - l.length, d = (e) => (t) => {
+		t.stopPropagation(), s(e);
 	};
 	return /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ W("div", {
 		"data-testid": r,
 		className: "flex flex-row items-center gap-1",
-		children: [c.map((t, n) => /* @__PURE__ */ U("button", {
+		children: [l.map((t, n) => /* @__PURE__ */ U("button", {
 			type: "button",
 			"data-testid": `${r}-thumb-${n}`,
 			"aria-label": t.alt ?? `Result image ${n + 1} of ${e.length}`,
 			className: Vn,
 			onMouseDown: Bn,
-			onClick: u(n),
+			onClick: d(n),
 			children: /* @__PURE__ */ U("img", {
 				src: i(t.imageId),
 				alt: t.alt ?? "",
 				loading: "lazy",
 				className: "h-full w-full object-cover"
 			})
-		}, `${t.imageId}-${n}`)), s && /* @__PURE__ */ W("button", {
+		}, `${t.imageId}-${n}`)), c && /* @__PURE__ */ W("button", {
 			type: "button",
 			"data-testid": `${r}-overflow`,
 			"aria-label": `Show all ${e.length} images`,
 			className: n(Vn, "flex items-center justify-center font-mono text-[11px] font-medium text-text-secondary"),
 			onMouseDown: Bn,
-			onClick: u(c.length),
-			children: ["+", l]
+			onClick: d(l.length),
+			children: ["+", u]
 		})]
-	}), /* @__PURE__ */ U(f, {
+	}), /* @__PURE__ */ U(o, {
 		images: e.map((e) => ({
 			src: i(e.imageId),
 			alt: e.alt,
 			caption: e.alt
 		})),
 		openIndex: a,
-		onClose: () => o(null),
-		onNavigate: o
+		onClose: () => s(null),
+		onNavigate: s
 	})] });
 }
 //#endregion
@@ -1870,12 +1870,12 @@ var cr = (e) => e.stopPropagation(), lr = It(function({ info: e }) {
 			})
 		] });
 	}
-	let o = e.tokensIn != null || e.tokensOut != null, s = !e.streaming && !e.awaiting && e.response.length > 0, c = t ? e.response : e.response.length > 60 ? `${e.response.slice(0, 60)}…` : e.response, l = e.awaiting ? "Vision: waiting for first token" : e.streaming ? "Vision: streaming response" : s ? "Vision: completed" : "";
+	let s = e.tokensIn != null || e.tokensOut != null, c = !e.streaming && !e.awaiting && e.response.length > 0, l = t ? e.response : e.response.length > 60 ? `${e.response.slice(0, 60)}…` : e.response, u = e.awaiting ? "Vision: waiting for first token" : e.streaming ? "Vision: streaming response" : c ? "Vision: completed" : "";
 	return /* @__PURE__ */ W("div", { children: [
 		/* @__PURE__ */ U("output", {
 			"aria-live": "polite",
 			className: "sr-only",
-			children: l
+			children: u
 		}),
 		/* @__PURE__ */ W("button", {
 			type: "button",
@@ -1891,7 +1891,7 @@ var cr = (e) => e.stopPropagation(), lr = It(function({ info: e }) {
 					title: "Cost based on model usage rate",
 					children: ["· ", or(e.costUsd)]
 				}),
-				o && /* @__PURE__ */ W("span", {
+				s && /* @__PURE__ */ W("span", {
 					className: "ml-1.5 text-[11px] text-text-tertiary",
 					children: [
 						"· ",
@@ -1912,7 +1912,7 @@ var cr = (e) => e.stopPropagation(), lr = It(function({ info: e }) {
 				})
 			]
 		}),
-		s && e.imageId && /* @__PURE__ */ U("button", {
+		c && e.imageId && /* @__PURE__ */ U("button", {
 			type: "button",
 			onClick: () => window.dispatchEvent(new CustomEvent("pipeline:open-run-modal")),
 			className: "mt-1 block bg-transparent border-none p-0 cursor-pointer text-[11px] text-primary underline font-inherit",
@@ -1932,7 +1932,7 @@ var cr = (e) => e.stopPropagation(), lr = It(function({ info: e }) {
 				className: "h-full w-full object-cover",
 				"data-testid": "vision-input-thumb"
 			})
-		}), /* @__PURE__ */ U(f, {
+		}), /* @__PURE__ */ U(o, {
 			images: [{
 				src: e.getImageUrl(e.imageId),
 				alt: "Vision input",
@@ -1943,7 +1943,7 @@ var cr = (e) => e.stopPropagation(), lr = It(function({ info: e }) {
 		})] }),
 		/* @__PURE__ */ U("div", {
 			className: n("mt-1 overflow-hidden font-mono text-[11px] leading-snug text-text-primary whitespace-pre-wrap break-words", t ? "max-h-none" : "max-h-[1.4em]"),
-			children: c
+			children: l
 		})
 	] });
 });
@@ -2193,13 +2193,13 @@ function hr(e) {
 }
 var gr = (e) => e.stopPropagation();
 function _r(e) {
-	let { id: t, data: r, selected: i } = e, a = ct(), [o, s] = V(!1), c = I(t), l = c?.status === "cancelled" ? "failed" : c?.status, u = (r._state && r._state !== "idle" ? r._state : void 0) ?? l ?? r._state ?? "idle", d = c?.images ?? [], p = c?.startedAt ? Date.parse(c.startedAt) : NaN, m = u === "running" && d.length === 0, h = (r.numImages ?? 1) > 1 || d.length > 1, g;
-	if (d.length > 0 && h) g = /* @__PURE__ */ U(Hn, {
-		images: d,
+	let { id: t, data: r, selected: i } = e, a = ct(), [s, c] = V(!1), l = I(t), u = l?.status === "cancelled" ? "failed" : l?.status, d = (r._state && r._state !== "idle" ? r._state : void 0) ?? u ?? r._state ?? "idle", f = l?.images ?? [], p = l?.startedAt ? Date.parse(l.startedAt) : NaN, m = d === "running" && f.length === 0, h = (r.numImages ?? 1) > 1 || f.length > 1, g;
+	if (f.length > 0 && h) g = /* @__PURE__ */ U(Hn, {
+		images: f,
 		"data-testid": "generate-thumb-strip"
 	});
-	else if (m || d.length === 1) {
-		let e = d[0] ? a(d[0].imageId) : void 0;
+	else if (m || f.length === 1) {
+		let e = f[0] ? a(f[0].imageId) : void 0;
 		g = /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U("button", {
 			type: "button",
 			"data-testid": "generate-output-preview",
@@ -2207,7 +2207,7 @@ function _r(e) {
 			className: n("block w-full rounded-md border-none bg-transparent p-0", "focus:outline-none focus-visible:ring-2 focus-visible:ring-info", e ? "cursor-zoom-in" : "cursor-default"),
 			onMouseDown: gr,
 			onClick: (t) => {
-				t.stopPropagation(), e && s(!0);
+				t.stopPropagation(), e && c(!0);
 			},
 			children: /* @__PURE__ */ U(bt, {
 				status: m ? "synthesizing" : "done",
@@ -2216,13 +2216,13 @@ function _r(e) {
 				...m && Number.isFinite(p) ? { startedAt: p } : {},
 				className: "w-full h-20"
 			})
-		}), e && /* @__PURE__ */ U(f, {
+		}), e && /* @__PURE__ */ U(o, {
 			images: [{
 				src: e,
 				alt: "Generate output"
 			}],
-			openIndex: o ? 0 : null,
-			onClose: () => s(!1)
+			openIndex: s ? 0 : null,
+			onClose: () => c(!1)
 		})] });
 	} else g = /* @__PURE__ */ U("div", {
 		className: "w-24 h-16 rounded border border-dashed border-border bg-surface-inset flex items-center justify-center px-2 text-center text-[11px] text-text-tertiary",
@@ -2236,12 +2236,12 @@ function _r(e) {
 	return /* @__PURE__ */ W(q, {
 		icon: "✦",
 		subtitle: "image:generate",
-		state: u,
+		state: d,
 		category: J("image:generate"),
 		body: g,
 		footer: y,
 		selected: i,
-		ariaLabel: `Generate node, state: ${u}`,
+		ariaLabel: `Generate node, state: ${d}`,
 		hasBreakpoint: r._hasBreakpoint,
 		pausedAtBreakpoint: r._pausedAtBreakpoint,
 		children: [
@@ -2270,7 +2270,7 @@ function _r(e) {
 //#region src/components/pipelines/nodes/variation/VariationNode.tsx
 var vr = (e) => e.stopPropagation();
 function yr(e) {
-	let { id: t, data: r, selected: i } = e, a = ct(), [o, s] = V(!1), c = I(t), l = c?.status === "cancelled" ? "failed" : c?.status, u = (r._state && r._state !== "idle" ? r._state : void 0) ?? l ?? r._state ?? "idle", d = c?.images ?? [], p = c?.startedAt ? Date.parse(c.startedAt) : NaN, m = u === "running" && d.length === 0, h = r.numVariations ?? 1, g = h > 1 || d.length > 1, _ = /* @__PURE__ */ W("span", {
+	let { id: t, data: r, selected: i } = e, a = ct(), [s, c] = V(!1), l = I(t), u = l?.status === "cancelled" ? "failed" : l?.status, d = (r._state && r._state !== "idle" ? r._state : void 0) ?? u ?? r._state ?? "idle", f = l?.images ?? [], p = l?.startedAt ? Date.parse(l.startedAt) : NaN, m = d === "running" && f.length === 0, h = r.numVariations ?? 1, g = h > 1 || f.length > 1, _ = /* @__PURE__ */ W("span", {
 		className: "inline-block text-[10px] font-semibold bg-surface-inset border border-border rounded px-1.5 py-0.5 text-text-secondary mb-1",
 		children: [
 			"×",
@@ -2279,12 +2279,12 @@ function yr(e) {
 			h === 1 ? "" : "s"
 		]
 	}), v;
-	if (d.length > 0 && g) v = /* @__PURE__ */ U(Hn, {
-		images: d,
+	if (f.length > 0 && g) v = /* @__PURE__ */ U(Hn, {
+		images: f,
 		"data-testid": "variation-thumb-strip"
 	});
-	else if (m || d.length === 1) {
-		let e = d[0] ? a(d[0].imageId) : void 0;
+	else if (m || f.length === 1) {
+		let e = f[0] ? a(f[0].imageId) : void 0;
 		v = /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U("button", {
 			type: "button",
 			"data-testid": "variation-output-preview",
@@ -2292,7 +2292,7 @@ function yr(e) {
 			className: n("block w-full rounded-md border-none bg-transparent p-0", "focus:outline-none focus-visible:ring-2 focus-visible:ring-info", e ? "cursor-zoom-in" : "cursor-default"),
 			onMouseDown: vr,
 			onClick: (t) => {
-				t.stopPropagation(), e && s(!0);
+				t.stopPropagation(), e && c(!0);
 			},
 			children: /* @__PURE__ */ U(bt, {
 				status: m ? "synthesizing" : "done",
@@ -2301,13 +2301,13 @@ function yr(e) {
 				...m && Number.isFinite(p) ? { startedAt: p } : {},
 				className: "w-full h-20"
 			})
-		}), e && /* @__PURE__ */ U(f, {
+		}), e && /* @__PURE__ */ U(o, {
 			images: [{
 				src: e,
 				alt: "Variation output"
 			}],
-			openIndex: o ? 0 : null,
-			onClose: () => s(!1)
+			openIndex: s ? 0 : null,
+			onClose: () => c(!1)
 		})] });
 	} else v = /* @__PURE__ */ U("div", {
 		className: "w-24 h-16 rounded border border-dashed border-border bg-surface-inset flex items-center justify-center text-[11px] text-text-tertiary",
@@ -2321,12 +2321,12 @@ function yr(e) {
 	return /* @__PURE__ */ W(q, {
 		icon: "⊞",
 		subtitle: "image:variation",
-		state: u,
+		state: d,
 		category: J("image:variation"),
 		body: y,
 		footer: b,
 		selected: i,
-		ariaLabel: `Variation node, ${h} variations, state: ${u}`,
+		ariaLabel: `Variation node, ${h} variations, state: ${d}`,
 		hasBreakpoint: r._hasBreakpoint,
 		pausedAtBreakpoint: r._pausedAtBreakpoint,
 		children: [
@@ -2358,13 +2358,13 @@ function br(e) {
 }
 var xr = (e) => e.stopPropagation();
 function Sr(e) {
-	let { id: t, data: r, selected: i } = e, a = ct(), [o, s] = V(!1), c = I(t), l = c?.status === "cancelled" ? "failed" : c?.status, u = (r._state && r._state !== "idle" ? r._state : void 0) ?? l ?? r._state ?? "idle", d = c?.images ?? [], p = c?.startedAt ? Date.parse(c.startedAt) : NaN, m = u === "running" && d.length === 0, h = d.length > 1, g;
+	let { id: t, data: r, selected: i } = e, a = ct(), [s, c] = V(!1), l = I(t), u = l?.status === "cancelled" ? "failed" : l?.status, d = (r._state && r._state !== "idle" ? r._state : void 0) ?? u ?? r._state ?? "idle", f = l?.images ?? [], p = l?.startedAt ? Date.parse(l.startedAt) : NaN, m = d === "running" && f.length === 0, h = f.length > 1, g;
 	if (h) g = /* @__PURE__ */ U(Hn, {
-		images: d,
+		images: f,
 		"data-testid": "edit-prompt-thumb-strip"
 	});
-	else if (m || d.length === 1) {
-		let e = d[0] ? a(d[0].imageId) : void 0;
+	else if (m || f.length === 1) {
+		let e = f[0] ? a(f[0].imageId) : void 0;
 		g = /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U("button", {
 			type: "button",
 			"data-testid": "edit-prompt-output-preview",
@@ -2372,7 +2372,7 @@ function Sr(e) {
 			className: n("block w-full rounded-md border-none bg-transparent p-0", "focus:outline-none focus-visible:ring-2 focus-visible:ring-info", e ? "cursor-zoom-in" : "cursor-default"),
 			onMouseDown: xr,
 			onClick: (t) => {
-				t.stopPropagation(), e && s(!0);
+				t.stopPropagation(), e && c(!0);
 			},
 			children: /* @__PURE__ */ U(bt, {
 				status: m ? "synthesizing" : "done",
@@ -2381,13 +2381,13 @@ function Sr(e) {
 				...m && Number.isFinite(p) ? { startedAt: p } : {},
 				className: "w-full h-20"
 			})
-		}), e && /* @__PURE__ */ U(f, {
+		}), e && /* @__PURE__ */ U(o, {
 			images: [{
 				src: e,
 				alt: "Edit output"
 			}],
-			openIndex: o ? 0 : null,
-			onClose: () => s(!1)
+			openIndex: s ? 0 : null,
+			onClose: () => c(!1)
 		})] });
 	} else g = /* @__PURE__ */ U("div", {
 		className: "w-24 h-16 rounded border border-dashed border-border bg-surface-inset flex items-center justify-center px-2 text-center text-[11px] text-text-tertiary",
@@ -2401,12 +2401,12 @@ function Sr(e) {
 	return /* @__PURE__ */ W(q, {
 		icon: "✎",
 		subtitle: "image:edit-prompt",
-		state: u,
+		state: d,
 		category: J("image:edit-prompt"),
 		body: g,
 		footer: _,
 		selected: i,
-		ariaLabel: `Edit Prompt node, state: ${u}`,
+		ariaLabel: `Edit Prompt node, state: ${d}`,
 		hasBreakpoint: r._hasBreakpoint,
 		pausedAtBreakpoint: r._pausedAtBreakpoint,
 		children: [
@@ -3353,7 +3353,7 @@ function ei({ disabledTypes: e = [], contextTypes: t, serverKinds: r }) {
 		});
 	}, []), w = L(() => {
 		a(""), s(/* @__PURE__ */ new Set());
-	}, []), T = L((e, t) => {
+	}, []), E = L((e, t) => {
 		h((n) => {
 			let r = {
 				...n,
@@ -3361,21 +3361,21 @@ function ei({ disabledTypes: e = [], contextTypes: t, serverKinds: r }) {
 			};
 			return Zr(e, r[e]), r;
 		});
-	}, []), E = z(() => {
+	}, []), D = z(() => {
 		let e = /* @__PURE__ */ new Map();
 		for (let t of y) for (let n of t.items) e.set(n.type, n);
 		return e;
-	}, [y]), O = tt(), ee = z(() => {
+	}, [y]), ee = tt(), O = z(() => {
 		if (!t || t.length === 0) return [];
-		let e = [...E.keys()];
-		return Fr(t, e, { unavailable: e.filter((e) => !O(e) || g.has(e)) }).map((e) => E.get(e.kind)).filter(Boolean);
+		let e = [...D.keys()];
+		return Fr(t, e, { unavailable: e.filter((e) => !ee(e) || g.has(e)) }).map((e) => D.get(e.kind)).filter(Boolean);
 	}, [
 		t,
-		E,
-		O,
+		D,
+		ee,
 		g
-	]), k = z(() => u.map((e) => E.get(e)).filter(Boolean), [u, E]), A = ee.length > 0 ? ee : k, te = ee.length > 0 ? "Relevant here" : "Recently used", ne = z(() => {
-		let e = !i && o.size === 0, t = new Set(e ? A.map((e) => e.type) : []);
+	]), k = z(() => u.map((e) => D.get(e)).filter(Boolean), [u, D]), te = O.length > 0 ? O : k, ne = O.length > 0 ? "Relevant here" : "Recently used", A = z(() => {
+		let e = !i && o.size === 0, t = new Set(e ? te.map((e) => e.type) : []);
 		return y.map((e) => {
 			let n = o.size > 0 && !o.has(e.name) ? [] : e.items.filter((e) => !t.has(e.type) && Qr(e, i));
 			return {
@@ -3387,35 +3387,35 @@ function ei({ disabledTypes: e = [], contextTypes: t, serverKinds: r }) {
 		i,
 		o,
 		y,
-		A
-	]), ie = i.length > 0 || o.size > 0, j = z(() => {
+		te
+	]), re = i.length > 0 || o.size > 0, ie = z(() => {
 		let e = /* @__PURE__ */ new Set(), t = [];
-		if (!i && o.size === 0) for (let n of A) t.push(n), e.add(n.type);
-		for (let n of ne) if (!(!ie && (m[n.name] ?? x(n)))) for (let r of n.items) e.has(r.type) || (t.push(r), e.add(r.type));
+		if (!i && o.size === 0) for (let n of te) t.push(n), e.add(n.type);
+		for (let n of A) if (!(!re && (m[n.name] ?? x(n)))) for (let r of n.items) e.has(r.type) || (t.push(r), e.add(r.type));
 		return t;
 	}, [
+		te,
 		A,
-		ne,
 		i,
 		o,
 		m,
-		ie,
+		re,
 		x
-	]), M = B(j);
+	]), M = B(ie);
 	R(() => {
-		M.current = j;
-	}, [j]);
-	let ae = ne.length === 0 && (i !== "" || o.size > 0), N = (e) => (t) => {
+		M.current = ie;
+	}, [ie]);
+	let ae = A.length === 0 && (i !== "" || o.size > 0), oe = (e) => (t) => {
 		if (g.has(e.type)) {
 			t.preventDefault();
 			return;
 		}
 		t.dataTransfer.setData("application/reactflow", JSON.stringify({ nodeType: e.type })), t.dataTransfer.effectAllowed = "move";
-	}, oe = (e, t) => {
-		let r = g.has(e.type), i = !O(e.type), a = c === e.type && !r, o = t !== null && t < 9 ? t + 1 : null;
+	}, se = (e, t) => {
+		let r = g.has(e.type), i = !ee(e.type), a = c === e.type && !r, o = t !== null && t < 9 ? t + 1 : null;
 		return f ? /* @__PURE__ */ W("div", {
 			draggable: !r,
-			onDragStart: N(e),
+			onDragStart: oe(e),
 			onMouseEnter: () => l(e.type),
 			onMouseLeave: () => l(null),
 			className: n("h-8 box-border my-px mx-2 px-2 flex items-center gap-2 rounded font-[inherit]", r ? "cursor-not-allowed opacity-45" : "cursor-grab", a ? "bg-surface-hover" : "bg-transparent"),
@@ -3447,7 +3447,7 @@ function ei({ disabledTypes: e = [], contextTypes: t, serverKinds: r }) {
 			]
 		}, e.type) : /* @__PURE__ */ W("div", {
 			draggable: !r,
-			onDragStart: N(e),
+			onDragStart: oe(e),
 			onMouseEnter: () => l(e.type),
 			onMouseLeave: () => l(null),
 			className: n("h-11 box-border my-0.5 mx-2 py-1.5 px-2.5 flex items-center gap-2.5 rounded-md border border-transparent font-[inherit]", r ? "cursor-not-allowed opacity-45" : "cursor-grab", a ? "bg-surface-panel" : "bg-transparent"),
@@ -3495,7 +3495,7 @@ function ei({ disabledTypes: e = [], contextTypes: t, serverKinds: r }) {
 				})
 			]
 		}, e.type);
-	}, P = A.length > 0 && !i && o.size === 0, se = 0;
+	}, N = te.length > 0 && !i && o.size === 0, P = 0;
 	return /* @__PURE__ */ W("div", {
 		className: "w-[220px] shrink-0 h-full border-r border-border bg-surface flex flex-col",
 		"data-testid": "node-palette",
@@ -3504,7 +3504,7 @@ function ei({ disabledTypes: e = [], contextTypes: t, serverKinds: r }) {
 				className: "shrink-0 border-b border-border",
 				children: [/* @__PURE__ */ W("div", {
 					className: "flex items-center gap-1.5 py-2.5 px-3",
-					children: [/* @__PURE__ */ U(D, {
+					children: [/* @__PURE__ */ U(T, {
 						type: "text",
 						value: i,
 						onChange: (e) => a(e.target.value),
@@ -3596,7 +3596,7 @@ function ei({ disabledTypes: e = [], contextTypes: t, serverKinds: r }) {
 				}), /* @__PURE__ */ U("div", {
 					className: "flex flex-wrap gap-1 px-3 pb-2.5",
 					"data-testid": "palette-category-chips",
-					children: S.map((e) => /* @__PURE__ */ U(re, {
+					children: S.map((e) => /* @__PURE__ */ U(j, {
 						size: "xs",
 						active: o.has(e),
 						onClick: () => C(e),
@@ -3608,17 +3608,17 @@ function ei({ disabledTypes: e = [], contextTypes: t, serverKinds: r }) {
 			/* @__PURE__ */ W("div", {
 				className: "flex-1 overflow-y-auto py-1",
 				"data-testid": "palette-scroll",
-				children: [P && /* @__PURE__ */ W("div", {
+				children: [N && /* @__PURE__ */ W("div", {
 					"data-testid": "palette-recents",
 					children: [/* @__PURE__ */ W("button", {
 						type: "button",
-						onClick: () => T("__recents__", !!m.__recents__),
+						onClick: () => E("__recents__", !!m.__recents__),
 						className: "w-full flex items-center gap-1 pt-2 pb-1 px-3.5 text-[10px] font-bold tracking-[0.6px] uppercase text-text-tertiary hover:text-text-secondary transition-colors font-[inherit]",
 						"aria-expanded": !m.__recents__,
-						children: [/* @__PURE__ */ U($r, { expanded: !m.__recents__ }), te]
-					}), !m.__recents__ && /* @__PURE__ */ U("div", { children: A.map((e) => {
-						let t = se++;
-						return oe(e, t);
+						children: [/* @__PURE__ */ U($r, { expanded: !m.__recents__ }), ne]
+					}), !m.__recents__ && /* @__PURE__ */ U("div", { children: te.map((e) => {
+						let t = P++;
+						return se(e, t);
 					}) })]
 				}), ae ? /* @__PURE__ */ W("div", {
 					className: "flex flex-col items-center gap-3 px-4 py-8 text-center",
@@ -3633,13 +3633,13 @@ function ei({ disabledTypes: e = [], contextTypes: t, serverKinds: r }) {
 						className: "text-[11px] font-semibold text-info-fg hover:underline",
 						children: "Clear filters"
 					})]
-				}) : ne.map((e) => {
-					let t = ie ? !1 : m[e.name] ?? x(e);
+				}) : A.map((e) => {
+					let t = re ? !1 : m[e.name] ?? x(e);
 					return /* @__PURE__ */ W("div", {
 						"data-testid": `palette-category-${e.name}`,
 						children: [/* @__PURE__ */ W("button", {
 							type: "button",
-							onClick: () => T(e.name, t),
+							onClick: () => E(e.name, t),
 							className: "w-full flex items-center gap-1 pt-2 pb-1 px-3.5 text-[10px] font-bold tracking-[0.6px] uppercase text-text-tertiary hover:text-text-secondary transition-colors font-[inherit]",
 							"aria-expanded": !t,
 							children: [
@@ -3652,8 +3652,8 @@ function ei({ disabledTypes: e = [], contextTypes: t, serverKinds: r }) {
 								e.name
 							]
 						}), !t && /* @__PURE__ */ U("div", { children: e.items.map((e) => {
-							let t = se++;
-							return oe(e, t);
+							let t = P++;
+							return se(e, t);
 						}) })]
 					}, e.name);
 				})]
@@ -3890,7 +3890,7 @@ function _i({ onFilterLog: e, errorNodeId: t, onErrorNodePosition: n, replayEdge
 		e && (b.current = !0);
 	}, []);
 	R(() => {
-		let e = te.current;
+		let e = ne.current;
 		if (!e || typeof ResizeObserver > "u") return;
 		let t = {
 			w: e.clientWidth,
@@ -3909,21 +3909,21 @@ function _i({ onFilterLog: e, errorNodeId: t, onErrorNodePosition: n, replayEdge
 		updateNodeData: _,
 		getDefinition: () => c
 	});
-	let [S, C, w] = Zt([]), [T, E, D] = Yt([]), [O, ee] = V(!0), [k, A] = V(!0), te = B(null), ne = B(null), [re, ie] = V(null), [j, M] = V(null), ae = L((e, t) => {
+	let [S, C, w] = Zt([]), [T, E, D] = Yt([]), [ee, O] = V(!0), [k, te] = V(!0), ne = B(null), A = B(null), [re, ie] = V(null), [j, M] = V(null), ae = L((e, t) => {
 		e.preventDefault(), M({
 			nodeId: t.id,
 			x: e.clientX,
 			y: e.clientY
 		});
-	}, []), N = L(() => {
+	}, []), oe = L(() => {
 		j && (e?.(j.nodeId), M(null));
-	}, [j, e]), oe = L(() => {
+	}, [j, e]), se = L(() => {
 		if (!j) return;
 		let e = j.nodeId;
 		typeof navigator < "u" && navigator.clipboard?.writeText && navigator.clipboard.writeText(e).catch(() => {}), M(null);
-	}, [j]), P = L(() => {
+	}, [j]), N = L(() => {
 		j && (o?.(j.nodeId), M(null));
-	}, [j, o]), se = L(() => {
+	}, [j, o]), P = L(() => {
 		if (!j) return;
 		let e = m([j.nodeId]);
 		e.length > 0 && g(e[0]), M(null);
@@ -3969,7 +3969,7 @@ function _i({ onFilterLog: e, errorNodeId: t, onErrorNodePosition: n, replayEdge
 			});
 			return n ? r : e;
 		}), requestAnimationFrame(() => {
-			let e = te.current;
+			let e = ne.current;
 			if (!e) return;
 			let r = e.querySelector(`.react-flow__node[data-id="${CSS.escape(t)}"]`);
 			if (!r) {
@@ -4081,11 +4081,11 @@ function _i({ onFilterLog: e, errorNodeId: t, onErrorNodePosition: n, replayEdge
 		let e = (e) => {
 			if (!di(e.target) && !(e.metaKey || e.ctrlKey || e.altKey)) {
 				if (e.key === "m" || e.key === "M") {
-					ee((e) => !e);
+					O((e) => !e);
 					return;
 				}
 				if (e.key === "c" || e.key === "C") {
-					A((e) => !e);
+					te((e) => !e);
 					return;
 				}
 			}
@@ -4103,8 +4103,8 @@ function _i({ onFilterLog: e, errorNodeId: t, onErrorNodePosition: n, replayEdge
 		setEdges: E,
 		setPositions: u,
 		duplicateNodes: m,
-		clipboardRef: ne,
-		containerRef: te
+		clipboardRef: A,
+		containerRef: ne
 	});
 	let xe = L((e) => {
 		switch (e.data?._state) {
@@ -4117,7 +4117,7 @@ function _i({ onFilterLog: e, errorNodeId: t, onErrorNodePosition: n, replayEdge
 		}
 	}, []);
 	return /* @__PURE__ */ W("div", {
-		ref: te,
+		ref: ne,
 		className: "flex-1 min-w-0 min-h-[520px] relative bg-surface-inset",
 		role: "application",
 		"aria-label": "Pipeline editor canvas",
@@ -4163,7 +4163,7 @@ function _i({ onFilterLog: e, errorNodeId: t, onErrorNodePosition: n, replayEdge
 						showInteractive: !0,
 						className: "!bg-surface !border !border-border !rounded-md !shadow-[0_1px_3px_rgba(0,0,0,0.06)]"
 					}) : null,
-					O ? /* @__PURE__ */ U(Kt, {
+					ee ? /* @__PURE__ */ U(Kt, {
 						position: "bottom-right",
 						pannable: !0,
 						zoomable: !0,
@@ -4185,7 +4185,7 @@ function _i({ onFilterLog: e, errorNodeId: t, onErrorNodePosition: n, replayEdge
 				definition: c,
 				addNode: l,
 				screenToFlowPosition: v,
-				containerRef: te
+				containerRef: ne
 			}),
 			/* @__PURE__ */ U(ci, {
 				definition: c,
@@ -4196,10 +4196,10 @@ function _i({ onFilterLog: e, errorNodeId: t, onErrorNodePosition: n, replayEdge
 				nodeMenu: j,
 				breakpoints: a,
 				showBreakpointOption: !!o,
-				onFilterLog: N,
-				onCopyNodeId: oe,
-				onDuplicate: se,
-				onToggleBreakpoint: P,
+				onFilterLog: oe,
+				onCopyNodeId: se,
+				onDuplicate: P,
+				onToggleBreakpoint: N,
 				onDismiss: ce
 			}) : null
 		]
@@ -4285,7 +4285,7 @@ function xi({ error: e, anchor: t, onDismiss: n, onRetry: r }) {
 		r?.();
 	}, [r]);
 	A(!0, n), R(() => {
-		te(i.current);
+		re(i.current);
 	}, []);
 	let m = Math.min(t.y + 8, window.innerHeight - 440), h = Math.min(t.x + 12, window.innerWidth - 360);
 	return /* @__PURE__ */ W("div", {
@@ -5070,7 +5070,7 @@ function ma({ open: e, onClose: t, currentDef: n, publishedDef: r, onJumpToNode:
 	let a = z(() => ua(n, r), [n, r]), o = (e) => {
 		i && i(e), t();
 	}, s = r !== null, c = n.version, l = n.publishedVersion;
-	return /* @__PURE__ */ W(T, {
+	return /* @__PURE__ */ W(C, {
 		open: e,
 		onClose: t,
 		title: "Changes since publish",
@@ -5220,7 +5220,7 @@ var ga = "px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary
 function va(e) {
 	let { publishConfirmOpen: t, onPublishClose: r, onPublishConfirm: i, hasErrors: a, validationErrorCount: o, definitionName: s, definitionVersion: c, deleteConfirmOpen: l, onDeleteClose: u, onDeleteConfirm: d, clearRunsConfirmOpen: f, onClearRunsClose: p, onClearRunsConfirm: m, versionDiffOpen: h, onVersionDiffClose: g, currentDef: _, publishedDef: v, onJumpToNode: y, simPanelOpen: b, onSimPanelClose: x } = e;
 	return /* @__PURE__ */ W(H, { children: [
-		/* @__PURE__ */ U(T, {
+		/* @__PURE__ */ U(C, {
 			open: t,
 			onClose: r,
 			title: "Publish pipeline?",
@@ -5264,7 +5264,7 @@ function va(e) {
 				]
 			})
 		}),
-		/* @__PURE__ */ U(T, {
+		/* @__PURE__ */ U(C, {
 			open: l,
 			onClose: u,
 			title: "Delete pipeline?",
@@ -5287,7 +5287,7 @@ function va(e) {
 				] }), " will be permanently removed. Run history for this pipeline will also be lost."]
 			})
 		}),
-		/* @__PURE__ */ U(T, {
+		/* @__PURE__ */ U(C, {
 			open: f,
 			onClose: p,
 			title: "Clear run history?",
@@ -5447,7 +5447,7 @@ function ya({ runId: e, visible: t }) {
 				className: "flex items-center justify-center h-full text-code-muted text-[13px] italic",
 				children: e ? "Waiting for LLM output..." : "No active run"
 			}) : p.map((e) => /* @__PURE__ */ W("div", { children: [/* @__PURE__ */ W("div", {
-				className: n("flex items-center gap-2 py-1.5 cursor-pointer select-none text-[11px] font-semibold border-b border-code-border mb-1.5", e.active ? v.info : v.neutral),
+				className: n("flex items-center gap-2 py-1.5 cursor-pointer select-none text-[11px] font-semibold border-b border-code-border mb-1.5", e.active ? g.info : g.neutral),
 				onClick: () => d(e.stepId),
 				role: "button",
 				tabIndex: 0,
@@ -5459,7 +5459,7 @@ function ya({ runId: e, visible: t }) {
 					}),
 					/* @__PURE__ */ U("span", { children: e.stepId }),
 					e.active && /* @__PURE__ */ U("span", {
-						className: n(v.success, "text-[10px]"),
+						className: n(g.success, "text-[10px]"),
 						children: "streaming"
 					})
 				]
@@ -5467,7 +5467,7 @@ function ya({ runId: e, visible: t }) {
 				className: "whitespace-pre-wrap break-words m-0 mb-3 p-0 text-code-text",
 				children: [e.text, e.active && /* @__PURE__ */ U("span", { className: "inline-block w-0.5 h-[14px] bg-code-blue ml-px align-text-bottom [animation:live-output-blink_1s_step-end_infinite]" })]
 			}), e.summary && /* @__PURE__ */ W("div", {
-				className: n(v.success, "text-[11px] font-semibold pt-1 pb-2 border-b border-code-border mb-2"),
+				className: n(g.success, "text-[11px] font-semibold pt-1 pb-2 border-b border-code-border mb-2"),
 				children: [
 					"✓",
 					" ",
@@ -5555,14 +5555,14 @@ function Sa(e) {
 		t.runs,
 		x
 	]);
-	let C = x ? t.runs[x] : void 0, w = !!C && (C.status === "running" || C.status === "pending" || C.status === "awaiting_approval"), [T, E] = V(/* @__PURE__ */ new Set()), [D, O] = V(null), [ee, k] = V(null), [A, te] = V(null), [ne, re] = V(0), [ie, j] = V(!1), [M, ae] = V(null), N = L((e, t) => {
-		t === null ? (k(null), te(null)) : (k(t), te(e));
-	}, []), oe = L((e) => {
+	let C = x ? t.runs[x] : void 0, w = !!C && (C.status === "running" || C.status === "pending" || C.status === "awaiting_approval"), [T, E] = V(/* @__PURE__ */ new Set()), [D, ee] = V(null), [O, k] = V(null), [te, ne] = V(null), [A, re] = V(0), [ie, j] = V(!1), [M, ae] = V(null), oe = L((e, t) => {
+		t === null ? (k(null), ne(null)) : (k(t), ne(e));
+	}, []), se = L((e) => {
 		E((t) => {
 			let n = new Set(t);
 			return n.has(e) ? n.delete(e) : n.add(e), n;
 		});
-	}, []), P = L(async () => {
+	}, []), N = L(async () => {
 		if (T.size !== 0) try {
 			let n = await t.triggerDebugRun(e, Array.from(T));
 			S(n);
@@ -5573,20 +5573,20 @@ function Sa(e) {
 		T,
 		t,
 		e
-	]), se = L(() => {
-		D && (t.resolveBreakpoint(D.runId, D.stepId, "continue"), O(null));
+	]), P = L(() => {
+		D && (t.resolveBreakpoint(D.runId, D.stepId, "continue"), ee(null));
 	}, [D, t]), ce = L(() => {
-		D && (t.resolveBreakpoint(D.runId, D.stepId, "step_over"), O(null));
+		D && (t.resolveBreakpoint(D.runId, D.stepId, "step_over"), ee(null));
 	}, [D, t]), F = L(() => {
-		D && (t.resolveBreakpoint(D.runId, D.stepId, "resume_all"), O(null));
+		D && (t.resolveBreakpoint(D.runId, D.stepId, "resume_all"), ee(null));
 	}, [D, t]), le = L(async () => {
-		if (!(!D || !ee || A !== D.stepId) && Object.keys(ee).length !== 0) {
+		if (!(!D || !O || te !== D.stepId) && Object.keys(O).length !== 0) {
 			j(!0);
 			try {
 				await St(e, D.runId, D.stepId, {
 					mode: "merge",
-					values: ee
-				}), k(null), te(null), re((e) => e + 1), t.resolveBreakpoint(D.runId, D.stepId, "continue"), O(null);
+					values: O
+				}), k(null), ne(null), re((e) => e + 1), t.resolveBreakpoint(D.runId, D.stepId, "continue"), ee(null);
 			} catch (e) {
 				if (e instanceof ze) n(`Patch rejected: ${e.reason}`, {
 					type: "error",
@@ -5609,8 +5609,8 @@ function Sa(e) {
 		}
 	}, [
 		D,
-		ee,
-		A,
+		O,
+		te,
 		e,
 		t,
 		n
@@ -5644,7 +5644,7 @@ function Sa(e) {
 		n
 	]), de = L((e) => {
 		if ("eventType" in e || !l(e.runId)) return;
-		O({
+		ee({
 			runId: e.runId,
 			stepId: e.stepId
 		});
@@ -5656,7 +5656,7 @@ function Sa(e) {
 	}, [l, n]);
 	fe("pipeline.step.breakpoint", de);
 	let pe = L((e) => {
-		"eventType" in e || D && D.runId === e.runId && O(null);
+		"eventType" in e || D && D.runId === e.runId && ee(null);
 	}, [D]);
 	fe("pipeline.run.completed", pe), fe("pipeline.run.failed", pe), fe("pipeline.run.cancelled", pe);
 	let me = L(() => {
@@ -5718,20 +5718,20 @@ function Sa(e) {
 		triggerInputValues: xe,
 		setTriggerInputValues: Se,
 		breakpoints: T,
-		handleToggleBreakpoint: oe,
-		handleDebugRunClick: P,
+		handleToggleBreakpoint: se,
+		handleDebugRunClick: N,
 		pausedBreakpoint: D,
-		handleBreakpointContinue: se,
+		handleBreakpointContinue: P,
 		handleBreakpointStepOver: ce,
 		handleBreakpointResumeAll: F,
 		handleApplyAndContinue: le,
 		handleRevertPatch: ue,
 		applyingPatch: ie,
 		revertingPatchId: M,
-		dirtyPatch: ee,
-		dirtyPatchStepId: A,
-		handleContextEditBufferChange: N,
-		resetEditBufferKey: ne,
+		dirtyPatch: O,
+		dirtyPatchStepId: te,
+		handleContextEditBufferChange: oe,
+		resetEditBufferKey: A,
 		sidebarTab: Ee,
 		setSidebarTab: De
 	};
@@ -5816,17 +5816,17 @@ var wa = {
 	danger: "bg-danger-bg text-danger-fg",
 	info: "bg-info-bg text-info-fg"
 };
-function Ta({ pipelineId: e, definition: t, dirty: r, savingFlash: i, isRunActive: a, isTriggering: o, runDisabled: s, runTitle: c, currentRun: u, breakpoints: d, onRunClick: f, onDebugRunClick: p, onExport: m, onPublishClick: h, onDuplicate: _, onCopyMermaid: v, onViewVersions: y, onRevert: b, onToggleShowTags: S, showTags: C, onViewRunHistory: w, onClearRunHistory: T, onSimPanelOpen: E, onDelete: O }) {
-	let ee = Bt(), { rename: k, setIcon: A, setSelectedNodeId: te } = he(), [ne, re] = V(!1), [ie, j] = V(""), M = B(null);
+function Ta({ pipelineId: e, definition: t, dirty: r, savingFlash: i, isRunActive: a, isTriggering: o, runDisabled: s, runTitle: c, currentRun: l, breakpoints: u, onRunClick: d, onDebugRunClick: f, onExport: h, onPublishClick: g, onDuplicate: _, onCopyMermaid: v, onViewVersions: b, onRevert: x, onToggleShowTags: S, showTags: C, onViewRunHistory: w, onClearRunHistory: E, onSimPanelOpen: D, onDelete: ee }) {
+	let O = Bt(), { rename: k, setIcon: te, setSelectedNodeId: ne } = he(), [A, re] = V(!1), [ie, j] = V(""), M = B(null);
 	R(() => {
-		ne && (j(t.name ?? ""), setTimeout(() => M.current?.focus(), 0));
-	}, [ne, t.name]);
+		A && (j(t.name ?? ""), setTimeout(() => M.current?.focus(), 0));
+	}, [A, t.name]);
 	let ae = () => {
 		let e = ie.trim();
 		e && e !== t.name && k(e), re(!1);
-	}, N = z(() => t ? Ci(t) : null, [t]);
-	N?.errors.length;
-	let oe = t.status === "published", P = r ? {
+	}, oe = z(() => t ? Ci(t) : null, [t]);
+	oe?.errors.length;
+	let se = t.status === "published", N = r ? {
 		label: "Saving…",
 		variant: "info"
 	} : i ? {
@@ -5835,7 +5835,7 @@ function Ta({ pipelineId: e, definition: t, dirty: r, savingFlash: i, isRunActiv
 	} : {
 		label: "✓ Saved",
 		variant: "neutral"
-	}, se = t.status === "published" ? {
+	}, P = t.status === "published" ? {
 		label: `v${t.version} · Published`,
 		variant: "success"
 	} : typeof t.publishedVersion == "number" ? {
@@ -5844,11 +5844,11 @@ function Ta({ pipelineId: e, definition: t, dirty: r, savingFlash: i, isRunActiv
 	} : {
 		label: `v${t.version} · Draft`,
 		variant: "neutral"
-	}, ce = N ? N.errors.length > 0 ? {
-		label: `✗ ${N.errors.length} error${N.errors.length === 1 ? "" : "s"}`,
+	}, ce = oe ? oe.errors.length > 0 ? {
+		label: `✗ ${oe.errors.length} error${oe.errors.length === 1 ? "" : "s"}`,
 		variant: "danger"
-	} : N.warnings.length > 0 ? {
-		label: `⚠ ${N.warnings.length} warning${N.warnings.length === 1 ? "" : "s"}`,
+	} : oe.warnings.length > 0 ? {
+		label: `⚠ ${oe.warnings.length} warning${oe.warnings.length === 1 ? "" : "s"}`,
 		variant: "warning"
 	} : {
 		label: "✓ Valid",
@@ -5858,16 +5858,16 @@ function Ta({ pipelineId: e, definition: t, dirty: r, savingFlash: i, isRunActiv
 		variant: "neutral"
 	}, [F, le] = V(!1), ue = B(null);
 	wr(ue, () => le(!1), F);
-	let de = N ? [...N.errors, ...N.warnings] : [], fe = (e) => {
-		e && (te(e), le(!1));
-	}, pe = t.nodes.filter((e) => e.type !== "trigger").length, me = u ? Object.values(u.steps).filter((e) => e.status === "completed" || e.status === "skipped").length : 0, ge = ((u?.startedAt ? Date.now() - new Date(u.startedAt).getTime() : 0) / 1e3).toFixed(1), _e = a && u ? {
+	let de = oe ? [...oe.errors, ...oe.warnings] : [], fe = (e) => {
+		e && (ne(e), le(!1));
+	}, pe = t.nodes.filter((e) => e.type !== "trigger").length, me = l ? Object.values(l.steps).filter((e) => e.status === "completed" || e.status === "skipped").length : 0, ge = ((l?.startedAt ? Date.now() - new Date(l.startedAt).getTime() : 0) / 1e3).toFixed(1), _e = a && l ? {
 		text: `Running (${me}/${pe} steps) · ${ge}s`,
 		variant: "running"
-	} : u?.status === "completed" ? {
-		text: `Completed in ${u.durationMs == null ? "?" : (u.durationMs / 1e3).toFixed(1)}s`,
+	} : l?.status === "completed" ? {
+		text: `Completed in ${l.durationMs == null ? "?" : (l.durationMs / 1e3).toFixed(1)}s`,
 		variant: "success"
-	} : u?.status === "failed" ? {
-		text: `Failed at ${xa(t, u.error?.nodeId)}`,
+	} : l?.status === "failed" ? {
+		text: `Failed at ${xa(t, l.error?.nodeId)}`,
 		variant: "error"
 	} : {
 		text: "",
@@ -5876,21 +5876,21 @@ function Ta({ pipelineId: e, definition: t, dirty: r, savingFlash: i, isRunActiv
 		running: "bg-info-bg text-info-fg",
 		success: "bg-success-bg text-success-fg",
 		error: "bg-danger-bg text-danger-fg"
-	}, ye = a ? "⏹ Stop" : u && u.status !== "running" ? "↻ Re-run" : "▶ Run", [be, xe] = V(!1), Se = B(null);
+	}, ye = a ? "⏹ Stop" : l && l.status !== "running" ? "↻ Re-run" : "▶ Run", [be, xe] = V(!1), Se = B(null);
 	return wr(Se, () => xe(!1), be), /* @__PURE__ */ W("div", {
 		className: n("h-11 shrink-0 flex items-center gap-2.5 px-3", "border-b border-border bg-surface", "sticky top-0 z-5"),
 		children: [
-			/* @__PURE__ */ U(x, {
-				onClick: () => ee("/pipelines"),
+			/* @__PURE__ */ U(y, {
+				onClick: () => O("/pipelines"),
 				"aria-label": "Back to pipelines",
 				title: "Back to pipelines",
 				children: "←"
 			}),
-			/* @__PURE__ */ U(l, {
+			/* @__PURE__ */ U(p, {
 				value: t.icon ?? "🔀",
-				onChange: A
+				onChange: te
 			}),
-			ne ? /* @__PURE__ */ U(D, {
+			A ? /* @__PURE__ */ U(T, {
 				ref: M,
 				value: ie,
 				onChange: (e) => j(e.target.value),
@@ -5910,14 +5910,14 @@ function Ta({ pipelineId: e, definition: t, dirty: r, savingFlash: i, isRunActiv
 				children: t.name
 			}),
 			/* @__PURE__ */ U("span", {
-				className: n("inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold font-inherit leading-snug whitespace-nowrap", wa[P.variant]),
+				className: n("inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold font-inherit leading-snug whitespace-nowrap", wa[N.variant]),
 				"data-testid": "save-status",
-				children: P.label
+				children: N.label
 			}),
 			/* @__PURE__ */ U("span", {
-				className: n("inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold font-inherit leading-snug whitespace-nowrap", wa[se.variant]),
+				className: n("inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold font-inherit leading-snug whitespace-nowrap", wa[P.variant]),
 				"data-testid": "version-badge",
-				children: se.label
+				children: P.label
 			}),
 			/* @__PURE__ */ W("div", {
 				className: "relative",
@@ -5968,32 +5968,32 @@ function Ta({ pipelineId: e, definition: t, dirty: r, savingFlash: i, isRunActiv
 				]
 			}),
 			/* @__PURE__ */ U("div", { className: "flex-1" }),
-			/* @__PURE__ */ U(g, {
+			/* @__PURE__ */ U(m, {
 				variant: "secondary",
-				onClick: () => ee("/pipelines/metrics"),
+				onClick: () => O("/pipelines/metrics"),
 				title: "View pipeline metrics dashboard",
 				"data-testid": "metrics-button",
 				children: "Metrics"
 			}),
-			/* @__PURE__ */ U(g, {
+			/* @__PURE__ */ U(m, {
 				variant: "secondary",
-				onClick: m,
+				onClick: h,
 				title: "Export pipeline as JSON",
 				"data-testid": "export-button",
 				children: "Export"
 			}),
 			/* @__PURE__ */ U("button", {
 				type: "button",
-				onClick: h,
-				title: oe ? "Already published at this version" : "Publish pipeline to enable runs",
-				disabled: oe,
-				className: n("px-3 py-1.5 text-[13px] font-semibold border-none rounded-md font-inherit shrink-0", oe ? "bg-surface-hover text-text-tertiary cursor-default opacity-70" : "bg-success text-white cursor-pointer"),
+				onClick: g,
+				title: se ? "Already published at this version" : "Publish pipeline to enable runs",
+				disabled: se,
+				className: n("px-3 py-1.5 text-[13px] font-semibold border-none rounded-md font-inherit shrink-0", se ? "bg-surface-hover text-text-tertiary cursor-default opacity-70" : "bg-success text-white cursor-pointer"),
 				"data-testid": "publish-button",
-				children: oe ? "Published" : "Publish"
+				children: se ? "Published" : "Publish"
 			}),
 			/* @__PURE__ */ U("button", {
 				type: "button",
-				onClick: f,
+				onClick: d,
 				disabled: s || o,
 				title: c,
 				className: n("px-3.5 py-1.5 text-[13px] font-semibold text-white border-none rounded-md font-inherit shrink-0", a ? "bg-danger" : "bg-primary", s || o ? "cursor-not-allowed opacity-50" : "cursor-pointer"),
@@ -6003,29 +6003,29 @@ function Ta({ pipelineId: e, definition: t, dirty: r, savingFlash: i, isRunActiv
 					children: [/* @__PURE__ */ U("span", { className: "inline-block w-3 h-3 border-2 border-border border-t-white rounded-full animate-spin" }), "Triggering…"]
 				}) : ye
 			}),
-			d.size > 0 && /* @__PURE__ */ W("button", {
+			u.size > 0 && /* @__PURE__ */ W("button", {
 				type: "button",
-				onClick: p,
+				onClick: f,
 				disabled: s || a,
-				title: `Debug run (${d.size} breakpoint${d.size > 1 ? "s" : ""})`,
+				title: `Debug run (${u.size} breakpoint${u.size > 1 ? "s" : ""})`,
 				className: n("px-3.5 py-1.5 text-[13px] font-semibold bg-warning text-white", "border-none rounded-md font-inherit shrink-0", s || a ? "cursor-not-allowed opacity-50" : "cursor-pointer"),
 				"data-testid": "debug-run-button",
 				children: [
 					"Debug (",
-					d.size,
+					u.size,
 					")"
 				]
 			}),
 			/* @__PURE__ */ W("div", {
 				className: "relative",
 				ref: Se,
-				children: [/* @__PURE__ */ U(x, {
+				children: [/* @__PURE__ */ U(y, {
 					onClick: () => xe((e) => !e),
 					"aria-label": "More actions",
 					"data-testid": "overflow-menu-btn",
 					children: "⋯"
 				}), be && /* @__PURE__ */ U(Ca, {
-					isPublished: oe,
+					isPublished: se,
 					showTags: C,
 					onDuplicate: () => {
 						_(), xe(!1);
@@ -6034,10 +6034,10 @@ function Ta({ pipelineId: e, definition: t, dirty: r, savingFlash: i, isRunActiv
 						v(), xe(!1);
 					},
 					onViewVersions: () => {
-						y(), xe(!1);
+						b(), xe(!1);
 					},
 					onRevert: () => {
-						b(), xe(!1);
+						x(), xe(!1);
 					},
 					onToggleShowTags: () => {
 						S(), xe(!1);
@@ -6046,13 +6046,13 @@ function Ta({ pipelineId: e, definition: t, dirty: r, savingFlash: i, isRunActiv
 						w(), xe(!1);
 					},
 					onClearRunHistory: () => {
-						T(), xe(!1);
-					},
-					onSimPanelOpen: () => {
 						E(), xe(!1);
 					},
+					onSimPanelOpen: () => {
+						D(), xe(!1);
+					},
 					onDelete: () => {
-						O(), xe(!1);
+						ee(), xe(!1);
 					},
 					hasPublishedVersion: typeof t.publishedVersion == "number"
 				})]
@@ -6486,7 +6486,7 @@ function za({ attempt: e, label: t }) {
 			}),
 			/* @__PURE__ */ W("div", {
 				className: "flex gap-1.5 mb-1.5 items-center",
-				children: [/* @__PURE__ */ U(b, {
+				children: [/* @__PURE__ */ U(v, {
 					palette: "code",
 					tone: r ? "success" : "danger",
 					size: "xs",
@@ -6497,7 +6497,7 @@ function za({ attempt: e, label: t }) {
 				})]
 			}),
 			e.error && /* @__PURE__ */ U("div", {
-				className: n("text-[11px] font-mono mb-1.5 px-2 py-1.5 rounded whitespace-pre-wrap break-words", y.danger),
+				className: n("text-[11px] font-mono mb-1.5 px-2 py-1.5 rounded whitespace-pre-wrap break-words", _.danger),
 				children: e.error
 			}),
 			e.output !== void 0 && /* @__PURE__ */ W("div", { children: [/* @__PURE__ */ U("div", {
@@ -6511,7 +6511,7 @@ function za({ attempt: e, label: t }) {
 	});
 }
 function Ba({ run: e, activeStepId: t, onStepSelect: r, editable: i = !1, onEditBufferChange: a, resetEditBufferKey: o }) {
-	let [s, c] = V("input"), [l, u] = V(0), [d, f] = V(!1), [p, m] = V({}), [h, g] = V(null), [_, v] = V({}), [y, x] = V({
+	let [s, c] = V("input"), [l, u] = V(0), [d, f] = V(!1), [p, m] = V({}), [h, g] = V(null), [_, y] = V({}), [b, x] = V({
 		key: "",
 		value: ""
 	}), { enrichedSnapshots: S, activeSnapshot: C, newKeysSet: w } = Ra(e, t), T = C?.resolvedPrompt != null, E = C?.stepExecution.attempts, D = (E?.length ?? 0) >= 2;
@@ -6524,19 +6524,19 @@ function Ba({ run: e, activeStepId: t, onStepSelect: r, editable: i = !1, onEdit
 	]), R(() => {
 		u(0);
 	}, [t]);
-	let O = !!(e && e.status === "paused_at_breakpoint" && t && (e.currentStepIds?.includes(t) || C?.stepExecution.status === "running" || C?.stepExecution.status === "awaiting" || C?.stepExecution.status === "pending")), ee = !!i && !!O;
+	let ee = !!(e && e.status === "paused_at_breakpoint" && t && (e.currentStepIds?.includes(t) || C?.stepExecution.status === "running" || C?.stepExecution.status === "awaiting" || C?.stepExecution.status === "pending")), O = !!i && !!ee;
 	R(() => {
-		ee ? h && h !== t && (m({}), g(null), v({})) : (d && f(!1), Object.keys(p).length > 0 && m({}), h && g(null), Object.keys(_).length > 0 && v({}));
-	}, [ee, t]), R(() => {
-		o !== void 0 && (m({}), g(null), v({}), x({
+		O ? h && h !== t && (m({}), g(null), y({})) : (d && f(!1), Object.keys(p).length > 0 && m({}), h && g(null), Object.keys(_).length > 0 && y({}));
+	}, [O, t]), R(() => {
+		o !== void 0 && (m({}), g(null), y({}), x({
 			key: "",
 			value: ""
 		}));
 	}, [o]), R(() => {
-		!ee || !t || a && (Object.keys(p).length === 0 ? a(t, null) : a(t, p));
+		!O || !t || a && (Object.keys(p).length === 0 ? a(t, null) : a(t, p));
 	}, [
 		p,
-		ee,
+		O,
 		t
 	]);
 	let k = L((e, n) => {
@@ -6544,49 +6544,49 @@ function Ba({ run: e, activeStepId: t, onStepSelect: r, editable: i = !1, onEdit
 			...t,
 			[e]: n
 		});
-	}, [t]), A = L((e, n) => {
+	}, [t]), te = L((e, n) => {
 		g(t), m((t) => ({
 			...t,
 			[e]: n
-		})), v((t) => {
+		})), y((t) => {
 			if (!(e in t)) return t;
 			let n = { ...t };
 			return delete n[e], n;
 		});
-	}, [t]), te = L((e) => {
+	}, [t]), ne = L((e) => {
 		m((t) => {
 			if (!(e in t)) return t;
 			let n = { ...t };
 			return delete n[e], n;
-		}), v((t) => {
+		}), y((t) => {
 			if (!(e in t)) return t;
 			let n = { ...t };
 			return delete n[e], n;
 		});
-	}, []), ne = L((e, t) => {
-		v((n) => ({
+	}, []), A = L((e, t) => {
+		y((n) => ({
 			...n,
 			[e]: t
 		}));
 	}, []), re = L(() => {
-		m({}), g(null), v({}), x({
+		m({}), g(null), y({}), x({
 			key: "",
 			value: ""
 		});
 	}, []), ie = L(() => {
-		let e = y.key.trim();
+		let e = b.key.trim();
 		if (!e) return;
-		let t = y.value, n = y.value;
+		let t = b.value, n = b.value;
 		if (n.trim().length > 0) try {
 			t = JSON.parse(n);
 		} catch {
 			t = n;
 		}
-		A(e, t), x({
+		te(e, t), x({
 			key: "",
 			value: ""
 		});
-	}, [y, A]);
+	}, [b, te]);
 	return !e || S.length === 0 ? /* @__PURE__ */ W("div", {
 		className: "flex flex-col overflow-hidden h-full",
 		"data-testid": "context-inspector",
@@ -6670,7 +6670,7 @@ function Ba({ run: e, activeStepId: t, onStepSelect: r, editable: i = !1, onEdit
 						children: [/* @__PURE__ */ W("div", {
 							className: "text-[10px] text-code-muted font-semibold uppercase",
 							children: ["Input context", C.stepId ? ` — step ${C.stepId.slice(0, 8)}` : ""]
-						}), ee && /* @__PURE__ */ W("div", {
+						}), O && /* @__PURE__ */ W("div", {
 							className: "flex gap-1.5 items-center",
 							children: [d && Object.keys(p).length > 0 && /* @__PURE__ */ U("button", {
 								type: "button",
@@ -6689,20 +6689,20 @@ function Ba({ run: e, activeStepId: t, onStepSelect: r, editable: i = !1, onEdit
 								children: d ? "Editing" : "Edit"
 							})]
 						})]
-					}), Object.keys(C.inputContext).length === 0 && !(ee && d) ? /* @__PURE__ */ U("div", {
+					}), Object.keys(C.inputContext).length === 0 && !(O && d) ? /* @__PURE__ */ U("div", {
 						className: "text-code-muted text-xs italic",
 						children: "No input context (first step or no upstream output)"
-					}) : ee && d ? /* @__PURE__ */ U(Pa, {
+					}) : O && d ? /* @__PURE__ */ U(Pa, {
 						inputContext: C.inputContext,
 						buffer: p,
 						parseErrors: _,
-						newKeyDraft: y,
+						newKeyDraft: b,
 						setNewKeyDraft: x,
 						onCommitNewKey: ie,
 						onBeginEditKey: k,
-						onSetValue: A,
-						onRemoveKey: te,
-						onParseError: ne
+						onSetValue: te,
+						onRemoveKey: ne,
+						onParseError: A
 					}) : /* @__PURE__ */ U(Aa, {
 						data: C.inputContext,
 						highlightKeys: w
@@ -6719,7 +6719,7 @@ function Ba({ run: e, activeStepId: t, onStepSelect: r, editable: i = !1, onEdit
 								children: "New context keys added"
 							}), /* @__PURE__ */ U("div", {
 								className: "flex flex-wrap gap-1",
-								children: C.newKeys.map((e) => /* @__PURE__ */ U(b, {
+								children: C.newKeys.map((e) => /* @__PURE__ */ U(v, {
 									palette: "code",
 									tone: "success",
 									size: "sm",
@@ -6812,7 +6812,7 @@ function Ba({ run: e, activeStepId: t, onStepSelect: r, editable: i = !1, onEdit
 								children: [
 									/* @__PURE__ */ W("div", {
 										className: "flex gap-2 mb-1",
-										children: [/* @__PURE__ */ U(b, {
+										children: [/* @__PURE__ */ U(v, {
 											palette: "code",
 											tone: e.decision === "approve" ? "success" : "danger",
 											size: "xs",
@@ -7285,7 +7285,7 @@ function no({ value: e, onChange: t, nodeId: n, label: r = "Source image path", 
 		label: r,
 		help: i,
 		controlId: s,
-		render: ({ describedById: n, controlId: r }) => /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(D, {
+		render: ({ describedById: n, controlId: r }) => /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(T, {
 			id: r,
 			"aria-describedby": n,
 			size: "sm",
@@ -7308,7 +7308,7 @@ function ro({ label: e, checked: t, onChange: n, help: r, disabled: i, "data-tes
 		className: "flex flex-col",
 		children: [/* @__PURE__ */ W("div", {
 			className: "flex items-center gap-2",
-			children: [/* @__PURE__ */ U(j, {
+			children: [/* @__PURE__ */ U(ae, {
 				size: "sm",
 				checked: t,
 				onChange: n,
@@ -7457,15 +7457,15 @@ var mo = [
 function ho({ data: e, onChange: t }) {
 	let n = Rt(), { toast: i } = r(), a = Lt(Re)?.definition?.triggerBinding?.webhookSecret, [o, s] = V(!1), c = at(), l = c.enabled, u = c.publicUrlBase ?? fo, d = e.triggerType.startsWith("document."), f = z(() => d ? po() : [], [d]), p = d && !e.documentTypeId, m = e.triggerType === "schedule" && !e.schedule, h = e.triggerType === "webhook" && !e.webhookPath, g = e.webhookPath ?? "", _ = e.triggerType === "webhook" && g.length > 0 && !uo.test(g), v = e.triggerType === "webhook" && uo.test(g) ? `${u}/hooks/pipeline/${g}` : null, y = () => {
 		v && navigator.clipboard.writeText(v).then(() => i("Webhook URL copied", { type: "success" })).catch(() => i("Could not copy webhook URL", { type: "error" }));
-	}, b = () => {
+	}, x = () => {
 		a && navigator.clipboard.writeText(a).then(() => i("Webhook secret copied", { type: "success" })).catch(() => i("Could not copy webhook secret", { type: "error" }));
-	}, x = e.triggerType === "schedule" ? e.schedule ?? "" : "", C = z(() => x ? oo(x) : null, [x]), w = z(() => C ? lo(C, /* @__PURE__ */ new Date(), 3) : [], [C]), T = e.triggerType === "schedule" && !!x && !C, E = e.triggerType === "document.finalize" ? "On finalize" : e.triggerType === "document.submit" ? "On submit for review" : e.triggerType === "document.comment" ? "On comment added" : "";
+	}, S = e.triggerType === "schedule" ? e.schedule ?? "" : "", C = z(() => S ? oo(S) : null, [S]), w = z(() => C ? lo(C, /* @__PURE__ */ new Date(), 3) : [], [C]), D = e.triggerType === "schedule" && !!S && !C, ee = e.triggerType === "document.finalize" ? "On finalize" : e.triggerType === "document.submit" ? "On submit for review" : e.triggerType === "document.comment" ? "On comment added" : "";
 	return /* @__PURE__ */ W(Ka, { children: [
 		/* @__PURE__ */ U(X, {
 			label: "Trigger type",
 			required: !0,
 			controlId: `${n}-trigger-type`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(F, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(E, {
 				size: "sm",
 				id: n,
 				"aria-describedby": r,
@@ -7480,7 +7480,7 @@ function ho({ data: e, onChange: t }) {
 			error: p ? "Select a document type." : void 0,
 			help: p ? void 0 : "Which document type should trigger this pipeline.",
 			controlId: `${n}-document-type`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(F, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(E, {
 				size: "sm",
 				invalid: p,
 				id: n,
@@ -7494,25 +7494,25 @@ function ho({ data: e, onChange: t }) {
 					value: e.id,
 					label: e.name
 				}))]
-			}), E && /* @__PURE__ */ W("div", {
+			}), ee && /* @__PURE__ */ W("div", {
 				className: "text-[11px] text-text-tertiary mt-1.5",
 				children: ["Event: ", /* @__PURE__ */ U("span", {
 					className: "font-semibold text-text-secondary",
-					children: E
+					children: ee
 				})]
 			})] })
 		}),
 		e.triggerType === "schedule" && /* @__PURE__ */ U(X, {
 			label: "Schedule (cron)",
 			required: !0,
-			error: m ? "Cron expression is required." : T ? "Invalid cron expression — supports *, */N, N,M, A-B, exact values." : void 0,
-			help: !m && !T ? "5-field cron: minute hour day month weekday." : void 0,
+			error: m ? "Cron expression is required." : D ? "Invalid cron expression — supports *, */N, N,M, A-B, exact values." : void 0,
+			help: !m && !D ? "5-field cron: minute hour day month weekday." : void 0,
 			controlId: `${n}-schedule`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(D, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(T, {
 				size: "sm",
 				mono: !0,
 				spellCheck: !1,
-				invalid: m || T,
+				invalid: m || D,
 				placeholder: "*/15 * * * *",
 				id: n,
 				"aria-describedby": r,
@@ -7535,7 +7535,7 @@ function ho({ data: e, onChange: t }) {
 					error: h ? "Webhook path is required." : _ ? "Path must be alphanumeric (plus _, -)" : void 0,
 					help: !h && !_ ? "Alphanumeric, _, or - (max 64 chars). No leading slash." : void 0,
 					controlId: `${n}-webhook-path`,
-					render: ({ controlId: e, describedById: n }) => /* @__PURE__ */ U(D, {
+					render: ({ controlId: e, describedById: n }) => /* @__PURE__ */ U(T, {
 						size: "sm",
 						mono: !0,
 						spellCheck: !1,
@@ -7547,7 +7547,7 @@ function ho({ data: e, onChange: t }) {
 						onChange: (e) => t({ webhookPath: e.target.value })
 					})
 				}),
-				!l && /* @__PURE__ */ U(S, {
+				!l && /* @__PURE__ */ U(b, {
 					variant: "warning",
 					title: "Endpoint not active.",
 					"data-testid": "webhook-relay-inactive",
@@ -7592,7 +7592,7 @@ function ho({ data: e, onChange: t }) {
 							}),
 							/* @__PURE__ */ U("button", {
 								type: "button",
-								onClick: b,
+								onClick: x,
 								className: "text-[11px] px-2 py-0.5 border border-border rounded bg-transparent text-text-secondary cursor-pointer font-sans",
 								children: "Copy"
 							})
@@ -7839,7 +7839,7 @@ function Eo(e, t) {
 	});
 }
 function Do({ data: e, onChange: t, nodeId: n }) {
-	let r = Rt(), [i, a] = V(!1), { paths: o, unresolved: s } = eo(n ?? null), l = new Map(o.map((e) => [e.path, e.kind])), u = s(`${e.systemPrompt ?? ""}\n${e.userPromptTemplate ?? ""}`), d = !e.systemPrompt?.trim(), f = !e.userPromptTemplate?.trim(), p = ut(), m = (e) => p(`llm:${e}`, (wo[e] ?? []).map((e) => ({ value: e }))), h = m(e.provider), g = e.model && !h.some((t) => t.value === e.model) ? [{ value: e.model }, ...h] : h, _ = Co.some((t) => t.value === e.provider) ? Co : [...Co, {
+	let r = Rt(), [i, a] = V(!1), { paths: o, unresolved: c } = eo(n ?? null), l = new Map(o.map((e) => [e.path, e.kind])), u = c(`${e.systemPrompt ?? ""}\n${e.userPromptTemplate ?? ""}`), d = !e.systemPrompt?.trim(), f = !e.userPromptTemplate?.trim(), p = ut(), m = (e) => p(`llm:${e}`, (wo[e] ?? []).map((e) => ({ value: e }))), h = m(e.provider), g = e.model && !h.some((t) => t.value === e.model) ? [{ value: e.model }, ...h] : h, _ = Co.some((t) => t.value === e.provider) ? Co : [...Co, {
 		value: String(e.provider ?? ""),
 		label: `${String(e.provider ?? "")} (unrecognised)`
 	}], v = (n) => {
@@ -7854,7 +7854,7 @@ function Do({ data: e, onChange: t, nodeId: n }) {
 			label: "Provider",
 			required: !0,
 			controlId: `${r}-provider`,
-			render: ({ controlId: t, describedById: n }) => /* @__PURE__ */ U(F, {
+			render: ({ controlId: t, describedById: n }) => /* @__PURE__ */ U(E, {
 				size: "sm",
 				id: t,
 				"aria-describedby": n,
@@ -7867,7 +7867,7 @@ function Do({ data: e, onChange: t, nodeId: n }) {
 			label: "Model",
 			required: !0,
 			controlId: `${r}-model`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(F, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(E, {
 				size: "sm",
 				id: n,
 				"aria-describedby": r,
@@ -7911,7 +7911,7 @@ function Do({ data: e, onChange: t, nodeId: n }) {
 			required: !0,
 			error: f ? "User prompt template is required." : void 0,
 			help: f ? void 0 : "Supports {{ context.* }} substitution — click a pill above to append.",
-			children: /* @__PURE__ */ U(c, {
+			children: /* @__PURE__ */ U(s, {
 				value: e.userPromptTemplate,
 				onChange: (e) => t({ userPromptTemplate: e }),
 				language: "template",
@@ -7927,7 +7927,7 @@ function Do({ data: e, onChange: t, nodeId: n }) {
 				/* @__PURE__ */ U(X, {
 					label: "Temperature",
 					help: "0 = deterministic, 1 = creative.",
-					children: /* @__PURE__ */ U(M, {
+					children: /* @__PURE__ */ U(oe, {
 						min: 0,
 						max: 1,
 						step: .1,
@@ -8026,7 +8026,7 @@ function Ao({ data: e, onChange: t }) {
 			render: ({ labelId: n }) => /* @__PURE__ */ U("div", {
 				role: "group",
 				"aria-labelledby": n,
-				children: /* @__PURE__ */ U(a, {
+				children: /* @__PURE__ */ U(c, {
 					name: "transform-type",
 					value: e.transformType,
 					onChange: (e) => t({ transformType: e }),
@@ -8043,7 +8043,7 @@ function Ao({ data: e, onChange: t }) {
 			required: !0,
 			error: r ? "Expression is required." : void 0,
 			help: r ? void 0 : e.transformType === "jsonpath" ? "e.g. $.items[?(@.status == \"active\")]" : e.transformType === "template" ? "Mustache-style: {{ context.doc.title }}" : e.transformType === "javascript" ? "return ctx.items.filter(x => x.active)" : void 0,
-			children: /* @__PURE__ */ U(c, {
+			children: /* @__PURE__ */ U(s, {
 				value: e.expression,
 				onChange: (e) => t({ expression: e }),
 				language: e.transformType === "javascript" ? "javascript" : "jsonpath",
@@ -8055,7 +8055,7 @@ function Ao({ data: e, onChange: t }) {
 			label: "Output key (optional)",
 			help: `If set, writes to context.${e.outputKey || "outputKey"}. Otherwise merges into root context.`,
 			controlId: `${n}-output-key`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(D, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(T, {
 				size: "sm",
 				mono: !0,
 				spellCheck: !1,
@@ -8072,7 +8072,7 @@ function Ao({ data: e, onChange: t }) {
 		}),
 		/* @__PURE__ */ U(X, {
 			label: "Preview",
-			children: /* @__PURE__ */ U(O, {
+			children: /* @__PURE__ */ U(k, {
 				title: "Preview not available yet",
 				body: "Sample input and output for a transform will render here once the preview runner ships."
 			})
@@ -8089,7 +8089,7 @@ function Mo({ data: e, onChange: t }) {
 		required: !0,
 		error: r ? "Expression is required." : void 0,
 		help: r ? void 0 : "e.g. context.llm.response.length > 500",
-		children: /* @__PURE__ */ U(c, {
+		children: /* @__PURE__ */ U(s, {
 			value: e.expression,
 			onChange: (e) => t({ expression: e }),
 			language: "javascript",
@@ -8100,7 +8100,7 @@ function Mo({ data: e, onChange: t }) {
 		label: "Label (optional — shown on node face)",
 		help: "A short name so this branch is easy to spot.",
 		controlId: `${n}-label`,
-		render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(D, {
+		render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(T, {
 			size: "sm",
 			id: n,
 			"aria-describedby": r,
@@ -8241,7 +8241,7 @@ var No = [
 	label: "Per attempt — fire once per retry window"
 }];
 function Lo({ data: e, onChange: t }) {
-	let n = Rt(), r = Po[e.actionType] ?? [], i = e.config ?? {}, o = typeof i.retryCount == "number" ? i.retryCount : 3, s = e.onError === "route-error" ? "route-error" : typeof i.retryCount == "number" ? "retry" : "halt", c = (e, n) => {
+	let n = Rt(), r = Po[e.actionType] ?? [], i = e.config ?? {}, a = typeof i.retryCount == "number" ? i.retryCount : 3, o = e.onError === "route-error" ? "route-error" : typeof i.retryCount == "number" ? "retry" : "halt", s = (e, n) => {
 		t({ config: {
 			...i,
 			[e]: n
@@ -8263,7 +8263,7 @@ function Lo({ data: e, onChange: t }) {
 			onError: "fail-run",
 			config: {
 				...i,
-				retryCount: o
+				retryCount: a
 			}
 		});
 	};
@@ -8272,7 +8272,7 @@ function Lo({ data: e, onChange: t }) {
 			label: "Action type",
 			required: !0,
 			controlId: `${n}-action-type`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(F, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(E, {
 				size: "sm",
 				id: n,
 				"aria-describedby": r,
@@ -8304,14 +8304,14 @@ function Lo({ data: e, onChange: t }) {
 							"aria-describedby": r,
 							placeholder: e.placeholder,
 							value: a,
-							onChange: (t) => c(e.key, t.target.value)
-						}) : /* @__PURE__ */ U(D, {
+							onChange: (t) => s(e.key, t.target.value)
+						}) : /* @__PURE__ */ U(T, {
 							size: "sm",
 							id: t,
 							"aria-describedby": r,
 							placeholder: e.placeholder,
 							value: a,
-							onChange: (t) => c(e.key, t.target.value)
+							onChange: (t) => s(e.key, t.target.value)
 						}),
 						e.help && /* @__PURE__ */ U("div", {
 							id: r,
@@ -8332,7 +8332,7 @@ function Lo({ data: e, onChange: t }) {
 		e.idempotent && /* @__PURE__ */ U(X, {
 			label: "Dedup scope",
 			controlId: `${n}-dedup-scope`,
-			render: ({ controlId: r }) => /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(F, {
+			render: ({ controlId: r }) => /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(E, {
 				size: "sm",
 				id: r,
 				"aria-describedby": `${n}-dedup-help`,
@@ -8354,13 +8354,13 @@ function Lo({ data: e, onChange: t }) {
 			render: ({ labelId: e }) => /* @__PURE__ */ W("div", {
 				role: "group",
 				"aria-labelledby": e,
-				children: [/* @__PURE__ */ U(a, {
+				children: [/* @__PURE__ */ U(c, {
 					name: "action-on-error",
-					value: s,
+					value: o,
 					onChange: l,
 					options: Fo,
 					"data-testid": "action-on-error"
-				}), s === "retry" && /* @__PURE__ */ W("div", {
+				}), o === "retry" && /* @__PURE__ */ W("div", {
 					className: "mt-2 flex items-center gap-2",
 					children: [/* @__PURE__ */ U("span", {
 						className: "text-[11px] font-semibold text-text-secondary",
@@ -8368,7 +8368,7 @@ function Lo({ data: e, onChange: t }) {
 					}), /* @__PURE__ */ U(P, {
 						size: "sm",
 						min: 1,
-						value: o,
+						value: a,
 						onChange: (e) => t({
 							onError: "fail-run",
 							config: {
@@ -8407,7 +8407,7 @@ function Vo({ data: e, onChange: t }) {
 		required: !0,
 		help: `Between ${Ro} and ${zo} parallel branches.`,
 		controlId: `${n}-branch-count`,
-		render: ({ controlId: e, describedById: t }) => /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(M, {
+		render: ({ controlId: e, describedById: t }) => /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(oe, {
 			min: Ro,
 			max: zo,
 			step: 1,
@@ -8440,7 +8440,7 @@ function Vo({ data: e, onChange: t }) {
 						t,
 						":"
 					]
-				}), /* @__PURE__ */ U(D, {
+				}), /* @__PURE__ */ U(T, {
 					size: "sm",
 					value: e,
 					onChange: (e) => o(t, e.target.value),
@@ -8494,7 +8494,7 @@ function Wo({ data: e, onChange: t }) {
 			render: ({ labelId: n }) => /* @__PURE__ */ W("div", {
 				role: "group",
 				"aria-labelledby": n,
-				children: [/* @__PURE__ */ U(a, {
+				children: [/* @__PURE__ */ U(c, {
 					name: "join-mode",
 					value: e.mode,
 					onChange: (e) => t({ mode: e }),
@@ -8526,7 +8526,7 @@ function Wo({ data: e, onChange: t }) {
 			render: ({ labelId: n }) => /* @__PURE__ */ U("div", {
 				role: "group",
 				"aria-labelledby": n,
-				children: /* @__PURE__ */ U(a, {
+				children: /* @__PURE__ */ U(c, {
 					name: "join-merge",
 					value: e.mergeStrategy,
 					onChange: (e) => t({ mergeStrategy: e }),
@@ -8582,7 +8582,7 @@ function Jo(e) {
 	return !e || e <= 0 ? "minutes" : e % qo.hours === 0 ? "hours" : e % qo.minutes === 0 ? "minutes" : "seconds";
 }
 function Yo({ data: e, onChange: t }) {
-	let r = Rt(), i = e.approvers ?? [], o = i.length === 0, [s, c] = V(() => Jo(e.timeoutMs)), l = e.timeoutMs === void 0 ? "" : Math.round(e.timeoutMs / qo[s]), u = i.filter((e) => e.type === "user").map((e) => e.value), d = (n) => {
+	let r = Rt(), i = e.approvers ?? [], o = i.length === 0, [s, l] = V(() => Jo(e.timeoutMs)), u = e.timeoutMs === void 0 ? "" : Math.round(e.timeoutMs / qo[s]), d = i.filter((e) => e.type === "user").map((e) => e.value), f = (n) => {
 		let r = i.filter((e) => e.type === "role"), a = [...n.map((e) => ({
 			type: "user",
 			value: e
@@ -8591,20 +8591,20 @@ function Yo({ data: e, onChange: t }) {
 			approvers: a,
 			requiredCount: Math.max(1, Math.min(e.requiredCount || 1, a.length || 1))
 		});
-	}, f = (n) => {
+	}, p = (n) => {
 		let r = i.filter((e, t) => t !== n);
 		t({
 			approvers: r,
 			requiredCount: Math.max(1, Math.min(e.requiredCount || 1, r.length || 1))
 		});
-	}, p = (e) => {
+	}, m = (e) => {
 		if (e === "") {
 			t({ timeoutMs: void 0 });
 			return;
 		}
 		t({ timeoutMs: Math.max(0, parseInt(e, 10) || 0) * qo[s] });
-	}, m = (e) => {
-		c(e), typeof l == "number" && !Number.isNaN(l) && t({ timeoutMs: l * qo[e] });
+	}, h = (e) => {
+		l(e), typeof u == "number" && !Number.isNaN(u) && t({ timeoutMs: u * qo[e] });
 	}, g = Math.max(1, i.length);
 	return /* @__PURE__ */ W(Ka, { children: [
 		/* @__PURE__ */ U(X, {
@@ -8616,9 +8616,9 @@ function Yo({ data: e, onChange: t }) {
 				role: "group",
 				"aria-labelledby": t,
 				"aria-describedby": e,
-				children: [/* @__PURE__ */ U(h, {
-					value: u,
-					onChange: d,
+				children: [/* @__PURE__ */ U(a, {
+					value: d,
+					onChange: f,
 					placeholder: "Add approver…"
 				}), i.length > 0 && /* @__PURE__ */ U("div", {
 					className: "flex flex-wrap gap-1.5 mt-2",
@@ -8630,7 +8630,7 @@ function Yo({ data: e, onChange: t }) {
 							e.value,
 							/* @__PURE__ */ U("button", {
 								type: "button",
-								onClick: () => f(t),
+								onClick: () => p(t),
 								"aria-label": `Remove ${e.value}`,
 								className: "bg-transparent border-none p-0 ml-0.5 cursor-pointer text-current font-inherit text-xs leading-none",
 								children: "×"
@@ -8674,17 +8674,17 @@ function Yo({ data: e, onChange: t }) {
 					children: [/* @__PURE__ */ U(P, {
 						size: "sm",
 						min: 0,
-						value: l === "" ? void 0 : Number(l),
-						onChange: (e) => p(String(e)),
-						onClear: () => p(""),
+						value: u === "" ? void 0 : Number(u),
+						onChange: (e) => m(String(e)),
+						onClear: () => m(""),
 						placeholder: "24",
 						"aria-label": "Timeout value",
 						"data-testid": "approval-timeout-value"
-					}), /* @__PURE__ */ U(F, {
+					}), /* @__PURE__ */ U(E, {
 						size: "sm",
 						className: "w-[120px] flex-none",
 						value: s,
-						onChange: (e) => m(e.target.value),
+						onChange: (e) => h(e.target.value),
 						"aria-label": "Timeout unit",
 						options: Go
 					})]
@@ -8695,7 +8695,7 @@ function Yo({ data: e, onChange: t }) {
 						children: "If timeout"
 					}), /* @__PURE__ */ U("div", {
 						className: "mt-1",
-						children: /* @__PURE__ */ U(a, {
+						children: /* @__PURE__ */ U(c, {
 							name: "approval-timeout-action",
 							orientation: "horizontal",
 							value: e.timeoutAction ?? "reject",
@@ -8964,7 +8964,7 @@ function ls({ data: e, onChange: t }) {
 			label: "Item alias",
 			help: "Optional, default 'item'. The element is put at context.<alias> for each arm — context.item unless you change it. It is also always at context.scatter.item, alongside .index and .total.",
 			controlId: `${n}-item-alias`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(D, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(T, {
 				size: "sm",
 				mono: !0,
 				spellCheck: !1,
@@ -9072,7 +9072,7 @@ function ds({ data: e, onChange: t, nodeId: n }) {
 			label: "Fit mode",
 			help: "How the image fits the target dimensions. cover (default) crops, contain letterboxes, fill stretches.",
 			controlId: "resize-fit",
-			render: ({ describedById: e, controlId: n }) => /* @__PURE__ */ U(F, {
+			render: ({ describedById: e, controlId: n }) => /* @__PURE__ */ U(E, {
 				id: n,
 				"aria-describedby": e,
 				size: "sm",
@@ -9091,7 +9091,7 @@ function ds({ data: e, onChange: t, nodeId: n }) {
 			label: "Background colour",
 			help: i ? "Hex colour used to fill letterbox padding." : "Only applies when fit is contain or fill.",
 			controlId: "resize-background",
-			render: ({ describedById: n, controlId: r }) => /* @__PURE__ */ U(D, {
+			render: ({ describedById: n, controlId: r }) => /* @__PURE__ */ U(T, {
 				id: r,
 				"aria-describedby": n,
 				size: "sm",
@@ -9146,7 +9146,7 @@ function hs({ op: e, index: t, onUpdate: n, onRemove: r }) {
 					className: "text-[11px] text-text-tertiary font-semibold min-w-[20px]",
 					children: [t + 1, "."]
 				}),
-				/* @__PURE__ */ U(F, {
+				/* @__PURE__ */ U(E, {
 					size: "sm",
 					className: "flex-1",
 					value: e.op,
@@ -9154,7 +9154,7 @@ function hs({ op: e, index: t, onUpdate: n, onRemove: r }) {
 					"aria-label": `Op ${t + 1} type`,
 					options: ps
 				}),
-				/* @__PURE__ */ U(g, {
+				/* @__PURE__ */ U(m, {
 					size: "sm",
 					variant: "ghost",
 					onClick: r,
@@ -9187,7 +9187,7 @@ function hs({ op: e, index: t, onUpdate: n, onRemove: r }) {
 				children: [/* @__PURE__ */ U("span", {
 					className: "text-[11px] text-text-tertiary min-w-[60px]",
 					children: "Background"
-				}), /* @__PURE__ */ U(D, {
+				}), /* @__PURE__ */ U(T, {
 					size: "sm",
 					mono: !0,
 					spellCheck: !1,
@@ -9245,7 +9245,7 @@ function gs({ data: e, onChange: t, nodeId: n }) {
 				}, t))
 			}), /* @__PURE__ */ U("div", {
 				className: r.length > 0 ? "mt-2" : "",
-				children: /* @__PURE__ */ U(g, {
+				children: /* @__PURE__ */ U(m, {
 					size: "sm",
 					variant: "secondary",
 					onClick: o,
@@ -9292,7 +9292,7 @@ function bs({ data: e, onChange: t, nodeId: n }) {
 		/* @__PURE__ */ U(X, {
 			label: "Output format",
 			controlId: "format-convert-format",
-			render: ({ describedById: e, controlId: n }) => /* @__PURE__ */ U(F, {
+			render: ({ describedById: e, controlId: n }) => /* @__PURE__ */ U(E, {
 				id: n,
 				"aria-describedby": e,
 				size: "sm",
@@ -9343,7 +9343,7 @@ function xs({ data: e, onChange: t, nodeId: n }) {
 			label: "Source image path",
 			help: "Optional. Defaults to the image produced upstream.",
 			controlId: "sharpen-source-image-path",
-			render: ({ describedById: n, controlId: i }) => /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(D, {
+			render: ({ describedById: n, controlId: i }) => /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(T, {
 				id: i,
 				"aria-describedby": n,
 				size: "sm",
@@ -9442,7 +9442,7 @@ function Cs({ data: e, onChange: t, nodeId: n }) {
 			error: r ? "Overlay image ID is required." : void 0,
 			help: "The imageId of the watermark image already stored in the blob store.",
 			controlId: "watermark-overlay-image-id",
-			render: ({ describedById: n, controlId: i }) => /* @__PURE__ */ U(D, {
+			render: ({ describedById: n, controlId: i }) => /* @__PURE__ */ U(T, {
 				id: i,
 				"aria-describedby": n,
 				size: "sm",
@@ -9458,7 +9458,7 @@ function Cs({ data: e, onChange: t, nodeId: n }) {
 			label: "Gravity",
 			help: "Where the overlay sits on the source image. Default southeast.",
 			controlId: "watermark-gravity",
-			render: ({ describedById: n, controlId: r }) => /* @__PURE__ */ U(F, {
+			render: ({ describedById: n, controlId: r }) => /* @__PURE__ */ U(E, {
 				id: r,
 				"aria-describedby": n,
 				size: "sm",
@@ -9736,29 +9736,29 @@ function Ms({ imageUrl: e, imageWidth: t, imageHeight: r, boxes: i, onChange: a,
 		o || (e.preventDefault(), v(t));
 	}, [o, v]), w = L((e, t) => {
 		o || (e.key === "Delete" || e.key === "Backspace") && (e.preventDefault(), v(t));
-	}, [o, v]), T = L((e, t) => {
+	}, [o, v]), E = L((e, t) => {
 		o || (e.stopPropagation(), f({
 			id: t.id,
 			value: t.label ?? ""
 		}));
-	}, [o]), E = L(() => {
+	}, [o]), D = L(() => {
 		d && (_(d.id, d.value), f(null));
-	}, [d, _]), O = null;
+	}, [d, _]), ee = null;
 	if (l.kind === "create") {
 		let e = Math.min(l.startX, l.currentX), t = Math.min(l.startY, l.currentY), n = Math.max(l.startX, l.currentX), r = Math.max(l.startY, l.currentY);
-		n - e >= 2 && r - t >= 2 && (O = {
+		n - e >= 2 && r - t >= 2 && (ee = {
 			x: e,
 			y: t,
 			width: n - e,
 			height: r - t
 		});
 	}
-	let ee = null;
+	let O = null;
 	if (l.kind === "move") {
 		let e = i.find((e) => e.id === l.id);
 		if (e) {
 			let n = Ds(l.currentX - l.offsetX, 0, t - e.width), i = Ds(l.currentY - l.offsetY, 0, r - e.height);
-			ee = {
+			O = {
 				...e,
 				x: n,
 				y: i
@@ -9786,9 +9786,9 @@ function Ms({ imageUrl: e, imageWidth: t, imageHeight: r, boxes: i, onChange: a,
 			height: u
 		};
 	}
-	let A = /* @__PURE__ */ new Set();
-	l.kind === "move" && A.add(l.id), l.kind === "resize" && A.add(l.id);
-	let te = (e, t) => /* @__PURE__ */ U("button", {
+	let te = /* @__PURE__ */ new Set();
+	l.kind === "move" && te.add(l.id), l.kind === "resize" && te.add(l.id);
+	let ne = (e, t) => /* @__PURE__ */ U("button", {
 		type: "button",
 		"aria-label": `Resize ${t}`,
 		className: n("absolute h-3 w-3 rounded-sm border border-primary bg-white shadow", {
@@ -9798,7 +9798,7 @@ function Ms({ imageUrl: e, imageWidth: t, imageHeight: r, boxes: i, onChange: a,
 			se: "-bottom-1.5 -right-1.5 cursor-se-resize"
 		}[t]),
 		onPointerDown: (n) => b(n, e, t)
-	}, t), ne = (e, i, a, s) => {
+	}, t), A = (e, i, a, s) => {
 		let c = As(e, t, r), l = d?.id === e.id;
 		return /* @__PURE__ */ W("div", {
 			role: "none",
@@ -9814,7 +9814,7 @@ function Ms({ imageUrl: e, imageWidth: t, imageHeight: r, boxes: i, onChange: a,
 				borderRadius: 2,
 				boxSizing: "border-box"
 			},
-			children: [l ? /* @__PURE__ */ U(D, {
+			children: [l ? /* @__PURE__ */ U(T, {
 				ref: p,
 				type: "text",
 				size: "sm",
@@ -9823,9 +9823,9 @@ function Ms({ imageUrl: e, imageWidth: t, imageHeight: r, boxes: i, onChange: a,
 					...t,
 					value: e.target.value
 				} : null),
-				onBlur: E,
+				onBlur: D,
 				onKeyDown: (e) => {
-					e.key === "Enter" && (e.preventDefault(), E()), e.key === "Escape" && (e.preventDefault(), f(null));
+					e.key === "Enter" && (e.preventDefault(), D()), e.key === "Escape" && (e.preventDefault(), f(null));
 				},
 				"aria-label": "Box label",
 				className: "absolute -top-5 left-0 h-5 w-24 border-primary px-1 text-[10px] font-semibold text-primary shadow focus:border-primary focus:ring-primary/40",
@@ -9836,15 +9836,15 @@ function Ms({ imageUrl: e, imageWidth: t, imageHeight: r, boxes: i, onChange: a,
 				"aria-label": `Label: ${e.label || "Unlabeled"}. Double-click to edit.`,
 				className: "absolute -top-5 left-0 rounded bg-primary px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white shadow",
 				style: { whiteSpace: "nowrap" },
-				onDoubleClick: (t) => T(t, e),
+				onDoubleClick: (t) => E(t, e),
 				onContextMenu: (t) => C(t, e.id),
 				onKeyDown: (t) => w(t, e.id),
 				children: e.label || "Unlabeled"
 			}), a && !o && /* @__PURE__ */ W(H, { children: [
-				te(e, "nw"),
-				te(e, "ne"),
-				te(e, "sw"),
-				te(e, "se")
+				ne(e, "nw"),
+				ne(e, "ne"),
+				ne(e, "sw"),
+				ne(e, "se")
 			] })]
 		}, s);
 	};
@@ -9867,12 +9867,12 @@ function Ms({ imageUrl: e, imageWidth: t, imageHeight: r, boxes: i, onChange: a,
 				onPointerMove: o ? void 0 : x,
 				onPointerUp: o ? void 0 : S,
 				children: [
-					i.map((e) => A.has(e.id) ? null : ne(e, !1, !0, `box-${e.id}`)),
-					ee && ne(ee, !0, !1, "ghost-move"),
-					k && ne(k, !0, !0, "ghost-resize"),
+					i.map((e) => te.has(e.id) ? null : A(e, !1, !0, `box-${e.id}`)),
+					O && A(O, !0, !1, "ghost-move"),
+					k && A(k, !0, !0, "ghost-resize"),
 					(() => {
-						if (!O) return null;
-						let e = As(O, t, r);
+						if (!ee) return null;
+						let e = As(ee, t, r);
 						return /* @__PURE__ */ U("div", {
 							"aria-hidden": !0,
 							className: "pointer-events-none absolute",
@@ -9947,7 +9947,7 @@ function zs({ data: e, onChange: t, currentNodeId: r }) {
 			label: "Bounding-box path",
 			help: "Optional. JSONPath to a bbox object { x, y, width, height } in pixels. Overrides the manual crop region below when present at run time.",
 			controlId: "crop-bbox-path",
-			render: ({ describedById: n, controlId: r, labelId: i }) => /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(D, {
+			render: ({ describedById: n, controlId: r, labelId: i }) => /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(T, {
 				id: r,
 				"aria-describedby": n,
 				size: "sm",
@@ -9981,28 +9981,28 @@ function zs({ data: e, onChange: t, currentNodeId: r }) {
 				className: "mt-1.5 flex flex-wrap gap-1",
 				"data-testid": "crop-region-chips",
 				children: e.bbox ? /* @__PURE__ */ W(H, { children: [
-					/* @__PURE__ */ W(b, {
+					/* @__PURE__ */ W(v, {
 						tone: "neutral",
 						size: "xs",
 						mono: !0,
 						"data-testid": "crop-chip-x",
 						children: ["x: ", e.bbox.x]
 					}),
-					/* @__PURE__ */ W(b, {
+					/* @__PURE__ */ W(v, {
 						tone: "neutral",
 						size: "xs",
 						mono: !0,
 						"data-testid": "crop-chip-y",
 						children: ["y: ", e.bbox.y]
 					}),
-					/* @__PURE__ */ W(b, {
+					/* @__PURE__ */ W(v, {
 						tone: "neutral",
 						size: "xs",
 						mono: !0,
 						"data-testid": "crop-chip-width",
 						children: ["w: ", e.bbox.width]
 					}),
-					/* @__PURE__ */ W(b, {
+					/* @__PURE__ */ W(v, {
 						tone: "neutral",
 						size: "xs",
 						mono: !0,
@@ -10013,7 +10013,7 @@ function zs({ data: e, onChange: t, currentNodeId: r }) {
 					className: n(Ls, "italic"),
 					children: "No crop region yet — drag on the image to add one."
 				})
-			})] }) : /* @__PURE__ */ U(S, {
+			})] }) : /* @__PURE__ */ U(b, {
 				variant: "info",
 				className: "mt-1.5",
 				"data-testid": "crop-region-empty-banner",
@@ -10066,7 +10066,7 @@ function Hs({ data: e, onChange: t, nodeId: n }) {
 			label: "Greyscale algorithm",
 			help: "Controls how RGB channels are weighted when converting to greyscale.",
 			controlId: "adjust-bw-algorithm",
-			render: ({ describedById: e, controlId: n }) => /* @__PURE__ */ U(F, {
+			render: ({ describedById: e, controlId: n }) => /* @__PURE__ */ U(E, {
 				id: n,
 				"aria-describedby": e,
 				size: "sm",
@@ -10096,14 +10096,14 @@ function Hs({ data: e, onChange: t, nodeId: n }) {
 //#endregion
 //#region src/components/image/ImageUploader.tsx
 function Us({ value: e, onChange: t, uploadImage: r, getImageUrl: i, maxSize: a = 8388608, accept: o = "image/*", fileOnly: s = !1, urlOnly: c = !1, className: l, "data-testid": u }) {
-	let [d, f] = V(!1), [p, m] = V(null), [h, _] = V("");
+	let [d, f] = V(!1), [p, h] = V(null), [g, _] = V("");
 	async function v(e) {
-		f(!0), m(null);
+		f(!0), h(null);
 		try {
 			t(await r(e)), _("");
 		} catch (e) {
 			let t = e instanceof Error ? e.message : "Upload failed. Please try again.";
-			m(t);
+			h(t);
 		} finally {
 			f(!1);
 		}
@@ -10112,7 +10112,7 @@ function Us({ value: e, onChange: t, uploadImage: r, getImageUrl: i, maxSize: a 
 		e.length > 0 && v(e[0]);
 	}
 	async function b() {
-		let e = h.trim();
+		let e = g.trim();
 		e && await v({ url: e });
 	}
 	if (e) {
@@ -10128,7 +10128,7 @@ function Us({ value: e, onChange: t, uploadImage: r, getImageUrl: i, maxSize: a 
 					size: "md",
 					aspectRatio: "square",
 					"data-testid": u ? `${u}-thumbnail` : void 0
-				}), /* @__PURE__ */ U(g, {
+				}), /* @__PURE__ */ U(m, {
 					variant: "ghost",
 					size: "sm",
 					onClick: () => t(null),
@@ -10147,7 +10147,7 @@ function Us({ value: e, onChange: t, uploadImage: r, getImageUrl: i, maxSize: a 
 				"data-testid": u ? `${u}-uploading` : void 0,
 				children: "Uploading..."
 			}),
-			!c && /* @__PURE__ */ U(ce, {
+			!c && /* @__PURE__ */ U(F, {
 				accept: o,
 				maxSize: a,
 				onFiles: y,
@@ -10157,21 +10157,21 @@ function Us({ value: e, onChange: t, uploadImage: r, getImageUrl: i, maxSize: a 
 			!s && /* @__PURE__ */ W("div", {
 				className: "flex items-center gap-2",
 				"data-testid": u ? `${u}-url-row` : void 0,
-				children: [/* @__PURE__ */ U(D, {
+				children: [/* @__PURE__ */ U(T, {
 					type: "url",
 					placeholder: "https://example.com/image.jpg",
-					value: h,
+					value: g,
 					onChange: (e) => _(e.target.value),
 					disabled: d,
 					"data-testid": u ? `${u}-url-input` : void 0,
 					onKeyDown: (e) => {
 						e.key === "Enter" && b();
 					}
-				}), /* @__PURE__ */ U(g, {
+				}), /* @__PURE__ */ U(m, {
 					variant: "secondary",
 					size: "sm",
 					onClick: () => void b(),
-					disabled: d || !h.trim(),
+					disabled: d || !g.trim(),
 					"data-testid": u ? `${u}-fetch-btn` : void 0,
 					children: "Fetch"
 				})]
@@ -10313,7 +10313,7 @@ function Qs({ layer: e, index: t, onUpdate: r, onRemove: i }) {
 				title: "Drag handle",
 				children: "⠿"
 			}),
-			/* @__PURE__ */ U(F, {
+			/* @__PURE__ */ U(E, {
 				value: e.kind,
 				onChange: s,
 				options: Ks,
@@ -10322,7 +10322,7 @@ function Qs({ layer: e, index: t, onUpdate: r, onRemove: i }) {
 				"data-testid": `layer-kind-select-${t}`,
 				className: "shrink-0"
 			}),
-			/* @__PURE__ */ U(M, {
+			/* @__PURE__ */ U(oe, {
 				min: a.min,
 				max: a.max,
 				step: a.step,
@@ -10403,10 +10403,10 @@ function tc(e) {
 	return e.length <= 8 ? e : `${e.slice(0, 8)}…`;
 }
 function nc({ layers: e, onChange: t, autoSourceImageId: r, pinnedSourceImageId: i, onPinnedSourceImageIdChange: a, sourceImageId: o, apiBase: s = "", authHeaders: c }) {
-	let l = Ee(), u = c ?? l?.authHeaders, [d, f] = V("brightness"), [p, m] = V(!1), h = r ?? o, _ = i ?? h, v = !!i, { previewSrc: y, loading: x } = ec(_, e, s, u), S = () => {
+	let l = Ee(), u = c ?? l?.authHeaders, [d, f] = V("brightness"), [p, h] = V(!1), g = r ?? o, _ = i ?? g, y = !!i, { previewSrc: b, loading: x } = ec(_, e, s, u), S = () => {
 		a?.(void 0);
 	}, C = (e) => {
-		e?.imageId && (a?.(e.imageId), m(!1));
+		e?.imageId && (a?.(e.imageId), h(!1));
 	}, w = (n, r) => {
 		t(e.map((e, t) => t === n ? r : e));
 	}, T = (n) => {
@@ -10430,7 +10430,7 @@ function nc({ layers: e, onChange: t, autoSourceImageId: r, pinnedSourceImageId:
 				}, t)),
 				/* @__PURE__ */ W("div", {
 					className: "flex items-center gap-2 mt-1",
-					children: [/* @__PURE__ */ U(F, {
+					children: [/* @__PURE__ */ U(E, {
 						value: d,
 						onChange: (e) => {
 							f(e.target.value);
@@ -10460,7 +10460,7 @@ function nc({ layers: e, onChange: t, autoSourceImageId: r, pinnedSourceImageId:
 				/* @__PURE__ */ W("div", {
 					className: n("flex items-center gap-1.5 flex-wrap"),
 					"data-testid": "adjust-layer-source-caption-row",
-					children: [v && _ ? /* @__PURE__ */ W(b, {
+					children: [y && _ ? /* @__PURE__ */ W(v, {
 						tone: "neutral",
 						size: "xs",
 						"data-testid": "adjust-layer-source-chip-pinned",
@@ -10476,19 +10476,19 @@ function nc({ layers: e, onChange: t, autoSourceImageId: r, pinnedSourceImageId:
 							className: n("ml-1 inline-flex items-center justify-center", "w-3 h-3 rounded-full text-[10px] leading-none", "bg-transparent border-none cursor-pointer text-current", "hover:bg-surface-emphasis"),
 							children: "×"
 						})]
-					}) : h ? /* @__PURE__ */ W(b, {
+					}) : g ? /* @__PURE__ */ W(v, {
 						tone: "info",
 						size: "xs",
 						"data-testid": "adjust-layer-source-chip-auto",
 						children: [
 							"Source: ",
-							tc(h),
+							tc(g),
 							" from upstream run"
 						]
-					}) : null, a && /* @__PURE__ */ U(g, {
+					}) : null, a && /* @__PURE__ */ U(m, {
 						variant: "ghost",
 						size: "sm",
-						onClick: () => m((e) => !e),
+						onClick: () => h((e) => !e),
 						"data-testid": "adjust-layer-override-btn",
 						children: "Override"
 					})]
@@ -10505,7 +10505,7 @@ function nc({ layers: e, onChange: t, autoSourceImageId: r, pinnedSourceImageId:
 				_ ? /* @__PURE__ */ W("div", {
 					className: "relative",
 					children: [/* @__PURE__ */ U(qe, {
-						src: y ?? "",
+						src: b ?? "",
 						alt: "Adjust layer preview",
 						size: "lg",
 						aspectRatio: "auto",
@@ -10688,7 +10688,7 @@ function hc({ data: e, onChange: t, nodeId: n }) {
 			label: "Model",
 			help: "Requires the host's vision credentials on the executor.",
 			controlId: `${r}-model`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(F, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(E, {
 				size: "sm",
 				id: n,
 				"aria-describedby": r,
@@ -10706,7 +10706,7 @@ function hc({ data: e, onChange: t, nodeId: n }) {
 			error: v,
 			help: "JSONPath into context. The value must be a string imageId, or an object with one.",
 			controlId: `${r}-image-ref-path`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(D, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(T, {
 				size: "sm",
 				mono: !0,
 				spellCheck: !1,
@@ -10842,7 +10842,7 @@ function _c({ data: e, onChange: t, nodeId: n }) {
 		/* @__PURE__ */ U(X, {
 			label: "Candidate tags",
 			help: "Restricts tagging to this vocabulary. Leave empty for open-ended tags.",
-			children: /* @__PURE__ */ U(o, {
+			children: /* @__PURE__ */ U(u, {
 				value: e.candidateTags ?? [],
 				onChange: (e) => t({ candidateTags: e }),
 				placeholder: "Add candidate tag…",
@@ -10867,7 +10867,7 @@ function _c({ data: e, onChange: t, nodeId: n }) {
 		}),
 		/* @__PURE__ */ U(X, {
 			label: "Model",
-			children: /* @__PURE__ */ U(F, {
+			children: /* @__PURE__ */ U(E, {
 				size: "sm",
 				value: e.model ?? r[0]?.value ?? "",
 				onChange: (e) => t({ model: e.target.value }),
@@ -10909,14 +10909,14 @@ function _c({ data: e, onChange: t, nodeId: n }) {
 //#region src/components/pipelines/nodes/vision-classify/VisionClassifyConfig.tsx
 var vc = 2;
 function yc({ data: e, onChange: t, nodeId: n }) {
-	let r = Rt(), i = Ve("image:vision", gc), a = e.labels ?? [], s = !e.imageRefPath?.trim();
+	let r = Rt(), i = Ve("image:vision", gc), a = e.labels ?? [], o = !e.imageRefPath?.trim();
 	return /* @__PURE__ */ W(Ka, { children: [
 		/* @__PURE__ */ U(no, {
 			value: e.imageRefPath,
 			onChange: (e) => t({ imageRefPath: e ?? "" }),
 			nodeId: n,
 			label: "Image ref path",
-			help: s ? "Required — JSONPath to the imageId to classify." : "JSONPath to the imageId to classify."
+			help: o ? "Required — JSONPath to the imageId to classify." : "JSONPath to the imageId to classify."
 		}),
 		/* @__PURE__ */ U(X, {
 			label: "Labels",
@@ -10927,7 +10927,7 @@ function yc({ data: e, onChange: t, nodeId: n }) {
 				role: "group",
 				"aria-labelledby": n,
 				"aria-describedby": e,
-				children: /* @__PURE__ */ U(o, {
+				children: /* @__PURE__ */ U(u, {
 					value: a,
 					onChange: (e) => t({ labels: e }),
 					placeholder: "Add label…",
@@ -10938,7 +10938,7 @@ function yc({ data: e, onChange: t, nodeId: n }) {
 		/* @__PURE__ */ U(X, {
 			label: "Model",
 			controlId: `${r}-model`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(F, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(E, {
 				size: "sm",
 				id: n,
 				"aria-describedby": r,
@@ -11014,7 +11014,7 @@ function bc({ data: e, onChange: t, nodeId: n }) {
 		/* @__PURE__ */ U(X, {
 			label: "Model",
 			controlId: `${r}-model`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(F, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(E, {
 				size: "sm",
 				id: n,
 				"aria-describedby": r,
@@ -11081,7 +11081,7 @@ function Sc({ data: e, onChange: t, nodeId: n }) {
 			label: "Model",
 			help: "Defaults to the more accurate model for OCR.",
 			controlId: `${r}-model`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(F, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(E, {
 				size: "sm",
 				id: n,
 				"aria-describedby": r,
@@ -11158,7 +11158,7 @@ function Dc({ data: e, onChange: t }) {
 			label: r.label("model", "Model"),
 			help: n.length === 0 ? "This host declares no image models." : r.help("model"),
 			controlId: "generate-model",
-			render: ({ describedById: e, controlId: r }) => /* @__PURE__ */ U(F, {
+			render: ({ describedById: e, controlId: r }) => /* @__PURE__ */ U(E, {
 				id: r,
 				"aria-describedby": e,
 				size: "sm",
@@ -11262,7 +11262,7 @@ function Ac({ data: e, onChange: t, nodeId: n }) {
 		/* @__PURE__ */ U(X, {
 			label: "Model",
 			controlId: "variation-model",
-			render: ({ describedById: n, controlId: i }) => /* @__PURE__ */ U(F, {
+			render: ({ describedById: n, controlId: i }) => /* @__PURE__ */ U(E, {
 				id: i,
 				"aria-describedby": n,
 				size: "sm",
@@ -11323,7 +11323,7 @@ function Mc({ data: e, onChange: t, nodeId: n }) {
 			label: "Mask image path",
 			help: "Optional. White pixels are the edit region, black is preserved. Omit for outpainting.",
 			controlId: "edit-prompt-mask-path",
-			render: ({ describedById: n, controlId: r }) => /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(D, {
+			render: ({ describedById: n, controlId: r }) => /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(T, {
 				id: r,
 				"aria-describedby": n,
 				size: "sm",
@@ -11358,7 +11358,7 @@ function Mc({ data: e, onChange: t, nodeId: n }) {
 		/* @__PURE__ */ U(X, {
 			label: "Model",
 			controlId: "edit-prompt-model",
-			render: ({ describedById: n, controlId: i }) => /* @__PURE__ */ U(F, {
+			render: ({ describedById: n, controlId: i }) => /* @__PURE__ */ U(E, {
 				id: i,
 				"aria-describedby": n,
 				size: "sm",
@@ -12402,7 +12402,7 @@ function Pc({ data: e, onChange: t }) {
 				})
 			]
 		}),
-		/* @__PURE__ */ U(D, {
+		/* @__PURE__ */ U(T, {
 			id: "image-source-image-id",
 			type: "text",
 			size: "sm",
@@ -12430,7 +12430,7 @@ function Pc({ data: e, onChange: t }) {
 				})
 			]
 		}),
-		/* @__PURE__ */ U(D, {
+		/* @__PURE__ */ U(T, {
 			id: "image-source-output-key",
 			type: "text",
 			size: "sm",
@@ -12474,7 +12474,7 @@ function Ic({ data: e, onChange: t, nodeId: n }) {
 				})
 			]
 		}),
-		/* @__PURE__ */ U(D, {
+		/* @__PURE__ */ U(T, {
 			id: "save-source-image-path",
 			type: "text",
 			size: "sm",
@@ -12511,7 +12511,7 @@ function Ic({ data: e, onChange: t, nodeId: n }) {
 				})
 			]
 		}),
-		/* @__PURE__ */ U(D, {
+		/* @__PURE__ */ U(T, {
 			id: "save-filename-template",
 			type: "text",
 			size: "sm",
@@ -12585,7 +12585,7 @@ function zc({ data: e, onChange: t, nodeId: n }) {
 			required: !0,
 			help: u,
 			controlId: `${r}-mode`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(F, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(E, {
 				size: "sm",
 				id: n,
 				"aria-describedby": r,
@@ -12602,7 +12602,7 @@ function zc({ data: e, onChange: t, nodeId: n }) {
 			required: !0,
 			help: d,
 			controlId: `${r}-scope`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(F, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(E, {
 				size: "sm",
 				id: n,
 				"aria-describedby": r,
@@ -12620,7 +12620,7 @@ function zc({ data: e, onChange: t, nodeId: n }) {
 			error: s ? "Namespace is required." : void 0,
 			help: s ? void 0 : "Groups related records. Reads only see their own namespace.",
 			controlId: `${r}-namespace`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(D, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(T, {
 				size: "sm",
 				mono: !0,
 				spellCheck: !1,
@@ -12637,7 +12637,7 @@ function zc({ data: e, onChange: t, nodeId: n }) {
 			error: c ? "Key expression is required." : void 0,
 			help: c ? void 0 : "Identifies the record. Supports {{ context.* }} substitution.",
 			controlId: `${r}-key-expression`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(D, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(T, {
 				size: "sm",
 				mono: !0,
 				spellCheck: !1,
@@ -12666,7 +12666,7 @@ function zc({ data: e, onChange: t, nodeId: n }) {
 			error: l ? "Value field is required for a write." : void 0,
 			help: l ? void 0 : "Context path whose value is persisted.",
 			controlId: `${r}-value-field`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(D, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(T, {
 				size: "sm",
 				mono: !0,
 				spellCheck: !1,
@@ -12680,7 +12680,7 @@ function zc({ data: e, onChange: t, nodeId: n }) {
 			label: "Output key",
 			help: "Where retrieved records land in context. Defaults to this step's output.",
 			controlId: `${r}-output-key`,
-			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(D, {
+			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(T, {
 				size: "sm",
 				mono: !0,
 				spellCheck: !1,
@@ -12707,7 +12707,7 @@ function Vc({ data: e, onChange: t, nodeId: n }) {
 				error: s ? "Knowledge base ID is required." : void 0,
 				help: s ? void 0 : o.help("knowledgeBaseId", "The knowledge base to retrieve from."),
 				controlId: `${r}-kb-id`,
-				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(D, {
+				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(T, {
 					size: "sm",
 					mono: !0,
 					spellCheck: !1,
@@ -12792,7 +12792,7 @@ function Vc({ data: e, onChange: t, nodeId: n }) {
 				label: "Output key",
 				help: "Where retrieved passages land in context. Defaults to this step's output.",
 				controlId: `${r}-output-key`,
-				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(D, {
+				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(T, {
 					size: "sm",
 					mono: !0,
 					spellCheck: !1,
@@ -12814,12 +12814,12 @@ function Vc({ data: e, onChange: t, nodeId: n }) {
 //#region src/components/pipelines/nodes/graph-query/GraphQueryConfig.tsx
 var Hc = "MATCH (u:User {id: $userId})-[:AUTHORED]->(d:Doc)\nRETURN d.title LIMIT 10", Uc = 100, Wc = 3e5;
 function Gc({ data: e, onChange: t, nodeId: n }) {
-	let r = Rt(), { paths: i, unresolved: a } = eo(n ?? null), o = gt("graph-query"), s = !e.graphId?.trim(), c = !e.query?.trim(), l = e.timeoutMs, u = l !== void 0 && (!Number.isFinite(l) || l < Uc || l > Wc), d = z(() => Object.entries(e.parameters ?? {}), [e.parameters]), f = (e) => t({ parameters: Object.keys(e).length > 0 ? e : void 0 }), [p, m] = V(null), h = (t, n) => {
+	let r = Rt(), { paths: i, unresolved: a } = eo(n ?? null), o = gt("graph-query"), s = !e.graphId?.trim(), c = !e.query?.trim(), l = e.timeoutMs, u = l !== void 0 && (!Number.isFinite(l) || l < Uc || l > Wc), d = z(() => Object.entries(e.parameters ?? {}), [e.parameters]), f = (e) => t({ parameters: Object.keys(e).length > 0 ? e : void 0 }), [p, h] = V(null), g = (t, n) => {
 		if (n !== t && n.trim() !== "" && n in (e.parameters ?? {})) {
-			m(n);
+			h(n);
 			return;
 		}
-		m(null);
+		h(null);
 		let r = {};
 		for (let [e, i] of d) r[e === t ? n : e] = i;
 		f(r);
@@ -12846,7 +12846,7 @@ function Gc({ data: e, onChange: t, nodeId: n }) {
 				error: s ? "Graph ID is required." : void 0,
 				help: s ? void 0 : o.help("graphId", "The graph to query."),
 				controlId: `${r}-graph-id`,
-				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(D, {
+				render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(T, {
 					size: "sm",
 					mono: !0,
 					spellCheck: !1,
@@ -12893,17 +12893,17 @@ function Gc({ data: e, onChange: t, nodeId: n }) {
 						d.map(([e, t], n) => /* @__PURE__ */ W("div", {
 							className: "flex items-center gap-2",
 							children: [
-								/* @__PURE__ */ U(D, {
+								/* @__PURE__ */ U(T, {
 									size: "sm",
 									mono: !0,
 									spellCheck: !1,
 									value: e,
-									onChange: (t) => h(e, t.target.value),
+									onChange: (t) => g(e, t.target.value),
 									invalid: e.trim() === "",
 									placeholder: "userId",
 									"aria-label": `Parameter ${n + 1} name`
 								}),
-								/* @__PURE__ */ U(D, {
+								/* @__PURE__ */ U(T, {
 									size: "sm",
 									mono: !0,
 									spellCheck: !1,
@@ -12912,7 +12912,7 @@ function Gc({ data: e, onChange: t, nodeId: n }) {
 									placeholder: "{{context.trigger.userId}}",
 									"aria-label": `Parameter ${n + 1} value`
 								}),
-								/* @__PURE__ */ U(g, {
+								/* @__PURE__ */ U(m, {
 									size: "sm",
 									variant: "ghost",
 									onClick: () => v(e),
@@ -12930,7 +12930,7 @@ function Gc({ data: e, onChange: t, nodeId: n }) {
 								"” already exists. Rename or remove it first — two rows cannot share a name."
 							]
 						}) : null,
-						/* @__PURE__ */ U("div", { children: /* @__PURE__ */ U(g, {
+						/* @__PURE__ */ U("div", { children: /* @__PURE__ */ U(m, {
 							size: "sm",
 							variant: "secondary",
 							onClick: y,
@@ -12987,7 +12987,7 @@ function Gc({ data: e, onChange: t, nodeId: n }) {
 					label: "Output key",
 					help: "Where rows land in context. Defaults to this step's output.",
 					controlId: `${r}-output-key`,
-					render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(D, {
+					render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(T, {
 						size: "sm",
 						mono: !0,
 						spellCheck: !1,
@@ -13018,25 +13018,25 @@ function Kc({ result: e, className: t }) {
 		}) : null, /* @__PURE__ */ W("div", {
 			className: "flex flex-wrap gap-1.5",
 			children: [
-				i ? /* @__PURE__ */ W(b, {
+				i ? /* @__PURE__ */ W(v, {
 					tone: "neutral",
 					size: "sm",
 					title: "Scene setting",
 					children: ["setting: ", i]
 				}) : null,
-				a ? /* @__PURE__ */ W(b, {
+				a ? /* @__PURE__ */ W(v, {
 					tone: "neutral",
 					size: "sm",
 					title: "Location",
 					children: ["loc: ", a]
 				}) : null,
-				o ? /* @__PURE__ */ W(b, {
+				o ? /* @__PURE__ */ W(v, {
 					tone: "neutral",
 					size: "sm",
 					title: "Time of day",
 					children: ["tod: ", o]
 				}) : null,
-				s ? /* @__PURE__ */ W(b, {
+				s ? /* @__PURE__ */ W(v, {
 					tone: "info",
 					size: "sm",
 					title: "Mood",
@@ -13164,23 +13164,23 @@ function Xc({ people: e, highlightedIndex: t, onSelect: r, className: i }) {
 								className: "inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold leading-none text-white",
 								children: e.index
 							}),
-							e.ageBucket ? /* @__PURE__ */ U(b, {
+							e.ageBucket ? /* @__PURE__ */ U(v, {
 								tone: "neutral",
 								size: "sm",
 								children: e.ageBucket.replace("_", " ")
 							}) : null,
-							e.gender ? /* @__PURE__ */ U(b, {
+							e.gender ? /* @__PURE__ */ U(v, {
 								tone: "neutral",
 								size: "sm",
 								children: e.gender
 							}) : null,
-							e.faceOrientation ? /* @__PURE__ */ U(b, {
+							e.faceOrientation ? /* @__PURE__ */ U(v, {
 								tone: "neutral",
 								size: "sm",
 								title: "Face orientation",
 								children: e.faceOrientation
 							}) : null,
-							e.expression ? /* @__PURE__ */ U(b, {
+							e.expression ? /* @__PURE__ */ U(v, {
 								tone: "info",
 								size: "sm",
 								children: e.expression
@@ -13285,12 +13285,12 @@ function Qc({ tags: e, onTagClick: t, className: r }) {
 				title: `Filter by ${e}`,
 				"aria-label": `Filter by ${e}`,
 				className: "appearance-none border-0 bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded-full",
-				children: /* @__PURE__ */ W(b, {
+				children: /* @__PURE__ */ W(v, {
 					tone: "info",
 					size: "sm",
 					children: ["#", e]
 				})
-			}, e) : /* @__PURE__ */ W(b, {
+			}, e) : /* @__PURE__ */ W(v, {
 				tone: "info",
 				size: "sm",
 				children: ["#", e]
@@ -13328,7 +13328,7 @@ function tl({ exposure: e, whiteBalance: t, contrast: r, composition: i, edits: 
 									className: "text-[11px] font-medium text-text-tertiary",
 									children: "EXPOSURE"
 								}),
-								/* @__PURE__ */ U(b, {
+								/* @__PURE__ */ U(v, {
 									tone: $c(e.verdict),
 									size: "sm",
 									children: el(e.verdict)
@@ -13356,7 +13356,7 @@ function tl({ exposure: e, whiteBalance: t, contrast: r, composition: i, edits: 
 									className: "text-[11px] font-medium text-text-tertiary",
 									children: "WB"
 								}),
-								/* @__PURE__ */ U(b, {
+								/* @__PURE__ */ U(v, {
 									tone: $c(t.verdict),
 									size: "sm",
 									children: el(t.verdict)
@@ -13382,7 +13382,7 @@ function tl({ exposure: e, whiteBalance: t, contrast: r, composition: i, edits: 
 							children: "CONTRAST"
 						}), /* @__PURE__ */ U("span", {
 							className: "ml-1.5",
-							children: /* @__PURE__ */ U(b, {
+							children: /* @__PURE__ */ U(v, {
 								tone: $c(r),
 								size: "sm",
 								children: el(r)
@@ -13728,17 +13728,17 @@ function ol(e) {
 	return e.cacheReadTokens && t.push(`${e.cacheReadTokens} cached`), t.join(" / ");
 }
 function sl({ systemPrompt: e, userPrompt: t, outputSchema: r, model: i, onSave: a, apiBase: o = "" }) {
-	let s = Ge(), [c, l] = V(e), [u, d] = V(t), [f, p] = V(i ?? il), [m, h] = V(r ? JSON.stringify(r, null, 2) : ""), [g, _] = V("0"), [v, y] = V(null), [b, x] = V(!1), [S, C] = V(null), [w, T] = V(null), E = L(() => {
+	let s = Ge(), [c, l] = V(e), [u, d] = V(t), [f, p] = V(i ?? il), [m, h] = V(r ? JSON.stringify(r, null, 2) : ""), [g, _] = V("0"), [v, y] = V(null), [b, x] = V(!1), [S, C] = V(null), [w, T] = V(null), D = L(() => {
 		let e = m.trim();
 		if (e) try {
 			let t = JSON.parse(e);
 			if (t && typeof t == "object" && !Array.isArray(t)) return t;
 		} catch {}
-	}, [m]), D = L((e) => {
+	}, [m]), ee = L((e) => {
 		_(e);
 		let t = al[Number(e)];
 		t && (h(t.value ? JSON.stringify(t.value, null, 2) : ""), t.systemPrompt !== void 0 && l(t.systemPrompt));
-	}, []), O = v?.imageId ?? null, ee = O ? s.getImageUrl(O) : null, k = L(async () => {
+	}, []), O = v?.imageId ?? null, k = O ? s.getImageUrl(O) : null, te = L(async () => {
 		if (!O) {
 			C("Upload or paste a sample image URL first.");
 			return;
@@ -13748,7 +13748,7 @@ function sl({ systemPrompt: e, userPrompt: t, outputSchema: r, model: i, onSave:
 			return;
 		}
 		x(!0), C(null), T(null);
-		let e = E();
+		let e = D();
 		try {
 			let t = await fetch(`${o}/api/pipeline/preview/vision`, {
 				method: "POST",
@@ -13770,7 +13770,7 @@ function sl({ systemPrompt: e, userPrompt: t, outputSchema: r, model: i, onSave:
 				return;
 			}
 			let r = {
-				imageUrl: ee ?? "",
+				imageUrl: k ?? "",
 				caption: n.caption ?? "",
 				rawText: typeof n.extracted == "object" && n.extracted ? JSON.stringify(n.extracted, null, 2) : void 0,
 				model: {
@@ -13797,25 +13797,25 @@ function sl({ systemPrompt: e, userPrompt: t, outputSchema: r, model: i, onSave:
 		}
 	}, [
 		O,
-		ee,
+		k,
 		u,
 		c,
 		f,
-		E,
+		D,
 		o
-	]), A = () => {
+	]), ne = () => {
 		a({
 			systemPrompt: c,
 			userPrompt: u,
-			outputSchema: E()
+			outputSchema: D()
 		});
-	}, te = "text-[12px] font-semibold text-text-secondary";
+	}, A = "text-[12px] font-semibold text-text-secondary";
 	return /* @__PURE__ */ W("div", {
 		className: "flex flex-col gap-4 px-4 py-3",
 		"data-testid": "vision-prompt-bench",
 		children: [
 			/* @__PURE__ */ W("div", { children: [/* @__PURE__ */ U("div", {
-				className: n(te, "mb-1"),
+				className: n(A, "mb-1"),
 				children: "Sample image"
 			}), /* @__PURE__ */ U(Ws, {
 				value: v,
@@ -13826,7 +13826,7 @@ function sl({ systemPrompt: e, userPrompt: t, outputSchema: r, model: i, onSave:
 				className: "flex flex-col gap-2",
 				children: [
 					/* @__PURE__ */ W("div", { children: [/* @__PURE__ */ U("label", {
-						className: te,
+						className: A,
 						children: "System prompt"
 					}), /* @__PURE__ */ U(N, {
 						value: c,
@@ -13837,7 +13837,7 @@ function sl({ systemPrompt: e, userPrompt: t, outputSchema: r, model: i, onSave:
 						className: "mt-1 text-[12px] font-mono"
 					})] }),
 					/* @__PURE__ */ W("div", { children: [/* @__PURE__ */ W("label", {
-						className: te,
+						className: A,
 						children: ["User prompt ", /* @__PURE__ */ U("span", {
 							className: "text-danger-fg",
 							children: "*"
@@ -13853,11 +13853,11 @@ function sl({ systemPrompt: e, userPrompt: t, outputSchema: r, model: i, onSave:
 					/* @__PURE__ */ W("div", { children: [/* @__PURE__ */ W("div", {
 						className: "flex items-center gap-2 mb-1",
 						children: [/* @__PURE__ */ U("label", {
-							className: te,
+							className: A,
 							children: "Output schema"
-						}), /* @__PURE__ */ U(F, {
+						}), /* @__PURE__ */ U(E, {
 							value: g,
-							onChange: (e) => D(e.target.value),
+							onChange: (e) => ee(e.target.value),
 							options: al.map((e, t) => ({
 								value: String(t),
 								label: e.label
@@ -13878,7 +13878,7 @@ function sl({ systemPrompt: e, userPrompt: t, outputSchema: r, model: i, onSave:
 			}),
 			/* @__PURE__ */ W("div", {
 				className: "flex items-center gap-2",
-				children: [/* @__PURE__ */ U(F, {
+				children: [/* @__PURE__ */ U(E, {
 					value: f,
 					onChange: (e) => p(e.target.value),
 					options: rl,
@@ -13887,7 +13887,7 @@ function sl({ systemPrompt: e, userPrompt: t, outputSchema: r, model: i, onSave:
 					"data-testid": "bench-model-select"
 				}), /* @__PURE__ */ U("button", {
 					type: "button",
-					onClick: () => void k(),
+					onClick: () => void te(),
 					disabled: b,
 					className: n("flex-1 py-1.5 px-4 text-[13px] font-semibold rounded-md cursor-pointer", "bg-primary text-white border-none", b ? "opacity-60 cursor-not-allowed" : "hover:bg-primary/90"),
 					"data-testid": "bench-try-btn",
@@ -13940,7 +13940,7 @@ function sl({ systemPrompt: e, userPrompt: t, outputSchema: r, model: i, onSave:
 					}),
 					/* @__PURE__ */ U("button", {
 						type: "button",
-						onClick: A,
+						onClick: ne,
 						className: n("mt-1 w-full py-1.5 text-[12px] font-semibold rounded-md cursor-pointer", "bg-surface-hover border border-border text-text-primary", "hover:bg-surface-inset"),
 						"data-testid": "bench-save-btn",
 						children: "Save to node"
@@ -14155,7 +14155,7 @@ var cl = {
 ]), dl = ({ data: e }) => /* @__PURE__ */ U("div", {
 	className: "p-4",
 	"data-testid": "config-panel-no-settings",
-	children: /* @__PURE__ */ U(O, {
+	children: /* @__PURE__ */ U(k, {
 		icon: "⚙️",
 		title: "No settings for this node type yet",
 		description: /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U("code", {
@@ -14367,7 +14367,7 @@ function hl({ selectedIds: e }) {
 							/* @__PURE__ */ W("div", {
 								className: "flex items-center gap-2",
 								children: [
-									/* @__PURE__ */ U(k, {
+									/* @__PURE__ */ U(ne, {
 										state: ll[_.status],
 										label: _.status,
 										size: "sm",
@@ -14512,7 +14512,7 @@ function Sl({ pipelineId: e, run: t, onBack: r }) {
 				children: [
 					/* @__PURE__ */ U(xl, {
 						label: "Status",
-						children: /* @__PURE__ */ U(b, {
+						children: /* @__PURE__ */ U(v, {
 							tone: vl(t.status),
 							"aria-label": `Status: ${yl(t.status)}`,
 							children: yl(t.status)
@@ -14606,7 +14606,7 @@ function Sl({ pipelineId: e, run: t, onBack: r }) {
 									/* @__PURE__ */ W("div", {
 										className: "flex items-center gap-2 py-1 text-xs",
 										children: [
-											/* @__PURE__ */ U(b, {
+											/* @__PURE__ */ U(v, {
 												tone: n,
 												"aria-label": `Status: ${r}`,
 												children: r
@@ -14757,11 +14757,11 @@ function kl({ pipelineId: e, onClose: t }) {
 			}
 		}
 	}, [e]));
-	let v = z(() => i.find((e) => e.id === u) ?? null, [i, u]), y = L((e) => {
+	let y = z(() => i.find((e) => e.id === u) ?? null, [i, u]), b = L((e) => {
 		h((t) => t.includes(e) ? t.filter((t) => t !== e) : t.length >= 2 ? [t[1], e] : [...t, e]);
 	}, []), x = L((e) => {
-		f ? y(e) : d(e);
-	}, [f, y]), S = L(() => {
+		f ? b(e) : d(e);
+	}, [f, b]), S = L(() => {
 		if (m.length !== 2) return;
 		let [t, n] = m;
 		r(`/pipelines/${e}/compare?a=${t}&b=${n}`);
@@ -14816,9 +14816,9 @@ function kl({ pipelineId: e, onClose: t }) {
 			/* @__PURE__ */ W("div", {
 				className: "relative min-h-0 flex-1",
 				children: [
-					v && /* @__PURE__ */ U(Sl, {
+					y && /* @__PURE__ */ U(Sl, {
 						pipelineId: e,
-						run: v,
+						run: y,
 						onBack: () => d(null)
 					}),
 					o && i.length === 0 && /* @__PURE__ */ U("div", {
@@ -14858,14 +14858,14 @@ function kl({ pipelineId: e, onClose: t }) {
 										children: [
 											f && /* @__PURE__ */ U(le, {
 												checked: i,
-												onChange: () => y(e.id),
+												onChange: () => b(e.id),
 												onClick: (e) => e.stopPropagation(),
 												onKeyDown: (e) => e.stopPropagation(),
 												"data-testid": `runs-panel-compare-check-${e.id}`,
 												className: "m-0 shrink-0",
 												"aria-label": `Select run ${e.id.slice(0, 8)} for comparison`
 											}),
-											/* @__PURE__ */ U(b, {
+											/* @__PURE__ */ U(v, {
 												tone: t,
 												"aria-label": `Status: ${r}`,
 												children: r
@@ -14978,26 +14978,26 @@ function Pl() {
 	});
 }
 function Fl({ pipelineId: e }) {
-	let t = Bt(), i = he(), a = Ce(), { toast: s } = r(), { definition: c, dirty: l, selectedNodeId: u, setSelectedNodeId: d, save: f, publish: p, revert: m, undo: h, redo: _, setTags: v } = i, y = Sa(e), [b, x] = V(!1), S = B(null), C = B(l);
-	R(() => (C.current && !l && (x(!0), S.current && clearTimeout(S.current), S.current = setTimeout(() => x(!1), 450)), C.current = l, () => {
+	let t = Bt(), i = he(), a = Ce(), { toast: o } = r(), { definition: s, dirty: c, selectedNodeId: l, setSelectedNodeId: d, save: f, publish: p, revert: h, undo: g, redo: _, setTags: v } = i, y = Sa(e), [b, x] = V(!1), S = B(null), w = B(c);
+	R(() => (w.current && !c && (x(!0), S.current && clearTimeout(S.current), S.current = setTimeout(() => x(!1), 450)), w.current = c, () => {
 		S.current &&= (clearTimeout(S.current), null);
-	}), [l]);
-	let w = z(() => c ? Ci(c) : null, [c]), E = (w?.errors.length ?? 0) > 0, D = z(() => Ml(c), [c]), O = z(() => c ? c.nodes.some((e) => e.type === "trigger") : !1, [c]) ? ["trigger"] : [], [ee, k] = V(!0), [A, te] = V(() => {
+	}), [c]);
+	let T = z(() => s ? Ci(s) : null, [s]), E = (T?.errors.length ?? 0) > 0, D = z(() => Ml(s), [s]), ee = z(() => s ? s.nodes.some((e) => e.type === "trigger") : !1, [s]) ? ["trigger"] : [], [O, k] = V(!0), [te, ne] = V(() => {
 		if (typeof window > "u") return !1;
 		try {
 			return window.localStorage.getItem("ws_pipelines_v1_show_tags") === "true";
 		} catch {
 			return !1;
 		}
-	}), ne = L(() => {
-		te((e) => {
+	}), A = L(() => {
+		ne((e) => {
 			let t = !e;
 			try {
 				window.localStorage.setItem("ws_pipelines_v1_show_tags", t ? "true" : "false");
 			} catch {}
 			return t;
 		});
-	}, []), [re, ie] = V(!1), [j, M] = V(!1), [ae, oe] = V(!1), [P, se] = V(!1), [ce, F] = V(!1), le = z(() => c?.publishedSnapshot ? c.publishedSnapshot : null, [c]), ue = c?.status === "published", de = !y.isRunActive && (!ue || E), fe = y.isRunActive ? "Cancel the active run" : ue ? E ? "Fix validation errors to enable runs" : "Start a new run" : "Publish the pipeline to enable runs", pe = L(async () => {
+	}, []), [re, ie] = V(!1), [j, M] = V(!1), [ae, oe] = V(!1), [se, P] = V(!1), [ce, F] = V(!1), le = z(() => s?.publishedSnapshot ? s.publishedSnapshot : null, [s]), ue = s?.status === "published", de = !y.isRunActive && (!ue || E), fe = y.isRunActive ? "Cancel the active run" : ue ? E ? "Fix validation errors to enable runs" : "Start a new run" : "Publish the pipeline to enable runs", pe = L(async () => {
 		if (y.isRunActive && y.currentRunId) {
 			a.cancelRun(y.currentRunId);
 			return;
@@ -15016,35 +15016,35 @@ function Fl({ pipelineId: e }) {
 		D
 	]), { saveError: me, clearSaveError: ge } = i;
 	R(() => {
-		me && (s(`Could not save: ${me}`, { type: "error" }), ge());
+		me && (o(`Could not save: ${me}`, { type: "error" }), ge());
 	}, [
 		me,
 		ge,
-		s
+		o
 	]);
 	let { publishError: _e, clearPublishError: ve, publishedAt: ye } = i, be = B(ye);
 	R(() => {
-		ye && ye !== be.current && s("Pipeline published", { type: "success" }), be.current = ye;
-	}, [ye, s]), R(() => {
-		_e && (s(`Could not publish: ${_e}`, { type: "error" }), ve());
+		ye && ye !== be.current && o("Pipeline published", { type: "success" }), be.current = ye;
+	}, [ye, o]), R(() => {
+		_e && (o(`Could not publish: ${_e}`, { type: "error" }), ve());
 	}, [
 		_e,
 		ve,
-		s
+		o
 	]);
 	let { retryError: xe, clearRetryError: Se } = a;
 	R(() => {
-		xe && (s(`Retry failed: ${xe.message}`, { type: "error" }), Se());
+		xe && (o(`Retry failed: ${xe.message}`, { type: "error" }), Se());
 	}, [
 		xe,
 		Se,
-		s
+		o
 	]), R(() => {
 		let e = (e) => {
 			if (Nl(e.target)) return;
 			let t = e.metaKey || e.ctrlKey;
 			if (t && e.key.toLowerCase() === "s") {
-				e.preventDefault(), f(), s("Saved", {
+				e.preventDefault(), f(), o("Saved", {
 					type: "success",
 					durationMs: 1200
 				});
@@ -15063,7 +15063,7 @@ function Fl({ pipelineId: e }) {
 				return;
 			}
 			if (t && e.key.toLowerCase() === "z") {
-				e.preventDefault(), h();
+				e.preventDefault(), g();
 				return;
 			}
 			if (e.key === "Escape") {
@@ -15074,48 +15074,48 @@ function Fl({ pipelineId: e }) {
 		return window.addEventListener("keydown", e), () => window.removeEventListener("keydown", e);
 	}, [
 		f,
-		s,
+		o,
 		pe,
 		y,
 		a,
-		h,
+		g,
 		_,
 		d
 	]);
 	let we = () => {
-		if (!c) return;
-		let e = ot(c.id);
+		if (!s) return;
+		let e = ot(s.id);
 		e && t(`/pipelines/${e.id}`);
 	}, Te = () => {
-		if (!c) return;
-		let e = xt(c.id);
-		e && ba(`${jl(c.name)}.pipeline.json`, e);
+		if (!s) return;
+		let e = xt(s.id);
+		e && ba(`${jl(s.name)}.pipeline.json`, e);
 	}, Ee = async () => {
-		if (!c) return;
-		let e = oa(c);
+		if (!s) return;
+		let e = oa(s);
 		try {
-			if (typeof navigator < "u" && navigator.clipboard?.writeText) await navigator.clipboard.writeText(e), s("Mermaid diagram copied", { type: "success" });
+			if (typeof navigator < "u" && navigator.clipboard?.writeText) await navigator.clipboard.writeText(e), o("Mermaid diagram copied", { type: "success" });
 			else throw Error("clipboard unavailable");
 		} catch (e) {
-			console.warn("[PipelineEditor] clipboard write failed", e), s("Could not copy Mermaid diagram", { type: "error" });
+			console.warn("[PipelineEditor] clipboard write failed", e), o("Could not copy Mermaid diagram", { type: "error" });
 		}
 	}, De = () => {
-		se(!0);
+		P(!0);
 	}, Oe = () => {
 		ie(!1), !E && p();
 	}, ke = () => {
-		c && (Ke(c.id), M(!1), t("/pipelines"));
+		s && (Ke(s.id), M(!1), t("/pipelines"));
 	}, Ae = () => {
-		Ct(e), oe(!1), s("Run history cleared", { type: "success" });
+		Ct(e), oe(!1), o("Run history cleared", { type: "success" });
 	}, je = y.currentRunId ? a.runs[y.currentRunId] : void 0;
-	return c ? /* @__PURE__ */ W("div", {
+	return s ? /* @__PURE__ */ W("div", {
 		className: n("flex flex-col min-h-[calc(100vh-200px)]", "bg-surface-inset font-inherit text-text-primary", "rounded-lg border border-border overflow-hidden"),
 		"data-testid": "pipeline-editor",
 		children: [
 			/* @__PURE__ */ U(Ta, {
 				pipelineId: e,
-				definition: c,
-				dirty: l,
+				definition: s,
+				dirty: c,
 				savingFlash: b,
 				isRunActive: y.isRunActive,
 				isTriggering: y.isTriggering,
@@ -15130,22 +15130,22 @@ function Fl({ pipelineId: e }) {
 				onDuplicate: we,
 				onCopyMermaid: Ee,
 				onViewVersions: De,
-				onRevert: m,
-				onToggleShowTags: ne,
-				showTags: A,
+				onRevert: h,
+				onToggleShowTags: A,
+				showTags: te,
 				onViewRunHistory: () => y.setSidebarTab("runs"),
 				onClearRunHistory: () => oe(!0),
 				onSimPanelOpen: () => F(!0),
 				onDelete: () => M(!0)
 			}),
-			A && /* @__PURE__ */ W("div", {
+			te && /* @__PURE__ */ W("div", {
 				"data-testid": "tags-row",
 				className: n("flex items-center gap-2 px-4 py-1.5", "border-b border-border bg-surface-inset", "min-h-[34px] shrink-0 sticky top-11 z-[4]"),
 				children: [/* @__PURE__ */ U("span", {
 					className: "text-[11px] text-text-tertiary font-semibold",
 					children: "TAGS"
-				}), /* @__PURE__ */ U(o, {
-					value: c.tags ?? [],
+				}), /* @__PURE__ */ U(u, {
+					value: s.tags ?? [],
 					onChange: v,
 					placeholder: "add tag…"
 				})]
@@ -15153,7 +15153,7 @@ function Fl({ pipelineId: e }) {
 			/* @__PURE__ */ W("div", {
 				className: "flex-1 flex min-h-0 relative overflow-hidden",
 				children: [
-					/* @__PURE__ */ U(ei, { disabledTypes: O }),
+					/* @__PURE__ */ U(ei, { disabledTypes: ee }),
 					/* @__PURE__ */ U("div", {
 						className: "flex-1 min-w-0 min-h-[600px] relative flex flex-col",
 						children: /* @__PURE__ */ U(vi, {
@@ -15166,14 +15166,14 @@ function Fl({ pipelineId: e }) {
 					}),
 					/* @__PURE__ */ U(Al, {
 						pipelineId: e,
-						selectedNodeId: u,
+						selectedNodeId: l,
 						sidebarTab: y.sidebarTab,
 						onTabChange: y.setSidebarTab
 					})
 				]
 			}),
 			y.pausedBreakpoint && /* @__PURE__ */ U(Va, {
-				definition: c,
+				definition: s,
 				pausedBreakpoint: y.pausedBreakpoint,
 				applyingPatch: y.applyingPatch,
 				revertingPatchId: y.revertingPatchId,
@@ -15195,40 +15195,40 @@ function Fl({ pipelineId: e }) {
 			}),
 			/* @__PURE__ */ U(ya, {
 				runId: y.currentRunId,
-				visible: y.isRunActive && ee
+				visible: y.isRunActive && O
 			}),
 			/* @__PURE__ */ U(va, {
 				publishConfirmOpen: re,
 				onPublishClose: () => ie(!1),
 				onPublishConfirm: Oe,
 				hasErrors: E,
-				validationErrorCount: w?.errors.length ?? 0,
-				definitionName: c.name,
-				definitionVersion: c.version,
+				validationErrorCount: T?.errors.length ?? 0,
+				definitionName: s.name,
+				definitionVersion: s.version,
 				deleteConfirmOpen: j,
 				onDeleteClose: () => M(!1),
 				onDeleteConfirm: ke,
 				clearRunsConfirmOpen: ae,
 				onClearRunsClose: () => oe(!1),
 				onClearRunsConfirm: Ae,
-				versionDiffOpen: P,
-				onVersionDiffClose: () => se(!1),
-				currentDef: c,
+				versionDiffOpen: se,
+				onVersionDiffClose: () => P(!1),
+				currentDef: s,
 				publishedDef: le,
 				onJumpToNode: d,
 				simPanelOpen: ce,
 				onSimPanelClose: () => F(!1)
 			}),
-			/* @__PURE__ */ U(T, {
+			/* @__PURE__ */ U(C, {
 				open: y.triggerInputOpen,
 				onClose: () => y.setTriggerInputOpen(!1),
 				title: "Trigger inputs",
 				maxWidth: 480,
-				footer: /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(g, {
+				footer: /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U(m, {
 					variant: "ghost",
 					onClick: () => y.setTriggerInputOpen(!1),
 					children: "Cancel"
-				}), /* @__PURE__ */ U(g, {
+				}), /* @__PURE__ */ U(m, {
 					variant: "primary",
 					onClick: y.handleTriggerInputSubmit,
 					disabled: D.some((e) => !y.triggerInputValues[e]?.trim()),
@@ -15287,8 +15287,8 @@ function Il(e) {
 function Ll({ row: e, onOpen: t, onRun: r, onDuplicate: i, onExport: a, onDelete: o, selectionMode: s, selected: c, anySelected: l, onToggleSelect: u }) {
 	let [d, f] = V(!1), [p, m] = V(!1), h = B(null);
 	wr(h, () => f(!1), d), A(d, L(() => f(!1), []));
-	let g = e.status === "published", _ = e.status === "archived", v = typeof e.publishedVersion == "number", y = Il(e.triggerBinding), x, S;
-	_ ? (x = `Archived · v${e.version}`, S = "danger") : g ? (x = `Published · v${e.version}`, S = "success") : v ? (x = `Draft · v${e.version} (published v${e.publishedVersion})`, S = "warning") : (x = `Draft · v${e.version}`, S = "neutral");
+	let g = e.status === "published", _ = e.status === "archived", y = typeof e.publishedVersion == "number", b = Il(e.triggerBinding), x, S;
+	_ ? (x = `Archived · v${e.version}`, S = "danger") : g ? (x = `Published · v${e.version}`, S = "success") : y ? (x = `Draft · v${e.version} (published v${e.publishedVersion})`, S = "warning") : (x = `Draft · v${e.version}`, S = "neutral");
 	let C = !g, w = (e) => (t) => {
 		t.stopPropagation(), e();
 	}, T = s || c || p || l;
@@ -15336,7 +15336,7 @@ function Ll({ row: e, onOpen: t, onRun: r, onDuplicate: i, onExport: a, onDelete
 			/* @__PURE__ */ W("div", {
 				className: "flex items-center gap-2 flex-wrap",
 				children: [
-					/* @__PURE__ */ U(b, {
+					/* @__PURE__ */ U(v, {
 						"aria-label": `Status: ${x}`,
 						tone: S,
 						size: "sm",
@@ -15345,9 +15345,9 @@ function Ll({ row: e, onOpen: t, onRun: r, onDuplicate: i, onExport: a, onDelete
 					/* @__PURE__ */ W("span", {
 						className: "text-[11px] text-text-secondary",
 						children: [
-							y.icon,
+							b.icon,
 							" ",
-							y.text
+							b.text
 						]
 					}),
 					/* @__PURE__ */ W("span", {
@@ -15453,7 +15453,7 @@ function Bl({ search: e, onSearchChange: t, statusFilter: r, statusExplicit: i, 
 					children: "All"
 				})]
 			}),
-			/* @__PURE__ */ U(D, {
+			/* @__PURE__ */ U(T, {
 				"data-testid": "pipeline-search",
 				type: "search",
 				size: "sm",
@@ -15490,7 +15490,7 @@ function Bl({ search: e, onSearchChange: t, statusFilter: r, statusExplicit: i, 
 			}),
 			/* @__PURE__ */ W("label", {
 				className: "text-xs text-text-secondary flex items-center gap-1.5",
-				children: ["Trigger:", /* @__PURE__ */ U(F, {
+				children: ["Trigger:", /* @__PURE__ */ U(E, {
 					"data-testid": "trigger-filter",
 					size: "sm",
 					value: o,
@@ -15522,7 +15522,7 @@ function Bl({ search: e, onSearchChange: t, statusFilter: r, statusExplicit: i, 
 			}),
 			/* @__PURE__ */ W("label", {
 				className: "text-xs text-text-secondary flex items-center gap-1.5 ml-auto",
-				children: ["Sort:", /* @__PURE__ */ U(F, {
+				children: ["Sort:", /* @__PURE__ */ U(E, {
 					"data-testid": "sort-key",
 					size: "sm",
 					value: c,
@@ -15555,7 +15555,7 @@ function Hl({ count: e, onClear: t, onExport: r, onExportAsJSON: a, onPublish: o
 	R(() => {
 		f && (b(""), setTimeout(() => x.current?.focus(), 30));
 	}, [f]);
-	let w = i(g), T = i(_);
+	let w = i(g), E = i(_);
 	R(() => {
 		if (!f) return;
 		let e = (e) => {
@@ -15569,15 +15569,15 @@ function Hl({ count: e, onClear: t, onExport: r, onExportAsJSON: a, onPublish: o
 	}, [f, w]), R(() => {
 		if (!p) return;
 		let e = (e) => {
-			C.current?.contains(e.target) || T();
+			C.current?.contains(e.target) || E();
 		}, t = window.setTimeout(() => {
 			document.addEventListener("mousedown", e);
 		}, 0);
 		return () => {
 			window.clearTimeout(t), document.removeEventListener("mousedown", e);
 		};
-	}, [p, T]);
-	let E = () => {
+	}, [p, E]);
+	let D = () => {
 		let e = y.trim();
 		e.length !== 0 && (m(e), b(""));
 	};
@@ -15642,7 +15642,7 @@ function Hl({ count: e, onClear: t, onExport: r, onExportAsJSON: a, onPublish: o
 					"data-testid": "bulk-add-tag-popover",
 					onClick: (e) => e.stopPropagation(),
 					className: n("absolute top-full left-0 mt-1.5", "bg-surface border border-border rounded-lg", "shadow-lg min-w-[220px] p-2.5 z-10", "flex flex-col gap-2"),
-					children: [/* @__PURE__ */ U(D, {
+					children: [/* @__PURE__ */ U(T, {
 						ref: x,
 						size: "sm",
 						"data-testid": "bulk-add-tag-input",
@@ -15650,14 +15650,14 @@ function Hl({ count: e, onClear: t, onExport: r, onExportAsJSON: a, onPublish: o
 						value: y,
 						onChange: (e) => b(e.target.value),
 						onKeyDown: (e) => {
-							e.key === "Enter" ? (e.preventDefault(), E()) : e.key === "Escape" && (e.preventDefault(), g());
+							e.key === "Enter" ? (e.preventDefault(), D()) : e.key === "Escape" && (e.preventDefault(), g());
 						},
 						className: n("border border-border-field rounded-md px-2.5 py-1.5 text-[13px]", "bg-surface-inset text-text-primary outline-none w-full"),
 						"aria-label": "Tag name"
 					}), /* @__PURE__ */ U("button", {
 						"data-testid": "bulk-add-tag-submit",
 						disabled: y.trim().length === 0,
-						onClick: E,
+						onClick: D,
 						className: n("px-2.5 py-[5px] text-xs font-semibold", "bg-primary text-white border-none rounded-md", "disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"),
 						children: "Add"
 					})]
@@ -17672,7 +17672,7 @@ function gu({ open: t, onClose: n, onCreated: r, onSelect: i, userId: a }) {
 		}
 		i && i(e);
 	};
-	return /* @__PURE__ */ W(T, {
+	return /* @__PURE__ */ W(C, {
 		open: t,
 		onClose: n,
 		title: "Pipeline templates",
@@ -17684,7 +17684,7 @@ function gu({ open: t, onClose: n, onCreated: r, onSelect: i, userId: a }) {
 				className: "text-[13px] text-text-secondary mb-3",
 				children: "Pick a template to spawn a new pipeline with prebuilt nodes and edges."
 			}),
-			/* @__PURE__ */ U(D, {
+			/* @__PURE__ */ U(T, {
 				ref: u,
 				type: "search",
 				"data-testid": "templates-search",
@@ -17767,7 +17767,7 @@ function wu({ open: e, onClose: t, onCreate: r }) {
 	let s = i.trim().length > 0, c = () => {
 		s && r(i.trim());
 	};
-	return /* @__PURE__ */ W(T, {
+	return /* @__PURE__ */ W(C, {
 		open: e,
 		onClose: t,
 		title: "Create new pipeline",
@@ -17787,7 +17787,7 @@ function wu({ open: e, onClose: t, onCreate: r }) {
 		children: [/* @__PURE__ */ U("label", {
 			className: "block text-[13px] font-semibold text-text-secondary mb-1.5",
 			children: "Name"
-		}), /* @__PURE__ */ U(D, {
+		}), /* @__PURE__ */ U(T, {
 			ref: o,
 			"data-testid": "new-pipeline-name",
 			value: i,
@@ -17805,7 +17805,7 @@ function Tu({ userId: t, idToken: i, baseUrl: a } = {}) {
 	let o = Bt(), s = e(), c = t === void 0 ? s?.userId ?? "" : t, { toast: l } = r(), { triggerRun: u, isTriggering: d } = Le({
 		idToken: i,
 		baseUrl: a
-	}), [f, p] = Ht(), [m, h] = V([]), [g, _] = V(""), [v, y] = V("all"), [b, x] = V("updated"), S = z(() => yu(f.get("status")), [f]), C = z(() => S ?? new Set(vu), [S]), w = S != null, E = (e) => {
+	}), [f, p] = Ht(), [m, h] = V([]), [g, _] = V(""), [v, y] = V("all"), [b, x] = V("updated"), S = z(() => yu(f.get("status")), [f]), w = z(() => S ?? new Set(vu), [S]), T = S != null, E = (e) => {
 		let t = new URLSearchParams(f);
 		if (e.size === 0) t.set("status", "");
 		else {
@@ -17814,9 +17814,9 @@ function Tu({ userId: t, idToken: i, baseUrl: a } = {}) {
 		}
 		p(t, { replace: !0 });
 	}, D = (e) => {
-		let t = w ? new Set(C) : new Set(vu);
+		let t = T ? new Set(w) : new Set(vu);
 		t.has(e) ? t.delete(e) : t.add(e), E(t);
-	}, [ee, k] = V(!1), [A, te] = V(!1), [ne, re] = V(null), [ie, j] = V(!1), [M, ae] = V(!1), [N, oe] = V(!1), P = L(async () => {
+	}, [ee, O] = V(!1), [te, ne] = V(!1), [A, re] = V(null), [ie, j] = V(!1), [M, ae] = V(!1), [oe, se] = V(!1), N = L(async () => {
 		let e = await ht(), t = [];
 		for (let n of e) {
 			let e = await nt(n.id);
@@ -17825,27 +17825,27 @@ function Tu({ userId: t, idToken: i, baseUrl: a } = {}) {
 		h(t);
 	}, []);
 	R(() => {
-		P();
-	}, [P]);
-	let se = z(() => {
+		N();
+	}, [N]);
+	let P = z(() => {
 		let e = g.trim().toLowerCase(), t = [...m.filter((t) => {
 			if (e) {
 				let n = t.name.toLowerCase().includes(e), r = t.tags.some((t) => t.toLowerCase().includes(e));
 				if (!n && !r) return !1;
 			}
-			return !(!(w && C.size === 0) && !C.has(t.status) || v !== "all" && xu(t.triggerBinding) !== v);
+			return !(!(T && w.size === 0) && !w.has(t.status) || v !== "all" && xu(t.triggerBinding) !== v);
 		})];
 		return b === "name" ? t.sort((e, t) => e.name.localeCompare(t.name)) : b === "created" ? t.sort((e, t) => t.createdAt.localeCompare(e.createdAt)) : t.sort((e, t) => t.updatedAt.localeCompare(e.updatedAt)), t;
 	}, [
 		m,
 		g,
-		C,
 		w,
+		T,
 		v,
 		b
 	]), { selectionMode: ce, selected: F, allVisibleSelected: le, someVisibleSelected: ue, selectAllRef: de, handleToggleSelectMode: fe, handleToggleSelect: pe, handleSelectAllFiltered: me, handleHeaderToggleAll: he, clearSelection: ge, setSelectionMode: _e } = Ul({
-		visibleRows: se,
-		filteredIds: z(() => se.map((e) => e.id), [se])
+		visibleRows: P,
+		filteredIds: z(() => P.map((e) => e.id), [P])
 	}), ve = B(/* @__PURE__ */ new Set());
 	R(() => {
 		let e = ve.current;
@@ -17868,13 +17868,13 @@ function Tu({ userId: t, idToken: i, baseUrl: a } = {}) {
 			l("Could not create the pipeline — the server rejected the request", { type: "error" });
 			return;
 		}
-		k(!1), o(`/pipelines/${t.id}`);
+		O(!1), o(`/pipelines/${t.id}`);
 	}, xe = () => {
 		let e = _t(c);
-		dt(e).then(() => P()), o(`/pipelines/${e.id}`);
+		dt(e).then(() => N()), o(`/pipelines/${e.id}`);
 	}, Se = (e) => {
 		let t = e.build(c);
-		dt(t), te(!1), o(`/pipelines/${t.id}`);
+		dt(t), ne(!1), o(`/pipelines/${t.id}`);
 	}, Ce = (e) => o(`/pipelines/${e}`), we = async (e) => {
 		if (e.status !== "published") {
 			l("Run requires published state", { type: "warning" });
@@ -17889,7 +17889,7 @@ function Tu({ userId: t, idToken: i, baseUrl: a } = {}) {
 		}
 	}, Te = (e) => {
 		let t = ot(e);
-		t && (dt(t).then(() => P()), l(`Duplicated as "${t.name}"`, { type: "success" }));
+		t && (dt(t).then(() => N()), l(`Duplicated as "${t.name}"`, { type: "success" }));
 	}, Ee = (e) => {
 		let t = xt(e.id);
 		if (!t) {
@@ -17898,16 +17898,16 @@ function Tu({ userId: t, idToken: i, baseUrl: a } = {}) {
 		}
 		ba(`${Su(e.name)}.pipeline.json`, t);
 	}, De = async () => {
-		if (ne) {
+		if (A) {
 			try {
-				await lt(ne);
+				await lt(A);
 			} catch {
-				re(null), P(), l("Could not delete the pipeline — it is still on the server", { type: "error" });
+				re(null), N(), l("Could not delete the pipeline — it is still on the server", { type: "error" });
 				return;
 			}
-			re(null), P(), l("Pipeline deleted", { type: "success" });
+			re(null), N(), l("Pipeline deleted", { type: "success" });
 		}
-	}, Oe = ne ? m.find((e) => e.id === ne) : null, ke = () => {
+	}, Oe = A ? m.find((e) => e.id === A) : null, ke = () => {
 		let e = Array.from(F);
 		e.length !== 0 && (e.forEach((e, t) => {
 			let n = window.setTimeout(() => {
@@ -17925,7 +17925,7 @@ function Tu({ userId: t, idToken: i, baseUrl: a } = {}) {
 			let r = t.tags ?? [];
 			r.includes(e) || (t.tags = [...r, e], await dt(t));
 		}
-		ae(!1), P(), l(`Added tag "${e}" to ${t.length} pipeline${t.length === 1 ? "" : "s"}`, { type: "success" });
+		ae(!1), N(), l(`Added tag "${e}" to ${t.length} pipeline${t.length === 1 ? "" : "s"}`, { type: "success" });
 	}, je = async (e) => {
 		let t = Array.from(F);
 		for (let n of t) {
@@ -17934,7 +17934,7 @@ function Tu({ userId: t, idToken: i, baseUrl: a } = {}) {
 			let r = t.tags ?? [];
 			r.includes(e) && (t.tags = r.filter((t) => t !== e), await dt(t));
 		}
-		P(), l(`Removed tag "${e}" from ${t.length} pipeline${t.length === 1 ? "" : "s"}`, { type: "success" });
+		N(), l(`Removed tag "${e}" from ${t.length} pipeline${t.length === 1 ? "" : "s"}`, { type: "success" });
 	}, Me = async () => {
 		let e = Array.from(F), t = 0, n = 0;
 		for (let r of e) try {
@@ -17942,7 +17942,7 @@ function Tu({ userId: t, idToken: i, baseUrl: a } = {}) {
 		} catch {
 			n += 1;
 		}
-		if (j(!1), ge(), P(), n > 0) {
+		if (j(!1), ge(), N(), n > 0) {
 			l(`Deleted ${t} of ${e.length} pipeline${e.length === 1 ? "" : "s"} — ${n} still on the server`, { type: "error" });
 			return;
 		}
@@ -17965,7 +17965,7 @@ function Tu({ userId: t, idToken: i, baseUrl: a } = {}) {
 				}
 			}
 		}
-		P(), r > 0 ? l(`Published ${t}; ${r} failed${n > 0 ? `; skipped ${n} already published` : ""}`, { type: "error" }) : l(n > 0 ? `Published ${t}; skipped ${n} already published` : `Published ${t} pipeline${t === 1 ? "" : "s"}`, { type: "success" });
+		N(), r > 0 ? l(`Published ${t}; ${r} failed${n > 0 ? `; skipped ${n} already published` : ""}`, { type: "error" }) : l(n > 0 ? `Published ${t}; skipped ${n} already published` : `Published ${t} pipeline${t === 1 ? "" : "s"}`, { type: "success" });
 	}, Pe = async () => {
 		let e = Array.from(F);
 		if (e.length === 0) return;
@@ -17974,7 +17974,7 @@ function Tu({ userId: t, idToken: i, baseUrl: a } = {}) {
 			let e = await nt(r);
 			e && (e.status === "archived" ? (e.status = "draft", n += 1) : (e.status = "archived", t += 1), await dt(e));
 		}
-		P();
+		N();
 		let r = [];
 		t > 0 && r.push(`Archived ${t}`), n > 0 && r.push(`Unarchived ${n}`), l(r.join(" · ") || "No pipelines changed", { type: "success" });
 	}, Fe = async () => {
@@ -17999,25 +17999,25 @@ function Tu({ userId: t, idToken: i, baseUrl: a } = {}) {
 				if (e === "INPUT" || e === "TEXTAREA" || e === "SELECT" || t.isContentEditable) return;
 			}
 			if (e.key === "Escape") {
-				(F.size > 0 || ce || M || N) && (ae(!1), oe(!1), ge(), _e(!1));
+				(F.size > 0 || ce || M || oe) && (ae(!1), se(!1), ge(), _e(!1));
 				return;
 			}
 			if ((e.metaKey || e.ctrlKey) && (e.key === "a" || e.key === "A")) {
 				ce && (e.preventDefault(), me());
 				return;
 			}
-			(e.key === "Delete" || e.key === "Backspace") && F.size > 0 && !ie && !ne && !ee && !A && (e.preventDefault(), j(!0));
+			(e.key === "Delete" || e.key === "Backspace") && F.size > 0 && !ie && !A && !ee && !te && (e.preventDefault(), j(!0));
 		};
 		return window.addEventListener("keydown", e), () => window.removeEventListener("keydown", e);
 	}, [
 		F,
 		ce,
 		M,
-		N,
+		oe,
 		ie,
-		ne,
-		ee,
 		A,
+		ee,
+		te,
 		ge,
 		me,
 		_e
@@ -18043,13 +18043,13 @@ function Tu({ userId: t, idToken: i, baseUrl: a } = {}) {
 						}),
 						/* @__PURE__ */ U("button", {
 							"data-testid": "templates-btn",
-							onClick: () => te(!0),
+							onClick: () => ne(!0),
 							className: n("px-4 py-[7px] text-[13px] font-semibold", "bg-surface text-text-secondary", "border border-border-field rounded-[7px]", "cursor-pointer font-inherit"),
 							children: "Templates"
 						}),
 						/* @__PURE__ */ U("button", {
 							"data-testid": "new-pipeline-btn",
-							onClick: () => k(!0),
+							onClick: () => O(!0),
 							className: n("px-4 py-[7px] text-[13px] font-semibold", "bg-primary text-white border-none rounded-md", "cursor-pointer font-inherit"),
 							children: "+ New Pipeline"
 						})
@@ -18059,8 +18059,8 @@ function Tu({ userId: t, idToken: i, baseUrl: a } = {}) {
 			I && /* @__PURE__ */ U(Bl, {
 				search: g,
 				onSearchChange: _,
-				statusFilter: C,
-				statusExplicit: w,
+				statusFilter: w,
+				statusExplicit: T,
 				onToggleStatusKey: D,
 				triggerFilter: v,
 				onTriggerFilterChange: y,
@@ -18078,31 +18078,31 @@ function Tu({ userId: t, idToken: i, baseUrl: a } = {}) {
 				onPublish: Ne,
 				onArchive: Pe,
 				onAddTag: () => {
-					ae((e) => !e), oe(!1);
+					ae((e) => !e), se(!1);
 				},
 				onRemoveTag: () => {
-					oe((e) => !e), ae(!1);
+					se((e) => !e), ae(!1);
 				},
 				onDelete: () => j(!0),
 				onDeleteWithConfirm: () => j(!0),
 				addTagOpen: M,
-				removeTagOpen: N,
+				removeTagOpen: oe,
 				onSubmitAddTag: Ae,
 				onSubmitRemoveTag: je,
 				onCloseAddTag: () => ae(!1),
-				onCloseRemoveTag: () => oe(!1),
+				onCloseRemoveTag: () => se(!1),
 				unionTags: ye
 			}),
 			/* @__PURE__ */ U("div", {
 				className: n("flex-1 overflow-y-auto overflow-x-hidden min-w-0", I ? "p-6" : "p-0"),
-				children: I ? se.length === 0 ? /* @__PURE__ */ U("div", {
+				children: I ? P.length === 0 ? /* @__PURE__ */ U("div", {
 					"data-testid": "filtered-empty",
 					className: "text-center p-12 text-[13px] text-text-tertiary",
 					children: "No pipelines match the current filters."
 				}) : /* @__PURE__ */ U("div", {
 					"data-testid": "pipeline-grid",
 					className: "grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-[50px]",
-					children: se.map((e) => /* @__PURE__ */ U(Ll, {
+					children: P.map((e) => /* @__PURE__ */ U(Ll, {
 						row: e,
 						onOpen: () => Ce(e.id),
 						onRun: () => {
@@ -18120,12 +18120,12 @@ function Tu({ userId: t, idToken: i, baseUrl: a } = {}) {
 					className: "flex flex-col h-full",
 					children: [/* @__PURE__ */ U("div", {
 						className: "flex-1 min-h-0",
-						children: /* @__PURE__ */ U(O, {
+						children: /* @__PURE__ */ U(k, {
 							icon: "🔀",
 							title: "No pipelines yet",
 							body: "Design your first one — from scratch or pick a template later.",
 							actionLabel: "+ New Pipeline",
-							onAction: () => k(!0)
+							onAction: () => O(!0)
 						})
 					}), /* @__PURE__ */ W("div", {
 						className: "flex justify-center items-center gap-2.5 text-[13px] text-text-tertiary px-6 pb-8",
@@ -18142,7 +18142,7 @@ function Tu({ userId: t, idToken: i, baseUrl: a } = {}) {
 							}),
 							/* @__PURE__ */ U("button", {
 								"data-testid": "empty-state-templates",
-								onClick: () => te(!0),
+								onClick: () => ne(!0),
 								className: "bg-transparent border-none p-1 px-2 text-[13px] text-primary cursor-pointer underline font-inherit",
 								children: "or browse templates"
 							})
@@ -18152,17 +18152,17 @@ function Tu({ userId: t, idToken: i, baseUrl: a } = {}) {
 			}),
 			/* @__PURE__ */ U(wu, {
 				open: ee,
-				onClose: () => k(!1),
+				onClose: () => O(!1),
 				onCreate: be
 			}),
 			/* @__PURE__ */ U(gu, {
-				open: A,
-				onClose: () => te(!1),
+				open: te,
+				onClose: () => ne(!1),
 				onSelect: Se,
 				userId: c
 			}),
-			/* @__PURE__ */ U(T, {
-				open: !!ne,
+			/* @__PURE__ */ U(C, {
+				open: !!A,
 				onClose: () => re(null),
 				title: "Delete pipeline?",
 				maxWidth: 400,
@@ -18186,7 +18186,7 @@ function Tu({ userId: t, idToken: i, baseUrl: a } = {}) {
 					] }), " will be permanently removed. Run history will also be lost."]
 				})
 			}),
-			/* @__PURE__ */ U(T, {
+			/* @__PURE__ */ U(C, {
 				open: ie,
 				onClose: () => j(!1),
 				title: `Delete ${F.size} pipeline${F.size === 1 ? "" : "s"}?`,
@@ -18513,7 +18513,7 @@ function Yu({ query: e, statuses: t, triggerKinds: r, range: i, onQueryChange: a
 	return /* @__PURE__ */ W("div", {
 		className: "flex items-center gap-2 px-3 py-2 bg-surface-inset border border-border rounded-md",
 		children: [
-			/* @__PURE__ */ U(D, {
+			/* @__PURE__ */ U(T, {
 				id: "runs-search",
 				type: "search",
 				size: "sm",
@@ -18765,12 +18765,12 @@ function td({ filtered: e, selected: t, onSelectionChange: r, comparePair: i, on
 					/* @__PURE__ */ W("td", {
 						className: "px-3 py-2.5 text-xs text-text-secondary",
 						children: [
-							/* @__PURE__ */ U(b, {
+							/* @__PURE__ */ U(v, {
 								tone: d,
 								"aria-label": `Status: ${f}`,
 								children: f
 							}),
-							p && e.status !== "stuck" && e.stuckAt && /* @__PURE__ */ U(b, {
+							p && e.status !== "stuck" && e.stuckAt && /* @__PURE__ */ U(v, {
 								tone: "warning",
 								size: "xs",
 								"data-testid": `run-stuck-badge-${e.id}`,
@@ -18778,7 +18778,7 @@ function td({ filtered: e, selected: t, onSelectionChange: r, comparePair: i, on
 								className: "ml-1.5",
 								children: "Stuck"
 							}),
-							e.status === "failed" && e.error?.errorCategory && /* @__PURE__ */ U(b, {
+							e.status === "failed" && e.error?.errorCategory && /* @__PURE__ */ U(v, {
 								tone: Qu(e.error.errorCategory),
 								size: "xs",
 								"data-testid": `run-error-category-${e.id}`,
@@ -18859,7 +18859,7 @@ function td({ filtered: e, selected: t, onSelectionChange: r, comparePair: i, on
 //#endregion
 //#region src/components/pipelines/PipelineRunsPage.tsx
 function nd() {
-	let { pipelineId: e } = Vt(), t = Bt(), [r, i] = Ht(), [a, o] = V([]), [s, c] = V(null), [l, u] = V([]), [d, f] = V(() => /* @__PURE__ */ new Set()), [p, m] = V(null), [h, g] = V(!1), [_, v] = V(null), [y, b] = V(!1), x = L((e) => {
+	let { pipelineId: e } = Vt(), t = Bt(), [r, i] = Ht(), [a, o] = V([]), [s, c] = V(null), [l, u] = V([]), [d, f] = V(() => /* @__PURE__ */ new Set()), [p, m] = V(null), [h, g] = V(!1), [_, v] = V(null), [y, x] = V(!1), S = L((e) => {
 		let t = e.error?.nodeId;
 		if (!t || t === "unknown") return;
 		let n = Object.entries(e.steps).filter(([e, n]) => e !== t && n.status === "completed").map(([e]) => e);
@@ -18879,19 +18879,19 @@ function nd() {
 				v(e instanceof Error ? e.message : String(e)), g(!1);
 			}
 		}
-	}, [p, t]), { query: w, statuses: T, triggerKinds: D, range: ee } = z(() => Wu(r), [r]), k = (e, t) => {
+	}, [p, t]), { query: T, statuses: E, triggerKinds: D, range: ee } = z(() => Wu(r), [r]), O = (e, t) => {
 		let n = new URLSearchParams(r);
 		t ? n.set(e, t) : n.delete(e), i(n, { replace: !0 });
-	}, A = (e) => {
-		let t = new Set(T);
-		t.has(e) ? t.delete(e) : t.add(e), k("status", t.size === 0 ? null : Array.from(t).join(","));
 	}, te = (e) => {
-		let t = new Set(D);
-		t.has(e) ? t.delete(e) : t.add(e), k("trigger", t.size === 0 ? null : Array.from(t).join(","));
+		let t = new Set(E);
+		t.has(e) ? t.delete(e) : t.add(e), O("status", t.size === 0 ? null : Array.from(t).join(","));
 	}, ne = (e) => {
-		k("range", e === "7d" ? null : e);
+		let t = new Set(D);
+		t.has(e) ? t.delete(e) : t.add(e), O("trigger", t.size === 0 ? null : Array.from(t).join(","));
+	}, A = (e) => {
+		O("range", e === "7d" ? null : e);
 	}, re = (e) => {
-		k("q", e.length === 0 ? null : e);
+		O("q", e.length === 0 ? null : e);
 	}, ie = (e) => {
 		u((t) => t.includes(e) ? t.filter((t) => t !== e) : t.length >= 2 ? [t[1], e] : [...t, e]);
 	};
@@ -18899,14 +18899,14 @@ function nd() {
 		e && (c(Ze(e)), o(Ot(e)));
 	}, [e]);
 	let j = z(() => Hu(a, {
-		query: w,
-		statuses: T,
+		query: T,
+		statuses: E,
 		triggerKinds: D,
 		range: ee
 	}), [
 		a,
-		w,
 		T,
+		E,
 		D,
 		ee
 	]), M = z(() => {
@@ -18930,7 +18930,7 @@ function nd() {
 		"data-testid": "pipeline-runs-page",
 		className: "p-6 flex flex-col gap-3",
 		children: [
-			/* @__PURE__ */ U(E, {
+			/* @__PURE__ */ U(w, {
 				open: p !== null,
 				onConfirm: C,
 				onCancel: () => {
@@ -18993,23 +18993,23 @@ function nd() {
 					]
 				})
 			}),
-			/* @__PURE__ */ U(E, {
+			/* @__PURE__ */ U(w, {
 				open: y,
 				onConfirm: () => {
 					if (!e) return;
-					b(!1);
+					x(!1);
 					let t = Array.from(d), n = a.filter((e) => !d.has(e.id));
 					Ct(e);
 					for (let t of [...n].sort((e, t) => e.startedAt.localeCompare(t.startedAt))) Be(e, t);
 					o(Ot(e)), f(/* @__PURE__ */ new Set()), u((e) => e.filter((e) => !t.includes(e)));
 				},
-				onCancel: () => b(!1),
+				onCancel: () => x(!1),
 				title: `Delete ${d.size} run${d.size === 1 ? "" : "s"}?`,
 				body: "This cannot be undone.",
 				confirmLabel: `Delete ${d.size}`,
 				tone: "destructive"
 			}),
-			_ && /* @__PURE__ */ U(S, {
+			_ && /* @__PURE__ */ U(b, {
 				title: "Retry failed:",
 				onDismiss: () => v(null),
 				children: _
@@ -19066,16 +19066,16 @@ function nd() {
 				]
 			}),
 			/* @__PURE__ */ U(Yu, {
-				query: w,
-				statuses: T,
+				query: T,
+				statuses: E,
 				triggerKinds: D,
 				range: ee,
 				onQueryChange: re,
-				onStatusToggle: A,
-				onTriggerToggle: te,
-				onRangeChange: ne,
+				onStatusToggle: te,
+				onTriggerToggle: ne,
+				onRangeChange: A,
 				onClearFilters: () => {
-					re(""), k("status", null), k("trigger", null);
+					re(""), O("status", null), O("trigger", null);
 				}
 			}),
 			d.size > 0 && /* @__PURE__ */ U(Xu, {
@@ -19087,11 +19087,11 @@ function nd() {
 					r.href = n, r.download = `pipeline-runs-${i}.json`, document.body.appendChild(r), r.click(), document.body.removeChild(r), URL.revokeObjectURL(n);
 				},
 				onDelete: () => {
-					d.size > 0 && e && b(!0);
+					d.size > 0 && e && x(!0);
 				},
 				onClear: () => f(/* @__PURE__ */ new Set())
 			}),
-			j.length === 0 ? /* @__PURE__ */ U(O, {
+			j.length === 0 ? /* @__PURE__ */ U(k, {
 				icon: "📜",
 				title: a.length === 0 ? "No runs yet" : "No runs match these filters",
 				body: a.length === 0 ? "Trigger this pipeline and completed runs will appear here." : "Try clearing a filter or expanding the date range."
@@ -19104,12 +19104,12 @@ function nd() {
 				costByRunId: ae,
 				pipelineId: e,
 				onNavigate: t,
-				onOpenRetryModal: x
+				onOpenRetryModal: S
 			})
 		]
 	}) : /* @__PURE__ */ U("div", {
 		className: "p-8",
-		children: /* @__PURE__ */ U(O, {
+		children: /* @__PURE__ */ U(k, {
 			icon: "🔍",
 			title: "Pipeline not found",
 			body: "It may have been deleted. Go back to the pipelines list.",
@@ -19223,13 +19223,13 @@ function gd({ attempt: e, isLast: t }) {
 						className: n("text-[11px] font-semibold", t ? "text-text-primary" : "text-text-secondary"),
 						children: ["Attempt ", e.attemptNumber]
 					}),
-					/* @__PURE__ */ U(b, {
+					/* @__PURE__ */ U(v, {
 						tone: i,
 						size: "xs",
 						uppercase: !0,
 						children: r ? "failed" : "succeeded"
 					}),
-					t && /* @__PURE__ */ U(b, {
+					t && /* @__PURE__ */ U(v, {
 						tone: "info",
 						size: "xs",
 						uppercase: !0,
@@ -19243,7 +19243,7 @@ function gd({ attempt: e, isLast: t }) {
 			}),
 			r && /* @__PURE__ */ W("div", {
 				className: "mt-1.5 flex flex-col gap-1.5",
-				children: [e.errorCategory != null && /* @__PURE__ */ U("div", { children: /* @__PURE__ */ U(b, {
+				children: [e.errorCategory != null && /* @__PURE__ */ U("div", { children: /* @__PURE__ */ U(v, {
 					tone: a,
 					size: "xs",
 					mono: !0,
@@ -19272,7 +19272,7 @@ function gd({ attempt: e, isLast: t }) {
 function _d({ attempts: e, className: t }) {
 	if (e.length === 0 || e.length === 1 && !hd(e[0])) return null;
 	let r = [...e].sort((e, t) => e.attemptNumber - t.attemptNumber), i = r[r.length - 1], a = r.filter(hd).length, o = hd(i) ? `${r.length} attempt${r.length === 1 ? "" : "s"}, all failed` : `succeeded on attempt ${i.attemptNumber} after ${a} failure${a === 1 ? "" : "s"}`;
-	return /* @__PURE__ */ U(p, {
+	return /* @__PURE__ */ U(l, {
 		first: !0,
 		title: "Retry history",
 		hint: o,
@@ -19505,15 +19505,15 @@ function Ad({ status: e, result: t, runId: r, endpointLabel: i, error: a, latenc
 					className: "font-mono text-[11px] font-semibold uppercase tracking-wide text-text-secondary",
 					children: l
 				}),
-				e === "running" ? /* @__PURE__ */ W(b, {
+				e === "running" ? /* @__PURE__ */ W(v, {
 					tone: "info",
 					size: "sm",
 					children: [/* @__PURE__ */ U("span", { className: "inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-primary" }), " running"]
-				}) : e === "completed" ? /* @__PURE__ */ U(b, {
+				}) : e === "completed" ? /* @__PURE__ */ U(v, {
 					tone: "success",
 					size: "sm",
 					children: "ok"
-				}) : /* @__PURE__ */ U(b, {
+				}) : /* @__PURE__ */ U(v, {
 					tone: "danger",
 					size: "sm",
 					children: "failed"
@@ -19537,7 +19537,7 @@ function Ad({ status: e, result: t, runId: r, endpointLabel: i, error: a, latenc
 		}),
 		f.length > 0 ? /* @__PURE__ */ U("div", {
 			className: "flex flex-wrap gap-1",
-			children: f.map((e) => /* @__PURE__ */ W(b, {
+			children: f.map((e) => /* @__PURE__ */ W(v, {
 				tone: "neutral",
 				size: "sm",
 				children: ["#", e]
@@ -19646,7 +19646,7 @@ function Fd({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryF
 		e && navigator.clipboard.writeText(JSON.stringify(e, null, 2)).then(() => {
 			v("Copied!"), setTimeout(() => v("Copy JSON"), 1e3);
 		});
-	}, [t.output]), x = t.output, S = x?.response, C = t.llm, w = t.input, T = Md[t.status] ?? "var(--color-text-tertiary)", E = cd(t), D = !E && !!o, O = !E && !!s;
+	}, [t.output]), x = t.output, S = x?.response, C = t.llm, w = t.input, T = Md[t.status] ?? "var(--color-text-tertiary)", E = cd(t), D = !E && !!o, ee = !E && !!s;
 	return /* @__PURE__ */ W("div", {
 		className: "relative pl-9 mb-1",
 		children: [
@@ -19983,9 +19983,9 @@ function Fd({ stepId: e, step: t, index: r, nodeType: i, nodeConfig: a, onRetryF
 							children: ld(E)
 						})]
 					}),
-					(D || O) && /* @__PURE__ */ W("div", {
+					(D || ee) && /* @__PURE__ */ W("div", {
 						className: "px-4 py-2.5 border-t border-border flex justify-end gap-2",
-						children: [O && s && /* @__PURE__ */ U("button", {
+						children: [ee && s && /* @__PURE__ */ U("button", {
 							type: "button",
 							"data-testid": `resume-from-step-${e}`,
 							onClick: (t) => {
@@ -20356,7 +20356,7 @@ function tf(e, t = Date.now()) {
 	return a < 24 ? `${a}h ago` : `${Math.floor(a / 24)}d ago`;
 }
 function nf({ pipelineId: e, runId: t, onStepClick: r }) {
-	let { items: i, error: a, hasMore: o, loadMore: s, loading: c } = Ud(e, t), [l, u] = V(/* @__PURE__ */ new Set()), [d, f] = V(""), [p, m] = V("all"), [h, _] = V(/* @__PURE__ */ new Set()), v = L((e) => {
+	let { items: i, error: a, hasMore: o, loadMore: s, loading: c } = Ud(e, t), [l, u] = V(/* @__PURE__ */ new Set()), [d, f] = V(""), [p, h] = V("all"), [g, _] = V(/* @__PURE__ */ new Set()), v = L((e) => {
 		u((t) => {
 			let n = new Set(t);
 			return n.has(e) ? n.delete(e) : n.add(e), n;
@@ -20425,7 +20425,7 @@ function nf({ pipelineId: e, runId: t, onStepClick: r }) {
 						className: "text-border",
 						children: "|"
 					}),
-					/* @__PURE__ */ U(D, {
+					/* @__PURE__ */ U(T, {
 						size: "sm",
 						value: d,
 						onChange: (e) => f(e.target.value),
@@ -20447,7 +20447,7 @@ function nf({ pipelineId: e, runId: t, onStepClick: r }) {
 						return /* @__PURE__ */ U("button", {
 							type: "button",
 							className: n("font-[inherit] text-[11px] font-semibold px-2.5 py-[3px] rounded-xl border cursor-pointer", t ? "bg-info-bg text-info-fg border-info-border" : "bg-surface text-text-secondary border-border"),
-							onClick: () => m(e),
+							onClick: () => h(e),
 							"data-testid": `executor-log-time-${e}`,
 							"aria-pressed": t,
 							children: Zd[e]
@@ -20484,7 +20484,7 @@ function nf({ pipelineId: e, runId: t, onStepClick: r }) {
 						children: "No audit rows match the current filters."
 					}),
 					b.map((e) => {
-						let t = h.has(e.auditId), r = e.action.startsWith("pipeline.step.") ? ef(e) : void 0;
+						let t = g.has(e.auditId), r = e.action.startsWith("pipeline.step.") ? ef(e) : void 0;
 						return /* @__PURE__ */ W("div", {
 							role: "button",
 							tabIndex: 0,
@@ -20546,13 +20546,13 @@ function nf({ pipelineId: e, runId: t, onStepClick: r }) {
 			}),
 			/* @__PURE__ */ W("div", {
 				className: "flex justify-between items-center gap-2 px-3 py-2.5 border-t border-border bg-surface-panel",
-				children: [o ? /* @__PURE__ */ U("span", { children: /* @__PURE__ */ U(g, {
+				children: [o ? /* @__PURE__ */ U("span", { children: /* @__PURE__ */ U(m, {
 					variant: "secondary",
 					size: "sm",
 					onClick: () => s(),
 					"data-testid": "executor-log-load-more",
 					children: "Load more"
-				}) }) : /* @__PURE__ */ U("span", {}), /* @__PURE__ */ U("span", { children: /* @__PURE__ */ U(g, {
+				}) }) : /* @__PURE__ */ U("span", {}), /* @__PURE__ */ U("span", { children: /* @__PURE__ */ U(m, {
 					variant: "secondary",
 					size: "sm",
 					onClick: x,
@@ -20583,7 +20583,7 @@ function af({ pipelineId: e, runId: t }) {
 	let r = Bt(), i = he(), a = Ce(), { definition: o } = i, [s, c] = V(null), [l, u] = V(null), [d, f] = V(0), p = L(() => f((e) => e + 1), []);
 	R(() => {
 		let n = !1;
-		return u(null), import("./services-BrRU8Xu8.js").then((e) => e.gt).then(({ getPipelineRun: r }) => r(e, t).then((e) => {
+		return u(null), import("./services-B_K0agRp.js").then((e) => e.gt).then(({ getPipelineRun: r }) => r(e, t).then((e) => {
 			!n && e && c(e);
 		})).catch((e) => {
 			n || u(e instanceof Error ? e.message : String(e));
@@ -20595,7 +20595,7 @@ function af({ pipelineId: e, runId: t }) {
 		t,
 		d
 	]);
-	let m = z(() => {
+	let h = z(() => {
 		let e = a.runs[t], n = s;
 		if (!(!e && !n)) return e ? !n || Object.keys(e.steps).length >= Object.keys(n.steps).length ? e : {
 			...n,
@@ -20608,7 +20608,7 @@ function af({ pipelineId: e, runId: t }) {
 		s
 	]);
 	Te(t);
-	let h = rd(m ?? null), _ = z(() => {
+	let g = rd(h ?? null), _ = z(() => {
 		let e = {};
 		if (!o) return e;
 		for (let t of o.nodes) e[t.id] = {
@@ -20616,88 +20616,88 @@ function af({ pipelineId: e, runId: t }) {
 			data: t.data
 		};
 		return e;
-	}, [o]), [v, y] = V(!1), C = B(null);
-	wr(C, () => y(!1), v);
-	let [w, T] = V("steps"), [D, O] = V(null), ee = L((e) => {
-		O(e), T("steps");
-	}, []), [k, A] = V(null), [te, ne] = V(null), [re, ie] = V(!1), j = m?.status === "failed" ? m.error?.nodeId : void 0, M = sd(m), ae = L((e) => {
-		if (!m) return;
-		let t = Object.entries(m.steps).filter(([t, n]) => t !== e && n.status === "completed").map(([e]) => e);
-		A({
+	}, [o]), [x, S] = V(!1), C = B(null);
+	wr(C, () => S(!1), x);
+	let [T, E] = V("steps"), [D, ee] = V(null), O = L((e) => {
+		ee(e), E("steps");
+	}, []), [k, te] = V(null), [ne, A] = V(null), [re, ie] = V(!1), j = h?.status === "failed" ? h.error?.nodeId : void 0, M = sd(h), ae = L((e) => {
+		if (!h) return;
+		let t = Object.entries(h.steps).filter(([t, n]) => t !== e && n.status === "completed").map(([e]) => e);
+		te({
 			nodeId: e,
 			skippedNodes: t,
 			snapshotInput: !1
-		}), ne(null);
-	}, [m]), N = L(async () => {
-		if (!(!k || !m)) {
-			ne(null), ie(!0);
+		}), A(null);
+	}, [h]), oe = L(async () => {
+		if (!(!k || !h)) {
+			A(null), ie(!0);
 			try {
-				let t = await Et(e, m.id, k.nodeId, void 0, k.snapshotInput || void 0);
-				A(null), r(`/pipelines/${e}/runs/${t.newRunId}`);
+				let t = await Et(e, h.id, k.nodeId, void 0, k.snapshotInput || void 0);
+				te(null), r(`/pipelines/${e}/runs/${t.newRunId}`);
 			} catch (e) {
-				ne(e instanceof Error ? e.message : String(e)), ie(!1);
+				A(e instanceof Error ? e.message : String(e)), ie(!1);
 			}
 		}
 	}, [
 		k,
-		m,
+		h,
 		e,
 		r
-	]), [oe, P] = V(null), [se, ce] = V(null), [F, ue] = V(null), [de, fe] = V(null), pe = B(null);
+	]), [se, N] = V(null), [P, ce] = V(null), [F, ue] = V(null), [de, fe] = V(null), pe = B(null);
 	R(() => () => {
 		pe.current && clearTimeout(pe.current);
 	}, []);
 	let me = L(async (t) => {
-		if (m) {
-			ce(null), P(t);
+		if (h) {
+			ce(null), N(t);
 			try {
-				let n = await $e(e, m.id, t);
-				ue(`Resumed from ${t.slice(0, 10)}${t.length > 10 ? "…" : ""} (replay #${n.replayAttempts})`), pe.current && clearTimeout(pe.current), pe.current = setTimeout(() => ue(null), 4e3), r(`/pipelines/${e}/runs/${m.id}`);
+				let n = await $e(e, h.id, t);
+				ue(`Resumed from ${t.slice(0, 10)}${t.length > 10 ? "…" : ""} (replay #${n.replayAttempts})`), pe.current && clearTimeout(pe.current), pe.current = setTimeout(() => ue(null), 4e3), r(`/pipelines/${e}/runs/${h.id}`);
 			} catch (e) {
 				ce(e instanceof Error ? e.message : String(e));
 			} finally {
-				P(null);
+				N(null);
 			}
 		}
 	}, [
-		m,
+		h,
 		e,
 		r
 	]), ge = L(async () => {
 		fe(null);
 		try {
-			let t = await a.triggerRun(e, m ? m.triggeredBy.payload : void 0);
+			let t = await a.triggerRun(e, h ? h.triggeredBy.payload : void 0);
 			r(`/pipelines/${e}/runs/${t}`);
 		} catch (e) {
 			console.error("[PipelineRunReplay] re-run failed", e), fe(e instanceof Error ? e.message : String(e));
 		}
 	}, [
-		m,
+		h,
 		a,
 		e,
 		r
 	]), _e = async () => {
-		y(!1);
+		S(!1);
 		try {
 			await navigator.clipboard?.writeText(t);
 		} catch {}
 	}, ve = () => {
-		if (y(!1), !m) return;
-		let e = JSON.stringify(m, null, 2);
+		if (S(!1), !h) return;
+		let e = JSON.stringify(h, null, 2);
 		ba(`run-${t}.json`, e);
 	}, ye = () => {
-		if (y(!1), !o) return;
+		if (S(!1), !o) return;
 		let e = ot(o.id, `${o.name} (from run)`);
 		e && r(`/pipelines/${e.id}`);
 	};
-	if (!m) {
+	if (!h) {
 		let t = l !== null;
 		return /* @__PURE__ */ W("div", {
 			className: "flex flex-col flex-1 h-0 overflow-hidden bg-surface-inset font-[inherit] text-text-primary rounded-lg border border-border",
 			"data-testid": t ? "pipeline-replay-error" : "pipeline-replay-missing",
 			children: [/* @__PURE__ */ W("div", {
 				className: "h-11 shrink-0 flex items-center gap-2.5 px-3 border-b border-border bg-surface relative z-[5]",
-				children: [/* @__PURE__ */ U(x, {
+				children: [/* @__PURE__ */ U(y, {
 					onClick: () => r(`/pipelines/${e}`),
 					"aria-label": "Back to pipeline",
 					title: "Back to pipeline",
@@ -20721,11 +20721,11 @@ function af({ pipelineId: e, runId: t }) {
 					}),
 					/* @__PURE__ */ W("div", {
 						className: "flex gap-2",
-						children: [/* @__PURE__ */ U(g, {
+						children: [/* @__PURE__ */ U(m, {
 							onClick: p,
 							"data-testid": "replay-retry",
 							children: "Retry"
-						}), /* @__PURE__ */ U(g, {
+						}), /* @__PURE__ */ U(m, {
 							variant: "secondary",
 							onClick: () => r(`/pipelines/${e}`),
 							children: "Back to pipeline"
@@ -20734,14 +20734,14 @@ function af({ pipelineId: e, runId: t }) {
 				] }) : /* @__PURE__ */ W(H, { children: [/* @__PURE__ */ U("div", {
 					className: "text-sm text-text-secondary",
 					children: "Run not available — it may have been trimmed from history."
-				}), /* @__PURE__ */ U(g, {
+				}), /* @__PURE__ */ U(m, {
 					onClick: () => r(`/pipelines/${e}`),
 					children: "Back to pipeline"
 				})] })
 			})]
 		});
 	}
-	let be = Zu(m.status), xe = m.triggeredBy.userId ?? m.triggeredBy.triggerType, Se = ku(h);
+	let be = Zu(h.status), xe = h.triggeredBy.userId ?? h.triggeredBy.triggerType, Se = ku(g);
 	return /* @__PURE__ */ W("div", {
 		className: "flex flex-col flex-1 h-0 overflow-hidden bg-surface-inset font-[inherit] text-text-primary rounded-lg border border-border",
 		"data-testid": "pipeline-replay",
@@ -20749,7 +20749,7 @@ function af({ pipelineId: e, runId: t }) {
 			/* @__PURE__ */ W("div", {
 				className: "h-11 shrink-0 flex items-center gap-2.5 px-3 border-b border-border bg-surface relative z-[5]",
 				children: [
-					/* @__PURE__ */ U(x, {
+					/* @__PURE__ */ U(y, {
 						onClick: () => r(`/pipelines/${e}`),
 						"aria-label": "Back to pipeline",
 						title: "Back to pipeline",
@@ -20769,7 +20769,7 @@ function af({ pipelineId: e, runId: t }) {
 						"data-testid": "replay-subtitle",
 						children: [
 							"Run from ",
-							Ua(m.startedAt),
+							Ua(h.startedAt),
 							" by ",
 							xe
 						]
@@ -20779,31 +20779,31 @@ function af({ pipelineId: e, runId: t }) {
 						"data-testid": "replay-cost",
 						children: ["· ", Se]
 					}),
-					/* @__PURE__ */ U(b, {
+					/* @__PURE__ */ U(v, {
 						tone: be.tone,
 						"aria-label": `Status: ${be.label}`,
 						children: be.label
 					}),
-					m.status === "failed" && m.error?.errorCategory ? /* @__PURE__ */ U(b, {
-						tone: Qu(m.error.errorCategory),
-						title: m.error.message || "Error details unavailable",
-						children: m.error.errorCategory
+					h.status === "failed" && h.error?.errorCategory ? /* @__PURE__ */ U(v, {
+						tone: Qu(h.error.errorCategory),
+						title: h.error.message || "Error details unavailable",
+						children: h.error.errorCategory
 					}) : null,
 					/* @__PURE__ */ U("div", { className: "flex-1" }),
-					M && /* @__PURE__ */ U(b, {
+					M && /* @__PURE__ */ U(v, {
 						tone: "neutral",
 						title: ld(M),
 						"data-testid": "refused-not-retryable",
 						children: "Not retryable"
 					}),
-					j && !M && /* @__PURE__ */ U(g, {
+					j && !M && /* @__PURE__ */ U(m, {
 						onClick: () => ae(j),
 						disabled: re,
 						"data-testid": "retry-from-failed-step-button",
 						title: `Retry from "${j}" with the original upstream context`,
 						children: "↻ Retry from failure"
 					}),
-					/* @__PURE__ */ U(g, {
+					/* @__PURE__ */ U(m, {
 						onClick: ge,
 						"data-testid": "rerun-button",
 						title: "Re-run with the original trigger payload",
@@ -20812,14 +20812,14 @@ function af({ pipelineId: e, runId: t }) {
 					/* @__PURE__ */ W("div", {
 						className: "relative",
 						ref: C,
-						children: [/* @__PURE__ */ U(x, {
-							onClick: () => y((e) => !e),
+						children: [/* @__PURE__ */ U(y, {
+							onClick: () => S((e) => !e),
 							"aria-label": "More actions",
 							"aria-haspopup": "menu",
-							"aria-expanded": v,
+							"aria-expanded": x,
 							"data-testid": "replay-overflow-btn",
 							children: "⋯"
-						}), v ? /* @__PURE__ */ W("div", {
+						}), x ? /* @__PURE__ */ W("div", {
 							className: "absolute top-full right-0 mt-1.5 bg-surface border border-border rounded-lg shadow-[0_12px_28px_rgba(15,23,42,0.14)] min-w-[200px] z-20 overflow-hidden",
 							role: "menu",
 							"aria-label": "More actions",
@@ -20847,11 +20847,11 @@ function af({ pipelineId: e, runId: t }) {
 					})
 				]
 			}),
-			/* @__PURE__ */ U(E, {
+			/* @__PURE__ */ U(w, {
 				open: k !== null,
-				onConfirm: N,
+				onConfirm: oe,
 				onCancel: () => {
-					re || A(null);
+					re || te(null);
 				},
 				title: "Retry from step",
 				confirmLabel: re ? "Starting…" : "Confirm retry",
@@ -20890,17 +20890,17 @@ function af({ pipelineId: e, runId: t }) {
 							className: "flex items-center gap-2 text-[13px] text-text-secondary cursor-pointer",
 							children: [/* @__PURE__ */ U(le, {
 								checked: k.snapshotInput,
-								onChange: (e) => A((t) => t && {
+								onChange: (e) => te((t) => t && {
 									...t,
 									snapshotInput: e
 								})
 							}), "Use persisted input snapshot"]
 						}),
-						te && /* @__PURE__ */ U("div", {
+						ne && /* @__PURE__ */ U("div", {
 							role: "alert",
 							"data-testid": "retry-modal-error",
 							className: "py-2 px-3 bg-danger-bg border border-danger-border rounded-md text-xs text-danger-fg",
-							children: te
+							children: ne
 						})
 					]
 				})
@@ -20917,72 +20917,72 @@ function af({ pipelineId: e, runId: t }) {
 									className: "m-0 text-[15px] font-bold text-text-primary",
 									children: [
 										"Steps (",
-										Object.keys(m.steps).length,
+										Object.keys(h.steps).length,
 										")"
 									]
 								}),
 								/* @__PURE__ */ W("span", {
 									className: "text-xs text-text-tertiary",
 									children: [
-										m.startedAt ? new Date(m.startedAt).toLocaleTimeString() : "",
+										h.startedAt ? new Date(h.startedAt).toLocaleTimeString() : "",
 										" — ",
-										m.completedAt ? new Date(m.completedAt).toLocaleTimeString() : "in progress"
+										h.completedAt ? new Date(h.completedAt).toLocaleTimeString() : "in progress"
 									]
 								}),
-								m.durationMs != null && /* @__PURE__ */ W("span", {
+								h.durationMs != null && /* @__PURE__ */ W("span", {
 									className: "text-xs text-text-secondary ml-auto",
-									children: ["Total: ", m.durationMs < 1e3 ? `${m.durationMs}ms` : `${(m.durationMs / 1e3).toFixed(1)}s`]
+									children: ["Total: ", h.durationMs < 1e3 ? `${h.durationMs}ms` : `${(h.durationMs / 1e3).toFixed(1)}s`]
 								})
 							]
 						}),
-						te && /* @__PURE__ */ U(S, {
+						ne && /* @__PURE__ */ U(b, {
 							title: "Retry failed:",
 							className: "mb-4",
-							children: te
+							children: ne
 						}),
-						se && /* @__PURE__ */ U(S, {
+						P && /* @__PURE__ */ U(b, {
 							title: "Resume failed:",
 							className: "mb-4",
 							"data-testid": "resume-error-banner",
-							children: se
+							children: P
 						}),
-						de && /* @__PURE__ */ U(S, {
+						de && /* @__PURE__ */ U(b, {
 							title: "Re-run failed:",
 							className: "mb-4",
 							"data-testid": "rerun-error-banner",
 							children: de
 						}),
-						(m.replayAttempts ?? 0) > 0 && /* @__PURE__ */ U(S, {
+						(h.replayAttempts ?? 0) > 0 && /* @__PURE__ */ U(b, {
 							title: "Resumed from a previous failure",
 							className: "mb-4",
 							"data-testid": "resume-history-banner",
 							children: /* @__PURE__ */ W("div", {
 								className: "flex flex-col gap-1.5",
 								children: [/* @__PURE__ */ W("div", { children: [
-									m.error?.nodeId && m.error.nodeId !== "unknown" && /* @__PURE__ */ W(H, { children: [
+									h.error?.nodeId && h.error.nodeId !== "unknown" && /* @__PURE__ */ W(H, { children: [
 										"Originally failed at ",
-										/* @__PURE__ */ U("code", { children: m.error.nodeId.slice(0, 12) }),
+										/* @__PURE__ */ U("code", { children: h.error.nodeId.slice(0, 12) }),
 										" — "
 									] }),
 									"Resumed ",
-									m.replayAttempts,
+									h.replayAttempts,
 									" time",
-									m.replayAttempts === 1 ? "" : "s",
+									h.replayAttempts === 1 ? "" : "s",
 									".",
-									m.resumeHistory && m.resumeHistory.length > 0 && /* @__PURE__ */ W(H, { children: [
+									h.resumeHistory && h.resumeHistory.length > 0 && /* @__PURE__ */ W(H, { children: [
 										" ",
 										"Most recent: from",
 										" ",
-										/* @__PURE__ */ U("code", { children: m.resumeHistory[m.resumeHistory.length - 1].fromNodeId.slice(0, 12) }),
+										/* @__PURE__ */ U("code", { children: h.resumeHistory[h.resumeHistory.length - 1].fromNodeId.slice(0, 12) }),
 										" ",
 										"at ",
-										Ua(m.resumeHistory[m.resumeHistory.length - 1].at),
+										Ua(h.resumeHistory[h.resumeHistory.length - 1].at),
 										"."
 									] })
-								] }), m.resumeHistory && m.resumeHistory.length > 1 && /* @__PURE__ */ U("ol", {
+								] }), h.resumeHistory && h.resumeHistory.length > 1 && /* @__PURE__ */ U("ol", {
 									className: "m-0 pl-[18px] text-[11px] text-text-tertiary leading-relaxed",
 									"data-testid": "resume-history-timeline",
-									children: m.resumeHistory.map((e, t) => /* @__PURE__ */ W("li", { children: [
+									children: h.resumeHistory.map((e, t) => /* @__PURE__ */ W("li", { children: [
 										"from ",
 										/* @__PURE__ */ U("code", { children: e.fromNodeId.slice(0, 12) }),
 										" at ",
@@ -20991,36 +20991,36 @@ function af({ pipelineId: e, runId: t }) {
 								})]
 							})
 						}),
-						F && /* @__PURE__ */ U(S, {
+						F && /* @__PURE__ */ U(b, {
 							title: "Resumed",
 							className: "mb-4",
 							"data-testid": "resume-toast",
 							children: F
 						}),
-						m.error && /* @__PURE__ */ W(S, {
+						h.error && /* @__PURE__ */ W(b, {
 							title: M ? `Refused (${M.code}):` : "Run failed:",
 							layout: M ? "stacked" : "inline",
 							className: "mb-4",
 							"data-testid": M ? "refused-banner" : "run-failed-banner",
 							children: [
-								m.error.message,
-								m.error.nodeId && m.error.nodeId !== "unknown" && /* @__PURE__ */ W("span", {
+								h.error.message,
+								h.error.nodeId && h.error.nodeId !== "unknown" && /* @__PURE__ */ W("span", {
 									className: "ml-2 text-[11px] text-danger-fg",
-									children: ["at node ", m.error.nodeId.slice(0, 8)]
+									children: ["at node ", h.error.nodeId.slice(0, 8)]
 								}),
 								M && /* @__PURE__ */ U("span", {
 									className: "mt-2 block text-xs text-text-secondary",
 									"data-testid": "refused-reason",
 									children: ld(M)
 								}),
-								m.status === "failed" && !M && m.error.nodeId && m.error.nodeId !== "unknown" && /* @__PURE__ */ U("div", {
+								h.status === "failed" && !M && h.error.nodeId && h.error.nodeId !== "unknown" && /* @__PURE__ */ U("div", {
 									className: "mt-2",
-									children: /* @__PURE__ */ U(g, {
-										onClick: () => me(m.error.nodeId),
-										disabled: oe !== null,
+									children: /* @__PURE__ */ U(m, {
+										onClick: () => me(h.error.nodeId),
+										disabled: se !== null,
 										"data-testid": "resume-from-here-button",
-										title: `Resume this run from "${m.error.nodeId}" using its accumulated upstream context`,
-										children: oe === m.error.nodeId ? "Resuming…" : "↻ Resume from here"
+										title: `Resume this run from "${h.error.nodeId}" using its accumulated upstream context`,
+										children: se === h.error.nodeId ? "Resuming…" : "↻ Resume from here"
 									})
 								})
 							]
@@ -21038,30 +21038,30 @@ function af({ pipelineId: e, runId: t }) {
 								id: "log",
 								label: "Executor Log"
 							}].map((e) => {
-								let t = w === e.id;
+								let t = T === e.id;
 								return /* @__PURE__ */ U("button", {
 									role: "tab",
 									"aria-selected": t,
 									tabIndex: t ? 0 : -1,
-									onClick: () => T(e.id),
+									onClick: () => E(e.id),
 									"data-testid": `run-replay-tab-${e.id}`,
 									className: n("font-[inherit] text-[13px] font-semibold py-1.5 px-3.5 border-none bg-transparent cursor-pointer -mb-px", t ? "text-text-primary border-b-2 border-b-primary" : "text-text-tertiary border-b-2 border-b-transparent"),
 									children: e.label
 								}, e.id);
 							})
 						}),
-						w === "steps" ? /* @__PURE__ */ U(Ld, {
-							steps: m.steps,
+						T === "steps" ? /* @__PURE__ */ U(Ld, {
+							steps: h.steps,
 							nodeDataMap: _,
 							edges: o?.edges,
 							onRetryFromStep: M ? void 0 : ae,
-							onResumeFromStep: m.status === "failed" && !M ? me : void 0
+							onResumeFromStep: h.status === "failed" && !M ? me : void 0
 						}) : /* @__PURE__ */ U("div", {
 							className: "flex flex-col min-h-[400px] h-[60vh]",
 							children: /* @__PURE__ */ U(nf, {
 								pipelineId: e,
 								runId: t,
-								onStepClick: ee
+								onStepClick: O
 							})
 						})
 					]
@@ -21170,7 +21170,7 @@ function of() {
 				onRangeChange: m,
 				onClearFilters: () => n(new URLSearchParams(), { replace: !0 })
 			}),
-			g.length === 0 ? /* @__PURE__ */ U(O, {
+			g.length === 0 ? /* @__PURE__ */ U(k, {
 				icon: "📋",
 				title: "No runs yet",
 				body: "Run a pipeline to see execution history here."
@@ -21228,7 +21228,7 @@ function of() {
 							}),
 							/* @__PURE__ */ U("td", {
 								className: "px-3 py-2.5 text-xs text-text-secondary",
-								children: /* @__PURE__ */ U(b, {
+								children: /* @__PURE__ */ U(v, {
 									tone: Zu(t.status).tone,
 									size: "sm",
 									children: t.status
@@ -21438,7 +21438,7 @@ function bf() {
 	});
 	if (!r) return /* @__PURE__ */ U("div", {
 		className: "p-8",
-		children: /* @__PURE__ */ U(O, {
+		children: /* @__PURE__ */ U(k, {
 			icon: "🔍",
 			title: "Pipeline not found",
 			body: "It may have been deleted. Go back to the pipelines list.",
@@ -21580,7 +21580,7 @@ function bf() {
 					}), f.length === 0 ? /* @__PURE__ */ U("div", {
 						className: "text-xs text-text-tertiary py-2",
 						children: "No per-node cost data in this range."
-					}) : /* @__PURE__ */ U(w, {
+					}) : /* @__PURE__ */ U(S, {
 						data: f.map((e) => ({
 							label: e.label,
 							cost: Number(e.totalCostUsd.toFixed(6))
@@ -21597,7 +21597,7 @@ function bf() {
 					children: [/* @__PURE__ */ U("div", {
 						className: "text-[13px] font-semibold text-text-primary",
 						children: "30-day spend trend"
-					}), /* @__PURE__ */ U(C, {
+					}), /* @__PURE__ */ U(x, {
 						series: m,
 						height: 200,
 						xFormat: (e) => new Date(Number(e)).toLocaleDateString(void 0, {
@@ -21616,7 +21616,7 @@ function bf() {
 						children: [/* @__PURE__ */ U("div", {
 							className: "text-[13px] font-semibold text-text-primary",
 							children: "Runs over time (cumulative)"
-						}), /* @__PURE__ */ U(C, {
+						}), /* @__PURE__ */ U(x, {
 							series: _f(l),
 							height: 180,
 							xFormat: (e) => new Date(Number(e)).toLocaleDateString()
@@ -21627,7 +21627,7 @@ function bf() {
 						children: [/* @__PURE__ */ U("div", {
 							className: "text-[13px] font-semibold text-text-primary",
 							children: "Duration over time"
-						}), /* @__PURE__ */ U(C, {
+						}), /* @__PURE__ */ U(x, {
 							series: vf(l, d.medianMs),
 							height: 180,
 							xFormat: (e) => new Date(Number(e)).toLocaleDateString(),
@@ -21639,7 +21639,7 @@ function bf() {
 						children: [/* @__PURE__ */ U("div", {
 							className: "text-[13px] font-semibold text-text-primary",
 							children: "Token usage over time"
-						}), /* @__PURE__ */ U(C, {
+						}), /* @__PURE__ */ U(x, {
 							series: yf(l),
 							height: 180,
 							xFormat: (e) => new Date(Number(e)).toLocaleDateString(),
@@ -21699,7 +21699,7 @@ function bf() {
 					})
 				]
 			})
-		] }) : /* @__PURE__ */ U(O, {
+		] }) : /* @__PURE__ */ U(k, {
 			icon: "📊",
 			title: "No runs yet",
 			body: "No runs yet. Trigger this pipeline to see stats."
@@ -21997,7 +21997,7 @@ function Ef() {
 				children: [/* @__PURE__ */ U("div", {
 					className: "text-lg font-bold text-text-primary",
 					children: "Pending approvals"
-				}), /* @__PURE__ */ U(b, {
+				}), /* @__PURE__ */ U(v, {
 					"data-testid": "pending-count",
 					tone: g > 0 ? "warning" : "neutral",
 					size: "sm",
@@ -22023,11 +22023,11 @@ function Ef() {
 				"data-testid": "approvals-loading",
 				className: "flex flex-col gap-3 max-w-[680px] mx-auto",
 				children: [
-					/* @__PURE__ */ U(ie, { height: 140 }),
-					/* @__PURE__ */ U(ie, { height: 140 }),
-					/* @__PURE__ */ U(ie, { height: 140 })
+					/* @__PURE__ */ U(M, { height: 140 }),
+					/* @__PURE__ */ U(M, { height: 140 }),
+					/* @__PURE__ */ U(M, { height: 140 })
 				]
-			}) : g === 0 && !r ? /* @__PURE__ */ U(O, {
+			}) : g === 0 && !r ? /* @__PURE__ */ U(k, {
 				icon: "✋",
 				title: "No pending approvals",
 				body: "When a pipeline reaches an approval step, it'll show up here.",
@@ -22064,7 +22064,7 @@ function Of({ result: e, className: t }) {
 						e.rubricSnapshot.version
 					]
 				}),
-				/* @__PURE__ */ W(b, {
+				/* @__PURE__ */ W(v, {
 					tone: r,
 					size: "sm",
 					children: [
@@ -22103,7 +22103,7 @@ function Of({ result: e, className: t }) {
 			children: [/* @__PURE__ */ U("span", {
 				className: "text-[11px] font-medium uppercase text-text-tertiary",
 				children: "overall"
-			}), /* @__PURE__ */ U(ne, {
+			}), /* @__PURE__ */ U(ie, {
 				value: e.overallScore,
 				threshold: a,
 				tone: r === "warning" ? "warning" : r,
@@ -22157,7 +22157,7 @@ function Af({ score: e, def: t }) {
 							"]"
 						]
 					}),
-					/* @__PURE__ */ U(b, {
+					/* @__PURE__ */ U(v, {
 						tone: n,
 						size: "sm",
 						children: r
@@ -22168,7 +22168,7 @@ function Af({ score: e, def: t }) {
 					})
 				]
 			}),
-			/* @__PURE__ */ U(ne, {
+			/* @__PURE__ */ U(ie, {
 				value: e.score,
 				threshold: t?.failThreshold ?? .5,
 				tone: n,
@@ -22326,7 +22326,7 @@ function If({ aggregate: e, className: t }) {
 						className: "font-mono text-[11px] font-semibold uppercase tracking-wide text-text-secondary",
 						children: e.dayBucket
 					}),
-					/* @__PURE__ */ W(b, {
+					/* @__PURE__ */ W(v, {
 						tone: a,
 						size: "sm",
 						children: [
@@ -22347,7 +22347,7 @@ function If({ aggregate: e, className: t }) {
 				children: [/* @__PURE__ */ U("span", {
 					className: "text-[11px] font-medium uppercase text-text-tertiary",
 					children: "mean score"
-				}), /* @__PURE__ */ U(ne, {
+				}), /* @__PURE__ */ U(ie, {
 					value: i,
 					tone: a === "warning" ? "warning" : a,
 					size: "md",
@@ -22409,7 +22409,7 @@ function Lf({ aggregates: e, sortOrder: t = "desc", caption: r, loading: i = !1,
 	let o = z(() => {
 		let n = e.slice();
 		return n.sort((e, t) => e.dayBucket.localeCompare(t.dayBucket)), t === "desc" && n.reverse(), n;
-	}, [e, t]), c = z(() => e.slice().sort((e, t) => e.dayBucket.localeCompare(t.dayBucket)).map((e) => e.numJudgments > 0 ? e.numPassed / e.numJudgments : 0), [e]);
+	}, [e, t]), s = z(() => e.slice().sort((e, t) => e.dayBucket.localeCompare(t.dayBucket)).map((e) => e.numJudgments > 0 ? e.numPassed / e.numJudgments : 0), [e]);
 	if (e.length === 0) return /* @__PURE__ */ U("section", {
 		className: n("flex min-h-[120px] w-full flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-border bg-surface-panel p-4 text-text-tertiary", a),
 		children: /* @__PURE__ */ U("span", {
@@ -22417,7 +22417,7 @@ function Lf({ aggregates: e, sortOrder: t = "desc", caption: r, loading: i = !1,
 			children: i ? "Loading trends…" : "No judgment activity in range."
 		})
 	});
-	let l = e.reduce((e, t) => e + t.numJudgments, 0), u = e.reduce((e, t) => e + t.numPassed, 0), d = e.reduce((e, t) => e + t.sumCostUsd, 0), f = l > 0 ? u / l : 0;
+	let c = e.reduce((e, t) => e + t.numJudgments, 0), l = e.reduce((e, t) => e + t.numPassed, 0), u = e.reduce((e, t) => e + t.sumCostUsd, 0), f = c > 0 ? l / c : 0;
 	return /* @__PURE__ */ W("section", {
 		className: n("flex w-full flex-col gap-2", a),
 		children: [
@@ -22428,19 +22428,19 @@ function Lf({ aggregates: e, sortOrder: t = "desc", caption: r, loading: i = !1,
 						className: "text-[11px] font-semibold uppercase tracking-wide text-text-tertiary",
 						children: r ?? `Judgment trend — ${e.length} days`
 					}),
-					/* @__PURE__ */ W(b, {
+					/* @__PURE__ */ W(v, {
 						tone: f >= .9 ? "success" : f >= .6 ? "warning" : "danger",
 						size: "sm",
 						children: [
 							(f * 100).toFixed(0),
 							"% pass · ",
-							l,
+							c,
 							" judgments"
 						]
 					}),
 					/* @__PURE__ */ W("span", {
 						className: "ml-auto font-mono text-[11px] text-text-tertiary",
-						children: ["total cost $", d.toFixed(4)]
+						children: ["total cost $", u.toFixed(4)]
 					})
 				]
 			}),
@@ -22449,13 +22449,13 @@ function Lf({ aggregates: e, sortOrder: t = "desc", caption: r, loading: i = !1,
 				children: [/* @__PURE__ */ U("span", {
 					className: "text-[11px] font-medium uppercase text-text-tertiary",
 					children: "pass-rate"
-				}), /* @__PURE__ */ U(s, {
-					points: c,
+				}), /* @__PURE__ */ U(d, {
+					points: s,
 					yMin: 0,
 					yMax: 1,
 					width: 240,
 					height: 36,
-					ariaLabel: `Pass-rate over ${c.length} days, ending at ${(c[c.length - 1] * 100).toFixed(0)}%`
+					ariaLabel: `Pass-rate over ${s.length} days, ending at ${(s[s.length - 1] * 100).toFixed(0)}%`
 				})]
 			}),
 			/* @__PURE__ */ W("table", {
@@ -22505,7 +22505,7 @@ function Rf({ row: e }) {
 			}),
 			/* @__PURE__ */ U("td", {
 				className: "py-1 pr-2",
-				children: /* @__PURE__ */ W(b, {
+				children: /* @__PURE__ */ W(v, {
 					tone: r,
 					size: "sm",
 					children: [(t * 100).toFixed(0), "%"]
@@ -22842,14 +22842,14 @@ function ep({ navEntries: e, imageId: t, onClose: r, onNavigate: i, getImageUrl:
 	}, [t]);
 	if (!o) return null;
 	let d = o.width && o.height ? `${o.width}×${o.height}` : null;
-	return /* @__PURE__ */ U(T, {
+	return /* @__PURE__ */ U(C, {
 		open: !0,
 		onClose: r,
 		title: `Artifact ${$f(o.imageId)}`,
 		maxWidth: 760,
 		rawChildren: !0,
 		backdropTestId: "lineage-preview-backdrop",
-		footer: /* @__PURE__ */ U(g, {
+		footer: /* @__PURE__ */ U(m, {
 			variant: "secondary",
 			size: "sm",
 			onClick: r,
@@ -22871,14 +22871,14 @@ function ep({ navEntries: e, imageId: t, onClose: r, onNavigate: i, getImageUrl:
 				className: "flex flex-wrap items-center gap-2 pt-1",
 				"data-testid": "lineage-preview-meta",
 				children: [
-					/* @__PURE__ */ W(b, {
+					/* @__PURE__ */ W(v, {
 						tone: "neutral",
 						size: "sm",
 						mono: !0,
 						title: o.imageId,
 						children: ["id: ", $f(o.imageId)]
 					}),
-					/* @__PURE__ */ U(x, {
+					/* @__PURE__ */ U(y, {
 						"aria-label": s ? "Image id copied" : "Copy image id",
 						size: "sm",
 						variant: "ghost",
@@ -22886,18 +22886,18 @@ function ep({ navEntries: e, imageId: t, onClose: r, onNavigate: i, getImageUrl:
 						"data-testid": "lineage-preview-copy",
 						children: s ? "✓" : "⧉"
 					}),
-					o.mimeType && /* @__PURE__ */ U(b, {
+					o.mimeType && /* @__PURE__ */ U(v, {
 						tone: "info",
 						size: "sm",
 						children: o.mimeType
 					}),
-					d && /* @__PURE__ */ U(b, {
+					d && /* @__PURE__ */ U(v, {
 						tone: "neutral",
 						size: "sm",
 						mono: !0,
 						children: d
 					}),
-					/* @__PURE__ */ W(b, {
+					/* @__PURE__ */ W(v, {
 						tone: "purple",
 						size: "sm",
 						mono: !0,
@@ -22943,7 +22943,7 @@ function tp({ entries: e, selectedImageId: t, onSelect: r, maxRenderedNodes: i =
 		h,
 		_,
 		a
-	]), y = z(() => new Set(m.map((e) => e.imageId)), [m]), b = z(() => m.filter((e) => e.parentImageId && y.has(e.parentImageId)).map((e) => ({
+	]), y = z(() => new Set(m.map((e) => e.imageId)), [m]), x = z(() => m.filter((e) => e.parentImageId && y.has(e.parentImageId)).map((e) => ({
 		id: `${e.parentImageId}->${e.imageId}`,
 		source: e.parentImageId,
 		target: e.imageId,
@@ -22954,7 +22954,7 @@ function tp({ entries: e, selectedImageId: t, onSelect: r, maxRenderedNodes: i =
 		m,
 		y,
 		h
-	]), [x, C, w] = Zt(v), [T, D, O] = Yt(b);
+	]), [S, C, T] = Zt(v), [E, D, ee] = Yt(x);
 	R(() => {
 		C((e) => {
 			let t = new Map(e.map((e) => [e.id, e.position]));
@@ -22967,17 +22967,17 @@ function tp({ entries: e, selectedImageId: t, onSelect: r, maxRenderedNodes: i =
 			});
 		});
 	}, [v, C]), R(() => {
-		D(b);
-	}, [b, D]);
-	let ee = L((e, t) => {
+		D(x);
+	}, [x, D]);
+	let O = L((e, t) => {
 		_(t.id);
 	}, [_]), k = L(() => {
 		f > Uf ? l(!0) : s(!0);
-	}, [f]), A = L(() => {
+	}, [f]), te = L(() => {
 		s(!0), l(!1);
-	}, []), te = L(() => {
+	}, []), ne = L(() => {
 		l(!1);
-	}, []), ne = z(() => {
+	}, []), A = z(() => {
 		let e = m.slice();
 		return e.sort((e, t) => {
 			let n = Date.parse(e.at), r = Date.parse(t.at);
@@ -22990,7 +22990,7 @@ function tp({ entries: e, selectedImageId: t, onSelect: r, maxRenderedNodes: i =
 		children: [
 			p && /* @__PURE__ */ U("div", {
 				className: "p-2 flex-shrink-0",
-				children: /* @__PURE__ */ W(S, {
+				children: /* @__PURE__ */ W(b, {
 					variant: "info",
 					"data-testid": "lineage-graph-clip-banner",
 					children: [/* @__PURE__ */ W("span", {
@@ -23014,11 +23014,11 @@ function tp({ entries: e, selectedImageId: t, onSelect: r, maxRenderedNodes: i =
 			/* @__PURE__ */ W("div", {
 				className: "flex-1 min-h-0 relative",
 				children: [/* @__PURE__ */ U("style", { children: ".react-flow__node { position: absolute; }" }), /* @__PURE__ */ W(qt, {
-					nodes: x,
-					edges: T,
-					onNodesChange: w,
-					onEdgesChange: O,
-					onNodeClick: ee,
+					nodes: S,
+					edges: E,
+					onNodesChange: T,
+					onEdgesChange: ee,
+					onNodeClick: O,
 					nodeTypes: Xf,
 					fitView: !0,
 					fitViewOptions: { padding: .2 },
@@ -23036,17 +23036,17 @@ function tp({ entries: e, selectedImageId: t, onSelect: r, maxRenderedNodes: i =
 					})]
 				})]
 			}),
-			/* @__PURE__ */ U(E, {
+			/* @__PURE__ */ U(w, {
 				open: c,
-				onConfirm: A,
-				onCancel: te,
+				onConfirm: te,
+				onCancel: ne,
 				title: "Show all artifacts?",
 				body: `Rendering all ${f} artifacts may slow down the lineage tab. Continue?`,
 				confirmLabel: "Show all",
 				tone: "caution"
 			}),
 			u && /* @__PURE__ */ U(ep, {
-				navEntries: ne,
+				navEntries: A,
 				imageId: u,
 				onClose: re,
 				onNavigate: ie,
@@ -23139,7 +23139,7 @@ function fp(e, t, n = {}) {
 			})
 		})),
 		rows: e.map((e) => {
-			let t = De(e, i), n = we(e.route), u = e.description?.trim() || void 0, f = !!s && !!e.rollup?.lastRunId && dp.has(t.tone), p = c?.(e), m = f || p ? /* @__PURE__ */ W(H, { children: [f && /* @__PURE__ */ U(g, {
+			let t = De(e, i), n = we(e.route), u = e.description?.trim() || void 0, f = !!s && !!e.rollup?.lastRunId && dp.has(t.tone), p = c?.(e), h = f || p ? /* @__PURE__ */ W(H, { children: [f && /* @__PURE__ */ U(m, {
 				variant: "link",
 				size: "sm",
 				"data-testid": `${l}-view-run-${e.id}`,
@@ -23155,7 +23155,7 @@ function fp(e, t, n = {}) {
 					variant: "plain"
 				}),
 				title: e.name,
-				pill: /* @__PURE__ */ U(k, {
+				pill: /* @__PURE__ */ U(ne, {
 					variant: "text",
 					...t,
 					"data-testid": `${l}-pill-${e.id}`
@@ -23163,15 +23163,15 @@ function fp(e, t, n = {}) {
 				subline: u ?? n,
 				hoverSubline: u && n ? n : void 0,
 				current: e.id === r,
-				trailing: m,
-				hoverActions: /* @__PURE__ */ W(H, { children: [o && e.status === "published" && /* @__PURE__ */ U(x, {
+				trailing: h,
+				hoverActions: /* @__PURE__ */ W(H, { children: [o && e.status === "published" && /* @__PURE__ */ U(y, {
 					"aria-label": `Run ${e.name}`,
 					size: "sm",
 					variant: "ghost",
 					icon: /* @__PURE__ */ U(up, {}),
 					"data-testid": `${l}-run-${e.id}`,
 					onClick: () => o(e)
-				}), /* @__PURE__ */ U(g, {
+				}), /* @__PURE__ */ U(m, {
 					variant: "secondary",
 					size: "sm",
 					"data-testid": `${l}-open-${e.id}`,
@@ -23182,118 +23182,118 @@ function fp(e, t, n = {}) {
 		})
 	};
 }
-function pp({ entries: e, loading: t = !1, error: r = null, onRetry: i, query: a, onQueryChange: o, searchPlaceholder: s = "Search pipelines…", groupBy: c, onGroupByChange: l, filters: f, activeFilterCount: p = 0, onClearFilters: h, title: v = "Pipelines", count: y, headerMenu: x, onTemplates: C, onStartBlank: w, headerActions: T, currentId: E = null, onOpen: D, onRun: k, onViewRun: A, rowMenu: te, rowTrailing: ne, storageKey: re, emptyState: ie, footer: j, now: M, frame: N = "none", className: P, "data-testid": ce = "pipelines-list" }) {
-	let le = z(() => e.filter((e) => je(e, a)), [e, a]), ue = M ?? Date.now(), { groups: de, rows: fe } = z(() => fp(le, c, {
-		currentId: E,
+function pp({ entries: e, loading: t = !1, error: r = null, onRetry: i, query: a, onQueryChange: o, searchPlaceholder: s = "Search pipelines…", groupBy: c, onGroupByChange: l, filters: u, activeFilterCount: d = 0, onClearFilters: p, title: g = "Pipelines", count: _, headerMenu: y, onTemplates: x, onStartBlank: S, headerActions: C, currentId: w = null, onOpen: T, onRun: ne, onViewRun: A, rowMenu: re, rowTrailing: ie, storageKey: j, emptyState: M, footer: ae, now: oe, frame: N = "none", className: P, "data-testid": F = "pipelines-list" }) {
+	let le = z(() => e.filter((e) => je(e, a)), [e, a]), ue = oe ?? Date.now(), { groups: de, rows: fe } = z(() => fp(le, c, {
+		currentId: w,
 		now: ue,
-		onOpen: D,
-		onRun: k,
+		onOpen: T,
+		onRun: ne,
 		onViewRun: A,
-		rowTrailing: ne,
-		testId: ce
+		rowTrailing: ie,
+		testId: F
 	}), [
 		le,
 		c,
-		E,
+		w,
 		ue,
-		D,
-		k,
-		A,
+		T,
 		ne,
-		ce
-	]), pe = z(() => new Map(le.map((e) => [e.id, e])), [le]), me = a.trim().length > 0 || p > 0, he = !!x?.length || !!C || !!w || !!T, ge;
-	return ge = t && e.length === 0 ? /* @__PURE__ */ U(ee, {
+		A,
+		ie,
+		F
+	]), pe = z(() => new Map(le.map((e) => [e.id, e])), [le]), me = a.trim().length > 0 || d > 0, he = !!y?.length || !!x || !!S || !!C, ge;
+	return ge = t && e.length === 0 ? /* @__PURE__ */ U(te, {
 		label: "Loading pipelines…",
-		testId: `${ce}-loading`
-	}) : e.length === 0 ? /* @__PURE__ */ U(O, {
-		testId: `${ce}-empty`,
-		title: ie?.title ?? "No pipelines yet",
-		body: ie?.body ?? "Start from a template, from blank, or ask the agent below to draft one.",
-		actionLabel: ie?.actionLabel ?? (w ? "Start from blank" : void 0),
-		onAction: ie?.onAction ?? w
-	}) : le.length === 0 ? /* @__PURE__ */ U(_, {
+		testId: `${F}-loading`
+	}) : e.length === 0 ? /* @__PURE__ */ U(k, {
+		testId: `${F}-empty`,
+		title: M?.title ?? "No pipelines yet",
+		body: M?.body ?? "Start from a template, from blank, or ask the agent below to draft one.",
+		actionLabel: M?.actionLabel ?? (S ? "Start from blank" : void 0),
+		onAction: M?.onAction ?? S
+	}) : le.length === 0 ? /* @__PURE__ */ U(h, {
 		density: "compact",
-		children: /* @__PURE__ */ U(O, {
-			testId: `${ce}-no-match`,
+		children: /* @__PURE__ */ U(k, {
+			testId: `${F}-no-match`,
 			title: "No pipelines match",
 			body: me ? "Try a different search, or clear the filters." : void 0,
 			actionLabel: me ? "Clear search and filters" : void 0,
 			onAction: me ? () => {
-				o(""), h?.();
+				o(""), p?.();
 			} : void 0
 		})
-	}) : /* @__PURE__ */ U(u, {
-		"data-testid": `${ce}-groups`,
+	}) : /* @__PURE__ */ U(f, {
+		"data-testid": `${F}-groups`,
 		groups: de,
 		rows: fe,
-		currentId: E,
-		storageKey: re,
+		currentId: w,
+		storageKey: j,
 		onOpenRow: (e) => {
 			let t = pe.get(e.id);
-			t && D(t);
+			t && T(t);
 		},
-		rowMenu: te ? (e) => {
+		rowMenu: re ? (e) => {
 			let t = pe.get(e.id);
-			return t ? te(t) : null;
+			return t ? re(t) : null;
 		} : void 0
 	}), /* @__PURE__ */ W("div", {
-		"data-testid": ce,
+		"data-testid": F,
 		"data-frame": N,
 		className: n("flex h-full min-h-0 flex-col gap-4", P),
 		children: [
-			/* @__PURE__ */ U(se, {
-				title: v,
-				badge: /* @__PURE__ */ U(b, {
+			/* @__PURE__ */ U(ce, {
+				title: g,
+				badge: /* @__PURE__ */ U(v, {
 					size: "sm",
 					tone: "neutral",
-					"data-testid": `${ce}-count`,
-					"aria-label": `${y ?? le.length} pipelines`,
-					children: y ?? le.length
+					"data-testid": `${F}-count`,
+					"aria-label": `${_ ?? le.length} pipelines`,
+					children: _ ?? le.length
 				}),
 				actions: he ? /* @__PURE__ */ W(H, { children: [
-					!!x?.length && /* @__PURE__ */ U(ae, {
+					!!y?.length && /* @__PURE__ */ U(se, {
 						trigger: /* @__PURE__ */ U("span", {
 							"aria-hidden": "true",
 							className: "text-base leading-none",
 							children: "⋯"
 						}),
 						triggerLabel: "More actions",
-						triggerTestId: `${ce}-more`,
+						triggerTestId: `${F}-more`,
 						align: "end",
-						sections: x,
+						sections: y,
 						triggerClassName: "h-9 w-9 px-0 py-0"
 					}),
-					C && /* @__PURE__ */ U(g, {
+					x && /* @__PURE__ */ U(m, {
 						variant: "secondary",
 						size: "md",
-						"data-testid": `${ce}-templates`,
-						onClick: C,
+						"data-testid": `${F}-templates`,
+						onClick: x,
 						children: "Templates"
 					}),
-					w && /* @__PURE__ */ U(g, {
+					S && /* @__PURE__ */ U(m, {
 						variant: "secondary",
 						size: "md",
-						"data-testid": `${ce}-start-blank`,
-						onClick: w,
+						"data-testid": `${F}-start-blank`,
+						onClick: S,
 						children: "Start from blank"
 					}),
-					T
+					C
 				] }) : void 0
 			}),
 			/* @__PURE__ */ W("div", {
-				"data-testid": `${ce}-frame`,
+				"data-testid": `${F}-frame`,
 				"data-frame": N,
 				className: n("flex min-h-0 flex-1 flex-col gap-4", N === "card" && "gap-0 overflow-hidden rounded-xl border border-border bg-surface"),
 				children: [
-					/* @__PURE__ */ W(d, {
+					/* @__PURE__ */ W(ee, {
 						"aria-label": "Pipeline list tools",
-						"data-testid": `${ce}-toolbar`,
+						"data-testid": `${F}-toolbar`,
 						bordered: N === "card",
 						className: n(N === "card" && "py-1.5"),
-						end: /* @__PURE__ */ U(F, {
+						end: /* @__PURE__ */ U(E, {
 							size: "sm",
 							"aria-label": "Group by",
-							"data-testid": `${ce}-group-by`,
+							"data-testid": `${F}-group-by`,
 							value: c,
 							onChange: (e) => l(e.target.value),
 							options: Ne.map((e) => ({
@@ -23301,24 +23301,24 @@ function pp({ entries: e, loading: t = !1, error: r = null, onRetry: i, query: a
 								label: `Group: ${Tt[e]}`
 							}))
 						}),
-						children: [/* @__PURE__ */ U(oe, {
+						children: [/* @__PURE__ */ U(O, {
 							value: a,
 							onChange: o,
 							placeholder: s,
 							"aria-label": "Search pipelines",
-							"data-testid": `${ce}-search`,
+							"data-testid": `${F}-search`,
 							className: "w-full max-w-[420px] flex-1"
-						}), f && /* @__PURE__ */ U(m, {
-							activeCount: p,
-							onClear: h,
-							"data-testid": `${ce}-filter`,
-							children: f
+						}), u && /* @__PURE__ */ U(D, {
+							activeCount: d,
+							onClear: p,
+							"data-testid": `${F}-filter`,
+							children: u
 						})]
 					}),
-					r && /* @__PURE__ */ U(S, {
+					r && /* @__PURE__ */ U(b, {
 						variant: "error",
-						"data-testid": `${ce}-error`,
-						action: i ? /* @__PURE__ */ U(g, {
+						"data-testid": `${F}-error`,
+						action: i ? /* @__PURE__ */ U(m, {
 							variant: "secondary",
 							size: "sm",
 							onClick: i,
@@ -23328,17 +23328,17 @@ function pp({ entries: e, loading: t = !1, error: r = null, onRetry: i, query: a
 					}),
 					/* @__PURE__ */ U("div", {
 						className: "min-h-0 flex-1 overflow-y-auto",
-						"data-testid": `${ce}-body`,
+						"data-testid": `${F}-body`,
 						children: ge
 					})
 				]
 			}),
-			j && /* @__PURE__ */ U(Mt.Provider, {
+			ae && /* @__PURE__ */ U(Mt.Provider, {
 				value: "pinned",
 				children: /* @__PURE__ */ U("div", {
-					"data-testid": `${ce}-footer`,
+					"data-testid": `${F}-footer`,
 					className: "w-full shrink-0 [--dock-inset:0px]",
-					children: j
+					children: ae
 				})
 			})
 		]

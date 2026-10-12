@@ -1,0 +1,69 @@
+/* Shared by every ConversationComposer, using the active tenant's brand and
+   theme. Existing central call docks paint it once around the whole shelf. */
+:is(.uic-composer-surface, .uic-composer-backdrop) {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--color-primary) 8%, var(--color-surface-panel)) 45%, var(--color-surface-panel));
+  overflow: clip;
+}
+.uic-composer-surface { padding: var(--ui-composer-block,14px) var(--ui-content-gutter,16px); }
+.uic-composer-backdrop:not(:where(.uic-composer-surface *)) {
+  /* Compact chat presets have zero inset; leave a visible edge for the sky. */
+  padding-block: 14px;
+  padding-inline: max(12px, var(--dock-inset, 0px));
+}
+:is(.uic-composer-surface, .uic-composer-backdrop)::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  z-index: 0;
+  background-image:
+    radial-gradient(circle at 18% 24%, color-mix(in srgb, var(--color-primary) 65%, transparent) 1.5px, transparent 3px),
+    radial-gradient(circle at 72% 65%, color-mix(in srgb, var(--color-primary) 45%, transparent) 1.2px, transparent 2.5px),
+    radial-gradient(circle at 38% 80%, color-mix(in srgb, var(--color-primary) 40%, transparent) 1px, transparent 2px),
+    radial-gradient(circle, color-mix(in srgb, var(--color-text-tertiary) 18%, transparent) .65px, transparent 1px);
+  background-size: 97px 73px, 151px 109px, 181px 137px, 13px 13px;
+  mask-image: linear-gradient(#0004, #000 20%);
+  pointer-events: none;
+  animation: composer-star-drift 4s ease-in-out infinite alternate;
+}
+:is(.uic-composer-surface, .uic-composer-backdrop)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(ellipse 1.5px 6px at 12% 75%, color-mix(in srgb, var(--color-primary) 70%, transparent) 15%, transparent 100%),
+    radial-gradient(ellipse 6px 1.5px at 12% 75%, color-mix(in srgb, var(--color-primary) 70%, transparent) 15%, transparent 100%),
+    radial-gradient(ellipse 1.5px 5px at 83% 40%, color-mix(in srgb, var(--color-primary) 55%, transparent) 15%, transparent 100%),
+    radial-gradient(ellipse 5px 1.5px at 83% 40%, color-mix(in srgb, var(--color-primary) 55%, transparent) 15%, transparent 100%);
+  background-size: 211px 97px, 211px 97px, 277px 131px, 277px 131px;
+  animation: composer-star-twinkle 1.8s ease-in-out infinite alternate;
+}
+:is(.uic-composer-surface, .uic-composer-backdrop) > * { position: relative; z-index: 1; }
+.uic-composer-surface .uic-composer-backdrop { background: transparent; overflow: visible; }
+.uic-composer-surface .uic-composer-backdrop::before,
+.uic-composer-surface .uic-composer-backdrop::after { content: none; }
+
+@keyframes composer-star-drift {
+  from { transform: translate3d(-8px, 5px, 0); opacity: .55; }
+  to { transform: translate3d(8px, -5px, 0); opacity: .9; }
+}
+@keyframes composer-star-twinkle {
+  from { opacity: .2; transform: translate3d(0, 2px, 0); }
+  to { opacity: .8; transform: translate3d(0, -2px, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(.uic-composer-surface, .uic-composer-backdrop)::before,
+  :is(.uic-composer-surface, .uic-composer-backdrop)::after { animation: none; }
+}
+
+.uic-composer-surface[data-density="compact"] { padding-block: 8px; }
+.uic-composer-surface [data-floating-composer-dock] {
+  background: transparent;
+  padding-top: 0;
+  --dock-inset: 0px;
+}
+.uic-composer-surface-content { position: relative; z-index: 1; width: 100%; max-width: var(--ui-composer-max-width,64rem); margin-inline: auto; }

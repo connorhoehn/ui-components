@@ -161,6 +161,7 @@ export interface WrappedChatPanelProps {
   fill?: boolean;
   /** Forwarded to ChatPanel — full-width custom composer in a filling pane. */
   flushComposer?: boolean;
+  contentAlign?: 'start' | 'end';
   /** Forwarded to ChatPanel — suppress its own "Chat (n)" heading when the
    *  host already names the region. */
   showHeader?: boolean;
@@ -270,6 +271,7 @@ export function WrappedChatPanel({
   tone,
   fill,
   flushComposer,
+  contentAlign,
   showHeader,
   loadMoreHistory = false,
   joinHistoryLimit = 20,
@@ -493,6 +495,7 @@ export function WrappedChatPanel({
       tone={tone}
       fill={fill}
       flushComposer={flushComposer}
+      contentAlign={contentAlign}
       showHeader={showHeader}
       composer={composer}
       emojis={emojis}

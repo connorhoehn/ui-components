@@ -411,7 +411,7 @@ describe('DataTable size="sm" (2.434.0)', () => {
     expect(th[0]!.className).toContain('text-xs');
     expect(th[1]!.className).toContain('text-right');
     const td = container.querySelector('tbody tr')!.querySelectorAll('td');
-    expect(td[0]!.className).toContain('h-11');
+    expect(td[0]!.className).toContain('h-[var(--ui-table-row,2.75rem)]');
     expect(td[0]!.className).toContain('whitespace-nowrap');
     expect(td[1]!.className).toContain('text-right');
     expect(td[1]!.className).toContain('tabular-nums');
