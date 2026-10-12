@@ -213,7 +213,11 @@ describe('Active Now composition', () => {
     // The frame is scenery: it must not swallow a click meant for a card, but
     // its own controls have to stay reachable.
     expect(frame.className).toContain('pointer-events-none');
-    expect(screen.getByRole('button', { name: 'Focus on Sprint review' }).closest('span')!.className).toContain('pointer-events-auto');
+    const actions = screen.getByRole('button', { name: 'Focus on Sprint review' }).closest('span')!;
+    expect(actions.className).toContain('pointer-events-auto');
+    // Link buttons intentionally inherit: compact graph metadata must not shrink their labels.
+    expect(actions.className).toContain('text-xs');
+    expect(actions.parentElement!.className).toContain('text-[10px]');
   });
 
   it('stops the ruler at the real clock, not at the end of the day', () => {

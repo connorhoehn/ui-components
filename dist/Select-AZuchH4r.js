@@ -8,7 +8,7 @@ var d = {
 	sm: `${t.sm} px-2 text-xs`,
 	md: `${t.md} px-2.5 text-sm`
 }, f = {
-	sm: "h-6 pl-2 pr-4 text-[11px]",
+	sm: "h-6 pl-2 pr-4 text-xs",
 	md: "h-7 pl-2.5 pr-5 text-[12px]"
 }, p = {
 	sm: "right-1.5",

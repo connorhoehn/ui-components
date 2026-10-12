@@ -25,6 +25,7 @@ export function summarize(cases) {
 }
 /** Adapter owns authentication/routes/read-only UI transitions; runner owns measurements. */
 export async function runAudit(browser, adapter, options) {
+  if (options.strictCoverage !== undefined && typeof options.strictCoverage !== 'boolean') throw new Error('strictCoverage must be boolean');
   const start = Date.now(), out = path.resolve(options.out); fs.mkdirSync(out, { recursive: true });
   const contract = JSON.parse(fs.readFileSync(options.contract ?? adapter.contract ?? fileURLToPath(new URL('../references/work-ui.contract.json', import.meta.url)), 'utf8')); validateContract(contract);
   const matrix = await adapter.cases(options);
@@ -106,17 +107,36 @@ export async function runAudit(browser, adapter, options) {
   report.groups = summarize(report.cases);
   report.failures = report.cases.reduce((n, c) => n + c.issues.length, 0);
   report.unclassified = report.cases.filter(c => c.coverage.some(item => item.status === 'unclassified')).map(({ tenant, route, theme, width, state }) => ({ tenant, route, theme, width, state }));
+  report.strictCoverage = options.strictCoverage ?? false;
+  report.exitCode = report.failures || (report.strictCoverage && report.unclassified.length) ? 1 : 0;
   report.elapsedMs = Date.now() - start;
   if (options.previous) {
     const previous = JSON.parse(fs.readFileSync(options.previous, 'utf8'));
     if (previous.contractHash !== report.contractHash) report.comparisonWarning = 'Contract changed; compare rule definitions before interpreting improvement';
     const old = new Set(previous.cases.flatMap(c => c.issues.map(i => i.fingerprint))), current = new Set(report.cases.flatMap(c => c.issues.map(i => i.fingerprint)));
-    // Only compare cases that were measured in BOTH sweeps; omitted pages do not count as fixed.
+    // A route that failed readiness/coverage/runtime is unverified, not fixed.
+    // Missing findings on that route cannot close a previously observed defect.
     const caseKey = c => JSON.stringify([c.actor, c.tenant, c.route, c.theme, c.width, c.state]);
-    const shared = new Set(report.cases.map(caseKey).filter(k => previous.cases.some(c => caseKey(c) === k)));
-    report.delta = { new: report.cases.filter(c => shared.has(caseKey(c))).flatMap(c => c.issues.filter(i => !old.has(i.fingerprint)).map(i => i.fingerprint)), resolved: previous.cases.filter(c => shared.has(caseKey(c))).flatMap(c => c.issues.filter(i => !current.has(i.fingerprint)).map(i => i.fingerprint)), comparedCases: shared.size };
+    const measured = c => c.samples?.length > 0 && !c.issues.some(i => ['coverage', 'runtime'].includes(i.category));
+    const priorCases = new Map(previous.cases.map(c => [caseKey(c), c]));
+    const currentCases = new Map(report.cases.map(c => [caseKey(c), c]));
+    const overlapping = [...currentCases.keys()].filter(key => priorCases.has(key));
+    const shared = new Set(overlapping.filter(key => measured(priorCases.get(key)) && measured(currentCases.get(key))));
+    const unverified = [...priorCases.keys()].filter(key => !shared.has(key) && (currentCases.has(key) || priorCases.get(key).issues.length));
+    report.delta = {
+      new: report.cases.filter(c => shared.has(caseKey(c))).flatMap(c => c.issues.filter(i => !old.has(i.fingerprint)).map(i => i.fingerprint)),
+      resolved: previous.cases.filter(c => shared.has(caseKey(c))).flatMap(c => c.issues.filter(i => !current.has(i.fingerprint)).map(i => i.fingerprint)),
+      comparedCases: shared.size,
+      overlappingCases: overlapping.length,
+      unverifiedFindings: unverified.reduce((count, key) => count + priorCases.get(key).issues.length, 0),
+      unverifiedCases: unverified.map(key => {
+        const prior = priorCases.get(key), now = currentCases.get(key);
+        return { actor: prior.actor, tenant: prior.tenant, route: prior.route, theme: prior.theme, width: prior.width, state: prior.state,
+          reason: !now ? 'not visited' : !measured(now) ? 'current case did not complete stable measurement' : 'previous case did not complete stable measurement' };
+      }),
+    };
   }
   fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(report, null, 2) + '\n');
-  fs.writeFileSync(path.join(out, 'summary.txt'), [`${report.cases.length} cases; ${report.failures} findings; ${report.unclassified.length} composer policies unclassified; ${(report.elapsedMs / 1000).toFixed(1)}s`, ...report.unclassified.map(c => `UNCLASSIFIED composer policy | ${c.tenant} ${c.route} ${c.theme}/${c.width}/${c.state}`), ...report.groups.map(g => `${g.rule} | ${g.property}: expected ${JSON.stringify(g.expected)}, got ${JSON.stringify(g.actual)} | ${g.routes.length} routes / ${g.occurrences} instances | ${g.owner}`)].join('\n') + '\n');
+  fs.writeFileSync(path.join(out, 'summary.txt'), [`${report.cases.length} cases; ${report.failures} findings; ${report.unclassified.length} composer policies unclassified; ${report.strictCoverage ? 'strict coverage' : 'advisory coverage'}; exit ${report.exitCode}; ${(report.elapsedMs / 1000).toFixed(1)}s`, ...report.unclassified.map(c => `UNCLASSIFIED composer policy | ${c.tenant} ${c.route} ${c.theme}/${c.width}/${c.state}`), ...(report.delta ? [`Comparison: ${report.delta.comparedCases} verified cases; ${report.delta.resolved.length} resolved; ${report.delta.unverifiedFindings} prior findings unverified across ${report.delta.unverifiedCases.length} cases`] : []), ...report.groups.map(g => `${g.rule} | ${g.property}: expected ${JSON.stringify(g.expected)}, got ${JSON.stringify(g.actual)} | ${g.routes.length} routes / ${g.occurrences} instances | ${g.owner}`)].join('\n') + '\n');
   return report;
 }

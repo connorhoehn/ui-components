@@ -13,6 +13,19 @@ const show = (entity: WorkGraphNodeData, detail?: WorkActivityNodeDetail, onSele
 };
 
 describe('Active Now node card', () => {
+  it('marks compact text leaves without exempting the card or embedded controls', () => {
+    const { container } = render(<WorkActivityNode node={node('deck', 'document', 'Release', 'completed')}
+      detail={{ lines: ['Release status'], badge: 'Ready', footer: { label: 'Updated today' },
+        artifact: { revisions: [{ id: 'v1', label: 'v1', createdAt: at, preview: <button>Inspect preview</button> }] } }}
+      selected={false} live onSelect={vi.fn()} />);
+    expect(screen.getByText('Release status')).toHaveAttribute('data-ui-text', 'graph-detail');
+    for (const text of ['Ready', 'Updated today', 'v1']) {
+      expect(screen.getByText(text)).toHaveAttribute('data-ui-text', 'graph-metadata');
+    }
+    expect(container.querySelector('[data-work-card]')).not.toHaveAttribute('data-ui-text');
+    expect(screen.getByText('Inspect preview').closest('[data-ui-text]')).toBeNull();
+  });
+
   it('is one hit target: header, body and footer all select the card', () => {
     const onSelect = vi.fn();
     show(node('terminal', 'terminal', 'Cloud terminal', 'running'), {

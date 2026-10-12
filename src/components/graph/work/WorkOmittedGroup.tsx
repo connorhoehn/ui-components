@@ -38,14 +38,14 @@ export function WorkOmittedGroup({ omitted, timezone, className }: WorkOmittedGr
   if (!expanded) {
     return <div className={cn('flex items-center gap-2 rounded-xl border border-dashed border-border bg-surface/90 px-3 py-1.5 shadow-sm', className)} data-testid="work-omitted-group" data-expanded="false">
       <span className="text-[11px] font-semibold text-text-secondary">{countLabel} more earlier</span>
-      <Button size="sm" variant="link" className="text-[11px]" aria-expanded={false} aria-label={`Show ${countLabel} earlier items held back from the graph`} onClick={onExpand}>Show</Button>
+      <Button size="sm" variant="link" aria-expanded={false} aria-label={`Show ${countLabel} earlier items held back from the graph`} onClick={onExpand}>Show</Button>
     </div>;
   }
   const remaining = Math.max(0, count - items.length);
   return <section aria-label={`${countLabel} earlier items`} className={cn('flex max-h-full w-[min(22rem,calc(100vw-2rem))] min-h-0 flex-col rounded-xl border border-dashed border-border bg-surface shadow-md', className)} data-testid="work-omitted-group" data-expanded="true">
     <header className="flex items-center justify-between gap-2 border-b border-border-subtle px-3 py-1.5">
       <span className="min-w-0 truncate text-[11px] font-semibold text-text-secondary">{countLabel} more earlier · newest first</span>
-      <Button size="sm" variant="link" className="text-[11px]" aria-expanded onClick={onCollapse}>Collapse</Button>
+      <Button size="sm" variant="link" aria-expanded onClick={onCollapse}>Collapse</Button>
     </header>
     <ul className="min-h-0 flex-1 divide-y divide-border-subtle overflow-auto" data-testid="work-omitted-items">
       {items.map((item) => <li key={item.id} className="flex items-center gap-2 px-3 py-1.5" data-work-omitted-item={item.id}>
@@ -60,7 +60,7 @@ export function WorkOmittedGroup({ omitted, timezone, className }: WorkOmittedGr
     {error && <InlineAlert tone="error" className="mx-2 my-1 text-[11px]">{error}</InlineAlert>}
     <footer className="flex items-center justify-between gap-2 border-t border-border-subtle px-3 py-1.5 text-[10px] text-text-tertiary">
       <span>{items.length.toLocaleString()} of {countLabel} shown</span>
-      {(hasMore || loading) && <Button size="sm" variant="secondary" className="text-[11px]" disabled={loading} onClick={onLoadMore}>{loading ? 'Loading…' : `Load ${Math.min(remaining, omitted.pageSize ?? 25).toLocaleString()} more`}</Button>}
+      {(hasMore || loading) && <Button size="sm" variant="secondary" disabled={loading} onClick={onLoadMore}>{loading ? 'Loading…' : `Load ${Math.min(remaining, omitted.pageSize ?? 25).toLocaleString()} more`}</Button>}
     </footer>
   </section>;
 }

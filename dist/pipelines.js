@@ -14,7 +14,7 @@ import { n as x, t as S } from "./Chart-kepXlehS.js";
 import { t as C } from "./Modal-CjgKqXl7.js";
 import { t as w } from "./ConfirmDialog-D5LLBfII.js";
 import { t as T } from "./Input-DKVe8Hp7.js";
-import { t as E } from "./Select-DbhTbkTN.js";
+import { t as E } from "./Select-AZuchH4r.js";
 import { a as D, t as ee } from "./Toolbar-brFewbKK.js";
 import { t as O } from "./SearchInput-BiSqItX5.js";
 import { t as k } from "./EmptyState-DJ3e4WMf.js";

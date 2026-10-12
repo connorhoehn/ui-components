@@ -8,6 +8,15 @@ const person = (overrides: Partial<ActivePerson> & { userId: string }): ActivePe
 });
 
 describe('ActivePeopleGrid', () => {
+  it('marks only compact captions, leaving tile and sibling actions under ordinary control checks', () => {
+    render(<ActivePeopleGrid people={[person({ userId: 'u1' }), person({ userId: 'u2' })]}
+      maxVisible={1} onSelectPerson={vi.fn()} onShowAll={vi.fn()} />);
+    expect(screen.getByText('Ada')).toHaveAttribute('data-ui-text', 'active-person-caption');
+    expect(screen.getByText('More')).toHaveAttribute('data-ui-text', 'active-person-caption');
+    expect(screen.getByTestId('active-people-grid-person-u1')).not.toHaveAttribute('data-ui-text');
+    expect(screen.getByText('+1').closest('[data-ui-text]')).toBeNull();
+  });
+
   it('renders one tile per person, its accessible name carrying status and activity', () => {
     render(
       <ActivePeopleGrid

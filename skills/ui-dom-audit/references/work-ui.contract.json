@@ -177,6 +177,18 @@
         {
           "selector": "$railItemLabels",
           "reason": "GroupedList rail titles use the explicit railType item typography profile; sibling actions remain ordinary controls"
+        },
+        {
+          "selector": "$graphDetailLabels",
+          "reason": "WorkActivityNode detail text uses a leaf-only typography profile; neighboring controls remain ordinary"
+        },
+        {
+          "selector": "$graphMetadataLabels",
+          "reason": "WorkActivityNode metadata uses a leaf-only typography profile; neighboring controls remain ordinary"
+        },
+        {
+          "selector": "$activePersonCaptions",
+          "reason": "ActivePeopleGrid name / More caption uses a leaf-only typography profile; neighboring controls remain ordinary"
         }
       ],
       "owner": "Button / IconButton / forms"
@@ -444,6 +456,37 @@
       "selector": "$composers",
       "owner": "page composition / contextual composer policy",
       "input": "[contenteditable=\"true\"], textarea, [role=\"textbox\"]"
+    },
+    {
+      "id": "graph.detail",
+      "kind": "text",
+      "selector": "$graphDetailLabels",
+      "properties": {
+        "fontSize": 11
+      },
+      "tolerance": 0.1,
+      "owner": "WorkActivityNode detail text"
+    },
+    {
+      "id": "graph.metadata",
+      "kind": "text",
+      "selector": "$graphMetadataLabels",
+      "properties": {
+        "fontSize": 10
+      },
+      "tolerance": 0.1,
+      "owner": "WorkActivityNode metadata"
+    },
+    {
+      "id": "people.active-caption",
+      "kind": "text",
+      "selector": "$activePersonCaptions",
+      "properties": {
+        "fontSize": 11,
+        "fontWeight": "500"
+      },
+      "tolerance": 0.1,
+      "owner": "ActivePeopleGrid name / More caption"
     }
   ]
 }

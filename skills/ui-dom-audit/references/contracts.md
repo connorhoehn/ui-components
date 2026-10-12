@@ -101,7 +101,10 @@ content/empty/error state to render. Do not add long sleeps or silence instabili
 - Single path, one theme/width: diagnosis in seconds.
 - Representative list/chat per tenant: catches shared drift with few navigations.
 - Full route/state/theme/width matrix: broader verification, proportionally slower.
-- `--previous`: matching cases only. Changed contracts emit a comparison warning.
+- `--previous`: matching, stably measured cases only. A navigation, coverage or
+  runtime failure cannot close older findings. `delta.unverifiedCases` and
+  `delta.unverifiedFindings` preserve unresolved evidence for omitted or failed
+  cases. Changed contracts emit a comparison warning.
 - CI invokes the same CLI and archives report.json, summary.txt and failure images.
   An empty route selection, failed sign-in or redirect is never a successful audit.
 
@@ -152,8 +155,12 @@ or accordion preference from contaminating the next scenario. Authentication
 must use cookies or durable local storage; session-storage-only authentication
 needs an adapter/runner extension that preserves that auth separately.
 
-In aws-agentcore, an exact parameterized `--path` (including query parameters)
-uses that requested record; only inventory placeholder cases resolve fixture IDs.
+In aws-agentcore, an absolute concrete `--path` (static or record, including query
+parameters) selects only that requested URL. Static `/pipelines/runs` cannot
+accidentally expand to its detail routes. An unknown absolute path selects zero
+cases and fails; it never becomes a substring sweep. Explicit `:id` templates
+select the inventory record family and resolve fixture IDs. A filter without a
+leading slash, such as `runs`, intentionally uses substring matching.
 This makes a user-reported path directly reproducible without editing the route
 inventory. No route selected is an error, never a zero-case success.
 
@@ -194,13 +201,16 @@ mode is a coverage failure. An exemption permits absence, but does not disable
 geometry/style checks on any composer that is present. Missing policy is recorded
 as `unclassified`, displayed as PARTIAL in console output and listed in
 `report.unclassified` and `summary.txt`; it is not an automatic demand for a
-composer or proof of complete compliance. The CLI still returns nonzero for
-actual violations/failed execution, while unclassified policy alone is reported
-without failing unrelated routes. CI can additionally require an empty
-`report.unclassified` list once that route set has been reviewed.
+composer or proof of complete compliance. The CLI returns nonzero for actual violations/failed execution. By default,
+unclassified policy alone remains advisory. `--strict-coverage` additionally exits
+nonzero when `report.unclassified` is nonempty; it does not turn those cases into
+DOM violations or increase `report.failures`. `report.strictCoverage` records the
+chosen policy and `report.exitCode` the outcome. Use this flag for reviewed
+acceptance/CI matrices; do not invent exemptions merely to make strict mode pass.
 
 Initial Work enforcement covers the inspected RunsLedger pages `/pipelines/runs`,
-`/iq/runs`, and `/assessment/runs`, plus existing DM/initiative contextual
+`/iq/runs`, `/assessment/runs`, and the shared Contacts collection at
+`/social/contacts`, plus existing DM/initiative contextual
 composers. Channel membership-required and shared-work-only views use documented
 state exemptions. Other page families remain unclassified until their context is
 reviewed; never attach a blanket exemption to a tenant. New tenant collection
@@ -221,3 +231,16 @@ identifies which section applies; the ledger itself is not the geometry anchor.
 A valid embedded section can be inset from the page, while extra ledger margins
 inside that section must still fail. Fixtures cover both an artificial full-page
 boundary nested under padding and drift inside a legitimate embedded section.
+
+
+Graph/card typography uses leaf-only source markers: WorkActivityNode detail
+text (`graph-detail`, 11px), its metadata (`graph-metadata`, 10px), and
+ActivePeopleGrid names/More captions (`active-person-caption`, 11px/500). Cards,
+rows and preview containers are not exempt. The fixture mutates a nested ordinary
+graph action to prove it remains governed by the standard control typography.
+
+The CLI regression fixture launches the real runner against an isolated local
+HTML response and checks advisory/strict unclassified exits and strict classified
+success. It also rejects malformed flags. Route-selection tests live beside the
+frontend adapter (`node --test portal/e2e/ui-dom-audit.routes.test.ts`) so portable
+runner changes do not require copying app-specific route logic into this skill.

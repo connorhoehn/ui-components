@@ -99,6 +99,7 @@ describe('Select variant="pill"', () => {
       <Select variant="pill" size="sm" aria-label="P" options={OPTS} value="a" onChange={() => {}} />,
     );
     expect(screen.getByLabelText('P').className).toContain('h-6');
+    expect(screen.getByLabelText('P').className).toContain('text-xs');
     rerender(<Select variant="pill" size="md" aria-label="P" options={OPTS} value="a" onChange={() => {}} />);
     expect(screen.getByLabelText('P').className).toContain('h-7');
   });

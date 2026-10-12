@@ -11,10 +11,10 @@ import { c as O, i as k, l as A, t as j } from "./Text-3v1iMImu.js";
 import { t as M } from "./Banner-8ngXUtJu.js";
 import { t as N } from "./Modal-CjgKqXl7.js";
 import { t as P } from "./Input-DKVe8Hp7.js";
-import { t as F } from "./Select-DbhTbkTN.js";
+import { t as F } from "./Select-AZuchH4r.js";
 import { t as I } from "./InlinePopover-MVLSEiUg.js";
 import { t as L } from "./SearchInput-BiSqItX5.js";
-import { t as R } from "./DataTable-BDUAbMyT.js";
+import { t as R } from "./DataTable-CmA0-to5.js";
 import { t as z } from "./EmptyState-DJ3e4WMf.js";
 import { n as B } from "./ThinkingDots-BZOWJ3Fp.js";
 import { n as ee } from "./StatusPill-c89IbU1L.js";
@@ -5024,6 +5024,7 @@ function gr({ people: e, maxVisible: t = 8, onSelectPerson: n, onShowAll: r, onS
 					"data-testid": `${t}-live`,
 					className: "h-1.5 w-1.5 shrink-0 rounded-full bg-primary"
 				}), /* @__PURE__ */ Q("span", {
+					"data-ui-text": "active-person-caption",
 					className: "min-w-0 truncate text-[11px] font-medium text-text-primary",
 					children: pr(e.displayName)
 				})]
@@ -5057,7 +5058,7 @@ function gr({ people: e, maxVisible: t = 8, onSelectPerson: n, onShowAll: r, onS
 						type: "button",
 						onClick: () => i(e.userId),
 						"aria-label": `View ${e.displayName}'s ${e.workSharing.state === "historical" ? "shared work history" : "shared work"}`,
-						className: "mt-1 w-full truncate rounded px-1 text-[10px] font-medium text-primary hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+						className: "mt-1 w-full truncate rounded px-1 text-xs font-medium text-primary hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
 						children: e.workSharing.state === "historical" ? "History" : "Active now"
 					})]
 				}, e.userId);
@@ -5095,6 +5096,7 @@ function gr({ people: e, maxVisible: t = 8, onSelectPerson: n, onShowAll: r, onS
 				className: "flex h-10 w-10 items-center justify-center rounded-full bg-surface-emphasis text-[12px] font-semibold text-text-secondary",
 				children: ["+", u]
 			}), /* @__PURE__ */ Q("span", {
+				"data-ui-text": "active-person-caption",
 				className: "w-full min-w-0 truncate text-[11px] font-medium text-text-tertiary",
 				children: "More"
 			})]
@@ -5105,6 +5107,7 @@ function gr({ people: e, maxVisible: t = 8, onSelectPerson: n, onShowAll: r, onS
 				className: "flex h-10 w-10 items-center justify-center rounded-full bg-surface-emphasis text-[12px] font-semibold text-text-secondary",
 				children: ["+", u]
 			}), /* @__PURE__ */ Q("span", {
+				"data-ui-text": "active-person-caption",
 				className: "w-full min-w-0 truncate text-[11px] font-medium text-text-tertiary",
 				children: "More"
 			})]

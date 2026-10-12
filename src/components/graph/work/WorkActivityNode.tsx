@@ -90,12 +90,12 @@ export function WorkActivityNode({ node, detail, selected, selectedRevisionId, l
         <div className={cn('space-y-1.5 py-2 pl-3.5 pr-2.5 text-[11px] leading-snug', muted ? 'text-text-tertiary' : 'text-text-secondary')}>
           {lines.map((line, index) => (
             <div key={`${index}-${line}`} className="flex items-start justify-between gap-1.5">
-              <span className="min-w-0">{line}</span>
+              <span data-ui-text="graph-detail" className="min-w-0">{line}</span>
               {index === 0 && visible?.badge && (
-                <span className={cn('shrink-0 rounded px-1.5 py-px text-[10px] font-semibold', node.status === 'running' ? 'border border-info-border text-info-fg' : 'bg-info-bg text-info-fg')}>{visible.badge}</span>
+                <span data-ui-text="graph-metadata" className={cn('shrink-0 rounded px-1.5 py-px text-[10px] font-semibold', node.status === 'running' ? 'border border-info-border text-info-fg' : 'bg-info-bg text-info-fg')}>{visible.badge}</span>
               )}
               {index === 0 && !visible?.badge && paused && line !== paused && (
-                <span data-testid="work-card-pause" className="shrink-0 rounded bg-warning-bg px-1.5 py-px text-[10px] font-semibold text-warning-fg">{paused}</span>
+                <span data-ui-text="graph-metadata" data-testid="work-card-pause" className="shrink-0 rounded bg-warning-bg px-1.5 py-px text-[10px] font-semibold text-warning-fg">{paused}</span>
               )}
             </div>
           ))}
@@ -104,28 +104,28 @@ export function WorkActivityNode({ node, detail, selected, selectedRevisionId, l
               <span className="flex -space-x-1.5">
                 {visible.participants.slice(0, 3).map((person) => <Avatar key={person.id} name={person.label} src={person.avatarUrl} size={18} className="ring-1 ring-surface" />)}
               </span>
-              <span className="min-w-0 truncate text-[10px]">{visible.participants.map((person) => person.label).slice(0, 2).join(', ')}{visible.participants.length > 2 ? ` +${visible.participants.length - 2}` : ''}</span>
+              <span data-ui-text="graph-metadata" className="min-w-0 truncate text-[10px]">{visible.participants.map((person) => person.label).slice(0, 2).join(', ')}{visible.participants.length > 2 ? ` +${visible.participants.length - 2}` : ''}</span>
             </div>
           )}
-          {visible?.excerpt && <p className={cn('text-[11px] italic', muted ? 'text-text-secondary' : 'text-text-primary')}>{`“${visible.excerpt}”`}</p>}
-          {visible?.attentionLabel && <p className="font-medium text-text-primary">{visible.attentionLabel}</p>}
+          {visible?.excerpt && <p data-ui-text="graph-detail" className={cn('text-[11px] italic', muted ? 'text-text-secondary' : 'text-text-primary')}>{`“${visible.excerpt}”`}</p>}
+          {visible?.attentionLabel && <p data-ui-text="graph-detail" className="font-medium text-text-primary">{visible.attentionLabel}</p>}
           {revision?.preview && (
             <div className={cn('aspect-video w-full overflow-hidden rounded-lg border border-border bg-surface', PREVIEW_FIT)} aria-label={`${title} ${revision.label} preview`}>{revision.preview}</div>
           )}
           {!!visible?.artifact?.revisions.length && (
             <div className="flex flex-wrap items-center gap-1 text-[10px]" aria-label={`${title} revisions`}>
               {visible.artifact.revisions.map((item) => (
-                <span key={item.id} className={cn('rounded px-1.5 py-0.5', item.id === revision?.id ? 'bg-info-bg font-medium text-info-fg' : 'text-text-tertiary')}>{item.label}</span>
+                <span data-ui-text="graph-metadata" key={item.id} className={cn('rounded px-1.5 py-0.5', item.id === revision?.id ? 'bg-info-bg font-medium text-info-fg' : 'text-text-tertiary')}>{item.label}</span>
               ))}
-              {pending?.status === 'generating' && <span className="rounded px-1.5 py-0.5 text-info-fg">{pending.label} generating</span>}
+              {pending?.status === 'generating' && <span data-ui-text="graph-metadata" className="rounded px-1.5 py-0.5 text-info-fg">{pending.label} generating</span>}
             </div>
           )}
-          {pending?.status === 'failed' && !visible?.lines?.length && <p className="text-danger-fg">{pending.label} generation failed</p>}
+          {pending?.status === 'failed' && !visible?.lines?.length && <p data-ui-text="graph-detail" className="text-danger-fg">{pending.label} generation failed</p>}
         </div>
         {visible?.footer && (
           <div className="flex items-center justify-between gap-2 border-t border-border py-1.5 pl-3.5 pr-2.5 text-[10px] text-text-tertiary">
-            <span className="truncate">{visible.footer.label}</span>
-            {visible.footer.note && <span className="shrink-0">{visible.footer.note}</span>}
+            <span data-ui-text="graph-metadata" className="truncate">{visible.footer.label}</span>
+            {visible.footer.note && <span data-ui-text="graph-metadata" className="shrink-0">{visible.footer.note}</span>}
           </div>
         )}
       </article>
@@ -133,14 +133,14 @@ export function WorkActivityNode({ node, detail, selected, selectedRevisionId, l
           belong to the attempt, and the card is the thing itself. */}
       {!!visible?.tools?.length && (
         <div className="flex flex-wrap items-center gap-1.5 pl-1 pt-1 text-[10px] text-text-tertiary">
-          <span>Tools</span>
-          {visible.tools.map((tool) => <span key={tool} className="rounded bg-surface-panel px-1.5 py-0.5 font-semibold text-text-secondary">{tool}</span>)}
+          <span data-ui-text="graph-metadata">Tools</span>
+          {visible.tools.map((tool) => <span data-ui-text="graph-metadata" key={tool} className="rounded bg-surface-panel px-1.5 py-0.5 font-semibold text-text-secondary">{tool}</span>)}
         </div>
       )}
       {!!visible?.feedbackCount && onFeedback && (!selectedRevisionId || revision) && (
         <IconButton size="sm" className="nodrag nopan absolute -right-2 -top-3 h-7 w-7 rounded-full border border-border bg-surface shadow-sm" aria-label={`${visible.feedbackCount} comments on ${title}`} onClick={(event) => { event.stopPropagation(); onFeedback(target); }}>
           <ChatIcon size={14} />
-          <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-0.5 text-[10px] text-white">{visible.feedbackCount}</span>
+          <span data-ui-text="graph-metadata" className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-0.5 text-[10px] text-white">{visible.feedbackCount}</span>
         </IconButton>
       )}
     </div>

@@ -8,7 +8,7 @@ import { t as l } from "./IconButton-CjSMY5sV.js";
 import { $ as u, Ct as d, S as f, d as p, f as m, h, mt as g } from "./Icons-B_xESAH3.js";
 import { c as _, i as v, l as y, r as b, t as x } from "./Text-3v1iMImu.js";
 import { t as S } from "./Input-DKVe8Hp7.js";
-import { t as C } from "./Select-DbhTbkTN.js";
+import { t as C } from "./Select-AZuchH4r.js";
 import { t as w } from "./Tooltip-DWyAb81m.js";
 import { t as T } from "./EmptyState-DJ3e4WMf.js";
 import { t as E } from "./Spinner-CYflBP-c.js";
@@ -2480,14 +2480,17 @@ function Dn({ node: e, detail: n, selected: r, selectedRevisionId: i, live: a, o
 								className: "flex items-start justify-between gap-1.5",
 								children: [
 									/* @__PURE__ */ X("span", {
+										"data-ui-text": "graph-detail",
 										className: "min-w-0",
 										children: n
 									}),
 									r === 0 && c?.badge && /* @__PURE__ */ X("span", {
+										"data-ui-text": "graph-metadata",
 										className: t("shrink-0 rounded px-1.5 py-px text-[10px] font-semibold", e.status === "running" ? "border border-info-border text-info-fg" : "bg-info-bg text-info-fg"),
 										children: c.badge
 									}),
 									r === 0 && !c?.badge && S && n !== S && /* @__PURE__ */ X("span", {
+										"data-ui-text": "graph-metadata",
 										"data-testid": "work-card-pause",
 										className: "shrink-0 rounded bg-warning-bg px-1.5 py-px text-[10px] font-semibold text-warning-fg",
 										children: S
@@ -2505,15 +2508,18 @@ function Dn({ node: e, detail: n, selected: r, selectedRevisionId: i, live: a, o
 										className: "ring-1 ring-surface"
 									}, e.id))
 								}), /* @__PURE__ */ Z("span", {
+									"data-ui-text": "graph-metadata",
 									className: "min-w-0 truncate text-[10px]",
 									children: [c.participants.map((e) => e.label).slice(0, 2).join(", "), c.participants.length > 2 ? ` +${c.participants.length - 2}` : ""]
 								})]
 							}),
 							c?.excerpt && /* @__PURE__ */ X("p", {
+								"data-ui-text": "graph-detail",
 								className: t("text-[11px] italic", h ? "text-text-secondary" : "text-text-primary"),
 								children: `“${c.excerpt}”`
 							}),
 							c?.attentionLabel && /* @__PURE__ */ X("p", {
+								"data-ui-text": "graph-detail",
 								className: "font-medium text-text-primary",
 								children: c.attentionLabel
 							}),
@@ -2526,14 +2532,17 @@ function Dn({ node: e, detail: n, selected: r, selectedRevisionId: i, live: a, o
 								className: "flex flex-wrap items-center gap-1 text-[10px]",
 								"aria-label": `${f} revisions`,
 								children: [c.artifact.revisions.map((e) => /* @__PURE__ */ X("span", {
+									"data-ui-text": "graph-metadata",
 									className: t("rounded px-1.5 py-0.5", e.id === u?.id ? "bg-info-bg font-medium text-info-fg" : "text-text-tertiary"),
 									children: e.label
 								}, e.id)), d?.status === "generating" && /* @__PURE__ */ Z("span", {
+									"data-ui-text": "graph-metadata",
 									className: "rounded px-1.5 py-0.5 text-info-fg",
 									children: [d.label, " generating"]
 								})]
 							}),
 							d?.status === "failed" && !c?.lines?.length && /* @__PURE__ */ Z("p", {
+								"data-ui-text": "graph-detail",
 								className: "text-danger-fg",
 								children: [d.label, " generation failed"]
 							})
@@ -2542,9 +2551,11 @@ function Dn({ node: e, detail: n, selected: r, selectedRevisionId: i, live: a, o
 					c?.footer && /* @__PURE__ */ Z("div", {
 						className: "flex items-center justify-between gap-2 border-t border-border py-1.5 pl-3.5 pr-2.5 text-[10px] text-text-tertiary",
 						children: [/* @__PURE__ */ X("span", {
+							"data-ui-text": "graph-metadata",
 							className: "truncate",
 							children: c.footer.label
 						}), c.footer.note && /* @__PURE__ */ X("span", {
+							"data-ui-text": "graph-metadata",
 							className: "shrink-0",
 							children: c.footer.note
 						})]
@@ -2553,7 +2564,11 @@ function Dn({ node: e, detail: n, selected: r, selectedRevisionId: i, live: a, o
 			}),
 			!!c?.tools?.length && /* @__PURE__ */ Z("div", {
 				className: "flex flex-wrap items-center gap-1.5 pl-1 pt-1 text-[10px] text-text-tertiary",
-				children: [/* @__PURE__ */ X("span", { children: "Tools" }), c.tools.map((e) => /* @__PURE__ */ X("span", {
+				children: [/* @__PURE__ */ X("span", {
+					"data-ui-text": "graph-metadata",
+					children: "Tools"
+				}), c.tools.map((e) => /* @__PURE__ */ X("span", {
+					"data-ui-text": "graph-metadata",
 					className: "rounded bg-surface-panel px-1.5 py-0.5 font-semibold text-text-secondary",
 					children: e
 				}, e))]
@@ -2566,6 +2581,7 @@ function Dn({ node: e, detail: n, selected: r, selectedRevisionId: i, live: a, o
 					e.stopPropagation(), s(E);
 				},
 				children: [/* @__PURE__ */ X(p, { size: 14 }), /* @__PURE__ */ X("span", {
+					"data-ui-text": "graph-metadata",
 					className: "absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-0.5 text-[10px] text-white",
 					children: c.feedbackCount
 				})]
@@ -2615,7 +2631,6 @@ function An({ omitted: e, timezone: r, className: i }) {
 		}), /* @__PURE__ */ X(n, {
 			size: "sm",
 			variant: "link",
-			className: "text-[11px]",
 			"aria-expanded": !1,
 			"aria-label": `Show ${m} earlier items held back from the graph`,
 			onClick: d,
@@ -2637,7 +2652,6 @@ function An({ omitted: e, timezone: r, className: i }) {
 				}), /* @__PURE__ */ X(n, {
 					size: "sm",
 					variant: "link",
-					className: "text-[11px]",
 					"aria-expanded": !0,
 					onClick: f,
 					children: "Collapse"
@@ -2687,7 +2701,6 @@ function An({ omitted: e, timezone: r, className: i }) {
 				] }), (u || c) && /* @__PURE__ */ X(n, {
 					size: "sm",
 					variant: "secondary",
-					className: "text-[11px]",
 					disabled: c,
 					onClick: p,
 					children: c ? "Loading…" : `Load ${Math.min(h, e.pageSize ?? 25).toLocaleString()} more`
@@ -2768,18 +2781,18 @@ function Fn({ data: e }) {
 					children: "Relationship order unavailable"
 				})]
 			}), /* @__PURE__ */ Z("span", {
-				className: "pointer-events-auto flex shrink-0 items-center gap-2",
+				className: "pointer-events-auto flex shrink-0 items-center gap-2 text-xs",
 				children: [e.sources > 0 && /* @__PURE__ */ X(n, {
 					size: "sm",
 					variant: "link",
-					className: "nodrag nopan text-[10px]",
+					className: "nodrag nopan",
 					"aria-label": `${e.expanded ? "Hide" : "Show"} ${e.sources} sources for ${e.title}`,
 					onClick: e.onSources,
 					children: e.expanded ? "Hide sources" : `+ ${e.sources} sources`
 				}), /* @__PURE__ */ X(n, {
 					size: "sm",
 					variant: "link",
-					className: "nodrag nopan text-[10px]",
+					className: "nodrag nopan",
 					"aria-label": e.focused ? "Show all activities" : `Focus on ${e.title}`,
 					onClick: e.onFocus,
 					children: e.focused ? "All activities" : "Focus"
@@ -2795,7 +2808,7 @@ function In(e) {
 		data: { state: n.failed ? "traversed-failure" : n.active ? "active" : "default" }
 	}), /* @__PURE__ */ X(we, { children: /* @__PURE__ */ X("button", {
 		type: "button",
-		className: t("nodrag nopan pointer-events-auto absolute z-10 flex items-center justify-center rounded-full text-[10px] font-medium leading-none focus-visible:outline-2 focus-visible:outline-primary", n.pill ? t("h-5 max-w-28 border bg-surface px-2 shadow-sm", n.failed ? "border-danger text-danger-fg" : n.active ? "border-info text-info-fg" : "border-border-emphasis text-text-secondary") : "h-3 w-3 border border-transparent bg-transparent text-transparent focus-visible:border-border focus-visible:bg-surface"),
+		className: t("nodrag nopan pointer-events-auto absolute z-10 flex items-center justify-center rounded-full text-xs font-medium leading-none focus-visible:outline-2 focus-visible:outline-primary", n.pill ? t("h-5 max-w-28 border bg-surface px-2 shadow-sm", n.failed ? "border-danger text-danger-fg" : n.active ? "border-info text-info-fg" : "border-border-emphasis text-text-secondary") : "h-3 w-3 border border-transparent bg-transparent text-transparent focus-visible:border-border focus-visible:bg-surface"),
 		style: { transform: `translate(-50%, -50%) translate(${n.labelX}px, ${n.labelY}px)` },
 		onClick: n.onSelect,
 		"aria-label": `${n.label}${n.failed ? ", failed" : n.active ? ", active" : ""}`,

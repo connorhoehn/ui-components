@@ -36,6 +36,10 @@ node ~/.codex/skills/ui-dom-audit/scripts/audit.mjs \
 ```
 
 The repository shortcut is `npm --prefix portal run audit:ui -- --tenant pipelines`.
+Use `--strict-coverage` for an explicitly classified acceptance matrix: it fails
+when composer policy remains unclassified, separately from visual violations.
+An absolute `--path /pipelines/runs` selects that exact page only; use `--path runs`
+for a substring sweep or `/pipelines/runs/:id` for the inventory record template.
 Use `UI_DOM_AUDIT_SKILL` to select another installed/versioned skill directory.
 
 Omit tenant/path for a fast representative list/chat sweep across tenants.
@@ -57,8 +61,10 @@ geometry, route/theme/width/state, coverage and source revision. `summary.txt`
 groups repeated failures by rule/value/owner across tenants. Screenshots are
 failure evidence only; `--no-screenshots` disables them. Nonzero exit means
 violations or incomplete execution. Unclassified composer policy is separately
-reported as PARTIAL coverage, even when there are no violations. Pass a previous `report.json` with
-`--previous` to compare matching cases; unvisited routes are never called fixed.
+reported as PARTIAL coverage, even when there are no violations;
+`--strict-coverage` also makes that incomplete policy coverage exit nonzero. Pass a previous `report.json` with
+`--previous` to compare successfully measured matching cases. Unvisited, unstable, navigation-
+failed or runtime-failed cases are reported as unverified, never called fixed.
 
 ## Refine from a reported defect
 

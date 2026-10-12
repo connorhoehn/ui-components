@@ -10,7 +10,7 @@ import { a as v, r as y } from "./FollowBanner-Dp9yfMGe.js";
 import { n as b } from "./Badge-POenI45X.js";
 import { t as x } from "./Modal-CjgKqXl7.js";
 import { t as S } from "./Input-DKVe8Hp7.js";
-import { t as C } from "./Select-DbhTbkTN.js";
+import { t as C } from "./Select-AZuchH4r.js";
 import { t as w } from "./FormField-BQhFpmZJ.js";
 import { t as T } from "./SearchInput-BiSqItX5.js";
 import { t as E } from "./EmptyState-DJ3e4WMf.js";
@@ -25,7 +25,7 @@ import { t as P } from "./InlineAlert-CBtteaVZ.js";
 import { t as F } from "./PresenceAvatars-BVvLKiDW.js";
 import { t as I } from "./useMeasuredWidth-Bskznitu.js";
 import { t as L } from "./SectionLabel-Bn8Vvb-K.js";
-import { G as R, U as z } from "./renderers-Tj2vs6-X.js";
+import { G as R, U as z } from "./renderers-CHA6SUVD.js";
 import { a as ne } from "./composerSendError-CUHmc3vg.js";
 import { i as re, t as ie } from "./FloatingComposerDock-D10uQ4k3.js";
 import { Component as ae, Suspense as oe, lazy as se, useCallback as B, useEffect as V, useId as ce, useMemo as H, useRef as U, useState as W } from "react";
@@ -1360,7 +1360,7 @@ function nt(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
-var rt = se(() => import("./SortableSlideList-CjX28juP.js"));
+var rt = se(() => import("./SortableSlideList-CvrWEt8c.js"));
 function it(e, t) {
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }

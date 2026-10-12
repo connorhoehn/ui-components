@@ -93,9 +93,10 @@ function EffortFrame({ data }: NodeProps<FrameNode>) {
         {data.subtitle}
         {data.cycle && <span role="status" className="ml-2 text-warning-fg">Relationship order unavailable</span>}
       </span>
-      <span className="pointer-events-auto flex shrink-0 items-center gap-2">
-        {data.sources > 0 && <Button size="sm" variant="link" className="nodrag nopan text-[10px]" aria-label={`${data.expanded ? 'Hide' : 'Show'} ${data.sources} sources for ${data.title}`} onClick={data.onSources}>{data.expanded ? 'Hide sources' : `+ ${data.sources} sources`}</Button>}
-        <Button size="sm" variant="link" className="nodrag nopan text-[10px]" aria-label={data.focused ? 'Show all activities' : `Focus on ${data.title}`} onClick={data.onFocus}>{data.focused ? 'All activities' : 'Focus'}</Button>
+      {/* Link buttons inherit text size, so actions have their own control-size boundary. */}
+      <span className="pointer-events-auto flex shrink-0 items-center gap-2 text-xs">
+        {data.sources > 0 && <Button size="sm" variant="link" className="nodrag nopan" aria-label={`${data.expanded ? 'Hide' : 'Show'} ${data.sources} sources for ${data.title}`} onClick={data.onSources}>{data.expanded ? 'Hide sources' : `+ ${data.sources} sources`}</Button>}
+        <Button size="sm" variant="link" className="nodrag nopan" aria-label={data.focused ? 'Show all activities' : `Focus on ${data.title}`} onClick={data.onFocus}>{data.focused ? 'All activities' : 'Focus'}</Button>
       </span>
     </div>
   </TitledFrame>;
@@ -109,7 +110,7 @@ function Relationship(props: EdgeProps<ActivityEdge>) {
       <button
         type="button"
         className={cn(
-          'nodrag nopan pointer-events-auto absolute z-10 flex items-center justify-center rounded-full text-[10px] font-medium leading-none focus-visible:outline-2 focus-visible:outline-primary',
+          'nodrag nopan pointer-events-auto absolute z-10 flex items-center justify-center rounded-full text-xs font-medium leading-none focus-visible:outline-2 focus-visible:outline-primary',
           data.pill
             ? cn('h-5 max-w-28 border bg-surface px-2 shadow-sm', data.failed ? 'border-danger text-danger-fg' : data.active ? 'border-info text-info-fg' : 'border-border-emphasis text-text-secondary')
             : 'h-3 w-3 border border-transparent bg-transparent text-transparent focus-visible:border-border focus-visible:bg-surface',

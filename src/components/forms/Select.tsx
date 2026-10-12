@@ -90,7 +90,7 @@ const sizeClasses: Record<SelectSize, string> = {
 // over the select rather than painted as a background-image data-URI (an
 // inline style, and unthemeable — the URI would have to bake in a colour).
 const pillSizeClasses: Record<SelectSize, string> = {
-  sm: 'h-6 pl-2 pr-4 text-[11px]',
+  sm: 'h-6 pl-2 pr-4 text-xs',
   md: 'h-7 pl-2.5 pr-5 text-[12px]',
 };
 
