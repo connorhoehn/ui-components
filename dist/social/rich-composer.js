@@ -4,9 +4,9 @@ import { c as r, l as i, n as a } from "../Text-3v1iMImu.js";
 import { t as o } from "../Select-DbhTbkTN.js";
 import { a as s, c, i as l, l as u, n as d, r as f, t as p } from "../composerSendError-CUHmc3vg.js";
 import { a as m, i as ee, n as h, r as te, t as g } from "../composerContext-BLn1-Nao.js";
-import { a as ne, c as re, i as _, l as v, n as ie, o as y, r as ae, s as b, t as x, u as oe } from "../RichChatComposer-F-tJCOXU.js";
-import { t as se } from "../ContextComposer-kQyrA5E_.js";
-import { t as ce } from "../AgentComposerDock-CQfX7pPM.js";
+import { a as ne, c as re, i as _, l as v, n as ie, o as y, r as ae, s as b, t as x, u as oe } from "../RichChatComposer-DkhWdyD9.js";
+import { t as se } from "../ContextComposer-CCgQxgzs.js";
+import { t as ce } from "../AgentComposerDock-wja8Sbza.js";
 import { createContext as le, useCallback as S, useContext as ue, useEffect as C, useMemo as w, useRef as T, useState as E, useSyncExternalStore as D } from "react";
 import { jsx as O, jsxs as k } from "react/jsx-runtime";
 //#region src/components/social/conversationInputRegistry.ts

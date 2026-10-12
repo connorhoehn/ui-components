@@ -173,6 +173,10 @@
         {
           "selector": "$rowMenuGlyphs",
           "reason": "ConversationList has an explicit 13px profile"
+        },
+        {
+          "selector": "$railItemLabels",
+          "reason": "GroupedList rail titles use the explicit railType item typography profile; sibling actions remain ordinary controls"
         }
       ],
       "owner": "Button / IconButton / forms"
@@ -421,6 +425,25 @@
       },
       "tolerance": 0.1,
       "owner": "code identifier / inline code"
+    },
+    {
+      "id": "rail.item-label",
+      "kind": "text",
+      "selector": "$railItemLabels",
+      "properties": {
+        "fontSize": 13,
+        "fontWeight": "500",
+        "lineHeight": 20
+      },
+      "tolerance": 0.1,
+      "owner": "GroupedList / railType"
+    },
+    {
+      "id": "composer.presence",
+      "kind": "composer-presence",
+      "selector": "$composers",
+      "owner": "page composition / contextual composer policy",
+      "input": "[contenteditable=\"true\"], textarea, [role=\"textbox\"]"
     }
   ]
 }

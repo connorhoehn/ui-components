@@ -23,6 +23,16 @@ describe('PresenceAvatars', () => {
     expect(screen.getByLabelText('3 more users')).toBeInTheDocument();
   });
 
+  it.each([16, 20, 24])('keeps initials and overflow readable in a %ipx avatar', size => {
+    render(<PresenceAvatars users={makeUsers(8)} maxVisible={5} size={size} />);
+    const overflow = screen.getByLabelText('3 more users');
+    expect(parseFloat(overflow.style.fontSize)).toBeGreaterThanOrEqual(9);
+    expect(overflow.style.width).toBe(`${size}px`);
+    for (const text of document.querySelectorAll<HTMLElement>('[data-ui-text="avatar"]')) {
+      expect(parseFloat(text.style.fontSize)).toBeGreaterThanOrEqual(9);
+    }
+  });
+
   it('does not show overflow chip when users equal maxVisible', () => {
     render(<PresenceAvatars users={makeUsers(5)} maxVisible={5} />);
     expect(screen.queryByLabelText(/more users/)).not.toBeInTheDocument();

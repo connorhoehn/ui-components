@@ -1,5 +1,5 @@
 /** Serializable browser-side collector. No React, application imports or network. */
-export function measureDOM({ contract, selectors, required = [] }) {
+export function measureDOM({ contract, selectors, required = [], composerExpectation }) {
   const issues = [], coverage = [], samples = [];
   const selectorCache = new WeakMap();
   const tolerance = contract.tolerance ?? 1;
@@ -71,7 +71,23 @@ export function measureDOM({ contract, selectors, required = [] }) {
       }
       coverage.push({ rule: rule.id, matched: nodes.length, excluded });
       if (rule.required && nodes.length === 0) { add(rule, null, 'rendered count', '>= 1', 0, 'coverage'); continue; }
-      if (rule.kind === 'text') {
+      if (rule.kind === 'composer-presence') {
+        const mode = composerExpectation?.mode ?? 'unclassified';
+        const reason = typeof composerExpectation?.reason === 'string' ? composerExpectation.reason.trim() : '';
+        Object.assign(coverage.at(-1), { status: mode, ...(reason ? { reason } : {}) });
+        samples.push({ rule: rule.id, selector: css(rule.selector), property: 'presence policy', actual: nodes.length, expected: mode, ...(reason ? { reason } : {}) });
+        if (!['required', 'exempt', 'unclassified'].includes(mode)) add(rule, null, 'presence policy', 'required or exempt', mode, 'coverage');
+        else if (mode === 'required') {
+          if (nodes.length === 0) add(rule, null, 'composer count', '>= 1', 0);
+          else {
+            const inputs = nodes.flatMap(el => [...el.querySelectorAll(rule.input ?? '[contenteditable="true"], textarea, [role="textbox"]')].filter(visible));
+            samples.push({ rule: rule.id, selector: css(rule.selector), property: 'composer input count', actual: inputs.length, expected: '>= 1' });
+            if (!inputs.length) add(rule, nodes[0], 'composer input count', '>= 1 visible input inside composer', 0);
+          }
+        }
+        else if (mode === 'exempt' && !reason) add(rule, null, 'exemption reason', 'nonempty documented context', reason, 'coverage');
+      }
+      else if (rule.kind === 'text') {
         const labels = new Set();
         for (const scope of nodes) {
           if (scope.matches('input,select,textarea')) labels.add(scope);

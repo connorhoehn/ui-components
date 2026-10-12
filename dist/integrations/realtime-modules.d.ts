@@ -1243,7 +1243,7 @@ declare interface ChatPanelProps {
      *  demos expect), TRUE inside a dock, whose column has a definite
      *  height that the body must match or leave a dead band behind. */
     fill?: boolean;
-    /** In a filling panel with a custom composer, let its backdrop meet the
+    /** With a custom composer, let its backdrop meet the
      *  parent edges while message history keeps a 16px reading gutter. */
     flushComposer?: boolean;
     /** Discussion logs start at the top; live conversations rest against their input. */

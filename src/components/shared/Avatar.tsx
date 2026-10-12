@@ -192,6 +192,7 @@ export function Avatar({
   return (
     <div
       title={resolvedTitle}
+      data-ui-text="avatar"
       className={cn(
         'inline-flex items-center justify-center rounded-full flex-shrink-0 font-semibold select-none overflow-hidden',
         toneClasses,
@@ -204,7 +205,7 @@ export function Avatar({
         // leaving these undefined is what lets the class win.
         background: toneClasses ? undefined : bg,
         color: toneClasses ? undefined : fg,
-        fontSize: hasMark ? size * 0.5 : size * 0.38,
+        fontSize: Math.max(9, hasMark ? size * 0.5 : size * 0.38),
         ...style,
       }}
     >
@@ -287,11 +288,12 @@ export function AvatarGroup({
       ))}
       {overflow > 0 && (
         <div
+          data-ui-text="avatar"
           className="inline-flex items-center justify-center rounded-full flex-shrink-0 font-semibold select-none bg-surface-emphasis text-text-secondary border-2 border-white"
           style={{
             width: size,
             height: size,
-            fontSize: size * 0.38,
+            fontSize: Math.max(10, size * 0.38),
             marginLeft: overlap,
           }}
           title={`+${overflow} more`}

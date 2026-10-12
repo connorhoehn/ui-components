@@ -359,7 +359,7 @@ export interface ChatPanelProps {
    *  demos expect), TRUE inside a dock, whose column has a definite
    *  height that the body must match or leave a dead band behind. */
   fill?: boolean;
-  /** In a filling panel with a custom composer, let its backdrop meet the
+  /** With a custom composer, let its backdrop meet the
    *  parent edges while message history keeps a 16px reading gutter. */
   flushComposer?: boolean;
   /** Discussion logs start at the top; live conversations rest against their input. */
@@ -2792,12 +2792,12 @@ export function ChatPanel({
         // strip between the dock's tab bar and the first message.
         fills
           ? cn('flex h-full min-h-0 flex-col pt-2', flushComposer && composer ? 'px-0 pb-0' : 'px-3 pb-3')
-          : cn('border rounded p-3 mt-4', dark ? 'border-white/10 bg-white/5' : 'border-border'),
+          : cn('border rounded mt-4', flushComposer && composer ? 'px-0 pt-3 pb-0' : 'p-3', dark ? 'border-white/10 bg-white/5' : 'border-border'),
       )}
     >
       {/* Header */}
       {headerVisible && (
-        <div className={cn('text-sm font-semibold mb-2 shrink-0', dark ? 'text-white/90' : 'text-text-primary')}>
+        <div className={cn('text-sm font-semibold mb-2 shrink-0', flushComposer && composer && 'mx-[var(--ui-content-gutter,1rem)]', dark ? 'text-white/90' : 'text-text-primary')}>
           Chat ({messages.length})
         </div>
       )}
@@ -2830,7 +2830,7 @@ export function ChatPanel({
           stays on the bottom edge and the slack goes to the messages.
           Wrapped so the "new messages" affordance can float over its
           bottom edge without joining the scroll content. */}
-      <div className={cn('relative flex flex-col mb-2', fills ? 'min-h-0 flex-1' : '', fills && flushComposer && composer && 'mx-[var(--ui-content-gutter,1rem)]')}>
+      <div className={cn('relative flex flex-col mb-2', fills ? 'min-h-0 flex-1' : '', flushComposer && composer && 'mx-[var(--ui-content-gutter,1rem)]')}>
         <div
           ref={listRef}
           onScroll={handleListScroll}
@@ -3009,7 +3009,7 @@ export function ChatPanel({
       {typingUsers.length > 0 && (
         <TypingIndicator
           names={typingUsers}
-          className={cn('mb-1 mt-1 shrink-0 italic', dark ? 'text-white/50' : 'text-text-secondary')}
+          className={cn('mb-1 mt-1 shrink-0 italic', flushComposer && composer && 'mx-[var(--ui-content-gutter,1rem)]', dark ? 'text-white/50' : 'text-text-secondary')}
         />
       )}
 

@@ -839,7 +839,7 @@ function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onF
         )}
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="flex min-w-0 items-center gap-2.5">
-            <span className={cn('truncate text-text-primary', railRow ? RAIL_ITEM_TEXT : 'text-[14px] font-medium leading-5')} title={row.title}>
+            <span data-ui-text={railRow ? 'rail-item' : undefined} className={cn('truncate text-text-primary', railRow ? RAIL_ITEM_TEXT : 'text-[14px] font-medium leading-5')} title={row.title}>
               {row.title}
             </span>
             {row.pill && <span className="flex shrink-0 items-center">{row.pill}</span>}

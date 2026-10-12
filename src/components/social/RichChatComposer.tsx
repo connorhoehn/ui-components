@@ -2710,7 +2710,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                     onClick={() => requestMode(m)}
                     data-testid={`${testId}-mode-${m}`}
                     className={cn(
-                      'h-5 w-5 text-[11px] font-semibold tabular-nums',
+                      'h-5 w-5 text-xs font-semibold tabular-nums',
                       m === activeMode ? 'bg-info-bg text-info-fg hover:bg-info-bg' : 'text-text-tertiary',
                       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
                     )}

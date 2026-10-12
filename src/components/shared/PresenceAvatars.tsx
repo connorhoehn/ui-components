@@ -387,6 +387,7 @@ export function PresenceAvatars({
           onClick={onMoreClick}
           disabled={!onMoreClick}
           aria-label={`${overflow} more users`}
+          data-ui-text="avatar"
           className={cn(
             'inline-flex items-center justify-center rounded-full shrink-0',
             'font-semibold select-none bg-surface-emphasis text-text-secondary',
@@ -397,7 +398,7 @@ export function PresenceAvatars({
           style={{
             width: size,
             height: size,
-            fontSize: size * 0.34,
+            fontSize: Math.max(10, size * 0.34),
             marginLeft: overlap,
             border: `${border}px solid white`,
           }}

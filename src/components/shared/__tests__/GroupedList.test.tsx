@@ -418,3 +418,21 @@ describe('GroupedList groupHeading + currentStyle (2.389.0)', () => {
     expect(screen.getByTestId('grouped-list-row-b').className).not.toContain('inset_2px');
   });
 });
+
+
+describe('GroupedList semantic rail typography', () => {
+  it.each([
+    ['sm', 'plain', true],
+    ['md', 'ruled', true],
+    ['sm', 'ruled', false],
+  ] as const)('marks only rail titles for size=%s and rowStyle=%s', (size, rowStyle, isRail) => {
+    const row: GroupedListRow = { ...ROWS[0], pill: <span>Badge</span>, trailing: <button>Details</button> };
+    render(<GroupedList groups={GROUPS} rows={[row]} size={size} rowStyle={rowStyle} />);
+    const title = screen.getByText('Alpha');
+    if (isRail) expect(title).toHaveAttribute('data-ui-text', 'rail-item');
+    else expect(title).not.toHaveAttribute('data-ui-text');
+    expect(screen.getByText('Badge').closest('[data-ui-text="rail-item"]')).toBeNull();
+    expect(screen.getByText('Alpha description').closest('[data-ui-text="rail-item"]')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Details' }).closest('[data-ui-text="rail-item"]')).toBeNull();
+  });
+});

@@ -7,7 +7,7 @@ const hash = x => crypto.createHash('sha256').update(JSON.stringify(x)).digest('
 
 export function validateContract(contract) {
   if (contract.version !== 1 || !Array.isArray(contract.rules) || !contract.rules.length) throw new Error('Contract requires version: 1 and nonempty rules');
-  const ids = new Set(), kinds = new Set(['style', 'text', 'box', 'count', 'viewport', 'align', 'within', 'columns', 'table', 'composer']);
+  const ids = new Set(), kinds = new Set(['style', 'text', 'box', 'count', 'viewport', 'align', 'within', 'columns', 'table', 'composer', 'composer-presence']);
   for (const rule of contract.rules) {
     if (!rule.id || ids.has(rule.id) || !kinds.has(rule.kind)) throw new Error('Invalid/duplicate rule: ' + rule.id);
     ids.add(rule.id);
@@ -75,7 +75,8 @@ export async function runAudit(browser, adapter, options) {
             if (adapter.describe) entry.view = await adapter.describe(page, spec);
             await page.addStyleTag({ content: '*,*::before,*::after { animation-play-state: paused !important; transition-duration: 0s !important; caret-color: transparent !important; }' });
             await page.evaluate(async () => { await document.fonts.ready; await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); });
-            const payload = { contract, selectors: adapter.selectors, required: [...(spec.required ?? []), ...(state.required ?? [])] };
+            const composerExpectation = state.composerExpectation ?? await adapter.composerExpectation?.(page, spec) ?? spec.composerExpectation;
+            const payload = { contract, selectors: adapter.selectors, required: [...(spec.required ?? []), ...(state.required ?? [])], composerExpectation };
             const first = await page.evaluate(measureDOM, payload);
             // Repeat the same DOM measurement to expose unstable geometry instead
             // of blessing whichever frame happened to pass.
@@ -93,7 +94,8 @@ export async function runAudit(browser, adapter, options) {
             await page.screenshot({ path: path.join(out, entry.screenshot) }).catch(() => { delete entry.screenshot; });
           }
           report.cases.push(entry);
-          console.log(`${entry.issues.length ? 'FAIL' : 'PASS'} ${spec.tenant} ${spec.path} ${theme}/${width}/${state.name}: ${entry.issues.length} findings`);
+          const unclassified = entry.coverage.filter(c => c.status === 'unclassified').length;
+          console.log(`${entry.issues.length ? 'FAIL' : unclassified ? 'PARTIAL' : 'PASS'} ${spec.tenant} ${spec.path} ${theme}/${width}/${state.name}: ${entry.issues.length} findings${unclassified ? '; composer policy unclassified' : ''}`);
         }
       }
     } catch (error) {
@@ -103,6 +105,7 @@ export async function runAudit(browser, adapter, options) {
   for (const entry of report.cases) for (const issue of entry.issues) issue.fingerprint ??= hash([entry.actor, entry.tenant, entry.route, entry.theme, entry.width, entry.state, issue.rule, issue.selector, issue.property]);
   report.groups = summarize(report.cases);
   report.failures = report.cases.reduce((n, c) => n + c.issues.length, 0);
+  report.unclassified = report.cases.filter(c => c.coverage.some(item => item.status === 'unclassified')).map(({ tenant, route, theme, width, state }) => ({ tenant, route, theme, width, state }));
   report.elapsedMs = Date.now() - start;
   if (options.previous) {
     const previous = JSON.parse(fs.readFileSync(options.previous, 'utf8'));
@@ -114,6 +117,6 @@ export async function runAudit(browser, adapter, options) {
     report.delta = { new: report.cases.filter(c => shared.has(caseKey(c))).flatMap(c => c.issues.filter(i => !old.has(i.fingerprint)).map(i => i.fingerprint)), resolved: previous.cases.filter(c => shared.has(caseKey(c))).flatMap(c => c.issues.filter(i => !current.has(i.fingerprint)).map(i => i.fingerprint)), comparedCases: shared.size };
   }
   fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(report, null, 2) + '\n');
-  fs.writeFileSync(path.join(out, 'summary.txt'), [`${report.cases.length} cases; ${report.failures} findings; ${(report.elapsedMs / 1000).toFixed(1)}s`, ...report.groups.map(g => `${g.rule} | ${g.property}: expected ${JSON.stringify(g.expected)}, got ${JSON.stringify(g.actual)} | ${g.routes.length} routes / ${g.occurrences} instances | ${g.owner}`)].join('\n') + '\n');
+  fs.writeFileSync(path.join(out, 'summary.txt'), [`${report.cases.length} cases; ${report.failures} findings; ${report.unclassified.length} composer policies unclassified; ${(report.elapsedMs / 1000).toFixed(1)}s`, ...report.unclassified.map(c => `UNCLASSIFIED composer policy | ${c.tenant} ${c.route} ${c.theme}/${c.width}/${c.state}`), ...report.groups.map(g => `${g.rule} | ${g.property}: expected ${JSON.stringify(g.expected)}, got ${JSON.stringify(g.actual)} | ${g.routes.length} routes / ${g.occurrences} instances | ${g.owner}`)].join('\n') + '\n');
   return report;
 }

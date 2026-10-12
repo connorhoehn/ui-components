@@ -27,6 +27,7 @@ measurement and must not substitute for it.
 | `within` | selector, anchor, ancestor?, axes? | Element escaping its region; exclude intended scroll/portal surfaces explicitly |
 | `columns` | selector, children, min, max, maxGap | Gaps/overlap, uneven tops/bottoms in direct peer columns |
 | `table` | selector, rowHeight, cellInset, headerFontSize, headerFontWeight, bodyFontSize?, bodyFontFamily? | Unequal or oversized ordinary rows, cell padding and header/body typography |
+| `composer-presence` | selector; per-case composerExpectation | Missing required composer, undocumented exemptions, unclassified policy coverage |
 | `composer` | selector, input, boundary, inset, pseudo? | Missing/duplicate inputs, shelf insets, backdrop inset/missing paint, narrowing by an ancestor |
 
 `columns` can alternatively use `regions: ["$primary", "$secondary",
@@ -136,8 +137,8 @@ fixture and a size/family mutation; do not broaden ordinary controls to accept
 all sizes encountered in the app.
 
 The current frontend adapter uses public test IDs and component structure for
-these bindings. Its legacy Avatar binding also uses the titled circular root;
-replace that binding with a semantic marker if Avatar's public markup changes.
+these bindings. Avatar and overflow chips emit `data-ui-text="avatar"`; use that marker
+rather than rounded/title styling to identify text whose size scales with its host.
 A zero-match optional profile is recorded as unexercised. Required page regions
 must be declared separately; selector absence must not count as a successful
 measurement.
@@ -155,3 +156,68 @@ In aws-agentcore, an exact parameterized `--path` (including query parameters)
 uses that requested record; only inventory placeholder cases resolve fixture IDs.
 This makes a user-reported path directly reproducible without editing the route
 inventory. No route selected is an error, never a zero-case success.
+
+## Closing findings
+
+Keep the original report until the same failing cases pass. A representative
+matrix and a narrow detail-page check are separate coverage: rerun both when
+both produced findings. Record the shared package version installed by the
+frontend, and rebuild/reinstall it before accepting DOM results.
+
+A flush custom composer must reach its content edges in both filling and
+standalone chat panels. The latter often retains card padding even when the
+filling variant is correct. Keep the history's reading gutter independent of
+the composer shelf; do not hide the mismatch by changing its boundary selector.
+
+For compact avatars, test both initials and the overflow count at small sizes.
+A proportional font size needs a readability floor; increasing the avatar itself
+would enlarge the shell and evade the original compact-layout requirement.
+
+GroupedList label headings bind through `button[data-heading="label"][data-focus-key^="g:"] > span`; their title and count both use the 11px rail profile. Plain rail rows and medium rows emit `data-ui-text="rail-item"` on the title alone (13px, weight 500, line height 20px). Pills, metadata and neighboring actions remain outside that marker. Every named typography variant needs evidence in the shared component's source, a valid fixture and a failing mutation. Include an ordinary sibling control in the fixture and prove its mutation still fails, so the variant cannot silently exempt an entire row.
+
+
+## Composer presence policy
+
+Geometry alone cannot catch a composer that was never rendered. Cases can declare
+`composerExpectation: { mode: 'required' }` or `{ mode: 'exempt', reason: '…' }`.
+A state may override the case. For context-dependent pages an adapter can expose
+`composerExpectation(page, spec)`, inspecting a known read-only/membership state
+and returning the same object. State overrides take precedence, then the hook,
+then the case. Do not infer an exemption merely because the composer is absent.
+
+The `composer-presence` rule counts visible `$composers` and requires a visible
+contenteditable/textarea/textbox inside a matched surface. An empty particle
+wrapper or unrelated page textbox does not satisfy it; disabled/read-only visible
+inputs still count. Required + zero surfaces or zero contained inputs is a
+violation. Exempt requires a nonempty trimmed reason; a blank reason or invalid
+mode is a coverage failure. An exemption permits absence, but does not disable
+geometry/style checks on any composer that is present. Missing policy is recorded
+as `unclassified`, displayed as PARTIAL in console output and listed in
+`report.unclassified` and `summary.txt`; it is not an automatic demand for a
+composer or proof of complete compliance. The CLI still returns nonzero for
+actual violations/failed execution, while unclassified policy alone is reported
+without failing unrelated routes. CI can additionally require an empty
+`report.unclassified` list once that route set has been reviewed.
+
+Initial Work enforcement covers the inspected RunsLedger pages `/pipelines/runs`,
+`/iq/runs`, and `/assessment/runs`, plus existing DM/initiative contextual
+composers. Channel membership-required and shared-work-only views use documented
+state exemptions. Other page families remain unclassified until their context is
+reviewed; never attach a blanket exemption to a tenant. New tenant collection
+pages should reuse the shared composer for natural-language search/actions unless
+a documented contextual reason applies. Presence/geometry do not prove the
+language-command behavior; validate supported search/ops separately with bounded
+interaction tests that do not perform unauthorized business mutations.
+
+
+### Composer boundaries are host regions
+
+For full-page Work/Pipeline ledgers, measure against the real shell content column
+(`data-subnav-content`), not a marker on the ledger or composer wrapper. Otherwise
+ancestor page padding can shrink both measured nodes equally and falsely pass.
+The Assessment ledger is intentionally embedded within a PageSection: its binding
+is `section:has(> [data-collection-command-boundary="embedded"])`. The marker
+identifies which section applies; the ledger itself is not the geometry anchor.
+A valid embedded section can be inset from the page, while extra ledger margins
+inside that section must still fail. Fixtures cover both an artificial full-page
+boundary nested under padding and drift inside a legitimate embedded section.

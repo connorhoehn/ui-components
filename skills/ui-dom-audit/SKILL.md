@@ -4,8 +4,17 @@ description: Audit rendered UI consistency across tenant frontends using determi
 ---
 
 Measure the rendered app against a shared contract. Fix a component family once,
-then verify its consumers. Source searches and screenshots help diagnosis; they
+then verify its consumers. When the user asks to fix findings or improve the UI,
+continue through repair, rebuilding the consumed package and a confirming sweep;
+a list of failures is an intermediate result. Preserve an explicitly read-only
+audit request. Source searches and screenshots help diagnosis; they
 are not the pass/fail oracle.
+
+Shared collection/chat pages need an explicit composer policy: required, or a
+documented contextual exemption. Unreviewed pages remain visibly unclassified;
+geometry checks alone cannot certify a composer that is absent. See the
+[composer policy contract](references/contracts.md#composer-presence-policy) when
+adding a route family.
 
 The portable runner and contract live with this skill. Each frontend supplies a
 small adapter for its existing route inventory, real sign-in helper, readiness,
@@ -47,7 +56,8 @@ Outputs: `report.json` contains exact rule, selector, expected/actual value,
 geometry, route/theme/width/state, coverage and source revision. `summary.txt`
 groups repeated failures by rule/value/owner across tenants. Screenshots are
 failure evidence only; `--no-screenshots` disables them. Nonzero exit means
-violations or incomplete execution. Pass a previous `report.json` with
+violations or incomplete execution. Unclassified composer policy is separately
+reported as PARTIAL coverage, even when there are no violations. Pass a previous `report.json` with
 `--previous` to compare matching cases; unvisited routes are never called fixed.
 
 ## Refine from a reported defect
@@ -67,8 +77,21 @@ violations or incomplete execution. Pass a previous `report.json` with
 4. Keep every remaining failure visible. Do not increase tolerances, edit
    expected values to match a bad page, automatically accept a baseline, or
    remove a selector just to make the report green. Intentional design variants
-   need a named profile or narrow exclusion with its reason and validation.
-5. Run the mutation tests and skill validator after changing the audit itself.
+   need a named profile or narrow exclusion with its reason, shared-source
+   evidence and a valid/failing fixture pair. Verify that neighboring ordinary
+   controls still fail when mutated; never exempt an entire row for one label.
+5. Compare the repaired sweep against the original report using `--previous`.
+   Recheck every failing route/state/theme/width, including narrow layouts; a
+   passing representative sweep cannot close a defect found on a detail route.
+   Confirm the frontend actually serves the rebuilt shared package. An installed
+   version alone is insufficient: if the browser still measures old styles or
+   lacks new component markers, refresh its optimized dependency bundle through
+   the repository's frontend restart workflow, then remeasure. Prefer
+   semantic markers emitted by the owner (e.g. `data-ui-text="avatar"`) over
+   inferring identity from visual classes. Keep font floors in the component,
+   not a page CSS override. For an icon action rendered as a text character,
+   use the shared SVG icon/control and verify its menu still opens and closes.
+6. Run the mutation tests and skill validator after changing the audit itself.
    Report measured scope, findings and untested states; never equate a narrow
    sweep with a clean entire application.
 
