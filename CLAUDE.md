@@ -1,5 +1,11 @@
 # CLAUDE.md — @connorhoehnslalom/ui-components
 
+> **October 12, 2026 handoff:** Current shared UI is 2.440.7; current tenant audit
+> skill is `skills/ui-dom-audit/SKILL.md`. Read the sibling workspace handoff at
+> `../aws-agentcore/docs/claude-code-handoff-2026-10-12.md` for verified commits,
+> test scope and continuation steps. Old version/checkpoint prose below is
+> historical. Source and audit changes are committed and pushed on main.
+
 ## agent-hub retired (2026-08-16)
 
 This repo was previously coordinated through `agent-hub`. That system was
