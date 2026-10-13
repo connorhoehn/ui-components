@@ -3,11 +3,12 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { measureDOM } from './measure.mjs';
+import { probes } from './probes.mjs';
 const hash = x => crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex').slice(0, 16);
 
 export function validateContract(contract) {
   if (contract.version !== 1 || !Array.isArray(contract.rules) || !contract.rules.length) throw new Error('Contract requires version: 1 and nonempty rules');
-  const ids = new Set(), kinds = new Set(['style', 'text', 'box', 'count', 'viewport', 'align', 'within', 'columns', 'table', 'composer', 'composer-presence']);
+  const ids = new Set(), kinds = new Set(['style', 'text', 'box', 'count', 'viewport', 'align', 'within', 'columns', 'table', 'composer', 'composer-presence', 'record-popout', 'row-activatable', 'selection-shift']);
   for (const rule of contract.rules) {
     if (!rule.id || ids.has(rule.id) || !kinds.has(rule.kind)) throw new Error('Invalid/duplicate rule: ' + rule.id);
     ids.add(rule.id);
@@ -72,12 +73,22 @@ export async function runAudit(browser, adapter, options) {
             else if (new URL(page.url()).pathname !== new URL(spec.path, adapter.baseURL).pathname) throw new Error(`Unexpected redirect to ${new URL(page.url()).pathname}`);
             await adapter.theme(page, theme);
             await adapter.ready(page, spec);
-            if (state.enter) await state.enter(page);
-            if (adapter.describe) entry.view = await adapter.describe(page, spec);
+            // A state may run a read-only interaction probe and return its result for the rules to judge.
+            const entered = state.enter ? await state.enter(page, { probes }) : undefined;
+            const probe = entered && typeof entered === 'object' && typeof entered.kind === 'string' ? entered : undefined;
+            if (probe) entry.probe = probe;
+            // A navigating state is classified on the page it reached, not the list it left.
+            const reached = new URL(page.url());
+            const judged = state.navigates ? { ...spec, path: reached.pathname + reached.search, navigatedFrom: spec.path } : spec;
+            if (state.navigates) entry.reached = judged.path;
+            if (adapter.describe) entry.view = await adapter.describe(page, judged);
             await page.addStyleTag({ content: '*,*::before,*::after { animation-play-state: paused !important; transition-duration: 0s !important; caret-color: transparent !important; }' });
             await page.evaluate(async () => { await document.fonts.ready; await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); });
-            const composerExpectation = state.composerExpectation ?? await adapter.composerExpectation?.(page, spec) ?? spec.composerExpectation;
-            const payload = { contract, selectors: adapter.selectors, required: [...(spec.required ?? []), ...(state.required ?? [])], composerExpectation };
+            const composerExpectation = state.composerExpectation ?? await adapter.composerExpectation?.(page, judged) ?? (state.navigates ? undefined : spec.composerExpectation);
+            // A state that navigates away (a row opening its record) is judged on the
+            // page it reached: the list route's required regions no longer apply.
+            const required = state.navigates ? [...(state.required ?? [])] : [...(spec.required ?? []), ...(state.required ?? [])];
+            const payload = { contract, selectors: adapter.selectors, required, composerExpectation, probe };
             const first = await page.evaluate(measureDOM, payload);
             // Repeat the same DOM measurement to expose unstable geometry instead
             // of blessing whichever frame happened to pass.

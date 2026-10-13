@@ -20,7 +20,7 @@ const runner = fileURLToPath(new URL('./run.mjs', import.meta.url));
 try {
   fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify({type: 'module'}));
   fs.writeFileSync(path.join(dir, 'audit.spec.ts'), `import playwright from ${JSON.stringify(testModule)}; const { test, expect } = playwright;\nimport adapter from ${JSON.stringify(options.adapter)};\nimport { runAudit } from ${JSON.stringify(runner)};\ntest('deterministic rendered UI contract', async ({ browser }) => { const result = await runAudit(browser, adapter, ${JSON.stringify(options)}); expect(result.exitCode, 'See '+${JSON.stringify(options.out)}+'/report.json and summary.txt').toBe(0); });\n`);
-  fs.writeFileSync(path.join(dir, 'playwright.config.cjs'), `module.exports = {testDir:${JSON.stringify(dir)}, testMatch:'audit.spec.ts', timeout:1800000, workers:1, retries:0, reporter:'line', outputDir:${JSON.stringify(path.join(options.out, 'playwright'))}, use:{browserName:'chromium', headless:true}};\n`);
+  fs.writeFileSync(path.join(dir, 'playwright.config.cjs'), `module.exports = {testDir:${JSON.stringify(dir)}, testMatch:'audit.spec.ts', timeout:${Number(process.env.UI_DOM_AUDIT_TIMEOUT_MS) || 1800000}, workers:1, retries:0, reporter:'line', outputDir:${JSON.stringify(path.join(options.out, 'playwright'))}, use:{browserName:'chromium', headless:true}};\n`);
   const result = spawnSync(process.execPath, [cli, 'test', '--config', path.join(dir, 'playwright.config.cjs')], { stdio: 'inherit', cwd: path.resolve(options.project) });
   if (result.error) throw result.error;
   process.exitCode = result.status ?? 2;

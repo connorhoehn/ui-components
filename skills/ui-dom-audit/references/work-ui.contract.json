@@ -502,6 +502,28 @@
       },
       "tolerance": 0.1,
       "owner": "ActivePeopleGrid name / More caption"
+    },
+    {
+      "id": "record.popout",
+      "kind": "record-popout",
+      "owner": "collection record routing: ListRailLayout list rail + content column, or a SidePane tab",
+      "selector": "[role=\"dialog\"], [role=\"alertdialog\"], dialog[open], [data-ui-dialog]",
+      "allow": [
+        "[role=\"alertdialog\"]",
+        "[data-ui-dialog=\"confirm\"]",
+        "[data-ui-dialog=\"command-help\"]"
+      ]
+    },
+    {
+      "id": "collection.row-activatable",
+      "kind": "row-activatable",
+      "owner": "DataTable onRowClick (or a row link) / staticRows reason",
+      "selector": "$collectionTables"
+    },
+    {
+      "id": "collection.selection-shift",
+      "kind": "selection-shift",
+      "owner": "CollectionToolbar selection (in place of the resting controls)"
     }
   ]
 }

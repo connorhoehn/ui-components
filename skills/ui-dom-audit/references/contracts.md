@@ -29,6 +29,9 @@ measurement and must not substitute for it.
 | `table` | selector, rowHeight, cellInset, headerFontSize, headerFontWeight, bodyFontSize?, bodyFontFamily? | Unequal or oversized ordinary rows, cell padding and header/body typography |
 | `composer-presence` | selector; per-case composerExpectation | Missing required composer, undocumented exemptions, unclassified policy coverage |
 | `composer` | selector, input, boundary, inset, pseudo? | Missing/duplicate inputs, shelf insets, backdrop inset/missing paint, narrowing by an ancestor |
+| `row-activatable` | selector (collection tables) | Body rows that open nothing: not a focusable pointer row and no row link, unless the collection declares `data-collection-rows="static"` with a documented reason |
+| `record-popout` | selector (dialog-like surfaces), allow | After a row/record-detail activation probe: a drawer/modal/unmarked dialog instead of a routed record, an unchanged URL after a row activation, or a write attempted by the activation |
+| `selection-shift` | none (probe only) | After a selection probe: the table's top edge or first row moved when a row was checked or unchecked |
 
 `columns` can alternatively use `regions: ["$primary", "$secondary",
 "$content", "$right"]`. Never select nested parents and children as peers.
@@ -77,7 +80,8 @@ export default {
 ```
 
 Cases have `tenant`, `path`, optional `actor`, `required` alias list and
-`states: [{name, enter(page), required?}]`. Each state navigates afresh to the
+`states: [{name, enter(page, { probes }), required?, navigates?}]`; `enter`
+may return a probe result (see Interaction rules). Each state navigates afresh to the
 case route. Scope context/session reuse to one actor and run actors sequentially:
 a tenant switch may revoke that user's other sessions. Never import authentication
 cookies into output. Reuse the repository's route inventory and session helpers;
@@ -97,6 +101,97 @@ signal. An adapter should wait for known loading rows to disappear and expected
 content/empty/error state to render. Spinner absence alone can pass before a
 lazy page mounts; require a positive control or view marker before classifying
 its composer policy. Do not add long sleeps or silence instability.
+
+## Interaction rules (records open as pages, selections stay put)
+
+Three rules judge what happens when a reader acts on a collection, not only
+how it rests. They exist because a reported Assessment Submissions page had
+rows that opened nothing, a "Revision history" row action that opened a
+drawer, and a "2 selected" band that pushed the table down when a box was
+ticked. They hold for every tenant; there are no page-name exceptions.
+
+**Probes.** `scripts/probes.mjs` holds three read-only probes. The runner
+passes them to every state as `enter(page, { probes })`; a state that returns
+a probe result has it handed to `measureDOM` as `probe` and stored on the
+report case. Every probe blocks each non-GET/HEAD/OPTIONS request while it
+runs and reports what it stopped (`blockedWrites`) — activating a row or
+toggling a selection must never change business state, and a blocked write is
+itself a `record.popout`/`selection-shift` violation.
+
+- `activateRow(page, { rows, via? })` clicks the first body row on a cell
+  that holds no control of its own (never the selection checkbox or a row
+  action); a row that is not focusable but carries a link is opened through
+  that link; `via: 'enter'` focuses the row and presses Enter. It waits
+  (bounded) for the URL to change or a dialog to appear, then moves the
+  pointer off the row so a hover preview cannot pose as a popout.
+- `recordAction(page, { scope, name })` presses a record-detail action
+  (Revision history, History, Details …).
+- `toggleSelection(page, { checkbox })` checks, measures, unchecks and
+  measures the first visible row checkbox's table: top edge, first row
+  top/bottom/left.
+
+**`record.popout`** (`record-popout`) runs only when the state's probe is a
+`row-activation`; with no probe it reports `matched: 0` (unexercised), so a
+Filters popover in another state is never judged. After activation every
+visible `[role="dialog"]`, `[role="alertdialog"]`, `dialog[open]` or
+`[data-ui-dialog]` is a violation unless it matches `allow`. Allowed kinds are
+named by semantic marker, emitted by the library (ui-components 2.442.0):
+`[role="alertdialog"]`, `[data-ui-dialog="confirm"]` (`ConfirmDialog`) and
+`[data-ui-dialog="command-help"]` (an `InlinePopover kind="command-help"`).
+`Modal` emits `modal` (or its `dialogKind`), a floating `Drawer` emits
+`drawer` whether it renders as a modal `dialog` or a non-modal
+`complementary`, `InlinePopover` emits `popover` — all forbidden after an
+activation. A `row` trigger must also change the URL (path + query): the
+record is routed (`/…/:id` or `?item=<id>`) into the content column or the
+split layout. A `record-action` trigger (revision history) may stay on the
+same URL — a tab, section or right-pane tab is fine — but may not open a
+drawer or modal.
+
+**`collection.row-activatable`** (`row-activatable`, static) binds
+`$collectionTables` (aws-agentcore: the library `DataTable`'s
+`[data-collection-table]` and tables inside a `CollectionPage`). Every
+ordinary body row (no `colspan`) must be a focusable pointer row (`DataTable
+onRowClick` gives `tabindex="0"` and `cursor: pointer`) or carry a row link.
+A collection whose rows deliberately open nothing declares it on the owner:
+`DataTable staticRows="<reason>"` emits `data-collection-rows="static"` and
+`data-collection-rows-reason`. A blank or placeholder reason (`TODO`, `N/A`
+…, the composer-policy guard) fails coverage, and a declaration exempts only
+its own table.
+
+**`collection.selection-shift`** (`selection-shift`) runs only on a
+`selection` probe and requires the table top and the first row's
+top/bottom/left to stay within tolerance while a row is selected and after it
+is cleared, and the checkbox to have actually toggled. The library fix is
+`CollectionToolbar selection={{count, onClear, actions}}`: the selection
+replaces search/filters/count on the same toolbar row (same `Toolbar`, same
+height), marked `data-collection-selection="active"`. `DataTable` leaves a
+click or key on a control inside a clickable row to that control, so ticking
+a box never also opens the row.
+
+**Navigating states.** A state whose probe leaves the list (a row opening
+its record) sets `navigates: true`: the runner then judges it against the
+state's own `required` regions only (aws-agentcore: the shell's header,
+footer and columns), never the list route's (`$tables` on a record page would
+be a false coverage failure). A state without the flag keeps the case's
+required regions; the fixture proves both.
+
+**Adapter states.** aws-agentcore's `discoverStates` adds `row-activate`
+(a visible body row in a collection that has not declared static rows),
+`record-detail-action` (the first visible button named like Revision
+history/History/Details, except the Details buttons the `details-pane` state
+already opens into the right pane) and `row-select` (a visible checkbox in a
+collection body row). Each waits for loading rows to settle after its probe.
+
+Fixtures (`self-test.mjs`): valid — a row that routes by click and by Enter,
+a routed record beside a confirmation/alertdialog/command-help, revision
+history drawn inside the record, linked rows, rows declared static with a
+reason, a selection that swaps the toolbar row in place; failing — a modal
+drawer, a non-modal drawer, an unmarked dialog, an inert row, an activation
+that writes, a revision-history action opening a drawer, inert rows, a
+focusable row without a pointer, blank/placeholder static reasons, a static
+declaration beside an undeclared table, a selection band above the table and
+a toolbar row that changes height. A runner-level fixture proves a state's
+probe reaches the rules and the report.
 
 ## Fast loop and CI
 

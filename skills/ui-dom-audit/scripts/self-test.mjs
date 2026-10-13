@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { parseAuditArgs } from './cli-options.mjs';
 import { measureDOM } from './measure.mjs';
 import { runAudit, summarize, validateContract } from './run.mjs';
+import { probes } from './probes.mjs';
 const project = process.argv[process.argv.indexOf('--project') + 1];
 if (!project || !process.argv.includes('--project')) throw new Error('Usage: node self-test.mjs --project <package with @playwright/test>');
 const { chromium } = createRequire(path.resolve(project, 'package.json'))('@playwright/test');
@@ -19,12 +20,12 @@ const selectors = {
   graphDetailLabels: '[data-ui-text="graph-detail"]', graphMetadataLabels: '[data-ui-text="graph-metadata"]', activePersonCaptions: '[data-ui-text="active-person-caption"]',
   codeLabels: 'code', railCaptionLabels: '.rail-label, button[data-heading="label"][data-focus-key^="g:"] > span, [data-ui-text="rail-caption"]', railItemLabels: '[data-ui-text="rail-item"]', conversationLabels: '.conversation-label', conversationMetadata: '.conversation-meta', decorativeText: '[aria-hidden="true"]', rowMenuGlyphs: '.row-glyph', keyboardHints: 'kbd', captions: '[data-ui-text="caption"]', tenantControl: '.no-brand', tickerControl: '.no-ticker', avatarControl: '[data-ui-text="avatar"]', header: '#header', footer: '#footer', footerRow: '#footer', shellColumns: '#shell', nestedColumns: '.no-nested', workspaceColumns: '#workspace', splitColumns: '.no-split',
   controls: 'button,input,select,textarea,[role="button"]', railHeaders: '.rail-caption', toolbarControls: '#toolbar button', collections: '#collection', collectionToolbars: '#toolbar', sectionTitles: '#section',
-  tables: 'table', composers: '#shelf', nestedComposers: '#shelf [data-composer-surface]', composerBoundary: 'section:has(> [data-collection-command-boundary="embedded"]), #content',
+  tables: 'table', collectionTables: '[data-collection-table] table', composers: '#shelf', nestedComposers: '#shelf [data-composer-surface]', composerBoundary: 'section:has(> [data-collection-command-boundary="embedded"]), #content',
 };
 const html = `<!doctype html><html><head><style>
 :root { --ui-control-sm:28px; --ui-page-gutter:24px; --ui-table-inset:12px; --ui-table-row:44px; --ui-content-gutter:16px; }
 *{box-sizing:border-box} body{margin:0;font:14px system-ui,-apple-system,sans-serif} #header,#footer{height:44px} #shell{height:712px;display:flex} aside{width:180px;flex:none} main{flex:1;min-width:0} #workspace{display:flex;height:100%} #secondary{width:180px;flex:none} #right{width:180px;flex:none} #content{position:relative;flex:1;min-width:0} #section{padding:8px 24px} #collection{padding:0} #toolbar{padding:0 12px;display:flex;gap:8px} .control{height:28px;font:12px system-ui,-apple-system,sans-serif;border:1px solid black} table{border-collapse:collapse;width:100%;font:14px system-ui,-apple-system,sans-serif} th{font-size:12px;font-weight:600} td{padding:0 12px;height:44px} #shelf-wrapper{position:absolute;bottom:0;left:0;right:0} #shelf{position:relative;padding:8px var(--ui-content-gutter);width:100%} #shelf:before{content:'';position:absolute;inset:0;background-image:radial-gradient(white,transparent);pointer-events:none} [contenteditable]{position:relative;min-height:28px}
-</style></head><body><header id="header">Workspace <button class="control"><span class="rail-label" style="font-size:11px">Group</span><span class="conversation-label" style="font-size:13px">Person</span><span class="conversation-meta" style="font-size:11px">Now</span><code style="font-size:11px;font-family:monospace">ID-123</code><span class="avatar" data-ui-text="avatar" style="font-size:9.12px">AB</span></button></header><div id="shell"><aside>Primary<section><h3><button class="control" data-heading="label" data-focus-key="g:fixture"><span id="group-label" style="font-size:11px">Projects</span><span id="group-count" style="font-size:11px">2</span></button></h3><ul><li><button class="control"><span id="rail-title" data-ui-text="rail-item" style="font-size:13px;font-weight:500;line-height:20px">Sample initiative</span></button><button id="rail-sibling-action" class="control" style="font-size:14px">Open</button></li></ul></section></aside><main><div id="workspace"><nav id="secondary">Secondary</nav><section id="content"><div id="section">Section</div><div role="button"><span data-ui-text="graph-detail" style="font-size:11px">Graph detail</span><span data-ui-text="graph-metadata" style="font-size:10px">Revision</span><button class="control" id="graph-nested-action">Open graph</button></div><button class="control"><span data-ui-text="active-person-caption" style="font-size:11px;font-weight:500">Person</span></button><div id="collection"><div id="toolbar"><button class="control">Action</button></div><table><thead><tr><th>Name</th><th>State</th></tr></thead><tbody><tr><td>Record</td><td>Ready</td></tr></tbody></table></div><div id="shelf-wrapper"><div id="shelf" data-composer-surface><div contenteditable="true" role="textbox">Draft</div></div></div></section><aside id="right">Details<div id="dropzone" role="button" tabindex="0" data-ui-dropzone style="border:2px dashed #888">Drop files</div><button id="drop-sibling" class="control">Browse</button><div id="terminal" data-ui-code-surface="terminal"><textarea class="xterm-helper-textarea" aria-label="Terminal input" style="font-size:16px;font-family:monospace;width:8px;height:15px"></textarea></div></aside></div></main></div><footer id="footer">Footer <button id="overflow-count" class="control" data-ui-text="avatar" style="font-size:10px">+3</button></footer></body></html>`;
+</style></head><body><header id="header">Workspace <button class="control"><span class="rail-label" style="font-size:11px">Group</span><span class="conversation-label" style="font-size:13px">Person</span><span class="conversation-meta" style="font-size:11px">Now</span><code style="font-size:11px;font-family:monospace">ID-123</code><span class="avatar" data-ui-text="avatar" style="font-size:9.12px">AB</span></button></header><div id="shell"><aside>Primary<section><h3><button class="control" data-heading="label" data-focus-key="g:fixture"><span id="group-label" style="font-size:11px">Projects</span><span id="group-count" style="font-size:11px">2</span></button></h3><ul><li><button class="control"><span id="rail-title" data-ui-text="rail-item" style="font-size:13px;font-weight:500;line-height:20px">Sample initiative</span></button><button id="rail-sibling-action" class="control" style="font-size:14px">Open</button></li></ul></section></aside><main><div id="workspace"><nav id="secondary">Secondary</nav><section id="content"><div id="section">Section</div><div role="button"><span data-ui-text="graph-detail" style="font-size:11px">Graph detail</span><span data-ui-text="graph-metadata" style="font-size:10px">Revision</span><button class="control" id="graph-nested-action">Open graph</button></div><button class="control"><span data-ui-text="active-person-caption" style="font-size:11px;font-weight:500">Person</span></button><div id="collection"><div id="toolbar"><button class="control">Action</button></div><div data-collection-table data-collection-rows="activatable"><table><thead><tr><th>Name</th><th>State</th></tr></thead><tbody><tr tabindex="0" style="cursor:pointer"><td>Record</td><td>Ready</td></tr></tbody></table></div></div><div id="shelf-wrapper"><div id="shelf" data-composer-surface><div contenteditable="true" role="textbox">Draft</div></div></div></section><aside id="right">Details<div id="dropzone" role="button" tabindex="0" data-ui-dropzone style="border:2px dashed #888">Drop files</div><button id="drop-sibling" class="control">Browse</button><div id="terminal" data-ui-code-surface="terminal"><textarea class="xterm-helper-textarea" aria-label="Terminal input" style="font-size:16px;font-family:monospace;width:8px;height:15px"></textarea></div></aside></div></main></div><footer id="footer">Footer <button id="overflow-count" class="control" data-ui-text="avatar" style="font-size:10px">+3</button></footer></body></html>`;
 const browser = await chromium.launch({ headless: true });
 const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'ui-dom-audit-tests-'));
 try {
@@ -79,6 +80,10 @@ try {
     ['composer padding off its token (16 expected, 20 drawn)', () => { document.querySelector('#shelf').style.paddingLeft = '20px'; }, 'composer.surface'],
     ['host-scoped token without the matching padding', () => { const shelf = document.querySelector('#shelf'); shelf.parentElement.style.setProperty('--ui-content-gutter', '20px'); shelf.style.padding = '8px 16px'; }, 'composer.surface'],
     ['ordinary control beside a host-scoped composer', () => { document.querySelector('#shelf-wrapper').style.setProperty('--ui-content-gutter', '20px'); document.querySelector('#toolbar button').style.fontSize = '18px'; }, 'control.font-size'],
+    ['inert collection rows (no focus, no pointer, no link)', () => { const tr = document.querySelector('[data-collection-table] tbody tr'); tr.removeAttribute('tabindex'); tr.style.cursor = ''; }, 'collection.row-activatable'],
+    ['focusable row without a pointer cursor', () => { document.querySelector('[data-collection-table] tbody tr').style.cursor = 'default'; }, 'collection.row-activatable'],
+    ['static rows declared with a placeholder reason', () => { const host = document.querySelector('[data-collection-table]'); host.setAttribute('data-collection-rows', 'static'); host.setAttribute('data-collection-rows-reason', 'TODO'); }, 'collection.row-activatable'],
+    ['static rows declared without a reason', () => { document.querySelector('[data-collection-table]').setAttribute('data-collection-rows', 'static'); }, 'collection.row-activatable'],
     ['missing design token', () => document.documentElement.style.setProperty('--ui-control-sm', 'initial'), 'toolbar.control-height'],
   ];
   for (const [name, mutate, rule] of mutations) {
@@ -132,7 +137,109 @@ try {
   assert.ok(unknown.coverage.some(c => c.rule === 'composer.presence' && c.status === 'unclassified'), 'unreviewed pages remain visibly unclassified');
   assert.equal(unknown.issues.length, 0, 'an unreviewed page is not automatically required to have a composer');
   console.log('PASS composer policy: required, contextual exemption, geometry under exemption, malformed modes, placeholder rejection and unclassified coverage');
+
+  // Row activation: a row link or a static declaration with a reason is a valid
+  // inert-looking row; an ordinary inert row beside them still fails.
+  for (const [name, mutate] of [
+    ['row opened by its link', () => { const tr = document.querySelector('[data-collection-table] tbody tr'); tr.removeAttribute('tabindex'); tr.style.cursor = ''; tr.firstElementChild.innerHTML = '<a href="/records/1">Record</a>'; }],
+    ['rows declared static with a reason', () => { const host = document.querySelector('[data-collection-table]'); host.setAttribute('data-collection-rows', 'static'); host.setAttribute('data-collection-rows-reason', 'Read-only revisions of the open record.'); const tr = host.querySelector('tbody tr'); tr.removeAttribute('tabindex'); tr.style.cursor = ''; }],
+  ]) {
+    await page.setContent(html); await page.evaluate(mutate);
+    const valid = await measure();
+    assert.deepEqual(valid.issues.filter(i => i.rule === 'collection.row-activatable'), [], `${name} must pass: ${JSON.stringify(valid.issues)}`);
+  }
+  await page.setContent(html);
+  await page.evaluate(() => { const host = document.querySelector('[data-collection-table]'); host.setAttribute('data-collection-rows', 'static'); host.setAttribute('data-collection-rows-reason', 'Read-only revisions of the open record.');
+    const second = document.createElement('div'); second.setAttribute('data-collection-table', ''); second.innerHTML = '<table><tbody><tr><td>Other</td></tr></tbody></table>'; host.after(second); });
+  assert.ok((await measure()).issues.some(i => i.rule === 'collection.row-activatable' && i.property === 'row activation'), 'a static declaration on one table cannot exempt a neighbouring collection');
+  console.log('PASS row activation: activatable, linked and declared-static rows; inert rows, missing pointer, blank/placeholder reasons and a neighbouring table still fail');
   await page.close();
+
+  // Interaction rules: real clicks through the shared probes, judged by measureDOM.
+  const interactionHtml = `<!doctype html><html><head><style>body{margin:0;font:14px system-ui} table{border-collapse:collapse} td{height:44px;padding:0 12px} tr[tabindex]{cursor:pointer} #toolbar{height:40px;display:flex;align-items:center;gap:8px}</style></head><body>
+<main id="content"><div id="toolbar" data-toolbar-variant="collection"><input aria-label="Search"></div>
+<div data-collection-table data-collection-rows="activatable"><table><thead><tr><th></th><th>Team</th><th>Actions</th></tr></thead><tbody>
+<tr tabindex="0"><td><input type="checkbox" aria-label="Select A"></td><td>Team A</td><td><button aria-label="Revision history for A">H</button></td></tr>
+<tr tabindex="0"><td><input type="checkbox" aria-label="Select B"></td><td>Team B</td><td><button aria-label="Revision history for B">H</button></td></tr></tbody></table></div>
+<section id="record"></section></main>
+<script>
+const v = new URLSearchParams(location.search).get('v');
+const overlay = (attrs, text) => { const el = document.createElement('aside'); for (const [k, val] of Object.entries(attrs)) el.setAttribute(k, val); el.textContent = text; el.style.cssText = 'position:fixed;right:0;top:0;width:300px;height:100%;background:#fff'; document.body.append(el); };
+const open = tr => { history.pushState({}, '', '/list/' + tr.cells[1].textContent.replace(/\\s/g, '-') + location.search); document.querySelector('#record').textContent = 'Record ' + tr.cells[1].textContent; };
+document.querySelectorAll('tbody tr').forEach(tr => {
+  tr.addEventListener('keydown', e => { if (e.key === 'Enter' && v === 'route') open(tr); });
+  tr.addEventListener('click', e => {
+    if (e.target.closest('input,button')) return;
+    if (v === 'drawer') return overlay({ role: 'dialog', 'aria-modal': 'true', 'data-ui-dialog': 'drawer' }, 'Submission');
+    if (v === 'complementary') return overlay({ role: 'complementary', 'data-ui-dialog': 'drawer' }, 'Submission');
+    if (v === 'unmarked') return overlay({ role: 'dialog' }, 'Submission');
+    if (v === 'inert') return;
+    if (v === 'preselected' && tr === document.querySelector('tbody tr')) return;
+    if (v === 'writes') fetch('/api/mark-read', { method: 'POST' }).catch(() => {});
+    open(tr);
+    if (v === 'confirm') overlay({ role: 'dialog', 'data-ui-dialog': 'confirm' }, 'Discard draft?');
+    if (v === 'alert') overlay({ role: 'alertdialog' }, 'Discard draft?');
+    if (v === 'help') overlay({ role: 'dialog', 'data-ui-dialog': 'command-help' }, 'Available commands');
+  });
+});
+document.querySelectorAll('tbody button').forEach(b => b.addEventListener('click', () => {
+  if (v === 'history-section') { const s = document.createElement('section'); s.textContent = 'Revision history'; document.querySelector('#record').append(s); }
+  else overlay({ role: 'dialog', 'data-ui-dialog': 'drawer' }, 'Revision history');
+}));
+document.querySelectorAll('tbody input[type=checkbox]').forEach(cb => cb.addEventListener('change', () => {
+  const n = document.querySelectorAll('tbody input:checked').length, bar = document.querySelector('#toolbar');
+  if (v === 'band') { document.querySelector('#band')?.remove(); if (n) { const band = document.createElement('div'); band.id = 'band'; band.style.height = '36px'; band.textContent = n + ' selected'; bar.after(band); } }
+  else if (v === 'shrink') bar.style.height = n ? '32px' : '40px';
+  else bar.innerHTML = n ? '<span>' + n + ' selected</span><button>Clear selected</button>' : '<input aria-label="Search">';
+}));
+</script></body></html>`;
+  const interactionRules = ['record.popout', 'collection.row-activatable', 'collection.selection-shift'];
+  const interactionContract = { ...contract, rules: contract.rules.filter(r => interactionRules.includes(r.id)) };
+  const interactionContext = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+  await interactionContext.route('http://interaction.test/**', route => route.request().url().includes('/api/') ? route.fulfill({ status: 204 }) : route.fulfill({ contentType: 'text/html', body: interactionHtml }));
+  const ipage = await interactionContext.newPage();
+  const rows = '[data-collection-table] table > tbody > tr';
+  const judge = async (variant, enter) => {
+    await ipage.goto(`http://interaction.test/list?v=${variant}`);
+    const probe = await enter(ipage);
+    const result = await ipage.evaluate(measureDOM, { contract: interactionContract, selectors, probe });
+    return { probe, result, issues: result.issues };
+  };
+  const activate = page => probes.activateRow(page, { rows });
+  const history = page => probes.recordAction(page, { scope: 'main', name: /^(revision history|history|revisions|details)\b/i });
+  const select = page => probes.toggleSelection(page, { checkbox: `${rows} input[type="checkbox"]` });
+  for (const [variant, enter, rule, valid, label] of [
+    ['route', activate, 'record.popout', true, 'row click routes the record into the page'],
+    ['route', page => probes.activateRow(page, { rows, via: 'enter' }), 'record.popout', true, 'Enter on a focused row routes the record'],
+    ['preselected', activate, 'record.popout', true, 'the first row is already open; the next row routes'],
+    ['confirm', activate, 'record.popout', true, 'a confirmation (data-ui-dialog="confirm") beside the routed record'],
+    ['alert', activate, 'record.popout', true, 'an alertdialog beside the routed record'],
+    ['help', activate, 'record.popout', true, 'command help (data-ui-dialog="command-help")'],
+    ['history-section', history, 'record.popout', true, 'revision history drawn inside the record'],
+    ['drawer', activate, 'record.popout', false, 'row opens a modal drawer'],
+    ['complementary', activate, 'record.popout', false, 'row opens a non-modal drawer (complementary role, drawer marker)'],
+    ['unmarked', activate, 'record.popout', false, 'row opens an unmarked dialog'],
+    ['inert', activate, 'record.popout', false, 'row click changes nothing'],
+    ['writes', activate, 'record.popout', false, 'row activation attempts a write'],
+    ['route', history, 'record.popout', false, 'revision history action opens a drawer'],
+    ['in-place', select, 'collection.selection-shift', true, 'selection replaces the toolbar row in place'],
+    ['band', select, 'collection.selection-shift', false, 'selection inserts a band above the table'],
+    ['shrink', select, 'collection.selection-shift', false, 'selection changes the toolbar row height'],
+  ]) {
+    const { probe, issues } = await judge(variant, enter);
+    const hits = issues.filter(i => i.rule === rule);
+    if (valid) assert.deepEqual(hits, [], `${label} must pass ${rule}: ${JSON.stringify({ probe, issues })}`);
+    else assert.ok(hits.some(i => i.category === 'violation'), `${label} must fail ${rule}: ${JSON.stringify({ probe, issues })}`);
+    console.log(`PASS ${valid ? 'accepts' : 'detects'} ${label}`);
+  }
+  const blocked = await judge('writes', activate);
+  assert.deepEqual(blocked.probe.blockedWrites, ['POST /api/mark-read'], 'the probe blocks and reports the write it stopped');
+  await ipage.goto('http://interaction.test/list?v=drawer');
+  await ipage.locator(rows).first().click();
+  const unprobed = await ipage.evaluate(measureDOM, { contract: interactionContract, selectors });
+  assert.deepEqual(unprobed.issues.filter(i => i.rule !== 'collection.row-activatable'), [], 'without an activation probe a visible dialog (a Filters popover, say) is not judged');
+  assert.ok(unprobed.coverage.some(c => c.rule === 'record.popout' && c.matched === 0), 'an unprobed record.popout is reported as unexercised coverage');
+  await interactionContext.close();
   const adapter = {
     baseURL: 'http://audit.test', selectors,
     authenticate: async context => context.route('**/*', route => route.request().url().endsWith('/redirect') ? route.fulfill({ status: 302, headers: { location: 'http://audit.test/login' } }) : route.fulfill({ contentType: 'text/html', body: html })),
@@ -175,6 +282,25 @@ try {
   }, { out: path.join(temp, 'repaired'), themes: 'light', widths: '1280', height: 800, screenshots: false, previous });
   assert.equal(repaired.delta.resolved.length, 1, 'stable successful remeasurement can close the styling defect');
   assert.equal(repaired.delta.comparedCases, 1);
+  // The runner hands a state's probe result to the rules and keeps it in the report.
+  const interactionContractPath = path.join(temp, 'interaction.contract.json');
+  fs.writeFileSync(interactionContractPath, JSON.stringify(interactionContract));
+  const probed = await runAudit(browser, {
+    baseURL: 'http://interaction.test', selectors,
+    authenticate: async context => context.route('http://interaction.test/**', route => route.request().url().includes('/api/') ? route.fulfill({ status: 204 }) : route.fulfill({ contentType: 'text/html', body: interactionHtml })),
+    cases: async () => [
+      ...['drawer', 'route'].map(v => ({ tenant: 'fixture', path: `/list?v=${v}`, states: [{ name: 'row-activate', enter: (p, { probes: shared }) => shared.activateRow(p, { rows }) }] })),
+      // A list route's required regions (here a composer the record page lacks) bind a
+      // state that stays on the list, not one that navigated to the record.
+      ...[false, true].map(navigates => ({ tenant: 'fixture', path: '/list?v=route', required: ['$composers'], states: [{ name: navigates ? 'navigated' : 'stayed', navigates, enter: (p, { probes: shared }) => shared.activateRow(p, { rows }) }] })),
+    ],
+    ready: async p => p.locator('table').waitFor(), theme: async () => {},
+  }, { out: path.join(temp, 'probed'), contract: interactionContractPath, themes: 'light', widths: '1280', height: 800, screenshots: false });
+  assert.ok(probed.cases[0].issues.some(i => i.rule === 'record.popout'), 'runner judges the drawer opened by the row-activate state');
+  assert.equal(probed.cases[0].probe?.kind, 'row-activation', 'the probe is recorded with its case');
+  assert.deepEqual(probed.cases[1].issues, [], 'a routed record passes through the runner: ' + JSON.stringify(probed.cases[1].issues));
+  assert.ok(probed.cases[2].issues.some(i => i.rule === 'coverage.required'), 'a state that stays on the list keeps the list route\'s required regions');
+  assert.ok(!probed.cases[3].issues.some(i => i.rule === 'coverage.required'), 'a navigating state is judged on the page it reached: ' + JSON.stringify(probed.cases[3].issues));
 
   const cliBase = ['--project', path.resolve(project), '--adapter', path.join(temp, 'cli-adapter.mjs'), '--out', path.join(temp, 'cli')];
   assert.equal(parseAuditArgs([...cliBase, '--strict-coverage']).strictCoverage, true);

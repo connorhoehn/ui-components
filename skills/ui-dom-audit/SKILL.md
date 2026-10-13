@@ -27,7 +27,8 @@ too), so `/ui-dom-audit` loads these instructions and
 (`--tenant orgiq --path iq/`, `--tenant orgiq --path admin/`, `--tenant
 assessment --all`, `--tenant social --all`, `--tenant pipelines --all`) and
 never two runs at once: they share the fixture identity and a tenant switch
-revokes the other's cookie. Parity across tenants means every section reports
+revokes the other's cookie. A section whose matrix outgrows the 30-minute cap can raise it
+with `UI_DOM_AUDIT_TIMEOUT_MS`; the report is written only when the run ends. Parity across tenants means every section reports
 `0 findings; 0 composer policies unclassified` under `--strict-coverage`.
 
 The portable runner and contract live with this skill. Each frontend supplies a
@@ -68,7 +69,10 @@ installed Playwright. It uses computed styles, bounding rectangles and repeated
 measurements after fonts/layout settle. It does not attach to the user's tabs.
 Use adapter actions for navigation, local disclosure and view changes; this
 skill does not authorize sending chat messages, starting runs/calls or changing
-business records.
+business records. Interaction rules (a row activation, a record-detail action, a row
+selection) run through the shared read-only probes in `scripts/probes.mjs`,
+which block and report every write; see
+[interaction rules](references/contracts.md#interaction-rules-records-open-as-pages-selections-stay-put).
 
 Outputs: `report.json` contains exact rule, selector, expected/actual value,
 geometry, route/theme/width/state, coverage and source revision. `summary.txt`

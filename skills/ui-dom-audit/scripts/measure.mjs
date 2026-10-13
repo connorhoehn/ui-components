@@ -1,5 +1,5 @@
 /** Serializable browser-side collector. No React, application imports or network. */
-export function measureDOM({ contract, selectors, required = [], composerExpectation }) {
+export function measureDOM({ contract, selectors, required = [], composerExpectation, probe }) {
   const issues = [], coverage = [], samples = [];
   const selectorCache = new WeakMap();
   const tolerance = contract.tolerance ?? 1;
@@ -62,6 +62,9 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
     samples.push({ rule: rule.id, selector: selectorOf(el), property, actual, expected: wanted });
     if (!matches(actual, wanted, rule.tolerance ?? tolerance)) add(rule, el, property, wanted, actual);
   };
+  const PLACEHOLDER_REASON = /^(?:todo|tbd|n\/?a|none|null|undefined|exempt|not applicable|coming soon|[-?.…]+)[.!?]*$/i;
+  // The URL a reader would share: path and query, never a hash or the origin.
+  const urlKey = href => { try { const u = new URL(href); return u.pathname + u.search; } catch { return String(href); } };
   for (const name of required) if (query(name).length === 0) add({ id: 'coverage.required', selector: name }, null, 'rendered count', '>= 1', 0, 'coverage');
   for (const rule of contract.rules) {
     try {
@@ -91,7 +94,7 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
             if (!inputs.length) add(rule, nodes[0], 'composer input count', '>= 1 visible input inside composer', 0);
           }
         }
-        else if (mode === 'exempt' && (!reason || /^(?:todo|tbd|n\/?a|none|null|undefined|exempt|not applicable|coming soon|[-?.…]+)[.!?]*$/i.test(reason))) {
+        else if (mode === 'exempt' && (!reason || PLACEHOLDER_REASON.test(reason))) {
           add(rule, null, 'exemption reason', 'documented contextual reason, not blank or a placeholder', reason, 'coverage');
         }
       }
@@ -175,6 +178,59 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
         const anchor = el.parentElement?.closest(css(rule.boundary));
         if (!anchor) add(rule, el, 'composer boundary', css(rule.boundary), 'missing', 'coverage');
         else for (const edge of ['left', 'right']) check(rule, el, 'shelf ' + edge, rect(el)[edge] - rect(anchor)[edge], 0);
+      }
+      else if (rule.kind === 'record-popout') {
+        // Judged only after a row or record-detail action was activated (the
+        // state's probe). Allowed kinds are named by semantic marker.
+        const activation = probe?.kind === 'row-activation' ? probe : null;
+        Object.assign(coverage.at(-1), { matched: activation ? 1 : 0, ...(activation ? { trigger: activation.trigger } : {}) });
+        if (activation) {
+          const allowed = el => (rule.allow ?? []).some(a => el.matches(css(a)));
+          const popouts = nodes.filter(el => !allowed(el) && !nodes.some(other => other !== el && !allowed(other) && other.contains(el)));
+          samples.push({ rule: rule.id, selector: 'probe', property: `popouts after ${activation.trigger}`, actual: popouts.length, expected: 0 });
+          for (const el of popouts) add(rule, el, 'record surface', 'the record routed into the content column or split layout (no drawer/modal)', `${el.getAttribute('data-ui-dialog') ?? el.getAttribute('role') ?? el.tagName.toLowerCase()} opened by ${activation.trigger}${activation.label ? ` "${activation.label}"` : ''}`);
+          if (activation.trigger === 'row') {
+            const before = urlKey(activation.beforeUrl), after = urlKey(activation.afterUrl);
+            samples.push({ rule: rule.id, selector: 'probe', property: 'url changed by row activation', actual: before !== after, expected: true });
+            if (before === after) add(rule, null, 'url after row activation', `a record URL other than ${before}`, after);
+          }
+          if (activation.blockedWrites?.length) add(rule, null, 'writes during activation', 'none (activation is navigation)', activation.blockedWrites.join(', '));
+        }
+      }
+      else if (rule.kind === 'row-activatable') {
+        let rows = 0;
+        for (const table of nodes) {
+          const host = table.closest('[data-collection-rows]');
+          if (host?.getAttribute('data-collection-rows') === 'static') {
+            const reason = (host.getAttribute('data-collection-rows-reason') ?? '').trim();
+            samples.push({ rule: rule.id, selector: selectorOf(table), property: 'static rows reason', actual: reason, expected: 'documented reason' });
+            if (!reason || PLACEHOLDER_REASON.test(reason)) add(rule, table, 'static rows reason', 'documented reason, not blank or a placeholder', reason, 'coverage');
+            continue;
+          }
+          const body = [...table.querySelectorAll(':scope > tbody > tr')].filter(visible).filter(row => !row.querySelector('[colspan]'));
+          rows += body.length;
+          const activatable = row => {
+            const focusable = row.tabIndex >= 0 || ['link', 'button'].includes(row.getAttribute('role'));
+            return (focusable && getComputedStyle(row).cursor === 'pointer') || !!row.querySelector('td a[href]');
+          };
+          const inert = body.filter(row => !activatable(row));
+          samples.push({ rule: rule.id, selector: selectorOf(table), property: 'activatable rows', actual: body.length - inert.length, expected: body.length });
+          if (inert.length) add(rule, inert[0], 'row activation', 'focusable pointer row with a click target or a row link, or data-collection-rows="static" with a reason', `${inert.length} of ${body.length} rows inert`);
+        }
+        coverage.at(-1).rows = rows;
+      }
+      else if (rule.kind === 'selection-shift') {
+        const selection = probe?.kind === 'selection' ? probe : null;
+        coverage.at(-1).matched = selection ? 1 : 0;
+        if (selection) {
+          if (!selection.toggled) add(rule, null, 'selection toggle', 'checked then unchecked', JSON.stringify([selection.before.checked, selection.during.checked, selection.after.checked]), 'coverage');
+          if (selection.blockedWrites?.length) add(rule, null, 'writes during selection', 'none (selection is local state)', selection.blockedWrites.join(', '));
+          for (const phase of ['during', 'after']) for (const edge of ['tableTop', 'rowTop', 'rowBottom', 'rowLeft']) {
+            const delta = Math.round((selection[phase][edge] - selection.before[edge]) * 100) / 100;
+            samples.push({ rule: rule.id, selector: 'probe', property: `${edge} ${phase} selection`, actual: delta, expected: 0 });
+            if (Math.abs(delta) > (rule.tolerance ?? tolerance)) add(rule, null, `${edge} ${phase} selection`, 0, delta);
+          }
+        }
       }
     } catch (error) { add(rule, null, 'rule evaluation', 'valid selector/token/config', String(error.message), 'coverage'); }
   }
