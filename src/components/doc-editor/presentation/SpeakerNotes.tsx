@@ -71,7 +71,7 @@ export function SpeakerNotes({
         disabled={readOnly}
         placeholder={placeholder}
         onChange={(event) => onChange(event.target.value.slice(0, maxLength) || undefined)}
-        className="border-transparent bg-transparent px-0 text-[13px] focus:border-transparent"
+        className="border-transparent bg-transparent px-0 focus:border-transparent"
         data-testid={testId}
       />
     </section>

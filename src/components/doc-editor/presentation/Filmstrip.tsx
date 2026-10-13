@@ -488,11 +488,13 @@ export function Filmstrip({
         <div className="flex items-start gap-1.5">
           <span className="w-4 shrink-0" aria-hidden="true" />
           <Button
-            variant="ghost"
+            // A control is solid-bordered or borderless; the add affordance is
+            // the secondary button, not a dashed drop target (2.441.7).
+            variant="secondary"
             size="sm"
             disabled={!canAdd}
             onClick={onAdd}
-            className="min-w-0 flex-1 border border-dashed border-border text-text-secondary"
+            className="min-w-0 flex-1"
             data-testid={`${testIdPrefix}-add`}
           >
             <span className="inline-flex items-center gap-1"><PlusIcon size={12} />Add slide</span>

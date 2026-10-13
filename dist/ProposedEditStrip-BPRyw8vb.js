@@ -1360,7 +1360,7 @@ function nt(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
-var rt = se(() => import("./SortableSlideList-Cdfm3KwE.js"));
+var rt = se(() => import("./SortableSlideList-BSOBxqOY.js"));
 function it(e, t) {
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }
@@ -1710,11 +1710,11 @@ function ut({ items: e, selectedId: t, onSelect: n, onMove: a, onDuplicate: o, o
 					className: "w-4 shrink-0",
 					"aria-hidden": "true"
 				}), /* @__PURE__ */ K(i, {
-					variant: "ghost",
+					variant: "secondary",
 					size: "sm",
 					disabled: !l,
 					onClick: c,
-					className: "min-w-0 flex-1 border border-dashed border-border text-text-secondary",
+					className: "min-w-0 flex-1",
 					"data-testid": `${g}-add`,
 					children: /* @__PURE__ */ q("span", {
 						className: "inline-flex items-center gap-1",
@@ -1811,7 +1811,7 @@ function ft({ sources: e, onChange: t, options: n, onSearchSources: a, readOnly:
 							children: t.title
 						}),
 						n && /* @__PURE__ */ K("span", {
-							className: "ml-1.5 text-[10px] text-text-tertiary",
+							className: "ml-1.5 text-xs text-text-tertiary",
 							children: "added"
 						})
 					]
@@ -2526,7 +2526,7 @@ function jt({ value: e, onChange: t, readOnly: n = !1, maxLength: i = ze, placeh
 			disabled: n,
 			placeholder: a,
 			onChange: (e) => t(e.target.value.slice(0, i) || void 0),
-			className: "border-transparent bg-transparent px-0 text-[13px] focus:border-transparent",
+			className: "border-transparent bg-transparent px-0 focus:border-transparent",
 			"data-testid": s
 		})]
 	});

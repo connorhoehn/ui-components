@@ -97,7 +97,8 @@ function SortableRow({
           {...attributes}
           {...listeners}
           className={cn(
-            'mt-1 shrink-0 cursor-grab select-none touch-none border-none bg-transparent px-0.5 text-[11px] leading-none text-text-tertiary',
+            // 12px: a control's glyph on the meta step (11px before 2.441.7).
+            'mt-1 shrink-0 cursor-grab select-none touch-none border-none bg-transparent px-0.5 text-xs leading-none text-text-tertiary',
             isOver && !isDragging && 'text-info',
           )}
         >

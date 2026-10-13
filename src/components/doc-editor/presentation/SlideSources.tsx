@@ -177,7 +177,7 @@ export function SlideSources({
                 >
                   <span className="mr-1.5" aria-hidden="true">{KIND_ICON[option.kind ?? 'document']}</span>
                   <span className="truncate">{option.title}</span>
-                  {already && <span className="ml-1.5 text-[10px] text-text-tertiary">added</span>}
+                  {already && <span className="ml-1.5 text-xs text-text-tertiary">added</span>}
                 </Button>
               </li>
             );

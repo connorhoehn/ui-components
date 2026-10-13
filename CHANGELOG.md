@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.441.7
+
+`PresentationEditor` parts measured for the first time on a loaded deck (a control reads at 12 or 14px, solid-bordered or borderless).
+
+- **`SortableSlideList`**: the filmstrip drag handle's glyph is 12px (was 11px).
+- **`SpeakerNotes`**: the textarea uses the 14px `Textarea` default (it passed its own 13px).
+- **`SlideSources`**: an already-added option's "added" label is 12px (was 10px).
+- **`Filmstrip`**: "Add slide" is the solid `secondary` button (was a ghost button with a dashed border).
+
 ## 2.441.6
 
 - **`SplitPane`: the divider owns no layout width.** It was an 8px flex column, so the secondary pane began 8px right of the primary (the layout cascade measured a pane's trail 32px from the content edge instead of 24). The divider is now an overlay: the same 8px hit area, centred on the pane boundary by negative margins and stacked above both panes, with the same 1px line, drag, keyboard, focus and accessible name. The secondary pane begins exactly where the primary ends.

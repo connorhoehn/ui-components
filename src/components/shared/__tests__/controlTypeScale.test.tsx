@@ -17,6 +17,10 @@ import { GroupedList } from '../GroupedList';
 import { FileUploadDrop } from '../FileUploadDrop';
 import { WorkListView } from '../../work/WorkListView';
 import { ComposerReferences } from '../../social/ComposerReferences';
+import { SpeakerNotes } from '../../doc-editor/presentation/SpeakerNotes';
+import { SlideSources } from '../../doc-editor/presentation/SlideSources';
+import { Filmstrip } from '../../doc-editor/presentation/Filmstrip';
+import { SortableSlideList } from '../../doc-editor/presentation/SortableSlideList';
 
 afterEach(cleanup);
 
@@ -216,5 +220,40 @@ describe('ComposerReferences xs menu trigger (2.441.4)', () => {
     const trigger = screen.getByTestId('rich-chat-composer-references-menu-trigger');
     expect(trigger.className).toContain('text-xs');
     expect(trigger.className).not.toContain('text-[11px]');
+  });
+});
+
+describe('PresentationEditor parts (2.441.7)', () => {
+  const slide = (id: string, title: string) => ({ id, layout: 'bullets' as const, title, sources: [{ documentId: 'd1', title: 'Doc' }] });
+
+  it('flagged: the speaker-notes textarea passed its own 13px; it is the 14px Textarea default', () => {
+    render(<SpeakerNotes value="Say this" onChange={() => {}} data-testid="deck-editor-slide-notes" />);
+    const notes = screen.getByTestId('deck-editor-slide-notes');
+    expect(notes.className).toContain('text-sm');
+    expect(notes.className).not.toContain('text-[13px]');
+  });
+
+  it('flagged: an already-added source option labelled "added" at 10px; it is 12px', () => {
+    render(<SlideSources sources={[{ documentId: 'd1', title: 'Doc' }]} onChange={() => {}} options={[{ documentId: 'd1', title: 'Doc' }]} testIdPrefix="deck-editor-slide" />);
+    const option = screen.getByTestId('deck-editor-slide-source-option-d1');
+    expect(option.innerHTML).not.toMatch(OFF_SCALE);
+    expect(screen.getByText('added').className).toContain('text-xs');
+  });
+
+  it('flagged: the drag handle glyph was 11px; it is 12px', () => {
+    render(<SortableSlideList items={[{ slide: slide('title', 'Title'), uncited: false }, { slide: slide('two', 'Two'), uncited: false }]} selectedId="title"
+      onSelect={() => {}} onMove={() => {}} onDuplicate={() => {}} onDelete={() => {}} canDuplicate testIdPrefix="deck-editor-slide" />);
+    const handle = screen.getByTestId('deck-editor-slide-drag-handle-title');
+    expect(handle.className).toContain('text-xs');
+    expect(handle.className).not.toContain('text-[11px]');
+  });
+
+  it('flagged: "Add slide" had a dashed border; it is the solid secondary button', () => {
+    render(<Filmstrip items={[{ slide: slide('title', 'Title'), uncited: false }]} selectedId="title" onSelect={() => {}} onMove={() => {}}
+      onDuplicate={() => {}} onDelete={() => {}} onAdd={() => {}} canAdd testIdPrefix="deck-editor-slide" />);
+    const add = screen.getByTestId('deck-editor-slide-add');
+    expect(add.className).not.toContain('border-dashed');
+    expect(add).toHaveAttribute('data-variant', 'secondary');
+    expect(add).not.toHaveAttribute('data-ui-dropzone');
   });
 });

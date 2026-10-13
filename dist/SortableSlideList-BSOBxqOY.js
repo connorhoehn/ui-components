@@ -1,5 +1,5 @@
 import { t as e } from "./cn-D4QmbyEy.js";
-import { H as t } from "./ProposedEditStrip-B2vY32wY.js";
+import { H as t } from "./ProposedEditStrip-BPRyw8vb.js";
 import { jsx as n } from "react/jsx-runtime";
 import { DndContext as r, KeyboardSensor as i, PointerSensor as a, closestCenter as o, useSensor as s, useSensors as c } from "@dnd-kit/core";
 import { SortableContext as l, sortableKeyboardCoordinates as u, useSortable as d, verticalListSortingStrategy as f } from "@dnd-kit/sortable";
@@ -33,7 +33,7 @@ function p({ item: r, index: i, total: a, selectedId: o, readOnly: s, onSelect: 
 			"data-testid": `${h}-drag-handle-${r.slide.id}`,
 			...g,
 			..._,
-			className: e("mt-1 shrink-0 cursor-grab select-none touch-none border-none bg-transparent px-0.5 text-[11px] leading-none text-text-tertiary", b && !y && "text-info"),
+			className: e("mt-1 shrink-0 cursor-grab select-none touch-none border-none bg-transparent px-0.5 text-xs leading-none text-text-tertiary", b && !y && "text-info"),
 			children: "⋮⋮"
 		})
 	});
