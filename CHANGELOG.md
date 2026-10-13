@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.442.2
+
+- `RadioGroup` option labels are 14/500 (`text-sm`) and descriptions 12 (`text-xs`), on the app's control scale (were 13 and 11).
+
 ## 2.442.1
 
 - **`Input mono` names its value as code.** A monospace input (a URL, a regex, a cron expression, JSONPath) emits `data-ui-text="code"`, with or without a prefix/suffix, so the rendered-UI audit measures it on the code profile instead of failing it as an ordinary control in the wrong font. No visual change.

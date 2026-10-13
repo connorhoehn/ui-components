@@ -612,10 +612,10 @@ function ne({ name: e, value: n, onChange: r, options: i, disabled: a = !1, orie
 				}), /* @__PURE__ */ E("span", {
 					className: "flex flex-col",
 					children: [/* @__PURE__ */ T("span", {
-						className: t("text-[13px] leading-5 font-medium", a ? "text-text-tertiary" : "text-text-primary"),
+						className: t("text-sm leading-5 font-medium", a ? "text-text-tertiary" : "text-text-primary"),
 						children: i.label
 					}), i.description && /* @__PURE__ */ T("span", {
-						className: t("text-[11px] leading-4 mt-0.5", a ? "text-text-disabled" : "text-neutral"),
+						className: t("text-xs leading-4 mt-0.5", a ? "text-text-disabled" : "text-neutral"),
 						children: i.description
 					})]
 				})]

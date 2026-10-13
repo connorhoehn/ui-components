@@ -96,7 +96,7 @@ export function RadioGroup<T extends string = string>({
             <span className="flex flex-col">
               <span
                 className={cn(
-                  'text-[13px] leading-5 font-medium',
+                  'text-sm leading-5 font-medium',
                   disabled ? 'text-text-tertiary' : 'text-text-primary',
                 )}
               >
@@ -105,7 +105,7 @@ export function RadioGroup<T extends string = string>({
               {option.description && (
                 <span
                   className={cn(
-                    'text-[11px] leading-4 mt-0.5',
+                    'text-xs leading-4 mt-0.5',
                     disabled ? 'text-text-disabled' : 'text-neutral',
                   )}
                 >

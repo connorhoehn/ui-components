@@ -18,6 +18,7 @@ import { FileUploadDrop } from '../FileUploadDrop';
 import { WorkListView } from '../../work/WorkListView';
 import { ComposerReferences } from '../../social/ComposerReferences';
 import { SpeakerNotes } from '../../doc-editor/presentation/SpeakerNotes';
+import { RadioGroup } from '../../forms/RadioGroup';
 import { SlideSources } from '../../doc-editor/presentation/SlideSources';
 import { Filmstrip } from '../../doc-editor/presentation/Filmstrip';
 import { SortableSlideList } from '../../doc-editor/presentation/SortableSlideList';
@@ -305,5 +306,18 @@ describe('CollectionToolbar Filters popover focus (2.441.8)', () => {
     act(() => { fireEvent.keyDown(document.activeElement ?? document.body, { key: 'Escape' }); });
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(document.activeElement).toBe(trigger);
+  });
+});
+
+describe('RadioGroup option labels on the 12/14 scale (2.442.2)', () => {
+  it('flagged before: an option label at 13px and its description at 11px; now 14 (text-sm) and 12 (text-xs)', () => {
+    render(<RadioGroup name="who" aria-label="Who is it for?" value="self" onChange={() => {}}
+      options={[{ value: 'self', label: 'Myself', description: 'Approvers may request on behalf of a report.' }, { value: 'report', label: 'Someone who reports to me' }]} />);
+    const label = screen.getByText('Myself');
+    const description = screen.getByText('Approvers may request on behalf of a report.');
+    expect(label.className).toMatch(/\btext-sm\b/);
+    expect(label.className).not.toMatch(/text-\[13px\]/);
+    expect(description.className).toMatch(/\btext-xs\b/);
+    expect(description.className).not.toMatch(/text-\[11px\]/);
   });
 });
