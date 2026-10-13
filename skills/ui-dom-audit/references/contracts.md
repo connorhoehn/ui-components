@@ -220,7 +220,16 @@ Work enforcement covers the inspected RunsLedger pages `/pipelines/runs`,
 `/iq/runs`, `/assessment/runs`, the shared Contacts collection at
 `/social/contacts`, Pipeline Definitions, Runbooks, Queues, Artifacts, Approvals
 and source registries, plus existing DM/initiative contextual composers.
-Pipeline view policies live in the frontend adapter’s `ui-dom-audit.policies.ts`.
+Pipeline view policies live in the frontend adapter’s `ui-dom-audit.policies.ts`;
+since 2026-10-12 the same file's `tenantComposerPolicy` classifies the orgiq,
+assessment and social routes from evidence the adapter reads after the network
+settles (the inventory's list judge, a visible collection toolbar or searchable
+table, a visible composer, charts, a spatial canvas, a settings surface, a
+registration placeholder, the lab workspace, a chat directory with no selected
+conversation, an observed 404, a titled record), in an order that makes
+`required` win before any exemption. The adapter's documented route aliases
+(tenant roots and section indexes that `Navigate` to a front door) are listed
+with their reasons; any other redirect fails readiness.
 Exceptions require positive rendered evidence (graph controls, communication
 directory, configuration form or unavailable settings feature). A report’s
 missing-record state requires both a real 404 and its visible load-error view;
