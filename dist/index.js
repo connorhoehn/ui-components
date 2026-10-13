@@ -2509,7 +2509,7 @@ function $v({ primary: e, secondary: t, defaultRatio: n = .55, ratio: r, onRatio
 				onPointerUp: y,
 				onPointerCancel: y,
 				onKeyDown: b,
-				className: "group relative w-2 shrink-0 cursor-col-resize select-none touch-none bg-transparent outline-none focus-visible:bg-primary/20",
+				className: "group relative z-10 -mx-1 w-2 shrink-0 cursor-col-resize select-none touch-none bg-transparent outline-none focus-visible:bg-primary/20",
 				children: /* @__PURE__ */ Z("div", { className: "absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border transition-colors group-hover:bg-primary group-focus-visible:bg-primary" })
 			}),
 			/* @__PURE__ */ Z("div", {

@@ -1760,7 +1760,7 @@ export declare function duplicateSlide(spec: DeckSpec, id: string): DeckSpec;
 /** True when another tab of mine (same user, another socket) has unsaved edits to this deck. */
 export declare function editingInMyOtherTab(roster: readonly DeckRosterEntry[], documentId: string, ownClientId: string | null): boolean;
 
-export declare function EditorShell({ breadcrumbs, title, onTitleChange, titleLabel, kind, starred, onStarredChange, statusPill, path, crumbsTrailing, subtitle, metaBar, participants, onParticipantClick, onFollowParticipant, followingParticipantId, meta, saveState, headActions, tabs, activeTab, onTabChange, toolbar, children, footer, proposal, surface, explorer, workbench, label, variant, itemType, itemKey, titleSize, titleOverflow, tabsTrailing, className, 'data-testid': testId, }: EditorShellProps): JSX.Element;
+export declare function EditorShell({ breadcrumbs, title, onTitleChange, titleLabel, kind, starred, onStarredChange, statusPill, path, crumbsTrailing, subtitle, metaBar, participants, onParticipantClick, onFollowParticipant, followingParticipantId, meta, saveState, headActions, tabs, activeTab, onTabChange, toolbar, children, footer, proposal, surface, explorer, workbench, label, variant, itemType, itemKey, titleSize, titleAs: TitleTag, titleOverflow, tabsTrailing, className, 'data-testid': testId, }: EditorShellProps): JSX.Element;
 
 export declare interface EditorShellProps {
     /** The trail above the title — "Sprint planning / Sprint review". */
@@ -1865,9 +1865,18 @@ export declare interface EditorShellProps {
      * The title's size. `md` (default) is today's 20px bold document title (22px
      * in `work-item`). `lg` is a record's headline — 26px semibold — for a page
      * where the title IS the page heading and nothing sits above it but a crumb
-     * band. Hosts must not style the title themselves. Since 2.389.0.
+     * band. `sm` (since 2.441.6) is a record headline INSIDE a page — a pane
+     * of Review/Knowledge records — at the 14/600 heading step, so the page
+     * keeps its one 20px title. Hosts must not style the title themselves.
+     * Since 2.389.0.
      */
-    titleSize?: 'md' | 'lg';
+    titleSize?: 'sm' | 'md' | 'lg';
+    /**
+     * The read-only title's element. Default `h1`. A record headline inside a
+     * page (`titleSize="sm"`) may pass `h2` so the page keeps one h1. Since
+     * 2.441.6.
+     */
+    titleAs?: 'h1' | 'h2' | 'h3';
     /**
      * A read-only heading may wrap onto multiple lines. `truncate` (default)
      * keeps the existing single-line title. Editing still uses the fitted

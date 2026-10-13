@@ -161,9 +161,18 @@ export interface EditorShellProps {
    * The title's size. `md` (default) is today's 20px bold document title (22px
    * in `work-item`). `lg` is a record's headline — 26px semibold — for a page
    * where the title IS the page heading and nothing sits above it but a crumb
-   * band. Hosts must not style the title themselves. Since 2.389.0.
+   * band. `sm` (since 2.441.6) is a record headline INSIDE a page — a pane
+   * of Review/Knowledge records — at the 14/600 heading step, so the page
+   * keeps its one 20px title. Hosts must not style the title themselves.
+   * Since 2.389.0.
    */
-  titleSize?: 'md' | 'lg';
+  titleSize?: 'sm' | 'md' | 'lg';
+  /**
+   * The read-only title's element. Default `h1`. A record headline inside a
+   * page (`titleSize="sm"`) may pass `h2` so the page keeps one h1. Since
+   * 2.441.6.
+   */
+  titleAs?: 'h1' | 'h2' | 'h3';
   /**
    * A read-only heading may wrap onto multiple lines. `truncate` (default)
    * keeps the existing single-line title. Editing still uses the fitted
@@ -223,6 +232,7 @@ export function EditorShell({
   itemType,
   itemKey,
   titleSize = 'md',
+  titleAs: TitleTag = 'h1',
   titleOverflow = 'truncate',
   tabsTrailing,
   className,
@@ -239,7 +249,9 @@ export function EditorShell({
   const crumbsRow = workItem && ((breadcrumbs && breadcrumbs.length > 0) || trailing != null);
   const titleClass = titleSize === 'lg'
     ? 'text-[26px] font-semibold leading-8'
-    : workItem ? 'text-[22px] font-bold leading-7' : 'text-xl font-bold leading-6';
+    : titleSize === 'sm'
+      ? 'text-sm font-semibold leading-5'
+      : workItem ? 'text-[22px] font-bold leading-7' : 'text-xl font-bold leading-6';
   const idPrefix = `${testId}-${useId().replace(/:/g, '')}`;
   const hasTabs = !!tabs && tabs.length > 0;
   const currentTab = hasTabs ? (tabs!.some((t) => t.id === activeTab) ? activeTab! : tabs![0]!.id) : undefined;
@@ -351,8 +363,8 @@ export function EditorShell({
                   data-testid={`${testId}-title`}
                 />
               ) : (
-                <h1 className={cn('m-0 min-w-0 max-w-full flex-initial text-text-primary', titleClass,
-                  titleOverflow === 'wrap' ? 'whitespace-normal break-words' : 'truncate')} data-testid={`${testId}-title`}>{title}</h1>
+                <TitleTag className={cn('m-0 min-w-0 max-w-full flex-initial text-text-primary', titleClass,
+                  titleOverflow === 'wrap' ? 'whitespace-normal break-words' : 'truncate')} data-testid={`${testId}-title`} data-title-size={titleSize}>{title}</TitleTag>
               )}
               {onStarredChange && (
                 <IconButton

@@ -436,3 +436,25 @@ describe('EditorShell narrow-pane layout', () => {
     expect(strip).not.toContain('shrink-0');
   });
 });
+
+// 2.441.6: a record headline inside a page needs the 14/600 heading step so
+// the page keeps its one 20px title.
+describe('EditorShell titleSize="sm"', () => {
+  it('valid: the default title stays the 20px page title in an h1', () => {
+    render(<EditorShell title="Release plan"><p>x</p></EditorShell>);
+    const title = screen.getByTestId('editor-shell-title');
+    expect(title.tagName).toBe('H1');
+    expect(title.className).toContain('text-xl');
+  });
+  it('flagged: sm renders the record headline at 14/600, still an h1 unless the host passes titleAs', () => {
+    const { rerender } = render(<EditorShell title="Review rev-027" titleSize="sm"><p>x</p></EditorShell>);
+    const title = screen.getByTestId('editor-shell-title');
+    expect(title.tagName).toBe('H1');
+    expect(title.className).toContain('text-sm');
+    expect(title.className).toContain('font-semibold');
+    expect(title.className).not.toContain('text-xl');
+    rerender(<EditorShell title="Review rev-027" titleSize="sm" titleAs="h2"><p>x</p></EditorShell>);
+    expect(screen.getByTestId('editor-shell-title').tagName).toBe('H2');
+  });
+});
+

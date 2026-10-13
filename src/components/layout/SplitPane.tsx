@@ -142,7 +142,10 @@ export function SplitPane({
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
         onKeyDown={onKeyDown}
-        className="group relative w-2 shrink-0 cursor-col-resize select-none touch-none bg-transparent outline-none focus-visible:bg-primary/20"
+        // An overlay, not a column (2.441.6): the 8px hit area sits centred on
+        // the pane boundary and its negative margins give back its width, so
+        // the secondary pane begins exactly where the primary ends.
+        className="group relative z-10 -mx-1 w-2 shrink-0 cursor-col-resize select-none touch-none bg-transparent outline-none focus-visible:bg-primary/20"
       >
         <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border transition-colors group-hover:bg-primary group-focus-visible:bg-primary" />
       </div>
