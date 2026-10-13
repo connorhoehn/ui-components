@@ -26,10 +26,14 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
   };
   const rect = el => { const b = el.getBoundingClientRect(); return Object.fromEntries(['x', 'y', 'left', 'right', 'top', 'bottom', 'width', 'height'].map(k => [k, Math.round(b[k] * 100) / 100])); };
   const add = (rule, el, property, expected, actual, category = 'violation') => issues.push({ rule: rule.id, category, owner: rule.owner ?? 'shared UI contract', selector: el ? selectorOf(el) : css(rule.selector) ?? 'document', property, expected, actual, ...(el ? { bounds: rect(el) } : {}) });
-  const resolve = expected => {
+  // A token resolves on the document root, or — `scope: "element"` — on the
+  // measured element, so a host-scoped override of the token (a record pane
+  // setting its own content gutter) is the value that element must meet.
+  const resolve = (expected, el) => {
     if (!expected || typeof expected !== 'object') return expected;
     if (expected.token) {
-      const value = getComputedStyle(document.documentElement).getPropertyValue(expected.token).trim();
+      const host = expected.scope === 'element' && el ? el : document.documentElement;
+      const value = getComputedStyle(host).getPropertyValue(expected.token).trim();
       if (!value) throw new Error(`Missing design token ${expected.token}`);
       if (/^-?[\d.]+rem$/.test(value)) return parseFloat(value) * parseFloat(getComputedStyle(document.documentElement).fontSize);
       if (/^-?[\d.]+(?:px)?$/.test(value)) return parseFloat(value);
@@ -54,7 +58,7 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
     return String(actual).replace(/\s+/g, ' ').trim() === String(expected).replace(/\s+/g, ' ').trim();
   };
   const check = (rule, el, property, actual, expected) => {
-    const wanted = resolve(expected);
+    const wanted = resolve(expected, el);
     samples.push({ rule: rule.id, selector: selectorOf(el), property, actual, expected: wanted });
     if (!matches(actual, wanted, rule.tolerance ?? tolerance)) add(rule, el, property, wanted, actual);
   };

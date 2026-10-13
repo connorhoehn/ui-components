@@ -173,6 +173,8 @@ matrix and a narrow detail-page check are separate coverage: rerun both when
 both produced findings. Record the shared package version installed by the
 frontend, and rebuild/reinstall it before accepting DOM results.
 
+A token expectation resolves on the document root unless it says `"scope": "element"`, in which case it resolves on the measured element. The composer inset is `{"token": "--ui-content-gutter", "scope": "element"}`: `ComposerSurface` pads by that token, so a host that scopes it (a record pane setting `--ui-content-gutter` to 20px so its composer shares the record's one edge) is measured against its own value, and everywhere else the token's 16px default applies. A surface whose padding differs from the token in force still fails.
+
 A flush custom composer must reach its content edges in both filling and
 standalone chat panels. The latter often retains card padding even when the
 filling variant is correct. Keep the history's reading gutter independent of

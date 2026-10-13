@@ -294,7 +294,8 @@
       "input": "[contenteditable='true'], textarea",
       "boundary": "$composerBoundary",
       "inset": {
-        "token": "--ui-content-gutter"
+        "token": "--ui-content-gutter",
+        "scope": "element"
       },
       "owner": "ComposerSurface / conversation host"
     },
