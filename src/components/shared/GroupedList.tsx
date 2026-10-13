@@ -193,14 +193,14 @@ export interface GroupedListProps {
   reorderLabel?: (row: GroupedListRow) => string;
   /**
    * `sm` (default): 14px titles, 12px meta, a tinted current row. `md` — the
-   * Work column: 15px group headers and titles, 13px meta, taller rows, a
+   * Work column: 14px group headers (15px before 2.441.4), rail titles, 12px meta (13px before), taller rows, a
    * current row that is a rounded tint with a 3px primary bar on its left
    * edge, and a larger drag handle that is always visible.
    */
   size?: 'sm' | 'md';
   /**
    * How a group header reads. `title` (default): a sentence-case heading
-   * (14px, 15px at `md`) with its count in a neutral chip. `label`: a section
+   * (14px at both sizes since 2.441.4) with its count in a 12px neutral chip (10px before). `label`: a section
    * label — 11px uppercase semibold, letter-spaced, secondary ink — with the
    * count as plain muted text after it ("RECENTLY UPDATED 4"), for a list
    * whose groups are time bands rather than named things. Since 2.389.0.
@@ -639,7 +639,7 @@ export function GroupedList({
                   RAIL_GROUP_PAD_Y,
                   labelHeading
                     ? cn(RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK)
-                    : md ? 'text-[15px] font-semibold text-text-primary' : 'text-[14px] font-semibold text-text-primary',
+                    : 'text-sm font-semibold text-text-primary', // 14/600 at both sizes: a heading button is a control (md was 15px before 2.441.4)
                   'rounded-md hover:bg-surface-hover',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
                 )}
@@ -664,7 +664,7 @@ export function GroupedList({
                   </span>
                 )}
                 {typeof group.count === 'number' && !labelHeading && groupCountStyle !== 'plain' && (
-                  <Chip size="xs" tone="neutral" className={cn('shrink-0', countEnd)} aria-label={`${group.count} items`} data-testid={`${testId}-group-count-${group.id}`} data-count-align={groupCountAlign === 'end' ? 'end' : undefined}>
+                  <Chip size="md" tone="neutral" className={cn('shrink-0', countEnd)} aria-label={`${group.count} items`} data-testid={`${testId}-group-count-${group.id}`} data-count-align={groupCountAlign === 'end' ? 'end' : undefined}>
                     {group.count}
                   </Chip>
                 )}
@@ -847,7 +847,7 @@ function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onF
           {hasMeta && (
             <span
               data-testid={`${testId}-row-meta-${row.id}`}
-              className={cn('flex min-w-0 items-center gap-1.5 truncate text-text-secondary', md ? 'text-[13px] leading-5' : 'text-[12px] leading-4')}
+              className={cn('flex min-w-0 items-center gap-1.5 truncate text-text-secondary', md ? 'text-xs leading-5' : 'text-[12px] leading-4')}
             >
               {row.meta}
             </span>
@@ -895,7 +895,7 @@ function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onF
         </span>
       )}
       {row.trailing && (
-        <span className="flex shrink-0 items-center gap-1.5 text-[13px]" data-testid={`${testId}-row-trailing-${row.id}`}>
+        <span className="flex shrink-0 items-center gap-1.5 text-xs" data-testid={`${testId}-row-trailing-${row.id}`}>
           {row.trailing}
         </span>
       )}

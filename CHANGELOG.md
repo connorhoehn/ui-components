@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.441.4
+
+The last library-owned families on the orgiq /iq audit matrix (a control reads at 12 or 14px).
+
+- **`GroupedList`**: `size="md"` group headings are 14/600 (were 15px); the default chip group count is the 12px `Chip size="md"` (was the 10px `xs` chip inside the heading button); `md` row meta is 12px (was 13px); the row trailing slot is 12px (was 13px). Rail row titles keep the `rail-item` profile.
+- **`WorkListView`**: the sort control (select and menu) is 14px (was 15px); its rows, meta and group counts follow `GroupedList`.
+- **`ComposerReferences`**: the default `xs` chip, and so its menu trigger, is 12px (was 11px).
+
 ## 2.441.3
 
 Library-owned families from the 2026-10-12 four-tenant acceptance audit (a control reads at 12 or 14px in the page face).

@@ -39,7 +39,7 @@ import { t as Oe } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as ke, t as Ae } from "./ReactionPickerPopover-CDvPfdo2.js";
 import { n as je } from "./useComputeProjects-ZSazDRet.js";
 import "./QuoteBlock-qqQqscMP.js";
-import { i as Me, r as Ne } from "./composerSendError-CDdAqujg.js";
+import { i as Me, r as Ne } from "./composerSendError-Cz60kjWq.js";
 import { r as Pe } from "./PaneStatusLine-_boWR8wZ.js";
 import { Suspense as Fe, createContext as Ie, lazy as Le, useCallback as K, useContext as Re, useEffect as q, useId as ze, useMemo as J, useRef as Y, useState as X } from "react";
 import { Fragment as Z, jsx as Q, jsxs as $ } from "react/jsx-runtime";

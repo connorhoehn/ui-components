@@ -15,6 +15,8 @@ import { CodeBlock } from '../CodeBlock';
 import { SegmentedControl } from '../SegmentedControl';
 import { GroupedList } from '../GroupedList';
 import { FileUploadDrop } from '../FileUploadDrop';
+import { WorkListView } from '../../work/WorkListView';
+import { ComposerReferences } from '../../social/ComposerReferences';
 
 afterEach(cleanup);
 
@@ -178,5 +180,41 @@ describe('FileUploadDrop dashed drop target (2.441.3)', () => {
   it('flagged shape: an ordinary Button never carries the marker', () => {
     render(<Button variant="secondary">Browse</Button>);
     expect(screen.getByRole('button', { name: 'Browse' })).not.toHaveAttribute('data-ui-dropzone');
+  });
+});
+
+describe('WorkListView embedded rail (2.441.4)', () => {
+  const groups = [{ id: 'next', title: 'Next up' }];
+  const items = [{ id: 's4', groupId: 'next', title: 'Decommission legacy StatsD bridge', points: 5, owner: { id: 'lh', name: 'Layla Hassan' }, kindLabel: 'Story' }];
+  const sortOptions = [{ value: 'rank', label: 'Rank' }, { value: 'points', label: 'Points' }];
+  it.each(['select', 'menu'] as const)('flagged: meta 13px, %s sort 15px, group count 10px; now 12, 14, 12', (sortStyle) => {
+    render(<WorkListView groups={groups} items={items} query="" onQueryChange={() => {}} metaStyle="text" chrome="embedded"
+      sortOptions={sortOptions} sort="rank" onSortChange={() => {}} sortStyle={sortStyle} data-testid="initiative-work-rail" />);
+    const meta = screen.getByTestId('initiative-work-rail-groups-row-meta-s4');
+    expect(meta.className).toContain('text-xs');
+    expect(meta.className).not.toContain('text-[13px]');
+    const sort = screen.getByTestId('initiative-work-rail-toolbar-sort');
+    expect(sort.className).toContain('text-sm');
+    expect(sort.className).not.toContain('text-[15px]');
+    const count = screen.getByTestId('initiative-work-rail-groups-group-count-next');
+    expect(count.className).toContain('text-[12px]');
+    expect(count.className).not.toContain('text-[10px]');
+    // The row title stays on the rail-item profile.
+    expect(screen.getByText('Decommission legacy StatsD bridge')).toHaveAttribute('data-ui-text', 'rail-item');
+  });
+  it('flagged: GroupedList md group headings were 15px; they are 14/600', () => {
+    render(<GroupedList size="md" groups={[{ id: 'g', title: 'In progress' }]} rows={[]} data-testid="gl" />);
+    const heading = screen.getByRole('button', { name: /In progress/ });
+    expect(heading.className).toContain('text-sm');
+    expect(heading.className).not.toContain('text-[15px]');
+  });
+});
+
+describe('ComposerReferences xs menu trigger (2.441.4)', () => {
+  it('flagged: the xs menu trigger was 11px; it is 12px', () => {
+    render(<ComposerReferences references={[{ id: 'g', label: 'This guide', menu: [{ items: [{ label: 'This guide + sources', onSelect: () => {} }] }] }]} data-testid="rich-chat-composer-references" />);
+    const trigger = screen.getByTestId('rich-chat-composer-references-menu-trigger');
+    expect(trigger.className).toContain('text-xs');
+    expect(trigger.className).not.toContain('text-[11px]');
   });
 });

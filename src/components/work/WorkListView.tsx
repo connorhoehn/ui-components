@@ -452,7 +452,7 @@ export function WorkListToolbar({
       }
       triggerLabel={`${sortLabel}: ${current?.label ?? ''}`}
       triggerTestId={`${testId}-sort`}
-      triggerClassName="px-1 text-[15px] text-text-primary"
+      triggerClassName="px-1 text-sm text-text-primary"
       data-testid={`${testId}-sort-menu`}
       sections={[{
         items: sortOptions!.map((o) => ({
@@ -470,7 +470,7 @@ export function WorkListToolbar({
       onChange={(event) => onSortChange!(event.target.value)}
       options={sortOptions!}
       wrapperClassName="min-w-0 flex-1"
-      className="w-full text-[15px] text-text-primary"
+      className="w-full text-sm text-text-primary"
     />
   );
   const filterControl = filters ? (

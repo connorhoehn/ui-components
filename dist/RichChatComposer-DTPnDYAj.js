@@ -8,7 +8,7 @@ import { t as te } from "./Avatar-MKwdWqLr.js";
 import { t as ne } from "./RovingToolbar-B1Fai5PF.js";
 import { a as re, i as ie, n as ae, o as oe, s as se } from "./backdropTone-BzPocySl.js";
 import { i as ce, n as le, r as ue } from "./ReactionPickerPopover-CDvPfdo2.js";
-import { a as de, i as fe, l as pe, n as me, o as he, r as ge } from "./composerSendError-CDdAqujg.js";
+import { a as de, i as fe, l as pe, n as me, o as he, r as ge } from "./composerSendError-Cz60kjWq.js";
 import { Fragment as _e, forwardRef as ve, useCallback as ye, useEffect as be, useImperativeHandle as xe, useLayoutEffect as Se, useMemo as Ce, useRef as w, useState as T } from "react";
 import { Fragment as we, jsx as E, jsxs as D } from "react/jsx-runtime";
 import { EditorContent as Te, ReactRenderer as Ee, useEditor as De } from "@tiptap/react";

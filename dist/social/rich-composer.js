@@ -2,12 +2,12 @@ import { t as e } from "../cn-D4QmbyEy.js";
 import { c as t } from "../Button-uREUOWUk.js";
 import { c as n, l as r, n as i } from "../Text-D8wBtcfN.js";
 import { t as a } from "../Select-DcKBWGgP.js";
-import { a as o, c as s, i as c, l, n as u, r as d, t as f } from "../composerSendError-CDdAqujg.js";
+import { a as o, c as s, i as c, l, n as u, r as d, t as f } from "../composerSendError-Cz60kjWq.js";
 import { a as p, i as m, n as ee, r as h, t as te } from "../composerContext-BLn1-Nao.js";
 import { a as ne, i as g, n as re, o as ie, r as ae, s as _, t as v } from "../ConversationInputs-BAjd6VNH.js";
-import { a as oe, c as y, i as se, l as b, n as x, o as ce, r as le, s as ue, t as de, u as fe } from "../RichChatComposer-B_q9U1Nd.js";
-import { t as pe } from "../ContextComposer-DOlHHKom.js";
-import { t as me } from "../AgentComposerDock-B1H_YAiD.js";
+import { a as oe, c as y, i as se, l as b, n as x, o as ce, r as le, s as ue, t as de, u as fe } from "../RichChatComposer-DTPnDYAj.js";
+import { t as pe } from "../ContextComposer-DzK87jgT.js";
+import { t as me } from "../AgentComposerDock-DEJgHgMF.js";
 import { useCallback as S, useEffect as C, useMemo as w, useRef as T, useState as E } from "react";
 import { jsx as D, jsxs as he } from "react/jsx-runtime";
 function ge(e) {

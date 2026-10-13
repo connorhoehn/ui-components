@@ -18,8 +18,8 @@ import { i as Qe, n as $e, r as et, t as tt } from "./ToastProvider-CJAceUvq.js"
 import { t as nt } from "./useEventCallback-Cwx9QVSi.js";
 import { n as rt, r as it, t as at } from "./useAudioRecorder-BhPxnLmg.js";
 import { a as ot, c as st, i as ct, n as lt, o as ut, r as dt, s as ft, t as pt } from "./usePromptContext-CUNhKC01.js";
-import { a as mt, c as ht, d as gt, f as _t, i as vt, l as yt, m as bt, n as xt, o as St, p as Ct, r as wt, s as Tt, t as Et, u as Dt } from "./GroupedList-crnBsrBX.js";
-import { $ as Ot, A as kt, At, B as jt, C as Mt, Ct as Nt, D as Pt, Dt as Ft, E as It, Et as Lt, F as Rt, Ft as zt, G as Bt, H as Vt, I as Ht, It as Ut, J as Wt, K as Gt, L as Kt, M as qt, Mt as Jt, N as Yt, Nt as Xt, O as Zt, Ot as Qt, P as $t, Pt as en, Q as tn, R as nn, S as rn, St as an, T as on, Tt as sn, U as cn, V as ln, W as un, X as dn, Y as fn, Z as pn, _ as mn, _t as hn, a as gn, at as _n, b as vn, bt as yn, c as bn, ct as xn, d as Sn, dt as Cn, et as wn, f as Tn, ft as En, g as Dn, gt as On, h as kn, ht as An, i as jn, it as Mn, j as Nn, jt as Pn, k as Fn, kt as In, l as Ln, lt as Rn, m as zn, mt as Bn, n as Vn, nt as Hn, o as Un, ot as Wn, p as Gn, pt as Kn, q as qn, r as Jn, rt as Yn, s as Xn, st as Zn, t as Qn, tt as $n, u as er, ut as tr, v as nr, vt as rr, w as ir, wt as ar, x as or, xt as sr, y as cr, yt as lr, z as ur } from "./shared-Byux99XB.js";
+import { a as mt, c as ht, d as gt, f as _t, i as vt, l as yt, m as bt, n as xt, o as St, p as Ct, r as wt, s as Tt, t as Et, u as Dt } from "./GroupedList-o8Kp1hx3.js";
+import { $ as Ot, A as kt, At, B as jt, C as Mt, Ct as Nt, D as Pt, Dt as Ft, E as It, Et as Lt, F as Rt, Ft as zt, G as Bt, H as Vt, I as Ht, It as Ut, J as Wt, K as Gt, L as Kt, M as qt, Mt as Jt, N as Yt, Nt as Xt, O as Zt, Ot as Qt, P as $t, Pt as en, Q as tn, R as nn, S as rn, St as an, T as on, Tt as sn, U as cn, V as ln, W as un, X as dn, Y as fn, Z as pn, _ as mn, _t as hn, a as gn, at as _n, b as vn, bt as yn, c as bn, ct as xn, d as Sn, dt as Cn, et as wn, f as Tn, ft as En, g as Dn, gt as On, h as kn, ht as An, i as jn, it as Mn, j as Nn, jt as Pn, k as Fn, kt as In, l as Ln, lt as Rn, m as zn, mt as Bn, n as Vn, nt as Hn, o as Un, ot as Wn, p as Gn, pt as Kn, q as qn, r as Jn, rt as Yn, s as Xn, st as Zn, t as Qn, tt as $n, u as er, ut as tr, v as nr, vt as rr, w as ir, wt as ar, x as or, xt as sr, y as cr, yt as lr, z as ur } from "./shared-6HItQEJs.js";
 import { a as dr, c as fr, l as pr, n as V, o as mr, s as hr, t as gr } from "./Button-uREUOWUk.js";
 import { t as _r } from "./Card-CbTNNNkk.js";
 import { a as vr, i as yr, n as br, o as xr, r as Sr, t as Cr } from "./Table-zDkkvs-k.js";
@@ -90,11 +90,11 @@ import { t as Tc } from "./MetaLine-BtHTTScI.js";
 import { t as Ec } from "./Checkbox-C70AGFS5.js";
 import { n as Dc, t as Oc } from "./FileKindMark-DhjYpKjg.js";
 import { a as kc, i as Ac, n as jc, o as Mc, r as Nc, t as Pc } from "./DockedAside-DYAdUGa_.js";
-import { $ as Fc, A as Ic, B as Lc, C as Rc, D as zc, E as Bc, F as Vc, G as Hc, H as Uc, I as Wc, J as Gc, K as Kc, L as qc, M as Jc, N as Yc, O as Xc, P as Zc, Q as Qc, R as $c, S as el, T as tl, U as nl, V as rl, W as il, X as al, Y as ol, Z as sl, _ as cl, a as ll, at as ul, b as dl, c as fl, ct as pl, d as ml, et as hl, f as gl, g as _l, h as vl, i as yl, it as bl, j as xl, k as Sl, l as Cl, m as wl, n as Tl, nt as El, o as Dl, ot as Ol, p as kl, q as Al, r as jl, rt as Ml, s as Nl, st as Pl, t as Fl, tt as Il, u as Ll, v as Rl, w as zl, x as Bl, y as Vl, z as Hl } from "./social-B7g4HyoJ.js";
+import { $ as Fc, A as Ic, B as Lc, C as Rc, D as zc, E as Bc, F as Vc, G as Hc, H as Uc, I as Wc, J as Gc, K as Kc, L as qc, M as Jc, N as Yc, O as Xc, P as Zc, Q as Qc, R as $c, S as el, T as tl, U as nl, V as rl, W as il, X as al, Y as ol, Z as sl, _ as cl, a as ll, at as ul, b as dl, c as fl, ct as pl, d as ml, et as hl, f as gl, g as _l, h as vl, i as yl, it as bl, j as xl, k as Sl, l as Cl, m as wl, n as Tl, nt as El, o as Dl, ot as Ol, p as kl, q as Al, r as jl, rt as Ml, s as Nl, st as Pl, t as Fl, tt as Il, u as Ll, v as Rl, w as zl, x as Bl, y as Vl, z as Hl } from "./social-D6LkX62f.js";
 import { $ as Ul, A as Wl, B as Gl, C as Kl, D as ql, E as Jl, F as Yl, G as Xl, H as Zl, I as Ql, J as $l, K as eu, L as tu, M as nu, N as ru, O as iu, P as au, Q as ou, R as su, S as cu, T as lu, U as uu, V as du, W as fu, X as pu, Y as mu, Z as hu, _ as gu, a as _u, at as vu, b as yu, c as bu, ct as xu, d as Su, dt as Cu, et as wu, f as Tu, g as Eu, h as Du, i as Ou, it as ku, j as Au, k as ju, l as Mu, lt as Nu, m as Pu, n as Fu, nt as Iu, o as Lu, ot as Ru, p as zu, q as Bu, r as Vu, rt as Hu, s as Uu, st as Wu, t as Gu, tt as Ku, u as qu, ut as Ju, v as Yu, w as Xu, x as Zu, y as Qu, z as $u } from "./ConversationSurface-C0l2pa9n.js";
 import { t as ed } from "./activationKey-CjbL3LUv.js";
 import { B as td, C as nd, D as rd, E as id, F as ad, I as od, L as sd, M as cd, N as ld, O as ud, P as dd, R as fd, S as pd, T as md, V as hd, _ as gd, a as _d, b as vd, c as yd, d as bd, f as xd, g as Sd, h as Cd, i as wd, j as Td, l as Ed, m as Dd, n as Od, o as kd, p as Ad, r as jd, s as Md, t as Nd, u as Pd, v as Fd, w as Id, x as Ld, y as Rd, z as zd } from "./renderers-BWdD40qy.js";
-import { A as Bd, B as Vd, C as Hd, F as Ud, I as Wd, J as Gd, L as Kd, M as qd, N as Jd, O as Yd, P as Xd, R as Zd, X as Qd, Y as $d, Z as ef, h as tf, i as nf, j as rf, k as af, n as of, q as sf, r as cf, t as lf, z as uf } from "./ProposedEditStrip-Bm0Z5lrU.js";
+import { A as Bd, B as Vd, C as Hd, F as Ud, I as Wd, J as Gd, L as Kd, M as qd, N as Jd, O as Yd, P as Xd, R as Zd, X as Qd, Y as $d, Z as ef, h as tf, i as nf, j as rf, k as af, n as of, q as sf, r as cf, t as lf, z as uf } from "./ProposedEditStrip-B2vY32wY.js";
 import { n as df, r as ff, t as pf } from "./EventStreamContext-CLzG8O5_.js";
 import { B as mf, F as hf, H as gf, R as _f, Y as vf, _ as yf, bt as bf, c as xf, d as Sf, dt as Cf, f as wf, ft as Tf, g as Ef, h as Df, ht as Of, m as kf, mt as Af, n as jf, p as Mf, q as Nf, rt as Pf, t as Ff, u as If, v as Lf, xt as Rf, y as zf } from "./services-BWYsLheX.js";
 import { n as Bf, t as Vf } from "./ObservabilityContext-DpoDrm3T.js";
@@ -104,7 +104,7 @@ import { i as Am, n as jm, r as Mm, t as Nm } from "./ReactionPickerPopover-CDvP
 import { n as Pm } from "./useComputeProjects-ZSazDRet.js";
 import { n as Fm, t as Im } from "./QuoteBlock-qqQqscMP.js";
 import { t as Lm } from "./formatBytes-05ivRSJY.js";
-import { a as Rm, c as zm, i as Bm, l as Vm, n as Hm, o as Um, r as Wm, s as Gm, t as Km } from "./composerSendError-CDdAqujg.js";
+import { a as Rm, c as zm, i as Bm, l as Vm, n as Hm, o as Um, r as Wm, s as Gm, t as Km } from "./composerSendError-Cz60kjWq.js";
 import { $ as qm, A as Jm, B as Ym, C as Xm, D as Zm, E as Qm, F as $m, G as eh, H as th, I as nh, J as rh, K as ih, L as ah, M as oh, N as sh, O as ch, P as lh, Q as uh, R as dh, S as fh, T as ph, U as mh, V as hh, W as gh, X as _h, Y as vh, Z as yh, _ as bh, _t as xh, a as Sh, at as Ch, b as wh, c as Th, ct as Eh, d as Dh, dt as Oh, et as kh, f as Ah, ft as jh, g as Mh, gt as Nh, h as Ph, ht as Fh, i as Ih, it as Lh, j as Rh, k as zh, l as Bh, lt as Vh, m as Hh, mt as Uh, n as Wh, nt as Gh, o as Kh, ot as qh, p as Jh, pt as Yh, q as Xh, r as Zh, rt as Qh, s as $h, st as eg, t as tg, tt as ng, u as rg, ut as ig, v as ag, w as og, x as sg, y as cg, z as lg } from "./video-CV8XoHqA.js";
 import { A as ug, C as dg, D as fg, E as pg, M as mg, N as hg, O as gg, P as _g, S as vg, T as yg, _ as bg, a as xg, b as Sg, c as Cg, d as wg, f as Tg, g as Eg, h as Dg, i as Og, j as kg, k as Ag, l as jg, m as Mg, n as Ng, o as Pg, p as Fg, r as Ig, s as Lg, t as Rg, u as zg, v as Bg, w as Vg, x as Hg, y as Ug } from "./AudioVideoSettingsForm-DDk0PfZx.js";
 import { A as Wg, C as Gg, D as Kg, E as qg, O as Jg, S as Yg, T as Xg, _ as Zg, a as Qg, b as $g, c as e_, d as t_, f as n_, g as r_, h as i_, i as a_, k as o_, l as s_, m as c_, n as l_, o as u_, p as d_, r as f_, s as p_, t as m_, u as h_, v as g_, w as __, x as v_, y as y_ } from "./identity-DVkwwXY2.js";
@@ -1230,7 +1230,7 @@ function Ev() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var Dv = I_(() => import("./DocumentEditorPage-MIQ4p76r.js").then((e) => e.n));
+var Dv = I_(() => import("./DocumentEditorPage-YnoI_4t8.js").then((e) => e.n));
 function Ov({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;
@@ -3698,7 +3698,7 @@ function Qy({ query: e, onQueryChange: t, searchPlaceholder: n = "Search work…
 		})] }),
 		triggerLabel: `${o}: ${v?.label ?? ""}`,
 		triggerTestId: `${m}-sort`,
-		triggerClassName: "px-1 text-[15px] text-text-primary",
+		triggerClassName: "px-1 text-sm text-text-primary",
 		"data-testid": `${m}-sort-menu`,
 		sections: [{ items: i.map((e) => ({
 			label: String(e.label),
@@ -3712,7 +3712,7 @@ function Qy({ query: e, onQueryChange: t, searchPlaceholder: n = "Search work…
 		onChange: (e) => a(e.target.value),
 		options: i,
 		wrapperClassName: "min-w-0 flex-1",
-		className: "w-full text-[15px] text-text-primary"
+		className: "w-full text-sm text-text-primary"
 	}) : null, b = g ? /* @__PURE__ */ Z(io, {
 		activeCount: _,
 		onClear: u,
@@ -7636,7 +7636,7 @@ async function FS(e, t) {
 }
 //#endregion
 //#region src/components/social/AgentComposerDockLazy.tsx
-var IS = I_(() => import("./AgentComposerDock-B1H_YAiD.js").then((e) => e.n).then((e) => ({ default: e.AgentComposerDock })));
+var IS = I_(() => import("./AgentComposerDock-DEJgHgMF.js").then((e) => e.n).then((e) => ({ default: e.AgentComposerDock })));
 function LS(e) {
 	return /* @__PURE__ */ Z(N_, {
 		fallback: null,
@@ -7645,7 +7645,7 @@ function LS(e) {
 }
 //#endregion
 //#region src/components/social/ContextComposerLazy.tsx
-var RS = I_(() => import("./ContextComposer-DOlHHKom.js").then((e) => e.r).then((e) => ({ default: e.ContextComposer })));
+var RS = I_(() => import("./ContextComposer-DzK87jgT.js").then((e) => e.r).then((e) => ({ default: e.ContextComposer })));
 function zS(e) {
 	return /* @__PURE__ */ Z(N_, {
 		fallback: null,

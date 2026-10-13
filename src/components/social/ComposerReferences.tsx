@@ -59,7 +59,7 @@ export interface ComposerReferencesProps {
   /** Accessible name for a chip's remove button. */
   removeLabel?: (reference: ComposerReference) => string;
   className?: string;
-  /** Chip type. `xs` (default) is the 11px chip of a chat composer; `sm` is the 12px chip of a docked editor card (2.377.0). */
+  /** Chip type. `xs` (default) is the compact 12px chip of a chat composer (11px before 2.441.4); `sm` is the 12px chip of a docked editor card (2.377.0). */
   size?: 'xs' | 'sm' | 'md';
   'data-testid'?: string;
 }
@@ -85,7 +85,7 @@ export function ComposerReferences({
       {references.map((reference) => {
         const chipSize = size === 'md'
           ? 'gap-1.5 rounded-md bg-surface-inset py-1 pl-2.5 pr-1.5 text-xs'
-          : size === 'sm' ? 'py-1 text-xs' : 'py-0.5 text-[11px]';
+          : size === 'sm' ? 'py-1 text-xs' : 'py-0.5 text-xs'; // xs: 12px since 2.441.4 (a menu trigger is a control; was 11px)
         // A thing's own icon is data and is rendered as given; the fallback
         // glyph means "none chosen" and takes the colour of the text.
         const glyph = reference.icon

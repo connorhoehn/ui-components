@@ -5820,7 +5820,7 @@ export declare interface ComposerReferencesProps {
     /** Accessible name for a chip's remove button. */
     removeLabel?: (reference: ComposerReference) => string;
     className?: string;
-    /** Chip type. `xs` (default) is the 11px chip of a chat composer; `sm` is the 12px chip of a docked editor card (2.377.0). */
+    /** Chip type. `xs` (default) is the compact 12px chip of a chat composer (11px before 2.441.4); `sm` is the 12px chip of a docked editor card (2.377.0). */
     size?: 'xs' | 'sm' | 'md';
     'data-testid'?: string;
 }
@@ -10438,14 +10438,14 @@ export declare interface GroupedListProps {
     reorderLabel?: (row: GroupedListRow) => string;
     /**
      * `sm` (default): 14px titles, 12px meta, a tinted current row. `md` — the
-     * Work column: 15px group headers and titles, 13px meta, taller rows, a
+     * Work column: 14px group headers (15px before 2.441.4), rail titles, 12px meta (13px before), taller rows, a
      * current row that is a rounded tint with a 3px primary bar on its left
      * edge, and a larger drag handle that is always visible.
      */
     size?: 'sm' | 'md';
     /**
      * How a group header reads. `title` (default): a sentence-case heading
-     * (14px, 15px at `md`) with its count in a neutral chip. `label`: a section
+     * (14px at both sizes since 2.441.4) with its count in a 12px neutral chip (10px before). `label`: a section
      * label — 11px uppercase semibold, letter-spaced, secondary ink — with the
      * count as plain muted text after it ("RECENTLY UPDATED 4"), for a list
      * whose groups are time bands rather than named things. Since 2.389.0.

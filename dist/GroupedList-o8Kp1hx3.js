@@ -29,7 +29,7 @@ function j() {
 //#endregion
 //#region src/components/shared/CodeEditor.tsx
 var M = "'SF Mono', Menlo, monospace", N = 12, P = 1.5, F = N * P, I = 8, L = 10, R = 36;
-function ee({ value: e, onChange: n, language: r = "plain", placeholder: i, minLines: a = 4, maxLines: o = 20, readOnly: s = !1, variables: c, "aria-label": l }) {
+function z({ value: e, onChange: n, language: r = "plain", placeholder: i, minLines: a = 4, maxLines: o = 20, readOnly: s = !1, variables: c, "aria-label": l }) {
 	let u = S(null), [d, f] = C(!1), p = x(() => Math.max(1, e.split("\n").length), [e]), m = x(() => {
 		let e = Math.max(p, a), t = [];
 		for (let n = 1; n <= e; n++) t.push(String(n));
@@ -118,8 +118,8 @@ function ee({ value: e, onChange: n, language: r = "plain", placeholder: i, minL
 }
 //#endregion
 //#region src/components/shared/IconPicker.tsx
-var z = /* @__PURE__ */ "🔀.🔁.🔄.⚙️.🛠.🧰.🔧.⚡.🧠.💡.📊.📈.📉.📋.📝.📄.✉️.💬.📨.📤.📥.🔔.📢.📡.🚀.🎯.🎨.🧪.🔬.🔭.🧭.🗺.🗂.📁.🗃.🗄.💾.🔒.🔑.🛡.🌐.🔗.🔀.⏩.⏱.🔍.📌.🏷".split(".");
-function B({ emoji: e, active: n, onPick: r }) {
+var B = /* @__PURE__ */ "🔀.🔁.🔄.⚙️.🛠.🧰.🔧.⚡.🧠.💡.📊.📈.📉.📋.📝.📄.✉️.💬.📨.📤.📥.🔔.📢.📡.🚀.🎯.🎨.🧪.🔬.🔭.🧭.🗺.🗂.📁.🗃.🗄.💾.🔒.🔑.🛡.🌐.🔗.🔀.⏩.⏱.🔍.📌.🏷".split(".");
+function V({ emoji: e, active: n, onPick: r }) {
 	return /* @__PURE__ */ T("button", {
 		type: "button",
 		onClick: () => r(e),
@@ -129,8 +129,8 @@ function B({ emoji: e, active: n, onPick: r }) {
 		children: e
 	});
 }
-function V({ value: e, onChange: t, curated: n }) {
-	let [r, i] = C(!1), [a, s] = C(!1), [c, l] = C(""), u = S(null), d = S(null), f = n ?? z;
+function H({ value: e, onChange: t, curated: n }) {
+	let [r, i] = C(!1), [a, s] = C(!1), [c, l] = C(""), u = S(null), d = S(null), f = n ?? B;
 	y(() => {
 		if (!r) return;
 		let e = (e) => {
@@ -168,7 +168,7 @@ function V({ value: e, onChange: t, curated: n }) {
 			"data-testid": "icon-picker-popover",
 			children: [/* @__PURE__ */ T("div", {
 				className: "grid grid-cols-[repeat(8,28px)] gap-1",
-				children: f.map((t, n) => /* @__PURE__ */ T(B, {
+				children: f.map((t, n) => /* @__PURE__ */ T(V, {
 					emoji: t,
 					active: t === e,
 					onPick: p
@@ -199,8 +199,8 @@ function V({ value: e, onChange: t, curated: n }) {
 }
 //#endregion
 //#region src/components/shared/ImageLightbox.tsx
-var H = t("absolute top-1/2 -translate-y-1/2 flex items-center justify-center", "w-10 h-10 rounded-full bg-black/50 text-white text-xl leading-none", "hover:bg-black/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80");
-function U({ images: e, openIndex: n, onClose: i, onNavigate: a }) {
+var U = t("absolute top-1/2 -translate-y-1/2 flex items-center justify-center", "w-10 h-10 rounded-full bg-black/50 text-white text-xl leading-none", "hover:bg-black/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80");
+function W({ images: e, openIndex: n, onClose: i, onNavigate: a }) {
 	let o = S(null), c = S(null), [l, u] = C(n);
 	y(() => {
 		u(n);
@@ -278,7 +278,7 @@ function U({ images: e, openIndex: n, onClose: i, onNavigate: a }) {
 				type: "button",
 				"aria-label": "Previous image",
 				"data-testid": "image-lightbox-prev",
-				className: t(H, "left-3"),
+				className: t(U, "left-3"),
 				onClick: (e) => {
 					e.stopPropagation(), h(-1);
 				},
@@ -287,7 +287,7 @@ function U({ images: e, openIndex: n, onClose: i, onNavigate: a }) {
 				type: "button",
 				"aria-label": "Next image",
 				"data-testid": "image-lightbox-next",
-				className: t(H, "right-3"),
+				className: t(U, "right-3"),
 				onClick: (e) => {
 					e.stopPropagation(), h(1);
 				},
@@ -298,7 +298,7 @@ function U({ images: e, openIndex: n, onClose: i, onNavigate: a }) {
 }
 //#endregion
 //#region src/components/shared/TrendSparkline.tsx
-function W({ points: e, yMin: n, yMax: r, width: i = 120, height: a = 32, stroke: o = "currentColor", strokeWidth: s = 1.5, showLastPoint: c = !0, showFill: l = !0, ariaLabel: u, className: d }) {
+function G({ points: e, yMin: n, yMax: r, width: i = 120, height: a = 32, stroke: o = "currentColor", strokeWidth: s = 1.5, showLastPoint: c = !0, showFill: l = !0, ariaLabel: u, className: d }) {
 	let f = e.filter((e) => Number.isFinite(e));
 	if (f.length === 0) return /* @__PURE__ */ T("div", {
 		role: "img",
@@ -313,7 +313,7 @@ function W({ points: e, yMin: n, yMax: r, width: i = 120, height: a = 32, stroke
 	let p = Math.min(...f), m = Math.max(...f), h = n ?? (p === m ? p - 1 : p), g = r ?? (p === m ? m + 1 : m), _ = Math.max(1e-9, g - h), v = f.length === 1 ? 0 : i / (f.length - 1), y = s, b = a - y * 2, x = f.map((e, t) => ({
 		x: f.length === 1 ? i / 2 : t * v,
 		y: y + b - (e - h) / _ * b
-	})), S = x.map((e, t) => `${t === 0 ? "M" : "L"}${e.x.toFixed(2)},${e.y.toFixed(2)}`).join(" "), C = `${S} L${x[x.length - 1].x.toFixed(2)},${(a - y).toFixed(2)} L${x[0].x.toFixed(2)},${(a - y).toFixed(2)} Z`, w = x[x.length - 1], D = `Trend, ${f.length} points, starts ${G(f[0])}, ends ${G(f[f.length - 1])}`;
+	})), S = x.map((e, t) => `${t === 0 ? "M" : "L"}${e.x.toFixed(2)},${e.y.toFixed(2)}`).join(" "), C = `${S} L${x[x.length - 1].x.toFixed(2)},${(a - y).toFixed(2)} L${x[0].x.toFixed(2)},${(a - y).toFixed(2)} Z`, w = x[x.length - 1], D = `Trend, ${f.length} points, starts ${K(f[0])}, ends ${K(f[f.length - 1])}`;
 	return /* @__PURE__ */ T("div", {
 		role: "img",
 		"aria-label": u ?? D,
@@ -353,18 +353,18 @@ function W({ points: e, yMin: n, yMax: r, width: i = 120, height: a = 32, stroke
 		})
 	});
 }
-function G(e) {
+function K(e) {
 	return Math.abs(e) >= 100 ? e.toFixed(0) : Math.abs(e) >= 1 ? e.toFixed(2) : e.toFixed(3);
 }
 //#endregion
 //#region src/components/shared/TagEditor.tsx
-function K(e, t) {
+function q(e, t) {
 	let n = e.trim();
 	return t ? n.toLowerCase() : n;
 }
-function q({ "aria-label": e, value: t, onChange: n, placeholder: r = "add tag...", suggestions: i, lowercase: a = !0 }) {
+function ee({ "aria-label": e, value: t, onChange: n, placeholder: r = "add tag...", suggestions: i, lowercase: a = !0 }) {
 	let [o, s] = C(""), [c, l] = C(!1), u = S(null), d = (e) => {
-		let r = K(e, a);
+		let r = q(e, a);
 		if (r) {
 			if (t.includes(r)) {
 				s("");
@@ -437,18 +437,18 @@ function q({ "aria-label": e, value: t, onChange: n, placeholder: r = "add tag..
 //#endregion
 //#region src/components/shared/UserPicker.tsx
 var te = "";
-function ne(e, t) {
+function J(e, t) {
 	let n = e.displayName;
 	return typeof n == "string" && n.length > 0 ? n : t.slice(0, 8);
 }
-function J({ value: n, onChange: r, placeholder: i, maxSelect: a, presenceUsers: o, idToken: s, searchUsers: c, baseUrl: l }) {
+function Y({ value: n, onChange: r, placeholder: i, maxSelect: a, presenceUsers: o, idToken: s, searchUsers: c, baseUrl: l }) {
 	let u = j(), d = e(), f = o ?? u?.presenceUsers ?? [], p = s === void 0 ? d?.idToken ?? null : s, [m, h] = C(""), [g, _] = C(!1), [v, b] = C(0), [w, D] = C([]), O = S(null), k = S(null), A = x(() => {
 		let e = new Set(n), t = [];
 		for (let n of f) {
 			let r = n.metadata.userId ?? n.clientId;
 			e.has(r) || (e.add(r), t.push({
 				userId: r,
-				displayName: ne(n.metadata, r)
+				displayName: J(n.metadata, r)
 			}));
 		}
 		return t;
@@ -515,7 +515,7 @@ function J({ value: n, onChange: r, placeholder: i, maxSelect: a, presenceUsers:
 		} else e.key === "Escape" ? _(!1) : e.key === "Backspace" && !m && n.length > 0 && I(n[n.length - 1]);
 	}, R = (e) => {
 		let t = f.find((t) => (t.metadata.userId ?? t.clientId) === e);
-		if (t) return ne(t.metadata, e);
+		if (t) return J(t.metadata, e);
 		let n = w.find((t) => t.userId === e);
 		return n && n.displayName ? n.displayName : e;
 	};
@@ -576,7 +576,7 @@ function J({ value: n, onChange: r, placeholder: i, maxSelect: a, presenceUsers:
 }
 //#endregion
 //#region src/components/forms/RadioGroup.tsx
-function Y({ name: e, value: n, onChange: r, options: i, disabled: a = !1, orientation: o = "vertical", "data-testid": s }) {
+function ne({ name: e, value: n, onChange: r, options: i, disabled: a = !1, orientation: o = "vertical", "data-testid": s }) {
 	let c = b();
 	return /* @__PURE__ */ T("div", {
 		role: "radiogroup",
@@ -631,7 +631,7 @@ var re = {
 	md: "my-4",
 	lg: "my-6"
 };
-function X({ label: e, spacing: n = "md", className: r, "data-testid": i }) {
+function ie({ label: e, spacing: n = "md", className: r, "data-testid": i }) {
 	let a = re[n];
 	return e == null ? /* @__PURE__ */ T("hr", {
 		className: t("border-0 border-t border-border", a, r),
@@ -653,7 +653,7 @@ function X({ label: e, spacing: n = "md", className: r, "data-testid": i }) {
 }
 //#endregion
 //#region src/components/shared/DetailSection.tsx
-function ie({ title: e, hint: r, actions: i, first: a = !1, variant: o = "label", size: s, description: c, children: l, className: u, "data-testid": d }) {
+function ae({ title: e, hint: r, actions: i, first: a = !1, variant: o = "label", size: s, description: c, children: l, className: u, "data-testid": d }) {
 	let f = n("DetailSection", s, {
 		comfortable: "md",
 		compact: "sm"
@@ -696,7 +696,7 @@ function ie({ title: e, hint: r, actions: i, first: a = !1, variant: o = "label"
 		className: t(u),
 		...d ? { "data-testid": d } : {},
 		children: [
-			!a && /* @__PURE__ */ T(X, { spacing: "md" }),
+			!a && /* @__PURE__ */ T(ie, { spacing: "md" }),
 			/* @__PURE__ */ E("div", {
 				className: "mb-2 flex items-baseline gap-2",
 				children: [
@@ -715,7 +715,7 @@ function ie({ title: e, hint: r, actions: i, first: a = !1, variant: o = "label"
 		]
 	});
 }
-function ae(e, t, n) {
+function oe(e, t, n) {
 	let r = e.find((e) => e.id === t);
 	if (!r || t === n) return null;
 	if (n.startsWith("__grouped-list-group__:")) {
@@ -733,11 +733,11 @@ function ae(e, t, n) {
 		index: a
 	};
 }
-var Z = null;
-function oe() {
-	return Z ??= import("./GroupedListSortable-DzTojHzU.js").catch(() => null), Z;
+var X = null;
+function se() {
+	return X ??= import("./GroupedListSortable-DzTojHzU.js").catch(() => null), X;
 }
-var se = t("flex h-7 w-5 shrink-0 cursor-grab select-none touch-none items-center justify-center rounded border-0 bg-transparent p-0", "text-text-tertiary hover:text-text-secondary", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary");
+var Z = t("flex h-7 w-5 shrink-0 cursor-grab select-none touch-none items-center justify-center rounded border-0 bg-transparent p-0", "text-text-tertiary hover:text-text-secondary", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary");
 function ce(e) {
 	if (!e || typeof window > "u") return /* @__PURE__ */ new Set();
 	try {
@@ -762,22 +762,22 @@ function de(e) {
 	return t ? (t.getAttribute("aria-expanded") !== "true" && t.click(), !0) : !1;
 }
 function Q({ groups: e, rows: n, onOpenRow: r, rowMenu: a, rowMenuLabel: o, openGroups: s, onToggleGroup: c, storageKey: u, currentId: p = null, hideEmptyGroups: m = !1, onReorder: g, canReorder: v, reorderLabel: b, size: w = "sm", groupHeading: D = "title", currentStyle: O = "tint", groupCountStyle: k = "chip", groupCountAlign: A = "inline", rowStyle: j = "ruled", className: M, "data-testid": N = "grouped-list" }) {
-	let P = w === "md", F = D === "label", I = A === "end" ? "ml-auto pr-1" : void 0, L = s !== void 0, [R, ee] = C(() => {
+	let P = D === "label", F = A === "end" ? "ml-auto pr-1" : void 0, I = s !== void 0, [L, R] = C(() => {
 		let t = ce(u);
 		return e.forEach((e) => {
 			e.defaultOpen === !1 && !t.has(e.id) && t.add(e.id);
 		}), t;
-	}), z = _((e) => L ? s.includes(e) : !R.has(e), [
-		L,
+	}), z = _((e) => I ? s.includes(e) : !L.has(e), [
+		I,
 		s,
-		R
+		L
 	]), B = _((e, t) => {
-		L || ee((n) => {
+		I || R((n) => {
 			let r = new Set(n);
 			return t ? r.delete(e) : r.add(e), le(u, r), r;
 		}), c?.(e, t);
 	}, [
-		L,
+		I,
 		c,
 		u
 	]), V = x(() => {
@@ -799,25 +799,25 @@ function Q({ groups: e, rows: n, onOpenRow: r, rowMenu: a, rowMenuLabel: o, open
 		H,
 		V,
 		z
-	]), [W, G] = C(null), K = S(null), q = _((e) => !!g && (v ? v(e) : !e.disabled), [g, v]), [te, ne] = C(""), J = S(null), [Y, re] = C(null), [X, ie] = C(null), Z = S(/* @__PURE__ */ new Map()), se = !!g;
+	]), [W, G] = C(null), K = S(null), q = _((e) => !!g && (v ? v(e) : !e.disabled), [g, v]), [ee, te] = C(""), J = S(null), [Y, ne] = C(null), [re, ie] = C(null), ae = S(/* @__PURE__ */ new Map()), X = !!g;
 	y(() => {
-		if (!se || Y) return;
+		if (!X || Y) return;
 		let e = !0;
-		return oe().then((t) => {
-			e && t && re(t);
+		return se().then((t) => {
+			e && t && ne(t);
 		}), () => {
 			e = !1;
 		};
-	}, [se, Y]);
-	let Q = _((t, n, r) => {
+	}, [X, Y]);
+	let Z = _((t, n, r) => {
 		if (!g) return;
 		let i = e.find((e) => e.id === n), a = (V.get(n) ?? []).filter((e) => e.id !== t.id).length;
-		g(t.id, n, r), ne(`Moved ${t.title} to position ${r + 1} of ${a + 1} in ${i?.title ?? n}`);
+		g(t.id, n, r), te(`Moved ${t.title} to position ${r + 1} of ${a + 1} in ${i?.title ?? n}`);
 	}, [
 		g,
 		e,
 		V
-	]), pe = _((t, n) => {
+	]), Q = _((t, n) => {
 		let r = V.get(t.groupId) ?? [], i = r.findIndex((e) => e.id === t.id), a = null;
 		if (n === "ArrowUp" && i > 0) a = {
 			toGroupId: t.groupId,
@@ -834,7 +834,7 @@ function Q({ groups: e, rows: n, onOpenRow: r, rowMenu: a, rowMenuLabel: o, open
 				index: V.get(i.id)?.length ?? 0
 			});
 		}
-		a && (Q(t, a.toGroupId, a.index), J.current = {
+		a && (Z(t, a.toGroupId, a.index), J.current = {
 			id: t.id,
 			groupId: a.toGroupId,
 			index: a.index
@@ -842,17 +842,17 @@ function Q({ groups: e, rows: n, onOpenRow: r, rowMenu: a, rowMenuLabel: o, open
 	}, [
 		V,
 		e,
-		Q,
+		Z,
 		z,
 		B
-	]), me = _((e, t) => {
-		let r = n.find((t) => t.id === e), i = r && q(r) ? ae(n, e, t) : null;
-		r && i && Q(r, i.toGroupId, i.index);
+	]), pe = _((e, t) => {
+		let r = n.find((t) => t.id === e), i = r && q(r) ? oe(n, e, t) : null;
+		r && i && Z(r, i.toGroupId, i.index);
 	}, [
 		n,
 		q,
-		Q
-	]), he = x(() => {
+		Z
+	]), me = x(() => {
 		if (W && U.includes(W)) return W;
 		let e = n.find((e) => e.current || e.id === p), t = e ? `r:${e.id}` : null;
 		return t && U.includes(t) ? t : U[0] ?? null;
@@ -874,7 +874,7 @@ function Q({ groups: e, rows: n, onOpenRow: r, rowMenu: a, rowMenuLabel: o, open
 		let t = K.current?.querySelector(`[data-focus-key="${ue(`r:${e.id}`)}"]`);
 		t && t !== document.activeElement && $(`r:${e.id}`);
 	});
-	let ge = _((e) => {
+	let he = _((e) => {
 		let t = e.target;
 		if (t.closest("[role=\"menu\"]")) return;
 		let r = t.closest("[data-focus-key]")?.dataset.focusKey;
@@ -886,7 +886,7 @@ function Q({ groups: e, rows: n, onOpenRow: r, rowMenu: a, rowMenuLabel: o, open
 			if (a) return;
 			e.preventDefault();
 			let t = n.find((e) => e.id === o);
-			t && q(t) && pe(t, e.key);
+			t && q(t) && Q(t, e.key);
 			return;
 		}
 		if (e.key === "F10" && e.shiftKey || e.key === "ContextMenu") {
@@ -933,18 +933,18 @@ function Q({ groups: e, rows: n, onOpenRow: r, rowMenu: a, rowMenuLabel: o, open
 		V,
 		g,
 		q,
-		pe
-	]), _e = /* @__PURE__ */ E("div", {
+		Q
+	]), ge = /* @__PURE__ */ E("div", {
 		ref: K,
 		"data-testid": N,
 		className: t("flex flex-col", M),
-		onKeyDown: ge,
+		onKeyDown: he,
 		children: [g && /* @__PURE__ */ T("div", {
 			role: "status",
 			"aria-live": "polite",
 			className: "sr-only",
 			"data-testid": `${N}-reorder-status`,
-			children: te
+			children: ee
 		}), H.map((e) => {
 			let n = z(e.id), s = V.get(e.id) ?? [], c = `${N}-group-toggle-${e.id}`, u = `${N}-group-rows-${e.id}`, m = `g:${e.id}`;
 			return /* @__PURE__ */ E("section", {
@@ -955,10 +955,10 @@ function Q({ groups: e, rows: n, onOpenRow: r, rowMenu: a, rowMenuLabel: o, open
 				className: "flex flex-col",
 				children: [
 					/* @__PURE__ */ T("h3", {
-						className: t("m-0 rounded-md", X === e.id && "bg-primary/8"),
-						"data-drop-over": X === e.id || void 0,
+						className: t("m-0 rounded-md", re === e.id && "bg-primary/8"),
+						"data-drop-over": re === e.id || void 0,
 						ref: (t) => {
-							Z.current.set(e.id, t);
+							ae.current.set(e.id, t);
 						},
 						children: /* @__PURE__ */ E("button", {
 							type: "button",
@@ -967,11 +967,11 @@ function Q({ groups: e, rows: n, onOpenRow: r, rowMenu: a, rowMenuLabel: o, open
 							"data-focus-key": m,
 							"aria-expanded": n,
 							"aria-controls": u,
-							tabIndex: he === m ? 0 : -1,
+							tabIndex: me === m ? 0 : -1,
 							onFocus: () => G(m),
 							onClick: () => B(e.id, !n),
-							"data-heading": F ? "label" : void 0,
-							className: t("flex w-full items-center gap-2.5 border-0 bg-transparent px-2 text-left", h, F ? t(f, l) : P ? "text-[15px] font-semibold text-text-primary" : "text-[14px] font-semibold text-text-primary", "rounded-md hover:bg-surface-hover", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"),
+							"data-heading": P ? "label" : void 0,
+							className: t("flex w-full items-center gap-2.5 border-0 bg-transparent px-2 text-left", h, P ? t(f, l) : "text-sm font-semibold text-text-primary", "rounded-md hover:bg-surface-hover", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"),
 							children: [
 								/* @__PURE__ */ T("span", {
 									className: "grid h-5 w-5 shrink-0 place-items-center text-text-secondary",
@@ -986,25 +986,25 @@ function Q({ groups: e, rows: n, onOpenRow: r, rowMenu: a, rowMenuLabel: o, open
 									className: "truncate",
 									children: e.title
 								}),
-								typeof e.count == "number" && !F && k === "plain" && /* @__PURE__ */ T("span", {
-									className: t("shrink-0 text-xs font-medium tabular-nums text-text-secondary", I),
+								typeof e.count == "number" && !P && k === "plain" && /* @__PURE__ */ T("span", {
+									className: t("shrink-0 text-xs font-medium tabular-nums text-text-secondary", F),
 									"aria-label": `${e.count} items`,
 									"data-testid": `${N}-group-count-${e.id}`,
 									"data-count-style": "plain",
 									"data-count-align": A === "end" ? "end" : void 0,
 									children: e.count
 								}),
-								typeof e.count == "number" && F && /* @__PURE__ */ T("span", {
-									className: t("shrink-0", "text-[11px] font-medium leading-4 normal-case tracking-normal tabular-nums text-text-tertiary", I),
+								typeof e.count == "number" && P && /* @__PURE__ */ T("span", {
+									className: t("shrink-0", "text-[11px] font-medium leading-4 normal-case tracking-normal tabular-nums text-text-tertiary", F),
 									"aria-label": `${e.count} items`,
 									"data-testid": `${N}-group-count-${e.id}`,
 									"data-count-align": A === "end" ? "end" : void 0,
 									children: e.count
 								}),
-								typeof e.count == "number" && !F && k !== "plain" && /* @__PURE__ */ T(i, {
-									size: "xs",
+								typeof e.count == "number" && !P && k !== "plain" && /* @__PURE__ */ T(i, {
+									size: "md",
 									tone: "neutral",
-									className: t("shrink-0", I),
+									className: t("shrink-0", F),
 									"aria-label": `${e.count} items`,
 									"data-testid": `${N}-group-count-${e.id}`,
 									"data-count-align": A === "end" ? "end" : void 0,
@@ -1029,7 +1029,7 @@ function Q({ groups: e, rows: n, onOpenRow: r, rowMenu: a, rowMenuLabel: o, open
 							rowStyle: j,
 							testId: N,
 							size: w,
-							tabbable: he === `r:${e.id}`,
+							tabbable: me === `r:${e.id}`,
 							onFocusRow: () => G(`r:${e.id}`),
 							onOpenRow: r,
 							menuSections: a?.(e),
@@ -1042,7 +1042,7 @@ function Q({ groups: e, rows: n, onOpenRow: r, rowMenu: a, rowMenuLabel: o, open
 					}),
 					Y && /* @__PURE__ */ T(Y.GroupDropTarget, {
 						id: `__grouped-list-group__:${e.id}`,
-						getNode: () => Z.current.get(e.id) ?? null,
+						getNode: () => ae.current.get(e.id) ?? null,
 						onOverChange: (t) => ie((n) => t ? e.id : n === e.id ? null : n)
 					})
 				]
@@ -1051,9 +1051,9 @@ function Q({ groups: e, rows: n, onOpenRow: r, rowMenu: a, rowMenuLabel: o, open
 	});
 	return Y ? /* @__PURE__ */ T(Y.GroupedListDndRoot, {
 		ids: U.filter((e) => e.startsWith("r:")).map((e) => e.slice(2)),
-		onDrop: me,
-		children: _e
-	}) : _e;
+		onDrop: pe,
+		children: ge
+	}) : ge;
 }
 function fe({ row: e, current: n, currentStyle: r, rowStyle: i, testId: o, size: s, tabbable: l, onFocusRow: d, onOpenRow: f, menuSections: h, menuLabel: g, reorder: v }) {
 	let y = !!h && h.some((e) => e.items.length > 0), b = e.hoverSubline !== void 0 && e.hoverSubline !== null, x = e.meta !== void 0 && e.meta !== null, S = e.leading !== void 0 && e.leading !== null, w = `r:${e.id}`, D = s === "md", O = D || i === "plain", [k, A] = C({
@@ -1065,7 +1065,7 @@ function fe({ row: e, current: n, currentStyle: r, rowStyle: i, testId: o, size:
 		"aria-label": v?.label,
 		title: "Drag to reorder, or Alt+arrow keys on the row",
 		"data-testid": `${o}-row-handle-${e.id}`,
-		className: t(se, D && "h-8 w-6 text-text-secondary")
+		className: t(Z, D && "h-8 w-6 text-text-secondary")
 	}, N = /* @__PURE__ */ T(a, { size: D ? 20 : 14 });
 	return /* @__PURE__ */ E("li", {
 		"data-dragging": k.dragging || void 0,
@@ -1124,7 +1124,7 @@ function fe({ row: e, current: n, currentStyle: r, rowStyle: i, testId: o, size:
 							}),
 							x && /* @__PURE__ */ T("span", {
 								"data-testid": `${o}-row-meta-${e.id}`,
-								className: t("flex min-w-0 items-center gap-1.5 truncate text-text-secondary", D ? "text-[13px] leading-5" : "text-[12px] leading-4"),
+								className: t("flex min-w-0 items-center gap-1.5 truncate text-text-secondary", D ? "text-xs leading-5" : "text-[12px] leading-4"),
 								children: e.meta
 							}),
 							(e.subline !== void 0 || b) && /* @__PURE__ */ E("span", {
@@ -1150,7 +1150,7 @@ function fe({ row: e, current: n, currentStyle: r, rowStyle: i, testId: o, size:
 				children: e.hoverActions
 			}),
 			e.trailing && /* @__PURE__ */ T("span", {
-				className: "flex shrink-0 items-center gap-1.5 text-[13px]",
+				className: "flex shrink-0 items-center gap-1.5 text-xs",
 				"data-testid": `${o}-row-trailing-${e.id}`,
 				children: e.trailing
 			}),
@@ -1188,4 +1188,4 @@ function fe({ row: e, current: n, currentStyle: r, rowStyle: i, testId: o, size:
 	});
 }
 //#endregion
-export { J as a, U as c, ee as d, k as f, Y as i, z as l, A as m, ie as n, q as o, j as p, X as r, W as s, Q as t, V as u };
+export { Y as a, W as c, z as d, k as f, ne as i, B as l, A as m, ae as n, ee as o, j as p, ie as r, G as s, Q as t, H as u };
