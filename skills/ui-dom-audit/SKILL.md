@@ -17,6 +17,19 @@ geometry checks alone cannot certify a composer that is absent. See the
 [composer policy contract](references/contracts.md#composer-presence-policy) when
 adding a route family.
 
+**Claude Code.** This directory is a Claude Code skill (`SKILL.md` frontmatter):
+aws-agentcore links it as `.claude/skills/ui-dom-audit` (a user-level
+`~/.claude/skills/ui-dom-audit` or `~/.codex/skills/ui-dom-audit` link works
+too), so `/ui-dom-audit` loads these instructions and
+`npm --prefix portal run audit:ui -- …` finds the runner through
+`scripts/audit-ui-dom.cjs`. One Playwright test holds a whole run and caps at
+30 minutes, so run the acceptance matrix per tenant or section
+(`--tenant orgiq --path iq/`, `--tenant orgiq --path admin/`, `--tenant
+assessment --all`, `--tenant social --all`, `--tenant pipelines --all`) and
+never two runs at once: they share the fixture identity and a tenant switch
+revokes the other's cookie. Parity across tenants means every section reports
+`0 findings; 0 composer policies unclassified` under `--strict-coverage`.
+
 The portable runner and contract live with this skill. Each frontend supplies a
 small adapter for its existing route inventory, real sign-in helper, readiness,
 semantic selectors and read-only UI states. Keep tenant routes and authentication
@@ -30,7 +43,7 @@ repo or extending rules. For the existing aws-agentcore workspace, run from its
 root (the adapter is already present):
 
 ```bash
-node ~/.codex/skills/ui-dom-audit/scripts/audit.mjs \
+node .claude/skills/ui-dom-audit/scripts/audit.mjs \
   --project portal --adapter portal/e2e/ui-dom-audit.adapter.ts \
   --tenant pipelines --path /pipelines/runs \
   --themes light,dark --widths 1440,900 --out .scratch/ui-dom-audit
@@ -103,7 +116,7 @@ failed or runtime-failed cases are reported as unverified, never called fixed.
    sweep with a clean entire application.
 
 ```bash
-node ~/.codex/skills/ui-dom-audit/scripts/self-test.mjs --project portal
+node .claude/skills/ui-dom-audit/scripts/self-test.mjs --project portal
 ```
 
 The default contract describes this app's compact UI, not universal design
