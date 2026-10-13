@@ -22,8 +22,9 @@ aws-agentcore links it as `.claude/skills/ui-dom-audit` (a user-level
 `~/.claude/skills/ui-dom-audit` or `~/.codex/skills/ui-dom-audit` link works
 too), so `/ui-dom-audit` loads these instructions and
 `npm --prefix portal run audit:ui -- …` finds the runner through
-`scripts/audit-ui-dom.cjs`. One Playwright test holds a whole run and caps at
-30 minutes, so run the acceptance matrix per tenant or section
+`scripts/audit-ui-dom.cjs`. One Playwright test holds a whole run (cap: `UI_DOM_AUDIT_TIMEOUT_MS`,
+30 minutes by default; aws-agentcore's wrapper sets 60 because the interaction
+probes lengthen the larger sections), so run the acceptance matrix per tenant or section
 (`--tenant orgiq --path iq/`, `--tenant orgiq --path admin/`, `--tenant
 assessment --all`, `--tenant social --all`, `--tenant pipelines --all`) and
 never two runs at once: they share the fixture identity and a tenant switch
