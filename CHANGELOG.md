@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.442.1
+
+- **`Input mono` names its value as code.** A monospace input (a URL, a regex, a cron expression, JSONPath) emits `data-ui-text="code"`, with or without a prefix/suffix, so the rendered-UI audit measures it on the code profile instead of failing it as an ordinary control in the wrong font. No visual change.
+
 ## 2.442.0
 
 Records open as pages, selections never move the table, and dialogs say what they are (the rendered-UI audit's `record.popout`, `collection.row-activatable` and `collection.selection-shift` rules read these).

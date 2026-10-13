@@ -18,7 +18,7 @@ const contract = JSON.parse(fs.readFileSync(new URL('../references/work-ui.contr
 validateContract(contract);
 const selectors = {
   graphDetailLabels: '[data-ui-text="graph-detail"]', graphMetadataLabels: '[data-ui-text="graph-metadata"]', activePersonCaptions: '[data-ui-text="active-person-caption"]',
-  codeLabels: 'code', railCaptionLabels: '.rail-label, button[data-heading="label"][data-focus-key^="g:"] > span, [data-ui-text="rail-caption"]', railItemLabels: '[data-ui-text="rail-item"]', conversationLabels: '.conversation-label', conversationMetadata: '.conversation-meta', decorativeText: '[aria-hidden="true"]', rowMenuGlyphs: '.row-glyph', keyboardHints: 'kbd', captions: '[data-ui-text="caption"]', tenantControl: '.no-brand', tickerControl: '.no-ticker', avatarControl: '[data-ui-text="avatar"]', header: '#header', footer: '#footer', footerRow: '#footer', shellColumns: '#shell', nestedColumns: '.no-nested', workspaceColumns: '#workspace', splitColumns: '.no-split',
+  codeLabels: 'code, input[data-ui-text="code"]', railCaptionLabels: '.rail-label, button[data-heading="label"][data-focus-key^="g:"] > span, [data-ui-text="rail-caption"]', railItemLabels: '[data-ui-text="rail-item"]', conversationLabels: '.conversation-label', conversationMetadata: '.conversation-meta', decorativeText: '[aria-hidden="true"]', rowMenuGlyphs: '.row-glyph', keyboardHints: 'kbd', captions: '[data-ui-text="caption"]', tenantControl: '.no-brand', tickerControl: '.no-ticker', avatarControl: '[data-ui-text="avatar"]', header: '#header', footer: '#footer', footerRow: '#footer', shellColumns: '#shell', nestedColumns: '.no-nested', workspaceColumns: '#workspace', splitColumns: '.no-split',
   controls: 'button,input,select,textarea,[role="button"]', railHeaders: '.rail-caption', toolbarControls: '#toolbar button', collections: '#collection', collectionToolbars: '#toolbar', sectionTitles: '#section',
   tables: 'table', collectionTables: '[data-collection-table] table', composers: '#shelf', nestedComposers: '#shelf [data-composer-surface]', composerBoundary: 'section:has(> [data-collection-command-boundary="embedded"]), #content',
 };
@@ -84,6 +84,8 @@ try {
     ['focusable row without a pointer cursor', () => { document.querySelector('[data-collection-table] tbody tr').style.cursor = 'default'; }, 'collection.row-activatable'],
     ['static rows declared with a placeholder reason', () => { const host = document.querySelector('[data-collection-table]'); host.setAttribute('data-collection-rows', 'static'); host.setAttribute('data-collection-rows-reason', 'TODO'); }, 'collection.row-activatable'],
     ['static rows declared without a reason', () => { document.querySelector('[data-collection-table]').setAttribute('data-collection-rows', 'static'); }, 'collection.row-activatable'],
+    ['monospace input without the code marker', () => { const i = document.createElement('input'); i.value = '0 */4 * * *'; i.style.cssText = 'font-family:monospace;font-size:12px;height:28px;border:1px solid black'; document.querySelector('#toolbar').append(i); }, 'control.font-family'],
+    ['marked code input off the code profile', () => { const i = document.createElement('input'); i.value = '/docs/.*'; i.setAttribute('data-ui-text', 'code'); i.style.cssText = 'font-family:serif;font-size:12px;height:28px;border:1px solid black'; document.querySelector('#toolbar').append(i); }, 'code.typography'],
     ['missing design token', () => document.documentElement.style.setProperty('--ui-control-sm', 'initial'), 'toolbar.control-height'],
   ];
   for (const [name, mutate, rule] of mutations) {
@@ -138,6 +140,10 @@ try {
   assert.equal(unknown.issues.length, 0, 'an unreviewed page is not automatically required to have a composer');
   console.log('PASS composer policy: required, contextual exemption, geometry under exemption, malformed modes, placeholder rejection and unclassified coverage');
 
+  await page.setContent(html);
+  await page.evaluate(() => { const i = document.createElement('input'); i.value = 'https://example.com/docs'; i.setAttribute('data-ui-text', 'code'); i.style.cssText = 'font-family:monospace;font-size:12px;height:28px;border:1px solid black'; document.querySelector('#toolbar').append(i); });
+  assert.deepEqual((await measure()).issues, [], 'a marked code input (Input mono) is measured on the code profile');
+  console.log('PASS a marked monospace input passes; unmarked or off-profile ones fail');
   // Row activation: a row link or a static declaration with a reason is a valid
   // inert-looking row; an ordinary inert row beside them still fails.
   for (const [name, mutate] of [

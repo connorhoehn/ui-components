@@ -25,6 +25,7 @@ describe('Input', () => {
   it('mono renders a monospace value', () => {
     render(<Input mono aria-label="Cron" onChange={() => {}} />);
     expect(screen.getByLabelText('Cron').className).toContain('font-mono');
+    expect(screen.getByLabelText('Cron')).toHaveAttribute('data-ui-text', 'code');
   });
 
   it('renders prefix and suffix slots', () => {
@@ -38,5 +39,11 @@ describe('Input', () => {
   it('disabled blocks input', () => {
     render(<Input disabled aria-label="D" onChange={() => {}} />);
     expect(screen.getByLabelText('D')).toBeDisabled();
+  });
+  it('an ordinary input carries no code marker, with or without a prefix', () => {
+    render(<><Input aria-label="Name" onChange={() => {}} /><Input aria-label="Price" prefix="$" onChange={() => {}} /><Input aria-label="Path" prefix="/" mono onChange={() => {}} /></>);
+    expect(screen.getByLabelText('Name')).not.toHaveAttribute('data-ui-text');
+    expect(screen.getByLabelText('Price')).not.toHaveAttribute('data-ui-text');
+    expect(screen.getByLabelText('Path')).toHaveAttribute('data-ui-text', 'code');
   });
 });

@@ -84,6 +84,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           sizeClasses[size],
           className,
         )}
+        // A monospace value (a URL, regex, cron, JSONPath) is code: say so, so a
+        // rendered-UI audit measures it on the code profile, not as a stray font.
+        {...(mono ? { 'data-ui-text': 'code' } : {})}
         {...rest}
       />
     );
@@ -128,6 +131,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           mono && 'font-mono',
           className,
         )}
+        {...(mono ? { 'data-ui-text': 'code' } : {})}
         {...rest}
       />
       {hasSuffix && (

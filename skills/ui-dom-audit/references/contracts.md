@@ -282,6 +282,13 @@ would enlarge the shell and evade the original compact-layout requirement.
 GroupedList label headings bind through `button[data-heading="label"][data-focus-key^="g:"] > span`; their title and count both use the 11px rail profile. Plain rail rows and medium rows emit `data-ui-text="rail-item"` on the title alone (13px, weight 500, line height 20px). Since ui-components 2.441.0 every railType row title emits that marker (StackedRail, SubNavLayout, NavRail, RailNavList and `TreeView size="rail"`, not only GroupedList), and StackedRail's caption and group heading label/count emit `data-ui-text="rail-caption"` (the 11px profile); a frontend adapter should include `[data-ui-text="rail-caption"]` in `railCaptionLabels` rather than binding each rail's structure. Pills, metadata and neighboring actions remain outside that marker. Every named typography variant needs evidence in the shared component's source, a valid fixture and a failing mutation. Include an ordinary sibling control in the fixture and prove its mutation still fails, so the variant cannot silently exempt an entire row.
 
 
+Library `Input mono` (a URL, regex, cron or JSONPath value) emits
+`data-ui-text="code"` since ui-components 2.442.1; bind it in `codeLabels`
+(`input[data-ui-text="code"]`) so it is measured on the code profile. An
+unmarked monospace input still fails the ordinary control font-family, and a
+marked one off the code profile fails `code.typography` (fixture pair).
+
+
 ## Composer presence policy
 
 Geometry alone cannot catch a composer that was never rendered. Cases can declare
