@@ -114,10 +114,11 @@ describe('ScopeHeader peopleStyle="inline"', () => {
 
 describe('ScopeHeader tabSize', () => {
   const tabs = [{ id: 'o', label: 'Overview' }, { id: 'w', label: 'Work', count: 11 }];
-  it('md makes 15px tabs at the default title size', () => {
+  it('md makes 14px tabs at the default title size (15px before 2.441.3: a tab is a control)', () => {
     render(<ScopeHeader title="Obs" tabs={tabs} tabSize="md" />);
     const tab = screen.getByRole('tab', { name: /Overview/ });
-    expect(tab.className).toContain('text-[15px]');
+    expect(tab.className).toContain('text-sm');
+    expect(tab.className).not.toContain('text-[15px]');
     // 2.396.0: the bar starts at the content edge, the label 4px in.
     expect(tab.className).toContain('pl-1');
     expect(tab.className).toContain('pr-3');
@@ -157,11 +158,12 @@ describe('ScopeHeader tabSize', () => {
     expect(screen.getByTestId('scope-header')).not.toHaveAttribute('data-tabs-rule');
     expect(screen.getByRole('tablist').className).toContain('border-b-0');
   });
-  it('absent keeps 14px at md and 15px at lg; sm forces 14px at lg', () => {
+  it('every tab size is 14px, at md and lg titles alike (2.441.3)', () => {
     const { rerender } = render(<ScopeHeader title="Obs" tabs={tabs} />);
     expect(screen.getByRole('tab', { name: /Overview/ }).className).not.toContain('text-[15px]');
     rerender(<ScopeHeader title="Obs" tabs={tabs} titleSize="lg" />);
-    expect(screen.getByRole('tab', { name: /Overview/ }).className).toContain('text-[15px]');
+    expect(screen.getByRole('tab', { name: /Overview/ }).className).toContain('text-sm');
+    expect(screen.getByRole('tab', { name: /Overview/ }).className).not.toContain('text-[15px]');
     rerender(<ScopeHeader title="Obs" tabs={tabs} titleSize="lg" tabSize="sm" />);
     expect(screen.getByRole('tab', { name: /Overview/ }).className).not.toContain('text-[15px]');
   });

@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.441.3
+
+Library-owned families from the 2026-10-12 four-tenant acceptance audit (a control reads at 12 or 14px in the page face).
+
+- **`Breadcrumbs size="sm"`** is the 12px meta step (was a deliberate 13px). `EditorShell`'s folder path follows.
+- **`Button variant="link"`** with an explicit `size` draws that size's type itself (sm 12, md/lg 14) instead of inheriting the page's 16px; an unsized link still inherits as inline prose, and a host size class still wins.
+- **`CodeBlock`** (and `MarkdownView` code blocks): the copy button is 12px/500 in the page face. The monospace face and 13px code size moved from the block onto its `<pre>`, so controls over the code no longer inherit them.
+- **Lab chrome**: `LabFleetRail` group names 14/600, row labels 14px (still mono — an identifier), counts, meta, the selected ✓ and the open-pane glyph 12px (were 9–12.5px). The workspace instruction bar's textarea uses the page face (the overlay's code-toned bar keeps mono). `ShellTerminal`'s xterm host carries `data-ui-code-surface="terminal"`.
+- **`SegmentedControl tone="accent"`** segments are 14px (were 15px).
+- **`ScopeHeader`** tab labels are 14px at every `tabSize` and title size (`md` and `titleSize="lg"` were 15px).
+- **`GroupedList`** plain group-header count is 12px (was 13px).
+- **`FileUploadDrop`**'s drop target carries `data-ui-dropzone`.
+- **DOM audit contract** (`skills/ui-dom-audit`): two narrow exclusions with self-test fixture pairs. `control.border-style` exempts `[role="button"][data-ui-dropzone]` only while it hosts no nested control (a sibling button, a nested button and an unmarked dashed control still fail). `control.font-size` / `control.font-family` exempt only `textarea.xterm-helper-textarea` inside `[data-ui-code-surface="terminal"]` (an unmarked helper and an ordinary textarea inside the surface still fail). The rules themselves are unchanged.
+
+## 2.441.2
+
+Three library-owned `control.font-size` families from the 2026-10-12 orgiq audit (a control reads at 12 or 14px).
+
+- **`StatStrip` card variant, clickable items** (`onSelect` → button, `href` → link): value 14/600 (was 17/700), label 12/400 (was 10/600), hint 12 (was 11). Read-only cards keep the 17px figure under the 10px caption; connectors and per-tier status are unchanged. The cluster carries `data-stat-control` when it is a control.
+- **`ChoiceRow`**: title 14/500 (was 13/600), description 12; `ChoiceOption` 14 (was 13).
+- **`Textarea`**: default text is 14px (was 13px), matching `Input`/`Select` `md`. A host size class still overrides it.
+- **`SourceCard`**: the title is 14/500 (was 13/500) in both layouts — the card's `SourceTitle` button/link and the row's title inside its button.
+- `ScopeHeader` tabs were checked and need no change: `tabSize` default and `sm` draw 14px labels; the 13px measured on the work-item header is a consumer stylesheet override.
+
 ## 2.441.1
 
 - **`DeckReader` / `DeckPresentationDialog`: "Chat & agent" works without a prop again.** The 2.441.0 port made the composer handoff an `onFocusConversation` prop, so a host that mounted the reader the way the portal's own reader was mounted (inside a page whose rich composer registers with the conversation-input registry) got a disabled toolbar button and no button while presenting. With no `onFocusConversation`, both now ask `useComposerFocus` for the agent composer — enabled only while one is mounted — exactly as the portal's reader did; the prop still overrides. Regression tests pin the portal reader's DOM contract (`<testId>-position`, `-viewport`, `-stage` image, `-filmstrip-select-<id>`, `-notes`, `-preview-loading`, footer context, the toolbar's accessible names) and the hidden-until-current preview behaviour.

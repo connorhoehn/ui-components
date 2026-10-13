@@ -73,7 +73,7 @@ export interface BreadcrumbsProps {
 }
 
 export type BreadcrumbSize = 'sm' | 'md';
-const CRUMB_TEXT: Record<BreadcrumbSize, string> = { sm: 'text-[13px]', md: 'text-sm' };
+const CRUMB_TEXT: Record<BreadcrumbSize, string> = { sm: 'text-xs', md: 'text-sm' };
 
 function BreadcrumbLink({
   item,

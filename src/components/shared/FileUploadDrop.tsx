@@ -137,6 +137,10 @@ export function FileUploadDrop({
     <div className={cn('flex flex-col gap-2', className)} data-testid={testId}>
       <div
         role="button"
+        // A named variant, not an ordinary control: its dashed edge is the
+        // drop-target affordance. The DOM audit exempts it from the control
+        // border rule by this marker only while it hosts no nested control.
+        data-ui-dropzone=""
         tabIndex={disabled ? -1 : 0}
         aria-label={label ?? 'File upload drop zone'}
         aria-disabled={disabled}

@@ -171,7 +171,7 @@ export function SegmentedControl({
               disabled && 'cursor-not-allowed opacity-60',
               compact ? cn('relative', ICON_SIZE_CLASSES[size]) : SIZE_CLASSES[size],
               active ? (tone === 'accent' ? ACCENT_ACTIVE_CLASSES : ACTIVE_CLASSES) : INACTIVE_CLASSES,
-              tone === 'accent' && 'h-[30px] py-0 text-[15px]',
+              tone === 'accent' && 'h-[30px] py-0 text-sm', // 14px: a control's step (was 15px; 2.441.3)
               tone === 'accent' && !active && 'text-text-primary',
             )}
           >

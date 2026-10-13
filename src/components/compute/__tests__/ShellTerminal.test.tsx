@@ -213,3 +213,12 @@ describe('ShellTerminal socket ownership', () => {
     expect(term.written.length).toBe(before);
   });
 });
+
+describe('ShellTerminal code surface marker (2.441.3)', () => {
+  // The DOM audit exempts xterm's hidden input helper only inside this marker;
+  // without it the helper textarea measures as a 16px monospace form control.
+  it('marks the xterm host as a terminal code surface', () => {
+    const { view } = renderTerminal();
+    expect(view.container.querySelector('[data-ui-code-surface="terminal"]')).not.toBeNull();
+  });
+});

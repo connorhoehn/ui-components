@@ -111,8 +111,9 @@ export function ChoiceRow({
           </span>
         ) : icon ? <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-surface-panel text-text-secondary ring-1 ring-border" aria-hidden="true">{icon}</span> : null}
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-          <span className="truncate text-[13px] font-semibold text-text-primary">{title}</span>
-          {description ? <span className="truncate text-[12px] text-text-secondary">{description}</span> : null}
+          {/* 14/500 title, 12/400 description: the control scale (2.441.2; the title was 13/600). */}
+          <span className="truncate text-sm font-medium text-text-primary">{title}</span>
+          {description ? <span className="truncate text-xs text-text-secondary">{description}</span> : null}
         </span>
         {disclosure ? <Chevron open={open} /> : null}
       </button>
@@ -141,7 +142,7 @@ export function ChoiceOption({ icon, label, onSelect, disabled = false, 'data-te
       disabled={disabled}
       onClick={onSelect}
       className={cn(
-        'flex w-full cursor-pointer items-center gap-2.5 border-none bg-transparent py-1.5 pl-[3.75rem] pr-4 text-left font-[inherit] text-[13px] text-text-primary transition-colors',
+        'flex w-full cursor-pointer items-center gap-2.5 border-none bg-transparent py-1.5 pl-[3.75rem] pr-4 text-left font-[inherit] text-sm text-text-primary transition-colors',
         'hover:bg-surface-hover disabled:cursor-default disabled:opacity-50',
       )}
       data-testid={testId}

@@ -110,6 +110,10 @@
         {
           "selector": "$codeLabels",
           "reason": "Code identifiers have their own monospace profile"
+        },
+        {
+          "selector": "[data-ui-code-surface=\"terminal\"] textarea.xterm-helper-textarea",
+          "reason": "xterm's hidden input helper inside a marked terminal code surface is not a visible form control"
         }
       ],
       "tolerance": 0.1
@@ -189,6 +193,10 @@
         {
           "selector": "$activePersonCaptions",
           "reason": "ActivePeopleGrid name / More caption uses a leaf-only typography profile; neighboring controls remain ordinary"
+        },
+        {
+          "selector": "[data-ui-code-surface=\"terminal\"] textarea.xterm-helper-textarea",
+          "reason": "xterm's hidden input helper inside a marked terminal code surface is not a visible form control"
         }
       ],
       "owner": "Button / IconButton / forms"
@@ -203,7 +211,13 @@
           "none"
         ]
       },
-      "owner": "Button / IconButton / forms"
+      "owner": "Button / IconButton / forms (FileUploadDrop: data-ui-dropzone)",
+      "exclude": [
+        {
+          "selector": "[role=\"button\"][data-ui-dropzone]:not(:has(button, input, select, textarea, [role=\"button\"]))",
+          "reason": "A marked drop target's dashed edge is its affordance; the exemption lapses if it hosts a nested control"
+        }
+      ]
     },
     {
       "id": "toolbar.control-height",

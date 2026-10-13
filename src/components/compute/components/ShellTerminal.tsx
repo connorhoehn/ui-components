@@ -585,6 +585,10 @@ export const ShellTerminal = forwardRef<ShellTerminalHandle, ShellTerminalProps>
 
       <div
         ref={hostRef}
+        // A code surface, not a form: xterm's hidden input helper
+        // (textarea.xterm-helper-textarea) lives in here. The DOM audit
+        // exempts only that helper inside this marker (2.441.3).
+        data-ui-code-surface="terminal"
         style={fillHeight ? undefined : { height }}
         className={cn('px-2 py-1', fillHeight && 'flex-1 min-h-0')}
       />

@@ -164,9 +164,15 @@ function LineCluster({ item, sm = false }: { item: StatStripItem; sm?: boolean }
   );
 }
 
-function Cluster({ item, flush }: { item: StatStripItem; flush?: 'start' | 'end' | 'both' }) {
+function Cluster({ item, flush, control = false }: { item: StatStripItem; flush?: 'start' | 'end' | 'both'; control?: boolean }) {
+  // A clickable item (`onSelect` → a button, `href` → a link) is a CONTROL,
+  // and a control's text reads at 12 or 14px (the app scale; the DOM audit's
+  // control rule). Its value is 14/600, its label and hint 12/400. A
+  // read-only card keeps the larger 17px figure under a 10px caption
+  // (2.441.2).
   return (
     <div
+      data-stat-control={control || undefined}
       className={cn(
         'min-w-0 px-4 py-2.5',
         // A framed strip pads its own edges. A frameless one sits inside a
@@ -177,15 +183,15 @@ function Cluster({ item, flush }: { item: StatStripItem; flush?: 'start' | 'end'
         (flush === 'end' || flush === 'both') && 'pr-0',
       )}
     >
-      <div className="whitespace-nowrap text-[10px] font-semibold uppercase tracking-wide text-text-tertiary">
+      <div className={cn('whitespace-nowrap uppercase tracking-wide text-text-tertiary', control ? 'text-xs font-normal' : 'text-[10px] font-semibold')}>
         {item.label}
       </div>
       <div className="mt-0.5 flex min-w-0 items-baseline gap-2">
-        <span className={cn('text-[17px] font-bold leading-none tabular-nums', VALUE_TONE[item.tone ?? 'default'])}>
+        <span className={cn('leading-none tabular-nums', control ? 'text-sm font-semibold' : 'text-[17px] font-bold', VALUE_TONE[item.tone ?? 'default'])}>
           {item.value}
         </span>
         {item.hint != null && (
-          <span className="min-w-0 truncate text-[11px] text-text-tertiary">{item.hint}</span>
+          <span className={cn('min-w-0 truncate text-text-tertiary', control ? 'text-xs' : 'text-[11px]')}>{item.hint}</span>
         )}
       </div>
       {item.status && (
@@ -325,7 +331,7 @@ export function StatStrip({
         if (item.href) {
           cluster = (
             <a href={item.href} className="min-w-0 flex-1 no-underline transition-colors hover:bg-surface-hover" {...tip}>
-              <Cluster item={item} flush={flush} />
+              <Cluster item={item} flush={flush} control />
             </a>
           );
         } else if (item.onSelect) {
@@ -336,7 +342,7 @@ export function StatStrip({
               className="min-w-0 flex-1 cursor-pointer border-none bg-transparent p-0 text-left transition-colors hover:bg-surface-hover"
               {...tip}
             >
-              <Cluster item={item} flush={flush} />
+              <Cluster item={item} flush={flush} control />
             </button>
           );
         } else {

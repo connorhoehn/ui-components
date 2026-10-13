@@ -654,7 +654,7 @@ export function GroupedList({
                 )}
                 <span className="truncate">{group.title}</span>
                 {typeof group.count === 'number' && !labelHeading && groupCountStyle === 'plain' && (
-                  <span className={cn('shrink-0 text-[13px] font-medium text-text-secondary', countEnd)} aria-label={`${group.count} items`} data-testid={`${testId}-group-count-${group.id}`} data-count-style="plain" data-count-align={groupCountAlign === 'end' ? 'end' : undefined}>
+                  <span className={cn('shrink-0 text-xs font-medium tabular-nums text-text-secondary', countEnd)} aria-label={`${group.count} items`} data-testid={`${testId}-group-count-${group.id}`} data-count-style="plain" data-count-align={groupCountAlign === 'end' ? 'end' : undefined}>
                     {group.count}
                   </span>
                 )}

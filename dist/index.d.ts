@@ -19121,8 +19121,8 @@ export declare interface ScopeHeaderProps {
      */
     peopleStyle?: 'avatars' | 'names' | 'inline';
     /**
-     * The tab row's size. Absent: 14px tabs, or 15px at `titleSize="lg"` (as
-     * before). `md` (since 2.392.0): 15px tabs at any title size, the count
+     * The tab row's size. Every step draws 14px labels since 2.441.3 (a tab
+     * is a control; `md` and `titleSize="lg"` were 15px). `md` (since 2.392.0): the wider tab spacing at any title size, the count
      * 10px after its label, 8px side padding with 28px gaps between tabs
      * and the first label aligned under the title — the Initiatives v2 header.
      * `sm`: 14px tabs at any title size.

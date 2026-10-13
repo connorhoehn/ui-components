@@ -120,6 +120,8 @@ const sizeClasses: Record<ButtonSize, string> = {
   lg: `${CONTROL_HEIGHT.lg} gap-2 px-4 text-sm`,
 };
 
+const LINK_TEXT: Record<ButtonSize, string> = { sm: 'text-xs', md: 'text-sm', lg: 'text-sm' };
+
 export function Button({
   variant = 'primary',
   size: requestedSize,
@@ -160,6 +162,11 @@ export function Button({
         tone === 'code' ? 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-code-blue' : 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
         (TONE[tone] ?? variantClasses)[variant],
         !isLink && sizeClasses[size],
+        // A link given an explicit size draws that size's type itself (sm 12,
+        // md/lg 14) rather than inheriting the document's 16px wherever its
+        // host has no sized text (2.441.3). With no `size`, it stays inline
+        // prose and inherits.
+        isLink && requestedSize && LINK_TEXT[requestedSize],
         disabled && 'opacity-50 cursor-not-allowed',
         !disabled && 'cursor-pointer',
         fullWidth && 'w-full',

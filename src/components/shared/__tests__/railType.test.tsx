@@ -193,11 +193,12 @@ describe('Documents rail on the rail scale (2.407.13)', () => {
     }
   });
 
-  it('Breadcrumbs size="sm" puts every crumb and separator on the 13px meta step', () => {
+  it('Breadcrumbs size="sm" puts every crumb and separator on the 12px meta step (2.441.3; was 13px)', () => {
     render(<Breadcrumbs size="sm" lastIsCurrent={false} items={[{ label: 'Sprint planning', href: '#a' }, { label: 'Meetings', href: '#b' }]} data-testid="crumbs" />);
     const nav = screen.getByTestId('crumbs');
     for (const el of [...nav.querySelectorAll('a'), ...nav.querySelectorAll('[aria-hidden="true"]')]) {
-      expect(el.className).toContain('text-[13px]');
+      expect(el.className).toContain('text-xs');
+      expect(el.className).not.toContain('text-[13px]');
       expect(el.className).not.toContain('text-sm');
     }
   });

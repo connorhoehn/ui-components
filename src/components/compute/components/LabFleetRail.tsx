@@ -268,8 +268,8 @@ export function LabFleetRail({
                       className={cn('mt-0.5 shrink-0 text-text-tertiary transition-transform', isCollapsed && '-rotate-90')}
                     />
                     <span className="min-w-0 flex-1">
-                      <span className="block text-[12px] font-semibold text-text-primary truncate">{group.name}</span>
-                      <span className="block text-[11px] text-text-tertiary truncate tabular-nums">{group.quickLine}</span>
+                      <span className="block text-sm font-semibold text-text-primary truncate">{group.name}</span>
+                      <span className="block text-xs text-text-tertiary truncate tabular-nums">{group.quickLine}</span>
                     </span>
                   </button>
                 )}
@@ -328,7 +328,7 @@ function RailTab({ selected, onSelect, icon, label, count }: {
     >
       {icon}
       {label}
-      <span className="text-[11px] font-normal text-text-tertiary tabular-nums">{count}</span>
+      <span className="text-xs font-normal text-text-tertiary tabular-nums">{count}</span>
     </button>
   );
 }
@@ -411,7 +411,7 @@ function FleetRow({
           active ? 'border-primary' : selected ? 'border-border-emphasis' : 'border-transparent',
         )}
       >
-        <span className="w-5 shrink-0 text-right text-[11px] text-text-tertiary tabular-nums leading-5">{number}</span>
+        <span className="w-5 shrink-0 text-right text-xs text-text-tertiary tabular-nums leading-5">{number}</span>
         <span className="w-3.5 shrink-0 flex justify-center leading-5 pt-[5px]">
           {local ? (
             <LaptopIcon size={14} aria-label={`laptop · ${meta.label}`} className={cn('-mt-[2px]', STATUS_TEXT[status])} />
@@ -422,21 +422,23 @@ function FleetRow({
         <span className="min-w-0 flex-1">
           <span
             className={cn(
-              'block text-[12.5px] leading-5 truncate font-mono',
+              // The rail scale (2.441.3): 14px title, 12px meta. The label stays
+              // mono (a computer name is an identifier).
+              'block text-sm leading-5 truncate font-mono',
               active ? 'text-text-primary font-semibold' : 'text-text-secondary',
             )}
           >
             {computer.label}
           </span>
           {showTask && (
-            <span className="block text-[11px] text-text-tertiary truncate">
+            <span className="block text-xs text-text-tertiary truncate">
               <span className={cn('font-semibold', STATUS_TEXT[status])}>{meta.label}</span>
               {computer.currentTask ? ` · ${computer.currentTask}` : ''}
             </span>
           )}
         </span>
-        {selected && <span aria-label="selected as a target" className="text-[11px] text-primary leading-5">✓</span>}
-        {open && <span aria-label="open in a pane" title="Open in a pane" className="text-[9px] text-primary leading-5">▣</span>}
+        {selected && <span aria-label="selected as a target" className="text-xs text-primary leading-5">✓</span>}
+        {open && <span aria-label="open in a pane" title="Open in a pane" className="text-xs text-primary leading-5">▣</span>}
       </button>
       {onOpenInPane && (
         <button

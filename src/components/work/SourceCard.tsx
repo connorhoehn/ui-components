@@ -59,7 +59,7 @@ export function formatSourceAge(
 }
 
 function SourceTitle({ id, title, onOpen, href }: Pick<SourceCardProps, 'id' | 'title' | 'onOpen' | 'href'>) {
-  const cls = 'min-w-0 text-left text-[13px] font-medium leading-snug text-text-primary';
+  const cls = 'min-w-0 text-left text-sm font-medium leading-snug text-text-primary';
   if (onOpen) {
     return (
       <button
@@ -101,7 +101,7 @@ export function SourceCard({
       <>
         <FileKindMark kind={kind} size="xl" variant="outline" className="rounded-md border border-border" />
         <span className="flex min-w-0 flex-1 flex-col">
-          <span className="truncate text-[13px] font-medium leading-5 text-text-primary" data-testid={`${testId}-title`}>{title}</span>
+          <span className="truncate text-sm font-medium leading-5 text-text-primary" data-testid={`${testId}-title`}>{title}</span>
           {quiet && <span className="truncate text-[12px] leading-4 text-text-tertiary" data-testid={quietId}>{quiet}</span>}
         </span>
         {(onOpen || href) && <ChevronIcon dir="right" size={16} aria-hidden="true" className="shrink-0 text-text-secondary" data-testid={`${testId}-chevron`} />}

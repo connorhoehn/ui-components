@@ -641,7 +641,9 @@ export function ComputerLab({
       className={cn(
         'flex-1 min-w-0 resize-none bg-transparent border-none outline-none text-[12px] leading-6',
         workspace
-          ? 'font-mono text-text-primary caret-primary placeholder:text-text-tertiary disabled:opacity-60'
+          // The workspace instruction bar is a form control, not a terminal:
+          // the page face (2.441.3). The overlay's code-toned bar keeps mono.
+          ? 'font-[inherit] text-text-primary caret-primary placeholder:text-text-tertiary disabled:opacity-60'
           : 'text-code-text caret-code-blue placeholder:text-code-raised',
       )}
     />

@@ -14,7 +14,7 @@ describe('EditorShell', () => {
     expect(byline.parentElement!.className).toContain('[@media(max-height:640px)]:flex-row');
   });
 
-  it('draws the head on the library type steps: 20px title, Tabs md (14px) tabs, 13px folder path (2.407.13)', () => {
+  it('draws the head on the library type steps: 20px title, Tabs md (14px) tabs, 12px folder path (2.441.3; 13px since 2.407.13)', () => {
     render(
       <EditorShell
         title="audit-file-menu renamed"
@@ -31,7 +31,8 @@ describe('EditorShell', () => {
       expect(tab.className).not.toContain('text-[15px]');
     }
     for (const a of screen.getByTestId('editor-shell-path-crumbs').querySelectorAll('a')) {
-      expect(a.className).toContain('text-[13px]');
+      expect(a.className).toContain('text-xs');
+      expect(a.className).not.toContain('text-[13px]');
       expect(a.className).not.toContain('text-sm');
     }
   });

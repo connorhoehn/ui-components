@@ -203,8 +203,8 @@ export interface ScopeHeaderProps {
    */
   peopleStyle?: 'avatars' | 'names' | 'inline';
   /**
-   * The tab row's size. Absent: 14px tabs, or 15px at `titleSize="lg"` (as
-   * before). `md` (since 2.392.0): 15px tabs at any title size, the count
+   * The tab row's size. Every step draws 14px labels since 2.441.3 (a tab
+   * is a control; `md` and `titleSize="lg"` were 15px). `md` (since 2.392.0): the wider tab spacing at any title size, the count
    * 10px after its label, 8px side padding with 28px gaps between tabs
    * and the first label aligned under the title — the Initiatives v2 header.
    * `sm`: 14px tabs at any title size.
@@ -1009,7 +1009,7 @@ function ScopeHeaderInline({
           {...(tabSize === 'md' ? { indicatorWeight: 3 as const } : {})}
           // The tabs fill the row's height so the selected tab's bar sits on
           // the row's bottom edge (the host's rule); no rule of their own.
-          itemClassName={cn('h-full py-0', tabSize === 'md' ? 'gap-0 px-2 text-[15px]' : 'gap-0')}
+          itemClassName={cn('h-full py-0', tabSize === 'md' ? 'gap-0 px-2 text-sm' : 'gap-0')}
           aria-label={`${name} views`}
           data-testid={`${testId}-tabs`}
           className="shrink-0 items-stretch self-stretch after:hidden"
@@ -1131,15 +1131,15 @@ function ScopeHeaderFull({
       // lg: the count sits 10px after its label ("Work 11"), as the
       // Initiatives mockup draws it — the button's own 6px gap is dropped
       // and only the badge's margin remains. tabSize="md" (2.392.0) is
-      // the same 15px/10px at any title size, with 8px side padding,
+      // the same 14px/10px at any title size (15px before 2.441.3: a tab is a control), with 8px side padding,
       // 28px between tabs and the first label 4px in from the title.
       {...(dense
         ? {}
         : tabSize === 'md'
-          ? { itemClassName: 'gap-0 pb-4 pl-1 pr-3 pt-2 text-[15px]' }
+          ? { itemClassName: 'gap-0 pb-4 pl-1 pr-3 pt-2 text-sm' }
           : tabSize === 'sm'
             ? {}
-            : lg ? { itemClassName: 'gap-0 text-[15px]' } : {})}
+            : lg ? { itemClassName: 'gap-0 text-sm' } : {})}
       aria-label={`${title} views`}
       className={cn(
         // host: the row sits on the host's rule (-mb-px) and draws none of

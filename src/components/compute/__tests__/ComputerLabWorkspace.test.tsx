@@ -379,3 +379,18 @@ describe('ComputerLab appearance="workspace" empty fleet', () => {
     expect(screen.queryByTestId('lab-fleet-empty')).toBeNull();
   });
 });
+
+
+describe('lab chrome on the type scale (2.441.3)', () => {
+  // Flagged on /admin/devbox: 11px row meta, a 12.5px mono label, a 9px glyph
+  // inside the fleet rail's buttons, and a monospace instruction textarea.
+  it('draws the fleet rail on the 14/12 scale and the instruction bar in the page face', async () => {
+    renderWorkspace();
+    const fleet = await rail();
+    expect(fleet.innerHTML).not.toMatch(/text-\[(9|10|11|12\.5|13)px\]/);
+    const bar = await screen.findByTestId('lab-instruction-bar');
+    const area = bar.querySelector('textarea')!;
+    expect(area.className).not.toContain('font-mono');
+    expect(area.className).toContain('font-[inherit]');
+  });
+});
