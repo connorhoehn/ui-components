@@ -72,10 +72,10 @@ describe('PageHeader', () => {
     expect(screen.getByRole('tab', { name: /Work/ })).toHaveAttribute('aria-selected', 'true');
   });
 
-  it('compact: one 28px row, 14/600 title, avatars with names in tooltips, description in a hover card', () => {
+  it('compact size="sm": one 28px row, 14/600 title, avatars with names in tooltips, description in a hover card', () => {
     vi.useFakeTimers();
     try {
-      render(<PageHeader density="compact" title="Observability" description="Collect telemetry" people={PEOPLE} tabs={TABS}
+      render(<PageHeader density="compact" size="sm" title="Observability" description="Collect telemetry" people={PEOPLE} tabs={TABS}
         badge={<span data-testid="status">In progress</span>} actions={<button>Start call</button>} />);
       expect(screen.getByTestId('page-header')).toHaveAttribute('data-density', 'compact');
       expect(screen.getByTestId('page-header-row').className).toContain('h-7');

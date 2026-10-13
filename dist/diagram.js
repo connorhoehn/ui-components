@@ -7,14 +7,14 @@ import { t as o } from "./Select-DcKBWGgP.js";
 import { t as s } from "./Textarea-BwvE1HPn.js";
 import { t as c } from "./Checkbox-C70AGFS5.js";
 import { t as l } from "./formatBytes-05ivRSJY.js";
-import { n as u, t as d } from "./useResolvedTheme-B34f9OhG.js";
+import { n as u, t as d } from "./useResolvedTheme-DFevZQxD.js";
 import { Suspense as f, createElement as p, lazy as m, useCallback as h, useEffect as g, useMemo as ee, useRef as _, useState as v } from "react";
 import { Fragment as y, jsx as b, jsxs as x } from "react/jsx-runtime";
 import { Extension as S } from "@tiptap/core";
 import { NodeSelection as te, Plugin as ne, PluginKey as re, TextSelection as ie } from "@tiptap/pm/state";
 import { createRoot as ae } from "react-dom/client";
 //#region src/components/diagram/CollaborativeExcalidraw.tsx
-var oe = m(() => import("./ExcalidrawCanvas-6CdGLOwb.js"));
+var oe = m(() => import("./ExcalidrawCanvas-DgViYfka.js"));
 function se({ label: e }) {
 	return /* @__PURE__ */ b("div", {
 		"data-testid": "diagram-loading",

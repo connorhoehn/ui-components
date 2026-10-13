@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.441.8
+
+- **`PageHeader` compact form keeps the 20/600 page title.** The compact form (one 28px row) drew its h1 at 14/600, and `CollectionPage` always renders the compact form, so every collection page — and every page passing `density="compact"` — lost the house 20/600 title. Density is spacing, as for `PageSection` in 2.441.5: the compact form still folds the header onto one 28px row, with the title at 20/600 (`leading-7`). The 14/600 title is now an explicit `size="sm"` (new; in either form). The title carries `data-title-size`.
+- **`InlinePopover` returns focus to its trigger on close.** It restored focus to whatever had it when the panel opened, which is `<body>` when the opening press did not focus its button (Safari, synthetic clicks) — so Escape in `CollectionToolbar`'s Filters popover (and every `FilterPopover`) dropped focus on the page. It still returns focus to whatever had it when the panel opened (a keyboard opener such as a focused tree row keeps it); when that was `<body>` or has left the document, an Escape now returns focus to the `trigger` (hover-out and outside-click dismissals are unchanged, so a hover card never pulls focus back onto its trigger).
+
 ## 2.441.7
 
 `PresentationEditor` parts measured for the first time on a loaded deck (a control reads at 12 or 14px, solid-bordered or borderless).

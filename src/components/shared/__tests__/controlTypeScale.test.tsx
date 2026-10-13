@@ -21,6 +21,11 @@ import { SpeakerNotes } from '../../doc-editor/presentation/SpeakerNotes';
 import { SlideSources } from '../../doc-editor/presentation/SlideSources';
 import { Filmstrip } from '../../doc-editor/presentation/Filmstrip';
 import { SortableSlideList } from '../../doc-editor/presentation/SortableSlideList';
+import { PageHeader } from '../PageHeader';
+import { CollectionPage } from '../CollectionPage';
+import { CollectionToolbar } from '../CollectionToolbar';
+import { DensityProvider } from '../Density';
+import { act, fireEvent } from '@testing-library/react';
 
 afterEach(cleanup);
 
@@ -255,5 +260,50 @@ describe('PresentationEditor parts (2.441.7)', () => {
     expect(add.className).not.toContain('border-dashed');
     expect(add).toHaveAttribute('data-variant', 'secondary');
     expect(add).not.toHaveAttribute('data-ui-dropzone');
+  });
+});
+
+// 2.441.8: the compact header form demoted the page title to 14/600, so every
+// CollectionPage (and every page passing density="compact") lost its 20/600
+// title. Density is spacing; the title is 20/600 unless the host asks for sm.
+describe('page titles under the compact density', () => {
+  it('flagged: CollectionPage inside a compact provider renders an h1 at 20/600', () => {
+    render(<DensityProvider density="compact"><CollectionPage title="Catalog"><p>rows</p></CollectionPage></DensityProvider>);
+    const h1 = screen.getByRole('heading', { level: 1, name: 'Catalog' });
+    expect(h1.className).toContain('text-xl');
+    expect(h1.className).toContain('font-semibold');
+    expect(screen.getByTestId('page-header')).toHaveAttribute('data-density', 'compact');
+  });
+  it('flagged: PageHeader density="compact" keeps the 20/600 title on its one 28px row', () => {
+    render(<DensityProvider density="compact"><PageHeader density="compact" title="Runs" /></DensityProvider>);
+    const h1 = screen.getByRole('heading', { level: 1, name: 'Runs' });
+    expect(h1.className).toContain('text-xl');
+    expect(h1.className).toContain('leading-7');
+    expect(screen.getByTestId('page-header-row').className).toContain('h-7');
+  });
+  it('valid: an explicit size="sm" still renders the 14/600 compact title', () => {
+    render(<PageHeader density="compact" size="sm" title="Runs" />);
+    const h1 = screen.getByRole('heading', { level: 1, name: 'Runs' });
+    expect(h1.className).toContain('text-sm');
+    expect(h1.className).not.toContain('text-xl');
+  });
+  it('valid: the comfortable form is unchanged (20px h1)', () => {
+    render(<PageHeader title="Runs" />);
+    expect(screen.getByRole('heading', { level: 1, name: 'Runs' }).className).toContain('text-xl');
+  });
+});
+
+describe('CollectionToolbar Filters popover focus (2.441.8)', () => {
+  it('Escape returns focus to the Filters button even when the opening press did not focus it', async () => {
+    render(<CollectionToolbar label="Catalog" filters={[{ id: 'kind', label: 'Kind', value: '', options: [{ value: '', label: 'All' }, { value: 'a', label: 'A' }], onChange: () => {} }]} />);
+    const trigger = screen.getByRole('button', { name: 'Filters' });
+    // A pointer press that leaves focus on <body> (jsdom's click, Safari).
+    expect(document.activeElement).toBe(document.body);
+    fireEvent.click(trigger);
+    expect(await screen.findByRole('dialog')).toBeInTheDocument();
+    await act(async () => { await Promise.resolve(); });
+    act(() => { fireEvent.keyDown(document.activeElement ?? document.body, { key: 'Escape' }); });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.activeElement).toBe(trigger);
   });
 });

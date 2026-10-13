@@ -14451,11 +14451,14 @@ export declare interface PageHeaderProps {
     /** Badge or status pill rendered to the right of the title. */
     badge?: default_2.ReactNode;
     /**
-     * Title size. `md` (default) is the 20px heading every page has had;
-     * `lg` is a 28px directory title — a page that IS the list, not a page
-     * about one thing. Comfortable density only.
+     * Title size. `md` (default) is the 20px heading every page has had, in
+     * both forms; `lg` is a 28px directory title — a page that IS the list,
+     * not a page about one thing (comfortable form only). `sm` (since
+     * 2.441.8) is the 14/600 title — the compact form's title before 2.441.8,
+     * now only on explicit request. Density is spacing: the compact form folds
+     * the header onto one 28px row but keeps the 20/600 page title.
      */
-    size?: 'md' | 'lg';
+    size?: 'sm' | 'md' | 'lg';
     /**
      * Since 2.437.0 — the trail as the header's first row ("Plan › Initiatives
      * › Observability Platform"). Owned here so a collapsed header can fold the

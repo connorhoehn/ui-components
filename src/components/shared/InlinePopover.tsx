@@ -181,6 +181,7 @@ export function InlinePopover({
   // enough to decide it belongs on the other side of its trigger.
   const anchorRectRef = useRef<DOMRect | null>(null);
   const previouslyFocusedRef = useRef<HTMLElement | null>(null);
+  const closedByEscapeRef = useRef(false);
   // Escape/Tab belong to the top layer only. See lib/overlayStack.ts for why
   // the `e.stopPropagation()` below cannot achieve this on its own.
   const isTopLayer = useOverlayLayer(open);
@@ -291,6 +292,7 @@ export function InlinePopover({
         ? (document.activeElement as HTMLElement | null)
         : null;
     previouslyFocusedRef.current = active;
+    closedByEscapeRef.current = false;
     // Defer until panel is mounted.
     queueMicrotask(() => {
       const panel = panelRef.current;
@@ -304,12 +306,25 @@ export function InlinePopover({
       }
     });
     return () => {
+      // Back to what had focus when the panel opened (a keyboard opener such
+      // as a focused row keeps it). When that was nothing — <body>, because a
+      // pointer press did not focus its button (Safari, synthetic clicks) —
+      // or it has left the document, an Escape returns focus to the trigger
+      // instead of dropping the reader at the top of the page (2.441.8).
+      // Other dismissals (hover-out, outside click) keep the old rule, so a
+      // hover card never pulls focus onto its trigger and reopens.
       const prev = previouslyFocusedRef.current;
-      if (prev && typeof prev.focus === 'function' && document.contains(prev)) {
-        prev.focus();
+      const anchor = trigger.current;
+      const prevUsable = !!prev && prev !== document.body && document.contains(prev);
+      const escaped = closedByEscapeRef.current;
+      closedByEscapeRef.current = false;
+      const target = prevUsable ? prev : escaped && anchor && document.contains(anchor) ? anchor : null;
+      if (target && typeof target.focus === 'function' && document.contains(target)) {
+        target.focus();
       }
       previouslyFocusedRef.current = null;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   // ESC + focus trap.
@@ -319,6 +334,7 @@ export function InlinePopover({
       if (e.key === 'Escape') {
         if (!isTopLayer()) return;
         e.stopPropagation();
+        closedByEscapeRef.current = true;
         onClose();
         return;
       }
