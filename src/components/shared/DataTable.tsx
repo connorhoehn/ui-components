@@ -90,8 +90,25 @@ export interface DataTableProps<T> {
    * on one line, a 12px semibold caps header — the app's list step.
    */
   size?: TableSize;
+  /**
+   * Declares that this table's rows open nothing, and why ("Revisions are
+   * read-only snapshots of this submission"). Ignored when `onRowClick` is
+   * set. Emitted as `data-collection-rows="static"` +
+   * `data-collection-rows-reason` so a rendered-UI audit can require every
+   * other collection's rows to be activatable. Since 2.442.0.
+   */
+  staticRows?: string;
   className?: string;
   'data-testid'?: string;
+}
+
+const NESTED_CONTROL = 'a[href], button, input, select, textarea, label, summary, [role="button"], [role="checkbox"], [role="link"], [role="menuitem"], [role="switch"], [contenteditable="true"]';
+
+/** True when a row event started on a control inside the row rather than the row itself. */
+function fromNestedControl(target: EventTarget | null, row: Element): boolean {
+  if (!(target instanceof Element)) return false;
+  const control = target.closest(NESTED_CONTROL);
+  return !!control && control !== row && row.contains(control);
 }
 
 /**
@@ -202,6 +219,7 @@ export function DataTable<T>({
   striped = false,
   className,
   'data-testid': testId,
+  staticRows,
 }: DataTableProps<T>) {
   // A library's props cross a trust boundary: the types are erased at runtime,
   // and a host that hands us `undefined` (an in-flight fetch, a response shape
@@ -261,7 +279,15 @@ export function DataTable<T>({
   }, [sorted, pageSize, safePage]);
 
   return (
-    <div className={cn('flex min-w-0 flex-col gap-3', className)} data-testid={testId}>
+    <div
+      className={cn('flex min-w-0 flex-col gap-3', className)}
+      data-testid={testId}
+      // The collection composite: an audit reads these to require activatable
+      // rows unless the table says, with a reason, that its rows open nothing.
+      data-collection-table=""
+      data-collection-rows={onRowClick ? 'activatable' : staticRows ? 'static' : undefined}
+      data-collection-rows-reason={!onRowClick && staticRows ? staticRows : undefined}
+    >
       {searchable && <CollectionToolbar label="Table controls" search={{ value: query, onChange: value => { setQuery(value); setPage(0); }, placeholder: searchPlaceholder, 'aria-label': 'Search', 'data-testid': 'datatable-search' }} />}
       {/* A table is the one thing on a page that legitimately outgrows its
           column — many columns, long cells. Without a scroller of its own it
@@ -339,10 +365,14 @@ export function DataTable<T>({
                     // +2, not +1: row 1 of the ARIA table model is the header
                     // row, so the first body row is row 2.
                     aria-rowindex={onRowClick ? rowIndex + 2 : undefined}
-                    onClick={onRowClick ? () => onRowClick(row) : undefined}
+                    // A control inside the row (a selection checkbox, a link, a
+                    // menu) owns its own click and keys: it must not also open
+                    // the row, and Space on a focused checkbox must still tick it.
+                    onClick={onRowClick ? (e) => { if (!fromNestedControl(e.target, e.currentTarget)) onRowClick(row); } : undefined}
                     onKeyDown={
                       onRowClick
                         ? (e) => {
+                            if (e.target !== e.currentTarget) return;
                             if (e.key === 'Enter' || e.key === ' ') {
                               e.preventDefault();
                               onRowClick(row);

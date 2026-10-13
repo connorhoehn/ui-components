@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.442.0
+
+Records open as pages, selections never move the table, and dialogs say what they are (the rendered-UI audit's `record.popout`, `collection.row-activatable` and `collection.selection-shift` rules read these).
+
+- **`CollectionToolbar` `selection`** (new, `CollectionSelection`): while `count > 0` the toolbar row shows the selection — a Clear-selection `IconButton`, "N selected" and the host's bulk `actions` — IN PLACE of search, filters and count, on the same `Toolbar` (same variant, wrap and control scale, so the same height). A page no longer inserts a "2 selected …" band above its table, so the table's top edge does not move when a row is ticked. The row carries `data-collection-selection="idle|active"`; `Toolbar` passes that attribute through.
+- **`DataTable`**: a click or key on a control inside a clickable row (a selection checkbox, a link, a button, a menu) belongs to that control — it no longer also fires `onRowClick`, and Space on a focused checkbox ticks it instead of opening the row. New `staticRows` (a reason) declares rows that open nothing. The wrapper carries `data-collection-table` and `data-collection-rows="activatable|static"` (+ `data-collection-rows-reason`).
+- **Dialog kinds as markers**: `Modal` takes `dialogKind` (default `modal`) and emits `data-ui-dialog`; `ConfirmDialog` emits `confirm`; a floating `Drawer` (modal `dialog` or non-modal `complementary`) emits `drawer`; `InlinePopover` takes `kind` (default `popover`, e.g. `command-help`). No visual change.
+
 ## 2.441.8
 
 - **`PageHeader` compact form keeps the 20/600 page title.** The compact form (one 28px row) drew its h1 at 14/600, and `CollectionPage` always renders the compact form, so every collection page — and every page passing `density="compact"` — lost the house 20/600 title. Density is spacing, as for `PageSection` in 2.441.5: the compact form still folds the header onto one 28px row, with the title at 20/600 (`leading-7`). The 14/600 title is now an explicit `size="sm"` (new; in either form). The title carries `data-title-size`.

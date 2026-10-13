@@ -2,6 +2,10 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import ConfirmDialog from '../ConfirmDialog';
 
 describe('ConfirmDialog', () => {
+  it('marks its dialog as a confirmation for rendered-UI audits', () => {
+    render(<ConfirmDialog open onConfirm={() => {}} onCancel={() => {}} title="Delete?" />);
+    expect(screen.getByRole('dialog')).toHaveAttribute('data-ui-dialog', 'confirm');
+  });
   const onConfirm = vi.fn();
   const onCancel = vi.fn();
 

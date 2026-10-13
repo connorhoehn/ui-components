@@ -55,6 +55,13 @@ export interface ModalProps {
    * their own full-layout and need the card to be a flex container.
    */
   rawChildren?: boolean;
+  /**
+   * What this dialog is, emitted as `data-ui-dialog` on the `role="dialog"`
+   * card so a rendered-UI audit can tell a confirmation from a record popped
+   * out of its page. Default `modal`; `ConfirmDialog` passes `confirm`.
+   * Since 2.442.0.
+   */
+  dialogKind?: string;
 }
 
 // CSS selector matching everything that can hold focus. Buttons, links with
@@ -87,7 +94,7 @@ function getFocusableElements(root: HTMLElement): HTMLElement[] {
 function Modal({
   open, onClose, title, ariaLabel, maxWidth = 380, children, footer,
   backdropTestId = 'modal-backdrop', backdropStyle, cardStyle, cardClassName,
-  zIndex = 10000, rawChildren = false,
+  zIndex = 10000, rawChildren = false, dialogKind = 'modal',
 }: ModalProps) {
   const cardRef = useRef<HTMLDivElement | null>(null);
   // Captures the element that had focus before the modal opened, so we can
@@ -200,6 +207,7 @@ function Modal({
       <div
         ref={cardRef}
         role="dialog"
+        data-ui-dialog={dialogKind}
         aria-modal="true"
         aria-label={title ?? ariaLabel}
         className={cn(

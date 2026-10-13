@@ -146,3 +146,13 @@ export const Empty: Story = {
     emptyMessage: 'No pipeline runs in the last 24 hours.',
   },
 };
+
+/** Rows that open nothing say so, with a reason the rendered-UI audit reads (since 2.442.0). */
+export const StaticRows: Story = {
+  args: {
+    data: RUNS.slice(0, 3),
+    columns,
+    keyField: (r: Run) => r.id,
+    staticRows: 'Read-only history of this record; the record itself is the page.',
+  },
+};

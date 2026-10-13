@@ -5289,9 +5289,25 @@ export declare interface CollectionPageProps extends Omit<HTMLAttributes<HTMLDiv
     back?: PageHeaderProps['back'];
 }
 
+/**
+ * A row selection, drawn IN PLACE of the resting controls (search, filters,
+ * count) on the same toolbar row, so selecting a row never inserts a band
+ * above the table and the table's top edge never moves. Since 2.442.0.
+ */
+export declare interface CollectionSelection {
+    /** Selected row count. `0` restores the resting controls. */
+    count: number;
+    /** Override the "N selected" label. */
+    label?: ReactNode;
+    /** Bulk actions for the selection — `Button size="sm"`s, drawn at the row's end. */
+    actions?: ReactNode;
+    /** Clears the selection (the row's × control). */
+    onClear: () => void;
+}
+
 /** One collection control row: filters, count, notices and named icon actions.
  * Hosts supply state and commands, never control geometry or presentation. */
-export declare function CollectionToolbar({ label, search, filters, summary, notices, actions, onRefresh, refreshing, children }: CollectionToolbarProps): JSX.Element;
+export declare function CollectionToolbar({ label, search, filters, summary, notices, actions, onRefresh, refreshing, selection, children }: CollectionToolbarProps): JSX.Element;
 
 export declare interface CollectionToolbarProps {
     label: string;
@@ -5303,6 +5319,8 @@ export declare interface CollectionToolbarProps {
     actions?: CollectionAction[];
     onRefresh?: () => void;
     refreshing?: boolean;
+    /** While `selection.count > 0` the row shows the selection and its bulk actions instead of search/filters/count. */
+    selection?: CollectionSelection;
     children?: ReactNode;
 }
 
@@ -7292,7 +7310,7 @@ export declare function dataAccentProps(accent: DataAccent | undefined): {
 
 export declare type DataAccentSlot = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
-export declare function DataTable<T>({ data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, className, 'data-testid': testId, }: DataTableProps<T>): JSX.Element;
+export declare function DataTable<T>({ data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
 
 export declare interface DataTableColumn<T> {
     /** Stable id for the column. When `accessor` is omitted, used as the data key on T. */
@@ -7361,6 +7379,14 @@ export declare interface DataTableProps<T> {
      * on one line, a 12px semibold caps header — the app's list step.
      */
     size?: TableSize;
+    /**
+     * Declares that this table's rows open nothing, and why ("Revisions are
+     * read-only snapshots of this submission"). Ignored when `onRowClick` is
+     * set. Emitted as `data-collection-rows="static"` +
+     * `data-collection-rows-reason` so a rendered-UI audit can require every
+     * other collection's rows to be activatable. Since 2.442.0.
+     */
+    staticRows?: string;
     className?: string;
     'data-testid'?: string;
 }
@@ -11932,7 +11958,7 @@ export declare interface InlinePlaceholderProps {
 /** @see SurfaceTone — which colour family the placeholder paints in. */
 export declare type InlinePlaceholderTone = SurfaceTone;
 
-export declare function InlinePopover({ trigger, open, onClose, placement, offset, className, zIndex, 'data-testid': testId, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, children, }: InlinePopoverProps): ReactPortal | null;
+export declare function InlinePopover({ trigger, open, onClose, placement, offset, className, zIndex, 'data-testid': testId, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, kind, children, }: InlinePopoverProps): ReactPortal | null;
 
 export declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right';
 
@@ -11961,6 +11987,12 @@ export declare interface InlinePopoverProps {
     'aria-label'?: string;
     /** Id of an element inside the panel that names it. */
     'aria-labelledby'?: string;
+    /**
+     * What this popover is, emitted as `data-ui-dialog` (default `popover`).
+     * Name a purpose an audit should recognise, e.g. `command-help` for a
+     * composer's supported-commands help. Since 2.442.0.
+     */
+    kind?: string;
     children: ReactNode;
 }
 
@@ -13629,7 +13661,7 @@ export declare function MicIcon({ size, ...rest }: IconProps): JSX.Element;
 
 export declare function MicOffIcon({ size, ...rest }: IconProps): JSX.Element;
 
-export declare function Modal({ open, onClose, title, ariaLabel, maxWidth, children, footer, backdropTestId, backdropStyle, cardStyle, cardClassName, zIndex, rawChildren, }: ModalProps): ReactPortal | null;
+export declare function Modal({ open, onClose, title, ariaLabel, maxWidth, children, footer, backdropTestId, backdropStyle, cardStyle, cardClassName, zIndex, rawChildren, dialogKind, }: ModalProps): ReactPortal | null;
 
 export declare interface ModalProps {
     open: boolean;
@@ -13678,6 +13710,13 @@ export declare interface ModalProps {
      * their own full-layout and need the card to be a flex container.
      */
     rawChildren?: boolean;
+    /**
+     * What this dialog is, emitted as `data-ui-dialog` on the `role="dialog"`
+     * card so a rendered-UI audit can tell a confirmation from a record popped
+     * out of its page. Default `modal`; `ConfirmDialog` passes `confirm`.
+     * Since 2.442.0.
+     */
+    dialogKind?: string;
 }
 
 /**
@@ -22313,7 +22352,7 @@ export declare const TONES: readonly ["neutral", "success", "warning", "danger",
  */
 export declare function toneVar(tone: ToneOrAlias): string;
 
-export declare function Toolbar({ children, end, tone, variant, size, sticky, bordered, wrap, className, 'aria-label': ariaLabel, 'data-testid': testId, }: ToolbarProps): JSX.Element;
+export declare function Toolbar({ children, end, tone, variant, size, sticky, bordered, wrap, className, 'aria-label': ariaLabel, 'data-testid': testId, 'data-collection-selection': selectionState, }: ToolbarProps): JSX.Element;
 
 export declare function ToolbarGroup({ children, divided, tone, className, 'aria-label': ariaLabel, }: ToolbarGroupProps): JSX.Element;
 
@@ -22376,6 +22415,8 @@ export declare interface ToolbarProps {
      */
     'aria-label'?: string;
     'data-testid'?: string;
+    /** Set by `CollectionToolbar`: `active` while the row shows a selection in place of its controls. Since 2.442.0. */
+    'data-collection-selection'?: 'idle' | 'active';
 }
 
 export declare function ToolbarSeparator({ tone, className }: ToolbarSeparatorProps): JSX.Element;

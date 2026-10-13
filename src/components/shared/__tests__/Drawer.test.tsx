@@ -3,6 +3,12 @@ import { describe, it, expect, vi } from 'vitest';
 import { Drawer } from '../Drawer';
 
 describe('Drawer', () => {
+  it('marks a floating drawer, modal or not, so an audit can find a record popped out of its page', () => {
+    const { rerender } = render(<Drawer open onClose={() => {}} title="History">body</Drawer>);
+    expect(screen.getByRole('dialog', { name: 'History' })).toHaveAttribute('data-ui-dialog', 'drawer');
+    rerender(<Drawer open onClose={() => {}} title="History" modal={false}>body</Drawer>);
+    expect(screen.getByRole('complementary', { name: 'History' })).toHaveAttribute('data-ui-dialog', 'drawer');
+  });
   it('renders nothing when closed', () => {
     render(<Drawer open={false} onClose={() => {}} title="Details">body</Drawer>);
     expect(screen.queryByRole('dialog')).toBeNull();

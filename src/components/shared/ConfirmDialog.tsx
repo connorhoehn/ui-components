@@ -33,6 +33,7 @@ export default function ConfirmDialog({
       onClose={onCancel}
       title={title}
       maxWidth={420}
+      dialogKind="confirm"
       footer={
         <>
           <button

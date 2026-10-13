@@ -56,6 +56,12 @@ export interface InlinePopoverProps {
   'aria-label'?: string;
   /** Id of an element inside the panel that names it. */
   'aria-labelledby'?: string;
+  /**
+   * What this popover is, emitted as `data-ui-dialog` (default `popover`).
+   * Name a purpose an audit should recognise, e.g. `command-help` for a
+   * composer's supported-commands help. Since 2.442.0.
+   */
+  kind?: string;
   children: ReactNode;
 }
 
@@ -171,6 +177,7 @@ export function InlinePopover({
   'data-testid': testId = 'inline-popover',
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
+  kind = 'popover',
   children,
 }: InlinePopoverProps) {
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -395,6 +402,7 @@ export function InlinePopover({
       aria-labelledby={ariaLabelledBy}
       data-testid={testId}
       data-placement={placement}
+      data-ui-dialog={kind}
       data-uic-popover-seq={seqRef.current || undefined}
       className={cn(
         // `bg-surface`, NOT `bg-white`. This panel is PORTALLED to

@@ -33,6 +33,16 @@ function Host({
 }
 
 describe('InlinePopover', () => {
+  it('names its kind for rendered-UI audits (default popover)', () => {
+    function Kind({ kind }: { kind?: string }) {
+      const ref = useRef<HTMLButtonElement | null>(null);
+      return <><button ref={ref}>a</button><InlinePopover trigger={ref} open onClose={() => {}} kind={kind} aria-label="Help">x</InlinePopover></>;
+    }
+    const { rerender } = render(<Kind />);
+    expect(screen.getByRole('dialog', { name: 'Help' })).toHaveAttribute('data-ui-dialog', 'popover');
+    rerender(<Kind kind="command-help" />);
+    expect(screen.getByRole('dialog', { name: 'Help' })).toHaveAttribute('data-ui-dialog', 'command-help');
+  });
   it('renders nothing when closed', () => {
     render(<Host initialOpen={false} />);
     expect(screen.queryByTestId('inline-popover')).toBeNull();

@@ -2,6 +2,12 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import Modal from '../Modal';
 
 describe('Modal', () => {
+  it('names its kind on the dialog (default modal)', () => {
+    const { rerender } = render(<Modal open onClose={() => {}}><p>x</p></Modal>);
+    expect(screen.getByRole('dialog')).toHaveAttribute('data-ui-dialog', 'modal');
+    rerender(<Modal open onClose={() => {}} dialogKind="picker"><p>x</p></Modal>);
+    expect(screen.getByRole('dialog')).toHaveAttribute('data-ui-dialog', 'picker');
+  });
   const onClose = vi.fn();
 
   beforeEach(() => {

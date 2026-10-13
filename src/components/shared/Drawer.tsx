@@ -277,6 +277,10 @@ function Drawer({
       <aside
         ref={panelRef}
         role={isModal ? 'dialog' : 'complementary'}
+        // A floating drawer (modal or not) is a panel over the page; the
+        // marker lets an audit find it whichever role it takes. Docked
+        // drawers are part of the layout and carry no marker.
+        data-ui-dialog="drawer"
         aria-modal={isModal ? 'true' : undefined}
         aria-labelledby={title ? headingId : undefined}
         aria-label={title ? undefined : ariaLabel}

@@ -31,6 +31,34 @@ const columns: DataTableColumn<Row>[] = [
 const keyField = (row: Row) => row.id;
 
 describe('DataTable', () => {
+  it('leaves a click or key on a control inside a clickable row to that control', () => {
+    const open = vi.fn();
+    const tick = vi.fn();
+    render(<DataTable data={rows.slice(0, 1)} keyField={keyField} onRowClick={open}
+      columns={[{ key: 'pick', header: '', render: (r) => <input type="checkbox" aria-label={`Select ${r.name}`} onChange={tick} /> }, ...columns]} />);
+    const box = screen.getByRole('checkbox', { name: 'Select Alpha' });
+    fireEvent.click(box);
+    expect(tick).toHaveBeenCalledOnce();
+    expect(open).not.toHaveBeenCalled();
+    fireEvent.keyDown(box, { key: ' ' });
+    expect(open).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByText('Alpha'));
+    expect(open).toHaveBeenCalledTimes(1);
+    fireEvent.keyDown(screen.getByText('Alpha').closest('tr')!, { key: 'Enter' });
+    expect(open).toHaveBeenCalledTimes(2);
+  });
+  it('declares its rows for a rendered-UI audit: activatable with onRowClick, static only with a reason', () => {
+    const { container, rerender } = render(<DataTable data={rows} columns={columns} keyField={keyField} onRowClick={() => {}} staticRows="ignored when rows open" />);
+    const root = container.querySelector('[data-collection-table]')!;
+    expect(root).toHaveAttribute('data-collection-rows', 'activatable');
+    expect(root).not.toHaveAttribute('data-collection-rows-reason');
+    rerender(<DataTable data={rows} columns={columns} keyField={keyField} staticRows="Revisions are read-only snapshots." />);
+    expect(container.querySelector('[data-collection-table]')).toHaveAttribute('data-collection-rows', 'static');
+    expect(container.querySelector('[data-collection-table]')).toHaveAttribute('data-collection-rows-reason', 'Revisions are read-only snapshots.');
+    rerender(<DataTable data={rows} columns={columns} keyField={keyField} />);
+    expect(container.querySelector('[data-collection-table]')).not.toHaveAttribute('data-collection-rows');
+  });
+
   it('renders headers and rows', () => {
     render(<DataTable data={rows} columns={columns} keyField={keyField} />);
     expect(screen.getByText('Name')).toBeInTheDocument();
