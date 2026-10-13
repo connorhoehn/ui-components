@@ -955,7 +955,7 @@ function Q({ groups: e, rows: n, onOpenRow: r, rowMenu: a, rowMenuLabel: o, open
 				className: "flex flex-col",
 				children: [
 					/* @__PURE__ */ T("h3", {
-						className: t("m-0 rounded-md", re === e.id && "bg-primary/8"),
+						className: t("m-0 rounded-md", P ? f : "text-sm font-semibold", re === e.id && "bg-primary/8"),
 						"data-drop-over": re === e.id || void 0,
 						ref: (t) => {
 							ae.current.set(e.id, t);

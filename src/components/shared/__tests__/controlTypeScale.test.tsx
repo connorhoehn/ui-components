@@ -321,3 +321,11 @@ describe('RadioGroup option labels on the 12/14 scale (2.442.2)', () => {
     expect(description.className).not.toMatch(/text-\[11px\]/);
   });
 });
+
+describe('GroupedList group heading wrapper (2.442.3)', () => {
+  it('the h3 around a title heading carries the 14/600 step, never the document default', () => {
+    render(<GroupedList size="sm" groupHeading="title" groups={[{ id: 'g', title: 'Policies', count: 2 }]} rows={[]} data-testid="gl" />);
+    const h3 = document.querySelector('h3');
+    expect(h3?.className).toMatch(/\btext-sm\b/);
+  });
+});

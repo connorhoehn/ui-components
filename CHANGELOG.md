@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.442.3
+
+- `GroupedList`: the group heading's `<h3>` wrapper carries its button's step (14/600, or the rail label profile), so it never measures the document's 16px beside the rail captions.
+
 ## 2.442.2
 
 - `RadioGroup` option labels are 14/500 (`text-sm`) and descriptions 12 (`text-xs`), on the app's control scale (were 13 and 11).

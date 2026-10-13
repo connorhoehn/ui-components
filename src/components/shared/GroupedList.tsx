@@ -617,7 +617,9 @@ export function GroupedList({
             className="flex flex-col"
           >
             <h3
-              className={cn('m-0 rounded-md', overGroup === group.id && 'bg-primary/8')}
+              // The heading wrapper carries its button's step (or the rail label's), so the
+              // element itself never measures the document's 16px beside the rail captions.
+              className={cn('m-0 rounded-md', labelHeading ? RAIL_GROUP_LABEL : 'text-sm font-semibold', overGroup === group.id && 'bg-primary/8')}
               data-drop-over={overGroup === group.id || undefined}
               ref={(el) => {
                 headerRefs.current.set(group.id, el);
