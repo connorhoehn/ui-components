@@ -17,8 +17,12 @@ import type { WorkspaceRailBack } from './WorkspaceRail';
 
 /** A list rail, as data: what `ListRailLayout` (and an `ExplorerLayout`) draws in its rail. */
 export interface ListRail {
-  /** Caption title in the rail's head row ("All initiatives", "Pending"). */
-  title: string;
+  /**
+   * Caption title in the rail's head row ("All initiatives", "Pending"). Optional
+   * since 2.442.4: a rail whose group headings already name and count its rows
+   * omits it, so one rail carries one heading size.
+   */
+  title?: string;
   /**
    * The count after the title — the rows the host holds. Omit when unknown
    * or capped (a full page has no honest total; say "100+" in the footer).

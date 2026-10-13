@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.442.4
+
+- `ListRailLayout`: `list.title` is optional; a rail whose group headings already name and count its rows omits the caption.
+
 ## 2.442.3
 
 - `GroupedList`: the group heading's `<h3>` wrapper carries its button's step (14/600, or the rail label profile), so it never measures the document's 16px beside the rail captions.
