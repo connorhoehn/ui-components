@@ -438,6 +438,24 @@
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
 }
 
+/* TenantSwitcher (2.441.0) — the moon orbiting the brand planet. The plane
+   tilts slowly; the moon passes in front west → east, then recedes behind
+   the planet (scaled down, faded out) on the return pass. Both are stilled
+   by the component's `motion={false}` and by prefers-reduced-motion. */
+@keyframes tenant-orbit-plane {
+  0%, 100% { transform: rotate(8deg); }
+  50% { transform: rotate(20deg); }
+}
+
+@keyframes tenant-orbit {
+  0%, 100% { transform: translateX(-15px) scale(.55); opacity: 1; }
+  25% { transform: translateX(0) scale(1); opacity: 1; }
+  50% { transform: translateX(15px) scale(.55); opacity: 1; }
+  60% { transform: translateX(15px) scale(.4); opacity: 0; }
+  75% { transform: translateX(0) scale(.35); opacity: 0; }
+  90% { transform: translateX(-15px) scale(.4); opacity: 0; }
+}
+
 @keyframes skeleton-shimmer {
   0%   { background-position: -200px 0; }
   100% { background-position: 200px 0; }

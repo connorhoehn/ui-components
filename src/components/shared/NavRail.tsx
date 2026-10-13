@@ -218,6 +218,7 @@ function RailItem({
             RAIL_ITEM_TEXT,
             palette.labelActive,
           )}
+          data-ui-text="rail-item"
         >
           {item.label}
         </span>

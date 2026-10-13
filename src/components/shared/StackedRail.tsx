@@ -511,7 +511,7 @@ export function StackedRail({
           </Gutter>
         )}
         {row.icon != null && <span className="flex shrink-0 items-center text-text-secondary">{row.icon}</span>}
-        <span className="min-w-0 flex-1 truncate" title={row.label}>{row.label}</span>
+        <span className="min-w-0 flex-1 truncate" title={row.label} data-ui-text="rail-item">{row.label}</span>
         {row.meta !== undefined && row.meta !== '' && (
           <span
             className={cn('shrink-0', RAIL_ITEM_COUNT)}
@@ -586,9 +586,9 @@ export function StackedRail({
       {title && (
         <div className={cn('@container flex h-9 min-w-0 items-center gap-2', ROW_INSET)}>
           <Gutter cancelGap="-mr-2"><span className={STACKED_RAIL_STEP_CLASS} data-rail-step="caption" /></Gutter>
-          <span className={cn('min-w-0 truncate', RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK)} title={title} data-testid={heading}>{title}</span>
+          <span className={cn('min-w-0 truncate', RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK)} title={title} data-testid={heading} data-ui-text="rail-caption">{title}</span>
           {typeof count === 'number' && (
-            <span className={cn('shrink-0', RAIL_GROUP_COUNT)} aria-label={`${count} items`} data-testid={`${testId}-count`}>{count}</span>
+            <span className={cn('shrink-0', RAIL_GROUP_COUNT)} aria-label={`${count} items`} data-testid={`${testId}-count`} data-ui-text="rail-caption">{count}</span>
           )}
           <span className="flex-1" />
           {actions != null && <CaptionActions actions={actions} title={title} testId={testId} />}
@@ -608,9 +608,9 @@ export function StackedRail({
                 {collapsible && <RailCaretIcon open={open} />}
               </span>
             </Gutter>
-            <span className="min-w-0 truncate" data-testid={`${headerId}-label`}>{group.title}</span>
+            <span className="min-w-0 truncate" data-testid={`${headerId}-label`} data-ui-text="rail-caption">{group.title}</span>
             {typeof group.count === 'number' && (
-              <span className={cn('shrink-0', RAIL_GROUP_COUNT)} aria-label={`${group.count} items`} data-testid={`${groupTestId}-count`}>
+              <span className={cn('shrink-0', RAIL_GROUP_COUNT)} aria-label={`${group.count} items`} data-testid={`${groupTestId}-count`} data-ui-text="rail-caption">
                 {group.count}
               </span>
             )}

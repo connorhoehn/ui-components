@@ -30,7 +30,7 @@ import { t as ce } from "./InlineAlert-CBtteaVZ.js";
 import { t as le } from "./LogStream-Bk8DVIVb.js";
 import { a as ue, n as de, o as fe, s as pe, t as me } from "./backdropTone-BzPocySl.js";
 import { l as he } from "./railType-DaEA_kg6.js";
-import { n as ge, s as _e, t as ve } from "./PopoverForm-FCPkOgmQ.js";
+import { n as ge, s as _e, t as ve } from "./PopoverForm-DSiCGM5w.js";
 import { t as ye } from "./InlinePlaceholder-CbIBYc-_.js";
 import { t as be } from "./MetaLine-BtHTTScI.js";
 import { F as xe, R as Se, j as Ce, lt as we, rt as Te, st as Ee, tt as De } from "./ConversationSurface-Cr4ssJPq.js";
@@ -3959,7 +3959,7 @@ function mn({ status: e, contextTokens: t, contextBudgetTokens: n, onOpen: r, cl
 		onClick: r,
 		"data-testid": a,
 		"data-status": e,
-		className: o("inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-border bg-surface-inset px-2.5 py-1", "font-mono text-[11px] leading-none text-text-secondary hover:bg-surface-hover hover:text-text-primary", i),
+		className: o("inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-border bg-surface-inset px-2.5 py-1", "font-mono text-xs leading-none text-text-secondary hover:bg-surface-hover hover:text-text-primary", i),
 		children: [
 			/* @__PURE__ */ Q("span", {
 				"aria-hidden": "true",

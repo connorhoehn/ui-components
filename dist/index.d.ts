@@ -16757,7 +16757,7 @@ export declare interface RailNavListItem {
     onSelect?: () => void;
     /** Router interception; keep modified clicks native by checking the event. */
     onNavigate?: (event: MouseEvent_2<HTMLAnchorElement>) => void;
-    /** The view on screen. Marked `aria-current="page"` and drawn semibold. */
+    /** The view on screen. Marked `aria-current="page"`; semibold under `currentStyle="weight"`, tinted (at the rail item's 500 weight) under `"tint"`. */
     current?: boolean;
     /** Muted number at the item's right edge. Absent draws none; 0 shows "0". */
     count?: number;
@@ -16770,7 +16770,12 @@ export declare interface RailNavListItem {
 
 export declare interface RailNavListProps {
     items: RailNavListItem[];
-    /** A tinted current view for a rail that also contains selected records. */
+    /**
+     * A tinted current view for a rail that also contains selected records.
+     * Since 2.441.0 `tint` marks the current view by its fill alone, like
+     * StackedRail and GroupedList rail rows: the title keeps the rail item's
+     * 500 weight (the `data-ui-text="rail-item"` profile).
+     */
     currentStyle?: 'weight' | 'tint';
     /** The nav landmark's name. Default "Views". */
     'aria-label'?: string;
@@ -21845,6 +21850,58 @@ export declare interface TechnicalDetailsProps {
 /** A page with a dashed block: "a template". Since 2.390.3. */
 export declare function TemplateIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
+export declare function TenantSwitcher({ label, healthy, motion, destinations, onSelect, live, blockedReason, emptyMessage, resetKey, avatarColor, avatarForeground, triggerLabel, dialogLabel, errorFallback, className, 'data-testid': testId, }: TenantSwitcherProps): JSX.Element;
+
+export declare interface TenantSwitcherDestination {
+    /** Stable id handed back to `onSelect`; also written as `data-tenant`. */
+    id: string;
+    /** The workspace's name ("Assessment"). The button's accessible name. */
+    label: string;
+    /** Avatar initials. Default: the label's first two characters. */
+    initials?: string;
+    /** Unread notices for this workspace. Absent or 0 draws the info glyph. */
+    unread?: number;
+}
+
+export declare interface TenantSwitcherProps {
+    /** The current workspace's name, drawn beside the planet ("Work"). */
+    label: string;
+    /** Draws the orbiting moon — the shell's "connected and healthy" hint. */
+    healthy?: boolean;
+    /**
+     * Ambient motion. `false` keeps the moon still (no animation at all);
+     * `prefers-reduced-motion` stills it regardless. Default true.
+     */
+    motion?: boolean;
+    /** The workspaces the viewer may switch to, in display order. */
+    destinations: readonly TenantSwitcherDestination[];
+    /**
+     * Switch. A rejected promise shows its message in the panel and re-enables
+     * the destinations; a resolved one leaves them disabled (the host is
+     * navigating) until `resetKey` changes.
+     */
+    onSelect: (id: string) => void | Promise<unknown>;
+    /** Whether live notification updates are available. Shapes each activity hint. */
+    live?: boolean;
+    /** When set, every destination is disabled and this explains why. */
+    blockedReason?: ReactNode;
+    /** Shown when `destinations` is empty. */
+    emptyMessage?: ReactNode;
+    /** Closes the panel and clears its error/busy state when it changes (e.g. user + tenant). */
+    resetKey?: string | number;
+    /** Destination avatar fill / ink. Default the primary tint tokens. */
+    avatarColor?: string;
+    avatarForeground?: string;
+    /** Trigger's accessible name. Default `"<label>: switch tenant"`. */
+    triggerLabel?: string;
+    /** The dialog's accessible name. Default "Switch tenant". */
+    dialogLabel?: string;
+    /** Shown when `onSelect` rejects with something that is not an `Error`. */
+    errorFallback?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
 declare const TERMINAL_DECISIONS: {
     readonly acked: "approved";
     readonly done: "approved";
@@ -25970,10 +26027,10 @@ declare interface UseActivityBusReturn {
           pending?: boolean;
       };
       /**
-       * `inline` (default): borderless fields at 13px with a rule between each.
+       * `inline` (default): borderless fields at 14px with a rule between each.
        * `boxed` (since 2.386.15): the Work mockup's row — status and priority are
        * 36px bordered select boxes ("● Open ⌄", "Priority: High ⌄"), points and
-       * owner plain 14–15px text with one rule between them.
+       * owner plain 14px text with one rule between them.
        */
       appearance?: 'inline' | 'boxed';
       /**
@@ -25986,7 +26043,7 @@ declare interface UseActivityBusReturn {
        * `default`: the fields in their usual order (status, points, owner,
        * priority). `divided` (since 2.390.0): the read-first row under a work
        * item's large title — status · flags · owner · points · priority, a rule
-       * between each, at 15px ("● Open | Blocked | (EG) Eli Garcia | 2 points |
+       * between each, at 14px (the body step; 15px before 2.441.0) ("● Open | Blocked | (EG) Eli Garcia | 2 points |
        * High priority"). Ignored when `appearance="boxed"`.
        */
       layout?: 'default' | 'divided';

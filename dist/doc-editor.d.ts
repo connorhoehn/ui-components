@@ -946,9 +946,73 @@ export declare interface DeckPresence {
 
 export declare const deckPresenceChannel: (documentId: string) => string;
 
+export declare function DeckPresentationDialog({ title, slides, open, slideIndex, onSlideChange, onClose, loading, error, onRetry, onFocusConversation, testId, }: DeckPresentationDialogProps): JSX.Element;
+
+export declare interface DeckPresentationDialogProps {
+    /** The deck's title. The dialog is named "Present <title>". */
+    title: string;
+    slides: readonly PresentationPreviewSlide[];
+    open: boolean;
+    /** Zero-based, including the renderer's generated Sources slide. */
+    slideIndex: number;
+    onSlideChange: (index: number) => void;
+    onClose: () => void;
+    loading?: boolean;
+    error?: string;
+    onRetry?: () => void;
+    /**
+     * Hand the reader to the page's conversation ("Chat & agent"). The dialog
+     * closes first, and the callback runs on the next frame so the modal has
+     * restored focus before the host moves it. Absent (the default), the
+     * dialog asks the conversation-input registry (`useComposerFocus`) for the
+     * agent composer and shows the button only while one is mounted.
+     */
+    onFocusConversation?: () => void;
+    /** Prefix for the view's test ids (`<testId>-position`, `<testId>-stage`, …). */
+    testId?: string;
+}
+
 export declare interface DeckQuote {
     text: string;
     by: string;
+}
+
+export declare function DeckReader({ spec, compactReview, fileActions, preview, previewCurrent, onRequestPreview, slideViewers, selectSlideRequest, onSelectedSlideChange, onNavigateSlide, renderFrame, footer, onFocusConversation, 'data-testid': testId, }: DeckReaderProps): JSX.Element;
+
+export declare interface DeckReaderProps {
+    /** The saved deck. Never mutated. */
+    spec: DeckSpec;
+    /** An active call's review: one toolbar row (a View menu) and notes closed by default. */
+    compactReview?: boolean;
+    /** File actions at the toolbar's end (Download, Open in editor…). */
+    fileActions?: ReactNode;
+    /** The rendered slides for `spec`, `'loading'`, or `{ error }`. */
+    preview: PresentationPreview;
+    /** The supplied images were rendered from this exact saved spec. Default true. */
+    previewCurrent?: boolean;
+    /** Asked once per renderable spec (and on Retry). */
+    onRequestPreview: (spec: DeckSpec) => void;
+    /** Who is looking at which slide — faces on the filmstrip thumbnails. */
+    slideViewers?: PresentationEditorProps['slideViewers'];
+    /** A follow request: select this slide without reporting it as navigation. */
+    selectSlideRequest?: PresentationEditorProps['selectSlideRequest'];
+    /** Every selection change, followed or explicit. */
+    onSelectedSlideChange?: (slideId: string) => void;
+    /** Explicit viewer navigation only (clicks, keys, filmstrip, outline). */
+    onNavigateSlide?: (slideId: string) => void;
+    /** Draw the parts — `{ toolbar, actions: null, surface, footer }`. */
+    renderFrame: (frame: PresentationEditorFrame) => ReactNode;
+    footer?: (context: PresentationFooterContext) => ReactNode;
+    /**
+     * Hand the reader to the page's conversation ("Chat & agent", in the
+     * toolbar and while presenting). Absent (the default), the reader asks the
+     * conversation-input registry (`useComposerFocus`, the same one the rich
+     * composer registers with) for the agent composer, exactly as the portal's
+     * reader did: enabled only while a composer is mounted to take the focus.
+     * Pass it to route the handoff somewhere else.
+     */
+    onFocusConversation?: () => void;
+    'data-testid'?: string;
 }
 
 export declare interface DeckRecordingOption {

@@ -59,10 +59,10 @@ export interface WorkItemMetaBarProps {
     readOnlyReason?: string; pending?: boolean;
   };
   /**
-   * `inline` (default): borderless fields at 13px with a rule between each.
+   * `inline` (default): borderless fields at 14px with a rule between each.
    * `boxed` (since 2.386.15): the Work mockup's row — status and priority are
    * 36px bordered select boxes ("● Open ⌄", "Priority: High ⌄"), points and
-   * owner plain 14–15px text with one rule between them.
+   * owner plain 14px text with one rule between them.
    */
   appearance?: 'inline' | 'boxed';
   /**
@@ -75,7 +75,7 @@ export interface WorkItemMetaBarProps {
    * `default`: the fields in their usual order (status, points, owner,
    * priority). `divided` (since 2.390.0): the read-first row under a work
    * item's large title — status · flags · owner · points · priority, a rule
-   * between each, at 15px ("● Open | Blocked | (EG) Eli Garcia | 2 points |
+   * between each, at 14px (the body step; 15px before 2.441.0) ("● Open | Blocked | (EG) Eli Garcia | 2 points |
    * High priority"). Ignored when `appearance="boxed"`.
    */
   layout?: 'default' | 'divided';
@@ -201,7 +201,7 @@ export function WorkSearchPicker<T>({
                   <button
                     type="button"
                     onClick={() => { onPick(item); onClose(); }}
-                    className="flex w-full cursor-pointer items-center gap-2 rounded-md border-none bg-transparent px-2 py-1.5 text-left font-[inherit] text-[13px] text-text-primary hover:bg-surface-hover focus-visible:bg-surface-hover"
+                    className="flex w-full cursor-pointer items-center gap-2 rounded-md border-none bg-transparent px-2 py-1.5 text-left font-[inherit] text-sm text-text-primary hover:bg-surface-hover focus-visible:bg-surface-hover"
                   >
                     {renderItem(item)}
                   </button>
@@ -287,7 +287,7 @@ function StatusField({ f, boxed, big = false }: { f: NonNullable<WorkItemMetaBar
         />
       ) : (
         <span
-          className={cn(big ? 'text-[15px]' : 'text-[13px]', opt ? 'text-text-primary' : 'text-text-tertiary')}
+          className={cn('text-sm', opt ? 'text-text-primary' : 'text-text-tertiary')}
           aria-describedby={f.readOnlyReason ? reasonId : undefined}
         >
           {opt?.label ?? f.value ?? 'No status'}
@@ -362,13 +362,13 @@ function PointsField({ f, boxed, big = false }: { f: NonNullable<WorkItemMetaBar
           onClick={start}
           disabled={f.pending}
           aria-label={`Points: ${f.value == null ? 'not set' : f.value}. Edit`}
-          className={cn(big ? 'text-[15px]' : boxed ? 'text-sm' : 'text-[13px]', f.value == null ? 'text-text-tertiary' : 'text-text-secondary')}
+          className={cn('text-sm', f.value == null ? 'text-text-tertiary' : 'text-text-secondary')}
         >
           {label}
         </Button>
       ) : (
         <span
-          className={cn(big ? 'text-[15px]' : 'text-[13px]', f.value == null ? 'text-text-tertiary' : 'text-text-secondary')}
+          className={cn('text-sm', f.value == null ? 'text-text-tertiary' : 'text-text-secondary')}
           aria-describedby={f.readOnlyReason ? reasonId : undefined}
         >
           {label}
@@ -387,10 +387,10 @@ function OwnerField({ f, boxed: boxedIn, big = false }: { f: NonNullable<WorkIte
   const face = f.value ? (
     <>
       <Avatar name={f.value.name} src={f.value.avatarUrl} size={boxed ? 28 : 24} />
-      <span className={cn('truncate text-text-primary', boxed ? 'text-[15px]' : 'text-[13px]')}>{f.value.name}</span>
+      <span className="truncate text-sm text-text-primary">{f.value.name}</span>
     </>
   ) : (
-    <span className={cn('text-text-tertiary', boxed ? 'text-sm' : 'text-[13px]')}>Unassigned</span>
+    <span className="text-sm text-text-tertiary">Unassigned</span>
   );
   return (
     <Field name="owner" readOnlyReason={f.readOnlyReason} pending={f.pending} reasonId={reasonId}>
@@ -466,7 +466,7 @@ function PriorityField({ f, boxed, tag = false, big = false }: { f: NonNullable<
             <Chip tone={opt.tone ?? 'neutral'} size={big ? 'md' : 'sm'}>{`${opt.label} priority`}</Chip>
           </span>
         ) : (
-          <span className={cn(big ? 'text-[15px]' : 'text-[13px]', 'text-text-tertiary')} aria-describedby={f.readOnlyReason ? reasonId : undefined}>
+          <span className="text-sm text-text-tertiary" aria-describedby={f.readOnlyReason ? reasonId : undefined}>
             {f.value ?? 'No priority'}
           </span>
         )}
@@ -496,7 +496,7 @@ function PriorityField({ f, boxed, tag = false, big = false }: { f: NonNullable<
   }
   return (
     <Field name="priority" readOnlyReason={f.readOnlyReason} pending={f.pending} reasonId={reasonId}>
-      <span id={labelId} className="text-[13px] text-text-secondary">Priority:</span>
+      <span id={labelId} className="text-sm text-text-secondary">Priority:</span>
       {editable ? (
         // The pill Select IS the toned chip, made changeable (see SelectVariant).
         <Select
@@ -516,7 +516,7 @@ function PriorityField({ f, boxed, tag = false, big = false }: { f: NonNullable<
           <Chip tone={opt.tone ?? 'neutral'}>{opt.label}</Chip>
         </span>
       ) : (
-        <span className="text-[13px] text-text-tertiary" aria-describedby={f.readOnlyReason ? reasonId : undefined}>
+        <span className="text-sm text-text-tertiary" aria-describedby={f.readOnlyReason ? reasonId : undefined}>
           {f.value ?? 'No priority'}
         </span>
       )}

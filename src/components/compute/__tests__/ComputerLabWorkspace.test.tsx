@@ -188,6 +188,8 @@ describe('ComputerLab appearance="workspace"', () => {
     expect(screen.getByTestId('lab-pill-waiting').textContent).toContain(`${s.needsYou} need`);
     expect(screen.getByTestId('lab-pill-running').textContent).toContain(`${s.running} running`);
     expect(screen.getByTestId('lab-pill-error').textContent).toContain('1 error');
+    // A pill is a filter control: its label is on the 12px control step, not the 11px badge step (2.441.0).
+    expect(screen.getByTestId('lab-pill-running').firstElementChild?.className).toContain('text-[12px]');
     expect(screen.getByTestId('lab-create')).toBeTruthy();
     fireEvent.click(screen.getByTestId('lab-keys'));
     expect(await screen.findByRole('dialog', { name: 'Keyboard shortcuts' })).toBeTruthy();

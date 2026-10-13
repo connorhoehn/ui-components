@@ -346,7 +346,7 @@ function TreeRow({
           <span className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
         )}
         {entry.icon && <span className={cn('flex flex-shrink-0 items-center', md && (isSelected ? 'text-primary-fg' : 'text-text-secondary'))} data-testid={`${testId}-icon-${entry.id}`}>{entry.icon}</span>}
-        <span className="min-w-0 flex-1 truncate" title={entry.title}>
+        <span className="min-w-0 flex-1 truncate" title={entry.title} data-ui-text={rail ? 'rail-item' : undefined}>
           {entry.title}
         </span>
         {entry.meta && <span className={cn('flex-shrink-0 text-text-tertiary', rail ? RAIL_ITEM_COUNT : md ? 'text-[13px] tabular-nums' : 'text-xs')}>{entry.meta}</span>}

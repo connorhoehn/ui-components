@@ -38,6 +38,13 @@ export { SlideSources } from './SlideSources';
 export type { SlideSourcesProps, PresentationSourceOption } from './SlideSources';
 export { svgDataUri } from './svgPreview';
 
+// The reading end, composed from the pieces above (2.441.0): a saved deck,
+// read-only, and its full-window presentation.
+export { DeckReader } from './DeckReader';
+export type { DeckReaderProps } from './DeckReader';
+export { DeckPresentationDialog } from './DeckPresentationDialog';
+export type { DeckPresentationDialogProps } from './DeckPresentationDialog';
+
 export {
   DECK_THEMES,
   MAX_BULLETS_PER_SLIDE,

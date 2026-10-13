@@ -112,7 +112,9 @@ export function LabHeader({
                 count === 0 && !on && 'opacity-60',
               )}
             >
-              <Chip size="sm" tone={tone} dot="static" outline={on ? undefined : 'soft'} solid={on} className="tabular-nums">
+              {/* md (12px): the pill IS the filter control's label, and a control
+                  reads at 12 or 14px — sm's 11px badge type is for passive tags. */}
+              <Chip size="md" tone={tone} dot="static" outline={on ? undefined : 'soft'} solid={on} className="px-2 tabular-nums">
                 {count} {word(count)}
               </Chip>
             </button>

@@ -831,12 +831,12 @@ function tn({ title: r, summary: i, statusFilter: o, onStatusFilter: s, canCreat
 						"data-testid": `lab-pill-${t}`,
 						className: e("rounded-full p-0 bg-transparent border-none cursor-pointer", "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary", u === 0 && !d && "opacity-60"),
 						children: /* @__PURE__ */ J(n, {
-							size: "sm",
+							size: "md",
 							tone: a,
 							dot: "static",
 							outline: d ? void 0 : "soft",
 							solid: d,
-							className: "tabular-nums",
+							className: "px-2 tabular-nums",
 							children: [
 								u,
 								" ",

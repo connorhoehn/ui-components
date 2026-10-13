@@ -482,6 +482,9 @@ export { MarkdownView } from './MarkdownView';
 export type { MarkdownViewProps, MarkdownViewScale } from './MarkdownView';
 export { Tooltip } from './Tooltip';
 export type { TooltipProps, TooltipPlacement } from './Tooltip';
+// The shell's brand mark + workspace switcher (2.441.0).
+export { TenantSwitcher } from './TenantSwitcher';
+export type { TenantSwitcherProps, TenantSwitcherDestination } from './TenantSwitcher';
 export { ChoiceList, ChoiceRow, ChoiceOption } from './ChoiceList';
 export type { ChoiceListProps, ChoiceRowProps, ChoiceOptionProps } from './ChoiceList';
 export { Text, T } from './Text';

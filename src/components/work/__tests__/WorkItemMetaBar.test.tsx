@@ -163,3 +163,24 @@ describe('WorkItemMetaBar', () => {
     expect(screen.getByLabelText('Saving status')).toBeTruthy();
   });
 });
+
+describe('WorkItemMetaBar type scale (2.441.0)', () => {
+  // Controls read at 12 or 14px; the meta row's text and its link-variant
+  // buttons (which inherit the size they are given) were 13px inline and 15px
+  // divided. Every field is the 14px body step now.
+  it.each(['default', 'divided'] as const)('draws every field at 14px in the %s layout', (layout) => {
+    const { container } = render(
+      <WorkItemMetaBar
+        layout={layout}
+        status={{ value: 'open', options: STATUS }}
+        points={{ value: 5, onChange: () => {} }}
+        owner={{ value: LAYLA, onChange: () => {} }}
+        priority={{ value: null, options: PRIORITY }}
+      />,
+    );
+    const points = screen.getByRole('button', { name: /Points: 5/ });
+    expect(points.className).toContain('text-sm');
+    expect(screen.getByText('Layla Hassan').className).toContain('text-sm');
+    expect(container.innerHTML).not.toMatch(/text-\[1[35]px\]/);
+  });
+});

@@ -419,6 +419,7 @@ function ItemLink({
           className={cn('min-w-0 truncate', RAIL_ITEM_TEXT)}
           style={accentColor ? { color: accentColor } : undefined}
           data-testid="subnav-item-label"
+          data-ui-text="rail-item"
         >
           {item.label}
         </span>

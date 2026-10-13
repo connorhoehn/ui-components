@@ -694,7 +694,7 @@ export function ChatLabPill({
       data-status={status}
       className={cn(
         'inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-border bg-surface-inset px-2.5 py-1',
-        'font-mono text-[11px] leading-none text-text-secondary hover:bg-surface-hover hover:text-text-primary',
+        'font-mono text-xs leading-none text-text-secondary hover:bg-surface-hover hover:text-text-primary',
         className,
       )}
     >

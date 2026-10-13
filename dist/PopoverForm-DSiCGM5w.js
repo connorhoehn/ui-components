@@ -174,6 +174,7 @@ function j({ item: t, renderNavItem: r }) {
 				className: e("min-w-0 truncate", a),
 				style: i ? { color: i } : void 0,
 				"data-testid": "subnav-item-label",
+				"data-ui-text": "rail-item",
 				children: t.label
 			}),
 			t.activity && /* @__PURE__ */ S("span", {

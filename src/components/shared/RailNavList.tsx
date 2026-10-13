@@ -37,7 +37,7 @@ export interface RailNavListItem {
   onSelect?: () => void;
   /** Router interception; keep modified clicks native by checking the event. */
   onNavigate?: (event: MouseEvent<HTMLAnchorElement>) => void;
-  /** The view on screen. Marked `aria-current="page"` and drawn semibold. */
+  /** The view on screen. Marked `aria-current="page"`; semibold under `currentStyle="weight"`, tinted (at the rail item's 500 weight) under `"tint"`. */
   current?: boolean;
   /** Muted number at the item's right edge. Absent draws none; 0 shows "0". */
   count?: number;
@@ -50,7 +50,12 @@ export interface RailNavListItem {
 
 export interface RailNavListProps {
   items: RailNavListItem[];
-  /** A tinted current view for a rail that also contains selected records. */
+  /**
+   * A tinted current view for a rail that also contains selected records.
+   * Since 2.441.0 `tint` marks the current view by its fill alone, like
+   * StackedRail and GroupedList rail rows: the title keeps the rail item's
+   * 500 weight (the `data-ui-text="rail-item"` profile).
+   */
   currentStyle?: 'weight' | 'tint';
   /** The nav landmark's name. Default "Views". */
   'aria-label'?: string;
@@ -82,7 +87,7 @@ export function RailNavList({
           const body = (
             <>
               {item.icon != null && <span className="flex shrink-0 items-center text-text-secondary">{item.icon}</span>}
-              <span className="min-w-0 flex-1 truncate" title={item.label}>{item.label}</span>
+              <span className="min-w-0 flex-1 truncate" title={item.label} data-ui-text="rail-item">{item.label}</span>
               {typeof item.count === 'number' && (
                 <span className={cn('shrink-0', RAIL_ITEM_COUNT)} aria-label={`${item.count} items`} data-testid={`${testId}-count-${item.id}`}>
                   {item.count}
@@ -90,7 +95,7 @@ export function RailNavList({
               )}
             </>
           );
-          const cls = cn(RAIL_NAV_ITEM_CLASS, item.current ? 'font-semibold' : undefined, item.current && currentStyle === 'tint' && 'bg-primary/10', item.disabled ? 'cursor-default opacity-60 hover:bg-transparent' : 'cursor-pointer');
+          const cls = cn(RAIL_NAV_ITEM_CLASS, item.current && currentStyle === 'weight' && 'font-semibold', item.current && currentStyle === 'tint' && 'bg-primary/10', item.disabled ? 'cursor-default opacity-60 hover:bg-transparent' : 'cursor-pointer');
           const common = {
             className: cls,
             'data-testid': `${testId}-item-${item.id}`,

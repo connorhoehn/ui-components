@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.441.1
+
+- **`DeckReader` / `DeckPresentationDialog`: "Chat & agent" works without a prop again.** The 2.441.0 port made the composer handoff an `onFocusConversation` prop, so a host that mounted the reader the way the portal's own reader was mounted (inside a page whose rich composer registers with the conversation-input registry) got a disabled toolbar button and no button while presenting. With no `onFocusConversation`, both now ask `useComposerFocus` for the agent composer — enabled only while one is mounted — exactly as the portal's reader did; the prop still overrides. Regression tests pin the portal reader's DOM contract (`<testId>-position`, `-viewport`, `-stage` image, `-filmstrip-select-<id>`, `-notes`, `-preview-loading`, footer context, the toolbar's accessible names) and the hidden-until-current preview behaviour.
+
+## 2.441.0
+
+Fixes for the 2026-10-12 tenant DOM audit (the app's scale: 14/400 body, 12/400 meta, controls at 12 or 14px), and two composites ported out of the aws-agentcore portal.
+
+- **New `TenantSwitcher`** (`/shared` and root): the shell's brand mark (planet glyph, optional orbiting "healthy" moon, workspace label) that opens, on a mouse hover after 250ms or a click, a dialog of the other workspaces with their unread activity. Props: `label`, `healthy`, `motion`, `destinations` (`{ id, label, initials?, unread? }`), `onSelect` (a rejection is shown in the panel), `live`, `blockedReason`, `emptyMessage`, `resetKey`, `avatarColor`/`avatarForeground`, `triggerLabel`, `dialogLabel`, `errorFallback`. Keeps the portal's DOM contract: the `tenant-*` class hooks, `data-status` on each activity glyph, `data-tenant` on each avatar, Escape/outside-click/blur close, ArrowDown opens and focuses the first destination. `@keyframes tenant-orbit` / `tenant-orbit-plane` added to `styles.css`.
+- **New `DeckReader` and `DeckPresentationDialog`** (`/doc-editor`, next to `PresentationEditor`): a saved deck read-only — viewing toolbar (Slides/Outline, previous/next with "Slide n of m", a native "Slide zoom" select, Notes, Chat & agent, Present, or one View menu under `compactReview`), a thumbnail or outline rail, a keyboard-navigable 16:9 viewport and speaker notes — and its full-window presentation. Every `data-testid`, accessible name and `deck-reader-*` class hook of the portal's version is kept. The composer handoff is a prop, `onFocusConversation`, instead of a dependency on the rich-composer focus registry.
+- **Rail typography markers.** Every railType row title now emits `data-ui-text="rail-item"` (StackedRail, SubNavLayout, NavRail, RailNavList, `TreeView size="rail"`), and StackedRail's caption, group label and counts emit `data-ui-text="rail-caption"`, so the DOM audit measures them under the rail profiles (13/500/20, 11px) rather than as ordinary 13px/11px controls. `RailNavList currentStyle="tint"` marks the current view by its fill alone (no semibold), like StackedRail and GroupedList rail rows. The audit skill documents the `rail-caption` marker.
+- **`WorkItemMetaBar`**: every field is 14px (was 13px inline, 15px divided); the Points link button and owner trigger no longer render at 13px. The owner picker's result rows are 14px.
+- **Lab pills**: `LabWorkspaceChrome`'s status filter pills use the 12px Chip (`md`) instead of the 11px badge size; `ChatLabPill` is 12px.
+
 ## 2.440.2
 
 - Add CollectionPage and CollectionToolbar: one layout for list headers, filter panels, summaries, advisory popovers, refresh and named icon actions. DataTable search uses the same toolbar.
