@@ -4,7 +4,7 @@
 
 import { type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
-import { useDensitySize } from '../shared/Density';
+import { useDensity, useDensitySize } from '../shared/Density';
 import Chip from '../shared/Chip';
 
 export interface PageSectionProps {
@@ -31,6 +31,10 @@ export interface PageSectionProps {
    * body step — 14px semibold (`T size="sm" weight="semibold"`), a 12px count
    * pill and 14px actions — for a section inside a tabbed pane, where 16px
    * reads a size up from the 14px tabs and the 13–14px rails beside it.
+   *
+   * Unsized, it is `lg` at every density: under `<DensityProvider
+   * density="compact">` it keeps the h1 and takes the compact 8px content
+   * gap (2.441.5). An explicit size always wins, `lg` included.
    */
   size?: 'lg' | 'md' | 'sm';
   className?: string;
@@ -48,13 +52,21 @@ export function PageSection({
   className,
   'data-testid': testId,
 }: PageSectionProps) {
-  const size = useDensitySize('PageSection', sizeProp, { comfortable: 'lg', compact: 'sm' });
+  // Density is spacing, never heading level (2.441.5). Only an explicit
+  // `md`/`sm` makes this a subsection (h2); an unsized PageSection is the
+  // page's own title (h1, 20/600) at every density, and under the compact
+  // density it takes the compact content gap. 2.440.0–2.441.4 mapped compact
+  // to `sm`, which left every compact page with a 14px h2 and no h1.
+  useDensitySize('PageSection', sizeProp, { comfortable: 'lg', compact: 'sm' }); // deprecation warning for an explicit sm only
+  const density = useDensity();
+  const size = sizeProp ?? 'lg';
   const sm = size === 'sm';
   // `sm` is `md`'s layout at the body type step.
   const md = size === 'md' || sm;
+  const compactGap = md || (sizeProp === undefined && density === 'compact');
   const Heading = md ? 'h2' : 'h1';
   return (
-    <section className={cn('flex flex-col', md ? 'gap-2' : 'gap-6', className)} {...(testId ? { 'data-testid': testId } : {})} data-size={md ? size : undefined}>
+    <section className={cn('flex flex-col', compactGap ? 'gap-2' : 'gap-6', className)} {...(testId ? { 'data-testid': testId } : {})} data-size={md ? size : undefined} data-density={sizeProp === undefined && density === 'compact' ? 'compact' : undefined}>
       <div className={cn('flex justify-between gap-4', md ? 'items-center' : 'items-start')}>
         <div className="min-w-0">
           <Heading className={cn('m-0 text-text-primary', md ? cn('flex min-w-0 items-center gap-2.5 font-semibold', sm ? 'text-sm leading-5' : 'text-[16px] leading-6') : 'text-xl font-semibold')}>

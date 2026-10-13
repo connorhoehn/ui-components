@@ -37,7 +37,7 @@ const compact = (node: ReactElement) => <DensityProvider density="compact">{node
 // Each composite twice: [explicit sm, same element with no size].
 const CASES: Array<[string, (size?: 'sm') => ReactElement]> = [
   ['StatStrip', (size) => <StatStrip variant="line" {...(size ? { size } : {})} items={[{ label: 'assessed', value: '3/17' }, { label: 'open', value: 2 }]} />],
-  ['PageSection', (size) => <PageSection title="Work" count={4} {...(size ? { size } : {})}><p>body</p></PageSection>],
+  // PageSection is not here since 2.441.5: density is its spacing, never its heading level (see below).
   ['DetailSection', (size) => <DetailSection variant="heading" title="Owner" hint="who" {...(size ? { size } : {})}><p>x</p></DetailSection>],
   ['ActionRowList', (size) => <ActionRowList {...(size ? { size } : {})} items={[{ id: 'a', title: 'Fix login', description: 'p1' }]} onOpen={() => {}} />],
   ['Table', (size) => <Table {...(size ? { size } : {})}><TableBody><TableRow><TableTd>cell</TableTd></TableRow></TableBody></Table>],
@@ -148,5 +148,34 @@ describe('StatStrip line track', () => {
     ));
     expect(getByTestId('stat-strip-track')).toHaveTextContent('levels');
     expect(queryByTestId('stat-strip-progress')).toBeNull();
+  });
+});
+
+// 2.441.5: the compact density changed PageSection's heading LEVEL (h1 → h2)
+// as well as its spacing, so every compact page lost its h1 — the layout
+// cascade's "first h1 after the trail" (20/600) failed on 46 routes.
+describe('PageSection: density is spacing, not heading level', () => {
+  it('flagged: unsized inside a compact provider stays the page h1 at 20/600, with the compact gap', () => {
+    const { container } = render(compact(<PageSection title="Work" data-testid="ps"><p>b</p></PageSection>));
+    const h1 = container.querySelector('h1');
+    expect(h1).not.toBeNull();
+    expect(h1!.className).toContain('text-xl');
+    expect(h1!.className).toContain('font-semibold');
+    expect(container.querySelector('h2')).toBeNull();
+    expect(container.querySelector('[data-testid="ps"]')!.className).toContain('gap-2');
+  });
+  it.each(['sm', 'md'] as const)('valid: an explicit %s is the h2 subsection under compact density', (size) => {
+    const { container } = render(compact(<PageSection title="Up next" size={size}><p>b</p></PageSection>));
+    expect(container.querySelector('h2')).not.toBeNull();
+    expect(container.querySelector('h1')).toBeNull();
+  });
+  it('valid: comfortable density is unchanged — h1 with the 24px gap', () => {
+    const { container } = render(<PageSection title="Work" data-testid="ps"><p>b</p></PageSection>);
+    expect(container.querySelector('h1')!.className).toContain('text-xl');
+    expect(container.querySelector('[data-testid="ps"]')!.className).toContain('gap-6');
+  });
+  it('valid: DetailSection keeps its h3 at every density (its density mapping is type size only)', () => {
+    const { container } = render(compact(<DetailSection variant="heading" title="Owner"><p>x</p></DetailSection>));
+    expect(container.querySelector('h3')).not.toBeNull();
   });
 });

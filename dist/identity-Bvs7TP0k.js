@@ -4,7 +4,7 @@ import { n } from "./Button-uREUOWUk.js";
 import { t as r } from "./Card-CbTNNNkk.js";
 import { a as i, i as a, n as o, o as s, r as c, t as l } from "./Table-zDkkvs-k.js";
 import { t as u } from "./Chip-DJyxHDn3.js";
-import { t as d } from "./PageSection-D1QzVMyJ.js";
+import { t as d } from "./PageSection-Cm2GMxaF.js";
 import { t as f } from "./Banner-8ngXUtJu.js";
 import { t as p } from "./Modal-CjgKqXl7.js";
 import { t as m } from "./ConfirmDialog-D5LLBfII.js";

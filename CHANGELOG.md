@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.441.5
+
+- **`PageSection`: density is spacing, never heading level.** Since 2.440.0 the compact density mapped an unsized `PageSection` to `sm`, which renders an h2 — so under the shell's `<DensityProvider density="compact">` every page title became a 14px h2 and the page had no h1 (the layout cascade's "first h1 after the trail", 20/600, failed on 46 consumer routes). An unsized `PageSection` is now the page's `lg` h1 (20/600) at every density, taking the compact 8px content gap under the compact density; an explicit `md`/`sm` still renders the h2 subsection, and an explicit size (`lg` included) always wins. `DetailSection` (h3 at every size), `PageHeader` and `ScopeHeader` (form density, never level) were checked and need no change.
+
 ## 2.441.4
 
 The last library-owned families on the orgiq /iq audit matrix (a control reads at 12 or 14px).

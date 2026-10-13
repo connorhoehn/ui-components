@@ -4029,6 +4029,10 @@ export declare interface PageSectionProps {
      * body step — 14px semibold (`T size="sm" weight="semibold"`), a 12px count
      * pill and 14px actions — for a section inside a tabbed pane, where 16px
      * reads a size up from the 14px tabs and the 13–14px rails beside it.
+     *
+     * Unsized, it is `lg` at every density: under `<DensityProvider
+     * density="compact">` it keeps the h1 and takes the compact 8px content
+     * gap (2.441.5). An explicit size always wins, `lg` included.
      */
     size?: 'lg' | 'md' | 'sm';
     className?: string;
