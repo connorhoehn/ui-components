@@ -207,6 +207,20 @@ try {
     assert.ok((await measure()).issues.some(i => i.rule === 'dock.clearance'), 'the same overlap under a dock pinned outside the scroller still fails');
     console.log('PASS an embedded command host in the scroll flow passes; the same overlap under a pinned dock fails');
   }
+  // A closed disclosure paints nothing: a control inside it that would overrun
+  // the column is not judged (and cannot flip the measurement); opened, it is.
+  {
+    const disclosure = (open) => page.evaluate((isOpen) => {
+      const d = document.createElement('details'); d.open = isOpen; d.innerHTML = '<summary>Bots pulling from this queue</summary><div style="width:4000px"><a id="hidden-link" href="/bots" style="margin-left:3000px">Manage bots</a></div>';
+      document.querySelector('#collection').append(d);
+    }, open);
+    await page.setContent(html); await disclosure(false);
+    const closed = await measure();
+    assert.deepEqual(closed.issues.filter(i => i.rule === 'layout.contained-controls'), [], `a control inside a closed <details> is not painted, so not judged: ${JSON.stringify(closed.issues)}`);
+    await page.setContent(html); await disclosure(true);
+    assert.ok((await measure()).issues.some(i => i.rule === 'layout.contained-controls'), 'the same control in an open disclosure overruns its column and fails');
+    console.log('PASS a closed disclosure\'s contents are not judged; opened, an overrunning control fails');
+  }
   // Row activation: a row link or a static declaration with a reason is a valid
   // inert-looking row; an ordinary inert row beside them still fails.
   for (const [name, mutate] of [

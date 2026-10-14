@@ -98,7 +98,11 @@ export async function runAudit(browser, adapter, options) {
             if (hash(first.samples) !== hash(second.samples)) {
               // Name what moved, so an unstable case points at its moving node instead of a bare hash.
               const key = x => `${x.rule}|${x.selector}|${x.property}`, before = new Map(first.samples.map(x => [key(x), JSON.stringify(x.actual)]));
-              const moved = second.samples.filter(x => before.get(key(x)) !== JSON.stringify(x.actual)).slice(0, 5).map(x => ({ rule: x.rule, selector: x.selector, property: x.property, first: before.has(key(x)) ? JSON.parse(before.get(key(x))) : 'absent', second: x.actual }));
+              const after = new Set(second.samples.map(key));
+              const moved = [
+                ...second.samples.filter(x => before.get(key(x)) !== JSON.stringify(x.actual)).map(x => ({ rule: x.rule, selector: x.selector, property: x.property, first: before.has(key(x)) ? JSON.parse(before.get(key(x))) : 'absent', second: x.actual })),
+                ...first.samples.filter(x => !after.has(key(x))).map(x => ({ rule: x.rule, selector: x.selector, property: x.property, first: x.actual, second: 'absent' })),
+              ].slice(0, 6);
               entry.issues.push({ rule: 'coverage.stability', category: 'coverage', selector: 'document', property: 'measurement hash', expected: hash(first.samples), actual: hash(second.samples), moved });
             }
             for (const message of errors) entry.issues.push({ rule: 'runtime.error', category: 'runtime', selector: 'document', property: 'pageerror', expected: 'none', actual: message });

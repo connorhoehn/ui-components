@@ -3,7 +3,10 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
   const issues = [], coverage = [], samples = [];
   const selectorCache = new WeakMap();
   const tolerance = contract.tolerance ?? 1;
-  const visible = el => { const b = el.getBoundingClientRect(), s = getComputedStyle(el); return b.width > 0 && b.height > 0 && s.display !== 'none' && s.visibility !== 'hidden' && s.clip.replace(/\s/g, '') !== 'rect(0px,0px,0px,0px)' && s.clipPath !== 'inset(50%)'; };
+  // checkVisibility(): a closed <details>'s contents (content-visibility hidden)
+  // keep a laid-out box but paint nothing; whether that box has been laid out
+  // yet depends on what forced layout last, so judging it made cases unstable.
+  const visible = el => { const b = el.getBoundingClientRect(), s = getComputedStyle(el); return b.width > 0 && b.height > 0 && s.display !== 'none' && s.visibility !== 'hidden' && s.clip.replace(/\s/g, '') !== 'rect(0px,0px,0px,0px)' && s.clipPath !== 'inset(50%)' && (typeof el.checkVisibility !== 'function' || el.checkVisibility()); };
   const selectorOf = el => {
     if (el === document.documentElement) return ':root';
     if (selectorCache.has(el)) return selectorCache.get(el);

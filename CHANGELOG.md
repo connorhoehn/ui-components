@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.446.5
+
+- ui-dom-audit: an element is measured only when it is painted (`checkVisibility()`): a closed `<details>`'s contents keep a laid-out box but paint nothing, and whether that box had been laid out yet depended on what forced layout last — the cause of two `coverage.stability` flips (`/iq/work`, `/iq/local-compute/configuration`). Fixture pair: a control inside a closed disclosure is not judged; opened, the same overrunning control fails.
+- ui-dom-audit: a `coverage.stability` finding's `moved` list also names samples present only in the first measurement.
+
 ## 2.446.4
 
 - Controls stay inside their column at narrow widths (the portal's 900px sweep found tab rows, header actions, a detail readout and table cells running past the column's edge, cut off by the page's scroller):
