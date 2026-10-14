@@ -150,6 +150,21 @@ export const NothingYet: Story = {
 };
 
 /**
+ * One section per page (2.442.5): a Channels route draws the Channels group
+ * and nothing else from `sections` — the Direct messages rows and the host's
+ * Teams section stay out.
+ */
+export const OneSectionPerRoute: Story = {
+  render: () => (
+    <RailHarness
+      sectionOrder="dms-first"
+      sections={[{ id: 'teams', label: 'Teams', heading: true, node: null }]}
+      showSections={['channels']}
+    />
+  ),
+};
+
+/**
  * Host chrome above and below. The rail owns the middle; the workspace
  * identity and the signed-in row belong to the app around it.
  */

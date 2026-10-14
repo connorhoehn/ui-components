@@ -230,6 +230,17 @@ export interface ConversationRailProps {
    * sections" (↑/↓ per section, then Done) and "Reset layout".
    */
   onSectionLayoutChange?: (order: string[] | null) => void;
+  /**
+   * Which sections to draw, by id — host `sections` ids and the rail's own
+   * `dms` / `channels` (2.442.5). Unset (default) draws every section. A page
+   * that owns one section (a route per section) passes that id, plus anything
+   * it keeps on every page such as presence; the rail then draws nothing else
+   * — no other caption, no other rows. The empty label shows only when a shown
+   * conversation section has no rows, and "Arrange sections" is not offered,
+   * because a partial view has no whole order to arrange. The reader's stored
+   * `sectionLayout` still orders what is shown.
+   */
+  showSections?: readonly string[] | null;
   className?: string;
   'data-testid'?: string;
 }
@@ -267,6 +278,7 @@ export function ConversationRail({
   sections,
   sectionLayout,
   onSectionLayoutChange,
+  showSections,
   className,
   'data-testid': testId = 'conversation-rail',
 }: ConversationRailProps) {
@@ -301,7 +313,8 @@ export function ConversationRail({
   ] : [];
   const all = sections ? [...sections, ...(sectionOrder === 'dms-first' ? builtIn : [...builtIn].reverse())] : [];
   const defaultOrder = all.map((x) => x.id);
-  const order = sections ? arrangeRailSections(defaultOrder, sectionLayout) : [];
+  const shown = sections && showSections ? new Set(showSections) : null;
+  const order = sections ? arrangeRailSections(defaultOrder, sectionLayout).filter((id) => !shown || shown.has(id)) : [];
   const byId = new Map(all.map((x) => [x.id, x]));
   const move = (id: string, by: -1 | 1) => {
     const next = [...order];
@@ -312,6 +325,9 @@ export function ConversationRail({
   };
   const dms = conversations.filter((i) => !isChannelRow(i));
   const chans = conversations.filter(isChannelRow);
+  // With `showSections`, only the shown conversation groups' rows count toward the empty label.
+  const showsConversations = !shown || shown.has(RAIL_DMS_SECTION) || shown.has(RAIL_CHANNELS_SECTION);
+  const shownRows = shown ? (shown.has(RAIL_DMS_SECTION) ? dms.length : 0) + (shown.has(RAIL_CHANNELS_SECTION) ? chans.length : 0) : conversations.length;
   const renderSection = (id: string) => {
     if (id === RAIL_DMS_SECTION || id === RAIL_CHANNELS_SECTION) {
       const items = id === RAIL_DMS_SECTION ? dms : chans;
@@ -347,7 +363,7 @@ export function ConversationRail({
     );
   };
 
-  const railActions = (search || onSectionLayoutChange || actions != null) ? (
+  const railActions = (search || (onSectionLayoutChange && !shown) || actions != null) ? (
     <>
       {search && (
         <IconButton ref={searchToggle} size="sm" variant="ghost" aria-label={searchLabel} title={searchLabel}
@@ -357,7 +373,7 @@ export function ConversationRail({
           data-testid={`${testId}-search-toggle`} />
       )}
       {actions}
-      {onSectionLayoutChange && sections && (
+      {onSectionLayoutChange && sections && !shown && (
         <DropdownMenu trigger={<MoreIcon size={14} />} triggerLabel="Rail options" triggerTitle="Rail options" align="end"
           triggerTestId={`${testId}-options`} triggerClassName="h-7 w-7 border-transparent px-0 py-0 text-text-secondary"
           sections={[{ items: [
@@ -420,7 +436,7 @@ export function ConversationRail({
 
       {!isCollapsed && sections && !arranging && order.map(renderSection)}
 
-      {!isCollapsed && sections && !arranging && conversations.length === 0 && (
+      {!isCollapsed && sections && !arranging && showsConversations && shownRows === 0 && (
         <ConversationList items={[]} {...listProps} emptyLabel={emptyLabel} className={cn(RAIL_SECTION_GUTTER, 'pb-2')} data-testid={`${testId}-list`} />
       )}
 

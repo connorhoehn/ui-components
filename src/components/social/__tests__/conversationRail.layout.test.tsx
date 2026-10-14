@@ -75,3 +75,43 @@ describe('sections', () => {
     expect(arrangeRailSections(['a', 'b'], null)).toEqual(['a', 'b']);
   });
 });
+
+describe('showSections (2.442.5)', () => {
+  const sections = [
+    { id: 'presence', label: 'Active now', node: <p>presence body</p> },
+    { id: 'teams', label: 'Teams', node: <p>teams body</p> },
+  ];
+  const rows = [channel('general'), dm('d', 'Dave')];
+
+  it('draws only the shown sections — one conversation group, no other captions or rows', () => {
+    render(<ConversationRail title="Chat" conversations={rows} onSelect={() => {}} sectionOrder="dms-first" sections={sections}
+      showSections={['presence', 'channels']} onSectionLayoutChange={() => {}} />);
+    const text = document.body.textContent ?? '';
+    expect(text).toContain('presence body');
+    expect(text).toContain('general');
+    expect(text).not.toContain('teams body');
+    expect(text).not.toContain('Direct messages');
+    expect(text).not.toContain('Dave');
+    expect(screen.queryByTestId('conversation-rail-list-dms')).toBeNull();
+    // A partial view has no whole order to arrange.
+    expect(screen.queryByTestId('conversation-rail-options')).toBeNull();
+  });
+
+  it('shows the empty label only for a shown conversation group with no rows', () => {
+    const { rerender } = render(<ConversationRail conversations={[channel('general')]} onSelect={() => {}} sections={sections}
+      showSections={['presence', 'dms']} emptyLabel="Nothing here" />);
+    expect(document.body.textContent).toContain('Nothing here');
+    expect(document.body.textContent).not.toContain('general');
+    rerender(<ConversationRail conversations={rows} onSelect={() => {}} sections={sections} showSections={['presence', 'teams']} emptyLabel="Nothing here" />);
+    expect(document.body.textContent).not.toContain('Nothing here');
+    expect(document.body.textContent).toContain('teams body');
+    expect(document.body.textContent).not.toContain('general');
+  });
+
+  it('keeps the reader’s stored order among what is shown', () => {
+    render(<ConversationRail conversations={rows} onSelect={() => {}} sectionOrder="dms-first" sections={sections}
+      sectionLayout={['dms', 'teams', 'presence', 'channels']} showSections={['presence', 'dms']} />);
+    const text = document.body.textContent ?? '';
+    expect(text.indexOf('Dave')).toBeLessThan(text.indexOf('presence body'));
+  });
+});

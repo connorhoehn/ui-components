@@ -1955,7 +1955,7 @@ export declare interface ConversationPeer {
     online?: boolean;
 }
 
-export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, sectionActions, collapsedSections, onToggleSection, onStartCall, maxVisible, emptyLabel, header, title, actions, beforeList, footer, onTogglePin, onToggleMute, onMarkUnread, onRename, canRename, onSetSection, collapsible, collapsed, onToggleCollapse, shelfLayout, search, sections, sectionLayout, onSectionLayoutChange, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
+export declare function ConversationRail({ shelf, conversations, selected, onSelect, onNewChat, grouped, sectionOrder, sectionActions, collapsedSections, onToggleSection, onStartCall, maxVisible, emptyLabel, header, title, actions, beforeList, footer, onTogglePin, onToggleMute, onMarkUnread, onRename, canRename, onSetSection, collapsible, collapsed, onToggleCollapse, shelfLayout, search, sections, sectionLayout, onSectionLayoutChange, showSections, className, 'data-testid': testId, }: ConversationRailProps): JSX.Element;
 
 export declare interface ConversationRailProps {
     /**
@@ -2069,6 +2069,17 @@ export declare interface ConversationRailProps {
      * sections" (↑/↓ per section, then Done) and "Reset layout".
      */
     onSectionLayoutChange?: (order: string[] | null) => void;
+    /**
+     * Which sections to draw, by id — host `sections` ids and the rail's own
+     * `dms` / `channels` (2.442.5). Unset (default) draws every section. A page
+     * that owns one section (a route per section) passes that id, plus anything
+     * it keeps on every page such as presence; the rail then draws nothing else
+     * — no other caption, no other rows. The empty label shows only when a shown
+     * conversation section has no rows, and "Arrange sections" is not offered,
+     * because a partial view has no whole order to arrange. The reader's stored
+     * `sectionLayout` still orders what is shown.
+     */
+    showSections?: readonly string[] | null;
     className?: string;
     'data-testid'?: string;
 }

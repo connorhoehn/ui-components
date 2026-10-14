@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.442.5
+
+- `ConversationRail` `showSections` (new): the ids of the sections to draw — host `sections` ids and the rail's own `dms` / `channels`. Unset draws every section (unchanged). A page that owns one section passes that id (plus anything it keeps on every page, such as presence) and the rail draws no other caption or rows; the empty label shows only when a shown conversation group has no rows, and "Arrange sections" is not offered while the view is partial. The stored `sectionLayout` still orders what is shown. For the Social tenant's one-section-per-route rail.
+
 ## 2.442.4
 
 - `ListRailLayout`: `list.title` is optional; a rail whose group headings already name and count its rows omits the caption.
