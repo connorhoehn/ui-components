@@ -271,7 +271,7 @@ export function ComposerRecipientSelect({ id, value, recipients, onChange, 'data
     options: recipients.filter((r) => r.group === label).map((r) => ({ value: r.id, label: r.label, ...(r.disabled ? { disabled: true } : {}) })),
   }));
   return (
-    <Inline gap="xs" align="center" wrap={false} className="ml-1 min-w-0 self-start rounded-md border border-border bg-surface pl-2">
+    <Inline gap="xs" align="center" wrap={false} className="ml-1 min-w-0 shrink-0 self-start rounded-md border border-border bg-surface pl-2">
       <Text size="xs" tone="secondary" className="shrink-0">To:</Text>
       <Select id={id} aria-label="Chat recipient" value={value ?? ''} size="sm" placeholder="Choose a destination"
         wrapperClassName="max-w-[12rem]" className="max-w-[12rem] truncate border-0 bg-transparent pr-7 text-xs font-medium"
@@ -609,8 +609,21 @@ function ConversationComposerImpl({
   const notices = showRecipients || recipientReason || note || noPage || recipientError || (hostAbove != null && hostAbove !== false) ? (
     <Stack gap="xs">
       {hostAbove}
-      {showRecipients && <ComposerRecipientSelect id={`${draftKey}-recipient`} value={recipient?.id ?? null} recipients={listed} onChange={choose} data-testid={`${testId}-recipient`} />}
-      {recipientReason && <Text size="xs" tone="tertiary" wrap data-testid={`${testId}-recipient-unavailable`}>{recipientReason}</Text>}
+      {/* One To: row (since 2.443.1): why the chosen destination cannot take
+          a message sits beside the selector, after a divider, on one line —
+          the full sentence on hover — instead of a second row under it. */}
+      {(showRecipients || recipientReason) && (
+        <Inline gap="sm" align="center" wrap={false} className="min-w-0" data-composer-recipient-row="">
+          {showRecipients && <ComposerRecipientSelect id={`${draftKey}-recipient`} value={recipient?.id ?? null} recipients={listed} onChange={choose} data-testid={`${testId}-recipient`} />}
+          {recipientReason && (
+            <Text size="xs" tone="tertiary" title={recipientReason}
+              className={cn('min-w-0', showRecipients && 'border-0 border-l border-solid border-border pl-2')}
+              data-composer-recipient-notice="" data-testid={`${testId}-recipient-unavailable`}>
+              <span className="truncate">{recipientReason}</span>
+            </Text>
+          )}
+        </Inline>
+      )}
       {noPage && <Text size="xs" tone="tertiary" wrap>{NO_PAGE}</Text>}
       {note && <Text size="xs" tone="secondary" wrap data-testid={`${testId}-note`}>{note}</Text>}
       {recipientError && <Text size="xs" className="text-error" wrap data-testid={`${testId}-recipient-error`}>{recipientError}</Text>}

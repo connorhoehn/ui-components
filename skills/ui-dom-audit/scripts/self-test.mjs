@@ -26,6 +26,7 @@ const selectors = {
   contentColumns: ':has(> [data-trail])', trail: '[data-trail]',
   containedControls: 'button, a[href], [role="tab"], input, select, textarea', containmentRegions: '#content, aside, nav, [data-column]',
   tileLists: '[role="list"]',
+  popovers: '[data-ui-dialog="popover"]', boards: '[data-ui-board]', boardLanes: '[data-ui-board-lane]',
 };
 const html = `<!doctype html><html><head><style>
 :root { --ui-control-sm:28px; --ui-page-gutter:24px; --ui-table-inset:12px; --ui-table-row:44px; --ui-content-gutter:16px; }
@@ -198,6 +199,59 @@ try {
     const second = document.createElement('div'); second.setAttribute('data-collection-table', ''); second.innerHTML = '<table><tbody><tr><td>Other</td></tr></tbody></table>'; host.after(second); });
   assert.ok((await measure()).issues.some(i => i.rule === 'collection.row-activatable' && i.property === 'row activation'), 'a static declaration on one table cannot exempt a neighbouring collection');
   console.log('PASS row activation: activatable, linked and declared-static rows; inert rows, missing pointer, blank/placeholder reasons and a neighbouring table still fail');
+
+  // Anchored popovers (popover.fit) and board lanes (board.lane-surface,
+  // board.lane-columns): a footer bell's 99+ feed once grew past the window
+  // and over its own trigger with the header scrolling away; a sprint board's
+  // cards floated on the page with no lane behind them.
+  const only = ids => ({ ...payload, required: [], composerExpectation: undefined, contract: { ...contract, rules: contract.rules.filter(r => ids.includes(r.id)) } });
+  const surfaceHtml = `<!doctype html><html><head><style>
+*{box-sizing:border-box} body{margin:0;font:14px system-ui;background:#eef1f5;height:800px}
+#bell{position:fixed;left:300px;bottom:8px;width:28px;height:28px}
+#panel{position:fixed;left:300px;width:360px;top:198px;height:560px;display:flex;flex-direction:column;background:#fff}
+#panel h2{margin:0;height:40px;flex:none} #feed{flex:1;min-height:0;overflow-y:auto} #feed div{height:80px}
+#board{display:grid;grid-template-columns:repeat(4,minmax(13rem,1fr));gap:12px;align-items:stretch;padding:16px;width:1100px}
+[data-ui-board-lane]{background:rgba(15,23,42,0.04);border-radius:8px;padding:8px;min-height:192px} .card{height:60px;background:#fff;margin-bottom:8px}
+</style></head><body>
+<button id="bell" aria-haspopup="dialog" aria-expanded="true">B</button>
+<div id="panel" role="dialog" data-ui-dialog="popover"><h2>Notifications</h2><div role="tablist"><button>Unread</button></div><div id="feed">${'<div>Item</div>'.repeat(40)}</div></div>
+<div id="board" data-ui-board><section data-ui-board-lane><div class="card"></div><div class="card"></div><div class="card"></div></section><section data-ui-board-lane><div class="card"></div></section><section data-ui-board-lane><div data-board-lane-empty>No items</div></section><section data-ui-board-lane><div class="card"></div></section></div>
+</body></html>`;
+  const surfaceIds = ['popover.fit', 'board.lane-surface', 'board.lane-columns'];
+  await page.setContent(surfaceHtml);
+  const surfaces = await page.evaluate(measureDOM, only(surfaceIds));
+  assert.deepEqual(surfaces.issues, [], 'a capped panel above its footer trigger with an inner feed, and tinted full-height lanes, pass: ' + JSON.stringify(surfaces.issues));
+  assert.ok(surfaceIds.every(id => surfaces.coverage.some(c => c.rule === id && c.matched > 0)), 'each surface rule is exercised by the valid fixture');
+  const validSurfaces = [
+    ['a header-less menu clamped to the viewport may scroll as a whole', () => { const p = document.querySelector('#panel'); p.innerHTML = '<div style="height:2000px">Menu items</div>'; p.style.cssText += ';overflow-y:auto;top:8px;height:500px'; }],
+    ['a lane on a dark page with a light tint is still distinct', () => { document.body.style.background = '#0f172a'; document.querySelectorAll('[data-ui-board-lane]').forEach(l => { l.style.background = 'rgba(241,245,249,0.04)'; }); }],
+  ];
+  for (const [name, mutate] of validSurfaces) {
+    await page.setContent(surfaceHtml); await page.evaluate(mutate);
+    const result = await page.evaluate(measureDOM, only(surfaceIds));
+    assert.deepEqual(result.issues, [], `${name}: ${JSON.stringify(result.issues)}`);
+    console.log('PASS allows ' + name);
+  }
+  const surfaceDefects = [
+    ['popover grown past the top of the window', () => { const p = document.querySelector('#panel'); p.style.top = '-140px'; p.style.height = '900px'; }, 'popover.fit', 'y containment'],
+    ['popover clamped over the trigger that opened it', () => { const p = document.querySelector('#panel'); p.style.top = '8px'; p.style.height = '784px'; }, 'popover.fit', 'covers trigger'],
+    ['popover scrolling as a whole, carrying its header away', () => { const p = document.querySelector('#panel'); p.style.display = 'block'; p.style.overflowY = 'auto'; document.querySelector('#feed').style.overflowY = 'visible'; }, 'popover.fit', 'scroll region'],
+    ['popover hanging off the right edge', () => { document.querySelector('#panel').style.left = '1100px'; }, 'popover.fit', 'x containment'],
+    ['lane with no background (cards float on the page)', () => { document.querySelector('[data-ui-board-lane]').style.background = 'transparent'; }, 'board.lane-surface', 'backgroundColor'],
+    ['lane painted the same as the page behind it', () => { document.querySelector('[data-ui-board-lane]').style.background = '#eef1f5'; }, 'board.lane-surface', 'backgroundColor'],
+    ['lanes sized to their cards instead of the board height', () => { document.querySelector('#board').style.alignItems = 'start'; }, 'board.lane-columns', 'column bottom alignment'],
+    ['lanes wrapped into a second row', () => { document.querySelector('#board').style.gridTemplateColumns = 'repeat(2, 1fr)'; }, 'board.lane-columns', 'column top alignment'],
+  ];
+  for (const [name, mutate, rule, property] of surfaceDefects) {
+    await page.setContent(surfaceHtml); await page.evaluate(mutate);
+    const result = await page.evaluate(measureDOM, only(surfaceIds));
+    assert.ok(result.issues.some(i => i.rule === rule && i.property === property), `${name} must fail ${rule} (${property}): ${JSON.stringify(result.issues)}`);
+    console.log('PASS detects ' + name);
+  }
+  await page.setContent(surfaceHtml);
+  await page.evaluate(() => { const b = document.createElement('button'); b.setAttribute('aria-expanded', 'true'); b.style.cssText = 'position:fixed;left:310px;top:300px'; b.textContent = 'Rail group'; document.body.append(b); });
+  assert.deepEqual((await page.evaluate(measureDOM, only(['popover.fit']))).issues, [], 'an expanded disclosure (no aria-haspopup) under the panel is not its trigger');
+  console.log('PASS popover.fit judges only popup triggers; board lanes need a distinct surface and the full board height');
   await page.close();
 
   // Content column: trail first, the title under it, the body at the same edge.

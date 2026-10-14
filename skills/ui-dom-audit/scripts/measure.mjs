@@ -371,6 +371,40 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
         if (!anchor) add(rule, el, 'composer boundary', css(rule.boundary), 'missing', 'coverage');
         else for (const edge of ['left', 'right']) check(rule, el, 'shelf ' + edge, rect(el)[edge] - rect(anchor)[edge], 0);
       }
+      else if (rule.kind === 'popover-fit') for (const el of nodes) {
+        // An open anchored panel must fit the viewport, must not cover the
+        // control that opened it, and — when it has a header (title, tabs,
+        // "Mark all read") — must scroll a region inside itself rather than
+        // scrolling as a whole, which carries the header away with the feed.
+        const b = rect(el), margin = rule.margin ?? 0;
+        samples.push({ rule: rule.id, selector: selectorOf(el), property: 'viewport fit', actual: [b.top, b.bottom], expected: [margin, innerHeight - margin] });
+        if (b.top < margin - tolerance || b.bottom > innerHeight - margin + tolerance) add(rule, el, 'y containment', [margin, innerHeight - margin], [b.top, b.bottom]);
+        if (b.left < margin - tolerance || b.right > innerWidth - margin + tolerance) add(rule, el, 'x containment', [margin, innerWidth - margin], [b.left, b.right]);
+        const triggers = [...document.querySelectorAll(rule.trigger ?? '[aria-expanded="true"]')].filter(t => visible(t) && !el.contains(t));
+        for (const trigger of triggers) {
+          const t = rect(trigger);
+          const overlap = Math.min(b.right, t.right) - Math.max(b.left, t.left) > tolerance && Math.min(b.bottom, t.bottom) - Math.max(b.top, t.top) > tolerance;
+          samples.push({ rule: rule.id, selector: selectorOf(el), property: 'covers trigger', actual: overlap, expected: false });
+          if (overlap) add(rule, el, 'covers trigger', 'opens beside its trigger, not over it', selectorOf(trigger));
+        }
+        const style = getComputedStyle(el);
+        const scrollsWhole = /(auto|scroll)/.test(style.overflowY) && el.scrollHeight > el.clientHeight + tolerance;
+        const header = rule.header ? [...el.querySelectorAll(css(rule.header))].find(visible) : null;
+        samples.push({ rule: rule.id, selector: selectorOf(el), property: 'scroll region', actual: scrollsWhole && header ? 'whole panel' : 'inner', expected: 'inner' });
+        if (scrollsWhole && header) add(rule, el, 'scroll region', 'a scrolling region inside the panel; the header stays in view', `the whole panel scrolls (${el.scrollHeight}px in ${el.clientHeight}px), carrying ${selectorOf(header)}`);
+      }
+      else if (rule.kind === 'surface-distinct') for (const el of nodes) {
+        // A surface that is meant to read as its own region (a board lane)
+        // paints a background the reader can tell apart from what it sits on.
+        const painted = c => { const m = /rgba?\(([^)]+)\)/.exec(c); if (!m) return c !== 'transparent'; const parts = m[1].split(/[\s,/]+/).filter(Boolean); return parts.length < 4 || parseFloat(parts[3]) > 0; };
+        const own = getComputedStyle(el).backgroundColor;
+        let behind = null;
+        for (let n = el.parentElement; n; n = n.parentElement) { const c = getComputedStyle(n).backgroundColor; if (painted(c)) { behind = c; break; } }
+        behind ??= 'rgb(255, 255, 255)';
+        samples.push({ rule: rule.id, selector: selectorOf(el), property: 'backgroundColor', actual: own, expected: `painted, not ${behind}` });
+        if (!painted(own)) add(rule, el, 'backgroundColor', 'a painted surface distinct from its background', own);
+        else if (own.replace(/\s/g, '') === behind.replace(/\s/g, '')) add(rule, el, 'backgroundColor', `distinct from the surface behind it (${behind})`, own);
+      }
       else if (rule.kind === 'record-popout') {
         // Judged only after a row or record-detail action was activated (the
         // state's probe). Allowed kinds are named by semantic marker.

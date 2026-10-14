@@ -136,6 +136,26 @@ describe('ConversationComposer — recipients and the page reference', () => {
     expect(options.find((o) => o.value === 'discussion')?.disabled).toBe(true);
   });
 
+  it('says why the destination is read-only on the To: row itself, beside the selector', () => {
+    const { container } = setup({
+      capabilities: { maySend: false, readOnlyReason: 'You can read messages. Your current role cannot post to this discussion.' },
+      defaultMode: 'chat',
+      defaultRecipient: 'discussion',
+      recipients: [
+        { id: 'discussion', label: 'Discussion', channel: CHANNEL },
+        { id: 'huddle:c-1', label: 'Huddle', channel: 'orgiq:huddle:c-1', send: async () => true },
+      ],
+    });
+    const row = container.querySelector('[data-composer-recipient-row]');
+    const notice = container.querySelector('[data-composer-recipient-notice]') as HTMLElement | null;
+    expect(row?.contains(screen.getByRole('combobox', { name: 'Chat recipient' }))).toBe(true);
+    expect(notice && row?.contains(notice)).toBe(true);
+    // One line with the whole sentence on hover; a divider separates it from To:.
+    expect(notice?.getAttribute('title')).toBe('You can read messages. Your current role cannot post to this discussion.');
+    expect(notice?.querySelector('.truncate')).not.toBeNull();
+    expect(notice?.className).toContain('border-l');
+  });
+
   it('removing the reference chip sends without it', async () => {
     const { chat, handle } = setup({ context: { ...context, reference }, expanded: true });
     await act(async () => { fireEvent.click(screen.getByRole('button', { name: /Remove Org › Initiatives › Auth Migration from this draft/ })); });

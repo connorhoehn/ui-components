@@ -38,6 +38,8 @@ measurement and must not substitute for it.
 | `row-activatable` | selector (collection tables) | Body rows that open nothing: not a focusable pointer row and no row link, unless the collection declares `data-collection-rows="static"` with a documented reason |
 | `record-popout` | selector (dialog-like surfaces), allow | After a row/record-detail activation probe: a drawer/modal/unmarked dialog instead of a routed record, an unchanged URL after a row activation, or a write attempted by the activation |
 | `selection-shift` | none (probe only) | After a selection probe: the table's top edge or first row moved when a row was checked or unchecked |
+| `popover-fit` | selector (open panels), trigger?, header?, margin? | An open anchored panel outside the viewport, covering the popup trigger that opened it, or scrolling as a whole while it holds a header |
+| `surface-distinct` | selector | A surface meant to read as its own region (a board lane) painting no background, or the same background as the surface behind it |
 
 `columns` can alternatively use `regions: ["$primary", "$secondary",
 "$content", "$right"]`. Never select nested parents and children as peers.
@@ -278,6 +280,59 @@ focusable row without a pointer, blank/placeholder static reasons, a static
 declaration beside an undeclared table, a selection band above the table and
 a toolbar row that changes height. A runner-level fixture proves a state's
 probe reaches the rules and the report.
+
+## Anchored panels and board lanes
+
+Two rules came from reports where the resting page was fine and the defect
+only showed in an opened or populated state. Both are general; neither names
+a page.
+
+**`popover.fit`** (`popover-fit`) binds `$popovers` (aws-agentcore: the
+library `InlinePopover`'s `[data-ui-dialog="popover"]`). Every visible open
+panel must (1) lie inside the viewport (`margin`, default 0), (2) not overlap
+its trigger — any visible `[aria-expanded="true"][aria-haspopup]` outside the
+panel; an expanded rail disclosure (no `aria-haspopup`) is not a trigger — and
+(3) when it holds a `header` (`h2, h3, [role="tablist"]`), scroll a region
+inside itself rather than scrolling as a whole. It exists because the footer
+NotificationBell with a 99+ feed grew to the window's height: the popover's
+viewport clamp pinned it at the top, it covered the bell that opened it, and
+the "Notifications / Mark all read" header scrolled away with the feed. The
+library fix (ui-components 2.443.1) is a fixed `min(70vh, 560px)` panel whose
+feed scrolls between a pinned header and an optional `seeAll` footer, plus
+`InlinePopover` re-anchoring when a placed panel grows out of the viewport. A
+header-less menu clamped to a short viewport may still scroll as a whole.
+
+**`board.lane-surface`** (`surface-distinct`) binds `$boardLanes`
+(`[data-ui-board-lane]`, emitted by `BoardColumn`): the lane's computed
+background must be painted and differ from the nearest painted ancestor's.
+**`board.lane-columns`** (`columns`, selector `$boards` =
+`[data-ui-board]`, emitted by `CatalogGrid variant="lanes"`) requires the
+lanes in one row with equal tops and bottoms (gap ≤ 16px): lanes sized to
+their cards, or wrapped into a second row at a narrow width, fail. Since
+2.443.1 `BoardColumn` is a tinted (`color-mix` of the text colour at 4%),
+full-height lane with its header inside and a dashed empty-lane message, and
+the `lanes` grid keeps fixed columns in one row that scrolls sideways.
+
+**Adapter states.** aws-agentcore's `discoverStates` adds
+`notification-bell-open` (the footer bell, on one representative list route
+per tenant — the bell is shell chrome, identical everywhere) and
+`sprint-board` on `/iq/projects` (Sprints lens, first sprint opened, board
+lanes required).
+
+**Not a rule: the composer To: notice.** The reported defect (a read-only
+reason on its own line under the To: selector) is a placement inside one
+composite with no second consumer, so it is fixed and unit-tested in
+`ConversationComposer` (`data-composer-recipient-row` holds the selector and
+`data-composer-recipient-notice`). A general geometry rule ("a notice shares
+its control's row") cannot tell a deliberate second line from a misplaced
+one without a page-specific selector, which this skill does not take.
+
+Fixtures (`self-test.mjs`): valid — a capped panel above its footer trigger
+with an inner feed, a header-less clamped menu scrolling whole, tinted
+full-height lanes on light and dark pages; failing — a panel past the top of
+the window, a panel over its trigger, a panel scrolling as a whole with its
+header, a panel off the right edge, a transparent lane, a lane matching the
+page, lanes sized to their cards, lanes wrapped to a second row.
 
 ## Fast loop and CI
 

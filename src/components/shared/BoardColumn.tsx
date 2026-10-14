@@ -12,6 +12,10 @@
 // darkSurfaceTokens guard scans comments too, and a `--color-*` split across a
 // line wrap reads to it as a reference to an undefined token.)
 //
+// Since 2.443.1 the lane is a tinted surface running the full board height,
+// its header sits inside the lane, and an empty lane shows a dashed drop-zone
+// style message rather than a one-line placeholder.
+//
 // Pair with `<CatalogGrid columns={n}>`: fixed columns keep an empty lane the
 // same width as a full one. An `auto-fit` grid, which is what the hand-rolled
 // versions used, stretches two empty lanes across half the screen the moment a
@@ -19,7 +23,6 @@
 
 import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
-import InlinePlaceholder from './InlinePlaceholder';
 
 export interface BoardColumnProps {
   /** The lane's name — "In progress", "Blocked". */
@@ -53,15 +56,37 @@ export function BoardColumn({
   // callers signal emptiness by passing nothing at all.
   const empty = children === undefined || children === null
     || children === false || (Array.isArray(children) && children.length === 0);
+  // The lane is a surface of its own (since 2.443.1): a 4% tint of the text
+  // colour over whatever the board sits on, so it reads as a column in light
+  // and dark alike without a new token. Cards used to float on the page with
+  // nothing marking which column they were in once the header scrolled away.
+  // `h-full` lets a grid row stretch every lane to the tallest one, so the
+  // stripes run the full board height. `data-ui-board-lane` is the DOM audit's
+  // marker (board.lane-surface / board.lane-columns).
   return (
-    <section className={cn('flex flex-col gap-1.5 min-w-0', className)} data-testid={testId}>
-      <header className="flex items-baseline justify-between gap-2 text-[11px] uppercase tracking-[0.04em] text-text-tertiary">
+    <section
+      className={cn(
+        'flex h-full min-h-48 min-w-0 flex-col gap-2 rounded-lg p-2',
+        'bg-[color-mix(in_srgb,var(--color-text-primary)_4%,transparent)]',
+        className,
+      )}
+      data-ui-board-lane=""
+      data-testid={testId}
+    >
+      <header className="flex h-6 shrink-0 items-center justify-between gap-2 px-1 text-[11px] font-semibold uppercase tracking-[0.04em] text-text-secondary">
         <span className="truncate">{label}</span>
-        {action ?? (count !== undefined ? <span className="tabular-nums">{count}</span> : null)}
+        {action ?? (count !== undefined ? <span className="tabular-nums text-text-tertiary">{count}</span> : null)}
       </header>
       {empty
-        ? <InlinePlaceholder>{emptyLabel}</InlinePlaceholder>
-        : <div className="flex flex-col gap-1.5">{children}</div>}
+        ? (
+          <div
+            data-board-lane-empty=""
+            className="flex flex-1 items-center justify-center rounded-md border border-dashed border-border px-2 py-6 text-center text-[12px] text-text-tertiary"
+          >
+            {emptyLabel}
+          </div>
+        )
+        : <div className="flex flex-col gap-2">{children}</div>}
     </section>
   );
 }

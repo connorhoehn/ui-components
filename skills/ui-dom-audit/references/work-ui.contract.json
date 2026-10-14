@@ -619,6 +619,31 @@
       "id": "collection.selection-shift",
       "kind": "selection-shift",
       "owner": "CollectionToolbar selection (in place of the resting controls)"
+    },
+    {
+      "id": "popover.fit",
+      "kind": "popover-fit",
+      "selector": "$popovers",
+      "trigger": "[aria-expanded=\"true\"][aria-haspopup]",
+      "header": "h2, h3, [role=\"tablist\"]",
+      "margin": 0,
+      "owner": "InlinePopover placement (flip/clamp, re-anchor on growth) + the panel's own height cap (NotificationBell)"
+    },
+    {
+      "id": "board.lane-surface",
+      "kind": "surface-distinct",
+      "selector": "$boardLanes",
+      "owner": "BoardColumn lane surface"
+    },
+    {
+      "id": "board.lane-columns",
+      "kind": "columns",
+      "selector": "$boards",
+      "children": "[data-ui-board-lane]",
+      "min": 1,
+      "max": 12,
+      "maxGap": 16,
+      "owner": "CatalogGrid variant=\"lanes\" + BoardColumn h-full"
     }
   ]
 }

@@ -280,6 +280,25 @@ export function InlinePopover({
     setPosition({ position: 'fixed', top, left, maxHeight: maxH, overflowY: 'auto' });
   }, [open, position]);
 
+  // The correction above runs once per anchor-derived position, so a panel
+  // whose content grows AFTER it was placed (a live feed filling in, a tab
+  // switch, an async list) kept its old top and ran off the screen — up past
+  // the window's top for a panel flipped above a footer trigger. Re-anchor
+  // when the panel's size changes and it no longer fits the viewport (since
+  // 2.443.1). The corrected position always fits, so this cannot loop.
+  useEffect(() => {
+    if (!open || !position || typeof ResizeObserver === 'undefined') return;
+    const panel = panelRef.current;
+    if (!panel) return;
+    const observer = new ResizeObserver(() => {
+      const r = panel.getBoundingClientRect();
+      if (r.width === 0 && r.height === 0) return;
+      if (r.top < 0 || r.bottom > window.innerHeight) recompute();
+    });
+    observer.observe(panel);
+    return () => observer.disconnect();
+  }, [open, position, recompute]);
+
   useEffect(() => {
     if (!open) return;
     const handler = () => recompute();

@@ -2,7 +2,7 @@
 //
 // Tabs: Unread | All. Uses EmptyState when empty.
 
-import { useId, useState } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { IconButton } from '../ui/IconButton';
 import { ChecklistIcon, TrashIcon } from '../ui/Icons';
 import { Tooltip } from './Tooltip';
@@ -28,6 +28,13 @@ export interface NotificationCenterProps {
   onItemClick?: (item: NotificationItem) => void;
   onMarkAllRead?: () => void;
   onClearAll?: () => void;
+  /**
+   * Pinned under the feed, outside its scroll region — e.g. a "See all
+   * activity" link. Since 2.443.1. The header (title, Mark all read, tabs) is
+   * likewise outside the scroll region, so in a height-capped host both stay
+   * in view while only the feed scrolls.
+   */
+  footer?: ReactNode;
   className?: string;
   'data-testid'?: string;
 }
@@ -51,6 +58,7 @@ export function NotificationCenter({
   onItemClick,
   onMarkAllRead,
   onClearAll,
+  footer,
   className,
   'data-testid': testId,
 }: NotificationCenterProps) {
@@ -64,7 +72,7 @@ export function NotificationCenter({
   return (
     <section data-testid={testId} aria-label="Notifications"
       className={cn('flex min-h-0 flex-col bg-surface text-text-primary', className)}>
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3">
+      <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3">
         <h2><T as="span" size="sm" weight="semibold">
           Notifications {hasUnread && <span className="ml-2 text-xs text-primary" aria-label={`${unread.length} unread`}>{unread.length}</span>}
         </T></h2>
@@ -148,6 +156,11 @@ export function NotificationCenter({
           })
         )}
       </TabPanel>
+      {footer != null && footer !== false && (
+        <div className="flex shrink-0 items-center justify-center border-t border-border px-4 py-1.5" data-notification-footer="">
+          {footer}
+        </div>
+      )}
     </section>
   );
 }

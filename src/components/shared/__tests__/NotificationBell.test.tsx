@@ -75,9 +75,9 @@ describe('NotificationBell', () => {
       />,
     );
     fireEvent.click(button());
-    fireEvent.click(screen.getByText('Mark all read'));
+    fireEvent.click(screen.getByRole('button', { name: 'Mark all read' }));
     expect(onMarkAllRead).toHaveBeenCalledTimes(1);
-    fireEvent.click(screen.getByText('Clear all'));
+    fireEvent.click(screen.getByRole('button', { name: 'Clear all' }));
     expect(onClearAll).toHaveBeenCalledTimes(1);
     fireEvent.click(screen.getByText('Notification 1'));
     expect(onItemClick).toHaveBeenCalledWith(expect.objectContaining({ id: 'n0' }));
@@ -95,5 +95,35 @@ describe('NotificationBell', () => {
     render(<NotificationBell items={[]} size="sm" />);
     expect(button().className).toMatch(/\bh-7\b/);
     expect(button().className).toMatch(/\bw-7\b/);
+  });
+
+  it('caps the panel at a fixed height so a 99+ feed scrolls inside it', () => {
+    render(<NotificationBell items={makeItems(150)} />);
+    fireEvent.click(button());
+    const center = screen.getByTestId('notification-bell-center');
+    expect(center.className).toContain('h-[min(70vh,560px)]');
+    // The header with Mark all read sits outside the scrolling feed.
+    const feed = center.querySelector('.overflow-y-auto');
+    expect(feed).not.toBeNull();
+    expect(feed?.contains(screen.getByRole('heading', { level: 2 }))).toBe(false);
+  });
+
+  it('pins a "See all activity" link under the feed that closes the popover first', () => {
+    const onSelect = vi.fn();
+    render(<NotificationBell items={makeItems(3)} seeAll={{ onSelect }} />);
+    fireEvent.click(button());
+    const link = screen.getByTestId('notification-bell-see-all');
+    expect(link).toHaveTextContent('See all activity');
+    expect(link.closest('[data-notification-footer]')).not.toBeNull();
+    fireEvent.click(link);
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(button()).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('offers the link in the empty state too, and marks its root for the DOM audit', () => {
+    const { container } = render(<NotificationBell items={[]} seeAll={{ label: 'Open activity', onSelect: () => {} }} />);
+    expect(container.querySelector('[data-notification-bell]')).not.toBeNull();
+    fireEvent.click(button());
+    expect(screen.getByTestId('notification-bell-see-all')).toHaveTextContent('Open activity');
   });
 });

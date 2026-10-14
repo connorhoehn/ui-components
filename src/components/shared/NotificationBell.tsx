@@ -11,8 +11,19 @@
 // count is part of the button's accessible name ("Activity, 3 unread"), so
 // the badge itself is hidden from assistive tech rather than announced twice.
 // Since 2.407.37.
+//
+// Since 2.443.1 the panel has a fixed height — `min(70vh, 560px)` — with the
+// feed scrolling inside it while the header (Mark all read, tabs) and the
+// optional `seeAll` footer stay put. Before, a 99+ feed made the whole
+// popover as tall as the window: the popover's own viewport clamp could only
+// pin it to the top and scroll the panel as a whole, so the header scrolled
+// away and the panel covered the footer bell that opened it. A capped panel
+// fits on the other side of its trigger instead (InlinePopover flips it), and
+// a fixed rather than max height keeps it from jumping when Unread/All change
+// the feed's length.
 
 import { useCallback, useRef, useState } from 'react';
+import { Button } from '../ui/Button';
 import { cn } from '../../lib/cn';
 import { IconButton } from '../ui/IconButton';
 import { BellIcon } from '../ui/Icons';
@@ -37,6 +48,11 @@ export interface NotificationBellProps {
   label?: string;
   /** Where the popover opens. Default `bottom-end` (a bell at a header's right edge). */
   placement?: InlinePopoverPlacement;
+  /**
+   * A link pinned under the feed to the app's full activity view ("See all
+   * activity"). The popover closes before `onSelect` runs. Since 2.443.1.
+   */
+  seeAll?: { label?: string; onSelect: () => void };
   /** `sm` = 28px, the header-control family; `md` = 32px. Default `md`. */
   size?: NotificationBellSize;
   className?: string;
@@ -58,6 +74,7 @@ export function NotificationBell({
   label = 'Activity',
   placement = 'bottom-end',
   size = 'md',
+  seeAll,
   className,
   'data-testid': testId = 'notification-bell',
 }: NotificationBellProps) {
@@ -78,9 +95,19 @@ export function NotificationBell({
     : undefined;
 
   const empty = items.length === 0;
+  const seeAllLink = seeAll ? (
+    <Button
+      variant="link"
+      size="sm"
+      onClick={() => { close(); seeAll.onSelect(); }}
+      data-testid={`${testId}-see-all`}
+    >
+      {seeAll.label ?? 'See all activity'}
+    </Button>
+  ) : null;
 
   return (
-    <span ref={anchorRef} data-testid={testId} className={cn('relative inline-flex', className)}>
+    <span ref={anchorRef} data-testid={testId} data-notification-bell="" className={cn('relative inline-flex', className)}>
       <IconButton
         aria-label={notificationBellLabel(label, unread)}
         aria-haspopup="dialog"
@@ -107,23 +134,28 @@ export function NotificationBell({
         className={
           empty
             ? 'w-[300px] max-w-[calc(100vw-16px)]'
-            : 'w-[360px] max-w-[calc(100vw-16px)] p-0 border-0 bg-transparent shadow-none'
+            : 'w-[360px] max-w-[calc(100vw-16px)] overflow-hidden p-0'
         }
       >
         {empty ? (
-          <DensityProvider density="compact"><EmptyState
-            icon={<BellIcon size={24} />}
-            title="Nothing new"
-            description="Activity will appear here."
-            testId={`${testId}-empty`}
-          /></DensityProvider>
+          <>
+            <DensityProvider density="compact"><EmptyState
+              icon={<BellIcon size={24} />}
+              title="Nothing new"
+              description="Activity will appear here."
+              testId={`${testId}-empty`}
+            /></DensityProvider>
+            {seeAllLink && <div className="flex justify-center border-t border-border py-1.5">{seeAllLink}</div>}
+          </>
         ) : (
           <NotificationCenter
             items={items}
             onItemClick={handleItemClick}
             onMarkAllRead={onMarkAllRead}
             onClearAll={onClearAll}
-            className="w-full"
+            footer={seeAllLink}
+            // A fixed height, never the window's: the feed scrolls inside.
+            className="h-[min(70vh,560px)] w-full"
             data-testid={`${testId}-center`}
           />
         )}

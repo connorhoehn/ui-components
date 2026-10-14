@@ -60,4 +60,20 @@ describe('BoardColumn', () => {
     expect(container.querySelector('section')).not.toBeNull();
     expect(screen.getByTestId('lane')).toBeInTheDocument();
   });
+
+  it('is a lane surface the DOM audit can find, with a tinted background', () => {
+    const { container } = render(<BoardColumn label="Open"><div>c</div></BoardColumn>);
+    const lane = container.querySelector('[data-ui-board-lane]');
+    expect(lane).not.toBeNull();
+    expect(lane?.className).toMatch(/bg-\[color-mix/);
+    // Stretches with its grid row so every lane runs the board's full height.
+    expect(lane?.className).toContain('h-full');
+  });
+
+  it('marks an empty lane with a drop-zone message inside the lane, not a bare dash', () => {
+    const { container } = render(<BoardColumn label="Done" count={0} emptyLabel="No items" />);
+    const empty = container.querySelector('[data-board-lane-empty]');
+    expect(empty?.textContent).toBe('No items');
+    expect(empty?.closest('[data-ui-board-lane]')).not.toBeNull();
+  });
 });
