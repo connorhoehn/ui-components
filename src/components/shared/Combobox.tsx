@@ -14,9 +14,13 @@
 // `aria-invalid`, `aria-required`) plus `invalid` for the danger border. The
 // root carries `data-ui-control="combobox"` so the DOM audit knows the
 // control is the library's.
+//
+// 2.452.0 (PersonPicker): an option may carry `leading` (an avatar) drawn
+// before its title, and the field may carry `leading` drawn before the input
+// while a single choice is shown idle — the chosen person's avatar.
 
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
-import type { KeyboardEvent } from 'react';
+import type { KeyboardEvent, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import Chip from './Chip';
 
@@ -26,6 +30,8 @@ export interface ComboboxOption {
   description?: string;
   /** A short right-aligned tag on the option's title line (a workspace, a team). */
   meta?: string;
+  /** A small visual drawn before the title (an avatar). Never matched by the filter. */
+  leading?: ReactNode;
   disabled?: boolean;
 }
 
@@ -55,6 +61,8 @@ interface BaseProps {
   invalid?: boolean;
   /** Draw the chevron that opens the full list on click. Default true in single mode. */
   showToggle?: boolean;
+  /** Single mode: drawn before the input while the chosen option's label is shown (not while typing). */
+  leading?: ReactNode;
 }
 export interface SingleComboboxProps extends BaseProps {
   multiple?: false;
@@ -165,6 +173,7 @@ export function Combobox(props: ComboboxProps) {
 
   // Single mode shows the chosen label while the field is idle.
   const shown = props.multiple || query || open ? query : selected[0] ? labelOf(selected[0]) : '';
+  const fieldLeading = !props.multiple && !query && !open && selected[0] ? props.leading : undefined;
 
   return (
     <div ref={rootRef} className={cn('relative min-w-0', className)} data-testid={testId} data-ui-control="combobox">
@@ -180,6 +189,7 @@ export function Combobox(props: ComboboxProps) {
             {labelOf(v)}
           </Chip>
         ))}
+        {fieldLeading && <span className="flex shrink-0 items-center" data-combobox-leading="">{fieldLeading}</span>}
         <input
           ref={inputRef}
           id={id}
@@ -243,11 +253,26 @@ export function Combobox(props: ComboboxProps) {
                   o.disabled && 'cursor-not-allowed opacity-50',
                 )}
               >
-                <span className="flex min-w-0 items-baseline gap-2">
-                  <span className="min-w-0 flex-1 truncate">{isSel ? '✓ ' : ''}{o.label}</span>
-                  {o.meta && <span className="shrink-0 text-xs font-normal text-text-secondary">{o.meta}</span>}
-                </span>
-                {o.description && <span className="text-xs font-normal leading-4 text-text-tertiary">{o.description}</span>}
+                {o.leading ? (
+                  <span className="flex min-w-0 items-center gap-2">
+                    <span className="flex shrink-0 items-center" aria-hidden="true">{o.leading}</span>
+                    <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                      <span className="flex min-w-0 items-baseline gap-2">
+                        <span className="min-w-0 flex-1 truncate">{isSel ? '✓ ' : ''}{o.label}</span>
+                        {o.meta && <span className="shrink-0 text-xs font-normal text-text-secondary">{o.meta}</span>}
+                      </span>
+                      {o.description && <span className="text-xs font-normal leading-4 text-text-tertiary">{o.description}</span>}
+                    </span>
+                  </span>
+                ) : (
+                  <>
+                    <span className="flex min-w-0 items-baseline gap-2">
+                      <span className="min-w-0 flex-1 truncate">{isSel ? '✓ ' : ''}{o.label}</span>
+                      {o.meta && <span className="shrink-0 text-xs font-normal text-text-secondary">{o.meta}</span>}
+                    </span>
+                    {o.description && <span className="text-xs font-normal leading-4 text-text-tertiary">{o.description}</span>}
+                  </>
+                )}
               </li>
             );
           })}

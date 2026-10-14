@@ -515,6 +515,9 @@ export type { HighlightProps } from './Highlight';
 // a bare bucket histogram and runtime-colour accents without inline styles.
 export { Combobox } from './Combobox';
 export type { ComboboxProps, ComboboxOption, SingleComboboxProps, MultiComboboxProps } from './Combobox';
+// PersonPicker (2.452.0): choose one known person (a beneficiary, a delegate) — avatar, name, tag, detail.
+export { PersonPicker } from './PersonPicker';
+export type { PersonPickerProps, PersonPickerPerson } from './PersonPicker';
 export { Histogram } from './Histogram';
 export type { HistogramProps } from './Histogram';
 export { AccentStripe, dataAccentProps, DATA_ACCENT_SLOTS } from './dataAccent';
