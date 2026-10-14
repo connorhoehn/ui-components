@@ -64,9 +64,13 @@ export function DetailHeader({
         {meta}
       </div>
       {aside ? (
-        <aside className="flex flex-col gap-2 shrink-0" style={{ width: asideWidth }}>
+        // A div, not <aside> (since 2.446.2): the readout is part of the
+        // header, not a complementary landmark — and as an <aside> it picked
+        // up host rules meant for side rails (the portal paints every shell
+        // <aside> as a panel, so a sprint's progress sat in a grey box).
+        <div className="flex flex-col gap-2 shrink-0" style={{ width: asideWidth }} data-detail-aside="">
           {aside}
-        </aside>
+        </div>
       ) : null}
     </div>
   );

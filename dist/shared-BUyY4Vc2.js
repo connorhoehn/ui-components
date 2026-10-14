@@ -3380,9 +3380,10 @@ function lr({ title: t, badge: n, description: r, meta: i, aside: a, asideWidth:
 				}) : null,
 				i
 			]
-		}), a ? /* @__PURE__ */ Z("aside", {
+		}), a ? /* @__PURE__ */ Z("div", {
 			className: "flex flex-col gap-2 shrink-0",
 			style: { width: o },
+			"data-detail-aside": "",
 			children: a
 		}) : null]
 	});

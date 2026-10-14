@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.446.2
+
+- `DetailHeader`: the right-hand readout is a `div` (`data-detail-aside`), not an `<aside>` landmark. It is part of the header; as an `<aside>` it picked up host rules meant for side rails (the portal paints every shell `<aside>` as a panel, so a sprint's progress readout sat in a grey box).
+
 ## 2.446.1
 
 - `BoardColumn` is a lane: a tinted surface (4% of the text colour over whatever the board sits on, so it reads in light and dark) that runs the board's full height, with its header inside the lane and an empty lane drawn as a dashed message instead of a one-line placeholder. Emits `data-ui-board-lane`.

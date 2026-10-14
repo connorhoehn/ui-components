@@ -35,18 +35,24 @@ describe('DetailHeader', () => {
 
   it('omits the aside element when there is nothing to put in it', () => {
     const { container } = render(<DetailHeader title="t" />);
-    expect(container.querySelector('aside')).toBeNull();
+    expect(container.querySelector('[data-detail-aside]')).toBeNull();
   });
 
   it('gives the aside a fixed, non-shrinking width — a reflowing gauge is unreadable', () => {
     const { container } = render(<DetailHeader title="t" aside={<div>bar</div>} />);
-    const aside = container.querySelector('aside')!;
+    const aside = container.querySelector('[data-detail-aside]')!;
     expect(aside.className).toContain('shrink-0');
     expect(aside).toHaveStyle({ width: '260px' });
   });
 
   it('takes an aside width', () => {
     const { container } = render(<DetailHeader title="t" aside={<div>b</div>} asideWidth={180} />);
-    expect(container.querySelector('aside')).toHaveStyle({ width: '180px' });
+    expect(container.querySelector('[data-detail-aside]')).toHaveStyle({ width: '180px' });
+  });
+
+  it('is header content, not a complementary landmark (no <aside> for host rail rules to style)', () => {
+    const { container } = render(<DetailHeader title="t" aside={<div>bar</div>} />);
+    expect(container.querySelector('aside')).toBeNull();
+    expect(container.querySelector('[data-detail-aside]')).not.toBeNull();
   });
 });
