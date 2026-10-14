@@ -255,6 +255,59 @@
       "owner": "SectionHeader"
     },
     {
+      "id": "content.gutter",
+      "kind": "gutter",
+      "selector": "$contentColumns",
+      "anchor": "$trail",
+      "edges": [
+        "left",
+        "right"
+      ],
+      "owner": "SectionContent body inset / the page composing the content column"
+    },
+    {
+      "id": "content.header-alignment",
+      "kind": "row-start",
+      "selector": "$contentColumns",
+      "anchor": "$trail",
+      "offset": 0,
+      "tolerance": 2,
+      "owner": "SectionHeader title band / the conversation header that takes the title slot"
+    },
+    {
+      "id": "content.single-title",
+      "kind": "title-count",
+      "selector": "$contentColumns",
+      "titleSize": 20,
+      "expected": 1,
+      "owner": "one header per page: SectionHeader title, or the conversation/record header with the title folded into the trail"
+    },
+    {
+      "id": "layout.contained-controls",
+      "kind": "contained",
+      "selector": "$containedControls",
+      "region": "$containmentRegions",
+      "owner": "the control's composite (header actions, tab rows, row actions) and its column",
+      "scrollers": [
+        {
+          "selector": "[role=\"tablist\"], :has(> [role=\"tablist\"])",
+          "reason": "A tab row that outgrows its column scrolls inside itself (Tabs / ChannelHeader); the row is judged in place of its tabs"
+        },
+        {
+          "selector": ":has(> table)",
+          "reason": "A table's own scroller (DataTable) scrolls wide rows; the scroller is judged in place of its cells' controls"
+        }
+      ]
+    },
+    {
+      "id": "people.sparse-row",
+      "kind": "sparse-row",
+      "selector": "$tileLists",
+      "maxGapRatio": 3,
+      "minItems": 3,
+      "owner": "ActivePeopleGrid columns (rail: 4; page: fit) / tile grids"
+    },
+    {
       "id": "toolbar.inset",
       "kind": "style",
       "selector": "$collectionToolbars",

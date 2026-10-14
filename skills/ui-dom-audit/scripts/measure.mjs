@@ -65,6 +65,39 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
   const PLACEHOLDER_REASON = /^(?:todo|tbd|n\/?a|none|null|undefined|exempt|not applicable|coming soon|[-?.…]+)[.!?]*$/i;
   // The URL a reader would share: path and query, never a hash or the origin.
   const urlKey = href => { try { const u = new URL(href); return u.pathname + u.search; } catch { return String(href); } };
+  // Ink: where a reader actually sees something — visible text runs, images,
+  // icons and canvases — never a padded wrapper's box. Used by the gutter,
+  // row-start and sparse-row rules so full-bleed rows and hover surfaces are
+  // judged by what they draw, not by the box that holds it.
+  const INK_ELEMENTS = 'img, svg, canvas, video, [data-ui-text="avatar"]';
+  const inkRects = (root, skip = () => false) => {
+    const out = [];
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) {
+      const text = walker.currentNode, parent = text.parentElement;
+      if (!text.textContent.trim() || !parent || !visible(parent) || parent.closest('svg, [aria-hidden="true"]') || skip(parent)) continue;
+      const range = document.createRange(); range.selectNodeContents(text);
+      for (const r of range.getClientRects()) if (r.width > 1 && r.height > 1) out.push({ el: parent, left: r.left, right: r.right, top: r.top, bottom: r.bottom });
+    }
+    for (const el of [root, ...root.querySelectorAll(INK_ELEMENTS)]) {
+      if (!el.matches?.(INK_ELEMENTS) || !visible(el) || el.parentElement?.closest('svg') || skip(el)) continue;
+      const r = el.getBoundingClientRect();
+      out.push({ el, left: r.left, right: r.right, top: r.top, bottom: r.bottom });
+    }
+    return out;
+  };
+  // A box whose padding is the gutter: its content box is the column's reading edge.
+  const contentBox = el => { const b = el.getBoundingClientRect(), s = getComputedStyle(el); return { left: b.left + parseFloat(s.paddingLeft), right: b.right - parseFloat(s.paddingRight), top: b.top, bottom: b.bottom }; };
+  // Ink is only what a clipping or scrolling ancestor (below `stop`) lets through:
+  // a wide table inside its own scroller is judged by the scroller's window.
+  const clipToAncestors = (r, stop) => {
+    let { left, right } = r;
+    for (let n = r.el.parentElement; n && n !== stop; n = n.parentElement) {
+      if (getComputedStyle(n).overflowX === 'visible') continue;
+      const c = n.getBoundingClientRect(); left = Math.max(left, c.left); right = Math.min(right, c.right);
+    }
+    return right - left > 1 ? { ...r, left, right } : null;
+  };
   for (const name of required) if (query(name).length === 0) add({ id: 'coverage.required', selector: name }, null, 'rendered count', '>= 1', 0, 'coverage');
   for (const rule of contract.rules) {
     try {
@@ -135,6 +168,115 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
         else for (const axis of rule.axes ?? ['x', 'y']) {
           const [start, end] = axis === 'x' ? ['left', 'right'] : ['top', 'bottom'];
           if (b[start] < a[start] - tolerance || b[end] > a[end] + tolerance) add(rule, el, axis + ' containment', [a[start], a[end]], [b[start], b[end]]);
+        }
+      }
+      else if (rule.kind === 'gutter') {
+        // The content column's reading edge: the anchor (the trail band, padded
+        // by the page gutter) sets left/right; every piece of ink in the
+        // column's body must sit inside it. A body flush to the rail while the
+        // trail and title are inset fails; so does an action at the window edge.
+        let measured = 0;
+        for (const region of nodes) {
+          const anchor = [...region.querySelectorAll(css(rule.anchor))].filter(visible)[0];
+          if (!anchor) { add(rule, region, 'gutter anchor', css(rule.anchor), 'missing', 'coverage'); continue; }
+          const edge = contentBox(anchor);
+          const skip = el => anchor.contains(el) || (rule.exclude ?? []).some(e => el.closest(css(e.selector)));
+          const ink = inkRects(region, skip).filter(r => r.top >= edge.bottom - tolerance).map(r => clipToAncestors(r, region)).filter(Boolean);
+          measured += ink.length;
+          const tol = rule.tolerance ?? tolerance;
+          for (const side of rule.edges ?? ['left', 'right']) {
+            const worst = side === 'left' ? ink.reduce((a, r) => (!a || r.left < a.left ? r : a), null) : ink.reduce((a, r) => (!a || r.right > a.right ? r : a), null);
+            if (!worst) continue;
+            const delta = Math.round((side === 'left' ? worst.left - edge.left : edge.right - worst.right) * 100) / 100;
+            samples.push({ rule: rule.id, selector: selectorOf(region), property: `${side} gutter`, actual: delta, expected: { min: 0 } });
+            if (delta < -tol) add(rule, worst.el, `${side} gutter (ink inside the trail's edge)`, `>= 0 (edge ${Math.round(edge[side])})`, delta);
+          }
+        }
+        coverage.at(-1).matched = measured;
+      }
+      else if (rule.kind === 'row-start') {
+        // The first heading row under the anchor (a page title, or a
+        // conversation's avatar + name when it is the page's header) starts
+        // at the anchor's reading edge — not left of it, not indented.
+        let measured = 0;
+        for (const region of nodes) {
+          const anchor = [...region.querySelectorAll(css(rule.anchor))].filter(visible)[0];
+          if (!anchor) continue;
+          const edge = contentBox(anchor);
+          const heading = [...region.querySelectorAll(css(rule.heading ?? 'h1, h2, h3, [role="heading"]'))]
+            .filter(el => visible(el) && !anchor.contains(el) && el.getBoundingClientRect().top >= edge.bottom - tolerance)
+            .sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top)[0];
+          if (!heading) continue;
+          const band = heading.getBoundingClientRect(), mid = (band.top + band.bottom) / 2;
+          // The row: ink in the region whose vertical extent crosses the heading's middle.
+          const row = inkRects(region).filter(r => r.top <= mid && r.bottom >= mid);
+          const start = row.reduce((a, r) => (!a || r.left < a.left ? r : a), null);
+          if (!start) continue;
+          measured++;
+          check(rule, start.el, 'first heading row start', Math.round((start.left - edge.left) * 100) / 100, rule.offset ?? 0);
+        }
+        coverage.at(-1).matched = measured;
+      }
+      else if (rule.kind === 'title-count') {
+        // One title per page: headings drawn at the page-title step (or larger) in the content column.
+        const min = resolve(rule.titleSize) - 0.1;
+        for (const region of nodes) {
+          const titles = [...region.querySelectorAll('h1, h2, h3, h4, h5, h6, [role="heading"]')]
+            .filter(el => visible(el) && parseFloat(getComputedStyle(el).fontSize) >= min && !(rule.exclude ?? []).some(e => el.closest(css(e.selector))));
+          samples.push({ rule: rule.id, selector: selectorOf(region), property: 'title-size headings', actual: titles.length, expected: rule.expected ?? 1 });
+          if (!matches(titles.length, rule.expected ?? 1, 0)) add(rule, titles[1] ?? region, 'title-size headings', rule.expected ?? 1, `${titles.length}: ${titles.map(t => `${(t.textContent ?? '').trim().slice(0, 40)} (${getComputedStyle(t).fontSize})`).join(' | ')}`);
+        }
+      }
+      else if (rule.kind === 'contained') {
+        // A visible control must be wholly visible: inside the viewport, inside
+        // its region (the content column, a rail), and not cut by any clipping
+        // or scrolling ancestor. The exception is explicit: an ancestor matching
+        // `scrollers` (a tab row, a table's scroller) may scroll the control
+        // out of view, and that scroller is judged in its place.
+        const tol = rule.tolerance ?? tolerance;
+        for (const reason of rule.scrollers ?? []) if (!reason.reason) throw new Error(`Scroller exception on ${rule.id} needs a reason`);
+        const scroller = n => (rule.scrollers ?? []).some(x => n.matches(css(x.selector)));
+        for (const el of nodes) {
+          let subject = el, clipped = false;
+          const region = rule.region ? el.parentElement?.closest(css(rule.region)) : null;
+          for (let n = el.parentElement; n && n !== document.body && n !== region; n = n.parentElement) {
+            const ox = getComputedStyle(n).overflowX;
+            if (ox === 'visible') continue;
+            if (scroller(n)) { subject = n; continue; }
+            const c = n.getBoundingClientRect(), b = subject.getBoundingClientRect();
+            if (b.right > c.right + tol || b.left < c.left - tol) {
+              add(rule, el, subject === el ? 'clipped by an ancestor' : 'scroller clipped by an ancestor', [Math.round(c.left), Math.round(c.right)], [Math.round(b.left), Math.round(b.right)]);
+              clipped = true; break;
+            }
+          }
+          if (clipped) continue;
+          const b = subject.getBoundingClientRect();
+          const bounds = { left: 0, right: innerWidth };
+          if (region) { const r = region.getBoundingClientRect(); bounds.left = Math.max(bounds.left, r.left); bounds.right = Math.min(bounds.right, r.right); }
+          samples.push({ rule: rule.id, selector: selectorOf(el), property: 'x containment', actual: [Math.round(b.left), Math.round(b.right)], expected: [Math.round(bounds.left), Math.round(bounds.right)] });
+          if (b.right > bounds.right + tol || b.left < bounds.left - tol) add(rule, el, subject === el ? 'x containment' : 'x containment (its scroller)', [Math.round(bounds.left), Math.round(bounds.right)], [Math.round(b.left), Math.round(b.right)]);
+        }
+      }
+      else if (rule.kind === 'sparse-row') {
+        // A row of like tiles (people, avatars) packed by what they draw: on a
+        // wide column a stretched grid sets each tile's ink far from the next.
+        const factor = rule.maxGapRatio ?? 3, minItems = rule.minItems ?? 3;
+        for (const list of nodes) {
+          const items = [...list.children].filter(visible).map(item => {
+            const ink = inkRects(item);
+            if (!ink.length) return null;
+            return { item, left: Math.min(...ink.map(r => r.left)), right: Math.max(...ink.map(r => r.right)), top: item.getBoundingClientRect().top };
+          }).filter(Boolean);
+          const rows = new Map();
+          for (const it of items) { const key = [...rows.keys()].find(t => Math.abs(t - it.top) <= 2) ?? it.top; rows.set(key, [...(rows.get(key) ?? []), it]); }
+          for (const row of rows.values()) {
+            if (row.length < minItems) continue;
+            row.sort((a, b) => a.left - b.left);
+            const widths = row.map(r => r.right - r.left).sort((a, b) => a - b), median = widths[Math.floor(widths.length / 2)];
+            const gap = Math.max(...row.slice(1).map((r, i) => r.left - row[i].right));
+            samples.push({ rule: rule.id, selector: selectorOf(list), property: 'tile gap / tile width', actual: Math.round((gap / median) * 100) / 100, expected: { max: factor } });
+            if (gap > factor * median + tolerance) add(rule, list, 'tile gap', `<= ${factor}x the ${Math.round(median)}px tile ink`, `${Math.round(gap)}px`);
+          }
         }
       }
       else if (rule.kind === 'columns') {

@@ -21,6 +21,11 @@ const selectors = {
   codeLabels: 'code, input[data-ui-text="code"]', railCaptionLabels: '.rail-label, button[data-heading="label"][data-focus-key^="g:"] > span, [data-ui-text="rail-caption"]', railItemLabels: '[data-ui-text="rail-item"]', conversationLabels: '.conversation-label', conversationMetadata: '.conversation-meta', decorativeText: '[aria-hidden="true"]', rowMenuGlyphs: '.row-glyph', keyboardHints: 'kbd', captions: '[data-ui-text="caption"]', tenantControl: '.no-brand', tickerControl: '.no-ticker', avatarControl: '[data-ui-text="avatar"]', header: '#header', footer: '#footer', footerRow: '#footer', shellColumns: '#shell', nestedColumns: '.no-nested', workspaceColumns: '#workspace', splitColumns: '.no-split',
   controls: 'button,input,select,textarea,[role="button"]', railHeaders: '.rail-caption', toolbarControls: '#toolbar button', collections: '#collection', collectionToolbars: '#toolbar', sectionTitles: '#section',
   tables: 'table', collectionTables: '[data-collection-table] table', composers: '#shelf', nestedComposers: '#shelf [data-composer-surface]', composerBoundary: 'section:has(> [data-collection-command-boundary="embedded"]), #content',
+  // The content-column rules (gutter, header alignment, one title, containment, sparse tiles):
+  // the column is the trail's parent, the trail band's padding is the reading edge.
+  contentColumns: ':has(> [data-trail])', trail: '[data-trail]',
+  containedControls: 'button, a[href], [role="tab"], input, select, textarea', containmentRegions: '#content, aside, nav, [data-column]',
+  tileLists: '[role="list"]',
 };
 const html = `<!doctype html><html><head><style>
 :root { --ui-control-sm:28px; --ui-page-gutter:24px; --ui-table-inset:12px; --ui-table-row:44px; --ui-content-gutter:16px; }
@@ -160,6 +165,65 @@ try {
   assert.ok((await measure()).issues.some(i => i.rule === 'collection.row-activatable' && i.property === 'row activation'), 'a static declaration on one table cannot exempt a neighbouring collection');
   console.log('PASS row activation: activatable, linked and declared-static rows; inert rows, missing pointer, blank/placeholder reasons and a neighbouring table still fail');
   await page.close();
+
+  // Content column: trail first, the title under it, the body at the same edge.
+  const columnHtml = `<!doctype html><html><head><style>
+*{box-sizing:border-box} body{margin:0;font:14px system-ui,-apple-system,sans-serif}
+#shell{display:flex;height:800px;width:1280px} #rail{width:240px;flex:none} #col{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}
+[data-trail]{padding:8px 24px 4px;display:flex} #title{padding:4px 24px 16px;display:flex;justify-content:space-between;align-items:center} #title h1{font-size:20px;font-weight:600;margin:0}
+#body{flex:1;min-height:0;overflow:auto;padding:0 24px 24px} h2{font-size:14px;margin:0} .row{display:flex;justify-content:space-between;padding:8px 10px;margin:0 -10px}
+.tiles{display:grid;gap:4px} .tile{display:flex;flex-direction:column;align-items:center;font-size:11px} .bubble{width:40px;height:40px;border-radius:50%}
+.tabs{display:flex;gap:16px;white-space:nowrap} .tabs button{flex:none;width:160px}
+#convo{display:none;align-items:center;gap:12px;padding:8px 24px;border-bottom:1px solid #ddd} #convo h2{font-size:20px}
+</style></head><body><div id="shell"><nav id="rail">Rail <button>Channels</button></nav>
+<section id="col" data-column><div data-trail><a href="/runs">Runs</a> › <span>Communication</span></div>
+<div id="title"><h1>Communication</h1><button id="title-action">Your work</button></div>
+<div id="convo"><svg class="bubble" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5"/></svg><h2>Rachel Kowalski</h2><div class="tabs" role="tablist"><button role="tab">Chat</button><button role="tab">Documents</button></div></div>
+<div id="body"><p id="meta">You are not in a conversation yet.</p>
+<section><h2>Active now</h2><div class="tiles" role="list" id="tiles" style="grid-template-columns:repeat(auto-fill,72px)">
+<div class="tile" role="listitem"><svg class="bubble" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5"/></svg>Asha</div><div class="tile" role="listitem"><svg class="bubble" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5"/></svg>Jonas</div><div class="tile" role="listitem"><svg class="bubble" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5"/></svg>Lena</div><div class="tile" role="listitem"><svg class="bubble" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5"/></svg>Nora</div></div></section>
+<section><div style="display:flex;justify-content:space-between"><h2>Channels you can join</h2><button id="join">Join a channel</button></div>
+<div class="row"><span>#general</span><span>Open →</span></div></section>
+<div id="scroller" style="overflow-x:auto"><table style="width:1600px"><tr><td>wide</td><td style="text-align:right">far right cell</td></tr></table></div>
+</div></section></div></body></html>`;
+  const columnPage = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  const columnRules = contract.rules.filter(r => ['gutter', 'row-start', 'title-count', 'contained', 'sparse-row'].includes(r.kind));
+  const columnMeasure = () => columnPage.evaluate(measureDOM, { contract: { ...contract, rules: columnRules }, selectors, required: [] });
+  await columnPage.setContent(columnHtml);
+  const columnClean = await columnMeasure();
+  assert.deepEqual(columnClean.issues, [], 'a column whose body shares the trail edge passes: ' + JSON.stringify(columnClean.issues));
+  for (const rule of columnRules) assert.ok(columnClean.coverage.find(c => c.rule === rule.id)?.matched > 0, `${rule.id} is exercised by the valid column`);
+  const columnValid = [
+    ['a full-bleed hover row whose text keeps the edge', () => { document.querySelector('.row').style.cssText = 'display:flex;justify-content:space-between;padding:8px 24px;margin:0 -24px;background:#eee'; }],
+    ['four stretched tiles in a 288px rail section', () => { const t = document.querySelector('#tiles'); t.style.gridTemplateColumns = 'repeat(4,1fr)'; t.style.width = '264px'; }],
+    ['a tab row scrolling inside its own scroller', () => { const tabs = document.querySelector('#convo .tabs'); tabs.style.overflowX = 'auto'; tabs.style.minWidth = '0'; tabs.style.flex = '1'; tabs.innerHTML += '<button role="tab">Pinned</button><button role="tab">Calls</button>'.repeat(4);
+      document.querySelector('#title').remove(); document.querySelector('#convo').style.display = 'flex'; }],
+    ['the title folded into the trail; the conversation header is the one title at the edge', () => { document.querySelector('#title').remove(); document.querySelector('#convo').style.display = 'flex'; }],
+  ];
+  for (const [name, mutate] of columnValid) {
+    await columnPage.setContent(columnHtml); await columnPage.evaluate(mutate);
+    const valid = await columnMeasure();
+    assert.deepEqual(valid.issues, [], `${name} must pass: ${JSON.stringify(valid.issues)}`);
+  }
+  const columnBroken = [
+    ['body flush to the rail while the trail and title are inset', () => { document.querySelector('#body').style.padding = '0'; }, 'content.gutter'],
+    ['a section action against the window edge', () => { document.querySelector('#body').style.paddingRight = '0'; }, 'content.gutter'],
+    ['conversation header starting left of the trail edge', () => { document.querySelector('#title').remove(); const c = document.querySelector('#convo'); c.style.display = 'flex'; c.style.paddingLeft = '16px'; }, 'content.header-alignment'],
+    ['title indented past the trail edge', () => { document.querySelector('#title').style.paddingLeft = '40px'; }, 'content.header-alignment'],
+    ['a second title-size header under the page title', () => { document.querySelector('#convo').style.display = 'flex'; }, 'content.single-title'],
+    ['no title at all', () => { document.querySelector('#title h1').style.fontSize = '14px'; }, 'content.single-title'],
+    ['a button clipped at the column edge', () => { const j = document.querySelector('#join'); j.style.cssText = 'margin-right:-120px'; }, 'layout.contained-controls'],
+    ['a tab row running past the column', () => { document.querySelector('#title').remove(); const c = document.querySelector('#convo'); c.style.display = 'flex'; c.querySelector('.tabs').innerHTML += '<button role="tab">Pinned</button><button role="tab">Calls</button>'.repeat(4); }, 'layout.contained-controls'],
+    ['four stretched tiles across a page-width section', () => { document.querySelector('#tiles').style.gridTemplateColumns = 'repeat(4,1fr)'; }, 'people.sparse-row'],
+  ];
+  for (const [name, mutate, rule] of columnBroken) {
+    await columnPage.setContent(columnHtml); await columnPage.evaluate(mutate);
+    const result = await columnMeasure();
+    assert.ok(result.issues.some(issue => issue.rule === rule), `${name} must fail ${rule}: ${JSON.stringify(result.issues)}`);
+    console.log('PASS detects ' + name);
+  }
+  console.log('PASS content column: shared edge, full-bleed rows, rail tiles, scrolling tab rows and a conversation header as the one title pass');
+  await columnPage.close();
 
   // Interaction rules: real clicks through the shared probes, judged by measureDOM.
   const interactionHtml = `<!doctype html><html><head><style>body{margin:0;font:14px system-ui} table{border-collapse:collapse} td{height:44px;padding:0 12px} tr[tabindex]{cursor:pointer} #toolbar{height:40px;display:flex;align-items:center;gap:8px}</style></head><body>

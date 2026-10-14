@@ -26,6 +26,11 @@ measurement and must not substitute for it.
 | `align` | selector, anchor, ancestor?, edges?, offset? | Content/header/shelf edges drifting from their real region |
 | `within` | selector, anchor, ancestor?, axes? | Element escaping its region; exclude intended scroll/portal surfaces explicitly |
 | `columns` | selector, children, min, max, maxGap | Gaps/overlap, uneven tops/bottoms in direct peer columns |
+| `gutter` | selector (content columns), anchor (the trail band), edges? | Ink (text, images, icons) in the column below the trail that starts left of, or ends right of, the trail's padded reading edge |
+| `row-start` | selector, anchor, heading?, offset? | The first heading row under the trail (a title, or an avatar + name) not starting at the trail's reading edge |
+| `title-count` | selector, titleSize, expected | Headings drawn at the page-title step or larger in a content column, other than exactly `expected` |
+| `contained` | selector (controls), region?, scrollers[{selector, reason}] | A control outside the viewport, outside its region, or cut by a clipping/scrolling ancestor that is not a declared scroller |
+| `sparse-row` | selector (tile lists), maxGapRatio, minItems | A row of like tiles whose ink sits further apart than `maxGapRatio` x the tile's ink width |
 | `table` | selector, rowHeight, cellInset, headerFontSize, headerFontWeight, bodyFontSize?, bodyFontFamily? | Unequal or oversized ordinary rows, cell padding and header/body typography |
 | `composer-presence` | selector; per-case composerExpectation | Missing required composer, undocumented exemptions, unclassified policy coverage |
 | `composer` | selector, input, boundary, inset, pseudo? | Missing/duplicate inputs, shelf insets, backdrop inset/missing paint, narrowing by an ancestor |
@@ -58,6 +63,83 @@ rule. This is structural, not a free-text whitelist. Table overflow is allowed
 inside its scroll container; page overflow is not. Composer checks use an
 explicit ancestor content region; choosing its immediately padded wrapper would
 hide the exact defect users have repeatedly reported.
+
+## Content column rules (one edge, one title, nothing clipped)
+
+Five rules judge the content column as a reader sees it. They exist because a
+reported Communication landing drew its body flush to the chat rail while the
+trail and title sat 24px in, set "Join a channel" and every "Open →" against
+the window edge, spread six Active-now avatars ~300px apart across a stretched
+four-column grid, and — on a conversation route — stacked a 20px conversation
+header (avatar 8px left of the trail, tabs running off the row) under the 20px
+page title. They hold for every tenant; there are no page-name exceptions.
+
+**The reading edge.** A content column is the trail's parent
+(aws-agentcore: `:has(> [data-testid="section-crumbs"])`, so a SectionContent
+and a ListRailLayout header column both qualify) and its edge is the trail
+band's content box: the band is padded by `--ui-page-gutter`, so its padding
+*is* the gutter. A page without a trail (the native Social tenant, a canvas
+shell) is unexercised (`matched: 0`), never passed.
+
+**Ink, not boxes.** `gutter`, `row-start` and `sparse-row` measure what is
+drawn: visible text runs, `img`/`svg`/`canvas`/`video` and
+`[data-ui-text="avatar"]`. A full-bleed row (a ruled list, a hover surface, a
+conversation header's border) passes when its text keeps the edge; ink is
+clipped to every clipping or scrolling ancestor below the column first, so a
+wide table inside its own scroller is judged by the scroller's window, while a
+page body scroller that is itself flush to the rail still fails.
+
+- **`content.gutter`** (`gutter`): every piece of ink below the trail starts at
+  or right of the edge's left and ends at or left of its right. Ink inside the
+  trail band (its hung controls) is the reference, not the subject. The fix is
+  the owner's body inset: SectionContent `inset="page"` (or a conversation
+  surface whose `--ui-content-gutter` is the page gutter), never a page margin.
+- **`content.header-alignment`** (`row-start`, tolerance 2px): the first
+  heading under the trail — the page title, or a conversation/record header
+  that took the title slot — begins its row at the edge. The row is the ink
+  crossing the heading's vertical middle, so an avatar beside the name counts.
+- **`content.single-title`** (`title-count`): exactly one heading at the
+  page-title step (20px) or larger in the column. A conversation route folds
+  the page title into the trail (ScopeHeader `collapsed`) and its
+  ChannelHeader name is the one title; two stacked 20px headers fail, and so
+  does a column with no title at all.
+- **`layout.contained-controls`** (`contained`): every visible control
+  (`button`, links, tabs, inputs) lies inside the viewport, inside its region
+  (content column, rail, shell header/footer) and inside every ancestor that
+  clips or scrolls. The exception is explicit — `scrollers` names a tab row
+  (`[role="tablist"]` and its wrapper) and a table's scroller (`:has(> table)`),
+  each with a reason; the scroller is then judged in its controls' place. An
+  undocumented scroller exception throws.
+- **`people.sparse-row`** (`sparse-row`): in a `role="list"` grid, a row of
+  three or more tiles whose largest gap between tile ink exceeds 3x the median
+  tile ink width fails. The rail's four stretched columns at ~288px pass; the
+  same grid across a page-width section fails. The library fix is
+  `ActivePeopleGrid columns="fit"` (ui-components 2.442.6): fixed 72px tiles,
+  left-aligned.
+
+**Not expressed: an empty view.** A selected view with no content and no
+EmptyState would need two library markers the DOM does not carry today:
+ConversationSurface's view panels are not `role="tabpanel"` (they are siblings
+of its Tabs) and EmptyState has no semantic marker, only an overridable
+`data-testid`. Without both, "empty" cannot be told from "loading" or from a
+custom empty line, so the rule is not shipped; the adapter's
+`conversation-view-*` states still measure each view's geometry.
+
+Fixtures (`self-test.mjs`, `columnHtml`): valid — a body on the trail's edge,
+a full-bleed hover row whose text keeps the edge, four stretched tiles in a
+264px rail section, a tab row scrolling inside itself, the title folded into
+the trail with the conversation header as the one title; failing — a body
+flush to the rail, a section action at the window edge, a conversation header
+left of the trail, a title indented past it, a second 20px header, no title,
+a button clipped at the column edge, a tab row running past the column, and
+four stretched tiles across a page-width section.
+
+**Adapter states.** aws-agentcore's `discoverStates` adds one
+`conversation-view-<label>` state per unselected ConversationSurface view tab
+(`[role="tablist"][aria-label="Views of this conversation"]`), with the
+composer declared absent for that view (it belongs to Chat). The route
+inventory observes the seeded DM on each tenant's Communication plane
+(`/iq|assessment|pipelines/communication/dms/:lobby`) beside Social's own.
 
 ## Frontend adapter interface
 

@@ -8,7 +8,7 @@ const hash = x => crypto.createHash('sha256').update(JSON.stringify(x)).digest('
 
 export function validateContract(contract) {
   if (contract.version !== 1 || !Array.isArray(contract.rules) || !contract.rules.length) throw new Error('Contract requires version: 1 and nonempty rules');
-  const ids = new Set(), kinds = new Set(['style', 'text', 'box', 'count', 'viewport', 'align', 'within', 'columns', 'table', 'composer', 'composer-presence', 'record-popout', 'row-activatable', 'selection-shift']);
+  const ids = new Set(), kinds = new Set(['style', 'text', 'box', 'count', 'viewport', 'align', 'within', 'columns', 'table', 'composer', 'composer-presence', 'record-popout', 'row-activatable', 'selection-shift', 'gutter', 'row-start', 'title-count', 'contained', 'sparse-row']);
   for (const rule of contract.rules) {
     if (!rule.id || ids.has(rule.id) || !kinds.has(rule.kind)) throw new Error('Invalid/duplicate rule: ' + rule.id);
     ids.add(rule.id);
