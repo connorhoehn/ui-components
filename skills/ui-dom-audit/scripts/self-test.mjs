@@ -9,13 +9,18 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { parseAuditArgs } from './cli-options.mjs';
 import { measureDOM } from './measure.mjs';
-import { runAudit, summarize, validateContract } from './run.mjs';
+import { runAudit, summarize, validateContract, consistencyOutliers } from './run.mjs';
 import { probes } from './probes.mjs';
 const project = process.argv[process.argv.indexOf('--project') + 1];
 if (!project || !process.argv.includes('--project')) throw new Error('Usage: node self-test.mjs --project <package with @playwright/test>');
 const { chromium } = createRequire(path.resolve(project, 'package.json'))('@playwright/test');
-const contract = JSON.parse(fs.readFileSync(new URL('../references/work-ui.contract.json', import.meta.url)));
-validateContract(contract);
+const fullContract = JSON.parse(fs.readFileSync(new URL('../references/work-ui.contract.json', import.meta.url)));
+validateContract(fullContract);
+// The deep-audit rules (references/deep-audit.md) have their own fixtures below; the
+// four-column fixture and the runner tests keep judging the established rule set.
+const DEEP_KINDS = new Set(['fingerprint', 'blank-band', 'table-first', 'narrow-block', 'alignment-grid', 'baseline', 'icon-center', 'scroll-owner', 'content-share', 'content-honesty', 'a11y-names', 'contrast', 'heading-order', 'landmarks', 'composer-readonly', 'layer', 'focus-walk', 'tab-stability', 'data-state', 'geometry-snapshot', 'text-fragmented', 'leading-separator', 'selection-column', 'column-hog', 'marker-first-line']);
+const contract = { ...fullContract, rules: fullContract.rules.filter(r => !DEEP_KINDS.has(r.kind)) };
+assert.ok(fullContract.rules.filter(r => DEEP_KINDS.has(r.kind)).length >= DEEP_KINDS.size, 'every deep rule kind is bound in the shipped contract');
 const selectors = {
   graphDetailLabels: '[data-ui-text="graph-detail"]', graphMetadataLabels: '[data-ui-text="graph-metadata"]', activePersonCaptions: '[data-ui-text="active-person-caption"]',
   codeLabels: 'code, input[data-ui-text="code"]', railCaptionLabels: '.rail-label, button[data-heading="label"][data-focus-key^="g:"] > span, [data-ui-text="rail-caption"]', railItemLabels: '[data-ui-text="rail-item"]', conversationLabels: '.conversation-label', conversationMetadata: '.conversation-meta', decorativeText: '[aria-hidden="true"]', rowMenuGlyphs: '.row-glyph', keyboardHints: 'kbd', captions: '[data-ui-text="caption"]', tenantControl: '.no-brand', tickerControl: '.no-ticker', avatarControl: '[data-ui-text="avatar"]', header: '#header', footer: '#footer', footerRow: '#footer', shellColumns: '#shell', nestedColumns: '.no-nested', workspaceColumns: '#workspace', splitColumns: '.no-split',
@@ -40,6 +45,7 @@ const html = `<!doctype html><html><head><style>
 </style></head><body><header id="header">Workspace <button class="control"><span class="rail-label" style="font-size:11px">Group</span><span class="conversation-label" style="font-size:13px">Person</span><span class="conversation-meta" style="font-size:11px">Now</span><code style="font-size:11px;font-family:monospace">ID-123</code><span class="avatar" data-ui-text="avatar" style="font-size:9.12px">AB</span></button></header><div id="shell"><aside>Primary<section><h3><button class="control" data-heading="label" data-focus-key="g:fixture"><span id="group-label" style="font-size:11px">Projects</span><span id="group-count" style="font-size:11px">2</span></button></h3><ul><li><button class="control"><span id="rail-title" data-ui-text="rail-item" style="font-size:13px;font-weight:500;line-height:20px">Sample initiative</span></button><button id="rail-sibling-action" class="control" style="font-size:14px">Open</button></li></ul></section></aside><main><div id="workspace"><nav id="secondary">Secondary</nav><section id="content"><div id="section">Section</div><div role="button"><span data-ui-text="graph-detail" style="font-size:11px">Graph detail</span><span data-ui-text="graph-metadata" style="font-size:10px">Revision</span><button class="control" id="graph-nested-action">Open graph</button></div><button class="control"><span data-ui-text="active-person-caption" style="font-size:11px;font-weight:500">Person</span></button><div id="collection"><div id="toolbar"><button class="control">Action</button></div><div data-collection-table data-collection-rows="activatable"><table><thead><tr><th>Name</th><th>State</th></tr></thead><tbody><tr tabindex="0" style="cursor:pointer"><td>Record</td><td>Ready</td></tr></tbody></table></div></div><div id="shelf-wrapper"><div id="shelf" data-composer-surface><div contenteditable="true" role="textbox">Draft</div></div></div></section><aside id="right">Details<div id="dropzone" role="button" tabindex="0" data-ui-dropzone style="border:2px dashed #888">Drop files</div><button id="drop-sibling" class="control">Browse</button><div id="terminal" data-ui-code-surface="terminal"><textarea class="xterm-helper-textarea" aria-label="Terminal input" style="font-size:16px;font-family:monospace;width:8px;height:15px"></textarea></div></aside></div></main></div><footer id="footer">Footer <button id="overflow-count" class="control" data-ui-text="avatar" style="font-size:10px">+3</button></footer></body></html>`;
 const browser = await chromium.launch({ headless: true });
 const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'ui-dom-audit-tests-'));
+const legacyContractPath = path.join(temp, 'legacy.contract.json'); fs.writeFileSync(legacyContractPath, JSON.stringify(contract));
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
   const payload = { contract, selectors, required: ['$header', '$footer', '$tables', '$composers'], composerExpectation: { mode: 'required' } };
@@ -665,7 +671,7 @@ document.querySelectorAll('tbody input[type=checkbox]').forEach(cb => cb.addEven
   assert.ok(unprobed.coverage.some(c => c.rule === 'record.popout' && c.matched === 0), 'an unprobed record.popout is reported as unexercised coverage');
   await interactionContext.close();
   const adapter = {
-    baseURL: 'http://audit.test', selectors,
+    baseURL: 'http://audit.test', selectors, contract: legacyContractPath,
     authenticate: async context => context.route('**/*', route => route.request().url().endsWith('/redirect') ? route.fulfill({ status: 302, headers: { location: 'http://audit.test/login' } }) : route.fulfill({ contentType: 'text/html', body: html })),
     cases: async () => [{ tenant: 'fixture', path: '/good', required: payload.required }, { tenant: 'fixture', path: '/bad', states: [{name:'default',enter: p => p.evaluate(() => { document.querySelector('#section').style.paddingLeft='45px'; localStorage.setItem('audit-state', 'changed'); })}] }, {tenant:'fixture',path:'/redirect'}].map(spec => ({ ...spec, composerExpectation: { mode: 'required' } })),
     ready: async p => { await p.locator('#header').waitFor(); assert.equal(await p.evaluate(() => localStorage.getItem('audit-state')), null, 'state preferences reset between navigations'); }, theme: async () => {},
@@ -726,6 +732,313 @@ document.querySelectorAll('tbody input[type=checkbox]').forEach(cb => cb.addEven
   assert.ok(probed.cases[2].issues.some(i => i.rule === 'coverage.required'), 'a state that stays on the list keeps the list route\'s required regions');
   assert.ok(!probed.cases[3].issues.some(i => i.rule === 'coverage.required'), 'a navigating state is judged on the page it reached: ' + JSON.stringify(probed.cases[3].issues));
 
+  // ── Deep audit (references/deep-audit.md): each family's rules on a small
+  // portal-shaped page. Every rule has a valid fixture that exercises it and
+  // deliberately broken mutations that fail it; none is a page-name exception.
+  {
+    const dpage = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    const dselectors = { ...selectors, tables: 'table', contentColumns: ':has(> [data-trail])', trail: '[data-trail]', collectionTables: '[data-collection-page] table', composers: '[data-composer-surface]', composerDocks: '[data-dock]', header: 'header', footer: 'footer', containmentRegions: 'main, aside', panels: '[role="dialog"], [role="menu"], [data-ui-dialog]' };
+    const deep = ids => ({ contract: { ...fullContract, rules: fullContract.rules.filter(r => ids.includes(r.id)) }, selectors: dselectors, required: [] });
+    const deepHtml = `<!doctype html><html><head><style>
+:root{--ui-table-inset:12px;--ui-content-gutter:16px;--ui-page-gutter:24px;--ui-table-row:44px;--ui-control-sm:28px}
+*{box-sizing:border-box} body{margin:0;font:14px system-ui,-apple-system,sans-serif;color:#111;background:#fff}
+header{height:44px;padding:0 16px} footer{height:44px;padding:0 16px}
+#shell{display:flex;height:812px} aside{width:200px;flex:none;padding:8px}
+#col{flex:1;min-width:0;display:flex;flex-direction:column;overflow:auto}
+[data-trail]{padding:12px 24px;font-size:12px;margin:0} .body{padding:0 24px}
+h1{font-size:20px;margin:16px 0 12px;line-height:28px} h2{font-size:14px;margin:16px 0 8px}
+table{width:100%;border-collapse:collapse} th,td{padding:0 12px;height:44px;text-align:left} th{font-size:12px;font-weight:600}
+.filters{display:flex;gap:8px;height:40px;align-items:center} button{font:inherit;height:28px}
+.meta{display:flex;align-items:baseline;gap:8px} .card{border:1px solid #d4d4d8;border-radius:8px;padding:16px;background:#fff}
+#act{display:inline-flex;align-items:center;gap:6px;height:32px}
+</style></head><body><header>Workspace</header>
+<div id="shell" data-shell-nav><aside aria-label="Primary"><nav aria-label="Sections"><a href="#runs">Runs</a></nav></aside>
+<main id="col"><p data-trail>Build › Runs</p><div class="body" id="body">
+<h1>Runs</h1>
+<div class="meta" id="meta"><span id="lbl" style="font-size:12px">Owner</span><span id="val" style="font-size:24px">Sana Iqbal</span></div>
+<div class="filters" id="filters"><button id="act"><svg width="16" height="16" aria-hidden="true"><rect width="16" height="16"/></svg><span>Refresh</span></button></div>
+<div data-collection-page id="list"><table><thead><tr><th>Name</th><th>Tokens</th><th>Status</th></tr></thead><tbody>
+<tr><td>inference-canary-nightly</td><td>12,345</td><td>Ready</td></tr><tr><td>obs-nightly-maintenance</td><td>12.3k</td><td>Ready</td></tr></tbody></table></div>
+<h2>Notes</h2><div class="card" id="card"><p style="margin:0">Owned by 2026 planning. <code>p-auth-migration</code></p></div>
+</div></main></div><footer>Footer</footer></body></html>`;
+    const dmeasure = ids => dpage.evaluate(measureDOM, deep(ids));
+    const families = [
+      { ids: ['density.blank-band'], valid: [['the resting list page', () => {}], ['a short page ending above the footer (nothing scrolls)', () => { document.querySelector('#card').remove(); }]],
+        broken: [['a 200px blank band between the title and the table', () => document.querySelector('#filters').insertAdjacentHTML('afterend', '<div style="height:200px"></div>'), 'interior blank band'],
+          ['a short scroller hiding its rows while the column under it is blank', () => { const l = document.querySelector('#list'); l.style.cssText = 'height:150px;overflow-y:auto'; l.querySelector('tbody').innerHTML = '<tr><td>row</td><td>1</td><td>Ready</td></tr>'.repeat(20); document.querySelector('#card').remove(); document.querySelector('h2').remove(); }, 'blank below a short scroller']] },
+      { ids: ['density.table-first'], valid: [['one filter row above the table', () => {}]],
+        broken: [['a stack of status cards pushing the table down', () => document.querySelector('#filters').insertAdjacentHTML('afterend', '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:12px 0">' + '<div class="card" style="height:110px">Open 4</div>'.repeat(4) + '</div>'), 'preamble above the table'],
+          ['a table starting below the fold', () => document.querySelector('#filters').insertAdjacentHTML('afterend', '<p style="margin:0;height:520px">Long introduction</p>'), 'table below the fold']] },
+      { ids: ['density.narrow-block'], valid: [['a full-width table', () => {}], ['a narrow table with a summary beside it', () => { const l = document.querySelector('#list'); const row = document.createElement('div'); row.style.cssText = 'display:flex;gap:16px'; l.before(row); row.append(l); l.style.width = '420px'; row.insertAdjacentHTML('beforeend', '<div class="card" style="flex:1">Summary of runs</div>'); }]],
+        broken: [['a table held to 420px with the rest of the column blank', () => { document.querySelector('#list').style.maxWidth = '420px'; }, 'block width']] },
+      { ids: ['align.grid'], valid: [['lines on the gutter, the table inset and card padding', () => {}], ['a card inside a card (16 + 16)', () => { document.querySelector('#card').insertAdjacentHTML('beforeend', '<div class="card" style="margin-top:8px">Nested note</div>'); }], ['a centred empty state', () => { document.querySelector('#body').insertAdjacentHTML('beforeend', '<div style="text-align:center;padding:4px">Nothing else</div>'); }]],
+        broken: [['a paragraph indented 4px off the grid', () => document.querySelector('#body').insertAdjacentHTML('beforeend', '<p style="padding-left:4px">Stray paragraph</p>'), 'line start off the grid'],
+          ['a header action 6px short of the reading edge', () => { const f = document.querySelector('#filters'); f.style.justifyContent = 'space-between'; f.insertAdjacentHTML('beforeend', '<button style="margin-right:6px">Export</button>'); }, 'right edge off the grid']] },
+      { ids: ['align.baseline'], valid: [['a label and value on one baseline', () => {}], ['a ✓ glyph centred beside its label (an icon, not a label)', () => { document.querySelector('#body').insertAdjacentHTML('beforeend', '<div style="display:flex;align-items:center;gap:6px"><span style="font-size:16px">✓</span><span style="font-size:12px">Contract complete</span></div>'); }]],
+        broken: [['a 12px label centred against a 24px value', () => { document.querySelector('#meta').style.alignItems = 'center'; }, 'baseline delta']] },
+      { ids: ['align.icon-center'], valid: [['an icon centred on its label', () => {}]],
+        broken: [['an icon pinned to the top of its button', () => { document.querySelector('#act svg').style.alignSelf = 'flex-start'; }, 'icon vertical centre']] },
+      { ids: ['layout.scroll-owner'], valid: [['a wide table in its own scroller', () => { const l = document.querySelector('#list'); l.style.overflowX = 'auto'; l.querySelector('table').style.width = '2000px'; }]],
+        broken: [['a wide table with no scroller of its own', () => { document.querySelector('#list table').style.width = '2000px'; }, 'wide content without its own scroller']] },
+      { ids: ['layout.content-share'], valid: [['rails leaving the content column its room', () => {}]],
+        broken: [['a rail that does not fold, squeezing the content column', () => { document.querySelector('aside').style.width = '1000px'; }, 'content column width']] },
+      { ids: ['content.honesty'], valid: [['formatted numbers, a year, an id in code style and a status repeated down a column', () => {}], ['the trail and the title sharing the section name', () => {}], ['two neighbouring regions each captioned with the same word', () => { document.querySelector('#body').insertAdjacentHTML('beforeend', '<div style="display:flex;gap:16px"><section><div><div><span>Status</span></div></div></section><section><div><div><span>Status</span></div></div></section></div>'); }]],
+        broken: [['undefined shown as a value', () => { document.querySelector('#val').textContent = 'undefined'; }, 'undefined/null/NaN shown'],
+          ['an object leaked into text', () => { document.querySelector('#val').textContent = '[object Object]'; }, 'object leaked'],
+          ['money that did not format', () => { document.querySelector('#val').textContent = 'Budget $NaN'; }, 'unformatted money'],
+          ['placeholder copy', () => { document.querySelector('#card p').textContent = 'Budget view coming soon'; }, 'placeholder copy'],
+          ['a raw ISO timestamp', () => { document.querySelector('tbody td').textContent = '2026-10-14T13:55:00Z'; }, 'raw ISO timestamp'],
+          ['a raw UUID', () => { document.querySelector('tbody td').textContent = '3f2b8c1e-9a7d-4b2e-8f1a-2c3d4e5f6a7b'; }, 'raw UUID'],
+          ['an ungrouped large number', () => { document.querySelector('tbody td:nth-child(2)').textContent = '123456'; }, 'ungrouped number'],
+          ['an internal id where a name belongs', () => { document.querySelector('#val').textContent = 'p-auth-migration'; }, 'internal id shown as text'],
+          ['the same label twice in a row', () => { document.querySelector('#lbl').insertAdjacentHTML('afterend', '<span style="font-size:12px">Owner</span>'); }, 'duplicated adjacent label']] },
+      { ids: ['a11y.names'], valid: [['labelled controls and decorative images', () => { document.querySelector('#filters').insertAdjacentHTML('beforeend', '<button aria-label="More actions"><svg width="16" height="16"><rect width="16" height="16"/></svg></button><img alt="" width="8" height="8">'); }]],
+        broken: [['an icon-only button with no name', () => document.querySelector('#filters').insertAdjacentHTML('beforeend', '<button><svg width="16" height="16"><rect width="16" height="16"/></svg></button>'), 'accessible name'],
+          ['an image with no alt', () => document.querySelector('#filters').insertAdjacentHTML('beforeend', '<img width="8" height="8" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=">'), 'img alt']] },
+      { ids: ['a11y.contrast'], valid: [['muted text at 4.8:1 and a disabled control', () => { document.querySelector('#lbl').style.color = '#6b7280'; document.querySelector('#filters').insertAdjacentHTML('beforeend', '<button disabled style="color:#ccc">Archive</button>'); }]],
+        broken: [['light grey text on white', () => { document.querySelector('#lbl').style.color = '#aaa'; }, 'text contrast'],
+          ['a dark theme whose secondary text sinks into the surface', () => { document.body.style.background = '#111'; document.body.style.color = '#eee'; document.querySelector('#lbl').style.color = '#555'; }, 'text contrast']] },
+      { ids: ['a11y.heading-order'], valid: [['one h1, then h2', () => {}]],
+        broken: [['an h3 straight after the h1', () => { document.querySelector('h2').outerHTML = '<h3>Notes</h3>'; }, 'heading level skipped'],
+          ['two h1s', () => document.querySelector('#card').insertAdjacentHTML('afterend', '<h1>Second title</h1>'), 'h1 count']] },
+      { ids: ['a11y.landmarks'], valid: [['one main, one header/footer, named navigation', () => {}]],
+        broken: [['two unnamed navigation landmarks', () => { document.querySelector('nav').removeAttribute('aria-label'); document.querySelector('#body').insertAdjacentHTML('afterbegin', '<nav><a href="#x">Tabs</a></nav>'); }, 'navigation landmark names'],
+          ['a second main', () => document.querySelector('#body').insertAdjacentHTML('beforeend', '<main>Nested</main>'), 'main landmarks']] },
+      // Rules born in the visual review pass (deep-audit.md): each confirmed candidate became one of these.
+      { ids: ['text.flex-fragmented'], valid: [['an icon link: bare text beside an svg on one line', () => { document.querySelector('#filters').insertAdjacentHTML('beforeend', '<a href="#a" style="display:inline-flex;gap:4px;align-items:center">All runs <svg width="12" height="12"><rect width="12" height="12"/></svg></a>'); }], ['a sentence wrapped in one element inside a flex row', () => { document.querySelector('#body').insertAdjacentHTML('beforeend', '<div style="display:flex;gap:8px;width:220px"><span>▶</span><p style="margin:0">Click Scenarios in the toolbar, generate a set of people, then hit Run all.</p></div>'); }], ['an icon beside one wrapping sentence of bare text', () => { document.querySelector('#body').insertAdjacentHTML('beforeend', '<li style="display:flex;gap:8px;width:220px"><svg width="12" height="12"><rect width="12" height="12"/></svg>Configure CI to trigger on commit, push, merge request or pull request.</li>'); }]],
+        broken: [['a sentence split into flex items that each wrap', () => document.querySelector('#body').insertAdjacentHTML('beforeend', '<p style="display:flex;gap:8px;width:260px">Click <b>▶ Scenarios</b> in the toolbar, generate a set of people, then hit <b>Run all</b> to generate traffic.</p>'), 'prose split into flex items']] },
+      { ids: ['text.leading-separator'], valid: [['a stats line on one row', () => { document.querySelector('#body').insertAdjacentHTML('beforeend', '<div id="stats" style="width:900px"><span>2 agents</span> <span>·</span> <span>11 active</span> <span>·</span> <span>41 open</span></div>'); }]],
+        broken: [['a wrapped stats line whose second row starts with "•"', () => document.querySelector('#body').insertAdjacentHTML('beforeend', '<div style="display:flex;flex-wrap:wrap;gap:8px;width:300px"><span style="width:290px">2 agents active on 1 initiative</span><span>•</span><span>11 active initiatives</span></div>'), 'line starts with a separator']] },
+      { ids: ['text.leading-separator'], valid: [['a bulleted list whose items start with "•" markers', () => { document.querySelector('#body').insertAdjacentHTML('beforeend', '<ul style="list-style:none;padding:0;width:260px">' + '<li style="display:flex;gap:6px;align-items:flex-start"><span>•</span><span>Ensure the majority of active development runs through CI.</span></li>'.repeat(3) + '</ul>'); }]], broken: [] },
+      { ids: ['list.marker-alignment'], valid: [['bullets on the first line of wrapping items', () => { document.querySelector('#body').insertAdjacentHTML('beforeend', '<ul style="list-style:none;padding:0;width:260px">' + '<li style="display:flex;gap:6px;align-items:flex-start;line-height:20px"><span>•</span><span>Ensure the majority of active development runs through CI rather than manual builds.</span></li>'.repeat(2) + '</ul>'); }]],
+        broken: [['bullets centred on two-line items', () => document.querySelector('#body').insertAdjacentHTML('beforeend', '<ul style="list-style:none;padding:0;width:260px">' + '<li style="display:flex;gap:6px;align-items:center;line-height:20px"><span>•</span><span>Ensure the majority of active development runs through CI rather than manual builds.</span></li>'.repeat(2) + '</ul>'), 'list marker position']] },
+      { ids: ['table.selection-column'], valid: [['a selection checkbox in the first column', () => { document.querySelectorAll('#list tr').forEach(tr => tr.insertAdjacentHTML('afterbegin', tr.closest('thead') ? '<th></th>' : '<td><input type="checkbox" aria-label="Select"></td>')); }]],
+        broken: [['a selection checkbox between Name and Tokens', () => { document.querySelectorAll('#list tr').forEach(tr => tr.children[0].insertAdjacentHTML('afterend', tr.closest('thead') ? '<th></th>' : '<td><input type="checkbox" aria-label="Select"></td>')); }, 'selection column']] },
+      { ids: ['table.column-hog'], valid: [['a long name truncated in its cell', () => { const l = document.querySelector('#list'); l.style.overflowX = 'auto'; const td = l.querySelector('tbody td'); td.innerHTML = '<div style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + 'inference-canary-nightly extraordinarily long name '.repeat(6) + '</div>'; }]],
+        broken: [['a long name widening its column until the other columns scroll away', () => { const l = document.querySelector('#list'); l.style.overflowX = 'auto'; const td = l.querySelector('tbody td'); td.style.whiteSpace = 'nowrap'; td.textContent = 'inference-canary-nightly extraordinarily long name '.repeat(6); }, 'column pushing the table out of view']] },
+    ];
+    for (const { ids, valid, broken } of families) {
+      for (const [name, mutate] of valid) {
+        await dpage.setContent(deepHtml); await dpage.evaluate(mutate);
+        const r = await dmeasure(ids);
+        assert.deepEqual(r.issues, [], `${ids} must pass ${name}: ${JSON.stringify(r.issues)}`);
+        console.log(`PASS ${ids} allows ${name}`);
+      }
+      for (const [name, mutate, property] of broken) {
+        await dpage.setContent(deepHtml); await dpage.evaluate(mutate);
+        const r = await dmeasure(ids);
+        assert.ok(r.issues.some(i => ids.includes(i.rule) && i.property === property), `${name} must fail ${ids} (${property}): ${JSON.stringify(r.issues)}`);
+        console.log(`PASS ${ids} detects ${name}`);
+      }
+    }
+    // Rules that judge exercise their valid fixture (a pass is not a zero-match).
+    await dpage.setContent(deepHtml);
+    const exercised = await dmeasure(['density.blank-band', 'density.table-first', 'density.narrow-block', 'align.grid', 'align.baseline', 'align.icon-center', 'a11y.contrast']);
+    for (const c of exercised.coverage) assert.ok(c.matched > 0, `${c.rule} is exercised by the valid deep fixture: ${JSON.stringify(c)}`);
+    console.log('PASS each deep layout rule is exercised by the valid fixture');
+
+    // composer.readonly-coherent: a composer that cannot post is read-only as a whole.
+    const composerHtml = `<!doctype html><html><body style="margin:0;font:14px system-ui"><div data-dock><div data-composer-surface id="c">
+<div id="to">To: Initiative discussion <span id="note">You can read messages. Your current role cannot post to this discussion.</span></div>
+<div role="toolbar"><button id="bold" aria-label="Bold" disabled>B</button><button aria-label="Italic" disabled>I</button><button aria-label="Link" disabled>L</button></div>
+<div id="ed" role="textbox" contenteditable="false">Write a message…</div>
+<button id="mode" aria-haspopup="menu" disabled>Chat</button><button id="wf" disabled>Workflow</button><button id="send" aria-label="Send" disabled>Send</button>
+<a href="/access/requests/new">Request access</a></div></div></body></html>`;
+    const cmeasure = () => dpage.evaluate(measureDOM, deep(['composer.readonly-coherent']));
+    for (const [name, mutate] of [['a read-only composer with every affordance disabled and the reason inline', () => {}],
+      ['the To: selector kept live as the way out, with its reason', () => { document.querySelector('#to').insertAdjacentHTML('beforeend', '<button aria-haspopup="listbox" data-composer-readonly-allow="Choosing another destination is the way out of read-only">Initiative discussion ▾</button>'); }],
+      ['an ordinary composer whose Send waits for a draft', () => { document.querySelector('#note').remove(); document.querySelectorAll('button').forEach(b => { if (b.id !== 'send') b.disabled = false; }); document.querySelector('#ed').contentEditable = 'true'; }]]) {
+      await dpage.setContent(composerHtml); await dpage.evaluate(mutate);
+      const r = await cmeasure();
+      assert.deepEqual(r.issues, [], `${name}: ${JSON.stringify(r.issues)}`);
+      console.log('PASS composer.readonly-coherent allows ' + name);
+    }
+    await dpage.setContent(composerHtml); assert.ok((await cmeasure()).coverage.some(c => c.rule === 'composer.readonly-coherent' && c.matched === 1), 'the read-only fixture is exercised');
+    for (const [name, mutate, property] of [
+      ['formatting buttons left live under the read-only note', () => { document.querySelector('#bold').disabled = false; }, 'enabled controls in a read-only composer'],
+      ['an editor still editable under the read-only note', () => { document.querySelector('#ed').contentEditable = 'true'; }, 'enabled controls in a read-only composer'],
+      ['the Chat mode menu and Workflow still live', () => { document.querySelector('#mode').disabled = false; document.querySelector('#wf').disabled = false; }, 'enabled controls in a read-only composer'],
+      ['a live control exempted with a placeholder reason', () => { document.querySelector('#to').insertAdjacentHTML('beforeend', '<button data-composer-readonly-allow="TODO">Initiative discussion ▾</button>'); }, 'read-only exemption reason'],
+      ['a composer marked read-only with no reason shown', () => { document.querySelector('#note').remove(); document.querySelector('#c').setAttribute('data-composer-readonly', ''); }, 'read-only reason'],
+    ]) {
+      await dpage.setContent(composerHtml); await dpage.evaluate(mutate);
+      const r = await cmeasure();
+      assert.ok(r.issues.some(i => i.rule === 'composer.readonly-coherent' && i.property === property), `${name} must fail composer.readonly-coherent (${property}): ${JSON.stringify(r.issues)}`);
+      console.log('PASS composer.readonly-coherent detects ' + name);
+    }
+
+    // tabs.stable: real clicks through the tabCycle probe, judged by measureDOM.
+    const tabsHtml = `<!doctype html><html><head><style>
+*{box-sizing:border-box} body{margin:0;font:14px system-ui} #shell{display:flex;height:800px} main{flex:1}
+aside{width:360px;height:800px;display:flex;flex-direction:column;border-left:1px solid #ddd}
+[role=tablist]{display:flex;gap:4px;flex:none;padding:0 16px;align-items:flex-start} [role=tab]{font:inherit;border:0;background:none;height:36px;padding:0 8px}
+[role=tab][aria-selected=true]{box-shadow:inset 0 -2px 0 #2563eb}
+#panel{flex:1;min-height:0;overflow-y:auto;padding:12px 16px} #intro{flex:none;padding:8px 16px}
+</style></head><body><div id="shell"><main><h1>Initiative</h1></main><aside id="pane" aria-label="Side pane"><div id="intro">Agent</div>
+<div role="tablist" aria-label="Pane views"><button role="tab" aria-selected="true" aria-controls="panel">Agent</button><button role="tab" aria-selected="false" aria-controls="panel">Activity</button><button role="tab" aria-selected="false" aria-controls="panel">Files</button></div>
+<div id="panel" role="tabpanel"><p>Agent conversation</p></div></aside></div>
+<script>{
+const bodies = { Agent: '<p>Agent conversation</p>', Activity: '<p>One</p><p>Two</p><p>Three</p><p>Four</p>', Files: '<p>Spec.md</p>' };
+document.querySelectorAll('[role=tab]').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('[role=tab]').forEach(o => o.setAttribute('aria-selected', String(o === t)));
+  document.querySelector('#panel').innerHTML = bodies[t.textContent];
+  if (window.variant === 'underline') document.querySelectorAll('[role=tab]').forEach(o => { o.style.boxSizing = 'content-box'; o.style.height = '36px'; o.style.borderBottom = o === t ? '2px solid #2563eb' : '0'; });
+  if (window.variant === 'intro') document.querySelector('#intro').innerHTML = t.textContent === 'Activity' ? 'Activity<br>Everything that happened on this initiative, newest first' : t.textContent;
+}));
+}</script></body></html>`;
+    const tabCase = async variant => {
+      await dpage.setContent(tabsHtml);
+      await dpage.evaluate(v => {
+        window.variant = v;
+        if (v === 'pane') { const pane = document.querySelector('#pane'); pane.style.height = 'auto'; pane.style.alignSelf = 'flex-start'; document.querySelector('#panel').style.overflow = 'visible'; }
+      }, variant);
+      const probe = await probes.tabCycle(dpage, { index: 0, name: 'Pane views', chrome: ['main'] });
+      return dpage.evaluate(measureDOM, { ...deep(['tabs.stable']), probe });
+    };
+    const stable = await tabCase('stable');
+    assert.deepEqual(stable.issues, [], 'a fixed-height tab row with an inset underline and a scrolling panel is stable: ' + JSON.stringify(stable.issues));
+    assert.ok(stable.coverage.some(c => c.rule === 'tabs.stable' && c.matched >= 3), 'every tab was visited');
+    console.log('PASS tabs.stable allows a tab switch that only changes its panel');
+    for (const [variant, name, pattern] of [['underline', 'an active underline adding 2px to the tab row', /^(tab \d|tablist) height/], ['intro', 'content above the tabs that changes with the tab and shifts the tablist', /^(tablist top|panel top)/], ['pane', 'a content-sized side pane that resizes on each tab', /^ancestor \d+ \(frame\) height/]]) {
+      const r = await tabCase(variant);
+      assert.ok(r.issues.some(i => i.rule === 'tabs.stable' && pattern.test(i.property)), `${name} must fail tabs.stable (${pattern}): ${JSON.stringify(r.issues)}`);
+      console.log('PASS tabs.stable detects ' + name);
+    }
+
+    // layer.behaviour: a menu opened through the openLayer probe.
+    const layerHtml = `<!doctype html><html><head><style>*{box-sizing:border-box} body{margin:0;font:14px system-ui;height:900px} header{height:44px;background:#eee} footer{position:fixed;bottom:0;left:0;right:0;height:44px;background:#eee;z-index:5}
+#menu{position:fixed;left:200px;top:120px;width:200px;background:#fff;border:1px solid #ccc;z-index:10;padding:4px} #menu[hidden]{display:none} #menu button{display:block;width:100%;font:inherit}
+#cover{position:fixed;left:0;right:0;top:100px;height:300px;z-index:20;display:none;background:rgba(0,0,0,.02)}</style></head><body><header>Workspace</header>
+<main><button id="more" aria-haspopup="menu" aria-expanded="false">More options</button></main>
+<div id="menu" role="menu" hidden><button role="menuitem">Copy link</button><button role="menuitem">Duplicate</button></div><div id="cover"></div><footer>Footer</footer>
+<script>{
+const more = document.querySelector('#more'), menu = document.querySelector('#menu');
+more.addEventListener('click', () => { menu.hidden = false; more.setAttribute('aria-expanded', 'true'); if (window.variant !== 'no-focus') menu.querySelector('button').focus(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && window.variant !== 'no-escape') { menu.hidden = true; more.setAttribute('aria-expanded', 'false'); if (window.variant !== 'no-return') more.focus(); } });
+}</script></body></html>`;
+    const layerCase = async (variant, style) => {
+      await dpage.setContent(layerHtml);
+      await dpage.evaluate(({ v, css }) => { window.variant = v; if (css) document.querySelector('#menu').style.cssText += css; if (v === 'covered') document.querySelector('#cover').style.display = 'block'; }, { v: variant, css: style });
+      const found = await probes.discoverDeep(dpage, { chrome: 'header, footer' });
+      const trigger = found.triggers.find(t => t.name === 'More options');
+      assert.ok(trigger, 'discoverDeep finds the menu trigger');
+      const probe = await probes.openLayer(dpage, trigger);
+      return dpage.evaluate(measureDOM, { ...deep(['layer.behaviour']), probe });
+    };
+    const goodLayer = await layerCase('ok');
+    assert.deepEqual(goodLayer.issues, [], 'a menu that takes focus, closes on Escape and returns focus passes: ' + JSON.stringify(goodLayer.issues));
+    console.log('PASS layer.behaviour allows a well-behaved menu');
+    for (const [variant, css, name, property] of [
+      ['no-focus', '', 'a menu that leaves focus on the page', 'focus moves into the layer'],
+      ['no-escape', '', 'a menu Escape does not close', 'Escape closes'],
+      ['no-return', '', 'a menu that drops focus on close', 'focus returns to the trigger'],
+      ['ok', ';top:870px', 'a menu hanging off the bottom of the window', 'bottom inside viewport'],
+      ['ok', ';top:830px;height:40px', 'a menu drawn over the footer bar', 'overlaps shell chrome'],
+      ['covered', '', 'a menu painted under another layer', 'z-order'],
+    ]) {
+      const r = await layerCase(variant, css);
+      assert.ok(r.issues.some(i => i.rule === 'layer.behaviour' && i.property === property), `${name} must fail layer.behaviour (${property}): ${JSON.stringify(r.issues)}`);
+      console.log('PASS layer.behaviour detects ' + name);
+    }
+    await dpage.setContent(`<!doctype html><html><body style="font:14px system-ui"><main><button id="cb" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="lb">All departments</button><ul id="lb" role="listbox" hidden style="position:fixed;top:60px;left:10px;background:#fff;margin:0"><li role="option" id="o1">Platform</li></ul></main><script>{const cb=document.querySelector('#cb'),lb=document.querySelector('#lb');cb.addEventListener('click',()=>{lb.hidden=false;cb.setAttribute('aria-expanded','true');cb.setAttribute('aria-activedescendant','o1');});document.addEventListener('keydown',e=>{if(e.key==='Escape'){lb.hidden=true;cb.setAttribute('aria-expanded','false');}});}</script></body></html>`);
+    const combo = (await probes.discoverDeep(dpage)).triggers.find(t => t.name === 'All departments');
+    const comboResult = await dpage.evaluate(measureDOM, { ...deep(['layer.behaviour']), probe: await probes.openLayer(dpage, combo) });
+    assert.deepEqual(comboResult.issues, [], 'a select-only combobox keeps focus on itself while its listbox is open: ' + JSON.stringify(comboResult.issues));
+    await dpage.setContent('<details><summary>Queue operations</summary><p>Drain the queue from the runbook.</p></details>');
+    const disclosure = (await probes.discoverDeep(dpage)).triggers.find(t => t.name === 'Queue operations');
+    const disclosureResult = await dpage.evaluate(measureDOM, { ...deep(['layer.behaviour']), probe: await probes.openLayer(dpage, disclosure) });
+    assert.deepEqual(disclosureResult.issues, [], 'a <details> disclosure opens in place and is judged by the page rules: ' + JSON.stringify(disclosureResult.issues));
+    console.log('PASS layer.behaviour allows a combobox keeping focus and an in-place disclosure');
+    assert.ok(!(await probes.discoverDeep(dpage)).triggers.some(t => /delete/i.test(t.name)), 'discovery never offers a write-named trigger');
+    await dpage.setContent('<button aria-haspopup="dialog">Delete record</button><button aria-haspopup="dialog">Start call</button>');
+    assert.deepEqual((await probes.discoverDeep(dpage)).triggers, [], 'write- and call-named triggers are never opened');
+    console.log('PASS discovery skips write- and call-named triggers');
+
+    // focus.visible: Tab through the page.
+    const focusCase = async css => {
+      await dpage.setContent(`<!doctype html><html><head><style>body{font:14px system-ui} ${css}</style></head><body><button>One</button><button>Two</button><a href="#x">Three</a><input aria-label="Four"></body></html>`);
+      const probe = await probes.focusWalk(dpage, { count: 4 });
+      return dpage.evaluate(measureDOM, { ...deep(['focus.visible']), probe });
+    };
+    assert.deepEqual((await focusCase('')).issues, [], 'the browser focus ring passes');
+    assert.deepEqual((await focusCase('button:focus-visible{outline:none;box-shadow:0 0 0 2px #2563eb}')).issues, [], 'a ring drawn as a shadow passes');
+    assert.ok((await focusCase('button:focus{outline:none}')).issues.some(i => i.rule === 'focus.visible' && i.property === 'no visible focus indicator'), 'outline:none with no replacement fails');
+    assert.ok((await focusCase('a{position:absolute;left:-9999px}')).issues.some(i => i.rule === 'focus.visible' && i.property === 'focused element not visible'), 'a focusable that stays off screen when focused fails');
+    console.log('PASS focus.visible: rings pass; a removed outline and an off-screen focus target fail');
+
+    // state.data: the probe's interception, and the rule judging the rendered state.
+    const dataHtml = `<!doctype html><html><body style="font:14px system-ui"><main><h1>Runs</h1><div id="out">Loading…</div></main><script>
+fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d => { document.querySelector('#out').innerHTML = '<table><thead><tr><th>Name</th></tr></thead><tbody>' + d.runs.map(x => '<tr><td>' + x.name + '</td></tr>').join('') + '</tbody></table>'; }).catch(() => {});
+</script></body></html>`;
+    // A real loopback server: interception fetches the original response before rewriting it.
+    const http = await import('node:http');
+    const server = http.createServer((req, res) => { if (req.url.startsWith('/api/slow')) { setTimeout(() => { res.setHeader('content-type', 'application/json'); res.end('{"name":"late"}'); }, 600); return; } if (req.url.startsWith('/api/')) { res.setHeader('content-type', 'application/json'); res.end(JSON.stringify({ runs: [{ id: 'r1', name: 'nightly' }, { id: 'r2', name: 'canary' }], canExport: true })); } else { res.setHeader('content-type', 'text/html'); res.end(dataHtml); } });
+    await new Promise(r => server.listen(0, '127.0.0.1', r));
+    const dataBase = `http://127.0.0.1:${server.address().port}`;
+    const dctx = await browser.newContext();
+    const dp = await dctx.newPage();
+    const dataCase = async (mode, wait = 'table, #out') => {
+      const handle = await probes.interceptData(dp, { mode, permissions: mode === 'denied' ? '/api/runs' : undefined });
+      await dp.goto(`${dataBase}/runs`);
+      await dp.waitForTimeout(300);
+      const text = await dp.locator('#out').innerText();
+      const probe = { kind: 'data-state', mode, intercepted: handle.stats.intercepted };
+      const r = await dp.evaluate(measureDOM, { ...deep(['state.data']), selectors: { ...dselectors, contentColumns: 'main' }, probe });
+      await handle.release();
+      return { text, r, rows: await dp.locator('tbody tr').count() };
+    };
+    const many = await dataCase('many'); assert.equal(many.rows, 60, 'many-rows fills a list to 60 rows');
+    const long = await dataCase('long'); assert.ok(long.text.length > 150, 'long-text lengthens names');
+    const empty = await dataCase('empty'); assert.equal(empty.rows, 0, 'empty clears every list');
+    assert.ok(empty.r.issues.some(i => i.rule === 'state.data' && i.property === 'empty: table explains itself'), 'a header row over nothing fails the empty state: ' + JSON.stringify(empty.r.issues));
+    const error = await dataCase('error');
+    assert.ok(error.r.issues.some(i => i.rule === 'state.data' && i.property === 'error: message shown'), 'a silent failure fails the error state: ' + JSON.stringify(error.r.issues));
+    const loading = await dataCase('loading'); assert.match(loading.text, /Loading/, 'loading holds the response');
+    assert.deepEqual(loading.r.issues, [], 'a page saying Loading… passes the loading state');
+    console.log('PASS interceptData renders empty, error, loading, long-text and many-row states in the audit context only');
+    const judged = async (body, mode) => { await dp.setContent(`<main>${body}</main>`); return dp.evaluate(measureDOM, { ...deep(['state.data']), selectors: { ...dselectors, contentColumns: 'main' }, probe: { kind: 'data-state', mode, intercepted: 1 } }); };
+    assert.deepEqual((await judged('<h1>Runs</h1><table><thead><tr><th>Name</th></tr></thead><tbody></tbody></table><div data-ui-empty>No runs yet</div>', 'empty')).issues, [], 'an empty table with an empty state passes');
+    assert.deepEqual((await judged('<h1>Runs</h1><div role="alert">Couldn\'t load runs. Try again.</div>', 'error')).issues, [], 'a written error passes');
+    assert.ok((await judged('<h1>Runs</h1><p>{"error":"audit_injected_failure"}</p>', 'error')).issues.some(i => i.property === 'error: raw error text'), 'a raw payload shown as the message fails');
+    assert.ok((await judged('', 'loading')).issues.some(i => i.property === 'loading: indicator'), 'a blank page while loading fails');
+    assert.deepEqual((await judged('<div aria-busy="true" class="skeleton"></div>', 'loading')).issues, [], 'a busy skeleton passes');
+    // A response landing after its state was released must not throw inside the page's context.
+    for (const mode of ['long', 'loading', 'error']) {
+      const late = await probes.interceptData(dp, { mode });
+      await dp.goto(`${dataBase}/runs`); dp.evaluate(() => fetch('/api/slow').catch(() => {})).catch(() => {});
+      await dp.waitForTimeout(100); await late.release(); await dp.waitForTimeout(900);
+      assert.equal(await dp.evaluate(() => 1 + 1), 2, `the page survives a late ${mode} response after release`);
+    }
+    console.log('PASS interception released mid-request leaves the page alive');
+    await dctx.close(); server.close();
+    console.log('PASS state.data: empty, error and loading pages must explain themselves');
+
+    // Cross-route consistency and theme parity, through the runner.
+    const routes = ['/a', '/b', '/c', '/d', '/e'];
+    const pageFor = (route, dark) => `<!doctype html><html><head><style>body{margin:0;font:14px system-ui;${dark ? 'background:#111;color:#eee' : ''}} h1{font-size:${route === '/e' ? 24 : 20}px;font-weight:600;line-height:28px;margin:0} [data-shell-nav]{padding:24px} .box{border:1px solid ${dark && route === '/d' ? '#111' : '#888'};padding:${dark && route === '/c' ? 20 : 16}px}</style></head><body><div data-shell-nav><h1>Title ${route}</h1><section data-ui-section class="box"><button>Act</button></section></div></body></html>`;
+    const crossPath = path.join(temp, 'cross.contract.json');
+    fs.writeFileSync(crossPath, JSON.stringify({ ...fullContract, rules: fullContract.rules.filter(r => ['consistency.fingerprint', 'theme.parity'].includes(r.id)) }));
+    const cross = await runAudit(browser, {
+      baseURL: 'http://cross.test', selectors: dselectors, contract: crossPath,
+      authenticate: async context => context.route('http://cross.test/**', route => { const u = new URL(route.request().url()); return route.fulfill({ contentType: 'text/html', body: pageFor(u.pathname, u.searchParams.get('t') === 'dark') }); }),
+      cases: async () => routes.map(r => ({ tenant: 'fixture', path: r })),
+      ready: async p => p.locator('h1').waitFor(),
+      theme: async (p, theme) => { if (theme === 'dark') await p.goto(p.url().split('?')[0] + '?t=dark'); },
+      assertRoute: async () => {},
+    }, { out: path.join(temp, 'cross'), themes: 'light,dark', widths: '1280', height: 800, screenshots: false });
+    const crossIssues = cross.cases.flatMap(c => c.issues.map(i => ({ ...i, route: c.route, theme: c.theme })));
+    assert.ok(crossIssues.some(i => i.rule === 'consistency.page-title' && i.route === '/e'), 'the one route whose title is 24px is a consistency outlier: ' + JSON.stringify(crossIssues));
+    assert.ok(!crossIssues.some(i => i.rule === 'consistency.page-title' && i.route !== '/e'), 'the majority routes are not reported');
+    assert.ok(cross.consistency.some(f => f.family === 'page-title' && f.values.length === 2), 'the report lists the family\'s distinct values');
+    assert.ok(crossIssues.some(i => i.rule === 'theme.parity' && i.route === '/c' && i.theme === 'dark' && /^size/.test(i.property)), 'padding that changes with the theme breaks parity');
+    assert.ok(crossIssues.some(i => i.rule === 'theme.parity' && i.route === '/d' && i.property === 'border visibility'), 'a border that vanishes in dark breaks parity');
+    assert.ok(!crossIssues.some(i => i.rule === 'theme.parity' && ['/a', '/b', '/e'].includes(i.route)), 'colour-only theme changes keep parity');
+    const split = consistencyOutliers([['/a', 20], ['/b', 20], ['/c', 24], ['/d', 24]].map(([route, size]) => ({ route, state: 'default', width: 1280, samples: [1], issues: [], fingerprints: [{ family: 'page-title', key: '*', value: JSON.stringify({ fontSize: size }), selector: 'h1' }] })));
+    assert.equal(split.issues.length, 0, 'an even split has no majority to deviate from');
+    console.log('PASS consistency outliers (minority values across routes) and theme parity (boxes and borders light vs dark)');
+    await dpage.close();
+  }
+
   const cliBase = ['--project', path.resolve(project), '--adapter', path.join(temp, 'cli-adapter.mjs'), '--out', path.join(temp, 'cli')];
   assert.equal(parseAuditArgs([...cliBase, '--strict-coverage']).strictCoverage, true);
   assert.throws(() => parseAuditArgs([...cliBase, '--strict-coverage=false']), /Unknown/);
@@ -733,7 +1046,7 @@ document.querySelectorAll('tbody input[type=checkbox]').forEach(cb => cb.addEven
   assert.throws(() => parseAuditArgs([...cliBase, '--states', 'typo']), /states/);
   await assert.rejects(runAudit(browser, adapter, { out: temp, strictCoverage: 'yes' }), /strictCoverage must be boolean/);
   fs.writeFileSync(path.join(temp, 'cli-adapter.mjs'), `export default {
-    baseURL: 'http://audit.test', selectors: ${JSON.stringify(selectors)},
+    baseURL: 'http://audit.test', selectors: ${JSON.stringify(selectors)}, contract: ${JSON.stringify(legacyContractPath)},
     authenticate: async context => context.route('**/*', route => route.fulfill({ contentType: 'text/html', body: ${JSON.stringify(html)} })),
     cases: async options => [{ tenant: 'fixture', path: '/good', composerExpectation: ({ required: {mode:'required'}, exempt: {mode:'exempt',reason:'Archived conversation does not accept new messages.'}, placeholder: {mode:'exempt',reason:'TODO'}, malformed: {}, typo: {mode:'requried'} })[options.path] }],
     ready: async p => p.locator('#header').waitFor(), theme: async () => {},

@@ -85,6 +85,17 @@ reported as PARTIAL coverage, even when there are no violations;
 `--previous` to compare successfully measured matching cases. Unvisited, unstable, navigation-
 failed or runtime-failed cases are reported as unverified, never called fixed.
 
+## Deep audit
+
+When asked to go deeper, before calling a tenant consistent, or after a change
+to a shared composite, run from [the deep-audit brief](references/deep-audit.md):
+`--deep` adds every layer the page can open, a keyboard focus walk, a click
+through every tablist and data states rendered by response interception, and
+captures every case for a visual review whose confirmed candidates become new
+rules. Consistency outliers (a family value few routes use) and theme parity
+are judged across the whole matrix. Expect findings; the brief says how to run
+sections, review screenshots into `review.jsonl`, and triage.
+
 ## Refine from a reported defect
 
 1. Reproduce the supplied path/state. Inspect measured values and identify the

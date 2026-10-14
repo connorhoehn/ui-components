@@ -357,7 +357,7 @@
       "kind": "count",
       "selector": "$nativeSelects",
       "expected": 0,
-      "owner": "forms/Select — a raw or hidden <select> (or <input list>/<datalist>) opens the platform's unstyled menu; the only accepted one is Select native={{ reason }} (data-ui-native-select + data-ui-native-reason)",
+      "owner": "forms/Select \u2014 a raw or hidden <select> (or <input list>/<datalist>) opens the platform's unstyled menu; the only accepted one is Select native={{ reason }} (data-ui-native-select + data-ui-native-reason)",
       "includeHidden": true
     },
     {
@@ -366,7 +366,7 @@
       "selector": "$unmarkedListboxes",
       "expected": 0,
       "includeHidden": true,
-      "owner": "forms/Select, Combobox, menus — a role=\"listbox\" without data-ui-listbox is a hand-rolled dropdown"
+      "owner": "forms/Select, Combobox, menus \u2014 a role=\"listbox\" without data-ui-listbox is a hand-rolled dropdown"
     },
     {
       "id": "listbox.option-type",
@@ -643,7 +643,7 @@
       "selector": "$panels",
       "empty": "$emptyStates",
       "maxGap": 96,
-      "owner": "the anchored panel's height cap (a max-height, never a fixed height) — NotificationBell / NotificationCenter, InlinePopover content"
+      "owner": "the anchored panel's height cap (a max-height, never a fixed height) \u2014 NotificationBell / NotificationCenter, InlinePopover content"
     },
     {
       "id": "composer.last",
@@ -660,7 +660,7 @@
       "selector": "$sections",
       "empty": "$emptyStates",
       "maxLines": 1,
-      "owner": "PageSection empty (one row: the title and one quiet line) — never a heading over a 'nothing here' block"
+      "owner": "PageSection empty (one row: the title and one quiet line) \u2014 never a heading over a 'nothing here' block"
     },
     {
       "id": "board.lane-surface",
@@ -684,7 +684,7 @@
       "selector": "body",
       "maxLines": 4,
       "minChars": 20,
-      "owner": "the composite laying the text out (a callout/alert stacking title, body and action; a card column) — container queries, not page CSS"
+      "owner": "the composite laying the text out (a callout/alert stacking title, body and action; a card column) \u2014 container queries, not page CSS"
     },
     {
       "id": "text.overlap",
@@ -714,6 +714,403 @@
       "minEm": 10,
       "owner": "the row hosting the input (a composer's idle row, a toolbar): the input keeps its minimum width before chips; chips fold into a menu when narrow",
       "maxHidden": 0.5
+    },
+    {
+      "id": "consistency.fingerprint",
+      "kind": "fingerprint",
+      "owner": "the component family named in the finding (its library composite, or the page that restyles it)",
+      "columns": "$contentColumns",
+      "trail": "$trail",
+      "outliers": {
+        "minRoutes": 4,
+        "minMajority": 3,
+        "maxShare": 0.2,
+        "maxDistinct": 3
+      },
+      "families": [
+        {
+          "name": "page-title",
+          "selector": "$pageTitles|[data-shell-nav] h1",
+          "properties": [
+            "fontSize",
+            "fontWeight",
+            "lineHeight",
+            "letterSpacing"
+          ]
+        },
+        {
+          "name": "section-heading",
+          "selector": "$sectionHeadings|[data-shell-nav] h2",
+          "properties": [
+            "fontSize",
+            "fontWeight",
+            "lineHeight",
+            "textTransform",
+            "letterSpacing"
+          ]
+        },
+        {
+          "name": "table-header",
+          "selector": "[data-shell-nav] thead th",
+          "properties": [
+            "height",
+            "paddingLeft",
+            "fontSize",
+            "fontWeight",
+            "textTransform",
+            "letterSpacing"
+          ]
+        },
+        {
+          "name": "table-row",
+          "selector": "[data-shell-nav] tbody > tr",
+          "exclude": "tr:has([colspan])",
+          "properties": [
+            "height"
+          ]
+        },
+        {
+          "name": "table-cell",
+          "selector": "[data-shell-nav] tbody td",
+          "exclude": "tr:has([colspan])",
+          "properties": [
+            "paddingLeft",
+            "paddingTop",
+            "fontSize"
+          ]
+        },
+        {
+          "name": "button",
+          "selector": "[data-shell-nav] button",
+          "where": "control",
+          "keyBy": [
+            "fontSize",
+            "iconOnly"
+          ],
+          "properties": [
+            "height",
+            "borderRadius"
+          ]
+        },
+        {
+          "name": "input",
+          "selector": "[data-shell-nav] input:not([type=\"checkbox\"]):not([type=\"radio\"]):not([type=\"range\"]):not([type=\"hidden\"]):not([type=\"file\"]), [data-shell-nav] [data-ui-control]",
+          "exclude": "[data-composer-surface]",
+          "properties": [
+            "height",
+            "fontSize",
+            "borderRadius"
+          ]
+        },
+        {
+          "name": "tab",
+          "selector": "[role=\"tab\"]",
+          "keyBy": [
+            "fontSize"
+          ],
+          "properties": [
+            "height",
+            "fontWeight",
+            "paddingLeft"
+          ]
+        },
+        {
+          "name": "rail-item",
+          "selector": "[data-ui-text=\"rail-item\"]",
+          "of": "button, a, [role=\"treeitem\"], [role=\"option\"], li",
+          "properties": [
+            "height",
+            "paddingLeft"
+          ]
+        },
+        {
+          "name": "empty-state",
+          "selector": "[data-ui-empty]",
+          "properties": [
+            "fontSize",
+            "textAlign",
+            "paddingTop",
+            "paddingLeft"
+          ]
+        },
+        {
+          "name": "badge",
+          "selector": "[data-shell-nav] span",
+          "where": "pill",
+          "max": 400,
+          "properties": [
+            "height",
+            "fontSize",
+            "fontWeight",
+            "paddingLeft"
+          ]
+        },
+        {
+          "name": "icon",
+          "selector": "[data-shell-nav] button svg",
+          "host": "button",
+          "keyBy": [
+            "host.height"
+          ],
+          "properties": [
+            "width",
+            "height"
+          ]
+        },
+        {
+          "name": "card",
+          "selector": "[data-shell-nav] div, [data-shell-nav] section, [data-shell-nav] article, [data-shell-nav] li",
+          "where": "card",
+          "max": 300,
+          "properties": [
+            "borderRadius",
+            "paddingLeft",
+            "paddingTop"
+          ]
+        },
+        {
+          "name": "panel",
+          "selector": "$panels",
+          "properties": [
+            "borderRadius"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "density.blank-band",
+      "kind": "blank-band",
+      "selector": "$contentColumns",
+      "maxGap": 96,
+      "owner": "the page composing the content column (or the composite holding a fixed height)"
+    },
+    {
+      "id": "density.table-first",
+      "kind": "table-first",
+      "selector": "$collectionTables",
+      "columns": "$contentColumns",
+      "trail": "$trail",
+      "maxTopRatio": 0.6,
+      "maxPreamble": 240,
+      "owner": "the list page (CollectionPage composition): one compact selector/filter row, then the table"
+    },
+    {
+      "id": "density.narrow-block",
+      "kind": "narrow-block",
+      "selector": "table, [data-ui-section], [data-collection-page]",
+      "columns": "$contentColumns",
+      "trail": "$trail",
+      "minRatio": 0.6,
+      "owner": "the block holding a max-width (its composite or the page)"
+    },
+    {
+      "id": "align.grid",
+      "kind": "alignment-grid",
+      "columns": "$contentColumns",
+      "trail": "$trail",
+      "insets": [
+        0,
+        {
+          "token": "--ui-table-inset"
+        },
+        {
+          "token": "--ui-content-gutter"
+        }
+      ],
+      "maxStray": 12,
+      "tolerance": 1.5,
+      "owner": "the block whose padding/margin is off the inset grid"
+    },
+    {
+      "id": "align.baseline",
+      "kind": "baseline",
+      "selector": "[data-shell-nav] *",
+      "tolerance": 1.5,
+      "owner": "the row composite (header, meta row, label/value list)"
+    },
+    {
+      "id": "align.icon-center",
+      "kind": "icon-center",
+      "selector": "[data-shell-nav] button, [data-shell-nav] [role=\"button\"], [data-shell-nav] [role=\"menuitem\"], [data-shell-nav] [role=\"tab\"], [data-shell-nav] a[href]",
+      "tolerance": 2,
+      "owner": "the control/row composite drawing the icon"
+    },
+    {
+      "id": "layout.scroll-owner",
+      "kind": "scroll-owner",
+      "selector": "[data-shell-nav] table, [data-shell-nav] pre, [data-shell-nav] [role=\"grid\"], [data-shell-nav] img, [data-shell-nav] canvas",
+      "region": "$containmentRegions",
+      "owner": "the composite holding wide content (DataTable scroller, code block)"
+    },
+    {
+      "id": "layout.content-share",
+      "kind": "content-share",
+      "selector": "$contentColumns",
+      "narrowBelow": 768,
+      "narrowRatio": 0.75,
+      "minWidth": 480,
+      "owner": "the shell/rail layout (rails fold at narrow widths)"
+    },
+    {
+      "id": "content.honesty",
+      "kind": "content-honesty",
+      "selector": "body",
+      "owner": "the page/fixture formatting the value",
+      "exclude": [
+        {
+          "selector": "$trail",
+          "reason": "The trail repeats the section name by design (layout cascade rule 2)"
+        }
+      ],
+      "patterns": [
+        {
+          "name": "undefined/null/NaN shown",
+          "pattern": "(?:^|[^\\w-])(undefined|null|NaN|Infinity|Invalid Date)(?![\\w-])"
+        },
+        {
+          "name": "object leaked",
+          "pattern": "\\[object \\w+\\]"
+        },
+        {
+          "name": "unformatted money",
+          "pattern": "\\$\\s?(NaN|undefined|-?\\d{5,}(?:\\.\\d+)?)\\b"
+        },
+        {
+          "name": "placeholder copy",
+          "pattern": "\\b(TODO|FIXME|XXX|TBD)\\b|lorem ipsum|coming soon|not (yet )?implemented|placeholder text|under construction",
+          "flags": "i"
+        },
+        {
+          "name": "raw ISO timestamp",
+          "pattern": "\\b\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}",
+          "expect": "a formatted date/time"
+        },
+        {
+          "name": "raw UUID",
+          "pattern": "\\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\b",
+          "flags": "i",
+          "expect": "the record's name"
+        },
+        {
+          "name": "ungrouped number",
+          "pattern": "(?<![\\w.,:/#$-])\\d{5,}(?:\\.\\d+)?(?![\\w:/.-])",
+          "expect": "digit grouping (12,345) or a compact form (12.3k)"
+        },
+        {
+          "name": "internal id shown as text",
+          "pattern": "^(?:p|u|spr|run|job|req|bot|asset|deck|doc|ch|dm|sub|tm|team|wi|evt|ar|grant)-[a-z0-9][a-z0-9-]*$",
+          "whole": true,
+          "expect": "the record's name, or the id in code style"
+        }
+      ]
+    },
+    {
+      "id": "a11y.names",
+      "kind": "a11y-names",
+      "selector": "button, a[href], [role=\"button\"], [role=\"tab\"], [role=\"menuitem\"], [role=\"checkbox\"], [role=\"switch\"], [role=\"combobox\"], input:not([type=\"hidden\"]), select, textarea, img",
+      "owner": "the control composite (icon buttons need aria-label)"
+    },
+    {
+      "id": "a11y.contrast",
+      "kind": "contrast",
+      "selector": "body",
+      "min": 4.5,
+      "minLarge": 3,
+      "owner": "the text token / tone in the theme measured",
+      "exclude": [
+        {
+          "selector": "[data-composer-surface] [contenteditable] [data-placeholder], .ProseMirror .is-empty",
+          "reason": "Editor placeholders are hint text drawn by the editor, measured by placeholder.squeezed"
+        },
+        {
+          "selector": "[data-ui-text=\"avatar\"]",
+          "reason": "Avatar initials sit on user-distinguishing palette colours (identity data, not a tone token); avatar.readability judges their size"
+        }
+      ]
+    },
+    {
+      "id": "a11y.heading-order",
+      "kind": "heading-order",
+      "selector": "body",
+      "owner": "the page outline (PageHeader h1, PageSection h2)"
+    },
+    {
+      "id": "a11y.landmarks",
+      "kind": "landmarks",
+      "owner": "AppShell regions and rails (name each nav/aside)"
+    },
+    {
+      "id": "composer.readonly-coherent",
+      "kind": "composer-readonly",
+      "selector": "$composers",
+      "dock": "$composerDocks|[data-column-dock], [data-floating-composer-dock]",
+      "allow": "a[href]",
+      "owner": "ConversationComposer / ComposerSurface (read-only mode)"
+    },
+    {
+      "id": "layer.behaviour",
+      "kind": "layer",
+      "chrome": [
+        "$header",
+        "$footer"
+      ],
+      "owner": "the layer composite (InlinePopover, Menu, Dialog, Drawer, Tooltip)"
+    },
+    {
+      "id": "focus.visible",
+      "kind": "focus-walk",
+      "owner": "the focusable composite (focus-visible ring)"
+    },
+    {
+      "id": "tabs.stable",
+      "kind": "tab-stability",
+      "tolerance": 1,
+      "owner": "Tabs / the pane hosting the tablist (fixed tab row height, panel below, pane not content-sized)"
+    },
+    {
+      "id": "state.data",
+      "kind": "data-state",
+      "region": "$contentColumns|main",
+      "owner": "the page handling the response (empty/error/loading states)"
+    },
+    {
+      "id": "theme.parity",
+      "kind": "geometry-snapshot",
+      "selector": "[data-shell-nav] :is(h1, h2, h3, button, input, table, [role=\"tab\"], [role=\"tablist\"], [data-ui-section], [data-ui-empty], [data-composer-surface])",
+      "tolerance": 1,
+      "owner": "the theme tokens (a size/border that changes with the theme)"
+    },
+    {
+      "id": "text.flex-fragmented",
+      "kind": "text-fragmented",
+      "selector": "[data-shell-nav] :is(p, div, span, li, td, label)",
+      "owner": "the component composing a sentence from text and inline marks (wrap the sentence in one element)"
+    },
+    {
+      "id": "text.leading-separator",
+      "kind": "leading-separator",
+      "selector": "[data-shell-nav]",
+      "owner": "the inline list composite (separators belong to the item before them, or the list wraps by item)"
+    },
+    {
+      "id": "table.selection-column",
+      "kind": "selection-column",
+      "selector": "$tables",
+      "owner": "DataTable selection / the page placing its checkbox column"
+    },
+    {
+      "id": "table.column-hog",
+      "kind": "column-hog",
+      "selector": "$tables",
+      "maxShare": 0.5,
+      "owner": "DataTable column sizing (a growing text column truncates) / the page defining the columns"
+    },
+    {
+      "id": "list.marker-alignment",
+      "kind": "marker-first-line",
+      "selector": "[data-shell-nav] :is(li, [role=\"listitem\"], div, p)",
+      "tolerance": 2,
+      "owner": "the list composite drawing the marker (align-items: first baseline / start, not center)"
     }
   ]
 }

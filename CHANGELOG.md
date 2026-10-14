@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.451.0
+
+- ui-dom-audit: a deep audit (`references/deep-audit.md`, `--deep`) that finds defects without a user report first. Every rule so far was added after a screenshot; the brief classifies each report by defect class and measures the classes. New criteria, each a general rule with a valid fixture and failing mutations in `self-test.mjs` and a section in `contracts.md` ("Deep-audit rules"):
+  - consistency outliers across routes (`fingerprint` → `consistency.<family>`): page title, section heading, table header/row/cell, painted button per size, input, tab, rail item, empty state, badge, button icon, card, panel, gutter, trail→title and title→content gaps; the minority value per family is reported on the routes that deviate, and `report.json.consistency` lists every family's values;
+  - whitespace and density: `density.blank-band`, `density.table-first`, `density.narrow-block`;
+  - alignment: `align.grid` (line starts and row-ending controls on the inset grid), `align.baseline`, `align.icon-center`, `list.marker-alignment`;
+  - interaction depth, read-only: every layer trigger opened (`layer.behaviour`: focus in, Escape, focus return, viewport, z-order, clear of the shell bars, scrolling cap), a keyboard focus walk (`focus.visible`), and every tablist cycled (`tabs.stable`: nothing outside the panel moves; per-tab screenshots under `evidence/`);
+  - data states rendered by rewriting the audit context's own responses (`interceptData`: empty, error, loading, long text, many rows, denied capabilities) with `state.data`;
+  - widths 1024/390 with `layout.scroll-owner` and `layout.content-share`;
+  - `content.honesty` (undefined/NaN, leaked objects, TODO/placeholder copy, raw timestamps/UUIDs/ids, ungrouped numbers, duplicated labels); `a11y.names`, `a11y.contrast`, `a11y.heading-order`, `a11y.landmarks` (axe-core is not a portal dependency); `theme.parity` (sizes and border visibility light vs dark);
+  - `composer.readonly-coherent`: a composer that cannot post leaves no live input affordance; a control that is the way out declares `data-composer-readonly-allow="<reason>"`;
+  - rules born in the first run's visual review: `text.flex-fragmented`, `text.leading-separator`, `table.selection-column`, `table.column-hog`.
+- ui-dom-audit runner: `--deep`, `--review` (every case captured, `review-index.jsonl` for the visual review whose confirmed candidates become rules), `--deep-states`, `--data-modes`, `--deep-layers`; states may declare `before`/`after` hooks, `ready: 'shell' | 'lenient'` and `ownRequired`; cross-route consistency and theme-parity passes; the adapter supplies `dataApi` and `deep`.
+
 ## 2.450.0
 
 - `ConversationComposer`: a coherent read-only state. When Chat is off for the chosen destination by a verdict (`maySend` false, or a destination's `unavailableReason`) — not offline, not the host's `disabled`, not a pending answer — the whole composer reads as read-only, not only Send: the editor is not editable or focusable (`aria-readonly`, `aria-describedby` the note), the placeholder is replaced by a muted lock line, every format button, the `/ commands` hint, attachments, Workflow ⌄ and the reference chip's × are off in muted ink, and the root carries `data-composer-readonly`. ONE note: with no To: row the input carries the reason; when the To: row already says why (2.446.1), the input says only "Read only. Choose another destination in To: to post." The To: selector stays live, and the mode menu stays live while another mode (Agent) is on — both are the way out. On an initiative page a member who cannot post saw "cannot post" on the To: row beside a live-looking Chat menu, toolbar, Workflow and `/ commands`.

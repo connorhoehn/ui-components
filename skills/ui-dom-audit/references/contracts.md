@@ -736,3 +736,59 @@ aws-agentcore adapter's `dropdown-open`). `includeHidden` is a general `count`
 option: it counts matching elements whether or not they paint. Fix a finding
 by rendering the library `Select` (or `Combobox` for a typed filter), never by
 adding a marker by hand.
+
+## Deep-audit rules
+
+The families in [deep-audit.md](deep-audit.md) as contract kinds. Page kinds
+run in every case; probe kinds judge only a state whose probe returned their
+`kind`; the two cross-route kinds are recorded per page and judged by the
+runner over the whole matrix. Each has a valid fixture and failing mutations in
+`self-test.mjs`.
+
+| Kind (rule id) | Contract fields | What it detects |
+| --- | --- | --- |
+| `fingerprint` (`consistency.<family>`) | families[{name, selector, properties, keyBy?, of?, host?, where?, exclude?, max?}], columns, trail, outliers{minRoutes, minMajority, maxShare, maxDistinct} | Cross-route: a family value (title type, table header, button height per size, gutter, trail→title gap…) shown on ≤ `maxShare` of the routes while the majority value holds ≥ `minMajority` routes. `where` filters by look (`control`: painted; `pill`: a rounded chip; `card`: a bordered/shadowed surface); `of` measures the item a marker labels; `host.<prop>` keys by the enclosing `host` |
+| `blank-band` (`density.blank-band`) | selector (content columns), maxGap | A blank band taller than `maxGap` between consecutive things the column draws (text, media, controls), or blank space under a short scroller that hides content |
+| `table-first` (`density.table-first`) | selector (collection tables), columns, trail, maxTopRatio, maxPreamble | A list page's table starting below `maxTopRatio` of the viewport, or more than `maxPreamble` px below the title |
+| `narrow-block` (`density.narrow-block`) | selector (blocks), columns, trail, minRatio | A table/section narrower than `minRatio` of its column with nothing beside it |
+| `alignment-grid` (`align.grid`) | columns, trail, insets[], maxStray, boxes? | A reading line whose start, or a row-ending control/box whose right edge, is 1.5–`maxStray` px off the inset grid (the insets and their pairwise sums; borders subtracted; centred/end-aligned blocks skipped) |
+| `baseline` (`align.baseline`) | selector (rows), tolerance | Two plain text items of different sizes side by side in a flex row whose baselines differ (a baseline-aligned row is counted, not judged) |
+| `icon-center` (`align.icon-center`) | selector (hosts), tolerance | An icon beside one line of text not centred on it |
+| `scroll-owner` (`layout.scroll-owner`) | selector (wide content), region | A table/pre/grid/media wider than its column with no horizontal scroller of its own inside the column |
+| `content-share` (`layout.content-share`) | selector (content columns), narrowBelow, narrowRatio, minWidth | A content column narrower than `narrowRatio` of a narrow viewport, or than `minWidth` on a wide one: the rails did not fold |
+| `content-honesty` (`content.honesty`) | selector (scope), patterns[{name, pattern, flags?, whole?, inCode?, expect?}], code?, duplicates? | Visible text matching a pattern (undefined/NaN, `[object …]`, TODO/lorem, raw ISO times, UUIDs, ungrouped numbers, internal ids), and the same label twice in a row outside list/table items |
+| `a11y-names` (`a11y.names`) | selector (controls, images) | A control with no accessible name; an `img` with no `alt` |
+| `contrast` (`a11y.contrast`) | selector (scope), min, minLarge | Text below the WCAG ratio against its composited background in the theme measured (disabled controls, punctuation-only runs and backgrounds under an image/gradient are not judged) |
+| `heading-order` (`a11y.heading-order`) | selector (scope) | Not exactly one h1; a heading level skipped going down |
+| `landmarks` (`a11y.landmarks`) | none | Not one main; more than one banner/contentinfo; repeated navigation/complementary landmarks without distinct names |
+| `composer-readonly` (`composer.readonly-coherent`) | selector (composers), dock?, marker?, noticeText?, allow? | A composer that says it cannot post (notice text, or a read-only marker on its host) with any enabled button, menu trigger, input or editable region left in it (links, and a control marked `data-composer-readonly-allow="<reason>"` as the way out, excepted; a blank/placeholder reason fails coverage); a marked one that does not show its reason |
+| `layer` (`layer.behaviour`) | chrome[], margin? | After `openLayer`: nothing opened; focus not moved into a dialog/menu/listbox; Escape not closing it; focus not returned; the layer outside the viewport, under other content, over the header/footer bar (its own trigger's bar excepted), or taller than the window with nothing scrolling |
+| `focus-walk` (`focus.visible`) | maxPerPage? | After `focusWalk`: focus dropped to body, an invisible focused element, or no style change between focused and blurred (outline, ring, border, background, colour on it or its two ancestors) |
+| `tab-stability` (`tabs.stable`) | tolerance, maxPerTablist? | After `tabCycle`: anything outside the tab panel moved — the tablist's top/height, a tab's height, blocks above it, ancestors' position/width, panes' and scrollers' heights, the panel's top, the shell chrome |
+| `data-state` (`state.data`) | region, busy?, ignore?, minInk? | After `interceptData`: an empty table with no explanation, a blank page, a silent or raw error, a blank loading page, a page that never settles |
+| `text-fragmented` (`text.flex-fragmented`) | selector (candidate rows) | A flex/grid row holding several pieces of one sentence (two bare text runs, or bare text between word-carrying phrasing elements) whose bare text wraps inside its own item: prose split into columns; an icon beside one wrapping sentence is not judged |
+| `leading-separator` (`text.leading-separator`) | selector (scope), separators? | A separator glyph (`·`, `•`, `|`) that opens a wrapped line of its inline list (a glyph that is its holder's first text is a list marker, judged by `list.marker-alignment`) |
+| `marker-first-line` (`list.marker-alignment`) | selector (items), tolerance | A list marker (bullet glyph, number, small icon) beside one wrapping text block whose centre is not on the block's first line |
+| `selection-column` (`table.selection-column`) | selector (tables) | A row-selection checkbox cell that is neither the first nor the last column |
+| `column-hog` (`table.column-hog`) | selector (tables), maxShare | In a table wider than its window, one column taking more than `maxShare` of the window (a long value that should truncate) |
+| `geometry-snapshot` (`theme.parity`) | selector (structural elements), tolerance, max? | Cross-theme: an element whose size differs between light and dark, or a border visible in one theme only |
+
+`fingerprint` and `geometry-snapshot` return their data on the page result
+(`fingerprints`, `geometry`); the runner judges them and strips them before
+writing `report.json`, which keeps `consistency` (every family's distinct
+values with the routes that show them). Consistency findings are categorised
+`consistency` and attached to the deviating route's resting case; a family
+needs four routes before it is judged.
+
+Probes (`scripts/probes.mjs`): `discoverDeep` lists layer triggers (never one
+named like a write or a call: delete, send, start, call, join, approve…),
+tablists and their chrome flag; `openLayer`, `focusWalk`, `tabCycle` (with a
+screenshot per tab when the runner passes `shoot`), and `interceptData`
+(`mode`: empty, error, loading, long, many, denied). All run under the
+read-only guard. A state may declare `before(page)` / `after(handle)` hooks
+(interception installed before navigation and released after measurement) and
+`ready: 'shell' | 'lenient'` when the page is not expected to settle, and
+`ownRequired: true` when its `required` list replaces the route's (a data
+state's empty page does not owe the list route's table). Loading and error data
+states carry a composer exemption: the composer policy is judged on the resting
+state.
