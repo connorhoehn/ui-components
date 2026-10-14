@@ -190,8 +190,9 @@ export interface ConversationComposerOwnProps {
    */
   offModes?: Partial<Record<ComposerMode, string>>;
   /**
-   * Human-in-the-loop prompts, shown one at a time above the input
-   * (`ComposerPromptDeck`, 2.444.0). A text / number prompt takes the typed
+   * Human-in-the-loop prompts, shown one at a time as the composer card's
+   * first section, above the input (`ComposerPromptDeck`, 2.444.0; inside the
+   * card since 2.446.0). A text / number prompt takes the typed
    * words as its answer: Enter answers it instead of sending a message.
    */
   prompts?: readonly ComposerPrompt[];
@@ -605,9 +606,8 @@ function ConversationComposerImpl({
   const noPage = mode === 'chat' && withReference && pageless && offThread && carries;
   const recipientReason = mode === 'chat' && listed.length > 1 ? recipient?.unavailableReason ?? (!recipient ? 'Choose a destination.' : null) : null;
   const recipientError = mode === 'chat' ? recipient?.error ?? null : null;
-  const notices = deck.visible || showRecipients || recipientReason || note || noPage || recipientError || (hostAbove != null && hostAbove !== false) ? (
+  const notices = showRecipients || recipientReason || note || noPage || recipientError || (hostAbove != null && hostAbove !== false) ? (
     <Stack gap="xs">
-      {deck.visible && <ComposerPromptDeck deck={deck} input={deckInput} data-testid={`${testId}-prompts`} />}
       {hostAbove}
       {showRecipients && <ComposerRecipientSelect id={`${draftKey}-recipient`} value={recipient?.id ?? null} recipients={listed} onChange={choose} data-testid={`${testId}-recipient`} />}
       {recipientReason && <Text size="xs" tone="tertiary" wrap data-testid={`${testId}-recipient-unavailable`}>{recipientReason}</Text>}
@@ -654,6 +654,7 @@ function ConversationComposerImpl({
       chatAvailable={hasChat && !modeState.reasons.chat}
       contextChip={contextChip ?? (reference ? false : undefined)}
       {...(notices ? { above: notices } : {})}
+      {...(deck.visible ? { header: <ComposerPromptDeck deck={deck} input={deckInput} variant="inset" data-testid={`${testId}-prompts`} /> } : {})}
       {...(modeRowEnd ? { modeRowEnd } : {})}
       {...(references ? { references, onRemoveReference: removeReference } : {})}
       modePlaceholders={placeholders}

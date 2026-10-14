@@ -395,6 +395,13 @@
       "owner": "ComposerSurface"
     },
     {
+      "id": "dock.clearance",
+      "kind": "dock-clearance",
+      "selector": "[data-floating-composer-dock][data-placement=\"pinned\"]",
+      "ignore": "[role=\"dialog\"], [role=\"menu\"], [role=\"listbox\"], [role=\"tooltip\"], [data-ui-listbox], [data-uic-popover]",
+      "owner": "the content column's scroller and the pinned composer dock (FloatingComposerDock / ComposerSurface)"
+    },
+    {
       "id": "rail.accordion-font",
       "kind": "style",
       "selector": "$railHeaders",

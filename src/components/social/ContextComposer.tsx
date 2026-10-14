@@ -224,6 +224,8 @@ export interface ContextComposerProps {
   dock?: ReactNode;
   /** Notices above the row (an error banner). Forces the full card. */
   above?: ReactNode;
+  /** Inside the card, its first section (`RichChatComposer header`): a prompt deck. Forces the full card. Since 2.446.0. */
+  header?: ReactNode;
   /** A strip joined to the composer's top edge. Forces the full card. Wins over `task`. */
   strip?: ReactNode;
   /** A task in flight, as the `TaskStrip`. */
@@ -414,6 +416,7 @@ export function ContextComposerBase({
   moreActionsLabel = 'Page actions',
   dock,
   above,
+  header,
   strip,
   task,
   reply,
@@ -663,7 +666,8 @@ export function ContextComposerBase({
 
   // Host content the composer cannot see forces the full card (never the
   // dock: a call shelf over an idle row is the resting state).
-  const forceExpanded = !!expanded || hasAbove || stripRow != null;
+  const hasHeader = header != null && header !== false;
+  const forceExpanded = !!expanded || hasAbove || hasHeader || stripRow != null;
 
   const chatOnlyAttachments = f.attachments === 'chat-only' && mode !== 'chat';
   const placeholders: Partial<Record<ComposerMode, string>> = {
@@ -749,6 +753,7 @@ export function ContextComposerBase({
                 submitLead={submitLead}
                 modeRowEnd={modeRowEnd}
                 modeRowStart={modeRowStart}
+                {...(hasHeader ? { header } : {})}
                 sendWithReferencesOnly={sendWithReferencesOnly}
                 referencesAction={referencesAction}
                 referenceDrop={referenceDrop}

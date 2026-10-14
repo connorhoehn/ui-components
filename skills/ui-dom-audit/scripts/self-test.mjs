@@ -163,6 +163,26 @@ try {
   });
   assert.deepEqual((await measure()).issues, [], 'a reasoned native escape hatch and a marked, in-viewport listbox on the 12/14 scale pass');
   console.log('PASS dropdowns: a reasoned native select and a marked listbox pass; raw, hidden, unreasoned, datalist, unmarked, off-scale and off-screen ones fail');
+  // Dock clearance: a pinned composer dock takes layout space. Content that
+  // scrolls inside a scroller ending at the dock's top passes; content drawn
+  // over (or under) the dock fails, wherever it comes from.
+  {
+    const pinned = () => { const shelf = document.querySelector('#shelf'); shelf.setAttribute('data-floating-composer-dock', ''); shelf.setAttribute('data-placement', 'pinned'); };
+    await page.setContent(html); await page.evaluate(pinned);
+    const docked = await measure();
+    assert.deepEqual(docked.issues.filter(i => i.rule === 'dock.clearance'), [], `a pinned dock clear of the content passes: ${JSON.stringify(docked.issues)}`);
+    assert.ok(docked.samples.some(x => x.rule === 'dock.clearance'), 'dock.clearance is exercised by the pinned fixture');
+    await page.setContent(html); await page.evaluate(pinned);
+    await page.evaluate(() => { const content = document.querySelector('#content'); const scroller = document.createElement('div');
+      const dock = document.querySelector('#shelf-wrapper').getBoundingClientRect(), top = content.getBoundingClientRect().top;
+      scroller.style.cssText = `position:absolute;left:0;right:0;top:0;height:${Math.floor(dock.top - top)}px;overflow-y:auto`;
+      scroller.innerHTML = '<p style="height:1200px;margin:0">Long brief that scrolls above the dock</p><p>Its last line</p>'; content.append(scroller); });
+    assert.deepEqual((await measure()).issues.filter(i => i.rule === 'dock.clearance'), [], 'content scrolling in a scroller that ends at the dock top passes');
+    await page.setContent(html); await page.evaluate(pinned);
+    await page.evaluate(() => { const p = document.createElement('p'); p.textContent = 'Next step drawn under the deck'; p.style.cssText = 'position:absolute;left:0;right:0;bottom:4px;margin:0;z-index:-1'; document.querySelector('#content').append(p); });
+    assert.ok((await measure()).issues.some(i => i.rule === 'dock.clearance'), 'content painted inside the dock box fails');
+    console.log('PASS a pinned dock takes layout space; content under it fails, content scrolling above it passes');
+  }
   // Row activation: a row link or a static declaration with a reason is a valid
   // inert-looking row; an ordinary inert row beside them still fails.
   for (const [name, mutate] of [

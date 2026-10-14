@@ -194,6 +194,13 @@ export interface ComposerPromptDeckProps {
   prompts?: readonly ComposerPrompt[];
   /** The composer input: its emptiness gates bare-key shortcuts; it takes the caret after an answer. */
   input?: ComposerPromptInput | null;
+  /**
+   * `card` (default): a bordered card of its own, for a composer's `above`.
+   * `inset`: the composer card's first section (`ConversationComposer
+   * prompts`, `RichChatComposer header`) — no border of its own, a hairline
+   * under it, the input below it in the same card. Since 2.446.0.
+   */
+  variant?: 'card' | 'inset';
   className?: string;
   'data-testid'?: string;
 }
@@ -219,7 +226,12 @@ function modKey(): string {
   return /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent) ? '⌘' : 'Ctrl+';
 }
 
-export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, className, 'data-testid': testId = 'composer-prompt-deck' }: ComposerPromptDeckProps) {
+// The deck never takes more than this of the screen: past it the card scrolls
+// inside itself, and the content column above keeps the rest.
+const DECK_MAX = 'max-h-[min(40vh,18rem)] overflow-y-auto overscroll-contain';
+
+export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, variant = 'card', className, 'data-testid': testId = 'composer-prompt-deck' }: ComposerPromptDeckProps) {
+  const inset = variant === 'inset';
   const own = useComposerPromptDeck(deckProp ? null : prompts);
   const deck = deckProp ?? own;
   const root = useRef<HTMLElement | null>(null);
@@ -259,7 +271,7 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, clas
   const count = pending.length;
 
   const receiptRow = receipt ? (
-    <Inline gap="xs" align="center" wrap className="min-w-0" data-testid={`${testId}-receipt`}>
+    <Inline gap="xs" align="center" wrap className={cn('min-w-0', inset && !collapsed && active && 'px-3 pb-2')} data-testid={`${testId}-receipt`}>
       <Text as="p" size="xs" tone="secondary" wrap role="status" className="min-w-0">
         {`Answered · ${receipt}`}
       </Text>
@@ -269,9 +281,9 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, clas
 
   if (!active || collapsed) {
     return (
-      <Stack gap="xs" className={cn('min-w-0', className)} data-composer-prompt-deck={active ? 'collapsed' : 'answered'} data-testid={testId} ref={root}>
+      <Stack gap="xs" className={cn('min-w-0', inset && 'border-b border-border px-3 py-1.5', className)} data-composer-prompt-deck={active ? 'collapsed' : 'answered'} data-deck-variant={variant} data-testid={testId} ref={root}>
         {active && (
-          <Inline gap="sm" align="center" wrap className="min-w-0 rounded-md border border-border bg-surface-secondary px-3 py-1.5">
+          <Inline gap="sm" align="center" wrap className={cn('min-w-0', !inset && 'rounded-md border border-border bg-surface-secondary px-3 py-1.5')}>
             <Text size="xs" tone="secondary" wrap className="min-w-0 flex-1">
               {count === 1 ? `1 question waiting · ${active.title}` : `${count} questions waiting · ${active.title}`}
             </Text>
@@ -300,13 +312,13 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, clas
   ].filter(Boolean).join(' · ');
 
   return (
-    <Stack gap="xs" className={cn('min-w-0', className)} data-composer-prompt-deck="expanded" data-testid={testId} ref={root}>
+    <Stack gap="xs" className={cn('min-w-0', inset && 'border-b border-border', className)} data-composer-prompt-deck="expanded" data-deck-variant={variant} data-testid={testId} ref={root}>
       <section
         role="group"
         aria-labelledby={titleId}
         aria-describedby={questionId}
         aria-busy={busy || undefined}
-        className="flex min-w-0 flex-col gap-2 rounded-lg border border-border bg-surface px-3 py-2.5"
+        className={cn('flex min-w-0 flex-col gap-2 px-3 py-2.5', DECK_MAX, !inset && 'rounded-lg border border-border bg-surface')}
         data-composer-prompt={active.id}
         data-composer-prompt-kind={active.kind}
         data-testid={`${testId}-card`}

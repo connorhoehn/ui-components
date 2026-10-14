@@ -510,7 +510,7 @@ export declare type ComposerPromptAnswer = {
     optionId: string;
 };
 
-export declare function ComposerPromptDeck({ deck: deckProp, prompts, input, className, 'data-testid': testId }: ComposerPromptDeckProps): JSX.Element | null;
+export declare function ComposerPromptDeck({ deck: deckProp, prompts, input, variant, className, 'data-testid': testId }: ComposerPromptDeckProps): JSX.Element | null;
 
 export declare interface ComposerPromptDeckProps {
     /** From `useComposerPromptDeck`; or pass `prompts` and the deck keeps its own state. */
@@ -518,6 +518,13 @@ export declare interface ComposerPromptDeckProps {
     prompts?: readonly ComposerPrompt[];
     /** The composer input: its emptiness gates bare-key shortcuts; it takes the caret after an answer. */
     input?: ComposerPromptInput | null;
+    /**
+     * `card` (default): a bordered card of its own, for a composer's `above`.
+     * `inset`: the composer card's first section (`ConversationComposer
+     * prompts`, `RichChatComposer header`) — no border of its own, a hairline
+     * under it, the input below it in the same card. Since 2.446.0.
+     */
+    variant?: 'card' | 'inset';
     className?: string;
     'data-testid'?: string;
 }
@@ -808,6 +815,8 @@ export declare interface ContextComposerProps {
     dock?: ReactNode;
     /** Notices above the row (an error banner). Forces the full card. */
     above?: ReactNode;
+    /** Inside the card, its first section (`RichChatComposer header`): a prompt deck. Forces the full card. Since 2.446.0. */
+    header?: ReactNode;
     /** A strip joined to the composer's top edge. Forces the full card. Wins over `task`. */
     strip?: ReactNode;
     /** A task in flight, as the `TaskStrip`. */
@@ -1049,8 +1058,9 @@ export declare interface ConversationComposerOwnProps {
      */
     offModes?: Partial<Record<ComposerMode, string>>;
     /**
-     * Human-in-the-loop prompts, shown one at a time above the input
-     * (`ComposerPromptDeck`, 2.444.0). A text / number prompt takes the typed
+     * Human-in-the-loop prompts, shown one at a time as the composer card's
+     * first section, above the input (`ComposerPromptDeck`, 2.444.0; inside the
+     * card since 2.446.0). A text / number prompt takes the typed
      * words as its answer: Enter answers it instead of sending a message.
      */
     prompts?: readonly ComposerPrompt[];
@@ -1802,6 +1812,12 @@ export declare interface RichChatComposerProps {
      * composer's. Since 2.390.0.
      */
     modeRowStart?: ReactNode;
+    /**
+     * The card's first section, above everything else inside the composer's
+     * border — a `ComposerPromptDeck` (`variant="inset"`): the question and its
+     * answers sit in the same card as the input that answers them. Since 2.446.0.
+     */
+    header?: ReactNode;
     /**
      * Let Send act while the input is empty if the draft has `references` the
      * host will send with it (a message that is only "this page"). Default

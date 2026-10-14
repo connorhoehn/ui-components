@@ -641,6 +641,12 @@ export interface RichChatComposerProps {
    */
   modeRowStart?: ReactNode;
   /**
+   * The card's first section, above everything else inside the composer's
+   * border — a `ComposerPromptDeck` (`variant="inset"`): the question and its
+   * answers sit in the same card as the input that answers them. Since 2.446.0.
+   */
+  header?: ReactNode;
+  /**
    * Let Send act while the input is empty if the draft has `references` the
    * host will send with it (a message that is only "this page"). Default
    * false: an empty draft with a reference chip stays unsendable.
@@ -1049,6 +1055,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   expanded: forceExpanded = false,
   documentMenu,
   modeRowStart,
+  header,
   sendWithReferencesOnly = false,
   sendShortcut = 'enter',
   defaultCommand,
@@ -2509,6 +2516,9 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[inherit]"
           data-testid={`${testId}-console`}
         />
+        {header != null && header !== false && (
+          <div className="min-w-0" data-composer-header="" data-testid={`${testId}-header`}>{header}</div>
+        )}
         {sendError && (
           <p role="alert" data-testid={`${testId}-send-error`} className="px-2 py-1 text-sm text-danger-fg">
             {typeof sendError === 'string'

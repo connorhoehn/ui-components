@@ -88,6 +88,17 @@ describe('ComposerPromptDeck', () => {
     expect(deck().getAttribute('data-composer-prompt-deck')).toBe('expanded');
   });
 
+  it('the card caps its height and scrolls inside itself; the inset variant drops its own border', () => {
+    const { rerender } = render(<ComposerPromptDeck prompts={prompts()} />);
+    const card = screen.getByTestId('composer-prompt-deck-card');
+    expect(card.className).toContain('overflow-y-auto');
+    expect(card.className).toMatch(/max-h-\[/);
+    expect(card.className).toContain('border');
+    rerender(<ComposerPromptDeck prompts={prompts()} variant="inset" />);
+    expect(screen.getByTestId('composer-prompt-deck-card').className).not.toContain('rounded-lg');
+    expect(deck().getAttribute('data-deck-variant')).toBe('inset');
+  });
+
   it('a read-only prompt shows why and offers no answers', () => {
     const p = prompts();
     render(<ComposerPromptDeck prompts={[{ ...p[0]!, readOnlyReason: 'An SME or leader authorizes jobs' }]} />);
@@ -128,8 +139,14 @@ describe('ConversationComposer prompts', () => {
     const onCap = vi.fn();
     const chat = { sendMessage: vi.fn() };
     render(<Host onCap={onCap} chat={chat} />);
-    expect(screen.getByTestId('conversation-composer-prompts').getAttribute('data-composer-prompt-deck')).toBe('expanded');
-    const input = screen.getByTestId('composer').querySelector('.ProseMirror') as HTMLElement;
+    const deckEl = screen.getByTestId('conversation-composer-prompts');
+    expect(deckEl.getAttribute('data-composer-prompt-deck')).toBe('expanded');
+    // One card: the deck is the composer card's first section, above its input.
+    const card = screen.getByTestId('composer');
+    expect(card.contains(deckEl)).toBe(true);
+    expect(deckEl.getAttribute('data-deck-variant')).toBe('inset');
+    const input = card.querySelector('.ProseMirror') as HTMLElement;
+    expect(deckEl.compareDocumentPosition(input) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     await act(async () => { input.focus(); fireEvent.focusIn(input); });
     act(() => { handle?.editor?.commands.setContent('<p>$5</p>', { emitUpdate: true }); });
     await act(async () => { fireEvent.click(screen.getByTestId('composer-send')); });

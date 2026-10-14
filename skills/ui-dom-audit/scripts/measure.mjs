@@ -307,6 +307,44 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
         }
         coverage.at(-1).matched = measured;
       }
+      else if (rule.kind === 'dock-clearance') {
+        // A pinned composer dock (and the prompt deck inside it) takes layout
+        // space: the content column scrolls ABOVE it. Nothing outside the dock
+        // may paint inside its box — judged on each element's VISIBLE rect
+        // (cut by every clipping/scrolling ancestor), so content that scrolls
+        // under a scroller ending at the dock's top is fine, and content drawn
+        // over or under the dock is not. Only elements that paint something of
+        // their own (text, a control, an image) are judged.
+        const tol = rule.tolerance ?? tolerance;
+        const ignore = rule.ignore ? css(rule.ignore) : null;
+        const paints = el => [...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()) || el.matches('button, a[href], input, select, textarea, img, svg, video, canvas, [role="button"]');
+        for (const dock of nodes) {
+          const d = dock.getBoundingClientRect();
+          let found = 0;
+          for (const el of document.body.querySelectorAll('*')) {
+            if (found >= (rule.maxPerDock ?? 3)) break;
+            if (dock.contains(el) || el.contains(dock)) continue;
+            const b = el.getBoundingClientRect();
+            // Cheap first: only an element whose own box reaches the dock can paint in it.
+            if (!(b.bottom > d.top + tol && b.top < d.bottom - tol && b.right > d.left + tol && b.left < d.right - tol)) continue;
+            if (!paints(el) || !visible(el) || (ignore && el.closest(ignore))) continue;
+            let top = b.top, bottom = b.bottom, left = b.left, right = b.right;
+            for (let n = el.parentElement; n && n !== document.documentElement; n = n.parentElement) {
+              const cs = getComputedStyle(n);
+              if (cs.position === 'fixed') break;
+              if (cs.overflowX === 'visible' && cs.overflowY === 'visible') continue;
+              const c = n.getBoundingClientRect();
+              top = Math.max(top, c.top); bottom = Math.min(bottom, c.bottom); left = Math.max(left, c.left); right = Math.min(right, c.right);
+            }
+            if (bottom - top <= tol || right - left <= tol) continue;
+            if (bottom > d.top + tol && top < d.bottom - tol && right > d.left + tol && left < d.right - tol) {
+              add(rule, el, 'visible bottom vs docked composer top', `<= ${Math.round(d.top)} (nothing paints inside the dock)`, Math.round(bottom));
+              found++;
+            }
+          }
+          samples.push({ rule: rule.id, selector: selectorOf(dock), property: 'elements painting inside the dock', actual: found, expected: 0 });
+        }
+      }
       else if (rule.kind === 'table') for (const table of nodes) {
         const rows = [...table.querySelectorAll('tbody > tr')].filter(visible).filter(row => !row.querySelector('[colspan]'));
         for (const row of rows) check(rule, row, 'row height', rect(row).height, rule.rowHeight);

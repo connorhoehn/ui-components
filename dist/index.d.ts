@@ -6375,6 +6375,8 @@ export declare interface ContextComposerProps {
     dock?: ReactNode;
     /** Notices above the row (an error banner). Forces the full card. */
     above?: ReactNode;
+    /** Inside the card, its first section (`RichChatComposer header`): a prompt deck. Forces the full card. Since 2.446.0. */
+    header?: ReactNode;
     /** A strip joined to the composer's top edge. Forces the full card. Wins over `task`. */
     strip?: ReactNode;
     /** A task in flight, as the `TaskStrip`. */
@@ -18650,6 +18652,12 @@ declare interface RichChatComposerProps {
      * composer's. Since 2.390.0.
      */
     modeRowStart?: ReactNode;
+    /**
+     * The card's first section, above everything else inside the composer's
+     * border — a `ComposerPromptDeck` (`variant="inset"`): the question and its
+     * answers sit in the same card as the input that answers them. Since 2.446.0.
+     */
+    header?: ReactNode;
     /**
      * Let Send act while the input is empty if the draft has `references` the
      * host will send with it (a message that is only "this page"). Default
