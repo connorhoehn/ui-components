@@ -136,3 +136,12 @@ describe('CollapsibleSection — focus handoff on close', () => {
     expect(header).toHaveAttribute('aria-expanded', 'false');
   });
 });
+
+// In a scrolling flex column the box's min-height resolved to 0 (it clips
+// its own corners) and the column squeezed it: a 28px header drawn in 14px.
+describe('CollapsibleSection in a flex column (2.447.2)', () => {
+  it('never shrinks below its content', () => {
+    const { container } = render(<CollapsibleSection title="About queue delivery">Body</CollapsibleSection>);
+    expect((container.firstElementChild as HTMLElement).classList.contains('shrink-0')).toBe(true);
+  });
+});

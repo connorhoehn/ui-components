@@ -1738,7 +1738,7 @@ function Gt({ title: t, defaultOpen: n = !1, badge: r, actions: i, children: a, 
 			window.localStorage.setItem(s, String(u));
 		} catch {}
 	}, [u, s]), /* @__PURE__ */ Q("div", {
-		className: e("border border-[var(--color-border)] rounded-lg overflow-hidden", o),
+		className: e("shrink-0 border border-[var(--color-border)] rounded-lg overflow-hidden", o),
 		children: [/* @__PURE__ */ Q("div", {
 			className: "flex items-stretch bg-[var(--color-surface)]",
 			children: [/* @__PURE__ */ Q("button", {

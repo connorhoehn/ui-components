@@ -380,7 +380,9 @@ would otherwise "touch" with no ink meeting.
   ellipsis` (horizontal) or `-webkit-line-clamp` (vertical) on the cutting
   element or between it and the text — a label sliced mid-glyph. Clipping
   honours containing blocks (an absolutely positioned box escapes static
-  ancestors' overflow, a fixed one everything below a transform). Text wholly
+  ancestors' overflow, a fixed one everything below a transform), and a
+  clipping box under a scale transform (a zoomed node canvas) is converted to
+  viewport pixels by its own rendered/layout ratio. Text wholly
   outside the clip box is hidden, not clipped (a collapsed panel). A scroll
   container's edge is not a cut — the reader scrolls — and neither is a
   declared pannable viewport: `scrollers` lists `.react-flow` (the xyflow node
@@ -410,13 +412,16 @@ stacks one line per cluster with a downward connector under 40rem, and every
 default-variant cluster label truncates with an ellipsis and a `title`; the
 composer's idle row folds its mode pill and context chip into ONE mode chip
 (the subject in its tooltip and its menu) when the composer is `narrow`, and
-caps reference chips on wider idle rows so the input keeps ~10em.
+caps reference chips on wider idle rows so the input keeps ~10em; `Toolbar`
+sizes its controls from their content and lets `end` give way first (2.447.1);
+`CollapsibleSection` never shrinks in a scrolling flex column (2.447.2).
 
 Fixtures (`self-test.mjs`, `textHtml`): valid — a wide inline callout, the
 callout stacked in a narrow column, ellipsised labels with and without a title,
 a truncated table cell, chips, a single long word in a 60px rail, a badge
 layered with a reason, a roomy search input, a composer row with its chips
-folded, a placeholder mostly shown beside slightly wider row items, a scroller and a node canvas cutting text at their edges; failing — the
+folded, a placeholder mostly shown beside slightly wider row items, a card
+under a scale transform whose label fits, a scroller and a node canvas cutting text at their edges; failing — the
 callout split into columns in a narrow container, flow labels running into
 the next column, a label clipped with no ellipsis, a node cut by an ordinary
 clipping box, a caption cut at the bottom of a fixed-height box, a layered

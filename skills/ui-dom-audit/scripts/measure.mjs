@@ -153,7 +153,15 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
     }
     clipCache.set(el, out); return out;
   };
-  const innerBox = n => { const b = n.getBoundingClientRect(); const left = b.left + n.clientLeft, top = b.top + n.clientTop; return { left, top, right: left + (n.clientWidth || b.width), bottom: top + (n.clientHeight || b.height) }; };
+  // The padding box in viewport pixels. client* sizes are layout pixels, so a
+  // box under a scale transform (a zoomed node canvas) is converted by its
+  // own rendered/layout ratio.
+  const innerBox = n => {
+    const b = n.getBoundingClientRect();
+    const sx = n.offsetWidth ? b.width / n.offsetWidth : 1, sy = n.offsetHeight ? b.height / n.offsetHeight : 1;
+    const left = b.left + n.clientLeft * sx, top = b.top + n.clientTop * sy;
+    return { left, top, right: left + (n.clientWidth ? n.clientWidth * sx : b.width), bottom: top + (n.clientHeight ? n.clientHeight * sy : b.height) };
+  };
   // A run's rect cut to every clipping/scrolling ancestor: null when wholly
   // hidden (a collapsed panel, a row scrolled out of its list).
   const clipped = (r, el) => {

@@ -103,7 +103,11 @@ function CollapsibleSection({
   return (
     <div
       className={cn(
-        'border border-[var(--color-border)] rounded-lg overflow-hidden',
+        // `shrink-0` (2.447.2): the box clips its own corners, so in a
+        // scrolling flex column its min-height resolves to 0 and the column
+        // squeezed it — a 28px "About queue delivery" header drawn in 14px,
+        // its label cut in half. The content sets its height; it never shrinks.
+        'shrink-0 border border-[var(--color-border)] rounded-lg overflow-hidden',
         className,
       )}
     >

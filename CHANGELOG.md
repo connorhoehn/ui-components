@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.447.2
+
+- `CollapsibleSection`: never shrinks below its content (`shrink-0`). The box clips its own corners, so in a scrolling flex column its min-height resolved to 0 and the column squeezed it — at 900px a 28px "About queue delivery" header was drawn in 14px with its label cut in half.
+- ui-dom-audit `text.clipped` / `text.overlap`: a clipping box under a scale transform (a zoomed node canvas) is converted to viewport pixels by its rendered/layout ratio. Layout `clientWidth` against a scaled rect reported every label in a zoomed work-graph node as cut. Fixture: a card under `scale(1.6)` whose label fits passes.
+
 ## 2.447.1
 
 - `Toolbar`: the controls keep their room. The controls slot is sized from its content (`flex-auto`, was a zero basis) and `end` gives way three times as fast (`flex-initial shrink-[3]`, was `flex-none`), never below its own min-content — a MetaLine wraps, buttons keep their width. At 900px a long `end` line ("3 of 3 knowledge bases · registry vs. the live account") kept its full width while the search field shrank to ~6 characters. In `wrap` mode the content basis is also what lets `end` drop to its own line. The controls slot carries `data-toolbar-controls`.
