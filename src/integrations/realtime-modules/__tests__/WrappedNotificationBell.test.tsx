@@ -64,8 +64,8 @@ describe('WrappedNotificationBell', () => {
     const hook = makeHook([makeEntry()]);
     render(<WrappedNotificationBell notifications={hook} />);
     open();
-    fireEvent.click(screen.getByText('Mark all read'));
-    fireEvent.click(screen.getByText('Clear all'));
+    fireEvent.click(screen.getByRole('button', { name: 'Mark all read' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Clear all' }));
     expect(hook.markAllRead).toHaveBeenCalledTimes(1);
     expect(hook.clearAll).toHaveBeenCalledTimes(1);
   });
