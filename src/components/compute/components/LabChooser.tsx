@@ -213,7 +213,7 @@ export function LabChooser({
           <span className="text-[10px] text-code-raised shrink-0 hidden sm:inline">⏎ jump · ⇧⏎ split</span>
         </div>
 
-        <div ref={listRef} role="listbox" aria-label="Results" className="max-h-[46vh] overflow-y-auto">
+        <div ref={listRef} role="listbox" data-ui-listbox="lab-chooser" aria-label="Results" className="max-h-[46vh] overflow-y-auto">
           {rows.length === 0 ? (
             <div className="px-3 py-4 text-[11px] text-code-raised">nothing matches “{query}”</div>
           ) : (

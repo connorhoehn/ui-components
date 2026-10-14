@@ -89,9 +89,9 @@ describe('ActionConfig', () => {
 
   it('names the action type and dedup scope selects, and their hint text', () => {
     render(<ActionConfig data={data} onChange={noop} />);
-    expect(byLabel('Action type').tagName).toBe('SELECT');
+    expect(byLabel('Action type')).toHaveAttribute('data-ui-control', 'select');
     const dedup = byLabel('Dedup scope');
-    expect(dedup.tagName).toBe('SELECT');
+    expect(dedup).toHaveAttribute('data-ui-control', 'select');
     // The hint under this one is the panel's own node, not ConfigField's help.
     expect(dedup).toHaveAccessibleDescription(/Retries skip this action/);
   });
@@ -255,7 +255,7 @@ describe('LLMConfig', () => {
 
   it('wires provider, model and system prompt', () => {
     render(<LLMConfig data={data} onChange={noop} />);
-    expect(byLabel('Provider').tagName).toBe('SELECT');
+    expect(byLabel('Provider')).toHaveAttribute('data-ui-control', 'select');
     expect(byLabel('Model')).toHaveValue('claude-sonnet-4-6');
     expect(byLabel('System prompt')).toHaveValue('be terse');
   });
@@ -414,7 +414,7 @@ describe('TriggerConfig', () => {
   it('wires the document type select and its help text', () => {
     show({ type: 'trigger', triggerType: 'document.finalize', documentTypeId: '' });
     const select = byLabel('Document type');
-    expect(select.tagName).toBe('SELECT');
+    expect(select).toHaveAttribute('data-ui-control', 'select');
     expect(select).toHaveAccessibleDescription('Select a document type.');
   });
 
@@ -439,7 +439,7 @@ describe('VisionConfig', () => {
 
   it('wires the model, image path, prompt and schema fields', () => {
     render(<VisionConfig data={data} onChange={noop} />);
-    expect(byLabel('Model').tagName).toBe('SELECT');
+    expect(byLabel('Model')).toHaveAttribute('data-ui-control', 'select');
     expect(byLabel('Image reference path')).toHaveValue('$.trigger.imageRef');
     expect(byLabel('User prompt')).toHaveValue('what is this');
     expect(byLabel('Output schema').tagName).toBe('TEXTAREA');
@@ -474,7 +474,7 @@ describe('VisionClassifyConfig', () => {
     expect(group('Labels')).toHaveAccessibleDescription(
       'The model returns the single best-matching label.',
     );
-    expect(byLabel('Model').tagName).toBe('SELECT');
+    expect(byLabel('Model')).toHaveAttribute('data-ui-control', 'select');
     expect(byLabel('System prompt override').tagName).toBe('TEXTAREA');
     expect(byLabel('Max output tokens')).toHaveValue(256);
   });
@@ -493,7 +493,7 @@ describe('VisionDescribeConfig', () => {
       />,
     );
     expect(byLabel('User prompt')).toHaveValue('describe it');
-    expect(byLabel('Model').tagName).toBe('SELECT');
+    expect(byLabel('Model')).toHaveAttribute('data-ui-control', 'select');
     expect(byLabel('System prompt override').tagName).toBe('TEXTAREA');
     expect(byLabel('Max output tokens')).toHaveValue(512);
   });
@@ -508,7 +508,7 @@ describe('VisionExtractTextConfig', () => {
       />,
     );
     const model = byLabel('Model');
-    expect(model.tagName).toBe('SELECT');
+    expect(model).toHaveAttribute('data-ui-control', 'select');
     expect(model).toHaveAccessibleDescription('Defaults to the more accurate model for OCR.');
     expect(byLabel('System prompt override').tagName).toBe('TEXTAREA');
     expect(byLabel('Max output tokens')).toHaveValue(1024);

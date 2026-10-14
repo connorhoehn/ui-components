@@ -26,6 +26,9 @@ import { PageHeader } from '../PageHeader';
 import { CollectionPage } from '../CollectionPage';
 import { CollectionToolbar } from '../CollectionToolbar';
 import { DensityProvider } from '../Density';
+import { FormWizard } from '../FormWizard';
+import { Combobox } from '../Combobox';
+import FormField from '../FormField';
 import { act, fireEvent } from '@testing-library/react';
 
 afterEach(cleanup);
@@ -327,5 +330,35 @@ describe('GroupedList group heading wrapper (2.442.3)', () => {
     render(<GroupedList size="sm" groupHeading="title" groups={[{ id: 'g', title: 'Policies', count: 2 }]} rows={[]} data-testid="gl" />);
     const h3 = document.querySelector('h3');
     expect(h3?.className).toMatch(/\btext-sm\b/);
+  });
+});
+
+describe('FormWizard and its fields on the 12/14 scale (2.445.0)', () => {
+  it('flagged before: FormField hints and Combobox descriptions at 11px; now 12/400', () => {
+    render(
+      <FormWizard summary={<p>Summary</p>} onSubmit={() => {}} sections={[{
+        key: 'what', title: 'What do you need?', description: 'One catalog item per request.',
+        content: (
+          <FormField label="Item" hint="12 of at least 20 characters">
+            {(w) => <Combobox {...w} options={[{ value: 'a', label: 'SME in Work', meta: 'Work', description: 'Dispatch runs' }]} value="" onChange={() => {}} />}
+          </FormField>
+        ),
+      }]} />,
+    );
+    const hint = screen.getByText('12 of at least 20 characters');
+    expect(hint.className).toMatch(/\btext-xs\b/);
+    expect(hint.className).not.toMatch(OFF_SCALE);
+    fireEvent.click(screen.getByRole('combobox'));
+    expect(screen.getByText('Dispatch runs').className).toMatch(/\btext-xs\b/);
+    expect(screen.getByRole('listbox').innerHTML).not.toMatch(OFF_SCALE);
+  });
+
+  it('valid: the section heading keeps the 14/600 step over a 12/400 description; the summary heading matches', () => {
+    render(<FormWizard summary={<p>Summary</p>} onSubmit={() => {}} sections={[{ key: 'why', title: 'Why?', description: 'Approvers read this first.', content: null }]} />);
+    const heading = screen.getByRole('heading', { name: 'Why?' });
+    expect(heading.className).toMatch(/\btext-sm\b/);
+    expect(heading.className).toMatch(/\bfont-semibold\b/);
+    expect(screen.getByText('Approvers read this first.').className).toMatch(/\btext-xs\b/);
+    expect(screen.getByRole('heading', { name: 'Summary' }).className).toMatch(/\btext-sm\b/);
   });
 });

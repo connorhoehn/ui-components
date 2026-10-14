@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import PresentationView, { type PresentationRevision } from '../PresentationView';
+import { readSelectOptions, selectLabels } from '../../../test-utils/selectListbox';
 
 function revision(partial: Partial<PresentationRevision> = {}): PresentationRevision {
   return {
@@ -39,8 +40,8 @@ describe('PresentationView', () => {
       olderRevisions: { count: 22, onLoad },
       onRevisionChange,
     });
-    const select = screen.getByTestId('presentation-view-revision-select') as HTMLSelectElement;
-    expect([...select.options].map((option) => option.text)).toEqual(['v24 · latest', 'v23', 'Older versions (22)…']);
+    const select = screen.getByTestId('presentation-view-revision-select');
+    expect(selectLabels(select)).toEqual(['v24 · latest', 'v23', 'Older versions (22)…']);
     fireEvent.change(select, { target: { value: '__older-revisions__' } });
     expect(onLoad).toHaveBeenCalledTimes(1);
     expect(onRevisionChange).not.toHaveBeenCalled();
@@ -57,8 +58,8 @@ describe('PresentationView', () => {
         onSlideChange={() => undefined}
       />,
     );
-    const loading = [...(screen.getByTestId('presentation-view-revision-select') as HTMLSelectElement).options].at(-1)!;
-    expect(loading.text).toBe('Loading older versions…');
+    const loading = readSelectOptions(screen.getByTestId('presentation-view-revision-select')).at(-1)!;
+    expect(loading.label).toBe('Loading older versions…');
     expect(loading.disabled).toBe(true);
   });
 
@@ -300,8 +301,8 @@ describe('PresentationView revision picker', () => {
     const onRevisionChange = vi.fn();
     const revisions = Array.from({ length: 7 }, (_, i) => revision({ id: `rev-${i + 1}`, label: `v${i + 1}` }));
     view({ revisions, revisionId: 'rev-7', onRevisionChange });
-    const select = screen.getByTestId('presentation-view-revision-select') as HTMLSelectElement;
-    expect(select.options[0]!.textContent).toBe('v7 · latest');
+    const select = screen.getByTestId('presentation-view-revision-select');
+    expect(selectLabels(select)[0]).toBe('v7 · latest');
     fireEvent.change(select, { target: { value: 'rev-2' } });
     expect(onRevisionChange).toHaveBeenCalledWith('rev-2');
     expect(screen.queryByTestId('presentation-view-revisions')).toBeNull();

@@ -9,6 +9,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import NewDocumentModal from '../NewDocumentModal';
+import { selectLabels, selectValues } from '../../../test-utils/selectListbox';
 
 // The modal reconciles document types with the server on every open. Nothing
 // here is about types, so the probe is stubbed to a quiet failure — which the
@@ -44,7 +45,7 @@ describe('NewDocumentModal — Presentation', () => {
     fireEvent.click(screen.getByTestId('doc-shape-presentation'));
     const select = screen.getByTestId('presentation-from');
     expect(select).toHaveValue('blank');
-    expect(Array.from((select as HTMLSelectElement).options).map((option) => option.value)).toEqual([
+    expect(selectValues(select)).toEqual([
       'blank',
       'transcript',
       'document',
@@ -96,7 +97,7 @@ describe('NewDocumentModal — Presentation', () => {
 
     await waitFor(() => expect(screen.getByTestId('presentation-source')).toBeInTheDocument());
     expect(onSearchDocuments).toHaveBeenCalledWith('road');
-    expect(screen.getByTestId('presentation-source')).toHaveTextContent('Roadmap Q3');
+    expect(selectLabels(screen.getByTestId('presentation-source'))).toContain('Roadmap Q3');
   });
 
   it('says so honestly when there is nothing to draw on', () => {

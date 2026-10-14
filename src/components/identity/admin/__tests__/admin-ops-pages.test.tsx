@@ -21,7 +21,7 @@ describe('AuditPage', () => {
   it('converts the filter bar into query params (datetime → epoch ms, limit → number)', async () => {
     const p = base();
     render(<AuditPage {...p} />);
-    fireEvent.change(screen.getByDisplayValue('All'), { target: { value: 'user' } });
+    fireEvent.change(screen.getByRole('combobox', { name: 'Entity Type' }), { target: { value: 'user' } });
     fireEvent.change(screen.getByPlaceholderText('Optional'), { target: { value: 'u1' } });
     fireEvent.click(screen.getByRole('button', { name: 'Query' }));
     await waitFor(() => expect(p.onQuery).toHaveBeenCalled());
@@ -94,7 +94,7 @@ describe('MfaManagementPage', () => {
     expect(screen.getByText('ada@x.co')).toBeInTheDocument();
     expect(screen.getByText('bob@y.co')).toBeInTheDocument();
 
-    fireEvent.change(screen.getByDisplayValue('All Pools'), { target: { value: 'p2' } });
+    fireEvent.change(screen.getByRole('combobox', { name: 'Filter by pool' }), { target: { value: 'p2' } });
 
     expect(screen.queryByText('ada@x.co')).toBeNull();
     expect(screen.getByText('bob@y.co')).toBeInTheDocument();

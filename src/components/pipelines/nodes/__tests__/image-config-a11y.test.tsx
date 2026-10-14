@@ -108,7 +108,7 @@ describe('image node config panels — label ↔ control association', () => {
     );
 
     expect(labelled('Source image path')).toHaveAttribute('type', 'text');
-    expect(labelled('Greyscale algorithm').tagName).toBe('SELECT');
+    expect(labelled('Greyscale algorithm')).toHaveAttribute('data-ui-control', 'select');
     expect(labelled('Contrast multiplier')).toHaveAttribute(
       'data-testid',
       'adjust-bw-contrast',
@@ -166,7 +166,7 @@ describe('image node config panels — label ↔ control association', () => {
     expect(labelled('Source image path')).toHaveAttribute('type', 'text');
     expect(labelled('Mask image path')).toHaveAccessibleDescription(/White pixels/);
     expect(labelled(/^Edit prompt/, 'Edit prompt').tagName).toBe('TEXTAREA');
-    expect(labelled('Model').tagName).toBe('SELECT');
+    expect(labelled('Model')).toHaveAttribute('data-ui-control', 'select');
   });
 
   it('EditPromptConfig points the prompt at its validation error', () => {
@@ -189,7 +189,7 @@ describe('image node config panels — label ↔ control association', () => {
       />,
     );
 
-    expect(labelled('Output format').tagName).toBe('SELECT');
+    expect(labelled('Output format')).toHaveAttribute('data-ui-control', 'select');
     expect(labelled('Quality')).toHaveAccessibleDescription(/Higher is better quality/);
   });
 
@@ -197,7 +197,7 @@ describe('image node config panels — label ↔ control association', () => {
     mount(<GenerateConfig data={{ type: 'image:generate', prompt: 'a dog' }} onChange={noop} />);
 
     expect(labelled(/^Prompt/, 'Prompt').tagName).toBe('TEXTAREA');
-    expect(labelled('Model').tagName).toBe('SELECT');
+    expect(labelled('Model')).toHaveAttribute('data-ui-control', 'select');
     expect(labelled('Width')).toHaveAttribute('data-testid', 'generate-width');
     expect(labelled('Height')).toHaveAttribute('data-testid', 'generate-height');
     expect(labelled('Seed')).toHaveAttribute('data-testid', 'generate-seed');
@@ -221,7 +221,7 @@ describe('image node config panels — label ↔ control association', () => {
     expect(labelled('Source image path')).toHaveAttribute('type', 'text');
     expect(labelled('Width')).toHaveAttribute('data-testid', 'resize-width');
     expect(labelled('Height')).toHaveAttribute('data-testid', 'resize-height');
-    expect(labelled('Fit mode').tagName).toBe('SELECT');
+    expect(labelled('Fit mode')).toHaveAttribute('data-ui-control', 'select');
     expect(labelled('Background colour')).toHaveAccessibleDescription(
       /Only applies when fit is contain or fill/,
     );
@@ -280,7 +280,7 @@ describe('image node config panels — label ↔ control association', () => {
     mount(<VariationConfig data={{ type: 'image:variation' }} onChange={noop} />);
 
     expect(labelled('Source image path')).toHaveAttribute('type', 'text');
-    expect(labelled('Model').tagName).toBe('SELECT');
+    expect(labelled('Model')).toHaveAttribute('data-ui-control', 'select');
     expect(labelled('Number of variations')).toHaveAccessibleDescription(
       /Always fans out/,
     );
@@ -302,7 +302,7 @@ describe('image node config panels — label ↔ control association', () => {
     expect(labelled(/^Overlay image ID/, 'Overlay image ID')).toHaveAccessibleDescription(
       /already stored in the blob store/,
     );
-    expect(labelled('Gravity').tagName).toBe('SELECT');
+    expect(labelled('Gravity')).toHaveAttribute('data-ui-control', 'select');
     expect(labelled('Opacity')).toHaveAttribute('data-testid', 'watermark-opacity');
     expect(labelled('Offset X')).toHaveAttribute('data-testid', 'watermark-offset-x');
     expect(labelled('Offset Y')).toHaveAttribute('data-testid', 'watermark-offset-y');

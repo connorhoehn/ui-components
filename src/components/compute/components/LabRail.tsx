@@ -311,7 +311,7 @@ function RailSection({
       ) : (
         <div
           ref={listRef}
-          role="listbox"
+          role="listbox" data-ui-listbox="lab-rail"
           aria-label={title}
           onKeyDown={onKeyDown}
           className="flex-1 min-h-0 overflow-y-auto pb-1"

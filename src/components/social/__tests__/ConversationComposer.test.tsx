@@ -6,6 +6,7 @@ import { DensityProvider } from '../../shared/Density';
 import type { RichChatComposerHandle } from '../RichChatComposer';
 import { draftStorageKey } from '../conversationComposerModel';
 import * as client from '@connorhoehn/realtime-modules/client';
+import { readSelectOptions } from '../../../test-utils/selectListbox';
 
 afterEach(cleanup);
 beforeEach(() => { window.localStorage.clear(); });
@@ -131,7 +132,7 @@ describe('ConversationComposer — recipients and the page reference', () => {
         { id: 'huddle:c-1', label: 'Huddle', channel: 'orgiq:huddle:c-1', send: async () => true },
       ],
     });
-    const options = Array.from((screen.getByRole('combobox', { name: 'Chat recipient' }) as HTMLSelectElement).options);
+    const options = readSelectOptions(screen.getByRole('combobox', { name: 'Chat recipient' }));
     expect(options.find((o) => o.value === 'discussion')?.disabled).toBe(true);
   });
 

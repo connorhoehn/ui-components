@@ -19,7 +19,7 @@ validateContract(contract);
 const selectors = {
   graphDetailLabels: '[data-ui-text="graph-detail"]', graphMetadataLabels: '[data-ui-text="graph-metadata"]', activePersonCaptions: '[data-ui-text="active-person-caption"]',
   codeLabels: 'code, input[data-ui-text="code"]', railCaptionLabels: '.rail-label, button[data-heading="label"][data-focus-key^="g:"] > span, [data-ui-text="rail-caption"]', railItemLabels: '[data-ui-text="rail-item"]', conversationLabels: '.conversation-label', conversationMetadata: '.conversation-meta', decorativeText: '[aria-hidden="true"]', rowMenuGlyphs: '.row-glyph', keyboardHints: 'kbd', captions: '[data-ui-text="caption"]', tenantControl: '.no-brand', tickerControl: '.no-ticker', avatarControl: '[data-ui-text="avatar"]', header: '#header', footer: '#footer', footerRow: '#footer', shellColumns: '#shell', nestedColumns: '.no-nested', workspaceColumns: '#workspace', splitColumns: '.no-split',
-  controls: 'button,input,select,textarea,[role="button"]', railHeaders: '.rail-caption', toolbarControls: '#toolbar button', collections: '#collection', collectionToolbars: '#toolbar', sectionTitles: '#section',
+  controls: 'button,input,select,textarea,[role="button"]', nativeSelects: 'select:not([data-ui-native-select][data-ui-native-reason]), select[data-ui-native-reason=""], input[list], datalist', unmarkedListboxes: '[role="listbox"]:not([data-ui-listbox])', listboxOptions: '[data-ui-listbox] [role="option"]', openListboxes: '[data-ui-listbox]', railHeaders: '.rail-caption', toolbarControls: '#toolbar button', collections: '#collection', collectionToolbars: '#toolbar', sectionTitles: '#section',
   tables: 'table', collectionTables: '[data-collection-table] table', composers: '#shelf', nestedComposers: '#shelf [data-composer-surface]', composerBoundary: 'section:has(> [data-collection-command-boundary="embedded"]), #content',
   // The content-column rules (gutter, header alignment, one title, containment, sparse tiles):
   // the column is the trail's parent, the trail band's padding is the reading edge.
@@ -91,6 +91,13 @@ try {
     ['static rows declared without a reason', () => { document.querySelector('[data-collection-table]').setAttribute('data-collection-rows', 'static'); }, 'collection.row-activatable'],
     ['monospace input without the code marker', () => { const i = document.createElement('input'); i.value = '0 */4 * * *'; i.style.cssText = 'font-family:monospace;font-size:12px;height:28px;border:1px solid black'; document.querySelector('#toolbar').append(i); }, 'control.font-family'],
     ['marked code input off the code profile', () => { const i = document.createElement('input'); i.value = '/docs/.*'; i.setAttribute('data-ui-text', 'code'); i.style.cssText = 'font-family:serif;font-size:12px;height:28px;border:1px solid black'; document.querySelector('#toolbar').append(i); }, 'code.typography'],
+    ['raw native select', () => { const s = document.createElement('select'); s.className = 'control'; s.innerHTML = '<option>One</option>'; document.querySelector('#toolbar').append(s); }, 'control.native-select'],
+    ['native select hidden behind a custom trigger', () => { const s = document.createElement('select'); s.style.display = 'none'; s.innerHTML = '<option>One</option>'; document.querySelector('#toolbar').append(s); }, 'control.native-select'],
+    ['native select marked without a reason', () => { const s = document.createElement('select'); s.className = 'control'; s.setAttribute('data-ui-native-select', ''); s.setAttribute('data-ui-native-reason', ''); document.querySelector('#toolbar').append(s); }, 'control.native-select'],
+    ['input bound to a datalist', () => { const i = document.createElement('input'); i.className = 'control'; i.setAttribute('list', 'dl'); const d = document.createElement('datalist'); d.id = 'dl'; d.innerHTML = '<option value="x">'; document.querySelector('#toolbar').append(i, d); }, 'control.native-select'],
+    ['hand-rolled listbox without the library marker', () => { const u = document.createElement('ul'); u.setAttribute('role', 'listbox'); u.innerHTML = '<li role="option" style="font-size:14px">One</li>'; document.querySelector('#content').append(u); }, 'control.unmarked-listbox'],
+    ['open listbox option off the type scale', () => { const u = document.createElement('ul'); u.setAttribute('role', 'listbox'); u.setAttribute('data-ui-listbox', 'select'); u.innerHTML = '<li role="option" style="font-size:16px">One</li>'; document.querySelector('#content').append(u); }, 'listbox.option-type'],
+    ['open listbox spilling out of the viewport', () => { const u = document.createElement('ul'); u.setAttribute('role', 'listbox'); u.setAttribute('data-ui-listbox', 'select'); u.style.cssText = 'position:fixed;top:780px;left:1200px;width:200px;margin:0;padding:0'; u.innerHTML = '<li role="option" style="font-size:14px;height:40px">One</li>'; document.body.append(u); }, 'listbox.in-viewport'],
     ['missing design token', () => document.documentElement.style.setProperty('--ui-control-sm', 'initial'), 'toolbar.control-height'],
   ];
   for (const [name, mutate, rule] of mutations) {
@@ -149,6 +156,13 @@ try {
   await page.evaluate(() => { const i = document.createElement('input'); i.value = 'https://example.com/docs'; i.setAttribute('data-ui-text', 'code'); i.style.cssText = 'font-family:monospace;font-size:12px;height:28px;border:1px solid black'; document.querySelector('#toolbar').append(i); });
   assert.deepEqual((await measure()).issues, [], 'a marked code input (Input mono) is measured on the code profile');
   console.log('PASS a marked monospace input passes; unmarked or off-profile ones fail');
+  await page.setContent(html);
+  await page.evaluate(() => {
+    const s = document.createElement('select'); s.className = 'control'; s.setAttribute('data-ui-native-select', ''); s.setAttribute('data-ui-native-reason', 'Mobile OS picker for a long list'); s.innerHTML = '<option>One</option>'; document.querySelector('#toolbar').append(s);
+    const u = document.createElement('ul'); u.setAttribute('role', 'listbox'); u.setAttribute('data-ui-listbox', 'select'); u.style.cssText = 'position:fixed;top:100px;left:300px;width:200px;margin:0;padding:0'; u.innerHTML = '<li role="option" style="font-size:14px">One</li><li role="option" style="font-size:12px">Two</li>'; document.body.append(u);
+  });
+  assert.deepEqual((await measure()).issues, [], 'a reasoned native escape hatch and a marked, in-viewport listbox on the 12/14 scale pass');
+  console.log('PASS dropdowns: a reasoned native select and a marked listbox pass; raw, hidden, unreasoned, datalist, unmarked, off-scale and off-screen ones fail');
   // Row activation: a row link or a static declaration with a reason is a valid
   // inert-looking row; an ordinary inert row beside them still fails.
   for (const [name, mutate] of [

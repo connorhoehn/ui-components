@@ -335,7 +335,8 @@ const LISTS: MarkButton[] = [
  * false after Enter, false after Space, and true after a mouse click — the same
  * for the align, colour and table menus, which never opened. Twenty-four of the
  * bar's twenty-seven focusable controls were dead; the three that worked were
- * the native `<select>`s.
+ * the dropdowns (then native `<select>`s; since 2.445.0 the library Select,
+ * a custom listbox that owns its keyboard).
  *
  * `ev.detail === 0` is what separates the two paths. A mouse click carries the
  * click count in `detail`; a click the browser synthesises from a keypress on a

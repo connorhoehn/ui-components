@@ -57,7 +57,7 @@ export const EmojiSuggestions = forwardRef<EmojiSuggestionsHandle, EmojiSuggesti
     return (
       <div
         data-testid="emoji-suggestions"
-        role="listbox"
+        role="listbox" data-ui-listbox="emoji-suggestions"
         aria-label="Emoji"
         className="max-h-56 w-56 overflow-y-auto rounded-lg border border-border bg-surface py-1 shadow-lg"
       >

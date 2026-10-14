@@ -17,6 +17,7 @@ import {
 import GenerateConfig, { DEFAULT_GENERATE_MODELS } from '../generate/GenerateConfig';
 import LLMConfig, { DEFAULT_MODELS_BY_PROVIDER } from '../llm/LLMConfig';
 import type { ImageGenerateNodeData, LLMNodeData } from '../../../../types/pipeline';
+import { selectValues } from '../../../../test-utils/selectListbox';
 
 const gen = (over: Partial<ImageGenerateNodeData> = {}): ImageGenerateNodeData => ({
   type: 'image:generate',
@@ -48,10 +49,14 @@ const withServices = (services: PipelineEditorServices, ui: React.ReactNode) =>
 // label, which getByLabelText matches on (raw textContent) but the accessible
 // name correctly drops. Before the labels were wired these resolved through an
 // aria-label that merely restated the visible label.
-const optionValues = (label: string) =>
-  within(screen.getByRole('combobox', { name: label }))
-    .queryAllByRole('option')
-    .map((o) => (o as HTMLOptionElement).value);
+// A select with no options has no list to open, so it offers nothing.
+const optionValues = (label: string) => {
+  const trigger = screen.getByRole('combobox', { name: label });
+  fireEvent.click(trigger);
+  const open = trigger.getAttribute('aria-expanded') === 'true';
+  if (open) fireEvent.keyDown(trigger, { key: 'Escape' });
+  return open ? selectValues(trigger) : [];
+};
 
 describe('image:generate model options', () => {
   it('offers the shipped defaults with no host wiring', () => {

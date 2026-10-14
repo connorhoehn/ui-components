@@ -2,6 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { FormField } from '../FormField';
 import { EntityTable, type Column } from '../EntityTable';
+import { selectLabels } from '../../../../test-utils/selectListbox';
 
 // ---------------------------------------------------------------------------
 // FormField
@@ -107,10 +108,11 @@ describe('FormField', () => {
         ]}
       />,
     );
-    expect(screen.getByLabelText('Role').tagName).toBe('SELECT');
-    expect(screen.getByText('Pick one')).toBeInTheDocument();
-    expect(screen.getByText('Admin')).toBeInTheDocument();
-    expect(screen.getByText('Member')).toBeInTheDocument();
+    const role = screen.getByLabelText('Role');
+    expect(role).toHaveAttribute('data-ui-control', 'select');
+    // The placeholder is a selectable "none" row (identity forms let a user clear the choice).
+    expect(role).toHaveTextContent('Pick one');
+    expect(selectLabels(role)).toEqual(['Pick one', 'Admin', 'Member']);
   });
 
   it('respects the disabled prop', () => {

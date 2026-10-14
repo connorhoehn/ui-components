@@ -134,7 +134,8 @@ export default function FormField({
     <div
       id={describedById}
       data-testid={hintTestId}
-      className={cn('text-[11px]', error ? 'text-danger-fg' : 'text-neutral')}
+      // 12/400 meta (2.445.0): the hint was 11px, off the app's type scale.
+      className={cn('text-xs font-normal leading-4', error ? 'text-danger-fg' : 'text-neutral')}
     >
       {error ?? hint}
     </div>

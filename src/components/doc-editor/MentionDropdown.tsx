@@ -95,7 +95,7 @@ export const MentionDropdown = forwardRef<MentionDropdownHandle, MentionDropdown
     return ReactDOM.createPortal(
       <div
         ref={listRef}
-        role="listbox"
+        role="listbox" data-ui-listbox="mention"
         className={cn('fixed z-[1000] bg-surface border border-border rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.12)] max-h-60 overflow-y-auto min-w-[200px]')}
         style={{ top: position.top, left: position.left }}
       >

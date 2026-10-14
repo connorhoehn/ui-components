@@ -455,3 +455,33 @@ HTML response and checks advisory/strict unclassified exits and strict classifie
 success. It also rejects malformed flags. Route-selection tests live beside the
 frontend adapter (`node --test portal/e2e/ui-dom-audit.routes.test.ts`) so portable
 runner changes do not require copying app-specific route logic into this skill.
+
+## Dropdowns (2.445.0)
+
+Every dropdown is the library's: `Select` is a custom listbox (a
+`role="combobox"` trigger marked `data-ui-control="select"` over a portal
+`role="listbox"` marked `data-ui-listbox="select"`), and `Combobox` and the
+library's suggestion/picker lists mark their listboxes `data-ui-listbox="<kind>"`.
+Four rules hold the line:
+
+- `control.native-select` (`count`, `includeHidden`) — any `<select>`, painted
+  or hidden behind a trigger, any `<input list>` and any `<datalist>` opens the
+  platform's unstyled menu. The only accepted `<select>` is the opt-in escape
+  hatch `Select native={{ reason }}`, which emits `data-ui-native-select` and a
+  non-empty `data-ui-native-reason`. Bind `$nativeSelects` to
+  `select:not([data-ui-native-select][data-ui-native-reason]), select[data-ui-native-reason=""], input[list], datalist`.
+- `control.unmarked-listbox` (`count`, `includeHidden`) — a `role="listbox"`
+  without `data-ui-listbox` is a hand-rolled dropdown. Bind `$unmarkedListboxes`
+  to `[role="listbox"]:not([data-ui-listbox])`.
+- `listbox.option-type` (`text`) — option rows of an open listbox read at 12 or
+  14px. Bind `$listboxOptions` to `[data-ui-listbox] [role="option"]`.
+- `listbox.in-viewport` (`in-viewport`, new kind) — an open listbox sits wholly
+  inside the viewport (each edge's margin ≥ 0 within tolerance). Bind
+  `$openListboxes` to `[data-ui-listbox]`.
+
+The last two only see a listbox while it is open, so an adapter should add a
+state that opens the first `[data-ui-control="select"]` on a page (the
+aws-agentcore adapter's `dropdown-open`). `includeHidden` is a general `count`
+option: it counts matching elements whether or not they paint. Fix a finding
+by rendering the library `Select` (or `Combobox` for a typed filter), never by
+adding a marker by hand.

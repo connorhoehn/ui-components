@@ -13,6 +13,7 @@ import {
 } from '../../pipelines/context/EventStreamContext';
 import type { EventStreamValue } from '../../pipelines/context/EventStreamContext';
 import EventsPage from '../EventsPage';
+import { selectValues } from '../../../test-utils/selectListbox';
 
 let stream: EventStreamValue | null = null;
 
@@ -107,8 +108,7 @@ describe('EventsPage time-range filter', () => {
         <EventsPage />
       </EventStreamProvider>,
     );
-    const select = screen.getByTestId('events-time-range') as HTMLSelectElement;
-    const values = Array.from(select.options).map((o) => o.value);
+    const values = selectValues(screen.getByTestId('events-time-range'));
     expect(values).toEqual(['15m', '1h', '6h', '24h']);
   });
 });

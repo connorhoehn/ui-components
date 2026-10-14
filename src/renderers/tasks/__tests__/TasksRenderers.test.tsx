@@ -238,7 +238,7 @@ describe('TasksEditorRenderer', () => {
         onUpdateItem={onUpdateItem}
       />,
     );
-    const prioritySelect = screen.getAllByTitle('Priority: medium').find(el => el.tagName === 'SELECT')!;
+    const prioritySelect = screen.getAllByTitle('Priority: medium').find(el => el.getAttribute('data-ui-control') === 'select')!;
     fireEvent.change(prioritySelect, { target: { value: 'high' } });
     expect(onUpdateItem).toHaveBeenCalledWith('i1', { priority: 'high' });
   });

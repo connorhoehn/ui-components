@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import VisionTagConfig, { DEFAULT_VISION_MODELS } from '../VisionTagConfig';
 import { PipelineEditorServicesProvider } from '../../../services/PipelineEditorServicesContext';
 import type { ImageVisionTagNodeData } from '../../../../../types/pipeline';
+import { selectValues } from '../../../../../test-utils/selectListbox';
 
 const base = (over: Partial<ImageVisionTagNodeData> = {}): ImageVisionTagNodeData => ({
   type: 'image:vision-tag',
@@ -48,8 +49,7 @@ describe('VisionTagConfig', () => {
 
   it('offers the default vision models with no host wiring', () => {
     render(<VisionTagConfig data={base()} onChange={vi.fn()} />);
-    const options = [...(screen.getByLabelText('Model') as HTMLSelectElement).options];
-    expect(options.map((o) => o.value)).toEqual(DEFAULT_VISION_MODELS.map((m) => m.value));
+    expect(selectValues(screen.getByLabelText('Model'))).toEqual(DEFAULT_VISION_MODELS.map((m) => m.value));
   });
 
   it('lets a host supply its own vision models', () => {
@@ -60,8 +60,7 @@ describe('VisionTagConfig', () => {
         <VisionTagConfig data={base()} onChange={vi.fn()} />
       </PipelineEditorServicesProvider>,
     );
-    const options = [...(screen.getByLabelText('Model') as HTMLSelectElement).options];
-    expect(options.map((o) => o.value)).toEqual(['llava']);
+    expect(selectValues(screen.getByLabelText('Model'))).toEqual(['llava']);
   });
 
   it('warns that the system prompt is not interpolated', () => {

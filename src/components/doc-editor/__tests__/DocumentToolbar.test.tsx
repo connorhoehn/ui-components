@@ -52,6 +52,8 @@ function makeEditor(active: Record<string, unknown> = {}, optional: string[] = [
       if (name === 'link') return { href: state['linkHref'] ?? '' };
       // The line-spacing menu reads the caret's paragraph attributes.
       if (name === 'paragraph') return { lineSpacing: state['lineSpacing'] };
+      // The typeface and size pickers read the caret's text style.
+      if (name === 'textStyle') return { fontFamily: state['fontFamily'], fontSize: state['fontSize'] };
       return {};
     },
     isActive: (name: string, attrs?: Record<string, unknown>) => {
@@ -301,12 +303,14 @@ describe('DocumentToolbar', () => {
   });
 
   it('sets a typeface, and clears it back to the page default', () => {
-    const { editor, calls } = makeEditor({}, ['setFontFamily', 'unsetFontFamily']);
+    const { editor, calls, moveCursor } = makeEditor({}, ['setFontFamily', 'unsetFontFamily']);
     render(<DocumentToolbar editor={editor} />);
     const picker = screen.getByTestId('document-toolbar-font-family');
 
     fireEvent.change(picker, { target: { value: 'Georgia, "Times New Roman", serif' } });
     expect(calls.join('|')).toContain('setFontFamily:["Georgia, \\"Times New Roman\\", serif"]');
+    // The caret now sits in Georgia (what the real editor reports after the command).
+    act(() => moveCursor({ fontFamily: 'Georgia, "Times New Roman", serif' }));
 
     // "Default" is the ABSENCE of a choice — it must unset, or a document
     // could never get back to its own typography.
@@ -315,12 +319,13 @@ describe('DocumentToolbar', () => {
   });
 
   it('sets a size in points, and clears it', () => {
-    const { editor, calls } = makeEditor({}, ['setFontSize', 'unsetFontSize']);
+    const { editor, calls, moveCursor } = makeEditor({}, ['setFontSize', 'unsetFontSize']);
     render(<DocumentToolbar editor={editor} />);
     const picker = screen.getByTestId('document-toolbar-font-size');
 
     fireEvent.change(picker, { target: { value: '18pt' } });
     expect(calls.join('|')).toContain('setFontSize:["18pt"]');
+    act(() => moveCursor({ fontSize: '18pt' }));
 
     fireEvent.change(picker, { target: { value: '' } });
     expect(calls.join('|')).toContain('unsetFontSize');
@@ -863,6 +868,7 @@ describe('DocumentToolbar — the gutter toggle', () => {
 // takes controls off the bar in a fixed order; nothing ever folds.
 
 import { useDocumentToolbarSize, documentToolbarSize, DOCUMENT_TOOLBAR_BREAKPOINTS } from '../DocumentToolbar';
+import { selectLabels, selectValue } from '../../../test-utils/selectListbox';
 
 /** Every optional extension the page registers, so every group is present. */
 const EVERYTHING = [
@@ -1131,9 +1137,9 @@ describe('DocumentToolbar extras="overflow" — the word-processor row (2.386.5)
       />,
     );
     fireEvent.mouseDown(screen.getByTestId('document-toolbar-more'));
-    const zoom = screen.getByTestId('document-toolbar-zoom') as HTMLSelectElement;
-    expect(zoom.value).toBe('1');
-    expect([...zoom.options].map((o) => o.textContent)).toEqual(['Fit width', '75%', '100%', '150%']);
+    const zoom = screen.getByTestId('document-toolbar-zoom');
+    expect(selectValue(zoom)).toBe('1');
+    expect(selectLabels(zoom)).toEqual(['Fit width', '75%', '100%', '150%']);
     fireEvent.change(zoom, { target: { value: '1.5' } });
     expect(onZoomChange).toHaveBeenCalledWith(1.5);
     fireEvent.change(zoom, { target: { value: 'fit' } });

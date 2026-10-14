@@ -17,6 +17,7 @@ import { useState } from 'react';
 import Modal from '../shared/Modal';
 import Avatar from '../shared/Avatar';
 import { Button } from '../ui/Button';
+import { Select } from '../forms/Select';
 import { cn } from '../../lib/cn';
 import type { DocumentPerson } from './DocumentOwnership';
 
@@ -140,17 +141,15 @@ export function DocumentShareDialog({
                   {p.role === 'owner' ? 'Owner' : p.role}
                 </span>
               ) : (
-                <select
+                <Select
+                  size="sm"
+                  variant="ghost"
                   value={p.role}
                   onChange={(e) => onChangeRole(p.userId, e.target.value as ShareRole)}
                   aria-label={`Access for ${p.displayName}`}
                   data-testid={`${testId}-role`}
-                  className="rounded border border-border bg-surface px-1 py-0.5 text-xs text-text-secondary"
-                >
-                  {SHARE_ROLES.filter((r) => r !== 'owner').map((r) => (
-                    <option key={r} value={r}>{r}</option>
-                  ))}
-                </select>
+                  options={SHARE_ROLES.filter((r) => r !== 'owner').map((r) => ({ value: r, label: r }))}
+                />
               )}
             </div>
           ))}
@@ -158,18 +157,15 @@ export function DocumentShareDialog({
 
         <div className="flex flex-col gap-1.5 border-t border-border pt-3">
           <span className="text-xs font-medium text-text-secondary">General access</span>
-          <select
+          <Select
+            size="md"
             value={generalAccess}
             onChange={(e) => onChangeGeneralAccess?.(e.target.value as GeneralAccess)}
             disabled={!onChangeGeneralAccess}
             aria-label="General access"
             data-testid={`${testId}-general-access`}
-            className="rounded border border-border bg-surface px-2 py-1.5 text-sm text-text-primary disabled:opacity-60"
-          >
-            {(Object.keys(GENERAL_ACCESS_LABEL) as GeneralAccess[]).map((k) => (
-              <option key={k} value={k}>{GENERAL_ACCESS_LABEL[k](orgName)}</option>
-            ))}
-          </select>
+            options={(Object.keys(GENERAL_ACCESS_LABEL) as GeneralAccess[]).map((k) => ({ value: k, label: GENERAL_ACCESS_LABEL[k](orgName) }))}
+          />
         </div>
 
         <div className="flex items-center justify-between">

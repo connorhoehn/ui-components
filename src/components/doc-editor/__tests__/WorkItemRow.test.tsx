@@ -16,6 +16,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 
 import WorkItemRow from '../WorkItemRow';
+import { selectValues } from '../../../test-utils/selectListbox';
 
 const SECTIONS = [
   { id: 'sec-a', title: 'Executive Summary' },
@@ -81,8 +82,8 @@ describe('WorkItemRow', () => {
 
     // A section a candidate already names must not ALSO appear in the picker;
     // one no candidate names must.
-    const picker = screen.getByTestId('work-item-ITEM1-file-under') as HTMLSelectElement;
-    const values = [...picker.options].map((o) => o.value);
+    const picker = screen.getByTestId('work-item-ITEM1-file-under');
+    const values = selectValues(picker);
     expect(values).not.toContain('sec-a');
     expect(values).not.toContain('sec-b');
     expect(values).toContain('sec-c');

@@ -115,9 +115,10 @@ export default function LLMConfig({ data, onChange, nodeId }: LLMConfigProps) {
       (DEFAULT_MODELS_BY_PROVIDER[provider] ?? []).map((value) => ({ value })),
     );
   const resolvedModelOptions = modelsFor(data.provider);
-  // Show the stored model even when it isn't in the resolved list. A <select>
-  // whose `value` matches no <option> renders the FIRST option instead, so the
-  // panel would quietly claim a model the node is not configured with.
+  // Show the stored model even when it isn't in the resolved list. A select
+  // whose `value` matches no option shows nothing chosen (the library listbox)
+  // or the FIRST option (a platform <select>, before 2.445.0), so the panel
+  // would quietly misstate the model the node is configured with.
   const modelOptions =
     data.model && !resolvedModelOptions.some((m) => m.value === data.model)
       ? [{ value: data.model }, ...resolvedModelOptions]

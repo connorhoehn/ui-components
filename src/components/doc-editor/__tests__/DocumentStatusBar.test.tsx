@@ -88,6 +88,7 @@ describe('DocumentStatusBar', () => {
       render(
         <DocumentStatusBar zoom={1.47} fitActive onZoomChange={vi.fn()} onFitWidth={vi.fn()} />,
       );
+      fireEvent.click(screen.getByRole('combobox', { name: 'Zoom' }));
       expect(screen.queryByRole('option', { name: '147%' })).toBeNull();
       expect(screen.getByRole('option', { name: '150%' })).toBeInTheDocument();
     });

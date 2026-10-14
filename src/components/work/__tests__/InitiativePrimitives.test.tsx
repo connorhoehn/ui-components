@@ -166,7 +166,7 @@ describe('WorkListView (2.390.0)', () => {
 
   it('sortStyle defaults to a select', () => {
     render(<WorkListView {...base} sort="priority" sortOptions={[{ value: 'priority', label: 'By priority' }]} onSortChange={() => {}} />);
-    expect(screen.getByTestId('work-list-toolbar-sort').tagName).toBe('SELECT');
+    expect(screen.getByTestId('work-list-toolbar-sort')).toHaveAttribute('data-ui-control', 'select');
   });
 
   it('passes currentStyle and groupCountStyle to the list', () => {

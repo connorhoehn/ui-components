@@ -419,6 +419,15 @@ declare interface BaseProps {
     onQueryChange?: (query: string) => void;
     className?: string;
     'data-testid'?: string;
+    /** The input's id — FormField's `id`, so its `<label htmlFor>` names the field. */
+    id?: string;
+    'aria-describedby'?: string;
+    'aria-invalid'?: boolean;
+    'aria-required'?: boolean;
+    /** Danger border (FormField's error state). `aria-invalid` alone also sets it. */
+    invalid?: boolean;
+    /** Draw the chevron that opens the full list on click. Default true in single mode. */
+    showToggle?: boolean;
 }
 
 /** A bell: "notifications", "activity" — the header's inbox trigger. Since 2.407.37. */
@@ -1188,6 +1197,8 @@ export declare interface ComboboxOption {
     value: string;
     label: string;
     description?: string;
+    /** A short right-aligned tag on the option's title line (a workspace, a team). */
+    meta?: string;
     disabled?: boolean;
 }
 
@@ -2664,6 +2675,65 @@ export declare interface FormRowProps {
     /** Gap between fields. Default 12px, matching Stack's `md`. */
     gap?: 'sm' | 'md' | 'lg';
     className?: string;
+    'data-testid'?: string;
+}
+
+export declare function FormWizard({ sections, mode, stepper, activeKey: activeKeyProp, onStepChange, summary, summaryTitle, aside, actionsPlacement, onSubmit, submitLabel, submittingLabel, submitting, submitDisabled, submitError, onDismissError, secondaryActions, backLabel, nextLabel, 'aria-label': ariaLabel, className, 'data-testid': testId, }: FormWizardProps): JSX.Element;
+
+export declare type FormWizardMode = 'single' | 'stepped';
+
+export declare interface FormWizardProps {
+    sections: readonly FormWizardSection[];
+    /** Default `single`. */
+    mode?: FormWizardMode;
+    /** Show the stepper. Default: on in stepped mode, off in single mode. */
+    stepper?: boolean;
+    /** Stepped mode, controlled: the visible section's key. */
+    activeKey?: string;
+    /** Stepped mode: called when the step changes (controlled or not). */
+    onStepChange?: (key: string) => void;
+    /** The live summary panel beside the form ("what you'll get"). */
+    summary?: ReactNode;
+    /** The summary panel's heading. Default "Summary". */
+    summaryTitle?: string;
+    /** Help under the summary (or alone in the side column). */
+    aside?: ReactNode;
+    /** Where Back/Next/Submit sit when there is a summary. Default `summary`; stepped mode always uses `form`. */
+    actionsPlacement?: 'form' | 'summary';
+    onSubmit: () => void | Promise<void>;
+    submitLabel?: string;
+    /** Shown on the Submit button while `submitting`. Default "Submitting…". */
+    submittingLabel?: string;
+    submitting?: boolean;
+    /** Disable Submit (e.g. a server pre-check blocks it). The reason belongs in the summary. */
+    submitDisabled?: boolean;
+    /** A failed submit, shown above the actions. */
+    submitError?: ReactNode;
+    onDismissError?: () => void;
+    /** Extra actions beside the primary (a Cancel link). */
+    secondaryActions?: ReactNode;
+    backLabel?: string;
+    nextLabel?: string;
+    /** Names the form for assistive tech. */
+    'aria-label'?: string;
+    className?: string;
+    /** Default `form-wizard`; sections get `<id>-section-<key>`, actions `<id>-submit` / `-next` / `-back`. */
+    'data-testid'?: string;
+}
+
+export declare interface FormWizardSection {
+    key: string;
+    /** The section heading (14/600) — and the step label unless `label` is given. */
+    title: string;
+    /** A short stepper label ("Who", "What") when the heading is a sentence. */
+    label?: string;
+    /** 12/400 line under the heading. */
+    description?: ReactNode;
+    content: ReactNode;
+    /** Leave the section out entirely (no step, no heading). */
+    hidden?: boolean;
+    /** What blocks this section, or null/undefined when it is complete. */
+    error?: string | null;
     'data-testid'?: string;
 }
 
@@ -5115,7 +5185,7 @@ export declare interface SegmentOption {
     testId?: string;
 }
 
-export declare const Select: ForwardRefExoticComponent<SelectProps & RefAttributes<HTMLSelectElement>>;
+export declare const Select: ForwardRefExoticComponent<SelectProps & RefAttributes<HTMLButtonElement>>;
 
 export declare function SelectableCard({ children, selected, onSelect, padding, disabled, className, ...rest }: SelectableCardProps): JSX.Element;
 
@@ -5131,10 +5201,19 @@ export declare interface SelectableCardProps extends Omit<ButtonHTMLAttributes<H
     padding?: SelectableCardPadding;
 }
 
+/** The platform `<select>`, opt-in, with the reason it is needed (the DOM audit reads it). */
+declare interface SelectNative {
+    reason: string;
+}
+
 export declare interface SelectOption {
     value: string;
     label: string;
     disabled?: boolean;
+    /** A 12/400 second line under the label in the open list. */
+    description?: string;
+    /** A small leading glyph in the open list (and the closed field). */
+    icon?: ReactNode;
 }
 
 export declare interface SelectOptionGroup {
@@ -5142,37 +5221,45 @@ export declare interface SelectOptionGroup {
     options: SelectOption[];
 }
 
-export declare interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
+export declare interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size' | 'multiple'> {
     options: SelectOption[];
     /** Optional labelled option groups, rendered after the flat `options`. */
     groups?: SelectOptionGroup[];
-    /** Shown as a disabled placeholder option when no value is selected. */
+    /** Shown in the field when no value is selected (never an option). */
     placeholder?: string;
     size?: SelectSize;
     /** Shape. See `SelectVariant`. Default `default`. */
     variant?: SelectVariant;
     /**
      * Semantic tone for `variant="pill"` — the capsule paints in that tone's
-     * soft surface (`-bg` / `-fg` / `-border`). Ignored by `variant="default"`,
-     * whose chrome is the neutral field border. Default `neutral`.
+     * soft surface (`-bg` / `-fg` / `-border`). Ignored by the other variants.
+     * Default `neutral`.
      */
     tone?: ToneOrAlias;
     /** When true, applies a danger-colored border. */
     invalid?: boolean;
-    /**
-     * Classes for the `variant="pill"` wrapper `<span>` (the positioning context
-     * for the chevron). `className` still lands on the `<select>` itself, so a
-     * caller can restyle the capsule without losing the layout hook.
-     */
+    /** Extra classes for the trigger (kept for call sites that styled the old wrapper). */
     wrapperClassName?: string;
     /**
-     * `native` (default): the browser's own arrow. `custom` (2.391.1): the
-     * default field with `appearance-none` and the library's chevron drawn over
-     * its right edge, so the field looks the same in every browser and theme
-     * (the call-settings selects). The select is then wrapped in a relative
-     * `<span>` that takes `wrapperClassName`.
+     * @deprecated since 2.445.0 — the field always draws the library chevron.
+     * Accepted and ignored so existing call sites compile.
      */
     chevron?: 'native' | 'custom';
+    /**
+     * Custom content for the closed field (the trigger), e.g. "Priority: [chip]".
+     * Receives the selected option (undefined when none). The open list still
+     * draws the options themselves. Default: the selected option's icon + label.
+     */
+    renderValue?: (selected: SelectOption | undefined) => ReactNode;
+    /** Render the library `Combobox`: a typed filter over the same options. */
+    searchable?: boolean;
+    /** Placeholder for the `searchable` filter. Default "Search". */
+    searchPlaceholder?: string;
+    /**
+     * Render the platform `<select>` instead, with the reason it is needed.
+     * Marked `data-ui-native-select` / `data-ui-native-reason`.
+     */
+    native?: SelectNative;
     'data-testid'?: string;
 }
 
@@ -5180,20 +5267,10 @@ export declare type SelectSize = 'sm' | 'md';
 
 /**
  * `default` is the boxed field. `pill` is the compact, tone-coloured capsule
- * that status and priority pickers want — a chip you can change.
- *
- * It exists because that shape kept getting hand-rolled: a task row's
- * priority/status pickers are visually chips, and the only way to get one was
- * a bare `<select>` with `appearance-none rounded-full` plus a background-image
- * data-URI arrow and a hand-written `border-*-border bg-*-bg text-*-fg` triple
- * per state. Native `<select>` semantics (keyboard, mobile pickers, form
- * submission) are worth keeping, so this is the real element restyled, not a
- * button-and-menu impostor.
- */
-/**
- * `ghost` (2.385.0) is the value side of a label/value row — no box, the
- * value right-aligned with the native chevron after it, a hover tint to say it
- * can be changed ("Model   Haiku ▾" in a run panel).
+ * that status and priority pickers want — a chip you can change. `ghost`
+ * (2.385.0) is the value side of a label/value row — no box, the value
+ * right-aligned with the chevron after it, a hover tint to say it can be
+ * changed ("Model   Haiku ▾" in a run panel).
  */
 declare type SelectVariant = 'default' | 'pill' | 'ghost';
 

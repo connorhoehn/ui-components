@@ -107,7 +107,7 @@ describe('MappingRuleEditor pattern codec', () => {
   it('rebuilds it when only the operator changes, preserving field and value', () => {
     const onChange = renderEditor([rule({ pattern: 'path:eq:/a/b' })]);
     fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
-    fireEvent.change(screen.getByDisplayValue('eq'), { target: { value: 'startsWith' } });
+    fireEvent.change(screen.getByRole('combobox', { name: 'Match operator' }), { target: { value: 'startsWith' } });
     fireEvent.click(screen.getByRole('button', { name: 'Save' }));
     expect(onChange.mock.calls[0][0][0].pattern).toBe('path:startsWith:/a/b');
   });

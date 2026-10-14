@@ -4,15 +4,14 @@ import { a as n, c as r, i, l as a, n as o, o as s, r as c, s as l, t as u, u as
 import { i as f } from "./useDocumentTypes-DCKwxXn8.js";
 import { t as p } from "./cn-D4QmbyEy.js";
 import { n as m } from "./Button-uREUOWUk.js";
-import { t as h } from "./overlayStack-D0Hf2ZrU.js";
-import { t as g } from "./Chip-DJyxHDn3.js";
+import { n as h, t as g } from "./overlayStack-C0EBgmzL.js";
 import { t as _ } from "./Input-_B49FdRY.js";
-import { t as v } from "./Select-DcKBWGgP.js";
+import { t as v } from "./Select-BKKYeBOc.js";
 import { t as y } from "./EmptyState-iFs0woF1.js";
-import { n as b, r as x, t as S } from "./focusTrap-Cj-AL49l.js";
+import { n as b, r as x, t as S } from "./focusTrap-sOPgEKsE.js";
 import { t as C } from "./SkeletonCard-D3FL0TB7.js";
 import { t as w } from "./activationKey-CjbL3LUv.js";
-import { n as T, t as E } from "./ChangeReviewCard-DTO1bZKL.js";
+import { n as T, t as E } from "./ChangeReviewCard-BHnoLbWz.js";
 import { useCallback as D, useEffect as O, useId as k, useMemo as A, useRef as j, useState as M } from "react";
 import { Fragment as N, jsx as P, jsxs as F } from "react/jsx-runtime";
 import { useNavigate as I, useParams as L } from "react-router";
@@ -35,10 +34,10 @@ function ne({ idToken: r, baseUrl: i } = {}) {
 	let { sources: c, loading: u, error: d, refresh: f } = n({
 		idToken: s,
 		baseUrl: i
-	}), { items: m, loading: h, error: _, refresh: v } = l({
+	}), { items: m, loading: g, error: _, refresh: v } = l({
 		idToken: s,
 		baseUrl: i
-	}), b = u || h, x = d || _, S = A(() => {
+	}), b = u || g, x = d || _, S = A(() => {
 		let e = c.filter((e) => e.status === "active").length, t = c.filter((e) => e.status === "paused").length, n = c.filter((e) => e.status === "error").length, r = m.filter((e) => e.status !== "done" && e.status !== "failed").length, i = m.filter((e) => e.status === "done" && H(e.updatedAt)).length, a = m.filter((e) => e.status === "failed").length;
 		return {
 			total: c.length,
@@ -239,7 +238,7 @@ function ne({ idToken: r, baseUrl: i } = {}) {
 							title: e.sourcePath,
 							children: e.sourcePath
 						}),
-						/* @__PURE__ */ P(g, {
+						/* @__PURE__ */ P(h, {
 							tone: "success",
 							size: "xs",
 							children: "done"
@@ -413,7 +412,7 @@ function J() {
 							}),
 							/* @__PURE__ */ P("td", {
 								className: "p-2",
-								children: /* @__PURE__ */ P(g, {
+								children: /* @__PURE__ */ P(h, {
 									tone: q(t.type),
 									size: "xs",
 									children: K(t.type)
@@ -421,7 +420,7 @@ function J() {
 							}),
 							/* @__PURE__ */ P("td", {
 								className: "p-2",
-								children: /* @__PURE__ */ P(g, {
+								children: /* @__PURE__ */ P(h, {
 									tone: G(t.status),
 									size: "sm",
 									children: t.status
@@ -1079,7 +1078,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 	}), { types: d } = f({
 		idToken: s,
 		baseUrl: r
-	}), [m, h] = M(null), [y, b] = M(!0), [x, S] = M(null), [w, T] = M(!1), E = k(), [A, j] = M(!1), [R, z] = M(!1), [B, ee] = M({}), [V, te] = M([]), [H, U] = M(""), [W, ne] = M(""), [G, K] = M({}), [q, re] = M(!1), J = D(() => {
+	}), [m, g] = M(null), [y, b] = M(!0), [x, S] = M(null), [w, T] = M(!1), E = k(), [A, j] = M(!1), [R, z] = M(!1), [B, ee] = M({}), [V, te] = M([]), [H, U] = M(""), [W, ne] = M(""), [G, K] = M({}), [q, re] = M(!1), J = D(() => {
 		let e = { "Content-Type": "application/json" };
 		return s && (e.Authorization = `Bearer ${s}`), e;
 	}, [s]), Y = D(async (e) => {
@@ -1097,7 +1096,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 					...n,
 					mappingRules: me(n.mappingRules ?? [])
 				};
-				h(r);
+				g(r);
 			} catch (t) {
 				if (e?.aborted) return;
 				S(t instanceof Error ? t.message : String(t));
@@ -1135,7 +1134,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 				});
 				if (!t.ok) throw Error(`HTTP ${t.status}`);
 				let n = await t.json();
-				h(n), T(!1);
+				g(n), T(!1);
 			} catch (e) {
 				S(e instanceof Error ? e.message : String(e));
 			} finally {
@@ -1192,7 +1191,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 			});
 			if (!t.ok) throw Error(`HTTP ${t.status}`);
 			let n = await t.json();
-			h(n);
+			g(n);
 		} catch (e) {
 			S(e instanceof Error ? e.message : String(e));
 		}
@@ -1263,12 +1262,12 @@ function he({ idToken: n, baseUrl: r } = {}) {
 							className: "m-0 text-[22px] font-bold text-text-primary",
 							children: m.name
 						}),
-						/* @__PURE__ */ P(g, {
+						/* @__PURE__ */ P(h, {
 							tone: de(m.type),
 							size: "sm",
 							children: ue(m.type)
 						}),
-						/* @__PURE__ */ P(g, {
+						/* @__PURE__ */ P(h, {
 							tone: le(m.status),
 							size: "sm",
 							children: m.status
@@ -1620,7 +1619,7 @@ function he({ idToken: n, baseUrl: r } = {}) {
 							children: "Status"
 						}), /* @__PURE__ */ F("span", {
 							className: "flex items-center gap-2.5",
-							children: [/* @__PURE__ */ P(g, {
+							children: [/* @__PURE__ */ P(h, {
 								tone: le(m.status),
 								size: "sm",
 								children: m.status
@@ -1682,7 +1681,7 @@ function $(e) {
 	return t < 6e4 ? "just now" : t < 36e5 ? `${Math.floor(t / 6e4)}m ago` : t < 864e5 ? `${Math.floor(t / 36e5)}h ago` : `${Math.floor(t / 864e5)}d ago`;
 }
 function be({ item: n, sourceName: r, onClose: i, onRetry: a, onSkip: o, idToken: c, baseUrl: l }) {
-	let u = t(), d = c === void 0 ? u?.idToken ?? null : c, f = l ?? e(), [m, _] = M(null), [v, y] = M(null), { events: C } = s(), w = j(null), T = j(null), E = h(n !== null);
+	let u = t(), d = c === void 0 ? u?.idToken ?? null : c, f = l ?? e(), [m, _] = M(null), [v, y] = M(null), { events: C } = s(), w = j(null), T = j(null), E = g(n !== null);
 	O(() => {
 		if (!n) return;
 		let e = (e) => {
@@ -1785,7 +1784,7 @@ function be({ item: n, sourceName: r, onClose: i, onRetry: a, onSkip: o, idToken
 								/* @__PURE__ */ F("div", {
 									className: "flex gap-2 items-center mt-1",
 									children: [
-										/* @__PURE__ */ P(g, {
+										/* @__PURE__ */ P(h, {
 											tone: ge(n.status),
 											size: "sm",
 											children: n.status
@@ -1872,7 +1871,7 @@ function be({ item: n, sourceName: r, onClose: i, onRetry: a, onSkip: o, idToken
 								children: "Mapping decision"
 							}), n.mappingMethod ? /* @__PURE__ */ F(N, { children: [/* @__PURE__ */ F("div", {
 								className: "flex items-center gap-2",
-								children: [/* @__PURE__ */ P(g, {
+								children: [/* @__PURE__ */ P(h, {
 									tone: _e(n.mappingMethod),
 									size: "sm",
 									children: n.mappingMethod
@@ -2040,7 +2039,7 @@ function we(e, t = 50) {
 	return e.length <= t ? e : "..." + e.slice(e.length - t + 3);
 }
 function Te() {
-	let [e, t] = M(null), [r, i] = M(null), [a, o] = M(null), { sources: s } = n(), { items: c, loading: u, error: d, refresh: f, retryItem: p, skipItem: m, actionError: h, clearActionError: _ } = l({
+	let [e, t] = M(null), [r, i] = M(null), [a, o] = M(null), { sources: s } = n(), { items: c, loading: u, error: d, refresh: f, retryItem: p, skipItem: m, actionError: g, clearActionError: _ } = l({
 		sourceId: e,
 		status: r
 	}), b = a ? c.find((e) => e.itemId === a.itemId) ?? a : null, x = A(() => {
@@ -2132,13 +2131,13 @@ function Te() {
 					children: "Retry"
 				})]
 			}),
-			h && /* @__PURE__ */ F("div", {
+			g && /* @__PURE__ */ F("div", {
 				"data-testid": "ingest-items-action-error",
 				role: "alert",
 				className: "px-4 py-3 bg-danger-bg border border-danger-border text-danger-fg rounded-lg flex items-center justify-between gap-3 mb-4",
 				children: [/* @__PURE__ */ F("span", {
 					className: "text-[13px] font-medium",
-					children: ["Could not update that item: ", h]
+					children: ["Could not update that item: ", g]
 				}), /* @__PURE__ */ P("button", {
 					onClick: _,
 					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger-border rounded-md cursor-pointer font-[inherit]",
@@ -2205,7 +2204,7 @@ function Te() {
 							}),
 							/* @__PURE__ */ P("td", {
 								className: "p-2",
-								children: /* @__PURE__ */ P(g, {
+								children: /* @__PURE__ */ P(h, {
 									tone: Se(e.status),
 									size: "sm",
 									children: e.status
@@ -2217,7 +2216,7 @@ function Te() {
 							}),
 							/* @__PURE__ */ P("td", {
 								className: "p-2",
-								children: e.mappingMethod ? /* @__PURE__ */ P(g, {
+								children: e.mappingMethod ? /* @__PURE__ */ P(h, {
 									tone: Ce(e.mappingMethod),
 									size: "xs",
 									children: e.mappingMethod
@@ -2535,7 +2534,7 @@ function Ne(e) {
 	return e.path && e.path.length > 0 ? e.path : e.field.split(".").slice(0, -1).map(Me);
 }
 function Pe() {
-	let { conflicts: e, loading: t, error: r, usingMock: i, refresh: a, resolveConflict: o, discardConflict: s, actionError: c, clearActionError: l } = u(), { sources: d } = n(), [f, p] = M({}), [h, v] = M({}), [b, x] = M(null), S = A(() => {
+	let { conflicts: e, loading: t, error: r, usingMock: i, refresh: a, resolveConflict: o, discardConflict: s, actionError: c, clearActionError: l } = u(), { sources: d } = n(), [f, p] = M({}), [g, v] = M({}), [b, x] = M(null), S = A(() => {
 		let e = /* @__PURE__ */ new Map();
 		for (let t of d) e.set(t.sourceId, t.name);
 		return e;
@@ -2556,7 +2555,7 @@ function Pe() {
 		try {
 			let t = {};
 			for (let n of e.fields) t[n.field] = D(e.conflictId, n.field);
-			let n = (h[e.conflictId] ?? "").trim(), r = {
+			let n = (g[e.conflictId] ?? "").trim(), r = {
 				pick: "source",
 				fieldChoices: t,
 				...n ? { note: n } : {}
@@ -2643,7 +2642,7 @@ function Pe() {
 				] }),
 				notices: /* @__PURE__ */ F("div", {
 					className: "flex flex-wrap items-center gap-1.5",
-					children: [/* @__PURE__ */ P(g, {
+					children: [/* @__PURE__ */ P(h, {
 						tone: "warning",
 						size: "xs",
 						uppercase: !0,
@@ -2666,7 +2665,7 @@ function Pe() {
 							"aria-label": "Optional note (logged in audit trail)",
 							className: "min-w-[240px] flex-1",
 							placeholder: "Optional note (logged in audit trail)",
-							value: h[e.conflictId] ?? "",
+							value: g[e.conflictId] ?? "",
 							onChange: (t) => v((n) => ({
 								...n,
 								[e.conflictId]: t.target.value
@@ -2705,7 +2704,7 @@ function Pe() {
 						}],
 						beforeLabel: "This copy",
 						afterLabel: "Incoming",
-						badges: /* @__PURE__ */ P(g, {
+						badges: /* @__PURE__ */ P(h, {
 							tone: n === "source" ? "success" : n === "merged" ? "info" : "neutral",
 							size: "xs",
 							"data-testid": `conflict-choice-${t.field}`,

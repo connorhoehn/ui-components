@@ -95,7 +95,7 @@ describe('GroupFormPage', () => {
         onCancel={() => {}}
       />,
     );
-    fireEvent.change(screen.getByDisplayValue('Select user to add...'), { target: { value: 'u2' } });
+    fireEvent.change(screen.getByRole('combobox', { name: 'Add member' }), { target: { value: 'u2' } });
     fireEvent.click(screen.getByRole('button', { name: 'Add' }));
     await waitFor(() => expect(onAddMember).toHaveBeenCalledWith('u2'));
   });

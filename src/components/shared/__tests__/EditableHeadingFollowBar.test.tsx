@@ -52,9 +52,10 @@ describe('SegmentedControl tone="accent" / Select chevron="custom"', () => {
     expect(screen.getByTestId('seg-a').className).not.toContain('bg-primary-bg');
   });
 
-  it('drops the native arrow and draws the library chevron', () => {
+  it('draws the library chevron (chevron="custom" is accepted; since 2.445.0 every Select is the library listbox)', () => {
     const { container } = render(<Select chevron="custom" options={[{ value: 'x', label: 'X' }]} value="x" onChange={() => {}} data-testid="sel" />);
-    expect(screen.getByTestId('sel').className).toContain('appearance-none');
+    expect(screen.getByTestId('sel')).toHaveAttribute('data-ui-control', 'select');
+    expect(container.querySelector('select')).toBeNull();
     expect(container.querySelector('svg')).toBeTruthy();
   });
 });

@@ -12,6 +12,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FieldBlock } from '../FieldBlock';
 import { readTypedField } from '../fieldText';
+import { chooseOption } from '../../../test-utils/selectListbox';
 
 const field = (body: string) => readTypedField(body)!;
 
@@ -137,7 +138,7 @@ describe('editing', () => {
         // changed is one you have to delete and recreate.
         const onTypeChange = vi.fn();
         render(<FieldBlock field={BAD_DATE} editable onTypeChange={onTypeChange} />);
-        await userEvent.selectOptions(screen.getByTestId('field-block-type'), 'text');
+        chooseOption(screen.getByTestId('field-block-type'), 'text');
         expect(onTypeChange).toHaveBeenCalledExactlyOnceWith('text');
     });
 

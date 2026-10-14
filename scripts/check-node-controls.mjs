@@ -98,7 +98,7 @@ const BASELINE = {
   // Terminal-styled dev inspector: every field is bg-code-bg / text-code-text /
   // border-code-border / font-mono, i.e. the code pane's palette rather than the
   // form language. Reads as a debugger, because it is one.
-  'pipelines/context-inspector/ContextEditBuffer.tsx': 6,
+  'pipelines/context-inspector/ContextEditBuffer.tsx': 5,
   // Invisible test hook (zero-size, opacity-0, pointer-events-none,
   // tabIndex={-1}) — the compare picker is driven by the row, not by this.
   // Not a user-facing control, so there is nothing for a Checkbox to render.

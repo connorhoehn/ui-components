@@ -1,3 +1,4 @@
+import { selectLabels } from '../../../test-utils/selectListbox';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -156,7 +157,7 @@ describe('RecordGraph', () => {
     const onTypeFilterChange = vi.fn();
     setup({ onTypeFilterChange, typeLabels: { knowledge: 'Guides' } });
     const select = screen.getByRole('combobox', { name: 'Connection record type' });
-    expect(screen.getByRole('option', { name: 'Guides' })).toBeInTheDocument();
+    expect(selectLabels(select)).toContain('Guides');
     fireEvent.change(select, { target: { value: 'initiative' } });
     expect(onTypeFilterChange).toHaveBeenCalledWith('initiative');
     expect(screen.getByTestId('record-graph-counts')).toHaveTextContent('1 records · 0 connections');

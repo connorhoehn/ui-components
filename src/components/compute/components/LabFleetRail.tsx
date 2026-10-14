@@ -352,7 +352,7 @@ function RovingList({ label, children, emptyState }: { label: string; children: 
   return (
     <div
       ref={ref}
-      role="listbox"
+      role="listbox" data-ui-listbox="lab-fleet"
       aria-label={label}
       onKeyDown={onKeyDown}
       className="flex-1 min-h-0 overflow-y-auto pb-2"

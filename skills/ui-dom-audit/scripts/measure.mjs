@@ -19,10 +19,11 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
     const result = parts.join(' > '); selectorCache.set(el, result); return result;
   };
   const css = name => name?.startsWith('$') ? selectors[name.slice(1)] : name;
-  const query = name => {
+  const query = (name, includeHidden = false) => {
     const s = css(name);
     if (!s) throw new Error(`Unbound selector ${name}`);
-    return [...document.querySelectorAll(s)].filter(visible);
+    const all = [...document.querySelectorAll(s)];
+    return includeHidden ? all : all.filter(visible);
   };
   const rect = el => { const b = el.getBoundingClientRect(); return Object.fromEntries(['x', 'y', 'left', 'right', 'top', 'bottom', 'width', 'height'].map(k => [k, Math.round(b[k] * 100) / 100])); };
   const add = (rule, el, property, expected, actual, category = 'violation') => issues.push({ rule: rule.id, category, owner: rule.owner ?? 'shared UI contract', selector: el ? selectorOf(el) : css(rule.selector) ?? 'document', property, expected, actual, ...(el ? { bounds: rect(el) } : {}) });
@@ -101,7 +102,9 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
   for (const name of required) if (query(name).length === 0) add({ id: 'coverage.required', selector: name }, null, 'rendered count', '>= 1', 0, 'coverage');
   for (const rule of contract.rules) {
     try {
-      let nodes = rule.selector ? query(rule.selector) : [];
+      // `includeHidden`: count elements whether or not they paint — a native
+      // <select> hidden behind a custom trigger is still a native dropdown.
+      let nodes = rule.selector ? query(rule.selector, rule.includeHidden === true) : [];
       const excluded = [];
       for (const exclusion of rule.exclude ?? []) {
         if (!exclusion.reason) throw new Error(`Exclusion on ${rule.id} needs a reason`);
@@ -154,6 +157,13 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
       else if (rule.kind === 'count') {
         samples.push({ rule: rule.id, selector: css(rule.selector), property: 'count', actual: nodes.length, expected: rule.expected });
         if (!matches(nodes.length, rule.expected, 0)) add(rule, nodes[0], 'count', rule.expected, nodes.length);
+      }
+      else if (rule.kind === 'in-viewport') for (const el of nodes) {
+        // An open popup (a listbox, a menu) must sit wholly inside the viewport.
+        const b = rect(el);
+        const box = { left: b.left, top: b.top, right: window.innerWidth - b.right, bottom: window.innerHeight - b.bottom };
+        samples.push({ rule: rule.id, selector: selectorOf(el), property: 'viewport margins', actual: box, expected: { min: 0 } });
+        for (const [edge, gap] of Object.entries(box)) if (gap < -tolerance) add(rule, el, `${edge} inside viewport`, '>= 0', Math.round(gap * 100) / 100);
       }
       else if (rule.kind === 'viewport') {
         const overflow = document.documentElement.scrollWidth - innerWidth;

@@ -140,7 +140,7 @@ export const CommandSuggestions = forwardRef<CommandSuggestionsHandle, CommandSu
           ? 'w-max min-w-[11rem] max-w-[min(20rem,calc(100vw-2rem))] rounded-lg border border-border bg-surface py-1 shadow-lg'
           : 'w-[26rem] max-w-[calc(100vw-2rem)] rounded-lg border border-border bg-surface py-1 shadow-lg'}
       >
-        <div role="listbox" aria-label={label} className="max-h-56 overflow-y-auto">
+        <div role="listbox" data-ui-listbox="command-suggestions" aria-label={label} className="max-h-56 overflow-y-auto">
           {items.map((item, i) => (
             <button
               key={item.id}

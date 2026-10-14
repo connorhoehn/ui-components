@@ -167,7 +167,7 @@ describe('DeckReader', () => {
     fireEvent.click(screen.getByTestId('fixture-reader-filmstrip-select-sources'));
     expect(screen.getByTestId('fixture-reader-position')).toHaveTextContent('Slide 3 of 3');
     expect(screen.getByTestId('fixture-footer')).toHaveAttribute('data-slide', 'sources');
-    expect(screen.getByRole('combobox', { name: 'Slide zoom' }).tagName).toBe('SELECT');
+    expect(screen.getByRole('combobox', { name: 'Slide zoom' })).toHaveAttribute('data-ui-control', 'select');
     for (const name of ['Slides', 'Outline', 'Previous slide', 'Next slide', 'Notes', 'Chat & agent', 'Present']) {
       expect(screen.getByRole('button', { name })).toBeInTheDocument();
     }

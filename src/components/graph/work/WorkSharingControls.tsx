@@ -2,6 +2,7 @@ import { useId, useState } from 'react';
 import { Button } from '../../ui/Button';
 import { Checkbox } from '../../forms/Checkbox';
 import { Input } from '../../forms/Input';
+import { Select } from '../../forms/Select';
 import { InlineAlert } from '../../shared/InlineAlert';
 import type {
   WorkGraphDisclosure,
@@ -197,17 +198,17 @@ export function WorkSharingControls({
       />
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="space-y-1 text-sm font-medium text-text-primary">
-          <span>Detail shared</span>
-          <select
+        <div className="flex flex-col gap-1 text-sm font-medium text-text-primary">
+          <label htmlFor={`${idPrefix}-disclosure`}>Detail shared</label>
+          <Select
+            id={`${idPrefix}-disclosure`}
+            size="md"
             value={value.disclosure}
             disabled={saving}
             onChange={(event) => onChange({ ...value, disclosure: event.target.value as WorkGraphDisclosure })}
-            className="h-9 w-full rounded-md border border-border-emphasis bg-surface-panel px-2.5 text-sm text-text-primary outline-none focus:border-info focus:ring-1 focus:ring-info/40 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {DISCLOSURES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-          </select>
-        </label>
+            options={DISCLOSURES.map((option) => ({ value: option.value, label: option.label }))}
+          />
+        </div>
         <label className="space-y-1 text-sm font-medium text-text-primary">
           <span>Live sharing expires</span>
           <Input

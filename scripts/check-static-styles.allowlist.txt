@@ -145,3 +145,4 @@ src/components/shared/dataAccent.tsx # sets the --data-accent custom property fo
 
 src/components/shared/ActivityTicker.tsx # floating toolbar left/bottom measured from the trigger DOM rect and viewport
 src/components/doc-editor/presentation/DeckReader.tsx  # slide frame width follows the measured viewport and the zoom step
+src/components/forms/Select.tsx

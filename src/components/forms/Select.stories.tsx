@@ -104,11 +104,23 @@ export const PillTones: Story = {
   ),
 };
 
-/** 2.391.1: `chevron="custom"` — no native arrow; the library chevron (the call-settings selects). */
-export const CustomChevron: Story = {
-  args: { options: providerOptions, value: 'anthropic', chevron: 'custom', wrapperClassName: 'w-72', onChange: () => {} },
+/** 2.445.0: the open list is the library's listbox — descriptions, groups, disabled rows, keyboard and type-ahead. */
+export const DescriptionsAndGroups: Story = {
+  args: {
+    'aria-label': 'Model', value: 'nova-pro', onChange: () => {}, className: 'w-72',
+    options: [{ value: 'nova-pro', label: 'Nova Pro', description: 'Default for every agent' }, { value: 'nova-lite', label: 'Nova Lite', description: 'Cheaper; shorter context' }],
+    groups: [{ label: 'Retired', options: [{ value: 'titan', label: 'Titan Text', description: 'No longer offered', disabled: true }] }],
+  },
 };
-export const CustomChevronDark: Story = {
-  ...CustomChevron,
+export const DescriptionsAndGroupsDark: Story = {
+  ...DescriptionsAndGroups,
   decorators: [(S) => <div data-theme="dark" className="bg-surface p-4"><S /></div>],
+};
+/** `searchable`: the same options through the library Combobox. */
+export const Searchable: Story = {
+  args: { 'aria-label': 'Provider', options: providerOptions, value: '', searchable: true, placeholder: 'Search providers', className: 'w-72', onChange: () => {} },
+};
+/** `native` — opt-in platform element with its reason, for a real need only. */
+export const NativeEscapeHatch: Story = {
+  args: { 'aria-label': 'Provider', options: providerOptions, value: 'anthropic', native: { reason: 'Mobile OS picker for a long list' }, className: 'w-72', onChange: () => {} },
 };

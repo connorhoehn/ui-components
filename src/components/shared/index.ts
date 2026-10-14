@@ -478,6 +478,10 @@ export { WorkflowStepper } from './WorkflowStepper';
 export type { WorkflowStepperProps, WorkflowStep } from './WorkflowStepper';
 export { Wizard } from './Wizard';
 export type { WizardProps, WizardStep } from './Wizard';
+// FormWizard (2.445.0): the one multi-field form frame — single page or stepped,
+// a sticky summary beside it, one actions bar.
+export { FormWizard } from './FormWizard';
+export type { FormWizardProps, FormWizardSection, FormWizardMode } from './FormWizard';
 export { MarkdownView } from './MarkdownView';
 export type { MarkdownViewProps, MarkdownViewScale } from './MarkdownView';
 export { Tooltip } from './Tooltip';

@@ -123,7 +123,7 @@ export function PickerDialog({
         )}
         <div
           ref={listRef}
-          role="listbox"
+          role="listbox" data-ui-listbox="picker"
           aria-label={title}
           tabIndex={options.length > 6 ? -1 : 0}
           className="flex max-h-[320px] flex-col overflow-y-auto rounded-md border border-border py-1"

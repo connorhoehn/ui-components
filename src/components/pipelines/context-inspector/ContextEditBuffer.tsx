@@ -6,6 +6,10 @@
 
 import { useMemo, useState } from 'react';
 import { cn } from '../../../lib/cn';
+import { Select } from '../../forms/Select';
+
+/** A boolean value's two choices, drawn by the library listbox (2.445.0; was a raw <select>). */
+const BOOLEAN_OPTIONS = [{ value: 'true', label: 'true' }, { value: 'false', label: 'false' }];
 
 // ---------------------------------------------------------------------------
 // Props
@@ -129,16 +133,16 @@ export function ContextEditBuffer({
             </span>
             <div className="min-w-0">
               {kind === 'boolean' ? (
-                <select
+                <Select
+                  size="sm"
+                  aria-label={`${key} value`}
                   data-testid={`context-edit-input-${key}`}
                   value={String(baseValue as boolean)}
                   onChange={(e) => onSetValue(key, e.target.value === 'true')}
                   onFocus={() => onBeginEditKey(key, baseValue)}
-                  className={inputClasses}
-                >
-                  <option value="true">true</option>
-                  <option value="false">false</option>
-                </select>
+                  options={BOOLEAN_OPTIONS}
+                  className="h-auto py-1 bg-code-bg text-code-text border-code-border rounded-sm font-mono"
+                />
               ) : kind === 'number' ? (
                 <input
                   data-testid={`context-edit-input-${key}`}

@@ -5,6 +5,7 @@
 import { render, screen, fireEvent, createEvent } from '@testing-library/react';
 import { describe, it, expect, beforeEach } from 'vitest';
 import FieldTypesPage from '../FieldTypesPage';
+import { readSelectOptions, chooseOption } from '../../../test-utils/selectListbox';
 
 describe('FieldTypesPage', () => {
   beforeEach(() => window.localStorage.clear());
@@ -21,9 +22,9 @@ describe('FieldTypesPage', () => {
     expect(next).toBeDisabled();
     fireEvent.change(screen.getByTestId('name-input'), { target: { value: 'Author bio' } });
     expect(next).toBeDisabled();
-    const select = screen.getByTestId('primitive-type-select') as HTMLSelectElement;
-    const firstEnabled = Array.from(select.options).find((o) => o.value && !o.disabled)!;
-    fireEvent.change(select, { target: { value: firstEnabled.value } });
+    const select = screen.getByTestId('primitive-type-select');
+    const firstEnabled = readSelectOptions(select).find((o) => o.value && !o.disabled)!;
+    chooseOption(select, firstEnabled.value);
     expect(next).toBeEnabled();
   });
 
@@ -31,9 +32,9 @@ describe('FieldTypesPage', () => {
     render(<FieldTypesPage />);
     fireEvent.click(screen.getByTestId('new-data-type-empty-btn'));
     fireEvent.change(screen.getByTestId('name-input'), { target: { value: 'Author bio' } });
-    const select = screen.getByTestId('primitive-type-select') as HTMLSelectElement;
-    const firstEnabled = Array.from(select.options).find((o) => o.value && !o.disabled)!;
-    fireEvent.change(select, { target: { value: firstEnabled.value } });
+    const select = screen.getByTestId('primitive-type-select');
+    const firstEnabled = readSelectOptions(select).find((o) => o.value && !o.disabled)!;
+    chooseOption(select, firstEnabled.value);
     fireEvent.click(screen.getByTestId('next-button'));
     fireEvent.click(screen.getByTestId('save-button'));
     expect(screen.getByText('Author bio')).toBeInTheDocument();
@@ -44,9 +45,9 @@ describe('FieldTypesPage', () => {
     const { unmount } = render(<FieldTypesPage />);
     fireEvent.click(screen.getByTestId('new-data-type-empty-btn'));
     fireEvent.change(screen.getByTestId('name-input'), { target: { value: 'Author bio' } });
-    const select = screen.getByTestId('primitive-type-select') as HTMLSelectElement;
-    const firstEnabled = Array.from(select.options).find((o) => o.value && !o.disabled)!;
-    fireEvent.change(select, { target: { value: firstEnabled.value } });
+    const select = screen.getByTestId('primitive-type-select');
+    const firstEnabled = readSelectOptions(select).find((o) => o.value && !o.disabled)!;
+    chooseOption(select, firstEnabled.value);
     fireEvent.click(screen.getByTestId('next-button'));
     fireEvent.click(screen.getByTestId('save-button'));
     unmount();
@@ -58,8 +59,7 @@ describe('FieldTypesPage', () => {
   it('the coming-soon primitive types are disabled options', () => {
     render(<FieldTypesPage />);
     fireEvent.click(screen.getByTestId('new-data-type-empty-btn'));
-    const select = screen.getByTestId('primitive-type-select') as HTMLSelectElement;
-    const disabled = Array.from(select.options).filter((o) => o.disabled);
+    const disabled = readSelectOptions(screen.getByTestId('primitive-type-select')).filter((o) => o.disabled);
     expect(disabled.length).toBeGreaterThan(0);
   });
 });
@@ -67,9 +67,9 @@ describe('FieldTypesPage', () => {
 function createType(name = 'Author bio') {
   fireEvent.click(screen.getByTestId('new-data-type-empty-btn'));
   fireEvent.change(screen.getByTestId('name-input'), { target: { value: name } });
-  const select = screen.getByTestId('primitive-type-select') as HTMLSelectElement;
-  const firstEnabled = Array.from(select.options).find((o) => o.value && !o.disabled)!;
-  fireEvent.change(select, { target: { value: firstEnabled.value } });
+  const select = screen.getByTestId('primitive-type-select');
+  const firstEnabled = readSelectOptions(select).find((o) => o.value && !o.disabled)!;
+  chooseOption(select, firstEnabled.value);
   fireEvent.click(screen.getByTestId('next-button'));
   fireEvent.click(screen.getByTestId('save-button'));
 }

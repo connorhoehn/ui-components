@@ -179,7 +179,7 @@ export default function QuickInsertPopover({
       <div
         id={LISTBOX_ID}
         className="max-h-[260px] overflow-y-auto py-1"
-        role="listbox"
+        role="listbox" data-ui-listbox="quick-insert"
         aria-label="Node types"
       >
         {filtered.length === 0 ? (

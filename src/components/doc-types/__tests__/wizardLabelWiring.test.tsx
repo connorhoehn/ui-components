@@ -12,6 +12,7 @@ import { describe, it, expect, vi } from 'vitest';
 
 import { DocumentTypeWizard } from '../DocumentTypeWizard';
 import FieldTypesPage from '../../field-types/FieldTypesPage';
+import { readSelectOptions } from '../../../test-utils/selectListbox';
 
 describe('DocumentTypeWizard step 1', () => {
   it('associates the Name and Description captions with their controls', () => {
@@ -57,8 +58,8 @@ describe('FieldTypesPage step 1', () => {
     // is only reachable in this order: pick a type, THEN advance with the
     // name still blank. Selecting the first real option rather than a
     // hardcoded id keeps this from breaking when the catalog changes.
-    const typeSelect = screen.getByTestId('primitive-type-select') as HTMLSelectElement;
-    const firstEnabled = Array.from(typeSelect.options).find((o) => o.value && !o.disabled);
+    const typeSelect = screen.getByTestId('primitive-type-select');
+    const firstEnabled = readSelectOptions(typeSelect).find((o) => o.value && !o.disabled);
     expect(firstEnabled, 'no selectable field type in the catalog').toBeDefined();
     fireEvent.change(typeSelect, { target: { value: firstEnabled!.value } });
 

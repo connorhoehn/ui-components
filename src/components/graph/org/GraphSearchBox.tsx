@@ -89,7 +89,7 @@ export function GraphSearchBox({
       {expanded && (
         <Stack
           gap="none"
-          role="listbox"
+          role="listbox" data-ui-listbox="graph-search"
           id={listId}
           aria-label="Matches"
           className="absolute left-0 top-[calc(100%+6px)] z-[120] max-h-[340px] w-[290px] overflow-y-auto rounded-lg border border-border bg-surface py-1 shadow-md"

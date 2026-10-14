@@ -21,6 +21,7 @@ import { ReplaceStep } from '@tiptap/pm/transform';
 import { ActionItemsMacro, type ActionItemsMacroOptions } from '../ActionItemsMacro';
 import { readActionItems, type ActionItemMirrorRow } from '../actionItemsText';
 import { refreshMacroViews } from '../registry';
+import { readSelectOptions } from '../../../test-utils/selectListbox';
 
 const LocalMacro = Node.create({
     name: 'macro',
@@ -208,10 +209,10 @@ describe('the assignee picker', () => {
         await run(() => {
             expect(refreshMacroViews(e.view)).toBe(true);
         });
-        const select = testId(e, 'action-items-item-0-assign') as HTMLSelectElement;
+        const select = testId(e, 'action-items-item-0-assign') as HTMLElement;
         expect(select).not.toBeNull();
         // unassigned + two people.
-        expect(select.options.length).toBe(3);
+        expect(readSelectOptions(select).length).toBe(3);
     });
 
     it('assigns in single ReplaceSteps — one per key, never a payload rewrite', async () => {

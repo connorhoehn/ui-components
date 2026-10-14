@@ -1,9 +1,19 @@
 // Combobox — searchable select over a still-focused input (ARIA 1.2 combobox
 // with a listbox popup). The input keeps focus for its whole open lifetime:
 // ArrowDown/ArrowUp move `aria-activedescendant`, Enter picks, Escape closes
-// without clearing, Tab is never intercepted, and the panel opens on typing or
-// ArrowDown — never on bare focus. Single or multi-select; `allowCustom` lets
-// Enter commit free text that matches no option (suggestions over free text).
+// without clearing, Tab is never intercepted, and the panel opens on typing,
+// ArrowDown, a pointer click on the field or its chevron — never on bare
+// (keyboard Tab) focus. Single or multi-select; `allowCustom` lets Enter commit
+// free text that matches no option (suggestions over free text).
+//
+// 2.445.0 (the form wizard's picker): options carry an optional `meta` tag
+// (a workspace, a team) drawn right-aligned beside the title, the default
+// filter matches title, description and meta, the description line is 12/400
+// (it was 11px, off the app scale), single mode marks the chosen option, and
+// the field takes FormField's wiring (`id`, `aria-describedby`,
+// `aria-invalid`, `aria-required`) plus `invalid` for the danger border. The
+// root carries `data-ui-control="combobox"` so the DOM audit knows the
+// control is the library's.
 
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
@@ -14,6 +24,8 @@ export interface ComboboxOption {
   value: string;
   label: string;
   description?: string;
+  /** A short right-aligned tag on the option's title line (a workspace, a team). */
+  meta?: string;
   disabled?: boolean;
 }
 
@@ -34,6 +46,15 @@ interface BaseProps {
   onQueryChange?: (query: string) => void;
   className?: string;
   'data-testid'?: string;
+  /** The input's id — FormField's `id`, so its `<label htmlFor>` names the field. */
+  id?: string;
+  'aria-describedby'?: string;
+  'aria-invalid'?: boolean;
+  'aria-required'?: boolean;
+  /** Danger border (FormField's error state). `aria-invalid` alone also sets it. */
+  invalid?: boolean;
+  /** Draw the chevron that opens the full list on click. Default true in single mode. */
+  showToggle?: boolean;
 }
 export interface SingleComboboxProps extends BaseProps {
   multiple?: false;
@@ -48,15 +69,26 @@ export interface MultiComboboxProps extends BaseProps {
 export type ComboboxProps = SingleComboboxProps | MultiComboboxProps;
 
 const SIZE: Record<'sm' | 'md', string> = {
-  sm: 'min-h-7 text-[12px]',
-  md: 'min-h-9 text-[14px]',
+  sm: 'min-h-7 text-xs',
+  md: 'min-h-9 text-sm',
 };
+const OPTION_TITLE: Record<'sm' | 'md', string> = {
+  sm: 'text-xs',
+  md: 'text-sm',
+};
+
+const defaultFilter = (o: ComboboxOption, q: string) =>
+  [o.label, o.description, o.meta].some((s) => (s ?? '').toLowerCase().includes(q));
 
 export function Combobox(props: ComboboxProps) {
   const {
     options, placeholder, size = 'sm', disabled, allowCustom, maxOptions = 8, emptyMessage = 'No matches',
-    filter, onQueryChange, className, 'data-testid': testId,
+    filter, onQueryChange, className, 'data-testid': testId, id, invalid,
+    'aria-describedby': describedBy, 'aria-invalid': ariaInvalid, 'aria-required': ariaRequired,
   } = props;
+  const showToggle = props.showToggle ?? !props.multiple;
+  const isInvalid = invalid || ariaInvalid === true;
+  const inputRef = useRef<HTMLInputElement>(null);
   const uid = useId();
   const listId = `${uid}-list`;
   const rootRef = useRef<HTMLDivElement>(null);
@@ -69,11 +101,17 @@ export function Combobox(props: ComboboxProps) {
 
   const matches = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const test = filter ?? ((o: ComboboxOption, s: string) => o.label.toLowerCase().includes(s));
+    const test = filter ?? defaultFilter;
     return options.filter((o) => !q || test(o, q)).slice(0, maxOptions);
   }, [options, query, filter, maxOptions]);
 
   const showPanel = open && (matches.length > 0 || query.trim().length > 0);
+  const openAll = () => {
+    if (disabled) return;
+    const at = selected[0] ? matches.findIndex((o) => o.value === selected[0]) : -1;
+    setOpen(true);
+    setActive(at >= 0 ? at : matches.length ? 0 : -1);
+  };
 
   const setQ = (q: string) => { setQuery(q); onQueryChange?.(q); };
   const close = () => { setOpen(false); setActive(-1); };
@@ -129,10 +167,11 @@ export function Combobox(props: ComboboxProps) {
   const shown = props.multiple || query || open ? query : selected[0] ? labelOf(selected[0]) : '';
 
   return (
-    <div ref={rootRef} className={cn('relative min-w-0', className)} data-testid={testId}>
+    <div ref={rootRef} className={cn('relative min-w-0', className)} data-testid={testId} data-ui-control="combobox">
       <div
         className={cn(
-          'flex flex-wrap items-center gap-1 rounded-md border border-border-field bg-surface px-2 py-0.5 focus-within:border-primary',
+          'flex flex-wrap items-center gap-1 rounded-md border bg-surface px-2 py-0.5',
+          isInvalid ? 'border-danger focus-within:border-danger' : 'border-border-field focus-within:border-primary',
           SIZE[size], disabled && 'opacity-60',
         )}
       >
@@ -142,29 +181,49 @@ export function Combobox(props: ComboboxProps) {
           </Chip>
         ))}
         <input
+          ref={inputRef}
+          id={id}
           role="combobox"
           aria-label={props['aria-label']}
+          aria-describedby={describedBy}
+          aria-invalid={isInvalid || undefined}
+          aria-required={ariaRequired}
           aria-expanded={showPanel}
           aria-controls={listId}
           aria-autocomplete="list"
           aria-activedescendant={showPanel && active >= 0 ? `${uid}-opt-${active}` : undefined}
           disabled={disabled}
           value={shown}
-          placeholder={props.multiple && props.value.length ? undefined : placeholder}
+          placeholder={props.multiple && props.value.length ? undefined : (!props.multiple && open && selected[0] ? labelOf(selected[0]) : placeholder)}
           onChange={(e) => { setQ(e.target.value); setOpen(true); setActive(-1); }}
           onKeyDown={onKeyDown}
+          onClick={() => { if (!open) openAll(); }}
           className="min-w-[4rem] flex-1 border-0 bg-transparent py-0.5 text-text-primary outline-none placeholder:text-text-tertiary"
         />
+        {showToggle && (
+          <button
+            type="button"
+            tabIndex={-1}
+            aria-label={open ? 'Close options' : 'Show options'}
+            disabled={disabled}
+            onMouseDown={(e) => { e.preventDefault(); if (open) close(); else { inputRef.current?.focus(); openAll(); } }}
+            className="flex shrink-0 items-center justify-center rounded p-0.5 text-text-secondary hover:bg-surface-hover disabled:cursor-not-allowed"
+          >
+            <svg aria-hidden="true" focusable="false" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d={open ? 'M4 10l4-4 4 4' : 'M4 6l4 4 4-4'} />
+            </svg>
+          </button>
+        )}
       </div>
       {showPanel && (
         <ul
           id={listId}
-          role="listbox"
+          role="listbox" data-ui-listbox="combobox"
           aria-multiselectable={props.multiple || undefined}
           className="absolute inset-x-0 top-full z-50 m-0 mt-1 max-h-64 list-none overflow-y-auto rounded-lg border border-border bg-surface p-1 shadow-lg"
         >
           {matches.length === 0 ? (
-            <li role="presentation" className="px-2 py-1.5 text-[12px] text-text-tertiary">{allowCustom ? `Press Enter to use "${query.trim()}"` : emptyMessage}</li>
+            <li role="presentation" className="px-2 py-1.5 text-xs text-text-tertiary">{allowCustom ? `Press Enter to use "${query.trim()}"` : emptyMessage}</li>
           ) : matches.map((o, i) => {
             const isSel = selected.includes(o.value);
             return (
@@ -178,13 +237,17 @@ export function Combobox(props: ComboboxProps) {
                 onMouseDown={(e) => { e.preventDefault(); if (!o.disabled) commit(o.value); }}
                 onMouseEnter={() => setActive(i)}
                 className={cn(
-                  'flex cursor-pointer select-none flex-col rounded px-2 py-1 text-[12px]',
+                  'flex cursor-pointer select-none flex-col gap-0.5 rounded px-2 py-1.5',
+                  OPTION_TITLE[size],
                   i === active ? 'bg-primary-bg text-primary-fg' : isSel ? 'font-semibold text-text-primary' : 'text-text-primary',
                   o.disabled && 'cursor-not-allowed opacity-50',
                 )}
               >
-                <span>{isSel && props.multiple ? '✓ ' : ''}{o.label}</span>
-                {o.description && <span className="text-[11px] text-text-tertiary">{o.description}</span>}
+                <span className="flex min-w-0 items-baseline gap-2">
+                  <span className="min-w-0 flex-1 truncate">{isSel ? '✓ ' : ''}{o.label}</span>
+                  {o.meta && <span className="shrink-0 text-xs font-normal text-text-secondary">{o.meta}</span>}
+                </span>
+                {o.description && <span className="text-xs font-normal leading-4 text-text-tertiary">{o.description}</span>}
               </li>
             );
           })}

@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DeviceSettingsPanel } from '../DeviceSettingsPanel';
+import { selectLabels } from '../../../test-utils/selectListbox';
 
 const devices = [
   { deviceId: 'mic-1', kind: 'audioinput', label: 'Headset Microphone' },
@@ -23,8 +24,8 @@ describe('DeviceSettingsPanel', () => {
     const onChange = vi.fn();
     render(<DeviceSettingsPanel value={{}} onChange={onChange} />);
     await waitFor(() => expect(screen.getByTestId('device-settings-microphone')).toBeTruthy());
-    const mic = screen.getByTestId('device-settings-microphone') as HTMLSelectElement;
-    await waitFor(() => expect([...mic.options].map((o) => o.textContent)).toEqual(['System default', 'Headset Microphone', 'Microphone 2']));
+    const mic = screen.getByTestId('device-settings-microphone');
+    await waitFor(() => expect(selectLabels(mic)).toEqual(['System default', 'Headset Microphone', 'Microphone 2']));
     expect(screen.getByTestId('device-settings-labels-hidden')).toBeTruthy();
     fireEvent.change(mic, { target: { value: 'mic-1' } });
     expect(onChange).toHaveBeenCalledWith({ microphoneId: 'mic-1' });
@@ -33,8 +34,8 @@ describe('DeviceSettingsPanel', () => {
 
   it('keeps a remembered device that is not connected as its own option', async () => {
     render(<DeviceSettingsPanel value={{ microphoneId: 'mic-gone' }} onChange={() => {}} showCamera={false} />);
-    const mic = await screen.findByTestId('device-settings-microphone') as HTMLSelectElement;
-    await waitFor(() => expect([...mic.options].some((o) => o.textContent === 'Remembered device (not connected)')).toBe(true));
+    const mic = await screen.findByTestId('device-settings-microphone');
+    await waitFor(() => expect(selectLabels(mic)).toContain('Remembered device (not connected)'));
     expect(screen.queryByTestId('device-settings-camera')).toBeNull();
   });
 

@@ -14,6 +14,7 @@ const useFriendsMock = vi.fn<() => UseFriendsReturn>();
 vi.mock('../../../hooks/useFriends', () => ({ useFriends: () => useFriendsMock() }));
 
 import { RoomList } from '../RoomList';
+import { selectLabels } from '../../../test-utils/selectListbox';
 
 function makeFriends(over: Partial<UseFriendsReturn> = {}): UseFriendsReturn {
   return {
@@ -79,7 +80,7 @@ describe('RoomList DM picker — follow-graph failure', () => {
     renderList();
     openDmPicker();
 
-    expect(screen.getByRole('option', { name: 'Grace' })).toBeInTheDocument();
+    expect(selectLabels(document.querySelector('form [data-ui-control="select"]') as HTMLElement)).toContain('Grace');
     // The list is usable, so don't shout an error over it.
     expect(screen.queryByTestId('dm-friends-error')).toBeNull();
   });

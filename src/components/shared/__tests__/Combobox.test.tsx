@@ -73,3 +73,50 @@ describe('Combobox', () => {
     expect(screen.getByText('No matches')).toBeInTheDocument();
   });
 });
+
+describe('Combobox — picker options (2.445.0)', () => {
+  const ITEMS = [
+    { value: 'sme', label: 'SME in Work', meta: 'Work', description: 'Dispatch agent runs on granted initiatives' },
+    { value: 'lead', label: 'Lead assessor', meta: 'Assessment', description: 'Signs off scorecards' },
+  ];
+  function Picker({ invalid }: { invalid?: boolean }) {
+    const [v, setV] = useState('');
+    return <Combobox options={ITEMS} value={v} onChange={setV} id="item" aria-describedby="item-hint" aria-invalid={invalid} aria-label="Item" />;
+  }
+
+  it('a click on the field opens the full list; the chevron toggles it', () => {
+    render(<Picker />);
+    const input = screen.getByRole('combobox');
+    fireEvent.click(input);
+    expect(screen.getAllByRole('option')).toHaveLength(2);
+    fireEvent.mouseDown(screen.getByRole('button', { name: 'Close options' }));
+    expect(screen.queryByRole('listbox')).toBeNull();
+    fireEvent.mouseDown(screen.getByRole('button', { name: 'Show options' }));
+    expect(screen.getAllByRole('option')).toHaveLength(2);
+  });
+
+  it('draws meta and a 12px description, and filters on description and meta', () => {
+    render(<Picker />);
+    const input = screen.getByRole('combobox');
+    fireEvent.change(input, { target: { value: 'scorecard' } });
+    expect(screen.getAllByRole('option')).toHaveLength(1);
+    expect(screen.getByText('Signs off scorecards').className).toContain('text-xs');
+    fireEvent.change(input, { target: { value: 'work' } });
+    expect(screen.getAllByRole('option')).toHaveLength(1);
+    expect(screen.getByText('Work').className).toContain('text-xs');
+  });
+
+  it('takes FormField wiring and marks the chosen option', () => {
+    const { container } = render(<Picker invalid />);
+    const input = screen.getByRole('combobox');
+    expect(input).toHaveAttribute('id', 'item');
+    expect(input).toHaveAttribute('aria-describedby', 'item-hint');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(container.querySelector('[data-ui-control="combobox"]')).not.toBeNull();
+    fireEvent.click(input);
+    fireEvent.mouseDown(screen.getAllByRole('option')[1]);
+    fireEvent.click(input);
+    expect(screen.getAllByRole('option')[1]).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getAllByRole('option')[1].textContent).toContain('✓');
+  });
+});

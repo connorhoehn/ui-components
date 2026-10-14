@@ -17,6 +17,7 @@ import { SlideStage } from '../presentation/SlideStage';
 import { SpeakerNotes } from '../presentation/SpeakerNotes';
 import type { DeckSpec } from '../presentation/deckSpec';
 import { MAX_NOTES_CHARS } from '../presentation/deckSpec';
+import { selectLabels, selectValue } from '../../../test-utils/selectListbox';
 
 const SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="9"></svg>';
 
@@ -325,9 +326,9 @@ describe('revision controls', () => {
     const onSelectRevision = vi.fn();
     const revisions = Array.from({ length: 8 }, (_, i) => ({ id: `rev-${i + 1}`, label: `v${i + 1}` }));
     render(<Harness revisions={revisions} activeRevisionId="rev-8" onSelectRevision={onSelectRevision} />);
-    const select = screen.getByTestId('presentation-editor-revision-select') as HTMLSelectElement;
-    expect(select.value).toBe('rev-8');
-    expect(select.options[0]!.textContent).toBe('v8 · latest');
+    const select = screen.getByTestId('presentation-editor-revision-select');
+    expect(selectValue(select)).toBe('rev-8');
+    expect(selectLabels(select)[0]).toBe('v8 · latest');
     fireEvent.change(select, { target: { value: 'rev-3' } });
     expect(onSelectRevision).toHaveBeenCalledWith('rev-3');
   });

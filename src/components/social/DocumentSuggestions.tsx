@@ -98,7 +98,7 @@ export const DocumentSuggestions = forwardRef<DocumentSuggestionsHandle, Documen
       return (
         <div
           data-testid="document-suggestions"
-          role="listbox"
+          role="listbox" data-ui-listbox="document-suggestions"
           aria-label="Documents"
           className="max-h-56 w-64 overflow-y-auto rounded-lg border border-border bg-surface py-1 shadow-lg"
         >
@@ -161,7 +161,7 @@ export const DocumentSuggestions = forwardRef<DocumentSuggestionsHandle, Documen
             </button>
           )}
         </div>
-        <div role="listbox" aria-label={title} className="mt-2 max-h-72 overflow-y-auto px-2 pb-1">
+        <div role="listbox" data-ui-listbox="document-suggestions" aria-label={title} className="mt-2 max-h-72 overflow-y-auto px-2 pb-1">
           {items.length === 0 && (
             <div className="px-2 py-3 text-sm text-text-secondary" data-testid="document-suggestions-empty">{panel.emptyLabel ?? 'Nothing matches'}</div>
           )}

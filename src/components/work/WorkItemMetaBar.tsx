@@ -90,40 +90,36 @@ export interface WorkItemMetaBarProps {
 }
 
 // ---------------------------------------------------------------------------
-// BoxedSelect — a bordered box that shows a value however it likes (a dot, a
-// toned chip) with a native <select> laid over it, transparent, so keyboard,
-// mobile pickers and the accessibility tree are the real element's.
+// BoxedSelect — the library Select (a custom listbox since 2.445.0; until then
+// a transparent native <select> laid over a toned box, whose open list was the
+// platform's menu). The closed field keeps its own display (`renderValue`: the
+// status dot and label; "Priority:" and the toned chip); the open list draws
+// the options, status with each option's dot as its icon.
 // ---------------------------------------------------------------------------
 
 function BoxedSelect({
-  children, value, options, placeholder, disabled, onChange, 'aria-label': ariaLabel, 'aria-labelledby': labelledBy, 'data-testid': testId,
+  value, options, placeholder, disabled, onChange, display, withDots = false, 'aria-label': ariaLabel, 'aria-labelledby': labelledBy, 'data-testid': testId,
 }: {
-  children: ReactNode; value: string; options: WorkMetaOption[]; placeholder: string; disabled?: boolean;
+  value: string; options: WorkMetaOption[]; placeholder: string; disabled?: boolean; display?: ReactNode; withDots?: boolean;
   onChange: (v: string) => void; 'aria-label'?: string; 'aria-labelledby'?: string; 'data-testid'?: string;
 }) {
   return (
-    <span
-      className={cn(
-        'relative inline-flex h-9 min-w-0 items-center gap-2 rounded-lg border border-border-emphasis bg-surface pl-3 pr-2.5 text-sm text-text-primary transition-colors',
-        'hover:bg-surface-hover focus-within:border-info focus-within:ring-1 focus-within:ring-info/40',
-        disabled && 'opacity-60',
-      )}
+    <Select
+      size="md"
+      className="w-auto"
+      renderValue={display === undefined ? undefined : () => display}
+      value={value}
+      placeholder={placeholder}
+      disabled={disabled}
+      aria-label={ariaLabel}
+      aria-labelledby={labelledBy}
+      onChange={(e) => onChange(e.target.value)}
+      options={options.map((o) => ({
+        value: o.value, label: o.label,
+        ...(withDots ? { icon: <StatusDot color={o.tone ? toneVar(o.tone) : undefined} /> } : {}),
+      }))}
       data-testid={testId}
-    >
-      {children}
-      <ChevronIcon dir="down" size={14} aria-hidden="true" className="ml-1 shrink-0 text-text-secondary" />
-      <select
-        value={value}
-        disabled={disabled}
-        aria-label={ariaLabel}
-        aria-labelledby={labelledBy}
-        onChange={(e) => onChange(e.target.value)}
-        className="absolute inset-0 h-full w-full cursor-pointer appearance-none opacity-0 disabled:cursor-default"
-      >
-        {!value && <option value="" disabled>{placeholder}</option>}
-        {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-      </select>
-    </span>
+    />
   );
 }
 
@@ -264,10 +260,9 @@ function StatusField({ f, boxed, big = false }: { f: NonNullable<WorkItemMetaBar
           disabled={f.pending}
           onChange={(v) => f.onChange?.(v)}
           data-testid="work-meta-status"
-        >
-          {dot}
-          <span className={cn('whitespace-nowrap font-medium', !opt && 'text-text-tertiary')}>{opt?.label ?? 'No status'}</span>
-        </BoxedSelect>
+          withDots
+          display={<>{dot}<span className={cn('whitespace-nowrap font-medium', !opt && 'text-text-tertiary')}>{opt?.label ?? 'No status'}</span></>}
+        />
       </Field>
     );
   }
@@ -484,13 +479,16 @@ function PriorityField({ f, boxed, tag = false, big = false }: { f: NonNullable<
           disabled={f.pending}
           onChange={(v) => f.onChange?.(v)}
           data-testid="work-meta-priority"
-        >
-          {/* A narrow column (under 36rem, e.g. a 1280px window with both
-              side columns open) drops the word so the row stays one line;
-              the select keeps its "Priority" name. */}
-          <span className="whitespace-nowrap text-text-primary @max-xl:hidden">Priority:</span>
-          {opt ? <Chip tone={opt.tone ?? 'neutral'} size="sm">{opt.label}</Chip> : <span className="text-text-tertiary">None</span>}
-        </BoxedSelect>
+          display={(
+            <>
+              {/* A narrow column (under 36rem, e.g. a 1280px window with both
+                  side columns open) drops the word so the row stays one line;
+                  the select keeps its "Priority" name. */}
+              <span className="whitespace-nowrap text-text-primary @max-xl:hidden">Priority:</span>
+              {opt ? <Chip tone={opt.tone ?? 'neutral'} size="sm">{opt.label}</Chip> : <span className="text-text-tertiary">None</span>}
+            </>
+          )}
+        />
       </Field>
     );
   }

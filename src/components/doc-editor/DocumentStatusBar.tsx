@@ -8,6 +8,7 @@
 
 import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { Select } from '../forms/Select';
 
 /**
  * The scales worth offering. The useful ones are few and the one that matters
@@ -104,28 +105,26 @@ export function DocumentStatusBar({
       )}
       {children}
       {onZoomChange && (
-        <select
+        <Select
+          size="sm"
+          variant="ghost"
           data-testid={`${testId}-zoom`}
           aria-label="Zoom"
           title="Zoom"
+          className="ml-auto"
           value={fitActive ? ZOOM_FIT : String(zoom)}
           onChange={(ev) => {
             if (ev.target.value === ZOOM_FIT) onFitWidth?.();
             else onZoomChange(Number(ev.target.value));
           }}
-          className="ml-auto h-6 cursor-pointer rounded border border-border bg-surface px-1 text-xs text-text-secondary"
-        >
-          {/* First, above the percentages, because it is the one option a
-              reader picks by INTENT rather than by number — "make the page fill
-              the window" is the question; 183% is only ever the answer. Every
-              word processor with a page view offers it, and on a laptop it is
-              the difference between reading a document and reading two thirds
-              of one. */}
-          {onFitWidth && <option value={ZOOM_FIT}>Fit width</option>}
-          {options.map((z) => (
-            <option key={z} value={String(z)}>{`${Math.round(z * 100)}%`}</option>
-          ))}
-        </select>
+          // "Fit width" first, above the percentages, because it is the one
+          // option a reader picks by INTENT rather than by number — "make the
+          // page fill the window" is the question; 183% is only ever the answer.
+          options={[
+            ...(onFitWidth ? [{ value: ZOOM_FIT, label: 'Fit width' }] : []),
+            ...options.map((z) => ({ value: String(z), label: `${Math.round(z * 100)}%` })),
+          ]}
+        />
       )}
     </div>
   );

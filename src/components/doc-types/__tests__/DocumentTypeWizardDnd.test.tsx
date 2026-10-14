@@ -18,6 +18,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { DocumentTypeWizard } from '../DocumentTypeWizard';
+import { chooseOption, selectValues } from '../../../test-utils/selectListbox';
 
 async function gotoStep2(user: ReturnType<typeof userEvent.setup>, name: string) {
   await user.type(screen.getByTestId('name-input'), name);
@@ -67,10 +68,10 @@ describe('DocumentTypeWizard — drag-and-drop affordances', () => {
     await user.click(screen.getByTestId('add-field-tasks'));
     await user.click(screen.getByTestId('add-page'));
 
-    const sectionMove = screen.getAllByTestId(/^section-move-page-/)[0] as HTMLSelectElement;
-    const optionValues = Array.from(sectionMove.options).map((o) => o.value);
+    const sectionMove = screen.getAllByTestId(/^section-move-page-/)[0] as HTMLElement;
+    const optionValues = selectValues(sectionMove);
     expect(optionValues.length).toBeGreaterThanOrEqual(2);
-    await user.selectOptions(sectionMove, optionValues[1]);
+    chooseOption(sectionMove, optionValues[1]);
 
     await user.click(screen.getByTestId('wizard-next')); // step 2 -> 3
     await user.click(screen.getByTestId('wizard-next')); // step 3 -> save

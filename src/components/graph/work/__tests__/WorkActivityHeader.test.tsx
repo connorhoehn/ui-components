@@ -2,6 +2,7 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { WorkActivityHeader } from '../WorkActivityHeader';
 import { WORK_ACTIVITY_ALL_EFFORTS } from '../effortLayout';
+import { selectLabels } from '../../../../test-utils/selectListbox';
 
 afterEach(cleanup);
 
@@ -51,8 +52,8 @@ describe('WorkActivityHeader', () => {
 });
 
 describe('WorkActivityHeader activity cap', () => {
-  const control = () => screen.getByTestId('work-activity-header-max-efforts') as HTMLSelectElement;
-  const shown = () => control().selectedOptions[0].textContent;
+  const control = () => screen.getByTestId('work-activity-header-max-efforts');
+  const shown = () => control().textContent?.trim();
 
   it('says how much of the day it is showing when the cap is biting', () => {
     render(<WorkActivityHeader title="Connor’s activity" effortCount={9} maxEfforts={2} onMaxEffortsChange={vi.fn()} />);
@@ -69,7 +70,7 @@ describe('WorkActivityHeader activity cap', () => {
     render(<WorkActivityHeader title="Connor’s activity" effortCount={3} maxEfforts={5} onMaxEffortsChange={vi.fn()} />);
     expect(shown()).toBe('All 3 activities');
     // Nothing on the list may promise more activities than exist.
-    expect([...control().options].map((option) => option.textContent))
+    expect(selectLabels(control()))
       .toEqual(['Show 1 of 3 activities', 'Show 2 of 3 activities', 'All 3 activities']);
   });
 

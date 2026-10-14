@@ -23,7 +23,7 @@ import { EventPayloadEditor, type EventKey } from './EventPayloadEditor';
 
 // ---------------------------------------------------------------------------
 // Event catalog — kept as a string-literal tuple so `EventKey` stays in sync
-// with the runtime <select> options. If PipelineEventMap grows a new key,
+// with the runtime Select options. If PipelineEventMap grows a new key,
 // TypeScript will flag the missing entry when the tuple is re-checked against
 // `keyof PipelineEventMap` via the `_ExhaustiveCheck` assertion below.
 // ---------------------------------------------------------------------------

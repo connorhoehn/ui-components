@@ -178,7 +178,7 @@ export function AddToChatDialog({
       )}
 
       <ul
-        role="listbox"
+        role="listbox" data-ui-listbox="add-to-chat"
         aria-label="People"
         aria-multiselectable="true"
         className="m-0 max-h-44 list-none overflow-y-auto rounded-md border border-border p-0"

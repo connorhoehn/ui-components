@@ -18,6 +18,7 @@ vi.mock('../../../hooks/useIngestProgress', () => ({ useIngestProgress: () => us
 vi.mock('react-router', () => ({ useNavigate: () => navigateMock }));
 
 import SyncMonitorPage from '../SyncMonitorPage';
+import { selectValues } from '../../../test-utils/selectListbox';
 
 function ev(type: string, over: Partial<IngestProgressEvent> = {}): IngestProgressEvent {
   return { type, timestamp: '2026-01-01T10:00:00.000Z', ...over };
@@ -128,8 +129,7 @@ describe('SyncMonitorPage event log filters', () => {
       [ev('item.mapped', { sourceId: 'z-src' }), ev('item.mapped', { sourceId: 'z-src' })],
       [sync({ sourceId: 'a-src' })],
     );
-    const opts = within(screen.getByTestId('event-source-filter')).getAllByRole('option');
-    expect(opts.map((o) => (o as HTMLOptionElement).value)).toEqual(['', 'a-src', 'z-src']);
+    expect(selectValues(screen.getByTestId('event-source-filter'))).toEqual(['', 'a-src', 'z-src']);
   });
 
   it('distinguishes "nothing arrived" from "nothing matches"', () => {

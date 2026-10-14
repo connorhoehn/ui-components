@@ -25,6 +25,7 @@ import IconPicker from '../shared/IconPicker';
 import FieldTypesPage from '../field-types/FieldTypesPage';
 import { resetOverlayStack } from '../../lib/overlayStack';
 import type { IngestItem } from '../../types/ingest';
+import { readSelectOptions } from '../../test-utils/selectListbox';
 
 vi.mock('../../contexts/IdentityContext', () => ({
   useIdentityContext: () => ({ idToken: 'test-token' }),
@@ -196,8 +197,8 @@ describe('IconPicker — Escape works anywhere in the panel', () => {
 function createCustomType(name = 'Temperature') {
   fireEvent.click(screen.getByTestId('new-data-type-empty-btn'));
   fireEvent.change(screen.getByTestId('name-input'), { target: { value: name } });
-  const select = screen.getByTestId('primitive-type-select') as HTMLSelectElement;
-  const firstEnabled = Array.from(select.options).find((o) => o.value && !o.disabled)!;
+  const select = screen.getByTestId('primitive-type-select');
+  const firstEnabled = readSelectOptions(select).find((o) => o.value && !o.disabled)!;
   fireEvent.change(select, { target: { value: firstEnabled.value } });
   fireEvent.click(screen.getByTestId('next-button'));
   fireEvent.click(screen.getByTestId('save-button'));
@@ -229,8 +230,8 @@ describe('FieldTypesPage wizard — focus follows the step', () => {
     fireEvent.change(screen.getByTestId('name-input'), {
       target: { value: 'Temperature' },
     });
-    const select = screen.getByTestId('primitive-type-select') as HTMLSelectElement;
-    const firstEnabled = Array.from(select.options).find((o) => o.value && !o.disabled)!;
+    const select = screen.getByTestId('primitive-type-select');
+    const firstEnabled = readSelectOptions(select).find((o) => o.value && !o.disabled)!;
     fireEvent.change(select, { target: { value: firstEnabled.value } });
 
     fireEvent.click(screen.getByTestId('next-button'));

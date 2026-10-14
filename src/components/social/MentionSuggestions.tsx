@@ -84,7 +84,7 @@ export const MentionSuggestions = forwardRef<MentionSuggestionsHandle, MentionSu
     return (
       <div
         data-testid="mention-suggestions"
-        role="listbox"
+        role="listbox" data-ui-listbox="mention-suggestions"
         aria-label="People"
         className="max-h-56 w-64 overflow-y-auto rounded-lg border border-border bg-surface py-1 shadow-lg"
       >
