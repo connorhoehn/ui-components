@@ -2061,6 +2061,8 @@ declare interface BaseProps {
     invalid?: boolean;
     /** Draw the chevron that opens the full list on click. Default true in single mode. */
     showToggle?: boolean;
+    /** Single mode: drawn before the input while the chosen option's label is shown (not while typing). */
+    leading?: ReactNode;
 }
 
 export declare interface BBox {
@@ -5415,6 +5417,8 @@ export declare interface ComboboxOption {
     description?: string;
     /** A short right-aligned tag on the option's title line (a workspace, a team). */
     meta?: string;
+    /** A small visual drawn before the title (an avatar). Never matched by the filter. */
+    leading?: ReactNode;
     disabled?: boolean;
 }
 
@@ -15203,6 +15207,47 @@ export declare interface PersonHoverCardProps {
 
 /** One head and shoulders: "a person" (a subject mask, one member). Since 2.390.0. */
 export declare function PersonIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+export declare function PersonPicker({ people, value, onChange, placeholder, emptyMessage, maxOptions, size, loading, disabled, onQueryChange, className, ...wiring }: PersonPickerProps): JSX.Element;
+
+export declare interface PersonPickerPerson {
+    /** The value committed on choice (a user id). */
+    id: string;
+    name: string;
+    /** A second line: a title, a team, what they hold. Matched by the filter. */
+    detail?: string;
+    /** A short right-aligned tag on the name line ("You", "Manager"). Matched by the filter. */
+    tag?: string;
+    avatarUrl?: string;
+    /** Shown but not choosable (e.g. someone the rules exclude), with the reason in `detail`. */
+    disabled?: boolean;
+}
+
+export declare interface PersonPickerProps {
+    people: readonly PersonPickerPerson[];
+    /** The chosen person's id, or '' for none. */
+    value: string;
+    onChange: (id: string) => void;
+    placeholder?: string;
+    /** Shown when the query matches nobody. */
+    emptyMessage?: string;
+    /** Cap on rendered suggestions (default 50: a person list is long and searched). */
+    maxOptions?: number;
+    size?: 'sm' | 'md';
+    /** The list is still loading: the field is disabled and says so. */
+    loading?: boolean;
+    disabled?: boolean;
+    /** Called as the query changes, for hosts that search a directory server-side. */
+    onQueryChange?: (query: string) => void;
+    id?: string;
+    'aria-label'?: string;
+    'aria-describedby'?: string;
+    'aria-invalid'?: boolean;
+    'aria-required'?: boolean;
+    invalid?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
 
 /** A phone handset: a call, ringing or in progress. */
 export declare function PhoneCallIcon({ size, ...rest }: IconProps): JSX.Element;

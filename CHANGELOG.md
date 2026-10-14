@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.452.0
+
+- `PersonPicker` (`/shared`, root): choose ONE known person in a form — a beneficiary, a delegate, an assignee. The Combobox keyboard and FormField contract (`id`, `aria-describedby`, `aria-invalid`, `aria-required`, `invalid`), each option an avatar, the name, an optional right-aligned `tag` ("You") and an optional `detail` line, all three matched by the filter; the chosen person's avatar sits at the field start while idle; `loading` disables the field and says so; a `disabled` person is shown but not choosable. Unlike `UserPicker` it never commits typed text that names nobody, so a form cannot submit an id the server would refuse. Tests and a story. First consumer: the aws-agentcore access tenant (the request form's "Who" and the delegation form).
+- `Combobox`: additive `leading` on an option (drawn before its title) and on the field (drawn before the input while a single choice is shown idle). Options without `leading` render byte for byte as before.
+
 ## 2.451.2
 
 - ChatSidePanelFrame: with `size="sm"` (or the compact density) its expand, open-full-page and close buttons draw at the small control size, so the deprecated explicit `size="sm"` is again byte-for-byte what `<DensityProvider density="compact">` draws (broken since 29f5cba7 made IconButton density-aware).
