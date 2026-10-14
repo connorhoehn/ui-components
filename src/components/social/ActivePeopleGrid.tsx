@@ -57,6 +57,14 @@ export interface ActivePeopleGridProps {
   /** Opens this person's server-filtered shared work graph. */
   onSelectSharedWork?: (userId: string) => void;
   emptyLabel?: string;
+  /**
+   * `4` (default): four tiles per row, each a quarter of the width — the
+   * ~288px rail section this grid was drawn for. `fit` (since 2.442.6): fixed
+   * 72px tiles, as many per row as fit, left-aligned — for a page-width
+   * section ("Active now" on a landing), where four stretched columns would
+   * set six people 300px apart.
+   */
+  columns?: 4 | 'fit';
   className?: string;
   'data-testid'?: string;
 }
@@ -135,6 +143,7 @@ export function ActivePeopleGrid({
   onShowAll,
   onSelectSharedWork,
   emptyLabel = 'Nobody is around right now.',
+  columns = 4,
   className,
   'data-testid': testId = 'active-people-grid',
 }: ActivePeopleGridProps) {
@@ -157,7 +166,8 @@ export function ActivePeopleGrid({
       data-testid={testId}
       role="list"
       aria-label="Active now"
-      className={cn('grid grid-cols-4 gap-x-1 gap-y-2', className)}
+      data-columns={columns}
+      className={cn('grid gap-x-1 gap-y-2', columns === 'fit' ? 'grid-cols-[repeat(auto-fill,4.5rem)]' : 'grid-cols-4', className)}
     >
       {visible.map((person) => {
         const tileTestId = `${testId}-person-${person.userId}`;

@@ -8,6 +8,18 @@ const person = (overrides: Partial<ActivePerson> & { userId: string }): ActivePe
 });
 
 describe('ActivePeopleGrid', () => {
+  it('draws four stretched columns by default and fixed 72px tiles with columns="fit"', () => {
+    const people = [person({ userId: 'u1' }), person({ userId: 'u2' })];
+    const { rerender } = render(<ActivePeopleGrid people={people} />);
+    const grid = screen.getByTestId('active-people-grid');
+    expect(grid).toHaveAttribute('data-columns', '4');
+    expect(grid.className).toContain('grid-cols-4');
+    rerender(<ActivePeopleGrid people={people} columns="fit" />);
+    expect(grid).toHaveAttribute('data-columns', 'fit');
+    expect(grid.className).toContain('grid-cols-[repeat(auto-fill,4.5rem)]');
+    expect(grid.className).not.toContain('grid-cols-4');
+  });
+
   it('marks only compact captions, leaving tile and sibling actions under ordinary control checks', () => {
     render(<ActivePeopleGrid people={[person({ userId: 'u1' }), person({ userId: 'u2' })]}
       maxVisible={1} onSelectPerson={vi.fn()} onShowAll={vi.fn()} />);

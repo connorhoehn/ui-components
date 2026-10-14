@@ -239,7 +239,7 @@ export declare const activeNavItemClassName = "block px-[14px] py-2 border-l-[3p
 
 export declare const activeNavItemStyle: CSSProperties;
 
-export declare function ActivePeopleGrid({ people, maxVisible, onSelectPerson, onShowAll, onSelectSharedWork, emptyLabel, className, 'data-testid': testId, }: ActivePeopleGridProps): JSX.Element;
+export declare function ActivePeopleGrid({ people, maxVisible, onSelectPerson, onShowAll, onSelectSharedWork, emptyLabel, columns, className, 'data-testid': testId, }: ActivePeopleGridProps): JSX.Element;
 
 export declare interface ActivePeopleGridProps {
     people: readonly ActivePerson[];
@@ -252,6 +252,14 @@ export declare interface ActivePeopleGridProps {
     /** Opens this person's server-filtered shared work graph. */
     onSelectSharedWork?: (userId: string) => void;
     emptyLabel?: string;
+    /**
+     * `4` (default): four tiles per row, each a quarter of the width — the
+     * ~288px rail section this grid was drawn for. `fit` (since 2.442.6): fixed
+     * 72px tiles, as many per row as fit, left-aligned — for a page-width
+     * section ("Active now" on a landing), where four stretched columns would
+     * set six people 300px apart.
+     */
+    columns?: 4 | 'fit';
     className?: string;
     'data-testid'?: string;
 }

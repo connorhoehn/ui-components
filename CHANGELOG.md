@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.442.6
+
+- `ActivePeopleGrid` `columns` (new): `4` (default, unchanged) draws four stretched columns for a ~288px rail section; `fit` draws fixed 72px tiles, as many per row as fit, left-aligned — for a page-width section such as a landing's "Active now", where four stretched columns set six people ~300px apart. The grid emits `data-columns`.
+
 ## 2.442.5
 
 - `ConversationRail` `showSections` (new): the ids of the sections to draw — host `sections` ids and the rail's own `dms` / `channels`. Unset draws every section (unchanged). A page that owns one section passes that id (plus anything it keeps on every page, such as presence) and the rail draws no other caption or rows; the empty label shows only when a shown conversation group has no rows, and "Arrange sections" is not offered while the view is partial. The stored `sectionLayout` still orders what is shown. For the Social tenant's one-section-per-route rail.

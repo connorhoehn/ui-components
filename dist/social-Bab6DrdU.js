@@ -5004,20 +5004,21 @@ function hr({ person: e, testId: t }) {
 		]
 	});
 }
-function gr({ people: e, maxVisible: t = 8, onSelectPerson: n, onShowAll: r, onSelectSharedWork: i, emptyLabel: a = "Nobody is around right now.", className: s, "data-testid": c = "active-people-grid" }) {
+function gr({ people: e, maxVisible: t = 8, onSelectPerson: n, onShowAll: r, onSelectSharedWork: i, emptyLabel: a = "Nobody is around right now.", columns: s = 4, className: c, "data-testid": l = "active-people-grid" }) {
 	if (e.length === 0) return /* @__PURE__ */ Q("p", {
-		"data-testid": `${c}-empty`,
-		className: o("text-[12px] text-text-tertiary", s),
+		"data-testid": `${l}-empty`,
+		className: o("text-[12px] text-text-tertiary", c),
 		children: a
 	});
-	let l = e.slice(0, t), u = e.length - l.length;
+	let u = e.slice(0, t), d = e.length - u.length;
 	return /* @__PURE__ */ $("div", {
-		"data-testid": c,
+		"data-testid": l,
 		role: "list",
 		"aria-label": "Active now",
-		className: o("grid grid-cols-4 gap-x-1 gap-y-2", s),
-		children: [l.map((e) => {
-			let t = `${c}-person-${e.userId}`, r = mr(e), a = /* @__PURE__ */ $("span", {
+		"data-columns": s,
+		className: o("grid gap-x-1 gap-y-2", s === "fit" ? "grid-cols-[repeat(auto-fill,4.5rem)]" : "grid-cols-4", c),
+		children: [u.map((e) => {
+			let t = `${l}-person-${e.userId}`, r = mr(e), a = /* @__PURE__ */ $("span", {
 				className: "flex w-full min-w-0 items-center justify-center gap-1",
 				children: [e.inCall && /* @__PURE__ */ Q("span", {
 					"aria-hidden": "true",
@@ -5086,26 +5087,26 @@ function gr({ people: e, maxVisible: t = 8, onSelectPerson: n, onShowAll: r, onS
 					testId: t
 				}), a]
 			}, e.userId);
-		}), u > 0 && (r ? /* @__PURE__ */ $("button", {
+		}), d > 0 && (r ? /* @__PURE__ */ $("button", {
 			type: "button",
 			onClick: r,
-			"aria-label": `${u} more people`,
-			"data-testid": `${c}-more`,
+			"aria-label": `${d} more people`,
+			"data-testid": `${l}-more`,
 			className: o(dr, fr),
 			children: [/* @__PURE__ */ $("span", {
 				className: "flex h-10 w-10 items-center justify-center rounded-full bg-surface-emphasis text-[12px] font-semibold text-text-secondary",
-				children: ["+", u]
+				children: ["+", d]
 			}), /* @__PURE__ */ Q("span", {
 				"data-ui-text": "active-person-caption",
 				className: "w-full min-w-0 truncate text-[11px] font-medium text-text-tertiary",
 				children: "More"
 			})]
 		}) : /* @__PURE__ */ $("div", {
-			"data-testid": `${c}-more`,
+			"data-testid": `${l}-more`,
 			className: dr,
 			children: [/* @__PURE__ */ $("span", {
 				className: "flex h-10 w-10 items-center justify-center rounded-full bg-surface-emphasis text-[12px] font-semibold text-text-secondary",
-				children: ["+", u]
+				children: ["+", d]
 			}), /* @__PURE__ */ Q("span", {
 				"data-ui-text": "active-person-caption",
 				className: "w-full min-w-0 truncate text-[11px] font-medium text-text-tertiary",

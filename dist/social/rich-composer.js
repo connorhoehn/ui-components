@@ -5,9 +5,9 @@ import { t as a } from "../Select-DcKBWGgP.js";
 import { a as o, c as s, i as c, l, n as u, r as d, t as f } from "../composerSendError-CGnAqRRn.js";
 import { a as p, i as m, n as ee, r as h, t as te } from "../composerContext-BLn1-Nao.js";
 import { a as ne, i as g, n as re, o as ie, r as ae, s as _, t as v } from "../ConversationInputs-B2Y9iIaf.js";
-import { a as oe, c as y, i as se, l as b, n as x, o as ce, r as le, s as ue, t as de, u as fe } from "../RichChatComposer-j0S880eo.js";
-import { t as pe } from "../ContextComposer-CfAW-ePs.js";
-import { t as me } from "../AgentComposerDock-m78azCjz.js";
+import { a as oe, c as y, i as se, l as b, n as x, o as ce, r as le, s as ue, t as de, u as fe } from "../RichChatComposer-Dxj26F6X.js";
+import { t as pe } from "../ContextComposer-DQPAW4GB.js";
+import { t as me } from "../AgentComposerDock-BOrS_xrj.js";
 import { useCallback as S, useEffect as C, useMemo as w, useRef as T, useState as E } from "react";
 import { jsx as D, jsxs as he } from "react/jsx-runtime";
 function ge(e) {
