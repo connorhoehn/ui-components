@@ -43,6 +43,9 @@ describe('Select — a custom listbox, never the platform menu', () => {
     const list = listbox();
     expect(list).toHaveAttribute('data-ui-listbox', 'select');
     expect(trigger().getAttribute('aria-controls')).toBe(list.id);
+    // Named by the trigger, so the field's label still names exactly one element.
+    expect(list.getAttribute('aria-labelledby')).toBe(trigger().id);
+    expect(screen.getAllByLabelText('Letter')).toHaveLength(1);
     const options = within(list).getAllByRole('option');
     expect(options).toHaveLength(4);
     expect(options[0]).toHaveAttribute('aria-selected', 'true');

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.446.3
+
+- `Select`: the open listbox is named by its trigger (`aria-labelledby`), not by repeating the field's `aria-label`, so the field's label names exactly one element while the list is open (`getByLabel('Move destination')` resolved to two).
+
 ## 2.446.2
 
 - `DetailHeader`: the right-hand readout is a `div` (`data-detail-aside`), not an `<aside>` landmark. It is part of the header; as an `<aside>` it picked up host rules meant for side rails (the portal paints every shell `<aside>` as a panel, so a sprint's progress readout sat in a grey box).

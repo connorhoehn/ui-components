@@ -476,8 +476,10 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
       ref={panelRef}
       id={listId}
       role="listbox"
-      aria-labelledby={props['aria-labelledby']}
-      aria-label={props['aria-labelledby'] ? undefined : (props['aria-label'] ?? (placeholder || undefined))}
+      // Named by its trigger (the pattern's convention), never by repeating the
+      // field's label: a second element named "Move destination" made every
+      // getByLabel('Move destination') ambiguous while the list was open.
+      aria-labelledby={props['aria-labelledby'] ?? id}
       data-ui-listbox="select"
       data-testid={testId ? `${testId}-listbox` : undefined}
       tabIndex={-1}
