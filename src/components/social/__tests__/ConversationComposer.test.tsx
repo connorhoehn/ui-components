@@ -466,3 +466,97 @@ describe('ConversationComposer — private actor draft persistence', () => {
     await waitFor(() => expect(input().textContent).toBe('Nora newer thought'));
   });
 });
+
+describe('ConversationComposer — read-only (2.450.0)', () => {
+  const REASON = 'You can read messages. Your current role cannot post to this discussion.';
+  const workflows = [{ id: 'summarize', label: 'Summarize' }];
+  const readOnlyRoot = () => screen.getByTestId('composer').closest('[data-composer-readonly]') ?? screen.getByTestId('composer');
+
+  it('a reader gets a coherent read-only composer: not editable, the note in the input, every control off', () => {
+    const { container } = setup({
+      capabilities: { maySend: false, readOnlyReason: REASON },
+      context: { kind: 'initiative', id: 'p-1', title: 'Auth Migration', reference: { id: 'ref', label: 'Org › Auth Migration', page: { kind: 'initiative', id: 'p-1' } } },
+      commands: [{ trigger: '/summarize', label: 'Summarize', run: () => true }],
+      workflows, expanded: true,
+    });
+    expect(readOnlyRoot().hasAttribute('data-composer-readonly')).toBe(true);
+    const editor = input();
+    expect(editor.getAttribute('contenteditable')).toBe('false');
+    expect(editor.getAttribute('aria-readonly')).toBe('true');
+    expect(editor.hasAttribute('tabindex')).toBe(false);
+    // Single destination: no To: row, so the input carries the whole reason — once.
+    expect(screen.getByTestId('composer-readonly-note').textContent).toBe(REASON);
+    expect(container.querySelector('[data-composer-recipient-notice]')).toBeNull();
+    expect(container.textContent?.split(REASON).length).toBe(2);
+    for (const name of ['Bold', 'Italic', 'Code', 'Add link', 'Bulleted list', 'Quote']) {
+      const button = screen.queryByRole('button', { name });
+      if (!button) continue;
+      expect(button).toBeDisabled();
+      expect(button.className).toContain('text-text-disabled');
+    }
+    expect(screen.queryByRole('button', { name: 'Attach files' })).toBeNull();
+    expect(screen.getByTestId('conversation-composer-workflow')).toBeDisabled();
+    expect(screen.getByTestId('composer-commands-hint').getAttribute('aria-disabled')).toBe('true');
+    expect(screen.getByTestId('composer-send')).toBeDisabled();
+    // Chat is the only mode: the mode control has nowhere to go.
+    const modeMenu = screen.queryByTestId('composer-mode-menu');
+    if (modeMenu) expect(modeMenu).toBeDisabled();
+    // The draft's chip stays: nothing to remove from a draft that cannot be sent.
+    expect(screen.queryByRole('button', { name: /Remove Org › Auth Migration/ })).toBeNull();
+  });
+
+  it('the To: row keeps the reason; the input says only what to do, and To: stays usable', () => {
+    const { container } = setup({
+      capabilities: { maySend: false, readOnlyReason: REASON },
+      defaultMode: 'chat', defaultRecipient: 'discussion', expanded: true,
+      recipients: [
+        { id: 'discussion', label: 'Discussion', channel: CHANNEL },
+        { id: 'person:u-nora', label: 'Nora', channel: 'orgiq:dm:u-nora', send: async () => true },
+      ],
+    });
+    expect(container.querySelector('[data-composer-recipient-notice]')?.textContent).toBe(REASON);
+    expect(container.textContent?.split(REASON).length).toBe(2);
+    expect(screen.getByTestId('composer-readonly-note').textContent).toBe('Read only. Choose another destination in To: to post.');
+    const to = screen.getByRole('combobox', { name: 'Chat recipient' });
+    expect(to).not.toBeDisabled();
+    fireEvent.change(to, { target: { value: 'person:u-nora' } });
+  });
+
+  it('another mode that is on keeps the mode menu live as the way out', () => {
+    setup({ capabilities: { maySend: false, readOnlyReason: REASON, agent: { allowed: true } }, mode: 'chat', expanded: true });
+    expect(readOnlyRoot().hasAttribute('data-composer-readonly')).toBe(true);
+    expect(screen.getByTestId('composer-mode-menu')).not.toBeDisabled();
+  });
+
+  it('a pending answer is quiet: no read-only note, no To: reason, no read-only marker', () => {
+    const { container } = setup({
+      capabilities: { maySend: false, readOnlyReason: REASON, pending: true },
+      defaultMode: 'chat', defaultRecipient: 'discussion', expanded: true,
+      recipients: [
+        { id: 'discussion', label: 'Discussion', channel: CHANNEL },
+        { id: 'person:u-nora', label: 'Nora', channel: 'orgiq:dm:u-nora', send: async () => true },
+      ],
+    });
+    expect(container.querySelector('[data-composer-readonly]')).toBeNull();
+    expect(screen.queryByTestId('composer-readonly-note')).toBeNull();
+    expect(container.querySelector('[data-composer-recipient-notice]')).toBeNull();
+    expect(screen.getByTestId('composer-send')).toBeDisabled();
+  });
+
+  it('offline and a host pause are not read-only verdicts', () => {
+    setup({ capabilities: { maySend: false, readOnlyReason: REASON }, offline: 'The gateway is offline.', expanded: true });
+    expect(screen.queryByTestId('composer-readonly-note')).toBeNull();
+    cleanup();
+    setup({ capabilities: { maySend: false, readOnlyReason: REASON }, disabled: true, expanded: true });
+    expect(screen.queryByTestId('composer-readonly-note')).toBeNull();
+  });
+
+  it('a writer gets a fully live composer', () => {
+    const { container } = setup({ capabilities: { maySend: true }, context: { kind: 'initiative', id: 'p-1', title: 'Auth Migration' }, workflows, expanded: true, commands: [{ trigger: '/summarize', label: 'Summarize', run: () => true }] });
+    expect(container.querySelector('[data-composer-readonly]')).toBeNull();
+    expect(input().getAttribute('contenteditable')).toBe('true');
+    expect(screen.getByRole('button', { name: 'Bold' })).not.toBeDisabled();
+    expect(screen.getByTestId('conversation-composer-workflow')).not.toBeDisabled();
+    expect(screen.getByTestId('composer-commands-hint').hasAttribute('aria-disabled')).toBe(false);
+  });
+});

@@ -101,6 +101,11 @@ export interface DropdownMenuProps {
    * to avoid. The host makes only the cursor row's trigger tabbable.
    */
   triggerTabIndex?: number;
+  /**
+   * The trigger is off: a real `disabled` button in muted ink that never
+   * opens the panel (a read-only composer's Workflow ⌄). Since 2.450.0.
+   */
+  disabled?: boolean;
   /** Test hook for the trigger itself; `data-testid` addresses the panel. */
   triggerTestId?: string;
   /**
@@ -141,6 +146,7 @@ export function DropdownMenu({
   triggerClassName,
   triggerVariant = 'default',
   triggerTabIndex,
+  disabled = false,
   triggerTestId,
   align = 'start',
   sections,
@@ -187,10 +193,13 @@ export function DropdownMenu({
         title={triggerTitle}
         tabIndex={triggerTabIndex}
         data-testid={triggerTestId}
-        onClick={() => setOpen((v) => !v)}
+        disabled={disabled || undefined}
+        aria-disabled={disabled ? 'true' : undefined}
+        onClick={() => { if (!disabled) setOpen((v) => !v); }}
         data-variant={triggerVariant}
         className={cn(
           'inline-flex items-center justify-center gap-1.5 cursor-pointer transition-colors duration-100',
+          'disabled:cursor-not-allowed disabled:bg-transparent disabled:text-[var(--color-text-disabled)] disabled:opacity-70',
           BUTTON_WEIGHT,
           TRIGGER_VARIANT[triggerVariant],
           triggerVariant !== 'link' && CONTROL_HEIGHT[controlSize],
@@ -202,7 +211,7 @@ export function DropdownMenu({
       </button>
       <InlinePopover
         trigger={triggerRef}
-        open={open}
+        open={open && !disabled}
         onClose={close}
         placement={align === 'end' ? 'bottom-end' : 'bottom-start'}
         className={cn('min-w-[180px] p-0 overflow-hidden rounded-lg', className)}

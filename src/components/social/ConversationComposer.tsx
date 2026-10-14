@@ -37,6 +37,12 @@
 //     (the footer's Message) — Chat or Agent, to the asked-for recipient.
 //   - The call block (`callBlock`): the huddle bar and tiles flush on the
 //     composer's top edge, from `useCallBlock(channel)`.
+//   - Read-only (2.450.0): when Chat is off for the chosen destination by a
+//     verdict (`maySend` false, a destination's reason) the whole composer
+//     reads as read-only — the editor takes no words, the note sits where the
+//     placeholder was (or, when the To: row already says why, what to do),
+//     every control is off and To: stays live. `capabilities.pending` (the
+//     server has not answered) is quiet instead, so loading never flashes it.
 //   - Density: under `DensityProvider value="compact"` (a side pane, a canvas
 //     page) it takes the one-row pane form. There is no size prop.
 //
@@ -134,7 +140,7 @@ export interface ConversationCommand {
 type Owned =
   | 'context' | 'modes' | 'disabledModes' | 'modeUnavailableReasons' | 'chatAvailable' | 'agentUnavailableReason'
   | 'onSend' | 'commands' | 'onCommand' | 'dock' | 'reply' | 'allowAttachments' | 'responsive' | 'mode' | 'onModeChange'
-  | 'draftKey' | 'disabled';
+  | 'draftKey' | 'disabled' | 'readOnly';
 
 export interface ConversationComposerOwnProps {
   /** The conversation this composer writes to (its thread). Null: no thread (an agent-only search box). */
@@ -591,10 +597,16 @@ function ConversationComposerImpl({
   };
 
   // ── rows ──
+  const pending = !!capabilities.pending;
+  const chatBlocked = mode === 'chat' && (!recipient || !!recipient.unavailableReason || !!recipient.disabled);
+  // Read-only (2.450.0): Chat is off for the chosen destination by a verdict —
+  // not offline, not the host's own pause, not a server answer still pending.
+  // The whole composer then says so, and the draft's chips stay put.
+  const readOnlyOn = chatBlocked && !deck.typed && !hostDisabled && !offline && !pending;
   const referenceChip = showReference && reference ? (
     <ComposerReferences
       references={[{ id: reference.id, label: compact ? reference.label.split(' › ').pop() ?? reference.label : reference.label, title: reference.label }]}
-      onRemove={() => { setWithReference(false); generation.current += 1; hostRemoveReference?.(reference.id); }}
+      {...(readOnlyOn ? {} : { onRemove: () => { setWithReference(false); generation.current += 1; hostRemoveReference?.(reference.id); } })}
       removeLabel={(ref) => `Remove ${ref.label} from this draft`}
       size="md"
       className="min-w-0 max-w-[max(9rem,min(30rem,calc(100cqw-22rem)))] flex-nowrap p-0"
@@ -604,7 +616,7 @@ function ConversationComposerImpl({
   const listed = gone && recipient ? [...recipients, recipient] : recipients;
   const showRecipients = mode === 'chat' && listed.length > 1;
   const noPage = mode === 'chat' && withReference && pageless && offThread && carries;
-  const recipientReason = mode === 'chat' && listed.length > 1 ? recipient?.unavailableReason ?? (!recipient ? 'Choose a destination.' : null) : null;
+  const recipientReason = mode === 'chat' && listed.length > 1 && !pending ? recipient?.unavailableReason ?? (!recipient ? 'Choose a destination.' : null) : null;
   const recipientError = mode === 'chat' ? recipient?.error ?? null : null;
   const notices = showRecipients || recipientReason || note || noPage || recipientError || (hostAbove != null && hostAbove !== false) ? (
     <Stack gap="xs">
@@ -648,7 +660,13 @@ function ConversationComposerImpl({
     ...(mode === 'chat' && recipient?.placeholder ? { chat: recipient.placeholder } : {}),
     ...(deck.typed && deck.active ? { [mode]: deck.active.placeholder ?? 'Type your answer and press Enter' } : {}),
   };
-  const chatBlocked = mode === 'chat' && (!recipient || !!recipient.unavailableReason || !!recipient.disabled);
+  // ONE note: when the To: row already carries the reason, the input says
+  // only what to do; otherwise the input carries the reason itself.
+  const readOnlyNote = readOnlyOn
+    ? (recipientReason
+      ? (choosable > 0 ? 'Read only. Choose another destination in To: to post.' : 'Read only')
+      : recipient?.unavailableReason ?? (recipient ? readOnly : 'Choose a destination.'))
+    : null;
 
   return (
     <ContextComposer
@@ -678,6 +696,7 @@ function ConversationComposerImpl({
       } : null}
       allowAttachments={!!uploadChannel}
       {...(sendWithReferencesOnly !== undefined ? { sendWithReferencesOnly } : {})}
+      {...(readOnlyNote ? { readOnly: readOnlyNote } : {})}
       disabled={!!hostDisabled || (!deck.typed && (!!offline || chatBlocked || (mode === 'agent' && !capabilities.agent?.allowed)))}
       draftKey={editorDraftKey}
       {...(controlled ? { draft: draftProp } : {})}

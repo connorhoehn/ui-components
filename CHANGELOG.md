@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.450.0
+
+- `ConversationComposer`: a coherent read-only state. When Chat is off for the chosen destination by a verdict (`maySend` false, or a destination's `unavailableReason`) — not offline, not the host's `disabled`, not a pending answer — the whole composer reads as read-only, not only Send: the editor is not editable or focusable (`aria-readonly`, `aria-describedby` the note), the placeholder is replaced by a muted lock line, every format button, the `/ commands` hint, attachments, Workflow ⌄ and the reference chip's × are off in muted ink, and the root carries `data-composer-readonly`. ONE note: with no To: row the input carries the reason; when the To: row already says why (2.446.1), the input says only "Read only. Choose another destination in To: to post." The To: selector stays live, and the mode menu stays live while another mode (Agent) is on — both are the way out. On an initiative page a member who cannot post saw "cannot post" on the To: row beside a live-looking Chat menu, toolbar, Workflow and `/ commands`.
+- `ConversationComposerCapabilities.pending` (new): the server has not answered yet, so `maySend: false` is a placeholder rather than a verdict. Chat stays off but quiet — no read-only note, no To: reason, no read-only look — so a loading page never flashes "you cannot post".
+- `RichChatComposer` / `ContextComposer`: `readOnly?: ReactNode` (the note; `true` says "Read only") draws that state; `disabled` (a pause) now also wears muted ink on the format buttons and `/ commands` hint instead of looking pressable.
+- `DropdownMenu`: `disabled` — the trigger is a real disabled button in muted ink and never opens its panel.
+
 ## 2.449.1
 
 - `PageSection empty`: the title keeps its width (`shrink-0`) and the quiet line truncates first; at 900px "Needs your attention" was cut to "Needs your attent…" beside a long empty line.

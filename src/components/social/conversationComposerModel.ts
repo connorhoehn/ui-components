@@ -18,6 +18,13 @@ export interface ConversationComposerCapabilities {
   /** Why not, when `maySend` is false (the off Chat mode and its placeholder say it). */
   readOnlyReason?: string | null;
   /**
+   * The server has not answered yet (since 2.450.0): `maySend` is a
+   * placeholder `false`, not a verdict. Chat stays off but quiet — no
+   * read-only note, no To: reason, no read-only look — so a loading page
+   * never flashes "you cannot post". Omitted: `maySend` is the answer.
+   */
+  pending?: boolean;
+  /**
    * Agent mode. Omitted: the composer has no Agent mode. `allowed` is the
    * server's per-subject answer (never a role-wide guess).
    */

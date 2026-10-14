@@ -115,3 +115,16 @@ describe('DropdownMenu disabled items', () => {
     expect(row).toHaveTextContent('Next two weeks');
   });
 });
+
+describe('DropdownMenu disabled trigger (2.450.0)', () => {
+  it('is a real disabled button in muted ink and never opens the panel', () => {
+    const onSelect = vi.fn();
+    render(<DropdownMenu trigger="Workflow ▾" triggerLabel="Workflow" disabled sections={[{ items: [{ label: 'Run', onSelect }] }]} />);
+    const trigger = screen.getByRole('button', { name: 'Workflow' });
+    expect(trigger).toBeDisabled();
+    expect(trigger).toHaveAttribute('aria-disabled', 'true');
+    expect(trigger.className).toContain('disabled:text-[var(--color-text-disabled)]');
+    fireEvent.click(trigger);
+    expect(screen.queryByRole('menu')).toBeNull();
+  });
+});

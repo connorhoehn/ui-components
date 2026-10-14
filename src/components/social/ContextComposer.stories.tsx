@@ -176,6 +176,33 @@ export const SingleMode: Story = {
   ),
 };
 
+/**
+ * Read-only (2.450.0): a reader on a discussion. The note takes the
+ * placeholder's place; format buttons, Workflow ⌄, `/ commands` and Send are
+ * off in muted ink. With only Chat the mode label is off too; with Agent on,
+ * the mode menu stays the way out. Beside it, the same composer for a writer.
+ */
+export const ReadOnly: Story = {
+  name: 'Read-only — a reader',
+  render: () => (
+    <div className="grid grid-cols-1 gap-4 bg-surface p-4 lg:grid-cols-2">
+      {(['light', 'dark'] as const).map((theme) => (
+        <Panel key={`ro-${theme}`} theme={theme} caption={`reader · chat only · ${theme}`}>
+          <ContextComposer {...wired} context={CONTEXTS.initiative!} modes={['chat']} expanded onSend={() => true}
+            readOnly="You can read messages. Your current role cannot post to this discussion." />
+        </Panel>
+      ))}
+      <Panel theme="light" caption="reader · Agent on (the mode menu stays live)">
+        <ContextComposer {...wired} context={CONTEXTS.initiative!} modes={['chat', 'agent']} mode="chat" expanded onSend={() => true}
+          readOnly="You can read messages. Your current role cannot post to this discussion." />
+      </Panel>
+      <Panel theme="light" caption="writer · fully live">
+        <ContextComposer {...wired} context={CONTEXTS.initiative!} modes={['chat', 'agent']} mode="chat" expanded onSend={() => true} />
+      </Panel>
+    </div>
+  ),
+};
+
 const DOCS = [
   { id: 'doc-adr', label: 'ADR: Aurora over Neptune' },
   { id: 'doc-runbook', label: 'Cutover runbook' },

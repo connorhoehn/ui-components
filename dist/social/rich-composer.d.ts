@@ -878,6 +878,12 @@ export declare interface ContextComposerProps {
     /** Default true: Agent/Terminal paint the console surface. */
     console?: boolean;
     disabled?: boolean;
+    /**
+     * Read, not write (since 2.450.0): `RichChatComposer.readOnly` — the note
+     * replaces the placeholder and every control is off — plus this
+     * composer's Workflow ⌄, Share and reference removal. See there.
+     */
+    readOnly?: ReactNode;
     status?: ComposerStatus | null;
     suggestions?: readonly string[];
     onSuggestion?: (suggestion: string) => void;
@@ -967,6 +973,13 @@ export declare interface ConversationComposerCapabilities {
     maySend: boolean;
     /** Why not, when `maySend` is false (the off Chat mode and its placeholder say it). */
     readOnlyReason?: string | null;
+    /**
+     * The server has not answered yet (since 2.450.0): `maySend` is a
+     * placeholder `false`, not a verdict. Chat stays off but quiet — no
+     * read-only note, no To: reason, no read-only look — so a loading page
+     * never flashes "you cannot post". Omitted: `maySend` is the answer.
+     */
+    pending?: boolean;
     /**
      * Agent mode. Omitted: the composer has no Agent mode. `allowed` is the
      * server's per-subject answer (never a role-wide guess).
@@ -1375,7 +1388,7 @@ export declare interface MentionSuggestionsProps {
     onPickNonMember?: (userId: string) => void;
 }
 
-declare type Owned = 'context' | 'modes' | 'disabledModes' | 'modeUnavailableReasons' | 'chatAvailable' | 'agentUnavailableReason' | 'onSend' | 'commands' | 'onCommand' | 'dock' | 'reply' | 'allowAttachments' | 'responsive' | 'mode' | 'onModeChange' | 'draftKey' | 'disabled';
+declare type Owned = 'context' | 'modes' | 'disabledModes' | 'modeUnavailableReasons' | 'chatAvailable' | 'agentUnavailableReason' | 'onSend' | 'commands' | 'onCommand' | 'dock' | 'reply' | 'allowAttachments' | 'responsive' | 'mode' | 'onModeChange' | 'draftKey' | 'disabled' | 'readOnly';
 
 /** A typed answer, checked: the answer, or why it is not one. */
 export declare function parseTypedAnswer(prompt: ComposerPrompt, raw: string): {
@@ -1467,6 +1480,17 @@ export declare interface RichChatComposerProps {
      */
     inputLabel?: string;
     disabled?: boolean;
+    /**
+     * The reader may read here but not write (since 2.450.0): the whole
+     * composer says so, not only Send. The editor is not editable or focusable
+     * (`aria-readonly`), the placeholder is replaced by this line (a lock and
+     * the note; `true` says "Read only"), every format button, the `/ commands`
+     * hint, attachments and the `toolbarExtras` host menus are off in muted
+     * ink, and the mode menu is off unless another mode is on (it is then the
+     * way out, like a To: selector). The root carries `data-composer-readonly`.
+     * Unlike `disabled` (a quiet pause: offline, loading) it is a verdict.
+     */
+    readOnly?: ReactNode;
     /**
      * Slash commands the host understands. While the draft starts with one, the
      * composer says so — a bar naming the command above the text and a

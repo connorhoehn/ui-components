@@ -120,7 +120,7 @@ import { DocumentSuggestions, type DocumentCandidate, type DocumentMenuPanel } f
 import { EmojiSuggestions } from './EmojiSuggestions';
 import { CommandSuggestions, type CommandSuggestionItem } from './CommandSuggestions';
 import { searchEmoji, type EmojiShortcode } from './emojiShortcodes';
-import { ArrowRightIcon, ArrowUpIcon, SendIcon, ChatIcon, ChevronIcon, CodeIcon, EyeIcon, EyeOffIcon, LinkIcon, ListIcon, PaperclipIcon, PuzzleIcon, QuoteIcon, SmileyIcon, SparkleIcon } from '../ui/Icons';
+import { ArrowRightIcon, ArrowUpIcon, SendIcon, ChatIcon, ChevronIcon, CodeIcon, EyeIcon, EyeOffIcon, LinkIcon, ListIcon, LockIcon, PaperclipIcon, PuzzleIcon, QuoteIcon, SmileyIcon, SparkleIcon } from '../ui/Icons';
 
 export type { MentionCandidate, DocumentCandidate, DocumentMenuPanel };
 
@@ -305,6 +305,17 @@ export interface RichChatComposerProps {
    */
   inputLabel?: string;
   disabled?: boolean;
+  /**
+   * The reader may read here but not write (since 2.450.0): the whole
+   * composer says so, not only Send. The editor is not editable or focusable
+   * (`aria-readonly`), the placeholder is replaced by this line (a lock and
+   * the note; `true` says "Read only"), every format button, the `/ commands`
+   * hint, attachments and the `toolbarExtras` host menus are off in muted
+   * ink, and the mode menu is off unless another mode is on (it is then the
+   * way out, like a To: selector). The root carries `data-composer-readonly`.
+   * Unlike `disabled` (a quiet pause: offline, loading) it is a verdict.
+   */
+  readOnly?: ReactNode;
   /**
    * Slash commands the host understands. While the draft starts with one, the
    * composer says so — a bar naming the command above the text and a
@@ -1010,6 +1021,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   onPrivacyChange,
   privacyLabels,
   disabled = false,
+  readOnly,
   references,
   onRemoveReference,
   toolbarExtras,
@@ -1092,7 +1104,12 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // false: no alert. true: a send failed for no reason the host gave. A
   // string: the host's ComposerSendError message.
   const [sendError, setSendError] = useState<boolean | string>(false);
-  const blocked = disabled || sending;
+  const readOnlyOn = readOnly != null && readOnly !== false;
+  const readOnlyNote: ReactNode = readOnly === true ? 'Read only' : readOnly;
+  const blocked = disabled || readOnlyOn || sending;
+  // Off by the host (a verdict or a pause), not by a send in flight: the
+  // controls wear muted ink, so nothing looks pressable that is not.
+  const inert = disabled || readOnlyOn;
   // Mirrors emptiness so the send button can disable. `editor.isEmpty` is not
   // reactive, so reading it during render leaves the button one keystroke stale.
   const [empty, setEmpty] = useState(true);
@@ -1126,6 +1143,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   /** Why the last shortcut/trigger was refused. Cleared by the next edit or switch. */
   const [modeNotice, setModeNotice] = useState<string | null>(null);
   const isModeDisabled = (m: ComposerMode) => !!disabledModes?.includes(m);
+  // Read-only: the mode menu stays the way out only while another mode is on.
+  const modeMenuOff = readOnlyOn && !offeredModes.some((m) => m !== activeMode && !isModeDisabled(m));
   const requestMode = (next: ComposerMode): boolean => {
     if (!switchable || !offeredModes.includes(next)) return false;
     if (isModeDisabled(next)) {
@@ -1639,7 +1658,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     ...(inputLabel ? { 'aria-label': inputLabel } : {}),
     class: 'chat-composer-input',
     'data-testid': `${testId}-input`,
-  }), [inputLabel, testId]);
+    ...(readOnlyOn ? { 'aria-readonly': 'true', 'aria-disabled': 'true', 'aria-describedby': `${testId}-readonly-note` } : {}),
+  }), [inputLabel, testId, readOnlyOn]);
   const appliedInputAttributesRef = useRef(inputAttributes);
 
   const editor = useEditor(
@@ -2334,6 +2354,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
       aria-pressed={active}
       title={label}
       disabled={blocked}
+      aria-disabled={inert ? 'true' : undefined}
       data-testid={testId}
       // mousedown + preventDefault, not click: clicking would blur the editor
       // and collapse the selection first, so "bold" would apply to nothing.
@@ -2361,6 +2382,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         // inline command chips stay 15px — they are the message, not controls.
         docked ? 'h-9 w-9 text-xs' : 'h-7 w-7 text-sm',
         active ? 'bg-surface-hover text-text-primary' : cn(docked ? 'text-text-primary' : 'text-text-secondary', 'hover:bg-surface-hover'),
+        inert && 'cursor-not-allowed bg-transparent text-text-disabled hover:bg-transparent',
       )}
     >
       {glyph}
@@ -2397,6 +2419,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         data-backdrop-tone={consoleSurface ? tone : undefined}
         data-console-sky={consoleSurface ? (skyInherited ? 'inherited' : 'own') : undefined}
         data-working={working ? 'true' : undefined}
+        data-composer-readonly={readOnlyOn ? '' : undefined}
         ref={rootRef}
         data-density={density}
         data-collapsed={collapseWhenIdle ? (collapsed ? 'true' : 'false') : undefined}
@@ -2675,6 +2698,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 triggerLabel={`Composer mode: ${MODE_NAMES[activeMode]}`}
                 triggerTitle="Composer mode"
                 triggerTestId={`${testId}-mode-menu`}
+                disabled={modeMenuOff}
                 data-testid={`${testId}-mode-menu-list`}
                 align="start"
                 triggerClassName={basicBox ? 'h-8 rounded-md border border-border bg-surface px-3 hover:bg-surface-hover' : 'rounded-md border-0 bg-transparent hover:bg-surface-hover'}
@@ -2919,6 +2943,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 triggerLabel={`Composer mode: ${MODE_NAMES[activeMode]}`}
                 triggerTitle="Composer mode"
                 triggerTestId={`${testId}-mode-menu`}
+                disabled={modeMenuOff}
                 data-testid={`${testId}-mode-menu-list`}
                 align="start"
                 triggerClassName="h-auto shrink-0 rounded border-0 bg-transparent p-0 text-xs leading-4 hover:bg-transparent"
@@ -3052,10 +3077,23 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           )}
           data-basic-well={basicBox || undefined}
           data-testid={`${testId}-input-box`}
-          {...(empty && effectivePlaceholder ? { title: effectivePlaceholder } : {})}
+          {...(readOnlyOn ? (typeof readOnlyNote === 'string' ? { title: readOnlyNote } : {}) : empty && effectivePlaceholder ? { title: effectivePlaceholder } : {})}
           {...(terminalMode ? { hidden: true } : {})}
         >
-          <EditorContent editor={editor} />
+          {readOnlyOn && (
+            // In the placeholder's place, in muted ink: the editor says it
+            // takes no words rather than inviting them (2.450.0).
+            <p
+              id={`${testId}-readonly-note`}
+              className={cn('m-0 flex min-w-0 items-start gap-1.5 text-text-tertiary', docked ? 'px-3 py-2 text-xs' : 'px-2 py-1.5 text-xs')}
+              data-composer-readonly-note=""
+              data-testid={`${testId}-readonly-note`}
+            >
+              <LockIcon size={12} aria-hidden="true" className="mt-0.5 shrink-0" />
+              <span className="min-w-0">{readOnlyNote}</span>
+            </p>
+          )}
+          <EditorContent editor={editor} className={readOnlyOn && empty ? 'hidden' : undefined} />
         </div>
         </div>
 
@@ -3286,7 +3324,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               muted `/ commands`, the way a code editor's status line names
               its palette. Wide only — narrow has no room and the `?` menu. */}
           {!collapsed && wide && !!commands?.length && !promptCard && (
-            <span className={cn('shrink-0 select-none text-text-tertiary', docked ? 'ml-3 text-xs' : 'ml-1 border-l border-border pl-2 text-xs')} data-testid={`${testId}-commands-hint`}>/ commands</span>
+            <span
+              className={cn('shrink-0 select-none', inert ? 'text-text-disabled' : 'text-text-tertiary', docked ? 'ml-3 text-xs' : 'ml-1 border-l border-border pl-2 text-xs')}
+              aria-disabled={inert ? 'true' : undefined}
+              data-testid={`${testId}-commands-hint`}
+            >/ commands</span>
           )}
 
           {!collapsed && !docked && (!pane || paneTools) && ((!hintsInRow && !!resolvedHints.length) || suggestionsInMenu || (formatInHints && !!editor)) ? (

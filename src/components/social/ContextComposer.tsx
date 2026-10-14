@@ -291,6 +291,12 @@ export interface ContextComposerProps {
   /** Default true: Agent/Terminal paint the console surface. */
   console?: boolean;
   disabled?: boolean;
+  /**
+   * Read, not write (since 2.450.0): `RichChatComposer.readOnly` — the note
+   * replaces the placeholder and every control is off — plus this
+   * composer's Workflow ⌄, Share and reference removal. See there.
+   */
+  readOnly?: ReactNode;
   status?: ComposerStatus | null;
   suggestions?: readonly string[];
   onSuggestion?: (suggestion: string) => void;
@@ -443,6 +449,7 @@ export function ContextComposerBase({
   working,
   console: consoleOn = true,
   disabled,
+  readOnly,
   status,
   suggestions,
   onSuggestion,
@@ -571,7 +578,8 @@ export function ContextComposerBase({
     if (id === chipId) { setChipHidden(true); onRemoveContext?.(); return; }
     onRemoveReference?.(id);
   }, [chipId, onRemoveContext, onRemoveReference]);
-  const referencesRemovable = !!onRemoveReference || (!!chipLabel && !!onRemoveContext);
+  const readOnlyOn = readOnly != null && readOnly !== false;
+  const referencesRemovable = !readOnlyOn && (!!onRemoveReference || (!!chipLabel && !!onRemoveContext));
 
   // ── page actions (under Agent ⌄) ──
   const actionSections: DropdownMenuSection[] = f.pageActions ? [
@@ -595,6 +603,7 @@ export function ContextComposerBase({
       variant="ghost"
       size="sm"
       icon={<DocumentIcon size={14} />}
+      disabled={readOnlyOn}
       onClick={(e) => onShareDocument(e.currentTarget)}
       data-testid={shareDocumentTestId ?? `${testId}-share-document`}
     />
@@ -611,6 +620,7 @@ export function ContextComposerBase({
       triggerLabel="Workflow"
       triggerClassName={`h-7 px-2 text-xs text-text-secondary ${BUTTON_WEIGHT}`}
       triggerTestId={`${testId}-workflow`}
+      disabled={readOnlyOn || !!disabled}
       sections={[{
         items: workflowRows.map((w) => ({
           label: w.label,
@@ -736,6 +746,7 @@ export function ContextComposerBase({
                 mentionMembers={mentionMembers}
                 onMentionNonMember={onMentionNonMember}
                 disabled={disabled}
+                {...(readOnlyOn ? { readOnly } : {})}
                 status={status}
                 hints={hints}
                 suggestions={suggestions}

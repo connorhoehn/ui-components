@@ -6454,6 +6454,12 @@ export declare interface ContextComposerProps {
     /** Default true: Agent/Terminal paint the console surface. */
     console?: boolean;
     disabled?: boolean;
+    /**
+     * Read, not write (since 2.450.0): `RichChatComposer.readOnly` — the note
+     * replaces the placeholder and every control is off — plus this
+     * composer's Workflow ⌄, Share and reference removal. See there.
+     */
+    readOnly?: ReactNode;
     status?: ComposerStatus | null;
     suggestions?: readonly string[];
     onSuggestion?: (suggestion: string) => void;
@@ -8601,7 +8607,7 @@ export declare interface DrawerProps {
  */
 export declare function drawnParticles(count: number, density: number | undefined, width: number, height: number): number;
 
-export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, triggerVariant, triggerTabIndex, triggerTestId, align, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
+export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, triggerVariant, triggerTabIndex, disabled, triggerTestId, align, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
 
 export declare interface DropdownMenuItem {
     /** Visible item label. */
@@ -8667,6 +8673,11 @@ export declare interface DropdownMenuProps {
      * to avoid. The host makes only the cursor row's trigger tabbable.
      */
     triggerTabIndex?: number;
+    /**
+     * The trigger is off: a real `disabled` button in muted ink that never
+     * opens the panel (a read-only composer's Workflow ⌄). Since 2.450.0.
+     */
+    disabled?: boolean;
     /** Test hook for the trigger itself; `data-testid` addresses the panel. */
     triggerTestId?: string;
     /**
@@ -18364,6 +18375,17 @@ declare interface RichChatComposerProps {
      */
     inputLabel?: string;
     disabled?: boolean;
+    /**
+     * The reader may read here but not write (since 2.450.0): the whole
+     * composer says so, not only Send. The editor is not editable or focusable
+     * (`aria-readonly`), the placeholder is replaced by this line (a lock and
+     * the note; `true` says "Read only"), every format button, the `/ commands`
+     * hint, attachments and the `toolbarExtras` host menus are off in muted
+     * ink, and the mode menu is off unless another mode is on (it is then the
+     * way out, like a To: selector). The root carries `data-composer-readonly`.
+     * Unlike `disabled` (a quiet pause: offline, loading) it is a verdict.
+     */
+    readOnly?: ReactNode;
     /**
      * Slash commands the host understands. While the draft starts with one, the
      * composer says so — a bar naming the command above the text and a

@@ -1969,7 +1969,7 @@ export declare interface DrawerProps {
  */
 export declare function drawnParticles(count: number, density: number | undefined, width: number, height: number): number;
 
-export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, triggerVariant, triggerTabIndex, triggerTestId, align, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
+export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, triggerVariant, triggerTabIndex, disabled, triggerTestId, align, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
 
 export declare interface DropdownMenuItem {
     /** Visible item label. */
@@ -2035,6 +2035,11 @@ export declare interface DropdownMenuProps {
      * to avoid. The host makes only the cursor row's trigger tabbable.
      */
     triggerTabIndex?: number;
+    /**
+     * The trigger is off: a real `disabled` button in muted ink that never
+     * opens the panel (a read-only composer's Workflow ⌄). Since 2.450.0.
+     */
+    disabled?: boolean;
     /** Test hook for the trigger itself; `data-testid` addresses the panel. */
     triggerTestId?: string;
     /**

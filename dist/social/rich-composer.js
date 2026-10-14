@@ -1,13 +1,13 @@
 import { t as e } from "../cn-D4QmbyEy.js";
 import { c as t, n } from "../Button-uREUOWUk.js";
-import { c as r, l as i, n as a } from "../Text-B9dLbWrv.js";
+import { c as r, l as i, n as a } from "../Text-Y7cUwppt.js";
 import { t as o } from "../Select-0lM_wZAc.js";
-import { a as s, c, i as l, l as u, n as d, r as f, t as p } from "../composerSendError-DTE9_DLz.js";
+import { a as s, c, i as l, l as u, n as d, r as f, t as p } from "../composerSendError-Bv4mkKMu.js";
 import { a as m, i as h, n as g, r as _, t as v } from "../composerContext-BLn1-Nao.js";
-import { a as ee, i as y, n as b, o as x, r as te, s as S, t as C } from "../ConversationInputs-CyqSTiko.js";
-import { a as w, c as T, i as E, l as D, n as ne, o as re, r as O, s as ie, t as ae, u as oe } from "../RichChatComposer-BrhSCJu7.js";
-import { t as se } from "../ContextComposer-aKJwk-yP.js";
-import { t as ce } from "../AgentComposerDock-djWN1OvY.js";
+import { a as ee, i as y, n as b, o as x, r as te, s as S, t as C } from "../ConversationInputs-MSs8xlYn.js";
+import { a as w, c as T, i as E, l as D, n as ne, o as re, r as O, s as ie, t as ae, u as oe } from "../RichChatComposer-DXs-ob0g.js";
+import { t as se } from "../ContextComposer-DDumlhA5.js";
+import { t as ce } from "../AgentComposerDock-myjfQs-I.js";
 import { useCallback as k, useEffect as A, useId as le, useMemo as j, useRef as M, useState as N } from "react";
 import { jsx as P, jsxs as F } from "react/jsx-runtime";
 //#region src/components/social/composerPromptModel.ts
@@ -936,49 +936,49 @@ function Ge({ rm: n, channel: o, chat: c, context: l, capabilities: u, identity:
 			reference: et
 		}, g;
 		return U.send ? g = await U.send(h) : c ? (c.sendMessage(m, p), g = !0) : g = !1, g ? Y.current !== a || at.current !== I ? (it.current === s && ft(Ie), !1) : (d && x?.clear(), E && !X && Z && Ne(Ve(), Z, ""), !0) : !1;
-	}, Ct = $e && J ? /* @__PURE__ */ P(s, {
+	}, Ct = !!u.pending, wt = K === "chat" && (!U || !!U.unavailableReason || !!U.disabled), Tt = wt && !$.typed && !O && !f && !Ct, Et = $e && J ? /* @__PURE__ */ P(s, {
 		references: [{
 			id: J.id,
 			label: _e ? J.label.split(" › ").pop() ?? J.label : J.label,
 			title: J.label
 		}],
-		onRemove: () => {
+		...Tt ? {} : { onRemove: () => {
 			Ye(!1), Y.current += 1, de?.(J.id);
-		},
+		} },
 		removeLabel: (e) => `Remove ${e.label} from this draft`,
 		size: "md",
 		className: "min-w-0 max-w-[max(9rem,min(30rem,calc(100cqw-22rem)))] flex-nowrap p-0",
 		"data-testid": "rich-chat-composer-references"
-	}) : null, wt = je && U ? [...V, U] : V, Tt = K === "chat" && wt.length > 1, Et = K === "chat" && Je && Ze && Qe && Xe, Dt = K === "chat" && wt.length > 1 ? U?.unavailableReason ?? (U ? null : "Choose a destination.") : null, Ot = K === "chat" ? U?.error ?? null : null, kt = Tt || Dt || dt || Et || Ot || L != null && L !== !1 ? /* @__PURE__ */ F(i, {
+	}) : null, Dt = je && U ? [...V, U] : V, Ot = K === "chat" && Dt.length > 1, kt = K === "chat" && Je && Ze && Qe && Xe, At = K === "chat" && Dt.length > 1 && !Ct ? U?.unavailableReason ?? (U ? null : "Choose a destination.") : null, jt = K === "chat" ? U?.error ?? null : null, Mt = Ot || At || dt || kt || jt || L != null && L !== !1 ? /* @__PURE__ */ F(i, {
 		gap: "xs",
 		children: [
 			L,
-			(Tt || Dt) && /* @__PURE__ */ F(r, {
+			(Ot || At) && /* @__PURE__ */ F(r, {
 				gap: "sm",
 				align: "center",
 				wrap: !1,
 				className: "min-w-0",
 				"data-composer-recipient-row": "",
-				children: [Tt && /* @__PURE__ */ P(Ue, {
+				children: [Ot && /* @__PURE__ */ P(Ue, {
 					id: `${B}-recipient`,
 					value: U?.id ?? null,
-					recipients: wt,
+					recipients: Dt,
 					onChange: gt,
 					"data-testid": `${z}-recipient`
-				}), Dt && /* @__PURE__ */ P(a, {
+				}), At && /* @__PURE__ */ P(a, {
 					size: "xs",
 					tone: "tertiary",
-					title: Dt,
-					className: e("min-w-0", Tt && "border-0 border-l border-solid border-border pl-2"),
+					title: At,
+					className: e("min-w-0", Ot && "border-0 border-l border-solid border-border pl-2"),
 					"data-composer-recipient-notice": "",
 					"data-testid": `${z}-recipient-unavailable`,
 					children: /* @__PURE__ */ P("span", {
 						className: "truncate",
-						children: Dt
+						children: At
 					})
 				})]
 			}),
-			Et && /* @__PURE__ */ P(a, {
+			kt && /* @__PURE__ */ P(a, {
 				size: "xs",
 				tone: "tertiary",
 				wrap: !0,
@@ -991,31 +991,31 @@ function Ge({ rm: n, channel: o, chat: c, context: l, capabilities: u, identity:
 				"data-testid": `${z}-note`,
 				children: dt
 			}),
-			Ot && /* @__PURE__ */ P(a, {
+			jt && /* @__PURE__ */ P(a, {
 				size: "xs",
 				className: "text-error",
 				wrap: !0,
 				"data-testid": `${z}-recipient-error`,
-				children: Ot
+				children: jt
 			})
 		]
-	}) : void 0, At = !_e, jt = At && Ct || ue ? /* @__PURE__ */ F(r, {
+	}) : void 0, Nt = !_e, Pt = Nt && Et || ue ? /* @__PURE__ */ F(r, {
 		gap: "xs",
 		align: "center",
 		wrap: !1,
 		className: "min-w-0",
-		children: [At ? Ct : null, ue]
-	}) : void 0, Mt = !At && $e && J ? [{
+		children: [Nt ? Et : null, ue]
+	}) : void 0, Ft = !Nt && $e && J ? [{
 		id: J.id,
 		label: J.label.split(" › ").pop() ?? J.label,
 		title: J.label
-	}, ...R ?? []] : R, Nt = (e) => {
+	}, ...R ?? []] : R, It = (e) => {
 		J && e === J.id && (Ye(!1), Y.current += 1), de?.(e);
-	}, Pt = {
+	}, Lt = {
 		...fe,
 		...K === "chat" && U?.placeholder ? { chat: U.placeholder } : {},
 		...$.typed && $.active ? { [K]: $.active.placeholder ?? "Type your answer and press Enter" } : {}
-	}, Ft = K === "chat" && (!U || !!U.unavailableReason || !!U.disabled);
+	}, Rt = Tt ? At ? Pe > 0 ? "Read only. Choose another destination in To: to post." : "Read only" : U?.unavailableReason ?? (U ? be : "Choose a destination.") : null;
 	return /* @__PURE__ */ P(se, {
 		...ge,
 		context: l,
@@ -1031,19 +1031,19 @@ function Ge({ rm: n, channel: o, chat: c, context: l, capabilities: u, identity:
 		modeUnavailableReasons: G.reasons,
 		chatAvailable: W && !G.reasons.chat,
 		contextChip: pe ?? (!J && void 0),
-		...kt ? { above: kt } : {},
+		...Mt ? { above: Mt } : {},
 		...$.visible ? { header: /* @__PURE__ */ P(Ce, {
 			deck: $,
 			input: ht,
 			variant: "inset",
 			"data-testid": `${z}-prompts`
 		}) } : {},
-		...jt ? { modeRowEnd: jt } : {},
-		...Mt ? {
-			references: Mt,
-			onRemoveReference: Nt
+		...Pt ? { modeRowEnd: Pt } : {},
+		...Ft ? {
+			references: Ft,
+			onRemoveReference: It
 		} : {},
-		modePlaceholders: Pt,
+		modePlaceholders: Lt,
 		commands: bt,
 		reply: K === "chat" && x?.reply && U?.channel === o ? {
 			author: x.reply.author,
@@ -1054,7 +1054,8 @@ function Ge({ rm: n, channel: o, chat: c, context: l, capabilities: u, identity:
 		} : null,
 		allowAttachments: !!lt,
 		...me === void 0 ? {} : { sendWithReferencesOnly: me },
-		disabled: !!O || !$.typed && (!!f || Ft || K === "agent" && !u.agent?.allowed),
+		...Rt ? { readOnly: Rt } : {},
+		disabled: !!O || !$.typed && (!!f || wt || K === "agent" && !u.agent?.allowed),
 		draftKey: nt,
 		...X ? { draft: I } : {},
 		...ot === void 0 ? {} : { defaultDraft: ot },
