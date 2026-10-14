@@ -1,13 +1,13 @@
 import { t as e } from "../cn-D4QmbyEy.js";
 import { c as t, n } from "../Button-uREUOWUk.js";
-import { c as r, l as i, n as a } from "../Text-Y7cUwppt.js";
+import { c as r, l as i, n as a } from "../Text-4BIlhd_-.js";
 import { t as o } from "../Select-DSnKoxyn.js";
-import { a as s, c, i as l, l as u, n as d, r as f, t as p } from "../composerSendError-Bv4mkKMu.js";
+import { a as s, c, i as l, l as u, n as d, r as f, t as p } from "../composerSendError-BCxgMhHn.js";
 import { a as m, i as h, n as g, r as _, t as v } from "../composerContext-BLn1-Nao.js";
-import { a as ee, i as y, n as b, o as x, r as te, s as S, t as C } from "../ConversationInputs-MSs8xlYn.js";
-import { a as w, c as T, i as E, l as D, n as ne, o as re, r as O, s as ie, t as ae, u as oe } from "../RichChatComposer-B7agoWlx.js";
-import { t as se } from "../ContextComposer-mVPKwf-U.js";
-import { t as ce } from "../AgentComposerDock-DFFLJiTI.js";
+import { a as ee, i as y, n as b, o as x, r as te, s as S, t as C } from "../ConversationInputs-GSOr1WbY.js";
+import { a as w, c as T, i as E, l as D, n as ne, o as re, r as O, s as ie, t as ae, u as oe } from "../RichChatComposer-BT9KsW9Q.js";
+import { t as se } from "../ContextComposer-DbIlfjKP.js";
+import { t as ce } from "../AgentComposerDock-D0EU55XL.js";
 import { useCallback as k, useEffect as A, useId as le, useMemo as j, useRef as M, useState as N } from "react";
 import { jsx as P, jsxs as F } from "react/jsx-runtime";
 //#region src/components/social/composerPromptModel.ts

@@ -765,6 +765,16 @@ export function PlayCircleIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
+/** Two upright bars in a ring: "pause" (the counterpart of PlayCircleIcon). Since 2.451.3. */
+export function PauseCircleIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <circle cx="8" cy="8" r="5.75" />
+      <path d="M6.6 5.9v4.2M9.4 5.9v4.2" />
+    </svg>
+  );
+}
+
 /** Two stacked pages: "make a copy". Since 2.390.3. */
 export function CopyIcon({ size = 16, ...rest }: GlyphProps) {
   return (

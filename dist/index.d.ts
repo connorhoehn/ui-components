@@ -15026,6 +15026,9 @@ export declare interface PathHop {
     viaType: string;
 }
 
+/** Two upright bars in a ring: "pause" (the counterpart of PlayCircleIcon). Since 2.451.3. */
+export declare function PauseCircleIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 export declare function PauseIcon({ size, ...rest }: IconProps): JSX.Element;
 
 export declare const PEOPLE_GRAPH_QUERY_NODE_ID = "__query__";

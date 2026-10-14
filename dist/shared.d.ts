@@ -4256,6 +4256,9 @@ export declare interface ParticlesBackgroundProps {
     'data-testid'?: string;
 }
 
+/** Two upright bars in a ring: "pause" (the counterpart of PlayCircleIcon). Since 2.451.3. */
+export declare function PauseCircleIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
 /** Two people: "shared with me", a group. Since 2.385.0. */
 export declare function PeopleIcon({ size, ...rest }: GlyphProps): JSX.Element;
 

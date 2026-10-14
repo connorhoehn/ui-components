@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.452.2
+
+- PauseCircleIcon: two bars in a ring, the counterpart of PlayCircleIcon (the video barrel already owns the 20px PauseIcon), so a table row's pause/resume pair is two `IconButton`s instead of text buttons (aws-agentcore layout-drift burn-down, Lane B).
+
 ## 2.452.1
 
 - ui-dom-audit `interceptData`: data states are read-only like every probe. A page reacting to an injected failure or a denied capability with a write (a logout, a tenant switch) had that request reach the server, which revoked the shared fixture session and turned the rest of a run into coverage failures; non-GET requests are now aborted and `state.data` reports them as `<mode>: writes attempted` (fixture). `deep-audit.md`: never sign in as the fixture user elsewhere while a run is underway.
