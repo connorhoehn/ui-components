@@ -183,6 +183,29 @@ try {
     await page.evaluate(() => { const p = document.createElement('p'); p.textContent = 'Next step drawn under the deck'; p.style.cssText = 'position:absolute;left:0;right:0;bottom:4px;margin:0;z-index:-1'; document.querySelector('#content').append(p); });
     assert.ok((await measure()).issues.some(i => i.rule === 'dock.clearance'), 'content painted inside the dock box fails');
     console.log('PASS a pinned dock takes layout space; content under it fails, content scrolling above it passes');
+    // An embedded command host is the LAST ROW of a scrolling column: it scrolls
+    // with that column, and its box running past the column's bottom edge lies
+    // over the shell chrome below only on paper (the column clips it). Same
+    // geometry with the dock pinned outside the scroller is a real overlap.
+    const embedded = (pinnedOutside) => page.evaluate((outside) => {
+      document.querySelector('#shelf-wrapper').remove();
+      const content = document.querySelector('#content');
+      const col = document.createElement('div'); col.style.cssText = 'position:absolute;top:0;left:0;right:0;height:300px;overflow-y:auto';
+      col.innerHTML = '<p style="height:400px;margin:0">Rows</p>';
+      const dock = document.createElement('div'); dock.id = 'embedded-dock'; dock.setAttribute('data-floating-composer-dock', ''); dock.setAttribute('data-placement', 'pinned');
+      dock.style.cssText = 'position:relative;height:120px'; dock.innerHTML = '<div data-composer-surface><div contenteditable="true" role="textbox">Command</div></div>';
+      const chrome = document.createElement('p'); chrome.textContent = 'Footer status under the column'; chrome.style.cssText = 'position:absolute;left:0;right:0;top:305px;height:12px;margin:0;font-size:12px';
+      content.append(col, chrome);
+      if (outside) { dock.style.cssText = 'position:absolute;left:0;right:0;top:200px;height:120px'; content.append(dock); }
+      else { col.append(dock); col.scrollTop = 200; }
+    }, pinnedOutside);
+    await page.setContent(html); await embedded(false);
+    const flow = await measure();
+    assert.deepEqual(flow.issues.filter(i => i.rule === 'dock.clearance'), [], `an embedded host scrolling with its column is not a pinned dock: ${JSON.stringify(flow.issues.filter(i => i.rule === 'dock.clearance'))}`);
+    assert.ok(flow.samples.some(x => x.rule === 'dock.clearance' && /not pinned/.test(String(x.actual))), 'the embedded host is classified, not silently skipped');
+    await page.setContent(html); await embedded(true);
+    assert.ok((await measure()).issues.some(i => i.rule === 'dock.clearance'), 'the same overlap under a dock pinned outside the scroller still fails');
+    console.log('PASS an embedded command host in the scroll flow passes; the same overlap under a pinned dock fails');
   }
   // Row activation: a row link or a static declaration with a reason is a valid
   // inert-looking row; an ordinary inert row beside them still fails.

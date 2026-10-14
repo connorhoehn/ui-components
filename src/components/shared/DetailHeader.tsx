@@ -68,7 +68,10 @@ export function DetailHeader({
         // header, not a complementary landmark — and as an <aside> it picked
         // up host rules meant for side rails (the portal paints every shell
         // <aside> as a panel, so a sprint's progress sat in a grey box).
-        <div className="flex flex-col gap-2 shrink-0" style={{ width: asideWidth }} data-detail-aside="">
+        // `asideWidth` is the preferred width; `max-w-full` caps it at the
+        // header's own width once the row wraps (since 2.446.4), so a narrow
+        // panel puts the readout under the title instead of past its edge.
+        <div className="flex max-w-full flex-col gap-2 shrink-0" style={{ width: asideWidth }} data-detail-aside="">
           {aside}
         </div>
       ) : null}

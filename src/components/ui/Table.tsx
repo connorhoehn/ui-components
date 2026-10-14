@@ -32,9 +32,16 @@ export function Table({ children, className, size: sizeProp, ...rest }: TablePro
   const size = useDensitySize<TableSize>('Table', sizeProp, { comfortable: 'md', compact: 'sm' });
   return (
     <TableSizeContext.Provider value={size}>
-      <table className={cn('w-full text-sm', className)} data-size={size === 'sm' ? 'sm' : undefined} {...rest}>
-        {children}
-      </table>
+      {/* A table is the one thing on a page that legitimately outgrows its
+          column — many columns, long one-line cells. Its own scroller (since
+          2.446.4; DataTable used to add it) keeps that spill inside the
+          table's box instead of running past the column and being cut off
+          by the page's scroller. */}
+      <div className="w-full min-w-0 max-w-full overflow-x-auto" data-table-scroller="">
+        <table className={cn('w-full text-sm', className)} data-size={size === 'sm' ? 'sm' : undefined} {...rest}>
+          {children}
+        </table>
+      </div>
     </TableSizeContext.Provider>
   );
 }

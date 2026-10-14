@@ -77,7 +77,7 @@ export function WorkTableView({
       onClearFilters={onClearFilters} className="mb-3 max-w-[420px]" />
     {loading ? <LoadingState label="Loading work…" /> : error ? <ErrorState title="Work unavailable" body={error}
       action={onRetry ? <Button size="sm" onClick={onRetry}>Try again</Button> : undefined} /> : !items.length ? <DensityProvider density="compact"><EmptyState title={emptyLabel} /></DensityProvider> : <>
-      <div className="overflow-x-auto">
+      {/* Table scrolls itself sideways below its 620px floor. */}
         <Table className="min-w-[620px] border-collapse text-left" aria-label={`Work items grouped by ${groupBy}`}>
           <TableHead className="border-t border-border bg-transparent"><Tr>
             <Th className={cn(heading, 'w-1/2')}>Work item</Th><Th className={heading}>Owner</Th><Th className={heading}>Type</Th><Th className={heading}>Points</Th><Th className={heading}><span className="sr-only">Open</span></Th>
@@ -114,7 +114,6 @@ export function WorkTableView({
             </TableBody>;
           })}
         </Table>
-      </div>
       <p className="m-0 pt-2 text-xs text-text-tertiary">{items.length === count ? `${count} work ${count === 1 ? 'item' : 'items'}` : `${items.length} of ${count} work items`}</p>
     </>}
   </section>;

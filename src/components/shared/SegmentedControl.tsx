@@ -166,7 +166,7 @@ export function SegmentedControl({
             data-testid={option.testId ?? (testId ? `${testId}-${option.value}` : undefined)}
             {...(compact ? { 'aria-label': hasBadge && (typeof option.badge === 'string' || typeof option.badge === 'number') ? `${option.label}, ${option.badge}` : option.label } : {})}
             className={cn(
-              'inline-flex items-center justify-center gap-1.5 rounded-md font-medium transition-all cursor-pointer',
+              'inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md font-medium transition-all cursor-pointer',
               fullWidth && 'flex-1',
               disabled && 'cursor-not-allowed opacity-60',
               compact ? cn('relative', ICON_SIZE_CLASSES[size]) : SIZE_CLASSES[size],

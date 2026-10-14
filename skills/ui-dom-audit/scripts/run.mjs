@@ -95,7 +95,12 @@ export async function runAudit(browser, adapter, options) {
             await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
             const second = await page.evaluate(measureDOM, payload);
             Object.assign(entry, second);
-            if (hash(first.samples) !== hash(second.samples)) entry.issues.push({ rule: 'coverage.stability', category: 'coverage', selector: 'document', property: 'measurement hash', expected: hash(first.samples), actual: hash(second.samples) });
+            if (hash(first.samples) !== hash(second.samples)) {
+              // Name what moved, so an unstable case points at its moving node instead of a bare hash.
+              const key = x => `${x.rule}|${x.selector}|${x.property}`, before = new Map(first.samples.map(x => [key(x), JSON.stringify(x.actual)]));
+              const moved = second.samples.filter(x => before.get(key(x)) !== JSON.stringify(x.actual)).slice(0, 5).map(x => ({ rule: x.rule, selector: x.selector, property: x.property, first: before.has(key(x)) ? JSON.parse(before.get(key(x))) : 'absent', second: x.actual }));
+              entry.issues.push({ rule: 'coverage.stability', category: 'coverage', selector: 'document', property: 'measurement hash', expected: hash(first.samples), actual: hash(second.samples), moved });
+            }
             for (const message of errors) entry.issues.push({ rule: 'runtime.error', category: 'runtime', selector: 'document', property: 'pageerror', expected: 'none', actual: message });
           } catch (error) {
             entry.issues.push({ rule: 'coverage.navigation-state', category: 'coverage', selector: 'document', property: 'ready state', expected: 'requested route and state rendered', actual: String(error.message) });

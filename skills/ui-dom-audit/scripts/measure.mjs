@@ -318,7 +318,22 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
         const tol = rule.tolerance ?? tolerance;
         const ignore = rule.ignore ? css(rule.ignore) : null;
         const paints = el => [...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()) || el.matches('button, a[href], input, select, textarea, img, svg, video, canvas, [role="button"]');
+        // Pinned means it holds its place while the content scrolls: the dock
+        // (or an ancestor) is sticky/fixed, or no ancestor scroll container
+        // actually scrolls it. A dock laid out as the last row INSIDE a
+        // scrolling column (an embedded collection command host) scrolls with
+        // that column; it is not a dock, and the shell chrome under that
+        // column's bottom edge is not "inside" it.
+        const inScrollFlow = dock => {
+          for (let n = dock; n && n !== document.documentElement; n = n.parentElement) {
+            const cs = getComputedStyle(n);
+            if (cs.position === 'fixed' || cs.position === 'sticky') return false;
+            if (n !== dock && /^(auto|scroll)$/.test(cs.overflowY) && n.scrollHeight > n.clientHeight + 1) return true;
+          }
+          return false;
+        };
         for (const dock of nodes) {
+          if (inScrollFlow(dock)) { samples.push({ rule: rule.id, selector: selectorOf(dock), property: 'dock placement', actual: 'scrolls with its column (not pinned)', expected: 'judged only when pinned' }); continue; }
           const d = dock.getBoundingClientRect();
           let found = 0;
           for (const el of document.body.querySelectorAll('*')) {

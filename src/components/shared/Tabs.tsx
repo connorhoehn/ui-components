@@ -182,6 +182,18 @@ export function Tabs({
     if (pending?.id === value && (document.activeElement === pending.origin || document.activeElement === document.body)) focusTab(value);
   }, [value, folded, focusTab]);
 
+  // Keep the selected tab inside a row that scrolls (a narrow column):
+  // scroll only the row itself, never the page around it.
+  useLayoutEffect(() => {
+    const tab = tabRefs.current.get(value);
+    const row = tab?.parentElement;
+    if (!tab || !row || row.scrollWidth <= row.clientWidth) return;
+    const t = tab.getBoundingClientRect(), r = row.getBoundingClientRect();
+    const start = t.left - r.left + row.scrollLeft, end = start + t.width;
+    if (start < row.scrollLeft) row.scrollLeft = start;
+    else if (end > row.scrollLeft + row.clientWidth) row.scrollLeft = end - row.clientWidth;
+  }, [value, folded]);
+
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLButtonElement>, currentId: string) => {
       if (enabledIds.length === 0) return;
@@ -229,7 +241,12 @@ export function Tabs({
       data-testid={testId}
       data-folded={overflowBelow ? (folded ? 'true' : 'false') : undefined}
       {...(bar ? { 'data-indicator': 'bar' } : {})}
-      className={cn(variantContainerClasses(variant, bar), className)}
+      // A tab row never runs past its column (since 2.446.4): it is capped at
+      // the column's width and scrolls inside itself (no scrollbar drawn —
+      // the selected tab is kept in view, and the row still scrolls by
+      // trackpad, wheel and keyboard focus). `overflowBelow` folds instead.
+      className={cn(variantContainerClasses(variant, bar), 'min-w-0 max-w-full overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', className)}
+      data-tab-scroller=""
       style={style}
     >
       {shownItems.map((item) => {
@@ -253,7 +270,9 @@ export function Tabs({
             onClick={() => !item.disabled && onValueChange(item.id)}
             onKeyDown={(e) => handleKeyDown(e, item.id)}
             className={cn(
-              'inline-flex items-center gap-1.5 font-medium transition-colors cursor-pointer',
+              // shrink-0: in a scrolling row a tab keeps its width; the inset
+              // focus ring stays inside the row's clip.
+              'inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap font-medium transition-colors cursor-pointer focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[var(--color-primary)]',
               stretch && 'flex-1 justify-center',
               SIZE[size],
               variantItemClasses(variant, active, !!item.disabled, bar),

@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.446.4
+
+- Controls stay inside their column at narrow widths (the portal's 900px sweep found tab rows, header actions, a detail readout and table cells running past the column's edge, cut off by the page's scroller):
+  - `Tabs`: the tab row is capped at its column (`min-w-0 max-w-full`) and scrolls inside itself with no drawn scrollbar (`data-tab-scroller`); tabs keep their width (`shrink-0`, `whitespace-nowrap`), focus rings are inset so the row's clip cannot cut them, and the selected tab is scrolled into view within the row (never the page). `overflowBelow` still folds instead.
+  - `Table`: draws its own horizontal scroller around the `<table>` (`data-table-scroller`, `overflow-x-auto`). `DataTable` and `WorkTableView` no longer add their own.
+  - `PageHeader` (comfortable): the actions are capped at the header's width and wrap there; the title's cluster wraps its badge/info under the title instead of squeezing the title onto two lines.
+  - `PageSection`: the header row wraps — the title block keeps at least 16rem, and the actions take their own row (capped, wrapping) when both do not fit.
+  - `DetailHeader`: `asideWidth` is a preferred width capped at the header's (`max-w-full`), so a wrapped readout sits under the title instead of past its edge.
+  - `SegmentedControl`: a segment label never breaks across lines.
+- ui-dom-audit: `dock.clearance` judges only a PINNED dock — sticky/fixed, or not scrolled by any ancestor scroll container. A dock laid out as the last row inside a scrolling column (an embedded collection command host, `data-collection-command-boundary="embedded"`) scrolls with that column; it is now reported as `dock placement: scrolls with its column`, and the shell footer under the column's bottom edge is no longer "inside" it. Fixture pair: the embedded host passes; the same overlap under a dock pinned outside the scroller fails.
+- ui-dom-audit: a `coverage.stability` finding names what moved between the two measurements (`moved`: rule, selector, property, first and second value) instead of only two hashes.
+
 ## 2.446.3
 
 - `Select`: the open listbox is named by its trigger (`aria-labelledby`), not by repeating the field's `aria-label`, so the field's label names exactly one element while the list is open (`getByLabel('Move destination')` resolved to two).

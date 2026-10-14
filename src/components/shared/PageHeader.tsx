@@ -215,7 +215,10 @@ function PageHeader({
         </a>
       )}
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-        <div className="min-w-0 flex items-center gap-2.5">
+        {/* The title keeps its line: a badge/info that does not fit beside it
+            wraps under it (since 2.446.4) instead of squeezing the title onto
+            two lines. */}
+        <div className="min-w-0 flex flex-wrap items-center gap-x-2.5 gap-y-2">
           <h1
             className={cn(
               'font-semibold text-[var(--color-text-primary)] leading-tight',
@@ -228,8 +231,11 @@ function PageHeader({
           {info}
           {chevron}
         </div>
+        {/* Capped at the header's width (since 2.446.4): on a narrow column the
+            actions take their own row and wrap inside it rather than run past
+            the column's edge. */}
         {actions && (
-          <div className="flex-shrink-0 flex items-center gap-2">{actions}</div>
+          <div className="flex max-w-full min-w-0 flex-shrink-0 flex-wrap items-center gap-2">{actions}</div>
         )}
       </div>
       {description && (

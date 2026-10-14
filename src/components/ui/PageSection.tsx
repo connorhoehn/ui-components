@@ -67,8 +67,12 @@ export function PageSection({
   const Heading = md ? 'h2' : 'h1';
   return (
     <section className={cn('flex flex-col', compactGap ? 'gap-2' : 'gap-6', className)} {...(testId ? { 'data-testid': testId } : {})} data-size={md ? size : undefined} data-density={sizeProp === undefined && density === 'compact' ? 'compact' : undefined}>
-      <div className={cn('flex justify-between gap-4', md ? 'items-center' : 'items-start')}>
-        <div className="min-w-0">
+      {/* The row wraps (since 2.446.4): when the title and the actions do not
+          fit side by side, the actions take their own row, capped at its
+          width, instead of squeezing the title into a sliver or running past
+          the column. */}
+      <div className={cn('flex flex-wrap justify-between gap-x-4 gap-y-2', md ? 'items-center' : 'items-start')}>
+        <div className="min-w-0 flex-[1_1_16rem]">
           <Heading className={cn('m-0 text-text-primary', md ? cn('flex min-w-0 items-center gap-2.5 font-semibold', sm ? 'text-sm leading-5' : 'text-[16px] leading-6') : 'text-xl font-semibold')}>
             {md ? <span className="min-w-0 truncate">{title}</span> : title}
             {typeof count === 'number' && (
@@ -89,7 +93,7 @@ export function PageSection({
             <p className="text-sm text-neutral mt-1 mb-0">{description}</p>
           )}
         </div>
-        {actions && <div className={cn('flex items-center gap-2 shrink-0', sm && 'text-sm')}>{actions}</div>}
+        {actions && <div className={cn('flex max-w-full min-w-0 flex-wrap items-center gap-2 shrink-0', sm && 'text-sm')}>{actions}</div>}
       </div>
       {children}
     </section>

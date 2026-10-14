@@ -289,12 +289,8 @@ export function DataTable<T>({
       data-collection-rows-reason={!onRowClick && staticRows ? staticRows : undefined}
     >
       {searchable && <CollectionToolbar label="Table controls" search={{ value: query, onChange: value => { setQuery(value); setPage(0); }, placeholder: searchPlaceholder, 'aria-label': 'Search', 'data-testid': 'datatable-search' }} />}
-      {/* A table is the one thing on a page that legitimately outgrows its
-          column — many columns, long cells. Without a scroller of its own it
-          simply overflows, painting its trailing columns on top of whatever
-          sits beside it (a rail, a sidebar). This keeps that spill inside the
-          table's own box. */}
-      <div className="w-full max-w-full overflow-x-auto">
+      {/* `Table` draws its own horizontal scroller (since 2.446.4), so a wide
+          table's spill stays inside the table's box. */}
         <Table {...(size ? { size } : {})} className={frameless ? undefined : 'border border-border rounded-lg overflow-hidden'}>
         <TableHead>
           <tr>
@@ -403,7 +399,6 @@ export function DataTable<T>({
                 ))}
         </TableBody>
         </Table>
-      </div>
       {pageSize && pageSize > 0 && sorted.length > pageSize && (
         <div className="flex items-center justify-between text-xs text-text-secondary">
           <span data-testid="datatable-page-summary">
