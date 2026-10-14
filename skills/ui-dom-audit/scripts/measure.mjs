@@ -1343,7 +1343,10 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
               for (const [edge, gap] of Object.entries(out)) if (gap < -tolerance) add(rule, layer, `${edge} inside viewport`, `${label}: >= 0`, Math.round(gap));
               // z-order: the layer paints over the content beneath it.
               const pts = [[0.5, 0.5], [0.15, 0.15], [0.85, 0.15], [0.15, 0.85], [0.85, 0.85]].map(([x, y]) => [b.left + b.width * x, b.top + b.height * y]).filter(([x, y]) => x >= 0 && y >= 0 && x < innerWidth && y < innerHeight);
-              const covered = pts.filter(([x, y]) => { const hit = document.elementFromPoint(x, y); return hit && !layer.contains(hit) && !hit.contains(layer); });
+              // The layer's own panel: its nearest positioned (fixed/absolute) ancestor-or-self. Parts of the
+              // same panel drawn over the marked node (a header over a menu list) are the layer, not a cover.
+              let panel = layer; for (let n = layer; n && n !== document.body; n = n.parentElement) if (/fixed|absolute/.test(cs(n).position)) { panel = n; break; }
+              const covered = pts.filter(([x, y]) => { const hit = document.elementFromPoint(x, y); return hit && !panel.contains(hit) && !hit.contains(layer); });
               if (covered.length) add(rule, layer, 'z-order', `${label}: drawn above the page`, `${covered.length}/${pts.length} sample points covered by ${selectorOf(document.elementFromPoint(...covered[0]))}`);
               // Never under or over the shell's header/footer bars.
               for (const name of rule.chrome ?? []) {
@@ -1468,8 +1471,21 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
         // "a · b · c" that wraps must not start its next line with the separator.
         const sep = new RegExp(rule.separators ?? '^[·•|]$');
         let found = 0;
-        for (const scope of nodes) for (const run of textRuns(scope)) {
-          if (found >= (rule.maxPerPage ?? 5) || !sep.test(run.text)) continue;
+        // Separators are usually decorative (aria-hidden), so they are found among all painted text
+        // nodes, not only the readable runs; the rows around them are judged by readable ink.
+        const glyphs = [];
+        for (const scope of nodes) {
+          const walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT);
+          while (walker.nextNode()) {
+            const node = walker.currentNode, el = node.parentElement, text = node.textContent.trim();
+            if (!sep.test(text) || !el || el.closest('svg') || !visible(el) || faded(el)) continue;
+            const range = document.createRange(); range.selectNodeContents(node);
+            const rects = [...range.getClientRects()].filter(r => r.width > 1 && r.height > 1);
+            if (rects.length) glyphs.push({ node, el, text, rects });
+          }
+        }
+        for (const run of glyphs) {
+          if (found >= (rule.maxPerPage ?? 5)) continue;
           let block = run.el; while (block.parentElement && /^(inline|inline-block|inline-flex|contents)$/.test(cs(block).display)) block = block.parentElement;
           // The line holder: the nearest ancestor whose ink spans more than one row.
           let holder = block;
@@ -1477,12 +1493,13 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
           const ink = inkRects(holder), rows = rowsOf(ink);
           if (rows.length < 2) continue;
           // A separator sits between items: a glyph that is the first text of its holder is a list marker (list.marker-alignment).
-          if (textRuns(holder)[0]?.el === run.el) continue;
+          { const w = document.createTreeWalker(holder, NodeFilter.SHOW_TEXT); let firstText = null; while (w.nextNode()) if (w.currentNode.textContent.trim()) { firstText = w.currentNode; break; } if (firstText === run.node) continue; }
           const r = run.rects[0], mid = (r.top + r.bottom) / 2;
           const row = rows.find(x => mid >= x.top - 1 && mid <= x.bottom + 1);
           if (!row || row === rows[0]) continue;
           const leftmost = row.items.reduce((a, x) => (x.left < a.left ? x : a));
-          if (leftmost.el === run.el || leftmost.left >= r.left - 1) { found++; add(rule, run.el, 'line starts with a separator', 'separators between items, never leading a wrapped line', `"${run.text}" opens line ${rows.indexOf(row) + 1} of ${selectorOf(holder)}`); }
+          // Judged by position: text nodes of one element ("Page ", "1", " · ", "77") share their parent.
+          if (leftmost.left >= r.left - 1) { found++; add(rule, run.el, 'line starts with a separator', 'separators between items, never leading a wrapped line', `"${run.text}" opens line ${rows.indexOf(row) + 1} of ${selectorOf(holder)}`); }
         }
         samples.push({ rule: rule.id, selector: 'document', property: 'leading separators', actual: found, expected: 0 });
       }

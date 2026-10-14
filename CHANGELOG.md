@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.451.1
+
+- ui-dom-audit `text.leading-separator`: separators are found among all painted text, including decorative `aria-hidden` glyphs (the `/iq/projects` stats line that gave the rule its fixture uses them and was missed), and a separator is judged by position, so "Page 1 of 4 · 77 total" rendered as sibling text nodes of one element no longer reads as opening its line (fixtures for both).
+- ui-dom-audit `layer.behaviour` z-order: parts of the opened layer's own panel (its nearest fixed/absolute ancestor) drawn over the marked node — a dropdown's header over its menu list — are the layer, not a cover (fixture).
+
 ## 2.451.0
 
 - ui-dom-audit: a deep audit (`references/deep-audit.md`, `--deep`) that finds defects without a user report first. Every rule so far was added after a screenshot; the brief classifies each report by defect class and measures the classes. New criteria, each a general rule with a valid fixture and failing mutations in `self-test.mjs` and a section in `contracts.md` ("Deep-audit rules"):
