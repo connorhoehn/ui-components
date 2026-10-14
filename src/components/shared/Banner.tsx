@@ -169,24 +169,39 @@ export default function Banner({
     );
   }
 
+  // The banner is a size container (2.447.0): `inline` lays title, body and
+  // action in one row only while the BANNER is wide enough to hold them. In
+  // a narrow column (a 324px content column beside a list rail, a comment
+  // gutter) the row split the width three ways and left the message ~3 words
+  // wide and a dozen lines tall; under 30rem it stacks — title, then the
+  // body at full width, then the action — whatever the viewport is.
+  const stacked = layout === 'stacked';
   return (
     <div
       role={variant === 'error' || variant === 'warning' ? 'alert' : 'status'}
       aria-live={variant === 'error' || variant === 'warning' ? 'assertive' : 'polite'}
       data-testid={testId}
+      data-layout={layout}
       className={cn(
-        'px-3.5 py-2.5 rounded-lg text-[13px] flex gap-2 border',
-        layout === 'stacked' ? 'flex-col items-start gap-1' : 'items-center',
+        '@container px-3.5 py-2.5 rounded-lg text-[13px] border',
         VARIANT_CLASSES[variant],
         className,
       )}
       style={style}
     >
-      {iconNode}
-      {title && <strong>{title}</strong>}
-      <span className={layout === 'stacked' ? 'w-full' : 'flex-1'}>{children}</span>
-      {action && <span className="shrink-0 flex items-center gap-2">{action}</span>}
-      {dismiss}
+      <div
+        className={cn(
+          'flex gap-2 min-w-0',
+          stacked ? 'flex-col items-start gap-1' : 'items-center @max-[30rem]:flex-col @max-[30rem]:items-start @max-[30rem]:gap-1.5',
+        )}
+        data-banner-row=""
+      >
+        {iconNode}
+        {title && <strong>{title}</strong>}
+        <span className={stacked ? 'w-full' : 'min-w-0 flex-1 @max-[30rem]:w-full'}>{children}</span>
+        {action && <span className="shrink-0 flex items-center gap-2">{action}</span>}
+        {dismiss}
+      </div>
     </div>
   );
 }

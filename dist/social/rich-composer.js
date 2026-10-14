@@ -5,9 +5,9 @@ import { t as o } from "../Select-0lM_wZAc.js";
 import { a as s, c, i as l, l as u, n as d, r as f, t as p } from "../composerSendError-DTE9_DLz.js";
 import { a as m, i as h, n as g, r as _, t as v } from "../composerContext-BLn1-Nao.js";
 import { a as ee, i as y, n as b, o as x, r as te, s as S, t as C } from "../ConversationInputs-CyqSTiko.js";
-import { a as w, c as T, i as E, l as D, n as ne, o as re, r as O, s as ie, t as ae, u as oe } from "../RichChatComposer-BB7Q4mbz.js";
-import { t as se } from "../ContextComposer-Dw6rT2iG.js";
-import { t as ce } from "../AgentComposerDock-DZXQV5tY.js";
+import { a as w, c as T, i as E, l as D, n as ne, o as re, r as O, s as ie, t as ae, u as oe } from "../RichChatComposer-BrhSCJu7.js";
+import { t as se } from "../ContextComposer-aKJwk-yP.js";
+import { t as ce } from "../AgentComposerDock-djWN1OvY.js";
 import { useCallback as k, useEffect as A, useId as le, useMemo as j, useRef as M, useState as N } from "react";
 import { jsx as P, jsxs as F } from "react/jsx-runtime";
 //#region src/components/social/composerPromptModel.ts

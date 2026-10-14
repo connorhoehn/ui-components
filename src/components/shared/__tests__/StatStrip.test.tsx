@@ -87,10 +87,37 @@ describe('StatStrip', () => {
     expect(connectors[1]!.className).toContain('text-warning-fg');
     expect(screen.getByTestId('flow').className).not.toContain('divide-x');
     // connectors sit BETWEEN clusters: L0, arrow, L1, arrow, L2
-    const kids = Array.from(screen.getByTestId('flow').children);
+    const kids = Array.from(screen.getByTestId('flow').querySelector('[data-stat-strip-row]')!.children);
     expect(kids.map((k) => k.getAttribute('data-testid') ?? 'cluster')).toEqual([
       'cluster', 'stat-strip-connector', 'cluster', 'stat-strip-connector', 'cluster',
     ]);
+  });
+
+  // In a 324px content column the flow's labels ran into each other and the
+  // last cluster was cut to its number. A flow is a size container: under
+  // 40rem of its own width it stacks, one line per cluster, with a downward
+  // arrow; wider, a label that does not fit ends in an ellipsis with the full
+  // label on hover.
+  it('a flow stacks under a 40rem container and truncates labels with a title', () => {
+    render(
+      <StatStrip
+        data-testid="flow"
+        items={[{ label: 'L2 Guides & findings', value: 11, onSelect: () => {} }, { label: 'Agent library', value: 7, title: '7 guides linked' }]}
+        connectors={[{ label: 'Publish' }]}
+      />,
+    );
+    const root = screen.getByTestId('flow');
+    expect(root.getAttribute('role')).toBe('group');
+    expect(root.classList.contains('@container')).toBe(true);
+    expect(root.querySelector('[data-stat-strip-row]')!.className).toContain('@max-[40rem]:flex-col');
+    const labels = screen.getAllByTestId('stat-strip-label');
+    expect(labels[0]!.classList.contains('truncate')).toBe(true);
+    expect(labels[0]!.getAttribute('title')).toBe('L2 Guides & findings');
+    // The item's own title (provenance) speaks for its cluster; no second tooltip.
+    expect(labels[1]!.hasAttribute('title')).toBe(false);
+    const arrows = screen.getByTestId('stat-strip-connector').querySelectorAll('svg');
+    expect(arrows).toHaveLength(2);
+    expect(arrows[1]!.getAttribute('class')).toContain('@max-[40rem]:block');
   });
 
   it('keeps dividers when there are no connectors', () => {

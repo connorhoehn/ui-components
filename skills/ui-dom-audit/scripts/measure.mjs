@@ -102,6 +102,92 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
     }
     return right - left > 1 ? { ...r, left, right } : null;
   };
+  // ── Legible text (text.cramped, text.overlap, text.clipped, placeholder.squeezed) ──
+  // A text run is a non-empty text node a reader can see: its parent paints
+  // (no display:none / visibility:hidden / sr-only clip, no opacity-0
+  // ancestor) and it is not an icon glyph (svg, aria-hidden). Each line of it
+  // is judged by its EM box: the glyph rect a range reports is ~1.2em tall
+  // (ascent + descent), so two tight lines (leading-none) would "touch"
+  // without any ink meeting; the em box is what the eye reads as the line.
+  const csCache = new Map();
+  const cs = el => { let s = csCache.get(el); if (!s) { s = getComputedStyle(el); csCache.set(el, s); } return s; };
+  const faded = el => { for (let n = el; n && n !== document.documentElement; n = n.parentElement) if (cs(n).opacity === '0') return true; return false; };
+  const textRuns = root => {
+    const out = [], seen = new Map();
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) {
+      const node = walker.currentNode, el = node.parentElement;
+      if (!node.textContent.trim() || !el || el.closest('svg, [aria-hidden="true"], script, style, noscript, template, title')) continue;
+      if (!seen.has(el)) seen.set(el, visible(el) && !faded(el));
+      if (!seen.get(el)) continue;
+      const range = document.createRange(); range.selectNodeContents(node);
+      const fs = parseFloat(cs(el).fontSize) || 14;
+      const rects = [...range.getClientRects()].filter(r => r.width > 1 && r.height > 1).map(r => {
+        const pad = Math.max(0, (r.height - fs) / 2);
+        return { left: r.left, right: r.right, top: r.top + pad, bottom: r.bottom - pad };
+      });
+      if (rects.length) out.push({ node, el, fs, rects, text: node.textContent.replace(/\s+/g, ' ').trim() });
+    }
+    return out;
+  };
+  // The ancestors that clip an element's painted box, honouring containing
+  // blocks: an absolutely positioned box escapes static ancestors' overflow,
+  // a fixed one escapes everything below a transformed/filtered ancestor.
+  // The element itself is first: its overflow clips its own text.
+  const clipCache = new Map();
+  const clippers = el => {
+    if (clipCache.has(el)) return clipCache.get(el);
+    const out = []; let pos = 'static';
+    for (let n = el; n && n !== document.documentElement; n = n.parentElement) {
+      const s = cs(n);
+      const contains = s.position !== 'static' || s.transform !== 'none' || s.filter !== 'none' || /paint|layout|strict|content/.test(s.contain);
+      const holds = pos === 'fixed' ? (s.transform !== 'none' || s.filter !== 'none' || /paint|layout|strict|content/.test(s.contain)) : pos === 'absolute' ? contains : true;
+      if (holds) {
+        {
+          const x = s.overflowX !== 'visible', y = s.overflowY !== 'visible';
+          if (x || y) out.push({ n, x, y, xHard: /hidden|clip/.test(s.overflowX), yHard: /hidden|clip/.test(s.overflowY) });
+        }
+        pos = s.position;
+      }
+      if (n === document.body) break;
+    }
+    clipCache.set(el, out); return out;
+  };
+  const innerBox = n => { const b = n.getBoundingClientRect(); const left = b.left + n.clientLeft, top = b.top + n.clientTop; return { left, top, right: left + (n.clientWidth || b.width), bottom: top + (n.clientHeight || b.height) }; };
+  // A run's rect cut to every clipping/scrolling ancestor: null when wholly
+  // hidden (a collapsed panel, a row scrolled out of its list).
+  const clipped = (r, el) => {
+    let { left, right, top, bottom } = r;
+    for (const c of clippers(el)) {
+      const b = innerBox(c.n);
+      if (c.x) { left = Math.max(left, b.left); right = Math.min(right, b.right); }
+      if (c.y) { top = Math.max(top, b.top); bottom = Math.min(bottom, b.bottom); }
+    }
+    return right - left > 1 && bottom - top > 1 ? { left, right, top, bottom } : null;
+  };
+  // The nearest stacking-context root: two runs are only comparable when they
+  // paint in the same context (a popover, a sticky header or a canvas node is
+  // its own layer, drawn over the page by design).
+  const stackCache = new Map();
+  const stackRoot = el => {
+    if (stackCache.has(el)) return stackCache.get(el);
+    let root = document.documentElement;
+    for (let n = el; n && n !== document.documentElement; n = n.parentElement) {
+      const s = cs(n), parent = n.parentElement ? cs(n.parentElement) : null;
+      const flexItem = parent && /flex|grid/.test(parent.display);
+      if (s.position === 'fixed' || s.position === 'sticky' || ((s.position !== 'static' || flexItem) && s.zIndex !== 'auto') || parseFloat(s.opacity) < 1
+        || s.transform !== 'none' || s.filter !== 'none' || s.isolation === 'isolate' || s.mixBlendMode !== 'normal' || /transform|opacity|filter/.test(s.willChange)
+        || /paint|layout|strict|content/.test(s.contain) || (s.backdropFilter && s.backdropFilter !== 'none') || s.clipPath !== 'none' || (s.maskImage && s.maskImage !== 'none')) { root = n; break; }
+    }
+    stackCache.set(el, root); return root;
+  };
+  // Elements layered over text by design (a count badge over an avatar)
+  // declare it on the owner: data-ui-layered="<reason>".
+  const layered = el => el.closest('[data-ui-layered]');
+  const snippet = s => (s.length > 40 ? s.slice(0, 39) + '…' : s);
+  const canvas = document.createElement('canvas').getContext('2d');
+  const textWidth = (text, font) => { canvas.font = font; return canvas.measureText(text).width; };
+  const fontOf = s => s.font || `${s.fontStyle} ${s.fontWeight} ${s.fontSize} ${s.fontFamily}`;
   for (const name of required) if (query(name).length === 0) add({ id: 'coverage.required', selector: name }, null, 'rendered count', '>= 1', 0, 'coverage');
   for (const rule of contract.rules) {
     try {
@@ -475,6 +561,165 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
             if (Math.abs(delta) > (rule.tolerance ?? tolerance)) add(rule, null, `${edge} ${phase} selection`, 0, delta);
           }
         }
+      }
+      else if (rule.kind === 'text-cramped') {
+        // A block of wrapped text squeezed into a column too narrow to read:
+        // more than `maxLines` lines while a line holds fewer than `minChars`
+        // characters at the block's own font (measured, not assumed). A
+        // truncated cell, a chip or a single-word label is one line and never
+        // qualifies; lines forced by <br> or separate items (a short address)
+        // do not either — the text must be long enough to fill the lines by
+        // wrapping (`length / chars-per-line > maxLines`).
+        const maxLines = rule.maxLines ?? 4, minChars = rule.minChars ?? 20;
+        const blocks = new Map();
+        for (const scope of nodes) for (const run of textRuns(scope)) {
+          if ((rule.exclude ?? []).some(e => run.el.closest(css(e.selector)))) continue;
+          let block = run.el;
+          while (block.parentElement && /^(inline|contents)$/.test(cs(block).display)) block = block.parentElement;
+          if (/^(pre|pre-wrap)$/.test(cs(block).whiteSpace) || block.closest('pre, code, [contenteditable="true"]') || cs(block).writingMode !== 'horizontal-tb') continue;
+          const entry = blocks.get(block) ?? { text: '', tops: [] };
+          entry.text += (entry.text ? ' ' : '') + run.text;
+          for (const r of run.rects) entry.tops.push({ top: r.top, fs: run.fs });
+          blocks.set(block, entry);
+        }
+        let measured = 0;
+        for (const [block, { text, tops }] of blocks) {
+          tops.sort((a, b) => a.top - b.top);
+          let lines = 0, last = -Infinity;
+          for (const t of tops) if (t.top > last + t.fs * 0.5) { lines++; last = t.top; }
+          if (lines <= maxLines) continue;
+          measured++;
+          const s = cs(block), width = block.clientWidth - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight);
+          const avg = textWidth(text, fontOf(s)) / Math.max(1, text.length);
+          const perLine = width / Math.max(avg, 0.1);
+          samples.push({ rule: rule.id, selector: selectorOf(block), property: 'characters per line', actual: Math.round(perLine), expected: { min: minChars } });
+          if (perLine < minChars && text.length / perLine > maxLines) add(rule, block, 'characters per line', `>= ${minChars} when the text wraps past ${maxLines} lines`, `${Math.round(perLine)} chars (${Math.round(width)}px, ${Math.round(width / parseFloat(s.fontSize) * 10) / 10}em) over ${lines} lines: "${snippet(text)}"`);
+        }
+        coverage.at(-1).matched = measured;
+        coverage.at(-1).textNodes = blocks.size;
+      }
+      else if (rule.kind === 'text-overlap') {
+        // Two runs of text drawn on top of each other in the same stacking
+        // context: a label that overflows into its neighbour, an absolutely
+        // placed caption over a value. Judged on each line's em box cut to its
+        // clipping/scrolling ancestors; a pair inside a declared layer
+        // (data-ui-layered="<reason>") is exempt, and a blank or placeholder
+        // reason fails coverage.
+        const tol = rule.tolerance ?? 2, cap = rule.maxPerPage ?? 10;
+        const boxes = [];
+        for (const scope of nodes) for (const run of textRuns(scope)) {
+          if ((rule.exclude ?? []).some(e => run.el.closest(css(e.selector)))) continue;
+          const layer = layered(run.el);
+          if (layer) {
+            const reason = (layer.getAttribute('data-ui-layered') ?? '').trim();
+            if (!reason || PLACEHOLDER_REASON.test(reason)) add(rule, layer, 'layered reason', 'data-ui-layered names why text is layered over text', reason, 'coverage');
+            continue;
+          }
+          for (const r of run.rects) { const v = clipped(r, run.el); if (v) boxes.push({ ...v, run, root: stackRoot(run.el) }); }
+        }
+        boxes.sort((a, b) => a.left - b.left);
+        let found = 0;
+        for (let i = 0; i < boxes.length && found < cap; i++) {
+          const a = boxes[i];
+          for (let j = i + 1; j < boxes.length && boxes[j].left < a.right - tol && found < cap; j++) {
+            const b = boxes[j];
+            if (a.run === b.run || a.root !== b.root) continue;
+            const x = Math.min(a.right, b.right) - Math.max(a.left, b.left), y = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+            if (x > tol && y > tol) {
+              add(rule, a.run.el, 'text overlaps text', `no overlap (> ${tol}px) with neighbouring text in the same layer`, `"${snippet(a.run.text)}" × "${snippet(b.run.text)}" (${Math.round(x)}×${Math.round(y)}px; other: ${selectorOf(b.run.el)})`);
+              found++;
+            }
+          }
+        }
+        samples.push({ rule: rule.id, selector: 'document', property: 'overlapping text pairs', actual: found, expected: 0 });
+        coverage.at(-1).matched = boxes.length;
+      }
+      else if (rule.kind === 'text-clipped') {
+        // Text cut by an overflow:hidden/clip ancestor — a label sliced
+        // mid-glyph at a container edge. Allowed only as a declared
+        // truncation: an ellipsis (text-overflow: ellipsis, or a line clamp
+        // for a vertical cut) on the element doing the cutting or between it
+        // and the text. Whether the full text is reachable (a `title`, an
+        // aria-label carrying it) is recorded on the sample; `requireFullText`
+        // makes it a violation too. Text wholly outside the clip box is
+        // hidden, not clipped; a scroll container's edge is not a cut (the
+        // reader can scroll), nor is a declared pannable viewport's
+        // (`scrollers`, each with a reason — a node canvas pans).
+        const tol = rule.tolerance ?? 1;
+        for (const x of rule.scrollers ?? []) if (!x.reason) throw new Error(`Scroller exception on ${rule.id} needs a reason`);
+        const pannable = n => (rule.scrollers ?? []).some(x => n.matches(css(x.selector)));
+        const reported = new Set();
+        let measured = 0;
+        for (const scope of nodes) for (const run of textRuns(scope)) {
+          if (reported.has(run.el) || (rule.exclude ?? []).some(e => run.el.closest(css(e.selector)))) continue;
+          const chain = clippers(run.el).map(c => pannable(c.n) ? { ...c, xHard: false, yHard: false } : c);
+          if (!chain.some(c => c.xHard || c.yHard)) continue;
+          measured++;
+          let cut = null;
+          for (const r of run.rects) {
+            let { left, right, top, bottom } = r, hidden = false;
+            for (const c of chain) {
+              const b = innerBox(c.n);
+              const nl = c.x ? Math.max(left, b.left) : left, nr = c.x ? Math.min(right, b.right) : right;
+              const nt = c.y ? Math.max(top, b.top) : top, nb = c.y ? Math.min(bottom, b.bottom) : bottom;
+              if (nr - nl <= 1 || nb - nt <= 1) { hidden = true; break; }
+              const axis = (nl - left > tol || right - nr > tol) ? 'x' : (nt - top > tol || bottom - nb > tol) ? 'y' : null;
+              if (axis && (axis === 'x' ? c.xHard : c.yHard)) { cut = { c, axis, lost: axis === 'x' ? (nl - left) + (right - nr) : (nt - top) + (bottom - nb) }; break; }
+              left = nl; right = nr; top = nt; bottom = nb;
+            }
+            if (hidden || cut) break;
+          }
+          if (!cut) continue;
+          const between = [];
+          for (let n = run.el; n; n = n.parentElement) { between.push(n); if (n === cut.c.n) break; }
+          const ellipsis = between.some(n => cut.axis === 'x' ? cs(n).textOverflow === 'ellipsis' : (cs(n).webkitLineClamp && cs(n).webkitLineClamp !== 'none'));
+          const probe = run.text.slice(0, 24).toLowerCase();
+          let reachable = false;
+          for (let n = run.el, k = 0; n && k < between.length + 3; n = n.parentElement, k++) {
+            if ((n.getAttribute('title') ?? '').trim()) { reachable = true; break; }
+            const label = (n.getAttribute('aria-label') ?? '').toLowerCase();
+            if (label && label.includes(probe)) { reachable = true; break; }
+          }
+          samples.push({ rule: rule.id, selector: selectorOf(run.el), property: 'clipped text', actual: { ellipsis, reachable, axis: cut.axis }, expected: 'ellipsis + full text' });
+          if (!ellipsis || (rule.requireFullText && !reachable)) {
+            reported.add(run.el);
+            add(rule, run.el, `text clipped (${cut.axis})`, 'fits its box, or an ellipsis with the full text in a title / aria-label', `${Math.round(cut.lost)}px of "${snippet(run.text)}" cut by ${selectorOf(cut.c.n)}${ellipsis ? ' (ellipsis, no full text)' : ' (no ellipsis)'}`);
+          }
+        }
+        coverage.at(-1).matched = measured;
+      }
+      else if (rule.kind === 'placeholder-squeezed') for (const el of nodes) {
+        // An input sharing its row with chips/buttons must keep room to be
+        // read: at least `minEm` of its own font wide, and — when its
+        // placeholder is cut — the siblings must not be the ones taking the
+        // space (siblings wider than the input itself).
+        const editable = el.isContentEditable;
+        const holder = editable ? el.querySelector('[data-placeholder]') : el;
+        const placeholder = editable ? (holder?.getAttribute('data-placeholder') ?? el.getAttribute('aria-placeholder') ?? '') : (el.getAttribute('placeholder') ?? '');
+        const empty = editable ? !el.textContent.trim() : !el.value;
+        if (!placeholder.trim() || !empty) continue;
+        const s = cs(el), fs = parseFloat(s.fontSize) || 14, own = el.getBoundingClientRect();
+        // The row: the nearest flex/grid ancestor (display:contents wrappers
+        // flattened) holding other painted items on the input's line.
+        let siblings = null, row = null;
+        for (let child = el, n = el.parentElement, k = 0; n && k < 8; child = n, n = n.parentElement, k++) {
+          const d = cs(n).display;
+          if (d === 'contents') continue;
+          if (!/flex|grid/.test(d) || (/flex/.test(d) && /column/.test(cs(n).flexDirection))) continue;
+          const flat = node => [...node.children].flatMap(c => cs(c).display === 'contents' ? flat(c) : [c]);
+          const items = flat(n).filter(c => c !== child && !c.contains(el) && visible(c)).filter(c => { const b = c.getBoundingClientRect(); return b.width > 1 && Math.min(b.bottom, own.bottom) - Math.max(b.top, own.top) > 4; });
+          if (items.length) { siblings = items; row = n; break; }
+        }
+        if (!siblings) continue;
+        const sibWidth = siblings.reduce((sum, c) => sum + c.getBoundingClientRect().width, 0);
+        const box = holder && holder !== el ? holder : el, bs = cs(box);
+        const avail = box.clientWidth - parseFloat(bs.paddingLeft) - parseFloat(bs.paddingRight);
+        const phFont = fontOf(getComputedStyle(holder ?? el, editable ? '::before' : '::placeholder'));
+        const need = textWidth(placeholder, phFont);
+        const truncated = need > avail + tolerance;
+        samples.push({ rule: rule.id, selector: selectorOf(el), property: 'input width (em)', actual: Math.round(own.width / fs * 10) / 10, expected: { min: rule.minEm ?? 10 } });
+        if (own.width < (rule.minEm ?? 10) * fs - tolerance) add(rule, el, 'input width', `>= ${rule.minEm ?? 10}em (${Math.round((rule.minEm ?? 10) * fs)}px) beside ${siblings.length} row item(s)`, `${Math.round(own.width)}px; the row's other items take ${Math.round(sibWidth)}px (${selectorOf(row)})`);
+        else if (truncated && sibWidth > own.width) add(rule, el, 'placeholder truncated', 'the input wider than what shares its row, or the placeholder whole', `"${snippet(placeholder)}" needs ${Math.round(need)}px, has ${Math.round(avail)}px; row items take ${Math.round(sibWidth)}px`);
       }
     } catch (error) { add(rule, null, 'rule evaluation', 'valid selector/token/config', String(error.message), 'coverage'); }
   }

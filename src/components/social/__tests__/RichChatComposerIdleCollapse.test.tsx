@@ -308,3 +308,36 @@ describe('collapseWhenIdle with the mode menu and the editor strip', () => {
     expect(screen.getByTestId('composer')).not.toHaveAttribute('data-collapsed');
   });
 });
+
+// A 340px docked command composer drew pill + "Compaction runs" chip + Apply
+// and left the input ~64px ("Sear…"). Narrow and idle, the chips fold into ONE
+// mode chip — the subject rides its tooltip and its menu — and the input keeps
+// the row. Wider idle rows cap the reference chips so the input keeps ~10em.
+describe('collapseWhenIdle — the input keeps the row (2.447.0)', () => {
+  it('narrow: pill and reference fold into one mode chip carrying the subject', () => {
+    render(
+      <RichChatComposer
+        {...modes}
+        layout="narrow"
+        modeControl="menu"
+        references={[{ id: 'ctx', label: 'Compaction runs' }]}
+        onRemoveReference={() => {}}
+      />,
+    );
+    expect(screen.getByTestId('composer')).toHaveAttribute('data-collapsed', 'true');
+    const chip = screen.getByTestId('composer-context-chip');
+    expect(chip).toHaveAttribute('data-folded', 'true');
+    expect(chip.getAttribute('title')).toBe('Agent · Compaction runs');
+    expect(chip).toHaveTextContent('Agent');
+    expect(chip).not.toHaveTextContent('Compaction runs');
+    expect(screen.queryByTestId('composer-mode-pill')).toBeNull();
+    expect(screen.queryByTestId('composer-references')).toBeNull();
+    expect(screen.getByTestId('composer-mode-menu')).toBeInTheDocument();
+  });
+
+  it('wider idle rows cap the reference chips to leave the input its room', () => {
+    render(<RichChatComposer {...modes} layout="medium" references={[{ id: 'ctx', label: 'Compaction runs' }]} />);
+    expect(screen.getByTestId('composer-references').className).toContain('max-w-[min(45%,calc(100%-18rem))]');
+    expect(screen.getByTestId('composer-mode-pill')).toBeInTheDocument();
+  });
+});

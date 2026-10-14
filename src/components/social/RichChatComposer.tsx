@@ -2227,6 +2227,12 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // choice that survives a resize (someone who opened it wants it open).
   const [formatOpen, setFormatOpen] = useState(false);
   const singleRow = ((narrow || pane) && !formatOpen) || collapsed;
+  // The narrow idle row (2.447.0): the input gets the row before any chip. A
+  // mode pill plus a context chip plus Send left a 340px dock's input ~64px
+  // wide ("Sear…"); under `narrow` the chips fold into ONE mode chip whose
+  // menu (and tooltip) carries what the draft is about.
+  const foldedChip = collapsed && narrow;
+  const chipRow = pane || foldedChip;
   // The pane's Aa / ? / ⋯ / row end: while focus is inside OR the draft holds
   // something. Keyed on focus alone, pressing Send on an unfocused draft
   // brought them in on mousedown, wrapped Send to the next row and the
@@ -2868,7 +2874,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
           // is drawn on the idle row too, not only once the card expands.
           <span className="ml-1.5 flex shrink-0 items-center" data-testid={`${testId}-mode-row-start`}>{modeRowStart}</span>
         )}
-        {collapsed && !pane && singleMode && (
+        {collapsed && !chipRow && singleMode && (
           // One mode: the same pill, as a label — nothing to switch to.
           <span
             title={MODE_NAMES[activeMode]}
@@ -2880,7 +2886,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             {MODE_NAMES[activeMode]}
           </span>
         )}
-        {collapsed && !pane && modesEnabled && !fixedMode && !singleMode && (
+        {collapsed && !chipRow && modesEnabled && !fixedMode && !singleMode && (
           // The idle row's mode pill: which mode Enter is in, at a glance.
           // Pressing it puts the caret in the input (the full composer, mode
           // switch included, comes back) — on click, after the pointer is up.
@@ -2895,13 +2901,17 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             {MODE_NAMES[activeMode]}
           </button>
         )}
-        {pane && (modesEnabled || !!references?.length) && (
+        {chipRow && (modesEnabled || !!references?.length) && (
           // The pane's context chip: mode · subject on ONE line. The subject
           // keeps both ends ("Org › Initi…on Platform") so the leaf survives.
+          // Its width leaves the input ~10em and Send (2.447.0). Folded (the
+          // narrow idle row) it is the mode alone; the subject is in its
+          // tooltip and its menu.
           <span
             data-testid={`${testId}-context-chip`}
-            title={[modesEnabled ? MODE_NAMES[activeMode] : null, references?.[0]?.title ?? references?.[0]?.label].filter(Boolean).join(' · ')}
-            className="group/chip ml-1.5 flex min-w-0 max-w-[45%] shrink items-center gap-1 self-center whitespace-nowrap rounded-full bg-surface-inset px-2 py-0.5 text-xs text-text-secondary"
+            data-folded={foldedChip || undefined}
+            title={[modesEnabled ? MODE_NAMES[activeMode] : null, ...(references ?? []).map((r) => r.title ?? r.label)].filter(Boolean).join(' · ')}
+            className="group/chip ml-1.5 flex min-w-0 max-w-[min(45%,calc(100%-14rem))] shrink items-center gap-1 self-center whitespace-nowrap rounded-full bg-surface-inset px-2 py-0.5 text-xs text-text-secondary"
           >
             {modesEnabled && (switchable && offeredModes.length > 1 ? (
               <DropdownMenu
@@ -2917,14 +2927,21 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                     const reason = isModeDisabled(m) ? modeUnavailableReasons?.[m] : undefined;
                     return { label: MODE_NAMES[m], icon: MODE_ICON[m], active: m === activeMode, ...(reason ? { description: reason } : {}), onSelect: () => { requestMode(m); } };
                   }),
-                }]}
+                }, ...(foldedChip && references?.length ? [{
+                  // Folded: what the draft is about, and the way to drop it.
+                  label: 'About',
+                  items: references.flatMap((r) => [
+                    { label: r.label, ...(r.title && r.title !== r.label ? { description: r.title } : {}) },
+                    ...(onRemoveReference ? [{ label: `Remove ${r.label}`, onSelect: () => onRemoveReference(r.id) }] : []),
+                  ]),
+                }] : [])]}
               />
             ) : (
               <span className="flex shrink-0 items-center gap-1 font-semibold text-text-primary" data-testid={`${testId}-mode-label`}>
                 <span aria-hidden="true" className="flex w-3.5 justify-center">{MODE_ICON[activeMode]}</span>{MODE_NAMES[activeMode]}
               </span>
             ))}
-            {!!references?.length && (() => {
+            {!!references?.length && !(foldedChip && modesEnabled) && (() => {
               const label = references[0]!.label;
               const tail = label.length > 18 ? label.slice(-12) : '';
               return (
@@ -2951,7 +2968,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             })()}
           </span>
         )}
-        {collapsed && !pane && !!references?.length && (
+        {collapsed && !chipRow && !!references?.length && (
           // What the draft is ABOUT is part of the draft, idle or not: a
           // reference added from elsewhere ("Reference in chat") must be
           // visible before anyone focuses the box. In the idle row, beside the
@@ -2960,7 +2977,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             references={references}
             {...(onRemoveReference ? { onRemove: onRemoveReference } : {})}
             removeLabel={(reference) => `Remove ${reference.label} from this draft`}
-            className="ml-1.5 min-w-0 max-w-[45%] shrink flex-nowrap overflow-hidden p-0"
+            className="ml-1.5 min-w-0 max-w-[min(45%,calc(100%-18rem))] shrink flex-nowrap overflow-hidden p-0"
             data-testid={`${testId}-references`}
           />
         )}

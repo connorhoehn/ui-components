@@ -164,7 +164,21 @@ function LineCluster({ item, sm = false }: { item: StatStripItem; sm?: boolean }
   );
 }
 
-function Cluster({ item, flush, control = false }: { item: StatStripItem; flush?: 'start' | 'end' | 'both'; control?: boolean }) {
+/**
+ * The flow strip's narrow form (2.447.0) — a size-container query on the
+ * strip, never the viewport: under 40rem the clusters stack as one line each
+ * ("L0 RUN NOTES 244 ● 50m behind") with a downward connector between them.
+ * Laid out left to right in a 324px column the four labels ran into each
+ * other and the last cluster was cut to its number.
+ */
+const NARROW = {
+  row: '@max-[40rem]:flex-col',
+  cell: '@max-[40rem]:flex-none',
+  cluster: '@max-[40rem]:flex @max-[40rem]:flex-wrap @max-[40rem]:items-baseline @max-[40rem]:gap-x-3 @max-[40rem]:gap-y-0.5 @max-[40rem]:py-1.5',
+  inline: '@max-[40rem]:mt-0',
+} as const;
+
+function Cluster({ item, flush, control = false, flow = false }: { item: StatStripItem; flush?: 'start' | 'end' | 'both'; control?: boolean; flow?: false | 'framed' | 'frameless' }) {
   // A clickable item (`onSelect` → a button, `href` → a link) is a CONTROL,
   // and a control's text reads at 12 or 14px (the app scale; the DOM audit's
   // control rule). Its value is 14/600, its label and hint 12/400. A
@@ -181,12 +195,22 @@ function Cluster({ item, flush, control = false }: { item: StatStripItem; flush?
         // misalignment the frame was hiding.
         (flush === 'start' || flush === 'both') && 'pl-0',
         (flush === 'end' || flush === 'both') && 'pr-0',
+        flow && NARROW.cluster,
+        // Stacked, every cluster starts at the same edge: a frameless strip's host owns the inset.
+        flow === 'frameless' && '@max-[40rem]:px-0',
       )}
     >
-      <div className={cn('whitespace-nowrap uppercase tracking-wide text-text-tertiary', control ? 'text-xs font-normal' : 'text-[10px] font-semibold')}>
+      {/* One line, cut with an ellipsis when the cluster is narrower than its
+          label (2.447.0); the full label stays on hover unless the item's own
+          title (its provenance) already speaks for the cluster. */}
+      <div
+        className={cn('truncate uppercase tracking-wide text-text-tertiary', control ? 'text-xs font-normal' : 'text-[10px] font-semibold')}
+        {...(item.title ? {} : { title: item.label })}
+        data-testid="stat-strip-label"
+      >
         {item.label}
       </div>
-      <div className="mt-0.5 flex min-w-0 items-baseline gap-2">
+      <div className={cn('mt-0.5 flex min-w-0 items-baseline gap-2', flow && NARROW.inline)}>
         <span className={cn('leading-none tabular-nums', control ? 'text-sm font-semibold' : 'text-[17px] font-bold', VALUE_TONE[item.tone ?? 'default'])}>
           {item.value}
         </span>
@@ -195,7 +219,7 @@ function Cluster({ item, flush, control = false }: { item: StatStripItem; flush?
         )}
       </div>
       {item.status && (
-        <div className="mt-1 flex min-w-0 items-center gap-1.5 text-[12px]" data-testid="stat-strip-status">
+        <div className={cn('mt-1 flex min-w-0 items-center gap-1.5 text-[12px]', flow && NARROW.inline)} data-testid="stat-strip-status">
           <span aria-hidden="true" className={cn('inline-block h-2 w-2 shrink-0 rounded-full', TONE_SOLID_BG[item.status.tone ?? 'neutral'])} />
           <span className={cn('min-w-0 truncate', item.status.tone && item.status.tone !== 'neutral' ? TONE_TEXT[item.status.tone] : 'text-text-secondary')}>
             {item.status.label}
@@ -207,19 +231,25 @@ function Cluster({ item, flush, control = false }: { item: StatStripItem; flush?
   );
 }
 
-function Connector({ connector }: { connector: StatStripConnector | undefined }) {
+function Connector({ connector, frameless = false }: { connector: StatStripConnector | undefined; frameless?: boolean }) {
   const tone = connector?.tone;
   return (
     <div
       className={cn(
         'flex shrink-0 flex-col items-center justify-center gap-1 self-center px-1',
+        '@max-[40rem]:flex-row @max-[40rem]:self-start @max-[40rem]:gap-1.5 @max-[40rem]:py-0.5',
+        frameless ? '@max-[40rem]:px-0' : '@max-[40rem]:px-4',
         tone ? TONE_TEXT[tone] : 'text-text-tertiary',
       )}
       data-testid="stat-strip-connector"
     >
-      <svg aria-hidden="true" width="56" height="8" viewBox="0 0 56 8" className="block">
+      <svg aria-hidden="true" width="56" height="8" viewBox="0 0 56 8" className="block @max-[40rem]:hidden">
         <line x1="0" y1="4" x2="50" y2="4" stroke="currentColor" strokeWidth="1.25" />
         <path d="M49 0.5 L55 4 L49 7.5 Z" fill="currentColor" />
+      </svg>
+      <svg aria-hidden="true" width="8" height="14" viewBox="0 0 8 14" className="hidden @max-[40rem]:block">
+        <line x1="4" y1="0" x2="4" y2="8" stroke="currentColor" strokeWidth="1.25" />
+        <path d="M0.5 7 L4 13 L7.5 7 Z" fill="currentColor" />
       </svg>
       {connector?.label && <span className="whitespace-nowrap text-[11px] leading-none">{connector.label}</span>}
     </div>
@@ -302,19 +332,8 @@ export function StatStrip({
       </div>
     );
   }
-  return (
-    <div
-      role="group"
-      className={cn(
-        'flex overflow-x-auto',
-        flow ? 'items-stretch' : 'divide-x divide-border',
-        !frameless && 'rounded-lg border border-border bg-surface',
-        className,
-      )}
-      {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}
-      {...(testId ? { 'data-testid': testId } : {})}
-    >
-      {items.map((item, i) => {
+  const flowMode = flow ? (frameless ? 'frameless' as const : 'framed' as const) : false;
+  const cells = items.map((item, i) => {
         // Only the OUTER edges go flush, and only when frameless: the padding
         // between clusters is what keeps the dividers from crowding numbers.
         const flush = !frameless
@@ -330,8 +349,8 @@ export function StatStrip({
         let cluster: ReactNode;
         if (item.href) {
           cluster = (
-            <a href={item.href} className="min-w-0 flex-1 no-underline transition-colors hover:bg-surface-hover" {...tip}>
-              <Cluster item={item} flush={flush} control />
+            <a href={item.href} className={cn('min-w-0 flex-1 no-underline transition-colors hover:bg-surface-hover', flow && NARROW.cell)} {...tip}>
+              <Cluster item={item} flush={flush} control flow={flowMode} />
             </a>
           );
         } else if (item.onSelect) {
@@ -339,26 +358,47 @@ export function StatStrip({
             <button
               type="button"
               onClick={item.onSelect}
-              className="min-w-0 flex-1 cursor-pointer border-none bg-transparent p-0 text-left transition-colors hover:bg-surface-hover"
+              className={cn('min-w-0 flex-1 cursor-pointer border-none bg-transparent p-0 text-left transition-colors hover:bg-surface-hover', flow && NARROW.cell)}
               {...tip}
             >
-              <Cluster item={item} flush={flush} control />
+              <Cluster item={item} flush={flush} control flow={flowMode} />
             </button>
           );
         } else {
           cluster = (
-            <div className="min-w-0 flex-1" {...tip}>
-              <Cluster item={item} flush={flush} />
+            <div className={cn('min-w-0 flex-1', flow && NARROW.cell)} {...tip}>
+              <Cluster item={item} flush={flush} flow={flowMode} />
             </div>
           );
         }
         return (
           <Fragment key={item.label}>
             {cluster}
-            {flow && i < items.length - 1 && <Connector connector={connectors![i]} />}
+            {flow && i < items.length - 1 && <Connector connector={connectors![i]} frameless={frameless} />}
           </Fragment>
         );
-      })}
+  });
+  const frame = !frameless && 'rounded-lg border border-border bg-surface';
+  const group = {
+    role: 'group' as const,
+    ...(ariaLabel ? { 'aria-label': ariaLabel } : {}),
+    ...(testId ? { 'data-testid': testId } : {}),
+  };
+  if (flow) {
+    // A flow is a size container: its row turns into a column under 40rem
+    // of its OWN width (NARROW), so the same strip reads in a 900px page's
+    // 324px content column and across a 1440px one.
+    return (
+      <div {...group} data-flow="" className={cn('@container min-w-0', frame, className)}>
+        <div className={cn('flex items-stretch overflow-x-auto', NARROW.row)} data-stat-strip-row="">
+          {cells}
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div {...group} className={cn('flex overflow-x-auto divide-x divide-border', frame, className)}>
+      {cells}
     </div>
   );
 }

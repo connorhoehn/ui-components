@@ -291,6 +291,75 @@ try {
   console.log('PASS popover.fit judges only popup triggers; board lanes need a distinct surface and the full board height');
   await page.close();
 
+  // Legible text (text.cramped, text.overlap, text.clipped,
+  // placeholder.squeezed): a red callout split into side-by-side columns
+  // left its message ~3 words wide and 12+ lines tall; a flow strip's labels
+  // ran into the next column and off the strip; a docked composer's chips
+  // squeezed its input until the placeholder read "Sear…".
+  {
+    const textIds = ['text.cramped', 'text.overlap', 'text.clipped', 'placeholder.squeezed'];
+    const textHtml = `<!doctype html><html><head><style>
+*{box-sizing:border-box} body{margin:0;font:14px system-ui,-apple-system,sans-serif;width:1280px}
+.banner{display:flex;gap:8px;align-items:center;padding:10px 14px;font-size:13px;border:1px solid #c00;margin:8px} .banner > span{flex:1}
+#narrow{width:330px} #wide{width:900px}
+.strip{display:flex;border:1px solid #ccc;margin:8px;width:480px} .cluster{flex:1;min-width:0;padding:8px 16px} .label{font-size:12px;text-transform:uppercase;white-space:nowrap}
+.label.truncate{overflow:hidden;text-overflow:ellipsis}
+table{border-collapse:collapse;margin:8px} td{width:120px;max-width:120px;padding:0 12px;height:44px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip{display:inline-flex;font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid #ccc;white-space:nowrap}
+#rail{width:120px;margin:8px;font-size:13px} .avatar{position:relative;width:32px;height:32px;border-radius:50%;background:#ddd;display:grid;place-items:center;font-size:12px}
+.badge{position:absolute;right:-4px;bottom:-4px;font-size:10px;background:#fff;border-radius:999px;padding:0 3px}
+.row{display:flex;align-items:center;gap:6px;margin:8px;border:1px solid #ccc;padding:4px} .row > .grow{flex:1;min-width:0}
+.row input{width:100%;font:14px system-ui;border:1px solid #999;padding:4px 8px} .pill{flex:none;font-size:12px;padding:2px 8px;white-space:nowrap}
+#scroller{width:200px;overflow-x:auto;white-space:nowrap;margin:8px}
+</style></head><body>
+<div id="wide"><div class="banner" id="callout" role="alert"><strong>Guide updates stalled · Last run 12h ago</strong><span>10 patterns waiting for L2 and no compaction has run into it in 13h — trigger one by hand before the backlog grows further.</span><button>View runs →</button></div></div>
+<div class="strip" id="strip"><button class="cluster" title="244 run notes"><div class="label truncate" title="L0 Run notes">L0 Run notes</div><div>244</div></button><button class="cluster"><div class="label truncate" title="L1 Patterns">L1 Patterns</div><div>22</div></button><button class="cluster"><div class="label truncate" title="L2 Guides &amp; findings">L2 Guides &amp; findings</div><div>11</div></button><button class="cluster" aria-label="Agent library linked guides: 7"><div class="label truncate">Agent library linked guides</div><div>7</div></button></div>
+<table><tr><td title="A very long initiative name that truncates">A very long initiative name that truncates</td><td>Ready</td></tr></table>
+<p><span class="chip">Compaction runs</span> <span class="chip">L2</span></p>
+<div id="rail"><p>Pneumonoultramicroscopic</p><p>A short note for the rail that wraps a little.</p><div class="avatar">AB<span class="badge" data-ui-layered="Unread count badge sits over the avatar's corner">3</span></div></div>
+<div class="row" id="search-row" style="width:320px"><div class="grow"><input placeholder="Search runs"></div><button class="pill">Filter</button></div>
+<div class="row" id="composer-row" style="width:520px"><span class="pill">Agent</span><span class="pill">Compaction runs</span><div class="grow"><input id="cmd" placeholder="Search runs, filter, open a record, or refresh…"></div><button class="pill">Apply</button></div>
+<div id="scroller"><span>Rows that scroll sideways inside their own frame keep going past the edge</span></div>
+</body></html>`;
+    const textMeasure = () => page2.evaluate(measureDOM, only(textIds));
+    const page2 = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+    await page2.setContent(textHtml);
+    const textClean = await textMeasure();
+    assert.deepEqual(textClean.issues, [], 'a wide callout, ellipsised labels with titles, truncated cells, chips, a single long word, a layered badge with a reason, a roomy search input and a scroller pass: ' + JSON.stringify(textClean.issues));
+    assert.ok(textIds.every(id => textClean.coverage.some(c => c.rule === id)), 'each text rule runs on the valid fixture');
+    const textValid = [
+      ['the callout stacked in a narrow column (title, body, action each full width)', () => { const n = document.querySelector('#wide'); n.id = 'narrow'; const b = document.querySelector('#callout'); b.style.flexDirection = 'column'; b.style.alignItems = 'flex-start'; }],
+      ['a long word wrapping in a narrow rail is one label, not a cramped block', () => { const p = document.querySelector('#rail p'); p.style.wordBreak = 'break-all'; p.style.width = '60px'; }],
+      ['an ellipsis without a title is a declared truncation (the full text is advisory)', () => { document.querySelectorAll('#strip .label')[2].removeAttribute('title'); }],
+      ['a node canvas (a declared pannable viewport) cutting a node at its edge', () => { const v = document.createElement('div'); v.className = 'react-flow'; v.style.cssText = 'position:relative;width:200px;height:60px;overflow:hidden;margin:8px'; v.innerHTML = '<div style="position:absolute;left:150px;top:10px;white-space:nowrap">Data Lake Migration node</div>'; document.body.append(v); }],
+      ['the composer row giving its input the room first, chips folded', () => { document.querySelector('#composer-row').style.width = '340px'; document.querySelectorAll('#composer-row .pill')[1].remove(); }],
+    ];
+    for (const [name, mutate] of textValid) {
+      await page2.setContent(textHtml); await page2.evaluate(mutate);
+      const r = await textMeasure();
+      assert.deepEqual(r.issues, [], `${name} must pass: ${JSON.stringify(r.issues)}`);
+      console.log('PASS allows ' + name);
+    }
+    const textBroken = [
+      ['a callout split into side-by-side columns in a narrow container', () => { document.querySelector('#wide').id = 'narrow'; }, 'text.cramped', 'characters per line'],
+      ['flow-strip labels running into the next column', () => { document.querySelectorAll('#strip .label').forEach(l => l.classList.remove('truncate')); }, 'text.overlap', 'text overlaps text'],
+      ['a label clipped mid-glyph with no ellipsis', () => { document.querySelectorAll('#strip .label')[2].style.textOverflow = 'clip'; }, 'text.clipped', 'text clipped (x)'],
+      ['the same node cut by an ordinary clipping box (no pannable declaration)', () => { const v = document.createElement('div'); v.style.cssText = 'position:relative;width:200px;height:60px;overflow:hidden;margin:8px'; v.innerHTML = '<div style="position:absolute;left:150px;top:10px;white-space:nowrap">Data Lake Migration node</div>'; document.body.append(v); }, 'text.clipped', 'text clipped (x)'],
+      ['a caption cut at the bottom of a fixed-height box', () => { const p = document.querySelector('#rail p:nth-of-type(2)'); p.style.cssText = 'height:24px;overflow:hidden;margin:0'; }, 'text.clipped', 'text clipped (y)'],
+      ['a badge layered over text with a placeholder reason', () => { document.querySelector('.badge').setAttribute('data-ui-layered', 'TODO'); }, 'text.overlap', 'layered reason'],
+      ['text absolutely placed over a neighbour', () => { const b = document.querySelector('.badge'); b.removeAttribute('data-ui-layered'); b.style.cssText = 'position:absolute;left:4px;top:8px;font-size:12px'; }, 'text.overlap', 'text overlaps text'],
+      ['a composer input squeezed by chips to a few characters', () => { document.querySelector('#composer-row').style.width = '340px'; }, 'placeholder.squeezed', 'input width'],
+      ['a placeholder cut while the row items take more room than the input', () => { document.querySelector('#composer-row').style.width = '460px'; document.querySelectorAll('#composer-row .pill')[1].style.cssText = 'flex:none;width:170px'; }, 'placeholder.squeezed', 'placeholder truncated'],
+    ];
+    for (const [name, mutate, rule, property] of textBroken) {
+      await page2.setContent(textHtml); await page2.evaluate(mutate);
+      const r = await textMeasure();
+      assert.ok(r.issues.some(i => i.rule === rule && i.property === property), `${name} must fail ${rule} (${property}): ${JSON.stringify(r.issues)}`);
+      console.log('PASS detects ' + name);
+    }
+    console.log('PASS legible text: cramped blocks, overlapping and clipped labels, and squeezed inputs fail; truncation with full text, chips, single words, declared layers and scrollers pass');
+    await page2.close();
+  }
   // Content column: trail first, the title under it, the body at the same edge.
   const columnHtml = `<!doctype html><html><head><style>
 *{box-sizing:border-box} body{margin:0;font:14px system-ui,-apple-system,sans-serif}

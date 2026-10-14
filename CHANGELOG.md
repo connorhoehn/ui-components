@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.447.0
+
+- Text stays legible in narrow columns (a 900px page's 324px content column beside a list rail split a red callout three ways, ran a tier-flow strip's labels into each other and squeezed a docked composer's input to "Sear…"):
+  - `Banner`: a size container. `layout="inline"` lays title, body and action in one row only while the banner itself is at least 30rem wide; narrower, they stack (title, body at full width, action). A container query, not a viewport breakpoint. The row is a new inner `data-banner-row` element; the root keeps the role, tone classes and `className`.
+  - `StatStrip`: with `connectors` (a flow) the strip is a size container — under 40rem of its own width each cluster is one line (label, value, status) with a downward connector between them; wider, it is the row it was. The root keeps `role="group"`, `aria-label` and `data-testid`; the clusters now sit in an inner `data-stat-strip-row`. Every default-variant cluster label truncates with an ellipsis (`data-testid="stat-strip-label"`) and carries the label as its `title` unless the item's own `title` already speaks for the cluster.
+  - `RichChatComposer` (the idle one-row composer, `collapseWhenIdle`): when the composer is `narrow` (< 380px) the mode pill and the reference chips fold into ONE mode chip (`data-folded`) whose tooltip names the subject and whose mode menu gains an "About" section with the subject and its Remove action; wider idle rows cap reference chips at `min(45%, 100% - 18rem)` and the pane's context chip at `min(45%, 100% - 14rem)`, so the input keeps ~10em beside Send.
+- ui-dom-audit: four legibility rules, each with valid/failing fixtures (`references/contracts.md` "Legible text"):
+  - `text.cramped` (`text-cramped`): a block of wrapped text over 4 lines whose width holds fewer than 20 characters at its own font.
+  - `text.overlap` (`text-overlap`): two runs of text whose em boxes intersect (> 2px) in the same stacking context; a deliberate layer declares `data-ui-layered="<reason>"`.
+  - `text.clipped` (`text-clipped`): text cut by an overflow hidden/clip ancestor with no ellipsis or line clamp; scroll containers and the declared pannable `.react-flow` canvas are not cuts; the full text of an ellipsis is recorded (`requireFullText` makes it required).
+  - `placeholder.squeezed` (`placeholder-squeezed`): an input narrower than 10em beside other row items, or whose placeholder is cut while those items are wider than it.
+
 ## 2.446.5
 
 - ui-dom-audit: an element is measured only when it is painted (`checkVisibility()`): a closed `<details>`'s contents keep a laid-out box but paint nothing, and whether that box had been laid out yet depended on what forced layout last — the cause of two `coverage.stability` flips (`/iq/work`, `/iq/local-compute/configuration`). Fixture pair: a control inside a closed disclosure is not judged; opened, the same overrunning control fails.

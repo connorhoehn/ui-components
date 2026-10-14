@@ -644,6 +644,42 @@
       "max": 12,
       "maxGap": 16,
       "owner": "CatalogGrid variant=\"lanes\" + BoardColumn h-full"
+    },
+    {
+      "id": "text.cramped",
+      "kind": "text-cramped",
+      "selector": "body",
+      "maxLines": 4,
+      "minChars": 20,
+      "owner": "the composite laying the text out (a callout/alert stacking title, body and action; a card column) \u2014 container queries, not page CSS"
+    },
+    {
+      "id": "text.overlap",
+      "kind": "text-overlap",
+      "selector": "body",
+      "tolerance": 2,
+      "maxPerPage": 10,
+      "owner": "the composite whose labels overflow their slot (flow/stat strips, chips, headers): wrap, ellipsis + title, or scroll inside the frame"
+    },
+    {
+      "id": "text.clipped",
+      "kind": "text-clipped",
+      "selector": "body",
+      "tolerance": 1,
+      "owner": "the composite clipping the label: an ellipsis (title for the full text) or room for it",
+      "scrollers": [
+        {
+          "selector": ".react-flow",
+          "reason": "A node canvas viewport (xyflow, TypedNodeCanvas / WorkActivityGraph) pans: a node cut at its edge is reached by panning, like a row scrolled out of a list"
+        }
+      ]
+    },
+    {
+      "id": "placeholder.squeezed",
+      "kind": "placeholder-squeezed",
+      "selector": "input[placeholder]:not([type=\"checkbox\"]):not([type=\"radio\"]):not([type=\"range\"]):not([type=\"file\"]):not([type=\"hidden\"]):not([type=\"color\"]), textarea[placeholder], [contenteditable=\"true\"]:has([data-placeholder]), [contenteditable=\"true\"][aria-placeholder]",
+      "minEm": 10,
+      "owner": "the row hosting the input (a composer's idle row, a toolbar): the input keeps its minimum width before chips; chips fold into a menu when narrow"
     }
   ]
 }

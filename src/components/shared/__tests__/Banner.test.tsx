@@ -64,13 +64,26 @@ describe('Banner', () => {
   it('stacks the title above the body when asked', () => {
     const { rerender } = render(<Banner title="Heads up">Body text</Banner>);
     const inline = screen.getByText('Body text').parentElement!;
-    expect(inline.className).toContain('items-center');
-    expect(inline.className).not.toContain('flex-col');
+    expect(inline.classList.contains('items-center')).toBe(true);
+    expect(inline.classList.contains('flex-col')).toBe(false);
 
     rerender(<Banner title="Heads up" layout="stacked">Body text</Banner>);
     const stacked = screen.getByText('Body text').parentElement!;
     expect(stacked.className).toContain('flex-col');
     expect(stacked.className).toContain('items-start');
+  });
+
+  // A 324px content column split title / body / action three ways and left
+  // the message ~3 words wide and 12+ lines tall. The banner is a size
+  // container: inline holds one row only while the banner itself is wide.
+  it('inline stacks under a 30rem container, not a viewport breakpoint', () => {
+    render(<Banner title="Guide updates stalled" action={<button>View runs</button>} data-testid="b">10 patterns waiting</Banner>);
+    const root = screen.getByTestId('b');
+    expect(root.classList.contains('@container')).toBe(true);
+    const row = screen.getByText('10 patterns waiting').parentElement!;
+    expect(row.className).toContain('@max-[30rem]:flex-col');
+    expect(screen.getByText('10 patterns waiting').className).toContain('@max-[30rem]:w-full');
+    expect(row.className).not.toMatch(/(^|\s)(sm|md|lg):/);
   });
 
   it('gives a stacked body the full width rather than a flex share', () => {

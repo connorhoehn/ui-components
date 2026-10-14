@@ -40,6 +40,10 @@ measurement and must not substitute for it.
 | `selection-shift` | none (probe only) | After a selection probe: the table's top edge or first row moved when a row was checked or unchecked |
 | `popover-fit` | selector (open panels), trigger?, header?, margin? | An open anchored panel outside the viewport, covering the popup trigger that opened it, or scrolling as a whole while it holds a header |
 | `surface-distinct` | selector | A surface meant to read as its own region (a board lane) painting no background, or the same background as the surface behind it |
+| `text-cramped` | selector (scope), maxLines, minChars | A block of wrapped text over `maxLines` lines whose width holds fewer than `minChars` characters at its own font |
+| `text-overlap` | selector (scope), tolerance, maxPerPage | Two runs of text whose em boxes intersect in the same stacking context; `data-ui-layered="<reason>"` exempts a declared layer |
+| `text-clipped` | selector (scope), scrollers[{selector, reason}], requireFullText? | Text cut by an overflow hidden/clip ancestor with no ellipsis or line clamp |
+| `placeholder-squeezed` | selector (inputs), minEm | An input narrower than `minEm` of its font beside other row items, or whose placeholder is cut while those items are wider than it |
 
 `columns` can alternatively use `regions: ["$primary", "$secondary",
 "$content", "$right"]`. Never select nested parents and children as peers.
@@ -333,6 +337,90 @@ full-height lanes on light and dark pages; failing — a panel past the top of
 the window, a panel over its trigger, a panel scrolling as a whole with its
 header, a panel off the right edge, a transparent lane, a lane matching the
 page, lanes sized to their cards, lanes wrapped to a second row.
+
+## Legible text (cramped, overlapping, clipped, squeezed)
+
+Four rules judge whether text can be read at the widths the matrix runs
+(the 900px pass is the narrow state; no extra adapter state is needed). They
+came from one report — a 900px page whose content column sat beside a list
+rail: a red callout laid its title, message and action side by side and left
+the message ~3 words wide and 13 lines tall; a tier-flow strip's labels ran
+into the next column and the last column was cut to its number; and a docked
+command composer's mode and context chips squeezed its input until the
+placeholder read "Sear…". They are general and name no page.
+
+All four measure **text runs**: non-empty text nodes whose parent paints (no
+`display:none`, `visibility:hidden`, sr-only clip or opacity-0 ancestor) and
+that are not icon glyphs (`svg`, `aria-hidden`). Each line is judged by its
+**em box** — the range rect shrunk vertically to the font size — because a
+range reports ascent + descent (~1.2em), and two tight `leading-none` lines
+would otherwise "touch" with no ink meeting.
+
+- **`text.cramped`** (`text-cramped`, `maxLines: 4`, `minChars: 20`): runs are
+  grouped by their block (the nearest non-inline ancestor). A block wrapping
+  past `maxLines` lines whose content width holds fewer than `minChars`
+  characters — measured with the block's own font (canvas `measureText`), not
+  assumed — fails, provided the text is long enough to fill those lines by
+  wrapping (`length / chars-per-line > maxLines`): lines forced by `<br>` or by
+  separate items do not count. 20 characters is ~10–12em at this app's type.
+  A truncated cell, a chip and a single-word label are one line; a single long
+  word broken across lines in a narrow rail fails the length test. Calibrated
+  on the reported callout (12 characters, 71px, 13 lines). `pre`, code,
+  contenteditable drafts and vertical writing modes are skipped.
+- **`text.overlap`** (`text-overlap`, tolerance 2px, at most 10 per page): every
+  pair of em boxes — each cut to its clipping and scrolling ancestors first —
+  that intersect by more than the tolerance on both axes inside the same
+  stacking context fails. A popover, a sticky header, a transformed canvas
+  node or anything with a z-index is its own context, drawn over the page by
+  design. Text deliberately layered over text (a count badge over an avatar)
+  declares it on the owning element: `data-ui-layered="<reason>"`; a blank or
+  placeholder reason (the composer-policy guard) fails coverage.
+- **`text.clipped`** (`text-clipped`, tolerance 1px): a run cut by an ancestor
+  whose overflow is `hidden`/`clip` on the cut axis, with no `text-overflow:
+  ellipsis` (horizontal) or `-webkit-line-clamp` (vertical) on the cutting
+  element or between it and the text — a label sliced mid-glyph. Clipping
+  honours containing blocks (an absolutely positioned box escapes static
+  ancestors' overflow, a fixed one everything below a transform). Text wholly
+  outside the clip box is hidden, not clipped (a collapsed panel). A scroll
+  container's edge is not a cut — the reader scrolls — and neither is a
+  declared pannable viewport: `scrollers` lists `.react-flow` (the xyflow node
+  canvas behind TypedNodeCanvas and WorkActivityGraph) with its reason.
+  Whether the full text of an ellipsis is reachable (a `title`, or an
+  `aria-label` on the element or an ancestor near the cut carrying it) is
+  recorded on the sample; `requireFullText: true` turns its absence into a
+  violation. The default contract keeps it advisory: ellipsis truncation is a
+  declared design choice; truncation with a title stays allowed either way.
+- **`placeholder.squeezed`** (`placeholder-squeezed`, `minEm: 10`): an empty
+  input showing a placeholder (`input[placeholder]` of a text type,
+  `textarea[placeholder]`, a contenteditable carrying `[data-placeholder]` or
+  `aria-placeholder`) is judged against its row — the nearest flex/grid row
+  ancestor (`display: contents` wrappers flattened) holding other painted
+  items on the input's line. With such items it must be at least `minEm` of
+  its own font wide; and when its placeholder is cut (canvas width of the
+  `::placeholder` / `::before` text against the input's content box), the row
+  items must not be wider than the input. A lone input in a narrow container
+  is not this rule's concern.
+
+Library owners (ui-components 2.447.0): `Banner` is a size container —
+`layout="inline"` stacks title, body and action under 30rem of the banner's
+own width; a `StatStrip` with `connectors` (a flow) is a size container that
+stacks one line per cluster with a downward connector under 40rem, and every
+default-variant cluster label truncates with an ellipsis and a `title`; the
+composer's idle row folds its mode pill and context chip into ONE mode chip
+(the subject in its tooltip and its menu) when the composer is `narrow`, and
+caps reference chips on wider idle rows so the input keeps ~10em.
+
+Fixtures (`self-test.mjs`, `textHtml`): valid — a wide inline callout, the
+callout stacked in a narrow column, ellipsised labels with and without a title,
+a truncated table cell, chips, a single long word in a 60px rail, a badge
+layered with a reason, a roomy search input, a composer row with its chips
+folded, a scroller and a node canvas cutting text at their edges; failing — the
+callout split into columns in a narrow container, flow labels running into
+the next column, a label clipped with no ellipsis, a node cut by an ordinary
+clipping box, a caption cut at the bottom of a fixed-height box, a layered
+badge with a placeholder reason, text absolutely placed over a neighbour, a
+composer input squeezed to a few characters, and a cut placeholder beside row
+items wider than the input.
 
 ## Fast loop and CI
 
