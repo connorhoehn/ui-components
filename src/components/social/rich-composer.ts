@@ -129,3 +129,27 @@ export {
 } from './ConversationInputs';
 export type { ThreadInput, ThreadInputHandoffProps } from './ConversationInputs';
 export type { ComposerFocusTarget, ComposerFocusRequest, ThreadInputOwner } from './conversationInputRegistry';
+
+// Human-in-the-loop prompts in the docked composer (2.444.0): a queue of
+// questions with a prepopulated header card each, answered from the keyboard
+// (`ConversationComposer prompts`, or the deck in any composer's `above`).
+export { ComposerPromptDeck, useComposerPromptDeck } from './ComposerPromptDeck';
+export type { ComposerPromptDeckProps, ComposerPromptDeckState, ComposerPromptInput } from './ComposerPromptDeck';
+export {
+  CONFIRM_OPTIONS,
+  answerForOption,
+  deckKeyAction,
+  defaultOption,
+  parseTypedAnswer,
+  promptOptions,
+  takesTypedAnswer,
+} from './composerPromptModel';
+export type {
+  ComposerPrompt,
+  ComposerPromptAnswer,
+  ComposerPromptField,
+  ComposerPromptKind,
+  ComposerPromptOption,
+  ComposerPromptResult,
+  ComposerPromptTone,
+} from './composerPromptModel';

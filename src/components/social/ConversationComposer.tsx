@@ -52,6 +52,8 @@ import { Text } from '../shared/Text';
 import { ContextComposer, type ContextComposerProps } from './ContextComposer';
 import { ComposerReferences } from './ComposerReferences';
 import { ComposerSendError } from './composerSendError';
+import { ComposerPromptDeck, useComposerPromptDeck, type ComposerPromptInput } from './ComposerPromptDeck';
+import type { ComposerPrompt } from './composerPromptModel';
 import type { ComposedMessage, ComposerCommand, ComposerMode, RichChatComposerHandle, RichChatDraft } from './RichChatComposer';
 import type { ComposerContext } from './composerContext';
 import { composerDraftOf } from './agentComposerDraft';
@@ -187,6 +189,12 @@ export interface ConversationComposerOwnProps {
    * Never turns a mode ON — capabilities do that.
    */
   offModes?: Partial<Record<ComposerMode, string>>;
+  /**
+   * Human-in-the-loop prompts, shown one at a time above the input
+   * (`ComposerPromptDeck`, 2.444.0). A text / number prompt takes the typed
+   * words as its answer: Enter answers it instead of sending a message.
+   */
+  prompts?: readonly ComposerPrompt[];
 }
 
 export type ConversationComposerProps = ConversationComposerOwnProps & Omit<ContextComposerProps, Owned>;
@@ -309,6 +317,7 @@ function ConversationComposerImpl({
   onReveal,
   disabled: hostDisabled,
   offModes,
+  prompts,
   composerRef,
   onDraftChange,
   defaultDraft,
@@ -437,6 +446,14 @@ function ConversationComposerImpl({
     requestAnimationFrame(attempt);
   }, [onReveal]);
 
+  // ── prompts ── the deck reads the input's emptiness and hands the caret back.
+  const deck = useComposerPromptDeck(prompts);
+  const deckInput = useMemo<ComposerPromptInput>(() => ({
+    isEmpty: () => !(handle.current?.editor?.getText().trim()),
+    contains: (node: Node | null) => { try { return !!node && !!handle.current?.editor?.view.dom.contains(node); } catch { return false; } },
+    focus: () => handle.current?.focus(),
+  }), []);
+
   const choose = useCallback((id: string) => {
     setChosen(id);
     onRecipientChange?.(id);
@@ -499,6 +516,12 @@ function ConversationComposerImpl({
   // ── send ──
   const send = async (message: ComposedMessage, sentMode: ComposerMode): Promise<boolean> => {
     setNote(null);
+    if (deck.typed) {
+      // The input is the prompt's answer field: the words answer it, nothing is posted.
+      const taken = await deck.answerTyped(message.text);
+      if (taken && persistDraft && !controlled && storedDraftKey) writeStoredDraft(storage(), storedDraftKey, '');
+      return taken;
+    }
     const input = (text: string, trigger: string, argumentText: string): ConversationCommandInput => ({
       trigger, text, argumentText, mode: sentMode, reference: sentReference ?? (withReference ? reference : null),
       recipientId: recipient?.id ?? null, message,
@@ -582,8 +605,9 @@ function ConversationComposerImpl({
   const noPage = mode === 'chat' && withReference && pageless && offThread && carries;
   const recipientReason = mode === 'chat' && listed.length > 1 ? recipient?.unavailableReason ?? (!recipient ? 'Choose a destination.' : null) : null;
   const recipientError = mode === 'chat' ? recipient?.error ?? null : null;
-  const notices = showRecipients || recipientReason || note || noPage || recipientError || (hostAbove != null && hostAbove !== false) ? (
+  const notices = deck.visible || showRecipients || recipientReason || note || noPage || recipientError || (hostAbove != null && hostAbove !== false) ? (
     <Stack gap="xs">
+      {deck.visible && <ComposerPromptDeck deck={deck} input={deckInput} data-testid={`${testId}-prompts`} />}
       {hostAbove}
       {showRecipients && <ComposerRecipientSelect id={`${draftKey}-recipient`} value={recipient?.id ?? null} recipients={listed} onChange={choose} data-testid={`${testId}-recipient`} />}
       {recipientReason && <Text size="xs" tone="tertiary" wrap data-testid={`${testId}-recipient-unavailable`}>{recipientReason}</Text>}
@@ -609,6 +633,7 @@ function ConversationComposerImpl({
   const placeholders: Partial<Record<ComposerMode, string>> = {
     ...hostPlaceholders,
     ...(mode === 'chat' && recipient?.placeholder ? { chat: recipient.placeholder } : {}),
+    ...(deck.typed && deck.active ? { [mode]: deck.active.placeholder ?? 'Type your answer and press Enter' } : {}),
   };
   const chatBlocked = mode === 'chat' && (!recipient || !!recipient.unavailableReason || !!recipient.disabled);
 
@@ -639,7 +664,7 @@ function ConversationComposerImpl({
       } : null}
       allowAttachments={!!uploadChannel}
       {...(sendWithReferencesOnly !== undefined ? { sendWithReferencesOnly } : {})}
-      disabled={!!hostDisabled || !!offline || chatBlocked || (mode === 'agent' && !capabilities.agent?.allowed)}
+      disabled={!!hostDisabled || (!deck.typed && (!!offline || chatBlocked || (mode === 'agent' && !capabilities.agent?.allowed)))}
       draftKey={editorDraftKey}
       {...(controlled ? { draft: draftProp } : {})}
       {...(initialDraft !== undefined ? { defaultDraft: initialDraft } : {})}

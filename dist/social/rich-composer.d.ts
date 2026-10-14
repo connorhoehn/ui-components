@@ -117,6 +117,9 @@ export declare interface AgentComposerWorkflow {
 /** Where an agent task is. Shared by `TaskStrip` and `AgentTaskCard`. */
 declare type AgentTaskStatus = 'queued' | 'running' | 'paused' | 'awaiting' | 'done' | 'failed' | 'stopped';
 
+/** The answer an option stands for, per the prompt's kind. */
+export declare function answerForOption(prompt: ComposerPrompt, option: ComposerPromptOption): ComposerPromptAnswer;
+
 /** Message text for a send whose body is empty: the names of what was shared. */
 export declare function attachmentOnlyText(attachments: readonly ChatAttachmentDescriptor[]): string;
 
@@ -458,6 +461,141 @@ export declare interface ComposerProcess {
     tone: 'running' | 'idle' | 'failed' | 'done';
 }
 
+export declare interface ComposerPrompt {
+    /** Stable while the question is the same; a new id is a new question (re-asked prompts take a new id). */
+    id: string;
+    title: string;
+    /** A line above the title ("Prepare job", "Approval", "Agent question"). */
+    eyebrow?: string;
+    /** The prepopulated header card. */
+    fields?: readonly ComposerPromptField[];
+    question: string;
+    kind: ComposerPromptKind;
+    /**
+     * Choice: required. Confirm: default `Confirm` (1) / `Cancel` (2). Text /
+     * number: optional quick answers beside the typed one.
+     */
+    options?: readonly ComposerPromptOption[];
+    /** What Enter on an empty input picks. Confirm defaults to its first option. */
+    defaultOptionId?: string;
+    /** Text / number: the input's placeholder while this prompt is on screen. */
+    placeholder?: string;
+    /** Number: bounds a typed answer must sit inside. */
+    min?: number;
+    max?: number;
+    /** Shown on the card instead of answers: the reader may look but not decide. */
+    readOnlyReason?: string;
+    onAnswer: (answer: ComposerPromptAnswer) => ComposerPromptResult | Promise<ComposerPromptResult>;
+}
+
+export declare type ComposerPromptAnswer = {
+    kind: 'choice';
+    optionId: string;
+} | {
+    kind: 'confirm';
+    optionId: string;
+    confirmed: boolean;
+} | {
+    kind: 'text';
+    text: string;
+    optionId?: undefined;
+} | {
+    kind: 'number';
+    value: number;
+    optionId?: undefined;
+}
+/** A text / number prompt answered with one of its quick options instead of typing. */
+| {
+    kind: 'option';
+    optionId: string;
+};
+
+export declare function ComposerPromptDeck({ deck: deckProp, prompts, input, className, 'data-testid': testId }: ComposerPromptDeckProps): JSX.Element | null;
+
+export declare interface ComposerPromptDeckProps {
+    /** From `useComposerPromptDeck`; or pass `prompts` and the deck keeps its own state. */
+    deck?: ComposerPromptDeckState;
+    prompts?: readonly ComposerPrompt[];
+    /** The composer input: its emptiness gates bare-key shortcuts; it takes the caret after an answer. */
+    input?: ComposerPromptInput | null;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface ComposerPromptDeckState {
+    /** Prompts still waiting, in the host's order. */
+    pending: readonly ComposerPrompt[];
+    /** The prompt on screen. */
+    active: ComposerPrompt | null;
+    /** Its 0-based position in `pending`. */
+    index: number;
+    collapsed: boolean;
+    /** An answer is being taken. */
+    busy: boolean;
+    /** The refusal on the active prompt, if its last answer was refused. */
+    error: string | null;
+    /** The last answered prompt's receipt. */
+    receipt: string | null;
+    /** Something to draw: a waiting prompt or a receipt. */
+    visible: boolean;
+    /** The composer's input is the active prompt's answer field. */
+    typed: boolean;
+    setCollapsed: (collapsed: boolean) => void;
+    page: (delta: 1 | -1) => void;
+    pick: (optionId: string) => Promise<boolean>;
+    /** Answer the active text / number prompt with typed words. True when taken. */
+    answerTyped: (raw: string) => Promise<boolean>;
+    dismissReceipt: () => void;
+}
+
+/** One prepopulated fact on the prompt's header card. */
+export declare interface ComposerPromptField {
+    label: string;
+    value: ReactNode;
+    /** Colours the value (a warning: "$4.10 left of $5.00"). */
+    tone?: ComposerPromptTone;
+    /** Monospace value (ids, repos). */
+    mono?: boolean;
+}
+
+/** The composer input the deck reads and steers. */
+export declare interface ComposerPromptInput {
+    /** True when the input holds no text. */
+    isEmpty: () => boolean;
+    /** True when `node` is the input or inside it. */
+    contains: (node: Node | null) => boolean;
+    focus: () => void;
+}
+
+export declare type ComposerPromptKind = 'choice' | 'confirm' | 'text' | 'number';
+
+/** One answer a prompt offers. Its position (1–9) is its default shortcut. */
+export declare interface ComposerPromptOption {
+    id: string;
+    label: string;
+    /** A short line under the label ("$0.40–$1.10 forecast"). */
+    hint?: string;
+    /** A single key that also picks it (default: its 1-based position). */
+    shortcut?: string;
+    /** Paints the option as the deciding action (`primary`) or a risky one (`danger`). */
+    emphasis?: 'primary' | 'danger';
+    /** Off, with why. */
+    disabledReason?: string;
+}
+
+/**
+ * What `onAnswer` resolves to. Nothing (or `{ receipt }`): answered — the prompt
+ * drops off and the receipt (default: the answer's label) is announced. `{ error }`:
+ * not answered — the error shows on the card and the prompt stays.
+ */
+export declare type ComposerPromptResult = void | undefined | {
+    error: string;
+} | {
+    receipt: string;
+};
+
+export declare type ComposerPromptTone = 'neutral' | 'success' | 'warning' | 'danger' | 'info';
+
 export declare type ComposerRadius = 'none' | 'sm' | 'md' | 'lg' | 'xl';
 
 export declare interface ComposerReference {
@@ -584,6 +722,8 @@ export declare interface ComposerWorkflow {
     /** Second line and tooltip of a disabled row. */
     disabledReason?: string;
 }
+
+export declare const CONFIRM_OPTIONS: readonly ComposerPromptOption[];
 
 export declare function ContextComposer(props: ContextComposerProps): JSX.Element;
 
@@ -908,6 +1048,12 @@ export declare interface ConversationComposerOwnProps {
      * Never turns a mode ON — capabilities do that.
      */
     offModes?: Partial<Record<ComposerMode, string>>;
+    /**
+     * Human-in-the-loop prompts, shown one at a time above the input
+     * (`ComposerPromptDeck`, 2.444.0). A text / number prompt takes the typed
+     * words as its answer: Enter answers it instead of sending a message.
+     */
+    prompts?: readonly ComposerPrompt[];
 }
 
 export declare type ConversationComposerProps = ConversationComposerOwnProps & Omit<ContextComposerProps, Owned>;
@@ -991,6 +1137,47 @@ export declare interface ConversationReply {
 
 /** Bind the composer to the installed realtime-modules `useFileUpload`. Call once, at module scope. */
 export declare function createConversationComposer(rm: ConversationComposerModules): ConversationComposerComponent;
+
+declare interface DeckKey {
+    key: string;
+    altKey?: boolean;
+    ctrlKey?: boolean;
+    metaKey?: boolean;
+    shiftKey?: boolean;
+    /** The physical key (`Digit2`): macOS Alt+2 types a symbol, so Alt reads this. */
+    code?: string;
+}
+
+declare type DeckKeyAction = {
+    type: 'pick';
+    optionId: string;
+} | {
+    type: 'default';
+    optionId: string;
+} | {
+    type: 'page';
+    delta: 1 | -1;
+} | {
+    type: 'collapse';
+} | {
+    type: 'expand';
+} | null;
+
+/**
+ * What a key does to the deck. `inputEmpty` is the composer's input; `inDeck`
+ * is focus inside the deck itself (a button). Anything that returns null is
+ * the composer's own key: typing, sending, its menus.
+ */
+export declare function deckKeyAction(event: DeckKey, state: {
+    prompt: ComposerPrompt | null;
+    collapsed: boolean;
+    inputEmpty: boolean;
+    inDeck: boolean;
+    busy: boolean;
+}): DeckKeyAction;
+
+/** The option Enter picks on an empty input, if any. */
+export declare function defaultOption(prompt: ComposerPrompt): ComposerPromptOption | null;
 
 export declare interface DocumentCandidate {
     /** Stable identity — this is what travels in the message, not the label. */
@@ -1179,6 +1366,16 @@ export declare interface MentionSuggestionsProps {
 }
 
 declare type Owned = 'context' | 'modes' | 'disabledModes' | 'modeUnavailableReasons' | 'chatAvailable' | 'agentUnavailableReason' | 'onSend' | 'commands' | 'onCommand' | 'dock' | 'reply' | 'allowAttachments' | 'responsive' | 'mode' | 'onModeChange' | 'draftKey' | 'disabled';
+
+/** A typed answer, checked: the answer, or why it is not one. */
+export declare function parseTypedAnswer(prompt: ComposerPrompt, raw: string): {
+    answer: ComposerPromptAnswer;
+} | {
+    error: string;
+};
+
+/** The options a prompt offers, with confirm's defaults filled in. */
+export declare function promptOptions(prompt: ComposerPrompt): readonly ComposerPromptOption[];
 
 export declare const RichChatComposer: ForwardRefExoticComponent<RichChatComposerProps & RefAttributes<RichChatComposerHandle>>;
 
@@ -1660,6 +1857,9 @@ export declare interface StagedFile {
     file: File;
 }
 
+/** Whether the composer's input carries a typed answer for this prompt. */
+export declare function takesTypedAnswer(prompt: ComposerPrompt | null | undefined): boolean;
+
 export declare type ThreadInput = ThreadInputOwner & {
     /** The thread's send intent: the claiming composer takes the caret. False when none claims it. */
     focus(reply?: boolean): boolean;
@@ -1697,6 +1897,9 @@ export declare function useComposerFocus(): {
 
 /** Bring a surface on screen before any composer answers (a collapsed side pane). */
 export declare function useComposerFocusReveal(revealer: (request: ComposerFocusRequest) => void, enabled?: boolean): void;
+
+/** The deck's state over the host's queue. Hosts that render the deck themselves call this once. */
+export declare function useComposerPromptDeck(prompts: readonly ComposerPrompt[] | null | undefined): ComposerPromptDeckState;
 
 /** Uploads files to `channel` through the gateway and resolves each once the gateway says it landed. */
 export declare function useConversationUploads(rm: ConversationComposerModules, channel: string | null, displayName: string, timeoutMs?: number): (files: readonly File[]) => Promise<ChatAttachmentDescriptor[]>;
