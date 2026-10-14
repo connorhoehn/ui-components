@@ -33,13 +33,13 @@ const hasAll = (el: Element, classes: string) => {
 };
 
 describe('rail type scale (2.397.0)', () => {
-  it('is the compact scale (2.398.0): 13px/500 items on a 36px pitch, 11px caps labels', () => {
-    expect(RAIL_ITEM_TEXT).toBe('text-[13px] font-medium leading-5');
+  it('is the compact scale (2.398.0): 14px/500 items on a 36px pitch, 12px caps labels (2.452.0: the app type scale)', () => {
+    expect(RAIL_ITEM_TEXT).toBe('text-[14px] font-medium leading-5');
     expect(RAIL_ROW_PAD_Y).toBe('py-2');
     expect(railType.rowPitch).toBe(36);
-    expect(RAIL_GROUP_LABEL).toContain('text-[11px]');
+    expect(RAIL_GROUP_LABEL).toContain('text-[12px]');
     expect(RAIL_GROUP_LABEL).toContain('uppercase');
-    expect(RAIL_GROUP_COUNT).toContain('text-[11px]');
+    expect(RAIL_GROUP_COUNT).toContain('text-[12px]');
     expect(RAIL_CAPTION).toContain('text-[12px]');
   });
 
@@ -188,7 +188,7 @@ describe('Documents rail on the rail scale (2.407.13)', () => {
       hasAll(button, 'min-h-9');
       hasAll(button, RAIL_ROW_PAD_Y);
       const label = within(button).getByText(id === 'all' ? 'All documents' : 'Recent');
-      hasAll(label, 'text-[13px]');
+      hasAll(label, 'text-[14px]');
       expect(label.className).not.toContain('text-[15px]');
     }
   });

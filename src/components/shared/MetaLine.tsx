@@ -32,7 +32,7 @@ export interface MetaLineProps {
 }
 
 const SIZE: Record<MetaLineSize, string> = {
-  xs: 'text-[11px]',
+  xs: 'text-[12px]',
   sm: 'text-[12px]',
 };
 

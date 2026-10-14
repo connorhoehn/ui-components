@@ -26,8 +26,8 @@
 
 import { cn } from '../../lib/cn';
 
-/** A rail item's label: 13px, medium weight, 20px line. */
-export const RAIL_ITEM_TEXT = 'text-[13px] font-medium leading-5';
+/** A rail item's label: 14px (the app body step), medium weight, 20px line. Was 13px before 2.452.0. */
+export const RAIL_ITEM_TEXT = 'text-[14px] font-medium leading-5';
 
 /** Vertical padding that puts a one-line rail row on a 36px pitch (8 + 20 + 8). */
 export const RAIL_ROW_PAD_Y = 'py-2';
@@ -39,11 +39,11 @@ export const RAIL_ROW_PITCH = 36;
 export const RAIL_ITEM_COUNT = 'text-[12px] font-medium leading-4 tabular-nums text-text-tertiary';
 
 /**
- * A group heading ("PLAN", "IN PROGRESS"): 11px semibold uppercase,
- * letter-spaced. Ink is separate (`RAIL_GROUP_LABEL_INK`) so a dark rail can
+ * A group heading ("PLAN", "IN PROGRESS"): 12px semibold uppercase,
+ * letter-spaced (the app meta step; 11px before 2.452.0). Ink is separate (`RAIL_GROUP_LABEL_INK`) so a dark rail can
  * swap it without fighting class order.
  */
-export const RAIL_GROUP_LABEL = 'text-[11px] font-semibold uppercase leading-4 tracking-wide';
+export const RAIL_GROUP_LABEL = 'text-[12px] font-semibold uppercase leading-4 tracking-wide';
 
 /** The default ink of a group heading. */
 export const RAIL_GROUP_LABEL_INK = 'text-text-secondary';
@@ -52,7 +52,7 @@ export const RAIL_GROUP_LABEL_INK = 'text-text-secondary';
  * A group heading's count ("IN PROGRESS … 9"): plain muted text at the label's
  * size, never a pill — the heading already says what it counts.
  */
-export const RAIL_GROUP_COUNT = 'text-[11px] font-medium leading-4 normal-case tracking-normal tabular-nums text-text-tertiary';
+export const RAIL_GROUP_COUNT = 'text-[12px] font-medium leading-4 normal-case tracking-normal tabular-nums text-text-tertiary';
 
 /** Padding that puts a group heading (20px caret box) on the same 36px pitch. */
 export const RAIL_GROUP_PAD_Y = 'py-2';

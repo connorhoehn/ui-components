@@ -131,8 +131,8 @@ function InlineCluster({ item, first, last }: { item: StatStripItem; first: bool
   return (
     <div className={cn('min-w-0 py-3', first ? 'pl-0 pr-6' : 'px-6', last && !first && 'pr-0')} data-testid="stat-strip-cluster">
       <div className="flex min-w-0 items-baseline gap-1.5 whitespace-nowrap">
-        <span className={cn('text-[17px] font-bold leading-6 tabular-nums', VALUE_TONE[item.tone ?? 'default'])}>{item.value}</span>
-        <span className="min-w-0 truncate text-[15px] leading-6 text-text-secondary">{item.label}</span>
+        <span className={cn('text-sm font-semibold leading-6 tabular-nums', VALUE_TONE[item.tone ?? 'default'])}>{item.value}</span>
+        <span className="min-w-0 truncate text-sm leading-6 text-text-secondary">{item.label}</span>
       </div>
       <ProgressLine progress={item.progress} label={item.label} />
       {item.hint != null && <div className="mt-0.5 truncate text-[12px] text-text-tertiary">{item.hint}</div>}
@@ -204,18 +204,18 @@ function Cluster({ item, flush, control = false, flow = false }: { item: StatStr
           label (2.447.0); the full label stays on hover unless the item's own
           title (its provenance) already speaks for the cluster. */}
       <div
-        className={cn('truncate uppercase tracking-wide text-text-tertiary', control ? 'text-xs font-normal' : 'text-[10px] font-semibold')}
+        className={cn('truncate uppercase tracking-wide text-text-tertiary', control ? 'text-xs font-normal' : 'text-xs font-semibold')}
         {...(item.title ? {} : { title: item.label })}
         data-testid="stat-strip-label"
       >
         {item.label}
       </div>
       <div className={cn('mt-0.5 flex min-w-0 items-baseline gap-2', flow && NARROW.inline)}>
-        <span className={cn('leading-none tabular-nums', control ? 'text-sm font-semibold' : 'text-[17px] font-bold', VALUE_TONE[item.tone ?? 'default'])}>
+        <span className={cn('leading-none tabular-nums', 'text-sm font-semibold', VALUE_TONE[item.tone ?? 'default'])}>
           {item.value}
         </span>
         {item.hint != null && (
-          <span className={cn('min-w-0 truncate text-text-tertiary', control ? 'text-xs' : 'text-[11px]')}>{item.hint}</span>
+          <span className={cn('min-w-0 truncate text-text-tertiary', 'text-xs')}>{item.hint}</span>
         )}
       </div>
       {item.status && (
@@ -251,7 +251,7 @@ function Connector({ connector, frameless = false }: { connector: StatStripConne
         <line x1="4" y1="0" x2="4" y2="8" stroke="currentColor" strokeWidth="1.25" />
         <path d="M0.5 7 L4 13 L7.5 7 Z" fill="currentColor" />
       </svg>
-      {connector?.label && <span className="whitespace-nowrap text-[11px] leading-none">{connector.label}</span>}
+      {connector?.label && <span className="whitespace-nowrap text-[12px] leading-none">{connector.label}</span>}
     </div>
   );
 }

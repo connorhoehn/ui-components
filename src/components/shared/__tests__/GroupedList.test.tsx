@@ -392,7 +392,7 @@ describe('GroupedList groupHeading + currentStyle (2.389.0)', () => {
     const toggle = screen.getByTestId('grouped-list-group-toggle-docs');
     expect(toggle).toHaveAttribute('data-heading', 'label');
     expect(toggle.className).toContain('uppercase');
-    expect(toggle.className).toContain('text-[11px]');
+    expect(toggle.className).toContain('text-[12px]');
     const count = screen.getByTestId('grouped-list-group-count-docs');
     expect(count.tagName).toBe('SPAN');
     expect(count).toHaveTextContent('2');

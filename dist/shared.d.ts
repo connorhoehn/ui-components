@@ -4783,14 +4783,14 @@ export declare const RAIL_FOLD_SECTION_BELOW = 768;
  * A group heading's count ("IN PROGRESS … 9"): plain muted text at the label's
  * size, never a pill — the heading already says what it counts.
  */
-export declare const RAIL_GROUP_COUNT = "text-[11px] font-medium leading-4 normal-case tracking-normal tabular-nums text-text-tertiary";
+export declare const RAIL_GROUP_COUNT = "text-[12px] font-medium leading-4 normal-case tracking-normal tabular-nums text-text-tertiary";
 
 /**
- * A group heading ("PLAN", "IN PROGRESS"): 11px semibold uppercase,
- * letter-spaced. Ink is separate (`RAIL_GROUP_LABEL_INK`) so a dark rail can
+ * A group heading ("PLAN", "IN PROGRESS"): 12px semibold uppercase,
+ * letter-spaced (the app meta step; 11px before 2.452.0). Ink is separate (`RAIL_GROUP_LABEL_INK`) so a dark rail can
  * swap it without fighting class order.
  */
-export declare const RAIL_GROUP_LABEL = "text-[11px] font-semibold uppercase leading-4 tracking-wide";
+export declare const RAIL_GROUP_LABEL = "text-[12px] font-semibold uppercase leading-4 tracking-wide";
 
 /** The default ink of a group heading. */
 export declare const RAIL_GROUP_LABEL_INK = "text-text-secondary";
@@ -4801,8 +4801,8 @@ export declare const RAIL_GROUP_PAD_Y = "py-2";
 /** A count at an item's right edge ("Initiatives 3"): muted, tabular. */
 export declare const RAIL_ITEM_COUNT = "text-[12px] font-medium leading-4 tabular-nums text-text-tertiary";
 
-/** A rail item's label: 13px, medium weight, 20px line. */
-export declare const RAIL_ITEM_TEXT = "text-[13px] font-medium leading-5";
+/** A rail item's label: 14px (the app body step), medium weight, 20px line. Was 13px before 2.452.0. */
+export declare const RAIL_ITEM_TEXT = "text-[14px] font-medium leading-5";
 
 /** Vertical padding that puts a one-line rail row on a 36px pitch (8 + 20 + 8). */
 export declare const RAIL_ROW_PAD_Y = "py-2";
@@ -4925,13 +4925,13 @@ export declare interface RailSectionProps {
 
 /** Everything above, as one object — `railType.item`, `railType.groupLabel`… */
 export declare const railType: {
-    readonly item: "text-[13px] font-medium leading-5";
+    readonly item: "text-[14px] font-medium leading-5";
     readonly rowPadY: "py-2";
     readonly rowPitch: 36;
     readonly itemCount: "text-[12px] font-medium leading-4 tabular-nums text-text-tertiary";
-    readonly groupLabel: "text-[11px] font-semibold uppercase leading-4 tracking-wide";
+    readonly groupLabel: "text-[12px] font-semibold uppercase leading-4 tracking-wide";
     readonly groupLabelInk: "text-text-secondary";
-    readonly groupCount: "text-[11px] font-medium leading-4 normal-case tracking-normal tabular-nums text-text-tertiary";
+    readonly groupCount: "text-[12px] font-medium leading-4 normal-case tracking-normal tabular-nums text-text-tertiary";
     readonly groupPadY: "py-2";
     readonly caption: "text-[12px] font-semibold uppercase tracking-[0.06em]";
     readonly currentFill: "bg-primary/8";
@@ -5771,7 +5771,7 @@ export declare interface StackProps extends Omit<HTMLAttributes<HTMLElement>, 'c
     ref?: Ref<HTMLElement>;
 }
 
-export declare function StatCard({ label, value, accent, danger, hint, title, delta, sparklineData, to, as: As, onClick, mono, className, style, 'data-testid': testId, }: StatCardProps): JSX.Element;
+export declare function StatCard({ label, value, accent, danger, hint, title, delta, sparklineData, to, as: As, onClick, mono, size: sizeProp, className, style, 'data-testid': testId, }: StatCardProps): JSX.Element;
 
 export declare interface StatCardDelta {
     /** Magnitude of the change. Rendered with a sign derived from `direction`. */
@@ -5842,6 +5842,8 @@ export declare interface StatCardProps {
     /** Click handler — renders a <button> wrapper if no `to` is given. */
     onClick?: () => void;
     mono?: boolean;
+    /** `sm` (since 2.452.0, the compact-density default): 14px semibold value, the app type scale. `md`: the 24px bold KPI value. */
+    size?: 'md' | 'sm';
     className?: string;
     style?: CSSProperties;
     'data-testid'?: string;

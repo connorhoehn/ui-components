@@ -244,7 +244,7 @@ export function SubNavLayout({
           collapsed ? 'justify-center px-0' : 'justify-between px-4',
           alignHeader ? 'h-9 py-0' : 'py-[14px]')}>
           {!collapsed && (
-            <span className="text-[11px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-[0.05em]">
+            <span className="text-[12px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-[0.05em]">
               {title}
             </span>
           )}
@@ -265,7 +265,7 @@ export function SubNavLayout({
           style={{ width: secondaryRailWidth }}
         >
           <div className="flex items-center justify-between px-4 py-[14px] border-b border-[var(--color-border)]">
-            <span className="text-[11px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-[0.05em]">
+            <span className="text-[12px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-[0.05em]">
               {secondaryTitle ?? ''}
             </span>
           </div>

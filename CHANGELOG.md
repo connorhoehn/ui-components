@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.453.0
+
+The app type scale (20/600 title, 14 heading and body, 12 meta; 10-11px only inside a pill) reaches the shared small text, closing the rail and small-text rows of aws-agentcore's `type-scale-burndown.tsv`.
+
+- `railType` (`SubNavLayout`, `NavRail`, `StackedRail`, `GroupedList`, `TreeView`, `WorkspaceRail`, `RailSectionHeader`, `ConversationShelf`): rail items 13px to 14px/500 (`RAIL_ITEM_TEXT`), group labels and their counts 11px to 12px (`RAIL_GROUP_LABEL`, `RAIL_GROUP_COUNT`). The 36px pitch is unchanged. `SubNavLayout`'s title is 12px.
+- `ConversationList` rows: name 14px, the `#` channel glyph 14px, time 12px, the "New chat" row and the row menu trigger 14px. `ScopeHeader` crumbs, separators and the Filters toggle 14px.
+- `MetaLine` `xs` is 12px (the same step as `sm`; the prop stays), `SectionLabel` `upper` 12px, `DotMeter` 12px, `Table` column headings 12px.
+- `StatStrip` default and `inline` variants: caption 12px, value 14px/600 (was 10px and 17px/700), hint 12px.
+- `StatCard` gains `size` (`md` the 24px bold KPI figure, `sm` 14px/600); it follows the density, so a compact app gets `sm`.
+- Work graph chrome (`WorkKindLegend`, the time ruler, the activity header, footer and effort frame, `WorkOmittedGroup`): 10-11px text to 12px. Node card bodies are unchanged.
+
 ## 2.452.2
 
 - PauseCircleIcon: two bars in a ring, the counterpart of PlayCircleIcon (the video barrel already owns the 20px PauseIcon), so a table row's pause/resume pair is two `IconButton`s instead of text buttons (aws-agentcore layout-drift burn-down, Lane B).

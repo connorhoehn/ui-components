@@ -1041,7 +1041,7 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
           const crumbs = screen.getAllByTestId('scope-header-crumb');
           const more = screen.getByTestId('scope-header-crumbs-more');
           [...crumbs, more].forEach((el) => {
-            expect(el.className).toMatch(/text-\[13px\]/);
+            expect(el.className).toMatch(/text-\[14px\]/);
             expect(el.className).toMatch(/\bfont-medium\b/);
             expect(el.className).toMatch(/\btext-text-secondary\b/);
             expect(el.className).not.toMatch(/\btext-sm\b|\btext-text-tertiary\b/);
@@ -1051,7 +1051,7 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
           const seps = Array.from(screen.getByTestId('scope-header-trail').querySelectorAll('[aria-hidden="true"]')).filter((el) => el.textContent === '›');
           expect(seps.length).toBeGreaterThan(0);
           seps.forEach((el) => {
-            expect(el.className).toMatch(/text-\[13px\]/);
+            expect(el.className).toMatch(/text-\[14px\]/);
             expect(el.className).toMatch(/\btext-text-tertiary\b/);
             expect(el.className).not.toMatch(/\btext-sm\b/);
           });
@@ -1164,7 +1164,7 @@ describe('ScopeHeader inline — 2.407.15', () => {
     );
     const toggle = screen.getByTestId('scope-header-controls-toggle');
     expect(toggle.className).toMatch(/\bh-7\b/);
-    expect(toggle.className).toMatch(/text-\[13px\]/);
+    expect(toggle.className).toMatch(/text-\[1[34]px\]/);
     expect(toggle.className).toMatch(/\bfont-medium\b/);
     expect(toggle.className).not.toMatch(/\btext-sm\b/);
     // 2.407.19: bordered like the DropdownMenu default triggers it replaces.

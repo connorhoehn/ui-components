@@ -42,7 +42,7 @@ import { cn } from '../../lib/cn';
 export type SectionLabelCase = 'upper' | 'sentence';
 
 const CASE_CLASSES: Record<SectionLabelCase, string> = {
-  upper: 'text-[11px] font-bold uppercase tracking-[0.06em] text-text-tertiary',
+  upper: 'text-[12px] font-bold uppercase tracking-[0.06em] text-text-tertiary',
   sentence: 'text-[12px] font-medium normal-case tracking-normal text-text-primary',
 };
 

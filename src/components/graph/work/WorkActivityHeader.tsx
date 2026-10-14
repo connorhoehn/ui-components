@@ -55,7 +55,7 @@ export function WorkActivityHeader({
     <header data-testid={testId} className={cn('@container flex shrink-0 items-center justify-between gap-2 border-b border-border bg-surface px-3 py-1.5', className)}>
       <span className="flex min-w-0 flex-col">
         <span className="truncate text-[12px] font-semibold text-text-secondary" data-testid={`${testId}-title`}>{title}</span>
-        {subtitle && <span className="truncate text-[11px] text-text-tertiary" data-testid={`${testId}-subtitle`}>{subtitle}</span>}
+        {subtitle && <span className="truncate text-[12px] text-text-tertiary" data-testid={`${testId}-subtitle`}>{subtitle}</span>}
       </span>
       <span className="flex shrink-0 items-center gap-1">
         {actions}
@@ -120,7 +120,7 @@ export function WorkActivityHeader({
             left the note two letters ("Sh…"), which reads as a bug. The row
             is a container, so the cut goes by its own width, not the window's. */}
         {viewNote && (
-          <span className="hidden min-w-0 truncate text-[11px] text-text-tertiary @lg:inline" data-testid={`${testId}-view-note`}>
+          <span className="hidden min-w-0 truncate text-[12px] text-text-tertiary @lg:inline" data-testid={`${testId}-view-note`}>
             {viewNote}
           </span>
         )}

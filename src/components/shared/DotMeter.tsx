@@ -80,7 +80,7 @@ export function DotMeter({
   return (
     <div
       data-testid={testId}
-      className={cn('flex items-center gap-2 text-[10px] font-mono leading-none', className)}
+      className={cn('flex items-center gap-2 text-[12px] font-mono leading-none', className)}
       role="meter"
       aria-valuenow={percent}
       aria-valuemin={0}

@@ -58,8 +58,8 @@ describe('StatStrip card variant', () => {
   it('valid: a read-only card keeps its large figure under the caption', () => {
     render(<StatStrip items={tiers(false)} />);
     expect(screen.queryByRole('button')).toBeNull();
-    expect(screen.getByText('120').className).toContain('text-[17px]');
-    expect(screen.getByText('Raw').className).toContain('text-[10px]');
+    expect(screen.getByText('120').className).toContain('text-sm');
+    expect(screen.getByText('Raw').className).toContain('text-xs');
   });
 });
 

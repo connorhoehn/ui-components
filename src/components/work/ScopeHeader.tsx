@@ -368,7 +368,7 @@ function RightGroup({
           target="_blank"
           rel="noreferrer"
           data-testid={`${testId}-link`}
-          className="flex min-w-0 items-center gap-1.5 border-l border-border pl-4 text-[13px] font-medium text-primary no-underline hover:underline"
+          className="flex min-w-0 items-center gap-1.5 border-l border-border pl-4 text-[14px] font-medium text-primary no-underline hover:underline"
         >
           {link.icon ?? <LinkIcon size={14} />}
           <span className="max-w-[16rem] truncate">{link.label}</span>
@@ -658,7 +658,7 @@ function scopeTabItems(tabs: ScopeHeaderTab[], testId: string): TabItem[] {
  */
 const CRUMB_CLASS = cn('block min-w-0 truncate whitespace-nowrap text-text-secondary transition-colors duration-100', RAIL_ITEM_TEXT);
 /** A "›" between crumbs, and before the title: tertiary, at the crumbs' 13px. */
-const CRUMB_SEP_CLASS = 'shrink-0 select-none text-[13px] leading-5 text-text-tertiary';
+const CRUMB_SEP_CLASS = 'shrink-0 select-none text-[14px] leading-5 text-text-tertiary';
 
 function InlineCrumb({ item, last, testId }: { item: BreadcrumbItem; last: boolean; testId: string }) {
   // The last crumb is the scope the title sits in ("Design System API"), so
@@ -1109,7 +1109,7 @@ function ScopeHeaderFull({
       items={statItems}
       size="sm"
       tone="secondary"
-      className={cn('min-w-0', statsBelow ? 'text-[15px]' : 'text-[13px]')}
+      className={cn('min-w-0', statsBelow ? 'text-[15px]' : 'text-[14px]')}
       data-testid={`${testId}-stats`}
     />
   ) : null;

@@ -489,7 +489,7 @@ export function ConversationList({
           onClick={onNewChat}
           data-testid="conversation-new-chat"
           className={cn(
-            'flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[13px] font-medium',
+            'flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[14px] font-medium',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset',
             dark
               ? 'text-white/80 hover:bg-white/10 hover:text-white'
@@ -511,7 +511,7 @@ export function ConversationList({
 
       {items.length === 0 ? (
         <p
-          className={cn('m-0 px-2 py-1.5 text-[13px]', dark ? 'text-white/60' : 'text-text-secondary')}
+          className={cn('m-0 px-2 py-1.5 text-[14px]', dark ? 'text-white/60' : 'text-text-secondary')}
           data-testid="conversation-empty"
         >
           {emptyLabel}
@@ -650,7 +650,7 @@ export function ConversationList({
                       aria-hidden="true"
                       data-testid="conversation-channel-glyph"
                       className={cn(
-                        'grid h-7 w-7 shrink-0 place-items-center rounded-lg text-[15px] font-semibold leading-none',
+                        'grid h-7 w-7 shrink-0 place-items-center rounded-lg text-[14px] font-semibold leading-none',
                         dark ? 'bg-white/10 text-white/70' : 'bg-surface-inset text-text-secondary',
                       )}
                     >
@@ -691,7 +691,7 @@ export function ConversationList({
                     <span className="flex items-baseline gap-2">
                       <span
                         className={cn(
-                          'min-w-0 flex-1 truncate text-[13px]',
+                          'min-w-0 flex-1 truncate text-[14px]',
                           unread > 0 ? 'font-semibold' : 'font-medium',
                           dark ? 'text-white' : 'text-text-primary',
                         )}
@@ -720,7 +720,7 @@ export function ConversationList({
                         <time
                           dateTime={item.lastMessageAt}
                           title={timeTitle}
-                          className={cn('shrink-0 text-[11px] tabular-nums', dark ? 'text-white/50' : 'text-text-tertiary')}
+                          className={cn('shrink-0 text-[12px] tabular-nums', dark ? 'text-white/50' : 'text-text-tertiary')}
                           data-testid="conversation-time"
                         >
                           {time}
@@ -803,7 +803,7 @@ export function ConversationList({
                       triggerTabIndex={isCursor ? 0 : -1}
                       triggerTestId={menuTestId}
                       triggerClassName={cn(
-                        'h-6 w-6 rounded-md border-0 p-0 text-[13px]',
+                        'h-6 w-6 rounded-md border-0 p-0 text-[14px]',
                         dark
                           ? 'text-white/70 hover:bg-white/15'
                           : 'text-text-secondary hover:bg-surface-hover',

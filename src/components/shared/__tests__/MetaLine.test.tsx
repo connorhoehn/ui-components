@@ -57,7 +57,7 @@ describe('MetaLine', () => {
 
   it('applies the size and tone scales', () => {
     const { rerender } = render(<MetaLine data-testid="m" items={['a']} />);
-    expect(screen.getByTestId('m').className).toContain('text-[11px]');
+    expect(screen.getByTestId('m').className).toContain('text-[12px]');
     expect(screen.getByTestId('m').className).toContain('text-text-tertiary');
     rerender(<MetaLine data-testid="m" items={['a']} size="sm" tone="secondary" />);
     expect(screen.getByTestId('m').className).toContain('text-[12px]');

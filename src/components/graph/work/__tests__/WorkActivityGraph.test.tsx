@@ -217,7 +217,7 @@ describe('Active Now composition', () => {
     expect(actions.className).toContain('pointer-events-auto');
     // Link buttons intentionally inherit: compact graph metadata must not shrink their labels.
     expect(actions.className).toContain('text-xs');
-    expect(actions.parentElement!.className).toContain('text-[10px]');
+    expect(actions.parentElement!.className).toContain('text-[12px]');
   });
 
   it('stops the ruler at the real clock, not at the end of the day', () => {

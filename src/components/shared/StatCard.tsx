@@ -16,6 +16,7 @@
 import type { CSSProperties, ElementType, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import Sparkline from './Sparkline';
+import { useDensitySize } from './Density';
 
 export interface StatCardDelta {
   /** Magnitude of the change. Rendered with a sign derived from `direction`. */
@@ -87,6 +88,8 @@ export interface StatCardProps {
   /** Click handler — renders a <button> wrapper if no `to` is given. */
   onClick?: () => void;
   mono?: boolean;
+  /** `sm` (since 2.452.0, the compact-density default): 14px semibold value, the app type scale. `md`: the 24px bold KPI value. */
+  size?: 'md' | 'sm';
   className?: string;
   style?: CSSProperties;
   'data-testid'?: string;
@@ -115,10 +118,12 @@ export function StatCard({
   as: As,
   onClick,
   mono = false,
+  size: sizeProp,
   className,
   style,
   'data-testid': testId,
 }: StatCardProps) {
+  const size = useDensitySize('StatCard', sizeProp, { comfortable: 'md', compact: 'sm' });
   const baseClasses = cn(
     'block rounded-lg border p-3 no-underline transition-colors',
     !accent && !danger && 'bg-[var(--color-surface)] border-[var(--color-border)]',
@@ -162,7 +167,7 @@ export function StatCard({
       <div className="mt-1 flex items-center gap-2">
         <div
           className={cn(
-            'text-[24px] font-bold leading-tight text-[var(--color-text-primary)]',
+            size === 'sm' ? 'text-sm font-semibold leading-5 text-[var(--color-text-primary)]' : 'text-[24px] font-bold leading-tight text-[var(--color-text-primary)]',
             mono && 'font-mono',
           )}
         >
@@ -172,7 +177,7 @@ export function StatCard({
       </div>
       {deltaNode}
       {hint != null && (
-        <div className="mt-1 text-[11px] italic text-[var(--color-text-tertiary)]">
+        <div className={cn('mt-1 italic text-[var(--color-text-tertiary)]', size === 'sm' ? 'text-xs' : 'text-[11px]')}>
           {hint}
         </div>
       )}

@@ -83,12 +83,12 @@ function ResourceNode({ data, selected }: NodeProps<ActivityNode>) {
 // effort read as "Coverag…" (NFR #164). The title truncates with a tooltip.
 function EffortFrame({ data }: NodeProps<FrameNode>) {
   return <TitledFrame tone="surface" titleText={data.title} title={
-    <span className="flex min-w-0 max-w-full items-center gap-1.5 font-sans text-[11px] font-semibold text-text-secondary">
+    <span className="flex min-w-0 max-w-full items-center gap-1.5 font-sans text-[12px] font-semibold text-text-secondary">
       {data.live && <span aria-hidden="true" className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-primary/50" />}
       <span className="truncate" data-work-effort-title="">{data.title}</span>
     </span>
   } className="pointer-events-none h-full w-full rounded-xl border-dashed border-border-subtle bg-surface/60" data-testid="work-effort">
-    <div className="flex min-w-0 items-center gap-2 px-4 pt-1 text-[10px] leading-4 text-text-tertiary">
+    <div className="flex min-w-0 items-center gap-2 px-4 pt-1 text-[12px] leading-4 text-text-tertiary">
       <span className="min-w-0 flex-1 truncate" title={data.subtitle}>
         {data.subtitle}
         {data.cycle && <span role="status" className="ml-2 text-warning-fg">Relationship order unavailable</span>}
@@ -373,7 +373,7 @@ export function WorkActivityCanvas(props: ActivityProps) {
       {belowReadable && (
         <InlineAlert
           tone="info"
-          className="pointer-events-auto max-w-[min(26rem,100%)] text-[11px]"
+          className="pointer-events-auto max-w-[min(26rem,100%)] text-[12px]"
           data-testid="work-activity-zoom-hint"
         >
           <span>

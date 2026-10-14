@@ -23,7 +23,7 @@ const plural = (count: number, one: string, many: string) => `${count} ${count =
 export function WorkKindLegend({ nodes, edges, className, 'data-testid': testId = 'work-kind-legend' }: WorkKindLegendProps) {
   const kinds = workNodeKindCounts(nodes);
   return (
-    <span className={cn('flex min-w-0 items-center gap-3 text-[11px] text-text-tertiary', className)} data-testid={testId}>
+    <span className={cn('flex min-w-0 items-center gap-3 text-[12px] text-text-tertiary', className)} data-testid={testId}>
       <ul aria-label="Kinds of work shown" className="flex min-w-0 items-center gap-2">
         {kinds.map(({ kind, count }) => {
           const label = `${count} ${WORK_NODE_KIND_LABELS[kind]}`;

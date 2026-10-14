@@ -96,7 +96,7 @@ export function WorkTimeWindow({ activity, timezone = 'UTC' }: { activity: WorkA
           onChange={(event) => move(window.end, window.following, event.target.value === 'day' ? span : Number(event.target.value) * MINUTE)}
         />
       </div>
-      <div ref={ruler.ref} className="relative mx-1 mt-2 h-4 text-[10px] text-text-tertiary" aria-hidden="true" data-testid="work-time-ruler">
+      <div ref={ruler.ref} className="relative mx-1 mt-2 h-4 text-[12px] text-text-tertiary" aria-hidden="true" data-testid="work-time-ruler">
         {ticks.map((mark) => (
           <span key={mark} className="absolute top-0 -translate-x-1/2 first:translate-x-0 tabular-nums" style={{ left: `${at(mark)}%` }}>{clock(mark)}</span>
         ))}
