@@ -1,6 +1,6 @@
 // NotificationCenter — inbox/notification feed panel.
 //
-// Tabs: Unread | All. Uses EmptyState when empty.
+// Tabs: Unread | All. Uses EmptyState when empty, at the header's inset.
 
 import { useId, useState, type ReactNode } from 'react';
 import { IconButton } from '../ui/IconButton';
@@ -35,6 +35,8 @@ export interface NotificationCenterProps {
    * in view while only the feed scrolls.
    */
   footer?: ReactNode;
+  /** Test id of the empty state. Default `empty-state`. Since 2.448.0. */
+  emptyTestId?: string;
   className?: string;
   'data-testid'?: string;
 }
@@ -59,6 +61,7 @@ export function NotificationCenter({
   onMarkAllRead,
   onClearAll,
   footer,
+  emptyTestId,
   className,
   'data-testid': testId,
 }: NotificationCenterProps) {
@@ -88,10 +91,16 @@ export function NotificationCenter({
       {/* Feed */}
       <TabPanel id={tab} when={tab} idPrefix={tabsId} className="flex min-h-0 flex-1 flex-col overflow-y-auto py-2">
         {displayed.length === 0 ? (
+          // Every block of the panel shares the header's 16px inset (px-4):
+          // a start-aligned EmptyState has no padding of its own, so without
+          // it "All caught up" sat flush on the panel's edge under an inset
+          // title and tab row. With no items at all the message says so
+          // plainly on either tab ("Nothing new"), since 2.448.0.
           <EmptyState
-            size="sm" align="start"
-            title={tab === 'unread' ? 'All caught up' : 'No notifications'}
-            body={tab === 'unread' ? 'No unread notifications.' : 'Notifications will appear here.'}
+            size="sm" align="start" className="px-4 py-2"
+            {...(emptyTestId ? { testId: emptyTestId } : {})}
+            title={items.length === 0 ? 'Nothing new' : tab === 'unread' ? 'All caught up' : 'No notifications'}
+            body={items.length === 0 ? 'Activity will appear here.' : tab === 'unread' ? 'No unread notifications.' : 'Notifications will appear here.'}
           />
         ) : (
           displayed.map(item => {

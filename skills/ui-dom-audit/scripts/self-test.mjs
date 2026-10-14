@@ -20,7 +20,11 @@ const selectors = {
   graphDetailLabels: '[data-ui-text="graph-detail"]', graphMetadataLabels: '[data-ui-text="graph-metadata"]', activePersonCaptions: '[data-ui-text="active-person-caption"]',
   codeLabels: 'code, input[data-ui-text="code"]', railCaptionLabels: '.rail-label, button[data-heading="label"][data-focus-key^="g:"] > span, [data-ui-text="rail-caption"]', railItemLabels: '[data-ui-text="rail-item"]', conversationLabels: '.conversation-label', conversationMetadata: '.conversation-meta', decorativeText: '[aria-hidden="true"]', rowMenuGlyphs: '.row-glyph', keyboardHints: 'kbd', captions: '[data-ui-text="caption"]', tenantControl: '.no-brand', tickerControl: '.no-ticker', avatarControl: '[data-ui-text="avatar"]', header: '#header', footer: '#footer', footerRow: '#footer', shellColumns: '#shell', nestedColumns: '.no-nested', workspaceColumns: '#workspace', splitColumns: '.no-split',
   controls: 'button,input,select,textarea,[role="button"]', nativeSelects: 'select:not([data-ui-native-select][data-ui-native-reason]), select[data-ui-native-reason=""], input[list], datalist', unmarkedListboxes: '[role="listbox"]:not([data-ui-listbox])', listboxOptions: '[data-ui-listbox] [role="option"]', openListboxes: '[data-ui-listbox]', railHeaders: '.rail-caption', toolbarControls: '#toolbar button', collections: '#collection', collectionToolbars: '#toolbar', sectionTitles: '#section',
-  tables: 'table', collectionTables: '[data-collection-table] table', composers: '#shelf', nestedComposers: '#shelf [data-composer-surface]', composerBoundary: 'section:has(> [data-collection-command-boundary="embedded"]), #content',
+  tables: 'table', collectionTables: '[data-collection-table] table', composers: '#shelf', nestedComposers: '#shelf [data-composer-surface]', composerBoundary: '#content',
+  // composer.last: the column a composer docks at the bottom of, and the dock that holds it.
+  composerColumns: '#content', composerDocks: '#shelf-wrapper',
+  // panel.inset / panel.empty-height: anchored panels and the library EmptyState marker.
+  panels: '[role="dialog"], [role="alertdialog"], dialog[open], [data-ui-dialog]', emptyStates: '[data-ui-empty]',
   // The content-column rules (gutter, header alignment, one title, containment, sparse tiles):
   // the column is the trail's parent, the trail band's padding is the reading edge.
   contentColumns: ':has(> [data-trail])', trail: '[data-trail]',
@@ -113,16 +117,19 @@ try {
   assert.ok(scoped.samples.some(x => x.rule === 'composer.surface' && x.property === 'paddingLeft' && x.expected === 20), 'the inset resolves on the surface element, not the document root');
   assert.ok(clean.samples.some(x => x.rule === 'composer.surface' && x.property === 'paddingLeft' && x.expected === 16), 'with no host override the token resolves to the 16px default');
   console.log('PASS composer inset follows --ui-content-gutter at 16 and at a host-scoped 20');
+  // An embedded section is no longer a composer boundary (the composer docks
+  // at the bottom of the content column, ui-components 2.448.0): a composer
+  // inside a section inset from the column fails both its shelf and its band.
   await page.setContent(html);
   await page.evaluate(() => {
     const section = document.createElement('section'); section.style.margin = '0 24px';
     const ledger = document.createElement('div'); ledger.setAttribute('data-collection-command-boundary', 'embedded');
     ledger.append(document.querySelector('#shelf')); section.append(ledger); document.querySelector('#shelf-wrapper').append(section);
   });
-  assert.deepEqual((await measure()).issues, [], 'intentional embedded section may be inset from the page');
-  await page.evaluate(() => document.querySelector('[data-collection-command-boundary="embedded"]').style.margin = '0 12px');
-  assert.ok((await measure()).issues.some(i => i.rule === 'composer.surface' && i.property === 'shelf left'), 'inset embedded ledger must be measured against its section, not itself');
-  console.log('PASS full-page content boundary and intentional embedded-section boundary');
+  const embeddedInset = await measure();
+  assert.ok(embeddedInset.issues.some(i => i.rule === 'composer.surface' && i.property === 'shelf left'), 'a composer in an inset section is measured against the content column');
+  assert.ok(embeddedInset.issues.some(i => i.rule === 'composer.last' && i.property === 'band left margin'), 'its band has side margins inside the column');
+  console.log('PASS full-page content boundary; an embedded section is not a composer boundary');
   await page.setContent(html);
   await page.evaluate(() => document.querySelector('#shelf').remove());
   const absencePayload = { ...payload, required: payload.required.filter(name => name !== '$composers') };
@@ -290,6 +297,111 @@ try {
   assert.deepEqual((await page.evaluate(measureDOM, only(['popover.fit']))).issues, [], 'an expanded disclosure (no aria-haspopup) under the panel is not its trigger');
   console.log('PASS popover.fit judges only popup triggers; board lanes need a distinct surface and the full board height');
   await page.close();
+
+  // Anchored panel sections (panel.inset, panel.empty-height): the footer
+  // bell's empty Unread tab drew "All caught up" flush on the panel's edge
+  // under an inset title and tab row, and kept its full fixed height with a
+  // blank area under it. Every block shares the header's inset; an empty
+  // panel shrinks to its content (the height cap is a maximum).
+  {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+    const panelIds = ['panel.inset', 'panel.empty-height'];
+    const panelHtml = `<!doctype html><html><head><style>
+*{box-sizing:border-box} body{margin:0;font:14px system-ui;background:#eef1f5;height:800px}
+#bell{position:fixed;left:300px;bottom:8px;width:28px;height:28px}
+#panel{position:fixed;left:300px;bottom:44px;width:360px;max-height:560px;display:flex;flex-direction:column;background:#fff;border:1px solid #ccd;overflow:hidden}
+#head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;flex:none} #head h2{margin:0;font-size:14px}
+#tabs{margin:0 16px;display:flex;gap:4px;flex:none} #tabs button{font:inherit;border:0;background:none;padding:6px 0}
+#feed{flex:1;min-height:0;overflow-y:auto;padding:8px 0}
+.empty{padding:8px 16px} .empty p{margin:0}
+.row{display:block;width:100%;padding:12px 16px;border:0;background:none;text-align:left;font:inherit;height:72px}
+#foot{flex:none;text-align:center;padding:6px 16px;border-top:1px solid #ccd}
+</style></head><body>
+<button id="bell" aria-haspopup="dialog" aria-expanded="true">B</button>
+<div id="panel" role="dialog" data-ui-dialog="popover"><div id="head"><h2>Notifications</h2><button aria-label="Mark all read">✓</button></div>
+<div id="tabs" role="tablist"><button role="tab">Unread</button><button role="tab">All</button></div>
+<div id="feed"><div class="empty" data-ui-empty><p><b>All caught up</b></p><p>No unread notifications.</p></div></div>
+<div id="foot"><button>See all activity</button></div></div>
+</body></html>`;
+    const pmeasure = () => page.evaluate(measureDOM, only(panelIds));
+    await page.setContent(panelHtml);
+    const clean = await pmeasure();
+    assert.deepEqual(clean.issues, [], 'an empty panel at its content height with its empty state at the header inset passes: ' + JSON.stringify(clean.issues));
+    assert.ok(panelIds.every(id => clean.coverage.some(c => c.rule === id && c.matched > 0)), 'each panel rule is exercised by the valid fixture');
+    const validPanels = [
+      ['a long feed capped at its max height with full-bleed rows whose text keeps the inset', () => { document.querySelector('#feed').innerHTML = '<button class="row">Sana Iqbal in #general</button>'.repeat(20); }],
+      ['a header-less "Nothing new" panel with a centred empty state', () => { const p = document.querySelector('#panel'); p.innerHTML = '<div data-ui-empty style="display:flex;flex-direction:column;align-items:center;padding:24px 16px"><p style="margin:0">Nothing new</p><p style="margin:0">Activity will appear here.</p></div><div id="foot"><button>See all activity</button></div>'; }],
+    ];
+    for (const [name, mutate] of validPanels) {
+      await page.setContent(panelHtml); await page.evaluate(mutate);
+      const result = await pmeasure();
+      assert.deepEqual(result.issues, [], `${name}: ${JSON.stringify(result.issues)}`);
+      console.log('PASS allows ' + name);
+    }
+    const panelDefects = [
+      ['an empty state flush on the panel edge under an inset header', () => { document.querySelector('.empty').style.padding = '8px 0'; }, 'panel.inset', 'left inset (ink left of the panel header)'],
+      ['a feed row whose label runs to the panel edge', () => { document.querySelector('#feed').insertAdjacentHTML('beforeend', '<div style="text-align:right;padding:0 2px">Flush label</div>'); }, 'panel.inset', 'right inset (ink past the header inset)'],
+      ['an empty panel kept at its full fixed height (blank under its footer)', () => { document.querySelector('#panel').style.height = '560px'; document.querySelector('#feed').style.flex = 'none'; }, 'panel.empty-height', 'blank band in an empty panel'],
+      ['an empty fixed-height panel whose footer is pinned at its bottom', () => { const p = document.querySelector('#panel'); p.style.height = '560px'; document.querySelector('#feed').style.flex = '1'; }, 'panel.empty-height', 'blank band in an empty panel'],
+    ];
+    for (const [name, mutate, rule, property] of panelDefects) {
+      await page.setContent(panelHtml); await page.evaluate(mutate);
+      const result = await pmeasure();
+      assert.ok(result.issues.some(i => i.rule === rule && i.property === property), `${name} must fail ${rule} (${property}): ${JSON.stringify(result.issues)}`);
+      console.log('PASS detects ' + name);
+    }
+    console.log('PASS panel sections share the header inset; an empty panel shrinks to its content');
+    await page.close();
+  }
+
+  // The column's composer is its last content (composer.last): a section's
+  // command composer once sat mid-page on an inset band, with the page's
+  // findings link and a disclosure after it and blank space to the footer.
+  // Docked at the column's bottom it spans the column and nothing follows it.
+  {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+    const lastIds = ['composer.last'];
+    const lastSelectors = { ...selectors, composers: '[data-composer-surface]', composerColumns: '[data-col]', composerDocks: '[data-dock]' };
+    const lastHtml = `<!doctype html><html><head><style>
+*{box-sizing:border-box} body{margin:0;font:14px system-ui}
+#col{display:flex;flex-direction:column;width:900px;height:600px;margin-left:200px}
+#body{flex:1;min-height:0;overflow:auto;padding:0 24px} section{padding:8px 0}
+[data-dock]{flex:none} [data-composer-surface]{padding:8px 16px;position:relative} [data-composer-surface]::before{content:'';position:absolute;inset:0;background-image:radial-gradient(#ccd 1px,transparent 1px)}
+</style></head><body><div id="col" data-col><div id="body">
+<section><h3>Needs your attention</h3><p>Nothing right now.</p></section>
+<section id="runs"><h3>Recent runs</h3><table><tr><td>inference-canary-nightly</td></tr></table></section>
+<a id="findings" href="#f">5 open findings →</a><details><summary>Queue operations</summary></details>
+</div><div data-dock><div data-composer-surface><div contenteditable="true" role="textbox">Search runs…</div></div></div></div></body></html>`;
+    const lmeasure = () => page.evaluate(measureDOM, { ...only(lastIds), selectors: lastSelectors });
+    await page.setContent(lastHtml);
+    const clean = await lmeasure();
+    assert.deepEqual(clean.issues, [], 'a composer docked at the column bottom, spanning it, passes: ' + JSON.stringify(clean.issues));
+    assert.ok(clean.coverage.some(c => c.rule === 'composer.last' && c.matched > 0), 'composer.last is exercised by the valid fixture');
+    const validLast = [
+      ['a call strip under the composer inside the same dock', () => { document.querySelector('[data-dock]').insertAdjacentHTML('beforeend', '<div>In call · 2 people</div>'); }],
+      ['an open menu (a fixed layer) drawn below the composer', () => { document.body.insertAdjacentHTML('beforeend', '<div role="menu" style="position:fixed;left:300px;top:640px">Menu item</div>'); }],
+    ];
+    for (const [name, mutate] of validLast) {
+      await page.setContent(lastHtml); await page.evaluate(mutate);
+      const result = await lmeasure();
+      assert.deepEqual(result.issues, [], `${name}: ${JSON.stringify(result.issues)}`);
+      console.log('PASS allows ' + name);
+    }
+    // Serialized into the page, so each mutation carries its own steps.
+    const lastDefects = [
+      ['a section composer followed by the page\'s findings link and disclosure', () => { document.querySelector('#runs').append(document.querySelector('[data-composer-surface]')); document.querySelector('[data-dock]').remove(); }, 'content below the composer'],
+      ['content below the composer scrolled out of view', () => { document.querySelector('#runs').append(document.querySelector('[data-composer-surface]')); document.querySelector('[data-dock]').remove(); document.querySelector('#body').insertAdjacentHTML('afterbegin', '<p style="height:900px;margin:0">Long page</p>'); }, 'content below the composer'],
+      ['a composer band with side margins inside its column', () => { document.querySelector('#runs').append(document.querySelector('[data-composer-surface]')); document.querySelector('[data-dock]').remove(); document.querySelector('#findings').remove(); document.querySelector('details').remove(); }, 'band left margin'],
+    ];
+    for (const [name, mutate, property] of lastDefects) {
+      await page.setContent(lastHtml); await page.evaluate(mutate);
+      const result = await lmeasure();
+      assert.ok(result.issues.some(i => i.rule === 'composer.last' && i.property === property), `${name} must fail composer.last (${property}): ${JSON.stringify(result.issues)}`);
+      console.log('PASS detects ' + name);
+    }
+    console.log('PASS the column\'s composer is its last content and spans it');
+    await page.close();
+  }
 
   // Legible text (text.cramped, text.overlap, text.clipped,
   // placeholder.squeezed): a red callout split into side-by-side columns

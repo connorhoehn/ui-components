@@ -4,7 +4,7 @@ import { t as r } from "./IconButton-IE5g44md.js";
 import { h as i, it as a } from "./Icons-B_xESAH3.js";
 import { c as o } from "./Text-B9dLbWrv.js";
 import { t as s } from "./Tooltip-DWyAb81m.js";
-import { t as c } from "./EmptyState-iFs0woF1.js";
+import { t as c } from "./EmptyState-ChFI22O0.js";
 import { createContext as l, useContext as u, useMemo as d, useState as f } from "react";
 import { Fragment as p, jsx as m, jsxs as h } from "react/jsx-runtime";
 //#region src/components/social/ChatSidePanelRegistry.tsx

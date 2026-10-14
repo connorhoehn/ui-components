@@ -4,23 +4,26 @@
 // Composed from library parts only: `IconButton` + `BellIcon`, a `Badge`
 // count at the button's top-right (hidden at 0, "99+" past 99), an
 // `InlinePopover` anchored to the button (Esc / outside click close it, focus
-// goes back to the button), and `NotificationCenter` inside — or an
-// `EmptyState` ("Nothing new") when there are no items at all.
+// goes back to the button), and `NotificationCenter` inside (its own empty
+// state, "Nothing new", when there are no items at all).
 //
 // Open state is internal: a header drops it in and passes items. The unread
 // count is part of the button's accessible name ("Activity, 3 unread"), so
 // the badge itself is hidden from assistive tech rather than announced twice.
 // Since 2.407.37.
 //
-// Since 2.446.1 the panel has a fixed height — `min(70vh, 560px)` — with the
-// feed scrolling inside it while the header (Mark all read, tabs) and the
+// Since 2.446.1 the panel is capped — `min(70vh, 560px)` — with the feed
+// scrolling inside it while the header (Mark all read, tabs) and the
 // optional `seeAll` footer stay put. Before, a 99+ feed made the whole
 // popover as tall as the window: the popover's own viewport clamp could only
 // pin it to the top and scroll the panel as a whole, so the header scrolled
 // away and the panel covered the footer bell that opened it. A capped panel
-// fits on the other side of its trigger instead (InlinePopover flips it), and
-// a fixed rather than max height keeps it from jumping when Unread/All change
-// the feed's length.
+// fits on the other side of its trigger instead (InlinePopover flips it).
+//
+// Since 2.448.0 the cap is a maximum, not a fixed height: an empty Unread tab
+// kept the full 560px with a blank area under "All caught up". And there is
+// one panel, empty or not — with no items it is the same NotificationCenter
+// ("Nothing new" at the header's inset), not a second, headerless panel.
 
 import { useCallback, useRef, useState } from 'react';
 import { Button } from '../ui/Button';
@@ -28,10 +31,8 @@ import { cn } from '../../lib/cn';
 import { IconButton } from '../ui/IconButton';
 import { BellIcon } from '../ui/Icons';
 import { Badge } from './Badge';
-import EmptyState from './EmptyState';
 import { InlinePopover, type InlinePopoverPlacement } from './InlinePopover';
 import { NotificationCenter, type NotificationItem } from './NotificationCenter';
-import { DensityProvider } from './Density';
 
 export type NotificationBellSize = 'sm' | 'md';
 
@@ -94,7 +95,6 @@ export function NotificationBell({
       }
     : undefined;
 
-  const empty = items.length === 0;
   const seeAllLink = seeAll ? (
     <Button
       variant="link"
@@ -131,34 +131,22 @@ export function NotificationBell({
         placement={placement}
         aria-label={label}
         data-testid={`${testId}-popover`}
-        className={
-          empty
-            ? 'w-[300px] max-w-[calc(100vw-16px)]'
-            : 'w-[360px] max-w-[calc(100vw-16px)] overflow-hidden p-0'
-        }
+        className="w-[360px] max-w-[calc(100vw-16px)] overflow-hidden p-0"
       >
-        {empty ? (
-          <>
-            <DensityProvider density="compact"><EmptyState
-              icon={<BellIcon size={24} />}
-              title="Nothing new"
-              description="Activity will appear here."
-              testId={`${testId}-empty`}
-            /></DensityProvider>
-            {seeAllLink && <div className="flex justify-center border-t border-border py-1.5">{seeAllLink}</div>}
-          </>
-        ) : (
-          <NotificationCenter
-            items={items}
-            onItemClick={handleItemClick}
-            onMarkAllRead={onMarkAllRead}
-            onClearAll={onClearAll}
-            footer={seeAllLink}
-            // A fixed height, never the window's: the feed scrolls inside.
-            className="h-[min(70vh,560px)] w-full"
-            data-testid={`${testId}-center`}
-          />
-        )}
+        {/* One panel, empty or not: the header, the tabs and the feed (or its
+            empty state at the header's inset). The cap is a MAXIMUM — a
+            short or empty feed shrinks the panel to its content, a long one
+            scrolls inside it under the pinned header. */}
+        <NotificationCenter
+          items={items}
+          onItemClick={handleItemClick}
+          onMarkAllRead={onMarkAllRead}
+          onClearAll={onClearAll}
+          footer={seeAllLink}
+          emptyTestId={`${testId}-empty`}
+          className="max-h-[min(70vh,560px)] w-full"
+          data-testid={`${testId}-center`}
+        />
       </InlinePopover>
     </span>
   );

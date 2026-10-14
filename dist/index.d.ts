@@ -5400,6 +5400,13 @@ export declare interface Column<T> {
     align?: 'left' | 'right' | 'center';
 }
 
+/** Render `children` in the nearest DockedColumn's dock (in place when there is none). */
+export declare function ColumnDock({ children }: ColumnDockProps): JSX.Element | null;
+
+export declare interface ColumnDockProps {
+    children: ReactNode;
+}
+
 export declare function Combobox(props: ComboboxProps): JSX.Element;
 
 export declare interface ComboboxOption {
@@ -7999,6 +8006,20 @@ export declare interface DockedAsideProps {
     bodyPadding?: 'none' | 'md';
     className?: string;
     'data-testid'?: string;
+}
+
+export declare function DockedColumn({ children, className, bodyClassName, body, bodyProps, ...rest }: DockedColumnProps): JSX.Element;
+
+export declare interface DockedColumnProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
+    children: ReactNode;
+    /** Classes for the scrolling body (its gutter and padding live here, never on the dock). */
+    bodyClassName?: string;
+    /** `scroll` (default): the body scrolls above the dock. `fill`: the body is a fixed frame whose panes scroll on their own. */
+    body?: 'scroll' | 'fill';
+    /** Attributes for the scrolling body (a test id, a semantic marker such as `data-section-body`). */
+    bodyProps?: HTMLAttributes<HTMLDivElement> & {
+        [marker: `data-${string}`]: string | undefined;
+    };
 }
 
 export declare interface DockedPanelContextValue {
@@ -14259,7 +14280,7 @@ export declare interface NotificationBellProps {
 
 export declare type NotificationBellSize = 'sm' | 'md';
 
-export declare function NotificationCenter({ items, onItemClick, onMarkAllRead, onClearAll, footer, className, 'data-testid': testId, }: NotificationCenterProps): JSX.Element;
+export declare function NotificationCenter({ items, onItemClick, onMarkAllRead, onClearAll, footer, emptyTestId, className, 'data-testid': testId, }: NotificationCenterProps): JSX.Element;
 
 export declare interface NotificationCenterProps {
     items: NotificationItem[];
@@ -14273,6 +14294,8 @@ export declare interface NotificationCenterProps {
      * in view while only the feed scrolls.
      */
     footer?: ReactNode;
+    /** Test id of the empty state. Default `empty-state`. Since 2.448.0. */
+    emptyTestId?: string;
     className?: string;
     'data-testid'?: string;
 }
@@ -23968,6 +23991,9 @@ declare interface UseActivityBusReturn {
   * thumbnail.
   */
  export declare function useImageUrl(): (imageId: string) => string;
+
+ /** Whether a DockedColumn is above this component (its ColumnDock will dock rather than render in place). */
+ export declare function useInDockedColumn(): boolean;
 
  export declare function useIngestAudit(filters?: IngestAuditFilters): UseIngestAuditResult;
 

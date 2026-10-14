@@ -505,6 +505,87 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
         samples.push({ rule: rule.id, selector: selectorOf(el), property: 'scroll region', actual: scrollsWhole && header ? 'whole panel' : 'inner', expected: 'inner' });
         if (scrollsWhole && header) add(rule, el, 'scroll region', 'a scrolling region inside the panel; the header stays in view', `the whole panel scrolls (${el.scrollHeight}px in ${el.clientHeight}px), carrying ${selectorOf(header)}`);
       }
+      else if (rule.kind === 'panel-inset') {
+        // Inside an anchored panel (popover, dialog, drawer) every block shares
+        // the header's inset: no ink starts left of the header's first ink or
+        // ends right of the same inset from the panel's right edge. A
+        // start-aligned empty state flush on the panel's edge under an inset
+        // title and tab row is the reported shape. Judged on ink, clipped to
+        // the panel's scrolling/clipping descendants, so a full-bleed row whose
+        // text keeps the inset passes. A panel inside another is judged on its
+        // own; a panel with no heading is unexercised.
+        const tol = rule.tolerance ?? 2;
+        let measured = 0;
+        for (const panel of nodes) {
+          const nested = n => n !== panel && n.closest(css(rule.selector)) !== panel;
+          const heading = [...panel.querySelectorAll(css(rule.header ?? 'h1, h2, h3, [role="heading"]'))].find(h => visible(h) && !nested(h));
+          if (!heading) continue;
+          const headInk = inkRects(heading);
+          if (!headInk.length) continue;
+          const p = panel.getBoundingClientRect();
+          const edge = Math.min(...headInk.map(r => r.left)), inset = edge - p.left;
+          const skip = el => nested(el) || (rule.exclude ?? []).some(e => el.closest(css(e.selector)));
+          const ink = inkRects(panel, skip).map(r => clipToAncestors(r, panel)).filter(Boolean);
+          measured++;
+          const left = ink.reduce((a, r) => (!a || r.left < a.left ? r : a), null), right = ink.reduce((a, r) => (!a || r.right > a.right ? r : a), null);
+          const dl = left ? Math.round((left.left - edge) * 100) / 100 : 0, dr = right ? Math.round((p.right - inset - right.right) * 100) / 100 : 0;
+          samples.push({ rule: rule.id, selector: selectorOf(panel), property: 'panel inset', actual: { left: dl, right: dr, inset: Math.round(inset) }, expected: { min: 0 } });
+          if (dl < -tol) add(rule, left.el, 'left inset (ink left of the panel header)', `>= ${Math.round(inset)}px from the panel edge (the header's inset)`, `${Math.round(left.left - p.left)}px`);
+          if (dr < -tol) add(rule, right.el, 'right inset (ink past the header inset)', `<= panel right - ${Math.round(inset)}px`, `${Math.round(p.right - right.right)}px from the panel's right edge`);
+        }
+        coverage.at(-1).matched = measured;
+      }
+      else if (rule.kind === 'panel-empty') {
+        // An anchored panel whose content is an empty state shrinks to that
+        // content: its fixed height is a maximum, not a minimum. Judged on
+        // the blank bands between what the panel draws (ink: text, icons,
+        // images) — from its padded top to its padded bottom — so a pinned
+        // footer link under a blank 300px area still fails.
+        const maxGap = rule.maxGap ?? 96, tol = rule.tolerance ?? tolerance;
+        let measured = 0;
+        for (const panel of nodes) {
+          const empty = [...panel.querySelectorAll(css(rule.empty))].filter(visible);
+          if (!empty.length) continue;
+          measured++;
+          const p = panel.getBoundingClientRect(), s = getComputedStyle(panel);
+          const top = p.top + parseFloat(s.borderTopWidth) + parseFloat(s.paddingTop), bottom = p.bottom - parseFloat(s.borderBottomWidth) - parseFloat(s.paddingBottom);
+          const bands = inkRects(panel).map(r => [Math.max(top, r.top), Math.min(bottom, r.bottom)]).filter(([a, b]) => b - a > 1).sort((a, b) => a[0] - b[0]);
+          let cursor = top, gap = 0, at = top;
+          for (const [a, b] of bands) { if (a - cursor > gap) { gap = a - cursor; at = cursor; } cursor = Math.max(cursor, b); }
+          if (bottom - cursor > gap) { gap = bottom - cursor; at = cursor; }
+          gap = Math.round(gap * 100) / 100;
+          samples.push({ rule: rule.id, selector: selectorOf(panel), property: 'largest blank band', actual: gap, expected: { max: maxGap } });
+          if (gap > maxGap + tol) add(rule, panel, 'blank band in an empty panel', `<= ${maxGap}px (the panel shrinks to its empty state; its height cap is a maximum)`, `${Math.round(gap)}px blank from y=${Math.round(at)} in a ${Math.round(p.height)}px panel`);
+        }
+        coverage.at(-1).matched = measured;
+      }
+      else if (rule.kind === 'composer-last') {
+        // A page's composer is docked at the bottom of its column: nothing is
+        // laid out below it in that column (the dock that holds it excepted —
+        // a call strip under the composer belongs to the dock), and its band
+        // (the surface's painted backdrop) spans the column edge to edge, never
+        // a decorated strip with side margins inside a section. Content below
+        // the composer counts whether or not it is scrolled into view.
+        const tol = rule.tolerance ?? tolerance;
+        let measured = 0;
+        for (const composer of nodes) {
+          const column = composer.parentElement?.closest(css(rule.column));
+          if (!column) { add(rule, composer, 'composer column', css(rule.column), 'missing', 'coverage'); continue; }
+          measured++;
+          const c = composer.getBoundingClientRect(), col = column.getBoundingClientRect();
+          const dock = rule.dock ? composer.closest(css(rule.dock)) : null;
+          const ignore = rule.ignore ? css(rule.ignore) : null;
+          const layer = el => { for (let n = el; n && n !== column; n = n.parentElement) if (getComputedStyle(n).position === 'fixed') return true; return false; };
+          const skip = el => composer.contains(el) || (dock && column.contains(dock) && dock.contains(el)) || (ignore && el.closest(ignore)) || layer(el);
+          const below = inkRects(column, skip).map(r => clipToAncestors(r, column)).filter(r => r && r.top >= c.bottom - tol && r.right > c.left + tol && r.left < c.right - tol).sort((a, b) => a.top - b.top);
+          samples.push({ rule: rule.id, selector: selectorOf(composer), property: 'content below the composer', actual: below.length, expected: 0 });
+          if (below.length) add(rule, below[0].el, 'content below the composer', `nothing in ${selectorOf(column)} below the composer (bottom ${Math.round(c.bottom)})`, `${below.length} piece(s) of ink, first "${snippet((below[0].el.textContent ?? '').trim()) || below[0].el.tagName.toLowerCase()}" at y=${Math.round(below[0].top)}`);
+          const margins = { left: Math.round((c.left - col.left) * 100) / 100, right: Math.round((col.right - c.right) * 100) / 100 };
+          samples.push({ rule: rule.id, selector: selectorOf(composer), property: 'band side margins', actual: margins, expected: 0 });
+          for (const side of ['left', 'right']) if (Math.abs(margins[side]) > tol) add(rule, composer, `band ${side} margin`, `the composer band spans ${selectorOf(column)} (0px)`, `${margins[side]}px`);
+        }
+        coverage.at(-1).matched = measured;
+      }
       else if (rule.kind === 'surface-distinct') for (const el of nodes) {
         // A surface that is meant to read as its own region (a board lane)
         // paints a background the reader can tell apart from what it sits on.

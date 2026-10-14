@@ -2658,6 +2658,8 @@ declare interface NotificationCenterProps {
      * in view while only the feed scrolls.
      */
     footer?: ReactNode;
+    /** Test id of the empty state. Default `empty-state`. Since 2.448.0. */
+    emptyTestId?: string;
     className?: string;
     'data-testid'?: string;
 }

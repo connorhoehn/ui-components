@@ -32,6 +32,16 @@ describe('NotificationCenter', () => {
     expect(screen.getByTestId('empty-state')).toBeInTheDocument();
   });
 
+  it('insets the empty state to the header and names an empty feed plainly', () => {
+    const { rerender } = render(<NotificationCenter items={makeItems(2, true)} emptyTestId="center-empty" />);
+    const caughtUp = screen.getByTestId('center-empty');
+    expect(caughtUp).toHaveTextContent('All caught up');
+    expect(caughtUp.className).toMatch(/\bpx-4\b/);
+    expect(caughtUp).toHaveAttribute('data-ui-empty');
+    rerender(<NotificationCenter items={[]} emptyTestId="center-empty" />);
+    expect(screen.getByTestId('center-empty')).toHaveTextContent('Nothing new');
+  });
+
   it('shows empty state in All tab when items is empty', () => {
     render(<NotificationCenter items={[]} />);
     fireEvent.click(screen.getByText('All'));

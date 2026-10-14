@@ -36,6 +36,7 @@ function o({ icon: n, title: o, body: l, description: u, actionLabel: d, onActio
 	}), O = D === "sm", k = D === "lg", A = (b ?? (x === "compact" ? "line" : "block")) === "line", j = S === "start" && !A;
 	return /* @__PURE__ */ i("div", {
 		"data-testid": h,
+		"data-ui-empty": "",
 		"data-align": S,
 		"data-size": D,
 		className: e(A ? "flex flex-row flex-wrap items-center gap-1.5 py-1 text-[13px] font-[inherit]" : j ? e("flex flex-col items-start text-left font-[inherit]", O ? "gap-1" : k ? "gap-2" : "gap-1.5") : e("flex flex-col items-center justify-center font-[inherit]", O ? "gap-1 px-4 py-6" : "min-h-[220px] gap-2 p-8"), E.container, v),

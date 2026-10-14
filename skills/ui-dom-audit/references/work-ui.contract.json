@@ -357,7 +357,7 @@
       "kind": "count",
       "selector": "$nativeSelects",
       "expected": 0,
-      "owner": "forms/Select \u2014 a raw or hidden <select> (or <input list>/<datalist>) opens the platform's unstyled menu; the only accepted one is Select native={{ reason }} (data-ui-native-select + data-ui-native-reason)",
+      "owner": "forms/Select — a raw or hidden <select> (or <input list>/<datalist>) opens the platform's unstyled menu; the only accepted one is Select native={{ reason }} (data-ui-native-select + data-ui-native-reason)",
       "includeHidden": true
     },
     {
@@ -366,7 +366,7 @@
       "selector": "$unmarkedListboxes",
       "expected": 0,
       "includeHidden": true,
-      "owner": "forms/Select, Combobox, menus \u2014 a role=\"listbox\" without data-ui-listbox is a hand-rolled dropdown"
+      "owner": "forms/Select, Combobox, menus — a role=\"listbox\" without data-ui-listbox is a hand-rolled dropdown"
     },
     {
       "id": "listbox.option-type",
@@ -630,6 +630,31 @@
       "owner": "InlinePopover placement (flip/clamp, re-anchor on growth) + the panel's own height cap (NotificationBell)"
     },
     {
+      "id": "panel.inset",
+      "kind": "panel-inset",
+      "selector": "$panels",
+      "header": "h1, h2, h3, [role=\"heading\"]",
+      "tolerance": 2,
+      "owner": "the anchored panel's sections (NotificationCenter feed/empty state, popover bodies): every block at the header's inset"
+    },
+    {
+      "id": "panel.empty-height",
+      "kind": "panel-empty",
+      "selector": "$panels",
+      "empty": "$emptyStates",
+      "maxGap": 96,
+      "owner": "the anchored panel's height cap (a max-height, never a fixed height) — NotificationBell / NotificationCenter, InlinePopover content"
+    },
+    {
+      "id": "composer.last",
+      "kind": "composer-last",
+      "selector": "$composers",
+      "column": "$composerColumns",
+      "dock": "$composerDocks",
+      "ignore": "[role=\"dialog\"], [role=\"menu\"], [role=\"listbox\"], [role=\"tooltip\"], [data-ui-listbox], [data-uic-popover]",
+      "owner": "DockedColumn + ColumnDock (the page's one composer docked at the content column's bottom, spanning it); the page composing the column"
+    },
+    {
       "id": "board.lane-surface",
       "kind": "surface-distinct",
       "selector": "$boardLanes",
@@ -651,7 +676,7 @@
       "selector": "body",
       "maxLines": 4,
       "minChars": 20,
-      "owner": "the composite laying the text out (a callout/alert stacking title, body and action; a card column) \u2014 container queries, not page CSS"
+      "owner": "the composite laying the text out (a callout/alert stacking title, body and action; a card column) — container queries, not page CSS"
     },
     {
       "id": "text.overlap",

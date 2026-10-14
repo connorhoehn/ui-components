@@ -59,3 +59,6 @@ export type { MoreContextDisclosureProps, MoreContextItem } from './MoreContextD
 
 export { WorkspaceRail } from './WorkspaceRail';
 export type { WorkspaceRailProps, WorkspaceRailBack } from './WorkspaceRail';
+// One composer per column, docked at its bottom (2.448.0).
+export { DockedColumn, ColumnDock, useInDockedColumn } from './DockedColumn';
+export type { DockedColumnProps, ColumnDockProps } from './DockedColumn';

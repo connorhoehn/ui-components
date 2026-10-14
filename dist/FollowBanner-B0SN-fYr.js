@@ -1,7 +1,7 @@
 import { t as e } from "./cn-D4QmbyEy.js";
 import { t } from "./useEventCallback-Cwx9QVSi.js";
 import { n } from "./Button-uREUOWUk.js";
-import { t as r } from "./EmptyState-iFs0woF1.js";
+import { t as r } from "./EmptyState-ChFI22O0.js";
 import { useEffect as i } from "react";
 import { jsx as a, jsxs as o } from "react/jsx-runtime";
 //#region src/components/ui/SelectableCard.tsx

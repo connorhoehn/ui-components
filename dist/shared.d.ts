@@ -3972,7 +3972,7 @@ export declare interface NotificationBellProps {
 
 export declare type NotificationBellSize = 'sm' | 'md';
 
-export declare function NotificationCenter({ items, onItemClick, onMarkAllRead, onClearAll, footer, className, 'data-testid': testId, }: NotificationCenterProps): JSX.Element;
+export declare function NotificationCenter({ items, onItemClick, onMarkAllRead, onClearAll, footer, emptyTestId, className, 'data-testid': testId, }: NotificationCenterProps): JSX.Element;
 
 export declare interface NotificationCenterProps {
     items: NotificationItem[];
@@ -3986,6 +3986,8 @@ export declare interface NotificationCenterProps {
      * in view while only the feed scrolls.
      */
     footer?: ReactNode;
+    /** Test id of the empty state. Default `empty-state`. Since 2.448.0. */
+    emptyTestId?: string;
     className?: string;
     'data-testid'?: string;
 }

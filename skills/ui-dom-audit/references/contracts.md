@@ -44,6 +44,9 @@ measurement and must not substitute for it.
 | `text-overlap` | selector (scope), tolerance, maxPerPage | Two runs of text whose em boxes intersect in the same stacking context; `data-ui-layered="<reason>"` exempts a declared layer |
 | `text-clipped` | selector (scope), scrollers[{selector, reason}], requireFullText? | Text cut by an overflow hidden/clip ancestor with no ellipsis or line clamp |
 | `placeholder-squeezed` | selector (inputs), minEm, maxHidden | An input narrower than `minEm` of its font beside other row items, or whose placeholder is cut while those items are wider than it |
+| `panel-inset` | selector (open panels), header?, tolerance? | Ink inside an anchored panel (popover, dialog, drawer) starting left of the panel header's first ink, or ending right of the same inset from the panel's right edge |
+| `panel-empty` | selector (open panels), empty (empty-state marker), maxGap | A panel holding an empty state with a blank band (between what it draws, padded top to padded bottom) taller than `maxGap`: a fixed height where the cap should be a maximum |
+| `composer-last` | selector (composers), column, dock?, ignore? | Ink in the composer's column laid out below it (scrolled into view or not; its own dock and fixed layers excepted), or a composer band with side margins inside its column |
 
 `columns` can alternatively use `regions: ["$primary", "$secondary",
 "$content", "$right"]`. Never select nested parents and children as peers.
@@ -338,6 +341,76 @@ the window, a panel over its trigger, a panel scrolling as a whole with its
 header, a panel off the right edge, a transparent lane, a lane matching the
 page, lanes sized to their cards, lanes wrapped to a second row.
 
+## Panel sections and the column's composer (2.448.0)
+
+Two reports, one shape each. The footer bell's empty Unread tab drew "All
+caught up / No unread notifications." flush on the panel's left edge while the
+panel's "Notifications" title and tab row sat 16px in, and kept the full
+`min(70vh, 560px)` height with a blank area under the message. And on
+`/iq/work` (Automate › Inbox) the "Recent runs" command composer sat
+mid-page as its section's last row, on its own dotted band inset from the
+column, with "5 open findings →" and the "Queue operations" disclosure after
+it and blank space down to the footer. Three general rules; none names a page.
+
+- **`panel.inset`** (`panel-inset`, tolerance 2px) binds `$panels`
+  (aws-agentcore: `[role="dialog"], [role="alertdialog"], dialog[open],
+  [data-ui-dialog]`). In a panel with a heading (`h1, h2, h3,
+  [role="heading"]`, the first visible one that is not inside a nested
+  panel), the header's first ink sets the inset: no ink in the panel starts
+  left of it, and none ends right of the same distance from the panel's right
+  edge. Ink, not boxes: a full-bleed feed row whose text keeps the inset
+  passes. Ink is clipped to the panel's clipping/scrolling descendants first;
+  a nested panel is judged on its own; a panel with no heading (the command
+  help, a header-less menu) is unexercised (`matched: 0`), never passed.
+- **`panel.empty-height`** (`panel-empty`, `maxGap: 96`) binds `$panels` and
+  `$emptyStates` (the library EmptyState's `data-ui-empty`, ui-components
+  2.448.0 — its `data-testid` is overridable, so it is not a marker). A
+  panel holding a visible empty state must not leave a blank band taller
+  than 96px between what it draws, measured from its padded top to its padded
+  bottom: a pinned footer link under a blank 350px area still fails. 96px is
+  more than any library empty state's own padding and centring (the md
+  block's `min-h-[220px]` with `p-8`), so only a height the content does not
+  fill trips it. The fix is a `max-height`, never a `height`.
+- **`composer.last`** (`composer-last`) binds `$composers`, `$composerColumns`
+  (the content-column hosts: aws-agentcore's `[data-docked-column]`, pane
+  columns, `[data-section-content]`, `[data-subnav-content]`, the split
+  primary and the conversation pane — the nearest one is the column) and
+  `$composerDocks` (`[data-column-dock], [data-floating-composer-dock]`).
+  Nothing in the column is laid out below the composer — any ink whose top is
+  at or below the composer's bottom and overlaps it horizontally, whether or
+  not it is scrolled into view — except inside the dock that holds it (a
+  call strip under the composer) and in fixed layers (menus, popovers,
+  tooltips; `ignore` names them). And the composer's band (the surface whose
+  backdrop is painted) spans the column: a left or right margin inside it
+  fails (`band left|right margin`), which is how a composer embedded in an
+  inset section with a decorative strip reads. `composerBoundary` no longer
+  accepts an embedded section (`section:has(> [data-collection-command-boundary="embedded"])`).
+
+Library owners (ui-components 2.448.0): `DockedColumn` is a content column —
+a scrolling body over a dock slot that does not scroll — and `ColumnDock`
+renders its children into the nearest DockedColumn's dock through a portal
+(in place when there is none), so a section deep in the body keeps owning and
+driving its composer while the composer lands at the column's bottom,
+spanning it. `NotificationBell` renders one panel, empty or not (the
+`NotificationCenter`, whose empty state sits at the header's 16px inset),
+capped by `max-height: min(70vh, 560px)`.
+
+**Adapter states.** aws-agentcore's `notification-bell-open` now requires an
+empty state (`$emptyStates`) with the Unread tab selected, opened read-only as
+the sweep user, who is seeded with no inbox items — no item is marked read and
+no scenario is switched. It runs on one list route per tenant, including
+`/access/requests`. `composer.last` needs no state: it runs on every route.
+
+Fixtures (`self-test.mjs`): valid — an empty panel at its content height with
+the empty state at the header inset, a long capped feed of full-bleed rows,
+a header-less centred "Nothing new" panel, a composer docked at the column's
+bottom, a call strip in the same dock, a fixed menu drawn below the composer;
+failing — an empty state flush on the panel edge, a row label running to the
+panel's right edge, an empty panel kept at its fixed height (blank under the
+footer, and with the footer pinned at the bottom), a section composer followed
+by the findings link and a disclosure, content below the composer scrolled out
+of view, and a composer band with side margins in its column.
+
 ## Legible text (cramped, overlapping, clipped, squeezed)
 
 Four rules judge whether text can be read at the widths the matrix runs
@@ -587,15 +660,15 @@ interaction tests that do not perform unauthorized business mutations.
 
 ### Composer boundaries are host regions
 
-For full-page Work/Pipeline ledgers, measure against the real shell content column
-(`data-subnav-content`), not a marker on the ledger or composer wrapper. Otherwise
-ancestor page padding can shrink both measured nodes equally and falsely pass.
-The Assessment ledger is intentionally embedded within a PageSection: its binding
-is `section:has(> [data-collection-command-boundary="embedded"])`. The marker
-identifies which section applies; the ledger itself is not the geometry anchor.
-A valid embedded section can be inset from the page, while extra ledger margins
-inside that section must still fail. Fixtures cover both an artificial full-page
-boundary nested under padding and drift inside a legitimate embedded section.
+Measure against the real shell content column (`data-subnav-content`,
+`data-docked-column`, a pane column), not a marker on the ledger or composer
+wrapper. Otherwise ancestor page padding can shrink both measured nodes equally
+and falsely pass. Since 2.448.0 there is no embedded boundary: a section that
+owns a table docks its command composer at the bottom of the content column
+(`ColumnDock`), so the composer is measured against the column like every
+other. Fixtures cover an artificial full-page boundary nested under padding and
+a composer inside an inset section (it fails `composer.surface` and
+`composer.last`).
 
 
 Graph/card typography uses leaf-only source markers: WorkActivityNode detail

@@ -209,6 +209,9 @@ function EmptyState({
   return (
     <div
       data-testid={testId}
+      // A semantic marker for the DOM audit (panel.empty-height): the test id
+      // is overridable, so "this is an empty state" needs its own attribute.
+      data-ui-empty=""
       data-align={align}
       data-size={size}
       className={cn(

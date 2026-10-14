@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.448.0
+
+- `DockedColumn` + `ColumnDock` (root, new): one composer per column, docked at its bottom. `DockedColumn` is a content column — a scrolling body (`body="scroll"`, or `"fill"` for a fixed frame; `bodyClassName`, `bodyProps`) over a dock slot that does not scroll (`data-column-dock`, hidden while empty). `ColumnDock` renders its children into the nearest DockedColumn's dock through a portal — in place when there is none — so a section deep in the body keeps owning and driving its composer while the composer lands at the column's bottom, spanning it. `useInDockedColumn()` tells a child which it will get. On `/iq/work` a section's command composer sat mid-page on its own inset band with the page's findings link and a disclosure after it.
+- `NotificationBell`: one panel, empty or not — with no items it is the same `NotificationCenter` (title, tabs, "Nothing new"), not a second header-less panel — and its cap is a maximum: `max-h-[min(70vh,560px)]` (was a fixed `h-`), so an empty or short feed shrinks the panel to its content while a long one still scrolls under the pinned header.
+- `NotificationCenter`: the empty state sits at the header's 16px inset (`px-4`); it was flush on the panel's edge under the inset title and tab row. With no items at all it reads "Nothing new / Activity will appear here." on either tab. New `emptyTestId` (default `empty-state`).
+- `EmptyState`: emits `data-ui-empty` — a semantic marker for the DOM audit (its `data-testid` is overridable).
+- ui-dom-audit: three rules, each with valid/failing fixtures (`references/contracts.md` "Panel sections and the column's composer"):
+  - `panel.inset` (`panel-inset`): inside an anchored panel with a heading, no ink starts left of the header's first ink or ends right of the same inset from the panel's right edge.
+  - `panel.empty-height` (`panel-empty`): a panel holding an empty state (`data-ui-empty`) leaves no blank band taller than 96px between what it draws — a fixed height where the cap should be a maximum.
+  - `composer.last` (`composer-last`): nothing in the composer's column is laid out below it (its own dock and fixed layers excepted), and its band spans the column (no side margins). The embedded-section composer boundary is retired.
+
 ## 2.447.2
 
 - `CollapsibleSection`: never shrinks below its content (`shrink-0`). The box clips its own corners, so in a scrolling flex column its min-height resolved to 0 and the column squeezed it — at 900px a 28px "About queue delivery" header was drawn in 14px with its label cut in half.

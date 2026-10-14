@@ -84,11 +84,16 @@ describe('NotificationBell', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
-  it('shows "Nothing new" when there are no items', () => {
+  it('shows "Nothing new" in the same titled panel when there are no items', () => {
     render(<NotificationBell items={[]} />);
     fireEvent.click(button());
-    expect(screen.getByTestId('notification-bell-empty')).toHaveTextContent('Nothing new');
-    expect(screen.queryByTestId('notification-bell-center')).toBeNull();
+    const empty = screen.getByTestId('notification-bell-empty');
+    expect(empty).toHaveTextContent('Nothing new');
+    // One panel, empty or not: the header and tabs stay, the empty state sits in the feed.
+    expect(screen.getByTestId('notification-bell-center').contains(empty)).toBe(true);
+    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('Notifications');
+    // Every block shares the header's 16px inset.
+    expect(empty.className).toMatch(/\bpx-4\b/);
   });
 
   it('sm is the 28px header control', () => {
@@ -97,11 +102,12 @@ describe('NotificationBell', () => {
     expect(button().className).toMatch(/\bw-7\b/);
   });
 
-  it('caps the panel at a fixed height so a 99+ feed scrolls inside it', () => {
+  it('caps the panel with a maximum height so a 99+ feed scrolls inside it and a short one shrinks', () => {
     render(<NotificationBell items={makeItems(150)} />);
     fireEvent.click(button());
     const center = screen.getByTestId('notification-bell-center');
-    expect(center.className).toContain('h-[min(70vh,560px)]');
+    expect(center.className).toContain('max-h-[min(70vh,560px)]');
+    expect(center.className).not.toMatch(/(^|\s)h-\[min/);
     // The header with Mark all read sits outside the scrolling feed.
     const feed = center.querySelector('.overflow-y-auto');
     expect(feed).not.toBeNull();
