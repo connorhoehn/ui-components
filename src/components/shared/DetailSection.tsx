@@ -90,10 +90,10 @@ export function DetailSection({
     <section className={cn(className)} {...(testId ? { 'data-testid': testId } : {})}>
       {!first && <Divider spacing="md" />}
       <div className="mb-2 flex items-baseline gap-2">
-        <h3 className="m-0 text-[10px] font-semibold uppercase tracking-wide text-text-tertiary">
+        <h3 className="m-0 text-xs font-semibold uppercase tracking-wide text-text-tertiary">
           {title}
         </h3>
-        {hint != null && <span className="min-w-0 truncate text-[11px] text-text-tertiary">{hint}</span>}
+        {hint != null && <span className="min-w-0 truncate text-xs text-text-tertiary">{hint}</span>}
         {actions != null && (
           <>
             <span className="flex-1" />

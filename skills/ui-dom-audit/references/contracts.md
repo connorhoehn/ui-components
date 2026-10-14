@@ -172,8 +172,23 @@ export default {
   theme: async (page, theme) => activateExistingTheme(page, theme),
   ready: async (page, spec) => waitForActualRouteContent(page, spec),
   // Optional discoverStates(page, spec) -> [{name, enter(page), required?}].
+  // Optional classifyContext(page, spec, state) -> { kind, skip?, reason? }: where the page landed
+  // (outside the app frame, an unreadable record). skip: true records it without measuring; a
+  // blank/placeholder reason fails coverage (coverage.context).
+  // Optional dataApi {include, exclude[], permissions} and deep {chrome[], panes, chromeTriggers}: deep-audit.md.
 };
 ```
+
+Other runners reuse the engine through `scripts/run.mjs` exports rather than
+copying it: `loadContract(path?)` (read + validate; the shipped contract when no
+path), `measureCase(page, { contract, selectors, required, composerExpectation,
+probe })` (pause motion, fonts, two frames, measure twice; returns the
+measurement with `stable` and, when unstable, a `coverage.stability` issue
+naming what moved), `isDeepRule(contract, id)`, `consistencyOutliers(cases)` and
+`themeParity(cases)`. Rules carry `deep: true` when they belong to the deep
+audit; the report's `gate` counts findings apart — `resting` (established rules
+on resting and adapter states) and `deep` (deep rules, cross-route passes and
+every `deep:*` state) — and each deep finding is marked `deep: true`.
 
 Cases have `tenant`, `path`, optional `actor`, `required` alias list and
 `states: [{name, enter(page, { probes }), required?, navigates?}]`; `enter`
@@ -561,8 +576,8 @@ separate measured rules, not blanket exemptions. Captions have the semantic
 ## Work profile bindings
 
 Typography variants follow existing component families: `railType` and
-`RailSectionHeader` group labels (11px); `ConversationList` names (13px),
-metadata (11px) and previews (12px); `Avatar` initials use a bounded readability
+`RailSectionHeader` group labels (12px); `ConversationList` names (14px),
+metadata (12px) and previews (12px); `Avatar` initials use a bounded readability
 range; code identifiers have a compact monospace profile. Text glyphs marked
 `aria-hidden` are icons, not label typography. New arbitrary button text still
 uses the ordinary control profile. Validate each special profile with a valid
@@ -612,7 +627,7 @@ For compact avatars, test both initials and the overflow count at small sizes.
 A proportional font size needs a readability floor; increasing the avatar itself
 would enlarge the shell and evade the original compact-layout requirement.
 
-GroupedList label headings bind through `button[data-heading="label"][data-focus-key^="g:"] > span`; their title and count both use the 11px rail profile. Plain rail rows and medium rows emit `data-ui-text="rail-item"` on the title alone (13px, weight 500, line height 20px). Since ui-components 2.441.0 every railType row title emits that marker (StackedRail, SubNavLayout, NavRail, RailNavList and `TreeView size="rail"`, not only GroupedList), and StackedRail's caption and group heading label/count emit `data-ui-text="rail-caption"` (the 11px profile); a frontend adapter should include `[data-ui-text="rail-caption"]` in `railCaptionLabels` rather than binding each rail's structure. Pills, metadata and neighboring actions remain outside that marker. Every named typography variant needs evidence in the shared component's source, a valid fixture and a failing mutation. Include an ordinary sibling control in the fixture and prove its mutation still fails, so the variant cannot silently exempt an entire row.
+GroupedList label headings bind through `button[data-heading="label"][data-focus-key^="g:"] > span`; their title and count both use the 12px rail profile. Plain rail rows and medium rows emit `data-ui-text="rail-item"` on the title alone (14px, weight 500, line height 20px). Since ui-components 2.441.0 every railType row title emits that marker (StackedRail, SubNavLayout, NavRail, RailNavList and `TreeView size="rail"`, not only GroupedList), and StackedRail's caption and group heading label/count emit `data-ui-text="rail-caption"` (the 12px profile); a frontend adapter should include `[data-ui-text="rail-caption"]` in `railCaptionLabels` rather than binding each rail's structure. Pills, metadata and neighboring actions remain outside that marker. Every named typography variant needs evidence in the shared component's source, a valid fixture and a failing mutation. Include an ordinary sibling control in the fixture and prove its mutation still fails, so the variant cannot silently exempt an entire row.
 
 
 Library `Input mono` (a URL, regex, cron or JSONPath value) emits

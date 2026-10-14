@@ -33,7 +33,7 @@ describe('InlinePlaceholder', () => {
   it('defaults to the xs scale, left-aligned, in the surface family', () => {
     render(<InlinePlaceholder>empty</InlinePlaceholder>);
     expect(screen.getByTestId('inline-placeholder')).toHaveClass(
-      'text-[11px]',
+      'text-[12px]',
       'justify-start',
       'text-left',
       'text-text-tertiary',
@@ -50,7 +50,7 @@ describe('InlinePlaceholder', () => {
   it('centres and enlarges for a region it owns outright', () => {
     render(<InlinePlaceholder size="sm" align="center">gone</InlinePlaceholder>);
     expect(screen.getByTestId('inline-placeholder')).toHaveClass(
-      'text-[13px]',
+      'text-[14px]',
       'justify-center',
       'text-center',
     );
@@ -79,7 +79,7 @@ describe('InlinePlaceholder', () => {
       </InlinePlaceholder>,
     );
     expect(screen.getByTestId('inline-placeholder')).toHaveClass(
-      'text-[11px]',
+      'text-[12px]',
       'justify-start',
       'text-text-tertiary',
     );

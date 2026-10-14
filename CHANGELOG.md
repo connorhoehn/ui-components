@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.454.0
+
+Second step of the app type scale (aws-agentcore `type-scale-burndown.tsv`), and the ui-dom-audit contract moves with the rails.
+
+- ui-dom-audit `work-ui.contract.json`: `rail.item-label` expects 14/500/20 (was 13), `rail.disclosure-label` and `rail.accordion-font` 12px (was 11), `conversation.label` 14px, `conversation.metadata` 12px, matching the 2.453.0 rail scale. Self-test fixtures and mutations moved with them; `contracts.md` updated.
+- `DetailSection` (section variant) heading and hint 12px (were 10 and 11). `KeyValue` labels 12px (row) or 14px (ruled), values 14px. `ErrorState` icon 14px, title and description 14px. `InlinePlaceholder` `xs` 12px, `sm` 14px.
+- `MarkdownView` `sm` and `md` draw the app scale: 14px body, 14px/600 headings, 12px inline code. `lg` is unchanged.
+
 ## 2.453.0
 
 The app type scale (20/600 title, 14 heading and body, 12 meta; 10-11px only inside a pill) reaches the shared small text, closing the rail and small-text rows of aws-agentcore's `type-scale-burndown.tsv`.

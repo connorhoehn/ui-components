@@ -120,3 +120,32 @@ describe('Combobox — picker options (2.445.0)', () => {
     expect(screen.getAllByRole('option')[1].textContent).toContain('✓');
   });
 });
+
+describe('Combobox house control size', () => {
+  const field = (c: HTMLElement) => c.querySelector('[data-ui-control="combobox"] > div') as HTMLElement;
+
+  it('uses the --ui-control-* height tokens and Input\'s border, surface and padding', () => {
+    const { container } = render(<Combobox options={OPTS} value="" onChange={() => {}} aria-label="skill" size="md" />);
+    const cls = field(container).className;
+    expect(cls).toContain('h-[var(--ui-control-md,2.25rem)]');
+    expect(cls).toContain('px-2.5');
+    expect(cls).toContain('text-sm');
+    expect(cls).toContain('bg-surface-panel');
+    expect(cls).toContain('border-border-emphasis');
+    expect(cls).not.toContain('py-0.5');
+  });
+
+  it('small takes the sm token, and a multi field grows from it instead of fixing it', () => {
+    const sm = render(<Combobox options={OPTS} value="" onChange={() => {}} aria-label="a" size="sm" />);
+    expect(field(sm.container).className).toContain('h-[var(--ui-control-sm,1.75rem)]');
+    const multi = render(<Combobox multiple options={OPTS} value={['go']} onChange={() => {}} aria-label="b" size="sm" />);
+    const cls = field(multi.container).className;
+    expect(cls).toContain('min-h-[var(--ui-control-sm,1.75rem)]');
+    expect(cls).not.toMatch(/(^| )h-\[/);
+  });
+
+  it('defaults to the md house size like Input', () => {
+    const { container } = render(<Combobox options={OPTS} value="" onChange={() => {}} aria-label="skill" />);
+    expect(field(container).className).toContain('h-[var(--ui-control-md,2.25rem)]');
+  });
+});

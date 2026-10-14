@@ -49,8 +49,8 @@ export interface InlinePlaceholderProps {
 }
 
 const SIZE = {
-  xs: 'text-[11px] gap-2',
-  sm: 'text-[13px] gap-3',
+  xs: 'text-[12px] gap-2',
+  sm: 'text-[14px] gap-3',
 } as const;
 
 const ALIGN = {

@@ -98,8 +98,8 @@ export function KeyValue({
           <dt
             className={cn(
               'm-0',
-              ruled ? cn('shrink-0 text-[15px] text-text-primary', labelWidth) : 'text-text-secondary',
-              !ruled && (row ? cn('shrink-0 text-[13px]', labelWidth) : 'text-[12px]'),
+              ruled ? cn('shrink-0 text-sm text-text-primary', labelWidth) : 'text-text-secondary',
+              !ruled && (row ? cn('shrink-0 text-xs', labelWidth) : 'text-[12px]'),
             )}
           >
             {item.label}
@@ -107,7 +107,7 @@ export function KeyValue({
           <dd
             className={cn(
               'm-0 min-w-0 truncate',
-              ruled ? 'text-sm' : 'text-[13px]',
+              'text-sm',
               item.muted ? 'text-text-tertiary' : 'text-text-primary',
               row && 'flex-1',
               item.mono && 'font-mono text-[12px]',

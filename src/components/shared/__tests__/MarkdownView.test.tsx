@@ -55,17 +55,17 @@ describe('MarkdownView', () => {
   it('keeps the long-standing classes at the default md scale', () => {
     render(<MarkdownView markdown={'# Title\n\nBody'} />);
     expect(screen.getByTestId('markdown-view')).toHaveAttribute('data-scale', 'md');
-    expect(screen.getByRole('heading', { level: 1 }).className).toContain('text-xl');
+    expect(screen.getByRole('heading', { level: 1 }).className).toContain('text-sm');
     expect(screen.getByText('Body').className).toContain('text-sm');
   });
 
   it('steps headings and body down at sm and up at lg', () => {
     const md = '# One\n\n## Two\n\n#### Four\n\nBody';
     const { unmount } = render(<MarkdownView markdown={md} scale="sm" />);
-    expect(screen.getByRole('heading', { level: 1 }).className).toContain('text-[17px]');
-    expect(screen.getByRole('heading', { level: 2 }).className).toContain('text-[15px]');
-    expect(screen.getByRole('heading', { level: 4 }).className).toContain('text-[13px]');
-    expect(screen.getByText('Body').className).toContain('text-[13px]');
+    expect(screen.getByRole('heading', { level: 1 }).className).toContain('text-sm');
+    expect(screen.getByRole('heading', { level: 2 }).className).toContain('text-sm');
+    expect(screen.getByRole('heading', { level: 4 }).className).toContain('text-sm');
+    expect(screen.getByText('Body').className).toContain('text-sm');
     unmount();
     render(<MarkdownView markdown={md} scale="lg" />);
     expect(screen.getByRole('heading', { level: 1 }).className).toContain('text-2xl');

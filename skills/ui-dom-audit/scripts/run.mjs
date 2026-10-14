@@ -4,6 +4,7 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { measureDOM } from './measure.mjs';
 import { probes } from './probes.mjs';
+const PLACEHOLDER = /^(?:todo|tbd|n\/?a|none|null|undefined|exempt|not applicable|coming soon|[-?.…]+)[.!?]*$/i;
 const hash = x => crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex').slice(0, 16);
 
 export function validateContract(contract) {
@@ -13,6 +14,7 @@ export function validateContract(contract) {
     if (!rule.id || ids.has(rule.id) || !kinds.has(rule.kind)) throw new Error('Invalid/duplicate rule: ' + rule.id);
     ids.add(rule.id);
     if ((rule.exclude ?? []).some(e => !e.reason || !e.selector)) throw new Error(`Undocumented exclusion: ${rule.id}`);
+    if (rule.deep !== undefined && typeof rule.deep !== 'boolean') throw new Error(`deep must be boolean: ${rule.id}`);
   }
 }
 export function summarize(cases) {
@@ -23,6 +25,39 @@ export function summarize(cases) {
     const group = groups.get(key); group.occurrences++; group.routes.add(item.route); group.tenants.add(item.tenant);
   }
   return [...groups.values()].map(g => ({ ...g, routes: [...g.routes].sort(), tenants: [...g.tenants].sort() })).sort((a, b) => b.routes.length - a.routes.length || b.occurrences - a.occurrences || a.id.localeCompare(b.id));
+}
+/** Read and validate a contract file (the shipped work-ui contract when no path is given). */
+export function loadContract(file) {
+  const contract = JSON.parse(fs.readFileSync(file ?? fileURLToPath(new URL('../references/work-ui.contract.json', import.meta.url)), 'utf8'));
+  validateContract(contract);
+  return contract;
+}
+/** A rule that belongs to the deep audit (contract `deep: true`), judged apart from the resting-state gate. */
+export const isDeepRule = (contract, id) => id.startsWith('consistency.') || id === 'theme.parity' ? true : !!contract.rules.find(r => r.id === id)?.deep;
+/**
+ * Measure the current page once, the way the runner does: pause motion, wait
+ * for fonts and two frames, measure twice and report what moved between the
+ * two passes. Returns the second measurement plus `stable` and, when unstable,
+ * a `coverage.stability` issue naming the moving nodes.
+ */
+export async function measureCase(page, { contract, selectors, required = [], composerExpectation, probe } = {}) {
+  await page.addStyleTag({ content: '*,*::before,*::after { animation-play-state: paused !important; transition-duration: 0s !important; caret-color: transparent !important; }' });
+  await page.evaluate(async () => { await document.fonts.ready; await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); });
+  const payload = { contract, selectors, required, composerExpectation, probe };
+  const first = await page.evaluate(measureDOM, payload);
+  // Repeat the same DOM measurement to expose unstable geometry instead
+  // of blessing whichever frame happened to pass.
+  await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
+  const second = await page.evaluate(measureDOM, payload);
+  if (hash(first.samples) === hash(second.samples)) return { ...second, stable: true };
+  // Name what moved, so an unstable case points at its moving node instead of a bare hash.
+  const key = x => `${x.rule}|${x.selector}|${x.property}`, before = new Map(first.samples.map(x => [key(x), JSON.stringify(x.actual)]));
+  const after = new Set(second.samples.map(key));
+  const moved = [
+    ...second.samples.filter(x => before.get(key(x)) !== JSON.stringify(x.actual)).map(x => ({ rule: x.rule, selector: x.selector, property: x.property, first: before.has(key(x)) ? JSON.parse(before.get(key(x))) : 'absent', second: x.actual })),
+    ...first.samples.filter(x => !after.has(key(x))).map(x => ({ rule: x.rule, selector: x.selector, property: x.property, first: x.actual, second: 'absent' })),
+  ].slice(0, 6);
+  return { ...second, stable: false, issues: [...second.issues, { rule: 'coverage.stability', category: 'coverage', selector: 'document', property: 'measurement hash', expected: hash(first.samples), actual: hash(second.samples), moved }] };
 }
 const measuredCase = c => c.samples?.length > 0 && !c.issues.some(i => ['coverage', 'runtime'].includes(i.category));
 /**
@@ -137,7 +172,7 @@ async function deepStates(page, spec, adapter, options, seen) {
 export async function runAudit(browser, adapter, options) {
   if (options.strictCoverage !== undefined && typeof options.strictCoverage !== 'boolean') throw new Error('strictCoverage must be boolean');
   const start = Date.now(), out = path.resolve(options.out); fs.mkdirSync(out, { recursive: true });
-  const contract = JSON.parse(fs.readFileSync(options.contract ?? adapter.contract ?? fileURLToPath(new URL('../references/work-ui.contract.json', import.meta.url)), 'utf8')); validateContract(contract);
+  const contract = loadContract(options.contract ?? adapter.contract);
   const matrix = await adapter.cases(options);
   if (!matrix.length) throw new Error('No audit cases selected; an empty sweep is not a pass');
   const report = { version: 1, contract: contract.name, contractHash: hash(contract), revision: await adapter.revision?.() ?? null, cases: [], groups: [], failures: 0, elapsedMs: 0 };
@@ -210,28 +245,22 @@ export async function runAudit(browser, adapter, options) {
             const judged = state.navigates ? { ...spec, path: reached.pathname + reached.search, navigatedFrom: spec.path } : spec;
             if (state.navigates) entry.reached = judged.path;
             if (adapter.describe) entry.view = await adapter.describe(page, judged);
-            await page.addStyleTag({ content: '*,*::before,*::after { animation-play-state: paused !important; transition-duration: 0s !important; caret-color: transparent !important; }' });
-            await page.evaluate(async () => { await document.fonts.ready; await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); });
-            const composerExpectation = state.composerExpectation ?? await adapter.composerExpectation?.(page, judged) ?? (state.navigates ? undefined : spec.composerExpectation);
-            // A state that navigates away (a row opening its record) is judged on the
-            // page it reached: the list route's required regions no longer apply.
-            const required = state.navigates || state.ownRequired ? [...(state.required ?? [])] : [...(spec.required ?? []), ...(state.required ?? [])];
-            const payload = { contract, selectors: adapter.selectors, required, composerExpectation, probe };
-            const first = await page.evaluate(measureDOM, payload);
-            // Repeat the same DOM measurement to expose unstable geometry instead
-            // of blessing whichever frame happened to pass.
-            await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
-            const second = await page.evaluate(measureDOM, payload);
-            Object.assign(entry, second);
-            if (hash(first.samples) !== hash(second.samples)) {
-              // Name what moved, so an unstable case points at its moving node instead of a bare hash.
-              const key = x => `${x.rule}|${x.selector}|${x.property}`, before = new Map(first.samples.map(x => [key(x), JSON.stringify(x.actual)]));
-              const after = new Set(second.samples.map(key));
-              const moved = [
-                ...second.samples.filter(x => before.get(key(x)) !== JSON.stringify(x.actual)).map(x => ({ rule: x.rule, selector: x.selector, property: x.property, first: before.has(key(x)) ? JSON.parse(before.get(key(x))) : 'absent', second: x.actual })),
-                ...first.samples.filter(x => !after.has(key(x))).map(x => ({ rule: x.rule, selector: x.selector, property: x.property, first: x.actual, second: 'absent' })),
-              ].slice(0, 6);
-              entry.issues.push({ rule: 'coverage.stability', category: 'coverage', selector: 'document', property: 'measurement hash', expected: hash(first.samples), actual: hash(second.samples), moved });
+            // The adapter may classify where the page landed before it is judged: outside the app frame
+            // (an external sign-in, a raw file), an unreadable record. `{ skip: true, reason }` records
+            // the context as coverage without measuring it; anything else is kept on the case.
+            const context = await adapter.classifyContext?.(page, judged, state);
+            if (context) entry.context = context;
+            if (context?.skip) {
+              if (!context.reason || PLACEHOLDER.test(String(context.reason).trim())) entry.issues.push({ rule: 'coverage.context', category: 'coverage', selector: 'document', property: 'context reason', expected: 'a documented reason for not judging this page', actual: context.reason ?? '' });
+              entry.samples = [{ rule: 'coverage.context', selector: 'document', property: 'context', actual: context.kind ?? 'skipped', expected: 'classified' }];
+            } else {
+              const composerExpectation = state.composerExpectation ?? await adapter.composerExpectation?.(page, judged) ?? (state.navigates ? undefined : spec.composerExpectation);
+              // A state that navigates away (a row opening its record) is judged on the
+              // page it reached: the list route's required regions no longer apply.
+              const required = state.navigates || state.ownRequired ? [...(state.required ?? [])] : [...(spec.required ?? []), ...(state.required ?? [])];
+              const measured = await measureCase(page, { contract, selectors: adapter.selectors, required, composerExpectation, probe });
+              const { stable, ...result } = measured;
+              Object.assign(entry, result, { issues: [...entry.issues, ...result.issues] });
             }
             for (const message of errors) entry.issues.push({ rule: 'runtime.error', category: 'runtime', selector: 'document', property: 'pageerror', expected: 'none', actual: message });
             if (options.review) {
@@ -271,6 +300,10 @@ export async function runAudit(browser, adapter, options) {
   for (const entry of report.cases) for (const issue of entry.issues) issue.fingerprint ??= hash([entry.actor, entry.tenant, entry.route, entry.theme, entry.width, entry.state, issue.rule, issue.selector, issue.property]);
   report.groups = summarize(report.cases);
   report.failures = report.cases.reduce((n, c) => n + c.issues.length, 0);
+  // The resting-state gate (established rules on resting and adapter states) and the deep findings
+  // (rules marked deep, and every deep:* state) are counted apart so a consumer can gate on either.
+  for (const c of report.cases) for (const i of c.issues) if (c.state?.startsWith('deep:') || isDeepRule(contract, i.rule)) i.deep = true;
+  report.gate = { resting: report.cases.reduce((n, c) => n + c.issues.filter(i => !i.deep).length, 0), deep: report.cases.reduce((n, c) => n + c.issues.filter(i => i.deep).length, 0) };
   report.unclassified = report.cases.filter(c => c.coverage.some(item => item.status === 'unclassified')).map(({ tenant, route, theme, width, state }) => ({ tenant, route, theme, width, state }));
   report.strictCoverage = options.strictCoverage ?? false;
   report.exitCode = report.failures || (report.strictCoverage && report.unclassified.length) ? 1 : 0;
@@ -302,6 +335,6 @@ export async function runAudit(browser, adapter, options) {
     };
   }
   fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(report, null, 2) + '\n');
-  fs.writeFileSync(path.join(out, 'summary.txt'), [`${report.cases.length} cases; ${report.failures} findings; ${report.unclassified.length} composer policies unclassified; ${report.strictCoverage ? 'strict coverage' : 'advisory coverage'}; exit ${report.exitCode}; ${(report.elapsedMs / 1000).toFixed(1)}s`, ...report.unclassified.map(c => `UNCLASSIFIED composer policy | ${c.tenant} ${c.route} ${c.theme}/${c.width}/${c.state}`), ...(report.delta ? [`Comparison: ${report.delta.comparedCases} verified cases; ${report.delta.resolved.length} resolved; ${report.delta.unverifiedFindings} prior findings unverified across ${report.delta.unverifiedCases.length} cases`] : []), ...report.groups.map(g => `${g.rule} | ${g.property}: expected ${JSON.stringify(g.expected)}, got ${JSON.stringify(g.actual)} | ${g.routes.length} routes / ${g.occurrences} instances | ${g.owner}`), ...(report.consistency ?? []).filter(f => f.values.length > (fingerprintRule?.outliers?.maxDistinct ?? 3)).map(f => `CONSISTENCY ${f.family}${f.key === '*' ? '' : ` (${f.key})`} at ${f.width}px: ${f.values.length} distinct values over ${f.routes} routes: ${f.values.slice(0, 6).map(v => `${JSON.stringify(v.value)}×${v.routes}`).join('; ')}`)].join('\n') + '\n');
+  fs.writeFileSync(path.join(out, 'summary.txt'), [`${report.cases.length} cases; ${report.failures} findings (${report.gate.resting} resting-state gate, ${report.gate.deep} deep); ${report.unclassified.length} composer policies unclassified; ${report.strictCoverage ? 'strict coverage' : 'advisory coverage'}; exit ${report.exitCode}; ${(report.elapsedMs / 1000).toFixed(1)}s`, ...report.unclassified.map(c => `UNCLASSIFIED composer policy | ${c.tenant} ${c.route} ${c.theme}/${c.width}/${c.state}`), ...(report.delta ? [`Comparison: ${report.delta.comparedCases} verified cases; ${report.delta.resolved.length} resolved; ${report.delta.unverifiedFindings} prior findings unverified across ${report.delta.unverifiedCases.length} cases`] : []), ...report.groups.map(g => `${g.rule} | ${g.property}: expected ${JSON.stringify(g.expected)}, got ${JSON.stringify(g.actual)} | ${g.routes.length} routes / ${g.occurrences} instances | ${g.owner}`), ...(report.consistency ?? []).filter(f => f.values.length > (fingerprintRule?.outliers?.maxDistinct ?? 3)).map(f => `CONSISTENCY ${f.family}${f.key === '*' ? '' : ` (${f.key})`} at ${f.width}px: ${f.values.length} distinct values over ${f.routes} routes: ${f.values.slice(0, 6).map(v => `${JSON.stringify(v.value)}×${v.routes}`).join('; ')}`)].join('\n') + '\n');
   return report;
 }

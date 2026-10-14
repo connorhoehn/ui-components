@@ -217,6 +217,15 @@ column until the other columns scroll out of view — `/iq/projects` under the
 long-text state). Two candidates stayed judgment-only in `review.jsonl`, with
 their reasons.
 
+## Two gates
+
+Every deep rule is marked `deep: true` in the contract. `report.json.gate`
+counts `resting` findings (the established rules on resting and adapter states:
+the acceptance gate that went to zero) and `deep` findings (deep rules, the
+cross-route passes, every `deep:*` state) separately, and `summary.txt` prints
+both, so a tenant can hold its resting-state gate at zero while its deep
+backlog is burned down.
+
 ## Triage and reporting
 
 Produce a findings report per run: counts per rule and section; the defect

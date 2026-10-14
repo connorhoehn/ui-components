@@ -56,20 +56,20 @@ interface ScaleClasses {
 // keeps none at `md`.
 const SCALES: Record<MarkdownViewScale, ScaleClasses> = {
   sm: {
-    body: 'text-[13px]',
-    h1: 'mb-2 mt-4 text-[17px] font-semibold',
-    h2: 'mb-1.5 mt-4 text-[15px] font-semibold',
-    h3: 'mb-1.5 mt-3 text-[14px] font-semibold',
-    h4: 'mb-1 mt-3 text-[13px] font-semibold',
+    body: 'text-sm',
+    h1: 'mb-2 mt-4 text-sm font-semibold',
+    h2: 'mb-1.5 mt-4 text-sm font-semibold',
+    h3: 'mb-1.5 mt-3 text-sm font-semibold',
+    h4: 'mb-1 mt-3 text-sm font-semibold',
     inlineCode: 'text-[12px]',
   },
   md: {
     body: 'text-sm',
-    h1: 'mb-3 mt-6 text-xl font-bold',
-    h2: 'mb-2 mt-5 text-lg font-bold',
-    h3: 'mb-2 mt-4 text-base font-semibold',
+    h1: 'mb-3 mt-6 text-sm font-semibold',
+    h2: 'mb-2 mt-5 text-sm font-semibold',
+    h3: 'mb-2 mt-4 text-sm font-semibold',
     h4: '',
-    inlineCode: 'text-[13px]',
+    inlineCode: 'text-[12px]',
   },
   lg: {
     body: 'text-[15px]',

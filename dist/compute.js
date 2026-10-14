@@ -9,7 +9,7 @@ import { t as y } from "./TitledFrame-B0QW93da.js";
 import { t as b } from "./DotMeter-B6ZDgLU7.js";
 import { t as x } from "./StatusDot-ClFcLvD7.js";
 import { t as S } from "./SectionLabel-Ch_rkHQZ.js";
-import { t as C } from "./InlinePlaceholder-CbIBYc-_.js";
+import { t as C } from "./InlinePlaceholder-DiPQ7hOM.js";
 import { n as ee } from "./FloatingPanel-CP5vaOcJ.js";
 import { a as te, i as w, n as T, r as E, t as D } from "./useComputeProjects-ZSazDRet.js";
 import { a as ne, i as O, n as re, o as k, r as ie, s as A, t as ae } from "./PaneStatusLine-0m8sWE8y.js";

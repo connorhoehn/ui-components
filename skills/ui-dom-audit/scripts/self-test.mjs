@@ -9,7 +9,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { parseAuditArgs } from './cli-options.mjs';
 import { measureDOM } from './measure.mjs';
-import { runAudit, summarize, validateContract, consistencyOutliers } from './run.mjs';
+import { runAudit, summarize, validateContract, consistencyOutliers, loadContract, measureCase, isDeepRule } from './run.mjs';
 import { probes } from './probes.mjs';
 const project = process.argv[process.argv.indexOf('--project') + 1];
 if (!project || !process.argv.includes('--project')) throw new Error('Usage: node self-test.mjs --project <package with @playwright/test>');
@@ -21,6 +21,9 @@ validateContract(fullContract);
 const DEEP_KINDS = new Set(['fingerprint', 'blank-band', 'table-first', 'narrow-block', 'alignment-grid', 'baseline', 'icon-center', 'scroll-owner', 'content-share', 'content-honesty', 'a11y-names', 'contrast', 'heading-order', 'landmarks', 'composer-readonly', 'layer', 'focus-walk', 'tab-stability', 'data-state', 'geometry-snapshot', 'text-fragmented', 'leading-separator', 'selection-column', 'column-hog', 'marker-first-line']);
 const contract = { ...fullContract, rules: fullContract.rules.filter(r => !DEEP_KINDS.has(r.kind)) };
 assert.ok(fullContract.rules.filter(r => DEEP_KINDS.has(r.kind)).length >= DEEP_KINDS.size, 'every deep rule kind is bound in the shipped contract');
+assert.ok(fullContract.rules.every(r => (r.deep === true) === DEEP_KINDS.has(r.kind)), 'exactly the deep-audit rules carry deep: true');
+assert.deepEqual(loadContract().rules.length, fullContract.rules.length, 'loadContract reads the shipped contract');
+assert.throws(() => validateContract({ version: 1, rules: [{ id: 'x', kind: 'count', deep: 'yes' }] }), /deep must be boolean/);
 const selectors = {
   graphDetailLabels: '[data-ui-text="graph-detail"]', graphMetadataLabels: '[data-ui-text="graph-metadata"]', activePersonCaptions: '[data-ui-text="active-person-caption"]',
   codeLabels: 'code, input[data-ui-text="code"]', railCaptionLabels: '.rail-label, button[data-heading="label"][data-focus-key^="g:"] > span, [data-ui-text="rail-caption"]', railItemLabels: '[data-ui-text="rail-item"]', conversationLabels: '.conversation-label', conversationMetadata: '.conversation-meta', decorativeText: '[aria-hidden="true"]', rowMenuGlyphs: '.row-glyph', keyboardHints: 'kbd', captions: '[data-ui-text="caption"]', tenantControl: '.no-brand', tickerControl: '.no-ticker', avatarControl: '[data-ui-text="avatar"]', header: '#header', footer: '#footer', footerRow: '#footer', shellColumns: '#shell', nestedColumns: '.no-nested', workspaceColumns: '#workspace', splitColumns: '.no-split',
@@ -42,7 +45,7 @@ const selectors = {
 const html = `<!doctype html><html><head><style>
 :root { --ui-control-sm:28px; --ui-page-gutter:24px; --ui-table-inset:12px; --ui-table-row:44px; --ui-content-gutter:16px; }
 *{box-sizing:border-box} body{margin:0;font:14px system-ui,-apple-system,sans-serif} #header,#footer{height:44px} #shell{height:712px;display:flex} aside{width:180px;flex:none} main{flex:1;min-width:0} #workspace{display:flex;height:100%} #secondary{width:180px;flex:none} #right{width:180px;flex:none} #content{position:relative;flex:1;min-width:0} #section{padding:8px 24px} #collection{padding:0} #toolbar{padding:0 12px;display:flex;gap:8px} .control{height:28px;font:12px system-ui,-apple-system,sans-serif;border:1px solid black} table{border-collapse:collapse;width:100%;font:14px system-ui,-apple-system,sans-serif} th{font-size:12px;font-weight:600} td{padding:0 12px;height:44px} #shelf-wrapper{position:absolute;bottom:0;left:0;right:0} #shelf{position:relative;padding:8px var(--ui-content-gutter);width:100%} #shelf:before{content:'';position:absolute;inset:0;background-image:radial-gradient(white,transparent);pointer-events:none} [contenteditable]{position:relative;min-height:28px}
-</style></head><body><header id="header">Workspace <button class="control"><span class="rail-label" style="font-size:11px">Group</span><span class="conversation-label" style="font-size:13px">Person</span><span class="conversation-meta" style="font-size:11px">Now</span><code style="font-size:11px;font-family:monospace">ID-123</code><span class="avatar" data-ui-text="avatar" style="font-size:9.12px">AB</span></button></header><div id="shell"><aside>Primary<section><h3><button class="control" data-heading="label" data-focus-key="g:fixture"><span id="group-label" style="font-size:11px">Projects</span><span id="group-count" style="font-size:11px">2</span></button></h3><ul><li><button class="control"><span id="rail-title" data-ui-text="rail-item" style="font-size:13px;font-weight:500;line-height:20px">Sample initiative</span></button><button id="rail-sibling-action" class="control" style="font-size:14px">Open</button></li></ul></section></aside><main><div id="workspace"><nav id="secondary">Secondary</nav><section id="content"><div id="section">Section</div><div role="button"><span data-ui-text="graph-detail" style="font-size:11px">Graph detail</span><span data-ui-text="graph-metadata" style="font-size:10px">Revision</span><button class="control" id="graph-nested-action">Open graph</button></div><button class="control"><span data-ui-text="active-person-caption" style="font-size:11px;font-weight:500">Person</span></button><div id="collection"><div id="toolbar"><button class="control">Action</button></div><div data-collection-table data-collection-rows="activatable"><table><thead><tr><th>Name</th><th>State</th></tr></thead><tbody><tr tabindex="0" style="cursor:pointer"><td>Record</td><td>Ready</td></tr></tbody></table></div></div><div id="shelf-wrapper"><div id="shelf" data-composer-surface><div contenteditable="true" role="textbox">Draft</div></div></div></section><aside id="right">Details<div id="dropzone" role="button" tabindex="0" data-ui-dropzone style="border:2px dashed #888">Drop files</div><button id="drop-sibling" class="control">Browse</button><div id="terminal" data-ui-code-surface="terminal"><textarea class="xterm-helper-textarea" aria-label="Terminal input" style="font-size:16px;font-family:monospace;width:8px;height:15px"></textarea></div></aside></div></main></div><footer id="footer">Footer <button id="overflow-count" class="control" data-ui-text="avatar" style="font-size:10px">+3</button></footer></body></html>`;
+</style></head><body><header id="header">Workspace <button class="control"><span class="rail-label" style="font-size:12px">Group</span><span class="conversation-label" style="font-size:14px">Person</span><span class="conversation-meta" style="font-size:12px">Now</span><code style="font-size:11px;font-family:monospace">ID-123</code><span class="avatar" data-ui-text="avatar" style="font-size:9.12px">AB</span></button></header><div id="shell"><aside>Primary<section><h3><button class="control" data-heading="label" data-focus-key="g:fixture"><span id="group-label" style="font-size:12px">Projects</span><span id="group-count" style="font-size:12px">2</span></button></h3><ul><li><button class="control"><span id="rail-title" data-ui-text="rail-item" style="font-size:14px;font-weight:500;line-height:20px">Sample initiative</span></button><button id="rail-sibling-action" class="control" style="font-size:14px">Open</button></li></ul></section></aside><main><div id="workspace"><nav id="secondary">Secondary</nav><section id="content"><div id="section">Section</div><div role="button"><span data-ui-text="graph-detail" style="font-size:11px">Graph detail</span><span data-ui-text="graph-metadata" style="font-size:10px">Revision</span><button class="control" id="graph-nested-action">Open graph</button></div><button class="control"><span data-ui-text="active-person-caption" style="font-size:11px;font-weight:500">Person</span></button><div id="collection"><div id="toolbar"><button class="control">Action</button></div><div data-collection-table data-collection-rows="activatable"><table><thead><tr><th>Name</th><th>State</th></tr></thead><tbody><tr tabindex="0" style="cursor:pointer"><td>Record</td><td>Ready</td></tr></tbody></table></div></div><div id="shelf-wrapper"><div id="shelf" data-composer-surface><div contenteditable="true" role="textbox">Draft</div></div></div></section><aside id="right">Details<div id="dropzone" role="button" tabindex="0" data-ui-dropzone style="border:2px dashed #888">Drop files</div><button id="drop-sibling" class="control">Browse</button><div id="terminal" data-ui-code-surface="terminal"><textarea class="xterm-helper-textarea" aria-label="Terminal input" style="font-size:16px;font-family:monospace;width:8px;height:15px"></textarea></div></aside></div></main></div><footer id="footer">Footer <button id="overflow-count" class="control" data-ui-text="avatar" style="font-size:10px">+3</button></footer></body></html>`;
 const browser = await chromium.launch({ headless: true });
 const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'ui-dom-audit-tests-'));
 const legacyContractPath = path.join(temp, 'legacy.contract.json'); fs.writeFileSync(legacyContractPath, JSON.stringify(contract));
@@ -61,13 +64,13 @@ try {
     ['missing required composer', () => document.querySelector('#shelf').remove(), 'composer.presence'],
     ['empty composer surface', () => document.querySelector('#shelf [contenteditable]').remove(), 'composer.presence'],
     ['unrelated page textbox cannot replace composer input', () => { document.querySelector('#shelf [contenteditable]').remove(); const input = document.createElement('textarea'); document.querySelector('#content').prepend(input); }, 'composer.presence'],
-    ['grouped rail caption drift', () => document.querySelector('#group-label').style.fontSize='14px', 'rail.disclosure-label'],
+    ['grouped rail caption drift', () => document.querySelector('#group-label').style.fontSize='13px', 'rail.disclosure-label'],
     ['grouped rail count drift', () => document.querySelector('#group-count').style.fontSize='9px', 'rail.disclosure-label'],
-    ['grouped rail item size drift', () => document.querySelector('#rail-title').style.fontSize='14px', 'rail.item-label'],
+    ['grouped rail item size drift', () => document.querySelector('#rail-title').style.fontSize='13px', 'rail.item-label'],
     ['grouped rail item weight drift', () => document.querySelector('#rail-title').style.fontWeight='700', 'rail.item-label'],
     ['grouped rail item line-height drift', () => document.querySelector('#rail-title').style.lineHeight='24px', 'rail.item-label'],
     ['ordinary action beside rail title', () => document.querySelector('#rail-sibling-action').style.fontSize='13px', 'control.font-size'],
-    ['rail caption drift', () => document.querySelector('.rail-label').style.fontSize='14px', 'rail.disclosure-label'],
+    ['rail caption drift', () => document.querySelector('.rail-label').style.fontSize='13px', 'rail.disclosure-label'],
     ['conversation label drift', () => document.querySelector('.conversation-label').style.fontSize='18px', 'conversation.label'],
     ['code family drift', () => document.querySelector('code').style.fontFamily='serif', 'code.typography'],
     ['unreadable overflow count', () => document.querySelector('#overflow-count').style.fontSize='6.8px', 'avatar.readability'],
@@ -1050,6 +1053,28 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
     const split = consistencyOutliers([['/a', 20], ['/b', 20], ['/c', 24], ['/d', 24]].map(([route, size]) => ({ route, state: 'default', width: 1280, samples: [1], issues: [], fingerprints: [{ family: 'page-title', key: '*', value: JSON.stringify({ fontSize: size }), selector: 'h1' }] })));
     assert.equal(split.issues.length, 0, 'an even split has no majority to deviate from');
     console.log('PASS consistency outliers (minority values across routes) and theme parity (boxes and borders light vs dark)');
+    assert.ok(cross.gate.deep > 0 && cross.gate.resting === 0, 'consistency and parity findings count toward the deep gate, not the resting-state gate: ' + JSON.stringify(cross.gate));
+    assert.ok(isDeepRule(fullContract, 'consistency.page-title') && !isDeepRule(fullContract, 'table.geometry'), 'isDeepRule separates the families');
+    // measureCase: the runner's measure-twice step, exported for other runners.
+    await dpage.setContent(deepHtml);
+    const once = await measureCase(dpage, { ...deep(['align.grid']) });
+    assert.equal(once.stable, true, 'a still page measures stable'); assert.deepEqual(once.issues, []);
+    await dpage.setContent(deepHtml);
+    await dpage.evaluate(() => { let n = 0; const list = document.querySelector('#list'); const tick = () => { list.style.marginTop = (n++ % 40) + 'px'; requestAnimationFrame(tick); }; tick(); });
+    const moving = await measureCase(dpage, { ...deep(['density.table-first']) });
+    assert.ok(moving.stable === false && moving.issues.some(i => i.rule === 'coverage.stability' && i.moved?.length), 'a page that keeps moving is reported unstable with what moved: ' + JSON.stringify(moving.issues));
+    // classifyContext: a page outside the app frame is recorded, not judged; a placeholder reason fails coverage.
+    const ctxRun = await runAudit(browser, {
+      baseURL: 'http://cross.test', selectors: dselectors, contract: crossPath,
+      authenticate: async context => context.route('http://cross.test/**', route => route.fulfill({ contentType: 'text/html', body: pageFor('/e', false) })),
+      cases: async () => [{ tenant: 'fixture', path: '/signin' }, { tenant: 'fixture', path: '/blank' }],
+      ready: async p => p.locator('h1').waitFor(), theme: async () => {}, assertRoute: async () => {},
+      classifyContext: async (p, spec) => ({ skip: true, kind: 'outside-app-frame', reason: spec.path === '/signin' ? 'The identity provider\'s sign-in page is not part of the app' : 'TODO' }),
+    }, { out: path.join(temp, 'ctx'), themes: 'light', widths: '1280', height: 800, screenshots: false });
+    assert.deepEqual(ctxRun.cases[0].issues, [], 'a documented outside-the-app page is recorded without findings');
+    assert.equal(ctxRun.cases[0].context.kind, 'outside-app-frame');
+    assert.ok(ctxRun.cases[1].issues.some(i => i.rule === 'coverage.context'), 'a placeholder context reason fails coverage');
+    console.log('PASS exported loadContract / measureCase / isDeepRule, the resting vs deep gate, and the classifyContext hook');
     await dpage.close();
   }
 

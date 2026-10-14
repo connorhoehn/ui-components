@@ -23,6 +23,8 @@ import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import Chip from './Chip';
+import { CONTROL_HEIGHT } from './controlMetrics';
+import { useDensity } from './Density';
 
 export interface ComboboxOption {
   value: string;
@@ -76,9 +78,16 @@ export interface MultiComboboxProps extends BaseProps {
 }
 export type ComboboxProps = SingleComboboxProps | MultiComboboxProps;
 
-const SIZE: Record<'sm' | 'md', string> = {
-  sm: 'min-h-7 text-xs',
-  md: 'min-h-9 text-sm',
+// The field takes the house control size (`--ui-control-*`, the same tokens
+// Input uses) and Input's border, surface, padding and type. A single field is
+// exactly that tall; a multi field grows past it as chips wrap.
+const SIZE_SINGLE: Record<'sm' | 'md', string> = {
+  sm: `${CONTROL_HEIGHT.sm} px-2 text-xs`,
+  md: `${CONTROL_HEIGHT.md} px-2.5 text-sm`,
+};
+const SIZE_MULTI: Record<'sm' | 'md', string> = {
+  sm: 'min-h-[var(--ui-control-sm,1.75rem)] px-2 text-xs',
+  md: 'min-h-[var(--ui-control-md,2.25rem)] px-2.5 text-sm',
 };
 const OPTION_TITLE: Record<'sm' | 'md', string> = {
   sm: 'text-xs',
@@ -90,10 +99,12 @@ const defaultFilter = (o: ComboboxOption, q: string) =>
 
 export function Combobox(props: ComboboxProps) {
   const {
-    options, placeholder, size = 'sm', disabled, allowCustom, maxOptions = 8, emptyMessage = 'No matches',
+    options, placeholder, size: requestedSize, disabled, allowCustom, maxOptions = 8, emptyMessage = 'No matches',
     filter, onQueryChange, className, 'data-testid': testId, id, invalid,
     'aria-describedby': describedBy, 'aria-invalid': ariaInvalid, 'aria-required': ariaRequired,
   } = props;
+  const density = useDensity();
+  const size = requestedSize ?? (density === 'compact' ? 'sm' : 'md');
   const showToggle = props.showToggle ?? !props.multiple;
   const isInvalid = invalid || ariaInvalid === true;
   const inputRef = useRef<HTMLInputElement>(null);
@@ -179,9 +190,11 @@ export function Combobox(props: ComboboxProps) {
     <div ref={rootRef} className={cn('relative min-w-0', className)} data-testid={testId} data-ui-control="combobox">
       <div
         className={cn(
-          'flex flex-wrap items-center gap-1 rounded-md border bg-surface px-2 py-0.5',
-          isInvalid ? 'border-danger focus-within:border-danger' : 'border-border-field focus-within:border-primary',
-          SIZE[size], disabled && 'opacity-60',
+          'flex items-center gap-1 rounded-md border bg-surface-panel transition-colors duration-150',
+          'focus-within:bg-surface focus-within:ring-1',
+          props.multiple ? 'flex-wrap py-0.5' : 'flex-nowrap',
+          isInvalid ? 'border-danger focus-within:border-danger focus-within:ring-danger/40' : 'border-border-emphasis focus-within:border-info focus-within:ring-info/40',
+          props.multiple ? SIZE_MULTI[size] : SIZE_SINGLE[size], disabled && 'opacity-50',
         )}
       >
         {props.multiple && props.value.map((v) => (
@@ -208,7 +221,7 @@ export function Combobox(props: ComboboxProps) {
           onChange={(e) => { setQ(e.target.value); setOpen(true); setActive(-1); }}
           onKeyDown={onKeyDown}
           onClick={() => { if (!open) openAll(); }}
-          className="min-w-[4rem] flex-1 border-0 bg-transparent py-0.5 text-text-primary outline-none placeholder:text-text-tertiary"
+          className="min-w-[4rem] flex-1 border-0 bg-transparent p-0 font-inherit text-text-primary outline-none placeholder:text-text-tertiary"
         />
         {showToggle && (
           <button
