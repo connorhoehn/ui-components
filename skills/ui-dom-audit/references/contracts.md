@@ -109,7 +109,9 @@ page body scroller that is itself flush to the rail still fails.
   clips or scrolls. The exception is explicit — `scrollers` names a tab row
   (`[role="tablist"]` and its wrapper) and a table's scroller (`:has(> table)`),
   each with a reason; the scroller is then judged in its controls' place. An
-  undocumented scroller exception throws.
+  undocumented scroller exception throws. A control wholly outside a clipping
+  ancestor (a collapsed panel's contents) is hidden, not clipped, and is skipped;
+  a partly cut control fails.
 - **`people.sparse-row`** (`sparse-row`): in a `role="list"` grid, a row of
   three or more tiles whose largest gap between tile ink exceeds 3x the median
   tile ink width fails. The rail's four stretched columns at ~288px pass; the
@@ -126,6 +128,7 @@ custom empty line, so the rule is not shipped; the adapter's
 `conversation-view-*` states still measure each view's geometry.
 
 Fixtures (`self-test.mjs`, `columnHtml`): valid — a body on the trail's edge,
+a collapsed 1px panel whose controls are wholly hidden,
 a full-bleed hover row whose text keeps the edge, four stretched tiles in a
 264px rail section, a tab row scrolling inside itself, the title folded into
 the trail with the conversation header as the one title; failing — a body

@@ -254,6 +254,8 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
             if (ox === 'visible') continue;
             if (scroller(n)) { subject = n; continue; }
             const c = n.getBoundingClientRect(), b = subject.getBoundingClientRect();
+            // Wholly outside the clip box is hidden (a collapsed panel's contents), not clipped.
+            if (b.left >= c.right - tol || b.right <= c.left + tol) { clipped = true; break; }
             if (b.right > c.right + tol || b.left < c.left - tol) {
               add(rule, el, subject === el ? 'clipped by an ancestor' : 'scroller clipped by an ancestor', [Math.round(c.left), Math.round(c.right)], [Math.round(b.left), Math.round(b.right)]);
               clipped = true; break;

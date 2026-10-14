@@ -212,6 +212,7 @@ try {
     ['four stretched tiles in a 288px rail section', () => { const t = document.querySelector('#tiles'); t.style.gridTemplateColumns = 'repeat(4,1fr)'; t.style.width = '264px'; }],
     ['a tab row scrolling inside its own scroller', () => { const tabs = document.querySelector('#convo .tabs'); tabs.style.overflowX = 'auto'; tabs.style.minWidth = '0'; tabs.style.flex = '1'; tabs.innerHTML += '<button role="tab">Pinned</button><button role="tab">Calls</button>'.repeat(4);
       document.querySelector('#title').remove(); document.querySelector('#convo').style.display = 'flex'; }],
+    ['a collapsed panel (1px, overflow hidden) whose controls are wholly hidden', () => { const p = document.createElement('div'); p.style.cssText = 'width:1px;overflow:hidden;white-space:nowrap'; p.innerHTML = '<span style="display:inline-block;width:1px"></span><button>Hidden action</button>'; document.querySelector('#rail').append(p); }],
     ['the title folded into the trail; the conversation header is the one title at the edge', () => { document.querySelector('#title').remove(); document.querySelector('#convo').style.display = 'flex'; }],
   ];
   for (const [name, mutate] of columnValid) {
