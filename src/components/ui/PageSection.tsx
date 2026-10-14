@@ -85,7 +85,8 @@ export function PageSection({
           the column. */}
       <div className={cn('flex flex-wrap justify-between gap-x-4 gap-y-2', md ? 'items-center' : 'items-start')}>
         <div className={cn('min-w-0 flex-[1_1_16rem]', isEmpty && 'flex items-baseline gap-3')}>
-          <Heading className={cn('m-0 text-text-primary', md ? cn('flex min-w-0 items-center gap-2.5 font-semibold', sm ? 'text-sm leading-5' : 'text-[16px] leading-6') : 'text-xl font-semibold')}>
+          {/* An empty section's quiet line gives way first: the title keeps its width (shrink-0). */}
+          <Heading className={cn('m-0 text-text-primary', isEmpty && 'shrink-0', md ? cn('flex min-w-0 items-center gap-2.5 font-semibold', sm ? 'text-sm leading-5' : 'text-[16px] leading-6') : 'text-xl font-semibold')}>
             {md ? <span className="min-w-0 truncate">{title}</span> : title}
             {typeof count === 'number' && (
               <Chip

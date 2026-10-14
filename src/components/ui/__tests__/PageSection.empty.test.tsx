@@ -20,6 +20,9 @@ describe('PageSection empty', () => {
     expect(screen.queryByText('Agent questions and reviews.')).toBeNull();
     expect(screen.queryByText('content')).toBeNull();
     expect(screen.getByText('All runs')).toBeInTheDocument();
+    // In a narrow column the quiet line truncates; the title keeps its width.
+    expect(screen.getByRole('heading', { name: 'Needs your attention' }).className).toMatch(/\bshrink-0\b/);
+    expect(line.className).toMatch(/\btruncate\b/);
   });
 
   it('draws its content (and no empty marker) when not empty', () => {

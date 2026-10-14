@@ -21,7 +21,7 @@ function o({ title: o, description: s, actions: c, children: l, count: u, countT
 			children: [/* @__PURE__ */ a("div", {
 				className: e("min-w-0 flex-[1_1_16rem]", S && "flex items-baseline gap-3"),
 				children: [/* @__PURE__ */ a(x, {
-					className: e("m-0 text-text-primary", y ? e("flex min-w-0 items-center gap-2.5 font-semibold", v ? "text-sm leading-5" : "text-[16px] leading-6") : "text-xl font-semibold"),
+					className: e("m-0 text-text-primary", S && "shrink-0", y ? e("flex min-w-0 items-center gap-2.5 font-semibold", v ? "text-sm leading-5" : "text-[16px] leading-6") : "text-xl font-semibold"),
 					children: [y ? /* @__PURE__ */ i("span", {
 						className: "min-w-0 truncate",
 						children: o

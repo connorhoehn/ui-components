@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.449.1
+
+- `PageSection empty`: the title keeps its width (`shrink-0`) and the quiet line truncates first; at 900px "Needs your attention" was cut to "Needs your attent…" beside a long empty line.
+
 ## 2.449.0
 
 - `PageSection`: `empty` — a section with nothing to show is one row: the title and one quiet line on the title's row (`data-ui-empty`), no description and no content block, actions on the right (`data-section-empty`). `children` is optional. Every PageSection emits `data-ui-section`. On `/iq/work` "Needs your attention" drew a heading over a two-line "nothing needs your attention" callout — two full rows for nothing.
