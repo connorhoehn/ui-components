@@ -690,9 +690,10 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
       }
       else if (rule.kind === 'placeholder-squeezed') for (const el of nodes) {
         // An input sharing its row with chips/buttons must keep room to be
-        // read: at least `minEm` of its own font wide, and — when its
-        // placeholder is cut — the siblings must not be the ones taking the
-        // space (siblings wider than the input itself).
+        // read: at least `minEm` of its own font wide, and its placeholder
+        // must not lose more than `maxHidden` (default half) of its width
+        // while the row's other items are wider than the input itself — the
+        // chips taking the space the words need.
         const editable = el.isContentEditable;
         const holder = editable ? el.querySelector('[data-placeholder]') : el;
         const placeholder = editable ? (holder?.getAttribute('data-placeholder') ?? el.getAttribute('aria-placeholder') ?? '') : (el.getAttribute('placeholder') ?? '');
@@ -716,10 +717,10 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
         const avail = box.clientWidth - parseFloat(bs.paddingLeft) - parseFloat(bs.paddingRight);
         const phFont = fontOf(getComputedStyle(holder ?? el, editable ? '::before' : '::placeholder'));
         const need = textWidth(placeholder, phFont);
-        const truncated = need > avail + tolerance;
+        const truncated = need > avail + tolerance && avail < need * (1 - (rule.maxHidden ?? 0.5));
         samples.push({ rule: rule.id, selector: selectorOf(el), property: 'input width (em)', actual: Math.round(own.width / fs * 10) / 10, expected: { min: rule.minEm ?? 10 } });
         if (own.width < (rule.minEm ?? 10) * fs - tolerance) add(rule, el, 'input width', `>= ${rule.minEm ?? 10}em (${Math.round((rule.minEm ?? 10) * fs)}px) beside ${siblings.length} row item(s)`, `${Math.round(own.width)}px; the row's other items take ${Math.round(sibWidth)}px (${selectorOf(row)})`);
-        else if (truncated && sibWidth > own.width) add(rule, el, 'placeholder truncated', 'the input wider than what shares its row, or the placeholder whole', `"${snippet(placeholder)}" needs ${Math.round(need)}px, has ${Math.round(avail)}px; row items take ${Math.round(sibWidth)}px`);
+        else if (truncated && sibWidth > own.width) add(rule, el, 'placeholder truncated', `at most ${Math.round((rule.maxHidden ?? 0.5) * 100)}% of the placeholder hidden, or the input wider than what shares its row`, `"${snippet(placeholder)}" needs ${Math.round(need)}px, has ${Math.round(avail)}px; row items take ${Math.round(sibWidth)}px`);
       }
     } catch (error) { add(rule, null, 'rule evaluation', 'valid selector/token/config', String(error.message), 'coverage'); }
   }

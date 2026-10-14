@@ -679,7 +679,8 @@
       "kind": "placeholder-squeezed",
       "selector": "input[placeholder]:not([type=\"checkbox\"]):not([type=\"radio\"]):not([type=\"range\"]):not([type=\"file\"]):not([type=\"hidden\"]):not([type=\"color\"]), textarea[placeholder], [contenteditable=\"true\"]:has([data-placeholder]), [contenteditable=\"true\"][aria-placeholder]",
       "minEm": 10,
-      "owner": "the row hosting the input (a composer's idle row, a toolbar): the input keeps its minimum width before chips; chips fold into a menu when narrow"
+      "owner": "the row hosting the input (a composer's idle row, a toolbar): the input keeps its minimum width before chips; chips fold into a menu when narrow",
+      "maxHidden": 0.5
     }
   ]
 }

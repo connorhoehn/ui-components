@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.447.1
+
+- `Toolbar`: the controls keep their room. The controls slot is sized from its content (`flex-auto`, was a zero basis) and `end` gives way three times as fast (`flex-initial shrink-[3]`, was `flex-none`), never below its own min-content — a MetaLine wraps, buttons keep their width. At 900px a long `end` line ("3 of 3 knowledge bases · registry vs. the live account") kept its full width while the search field shrank to ~6 characters. In `wrap` mode the content basis is also what lets `end` drop to its own line. The controls slot carries `data-toolbar-controls`.
+- ui-dom-audit `placeholder.squeezed`: a cut placeholder fails only when more than `maxHidden` (0.5) of it is hidden while the row's other items are wider than the input — "Search initiatives, open a record, or r…" is still read. Fixture: a placeholder mostly shown beside slightly wider row items passes.
+
 ## 2.447.0
 
 - Text stays legible in narrow columns (a 900px page's 324px content column beside a list rail split a red callout three ways, ran a tier-flow strip's labels into each other and squeezed a docked composer's input to "Sear…"):

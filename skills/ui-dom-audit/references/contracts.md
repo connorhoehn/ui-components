@@ -43,7 +43,7 @@ measurement and must not substitute for it.
 | `text-cramped` | selector (scope), maxLines, minChars | A block of wrapped text over `maxLines` lines whose width holds fewer than `minChars` characters at its own font |
 | `text-overlap` | selector (scope), tolerance, maxPerPage | Two runs of text whose em boxes intersect in the same stacking context; `data-ui-layered="<reason>"` exempts a declared layer |
 | `text-clipped` | selector (scope), scrollers[{selector, reason}], requireFullText? | Text cut by an overflow hidden/clip ancestor with no ellipsis or line clamp |
-| `placeholder-squeezed` | selector (inputs), minEm | An input narrower than `minEm` of its font beside other row items, or whose placeholder is cut while those items are wider than it |
+| `placeholder-squeezed` | selector (inputs), minEm, maxHidden | An input narrower than `minEm` of its font beside other row items, or whose placeholder is cut while those items are wider than it |
 
 `columns` can alternatively use `regions: ["$primary", "$secondary",
 "$content", "$right"]`. Never select nested parents and children as peers.
@@ -396,10 +396,12 @@ would otherwise "touch" with no ink meeting.
   `aria-placeholder`) is judged against its row — the nearest flex/grid row
   ancestor (`display: contents` wrappers flattened) holding other painted
   items on the input's line. With such items it must be at least `minEm` of
-  its own font wide; and when its placeholder is cut (canvas width of the
-  `::placeholder` / `::before` text against the input's content box), the row
-  items must not be wider than the input. A lone input in a narrow container
-  is not this rule's concern.
+  its own font wide; and when more than `maxHidden` (0.5) of its placeholder
+  is cut (canvas width of the `::placeholder` / `::before` text against the
+  input's content box), the row items must not be wider than the input. A
+  placeholder that loses its tail ("Search initiatives, open a record, or r…")
+  is still read; one cut to its first word beside wide chips is not. A lone
+  input in a narrow container is not this rule's concern.
 
 Library owners (ui-components 2.447.0): `Banner` is a size container —
 `layout="inline"` stacks title, body and action under 30rem of the banner's
@@ -414,7 +416,7 @@ Fixtures (`self-test.mjs`, `textHtml`): valid — a wide inline callout, the
 callout stacked in a narrow column, ellipsised labels with and without a title,
 a truncated table cell, chips, a single long word in a 60px rail, a badge
 layered with a reason, a roomy search input, a composer row with its chips
-folded, a scroller and a node canvas cutting text at their edges; failing — the
+folded, a placeholder mostly shown beside slightly wider row items, a scroller and a node canvas cutting text at their edges; failing — the
 callout split into columns in a narrow container, flow labels running into
 the next column, a label clipped with no ellipsis, a node cut by an ordinary
 clipping box, a caption cut at the bottom of a fixed-height box, a layered

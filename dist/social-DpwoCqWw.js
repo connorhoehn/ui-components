@@ -14,7 +14,7 @@ import { t as P } from "./Input-_B49FdRY.js";
 import { t as F } from "./Select-0lM_wZAc.js";
 import { t as I } from "./InlinePopover-BSeEQkYe.js";
 import { t as L } from "./SearchInput-HK4TcIG4.js";
-import { t as R } from "./DataTable-BpCjTLNe.js";
+import { t as R } from "./DataTable-Dc6jzY49.js";
 import { t as z } from "./EmptyState-iFs0woF1.js";
 import { n as B } from "./ThinkingDots-BZOWJ3Fp.js";
 import { n as V } from "./StatusPill-c89IbU1L.js";

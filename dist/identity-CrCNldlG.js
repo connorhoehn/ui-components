@@ -11,7 +11,7 @@ import { t as m } from "./ConfirmDialog-DVS3MsJN.js";
 import { t as h } from "./Input-_B49FdRY.js";
 import { t as g } from "./Select-0lM_wZAc.js";
 import { t as _ } from "./FormField-CQ27qxWt.js";
-import { t as v } from "./DataTable-BpCjTLNe.js";
+import { t as v } from "./DataTable-Dc6jzY49.js";
 import { t as y } from "./EmptyState-iFs0woF1.js";
 import { t as b } from "./Textarea-BwvE1HPn.js";
 import { t as x } from "./Checkbox-Jycr-rlf.js";

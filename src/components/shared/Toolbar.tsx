@@ -173,18 +173,26 @@ export function Toolbar({
         className,
       )}
     >
+      {/* The controls come first (2.447.1). The slot is sized from its
+          content (`flex-auto`, not a zero basis) and `end` gives way three
+          times as fast (`shrink-[3]`, never below its own min-content — a
+          MetaLine wraps, buttons keep their width): a long "3 of 3 knowledge
+          bases · registry vs. the live account" used to keep its full width
+          while the search field shrank to ~6 characters at 900px. In `wrap`
+          mode the content basis is what lets `end` drop to its own line. */}
       <div
         className={cn(
-          'flex min-w-0 flex-1 items-center gap-2',
+          'flex min-w-0 flex-auto items-center gap-2',
           wrap ? 'flex-wrap gap-y-1.5' : 'overflow-x-auto',
         )}
+        data-toolbar-controls=""
       >
         {children}
       </div>
       {end && (
         <div
           className={cn(
-            'flex flex-none items-center gap-2',
+            'flex flex-initial shrink-[3] items-center gap-2',
             // The left padding assumes `end` is sharing a line with
             // `children` — right when the row hasn't wrapped, wrong (a stray
             // indent) once `end` has dropped to its own line.

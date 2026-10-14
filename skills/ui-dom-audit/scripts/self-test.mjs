@@ -332,6 +332,7 @@ table{border-collapse:collapse;margin:8px} td{width:120px;max-width:120px;paddin
       ['a long word wrapping in a narrow rail is one label, not a cramped block', () => { const p = document.querySelector('#rail p'); p.style.wordBreak = 'break-all'; p.style.width = '60px'; }],
       ['an ellipsis without a title is a declared truncation (the full text is advisory)', () => { document.querySelectorAll('#strip .label')[2].removeAttribute('title'); }],
       ['a node canvas (a declared pannable viewport) cutting a node at its edge', () => { const v = document.createElement('div'); v.className = 'react-flow'; v.style.cssText = 'position:relative;width:200px;height:60px;overflow:hidden;margin:8px'; v.innerHTML = '<div style="position:absolute;left:150px;top:10px;white-space:nowrap">Data Lake Migration node</div>'; document.body.append(v); }],
+      ['a placeholder mostly shown (over half) beside row items a little wider than the input', () => { document.querySelectorAll('#composer-row .pill')[1].style.cssText = 'flex:none;width:170px'; }],
       ['the composer row giving its input the room first, chips folded', () => { document.querySelector('#composer-row').style.width = '340px'; document.querySelectorAll('#composer-row .pill')[1].remove(); }],
     ];
     for (const [name, mutate] of textValid) {

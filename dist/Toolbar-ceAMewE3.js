@@ -145,10 +145,11 @@ function x({ children: t, end: n, tone: r = "surface", variant: i = "surface", s
 		onKeyDown: x,
 		className: e("flex flex-none", u ? "flex-wrap items-start py-1.5" : "items-center", _[a], i === "collection" ? "bg-transparent text-text-primary px-[var(--ui-table-inset,0.75rem)]" : v[r], c && i !== "collection" && "border-b", o && "sticky top-0 z-20", d),
 		children: [/* @__PURE__ */ f("div", {
-			className: e("flex min-w-0 flex-1 items-center gap-2", u ? "flex-wrap gap-y-1.5" : "overflow-x-auto"),
+			className: e("flex min-w-0 flex-auto items-center gap-2", u ? "flex-wrap gap-y-1.5" : "overflow-x-auto"),
+			"data-toolbar-controls": "",
 			children: t
 		}), n && /* @__PURE__ */ f("div", {
-			className: e("flex flex-none items-center gap-2", u ? "flex-wrap" : "pl-2"),
+			className: e("flex flex-initial shrink-[3] items-center gap-2", u ? "flex-wrap" : "pl-2"),
 			children: n
 		})]
 	});

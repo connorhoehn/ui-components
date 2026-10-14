@@ -175,3 +175,25 @@ describe('Toolbar', () => {
     expect(endWrapper().className).toContain('flex-wrap');
   });
 });
+
+// At 900px a long `end` line ("3 of 3 knowledge bases · registry vs. the live
+// account") kept its full width while the search field shrank to ~6
+// characters. The controls are sized from their content and `end` gives way
+// first (never below its own min-content).
+describe('Toolbar — the controls keep their room (2.447.1)', () => {
+  it('sizes the controls from their content and lets `end` shrink first', () => {
+    render(
+      <Toolbar data-testid="tb" end={<span>3 of 3 knowledge bases · registry vs. the live account</span>}>
+        <input aria-label="Search" placeholder="Search by name, slug or id…" />
+      </Toolbar>,
+    );
+    const controls = screen.getByRole('textbox', { name: 'Search' }).parentElement!;
+    expect(controls).toHaveAttribute('data-toolbar-controls');
+    expect(controls.classList.contains('flex-auto')).toBe(true);
+    expect(controls.classList.contains('flex-1')).toBe(false);
+    const end = screen.getByText(/registry vs\. the live account/).parentElement!;
+    expect(end.classList.contains('shrink-[3]')).toBe(true);
+    expect(end.classList.contains('flex-none')).toBe(false);
+    expect(end.classList.contains('min-w-0')).toBe(false);
+  });
+});
