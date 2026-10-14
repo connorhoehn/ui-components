@@ -127,7 +127,7 @@ async function deepStates(page, spec, adapter, options, seen) {
         after: handle => handle?.release(),
         enter: async (p, { handle, readyError }) => {
           if (mode === 'loading') await p.waitForTimeout(1500);
-          return { kind: 'data-state', mode, intercepted: handle.stats.intercepted, urls: handle.stats.urls, ...(readyError ? { readyError } : {}) };
+          return { kind: 'data-state', mode, intercepted: handle.stats.intercepted, urls: handle.stats.urls, blockedWrites: handle.stats.blockedWrites, ...(readyError ? { readyError } : {}) };
         } });
     }
   }

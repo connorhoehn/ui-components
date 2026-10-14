@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.452.1
+
+- ui-dom-audit `interceptData`: data states are read-only like every probe. A page reacting to an injected failure or a denied capability with a write (a logout, a tenant switch) had that request reach the server, which revoked the shared fixture session and turned the rest of a run into coverage failures; non-GET requests are now aborted and `state.data` reports them as `<mode>: writes attempted` (fixture). `deep-audit.md`: never sign in as the fixture user elsewhere while a run is underway.
+
 ## 2.452.0
 
 - `PersonPicker` (`/shared`, root): choose ONE known person in a form — a beneficiary, a delegate, an assignee. The Combobox keyboard and FormField contract (`id`, `aria-describedby`, `aria-invalid`, `aria-required`, `invalid`), each option an avatar, the name, an optional right-aligned `tag` ("You") and an optional `detail` line, all three matched by the filter; the chosen person's avatar sits at the field start while idle; `loading` disables the field and says so; a `disabled` person is shown but not choosable. Unlike `UserPicker` it never commits typed text that names nobody, so a form cannot submit an id the server would refuse. Tests and a story. First consumer: the aws-agentcore access tenant (the request form's "Who" and the delegation form).

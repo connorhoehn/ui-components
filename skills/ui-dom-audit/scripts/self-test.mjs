@@ -1014,6 +1014,16 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
       assert.equal(await dp.evaluate(() => 1 + 1), 2, `the page survives a late ${mode} response after release`);
     }
     console.log('PASS interception released mid-request leaves the page alive');
+    // A page that writes in reaction to a data state (a logout after a 500) is stopped and reported.
+    const writer = await probes.interceptData(dp, { mode: 'error' });
+    await dp.goto(`${dataBase}/runs`);
+    await dp.evaluate(() => fetch('/api/session/logout', { method: 'POST' }).catch(() => {}));
+    await dp.waitForTimeout(200);
+    assert.deepEqual(writer.stats.blockedWrites, ['POST /api/session/logout'], 'the write was blocked and recorded');
+    const writeJudged = await dp.evaluate(measureDOM, { ...deep(['state.data']), selectors: { ...dselectors, contentColumns: 'main' }, probe: { kind: 'data-state', mode: 'error', intercepted: writer.stats.intercepted, blockedWrites: writer.stats.blockedWrites } });
+    assert.ok(writeJudged.issues.some(i => i.property === 'error: writes attempted'), 'state.data reports the attempted write');
+    await writer.release();
+    console.log('PASS data states block and report writes');
     await dctx.close(); server.close();
     console.log('PASS state.data: empty, error and loading pages must explain themselves');
 

@@ -91,8 +91,9 @@ valid fixture and failing mutations in `scripts/self-test.mjs` and a section in
    browser context only: `empty` (every array emptied), `error` (500),
    `loading` (responses held), `long` (names, titles, labels and emails grown
    past 80 characters), `many` (lists repeated to 60 rows), `denied` (every
-   boolean in the capabilities read false). Every rule runs in each; `state.data`
-   adds: an empty table explains itself, an error is written (no raw payload,
+   boolean in the capabilities read false). Non-GET requests are blocked and reported (a
+   page that logs out on a 500 must not revoke the shared session). Every rule
+   runs in each; `state.data` adds: an empty table explains itself, an error is written (no raw payload,
    no stack, no "Internal Server Error"), a loading page shows an indicator,
    and the page settles. Interception is preferred because it is read-only to
    the shared stack. The mock's scenario API (`GET /api/__mock/scenarios`,
@@ -143,7 +144,9 @@ valid fixture and failing mutations in `scripts/self-test.mjs` and a section in
 ## Running it
 
 One section at a time, never two runs at once (they share the fixture
-identity), and only when `pgrep -f audit.mjs` is empty and `uptime` load is
+identity), and never sign in as the fixture user anywhere else while a run is
+underway — a diagnostic script's login or tenant switch bumps the session epoch
+and turns the rest of the run into coverage failures; and only when `pgrep -f audit.mjs` is empty and `uptime` load is
 under 20. From aws-agentcore:
 
 ```bash

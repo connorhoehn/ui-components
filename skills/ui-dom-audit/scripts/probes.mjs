@@ -322,7 +322,7 @@ export async function tabCycle(page, { index, name, chrome = [], panes = 'aside,
  * with every capability denied.
  */
 export async function interceptData(page, { mode, include = '/api/', exclude = [], permissions } = {}) {
-  const stats = { intercepted: 0, urls: [] }, held = [];
+  const stats = { intercepted: 0, urls: [], blockedWrites: [] }, held = [];
   const skip = url => exclude.some(x => new RegExp(x).test(url));
   const LONG = 'Extraordinarily-long-name segment that keeps going well past eighty characters to test truncation';
   const longEmail = 'a.really.long.mailbox.name.for.layout.testing@subdomain.example-organisation.com';
@@ -345,6 +345,9 @@ export async function interceptData(page, { mode, include = '/api/', exclude = [
     if (released) return route.fallback();
     const request = route.request(), url = request.url();
     const path = new URL(url).pathname;
+    // A data state is read-only like every probe: a page reacting to an injected failure or a
+    // denied capability (a logout, a tenant switch, a retry that writes) must not reach the server.
+    if (!SAFE.has(request.method())) { stats.blockedWrites.push(`${request.method()} ${path}`); return route.abort('blockedbyclient'); }
     // `denied` rewrites only the permissions endpoint (which an ordinary exclusion of session routes would skip).
     const target = mode === 'denied' ? !!permissions && new RegExp(permissions).test(path) : path.includes(include) && !skip(path);
     if (request.method() !== 'GET' || !target || !['fetch', 'xhr'].includes(request.resourceType())) return route.fallback();

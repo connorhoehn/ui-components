@@ -1414,6 +1414,7 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
         // reader what is going on.
         const state = probe?.kind === 'data-state' ? probe : null;
         coverage.at(-1).matched = state ? state.intercepted : 0;
+        if (state?.blockedWrites?.length) add(rule, null, `${state.mode}: writes attempted`, 'none (the page reacts to a data state by reading, not by writing)', state.blockedWrites.slice(0, 6).join(', '));
         if (state && state.intercepted > 0) {
           const region = query(rule.region)[0] ?? document.body;
           const text = (region.innerText ?? '').replace(/\s+/g, ' ');
