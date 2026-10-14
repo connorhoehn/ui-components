@@ -609,7 +609,7 @@ function ConversationComposerImpl({
   const notices = showRecipients || recipientReason || note || noPage || recipientError || (hostAbove != null && hostAbove !== false) ? (
     <Stack gap="xs">
       {hostAbove}
-      {/* One To: row (since 2.443.1): why the chosen destination cannot take
+      {/* One To: row (since 2.446.1): why the chosen destination cannot take
           a message sits beside the selector, after a divider, on one line —
           the full sentence on hover — instead of a second row under it. */}
       {(showRecipients || recipientReason) && (

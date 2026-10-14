@@ -12,7 +12,7 @@
 // the badge itself is hidden from assistive tech rather than announced twice.
 // Since 2.407.37.
 //
-// Since 2.443.1 the panel has a fixed height — `min(70vh, 560px)` — with the
+// Since 2.446.1 the panel has a fixed height — `min(70vh, 560px)` — with the
 // feed scrolling inside it while the header (Mark all read, tabs) and the
 // optional `seeAll` footer stay put. Before, a 99+ feed made the whole
 // popover as tall as the window: the popover's own viewport clamp could only
@@ -50,7 +50,7 @@ export interface NotificationBellProps {
   placement?: InlinePopoverPlacement;
   /**
    * A link pinned under the feed to the app's full activity view ("See all
-   * activity"). The popover closes before `onSelect` runs. Since 2.443.1.
+   * activity"). The popover closes before `onSelect` runs. Since 2.446.1.
    */
   seeAll?: { label?: string; onSelect: () => void };
   /** `sm` = 28px, the header-control family; `md` = 32px. Default `md`. */

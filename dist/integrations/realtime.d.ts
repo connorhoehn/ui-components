@@ -2629,6 +2629,14 @@ declare interface NotificationBellProps {
     label?: string;
     /** Where the popover opens. Default `bottom-end` (a bell at a header's right edge). */
     placement?: InlinePopoverPlacement;
+    /**
+     * A link pinned under the feed to the app's full activity view ("See all
+     * activity"). The popover closes before `onSelect` runs. Since 2.446.1.
+     */
+    seeAll?: {
+        label?: string;
+        onSelect: () => void;
+    };
     /** `sm` = 28px, the header-control family; `md` = 32px. Default `md`. */
     size?: NotificationBellSize;
     className?: string;
@@ -2643,6 +2651,13 @@ declare interface NotificationCenterProps {
     onItemClick?: (item: NotificationItem) => void;
     onMarkAllRead?: () => void;
     onClearAll?: () => void;
+    /**
+     * Pinned under the feed, outside its scroll region — e.g. a "See all
+     * activity" link. Since 2.446.1. The header (title, Mark all read, tabs) is
+     * likewise outside the scroll region, so in a height-capped host both stay
+     * in view while only the feed scrolls.
+     */
+    footer?: ReactNode;
     className?: string;
     'data-testid'?: string;
 }

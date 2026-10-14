@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.446.1
+
+- `BoardColumn` is a lane: a tinted surface (4% of the text colour over whatever the board sits on, so it reads in light and dark) that runs the board's full height, with its header inside the lane and an empty lane drawn as a dashed message instead of a one-line placeholder. Emits `data-ui-board-lane`.
+- `CatalogGrid` `variant` (new): `lanes` keeps a board's `columns` in one row that never wraps (13rem minimum per lane, scrolling sideways below that) and stretches lanes to the row height. Emits `data-ui-board`. `tiles` (default) is unchanged.
+- `NotificationBell`: the panel is a fixed `min(70vh, 560px)`; the feed scrolls between the pinned header (title, Mark all read, Unread/All) and the new optional `seeAll` footer link ("See all activity", closes the popover first). A 99+ feed no longer grows to the window's height over its own trigger. `NotificationCenter` gains a `footer` slot outside its scroll region. The bell's root emits `data-notification-bell`.
+- `InlinePopover` re-anchors a placed panel whose content grows out of the viewport (a live feed filling in, a tab switch), instead of keeping its first position.
+- `ConversationComposer`: a destination's read-only reason sits on the To: row, beside the selector after a divider, on one line truncated with the full sentence on hover (`data-composer-recipient-row` / `data-composer-recipient-notice`), instead of a second row under it.
+- ui-dom-audit: `popover-fit` and `surface-distinct` rule kinds; `popover.fit` (an open panel inside the viewport, not over its popup trigger, scrolling inside itself when it has a header), `board.lane-surface` and `board.lane-columns` rules, each with valid/failing fixtures (`references/contracts.md` "Anchored panels and board lanes").
+- Tests: `NotificationBell` / `WrappedNotificationBell` find Mark all read and Clear all by role (they are icon buttons with tooltips).
+
 ## 2.446.0
 
 - `ComposerPromptDeck` is now part of the composer card: `ConversationComposer prompts` draws the deck as the card's first section (`variant="inset"`: no border of its own, a hairline under it), with the input below it in the same card — the To: row stays above the whole composer instead of sitting between the deck and the input. The deck caps its height at `min(40vh, 18rem)` and scrolls inside itself, so an expanded deck grows the pinned dock by at most that and the content column keeps the rest. `variant="card"` (default) is the standalone bordered form for a composer's `above`. Marker: `data-deck-variant`.

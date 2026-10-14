@@ -12,7 +12,7 @@
 // darkSurfaceTokens guard scans comments too, and a `--color-*` split across a
 // line wrap reads to it as a reference to an undefined token.)
 //
-// Since 2.443.1 the lane is a tinted surface running the full board height,
+// Since 2.446.1 the lane is a tinted surface running the full board height,
 // its header sits inside the lane, and an empty lane shows a dashed drop-zone
 // style message rather than a one-line placeholder.
 //
@@ -56,7 +56,7 @@ export function BoardColumn({
   // callers signal emptiness by passing nothing at all.
   const empty = children === undefined || children === null
     || children === false || (Array.isArray(children) && children.length === 0);
-  // The lane is a surface of its own (since 2.443.1): a 4% tint of the text
+  // The lane is a surface of its own (since 2.446.1): a 4% tint of the text
   // colour over whatever the board sits on, so it reads as a column in light
   // and dark alike without a new token. Cards used to float on the page with
   // nothing marking which column they were in once the header scrolled away.

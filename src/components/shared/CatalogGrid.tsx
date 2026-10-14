@@ -18,7 +18,7 @@ export interface CatalogGridProps {
   /** Tighter gap (12px vs 20px). Default false. */
   dense?: boolean;
   /**
-   * `lanes` (since 2.443.1): a board's columns — `columns` lanes in ONE row
+   * `lanes` (since 2.446.1): a board's columns — `columns` lanes in ONE row
    * that never wrap; below the width they need (13rem each) the row scrolls
    * sideways inside itself instead of stacking lanes into a second row, where
    * "In review" would sit under "Open". Children stretch to the row height,

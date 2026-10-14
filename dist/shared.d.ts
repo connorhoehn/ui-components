@@ -641,7 +641,7 @@ export declare interface CardProps extends HTMLAttributes<HTMLDivElement> {
     ref?: Ref<HTMLDivElement>;
 }
 
-export declare function CatalogGrid({ children, columns, dense, className, style, 'data-testid': testId, }: CatalogGridProps): JSX.Element;
+export declare function CatalogGrid({ children, columns, dense, variant, className, style, 'data-testid': testId, }: CatalogGridProps): JSX.Element;
 
 export declare type CatalogGridColumns = 1 | 2 | 3 | 4 | 5;
 
@@ -652,6 +652,15 @@ export declare interface CatalogGridProps {
     columns?: CatalogGridColumns;
     /** Tighter gap (12px vs 20px). Default false. */
     dense?: boolean;
+    /**
+     * `lanes` (since 2.446.1): a board's columns — `columns` lanes in ONE row
+     * that never wrap; below the width they need (13rem each) the row scrolls
+     * sideways inside itself instead of stacking lanes into a second row, where
+     * "In review" would sit under "Open". Children stretch to the row height,
+     * so `BoardColumn` lanes run the full board height. Emits `data-ui-board`
+     * for the DOM audit. Default `tiles`.
+     */
+    variant?: 'tiles' | 'lanes';
     className?: string;
     style?: CSSProperties;
     'data-testid'?: string;
@@ -3931,7 +3940,7 @@ export declare interface NodeCardProps {
     onClick?: () => void;
 }
 
-export declare function NotificationBell({ items, unreadCount, onItemClick, onMarkAllRead, onClearAll, label, placement, size, className, 'data-testid': testId, }: NotificationBellProps): JSX.Element;
+export declare function NotificationBell({ items, unreadCount, onItemClick, onMarkAllRead, onClearAll, label, placement, size, seeAll, className, 'data-testid': testId, }: NotificationBellProps): JSX.Element;
 
 export declare interface NotificationBellProps {
     /** The feed, in `NotificationCenter`'s shape. */
@@ -3946,6 +3955,14 @@ export declare interface NotificationBellProps {
     label?: string;
     /** Where the popover opens. Default `bottom-end` (a bell at a header's right edge). */
     placement?: InlinePopoverPlacement;
+    /**
+     * A link pinned under the feed to the app's full activity view ("See all
+     * activity"). The popover closes before `onSelect` runs. Since 2.446.1.
+     */
+    seeAll?: {
+        label?: string;
+        onSelect: () => void;
+    };
     /** `sm` = 28px, the header-control family; `md` = 32px. Default `md`. */
     size?: NotificationBellSize;
     className?: string;
@@ -3955,13 +3972,20 @@ export declare interface NotificationBellProps {
 
 export declare type NotificationBellSize = 'sm' | 'md';
 
-export declare function NotificationCenter({ items, onItemClick, onMarkAllRead, onClearAll, className, 'data-testid': testId, }: NotificationCenterProps): JSX.Element;
+export declare function NotificationCenter({ items, onItemClick, onMarkAllRead, onClearAll, footer, className, 'data-testid': testId, }: NotificationCenterProps): JSX.Element;
 
 export declare interface NotificationCenterProps {
     items: NotificationItem[];
     onItemClick?: (item: NotificationItem) => void;
     onMarkAllRead?: () => void;
     onClearAll?: () => void;
+    /**
+     * Pinned under the feed, outside its scroll region — e.g. a "See all
+     * activity" link. Since 2.446.1. The header (title, Mark all read, tabs) is
+     * likewise outside the scroll region, so in a height-capped host both stay
+     * in view while only the feed scrolls.
+     */
+    footer?: ReactNode;
     className?: string;
     'data-testid'?: string;
 }

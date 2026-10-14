@@ -30,7 +30,7 @@ export interface NotificationCenterProps {
   onClearAll?: () => void;
   /**
    * Pinned under the feed, outside its scroll region — e.g. a "See all
-   * activity" link. Since 2.443.1. The header (title, Mark all read, tabs) is
+   * activity" link. Since 2.446.1. The header (title, Mark all read, tabs) is
    * likewise outside the scroll region, so in a height-capped host both stay
    * in view while only the feed scrolls.
    */

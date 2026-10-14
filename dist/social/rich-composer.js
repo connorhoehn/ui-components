@@ -1,13 +1,13 @@
 import { t as e } from "../cn-D4QmbyEy.js";
 import { c as t, n } from "../Button-uREUOWUk.js";
-import { c as r, l as i, n as a } from "../Text-_F8jtt9A.js";
+import { c as r, l as i, n as a } from "../Text-kXXifsCP.js";
 import { t as o } from "../Select-BKKYeBOc.js";
-import { a as s, c, i as l, l as u, n as d, r as f, t as p } from "../composerSendError-BA_aS2ld.js";
+import { a as s, c, i as l, l as u, n as d, r as f, t as p } from "../composerSendError-DTE9_DLz.js";
 import { a as m, i as h, n as g, r as _, t as v } from "../composerContext-BLn1-Nao.js";
-import { a as ee, i as y, n as b, o as x, r as te, s as S, t as C } from "../ConversationInputs-KYhQsLI0.js";
-import { a as w, c as T, i as E, l as D, n as ne, o as re, r as O, s as ie, t as ae, u as oe } from "../RichChatComposer-DRcN99IE.js";
-import { t as se } from "../ContextComposer-BMbkutFa.js";
-import { t as ce } from "../AgentComposerDock-ZG_YfLFo.js";
+import { a as ee, i as y, n as b, o as x, r as te, s as S, t as C } from "../ConversationInputs-CKY-PkKB.js";
+import { a as w, c as T, i as E, l as D, n as ne, o as re, r as O, s as ie, t as ae, u as oe } from "../RichChatComposer-jRXKSXTN.js";
+import { t as se } from "../ContextComposer--teQFiYx.js";
+import { t as ce } from "../AgentComposerDock-BD30GSmD.js";
 import { useCallback as k, useEffect as A, useId as le, useMemo as j, useRef as M, useState as N } from "react";
 import { jsx as P, jsxs as F } from "react/jsx-runtime";
 //#region src/components/social/composerPromptModel.ts
@@ -689,7 +689,7 @@ function Ue({ id: e, value: t, recipients: n, onChange: i, "data-testid": s }) {
 		gap: "xs",
 		align: "center",
 		wrap: !1,
-		className: "ml-1 min-w-0 self-start rounded-md border border-border bg-surface pl-2",
+		className: "ml-1 min-w-0 shrink-0 self-start rounded-md border border-border bg-surface pl-2",
 		children: [/* @__PURE__ */ P(a, {
 			size: "xs",
 			tone: "secondary",
@@ -953,19 +953,30 @@ function Ge({ rm: n, channel: o, chat: c, context: l, capabilities: u, identity:
 		gap: "xs",
 		children: [
 			L,
-			Tt && /* @__PURE__ */ P(Ue, {
-				id: `${B}-recipient`,
-				value: U?.id ?? null,
-				recipients: wt,
-				onChange: gt,
-				"data-testid": `${z}-recipient`
-			}),
-			Dt && /* @__PURE__ */ P(a, {
-				size: "xs",
-				tone: "tertiary",
-				wrap: !0,
-				"data-testid": `${z}-recipient-unavailable`,
-				children: Dt
+			(Tt || Dt) && /* @__PURE__ */ F(r, {
+				gap: "sm",
+				align: "center",
+				wrap: !1,
+				className: "min-w-0",
+				"data-composer-recipient-row": "",
+				children: [Tt && /* @__PURE__ */ P(Ue, {
+					id: `${B}-recipient`,
+					value: U?.id ?? null,
+					recipients: wt,
+					onChange: gt,
+					"data-testid": `${z}-recipient`
+				}), Dt && /* @__PURE__ */ P(a, {
+					size: "xs",
+					tone: "tertiary",
+					title: Dt,
+					className: e("min-w-0", Tt && "border-0 border-l border-solid border-border pl-2"),
+					"data-composer-recipient-notice": "",
+					"data-testid": `${z}-recipient-unavailable`,
+					children: /* @__PURE__ */ P("span", {
+						className: "truncate",
+						children: Dt
+					})
+				})]
 			}),
 			Et && /* @__PURE__ */ P(a, {
 				size: "xs",

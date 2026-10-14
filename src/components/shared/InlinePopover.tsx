@@ -285,7 +285,7 @@ export function InlinePopover({
   // switch, an async list) kept its old top and ran off the screen — up past
   // the window's top for a panel flipped above a footer trigger. Re-anchor
   // when the panel's size changes and it no longer fits the viewport (since
-  // 2.443.1). The corrected position always fits, so this cannot loop.
+  // 2.446.1). The corrected position always fits, so this cannot loop.
   useEffect(() => {
     if (!open || !position || typeof ResizeObserver === 'undefined') return;
     const panel = panelRef.current;

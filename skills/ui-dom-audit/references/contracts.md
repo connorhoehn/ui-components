@@ -297,7 +297,7 @@ inside itself rather than scrolling as a whole. It exists because the footer
 NotificationBell with a 99+ feed grew to the window's height: the popover's
 viewport clamp pinned it at the top, it covered the bell that opened it, and
 the "Notifications / Mark all read" header scrolled away with the feed. The
-library fix (ui-components 2.443.1) is a fixed `min(70vh, 560px)` panel whose
+library fix (ui-components 2.446.1) is a fixed `min(70vh, 560px)` panel whose
 feed scrolls between a pinned header and an optional `seeAll` footer, plus
 `InlinePopover` re-anchoring when a placed panel grows out of the viewport. A
 header-less menu clamped to a short viewport may still scroll as a whole.
@@ -309,7 +309,7 @@ background must be painted and differ from the nearest painted ancestor's.
 `[data-ui-board]`, emitted by `CatalogGrid variant="lanes"`) requires the
 lanes in one row with equal tops and bottoms (gap ≤ 16px): lanes sized to
 their cards, or wrapped into a second row at a narrow width, fail. Since
-2.443.1 `BoardColumn` is a tinted (`color-mix` of the text colour at 4%),
+2.446.1 `BoardColumn` is a tinted (`color-mix` of the text colour at 4%),
 full-height lane with its header inside and a dashed empty-lane message, and
 the `lanes` grid keeps fixed columns in one row that scrolls sideways.
 
