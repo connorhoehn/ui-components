@@ -655,6 +655,14 @@
       "owner": "DockedColumn + ColumnDock (the page's one composer docked at the content column's bottom, spanning it); the page composing the column"
     },
     {
+      "id": "section.empty-row",
+      "kind": "section-empty",
+      "selector": "$sections",
+      "empty": "$emptyStates",
+      "maxLines": 1,
+      "owner": "PageSection empty (one row: the title and one quiet line) — never a heading over a 'nothing here' block"
+    },
+    {
       "id": "board.lane-surface",
       "kind": "surface-distinct",
       "selector": "$boardLanes",

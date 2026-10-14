@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.449.0
+
+- `PageSection`: `empty` — a section with nothing to show is one row: the title and one quiet line on the title's row (`data-ui-empty`), no description and no content block, actions on the right (`data-section-empty`). `children` is optional. Every PageSection emits `data-ui-section`. On `/iq/work` "Needs your attention" drew a heading over a two-line "nothing needs your attention" callout — two full rows for nothing.
+- ui-dom-audit `section.empty-row` (`section-empty`): a page section holding its own empty state and no other ink but headings and controls must sit on one line. Fixtures: an empty section on one row, content, a nested section's empty state and an empty state beside real content pass; a heading over a "nothing here" block and the quiet line stacked under the title fail.
+- ui-dom-audit `composer.last`: ink inside a scroller that does not hold the composer is cut to that scroller — rows scrolled past the bottom of a list that ends above the dock are above the composer, not below it (fixture).
+
 ## 2.448.0
 
 - `DockedColumn` + `ColumnDock` (root, new): one composer per column, docked at its bottom. `DockedColumn` is a content column — a scrolling body (`body="scroll"`, or `"fill"` for a fixed frame; `bodyClassName`, `bodyProps`) over a dock slot that does not scroll (`data-column-dock`, hidden while empty). `ColumnDock` renders its children into the nearest DockedColumn's dock through a portal — in place when there is none — so a section deep in the body keeps owning and driving its composer while the composer lands at the column's bottom, spanning it. `useInDockedColumn()` tells a child which it will get. On `/iq/work` a section's command composer sat mid-page on its own inset band with the page's findings link and a disclosure after it.

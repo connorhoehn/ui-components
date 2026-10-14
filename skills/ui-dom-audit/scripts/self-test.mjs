@@ -25,6 +25,8 @@ const selectors = {
   composerColumns: '#content', composerDocks: '#shelf-wrapper',
   // panel.inset / panel.empty-height: anchored panels and the library EmptyState marker.
   panels: '[role="dialog"], [role="alertdialog"], dialog[open], [data-ui-dialog]', emptyStates: '[data-ui-empty]',
+  // section.empty-row: page sections (PageSection's data-ui-section).
+  sections: '[data-ui-section]',
   // The content-column rules (gutter, header alignment, one title, containment, sparse tiles):
   // the column is the trail's parent, the trail band's padding is the reading edge.
   contentColumns: ':has(> [data-trail])', trail: '[data-trail]',
@@ -380,6 +382,7 @@ try {
     const validLast = [
       ['a call strip under the composer inside the same dock', () => { document.querySelector('[data-dock]').insertAdjacentHTML('beforeend', '<div>In call · 2 people</div>'); }],
       ['an open menu (a fixed layer) drawn below the composer', () => { document.body.insertAdjacentHTML('beforeend', '<div role="menu" style="position:fixed;left:300px;top:640px">Menu item</div>'); }],
+      ['rows scrolled past the bottom of a list that ends above the dock', () => { document.querySelector('#body').insertAdjacentHTML('beforeend', '<p style="height:900px;margin:0">Long list</p><p>Last row</p>'); }],
     ];
     for (const [name, mutate] of validLast) {
       await page.setContent(lastHtml); await page.evaluate(mutate);
@@ -400,6 +403,48 @@ try {
       console.log('PASS detects ' + name);
     }
     console.log('PASS the column\'s composer is its last content and spans it');
+    await page.close();
+  }
+
+  // An empty page section takes one row (section.empty-row): /iq/work's
+  // "Needs your attention" drew a heading over a two-line "Nothing needs your
+  // attention right now…" block, two full rows of screen for nothing.
+  {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+    const ids = ['section.empty-row'];
+    const sectionHtml = `<!doctype html><html><head><style>
+*{box-sizing:border-box} body{margin:0;font:14px system-ui;width:900px} section{display:flex;flex-direction:column;gap:8px;padding:8px 24px}
+.row{display:flex;justify-content:space-between;align-items:center} .title{display:flex;align-items:baseline;gap:12px} h2{margin:0;font-size:14px}
+</style></head><body>
+<section id="empty" data-ui-section data-section-empty><div class="row"><div class="title"><h2>Needs your attention</h2><span data-ui-empty>Nothing right now</span></div><a href="#all">All runs →</a></div></section>
+<section id="full" data-ui-section><div class="row"><div class="title"><h2>Recent runs</h2></div></div><p style="margin:0">inference-canary-nightly</p><p style="margin:0">obs-nightly-maintenance</p></section>
+</body></html>`;
+    const smeasure = () => page.evaluate(measureDOM, only(ids));
+    await page.setContent(sectionHtml);
+    const clean = await smeasure();
+    assert.deepEqual(clean.issues, [], 'an empty section on one row and a section with content pass: ' + JSON.stringify(clean.issues));
+    assert.ok(clean.coverage.some(c => c.rule === 'section.empty-row' && c.matched === 1), 'only the empty section is judged');
+    const valid = [
+      ['an empty state inside a nested section is judged on the nested one', () => { document.querySelector('#full').insertAdjacentHTML('beforeend', '<section data-ui-section><div class="title"><h2>Nested</h2><span data-ui-empty>None</span></div></section>'); }],
+      ['a section whose empty state sits beside real content (a toolbar and a table) is not an empty section', () => { document.querySelector('#full').insertAdjacentHTML('beforeend', '<div data-ui-empty style="padding:24px">No run matches this search</div>'); }],
+    ];
+    for (const [name, mutate] of valid) {
+      await page.setContent(sectionHtml); await page.evaluate(mutate);
+      const result = await smeasure();
+      assert.deepEqual(result.issues, [], `${name}: ${JSON.stringify(result.issues)}`);
+      console.log('PASS allows ' + name);
+    }
+    const defects = [
+      ['a heading over a "nothing here" block', () => { const s = document.querySelector('#empty'); s.querySelector('[data-ui-empty]').remove(); s.insertAdjacentHTML('beforeend', '<div data-ui-empty style="padding:12px 16px;border-left:3px solid #36c">Nothing needs your attention right now — agent questions and finished work awaiting review will show up here.</div>'); }],
+      ['an empty line stacked under the title', () => { document.querySelector('#empty .title').style.flexDirection = 'column'; }],
+    ];
+    for (const [name, mutate] of defects) {
+      await page.setContent(sectionHtml); await page.evaluate(mutate);
+      const result = await smeasure();
+      assert.ok(result.issues.some(i => i.rule === 'section.empty-row'), `${name} must fail section.empty-row: ${JSON.stringify(result.issues)}`);
+      console.log('PASS detects ' + name);
+    }
+    console.log('PASS an empty page section is one row');
     await page.close();
   }
 

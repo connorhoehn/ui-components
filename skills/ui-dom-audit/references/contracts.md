@@ -47,6 +47,7 @@ measurement and must not substitute for it.
 | `panel-inset` | selector (open panels), header?, tolerance? | Ink inside an anchored panel (popover, dialog, drawer) starting left of the panel header's first ink, or ending right of the same inset from the panel's right edge |
 | `panel-empty` | selector (open panels), empty (empty-state marker), maxGap | A panel holding an empty state with a blank band (between what it draws, padded top to padded bottom) taller than `maxGap`: a fixed height where the cap should be a maximum |
 | `composer-last` | selector (composers), column, dock?, ignore? | Ink in the composer's column laid out below it (scrolled into view or not; its own dock and fixed layers excepted), or a composer band with side margins inside its column |
+| `section-empty` | selector (page sections), empty (empty-state marker), maxLines | A page section with nothing to show (its own empty state, no ink but headings and controls) drawn on more than `maxLines` lines |
 
 `columns` can alternatively use `regions: ["$primary", "$secondary",
 "$content", "$right"]`. Never select nested parents and children as peers.
@@ -410,6 +411,29 @@ panel's right edge, an empty panel kept at its fixed height (blank under the
 footer, and with the footer pinned at the bottom), a section composer followed
 by the findings link and a disclosure, content below the composer scrolled out
 of view, and a composer band with side margins in its column.
+
+## Empty sections are one row (2.449.0)
+
+On `/iq/work` "Needs your attention" drew a 14px heading over a two-line
+"Nothing needs your attention right now — agent questions and finished work
+awaiting review will show up here." callout: two full rows of screen for
+nothing. **`section.empty-row`** (`section-empty`, `maxLines: 1`) binds
+`$sections` (PageSection's `data-ui-section`) and `$emptyStates`. A section
+qualifies when it holds its own empty state (one whose nearest section is it,
+not a nested one's) and no other ink apart from headings and controls (a
+header link, a button); all of its ink must then sit on one line — the title
+and one quiet line on the title's row. A section whose empty state sits
+beside real content (a toolbar over an empty table) is not an empty section.
+The library owner is `PageSection empty="…"` (ui-components 2.449.0): the
+title row carries the quiet line (`data-ui-empty`), no description and no
+content block, actions on the right. When the section's items do exist and
+need a response, aws-agentcore surfaces them through the page's docked
+composer's prompt deck rather than a block above it (`/iq/work`).
+
+Fixtures (`self-test.mjs`): valid — an empty section on one row beside a
+header link, a section with content, an empty state in a nested section, an
+empty state beside real content; failing — a heading over a "nothing here"
+block, and the quiet line stacked under the title.
 
 ## Legible text (cramped, overlapping, clipped, squeezed)
 

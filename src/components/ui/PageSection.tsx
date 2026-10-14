@@ -11,7 +11,17 @@ export interface PageSectionProps {
   title: string;
   description?: string;
   actions?: ReactNode;
-  children: ReactNode;
+  /** The section's content. Not drawn when `empty` is set. */
+  children?: ReactNode;
+  /**
+   * The section has nothing to show: one quiet line beside the title, on the
+   * title's row — "Needs your attention · Nothing right now". The section
+   * collapses to that one row (no description, no content block); `actions`
+   * stay on the right. Emits `data-section-empty` and marks the line
+   * `data-ui-empty`. A heading over a two-line "nothing here" paragraph took
+   * two full rows of an inbox page for nothing. Since 2.449.0.
+   */
+  empty?: ReactNode;
   /**
    * A count beside the title in a neutral chip — "Needs attention 1". Absent
    * draws none; zero shows "0" (an empty section is a fact). Since 2.392.0.
@@ -48,6 +58,7 @@ export function PageSection({
   children,
   count,
   countTone = 'neutral',
+  empty,
   size: sizeProp,
   className,
   'data-testid': testId,
@@ -65,14 +76,15 @@ export function PageSection({
   const md = size === 'md' || sm;
   const compactGap = md || (sizeProp === undefined && density === 'compact');
   const Heading = md ? 'h2' : 'h1';
+  const isEmpty = empty != null && empty !== false;
   return (
-    <section className={cn('flex flex-col', compactGap ? 'gap-2' : 'gap-6', className)} {...(testId ? { 'data-testid': testId } : {})} data-size={md ? size : undefined} data-density={sizeProp === undefined && density === 'compact' ? 'compact' : undefined}>
+    <section className={cn('flex flex-col', compactGap ? 'gap-2' : 'gap-6', className)} {...(testId ? { 'data-testid': testId } : {})} data-size={md ? size : undefined} data-density={sizeProp === undefined && density === 'compact' ? 'compact' : undefined} data-ui-section="" data-section-empty={isEmpty ? '' : undefined}>
       {/* The row wraps (since 2.446.4): when the title and the actions do not
           fit side by side, the actions take their own row, capped at its
           width, instead of squeezing the title into a sliver or running past
           the column. */}
       <div className={cn('flex flex-wrap justify-between gap-x-4 gap-y-2', md ? 'items-center' : 'items-start')}>
-        <div className="min-w-0 flex-[1_1_16rem]">
+        <div className={cn('min-w-0 flex-[1_1_16rem]', isEmpty && 'flex items-baseline gap-3')}>
           <Heading className={cn('m-0 text-text-primary', md ? cn('flex min-w-0 items-center gap-2.5 font-semibold', sm ? 'text-sm leading-5' : 'text-[16px] leading-6') : 'text-xl font-semibold')}>
             {md ? <span className="min-w-0 truncate">{title}</span> : title}
             {typeof count === 'number' && (
@@ -89,13 +101,15 @@ export function PageSection({
               </Chip>
             )}
           </Heading>
-          {description && (
+          {isEmpty ? (
+            <span data-ui-empty="" className={cn('min-w-0 truncate text-text-tertiary', sm ? 'text-xs' : 'text-sm')}>{empty}</span>
+          ) : description && (
             <p className="text-sm text-neutral mt-1 mb-0">{description}</p>
           )}
         </div>
         {actions && <div className={cn('flex max-w-full min-w-0 flex-wrap items-center gap-2 shrink-0', sm && 'text-sm')}>{actions}</div>}
       </div>
-      {children}
+      {!isEmpty && children}
     </section>
   );
 }

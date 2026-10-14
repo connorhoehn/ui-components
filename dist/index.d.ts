@@ -14700,13 +14700,23 @@ export declare interface PageHeaderTab {
     disabled?: boolean;
 }
 
-export declare function PageSection({ title, description, actions, children, count, countTone, size: sizeProp, className, 'data-testid': testId, }: PageSectionProps): JSX.Element;
+export declare function PageSection({ title, description, actions, children, count, countTone, empty, size: sizeProp, className, 'data-testid': testId, }: PageSectionProps): JSX.Element;
 
 export declare interface PageSectionProps {
     title: string;
     description?: string;
     actions?: ReactNode;
-    children: ReactNode;
+    /** The section's content. Not drawn when `empty` is set. */
+    children?: ReactNode;
+    /**
+     * The section has nothing to show: one quiet line beside the title, on the
+     * title's row — "Needs your attention · Nothing right now". The section
+     * collapses to that one row (no description, no content block); `actions`
+     * stay on the right. Emits `data-section-empty` and marks the line
+     * `data-ui-empty`. A heading over a two-line "nothing here" paragraph took
+     * two full rows of an inbox page for nothing. Since 2.449.0.
+     */
+    empty?: ReactNode;
     /**
      * A count beside the title in a neutral chip — "Needs attention 1". Absent
      * draws none; zero shows "0" (an empty section is a fact). Since 2.392.0.

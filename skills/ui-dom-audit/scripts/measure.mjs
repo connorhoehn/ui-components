@@ -577,12 +577,49 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
           const ignore = rule.ignore ? css(rule.ignore) : null;
           const layer = el => { for (let n = el; n && n !== column; n = n.parentElement) if (getComputedStyle(n).position === 'fixed') return true; return false; };
           const skip = el => composer.contains(el) || (dock && column.contains(dock) && dock.contains(el)) || (ignore && el.closest(ignore)) || layer(el);
-          const below = inkRects(column, skip).map(r => clipToAncestors(r, column)).filter(r => r && r.top >= c.bottom - tol && r.right > c.left + tol && r.left < c.right - tol).sort((a, b) => a.top - b.top);
+          // Ink inside a scroller or clipping box that does NOT hold the composer
+          // is cut to it: rows scrolled past a list that ends above the dock are
+          // above the composer in the flow, not below it. Ink sharing the
+          // composer's scroller is not cut — out of view below it still counts.
+          const ownWindow = r => {
+            let { top, bottom } = r;
+            for (let n = r.el.parentElement; n && n !== column; n = n.parentElement) {
+              if (getComputedStyle(n).overflowY === 'visible' || n.contains(composer)) continue;
+              const b = n.getBoundingClientRect(); top = Math.max(top, b.top); bottom = Math.min(bottom, b.bottom);
+            }
+            return bottom - top > 1 ? { ...r, top, bottom } : null;
+          };
+          const below = inkRects(column, skip).map(r => clipToAncestors(r, column)).filter(Boolean).map(ownWindow).filter(r => r && r.top >= c.bottom - tol && r.right > c.left + tol && r.left < c.right - tol).sort((a, b) => a.top - b.top);
           samples.push({ rule: rule.id, selector: selectorOf(composer), property: 'content below the composer', actual: below.length, expected: 0 });
           if (below.length) add(rule, below[0].el, 'content below the composer', `nothing in ${selectorOf(column)} below the composer (bottom ${Math.round(c.bottom)})`, `${below.length} piece(s) of ink, first "${snippet((below[0].el.textContent ?? '').trim()) || below[0].el.tagName.toLowerCase()}" at y=${Math.round(below[0].top)}`);
           const margins = { left: Math.round((c.left - col.left) * 100) / 100, right: Math.round((col.right - c.right) * 100) / 100 };
           samples.push({ rule: rule.id, selector: selectorOf(composer), property: 'band side margins', actual: margins, expected: 0 });
           for (const side of ['left', 'right']) if (Math.abs(margins[side]) > tol) add(rule, composer, `band ${side} margin`, `the composer band spans ${selectorOf(column)} (0px)`, `${margins[side]}px`);
+        }
+        coverage.at(-1).matched = measured;
+      }
+      else if (rule.kind === 'section-empty') {
+        // A page section with nothing to show takes one row: its title and
+        // one quiet line, not a heading over a "nothing here" paragraph. A
+        // section qualifies when it holds its own empty state (`empty`, not a
+        // nested section's) and no other ink apart from headings and controls
+        // (a header link or button); its ink must then sit on `maxLines` lines.
+        const maxLines = rule.maxLines ?? 1;
+        let measured = 0;
+        for (const section of nodes) {
+          const own = el => el.closest(css(rule.selector)) === section;
+          const empties = [...section.querySelectorAll(css(rule.empty))].filter(e => visible(e) && own(e));
+          if (!empties.length) continue;
+          const ink = inkRects(section, el => !own(el));
+          const other = ink.filter(r => !r.el.closest(css(rule.empty)) && !r.el.closest('h1, h2, h3, h4, h5, h6, [role="heading"], button, a[href], [role="button"]'));
+          if (other.length) continue;
+          measured++;
+          const tops = ink.map(r => ({ top: r.top, h: r.bottom - r.top })).sort((a, b) => a.top - b.top);
+          let lines = 0, last = -Infinity;
+          for (const t of tops) if (t.top > last + t.h * 0.6) { lines++; last = t.top; }
+          const h = Math.round(section.getBoundingClientRect().height);
+          samples.push({ rule: rule.id, selector: selectorOf(section), property: 'empty section lines', actual: lines, expected: { max: maxLines } });
+          if (lines > maxLines) add(rule, section, 'empty section lines', `<= ${maxLines} (the title and one quiet line on one row)`, `${lines} lines, ${h}px: "${snippet((empties[0].textContent ?? '').trim())}"`);
         }
         coverage.at(-1).matched = measured;
       }
