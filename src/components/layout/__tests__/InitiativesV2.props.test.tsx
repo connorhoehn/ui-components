@@ -149,7 +149,7 @@ describe('ScopeHeader tabSize', () => {
     expect(list.className).not.toContain('after:hidden');
     expect(list.className).toContain('after:h-px');
     expect(screen.getByTestId('scope-header')).toHaveAttribute('data-tabs-rule', 'inset');
-    expect(screen.getByTestId('scope-header').className).toContain('px-6');
+    expect(screen.getByTestId('scope-header').className).toContain('px-[var(--ui-page-gutter,1.5rem)]');
     // without tabSize the row keeps its border rule, no longer cancelled
     rerender(<ScopeHeader title="Obs" tabs={tabs} tabsRule="inset" />);
     expect(screen.getByRole('tablist').className).not.toContain('border-b-0');

@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.451.2
+
+- ChatSidePanelFrame: with `size="sm"` (or the compact density) its expand, open-full-page and close buttons draw at the small control size, so the deprecated explicit `size="sm"` is again byte-for-byte what `<DensityProvider density="compact">` draws (broken since 29f5cba7 made IconButton density-aware).
+- Density.tsx: `warnDeprecatedSize` no longer needs `@types/node` to type-check (module-scoped `process` declaration); a consumer compiling the source with `types: []` failed `CallBlockConsumerTypes`.
+- Tests: nine reds carried since 2.450.x brought current. Seven were stale against deliberate changes (29f5cba7 moved control/gutter sizes to `--ui-control-*` / `--ui-page-gutter`; fc1f8c1a moved the message action bar into the row header's actions slot); the other two are the component fixes above. No test deleted.
+
 ## 2.451.1
 
 - ui-dom-audit `text.leading-separator`: separators are found among all painted text, including decorative `aria-hidden` glyphs (the `/iq/projects` stats line that gave the rule its fixture uses them and was missed), and a separator is judged by position, so "Page 1 of 4 · 77 total" rendered as sibling text nodes of one element no longer reads as opening its line (fixtures for both).

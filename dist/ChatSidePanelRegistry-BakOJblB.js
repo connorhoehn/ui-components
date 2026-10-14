@@ -65,6 +65,7 @@ function x({ title: n, subtitle: a, onClose: c, onOpenFullPage: l, actions: u, e
 							content: d ? "Show chat" : "Expand board",
 							placement: "bottom",
 							children: /* @__PURE__ */ m(r, {
+								size: x ? "sm" : void 0,
 								"aria-label": d ? "Show chat" : "Expand board",
 								"aria-pressed": d,
 								onClick: f,
@@ -93,6 +94,7 @@ function x({ title: n, subtitle: a, onClose: c, onOpenFullPage: l, actions: u, e
 							content: "Open full page",
 							placement: "bottom",
 							children: /* @__PURE__ */ m(r, {
+								size: x ? "sm" : void 0,
 								"aria-label": "Open full page",
 								onClick: l,
 								"data-testid": `${b}-open-full`,
@@ -117,6 +119,7 @@ function x({ title: n, subtitle: a, onClose: c, onOpenFullPage: l, actions: u, e
 				content: _,
 				placement: "bottom",
 				children: /* @__PURE__ */ m(r, {
+					size: x ? "sm" : void 0,
 					"aria-label": _,
 					onClick: c,
 					"data-testid": `${b}-close`,

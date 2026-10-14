@@ -78,6 +78,10 @@ export function useDensityForm(override?: Density | null): Density {
   return override ?? inherited.form;
 }
 
+// Module-scoped on purpose: a consumer type-checking this source without
+// @types/node still compiles, and bundlers still replace `process.env.NODE_ENV`.
+declare const process: { env: { NODE_ENV?: string } };
+
 const warnedSizes = new Set<string>();
 
 /**

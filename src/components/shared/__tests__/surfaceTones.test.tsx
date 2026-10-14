@@ -74,7 +74,7 @@ describe('Button tone', () => {
   it('leaves size and disabled behaviour alone', () => {
     render(<Button tone="code" size="sm" disabled>run</Button>);
     const btn = screen.getByRole('button');
-    expect(btn).toHaveClass('h-6.5', 'px-2.5', 'opacity-50');
+    expect(btn).toHaveClass('h-[var(--ui-control-sm,1.75rem)]', 'px-2.5', 'opacity-50');
     expect(btn).toBeDisabled();
   });
 });

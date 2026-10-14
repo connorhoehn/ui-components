@@ -48,9 +48,9 @@ describe('WorkArea', () => {
 
   it('padded by default, and drops the padding when asked', () => {
     const { rerender, container } = render(<WorkArea><p>body</p></WorkArea>);
-    expect(container.querySelector('.overflow-auto')?.className).toContain('p-6');
+    expect(container.querySelector('.overflow-auto')?.className).toContain('p-[var(--ui-page-gutter,1.5rem)]');
     rerender(<WorkArea padded={false}><p>body</p></WorkArea>);
-    expect(container.querySelector('.overflow-auto')?.className).not.toContain('p-6');
+    expect(container.querySelector('.overflow-auto')?.className).not.toContain('p-[var(--ui-page-gutter,1.5rem)]');
   });
 
   it('bodyClassName lands on the scroller, not the column', () => {

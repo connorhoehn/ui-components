@@ -1,7 +1,7 @@
 import { o as e } from "./Button-uREUOWUk.js";
 import { t } from "./SegmentedControl-CSn7GyT9.js";
 import { t as n } from "./FollowUpChips-BWHw0Y0h.js";
-import { r } from "./RichChatComposer-DXs-ob0g.js";
+import { r } from "./RichChatComposer-DOfzJzp2.js";
 import { jsx as i, jsxs as a } from "react/jsx-runtime";
 //#region src/components/doc-editor/presentation/PresentationAgentComposer.tsx
 var o = {

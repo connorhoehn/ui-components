@@ -34,7 +34,7 @@ import { n as ge, s as _e, t as ve } from "./PopoverForm-CZhsjmZn.js";
 import { t as ye } from "./InlinePlaceholder-CbIBYc-_.js";
 import { t as be } from "./MetaLine-BtHTTScI.js";
 import { F as xe, R as Se, j as Ce, lt as we, rt as Te, st as Ee, tt as De } from "./ConversationSurface-DJQ2qzvT.js";
-import "./ChatSidePanelRegistry-DPAKTcnw.js";
+import "./ChatSidePanelRegistry-BakOJblB.js";
 import { t as Oe } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as ke, t as Ae } from "./ReactionPickerPopover-DJgbcskc.js";
 import { n as je } from "./useComputeProjects-ZSazDRet.js";

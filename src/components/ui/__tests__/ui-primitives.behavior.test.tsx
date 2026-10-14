@@ -124,7 +124,7 @@ describe('IconButton content resolution', () => {
     expect(screen.getByRole('button').className).not.toContain('cursor-pointer');
   });
 
-  it.each([['sm', 'w-6'], ['md', 'w-8'], ['lg', 'w-10']] as const)(
+  it.each([['sm', 'w-[var(--ui-control-sm,1.75rem)]'], ['md', 'w-[var(--ui-control-md,2.25rem)]'], ['lg', 'w-[var(--ui-control-lg,2.5rem)]']] as const)(
     'size %s pins a square footprint',
     (size, cls) => {
       render(<IconButton aria-label="x" size={size}>×</IconButton>);

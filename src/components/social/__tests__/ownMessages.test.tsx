@@ -93,8 +93,10 @@ describe('the hover action bar', () => {
   it('sits at the top right of the row, off the author line', () => {
     render(<ChatPanel messages={[msg]} onSend={vi.fn()} onReply={vi.fn()} />);
     const bar = screen.getByTestId('message-actions');
-    expect(bar.className).toContain('right-3');
-    expect(bar.className).toContain('-top-3');
+    // Since fc1f8c1a the bar lives in the row header's own actions slot, so it
+    // takes layout space instead of overlaying the author line.
+    expect(bar.className).not.toContain('absolute');
+    expect(bar.className).not.toContain('-top-3');
     expect(bar.className).not.toContain('left-14');
     expect(screen.getByTestId('chat-message').className).toContain('hover:bg-surface-hover');
   });
