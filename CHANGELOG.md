@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.454.1
+
+- Changelog for ui-dom-audit changes that shipped inside 2.454.0's commit (the checkout was shared): `scripts/run.mjs` exports `loadContract(path?)`, `measureCase(page, { contract, selectors, required, composerExpectation, probe })` (the runner's pause-motion, measure-twice and stability step), `isDeepRule(contract, id)`; every deep-audit rule carries `deep: true` and `report.gate` counts `resting` and `deep` findings apart (deep findings are marked `deep: true`; `summary.txt` prints both); adapters may implement `classifyContext(page, spec, state)` → `{ kind, skip?, reason? }` to record a page outside the app frame or an unreadable record without judging it (a placeholder reason fails `coverage.context`). Fixtures for each; documented in `contracts.md` and `deep-audit.md`.
+
 ## 2.454.0
 
 Second step of the app type scale (aws-agentcore `type-scale-burndown.tsv`), and the ui-dom-audit contract moves with the rails.
