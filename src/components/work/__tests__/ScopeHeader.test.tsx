@@ -233,7 +233,7 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
       renderInline();
       const title = screen.getByRole('heading', { level: 1, name: 'People & connections' });
       expect(title).toHaveAttribute('aria-current', 'page');
-      expect(title.className).toMatch(/text-\[18px\]/);
+      expect(title.className).toMatch(/text-\[20px\]/);
       // The crumbs are all places to go; only the title is current.
       expect(screen.getByTestId('scope-header-crumbs').querySelector('[aria-current]')).toBeNull();
       expect(screen.getByRole('link', { name: 'Search' })).toHaveAttribute('href', '/iq/search');
@@ -1056,7 +1056,7 @@ describe('ScopeHeader variant="crumbs" (2.389.0)', () => {
             expect(el.className).not.toMatch(/\btext-sm\b/);
           });
           const title = screen.getByTestId('scope-header-title');
-          expect(title.className).toMatch(/text-\[18px\]/);
+          expect(title.className).toMatch(/text-\[20px\]/);
           expect(title.className).toMatch(/\bfont-semibold\b/);
         } finally {
           sw.mockRestore();

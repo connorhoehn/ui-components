@@ -50,7 +50,7 @@ export function OutcomeSection({
   const text = value?.trim() ? value : null;
   const body = variant === 'heading'
     ? (size === 'lg' ? 'text-[15px] leading-6' : 'text-sm leading-5')
-    : 'text-[13px] leading-relaxed';
+    : 'text-sm leading-relaxed';
 
   useEffect(() => { if (editing) ref.current?.focus(); }, [editing]);
 
@@ -64,7 +64,7 @@ export function OutcomeSection({
   };
 
   const actions = editable && !editing && text ? (
-    <Button variant="link" size="sm" className="text-[13px]" onClick={start} disabled={pending} aria-label={`Edit ${title.toLowerCase()}`}>
+    <Button variant="link" size="sm" className="text-sm" onClick={start} disabled={pending} aria-label={`Edit ${title.toLowerCase()}`}>
       Edit
     </Button>
   ) : undefined;
@@ -111,7 +111,7 @@ export function OutcomeSection({
           )
         ) : (
           <div className="flex items-center gap-2">
-            <p className="m-0 text-[13px] text-text-tertiary" aria-describedby={readOnlyReason ? reasonId : undefined}>
+            <p className="m-0 text-xs text-text-tertiary" aria-describedby={readOnlyReason ? reasonId : undefined}>
               No outcome yet
             </p>
             {editable && (

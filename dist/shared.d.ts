@@ -356,7 +356,7 @@ export declare interface BannerProps {
      */
     meta?: ReactNode;
     /**
-     * `callout` only: `md` (default) is the 14px title over a 13px body; `lg`
+     * `callout` only: `md` (default) is the 14px title over a 14px body; `lg`
      * is a 17px title over a 15px body with roomier padding — a callout that is
      * a section's content, not a note beside it — and its `action` sits level
      * with the title rather than centred on the block. Since 2.390.0.

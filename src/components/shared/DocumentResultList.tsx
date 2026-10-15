@@ -160,7 +160,7 @@ export function DocumentResultList({
             >
               <FileKindMark kind={item.kind} variant="app" size="xl" />
               <span className="flex min-w-0 flex-col gap-0.5">
-                <span className="truncate text-base font-semibold leading-snug text-text-primary">{item.title}</span>
+                <span className="truncate text-sm font-semibold leading-snug text-text-primary">{item.title}</span>
                 {item.summary && <span className="truncate text-sm leading-snug text-text-secondary">{item.summary}</span>}
                 {(item.folder || age) && (
                   <span className="flex min-w-0 items-center gap-1.5 text-sm leading-snug text-text-tertiary">

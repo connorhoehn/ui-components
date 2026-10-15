@@ -132,7 +132,7 @@ export function ExpertCard({
             <Chip key={s} tone="neutral" size="xs">{s}</Chip>
           ))}
           {spareSkills.length > MAX_OTHER_SKILLS && (
-            <span className="text-[10.5px] text-text-tertiary">+{spareSkills.length - MAX_OTHER_SKILLS}</span>
+            <span className="text-xs text-text-tertiary">+{spareSkills.length - MAX_OTHER_SKILLS}</span>
           )}
         </div>
       )}

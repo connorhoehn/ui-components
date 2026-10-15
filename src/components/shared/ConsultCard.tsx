@@ -103,7 +103,7 @@ export function ConsultCard({
         </Chip>
         {origin.map((o) => <Chip key={o} tone="neutral" size="xs" mono>{o}</Chip>)}
         <span className="flex-1" />
-        {askedAt && <span className="text-[10.5px] text-text-tertiary whitespace-nowrap">{askedAt}</span>}
+        {askedAt && <span className="text-xs text-text-tertiary whitespace-nowrap">{askedAt}</span>}
       </div>
 
       <p className="m-0 text-[13.5px] font-medium text-text-primary leading-snug">{question}</p>

@@ -38,9 +38,9 @@ function LoadingState({
       {/* The container is the live region; a second one inside it would
           make the reader announce the wait twice. */}
       <Spinner size={spinnerSize} color={spinnerColor} decorative />
-      <div className="text-[15px] font-medium text-text-primary">{label}</div>
+      <div className="text-sm font-medium text-text-primary">{label}</div>
       {description && (
-        <div className="text-[13px] text-center max-w-[340px] text-text-secondary leading-normal">
+        <div className="text-xs text-center max-w-[340px] text-text-secondary leading-normal">
           {description}
         </div>
       )}

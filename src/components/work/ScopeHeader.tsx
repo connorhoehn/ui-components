@@ -108,7 +108,7 @@ export interface ScopeHeaderProps {
    *
    * `inline` (since 2.405.2): ONE row, at most 48px tall — the crumbs, then
    * the title as the trail's emphasised last segment ("Org › Search ›
-   * **People & connections**", 18px semibold, or 20px bold at
+   * **People & connections**", 20px semibold, or 20px bold at
    * `titleSize="lg"`), then, right-aligned on the same row, the `tabs`
    * (honouring `activeTab`, `onTabChange`, `tabSize`, counts and dots) and
    * after them `controls`, `link` and `menu`. For a workspace whose body (a
@@ -179,7 +179,7 @@ export interface ScopeHeaderProps {
   activeTab?: string;
   onTabChange?: (id: string) => void;
   /**
-   * The h1's size. `md` (default) is the 22px band title; `lg` is the 28px
+   * The h1's size. `md` (default) is the 20px band title; `lg` is the 28px
    * bold page title of a header that IS the page's heading (the Initiatives
    * overview). Since 2.390.0.
    */
@@ -376,7 +376,7 @@ function RightGroup({
       )}
       {hasMenu && (
         <DropdownMenu
-          trigger={<span aria-hidden="true" className="text-base leading-none">⋯</span>}
+          trigger={<span aria-hidden="true" className="text-sm leading-none">⋯</span>}
           triggerLabel={menuLabel ?? `Actions for ${title}`}
           triggerTestId={`${testId}-menu`}
           align="end"
@@ -816,7 +816,7 @@ function InlineTrail({ crumbs, title, titleHint, lg, sm = false, after, testId }
             // its 12rem floor.
             'm-0 min-w-[12rem] flex-1 truncate whitespace-nowrap text-text-primary',
             // 2.437.0: compact/collapsed density — the sm scale's 14/600 heading.
-            sm ? 'text-sm font-semibold leading-5' : lg ? 'text-[20px] font-bold leading-7 tracking-[-0.01em]' : 'text-[18px] font-semibold leading-7',
+            sm ? 'text-sm font-semibold leading-5' : lg ? 'text-[20px] font-bold leading-7 tracking-[-0.01em]' : 'text-[20px] font-semibold leading-7',
           )}
         >
           {title}
@@ -1182,7 +1182,7 @@ function ScopeHeaderFull({
           <h1
             className={cn(
               'm-0 min-w-0 truncate text-text-primary',
-              dense ? 'text-sm font-semibold leading-5' : lg ? 'text-[28px] font-bold leading-9 tracking-[-0.01em]' : 'text-[22px] font-semibold leading-8',
+              dense ? 'text-sm font-semibold leading-5' : lg ? 'text-[28px] font-bold leading-9 tracking-[-0.01em]' : 'text-[20px] font-semibold leading-7',
             )}
             title={title}
             data-testid={`${testId}-title`}

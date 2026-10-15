@@ -679,7 +679,7 @@ export function GroupedList({
               className="m-0 flex list-none flex-col p-0"
             >
               {open && groupRows.length === 0 && (
-                <li className="px-4 py-3 pl-12 text-[13px] text-text-tertiary" data-testid={`${testId}-group-empty-${group.id}`}>
+                <li className="px-4 py-3 pl-12 text-xs text-text-tertiary" data-testid={`${testId}-group-empty-${group.id}`}>
                   {group.emptyLabel ?? 'Nothing here'}
                 </li>
               )}

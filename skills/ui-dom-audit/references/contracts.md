@@ -711,7 +711,7 @@ a composer inside an inset section (it fails `composer.surface` and
 
 
 Graph/card typography uses leaf-only source markers: WorkActivityNode detail
-text (`graph-detail`, 11px), its metadata (`graph-metadata`, 10px), and
+text (`graph-detail`, 12px), its metadata (`graph-metadata`, 12px), and
 ActivePeopleGrid names/More captions (`active-person-caption`, 12px/500). Cards,
 rows and preview containers are not exempt. The fixture mutates a nested ordinary
 graph action to prove it remains governed by the standard control typography.

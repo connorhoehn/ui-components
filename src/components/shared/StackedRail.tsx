@@ -676,7 +676,7 @@ export function StackedRail({
             {open && (
               <ul className="m-0 flex list-none flex-col p-0" data-testid={`${groupTestId}-rows`}>
                 {group.rows.length === 0 ? (
-                  <li className={cn('text-[13px] leading-5', ROW_INSET, ROW_PAD_Y, 'text-text-tertiary')} data-testid={`${groupTestId}-empty`}>
+                  <li className={cn('text-xs leading-5', ROW_INSET, ROW_PAD_Y, 'text-text-tertiary')} data-testid={`${groupTestId}-empty`}>
                     {group.emptyLabel ?? 'Nothing here yet.'}
                   </li>
                 ) : (

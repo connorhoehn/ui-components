@@ -1989,7 +1989,7 @@ export declare interface BannerProps {
      */
     meta?: ReactNode;
     /**
-     * `callout` only: `md` (default) is the 14px title over a 13px body; `lg`
+     * `callout` only: `md` (default) is the 14px title over a 14px body; `lg`
      * is a 17px title over a 15px body with roomier padding — a callout that is
      * a section's content, not a note beside it — and its `action` sits level
      * with the title rather than centred on the block. Since 2.390.0.
@@ -19293,7 +19293,7 @@ export declare interface ScopeHeaderProps {
      *
      * `inline` (since 2.405.2): ONE row, at most 48px tall — the crumbs, then
      * the title as the trail's emphasised last segment ("Org › Search ›
-     * **People & connections**", 18px semibold, or 20px bold at
+     * **People & connections**", 20px semibold, or 20px bold at
      * `titleSize="lg"`), then, right-aligned on the same row, the `tabs`
      * (honouring `activeTab`, `onTabChange`, `tabSize`, counts and dots) and
      * after them `controls`, `link` and `menu`. For a workspace whose body (a
@@ -19371,7 +19371,7 @@ export declare interface ScopeHeaderProps {
     activeTab?: string;
     onTabChange?: (id: string) => void;
     /**
-     * The h1's size. `md` (default) is the 22px band title; `lg` is the 28px
+     * The h1's size. `md` (default) is the 20px band title; `lg` is the 28px
      * bold page title of a header that IS the page's heading (the Initiatives
      * overview). Since 2.390.0.
      */

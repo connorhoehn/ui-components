@@ -137,7 +137,7 @@ function AnnotationRow({ a }: { a: DiffAnnotation }) {
       <Chip tone={SEVERITY_TONE[a.severity ?? 'info']} size="xs" uppercase>{a.severity ?? 'note'}</Chip>
       <div className="min-w-0">
         <span className="text-[12px] text-text-primary leading-snug">{a.note}</span>
-        {a.author && <span className="ml-2 text-[10.5px] text-text-tertiary whitespace-nowrap">— {a.author}</span>}
+        {a.author && <span className="ml-2 text-xs text-text-tertiary whitespace-nowrap">— {a.author}</span>}
       </div>
     </div>
   );
@@ -205,7 +205,7 @@ function FileSection({ file, annotations, collapsed, onToggle, maxLines }: {
                 {shown.map((l, i) => (
                   l.kind === 'hunk' ? (
                     <tr key={i} className={LINE_BG.hunk}>
-                      <td colSpan={3} className="px-3 py-0.5 text-[10.5px] text-text-tertiary select-none">{l.text}</td>
+                      <td colSpan={3} className="px-3 py-0.5 text-xs text-text-tertiary select-none">{l.text}</td>
                     </tr>
                   ) : (
                     <>

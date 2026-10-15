@@ -572,7 +572,7 @@
       "kind": "text",
       "selector": "$graphDetailLabels",
       "properties": {
-        "fontSize": 11
+        "fontSize": 12
       },
       "tolerance": 0.1,
       "owner": "WorkActivityNode detail text"
@@ -582,7 +582,7 @@
       "kind": "text",
       "selector": "$graphMetadataLabels",
       "properties": {
-        "fontSize": 10
+        "fontSize": 12
       },
       "tolerance": 0.1,
       "owner": "WorkActivityNode metadata"

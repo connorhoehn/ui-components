@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.456.0
+
+Third step of the app type scale (aws-agentcore `type-scale-burndown.tsv`).
+
+- `WorkActivityNode` card text, `WorkActivityCanvas` legend: 12px (were 10 and 11); the feedback count is 12px. ui-dom-audit contract: `graph.detail` and `graph.metadata` expect 12px, with `contracts.md` and the self-test fixture.
+- `CanvasZoomControls` glyphs 14px (were 15).
+- `ScopeHeader`: the default band title is 20px/600 (was 22px) and the `inline` trail title 20px/600 (was 18px); the inline overflow menu glyph is 14px. `titleSize="lg"` is unchanged.
+- `DetailHeader` title 14px/600 (was 18px h2 or 15px h3), description 12px (was 13px).
+- `Banner` text 14px (was 13px; the callout `md` body too). `LoadingState` label 14px, hint 12px. `StatusDot` label 12px (was 11px). `CodeBlock` 12px (was 13px). `DocumentResultList` titles 14px/600 (were 16px).
+- `OutcomeSection` body 14px (was 13px), read-only line 12px. `StackedRail` empty line and `GroupedList` empty group line 12px (were 13px).
+- `ReviewThread`, `ExpertCard`, `ConsultCard`, `DiffViewer`: the 10.5px captions are 12px.
+
 ## 2.455.0
 
 - `ActivePeopleGrid` names and the More caption 12px (were 11px); chart legends 12px. ui-dom-audit contract: `people.active-caption` and `caption.typography` expect 12px (the app meta step), with the self-test fixture and `contracts.md` moved with them.

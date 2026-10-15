@@ -83,19 +83,19 @@ export function WorkActivityNode({ node, detail, selected, selectedRevisionId, l
       >
         <span aria-hidden="true" className={cn('absolute inset-y-0 left-0 w-[3px]', failed ? 'bg-danger' : ready ? 'bg-success' : current ? 'bg-info' : accent.bar)} />
         <header className="flex items-center gap-2 border-b border-border bg-surface-panel py-1.5 pl-3.5 pr-2.5">
-          <span aria-hidden="true" className={cn('flex h-5 w-5 shrink-0 items-center justify-center rounded text-[11px] leading-none', accent.chip)}>{ICONS[node.kind]}</span>
+          <span aria-hidden="true" className={cn('flex h-5 w-5 shrink-0 items-center justify-center rounded text-xs leading-none', accent.chip)}>{ICONS[node.kind]}</span>
           <span title={title} className={cn('min-w-0 flex-1 truncate text-[12px] font-semibold', muted ? 'text-text-secondary' : 'text-text-primary')}>{title}</span>
           <span aria-hidden="true" className={cn('h-2 w-2 shrink-0 rounded-full', muted ? 'bg-border-emphasis' : DOT[node.status])} />
         </header>
-        <div className={cn('space-y-1.5 py-2 pl-3.5 pr-2.5 text-[11px] leading-snug', muted ? 'text-text-tertiary' : 'text-text-secondary')}>
+        <div className={cn('space-y-1.5 py-2 pl-3.5 pr-2.5 text-xs leading-snug', muted ? 'text-text-tertiary' : 'text-text-secondary')}>
           {lines.map((line, index) => (
             <div key={`${index}-${line}`} className="flex items-start justify-between gap-1.5">
               <span data-ui-text="graph-detail" className="min-w-0">{line}</span>
               {index === 0 && visible?.badge && (
-                <span data-ui-text="graph-metadata" className={cn('shrink-0 rounded px-1.5 py-px text-[10px] font-semibold', node.status === 'running' ? 'border border-info-border text-info-fg' : 'bg-info-bg text-info-fg')}>{visible.badge}</span>
+                <span data-ui-text="graph-metadata" className={cn('shrink-0 rounded px-1.5 py-px text-xs font-semibold', node.status === 'running' ? 'border border-info-border text-info-fg' : 'bg-info-bg text-info-fg')}>{visible.badge}</span>
               )}
               {index === 0 && !visible?.badge && paused && line !== paused && (
-                <span data-ui-text="graph-metadata" data-testid="work-card-pause" className="shrink-0 rounded bg-warning-bg px-1.5 py-px text-[10px] font-semibold text-warning-fg">{paused}</span>
+                <span data-ui-text="graph-metadata" data-testid="work-card-pause" className="shrink-0 rounded bg-warning-bg px-1.5 py-px text-xs font-semibold text-warning-fg">{paused}</span>
               )}
             </div>
           ))}
@@ -104,16 +104,16 @@ export function WorkActivityNode({ node, detail, selected, selectedRevisionId, l
               <span className="flex -space-x-1.5">
                 {visible.participants.slice(0, 3).map((person) => <Avatar key={person.id} name={person.label} src={person.avatarUrl} size={18} className="ring-1 ring-surface" />)}
               </span>
-              <span data-ui-text="graph-metadata" className="min-w-0 truncate text-[10px]">{visible.participants.map((person) => person.label).slice(0, 2).join(', ')}{visible.participants.length > 2 ? ` +${visible.participants.length - 2}` : ''}</span>
+              <span data-ui-text="graph-metadata" className="min-w-0 truncate text-xs">{visible.participants.map((person) => person.label).slice(0, 2).join(', ')}{visible.participants.length > 2 ? ` +${visible.participants.length - 2}` : ''}</span>
             </div>
           )}
-          {visible?.excerpt && <p data-ui-text="graph-detail" className={cn('text-[11px] italic', muted ? 'text-text-secondary' : 'text-text-primary')}>{`“${visible.excerpt}”`}</p>}
+          {visible?.excerpt && <p data-ui-text="graph-detail" className={cn('text-xs italic', muted ? 'text-text-secondary' : 'text-text-primary')}>{`“${visible.excerpt}”`}</p>}
           {visible?.attentionLabel && <p data-ui-text="graph-detail" className="font-medium text-text-primary">{visible.attentionLabel}</p>}
           {revision?.preview && (
             <div className={cn('aspect-video w-full overflow-hidden rounded-lg border border-border bg-surface', PREVIEW_FIT)} aria-label={`${title} ${revision.label} preview`}>{revision.preview}</div>
           )}
           {!!visible?.artifact?.revisions.length && (
-            <div className="flex flex-wrap items-center gap-1 text-[10px]" aria-label={`${title} revisions`}>
+            <div className="flex flex-wrap items-center gap-1 text-xs" aria-label={`${title} revisions`}>
               {visible.artifact.revisions.map((item) => (
                 <span data-ui-text="graph-metadata" key={item.id} className={cn('rounded px-1.5 py-0.5', item.id === revision?.id ? 'bg-info-bg font-medium text-info-fg' : 'text-text-tertiary')}>{item.label}</span>
               ))}
@@ -123,7 +123,7 @@ export function WorkActivityNode({ node, detail, selected, selectedRevisionId, l
           {pending?.status === 'failed' && !visible?.lines?.length && <p data-ui-text="graph-detail" className="text-danger-fg">{pending.label} generation failed</p>}
         </div>
         {visible?.footer && (
-          <div className="flex items-center justify-between gap-2 border-t border-border py-1.5 pl-3.5 pr-2.5 text-[10px] text-text-tertiary">
+          <div className="flex items-center justify-between gap-2 border-t border-border py-1.5 pl-3.5 pr-2.5 text-xs text-text-tertiary">
             <span data-ui-text="graph-metadata" className="truncate">{visible.footer.label}</span>
             {visible.footer.note && <span data-ui-text="graph-metadata" className="shrink-0">{visible.footer.note}</span>}
           </div>
@@ -132,7 +132,7 @@ export function WorkActivityNode({ node, detail, selected, selectedRevisionId, l
       {/* The prototype hangs the run's tools off the card, not inside it: they
           belong to the attempt, and the card is the thing itself. */}
       {!!visible?.tools?.length && (
-        <div className="flex flex-wrap items-center gap-1.5 pl-1 pt-1 text-[10px] text-text-tertiary">
+        <div className="flex flex-wrap items-center gap-1.5 pl-1 pt-1 text-xs text-text-tertiary">
           <span data-ui-text="graph-metadata">Tools</span>
           {visible.tools.map((tool) => <span data-ui-text="graph-metadata" key={tool} className="rounded bg-surface-panel px-1.5 py-0.5 font-semibold text-text-secondary">{tool}</span>)}
         </div>
@@ -140,7 +140,7 @@ export function WorkActivityNode({ node, detail, selected, selectedRevisionId, l
       {!!visible?.feedbackCount && onFeedback && (!selectedRevisionId || revision) && (
         <IconButton size="sm" className="nodrag nopan absolute -right-2 -top-3 h-7 w-7 rounded-full border border-border bg-surface shadow-sm" aria-label={`${visible.feedbackCount} comments on ${title}`} onClick={(event) => { event.stopPropagation(); onFeedback(target); }}>
           <ChatIcon size={14} />
-          <span data-ui-text="graph-metadata" className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-0.5 text-[10px] text-white">{visible.feedbackCount}</span>
+          <span data-ui-text="graph-metadata" className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-0.5 text-xs leading-none text-white">{visible.feedbackCount}</span>
         </IconButton>
       )}
     </div>

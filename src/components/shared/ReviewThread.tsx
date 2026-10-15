@@ -87,7 +87,7 @@ export function ArtifactTile({ name, type, url }: { name: string; type?: string;
       <span className="text-lg" role="img" aria-label="artifact">🖼️</span>
       <div className="min-w-0">
         <div className="truncate text-xs font-medium text-text-primary">{name}</div>
-        {type && <div className="text-[10.5px] text-text-tertiary">{type}</div>}
+        {type && <div className="text-xs text-text-tertiary">{type}</div>}
       </div>
       <div className="flex-1" />
       {url ? (
@@ -95,7 +95,7 @@ export function ArtifactTile({ name, type, url }: { name: string; type?: string;
           open →
         </a>
       ) : (
-        <span className="text-[10.5px] text-text-tertiary">stored with the run</span>
+        <span className="text-xs text-text-tertiary">stored with the run</span>
       )}
     </div>
   );

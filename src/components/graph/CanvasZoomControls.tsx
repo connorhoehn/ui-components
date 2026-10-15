@@ -50,7 +50,7 @@ export function CanvasZoomControls({
     <div role="toolbar" aria-label={ariaLabel} className={cn('inline-flex items-center gap-1.5', className)} data-testid={testId}>
       <div className="inline-flex items-center rounded-md border border-border bg-surface">
         <IconButton size="md" aria-label="Zoom out" onClick={onZoomOut} disabled={atMin} className="rounded-r-none">
-          <span aria-hidden="true" className="text-[15px] leading-none text-text-secondary">−</span>
+          <span aria-hidden="true" className="text-sm leading-none text-text-secondary">−</span>
         </IconButton>
         {percent && (
           <span
@@ -62,7 +62,7 @@ export function CanvasZoomControls({
           </span>
         )}
         <IconButton size="md" aria-label="Zoom in" onClick={onZoomIn} disabled={atMax} className="rounded-l-none">
-          <span aria-hidden="true" className="text-[15px] leading-none text-text-secondary">+</span>
+          <span aria-hidden="true" className="text-sm leading-none text-text-secondary">+</span>
         </IconButton>
       </div>
       {onFit && (

@@ -197,7 +197,7 @@ export function CodeBlock({
           {copied ? 'Copied' : 'Copy'}
         </button>
       )}
-      <pre className="m-0 px-4 py-3 overflow-x-auto font-mono text-[13px] leading-relaxed">
+      <pre className="m-0 px-4 py-3 overflow-x-auto font-mono text-xs leading-relaxed">
         {showLineNumbers ? (
           <div className="flex">
             <div

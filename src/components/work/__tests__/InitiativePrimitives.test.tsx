@@ -17,12 +17,12 @@ const people = [
 ];
 
 describe('ScopeHeader (2.390.0)', () => {
-  it('titleSize="lg" draws the 28px bold title; the default stays 22px', () => {
+  it('titleSize="lg" draws the 28px bold title; the default is the 20px page title', () => {
     const { rerender } = render(<ScopeHeader title="Observability Platform" titleSize="lg" />);
     expect(screen.getByTestId('scope-header-title').className).toContain('text-[28px]');
     expect(screen.getByTestId('scope-header-title').className).toContain('font-bold');
     rerender(<ScopeHeader title="Observability Platform" />);
-    expect(screen.getByTestId('scope-header-title').className).toContain('text-[22px]');
+    expect(screen.getByTestId('scope-header-title').className).toContain('text-[20px]');
   });
 
   it('description draws a line under the title; absent draws none', () => {

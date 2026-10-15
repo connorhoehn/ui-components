@@ -53,13 +53,13 @@ export function DetailHeader({
     >
       <div className="flex flex-col gap-1.5 min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
-          <Heading className={cn('m-0', Heading === 'h2' ? 'text-[18px]' : 'text-[15px]')}>
+          <Heading className={'m-0 text-sm font-semibold text-text-primary'}>
             {title}
           </Heading>
           {badge}
         </div>
         {description ? (
-          <p className="m-0 max-w-[72ch] text-[13px] text-text-secondary">{description}</p>
+          <p className="m-0 max-w-[72ch] text-xs text-text-secondary">{description}</p>
         ) : null}
         {meta}
       </div>

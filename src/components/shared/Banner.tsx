@@ -95,7 +95,7 @@ export interface BannerProps {
    */
   meta?: ReactNode;
   /**
-   * `callout` only: `md` (default) is the 14px title over a 13px body; `lg`
+   * `callout` only: `md` (default) is the 14px title over a 14px body; `lg`
    * is a 17px title over a 15px body with roomier padding — a callout that is
    * a section's content, not a note beside it — and its `action` sits level
    * with the title rather than centred on the block. Since 2.390.0.
@@ -146,7 +146,7 @@ export default function Banner({
           // lg hangs the action off the title line, not the block's middle.
           'rounded-md flex gap-4 border text-text-primary',
           lg ? 'items-start' : 'items-center',
-          lg ? 'px-6 py-3 text-[15px]' : 'px-5 py-3 text-[13px]',
+          lg ? 'px-6 py-3 text-[15px]' : 'px-5 py-3 text-sm',
           CALLOUT_CLASSES[variant],
           accent === 'bar' && cn('border-l-[3px]', ACCENT_BAR_CLASSES[variant]),
           className,
@@ -156,7 +156,7 @@ export default function Banner({
         {iconNode}
         <div className="flex-1 min-w-0 flex flex-col gap-0.5">
           {title && <strong className={cn('font-semibold text-text-primary', lg ? 'text-[17px] leading-[22px]' : 'text-sm leading-5')}>{title}</strong>}
-          {children != null && <span className={cn(lg ? 'text-[15px] leading-[22px] text-text-primary' : 'text-[13px] leading-5 text-text-secondary')}>{children}</span>}
+          {children != null && <span className={cn(lg ? 'text-[15px] leading-[22px] text-text-primary' : 'text-sm leading-5 text-text-secondary')}>{children}</span>}
           {meta != null && (
             <span className={cn('text-text-secondary', lg ? 'text-sm leading-5' : 'text-[12px] leading-4')} data-testid={testId ? `${testId}-meta` : undefined}>
               {meta}
@@ -183,7 +183,7 @@ export default function Banner({
       data-testid={testId}
       data-layout={layout}
       className={cn(
-        '@container px-3.5 py-2.5 rounded-lg text-[13px] border',
+        '@container px-3.5 py-2.5 rounded-lg text-sm border',
         VARIANT_CLASSES[variant],
         className,
       )}

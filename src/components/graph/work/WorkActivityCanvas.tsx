@@ -405,7 +405,7 @@ export function WorkActivityCanvas(props: ActivityProps) {
  * hidden rather than wrapped — the cards still carry their own state labels.
  */
 export function WorkActivityLegend({ live }: { live: boolean }) {
-  return <ul aria-label="Activity emphasis legend" className="hidden items-center gap-2 text-[10px] text-text-tertiary @xl:flex" data-testid="work-activity-legend">
+  return <ul aria-label="Activity emphasis legend" className="hidden items-center gap-2 text-xs text-text-tertiary @xl:flex" data-testid="work-activity-legend">
     {([['earlier', 'Earlier', 'border-border bg-surface-inset opacity-70'], ['input', 'Input', 'border-border-emphasis bg-surface-inset'], ['active', live ? 'Active' : 'Active then', 'border-info bg-info']] as const).map(([key, label, swatch]) => (
       <li key={key} className="flex items-center gap-1"><span aria-hidden="true" className={cn('inline-block h-2 w-2 rounded-sm border', swatch)} />{label}</li>
     ))}

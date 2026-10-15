@@ -74,7 +74,7 @@ export function StatusDot({
       style={style}
     >
       {dot}
-      <span className="ml-1.5 text-[11px] text-[var(--color-text-secondary)]">
+      <span className="ml-1.5 text-xs text-[var(--color-text-secondary)]">
         {label}
       </span>
     </span>
