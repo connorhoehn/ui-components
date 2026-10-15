@@ -33,11 +33,11 @@ function u({ item: e, opacity: n, dotColor: r }) {
 				size: 17
 			}),
 			/* @__PURE__ */ a("span", {
-				className: "text-[11px] text-text-primary font-medium shrink-0",
+				className: "text-xs text-text-primary font-medium shrink-0",
 				children: c(e.actor)
 			}),
 			/* @__PURE__ */ a("span", {
-				className: "text-[11px] text-text-tertiary shrink-0",
+				className: "text-xs text-text-tertiary shrink-0",
 				children: e.action
 			}),
 			e.ticketId && /* @__PURE__ */ a("span", {
@@ -45,12 +45,12 @@ function u({ item: e, opacity: n, dotColor: r }) {
 				children: e.ticketId
 			}),
 			/* @__PURE__ */ a("span", {
-				className: "text-[11px] text-text-secondary overflow-hidden text-ellipsis whitespace-nowrap flex-1 min-w-0",
+				className: "text-xs text-text-secondary overflow-hidden text-ellipsis whitespace-nowrap flex-1 min-w-0",
 				title: e.subject,
 				children: e.subject
 			}),
 			e.timeLabel && /* @__PURE__ */ a("span", {
-				className: "text-[10px] text-code-subtle shrink-0 whitespace-nowrap",
+				className: "text-xs text-code-subtle shrink-0 whitespace-nowrap",
 				children: e.timeLabel
 			})
 		]
@@ -83,7 +83,7 @@ function d({ items: t, visibleCount: o = 3, rotateMs: c = 4200, staggerMs: d = 0
 	]), h.length === 0 ? /* @__PURE__ */ a("div", {
 		className: e("flex-1 flex items-center", p),
 		children: /* @__PURE__ */ a("span", {
-			className: "text-[11px] text-border",
+			className: "text-xs text-border",
 			children: "No recent activity"
 		})
 	}) : /* @__PURE__ */ a("div", {

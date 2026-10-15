@@ -179,7 +179,7 @@ function FileSection({ file, annotations, collapsed, onToggle, maxLines }: {
         aria-expanded={!collapsed}
         className="w-full flex items-center gap-2 px-3 py-2 bg-surface-panel border-0 cursor-pointer text-left hover:bg-surface-hover min-w-0"
       >
-        <span aria-hidden className="text-[10px] text-text-tertiary">{collapsed ? '▸' : '▾'}</span>
+        <span aria-hidden className="text-xs text-text-tertiary">{collapsed ? '▸' : '▾'}</span>
         <span className="text-[12px] font-mono font-semibold text-text-primary truncate">
           {file.oldPath ? `${file.oldPath} → ${file.path}` : file.path}
         </span>
@@ -188,7 +188,7 @@ function FileSection({ file, annotations, collapsed, onToggle, maxLines }: {
           <Chip tone="warning" size="xs" mono>{annotations.length} note{annotations.length === 1 ? '' : 's'}</Chip>
         )}
         <span className="flex-1" />
-        <span className="text-[11px] font-mono tabular-nums whitespace-nowrap">
+        <span className="text-xs font-mono tabular-nums whitespace-nowrap">
           <span className="text-success">+{file.adds}</span>{' '}
           <span className="text-danger">−{file.dels}</span>
         </span>
@@ -210,10 +210,10 @@ function FileSection({ file, annotations, collapsed, onToggle, maxLines }: {
                   ) : (
                     <>
                       <tr key={i} className={LINE_BG[l.kind]}>
-                        <td className="w-[3.2em] px-1.5 text-right text-[10px] text-text-tertiary select-none align-top tabular-nums border-r border-border/60">
+                        <td className="w-[3.2em] px-1.5 text-right text-xs text-text-tertiary select-none align-top tabular-nums border-r border-border/60">
                           {l.oldNo ?? ''}
                         </td>
-                        <td className="w-[3.2em] px-1.5 text-right text-[10px] text-text-tertiary select-none align-top tabular-nums border-r border-border/60">
+                        <td className="w-[3.2em] px-1.5 text-right text-xs text-text-tertiary select-none align-top tabular-nums border-r border-border/60">
                           {l.newNo ?? ''}
                         </td>
                         <td className={cn(
@@ -238,7 +238,7 @@ function FileSection({ file, annotations, collapsed, onToggle, maxLines }: {
                 ))}
                 {truncated && (
                   <tr>
-                    <td colSpan={3} className="px-3 py-1.5 text-[11px] text-text-tertiary">
+                    <td colSpan={3} className="px-3 py-1.5 text-xs text-text-tertiary">
                       … {file.lines.length - maxLines} more lines in this file not shown.
                     </td>
                   </tr>
@@ -312,7 +312,7 @@ export function DiffViewer({
     <div data-testid={testId} className={cn('flex flex-col gap-2 min-w-0', className)}>
       {/* File strip — the change at a glance, and the way around a big one. */}
       <div className="flex items-center gap-1.5 flex-wrap">
-        <span className="text-[11px] text-text-secondary font-medium whitespace-nowrap">
+        <span className="text-xs text-text-secondary font-medium whitespace-nowrap">
           {files.length} file{files.length === 1 ? '' : 's'}
           {' '}<span className="font-mono tabular-nums"><span className="text-success">+{totalAdds}</span> <span className="text-danger">−{totalDels}</span></span>
         </span>
@@ -334,7 +334,7 @@ export function DiffViewer({
       </div>
 
       {truncatedNote && (
-        <div className="text-[11px] text-warning">{truncatedNote}</div>
+        <div className="text-xs text-warning">{truncatedNote}</div>
       )}
 
       {files.map((f) => (

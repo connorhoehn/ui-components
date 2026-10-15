@@ -12,7 +12,7 @@ import { n as T, t as E } from "./Slider-DEbQCKD1.js";
 import { t as D } from "./DropdownMenu-BvzGTOgf.js";
 import { t as O } from "./Avatar-poY12YbV.js";
 import { t as k } from "./InlineAlert-CBtteaVZ.js";
-import { t as A } from "./ActivityFeed-Dh1s6ZFA.js";
+import { t as A } from "./ActivityFeed-37Apeg0J.js";
 import { t as j } from "./Checkbox-Jycr-rlf.js";
 import { memo as M, useCallback as N, useEffect as P, useLayoutEffect as F, useMemo as I, useRef as L, useState as R } from "react";
 import { Fragment as z, jsx as B, jsxs as V } from "react/jsx-runtime";

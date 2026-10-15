@@ -138,14 +138,14 @@ export function ExpertCard({
       )}
 
       {contexts.length > 0 && (
-        <div className="text-[11px] text-text-tertiary truncate" title={contexts.join(', ')}>
+        <div className="text-xs text-text-tertiary truncate" title={contexts.join(', ')}>
           Working on {contexts.join(', ')}
         </div>
       )}
 
       {shownEvidence.length > 0 && (
         <div className="flex flex-col gap-1 min-w-0">
-          <span className="text-[10px] font-semibold uppercase tracking-wide text-text-tertiary select-none">
+          <span className="text-xs font-semibold uppercase tracking-wide text-text-tertiary select-none">
             {evidenceLabel}
           </span>
           {shownEvidence.map((doc) => (

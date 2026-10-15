@@ -107,7 +107,7 @@ export function WorkspaceRail({
             <h2 className={cn('m-0 flex min-w-0 flex-1 items-center gap-2 text-text-primary', heading === 'prominent' ? 'text-[18px] font-semibold' : heading === 'label' ? cn(RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK) : heading === 'caption' ? RAIL_CAPTION : 'text-[12px] font-semibold')} data-testid={`${testId}-title`}>
               <span className="min-w-0 truncate">{title}</span>
               {typeof count === 'number' && plainCount && (
-                <span className={cn('shrink-0', heading === 'label' ? RAIL_GROUP_COUNT : 'text-[13px] font-medium text-text-secondary')} aria-label={`${count} items`} data-testid={`${testId}-count`} data-count-style="plain">{count}</span>
+                <span className={cn('shrink-0', heading === 'label' ? RAIL_GROUP_COUNT : 'text-xs font-medium text-text-secondary')} aria-label={`${count} items`} data-testid={`${testId}-count`} data-count-style="plain">{count}</span>
               )}
               {typeof count === 'number' && !plainCount && (
                 <Chip size={heading === 'prominent' ? 'md' : heading === 'caption' ? 'sm' : 'xs'} tone="neutral" className="shrink-0" aria-label={`${count} items`} data-testid={`${testId}-count`}>{count}</Chip>

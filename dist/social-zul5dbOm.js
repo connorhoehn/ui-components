@@ -40,7 +40,7 @@ import { n as ke, t as Ae } from "./ReactionPickerPopover-DJgbcskc.js";
 import { n as je } from "./useComputeProjects-ZSazDRet.js";
 import "./QuoteBlock-qqQqscMP.js";
 import { i as Me, r as Ne } from "./composerSendError-BCxgMhHn.js";
-import { r as Pe } from "./PaneStatusLine-0m8sWE8y.js";
+import { r as Pe } from "./PaneStatusLine-xsRiN9Y9.js";
 import { Suspense as Fe, createContext as Ie, lazy as Le, useCallback as K, useContext as Re, useEffect as q, useId as ze, useMemo as J, useRef as Y, useState as X } from "react";
 import { Fragment as Z, jsx as Q, jsxs as $ } from "react/jsx-runtime";
 //#region src/components/hangout/InviteCandidateList.tsx
@@ -239,7 +239,7 @@ function He({ title: e, label: t, actions: n, header: r, footer: i, children: a,
 								children: e
 							}),
 							typeof c == "number" && x && /* @__PURE__ */ Q("span", {
-								className: o("shrink-0", l === "label" ? "text-[12px] font-medium leading-4 normal-case tracking-normal tabular-nums text-text-tertiary" : "text-[13px] font-medium text-text-secondary"),
+								className: o("shrink-0", l === "label" ? "text-[12px] font-medium leading-4 normal-case tracking-normal tabular-nums text-text-tertiary" : "text-xs font-medium text-text-secondary"),
 								"aria-label": `${c} items`,
 								"data-testid": `${b}-count`,
 								"data-count-style": "plain",
@@ -3548,7 +3548,7 @@ function an(e, t = {}) {
 }
 //#endregion
 //#region src/components/social/ChatLabShell.tsx
-var on = Le(() => import("./ChatLabTerminal-sLKKQFSH.js")), sn = {
+var on = Le(() => import("./ChatLabTerminal-C7m06IJV.js")), sn = {
 	planning: {
 		label: "Planning",
 		dot: "bg-code-mauve",

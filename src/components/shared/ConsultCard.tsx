@@ -116,7 +116,7 @@ export function ConsultCard({
 
       {status === 'answered' && answer && (
         <div className="flex flex-col gap-1">
-          <span className="text-[10px] font-semibold uppercase tracking-wide text-text-tertiary select-none">
+          <span className="text-xs font-semibold uppercase tracking-wide text-text-tertiary select-none">
             Answer{answeredBy ? ` — ${answeredBy}` : ''}
           </span>
           <p className="m-0 text-[12.5px] text-text-primary leading-snug">{answer}</p>

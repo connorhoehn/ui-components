@@ -125,7 +125,7 @@ export function PaneStatusLine({
     return (
       <span
         data-testid={testId}
-        className={cn('inline-flex items-center gap-1.5 min-w-0 text-[11px] text-text-tertiary truncate', className)}
+        className={cn('inline-flex items-center gap-1.5 min-w-0 text-xs text-text-tertiary truncate', className)}
       >
         {fields.map((field, i) => (
           <Fragment key={i}>

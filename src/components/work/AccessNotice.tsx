@@ -61,7 +61,7 @@ export function AccessNotice({
       aria-labelledby={titleId}
       data-tone={tone}
       data-testid={testId}
-      className={cn('flex items-start gap-2.5 py-3 text-[13px]', className)}
+      className={cn('flex items-start gap-2.5 py-3 text-sm', className)}
     >
       <StatusDot color={DOT[tone]} size="sm" className="mt-1.5 shrink-0" />
       <div className="min-w-0 flex-1">
@@ -72,11 +72,11 @@ export function AccessNotice({
       </div>
       {action &&
         (action.href ? (
-          <Link href={action.href} onClick={action.onClick} className="shrink-0 text-[13px] font-medium">
+          <Link href={action.href} onClick={action.onClick} className="shrink-0 text-sm font-medium">
             {actionContent}
           </Link>
         ) : (
-          <Button variant="link" onClick={action.onClick} className="shrink-0 text-[13px]">
+          <Button variant="link" onClick={action.onClick} className="shrink-0 text-sm">
             {actionContent}
           </Button>
         ))}

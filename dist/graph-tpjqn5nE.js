@@ -32,7 +32,7 @@ import { t as le } from "./Checkbox-Jycr-rlf.js";
 import { n as ue } from "./ChatSidePanelRegistry-DhwY9imw.js";
 import { n as U } from "./useComputeProjects-ZSazDRet.js";
 import { t as de } from "./formatBytes-05ivRSJY.js";
-import { n as fe, r as pe } from "./PaneStatusLine-0m8sWE8y.js";
+import { n as fe, r as pe } from "./PaneStatusLine-xsRiN9Y9.js";
 /* empty css               */
 import { t as me } from "./AnimatedEdge-DnsfF8-D.js";
 import { Suspense as he, createContext as ge, lazy as _e, useCallback as W, useContext as ve, useEffect as G, useId as ye, useImperativeHandle as be, useMemo as K, useRef as q, useState as J } from "react";
@@ -3593,7 +3593,7 @@ function Xn({ node: e, artifact: r, selection: i, onSelectionChange: a, onOpen: 
 }
 //#endregion
 //#region src/components/graph/work/WorkComputePane.tsx
-var Zn = _e(() => import("./ChatLabTerminal-sLKKQFSH.js")), Qn = {
+var Zn = _e(() => import("./ChatLabTerminal-C7m06IJV.js")), Qn = {
 	planning: {
 		label: "PLANNING",
 		pill: "info",

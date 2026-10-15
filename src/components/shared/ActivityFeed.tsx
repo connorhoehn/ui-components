@@ -86,10 +86,10 @@ function ActivityRow({ item, opacity, dotColor }: ActivityRowProps) {
       <Avatar name={item.actor} size={17} />
 
       {/* "Alex C. merged" */}
-      <span className="text-[11px] text-text-primary font-medium shrink-0">
+      <span className="text-xs text-text-primary font-medium shrink-0">
         {shortName(item.actor)}
       </span>
-      <span className="text-[11px] text-text-tertiary shrink-0">{item.action}</span>
+      <span className="text-xs text-text-tertiary shrink-0">{item.action}</span>
 
       {/* Ticket badge */}
       {item.ticketId && (
@@ -110,7 +110,7 @@ function ActivityRow({ item, opacity, dotColor }: ActivityRowProps) {
           whatever width each caller actually has, and `title` still holds the
           whole thing. */}
       <span
-        className="text-[11px] text-text-secondary overflow-hidden text-ellipsis whitespace-nowrap flex-1 min-w-0"
+        className="text-xs text-text-secondary overflow-hidden text-ellipsis whitespace-nowrap flex-1 min-w-0"
         title={item.subject}
       >
         {item.subject}
@@ -118,7 +118,7 @@ function ActivityRow({ item, opacity, dotColor }: ActivityRowProps) {
 
       {/* Timestamp */}
       {item.timeLabel && (
-        <span className="text-[10px] text-code-subtle shrink-0 whitespace-nowrap">
+        <span className="text-xs text-code-subtle shrink-0 whitespace-nowrap">
           {item.timeLabel}
         </span>
       )}
@@ -180,7 +180,7 @@ export function ActivityFeed({
   if (visible.length === 0) {
     return (
       <div className={cn('flex-1 flex items-center', className)}>
-        <span className="text-[11px] text-border">No recent activity</span>
+        <span className="text-xs text-border">No recent activity</span>
       </div>
     );
   }

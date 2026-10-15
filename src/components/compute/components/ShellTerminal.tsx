@@ -373,7 +373,7 @@ export const ShellTerminal = forwardRef<ShellTerminalHandle, ShellTerminalProps>
     const term = new Terminal({
       convertEol: false,
       cursorBlink: true,
-      fontSize: 12.5,
+      fontSize: 12,
       fontFamily: '"Fira Code", ui-monospace, SFMono-Regular, Menlo, monospace',
       theme: themePalette(background, hostRef.current),
       scrollback: 5_000,

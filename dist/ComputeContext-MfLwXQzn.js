@@ -10,7 +10,7 @@ import { t as f } from "./LogStream-Bk8DVIVb.js";
 import { t as p } from "./RisingParticles-BBIjT11W.js";
 import { t as m } from "./Link-h2c9gcsw.js";
 import { i as h, r as g } from "./useComputeProjects-ZSazDRet.js";
-import { a as _, s as v } from "./PaneStatusLine-0m8sWE8y.js";
+import { a as _, s as v } from "./PaneStatusLine-xsRiN9Y9.js";
 import { createContext as y, forwardRef as b, useCallback as x, useContext as S, useEffect as C, useImperativeHandle as w, useLayoutEffect as T, useMemo as E, useRef as D, useState as O } from "react";
 import { Fragment as ee, jsx as k, jsxs as A } from "react/jsx-runtime";
 import { Terminal as te } from "@xterm/xterm";
@@ -1986,7 +1986,7 @@ var St = b(function({ sessionId: t, shellId: n, label: r, cwd: i, onExit: a, hei
 		let e = new te({
 			convertEol: !1,
 			cursorBlink: !0,
-			fontSize: 12.5,
+			fontSize: 12,
 			fontFamily: "\"Fira Code\", ui-monospace, SFMono-Regular, Menlo, monospace",
 			theme: xt(d, y.current),
 			scrollback: 5e3

@@ -91,7 +91,7 @@ export function ArtifactTile({ name, type, url }: { name: string; type?: string;
       </div>
       <div className="flex-1" />
       {url ? (
-        <a href={url} target="_blank" rel="noreferrer" className="text-[11px] text-primary no-underline hover:underline">
+        <a href={url} target="_blank" rel="noreferrer" className="text-xs text-primary no-underline hover:underline">
           open →
         </a>
       ) : (
@@ -127,7 +127,7 @@ function Post({ post, labels, tones, onAnswer, busy, placeholder, submitLabel }:
         {openQuestion && <Chip tone="warning" size="xs" dot="pulse">needs a human</Chip>}
         {post.kind === 'question' && post.resolved && <Chip tone="success" size="xs">resolved</Chip>}
         <div className="flex-1" />
-        {post.timeLabel && <span className="whitespace-nowrap text-[11px] text-text-tertiary">{post.timeLabel}</span>}
+        {post.timeLabel && <span className="whitespace-nowrap text-xs text-text-tertiary">{post.timeLabel}</span>}
       </div>
 
       <div className="mt-1.5 whitespace-pre-wrap pl-7 text-xs leading-relaxed text-text-secondary">

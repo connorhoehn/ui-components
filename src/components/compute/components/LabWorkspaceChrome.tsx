@@ -308,7 +308,7 @@ export function WorkspacePane({
               })),
             }]}
           />
-          <span aria-hidden="true" className="text-text-tertiary">·</span>
+          <span aria-hidden="true" className="text-xs text-text-tertiary">·</span>
           <StatusDot size="xs" color={meta.color} pulse={meta.pulse} aria-label={meta.label} />
           <span className="min-w-[3rem] text-[12px] font-mono text-text-primary truncate" title={computer.project ?? computer.label}>
             {computer.label}

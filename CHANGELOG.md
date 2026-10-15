@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.456.1
+
+- `FilePickerButton` takes `size="sm"` (32px tall, `data-size="sm"`; the default stays 36px) so a page-header action can sit on the small-button height.
+- `ActivityFeed` rows 12px (were 11 and 10). `ReviewThread`, `ExpertCard`, `ConsultCard`, `DiffViewer` captions, line numbers and notes 12px (were 10 and 11). `AccessNotice` 14px title row and action, 12px body (were 13px). `WorkspaceRail` plain count 12px (was 13px).
+- Compute lab: `PaneStatusLine` meta line and the pane separator 12px (were 11 and inherited 16), the instruction caption 12px, `ShellTerminal` xterm font 12px (was 12.5).
+
 ## 2.456.0
 
 Third step of the app type scale (aws-agentcore `type-scale-burndown.tsv`).

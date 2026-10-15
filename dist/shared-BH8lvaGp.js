@@ -59,7 +59,7 @@ import "./MeterRow-7m0okaBy.js";
 import "./FollowUpChips-BWHw0Y0h.js";
 import "./PresenceAvatars-Bh1NCrpi.js";
 import "./FileUploadDrop-DrckU_7j.js";
-import { t as W } from "./ActivityFeed-Dh1s6ZFA.js";
+import { t as W } from "./ActivityFeed-37Apeg0J.js";
 import { a as he, c as ge, d as _e, i as ve, l as ye, o as be } from "./railType-C-v_XDgr.js";
 import "./PopoverForm-ssRJdFGx.js";
 import "./useMeasuredWidth-Dv1skbGr.js";
@@ -1189,14 +1189,14 @@ function Ct({ name: t, title: n, subtitle: i, imageUrl: a, matchedSkills: o, oth
 				]
 			}),
 			c.length > 0 && /* @__PURE__ */ Q("div", {
-				className: "text-[11px] text-text-tertiary truncate",
+				className: "text-xs text-text-tertiary truncate",
 				title: c.join(", "),
 				children: ["Working on ", c.join(", ")]
 			}),
 			y.length > 0 && /* @__PURE__ */ Q("div", {
 				className: "flex flex-col gap-1 min-w-0",
 				children: [/* @__PURE__ */ Z("span", {
-					className: "text-[10px] font-semibold uppercase tracking-wide text-text-tertiary select-none",
+					className: "text-xs font-semibold uppercase tracking-wide text-text-tertiary select-none",
 					children: u
 				}), y.map((e) => /* @__PURE__ */ Q("div", {
 					className: "flex items-center gap-1.5 min-w-0",
@@ -1284,7 +1284,7 @@ function Tt({ question: t, context: n, origin: i = [], askedAt: a, status: o, an
 			o === "answered" && s && /* @__PURE__ */ Q("div", {
 				className: "flex flex-col gap-1",
 				children: [/* @__PURE__ */ Q("span", {
-					className: "text-[10px] font-semibold uppercase tracking-wide text-text-tertiary select-none",
+					className: "text-xs font-semibold uppercase tracking-wide text-text-tertiary select-none",
 					children: ["Answer", c ? ` — ${c}` : ""]
 				}), /* @__PURE__ */ Z("p", {
 					className: "m-0 text-[12.5px] text-text-primary leading-snug",
@@ -1451,7 +1451,7 @@ function Mt({ file: t, annotations: n, collapsed: r, onToggle: i, maxLines: a })
 			children: [
 				/* @__PURE__ */ Z("span", {
 					"aria-hidden": !0,
-					className: "text-[10px] text-text-tertiary",
+					className: "text-xs text-text-tertiary",
 					children: r ? "▸" : "▾"
 				}),
 				/* @__PURE__ */ Z("span", {
@@ -1475,7 +1475,7 @@ function Mt({ file: t, annotations: n, collapsed: r, onToggle: i, maxLines: a })
 				}),
 				/* @__PURE__ */ Z("span", { className: "flex-1" }),
 				/* @__PURE__ */ Q("span", {
-					className: "text-[11px] font-mono tabular-nums whitespace-nowrap",
+					className: "text-xs font-mono tabular-nums whitespace-nowrap",
 					children: [
 						/* @__PURE__ */ Q("span", {
 							className: "text-success",
@@ -1507,11 +1507,11 @@ function Mt({ file: t, annotations: n, collapsed: r, onToggle: i, maxLines: a })
 					className: At[t.kind],
 					children: [
 						/* @__PURE__ */ Z("td", {
-							className: "w-[3.2em] px-1.5 text-right text-[10px] text-text-tertiary select-none align-top tabular-nums border-r border-border/60",
+							className: "w-[3.2em] px-1.5 text-right text-xs text-text-tertiary select-none align-top tabular-nums border-r border-border/60",
 							children: t.oldNo ?? ""
 						}),
 						/* @__PURE__ */ Z("td", {
-							className: "w-[3.2em] px-1.5 text-right text-[10px] text-text-tertiary select-none align-top tabular-nums border-r border-border/60",
+							className: "w-[3.2em] px-1.5 text-right text-xs text-text-tertiary select-none align-top tabular-nums border-r border-border/60",
 							children: t.newNo ?? ""
 						}),
 						/* @__PURE__ */ Q("td", {
@@ -1528,7 +1528,7 @@ function Mt({ file: t, annotations: n, collapsed: r, onToggle: i, maxLines: a })
 					children: /* @__PURE__ */ Z(jt, { a: e })
 				}) }, `${n}-a${t}`))] })), l && /* @__PURE__ */ Z("tr", { children: /* @__PURE__ */ Q("td", {
 					colSpan: 3,
-					className: "px-3 py-1.5 text-[11px] text-text-tertiary",
+					className: "px-3 py-1.5 text-xs text-text-tertiary",
 					children: [
 						"… ",
 						t.lines.length - a,
@@ -1578,7 +1578,7 @@ function Nt({ diff: t, annotations: n = [], defaultCollapsed: r = !1, maxLinesPe
 			/* @__PURE__ */ Q("div", {
 				className: "flex items-center gap-1.5 flex-wrap",
 				children: [/* @__PURE__ */ Q("span", {
-					className: "text-[11px] text-text-secondary font-medium whitespace-nowrap",
+					className: "text-xs text-text-secondary font-medium whitespace-nowrap",
 					children: [
 						c.length,
 						" file",
@@ -1608,7 +1608,7 @@ function Nt({ diff: t, annotations: n = [], defaultCollapsed: r = !1, maxLinesPe
 				}, t.path))]
 			}),
 			a && /* @__PURE__ */ Z("div", {
-				className: "text-[11px] text-warning",
+				className: "text-xs text-warning",
 				children: a
 			}),
 			c.map((e) => /* @__PURE__ */ Z("div", {
@@ -3437,7 +3437,7 @@ function pr({ name: e, type: t, url: n }) {
 				href: n,
 				target: "_blank",
 				rel: "noreferrer",
-				className: "text-[11px] text-primary no-underline hover:underline",
+				className: "text-xs text-primary no-underline hover:underline",
 				children: "open →"
 			}) : /* @__PURE__ */ Z("span", {
 				className: "text-xs text-text-tertiary",
@@ -3486,7 +3486,7 @@ function mr({ post: t, labels: n, tones: i, onAnswer: a, busy: o, placeholder: s
 					}),
 					/* @__PURE__ */ Z("div", { className: "flex-1" }),
 					t.timeLabel && /* @__PURE__ */ Z("span", {
-						className: "whitespace-nowrap text-[11px] text-text-tertiary",
+						className: "whitespace-nowrap text-xs text-text-tertiary",
 						children: t.timeLabel
 					})
 				]
@@ -5331,23 +5331,24 @@ function mi({ items: n, currentId: r, onCurrentChange: i, onOpen: a, onToggleAtt
 }
 //#endregion
 //#region src/components/shared/FilePickerButton.tsx
-function hi({ onFiles: t, accept: n, multiple: r = !1, variant: i = "secondary", icon: a, disabled: o, children: s, className: c, "aria-label": l, "data-testid": u = "file-picker-button" }) {
-	let d = J(null);
+function hi({ onFiles: t, accept: n, multiple: r = !1, variant: i = "secondary", size: a = "md", icon: o, disabled: s, children: c, className: l, "aria-label": u, "data-testid": d = "file-picker-button" }) {
+	let f = J(null);
 	return /* @__PURE__ */ Q(X, { children: [/* @__PURE__ */ Q("button", {
 		type: "button",
-		disabled: o,
-		"aria-label": l,
-		"data-testid": u,
-		onClick: () => d.current?.click(),
-		className: e("inline-flex h-9 cursor-pointer items-center gap-2 rounded-lg px-3.5 text-sm font-medium transition-colors duration-100", "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50", i === "primary" ? "border-none bg-primary text-on-primary hover:bg-primary-hover" : "border border-border bg-surface text-text-primary hover:bg-surface-hover", c),
-		children: [a, s]
+		disabled: s,
+		"aria-label": u,
+		"data-testid": d,
+		"data-size": a === "sm" ? "sm" : void 0,
+		onClick: () => f.current?.click(),
+		className: e("inline-flex cursor-pointer items-center gap-2 rounded-lg text-sm font-medium transition-colors duration-100", a === "sm" ? "h-8 px-3" : "h-9 px-3.5", "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50", i === "primary" ? "border-none bg-primary text-on-primary hover:bg-primary-hover" : "border border-border bg-surface text-text-primary hover:bg-surface-hover", l),
+		children: [o, c]
 	}), /* @__PURE__ */ Z("input", {
-		ref: d,
+		ref: f,
 		type: "file",
 		hidden: !0,
 		accept: n,
 		multiple: r,
-		"data-testid": `${u}-input`,
+		"data-testid": `${d}-input`,
 		onChange: (e) => {
 			let n = Array.from(e.target.files ?? []);
 			e.target.value = "", n.length && t(n);

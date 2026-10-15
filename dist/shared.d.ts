@@ -2384,7 +2384,7 @@ export declare type FileKindMarkSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 /** `outline` (since 2.386.5): the glyph alone, in the kind's colour, no box fill — an editor's title mark. */
 export declare type FileKindMarkVariant = 'tinted' | 'plain' | 'glyph' | 'outline' | 'app';
 
-export declare function FilePickerButton({ onFiles, accept, multiple, variant, icon, disabled, children, className, 'aria-label': ariaLabel, 'data-testid': testId, }: FilePickerButtonProps): JSX.Element;
+export declare function FilePickerButton({ onFiles, accept, multiple, variant, size, icon, disabled, children, className, 'aria-label': ariaLabel, 'data-testid': testId, }: FilePickerButtonProps): JSX.Element;
 
 export declare interface FilePickerButtonProps {
     onFiles: (files: File[]) => void;
@@ -2393,6 +2393,8 @@ export declare interface FilePickerButtonProps {
     multiple?: boolean;
     /** `secondary` is a 36px bordered button, `primary` the brand one. */
     variant?: 'secondary' | 'primary';
+    /** `md` (default) is 36px tall; `sm` (since 2.456.1) is the 32px header-action height. */
+    size?: 'sm' | 'md';
     icon?: ReactNode;
     disabled?: boolean;
     children: ReactNode;

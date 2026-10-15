@@ -13,6 +13,8 @@ export interface FilePickerButtonProps {
   multiple?: boolean;
   /** `secondary` is a 36px bordered button, `primary` the brand one. */
   variant?: 'secondary' | 'primary';
+  /** `md` (default) is 36px tall; `sm` (since 2.456.1) is the 32px header-action height. */
+  size?: 'sm' | 'md';
   icon?: ReactNode;
   disabled?: boolean;
   children: ReactNode;
@@ -26,6 +28,7 @@ export function FilePickerButton({
   accept,
   multiple = false,
   variant = 'secondary',
+  size = 'md',
   icon,
   disabled,
   children,
@@ -41,9 +44,11 @@ export function FilePickerButton({
         disabled={disabled}
         aria-label={ariaLabel}
         data-testid={testId}
+        data-size={size === 'sm' ? 'sm' : undefined}
         onClick={() => input.current?.click()}
         className={cn(
-          'inline-flex h-9 cursor-pointer items-center gap-2 rounded-lg px-3.5 text-sm font-medium transition-colors duration-100',
+          'inline-flex cursor-pointer items-center gap-2 rounded-lg text-sm font-medium transition-colors duration-100',
+          size === 'sm' ? 'h-8 px-3' : 'h-9 px-3.5',
           'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50',
           variant === 'primary'
             ? 'border-none bg-primary text-on-primary hover:bg-primary-hover'

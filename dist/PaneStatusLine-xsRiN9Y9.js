@@ -134,7 +134,7 @@ function m({ computer: c, modelId: m, models: h = [], idleWindowMs: g = d, broad
 			children: v
 		}, "mode")), /* @__PURE__ */ a("span", {
 			"data-testid": S,
-			className: e("inline-flex items-center gap-1.5 min-w-0 text-[11px] text-text-tertiary truncate", x),
+			className: e("inline-flex items-center gap-1.5 min-w-0 text-xs text-text-tertiary truncate", x),
 			children: n.map((e, t) => /* @__PURE__ */ o(r, { children: [t > 0 && /* @__PURE__ */ a("span", {
 				"aria-hidden": "true",
 				children: "·"

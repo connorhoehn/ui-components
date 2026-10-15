@@ -928,7 +928,7 @@ export function ComputerLab({
                   ⏎
                 </button>
               </div>
-              <div data-testid="lab-instruction-caption" className="px-1 pt-0.5 text-[11px] text-text-tertiary tabular-nums">
+              <div data-testid="lab-instruction-caption" className="px-1 pt-0.5 text-xs text-text-tertiary tabular-nums">
                 {instructMode === 'type' ? 'Shell input' : 'Agent instruction'} · {targetCount} {targetCount === 1 ? 'target' : 'targets'}
                 {instructing && ' · sending…'}
               </div>
