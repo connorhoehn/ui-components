@@ -101,9 +101,9 @@ function p({ name: t, onRename: l, memberCount: u, description: d, tabs: f, acti
 							onKeyDown: (e) => {
 								e.key === "Enter" ? (e.preventDefault(), O()) : e.key === "Escape" && (e.preventDefault(), k()), e.stopPropagation();
 							},
-							className: e("min-w-0 rounded border border-primary bg-surface px-1 py-0 font-semibold text-[var(--color-text-primary)] leading-tight outline-none", x ? "text-[13px]" : "text-xl")
+							className: e("min-w-0 rounded border border-primary bg-surface px-1 py-0 font-semibold text-[var(--color-text-primary)] leading-tight outline-none", "text-sm")
 						}) : /* @__PURE__ */ s("h2", {
-							className: e("font-semibold text-[var(--color-text-primary)] leading-tight truncate", x ? "text-[13px]" : "text-xl", l && "cursor-text"),
+							className: e("font-semibold text-[var(--color-text-primary)] leading-tight truncate", "text-sm", l && "cursor-text"),
 							onDoubleClick: l ? () => w(!0) : void 0,
 							title: l ? "Double-click to rename" : void 0,
 							"data-testid": b ? `${b}-name` : void 0,
@@ -113,7 +113,7 @@ function p({ name: t, onRename: l, memberCount: u, description: d, tabs: f, acti
 							onClick: g,
 							"data-testid": "channel-header-members",
 							"aria-label": `${u} ${u === 1 ? "member" : "members"} — open the member list`,
-							className: e("text-[11px] font-medium text-[var(--color-text-tertiary)]", "bg-transparent border-none p-0 leading-none", "cursor-pointer hover:text-[var(--color-text-secondary)]"),
+							className: e("text-xs font-medium text-[var(--color-text-tertiary)]", "bg-transparent border-none p-0 leading-none", "cursor-pointer hover:text-[var(--color-text-secondary)]"),
 							children: [
 								u,
 								" ",
@@ -121,7 +121,7 @@ function p({ name: t, onRename: l, memberCount: u, description: d, tabs: f, acti
 							]
 						}) : /* @__PURE__ */ c("span", {
 							"data-testid": "channel-header-members",
-							className: "text-[11px] font-medium leading-none text-[var(--color-text-tertiary)]",
+							className: "text-xs font-medium leading-none text-[var(--color-text-tertiary)]",
 							children: [
 								u,
 								" ",

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.456.2
+
+- `ChannelHeader` name 14px/600 at both sizes (the `md` bar was 20px, the `sm` column 13px) and its member count 12px (was 11px): a conversation's header is a record headline under the page title, and 20px belongs to the page title alone.
+
 ## 2.456.1
 
 - `FilePickerButton` takes `size="sm"` (32px tall, `data-size="sm"`; the default stays 36px) so a page-header action can sit on the small-button height.

@@ -172,14 +172,14 @@ export function ChannelHeader({
                 }}
                 className={cn(
                   'min-w-0 rounded border border-primary bg-surface px-1 py-0 font-semibold text-[var(--color-text-primary)] leading-tight outline-none',
-                  small ? 'text-[13px]' : 'text-xl',
+                  'text-sm',
                 )}
               />
             ) : (
               <h2
                 className={cn(
                   'font-semibold text-[var(--color-text-primary)] leading-tight truncate',
-                  small ? 'text-[13px]' : 'text-xl',
+                  'text-sm',
                   onRename && 'cursor-text',
                 )}
                 onDoubleClick={onRename ? () => setEditing(true) : undefined}
@@ -202,7 +202,7 @@ export function ChannelHeader({
                   data-testid="channel-header-members"
                   aria-label={`${memberCount} ${memberCount === 1 ? 'member' : 'members'} — open the member list`}
                   className={cn(
-                    'text-[11px] font-medium text-[var(--color-text-tertiary)]',
+                    'text-xs font-medium text-[var(--color-text-tertiary)]',
                     'bg-transparent border-none p-0 leading-none',
                     'cursor-pointer hover:text-[var(--color-text-secondary)]',
                   )}
@@ -212,7 +212,7 @@ export function ChannelHeader({
               ) : (
                 <span
                   data-testid="channel-header-members"
-                  className="text-[11px] font-medium leading-none text-[var(--color-text-tertiary)]"
+                  className="text-xs font-medium leading-none text-[var(--color-text-tertiary)]"
                 >
                   {memberCount} {memberCount === 1 ? 'member' : 'members'}
                 </span>

@@ -9,7 +9,7 @@ import { t as C } from "./ConfirmDialog-DVS3MsJN.js";
 import { t as ee } from "./Input-_B49FdRY.js";
 import { t as w } from "./EmptyState-ChFI22O0.js";
 import { t as T } from "./StatusPill-CLkB5jFS.js";
-import { i as E, n as D, t as O } from "./ChannelHeader-DxCvqVtz.js";
+import { i as E, n as D, t as O } from "./ChannelHeader-ZpNDoKb8.js";
 import { t as te } from "./DropdownMenu-BvzGTOgf.js";
 import { n as k } from "./DockedPanelContext-pH9A5z1h.js";
 import { t as A } from "./Textarea-BwvE1HPn.js";
