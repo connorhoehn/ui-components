@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { WorkSharingControls } from '../WorkSharingControls';
 import type { WorkGraphEdgeData, WorkGraphNodeData, WorkSharingControlsProps, WorkSharingFormValue } from '../types';
@@ -116,7 +116,12 @@ describe('WorkSharingControls on a real day', () => {
     const list = items.querySelector('[data-testid="work-sharing-checklist"]')!;
     expect(list.className).toContain('max-h-72');
     expect(list.className).toContain('overflow-y-auto');
-    fireEvent.change(screen.getByLabelText('Filter work items'), { target: { value: 'sprint' } });
+    // Look the filter up by placeholder, then assert its accessible name directly:
+    // getByLabelText walks every <label>/element pair, which is quadratic in jsdom
+    // and took ~10s with 250 checklist rows (the source of the load-sensitive timeout).
+    const filter = within(items).getByPlaceholderText('Filter work items');
+    expect(filter).toHaveAttribute('aria-label', 'Filter work items');
+    fireEvent.change(filter, { target: { value: 'sprint' } });
     expect(list.querySelectorAll('label')).toHaveLength(1);
     fireEvent.click(screen.getByLabelText(/Sprint review/));
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ selectedNodeIds: ['n-1', 'n-2', 'n-137'] }));

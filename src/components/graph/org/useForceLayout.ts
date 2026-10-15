@@ -130,6 +130,21 @@ export function forceParamsFor(count: number, width: number, height: number): Or
   };
 }
 
+/**
+ * A stable pseudo-random number in [0, 1) derived from a person's id (FNV-1a
+ * then a murmur-style finaliser). The starting scatter must not use
+ * Math.random: d3-force is otherwise deterministic, so the same org would
+ * settle into a different layout on every mount.
+ */
+function idUnit(id: string, salt: number): number {
+  let h = (0x811c9dc5 ^ salt) >>> 0;
+  for (let i = 0; i < id.length; i++) h = Math.imul(h ^ id.charCodeAt(i), 0x01000193) >>> 0;
+  h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b) >>> 0;
+  h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35) >>> 0;
+  h ^= h >>> 16;
+  return (h >>> 0) / 4294967296;
+}
+
 const defaultRadiusOf = (p: GraphPerson) => 15 + p.influenceScore * 20;
 
 /**
@@ -147,8 +162,8 @@ export function createOrgSimulation({
     const center = deptCenters.get(p.department) ?? { x: width / 2, y: height / 2 };
     return {
       ...p,
-      x: center.x + (Math.random() - 0.5) * 2 * params.jitter,
-      y: center.y + (Math.random() - 0.5) * 2 * params.jitter,
+      x: center.x + (idUnit(p.id, 0) - 0.5) * 2 * params.jitter,
+      y: center.y + (idUnit(p.id, 1) - 0.5) * 2 * params.jitter,
     };
   });
 

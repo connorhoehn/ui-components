@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.456.4
+
+- The org graph's starting scatter is deterministic. `createOrgSimulation` placed each person around their department cell with `Math.random`, so the same org settled into a different layout on every mount (and `forceLayout.test.ts` "fills the clear area's width" failed about one run in three). The offset now derives from a hash of the person id. `WorkSharingControls` test: the 250-item case looked up the filter with `getByLabelText`, which took ~10s in jsdom and timed out under load; it now uses the placeholder and asserts the `aria-label` directly (7.7s to 0.2s).
+
 ## 2.456.3
 
 - `EditorShell` byline save status 12px (was 13px); the Slides toolbar style note 12px (was 11px).
