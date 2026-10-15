@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.454.2
+
+- `Combobox` (and `PersonPicker`, which builds on it) measures as the house text input. The code shipped inside 2.454.0's commit (the checkout was shared); this release adds its changelog entry and the unit test's release. A single field is exactly `--ui-control-sm` / `--ui-control-md` tall (a multi field uses them as its minimum), with Input's `border-border-emphasis`, `bg-surface-panel`, padding (`px-2` / `px-2.5`), type and focus ring. The default size follows the density like Input (`md`, `sm` when compact) instead of a fixed `sm`.
+
 ## 2.454.1
 
 - Changelog for ui-dom-audit changes that shipped inside 2.454.0's commit (the checkout was shared): `scripts/run.mjs` exports `loadContract(path?)`, `measureCase(page, { contract, selectors, required, composerExpectation, probe })` (the runner's pause-motion, measure-twice and stability step), `isDeepRule(contract, id)`; every deep-audit rule carries `deep: true` and `report.gate` counts `resting` and `deep` findings apart (deep findings are marked `deep: true`; `summary.txt` prints both); adapters may implement `classifyContext(page, spec, state)` → `{ kind, skip?, reason? }` to record a page outside the app frame or an unreadable record without judging it (a placeholder reason fails `coverage.context`). Fixtures for each; documented in `contracts.md` and `deep-audit.md`.
