@@ -1360,7 +1360,7 @@ function nt(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
-var rt = se(() => import("./SortableSlideList-gKTzj5M8.js"));
+var rt = se(() => import("./SortableSlideList-B5jg19kP.js"));
 function it(e, t) {
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }
@@ -2469,7 +2469,7 @@ function At({ slide: e, theme: t, onAddSlide: n, canAddSlide: o = !0, onLayoutCh
 			})] }),
 			D("note") && /* @__PURE__ */ K(_, {
 				as: "span",
-				className: "ml-1 shrink-0 whitespace-nowrap text-[11px] text-text-tertiary",
+				className: "ml-1 shrink-0 whitespace-nowrap text-xs text-text-tertiary",
 				title: Tt,
 				"data-testid": `${x}-style-note`,
 				children: wt

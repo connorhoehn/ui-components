@@ -350,7 +350,7 @@ export function SlidesToolbar({
       {on('note') && (
         <Text
           as="span"
-          className="ml-1 shrink-0 whitespace-nowrap text-[11px] text-text-tertiary"
+          className="ml-1 shrink-0 whitespace-nowrap text-xs text-text-tertiary"
           title={STYLE_NOTE_TITLE}
           data-testid={`${testIdPrefix}-style-note`}
         >

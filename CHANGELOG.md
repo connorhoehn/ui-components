@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.456.3
+
+- `EditorShell` byline save status 12px (was 13px); the Slides toolbar style note 12px (was 11px).
+
 ## 2.456.2
 
 - `ChannelHeader` name 14px/600 at both sizes (the `md` bar was 20px, the `sm` column 13px) and its member count 12px (was 11px): a conversation's header is a record headline under the page title, and 20px belongs to the page title alone.

@@ -405,7 +405,7 @@ export function EditorShell({
                   />
                 )}
                 {meta != null && <span className="min-w-0 truncate">{meta}</span>}
-                <DocumentSaveStatus state={saveState} className="text-[13px]" />
+                <DocumentSaveStatus state={saveState} className="text-xs" />
               </div>
             )}
           </div>
