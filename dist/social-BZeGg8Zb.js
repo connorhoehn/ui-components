@@ -5027,7 +5027,7 @@ function gr({ people: e, maxVisible: t = 8, onSelectPerson: n, onShowAll: r, onS
 					className: "h-1.5 w-1.5 shrink-0 rounded-full bg-primary"
 				}), /* @__PURE__ */ Q("span", {
 					"data-ui-text": "active-person-caption",
-					className: "min-w-0 truncate text-[11px] font-medium text-text-primary",
+					className: "min-w-0 truncate text-[12px] font-medium text-text-primary",
 					children: pr(e.displayName)
 				})]
 			});
@@ -5099,7 +5099,7 @@ function gr({ people: e, maxVisible: t = 8, onSelectPerson: n, onShowAll: r, onS
 				children: ["+", d]
 			}), /* @__PURE__ */ Q("span", {
 				"data-ui-text": "active-person-caption",
-				className: "w-full min-w-0 truncate text-[11px] font-medium text-text-tertiary",
+				className: "w-full min-w-0 truncate text-[12px] font-medium text-text-tertiary",
 				children: "More"
 			})]
 		}) : /* @__PURE__ */ $("div", {
@@ -5110,7 +5110,7 @@ function gr({ people: e, maxVisible: t = 8, onSelectPerson: n, onShowAll: r, onS
 				children: ["+", d]
 			}), /* @__PURE__ */ Q("span", {
 				"data-ui-text": "active-person-caption",
-				className: "w-full min-w-0 truncate text-[11px] font-medium text-text-tertiary",
+				className: "w-full min-w-0 truncate text-[12px] font-medium text-text-tertiary",
 				children: "More"
 			})]
 		}))]

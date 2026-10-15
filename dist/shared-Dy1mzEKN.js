@@ -14,7 +14,7 @@ import { c as A, l as j, n as M, t as N } from "./Text-4BIlhd_-.js";
 import "./FollowBanner-B0SN-fYr.js";
 import "./Badge-B51Hl2wN.js";
 import "./Banner-DsDANtvy.js";
-import "./Chart-xxoyJmZI.js";
+import "./Chart-toR_hL7e.js";
 import { t as P } from "./Modal-CEiWhFnj.js";
 import { t as F } from "./ConfirmDialog-DVS3MsJN.js";
 import { t as I } from "./Input-_B49FdRY.js";

@@ -476,7 +476,7 @@
       "kind": "text",
       "selector": "$captions",
       "properties": {
-        "fontSize": 11
+        "fontSize": 12
       },
       "owner": "secondary caption",
       "tolerance": 0.1
@@ -592,7 +592,7 @@
       "kind": "text",
       "selector": "$activePersonCaptions",
       "properties": {
-        "fontSize": 11,
+        "fontSize": 12,
         "fontWeight": "500"
       },
       "tolerance": 0.1,

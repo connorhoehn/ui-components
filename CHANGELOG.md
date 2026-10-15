@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.455.0
+
+- `ActivePeopleGrid` names and the More caption 12px (were 11px); chart legends 12px. ui-dom-audit contract: `people.active-caption` and `caption.typography` expect 12px (the app meta step), with the self-test fixture and `contracts.md` moved with them.
+
 ## 2.454.2
 
 - `Combobox` (and `PersonPicker`, which builds on it) measures as the house text input. The code shipped inside 2.454.0's commit (the checkout was shared); this release adds its changelog entry and the unit test's release. A single field is exactly `--ui-control-sm` / `--ui-control-md` tall (a multi field uses them as its minimum), with Input's `border-border-emphasis`, `bg-surface-panel`, padding (`px-2` / `px-2.5`), type and focus ring. The default size follows the density like Input (`md`, `sm` when compact) instead of a fixed `sm`.

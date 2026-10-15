@@ -87,7 +87,7 @@ const TOOLTIP_ITEM_STYLE: CSSProperties = {
 };
 
 const LEGEND_WRAPPER_STYLE: CSSProperties = {
-  fontSize: 11,
+  fontSize: 12,
   color: 'var(--color-text-secondary)',
   paddingBottom: 4,
 };

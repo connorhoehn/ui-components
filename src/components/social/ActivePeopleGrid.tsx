@@ -181,7 +181,7 @@ export function ActivePeopleGrid({
                 className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary"
               />
             )}
-            <span data-ui-text="active-person-caption" className="min-w-0 truncate text-[11px] font-medium text-text-primary">
+            <span data-ui-text="active-person-caption" className="min-w-0 truncate text-[12px] font-medium text-text-primary">
               {firstName(person.displayName)}
             </span>
           </span>
@@ -269,7 +269,7 @@ export function ActivePeopleGrid({
             >
               +{overflow}
             </span>
-            <span data-ui-text="active-person-caption" className="w-full min-w-0 truncate text-[11px] font-medium text-text-tertiary">
+            <span data-ui-text="active-person-caption" className="w-full min-w-0 truncate text-[12px] font-medium text-text-tertiary">
               More
             </span>
           </button>
@@ -280,7 +280,7 @@ export function ActivePeopleGrid({
             >
               +{overflow}
             </span>
-            <span data-ui-text="active-person-caption" className="w-full min-w-0 truncate text-[11px] font-medium text-text-tertiary">
+            <span data-ui-text="active-person-caption" className="w-full min-w-0 truncate text-[12px] font-medium text-text-tertiary">
               More
             </span>
           </div>

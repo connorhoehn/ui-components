@@ -31,7 +31,7 @@ var _ = 180, v = 80, y = {
 	fontSize: 10,
 	padding: 0
 }, T = {
-	fontSize: 11,
+	fontSize: 12,
 	color: "var(--color-text-secondary)",
 	paddingBottom: 4
 }, E = "var(--color-border)", D = .5;
