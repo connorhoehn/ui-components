@@ -353,7 +353,7 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, vari
             {active.fields.map((field, i) => (
               <div key={`${field.label}-${i}`} className="flex min-w-0 max-w-full flex-col">
                 <dt className="m-0 text-xs font-normal text-text-tertiary">{field.label}</dt>
-                <dd className={cn('m-0 min-w-0 break-words text-sm font-normal', FIELD_TONE[field.tone ?? 'neutral'], field.mono && 'font-mono')}
+                <dd className={cn('m-0 min-w-0 break-words text-xs font-normal', FIELD_TONE[field.tone ?? 'neutral'], field.mono && 'tabular-nums')}
                   {...(typeof field.value === 'string' ? { title: field.value } : {})}>{field.value}</dd>
               </div>
             ))}

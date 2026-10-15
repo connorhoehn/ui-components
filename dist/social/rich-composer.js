@@ -5,9 +5,9 @@ import { t as o } from "../Select-DjpQtNw3.js";
 import { a as s, c, i as l, l as u, n as d, r as f, t as p } from "../composerSendError-BCxgMhHn.js";
 import { a as m, i as h, n as g, r as _, t as v } from "../composerContext-BLn1-Nao.js";
 import { a as ee, i as y, n as b, o as x, r as te, s as S, t as C } from "../ConversationInputs-GSOr1WbY.js";
-import { a as w, c as T, i as E, l as D, n as ne, o as re, r as O, s as ie, t as ae, u as oe } from "../RichChatComposer-Bu81KyMw.js";
-import { t as se } from "../ContextComposer-DLAmODCX.js";
-import { t as ce } from "../AgentComposerDock-COpr4CFf.js";
+import { a as w, c as T, i as E, l as D, n as ne, o as re, r as O, s as ie, t as ae, u as oe } from "../RichChatComposer-BwhPKm5d.js";
+import { t as se } from "../ContextComposer-C-4bfw4e.js";
+import { t as ce } from "../AgentComposerDock-CRDX4bbv.js";
 import { useCallback as k, useEffect as A, useId as le, useMemo as j, useRef as M, useState as N } from "react";
 import { jsx as P, jsxs as F } from "react/jsx-runtime";
 //#region src/components/social/composerPromptModel.ts
@@ -408,7 +408,7 @@ function Ce({ deck: t, prompts: o, input: s = null, variant: c = "card", classNa
 							className: "m-0 text-xs font-normal text-text-tertiary",
 							children: t.label
 						}), /* @__PURE__ */ P("dd", {
-							className: e("m-0 min-w-0 break-words text-sm font-normal", be[t.tone ?? "neutral"], t.mono && "font-mono"),
+							className: e("m-0 min-w-0 break-words text-xs font-normal", be[t.tone ?? "neutral"], t.mono && "tabular-nums"),
 							...typeof t.value == "string" ? { title: t.value } : {},
 							children: t.value
 						})]

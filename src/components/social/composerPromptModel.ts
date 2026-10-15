@@ -27,7 +27,7 @@ export interface ComposerPromptField {
   value: ReactNode;
   /** Colours the value (a warning: "$4.10 left of $5.00"). */
   tone?: ComposerPromptTone;
-  /** Monospace value (ids, repos). */
+  /** An identifier value (ids, repos): tabular figures in the body face, never monospace. */
   mono?: boolean;
 }
 
