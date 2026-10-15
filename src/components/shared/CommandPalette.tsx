@@ -71,10 +71,54 @@ export interface CommandPaletteProviderProps {
   children: ReactNode;
 }
 
+/** One record a host's search returned (a person, an initiative, a request…). */
+export interface PaletteRecord {
+  id: string;
+  title: string;
+  subtitle?: string;
+  /** Short type label shown as a chip, e.g. "Person", "Request". */
+  kind: string;
+  /** Where the record lives; handed to `onOpenRecord` on Enter/click. */
+  href: string;
+  icon?: ReactNode;
+}
+
+/** Records of one type, in the order the host wants them shown. */
+export interface PaletteRecordGroup {
+  group: string;
+  items: PaletteRecord[];
+}
+
+/**
+ * Host search. Must honour `signal` (the palette aborts it when the query
+ * changes or the palette closes). Reject to show the palette's error row.
+ */
+export type SearchPaletteRecords = (
+  query: string,
+  options: { signal: AbortSignal },
+) => Promise<PaletteRecordGroup[]>;
+
 export interface CommandPaletteProps {
+  /**
+   * Input placeholder. Hosts must only promise what `searchRecords` can find
+   * (not "a person" unless people are indexed).
+   */
   placeholder?: string;
+  /** Replaces the default "No matches for “query”" empty row. */
   emptyState?: ReactNode;
   className?: string;
+  /**
+   * Async record search. When set, a record section follows the commands
+   * once the query reaches `minRecordQueryLength`; commands never wait on it.
+   * Since 2.457.0.
+   */
+  searchRecords?: SearchPaletteRecords;
+  /** Called with the record on Enter/click. Defaults to `location.assign(href)`. */
+  onOpenRecord?: (record: PaletteRecord) => void;
+  /** Quiet period before `searchRecords` fires. Default 200ms. */
+  recordDebounceMs?: number;
+  /** Shortest trimmed query sent to `searchRecords`. Default 2. */
+  minRecordQueryLength?: number;
 }
 
 export interface CommandPaletteHintProps {
@@ -356,10 +400,99 @@ function groupCommands(commands: Command[]): GroupedCommands[] {
   }));
 }
 
+/**
+ * Token match: every whitespace-separated token of the query must appear
+ * somewhere in the haystack, in any order ("requests my open" finds "My open
+ * requests"). Falls back to an in-order character match of the whole query so
+ * short fuzzy habits ("cp" for "command palette") keep working.
+ */
+export function matchTokens(haystack: string, query: string): number {
+  const q = query.trim().toLowerCase();
+  if (!q) return 1;
+  const h = haystack.toLowerCase();
+  const tokens = q.split(/\s+/).filter(Boolean);
+  if (tokens.every((t) => h.includes(t))) {
+    return h.startsWith(tokens[0]) ? 1 : 0.8;
+  }
+  let at = 0;
+  for (const ch of q.replace(/\s+/g, '')) {
+    at = h.indexOf(ch, at);
+    if (at < 0) return 0;
+    at += 1;
+  }
+  return 0.1;
+}
+
+type RecordState =
+  | { status: 'idle'; groups: PaletteRecordGroup[] }
+  | { status: 'loading'; groups: PaletteRecordGroup[] }
+  | { status: 'done'; groups: PaletteRecordGroup[] }
+  | { status: 'error'; groups: PaletteRecordGroup[] };
+
+const IDLE: RecordState = { status: 'idle', groups: [] };
+
+function useRecordSearch(
+  active: boolean,
+  query: string,
+  search: SearchPaletteRecords | undefined,
+  debounceMs: number,
+  minLength: number,
+): { state: RecordState; retry: () => void } {
+  const [state, setState] = useState<RecordState>(IDLE);
+  const [attempt, setAttempt] = useState(0);
+  const searchRef = useRef(search);
+  searchRef.current = search;
+  const q = query.trim();
+  const enabled = active && !!search && q.length >= minLength;
+
+  useEffect(() => {
+    if (!enabled) {
+      setState(IDLE);
+      return;
+    }
+    const controller = new AbortController();
+    // Loading shows at once; the request itself waits out the debounce.
+    setState({ status: 'loading', groups: [] });
+    const timer = setTimeout(() => {
+      const run = searchRef.current;
+      if (!run) return;
+      run(q, { signal: controller.signal }).then(
+        (groups) => {
+          if (controller.signal.aborted) return;
+          setState({
+            status: 'done',
+            groups: (groups ?? []).filter((g) => g.items.length > 0),
+          });
+        },
+        () => {
+          if (controller.signal.aborted) return;
+          setState({ status: 'error', groups: [] });
+        },
+      );
+    }, debounceMs);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [enabled, q, debounceMs, attempt]);
+
+  const retry = useCallback(() => setAttempt((n) => n + 1), []);
+  return { state: enabled ? state : IDLE, retry };
+}
+
+const ITEM_CLASS = cn(
+  'flex items-center gap-2 px-3 py-2 mx-1 rounded-md cursor-pointer text-sm',
+  'text-text-primary aria-selected:bg-surface-hover',
+);
+
 export function CommandPalette({
   placeholder = 'Type a command or search…',
   emptyState,
   className,
+  searchRecords,
+  onOpenRecord,
+  recordDebounceMs = 200,
+  minRecordQueryLength = 2,
 }: CommandPaletteProps = {}) {
   const {
     isOpen,
@@ -383,6 +516,53 @@ export function CommandPalette({
   }, [mergedCommands, query, recents]);
 
   const grouped = useMemo(() => groupCommands(mergedCommands), [mergedCommands]);
+
+  const { state: records, retry } = useRecordSearch(
+    isOpen,
+    query,
+    searchRecords,
+    recordDebounceMs,
+    minRecordQueryLength,
+  );
+  const trimmed = query.trim();
+  const commandMatchCount = useMemo(
+    () =>
+      trimmed === ''
+        ? mergedCommands.length
+        : mergedCommands.filter(
+            (c) =>
+              matchTokens(
+                `${c.id} ${c.label} ${(c.keywords ?? []).join(' ')}`,
+                trimmed,
+              ) > 0,
+          ).length,
+    [mergedCommands, trimmed],
+  );
+  const recordCount = records.groups.reduce((n, g) => n + g.items.length, 0);
+  const totalMatches = commandMatchCount + recordCount;
+  const showEmpty =
+    trimmed !== '' && totalMatches === 0 && records.status !== 'loading' && records.status !== 'error';
+  const announcement =
+    trimmed === ''
+      ? ''
+      : records.status === 'loading'
+        ? `${commandMatchCount} commands. Searching records.`
+        : records.status === 'error'
+          ? `${commandMatchCount} commands. Record search failed.`
+          : totalMatches === 0
+            ? `No matches for ${trimmed}`
+            : `${totalMatches} ${totalMatches === 1 ? 'result' : 'results'}`;
+
+  const handleOpenRecord = useCallback(
+    (rec: PaletteRecord) => {
+      close();
+      void Promise.resolve().then(() => {
+        if (onOpenRecord) onOpenRecord(rec);
+        else if (typeof window !== 'undefined') window.location.assign(rec.href);
+      });
+    },
+    [close, onOpenRecord],
+  );
 
   // We close BEFORE invoking run() so navigation/route changes happen with a
   // clean modal state. Any async work in run() resolves after the close has
@@ -409,6 +589,9 @@ export function CommandPalette({
       <Cmdk
         label="Command palette"
         value={undefined}
+        filter={(value, search, keywords) =>
+          matchTokens(`${value} ${(keywords ?? []).join(' ')}`, search)
+        }
         // cmdk uses its own internal input value; we mirror it via the
         // Input's onValueChange so the provider owns query state.
         className={cn('flex flex-col gap-0 w-full', className)}
@@ -426,9 +609,14 @@ export function CommandPalette({
           data-testid="command-palette-input"
         />
         <Cmdk.List className="max-h-[360px] overflow-y-auto py-2">
-          <Cmdk.Empty className="px-3 py-6 text-center text-sm text-text-tertiary">
-            {emptyState ?? 'No results.'}
-          </Cmdk.Empty>
+          {showEmpty ? (
+            <div
+              className="px-3 py-6 text-center text-sm text-text-tertiary"
+              data-testid="command-palette-empty"
+            >
+              {emptyState ?? `No matches for \u201c${trimmed}\u201d`}
+            </div>
+          ) : null}
           {recentGroup.length > 0 && (
             <Cmdk.Group heading="Recent" data-testid="command-palette-group-recent">
               {recentGroup.map((cmd) => (
@@ -502,7 +690,72 @@ export function CommandPalette({
               ))}
             </Cmdk.Group>
           ))}
+          {records.groups.map((g) => (
+            <Cmdk.Group
+              key={`records-${g.group}`}
+              heading={g.group}
+              forceMount
+              data-testid={`command-palette-records-${g.group}`}
+            >
+              {g.items.map((rec) => (
+                <Cmdk.Item
+                  key={`${g.group}-${rec.id}`}
+                  value={`record ${g.group} ${rec.id} ${rec.title}`}
+                  forceMount
+                  onSelect={() => handleOpenRecord(rec)}
+                  data-testid={`command-palette-record-${rec.id}`}
+                  className={ITEM_CLASS}
+                >
+                  {rec.icon && (
+                    <span className="shrink-0 text-text-secondary">{rec.icon}</span>
+                  )}
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate">{rec.title}</span>
+                    {rec.subtitle && (
+                      <span className="block truncate text-xs text-text-tertiary">
+                        {rec.subtitle}
+                      </span>
+                    )}
+                  </span>
+                  <span className="shrink-0 rounded border border-border px-1.5 text-xs text-text-secondary">
+                    {rec.kind}
+                  </span>
+                </Cmdk.Item>
+              ))}
+            </Cmdk.Group>
+          ))}
+          {records.status === 'loading' && (
+            <div
+              className="px-3 py-2 text-sm text-text-tertiary"
+              data-testid="command-palette-records-loading"
+            >
+              Searching records…
+            </div>
+          )}
+          {records.status === 'error' && (
+            <div
+              className="flex items-center gap-2 px-3 py-2 text-sm text-text-secondary"
+              data-testid="command-palette-records-error"
+            >
+              <span className="flex-1">Couldn&rsquo;t search records.</span>
+              <button
+                type="button"
+                onClick={retry}
+                className="rounded border border-border px-2 py-0.5 text-xs hover:bg-surface-hover"
+              >
+                Retry
+              </button>
+            </div>
+          )}
         </Cmdk.List>
+        <div
+          role="status"
+          aria-live="polite"
+          className="sr-only"
+          data-testid="command-palette-status"
+        >
+          {announcement}
+        </div>
       </Cmdk>
     </Modal>
   );

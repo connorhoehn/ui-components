@@ -165,3 +165,50 @@ export const WithKeyboardShortcuts: Story = {
     </CommandPaletteProvider>
   ),
 };
+
+const RECORD_COMMANDS: Command[] = [
+  { id: 'teams', label: 'Teams', group: 'Pages', run: noop },
+  { id: 'open-reqs', label: 'My open requests', group: 'Pages', run: noop },
+];
+
+/**
+ * Record results: type two or more characters. Commands match by tokens in any
+ * order and never wait; records arrive after a 200ms debounce from the host's
+ * `searchRecords` (here a 600ms fake). Try "rhea", "requests open", "zzzz".
+ */
+export const WithRecordResults: Story = {
+  render: () => (
+    <CommandPaletteProvider commands={RECORD_COMMANDS} recentsKey={null}>
+      <AutoOpen />
+      <CommandPalette
+        placeholder="Search pages, people and requests"
+        searchRecords={(q, { signal }) =>
+          new Promise((resolve, reject) => {
+            const t = setTimeout(() => {
+              if (!/rhea|req/i.test(q)) return resolve([]);
+              resolve([
+                { group: 'People', items: [{ id: 'p-001', title: 'Rhea Patel', subtitle: 'Engineering', kind: 'Person', href: '/people/p-001' }] },
+                { group: 'Requests', items: [{ id: 'req-0001', title: 'Prod access for Rhea', subtitle: 'Pending approval', kind: 'Request', href: '/access/req-0001' }] },
+              ]);
+            }, 600);
+            signal.addEventListener('abort', () => {
+              clearTimeout(t);
+              reject(new DOMException('aborted', 'AbortError'));
+            });
+          })
+        }
+        onOpenRecord={noop}
+      />
+    </CommandPaletteProvider>
+  ),
+};
+
+/** The host search rejects: commands stay usable and a Retry row appears. */
+export const RecordSearchError: Story = {
+  render: () => (
+    <CommandPaletteProvider commands={RECORD_COMMANDS} recentsKey={null}>
+      <AutoOpen />
+      <CommandPalette searchRecords={() => Promise.reject(new Error('down'))} />
+    </CommandPaletteProvider>
+  ),
+};
