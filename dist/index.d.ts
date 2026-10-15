@@ -5447,7 +5447,7 @@ export declare interface Command {
     run: () => void | Promise<void>;
 }
 
-export declare function CommandPalette({ placeholder, emptyState, className, }?: CommandPaletteProps): JSX.Element;
+export declare function CommandPalette({ placeholder, emptyState, className, searchRecords, onOpenRecord, recordDebounceMs, minRecordQueryLength, }?: CommandPaletteProps): JSX.Element;
 
 export declare interface CommandPaletteController {
     open: () => void;
@@ -5472,9 +5472,26 @@ export declare interface CommandPaletteHintProps {
 }
 
 export declare interface CommandPaletteProps {
+    /**
+     * Input placeholder. Hosts must only promise what `searchRecords` can find
+     * (not "a person" unless people are indexed).
+     */
     placeholder?: string;
+    /** Replaces the default "No matches for “query”" empty row. */
     emptyState?: ReactNode;
     className?: string;
+    /**
+     * Async record search. When set, a record section follows the commands
+     * once the query reaches `minRecordQueryLength`; commands never wait on it.
+     * Since 2.457.0.
+     */
+    searchRecords?: SearchPaletteRecords;
+    /** Called with the record on Enter/click. Defaults to `location.assign(href)`. */
+    onOpenRecord?: (record: PaletteRecord) => void;
+    /** Quiet period before `searchRecords` fires. Default 200ms. */
+    recordDebounceMs?: number;
+    /** Shortest trimmed query sent to `searchRecords`. Default 2. */
+    minRecordQueryLength?: number;
 }
 
 export declare function CommandPaletteProvider({ commands, getDynamicCommands, recentsKey, recentsLimit, children, }: CommandPaletteProviderProps): JSX.Element;
@@ -13093,6 +13110,14 @@ export declare function matchHotkey(e: KeyboardEvent, spec: string): boolean;
  */
 export declare function matchingTag(person: GraphPerson, query: string | undefined): string | undefined;
 
+/**
+ * Token match: every whitespace-separated token of the query must appear
+ * somewhere in the haystack, in any order ("requests my open" finds "My open
+ * requests"). Falls back to an in-order character match of the whole query so
+ * short fuzzy habits ("cp" for "command palette") keep working.
+ */
+export declare function matchTokens(haystack: string, query: string): number;
+
 export declare const MAX_DECK_SLIDES = 40;
 
 /** Largest value in a degree map, or 0 for an empty graph. */
@@ -14761,6 +14786,24 @@ export declare interface PageSectionProps {
     size?: 'lg' | 'md' | 'sm';
     className?: string;
     'data-testid'?: string;
+}
+
+/** One record a host's search returned (a person, an initiative, a request…). */
+export declare interface PaletteRecord {
+    id: string;
+    title: string;
+    subtitle?: string;
+    /** Short type label shown as a chip, e.g. "Person", "Request". */
+    kind: string;
+    /** Where the record lives; handed to `onOpenRecord` on Enter/click. */
+    href: string;
+    icon?: ReactNode;
+}
+
+/** Records of one type, in the order the host wants them shown. */
+export declare interface PaletteRecordGroup {
+    group: string;
+    items: PaletteRecord[];
 }
 
 /**
@@ -19604,6 +19647,14 @@ export declare interface SearchInputProps {
 
 /** @see SurfaceTone — which colour family the field paints in. */
 export declare type SearchInputTone = SurfaceTone;
+
+/**
+ * Host search. Must honour `signal` (the palette aborts it when the query
+ * changes or the palette closes). Reject to show the palette's error row.
+ */
+export declare type SearchPaletteRecords = (query: string, options: {
+    signal: AbortSignal;
+}) => Promise<PaletteRecordGroup[]>;
 
 export declare interface Section {
     id: string;

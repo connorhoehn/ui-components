@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## 2.457.0
 
 - `CommandPalette` reaches records. New props: `searchRecords(query, { signal })` returning `PaletteRecordGroup[]` (`{ group, items: PaletteRecord[] }`, item = `{ id, title, subtitle?, kind, href, icon? }`), `onOpenRecord(record)`, `recordDebounceMs` (200), `minRecordQueryLength` (2). Records debounce, abort when the query changes or the palette closes, show a loading row and an error row with Retry, and never block the static commands. They sit in the same listbox, so arrow keys and Enter cross command and record groups (`aria-activedescendant`, an `aria-live` status announces the result count).
-- Commands now match by tokens (all words present, any order) before falling back to the old in-order character match, so "requests open" finds "My open requests". The empty state is honest: "No matches for \u201cquery\u201d" (still overridable with `emptyState`). New exports: `matchTokens`, types `PaletteRecord`, `PaletteRecordGroup`, `SearchPaletteRecords`.
+- Commands now match by tokens (all words present, any order) before falling back to the old in-order character match, so "requests open" finds "My open requests". The empty state is honest: "No matches for “query”" (still overridable with `emptyState`). New exports: `matchTokens`, types `PaletteRecord`, `PaletteRecordGroup`, `SearchPaletteRecords`.
 
 ## 2.456.4
 
