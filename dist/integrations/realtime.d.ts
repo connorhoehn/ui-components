@@ -3252,6 +3252,13 @@ export declare interface RMBreakoutState {
         fromDisplayName: string;
         at: string;
     } | null;
+    /** realtime-modules 0.130.0+: the last 20 announcements, oldest first. Older pins: absent. */
+    announcements?: Array<{
+        message: string;
+        fromUserId: string;
+        fromDisplayName: string;
+        at: string;
+    }>;
     settings: {
         allowReturnToMain: boolean;
     };

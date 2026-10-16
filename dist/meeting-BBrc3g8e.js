@@ -21,48 +21,48 @@ import { t as C } from "./FileUploadDrop-DrckU_7j.js";
 import { t as w } from "./ActivityFeed-Cp6MhNab.js";
 import { a as T, i as E, n as D, o as O } from "./DockedAside-BDA5tJ1T.js";
 import { d as k, dt as A, lt as j, n as M, t as N, u as P, ut as F } from "./ConversationSurface-Cj3TMoE4.js";
-import { E as I, G as ee, R as te, T as ne, Y as re, _ as ie, i as L, k as R, n as ae, q as oe, s as z, t as se, w as ce, x as le, y as ue } from "./BreakoutRoomsPanel-BDePp0T6.js";
-import { t as de } from "./useActiveSpeaker-BGKJU3Lb.js";
-import { c as B, o as fe, s as pe } from "./useDocumentImageUpload-3W74XPh6.js";
-import { Component as me, createContext as V, createElement as he, useCallback as H, useContext as U, useEffect as W, useMemo as G, useRef as K, useState as q } from "react";
-import { Fragment as J, jsx as Y, jsxs as X } from "react/jsx-runtime";
-import * as ge from "yjs";
+import { E as I, G as ee, R as te, T as ne, Y as re, _ as ie, i as L, k as R, n as ae, q as oe, s as z, t as se, w as B, x as ce, y as le } from "./BreakoutRoomsPanel-BDePp0T6.js";
+import { t as ue } from "./useActiveSpeaker-BGKJU3Lb.js";
+import { c as V, o as de, s as fe } from "./useDocumentImageUpload-3W74XPh6.js";
+import { Component as pe, createContext as H, createElement as me, useCallback as U, useContext as W, useEffect as G, useMemo as K, useRef as q, useState as J } from "react";
+import { Fragment as Y, jsx as X, jsxs as Z } from "react/jsx-runtime";
+import * as he from "yjs";
 //#region src/integrations/realtime/HangoutRoomRow.tsx
-function _e(e) {
+function ge(e) {
 	function t(t) {
-		return ve(e, t);
+		return _e(e, t);
 	}
 	return t;
 }
-function ve(e, { slug: t, name: n, participantId: r, occupancy: i, subscribeRoomsIndex: a, onClick: o, onContextMenu: c, onOpenConversation: l, kebab: u, className: d, "data-testid": f = "room-row" }) {
-	let p = e.useRoomOccupancy(a ? t : null, { subscribeRoomsIndex: a }), m = a ? p.occupancy ?? null : i ?? null, h = m?.count ?? 0, g = m?.members ?? [], _ = G(() => r ? g.some((e) => e.participantId === r) : !1, [g, r]), v = _, y = G(() => g.slice(0, 3).map((e) => ({
+function _e(e, { slug: t, name: n, participantId: r, occupancy: i, subscribeRoomsIndex: a, onClick: o, onContextMenu: c, onOpenConversation: l, kebab: u, className: d, "data-testid": f = "room-row" }) {
+	let p = e.useRoomOccupancy(a ? t : null, { subscribeRoomsIndex: a }), m = a ? p.occupancy ?? null : i ?? null, h = m?.count ?? 0, g = m?.members ?? [], _ = K(() => r ? g.some((e) => e.participantId === r) : !1, [g, r]), v = _, y = K(() => g.slice(0, 3).map((e) => ({
 		id: e.participantId,
 		name: e.displayName || e.userId,
 		online: !0
 	})), [g]), b = null;
-	h > 1 ? b = /* @__PURE__ */ X(J, { children: [/* @__PURE__ */ Y(S, {
+	h > 1 ? b = /* @__PURE__ */ Z(Y, { children: [/* @__PURE__ */ X(S, {
 		users: y,
 		maxVisible: 3,
 		size: 18
-	}), /* @__PURE__ */ Y(s, {
+	}), /* @__PURE__ */ X(s, {
 		variant: "count",
 		value: h,
 		color: "muted"
-	})] }) : h === 1 && _ ? b = /* @__PURE__ */ Y(s, {
+	})] }) : h === 1 && _ ? b = /* @__PURE__ */ X(s, {
 		variant: "pulse",
 		color: "accent",
 		"aria-label": "Just you in this room",
 		"data-testid": `${f}-self-pulse`
-	}) : h === 1 && (b = /* @__PURE__ */ X(J, { children: [/* @__PURE__ */ Y(S, {
+	}) : h === 1 && (b = /* @__PURE__ */ Z(Y, { children: [/* @__PURE__ */ X(S, {
 		users: y,
 		maxVisible: 1,
 		size: 18
-	}), /* @__PURE__ */ Y(s, {
+	}), /* @__PURE__ */ X(s, {
 		variant: "count",
 		value: 1,
 		color: "muted"
 	})] }));
-	let x = l ? /* @__PURE__ */ Y("button", {
+	let x = l ? /* @__PURE__ */ X("button", {
 		type: "button",
 		"aria-label": `Open the ${n} conversation`,
 		title: "Open conversation",
@@ -73,9 +73,9 @@ function ve(e, { slug: t, name: n, participantId: r, occupancy: i, subscribeRoom
 		className: "grid h-5 w-5 place-items-center rounded bg-transparent text-[11px] text-text-tertiary opacity-0 transition-opacity hover:bg-surface-hover hover:text-text-primary focus:opacity-100 group-hover:opacity-100",
 		children: "💬"
 	}) : null;
-	return /* @__PURE__ */ Y(T, {
+	return /* @__PURE__ */ X(T, {
 		"data-testid": f,
-		icon: /* @__PURE__ */ Y("span", {
+		icon: /* @__PURE__ */ X("span", {
 			"aria-hidden": "true",
 			className: "font-semibold text-text-tertiary",
 			children: "#"
@@ -98,20 +98,20 @@ function ve(e, { slug: t, name: n, participantId: r, occupancy: i, subscribeRoom
 }
 //#endregion
 //#region src/integrations/realtime-modules/NewHangoutRoomDialog.tsx
-var ye = 3, be = 48;
-function xe(e) {
+var ve = 3, ye = 48;
+function be(e) {
 	return e.normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 48);
 }
-function Z(e) {
+function xe(e) {
 	let t = e.trim();
-	return t.length === 0 ? "Name is required." : t.length < ye ? `Name must be at least ${ye} characters.` : t.length > be ? `Name must be at most ${be} characters.` : null;
+	return t.length === 0 ? "Name is required." : t.length < ve ? `Name must be at least ${ve} characters.` : t.length > ye ? `Name must be at most ${ye} characters.` : null;
 }
 function Se({ open: e, onClose: n, onCreate: r, onCreated: i, defaultVisibility: a }) {
-	let [o, s] = q(""), [c, u] = q(""), [d, f] = q(!1), [p, m] = q(!1), [g, _] = q(!1), [v, y] = q(null);
-	W(() => {
+	let [o, s] = J(""), [c, u] = J(""), [d, f] = J(!1), [p, m] = J(!1), [g, _] = J(!1), [v, y] = J(null);
+	G(() => {
 		e && (s(""), u(""), f(!1), m(!1), _(!1), y(null));
 	}, [e]);
-	let b = G(() => Z(o), [o]), x = G(() => xe(o), [o]), S = !b && !g;
+	let b = K(() => xe(o), [o]), x = K(() => be(o), [o]), S = !b && !g;
 	async function C(e) {
 		if (e.preventDefault(), S) {
 			_(!0), y(null);
@@ -131,7 +131,7 @@ function Se({ open: e, onClose: n, onCreate: r, onCreated: i, defaultVisibility:
 			}
 		}
 	}
-	return /* @__PURE__ */ Y(l, {
+	return /* @__PURE__ */ X(l, {
 		open: e,
 		onClose: g ? () => {} : n,
 		title: "New room",
@@ -139,18 +139,18 @@ function Se({ open: e, onClose: n, onCreate: r, onCreated: i, defaultVisibility:
 		rawChildren: !0,
 		backdropTestId: "new-hangout-room-dialog",
 		footer: null,
-		children: /* @__PURE__ */ X("form", {
+		children: /* @__PURE__ */ Z("form", {
 			onSubmit: C,
 			className: "flex flex-col gap-4",
 			children: [
-				/* @__PURE__ */ X("label", {
+				/* @__PURE__ */ Z("label", {
 					className: "flex flex-col gap-1",
 					children: [
-						/* @__PURE__ */ Y("span", {
+						/* @__PURE__ */ X("span", {
 							className: "text-[12px] font-semibold text-text-primary",
 							children: "Name"
 						}),
-						/* @__PURE__ */ Y("input", {
+						/* @__PURE__ */ X("input", {
 							"data-autofocus": !0,
 							"data-testid": "new-hangout-room-name",
 							type: "text",
@@ -161,29 +161,29 @@ function Se({ open: e, onClose: n, onCreate: r, onCreated: i, defaultVisibility:
 							disabled: g,
 							className: "w-full px-3 py-2 text-sm border border-border-emphasis rounded-md focus:outline-none focus:ring-2 focus:ring-info"
 						}),
-						/* @__PURE__ */ X("div", {
+						/* @__PURE__ */ Z("div", {
 							className: "flex items-center justify-between text-[11px] text-text-tertiary",
-							children: [/* @__PURE__ */ Y("span", {
+							children: [/* @__PURE__ */ X("span", {
 								"data-testid": "new-hangout-room-slug-preview",
 								children: x ? `#${x}` : "Slug preview appears here"
-							}), /* @__PURE__ */ Y("span", { children: `${o.trim().length}/${be}` })]
+							}), /* @__PURE__ */ X("span", { children: `${o.trim().length}/${ye}` })]
 						}),
-						b && o.length > 0 && /* @__PURE__ */ Y("span", {
+						b && o.length > 0 && /* @__PURE__ */ X("span", {
 							"data-testid": "new-hangout-room-name-error",
 							className: "text-[11px] text-danger-fg",
 							children: b
 						})
 					]
 				}),
-				/* @__PURE__ */ X("label", {
+				/* @__PURE__ */ Z("label", {
 					className: "flex flex-col gap-1",
-					children: [/* @__PURE__ */ X("span", {
+					children: [/* @__PURE__ */ Z("span", {
 						className: "text-[12px] font-semibold text-text-primary",
-						children: ["Description ", /* @__PURE__ */ Y("span", {
+						children: ["Description ", /* @__PURE__ */ X("span", {
 							className: "font-normal text-text-tertiary",
 							children: "(optional)"
 						})]
-					}), /* @__PURE__ */ Y("textarea", {
+					}), /* @__PURE__ */ X("textarea", {
 						"data-testid": "new-hangout-room-description",
 						value: c,
 						onChange: (e) => u(e.target.value),
@@ -193,38 +193,38 @@ function Se({ open: e, onClose: n, onCreate: r, onCreated: i, defaultVisibility:
 						className: "w-full px-3 py-2 text-sm border border-border-emphasis rounded-md focus:outline-none focus:ring-2 focus:ring-info resize-none"
 					})]
 				}),
-				/* @__PURE__ */ X("div", {
+				/* @__PURE__ */ Z("div", {
 					className: "flex flex-col gap-3",
-					children: [/* @__PURE__ */ X("label", {
+					children: [/* @__PURE__ */ Z("label", {
 						className: "flex items-center justify-between gap-3",
-						children: [/* @__PURE__ */ X("span", {
+						children: [/* @__PURE__ */ Z("span", {
 							className: "flex flex-col",
-							children: [/* @__PURE__ */ Y("span", {
+							children: [/* @__PURE__ */ X("span", {
 								className: "text-[13px] font-semibold text-text-primary",
 								children: "Audio only"
-							}), /* @__PURE__ */ Y("span", {
+							}), /* @__PURE__ */ X("span", {
 								className: "text-[11px] text-text-tertiary",
 								children: "Skip video tracks — voice-only room."
 							})]
-						}), /* @__PURE__ */ Y(h, {
+						}), /* @__PURE__ */ X(h, {
 							checked: d,
 							onChange: f,
 							disabled: g,
 							"aria-label": "Audio only",
 							"data-testid": "new-hangout-room-audio-only"
 						})]
-					}), /* @__PURE__ */ X("label", {
+					}), /* @__PURE__ */ Z("label", {
 						className: "flex items-center justify-between gap-3",
-						children: [/* @__PURE__ */ X("span", {
+						children: [/* @__PURE__ */ Z("span", {
 							className: "flex flex-col",
-							children: [/* @__PURE__ */ Y("span", {
+							children: [/* @__PURE__ */ X("span", {
 								className: "text-[13px] font-semibold text-text-primary",
 								children: "Recording enabled"
-							}), /* @__PURE__ */ Y("span", {
+							}), /* @__PURE__ */ X("span", {
 								className: "text-[11px] text-text-tertiary",
 								children: "Allow server-side recording of sessions."
 							})]
-						}), /* @__PURE__ */ Y(h, {
+						}), /* @__PURE__ */ X(h, {
 							checked: p,
 							onChange: m,
 							disabled: g,
@@ -233,21 +233,21 @@ function Se({ open: e, onClose: n, onCreate: r, onCreated: i, defaultVisibility:
 						})]
 					})]
 				}),
-				v && /* @__PURE__ */ Y("div", {
+				v && /* @__PURE__ */ X("div", {
 					"data-testid": "new-hangout-room-error",
 					role: "alert",
 					className: "text-[12px] text-danger-fg bg-danger-bg border border-danger-border rounded-md px-3 py-2",
 					children: v
 				}),
-				/* @__PURE__ */ X("div", {
+				/* @__PURE__ */ Z("div", {
 					className: "flex justify-end gap-2 pt-1",
-					children: [/* @__PURE__ */ Y(t, {
+					children: [/* @__PURE__ */ X(t, {
 						type: "button",
 						variant: "ghost",
 						onClick: n,
 						disabled: g,
 						children: "Cancel"
-					}), /* @__PURE__ */ Y(t, {
+					}), /* @__PURE__ */ X(t, {
 						type: "submit",
 						variant: "primary",
 						disabled: !S,
@@ -268,61 +268,61 @@ function Ce(e) {
 	return t;
 }
 function we(e, { rooms: r, occupancyFor: i, occupancyAdapter: a, participantId: o, onJoinRoom: s, onOpenConversation: c, onContextMenu: l, onBrowseAll: u, maxVisible: f = 10, title: p = "Rooms", storageKey: m, collapsed: h = !1, onToggleCollapse: g, renderCreateDialog: _ }) {
-	let [v, y] = q(!1), b = () => y(!0), x = () => y(!1), S = G(() => {
+	let [v, y] = J(!1), b = () => y(!0), x = () => y(!1), S = K(() => {
 		let e = /* @__PURE__ */ new Set(), t = [];
 		for (let n of r.rooms) n.state === "active" && (e.has(n.slug) || (e.add(n.slug), t.push(n)));
 		return t;
-	}, [r.rooms]), C = G(() => S.slice(0, f), [S, f]), w = S.length - C.length, E = /* @__PURE__ */ Y(n, {
+	}, [r.rooms]), C = K(() => S.slice(0, f), [S, f]), w = S.length - C.length, E = /* @__PURE__ */ X(n, {
 		"aria-label": "New room",
 		size: "sm",
 		onClick: b,
-		icon: /* @__PURE__ */ Y("span", {
+		icon: /* @__PURE__ */ X("span", {
 			"aria-hidden": "true",
 			className: "text-[14px] leading-none font-bold",
 			children: "+"
 		}),
 		"data-testid": "new-room-button"
-	}), D = g !== void 0, k = /* @__PURE__ */ X(J, { children: [
-		r.isLoading && /* @__PURE__ */ Y("div", {
+	}), D = g !== void 0, k = /* @__PURE__ */ Z(Y, { children: [
+		r.isLoading && /* @__PURE__ */ X("div", {
 			className: "flex flex-col gap-1 px-1 py-1",
 			"data-testid": "hangout-rooms-loading",
 			children: [
 				0,
 				1,
 				2
-			].map((e) => /* @__PURE__ */ Y("div", {
+			].map((e) => /* @__PURE__ */ X("div", {
 				"aria-hidden": "true",
 				className: "h-7 rounded-md bg-surface-hover animate-pulse"
 			}, e))
 		}),
-		!r.isLoading && r.error && /* @__PURE__ */ X("div", {
+		!r.isLoading && r.error && /* @__PURE__ */ Z("div", {
 			role: "alert",
 			"data-testid": "hangout-rooms-error",
 			className: "mx-1 my-1 px-3 py-2 text-[12px] text-danger-fg bg-danger-bg border border-danger-border rounded-md flex items-center justify-between gap-2",
-			children: [/* @__PURE__ */ Y("span", {
+			children: [/* @__PURE__ */ X("span", {
 				className: "truncate",
 				children: "Couldn't load rooms."
-			}), /* @__PURE__ */ Y("button", {
+			}), /* @__PURE__ */ X("button", {
 				type: "button",
 				onClick: () => void r.refetch(),
 				className: "text-danger-fg underline hover:text-danger-fg cursor-pointer",
 				children: "Retry"
 			})]
 		}),
-		!r.isLoading && !r.error && S.length === 0 && /* @__PURE__ */ Y(d, {
+		!r.isLoading && !r.error && S.length === 0 && /* @__PURE__ */ X(d, {
 			testId: "hangout-rooms-empty",
 			title: "No rooms yet",
 			description: "Create one to start an ongoing hangout.",
-			action: /* @__PURE__ */ Y(t, {
+			action: /* @__PURE__ */ X(t, {
 				onClick: b,
 				variant: "primary",
 				size: "sm",
 				children: "Create room"
 			})
 		}),
-		!r.isLoading && !r.error && S.length > 0 && /* @__PURE__ */ X("div", {
+		!r.isLoading && !r.error && S.length > 0 && /* @__PURE__ */ Z("div", {
 			className: "flex flex-col gap-0.5",
-			children: [C.map((t) => /* @__PURE__ */ Y(e, {
+			children: [C.map((t) => /* @__PURE__ */ X(e, {
 				slug: t.slug,
 				name: t.name,
 				participantId: o,
@@ -331,9 +331,9 @@ function we(e, { rooms: r, occupancyFor: i, occupancyAdapter: a, participantId: 
 				onClick: s ? () => s(t) : void 0,
 				onOpenConversation: c ? () => c(t) : void 0,
 				onContextMenu: l ? (e) => l(t, e) : void 0
-			}, t.slug)), w > 0 && u && /* @__PURE__ */ Y(T, {
+			}, t.slug)), w > 0 && u && /* @__PURE__ */ X(T, {
 				"data-testid": "hangout-rooms-browse-all",
-				label: /* @__PURE__ */ X("span", {
+				label: /* @__PURE__ */ Z("span", {
 					className: "text-[12px] text-neutral",
 					children: [
 						"Browse all (",
@@ -345,11 +345,11 @@ function we(e, { rooms: r, occupancyFor: i, occupancyAdapter: a, participantId: 
 			})]
 		})
 	] });
-	return /* @__PURE__ */ X(J, { children: [D ? /* @__PURE__ */ X("div", {
+	return /* @__PURE__ */ Z(Y, { children: [D ? /* @__PURE__ */ Z("div", {
 		"data-testid": "rooms-section",
 		"data-collapsed": h ? "true" : "false",
 		className: "flex flex-col",
-		children: [/* @__PURE__ */ Y(j, {
+		children: [/* @__PURE__ */ X(j, {
 			label: p,
 			presentational: !1,
 			collapsed: h,
@@ -362,7 +362,7 @@ function we(e, { rooms: r, occupancyFor: i, occupancyAdapter: a, participantId: 
 			}],
 			"data-testid": "rooms-section-header"
 		}), !h && k]
-	}) : /* @__PURE__ */ Y(O, {
+	}) : /* @__PURE__ */ X(O, {
 		title: p,
 		storageKey: m,
 		actions: E,
@@ -371,7 +371,7 @@ function we(e, { rooms: r, occupancyFor: i, occupancyAdapter: a, participantId: 
 	}), _ ? _({
 		open: v,
 		onClose: x
-	}) : /* @__PURE__ */ Y(Se, {
+	}) : /* @__PURE__ */ X(Se, {
 		open: v,
 		onClose: x,
 		onCreate: r.createRoom,
@@ -382,7 +382,7 @@ function we(e, { rooms: r, occupancyFor: i, occupancyAdapter: a, participantId: 
 }
 //#endregion
 //#region src/integrations/realtime-modules/NetworkErrorBoundary.tsx
-var Te = class extends me {
+var Te = class extends pe {
 	state = { error: null };
 	static getDerivedStateFromError(e) {
 		return { error: e };
@@ -398,9 +398,9 @@ var Te = class extends me {
 		let { error: e } = this.state;
 		if (e == null) return this.props.children;
 		let { fallback: t, title: n = "Something went wrong", description: r, retryLabel: i = "Retry" } = this.props;
-		return t ? t(e, this.reset) : /* @__PURE__ */ Y("div", {
+		return t ? t(e, this.reset) : /* @__PURE__ */ X("div", {
 			"data-testid": "network-error-boundary-fallback",
-			children: /* @__PURE__ */ Y(d, {
+			children: /* @__PURE__ */ X(d, {
 				icon: "⚠️",
 				title: n,
 				description: r ?? e.message,
@@ -413,31 +413,31 @@ var Te = class extends me {
 //#endregion
 //#region src/integrations/realtime-modules/ReconnectingShim.tsx
 function Ee({ connectionState: t, children: n, onRetry: r, reconnectingLabel: i, disconnectedTitle: a = "Disconnected", disconnectedDescription: o = "The connection to the server was lost. Check your network and try again.", retryLabel: s = "Try again", connectingPlaceholder: c, disconnectedFallback: l, className: u }) {
-	return t === "connecting" ? /* @__PURE__ */ Y("div", {
+	return t === "connecting" ? /* @__PURE__ */ X("div", {
 		"data-testid": "reconnecting-shim-connecting",
 		className: u,
-		children: c ?? /* @__PURE__ */ Y(m, { height: 120 })
-	}) : t === "disconnected" ? /* @__PURE__ */ Y("div", {
+		children: c ?? /* @__PURE__ */ X(m, { height: 120 })
+	}) : t === "disconnected" ? /* @__PURE__ */ X("div", {
 		"data-testid": "reconnecting-shim-disconnected",
 		className: u,
-		children: l ?? /* @__PURE__ */ Y(d, {
+		children: l ?? /* @__PURE__ */ X(d, {
 			icon: "📡",
 			title: a,
 			description: o,
 			actionLabel: r ? s : void 0,
 			onAction: r
 		})
-	}) : t === "reconnecting" ? /* @__PURE__ */ X("div", {
+	}) : t === "reconnecting" ? /* @__PURE__ */ Z("div", {
 		"data-testid": "reconnecting-shim-reconnecting",
 		className: e("relative", u),
-		children: [/* @__PURE__ */ Y("div", {
+		children: [/* @__PURE__ */ X("div", {
 			className: "opacity-60 pointer-events-none",
 			children: n
-		}), /* @__PURE__ */ Y(ce, {
+		}), /* @__PURE__ */ X(B, {
 			show: !0,
 			label: i
 		})]
-	}) : /* @__PURE__ */ Y("div", {
+	}) : /* @__PURE__ */ X("div", {
 		"data-testid": "reconnecting-shim-connected",
 		className: u,
 		children: n
@@ -446,14 +446,14 @@ function Ee({ connectionState: t, children: n, onRetry: r, reconnectingLabel: i,
 //#endregion
 //#region src/integrations/realtime-modules/networkShim.tsx
 function De(e, t) {
-	return t ? /* @__PURE__ */ Y(Te, {
+	return t ? /* @__PURE__ */ X(Te, {
 		title: t.errorTitle,
 		description: t.errorDescription,
 		retryLabel: t.retryLabel,
 		onRetry: t.onRetry,
 		onError: t.onError,
 		fallback: t.errorFallback,
-		children: /* @__PURE__ */ Y(Ee, {
+		children: /* @__PURE__ */ X(Ee, {
 			connectionState: t.connectionState,
 			onRetry: t.onRetry,
 			reconnectingLabel: t.reconnectingLabel,
@@ -476,10 +476,10 @@ function Oe(e) {
 	return t;
 }
 function ke(e, { hangoutRooms: t, subscribeRoomsIndex: n, occupancyFor: r, participantId: i, onJoin: a, onContextMenu: o, onBrowseAll: s, maxVisible: c, title: l, storageKey: u, renderEmpty: d, collapsed: f, onToggleCollapse: p, renderCreateDialog: m, wrapWithNetworkShim: h }) {
-	return t.rooms.filter((e) => e.state === "active").length === 0 && !t.isLoading && !t.error && d ? /* @__PURE__ */ Y("div", {
+	return t.rooms.filter((e) => e.state === "active").length === 0 && !t.isLoading && !t.error && d ? /* @__PURE__ */ X("div", {
 		"data-testid": "wrapped-hangout-rooms-empty-slot",
 		children: d
-	}) : /* @__PURE__ */ Y(J, { children: De(/* @__PURE__ */ Y(e, {
+	}) : /* @__PURE__ */ X(Y, { children: De(/* @__PURE__ */ X(e, {
 		rooms: t,
 		occupancyAdapter: n,
 		occupancyFor: r,
@@ -508,7 +508,7 @@ var Q = [
 ], Ae = {
 	chat: !0,
 	presence: !0
-}, je = V(null);
+}, je = H(null);
 function Me(e) {
 	function t(t) {
 		return Ne(e, t);
@@ -516,7 +516,7 @@ function Me(e) {
 	return t;
 }
 function Ne(e, { capabilities: t = Ae, channel: n, children: r }) {
-	let i = G(() => Q.filter((e) => t[e] === !0), [t]), { enabled: a, isLoading: o } = e.useCapabilities(i, n), s = G(() => {
+	let i = K(() => Q.filter((e) => t[e] === !0), [t]), { enabled: a, isLoading: o } = e.useCapabilities(i, n), s = K(() => {
 		let e = {}, n = {}, r = {};
 		for (let i of Q) e[i] = t[i] === !0, n[i] = a[i] ?? !1, r[i] = e[i] && n[i];
 		return {
@@ -530,13 +530,13 @@ function Ne(e, { capabilities: t = Ae, channel: n, children: r }) {
 		a,
 		o
 	]);
-	return /* @__PURE__ */ Y(je.Provider, {
+	return /* @__PURE__ */ X(je.Provider, {
 		value: s,
 		children: r
 	});
 }
 function Pe() {
-	return U(je) ?? {
+	return W(je) ?? {
 		can: Object.fromEntries(Q.map((e) => [e, !1])),
 		declared: Object.fromEntries(Q.map((e) => [e, !1])),
 		provisioned: Object.fromEntries(Q.map((e) => [e, !1])),
@@ -545,7 +545,7 @@ function Pe() {
 }
 function Fe({ need: e, children: t, fallback: n = null }) {
 	let { can: r } = Pe(), i = (Array.isArray(e) ? e : [e]).every((e) => r[e]);
-	return /* @__PURE__ */ Y(J, { children: i ? t : n });
+	return /* @__PURE__ */ X(Y, { children: i ? t : n });
 }
 //#endregion
 //#region src/integrations/realtime/WrappedConversationSurface.tsx
@@ -567,7 +567,7 @@ function ze(e, t) {
 	return i.filter((t) => t === "mentions" ? !1 : t === "documents" ? r : t !== "calls" || !!e.lobbyForChannel(n));
 }
 function Be({ declare: e = N, capabilities: t, capabilitiesError: n, capabilityNames: r = {}, children: i, ...a }) {
-	let o = G(() => {
+	let o = K(() => {
 		let i = r;
 		return e.filter((e) => e === "chat" || e === "members" || !t || n ? !0 : t[i[e] ?? Ie[e]] === !0);
 	}, [
@@ -576,7 +576,7 @@ function Be({ declare: e = N, capabilities: t, capabilitiesError: n, capabilityN
 		n,
 		r
 	]);
-	return /* @__PURE__ */ Y(M, {
+	return /* @__PURE__ */ X(M, {
 		...a,
 		features: o,
 		children: i
@@ -595,7 +595,7 @@ function Ve(e, { channelArn: t, excludeParticipantId: n, getAuthToken: r, baseUr
 		channelArn: t,
 		baseUrl: i
 	});
-	return W(() => {
+	return G(() => {
 		a?.({
 			mode: "realtime",
 			live: c,
@@ -605,7 +605,7 @@ function Ve(e, { channelArn: t, excludeParticipantId: n, getAuthToken: r, baseUr
 		c,
 		s.error,
 		a
-	]), /* @__PURE__ */ Y(z, {
+	]), /* @__PURE__ */ X(z, {
 		...o,
 		live: c,
 		stream: s.stream,
@@ -622,13 +622,13 @@ function He(e, { channelArn: t, playbackToken: n, baseUrl: r, onStatusChange: i,
 		baseUrl: r,
 		playbackToken: n
 	});
-	return W(() => {
+	return G(() => {
 		i?.({
 			mode: "near-realtime",
 			live: o.ready,
 			error: null
 		});
-	}, [o.ready, i]), /* @__PURE__ */ Y(z, {
+	}, [o.ready, i]), /* @__PURE__ */ X(z, {
 		...a,
 		live: o.ready,
 		playlistUrl: o.playlistUrl,
@@ -643,14 +643,14 @@ function Ue(e) {
 		return He(e, t);
 	}
 	function r({ mode: e = "near-realtime", ...r }) {
-		return Y(e === "realtime" ? t : n, { ...r });
+		return X(e === "realtime" ? t : n, { ...r });
 	}
 	return r;
 }
 //#endregion
 //#region src/integrations/realtime/WrappedLVSHangoutLayout.tsx
 function We({ stream: e, displayName: t }) {
-	return e ? /* @__PURE__ */ Y("video", {
+	return e ? /* @__PURE__ */ X("video", {
 		autoPlay: !0,
 		playsInline: !0,
 		muted: !0,
@@ -658,24 +658,24 @@ function We({ stream: e, displayName: t }) {
 			t && t.srcObject !== e && (t.srcObject = e);
 		},
 		className: "w-full h-full object-cover scale-x-[-1]"
-	}) : /* @__PURE__ */ Y("div", {
+	}) : /* @__PURE__ */ X("div", {
 		className: "w-full h-full grid place-items-center bg-surface-emphasis",
 		"data-testid": "local-camera-avatar",
-		children: /* @__PURE__ */ Y(g, {
+		children: /* @__PURE__ */ X(g, {
 			name: t,
 			size: 64
 		})
 	});
 }
 function Ge(e, t) {
-	let n = e.isLocal, r = n ? t ?? e.displayName ?? "You" : e.displayName || e.participantId.slice(0, 8), i = e.streams[0], a = e.screenStream, o = n ? /* @__PURE__ */ Y(We, {
+	let n = e.isLocal, r = n ? t ?? e.displayName ?? "You" : e.displayName || e.participantId.slice(0, 8), i = e.streams[0], a = e.screenStream, o = n ? /* @__PURE__ */ X(We, {
 		stream: i,
 		displayName: r
-	}) : /* @__PURE__ */ Y(ne, {
+	}) : /* @__PURE__ */ X(ne, {
 		stream: i,
 		displayName: r,
 		cameraOn: e.hasVideo
-	}), s = a ? /* @__PURE__ */ Y(I, {
+	}), s = a ? /* @__PURE__ */ X(I, {
 		stream: a,
 		muted: n,
 		className: "w-full h-full object-contain bg-black"
@@ -701,7 +701,7 @@ function qe(e, { stageToken: t, participantId: n, userId: r, localClientId: i, g
 		participantId: n,
 		userId: r ?? n.slice(0, 8),
 		getAuthToken: a
-	}), _ = G(() => g.participants.filter((e) => f || !e.isLocal).map((e) => {
+	}), _ = K(() => g.participants.filter((e) => f || !e.isLocal).map((e) => {
 		let t = Ge(e, d), n = p?.(e.appUserId ?? e.userId);
 		return n ? {
 			...t,
@@ -718,20 +718,20 @@ function qe(e, { stageToken: t, participantId: n, userId: r, localClientId: i, g
 		participantCount: g.participants.length,
 		remoteCount: v
 	};
-	return /* @__PURE__ */ X("div", {
+	return /* @__PURE__ */ Z("div", {
 		"data-testid": h,
 		className: `relative flex-1 min-h-0 ${m ?? ""}`,
-		children: [/* @__PURE__ */ Y(R, {
+		children: [/* @__PURE__ */ X(R, {
 			participants: _,
 			localParticipant: null,
 			mode: l,
 			spotlightContent: s,
 			onParticipantClick: c,
 			className: "h-full"
-		}), o && /* @__PURE__ */ Y("div", {
+		}), o && /* @__PURE__ */ X("div", {
 			className: "absolute inset-0 pointer-events-none z-10",
 			"data-testid": "wrapped-overlay-slot",
-			children: /* @__PURE__ */ Y("div", {
+			children: /* @__PURE__ */ X("div", {
 				className: "pointer-events-auto",
 				children: o(y)
 			})
@@ -741,7 +741,7 @@ function qe(e, { stageToken: t, participantId: n, userId: r, localClientId: i, g
 //#endregion
 //#region src/integrations/realtime/createRealtimeIntegrations.tsx
 function Je(e) {
-	let t = _e(e), n = Ce(t);
+	let t = ge(e), n = Ce(t);
 	return {
 		HangoutRoomRow: t,
 		HangoutRoomsSection: n,
@@ -752,20 +752,20 @@ function Je(e) {
 		WrappedLVSHangoutLayout: Ke(e)
 	};
 }
-var Ye = V(null), Xe = /* @__PURE__ */ new WeakMap();
+var Ye = H(null), Xe = /* @__PURE__ */ new WeakMap();
 function Ze(e) {
 	let t = Xe.get(e);
 	return t || (t = Je(e), Xe.set(e, t)), t;
 }
 function Qe({ modules: e, children: t }) {
-	let n = G(() => Ze(e), [e]);
-	return /* @__PURE__ */ Y(Ye.Provider, {
+	let n = K(() => Ze(e), [e]);
+	return /* @__PURE__ */ X(Ye.Provider, {
 		value: n,
 		children: t
 	});
 }
 function $e() {
-	let e = U(Ye);
+	let e = W(Ye);
 	if (!e) throw Error("useRealtimeIntegrations() needs a <RealtimeIntegrationsProvider modules={…}> above it.");
 	return e;
 }
@@ -800,14 +800,14 @@ function nt(e) {
 //#endregion
 //#region src/integrations/realtime/useCanvasRecovery.ts
 function rt(e, t, n, r) {
-	let i = et(e, t, n, r), [a, o] = q(() => {
+	let i = et(e, t, n, r), [a, o] = J(() => {
 		try {
 			let e = JSON.parse(sessionStorage.getItem(i) ?? "null");
 			return nt(e?.recovered ?? e?.pending) ? e.recovered ?? e.pending : null;
 		} catch {
 			return null;
 		}
-	}), s = K(a), c = K(null), [l, u] = q(!1), d = H(() => {
+	}), s = q(a), c = q(null), [l, u] = J(!1), d = U(() => {
 		try {
 			!s.current && !c.current ? sessionStorage.removeItem(i) : sessionStorage.setItem(i, JSON.stringify({
 				recovered: s.current,
@@ -816,20 +816,20 @@ function rt(e, t, n, r) {
 		} catch {
 			u(!0);
 		}
-	}, [i]), f = H((e) => {
+	}, [i]), f = U((e) => {
 		s.current = tt(e), o(s.current), d();
-	}, [d]), p = H(() => {
+	}, [d]), p = U(() => {
 		s.current = null, o(null), d();
-	}, [d]), m = H((e, t) => {
+	}, [d]), m = U((e, t) => {
 		if (!e || !t) return () => {};
 		let n = () => {
-			t.pendingUpdateCount && (c.current = tt(ge.encodeStateAsUpdate(e)), d());
+			t.pendingUpdateCount && (c.current = tt(he.encodeStateAsUpdate(e)), d());
 		};
 		return e.on("update", n), n(), () => e.off("update", n);
-	}, [d]), h = H(() => {
+	}, [d]), h = U(() => {
 		c.current = null, d();
 	}, [d]);
-	return W(() => {
+	return G(() => {
 		d();
 	}, [d]), {
 		recovered: a,
@@ -838,15 +838,15 @@ function rt(e, t, n, r) {
 		clear: p,
 		track: m,
 		acknowledged: h,
-		download: H(() => {
+		download: U(() => {
 			let e = nt(s.current ?? c.current);
 			if (!e) return;
 			let t = URL.createObjectURL(new Blob([Uint8Array.from(e)], { type: "application/octet-stream" })), r = document.createElement("a");
 			r.href = t, r.download = `document-${n}-recovery.yjs`, r.click(), window.setTimeout(() => URL.revokeObjectURL(t), 1e3);
 		}, [n]),
-		restore: H((e) => {
+		restore: U((e) => {
 			let t = nt(s.current);
-			t && (ge.applyUpdate(e, t, "explicit-recovery"), p());
+			t && (he.applyUpdate(e, t, "explicit-recovery"), p());
 		}, [p])
 	};
 }
@@ -878,43 +878,43 @@ function st(e) {
 			ws: A,
 			onMessage: A.onMessage,
 			onUnpersistedChanges: j.retain
-		}), N = e.useCanvasDocument({ ydoc: M.ydoc }), P = A.connectionState === "connected", F = m && h && M.synced && P, I = K(F);
+		}), N = e.useCanvasDocument({ ydoc: M.ydoc }), P = A.connectionState === "connected", F = m && h && M.synced && P, I = q(F);
 		I.current = F;
-		let [ee, te] = q(!1), [ne, re] = q(null), [ie, L] = q(!1), [R, ae] = q(!1), [oe, z] = q(null), se = K(null), ce = G(() => ({
+		let [ee, te] = J(!1), [ne, re] = J(null), [ie, L] = J(!1), [R, ae] = J(!1), [oe, z] = J(null), se = q(null), B = K(() => ({
 			name: c,
 			color: d
 		}), [c, d]);
-		W(() => j.track(M.ydoc, M.provider), [
+		G(() => j.track(M.ydoc, M.provider), [
 			M.ydoc,
 			M.provider,
 			j.track
-		]), W(() => {
+		]), G(() => {
 			M.persistenceState === "saved" && M.pendingUpdateCount === 0 && j.acknowledged();
 		}, [
 			M.persistenceState,
 			M.pendingUpdateCount,
 			j.acknowledged
-		]), W(() => {
+		]), G(() => {
 			x?.(M.pendingUpdateCount);
-		}, [M.pendingUpdateCount, x]), W(() => {
+		}, [M.pendingUpdateCount, x]), G(() => {
 			M.provider?.awareness.setLocalStateField("user", {
-				...ce,
+				...B,
 				id: s
 			});
 		}, [
 			M.provider,
-			ce,
+			B,
 			s
-		]), W(() => {
+		]), G(() => {
 			if (M.pendingUpdateCount === 0) return;
 			let e = (e) => {
 				e.preventDefault(), e.returnValue = "";
 			};
 			return window.addEventListener("beforeunload", e), () => window.removeEventListener("beforeunload", e);
-		}, [M.pendingUpdateCount]), W(() => A.onMessage((e) => {
+		}, [M.pendingUpdateCount]), G(() => A.onMessage((e) => {
 			e.channel === `doc:${r}` && (e.type === "crdt:error" && re(typeof e.error == "string" ? e.error : "The document operation was refused."), e.type === "crdt:snapshot" && re(null));
 		}), [A.onMessage, r]);
-		let le = async (e) => {
+		let ce = async (e) => {
 			let t = se.current;
 			if (!(!b || !t || t.isDestroyed || !I.current || R)) {
 				ae(!0), z(null);
@@ -931,7 +931,7 @@ function st(e) {
 					ae(!1);
 				}
 			}
-		}, ue = it(M.persistenceState, M.pendingUpdateCount, P, M.retryPersistence), de = {
+		}, le = it(M.persistenceState, M.pendingUpdateCount, P, M.retryPersistence), ue = {
 			editable: F,
 			online: P,
 			synced: M.synced,
@@ -940,30 +940,30 @@ function st(e) {
 			docVersion: M.docVersion,
 			ydoc: M.ydoc,
 			exportMarkdown: N.exportMarkdown
-		}, pe = /* @__PURE__ */ X(J, { children: [
+		}, fe = /* @__PURE__ */ Z(Y, { children: [
 			S,
-			j.recovered && /* @__PURE__ */ Y(v, {
+			j.recovered && /* @__PURE__ */ X(v, {
 				tone: "warning",
-				children: /* @__PURE__ */ X(a, {
+				children: /* @__PURE__ */ Z(a, {
 					gap: "xs",
-					children: ["Changes from an earlier editing session are available for recovery. They have not been applied to this document.", /* @__PURE__ */ X(i, {
+					children: ["Changes from an earlier editing session are available for recovery. They have not been applied to this document.", /* @__PURE__ */ Z(i, {
 						gap: "sm",
 						wrap: !0,
 						children: [
-							/* @__PURE__ */ Y(t, {
+							/* @__PURE__ */ X(t, {
 								size: "sm",
 								variant: "secondary",
 								onClick: j.download,
 								children: "Download recovery"
 							}),
-							m && /* @__PURE__ */ Y(t, {
+							m && /* @__PURE__ */ X(t, {
 								size: "sm",
 								variant: "secondary",
 								disabled: !M.synced || !P || M.pendingUpdateCount > 0,
 								onClick: () => te(!0),
 								children: "Recover changes…"
 							}),
-							/* @__PURE__ */ Y(t, {
+							/* @__PURE__ */ X(t, {
 								size: "sm",
 								variant: "ghost",
 								onClick: j.clear,
@@ -973,12 +973,12 @@ function st(e) {
 					})]
 				})
 			}),
-			j.storageError && /* @__PURE__ */ Y(v, {
+			j.storageError && /* @__PURE__ */ X(v, {
 				tone: "warning",
-				children: /* @__PURE__ */ X(i, {
+				children: /* @__PURE__ */ Z(i, {
 					gap: "sm",
 					wrap: !0,
-					children: ["This browser could not keep a recovery copy. Keep this page open until saving finishes.", /* @__PURE__ */ Y(t, {
+					children: ["This browser could not keep a recovery copy. Keep this page open until saving finishes.", /* @__PURE__ */ X(t, {
 						size: "sm",
 						variant: "secondary",
 						onClick: j.download,
@@ -986,13 +986,13 @@ function st(e) {
 					})]
 				})
 			}),
-			ne && /* @__PURE__ */ Y(v, {
+			ne && /* @__PURE__ */ X(v, {
 				tone: "error",
 				children: ne
 			})
-		] }), me = M.synced && !!M.ydoc && !!N.body, V = /* @__PURE__ */ X(J, { children: [
+		] }), pe = M.synced && !!M.ydoc && !!N.body, H = /* @__PURE__ */ Z(Y, { children: [
 			w,
-			/* @__PURE__ */ Y(u, {
+			/* @__PURE__ */ X(u, {
 				open: ee,
 				onCancel: () => te(!1),
 				title: "Recover earlier changes?",
@@ -1003,45 +1003,45 @@ function st(e) {
 					M.ydoc && m && P && M.pendingUpdateCount === 0 && j.restore(M.ydoc), te(!1);
 				}
 			}),
-			b && /* @__PURE__ */ Y(l, {
+			b && /* @__PURE__ */ X(l, {
 				open: ie,
 				onClose: () => {
 					R || L(!1);
 				},
 				title: "Insert image",
-				children: /* @__PURE__ */ X(a, {
+				children: /* @__PURE__ */ Z(a, {
 					gap: "sm",
-					children: [oe && /* @__PURE__ */ Y(v, {
+					children: [oe && /* @__PURE__ */ X(v, {
 						tone: "error",
 						children: oe
-					}), /* @__PURE__ */ Y(C, {
+					}), /* @__PURE__ */ X(C, {
 						accept: "image/*",
 						maxSize: 10485760,
 						disabled: R || !F,
 						label: R ? "Uploading image…" : "Choose an image or drop it here",
 						onFiles: (e) => {
-							e[0] && le(e[0]);
+							e[0] && ce(e[0]);
 						}
 					})]
 				})
 			})
-		] }), H = (e, t = null, n = null) => O ? O({
-			notices: pe,
+		] }), U = (e, t = null, n = null) => O ? O({
+			notices: fe,
 			canvas: e,
 			toolbar: t,
 			ruler: n,
-			saveState: ue,
-			state: de
-		}) : /* @__PURE__ */ X(J, { children: [pe, e] });
-		if (!me) return H(/* @__PURE__ */ Y(p, { label: D }));
-		if (!N.isCanvas) return H(/* @__PURE__ */ Y(f, {
+			saveState: le,
+			state: ue
+		}) : /* @__PURE__ */ Z(Y, { children: [fe, e] });
+		if (!pe) return U(/* @__PURE__ */ X(p, { label: D }));
+		if (!N.isCanvas) return U(/* @__PURE__ */ X(f, {
 			title: "Document migration is incomplete",
 			body: "The server has not supplied a rich document snapshot. No changes have been made."
 		}));
-		let U = (e) => /* @__PURE__ */ X(fe, {
+		let W = (e) => /* @__PURE__ */ Z(de, {
 			loadImage: _,
 			...y ? { requiresAuthentication: y } : {},
-			children: [/* @__PURE__ */ he(B, {
+			children: [/* @__PURE__ */ me(V, {
 				...ot,
 				...T,
 				key: M.docVersion,
@@ -1049,7 +1049,7 @@ function st(e) {
 				body: N.body,
 				ydoc: M.ydoc,
 				provider: M.provider,
-				user: ce,
+				user: B,
 				editable: F,
 				extensions: g,
 				...b && F ? { onInsertImage: () => {
@@ -1059,18 +1059,18 @@ function st(e) {
 				onEditorReady: (e) => {
 					se.current = e, E?.(e);
 				}
-			}), V]
+			}), H]
 		});
-		return O ? U((e, t, n) => H(/* @__PURE__ */ Y(a, {
+		return O ? W((e, t, n) => U(/* @__PURE__ */ X(a, {
 			gap: "none",
 			className: "min-h-0 flex-1",
 			"data-testid": "document-canvas-slot",
 			children: n
-		}), e, t)) : H(/* @__PURE__ */ Y(a, {
+		}), e, t)) : U(/* @__PURE__ */ X(a, {
 			gap: "none",
 			className: "min-h-0 flex-1",
 			"data-testid": "document-canvas-slot",
-			children: U()
+			children: W()
 		}));
 	};
 }
@@ -1079,12 +1079,12 @@ function st(e) {
 function ct(e, t) {
 	return e({
 		...t,
-		Image: pe(t.Image)
+		Image: fe(t.Image)
 	});
 }
 //#endregion
 //#region src/integrations/realtime/ConversationCallDock.tsx
-var lt = (e) => e.stream ? /* @__PURE__ */ Y(I, {
+var lt = (e) => e.stream ? /* @__PURE__ */ X(I, {
 	stream: e.stream,
 	muted: e.isLocal
 }) : void 0, ut = () => typeof HTMLMediaElement < "u" && "setSinkId" in HTMLMediaElement.prototype;
@@ -1118,17 +1118,17 @@ function ft(e, t) {
 }
 function pt(e) {
 	let t = (e?.participants ?? []).filter((e) => !e.isLocal && e.stream && (e.state === "in-call" || e.state === "reconnecting")), n = t.map((e) => `${e.id}=${e.stream.id}`).join("|");
-	return G(() => t.map((e) => ({
+	return K(() => t.map((e) => ({
 		participantId: e.id,
 		streams: [e.stream]
 	})), [n]);
 }
 function mt(e, { call: t, title: n, onOpenPeople: r, peopleOpen: i, onOpenSettings: a, onPopOut: o, extras: s, cameraMenuItems: c, tile: u = lt, notice: d, handFor: f, selfName: p, compact: m = !1, tileSize: h, documents: g, onOpenDocuments: _, documentsOpen: y, onDocumentClick: b, layout: x = "shelf", className: S, "data-testid": C = "conversation-call-dock" }) {
-	let [w, T] = q(!1), E = t.media?.captureError ?? null, [D, O] = q(null);
-	W(() => {
+	let [w, T] = J(!1), E = t.media?.captureError ?? null, [D, O] = J(null);
+	G(() => {
 		E || O(null);
 	}, [E]);
-	let k = e.useAudioVideoSettings({ preview: w }), { activeSpeakerId: A } = de({ participants: pt(t.call) }), j = e.conversationCallDockProps(t, {
+	let k = e.useAudioVideoSettings({ preview: w }), { activeSpeakerId: A } = ue({ participants: pt(t.call) }), j = e.conversationCallDockProps(t, {
 		title: n,
 		onOpenPeople: r,
 		...i === void 0 ? {} : { peopleOpen: i },
@@ -1153,24 +1153,24 @@ function mt(e, { call: t, title: n, onOpenPeople: r, peopleOpen: i, onOpenSettin
 		...b ? { onDocumentClick: b } : {},
 		...S ? { className: S } : {}
 	};
-	return /* @__PURE__ */ X(J, { children: [
-		d ? /* @__PURE__ */ Y(v, {
+	return /* @__PURE__ */ Z(Y, { children: [
+		d ? /* @__PURE__ */ X(v, {
 			tone: "info",
 			"data-testid": `${C}-notice`,
 			children: d
 		}) : null,
-		E && E !== D ? /* @__PURE__ */ X(v, {
+		E && E !== D ? /* @__PURE__ */ Z(v, {
 			tone: "warning",
 			"data-testid": `${C}-capture-error`,
 			onDismiss: () => O(E),
 			children: [E, " You can keep listening. Check browser device access, then turn the device on to retry."]
 		}) : null,
-		/* @__PURE__ */ Y(le, { ...M }),
-		!a && /* @__PURE__ */ Y(l, {
+		/* @__PURE__ */ X(ce, { ...M }),
+		!a && /* @__PURE__ */ X(l, {
 			open: w,
 			onClose: () => T(!1),
 			title: "Call devices",
-			children: /* @__PURE__ */ Y(L, {
+			children: /* @__PURE__ */ X(L, {
 				"data-testid": `${C}-settings`,
 				value: k.settings,
 				onChange: (e) => {
@@ -1212,25 +1212,25 @@ function gt(e) {
 }
 function _t({ ring: e, onAccept: n, onDecline: a, corner: o = "top-right", width: s = 360, className: l, "data-testid": u = "incoming-call-toast" }) {
 	let d = e.kind === "knock";
-	return /* @__PURE__ */ Y(D, {
+	return /* @__PURE__ */ X(D, {
 		corner: o,
 		width: s,
 		"data-testid": u,
 		...l ? { className: l } : {},
-		children: /* @__PURE__ */ Y(c, {
+		children: /* @__PURE__ */ X(c, {
 			variant: "info",
 			layout: "stacked",
-			icon: /* @__PURE__ */ Y(r, { size: 16 }),
+			icon: /* @__PURE__ */ X(r, { size: 16 }),
 			title: gt(e),
-			action: /* @__PURE__ */ X(i, {
+			action: /* @__PURE__ */ Z(i, {
 				gap: "sm",
-				children: [/* @__PURE__ */ Y(t, {
+				children: [/* @__PURE__ */ X(t, {
 					size: "sm",
 					variant: "secondary",
 					onClick: a,
 					"data-testid": "incoming-call-decline",
 					children: "Decline"
-				}), /* @__PURE__ */ Y(t, {
+				}), /* @__PURE__ */ X(t, {
 					size: "sm",
 					variant: "success",
 					onClick: n,
@@ -1475,10 +1475,10 @@ function Bt(e) {
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedChatPanel.tsx
-function Vt({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, pins: a, currentActor: o, currentUserId: s, displayName: c, avatarUrl: l, sendMetadata: u, publishTyping: d, attachmentSrc: f, onOpenAttachment: p, acceptFiles: m, maxFileSize: h, onFileError: g, disabled: _, typingUsers: v, tone: y, fill: b, flushComposer: x, contentAlign: S, showHeader: C, loadMoreHistory: w = !1, joinHistoryLimit: T = 20, historyPageSize: E = 50, onLoadMore: D, hasMore: O, loadingMore: A, composer: j, renderMessageReferences: M, emojis: N, onReply: P, reply: F, onCancelReply: I, readReceipts: ee, readReceiptsEnabled: te, unreadFrom: ne, threaded: re, onJumpToMessage: ie, highlightedMessageId: L, documentEditors: R, callParticipants: ae, onJoinCall: oe, onOpenDocument: z, wrapWithNetworkShim: se, editable: ce = !0, canEdit: le, canDelete: ue, onForwardMessage: de }) {
-	let B = G(() => bt(e.messages), [e.messages]), fe = G(() => {
+function Vt({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, pins: a, currentActor: o, currentUserId: s, displayName: c, avatarUrl: l, sendMetadata: u, publishTyping: d, attachmentSrc: f, onOpenAttachment: p, acceptFiles: m, maxFileSize: h, onFileError: g, disabled: _, typingUsers: v, tone: y, fill: b, flushComposer: x, contentAlign: S, showHeader: C, loadMoreHistory: w = !1, joinHistoryLimit: T = 20, historyPageSize: E = 50, onLoadMore: D, hasMore: O, loadingMore: A, composer: j, renderMessageReferences: M, emojis: N, onReply: P, reply: F, onCancelReply: I, readReceipts: ee, readReceiptsEnabled: te, unreadFrom: ne, threaded: re, onJumpToMessage: ie, highlightedMessageId: L, documentEditors: R, callParticipants: ae, onJoinCall: oe, onOpenDocument: z, wrapWithNetworkShim: se, editable: B = !0, canEdit: ce, canDelete: le, onForwardMessage: ue }) {
+	let V = K(() => bt(e.messages), [e.messages]), de = K(() => {
 		if (!t?.length) return [];
-		let e = new Set(B.flatMap((e) => e.id ? [e.id] : [])), n = /* @__PURE__ */ new Set(), r = [];
+		let e = new Set(V.flatMap((e) => e.id ? [e.id] : [])), n = /* @__PURE__ */ new Set(), r = [];
 		for (let i of t) if (i.body !== void 0) {
 			if (i.id) {
 				if (e.has(i.id) || n.has(i.id)) continue;
@@ -1496,44 +1496,44 @@ function Vt({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 			});
 		}
 		return r;
-	}, [B, t]), pe = G(() => {
-		let e = B;
+	}, [V, t]), fe = K(() => {
+		let e = V;
 		if (!t?.length) return e;
 		let n = new Set(e.flatMap((e) => e.id ? [e.id] : [])), r = t.filter((e) => e.body === void 0 && (!e.id || !n.has(e.id)));
 		return r.length === 0 ? e : [...e, ...r].map((e, t) => ({
 			m: e,
 			i: t
 		})).sort((e, t) => Date.parse(e.m.timestamp) - Date.parse(t.m.timestamp) || e.i - t.i).map(({ m: e }) => e);
-	}, [B, t]), me = v ?? n?.roster.filter((e) => {
+	}, [V, t]), pe = v ?? n?.roster.filter((e) => {
 		if (e.metadata?.isTyping !== !0) return !1;
 		let t = e.metadata?.userId;
 		return s && typeof t == "string" ? t !== s : !o || e.clientId !== o;
-	}).map((e) => e.metadata?.displayName ?? e.clientId.slice(0, 8)) ?? [], V = e.sendMessage, he = H((e) => {
+	}).map((e) => e.metadata?.displayName ?? e.clientId.slice(0, 8)) ?? [], H = e.sendMessage, me = U((e) => {
 		let t = { ...u ?? {} };
-		c && (t.displayName = c), l && (t.avatarUrl = l), Object.keys(t).length > 0 ? V(e, t) : V(e);
+		c && (t.displayName = c), l && (t.avatarUrl = l), Object.keys(t).length > 0 ? H(e, t) : H(e);
 	}, [
-		V,
+		H,
 		u,
 		c,
 		l
-	]), U = n?.updateMetadata, X = (d ?? !0) && !!U, ge = H((e) => U?.({ isTyping: e }), [U]), _e = e.loadHistory, [ve, ye] = q(T), [be, xe] = q(!1), Z = e.messages.length, Se = K(Z);
-	W(() => {
-		Z !== Se.current && (Se.current = Z, xe(!1));
-	}, [Z]);
-	let Ce = K(ve);
-	Ce.current = ve;
-	let we = H(() => {
+	]), W = n?.updateMetadata, Z = (d ?? !0) && !!W, he = U((e) => W?.({ isTyping: e }), [W]), ge = e.loadHistory, [_e, ve] = J(T), [ye, be] = J(!1), xe = e.messages.length, Se = q(xe);
+	G(() => {
+		xe !== Se.current && (Se.current = xe, be(!1));
+	}, [xe]);
+	let Ce = q(_e);
+	Ce.current = _e;
+	let we = U(() => {
 		let e = Ce.current + E;
-		Ce.current = e, ye(e), xe(!0), _e(e);
-	}, [_e, E]), Te = D ? {
+		Ce.current = e, ve(e), be(!0), ge(e);
+	}, [ge, E]), Te = D ? {
 		onLoadMore: D,
 		hasMore: O,
 		loadingMore: A
 	} : w ? {
 		onLoadMore: we,
-		hasMore: O ?? Z >= ve,
-		loadingMore: A ?? be
-	} : {}, Ee = G(() => i ? (e) => Dt(i, e) : void 0, [i]), Oe = G(() => {
+		hasMore: O ?? xe >= _e,
+		loadingMore: A ?? ye
+	} : {}, Ee = K(() => i ? (e) => Dt(i, e) : void 0, [i]), Oe = K(() => {
 		if (!i || !s) return;
 		let { toggle: e, react: t, unreact: n } = i;
 		return e ? (t, n) => e(n, {
@@ -1542,7 +1542,7 @@ function Vt({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 		}) : (e, r) => {
 			Dt(i, e).some((e) => e.emoji === r && e.userId === s) && n ? n(r, { targetId: e }) : t(r, { targetId: e });
 		};
-	}, [i, s]), ke = H((e) => {
+	}, [i, s]), ke = U((e) => {
 		if (!a) return;
 		let t = e.id ?? "";
 		t && (a.pinnedIds.has(t) ? a.unpin(t) : a.pin({
@@ -1550,19 +1550,19 @@ function Vt({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 			text: e.content,
 			author: e.displayName ?? "Unknown"
 		}));
-	}, [a]), Q = e.editMessage, Ae = e.deleteMessage, je = H((e, t) => {
+	}, [a]), Q = e.editMessage, Ae = e.deleteMessage, je = U((e, t) => {
 		let n = t.trim();
 		if (!e.id || !n) return;
 		let r = `<p>${n.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>")}</p>`;
 		Q?.(e.id, n, { html: r });
-	}, [Q]), Me = H((e) => {
+	}, [Q]), Me = U((e) => {
 		e.id && Ae?.(e.id);
-	}, [Ae]), Ne = /* @__PURE__ */ Y(k, {
-		messages: pe,
-		...fe.length ? { localMessages: fe } : {},
-		onSend: he,
+	}, [Ae]), Ne = /* @__PURE__ */ X(k, {
+		messages: fe,
+		...de.length ? { localMessages: de } : {},
+		onSend: me,
 		disabled: _,
-		typingUsers: me,
+		typingUsers: pe,
 		tone: y,
 		fill: b,
 		flushComposer: x,
@@ -1571,7 +1571,7 @@ function Vt({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 		composer: j,
 		emojis: N,
 		...Te,
-		...X ? { onTyping: ge } : {},
+		...Z ? { onTyping: he } : {},
 		...r ? {
 			onSendFiles: (e) => {
 				for (let t of e) r.upload(t);
@@ -1587,15 +1587,15 @@ function Vt({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 			pinnedMessageIds: a.pinnedIds,
 			onTogglePin: ke
 		} : {},
-		...ce && Q ? {
+		...B && Q ? {
 			onEditMessage: je,
-			...le ? { canEditMessage: le } : {}
+			...ce ? { canEditMessage: ce } : {}
 		} : {},
-		...ce && Ae ? {
+		...B && Ae ? {
 			onDeleteMessage: Me,
-			...ue ? { canDeleteMessage: ue } : {}
+			...le ? { canDeleteMessage: le } : {}
 		} : {},
-		onForwardMessage: de,
+		onForwardMessage: ue,
 		onReply: P,
 		reply: F,
 		onCancelReply: I,
@@ -1616,7 +1616,7 @@ function Vt({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 		maxFileSize: h,
 		onFileError: g
 	});
-	return /* @__PURE__ */ Y(J, { children: De(Ne, se) });
+	return /* @__PURE__ */ X(Y, { children: De(Ne, se) });
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedPresencePanel.tsx
@@ -1654,7 +1654,7 @@ function Wt(e, t) {
 	return r;
 }
 function Gt({ presence: e, currentClientId: t, perConnection: n = !1, wrapWithNetworkShim: r }) {
-	let i = G(() => n ? e.roster.map((e) => ({
+	let i = K(() => n ? e.roster.map((e) => ({
 		clientId: e.clientId,
 		status: e.status,
 		metadata: e.metadata
@@ -1663,7 +1663,7 @@ function Gt({ presence: e, currentClientId: t, perConnection: n = !1, wrapWithNe
 		t,
 		n
 	]);
-	return /* @__PURE__ */ Y(J, { children: De(/* @__PURE__ */ Y(P, {
+	return /* @__PURE__ */ X(Y, { children: De(/* @__PURE__ */ X(P, {
 		users: i,
 		currentClientId: t
 	}), r) });
@@ -1671,8 +1671,8 @@ function Gt({ presence: e, currentClientId: t, perConnection: n = !1, wrapWithNe
 //#endregion
 //#region src/integrations/realtime-modules/WrappedActivityPanel.tsx
 function Kt({ activity: e, visibleCount: t, rotateMs: n, staggerMs: r, kindColors: i, className: a }) {
-	let o = G(() => Nt(e.events), [e.events]);
-	return /* @__PURE__ */ Y(w, {
+	let o = K(() => Nt(e.events), [e.events]);
+	return /* @__PURE__ */ X(w, {
 		items: o,
 		visibleCount: t,
 		rotateMs: n,
@@ -1693,18 +1693,18 @@ function qt({ cursors: t, coordinates: n = "pixels", onMove: r, children: i, cla
 		let a = (e) => Math.min(1, Math.max(0, e));
 		r(a(n / t.width), a(i / t.height));
 	}
-	return /* @__PURE__ */ X("div", {
+	return /* @__PURE__ */ Z("div", {
 		"data-testid": "cursor-overlay",
 		className: e("relative", a),
 		onPointerMove: r ? s : void 0,
-		children: [i, /* @__PURE__ */ Y("div", {
+		children: [i, /* @__PURE__ */ X("div", {
 			className: "pointer-events-none absolute inset-0 overflow-hidden",
 			"aria-hidden": "true",
 			"data-testid": "cursor-overlay-layer",
 			children: t.map((e) => {
 				if (!Number.isFinite(e.x) || !Number.isFinite(e.y)) return null;
 				let t = e.label ?? e.clientId, n = e.color ?? F(t);
-				return /* @__PURE__ */ X("div", {
+				return /* @__PURE__ */ Z("div", {
 					"data-testid": "cursor-overlay-pointer",
 					"data-client-id": e.clientId,
 					className: "absolute select-none",
@@ -1712,19 +1712,19 @@ function qt({ cursors: t, coordinates: n = "pixels", onMove: r, children: i, cla
 						left: o ? `${e.x * 100}%` : e.x,
 						top: o ? `${e.y * 100}%` : e.y
 					},
-					children: [/* @__PURE__ */ Y("svg", {
+					children: [/* @__PURE__ */ X("svg", {
 						width: "16",
 						height: "16",
 						viewBox: "0 0 16 16",
 						fill: n,
 						className: "drop-shadow",
-						children: /* @__PURE__ */ Y("path", {
+						children: /* @__PURE__ */ X("path", {
 							d: "M1 1l5.5 14 2-5.5L14 7.5z",
 							stroke: "white",
 							strokeWidth: "1",
 							strokeLinejoin: "round"
 						})
-					}), /* @__PURE__ */ Y("span", {
+					}), /* @__PURE__ */ X("span", {
 						"data-testid": "cursor-overlay-label",
 						title: t,
 						className: "ml-3 -mt-1 inline-block max-w-[10rem] truncate rounded px-1.5 py-0.5 text-[10px] font-medium text-white shadow",
@@ -1739,8 +1739,8 @@ function qt({ cursors: t, coordinates: n = "pixels", onMove: r, children: i, cla
 //#endregion
 //#region src/integrations/realtime-modules/WrappedCursorOverlay.tsx
 function Jt({ cursor: e, coordinates: t = "fraction", publish: n = !0, selfClientId: r, children: i, className: a }) {
-	let o = G(() => Bt(e.cursors).filter((e) => e.clientId !== r), [e.cursors, r]), s = e.move;
-	return /* @__PURE__ */ Y(qt, {
+	let o = K(() => Bt(e.cursors).filter((e) => e.clientId !== r), [e.cursors, r]), s = e.move;
+	return /* @__PURE__ */ X(qt, {
 		cursors: o,
 		coordinates: t,
 		onMove: n ? (e, t) => s({
@@ -1754,19 +1754,19 @@ function Jt({ cursor: e, coordinates: t = "fraction", publish: n = !0, selfClien
 //#endregion
 //#region src/integrations/realtime-modules/WrappedReactionsOverlay.tsx
 function Yt({ reactions: e, ttlMs: t = 2500 }) {
-	let [n, r] = q([]), i = e.reactions, a = K(/* @__PURE__ */ new Map());
-	return W(() => {
+	let [n, r] = J([]), i = e.reactions, a = q(/* @__PURE__ */ new Map());
+	return G(() => {
 		if (i.length === 0) return;
 		let e = i[i.length - 1], n = Tt(e, i.length - 1), o = a.current;
 		o.has(n.id) || (r((e) => e.some((e) => e.id === n.id) ? e : [...e, n]), o.set(n.id, setTimeout(() => {
 			o.delete(n.id), r((e) => e.filter((e) => e.id !== n.id));
 		}, t)));
-	}, [i, t]), W(() => {
+	}, [i, t]), G(() => {
 		let e = a.current;
 		return () => {
 			e.forEach((e) => clearTimeout(e)), e.clear();
 		};
-	}, []), /* @__PURE__ */ Y(E, { reactions: n });
+	}, []), /* @__PURE__ */ X(E, { reactions: n });
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedFileUploadDrop.tsx
@@ -1778,7 +1778,7 @@ function Xt({ fileUpload: e, accept: t, maxSize: n, multiple: r, disabled: i, la
 			c?.(t);
 		});
 	}
-	return /* @__PURE__ */ X("div", { children: [/* @__PURE__ */ Y(C, {
+	return /* @__PURE__ */ Z("div", { children: [/* @__PURE__ */ X(C, {
 		accept: t,
 		maxSize: n,
 		multiple: r,
@@ -1787,33 +1787,33 @@ function Xt({ fileUpload: e, accept: t, maxSize: n, multiple: r, disabled: i, la
 		className: o,
 		onFiles: u,
 		onError: c
-	}), l.length > 0 && /* @__PURE__ */ Y(Zt, {
+	}), l.length > 0 && /* @__PURE__ */ X(Zt, {
 		summaries: l,
 		onDismiss: () => e.removeCompleted()
 	})] });
 }
 function Zt({ summaries: e, onDismiss: t }) {
-	return /* @__PURE__ */ Y("ul", {
+	return /* @__PURE__ */ X("ul", {
 		className: "mt-2 p-0 list-none text-[13px]",
-		children: e.map((e) => /* @__PURE__ */ X("li", {
+		children: e.map((e) => /* @__PURE__ */ Z("li", {
 			className: "flex items-center gap-2 py-1 border-b border-border",
 			children: [
-				/* @__PURE__ */ Y("span", {
+				/* @__PURE__ */ X("span", {
 					className: "flex-1 overflow-hidden text-ellipsis whitespace-nowrap",
 					children: e.filename
 				}),
-				/* @__PURE__ */ Y("span", {
+				/* @__PURE__ */ X("span", {
 					className: `text-xs font-semibold ${Qt(e.status)}`,
 					children: e.status === "uploading" ? `${e.progress}%` : e.status
 				}),
-				(e.status === "completed" || e.status === "clean") && e.downloadUrl && /* @__PURE__ */ Y("a", {
+				(e.status === "completed" || e.status === "clean") && e.downloadUrl && /* @__PURE__ */ X("a", {
 					href: e.downloadUrl,
 					target: "_blank",
 					rel: "noreferrer",
 					className: "text-xs text-info",
 					children: "Download"
 				}),
-				(e.status === "failed" || e.status === "infected") && /* @__PURE__ */ Y("button", {
+				(e.status === "failed" || e.status === "infected") && /* @__PURE__ */ X("button", {
 					type: "button",
 					onClick: t,
 					className: "text-xs text-danger bg-transparent border-0 cursor-pointer p-0",
@@ -1844,7 +1844,7 @@ function $t({ hangout: e, localClientId: t, videoElements: n, mode: r, spotlight
 			videoElement: n[e.id] ?? e.videoElement
 		})) : e;
 	}
-	return /* @__PURE__ */ Y(R, {
+	return /* @__PURE__ */ X(R, {
 		participants: f(d),
 		localParticipant: u ? f([u])[0] : null,
 		mode: r,
@@ -1859,7 +1859,7 @@ function $t({ hangout: e, localClientId: t, videoElements: n, mode: r, spotlight
 //#region src/integrations/realtime-modules/WrappedNotificationCenter.tsx
 function en({ notifications: e, onItemClick: t, ...n }) {
 	let r = zt(e.notifications);
-	return /* @__PURE__ */ Y(y, {
+	return /* @__PURE__ */ X(y, {
 		items: r,
 		onItemClick: (n) => {
 			t ? t(n, e.notifications.find((e) => e.id === n.id)) : e.markAsRead(n.id);
@@ -1873,7 +1873,7 @@ function en({ notifications: e, onItemClick: t, ...n }) {
 //#region src/integrations/realtime-modules/WrappedNotificationBell.tsx
 function tn({ notifications: e, onItemClick: t, unreadCount: n, ...r }) {
 	let i = zt(e.notifications);
-	return /* @__PURE__ */ Y(x, {
+	return /* @__PURE__ */ X(x, {
 		items: i,
 		unreadCount: n ?? e.unreadCount,
 		onItemClick: (n) => {
@@ -1887,7 +1887,7 @@ function tn({ notifications: e, onItemClick: t, unreadCount: n, ...r }) {
 //#endregion
 //#region src/integrations/realtime-modules/WrappedConnectionPill.tsx
 function nn({ socket: e, ...t }) {
-	return /* @__PURE__ */ Y(b, {
+	return /* @__PURE__ */ X(b, {
 		state: e.connectionState,
 		...t
 	});
@@ -1895,12 +1895,12 @@ function nn({ socket: e, ...t }) {
 //#endregion
 //#region src/integrations/realtime-modules/CapabilityBoundary.tsx
 function rn({ capability: e, loading: t, fallback: n, children: r }) {
-	return e.isLoading ? /* @__PURE__ */ Y(J, { children: t ?? null }) : e.enabled ? /* @__PURE__ */ Y(J, { children: r }) : /* @__PURE__ */ Y(J, { children: n ?? null });
+	return e.isLoading ? /* @__PURE__ */ X(Y, { children: t ?? null }) : e.enabled ? /* @__PURE__ */ X(Y, { children: r }) : /* @__PURE__ */ X(Y, { children: n ?? null });
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedMediaEffectsTray.tsx
 function an({ controller: e, ...t }) {
-	return /* @__PURE__ */ Y(ue, {
+	return /* @__PURE__ */ X(le, {
 		filters: e.filters.map(({ id: e, label: t, cssFilter: n }) => ({
 			id: e,
 			label: t,
@@ -1931,15 +1931,15 @@ function an({ controller: e, ...t }) {
 //#endregion
 //#region src/integrations/realtime-modules/WrappedMediaEffectsPreviewPanel.tsx
 function on({ open: e, controller: t, onClose: n, onApplied: r, ...i }) {
-	let a = K(t);
+	let a = q(t);
 	a.current = t;
-	let o = K(!1);
-	W(() => {
+	let o = q(!1);
+	G(() => {
 		if (e) return a.current.beginPreview(), o.current = !0, () => {
 			o.current && (o.current = !1, a.current.cancelPreview());
 		};
 	}, [e]);
-	let s = G(() => {
+	let s = K(() => {
 		let e = t.previewTrack;
 		if (!e || typeof MediaStream > "u") return null;
 		try {
@@ -1957,7 +1957,7 @@ function on({ open: e, controller: t, onClose: n, onApplied: r, ...i }) {
 	}, u = () => {
 		o.current = !1;
 	};
-	return /* @__PURE__ */ Y(ie, {
+	return /* @__PURE__ */ X(ie, {
 		...i,
 		previewActive: c !== null,
 		previewStream: s,
@@ -2003,7 +2003,7 @@ function sn(e) {
 //#endregion
 //#region src/integrations/realtime-modules/WrappedCanvasDocument.tsx
 function cn({ canvas: e, schema: t, legacyModel: n, beforeConvert: r, ...i }) {
-	let [a, o] = q([]), s = H(async () => {
+	let [a, o] = J([]), s = U(async () => {
 		if (!t) return "The editor is still loading — try again in a moment.";
 		try {
 			await r?.();
@@ -2021,7 +2021,7 @@ function cn({ canvas: e, schema: t, legacyModel: n, beforeConvert: r, ...i }) {
 		n,
 		r
 	]);
-	return /* @__PURE__ */ Y(B, {
+	return /* @__PURE__ */ X(V, {
 		...i,
 		isCanvas: e.isCanvas,
 		body: e.body,
@@ -2032,7 +2032,7 @@ function cn({ canvas: e, schema: t, legacyModel: n, beforeConvert: r, ...i }) {
 //#endregion
 //#region src/integrations/realtime-modules/WrappedAudioVideoSettingsForm.tsx
 function ln({ devices: e, settings: t, cameraOn: n, ...r }) {
-	return /* @__PURE__ */ Y(L, {
+	return /* @__PURE__ */ X(L, {
 		...r,
 		value: t.settings,
 		onChange: (e) => t.update(e),
@@ -2100,7 +2100,7 @@ function mn(e) {
 }
 function hn({ meeting: e, people: t, roomNames: n, renderError: r, ...i }) {
 	let { rooms: a, unassigned: o } = pn(e.breakout, t, e.hands), s = e.breakout;
-	return /* @__PURE__ */ Y(se, {
+	return /* @__PURE__ */ X(se, {
 		...i,
 		rooms: a,
 		phase: s.phase,
@@ -2131,7 +2131,7 @@ function hn({ meeting: e, people: t, roomNames: n, renderError: r, ...i }) {
 		onDeleteRooms: () => e.configureBreakouts([]),
 		onAddRoom: e.addRoom ? () => e.addRoom?.() : void 0,
 		onRenameRoom: e.renameRoom,
-		notice: e.error ? r?.(e.error) ?? /* @__PURE__ */ Y(c, {
+		notice: e.error ? r?.(e.error) ?? /* @__PURE__ */ X(c, {
 			variant: "error",
 			className: "mx-4 mt-3",
 			"data-testid": "breakout-error",
@@ -2142,7 +2142,7 @@ function hn({ meeting: e, people: t, roomNames: n, renderError: r, ...i }) {
 function gn({ meeting: e, className: t }) {
 	if (!e.myRoom) return null;
 	let n = e.breakout;
-	return /* @__PURE__ */ Y(ae, {
+	return /* @__PURE__ */ X(ae, {
 		roomName: e.myRoom.name,
 		endsAt: n.endsAt,
 		clockOffsetMs: e.clockOffsetMs,
@@ -2159,9 +2159,9 @@ function _n(e, t) {
 		...r ? { react: {
 			id: "react",
 			label: "React",
-			icon: /* @__PURE__ */ Y(oe, {}),
+			icon: /* @__PURE__ */ X(oe, {}),
 			popoverLabel: "Send a reaction",
-			popover: (e) => /* @__PURE__ */ Y(te, {
+			popover: (e) => /* @__PURE__ */ X(te, {
 				tone: "surface",
 				emojis: t.reactions,
 				onReact: (t) => {
@@ -2173,7 +2173,7 @@ function _n(e, t) {
 			id: "raise",
 			label: n ? "Lower" : "Raise",
 			title: n ? `Lower your hand (${e.myHandPosition} in line)` : "Raise your hand",
-			icon: /* @__PURE__ */ Y(ee, {}),
+			icon: /* @__PURE__ */ X(ee, {}),
 			pressed: n,
 			onClick: e.toggleHand,
 			disabled: !e.ready
@@ -2181,7 +2181,7 @@ function _n(e, t) {
 		rooms: {
 			id: "rooms",
 			label: "Rooms",
-			icon: /* @__PURE__ */ Y(re, {}),
+			icon: /* @__PURE__ */ X(re, {}),
 			active: t.roomsOpen,
 			onClick: t.onToggleRooms,
 			disabled: !e.ready,
@@ -2193,24 +2193,24 @@ function vn(e) {
 	return e.myRoom ? `${e.myRoom.name} chat` : "Meeting chat";
 }
 function yn({ roomName: e }) {
-	return /* @__PURE__ */ X("div", {
+	return /* @__PURE__ */ Z("div", {
 		className: "flex items-center gap-2 border-t border-border px-3 py-1.5",
 		role: "status",
 		"aria-live": "polite",
 		"data-testid": "meeting-chat-context",
 		children: [
-			/* @__PURE__ */ Y(re, {
+			/* @__PURE__ */ X(re, {
 				size: 14,
 				"aria-hidden": !0,
 				className: "shrink-0 text-text-secondary"
 			}),
-			/* @__PURE__ */ X(o, {
+			/* @__PURE__ */ Z(o, {
 				size: "xs",
 				weight: "semibold",
 				className: "shrink-0 whitespace-nowrap",
 				children: [e, " chat"]
 			}),
-			/* @__PURE__ */ X(o, {
+			/* @__PURE__ */ Z(o, {
 				size: "xs",
 				tone: "tertiary",
 				className: "min-w-0",
@@ -2224,16 +2224,16 @@ function yn({ roomName: e }) {
 	});
 }
 function bn({ value: e, onChange: t }) {
-	return /* @__PURE__ */ X("div", {
+	return /* @__PURE__ */ Z("div", {
 		className: "flex items-center gap-2 border-t border-border px-3 py-1.5",
 		"data-testid": "meeting-chat-target",
 		children: [
-			/* @__PURE__ */ Y(o, {
+			/* @__PURE__ */ X(o, {
 				size: "xs",
 				tone: "secondary",
 				children: "To"
 			}),
-			/* @__PURE__ */ Y(_, {
+			/* @__PURE__ */ X(_, {
 				size: "sm",
 				"aria-label": "Send to",
 				value: e,
@@ -2246,7 +2246,7 @@ function bn({ value: e, onChange: t }) {
 					label: "All rooms"
 				}]
 			}),
-			e === "rooms" && /* @__PURE__ */ Y(o, {
+			e === "rooms" && /* @__PURE__ */ X(o, {
 				size: "xs",
 				tone: "tertiary",
 				children: "Every room sees this as an announcement."
@@ -2256,18 +2256,22 @@ function bn({ value: e, onChange: t }) {
 }
 var xn = "meeting-announcement:";
 function Sn(e, t) {
-	let [n, r] = q("chat"), [i, a] = q([]), s = e.breakout.announcement, c = s ? `${s.at}|${s.fromUserId}` : null;
-	W(() => {
-		!s || !c || a((e) => e.some((e) => `${e.at}|${e.fromUserId}` === c) ? e : [...e, s].slice(-50));
-	}, [c]);
-	let l = e.ready && e.isOrganizer && e.breakout.phase === "open", u = l ? n : "chat", d = t.announcementNote ?? "Announcement to every room", f = G(() => i.map((e) => ({
+	let [n, r] = J("chat"), [i, a] = J([]), s = e.breakout.announcement, c = e.breakout.announcements, l = (e) => `${e.at}|${e.fromUserId}`, u = [s ? l(s) : "", ...(c ?? []).map(l)].join(",");
+	G(() => {
+		let e = [...c ?? [], ...s ? [s] : []];
+		e.length !== 0 && a((t) => {
+			let n = new Set(t.map(l)), r = e.filter((e) => !n.has(l(e)) && n.add(l(e)));
+			return r.length === 0 ? t : [...t, ...r].sort((e, t) => Date.parse(e.at) - Date.parse(t.at)).slice(-50);
+		});
+	}, [u]);
+	let d = e.ready && e.isOrganizer && e.breakout.phase === "open", f = d ? n : "chat", p = t.announcementNote ?? "Announcement to every room", m = K(() => i.map((e) => ({
 		id: `${xn}${e.at}:${e.fromUserId}`,
 		clientId: "meeting",
 		userId: e.fromUserId,
 		displayName: e.fromDisplayName,
 		content: e.message,
 		timestamp: e.at
-	})), [i]), p = t.renderMessageReferences, m = G(() => i.map((e) => ({
+	})), [i]), h = t.renderMessageReferences, g = K(() => i.map((e) => ({
 		id: `${xn}${e.at}:${e.fromUserId}`,
 		timestamp: e.at,
 		displayName: e.fromDisplayName,
@@ -2276,36 +2280,36 @@ function Sn(e, t) {
 			kind: "meeting-announcement",
 			fromUserId: e.fromUserId
 		},
-		note: d
-	})), [i, d]), { send: h } = t;
+		note: p
+	})), [i, p]), { send: _ } = t;
 	return {
-		target: u,
+		target: f,
 		setTarget: r,
-		localMessages: m,
-		withAnnouncements: (e) => f.length === 0 ? [...e] : [...e, ...f].sort((e, t) => Date.parse(e.timestamp) - Date.parse(t.timestamp)),
-		renderMessageReferences: (e) => e.id?.startsWith(xn) ? /* @__PURE__ */ Y(o, {
+		localMessages: g,
+		withAnnouncements: (e) => m.length === 0 ? [...e] : [...e, ...m].sort((e, t) => Date.parse(e.timestamp) - Date.parse(t.timestamp)),
+		renderMessageReferences: (e) => e.id?.startsWith(xn) ? /* @__PURE__ */ X(o, {
 			as: "p",
 			size: "xs",
 			tone: "tertiary",
 			"data-testid": "meeting-chat-announcement-note",
-			children: d
-		}) : p?.(e) ?? null,
+			children: p
+		}) : h?.(e) ?? null,
 		title: vn(e),
-		dock: e.myRoom || l ? /* @__PURE__ */ X(J, { children: [e.myRoom && /* @__PURE__ */ Y(yn, { roomName: e.myRoom.name }), l && /* @__PURE__ */ Y(bn, {
-			value: u,
+		dock: e.myRoom || d ? /* @__PURE__ */ Z(Y, { children: [e.myRoom && /* @__PURE__ */ X(yn, { roomName: e.myRoom.name }), d && /* @__PURE__ */ X(bn, {
+			value: f,
 			onChange: r
 		})] }) : null,
 		onSend: (t) => {
 			let n = t.trim();
 			if (n) {
-				if (u === "rooms") {
+				if (f === "rooms") {
 					e.broadcast(n.slice(0, 500)), r("chat");
 					return;
 				}
-				h(t);
+				_(t);
 			}
 		}
 	};
 }
 //#endregion
-export { nt as $, Nt as A, xt as B, Xt as C, Gt as D, Kt as E, It as F, gt as G, Tt as H, Lt as I, st as J, ht as K, Dt as L, bt as M, Pt as N, Vt as O, Ft as P, et as Q, Rt as R, $t as S, _e as St, Jt as T, Et as U, St as V, _t as W, it as X, at as Y, rt as Z, an as _, Ee as _t, pn as a, Ue as at, tn as b, Se as bt, un as c, Le as ct, Sn as d, Fe as dt, tt as et, dn as f, Ae as ft, sn as g, De as gt, on as h, Oe as ht, hn as i, Ke as it, yt as j, Mt as k, fn as l, Re as lt, cn as m, Pe as mt, bn as n, Je as nt, mn as o, Ie as ot, ln as p, Me as pt, ct as q, gn as r, $e as rt, vn as s, Be as st, yn as t, Qe as tt, _n as u, Q as ut, rn as v, Te as vt, Yt as w, en as x, xe as xt, nn as y, Ce as yt, zt as z };
+export { nt as $, Nt as A, xt as B, Xt as C, Gt as D, Kt as E, It as F, gt as G, Tt as H, Lt as I, st as J, ht as K, Dt as L, bt as M, Pt as N, Vt as O, Ft as P, et as Q, Rt as R, $t as S, ge as St, Jt as T, Et as U, St as V, _t as W, it as X, at as Y, rt as Z, an as _, Ee as _t, pn as a, Ue as at, tn as b, Se as bt, un as c, Le as ct, Sn as d, Fe as dt, tt as et, dn as f, Ae as ft, sn as g, De as gt, on as h, Oe as ht, hn as i, Ke as it, yt as j, Mt as k, fn as l, Re as lt, cn as m, Pe as mt, bn as n, Je as nt, mn as o, Ie as ot, ln as p, Me as pt, ct as q, gn as r, $e as rt, vn as s, Be as st, yn as t, Qe as tt, _n as u, Q as ut, rn as v, Te as vt, Yt as w, en as x, be as xt, nn as y, Ce as yt, zt as z };
