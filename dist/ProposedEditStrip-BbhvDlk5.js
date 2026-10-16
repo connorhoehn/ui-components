@@ -27,7 +27,7 @@ import { t as F } from "./useMeasuredWidth-Dv1skbGr.js";
 import { t as I } from "./SectionLabel-Ch_rkHQZ.js";
 import { G as L, U as R } from "./renderers-Cj0O_Bjx.js";
 import { a as re } from "./composerSendError-BCxgMhHn.js";
-import { t as ie } from "./InlineEditableText-CdErtRnG.js";
+import { t as ie } from "./InlineEditableText-BOuYANbP.js";
 import { i as ae, t as oe } from "./FloatingComposerDock-D10uQ4k3.js";
 import { Component as se, Suspense as ce, lazy as le, useCallback as z, useEffect as B, useId as ue, useMemo as V, useRef as H, useState as U } from "react";
 import { Fragment as W, jsx as G, jsxs as K } from "react/jsx-runtime";
@@ -1313,7 +1313,7 @@ function tt(e) {
 }
 //#endregion
 //#region src/components/doc-editor/presentation/Filmstrip.tsx
-var nt = le(() => import("./SortableSlideList-C2G3_PDp.js"));
+var nt = le(() => import("./SortableSlideList-DmF7Ien9.js"));
 function rt(e, t) {
 	if (e) return Array.from(e.querySelectorAll("[data-slide-id]")).find((e) => e.dataset.slideId === t);
 }

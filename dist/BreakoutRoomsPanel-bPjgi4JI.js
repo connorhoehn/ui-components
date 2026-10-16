@@ -18,7 +18,7 @@ import { t as N } from "./InlineAlert-CBtteaVZ.js";
 import { t as ee } from "./ActivityFeed-Cp6MhNab.js";
 import { t as P } from "./NumberInput-D_suV6tQ.js";
 import { t as te } from "./Checkbox-Jycr-rlf.js";
-import { t as F } from "./InlineEditableText-CdErtRnG.js";
+import { t as F } from "./InlineEditableText-BOuYANbP.js";
 import { memo as I, useCallback as ne, useEffect as L, useId as R, useLayoutEffect as re, useMemo as z, useRef as B, useState as V } from "react";
 import { Fragment as H, jsx as U, jsxs as W } from "react/jsx-runtime";
 //#region src/components/video/MeetingIcons.tsx

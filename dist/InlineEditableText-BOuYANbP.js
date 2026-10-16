@@ -8,13 +8,13 @@ var o = {
 	muted: "text-[12px] text-text-secondary"
 };
 function s({ value: s, onCommit: c, label: l, placeholder: u, maxLength: d, required: f = !1, disabled: p = !1, size: m = "sm", tone: h = "title", fitContent: g = !1, className: _, "data-testid": v = "inline-editable-text" }) {
-	let [y, b] = i(!1), [x, S] = i(s), C = r(null);
+	let [y, b] = i(!1), [x, S] = i(s), C = r(null), w = r(null), T = r(!1);
 	n(() => {
 		y || S(s);
 	}, [s, y]), n(() => {
-		y && C.current?.select();
+		y ? C.current?.select() : T.current && (T.current = !1, w.current?.focus());
 	}, [y]);
-	let w = () => {
+	let E = () => {
 		b(!1);
 		let e = x.trim();
 		if (f && !e) {
@@ -32,13 +32,14 @@ function s({ value: s, onCommit: c, label: l, placeholder: u, maxLength: d, requ
 		maxLength: d,
 		autoFocus: !0,
 		onChange: (e) => S(e.target.value),
-		onBlur: w,
+		onBlur: E,
 		onKeyDown: (e) => {
-			e.key === "Enter" && (e.preventDefault(), w()), e.key === "Escape" && (e.preventDefault(), S(s), b(!1));
+			e.key === "Enter" && (e.preventDefault(), T.current = !0, E()), e.key === "Escape" && (e.preventDefault(), T.current = !0, S(s), b(!1));
 		},
 		className: e("min-w-0", g && "w-auto min-w-[8ch] [field-sizing:content]", _),
 		"data-testid": `${v}-input`
 	}) : /* @__PURE__ */ a("button", {
+		ref: w,
 		type: "button",
 		disabled: p,
 		onClick: () => b(!0),
