@@ -3,10 +3,10 @@
 // (realtime-modules' reducer over the loopback socket), not the published
 // `useMeeting`: under vitest its CommonJS dist loads a second React. The real
 // hook over the same loopback is tested in realtime-modules
-// (test/meeting/loopback.test.tsx) and runs in the Storybook story. (realtime-modules createMeetingLoopback), so
-// a runtime mismatch between UseMeetingResult and the bindings fails here,
-// not in an app. The flow is the reference picture's: hands, rooms, the
-// announcement through the chat, and everyone back.
+// (test/meeting/loopback.test.tsx) and runs in the Storybook story. Because
+// the service is real (createMeetingLoopback), a mismatch between the wire
+// and the bindings fails here, not in an app. The flow is the reference
+// picture's: hands, rooms, the announcement through the chat, and everyone back.
 
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 
