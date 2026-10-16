@@ -66,6 +66,11 @@ export interface BreakoutRoomsPanelProps {
   onSetTimer?: (durationMs: number | null) => void;
   onBroadcast?: (message: string) => void;
   onEnd?: () => void;
+  /**
+   * Discard the drafted rooms so they can be created again (2.458.1). Shown
+   * only while rooms are closed; open rooms must be ended first.
+   */
+  onDeleteRooms?: () => void;
 
   /** The header ✕. Omitted: no close button. */
   onClose?: () => void;
@@ -193,7 +198,7 @@ function CreateRooms({ onCreateRooms }: { onCreateRooms: (count: number, mode: B
 }
 
 function OrganizerControls(props: BreakoutRoomsPanelProps & { left: number | null }) {
-  const { phase, mode, rooms, onOpenRooms, onCloseRooms, onAutoAssign, onSetTimer, onBroadcast, onEnd, left, timerMinutes = DEFAULT_TIMER_MINUTES } = props;
+  const { phase, mode, rooms, onOpenRooms, onCloseRooms, onAutoAssign, onSetTimer, onBroadcast, onEnd, onDeleteRooms, left, timerMinutes = DEFAULT_TIMER_MINUTES } = props;
   const [message, setMessage] = useState('');
   const anyOpen = rooms.some((r) => r.state === 'open');
   const send = () => {
@@ -211,8 +216,11 @@ function OrganizerControls(props: BreakoutRoomsPanelProps & { left: number | nul
         {mode === 'assigned' && onAutoAssign && (
           <Button variant="secondary" size="sm" onClick={onAutoAssign} data-testid="breakout-auto-assign">Assign automatically</Button>
         )}
-        {onEnd && phase !== 'none' && (
+        {onEnd && phase === 'open' && (
           <Button variant="ghost" size="sm" onClick={onEnd} className="text-danger" data-testid="breakout-end">End breakout rooms</Button>
+        )}
+        {onDeleteRooms && phase === 'draft' && (
+          <Button variant="ghost" size="sm" onClick={onDeleteRooms} className="text-danger" data-testid="breakout-delete">Delete rooms</Button>
         )}
       </div>
       {onSetTimer && (

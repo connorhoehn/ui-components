@@ -149,6 +149,12 @@ describe('meeting bindings over the real service', () => {
     fireEvent.click(within(org).getByTestId('breakout-end'));
     await flush();
     expect(within(ana).getAllByTestId('breakout-room').every((r) => r.getAttribute('data-room-state') === 'closed')).toBe(true);
+
+    // Back in draft the organizer can delete the rooms and start over.
+    fireEvent.click(within(org).getByTestId('breakout-delete'));
+    await flush();
+    expect(within(org).getByTestId('breakout-create')).toBeInTheDocument();
+    expect(within(ana).getByTestId('panel-u-a-empty')).toBeInTheDocument();
     w.svc.dispose();
   });
 

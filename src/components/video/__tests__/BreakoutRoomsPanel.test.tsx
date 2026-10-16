@@ -61,7 +61,7 @@ describe('BreakoutRoomsPanel — organizer', () => {
   });
 
   it('opens all, assigns automatically, moves a person, and opens or closes one room', () => {
-    const fns = { onOpenRooms: vi.fn(), onCloseRooms: vi.fn(), onAutoAssign: vi.fn(), onAssign: vi.fn(), onEnd: vi.fn() };
+    const fns = { onOpenRooms: vi.fn(), onCloseRooms: vi.fn(), onAutoAssign: vi.fn(), onAssign: vi.fn(), onEnd: vi.fn(), onDeleteRooms: vi.fn() };
     const draft = ROOMS.map((r) => ({ ...r, state: 'closed' as const }));
     render(<BreakoutRoomsPanel rooms={draft} phase="draft" mode="assigned" isOrganizer unassigned={[{ id: 'u-b', name: 'Ben' }]} {...fns} />);
     fireEvent.click(screen.getByTestId('breakout-open-all'));
@@ -73,8 +73,10 @@ describe('BreakoutRoomsPanel — organizer', () => {
     expect(fns.onAssign).toHaveBeenCalledWith('u-b', 'r2');
     fireEvent.click(within(screen.getAllByTestId('breakout-room')[0]!).getByTestId('breakout-room-toggle'));
     expect(fns.onOpenRooms).toHaveBeenCalledWith(['r1']);
-    fireEvent.click(screen.getByTestId('breakout-end'));
-    expect(fns.onEnd).toHaveBeenCalled();
+    // Draft: nothing to end, but the rooms can be deleted and created again.
+    expect(screen.queryByTestId('breakout-end')).toBeNull();
+    fireEvent.click(screen.getByTestId('breakout-delete'));
+    expect(fns.onDeleteRooms).toHaveBeenCalled();
   });
 
   it('with rooms open: close all, a timer, and a broadcast that clears after sending', () => {
@@ -82,6 +84,7 @@ describe('BreakoutRoomsPanel — organizer', () => {
     render(<BreakoutRoomsPanel rooms={ROOMS} phase="open" mode="assigned" isOrganizer {...fns} />);
     fireEvent.click(screen.getByTestId('breakout-close-all'));
     expect(fns.onCloseRooms).toHaveBeenCalledWith();
+    expect(screen.queryByTestId('breakout-delete')).toBeNull();
     fireEvent.change(screen.getByLabelText('Breakout timer'), { target: { value: '10' } });
     expect(fns.onSetTimer).toHaveBeenCalledWith(600_000);
     const input = screen.getByLabelText('Announcement to every room');

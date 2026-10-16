@@ -142,6 +142,7 @@ export function WrappedBreakoutRoomsPanel({ meeting, people, roomNames, renderEr
       onSetTimer={meeting.setTimer}
       onBroadcast={meeting.broadcast}
       onEnd={meeting.endBreakouts}
+      onDeleteRooms={() => meeting.configureBreakouts([])}
       notice={meeting.error ? (renderError?.(meeting.error) ?? (
         <Banner variant="error" className="mx-4 mt-3" data-testid="breakout-error">{meeting.error.message}</Banner>
       )) : null}

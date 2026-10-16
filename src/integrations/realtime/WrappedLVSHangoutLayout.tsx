@@ -94,6 +94,13 @@ export interface WrappedLVSHangoutLayoutProps {
   /** When false, the local user does NOT appear as a tile (e.g. they
    *  only host the call). Default true (Meet-style). */
   showLocalAsTile?: boolean;
+  /**
+   * Raised hand for a participant (2.458.1): `true`, a 1-based queue
+   * position, or undefined. Keyed by the app user id when the SFU carries one
+   * (`appUserId`), else the SFU `userId`. Bind with meetingHandPositions:
+   * `handFor={(id) => hands.get(id)}`.
+   */
+  handFor?: (userId: string) => boolean | number | undefined;
 
   className?: string;
   'data-testid'?: string;
@@ -198,6 +205,7 @@ function WrappedLVSHangoutLayoutView(rm: WrappedLVSHangoutLayoutModules, {
   activeSpeakerStrategy: _activeSpeakerStrategy = 'audio-level',
   localTileLabel,
   showLocalAsTile = true,
+  handFor,
   className,
   'data-testid': testId,
 }: WrappedLVSHangoutLayoutProps) {
@@ -215,9 +223,13 @@ function WrappedLVSHangoutLayoutView(rm: WrappedLVSHangoutLayoutModules, {
   const tiles = useMemo<HangoutLayoutParticipant[]>(() => {
     const list = hangout.participants
       .filter((p) => showLocalAsTile || !p.isLocal)
-      .map((p) => projectToLayoutShape(p, localTileLabel));
+      .map((p) => {
+        const tile = projectToLayoutShape(p, localTileLabel);
+        const hand = handFor?.(p.appUserId ?? p.userId);
+        return hand ? { ...tile, handRaised: hand } : tile;
+      });
     return list;
-  }, [hangout.participants, showLocalAsTile, localTileLabel]);
+  }, [hangout.participants, showLocalAsTile, localTileLabel, handFor]);
 
   const remoteCount = hangout.participants.filter((p) => !p.isLocal).length;
   const overlayState: WrappedHangoutState = {

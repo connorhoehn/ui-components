@@ -21,6 +21,7 @@ import { memo, useLayoutEffect, useRef, useState, type CSSProperties, type React
 import { cn } from '../../lib/cn';
 import { noteCallDockRender } from './callDockRenderProbe';
 import { ParticipantTile } from './ParticipantTile';
+import { RaisedHandBadge, raisedHandLabel } from './RaisedHandBadge';
 import { gridCols } from './HangoutGrid';
 import { Avatar } from '../shared/Avatar';
 import type { HangoutLayoutParticipant } from './HangoutLayoutTypes';
@@ -181,6 +182,7 @@ export function CallTileRow({
       displayName={p.displayName}
       {...(p.avatarUrl ? { avatarUrl: p.avatarUrl } : {})}
       isMuted={p.isMuted}
+      handRaised={p.handRaised}
       isLocal={p.isLocal}
       isSpeaking={p.id === activeSpeakerId}
       videoElement={p.videoElement}
@@ -215,6 +217,7 @@ export function CallTileRow({
                 displayName={p.displayName}
                 {...(p.avatarUrl ? { avatarUrl: p.avatarUrl } : {})}
                 isMuted={p.isMuted}
+                handRaised={p.handRaised}
                 isLocal={p.isLocal}
                 isSpeaking={p.id === activeSpeakerId}
                 videoElement={p.videoElement}
@@ -480,7 +483,7 @@ function DockTileImpl({
   const name = p.isLocal ? 'You' : p.displayName;
   const label = p.ringing
     ? `${p.displayName}, ringing`
-    : `${p.isLocal ? 'You' : p.displayName}${p.isMuted ? ', muted' : ''}${p.screenSharing ? ', sharing screen' : ''}`;
+    : `${p.isLocal ? 'You' : p.displayName}${p.handRaised ? `, ${raisedHandLabel(p.handRaised)!.toLowerCase()}` : ''}${p.isMuted ? ', muted' : ''}${p.screenSharing ? ', sharing screen' : ''}`;
   return (
     <div
       className={cn(
@@ -510,6 +513,7 @@ function DockTileImpl({
       data-speaking={speaking ? 'true' : 'false'}
       data-track-kind={p.videoElement && !p.cameraOff ? 'camera' : 'avatar'}
       data-ringing={p.ringing ? 'true' : undefined}
+      data-hand-raised={p.handRaised ? 'true' : undefined}
     >
       {p.videoElement && p.cameraOff && (
         // Kept playing for its audio; 1px and transparent rather than
@@ -544,6 +548,7 @@ function DockTileImpl({
           <span className="shrink-0 text-white/80" data-testid={`${testId}-ringing`}>Ringing…</span>
         ) : (
           <>
+            <RaisedHandBadge raised={p.handRaised} tone="overlay" data-testid={`${testId}-hand`} />
             {p.screenSharing && <ScreenShareIcon size={13} className="shrink-0" />}
             {p.isMuted ? <MicOffIcon size={14} className="shrink-0" /> : <MicIcon size={14} className="shrink-0" />}
           </>
@@ -577,7 +582,7 @@ function DockTileImpl({
  * wider than the circle.
  */
 function AvatarBubble({ participant: p, speaking, onClick }: { participant: HangoutLayoutParticipant; speaking: boolean; onClick?: () => void }) {
-  const label = `${p.displayName}${p.isLocal ? ' (you)' : ''}${p.isMuted ? ', muted' : ''}`;
+  const label = `${p.displayName}${p.isLocal ? ' (you)' : ''}${p.handRaised ? `, ${raisedHandLabel(p.handRaised)!.toLowerCase()}` : ''}${p.isMuted ? ', muted' : ''}`;
   return (
     <div
       className={cn(
@@ -596,6 +601,9 @@ function AvatarBubble({ participant: p, speaking, onClick }: { participant: Hang
       data-is-muted={p.isMuted ? 'true' : 'false'}
     >
       <Avatar name={p.displayName} size={44} {...(p.avatarUrl ? { src: p.avatarUrl } : {})} />
+      {p.handRaised ? (
+        <RaisedHandBadge raised={p.handRaised} tone="overlay" className="absolute -left-1 -top-1 ring-2 ring-white" data-testid="bubble-hand" />
+      ) : null}
       {p.isMuted && (
         <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-danger text-[9px] text-white ring-2 ring-white" aria-hidden="true">
           ✕

@@ -242,3 +242,22 @@ describe('mirrors agree with realtime-modules (compile time)', () => {
     expectTypeOf<ConversationCallResult>().toMatchTypeOf<RMConversationCallSource>();
   });
 });
+
+describe('ConversationCallDock — raised hands (2.458.1)', () => {
+  it('handFor puts the hand on the matching tile, with the queue position in its name', () => {
+    const { Dock } = bind();
+    const hands = new Map([['u-nora', 2]]);
+    render(<Dock call={fakeCall()} title="Auth Migration" onOpenPeople={() => {}} handFor={(id) => hands.get(id)} />);
+    const row = screen.getByTestId('call-dock-tile-row');
+    const nora = row.querySelector('[data-peer-id="u-nora"]')!;
+    expect(nora).toHaveAttribute('data-hand-raised', 'true');
+    expect(nora.getAttribute('aria-label')).toContain('hand raised, 2nd in line');
+    expect(row.querySelector('[data-peer-id="u-vera"]')).not.toHaveAttribute('data-hand-raised');
+  });
+
+  it('without handFor nothing changes', () => {
+    const { Dock } = bind();
+    render(<Dock call={fakeCall()} title="Auth Migration" onOpenPeople={() => {}} />);
+    expect(screen.getByTestId('call-dock-tile-row').querySelector('[data-hand-raised]')).toBeNull();
+  });
+});

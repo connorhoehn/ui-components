@@ -324,3 +324,24 @@ describe('WrappedLVSHangoutLayout', () => {
     expect(spotlight.getAttribute('data-spotlight-user')).toBe('Me');
   });
 });
+
+describe('WrappedLVSHangoutLayout — raised hands (2.458.1)', () => {
+  beforeEach(() => {
+    mockState.current = { ...mockState.current, participants: [] };
+  });
+
+  it('handFor is keyed by appUserId when the SFU carries one, else userId', () => {
+    mockState.current = {
+      ...mockState.current,
+      participants: [
+        makeLocal(),
+        makeRemote('sfu-1', { appUserId: 'u-ana' } as Partial<HangoutParticipant>),
+        makeRemote('sfu-2'),
+      ],
+    };
+    const hands = new Map<string, number>([['u-ana', 1], ['User sfu-2', 2]]);
+    render(<WrappedLVSHangoutLayout stageToken="t" participantId="me" handFor={(id) => hands.get(id)} />);
+    const marks = screen.getAllByTestId('tile-raised-hand').map((el) => el.getAttribute('data-hand-position')).sort();
+    expect(marks).toEqual(['1', '2']);
+  });
+});

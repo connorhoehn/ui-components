@@ -62,6 +62,12 @@ export interface ConversationCallDockProps {
   tile?: (p: RMConversationCallParticipant) => ReactNode | undefined;
   /** An info line above the shelf while the call is on (e.g. who the call could not ring). */
   notice?: ReactNode;
+  /**
+   * Raised hand per call participant (2.458.1), by userId: `true`, a 1-based
+   * queue position, or undefined. Bind to realtime-modules' useMeeting with
+   * `const hands = meetingHandPositions(meeting.hands); handFor={(id) => hands.get(id)}`.
+   */
+  handFor?: (userId: string) => boolean | number | undefined;
   /** Name shown on the settings preview. */
   selfName?: string;
   /** 132 × 74 tiles instead of 176 × 88. */
@@ -133,6 +139,22 @@ function withRingingInvitees(
   return ringing.length ? [...inCall, ...ringing] : inCall;
 }
 
+/** Raised hands onto the dock's participants; untouched objects when nobody's hand is up. */
+function withHands(
+  participants: CallDockProps['participants'],
+  handFor: ConversationCallDockProps['handFor'],
+): CallDockProps['participants'] {
+  if (!handFor) return participants;
+  let changed = false;
+  const next = participants.map((p) => {
+    const hand = handFor(p.userId);
+    if (!hand) return p;
+    changed = true;
+    return { ...p, handRaised: hand };
+  });
+  return changed ? next : participants;
+}
+
 /** Remote in-call streams, keyed so the analyser set is rebuilt only when a stream changes. */
 function useSpeakerStreams(call: RMConversationCallSource['call']) {
   const remote = (call?.participants ?? []).filter(
@@ -155,6 +177,7 @@ function ConversationCallDockImpl(
     cameraMenuItems,
     tile = defaultTile,
     notice,
+    handFor,
     selfName,
     compact = false,
     tileSize,
@@ -194,7 +217,7 @@ function ConversationCallDockImpl(
   if (!dock) return null;
   const dockProps: CallDockProps = {
     ...dock,
-    participants: withRingingInvitees(dock.participants as CallDockProps['participants'], call.call?.participants ?? [], dock.phase),
+    participants: withHands(withRingingInvitees(dock.participants as CallDockProps['participants'], call.call?.participants ?? [], dock.phase), handFor),
     layout,
     ...(tileSize ? { tileSize } : {}),
     ...(documents ? { documents } : {}),

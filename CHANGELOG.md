@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.458.1
+
+Meeting audit sweep (realtime-modules `docs/design/meeting-rooms-audit.md`).
+
+- Raised hands now show in `CallTileRow`, the tile row inside `CallDock` and `ConversationCallDock`: every variant (bar, floating tiles and avatar bubbles, dock, grid), with the queue position in the tile's accessible name ("Ana, hand raised, 1st in line") and `data-hand-raised`. 2.458.0 drew them only on `ParticipantTile`/`HangoutGrid`, which the app's dock does not use.
+- `ConversationCallDock` and `WrappedLVSHangoutLayout` take `handFor(userId) => boolean | number | undefined` (bind with `meetingHandPositions(meeting.hands)`); the LVS layout keys it by `appUserId` when the SFU carries one.
+- `BreakoutRoomsPanel` `onDeleteRooms` (Delete rooms, draft only) so an organizer can start over; End breakout rooms shows only while rooms are open. `WrappedBreakoutRoomsPanel` binds it to `configureBreakouts([])`.
+
 ## 2.458.0
 
 Meetings: a Teams-style meeting surface — the labelled meeting bar, the recording consent card, raised hands on tiles and the roster, and the breakout Rooms pane — bound to realtime-modules 0.121's `useMeeting`. Additive; no existing prop changes meaning.
