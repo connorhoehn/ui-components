@@ -60,6 +60,8 @@ export interface RMMeetingSource {
   myRoom: { id: string; name: string } | null;
   state: { announcement: RMBreakoutState['announcement']; you?: { userId: string | null; organizer: boolean } };
   error: { code: string; message: string; requestAction: string } | null;
+  /** realtime-modules 0.129.0+: server clock minus this device's, ms. Older pins: treated as 0. */
+  clockOffsetMs?: number;
   configureBreakouts(rooms: { id?: string; name: string; members?: string[] }[], opts?: { mode?: 'assigned' | 'self-select'; allowReturnToMain?: boolean }): void;
   /** realtime-modules 0.123.0+. Without it the pane has no Add room. */
   addRoom?(opts?: { id?: string; name?: string }): void;
@@ -174,6 +176,7 @@ export function WrappedBreakoutRoomsPanel({ meeting, people, roomNames, renderEr
       isOrganizer={meeting.isOrganizer}
       unassigned={unassigned}
       endsAt={b.endsAt}
+      clockOffsetMs={meeting.clockOffsetMs}
       closing={b.closing === true}
       allowReturnToMain={b.settings.allowReturnToMain}
       onJoin={meeting.joinRoom}
@@ -211,6 +214,7 @@ export function WrappedBreakoutRoomBanner({ meeting, className }: { meeting: RMM
     <BreakoutRoomBanner
       roomName={meeting.myRoom.name}
       endsAt={b.endsAt}
+      clockOffsetMs={meeting.clockOffsetMs}
       closing={b.closing === true}
       announcement={meeting.state.announcement}
       onDismissAnnouncement={meeting.dismissAnnouncement}

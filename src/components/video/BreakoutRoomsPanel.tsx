@@ -52,6 +52,8 @@ export interface BreakoutRoomsPanelProps {
   unassigned?: BreakoutPerson[];
   /** ISO end of the timer. */
   endsAt?: string | null;
+  /** Server clock minus this device's, ms (`useMeeting().clockOffsetMs`). Default 0. Since 2.469.0. */
+  clockOffsetMs?: number;
   /**
    * Rooms are in the closing grace (2.461.0; realtime-modules 0.124
    * `breakout.closing`): `endsAt` is the deadline. Organizers get Close now
@@ -347,7 +349,7 @@ export function BreakoutRoomsPanel(props: BreakoutRoomsPanelProps) {
     onJoin, onReturnToMain, onCreateRooms, onAssign, onOpenRooms, onCloseRooms, onRenameRoom, onClose,
     title = 'Breakout rooms', notice, className, 'data-testid': testId = 'breakout-rooms-panel',
   } = props;
-  const left = useCountdown(phase === 'open' ? endsAt : null);
+  const left = useCountdown(phase === 'open' ? endsAt : null, props.clockOffsetMs);
   const canReturn = allowReturnToMain || isOrganizer;
   const toggleRoom = onOpenRooms && onCloseRooms
     ? (roomId: string, next: 'open' | 'closed') => (next === 'open' ? onOpenRooms([roomId]) : onCloseRooms([roomId]))

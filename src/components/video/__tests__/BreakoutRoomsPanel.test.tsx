@@ -1,4 +1,5 @@
 import { act, render, screen, fireEvent, within } from '@testing-library/react';
+import { cleanup } from '@testing-library/react';
 import { BreakoutRoomsPanel, type BreakoutRoomView } from '../BreakoutRoomsPanel';
 import { BreakoutRoomBanner } from '../BreakoutRoomBanner';
 
@@ -234,4 +235,18 @@ describe('BreakoutRoomBanner', () => {
     expect(screen.queryByTestId('breakout-banner-countdown')).toBeNull();
     expect(screen.queryByTestId('breakout-banner-return')).toBeNull();
   });
+
+  it('counts down in server time when given clockOffsetMs (2.469.0)', () => {
+    // The server runs 40 s ahead: a deadline 60 s away on this device is 20 s away for real.
+    const endsAt = new Date(Date.now() + 60_000).toISOString();
+    render(<BreakoutRoomsPanel rooms={ROOMS} phase="open" mode="assigned" isOrganizer endsAt={endsAt} clockOffsetMs={40_000} onSetTimer={vi.fn()} />);
+    expect(screen.getByTestId('breakout-timer-left').textContent).toMatch(/00:(19|20)/);
+    cleanup();
+    render(<BreakoutRoomBanner roomName="Room 1" endsAt={endsAt} clockOffsetMs={40_000} />);
+    expect(screen.getByTestId('breakout-banner')).toHaveTextContent(/00:(19|20)/);
+    cleanup();
+    render(<BreakoutRoomBanner roomName="Room 1" endsAt={endsAt} />);
+    expect(screen.getByTestId('breakout-banner')).toHaveTextContent(/00:(59|60)|01:00/);
+  });
 });
+

@@ -15,6 +15,8 @@ export interface BreakoutRoomBannerProps {
   roomName: string;
   /** ISO end of the breakout timer, or null for none. */
   endsAt?: string | null;
+  /** Server clock minus this device's, ms (`useMeeting().clockOffsetMs`). Default 0. */
+  clockOffsetMs?: number;
   /**
    * The organizer closed the rooms and `endsAt` is the end of the closing
    * grace (realtime-modules 0.124 `breakout.closing`). The countdown reads
@@ -29,7 +31,13 @@ export interface BreakoutRoomBannerProps {
   'data-testid'?: string;
 }
 
-export function useCountdown(endsAt: string | null | undefined): number | null {
+/**
+ * Milliseconds until `endsAt`, ticking each second. `clockOffsetMs` is the
+ * server clock minus this device's (realtime-modules 0.129 `useMeeting`):
+ * deadlines are server time, so a device whose clock is off counts from the
+ * corrected now (2.469.0).
+ */
+export function useCountdown(endsAt: string | null | undefined, clockOffsetMs = 0): number | null {
   const end = endsAt ? Date.parse(endsAt) : NaN;
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -38,12 +46,13 @@ export function useCountdown(endsAt: string | null | undefined): number | null {
     const t = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(t);
   }, [end]);
-  return Number.isFinite(end) ? Math.max(0, end - now) : null;
+  return Number.isFinite(end) ? Math.max(0, end - (now + clockOffsetMs)) : null;
 }
 
 export function BreakoutRoomBanner({
   roomName,
   endsAt,
+  clockOffsetMs = 0,
   closing = false,
   announcement,
   onDismissAnnouncement,
@@ -51,7 +60,7 @@ export function BreakoutRoomBanner({
   className,
   'data-testid': testId = 'breakout-banner',
 }: BreakoutRoomBannerProps) {
-  const left = useCountdown(endsAt);
+  const left = useCountdown(endsAt, clockOffsetMs);
   const urgent = left !== null && (closing || left <= 60_000);
   return (
     <div

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.469.0
+
+- Breakout countdowns run on server time. `BreakoutRoomBanner` and `BreakoutRoomsPanel` take `clockOffsetMs` (server clock minus this device's), and `useCountdown(endsAt, clockOffsetMs?)` counts from the corrected now; the wrappers pass realtime-modules 0.129 `useMeeting().clockOffsetMs`, and `RMMeetingSource.clockOffsetMs` is optional, so older pins count as before. A laptop whose clock was 40 s off showed a timer 40 s off.
+
 ## 2.468.0
 
 - Wiring rehearsal (realtime-modules goal G11): story `Video/MeetingRehearsal (live bindings)` runs three people in one real meeting in the page (realtime-modules 0.128 `createMeetingLoopback` + the real `useMeeting`), and the whole screen is built only from the public bindings; an integration test walks hands, rooms, a chat announcement, a private room chat and the return. Storybook aliases `@connorhoehn/realtime-modules/meeting` and `/client/meeting` to source, as it does the other subpaths.
