@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.460.1
+
+- `WorkTableView` cells truncate inside their own columns: the owner avatar keeps its size, the owner name and the type cell truncate with a `title`, so long titles and names no longer run under each other (5 `text.overlap` findings in the aws-agentcore long-text world).
+- ui-dom-audit: `listbox.option-type` skips key hints (`$keyboardHints`), which `keyboard.typography` alone judges at 11px; a CommandPalette option with a ⌘I hint was failed by one rule for obeying the other.
+- (2.458.2 already carried the work-journeys size batch: ConfirmDialog and EmptyState link actions at 14px, the CommandPalette listbox marker and 11px hints, StatStrip/MetaLine trailing separators, WorkTableView 14px titles, 44px rows and a capped title column, RecordGraph 12px labels and 9–16px initials.)
+
 ## 2.460.0
 
 - `RosterPanel` hands queue, as in the Teams People pane. `raisedHandsFirst` lists raised hands at the top in queue order (numbered positions, then unnumbered hands, then everyone else in the caller's order; also exported as `orderRosterByHands`). `onLowerHand(id)` adds Lower on each row with a hand up, and `onLowerAllHands()` adds Lower all hands to the header while any hand is up. When a Lower button disappears with its hand, focus moves to the next Lower (else the panel), not `<body>`. All opt-in; existing rosters render as before.

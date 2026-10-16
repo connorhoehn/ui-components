@@ -1,7 +1,7 @@
 import { t as e } from "./rolldown-runtime-Dy4uBu1J.js";
 import { r as t } from "./registry-DbX3MVAA.js";
 import { r as n } from "./IdentityContext-CQM1qwH6.js";
-import { a as r, c as i, i as a, l as o, n as s, o as c, r as l, s as u, t as d } from "./useVideoSessions-DnoPQfEA.js";
+import { a as r, c as i, i as a, l as o, n as s, o as c, r as l, s as u, t as d } from "./useVideoSessions-RVzKQ3Go.js";
 import { t as f } from "./useDocumentTypes-DCKwxXn8.js";
 import { t as p } from "./cn-D4QmbyEy.js";
 import { n as m } from "./Button-uREUOWUk.js";
@@ -18,7 +18,7 @@ import { t as N } from "./Textarea-BwvE1HPn.js";
 import { t as me } from "./Avatar-CpUrJRJP.js";
 import { t as P } from "./activationKey-CjbL3LUv.js";
 import { O as he } from "./renderers-Cj0O_Bjx.js";
-import { Y as ge } from "./ProposedEditStrip-CBGV82Qv.js";
+import { Y as ge } from "./ProposedEditStrip-BTi8aU-L.js";
 import { t as _e } from "./TiptapEditor-BjjwDyPa.js";
 import { t as ve } from "./useHangoutEmbed-ChkoGDC_.js";
 import { t as F } from "./useActiveSpeaker-BGKJU3Lb.js";
