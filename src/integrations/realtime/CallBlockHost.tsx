@@ -57,6 +57,7 @@ import { WrappedAudioVideoSettingsForm, type RMAudioVideoSettingsSource, type RM
 import { createConversationCallDock, type ConversationCallDockModules } from './ConversationCallDock';
 import { IncomingCallToast } from './IncomingCallToast';
 import type { RMConversationCallSource, RMIncomingConversationCall } from './conversationCallTypes';
+import type { RMMeetingSource } from './meetingSource';
 import {
   CallBlockClaims,
   callBlockLayout,
@@ -115,6 +116,8 @@ export interface CallBlockModules extends ConversationCallDockModules {
   // Method syntax on purpose: the installed hooks' option types are wider than what is passed here.
   useConversationCall(opts: {
     lobbyName: string;
+    /** realtime-modules 0.134.0+: the lobby the media joins (a breakout room's); older pins ignore it. */
+    mediaLobby?: string | null;
     channel?: string | null;
     self: { userId: string; displayName: string; avatarUrl?: string };
     platformApi: { baseUrl: string; getIdToken: () => string | Promise<string> };
@@ -131,7 +134,20 @@ export interface CallBlockModules extends ConversationCallDockModules {
     onAccept?(ring: never): void;
   }): { rings: CallBlockRing[]; accept(ring: never): void; decline(ring: never): void };
   useMediaDevices(opts?: { requestOnMount?: boolean }): RMMediaDevicesSource;
+  /**
+   * realtime-modules 0.134.0+ `useMeeting`, for raise hand and breakout rooms
+   * on the call (`CallHostProviderProps.meeting`). Optional: a host bound to
+   * an older pin simply has no meeting. Since 2.476.0.
+   */
+  useMeeting?(meetingId: string | null, opts: {
+    enabled?: boolean;
+    chatChannel?: string;
+    socket?: { send(msg: Record<string, unknown>): void; onMessage(handler: (msg: never) => void): () => void };
+  }): CallHostMeeting;
 }
+
+/** The meeting riding the call: the bindings' source plus where media and chat belong now. */
+export type CallHostMeeting = RMMeetingSource & { activeLobby: string | null; activeChat: string | null };
 
 /** A page's lobby: what the call host binds while nothing is in progress. */
 export interface CallLobby {
@@ -163,6 +179,13 @@ export interface CallHostValue<C extends CallBlockCall> {
   unavailableReason: string | null;
   /** Opens the device check on request (clears the remembered skip). */
   checkDevices(): void;
+  /**
+   * The call's meeting (raise hand, rooms, announcements) while a call is
+   * live and the provider's `meeting` option is on; null otherwise. Feed it to
+   * `meetingToolbarItems`, `WrappedBreakoutRoomsPanel`, `useMeetingChat`.
+   * Since 2.476.0.
+   */
+  meeting: CallHostMeeting | null;
 }
 
 /** The media panel (the side pane's tile grid): open or collapsed. Opens by itself once per call. */
@@ -185,6 +208,15 @@ export interface CallHostProviderProps {
   /** Accept was pressed on a ring: open the page the call is about. */
   onAccept?: (ring: CallBlockRing) => void;
   onCallEvent?: OnCallHostEvent;
+  /**
+   * Run a meeting beside the call (needs `useMeeting` in the modules): the
+   * meeting id is the call's lobby, and the call's MEDIA follows the meeting
+   * into a breakout room's lobby (realtime-modules 0.134 `mediaLobby`) while
+   * the call itself stays. `chatChannelFor` names the call's chat channel in
+   * the host's scheme, so a room's chat is `<that>~breakout~<roomId>`.
+   * Off by default. Since 2.476.0.
+   */
+  meeting?: { chatChannelFor?(lobbyName: string, callId: string | null): string | null } | false;
   /** Where the pre-join choices persist (one key per device). */
   preJoinStorageKey?: string;
   children: ReactNode;
@@ -358,7 +390,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
 
   interface PreJoinRequest { kind: PreJoinKind; run(call: Call): void; cancel?(): void; initial: PreJoinChoice }
 
-  function Host({ self, tenant, platformApiUrl, getIdToken, gateway, gatewayConfigured, connectionState, onAccept, onCallEvent, preJoinStorageKey = DEFAULT_PRE_JOIN_KEY, children }: Omit<CallHostProviderProps, 'scopeKey' | 'videoUrl'>) {
+  function Host({ self, tenant, platformApiUrl, getIdToken, gateway, gatewayConfigured, connectionState, onAccept, onCallEvent, meeting: meetingOption, preJoinStorageKey = DEFAULT_PRE_JOIN_KEY, children }: Omit<CallHostProviderProps, 'scopeKey' | 'videoUrl'>) {
     const [lobby, setLobby] = useState<CallLobby | null>(null);
     const pendingRing = useRef<CallBlockRing | null>(null);
     const hostRef = useRef<string | null>(null);
@@ -368,8 +400,26 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
       eventRef.current?.(kind, event, { host: hostRef.current, selfId: self?.userId ?? '' });
     };
     const [initialMedia, setInitialMedia] = useState(() => readChoice(preJoinStorageKey));
+    // The meeting rides a LIVE call: its id is the call's lobby. `inCall`
+    // trails the call by a render (set below), which is what lets the media
+    // lobby feed back into the one useConversationCall without a cycle.
+    const [liveCall, setLiveCall] = useState<{ lobbyName: string; callId: string | null } | null>(null);
+    const meetingId = meetingOption && rm.useMeeting && liveCall ? liveCall.lobbyName : null;
+    const g = gateway as { send?(m: Record<string, unknown>): void; sendMessage?(m: Record<string, unknown>): void; onMessage?(h: (m: never) => void): () => void } | null | undefined;
+    const meetingSocket = useMemo(() => (g?.onMessage
+      ? { send: (m: Record<string, unknown>) => (g.send ?? g.sendMessage)?.call(g, m), onMessage: (h: (m: never) => void) => g.onMessage!(h) }
+      : undefined), [g]);
+    const chatChannel = meetingId && meetingOption && meetingOption.chatChannelFor
+      ? meetingOption.chatChannelFor(meetingId, liveCall?.callId ?? null) ?? undefined
+      : undefined;
+    // Same function on every render: rm.useMeeting is fixed per createCallBlockHost.
+    const meetingResult = rm.useMeeting
+      ? rm.useMeeting(meetingId, { enabled: !!meetingId, socket: meetingSocket, ...(chatChannel ? { chatChannel } : {}) })
+      : null;
+    const meeting = meetingId && meetingResult ? meetingResult : null;
     const rawCall = rm.useConversationCall({
       lobbyName: lobby?.lobbyName ?? UNBOUND,
+      ...(meeting?.activeLobby ? { mediaLobby: meeting.activeLobby } : {}),
       channel: lobby?.channel ?? null,
       self: self ?? { userId: '', displayName: '' },
       platformApi: { baseUrl: platformApiUrl ?? '', getIdToken },
@@ -473,10 +523,19 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
 
     const unavailableReason = callHostUnavailable({ gatewayConfigured, platformApiUrl, signedIn: !!self, connectionState });
     const selfValue = useMemo(() => (self ? { userId: self.userId, displayName: self.displayName } : null), [self?.userId, self?.displayName]); // eslint-disable-line react-hooks/exhaustive-deps
+    // Track the live call for the meeting (see `liveCall` above).
+    const liveLobby = lobby && callOn(rawCall.phase, true) && rawCall.call ? lobby.lobbyName : null;
+    const liveCallId = rawCall.call?.callId ?? null;
+    useEffect(() => {
+      setLiveCall((cur) => (liveLobby
+        ? (cur && cur.lobbyName === liveLobby && cur.callId === liveCallId ? cur : { lobbyName: liveLobby, callId: liveCallId })
+        : null));
+    }, [liveLobby, liveCallId]);
+
     const value = useMemo<CallHostValue<Call>>(() => ({
       call, lobby, bind, unbind, startBound: lobby && starterRef.current ? startBound : null, self: selfValue, tenant,
-      gatewayConfigured, connectionState, platformApiUrl, unavailableReason, checkDevices,
-    }), [call, lobby, bind, unbind, startBound, selfValue, tenant, gatewayConfigured, connectionState, platformApiUrl, unavailableReason, checkDevices]);
+      gatewayConfigured, connectionState, platformApiUrl, unavailableReason, checkDevices, meeting,
+    }), [call, lobby, bind, unbind, startBound, selfValue, tenant, gatewayConfigured, connectionState, platformApiUrl, unavailableReason, checkDevices, meeting]);
 
     const head = rings.rings[0] ?? null;
     return (

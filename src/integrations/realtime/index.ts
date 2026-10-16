@@ -254,6 +254,7 @@ export type {
   CallBlockProps,
   CallBlockView,
   CallHostValue,
+  CallHostMeeting,
   CallHostProviderProps,
   CallHostEvent,
   CallHostEventKind,

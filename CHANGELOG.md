@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.476.0
+
+- The call host runs a meeting beside the call (lane L2, part 2; completes lane L2 of aws-agentcore `docs/meeting-rooms-app-goal.md`). `CallBlockModules.useMeeting` (realtime-modules 0.134.0+, optional so older pins still load) and `CallHostProviderProps.meeting: { chatChannelFor? } | false`: while a call is live the host runs `useMeeting(<the call's lobby>)` on the app's gateway, names room chat after the app's call channel (`chatChannelFor`), and passes the meeting's `activeLobby` to the call as `mediaLobby`, so a breakout moves the media while the call itself stays. `useCallHost().meeting` (`CallHostMeeting`) feeds `meetingToolbarItems`, `HuddleBar meetingItems`, `WrappedBreakoutRoomsPanel` and `useMeetingChat`. Off by default.
+- The meeting source types (`RMMeetingSource`, `RMBreakoutState`, `RMRaisedHand`, `RMMeetingPerson`) live in a dependency-free module, still exported from the same places, so the call host's declarations do not pull the meeting bindings' component graph into consumers' typechecks.
+
 ## 2.475.0
 
 - `HuddleBar meetingItems` (lane L2, part 1 of aws-agentcore `docs/meeting-rooms-app-goal.md`): the meeting controls `meetingToolbarItems` builds (Raise, React, Rooms…) drawn as the bar's own compact buttons — icon, the label from `@lg`, pressed/active states, a badge, and a popover item's panel (React's picker) — before Leave, never while idle. The same items feed `MeetingToolbar` on a stage, so a host binds once. Story `Video/HuddleBar` LiveWithMeeting.

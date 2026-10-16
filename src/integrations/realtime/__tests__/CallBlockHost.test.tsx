@@ -204,3 +204,88 @@ describe('native call device feedback', () => {
     expect(screen.queryByTestId('conversation-call-dock-capture-error')).toBeNull();
   });
 });
+
+describe('CallBlockHost meeting (2.476.0)', () => {
+  const meetingCalls: Array<{ id: string | null; opts: any }> = [];
+  let activeLobby: string | null = null;
+  const withMeeting: CallBlockModules = {
+    ...modules,
+    useMeeting: (id, opts) => {
+      meetingCalls.push({ id, opts });
+      return {
+        ready: !!id, isOrganizer: true, hands: [], myHandPosition: null,
+        toggleHand() {}, lowerHand() {}, lowerAllHands() {},
+        breakout: { phase: 'none', mode: 'assigned', rooms: [], returned: [], endsAt: null, announcement: null, settings: { allowReturnToMain: true } },
+        myRoom: null, state: { announcement: null }, error: null,
+        configureBreakouts() {}, assign() {}, autoAssign() {}, openRooms() {}, closeRooms() {}, setTimer() {}, broadcast() {},
+        joinRoom() {}, returnToMain() {}, endBreakouts() {}, dismissAnnouncement() {},
+        activeLobby: id ? activeLobby ?? id : null, activeChat: id ? opts.chatChannel ?? id : null,
+      };
+    },
+  };
+  const meetingHost = createCallBlockHost(withMeeting);
+  const gateway = { send: vi.fn(), onMessage: vi.fn(() => () => {}) };
+
+  function MeetingShell({ children, meeting }: { children: ReactNode; meeting?: false | { chatChannelFor?(lobby: string, callId: string | null): string | null } }) {
+    return <meetingHost.CallHostProvider self={{ userId: 'u-vera', displayName: 'Vera Green' }} tenant="orgiq" scopeKey="orgiq|u-vera"
+      platformApiUrl="http://platform" getIdToken={() => 'token'} videoUrl="http://sfu" gateway={gateway} gatewayConfigured connectionState="connected"
+      {...(meeting !== undefined ? { meeting } : {})}>
+      {children}
+    </meetingHost.CallHostProvider>;
+  }
+  function MeetingPage() {
+    meetingHost.useCallBlock('orgiq:initiative:p-auth', { bind: { title: 'Auth Migration huddle' } });
+    const host = meetingHost.useCallHost();
+    return <span data-testid="meeting">{host?.meeting ? `${host.meeting.activeLobby}|${host.meeting.activeChat}` : 'none'}</span>;
+  }
+
+  beforeEach(() => { meetingCalls.length = 0; activeLobby = null; });
+
+  it('runs the meeting on a live call: id = the lobby, the app names the chat, media follows the room', async () => {
+    // Bind while idle (a page cannot rebind mid-call), then the call goes live.
+    phase = 'idle';
+    const { rerender } = render(<MeetingShell meeting={{ chatChannelFor: (_l, callId) => `orgiq:huddle:${callId}` }}><MeetingPage /></MeetingShell>);
+    phase = 'live';
+    rerender(<MeetingShell meeting={{ chatChannelFor: (_l, callId) => `orgiq:huddle:${callId}` }}><MeetingPage /></MeetingShell>);
+    await act(async () => {});
+    expect(screen.getByTestId('meeting')).toHaveTextContent('orgiq:initiative:p-auth|orgiq:huddle:c-1');
+    const last = meetingCalls.at(-1)!;
+    expect(last.id).toBe('orgiq:initiative:p-auth');
+    expect(last.opts.enabled).toBe(true);
+    expect(typeof last.opts.socket.send).toBe('function');
+    expect(latestCallOptions.mediaLobby).toBe('orgiq:initiative:p-auth');
+    // The organizer opens rooms: the meeting says this person belongs in r1.
+    activeLobby = 'orgiq:initiative:p-auth~breakout~r1';
+    rerender(<MeetingShell meeting={{ chatChannelFor: (_l, callId) => `orgiq:huddle:${callId}` }}><MeetingPage /></MeetingShell>);
+    await act(async () => {});
+    expect(latestCallOptions.mediaLobby).toBe('orgiq:initiative:p-auth~breakout~r1');
+    expect(latestCallOptions.lobbyName).toBe('orgiq:initiative:p-auth'); // the call itself stays
+  });
+
+  it('no meeting while idle, with the option off, or on modules without useMeeting', async () => {
+    phase = 'idle';
+    render(<MeetingShell meeting={{}}><MeetingPage /></MeetingShell>);
+    expect(screen.getByTestId('meeting')).toHaveTextContent('none');
+    expect(meetingCalls.every((c) => c.id === null && c.opts.enabled === false)).toBe(true);
+    cleanup();
+    phase = 'idle';
+    const off = render(<MeetingShell meeting={false}><MeetingPage /></MeetingShell>);
+    phase = 'live';
+    off.rerender(<MeetingShell meeting={false}><MeetingPage /></MeetingShell>);
+    await act(async () => {});
+    expect(screen.getByTestId('meeting')).toHaveTextContent('none');
+    expect(latestCallOptions.mediaLobby).toBeUndefined();
+    cleanup();
+    function OldPage() {
+      calls.useCallBlock('orgiq:initiative:p-auth', { bind: { title: 'Auth Migration huddle' } });
+      return <span data-testid="old">{calls.useCallHost()?.meeting === null ? 'null' : 'set'}</span>;
+    }
+    phase = 'idle';
+    const old = render(<Shell><OldPage /></Shell>);
+    phase = 'live';
+    old.rerender(<Shell><OldPage /></Shell>);
+    await act(async () => {});
+    expect(screen.getByTestId('old')).toHaveTextContent('null');
+  });
+});
+
