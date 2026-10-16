@@ -40,7 +40,7 @@ export const OrganizerDraft: Story = {
     rooms: ROOMS.slice(0, 3).map((r) => ({ ...r, state: 'closed' as const })),
     phase: 'draft', mode: 'assigned', isOrganizer: true,
     unassigned: [{ id: 'p4', name: PEOPLE[3]! }, { id: 'p5', name: PEOPLE[4]!, handRaised: 2 }],
-    onOpenRooms: () => {}, onCloseRooms: () => {}, onAutoAssign: () => {}, onAssign: () => {}, onEnd: () => {}, onDeleteRooms: () => {}, onSetTimer: () => {}, onClose: () => {},
+    onOpenRooms: () => {}, onCloseRooms: () => {}, onAutoAssign: () => {}, onAssign: () => {}, onEnd: () => {}, onDeleteRooms: () => {}, onSetTimer: () => {}, onRenameRoom: () => {}, onAddRoom: () => {}, onClose: () => {},
   },
 };
 
@@ -49,6 +49,6 @@ export const OrganizerOpen: Story = {
   args: {
     rooms: ROOMS.slice(0, 3), phase: 'open', mode: 'assigned', isOrganizer: true,
     endsAt: new Date(Date.now() + 9 * 60_000).toISOString(),
-    onOpenRooms: () => {}, onCloseRooms: () => {}, onAutoAssign: () => {}, onAssign: () => {}, onEnd: () => {}, onSetTimer: () => {}, onBroadcast: () => {}, onClose: () => {},
+    onOpenRooms: () => {}, onCloseRooms: () => {}, onAutoAssign: () => {}, onAssign: () => {}, onEnd: () => {}, onSetTimer: () => {}, onBroadcast: () => {}, onRenameRoom: () => {}, onAddRoom: () => {}, onClose: () => {},
   },
 };

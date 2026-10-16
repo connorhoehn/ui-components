@@ -36,7 +36,10 @@ export interface RMRaisedHand {
   raisedAt: string;
 }
 
-/** Structural `UseMeetingResult` (realtime-modules 0.121.0). */
+/**
+ * Structural `UseMeetingResult` (realtime-modules 0.121.0). Members added
+ * later are optional, so an older pin's result still fits.
+ */
 export interface RMMeetingSource {
   ready: boolean;
   isOrganizer: boolean;
@@ -50,6 +53,10 @@ export interface RMMeetingSource {
   state: { announcement: RMBreakoutState['announcement']; you?: { userId: string | null; organizer: boolean } };
   error: { code: string; message: string; requestAction: string } | null;
   configureBreakouts(rooms: { id?: string; name: string; members?: string[] }[], opts?: { mode?: 'assigned' | 'self-select'; allowReturnToMain?: boolean }): void;
+  /** realtime-modules 0.123.0+. Without it the pane has no Add room. */
+  addRoom?(opts?: { id?: string; name?: string }): void;
+  /** realtime-modules 0.123.0+. Without it room names are read-only. */
+  renameRoom?(roomId: string, name: string): void;
   assign(assignments: Record<string, string | null>): void;
   autoAssign(userIds: string[]): void;
   openRooms(roomIds?: string[]): void;
@@ -101,7 +108,7 @@ export function defaultRoomDrafts(count: number): { name: string }[] {
 }
 
 export interface WrappedBreakoutRoomsPanelProps
-  extends Pick<BreakoutRoomsPanelProps, 'onClose' | 'title' | 'timerMinutes' | 'className' | 'data-testid'> {
+  extends Pick<BreakoutRoomsPanelProps, 'onClose' | 'title' | 'timerMinutes' | 'maxRooms' | 'className' | 'data-testid'> {
   meeting: RMMeetingSource;
   /** Everyone in the meeting (the call roster), for names and the "not in a room" list. */
   people: RMMeetingPerson[];
@@ -143,6 +150,8 @@ export function WrappedBreakoutRoomsPanel({ meeting, people, roomNames, renderEr
       onBroadcast={meeting.broadcast}
       onEnd={meeting.endBreakouts}
       onDeleteRooms={() => meeting.configureBreakouts([])}
+      onAddRoom={meeting.addRoom ? () => meeting.addRoom?.() : undefined}
+      onRenameRoom={meeting.renameRoom}
       notice={meeting.error ? (renderError?.(meeting.error) ?? (
         <Banner variant="error" className="mx-4 mt-3" data-testid="breakout-error">{meeting.error.message}</Banner>
       )) : null}

@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.459.0
+
+- `BreakoutRoomsPanel` renames and adds rooms, also while rooms are open (as in Teams). `onRenameRoom(roomId, name)` turns each room name into an in-place editor for organizers (`InlineEditableText`, 80 characters; Enter or blur commits, Escape cancels, an emptied name is refused). `onAddRoom()` adds an Add room button in draft and open phases, disabled at `maxRooms` (default 50). Participants still see plain names.
+- `WrappedBreakoutRoomsPanel` binds both to realtime-modules 0.123's `useMeeting().addRoom` / `renameRoom`. `RMMeetingSource` lists them as optional, so a result from an older pin still fits and simply renders without them.
+
 ## 2.458.2
 
 - `MeetingToolbar` implements the WAI-ARIA toolbar keyboard contract its `role="toolbar"` promised: the bar is one tab stop, Left/Right move focus (wrapping), Home/End jump, disabled buttons and open menus are skipped, and split chevrons are reachable. Built on `useRovingToolbar`.

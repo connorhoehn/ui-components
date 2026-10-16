@@ -75,6 +75,8 @@ function useTestMeeting(w: ReturnType<typeof world>, clientId: string, userId: s
       state,
       error: state.error,
       configureBreakouts: (rooms, o = {}) => act_('breakout.configure', { rooms, ...o }),
+      addRoom: (o = {}) => act_('breakout.addRoom', o),
+      renameRoom: (roomId, name) => act_('breakout.rename', { roomId, name }),
       assign: (assignments) => act_('breakout.assign', { assignments }),
       autoAssign: (userIds) => act_('breakout.autoAssign', { userIds }),
       openRooms: (roomIds) => act_('breakout.open', roomIds ? { roomIds } : {}),
@@ -156,6 +158,48 @@ describe('meeting bindings over the real service', () => {
     expect(within(org).getByTestId('breakout-create')).toBeInTheDocument();
     expect(within(ana).getByTestId('panel-u-a-empty')).toBeInTheDocument();
     w.svc.dispose();
+  });
+
+  it('while rooms are open the organizer renames one and adds another; everyone sees it', async () => {
+    const w = world();
+    render(<><Seat w={w} clientId="c-org" userId="u-org" /><Seat w={w} clientId="c-a" userId="u-a" /></>);
+    await flush();
+    const org = screen.getByTestId('seat-u-org');
+    const ana = screen.getByTestId('seat-u-a');
+    fireEvent.change(within(org).getByLabelText('Number of rooms'), { target: { value: '1' } });
+    fireEvent.click(within(org).getByTestId('breakout-create-submit'));
+    await flush();
+    fireEvent.click(within(org).getByTestId('breakout-open-all'));
+    await flush();
+
+    fireEvent.click(within(org).getByTestId('breakout-room-name'));
+    fireEvent.change(within(org).getByLabelText('Room name'), { target: { value: 'Design crit' } });
+    fireEvent.keyDown(within(org).getByLabelText('Room name'), { key: 'Enter' });
+    await flush();
+    fireEvent.click(within(org).getByTestId('breakout-add-room'));
+    await flush();
+
+    const rows = within(ana).getAllByTestId('breakout-room');
+    expect(rows.map((r) => r.textContent)).toEqual([expect.stringContaining('Design crit'), expect.stringContaining('Room 2')]);
+    expect(rows.map((r) => r.getAttribute('data-room-state'))).toEqual(['open', 'closed']);
+    // A participant reads names; they cannot edit them.
+    expect(within(ana).queryByTestId('breakout-room-name')).toBeNull();
+    w.svc.dispose();
+  });
+
+  it('a source without addRoom/renameRoom (realtime-modules < 0.123) renders read-only names and no Add room', () => {
+    const source = {
+      ready: true, isOrganizer: true, hands: [], myHandPosition: null,
+      toggleHand() {}, lowerHand() {}, lowerAllHands() {},
+      breakout: { phase: 'open', mode: 'assigned', rooms: [{ id: 'r1', name: 'Room 1', state: 'open', members: [] }], returned: [], endsAt: null, announcement: null, settings: { allowReturnToMain: true } },
+      myRoom: null, state: { announcement: null }, error: null,
+      configureBreakouts() {}, assign() {}, autoAssign() {}, openRooms() {}, closeRooms() {}, setTimer() {}, broadcast() {},
+      joinRoom() {}, returnToMain() {}, endBreakouts() {}, dismissAnnouncement() {},
+    } satisfies RMMeetingSource;
+    render(<WrappedBreakoutRoomsPanel meeting={source} people={PEOPLE} />);
+    expect(screen.queryByTestId('breakout-add-room')).toBeNull();
+    expect(screen.queryByTestId('breakout-room-name')).toBeNull();
+    expect(screen.getByText('Room 1')).toBeInTheDocument();
   });
 
   it('raised hands flow to the Raise button and to the rooms member list', async () => {

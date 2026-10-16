@@ -1,7 +1,7 @@
 // BreakoutRoomsPanel — the Rooms pane. Participants see the room list (expand
 // chevron for who is in a room, Open/Closed, Join); organizers also create
-// rooms, place people, open and close them, run a timer, broadcast an
-// announcement and end the session.
+// rooms, place people, open and close them, rename and add rooms (also while
+// they are open), run a timer, broadcast an announcement and end the session.
 //
 // Transport-agnostic: rooms and people are plain props and every action is a
 // callback. `WrappedBreakoutRoomsPanel` (integrations/realtime-modules) binds
@@ -9,6 +9,7 @@
 
 import { useId, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { InlineEditableText } from '../forms/InlineEditableText';
 import { NumberInput } from '../forms/NumberInput';
 import { Select } from '../forms/Select';
 import { Textarea } from '../forms/Textarea';
@@ -71,6 +72,15 @@ export interface BreakoutRoomsPanelProps {
    * only while rooms are closed; open rooms must be ended first.
    */
   onDeleteRooms?: () => void;
+  /**
+   * Rename a room (2.459.0). Organizers then click a room's name to edit it
+   * in place, in any phase; Enter or blur commits, Escape cancels.
+   */
+  onRenameRoom?: (roomId: string, name: string) => void;
+  /** Add one room (2.459.0), in draft or while rooms are open. It starts closed. */
+  onAddRoom?: () => void;
+  /** The server's room cap; Add room is disabled at it. Default 50. */
+  maxRooms?: number;
 
   /** The header ✕. Omitted: no close button. */
   onClose?: () => void;
@@ -84,9 +94,12 @@ export interface BreakoutRoomsPanelProps {
 }
 
 const DEFAULT_TIMER_MINUTES = [5, 10, 15, 30, 60];
+const DEFAULT_MAX_ROOMS = 50;
+/** realtime-modules' MAX_ROOM_NAME_LENGTH. */
+const MAX_ROOM_NAME_LENGTH = 80;
 
 function RoomRow({
-  room, mine, canJoin, canReturn, isOrganizer, rooms, onJoin, onReturnToMain, onAssign, onToggleRoom,
+  room, mine, canJoin, canReturn, isOrganizer, rooms, onJoin, onReturnToMain, onAssign, onToggleRoom, onRenameRoom,
 }: {
   room: BreakoutRoomView;
   mine: boolean;
@@ -98,6 +111,7 @@ function RoomRow({
   onReturnToMain?: () => void;
   onAssign?: (userId: string, roomId: string | null) => void;
   onToggleRoom?: (roomId: string, next: 'open' | 'closed') => void;
+  onRenameRoom?: (roomId: string, name: string) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
   const bodyId = useId();
@@ -117,7 +131,19 @@ function RoomRow({
           <ChevronIcon size={14} dir={expanded ? 'down' : 'right'} />
         </IconButton>
         <div className="flex min-w-0 flex-1 flex-col">
-          <T size="base" tone="primary" className="truncate" title={room.name}>{room.name}</T>
+          {isOrganizer && onRenameRoom ? (
+            <InlineEditableText
+              value={room.name}
+              onCommit={(name) => onRenameRoom(room.id, name)}
+              label="Room name"
+              maxLength={MAX_ROOM_NAME_LENGTH}
+              required
+              className="-ml-1 self-start"
+              data-testid="breakout-room-name"
+            />
+          ) : (
+            <T size="base" tone="primary" className="truncate" title={room.name}>{room.name}</T>
+          )}
           <T size="sm" tone="inherit" className={open ? 'text-success' : 'text-text-tertiary'} data-testid="breakout-room-status">
             {open ? 'Open' : 'Closed'}
             {room.members.length > 0 && <span className="ml-1 text-text-tertiary">· {room.members.length}</span>}
@@ -198,7 +224,10 @@ function CreateRooms({ onCreateRooms }: { onCreateRooms: (count: number, mode: B
 }
 
 function OrganizerControls(props: BreakoutRoomsPanelProps & { left: number | null }) {
-  const { phase, mode, rooms, onOpenRooms, onCloseRooms, onAutoAssign, onSetTimer, onBroadcast, onEnd, onDeleteRooms, left, timerMinutes = DEFAULT_TIMER_MINUTES } = props;
+  const {
+    phase, mode, rooms, onOpenRooms, onCloseRooms, onAutoAssign, onSetTimer, onBroadcast, onEnd, onDeleteRooms, onAddRoom,
+    left, timerMinutes = DEFAULT_TIMER_MINUTES, maxRooms = DEFAULT_MAX_ROOMS,
+  } = props;
   const [message, setMessage] = useState('');
   const anyOpen = rooms.some((r) => r.state === 'open');
   const send = () => {
@@ -213,6 +242,18 @@ function OrganizerControls(props: BreakoutRoomsPanelProps & { left: number | nul
         {anyOpen
           ? onCloseRooms && <Button variant="secondary" size="sm" onClick={() => onCloseRooms()} data-testid="breakout-close-all">Close rooms</Button>
           : onOpenRooms && <Button variant="primary" size="sm" onClick={() => onOpenRooms()} data-testid="breakout-open-all">Open rooms</Button>}
+        {onAddRoom && (
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={onAddRoom}
+            disabled={rooms.length >= maxRooms}
+            title={rooms.length >= maxRooms ? `At most ${maxRooms} rooms` : undefined}
+            data-testid="breakout-add-room"
+          >
+            Add room
+          </Button>
+        )}
         {mode === 'assigned' && onAutoAssign && (
           <Button variant="secondary" size="sm" onClick={onAutoAssign} data-testid="breakout-auto-assign">Assign automatically</Button>
         )}
@@ -274,7 +315,7 @@ function OrganizerControls(props: BreakoutRoomsPanelProps & { left: number | nul
 export function BreakoutRoomsPanel(props: BreakoutRoomsPanelProps) {
   const {
     rooms, phase, mode, myRoomId = null, isOrganizer = false, unassigned = [], endsAt = null, allowReturnToMain = true,
-    onJoin, onReturnToMain, onCreateRooms, onAssign, onOpenRooms, onCloseRooms, onClose,
+    onJoin, onReturnToMain, onCreateRooms, onAssign, onOpenRooms, onCloseRooms, onRenameRoom, onClose,
     title = 'Breakout rooms', notice, className, 'data-testid': testId = 'breakout-rooms-panel',
   } = props;
   const left = useCountdown(phase === 'open' ? endsAt : null);
@@ -323,6 +364,7 @@ export function BreakoutRoomsPanel(props: BreakoutRoomsPanelProps) {
                   onReturnToMain={onReturnToMain}
                   onAssign={onAssign}
                   onToggleRoom={toggleRoom}
+                  onRenameRoom={onRenameRoom}
                 />
               );
             })}

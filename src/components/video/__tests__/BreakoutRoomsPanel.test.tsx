@@ -95,6 +95,36 @@ describe('BreakoutRoomsPanel — organizer', () => {
     expect(input).toHaveValue('');
   });
 
+  it('while rooms are open: rename a room in place and add a room', () => {
+    const fns = { onRenameRoom: vi.fn(), onAddRoom: vi.fn() };
+    render(<BreakoutRoomsPanel rooms={ROOMS} phase="open" mode="assigned" isOrganizer {...fns} />);
+    const first = screen.getAllByTestId('breakout-room')[0]!;
+    fireEvent.click(within(first).getByTestId('breakout-room-name'));
+    const input = within(first).getByLabelText('Room name');
+    expect(input).toHaveAttribute('maxlength', '80');
+    fireEvent.change(input, { target: { value: '  Design crit ' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(fns.onRenameRoom).toHaveBeenCalledWith('r1', 'Design crit');
+    // Escape cancels; an emptied name is refused.
+    fireEvent.click(within(first).getByTestId('breakout-room-name'));
+    fireEvent.change(within(first).getByLabelText('Room name'), { target: { value: 'nope' } });
+    fireEvent.keyDown(within(first).getByLabelText('Room name'), { key: 'Escape' });
+    fireEvent.click(within(first).getByTestId('breakout-room-name'));
+    fireEvent.change(within(first).getByLabelText('Room name'), { target: { value: '  ' } });
+    fireEvent.blur(within(first).getByLabelText('Room name'));
+    expect(fns.onRenameRoom).toHaveBeenCalledTimes(1);
+    fireEvent.click(screen.getByTestId('breakout-add-room'));
+    expect(fns.onAddRoom).toHaveBeenCalledTimes(1);
+  });
+
+  it('Add room is disabled at the cap; participants get plain names and no Add room', () => {
+    const { rerender } = render(<BreakoutRoomsPanel rooms={ROOMS} phase="draft" mode="assigned" isOrganizer maxRooms={ROOMS.length} onAddRoom={vi.fn()} onRenameRoom={vi.fn()} />);
+    expect(screen.getByTestId('breakout-add-room')).toBeDisabled();
+    rerender(<BreakoutRoomsPanel rooms={ROOMS} phase="open" mode="self-select" onAddRoom={vi.fn()} onRenameRoom={vi.fn()} />);
+    expect(screen.queryByTestId('breakout-add-room')).toBeNull();
+    expect(screen.queryByTestId('breakout-room-name')).toBeNull();
+  });
+
   it('shows the time left on a running timer and lets it be cleared', () => {
     vi.useFakeTimers();
     try {
