@@ -2456,9 +2456,17 @@ declare interface MeetingToolbarItem {
 export declare function meetingToolbarItems(meeting: RMMeetingSource, opts: {
     roomsOpen: boolean;
     onToggleRooms: () => void;
+    /**
+     * Send a reaction (e.g. `useReactions().send`). When given, the result
+     * carries a React item whose popover is the reaction picker. Since 2.465.0.
+     */
+    onReact?: (emoji: string) => void;
+    /** The picker's emoji. Default the picker's own set. */
+    reactions?: string[];
 }): {
     raise: MeetingToolbarItem;
     rooms: MeetingToolbarItem;
+    react?: MeetingToolbarItem;
 };
 
 export declare class NetworkErrorBoundary extends Component<NetworkErrorBoundaryProps, NetworkErrorBoundaryState> {

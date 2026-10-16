@@ -2428,7 +2428,7 @@ export declare interface ReactionOverlayProps {
     style?: CSSProperties;
 }
 
-export declare function ReactionPicker({ onReact, emojis, className, style }: ReactionPickerProps): JSX.Element;
+export declare function ReactionPicker({ onReact, emojis, className, style, tone }: ReactionPickerProps): JSX.Element;
 
 /**
  * Icon trigger + popover pairing of ReactionPicker, sized to sit in a call
@@ -2475,6 +2475,12 @@ export declare interface ReactionPickerProps {
     className?: string;
     /** @deprecated Use `className`. Kept so existing callers keep compiling. */
     style?: CSSProperties;
+    /**
+     * `chrome` (default): its own dark pill, for a call stage. `surface`: no
+     * background of its own and theme-following hovers, for a light panel that
+     * already frames it (the meeting toolbar's React popover). Since 2.465.0.
+     */
+    tone?: 'chrome' | 'surface';
 }
 
 export declare function ReconnectingBanner({ show, label }: ReconnectingBannerProps): JSX.Element | null;
