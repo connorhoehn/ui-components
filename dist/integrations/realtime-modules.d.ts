@@ -3982,7 +3982,7 @@ export declare interface WrappedCanvasDocumentProps extends Omit<CanvasDocumentV
     beforeConvert?: () => void | Promise<void>;
 }
 
-export declare function WrappedChatPanel({ chat, localMessages, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, flushComposer, contentAlign, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, renderMessageReferences, emojis, onReply, reply, onCancelReply, readReceipts, readReceiptsEnabled, unreadFrom, threaded, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, editable, canEdit, canDelete, onForwardMessage, }: WrappedChatPanelProps): JSX.Element;
+export declare function WrappedChatPanel({ chat, localMessages, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, flushComposer, contentAlign, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, renderMessageReferences, transformMessages, dock, emojis, onReply, reply, onCancelReply, readReceipts, readReceiptsEnabled, unreadFrom, threaded, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, editable, canEdit, canDelete, onForwardMessage, }: WrappedChatPanelProps): JSX.Element;
 
 export declare interface WrappedChatPanelProps {
     /** Return value of useChat(channel) from realtime-modules */
@@ -4105,6 +4105,14 @@ export declare interface WrappedChatPanelProps {
     composer?: ReactNode;
     /** Host-resolved references rendered after each adapted message. */
     renderMessageReferences?: ChatPanelProps['renderMessageReferences'];
+    /**
+     * Last word on the thread's messages after they are adapted (2.477.0): a
+     * host merges its own entries in, e.g. a meeting's announcements with
+     * `useMeetingChat(...).withAnnouncements`. Must be stable or cheap.
+     */
+    transformMessages?: (messages: ChatMessage[]) => ChatMessage[];
+    /** Pinned above the composer (ChatPanel `dock`), e.g. `useMeetingChat`'s dock. Since 2.477.0. */
+    dock?: ChatPanelProps['dock'];
     emojis?: readonly string[];
     onReply?: (message: ChatMessage) => void;
     /**

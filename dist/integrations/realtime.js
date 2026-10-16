@@ -3,7 +3,7 @@ import { c as t, l as n, n as r } from "../Text-4BIlhd_-.js";
 import { t as i } from "../Modal-CEiWhFnj.js";
 import { n as a } from "../Slider-DEbQCKD1.js";
 import { i as o, n as s, r as c, t as l } from "../useDocumentImageUpload-3W74XPh6.js";
-import { $ as u, A as d, B as f, C as p, D as m, E as h, F as g, G as _, H as v, I as y, J as b, K as x, L as S, M as C, N as w, O as T, P as E, Q as ee, R as te, S as ne, St as D, T as O, U as k, V as A, W as re, X as j, Y as M, Z as N, _ as P, _t as ie, a as ae, at as oe, b as F, bt as I, c as L, ct as R, d as se, dt as z, et as ce, f as le, ft as B, g as ue, gt as de, h as fe, ht as V, i as H, it as pe, j as U, k as me, l as he, lt as ge, m as _e, mt as ve, n as ye, nt as be, o as xe, ot as Se, p as Ce, pt as we, q as Te, r as Ee, rt as De, s as Oe, st as ke, t as Ae, tt as je, u as Me, ut as Ne, v as Pe, vt as Fe, w as Ie, x as Le, xt as Re, y as ze, yt as Be, z as Ve } from "../meeting-uhne3kX_.js";
+import { $ as u, A as d, B as f, C as p, D as m, E as h, F as g, G as _, H as v, I as y, J as b, K as x, L as S, M as C, N as w, O as T, P as E, Q as ee, R as te, S as ne, St as D, T as O, U as k, V as A, W as re, X as j, Y as M, Z as N, _ as P, _t as ie, a as ae, at as oe, b as F, bt as I, c as L, ct as R, d as se, dt as z, et as ce, f as le, ft as B, g as ue, gt as de, h as fe, ht as V, i as H, it as pe, j as U, k as me, l as he, lt as ge, m as _e, mt as ve, n as ye, nt as be, o as xe, ot as Se, p as Ce, pt as we, q as Te, r as Ee, rt as De, s as Oe, st as ke, t as Ae, tt as je, u as Me, ut as Ne, v as Pe, vt as Fe, w as Ie, x as Le, xt as Re, y as ze, yt as Be, z as Ve } from "../meeting-CEoYZxG1.js";
 import { createContext as He, useCallback as W, useContext as G, useEffect as K, useLayoutEffect as Ue, useMemo as q, useRef as J, useState as Y, useSyncExternalStore as We } from "react";
 import { jsx as X, jsxs as Z } from "react/jsx-runtime";
 import { createPortal as Ge } from "react-dom";
@@ -310,7 +310,7 @@ function Ct(o) {
 				host: v.current,
 				selfId: e?.userId ?? ""
 			});
-		}, [x, S] = Y(() => xt(p)), [C, w] = Y(null), T = d && o.useMeeting && C ? C.lobbyName : null, E = i, ee = q(() => E?.onMessage ? {
+		}, [x, S] = Y(() => xt(p)), [C, w] = Y(null), T = d && o.useMeeting && C && (!d.enabledFor || d.enabledFor(C.lobbyName)) ? C.lobbyName : null, E = i, ee = q(() => E?.onMessage ? {
 			send: (e) => (E.send ?? E.sendMessage)?.call(E, e),
 			onMessage: (e) => E.onMessage(e)
 		} : void 0, [E]), te = T && d && d.chatChannelFor ? d.chatChannelFor(T, C?.callId ?? null) ?? void 0 : void 0, ne = o.useMeeting ? o.useMeeting(T, {
@@ -631,44 +631,55 @@ function Ct(o) {
 			...l
 		};
 	}
-	function ee({ id: e, onOpenPeople: t, onOpenDocument: r, overlay: i, dockTestId: a }) {
-		let o = G(s), c = y((e) => e.current, pt), l = y((e) => e.placement, mt), d = y((e) => e.compact, ht), f = y((e) => e.documents, _t), p = !!o?.lobby && Q(o.call.phase, !0), m = !!c && l === "composer", h = !!c && l !== "pane", g = Ye(c ? l : "footer", d), _ = o?.lobby ?? null, v = p && _ && o ? /* @__PURE__ */ X(u, {
-			call: o.call,
-			title: _.title,
-			onOpenPeople: () => t?.(_, o.tenant),
-			selfName: o.self?.displayName ?? "",
-			compact: !h || d,
-			...h && !d ? { tileSize: "lg" } : {},
-			...m && f.length ? {
-				documents: f.map((e) => ({
+	function ee({ id: e, onOpenPeople: t, onOpenDocument: r, overlay: i, header: a, extras: o, notice: c, dockTestId: l }) {
+		let d = G(s), f = y((e) => e.current, pt), p = y((e) => e.placement, mt), m = y((e) => e.compact, ht), h = y((e) => e.documents, _t), g = !!d?.lobby && Q(d.call.phase, !0), _ = !!f && p === "composer", v = !!f && p !== "pane", b = Ye(f ? p : "footer", m), x = d?.lobby ?? null, S = d?.meeting?.hands, C = q(() => {
+			if (!S || S.length === 0) return;
+			let e = new Map(S.map((e, t) => [e.userId, t + 1]));
+			return (t) => e.get(t);
+		}, [S]), w = g && x && d ? /* @__PURE__ */ X(u, {
+			call: d.call,
+			title: x.title,
+			onOpenPeople: () => t?.(x, d.tenant),
+			selfName: d.self?.displayName ?? "",
+			compact: !v || m,
+			...v && !m ? { tileSize: "lg" } : {},
+			..._ && h.length ? {
+				documents: h.map((e) => ({
 					id: e.id,
 					title: e.title
 				})),
 				onDocumentClick: (e) => {
-					let t = f.find((t) => t.id === e);
+					let t = h.find((t) => t.id === e);
 					t && r?.(t);
 				}
 			} : {},
-			layout: g,
-			"data-testid": a ? a(_, o.tenant) : "conversation-call-dock"
+			layout: b,
+			...C ? { handFor: C } : {},
+			...o === void 0 ? {} : { extras: o },
+			...c === void 0 ? {} : { notice: c },
+			"data-testid": l ? l(x, d.tenant) : "conversation-call-dock"
 		}) : null;
-		return v ? c ? Ge(/* @__PURE__ */ Z(n, {
+		return w ? f ? Ge(/* @__PURE__ */ Z(n, {
 			gap: "none",
 			className: "relative",
 			"data-testid": "shell-call-media",
-			"data-placement": l,
-			"data-layout": g,
+			"data-placement": p,
+			"data-layout": b,
 			"data-expanded": "true",
-			children: [v, i]
-		}), c) : /* @__PURE__ */ X(n, {
+			children: [
+				a,
+				w,
+				i
+			]
+		}), f) : /* @__PURE__ */ X(n, {
 			id: e,
 			gap: "none",
 			className: "hidden",
 			"data-testid": "shell-call-media",
 			"data-placement": "footer",
-			"data-layout": g,
+			"data-layout": b,
 			"data-expanded": "false",
-			children: v
+			children: w
 		}) : null;
 	}
 	return {

@@ -22,9 +22,9 @@ import { t as T } from "./FileUploadDrop-DrckU_7j.js";
 import { t as E } from "./ActivityFeed-Cp6MhNab.js";
 import { a as D, i as O, n as k, o as A } from "./DockedAside-BDA5tJ1T.js";
 import { d as j, dt as M, lt as N, n as P, t as F, u as ee, ut as te } from "./ConversationSurface-Cj3TMoE4.js";
-import { E as I, G as ne, R as re, T as ie, Y as L, _ as R, i as ae, k as oe, n as se, q as ce, s as z, t as le, w as ue, x as de, y as B } from "./BreakoutRoomsPanel-Cv8bxfze.js";
-import { t as fe } from "./useActiveSpeaker-BGKJU3Lb.js";
-import { c as pe, o as me, s as he } from "./useDocumentImageUpload-3W74XPh6.js";
+import { E as I, G as ne, R as re, T as ie, Y as L, _ as R, i as ae, k as oe, n as se, q as ce, s as z, t as le, w as ue, x as de, y as fe } from "./BreakoutRoomsPanel-Cv8bxfze.js";
+import { t as pe } from "./useActiveSpeaker-BGKJU3Lb.js";
+import { c as B, o as me, s as he } from "./useDocumentImageUpload-3W74XPh6.js";
 import { Component as V, createContext as H, createElement as ge, useCallback as U, useContext as _e, useEffect as W, useMemo as G, useRef as K, useState as q } from "react";
 import { Fragment as J, jsx as Y, jsxs as X } from "react/jsx-runtime";
 import * as ve from "yjs";
@@ -99,20 +99,20 @@ function be(e, { slug: t, name: n, participantId: r, occupancy: i, subscribeRoom
 }
 //#endregion
 //#region src/integrations/realtime-modules/NewHangoutRoomDialog.tsx
-var xe = 3, Z = 48;
-function Se(e) {
+var xe = 3, Se = 48;
+function Ce(e) {
 	return e.normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 48);
 }
-function Ce(e) {
+function Z(e) {
 	let t = e.trim();
-	return t.length === 0 ? "Name is required." : t.length < xe ? `Name must be at least ${xe} characters.` : t.length > Z ? `Name must be at most ${Z} characters.` : null;
+	return t.length === 0 ? "Name is required." : t.length < xe ? `Name must be at least ${xe} characters.` : t.length > Se ? `Name must be at most ${Se} characters.` : null;
 }
 function we({ open: e, onClose: n, onCreate: r, onCreated: i, defaultVisibility: a }) {
 	let [o, s] = q(""), [c, l] = q(""), [u, f] = q(!1), [p, m] = q(!1), [h, g] = q(!1), [v, y] = q(null);
 	W(() => {
 		e && (s(""), l(""), f(!1), m(!1), g(!1), y(null));
 	}, [e]);
-	let b = G(() => Ce(o), [o]), x = G(() => Se(o), [o]), S = !b && !h;
+	let b = G(() => Z(o), [o]), x = G(() => Ce(o), [o]), S = !b && !h;
 	async function C(e) {
 		if (e.preventDefault(), S) {
 			g(!0), y(null);
@@ -167,7 +167,7 @@ function we({ open: e, onClose: n, onCreate: r, onCreated: i, defaultVisibility:
 							children: [/* @__PURE__ */ Y("span", {
 								"data-testid": "new-hangout-room-slug-preview",
 								children: x ? `#${x}` : "Slug preview appears here"
-							}), /* @__PURE__ */ Y("span", { children: `${o.trim().length}/${Z}` })]
+							}), /* @__PURE__ */ Y("span", { children: `${o.trim().length}/${Se}` })]
 						}),
 						b && o.length > 0 && /* @__PURE__ */ Y("span", {
 							"data-testid": "new-hangout-room-name-error",
@@ -941,7 +941,7 @@ function lt(e) {
 			docVersion: M.docVersion,
 			ydoc: M.ydoc,
 			exportMarkdown: N.exportMarkdown
-		}, B = /* @__PURE__ */ X(J, { children: [
+		}, fe = /* @__PURE__ */ X(J, { children: [
 			S,
 			j.recovered && /* @__PURE__ */ Y(b, {
 				tone: "warning",
@@ -991,7 +991,7 @@ function lt(e) {
 				tone: "error",
 				children: ne
 			})
-		] }), fe = M.synced && !!M.ydoc && !!N.body, he = /* @__PURE__ */ X(J, { children: [
+		] }), pe = M.synced && !!M.ydoc && !!N.body, he = /* @__PURE__ */ X(J, { children: [
 			C,
 			/* @__PURE__ */ Y(f, {
 				open: te,
@@ -1027,14 +1027,14 @@ function lt(e) {
 				})
 			})
 		] }), V = (e, t = null, n = null) => O ? O({
-			notices: B,
+			notices: fe,
 			canvas: e,
 			toolbar: t,
 			ruler: n,
 			saveState: ue,
 			state: de
-		}) : /* @__PURE__ */ X(J, { children: [B, e] });
-		if (!fe) return V(/* @__PURE__ */ Y(h, { label: D }));
+		}) : /* @__PURE__ */ X(J, { children: [fe, e] });
+		if (!pe) return V(/* @__PURE__ */ Y(h, { label: D }));
 		if (!N.isCanvas) return V(/* @__PURE__ */ Y(m, {
 			title: "Document migration is incomplete",
 			body: "The server has not supplied a rich document snapshot. No changes have been made."
@@ -1042,7 +1042,7 @@ function lt(e) {
 		let H = (e) => /* @__PURE__ */ X(me, {
 			loadImage: _,
 			...v ? { requiresAuthentication: v } : {},
-			children: [/* @__PURE__ */ ge(pe, {
+			children: [/* @__PURE__ */ ge(B, {
 				...ct,
 				...w,
 				key: M.docVersion,
@@ -1129,7 +1129,7 @@ function gt(e, { call: t, title: n, onOpenPeople: r, peopleOpen: i, onOpenSettin
 	W(() => {
 		E || O(null);
 	}, [E]);
-	let k = e.useAudioVideoSettings({ preview: w }), { activeSpeakerId: A } = fe({ participants: ht(t.call) }), j = e.conversationCallDockProps(t, {
+	let k = e.useAudioVideoSettings({ preview: w }), { activeSpeakerId: A } = pe({ participants: ht(t.call) }), j = e.conversationCallDockProps(t, {
 		title: n,
 		onOpenPeople: r,
 		...i === void 0 ? {} : { peopleOpen: i },
@@ -1476,8 +1476,8 @@ function Ht(e) {
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedChatPanel.tsx
-function Ut({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, pins: a, currentActor: o, currentUserId: s, displayName: c, avatarUrl: l, sendMetadata: u, publishTyping: d, attachmentSrc: f, onOpenAttachment: p, acceptFiles: m, maxFileSize: h, onFileError: g, disabled: _, typingUsers: v, tone: y, fill: b, flushComposer: x, contentAlign: S, showHeader: C, loadMoreHistory: w = !1, joinHistoryLimit: T = 20, historyPageSize: E = 50, onLoadMore: D, hasMore: O, loadingMore: k, composer: A, renderMessageReferences: M, emojis: N, onReply: P, reply: F, onCancelReply: ee, readReceipts: te, readReceiptsEnabled: I, unreadFrom: ne, threaded: re, onJumpToMessage: ie, highlightedMessageId: L, documentEditors: R, callParticipants: ae, onJoinCall: oe, onOpenDocument: se, wrapWithNetworkShim: ce, editable: z = !0, canEdit: le, canDelete: ue, onForwardMessage: de }) {
-	let B = G(() => St(e.messages), [e.messages]), fe = G(() => {
+function Ut({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, pins: a, currentActor: o, currentUserId: s, displayName: c, avatarUrl: l, sendMetadata: u, publishTyping: d, attachmentSrc: f, onOpenAttachment: p, acceptFiles: m, maxFileSize: h, onFileError: g, disabled: _, typingUsers: v, tone: y, fill: b, flushComposer: x, contentAlign: S, showHeader: C, loadMoreHistory: w = !1, joinHistoryLimit: T = 20, historyPageSize: E = 50, onLoadMore: D, hasMore: O, loadingMore: k, composer: A, renderMessageReferences: M, transformMessages: N, dock: P, emojis: F, onReply: ee, reply: te, onCancelReply: I, readReceipts: ne, readReceiptsEnabled: re, unreadFrom: ie, threaded: L, onJumpToMessage: R, highlightedMessageId: ae, documentEditors: oe, callParticipants: se, onJoinCall: ce, onOpenDocument: z, wrapWithNetworkShim: le, editable: ue = !0, canEdit: de, canDelete: fe, onForwardMessage: pe }) {
+	let B = G(() => St(e.messages), [e.messages]), me = G(() => {
 		if (!t?.length) return [];
 		let e = new Set(B.flatMap((e) => e.id ? [e.id] : [])), n = /* @__PURE__ */ new Set(), r = [];
 		for (let i of t) if (i.body !== void 0) {
@@ -1497,7 +1497,7 @@ function Ut({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 			});
 		}
 		return r;
-	}, [B, t]), pe = G(() => {
+	}, [B, t]), he = G(() => {
 		let e = B;
 		if (!t?.length) return e;
 		let n = new Set(e.flatMap((e) => e.id ? [e.id] : [])), r = t.filter((e) => e.body === void 0 && (!e.id || !n.has(e.id)));
@@ -1505,36 +1505,36 @@ function Ut({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 			m: e,
 			i: t
 		})).sort((e, t) => Date.parse(e.m.timestamp) - Date.parse(t.m.timestamp) || e.i - t.i).map(({ m: e }) => e);
-	}, [B, t]), me = v ?? n?.roster.filter((e) => {
+	}, [B, t]), V = v ?? n?.roster.filter((e) => {
 		if (e.metadata?.isTyping !== !0) return !1;
 		let t = e.metadata?.userId;
 		return s && typeof t == "string" ? t !== s : !o || e.clientId !== o;
-	}).map((e) => e.metadata?.displayName ?? e.clientId.slice(0, 8)) ?? [], he = e.sendMessage, V = U((e) => {
+	}).map((e) => e.metadata?.displayName ?? e.clientId.slice(0, 8)) ?? [], H = e.sendMessage, ge = U((e) => {
 		let t = { ...u ?? {} };
-		c && (t.displayName = c), l && (t.avatarUrl = l), Object.keys(t).length > 0 ? he(e, t) : he(e);
+		c && (t.displayName = c), l && (t.avatarUrl = l), Object.keys(t).length > 0 ? H(e, t) : H(e);
 	}, [
-		he,
+		H,
 		u,
 		c,
 		l
-	]), H = n?.updateMetadata, ge = (d ?? !0) && !!H, _e = U((e) => H?.({ isTyping: e }), [H]), X = e.loadHistory, [ve, ye] = q(T), [be, xe] = q(!1), Z = e.messages.length, Se = K(Z);
+	]), _e = n?.updateMetadata, X = (d ?? !0) && !!_e, ve = U((e) => _e?.({ isTyping: e }), [_e]), ye = e.loadHistory, [be, xe] = q(T), [Se, Ce] = q(!1), Z = e.messages.length, we = K(Z);
 	W(() => {
-		Z !== Se.current && (Se.current = Z, xe(!1));
+		Z !== we.current && (we.current = Z, Ce(!1));
 	}, [Z]);
-	let Ce = K(ve);
-	Ce.current = ve;
-	let we = U(() => {
-		let e = Ce.current + E;
-		Ce.current = e, ye(e), xe(!0), X(e);
-	}, [X, E]), Te = D ? {
+	let Te = K(be);
+	Te.current = be;
+	let Ee = U(() => {
+		let e = Te.current + E;
+		Te.current = e, xe(e), Ce(!0), ye(e);
+	}, [ye, E]), De = D ? {
 		onLoadMore: D,
 		hasMore: O,
 		loadingMore: k
 	} : w ? {
-		onLoadMore: we,
-		hasMore: O ?? Z >= ve,
-		loadingMore: k ?? be
-	} : {}, Ee = G(() => i ? (e) => kt(i, e) : void 0, [i]), De = G(() => {
+		onLoadMore: Ee,
+		hasMore: O ?? Z >= be,
+		loadingMore: k ?? Se
+	} : {}, Oe = G(() => i ? (e) => kt(i, e) : void 0, [i]), Ae = G(() => {
 		if (!i || !s) return;
 		let { toggle: e, react: t, unreact: n } = i;
 		return e ? (t, n) => e(n, {
@@ -1543,7 +1543,7 @@ function Ut({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 		}) : (e, r) => {
 			kt(i, e).some((e) => e.emoji === r && e.userId === s) && n ? n(r, { targetId: e }) : t(r, { targetId: e });
 		};
-	}, [i, s]), Oe = U((e) => {
+	}, [i, s]), je = U((e) => {
 		if (!a) return;
 		let t = e.id ?? "";
 		t && (a.pinnedIds.has(t) ? a.unpin(t) : a.pin({
@@ -1551,28 +1551,29 @@ function Ut({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 			text: e.content,
 			author: e.displayName ?? "Unknown"
 		}));
-	}, [a]), Ae = e.editMessage, je = e.deleteMessage, Q = U((e, t) => {
+	}, [a]), Q = e.editMessage, Me = e.deleteMessage, Ne = U((e, t) => {
 		let n = t.trim();
 		if (!e.id || !n) return;
 		let r = `<p>${n.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>")}</p>`;
-		Ae?.(e.id, n, { html: r });
-	}, [Ae]), Me = U((e) => {
-		e.id && je?.(e.id);
-	}, [je]), Ne = /* @__PURE__ */ Y(j, {
-		messages: pe,
-		...fe.length ? { localMessages: fe } : {},
-		onSend: V,
+		Q?.(e.id, n, { html: r });
+	}, [Q]), Pe = U((e) => {
+		e.id && Me?.(e.id);
+	}, [Me]), Fe = /* @__PURE__ */ Y(j, {
+		messages: N ? N(he) : he,
+		...me.length ? { localMessages: me } : {},
+		...P === void 0 ? {} : { dock: P },
+		onSend: ge,
 		disabled: _,
-		typingUsers: me,
+		typingUsers: V,
 		tone: y,
 		fill: b,
 		flushComposer: x,
 		contentAlign: S,
 		showHeader: C,
 		composer: A,
-		emojis: N,
-		...Te,
-		...ge ? { onTyping: _e } : {},
+		emojis: F,
+		...De,
+		...X ? { onTyping: ve } : {},
 		...r ? {
 			onSendFiles: (e) => {
 				for (let t of e) r.upload(t);
@@ -1582,34 +1583,34 @@ function Ut({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 		} : {},
 		currentActor: o,
 		currentUserId: s,
-		reactionsFor: Ee,
-		onToggleReaction: De,
+		reactionsFor: Oe,
+		onToggleReaction: Ae,
 		...a ? {
 			pinnedMessageIds: a.pinnedIds,
-			onTogglePin: Oe
+			onTogglePin: je
 		} : {},
-		...z && Ae ? {
-			onEditMessage: Q,
-			...le ? { canEditMessage: le } : {}
+		...ue && Q ? {
+			onEditMessage: Ne,
+			...de ? { canEditMessage: de } : {}
 		} : {},
-		...z && je ? {
-			onDeleteMessage: Me,
-			...ue ? { canDeleteMessage: ue } : {}
+		...ue && Me ? {
+			onDeleteMessage: Pe,
+			...fe ? { canDeleteMessage: fe } : {}
 		} : {},
-		onForwardMessage: de,
-		onReply: P,
-		reply: F,
-		onCancelReply: ee,
-		readReceipts: te,
-		readReceiptsEnabled: I,
-		unreadFrom: ne,
-		threaded: re,
-		onJumpToMessage: ie,
-		highlightedMessageId: L,
-		documentEditors: R,
-		callParticipants: ae,
-		onJoinCall: oe,
-		onOpenDocument: se,
+		onForwardMessage: pe,
+		onReply: ee,
+		reply: te,
+		onCancelReply: I,
+		readReceipts: ne,
+		readReceiptsEnabled: re,
+		unreadFrom: ie,
+		threaded: L,
+		onJumpToMessage: R,
+		highlightedMessageId: ae,
+		documentEditors: oe,
+		callParticipants: se,
+		onJoinCall: ce,
+		onOpenDocument: z,
 		renderMessageReferences: M,
 		attachmentSrc: f,
 		onOpenAttachment: p,
@@ -1617,7 +1618,7 @@ function Ut({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 		maxFileSize: h,
 		onFileError: g
 	});
-	return /* @__PURE__ */ Y(J, { children: ke(Ne, ce) });
+	return /* @__PURE__ */ Y(J, { children: ke(Fe, le) });
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedPresencePanel.tsx
@@ -1901,7 +1902,7 @@ function on({ capability: e, loading: t, fallback: n, children: r }) {
 //#endregion
 //#region src/integrations/realtime-modules/WrappedMediaEffectsTray.tsx
 function sn({ controller: e, ...t }) {
-	return /* @__PURE__ */ Y(B, {
+	return /* @__PURE__ */ Y(fe, {
 		filters: e.filters.map(({ id: e, label: t, cssFilter: n }) => ({
 			id: e,
 			label: t,
@@ -2022,7 +2023,7 @@ function un({ canvas: e, schema: t, legacyModel: n, beforeConvert: r, ...i }) {
 		n,
 		r
 	]);
-	return /* @__PURE__ */ Y(pe, {
+	return /* @__PURE__ */ Y(B, {
 		...i,
 		isCanvas: e.isCanvas,
 		body: e.body,
@@ -2330,4 +2331,4 @@ function wn(e, t) {
 	};
 }
 //#endregion
-export { it as $, Ft as A, Ct as B, Qt as C, qt as D, Jt as E, Rt as F, vt as G, Dt as H, zt as I, lt as J, _t as K, kt as L, St as M, It as N, Ut as O, Lt as P, nt as Q, Bt as R, tn as S, ye as St, Xt as T, Ot as U, wt as V, yt as W, ot as X, st as Y, at as Z, sn as _, Oe as _t, hn as a, Ge as at, rn as b, we as bt, fn as c, ze as ct, wn as d, Le as dt, rt as et, pn as f, Me as ft, ln as g, ke as gt, cn as h, Ae as ht, _n as i, Je as it, xt as j, Pt as k, mn as l, Be as lt, un as m, Ie as mt, Sn as n, Xe as nt, gn as o, Re as ot, dn as p, Pe as pt, ut as q, vn as r, tt as rt, bn as s, He as st, xn as t, et as tt, yn as u, Q as ut, on as v, De as vt, Zt as w, nn as x, Se as xt, an as y, Te as yt, Vt as z };
+export { it as $, Ft as A, Ct as B, Qt as C, qt as D, Jt as E, Rt as F, vt as G, Dt as H, zt as I, lt as J, _t as K, kt as L, St as M, It as N, Ut as O, Lt as P, nt as Q, Bt as R, tn as S, ye as St, Xt as T, Ot as U, wt as V, yt as W, ot as X, st as Y, at as Z, sn as _, Oe as _t, hn as a, Ge as at, rn as b, we as bt, fn as c, ze as ct, wn as d, Le as dt, rt as et, pn as f, Me as ft, ln as g, ke as gt, cn as h, Ae as ht, _n as i, Je as it, xt as j, Pt as k, mn as l, Be as lt, un as m, Ie as mt, Sn as n, Xe as nt, gn as o, Re as ot, dn as p, Pe as pt, ut as q, vn as r, tt as rt, bn as s, He as st, xn as t, et as tt, yn as u, Q as ut, on as v, De as vt, Zt as w, nn as x, Ce as xt, an as y, Te as yt, Vt as z };
