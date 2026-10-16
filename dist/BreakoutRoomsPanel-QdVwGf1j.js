@@ -3208,11 +3208,8 @@ function Qt({ roomName: n, endsAt: i, closing: a = !1, announcement: s, onDismis
 				tone: "inherit",
 				className: "block min-w-0 flex-1",
 				children: [
-					/* @__PURE__ */ W(b, {
-						as: "span",
-						size: "sm",
-						weight: "semibold",
-						tone: "inherit",
+					/* @__PURE__ */ W("strong", {
+						className: "font-semibold",
 						children: [s.fromDisplayName, ":"]
 					}),
 					" ",

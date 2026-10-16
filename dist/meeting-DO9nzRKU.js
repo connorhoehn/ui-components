@@ -21,7 +21,7 @@ import { t as C } from "./FileUploadDrop-DrckU_7j.js";
 import { t as w } from "./ActivityFeed-Cp6MhNab.js";
 import { a as T, i as E, n as D, o as O } from "./DockedAside-BDA5tJ1T.js";
 import { d as k, dt as A, lt as j, n as M, t as N, u as P, ut as F } from "./ConversationSurface-Cj3TMoE4.js";
-import { E as ee, G as te, R as ne, T as re, Y as ie, _ as ae, i as I, k as L, n as oe, q as se, s as R, t as ce, w as z, x as le, y as ue } from "./BreakoutRoomsPanel-bPjgi4JI.js";
+import { E as ee, G as te, R as ne, T as re, Y as ie, _ as ae, i as I, k as L, n as oe, q as se, s as R, t as ce, w as z, x as le, y as ue } from "./BreakoutRoomsPanel-QdVwGf1j.js";
 import { t as de } from "./useActiveSpeaker-BGKJU3Lb.js";
 import { c as B, o as fe, s as pe } from "./useDocumentImageUpload-3W74XPh6.js";
 import { Component as me, createContext as V, createElement as he, useCallback as H, useContext as U, useEffect as W, useMemo as G, useRef as K, useState as q } from "react";
@@ -2057,6 +2057,13 @@ function un(e) {
 	return new Map(e.map((e, t) => [e.userId, t + 1]));
 }
 function dn(e, t) {
+	let n = un(t.hands);
+	return e.map((e) => ({
+		...e,
+		handRaised: n.get(e.id)
+	}));
+}
+function fn(e, t) {
 	let n = un(e.hands);
 	return {
 		participants: t.map((e) => ({
@@ -2068,7 +2075,7 @@ function dn(e, t) {
 		onLowerAllHands: e.isOrganizer ? () => e.lowerAllHands() : void 0
 	};
 }
-function fn(e, t, n = []) {
+function pn(e, t, n = []) {
 	let r = new Map(t.map((e) => [e.userId, e])), i = un(n), a = (e) => {
 		let t = r.get(e);
 		return {
@@ -2088,11 +2095,11 @@ function fn(e, t, n = []) {
 		unassigned: t.filter((e) => !o.has(e.userId)).map((e) => a(e.userId))
 	};
 }
-function pn(e) {
+function mn(e) {
 	return Array.from({ length: e }, (e, t) => ({ name: `Room ${t + 1}` }));
 }
-function mn({ meeting: e, people: t, roomNames: n, renderError: r, ...i }) {
-	let { rooms: a, unassigned: o } = fn(e.breakout, t, e.hands), s = e.breakout;
+function hn({ meeting: e, people: t, roomNames: n, renderError: r, ...i }) {
+	let { rooms: a, unassigned: o } = pn(e.breakout, t, e.hands), s = e.breakout;
 	return /* @__PURE__ */ Y(ce, {
 		...i,
 		rooms: a,
@@ -2107,7 +2114,7 @@ function mn({ meeting: e, people: t, roomNames: n, renderError: r, ...i }) {
 		onJoin: e.joinRoom,
 		onReturnToMain: e.returnToMain,
 		onCreateRooms: (t, r) => {
-			let i = n?.(t) ?? pn(t).map((e) => e.name);
+			let i = n?.(t) ?? mn(t).map((e) => e.name);
 			e.configureBreakouts(i.map((e) => ({ name: e })), { mode: r });
 		},
 		onAutoAssign: () => {
@@ -2131,7 +2138,7 @@ function mn({ meeting: e, people: t, roomNames: n, renderError: r, ...i }) {
 		}) : null
 	});
 }
-function hn({ meeting: e, className: t }) {
+function gn({ meeting: e, className: t }) {
 	if (!e.myRoom) return null;
 	let n = e.breakout;
 	return /* @__PURE__ */ Y(oe, {
@@ -2144,7 +2151,7 @@ function hn({ meeting: e, className: t }) {
 		className: t
 	});
 }
-function gn(e, t) {
+function _n(e, t) {
 	let n = e.myHandPosition !== null, r = t.onReact;
 	return {
 		...r ? { react: {
@@ -2180,7 +2187,7 @@ function gn(e, t) {
 		}
 	};
 }
-function _n({ value: e, onChange: t }) {
+function vn({ value: e, onChange: t }) {
 	return /* @__PURE__ */ X("div", {
 		className: "flex items-center gap-2 border-t border-border px-3 py-1.5",
 		"data-testid": "meeting-chat-target",
@@ -2211,13 +2218,21 @@ function _n({ value: e, onChange: t }) {
 		]
 	});
 }
-function vn(e, t) {
-	let [n, r] = q("chat"), [i, a] = q([]), o = e.breakout.announcement, s = o ? `${o.at}|${o.fromUserId}` : null;
+var yn = "meeting-announcement:";
+function bn(e, t) {
+	let [n, r] = q("chat"), [i, a] = q([]), s = e.breakout.announcement, c = s ? `${s.at}|${s.fromUserId}` : null;
 	W(() => {
-		!o || !s || a((e) => e.some((e) => `${e.at}|${e.fromUserId}` === s) ? e : [...e, o].slice(-50));
-	}, [s]);
-	let c = e.ready && e.isOrganizer && e.breakout.phase === "open", l = c ? n : "chat", u = t.announcementNote ?? "Announcement to every room", d = G(() => i.map((e) => ({
-		id: `meeting-announcement:${e.at}:${e.fromUserId}`,
+		!s || !c || a((e) => e.some((e) => `${e.at}|${e.fromUserId}` === c) ? e : [...e, s].slice(-50));
+	}, [c]);
+	let l = e.ready && e.isOrganizer && e.breakout.phase === "open", u = l ? n : "chat", d = t.announcementNote ?? "Announcement to every room", f = G(() => i.map((e) => ({
+		id: `${yn}${e.at}:${e.fromUserId}`,
+		clientId: "meeting",
+		userId: e.fromUserId,
+		displayName: e.fromDisplayName,
+		content: e.message,
+		timestamp: e.at
+	})), [i]), p = t.renderMessageReferences, m = G(() => i.map((e) => ({
+		id: `${yn}${e.at}:${e.fromUserId}`,
 		timestamp: e.at,
 		displayName: e.fromDisplayName,
 		content: e.message,
@@ -2225,27 +2240,35 @@ function vn(e, t) {
 			kind: "meeting-announcement",
 			fromUserId: e.fromUserId
 		},
-		note: u
-	})), [i, u]), { send: f } = t;
+		note: d
+	})), [i, d]), { send: h } = t;
 	return {
-		target: l,
+		target: u,
 		setTarget: r,
-		localMessages: d,
-		dock: c ? /* @__PURE__ */ Y(_n, {
-			value: l,
+		localMessages: m,
+		withAnnouncements: (e) => f.length === 0 ? [...e] : [...e, ...f].sort((e, t) => Date.parse(e.timestamp) - Date.parse(t.timestamp)),
+		renderMessageReferences: (e) => e.id?.startsWith(yn) ? /* @__PURE__ */ Y(o, {
+			as: "p",
+			size: "xs",
+			tone: "tertiary",
+			"data-testid": "meeting-chat-announcement-note",
+			children: d
+		}) : p?.(e) ?? null,
+		dock: l ? /* @__PURE__ */ Y(vn, {
+			value: u,
 			onChange: r
 		}) : null,
 		onSend: (t) => {
 			let n = t.trim();
 			if (n) {
-				if (l === "rooms") {
+				if (u === "rooms") {
 					e.broadcast(n.slice(0, 500)), r("chat");
 					return;
 				}
-				f(t);
+				h(t);
 			}
 		}
 	};
 }
 //#endregion
-export { Je as $, Pt as A, Et as B, Kt as C, Nt as D, Mt as E, Rt as F, st as G, gt as H, zt as I, rt as J, at as K, xt as L, It as M, Lt as N, yt as O, Dt as P, Qe as Q, St as R, Jt as S, Vt as T, ht as U, _t as V, ct as W, nt as X, et as Y, tt as Z, tn as _, Se as _t, pn as a, Le as at, Xt as b, gn as c, Fe as ct, cn as d, Pe as dt, $e as et, on as f, Oe as ft, nn as g, Ce as gt, rn as h, Te as ht, fn as i, Be as it, Ft as j, bt as k, vn as l, Ae as lt, an as m, Ee as mt, hn as n, Ue as nt, un as o, Re as ot, sn as p, De as pt, it as q, mn as r, Ie as rt, dn as s, Q as st, _n as t, Ke as tt, ln as u, Me as ut, en as v, xe as vt, Gt as w, Yt as x, $t as y, _e as yt, Tt as z };
+export { Qe as $, bt as A, Tt as B, Jt as C, Mt as D, Vt as E, Dt as F, ct as G, _t as H, Rt as I, it as J, st as K, zt as L, Ft as M, It as N, Nt as O, Lt as P, tt as Q, xt as R, Yt as S, Gt as T, gt as U, Et as V, ht as W, et as X, rt as Y, nt as Z, nn as _, Ce as _t, mn as a, Be as at, $t as b, _e as bt, _n as c, Q as ct, ln as d, Me as dt, Je as et, cn as f, Pe as ft, rn as g, Te as gt, an as h, Ee as ht, pn as i, Ie as it, Pt as j, yt as k, bn as l, Fe as lt, sn as m, De as mt, gn as n, Ke as nt, un as o, Le as ot, on as p, Oe as pt, at as q, hn as r, Ue as rt, fn as s, Re as st, vn as t, $e as tt, dn as u, Ae as ut, tn as v, Se as vt, Kt as w, Xt as x, en as y, xe as yt, St as z };

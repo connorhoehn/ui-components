@@ -2893,6 +2893,7 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "useMeetingChat",
     "useRealtimeCapabilities",
     "useRealtimeIntegrations",
+    "withMeetingHands",
   ],
   "./integrations/realtime-modules": [
     "ALL_REALTIME_CAPABILITIES",
@@ -2974,6 +2975,7 @@ const exportSurfaceSnapshot: Record<string, string[]> = {
     "useMeetingChat",
     "useRealtimeCapabilities",
     "useRealtimeIntegrations",
+    "withMeetingHands",
   ],
 };
 

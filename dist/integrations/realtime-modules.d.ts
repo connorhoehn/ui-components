@@ -2410,7 +2410,23 @@ declare type MediaPermission = 'prompt' | 'granted' | 'denied' | 'unavailable';
 export declare interface MeetingChatBinding {
     /** Pass to ChatPanel `onSend`: posts to the chat, or announces to every room. */
     onSend: (content: string) => void;
-    /** Pass to ChatPanel `localMessages`: the announcements, oldest first. */
+    /**
+     * Your chat's messages with the announcements merged in by time, each from
+     * its organizer (so it sits on their side of the thread and counts):
+     * `messages={chat.withAnnouncements(messages)}`. Since 2.468.0.
+     */
+    withAnnouncements: (messages: readonly ChatMessage[]) => ChatMessage[];
+    /**
+     * Pass to ChatPanel `renderMessageReferences`: marks announcements
+     * "Announcement to every room". Wraps the host's own renderer if given in
+     * the options. Since 2.468.0.
+     */
+    renderMessageReferences: (message: ChatMessage) => ReactNode;
+    /**
+     * @deprecated since 2.468.0: viewer-only messages are drawn as YOUR OWN,
+     * so another organizer's announcement sat on your side of the thread. Use
+     * `withAnnouncements` + `renderMessageReferences`; do not pass both.
+     */
     localMessages: LocalChatMessage[];
     /** Pass to ChatPanel `dock`: the "To" switch, or null when it does not apply. */
     dock: ReactNode;
@@ -3822,6 +3838,8 @@ export declare function useDocumentImageUpload(documentId: string | null | undef
 export declare function useMeetingChat(meeting: RMMeetingSource, opts: {
     send: (content: string) => void;
     announcementNote?: string;
+    /** The host's own ChatPanel `renderMessageReferences`, kept for other messages. */
+    renderMessageReferences?: (message: ChatMessage) => ReactNode;
 }): MeetingChatBinding;
 
 /**
@@ -3839,6 +3857,18 @@ export declare function useRealtimeCapabilities(): ResolvedCapabilities;
  * the package this entry exists to avoid importing).
  */
 export declare function useRealtimeIntegrations(): RealtimeIntegrations;
+
+/**
+ * Tiles (or any list keyed by the meeting's userId) with their hand position
+ * set, for `HangoutGrid` / `HangoutLayout` participants. Lowered hands clear
+ * `handRaised`. Since 2.468.0.
+ *
+ *   <HangoutGrid participants={withMeetingHands(callParticipants, meeting)} />
+ */
+export declare function withMeetingHands<P extends {
+    id: string;
+    handRaised?: boolean | number;
+}>(participants: readonly P[], meeting: Pick<RMMeetingSource, 'hands'>): P[];
 
 export declare function WrappedActivityPanel({ activity, visibleCount, rotateMs, staggerMs, kindColors, className, }: WrappedActivityPanelProps): JSX.Element;
 
