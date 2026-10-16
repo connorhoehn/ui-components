@@ -2242,6 +2242,14 @@ export declare interface BreakoutRoomsPanelProps {
     onCloseRooms?: (roomIds?: string[]) => void;
     onSetTimer?: (durationMs: number | null) => void;
     onBroadcast?: (message: string) => void;
+    /**
+     * Where organizers write announcements (2.466.0). `chat` (default): the
+     * meeting chat, through `useMeetingChat`'s "To: All rooms"; the pane only
+     * points there. `pane`: the old announcement box in this pane, kept for
+     * hosts without a meeting chat. Before 2.466.0 the box always showed when
+     * `onBroadcast` was set.
+     */
+    announceIn?: 'chat' | 'pane';
     onEnd?: () => void;
     /**
      * Discard the drafted rooms so they can be created again (2.458.1). Shown

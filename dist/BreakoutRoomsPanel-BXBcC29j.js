@@ -3422,9 +3422,9 @@ function an({ onCreateRooms: e }) {
 	});
 }
 function on(n) {
-	let { phase: r, mode: i, rooms: a, onOpenRooms: o, onCloseRooms: s, onAutoAssign: c, onSetTimer: l, onBroadcast: u, onEnd: d, onDeleteRooms: f, onAddRoom: p, left: m, timerMinutes: h = $t, maxRooms: g = en, closing: _ = !1 } = n, [v, y] = V(""), x = a.some((e) => e.state === "open"), S = () => {
-		let e = v.trim();
-		!e || !u || (u(e), y(""));
+	let { phase: r, mode: i, rooms: a, onOpenRooms: o, onCloseRooms: s, onAutoAssign: c, onSetTimer: l, onBroadcast: u, announceIn: d = "chat", onEnd: f, onDeleteRooms: p, onAddRoom: m, left: h, timerMinutes: g = $t, maxRooms: _ = en, closing: v = !1 } = n, [y, x] = V(""), S = a.some((e) => e.state === "open"), C = () => {
+		let e = y.trim();
+		!e || !u || (u(e), x(""));
 	};
 	return /* @__PURE__ */ W("div", {
 		className: "flex flex-col gap-3 border-b border-border px-4 py-3",
@@ -3433,7 +3433,7 @@ function on(n) {
 			/* @__PURE__ */ W("div", {
 				className: "flex flex-wrap items-center gap-2",
 				children: [
-					_ && x ? /* @__PURE__ */ W(H, { children: [s && /* @__PURE__ */ U(t, {
+					v && S ? /* @__PURE__ */ W(H, { children: [s && /* @__PURE__ */ U(t, {
 						variant: "danger",
 						size: "sm",
 						onClick: () => s(),
@@ -3445,7 +3445,7 @@ function on(n) {
 						onClick: () => o(),
 						"data-testid": "breakout-keep-open",
 						children: "Keep rooms open"
-					})] }) : x ? s && /* @__PURE__ */ U(t, {
+					})] }) : S ? s && /* @__PURE__ */ U(t, {
 						variant: "secondary",
 						size: "sm",
 						onClick: () => s(),
@@ -3458,12 +3458,12 @@ function on(n) {
 						"data-testid": "breakout-open-all",
 						children: "Open rooms"
 					}),
-					p && /* @__PURE__ */ U(t, {
+					m && /* @__PURE__ */ U(t, {
 						variant: "secondary",
 						size: "sm",
-						onClick: p,
-						disabled: a.length >= g,
-						title: a.length >= g ? `At most ${g} rooms` : void 0,
+						onClick: m,
+						disabled: a.length >= _,
+						title: a.length >= _ ? `At most ${_} rooms` : void 0,
 						"data-testid": "breakout-add-room",
 						children: "Add room"
 					}),
@@ -3474,18 +3474,18 @@ function on(n) {
 						"data-testid": "breakout-auto-assign",
 						children: "Assign automatically"
 					}),
-					d && r === "open" && !_ && /* @__PURE__ */ U(t, {
+					f && r === "open" && !v && /* @__PURE__ */ U(t, {
 						variant: "ghost",
 						size: "sm",
-						onClick: d,
+						onClick: f,
 						className: "text-danger",
 						"data-testid": "breakout-end",
 						children: "End breakout rooms"
 					}),
-					f && r === "draft" && /* @__PURE__ */ U(t, {
+					p && r === "draft" && /* @__PURE__ */ U(t, {
 						variant: "ghost",
 						size: "sm",
-						onClick: f,
+						onClick: p,
 						className: "text-danger",
 						"data-testid": "breakout-delete",
 						children: "Delete rooms"
@@ -3499,18 +3499,18 @@ function on(n) {
 					children: "Timer"
 				}), /* @__PURE__ */ W("div", {
 					className: "flex items-center gap-2",
-					children: [m !== null && /* @__PURE__ */ U(b, {
+					children: [h !== null && /* @__PURE__ */ U(b, {
 						size: "sm",
-						tone: _ ? "inherit" : "secondary",
+						tone: v ? "inherit" : "secondary",
 						tabular: !0,
-						className: e(_ && "font-semibold text-danger"),
+						className: e(v && "font-semibold text-danger"),
 						"data-testid": "breakout-timer-left",
-						children: _ ? `Closing in ${$(m)}` : `${$(m)} left`
+						children: v ? `Closing in ${$(h)}` : `${$(h)} left`
 					}), /* @__PURE__ */ U(w, {
 						size: "sm",
 						"aria-label": "Breakout timer",
 						disabled: r !== "open",
-						value: m === null ? "" : "running",
+						value: h === null ? "" : "running",
 						onChange: (e) => {
 							let t = e.target.value;
 							t !== "running" && l(t ? Number(t) * 6e4 : null);
@@ -3520,11 +3520,11 @@ function on(n) {
 								value: "",
 								label: "No timer"
 							},
-							...m === null ? [] : [{
+							...h === null ? [] : [{
 								value: "running",
 								label: "Running"
 							}],
-							...h.map((e) => ({
+							...g.map((e) => ({
 								value: String(e),
 								label: `${e} min`
 							}))
@@ -3534,15 +3534,22 @@ function on(n) {
 					})]
 				})]
 			}),
-			u && r === "open" && /* @__PURE__ */ W("div", {
+			u && r === "open" && d === "chat" && /* @__PURE__ */ U(b, {
+				as: "p",
+				size: "xs",
+				tone: "tertiary",
+				"data-testid": "breakout-announce-hint",
+				children: "Send announcements to every room from the meeting chat."
+			}),
+			u && r === "open" && d === "pane" && /* @__PURE__ */ W("div", {
 				className: "flex items-end gap-2",
 				children: [/* @__PURE__ */ U(A, {
 					"aria-label": "Announcement to every room",
 					placeholder: "Send an announcement to every room",
-					value: v,
-					onChange: (e) => y(e.target.value),
+					value: y,
+					onChange: (e) => x(e.target.value),
 					onKeyDown: (e) => {
-						e.key === "Enter" && (e.metaKey || e.ctrlKey) && (e.preventDefault(), S());
+						e.key === "Enter" && (e.metaKey || e.ctrlKey) && (e.preventDefault(), C());
 					},
 					minRows: 1,
 					maxRows: 4,
@@ -3553,8 +3560,8 @@ function on(n) {
 				}), /* @__PURE__ */ U(t, {
 					variant: "secondary",
 					size: "sm",
-					onClick: S,
-					disabled: !v.trim(),
+					onClick: C,
+					disabled: !y.trim(),
 					"data-testid": "breakout-broadcast-send",
 					children: "Send"
 				})]

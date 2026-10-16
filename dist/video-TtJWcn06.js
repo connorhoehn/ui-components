@@ -30,7 +30,7 @@ import { n as Se } from "./RovingToolbar-B1Fai5PF.js";
 import { t as Ce } from "./Link-h2c9gcsw.js";
 import { t as we } from "./Checkbox-Jycr-rlf.js";
 import { t as Te } from "./activationKey-CjbL3LUv.js";
-import { C as Ee, E as De, H as Oe, J as ke, L as Ae, S as je, V as Me, Z as Ne } from "./BreakoutRoomsPanel-t-XNlFku.js";
+import { C as Ee, E as De, H as Oe, J as ke, L as Ae, S as je, V as Me, Z as Ne } from "./BreakoutRoomsPanel-BXBcC29j.js";
 import { useCallback as U, useEffect as W, useImperativeHandle as Pe, useLayoutEffect as Fe, useMemo as G, useRef as K, useState as q } from "react";
 import { Fragment as J, jsx as Y, jsxs as X } from "react/jsx-runtime";
 //#region src/components/video/VideoPlayer.tsx

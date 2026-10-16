@@ -350,6 +350,14 @@ declare interface BreakoutRoomsPanelProps {
     onCloseRooms?: (roomIds?: string[]) => void;
     onSetTimer?: (durationMs: number | null) => void;
     onBroadcast?: (message: string) => void;
+    /**
+     * Where organizers write announcements (2.466.0). `chat` (default): the
+     * meeting chat, through `useMeetingChat`'s "To: All rooms"; the pane only
+     * points there. `pane`: the old announcement box in this pane, kept for
+     * hosts without a meeting chat. Before 2.466.0 the box always showed when
+     * `onBroadcast` was set.
+     */
+    announceIn?: 'chat' | 'pane';
     onEnd?: () => void;
     /**
      * Discard the drafted rooms so they can be created again (2.458.1). Shown
@@ -2678,6 +2686,25 @@ declare interface MediaEffectsTrayProps {
 /** Browser media permission for one kind of device. */
 declare type MediaPermission = 'prompt' | 'granted' | 'denied' | 'unavailable';
 
+export declare interface MeetingChatBinding {
+    /** Pass to ChatPanel `onSend`: posts to the chat, or announces to every room. */
+    onSend: (content: string) => void;
+    /** Pass to ChatPanel `localMessages`: the announcements, oldest first. */
+    localMessages: LocalChatMessage[];
+    /** Pass to ChatPanel `dock`: the "To" switch, or null when it does not apply. */
+    dock: ReactNode;
+    target: MeetingChatTarget;
+    setTarget: (target: MeetingChatTarget) => void;
+}
+
+export declare type MeetingChatTarget = 'chat' | 'rooms';
+
+/** The "To: This chat | All rooms" switch an organizer sees while rooms are open. */
+export declare function MeetingChatTargetSwitch({ value, onChange }: {
+    value: MeetingChatTarget;
+    onChange: (v: MeetingChatTarget) => void;
+}): JSX.Element;
+
 /** userId → 1-based hand position. Feed `handRaised` on tiles and roster rows. */
 export declare function meetingHandPositions(hands: readonly RMRaisedHand[]): Map<string, number>;
 
@@ -4120,6 +4147,11 @@ export declare function useCanvasRecovery(tenant: string, subject: string, docum
 
 /** Reference editor upload binding; waits for the server's stable asset URL, never a data URI. */
 export declare function useDocumentImageUpload(documentId: string | null | undefined, displayName: string, useFileUpload: DocumentFileUploadHook, timeoutMs?: number): DocumentImageUpload;
+
+export declare function useMeetingChat(meeting: RMMeetingSource, opts: {
+    send: (content: string) => void;
+    announcementNote?: string;
+}): MeetingChatBinding;
 
 /**
  * Read the effective capabilities.

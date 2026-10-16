@@ -3,17 +3,17 @@ import { c as t, l as n, n as r } from "../Text-4BIlhd_-.js";
 import { t as i } from "../Modal-CEiWhFnj.js";
 import { n as a } from "../Slider-DEbQCKD1.js";
 import { i as o, n as s, r as c, t as l } from "../useDocumentImageUpload-3W74XPh6.js";
-import { $ as u, A as d, B as f, C as p, D as m, E as h, F as g, G as _, H as v, I as y, J as b, K as x, L as S, M as C, N as w, O as T, P as E, Q as D, R as O, S as k, T as A, U as j, V as M, W as N, X as P, Y as F, Z as I, _ as L, _t as ee, a as te, at as R, b as z, c as B, ct as V, d as ne, dt as H, et as re, f as ie, ft as ae, g as oe, gt as se, h as ce, ht as le, i as ue, it as de, j as fe, k as pe, l as me, lt as he, m as ge, mt as _e, n as ve, nt as ye, o as be, ot as xe, p as Se, pt as Ce, q as we, r as Te, rt as Ee, s as De, st as Oe, t as ke, tt as Ae, u as je, ut as Me, v as Ne, w as Pe, x as Fe, y as Ie, z as Le } from "../meeting-Bnv6bnM9.js";
-import { createContext as U, useCallback as W, useContext as G, useEffect as K, useLayoutEffect as Re, useMemo as q, useRef as J, useState as Y, useSyncExternalStore as ze } from "react";
+import { $ as u, A as d, B as f, C as p, D as m, E as h, F as g, G as _, H as v, I as y, J as b, K as x, L as S, M as C, N as w, O as T, P as E, Q as D, R as O, S as ee, T as te, U as k, V as ne, W as A, X as j, Y as M, Z as N, _ as P, _t as F, a as I, at as L, b as R, c as z, ct as B, d as V, dt as re, et as H, f as ie, ft as ae, g as oe, gt as se, h as ce, ht as le, i as ue, it as de, j as fe, k as pe, l as me, lt as he, m as ge, mt as _e, n as ve, nt as ye, o as be, ot as xe, p as Se, pt as Ce, q as we, r as Te, rt as Ee, s as De, st as Oe, t as ke, tt as Ae, u as je, ut as Me, v as Ne, vt as Pe, w as Fe, x as Ie, y as Le, yt as Re, z as ze } from "../meeting-CAJLY9u6.js";
+import { createContext as U, useCallback as W, useContext as G, useEffect as K, useLayoutEffect as Be, useMemo as q, useRef as J, useState as Y, useSyncExternalStore as Ve } from "react";
 import { jsx as X, jsxs as Z } from "react/jsx-runtime";
-import { createPortal as Be } from "react-dom";
+import { createPortal as He } from "react-dom";
 //#region src/integrations/realtime/callBlockModel.ts
-var Ve = [], He = [
+var Ue = [], We = [
 	"composer",
 	"page",
 	"block",
 	"pane"
-], Ue = class {
+], Ge = class {
 	claims = [];
 	listeners = /* @__PURE__ */ new Set();
 	claim(e, t = "page", n = {}) {
@@ -23,20 +23,20 @@ var Ve = [], He = [
 			target: e,
 			placement: t,
 			compact: !!n.compact,
-			documents: n.documents ?? Ve
+			documents: n.documents ?? Ue
 		}], this.emit(), () => {
 			let e = this.claims.length;
 			this.claims = this.claims.filter((e) => e.token !== r), this.claims.length !== e && this.emit();
 		};
 	}
 	top() {
-		for (let e of He) for (let t = this.claims.length - 1; t >= 0; --t) if (this.claims[t].placement === e) return this.claims[t];
+		for (let e of We) for (let t = this.claims.length - 1; t >= 0; --t) if (this.claims[t].placement === e) return this.claims[t];
 		return null;
 	}
 	current = () => this.top()?.target ?? null;
 	placement = () => this.top()?.placement ?? "footer";
 	compact = () => this.top()?.compact ?? !1;
-	documents = () => this.top()?.documents ?? Ve;
+	documents = () => this.top()?.documents ?? Ue;
 	pageClaimed = () => this.claims.some((e) => e.placement !== "pane");
 	subscribe = (e) => (this.listeners.add(e), () => {
 		this.listeners.delete(e);
@@ -45,22 +45,22 @@ var Ve = [], He = [
 		for (let e of this.listeners) e();
 	}
 };
-function We(e, t = !1) {
+function Ke(e, t = !1) {
 	return e === "composer" ? t ? "stack" : "shelf" : e === "pane" ? "grid" : "shelf";
 }
-function Ge(e) {
+function qe(e) {
 	return e > 0 && e < 640;
 }
 function Q(e, t) {
 	return t && e !== "idle" && e !== "ringing";
 }
-function Ke(e, t) {
+function Je(e, t) {
 	return Q(e, t) && e !== "ended" && e !== "failed";
 }
-function qe(e, t, n) {
+function Ye(e, t, n) {
 	return !e || !Q(t, !0) ? !1 : n.some((t) => !!t && (t === e.lobbyName || t === e.channel));
 }
-function Je(e) {
+function Xe(e) {
 	if (!e) return {
 		joined: 0,
 		ringing: 0
@@ -71,15 +71,15 @@ function Je(e) {
 		ringing: e.participants.filter((e) => e.state === "ringing").length
 	};
 }
-function Ye(e) {
+function Ze(e) {
 	return e.phase === "idle" && e.call ? (e.rejoin(), "rejoin") : e.phase === "idle" || e.phase === "ended" || e.phase === "failed" ? (e.start([]), "start") : null;
 }
 var $ = {
 	micOn: !0,
 	cameraOn: !0,
 	remember: !1
-}, Xe = 1e4;
-function Ze(e) {
+}, Qe = 1e4;
+function $e(e) {
 	if (!e) return $;
 	try {
 		let t = JSON.parse(e);
@@ -92,45 +92,45 @@ function Ze(e) {
 		return $;
 	}
 }
-function Qe(e, t, n) {
+function et(e, t, n) {
 	return e === "accept" ? "accept" : e === "start" ? t === "idle" || t === "ended" || t === "failed" ? "start" : null : t === "idle" && n ? "join" : null;
 }
-function $e(e, t) {
+function tt(e, t) {
 	return t === "check" || !e.remember;
 }
-function et(e) {
+function nt(e) {
 	return {
 		...e,
 		remember: !1
 	};
 }
-function tt(e) {
-	return e === "accept" ? Xe : null;
+function rt(e) {
+	return e === "accept" ? Qe : null;
 }
-function nt(e) {
+function it(e) {
 	return {
 		micOn: e.micOn,
 		cameraOn: e.cameraOn,
 		remember: e.remember
 	};
 }
-function rt(e) {
+function at(e) {
 	return Math.max(0, Math.ceil(e / 1e3));
 }
 //#endregion
 //#region src/integrations/realtime/CallBlockHost.tsx
-var it = {
+var ot = {
 	start: "Start a huddle",
 	join: "Join the huddle",
 	accept: "Join the huddle",
 	check: "Check your devices"
-}, at = "__unbound__", ot = () => "", st = () => () => {}, ct = () => null, lt = () => "footer", ut = () => !1, dt = [], ft = () => dt, pt = "ui.call-prejoin.v1";
-function mt(e) {
+}, st = "__unbound__", ct = () => "", lt = () => () => {}, ut = () => null, dt = () => "footer", ft = () => !1, pt = [], mt = () => pt, ht = "ui.call-prejoin.v1";
+function gt(e) {
 	return e.gatewayConfigured ? e.platformApiUrl ? e.signedIn ? e.connectionState === "connected" ? null : "Connecting to the realtime gateway…" : "Sign in to start a call" : "Calls need platform-api — the middleware returned no platformApiUrl (REALTIME_PLATFORM_PUBLIC_URL) and VITE_PLATFORM_API_URL is not set" : "Calls need the realtime gateway — the middleware returned no gatewayUrl and VITE_GATEWAY_URL is not set";
 }
-function ht(e) {
+function _t(e) {
 	let [t, n] = Y(0);
-	return Re(() => {
+	return Be(() => {
 		if (!e) {
 			n(0);
 			return;
@@ -141,26 +141,26 @@ function ht(e) {
 		return r.observe(e), () => r.disconnect();
 	}, [e]), t;
 }
-function gt(e) {
+function vt(e) {
 	try {
-		return Ze(window.localStorage.getItem(e));
+		return $e(window.localStorage.getItem(e));
 	} catch {
-		return Ze(null);
+		return $e(null);
 	}
 }
-function _t(e, t) {
+function yt(e, t) {
 	try {
-		window.localStorage.setItem(e, JSON.stringify(nt(t)));
+		window.localStorage.setItem(e, JSON.stringify(it(t)));
 	} catch {}
 }
-function vt(o) {
-	let s = U(null), c = U(null), l = U(null), u = M(o), { LVSProvider: d } = o;
+function bt(o) {
+	let s = U(null), c = U(null), l = U(null), u = k(o), { LVSProvider: d } = o;
 	function f({ kind: s, title: c, selfName: l, selfAvatarUrl: u, initial: d, onJoin: f, onCancel: p }) {
 		let [m, h] = Y(d), g = o.useMediaDevices({ requestOnMount: !1 }), _ = o.useAudioVideoSettings({
 			preview: m.micOn || m.cameraOn,
 			previewAudio: m.micOn,
 			previewVideo: m.cameraOn
-		}), v = tt(s), [y, b] = Y(v), x = J(!1), S = J({
+		}), v = rt(s), [y, b] = Y(v), x = J(!1), S = J({
 			choice: m,
 			settings: _.settings
 		});
@@ -202,7 +202,7 @@ function vt(o) {
 		}, [v]), /* @__PURE__ */ X(i, {
 			open: !0,
 			onClose: p,
-			title: it[s],
+			title: ot[s],
 			maxWidth: 900,
 			rawChildren: !0,
 			cardClassName: "flex max-h-[88vh] flex-col overflow-hidden border border-border border-t-4 border-t-primary",
@@ -218,7 +218,7 @@ function vt(o) {
 				}), /* @__PURE__ */ X(e, {
 					onClick: C,
 					"data-testid": "prejoin-join",
-					children: y === null ? s === "check" ? "Save" : "Join" : `Join as last time (${rt(y)})`
+					children: y === null ? s === "check" ? "Save" : "Join" : `Join as last time (${at(y)})`
 				})]
 			}),
 			children: /* @__PURE__ */ Z(n, {
@@ -241,7 +241,7 @@ function vt(o) {
 							children: ["Joining as ", l]
 						})]
 					}),
-					/* @__PURE__ */ X(B, {
+					/* @__PURE__ */ X(je, {
 						devices: g,
 						settings: _,
 						cameraOn: m.cameraOn,
@@ -302,7 +302,7 @@ function vt(o) {
 			})
 		});
 	}
-	function p({ self: e, tenant: t, platformApiUrl: n, getIdToken: r, gateway: i, gatewayConfigured: a, connectionState: c, onAccept: l, onCallEvent: u, preJoinStorageKey: d = pt, children: p }) {
+	function p({ self: e, tenant: t, platformApiUrl: n, getIdToken: r, gateway: i, gatewayConfigured: a, connectionState: c, onAccept: l, onCallEvent: u, preJoinStorageKey: d = ht, children: p }) {
 		let [m, h] = Y(null), g = J(null), _ = J(null), v = J(u);
 		v.current = u;
 		let y = (t, n) => {
@@ -310,8 +310,8 @@ function vt(o) {
 				host: _.current,
 				selfId: e?.userId ?? ""
 			});
-		}, [b, x] = Y(() => gt(d)), S = o.useConversationCall({
-			lobbyName: m?.lobbyName ?? at,
+		}, [b, x] = Y(() => vt(d)), S = o.useConversationCall({
+			lobbyName: m?.lobbyName ?? st,
 			channel: m?.channel ?? null,
 			self: e ?? {
 				userId: "",
@@ -335,8 +335,8 @@ function vt(o) {
 		}), C = J(S);
 		C.current = S;
 		let [w, T] = Y(null), [E, D] = Y(null), O = W((e, t, n) => {
-			let r = gt(d);
-			if (!$e(r, e)) {
+			let r = vt(d);
+			if (!tt(r, e)) {
 				x(r), D({ run: t });
 				return;
 			}
@@ -346,45 +346,45 @@ function vt(o) {
 				...n ? { cancel: n } : {},
 				initial: r
 			});
-		}, [d]), k = W((e, t) => Qe("start", C.current.phase, !!C.current.call) ? (O("start", (n) => {
+		}, [d]), ee = W((e, t) => et("start", C.current.phase, !!C.current.call) ? (O("start", (n) => {
 			n.start(e, t);
-		}), Promise.resolve()) : C.current.start(e, t), [O]), A = W(() => {
+		}), Promise.resolve()) : C.current.start(e, t), [O]), te = W(() => {
 			let e = C.current;
-			return Qe("rejoin", e.phase, !!e.call) ? (O("join", (e) => {
+			return et("rejoin", e.phase, !!e.call) ? (O("join", (e) => {
 				e.rejoin();
 			}), Promise.resolve()) : e.rejoin();
-		}, [O]), j = W(() => {
+		}, [O]), k = W(() => {
 			T((e) => e ?? {
 				kind: "check",
 				run: () => {},
-				initial: et(gt(d))
+				initial: nt(vt(d))
 			});
-		}, [d]), M = q(() => ({
+		}, [d]), A = q(() => ({
 			...S,
-			start: k,
-			rejoin: A
+			start: ee,
+			rejoin: te
 		}), [
 			S,
-			k,
-			A
+			ee,
+			te
 		]);
 		K(() => {
 			E && (E.run(C.current), D(null));
-		}, [E]), _.current = M.call?.host ?? _.current, M.phase === "idle" && (_.current = null);
-		let N = J(M.phase);
-		N.current = M.phase;
-		let P = J(null), F = J(null), I = W((e, t) => {
+		}, [E]), _.current = A.call?.host ?? _.current, A.phase === "idle" && (_.current = null);
+		let j = J(A.phase);
+		j.current = A.phase;
+		let M = J(null), N = J(null), P = W((e, t) => {
 			if (g.current) return;
-			let n = N.current;
-			(n === "idle" || n === "ringing") && (P.current = t ?? null, F.current = e.lobbyName, h((t) => t && t.lobbyName === e.lobbyName && t.title === e.title && t.channel === e.channel && t.startBlockedReason === e.startBlockedReason ? t : e));
-		}, []), L = W((e) => {
+			let n = j.current;
+			(n === "idle" || n === "ringing") && (M.current = t ?? null, N.current = e.lobbyName, h((t) => t && t.lobbyName === e.lobbyName && t.title === e.title && t.channel === e.channel && t.startBlockedReason === e.startBlockedReason ? t : e));
+		}, []), F = W((e) => {
 			if (g.current) return;
-			let t = N.current;
-			(t === "idle" || t === "ringing") && F.current === e && (F.current = null, P.current = null, h((t) => t && t.lobbyName === e ? null : t));
-		}, []), ee = W(() => {
-			P.current?.start();
-		}, []), te = J(l);
-		te.current = l;
+			let t = j.current;
+			(t === "idle" || t === "ringing") && N.current === e && (N.current = null, M.current = null, h((t) => t && t.lobbyName === e ? null : t));
+		}, []), I = W(() => {
+			M.current?.start();
+		}, []), L = J(l);
+		L.current = l;
 		let R = o.useIncomingConversationCalls({
 			gateway: i,
 			self: {
@@ -392,11 +392,11 @@ function vt(o) {
 				...e ? { displayName: e.displayName } : {}
 			},
 			onAccept: ((e) => {
-				g.current = e, F.current = e.lobbyName, P.current = null, h({
+				g.current = e, N.current = e.lobbyName, M.current = null, h({
 					lobbyName: e.lobbyName,
 					title: e.callerName,
 					channel: e.channel
-				}), te.current?.(e);
+				}), L.current?.(e);
 			})
 		}), z = J(null);
 		K(() => {
@@ -404,15 +404,15 @@ function vt(o) {
 			!e || m?.lobbyName !== e.lobbyName || z.current !== e.callId && (z.current = e.callId, O("accept", (t) => {
 				g.current = null, t.accept(e);
 			}, () => {
-				g.current = null, R.decline(e), L(e.lobbyName);
+				g.current = null, R.decline(e), F(e.lobbyName);
 			}));
 		}, [
 			m,
 			O,
 			R,
-			L
+			F
 		]);
-		let B = mt({
+		let B = gt({
 			gatewayConfigured: a,
 			platformApiUrl: n,
 			signedIn: !!e,
@@ -420,35 +420,35 @@ function vt(o) {
 		}), V = q(() => e ? {
 			userId: e.userId,
 			displayName: e.displayName
-		} : null, [e?.userId, e?.displayName]), ne = q(() => ({
-			call: M,
+		} : null, [e?.userId, e?.displayName]), re = q(() => ({
+			call: A,
 			lobby: m,
-			bind: I,
-			unbind: L,
-			startBound: m && P.current ? ee : null,
+			bind: P,
+			unbind: F,
+			startBound: m && M.current ? I : null,
 			self: V,
 			tenant: t,
 			gatewayConfigured: a,
 			connectionState: c,
 			platformApiUrl: n,
 			unavailableReason: B,
-			checkDevices: j
+			checkDevices: k
 		}), [
-			M,
+			A,
 			m,
+			P,
+			F,
 			I,
-			L,
-			ee,
 			V,
 			t,
 			a,
 			c,
 			n,
 			B,
-			j
+			k
 		]), H = R.rings[0] ?? null;
 		return /* @__PURE__ */ Z(s.Provider, {
-			value: ne,
+			value: re,
 			children: [
 				p,
 				w && /* @__PURE__ */ X(f, {
@@ -463,13 +463,13 @@ function vt(o) {
 					},
 					onJoin: (e, t) => {
 						let n = w;
-						_t(d, e), C.current.devices.set({
+						yt(d, e), C.current.devices.set({
 							...C.current.devices.prefs,
 							...t
 						}), T(null), n.kind !== "check" && (x(e), D({ run: n.run }));
 					}
 				}),
-				H && /* @__PURE__ */ X(Le, {
+				H && /* @__PURE__ */ X(ne, {
 					ring: H,
 					onAccept: () => R.accept(H),
 					onDecline: () => R.decline(H)
@@ -478,7 +478,7 @@ function vt(o) {
 		});
 	}
 	function m({ children: e }) {
-		let t = G(s), [n, r] = Y(!1), i = !!t?.lobby && Ke(t.call.phase, !0);
+		let t = G(s), [n, r] = Y(!1), i = !!t?.lobby && Je(t.call.phase, !0);
 		K(() => {
 			r(i);
 		}, [i]);
@@ -502,10 +502,10 @@ function vt(o) {
 	function g({ videoUrl: e, children: t, ...n }) {
 		let r = J(null);
 		e && !r.current && (r.current = e);
-		let [i] = Y(() => new Ue());
+		let [i] = Y(() => new Ge());
 		return /* @__PURE__ */ X(d, {
 			baseUrl: r.current ?? "",
-			getAuthToken: ot,
+			getAuthToken: ct,
 			children: /* @__PURE__ */ X(p, {
 				...n,
 				children: /* @__PURE__ */ X(c.Provider, {
@@ -523,17 +523,17 @@ function vt(o) {
 	}
 	function y(e, t) {
 		let n = G(c), r = n ? e(n) : t;
-		return ze(n?.subscribe ?? st, r, r);
+		return Ve(n?.subscribe ?? lt, r, r);
 	}
 	function b() {
-		return y((e) => e.placement, lt);
+		return y((e) => e.placement, dt);
 	}
 	function x() {
-		return y((e) => e.pageClaimed, ut);
+		return y((e) => e.pageClaimed, ft);
 	}
 	function S(e, t, n = !0, r = {}) {
 		let i = G(c), a = !!r.compact, o = JSON.stringify(r.documents ?? []), s = q(() => JSON.parse(o), [o]);
-		Re(() => i && e && n ? i.claim(e, t, {
+		Be(() => i && e && n ? i.claim(e, t, {
 			compact: a,
 			documents: s
 		}) : void 0, [
@@ -544,11 +544,11 @@ function vt(o) {
 			a,
 			s
 		]);
-		let l = y((e) => e.current, ct);
+		let l = y((e) => e.current, ut);
 		return !!e && l === e;
 	}
 	function C({ placement: e, compact: t = !1, documents: r, className: i }) {
-		let a = G(s), o = G(l), [c, u] = Y(null), d = ht(c), f = !!a?.lobby && Q(a.call.phase, !0), p = e === "composer" ? d > 0 : e === "pane" || f && !!o?.open && d > 0, m = e === "composer" && (t || Ge(d)), h = S(c, e, p, {
+		let a = G(s), o = G(l), [c, u] = Y(null), d = _t(c), f = !!a?.lobby && Q(a.call.phase, !0), p = e === "composer" ? d > 0 : e === "pane" || f && !!o?.open && d > 0, m = e === "composer" && (t || qe(d)), h = S(c, e, p, {
 			compact: m,
 			...r ? { documents: r } : {}
 		});
@@ -601,9 +601,9 @@ function vt(o) {
 					a.start();
 					return;
 				}
-				n.lobby?.lobbyName === o && Ye(n.call);
+				n.lobby?.lobbyName === o && Ze(n.call);
 			}
-		}), u = t.enabled !== !1 && qe(n?.lobby ?? null, n?.call.phase ?? "idle", r);
+		}), u = t.enabled !== !1 && Ye(n?.lobby ?? null, n?.call.phase ?? "idle", r);
 		return {
 			block: u ? /* @__PURE__ */ X(C, {
 				placement: "composer",
@@ -615,7 +615,7 @@ function vt(o) {
 		};
 	}
 	function E({ id: e, onOpenPeople: t, onOpenDocument: r, overlay: i, dockTestId: a }) {
-		let o = G(s), c = y((e) => e.current, ct), l = y((e) => e.placement, lt), d = y((e) => e.compact, ut), f = y((e) => e.documents, ft), p = !!o?.lobby && Q(o.call.phase, !0), m = !!c && l === "composer", h = !!c && l !== "pane", g = We(c ? l : "footer", d), _ = o?.lobby ?? null, v = p && _ && o ? /* @__PURE__ */ X(u, {
+		let o = G(s), c = y((e) => e.current, ut), l = y((e) => e.placement, dt), d = y((e) => e.compact, ft), f = y((e) => e.documents, mt), p = !!o?.lobby && Q(o.call.phase, !0), m = !!c && l === "composer", h = !!c && l !== "pane", g = Ke(c ? l : "footer", d), _ = o?.lobby ?? null, v = p && _ && o ? /* @__PURE__ */ X(u, {
 			call: o.call,
 			title: _.title,
 			onOpenPeople: () => t?.(_, o.tenant),
@@ -635,7 +635,7 @@ function vt(o) {
 			layout: g,
 			"data-testid": a ? a(_, o.tenant) : "conversation-call-dock"
 		}) : null;
-		return v ? c ? Be(/* @__PURE__ */ Z(n, {
+		return v ? c ? He(/* @__PURE__ */ Z(n, {
 			gap: "none",
 			className: "relative",
 			"data-testid": "shell-call-media",
@@ -670,4 +670,4 @@ function vt(o) {
 	};
 }
 //#endregion
-export { R as ALL_REALTIME_CAPABILITIES, Ae as CONVERSATION_CAPABILITY_NAMES, Se as CapabilityBoundary, xe as CapabilityGate, Oe as DEFAULT_REALTIME_CAPABILITIES, Le as IncomingCallToast, l as MAX_ATTACHMENT_BYTES, s as MAX_IMAGE_BYTES, Ce as NetworkErrorBoundary, le as NewHangoutRoomDialog, P as RealtimeIntegrationsProvider, ae as ReconnectingShim, Fe as WrappedActivityPanel, B as WrappedAudioVideoSettingsForm, ke as WrappedBreakoutRoomBanner, ve as WrappedBreakoutRoomsPanel, me as WrappedCanvasDocument, p as WrappedChatPanel, ge as WrappedConnectionPill, ye as WrappedConversationSurface, z as WrappedCursorOverlay, Ne as WrappedFileUploadDrop, L as WrappedHangoutLayout, je as WrappedMediaEffectsPreviewPanel, ie as WrappedMediaEffectsTray, ce as WrappedNotificationBell, oe as WrappedNotificationCenter, k as WrappedPresencePanel, Ie as WrappedReactionsOverlay, c as acceptsDocumentImage, Pe as adaptActivityEvent, A as adaptActivityEvents, Te as adaptBreakoutRooms, h as adaptChatMessage, m as adaptChatMessages, T as adaptFileUploadState, pe as adaptFileUploads, d as adaptHangoutParticipant, fe as adaptHangoutParticipants, C as adaptMessageReactions, w as adaptNotification, E as adaptNotifications, g as adaptPresenceEntry, y as adaptPresenceRoster, S as adaptReaction, O as adaptReactions, H as applyNetworkShim, v as buildCanvasDocumentExtensions, Je as callCounts, Q as callDrawn, N as canEditCanvasGrant, _ as canvasDocumentSaveState, we as canvasRecoveryKey, Ee as capabilityNamesFor, vt as createCallBlockHost, j as createCanvasDocumentPane, M as createConversationCallDock, de as createConversationFeaturesFor, ee as createHangoutRoomRow, _e as createHangoutRoomsSection, V as createRealtimeCapabilityProvider, I as createRealtimeIntegrations, Me as createWrappedHangoutRoomsList, u as createWrappedLVSHangoutLayout, re as createWrappedStreamStage, b as decodeCanvasRecovery, ue as defaultRoomDrafts, F as encodeCanvasRecovery, f as incomingCallTitle, ne as mediaEffectsChangeCount, te as meetingHandPositions, be as meetingRosterProps, De as meetingToolbarItems, Ye as pageHuddleStart, se as slugifyRoomName, x as useCanvasRecovery, o as useDocumentImageUpload, he as useRealtimeCapabilities, D as useRealtimeIntegrations };
+export { Oe as ALL_REALTIME_CAPABILITIES, Ee as CONVERSATION_CAPABILITY_NAMES, ce as CapabilityBoundary, B as CapabilityGate, he as DEFAULT_REALTIME_CAPABILITIES, ne as IncomingCallToast, l as MAX_ATTACHMENT_BYTES, s as MAX_IMAGE_BYTES, ke as MeetingChatTargetSwitch, le as NetworkErrorBoundary, F as NewHangoutRoomDialog, D as RealtimeIntegrationsProvider, _e as ReconnectingShim, p as WrappedActivityPanel, je as WrappedAudioVideoSettingsForm, ve as WrappedBreakoutRoomBanner, Te as WrappedBreakoutRoomsPanel, V as WrappedCanvasDocument, te as WrappedChatPanel, oe as WrappedConnectionPill, de as WrappedConversationSurface, ee as WrappedCursorOverlay, R as WrappedFileUploadDrop, Le as WrappedHangoutLayout, ie as WrappedMediaEffectsPreviewPanel, ge as WrappedMediaEffectsTray, P as WrappedNotificationBell, Ne as WrappedNotificationCenter, Fe as WrappedPresencePanel, Ie as WrappedReactionsOverlay, c as acceptsDocumentImage, h as adaptActivityEvent, m as adaptActivityEvents, ue as adaptBreakoutRooms, T as adaptChatMessage, pe as adaptChatMessages, d as adaptFileUploadState, fe as adaptFileUploads, C as adaptHangoutParticipant, w as adaptHangoutParticipants, E as adaptMessageReactions, g as adaptNotification, y as adaptNotifications, S as adaptPresenceEntry, O as adaptPresenceRoster, ze as adaptReaction, f as adaptReactions, Ce as applyNetworkShim, A as buildCanvasDocumentExtensions, Xe as callCounts, Q as callDrawn, x as canEditCanvasGrant, we as canvasDocumentSaveState, M as canvasRecoveryKey, L as capabilityNamesFor, bt as createCallBlockHost, _ as createCanvasDocumentPane, k as createConversationCallDock, xe as createConversationFeaturesFor, Re as createHangoutRoomRow, se as createHangoutRoomsSection, Me as createRealtimeCapabilityProvider, u as createRealtimeIntegrations, ae as createWrappedHangoutRoomsList, Ae as createWrappedLVSHangoutLayout, ye as createWrappedStreamStage, j as decodeCanvasRecovery, I as defaultRoomDrafts, N as encodeCanvasRecovery, v as incomingCallTitle, Se as mediaEffectsChangeCount, be as meetingHandPositions, De as meetingRosterProps, z as meetingToolbarItems, Ze as pageHuddleStart, Pe as slugifyRoomName, b as useCanvasRecovery, o as useDocumentImageUpload, me as useMeetingChat, re as useRealtimeCapabilities, H as useRealtimeIntegrations };
