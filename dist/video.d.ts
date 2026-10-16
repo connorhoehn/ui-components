@@ -1902,6 +1902,8 @@ export declare interface IncomingCallPopoverProps {
     'data-testid'?: string;
 }
 
+declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right';
+
 /**
  * `null`/`undefined` mean nobody measured; a numeric 0 means somebody did and
  * the answer was nobody. Negative is nonsense from a broken source, and is
@@ -2149,6 +2151,17 @@ export declare interface MeetingToolbarItem {
     priority?: 'primary' | 'secondary';
     /** Tooltip; defaults to the label. */
     title?: string;
+    /**
+     * An anchored panel this button opens, e.g. the reaction picker:
+     * `popover: (close) => <ReactionPicker onReact={(e) => { send(e); close(); }} />`.
+     * The button toggles it (`aria-haspopup="dialog"`, `aria-expanded`) and
+     * `onClick` is not called. Since 2.463.0.
+     */
+    popover?: (close: () => void) => ReactNode;
+    /** Accessible name of the panel. Default the label. */
+    popoverLabel?: string;
+    /** Default `bottom-start`; `bottom-end` for a button near the bar's right edge. */
+    popoverPlacement?: InlinePopoverPlacement;
 }
 
 export declare interface MeetingToolbarProps {

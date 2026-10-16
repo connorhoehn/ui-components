@@ -5875,19 +5875,21 @@ function si({ title: t, participantCount: n, elapsedMs: r, people: a, documents:
 //#region src/components/video/MeetingToolbar.tsx
 var ci = "relative inline-flex h-14 min-w-14 flex-col items-center justify-center gap-0.5 rounded-md px-2 text-text-secondary transition-colors duration-100 hover:bg-surface-hover hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent";
 function li({ item: t }) {
-	let n = t.disabled && t.disabledReason ? t.disabledReason : t.title ?? t.label, r = /* @__PURE__ */ X("button", {
+	let n = t.disabled && t.disabledReason ? t.disabledReason : t.title ?? t.label, r = K(null), [i, a] = q(!1), o = !!t.popover, s = o && i && !t.disabled, c = o ? s || !!t.active : t.active, l = /* @__PURE__ */ X("button", {
+		ref: r,
 		type: "button",
-		onClick: t.onClick,
+		onClick: o ? () => a((e) => !e) : t.onClick,
 		disabled: t.disabled,
 		title: n,
 		"aria-label": t.count === void 0 ? t.label : `${t.label}, ${t.count}`,
 		"aria-pressed": t.pressed === void 0 ? void 0 : t.pressed,
-		"aria-expanded": t.active === void 0 ? void 0 : t.active,
+		"aria-haspopup": o ? "dialog" : void 0,
+		"aria-expanded": o ? s : t.active === void 0 ? void 0 : t.active,
 		"data-testid": `meeting-toolbar-${t.id}`,
-		"data-active": t.active ? "true" : void 0,
+		"data-active": c ? "true" : void 0,
 		"data-pressed": t.pressed ? "true" : void 0,
 		"data-tone": t.tone ?? "default",
-		className: e(ci, t.active && "text-accent hover:text-accent", t.pressed && "bg-accent-bg text-accent hover:bg-accent-bg hover:text-accent", t.tone === "danger" && "text-danger hover:bg-danger-bg hover:text-danger", t.menu && "rounded-r-none pr-1"),
+		className: e(ci, c && "text-accent hover:text-accent", t.pressed && "bg-accent-bg text-accent hover:bg-accent-bg hover:text-accent", t.tone === "danger" && "text-danger hover:bg-danger-bg hover:text-danger", t.menu && "rounded-r-none pr-1"),
 		children: [
 			/* @__PURE__ */ X("span", {
 				className: "relative inline-flex items-center gap-1",
@@ -5916,17 +5918,30 @@ function li({ item: t }) {
 				className: "leading-tight whitespace-nowrap",
 				children: t.label
 			}),
-			t.active && /* @__PURE__ */ Y("span", {
+			c && /* @__PURE__ */ Y("span", {
 				"aria-hidden": !0,
 				className: "absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-accent",
 				"data-testid": `meeting-toolbar-${t.id}-active`
 			})
 		]
 	});
+	if (o) {
+		let e = () => a(!1);
+		return /* @__PURE__ */ X(J, { children: [l, /* @__PURE__ */ Y(B, {
+			trigger: r,
+			open: s,
+			onClose: e,
+			placement: t.popoverPlacement ?? "bottom-start",
+			"aria-label": t.popoverLabel ?? t.label,
+			kind: "meeting-toolbar-popover",
+			"data-testid": `meeting-toolbar-${t.id}-popover`,
+			children: s && t.popover(e)
+		})] });
+	}
 	return t.menu ? /* @__PURE__ */ X("span", {
 		className: "inline-flex items-stretch",
 		"data-testid": `meeting-toolbar-${t.id}-split`,
-		children: [r, /* @__PURE__ */ Y(me, {
+		children: [l, /* @__PURE__ */ Y(me, {
 			trigger: /* @__PURE__ */ Y(p, { size: 14 }),
 			triggerLabel: t.menuLabel ?? `${t.label} options`,
 			triggerVariant: "link",
@@ -5936,7 +5951,7 @@ function li({ item: t }) {
 			align: "end",
 			sections: t.menu
 		})]
-	}) : r;
+	}) : l;
 }
 function ui(e) {
 	return {
@@ -5973,8 +5988,8 @@ function fi() {
 	});
 }
 function pi({ start: t, items: n, media: r = [], moreSections: i = [], onLeave: a, leaveLabel: o = "Leave", leaveMenu: s, compactBelow: c = 960, compact: l, className: u, "data-testid": d = "meeting-toolbar" }) {
-	let f = Se(), p = di(f.ref, c, l), m = p ? n.filter((e) => e.priority !== "secondary") : n, h = p ? n.filter((e) => e.priority === "secondary") : [], g = [...h.length ? [{
-		items: h.map(ui),
+	let f = Se(), p = di(f.ref, c, l), m = (e) => e.priority === "secondary" && !e.popover, h = p ? n.filter((e) => !m(e)) : n, g = p ? n.filter(m) : [], _ = [...g.length ? [{
+		items: g.map(ui),
 		"data-testid": "meeting-toolbar-more-folded"
 	}] : [], ...i];
 	return /* @__PURE__ */ X("div", {
@@ -5992,7 +6007,7 @@ function pi({ start: t, items: n, media: r = [], moreSections: i = [], onLeave: 
 			/* @__PURE__ */ X("div", {
 				className: "flex shrink-0 items-center gap-0.5",
 				"data-testid": `${d}-items`,
-				children: [m.map((e) => /* @__PURE__ */ Y(li, { item: e }, e.id)), g.length > 0 && /* @__PURE__ */ Y(me, {
+				children: [h.map((e) => /* @__PURE__ */ Y(li, { item: e }, e.id)), _.length > 0 && /* @__PURE__ */ Y(me, {
 					trigger: /* @__PURE__ */ X(J, { children: [/* @__PURE__ */ Y(A, { size: 20 }), /* @__PURE__ */ Y(F, {
 						size: "xs",
 						tone: "inherit",
@@ -6004,7 +6019,7 @@ function pi({ start: t, items: n, media: r = [], moreSections: i = [], onLeave: 
 					triggerClassName: e("relative inline-flex h-14 min-w-14 flex-col items-center justify-center gap-0.5 rounded-md px-2 text-text-secondary transition-colors duration-100 hover:bg-surface-hover hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent", "gap-0.5 font-normal"),
 					triggerTestId: "meeting-toolbar-more",
 					align: "end",
-					sections: g
+					sections: _
 				})]
 			}),
 			r.length > 0 && /* @__PURE__ */ Y(fi, {}),
