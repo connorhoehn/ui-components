@@ -15,12 +15,12 @@ export const WithTimerAndAnnouncement: Story = {
   args: {
     roomName: 'Room 2',
     endsAt: new Date(Date.now() + 4 * 60_000).toISOString(),
-    announcement: { message: 'Five minutes left — pick one idea to share back.', fromDisplayName: 'Digisha Jain' },
+    announcement: { message: 'Five minutes left — pick one idea to share back.', fromDisplayName: 'Rowan Ellery' },
     onDismissAnnouncement: () => {},
     onReturnToMain: () => {},
   },
 };
-export const LastMinute: Story = { args: { roomName: "Jeff's Room", endsAt: new Date(Date.now() + 45_000).toISOString() } };
+export const LastMinute: Story = { args: { roomName: "Theo's Room", endsAt: new Date(Date.now() + 45_000).toISOString() } };
 
 /** The organizer is closing the rooms: the closing grace counts down. */
-export const Closing: Story = { args: { roomName: "Hilla's Room", closing: true, endsAt: new Date(Date.now() + 30_000).toISOString(), onReturnToMain: () => {} } };
+export const Closing: Story = { args: { roomName: "Mara's Room", closing: true, endsAt: new Date(Date.now() + 30_000).toISOString(), onReturnToMain: () => {} } };

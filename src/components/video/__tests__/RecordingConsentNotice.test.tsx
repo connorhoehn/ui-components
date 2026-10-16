@@ -4,9 +4,9 @@ import { RecordingConsentNotice, useConsentDismissal } from '../RecordingConsent
 describe('RecordingConsentNotice', () => {
   it('says who started it, links the policy, and dismisses', () => {
     const onDismiss = vi.fn();
-    render(<RecordingConsentNotice open kind="both" startedBy="Digisha Jain" privacyHref="https://example.test/privacy" onDismiss={onDismiss} />);
+    render(<RecordingConsentNotice open kind="both" startedBy="Rowan Ellery" privacyHref="https://example.test/privacy" onDismiss={onDismiss} />);
     const notice = screen.getByRole('status', { name: 'Recording and transcription' });
-    expect(notice).toHaveTextContent('Started by Digisha Jain. By attending this meeting, you agree to being included.');
+    expect(notice).toHaveTextContent('Started by Rowan Ellery. By attending this meeting, you agree to being included.');
     expect(screen.getByTestId('recording-consent-privacy')).toHaveAttribute('href', 'https://example.test/privacy');
     fireEvent.click(screen.getByTestId('recording-consent-dismiss'));
     expect(onDismiss).toHaveBeenCalled();

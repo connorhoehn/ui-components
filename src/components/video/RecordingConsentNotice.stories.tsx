@@ -12,7 +12,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const RecordingAndTranscription: Story = {
-  args: { open: true, kind: 'both', startedBy: 'Digisha Prakashchandra Jain', privacyHref: '#privacy', placement: 'inline', onDismiss: () => {} },
+  args: { open: true, kind: 'both', startedBy: 'Rowan Ellery-Castellanos', privacyHref: '#privacy', placement: 'inline', onDismiss: () => {} },
 };
 export const RecordingOnly: Story = {
   args: { open: true, kind: 'recording', placement: 'inline', onDismiss: () => {} },

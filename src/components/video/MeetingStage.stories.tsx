@@ -11,18 +11,19 @@ import { RecordingConsentNotice } from './RecordingConsentNotice';
 import { HangoutGrid } from './HangoutGrid';
 import { BreakoutRoomsPanel, type BreakoutRoomView } from './BreakoutRoomsPanel';
 import { BreakoutRoomBanner } from './BreakoutRoomBanner';
+import './MeetingStage.stories.css';
 import { ReactionPicker } from './ReactionOverlay';
 import { MeetingHandIcon, MeetingReactIcon, MeetingRoomsIcon, MeetingShareIcon, MeetingViewIcon } from './MeetingIcons';
 import { ChatBubbleIcon, MicOffIcon, UsersIcon, VideoOffIcon } from './MediaIcons';
 import type { HangoutLayoutParticipant } from './HangoutLayoutTypes';
 
-const NAMES = ['Lauren Milosky', 'Neal Patel', 'Digisha Jain', 'Sanjay Ramanathan', 'Ivan Nunez', 'Parker Watson', 'Fabian Jimenez', 'Greg Mikels', 'Kiana Bahramian', 'Eli Galayda', 'Yifei Wang', 'Abhishek Bhardwaj', 'Chandan Vedavyas', 'Jeff Averill'];
+const NAMES = ['Ada Lindqvist', 'Bram Okonjo', 'Rowan Ellery', 'Cleo Navarro', 'Dario Fenwick', 'Esme Tanaka', 'Felix Moreau', 'Gus Halvorsen', 'Hana Ruiz', 'Iris Achebe', 'Jonah Petrov', 'Kofi Mensah', 'Lena Sorensen', 'Milo Varga'];
 const PEOPLE: HangoutLayoutParticipant[] = NAMES.map((displayName, i) => ({
   id: `p${i}`, displayName, isMuted: i !== 13, handRaised: i === 5 ? 1 : i === 8 ? 2 : undefined,
 }));
 const ROOMS: BreakoutRoomView[] = [
-  { id: 'hilla', name: "Hilla's Room", state: 'open', members: [] },
-  { id: 'jeff', name: "Jeff's Room", state: 'open', members: [] },
+  { id: 'mara', name: "Mara's Room", state: 'open', members: [] },
+  { id: 'theo', name: "Theo's Room", state: 'open', members: [] },
   ...[1, 2, 3, 4, 5].map((n) => ({ id: `r${n}`, name: `Room ${n}`, state: 'open' as const, members: [] })),
 ];
 
@@ -54,14 +55,14 @@ function Stage({ inRoom }: { inRoom?: boolean }) {
         <BreakoutRoomBanner
           roomName="Room 2"
           endsAt={new Date(Date.now() + 4 * 60_000).toISOString()}
-          announcement={{ message: 'Five minutes left — pick one idea to share back.', fromDisplayName: 'Digisha Jain' }}
+          announcement={{ message: 'Five minutes left — pick one idea to share back.', fromDisplayName: 'Rowan Ellery' }}
           onDismissAnnouncement={() => {}}
           onReturnToMain={() => {}}
         />
       )}
       <div className="flex min-h-0 flex-1">
         <div className="relative min-w-0 flex-1 p-3">
-          <RecordingConsentNotice open={consent} kind="both" startedBy="Digisha Prakashchandra Jain" privacyHref="#privacy" onDismiss={() => setConsent(false)} />
+          <RecordingConsentNotice open={consent} kind="both" startedBy="Rowan Ellery-Castellanos" privacyHref="#privacy" onDismiss={() => setConsent(false)} />
           <HangoutGrid participants={PEOPLE} localParticipant={{ id: 'me', displayName: 'Connor Hoehn', isLocal: true, isMuted: true }} activeSpeakerId="p13" fillParent className="h-full" />
         </div>
         {rooms && (
@@ -87,3 +88,16 @@ export const MainMeeting: Story = { render: () => <Stage /> };
 
 /** Inside a breakout room: the banner with countdown and announcement. */
 export const InBreakoutRoom: Story = { render: () => <Stage inRoom /> };
+
+/**
+ * The same stage under another app's brand (teal, like the Assessment
+ * tenant): the toolbar's active underline, pressed Raise, focus ring and the
+ * consent link follow `--color-primary`; hands stay warning amber.
+ */
+export const TealBrand: Story = {
+  render: () => (
+    <div className="meeting-story-teal">
+      <Stage />
+    </div>
+  ),
+};

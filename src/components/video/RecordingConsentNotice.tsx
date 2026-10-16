@@ -8,6 +8,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { cn } from '../../lib/cn';
 import { T } from '../shared/Text';
 import { IconButton } from '../ui/IconButton';
+import { CloseIcon } from '../ui/Icons';
+import { Link } from '../shared/Link';
+import { MeetingRecordingIcon } from './MeetingIcons';
 
 export type RecordingConsentKind = 'recording' | 'transcription' | 'both';
 
@@ -58,9 +61,7 @@ export function RecordingConsentNotice({
       )}
     >
       <div className="flex items-start gap-3">
-        <span aria-hidden className="mt-1 grid h-4 w-4 shrink-0 place-items-center rounded-full border-2 border-text-primary">
-          <span className="h-2 w-2 rounded-full bg-text-primary" />
-        </span>
+        <MeetingRecordingIcon aria-hidden size={16} className="mt-0.5 shrink-0 text-text-primary" />
         <div className="min-w-0 flex-1">
           <T as="p" size="sm" weight="semibold">{title}</T>
           <T as="p" size="sm" tone="secondary" className="mt-1 block">
@@ -69,16 +70,14 @@ export function RecordingConsentNotice({
             {privacyHref && (
               <>
                 {' '}
-                <a href={privacyHref} target="_blank" rel="noreferrer" className="text-accent underline" data-testid={`${testId}-privacy`}>
+                <Link href={privacyHref} external className="underline" data-testid={`${testId}-privacy`}>
                   {privacyLabel}
-                </a>
+                </Link>
               </>
             )}
           </T>
         </div>
-        <IconButton aria-label="Dismiss" variant="ghost" size="sm" onClick={onDismiss} data-testid={`${testId}-dismiss`}>
-          <span aria-hidden className="text-lg leading-none">×</span>
-        </IconButton>
+        <IconButton aria-label="Dismiss" variant="ghost" size="sm" icon={<CloseIcon />} onClick={onDismiss} data-testid={`${testId}-dismiss`} />
       </div>
     </section>
   );

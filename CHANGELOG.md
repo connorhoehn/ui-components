@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.464.0
+
+- Meeting components follow the app's brand. The toolbar's active underline, pressed state (Raise) and focus ring, and the consent card's privacy link, paint with `--color-primary` instead of the fixed `accent` purple, so a host that sets its brand (the aws-agentcore portal does per tenant) sees its own colour. Warning amber stays on raised hands and danger red on the closing timer.
+- Library primitives in place of hand-drawn bits: close buttons in the room banner, the consent card and the rooms pane use `CloseIcon`; the consent card's recording mark is `MeetingRecordingIcon` (new, `/video`); the privacy link is `Link external`; the hand badge's number is `T` and its tile tone uses `text-text-inverse`.
+- Stories and tests use fictional names (they had reused names from a real meeting screenshot). New story `Video/MeetingStage (composition)` TealBrand scopes another brand on a wrapper element, the way a host brands one region. A ratchet test fails on `accent`, raw palette classes, white/black, arbitrary colours or sizes and `×` glyphs in the meeting components, and on the old names.
+
 ## 2.463.0
 
 - `MeetingToolbarItem.popover: (close) => ReactNode` (plus `popoverLabel`, `popoverPlacement`): a toolbar button that opens an anchored panel instead of firing `onClick`, so React hosts the existing `ReactionPicker` like Teams' reaction flyout. The panel is an `InlinePopover` (portalled, so the bar never clips it and its buttons stay out of the toolbar's arrow-key roving); Escape, an outside click, a second click or `close()` shut it and focus returns to the button. The button carries `aria-haspopup="dialog"` and `aria-expanded`, and shows the active underline while open. A popover item never folds into More, and a disabled one cannot open.

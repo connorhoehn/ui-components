@@ -35,6 +35,16 @@ export function MeetingHandIcon({ size = 20, ...rest }: IconProps) {
   );
 }
 
+/** A ring around a dot: recording is on (the consent card). */
+export function MeetingRecordingIcon({ size = 16, ...rest }: IconProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="4" fill="currentColor" />
+    </svg>
+  );
+}
+
 /** A smiling face: the React button. */
 export function MeetingReactIcon({ size = 20, ...rest }: IconProps) {
   return (

@@ -94,7 +94,7 @@ export interface MeetingToolbarProps {
 export const MEETING_TOOLBAR_BUTTON =
   'relative inline-flex h-14 min-w-14 flex-col items-center justify-center gap-0.5 rounded-md px-2 ' +
   'text-text-secondary transition-colors duration-100 hover:bg-surface-hover hover:text-text-primary ' +
-  'focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent cursor-pointer ' +
+  'focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary cursor-pointer ' +
   'disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent';
 
 function ToolbarButton({ item }: { item: MeetingToolbarItem }) {
@@ -121,8 +121,8 @@ function ToolbarButton({ item }: { item: MeetingToolbarItem }) {
       data-tone={item.tone ?? 'default'}
       className={cn(
         MEETING_TOOLBAR_BUTTON,
-        active && 'text-accent hover:text-accent',
-        item.pressed && 'bg-accent-bg text-accent hover:bg-accent-bg hover:text-accent',
+        active && 'text-primary hover:text-primary',
+        item.pressed && 'bg-primary-bg text-primary-fg hover:bg-primary-bg hover:text-primary-fg',
         item.tone === 'danger' && 'text-danger hover:bg-danger-bg hover:text-danger',
         item.menu && 'rounded-r-none pr-1',
       )}
@@ -146,7 +146,7 @@ function ToolbarButton({ item }: { item: MeetingToolbarItem }) {
       </span>
       <T size="xs" tone="inherit" className="leading-tight whitespace-nowrap">{item.label}</T>
       {active && (
-        <span aria-hidden className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-accent" data-testid={`meeting-toolbar-${item.id}-active`} />
+        <span aria-hidden className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-primary" data-testid={`meeting-toolbar-${item.id}-active`} />
       )}
     </button>
   );

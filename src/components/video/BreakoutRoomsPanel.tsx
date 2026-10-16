@@ -17,7 +17,7 @@ import { Avatar } from '../shared/Avatar';
 import { SegmentedControl } from '../shared/SegmentedControl';
 import { T } from '../shared/Text';
 import { Button } from '../ui/Button';
-import { ChevronIcon } from '../ui/Icons';
+import { ChevronIcon, CloseIcon } from '../ui/Icons';
 import { IconButton } from '../ui/IconButton';
 import { useCountdown } from './BreakoutRoomBanner';
 import { formatCallElapsed } from './CallDock';
@@ -345,9 +345,7 @@ export function BreakoutRoomsPanel(props: BreakoutRoomsPanelProps) {
       <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-4 py-3">
         <T as="div" size="lg" weight="semibold" role="heading" aria-label={title}>{title}</T>
         {onClose && (
-          <IconButton aria-label={`Close ${title.toLowerCase()}`} variant="ghost" size="sm" onClick={onClose} data-testid={`${testId}-close`}>
-            <span aria-hidden className="text-xl leading-none">×</span>
-          </IconButton>
+          <IconButton aria-label={`Close ${title.toLowerCase()}`} variant="ghost" size="sm" icon={<CloseIcon />} onClick={onClose} data-testid={`${testId}-close`} />
         )}
       </div>
       {notice}

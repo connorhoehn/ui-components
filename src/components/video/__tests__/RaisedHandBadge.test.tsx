@@ -22,7 +22,7 @@ describe('RaisedHandBadge', () => {
   });
 
   it('ParticipantTile shows the hand in its name chip', () => {
-    render(<ParticipantTile id="a" displayName="Parker Watson" handRaised={1} isMuted />);
+    render(<ParticipantTile id="a" displayName="Esme Tanaka" handRaised={1} isMuted />);
     expect(screen.getByTestId('remote-tile')).toHaveAttribute('data-hand-raised', 'true');
     expect(screen.getByTestId('tile-raised-hand')).toHaveAttribute('data-hand-position', '1');
   });

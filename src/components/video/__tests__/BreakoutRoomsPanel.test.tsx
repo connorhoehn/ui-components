@@ -3,8 +3,8 @@ import { BreakoutRoomsPanel, type BreakoutRoomView } from '../BreakoutRoomsPanel
 import { BreakoutRoomBanner } from '../BreakoutRoomBanner';
 
 const ROOMS: BreakoutRoomView[] = [
-  { id: 'r1', name: "Hilla's Room", state: 'open', members: [{ id: 'u-a', name: 'Ana', handRaised: 1 }] },
-  { id: 'r2', name: "Jeff's Room", state: 'open', members: [] },
+  { id: 'r1', name: "Mara's Room", state: 'open', members: [{ id: 'u-a', name: 'Ana', handRaised: 1 }] },
+  { id: 'r2', name: "Theo's Room", state: 'open', members: [] },
   { id: 'r3', name: 'Room 1', state: 'closed', members: [] },
 ];
 

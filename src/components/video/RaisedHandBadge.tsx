@@ -3,12 +3,13 @@
 // roster row, or a breakout member list. Renders nothing when not raised.
 
 import { cn } from '../../lib/cn';
+import { T } from '../shared/Text';
 import { MeetingHandIcon } from './MeetingIcons';
 
 export interface RaisedHandBadgeProps {
   /** `true`, or the 1-based queue position. Falsy renders nothing. */
   raised: boolean | number | null | undefined;
-  /** `chip` (default): accent pill for light surfaces. `overlay`: for a dark video tile. */
+  /** `chip` (default): warning pill for light surfaces. `overlay`: for a dark video tile. */
   tone?: 'chip' | 'overlay';
   size?: 'sm' | 'md';
   className?: string;
@@ -37,14 +38,14 @@ export function RaisedHandBadge({ raised, tone = 'chip', size = 'sm', className,
       data-testid={testId}
       data-hand-position={typeof raised === 'number' ? raised : undefined}
       className={cn(
-        'inline-flex shrink-0 items-center gap-0.5 rounded-full font-semibold leading-none tabular-nums',
-        size === 'sm' ? 'h-4 px-1 text-[10px]' : 'h-5 px-1.5 text-xs',
-        tone === 'chip' ? 'bg-warning-bg text-warning-fg' : 'bg-warning text-white',
+        'inline-flex shrink-0 items-center gap-0.5 rounded-full leading-none',
+        size === 'sm' ? 'h-4 px-1' : 'h-5 px-1.5',
+        tone === 'chip' ? 'bg-warning-bg text-warning-fg' : 'bg-warning text-text-inverse',
         className,
       )}
     >
       <MeetingHandIcon size={size === 'sm' ? 11 : 13} />
-      {typeof raised === 'number' && <span>{raised}</span>}
+      {typeof raised === 'number' && <T as="span" size="xs" weight="semibold" tone="inherit" tabular className="leading-none">{raised}</T>}
     </span>
   );
 }

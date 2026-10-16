@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { BreakoutRoomsPanel, type BreakoutRoomView } from './BreakoutRoomsPanel';
 
-const PEOPLE = ['Parker Watson', 'Fabian Jimenez', 'Greg Mikels', 'Kiana Bahramian', 'Eli Galayda', 'Yifei Wang'];
+const PEOPLE = ['Esme Tanaka', 'Felix Moreau', 'Gus Halvorsen', 'Hana Ruiz', 'Iris Achebe', 'Jonah Petrov'];
 const ROOMS: BreakoutRoomView[] = [
-  { id: 'hilla', name: "Hilla's Room", state: 'open', members: [{ id: 'p1', name: PEOPLE[0]!, handRaised: 1 }, { id: 'p2', name: PEOPLE[1]! }] },
-  { id: 'jeff', name: "Jeff's Room", state: 'open', members: [{ id: 'p3', name: PEOPLE[2]! }] },
+  { id: 'mara', name: "Mara's Room", state: 'open', members: [{ id: 'p1', name: PEOPLE[0]!, handRaised: 1 }, { id: 'p2', name: PEOPLE[1]! }] },
+  { id: 'theo', name: "Theo's Room", state: 'open', members: [{ id: 'p3', name: PEOPLE[2]! }] },
   ...[1, 2, 3, 4, 5].map((n) => ({ id: `r${n}`, name: `Room ${n}`, state: 'open' as const, members: [] })),
 ];
 
@@ -26,7 +26,7 @@ export const ParticipantSelfSelect: Story = {
 
 /** In a room you were assigned to, with returning allowed. */
 export const ParticipantInRoom: Story = {
-  args: { rooms: ROOMS, phase: 'open', mode: 'assigned', myRoomId: 'jeff', onReturnToMain: () => {}, onClose: () => {} },
+  args: { rooms: ROOMS, phase: 'open', mode: 'assigned', myRoomId: 'theo', onReturnToMain: () => {}, onClose: () => {} },
 };
 
 /** Organizer before any rooms exist. */

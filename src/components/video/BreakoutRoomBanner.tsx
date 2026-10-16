@@ -7,6 +7,7 @@ import { cn } from '../../lib/cn';
 import { T } from '../shared/Text';
 import { Button } from '../ui/Button';
 import { IconButton } from '../ui/IconButton';
+import { CloseIcon } from '../ui/Icons';
 import { formatCallElapsed } from './CallDock';
 import { MeetingRoomsIcon } from './MeetingIcons';
 
@@ -88,12 +89,10 @@ export function BreakoutRoomBanner({
       {announcement && (
         <div className="flex items-start gap-2" data-testid={`${testId}-announcement`} role="status" aria-live="polite">
           <T size="sm" tone="inherit" className="block min-w-0 flex-1">
-            <span className="font-semibold">{announcement.fromDisplayName}:</span> {announcement.message}
+            <T as="span" size="sm" weight="semibold" tone="inherit">{announcement.fromDisplayName}:</T> {announcement.message}
           </T>
           {onDismissAnnouncement && (
-            <IconButton aria-label="Dismiss announcement" variant="ghost" size="sm" onClick={onDismissAnnouncement} data-testid={`${testId}-announcement-dismiss`}>
-              <span aria-hidden className="text-base leading-none">×</span>
-            </IconButton>
+            <IconButton aria-label="Dismiss announcement" variant="ghost" size="sm" icon={<CloseIcon />} onClick={onDismissAnnouncement} data-testid={`${testId}-announcement-dismiss`} />
           )}
         </div>
       )}

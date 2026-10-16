@@ -347,6 +347,7 @@ export type { BreakoutRoomBannerProps } from './BreakoutRoomBanner';
 export {
   MeetingHandIcon,
   MeetingReactIcon,
+  MeetingRecordingIcon,
   MeetingViewIcon,
   MeetingNotesIcon,
   MeetingRoomsIcon,

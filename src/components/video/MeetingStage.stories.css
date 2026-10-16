@@ -1,0 +1,17 @@
+/* Story-only: another app's brand scoped to one subtree, the way a host sets
+   it (the aws-agentcore portal sets these per tenant on [data-tenant]).
+   Teal, like the Assessment tenant; dark values follow the theme. */
+.meeting-story-teal {
+  --color-primary: #0d9488;
+  --color-primary-hover: #0f766e;
+  --color-primary-bg: #f0fdfa;
+  --color-primary-fg: #0f766e;
+  --color-primary-border: #99f6e4;
+}
+[data-theme='dark'] .meeting-story-teal {
+  --color-primary: #2dd4bf;
+  --color-primary-hover: #5eead4;
+  --color-primary-bg: #134e4a;
+  --color-primary-fg: #99f6e4;
+  --color-primary-border: #0f766e;
+}
