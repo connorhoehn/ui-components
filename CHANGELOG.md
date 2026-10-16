@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.479.0
+
+- Read-only composer is coherent under ui-dom-audit `composer.readonly-coherent`: when a `ConversationComposer` cannot post, the To: chooser stays live and carries `data-composer-readonly-allow="Choose a destination you can post to"` if another destination can take a message, and is disabled when none can; a mode menu kept live by another usable mode carries `data-composer-readonly-allow="Switch to a mode you can use"`. `DropdownMenu` gains `triggerAttributes` (`data-*` attributes spread on the trigger).
+
 ## 2.478.0
 
 - `MeetingToolbar onLeave` is optional (lane L7 of aws-agentcore `docs/meeting-rooms-app-goal.md`): without it the bar draws no Leave and no divider before it (and ignores `leaveMenu`), so a stage toolbar above a call dock that already has Leave shows one Leave per screen.
