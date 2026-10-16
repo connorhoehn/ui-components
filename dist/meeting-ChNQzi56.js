@@ -20,7 +20,7 @@ import { t as x } from "./FileUploadDrop-DrckU_7j.js";
 import { t as S } from "./ActivityFeed-Cp6MhNab.js";
 import { a as C, i as w, n as T, o as E } from "./DockedAside-BDA5tJ1T.js";
 import { d as ee, dt as D, lt as O, n as k, t as A, u as j, ut as M } from "./ConversationSurface-Cj3TMoE4.js";
-import { E as N, T as P, V as F, W as te, _ as I, i as ne, k as re, n as ie, s as L, t as R, w as ae, x as oe, y as se } from "./BreakoutRoomsPanel-BIm0FtYT.js";
+import { E as N, G as P, T as F, V as te, _ as I, i as ne, k as re, n as ie, s as L, t as R, w as ae, x as oe, y as se } from "./BreakoutRoomsPanel-CtKMSlTX.js";
 import { t as ce } from "./useActiveSpeaker-BGKJU3Lb.js";
 import { c as le, o as ue, s as z } from "./useDocumentImageUpload-3W74XPh6.js";
 import { Component as de, createContext as B, createElement as fe, useCallback as V, useContext as pe, useEffect as H, useMemo as U, useRef as W, useState as G } from "react";
@@ -670,7 +670,7 @@ function Ve(e, t) {
 	let n = e.isLocal, r = n ? t ?? e.displayName ?? "You" : e.displayName || e.participantId.slice(0, 8), i = e.streams[0], a = e.screenStream, o = n ? /* @__PURE__ */ q(Be, {
 		stream: i,
 		displayName: r
-	}) : /* @__PURE__ */ q(P, {
+	}) : /* @__PURE__ */ q(F, {
 		stream: i,
 		displayName: r,
 		cameraOn: e.hasVideo
@@ -2150,7 +2150,7 @@ function fn(e, t) {
 			id: "raise",
 			label: n ? "Lower" : "Raise",
 			title: n ? `Lower your hand (${e.myHandPosition} in line)` : "Raise your hand",
-			icon: /* @__PURE__ */ q(F, {}),
+			icon: /* @__PURE__ */ q(te, {}),
 			pressed: n,
 			onClick: e.toggleHand,
 			disabled: !e.ready
@@ -2158,7 +2158,7 @@ function fn(e, t) {
 		rooms: {
 			id: "rooms",
 			label: "Rooms",
-			icon: /* @__PURE__ */ q(te, {}),
+			icon: /* @__PURE__ */ q(P, {}),
 			active: t.roomsOpen,
 			onClick: t.onToggleRooms,
 			disabled: !e.ready,

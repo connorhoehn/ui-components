@@ -13458,6 +13458,9 @@ export declare function MeetingNotesIcon({ size, ...rest }: IconProps): JSX.Elem
 /** A smiling face: the React button. */
 export declare function MeetingReactIcon({ size, ...rest }: IconProps): JSX.Element;
 
+/** A ring around a dot: recording is on (the consent card). */
+export declare function MeetingRecordingIcon({ size, ...rest }: IconProps): JSX.Element;
+
 /** A room inside a room: breakout rooms. */
 export declare function MeetingRoomsIcon({ size, ...rest }: IconProps): JSX.Element;
 
@@ -17457,7 +17460,7 @@ export declare function RaisedHandBadge({ raised, tone, size, className, 'data-t
 export declare interface RaisedHandBadgeProps {
     /** `true`, or the 1-based queue position. Falsy renders nothing. */
     raised: boolean | number | null | undefined;
-    /** `chip` (default): accent pill for light surfaces. `overlay`: for a dark video tile. */
+    /** `chip` (default): warning pill for light surfaces. `overlay`: for a dark video tile. */
     tone?: 'chip' | 'overlay';
     size?: 'sm' | 'md';
     className?: string;
