@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { render, screen, fireEvent, within } from '@testing-library/react';
-import { RosterPanel, type RosterParticipant } from '../RosterPanel';
+import { RosterPanel, orderRosterByHands, type RosterParticipant } from '../RosterPanel';
 
 function participant(overrides: Partial<RosterParticipant> & { id: string }): RosterParticipant {
   return {
@@ -153,5 +154,66 @@ describe('RosterPanel', () => {
   it('emits aria-label="Call participants" on the aside', () => {
     render(<RosterPanel participants={[]} />);
     expect(screen.getByLabelText('Call participants').tagName.toLowerCase()).toBe('aside');
+  });
+});
+
+describe('RosterPanel — raised hands queue', () => {
+  const ps = [
+    participant({ id: 'a', displayName: 'Alpha' }),
+    participant({ id: 'b', displayName: 'Bravo', handRaised: 2 }),
+    participant({ id: 'c', displayName: 'Charlie', handRaised: true }),
+    participant({ id: 'd', displayName: 'Delta', handRaised: 1 }),
+    participant({ id: 'e', displayName: 'Echo' }),
+  ];
+  const order = () => screen.getAllByTestId('roster-row').map((r) => r.getAttribute('data-user-id'));
+
+  it('orderRosterByHands: numbered positions, then unnumbered hands, then everyone else in order', () => {
+    expect(orderRosterByHands(ps).map((p) => p.id)).toEqual(['d', 'b', 'c', 'a', 'e']);
+  });
+
+  it('keeps the caller order unless raisedHandsFirst', () => {
+    const { rerender } = render(<RosterPanel participants={ps} />);
+    expect(order()).toEqual(['a', 'b', 'c', 'd', 'e']);
+    rerender(<RosterPanel participants={ps} raisedHandsFirst />);
+    expect(order()).toEqual(['d', 'b', 'c', 'a', 'e']);
+  });
+
+  it('organizer controls: Lower per raised row and Lower all hands in the header', () => {
+    const onLowerHand = vi.fn();
+    const onLowerAllHands = vi.fn();
+    render(<RosterPanel participants={ps} raisedHandsFirst onLowerHand={onLowerHand} onLowerAllHands={onLowerAllHands} />);
+    expect(screen.getAllByTestId('roster-lower-hand')).toHaveLength(3);
+    fireEvent.click(screen.getByRole('button', { name: "Lower Bravo's hand" }));
+    expect(onLowerHand).toHaveBeenCalledWith('b');
+    fireEvent.click(screen.getByTestId('roster-lower-all'));
+    expect(onLowerAllHands).toHaveBeenCalledTimes(1);
+  });
+
+  it('focus moves to the next Lower, then the panel, as hands go down', () => {
+    function Live() {
+      const [list, setList] = useState(ps);
+      return (
+        <RosterPanel
+          participants={list}
+          raisedHandsFirst
+          onLowerHand={(id) => setList((l) => l.map((p) => (p.id === id ? { ...p, handRaised: undefined } : p)))}
+          onLowerAllHands={() => setList((l) => l.map((p) => ({ ...p, handRaised: undefined })))}
+        />
+      );
+    }
+    render(<Live />);
+    fireEvent.click(screen.getByRole('button', { name: "Lower Delta's hand" }));
+    expect(document.activeElement).toHaveAccessibleName("Lower Bravo's hand");
+    fireEvent.click(screen.getByTestId('roster-lower-all'));
+    expect(document.activeElement).toBe(screen.getByRole('complementary', { name: 'Call participants' }));
+  });
+
+  it('no organizer controls without handlers, and no Lower all when no hand is up', () => {
+    const { rerender } = render(<RosterPanel participants={ps} />);
+    expect(screen.queryByTestId('roster-lower-hand')).toBeNull();
+    expect(screen.queryByTestId('roster-lower-all')).toBeNull();
+    rerender(<RosterPanel participants={[participant({ id: 'a' })]} onLowerAllHands={vi.fn()} onLowerHand={vi.fn()} />);
+    expect(screen.queryByTestId('roster-lower-all')).toBeNull();
+    expect(screen.queryByTestId('roster-lower-hand')).toBeNull();
   });
 });

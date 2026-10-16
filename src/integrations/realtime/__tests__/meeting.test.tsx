@@ -17,9 +17,11 @@ import {
   WrappedBreakoutRoomBanner,
   adaptBreakoutRooms,
   meetingHandPositions,
+  meetingRosterProps,
   meetingToolbarItems,
   type RMMeetingSource,
 } from '../meeting';
+import { RosterPanel } from '../../../components/video/RosterPanel';
 
 // Compile-time: the hook's result is a valid source.
 const _fits = (m: UseMeetingResult): RMMeetingSource => m;
@@ -200,6 +202,41 @@ describe('meeting bindings over the real service', () => {
     expect(screen.queryByTestId('breakout-add-room')).toBeNull();
     expect(screen.queryByTestId('breakout-room-name')).toBeNull();
     expect(screen.getByText('Room 1')).toBeInTheDocument();
+  });
+
+  it('People queue: hands sort to the top in order; only the organizer can lower one or all', async () => {
+    const w = world();
+    const roster = PEOPLE.map((p) => ({ id: p.userId, displayName: p.displayName }));
+    function People({ clientId, userId }: { clientId: string; userId: string }) {
+      const meeting = useTestMeeting(w, clientId, userId);
+      const items = meetingToolbarItems(meeting, { roomsOpen: false, onToggleRooms: () => {} });
+      return (
+        <section data-testid={`people-${userId}`}>
+          <button type="button" data-testid={`raise-${userId}`} onClick={items.raise.onClick}>{items.raise.label}</button>
+          <RosterPanel {...meetingRosterProps(meeting, roster)} />
+        </section>
+      );
+    }
+    render(<><People clientId="c-org" userId="u-org" /><People clientId="c-a" userId="u-a" /><People clientId="c-b" userId="u-b" /></>);
+    await flush();
+    fireEvent.click(screen.getByTestId('raise-u-b'));
+    await flush();
+    fireEvent.click(screen.getByTestId('raise-u-a'));
+    await flush();
+    const org = screen.getByTestId('people-u-org');
+    const ana = screen.getByTestId('people-u-a');
+    expect(within(ana).getAllByTestId('roster-row').map((r) => r.getAttribute('data-user-id'))).toEqual(['u-b', 'u-a', 'u-org']);
+    expect(within(ana).queryByTestId('roster-lower-hand')).toBeNull();
+    expect(within(ana).queryByTestId('roster-lower-all')).toBeNull();
+
+    fireEvent.click(within(org).getByRole('button', { name: "Lower Ben's hand" }));
+    await flush();
+    expect(within(ana).getAllByTestId('roster-row').map((r) => r.getAttribute('data-user-id'))).toEqual(['u-a', 'u-org', 'u-b']);
+    fireEvent.click(within(org).getByTestId('roster-lower-all'));
+    await flush();
+    expect(within(ana).queryAllByTestId('roster-raised-hand')).toHaveLength(0);
+    expect(within(org).queryByTestId('roster-lower-all')).toBeNull();
+    w.svc.dispose();
   });
 
   it('raised hands flow to the Raise button and to the rooms member list', async () => {

@@ -107,6 +107,7 @@ export type { PiPButtonProps } from './PiPButton';
 
 export { RosterPanel } from './RosterPanel';
 export type { RosterPanelProps, RosterParticipant } from './RosterPanel';
+export { orderRosterByHands } from './RosterPanel';
 
 export { useMuteWhileTalking } from '../../lib/video/useMuteWhileTalking';
 export { useTrackStateBump, streamHasUsableVideo } from '../../lib/video/useTrackStateBump';

@@ -264,6 +264,7 @@ export {
   adaptBreakoutRooms,
   defaultRoomDrafts,
   meetingHandPositions,
+  meetingRosterProps,
   meetingToolbarItems,
 } from '../realtime/meeting';
 export type {

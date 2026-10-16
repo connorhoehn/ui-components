@@ -281,6 +281,7 @@ export {
   adaptBreakoutRooms,
   defaultRoomDrafts,
   meetingHandPositions,
+  meetingRosterProps,
   meetingToolbarItems,
 } from './meeting';
 export type {

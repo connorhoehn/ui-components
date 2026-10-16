@@ -80,3 +80,26 @@ export const WithFooterAction: Story = {
 export const Empty: Story = {
   args: { participants: [] },
 };
+
+/** The People pane's hands queue (organizer view): raised hands sort to the
+ *  top in queue order, each with Lower, and Lower all hands in the header. */
+export const RaisedHandsQueue: Story = {
+  args: { participants: PEOPLE },
+  render: (args) => {
+    const [hands, setHands] = useState<string[]>(['eli', 'bob', 'alice']);
+    const participants = args.participants.map((p) => {
+      const at = hands.indexOf(p.id);
+      return { ...p, handRaised: at >= 0 ? at + 1 : undefined };
+    });
+    return (
+      <RosterPanel
+        {...args}
+        participants={participants}
+        title="People"
+        raisedHandsFirst
+        onLowerHand={(id) => setHands((h) => h.filter((x) => x !== id))}
+        onLowerAllHands={() => setHands([])}
+      />
+    );
+  },
+};

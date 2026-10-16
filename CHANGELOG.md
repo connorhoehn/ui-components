@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.460.0
+
+- `RosterPanel` hands queue, as in the Teams People pane. `raisedHandsFirst` lists raised hands at the top in queue order (numbered positions, then unnumbered hands, then everyone else in the caller's order; also exported as `orderRosterByHands`). `onLowerHand(id)` adds Lower on each row with a hand up, and `onLowerAllHands()` adds Lower all hands to the header while any hand is up. When a Lower button disappears with its hand, focus moves to the next Lower (else the panel), not `<body>`. All opt-in; existing rosters render as before.
+- `meetingRosterProps(meeting, participants)` (both realtime barrels) binds it to `useMeeting`: queue positions from `meeting.hands`, hands first, and the lower actions for organizers only. `<RosterPanel {...meetingRosterProps(meeting, roster)} />`.
+- `Video/RosterPanel` RaisedHandsQueue story.
+
 ## 2.459.0
 
 - `BreakoutRoomsPanel` renames and adds rooms, also while rooms are open (as in Teams). `onRenameRoom(roomId, name)` turns each room name into an in-place editor for organizers (`InlineEditableText`, 80 characters; Enter or blur commits, Escape cancels, an emptied name is refused). `onAddRoom()` adds an Add room button in draft and open phases, disabled at `maxRooms` (default 50). Participants still see plain names.

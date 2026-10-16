@@ -2,9 +2,14 @@
 // N≥5. Each row: avatar + display name + mute icon + speaking pulse.
 // Pure presentational — caller passes the participant list + mute
 // states + active-speaker id; no transport / signaling coupling.
+//
+// Raised hands (2.460.0): `raisedHandsFirst` orders the list by queue
+// position, and an organizer gets Lower per row (`onLowerHand`) and Lower all
+// in the header (`onLowerAllHands`) — the People pane's hands queue in Teams.
 
-import type { ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { Button } from '../ui/Button';
 import { RaisedHandBadge } from './RaisedHandBadge';
 
 export interface RosterParticipant {
@@ -33,7 +38,30 @@ export interface RosterPanelProps {
    *  light-only, so the default is a white slab inside the dark call
    *  widget — 2026-08-25 audit P0-3). */
   tone?: 'light' | 'dark';
+  /**
+   * Put raised hands at the top in queue order (numbered positions first,
+   * then unnumbered hands), everyone else after in the given order. Default
+   * false: the list keeps the caller's order.
+   */
+  raisedHandsFirst?: boolean;
+  /** Organizer: lower one person's hand. Shown as Lower on rows with a hand up. */
+  onLowerHand?: (id: string) => void;
+  /** Organizer: lower every hand. Shown in the header while any hand is up. */
+  onLowerAllHands?: () => void;
   className?: string;
+}
+
+function handRank(raised: RosterParticipant['handRaised']): number {
+  if (typeof raised === 'number') return raised;
+  return raised ? Number.MAX_SAFE_INTEGER - 1 : Number.MAX_SAFE_INTEGER;
+}
+
+/** Raised hands first in queue order; a stable sort, so ties keep the caller's order. */
+export function orderRosterByHands(participants: readonly RosterParticipant[]): RosterParticipant[] {
+  return participants
+    .map((p, i) => ({ p, i, rank: handRank(p.handRaised) }))
+    .sort((a, b) => a.rank - b.rank || a.i - b.i)
+    .map((x) => x.p);
 }
 
 function initials(name: string): string {
@@ -51,14 +79,29 @@ export function RosterPanel({
   title = 'Participants',
   footer,
   tone = 'light',
+  raisedHandsFirst = false,
+  onLowerHand,
+  onLowerAllHands,
   className,
 }: RosterPanelProps) {
   const dark = tone === 'dark';
   const total = count ?? participants.length;
+  const rows = raisedHandsFirst ? orderRosterByHands(participants) : participants;
+  const handsUp = participants.filter((p) => p.handRaised).length;
+  const panelRef = useRef<HTMLElement>(null);
+  // A Lower button disappears with the hand it lowers. Move focus first — to
+  // the next Lower in the list, else the previous one, else the panel — so a
+  // keyboard user is not dropped onto <body>.
+  const keepFocus = (from: HTMLElement | null) => {
+    const all = Array.from(panelRef.current?.querySelectorAll<HTMLElement>('[data-testid="roster-lower-hand"]') ?? []);
+    const at = from ? all.indexOf(from) : -1;
+    const next = at >= 0 ? all[at + 1] ?? all[at - 1] : undefined;
+    (next ?? panelRef.current)?.focus();
+  };
   return (
     <aside
       className={cn(
-        'flex flex-col w-64 shrink-0',
+        'flex flex-col w-64 shrink-0 focus:outline-none',
         dark
           // tone="dark" is call chrome (all its text is white/alpha), so it
           // takes the theme-invariant token — `bg-surface-inverse` flipped
@@ -68,21 +111,36 @@ export function RosterPanel({
         className,
       )}
       aria-label="Call participants"
+      ref={panelRef}
+      tabIndex={-1}
     >
       <header className={cn('px-4 py-3 border-b flex items-center justify-between', dark ? 'border-white/10' : 'border-[var(--color-border)]')}>
         <h3 className={cn('text-sm font-semibold', dark ? 'text-white' : 'text-[var(--color-text-primary)]')}>{title}</h3>
-        <span className={cn('text-xs tabular-nums', dark ? 'text-white/50' : 'text-[var(--color-text-secondary)]')}>{total}</span>
+        <span className="flex items-center gap-2">
+          {onLowerAllHands && handsUp > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => { keepFocus(null); onLowerAllHands(); }}
+              className={dark ? 'text-white/80 hover:text-white' : undefined}
+              data-testid="roster-lower-all"
+            >
+              Lower all hands
+            </Button>
+          )}
+          <span className={cn('text-xs tabular-nums', dark ? 'text-white/50' : 'text-[var(--color-text-secondary)]')}>{total}</span>
+        </span>
       </header>
       <ul className="flex-1 overflow-y-auto py-1 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
-        {participants.map((p) => {
+        {rows.map((p) => {
           const isSpeaking = p.id === activeSpeakerId;
           return (
-            <li key={p.id}>
+            <li key={p.id} className="flex items-center" data-testid="roster-row" data-user-id={p.id}>
               <button
                 type="button"
                 onClick={onParticipantClick ? () => onParticipantClick(p.id) : undefined}
                 className={cn(
-                  'w-full flex items-center gap-3 px-4 py-2 text-left transition-colors',
+                  'min-w-0 flex-1 flex items-center gap-3 px-4 py-2 text-left transition-colors',
                   'hover:bg-white/[0.03]',
                   isSpeaking && 'bg-white/[0.04]',
                   onParticipantClick ? 'cursor-pointer' : 'cursor-default',
@@ -125,6 +183,18 @@ export function RosterPanel({
                   </svg>
                 )}
               </button>
+              {onLowerHand && p.handRaised && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => { keepFocus(e.currentTarget); onLowerHand(p.id); }}
+                  aria-label={`Lower ${p.displayName}'s hand`}
+                  className={cn('mr-2 shrink-0', dark && 'text-white/80 hover:text-white')}
+                  data-testid="roster-lower-hand"
+                >
+                  Lower
+                </Button>
+              )}
             </li>
           );
         })}

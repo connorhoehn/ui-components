@@ -18,6 +18,7 @@ import { BreakoutRoomBanner } from '../../components/video/BreakoutRoomBanner';
 import Banner from '../../components/shared/Banner';
 import { MeetingHandIcon, MeetingRoomsIcon } from '../../components/video/MeetingIcons';
 import type { MeetingToolbarItem } from '../../components/video/MeetingToolbar';
+import type { RosterPanelProps, RosterParticipant } from '../../components/video/RosterPanel';
 
 /** The slice of realtime-modules' `BreakoutState` these bindings read. */
 export interface RMBreakoutState {
@@ -79,6 +80,26 @@ export interface RMMeetingPerson {
 /** userId → 1-based hand position. Feed `handRaised` on tiles and roster rows. */
 export function meetingHandPositions(hands: readonly RMRaisedHand[]): Map<string, number> {
   return new Map(hands.map((h, i) => [h.userId, i + 1]));
+}
+
+/**
+ * The People pane's hands queue: spread onto `RosterPanel`. Each participant
+ * (keyed by the meeting's userId) gets its queue position, raised hands sort
+ * to the top, and an organizer gets Lower and Lower all hands.
+ *
+ *   <RosterPanel {...meetingRosterProps(meeting, roster)} />
+ */
+export function meetingRosterProps(
+  meeting: Pick<RMMeetingSource, 'hands' | 'isOrganizer' | 'lowerHand' | 'lowerAllHands'>,
+  participants: readonly RosterParticipant[],
+): Pick<RosterPanelProps, 'participants' | 'raisedHandsFirst' | 'onLowerHand' | 'onLowerAllHands'> {
+  const handAt = meetingHandPositions(meeting.hands);
+  return {
+    participants: participants.map((p) => ({ ...p, handRaised: handAt.get(p.id) })),
+    raisedHandsFirst: true,
+    onLowerHand: meeting.isOrganizer ? (id) => meeting.lowerHand(id) : undefined,
+    onLowerAllHands: meeting.isOrganizer ? () => meeting.lowerAllHands() : undefined,
+  };
 }
 
 /** Rooms with people resolved, plus who is in the meeting but in no room. */
