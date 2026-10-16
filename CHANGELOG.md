@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.468.0
+
+- Wiring rehearsal (realtime-modules goal G11): story `Video/MeetingRehearsal (live bindings)` runs three people in one real meeting in the page (realtime-modules 0.128 `createMeetingLoopback` + the real `useMeeting`), and the whole screen is built only from the public bindings; an integration test walks hands, rooms, a chat announcement, a private room chat and the return. Storybook aliases `@connorhoehn/realtime-modules/meeting` and `/client/meeting` to source, as it does the other subpaths.
+- `withMeetingHands(participants, meeting)`: tiles with their hand position, the one piece of glue the rehearsal found missing.
+- `useMeetingChat`: `withAnnouncements(messages)` merges announcements into the thread as the organizer's messages (their side, counted) and `renderMessageReferences` marks them "Announcement to every room". `localMessages` is deprecated: viewer-only messages are drawn as your own, so another organizer's announcement sat on your side of the thread (found by the rehearsal).
+- `BreakoutRoomBanner`: the announcement's sender and message share one line again (2.464.0 put the name in a flex `T`, which broke the line).
+
 ## 2.467.0
 
 - `InlineEditableText`: Enter and Escape hand focus back to the edit button. The input unmounted and focus fell to the page body, so a keyboard user renaming a breakout room (or any inline title) lost their place. A blur leaves focus where it went.

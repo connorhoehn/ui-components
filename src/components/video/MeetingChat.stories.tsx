@@ -39,7 +39,7 @@ function OrganizerChat() {
   });
   return (
     <div className="flex h-[560px] w-[380px] flex-col border border-border bg-surface">
-      <ChatPanel messages={messages} currentUserId="u-me" onSend={chat.onSend} localMessages={chat.localMessages} dock={chat.dock} fill />
+      <ChatPanel messages={chat.withAnnouncements(messages)} currentUserId="u-me" onSend={chat.onSend} renderMessageReferences={chat.renderMessageReferences} dock={chat.dock} fill />
     </div>
   );
 }

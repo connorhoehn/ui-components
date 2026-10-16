@@ -19,6 +19,7 @@ import Banner from '../../components/shared/Banner';
 import { SegmentedControl } from '../../components/shared/SegmentedControl';
 import { T } from '../../components/shared/Text';
 import type { LocalChatMessage } from '../../components/social/ChatPanel';
+import type { ChatMessage } from '../../hooks/useChat';
 import { MeetingHandIcon, MeetingReactIcon, MeetingRoomsIcon } from '../../components/video/MeetingIcons';
 import { ReactionPicker } from '../../components/video/ReactionOverlay';
 import type { MeetingToolbarItem } from '../../components/video/MeetingToolbar';
@@ -86,6 +87,21 @@ export interface RMMeetingPerson {
 /** userId → 1-based hand position. Feed `handRaised` on tiles and roster rows. */
 export function meetingHandPositions(hands: readonly RMRaisedHand[]): Map<string, number> {
   return new Map(hands.map((h, i) => [h.userId, i + 1]));
+}
+
+/**
+ * Tiles (or any list keyed by the meeting's userId) with their hand position
+ * set, for `HangoutGrid` / `HangoutLayout` participants. Lowered hands clear
+ * `handRaised`. Since 2.468.0.
+ *
+ *   <HangoutGrid participants={withMeetingHands(callParticipants, meeting)} />
+ */
+export function withMeetingHands<P extends { id: string; handRaised?: boolean | number }>(
+  participants: readonly P[],
+  meeting: Pick<RMMeetingSource, 'hands'>,
+): P[] {
+  const handAt = meetingHandPositions(meeting.hands);
+  return participants.map((p) => ({ ...p, handRaised: handAt.get(p.id) }));
 }
 
 /**
@@ -270,7 +286,23 @@ export type MeetingChatTarget = 'chat' | 'rooms';
 export interface MeetingChatBinding {
   /** Pass to ChatPanel `onSend`: posts to the chat, or announces to every room. */
   onSend: (content: string) => void;
-  /** Pass to ChatPanel `localMessages`: the announcements, oldest first. */
+  /**
+   * Your chat's messages with the announcements merged in by time, each from
+   * its organizer (so it sits on their side of the thread and counts):
+   * `messages={chat.withAnnouncements(messages)}`. Since 2.468.0.
+   */
+  withAnnouncements: (messages: readonly ChatMessage[]) => ChatMessage[];
+  /**
+   * Pass to ChatPanel `renderMessageReferences`: marks announcements
+   * "Announcement to every room". Wraps the host's own renderer if given in
+   * the options. Since 2.468.0.
+   */
+  renderMessageReferences: (message: ChatMessage) => ReactNode;
+  /**
+   * @deprecated since 2.468.0: viewer-only messages are drawn as YOUR OWN,
+   * so another organizer's announcement sat on your side of the thread. Use
+   * `withAnnouncements` + `renderMessageReferences`; do not pass both.
+   */
   localMessages: LocalChatMessage[];
   /** Pass to ChatPanel `dock`: the "To" switch, or null when it does not apply. */
   dock: ReactNode;
@@ -295,9 +327,16 @@ export function MeetingChatTargetSwitch({ value, onChange }: { value: MeetingCha
   );
 }
 
+const ANNOUNCEMENT_ID = 'meeting-announcement:';
+
 export function useMeetingChat(
   meeting: RMMeetingSource,
-  opts: { send: (content: string) => void; announcementNote?: string },
+  opts: {
+    send: (content: string) => void;
+    announcementNote?: string;
+    /** The host's own ChatPanel `renderMessageReferences`, kept for other messages. */
+    renderMessageReferences?: (message: ChatMessage) => ReactNode;
+  },
 ): MeetingChatBinding {
   const [target, setTarget] = useState<MeetingChatTarget>('chat');
   const [seen, setSeen] = useState<Array<NonNullable<RMBreakoutState['announcement']>>>([]);
@@ -311,8 +350,17 @@ export function useMeetingChat(
   const canAnnounce = meeting.ready && meeting.isOrganizer && meeting.breakout.phase === 'open';
   const effective: MeetingChatTarget = canAnnounce ? target : 'chat';
   const note = opts.announcementNote ?? 'Announcement to every room';
+  const announcementMessages = useMemo<ChatMessage[]>(() => seen.map((a) => ({
+    id: `${ANNOUNCEMENT_ID}${a.at}:${a.fromUserId}`,
+    clientId: 'meeting',
+    userId: a.fromUserId,
+    displayName: a.fromDisplayName,
+    content: a.message,
+    timestamp: a.at,
+  })), [seen]);
+  const hostRefs = opts.renderMessageReferences;
   const localMessages = useMemo<LocalChatMessage[]>(() => seen.map((a) => ({
-    id: `meeting-announcement:${a.at}:${a.fromUserId}`,
+    id: `${ANNOUNCEMENT_ID}${a.at}:${a.fromUserId}`,
     timestamp: a.at,
     displayName: a.fromDisplayName,
     content: a.message,
@@ -324,6 +372,12 @@ export function useMeetingChat(
     target: effective,
     setTarget,
     localMessages,
+    withAnnouncements: (messages) => (announcementMessages.length === 0
+      ? [...messages]
+      : [...messages, ...announcementMessages].sort((x, y) => Date.parse(x.timestamp) - Date.parse(y.timestamp))),
+    renderMessageReferences: (message) => (message.id?.startsWith(ANNOUNCEMENT_ID)
+      ? <T as="p" size="xs" tone="tertiary" data-testid="meeting-chat-announcement-note">{note}</T>
+      : hostRefs?.(message) ?? null),
     dock: canAnnounce ? <MeetingChatTargetSwitch value={effective} onChange={setTarget} /> : null,
     onSend: (content: string) => {
       const text = content.trim();

@@ -21,6 +21,9 @@ const rmSrc = rmSrcFrom(import.meta.dirname);
 const realtimeModulesAliases = {
   '@connorhoehn/realtime-modules/adapters/tiptap': rmSrc('adapters/tiptap/index.ts'),
   '@connorhoehn/realtime-modules/client/video': rmSrc('client/video/index.ts'),
+  // Video/MeetingRehearsal (2.468.0) runs the real useMeeting over a loopback.
+  '@connorhoehn/realtime-modules/client/meeting': rmSrc('client/meeting/index.ts'),
+  '@connorhoehn/realtime-modules/meeting': rmSrc('meeting/index.ts'),
   '@connorhoehn/realtime-modules/client/hangout-rooms': rmSrc(
     'client/hangout-rooms/index.ts',
   ),

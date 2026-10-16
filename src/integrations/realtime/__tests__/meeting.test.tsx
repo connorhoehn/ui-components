@@ -106,7 +106,7 @@ function Seat({ w, clientId, userId }: { w: ReturnType<typeof world>; clientId: 
     <section data-testid={`seat-${userId}`}>
       <button type="button" data-testid={`raise-${userId}`} aria-pressed={items.raise.pressed} onClick={items.raise.onClick}>{items.raise.label}</button>
       <div data-testid={`chat-${userId}`} data-posted={posted.join('|')}>
-        <ChatPanel messages={[]} onSend={chat.onSend} localMessages={chat.localMessages} dock={chat.dock} />
+        <ChatPanel messages={chat.withAnnouncements([])} onSend={chat.onSend} renderMessageReferences={chat.renderMessageReferences} dock={chat.dock} />
       </div>
       <WrappedBreakoutRoomBanner meeting={meeting} />
       <WrappedBreakoutRoomsPanel meeting={meeting} people={PEOPLE} data-testid={`panel-${userId}`} />
@@ -159,6 +159,9 @@ describe('meeting bindings over the real service', () => {
     const anaChat = within(ana).getByTestId('chat-u-a');
     expect(anaChat).toHaveTextContent('Five minutes left');
     expect(anaChat).toHaveTextContent('Announcement to every room');
+    // Merged as Olive's message (her side of the thread, counted), not a local one.
+    expect(within(anaChat).getByTestId('chat-message')).toHaveTextContent('Olive Organizer');
+    expect(within(anaChat).getByTestId('meeting-chat-announcement-note')).toBeInTheDocument();
     // The switch went back to This chat: the next message is ordinary chat.
     fireEvent.change(within(orgChat).getByPlaceholderText('Type a message...'), { target: { value: 'thanks all' } });
     fireEvent.keyDown(within(orgChat).getByPlaceholderText('Type a message...'), { key: 'Enter' });

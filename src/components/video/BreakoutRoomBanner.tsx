@@ -89,7 +89,7 @@ export function BreakoutRoomBanner({
       {announcement && (
         <div className="flex items-start gap-2" data-testid={`${testId}-announcement`} role="status" aria-live="polite">
           <T size="sm" tone="inherit" className="block min-w-0 flex-1">
-            <T as="span" size="sm" weight="semibold" tone="inherit">{announcement.fromDisplayName}:</T> {announcement.message}
+            <strong className="font-semibold">{announcement.fromDisplayName}:</strong> {announcement.message}
           </T>
           {onDismissAnnouncement && (
             <IconButton aria-label="Dismiss announcement" variant="ghost" size="sm" icon={<CloseIcon />} onClick={onDismissAnnouncement} data-testid={`${testId}-announcement-dismiss`} />

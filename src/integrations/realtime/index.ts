@@ -283,6 +283,7 @@ export {
   meetingHandPositions,
   meetingRosterProps,
   meetingToolbarItems,
+  withMeetingHands,
   MeetingChatTargetSwitch,
   useMeetingChat,
 } from './meeting';
