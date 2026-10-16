@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.478.0
+
+- `MeetingToolbar onLeave` is optional (lane L7 of aws-agentcore `docs/meeting-rooms-app-goal.md`): without it the bar draws no Leave and no divider before it (and ignores `leaveMenu`), so a stage toolbar above a call dock that already has Leave shows one Leave per screen.
+
 ## 2.477.0
 
 The seams aws-agentcore's call stage needs for a meeting (`docs/meeting-rooms-app-goal.md`, found by drafting the portal):

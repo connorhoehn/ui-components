@@ -83,7 +83,12 @@ export interface MeetingToolbarProps {
   media?: MeetingToolbarItem[];
   /** Extra More-menu sections (Settings, Record, Captions…). More appears when this or folded items exist. */
   moreSections?: DropdownMenuSection[];
-  onLeave: () => void;
+  /**
+   * Leave the call. Omit it when the bar sits above a call dock that already
+   * has Leave (one Leave per screen): no Leave button, no divider before it,
+   * and `leaveMenu` is ignored. Optional since 2.478.0.
+   */
+  onLeave?: () => void;
   /** Default "Leave". */
   leaveLabel?: string;
   /** A split chevron on Leave — e.g. "End meeting for everyone". */
@@ -263,7 +268,7 @@ export function MeetingToolbar({
   const mediaFolded = narrow ? media.filter((m) => m.priority === 'secondary') : [];
   // On a phone the split chevrons go; their menus (device lists, Leave options) move into More.
   const movedMenus: DropdownMenuSection[] = phone
-    ? [...mediaShown.flatMap((m) => m.menu ?? []), ...(leaveMenu ?? [])]
+    ? [...mediaShown.flatMap((m) => m.menu ?? []), ...(onLeave ? leaveMenu ?? [] : [])]
     : [];
   const allFolded = [...folded, ...mediaFolded];
   const more: DropdownMenuSection[] = [
@@ -312,19 +317,21 @@ export function MeetingToolbar({
           {mediaShown.map((item) => <ToolbarButton key={item.id} item={item} iconOnly={phone} />)}
         </div>
       )}
-      <Divider />
-      <ToolbarButton
-        item={{
-          id: 'leave',
-          label: leaveLabel,
-          icon: <PhoneOffIcon size={20} />,
-          onClick: onLeave,
-          tone: 'danger',
-          menu: leaveMenu,
-          menuLabel: 'Leave options',
-        }}
-        iconOnly={phone}
-      />
+      {onLeave && <Divider />}
+      {onLeave && (
+        <ToolbarButton
+          item={{
+            id: 'leave',
+            label: leaveLabel,
+            icon: <PhoneOffIcon size={20} />,
+            onClick: onLeave,
+            tone: 'danger',
+            menu: leaveMenu,
+            menuLabel: 'Leave options',
+          }}
+          iconOnly={phone}
+        />
+      )}
     </div>
   );
 }

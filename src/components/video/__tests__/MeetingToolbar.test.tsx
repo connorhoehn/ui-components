@@ -252,5 +252,13 @@ describe('MeetingToolbar keyboard (WAI-ARIA toolbar, 2.458.2)', () => {
     expect(screen.getByTestId('device-a')).toBeInTheDocument();
     expect(screen.getByTestId('end-all')).toBeInTheDocument();
   });
+
+  it('without onLeave there is no Leave button and no divider before it (2.478.0)', () => {
+    render(<MeetingToolbar items={items()} leaveMenu={[{ items: [{ label: 'End for everyone', onSelect: vi.fn() }] }]} compact={false} />);
+    expect(screen.queryByTestId('meeting-toolbar-leave')).toBeNull();
+    expect(screen.queryByRole('button', { name: /leave/i })).toBeNull();
+    // Still a toolbar with its own controls.
+    expect(screen.getByTestId('meeting-toolbar-people')).toBeInTheDocument();
+  });
 });
 
