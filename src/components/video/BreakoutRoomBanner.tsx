@@ -78,10 +78,11 @@ export function BreakoutRoomBanner({
             size="sm"
             tone="inherit"
             tabular
+            weight={urgent ? 'semibold' : undefined}
             data-testid={`${testId}-countdown`}
             data-urgent={urgent ? 'true' : undefined}
             data-closing={closing ? 'true' : undefined}
-            className={cn(urgent && 'font-semibold text-danger')}
+            className={cn(urgent && 'text-danger')}
           >
             {closing ? `Room closes in ${formatCallElapsed(left)}` : `${formatCallElapsed(left)} left`}
           </T>
@@ -99,7 +100,7 @@ export function BreakoutRoomBanner({
       {announcement && (
         <div className="flex items-start gap-2" data-testid={`${testId}-announcement`} role="status" aria-live="polite">
           <T size="sm" tone="inherit" className="block min-w-0 flex-1">
-            <strong className="font-semibold">{announcement.fromDisplayName}:</strong> {announcement.message}
+            <strong>{announcement.fromDisplayName}:</strong> {announcement.message}
           </T>
           {onDismissAnnouncement && (
             <IconButton aria-label="Dismiss announcement" variant="ghost" size="sm" icon={<CloseIcon />} onClick={onDismissAnnouncement} data-testid={`${testId}-announcement-dismiss`} />

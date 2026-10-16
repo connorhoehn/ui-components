@@ -28,7 +28,6 @@ import {
 import { HangoutGrid } from './HangoutGrid';
 import { MeetingToolbar } from './MeetingToolbar';
 import { RosterPanel } from './RosterPanel';
-import { ChatBubbleIcon, UsersIcon } from './MediaIcons';
 
 export const REHEARSAL_MEETING = 'rehearsal:weekly-sync';
 
@@ -68,7 +67,11 @@ export function RehearsalSeat({
     },
   });
   const toggle = (p: Pane) => setPane((cur) => (cur === p ? null : p));
-  const items = meetingToolbarItems(meeting, { roomsOpen: pane === 'rooms', onToggleRooms: () => toggle('rooms'), onReact: () => {} });
+  const items = meetingToolbarItems(meeting, {
+    roomsOpen: pane === 'rooms', onToggleRooms: () => toggle('rooms'), onReact: () => {},
+    chat: { open: pane === 'chat', onToggle: () => toggle('chat') },
+    people: { open: pane === 'people', onToggle: () => toggle('people'), count: people.length },
+  });
   // Stand-in for LVS: the tiles are the people in the same lobby as you.
   const mine = breakoutRoomFor(meeting.breakout, person.userId);
   const here = people.filter((p) => breakoutRoomFor(meeting.breakout, p.userId) === mine);
@@ -80,13 +83,7 @@ export function RehearsalSeat({
       <MeetingToolbar
         compact={false}
         start={<T size="sm" tone="secondary">Viewing as {person.displayName}{meeting.isOrganizer ? ' (organizer)' : ''}</T>}
-        items={[
-          { id: 'chat', label: 'Chat', icon: <ChatBubbleIcon />, active: pane === 'chat', onClick: () => toggle('chat') },
-          { id: 'people', label: 'People', icon: <UsersIcon />, count: people.length, active: pane === 'people', onClick: () => toggle('people') },
-          items.raise,
-          ...(items.react ? [items.react] : []),
-          items.rooms,
-        ]}
+        items={[items.chat!, items.people!, items.raise, items.react!, items.rooms]}
         onLeave={() => {}}
       />
       <WrappedBreakoutRoomBanner meeting={meeting} />

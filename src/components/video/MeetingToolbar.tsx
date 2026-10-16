@@ -298,7 +298,8 @@ export function MeetingToolbar({
             )}
             triggerLabel="More"
             triggerVariant="link"
-            triggerClassName={cn(MEETING_TOOLBAR_BUTTON, 'gap-0.5 font-normal', phone && 'h-12 min-w-11 px-1.5')}
+            // font-normal undoes DropdownMenu's link-trigger weight so More matches its siblings. ratchet-ok
+            triggerClassName={cn(MEETING_TOOLBAR_BUTTON, 'gap-0.5 font-normal', phone && 'h-12 min-w-11 px-1.5')} // ratchet-ok: overrides a shared trigger's default weight
             triggerTestId="meeting-toolbar-more"
             align="end"
             sections={more}

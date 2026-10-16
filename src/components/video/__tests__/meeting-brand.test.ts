@@ -42,6 +42,8 @@ const RULES: Array<[string, RegExp]> = [
   ['white/black instead of a token', new RegExp(`\\b${UTIL}-(?:white|black)\\b`)],
   ['arbitrary colour', new RegExp(`\\b${UTIL}-\\[#`)],
   ['arbitrary text size (use T)', /\btext-\[\d+(?:px|rem)\]/],
+  ['raw text size (use T size)', /\btext-(?:xs|sm|base|lg|xl|[2-9]xl)\b/],
+  ['raw font weight (use T weight or <strong>)', /\bfont-(?:thin|extralight|light|normal|medium|semibold|bold|extrabold|black)\b/],
   ['hand-drawn × glyph (use CloseIcon)', /×/],
 ];
 const REFERENCE_NAMES = /Digisha|Prakashchandra|Hilla|Lauren Milosky|Neal Patel|Sanjay Ramanathan|Ivan Nunez|Parker Watson|Fabian Jimenez|Greg Mikels|Kiana Bahramian|Eli Galayda|Yifei Wang|Abhishek Bhardwaj|Chandan Vedavyas|Jeff Averill|Jeff's Room/;
@@ -51,6 +53,7 @@ function offences(files: string[], rules: Array<[string, RegExp]>): string[] {
   for (const f of files) {
     readFileSync(resolve(root, f), 'utf8').split('\n').forEach((line, i) => {
       if (/^\s*(\/\/|\*|\/\*)/.test(line)) return; // comments may name what they avoid
+      if (/ratchet-ok/.test(line)) return; // a reviewed exception, with its reason on the line
       for (const [why, re] of rules) if (re.test(line)) out.push(`${f}:${i + 1} ${why}: ${line.trim()}`);
     });
   }
@@ -70,7 +73,28 @@ describe('meeting components follow the brand', () => {
     const hits = (s: string) => RULES.filter(([, re]) => re.test(s)).map(([why]) => why);
     expect(hits("'bg-accent-bg text-accent'")).toEqual(['fixed accent instead of the brand (primary)']);
     expect(hits("'text-[10px] bg-blue-50 text-white'")).toHaveLength(3);
+    expect(hits("'text-sm font-semibold'")).toEqual(['raw text size (use T size)', 'raw font weight (use T weight or <strong>)']);
+    expect(hits("'text-text-secondary text-primary-fg'")).toEqual([]);
     expect(hits("'bg-primary-bg text-primary-fg focus-visible:outline-primary'")).toEqual([]);
     expect(REFERENCE_NAMES.test("Hilla's Room")).toBe(true);
   });
+
+  it('every close control is a named button (found by role, not test id)', async () => {
+    const { render, screen, cleanup } = await import('@testing-library/react');
+    const React = await import('react');
+    const { BreakoutRoomBanner } = await import('../BreakoutRoomBanner');
+    const { BreakoutRoomsPanel } = await import('../BreakoutRoomsPanel');
+    const { RecordingConsentNotice } = await import('../RecordingConsentNotice');
+    const noop = () => {};
+    render(React.createElement(BreakoutRoomBanner, { roomName: 'Room 1', announcement: { message: 'hi', fromDisplayName: 'Rowan' }, onDismissAnnouncement: noop }));
+    expect(screen.getByRole('button', { name: 'Dismiss announcement' })).toBeTruthy();
+    cleanup();
+    render(React.createElement(BreakoutRoomsPanel, { rooms: [], phase: 'none', mode: 'assigned', onClose: noop }));
+    expect(screen.getByRole('button', { name: 'Close breakout rooms' })).toBeTruthy();
+    cleanup();
+    render(React.createElement(RecordingConsentNotice, { open: true, kind: 'recording', onDismiss: noop }));
+    expect(screen.getByRole('button', { name: 'Dismiss' })).toBeTruthy();
+    cleanup();
+  });
 });
+

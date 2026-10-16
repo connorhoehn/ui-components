@@ -19,6 +19,7 @@ import {
   meetingHandPositions,
   meetingRosterProps,
   meetingToolbarItems,
+  meetingChatTitle,
   useMeetingChat,
   type RMMeetingSource,
 } from '../meeting';
@@ -361,6 +362,36 @@ describe('meeting adapters', () => {
       expect.stringContaining('note 1'), expect.stringContaining('note 2'), expect.stringContaining('note 3'),
     ]);
     expect(screen.getAllByTestId('meeting-chat-announcement-note')).toHaveLength(3);
+  });
+
+  it('meetingChatTitle names the room chat or the meeting chat', () => {
+    expect(meetingChatTitle({ myRoom: null })).toBe('Meeting chat');
+    expect(meetingChatTitle({ myRoom: { id: 'r2', name: 'Design crit', state: 'open', members: [] } })).toBe('Design crit chat');
+  });
+
+  it('meetingToolbarItems builds Chat and People when asked: counts, active state, an organizer hands badge', () => {
+    const base = {
+      ready: true, isOrganizer: true, hands: [{ userId: 'u-a', displayName: 'Ana', raisedAt: 'x' }], myHandPosition: null,
+      toggleHand() {}, lowerHand() {}, lowerAllHands() {},
+      breakout: { phase: 'none', mode: 'assigned', rooms: [], returned: [], endsAt: null, announcement: null, settings: { allowReturnToMain: true } },
+      myRoom: null, state: { announcement: null }, error: null,
+      configureBreakouts() {}, assign() {}, autoAssign() {}, openRooms() {}, closeRooms() {}, setTimer() {}, broadcast() {},
+      joinRoom() {}, returnToMain() {}, endBreakouts() {}, dismissAnnouncement() {},
+    } satisfies RMMeetingSource;
+    const onChat = vi.fn();
+    const without = meetingToolbarItems(base, { roomsOpen: false, onToggleRooms: () => {} });
+    expect(without.chat).toBeUndefined();
+    expect(without.people).toBeUndefined();
+    const items = meetingToolbarItems(base, {
+      roomsOpen: false, onToggleRooms: () => {},
+      chat: { open: true, onToggle: onChat, unread: 3 },
+      people: { open: false, onToggle: () => {}, count: 15 },
+    });
+    expect(items.chat).toMatchObject({ id: 'chat', active: true, badge: 3 });
+    items.chat!.onClick!();
+    expect(onChat).toHaveBeenCalled();
+    expect(items.people).toMatchObject({ id: 'people', count: 15, active: false, badge: 1 });
+    expect(meetingToolbarItems({ ...base, isOrganizer: false }, { roomsOpen: false, onToggleRooms: () => {}, people: { open: false, onToggle: () => {}, count: 15 } }).people!.badge).toBeUndefined();
   });
 });
 

@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.474.0
+
+- `meetingToolbarItems(meeting, { …, chat?, people? })` also builds the Chat button (`{ open, onToggle, unread? }`, unread badge) and the People button (`{ open, onToggle, count }`, head count, and a raised-hands badge for organizers), so a host builds the whole bar from bindings. The MeetingStage and MeetingRehearsal stories now do.
+- Meeting components set weight through `T` (`weight`) or `<strong>` instead of raw `font-*` classes; the brand ratchet test now refuses raw `text-{size}` and `font-{weight}` in the meeting files (a reviewed exception carries `ratchet-ok` and its reason) and finds every close control by role and name.
+- Reproducible checks for the meeting UI: `tests/storybook/meeting-widths.spec.ts` (no sideways scroll at 390/768/1440px in both themes; phone layout below 820px; `npm run test:e2e:storybook`) and `tests/storybook/ui-dom-audit/` (the ui-dom-audit adapter for the meeting stories, run command in its header).
+
 ## 2.473.0
 
 - Meeting components pass 4.5:1 text contrast (ui-dom-audit over the meeting stories, light and dark): a breakout room's "Open" is secondary text beside a green `StatusDot` (green text was 3.3:1); the raised-hand number is ink on amber, `text-primary` on the chip and the call-chrome ink on the tile (both ~3:1 before); the toolbar's active label and the consent card's privacy link use `primary-fg`, the readable ink of the brand (a teal brand fill was 3.7:1 as text); the chat's "Announcement to every room" note is secondary text.

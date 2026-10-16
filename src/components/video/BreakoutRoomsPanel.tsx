@@ -295,7 +295,7 @@ function OrganizerControls(props: BreakoutRoomsPanelProps & { left: number | nul
           <T size="sm">Timer</T>
           <div className="flex items-center gap-2">
             {left !== null && (
-              <T size="sm" tone={closing ? 'inherit' : 'secondary'} tabular className={cn(closing && 'font-semibold text-danger')} data-testid="breakout-timer-left">
+              <T size="sm" tone={closing ? 'inherit' : 'secondary'} tabular weight={closing ? 'semibold' : undefined} className={cn(closing && 'text-danger')} data-testid="breakout-timer-left">
                 {closing ? `Closing in ${formatCallElapsed(left)}` : `${formatCallElapsed(left)} left`}
               </T>
             )}
@@ -372,7 +372,7 @@ export function BreakoutRoomsPanel(props: BreakoutRoomsPanelProps) {
         {isOrganizer && phase === 'none' && onCreateRooms && <CreateRooms onCreateRooms={onCreateRooms} />}
         {isOrganizer && phase !== 'none' && <OrganizerControls {...props} left={left} />}
         {!isOrganizer && left !== null && (
-          <T as="div" size="sm" tone={closing ? 'inherit' : 'secondary'} tabular className={cn('px-4 pt-3', closing && 'font-semibold text-danger')} data-testid="breakout-timer-left">
+          <T as="div" size="sm" tone={closing ? 'inherit' : 'secondary'} tabular weight={closing ? 'semibold' : undefined} className={cn('px-4 pt-3', closing && 'text-danger')} data-testid="breakout-timer-left">
             {closing ? 'Closing' : 'Rooms close'} in {formatCallElapsed(left)}
           </T>
         )}

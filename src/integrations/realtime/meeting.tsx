@@ -21,6 +21,7 @@ import { T } from '../../components/shared/Text';
 import type { LocalChatMessage } from '../../components/social/ChatPanel';
 import type { ChatMessage } from '../../hooks/useChat';
 import { MeetingHandIcon, MeetingReactIcon, MeetingRoomsIcon } from '../../components/video/MeetingIcons';
+import { ChatBubbleIcon, UsersIcon } from '../../components/video/MediaIcons';
 import { ReactionPicker } from '../../components/video/ReactionOverlay';
 import type { MeetingToolbarItem } from '../../components/video/MeetingToolbar';
 import type { RosterPanelProps, RosterParticipant } from '../../components/video/RosterPanel';
@@ -239,11 +240,38 @@ export function meetingToolbarItems(
     onReact?: (emoji: string) => void;
     /** The picker's emoji. Default the picker's own set. */
     reactions?: string[];
+    /**
+     * The People pane toggle, with the call's head count and a badge for
+     * raised hands (organizers act on them there). Since 2.474.0.
+     */
+    people?: { open: boolean; onToggle: () => void; count: number };
+    /** The Chat pane toggle, with an unread badge. Since 2.474.0. */
+    chat?: { open: boolean; onToggle: () => void; unread?: number };
   },
-): { raise: MeetingToolbarItem; rooms: MeetingToolbarItem; react?: MeetingToolbarItem } {
+): {
+  raise: MeetingToolbarItem;
+  rooms: MeetingToolbarItem;
+  react?: MeetingToolbarItem;
+  people?: MeetingToolbarItem;
+  chat?: MeetingToolbarItem;
+} {
   const raised = meeting.myHandPosition !== null;
   const onReact = opts.onReact;
+  const { people, chat } = opts;
   return {
+    ...(chat ? {
+      chat: {
+        id: 'chat', label: 'Chat', icon: <ChatBubbleIcon />, active: chat.open, onClick: chat.onToggle,
+        badge: chat.unread || undefined,
+      } satisfies MeetingToolbarItem,
+    } : {}),
+    ...(people ? {
+      people: {
+        id: 'people', label: 'People', icon: <UsersIcon />, count: people.count, active: people.open, onClick: people.onToggle,
+        // Organizers see waiting hands on the button; everyone sees them in the pane.
+        badge: meeting.isOrganizer && meeting.hands.length > 0 ? meeting.hands.length : undefined,
+      } satisfies MeetingToolbarItem,
+    } : {}),
     ...(onReact ? {
       react: {
         id: 'react',

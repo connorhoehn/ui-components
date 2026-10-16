@@ -1,5 +1,9 @@
 // Goal G11: the whole meeting screen from the public bindings over the REAL
-// MeetingService (realtime-modules createMeetingLoopback), so
+// MeetingService. The seat's hook here is `useLoopbackMeeting` below
+// (realtime-modules' reducer over the loopback socket), not the published
+// `useMeeting`: under vitest its CommonJS dist loads a second React. The real
+// hook over the same loopback is tested in realtime-modules
+// (test/meeting/loopback.test.tsx) and runs in the Storybook story. (realtime-modules createMeetingLoopback), so
 // a runtime mismatch between UseMeetingResult and the bindings fails here,
 // not in an app. The flow is the reference picture's: hands, rooms, the
 // announcement through the chat, and everyone back.

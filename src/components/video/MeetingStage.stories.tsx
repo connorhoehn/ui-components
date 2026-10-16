@@ -12,9 +12,9 @@ import { HangoutGrid } from './HangoutGrid';
 import { BreakoutRoomsPanel, type BreakoutRoomView } from './BreakoutRoomsPanel';
 import { BreakoutRoomBanner } from './BreakoutRoomBanner';
 import './MeetingStage.stories.css';
-import { ReactionPicker } from './ReactionOverlay';
-import { MeetingHandIcon, MeetingReactIcon, MeetingRoomsIcon, MeetingShareIcon, MeetingViewIcon } from './MeetingIcons';
-import { ChatBubbleIcon, MicOffIcon, UsersIcon, VideoOffIcon } from './MediaIcons';
+import { meetingToolbarItems, type RMMeetingSource } from '../../integrations/realtime/meeting';
+import { MeetingShareIcon, MeetingViewIcon } from './MeetingIcons';
+import { MicOffIcon, VideoOffIcon } from './MediaIcons';
 import type { HangoutLayoutParticipant } from './HangoutLayoutTypes';
 
 const NAMES = ['Ada Lindqvist', 'Bram Okonjo', 'Rowan Ellery', 'Cleo Navarro', 'Dario Fenwick', 'Esme Tanaka', 'Felix Moreau', 'Gus Halvorsen', 'Hana Ruiz', 'Iris Achebe', 'Jonah Petrov', 'Kofi Mensah', 'Lena Sorensen', 'Milo Varga'];
@@ -27,21 +27,38 @@ const ROOMS: BreakoutRoomView[] = [
   ...[1, 2, 3, 4, 5].map((n) => ({ id: `r${n}`, name: `Room ${n}`, state: 'open' as const, members: [] })),
 ];
 
+/** A static meeting source for the picture: the toolbar comes from the bindings, as an app's would. */
+function stubMeeting(hand: boolean, setHand: (v: boolean) => void): RMMeetingSource {
+  return {
+    ready: true, isOrganizer: false, hands: hand ? [{ userId: 'me', displayName: 'Morgan Reyes', raisedAt: '2026-10-16T12:00:00Z' }] : [],
+    myHandPosition: hand ? 1 : null, toggleHand: () => setHand(!hand), lowerHand() {}, lowerAllHands() {},
+    breakout: { phase: 'open', mode: 'self-select', rooms: [], returned: [], endsAt: null, announcement: null, settings: { allowReturnToMain: true } },
+    myRoom: null, state: { announcement: null }, error: null,
+    configureBreakouts() {}, assign() {}, autoAssign() {}, openRooms() {}, closeRooms() {}, setTimer() {}, broadcast() {},
+    joinRoom() {}, returnToMain() {}, endBreakouts() {}, dismissAnnouncement() {},
+  };
+}
+
 function Stage({ inRoom }: { inRoom?: boolean }) {
   const [rooms, setRooms] = useState(true);
   const [consent, setConsent] = useState(true);
   const [hand, setHand] = useState(false);
+  const bound = meetingToolbarItems(stubMeeting(hand, setHand), {
+    roomsOpen: rooms, onToggleRooms: () => setRooms((v) => !v), onReact: () => {},
+    chat: { open: false, onToggle: () => {} },
+    people: { open: false, onToggle: () => {}, count: 15 },
+  });
   return (
     <div className="flex h-[760px] w-full flex-col bg-surface">
       <MeetingToolbar
         start={<MeetingStatusCluster recording={{ armed: true, active: true }} elapsedMs={(32 * 60 + 52) * 1000} onOpenOptions={() => {}} />}
         items={[
-          { id: 'chat', label: 'Chat', icon: <ChatBubbleIcon />, onClick: () => {} },
-          { id: 'people', label: 'People', icon: <UsersIcon />, count: 15, onClick: () => {} },
-          { id: 'raise', label: hand ? 'Lower' : 'Raise', icon: <MeetingHandIcon />, pressed: hand, onClick: () => setHand((v) => !v) },
-          { id: 'react', label: 'React', icon: <MeetingReactIcon />, popover: (close) => <ReactionPicker tone="surface" onReact={() => close()} /> },
+          bound.chat!,
+          bound.people!,
+          bound.raise,
+          bound.react!,
           { id: 'view', label: 'View', icon: <MeetingViewIcon />, priority: 'secondary', onClick: () => {} },
-          { id: 'rooms', label: 'Rooms', icon: <MeetingRoomsIcon />, active: rooms, onClick: () => setRooms((v) => !v) },
+          bound.rooms,
         ]}
         media={[
           { id: 'camera', label: 'Camera', icon: <VideoOffIcon />, tone: 'off', onClick: () => {}, menu: [{ items: [{ label: 'FaceTime HD Camera', checked: true }] }] },
