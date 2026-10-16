@@ -8753,7 +8753,7 @@ export declare interface DrawerProps {
  */
 export declare function drawnParticles(count: number, density: number | undefined, width: number, height: number): number;
 
-export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, triggerVariant, triggerTabIndex, disabled, triggerTestId, align, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
+export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, triggerVariant, triggerTabIndex, disabled, triggerTestId, triggerAttributes, align, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
 
 export declare interface DropdownMenuItem {
     /** Visible item label. */
@@ -8826,6 +8826,12 @@ export declare interface DropdownMenuProps {
     disabled?: boolean;
     /** Test hook for the trigger itself; `data-testid` addresses the panel. */
     triggerTestId?: string;
+    /**
+     * `data-*` attributes for the trigger itself (since 2.479.0), e.g. a
+     * read-only composer's mode menu declaring `data-composer-readonly-allow`
+     * as the way out. Only data attributes: everything else has a prop.
+     */
+    triggerAttributes?: Readonly<Record<`data-${string}`, string>>;
     /**
      * Panel alignment relative to the trigger. 'start' (default) anchors the
      * panel's left edge to the trigger's left edge; 'end' anchors the panel's

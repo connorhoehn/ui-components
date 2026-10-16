@@ -1,13 +1,13 @@
 import { t as e } from "../cn-D4QmbyEy.js";
 import { c as t, n } from "../Button-uREUOWUk.js";
-import { c as r, l as i, n as a } from "../Text-4BIlhd_-.js";
+import { c as r, l as i, n as a } from "../Text-KEOV-uPA.js";
 import { t as o } from "../Select-DjpQtNw3.js";
-import { a as s, c, i as l, l as u, n as d, r as f, t as p } from "../composerSendError-BCxgMhHn.js";
+import { a as s, c, i as l, l as u, n as d, r as f, t as p } from "../composerSendError-BdrmEzxB.js";
 import { a as m, i as h, n as g, r as _, t as v } from "../composerContext-BLn1-Nao.js";
-import { a as ee, i as y, n as b, o as x, r as te, s as S, t as C } from "../ConversationInputs-GSOr1WbY.js";
-import { a as w, c as T, i as E, l as D, n as ne, o as re, r as O, s as ie, t as ae, u as oe } from "../RichChatComposer-D5Y1PWbu.js";
-import { t as se } from "../ContextComposer-CgnYDkaR.js";
-import { t as ce } from "../AgentComposerDock-BF_0EM0q.js";
+import { a as ee, i as y, n as b, o as x, r as te, s as S, t as C } from "../ConversationInputs-DZp8ImyW.js";
+import { a as w, c as T, i as E, l as D, n as ne, o as re, r as O, s as ie, t as ae, u as oe } from "../RichChatComposer-D700ydAl.js";
+import { t as se } from "../ContextComposer-DGQSWRBv.js";
+import { t as ce } from "../AgentComposerDock-BVUf5X6G.js";
 import { useCallback as k, useEffect as A, useId as le, useMemo as j, useRef as M, useState as N } from "react";
 import { jsx as P, jsxs as F } from "react/jsx-runtime";
 //#region src/components/social/composerPromptModel.ts
@@ -672,12 +672,12 @@ function He(e, t, n, r = 6e4) {
 	}, [o, r]);
 	return k((e) => Promise.all(e.map(s)), [s]);
 }
-function Ue({ id: e, value: t, recipients: n, onChange: i, "data-testid": s }) {
-	let c = n.filter((e) => !e.group).map((e) => ({
+function Ue({ id: e, value: t, recipients: n, onChange: i, readOnlyWayOut: s, disabled: c, "data-testid": l }) {
+	let u = n.filter((e) => !e.group).map((e) => ({
 		value: e.id,
 		label: e.label,
 		...e.disabled ? { disabled: !0 } : {}
-	})), l = [...new Set(n.filter((e) => e.group).map((e) => e.group))].map((e) => ({
+	})), d = [...new Set(n.filter((e) => e.group).map((e) => e.group))].map((e) => ({
 		label: e,
 		options: n.filter((t) => t.group === e).map((e) => ({
 			value: e.id,
@@ -703,10 +703,12 @@ function Ue({ id: e, value: t, recipients: n, onChange: i, "data-testid": s }) {
 			placeholder: "Choose a destination",
 			wrapperClassName: "max-w-[12rem]",
 			className: "max-w-[12rem] truncate border-0 bg-transparent pr-7 text-xs font-medium",
-			options: c,
-			groups: l,
+			options: u,
+			groups: d,
 			chevron: "custom",
-			...s ? { "data-testid": s } : {},
+			...l ? { "data-testid": l } : {},
+			...s ? { "data-composer-readonly-allow": s } : {},
+			...c ? { disabled: !0 } : {},
 			onChange: (e) => i(e.target.value)
 		})]
 	});
@@ -964,7 +966,8 @@ function Ge({ rm: n, channel: o, chat: c, context: l, capabilities: u, identity:
 					value: U?.id ?? null,
 					recipients: Dt,
 					onChange: gt,
-					"data-testid": `${z}-recipient`
+					"data-testid": `${z}-recipient`,
+					...Tt ? Pe > 0 ? { readOnlyWayOut: "Choose a destination you can post to" } : { disabled: !0 } : {}
 				}), At && /* @__PURE__ */ P(a, {
 					size: "xs",
 					tone: "tertiary",

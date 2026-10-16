@@ -1,1 +1,0 @@
-const e=require("./Text-BB7L4-yv.cjs");function t(t){let{ref:n,size:r}=e.s(t?{forward:t}:{});return{ref:n,width:r}}Object.defineProperty(exports,"t",{enumerable:!0,get:function(){return t}});
