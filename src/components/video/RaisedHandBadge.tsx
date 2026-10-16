@@ -40,7 +40,9 @@ export function RaisedHandBadge({ raised, tone = 'chip', size = 'sm', className,
       className={cn(
         'inline-flex shrink-0 items-center gap-0.5 rounded-full leading-none',
         size === 'sm' ? 'h-4 px-1' : 'h-5 px-1.5',
-        tone === 'chip' ? 'bg-warning-bg text-warning-fg' : 'bg-warning text-text-inverse',
+        // Ink, not warning-fg: amber text on its own tint or white on amber is ~3:1 (2.473.0).
+        // The tile tone uses the call-chrome ink, dark in both themes, on solid amber.
+        tone === 'chip' ? 'bg-warning-bg text-text-primary [&_svg]:text-warning' : 'bg-warning text-call-chrome',
         className,
       )}
     >

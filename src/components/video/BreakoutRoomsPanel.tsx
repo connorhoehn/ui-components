@@ -15,6 +15,7 @@ import { Select } from '../forms/Select';
 import { Textarea } from '../forms/Textarea';
 import { Avatar } from '../shared/Avatar';
 import { SegmentedControl } from '../shared/SegmentedControl';
+import { StatusDot } from '../shared/StatusDot';
 import { T } from '../shared/Text';
 import { Button } from '../ui/Button';
 import { ChevronIcon, CloseIcon } from '../ui/Icons';
@@ -161,9 +162,12 @@ function RoomRow({
           ) : (
             <T size="base" tone="primary" className="truncate" title={room.name}>{room.name}</T>
           )}
-          <T size="sm" tone="inherit" className={open ? 'text-success' : 'text-text-tertiary'} data-testid="breakout-room-status">
+          {/* The state is carried by the dot's colour and the word; the word is
+              secondary text, because success-green text is 3.3:1 on white (2.473.0). */}
+          <T size="sm" tone="secondary" className="items-center gap-1.5" data-testid="breakout-room-status">
+            <StatusDot size="sm" color={open ? 'var(--color-success)' : undefined} />
             {open ? 'Open' : 'Closed'}
-            {room.members.length > 0 && <span className="ml-1 text-text-tertiary">· {room.members.length}</span>}
+            {room.members.length > 0 && <span>· {room.members.length}</span>}
           </T>
         </div>
         {isOrganizer && onToggleRoom && (

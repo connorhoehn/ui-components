@@ -70,7 +70,7 @@ export function RecordingConsentNotice({
             {privacyHref && (
               <>
                 {' '}
-                <Link href={privacyHref} external className="underline" data-testid={`${testId}-privacy`}>
+                <Link href={privacyHref} external className="text-primary-fg underline" data-testid={`${testId}-privacy`}>
                   {privacyLabel}
                 </Link>
               </>

@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.473.0
+
+- Meeting components pass 4.5:1 text contrast (ui-dom-audit over the meeting stories, light and dark): a breakout room's "Open" is secondary text beside a green `StatusDot` (green text was 3.3:1); the raised-hand number is ink on amber, `text-primary` on the chip and the call-chrome ink on the tile (both ~3:1 before); the toolbar's active label and the consent card's privacy link use `primary-fg`, the readable ink of the brand (a teal brand fill was 3.7:1 as text); the chat's "Announcement to every room" note is secondary text.
+- `Video/MeetingRehearsal` viewer switch uses first names, so it fits a phone.
+
 ## 2.472.0
 
 - `MeetingToolbar` phone layout below `phoneBelow` (default 820px, phones and tablets in portrait; `phone` forces it): the status cluster takes its own row, buttons go icon-only (the label stays the accessible name), every item folds into More except popover items, media stays as plain toggles unless marked `secondary`, and the split chevrons' menus (device lists, Leave options) move into More. At 390px the bar was 884px wide. Compact mode now also folds secondary media, and a cramped status cluster clips instead of sitting under the buttons.

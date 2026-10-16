@@ -131,7 +131,8 @@ function ToolbarButton({ item, iconOnly = false }: { item: MeetingToolbarItem; i
       data-tone={item.tone ?? 'default'}
       className={cn(
         MEETING_TOOLBAR_BUTTON,
-        active && 'text-primary hover:text-primary',
+        // primary-fg is the readable ink of the brand: brand fills (teal) are ~3.7:1 as text.
+        active && 'text-primary-fg hover:text-primary-fg',
         item.pressed && 'bg-primary-bg text-primary-fg hover:bg-primary-bg hover:text-primary-fg',
         item.tone === 'danger' && 'text-danger hover:bg-danger-bg hover:text-danger',
         item.menu && !iconOnly && 'rounded-r-none pr-1',

@@ -27,7 +27,7 @@ function Rehearsal() {
         aria-label="Viewing as"
         value={viewer}
         onChange={setViewer}
-        options={PEOPLE.map((p, i) => ({ value: p.userId, label: i === 0 ? `${p.displayName} (organizer)` : p.displayName }))}
+        options={PEOPLE.map((p, i) => ({ value: p.userId, label: i === 0 ? `${p.displayName.split(' ')[0]} (organizer)` : p.displayName.split(' ')[0]! }))}
       />
       </div>
       {/* Rowan mounts first, so he subscribes first and organizes. */}

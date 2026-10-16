@@ -419,7 +419,7 @@ export function useMeetingChat(
       ? [...messages]
       : [...messages, ...announcementMessages].sort((x, y) => Date.parse(x.timestamp) - Date.parse(y.timestamp))),
     renderMessageReferences: (message) => (message.id?.startsWith(ANNOUNCEMENT_ID)
-      ? <T as="p" size="xs" tone="tertiary" data-testid="meeting-chat-announcement-note">{note}</T>
+      ? <T as="p" size="xs" tone="secondary" data-testid="meeting-chat-announcement-note">{note}</T>
       : hostRefs?.(message) ?? null),
     title: meetingChatTitle(meeting),
     dock: meeting.myRoom || canAnnounce
