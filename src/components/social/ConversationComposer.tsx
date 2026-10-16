@@ -263,11 +263,18 @@ export function useConversationUploads(rm: ConversationComposerModules, channel:
 }
 
 /** The To: select. Library part, so every composer names its destination the same way. */
-export function ComposerRecipientSelect({ id, value, recipients, onChange, 'data-testid': testId }: {
+export function ComposerRecipientSelect({ id, value, recipients, onChange, readOnlyWayOut, disabled, 'data-testid': testId }: {
   id: string;
   value: string | null;
   recipients: readonly ConversationRecipient[];
   onChange: (id: string) => void;
+  /**
+   * The composer is read-only and this select is the way out (another
+   * destination can take a message): marked `data-composer-readonly-allow`
+   * with this reason, so the read-only rule reads it as deliberate. Since 2.479.0.
+   */
+  readOnlyWayOut?: string;
+  disabled?: boolean;
   'data-testid'?: string;
 }) {
   const flat = recipients.filter((r) => !r.group).map((r) => ({ value: r.id, label: r.label, ...(r.disabled ? { disabled: true } : {}) }));
@@ -282,6 +289,8 @@ export function ComposerRecipientSelect({ id, value, recipients, onChange, 'data
       <Select id={id} aria-label="Chat recipient" value={value ?? ''} size="sm" placeholder="Choose a destination"
         wrapperClassName="max-w-[12rem]" className="max-w-[12rem] truncate border-0 bg-transparent pr-7 text-xs font-medium"
         options={flat} groups={groups} chevron="custom" {...(testId ? { 'data-testid': testId } : {})}
+        {...(readOnlyWayOut ? { 'data-composer-readonly-allow': readOnlyWayOut } : {})}
+        {...(disabled ? { disabled: true } : {})}
         onChange={(event) => onChange(event.target.value)} />
     </Inline>
   );
@@ -626,7 +635,10 @@ function ConversationComposerImpl({
           the full sentence on hover — instead of a second row under it. */}
       {(showRecipients || recipientReason) && (
         <Inline gap="sm" align="center" wrap={false} className="min-w-0" data-composer-recipient-row="">
-          {showRecipients && <ComposerRecipientSelect id={`${draftKey}-recipient`} value={recipient?.id ?? null} recipients={listed} onChange={choose} data-testid={`${testId}-recipient`} />}
+          {showRecipients && <ComposerRecipientSelect id={`${draftKey}-recipient`} value={recipient?.id ?? null} recipients={listed} onChange={choose} data-testid={`${testId}-recipient`}
+            // Read-only (2.479.0): To: is the way out when another destination can
+            // take a message (marked so); with none, it offers nothing and is off.
+            {...(readOnlyOn ? (choosable > 0 ? { readOnlyWayOut: 'Choose a destination you can post to' } : { disabled: true }) : {})} />}
           {recipientReason && (
             <Text size="xs" tone="tertiary" title={recipientReason}
               className={cn('min-w-0', showRecipients && 'border-0 border-l border-solid border-border pl-2')}

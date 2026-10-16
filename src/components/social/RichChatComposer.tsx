@@ -1145,6 +1145,11 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const isModeDisabled = (m: ComposerMode) => !!disabledModes?.includes(m);
   // Read-only: the mode menu stays the way out only while another mode is on.
   const modeMenuOff = readOnlyOn && !offeredModes.some((m) => m !== activeMode && !isModeDisabled(m));
+  // Read-only with another mode that can post (2.479.0): the menu is the way
+  // out, and says so for the read-only rule (data-composer-readonly-allow).
+  const modeMenuWayOut = readOnlyOn && !modeMenuOff
+    ? { 'data-composer-readonly-allow': 'Switch to a mode you can use' } as const
+    : undefined;
   const requestMode = (next: ComposerMode): boolean => {
     if (!switchable || !offeredModes.includes(next)) return false;
     if (isModeDisabled(next)) {
@@ -2699,6 +2704,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 triggerTitle="Composer mode"
                 triggerTestId={`${testId}-mode-menu`}
                 disabled={modeMenuOff}
+                {...(modeMenuWayOut ? { triggerAttributes: modeMenuWayOut } : {})}
                 data-testid={`${testId}-mode-menu-list`}
                 align="start"
                 triggerClassName={basicBox ? 'h-8 rounded-md border border-border bg-surface px-3 hover:bg-surface-hover' : 'rounded-md border-0 bg-transparent hover:bg-surface-hover'}
@@ -2944,6 +2950,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 triggerTitle="Composer mode"
                 triggerTestId={`${testId}-mode-menu`}
                 disabled={modeMenuOff}
+                {...(modeMenuWayOut ? { triggerAttributes: modeMenuWayOut } : {})}
                 data-testid={`${testId}-mode-menu-list`}
                 align="start"
                 triggerClassName="h-auto shrink-0 rounded border-0 bg-transparent p-0 text-xs leading-4 hover:bg-transparent"

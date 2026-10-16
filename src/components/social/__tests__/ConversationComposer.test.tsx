@@ -560,3 +560,66 @@ describe('ConversationComposer — read-only (2.450.0)', () => {
     expect(screen.getByTestId('composer-commands-hint').hasAttribute('aria-disabled')).toBe(false);
   });
 });
+
+describe('ConversationComposer — read-only ways out are declared (2.479.0)', () => {
+  const REASON = 'You can read messages. Your current role cannot post to this discussion.';
+  // The ui-dom-audit rule `composer.readonly-coherent`: inside a composer that
+  // says it cannot post, every enabled button, combobox, input or editable
+  // region is a link or carries `data-composer-readonly-allow="<reason>"`.
+  function leftoverControls(root: Element): string[] {
+    const enabled = [...root.querySelectorAll('button, [role="combobox"], input, textarea, select, [contenteditable="true"]')]
+      .filter((el) => !(el as HTMLButtonElement).disabled && el.getAttribute('aria-disabled') !== 'true');
+    return enabled
+      .filter((el) => !el.closest('a[href]'))
+      .filter((el) => !(el.getAttribute('data-composer-readonly-allow') ?? '').trim())
+      .map((el) => el.getAttribute('data-testid') ?? el.getAttribute('aria-label') ?? el.tagName);
+  }
+
+  it('a member with a DM to go to: To: and the mode menu are the declared ways out, nothing else is live', () => {
+    const { container } = setup({
+      capabilities: { maySend: false, readOnlyReason: REASON, agent: { allowed: true } },
+      defaultMode: 'chat', defaultRecipient: 'discussion', expanded: true,
+      recipients: [
+        { id: 'discussion', label: 'Discussion', channel: CHANNEL },
+        { id: 'person:u-nora', label: 'Nora', channel: 'orgiq:dm:u-nora', send: async () => true },
+      ],
+    });
+    const root = container.querySelector('[data-composer-readonly]') ?? container;
+    const to = screen.getByRole('combobox', { name: 'Chat recipient' });
+    expect(to).not.toBeDisabled();
+    expect(to.getAttribute('data-composer-readonly-allow')).toBe('Choose a destination you can post to');
+    const mode = screen.getByTestId('composer-mode-menu');
+    expect(mode).not.toBeDisabled();
+    expect(mode.getAttribute('data-composer-readonly-allow')).toBe('Switch to a mode you can use');
+    expect(leftoverControls(root.closest('[data-testid="composer"]') ?? root)).toEqual([]);
+  });
+
+  it('with no destination that can take a message, To: is off and there is no live control', () => {
+    const { container } = setup({
+      capabilities: { maySend: false, readOnlyReason: REASON },
+      defaultMode: 'chat', defaultRecipient: 'discussion', expanded: true,
+      recipients: [
+        { id: 'discussion', label: 'Discussion', channel: CHANNEL },
+        { id: 'board', label: 'Board', channel: 'orgiq:board', unavailableReason: 'Read only' },
+      ],
+    });
+    const to = screen.getByRole('combobox', { name: 'Chat recipient' });
+    expect(to).toBeDisabled();
+    expect(to.hasAttribute('data-composer-readonly-allow')).toBe(false);
+    const root = container.querySelector('[data-composer-readonly]') ?? container;
+    expect(leftoverControls(root.closest('[data-testid="composer"]') ?? root)).toEqual([]);
+  });
+
+  it('nothing is marked while the composer can post', () => {
+    setup({
+      capabilities: { maySend: true },
+      defaultMode: 'chat', expanded: true,
+      recipients: [
+        { id: 'discussion', label: 'Discussion', channel: CHANNEL },
+        { id: 'person:u-nora', label: 'Nora', channel: 'orgiq:dm:u-nora', send: async () => true },
+      ],
+    });
+    expect(document.querySelector('[data-composer-readonly-allow]')).toBeNull();
+  });
+});
+

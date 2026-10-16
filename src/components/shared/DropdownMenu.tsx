@@ -109,6 +109,12 @@ export interface DropdownMenuProps {
   /** Test hook for the trigger itself; `data-testid` addresses the panel. */
   triggerTestId?: string;
   /**
+   * `data-*` attributes for the trigger itself (since 2.479.0), e.g. a
+   * read-only composer's mode menu declaring `data-composer-readonly-allow`
+   * as the way out. Only data attributes: everything else has a prop.
+   */
+  triggerAttributes?: Readonly<Record<`data-${string}`, string>>;
+  /**
    * Panel alignment relative to the trigger. 'start' (default) anchors the
    * panel's left edge to the trigger's left edge; 'end' anchors the panel's
    * RIGHT edge to the trigger's right edge.
@@ -148,6 +154,7 @@ export function DropdownMenu({
   triggerTabIndex,
   disabled = false,
   triggerTestId,
+  triggerAttributes,
   align = 'start',
   sections,
   className,
@@ -192,6 +199,7 @@ export function DropdownMenu({
         aria-expanded={open}
         title={triggerTitle}
         tabIndex={triggerTabIndex}
+        {...triggerAttributes}
         data-testid={triggerTestId}
         disabled={disabled || undefined}
         aria-disabled={disabled ? 'true' : undefined}
