@@ -348,6 +348,15 @@ declare interface BreakoutRoomsPanelProps {
      * only while rooms are closed; open rooms must be ended first.
      */
     onDeleteRooms?: () => void;
+    /**
+     * Rename a room (2.459.0). Organizers then click a room's name to edit it
+     * in place, in any phase; Enter or blur commits, Escape cancels.
+     */
+    onRenameRoom?: (roomId: string, name: string) => void;
+    /** Add one room (2.459.0), in draft or while rooms are open. It starts closed. */
+    onAddRoom?: () => void;
+    /** The server's room cap; Add room is disabled at it. Default 50. */
+    maxRooms?: number;
     /** The header ✕. Omitted: no close button. */
     onClose?: () => void;
     title?: string;
@@ -3141,7 +3150,10 @@ export declare interface RMMeetingPerson {
     avatarUrl?: string;
 }
 
-/** Structural `UseMeetingResult` (realtime-modules 0.121.0). */
+/**
+ * Structural `UseMeetingResult` (realtime-modules 0.121.0). Members added
+ * later are optional, so an older pin's result still fits.
+ */
 export declare interface RMMeetingSource {
     ready: boolean;
     isOrganizer: boolean;
@@ -3175,6 +3187,13 @@ export declare interface RMMeetingSource {
         mode?: 'assigned' | 'self-select';
         allowReturnToMain?: boolean;
     }): void;
+    /** realtime-modules 0.123.0+. Without it the pane has no Add room. */
+    addRoom?(opts?: {
+        id?: string;
+        name?: string;
+    }): void;
+    /** realtime-modules 0.123.0+. Without it room names are read-only. */
+    renameRoom?(roomId: string, name: string): void;
     assign(assignments: Record<string, string | null>): void;
     autoAssign(userIds: string[]): void;
     openRooms(roomIds?: string[]): void;
@@ -3743,7 +3762,7 @@ export declare function WrappedBreakoutRoomBanner({ meeting, className }: {
 
 export declare function WrappedBreakoutRoomsPanel({ meeting, people, roomNames, renderError, ...rest }: WrappedBreakoutRoomsPanelProps): JSX.Element;
 
-export declare interface WrappedBreakoutRoomsPanelProps extends Pick<BreakoutRoomsPanelProps, 'onClose' | 'title' | 'timerMinutes' | 'className' | 'data-testid'> {
+export declare interface WrappedBreakoutRoomsPanelProps extends Pick<BreakoutRoomsPanelProps, 'onClose' | 'title' | 'timerMinutes' | 'maxRooms' | 'className' | 'data-testid'> {
     meeting: RMMeetingSource;
     /** Everyone in the meeting (the call roster), for names and the "not in a room" list. */
     people: RMMeetingPerson[];

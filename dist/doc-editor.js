@@ -30,11 +30,12 @@ import { t as j } from "./Checkbox-Jycr-rlf.js";
 import { n as M } from "./FileKindMark-DEeDqhYT.js";
 import { t as N } from "./activationKey-CjbL3LUv.js";
 import { A as ie, k as ae } from "./renderers-Cj0O_Bjx.js";
-import { A as P, B as oe, C as F, D as se, E as ce, F as le, G as I, H as L, I as R, J as ue, K as z, L as de, M as fe, N as pe, O as me, P as he, R as ge, S as _e, T as ve, U as ye, V as be, W as xe, Y as Se, Z as Ce, _ as we, a as Te, b as Ee, c as De, d as Oe, f as ke, g as Ae, h as je, i as Me, j as Ne, k as Pe, l as Fe, m as Ie, n as Le, o as Re, p as ze, q as Be, r as Ve, s as He, t as Ue, u as We, v as Ge, w as Ke, x as qe, y as Je, z as Ye } from "./ProposedEditStrip-CjWa7Hr7.js";
+import { A as P, B as oe, C as F, D as se, E as ce, F as le, G as I, H as L, I as R, J as ue, K as z, L as de, M as fe, N as pe, O as me, P as he, R as ge, S as _e, T as ve, U as ye, V as be, W as xe, X as Se, _ as Ce, a as we, b as Te, c as Ee, d as De, f as Oe, g as ke, h as Ae, i as je, j as Me, k as Ne, l as Pe, m as Fe, n as Ie, o as Le, p as Re, q as ze, r as Be, s as Ve, t as He, u as Ue, v as We, w as Ge, x as Ke, y as qe, z as Je } from "./ProposedEditStrip-CBGV82Qv.js";
+import { t as Ye } from "./InlineEditableText-CdErtRnG.js";
 import { o as Xe, t as Ze } from "./VerdictChip-DNmt9VaC.js";
 import { a as Qe, c as $e, d as et, f as tt, h as nt, i as rt, l as it, m as at, n as ot, o as st, p as ct, r as lt, s as ut, t as dt, u as ft } from "./TiptapEditor-BjjwDyPa.js";
 import { i as pt, n as mt, r as ht, t as gt } from "./FloatingComposerDock-D10uQ4k3.js";
-import { A as _t, B as vt, C as yt, D as bt, E as xt, F as St, G as Ct, H as wt, I as Tt, J as Et, K as Dt, L as Ot, M as kt, N as At, O as jt, P as Mt, R as Nt, S as Pt, T as Ft, U as It, V as Lt, W as Rt, _ as zt, a as Bt, b as Vt, c as Ht, d as Ut, f as Wt, g as Gt, h as Kt, i as qt, j as Jt, k as Yt, l as Xt, m as Zt, o as Qt, p as $t, q as en, r as tn, s as nn, t as rn, u as an, v as on, w as sn, x as cn, y as ln, z as un } from "./DocumentEditorPage-BjEZIvO4.js";
+import { A as _t, B as vt, C as yt, D as bt, E as xt, F as St, G as Ct, H as wt, I as Tt, J as Et, K as Dt, L as Ot, M as kt, N as At, O as jt, P as Mt, R as Nt, S as Pt, T as Ft, U as It, V as Lt, W as Rt, _ as zt, a as Bt, b as Vt, c as Ht, d as Ut, f as Wt, g as Gt, h as Kt, i as qt, j as Jt, k as Yt, l as Xt, m as Zt, o as Qt, p as $t, q as en, r as tn, s as nn, t as rn, u as an, v as on, w as sn, x as cn, y as ln, z as un } from "./DocumentEditorPage-ERr3xQp6.js";
 import { C as dn, S as fn, T as pn, _ as mn, a as hn, b as gn, c as _n, d as vn, f as yn, g as bn, h as xn, i as Sn, l as Cn, m as wn, n as Tn, o as En, p as Dn, r as On, s as kn, t as An, u as jn, v as Mn, w as Nn, x as Pn, y as Fn } from "./useDocumentImageUpload-3W74XPh6.js";
 import { i as In } from "./ConversationInputs-GSOr1WbY.js";
 import { r as Ln } from "./RichChatComposer-D5Y1PWbu.js";
@@ -277,7 +278,7 @@ function pr({ documents: e, presence: t, onOpenDocument: r, onCreateDocument: i,
 					})
 				]
 			}),
-			/* @__PURE__ */ K(Ce, {
+			/* @__PURE__ */ K(Se, {
 				open: c,
 				onClose: () => l(!1),
 				onCreate: i
@@ -2768,7 +2769,7 @@ function Na({ request: e, onDecide: t, onWithdraw: n }) {
 		}
 	}
 	let h = e.reviewerName || e.reviewerId, g = e.state.replace(/_/g, " "), _ = g.charAt(0).toUpperCase() + g.slice(1);
-	return /* @__PURE__ */ K(Se, {
+	return /* @__PURE__ */ K(ue, {
 		"aria-label": `Review by ${h}`,
 		"aria-busy": s,
 		children: /* @__PURE__ */ q(m, {
@@ -2908,7 +2909,7 @@ function Pa({ requests: e, reviewers: t = [], currentUserId: n, loading: i, erro
 					})
 				]
 			}),
-			/* @__PURE__ */ K(ue, {
+			/* @__PURE__ */ K(ze, {
 				title: "Document reviews",
 				count: e.length,
 				hint: i ? "Loading…" : void 0,
@@ -3086,7 +3087,7 @@ function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 											/* @__PURE__ */ q("span", {
 												className: "flex min-w-0 max-w-full flex-initial flex-nowrap items-center gap-x-2",
 												"data-testid": `${L}-title-group`,
-												children: [r ? /* @__PURE__ */ K(Be, {
+												children: [r ? /* @__PURE__ */ K(Ye, {
 													value: t,
 													onCommit: r,
 													label: i,
@@ -3351,7 +3352,7 @@ function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previe
 	ie.current = s;
 	let ae = U(u);
 	ae.current = u;
-	let P = Ne(e), oe = In(), F = g ?? (oe.present ? () => {
+	let P = Me(e), oe = In(), F = g ?? (oe.present ? () => {
 		oe.request({ mode: "agent" });
 	} : void 0);
 	V(() => {
@@ -3558,7 +3559,7 @@ function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previe
 						]
 					})]
 				}) }, e.id))
-			}) : /* @__PURE__ */ K(ze, {
+			}) : /* @__PURE__ */ K(Re, {
 				items: me,
 				selectedId: R?.id ?? "",
 				onSelect: ue,
@@ -3587,7 +3588,7 @@ function Ha({ spec: e, compactReview: t = !1, fileActions: i, preview: a, previe
 				children: R ? /* @__PURE__ */ K("div", {
 					className: "deck-reader-slide-frame m-auto shrink-0",
 					style: { width: fe },
-					children: /* @__PURE__ */ K(We, {
+					children: /* @__PURE__ */ K(Ue, {
 						className: "deck-reader-stage [&>[role=figure]]:max-w-none",
 						label: `Slide ${L + 1} of ${I.length}: ${R.title}`,
 						"data-testid": `${_}-stage`,
@@ -3923,4 +3924,4 @@ function Ya({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1,
 	});
 }
 //#endregion
-export { kr as AckMode, Xt as ActionItemsCard, Fr as ActivityFeed, Ft as AttachmentsPanel, hn as AuthenticatedDocumentImageView, ot as BULLET_STYLES, It as CANVAS_BODY_KEY, Rt as CANVAS_SCHEMA_VERSION, ai as COMMENT_MARGIN_STORAGE_KEY, Ka as COMMENT_REPLY_COMMANDS, _n as CanvasDocumentView, it as CanvasLineSpacing, lt as CanvasListStyle, Dr as ChunkViewer, zt as CommentContextHeader, ti as CommentGhostPopover, Ya as CommentHandoffBar, Ja as CommentReplyComposer, on as CommentThreadNode, gt as ComposerDockPlacementContext, je as DECK_THEMES, Fa as DEFAULT_EDITOR_SHELL_TABS, Ua as DICTATION_HOLD_MS, mt as DOCK_HEIGHT_VAR, ht as DOCK_INSET_VAR, Mt as DOCUMENT_MODE_LABELS, wn as DOCUMENT_TOOLBAR_BREAKPOINTS, za as DeckPresentationDialog, Ha as DeckReader, Ga as DictationButton, nn as DiffViewer, rn as DocumentEditorPage, Cn as DocumentFindBar, yn as DocumentGutter, _t as DocumentHeader, En as DocumentImageProvider, Jt as DocumentLifecyclePill, pr as DocumentListPage, St as DocumentModePill, dn as DocumentOutline, At as DocumentOwnership, Pa as DocumentReviewPanel, Nn as DocumentRuler, Tt as DocumentSaveStatus, ui as DocumentShareDialog, gn as DocumentStatusBar, xn as DocumentToolbar, Ir as EMPTY_DECK_PRESENCE, La as EditorShell, nt as EditorToolbar, Wt as ExecutiveSummaryCard, ze as Filmstrip, Ie as FilmstripThumb, pt as FloatingComposerDock, ii as FloatingDockBar, Yt as FollowModeBar, $t as HeaderBanner, an as KeyDecisionsCard, ft as LINE_SPACINGS, et as LINE_SPACING_LABELS, rt as LIST_STYLE_LABELS, An as MAX_ATTACHMENT_BYTES, Ae as MAX_BULLETS_PER_SLIDE, we as MAX_BULLET_CHARS, Ge as MAX_CHART_LABELS, Je as MAX_CHART_SERIES, Ee as MAX_EYEBROW_CHARS, Tn as MAX_IMAGE_BYTES, qe as MAX_NOTES_CHARS, _e as MAX_QUOTE_CHARS, F as MAX_SLIDES, Ke as MAX_SOURCES_PER_SLIDE, ve as MAX_SUBTITLE_CHARS, ce as MAX_TITLE_CHARS, Qe as MULTILEVEL_STYLES, sn as MentionDropdown, Bt as MyMentionsPanel, st as NUMBER_STYLES, Ce as NewDocumentModal, I as OLDER_REVISIONS_VALUE, pn as PX_PER_INCH, Ot as ParticipantAvatars, Me as PresentationEditor, xe as PresentationView, Yr as ProposalCard, Ue as ProposedEditStrip, Ht as ReaderMode, ln as ResolvedBanner, Kt as ReviewMode, xr as ReviewProgress, Tr as ReviewableItem, ci as SHARE_ROLES, Re as SLIDES_TOOLBAR_BREAKPOINTS, se as SLIDE_ID_PATTERN, He as SLIDE_INSERTS, me as SLIDE_LAYOUTS, Pe as SLIDE_LAYOUT_LABELS, di as SUGGESTION_AUTHORING_MODES, Di as SUGGESTION_DATE_BUCKET_MS, Ea as SUGGESTION_VIEW_MODES, bt as SectionBlock, Gt as SectionComments, xt as SectionList, Ut as SectionSummariesCard, Oe as SlideForm, be as SlideList, L as SlideRow, ke as SlideSources, We as SlideStage, De as SlidesToolbar, Te as SpeakerNotes, vr as StandaloneTiptap, ga as SuggestChanges, bi as SuggestionCard, pa as SuggestionDelete, fa as SuggestionInsert, ha as SuggestionMarks, fi as SuggestionModeControl, ma as SuggestionModify, Ma as SuggestionReviewList, tn as TableOfContents, ie as TaskItemRow, ae as TaskList, dt as TiptapEditor, Qt as VersionHistoryPanel, jt as VideoCallPanel, ri as VideoDockSlot, qt as VideoHistoryPanel, Xr as WorkItemRow, kt as WorkspaceDocumentHeaderNotices, Pn as ZOOM_FIT, fn as ZOOM_STEPS, On as acceptsDocumentImage, P as addSlide, _a as authorSuggestionsAs, Oi as bucketSuggestionDate, Ne as canSaveDeck, Ct as canvasBody, Lt as canvasFragmentToMarkdown, mr as clientIdForUser, qa as commentReplyIntent, Vt as countAllComments, kn as createAuthenticatedDocumentImage, ki as createSuggestionIdentity, Lr as deckPresenceChannel, Si as deckTitleFrom, Ur as deckViewerToParticipant, Vr as deckViewersOf, Wa as dictationButtonLabel, ka as docForViewMode, bn as documentToolbarSize, fe as duplicateSlide, Hr as editingInMyOtherTab, Da as finalDoc, Nt as findDocumentTarget, jn as findMatches, Ca as formatSuggestionAuthor, Zt as generateSummaryBullets, cn as getInitials, Dt as isCanvasDocument, tt as isLineSpacing, Ri as isSuggestChangesEnabled, ct as lineSpacingAttributes, xa as listSuggestions, ut as listTypeFor, pe as makeSlide, he as moveSlide, vn as nextMatchIndex, le as nextRevisionLabel, R as nextSlideId, Oa as originalDoc, xi as parseDeckText, at as parseLineSpacing, $e as parseListStyle, wa as parseSuggestionAuthor, Aa as previewStateForViewMode, va as proposalAuthor, Le as proposedEditPlacement, Ve as proposedEditPreview, oi as readCommentMarginPreference, Mn as readOutline, en as readSchemaVersion, Ci as recordingIdFor, Pt as relativeTime, de as removeSlide, ge as replaceSlide, ei as replyLabel, yt as resolverLabel, z as revisionPickerOptions, Y as sameSuggestion, un as scrollToDocumentTarget, Fe as slidesToolbarSize, Dn as stackOffsets, Ta as suggestionAuthorLabel, J as suggestionIdentityOf, Ai as suggestionKey, ye as svgDataUri, Ye as uncitedSlideIds, si as useCommentMarginPreference, Wr as useDeckPresence, wt as useDocumentActions, Sn as useDocumentImageUpload, Fn as useDocumentOutline, mn as useDocumentToolbarSize, hr as useFollowCursor, Et as useIsCanvasDocument, vt as useSidebarPanels, ja as viewModeClassName, oe as withLayoutDefaults };
+export { kr as AckMode, Xt as ActionItemsCard, Fr as ActivityFeed, Ft as AttachmentsPanel, hn as AuthenticatedDocumentImageView, ot as BULLET_STYLES, It as CANVAS_BODY_KEY, Rt as CANVAS_SCHEMA_VERSION, ai as COMMENT_MARGIN_STORAGE_KEY, Ka as COMMENT_REPLY_COMMANDS, _n as CanvasDocumentView, it as CanvasLineSpacing, lt as CanvasListStyle, Dr as ChunkViewer, zt as CommentContextHeader, ti as CommentGhostPopover, Ya as CommentHandoffBar, Ja as CommentReplyComposer, on as CommentThreadNode, gt as ComposerDockPlacementContext, Ae as DECK_THEMES, Fa as DEFAULT_EDITOR_SHELL_TABS, Ua as DICTATION_HOLD_MS, mt as DOCK_HEIGHT_VAR, ht as DOCK_INSET_VAR, Mt as DOCUMENT_MODE_LABELS, wn as DOCUMENT_TOOLBAR_BREAKPOINTS, za as DeckPresentationDialog, Ha as DeckReader, Ga as DictationButton, nn as DiffViewer, rn as DocumentEditorPage, Cn as DocumentFindBar, yn as DocumentGutter, _t as DocumentHeader, En as DocumentImageProvider, Jt as DocumentLifecyclePill, pr as DocumentListPage, St as DocumentModePill, dn as DocumentOutline, At as DocumentOwnership, Pa as DocumentReviewPanel, Nn as DocumentRuler, Tt as DocumentSaveStatus, ui as DocumentShareDialog, gn as DocumentStatusBar, xn as DocumentToolbar, Ir as EMPTY_DECK_PRESENCE, La as EditorShell, nt as EditorToolbar, Wt as ExecutiveSummaryCard, Re as Filmstrip, Fe as FilmstripThumb, pt as FloatingComposerDock, ii as FloatingDockBar, Yt as FollowModeBar, $t as HeaderBanner, an as KeyDecisionsCard, ft as LINE_SPACINGS, et as LINE_SPACING_LABELS, rt as LIST_STYLE_LABELS, An as MAX_ATTACHMENT_BYTES, ke as MAX_BULLETS_PER_SLIDE, Ce as MAX_BULLET_CHARS, We as MAX_CHART_LABELS, qe as MAX_CHART_SERIES, Te as MAX_EYEBROW_CHARS, Tn as MAX_IMAGE_BYTES, Ke as MAX_NOTES_CHARS, _e as MAX_QUOTE_CHARS, F as MAX_SLIDES, Ge as MAX_SOURCES_PER_SLIDE, ve as MAX_SUBTITLE_CHARS, ce as MAX_TITLE_CHARS, Qe as MULTILEVEL_STYLES, sn as MentionDropdown, Bt as MyMentionsPanel, st as NUMBER_STYLES, Se as NewDocumentModal, I as OLDER_REVISIONS_VALUE, pn as PX_PER_INCH, Ot as ParticipantAvatars, je as PresentationEditor, xe as PresentationView, Yr as ProposalCard, He as ProposedEditStrip, Ht as ReaderMode, ln as ResolvedBanner, Kt as ReviewMode, xr as ReviewProgress, Tr as ReviewableItem, ci as SHARE_ROLES, Le as SLIDES_TOOLBAR_BREAKPOINTS, se as SLIDE_ID_PATTERN, Ve as SLIDE_INSERTS, me as SLIDE_LAYOUTS, Ne as SLIDE_LAYOUT_LABELS, di as SUGGESTION_AUTHORING_MODES, Di as SUGGESTION_DATE_BUCKET_MS, Ea as SUGGESTION_VIEW_MODES, bt as SectionBlock, Gt as SectionComments, xt as SectionList, Ut as SectionSummariesCard, De as SlideForm, be as SlideList, L as SlideRow, Oe as SlideSources, Ue as SlideStage, Ee as SlidesToolbar, we as SpeakerNotes, vr as StandaloneTiptap, ga as SuggestChanges, bi as SuggestionCard, pa as SuggestionDelete, fa as SuggestionInsert, ha as SuggestionMarks, fi as SuggestionModeControl, ma as SuggestionModify, Ma as SuggestionReviewList, tn as TableOfContents, ie as TaskItemRow, ae as TaskList, dt as TiptapEditor, Qt as VersionHistoryPanel, jt as VideoCallPanel, ri as VideoDockSlot, qt as VideoHistoryPanel, Xr as WorkItemRow, kt as WorkspaceDocumentHeaderNotices, Pn as ZOOM_FIT, fn as ZOOM_STEPS, On as acceptsDocumentImage, P as addSlide, _a as authorSuggestionsAs, Oi as bucketSuggestionDate, Me as canSaveDeck, Ct as canvasBody, Lt as canvasFragmentToMarkdown, mr as clientIdForUser, qa as commentReplyIntent, Vt as countAllComments, kn as createAuthenticatedDocumentImage, ki as createSuggestionIdentity, Lr as deckPresenceChannel, Si as deckTitleFrom, Ur as deckViewerToParticipant, Vr as deckViewersOf, Wa as dictationButtonLabel, ka as docForViewMode, bn as documentToolbarSize, fe as duplicateSlide, Hr as editingInMyOtherTab, Da as finalDoc, Nt as findDocumentTarget, jn as findMatches, Ca as formatSuggestionAuthor, Zt as generateSummaryBullets, cn as getInitials, Dt as isCanvasDocument, tt as isLineSpacing, Ri as isSuggestChangesEnabled, ct as lineSpacingAttributes, xa as listSuggestions, ut as listTypeFor, pe as makeSlide, he as moveSlide, vn as nextMatchIndex, le as nextRevisionLabel, R as nextSlideId, Oa as originalDoc, xi as parseDeckText, at as parseLineSpacing, $e as parseListStyle, wa as parseSuggestionAuthor, Aa as previewStateForViewMode, va as proposalAuthor, Ie as proposedEditPlacement, Be as proposedEditPreview, oi as readCommentMarginPreference, Mn as readOutline, en as readSchemaVersion, Ci as recordingIdFor, Pt as relativeTime, de as removeSlide, ge as replaceSlide, ei as replyLabel, yt as resolverLabel, z as revisionPickerOptions, Y as sameSuggestion, un as scrollToDocumentTarget, Pe as slidesToolbarSize, Dn as stackOffsets, Ta as suggestionAuthorLabel, J as suggestionIdentityOf, Ai as suggestionKey, ye as svgDataUri, Je as uncitedSlideIds, si as useCommentMarginPreference, Wr as useDeckPresence, wt as useDocumentActions, Sn as useDocumentImageUpload, Fn as useDocumentOutline, mn as useDocumentToolbarSize, hr as useFollowCursor, Et as useIsCanvasDocument, vt as useSidebarPanels, ja as viewModeClassName, oe as withLayoutDefaults };

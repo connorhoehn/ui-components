@@ -20,7 +20,7 @@ import { t as x } from "./FileUploadDrop-DrckU_7j.js";
 import { t as S } from "./ActivityFeed-Cp6MhNab.js";
 import { a as C, i as w, n as T, o as E } from "./DockedAside-BDA5tJ1T.js";
 import { d as ee, dt as D, lt as O, n as k, t as A, u as j, ut as M } from "./ConversationSurface-Cj3TMoE4.js";
-import { E as N, T as P, V as F, W as te, _ as I, i as ne, k as re, n as ie, s as L, t as R, w as ae, x as oe, y as se } from "./BreakoutRoomsPanel-DF49-gli.js";
+import { E as N, T as P, V as F, W as te, _ as I, i as ne, k as re, n as ie, s as L, t as R, w as ae, x as oe, y as se } from "./BreakoutRoomsPanel-1MfxOl_J.js";
 import { t as ce } from "./useActiveSpeaker-BGKJU3Lb.js";
 import { c as le, o as ue, s as z } from "./useDocumentImageUpload-3W74XPh6.js";
 import { Component as de, createContext as B, createElement as fe, useCallback as V, useContext as pe, useEffect as H, useMemo as U, useRef as W, useState as G } from "react";
@@ -2107,6 +2107,8 @@ function ln({ meeting: e, people: t, roomNames: n, renderError: r, ...i }) {
 		onBroadcast: e.broadcast,
 		onEnd: e.endBreakouts,
 		onDeleteRooms: () => e.configureBreakouts([]),
+		onAddRoom: e.addRoom ? () => e.addRoom?.() : void 0,
+		onRenameRoom: e.renameRoom,
 		notice: e.error ? r?.(e.error) ?? /* @__PURE__ */ q(s, {
 			variant: "error",
 			className: "mx-4 mt-3",

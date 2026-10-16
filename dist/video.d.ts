@@ -170,6 +170,15 @@ export declare interface BreakoutRoomsPanelProps {
      * only while rooms are closed; open rooms must be ended first.
      */
     onDeleteRooms?: () => void;
+    /**
+     * Rename a room (2.459.0). Organizers then click a room's name to edit it
+     * in place, in any phase; Enter or blur commits, Escape cancels.
+     */
+    onRenameRoom?: (roomId: string, name: string) => void;
+    /** Add one room (2.459.0), in draft or while rooms are open. It starts closed. */
+    onAddRoom?: () => void;
+    /** The server's room cap; Add room is disabled at it. Default 50. */
+    maxRooms?: number;
     /** The header ✕. Omitted: no close button. */
     onClose?: () => void;
     title?: string;

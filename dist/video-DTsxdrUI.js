@@ -29,7 +29,7 @@ import { t as xe } from "./SegmentedControl-CSn7GyT9.js";
 import { n as Se } from "./RovingToolbar-B1Fai5PF.js";
 import { t as Ce } from "./Checkbox-Jycr-rlf.js";
 import { t as we } from "./activationKey-CjbL3LUv.js";
-import { C as Te, E as Ee, K as De, L as Oe, R as ke, S as Ae } from "./BreakoutRoomsPanel-DF49-gli.js";
+import { C as Te, E as Ee, K as De, L as Oe, R as ke, S as Ae } from "./BreakoutRoomsPanel-1MfxOl_J.js";
 import { useCallback as U, useEffect as W, useImperativeHandle as je, useLayoutEffect as Me, useMemo as G, useRef as K, useState as q } from "react";
 import { Fragment as J, jsx as Y, jsxs as X } from "react/jsx-runtime";
 //#region src/components/video/VideoPlayer.tsx
