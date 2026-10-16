@@ -5,6 +5,8 @@ import { Inline } from '../ui/Stack';
 import { PresenceDot } from '../shared/PresenceDot';
 import { T } from '../shared/Text';
 import { HuddleBar } from './HuddleBar';
+import { MeetingHandIcon, MeetingReactIcon, MeetingRoomsIcon } from './MeetingIcons';
+import { ReactionPicker } from './ReactionOverlay';
 
 const meta = {
   title: 'Video/HuddleBar',
@@ -40,3 +42,27 @@ export const LiveInFooter: Story = {
   args: { name: 'Standup huddle', phase: 'live', startedAt: Date.now() - 125000, participantCount: 3, onToggleChat: () => {}, onLeave: () => {}, className: 'min-w-0 flex-1 border-l border-border' },
   render: (args) => <FooterRow><HuddleBar {...args} /></FooterRow>,
 };
+
+/**
+ * A live huddle that is also a meeting (2.475.0): Raise (pressed, second in
+ * line), React (opens the picker) and Rooms (two rooms open) from the same
+ * items `meetingToolbarItems` builds for `MeetingToolbar`.
+ */
+export const LiveWithMeeting: Story = {
+  args: {
+    name: 'Design review',
+    phase: 'live',
+    startedAt: Date.now() - 754000,
+    participantCount: 9,
+    onToggleChat: () => {},
+    onLeave: () => {},
+    className: 'min-w-0 flex-1 border-l border-border',
+    meetingItems: [
+      { id: 'raise', label: 'Lower', title: 'Lower your hand (2 in line)', icon: <MeetingHandIcon />, pressed: true, onClick: () => {} },
+      { id: 'react', label: 'React', icon: <MeetingReactIcon />, popoverLabel: 'Send a reaction', popover: (close) => <ReactionPicker tone="surface" onReact={() => close()} /> },
+      { id: 'rooms', label: 'Rooms', icon: <MeetingRoomsIcon />, badge: 2, onClick: () => {} },
+    ],
+  },
+  render: (args) => <FooterRow><HuddleBar {...args} /></FooterRow>,
+};
+

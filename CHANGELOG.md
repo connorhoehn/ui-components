@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.475.0
+
+- `HuddleBar meetingItems` (lane L2, part 1 of aws-agentcore `docs/meeting-rooms-app-goal.md`): the meeting controls `meetingToolbarItems` builds (Raise, React, Rooms…) drawn as the bar's own compact buttons — icon, the label from `@lg`, pressed/active states, a badge, and a popover item's panel (React's picker) — before Leave, never while idle. The same items feed `MeetingToolbar` on a stage, so a host binds once. Story `Video/HuddleBar` LiveWithMeeting.
+- Test typing: `meetingChatTitle`'s test passed a room field the source type does not have (vitest does not typecheck; `tsc` caught it).
+
 ## 2.474.0
 
 - `meetingToolbarItems(meeting, { …, chat?, people? })` also builds the Chat button (`{ open, onToggle, unread? }`, unread badge) and the People button (`{ open, onToggle, count }`, head count, and a raised-hands badge for organizers), so a host builds the whole bar from bindings. The MeetingStage and MeetingRehearsal stories now do.

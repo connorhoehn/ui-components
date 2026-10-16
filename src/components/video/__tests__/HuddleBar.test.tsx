@@ -150,3 +150,37 @@ describe('HuddleBar typography', () => {
     expect(src).not.toMatch(/<span\b/);
   });
 });
+
+describe('HuddleBar meetingItems (2.475.0)', () => {
+  const items = (onRaise = vi.fn()) => [
+    { id: 'raise', label: 'Raise', icon: <span>✋</span>, pressed: true, title: 'Lower your hand (2 in line)', onClick: onRaise },
+    { id: 'rooms', label: 'Rooms', icon: <span>▣</span>, active: false, badge: 3, onClick: vi.fn() },
+    { id: 'react', label: 'React', icon: <span>☺</span>, popoverLabel: 'Send a reaction', popover: (close: () => void) => <button type="button" onClick={close}>👍</button> },
+  ];
+
+  it('draws each item as a named button with its state, badge and panel', () => {
+    const onRaise = vi.fn();
+    render(<HuddleBar name="Design review" phase="live" meetingItems={items(onRaise)} onLeave={() => {}} />);
+    const raise = screen.getByTestId('huddle-bar-meeting-raise');
+    expect(raise).toHaveAccessibleName('Raise');
+    expect(raise).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.click(raise);
+    expect(onRaise).toHaveBeenCalled();
+    expect(screen.getByTestId('huddle-bar-meeting-rooms-badge')).toHaveTextContent('3');
+    const react = screen.getByTestId('huddle-bar-meeting-react');
+    expect(react).toHaveAttribute('aria-haspopup', 'dialog');
+    fireEvent.click(react);
+    const panel = screen.getByRole('dialog', { name: 'Send a reaction' });
+    fireEvent.click(panel.querySelector('button')!);
+    expect(screen.queryByRole('dialog', { name: 'Send a reaction' })).toBeNull();
+    // Meeting items sit before Leave.
+    const order = [...screen.getByTestId('huddle-bar').querySelectorAll('[data-testid^="huddle-bar-"]')].map((e) => e.getAttribute('data-testid'));
+    expect(order.indexOf('huddle-bar-meeting-raise')).toBeLessThan(order.indexOf('huddle-bar-leave'));
+  });
+
+  it('draws no meeting items while idle', () => {
+    render(<HuddleBar name="Design review" phase="idle" meetingItems={items()} onStart={() => {}} />);
+    expect(screen.queryByTestId('huddle-bar-meeting-raise')).toBeNull();
+  });
+});
+

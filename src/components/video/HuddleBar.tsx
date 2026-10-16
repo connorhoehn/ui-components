@@ -12,7 +12,7 @@
 // bar may sit in a pane. Status and name never drop; the timer and the
 // joined-count fold under 28rem.
 
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
 import { T } from '../shared/Text';
@@ -21,6 +21,8 @@ import { PresenceDot, type PresenceState } from '../shared/PresenceDot';
 import { DeviceToggleSelect, type DeviceOption, type MediaPermission } from './DeviceToggleSelect';
 import { PhoneOffIcon } from './MediaIcons';
 import { formatCallElapsed } from './CallDock';
+import { InlinePopover } from '../shared/InlinePopover';
+import type { MeetingToolbarItem } from './MeetingToolbar';
 
 export type HuddleBarPhase = 'idle' | 'live' | 'connecting' | 'ringing' | 'reconnecting' | 'ended';
 
@@ -117,6 +119,13 @@ export interface HuddleBarProps {
   onLeave?: () => void;
   /** Default "Leave". */
   leaveLabel?: string;
+  /**
+   * Meeting controls (Raise, React, Rooms…) from `meetingToolbarItems`, the
+   * same items `MeetingToolbar` draws, as this bar's compact buttons: icon,
+   * the label from `@lg`, pressed and active states, badge, and a popover
+   * item's panel (React's picker). Not drawn while idle. Since 2.475.0.
+   */
+  meetingItems?: MeetingToolbarItem[];
   /** Extra controls before Leave. */
   extras?: ReactNode;
   className?: string;
@@ -163,6 +172,7 @@ export function HuddleBar({
   chatDisabledReason,
   onLeave,
   leaveLabel = 'Leave',
+  meetingItems,
   extras,
   className,
   'data-testid': testId = 'huddle-bar',
@@ -276,6 +286,9 @@ export function HuddleBar({
             )}
           </T>
         )}
+        {phase !== 'idle' && meetingItems?.map((item) => (
+          <HuddleMeetingButton key={item.id} item={item} testId={`${testId}-meeting-${item.id}`} />
+        ))}
         {extras}
         {phase !== 'idle' && onLeave && <Button variant="danger-solid" size="sm" onClick={onLeave} aria-label={leaveLabel} data-testid={`${testId}-leave`} className="gap-1.5">
           <PhoneOffIcon size={16} />
@@ -283,6 +296,61 @@ export function HuddleBar({
         </Button>}
       </div>
     </div>
+  );
+}
+
+/** One meeting item as a HuddleBar button; a popover item opens its panel above the bar. */
+function HuddleMeetingButton({ item, testId }: { item: MeetingToolbarItem; testId: string }) {
+  const ref = useRef<HTMLButtonElement | null>(null);
+  const [open, setOpen] = useState(false);
+  const hasPanel = !!item.popover;
+  const panelOpen = hasPanel && open && !item.disabled;
+  const on = item.pressed || item.active || panelOpen;
+  const name = item.count !== undefined ? `${item.label}, ${item.count}` : item.label;
+  return (
+    <T className="relative inline-flex">
+      <Button
+        ref={ref}
+        variant={on ? 'secondary' : 'ghost'}
+        size="sm"
+        onClick={hasPanel ? () => setOpen((v) => !v) : item.onClick}
+        disabled={item.disabled}
+        title={item.disabled && item.disabledReason ? item.disabledReason : item.title ?? item.label}
+        aria-label={name}
+        aria-pressed={item.pressed === undefined ? undefined : item.pressed}
+        aria-expanded={hasPanel ? panelOpen : item.active === undefined ? undefined : item.active}
+        aria-haspopup={hasPanel ? 'dialog' : undefined}
+        data-testid={testId}
+        className="gap-1.5 [&_svg]:size-4"
+      >
+        {item.icon}
+        {item.count !== undefined && <T tabular>{item.count}</T>}
+        <T className="hidden @lg:inline">{item.label}</T>
+      </Button>
+      {!!item.badge && (
+        <T
+          className="absolute -right-1 -top-1 h-4 min-w-4 justify-center rounded-full bg-danger px-1 text-text-inverse"
+          size="xs"
+          weight="semibold"
+          data-testid={`${testId}-badge`}
+        >
+          {item.badge > 99 ? '99+' : item.badge}
+        </T>
+      )}
+      {hasPanel && (
+        <InlinePopover
+          trigger={ref}
+          open={panelOpen}
+          onClose={() => setOpen(false)}
+          placement={item.popoverPlacement ?? 'bottom-end'}
+          aria-label={item.popoverLabel ?? item.label}
+          kind="huddle-bar-popover"
+          data-testid={`${testId}-popover`}
+        >
+          {panelOpen && item.popover!(() => setOpen(false))}
+        </InlinePopover>
+      )}
+    </T>
   );
 }
 

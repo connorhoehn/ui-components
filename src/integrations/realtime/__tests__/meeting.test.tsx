@@ -366,7 +366,7 @@ describe('meeting adapters', () => {
 
   it('meetingChatTitle names the room chat or the meeting chat', () => {
     expect(meetingChatTitle({ myRoom: null })).toBe('Meeting chat');
-    expect(meetingChatTitle({ myRoom: { id: 'r2', name: 'Design crit', state: 'open', members: [] } })).toBe('Design crit chat');
+    expect(meetingChatTitle({ myRoom: { id: 'r2', name: 'Design crit' } })).toBe('Design crit chat');
   });
 
   it('meetingToolbarItems builds Chat and People when asked: counts, active state, an organizer hands badge', () => {
