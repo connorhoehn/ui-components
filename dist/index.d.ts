@@ -11399,7 +11399,7 @@ export declare interface HoverCardTriggerProps {
 
 export declare type HoverCardWidth = 'sm' | 'md' | 'lg' | 'xl';
 
-export declare function HuddleBar({ name, showContext, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, startDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, extras, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
+export declare function HuddleBar({ name, showContext, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, startDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, meetingItems, extras, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
 
 /** One media control: the toggle, and an optional device list behind a caret. */
 export declare interface HuddleBarMedia {
@@ -11468,6 +11468,13 @@ export declare interface HuddleBarProps {
     onLeave?: () => void;
     /** Default "Leave". */
     leaveLabel?: string;
+    /**
+     * Meeting controls (Raise, React, Rooms…) from `meetingToolbarItems`, the
+     * same items `MeetingToolbar` draws, as this bar's compact buttons: icon,
+     * the label from `@lg`, pressed and active states, badge, and a popover
+     * item's panel (React's picker). Not drawn while idle. Since 2.475.0.
+     */
+    meetingItems?: MeetingToolbarItem[];
     /** Extra controls before Leave. */
     extras?: ReactNode;
     className?: string;
