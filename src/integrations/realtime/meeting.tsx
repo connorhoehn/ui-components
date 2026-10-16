@@ -16,7 +16,8 @@ import {
 } from '../../components/video/BreakoutRoomsPanel';
 import { BreakoutRoomBanner } from '../../components/video/BreakoutRoomBanner';
 import Banner from '../../components/shared/Banner';
-import { MeetingHandIcon, MeetingRoomsIcon } from '../../components/video/MeetingIcons';
+import { MeetingHandIcon, MeetingReactIcon, MeetingRoomsIcon } from '../../components/video/MeetingIcons';
+import { ReactionPicker } from '../../components/video/ReactionOverlay';
 import type { MeetingToolbarItem } from '../../components/video/MeetingToolbar';
 import type { RosterPanelProps, RosterParticipant } from '../../components/video/RosterPanel';
 
@@ -203,10 +204,32 @@ export function WrappedBreakoutRoomBanner({ meeting, className }: { meeting: RMM
 /** Raise and Rooms toolbar buttons bound to the meeting. */
 export function meetingToolbarItems(
   meeting: RMMeetingSource,
-  opts: { roomsOpen: boolean; onToggleRooms: () => void },
-): { raise: MeetingToolbarItem; rooms: MeetingToolbarItem } {
+  opts: {
+    roomsOpen: boolean;
+    onToggleRooms: () => void;
+    /**
+     * Send a reaction (e.g. `useReactions().send`). When given, the result
+     * carries a React item whose popover is the reaction picker. Since 2.465.0.
+     */
+    onReact?: (emoji: string) => void;
+    /** The picker's emoji. Default the picker's own set. */
+    reactions?: string[];
+  },
+): { raise: MeetingToolbarItem; rooms: MeetingToolbarItem; react?: MeetingToolbarItem } {
   const raised = meeting.myHandPosition !== null;
+  const onReact = opts.onReact;
   return {
+    ...(onReact ? {
+      react: {
+        id: 'react',
+        label: 'React',
+        icon: <MeetingReactIcon />,
+        popoverLabel: 'Send a reaction',
+        popover: (close: () => void) => (
+          <ReactionPicker tone="surface" emojis={opts.reactions} onReact={(emoji) => { onReact(emoji); close(); }} />
+        ),
+      } satisfies MeetingToolbarItem,
+    } : {}),
     raise: {
       id: 'raise',
       label: raised ? 'Lower' : 'Raise',

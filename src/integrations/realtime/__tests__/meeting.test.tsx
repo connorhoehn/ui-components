@@ -22,6 +22,7 @@ import {
   type RMMeetingSource,
 } from '../meeting';
 import { RosterPanel } from '../../../components/video/RosterPanel';
+import { MeetingToolbar } from '../../../components/video/MeetingToolbar';
 
 // Compile-time: the hook's result is a valid source.
 const _fits = (m: UseMeetingResult): RMMeetingSource => m;
@@ -295,5 +296,27 @@ describe('meeting adapters', () => {
     expect(rooms[0]!.members).toEqual([{ id: 'u-a', name: 'Ana', avatarUrl: undefined, handRaised: undefined }, { id: 'ghost', name: 'ghost', avatarUrl: undefined, handRaised: undefined }]);
     expect(unassigned.map((p) => [p.id, p.handRaised])).toEqual([['u-org', undefined], ['u-b', 1]]);
     expect(meetingHandPositions(hands).get('u-b')).toBe(1);
+  });
+
+  it('meetingToolbarItems: React appears only with onReact, and its picker sends then closes', () => {
+    const source = {
+      ready: true, isOrganizer: false, hands: [], myHandPosition: null,
+      toggleHand() {}, lowerHand() {}, lowerAllHands() {},
+      breakout: { phase: 'none', mode: 'assigned', rooms: [], returned: [], endsAt: null, announcement: null, settings: { allowReturnToMain: true } },
+      myRoom: null, state: { announcement: null }, error: null,
+      configureBreakouts() {}, assign() {}, autoAssign() {}, openRooms() {}, closeRooms() {}, setTimer() {}, broadcast() {},
+      joinRoom() {}, returnToMain() {}, endBreakouts() {}, dismissAnnouncement() {},
+    } satisfies RMMeetingSource;
+    expect(meetingToolbarItems(source, { roomsOpen: false, onToggleRooms: () => {} }).react).toBeUndefined();
+    const sent: string[] = [];
+    const items = meetingToolbarItems(source, { roomsOpen: false, onToggleRooms: () => {}, onReact: (e) => sent.push(e), reactions: ['👍', '🎉'] });
+    render(<MeetingToolbar items={[items.raise, items.react!, items.rooms]} onLeave={() => {}} compact={false} />);
+    fireEvent.click(screen.getByTestId('meeting-toolbar-react'));
+    const panel = screen.getByRole('dialog', { name: 'Send a reaction' });
+    expect(within(panel).getByTestId('reaction-picker')).toHaveAttribute('data-tone', 'surface');
+    expect(within(panel).getAllByRole('button')).toHaveLength(2);
+    fireEvent.click(within(panel).getByRole('button', { name: 'React with party' }));
+    expect(sent).toEqual(['🎉']);
+    expect(screen.queryByRole('dialog', { name: 'Send a reaction' })).toBeNull();
   });
 });

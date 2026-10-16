@@ -40,7 +40,7 @@ function Stage({ inRoom }: { inRoom?: boolean }) {
           { id: 'chat', label: 'Chat', icon: <ChatBubbleIcon />, onClick: () => {} },
           { id: 'people', label: 'People', icon: <UsersIcon />, count: 15, onClick: () => {} },
           { id: 'raise', label: hand ? 'Lower' : 'Raise', icon: <MeetingHandIcon />, pressed: hand, onClick: () => setHand((v) => !v) },
-          { id: 'react', label: 'React', icon: <MeetingReactIcon />, popover: (close) => <ReactionPicker className="border-transparent bg-transparent" onReact={() => close()} /> },
+          { id: 'react', label: 'React', icon: <MeetingReactIcon />, popover: (close) => <ReactionPicker tone="surface" onReact={() => close()} /> },
           { id: 'view', label: 'View', icon: <MeetingViewIcon />, priority: 'secondary', onClick: () => {} },
           { id: 'rooms', label: 'Rooms', icon: <MeetingRoomsIcon />, active: rooms, onClick: () => setRooms((v) => !v) },
         ]}

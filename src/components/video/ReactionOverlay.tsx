@@ -115,18 +115,26 @@ export interface ReactionPickerProps {
   className?: string;
   /** @deprecated Use `className`. Kept so existing callers keep compiling. */
   style?: CSSProperties;
+  /**
+   * `chrome` (default): its own dark pill, for a call stage. `surface`: no
+   * background of its own and theme-following hovers, for a light panel that
+   * already frames it (the meeting toolbar's React popover). Since 2.465.0.
+   */
+  tone?: 'chrome' | 'surface';
 }
 
 const DEFAULT_EMOJIS = ['👍', '❤️', '🔥', '😂', '👏', '🎉', '😮', '💯'];
 
-export function ReactionPicker({ onReact, emojis = DEFAULT_EMOJIS, className, style }: ReactionPickerProps) {
+export function ReactionPicker({ onReact, emojis = DEFAULT_EMOJIS, className, style, tone = 'chrome' }: ReactionPickerProps) {
   return (
     <div
       data-testid="reaction-picker"
+      data-tone={tone}
       className={cn(
-        // Inverse-surface tokens (the way MediaEffectsTray styles itself):
-        // the picker always sits over dark call chrome.
-        'flex gap-1 px-2 py-1.5 rounded-[20px] bg-call-chrome/90 border border-call-chrome-border',
+        // Chrome: inverse-surface tokens (the way MediaEffectsTray styles
+        // itself) over dark call chrome. Surface: the host panel frames it.
+        'flex gap-1',
+        tone === 'chrome' ? 'px-2 py-1.5 rounded-[20px] bg-call-chrome/90 border border-call-chrome-border' : 'p-0.5',
         className,
       )}
       style={style}
@@ -142,7 +150,8 @@ export function ReactionPicker({ onReact, emojis = DEFAULT_EMOJIS, className, st
             data-testid={`reaction-option-${name}`}
             className={cn(
               'bg-transparent border-none text-xl cursor-pointer px-1 py-0.5 rounded',
-              'transition-transform duration-100 hover:bg-white/10 active:scale-125',
+              'transition-transform duration-100 active:scale-125',
+              tone === 'chrome' ? 'hover:bg-white/10' : 'hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-primary',
             )}
           >
             {emoji}

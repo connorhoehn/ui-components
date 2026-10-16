@@ -25,7 +25,7 @@ function Bar({ compact }: { compact?: boolean }) {
     { id: 'raise', label: hand ? 'Lower' : 'Raise', icon: <MeetingHandIcon />, pressed: hand, onClick: () => setHand((v) => !v) },
     {
       id: 'react', label: 'React', icon: <MeetingReactIcon />, popoverLabel: 'Send a reaction',
-      popover: (close) => <ReactionPicker className="border-transparent bg-transparent" onReact={() => close()} />,
+      popover: (close) => <ReactionPicker tone="surface" onReact={() => close()} />,
     },
     { id: 'view', label: 'View', icon: <MeetingViewIcon />, priority: 'secondary', onClick: () => {} },
     { id: 'notes', label: 'Notes', icon: <MeetingNotesIcon />, priority: 'secondary', active: pane === 'notes', onClick: () => toggle('notes') },

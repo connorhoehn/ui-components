@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.465.0
+
+- `meetingToolbarItems(meeting, { …, onReact, reactions? })` returns a `react` item when `onReact` is given (e.g. `useReactions().send`): the React button opens the reaction picker in its popover, sends the pick and closes. Without `onReact` nothing changes.
+- `ReactionPicker tone="surface"`: no fill of its own and theme-following hovers, for a light panel that already frames it (the meeting toolbar's popover). The default `chrome` is unchanged. Stories use it instead of clearing the chrome pill with classes.
+
 ## 2.464.0
 
 - Meeting components follow the app's brand. The toolbar's active underline, pressed state (Raise) and focus ring, and the consent card's privacy link, paint with `--color-primary` instead of the fixed `accent` purple, so a host that sets its brand (the aws-agentcore portal does per tenant) sees its own colour. Warning amber stays on raised hands and danger red on the closing timer.

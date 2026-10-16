@@ -103,3 +103,18 @@ describe('ReactionOverlay testids', () => {
     expect(screen.getByTestId('reaction-float')).toHaveTextContent('🎉');
   });
 });
+
+describe('ReactionPicker tone (2.465.0)', () => {
+  it('defaults to the dark chrome pill; surface drops its own fill for a light panel', () => {
+    const { rerender } = render(<ReactionPicker onReact={() => {}} />);
+    const chrome = screen.getByTestId('reaction-picker');
+    expect(chrome).toHaveAttribute('data-tone', 'chrome');
+    expect(chrome.className).toContain('bg-call-chrome/90');
+    rerender(<ReactionPicker onReact={() => {}} tone="surface" />);
+    const surface = screen.getByTestId('reaction-picker');
+    expect(surface).toHaveAttribute('data-tone', 'surface');
+    expect(surface.className).not.toContain('bg-call-chrome');
+    expect(screen.getByRole('button', { name: 'React with party' }).className).toContain('hover:bg-surface-hover');
+  });
+});
+
