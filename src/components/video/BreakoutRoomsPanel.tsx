@@ -52,6 +52,13 @@ export interface BreakoutRoomsPanelProps {
   unassigned?: BreakoutPerson[];
   /** ISO end of the timer. */
   endsAt?: string | null;
+  /**
+   * Rooms are in the closing grace (2.461.0; realtime-modules 0.124
+   * `breakout.closing`): `endsAt` is the deadline. Organizers get Close now
+   * (`onCloseRooms()` again) and Keep rooms open (`onOpenRooms()`); Join is
+   * hidden for everyone.
+   */
+  closing?: boolean;
   /** Participants may leave a room for the main meeting. Default true. */
   allowReturnToMain?: boolean;
 
@@ -226,7 +233,7 @@ function CreateRooms({ onCreateRooms }: { onCreateRooms: (count: number, mode: B
 function OrganizerControls(props: BreakoutRoomsPanelProps & { left: number | null }) {
   const {
     phase, mode, rooms, onOpenRooms, onCloseRooms, onAutoAssign, onSetTimer, onBroadcast, onEnd, onDeleteRooms, onAddRoom,
-    left, timerMinutes = DEFAULT_TIMER_MINUTES, maxRooms = DEFAULT_MAX_ROOMS,
+    left, timerMinutes = DEFAULT_TIMER_MINUTES, maxRooms = DEFAULT_MAX_ROOMS, closing = false,
   } = props;
   const [message, setMessage] = useState('');
   const anyOpen = rooms.some((r) => r.state === 'open');
@@ -239,7 +246,12 @@ function OrganizerControls(props: BreakoutRoomsPanelProps & { left: number | nul
   return (
     <div className="flex flex-col gap-3 border-b border-border px-4 py-3" data-testid="breakout-controls">
       <div className="flex flex-wrap items-center gap-2">
-        {anyOpen
+        {closing && anyOpen ? (
+          <>
+            {onCloseRooms && <Button variant="danger" size="sm" onClick={() => onCloseRooms()} data-testid="breakout-close-now">Close now</Button>}
+            {onOpenRooms && <Button variant="secondary" size="sm" onClick={() => onOpenRooms()} data-testid="breakout-keep-open">Keep rooms open</Button>}
+          </>
+        ) : anyOpen
           ? onCloseRooms && <Button variant="secondary" size="sm" onClick={() => onCloseRooms()} data-testid="breakout-close-all">Close rooms</Button>
           : onOpenRooms && <Button variant="primary" size="sm" onClick={() => onOpenRooms()} data-testid="breakout-open-all">Open rooms</Button>}
         {onAddRoom && (
@@ -257,7 +269,7 @@ function OrganizerControls(props: BreakoutRoomsPanelProps & { left: number | nul
         {mode === 'assigned' && onAutoAssign && (
           <Button variant="secondary" size="sm" onClick={onAutoAssign} data-testid="breakout-auto-assign">Assign automatically</Button>
         )}
-        {onEnd && phase === 'open' && (
+        {onEnd && phase === 'open' && !closing && (
           <Button variant="ghost" size="sm" onClick={onEnd} className="text-danger" data-testid="breakout-end">End breakout rooms</Button>
         )}
         {onDeleteRooms && phase === 'draft' && (
@@ -268,7 +280,11 @@ function OrganizerControls(props: BreakoutRoomsPanelProps & { left: number | nul
         <div className="flex items-center justify-between gap-3">
           <T size="sm">Timer</T>
           <div className="flex items-center gap-2">
-            {left !== null && <T size="sm" tone="secondary" tabular data-testid="breakout-timer-left">{formatCallElapsed(left)} left</T>}
+            {left !== null && (
+              <T size="sm" tone={closing ? 'inherit' : 'secondary'} tabular className={cn(closing && 'font-semibold text-danger')} data-testid="breakout-timer-left">
+                {closing ? `Closing in ${formatCallElapsed(left)}` : `${formatCallElapsed(left)} left`}
+              </T>
+            )}
             <Select
               size="sm"
               aria-label="Breakout timer"
@@ -314,7 +330,7 @@ function OrganizerControls(props: BreakoutRoomsPanelProps & { left: number | nul
 
 export function BreakoutRoomsPanel(props: BreakoutRoomsPanelProps) {
   const {
-    rooms, phase, mode, myRoomId = null, isOrganizer = false, unassigned = [], endsAt = null, allowReturnToMain = true,
+    rooms, phase, mode, myRoomId = null, isOrganizer = false, unassigned = [], endsAt = null, allowReturnToMain = true, closing = false,
     onJoin, onReturnToMain, onCreateRooms, onAssign, onOpenRooms, onCloseRooms, onRenameRoom, onClose,
     title = 'Breakout rooms', notice, className, 'data-testid': testId = 'breakout-rooms-panel',
   } = props;
@@ -339,7 +355,9 @@ export function BreakoutRoomsPanel(props: BreakoutRoomsPanelProps) {
         {isOrganizer && phase === 'none' && onCreateRooms && <CreateRooms onCreateRooms={onCreateRooms} />}
         {isOrganizer && phase !== 'none' && <OrganizerControls {...props} left={left} />}
         {!isOrganizer && left !== null && (
-          <T as="div" size="sm" tone="secondary" tabular className="px-4 pt-3" data-testid="breakout-timer-left">Rooms close in {formatCallElapsed(left)}</T>
+          <T as="div" size="sm" tone={closing ? 'inherit' : 'secondary'} tabular className={cn('px-4 pt-3', closing && 'font-semibold text-danger')} data-testid="breakout-timer-left">
+            {closing ? 'Closing' : 'Rooms close'} in {formatCallElapsed(left)}
+          </T>
         )}
         {rooms.length === 0 && !isOrganizer && (
           <T as="p" size="sm" tone="secondary" className="block px-4 py-6" data-testid={`${testId}-empty`}>
@@ -350,7 +368,7 @@ export function BreakoutRoomsPanel(props: BreakoutRoomsPanelProps) {
           <ul className="flex flex-col" data-testid="breakout-room-list">
             {rooms.map((room) => {
               const mine = room.id === myRoomId;
-              const canJoin = room.state === 'open' && phase === 'open' && (mode === 'self-select' || isOrganizer);
+              const canJoin = room.state === 'open' && phase === 'open' && !closing && (mode === 'self-select' || isOrganizer);
               return (
                 <RoomRow
                   key={room.id}

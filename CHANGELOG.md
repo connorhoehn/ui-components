@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.461.0
+
+- Breakout closing countdown (realtime-modules 0.124 `meeting({ closingGraceMs })`). `BreakoutRoomsPanel` `closing`: the timer row reads "Closing in 00:30" in the danger tone, organizers get Close now (`onCloseRooms()` again, which the server treats as immediate) and Keep rooms open (`onOpenRooms()`) in place of Close rooms and End, and Join is hidden for everyone. `BreakoutRoomBanner` `closing`: "Room closes in 00:30", urgent, plus one polite screen-reader status. Both wrappers pass `breakout.closing`; `RMBreakoutState.closing` is optional, so older pins read as not closing.
+- Stories: `Video/BreakoutRoomsPanel` OrganizerClosing, `Video/BreakoutRoomBanner` Closing.
+
 ## 2.460.1
 
 - `WorkTableView` cells truncate inside their own columns: the owner avatar keeps its size, the owner name and the type cell truncate with a `title`, so long titles and names no longer run under each other (5 `text.overlap` findings in the aws-agentcore long-text world).

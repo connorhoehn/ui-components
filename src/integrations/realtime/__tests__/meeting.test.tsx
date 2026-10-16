@@ -34,7 +34,7 @@ const PEOPLE = [
   { userId: 'u-b', displayName: 'Ben' },
 ];
 
-function world() {
+function world(config: ConstructorParameters<typeof MeetingService>[0]['config'] = {}) {
   const users = new Map<string, string>();
   const subs = new Map<string, Set<string>>();
   const listeners = new Map<string, (f: any) => void>();
@@ -48,6 +48,7 @@ function world() {
       getUserIdForClient: (c) => users.get(c),
       getClientData: (c) => ({ userContext: { userId: users.get(c), displayName: PEOPLE.find((p) => p.userId === users.get(c))?.displayName } }),
     },
+    config,
   });
   return { svc, users, listeners };
 }
@@ -236,6 +237,34 @@ describe('meeting bindings over the real service', () => {
     await flush();
     expect(within(ana).queryAllByTestId('roster-raised-hand')).toHaveLength(0);
     expect(within(org).queryByTestId('roster-lower-all')).toBeNull();
+    w.svc.dispose();
+  });
+
+  it('closing grace: Close rooms counts down in the pane and banner; Close now ends it at once', async () => {
+    const w = world({ closingGraceMs: 30_000 });
+    render(<><Seat w={w} clientId="c-org" userId="u-org" /><Seat w={w} clientId="c-a" userId="u-a" /></>);
+    await flush();
+    const org = screen.getByTestId('seat-u-org');
+    const ana = screen.getByTestId('seat-u-a');
+    fireEvent.change(within(org).getByLabelText('Number of rooms'), { target: { value: '1' } });
+    fireEvent.click(within(org).getByTestId('breakout-create-submit'));
+    await flush();
+    const room = within(org).getAllByTestId('breakout-room')[0]!.getAttribute('data-room-id')!;
+    fireEvent.change(within(org).getByLabelText('Move Ana'), { target: { value: room } });
+    await flush();
+    fireEvent.click(within(org).getByTestId('breakout-open-all'));
+    await flush();
+    expect(within(ana).getByTestId('breakout-banner')).toBeInTheDocument();
+
+    fireEvent.click(within(org).getByTestId('breakout-close-all'));
+    await flush();
+    expect(within(ana).getByTestId('breakout-banner-countdown')).toHaveTextContent(/Room closes in 00:(30|29)/);
+    expect(within(org).getByTestId('breakout-timer-left')).toHaveTextContent(/Closing in/);
+
+    fireEvent.click(within(org).getByTestId('breakout-close-now'));
+    await flush();
+    expect(within(ana).queryByTestId('breakout-banner')).toBeNull();
+    expect(within(org).getByTestId('breakout-open-all')).toBeInTheDocument();
     w.svc.dispose();
   });
 

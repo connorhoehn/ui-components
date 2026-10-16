@@ -27,6 +27,8 @@ export interface RMBreakoutState {
   rooms: { id: string; name: string; state: 'open' | 'closed'; members: string[] }[];
   returned: string[];
   endsAt: string | null;
+  /** realtime-modules 0.124.0+: rooms are in the closing grace. */
+  closing?: boolean;
   announcement: { message: string; fromUserId: string; fromDisplayName: string; at: string } | null;
   settings: { allowReturnToMain: boolean };
 }
@@ -152,6 +154,7 @@ export function WrappedBreakoutRoomsPanel({ meeting, people, roomNames, renderEr
       isOrganizer={meeting.isOrganizer}
       unassigned={unassigned}
       endsAt={b.endsAt}
+      closing={b.closing === true}
       allowReturnToMain={b.settings.allowReturnToMain}
       onJoin={meeting.joinRoom}
       onReturnToMain={meeting.returnToMain}
@@ -188,6 +191,7 @@ export function WrappedBreakoutRoomBanner({ meeting, className }: { meeting: RMM
     <BreakoutRoomBanner
       roomName={meeting.myRoom.name}
       endsAt={b.endsAt}
+      closing={b.closing === true}
       announcement={meeting.state.announcement}
       onDismissAnnouncement={meeting.dismissAnnouncement}
       onReturnToMain={b.settings.allowReturnToMain || meeting.isOrganizer ? meeting.returnToMain : undefined}

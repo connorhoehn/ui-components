@@ -21,3 +21,6 @@ export const WithTimerAndAnnouncement: Story = {
   },
 };
 export const LastMinute: Story = { args: { roomName: "Jeff's Room", endsAt: new Date(Date.now() + 45_000).toISOString() } };
+
+/** The organizer is closing the rooms: the closing grace counts down. */
+export const Closing: Story = { args: { roomName: "Hilla's Room", closing: true, endsAt: new Date(Date.now() + 30_000).toISOString(), onReturnToMain: () => {} } };

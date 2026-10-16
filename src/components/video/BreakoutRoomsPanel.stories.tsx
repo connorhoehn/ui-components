@@ -52,3 +52,13 @@ export const OrganizerOpen: Story = {
     onOpenRooms: () => {}, onCloseRooms: () => {}, onAutoAssign: () => {}, onAssign: () => {}, onEnd: () => {}, onSetTimer: () => {}, onBroadcast: () => {}, onRenameRoom: () => {}, onAddRoom: () => {}, onClose: () => {},
   },
 };
+
+/** The organizer closed the rooms with a closing grace configured: the
+ *  countdown replaces the timer, with Close now and Keep rooms open. */
+export const OrganizerClosing: Story = {
+  args: {
+    ...OrganizerOpen.args,
+    closing: true,
+    endsAt: new Date(Date.now() + 30_000).toISOString(),
+  },
+};

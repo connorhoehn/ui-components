@@ -142,6 +142,39 @@ describe('BreakoutRoomsPanel — organizer', () => {
   });
 });
 
+describe('BreakoutRoomsPanel — closing grace', () => {
+  it('organizer: Closing in, Close now and Keep rooms open replace Close rooms and End', () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(Date.parse('2026-10-16T12:00:00Z'));
+      const fns = { onOpenRooms: vi.fn(), onCloseRooms: vi.fn(), onEnd: vi.fn(), onSetTimer: vi.fn() };
+      render(<BreakoutRoomsPanel rooms={ROOMS} phase="open" mode="self-select" isOrganizer closing endsAt="2026-10-16T12:00:30Z" {...fns} />);
+      expect(screen.getByTestId('breakout-timer-left')).toHaveTextContent('Closing in 00:30');
+      expect(screen.queryByTestId('breakout-close-all')).toBeNull();
+      expect(screen.queryByTestId('breakout-end')).toBeNull();
+      expect(screen.queryAllByTestId('breakout-room-join')).toHaveLength(0);
+      fireEvent.click(screen.getByTestId('breakout-close-now'));
+      expect(fns.onCloseRooms).toHaveBeenCalledWith();
+      fireEvent.click(screen.getByTestId('breakout-keep-open'));
+      expect(fns.onOpenRooms).toHaveBeenCalledWith();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('participant: Closing in, and no Join while closing', () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(Date.parse('2026-10-16T12:00:00Z'));
+      render(<BreakoutRoomsPanel rooms={ROOMS} phase="open" mode="self-select" closing endsAt="2026-10-16T12:00:30Z" onJoin={vi.fn()} />);
+      expect(screen.getByTestId('breakout-timer-left')).toHaveTextContent('Closing in 00:30');
+      expect(screen.queryAllByTestId('breakout-room-join')).toHaveLength(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});
+
 describe('BreakoutRoomBanner', () => {
   afterEach(() => vi.useRealTimers());
 
@@ -170,6 +203,23 @@ describe('BreakoutRoomBanner', () => {
     expect(onDismiss).toHaveBeenCalled();
     fireEvent.click(screen.getByTestId('breakout-banner-return'));
     expect(onReturn).toHaveBeenCalled();
+  });
+
+  it('closing: "Room closes in", urgent, and one polite status for screen readers', () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(Date.parse('2026-10-16T12:00:00Z'));
+      const { rerender } = render(<BreakoutRoomBanner roomName="Room 1" endsAt="2026-10-16T12:05:00Z" />);
+      expect(screen.getByTestId('breakout-banner-countdown')).toHaveTextContent('05:00 left');
+      expect(screen.getByTestId('breakout-banner-closing-status')).toHaveTextContent('');
+      rerender(<BreakoutRoomBanner roomName="Room 1" endsAt="2026-10-16T12:00:30Z" closing />);
+      const countdown = screen.getByTestId('breakout-banner-countdown');
+      expect(countdown).toHaveTextContent('Room closes in 00:30');
+      expect(countdown).toHaveAttribute('data-urgent', 'true');
+      expect(screen.getByRole('status')).toHaveTextContent('closing the breakout rooms');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('no timer, no return button when returning is not allowed', () => {

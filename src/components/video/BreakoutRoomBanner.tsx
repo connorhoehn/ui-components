@@ -14,6 +14,12 @@ export interface BreakoutRoomBannerProps {
   roomName: string;
   /** ISO end of the breakout timer, or null for none. */
   endsAt?: string | null;
+  /**
+   * The organizer closed the rooms and `endsAt` is the end of the closing
+   * grace (realtime-modules 0.124 `breakout.closing`). The countdown reads
+   * "Room closes in 00:30" and is announced once to screen readers.
+   */
+  closing?: boolean;
   announcement?: { message: string; fromDisplayName: string } | null;
   onDismissAnnouncement?: () => void;
   /** Omit when returning is not allowed. */
@@ -37,6 +43,7 @@ export function useCountdown(endsAt: string | null | undefined): number | null {
 export function BreakoutRoomBanner({
   roomName,
   endsAt,
+  closing = false,
   announcement,
   onDismissAnnouncement,
   onReturnToMain,
@@ -44,7 +51,7 @@ export function BreakoutRoomBanner({
   'data-testid': testId = 'breakout-banner',
 }: BreakoutRoomBannerProps) {
   const left = useCountdown(endsAt);
-  const urgent = left !== null && left <= 60_000;
+  const urgent = left !== null && (closing || left <= 60_000);
   return (
     <div
       role="region"
@@ -62,11 +69,15 @@ export function BreakoutRoomBanner({
             tabular
             data-testid={`${testId}-countdown`}
             data-urgent={urgent ? 'true' : undefined}
+            data-closing={closing ? 'true' : undefined}
             className={cn(urgent && 'font-semibold text-danger')}
           >
-            {formatCallElapsed(left)} left
+            {closing ? `Room closes in ${formatCallElapsed(left)}` : `${formatCallElapsed(left)} left`}
           </T>
         )}
+        <span role="status" aria-live="polite" className="sr-only" data-testid={`${testId}-closing-status`}>
+          {closing ? 'The organizer is closing the breakout rooms. You will return to the main meeting shortly.' : ''}
+        </span>
         <span className="flex-1" />
         {onReturnToMain && (
           <Button variant="secondary" size="sm" onClick={onReturnToMain} data-testid={`${testId}-return`}>
