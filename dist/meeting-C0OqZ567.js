@@ -21,7 +21,7 @@ import { t as C } from "./FileUploadDrop-DrckU_7j.js";
 import { t as w } from "./ActivityFeed-Cp6MhNab.js";
 import { a as T, i as E, n as D, o as O } from "./DockedAside-BDA5tJ1T.js";
 import { d as k, dt as A, lt as j, n as M, t as N, u as P, ut as F } from "./ConversationSurface-Cj3TMoE4.js";
-import { E as ee, G as te, R as ne, T as re, Y as ie, _ as ae, i as I, k as L, n as oe, q as se, s as R, t as ce, w as z, x as le, y as ue } from "./BreakoutRoomsPanel-BDePp0T6.js";
+import { E as I, G as ee, R as te, T as ne, Y as re, _ as ie, i as L, k as R, n as ae, q as oe, s as z, t as se, w as ce, x as le, y as ue } from "./BreakoutRoomsPanel-BDePp0T6.js";
 import { t as de } from "./useActiveSpeaker-BGKJU3Lb.js";
 import { c as B, o as fe, s as pe } from "./useDocumentImageUpload-3W74XPh6.js";
 import { Component as me, createContext as V, createElement as he, useCallback as H, useContext as U, useEffect as W, useMemo as G, useRef as K, useState as q } from "react";
@@ -433,7 +433,7 @@ function Ee({ connectionState: t, children: n, onRetry: r, reconnectingLabel: i,
 		children: [/* @__PURE__ */ Y("div", {
 			className: "opacity-60 pointer-events-none",
 			children: n
-		}), /* @__PURE__ */ Y(z, {
+		}), /* @__PURE__ */ Y(ce, {
 			show: !0,
 			label: i
 		})]
@@ -605,7 +605,7 @@ function Ve(e, { channelArn: t, excludeParticipantId: n, getAuthToken: r, baseUr
 		c,
 		s.error,
 		a
-	]), /* @__PURE__ */ Y(R, {
+	]), /* @__PURE__ */ Y(z, {
 		...o,
 		live: c,
 		stream: s.stream,
@@ -628,7 +628,7 @@ function He(e, { channelArn: t, playbackToken: n, baseUrl: r, onStatusChange: i,
 			live: o.ready,
 			error: null
 		});
-	}, [o.ready, i]), /* @__PURE__ */ Y(R, {
+	}, [o.ready, i]), /* @__PURE__ */ Y(z, {
 		...a,
 		live: o.ready,
 		playlistUrl: o.playlistUrl,
@@ -671,11 +671,11 @@ function Ge(e, t) {
 	let n = e.isLocal, r = n ? t ?? e.displayName ?? "You" : e.displayName || e.participantId.slice(0, 8), i = e.streams[0], a = e.screenStream, o = n ? /* @__PURE__ */ Y(We, {
 		stream: i,
 		displayName: r
-	}) : /* @__PURE__ */ Y(re, {
+	}) : /* @__PURE__ */ Y(ne, {
 		stream: i,
 		displayName: r,
 		cameraOn: e.hasVideo
-	}), s = a ? /* @__PURE__ */ Y(ee, {
+	}), s = a ? /* @__PURE__ */ Y(I, {
 		stream: a,
 		muted: n,
 		className: "w-full h-full object-contain bg-black"
@@ -721,7 +721,7 @@ function qe(e, { stageToken: t, participantId: n, userId: r, localClientId: i, g
 	return /* @__PURE__ */ X("div", {
 		"data-testid": h,
 		className: `relative flex-1 min-h-0 ${m ?? ""}`,
-		children: [/* @__PURE__ */ Y(L, {
+		children: [/* @__PURE__ */ Y(R, {
 			participants: _,
 			localParticipant: null,
 			mode: l,
@@ -878,9 +878,9 @@ function st(e) {
 			ws: A,
 			onMessage: A.onMessage,
 			onUnpersistedChanges: j.retain
-		}), N = e.useCanvasDocument({ ydoc: M.ydoc }), P = A.connectionState === "connected", F = m && h && M.synced && P, ee = K(F);
-		ee.current = F;
-		let [te, ne] = q(!1), [re, ie] = q(null), [ae, I] = q(!1), [L, oe] = q(!1), [se, R] = q(null), ce = K(null), z = G(() => ({
+		}), N = e.useCanvasDocument({ ydoc: M.ydoc }), P = A.connectionState === "connected", F = m && h && M.synced && P, I = K(F);
+		I.current = F;
+		let [ee, te] = q(!1), [ne, re] = q(null), [ie, L] = q(!1), [R, ae] = q(!1), [oe, z] = q(null), se = K(null), ce = G(() => ({
 			name: c,
 			color: d
 		}), [c, d]);
@@ -898,12 +898,12 @@ function st(e) {
 			x?.(M.pendingUpdateCount);
 		}, [M.pendingUpdateCount, x]), W(() => {
 			M.provider?.awareness.setLocalStateField("user", {
-				...z,
+				...ce,
 				id: s
 			});
 		}, [
 			M.provider,
-			z,
+			ce,
 			s
 		]), W(() => {
 			if (M.pendingUpdateCount === 0) return;
@@ -912,23 +912,23 @@ function st(e) {
 			};
 			return window.addEventListener("beforeunload", e), () => window.removeEventListener("beforeunload", e);
 		}, [M.pendingUpdateCount]), W(() => A.onMessage((e) => {
-			e.channel === `doc:${r}` && (e.type === "crdt:error" && ie(typeof e.error == "string" ? e.error : "The document operation was refused."), e.type === "crdt:snapshot" && ie(null));
+			e.channel === `doc:${r}` && (e.type === "crdt:error" && re(typeof e.error == "string" ? e.error : "The document operation was refused."), e.type === "crdt:snapshot" && re(null));
 		}), [A.onMessage, r]);
 		let le = async (e) => {
-			let t = ce.current;
-			if (!(!b || !t || t.isDestroyed || !ee.current || L)) {
-				oe(!0), R(null);
+			let t = se.current;
+			if (!(!b || !t || t.isDestroyed || !I.current || R)) {
+				ae(!0), z(null);
 				try {
 					let n = await b(e);
-					if (ce.current !== t || t.isDestroyed || !ee.current) throw Error("The document is no longer editable. The image was not inserted.");
+					if (se.current !== t || t.isDestroyed || !I.current) throw Error("The document is no longer editable. The image was not inserted.");
 					t.chain().focus().setImage({
 						src: n,
 						alt: e.name
-					}).run(), I(!1);
+					}).run(), L(!1);
 				} catch (e) {
-					R(e instanceof Error ? e.message : "The image could not be uploaded.");
+					z(e instanceof Error ? e.message : "The image could not be uploaded.");
 				} finally {
-					oe(!1);
+					ae(!1);
 				}
 			}
 		}, ue = it(M.persistenceState, M.pendingUpdateCount, P, M.retryPersistence), de = {
@@ -960,7 +960,7 @@ function st(e) {
 								size: "sm",
 								variant: "secondary",
 								disabled: !M.synced || !P || M.pendingUpdateCount > 0,
-								onClick: () => ne(!0),
+								onClick: () => te(!0),
 								children: "Recover changes…"
 							}),
 							/* @__PURE__ */ Y(t, {
@@ -986,39 +986,39 @@ function st(e) {
 					})]
 				})
 			}),
-			re && /* @__PURE__ */ Y(v, {
+			ne && /* @__PURE__ */ Y(v, {
 				tone: "error",
-				children: re
+				children: ne
 			})
 		] }), me = M.synced && !!M.ydoc && !!N.body, V = /* @__PURE__ */ X(J, { children: [
 			w,
 			/* @__PURE__ */ Y(u, {
-				open: te,
-				onCancel: () => ne(!1),
+				open: ee,
+				onCancel: () => te(!1),
 				title: "Recover earlier changes?",
 				tone: "caution",
 				body: "This explicitly merges the recovered document with the current version. It can bring back content removed by a version restore. Download the recovery first if you want to keep a separate copy.",
 				confirmLabel: "Recover changes",
 				onConfirm: () => {
-					M.ydoc && m && P && M.pendingUpdateCount === 0 && j.restore(M.ydoc), ne(!1);
+					M.ydoc && m && P && M.pendingUpdateCount === 0 && j.restore(M.ydoc), te(!1);
 				}
 			}),
 			b && /* @__PURE__ */ Y(l, {
-				open: ae,
+				open: ie,
 				onClose: () => {
-					L || I(!1);
+					R || L(!1);
 				},
 				title: "Insert image",
 				children: /* @__PURE__ */ X(a, {
 					gap: "sm",
-					children: [se && /* @__PURE__ */ Y(v, {
+					children: [oe && /* @__PURE__ */ Y(v, {
 						tone: "error",
-						children: se
+						children: oe
 					}), /* @__PURE__ */ Y(C, {
 						accept: "image/*",
 						maxSize: 10485760,
-						disabled: L || !F,
-						label: L ? "Uploading image…" : "Choose an image or drop it here",
+						disabled: R || !F,
+						label: R ? "Uploading image…" : "Choose an image or drop it here",
 						onFiles: (e) => {
 							e[0] && le(e[0]);
 						}
@@ -1049,15 +1049,15 @@ function st(e) {
 				body: N.body,
 				ydoc: M.ydoc,
 				provider: M.provider,
-				user: z,
+				user: ce,
 				editable: F,
 				extensions: g,
 				...b && F ? { onInsertImage: () => {
-					R(null), I(!0);
+					z(null), L(!0);
 				} } : {},
 				...e ? { renderFrame: ({ toolbar: t, ruler: n, surface: r }) => e(t, n, r) } : {},
 				onEditorReady: (e) => {
-					ce.current = e, E?.(e);
+					se.current = e, E?.(e);
 				}
 			}), V]
 		});
@@ -1084,7 +1084,7 @@ function ct(e, t) {
 }
 //#endregion
 //#region src/integrations/realtime/ConversationCallDock.tsx
-var lt = (e) => e.stream ? /* @__PURE__ */ Y(ee, {
+var lt = (e) => e.stream ? /* @__PURE__ */ Y(I, {
 	stream: e.stream,
 	muted: e.isLocal
 }) : void 0, ut = () => typeof HTMLMediaElement < "u" && "setSinkId" in HTMLMediaElement.prototype;
@@ -1170,7 +1170,7 @@ function mt(e, { call: t, title: n, onOpenPeople: r, peopleOpen: i, onOpenSettin
 			open: w,
 			onClose: () => T(!1),
 			title: "Call devices",
-			children: /* @__PURE__ */ Y(I, {
+			children: /* @__PURE__ */ Y(L, {
 				"data-testid": `${C}-settings`,
 				value: k.settings,
 				onChange: (e) => {
@@ -1475,7 +1475,7 @@ function Bt(e) {
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedChatPanel.tsx
-function Vt({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, pins: a, currentActor: o, currentUserId: s, displayName: c, avatarUrl: l, sendMetadata: u, publishTyping: d, attachmentSrc: f, onOpenAttachment: p, acceptFiles: m, maxFileSize: h, onFileError: g, disabled: _, typingUsers: v, tone: y, fill: b, flushComposer: x, contentAlign: S, showHeader: C, loadMoreHistory: w = !1, joinHistoryLimit: T = 20, historyPageSize: E = 50, onLoadMore: D, hasMore: O, loadingMore: A, composer: j, renderMessageReferences: M, emojis: N, onReply: P, reply: F, onCancelReply: ee, readReceipts: te, readReceiptsEnabled: ne, unreadFrom: re, threaded: ie, onJumpToMessage: ae, highlightedMessageId: I, documentEditors: L, callParticipants: oe, onJoinCall: se, onOpenDocument: R, wrapWithNetworkShim: ce, editable: z = !0, canEdit: le, canDelete: ue, onForwardMessage: de }) {
+function Vt({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, pins: a, currentActor: o, currentUserId: s, displayName: c, avatarUrl: l, sendMetadata: u, publishTyping: d, attachmentSrc: f, onOpenAttachment: p, acceptFiles: m, maxFileSize: h, onFileError: g, disabled: _, typingUsers: v, tone: y, fill: b, flushComposer: x, contentAlign: S, showHeader: C, loadMoreHistory: w = !1, joinHistoryLimit: T = 20, historyPageSize: E = 50, onLoadMore: D, hasMore: O, loadingMore: A, composer: j, renderMessageReferences: M, emojis: N, onReply: P, reply: F, onCancelReply: I, readReceipts: ee, readReceiptsEnabled: te, unreadFrom: ne, threaded: re, onJumpToMessage: ie, highlightedMessageId: L, documentEditors: R, callParticipants: ae, onJoinCall: oe, onOpenDocument: z, wrapWithNetworkShim: se, editable: ce = !0, canEdit: le, canDelete: ue, onForwardMessage: de }) {
 	let B = G(() => bt(e.messages), [e.messages]), fe = G(() => {
 		if (!t?.length) return [];
 		let e = new Set(B.flatMap((e) => e.id ? [e.id] : [])), n = /* @__PURE__ */ new Set(), r = [];
@@ -1587,28 +1587,28 @@ function Vt({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 			pinnedMessageIds: a.pinnedIds,
 			onTogglePin: ke
 		} : {},
-		...z && Q ? {
+		...ce && Q ? {
 			onEditMessage: je,
 			...le ? { canEditMessage: le } : {}
 		} : {},
-		...z && Ae ? {
+		...ce && Ae ? {
 			onDeleteMessage: Me,
 			...ue ? { canDeleteMessage: ue } : {}
 		} : {},
 		onForwardMessage: de,
 		onReply: P,
 		reply: F,
-		onCancelReply: ee,
-		readReceipts: te,
-		readReceiptsEnabled: ne,
-		unreadFrom: re,
-		threaded: ie,
-		onJumpToMessage: ae,
-		highlightedMessageId: I,
-		documentEditors: L,
-		callParticipants: oe,
-		onJoinCall: se,
-		onOpenDocument: R,
+		onCancelReply: I,
+		readReceipts: ee,
+		readReceiptsEnabled: te,
+		unreadFrom: ne,
+		threaded: re,
+		onJumpToMessage: ie,
+		highlightedMessageId: L,
+		documentEditors: R,
+		callParticipants: ae,
+		onJoinCall: oe,
+		onOpenDocument: z,
 		renderMessageReferences: M,
 		attachmentSrc: f,
 		onOpenAttachment: p,
@@ -1616,7 +1616,7 @@ function Vt({ chat: e, localMessages: t, presence: n, upload: r, reactions: i, p
 		maxFileSize: h,
 		onFileError: g
 	});
-	return /* @__PURE__ */ Y(J, { children: De(Ne, ce) });
+	return /* @__PURE__ */ Y(J, { children: De(Ne, se) });
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedPresencePanel.tsx
@@ -1844,7 +1844,7 @@ function $t({ hangout: e, localClientId: t, videoElements: n, mode: r, spotlight
 			videoElement: n[e.id] ?? e.videoElement
 		})) : e;
 	}
-	return /* @__PURE__ */ Y(L, {
+	return /* @__PURE__ */ Y(R, {
 		participants: f(d),
 		localParticipant: u ? f([u])[0] : null,
 		mode: r,
@@ -1957,7 +1957,7 @@ function on({ open: e, controller: t, onClose: n, onApplied: r, ...i }) {
 	}, u = () => {
 		o.current = !1;
 	};
-	return /* @__PURE__ */ Y(ae, {
+	return /* @__PURE__ */ Y(ie, {
 		...i,
 		previewActive: c !== null,
 		previewStream: s,
@@ -2032,7 +2032,7 @@ function cn({ canvas: e, schema: t, legacyModel: n, beforeConvert: r, ...i }) {
 //#endregion
 //#region src/integrations/realtime-modules/WrappedAudioVideoSettingsForm.tsx
 function ln({ devices: e, settings: t, cameraOn: n, ...r }) {
-	return /* @__PURE__ */ Y(I, {
+	return /* @__PURE__ */ Y(L, {
 		...r,
 		value: t.settings,
 		onChange: (e) => t.update(e),
@@ -2100,7 +2100,7 @@ function mn(e) {
 }
 function hn({ meeting: e, people: t, roomNames: n, renderError: r, ...i }) {
 	let { rooms: a, unassigned: o } = pn(e.breakout, t, e.hands), s = e.breakout;
-	return /* @__PURE__ */ Y(ce, {
+	return /* @__PURE__ */ Y(se, {
 		...i,
 		rooms: a,
 		phase: s.phase,
@@ -2142,7 +2142,7 @@ function hn({ meeting: e, people: t, roomNames: n, renderError: r, ...i }) {
 function gn({ meeting: e, className: t }) {
 	if (!e.myRoom) return null;
 	let n = e.breakout;
-	return /* @__PURE__ */ Y(oe, {
+	return /* @__PURE__ */ Y(ae, {
 		roomName: e.myRoom.name,
 		endsAt: n.endsAt,
 		clockOffsetMs: e.clockOffsetMs,
@@ -2159,9 +2159,9 @@ function _n(e, t) {
 		...r ? { react: {
 			id: "react",
 			label: "React",
-			icon: /* @__PURE__ */ Y(se, {}),
+			icon: /* @__PURE__ */ Y(oe, {}),
 			popoverLabel: "Send a reaction",
-			popover: (e) => /* @__PURE__ */ Y(ne, {
+			popover: (e) => /* @__PURE__ */ Y(te, {
 				tone: "surface",
 				emojis: t.reactions,
 				onReact: (t) => {
@@ -2173,7 +2173,7 @@ function _n(e, t) {
 			id: "raise",
 			label: n ? "Lower" : "Raise",
 			title: n ? `Lower your hand (${e.myHandPosition} in line)` : "Raise your hand",
-			icon: /* @__PURE__ */ Y(te, {}),
+			icon: /* @__PURE__ */ Y(ee, {}),
 			pressed: n,
 			onClick: e.toggleHand,
 			disabled: !e.ready
@@ -2181,7 +2181,7 @@ function _n(e, t) {
 		rooms: {
 			id: "rooms",
 			label: "Rooms",
-			icon: /* @__PURE__ */ Y(ie, {}),
+			icon: /* @__PURE__ */ Y(re, {}),
 			active: t.roomsOpen,
 			onClick: t.onToggleRooms,
 			disabled: !e.ready,
@@ -2189,7 +2189,41 @@ function _n(e, t) {
 		}
 	};
 }
-function vn({ value: e, onChange: t }) {
+function vn(e) {
+	return e.myRoom ? `${e.myRoom.name} chat` : "Meeting chat";
+}
+function yn({ roomName: e }) {
+	return /* @__PURE__ */ X("div", {
+		className: "flex items-center gap-2 border-t border-border px-3 py-1.5",
+		role: "status",
+		"aria-live": "polite",
+		"data-testid": "meeting-chat-context",
+		children: [
+			/* @__PURE__ */ Y(re, {
+				size: 14,
+				"aria-hidden": !0,
+				className: "shrink-0 text-text-secondary"
+			}),
+			/* @__PURE__ */ X(o, {
+				size: "xs",
+				weight: "semibold",
+				className: "shrink-0 whitespace-nowrap",
+				children: [e, " chat"]
+			}),
+			/* @__PURE__ */ X(o, {
+				size: "xs",
+				tone: "tertiary",
+				className: "min-w-0",
+				children: [
+					"Only people in ",
+					e,
+					" see these messages."
+				]
+			})
+		]
+	});
+}
+function bn({ value: e, onChange: t }) {
 	return /* @__PURE__ */ X("div", {
 		className: "flex items-center gap-2 border-t border-border px-3 py-1.5",
 		"data-testid": "meeting-chat-target",
@@ -2220,21 +2254,21 @@ function vn({ value: e, onChange: t }) {
 		]
 	});
 }
-var yn = "meeting-announcement:";
-function bn(e, t) {
+var xn = "meeting-announcement:";
+function Sn(e, t) {
 	let [n, r] = q("chat"), [i, a] = q([]), s = e.breakout.announcement, c = s ? `${s.at}|${s.fromUserId}` : null;
 	W(() => {
 		!s || !c || a((e) => e.some((e) => `${e.at}|${e.fromUserId}` === c) ? e : [...e, s].slice(-50));
 	}, [c]);
 	let l = e.ready && e.isOrganizer && e.breakout.phase === "open", u = l ? n : "chat", d = t.announcementNote ?? "Announcement to every room", f = G(() => i.map((e) => ({
-		id: `${yn}${e.at}:${e.fromUserId}`,
+		id: `${xn}${e.at}:${e.fromUserId}`,
 		clientId: "meeting",
 		userId: e.fromUserId,
 		displayName: e.fromDisplayName,
 		content: e.message,
 		timestamp: e.at
 	})), [i]), p = t.renderMessageReferences, m = G(() => i.map((e) => ({
-		id: `${yn}${e.at}:${e.fromUserId}`,
+		id: `${xn}${e.at}:${e.fromUserId}`,
 		timestamp: e.at,
 		displayName: e.fromDisplayName,
 		content: e.message,
@@ -2249,17 +2283,18 @@ function bn(e, t) {
 		setTarget: r,
 		localMessages: m,
 		withAnnouncements: (e) => f.length === 0 ? [...e] : [...e, ...f].sort((e, t) => Date.parse(e.timestamp) - Date.parse(t.timestamp)),
-		renderMessageReferences: (e) => e.id?.startsWith(yn) ? /* @__PURE__ */ Y(o, {
+		renderMessageReferences: (e) => e.id?.startsWith(xn) ? /* @__PURE__ */ Y(o, {
 			as: "p",
 			size: "xs",
 			tone: "tertiary",
 			"data-testid": "meeting-chat-announcement-note",
 			children: d
 		}) : p?.(e) ?? null,
-		dock: l ? /* @__PURE__ */ Y(vn, {
+		title: vn(e),
+		dock: e.myRoom || l ? /* @__PURE__ */ X(J, { children: [e.myRoom && /* @__PURE__ */ Y(yn, { roomName: e.myRoom.name }), l && /* @__PURE__ */ Y(bn, {
 			value: u,
 			onChange: r
-		}) : null,
+		})] }) : null,
 		onSend: (t) => {
 			let n = t.trim();
 			if (n) {
@@ -2273,4 +2308,4 @@ function bn(e, t) {
 	};
 }
 //#endregion
-export { Qe as $, bt as A, Tt as B, Jt as C, Mt as D, Vt as E, Dt as F, ct as G, _t as H, Rt as I, it as J, st as K, zt as L, Ft as M, It as N, Nt as O, Lt as P, tt as Q, xt as R, Yt as S, Gt as T, gt as U, Et as V, ht as W, et as X, rt as Y, nt as Z, nn as _, Ce as _t, mn as a, Be as at, $t as b, _e as bt, _n as c, Q as ct, ln as d, Me as dt, Je as et, cn as f, Pe as ft, rn as g, Te as gt, an as h, Ee as ht, pn as i, Ie as it, Pt as j, yt as k, bn as l, Fe as lt, sn as m, De as mt, gn as n, Ke as nt, un as o, Le as ot, on as p, Oe as pt, at as q, hn as r, Ue as rt, fn as s, Re as st, vn as t, $e as tt, dn as u, Ae as ut, tn as v, Se as vt, Kt as w, Xt as x, en as y, xe as yt, St as z };
+export { nt as $, Nt as A, xt as B, Xt as C, Gt as D, Kt as E, It as F, gt as G, Tt as H, Lt as I, st as J, ht as K, Dt as L, bt as M, Pt as N, Vt as O, Ft as P, et as Q, Rt as R, $t as S, _e as St, Jt as T, Et as U, St as V, _t as W, it as X, at as Y, rt as Z, an as _, Ee as _t, pn as a, Ue as at, tn as b, Se as bt, un as c, Le as ct, Sn as d, Fe as dt, tt as et, dn as f, Ae as ft, sn as g, De as gt, on as h, Oe as ht, hn as i, Ke as it, yt as j, Mt as k, fn as l, Re as lt, cn as m, Pe as mt, bn as n, Je as nt, mn as o, Ie as ot, ln as p, Me as pt, ct as q, gn as r, $e as rt, vn as s, Be as st, yn as t, Qe as tt, _n as u, Q as ut, rn as v, Te as vt, Yt as w, en as x, xe as xt, nn as y, Ce as yt, zt as z };
