@@ -272,3 +272,21 @@ export type {
   PreJoinChoice,
   PreJoinKind,
 } from './callBlockModel';
+
+// Meetings (2.458.0): raised hands and breakout rooms from realtime-modules'
+// useMeeting (0.121.0+), passed in as a structural source — no runtime import.
+export {
+  WrappedBreakoutRoomsPanel,
+  WrappedBreakoutRoomBanner,
+  adaptBreakoutRooms,
+  defaultRoomDrafts,
+  meetingHandPositions,
+  meetingToolbarItems,
+} from './meeting';
+export type {
+  RMBreakoutState,
+  RMMeetingPerson,
+  RMMeetingSource,
+  RMRaisedHand,
+  WrappedBreakoutRoomsPanelProps,
+} from './meeting';

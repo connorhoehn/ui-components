@@ -5,6 +5,7 @@
 
 import type { ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { RaisedHandBadge } from './RaisedHandBadge';
 
 export interface RosterParticipant {
   id: string;
@@ -13,7 +14,8 @@ export interface RosterParticipant {
   isMuted?: boolean;
   isLocal?: boolean;
   isScreenSharing?: boolean;
-  handRaised?: boolean;
+  /** `true`, or the 1-based queue position (shown beside the hand since 2.458.0). */
+  handRaised?: boolean | number;
 }
 
 export interface RosterPanelProps {
@@ -110,9 +112,7 @@ export function RosterPanel({
                   {p.displayName}
                   {p.isLocal && <span className={cn('ml-1 text-xs', dark ? 'text-white/50' : 'text-[var(--color-text-secondary)]')}>(you)</span>}
                 </span>
-                {p.handRaised && (
-                  <span title="Hand raised" aria-label="Hand raised">✋</span>
-                )}
+                <RaisedHandBadge raised={p.handRaised} tone={dark ? 'overlay' : 'chip'} data-testid="roster-raised-hand" />
                 {p.isMuted && (
                   <svg
                     width="14" height="14" viewBox="0 0 16 16"

@@ -1,0 +1,183 @@
+// The meeting bindings against the REAL realtime-modules 0.121 service and
+// reducer: MeetingService runs in-process behind a fake router, each "client"
+// folds frames with the library's own meetingReducer, and the wrapped panels
+// render from that. So a click in the Rooms pane travels the real wire
+// contract and comes back as rendered state — no imitation of the server.
+// (useMeeting itself is not called here: realtime-modules carries its own
+// React copy in this workspace; its hook is tested in that repo, and the
+// type test below pins that its result fits RMMeetingSource.)
+
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { useMemo, useReducer, useEffect } from 'react';
+import { MeetingService } from '@connorhoehn/realtime-modules/meeting';
+import { INITIAL_MEETING_STATE, meetingReducer, handPosition, breakoutRoomFor } from '@connorhoehn/realtime-modules/client/meeting';
+import type { UseMeetingResult } from '@connorhoehn/realtime-modules/client/meeting';
+import {
+  WrappedBreakoutRoomsPanel,
+  WrappedBreakoutRoomBanner,
+  adaptBreakoutRooms,
+  meetingHandPositions,
+  meetingToolbarItems,
+  type RMMeetingSource,
+} from '../meeting';
+
+// Compile-time: the hook's result is a valid source.
+const _fits = (m: UseMeetingResult): RMMeetingSource => m;
+void _fits;
+
+const M = 'room:lounge';
+const PEOPLE = [
+  { userId: 'u-org', displayName: 'Olive Organizer' },
+  { userId: 'u-a', displayName: 'Ana' },
+  { userId: 'u-b', displayName: 'Ben' },
+];
+
+function world() {
+  const users = new Map<string, string>();
+  const subs = new Map<string, Set<string>>();
+  const listeners = new Map<string, (f: any) => void>();
+  const deliver = (clientId: string, frame: unknown) => { act(() => { listeners.get(clientId)?.(frame); }); };
+  const svc = new MeetingService({
+    router: {
+      sendToClient: (c, m) => { deliver(c, m); },
+      sendToChannel: (ch, m) => { for (const [c, s] of subs) if (s.has(ch)) deliver(c, m); },
+      subscribeToChannel: (c, ch) => { const s = subs.get(c) ?? new Set<string>(); s.add(ch); subs.set(c, s); return true; },
+      unsubscribeFromChannel: (c, ch) => { subs.get(c)?.delete(ch); },
+      getUserIdForClient: (c) => users.get(c),
+      getClientData: (c) => ({ userContext: { userId: users.get(c), displayName: PEOPLE.find((p) => p.userId === users.get(c))?.displayName } }),
+    },
+  });
+  return { svc, users, listeners };
+}
+
+function useTestMeeting(w: ReturnType<typeof world>, clientId: string, userId: string): RMMeetingSource {
+  const [state, dispatch] = useReducer(meetingReducer, INITIAL_MEETING_STATE);
+  useEffect(() => {
+    w.users.set(clientId, userId);
+    w.listeners.set(clientId, (frame) => dispatch({ kind: 'frame', frame }));
+    dispatch({ kind: 'reset', meetingId: M });
+    void w.svc.handleAction(clientId, 'subscribe', { meetingId: M });
+  }, [w, clientId, userId]);
+  return useMemo(() => {
+    const act_ = (action: string, extra: Record<string, unknown> = {}) => { void w.svc.handleAction(clientId, action, { meetingId: M, ...extra }); };
+    const self = state.you.userId;
+    const myRoomId = breakoutRoomFor(state.breakout, self);
+    return {
+      ready: state.ready,
+      isOrganizer: state.you.organizer,
+      hands: state.hands,
+      myHandPosition: handPosition(state.hands, self),
+      toggleHand: () => act_(handPosition(state.hands, self) ? 'hand.lower' : 'hand.raise'),
+      lowerHand: (u?: string) => act_('hand.lower', u ? { userId: u } : {}),
+      lowerAllHands: () => act_('hand.lowerAll'),
+      breakout: state.breakout,
+      myRoom: myRoomId ? state.breakout.rooms.find((r) => r.id === myRoomId) ?? null : null,
+      state,
+      error: state.error,
+      configureBreakouts: (rooms, o = {}) => act_('breakout.configure', { rooms, ...o }),
+      assign: (assignments) => act_('breakout.assign', { assignments }),
+      autoAssign: (userIds) => act_('breakout.autoAssign', { userIds }),
+      openRooms: (roomIds) => act_('breakout.open', roomIds ? { roomIds } : {}),
+      closeRooms: (roomIds) => act_('breakout.close', roomIds ? { roomIds } : {}),
+      setTimer: (durationMs) => act_('breakout.timer', { durationMs }),
+      broadcast: (message) => act_('breakout.broadcast', { message }),
+      joinRoom: (roomId) => act_('breakout.join', { roomId }),
+      returnToMain: () => act_('breakout.leave'),
+      endBreakouts: () => act_('breakout.end'),
+      dismissAnnouncement: () => dispatch({ kind: 'dismissAnnouncement' }),
+    };
+  }, [state, w, clientId]);
+}
+
+function Seat({ w, clientId, userId }: { w: ReturnType<typeof world>; clientId: string; userId: string }) {
+  const meeting = useTestMeeting(w, clientId, userId);
+  const items = meetingToolbarItems(meeting, { roomsOpen: true, onToggleRooms: () => {} });
+  return (
+    <section data-testid={`seat-${userId}`}>
+      <button type="button" data-testid={`raise-${userId}`} aria-pressed={items.raise.pressed} onClick={items.raise.onClick}>{items.raise.label}</button>
+      <WrappedBreakoutRoomBanner meeting={meeting} />
+      <WrappedBreakoutRoomsPanel meeting={meeting} people={PEOPLE} data-testid={`panel-${userId}`} />
+    </section>
+  );
+}
+
+async function flush() {
+  for (let i = 0; i < 20; i++) await act(async () => { await Promise.resolve(); });
+}
+
+describe('meeting bindings over the real service', () => {
+  it('organizer creates and assigns rooms; the participant follows into theirs and back', async () => {
+    const w = world();
+    render(<><Seat w={w} clientId="c-org" userId="u-org" /><Seat w={w} clientId="c-a" userId="u-a" /><Seat w={w} clientId="c-b" userId="u-b" /></>);
+    await flush();
+    const org = screen.getByTestId('seat-u-org');
+    const ana = screen.getByTestId('seat-u-a');
+
+    // Organizer view has the create form; a participant only sees the empty state.
+    expect(within(org).getByTestId('breakout-create')).toBeInTheDocument();
+    expect(within(ana).getByTestId('panel-u-a-empty')).toBeInTheDocument();
+
+    fireEvent.change(within(org).getByLabelText('Number of rooms'), { target: { value: '2' } });
+    fireEvent.click(within(org).getByTestId('breakout-create-submit'));
+    await flush();
+    expect(within(ana).getAllByTestId('breakout-room').map((r) => r.getAttribute('data-room-state'))).toEqual(['closed', 'closed']);
+
+    // Place Ana in Room 2 by hand, then open everything.
+    const anaRow = within(org).getAllByTestId('breakout-unassigned-person').find((r) => r.getAttribute('data-user-id') === 'u-a')!;
+    const room2 = within(org).getAllByTestId('breakout-room')[1]!.getAttribute('data-room-id')!;
+    fireEvent.change(within(anaRow).getByLabelText('Move Ana'), { target: { value: room2 } });
+    await flush();
+    fireEvent.click(within(org).getByTestId('breakout-open-all'));
+    await flush();
+
+    expect(within(ana).getByRole('region', { name: 'Breakout room: Room 2' })).toBeInTheDocument();
+    expect(within(ana).getAllByTestId('breakout-room')[1]).toHaveAttribute('data-mine', 'true');
+
+    // Broadcast reaches the room banner; dismiss is local.
+    fireEvent.change(within(org).getByLabelText('Announcement to every room'), { target: { value: 'Five minutes left' } });
+    fireEvent.click(within(org).getByTestId('breakout-broadcast-send'));
+    await flush();
+    expect(within(ana).getByTestId('breakout-banner-announcement')).toHaveTextContent('Olive Organizer: Five minutes left');
+
+    // Ana returns to the main meeting; the banner goes away.
+    fireEvent.click(within(ana).getByTestId('breakout-banner-return'));
+    await flush();
+    expect(within(ana).queryByTestId('breakout-banner')).toBeNull();
+
+    // The organizer ends the session; every room closes for everyone.
+    expect(within(ana).queryByTestId('breakout-end')).toBeNull();
+    fireEvent.click(within(org).getByTestId('breakout-end'));
+    await flush();
+    expect(within(ana).getAllByTestId('breakout-room').every((r) => r.getAttribute('data-room-state') === 'closed')).toBe(true);
+    w.svc.dispose();
+  });
+
+  it('raised hands flow to the Raise button and to the rooms member list', async () => {
+    const w = world();
+    render(<><Seat w={w} clientId="c-org" userId="u-org" /><Seat w={w} clientId="c-a" userId="u-a" /></>);
+    await flush();
+    fireEvent.click(screen.getByTestId('raise-u-a'));
+    await flush();
+    expect(screen.getByTestId('raise-u-a')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('raise-u-a')).toHaveTextContent('Lower');
+    expect(screen.getByTestId('raise-u-org')).toHaveAttribute('aria-pressed', 'false');
+    fireEvent.click(screen.getByTestId('raise-u-a'));
+    await flush();
+    expect(screen.getByTestId('raise-u-a')).toHaveAttribute('aria-pressed', 'false');
+    w.svc.dispose();
+  });
+});
+
+describe('meeting adapters', () => {
+  it('adaptBreakoutRooms resolves names, hands, and the unassigned list', () => {
+    const hands = [{ userId: 'u-b', displayName: 'Ben', raisedAt: '' }];
+    const { rooms, unassigned } = adaptBreakoutRooms(
+      { phase: 'open', mode: 'assigned', rooms: [{ id: 'r1', name: 'R1', state: 'open', members: ['u-a', 'ghost'] }], returned: [], endsAt: null, announcement: null, settings: { allowReturnToMain: true } },
+      PEOPLE,
+      hands,
+    );
+    expect(rooms[0]!.members).toEqual([{ id: 'u-a', name: 'Ana', avatarUrl: undefined, handRaised: undefined }, { id: 'ghost', name: 'ghost', avatarUrl: undefined, handRaised: undefined }]);
+    expect(unassigned.map((p) => [p.id, p.handRaised])).toEqual([['u-org', undefined], ['u-b', 1]]);
+    expect(meetingHandPositions(hands).get('u-b')).toBe(1);
+  });
+});

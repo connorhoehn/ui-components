@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.458.0
+
+Meetings: a Teams-style meeting surface — the labelled meeting bar, the recording consent card, raised hands on tiles and the roster, and the breakout Rooms pane — bound to realtime-modules 0.121's `useMeeting`. Additive; no existing prop changes meaning.
+
+- `MeetingToolbar` (`/video`): status slot, labelled icon buttons as data (`MeetingToolbarItem`: `count`, `badge`, `active` pane underline, `pressed` toggle, `tone`, split `menu`, `priority`), a media group, Leave with an optional split menu. Items marked `priority: 'secondary'` fold into More below `compactBelow` (960px, measured) so nothing wired becomes unreachable. Also `MEETING_TOOLBAR_BUTTON` and `deviceMenuSections(heading, devices, selectedId, onSelect)` for Camera/Mic chevrons.
+- `MeetingStatusCluster`: meeting-options shield, `RecordingChip`, and the elapsed time (ticks from `startedAt`, or controlled `elapsedMs`).
+- `RecordingConsentNotice`: "Recording and transcription. Started by X. By attending this meeting, you agree to being included." with a privacy link and dismiss; `RECORDING_CONSENT_TITLES`.
+- `RaisedHandBadge` + `raisedHandLabel`: the hand with a queue position ("Hand raised, 2nd in line"). `ParticipantTile` gains `handRaised?: boolean | number` (in the name chip; `data-hand-raised`); `HangoutLayoutParticipant.handRaised` flows through `HangoutGrid` and `HangoutSpotlight`; `RosterParticipant.handRaised` accepts a position.
+- `BreakoutRoomsPanel`: participant list (expand for members, Open/Closed, Join, Leave or "You're here") and organizer controls (create N rooms in assigned or self-select mode, open/close all or one, assign automatically, move a person, timer, broadcast, end). Types `BreakoutRoomView`, `BreakoutPerson`, `BreakoutPanelMode`, `BreakoutPanelPhase`.
+- `BreakoutRoomBanner` + `useCountdown`: "You're in Room 2 · 04:12 left", the organizer's announcement, Return to main meeting.
+- Icons `MeetingHandIcon`, `MeetingReactIcon`, `MeetingViewIcon`, `MeetingNotesIcon`, `MeetingRoomsIcon`, `MeetingAppsIcon`, `MeetingShieldIcon`, `MeetingShareIcon`.
+- `/integrations/realtime-modules` and `/integrations/realtime`: `WrappedBreakoutRoomsPanel` (`meeting={useMeeting(lobby)}`, `people`), `WrappedBreakoutRoomBanner`, `meetingToolbarItems(meeting, { roomsOpen, onToggleRooms })` for Raise and Rooms, `adaptBreakoutRooms`, `meetingHandPositions`, `defaultRoomDrafts`; types `RMMeetingSource`, `RMBreakoutState`, `RMRaisedHand`, `RMMeetingPerson`. The hook's result is a prop, so these barrels still load on realtime-modules pins older than 0.121.
+- Stories: `Video/MeetingToolbar`, `Video/BreakoutRoomsPanel`, `Video/MeetingStage (composition)` (the whole reference picture), and one per new primitive.
+
 ## 2.457.1
 
 - `ComposerPromptDeck` facts read in the body face: values are 12px like their labels, and `mono` fields (ids, repos) use tabular figures instead of a monospace font.

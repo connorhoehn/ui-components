@@ -138,6 +138,7 @@ export function HangoutSpotlight({
         displayName={cameraTileSource.displayName}
         avatarUrl={cameraTileSource.avatarUrl}
         isMuted={cameraTileSource.isMuted}
+        handRaised={cameraTileSource.handRaised}
         isLocal={cameraTileSource.isLocal}
         isSpotlight
         fillParent
@@ -186,6 +187,7 @@ export function HangoutSpotlight({
                 displayName={p.displayName}
                 avatarUrl={p.avatarUrl}
                 isMuted={p.isMuted}
+                handRaised={p.handRaised}
                 isLocal={p.isLocal}
                 videoElement={p.videoElement}
                 onClick={onParticipantClick ? () => onParticipantClick(p.id) : undefined}

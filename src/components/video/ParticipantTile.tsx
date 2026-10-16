@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { RaisedHandBadge } from './RaisedHandBadge';
 
 export interface ParticipantTileProps {
   /** Unique identifier for keying / pin actions. */
@@ -12,6 +13,8 @@ export interface ParticipantTileProps {
   isSpeaking?: boolean;
   /** Whether to overlay a muted-mic glyph in the badge. */
   isMuted?: boolean;
+  /** Raised hand: `true`, or the 1-based queue position (shown as "✋ 2" in the name chip). Since 2.458.0. */
+  handRaised?: boolean | number;
   /** Whether this tile represents the local user — replaces the displayName label with "You". */
   isLocal?: boolean;
   /** When true, applies the "main / spotlight" emphasis style (larger border, taller aspect). */
@@ -44,6 +47,7 @@ export function ParticipantTile({
   avatarUrl,
   isSpeaking = false,
   isMuted = false,
+  handRaised,
   isLocal = false,
   isSpotlight = false,
   videoElement,
@@ -80,6 +84,7 @@ export function ParticipantTile({
       data-is-local={isLocal ? 'true' : 'false'}
       data-is-spotlight={isSpotlight ? 'true' : 'false'}
       data-is-muted={isMuted ? 'true' : 'false'}
+      data-hand-raised={handRaised ? 'true' : undefined}
       data-track-kind={videoElement ? 'camera' : 'avatar'}
     >
       {videoElement ?? (
@@ -113,6 +118,7 @@ export function ParticipantTile({
       <div className={cn('absolute bottom-1 left-1 right-1 flex items-center gap-1 bg-black/70 rounded-[3px] px-1.5 py-0.5 text-[11px] text-white overflow-hidden drop-shadow')}>
         {isLocal && <span className={cn('text-code-blue truncate font-medium')}>You</span>}
         {!isLocal && <span className="truncate font-medium">{displayName}</span>}
+        <RaisedHandBadge raised={handRaised} tone="overlay" data-testid="tile-raised-hand" />
         {isMuted && (
           <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
             <path d="M1 1l8 8M5 1v4.5" stroke="#ef4444" strokeWidth="1.5" strokeLinecap="round" />

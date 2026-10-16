@@ -10,6 +10,8 @@ export interface HangoutLayoutParticipant {
   avatarUrl?: string;
   isMuted?: boolean;
   isLocal?: boolean;
+  /** Raised hand: `true`, or the 1-based queue position. Since 2.458.0. */
+  handRaised?: boolean | number;
   /** Pre-rendered video element — typically `<video ref={…} autoPlay playsInline />`. */
   videoElement?: ReactNode;
   /** Pre-rendered screen-share video element. When ANY participant supplies

@@ -254,3 +254,22 @@ export type {
   RealtimeIntegrationsProviderProps,
 } from '../realtime/createRealtimeIntegrations';
 export type { RealtimeClientModules } from '../realtime/modules';
+
+// Meetings (2.458.0): the Rooms pane, the in-room banner and the Raise/Rooms
+// toolbar buttons bound to `useMeeting` (realtime-modules 0.121.0+). The hook's
+// result is a prop, so this barrel still loads on older realtime-modules pins.
+export {
+  WrappedBreakoutRoomsPanel,
+  WrappedBreakoutRoomBanner,
+  adaptBreakoutRooms,
+  defaultRoomDrafts,
+  meetingHandPositions,
+  meetingToolbarItems,
+} from '../realtime/meeting';
+export type {
+  RMBreakoutState,
+  RMMeetingPerson,
+  RMMeetingSource,
+  RMRaisedHand,
+  WrappedBreakoutRoomsPanelProps,
+} from '../realtime/meeting';

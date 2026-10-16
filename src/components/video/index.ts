@@ -319,3 +319,35 @@ export { DocumentCallPanel } from './DocumentCallPanel';
 export type { DocumentCallPanelProps } from './DocumentCallPanel';
 export type { CallTileParticipant } from './CallTileRow';
 export { SpeakerIcon, MonitorIcon, ExpandIcon, PhoneCallIcon, SettingsGearIcon } from './MediaIcons';
+
+// ── Meetings (2.458.0): the Teams-style meeting bar, consent notice, raised
+// hands and the breakout Rooms pane. Bind to realtime-modules' useMeeting via
+// integrations/realtime-modules (WrappedBreakoutRoomsPanel, meetingToolbarItems).
+export { MeetingToolbar, MEETING_TOOLBAR_BUTTON, deviceMenuSections } from './MeetingToolbar';
+export type { MeetingToolbarProps, MeetingToolbarItem } from './MeetingToolbar';
+export { MeetingStatusCluster } from './MeetingStatusCluster';
+export type { MeetingStatusClusterProps } from './MeetingStatusCluster';
+export { RecordingConsentNotice, RECORDING_CONSENT_TITLES } from './RecordingConsentNotice';
+export type { RecordingConsentNoticeProps, RecordingConsentKind } from './RecordingConsentNotice';
+export { RaisedHandBadge, raisedHandLabel } from './RaisedHandBadge';
+export type { RaisedHandBadgeProps } from './RaisedHandBadge';
+export { BreakoutRoomsPanel } from './BreakoutRoomsPanel';
+export type {
+  BreakoutRoomsPanelProps,
+  BreakoutRoomView,
+  BreakoutPerson,
+  BreakoutPanelMode,
+  BreakoutPanelPhase,
+} from './BreakoutRoomsPanel';
+export { BreakoutRoomBanner, useCountdown } from './BreakoutRoomBanner';
+export type { BreakoutRoomBannerProps } from './BreakoutRoomBanner';
+export {
+  MeetingHandIcon,
+  MeetingReactIcon,
+  MeetingViewIcon,
+  MeetingNotesIcon,
+  MeetingRoomsIcon,
+  MeetingAppsIcon,
+  MeetingShieldIcon,
+  MeetingShareIcon,
+} from './MeetingIcons';

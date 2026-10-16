@@ -28,6 +28,7 @@ import {
 | Call widget | `CallWidget`, `CallControls`, `CallParticipantStrip`, `CallStatsOverlay`, `MuteWhileTalkingToast` |
 | Recordings | `RecordingPlayer`, `RecordingList`, `RecordingRow`, `TranscriptOverlay` |
 | Lifecycle banners | `CallStartedBanner`, `CallingStatusPill`, `ReconnectingBanner`, `PiPButton` |
+| Meetings (Teams-style) | `MeetingToolbar`, `MeetingStatusCluster`, `RecordingConsentNotice`, `RaisedHandBadge`, `BreakoutRoomsPanel`, `BreakoutRoomBanner`, `Meeting*Icon`; bound to realtime-modules `useMeeting` by `WrappedBreakoutRoomsPanel` |
 | Misc | `ReactionOverlay`, `StatsCard`, `StatusStrip` |
 
 ## Stability
