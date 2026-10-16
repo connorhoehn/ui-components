@@ -30,7 +30,7 @@ import { n as Se } from "./RovingToolbar-B1Fai5PF.js";
 import { t as Ce } from "./Link-h2c9gcsw.js";
 import { t as we } from "./Checkbox-Jycr-rlf.js";
 import { t as Te } from "./activationKey-CjbL3LUv.js";
-import { C as Ee, E as De, H as Oe, J as ke, L as Ae, S as je, V as Me, Z as Ne } from "./BreakoutRoomsPanel-BDePp0T6.js";
+import { C as Ee, E as De, H as Oe, J as ke, L as Ae, S as je, V as Me, Z as Ne } from "./BreakoutRoomsPanel-B9Zv6Z3e.js";
 import { useCallback as U, useEffect as W, useImperativeHandle as Pe, useLayoutEffect as Fe, useMemo as G, useRef as K, useState as q } from "react";
 import { Fragment as J, jsx as Y, jsxs as X } from "react/jsx-runtime";
 //#region src/components/video/VideoPlayer.tsx
@@ -5747,22 +5747,22 @@ function ri({ title: t, participantCount: n, elapsedMs: r, people: a, documents:
 //#endregion
 //#region src/components/video/MeetingToolbar.tsx
 var ii = "relative inline-flex h-14 min-w-14 flex-col items-center justify-center gap-0.5 rounded-md px-2 text-text-secondary transition-colors duration-100 hover:bg-surface-hover hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent";
-function ai({ item: t }) {
-	let n = t.disabled && t.disabledReason ? t.disabledReason : t.title ?? t.label, r = K(null), [i, a] = q(!1), o = !!t.popover, s = o && i && !t.disabled, c = o ? s || !!t.active : t.active, l = /* @__PURE__ */ X("button", {
-		ref: r,
+function ai({ item: t, iconOnly: n = !1 }) {
+	let r = t.disabled && t.disabledReason ? t.disabledReason : t.title ?? t.label, i = K(null), [a, o] = q(!1), s = !!t.popover, c = s && a && !t.disabled, l = s ? c || !!t.active : t.active, u = /* @__PURE__ */ X("button", {
+		ref: i,
 		type: "button",
-		onClick: o ? () => a((e) => !e) : t.onClick,
+		onClick: s ? () => o((e) => !e) : t.onClick,
 		disabled: t.disabled,
-		title: n,
+		title: r,
 		"aria-label": t.count === void 0 ? t.label : `${t.label}, ${t.count}`,
 		"aria-pressed": t.pressed === void 0 ? void 0 : t.pressed,
-		"aria-haspopup": o ? "dialog" : void 0,
-		"aria-expanded": o ? s : t.active === void 0 ? void 0 : t.active,
+		"aria-haspopup": s ? "dialog" : void 0,
+		"aria-expanded": s ? c : t.active === void 0 ? void 0 : t.active,
 		"data-testid": `meeting-toolbar-${t.id}`,
-		"data-active": c ? "true" : void 0,
+		"data-active": l ? "true" : void 0,
 		"data-pressed": t.pressed ? "true" : void 0,
 		"data-tone": t.tone ?? "default",
-		className: e(ii, c && "text-primary hover:text-primary", t.pressed && "bg-primary-bg text-primary-fg hover:bg-primary-bg hover:text-primary-fg", t.tone === "danger" && "text-danger hover:bg-danger-bg hover:text-danger", t.menu && "rounded-r-none pr-1"),
+		className: e(ii, l && "text-primary hover:text-primary", t.pressed && "bg-primary-bg text-primary-fg hover:bg-primary-bg hover:text-primary-fg", t.tone === "danger" && "text-danger hover:bg-danger-bg hover:text-danger", t.menu && !n && "rounded-r-none pr-1", n && "h-12 min-w-11 px-1.5"),
 		children: [
 			/* @__PURE__ */ X("span", {
 				className: "relative inline-flex items-center gap-1",
@@ -5785,36 +5785,36 @@ function ai({ item: t }) {
 					})
 				]
 			}),
-			/* @__PURE__ */ Y(F, {
+			!n && /* @__PURE__ */ Y(F, {
 				size: "xs",
 				tone: "inherit",
 				className: "leading-tight whitespace-nowrap",
 				children: t.label
 			}),
-			c && /* @__PURE__ */ Y("span", {
+			l && /* @__PURE__ */ Y("span", {
 				"aria-hidden": !0,
 				className: "absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-primary",
 				"data-testid": `meeting-toolbar-${t.id}-active`
 			})
 		]
 	});
-	if (o) {
-		let e = () => a(!1);
-		return /* @__PURE__ */ X(J, { children: [l, /* @__PURE__ */ Y(B, {
-			trigger: r,
-			open: s,
+	if (s) {
+		let e = () => o(!1);
+		return /* @__PURE__ */ X(J, { children: [u, /* @__PURE__ */ Y(B, {
+			trigger: i,
+			open: c,
 			onClose: e,
 			placement: t.popoverPlacement ?? "bottom-start",
 			"aria-label": t.popoverLabel ?? t.label,
 			kind: "meeting-toolbar-popover",
 			"data-testid": `meeting-toolbar-${t.id}-popover`,
-			children: s && t.popover(e)
+			children: c && t.popover(e)
 		})] });
 	}
-	return t.menu ? /* @__PURE__ */ X("span", {
+	return !t.menu || n ? u : /* @__PURE__ */ X("span", {
 		className: "inline-flex items-stretch",
 		"data-testid": `meeting-toolbar-${t.id}-split`,
-		children: [l, /* @__PURE__ */ Y(me, {
+		children: [u, /* @__PURE__ */ Y(me, {
 			trigger: /* @__PURE__ */ Y(p, { size: 14 }),
 			triggerLabel: t.menuLabel ?? `${t.label} options`,
 			triggerVariant: "link",
@@ -5824,7 +5824,7 @@ function ai({ item: t }) {
 			align: "end",
 			sections: t.menu
 		})]
-	}) : l;
+	});
 }
 function oi(e) {
 	return {
@@ -5838,21 +5838,20 @@ function oi(e) {
 		"data-testid": `meeting-toolbar-more-${e.id}`
 	};
 }
-function si(e, t, n) {
-	let [r, i] = q(!1);
+function si(e, t) {
+	let [n, r] = q(Infinity);
 	return W(() => {
-		if (n !== void 0) return;
-		let r = e.current;
-		if (!r || typeof ResizeObserver > "u") return;
-		let a = () => i(r.getBoundingClientRect().width < t);
-		a();
-		let o = new ResizeObserver(a);
-		return o.observe(r), () => o.disconnect();
-	}, [
-		e,
-		t,
-		n
-	]), n ?? r;
+		if (t) return;
+		let n = e.current;
+		if (!n || typeof ResizeObserver > "u") return;
+		let i = () => {
+			let e = n.getBoundingClientRect().width;
+			r(e > 0 ? e : Infinity);
+		};
+		i();
+		let a = new ResizeObserver(i);
+		return a.observe(n), () => a.disconnect();
+	}, [e, t]), n;
 }
 function ci() {
 	return /* @__PURE__ */ Y("span", {
@@ -5860,28 +5859,40 @@ function ci() {
 		className: "mx-1 h-8 w-px shrink-0 bg-border"
 	});
 }
-function li({ start: t, items: n, media: r = [], moreSections: i = [], onLeave: a, leaveLabel: o = "Leave", leaveMenu: s, compactBelow: c = 960, compact: l, className: u, "data-testid": d = "meeting-toolbar" }) {
-	let f = Se(), p = si(f.ref, c, l), m = (e) => e.priority === "secondary" && !e.popover, h = p ? n.filter((e) => !m(e)) : n, g = p ? n.filter(m) : [], _ = [...g.length ? [{
-		items: g.map(oi),
-		"data-testid": "meeting-toolbar-more-folded"
-	}] : [], ...i];
+function li({ start: t, items: n, media: r = [], moreSections: i = [], onLeave: a, leaveLabel: o = "Leave", leaveMenu: s, compactBelow: c = 960, compact: l, phoneBelow: u = 820, phone: d, className: f, "data-testid": p = "meeting-toolbar" }) {
+	let m = Se(), h = si(m.ref, l !== void 0 && d !== void 0), g = d ?? h < u, _ = g || (l ?? h < c), v = (e) => !e.popover && (g || e.priority === "secondary"), y = _ ? n.filter((e) => !v(e)) : n, b = _ ? n.filter(v) : [], x = _ ? r.filter((e) => e.priority !== "secondary") : r, S = _ ? r.filter((e) => e.priority === "secondary") : [], C = g ? [...x.flatMap((e) => e.menu ?? []), ...s ?? []] : [], w = [...b, ...S], T = [
+		...w.length ? [{
+			items: w.map(oi),
+			"data-testid": "meeting-toolbar-more-folded"
+		}] : [],
+		...C,
+		...i
+	];
 	return /* @__PURE__ */ X("div", {
-		...f,
+		...m,
 		role: "toolbar",
 		"aria-label": "Meeting controls",
-		"data-testid": d,
-		"data-compact": p ? "true" : void 0,
-		className: e("flex min-h-16 items-center gap-1 border-b border-border bg-surface px-3", u),
+		"data-testid": p,
+		"data-compact": _ ? "true" : void 0,
+		"data-layout": g ? "phone" : void 0,
+		className: e("flex min-h-16 items-center gap-1 border-b border-border bg-surface", g ? "flex-wrap px-2 pt-1" : "px-3", f),
 		children: [
 			/* @__PURE__ */ Y("div", {
-				className: "flex min-w-0 flex-1 items-center gap-3",
+				className: e("flex min-w-0 items-center gap-3 overflow-hidden", g ? "basis-full" : "flex-1"),
 				children: t
+			}),
+			g && /* @__PURE__ */ Y("span", {
+				"aria-hidden": !0,
+				className: "flex-1"
 			}),
 			/* @__PURE__ */ X("div", {
 				className: "flex shrink-0 items-center gap-0.5",
-				"data-testid": `${d}-items`,
-				children: [h.map((e) => /* @__PURE__ */ Y(ai, { item: e }, e.id)), _.length > 0 && /* @__PURE__ */ Y(me, {
-					trigger: /* @__PURE__ */ X(J, { children: [/* @__PURE__ */ Y(A, { size: 20 }), /* @__PURE__ */ Y(F, {
+				"data-testid": `${p}-items`,
+				children: [y.map((e) => /* @__PURE__ */ Y(ai, {
+					item: e,
+					iconOnly: g
+				}, e.id)), T.length > 0 && /* @__PURE__ */ Y(me, {
+					trigger: /* @__PURE__ */ X(J, { children: [/* @__PURE__ */ Y(A, { size: 20 }), !g && /* @__PURE__ */ Y(F, {
 						size: "xs",
 						tone: "inherit",
 						className: "leading-tight",
@@ -5889,28 +5900,34 @@ function li({ start: t, items: n, media: r = [], moreSections: i = [], onLeave: 
 					})] }),
 					triggerLabel: "More",
 					triggerVariant: "link",
-					triggerClassName: e("relative inline-flex h-14 min-w-14 flex-col items-center justify-center gap-0.5 rounded-md px-2 text-text-secondary transition-colors duration-100 hover:bg-surface-hover hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent", "gap-0.5 font-normal"),
+					triggerClassName: e("relative inline-flex h-14 min-w-14 flex-col items-center justify-center gap-0.5 rounded-md px-2 text-text-secondary transition-colors duration-100 hover:bg-surface-hover hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent", "gap-0.5 font-normal", g && "h-12 min-w-11 px-1.5"),
 					triggerTestId: "meeting-toolbar-more",
 					align: "end",
-					sections: _
+					sections: T
 				})]
 			}),
-			r.length > 0 && /* @__PURE__ */ Y(ci, {}),
-			r.length > 0 && /* @__PURE__ */ Y("div", {
+			x.length > 0 && /* @__PURE__ */ Y(ci, {}),
+			x.length > 0 && /* @__PURE__ */ Y("div", {
 				className: "flex shrink-0 items-center gap-0.5",
-				"data-testid": `${d}-media`,
-				children: r.map((e) => /* @__PURE__ */ Y(ai, { item: e }, e.id))
+				"data-testid": `${p}-media`,
+				children: x.map((e) => /* @__PURE__ */ Y(ai, {
+					item: e,
+					iconOnly: g
+				}, e.id))
 			}),
 			/* @__PURE__ */ Y(ci, {}),
-			/* @__PURE__ */ Y(ai, { item: {
-				id: "leave",
-				label: o,
-				icon: /* @__PURE__ */ Y(M, { size: 20 }),
-				onClick: a,
-				tone: "danger",
-				menu: s,
-				menuLabel: "Leave options"
-			} })
+			/* @__PURE__ */ Y(ai, {
+				item: {
+					id: "leave",
+					label: o,
+					icon: /* @__PURE__ */ Y(M, { size: 20 }),
+					onClick: a,
+					tone: "danger",
+					menu: s,
+					menuLabel: "Leave options"
+				},
+				iconOnly: g
+			})
 		]
 	});
 }

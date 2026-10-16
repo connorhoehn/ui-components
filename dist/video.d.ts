@@ -2136,7 +2136,7 @@ export declare interface MeetingStatusClusterProps {
     'data-testid'?: string;
 }
 
-export declare function MeetingToolbar({ start, items, media, moreSections, onLeave, leaveLabel, leaveMenu, compactBelow, compact, className, 'data-testid': testId, }: MeetingToolbarProps): JSX.Element;
+export declare function MeetingToolbar({ start, items, media, moreSections, onLeave, leaveLabel, leaveMenu, compactBelow, compact, phoneBelow, phone: forcedPhone, className, 'data-testid': testId, }: MeetingToolbarProps): JSX.Element;
 
 export declare interface MeetingToolbarItem {
     /** Stable id; the button's testid is `meeting-toolbar-<id>`. */
@@ -2197,6 +2197,10 @@ export declare interface MeetingToolbarProps {
     compactBelow?: number;
     /** Force compact (tests, a known-narrow host); otherwise measured. */
     compact?: boolean;
+    /** Width (px) below which the phone layout applies (phones and tablets in portrait). Default 820. Since 2.472.0. */
+    phoneBelow?: number;
+    /** Force the phone layout (tests, a known phone host); otherwise measured. */
+    phone?: boolean;
     className?: string;
     'data-testid'?: string;
 }

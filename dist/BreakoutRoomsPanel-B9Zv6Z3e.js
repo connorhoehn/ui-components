@@ -3162,9 +3162,12 @@ function Qt({ roomName: n, endsAt: i, clockOffsetMs: a = 0, closing: s = !1, ann
 		"data-testid": f,
 		className: e("flex flex-col gap-1 border-b border-border bg-info-bg px-4 py-2 text-info-fg", d),
 		children: [/* @__PURE__ */ W("div", {
-			className: "flex items-center gap-3",
+			className: "flex flex-wrap items-center gap-x-3 gap-y-1",
 			children: [
-				/* @__PURE__ */ U(q, { size: 18 }),
+				/* @__PURE__ */ U(q, {
+					size: 18,
+					className: "shrink-0"
+				}),
 				/* @__PURE__ */ W(b, {
 					size: "sm",
 					weight: "semibold",

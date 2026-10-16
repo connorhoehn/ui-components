@@ -21,7 +21,7 @@ import { t as C } from "./FileUploadDrop-DrckU_7j.js";
 import { t as w } from "./ActivityFeed-Cp6MhNab.js";
 import { a as T, i as E, n as D, o as O } from "./DockedAside-BDA5tJ1T.js";
 import { d as k, dt as A, lt as j, n as M, t as N, u as P, ut as F } from "./ConversationSurface-Cj3TMoE4.js";
-import { E as I, G as ee, R as te, T as ne, Y as re, _ as ie, i as L, k as R, n as ae, q as oe, s as z, t as se, w as B, x as ce, y as le } from "./BreakoutRoomsPanel-BDePp0T6.js";
+import { E as I, G as ee, R as te, T as ne, Y as re, _ as ie, i as L, k as R, n as ae, q as oe, s as z, t as se, w as B, x as ce, y as le } from "./BreakoutRoomsPanel-B9Zv6Z3e.js";
 import { t as ue } from "./useActiveSpeaker-BGKJU3Lb.js";
 import { c as V, o as de, s as fe } from "./useDocumentImageUpload-3W74XPh6.js";
 import { Component as pe, createContext as H, createElement as me, useCallback as U, useContext as W, useEffect as G, useMemo as K, useRef as q, useState as J } from "react";
