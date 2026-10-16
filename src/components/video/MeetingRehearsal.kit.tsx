@@ -90,12 +90,12 @@ export function RehearsalSeat({
         onLeave={() => {}}
       />
       <WrappedBreakoutRoomBanner meeting={meeting} />
-      <div className="flex min-h-0 flex-1">
-        <div className="min-w-0 flex-1 p-3">
+      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
+        <div className="min-h-0 min-w-0 flex-1 p-3">
           <HangoutGrid participants={tiles} fillParent className="h-full" />
         </div>
         {pane && (
-          <div className="flex w-[22rem] shrink-0 flex-col border-l border-border" data-testid={`seat-${person.userId}-pane`}>
+          <div className="flex max-h-[55%] w-full shrink-0 flex-col overflow-y-auto border-t border-border md:max-h-none md:w-[22rem] md:border-l md:border-t-0" data-testid={`seat-${person.userId}-pane`}>
             {pane === 'rooms' && <WrappedBreakoutRoomsPanel meeting={meeting} people={people} onClose={() => setPane(null)} />}
             {pane === 'people' && <RosterPanel {...meetingRosterProps(meeting, roster)} />}
             {pane === 'chat' && (

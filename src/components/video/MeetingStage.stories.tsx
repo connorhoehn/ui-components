@@ -34,7 +34,6 @@ function Stage({ inRoom }: { inRoom?: boolean }) {
   return (
     <div className="flex h-[760px] w-full flex-col bg-surface">
       <MeetingToolbar
-        compact={false}
         start={<MeetingStatusCluster recording={{ armed: true, active: true }} elapsedMs={(32 * 60 + 52) * 1000} onOpenOptions={() => {}} />}
         items={[
           { id: 'chat', label: 'Chat', icon: <ChatBubbleIcon />, onClick: () => {} },
@@ -47,7 +46,7 @@ function Stage({ inRoom }: { inRoom?: boolean }) {
         media={[
           { id: 'camera', label: 'Camera', icon: <VideoOffIcon />, tone: 'off', onClick: () => {}, menu: [{ items: [{ label: 'FaceTime HD Camera', checked: true }] }] },
           { id: 'mic', label: 'Mic', icon: <MicOffIcon />, tone: 'off', onClick: () => {}, menu: [{ items: [{ label: 'MacBook Pro Microphone', checked: true }] }] },
-          { id: 'share', label: 'Share', icon: <MeetingShareIcon />, onClick: () => {} },
+          { id: 'share', label: 'Share', icon: <MeetingShareIcon />, priority: 'secondary', onClick: () => {} },
         ]}
         onLeave={() => {}}
       />
@@ -60,13 +59,13 @@ function Stage({ inRoom }: { inRoom?: boolean }) {
           onReturnToMain={() => {}}
         />
       )}
-      <div className="flex min-h-0 flex-1">
-        <div className="relative min-w-0 flex-1 p-3">
+      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
+        <div className="relative min-h-0 min-w-0 flex-1 p-3">
           <RecordingConsentNotice open={consent} kind="both" startedBy="Rowan Ellery-Castellanos" privacyHref="#privacy" onDismiss={() => setConsent(false)} />
-          <HangoutGrid participants={PEOPLE} localParticipant={{ id: 'me', displayName: 'Connor Hoehn', isLocal: true, isMuted: true }} activeSpeakerId="p13" fillParent className="h-full" />
+          <HangoutGrid participants={PEOPLE} localParticipant={{ id: 'me', displayName: 'Morgan Reyes', isLocal: true, isMuted: true }} activeSpeakerId="p13" fillParent className="h-full" />
         </div>
         {rooms && (
-          <div className="w-[22rem] shrink-0 border-l border-border">
+          <div className="max-h-[50%] w-full shrink-0 overflow-y-auto border-t border-border md:max-h-none md:w-[22rem] md:border-l md:border-t-0">
             <BreakoutRoomsPanel rooms={ROOMS} phase="open" mode="self-select" onJoin={() => {}} onClose={() => setRooms(false)} />
           </div>
         )}

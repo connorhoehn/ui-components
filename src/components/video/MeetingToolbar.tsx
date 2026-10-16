@@ -14,6 +14,12 @@
 // and focus returns to the button. Such an item never folds into More, which
 // is a plain menu and has nowhere to put the panel.
 //
+// Below `phoneBelow` (default 820px, 2.472.0) the bar switches to a phone
+// layout: icon-only buttons (the label stays the accessible name), every item
+// folds into More except popover items (More cannot host a panel), media
+// stays as plain toggles unless marked `secondary`, and the split chevrons'
+// menus (device lists, Leave options) move into More.
+//
 // It follows the page theme (surface tokens), like the reference: a light bar
 // above the stage, not the always-dark call chrome of MediaControlsBar.
 
@@ -86,6 +92,10 @@ export interface MeetingToolbarProps {
   compactBelow?: number;
   /** Force compact (tests, a known-narrow host); otherwise measured. */
   compact?: boolean;
+  /** Width (px) below which the phone layout applies (phones and tablets in portrait). Default 820. Since 2.472.0. */
+  phoneBelow?: number;
+  /** Force the phone layout (tests, a known phone host); otherwise measured. */
+  phone?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -97,7 +107,7 @@ export const MEETING_TOOLBAR_BUTTON =
   'focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary cursor-pointer ' +
   'disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent';
 
-function ToolbarButton({ item }: { item: MeetingToolbarItem }) {
+function ToolbarButton({ item, iconOnly = false }: { item: MeetingToolbarItem; iconOnly?: boolean }) {
   const tip = item.disabled && item.disabledReason ? item.disabledReason : item.title ?? item.label;
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [panelOpen, setPanelOpen] = useState(false);
@@ -124,7 +134,8 @@ function ToolbarButton({ item }: { item: MeetingToolbarItem }) {
         active && 'text-primary hover:text-primary',
         item.pressed && 'bg-primary-bg text-primary-fg hover:bg-primary-bg hover:text-primary-fg',
         item.tone === 'danger' && 'text-danger hover:bg-danger-bg hover:text-danger',
-        item.menu && 'rounded-r-none pr-1',
+        item.menu && !iconOnly && 'rounded-r-none pr-1',
+        iconOnly && 'h-12 min-w-11 px-1.5',
       )}
     >
       <span className="relative inline-flex items-center gap-1">
@@ -144,7 +155,7 @@ function ToolbarButton({ item }: { item: MeetingToolbarItem }) {
           />
         )}
       </span>
-      <T size="xs" tone="inherit" className="leading-tight whitespace-nowrap">{item.label}</T>
+      {!iconOnly && <T size="xs" tone="inherit" className="leading-tight whitespace-nowrap">{item.label}</T>}
       {active && (
         <span aria-hidden className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-primary" data-testid={`meeting-toolbar-${item.id}-active`} />
       )}
@@ -169,7 +180,7 @@ function ToolbarButton({ item }: { item: MeetingToolbarItem }) {
       </>
     );
   }
-  if (!item.menu) return button;
+  if (!item.menu || iconOnly) return button;
   return (
     <span className="inline-flex items-stretch" data-testid={`meeting-toolbar-${item.id}-split`}>
       {button}
@@ -200,19 +211,21 @@ function asMenuItem(item: MeetingToolbarItem): DropdownMenuItem {
   };
 }
 
-function useNarrow(ref: React.RefObject<HTMLElement | null>, below: number, forced: boolean | undefined): boolean {
-  const [narrow, setNarrow] = useState(false);
+/** The bar's measured width; Infinity until measured (or without ResizeObserver). */
+function useWidth(ref: React.RefObject<HTMLElement | null>, skip: boolean): number {
+  const [width, setWidth] = useState(Infinity);
   useEffect(() => {
-    if (forced !== undefined) return undefined;
+    if (skip) return undefined;
     const el = ref.current;
     if (!el || typeof ResizeObserver === 'undefined') return undefined;
-    const measure = () => setNarrow(el.getBoundingClientRect().width < below);
+    // Zero means not laid out (hidden, or jsdom): treat as unmeasured, not as a phone.
+    const measure = () => { const w = el.getBoundingClientRect().width; setWidth(w > 0 ? w : Infinity); };
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(el);
     return () => ro.disconnect();
-  }, [ref, below, forced]);
-  return forced ?? narrow;
+  }, [ref, skip]);
+  return width;
 }
 
 function Divider() {
@@ -229,18 +242,32 @@ export function MeetingToolbar({
   leaveMenu,
   compactBelow = 960,
   compact,
+  phoneBelow = 820,
+  phone: forcedPhone,
   className,
   'data-testid': testId = 'meeting-toolbar',
 }: MeetingToolbarProps) {
   // WAI-ARIA toolbar (2.458.2): the bar is ONE tab stop and the arrow keys,
   // Home and End move within it, skipping disabled buttons and open menus.
   const roving = useRovingToolbar();
-  const narrow = useNarrow(roving.ref, compactBelow, compact);
-  const folds = (i: MeetingToolbarItem) => i.priority === 'secondary' && !i.popover;
+  const width = useWidth(roving.ref, compact !== undefined && forcedPhone !== undefined);
+  const phone = forcedPhone ?? width < phoneBelow;
+  const narrow = phone || (compact ?? width < compactBelow);
+  // Popover items never fold: More is a plain menu with nowhere to put a panel.
+  const folds = (i: MeetingToolbarItem) => !i.popover && (phone || i.priority === 'secondary');
   const shown = narrow ? items.filter((i) => !folds(i)) : items;
   const folded = narrow ? items.filter(folds) : [];
+  // Secondary media (Share) folds whenever the bar is compact, not only on a phone.
+  const mediaShown = narrow ? media.filter((m) => m.priority !== 'secondary') : media;
+  const mediaFolded = narrow ? media.filter((m) => m.priority === 'secondary') : [];
+  // On a phone the split chevrons go; their menus (device lists, Leave options) move into More.
+  const movedMenus: DropdownMenuSection[] = phone
+    ? [...mediaShown.flatMap((m) => m.menu ?? []), ...(leaveMenu ?? [])]
+    : [];
+  const allFolded = [...folded, ...mediaFolded];
   const more: DropdownMenuSection[] = [
-    ...(folded.length ? [{ items: folded.map(asMenuItem), 'data-testid': 'meeting-toolbar-more-folded' }] : []),
+    ...(allFolded.length ? [{ items: allFolded.map(asMenuItem), 'data-testid': 'meeting-toolbar-more-folded' }] : []),
+    ...movedMenus,
     ...moreSections,
   ];
 
@@ -251,32 +278,36 @@ export function MeetingToolbar({
       aria-label="Meeting controls"
       data-testid={testId}
       data-compact={narrow ? 'true' : undefined}
-      className={cn('flex min-h-16 items-center gap-1 border-b border-border bg-surface px-3', className)}
+      data-layout={phone ? 'phone' : undefined}
+      className={cn('flex min-h-16 items-center gap-1 border-b border-border bg-surface', phone ? 'flex-wrap px-2 pt-1' : 'px-3', className)}
     >
-      <div className="flex min-w-0 flex-1 items-center gap-3">{start}</div>
+      {/* On a phone the status cluster gets its own row above the buttons, as Teams mobile shows the time. */}
+      {/* overflow-hidden: a cramped bar clips the cluster rather than drawing buttons over it. */}
+      <div className={cn('flex min-w-0 items-center gap-3 overflow-hidden', phone ? 'basis-full' : 'flex-1')}>{start}</div>
+      {phone && <span aria-hidden className="flex-1" />}
       <div className="flex shrink-0 items-center gap-0.5" data-testid={`${testId}-items`}>
-        {shown.map((item) => <ToolbarButton key={item.id} item={item} />)}
+        {shown.map((item) => <ToolbarButton key={item.id} item={item} iconOnly={phone} />)}
         {more.length > 0 && (
           <DropdownMenu
             trigger={(
               <>
                 <MoreHorizontalIcon size={20} />
-                <T size="xs" tone="inherit" className="leading-tight">More</T>
+                {!phone && <T size="xs" tone="inherit" className="leading-tight">More</T>}
               </>
             )}
             triggerLabel="More"
             triggerVariant="link"
-            triggerClassName={cn(MEETING_TOOLBAR_BUTTON, 'gap-0.5 font-normal')}
+            triggerClassName={cn(MEETING_TOOLBAR_BUTTON, 'gap-0.5 font-normal', phone && 'h-12 min-w-11 px-1.5')}
             triggerTestId="meeting-toolbar-more"
             align="end"
             sections={more}
           />
         )}
       </div>
-      {media.length > 0 && <Divider />}
-      {media.length > 0 && (
+      {mediaShown.length > 0 && <Divider />}
+      {mediaShown.length > 0 && (
         <div className="flex shrink-0 items-center gap-0.5" data-testid={`${testId}-media`}>
-          {media.map((item) => <ToolbarButton key={item.id} item={item} />)}
+          {mediaShown.map((item) => <ToolbarButton key={item.id} item={item} iconOnly={phone} />)}
         </div>
       )}
       <Divider />
@@ -290,6 +321,7 @@ export function MeetingToolbar({
           menu: leaveMenu,
           menuLabel: 'Leave options',
         }}
+        iconOnly={phone}
       />
     </div>
   );

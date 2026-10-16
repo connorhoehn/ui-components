@@ -38,7 +38,7 @@ function OrganizerChat() {
     send: (content) => setMessages((list) => [...list, { id: `m${list.length + 1}`, clientId: 'c2', userId: 'u-me', displayName: 'Rowan Ellery', content, timestamp: new Date().toISOString() }]),
   });
   return (
-    <div className="flex h-[560px] w-[380px] flex-col border border-border bg-surface">
+    <div className="flex h-[560px] w-full max-w-[380px] flex-col border border-border bg-surface">
       <ChatPanel messages={chat.withAnnouncements(messages)} currentUserId="u-me" onSend={chat.onSend} renderMessageReferences={chat.renderMessageReferences} dock={chat.dock} fill />
     </div>
   );

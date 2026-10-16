@@ -69,8 +69,9 @@ export function BreakoutRoomBanner({
       data-testid={testId}
       className={cn('flex flex-col gap-1 border-b border-border bg-info-bg px-4 py-2 text-info-fg', className)}
     >
-      <div className="flex items-center gap-3">
-        <MeetingRoomsIcon size={18} />
+      {/* Wraps on a phone: the Return button drops under the room name rather than squeezing it. */}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <MeetingRoomsIcon size={18} className="shrink-0" />
         <T size="sm" weight="semibold" tone="inherit" className="min-w-0 truncate">You're in {roomName}</T>
         {left !== null && (
           <T

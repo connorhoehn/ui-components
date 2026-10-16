@@ -215,4 +215,42 @@ describe('MeetingToolbar keyboard (WAI-ARIA toolbar, 2.458.2)', () => {
     fireEvent.click(screen.getByTestId('meeting-toolbar-react'));
     expect(screen.queryByTestId('meeting-toolbar-react-popover')).toBeNull();
   });
+
+  it('phone layout: icon-only, items fold into More except popovers, device and Leave menus move into More', () => {
+    const onCamera = vi.fn();
+    render(
+      <MeetingToolbar
+        phone
+        items={[
+          ...items(),
+          { id: 'react', label: 'React', icon: <MeetingViewIcon />, popover: () => <span>picker</span> },
+        ]}
+        media={[
+          { id: 'camera', label: 'Camera', icon: <VideoOffIcon />, onClick: onCamera, menu: deviceMenuSections('Camera', [{ deviceId: 'a', label: 'Cam A' }], 'a', () => {}) },
+          { id: 'share', label: 'Share', icon: <UsersIcon />, priority: 'secondary', onClick: vi.fn() },
+        ]}
+        leaveMenu={[{ items: [{ label: 'End meeting for everyone', onSelect: vi.fn(), 'data-testid': 'end-all' }] }]}
+        onLeave={() => {}}
+      />,
+    );
+    const bar = screen.getByTestId('meeting-toolbar');
+    expect(bar).toHaveAttribute('data-layout', 'phone');
+    // Visible: React (popover), Camera, More, Leave — icon-only, named by label.
+    expect(screen.queryByTestId('meeting-toolbar-people')).toBeNull();
+    expect(screen.queryByTestId('meeting-toolbar-share')).toBeNull();
+    expect(screen.getByTestId('meeting-toolbar-react')).toBeInTheDocument();
+    const camera = screen.getByTestId('meeting-toolbar-camera');
+    expect(camera).toHaveAccessibleName('Camera');
+    expect(within(camera).queryByText('Camera')).toBeNull();
+    expect(screen.queryByTestId('meeting-toolbar-camera-menu')).toBeNull();
+    fireEvent.click(camera);
+    expect(onCamera).toHaveBeenCalled();
+    // More holds the folded items, Share, the device list and Leave options.
+    fireEvent.click(screen.getByTestId('meeting-toolbar-more'));
+    expect(screen.getByTestId('meeting-toolbar-more-people')).toBeInTheDocument();
+    expect(screen.getByTestId('meeting-toolbar-more-share')).toBeInTheDocument();
+    expect(screen.getByTestId('device-a')).toBeInTheDocument();
+    expect(screen.getByTestId('end-all')).toBeInTheDocument();
+  });
 });
+

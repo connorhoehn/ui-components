@@ -35,7 +35,7 @@ function Bar({ compact }: { compact?: boolean }) {
   const media: MeetingToolbarItem[] = [
     { id: 'camera', label: 'Camera', icon: cam ? <VideoIcon /> : <VideoOffIcon />, tone: cam ? 'default' : 'off', onClick: () => setCam((v) => !v), menu: deviceMenuSections('Camera', CAMERAS, camId, setCamId) },
     { id: 'mic', label: 'Mic', icon: mic ? <MicIcon /> : <MicOffIcon />, tone: mic ? 'default' : 'off', onClick: () => setMic((v) => !v), menu: deviceMenuSections('Microphone', MICS, micId, setMicId) },
-    { id: 'share', label: 'Share', icon: <MeetingShareIcon />, onClick: () => {} },
+    { id: 'share', label: 'Share', icon: <MeetingShareIcon />, priority: 'secondary', onClick: () => {} },
   ];
   return (
     <MeetingToolbar
@@ -71,3 +71,10 @@ export const Compact: Story = {
   args: { items: [], onLeave: () => {} },
   render: () => <Bar compact />,
 };
+
+/** A phone (2.472.0): icon-only; items, Share and the device menus fold into More; React stays. */
+export const Phone: Story = {
+  args: { items: [], onLeave: () => {} },
+  render: () => <div className="w-full max-w-[390px] border border-border"><Bar /></div>,
+};
+

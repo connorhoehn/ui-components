@@ -21,12 +21,15 @@ function Rehearsal() {
   useEffect(() => () => loop.dispose(), [loop]);
   return (
     <div className="flex w-full flex-col gap-3">
+      {/* The viewer switch is story chrome; on a phone it scrolls inside its own row. */}
+      <div className="max-w-full overflow-x-auto">
       <SegmentedControl
         aria-label="Viewing as"
         value={viewer}
         onChange={setViewer}
         options={PEOPLE.map((p, i) => ({ value: p.userId, label: i === 0 ? `${p.displayName} (organizer)` : p.displayName }))}
       />
+      </div>
       {/* Rowan mounts first, so he subscribes first and organizes. */}
       {PEOPLE.map((p) => (
         <RehearsalSeat key={p.userId} loop={loop} chat={chat} person={p} people={PEOPLE} hidden={p.userId !== viewer} />

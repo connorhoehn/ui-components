@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.472.0
+
+- `MeetingToolbar` phone layout below `phoneBelow` (default 820px, phones and tablets in portrait; `phone` forces it): the status cluster takes its own row, buttons go icon-only (the label stays the accessible name), every item folds into More except popover items, media stays as plain toggles unless marked `secondary`, and the split chevrons' menus (device lists, Leave options) move into More. At 390px the bar was 884px wide. Compact mode now also folds secondary media, and a cramped status cluster clips instead of sitting under the buttons.
+- `BreakoutRoomBanner` wraps on a narrow screen: Return to main meeting drops under the room name instead of squeezing it.
+- Stories: `Video/MeetingToolbar` Phone; the stage, pane, chat and rehearsal stories stack or size fluidly, so none scrolls sideways at 390 or 768px (light and dark checked).
+
 ## 2.471.0
 
 - `useMeetingChat` seeds the thread from the server's announcement history (realtime-modules 0.130 `breakout.announcements`), deduped with what arrives live, so a late joiner or a reload sees past announcements, not only the latest. `RMBreakoutState.announcements` is optional; older pins show what arrives live, as before.

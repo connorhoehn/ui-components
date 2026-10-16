@@ -13,7 +13,7 @@ const meta = {
   component: BreakoutRoomsPanel,
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
-  decorators: [(Story) => <div className="flex h-[640px] w-[360px] overflow-hidden rounded-lg border border-border"><Story /></div>],
+  decorators: [(Story) => <div className="flex h-[640px] w-full max-w-[360px] overflow-hidden rounded-lg border border-border"><Story /></div>],
 } satisfies Meta<typeof BreakoutRoomsPanel>;
 
 export default meta;
