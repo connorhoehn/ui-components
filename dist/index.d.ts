@@ -14633,6 +14633,9 @@ declare type OnMessageFn_8 = (handler: (msg: GatewayMessage) => void) => () => v
 
 declare type OnMessageFn_9 = (handler: (msg: GatewayMessage) => void) => () => void;
 
+/** Raised hands first in queue order; a stable sort, so ties keep the caller's order. */
+export declare function orderRosterByHands(participants: readonly RosterParticipant[]): RosterParticipant[];
+
 /**
  * The zoom cluster's box in the canvas's bottom-right corner, margins
  * included (`bottom-3 right-3` + a 34px-tall, ~158px-wide toolbar). The fit
@@ -19208,7 +19211,7 @@ export declare interface RoomMemberItem {
 
 export declare type RoomsOnMessageFn = (handler: (msg: GatewayMessage) => void) => () => void;
 
-export declare function RosterPanel({ participants, activeSpeakerId, onParticipantClick, count, title, footer, tone, className, }: RosterPanelProps): JSX.Element;
+export declare function RosterPanel({ participants, activeSpeakerId, onParticipantClick, count, title, footer, tone, raisedHandsFirst, onLowerHand, onLowerAllHands, className, }: RosterPanelProps): JSX.Element;
 
 export declare interface RosterPanelProps {
     participants: RosterParticipant[];
@@ -19225,6 +19228,16 @@ export declare interface RosterPanelProps {
      *  light-only, so the default is a white slab inside the dark call
      *  widget — 2026-08-25 audit P0-3). */
     tone?: 'light' | 'dark';
+    /**
+     * Put raised hands at the top in queue order (numbered positions first,
+     * then unnumbered hands), everyone else after in the given order. Default
+     * false: the list keeps the caller's order.
+     */
+    raisedHandsFirst?: boolean;
+    /** Organizer: lower one person's hand. Shown as Lower on rows with a hand up. */
+    onLowerHand?: (id: string) => void;
+    /** Organizer: lower every hand. Shown in the header while any hand is up. */
+    onLowerAllHands?: () => void;
     className?: string;
 }
 

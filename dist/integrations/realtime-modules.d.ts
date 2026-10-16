@@ -2395,6 +2395,15 @@ declare type MediaPermission = 'prompt' | 'granted' | 'denied' | 'unavailable';
 /** userId → 1-based hand position. Feed `handRaised` on tiles and roster rows. */
 export declare function meetingHandPositions(hands: readonly RMRaisedHand[]): Map<string, number>;
 
+/**
+ * The People pane's hands queue: spread onto `RosterPanel`. Each participant
+ * (keyed by the meeting's userId) gets its queue position, raised hands sort
+ * to the top, and an organizer gets Lower and Lower all hands.
+ *
+ *   <RosterPanel {...meetingRosterProps(meeting, roster)} />
+ */
+export declare function meetingRosterProps(meeting: Pick<RMMeetingSource, 'hands' | 'isOrganizer' | 'lowerHand' | 'lowerAllHands'>, participants: readonly RosterParticipant[]): Pick<RosterPanelProps, 'participants' | 'raisedHandsFirst' | 'onLowerHand' | 'onLowerAllHands'>;
+
 declare interface MeetingToolbarItem {
     /** Stable id; the button's testid is `meeting-toolbar-<id>`. */
     id: string;
@@ -3497,6 +3506,45 @@ export declare interface RMUseVideoHangoutReturn {
 }
 
 declare type RoomsIndexSubscriber_2 = NonNullable<HangoutRoomsSectionProps['occupancyAdapter']>;
+
+declare interface RosterPanelProps {
+    participants: RosterParticipant[];
+    activeSpeakerId?: string | null;
+    /** Click handler per row — e.g. promote to spotlight. */
+    onParticipantClick?: (id: string) => void;
+    /** Total-participants count shown in header. Defaults to participants.length. */
+    count?: number;
+    /** Optional header — e.g. "In this call". Default "Participants". */
+    title?: string;
+    /** Optional footer — e.g. an "+ Add" button. */
+    footer?: ReactNode;
+    /** 'dark' renders on black call chrome (the shipped token palette is
+     *  light-only, so the default is a white slab inside the dark call
+     *  widget — 2026-08-25 audit P0-3). */
+    tone?: 'light' | 'dark';
+    /**
+     * Put raised hands at the top in queue order (numbered positions first,
+     * then unnumbered hands), everyone else after in the given order. Default
+     * false: the list keeps the caller's order.
+     */
+    raisedHandsFirst?: boolean;
+    /** Organizer: lower one person's hand. Shown as Lower on rows with a hand up. */
+    onLowerHand?: (id: string) => void;
+    /** Organizer: lower every hand. Shown in the header while any hand is up. */
+    onLowerAllHands?: () => void;
+    className?: string;
+}
+
+declare interface RosterParticipant {
+    id: string;
+    displayName: string;
+    avatarUrl?: string;
+    isMuted?: boolean;
+    isLocal?: boolean;
+    isScreenSharing?: boolean;
+    /** `true`, or the 1-based queue position (shown beside the hand since 2.458.0). */
+    handRaised?: boolean | number;
+}
 
 /** Strip non-alphanumeric, lowercase, hyphenate. Mirrors typical
  *  server-side slug generation closely enough for a preview UI. */

@@ -2200,6 +2200,9 @@ export declare interface NetworkQualityBadgeProps {
     style?: CSSProperties;
 }
 
+/** Raised hands first in queue order; a stable sort, so ties keep the caller's order. */
+export declare function orderRosterByHands(participants: readonly RosterParticipant[]): RosterParticipant[];
+
 export declare interface Participant {
     id: string;
     displayName: string;
@@ -2608,7 +2611,7 @@ export declare interface ReviewDocumentListProps {
     rowTestIdPrefix?: string;
 }
 
-export declare function RosterPanel({ participants, activeSpeakerId, onParticipantClick, count, title, footer, tone, className, }: RosterPanelProps): JSX.Element;
+export declare function RosterPanel({ participants, activeSpeakerId, onParticipantClick, count, title, footer, tone, raisedHandsFirst, onLowerHand, onLowerAllHands, className, }: RosterPanelProps): JSX.Element;
 
 export declare interface RosterPanelProps {
     participants: RosterParticipant[];
@@ -2625,6 +2628,16 @@ export declare interface RosterPanelProps {
      *  light-only, so the default is a white slab inside the dark call
      *  widget — 2026-08-25 audit P0-3). */
     tone?: 'light' | 'dark';
+    /**
+     * Put raised hands at the top in queue order (numbered positions first,
+     * then unnumbered hands), everyone else after in the given order. Default
+     * false: the list keeps the caller's order.
+     */
+    raisedHandsFirst?: boolean;
+    /** Organizer: lower one person's hand. Shown as Lower on rows with a hand up. */
+    onLowerHand?: (id: string) => void;
+    /** Organizer: lower every hand. Shown in the header while any hand is up. */
+    onLowerAllHands?: () => void;
     className?: string;
 }
 

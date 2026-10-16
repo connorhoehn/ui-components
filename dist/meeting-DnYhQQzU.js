@@ -2055,7 +2055,19 @@ function an({ devices: e, settings: t, cameraOn: n, ...r }) {
 function on(e) {
 	return new Map(e.map((e, t) => [e.userId, t + 1]));
 }
-function sn(e, t, n = []) {
+function sn(e, t) {
+	let n = on(e.hands);
+	return {
+		participants: t.map((e) => ({
+			...e,
+			handRaised: n.get(e.id)
+		})),
+		raisedHandsFirst: !0,
+		onLowerHand: e.isOrganizer ? (t) => e.lowerHand(t) : void 0,
+		onLowerAllHands: e.isOrganizer ? () => e.lowerAllHands() : void 0
+	};
+}
+function cn(e, t, n = []) {
 	let r = new Map(t.map((e) => [e.userId, e])), i = on(n), a = (e) => {
 		let t = r.get(e);
 		return {
@@ -2075,11 +2087,11 @@ function sn(e, t, n = []) {
 		unassigned: t.filter((e) => !o.has(e.userId)).map((e) => a(e.userId))
 	};
 }
-function cn(e) {
+function ln(e) {
 	return Array.from({ length: e }, (e, t) => ({ name: `Room ${t + 1}` }));
 }
-function ln({ meeting: e, people: t, roomNames: n, renderError: r, ...i }) {
-	let { rooms: a, unassigned: o } = sn(e.breakout, t, e.hands), c = e.breakout;
+function un({ meeting: e, people: t, roomNames: n, renderError: r, ...i }) {
+	let { rooms: a, unassigned: o } = cn(e.breakout, t, e.hands), c = e.breakout;
 	return /* @__PURE__ */ q(R, {
 		...i,
 		rooms: a,
@@ -2093,7 +2105,7 @@ function ln({ meeting: e, people: t, roomNames: n, renderError: r, ...i }) {
 		onJoin: e.joinRoom,
 		onReturnToMain: e.returnToMain,
 		onCreateRooms: (t, r) => {
-			let i = n?.(t) ?? cn(t).map((e) => e.name);
+			let i = n?.(t) ?? ln(t).map((e) => e.name);
 			e.configureBreakouts(i.map((e) => ({ name: e })), { mode: r });
 		},
 		onAutoAssign: () => {
@@ -2117,7 +2129,7 @@ function ln({ meeting: e, people: t, roomNames: n, renderError: r, ...i }) {
 		}) : null
 	});
 }
-function un({ meeting: e, className: t }) {
+function dn({ meeting: e, className: t }) {
 	if (!e.myRoom) return null;
 	let n = e.breakout;
 	return /* @__PURE__ */ q(ie, {
@@ -2129,7 +2141,7 @@ function un({ meeting: e, className: t }) {
 		className: t
 	});
 }
-function dn(e, t) {
+function fn(e, t) {
 	let n = e.myHandPosition !== null;
 	return {
 		raise: {
@@ -2153,4 +2165,4 @@ function dn(e, t) {
 	};
 }
 //#endregion
-export { ze as $, Nt as A, dt as B, Ot as C, At as D, gt as E, vt as F, $e as G, rt as H, xt as I, Ze as J, Xe as K, St as L, Pt as M, Ft as N, jt as O, _t as P, He as Q, pt as R, Lt as S, ht as T, tt as U, it as V, et as W, We as X, Je as Y, Ye as Z, Kt as _, on as a, je as at, Ht as b, rn as c, Ae as ct, en as d, Se as dt, Me as et, $t as f, Z as ft, Yt as g, me as gt, Xt as h, _e as ht, cn as i, Q as it, Ct as j, Mt as k, tn as l, we as lt, Zt as m, ye as mt, ln as n, Ne as nt, dn as o, Ee as ot, Qt as p, be as pt, Qe as q, sn as r, Pe as rt, an as s, Oe as st, un as t, Ie as tt, nn as u, Ce as ut, Gt as v, kt as w, Vt as x, Wt as y, ft as z };
+export { He as $, Mt as A, ft as B, Lt as C, gt as D, ht as E, _t as F, et as G, it as H, vt as I, Qe as J, $e as K, xt as L, Ct as M, Pt as N, At as O, Ft as P, Ye as Q, St as R, Vt as S, kt as T, rt as U, dt as V, tt as W, Je as X, Ze as Y, We as Z, Yt as _, me as _t, on as a, Q as at, Wt as b, an as c, Oe as ct, nn as d, Ce as dt, ze as et, en as f, Se as ft, Xt as g, _e as gt, Zt as h, ye as ht, ln as i, Pe as it, Nt as j, jt as k, rn as l, Ae as lt, Qt as m, be as mt, un as n, Ie as nt, sn as o, je as ot, $t as p, Z as pt, Xe as q, cn as r, Ne as rt, fn as s, Ee as st, dn as t, Me as tt, tn as u, we as ut, Kt as v, Ot as w, Ht as x, Gt as y, pt as z };

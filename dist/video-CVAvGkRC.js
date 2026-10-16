@@ -2751,97 +2751,139 @@ function vn({ getVideoElement: t, className: n, title: r }) {
 //#endregion
 //#region src/components/video/RosterPanel.tsx
 function yn(e) {
+	return typeof e == "number" ? e : e ? 2 ** 53 - 1 - 1 : 2 ** 53 - 1;
+}
+function bn(e) {
+	return e.map((e, t) => ({
+		p: e,
+		i: t,
+		rank: yn(e.handRaised)
+	})).sort((e, t) => e.rank - t.rank || e.i - t.i).map((e) => e.p);
+}
+function xn(e) {
 	if (!e) return "?";
 	let t = e.trim().split(/\s+/);
 	return t.length === 1 ? t[0].slice(0, 2).toUpperCase() : (t[0].charAt(0) + t[t.length - 1].charAt(0)).toUpperCase();
 }
-function bn({ participants: t, activeSpeakerId: n, onParticipantClick: r, count: i, title: a = "Participants", footer: o, tone: s = "light", className: c }) {
-	let l = s === "dark", u = i ?? t.length;
+function Sn({ participants: t, activeSpeakerId: n, onParticipantClick: r, count: a, title: o = "Participants", footer: s, tone: c = "light", raisedHandsFirst: l = !1, onLowerHand: u, onLowerAllHands: d, className: f }) {
+	let p = c === "dark", m = a ?? t.length, h = l ? bn(t) : t, g = t.filter((e) => e.handRaised).length, _ = K(null), v = (e) => {
+		let t = Array.from(_.current?.querySelectorAll("[data-testid=\"roster-lower-hand\"]") ?? []), n = e ? t.indexOf(e) : -1;
+		((n >= 0 ? t[n + 1] ?? t[n - 1] : void 0) ?? _.current)?.focus();
+	};
 	return /* @__PURE__ */ X("aside", {
-		className: e("flex flex-col w-64 shrink-0", l ? "bg-call-chrome border-l border-call-chrome-border" : "bg-[var(--color-surface)] border-l border-[var(--color-border)]", c),
+		className: e("flex flex-col w-64 shrink-0 focus:outline-none", p ? "bg-call-chrome border-l border-call-chrome-border" : "bg-[var(--color-surface)] border-l border-[var(--color-border)]", f),
 		"aria-label": "Call participants",
+		ref: _,
+		tabIndex: -1,
 		children: [
 			/* @__PURE__ */ X("header", {
-				className: e("px-4 py-3 border-b flex items-center justify-between", l ? "border-white/10" : "border-[var(--color-border)]"),
+				className: e("px-4 py-3 border-b flex items-center justify-between", p ? "border-white/10" : "border-[var(--color-border)]"),
 				children: [/* @__PURE__ */ Y("h3", {
-					className: e("text-sm font-semibold", l ? "text-white" : "text-[var(--color-text-primary)]"),
-					children: a
-				}), /* @__PURE__ */ Y("span", {
-					className: e("text-xs tabular-nums", l ? "text-white/50" : "text-[var(--color-text-secondary)]"),
-					children: u
+					className: e("text-sm font-semibold", p ? "text-white" : "text-[var(--color-text-primary)]"),
+					children: o
+				}), /* @__PURE__ */ X("span", {
+					className: "flex items-center gap-2",
+					children: [d && g > 0 && /* @__PURE__ */ Y(i, {
+						variant: "ghost",
+						size: "sm",
+						onClick: () => {
+							v(null), d();
+						},
+						className: p ? "text-white/80 hover:text-white" : void 0,
+						"data-testid": "roster-lower-all",
+						children: "Lower all hands"
+					}), /* @__PURE__ */ Y("span", {
+						className: e("text-xs tabular-nums", p ? "text-white/50" : "text-[var(--color-text-secondary)]"),
+						children: m
+					})]
 				})]
 			}),
 			/* @__PURE__ */ Y("ul", {
 				className: "flex-1 overflow-y-auto py-1 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]",
-				children: t.map((t) => {
-					let i = t.id === n;
-					return /* @__PURE__ */ Y("li", { children: /* @__PURE__ */ X("button", {
-						type: "button",
-						onClick: r ? () => r(t.id) : void 0,
-						className: e("w-full flex items-center gap-3 px-4 py-2 text-left transition-colors", "hover:bg-white/[0.03]", i && "bg-white/[0.04]", r ? "cursor-pointer" : "cursor-default"),
-						disabled: !r,
-						children: [
-							/* @__PURE__ */ X("div", {
-								className: e("relative w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium shrink-0", "bg-[var(--color-primary)] text-white", i && "ring-2 ring-success ring-offset-2 ring-offset-[var(--color-surface)]"),
-								children: [t.avatarUrl ? /* @__PURE__ */ Y("img", {
-									src: t.avatarUrl,
-									alt: "",
-									className: "w-full h-full rounded-full object-cover"
-								}) : /* @__PURE__ */ Y("span", { children: yn(t.displayName) }), t.isScreenSharing && /* @__PURE__ */ Y("span", {
-									title: "Sharing screen",
-									className: "absolute -top-1 -right-1 w-3 h-3 rounded-full bg-info border border-[var(--color-surface)]"
-								})]
-							}),
-							/* @__PURE__ */ X("span", {
-								className: e("flex-1 truncate text-sm", l ? "text-white/90" : "text-[var(--color-text-primary)]"),
-								children: [t.displayName, t.isLocal && /* @__PURE__ */ Y("span", {
-									className: e("ml-1 text-xs", l ? "text-white/50" : "text-[var(--color-text-secondary)]"),
-									children: "(you)"
-								})]
-							}),
-							/* @__PURE__ */ Y(ke, {
-								raised: t.handRaised,
-								tone: l ? "overlay" : "chip",
-								"data-testid": "roster-raised-hand"
-							}),
-							t.isMuted && /* @__PURE__ */ Y("svg", {
-								width: "14",
-								height: "14",
-								viewBox: "0 0 16 16",
-								className: l ? "text-white/50" : "text-[var(--color-text-secondary)]",
-								"aria-label": "Muted",
-								children: /* @__PURE__ */ Y("path", {
-									fill: "currentColor",
-									d: "M8 1a3 3 0 00-3 3v4a3 3 0 006 0V4a3 3 0 00-3-3zM3 9a5 5 0 0010 0h-1a4 4 0 01-8 0H3zm5 4a3 3 0 01-3-3H4a4 4 0 008 0h-1a3 3 0 01-3 3zm4-13l-12 12 0.7 0.7 12-12L12 0z"
+				children: h.map((t) => {
+					let a = t.id === n;
+					return /* @__PURE__ */ X("li", {
+						className: "flex items-center",
+						"data-testid": "roster-row",
+						"data-user-id": t.id,
+						children: [/* @__PURE__ */ X("button", {
+							type: "button",
+							onClick: r ? () => r(t.id) : void 0,
+							className: e("min-w-0 flex-1 flex items-center gap-3 px-4 py-2 text-left transition-colors", "hover:bg-white/[0.03]", a && "bg-white/[0.04]", r ? "cursor-pointer" : "cursor-default"),
+							disabled: !r,
+							children: [
+								/* @__PURE__ */ X("div", {
+									className: e("relative w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium shrink-0", "bg-[var(--color-primary)] text-white", a && "ring-2 ring-success ring-offset-2 ring-offset-[var(--color-surface)]"),
+									children: [t.avatarUrl ? /* @__PURE__ */ Y("img", {
+										src: t.avatarUrl,
+										alt: "",
+										className: "w-full h-full rounded-full object-cover"
+									}) : /* @__PURE__ */ Y("span", { children: xn(t.displayName) }), t.isScreenSharing && /* @__PURE__ */ Y("span", {
+										title: "Sharing screen",
+										className: "absolute -top-1 -right-1 w-3 h-3 rounded-full bg-info border border-[var(--color-surface)]"
+									})]
+								}),
+								/* @__PURE__ */ X("span", {
+									className: e("flex-1 truncate text-sm", p ? "text-white/90" : "text-[var(--color-text-primary)]"),
+									children: [t.displayName, t.isLocal && /* @__PURE__ */ Y("span", {
+										className: e("ml-1 text-xs", p ? "text-white/50" : "text-[var(--color-text-secondary)]"),
+										children: "(you)"
+									})]
+								}),
+								/* @__PURE__ */ Y(ke, {
+									raised: t.handRaised,
+									tone: p ? "overlay" : "chip",
+									"data-testid": "roster-raised-hand"
+								}),
+								t.isMuted && /* @__PURE__ */ Y("svg", {
+									width: "14",
+									height: "14",
+									viewBox: "0 0 16 16",
+									className: p ? "text-white/50" : "text-[var(--color-text-secondary)]",
+									"aria-label": "Muted",
+									children: /* @__PURE__ */ Y("path", {
+										fill: "currentColor",
+										d: "M8 1a3 3 0 00-3 3v4a3 3 0 006 0V4a3 3 0 00-3-3zM3 9a5 5 0 0010 0h-1a4 4 0 01-8 0H3zm5 4a3 3 0 01-3-3H4a4 4 0 008 0h-1a3 3 0 01-3 3zm4-13l-12 12 0.7 0.7 12-12L12 0z"
+									})
 								})
-							})
-						]
-					}) }, t.id);
+							]
+						}), u && t.handRaised && /* @__PURE__ */ Y(i, {
+							variant: "ghost",
+							size: "sm",
+							onClick: (e) => {
+								v(e.currentTarget), u(t.id);
+							},
+							"aria-label": `Lower ${t.displayName}'s hand`,
+							className: e("mr-2 shrink-0", p && "text-white/80 hover:text-white"),
+							"data-testid": "roster-lower-hand",
+							children: "Lower"
+						})]
+					}, t.id);
 				})
 			}),
-			o && /* @__PURE__ */ Y("div", {
+			s && /* @__PURE__ */ Y("div", {
 				className: "border-t border-[var(--color-border)] p-3",
-				children: o
+				children: s
 			})
 		]
 	});
 }
 //#endregion
 //#region src/lib/video/useMuteWhileTalking.ts
-var xn = null;
-function Sn() {
-	if (xn) return xn;
+var Cn = null;
+function wn() {
+	if (Cn) return Cn;
 	try {
-		return xn = new AudioContext(), xn;
+		return Cn = new AudioContext(), Cn;
 	} catch {
 		return null;
 	}
 }
-function Cn({ localStream: e, isMuted: t, threshold: n = -45, triggerMs: r = 1500, cooldownMs: i = 6e3 }) {
+function Tn({ localStream: e, isMuted: t, threshold: n = -45, triggerMs: r = 1500, cooldownMs: i = 6e3 }) {
 	let [a, o] = q(!1);
 	return W(() => {
 		if (!t || !e || e.getAudioTracks().filter((e) => e.readyState === "live").length === 0) return;
-		let a = Sn();
+		let a = wn();
 		if (!a) return;
 		let s, c;
 		try {
@@ -2880,8 +2922,8 @@ function Cn({ localStream: e, isMuted: t, threshold: n = -45, triggerMs: r = 150
 }
 //#endregion
 //#region src/components/video/AutoplayGate.tsx
-var wn = "pointer-events-auto rounded-full bg-black/70 px-4 py-2 text-[13px] font-medium text-white shadow-lg backdrop-blur-sm hover:bg-black/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70";
-function Tn() {
+var En = "pointer-events-auto rounded-full bg-black/70 px-4 py-2 text-[13px] font-medium text-white shadow-lg backdrop-blur-sm hover:bg-black/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70";
+function Dn() {
 	typeof document > "u" || document.querySelectorAll("video").forEach((e) => {
 		if (e.paused) {
 			let t = e.play();
@@ -2889,7 +2931,7 @@ function Tn() {
 		}
 	});
 }
-function En({ chipLabel: t = "Tap to unmute", chipClassName: n, wrapperClassName: r, onPlayStateChange: i, ...a }) {
+function On({ chipLabel: t = "Tap to unmute", chipClassName: n, wrapperClassName: r, onPlayStateChange: i, ...a }) {
 	let [o, s] = q(!1), c = K(null), l = a.videoRef ?? c, u = U((e) => {
 		e === "paused-by-autoplay" ? s(!0) : e === "playing" && s(!1), i?.(e);
 	}, [i]), d = U(() => {
@@ -2899,7 +2941,7 @@ function En({ chipLabel: t = "Tap to unmute", chipClassName: n, wrapperClassName
 			let t = e.play();
 			t && typeof t.catch == "function" && t.catch(() => {});
 		}
-		Tn(), s(!1);
+		Dn(), s(!1);
 	}, [l]);
 	return /* @__PURE__ */ X("div", {
 		className: e("relative h-full w-full", r),
@@ -2912,7 +2954,7 @@ function En({ chipLabel: t = "Tap to unmute", chipClassName: n, wrapperClassName
 			children: /* @__PURE__ */ Y("button", {
 				type: "button",
 				onClick: d,
-				className: e(wn, n),
+				className: e(En, n),
 				"data-testid": "autoplay-gate-chip",
 				children: t
 			})
@@ -2921,20 +2963,20 @@ function En({ chipLabel: t = "Tap to unmute", chipClassName: n, wrapperClassName
 }
 //#endregion
 //#region src/components/video/useCallWidgetPersistence.ts
-var Dn = 1;
-function On({ persistKey: e, defaults: t, debounceMs: n = 200 }) {
+var kn = 1;
+function An({ persistKey: e, defaults: t, debounceMs: n = 200 }) {
 	let [r, i] = q(() => {
 		if (!e || typeof window > "u") return t;
 		try {
 			let n = window.localStorage.getItem(e);
 			if (!n) return t;
 			let r = JSON.parse(n);
-			return !r || r.v !== Dn ? t : {
+			return !r || r.v !== kn ? t : {
 				mode: r.mode === "docked" || r.mode === "window" ? "window" : "mini",
-				x: kn(r.x, t.x),
-				y: kn(r.y, t.y),
-				width: kn(r.width, t.width),
-				height: kn(r.height, t.height)
+				x: jn(r.x, t.x),
+				y: jn(r.y, t.y),
+				width: jn(r.width, t.width),
+				height: jn(r.height, t.height)
 			};
 		} catch {
 			try {
@@ -2950,7 +2992,7 @@ function On({ persistKey: e, defaults: t, debounceMs: n = 200 }) {
 	}), l = U((e, t) => {
 		try {
 			let n = {
-				v: Dn,
+				v: kn,
 				...t,
 				mode: t.mode === "window" ? "docked" : t.mode
 			};
@@ -2985,21 +3027,21 @@ function On({ persistKey: e, defaults: t, debounceMs: n = 200 }) {
 		}, [])
 	};
 }
-function kn(e, t) {
+function jn(e, t) {
 	return typeof e == "number" && Number.isFinite(e) ? e : t;
 }
 //#endregion
 //#region src/components/video/ExpandableCallWidget.tsx
-var An = 320, jn = 200, Mn = 640, Nn = 400, Pn = 1440, Fn = 900, In = 960, Ln = 600, Q = 8;
-function Rn({ title: t, subtitle: n, durationSeconds: r, children: i, controls: a, defaultMode: o = "mini", inline: s = !1, onModeChange: c, persistKey: l, apiRef: u, defaultCorner: d = "bottom-right", expandable: f = !0, sidePanelTabs: p, activeSidePanelTab: m = null, onSidePanelTabChange: h, zIndex: g = 9999, className: _, "data-testid": v = "expandable-call-widget" }) {
-	let y = o === "docked" ? "window" : o, b = G(() => y === "window" ? Un(In, Ln) : Wn(d), [y, d]), { state: x, setState: S } = On({
+var Mn = 320, Nn = 200, Pn = 640, Fn = 400, In = 1440, Ln = 900, Rn = 960, zn = 600, Q = 8;
+function Bn({ title: t, subtitle: n, durationSeconds: r, children: i, controls: a, defaultMode: o = "mini", inline: s = !1, onModeChange: c, persistKey: l, apiRef: u, defaultCorner: d = "bottom-right", expandable: f = !0, sidePanelTabs: p, activeSidePanelTab: m = null, onSidePanelTabChange: h, zIndex: g = 9999, className: _, "data-testid": v = "expandable-call-widget" }) {
+	let y = o === "docked" ? "window" : o, b = G(() => y === "window" ? Gn(Rn, zn) : Kn(d), [y, d]), { state: x, setState: S } = An({
 		persistKey: l,
 		defaults: {
 			mode: y,
 			x: b.x,
 			y: b.y,
-			width: In,
-			height: Ln
+			width: Rn,
+			height: zn
 		}
 	}), [C, w] = q(!1), T = C ? "fullscreen" : x.mode, E = K(null), D = p ?? [], O = D.length > 0, k = O && D.some((e) => e.id === m), A = K(!1);
 	W(() => {
@@ -3031,7 +3073,7 @@ function Rn({ title: t, subtitle: n, durationSeconds: r, children: i, controls: 
 				return;
 			}
 			if (t === "window" && T === "mini") {
-				let e = Un(x.width, x.height);
+				let e = Gn(x.width, x.height);
 				S({
 					mode: t,
 					x: e.x,
@@ -3040,7 +3082,7 @@ function Rn({ title: t, subtitle: n, durationSeconds: r, children: i, controls: 
 				return;
 			}
 			if (t === "mini" && T === "window") {
-				let e = Wn(d);
+				let e = Kn(d);
 				S({
 					mode: t,
 					x: e.x,
@@ -3079,7 +3121,7 @@ function Rn({ title: t, subtitle: n, durationSeconds: r, children: i, controls: 
 	]), F = U((e) => {
 		let t = P.current;
 		if (!t) return;
-		let n = e.clientX - t.startX, r = e.clientY - t.startY, i = Kn(t.origX + n, x.width, window.innerWidth), a = Kn(t.origY + r, x.height, window.innerHeight);
+		let n = e.clientX - t.startX, r = e.clientY - t.startY, i = Jn(t.origX + n, x.width, window.innerWidth), a = Jn(t.origY + r, x.height, window.innerHeight);
 		S({
 			x: i,
 			y: a
@@ -3104,7 +3146,7 @@ function Rn({ title: t, subtitle: n, durationSeconds: r, children: i, controls: 
 	]), ne = U((e) => {
 		let t = L.current;
 		if (!t) return;
-		let n = e.clientX - t.startX, r = e.clientY - t.startY, i = Gn(t.origW + n, Mn, Math.min(Pn, window.innerWidth - 16)), a = Gn(t.origH + r, Nn, Math.min(Fn, window.innerHeight - 16));
+		let n = e.clientX - t.startX, r = e.clientY - t.startY, i = qn(t.origW + n, Pn, Math.min(In, window.innerWidth - 16)), a = qn(t.origH + r, Fn, Math.min(Ln, window.innerHeight - 16));
 		S({
 			width: i,
 			height: a
@@ -3115,7 +3157,7 @@ function Rn({ title: t, subtitle: n, durationSeconds: r, children: i, controls: 
 	Me(() => {
 		if (T !== "window") return;
 		let e = () => {
-			let e = Kn(x.x, x.width, window.innerWidth), t = Kn(x.y, x.height, window.innerHeight);
+			let e = Jn(x.x, x.width, window.innerWidth), t = Jn(x.y, x.height, window.innerHeight);
 			(e !== x.x || t !== x.y) && S({
 				x: e,
 				y: t
@@ -3151,8 +3193,8 @@ function Rn({ title: t, subtitle: n, durationSeconds: r, children: i, controls: 
 		position: "fixed",
 		left: x.x,
 		top: x.y,
-		width: An,
-		height: jn,
+		width: Mn,
+		height: Nn,
 		zIndex: g
 	}, [
 		s,
@@ -3204,26 +3246,26 @@ function Rn({ title: t, subtitle: n, durationSeconds: r, children: i, controls: 
 				}), f && /* @__PURE__ */ X("div", {
 					className: "flex items-center gap-1",
 					children: [
-						/* @__PURE__ */ Y(zn, {
+						/* @__PURE__ */ Y(Vn, {
 							active: T === "mini",
 							label: "Mini",
 							onClick: () => N("mini"),
 							testId: "call-widget-mode-mini",
-							children: /* @__PURE__ */ Y(Bn, {})
+							children: /* @__PURE__ */ Y(Hn, {})
 						}),
-						/* @__PURE__ */ Y(zn, {
+						/* @__PURE__ */ Y(Vn, {
 							active: T === "window",
 							label: "Window",
 							onClick: () => N("window"),
 							testId: "call-widget-mode-window",
-							children: /* @__PURE__ */ Y(Vn, {})
+							children: /* @__PURE__ */ Y(Un, {})
 						}),
-						/* @__PURE__ */ Y(zn, {
+						/* @__PURE__ */ Y(Vn, {
 							active: T === "fullscreen",
 							label: "Fullscreen",
 							onClick: () => N(T === "fullscreen" ? "window" : "fullscreen"),
 							testId: "call-widget-mode-fullscreen",
-							children: /* @__PURE__ */ Y(Hn, {})
+							children: /* @__PURE__ */ Y(Wn, {})
 						})
 					]
 				})]
@@ -3277,7 +3319,7 @@ function Rn({ title: t, subtitle: n, durationSeconds: r, children: i, controls: 
 		]
 	});
 }
-function zn({ active: t, label: n, onClick: r, testId: i, children: a }) {
+function Vn({ active: t, label: n, onClick: r, testId: i, children: a }) {
 	return /* @__PURE__ */ Y("button", {
 		type: "button",
 		onClick: r,
@@ -3289,7 +3331,7 @@ function zn({ active: t, label: n, onClick: r, testId: i, children: a }) {
 		children: a
 	});
 }
-function Bn() {
+function Hn() {
 	return /* @__PURE__ */ Y("svg", {
 		width: "12",
 		height: "12",
@@ -3306,7 +3348,7 @@ function Bn() {
 		})
 	});
 }
-function Vn() {
+function Un() {
 	return /* @__PURE__ */ Y("svg", {
 		width: "12",
 		height: "12",
@@ -3323,7 +3365,7 @@ function Vn() {
 		})
 	});
 }
-function Hn() {
+function Wn() {
 	return /* @__PURE__ */ Y("svg", {
 		width: "12",
 		height: "12",
@@ -3338,7 +3380,7 @@ function Hn() {
 		})
 	});
 }
-function Un(e, t) {
+function Gn(e, t) {
 	return typeof window > "u" ? {
 		x: 16,
 		y: 16
@@ -3347,7 +3389,7 @@ function Un(e, t) {
 		y: Math.max(Q, Math.floor((window.innerHeight - t) / 2))
 	};
 }
-function Wn(e) {
+function Kn(e) {
 	if (typeof window > "u") return {
 		x: 16,
 		y: 16
@@ -3359,28 +3401,28 @@ function Wn(e) {
 			y: Q
 		};
 		case "top-right": return {
-			x: t - An - Q,
+			x: t - Mn - Q,
 			y: Q
 		};
 		case "bottom-left": return {
 			x: Q,
-			y: n - jn - Q
+			y: n - Nn - Q
 		};
 		default: return {
-			x: t - An - Q,
-			y: n - jn - Q
+			x: t - Mn - Q,
+			y: n - Nn - Q
 		};
 	}
 }
-function Gn(e, t, n) {
+function qn(e, t, n) {
 	return Math.max(t, Math.min(n, e));
 }
-function Kn(e, t, n) {
-	return Gn(e, Q, Math.max(Q, n - t - Q));
+function Jn(e, t, n) {
+	return qn(e, Q, Math.max(Q, n - t - Q));
 }
 //#endregion
 //#region src/components/video/CallingStatusPill.tsx
-function qn({ show: e, label: t }) {
+function Yn({ show: e, label: t }) {
 	return e ? /* @__PURE__ */ X("div", {
 		"data-testid": "calling-pill",
 		"data-call-status": "calling",
@@ -3394,7 +3436,7 @@ function qn({ show: e, label: t }) {
 }
 //#endregion
 //#region src/components/video/MuteWhileTalkingToast.tsx
-function Jn({ show: e, label: t = "You're muted — tap mic to unmute" }) {
+function Xn({ show: e, label: t = "You're muted — tap mic to unmute" }) {
 	return e ? /* @__PURE__ */ Y("div", {
 		"data-testid": "mute-while-talking-toast",
 		className: "pointer-events-none absolute bottom-4 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-full bg-danger/95 px-3.5 py-2 text-[13px] font-medium text-white shadow-lg",
@@ -3404,20 +3446,20 @@ function Jn({ show: e, label: t = "You're muted — tap mic to unmute" }) {
 }
 //#endregion
 //#region src/components/video/TranscriptOverlay.tsx
-var Yn = [
+var Zn = [
 	"#60a5fa",
 	"#f472b6",
 	"#34d399",
 	"#fbbf24",
 	"#a78bfa",
 	"#fb7185"
-], Xn = 3e3, Zn = .35;
-function Qn(e) {
+], Qn = 3e3, $n = .35;
+function er(e) {
 	let t = 0;
 	for (let n = 0; n < e.length; n++) t = t * 31 + e.charCodeAt(n) | 0;
-	return Yn[Math.abs(t) % Yn.length];
+	return Zn[Math.abs(t) % Zn.length];
 }
-function $n({ lines: t, maxLines: n = 4, fadeAfterMs: r = Xn, now: i, className: a }) {
+function tr({ lines: t, maxLines: n = 4, fadeAfterMs: r = Qn, now: i, className: a }) {
 	let [, o] = q(0), s = i === void 0, c = t.length > 0;
 	W(() => {
 		if (!s || !c) return;
@@ -3439,14 +3481,14 @@ function $n({ lines: t, maxLines: n = 4, fadeAfterMs: r = Xn, now: i, className:
 		}
 	}
 	let f = t.slice(-n).map((e) => {
-		let t = u.get(e.id), n = l - t.lastUpdateMs, i = Math.max(Zn, 1 - n / r);
+		let t = u.get(e.id), n = l - t.lastUpdateMs, i = Math.max($n, 1 - n / r);
 		return {
 			...e,
 			text: t.displayedText,
 			sinceUpdate: n,
 			opacity: i
 		};
-	}).filter((e) => e.sinceUpdate <= Xn);
+	}).filter((e) => e.sinceUpdate <= Qn);
 	return f.length === 0 ? null : /* @__PURE__ */ X("div", {
 		className: e("absolute bottom-16 left-1/2 -translate-x-1/2 max-w-[min(720px,80%)] z-20", "flex flex-col items-start gap-1 px-4 py-2 rounded-lg bg-black/70 backdrop-blur-sm overflow-hidden", a),
 		"aria-live": "polite",
@@ -3459,7 +3501,7 @@ function $n({ lines: t, maxLines: n = 4, fadeAfterMs: r = Xn, now: i, className:
 			style: { opacity: t.opacity },
 			children: [/* @__PURE__ */ Y("span", {
 				className: "font-medium text-xs shrink-0",
-				style: { color: Qn(t.speakerId) },
+				style: { color: er(t.speakerId) },
 				children: t.speakerName ?? t.speakerId.slice(0, 6)
 			}), /* @__PURE__ */ Y("span", {
 				className: "transcript-line-scrim text-white",
@@ -3470,41 +3512,41 @@ function $n({ lines: t, maxLines: n = 4, fadeAfterMs: r = Xn, now: i, className:
 }
 //#endregion
 //#region src/components/video/CircularIconToggle.tsx
-var er = {
+var nr = {
 	sm: "h-9 w-9",
 	md: "h-11 w-11",
 	lg: "h-14 w-14"
-}, tr = "bg-surface-emphasis text-text-primary hover:bg-surface-emphasis", nr = "bg-surface-hover text-neutral hover:bg-surface-emphasis", rr = "bg-danger-bg text-danger-fg hover:bg-danger-bg";
+}, rr = "bg-surface-emphasis text-text-primary hover:bg-surface-emphasis", ir = "bg-surface-hover text-neutral hover:bg-surface-emphasis", ar = "bg-danger-bg text-danger-fg hover:bg-danger-bg";
 function $({ on: t, iconOn: n, iconOff: r, "aria-label": i, offTone: a = "danger", size: o = "md", disabled: s, className: c, ...l }) {
-	let u = t ? tr : a === "danger" ? rr : nr;
+	let u = t ? rr : a === "danger" ? ar : ir;
 	return /* @__PURE__ */ Y("button", {
 		type: "button",
 		"aria-label": i,
 		"aria-pressed": t,
 		disabled: s,
-		className: e("rounded-full grid place-items-center transition-colors duration-150", er[o], u, s && "opacity-40 cursor-not-allowed", !s && "cursor-pointer", c),
+		className: e("rounded-full grid place-items-center transition-colors duration-150", nr[o], u, s && "opacity-40 cursor-not-allowed", !s && "cursor-pointer", c),
 		...l,
 		children: t ? n : r
 	});
 }
 //#endregion
 //#region src/components/video/HangoutPreJoinShell.tsx
-function ir(e, t, n) {
+function or(e, t, n) {
 	if (n) return "Checking room…";
 	if (!t || t === "empty") return "You'll be the first one in this room";
 	let r = e?.length ?? 0;
 	return t === "ready" ? r === 1 ? "1 person is in this call" : `${r} people are in this call` : r === 1 ? "1 person is joining (connecting…)" : `${r} people are joining (connecting…)`;
 }
-function ar(e) {
+function sr(e) {
 	return e === "denied" ? "denied" : e === "blocked" ? "blocked" : e === "no-device" ? "no-device" : e === "unavailable" ? "unavailable" : null;
 }
-var or = "bg-white/15 text-white hover:bg-white/25", sr = "bg-white text-video-stage hover:bg-white";
-function cr({ channelName: t, eyebrow: n, localIdentity: r, previewStream: a, permission: o, permissionMessage: s, audioEnabled: c, videoEnabled: l, onToggleAudio: u, onToggleVideo: d, onRetryPermission: f, participants: p, readyState: m, readyLoading: h = !1, effectsSlot: g, devicesSlot: _, devicesOpen: b, onToggleDevices: x, secondaryActions: S, onJoin: T, onCancel: E, joinLabel: D, joinDisabled: O, subtitleOverride: k, className: A, "data-testid": j }) {
+var cr = "bg-white/15 text-white hover:bg-white/25", lr = "bg-white text-video-stage hover:bg-white";
+function ur({ channelName: t, eyebrow: n, localIdentity: r, previewStream: a, permission: o, permissionMessage: s, audioEnabled: c, videoEnabled: l, onToggleAudio: u, onToggleVideo: d, onRetryPermission: f, participants: p, readyState: m, readyLoading: h = !1, effectsSlot: g, devicesSlot: _, devicesOpen: b, onToggleDevices: x, secondaryActions: S, onJoin: T, onCancel: E, joinLabel: D, joinDisabled: O, subtitleOverride: k, className: A, "data-testid": j }) {
 	let M = K(null), [P, ee] = q(!1);
 	W(() => {
 		M.current && a && (M.current.srcObject = a);
 	}, [a]);
-	let F = o === "granted", I = ar(o), L = O ?? !F, te = D ?? (L && !F ? "Allow camera to join" : "Join now"), ne = k ?? ir(p, m, h), R = !!_, z = R && (b ?? P);
+	let F = o === "granted", I = sr(o), L = O ?? !F, te = D ?? (L && !F ? "Allow camera to join" : "Join now"), ne = k ?? or(p, m, h), R = !!_, z = R && (b ?? P);
 	function B(e) {
 		b === void 0 && ee(e), x?.(e);
 	}
@@ -3579,7 +3621,7 @@ function cr({ channelName: t, eyebrow: n, localIdentity: r, previewStream: a, pe
 											title: c ? "Mute mic before joining" : "Unmute mic before joining",
 											iconOn: /* @__PURE__ */ Y(w, { size: 18 }),
 											iconOff: /* @__PURE__ */ Y(v, { size: 18 }),
-											className: e(c && or),
+											className: e(c && cr),
 											"data-testid": "prejoin-toggle-audio"
 										}),
 										/* @__PURE__ */ Y($, {
@@ -3590,7 +3632,7 @@ function cr({ channelName: t, eyebrow: n, localIdentity: r, previewStream: a, pe
 											title: l ? "Turn camera off before joining" : "Turn camera on before joining",
 											iconOn: /* @__PURE__ */ Y(y, { size: 18 }),
 											iconOff: /* @__PURE__ */ Y(N, { size: 18 }),
-											className: e(l && or),
+											className: e(l && cr),
 											"data-testid": "prejoin-toggle-video"
 										}),
 										R && /* @__PURE__ */ X(J, { children: [/* @__PURE__ */ Y("span", {
@@ -3603,7 +3645,7 @@ function cr({ channelName: t, eyebrow: n, localIdentity: r, previewStream: a, pe
 											title: z ? "Close device settings" : "Open device settings",
 											iconOn: /* @__PURE__ */ Y(C, { size: 18 }),
 											iconOff: /* @__PURE__ */ Y(C, { size: 18 }),
-											className: z ? sr : or,
+											className: z ? lr : cr,
 											"data-testid": "prejoin-devices-toggle"
 										})] })
 									]
@@ -3654,7 +3696,7 @@ function cr({ channelName: t, eyebrow: n, localIdentity: r, previewStream: a, pe
 							}), _]
 						}) : /* @__PURE__ */ X("div", {
 							className: e(h || p && p.length > 0 ? "rounded-xl border border-border bg-surface p-3" : "px-0.5"),
-							children: [/* @__PURE__ */ Y(lr, {
+							children: [/* @__PURE__ */ Y(dr, {
 								participants: p,
 								loading: h
 							}), m === "pending" && !h && /* @__PURE__ */ X("p", {
@@ -3695,7 +3737,7 @@ function cr({ channelName: t, eyebrow: n, localIdentity: r, previewStream: a, pe
 		})
 	});
 }
-function lr({ participants: e, loading: t }) {
+function dr({ participants: e, loading: t }) {
 	return t ? /* @__PURE__ */ X("div", {
 		className: "flex items-center gap-2 text-xs text-neutral",
 		children: [/* @__PURE__ */ Y(se, { size: "sm" }), " Finding people…"]
@@ -3745,17 +3787,17 @@ function lr({ participants: e, loading: t }) {
 }
 //#endregion
 //#region src/components/video/RecordingChip.tsx
-var ur = {
+var fr = {
 	active: "Recording — saved to /recordings when the call ends",
 	armed: "Recording armed — will start once the call is under way"
 };
-function dr({ armed: e, active: t, titles: n, className: r, "data-testid": i = "recording-chip" }) {
+function pr({ armed: e, active: t, titles: n, className: r, "data-testid": i = "recording-chip" }) {
 	return !e && !t ? null : /* @__PURE__ */ Y(a, {
 		tone: t ? "danger" : "neutral",
 		size: "xs",
 		uppercase: !0,
 		dot: t ? "pulse" : "static",
-		title: t ? n?.active ?? ur.active : n?.armed ?? ur.armed,
+		title: t ? n?.active ?? fr.active : n?.armed ?? fr.armed,
 		className: r,
 		"data-testid": i,
 		"aria-label": t ? "Recording" : "Recording armed",
@@ -3764,14 +3806,14 @@ function dr({ armed: e, active: t, titles: n, className: r, "data-testid": i = "
 }
 //#endregion
 //#region src/components/video/HangoutRoomHeader.tsx
-var fr = {
+var mr = {
 	idle: "neutral",
 	joining: "warning",
 	joined: "success",
 	reconnecting: "warning",
 	ended: "neutral",
 	failed: "danger"
-}, pr = {
+}, hr = {
 	idle: "Idle",
 	joining: "Joining…",
 	joined: "Live",
@@ -3779,7 +3821,7 @@ var fr = {
 	ended: "Ended",
 	failed: "Failed"
 };
-function mr() {
+function gr() {
 	return /* @__PURE__ */ X("svg", {
 		width: "10",
 		height: "10",
@@ -3797,7 +3839,7 @@ function mr() {
 		}), /* @__PURE__ */ Y("polyline", { points: "12 7 12 12 15 14" })]
 	});
 }
-function hr({ channelName: t, subtitle: n, recording: r, elapsedLabel: i, phase: o, actions: s, className: c, "data-testid": l }) {
+function _r({ channelName: t, subtitle: n, recording: r, elapsedLabel: i, phase: o, actions: s, className: c, "data-testid": l }) {
 	return /* @__PURE__ */ X("header", {
 		"data-testid": l,
 		className: e("flex items-center justify-between gap-4 px-6 py-4 border-b border-border bg-surface", c),
@@ -3810,7 +3852,7 @@ function hr({ channelName: t, subtitle: n, recording: r, elapsedLabel: i, phase:
 				className: "text-xs text-neutral mt-0.5 flex items-center gap-2 flex-wrap",
 				children: [
 					n && /* @__PURE__ */ Y("span", { children: n }),
-					r?.armed && /* @__PURE__ */ Y(dr, {
+					r?.armed && /* @__PURE__ */ Y(pr, {
 						armed: r.armed,
 						active: r.active,
 						titles: { armed: "Recording armed — will start when someone joins" },
@@ -3819,7 +3861,7 @@ function hr({ channelName: t, subtitle: n, recording: r, elapsedLabel: i, phase:
 					i && /* @__PURE__ */ Y(a, {
 						tone: "neutral",
 						size: "xs",
-						icon: /* @__PURE__ */ Y(mr, {}),
+						icon: /* @__PURE__ */ Y(gr, {}),
 						title: "Time since you joined this room",
 						"data-testid": "hangout-room-header-elapsed",
 						children: /* @__PURE__ */ Y("span", {
@@ -3832,32 +3874,32 @@ function hr({ channelName: t, subtitle: n, recording: r, elapsedLabel: i, phase:
 		}), (o || s) && /* @__PURE__ */ X("div", {
 			className: "flex items-center gap-3 shrink-0",
 			children: [o && /* @__PURE__ */ Y(a, {
-				tone: fr[o],
+				tone: mr[o],
 				size: "sm",
 				dot: o === "reconnecting" ? "pulse" : "static",
 				"data-testid": "hangout-room-header-phase",
-				children: pr[o]
+				children: hr[o]
 			}), s]
 		})]
 	});
 }
 //#endregion
 //#region src/components/video/HuddleBar.tsx
-var gr = {
+var vr = {
 	idle: "offline",
 	live: "online",
 	connecting: "away",
 	ringing: "away",
 	reconnecting: "away",
 	ended: "offline"
-}, _r = {
+}, yr = {
 	idle: "No call",
 	live: "Live",
 	connecting: "Connecting",
 	ringing: "Ringing",
 	reconnecting: "Reconnecting",
 	ended: "Ended"
-}, vr = {
+}, br = {
 	idle: null,
 	live: null,
 	connecting: "Connecting…",
@@ -3865,7 +3907,7 @@ var gr = {
 	reconnecting: "Reconnecting…",
 	ended: "Ended"
 };
-function yr(e, t) {
+function xr(e, t) {
 	let [n, r] = q(() => Date.now());
 	return W(() => {
 		if (!t || e == null) return;
@@ -3874,12 +3916,12 @@ function yr(e, t) {
 		return () => clearInterval(n);
 	}, [t, e]), t && e != null ? Math.max(0, n - e) : null;
 }
-function br(e, t) {
+function Sr(e, t) {
 	let n = `${e} joined`;
 	return t > 0 ? `${n} · ${t} ringing` : n;
 }
-function xr({ name: t, showContext: n = !0, phase: r = "live", statusLabel: a, startedAt: o, participantCount: s, ringingCount: l = 0, mic: f, camera: p, shareSlot: m, onToggleChat: h, chatOpen: g = !1, chatUnread: _ = 0, onToggleMedia: v, mediaOpen: y = !1, mediaToggleLabel: b = "Participants", onStart: x, startLabel: S = "Huddle", startDisabledReason: C, chatLabel: w = "Chat", chatDisabledReason: T, onLeave: E, leaveLabel: D = "Leave", extras: O, className: k, "data-testid": A = "huddle-bar" }) {
-	let j = yr(o, r === "live"), N = a === void 0 ? vr[r] : a, P = (e, t) => /* @__PURE__ */ Y(Te, {
+function Cr({ name: t, showContext: n = !0, phase: r = "live", statusLabel: a, startedAt: o, participantCount: s, ringingCount: l = 0, mic: f, camera: p, shareSlot: m, onToggleChat: h, chatOpen: g = !1, chatUnread: _ = 0, onToggleMedia: v, mediaOpen: y = !1, mediaToggleLabel: b = "Participants", onStart: x, startLabel: S = "Huddle", startDisabledReason: C, chatLabel: w = "Chat", chatDisabledReason: T, onLeave: E, leaveLabel: D = "Leave", extras: O, className: k, "data-testid": A = "huddle-bar" }) {
+	let j = xr(o, r === "live"), N = a === void 0 ? br[r] : a, P = (e, t) => /* @__PURE__ */ Y(Te, {
 		kind: e,
 		on: t.on,
 		onToggle: t.onToggle,
@@ -3903,8 +3945,8 @@ function xr({ name: t, showContext: n = !0, phase: r = "live", statusLabel: a, s
 			"data-testid": `${A}-status`,
 			children: [
 				/* @__PURE__ */ Y(ve, {
-					state: gr[r],
-					ariaLabel: _r[r],
+					state: vr[r],
+					ariaLabel: yr[r],
 					"data-testid": `${A}-dot`
 				}),
 				/* @__PURE__ */ Y(F, {
@@ -3936,7 +3978,7 @@ function xr({ name: t, showContext: n = !0, phase: r = "live", statusLabel: a, s
 					size: "xs",
 					tone: "secondary",
 					"data-testid": `${A}-people`,
-					children: br(s, l)
+					children: Sr(s, l)
 				})
 			]
 		}), /* @__PURE__ */ X("div", {
@@ -4016,16 +4058,16 @@ function xr({ name: t, showContext: n = !0, phase: r = "live", statusLabel: a, s
 }
 //#endregion
 //#region src/components/video/MediaControlsBar.tsx
-var Sr = {
+var wr = {
 	sm: "h-9 w-9",
 	md: "h-11 w-11",
 	lg: "h-14 w-14"
-}, Cr = {
+}, Tr = {
 	sm: 16,
 	md: 20,
 	lg: 24
 };
-function wr({ audioOn: t, videoOn: n, screenSharing: r = !1, onToggleAudio: i, onToggleVideo: a, onToggleScreenShare: o, onLeave: s, audioDisabled: c, videoDisabled: l, screenShareDisabled: u, extras: d, leaveLabel: f = "Leave call", size: p = "md", className: m, "data-testid": h }) {
+function Er({ audioOn: t, videoOn: n, screenSharing: r = !1, onToggleAudio: i, onToggleVideo: a, onToggleScreenShare: o, onLeave: s, audioDisabled: c, videoDisabled: l, screenShareDisabled: u, extras: d, leaveLabel: f = "Leave call", size: p = "md", className: m, "data-testid": h }) {
 	let g = p === "lg" ? 22 : p === "sm" ? 16 : 18;
 	return /* @__PURE__ */ X("div", {
 		"data-testid": h,
@@ -4072,21 +4114,21 @@ function wr({ audioOn: t, videoOn: n, screenSharing: r = !1, onToggleAudio: i, o
 				"aria-label": f,
 				title: f,
 				"data-testid": "media-controls-leave",
-				className: e("rounded-full grid place-items-center transition-colors duration-150", Sr[p], "bg-danger text-white hover:bg-danger cursor-pointer"),
-				children: /* @__PURE__ */ Y(M, { size: Cr[p] })
+				className: e("rounded-full grid place-items-center transition-colors duration-150", wr[p], "bg-danger text-white hover:bg-danger cursor-pointer"),
+				children: /* @__PURE__ */ Y(M, { size: Tr[p] })
 			})
 		]
 	});
 }
 //#endregion
 //#region src/components/video/CallSettingsDialog.tsx
-var Tr = {
+var Dr = {
 	devices: "Devices",
 	effects: "Effects",
 	people: "People",
 	chat: "Chat"
 };
-function Er({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", devicesContent: a, effectsContent: o, peopleContent: s, chatContent: c, showPreview: l = !0, title: u = "Call settings", className: d }) {
+function Or({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", devicesContent: a, effectsContent: o, peopleContent: s, chatContent: c, showPreview: l = !0, title: u = "Call settings", className: d }) {
 	let f = [
 		...a == null ? [] : ["devices"],
 		...o == null ? [] : ["effects"],
@@ -4156,7 +4198,7 @@ function Er({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", 
 							onClick: () => m(t),
 							"data-testid": `call-settings-tab-${t}`,
 							className: e("cursor-pointer rounded-t-md border-b-2 px-3 py-1.5 text-[13px] font-medium transition-colors", t === h ? "border-call-chrome-accent text-white" : "border-transparent text-white/60 hover:bg-white/5 hover:text-white/90"),
-							children: Tr[t]
+							children: Dr[t]
 						}, t))
 					}), /* @__PURE__ */ X("div", {
 						role: "tabpanel",
@@ -4176,11 +4218,11 @@ function Er({ open: t, onClose: n, previewStream: r, initialTab: i = "effects", 
 }
 //#endregion
 //#region src/components/video/GoLiveButton.tsx
-function Dr(e) {
+function kr(e) {
 	return `Start broadcasting this room and tell everyone in ${e ?? "the channel"}`;
 }
-var Or = "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium border-none transition-colors disabled:cursor-not-allowed disabled:opacity-50", kr = "text-xs text-text-tertiary";
-function Ar({ live: t = !1, starting: n = !1, onGoLive: r, onEndBroadcast: i, viewerCount: a, streamReady: o, connection: s = "online", channelName: c, error: l, endHint: u, label: d, disabled: f, className: p, "data-testid": m = "go-live" }) {
+var Ar = "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium border-none transition-colors disabled:cursor-not-allowed disabled:opacity-50", jr = "text-xs text-text-tertiary";
+function Mr({ live: t = !1, starting: n = !1, onGoLive: r, onEndBroadcast: i, viewerCount: a, streamReady: o, connection: s = "online", channelName: c, error: l, endHint: u, label: d, disabled: f, className: p, "data-testid": m = "go-live" }) {
 	if (t) {
 		let t = s !== "online", n = t || o === !1;
 		return /* @__PURE__ */ X("div", {
@@ -4195,7 +4237,7 @@ function Ar({ live: t = !1, starting: n = !1, onGoLive: r, onEndBroadcast: i, vi
 					/* @__PURE__ */ X("span", {
 						"data-testid": `${m}-status`,
 						role: "status",
-						className: e(Or, n ? "bg-warning-bg text-warning-fg" : "bg-danger text-white"),
+						className: e(Ar, n ? "bg-warning-bg text-warning-fg" : "bg-danger text-white"),
 						children: [/* @__PURE__ */ Y("span", {
 							"aria-hidden": !0,
 							className: e("h-1.5 w-1.5 rounded-full", n ? "bg-warning-fg" : "bg-white")
@@ -4203,20 +4245,20 @@ function Ar({ live: t = !1, starting: n = !1, onGoLive: r, onEndBroadcast: i, vi
 					}),
 					!n && typeof a == "number" && Number.isFinite(a) && a >= 0 && /* @__PURE__ */ X("span", {
 						"data-testid": `${m}-viewers`,
-						className: kr,
+						className: jr,
 						children: [a, " watching"]
 					}),
 					i && /* @__PURE__ */ Y("button", {
 						type: "button",
 						"data-testid": `${m}-end`,
 						onClick: i,
-						className: e(Or, "cursor-pointer bg-surface-panel text-text-secondary hover:bg-surface-hover"),
+						className: e(Ar, "cursor-pointer bg-surface-panel text-text-secondary hover:bg-surface-hover"),
 						children: "End broadcast"
 					})
 				]
 			}), (n || !i && u) && /* @__PURE__ */ Y("span", {
 				"data-testid": `${m}-hint`,
-				className: kr,
+				className: jr,
 				children: t ? s === "offline" ? "Your connection dropped. The broadcast resumes if it comes back." : "Your connection is unstable. What you see locally is not what they see." : n ? "Nobody can watch yet — the stream has not started." : u
 			})]
 		});
@@ -4230,9 +4272,9 @@ function Ar({ live: t = !1, starting: n = !1, onGoLive: r, onEndBroadcast: i, vi
 				"data-live": "false",
 				disabled: f || n,
 				onClick: r,
-				title: Dr(c),
-				"aria-label": n ? "Going live…" : `${d ?? "Go live"} — ${Dr(c).toLowerCase()}`,
-				className: e(Or, "cursor-pointer bg-danger text-white hover:opacity-90"),
+				title: kr(c),
+				"aria-label": n ? "Going live…" : `${d ?? "Go live"} — ${kr(c).toLowerCase()}`,
+				className: e(Ar, "cursor-pointer bg-danger text-white hover:opacity-90"),
 				children: [/* @__PURE__ */ Y("span", {
 					"aria-hidden": !0,
 					className: "h-1.5 w-1.5 rounded-full bg-white"
@@ -4240,7 +4282,7 @@ function Ar({ live: t = !1, starting: n = !1, onGoLive: r, onEndBroadcast: i, vi
 			}),
 			/* @__PURE__ */ Y("span", {
 				"data-testid": `${m}-hint`,
-				className: kr,
+				className: jr,
 				children: n ? "Connecting — this takes a few seconds." : `Starts a broadcast in ${c ?? "this channel"} and tells everyone there.`
 			}),
 			l && /* @__PURE__ */ Y("span", {
@@ -4254,7 +4296,7 @@ function Ar({ live: t = !1, starting: n = !1, onGoLive: r, onEndBroadcast: i, vi
 }
 //#endregion
 //#region src/components/video/DeviceSettingsPanel.tsx
-function jr() {
+function Nr() {
 	let [e, t] = q(!1), n = K(null);
 	return {
 		play: U(async (e) => {
@@ -4275,8 +4317,8 @@ function jr() {
 		playing: e
 	};
 }
-function Mr({ value: e, onChange: t, showCamera: n = !0, children: a, "data-testid": o = "device-settings" }) {
-	let s = r(), { play: c, playing: l } = jr();
+function Pr({ value: e, onChange: t, showCamera: n = !0, children: a, "data-testid": o = "device-settings" }) {
+	let s = r(), { play: c, playing: l } = Nr();
 	if (!s.supported) return /* @__PURE__ */ Y("p", {
 		"data-testid": `${o}-unsupported`,
 		className: "m-0 text-sm text-text-tertiary",
@@ -4361,12 +4403,12 @@ function Mr({ value: e, onChange: t, showCamera: n = !0, children: a, "data-test
 }
 //#endregion
 //#region src/components/video/AudioPlayer.tsx
-function Nr(e) {
+function Fr(e) {
 	if (!Number.isFinite(e) || e < 0) return "0:00";
 	let t = Math.floor(e);
 	return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
 }
-function Pr({ src: t, autoPlay: n = !1, onFirstPlay: r, onEnded: i, durationHint: a, size: o = "md", className: s, "data-testid": c = "audio-player" }) {
+function Ir({ src: t, autoPlay: n = !1, onFirstPlay: r, onEnded: i, durationHint: a, size: o = "md", className: s, "data-testid": c = "audio-player" }) {
 	let l = K(null), [u, d] = q(!1), [f, p] = q(0), [m, h] = q(a ?? 0), g = K(!1);
 	W(() => {
 		d(!1), p(0), h(a ?? 0), g.current = !1;
@@ -4420,7 +4462,7 @@ function Pr({ src: t, autoPlay: n = !1, onFirstPlay: r, onEnded: i, durationHint
 			/* @__PURE__ */ Y("span", {
 				className: "w-9 shrink-0 text-right font-mono tabular-nums text-text-secondary",
 				"data-testid": `${c}-time`,
-				children: Nr(f)
+				children: Fr(f)
 			}),
 			/* @__PURE__ */ Y(pe, {
 				"aria-label": "Seek",
@@ -4435,18 +4477,18 @@ function Pr({ src: t, autoPlay: n = !1, onFirstPlay: r, onEnded: i, durationHint
 			/* @__PURE__ */ Y("span", {
 				className: "w-9 shrink-0 font-mono tabular-nums text-text-tertiary",
 				"data-testid": `${c}-duration`,
-				children: Nr(m)
+				children: Fr(m)
 			})
 		]
 	});
 }
 //#endregion
 //#region src/components/video/VoicemailRecorder.tsx
-function Fr(e) {
+function Lr(e) {
 	let t = Math.max(0, Math.floor(e / 1e3));
 	return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
 }
-function Ir({ open: e, onClose: t, recipientName: r, getStream: a, onSend: o, maxSeconds: s = 60, "data-testid": c = "voicemail-recorder" }) {
+function Rr({ open: e, onClose: t, recipientName: r, getStream: a, onSend: o, maxSeconds: s = 60, "data-testid": c = "voicemail-recorder" }) {
 	let l = n({
 		getStream: a,
 		maxMs: s * 1e3
@@ -4525,12 +4567,12 @@ function Ir({ open: e, onClose: t, recipientName: r, getStream: a, onSend: o, ma
 				/* @__PURE__ */ X("div", {
 					className: "font-mono text-3xl tabular-nums text-text-primary",
 					"data-testid": `${c}-clock`,
-					children: [Fr(l.elapsedMs), /* @__PURE__ */ X("span", {
+					children: [Lr(l.elapsedMs), /* @__PURE__ */ X("span", {
 						className: "text-base text-text-tertiary",
-						children: [" / ", Fr(s * 1e3)]
+						children: [" / ", Lr(s * 1e3)]
 					})]
 				}),
-				l.state === "recorded" && l.url && /* @__PURE__ */ Y(Pr, {
+				l.state === "recorded" && l.url && /* @__PURE__ */ Y(Ir, {
 					src: l.url,
 					durationHint: l.elapsedMs / 1e3,
 					className: "w-full",
@@ -4547,7 +4589,7 @@ function Ir({ open: e, onClose: t, recipientName: r, getStream: a, onSend: o, ma
 }
 //#endregion
 //#region src/components/video/AuthedAudio.tsx
-function Lr({ src: e, getAuthToken: t, onFirstPlay: n, eager: r = !1, className: a, "data-testid": o = "authed-audio" }) {
+function zr({ src: e, getAuthToken: t, onFirstPlay: n, eager: r = !1, className: a, "data-testid": o = "authed-audio" }) {
 	let [s, c] = q(null), [l, u] = q("idle"), [d, f] = q(r), p = K(!1);
 	return W(() => {
 		if (!d) return;
@@ -4583,7 +4625,7 @@ function Lr({ src: e, getAuthToken: t, onFirstPlay: n, eager: r = !1, className:
 		},
 		"data-testid": `${o}-error`,
 		children: "Couldn’t load — retry"
-	}) : /* @__PURE__ */ Y(Pr, {
+	}) : /* @__PURE__ */ Y(Ir, {
 		src: s,
 		autoPlay: !0,
 		size: "sm",
@@ -4596,11 +4638,11 @@ function Lr({ src: e, getAuthToken: t, onFirstPlay: n, eager: r = !1, className:
 }
 //#endregion
 //#region src/components/video/EmbeddedCallPanel.tsx
-function Rr(e) {
+function Br(e) {
 	let t = Math.max(0, Math.floor(e)), n = Math.floor(t / 3600), r = Math.floor(t % 3600 / 60), i = t % 60;
 	return n > 0 ? `${n}:${String(r).padStart(2, "0")}:${String(i).padStart(2, "0")}` : `${r}:${String(i).padStart(2, "0")}`;
 }
-function zr({ title: t, subtitle: n, durationSeconds: r, live: i = !0, recording: a, onPopOut: o, popOutLabel: c = "Pop the call out", children: l, controls: u, aside: d, stage: f = "video", className: p, "data-testid": m = "embedded-call-panel" }) {
+function Vr({ title: t, subtitle: n, durationSeconds: r, live: i = !0, recording: a, onPopOut: o, popOutLabel: c = "Pop the call out", children: l, controls: u, aside: d, stage: f = "video", className: p, "data-testid": m = "embedded-call-panel" }) {
 	return /* @__PURE__ */ X("section", {
 		className: e("flex w-full min-w-0 flex-col overflow-hidden rounded-xl bg-video-stage text-white shadow-md", d && "@container", p),
 		"aria-label": typeof t == "string" ? `Call: ${t}` : "Call",
@@ -4619,7 +4661,7 @@ function zr({ title: t, subtitle: n, durationSeconds: r, live: i = !0, recording
 						"data-testid": `${m}-title`,
 						children: t
 					}),
-					a && /* @__PURE__ */ Y(dr, {
+					a && /* @__PURE__ */ Y(pr, {
 						armed: a.armed,
 						active: a.active,
 						className: "shrink-0",
@@ -4633,7 +4675,7 @@ function zr({ title: t, subtitle: n, durationSeconds: r, live: i = !0, recording
 					r !== void 0 && /* @__PURE__ */ Y("span", {
 						className: "shrink-0 font-mono text-xs tabular-nums text-white/80",
 						"data-testid": `${m}-duration`,
-						children: Rr(r)
+						children: Br(r)
 					}),
 					o && /* @__PURE__ */ Y(s, {
 						"aria-label": c,
@@ -4679,18 +4721,18 @@ function zr({ title: t, subtitle: n, durationSeconds: r, live: i = !0, recording
 }
 //#endregion
 //#region src/components/video/CallNoticePill.tsx
-var Br = {
+var Hr = {
 	warning: "bg-warning/95 text-white",
 	error: "bg-danger/95 text-white",
 	info: "bg-black/70 text-white"
 };
-function Vr({ show: t, tone: n = "warning", message: r, actions: i, className: a, "data-testid": o = "call-notice" }) {
+function Ur({ show: t, tone: n = "warning", message: r, actions: i, className: a, "data-testid": o = "call-notice" }) {
 	return t ? /* @__PURE__ */ X("div", {
 		role: "status",
 		"aria-live": "polite",
 		"data-testid": o,
 		"data-tone": n,
-		className: e("pointer-events-auto absolute left-1/2 top-3 z-30 flex max-w-[calc(100%-1rem)] -translate-x-1/2 items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium shadow-lg", Br[n], a),
+		className: e("pointer-events-auto absolute left-1/2 top-3 z-30 flex max-w-[calc(100%-1rem)] -translate-x-1/2 items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium shadow-lg", Hr[n], a),
 		children: [/* @__PURE__ */ Y("span", {
 			className: "min-w-0 truncate",
 			children: r
@@ -4702,7 +4744,7 @@ function Vr({ show: t, tone: n = "warning", message: r, actions: i, className: a
 }
 //#endregion
 //#region src/components/video/CallInterruptedNotice.tsx
-function Hr({ show: t, title: n, description: r, actions: i, className: a, "data-testid": o = "call-interrupted-notice" }) {
+function Wr({ show: t, title: n, description: r, actions: i, className: a, "data-testid": o = "call-interrupted-notice" }) {
 	return t ? /* @__PURE__ */ X("div", {
 		role: "alert",
 		"aria-live": "assertive",
@@ -4726,19 +4768,19 @@ function Hr({ show: t, title: n, description: r, actions: i, className: a, "data
 }
 //#endregion
 //#region src/components/video/MediaPrecheckRow.tsx
-var Ur = {
+var Gr = {
 	microphone: "Microphone blocked in the browser",
 	camera: "Camera blocked in the browser"
 };
-function Wr(e, t) {
-	if (t === "denied") return Ur[e];
+function Kr(e, t) {
+	if (t === "denied") return Gr[e];
 	if (t === "unavailable") return e === "microphone" ? "No microphone found" : "No camera found";
 }
-function Gr({ micOn: t, cameraOn: n, showCamera: r = !0, permission: a, onToggleMic: o, onToggleCamera: s, onOpenSettings: c, testIdPrefix: l = "start-call-precheck", settingsTestId: u = "start-call-settings", className: d }) {
+function qr({ micOn: t, cameraOn: n, showCamera: r = !0, permission: a, onToggleMic: o, onToggleCamera: s, onOpenSettings: c, testIdPrefix: l = "start-call-precheck", settingsTestId: u = "start-call-settings", className: d }) {
 	let f = typeof a == "string" ? {
 		microphone: a,
 		camera: a
-	} : a, p = Wr("microphone", f.microphone), m = Wr("camera", f.camera), h = t && !p, g = n && !m, _ = (t) => e("inline-flex h-8 items-center gap-2 border-transparent px-2 py-0 font-medium", t ? "text-danger-fg" : "text-text-primary");
+	} : a, p = Kr("microphone", f.microphone), m = Kr("camera", f.camera), h = t && !p, g = n && !m, _ = (t) => e("inline-flex h-8 items-center gap-2 border-transparent px-2 py-0 font-medium", t ? "text-danger-fg" : "text-text-primary");
 	return /* @__PURE__ */ X("div", {
 		className: e("flex items-center gap-2", d),
 		"data-testid": `${l}-row`,
@@ -4778,7 +4820,7 @@ function Gr({ micOn: t, cameraOn: n, showCamera: r = !0, permission: a, onToggle
 }
 //#endregion
 //#region src/components/video/ReviewDocumentList.tsx
-function Kr({ items: t, trailing: n, onRemove: r, onOpen: i, onSelect: a, onReorder: o, emptyLabel: c = "No documents yet", className: u, "data-testid": d = "review-document-list", rowTestIdPrefix: p = "call-document" }) {
+function Jr({ items: t, trailing: n, onRemove: r, onOpen: i, onSelect: a, onReorder: o, emptyLabel: c = "No documents yet", className: u, "data-testid": d = "review-document-list", rowTestIdPrefix: p = "call-document" }) {
 	let [m, h] = q(null), g = n === "remove";
 	if (t.length === 0) return /* @__PURE__ */ Y("p", {
 		className: e("m-0 py-2 text-sm text-text-tertiary", u),
@@ -4845,7 +4887,7 @@ function Kr({ items: t, trailing: n, onRemove: r, onOpen: i, onSelect: a, onReor
 }
 //#endregion
 //#region src/components/video/CollaboratorCheckList.tsx
-function qr({ title: t, rows: n, selected: r, onToggle: i, loading: a = !1, emptyLabel: o = "No one else has this document open", footnote: s, className: c, "data-testid": l = "start-call-collaborators", rowTestIdPrefix: u = "start-call-collaborator" }) {
+function Yr({ title: t, rows: n, selected: r, onToggle: i, loading: a = !1, emptyLabel: o = "No one else has this document open", footnote: s, className: c, "data-testid": l = "start-call-collaborators", rowTestIdPrefix: u = "start-call-collaborator" }) {
 	let d = new Set(r);
 	return /* @__PURE__ */ X("section", {
 		className: e("flex flex-col", c),
@@ -4926,7 +4968,7 @@ function qr({ title: t, rows: n, selected: r, onToggle: i, loading: a = !1, empt
 }
 //#endregion
 //#region src/components/video/CallPeopleList.tsx
-function Jr(e) {
+function Xr(e) {
 	let t = null;
 	return e.state === "ringing" ? t = {
 		label: "Ringing…",
@@ -4981,14 +5023,14 @@ function Jr(e) {
 		kind: "none"
 	};
 }
-var Yr = /* @__PURE__ */ new Set([
+var Zr = /* @__PURE__ */ new Set([
 	"ringing",
 	"notified",
 	"missed",
 	"declined",
 	"left"
 ]);
-function Xr({ people: t, count: n, followingUserId: r, canModerate: a, onInvite: o, onFollow: s, onMuteForMe: c, onMute: l, onRemove: u, onMakeHost: d, onRingAgain: f, onOpenSelfSettings: p, onLeave: m, hideHeading: h = !1, className: g, "data-testid": _ = "call-people-list" }) {
+function Qr({ people: t, count: n, followingUserId: r, canModerate: a, onInvite: o, onFollow: s, onMuteForMe: c, onMute: l, onRemove: u, onMakeHost: d, onRingAgain: f, onOpenSelfSettings: p, onLeave: m, hideHeading: h = !1, className: g, "data-testid": _ = "call-people-list" }) {
 	return /* @__PURE__ */ X("section", {
 		className: e("flex flex-col", g),
 		"data-testid": _,
@@ -5018,7 +5060,7 @@ function Xr({ people: t, count: n, followingUserId: r, canModerate: a, onInvite:
 		}), /* @__PURE__ */ Y("ul", {
 			className: "m-0 flex list-none flex-col p-0",
 			children: t.map((t) => {
-				let n = Jr(t), o = Yr.has(t.state), h = [];
+				let n = Xr(t), o = Zr.has(t.state), h = [];
 				if (!t.isLocal && !o) {
 					let e = r === t.userId;
 					h.push({
@@ -5134,7 +5176,7 @@ function Xr({ people: t, count: n, followingUserId: r, canModerate: a, onInvite:
 }
 //#endregion
 //#region src/components/video/CallSettingsDrawer.tsx
-var Zr = [
+var $r = [
 	{
 		id: "audio-video",
 		label: "Audio & video"
@@ -5148,7 +5190,7 @@ var Zr = [
 		label: "Captions"
 	}
 ];
-function Qr({ open: t, onClose: n, initialTab: r = "audio-video", tab: a, onTabChange: o, docked: s = !0, audioVideo: c, effects: l, captions: u, effectsFooter: d, width: f = 380, className: p, "data-testid": m = "call-settings-drawer" }) {
+function ei({ open: t, onClose: n, initialTab: r = "audio-video", tab: a, onTabChange: o, docked: s = !0, audioVideo: c, effects: l, captions: u, effectsFooter: d, width: f = 380, className: p, "data-testid": m = "call-settings-drawer" }) {
 	let [h, g] = q(r);
 	W(() => {
 		t && g(r);
@@ -5207,7 +5249,7 @@ function Qr({ open: t, onClose: n, initialTab: r = "audio-video", tab: a, onTabC
 		children: [/* @__PURE__ */ Y("div", {
 			className: "shrink-0 px-5",
 			children: /* @__PURE__ */ Y(ee, {
-				items: Zr.map((e) => ({
+				items: $r.map((e) => ({
 					id: e.id,
 					label: e.label,
 					testId: `call-settings-tab-${e.id}`
@@ -5230,7 +5272,7 @@ function Qr({ open: t, onClose: n, initialTab: r = "audio-video", tab: a, onTabC
 		})]
 	});
 }
-function $r({ enabled: t, onEnabledChange: n, language: r, onLanguageChange: i, languages: a = [{
+function ti({ enabled: t, onEnabledChange: n, language: r, onLanguageChange: i, languages: a = [{
 	value: "en",
 	label: "English"
 }], className: o }) {
@@ -5271,10 +5313,10 @@ function $r({ enabled: t, onEnabledChange: n, language: r, onLanguageChange: i, 
 }
 //#endregion
 //#region src/components/video/StartCallDrawer.tsx
-function ei(e) {
+function ni(e) {
 	return e === 0 ? "No one selected" : e === 1 ? "1 person selected" : `${e} people selected`;
 }
-function ti({ children: e, action: t }) {
+function ri({ children: e, action: t }) {
 	return /* @__PURE__ */ X("div", {
 		className: "flex items-center justify-between gap-2",
 		children: [/* @__PURE__ */ Y("h3", {
@@ -5283,7 +5325,7 @@ function ti({ children: e, action: t }) {
 		}), t]
 	});
 }
-function ni({ open: e, onClose: t, title: n, onTitleChange: r, media: o, onMediaChange: s, documents: c, onManageAccess: l, people: u, message: d, onMessageChange: f, messageMaxLength: p = 280, ring: m, onRingChange: v, precheck: y, selectedCount: b, onCopyLink: x, onStart: S, starting: C = !1, startDisabledReason: w, error: T, width: E = 400, docked: D = !0, className: O, "data-testid": k = "start-call-drawer" }) {
+function ii({ open: e, onClose: t, title: n, onTitleChange: r, media: o, onMediaChange: s, documents: c, onManageAccess: l, people: u, message: d, onMessageChange: f, messageMaxLength: p = 280, ring: m, onRingChange: v, precheck: y, selectedCount: b, onCopyLink: x, onStart: S, starting: C = !1, startDisabledReason: w, error: T, width: E = 400, docked: D = !0, className: O, "data-testid": k = "start-call-drawer" }) {
 	let { onAdd: A, ...j } = c, M = !!w || C || !n.trim(), N = /* @__PURE__ */ X("div", {
 		className: "flex flex-col gap-2.5",
 		children: [
@@ -5302,7 +5344,7 @@ function ni({ open: e, onClose: t, title: n, onTitleChange: r, media: o, onMedia
 			/* @__PURE__ */ Y("span", {
 				className: "text-xs text-text-tertiary",
 				"data-testid": "start-call-selected-count",
-				children: ei(b)
+				children: ni(b)
 			}),
 			/* @__PURE__ */ X("div", {
 				className: "flex items-center justify-between gap-3",
@@ -5370,7 +5412,7 @@ function ni({ open: e, onClose: t, title: n, onTitleChange: r, media: o, onMedia
 			/* @__PURE__ */ X("section", {
 				className: "flex flex-col gap-1",
 				children: [
-					/* @__PURE__ */ Y(ti, {
+					/* @__PURE__ */ Y(ri, {
 						action: /* @__PURE__ */ X(i, {
 							variant: "link",
 							onClick: A,
@@ -5380,7 +5422,7 @@ function ni({ open: e, onClose: t, title: n, onTitleChange: r, media: o, onMedia
 						}),
 						children: "Review documents"
 					}),
-					/* @__PURE__ */ Y(Kr, {
+					/* @__PURE__ */ Y(Jr, {
 						...j,
 						trailing: "remove",
 						"data-testid": "start-call-documents",
@@ -5404,7 +5446,7 @@ function ni({ open: e, onClose: t, title: n, onTitleChange: r, media: o, onMedia
 			/* @__PURE__ */ X("section", {
 				className: "flex flex-col gap-2",
 				children: [
-					/* @__PURE__ */ Y(ti, { children: "People" }),
+					/* @__PURE__ */ Y(ri, { children: "People" }),
 					/* @__PURE__ */ Y(ne, {
 						value: u.query,
 						onChange: (e) => u.onQueryChange(e.target.value),
@@ -5426,7 +5468,7 @@ function ni({ open: e, onClose: t, title: n, onTitleChange: r, media: o, onMedia
 							children: e.name
 						}, e.userId))
 					}),
-					/* @__PURE__ */ Y(qr, {
+					/* @__PURE__ */ Y(Yr, {
 						title: "Document collaborators",
 						footnote: "Offline people can use the invite link.",
 						...u.collaborators
@@ -5469,7 +5511,7 @@ function ni({ open: e, onClose: t, title: n, onTitleChange: r, media: o, onMedia
 				className: "-my-0.5 h-px shrink-0 bg-border",
 				"aria-hidden": "true"
 			}),
-			/* @__PURE__ */ Y(Gr, {
+			/* @__PURE__ */ Y(qr, {
 				showCamera: o === "video",
 				...y
 			})
@@ -5478,10 +5520,10 @@ function ni({ open: e, onClose: t, title: n, onTitleChange: r, media: o, onMedia
 }
 //#endregion
 //#region src/components/video/IncomingCallPopover.tsx
-function ri(e, t) {
+function ai(e, t) {
 	return e === 0 ? "Nobody has joined yet" : t ? `${e} in call` : e === 1 ? "1 person in the call" : `${e} people in the call`;
 }
-function ii({ open: t, anchorRef: n, compact: r = !1, caller: a, title: o, documents: c, onOpenDocument: u, participants: d, participantCount: p, mic: h, camera: g, onOpenSettings: _, busy: v = !1, onJoin: y, onSwitch: b, onDecline: x, onDismiss: S, ringing: w = !0, initialFocus: E = "join", className: D, "data-testid": O = "incoming-call-popover" }) {
+function oi({ open: t, anchorRef: n, compact: r = !1, caller: a, title: o, documents: c, onOpenDocument: u, participants: d, participantCount: p, mic: h, camera: g, onOpenSettings: _, busy: v = !1, onJoin: y, onSwitch: b, onDecline: x, onDismiss: S, ringing: w = !0, initialFocus: E = "join", className: D, "data-testid": O = "incoming-call-popover" }) {
 	let [k, ...A] = c, j = A.length ? r ? `+${A.length}` : `+${A.length} ${A.length === 1 ? "document" : "documents"}` : null, M = v && !!b, N = K(null);
 	return W(() => {
 		if (!t || E !== "join") return;
@@ -5604,7 +5646,7 @@ function ii({ open: t, anchorRef: n, compact: r = !1, caller: a, title: o, docum
 						r && /* @__PURE__ */ Y("span", {
 							className: "ml-auto shrink-0 text-text-secondary",
 							"data-testid": "incoming-call-participants",
-							children: ri(p, !0)
+							children: ai(p, !0)
 						})
 					]
 				}),
@@ -5621,7 +5663,7 @@ function ii({ open: t, anchorRef: n, compact: r = !1, caller: a, title: o, docum
 						className: "[&>*]:!border-surface [&>*+*]:!ml-[-4px]"
 					}), /* @__PURE__ */ Y("span", {
 						className: "text-sm text-text-secondary",
-						children: ri(p, !1)
+						children: ai(p, !1)
 					})]
 				}),
 				!r && /* @__PURE__ */ Y("div", {
@@ -5687,7 +5729,7 @@ function ii({ open: t, anchorRef: n, compact: r = !1, caller: a, title: o, docum
 }
 //#endregion
 //#region src/components/video/DocumentCallPanel.tsx
-function ai({ title: t, participantCount: n, elapsedMs: r, people: a, documents: o, presenting: c, currentDocumentId: l, canPresent: u, presentDisabledReason: d, onPresent: f, onCopyLink: p, onManageAccess: m, onPopOut: g, onClose: v, loading: y = !1, notice: b, className: x, "data-testid": C = "document-call-panel" }) {
+function si({ title: t, participantCount: n, elapsedMs: r, people: a, documents: o, presenting: c, currentDocumentId: l, canPresent: u, presentDisabledReason: d, onPresent: f, onCopyLink: p, onManageAccess: m, onPopOut: g, onClose: v, loading: y = !1, notice: b, className: x, "data-testid": C = "document-call-panel" }) {
 	let { count: w, onAdd: T, ...E } = o, D = a.people.find((e) => e.isLocal), k = !!(c && D && c.userId === D.userId && c.documentId === l), A = !!(c && (!D || c.userId !== D.userId)), j = a.people.filter((e) => e.state === "in-call" && !e.isLocal).length === 0, M = `${n === 1 ? "1 person" : `${n} people`}${r == null ? "" : ` · ${Ae(r)}`}`;
 	return /* @__PURE__ */ X(oe, {
 		open: !0,
@@ -5739,7 +5781,7 @@ function ai({ title: t, participantCount: n, elapsedMs: r, people: a, documents:
 					rounded: "md"
 				}, e))
 			}) : /* @__PURE__ */ X(J, { children: [
-				/* @__PURE__ */ Y(Xr, { ...a }),
+				/* @__PURE__ */ Y(Qr, { ...a }),
 				j && /* @__PURE__ */ X("p", {
 					className: "m-0 -mt-2 text-sm text-text-tertiary",
 					"data-testid": "call-panel-waiting",
@@ -5782,7 +5824,7 @@ function ai({ title: t, participantCount: n, elapsedMs: r, people: a, documents:
 								children: [/* @__PURE__ */ Y(h, { size: 14 }), "Add"]
 							})
 						]
-					}), /* @__PURE__ */ Y(Kr, {
+					}), /* @__PURE__ */ Y(Jr, {
 						...E,
 						trailing: "open",
 						"data-testid": "call-documents-list",
@@ -5831,8 +5873,8 @@ function ai({ title: t, participantCount: n, elapsedMs: r, people: a, documents:
 }
 //#endregion
 //#region src/components/video/MeetingToolbar.tsx
-var oi = "relative inline-flex h-14 min-w-14 flex-col items-center justify-center gap-0.5 rounded-md px-2 text-text-secondary transition-colors duration-100 hover:bg-surface-hover hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent";
-function si({ item: t }) {
+var ci = "relative inline-flex h-14 min-w-14 flex-col items-center justify-center gap-0.5 rounded-md px-2 text-text-secondary transition-colors duration-100 hover:bg-surface-hover hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent";
+function li({ item: t }) {
 	let n = t.disabled && t.disabledReason ? t.disabledReason : t.title ?? t.label, r = /* @__PURE__ */ X("button", {
 		type: "button",
 		onClick: t.onClick,
@@ -5845,7 +5887,7 @@ function si({ item: t }) {
 		"data-active": t.active ? "true" : void 0,
 		"data-pressed": t.pressed ? "true" : void 0,
 		"data-tone": t.tone ?? "default",
-		className: e(oi, t.active && "text-accent hover:text-accent", t.pressed && "bg-accent-bg text-accent hover:bg-accent-bg hover:text-accent", t.tone === "danger" && "text-danger hover:bg-danger-bg hover:text-danger", t.menu && "rounded-r-none pr-1"),
+		className: e(ci, t.active && "text-accent hover:text-accent", t.pressed && "bg-accent-bg text-accent hover:bg-accent-bg hover:text-accent", t.tone === "danger" && "text-danger hover:bg-danger-bg hover:text-danger", t.menu && "rounded-r-none pr-1"),
 		children: [
 			/* @__PURE__ */ X("span", {
 				className: "relative inline-flex items-center gap-1",
@@ -5896,7 +5938,7 @@ function si({ item: t }) {
 		})]
 	}) : r;
 }
-function ci(e) {
+function ui(e) {
 	return {
 		label: e.count === void 0 ? e.label : `${e.label} (${e.count})`,
 		icon: e.icon,
@@ -5908,7 +5950,7 @@ function ci(e) {
 		"data-testid": `meeting-toolbar-more-${e.id}`
 	};
 }
-function li(e, t, n) {
+function di(e, t, n) {
 	let [r, i] = q(!1);
 	return W(() => {
 		if (n !== void 0) return;
@@ -5924,15 +5966,15 @@ function li(e, t, n) {
 		n
 	]), n ?? r;
 }
-function ui() {
+function fi() {
 	return /* @__PURE__ */ Y("span", {
 		"aria-hidden": !0,
 		className: "mx-1 h-8 w-px shrink-0 bg-border"
 	});
 }
-function di({ start: t, items: n, media: r = [], moreSections: i = [], onLeave: a, leaveLabel: o = "Leave", leaveMenu: s, compactBelow: c = 960, compact: l, className: u, "data-testid": d = "meeting-toolbar" }) {
-	let f = Se(), p = li(f.ref, c, l), m = p ? n.filter((e) => e.priority !== "secondary") : n, h = p ? n.filter((e) => e.priority === "secondary") : [], g = [...h.length ? [{
-		items: h.map(ci),
+function pi({ start: t, items: n, media: r = [], moreSections: i = [], onLeave: a, leaveLabel: o = "Leave", leaveMenu: s, compactBelow: c = 960, compact: l, className: u, "data-testid": d = "meeting-toolbar" }) {
+	let f = Se(), p = di(f.ref, c, l), m = p ? n.filter((e) => e.priority !== "secondary") : n, h = p ? n.filter((e) => e.priority === "secondary") : [], g = [...h.length ? [{
+		items: h.map(ui),
 		"data-testid": "meeting-toolbar-more-folded"
 	}] : [], ...i];
 	return /* @__PURE__ */ X("div", {
@@ -5950,7 +5992,7 @@ function di({ start: t, items: n, media: r = [], moreSections: i = [], onLeave: 
 			/* @__PURE__ */ X("div", {
 				className: "flex shrink-0 items-center gap-0.5",
 				"data-testid": `${d}-items`,
-				children: [m.map((e) => /* @__PURE__ */ Y(si, { item: e }, e.id)), g.length > 0 && /* @__PURE__ */ Y(me, {
+				children: [m.map((e) => /* @__PURE__ */ Y(li, { item: e }, e.id)), g.length > 0 && /* @__PURE__ */ Y(me, {
 					trigger: /* @__PURE__ */ X(J, { children: [/* @__PURE__ */ Y(A, { size: 20 }), /* @__PURE__ */ Y(F, {
 						size: "xs",
 						tone: "inherit",
@@ -5965,14 +6007,14 @@ function di({ start: t, items: n, media: r = [], moreSections: i = [], onLeave: 
 					sections: g
 				})]
 			}),
-			r.length > 0 && /* @__PURE__ */ Y(ui, {}),
+			r.length > 0 && /* @__PURE__ */ Y(fi, {}),
 			r.length > 0 && /* @__PURE__ */ Y("div", {
 				className: "flex shrink-0 items-center gap-0.5",
 				"data-testid": `${d}-media`,
-				children: r.map((e) => /* @__PURE__ */ Y(si, { item: e }, e.id))
+				children: r.map((e) => /* @__PURE__ */ Y(li, { item: e }, e.id))
 			}),
-			/* @__PURE__ */ Y(ui, {}),
-			/* @__PURE__ */ Y(si, { item: {
+			/* @__PURE__ */ Y(fi, {}),
+			/* @__PURE__ */ Y(li, { item: {
 				id: "leave",
 				label: o,
 				icon: /* @__PURE__ */ Y(M, { size: 20 }),
@@ -5984,7 +6026,7 @@ function di({ start: t, items: n, media: r = [], moreSections: i = [], onLeave: 
 		]
 	});
 }
-function fi(e, t, n, r, i = []) {
+function mi(e, t, n, r, i = []) {
 	let a = {
 		label: e,
 		items: t.length ? t.map((t, i) => ({
@@ -6001,7 +6043,7 @@ function fi(e, t, n, r, i = []) {
 }
 //#endregion
 //#region src/components/video/MeetingStatusCluster.tsx
-function pi(e, t) {
+function hi(e, t) {
 	let n = e == null ? null : typeof e == "number" ? e : Date.parse(e), [r, i] = q(() => Date.now());
 	return W(() => {
 		if (!t || n === null || !Number.isFinite(n)) return;
@@ -6010,8 +6052,8 @@ function pi(e, t) {
 		return () => clearInterval(e);
 	}, [t, n]), n === null || !Number.isFinite(n) ? null : Math.max(0, r - n);
 }
-function mi({ title: t, recording: n, startedAt: r, elapsedMs: i, onOpenOptions: a, optionsLabel: o = "Meeting options", className: c, "data-testid": l = "meeting-status" }) {
-	let u = pi(r, i === void 0), d = i === void 0 ? u : i;
+function gi({ title: t, recording: n, startedAt: r, elapsedMs: i, onOpenOptions: a, optionsLabel: o = "Meeting options", className: c, "data-testid": l = "meeting-status" }) {
+	let u = hi(r, i === void 0), d = i === void 0 ? u : i;
 	return /* @__PURE__ */ X("div", {
 		className: e("flex min-w-0 items-center gap-3", c),
 		"data-testid": l,
@@ -6025,7 +6067,7 @@ function mi({ title: t, recording: n, startedAt: r, elapsedMs: i, onOpenOptions:
 				"data-testid": `${l}-options`,
 				children: /* @__PURE__ */ Y(De, { size: 18 })
 			}),
-			n && /* @__PURE__ */ Y(dr, {
+			n && /* @__PURE__ */ Y(pr, {
 				armed: n.armed,
 				active: n.active,
 				"data-testid": `${l}-recording`
@@ -6049,14 +6091,14 @@ function mi({ title: t, recording: n, startedAt: r, elapsedMs: i, onOpenOptions:
 }
 //#endregion
 //#region src/components/video/RecordingConsentNotice.tsx
-var hi = {
+var _i = {
 	recording: "Recording",
 	transcription: "Transcription",
 	both: "Recording and transcription"
 };
-function gi({ open: t, kind: n, startedBy: r, privacyHref: i, privacyLabel: a = "Privacy policy", onDismiss: o, placement: c = "overlay", className: l, "data-testid": u = "recording-consent" }) {
+function vi({ open: t, kind: n, startedBy: r, privacyHref: i, privacyLabel: a = "Privacy policy", onDismiss: o, placement: c = "overlay", className: l, "data-testid": u = "recording-consent" }) {
 	if (!t) return null;
-	let d = hi[n];
+	let d = _i[n];
 	return /* @__PURE__ */ Y("section", {
 		role: "status",
 		"aria-live": "polite",
@@ -6115,4 +6157,4 @@ function gi({ open: t, kind: n, startedBy: r, privacyHref: i, privacyLabel: a = 
 	});
 }
 //#endregion
-export { Ft as $, ur as A, Cn as B, Nr as C, Pe as Ct, wr as D, Er as E, Jn as F, dn as G, vn as H, qn as I, rn as J, un as K, Rn as L, cr as M, $ as N, xr as O, $n as P, It as Q, On as R, Pr as S, Le as St, Ar as T, _n as U, bn as V, gn as W, qt as X, $t as Y, Nt as Z, Hr as _, Ze as _t, di as a, Dt as at, Lr as b, Ue as bt, ii as c, Ct as ct, Qr as d, mt as dt, Pt as et, Xr as f, ut as ft, Gr as g, Ye as gt, Kr as h, qe as ht, oi as i, kt as it, dr as j, hr as k, ni as l, xt as lt, qr as m, tt as mt, gi as n, At as nt, fi as o, Tt as ot, Jr as p, ot as pt, an as q, mi as r, Ot as rt, ai as s, St as st, hi as t, Kt as tt, $r as u, vt as ut, Vr as v, Ke as vt, Mr as w, Ir as x, ze as xt, zr as y, We as yt, En as z };
+export { It as $, fr as A, Tn as B, Fr as C, Le as Ct, Er as D, Or as E, Xn as F, gn as G, bn as H, Yn as I, an as J, dn as K, Bn as L, ur as M, $ as N, Cr as O, tr as P, Nt as Q, An as R, Ir as S, ze as St, Mr as T, vn as U, Sn as V, _n as W, $t as X, rn as Y, qt as Z, Wr as _, Ye as _t, pi as a, kt as at, zr as b, We as bt, oi as c, St as ct, ei as d, vt as dt, Ft as et, Qr as f, mt as ft, qr as g, qe as gt, Jr as h, tt as ht, ci as i, Ot as it, pr as j, _r as k, ii as l, Ct as lt, Yr as m, ot as mt, vi as n, Kt as nt, mi as o, Dt as ot, Xr as p, ut as pt, un as q, gi as r, At as rt, si as s, Tt as st, _i as t, Pt as tt, ti as u, xt as ut, Ur as v, Ze as vt, Pr as w, Pe as wt, Rr as x, Ue as xt, Vr as y, Ke as yt, On as z };
