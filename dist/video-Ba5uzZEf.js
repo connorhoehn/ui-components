@@ -30,7 +30,7 @@ import { n as Se } from "./RovingToolbar-B1Fai5PF.js";
 import { t as Ce } from "./Link-h2c9gcsw.js";
 import { t as we } from "./Checkbox-Jycr-rlf.js";
 import { t as Te } from "./activationKey-CjbL3LUv.js";
-import { C as Ee, E as De, H as Oe, J as ke, L as Ae, S as je, V as Me, Z as Ne } from "./BreakoutRoomsPanel-B9Zv6Z3e.js";
+import { C as Ee, E as De, H as Oe, J as ke, L as Ae, S as je, V as Me, Z as Ne } from "./BreakoutRoomsPanel-B5OCEqlW.js";
 import { useCallback as U, useEffect as W, useImperativeHandle as Pe, useLayoutEffect as Fe, useMemo as G, useRef as K, useState as q } from "react";
 import { Fragment as J, jsx as Y, jsxs as X } from "react/jsx-runtime";
 //#region src/components/video/VideoPlayer.tsx
@@ -5762,7 +5762,7 @@ function ai({ item: t, iconOnly: n = !1 }) {
 		"data-active": l ? "true" : void 0,
 		"data-pressed": t.pressed ? "true" : void 0,
 		"data-tone": t.tone ?? "default",
-		className: e(ii, l && "text-primary hover:text-primary", t.pressed && "bg-primary-bg text-primary-fg hover:bg-primary-bg hover:text-primary-fg", t.tone === "danger" && "text-danger hover:bg-danger-bg hover:text-danger", t.menu && !n && "rounded-r-none pr-1", n && "h-12 min-w-11 px-1.5"),
+		className: e(ii, l && "text-primary-fg hover:text-primary-fg", t.pressed && "bg-primary-bg text-primary-fg hover:bg-primary-bg hover:text-primary-fg", t.tone === "danger" && "text-danger hover:bg-danger-bg hover:text-danger", t.menu && !n && "rounded-r-none pr-1", n && "h-12 min-w-11 px-1.5"),
 		children: [
 			/* @__PURE__ */ X("span", {
 				className: "relative inline-flex items-center gap-1",
@@ -6037,7 +6037,7 @@ function mi({ open: t, kind: n, startedBy: r, privacyHref: i, privacyLabel: a = 
 							i && /* @__PURE__ */ X(J, { children: [" ", /* @__PURE__ */ Y(Ce, {
 								href: i,
 								external: !0,
-								className: "underline",
+								className: "text-primary-fg underline",
 								"data-testid": `${u}-privacy`,
 								children: a
 							})] })
