@@ -330,6 +330,8 @@ export { MeetingStatusCluster } from './MeetingStatusCluster';
 export type { MeetingStatusClusterProps } from './MeetingStatusCluster';
 export { RecordingConsentNotice, RECORDING_CONSENT_TITLES } from './RecordingConsentNotice';
 export type { RecordingConsentNoticeProps, RecordingConsentKind } from './RecordingConsentNotice';
+export { useConsentDismissal } from './RecordingConsentNotice';
+export type { ConsentDismissal, UseConsentDismissalOptions } from './RecordingConsentNotice';
 export { RaisedHandBadge, raisedHandLabel } from './RaisedHandBadge';
 export type { RaisedHandBadgeProps } from './RaisedHandBadge';
 export { BreakoutRoomsPanel } from './BreakoutRoomsPanel';

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.462.0
+
+- `useConsentDismissal(key, { storage? })` (`/video`): remembers that someone dismissed `RecordingConsentNotice` for one recording, so a reload or a hop between pages of the same meeting does not ask again. Key it by meeting and recording session (`${meetingId}:${recordingId}`), so a recording that restarts asks again; a null key is never dismissed. sessionStorage by default (`storage: 'local'` for this device); every storage call is guarded and falls back to memory for the page. Returns `{ dismissed, dismiss, reset }`.
+
 ## 2.461.0
 
 - Breakout closing countdown (realtime-modules 0.124 `meeting({ closingGraceMs })`). `BreakoutRoomsPanel` `closing`: the timer row reads "Closing in 00:30" in the danger tone, organizers get Close now (`onCloseRooms()` again, which the server treats as immediate) and Keep rooms open (`onOpenRooms()`) in place of Close rooms and End, and Join is hidden for everyone. `BreakoutRoomBanner` `closing`: "Room closes in 00:30", urgent, plus one polite screen-reader status. Both wrappers pass `breakout.closing`; `RMBreakoutState.closing` is optional, so older pins read as not closing.

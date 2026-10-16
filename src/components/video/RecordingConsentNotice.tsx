@@ -4,6 +4,7 @@
 // dismissible, anchored over the stage. A pill (CallNoticePill) is too small
 // for a consent sentence and a link.
 
+import { useCallback, useEffect, useState } from 'react';
 import { cn } from '../../lib/cn';
 import { T } from '../shared/Text';
 import { IconButton } from '../ui/IconButton';
@@ -81,4 +82,83 @@ export function RecordingConsentNotice({
       </div>
     </section>
   );
+}
+
+// ── Remembered dismissal (2.462.0) ──────────────────────────────────────────
+
+const DISMISSAL_PREFIX = 'ui-components:consent-dismissed:';
+/** Dismissals this page has seen, for when storage is blocked or throws. */
+const dismissedInMemory = new Set<string>();
+
+function storageFor(kind: 'session' | 'local'): Storage | null {
+  try {
+    return kind === 'local' ? window.localStorage : window.sessionStorage;
+  } catch {
+    return null;
+  }
+}
+
+function readDismissed(key: string, kind: 'session' | 'local'): boolean {
+  if (dismissedInMemory.has(key)) return true;
+  try {
+    return storageFor(kind)?.getItem(DISMISSAL_PREFIX + key) === '1';
+  } catch {
+    return false;
+  }
+}
+
+export interface UseConsentDismissalOptions {
+  /**
+   * `session` (default): remembered for this tab, so a reload or a hop
+   * between pages of the same meeting does not show the card again, and a
+   * new tab does. `local`: remembered on this device.
+   */
+  storage?: 'session' | 'local';
+}
+
+export interface ConsentDismissal {
+  /** True once this key was dismissed (here, or earlier in the remembered scope). */
+  dismissed: boolean;
+  dismiss(): void;
+  /** Forget the dismissal (tests, a "show again" control). */
+  reset(): void;
+}
+
+/**
+ * Remember that someone dismissed `RecordingConsentNotice` for one recording.
+ * Key it by meeting AND recording session (`${meetingId}:${recordingId}`), so
+ * a recording that stops and starts again asks again. A null key is never
+ * dismissed. Storage failures (private mode, blocked site data) fall back to
+ * memory for the life of the page.
+ *
+ *   const consent = useConsentDismissal(recording ? `${meetingId}:${recording.id}` : null);
+ *   <RecordingConsentNotice open={!!recording && !consent.dismissed} onDismiss={consent.dismiss} … />
+ */
+export function useConsentDismissal(key: string | null, opts: UseConsentDismissalOptions = {}): ConsentDismissal {
+  const kind = opts.storage ?? 'session';
+  const [dismissed, setDismissed] = useState(() => (key ? readDismissed(key, kind) : false));
+  useEffect(() => {
+    setDismissed(key ? readDismissed(key, kind) : false);
+  }, [key, kind]);
+  const dismiss = useCallback(() => {
+    if (!key) return;
+    dismissedInMemory.add(key);
+    try {
+      storageFor(kind)?.setItem(DISMISSAL_PREFIX + key, '1');
+    } catch {
+      // Memory still holds it for this page.
+    }
+    setDismissed(true);
+  }, [key, kind]);
+  const reset = useCallback(() => {
+    if (!key) return;
+    dismissedInMemory.delete(key);
+    try {
+      storageFor(kind)?.removeItem(DISMISSAL_PREFIX + key);
+    } catch {
+      // Nothing stored to remove.
+    }
+    setDismissed(false);
+  }, [key, kind]);
+  return { dismissed, dismiss, reset };
 }
