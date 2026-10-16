@@ -308,10 +308,36 @@ export interface MeetingChatBinding {
    * `withAnnouncements` + `renderMessageReferences`; do not pass both.
    */
   localMessages: LocalChatMessage[];
-  /** Pass to ChatPanel `dock`: the "To" switch, or null when it does not apply. */
+  /**
+   * Pass to ChatPanel `dock`: which chat this is when you are in a room, and
+   * the organizer's "To" switch while rooms are open; null when neither
+   * applies.
+   */
   dock: ReactNode;
+  /** "Room 1 chat" inside a room, "Meeting chat" otherwise. Since 2.470.0. */
+  title: string;
   target: MeetingChatTarget;
   setTarget: (target: MeetingChatTarget) => void;
+}
+
+/**
+ * "Room 1 chat · Only people in Room 1 see these messages." Shown above the
+ * composer while you are in a room, so the thread changing under you when
+ * rooms open or close is explained; announced politely when it changes.
+ * Since 2.470.0.
+ */
+export function meetingChatTitle(meeting: Pick<RMMeetingSource, 'myRoom'>): string {
+  return meeting.myRoom ? `${meeting.myRoom.name} chat` : 'Meeting chat';
+}
+
+export function MeetingChatContext({ roomName }: { roomName: string }) {
+  return (
+    <div className="flex items-center gap-2 border-t border-border px-3 py-1.5" role="status" aria-live="polite" data-testid="meeting-chat-context">
+      <MeetingRoomsIcon size={14} aria-hidden className="shrink-0 text-text-secondary" />
+      <T size="xs" weight="semibold" className="shrink-0 whitespace-nowrap">{roomName} chat</T>
+      <T size="xs" tone="tertiary" className="min-w-0">Only people in {roomName} see these messages.</T>
+    </div>
+  );
 }
 
 /** The "To: This chat | All rooms" switch an organizer sees while rooms are open. */
@@ -382,7 +408,15 @@ export function useMeetingChat(
     renderMessageReferences: (message) => (message.id?.startsWith(ANNOUNCEMENT_ID)
       ? <T as="p" size="xs" tone="tertiary" data-testid="meeting-chat-announcement-note">{note}</T>
       : hostRefs?.(message) ?? null),
-    dock: canAnnounce ? <MeetingChatTargetSwitch value={effective} onChange={setTarget} /> : null,
+    title: meetingChatTitle(meeting),
+    dock: meeting.myRoom || canAnnounce
+      ? (
+        <>
+          {meeting.myRoom && <MeetingChatContext roomName={meeting.myRoom.name} />}
+          {canAnnounce && <MeetingChatTargetSwitch value={effective} onChange={setTarget} />}
+        </>
+      )
+      : null,
     onSend: (content: string) => {
       const text = content.trim();
       if (!text) return;

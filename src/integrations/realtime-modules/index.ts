@@ -268,6 +268,8 @@ export {
   meetingToolbarItems,
   withMeetingHands,
   MeetingChatTargetSwitch,
+  MeetingChatContext,
+  meetingChatTitle,
   useMeetingChat,
 } from '../realtime/meeting';
 export type {

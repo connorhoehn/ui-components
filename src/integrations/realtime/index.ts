@@ -285,6 +285,8 @@ export {
   meetingToolbarItems,
   withMeetingHands,
   MeetingChatTargetSwitch,
+  MeetingChatContext,
+  meetingChatTitle,
   useMeetingChat,
 } from './meeting';
 export type {

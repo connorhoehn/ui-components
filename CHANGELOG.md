@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.470.0
+
+- Which chat am I in: inside a breakout room, `useMeetingChat`'s `dock` starts with "Room 1 chat · Only people in Room 1 see these messages." (`MeetingChatContext`, a polite status, so the thread changing when rooms open or close is explained), above the organizer's To switch. `meetingChatTitle(meeting)` and the binding's `title` give "Room 1 chat" / "Meeting chat" for a host's own heading (ChatPanel's "Chat (n)" heading is fixed).
+
 ## 2.469.0
 
 - Breakout countdowns run on server time. `BreakoutRoomBanner` and `BreakoutRoomsPanel` take `clockOffsetMs` (server clock minus this device's), and `useCountdown(endsAt, clockOffsetMs?)` counts from the corrected now; the wrappers pass realtime-modules 0.129 `useMeeting().clockOffsetMs`, and `RMMeetingSource.clockOffsetMs` is optional, so older pins count as before. A laptop whose clock was 40 s off showed a timer 40 s off.

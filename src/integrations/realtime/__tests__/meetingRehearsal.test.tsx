@@ -105,6 +105,10 @@ describe('meeting wiring rehearsal (real service, public bindings only)', () => 
     await waitFor(() => expect(within(ada).getByTestId('breakout-banner-announcement')).toHaveTextContent('Five minutes left'));
     fireEvent.click(within(ada).getByTestId('meeting-toolbar-chat'));
     await waitFor(() => expect(within(ada).getByTestId('seat-u-ada-pane')).toHaveTextContent('Announcement to every room'));
+    // Which chat: Ada is told she is in her room's chat; Rowan, in the main meeting, is not.
+    expect(within(ada).getByTestId('meeting-chat-context')).toHaveTextContent(/Room \d chat/);
+    expect(within(ada).getByTestId('meeting-chat-context')).toHaveAttribute('aria-live', 'polite');
+    expect(within(rowan).queryByTestId('meeting-chat-context')).toBeNull();
 
     // Ada chats in her room; Rowan (main meeting) does not see it.
     const adaInput = within(ada).getByPlaceholderText('Type a message...');
@@ -118,6 +122,8 @@ describe('meeting wiring rehearsal (real service, public bindings only)', () => 
     fireEvent.click(within(rowan).getByTestId('breakout-end'));
     await waitFor(() => expect(within(ada).queryByTestId('breakout-banner')).toBeNull());
     await waitFor(() => expect(within(bram).queryByTestId('breakout-banner')).toBeNull());
+    // Back in the main meeting the room-chat line goes away.
+    await waitFor(() => expect(within(ada).queryByTestId('meeting-chat-context')).toBeNull());
     act(() => loop.dispose());
   });
 });
