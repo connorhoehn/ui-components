@@ -107,8 +107,8 @@ export function WorkTableView({
                   {item.signal && (item.signal.onClick ? <Button size="sm" variant="link" onClick={item.signal.onClick}>{item.signal.label}</Button> : <span className="text-xs text-text-secondary">{item.signal.label}</span>)}
                   {item.chips?.map((chip) => <Chip key={chip.label} tone={chip.tone}>{chip.label}</Chip>)}
                 </div></Td>
-                <Td className={cell}>{item.owner ? <span className="inline-flex items-center gap-2"><Avatar name={item.owner.name} src={item.owner.avatarUrl} size={28} />{item.owner.name}</span> : 'Unassigned'}</Td>
-                <Td className={cell}>{item.kindLabel ?? defaultKindLabel}</Td><Td className={cell}>{item.points ?? '—'}</Td>
+                <Td className={cn(cell, 'max-w-[12rem] min-w-0')} data-testid="work-table-owner-cell">{item.owner ? <span className="flex min-w-0 items-center gap-2"><span className="shrink-0"><Avatar name={item.owner.name} src={item.owner.avatarUrl} size={28} /></span><span className="min-w-0 truncate" title={item.owner.name}>{item.owner.name}</span></span> : 'Unassigned'}</Td>
+                <Td className={cn(cell, 'max-w-[8rem] min-w-0')}><span className="block min-w-0 truncate" title={item.kindLabel ?? defaultKindLabel}>{item.kindLabel ?? defaultKindLabel}</span></Td><Td className={cell}>{item.points ?? '—'}</Td>
                 <Td className={cell}>{onOpenItem && <IconButton disabled={item.disabled} aria-label={`Open ${item.title}`} onClick={() => onOpenItem(item)} icon={<ChevronIcon dir="right" size={14} />} />}</Td>
               </Tr>)}
             </TableBody>;

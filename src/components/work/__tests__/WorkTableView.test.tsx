@@ -22,6 +22,19 @@ describe('WorkTableView', () => {
     expect(screen.getByText('Previous release')).toBeInTheDocument();
     expect(screen.getAllByText('—')).toHaveLength(2);
   });
+  it('truncates long titles, types and owners inside their own columns', () => {
+    const long = 'ORG-AUTH-8 ' + 'very long work title '.repeat(8).trim();
+    render(<WorkTableView {...props} onOpenItem={undefined} items={[{ id: 'l', title: long, groupId: 'next', kindLabel: 'Extraordinarily long kind label', owner: { id: 'o', name: 'Bartholomew Featherstonehaugh-Cholmondeley' } }]} />);
+    const title = screen.getByText(long);
+    expect(title).toHaveClass('min-w-0', 'truncate');
+    expect(title).toHaveAttribute('title', long);
+    expect(screen.getByTestId('work-table-title-cell')).toHaveClass('max-w-0');
+    const owner = screen.getByText('Bartholomew Featherstonehaugh-Cholmondeley');
+    expect(owner).toHaveClass('min-w-0', 'truncate');
+    expect(owner).toHaveAttribute('title', 'Bartholomew Featherstonehaugh-Cholmondeley');
+    expect(screen.getByTestId('work-table-owner-cell')).toHaveClass('min-w-0', 'max-w-[12rem]');
+    expect(screen.getByText('Extraordinarily long kind label')).toHaveClass('truncate');
+  });
   it('opens a row and toggles completion independently', () => {
     const onOpenItem = vi.fn(), onToggleDone = vi.fn();
     render(<WorkTableView {...props} onOpenItem={onOpenItem} onToggleDone={onToggleDone} />);

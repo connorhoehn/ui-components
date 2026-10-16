@@ -113,9 +113,15 @@ try {
     ['input bound to a datalist', () => { const i = document.createElement('input'); i.className = 'control'; i.setAttribute('list', 'dl'); const d = document.createElement('datalist'); d.id = 'dl'; d.innerHTML = '<option value="x">'; document.querySelector('#toolbar').append(i, d); }, 'control.native-select'],
     ['hand-rolled listbox without the library marker', () => { const u = document.createElement('ul'); u.setAttribute('role', 'listbox'); u.innerHTML = '<li role="option" style="font-size:14px">One</li>'; document.querySelector('#content').append(u); }, 'control.unmarked-listbox'],
     ['open listbox option off the type scale', () => { const u = document.createElement('ul'); u.setAttribute('role', 'listbox'); u.setAttribute('data-ui-listbox', 'select'); u.innerHTML = '<li role="option" style="font-size:16px">One</li>'; document.querySelector('#content').append(u); }, 'listbox.option-type'],
+    ['open listbox option whose label text is 11px', () => { const u = document.createElement('ul'); u.setAttribute('role', 'listbox'); u.setAttribute('data-ui-listbox', 'select'); u.innerHTML = '<li role="option" style="font-size:14px"><span style="font-size:11px">One</span></li>'; document.querySelector('#content').append(u); }, 'listbox.option-type'],
     ['open listbox spilling out of the viewport', () => { const u = document.createElement('ul'); u.setAttribute('role', 'listbox'); u.setAttribute('data-ui-listbox', 'select'); u.style.cssText = 'position:fixed;top:780px;left:1200px;width:200px;margin:0;padding:0'; u.innerHTML = '<li role="option" style="font-size:14px;height:40px">One</li>'; document.body.append(u); }, 'listbox.in-viewport'],
     ['missing design token', () => document.documentElement.style.setProperty('--ui-control-sm', 'initial'), 'toolbar.control-height'],
   ];
+  await page.setContent(html);
+  await page.evaluate(() => { const u = document.createElement('ul'); u.setAttribute('role', 'listbox'); u.setAttribute('data-ui-listbox', 'select'); u.innerHTML = '<li role="option" style="font-size:14px">One <kbd style="font-size:11px">K</kbd></li>'; document.querySelector('#content').append(u); });
+  const hinted = await measure();
+  assert.deepEqual(hinted.issues.filter(i => i.rule === 'listbox.option-type'), [], 'a key hint inside an option is not judged by listbox.option-type: ' + JSON.stringify(hinted.issues));
+  console.log('PASS an option with an 11px kbd hint passes listbox.option-type');
   for (const [name, mutate, rule] of mutations) {
     await page.setContent(html); await page.evaluate(mutate); const result = await measure();
     assert.ok(result.issues.some(issue => issue.rule === rule), `${name} must fail ${rule}: ${JSON.stringify(result.issues)}`);

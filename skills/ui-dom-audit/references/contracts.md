@@ -740,7 +740,8 @@ Four rules hold the line:
   without `data-ui-listbox` is a hand-rolled dropdown. Bind `$unmarkedListboxes`
   to `[role="listbox"]:not([data-ui-listbox])`.
 - `listbox.option-type` (`text`) — option rows of an open listbox read at 12 or
-  14px. Bind `$listboxOptions` to `[data-ui-listbox] [role="option"]`.
+  14px. Bind `$listboxOptions` to `[data-ui-listbox] [role="option"]`. Elements matched by
+  `$keyboardHints` are excluded; `keyboard.typography` judges them.
 - `listbox.in-viewport` (`in-viewport`, new kind) — an open listbox sits wholly
   inside the viewport (each edge's margin ≥ 0 within tolerance). Bind
   `$openListboxes` to `[data-ui-listbox]`.

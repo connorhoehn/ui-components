@@ -379,6 +379,12 @@
         ]
       },
       "tolerance": 0.1,
+      "exclude": [
+        {
+          "selector": "$keyboardHints",
+          "reason": "Key hints inside an option are judged once, by keyboard.typography"
+        }
+      ],
       "owner": "forms/Select / Combobox option rows (12/14 scale)"
     },
     {
