@@ -5914,7 +5914,7 @@ function li() {
 	});
 }
 function ui({ start: t, items: n, media: r = [], moreSections: i = [], onLeave: a, leaveLabel: o = "Leave", leaveMenu: s, compactBelow: c = 960, compact: l, phoneBelow: u = 820, phone: d, className: f, "data-testid": p = "meeting-toolbar" }) {
-	let m = Se(), h = ci(m.ref, l !== void 0 && d !== void 0), g = d ?? h < u, _ = g || (l ?? h < c), v = (e) => !e.popover && (g || e.priority === "secondary"), y = _ ? n.filter((e) => !v(e)) : n, b = _ ? n.filter(v) : [], x = _ ? r.filter((e) => e.priority !== "secondary") : r, S = _ ? r.filter((e) => e.priority === "secondary") : [], C = g ? [...x.flatMap((e) => e.menu ?? []), ...s ?? []] : [], w = [...b, ...S], T = [
+	let m = Se(), h = ci(m.ref, l !== void 0 && d !== void 0), g = d ?? h < u, _ = g || (l ?? h < c), v = (e) => !e.popover && (g || e.priority === "secondary"), y = _ ? n.filter((e) => !v(e)) : n, b = _ ? n.filter(v) : [], x = _ ? r.filter((e) => e.priority !== "secondary") : r, S = _ ? r.filter((e) => e.priority === "secondary") : [], C = g ? [...x.flatMap((e) => e.menu ?? []), ...a ? s ?? [] : []] : [], w = [...b, ...S], T = [
 		...w.length ? [{
 			items: w.map(si),
 			"data-testid": "meeting-toolbar-more-folded"
@@ -5969,8 +5969,8 @@ function ui({ start: t, items: n, media: r = [], moreSections: i = [], onLeave: 
 					iconOnly: g
 				}, e.id))
 			}),
-			/* @__PURE__ */ Y(li, {}),
-			/* @__PURE__ */ Y(oi, {
+			a && /* @__PURE__ */ Y(li, {}),
+			a && /* @__PURE__ */ Y(oi, {
 				item: {
 					id: "leave",
 					label: o,
