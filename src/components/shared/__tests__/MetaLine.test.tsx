@@ -63,4 +63,13 @@ describe('MetaLine', () => {
     expect(screen.getByTestId('m').className).toContain('text-[12px]');
     expect(screen.getByTestId('m').className).toContain('text-text-secondary');
   });
+
+  it('keeps each separator with the item BEFORE it so a wrapped line never starts with one', () => {
+    render(<MetaLine data-testid="m" items={['a', 'b', 'c']} />);
+    const units = Array.from(screen.getByTestId('m').children);
+    expect(units).toHaveLength(3);
+    expect(units[0]!.lastElementChild).toHaveAttribute('aria-hidden', 'true');
+    expect(units[1]!.lastElementChild).toHaveAttribute('aria-hidden', 'true');
+    expect(units[2]!.querySelector('[aria-hidden="true"]')).toBeNull();
+  });
 });

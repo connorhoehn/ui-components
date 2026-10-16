@@ -356,7 +356,7 @@ function GuidedAction({
     ? cn(
         'inline-flex items-center gap-1 self-start border-0 bg-transparent p-0 font-medium text-primary no-underline',
         'cursor-pointer hover:underline [font-family:inherit]',
-        large || start ? 'text-base' : 'text-sm',
+        'text-sm',
       )
     : cn(
         'inline-flex items-center justify-center',

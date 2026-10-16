@@ -142,4 +142,16 @@ describe('StatStrip', () => {
     expect(screen.getByText('OK').className).toContain('text-text-secondary');
     expect(screen.getByTitle('Last compaction 50 minutes ago')).toBeTruthy();
   });
+
+  it('line variant: the separator trails the previous cluster, never leads the next', () => {
+    render(<StatStrip variant="line" items={[
+      { label: 'Agents', value: 2 }, { label: 'Spend', value: '$4' }, { label: 'Open', value: 7 },
+    ]} />);
+    const units = screen.getAllByTestId('stat-strip-unit');
+    expect(units).toHaveLength(3);
+    expect(units[0]!.lastElementChild).toHaveAttribute('data-testid', 'stat-strip-separator');
+    expect(units[1]!.lastElementChild).toHaveAttribute('data-testid', 'stat-strip-separator');
+    expect(units[2]!.querySelector('[data-testid="stat-strip-separator"]')).toBeNull();
+    expect(screen.getAllByTestId('stat-strip-separator')).toHaveLength(2);
+  });
 });

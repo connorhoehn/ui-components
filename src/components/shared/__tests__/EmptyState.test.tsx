@@ -224,4 +224,11 @@ describe('EmptyState size="sm" is the app body step (2.436.1)', () => {
     expect(screen.getByText('Body.').className).toContain('text-[13px]');
     expect(screen.getByTestId('cta').className).toContain('py-[9px]');
   });
+
+  it('renders a link-variant action at the 14px control size', () => {
+    render(<EmptyState title="Nothing yet" actions={[{ label: 'Show everyone', onClick: () => {}, variant: 'link' }]} />);
+    const cls = screen.getByTestId('empty-state-actions-button').className;
+    expect(cls).toContain('text-sm');
+    expect(cls).not.toContain('text-base');
+  });
 });

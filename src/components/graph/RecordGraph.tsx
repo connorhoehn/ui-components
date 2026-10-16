@@ -307,7 +307,7 @@ function RecordNodeView({ data }: NodeProps<RecordFlowNode>) {
         <span
           data-testid={selected ? 'record-graph-selected-title' : undefined}
           className={cn(
-            'rounded-sm bg-surface px-1 text-[13px] font-medium leading-tight text-text-primary',
+            'rounded-sm bg-surface px-1 text-xs font-medium leading-tight text-text-primary',
             selected ? 'relative z-10 w-max max-w-[220px] break-words shadow-sm' : 'line-clamp-2',
           )}
         >

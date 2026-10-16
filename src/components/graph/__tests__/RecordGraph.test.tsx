@@ -728,4 +728,12 @@ describe('RecordGraph', () => {
       expect(kept.zoom).toBeGreaterThanOrEqual(RECORD_GRAPH_MIN_FIT_ZOOM);
     });
   });
+
+  it('labels nodes at 12px and keeps person initials within 16px', () => {
+    setup({ selectedKeys: ['person:vera'] });
+    expect(screen.getByTestId('record-graph-selected-title').className).toContain('text-xs');
+    expect(screen.getByTestId('record-graph-selected-title').className).not.toContain('text-[13px]');
+    const initials = screen.getAllByText('VG')[0]!.closest('[style*="font-size"]') as HTMLElement;
+    expect(parseFloat(initials.style.fontSize)).toBeLessThanOrEqual(16);
+  });
 });

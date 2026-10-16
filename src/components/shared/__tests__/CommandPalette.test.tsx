@@ -595,4 +595,22 @@ describe('CommandPalette', () => {
     // Modal's cleanup effect restores focus to the previously-focused element.
     expect(document.activeElement).toBe(trigger);
   });
+
+  it('marks its listbox and renders shortcut hints at the 11px keyboard-hint size', async () => {
+    let controller: ReturnType<typeof useCommandPalette> | undefined;
+    render(
+      <Harness
+        commands={[{ id: 'foo', label: 'Foo', shortcut: ['G', 'F'], run: () => {} } as Command]}
+        onController={(c) => { controller = c; }}
+      />,
+    );
+    act(() => controller!.open());
+    const item = await screen.findByTestId('command-palette-item-foo');
+    const list = item.closest('[role="listbox"]');
+    expect(list).not.toBeNull();
+    expect(list).toHaveAttribute('data-ui-listbox', 'command-palette');
+    const kbd = item.querySelector('kbd')!;
+    expect(kbd.className).toContain('text-[11px]');
+    expect(kbd.className).not.toContain('text-[10px]');
+  });
 });

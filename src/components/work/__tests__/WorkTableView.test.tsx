@@ -60,4 +60,19 @@ describe('WorkTableView', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
     expect(onRetry).toHaveBeenCalledOnce();
   });
+
+  it('pins 14px controls, 44px rows and a title column capped at half the table', () => {
+    const long = 'A very long work item title '.repeat(10).trim();
+    render(<WorkTableView {...props} items={[{ ...props.items[0]!, title: long }, ...props.items.slice(1)]} />);
+    expect(screen.getByRole('button', { name: /^Next up/ }).className).toContain('text-sm');
+    const title = screen.getByRole('button', { name: long });
+    expect(title.className).toContain('text-sm');
+    expect(title.className).toContain('truncate');
+    expect(title).toHaveAttribute('title', long);
+    const cell = screen.getAllByTestId('work-table-title-cell')[0]!;
+    expect(cell.className).toContain('h-11');
+    expect(cell.className).toContain('w-1/2');
+    expect(cell.className).toContain('max-w-0');
+    expect(cell.className).not.toContain('py-2.5');
+  });
 });

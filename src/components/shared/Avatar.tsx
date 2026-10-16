@@ -205,7 +205,7 @@ export function Avatar({
         // leaving these undefined is what lets the class win.
         background: toneClasses ? undefined : bg,
         color: toneClasses ? undefined : fg,
-        fontSize: Math.max(9, hasMark ? size * 0.5 : size * 0.38),
+        fontSize: hasMark ? Math.max(9, size * 0.5) : Math.min(16, Math.max(9, size * 0.38)),
         ...style,
       }}
     >

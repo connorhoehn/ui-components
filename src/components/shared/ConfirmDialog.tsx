@@ -41,7 +41,7 @@ export default function ConfirmDialog({
             data-testid="confirm-dialog-cancel"
             onClick={onCancel}
             className={cn(
-              'px-4 py-[7px] text-[13px] font-[inherit]',
+              'px-4 py-[7px] text-sm font-[inherit]',
               'border border-border bg-surface text-text-secondary',
               'rounded-md cursor-pointer hover:bg-surface-panel',
             )}
@@ -54,7 +54,7 @@ export default function ConfirmDialog({
             onClick={onConfirm}
             disabled={confirmDisabled}
             className={cn(
-              'px-4 py-[7px] text-[13px] font-semibold font-[inherit]',
+              'px-4 py-[7px] text-sm font-semibold font-[inherit]',
               'border-none text-white rounded-md transition-colors duration-150',
               CONFIRM_BG[tone],
               confirmDisabled ? 'cursor-not-allowed opacity-70' : 'cursor-pointer opacity-100',

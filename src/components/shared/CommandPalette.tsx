@@ -608,7 +608,7 @@ export function CommandPalette({
           )}
           data-testid="command-palette-input"
         />
-        <Cmdk.List className="max-h-[360px] overflow-y-auto py-2">
+        <Cmdk.List data-ui-listbox="command-palette" className="max-h-[360px] overflow-y-auto py-2">
           {showEmpty ? (
             <div
               className="px-3 py-6 text-center text-sm text-text-tertiary"
@@ -676,7 +676,7 @@ export function CommandPalette({
                           key={`${cmd.id}-kbd-${i}`}
                           className={cn(
                             'inline-flex items-center justify-center min-w-[18px] h-[18px] px-1',
-                            'text-[10px] font-mono font-medium',
+                            'text-[11px] font-mono font-medium',
                             'bg-surface-hover text-text-secondary',
                             'border border-border rounded',
                           )}

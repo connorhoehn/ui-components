@@ -173,4 +173,11 @@ describe('Avatar foreground and title opt-out', () => {
     const { container } = render(<Avatar name="Alice Smith" showTitle={false} />);
     expect(container.firstElementChild).not.toHaveAttribute('title');
   });
+
+  it('keeps initials within 9-16px whatever the circle size', () => {
+    const { rerender } = render(<Avatar name="Vera Green" size={48} />);
+    expect(screen.getByTitle('Vera Green')).toHaveStyle({ fontSize: '16px' });
+    rerender(<Avatar name="Vera Green" size={18} />);
+    expect(screen.getByTitle('Vera Green')).toHaveStyle({ fontSize: '9px' });
+  });
 });

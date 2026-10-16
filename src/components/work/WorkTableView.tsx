@@ -51,7 +51,7 @@ export function WorkTableView({
     const n = items.filter((item) => item.groupId === group.id).length;
     return n ? `${n} ${group.title.toLowerCase()}` : null;
   }).filter(Boolean).join(' · ');
-  const cell = 'border-b border-border px-2 py-2.5 text-[13px] text-text-secondary';
+  const cell = 'border-b border-border px-2 py-1.5 text-sm text-text-secondary h-11';
   const heading = 'border-b border-border px-2 py-2 text-xs font-medium normal-case tracking-normal text-text-secondary';
 
   return <section className={cn('min-w-0 px-6 pb-6 pt-[18px]', className)} aria-label={title} data-testid={testId}>
@@ -80,7 +80,7 @@ export function WorkTableView({
       {/* Table scrolls itself sideways below its 620px floor. */}
         <Table className="min-w-[620px] border-collapse text-left" aria-label={`Work items grouped by ${groupBy}`}>
           <TableHead className="border-t border-border bg-transparent"><Tr>
-            <Th className={cn(heading, 'w-1/2')}>Work item</Th><Th className={heading}>Owner</Th><Th className={heading}>Type</Th><Th className={heading}>Points</Th><Th className={heading}><span className="sr-only">Open</span></Th>
+            <Th className={cn(heading, 'w-1/2 max-w-0')}>Work item</Th><Th className={heading}>Owner</Th><Th className={heading}>Type</Th><Th className={heading}>Points</Th><Th className={heading}><span className="sr-only">Open</span></Th>
           </Tr></TableHead>
           {tableGroups.map((group) => {
             const rows = items.filter((item) => groupKey(item) === group.id);
@@ -90,19 +90,19 @@ export function WorkTableView({
             return <TableBody key={key}>
               <Tr><Th colSpan={5} scope="rowgroup" className="border-b border-border p-0 normal-case tracking-normal">
                 <button type="button" aria-expanded={!closed} onClick={() => setCollapsed((prev) => ({ ...prev, [key]: !closed }))}
-                  className="flex w-full items-center gap-3 bg-transparent px-1 py-3 text-left text-[13px] font-semibold text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+                  className="flex w-full items-center gap-3 bg-transparent px-1 py-3 text-left text-sm font-semibold text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
                   <ChevronIcon dir={closed ? 'right' : 'down'} size={14} />
                   {groupBy === 'status' && groupColors?.[group.id] && <StatusDot color={groupColors[group.id]} />}
                   {group.title} <span className="font-normal text-text-tertiary">{rows.length}</span>
                 </button>
               </Th></Tr>
               {!closed && rows.map((item) => <Tr key={item.id} className={cn('hover:bg-primary/5', currentId === item.id && 'bg-primary/10')}>
-                <Td className={cn(cell, 'pl-8 text-text-primary')}><div className="flex items-center gap-3">
+                <Td className={cn(cell, 'w-1/2 max-w-0 pl-8 text-text-primary')} data-testid="work-table-title-cell"><div className="flex min-w-0 items-center gap-3">
                   {onToggleDone ? <Checkbox checked={item.done ?? false} disabled={item.donePending || item.disabled}
                     aria-label={`Mark ${item.title} ${item.done ? 'not done' : 'done'}`} onChange={(done) => onToggleDone(item, done)} /> :
                     <span className={cn('inline-flex h-4 w-4 shrink-0 items-center justify-center rounded text-[11px] text-white', item.kindLabel === 'Bug' ? 'bg-danger' : 'bg-primary')} aria-hidden="true">{item.kindLabel === 'Bug' ? '!' : <CheckIcon size={12} />}</span>}
-                  {onOpenItem ? <button type="button" disabled={item.disabled} className="bg-transparent text-left leading-normal hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:opacity-50"
-                    onClick={() => onOpenItem(item)}>{item.title}</button> : <span>{item.title}</span>}
+                  {onOpenItem ? <button type="button" disabled={item.disabled} title={item.title} className="min-w-0 truncate bg-transparent text-left text-sm leading-normal hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:opacity-50"
+                    onClick={() => onOpenItem(item)}>{item.title}</button> : <span className="min-w-0 truncate" title={item.title}>{item.title}</span>}
                   {item.tag && <Chip tone={item.tag.tone}>{item.tag.label}</Chip>}
                   {item.signal && (item.signal.onClick ? <Button size="sm" variant="link" onClick={item.signal.onClick}>{item.signal.label}</Button> : <span className="text-xs text-text-secondary">{item.signal.label}</span>)}
                   {item.chips?.map((chip) => <Chip key={chip.label} tone={chip.tone}>{chip.label}</Chip>)}

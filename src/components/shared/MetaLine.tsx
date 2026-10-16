@@ -72,9 +72,11 @@ export function MetaLine({
       {kept.map((item, i) => (
         // Index keys are correct here: the list is positional and static
         // within a render — there is no identity to preserve across reorders.
+        // The separator trails the PREVIOUS item in the same nowrap unit, so a
+        // wrapped line never starts with "·".
         <span key={i} className="flex items-center gap-1.5">
-          {i > 0 ? <span aria-hidden="true">{separator}</span> : null}
           {item}
+          {i < kept.length - 1 ? <span aria-hidden="true">{separator}</span> : null}
         </span>
       ))}
     </div>

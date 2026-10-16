@@ -294,12 +294,14 @@ export function StatStrip({
             cluster = <span className="min-w-0" {...tip}>{inner}</span>;
           }
           return (
-            <Fragment key={item.label}>
-              {i > 0 && (
+            // The separator trails the PREVIOUS cluster inside one nowrap unit,
+            // so a wrapped line never starts with "•".
+            <span key={item.label} className="inline-flex min-w-0 items-baseline" data-testid="stat-strip-unit">
+              {cluster}
+              {i < items.length - 1 && (
                 <span aria-hidden="true" className={cn('mx-5 text-text-secondary', size === 'sm' ? 'text-sm leading-5' : 'text-[15px] leading-6')} data-testid="stat-strip-separator">•</span>
               )}
-              {cluster}
-            </Fragment>
+            </span>
           );
         })}
       </div>

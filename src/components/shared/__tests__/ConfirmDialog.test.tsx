@@ -95,4 +95,13 @@ describe('ConfirmDialog', () => {
     );
     expect(screen.queryByText('Hidden')).not.toBeInTheDocument();
   });
+
+  it('renders Cancel and Confirm at the 14px control size', () => {
+    render(<ConfirmDialog open onConfirm={() => {}} onCancel={() => {}} title="Delete?" />);
+    for (const id of ['confirm-dialog-cancel', 'confirm-dialog-confirm']) {
+      const cls = screen.getByTestId(id).className;
+      expect(cls).toContain('text-sm');
+      expect(cls).not.toContain('text-[13px]');
+    }
+  });
 });
