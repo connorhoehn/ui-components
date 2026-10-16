@@ -445,6 +445,8 @@ export declare interface CallBlockModules extends ConversationCallDockModules {
     }>;
     useConversationCall(opts: {
         lobbyName: string;
+        /** realtime-modules 0.134.0+: the lobby the media joins (a breakout room's); older pins ignore it. */
+        mediaLobby?: string | null;
         channel?: string | null;
         self: {
             userId: string;
@@ -480,6 +482,19 @@ export declare interface CallBlockModules extends ConversationCallDockModules {
     useMediaDevices(opts?: {
         requestOnMount?: boolean;
     }): RMMediaDevicesSource;
+    /**
+     * realtime-modules 0.134.0+ `useMeeting`, for raise hand and breakout rooms
+     * on the call (`CallHostProviderProps.meeting`). Optional: a host bound to
+     * an older pin simply has no meeting. Since 2.476.0.
+     */
+    useMeeting?(meetingId: string | null, opts: {
+        enabled?: boolean;
+        chatChannel?: string;
+        socket?: {
+            send(msg: Record<string, unknown>): void;
+            onMessage(handler: (msg: never) => void): () => void;
+        };
+    }): CallHostMeeting;
 }
 
 /** Where the one call-media sink draws. */
@@ -539,6 +554,12 @@ export declare interface CallHostEvent {
 /** A call event, for an app that keeps a call log. */
 export declare type CallHostEventKind = 'started' | 'ended' | 'missed';
 
+/** The meeting riding the call: the bindings' source plus where media and chat belong now. */
+export declare type CallHostMeeting = RMMeetingSource & {
+    activeLobby: string | null;
+    activeChat: string | null;
+};
+
 export declare interface CallHostProviderProps {
     self: {
         userId: string;
@@ -560,6 +581,17 @@ export declare interface CallHostProviderProps {
     /** Accept was pressed on a ring: open the page the call is about. */
     onAccept?: (ring: CallBlockRing) => void;
     onCallEvent?: OnCallHostEvent;
+    /**
+     * Run a meeting beside the call (needs `useMeeting` in the modules): the
+     * meeting id is the call's lobby, and the call's MEDIA follows the meeting
+     * into a breakout room's lobby (realtime-modules 0.134 `mediaLobby`) while
+     * the call itself stays. `chatChannelFor` names the call's chat channel in
+     * the host's scheme, so a room's chat is `<that>~breakout~<roomId>`.
+     * Off by default. Since 2.476.0.
+     */
+    meeting?: {
+        chatChannelFor?(lobbyName: string, callId: string | null): string | null;
+    } | false;
     /** Where the pre-join choices persist (one key per device). */
     preJoinStorageKey?: string;
     children: ReactNode;
@@ -589,6 +621,13 @@ export declare interface CallHostValue<C extends CallBlockCall> {
     unavailableReason: string | null;
     /** Opens the device check on request (clears the remembered skip). */
     checkDevices(): void;
+    /**
+     * The call's meeting (raise hand, rooms, announcements) while a call is
+     * live and the provider's `meeting` option is on; null otherwise. Feed it to
+     * `meetingToolbarItems`, `WrappedBreakoutRoomsPanel`, `useMeetingChat`.
+     * Since 2.476.0.
+     */
+    meeting: CallHostMeeting | null;
 }
 
 /** A page's lobby: what the call host binds while nothing is in progress. */
