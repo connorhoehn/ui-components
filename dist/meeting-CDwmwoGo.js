@@ -20,7 +20,7 @@ import { t as x } from "./FileUploadDrop-DrckU_7j.js";
 import { t as S } from "./ActivityFeed-Cp6MhNab.js";
 import { a as C, i as w, n as T, o as E } from "./DockedAside-BDA5tJ1T.js";
 import { d as ee, dt as D, lt as O, n as k, t as A, u as j, ut as M } from "./ConversationSurface-Cj3TMoE4.js";
-import { E as N, T as P, V as F, W as te, _ as I, i as ne, k as re, n as ie, s as L, t as R, w as ae, x as oe, y as se } from "./BreakoutRoomsPanel-1MfxOl_J.js";
+import { E as N, T as P, V as F, W as te, _ as I, i as ne, k as re, n as ie, s as L, t as R, w as ae, x as oe, y as se } from "./BreakoutRoomsPanel-BIm0FtYT.js";
 import { t as ce } from "./useActiveSpeaker-BGKJU3Lb.js";
 import { c as le, o as ue, s as z } from "./useDocumentImageUpload-3W74XPh6.js";
 import { Component as de, createContext as B, createElement as fe, useCallback as V, useContext as pe, useEffect as H, useMemo as U, useRef as W, useState as G } from "react";
@@ -2101,6 +2101,7 @@ function un({ meeting: e, people: t, roomNames: n, renderError: r, ...i }) {
 		isOrganizer: e.isOrganizer,
 		unassigned: o,
 		endsAt: c.endsAt,
+		closing: c.closing === !0,
 		allowReturnToMain: c.settings.allowReturnToMain,
 		onJoin: e.joinRoom,
 		onReturnToMain: e.returnToMain,
@@ -2135,6 +2136,7 @@ function dn({ meeting: e, className: t }) {
 	return /* @__PURE__ */ q(ie, {
 		roomName: e.myRoom.name,
 		endsAt: n.endsAt,
+		closing: n.closing === !0,
 		announcement: e.state.announcement,
 		onDismissAnnouncement: e.dismissAnnouncement,
 		onReturnToMain: n.settings.allowReturnToMain || e.isOrganizer ? e.returnToMain : void 0,

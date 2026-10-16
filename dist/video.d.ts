@@ -123,12 +123,18 @@ export declare interface BreakoutPerson {
     handRaised?: boolean | number;
 }
 
-export declare function BreakoutRoomBanner({ roomName, endsAt, announcement, onDismissAnnouncement, onReturnToMain, className, 'data-testid': testId, }: BreakoutRoomBannerProps): JSX.Element;
+export declare function BreakoutRoomBanner({ roomName, endsAt, closing, announcement, onDismissAnnouncement, onReturnToMain, className, 'data-testid': testId, }: BreakoutRoomBannerProps): JSX.Element;
 
 export declare interface BreakoutRoomBannerProps {
     roomName: string;
     /** ISO end of the breakout timer, or null for none. */
     endsAt?: string | null;
+    /**
+     * The organizer closed the rooms and `endsAt` is the end of the closing
+     * grace (realtime-modules 0.124 `breakout.closing`). The countdown reads
+     * "Room closes in 00:30" and is announced once to screen readers.
+     */
+    closing?: boolean;
     announcement?: {
         message: string;
         fromDisplayName: string;
@@ -153,6 +159,13 @@ export declare interface BreakoutRoomsPanelProps {
     unassigned?: BreakoutPerson[];
     /** ISO end of the timer. */
     endsAt?: string | null;
+    /**
+     * Rooms are in the closing grace (2.461.0; realtime-modules 0.124
+     * `breakout.closing`): `endsAt` is the deadline. Organizers get Close now
+     * (`onCloseRooms()` again) and Keep rooms open (`onOpenRooms()`); Join is
+     * hidden for everyone.
+     */
+    closing?: boolean;
     /** Participants may leave a room for the main meeting. Default true. */
     allowReturnToMain?: boolean;
     onJoin?: (roomId: string) => void;

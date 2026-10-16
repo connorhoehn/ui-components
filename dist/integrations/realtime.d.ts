@@ -332,6 +332,13 @@ declare interface BreakoutRoomsPanelProps {
     unassigned?: BreakoutPerson[];
     /** ISO end of the timer. */
     endsAt?: string | null;
+    /**
+     * Rooms are in the closing grace (2.461.0; realtime-modules 0.124
+     * `breakout.closing`): `endsAt` is the deadline. Organizers get Close now
+     * (`onCloseRooms()` again) and Keep rooms open (`onOpenRooms()`); Join is
+     * hidden for everyone.
+     */
+    closing?: boolean;
     /** Participants may leave a room for the main meeting. Default true. */
     allowReturnToMain?: boolean;
     onJoin?: (roomId: string) => void;
@@ -3155,6 +3162,8 @@ export declare interface RMBreakoutState {
     }[];
     returned: string[];
     endsAt: string | null;
+    /** realtime-modules 0.124.0+: rooms are in the closing grace. */
+    closing?: boolean;
     announcement: {
         message: string;
         fromUserId: string;
