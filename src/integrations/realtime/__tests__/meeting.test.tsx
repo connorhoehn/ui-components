@@ -341,4 +341,26 @@ describe('meeting adapters', () => {
     expect(sent).toEqual(['🎉']);
     expect(screen.queryByRole('dialog', { name: 'Send a reaction' })).toBeNull();
   });
+
+  it('useMeetingChat seeds a late joiner from the server history, without duplicating the latest', () => {
+    const a = (n: number) => ({ message: `note ${n}`, fromUserId: 'u-org', fromDisplayName: 'Olive Organizer', at: `2026-10-16T12:0${n}:00.000Z` });
+    const source = {
+      ready: true, isOrganizer: false, hands: [], myHandPosition: null,
+      toggleHand() {}, lowerHand() {}, lowerAllHands() {},
+      breakout: { phase: 'open', mode: 'assigned', rooms: [], returned: [], endsAt: null, announcement: a(3), announcements: [a(1), a(2), a(3)], settings: { allowReturnToMain: true } },
+      myRoom: null, state: { announcement: null }, error: null,
+      configureBreakouts() {}, assign() {}, autoAssign() {}, openRooms() {}, closeRooms() {}, setTimer() {}, broadcast() {},
+      joinRoom() {}, returnToMain() {}, endBreakouts() {}, dismissAnnouncement() {},
+    } satisfies RMMeetingSource;
+    function Chat() {
+      const chat = useMeetingChat(source, { send: () => {} });
+      return <ChatPanel messages={chat.withAnnouncements([])} onSend={chat.onSend} renderMessageReferences={chat.renderMessageReferences} />;
+    }
+    render(<Chat />);
+    expect(screen.getAllByTestId('chat-message').map((m) => m.textContent)).toEqual([
+      expect.stringContaining('note 1'), expect.stringContaining('note 2'), expect.stringContaining('note 3'),
+    ]);
+    expect(screen.getAllByTestId('meeting-chat-announcement-note')).toHaveLength(3);
+  });
 });
+

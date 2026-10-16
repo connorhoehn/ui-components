@@ -35,6 +35,8 @@ export interface RMBreakoutState {
   /** realtime-modules 0.124.0+: rooms are in the closing grace. */
   closing?: boolean;
   announcement: { message: string; fromUserId: string; fromDisplayName: string; at: string } | null;
+  /** realtime-modules 0.130.0+: the last 20 announcements, oldest first. Older pins: absent. */
+  announcements?: Array<{ message: string; fromUserId: string; fromDisplayName: string; at: string }>;
   settings: { allowReturnToMain: boolean };
 }
 
@@ -370,12 +372,23 @@ export function useMeetingChat(
 ): MeetingChatBinding {
   const [target, setTarget] = useState<MeetingChatTarget>('chat');
   const [seen, setSeen] = useState<Array<NonNullable<RMBreakoutState['announcement']>>>([]);
+  // The server's history (realtime-modules 0.130.0+) plus anything this
+  // client has seen arrive, deduped by time and sender: a late joiner or a
+  // reload gets the history; an older server still shows what arrives live.
   const latest = meeting.breakout.announcement;
-  const key = latest ? `${latest.at}|${latest.fromUserId}` : null;
+  const history = meeting.breakout.announcements;
+  const idOf = (a: { at: string; fromUserId: string }) => `${a.at}|${a.fromUserId}`;
+  const key = [latest ? idOf(latest) : '', ...(history ?? []).map(idOf)].join(',');
   useEffect(() => {
-    if (!latest || !key) return;
-    setSeen((list) => (list.some((a) => `${a.at}|${a.fromUserId}` === key) ? list : [...list, latest].slice(-50)));
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed on the announcement's identity
+    const incoming = [...(history ?? []), ...(latest ? [latest] : [])];
+    if (incoming.length === 0) return;
+    setSeen((list) => {
+      const have = new Set(list.map(idOf));
+      const added = incoming.filter((a) => !have.has(idOf(a)) && have.add(idOf(a)));
+      if (added.length === 0) return list;
+      return [...list, ...added].sort((x, y) => Date.parse(x.at) - Date.parse(y.at)).slice(-50);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed on the announcements' identities
   }, [key]);
   const canAnnounce = meeting.ready && meeting.isOrganizer && meeting.breakout.phase === 'open';
   const effective: MeetingChatTarget = canAnnounce ? target : 'chat';

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.471.0
+
+- `useMeetingChat` seeds the thread from the server's announcement history (realtime-modules 0.130 `breakout.announcements`), deduped with what arrives live, so a late joiner or a reload sees past announcements, not only the latest. `RMBreakoutState.announcements` is optional; older pins show what arrives live, as before.
+
 ## 2.470.0
 
 - Which chat am I in: inside a breakout room, `useMeetingChat`'s `dock` starts with "Room 1 chat · Only people in Room 1 see these messages." (`MeetingChatContext`, a polite status, so the thread changing when rooms open or close is explained), above the organizer's To switch. `meetingChatTitle(meeting)` and the binding's `title` give "Room 1 chat" / "Meeting chat" for a host's own heading (ChatPanel's "Chat (n)" heading is fixed).
