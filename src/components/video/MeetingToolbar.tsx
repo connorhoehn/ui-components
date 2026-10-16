@@ -11,10 +11,11 @@
 // It follows the page theme (surface tokens), like the reference: a light bar
 // above the stage, not the always-dark call chrome of MediaControlsBar.
 
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { Badge } from '../shared/Badge';
 import { DropdownMenu, type DropdownMenuItem, type DropdownMenuSection } from '../shared/DropdownMenu';
+import { useRovingToolbar } from '../shared/RovingToolbar';
 import { T } from '../shared/Text';
 import { ChevronIcon } from '../ui/Icons';
 import { MoreHorizontalIcon, PhoneOffIcon } from './MediaIcons';
@@ -187,8 +188,10 @@ export function MeetingToolbar({
   className,
   'data-testid': testId = 'meeting-toolbar',
 }: MeetingToolbarProps) {
-  const rootRef = useRef<HTMLDivElement | null>(null);
-  const narrow = useNarrow(rootRef, compactBelow, compact);
+  // WAI-ARIA toolbar (2.458.2): the bar is ONE tab stop and the arrow keys,
+  // Home and End move within it, skipping disabled buttons and open menus.
+  const roving = useRovingToolbar();
+  const narrow = useNarrow(roving.ref, compactBelow, compact);
   const shown = narrow ? items.filter((i) => i.priority !== 'secondary') : items;
   const folded = narrow ? items.filter((i) => i.priority === 'secondary') : [];
   const more: DropdownMenuSection[] = [
@@ -198,7 +201,7 @@ export function MeetingToolbar({
 
   return (
     <div
-      ref={rootRef}
+      {...roving}
       role="toolbar"
       aria-label="Meeting controls"
       data-testid={testId}

@@ -84,3 +84,63 @@ describe('MeetingToolbar', () => {
     expect(section!.items[0]).toMatchObject({ label: 'No microphone found', disabled: true });
   });
 });
+
+describe('MeetingToolbar keyboard (WAI-ARIA toolbar, 2.458.2)', () => {
+  function setup() {
+    render(
+      <MeetingToolbar
+        items={[
+          { id: 'people', label: 'People', icon: <UsersIcon />, count: 3, onClick: () => {} },
+          { id: 'raise', label: 'Raise', icon: <MeetingHandIcon />, onClick: () => {} },
+          { id: 'view', label: 'View', icon: <MeetingViewIcon />, disabled: true },
+          { id: 'rooms', label: 'Rooms', icon: <MeetingRoomsIcon />, onClick: () => {} },
+        ]}
+        onLeave={() => {}}
+        compact={false}
+      />,
+    );
+    return screen.getByRole('toolbar', { name: 'Meeting controls' });
+  }
+
+  it('is a single tab stop', () => {
+    const bar = setup();
+    const stops = [...bar.querySelectorAll("button")].filter((b) => !b.disabled && b.tabIndex === 0);
+    expect(stops).toHaveLength(1);
+    expect(bar).toHaveAttribute('aria-orientation', 'horizontal');
+  });
+
+  it('arrow keys move focus, skipping disabled buttons; Home and End jump; it wraps', () => {
+    const bar = setup();
+    const people = screen.getByTestId('meeting-toolbar-people');
+    people.focus();
+    fireEvent.keyDown(people, { key: 'ArrowRight' });
+    expect(document.activeElement).toBe(screen.getByTestId('meeting-toolbar-raise'));
+    fireEvent.keyDown(document.activeElement!, { key: 'ArrowRight' });
+    expect(document.activeElement).toBe(screen.getByTestId('meeting-toolbar-rooms'));
+    fireEvent.keyDown(document.activeElement!, { key: 'End' });
+    expect(document.activeElement).toBe(screen.getByTestId('meeting-toolbar-leave'));
+    fireEvent.keyDown(document.activeElement!, { key: 'ArrowRight' });
+    expect(document.activeElement).toBe(people);
+    fireEvent.keyDown(people, { key: 'ArrowLeft' });
+    expect(document.activeElement).toBe(screen.getByTestId('meeting-toolbar-leave'));
+    fireEvent.keyDown(document.activeElement!, { key: 'Home' });
+    expect(document.activeElement).toBe(people);
+    // The tab stop follows focus.
+    expect([...bar.querySelectorAll("button")].filter((b) => !b.disabled && b.tabIndex === 0)).toEqual([people]);
+  });
+
+  it('split chevrons are stops too, so a device menu is reachable from the keyboard', () => {
+    render(
+      <MeetingToolbar
+        items={[]}
+        media={[{ id: 'camera', label: 'Camera', icon: <VideoOffIcon />, onClick: () => {}, menu: deviceMenuSections('Camera', [{ deviceId: 'a', label: 'Cam A' }], 'a', () => {}) }]}
+        onLeave={() => {}}
+        compact={false}
+      />,
+    );
+    const cam = screen.getByTestId('meeting-toolbar-camera');
+    cam.focus();
+    fireEvent.keyDown(cam, { key: 'ArrowRight' });
+    expect(document.activeElement).toBe(screen.getByTestId('meeting-toolbar-camera-menu'));
+  });
+});

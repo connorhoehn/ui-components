@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.458.2
+
+- `MeetingToolbar` implements the WAI-ARIA toolbar keyboard contract its `role="toolbar"` promised: the bar is one tab stop, Left/Right move focus (wrapping), Home/End jump, disabled buttons and open menus are skipped, and split chevrons are reachable. Built on `useRovingToolbar`.
+- The `Video/BreakoutRoomsPanel` OrganizerDraft story shows Delete rooms.
+
 ## 2.458.1
 
 Meeting audit sweep (realtime-modules `docs/design/meeting-rooms-audit.md`).
