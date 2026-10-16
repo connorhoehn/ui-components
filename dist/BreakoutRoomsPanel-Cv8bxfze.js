@@ -3180,10 +3180,11 @@ function $t({ roomName: n, endsAt: i, clockOffsetMs: a = 0, closing: s = !1, ann
 					size: "sm",
 					tone: "inherit",
 					tabular: !0,
+					weight: m ? "semibold" : void 0,
 					"data-testid": `${f}-countdown`,
 					"data-urgent": m ? "true" : void 0,
 					"data-closing": s ? "true" : void 0,
-					className: e(m && "font-semibold text-danger"),
+					className: e(m && "text-danger"),
 					children: s ? `Room closes in ${$(p)}` : `${$(p)} left`
 				}),
 				/* @__PURE__ */ W("span", {
@@ -3212,10 +3213,7 @@ function $t({ roomName: n, endsAt: i, clockOffsetMs: a = 0, closing: s = !1, ann
 				tone: "inherit",
 				className: "block min-w-0 flex-1",
 				children: [
-					/* @__PURE__ */ G("strong", {
-						className: "font-semibold",
-						children: [c.fromDisplayName, ":"]
-					}),
+					/* @__PURE__ */ G("strong", { children: [c.fromDisplayName, ":"] }),
 					" ",
 					c.message
 				]
@@ -3508,7 +3506,8 @@ function sn(n) {
 						size: "sm",
 						tone: v ? "inherit" : "secondary",
 						tabular: !0,
-						className: e(v && "font-semibold text-danger"),
+						weight: v ? "semibold" : void 0,
+						className: e(v && "text-danger"),
 						"data-testid": "breakout-timer-left",
 						children: v ? `Closing in ${$(h)}` : `${$(h)} left`
 					}), /* @__PURE__ */ W(w, {
@@ -3615,7 +3614,8 @@ function cn(t) {
 						size: "sm",
 						tone: f ? "inherit" : "secondary",
 						tabular: !0,
-						className: e("px-4 pt-3", f && "font-semibold text-danger"),
+						weight: f ? "semibold" : void 0,
+						className: e("px-4 pt-3", f && "text-danger"),
 						"data-testid": "breakout-timer-left",
 						children: [
 							f ? "Closing" : "Rooms close",

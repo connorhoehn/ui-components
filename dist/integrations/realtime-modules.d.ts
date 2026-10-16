@@ -2526,10 +2526,27 @@ export declare function meetingToolbarItems(meeting: RMMeetingSource, opts: {
     onReact?: (emoji: string) => void;
     /** The picker's emoji. Default the picker's own set. */
     reactions?: string[];
+    /**
+     * The People pane toggle, with the call's head count and a badge for
+     * raised hands (organizers act on them there). Since 2.474.0.
+     */
+    people?: {
+        open: boolean;
+        onToggle: () => void;
+        count: number;
+    };
+    /** The Chat pane toggle, with an unread badge. Since 2.474.0. */
+    chat?: {
+        open: boolean;
+        onToggle: () => void;
+        unread?: number;
+    };
 }): {
     raise: MeetingToolbarItem;
     rooms: MeetingToolbarItem;
     react?: MeetingToolbarItem;
+    people?: MeetingToolbarItem;
+    chat?: MeetingToolbarItem;
 };
 
 export declare class NetworkErrorBoundary extends Component<NetworkErrorBoundaryProps, NetworkErrorBoundaryState> {
