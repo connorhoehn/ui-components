@@ -4,7 +4,7 @@ import { t as i } from "./cn-D4QmbyEy.js";
 import { t as a } from "./useEventCallback-Cwx9QVSi.js";
 import { t as o } from "./Input-_B49FdRY.js";
 import { t as s } from "./Select-DjpQtNw3.js";
-import { t as c } from "./NumberInput-BEPkW6f6.js";
+import { t as c } from "./NumberInput-D_suV6tQ.js";
 import { t as l } from "./Checkbox-Jycr-rlf.js";
 import { t as u } from "./TiptapEditor-BjjwDyPa.js";
 import { useCallback as d, useEffect as f, useRef as p, useState as m } from "react";

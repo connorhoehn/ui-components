@@ -54,6 +54,12 @@ export declare function adaptActivityEvent(event: RMActivityEvent): ActivityFeed
 
 export declare function adaptActivityEvents(events: RMActivityEvent[]): ActivityFeedItem[];
 
+/** Rooms with people resolved, plus who is in the meeting but in no room. */
+export declare function adaptBreakoutRooms(breakout: RMBreakoutState, people: readonly RMMeetingPerson[], hands?: readonly RMRaisedHand[]): {
+    rooms: BreakoutRoomView[];
+    unassigned: BreakoutPerson[];
+};
+
 export declare function adaptChatMessage(msg: RMChatMessage): ChatMessage;
 
 export declare function adaptChatMessages(messages: RMChatMessage[]): ChatMessage[];
@@ -300,6 +306,59 @@ declare interface AudioVideoSettingsFormProps {
     layout?: 'stack' | 'prejoin';
     className?: string;
     'data-testid'?: string;
+}
+
+declare type BreakoutPanelMode = 'assigned' | 'self-select';
+
+declare type BreakoutPanelPhase = 'none' | 'draft' | 'open';
+
+declare interface BreakoutPerson {
+    id: string;
+    name: string;
+    avatarUrl?: string;
+    /** `true` or the 1-based queue position. */
+    handRaised?: boolean | number;
+}
+
+declare interface BreakoutRoomsPanelProps {
+    rooms: BreakoutRoomView[];
+    phase: BreakoutPanelPhase;
+    mode: BreakoutPanelMode;
+    /** The open room you are in, or null for the main meeting. */
+    myRoomId?: string | null;
+    isOrganizer?: boolean;
+    /** Organizer view: people in the meeting placed in no room. */
+    unassigned?: BreakoutPerson[];
+    /** ISO end of the timer. */
+    endsAt?: string | null;
+    /** Participants may leave a room for the main meeting. Default true. */
+    allowReturnToMain?: boolean;
+    onJoin?: (roomId: string) => void;
+    onReturnToMain?: () => void;
+    onCreateRooms?: (count: number, mode: BreakoutPanelMode) => void;
+    onAutoAssign?: () => void;
+    onAssign?: (userId: string, roomId: string | null) => void;
+    onOpenRooms?: (roomIds?: string[]) => void;
+    onCloseRooms?: (roomIds?: string[]) => void;
+    onSetTimer?: (durationMs: number | null) => void;
+    onBroadcast?: (message: string) => void;
+    onEnd?: () => void;
+    /** The header ✕. Omitted: no close button. */
+    onClose?: () => void;
+    title?: string;
+    /** Rendered under the header — an error notice, say. */
+    notice?: ReactNode;
+    /** Minute choices for the timer. Default 5, 10, 15, 30, 60. */
+    timerMinutes?: number[];
+    className?: string;
+    'data-testid'?: string;
+}
+
+declare interface BreakoutRoomView {
+    id: string;
+    name: string;
+    state: 'open' | 'closed';
+    members: BreakoutPerson[];
 }
 
 /**
@@ -1720,6 +1779,11 @@ export declare function decodeCanvasRecovery(value: unknown): Uint8Array | null;
  */
 export declare const DEFAULT_REALTIME_CAPABILITIES: RealtimeCapabilitySet;
 
+/** Default room names: "Room 1"…"Room n". */
+export declare function defaultRoomDrafts(count: number): {
+    name: string;
+}[];
+
 declare interface DeviceOption {
     deviceId: string;
     label: string;
@@ -1877,6 +1941,64 @@ declare interface DocumentZoomControl {
     onFitWidth?: () => void;
 }
 
+declare interface DropdownMenuItem {
+    /** Visible item label. */
+    label: string;
+    /** Optional leading icon / glyph. */
+    icon?: ReactNode;
+    /** Highlight this item as the currently-active selection. */
+    active?: boolean;
+    /** Style this item as destructive. */
+    danger?: boolean;
+    /** Fires on click / Enter; the menu closes afterwards. Not needed on a row with a `submenu`. */
+    onSelect?: () => void;
+    /** Right-aligned hint after the label — a shortcut (`⌘P`), a count. */
+    trailing?: ReactNode;
+    /** A second, quieter line under the label. */
+    description?: string;
+    /** A setting that is on: a check leads the row (menuitemcheckbox). */
+    checked?: boolean;
+    /**
+     * A flyout of further choices, opened from this row — "Share to ›",
+     * "Download as ›". Opens on hover, click or ArrowRight; the row itself
+     * runs no `onSelect`.
+     */
+    submenu?: DropdownMenuSection[];
+    /**
+     * Shown but not actionable: muted, `aria-disabled="true"` yet still
+     * focusable (WAI-ARIA menu practice, so a screen reader can reach it and
+     * hear why), and click / Enter / Space never run `onSelect` — the menu
+     * stays open. A disabled row with a `submenu` does not open it. Since 2.390.3.
+     */
+    disabled?: boolean;
+    /**
+     * Why it is disabled — shown as the row's secondary line (in place of
+     * `description`), its hover tooltip, and its `aria-describedby`.
+     * Since 2.390.3; the visible line since 2.390.4.
+     */
+    disabledReason?: string;
+    /** A hook for the spec that addresses this row. Without one the row is reachable by its label. */
+    'data-testid'?: string;
+}
+
+declare interface DropdownMenuSection {
+    /** Optional uppercase section heading. */
+    label?: string;
+    items: DropdownMenuItem[];
+    /**
+     * The group scrolls in place (`uic-menu-group-scroll`) so the sections
+     * after it stay put. For a generated list — one row per room — that would
+     * otherwise push the fixed actions below the fold.
+     */
+    scroll?: boolean;
+    /**
+     * A quiet line under the group's rows — what the group does as a whole
+     * ("Creates a new document."). Since 2.390.3.
+     */
+    caption?: string;
+    'data-testid'?: string;
+}
+
 export declare function encodeCanvasRecovery(bytes: Uint8Array): CanvasRecovery;
 
 declare interface EphemeralReaction {
@@ -1956,6 +2078,8 @@ declare interface HangoutLayoutParticipant {
     avatarUrl?: string;
     isMuted?: boolean;
     isLocal?: boolean;
+    /** Raised hand: `true`, or the 1-based queue position. Since 2.458.0. */
+    handRaised?: boolean | number;
     /** Pre-rendered video element — typically `<video ref={…} autoPlay playsInline />`. */
     videoElement?: ReactNode;
     /** Pre-rendered screen-share video element. When ANY participant supplies
@@ -2247,6 +2371,48 @@ declare interface MediaEffectsTrayProps {
 
 /** Browser media permission for one kind of device. */
 declare type MediaPermission = 'prompt' | 'granted' | 'denied' | 'unavailable';
+
+/** userId → 1-based hand position. Feed `handRaised` on tiles and roster rows. */
+export declare function meetingHandPositions(hands: readonly RMRaisedHand[]): Map<string, number>;
+
+declare interface MeetingToolbarItem {
+    /** Stable id; the button's testid is `meeting-toolbar-<id>`. */
+    id: string;
+    /** Text under the icon, and the accessible name. */
+    label: string;
+    icon: ReactNode;
+    onClick?: () => void;
+    /** The pane this button opens is open (underlined, `aria-expanded`). */
+    active?: boolean;
+    /** A toggle that is on (hand raised): filled, `aria-pressed`. */
+    pressed?: boolean;
+    /** A number shown beside the icon — the People count. */
+    count?: number;
+    /** An unread/attention badge on the icon — new chat messages. */
+    badge?: number;
+    disabled?: boolean;
+    /** Why it is disabled; becomes the tooltip. */
+    disabledReason?: string;
+    /** `off` (camera/mic off) dims nothing but marks state for tests; `danger` reds the button. */
+    tone?: 'default' | 'off' | 'danger';
+    /** A split chevron with this menu (Camera ▾ devices). */
+    menu?: DropdownMenuSection[];
+    /** Accessible name of the chevron. Default `"<label> options"`. */
+    menuLabel?: string;
+    /** `secondary` folds into More when the bar is compact. Default `primary`. */
+    priority?: 'primary' | 'secondary';
+    /** Tooltip; defaults to the label. */
+    title?: string;
+}
+
+/** Raise and Rooms toolbar buttons bound to the meeting. */
+export declare function meetingToolbarItems(meeting: RMMeetingSource, opts: {
+    roomsOpen: boolean;
+    onToggleRooms: () => void;
+}): {
+    raise: MeetingToolbarItem;
+    rooms: MeetingToolbarItem;
+};
 
 export declare class NetworkErrorBoundary extends Component<NetworkErrorBoundaryProps, NetworkErrorBoundaryState> {
     state: NetworkErrorBoundaryState;
@@ -2640,6 +2806,29 @@ export declare interface RMAudioVideoSettingsSource {
 
 export declare type RMBackgroundMode = 'none' | 'blur' | 'image';
 
+/** The slice of realtime-modules' `BreakoutState` these bindings read. */
+export declare interface RMBreakoutState {
+    phase: 'none' | 'draft' | 'open';
+    mode: 'assigned' | 'self-select';
+    rooms: {
+        id: string;
+        name: string;
+        state: 'open' | 'closed';
+        members: string[];
+    }[];
+    returned: string[];
+    endsAt: string | null;
+    announcement: {
+        message: string;
+        fromUserId: string;
+        fromDisplayName: string;
+        at: string;
+    } | null;
+    settings: {
+        allowReturnToMain: boolean;
+    };
+}
+
 /** Mirror of realtime-modules/src/client/useCapability.ts CapabilityHookResult */
 export declare interface RMCapabilityHookResult {
     capability: {
@@ -2934,6 +3123,59 @@ export declare interface RMMediaEffectsSettings {
     faceSpriteId: string | null;
 }
 
+/** A person in the meeting as the host knows them (the call roster). */
+export declare interface RMMeetingPerson {
+    userId: string;
+    displayName: string;
+    avatarUrl?: string;
+}
+
+/** Structural `UseMeetingResult` (realtime-modules 0.121.0). */
+export declare interface RMMeetingSource {
+    ready: boolean;
+    isOrganizer: boolean;
+    hands: RMRaisedHand[];
+    myHandPosition: number | null;
+    toggleHand(): void;
+    lowerHand(userId?: string): void;
+    lowerAllHands(): void;
+    breakout: RMBreakoutState;
+    myRoom: {
+        id: string;
+        name: string;
+    } | null;
+    state: {
+        announcement: RMBreakoutState['announcement'];
+        you?: {
+            userId: string | null;
+            organizer: boolean;
+        };
+    };
+    error: {
+        code: string;
+        message: string;
+        requestAction: string;
+    } | null;
+    configureBreakouts(rooms: {
+        id?: string;
+        name: string;
+        members?: string[];
+    }[], opts?: {
+        mode?: 'assigned' | 'self-select';
+        allowReturnToMain?: boolean;
+    }): void;
+    assign(assignments: Record<string, string | null>): void;
+    autoAssign(userIds: string[]): void;
+    openRooms(roomIds?: string[]): void;
+    closeRooms(roomIds?: string[]): void;
+    setTimer(durationMs: number | null): void;
+    broadcast(message: string): void;
+    joinRoom(roomId: string): void;
+    returnToMain(): void;
+    endBreakouts(): void;
+    dismissAnnouncement(): void;
+}
+
 /** Mirror of realtime-modules/src/client/useNotifications.ts NotificationHookEntry */
 export declare interface RMNotificationEntry {
     id: string;
@@ -2966,6 +3208,12 @@ export declare interface RMPresenceEntry {
 
 /** Mirror of realtime-modules/src/client/types.ts PresenceStatus */
 export declare type RMPresenceStatus = 'online' | 'away' | 'busy' | 'offline';
+
+export declare interface RMRaisedHand {
+    userId: string;
+    displayName: string;
+    raisedAt: string;
+}
 
 /** Mirror of realtime-modules/src/client/types.ts Reaction */
 export declare interface RMReaction {
@@ -3474,6 +3722,24 @@ export declare interface WrappedAudioVideoSettingsFormProps extends Pick<AudioVi
     settings: RMAudioVideoSettingsSource;
     /** Whether the viewer's camera is on (the preview shows "Camera is off" otherwise). */
     cameraOn: boolean;
+}
+
+/** The in-room banner, or nothing in the main meeting. */
+export declare function WrappedBreakoutRoomBanner({ meeting, className }: {
+    meeting: RMMeetingSource;
+    className?: string;
+}): JSX.Element | null;
+
+export declare function WrappedBreakoutRoomsPanel({ meeting, people, roomNames, renderError, ...rest }: WrappedBreakoutRoomsPanelProps): JSX.Element;
+
+export declare interface WrappedBreakoutRoomsPanelProps extends Pick<BreakoutRoomsPanelProps, 'onClose' | 'title' | 'timerMinutes' | 'className' | 'data-testid'> {
+    meeting: RMMeetingSource;
+    /** Everyone in the meeting (the call roster), for names and the "not in a room" list. */
+    people: RMMeetingPerson[];
+    /** Name the rooms an organizer creates. Default "Room 1"… */
+    roomNames?: (count: number) => string[];
+    /** Rendered above the list when the last action was refused. Default: the server's message. */
+    renderError?: (error: NonNullable<RMMeetingSource['error']>) => ReactNode;
 }
 
 export declare function WrappedCanvasDocument({ canvas, schema, legacyModel, beforeConvert, ...viewProps }: WrappedCanvasDocumentProps): JSX.Element;

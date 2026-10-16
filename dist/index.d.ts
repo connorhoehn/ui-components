@@ -2176,6 +2176,78 @@ export declare interface BreadcrumbsProps {
     'data-testid'?: string;
 }
 
+export declare type BreakoutPanelMode = 'assigned' | 'self-select';
+
+export declare type BreakoutPanelPhase = 'none' | 'draft' | 'open';
+
+export declare interface BreakoutPerson {
+    id: string;
+    name: string;
+    avatarUrl?: string;
+    /** `true` or the 1-based queue position. */
+    handRaised?: boolean | number;
+}
+
+export declare function BreakoutRoomBanner({ roomName, endsAt, announcement, onDismissAnnouncement, onReturnToMain, className, 'data-testid': testId, }: BreakoutRoomBannerProps): JSX.Element;
+
+export declare interface BreakoutRoomBannerProps {
+    roomName: string;
+    /** ISO end of the breakout timer, or null for none. */
+    endsAt?: string | null;
+    announcement?: {
+        message: string;
+        fromDisplayName: string;
+    } | null;
+    onDismissAnnouncement?: () => void;
+    /** Omit when returning is not allowed. */
+    onReturnToMain?: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function BreakoutRoomsPanel(props: BreakoutRoomsPanelProps): JSX.Element;
+
+export declare interface BreakoutRoomsPanelProps {
+    rooms: BreakoutRoomView[];
+    phase: BreakoutPanelPhase;
+    mode: BreakoutPanelMode;
+    /** The open room you are in, or null for the main meeting. */
+    myRoomId?: string | null;
+    isOrganizer?: boolean;
+    /** Organizer view: people in the meeting placed in no room. */
+    unassigned?: BreakoutPerson[];
+    /** ISO end of the timer. */
+    endsAt?: string | null;
+    /** Participants may leave a room for the main meeting. Default true. */
+    allowReturnToMain?: boolean;
+    onJoin?: (roomId: string) => void;
+    onReturnToMain?: () => void;
+    onCreateRooms?: (count: number, mode: BreakoutPanelMode) => void;
+    onAutoAssign?: () => void;
+    onAssign?: (userId: string, roomId: string | null) => void;
+    onOpenRooms?: (roomIds?: string[]) => void;
+    onCloseRooms?: (roomIds?: string[]) => void;
+    onSetTimer?: (durationMs: number | null) => void;
+    onBroadcast?: (message: string) => void;
+    onEnd?: () => void;
+    /** The header ✕. Omitted: no close button. */
+    onClose?: () => void;
+    title?: string;
+    /** Rendered under the header — an error notice, say. */
+    notice?: ReactNode;
+    /** Minute choices for the timer. Default 5, 10, 15, 30, 60. */
+    timerMinutes?: number[];
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface BreakoutRoomView {
+    id: string;
+    name: string;
+    state: 'open' | 'closed';
+    members: BreakoutPerson[];
+}
+
 /** A data section for `ConversationRail sections`: the heading's count, the rows, the empty line. */
 export declare function buildRailSection<T>(o: BuildRailSectionOptions<T>): ConversationRailSection;
 
@@ -7773,6 +7845,12 @@ export declare interface DetailSectionProps {
     'data-testid'?: string;
 }
 
+/** Device choices for a Camera/Mic split chevron. */
+export declare function deviceMenuSections(heading: string, devices: ReadonlyArray<{
+    deviceId: string;
+    label: string;
+}>, selectedDeviceId: string | undefined, onSelect: (deviceId: string) => void, extra?: DropdownMenuItem[]): DropdownMenuSection[];
+
 export declare interface DeviceOption {
     deviceId: string;
     label: string;
@@ -10821,6 +10899,8 @@ export declare interface HangoutLayoutParticipant {
     avatarUrl?: string;
     isMuted?: boolean;
     isLocal?: boolean;
+    /** Raised hand: `true`, or the 1-based queue position. Since 2.458.0. */
+    handRaised?: boolean | number;
     /** Pre-rendered video element — typically `<video ref={…} autoPlay playsInline />`. */
     videoElement?: ReactNode;
     /** Pre-rendered screen-share video element. When ANY participant supplies
@@ -13328,6 +13408,104 @@ export declare interface MediaPrecheckRowProps {
     className?: string;
 }
 
+/** The button look, shared by plain buttons, split halves and the More trigger. */
+export declare const MEETING_TOOLBAR_BUTTON: string;
+
+/** A plus in a square: Apps. */
+export declare function MeetingAppsIcon({ size, ...rest }: IconProps): JSX.Element;
+
+/** An open raised hand. */
+export declare function MeetingHandIcon({ size, ...rest }: IconProps): JSX.Element;
+
+/** A ruled page: meeting notes. */
+export declare function MeetingNotesIcon({ size, ...rest }: IconProps): JSX.Element;
+
+/** A smiling face: the React button. */
+export declare function MeetingReactIcon({ size, ...rest }: IconProps): JSX.Element;
+
+/** A room inside a room: breakout rooms. */
+export declare function MeetingRoomsIcon({ size, ...rest }: IconProps): JSX.Element;
+
+/** An arrow leaving a tray: Share (screen / content). */
+export declare function MeetingShareIcon({ size, ...rest }: IconProps): JSX.Element;
+
+/** A shield: meeting options / lobby settings. */
+export declare function MeetingShieldIcon({ size, ...rest }: IconProps): JSX.Element;
+
+export declare function MeetingStatusCluster({ title, recording, startedAt, elapsedMs, onOpenOptions, optionsLabel, className, 'data-testid': testId, }: MeetingStatusClusterProps): JSX.Element;
+
+export declare interface MeetingStatusClusterProps {
+    /** Meeting title, when the bar carries it (the reference puts it in the window title). */
+    title?: ReactNode;
+    recording?: RecordingChipState;
+    /** Epoch ms or ISO; the cluster ticks once a second. */
+    startedAt?: number | string | null;
+    /** Controlled elapsed time; wins over `startedAt`. */
+    elapsedMs?: number | null;
+    /** Shows the shield button (meeting options / lobby). */
+    onOpenOptions?: () => void;
+    optionsLabel?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function MeetingToolbar({ start, items, media, moreSections, onLeave, leaveLabel, leaveMenu, compactBelow, compact, className, 'data-testid': testId, }: MeetingToolbarProps): JSX.Element;
+
+export declare interface MeetingToolbarItem {
+    /** Stable id; the button's testid is `meeting-toolbar-<id>`. */
+    id: string;
+    /** Text under the icon, and the accessible name. */
+    label: string;
+    icon: ReactNode;
+    onClick?: () => void;
+    /** The pane this button opens is open (underlined, `aria-expanded`). */
+    active?: boolean;
+    /** A toggle that is on (hand raised): filled, `aria-pressed`. */
+    pressed?: boolean;
+    /** A number shown beside the icon — the People count. */
+    count?: number;
+    /** An unread/attention badge on the icon — new chat messages. */
+    badge?: number;
+    disabled?: boolean;
+    /** Why it is disabled; becomes the tooltip. */
+    disabledReason?: string;
+    /** `off` (camera/mic off) dims nothing but marks state for tests; `danger` reds the button. */
+    tone?: 'default' | 'off' | 'danger';
+    /** A split chevron with this menu (Camera ▾ devices). */
+    menu?: DropdownMenuSection[];
+    /** Accessible name of the chevron. Default `"<label> options"`. */
+    menuLabel?: string;
+    /** `secondary` folds into More when the bar is compact. Default `primary`. */
+    priority?: 'primary' | 'secondary';
+    /** Tooltip; defaults to the label. */
+    title?: string;
+}
+
+export declare interface MeetingToolbarProps {
+    /** The status cluster: recording, elapsed time, meeting options. */
+    start?: ReactNode;
+    /** The meeting buttons, left to right. */
+    items: MeetingToolbarItem[];
+    /** Camera, Mic, Share — set apart by a divider. */
+    media?: MeetingToolbarItem[];
+    /** Extra More-menu sections (Settings, Record, Captions…). More appears when this or folded items exist. */
+    moreSections?: DropdownMenuSection[];
+    onLeave: () => void;
+    /** Default "Leave". */
+    leaveLabel?: string;
+    /** A split chevron on Leave — e.g. "End meeting for everyone". */
+    leaveMenu?: DropdownMenuSection[];
+    /** Width (px) below which secondary items fold into More. Default 960. */
+    compactBelow?: number;
+    /** Force compact (tests, a known-narrow host); otherwise measured. */
+    compact?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** A four-pane grid: the View (layout) button. */
+export declare function MeetingViewIcon({ size, ...rest }: IconProps): JSX.Element;
+
 declare interface MemberItem {
     groupId: string;
     userId: string;
@@ -14918,7 +15096,7 @@ export declare interface Participant {
  * convention (Meet/Teams/Zoom), reflowing tiles on speaker change is jarring;
  * a green border is the agreed-on cue.
  */
-export declare function ParticipantTile({ id, displayName, avatarUrl, isSpeaking, isMuted, isLocal, isSpotlight, videoElement, onClick, fillParent, className, style, }: ParticipantTileProps): JSX.Element;
+export declare function ParticipantTile({ id, displayName, avatarUrl, isSpeaking, isMuted, handRaised, isLocal, isSpotlight, videoElement, onClick, fillParent, className, style, }: ParticipantTileProps): JSX.Element;
 
 export declare interface ParticipantTileProps {
     /** Unique identifier for keying / pin actions. */
@@ -14931,6 +15109,8 @@ export declare interface ParticipantTileProps {
     isSpeaking?: boolean;
     /** Whether to overlay a muted-mic glyph in the badge. */
     isMuted?: boolean;
+    /** Raised hand: `true`, or the 1-based queue position (shown as "✋ 2" in the name chip). Since 2.458.0. */
+    handRaised?: boolean | number;
     /** Whether this tile represents the local user — replaces the displayName label with "You". */
     isLocal?: boolean;
     /** When true, applies the "main / spotlight" emphasis style (larger border, taller aspect). */
@@ -17223,6 +17403,20 @@ export declare const railType: {
     readonly currentFill: "bg-primary/8";
 };
 
+export declare function RaisedHandBadge({ raised, tone, size, className, 'data-testid': testId }: RaisedHandBadgeProps): JSX.Element | null;
+
+export declare interface RaisedHandBadgeProps {
+    /** `true`, or the 1-based queue position. Falsy renders nothing. */
+    raised: boolean | number | null | undefined;
+    /** `chip` (default): accent pill for light surfaces. `overlay`: for a dark video tile. */
+    tone?: 'chip' | 'overlay';
+    size?: 'sm' | 'md';
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function raisedHandLabel(raised: boolean | number | null | undefined): string | null;
+
 /** Two native keyboard-operable handles on one track, with stable tab order. */
 export declare function RangeSlider({ value, min, max, step, minDistance, labels, formatValue, onChange, className }: RangeSliderProps): JSX.Element;
 
@@ -17842,6 +18036,8 @@ export declare const RECORDING_CHIP_TITLES: {
     readonly armed: "Recording armed — will start once the call is under way";
 };
 
+export declare const RECORDING_CONSENT_TITLES: Record<RecordingConsentKind, string>;
+
 export declare function RecordingActivityCard({ recordingId, title, recordedBy, participants, participantCount, startedAt, durationMs, thumbnailUrl, stage, transcriptReady, summaryReady, expiresAt, pinned, onOpen, onCopyLink, onShare, onTogglePin, onDownload, onOpenTranscript, onManageExpiry, onParticipantClick, className, 'data-testid': testId, }: RecordingActivityCardProps): JSX.Element;
 
 export declare interface RecordingActivityCardProps {
@@ -17915,6 +18111,24 @@ export declare interface RecordingChipState {
     armed: boolean;
     /** Bytes are being written right now. Implies armed. */
     active: boolean;
+}
+
+export declare type RecordingConsentKind = 'recording' | 'transcription' | 'both';
+
+export declare function RecordingConsentNotice({ open, kind, startedBy, privacyHref, privacyLabel, onDismiss, placement, className, 'data-testid': testId, }: RecordingConsentNoticeProps): JSX.Element | null;
+
+export declare interface RecordingConsentNoticeProps {
+    open: boolean;
+    kind: RecordingConsentKind;
+    /** Who started it. Omitted: the sentence says "Started." without a name. */
+    startedBy?: string;
+    privacyHref?: string;
+    privacyLabel?: string;
+    onDismiss: () => void;
+    /** `overlay` (default) floats over the stage; `inline` sits in the flow. */
+    placement?: 'overlay' | 'inline';
+    className?: string;
+    'data-testid'?: string;
 }
 
 export declare type RecordingExpiryChoice = '30d' | '90d' | '365d' | 'never' | 'custom';
@@ -19007,7 +19221,8 @@ export declare interface RosterParticipant {
     isMuted?: boolean;
     isLocal?: boolean;
     isScreenSharing?: boolean;
-    handRaised?: boolean;
+    /** `true`, or the 1-based queue position (shown beside the hand since 2.458.0). */
+    handRaised?: boolean | number;
 }
 
 export declare function RovingToolbar({ label, children, orientation, className, 'data-testid': testId, }: RovingToolbarProps): default_2.JSX.Element;
@@ -23514,6 +23729,8 @@ declare interface UseActivityBusReturn {
 
  /** Measures an element (or its parent) and gives the density its room implies. */
  export declare function useContainerDensity<T extends HTMLElement>(options?: ContainerDensityOptions<T>): ContainerDensityState<T>;
+
+ export declare function useCountdown(endsAt: string | null | undefined): number | null;
 
  export declare function useCRDT(options: UseCRDTOptions): UseCRDTReturn;
 
