@@ -28,7 +28,7 @@ import { i as ve, r as ye, t as be } from "./ChoiceList-B3BfW3Ls.js";
 import { t as xe } from "./SegmentedControl-CSn7GyT9.js";
 import { t as Se } from "./Checkbox-Jycr-rlf.js";
 import { t as Ce } from "./activationKey-CjbL3LUv.js";
-import { C as we, E as Te, K as Ee, L as De, R as Oe, S as ke } from "./BreakoutRoomsPanel-Q8H54JS-.js";
+import { C as we, E as Te, K as Ee, L as De, R as Oe, S as ke } from "./BreakoutRoomsPanel-traTlkih.js";
 import { useCallback as U, useEffect as W, useImperativeHandle as Ae, useLayoutEffect as je, useMemo as G, useRef as K, useState as q } from "react";
 import { Fragment as J, jsx as Y, jsxs as X } from "react/jsx-runtime";
 //#region src/components/video/VideoPlayer.tsx

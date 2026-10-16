@@ -165,6 +165,11 @@ export declare interface BreakoutRoomsPanelProps {
     onSetTimer?: (durationMs: number | null) => void;
     onBroadcast?: (message: string) => void;
     onEnd?: () => void;
+    /**
+     * Discard the drafted rooms so they can be created again (2.458.1). Shown
+     * only while rooms are closed; open rooms must be ended first.
+     */
+    onDeleteRooms?: () => void;
     /** The header ✕. Omitted: no close button. */
     onClose?: () => void;
     title?: string;

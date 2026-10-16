@@ -344,6 +344,11 @@ declare interface BreakoutRoomsPanelProps {
     onSetTimer?: (durationMs: number | null) => void;
     onBroadcast?: (message: string) => void;
     onEnd?: () => void;
+    /**
+     * Discard the drafted rooms so they can be created again (2.458.1). Shown
+     * only while rooms are closed; open rooms must be ended first.
+     */
+    onDeleteRooms?: () => void;
     /** The header ✕. Omitted: no close button. */
     onClose?: () => void;
     title?: string;
@@ -1761,6 +1766,12 @@ export declare interface ConversationCallDockProps {
     tile?: (p: RMConversationCallParticipant) => ReactNode | undefined;
     /** An info line above the shelf while the call is on (e.g. who the call could not ring). */
     notice?: ReactNode;
+    /**
+     * Raised hand per call participant (2.458.1), by userId: `true`, a 1-based
+     * queue position, or undefined. Bind to realtime-modules' useMeeting with
+     * `const hands = meetingHandPositions(meeting.hands); handFor={(id) => hands.get(id)}`.
+     */
+    handFor?: (userId: string) => boolean | number | undefined;
     /** Name shown on the settings preview. */
     selfName?: string;
     /** 132 × 74 tiles instead of 176 × 88. */
@@ -4506,6 +4517,13 @@ export declare interface WrappedLVSHangoutLayoutProps {
     /** When false, the local user does NOT appear as a tile (e.g. they
      *  only host the call). Default true (Meet-style). */
     showLocalAsTile?: boolean;
+    /**
+     * Raised hand for a participant (2.458.1): `true`, a 1-based queue
+     * position, or undefined. Keyed by the app user id when the SFU carries one
+     * (`appUserId`), else the SFU `userId`. Bind with meetingHandPositions:
+     * `handFor={(id) => hands.get(id)}`.
+     */
+    handFor?: (userId: string) => boolean | number | undefined;
     className?: string;
     'data-testid'?: string;
 }
