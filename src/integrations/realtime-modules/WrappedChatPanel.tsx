@@ -197,6 +197,14 @@ export interface WrappedChatPanelProps {
   composer?: ReactNode;
   /** Host-resolved references rendered after each adapted message. */
   renderMessageReferences?: ChatPanelProps['renderMessageReferences'];
+  /**
+   * Last word on the thread's messages after they are adapted (2.477.0): a
+   * host merges its own entries in, e.g. a meeting's announcements with
+   * `useMeetingChat(...).withAnnouncements`. Must be stable or cheap.
+   */
+  transformMessages?: (messages: ChatMessage[]) => ChatMessage[];
+  /** Pinned above the composer (ChatPanel `dock`), e.g. `useMeetingChat`'s dock. Since 2.477.0. */
+  dock?: ChatPanelProps['dock'];
   emojis?: readonly string[];
   onReply?: (message: ChatMessage) => void;
   /**
@@ -281,6 +289,8 @@ export function WrappedChatPanel({
   loadingMore,
   composer,
   renderMessageReferences,
+  transformMessages,
+  dock,
   emojis,
   onReply,
   reply,
@@ -487,8 +497,9 @@ export function WrappedChatPanel({
 
   const panel = (
     <ChatPanel
-      messages={messages}
+      messages={transformMessages ? transformMessages(messages) : messages}
       {...(cardMessages.length ? { localMessages: cardMessages } : {})}
+      {...(dock !== undefined ? { dock } : {})}
       onSend={handleSend}
       disabled={disabled}
       typingUsers={typingUsers}

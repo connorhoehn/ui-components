@@ -289,3 +289,69 @@ describe('CallBlockHost meeting (2.476.0)', () => {
   });
 });
 
+describe('CallBlockHost meeting seams (2.477.0)', () => {
+  const seen: Array<string | null> = [];
+  const gated = createCallBlockHost({
+    ...modules,
+    conversationCallDockProps: video.conversationCallDockProps,
+    useMeeting: (id) => {
+      seen.push(id);
+      return {
+        ready: !!id, isOrganizer: false, hands: [], myHandPosition: null,
+        toggleHand() {}, lowerHand() {}, lowerAllHands() {},
+        breakout: { phase: 'none', mode: 'assigned', rooms: [], returned: [], endsAt: null, announcement: null, settings: { allowReturnToMain: true } },
+        myRoom: null, state: { announcement: null }, error: null,
+        configureBreakouts() {}, assign() {}, autoAssign() {}, openRooms() {}, closeRooms() {}, setTimer() {}, broadcast() {},
+        joinRoom() {}, returnToMain() {}, endBreakouts() {}, dismissAnnouncement() {},
+        activeLobby: id, activeChat: id,
+      };
+    },
+  });
+  function GatedShell({ children, enabledFor }: { children: ReactNode; enabledFor: (lobby: string) => boolean }) {
+    return <gated.CallHostProvider self={{ userId: 'u-vera', displayName: 'Vera Green' }} tenant="orgiq" scopeKey="orgiq|u-vera"
+      platformApiUrl="http://platform" getIdToken={() => 'token'} videoUrl="http://sfu" gateway={{ send: vi.fn(), onMessage: () => () => {} }}
+      gatewayConfigured connectionState="connected" meeting={{ enabledFor }}>
+      {children}
+      <gated.CallMediaOutlet header={<span data-testid="stage-header">toolbar here</span>} />
+    </gated.CallHostProvider>;
+  }
+  function GatedPage({ lobby }: { lobby: string }) {
+    const view = gated.useCallBlock(lobby, { bind: { title: 'Huddle' } });
+    const host = gated.useCallHost();
+    return <div><span data-testid="has-meeting">{host?.meeting ? 'yes' : 'no'}</span>{view.block}</div>;
+  }
+
+  it('enabledFor rolls the meeting out per lobby', async () => {
+    const only = (l: string) => l.startsWith('orgiq:initiative:');
+    phase = 'idle';
+    const a = render(<GatedShell enabledFor={only}><GatedPage lobby="orgiq:initiative:p-auth" /></GatedShell>);
+    phase = 'live';
+    a.rerender(<GatedShell enabledFor={only}><GatedPage lobby="orgiq:initiative:p-auth" /></GatedShell>);
+    await act(async () => {});
+    expect(screen.getByTestId('has-meeting')).toHaveTextContent('yes');
+    cleanup();
+    seen.length = 0;
+    phase = 'idle';
+    const b = render(<GatedShell enabledFor={only}><GatedPage lobby="social:room:den" /></GatedShell>);
+    phase = 'live';
+    b.rerender(<GatedShell enabledFor={only}><GatedPage lobby="social:room:den" /></GatedShell>);
+    await act(async () => {});
+    expect(screen.getByTestId('has-meeting')).toHaveTextContent('no');
+    expect(seen.every((id) => id === null)).toBe(true);
+  });
+
+  it('the outlet draws its header above the dock only while a page holds it', async () => {
+    phase = 'idle';
+    const r = render(<GatedShell enabledFor={() => true}><GatedPage lobby="orgiq:initiative:p-auth" /></GatedShell>);
+    phase = 'live';
+    r.rerender(<GatedShell enabledFor={() => true}><GatedPage lobby="orgiq:initiative:p-auth" /></GatedShell>);
+    await act(async () => {});
+    const media = screen.getAllByTestId('shell-call-media');
+    const expanded = media.find((m) => m.getAttribute('data-expanded') === 'true');
+    const collapsed = media.find((m) => m.getAttribute('data-expanded') === 'false');
+    if (expanded) expect(expanded).toContainElement(screen.getByTestId('stage-header'));
+    if (collapsed) expect(collapsed.querySelector('[data-testid="stage-header"]')).toBeNull();
+    expect(expanded || collapsed).toBeTruthy();
+  });
+});
+

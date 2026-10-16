@@ -216,7 +216,11 @@ export interface CallHostProviderProps {
    * the host's scheme, so a room's chat is `<that>~breakout~<roomId>`.
    * Off by default. Since 2.476.0.
    */
-  meeting?: { chatChannelFor?(lobbyName: string, callId: string | null): string | null } | false;
+  meeting?: {
+    chatChannelFor?(lobbyName: string, callId: string | null): string | null;
+    /** Which lobbies get a meeting (2.477.0); default all. A host rolls surfaces out one at a time with this. */
+    enabledFor?(lobbyName: string): boolean;
+  } | false;
   /** Where the pre-join choices persist (one key per device). */
   preJoinStorageKey?: string;
   children: ReactNode;
@@ -265,6 +269,16 @@ export interface CallMediaOutletProps {
   onOpenDocument?: (document: CallBlockDocument) => void;
   /** Drawn over the tiles wherever the sink draws (floating reactions). */
   overlay?: ReactNode;
+  /**
+   * Drawn above the dock while it is expanded (a page or block holds it), e.g.
+   * the meeting's `MeetingToolbar` and `WrappedBreakoutRoomBanner`. Never in
+   * the collapsed footer shelf. Since 2.477.0.
+   */
+  header?: ReactNode;
+  /** Host controls in the dock's controls row (ConversationCallDock `extras`). Since 2.477.0. */
+  extras?: ReactNode;
+  /** An info line above the shelf (ConversationCallDock `notice`). Since 2.477.0. */
+  notice?: ReactNode;
   /** The dock's test id for a lobby (default `conversation-call-dock`). */
   dockTestId?: (lobby: CallLobby, tenant: string | null) => string;
 }
@@ -404,7 +418,8 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
     // trails the call by a render (set below), which is what lets the media
     // lobby feed back into the one useConversationCall without a cycle.
     const [liveCall, setLiveCall] = useState<{ lobbyName: string; callId: string | null } | null>(null);
-    const meetingId = meetingOption && rm.useMeeting && liveCall ? liveCall.lobbyName : null;
+    const meetingId = meetingOption && rm.useMeeting && liveCall && (!meetingOption.enabledFor || meetingOption.enabledFor(liveCall.lobbyName))
+      ? liveCall.lobbyName : null;
     const g = gateway as { send?(m: Record<string, unknown>): void; sendMessage?(m: Record<string, unknown>): void; onMessage?(h: (m: never) => void): () => void } | null | undefined;
     const meetingSocket = useMemo(() => (g?.onMessage
       ? { send: (m: Record<string, unknown>) => (g.send ?? g.sendMessage)?.call(g, m), onMessage: (h: (m: never) => void) => g.onMessage!(h) }
@@ -705,7 +720,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
    * stays in the footer collapsed (`display: none`; media keeps playing).
    * Moving between claimants moves this one dock — no second subscription.
    */
-  function CallMediaOutlet({ id, onOpenPeople, onOpenDocument, overlay, dockTestId }: CallMediaOutletProps) {
+  function CallMediaOutlet({ id, onOpenPeople, onOpenDocument, overlay, header, extras, notice, dockTestId }: CallMediaOutletProps) {
     const host = useContext(HostContext);
     const target = useClaimsSnapshot((c) => c.current, noTarget);
     const placement = useClaimsSnapshot((c) => c.placement, noPlacement);
@@ -716,6 +731,13 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
     const fullBar = !!target && placement !== 'pane';
     const layout = callBlockLayout(target ? placement : 'footer', holderCompact);
     const lobby = host?.lobby ?? null;
+    // Hands on tiles from the call's meeting, when one rides the call (2.477.0).
+    const hands = host?.meeting?.hands;
+    const handFor = useMemo(() => {
+      if (!hands || hands.length === 0) return undefined;
+      const at = new Map(hands.map((h, i) => [h.userId, i + 1]));
+      return (userId: string) => at.get(userId);
+    }, [hands]);
     const dock = draw && lobby && host ? <ConversationCallDock
       call={host.call}
       title={lobby.title}
@@ -728,11 +750,14 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
         onDocumentClick: (docId: string) => { const doc = documents.find((d) => d.id === docId); if (doc) onOpenDocument?.(doc); },
       } : {})}
       layout={layout}
+      {...(handFor ? { handFor } : {})}
+      {...(extras !== undefined ? { extras } : {})}
+      {...(notice !== undefined ? { notice } : {})}
       data-testid={dockTestId ? dockTestId(lobby, host.tenant) : 'conversation-call-dock'}
     /> : null;
     if (!dock) return null;
     return target
-      ? createPortal(<Stack gap="none" className="relative" data-testid="shell-call-media" data-placement={placement} data-layout={layout} data-expanded="true">{dock}{overlay}</Stack>, target)
+      ? createPortal(<Stack gap="none" className="relative" data-testid="shell-call-media" data-placement={placement} data-layout={layout} data-expanded="true">{header}{dock}{overlay}</Stack>, target)
       : <Stack id={id} gap="none" className="hidden" data-testid="shell-call-media" data-placement="footer" data-layout={layout} data-expanded="false">{dock}</Stack>;
   }
 

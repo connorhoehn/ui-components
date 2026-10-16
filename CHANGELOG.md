@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.477.0
+
+The seams aws-agentcore's call stage needs for a meeting (`docs/meeting-rooms-app-goal.md`, found by drafting the portal):
+
+- `CallMediaOutlet` (lane L4): `header` drawn above the dock while a page holds it (the stage's `MeetingToolbar` and room banner; never in the collapsed footer shelf), `extras` and `notice` passed to `ConversationCallDock`, and hands on tiles from the call's meeting automatically (`handFor` from `useCallHost().meeting.hands`).
+- `WrappedChatPanel` (lane L5): `transformMessages` (merge a host's entries into the thread, e.g. `useMeetingChat(...).withAnnouncements`) and `dock` (ChatPanel's slot above the composer, e.g. the "Room 1 chat" line and the To switch).
+- `CallHostProviderProps.meeting.enabledFor(lobbyName)` (lane L6): roll the meeting out one surface at a time; default every lobby.
+
 ## 2.476.0
 
 - The call host runs a meeting beside the call (lane L2), completing lane L2 of aws-agentcore `docs/meeting-rooms-app-goal.md` with 2.475.0's `HuddleBar meetingItems`. `CallBlockModules.useMeeting` (realtime-modules 0.134.0+, optional so older pins still load) and `CallHostProviderProps.meeting: { chatChannelFor? } | false`: while a call is live the host runs `useMeeting(<the call's lobby>)` on the app's gateway, names room chat after the app's call channel (`chatChannelFor`), and passes the meeting's `activeLobby` to the call as `mediaLobby`, so a breakout moves the media while the call itself stays. `useCallHost().meeting` (`CallHostMeeting`) feeds `meetingToolbarItems`, `HuddleBar meetingItems`, `WrappedBreakoutRoomsPanel` and `useMeetingChat`. Off by default.
