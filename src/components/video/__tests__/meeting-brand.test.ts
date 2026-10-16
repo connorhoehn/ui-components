@@ -23,6 +23,7 @@ const COMPONENTS = [
 const DEMO = [
   ...COMPONENTS,
   'src/components/video/MeetingStage.stories.tsx',
+  'src/components/video/MeetingChat.stories.tsx',
   'src/components/video/MeetingToolbar.stories.tsx',
   'src/components/video/BreakoutRoomsPanel.stories.tsx',
   'src/components/video/BreakoutRoomBanner.stories.tsx',

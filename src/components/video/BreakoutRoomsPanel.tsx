@@ -73,6 +73,14 @@ export interface BreakoutRoomsPanelProps {
   onCloseRooms?: (roomIds?: string[]) => void;
   onSetTimer?: (durationMs: number | null) => void;
   onBroadcast?: (message: string) => void;
+  /**
+   * Where organizers write announcements (2.466.0). `chat` (default): the
+   * meeting chat, through `useMeetingChat`'s "To: All rooms"; the pane only
+   * points there. `pane`: the old announcement box in this pane, kept for
+   * hosts without a meeting chat. Before 2.466.0 the box always showed when
+   * `onBroadcast` was set.
+   */
+  announceIn?: 'chat' | 'pane';
   onEnd?: () => void;
   /**
    * Discard the drafted rooms so they can be created again (2.458.1). Shown
@@ -232,7 +240,7 @@ function CreateRooms({ onCreateRooms }: { onCreateRooms: (count: number, mode: B
 
 function OrganizerControls(props: BreakoutRoomsPanelProps & { left: number | null }) {
   const {
-    phase, mode, rooms, onOpenRooms, onCloseRooms, onAutoAssign, onSetTimer, onBroadcast, onEnd, onDeleteRooms, onAddRoom,
+    phase, mode, rooms, onOpenRooms, onCloseRooms, onAutoAssign, onSetTimer, onBroadcast, announceIn = 'chat', onEnd, onDeleteRooms, onAddRoom,
     left, timerMinutes = DEFAULT_TIMER_MINUTES, maxRooms = DEFAULT_MAX_ROOMS, closing = false,
   } = props;
   const [message, setMessage] = useState('');
@@ -306,7 +314,12 @@ function OrganizerControls(props: BreakoutRoomsPanelProps & { left: number | nul
           </div>
         </div>
       )}
-      {onBroadcast && phase === 'open' && (
+      {onBroadcast && phase === 'open' && announceIn === 'chat' && (
+        <T as="p" size="xs" tone="tertiary" data-testid="breakout-announce-hint">
+          Send announcements to every room from the meeting chat.
+        </T>
+      )}
+      {onBroadcast && phase === 'open' && announceIn === 'pane' && (
         <div className="flex items-end gap-2">
           <Textarea
             aria-label="Announcement to every room"

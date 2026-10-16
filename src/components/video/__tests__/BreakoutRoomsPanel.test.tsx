@@ -81,7 +81,7 @@ describe('BreakoutRoomsPanel — organizer', () => {
 
   it('with rooms open: close all, a timer, and a broadcast that clears after sending', () => {
     const fns = { onOpenRooms: vi.fn(), onCloseRooms: vi.fn(), onSetTimer: vi.fn(), onBroadcast: vi.fn() };
-    render(<BreakoutRoomsPanel rooms={ROOMS} phase="open" mode="assigned" isOrganizer {...fns} />);
+    render(<BreakoutRoomsPanel rooms={ROOMS} phase="open" mode="assigned" isOrganizer announceIn="pane" {...fns} />);
     fireEvent.click(screen.getByTestId('breakout-close-all'));
     expect(fns.onCloseRooms).toHaveBeenCalledWith();
     expect(screen.queryByTestId('breakout-delete')).toBeNull();
@@ -93,6 +93,13 @@ describe('BreakoutRoomsPanel — organizer', () => {
     fireEvent.click(screen.getByTestId('breakout-broadcast-send'));
     expect(fns.onBroadcast).toHaveBeenCalledWith('Two minutes left');
     expect(input).toHaveValue('');
+  });
+
+  it('by default announcements live in the meeting chat: the pane has no composer, only a pointer', () => {
+    render(<BreakoutRoomsPanel rooms={ROOMS} phase="open" mode="assigned" isOrganizer onBroadcast={vi.fn()} />);
+    expect(screen.queryByLabelText('Announcement to every room')).toBeNull();
+    expect(screen.queryByTestId('breakout-broadcast-send')).toBeNull();
+    expect(screen.getByTestId('breakout-announce-hint')).toHaveTextContent('from the meeting chat');
   });
 
   it('while rooms are open: rename a room in place and add a room', () => {

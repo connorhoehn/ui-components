@@ -266,6 +266,8 @@ export {
   meetingHandPositions,
   meetingRosterProps,
   meetingToolbarItems,
+  MeetingChatTargetSwitch,
+  useMeetingChat,
 } from '../realtime/meeting';
 export type {
   RMBreakoutState,
@@ -273,4 +275,6 @@ export type {
   RMMeetingSource,
   RMRaisedHand,
   WrappedBreakoutRoomsPanelProps,
+  MeetingChatBinding,
+  MeetingChatTarget,
 } from '../realtime/meeting';

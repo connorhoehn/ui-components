@@ -8,7 +8,7 @@
 // type test below pins that its result fits RMMeetingSource.)
 
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
-import { useMemo, useReducer, useEffect } from 'react';
+import { useMemo, useReducer, useEffect, useState } from 'react';
 import { MeetingService } from '@connorhoehn/realtime-modules/meeting';
 import { INITIAL_MEETING_STATE, meetingReducer, handPosition, breakoutRoomFor } from '@connorhoehn/realtime-modules/client/meeting';
 import type { UseMeetingResult } from '@connorhoehn/realtime-modules/client/meeting';
@@ -19,10 +19,12 @@ import {
   meetingHandPositions,
   meetingRosterProps,
   meetingToolbarItems,
+  useMeetingChat,
   type RMMeetingSource,
 } from '../meeting';
 import { RosterPanel } from '../../../components/video/RosterPanel';
 import { MeetingToolbar } from '../../../components/video/MeetingToolbar';
+import { ChatPanel } from '../../../components/social/ChatPanel';
 
 // Compile-time: the hook's result is a valid source.
 const _fits = (m: UseMeetingResult): RMMeetingSource => m;
@@ -98,9 +100,14 @@ function useTestMeeting(w: ReturnType<typeof world>, clientId: string, userId: s
 function Seat({ w, clientId, userId }: { w: ReturnType<typeof world>; clientId: string; userId: string }) {
   const meeting = useTestMeeting(w, clientId, userId);
   const items = meetingToolbarItems(meeting, { roomsOpen: true, onToggleRooms: () => {} });
+  const [posted, setPosted] = useState<string[]>([]);
+  const chat = useMeetingChat(meeting, { send: (c) => setPosted((p) => [...p, c]) });
   return (
     <section data-testid={`seat-${userId}`}>
       <button type="button" data-testid={`raise-${userId}`} aria-pressed={items.raise.pressed} onClick={items.raise.onClick}>{items.raise.label}</button>
+      <div data-testid={`chat-${userId}`} data-posted={posted.join('|')}>
+        <ChatPanel messages={[]} onSend={chat.onSend} localMessages={chat.localMessages} dock={chat.dock} />
+      </div>
       <WrappedBreakoutRoomBanner meeting={meeting} />
       <WrappedBreakoutRoomsPanel meeting={meeting} people={PEOPLE} data-testid={`panel-${userId}`} />
     </section>
@@ -139,11 +146,23 @@ describe('meeting bindings over the real service', () => {
     expect(within(ana).getByRole('region', { name: 'Breakout room: Room 2' })).toBeInTheDocument();
     expect(within(ana).getAllByTestId('breakout-room')[1]).toHaveAttribute('data-mine', 'true');
 
-    // Broadcast reaches the room banner; dismiss is local.
-    fireEvent.change(within(org).getByLabelText('Announcement to every room'), { target: { value: 'Five minutes left' } });
-    fireEvent.click(within(org).getByTestId('breakout-broadcast-send'));
+    // The organizer announces from the meeting chat ("To: All rooms"); it
+    // reaches the room banner and shows in the participant's chat, marked.
+    expect(within(ana).queryByTestId('meeting-chat-target')).toBeNull();
+    const orgChat = within(org).getByTestId('chat-u-org');
+    fireEvent.click(within(within(orgChat).getByTestId('meeting-chat-target')).getByText('All rooms'));
+    fireEvent.change(within(orgChat).getByPlaceholderText('Type a message...'), { target: { value: 'Five minutes left' } });
+    fireEvent.keyDown(within(orgChat).getByPlaceholderText('Type a message...'), { key: 'Enter' });
     await flush();
+    expect(orgChat.getAttribute('data-posted')).toBe(''); // not an ordinary chat message
     expect(within(ana).getByTestId('breakout-banner-announcement')).toHaveTextContent('Olive Organizer: Five minutes left');
+    const anaChat = within(ana).getByTestId('chat-u-a');
+    expect(anaChat).toHaveTextContent('Five minutes left');
+    expect(anaChat).toHaveTextContent('Announcement to every room');
+    // The switch went back to This chat: the next message is ordinary chat.
+    fireEvent.change(within(orgChat).getByPlaceholderText('Type a message...'), { target: { value: 'thanks all' } });
+    fireEvent.keyDown(within(orgChat).getByPlaceholderText('Type a message...'), { key: 'Enter' });
+    expect(orgChat.getAttribute('data-posted')).toBe('thanks all');
 
     // Ana returns to the main meeting; the banner goes away.
     fireEvent.click(within(ana).getByTestId('breakout-banner-return'));

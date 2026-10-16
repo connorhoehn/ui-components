@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.466.0
+
+- Breakout announcements live in the meeting chat, as in Teams. `useMeetingChat(meeting, { send })` (`/integrations/realtime`, `/integrations/realtime-modules`) binds a `ChatPanel`: while rooms are open an organizer gets a "To: This chat | All rooms" switch in the panel's `dock`; sending with All rooms calls `meeting.broadcast` and the switch returns to This chat; every announcement this client has seen shows in the thread as a marked message ("Announcement to every room") in the main chat and each room's chat. Also `MeetingChatTargetSwitch`, `MeetingChatBinding`, `MeetingChatTarget`. Pair it with realtime-modules 0.126 `useMeeting().activeChat` so the panel reads the room's chat inside a room.
+- `BreakoutRoomsPanel announceIn` (`'chat'` default): the pane no longer carries its own announcement box; it points organizers to the meeting chat. `announceIn="pane"` keeps the old box for hosts without a meeting chat. **Behaviour change:** before this release the box showed whenever `onBroadcast` was set.
+- Story `Video/MeetingChat (announcements)` OrganizerRoomsOpen.
+
 ## 2.465.0
 
 - `meetingToolbarItems(meeting, { …, onReact, reactions? })` returns a `react` item when `onReact` is given (e.g. `useReactions().send`): the React button opens the reaction picker in its popover, sends the pick and closes. Without `onReact` nothing changes.

@@ -7,7 +7,7 @@
 // loads on any realtime-modules pin and a host on an older one simply never
 // renders it.
 
-import type { ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import {
   BreakoutRoomsPanel,
   type BreakoutPerson,
@@ -16,6 +16,9 @@ import {
 } from '../../components/video/BreakoutRoomsPanel';
 import { BreakoutRoomBanner } from '../../components/video/BreakoutRoomBanner';
 import Banner from '../../components/shared/Banner';
+import { SegmentedControl } from '../../components/shared/SegmentedControl';
+import { T } from '../../components/shared/Text';
+import type { LocalChatMessage } from '../../components/social/ChatPanel';
 import { MeetingHandIcon, MeetingReactIcon, MeetingRoomsIcon } from '../../components/video/MeetingIcons';
 import { ReactionPicker } from '../../components/video/ReactionOverlay';
 import type { MeetingToolbarItem } from '../../components/video/MeetingToolbar';
@@ -247,6 +250,90 @@ export function meetingToolbarItems(
       onClick: opts.onToggleRooms,
       disabled: !meeting.ready,
       badge: meeting.breakout.phase === 'open' && !meeting.myRoom && meeting.breakout.mode === 'self-select' ? meeting.breakout.rooms.filter((r) => r.state === 'open').length : undefined,
+    },
+  };
+}
+
+// ── Meeting chat: announcements live in the chat (2.466.0) ────────────────────
+//
+// Teams puts the organizer's "announce to every room" in the chat, not in a
+// second box in the rooms pane. `useMeetingChat` binds a ChatPanel to that:
+// while rooms are open an organizer gets a "To: This chat | All rooms" switch
+// in the panel's `dock`, sending with All rooms calls `meeting.broadcast`, and
+// every announcement this client has seen shows in the timeline as a marked
+// message, in the main chat and in each room's chat alike. Announcements are
+// not chat messages on the server, so a client that joins later sees only the
+// latest one (the meeting state keeps one).
+
+export type MeetingChatTarget = 'chat' | 'rooms';
+
+export interface MeetingChatBinding {
+  /** Pass to ChatPanel `onSend`: posts to the chat, or announces to every room. */
+  onSend: (content: string) => void;
+  /** Pass to ChatPanel `localMessages`: the announcements, oldest first. */
+  localMessages: LocalChatMessage[];
+  /** Pass to ChatPanel `dock`: the "To" switch, or null when it does not apply. */
+  dock: ReactNode;
+  target: MeetingChatTarget;
+  setTarget: (target: MeetingChatTarget) => void;
+}
+
+/** The "To: This chat | All rooms" switch an organizer sees while rooms are open. */
+export function MeetingChatTargetSwitch({ value, onChange }: { value: MeetingChatTarget; onChange: (v: MeetingChatTarget) => void }) {
+  return (
+    <div className="flex items-center gap-2 border-t border-border px-3 py-1.5" data-testid="meeting-chat-target">
+      <T size="xs" tone="secondary">To</T>
+      <SegmentedControl
+        size="sm"
+        aria-label="Send to"
+        value={value}
+        onChange={(v) => onChange(v === 'rooms' ? 'rooms' : 'chat')}
+        options={[{ value: 'chat', label: 'This chat' }, { value: 'rooms', label: 'All rooms' }]}
+      />
+      {value === 'rooms' && <T size="xs" tone="tertiary">Every room sees this as an announcement.</T>}
+    </div>
+  );
+}
+
+export function useMeetingChat(
+  meeting: RMMeetingSource,
+  opts: { send: (content: string) => void; announcementNote?: string },
+): MeetingChatBinding {
+  const [target, setTarget] = useState<MeetingChatTarget>('chat');
+  const [seen, setSeen] = useState<Array<NonNullable<RMBreakoutState['announcement']>>>([]);
+  const latest = meeting.breakout.announcement;
+  const key = latest ? `${latest.at}|${latest.fromUserId}` : null;
+  useEffect(() => {
+    if (!latest || !key) return;
+    setSeen((list) => (list.some((a) => `${a.at}|${a.fromUserId}` === key) ? list : [...list, latest].slice(-50)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed on the announcement's identity
+  }, [key]);
+  const canAnnounce = meeting.ready && meeting.isOrganizer && meeting.breakout.phase === 'open';
+  const effective: MeetingChatTarget = canAnnounce ? target : 'chat';
+  const note = opts.announcementNote ?? 'Announcement to every room';
+  const localMessages = useMemo<LocalChatMessage[]>(() => seen.map((a) => ({
+    id: `meeting-announcement:${a.at}:${a.fromUserId}`,
+    timestamp: a.at,
+    displayName: a.fromDisplayName,
+    content: a.message,
+    metadata: { kind: 'meeting-announcement', fromUserId: a.fromUserId },
+    note,
+  })), [seen, note]);
+  const { send } = opts;
+  return {
+    target: effective,
+    setTarget,
+    localMessages,
+    dock: canAnnounce ? <MeetingChatTargetSwitch value={effective} onChange={setTarget} /> : null,
+    onSend: (content: string) => {
+      const text = content.trim();
+      if (!text) return;
+      if (effective === 'rooms') {
+        meeting.broadcast(text.slice(0, 500));
+        setTarget('chat'); // one announcement at a time; the next message is chat again
+        return;
+      }
+      send(content);
     },
   };
 }
