@@ -5,6 +5,7 @@ import { MeetingStatusCluster } from './MeetingStatusCluster';
 import {
   MeetingAppsIcon, MeetingHandIcon, MeetingNotesIcon, MeetingReactIcon, MeetingRoomsIcon, MeetingShareIcon, MeetingViewIcon,
 } from './MeetingIcons';
+import { ReactionPicker } from './ReactionOverlay';
 import { ChatBubbleIcon, MicIcon, MicOffIcon, UsersIcon, VideoIcon, VideoOffIcon } from './MediaIcons';
 
 const CAMERAS = [{ deviceId: 'cam-1', label: 'FaceTime HD Camera' }, { deviceId: 'cam-2', label: 'Studio Display Camera' }];
@@ -22,7 +23,10 @@ function Bar({ compact }: { compact?: boolean }) {
     { id: 'chat', label: 'Chat', icon: <ChatBubbleIcon />, active: pane === 'chat', onClick: () => toggle('chat'), badge: 2 },
     { id: 'people', label: 'People', icon: <UsersIcon />, count: 15, active: pane === 'people', onClick: () => toggle('people') },
     { id: 'raise', label: hand ? 'Lower' : 'Raise', icon: <MeetingHandIcon />, pressed: hand, onClick: () => setHand((v) => !v) },
-    { id: 'react', label: 'React', icon: <MeetingReactIcon />, menu: [{ items: ['👍', '❤️', '😂', '😮', '👏'].map((e) => ({ label: e, onSelect: () => {} })) }], onClick: () => {} },
+    {
+      id: 'react', label: 'React', icon: <MeetingReactIcon />, popoverLabel: 'Send a reaction',
+      popover: (close) => <ReactionPicker className="border-transparent bg-transparent" onReact={() => close()} />,
+    },
     { id: 'view', label: 'View', icon: <MeetingViewIcon />, priority: 'secondary', onClick: () => {} },
     { id: 'notes', label: 'Notes', icon: <MeetingNotesIcon />, priority: 'secondary', active: pane === 'notes', onClick: () => toggle('notes') },
     { id: 'rooms', label: 'Rooms', icon: <MeetingRoomsIcon />, active: pane === 'rooms', onClick: () => toggle('rooms') },

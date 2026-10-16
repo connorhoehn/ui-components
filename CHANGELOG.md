@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.463.0
+
+- `MeetingToolbarItem.popover: (close) => ReactNode` (plus `popoverLabel`, `popoverPlacement`): a toolbar button that opens an anchored panel instead of firing `onClick`, so React hosts the existing `ReactionPicker` like Teams' reaction flyout. The panel is an `InlinePopover` (portalled, so the bar never clips it and its buttons stay out of the toolbar's arrow-key roving); Escape, an outside click, a second click or `close()` shut it and focus returns to the button. The button carries `aria-haspopup="dialog"` and `aria-expanded`, and shows the active underline while open. A popover item never folds into More, and a disabled one cannot open.
+- Stories: `Video/MeetingToolbar` and `Video/MeetingStage (composition)` React opens the reaction picker.
+
 ## 2.462.0
 
 - `useConsentDismissal(key, { storage? })` (`/video`): remembers that someone dismissed `RecordingConsentNotice` for one recording, so a reload or a hop between pages of the same meeting does not ask again. Key it by meeting and recording session (`${meetingId}:${recordingId}`), so a recording that restarts asks again; a null key is never dismissed. sessionStorage by default (`storage: 'local'` for this device); every storage call is guarded and falls back to memory for the page. Returns `{ dismissed, dismiss, reset }`.

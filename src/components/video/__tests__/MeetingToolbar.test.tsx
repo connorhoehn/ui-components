@@ -143,4 +143,76 @@ describe('MeetingToolbar keyboard (WAI-ARIA toolbar, 2.458.2)', () => {
     fireEvent.keyDown(cam, { key: 'ArrowRight' });
     expect(document.activeElement).toBe(screen.getByTestId('meeting-toolbar-camera-menu'));
   });
+
+  it('a popover item opens an anchored panel instead of firing onClick, and close() shuts it', () => {
+    const onClick = vi.fn();
+    const onReact = vi.fn();
+    render(
+      <MeetingToolbar
+        items={[{
+          id: 'react', label: 'React', icon: <MeetingViewIcon />, onClick, popoverLabel: 'Send a reaction',
+          popover: (close) => <button type="button" onClick={() => { onReact('👍'); close(); }}>👍</button>,
+        }]}
+        onLeave={() => {}}
+        compact={false}
+      />,
+    );
+    const react = screen.getByTestId('meeting-toolbar-react');
+    expect(react).toHaveAttribute('aria-haspopup', 'dialog');
+    expect(react).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByTestId('meeting-toolbar-react-popover')).toBeNull();
+    fireEvent.click(react);
+    expect(onClick).not.toHaveBeenCalled();
+    expect(react).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByTestId('meeting-toolbar-react-active')).toBeInTheDocument();
+    const panel = screen.getByRole('dialog', { name: 'Send a reaction' });
+    // Portalled: the toolbar's roving keys never see the panel's buttons.
+    expect(screen.getByRole('toolbar').contains(panel)).toBe(false);
+    fireEvent.click(within(panel).getByRole('button', { name: '👍' }));
+    expect(onReact).toHaveBeenCalledWith('👍');
+    expect(screen.queryByTestId('meeting-toolbar-react-popover')).toBeNull();
+    expect(react).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('a popover closes on Escape and on a second click of its button, returning focus', () => {
+    render(
+      <MeetingToolbar
+        items={[{ id: 'react', label: 'React', icon: <MeetingViewIcon />, popover: () => <button type="button">👍</button> }]}
+        onLeave={() => {}}
+        compact={false}
+      />,
+    );
+    const react = screen.getByTestId('meeting-toolbar-react');
+    react.focus();
+    fireEvent.click(react);
+    const panel = screen.getByTestId('meeting-toolbar-react-popover');
+    fireEvent.keyDown(document.activeElement ?? panel, { key: 'Escape' });
+    expect(screen.queryByTestId('meeting-toolbar-react-popover')).toBeNull();
+    expect(document.activeElement).toBe(react);
+    fireEvent.click(react);
+    expect(screen.getByTestId('meeting-toolbar-react-popover')).toBeInTheDocument();
+    fireEvent.click(react);
+    expect(screen.queryByTestId('meeting-toolbar-react-popover')).toBeNull();
+  });
+
+  it('a popover item never folds into More, even when secondary; a disabled one cannot open', () => {
+    const { rerender } = render(
+      <MeetingToolbar
+        items={[{ id: 'react', label: 'React', icon: <MeetingViewIcon />, priority: 'secondary', popover: () => <span>panel</span> }]}
+        onLeave={() => {}}
+        compact
+      />,
+    );
+    expect(screen.getByTestId('meeting-toolbar-react')).toBeInTheDocument();
+    expect(screen.queryByTestId('meeting-toolbar-more')).toBeNull();
+    rerender(
+      <MeetingToolbar
+        items={[{ id: 'react', label: 'React', icon: <MeetingViewIcon />, disabled: true, popover: () => <span>panel</span> }]}
+        onLeave={() => {}}
+        compact
+      />,
+    );
+    fireEvent.click(screen.getByTestId('meeting-toolbar-react'));
+    expect(screen.queryByTestId('meeting-toolbar-react-popover')).toBeNull();
+  });
 });

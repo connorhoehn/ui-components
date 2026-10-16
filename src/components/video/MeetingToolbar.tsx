@@ -8,13 +8,20 @@
 // into More when the bar is narrower than `compactBelow`, so nothing a caller
 // wired becomes unreachable at small widths.
 //
+// An item with a `popover` (React → the reaction picker) opens an anchored
+// panel instead of firing `onClick` (2.463.0). The panel is portalled, so the
+// bar's overflow never clips it; Escape, an outside click or `close()` shut it
+// and focus returns to the button. Such an item never folds into More, which
+// is a plain menu and has nowhere to put the panel.
+//
 // It follows the page theme (surface tokens), like the reference: a light bar
 // above the stage, not the always-dark call chrome of MediaControlsBar.
 
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { Badge } from '../shared/Badge';
 import { DropdownMenu, type DropdownMenuItem, type DropdownMenuSection } from '../shared/DropdownMenu';
+import { InlinePopover, type InlinePopoverPlacement } from '../shared/InlinePopover';
 import { useRovingToolbar } from '../shared/RovingToolbar';
 import { T } from '../shared/Text';
 import { ChevronIcon } from '../ui/Icons';
@@ -48,6 +55,17 @@ export interface MeetingToolbarItem {
   priority?: 'primary' | 'secondary';
   /** Tooltip; defaults to the label. */
   title?: string;
+  /**
+   * An anchored panel this button opens, e.g. the reaction picker:
+   * `popover: (close) => <ReactionPicker onReact={(e) => { send(e); close(); }} />`.
+   * The button toggles it (`aria-haspopup="dialog"`, `aria-expanded`) and
+   * `onClick` is not called. Since 2.463.0.
+   */
+  popover?: (close: () => void) => ReactNode;
+  /** Accessible name of the panel. Default the label. */
+  popoverLabel?: string;
+  /** Default `bottom-start`; `bottom-end` for a button near the bar's right edge. */
+  popoverPlacement?: InlinePopoverPlacement;
 }
 
 export interface MeetingToolbarProps {
@@ -81,22 +99,29 @@ export const MEETING_TOOLBAR_BUTTON =
 
 function ToolbarButton({ item }: { item: MeetingToolbarItem }) {
   const tip = item.disabled && item.disabledReason ? item.disabledReason : item.title ?? item.label;
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const [panelOpen, setPanelOpen] = useState(false);
+  const hasPanel = !!item.popover;
+  const open = hasPanel && panelOpen && !item.disabled;
+  const active = hasPanel ? open || !!item.active : item.active;
   const button = (
     <button
+      ref={buttonRef}
       type="button"
-      onClick={item.onClick}
+      onClick={hasPanel ? () => setPanelOpen((v) => !v) : item.onClick}
       disabled={item.disabled}
       title={tip}
       aria-label={item.count !== undefined ? `${item.label}, ${item.count}` : item.label}
       aria-pressed={item.pressed === undefined ? undefined : item.pressed}
-      aria-expanded={item.active === undefined ? undefined : item.active}
+      aria-haspopup={hasPanel ? 'dialog' : undefined}
+      aria-expanded={hasPanel ? open : item.active === undefined ? undefined : item.active}
       data-testid={`meeting-toolbar-${item.id}`}
-      data-active={item.active ? 'true' : undefined}
+      data-active={active ? 'true' : undefined}
       data-pressed={item.pressed ? 'true' : undefined}
       data-tone={item.tone ?? 'default'}
       className={cn(
         MEETING_TOOLBAR_BUTTON,
-        item.active && 'text-accent hover:text-accent',
+        active && 'text-accent hover:text-accent',
         item.pressed && 'bg-accent-bg text-accent hover:bg-accent-bg hover:text-accent',
         item.tone === 'danger' && 'text-danger hover:bg-danger-bg hover:text-danger',
         item.menu && 'rounded-r-none pr-1',
@@ -120,11 +145,30 @@ function ToolbarButton({ item }: { item: MeetingToolbarItem }) {
         )}
       </span>
       <T size="xs" tone="inherit" className="leading-tight whitespace-nowrap">{item.label}</T>
-      {item.active && (
+      {active && (
         <span aria-hidden className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-accent" data-testid={`meeting-toolbar-${item.id}-active`} />
       )}
     </button>
   );
+  if (hasPanel) {
+    const close = () => setPanelOpen(false);
+    return (
+      <>
+        {button}
+        <InlinePopover
+          trigger={buttonRef}
+          open={open}
+          onClose={close}
+          placement={item.popoverPlacement ?? 'bottom-start'}
+          aria-label={item.popoverLabel ?? item.label}
+          kind="meeting-toolbar-popover"
+          data-testid={`meeting-toolbar-${item.id}-popover`}
+        >
+          {open && item.popover!(close)}
+        </InlinePopover>
+      </>
+    );
+  }
   if (!item.menu) return button;
   return (
     <span className="inline-flex items-stretch" data-testid={`meeting-toolbar-${item.id}-split`}>
@@ -192,8 +236,9 @@ export function MeetingToolbar({
   // Home and End move within it, skipping disabled buttons and open menus.
   const roving = useRovingToolbar();
   const narrow = useNarrow(roving.ref, compactBelow, compact);
-  const shown = narrow ? items.filter((i) => i.priority !== 'secondary') : items;
-  const folded = narrow ? items.filter((i) => i.priority === 'secondary') : [];
+  const folds = (i: MeetingToolbarItem) => i.priority === 'secondary' && !i.popover;
+  const shown = narrow ? items.filter((i) => !folds(i)) : items;
+  const folded = narrow ? items.filter(folds) : [];
   const more: DropdownMenuSection[] = [
     ...(folded.length ? [{ items: folded.map(asMenuItem), 'data-testid': 'meeting-toolbar-more-folded' }] : []),
     ...moreSections,
