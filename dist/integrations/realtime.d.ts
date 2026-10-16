@@ -332,6 +332,8 @@ declare interface BreakoutRoomsPanelProps {
     unassigned?: BreakoutPerson[];
     /** ISO end of the timer. */
     endsAt?: string | null;
+    /** Server clock minus this device's, ms (`useMeeting().clockOffsetMs`). Default 0. Since 2.469.0. */
+    clockOffsetMs?: number;
     /**
      * Rooms are in the closing grace (2.461.0; realtime-modules 0.124
      * `breakout.closing`): `endsAt` is the deadline. Organizers get Close now
@@ -3567,6 +3569,8 @@ export declare interface RMMeetingSource {
         message: string;
         requestAction: string;
     } | null;
+    /** realtime-modules 0.129.0+: server clock minus this device's, ms. Older pins: treated as 0. */
+    clockOffsetMs?: number;
     configureBreakouts(rooms: {
         id?: string;
         name: string;

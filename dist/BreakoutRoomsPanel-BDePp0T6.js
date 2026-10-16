@@ -3145,22 +3145,22 @@ function Xt({ value: n, onChange: r, devices: i, permission: a, micLevel: o, pre
 }
 //#endregion
 //#region src/components/video/BreakoutRoomBanner.tsx
-function Zt(e) {
-	let t = e ? Date.parse(e) : NaN, [n, r] = V(() => Date.now());
+function Zt(e, t = 0) {
+	let n = e ? Date.parse(e) : NaN, [r, i] = V(() => Date.now());
 	return L(() => {
-		if (!Number.isFinite(t)) return;
-		r(Date.now());
-		let e = setInterval(() => r(Date.now()), 1e3);
+		if (!Number.isFinite(n)) return;
+		i(Date.now());
+		let e = setInterval(() => i(Date.now()), 1e3);
 		return () => clearInterval(e);
-	}, [t]), Number.isFinite(t) ? Math.max(0, t - n) : null;
+	}, [n]), Number.isFinite(n) ? Math.max(0, n - (r + t)) : null;
 }
-function Qt({ roomName: n, endsAt: i, closing: a = !1, announcement: s, onDismissAnnouncement: c, onReturnToMain: l, className: u, "data-testid": d = "breakout-banner" }) {
-	let f = Zt(i), p = f !== null && (a || f <= 6e4);
+function Qt({ roomName: n, endsAt: i, clockOffsetMs: a = 0, closing: s = !1, announcement: c, onDismissAnnouncement: l, onReturnToMain: u, className: d, "data-testid": f = "breakout-banner" }) {
+	let p = Zt(i, a), m = p !== null && (s || p <= 6e4);
 	return /* @__PURE__ */ W("div", {
 		role: "region",
 		"aria-label": `Breakout room: ${n}`,
-		"data-testid": d,
-		className: e("flex flex-col gap-1 border-b border-border bg-info-bg px-4 py-2 text-info-fg", u),
+		"data-testid": f,
+		className: e("flex flex-col gap-1 border-b border-border bg-info-bg px-4 py-2 text-info-fg", d),
 		children: [/* @__PURE__ */ W("div", {
 			className: "flex items-center gap-3",
 			children: [
@@ -3172,35 +3172,35 @@ function Qt({ roomName: n, endsAt: i, closing: a = !1, announcement: s, onDismis
 					className: "min-w-0 truncate",
 					children: ["You're in ", n]
 				}),
-				f !== null && /* @__PURE__ */ U(b, {
+				p !== null && /* @__PURE__ */ U(b, {
 					size: "sm",
 					tone: "inherit",
 					tabular: !0,
-					"data-testid": `${d}-countdown`,
-					"data-urgent": p ? "true" : void 0,
-					"data-closing": a ? "true" : void 0,
-					className: e(p && "font-semibold text-danger"),
-					children: a ? `Room closes in ${$(f)}` : `${$(f)} left`
+					"data-testid": `${f}-countdown`,
+					"data-urgent": m ? "true" : void 0,
+					"data-closing": s ? "true" : void 0,
+					className: e(m && "font-semibold text-danger"),
+					children: s ? `Room closes in ${$(p)}` : `${$(p)} left`
 				}),
 				/* @__PURE__ */ U("span", {
 					role: "status",
 					"aria-live": "polite",
 					className: "sr-only",
-					"data-testid": `${d}-closing-status`,
-					children: a ? "The organizer is closing the breakout rooms. You will return to the main meeting shortly." : ""
+					"data-testid": `${f}-closing-status`,
+					children: s ? "The organizer is closing the breakout rooms. You will return to the main meeting shortly." : ""
 				}),
 				/* @__PURE__ */ U("span", { className: "flex-1" }),
-				l && /* @__PURE__ */ U(t, {
+				u && /* @__PURE__ */ U(t, {
 					variant: "secondary",
 					size: "sm",
-					onClick: l,
-					"data-testid": `${d}-return`,
+					onClick: u,
+					"data-testid": `${f}-return`,
 					children: "Return to main meeting"
 				})
 			]
-		}), s && /* @__PURE__ */ W("div", {
+		}), c && /* @__PURE__ */ W("div", {
 			className: "flex items-start gap-2",
-			"data-testid": `${d}-announcement`,
+			"data-testid": `${f}-announcement`,
 			role: "status",
 			"aria-live": "polite",
 			children: [/* @__PURE__ */ W(b, {
@@ -3210,18 +3210,18 @@ function Qt({ roomName: n, endsAt: i, closing: a = !1, announcement: s, onDismis
 				children: [
 					/* @__PURE__ */ W("strong", {
 						className: "font-semibold",
-						children: [s.fromDisplayName, ":"]
+						children: [c.fromDisplayName, ":"]
 					}),
 					" ",
-					s.message
+					c.message
 				]
-			}), c && /* @__PURE__ */ U(r, {
+			}), l && /* @__PURE__ */ U(r, {
 				"aria-label": "Dismiss announcement",
 				variant: "ghost",
 				size: "sm",
 				icon: /* @__PURE__ */ U(o, {}),
-				onClick: c,
-				"data-testid": `${d}-announcement-dismiss`
+				onClick: l,
+				"data-testid": `${f}-announcement-dismiss`
 			})]
 		})]
 	});
@@ -3567,7 +3567,7 @@ function on(n) {
 	});
 }
 function sn(t) {
-	let { rooms: n, phase: i, mode: a, myRoomId: s = null, isOrganizer: c = !1, unassigned: l = [], endsAt: u = null, allowReturnToMain: d = !0, closing: f = !1, onJoin: p, onReturnToMain: m, onCreateRooms: h, onAssign: g, onOpenRooms: _, onCloseRooms: v, onRenameRoom: y, onClose: x, title: S = "Breakout rooms", notice: C, className: w, "data-testid": T = "breakout-rooms-panel" } = t, E = Zt(i === "open" ? u : null), D = d || c, O = _ && v ? (e, t) => t === "open" ? _([e]) : v([e]) : void 0;
+	let { rooms: n, phase: i, mode: a, myRoomId: s = null, isOrganizer: c = !1, unassigned: l = [], endsAt: u = null, allowReturnToMain: d = !0, closing: f = !1, onJoin: p, onReturnToMain: m, onCreateRooms: h, onAssign: g, onOpenRooms: _, onCloseRooms: v, onRenameRoom: y, onClose: x, title: S = "Breakout rooms", notice: C, className: w, "data-testid": T = "breakout-rooms-panel" } = t, E = Zt(i === "open" ? u : null, t.clockOffsetMs), D = d || c, O = _ && v ? (e, t) => t === "open" ? _([e]) : v([e]) : void 0;
 	return /* @__PURE__ */ W("aside", {
 		"aria-label": S,
 		"data-testid": T,

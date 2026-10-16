@@ -2188,12 +2188,14 @@ export declare interface BreakoutPerson {
     handRaised?: boolean | number;
 }
 
-export declare function BreakoutRoomBanner({ roomName, endsAt, closing, announcement, onDismissAnnouncement, onReturnToMain, className, 'data-testid': testId, }: BreakoutRoomBannerProps): JSX.Element;
+export declare function BreakoutRoomBanner({ roomName, endsAt, clockOffsetMs, closing, announcement, onDismissAnnouncement, onReturnToMain, className, 'data-testid': testId, }: BreakoutRoomBannerProps): JSX.Element;
 
 export declare interface BreakoutRoomBannerProps {
     roomName: string;
     /** ISO end of the breakout timer, or null for none. */
     endsAt?: string | null;
+    /** Server clock minus this device's, ms (`useMeeting().clockOffsetMs`). Default 0. */
+    clockOffsetMs?: number;
     /**
      * The organizer closed the rooms and `endsAt` is the end of the closing
      * grace (realtime-modules 0.124 `breakout.closing`). The countdown reads
@@ -2224,6 +2226,8 @@ export declare interface BreakoutRoomsPanelProps {
     unassigned?: BreakoutPerson[];
     /** ISO end of the timer. */
     endsAt?: string | null;
+    /** Server clock minus this device's, ms (`useMeeting().clockOffsetMs`). Default 0. Since 2.469.0. */
+    clockOffsetMs?: number;
     /**
      * Rooms are in the closing grace (2.461.0; realtime-modules 0.124
      * `breakout.closing`): `endsAt` is the deadline. Organizers get Close now
@@ -23827,7 +23831,13 @@ declare interface UseActivityBusReturn {
  /** Measures an element (or its parent) and gives the density its room implies. */
  export declare function useContainerDensity<T extends HTMLElement>(options?: ContainerDensityOptions<T>): ContainerDensityState<T>;
 
- export declare function useCountdown(endsAt: string | null | undefined): number | null;
+ /**
+  * Milliseconds until `endsAt`, ticking each second. `clockOffsetMs` is the
+  * server clock minus this device's (realtime-modules 0.129 `useMeeting`):
+  * deadlines are server time, so a device whose clock is off counts from the
+  * corrected now (2.469.0).
+  */
+ export declare function useCountdown(endsAt: string | null | undefined, clockOffsetMs?: number): number | null;
 
  export declare function useCRDT(options: UseCRDTOptions): UseCRDTReturn;
 
