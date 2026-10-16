@@ -6156,5 +6156,47 @@ function vi({ open: t, kind: n, startedBy: r, privacyHref: i, privacyLabel: a = 
 		})
 	});
 }
+var yi = "ui-components:consent-dismissed:", bi = /* @__PURE__ */ new Set();
+function xi(e) {
+	try {
+		return e === "local" ? window.localStorage : window.sessionStorage;
+	} catch {
+		return null;
+	}
+}
+function Si(e, t) {
+	if (bi.has(e)) return !0;
+	try {
+		return xi(t)?.getItem(yi + e) === "1";
+	} catch {
+		return !1;
+	}
+}
+function Ci(e, t = {}) {
+	let n = t.storage ?? "session", [r, i] = q(() => e ? Si(e, n) : !1);
+	return W(() => {
+		i(e ? Si(e, n) : !1);
+	}, [e, n]), {
+		dismissed: r,
+		dismiss: U(() => {
+			if (e) {
+				bi.add(e);
+				try {
+					xi(n)?.setItem(yi + e, "1");
+				} catch {}
+				i(!0);
+			}
+		}, [e, n]),
+		reset: U(() => {
+			if (e) {
+				bi.delete(e);
+				try {
+					xi(n)?.removeItem(yi + e);
+				} catch {}
+				i(!1);
+			}
+		}, [e, n])
+	};
+}
 //#endregion
-export { It as $, fr as A, Tn as B, Fr as C, Le as Ct, Er as D, Or as E, Xn as F, gn as G, bn as H, Yn as I, an as J, dn as K, Bn as L, ur as M, $ as N, Cr as O, tr as P, Nt as Q, An as R, Ir as S, ze as St, Mr as T, vn as U, Sn as V, _n as W, $t as X, rn as Y, qt as Z, Wr as _, Ye as _t, pi as a, kt as at, zr as b, We as bt, oi as c, St as ct, ei as d, vt as dt, Ft as et, Qr as f, mt as ft, qr as g, qe as gt, Jr as h, tt as ht, ci as i, Ot as it, pr as j, _r as k, ii as l, Ct as lt, Yr as m, ot as mt, vi as n, Kt as nt, mi as o, Dt as ot, Xr as p, ut as pt, un as q, gi as r, At as rt, si as s, Tt as st, _i as t, Pt as tt, ti as u, xt as ut, Ur as v, Ze as vt, Pr as w, Pe as wt, Rr as x, Ue as xt, Vr as y, Ke as yt, On as z };
+export { Nt as $, _r as A, On as B, Ir as C, ze as Ct, Or as D, Mr as E, tr as F, _n as G, Sn as H, Xn as I, un as J, gn as K, Yn as L, pr as M, ur as N, Er as O, $ as P, qt as Q, Bn as R, Rr as S, Ue as St, Pr as T, Pe as Tt, bn as U, Tn as V, vn as W, rn as X, an as Y, $t as Z, qr as _, qe as _t, ci as a, Ot as at, Vr as b, Ke as bt, si as c, Tt as ct, ti as d, xt as dt, It as et, ei as f, vt as ft, Jr as g, tt as gt, Yr as h, ot as ht, gi as i, At as it, fr as j, Cr as k, oi as l, St as lt, Xr as m, ut as mt, vi as n, Pt as nt, pi as o, kt as ot, Qr as p, mt as pt, dn as q, Ci as r, Kt as rt, mi as s, Dt as st, _i as t, Ft as tt, ii as u, Ct as ut, Wr as v, Ye as vt, Fr as w, Le as wt, zr as x, We as xt, Ur as y, Ze as yt, An as z };

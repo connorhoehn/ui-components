@@ -1103,6 +1103,14 @@ export declare interface CollaboratorRow {
     disabledReason?: string;
 }
 
+export declare interface ConsentDismissal {
+    /** True once this key was dismissed (here, or earlier in the remembered scope). */
+    dismissed: boolean;
+    dismiss(): void;
+    /** Forget the dismissal (tests, a "show again" control). */
+    reset(): void;
+}
+
 /** Device choices for a Camera/Mic split chevron. */
 export declare function deviceMenuSections(heading: string, devices: ReadonlyArray<{
     deviceId: string;
@@ -3200,6 +3208,27 @@ export declare interface UseCallWidgetPersistenceOptions {
     defaults: PersistedWidgetState;
     /** Debounce window for writes. Default 200ms. */
     debounceMs?: number;
+}
+
+/**
+ * Remember that someone dismissed `RecordingConsentNotice` for one recording.
+ * Key it by meeting AND recording session (`${meetingId}:${recordingId}`), so
+ * a recording that stops and starts again asks again. A null key is never
+ * dismissed. Storage failures (private mode, blocked site data) fall back to
+ * memory for the life of the page.
+ *
+ *   const consent = useConsentDismissal(recording ? `${meetingId}:${recording.id}` : null);
+ *   <RecordingConsentNotice open={!!recording && !consent.dismissed} onDismiss={consent.dismiss} … />
+ */
+export declare function useConsentDismissal(key: string | null, opts?: UseConsentDismissalOptions): ConsentDismissal;
+
+export declare interface UseConsentDismissalOptions {
+    /**
+     * `session` (default): remembered for this tab, so a reload or a hop
+     * between pages of the same meeting does not show the card again, and a
+     * new tab does. `local`: remembered on this device.
+     */
+    storage?: 'session' | 'local';
 }
 
 export declare function useCountdown(endsAt: string | null | undefined): number | null;

@@ -6248,6 +6248,14 @@ export declare function ConnectionStatus(props: ConnectionStatusProps): JSX.Elem
 /** @deprecated Use `ConnectionPill` from `/shared`. Alias retained for one minor. */
 declare type ConnectionStatusProps = Pick<ConnectionPillProps, 'state'>;
 
+export declare interface ConsentDismissal {
+    /** True once this key was dismissed (here, or earlier in the remembered scope). */
+    dismissed: boolean;
+    dismiss(): void;
+    /** Forget the dismissal (tests, a "show again" control). */
+    reset(): void;
+}
+
 export declare function ConsentPage({ clientName, scopes, redirectUri, onAuthorize, onDeny, logoUrl, }: ConsentPageProps): JSX.Element;
 
 export declare interface ConsentPageProps {
@@ -23765,6 +23773,27 @@ declare interface UseActivityBusReturn {
       */
      submitting: boolean;
      error: string | null;
+ }
+
+ /**
+  * Remember that someone dismissed `RecordingConsentNotice` for one recording.
+  * Key it by meeting AND recording session (`${meetingId}:${recordingId}`), so
+  * a recording that stops and starts again asks again. A null key is never
+  * dismissed. Storage failures (private mode, blocked site data) fall back to
+  * memory for the life of the page.
+  *
+  *   const consent = useConsentDismissal(recording ? `${meetingId}:${recording.id}` : null);
+  *   <RecordingConsentNotice open={!!recording && !consent.dismissed} onDismiss={consent.dismiss} … />
+  */
+ export declare function useConsentDismissal(key: string | null, opts?: UseConsentDismissalOptions): ConsentDismissal;
+
+ export declare interface UseConsentDismissalOptions {
+     /**
+      * `session` (default): remembered for this tab, so a reload or a hop
+      * between pages of the same meeting does not show the card again, and a
+      * new tab does. `local`: remembered on this device.
+      */
+     storage?: 'session' | 'local';
  }
 
  /** Measures an element (or its parent) and gives the density its room implies. */
