@@ -63,6 +63,12 @@ export function InlineEditableText({
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(value);
   const inputRef = useRef<HTMLInputElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  // Enter and Escape end the edit from the keyboard: the input unmounts and
+  // focus would fall to <body>, dropping a keyboard user out of the page.
+  // Send it back to the button instead. A blur (Tab or a click elsewhere)
+  // already put focus where the user wanted it, so it is left alone.
+  const refocusRef = useRef(false);
 
   useEffect(() => {
     if (!editing) setDraft(value);
@@ -70,6 +76,10 @@ export function InlineEditableText({
 
   useEffect(() => {
     if (editing) inputRef.current?.select();
+    else if (refocusRef.current) {
+      refocusRef.current = false;
+      buttonRef.current?.focus();
+    }
   }, [editing]);
 
   const commit = () => {
@@ -92,8 +102,8 @@ export function InlineEditableText({
         onChange={(event) => setDraft(event.target.value)}
         onBlur={commit}
         onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
-          if (event.key === 'Enter') { event.preventDefault(); commit(); }
-          if (event.key === 'Escape') { event.preventDefault(); setDraft(value); setEditing(false); }
+          if (event.key === 'Enter') { event.preventDefault(); refocusRef.current = true; commit(); }
+          if (event.key === 'Escape') { event.preventDefault(); refocusRef.current = true; setDraft(value); setEditing(false); }
         }}
         className={cn('min-w-0', fitContent && 'w-auto min-w-[8ch] [field-sizing:content]', className)}
         data-testid={`${testId}-input`}
@@ -103,6 +113,7 @@ export function InlineEditableText({
 
   return (
     <button
+      ref={buttonRef}
       type="button"
       disabled={disabled}
       onClick={() => setEditing(true)}

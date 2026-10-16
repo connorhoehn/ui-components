@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.467.0
+
+- `InlineEditableText`: Enter and Escape hand focus back to the edit button. The input unmounted and focus fell to the page body, so a keyboard user renaming a breakout room (or any inline title) lost their place. A blur leaves focus where it went.
+
 ## 2.466.0
 
 - Breakout announcements live in the meeting chat, as in Teams. `useMeetingChat(meeting, { send })` (`/integrations/realtime`, `/integrations/realtime-modules`) binds a `ChatPanel`: while rooms are open an organizer gets a "To: This chat | All rooms" switch in the panel's `dock`; sending with All rooms calls `meeting.broadcast` and the switch returns to This chat; every announcement this client has seen shows in the thread as a marked message ("Announcement to every room") in the main chat and each room's chat. Also `MeetingChatTargetSwitch`, `MeetingChatBinding`, `MeetingChatTarget`. Pair it with realtime-modules 0.126 `useMeeting().activeChat` so the panel reads the room's chat inside a room.
