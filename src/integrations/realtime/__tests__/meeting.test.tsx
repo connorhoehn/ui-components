@@ -134,6 +134,9 @@ describe('meeting bindings over the real service', () => {
     fireEvent.change(within(org).getByLabelText('Number of rooms'), { target: { value: '2' } });
     fireEvent.click(within(org).getByTestId('breakout-create-submit'));
     await flush();
+    // Drafted rooms are all closed: a participant sees them folded into one line (2.480.0).
+    expect(within(ana).getByTestId('breakout-closed-summary')).toHaveTextContent('2 rooms closed');
+    fireEvent.click(within(ana).getByTestId('breakout-closed-toggle'));
     expect(within(ana).getAllByTestId('breakout-room').map((r) => r.getAttribute('data-room-state'))).toEqual(['closed', 'closed']);
 
     // Place Ana in Room 2 by hand, then open everything.
@@ -177,9 +180,13 @@ describe('meeting bindings over the real service', () => {
     expect(within(ana).queryByTestId('breakout-end')).toBeNull();
     fireEvent.click(within(org).getByTestId('breakout-end'));
     await flush();
-    expect(within(ana).getAllByTestId('breakout-room').every((r) => r.getAttribute('data-room-state') === 'closed')).toBe(true);
+    // Ended, the dead rooms fold for the participant (who had unfolded them) and the organizer.
+    expect(within(ana).queryAllByTestId('breakout-room')).toHaveLength(0);
+    expect(within(ana).getByTestId('breakout-closed-summary')).toHaveTextContent('2 rooms closed');
+    expect(within(org).getByTestId('breakout-closed-summary')).toBeInTheDocument();
 
-    // Back in draft the organizer can delete the rooms and start over.
+    // Back in draft the organizer starts new rooms from the summary.
+    expect(within(org).getByTestId('breakout-delete')).toHaveTextContent('Start new rooms');
     fireEvent.click(within(org).getByTestId('breakout-delete'));
     await flush();
     expect(within(org).getByTestId('breakout-create')).toBeInTheDocument();

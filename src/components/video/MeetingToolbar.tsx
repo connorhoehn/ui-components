@@ -22,6 +22,12 @@
 //
 // It follows the page theme (surface tokens), like the reference: a light bar
 // above the stage, not the always-dark call chrome of MediaControlsBar.
+//
+// Compact by default (2.480.0): small icon buttons the size of the call dock's
+// media toggles (32px, 18px icons), the label is the accessible name and a
+// hover/focus `Tooltip`, counts and unread numbers are small badges on the
+// icon, and the active pane keeps its underline. `labels="visible"` restores
+// the earlier 56px buttons with the label under the icon.
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
@@ -30,13 +36,14 @@ import { DropdownMenu, type DropdownMenuItem, type DropdownMenuSection } from '.
 import { InlinePopover, type InlinePopoverPlacement } from '../shared/InlinePopover';
 import { useRovingToolbar } from '../shared/RovingToolbar';
 import { T } from '../shared/Text';
+import { Tooltip } from '../shared/Tooltip';
 import { ChevronIcon } from '../ui/Icons';
 import { MoreHorizontalIcon, PhoneOffIcon } from './MediaIcons';
 
 export interface MeetingToolbarItem {
   /** Stable id; the button's testid is `meeting-toolbar-<id>`. */
   id: string;
-  /** Text under the icon, and the accessible name. */
+  /** The accessible name and the hover tooltip (text under the icon with `labels="visible"`). */
   label: string;
   icon: ReactNode;
   onClick?: () => void;
@@ -44,7 +51,7 @@ export interface MeetingToolbarItem {
   active?: boolean;
   /** A toggle that is on (hand raised): filled, `aria-pressed`. */
   pressed?: boolean;
-  /** A number shown beside the icon — the People count. */
+  /** A number on the icon — the People count, your place in the hand queue. A small badge by default; beside the icon with `labels="visible"`. */
   count?: number;
   /** An unread/attention badge on the icon — new chat messages. */
   badge?: number;
@@ -101,18 +108,42 @@ export interface MeetingToolbarProps {
   phoneBelow?: number;
   /** Force the phone layout (tests, a known phone host); otherwise measured. */
   phone?: boolean;
+  /**
+   * `tooltip` (default since 2.480.0): small icon-only buttons, the label shown
+   * as a tooltip on hover or focus and kept as the accessible name. `visible`:
+   * the earlier 56px buttons with the label under the icon.
+   */
+  labels?: 'tooltip' | 'visible';
   className?: string;
   'data-testid'?: string;
 }
 
-/** The button look, shared by plain buttons, split halves and the More trigger. */
-export const MEETING_TOOLBAR_BUTTON =
-  'relative inline-flex h-14 min-w-14 flex-col items-center justify-center gap-0.5 rounded-md px-2 ' +
+/** The button look shared by plain buttons, split halves and the More trigger (no size). */
+const MEETING_TOOLBAR_BUTTON_BASE =
+  'relative inline-flex flex-col items-center justify-center rounded-md ' +
   'text-text-secondary transition-colors duration-100 hover:bg-surface-hover hover:text-text-primary ' +
   'focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary cursor-pointer ' +
   'disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent';
 
-function ToolbarButton({ item, iconOnly = false }: { item: MeetingToolbarItem; iconOnly?: boolean }) {
+/** The labelled (`labels="visible"`) button: 56px, label under the icon. */
+export const MEETING_TOOLBAR_BUTTON = `${MEETING_TOOLBAR_BUTTON_BASE} h-14 min-w-14 gap-0.5 px-2`;
+
+/** The default compact button: 32px square like the call dock's media toggles, 18px icons. Since 2.480.0. */
+const MEETING_TOOLBAR_BUTTON_COMPACT = `${MEETING_TOOLBAR_BUTTON_BASE} h-8 min-w-8 px-1.5 [&_svg]:size-[18px]`;
+
+/** Phone: icon-only, but a 40px touch target. */
+const MEETING_TOOLBAR_BUTTON_PHONE = `${MEETING_TOOLBAR_BUTTON_BASE} h-10 min-w-10 px-1.5 [&_svg]:size-5`;
+
+type ButtonLook = 'labelled' | 'compact' | 'phone';
+
+const LOOK_CLASS: Record<ButtonLook, string> = {
+  labelled: MEETING_TOOLBAR_BUTTON,
+  compact: MEETING_TOOLBAR_BUTTON_COMPACT,
+  phone: MEETING_TOOLBAR_BUTTON_PHONE,
+};
+
+function ToolbarButton({ item, look = 'compact' }: { item: MeetingToolbarItem; look?: ButtonLook }) {
+  const iconOnly = look !== 'labelled';
   const tip = item.disabled && item.disabledReason ? item.disabledReason : item.title ?? item.label;
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [panelOpen, setPanelOpen] = useState(false);
@@ -125,7 +156,9 @@ function ToolbarButton({ item, iconOnly = false }: { item: MeetingToolbarItem; i
       type="button"
       onClick={hasPanel ? () => setPanelOpen((v) => !v) : item.onClick}
       disabled={item.disabled}
-      title={tip}
+      // Icon-only buttons get a Tooltip instead; a disabled button fires no
+      // pointer events for it, so its reason stays the native title.
+      title={!iconOnly || item.disabled ? tip : undefined}
       aria-label={item.count !== undefined ? `${item.label}, ${item.count}` : item.label}
       aria-pressed={item.pressed === undefined ? undefined : item.pressed}
       aria-haspopup={hasPanel ? 'dialog' : undefined}
@@ -135,43 +168,56 @@ function ToolbarButton({ item, iconOnly = false }: { item: MeetingToolbarItem; i
       data-pressed={item.pressed ? 'true' : undefined}
       data-tone={item.tone ?? 'default'}
       className={cn(
-        MEETING_TOOLBAR_BUTTON,
+        LOOK_CLASS[look],
         // primary-fg is the readable ink of the brand: brand fills (teal) are ~3.7:1 as text.
         active && 'text-primary-fg hover:text-primary-fg',
         item.pressed && 'bg-primary-bg text-primary-fg hover:bg-primary-bg hover:text-primary-fg',
         item.tone === 'danger' && 'text-danger hover:bg-danger-bg hover:text-danger',
-        item.menu && !iconOnly && 'rounded-r-none pr-1',
-        iconOnly && 'h-12 min-w-11 px-1.5',
+        item.menu && look !== 'phone' && 'rounded-r-none pr-1',
+        item.menu && look === 'compact' && 'pr-0.5',
       )}
     >
       <span className="relative inline-flex items-center gap-1">
         {item.icon}
-        {item.count !== undefined && (
+        {item.count !== undefined && (iconOnly ? (
+          <Badge
+            variant="count"
+            color="muted"
+            value={item.count}
+            aria-label={String(item.count)}
+            className="absolute -bottom-1.5 -right-2.5 h-3.5 min-w-3.5 px-1 ring-1 ring-surface"
+            data-testid={`meeting-toolbar-${item.id}-count`}
+          />
+        ) : (
           <T size="sm" weight="semibold" tone="inherit" tabular data-testid={`meeting-toolbar-${item.id}-count`}>
             {item.count}
           </T>
-        )}
+        ))}
         {!!item.badge && (
           <Badge
             variant="count"
             color="danger"
             value={item.badge}
-            className="absolute -right-2.5 -top-1.5"
+            className={cn('absolute -top-1.5', iconOnly ? '-right-2.5 h-3.5 min-w-3.5 px-1 ring-1 ring-surface' : '-right-2.5')}
             data-testid={`meeting-toolbar-${item.id}-badge`}
           />
         )}
       </span>
       {!iconOnly && <T size="xs" tone="inherit" className="leading-tight whitespace-nowrap">{item.label}</T>}
       {active && (
-        <span aria-hidden className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-primary" data-testid={`meeting-toolbar-${item.id}-active`} />
+        <span aria-hidden className={cn('absolute bottom-0 h-0.5 rounded-full bg-primary', iconOnly ? 'inset-x-1.5' : 'inset-x-2')} data-testid={`meeting-toolbar-${item.id}-active`} />
       )}
     </button>
   );
+  // Icon-only: the label (or the item's title) is a hover/focus tooltip.
+  const shown = iconOnly && !item.disabled
+    ? <Tooltip content={tip} placement="bottom" data-testid={`meeting-toolbar-${item.id}-tooltip`}>{button}</Tooltip>
+    : button;
   if (hasPanel) {
     const close = () => setPanelOpen(false);
     return (
       <>
-        {button}
+        {shown}
         <InlinePopover
           trigger={buttonRef}
           open={open}
@@ -186,15 +232,15 @@ function ToolbarButton({ item, iconOnly = false }: { item: MeetingToolbarItem; i
       </>
     );
   }
-  if (!item.menu || iconOnly) return button;
+  if (!item.menu || look === 'phone') return shown;
   return (
     <span className="inline-flex items-stretch" data-testid={`meeting-toolbar-${item.id}-split`}>
-      {button}
+      {shown}
       <DropdownMenu
-        trigger={<ChevronIcon size={14} />}
+        trigger={<ChevronIcon size={look === 'compact' ? 12 : 14} />}
         triggerLabel={item.menuLabel ?? `${item.label} options`}
         triggerVariant="link"
-        triggerClassName="h-14 w-5 rounded-l-none rounded-r-md px-0 text-text-secondary hover:bg-surface-hover"
+        triggerClassName={cn('rounded-l-none rounded-r-md px-0 text-text-secondary hover:bg-surface-hover', look === 'compact' ? 'h-8 w-4' : 'h-14 w-5')}
         triggerTestId={`meeting-toolbar-${item.id}-menu`}
         disabled={item.disabled}
         align="end"
@@ -234,8 +280,8 @@ function useWidth(ref: React.RefObject<HTMLElement | null>, skip: boolean): numb
   return width;
 }
 
-function Divider() {
-  return <span aria-hidden className="mx-1 h-8 w-px shrink-0 bg-border" />;
+function Divider({ compact }: { compact: boolean }) {
+  return <span aria-hidden className={cn('w-px shrink-0 bg-border', compact ? 'mx-0.5 h-5' : 'mx-1 h-8')} />;
 }
 
 export function MeetingToolbar({
@@ -250,6 +296,7 @@ export function MeetingToolbar({
   compact,
   phoneBelow = 820,
   phone: forcedPhone,
+  labels = 'tooltip',
   className,
   'data-testid': testId = 'meeting-toolbar',
 }: MeetingToolbarProps) {
@@ -271,6 +318,8 @@ export function MeetingToolbar({
     ? [...mediaShown.flatMap((m) => m.menu ?? []), ...(onLeave ? leaveMenu ?? [] : [])]
     : [];
   const allFolded = [...folded, ...mediaFolded];
+  const look: ButtonLook = phone ? 'phone' : labels === 'visible' ? 'labelled' : 'compact';
+  const small = look !== 'labelled';
   const more: DropdownMenuSection[] = [
     ...(allFolded.length ? [{ items: allFolded.map(asMenuItem), 'data-testid': 'meeting-toolbar-more-folded' }] : []),
     ...movedMenus,
@@ -285,39 +334,44 @@ export function MeetingToolbar({
       data-testid={testId}
       data-compact={narrow ? 'true' : undefined}
       data-layout={phone ? 'phone' : undefined}
-      className={cn('flex min-h-16 items-center gap-1 border-b border-border bg-surface', phone ? 'flex-wrap px-2 pt-1' : 'px-3', className)}
+      data-labels={labels}
+      className={cn(
+        'flex items-center border-b border-border bg-surface',
+        phone ? 'flex-wrap gap-0.5 px-2 pt-1' : look === 'compact' ? 'min-h-10 gap-0.5 px-2 py-1' : 'min-h-16 gap-1 px-3',
+        className,
+      )}
     >
       {/* On a phone the status cluster gets its own row above the buttons, as Teams mobile shows the time. */}
       {/* overflow-hidden: a cramped bar clips the cluster rather than drawing buttons over it. */}
-      <div className={cn('flex min-w-0 items-center gap-3 overflow-hidden', phone ? 'basis-full' : 'flex-1')}>{start}</div>
+      <div className={cn('flex min-w-0 items-center overflow-hidden', small ? 'gap-2' : 'gap-3', phone ? 'basis-full' : 'flex-1')}>{start}</div>
       {phone && <span aria-hidden className="flex-1" />}
       <div className="flex shrink-0 items-center gap-0.5" data-testid={`${testId}-items`}>
-        {shown.map((item) => <ToolbarButton key={item.id} item={item} iconOnly={phone} />)}
+        {shown.map((item) => <ToolbarButton key={item.id} item={item} look={look} />)}
         {more.length > 0 && (
           <DropdownMenu
             trigger={(
               <>
                 <MoreHorizontalIcon size={20} />
-                {!phone && <T size="xs" tone="inherit" className="leading-tight">More</T>}
+                {!small && <T size="xs" tone="inherit" className="leading-tight">More</T>}
               </>
             )}
             triggerLabel="More"
             triggerVariant="link"
             // font-normal undoes DropdownMenu's link-trigger weight so More matches its siblings. ratchet-ok
-            triggerClassName={cn(MEETING_TOOLBAR_BUTTON, 'gap-0.5 font-normal', phone && 'h-12 min-w-11 px-1.5')} // ratchet-ok: overrides a shared trigger's default weight
+            triggerClassName={cn(LOOK_CLASS[look], 'gap-0.5 font-normal')} // ratchet-ok: overrides a shared trigger's default weight
             triggerTestId="meeting-toolbar-more"
             align="end"
             sections={more}
           />
         )}
       </div>
-      {mediaShown.length > 0 && <Divider />}
+      {mediaShown.length > 0 && <Divider compact={small} />}
       {mediaShown.length > 0 && (
         <div className="flex shrink-0 items-center gap-0.5" data-testid={`${testId}-media`}>
-          {mediaShown.map((item) => <ToolbarButton key={item.id} item={item} iconOnly={phone} />)}
+          {mediaShown.map((item) => <ToolbarButton key={item.id} item={item} look={look} />)}
         </div>
       )}
-      {onLeave && <Divider />}
+      {onLeave && <Divider compact={small} />}
       {onLeave && (
         <ToolbarButton
           item={{
@@ -329,7 +383,7 @@ export function MeetingToolbar({
             menu: leaveMenu,
             menuLabel: 'Leave options',
           }}
-          iconOnly={phone}
+          look={look}
         />
       )}
     </div>

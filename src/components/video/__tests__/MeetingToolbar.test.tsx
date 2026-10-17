@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, within } from '@testing-library/react';
+import { act, render, screen, fireEvent, within } from '@testing-library/react';
 import { MeetingToolbar, deviceMenuSections, type MeetingToolbarItem } from '../MeetingToolbar';
 import { MeetingHandIcon, MeetingRoomsIcon, MeetingViewIcon } from '../MeetingIcons';
 import { UsersIcon, VideoOffIcon } from '../MediaIcons';
@@ -260,5 +260,53 @@ describe('MeetingToolbar keyboard (WAI-ARIA toolbar, 2.458.2)', () => {
     // Still a toolbar with its own controls.
     expect(screen.getByTestId('meeting-toolbar-people')).toBeInTheDocument();
   });
-});
 
+  it('is compact by default: icon-only buttons named by label, a hover/focus tooltip, counts as badges (2.480.0)', () => {
+    vi.useFakeTimers();
+    try {
+      render(<MeetingToolbar items={[...items(), { id: 'chat', label: 'Chat', icon: <UsersIcon />, badge: 3 }]} onLeave={() => {}} compact={false} />);
+      expect(screen.getByTestId('meeting-toolbar')).toHaveAttribute('data-labels', 'tooltip');
+      const people = screen.getByTestId('meeting-toolbar-people');
+      expect(people).toHaveAccessibleName('People, 15');
+      // No visible label text and no native title competing with the tooltip.
+      expect(within(people).queryByText('People')).toBeNull();
+      expect(people).not.toHaveAttribute('title');
+      expect(people.className).toContain('h-8');
+      // The count is a small badge on the icon; the unread number stays a badge too.
+      expect(screen.getByTestId('meeting-toolbar-people-count')).toHaveTextContent('15');
+      expect(screen.getByTestId('meeting-toolbar-people-count')).toHaveClass('absolute');
+      expect(screen.getByTestId('meeting-toolbar-chat-badge')).toHaveTextContent('3');
+      // The active pane keeps its underline; a pressed toggle its state.
+      expect(screen.getByTestId('meeting-toolbar-rooms-active')).toBeInTheDocument();
+      expect(screen.getByTestId('meeting-toolbar-raise')).toHaveAttribute('aria-pressed', 'false');
+      // Hover shows the label after the delay; focus shows it at once.
+      expect(screen.queryByRole('tooltip')).toBeNull();
+      fireEvent.mouseEnter(people.parentElement!);
+      act(() => { vi.advanceTimersByTime(400); });
+      expect(screen.getByRole('tooltip')).toHaveTextContent('People');
+      fireEvent.mouseLeave(people.parentElement!);
+      act(() => { vi.advanceTimersByTime(200); });
+      expect(screen.queryByRole('tooltip')).toBeNull();
+      fireEvent.focus(screen.getByTestId('meeting-toolbar-leave'));
+      expect(screen.getByRole('tooltip')).toHaveTextContent('Leave');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('a disabled compact button keeps its reason as the native title (no pointer events for a tooltip)', () => {
+    render(<MeetingToolbar items={[{ id: 'view', label: 'View', icon: <MeetingViewIcon />, disabled: true, disabledReason: 'Not in this call' }]} compact={false} />);
+    expect(screen.getByTestId('meeting-toolbar-view')).toHaveAttribute('title', 'Not in this call');
+    expect(screen.queryByTestId('meeting-toolbar-view-tooltip')).toBeNull();
+  });
+
+  it('labels="visible" restores the labelled 56px buttons with the count beside the icon', () => {
+    render(<MeetingToolbar labels="visible" items={items()} onLeave={() => {}} compact={false} />);
+    const people = screen.getByTestId('meeting-toolbar-people');
+    expect(screen.getByTestId('meeting-toolbar')).toHaveAttribute('data-labels', 'visible');
+    expect(within(people).getByText('People')).toBeInTheDocument();
+    expect(people).toHaveAttribute('title', 'People');
+    expect(people.className).toContain('h-14');
+    expect(screen.getByTestId('meeting-toolbar-people-count')).not.toHaveClass('absolute');
+  });
+});

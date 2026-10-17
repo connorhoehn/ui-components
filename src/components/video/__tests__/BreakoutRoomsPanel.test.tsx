@@ -250,3 +250,66 @@ describe('BreakoutRoomBanner', () => {
   });
 });
 
+describe('BreakoutRoomsPanel — every room closed (2.480.0)', () => {
+  const CLOSED: BreakoutRoomView[] = [1, 2, 3].map((n) => ({
+    id: `r${n}`, name: `Room ${n}`, state: 'closed' as const, members: [{ id: `u-${n}`, name: `Person ${n}` }],
+  }));
+
+  it('a participant sees one summary line, and Show rooms lists them', () => {
+    render(<BreakoutRoomsPanel rooms={CLOSED} phase="draft" mode="assigned" />);
+    expect(screen.getByTestId('breakout-closed-summary')).toHaveTextContent('3 rooms closed');
+    expect(screen.queryAllByTestId('breakout-room')).toHaveLength(0);
+    const toggle = screen.getByTestId('breakout-closed-toggle');
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByTestId('breakout-delete')).toBeNull();
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    expect(toggle).toHaveTextContent('Hide rooms');
+    expect(screen.getAllByTestId('breakout-room')).toHaveLength(3);
+  });
+
+  it('the organizer\'s ended rooms fold too, with Start new rooms in place of Delete rooms', () => {
+    const onDeleteRooms = vi.fn();
+    const open = CLOSED.map((r) => ({ ...r, state: 'open' as const }));
+    const { rerender } = render(<BreakoutRoomsPanel rooms={open} phase="open" mode="assigned" isOrganizer onDeleteRooms={onDeleteRooms} onEnd={() => {}} />);
+    // Open rooms list their rows (and members behind the chevron).
+    expect(screen.getAllByTestId('breakout-room')).toHaveLength(3);
+    expect(screen.queryByTestId('breakout-closed-summary')).toBeNull();
+    // The session ends: back to draft with every room closed.
+    rerender(<BreakoutRoomsPanel rooms={CLOSED} phase="draft" mode="assigned" isOrganizer onDeleteRooms={onDeleteRooms} onEnd={() => {}} />);
+    expect(screen.getByTestId('breakout-closed-summary')).toHaveTextContent('3 rooms closed');
+    expect(screen.queryAllByTestId('breakout-room')).toHaveLength(0);
+    const startNew = screen.getAllByTestId('breakout-delete');
+    expect(startNew).toHaveLength(1);
+    expect(startNew[0]).toHaveTextContent('Start new rooms');
+    fireEvent.click(startNew[0]!);
+    expect(onDeleteRooms).toHaveBeenCalled();
+    // Unfolded, the controls' Delete rooms comes back and the summary's goes.
+    fireEvent.click(screen.getByTestId('breakout-closed-toggle'));
+    expect(screen.getAllByTestId('breakout-room')).toHaveLength(3);
+    expect(screen.getByTestId('breakout-delete')).toHaveTextContent('Delete rooms');
+  });
+
+  it('rooms an organizer just created stay listed so people can be placed', () => {
+    const { rerender } = render(<BreakoutRoomsPanel rooms={[]} phase="none" mode="assigned" isOrganizer onCreateRooms={() => {}} />);
+    const fresh = CLOSED.map((r) => ({ ...r, members: [] }));
+    rerender(<BreakoutRoomsPanel rooms={fresh} phase="draft" mode="assigned" isOrganizer />);
+    expect(screen.getAllByTestId('breakout-room')).toHaveLength(3);
+    // Placing people (auto-assign) does not fold the list mid-planning.
+    rerender(<BreakoutRoomsPanel rooms={CLOSED} phase="draft" mode="assigned" isOrganizer />);
+    expect(screen.getAllByTestId('breakout-room')).toHaveLength(3);
+    expect(screen.getByTestId('breakout-closed-toggle')).toHaveTextContent('Hide rooms');
+  });
+
+  it('collapseClosedRooms={false} always lists the rooms', () => {
+    render(<BreakoutRoomsPanel rooms={CLOSED} phase="draft" mode="assigned" collapseClosedRooms={false} />);
+    expect(screen.queryByTestId('breakout-closed-summary')).toBeNull();
+    expect(screen.getAllByTestId('breakout-room')).toHaveLength(3);
+  });
+
+  it('a mix of open and closed rooms is listed as before, in compact rows', () => {
+    render(<BreakoutRoomsPanel rooms={ROOMS} phase="open" mode="self-select" />);
+    expect(screen.queryByTestId('breakout-closed-summary')).toBeNull();
+    expect(screen.getAllByTestId('breakout-room')).toHaveLength(3);
+  });
+});

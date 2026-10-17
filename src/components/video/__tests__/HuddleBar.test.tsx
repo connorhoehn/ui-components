@@ -182,5 +182,66 @@ describe('HuddleBar meetingItems (2.475.0)', () => {
     render(<HuddleBar name="Design review" phase="idle" meetingItems={items()} onStart={() => {}} />);
     expect(screen.queryByTestId('huddle-bar-meeting-raise')).toBeNull();
   });
-});
 
+  it('joinable: a live huddle you are not in shows who is there and Join instead of Huddle (2.480.0)', () => {
+    const onJoin = vi.fn();
+    const onStart = vi.fn();
+    render(
+      <HuddleBar
+        name="Standup"
+        phase="joinable"
+        onStart={onStart}
+        onJoin={onJoin}
+        onToggleChat={() => {}}
+        onLeave={() => {}}
+        mic={{ on: true, onToggle: () => {} }}
+        liveParticipants={[
+          { id: 'u-1', displayName: 'Mara Ortiz', avatarUrl: 'https://example.test/mara.png' },
+          { id: 'u-2', displayName: 'Theo Park' },
+          { id: 'u-3', displayName: 'Ana Lee' },
+          { id: 'u-4', displayName: 'Ben Cho' },
+        ]}
+      />,
+    );
+    const bar = screen.getByTestId('huddle-bar');
+    expect(bar).toHaveAttribute('data-phase', 'joinable');
+    expect(screen.getByRole('group', { name: 'Standup huddle' })).toBeInTheDocument();
+    expect(screen.getByTestId('huddle-bar-name')).toHaveTextContent('Standup');
+    // The count falls back to the participant list.
+    expect(screen.getByTestId('huddle-bar-live')).toHaveTextContent('huddle live · 4 joined');
+    expect(screen.getByTestId('huddle-bar-avatars')).toBeInTheDocument();
+    expect(screen.getAllByTestId('presence-avatar')).toHaveLength(3);
+    // Join replaces Huddle; nothing of the call itself is drawn.
+    expect(screen.queryByTestId('huddle-bar-start')).toBeNull();
+    expect(screen.queryByTestId('huddle-bar-leave')).toBeNull();
+    expect(screen.queryByTestId('huddle-bar-mic')).toBeNull();
+    expect(screen.queryByTestId('huddle-bar-timer')).toBeNull();
+    expect(screen.getByTestId('huddle-bar-chat')).toBeInTheDocument();
+    const join = screen.getByTestId('huddle-bar-join');
+    expect(join).toHaveTextContent('Join');
+    expect(join).toHaveAccessibleName('Join Standup huddle');
+    fireEvent.click(join);
+    expect(onJoin).toHaveBeenCalledTimes(1);
+    expect(onStart).not.toHaveBeenCalled();
+  });
+
+  it('joinable: participantCount wins over the list length, and Join can carry a disabled reason', () => {
+    render(
+      <HuddleBar
+        name="Design"
+        phase="joinable"
+        participantCount={12}
+        liveParticipants={[{ id: 'u-1', displayName: 'Mara Ortiz' }]}
+        onJoin={() => {}}
+        joinLabel="Join huddle"
+        joinDisabledReason="The huddle is full"
+      />,
+    );
+    expect(screen.getByTestId('huddle-bar-live')).toHaveTextContent('12 joined');
+    expect(screen.queryByTestId('huddle-bar-people')).toBeNull();
+    const join = screen.getByTestId('huddle-bar-join');
+    expect(join).toBeDisabled();
+    expect(join).toHaveAttribute('title', 'The huddle is full');
+    expect(join).toHaveTextContent('Join huddle');
+  });
+});

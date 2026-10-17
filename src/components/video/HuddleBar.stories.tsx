@@ -66,3 +66,24 @@ export const LiveWithMeeting: Story = {
   render: (args) => <FooterRow><HuddleBar {...args} /></FooterRow>,
 };
 
+
+/**
+ * A huddle is live on this page and you are not in it (2.480.0): "Standup
+ * huddle live · 4 joined", who is there, and Join in place of Huddle.
+ */
+export const JoinableInFooter: Story = {
+  args: {
+    name: 'Standup',
+    phase: 'joinable',
+    liveParticipants: [
+      { id: 'u-1', displayName: 'Mara Ortiz' },
+      { id: 'u-2', displayName: 'Theo Park' },
+      { id: 'u-3', displayName: 'Ana Lee' },
+      { id: 'u-4', displayName: 'Ben Cho' },
+    ],
+    onJoin: () => {},
+    onToggleChat: () => {},
+    className: 'min-w-0 flex-1 border-l border-border',
+  },
+  render: (args) => <FooterRow><HuddleBar {...args} /></FooterRow>,
+};

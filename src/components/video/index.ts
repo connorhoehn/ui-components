@@ -179,7 +179,7 @@ export type {
 } from './CircularIconToggle';
 
 export { HuddleBar } from './HuddleBar';
-export type { HuddleBarProps, HuddleBarMedia, HuddleBarPhase } from './HuddleBar';
+export type { HuddleBarProps, HuddleBarMedia, HuddleBarPhase, HuddleBarLiveParticipant } from './HuddleBar';
 export { default as MediaControlsBar } from './MediaControlsBar';
 export type { MediaControlsBarProps } from './MediaControlsBar';
 

@@ -96,7 +96,7 @@ export function defaultRoomDrafts(count: number): { name: string }[] {
 }
 
 export interface WrappedBreakoutRoomsPanelProps
-  extends Pick<BreakoutRoomsPanelProps, 'onClose' | 'title' | 'timerMinutes' | 'maxRooms' | 'className' | 'data-testid'> {
+  extends Pick<BreakoutRoomsPanelProps, 'onClose' | 'title' | 'timerMinutes' | 'maxRooms' | 'collapseClosedRooms' | 'className' | 'data-testid'> {
   meeting: RMMeetingSource;
   /** Everyone in the meeting (the call roster), for names and the "not in a room" list. */
   people: RMMeetingPerson[];
@@ -143,7 +143,7 @@ export function WrappedBreakoutRoomsPanel({ meeting, people, roomNames, renderEr
       onAddRoom={meeting.addRoom ? () => meeting.addRoom?.() : undefined}
       onRenameRoom={meeting.renameRoom}
       notice={meeting.error ? (renderError?.(meeting.error) ?? (
-        <Banner variant="error" className="mx-4 mt-3" data-testid="breakout-error">{meeting.error.message}</Banner>
+        <Banner variant="error" className="mx-3 mt-2" data-testid="breakout-error">{meeting.error.message}</Banner>
       )) : null}
     />
   );
@@ -228,6 +228,8 @@ export function meetingToolbarItems(
       label: raised ? 'Lower' : 'Raise',
       title: raised ? `Lower your hand (${meeting.myHandPosition} in line)` : 'Raise your hand',
       icon: <MeetingHandIcon />,
+      // Your place in the hand queue, as a small badge on the icon (2.480.0).
+      ...(meeting.myHandPosition !== null ? { count: meeting.myHandPosition } : {}),
       pressed: raised,
       onClick: meeting.toggleHand,
       disabled: !meeting.ready,

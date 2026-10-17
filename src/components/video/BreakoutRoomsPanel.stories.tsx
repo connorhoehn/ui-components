@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useEffect, useState, type ComponentProps } from 'react';
 import { BreakoutRoomsPanel, type BreakoutRoomView } from './BreakoutRoomsPanel';
 
 const PEOPLE = ['Esme Tanaka', 'Felix Moreau', 'Gus Halvorsen', 'Hana Ruiz', 'Iris Achebe', 'Jonah Petrov'];
@@ -62,3 +63,31 @@ export const OrganizerClosing: Story = {
     endsAt: new Date(Date.now() + 30_000).toISOString(),
   },
 };
+
+/** The breakout ended (2.480.0): every room is closed, so a participant sees one
+ *  "3 rooms closed" line with Show rooms instead of three dead rows. */
+export const ParticipantAllClosed: Story = {
+  args: {
+    rooms: ROOMS.slice(0, 3).map((r) => ({ ...r, state: 'closed' as const })),
+    phase: 'draft', mode: 'assigned', onClose: () => {},
+  },
+};
+
+/** The organizer's view of the same, folded: Start new rooms beside Show rooms. */
+export const OrganizerAllClosed: Story = {
+  render: (args) => <OrganizerEnded {...args} />,
+  args: {
+    rooms: ROOMS.slice(0, 3).map((r) => ({ ...r, state: 'closed' as const })),
+    phase: 'draft', mode: 'assigned', isOrganizer: true,
+    onOpenRooms: () => {}, onCloseRooms: () => {}, onAutoAssign: () => {}, onAssign: () => {}, onDeleteRooms: () => {}, onAddRoom: () => {}, onClose: () => {},
+  },
+};
+
+/** Mounts with the rooms open, then ends them, as the organizer's pane sees it. */
+function OrganizerEnded(props: ComponentProps<typeof BreakoutRoomsPanel>) {
+  const [ended, setEnded] = useState(false);
+  useEffect(() => { setEnded(true); }, []);
+  return ended
+    ? <BreakoutRoomsPanel {...props} />
+    : <BreakoutRoomsPanel {...props} phase="open" rooms={props.rooms.map((r) => ({ ...r, state: 'open' as const }))} />;
+}

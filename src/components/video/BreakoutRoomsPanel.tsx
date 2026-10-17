@@ -3,11 +3,16 @@
 // rooms, place people, open and close them, rename and add rooms (also while
 // they are open), run a timer, broadcast an announcement and end the session.
 //
+// Compact (2.480.0): one 32px line per room, like the side panels around it.
+// When every room is closed (the session ended, or rooms not opened yet) the
+// list folds into one summary line, "3 rooms closed", with a Show rooms
+// disclosure and the organizer's Start new rooms; see `collapseClosedRooms`.
+//
 // Transport-agnostic: rooms and people are plain props and every action is a
 // callback. `WrappedBreakoutRoomsPanel` (integrations/realtime-modules) binds
 // it to realtime-modules' `useMeeting`.
 
-import { useId, useState, type ReactNode } from 'react';
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { InlineEditableText } from '../forms/InlineEditableText';
 import { NumberInput } from '../forms/NumberInput';
@@ -99,6 +104,14 @@ export interface BreakoutRoomsPanelProps {
   onAddRoom?: () => void;
   /** The server's room cap; Add room is disabled at it. Default 50. */
   maxRooms?: number;
+  /**
+   * Fold the list into one "N rooms closed" line while every room is closed
+   * (2.480.0). Default true. Participants start folded; organizers start
+   * with the list (closed rooms may be a draft they are planning) and it folds
+   * when the rooms are ended while the pane is up (open → draft). Show rooms /
+   * Hide rooms toggles it; `false` always lists the rooms.
+   */
+  collapseClosedRooms?: boolean;
 
   /** The header ✕. Omitted: no close button. */
   onClose?: () => void;
@@ -136,7 +149,7 @@ function RoomRow({
   const open = room.state === 'open';
   return (
     <li className="border-b border-border-subtle last:border-b-0" data-testid="breakout-room" data-room-id={room.id} data-room-state={room.state} data-mine={mine ? 'true' : undefined}>
-      <div className="flex items-center gap-2 px-3 py-3">
+      <div className="flex min-h-9 items-center gap-1.5 px-2 py-0.5">
         <IconButton
           aria-label={expanded ? `Hide people in ${room.name}` : `Show people in ${room.name}`}
           aria-expanded={expanded}
@@ -148,7 +161,7 @@ function RoomRow({
         >
           <ChevronIcon size={14} dir={expanded ? 'down' : 'right'} />
         </IconButton>
-        <div className="flex min-w-0 flex-1 flex-col">
+        <div className="flex min-w-0 flex-1 items-center gap-2">
           {isOrganizer && onRenameRoom ? (
             <InlineEditableText
               value={room.name}
@@ -156,15 +169,15 @@ function RoomRow({
               label="Room name"
               maxLength={MAX_ROOM_NAME_LENGTH}
               required
-              className="-ml-1 self-start"
+              className="-ml-1 min-w-0"
               data-testid="breakout-room-name"
             />
           ) : (
-            <T size="base" tone="primary" className="truncate" title={room.name}>{room.name}</T>
+            <T size="sm" tone="primary" className="min-w-0 truncate" title={room.name}>{room.name}</T>
           )}
           {/* The state is carried by the dot's colour and the word; the word is
               secondary text, because success-green text is 3.3:1 on white (2.473.0). */}
-          <T size="sm" tone="secondary" className="items-center gap-1.5" data-testid="breakout-room-status">
+          <T size="xs" tone="secondary" className="shrink-0 items-center gap-1" data-testid="breakout-room-status">
             <StatusDot size="sm" color={open ? 'var(--color-success)' : undefined} />
             {open ? 'Open' : 'Closed'}
             {room.members.length > 0 && <span>· {room.members.length}</span>}
@@ -178,17 +191,17 @@ function RoomRow({
         {mine && canReturn && onReturnToMain && (
           <Button variant="secondary" size="sm" onClick={onReturnToMain} data-testid="breakout-room-leave">Leave</Button>
         )}
-        {mine && !canReturn && <T size="sm" tone="secondary" data-testid="breakout-room-here">You're here</T>}
+        {mine && !canReturn && <T size="xs" tone="secondary" className="shrink-0" data-testid="breakout-room-here">You're here</T>}
         {!mine && canJoin && onJoin && (
           <Button variant="secondary" size="sm" onClick={() => onJoin(room.id)} data-testid="breakout-room-join">Join</Button>
         )}
       </div>
       {expanded && (
-        <ul id={bodyId} className="flex flex-col gap-1 pb-3 pl-12 pr-3" data-testid="breakout-room-members">
-          {room.members.length === 0 && <li><T size="sm" tone="tertiary">Nobody yet</T></li>}
+        <ul id={bodyId} className="flex flex-col gap-0.5 pb-2 pl-10 pr-2" data-testid="breakout-room-members">
+          {room.members.length === 0 && <li><T size="xs" tone="tertiary">Nobody yet</T></li>}
           {room.members.map((p) => (
             <li key={p.id} className="flex items-center gap-2" data-testid="breakout-member" data-user-id={p.id}>
-              <Avatar name={p.name} src={p.avatarUrl} size={24} />
+              <Avatar name={p.name} src={p.avatarUrl} size={20} />
               <T size="sm" className="min-w-0 flex-1 truncate">{p.name}</T>
               <RaisedHandBadge raised={p.handRaised} />
               {isOrganizer && onAssign && (
@@ -222,7 +235,7 @@ function CreateRooms({ onCreateRooms }: { onCreateRooms: (count: number, mode: B
   const [count, setCount] = useState(3);
   const [mode, setMode] = useState<BreakoutPanelMode>('assigned');
   return (
-    <div className="flex flex-col gap-3 border-b border-border px-4 py-4" data-testid="breakout-create">
+    <div className="flex flex-col gap-2 border-b border-border px-3 py-2.5" data-testid="breakout-create">
       <T size="sm" tone="secondary" className="block">Split the meeting into smaller rooms.</T>
       <label className="flex items-center justify-between gap-3">
         <T size="sm">Rooms</T>
@@ -244,10 +257,10 @@ function CreateRooms({ onCreateRooms }: { onCreateRooms: (count: number, mode: B
   );
 }
 
-function OrganizerControls(props: BreakoutRoomsPanelProps & { left: number | null }) {
+function OrganizerControls(props: BreakoutRoomsPanelProps & { left: number | null; folded: boolean }) {
   const {
     phase, mode, rooms, onOpenRooms, onCloseRooms, onAutoAssign, onSetTimer, onBroadcast, announceIn = 'chat', onEnd, onDeleteRooms, onAddRoom,
-    left, timerMinutes = DEFAULT_TIMER_MINUTES, maxRooms = DEFAULT_MAX_ROOMS, closing = false,
+    left, timerMinutes = DEFAULT_TIMER_MINUTES, maxRooms = DEFAULT_MAX_ROOMS, closing = false, folded,
   } = props;
   const [message, setMessage] = useState('');
   const anyOpen = rooms.some((r) => r.state === 'open');
@@ -258,8 +271,8 @@ function OrganizerControls(props: BreakoutRoomsPanelProps & { left: number | nul
     setMessage('');
   };
   return (
-    <div className="flex flex-col gap-3 border-b border-border px-4 py-3" data-testid="breakout-controls">
-      <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-col gap-2 border-b border-border px-3 py-2" data-testid="breakout-controls">
+      <div className="flex flex-wrap items-center gap-1.5">
         {closing && anyOpen ? (
           <>
             {onCloseRooms && <Button variant="danger" size="sm" onClick={() => onCloseRooms()} data-testid="breakout-close-now">Close now</Button>}
@@ -286,7 +299,8 @@ function OrganizerControls(props: BreakoutRoomsPanelProps & { left: number | nul
         {onEnd && phase === 'open' && !closing && (
           <Button variant="ghost" size="sm" onClick={onEnd} className="text-danger" data-testid="breakout-end">End breakout rooms</Button>
         )}
-        {onDeleteRooms && phase === 'draft' && (
+        {/* Folded, the summary line carries this as Start new rooms. */}
+        {onDeleteRooms && phase === 'draft' && !folded && (
           <Button variant="ghost" size="sm" onClick={onDeleteRooms} className="text-danger" data-testid="breakout-delete">Delete rooms</Button>
         )}
       </div>
@@ -351,8 +365,23 @@ export function BreakoutRoomsPanel(props: BreakoutRoomsPanelProps) {
   const {
     rooms, phase, mode, myRoomId = null, isOrganizer = false, unassigned = [], endsAt = null, allowReturnToMain = true, closing = false,
     onJoin, onReturnToMain, onCreateRooms, onAssign, onOpenRooms, onCloseRooms, onRenameRoom, onClose,
-    title = 'Breakout rooms', notice, className, 'data-testid': testId = 'breakout-rooms-panel',
+    title = 'Breakout rooms', notice, collapseClosedRooms = true, onDeleteRooms, className, 'data-testid': testId = 'breakout-rooms-panel',
   } = props;
+  const allClosed = rooms.length > 0 && rooms.every((r) => r.state === 'closed');
+  // Whether the closed rooms are listed (see `collapseClosedRooms`).
+  // Organizers start with the list (closed rooms may be a draft they are
+  // planning); participants start folded.
+  const [showClosed, setShowClosed] = useState(isOrganizer);
+  const lastPhase = useRef(phase);
+  useEffect(() => {
+    const was = lastPhase.current;
+    lastPhase.current = phase;
+    if (was === phase) return;
+    if (was === 'open') setShowClosed(false); // the session ended: fold the dead rooms
+    else if (was === 'none' && isOrganizer) setShowClosed(true); // just created: list them to place people
+  }, [phase, isOrganizer]);
+  const folded = collapseClosedRooms && allClosed && !showClosed;
+  const closedListId = useId();
   const left = useCountdown(phase === 'open' ? endsAt : null, props.clockOffsetMs);
   const canReturn = allowReturnToMain || isOrganizer;
   const toggleRoom = onOpenRooms && onCloseRooms
@@ -361,8 +390,8 @@ export function BreakoutRoomsPanel(props: BreakoutRoomsPanelProps) {
 
   return (
     <aside aria-label={title} data-testid={testId} data-phase={phase} data-mode={mode} className={cn('flex h-full min-h-0 w-full min-w-0 flex-col bg-surface', className)}>
-      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-4 py-3">
-        <T as="div" size="lg" weight="semibold" role="heading" aria-label={title}>{title}</T>
+      <div className="flex min-h-9 shrink-0 items-center justify-between gap-2 border-b border-border px-3 py-1.5">
+        <T as="div" size="sm" weight="semibold" role="heading" aria-label={title} className="truncate">{title}</T>
         {onClose && (
           <IconButton aria-label={`Close ${title.toLowerCase()}`} variant="ghost" size="sm" icon={<CloseIcon />} onClick={onClose} data-testid={`${testId}-close`} />
         )}
@@ -370,19 +399,41 @@ export function BreakoutRoomsPanel(props: BreakoutRoomsPanelProps) {
       {notice}
       <div className="min-h-0 flex-1 overflow-y-auto">
         {isOrganizer && phase === 'none' && onCreateRooms && <CreateRooms onCreateRooms={onCreateRooms} />}
-        {isOrganizer && phase !== 'none' && <OrganizerControls {...props} left={left} />}
+        {isOrganizer && phase !== 'none' && <OrganizerControls {...props} left={left} folded={folded} />}
         {!isOrganizer && left !== null && (
-          <T as="div" size="sm" tone={closing ? 'inherit' : 'secondary'} tabular weight={closing ? 'semibold' : undefined} className={cn('px-4 pt-3', closing && 'text-danger')} data-testid="breakout-timer-left">
+          <T as="div" size="sm" tone={closing ? 'inherit' : 'secondary'} tabular weight={closing ? 'semibold' : undefined} className={cn('px-3 pt-2', closing && 'text-danger')} data-testid="breakout-timer-left">
             {closing ? 'Closing' : 'Rooms close'} in {formatCallElapsed(left)}
           </T>
         )}
         {rooms.length === 0 && !isOrganizer && (
-          <T as="p" size="sm" tone="secondary" className="block px-4 py-6" data-testid={`${testId}-empty`}>
+          <T as="p" size="sm" tone="secondary" className="block px-3 py-4" data-testid={`${testId}-empty`}>
             No breakout rooms yet. The organizer will open them.
           </T>
         )}
-        {rooms.length > 0 && (
-          <ul className="flex flex-col" data-testid="breakout-room-list">
+        {collapseClosedRooms && allClosed && (
+          <div className="flex min-h-9 flex-wrap items-center gap-x-2 gap-y-1 border-b border-border-subtle px-3 py-1" data-testid="breakout-closed-summary">
+            <T size="sm" tone="secondary" className="mr-auto items-center gap-1.5">
+              <StatusDot size="sm" />
+              {rooms.length === 1 ? '1 room closed' : `${rooms.length} rooms closed`}
+            </T>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowClosed((v) => !v)}
+              aria-expanded={!folded}
+              aria-controls={closedListId}
+              data-testid="breakout-closed-toggle"
+            >
+              {folded ? 'Show rooms' : 'Hide rooms'}
+            </Button>
+            {isOrganizer && onDeleteRooms && folded && (
+              // Same testid as the controls' Delete rooms it replaces while folded.
+              <Button variant="secondary" size="sm" onClick={onDeleteRooms} data-testid="breakout-delete">Start new rooms</Button>
+            )}
+          </div>
+        )}
+        {rooms.length > 0 && !folded && (
+          <ul id={closedListId} className="flex flex-col" data-testid="breakout-room-list">
             {rooms.map((room) => {
               const mine = room.id === myRoomId;
               const canJoin = room.state === 'open' && phase === 'open' && !closing && (mode === 'self-select' || isOrganizer);
@@ -405,13 +456,13 @@ export function BreakoutRoomsPanel(props: BreakoutRoomsPanelProps) {
             })}
           </ul>
         )}
-        {isOrganizer && phase !== 'none' && unassigned.length > 0 && (
-          <section className="border-t border-border px-4 py-3" data-testid="breakout-unassigned" aria-label="Not in a room">
-            <T as="div" size="sm" weight="semibold" className="mb-2">Not in a room ({unassigned.length})</T>
-            <ul className="flex flex-col gap-1">
+        {isOrganizer && phase !== 'none' && !folded && unassigned.length > 0 && (
+          <section className="border-t border-border px-3 py-2" data-testid="breakout-unassigned" aria-label="Not in a room">
+            <T as="div" size="xs" weight="semibold" tone="secondary" className="mb-1">Not in a room ({unassigned.length})</T>
+            <ul className="flex flex-col gap-0.5">
               {unassigned.map((p) => (
                 <li key={p.id} className="flex items-center gap-2" data-testid="breakout-unassigned-person" data-user-id={p.id}>
-                  <Avatar name={p.name} src={p.avatarUrl} size={24} />
+                  <Avatar name={p.name} src={p.avatarUrl} size={20} />
                   <T size="sm" className="min-w-0 flex-1 truncate">{p.name}</T>
                   <RaisedHandBadge raised={p.handRaised} />
                   {onAssign && <MoveSelect person={p} rooms={rooms} current={null} onAssign={onAssign} />}

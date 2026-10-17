@@ -11,7 +11,7 @@ import { ChatBubbleIcon, MicIcon, MicOffIcon, UsersIcon, VideoIcon, VideoOffIcon
 const CAMERAS = [{ deviceId: 'cam-1', label: 'FaceTime HD Camera' }, { deviceId: 'cam-2', label: 'Studio Display Camera' }];
 const MICS = [{ deviceId: 'mic-1', label: 'MacBook Pro Microphone' }, { deviceId: 'mic-2', label: 'AirPods Pro' }];
 
-function Bar({ compact }: { compact?: boolean }) {
+function Bar({ compact, labels }: { compact?: boolean; labels?: 'tooltip' | 'visible' }) {
   const [pane, setPane] = useState<string | null>('rooms');
   const [hand, setHand] = useState(false);
   const [cam, setCam] = useState(false);
@@ -40,6 +40,7 @@ function Bar({ compact }: { compact?: boolean }) {
   return (
     <MeetingToolbar
       compact={compact}
+      labels={labels}
       start={<MeetingStatusCluster recording={{ armed: true, active: true }} startedAt={Date.now() - (32 * 60 + 52) * 1000} onOpenOptions={() => {}} />}
       items={items}
       media={media}
@@ -60,10 +61,16 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** The reference bar: status cluster, labelled buttons, Rooms open, split Camera/Mic, Leave. */
+/** The default bar (2.480.0): small icon buttons, labels as hover/focus tooltips, counts as badges, Rooms open, split Camera/Mic, Leave. */
 export const Teams: Story = {
   args: { items: [], onLeave: () => {} },
   render: () => <Bar compact={false} />,
+};
+
+/** `labels="visible"`: the earlier 56px buttons with the label under the icon. */
+export const Labelled: Story = {
+  args: { items: [], onLeave: () => {} },
+  render: () => <Bar compact={false} labels="visible" />,
 };
 
 /** Narrow: View, Notes and Apps fold into More. */

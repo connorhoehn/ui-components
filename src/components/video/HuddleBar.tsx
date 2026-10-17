@@ -7,6 +7,11 @@
 // tile shelf wherever it already renders remote media — this is the controls
 // row, not a media sink.
 //
+// Phases: `idle` (no call here: Huddle starts one), `joinable` (a huddle is
+// running on this page's context and you are not in it: "Standup huddle live ·
+// 3 joined", who is in it, and Join, since 2.480.0), then the call's own
+// connecting / ringing / live / reconnecting / ended once you are in it.
+//
 // Narrow behaviour: labels drop to icons from the bar's own width (a container
 // query, not the viewport) — the shell's footer is as wide as the page, but the
 // bar may sit in a pane. Status and name never drop; the timer and the
@@ -17,6 +22,7 @@ import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
 import { T } from '../shared/Text';
 import { ChatIcon, PeopleIcon, PhoneIcon } from '../ui/Icons';
+import { PresenceAvatars } from '../shared/PresenceAvatars';
 import { PresenceDot, type PresenceState } from '../shared/PresenceDot';
 import { DeviceToggleSelect, type DeviceOption, type MediaPermission } from './DeviceToggleSelect';
 import { PhoneOffIcon } from './MediaIcons';
@@ -24,10 +30,18 @@ import { formatCallElapsed } from './CallDock';
 import { InlinePopover } from '../shared/InlinePopover';
 import type { MeetingToolbarItem } from './MeetingToolbar';
 
-export type HuddleBarPhase = 'idle' | 'live' | 'connecting' | 'ringing' | 'reconnecting' | 'ended';
+export type HuddleBarPhase = 'idle' | 'joinable' | 'live' | 'connecting' | 'ringing' | 'reconnecting' | 'ended';
+
+/** Someone in a huddle you have not joined (`phase="joinable"`). */
+export interface HuddleBarLiveParticipant {
+  id: string;
+  displayName: string;
+  avatarUrl?: string;
+}
 
 const PHASE_DOT: Record<HuddleBarPhase, PresenceState> = {
   idle: 'offline',
+  joinable: 'online',
   live: 'online',
   connecting: 'away',
   ringing: 'away',
@@ -37,6 +51,7 @@ const PHASE_DOT: Record<HuddleBarPhase, PresenceState> = {
 
 const PHASE_LABEL: Record<HuddleBarPhase, string> = {
   idle: 'No call',
+  joinable: 'Huddle live',
   live: 'Live',
   connecting: 'Connecting',
   ringing: 'Ringing',
@@ -47,6 +62,7 @@ const PHASE_LABEL: Record<HuddleBarPhase, string> = {
 /** The visible wording beside the name for a phase that is not live. */
 const PHASE_TEXT: Record<HuddleBarPhase, string | null> = {
   idle: null,
+  joinable: null,
   live: null,
   connecting: 'Connecting…',
   ringing: 'Ringing…',
@@ -76,7 +92,11 @@ export interface HuddleBarProps {
   /**
    * Default `live`. `idle` is the pre-call bar: `name` is the page's context,
    * the bar draws `onStart` and the chat button (and no timer, counts, media
-   * or Leave). Since 2.416.0.
+   * or Leave). Since 2.416.0. `joinable` (2.480.0): a huddle is live on this
+   * context and the viewer is not in it — "<name> huddle live · N joined"
+   * (`participantCount`, else the length of `liveParticipants`), an avatar
+   * stack of `liveParticipants` and a primary Join (`onJoin`) in place of the
+   * Huddle start button; no timer, media or Leave.
    */
   phase?: HuddleBarPhase;
   /**
@@ -111,6 +131,14 @@ export interface HuddleBarProps {
   startLabel?: string;
   /** Idle only: disables the start button and is its tooltip. */
   startDisabledReason?: string;
+  /** Joinable only: who is in the huddle, for the avatar stack. Since 2.480.0. */
+  liveParticipants?: HuddleBarLiveParticipant[];
+  /** Joinable only: join the running huddle. Absent: no Join button. Since 2.480.0. */
+  onJoin?: () => void;
+  /** Joinable only: label of the Join button. Default "Join". */
+  joinLabel?: string;
+  /** Joinable only: disables Join and is its tooltip. */
+  joinDisabledReason?: string;
   /** Wording of the chat button (the icon alone below the bar's `@lg` width). Default "Chat". Since 2.416.0. */
   chatLabel?: string;
   /** Disables the chat button and is its tooltip. Since 2.416.0. */
@@ -168,6 +196,10 @@ export function HuddleBar({
   onStart,
   startLabel = 'Huddle',
   startDisabledReason,
+  liveParticipants = [],
+  onJoin,
+  joinLabel = 'Join',
+  joinDisabledReason,
   chatLabel = 'Chat',
   chatDisabledReason,
   onLeave,
@@ -179,6 +211,10 @@ export function HuddleBar({
 }: HuddleBarProps) {
   const elapsed = useElapsed(startedAt, phase === 'live');
   const statusText = statusLabel === undefined ? PHASE_TEXT[phase] : statusLabel;
+  const joinable = phase === 'joinable';
+  // Not in the call: no timer, media, meeting controls or Leave.
+  const outside = phase === 'idle' || joinable;
+  const joinedCount = participantCount ?? liveParticipants.length;
   const media = (kind: 'microphone' | 'camera', m: HuddleBarMedia) => (
     <DeviceToggleSelect
       kind={kind}
@@ -208,6 +244,20 @@ export function HuddleBar({
         <T className="min-w-0 truncate" size="xs" weight={phase === 'idle' ? 'normal' : 'medium'} tone={phase === 'idle' ? 'secondary' : 'primary'} title={name} data-testid={`${testId}-name`}>
           {name}
         </T>
+        {joinable && (
+          <T className="shrink-0" size="xs" tone="secondary" data-testid={`${testId}-live`}>
+            huddle live · {joinedCount} joined
+          </T>
+        )}
+        {joinable && liveParticipants.length > 0 && (
+          <T className="hidden shrink-0 @sm:inline-flex" data-testid={`${testId}-avatars`}>
+            <PresenceAvatars
+              users={liveParticipants.map((p) => ({ id: p.id, name: p.displayName, ...(p.avatarUrl ? { avatarUrl: p.avatarUrl } : {}) }))}
+              maxVisible={3}
+              size={20}
+            />
+          </T>
+        )}
         {statusText != null && (
           <T className="shrink-0" size="xs" tone="secondary" data-testid={`${testId}-phase`}>
             {statusText}
@@ -218,7 +268,7 @@ export function HuddleBar({
             {formatCallElapsed(elapsed)}
           </T>
         )}
-        {participantCount !== undefined && (
+        {participantCount !== undefined && !joinable && (
           <T className="hidden shrink-0 @md:inline" size="xs" tone="secondary" data-testid={`${testId}-people`}>
             {peopleText(participantCount, ringingCount)}
           </T>
@@ -226,10 +276,10 @@ export function HuddleBar({
       </div>}
 
       <div className="ml-auto flex shrink-0 items-center gap-2">
-        {mic && media('microphone', mic)}
-        {camera && media('camera', camera)}
-        {shareSlot != null && <T className="items-center" data-testid={`${testId}-share`}>{shareSlot}</T>}
-        {onToggleMedia && (
+        {!joinable && mic && media('microphone', mic)}
+        {!joinable && camera && media('camera', camera)}
+        {!joinable && shareSlot != null && <T className="items-center" data-testid={`${testId}-share`}>{shareSlot}</T>}
+        {!joinable && onToggleMedia && (
           <Button
             variant={mediaOpen ? 'secondary' : 'ghost'}
             size="sm"
@@ -259,6 +309,21 @@ export function HuddleBar({
             {startLabel}
           </Button>
         )}
+        {joinable && onJoin && (
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={onJoin}
+            disabled={joinDisabledReason !== undefined}
+            title={joinDisabledReason}
+            aria-label={`${joinLabel} ${name} huddle`}
+            data-testid={`${testId}-join`}
+            className="gap-1.5"
+          >
+            <PhoneIcon size={16} />
+            {joinLabel}
+          </Button>
+        )}
         {onToggleChat && (
           <T className="relative inline-flex">
             <Button
@@ -286,11 +351,11 @@ export function HuddleBar({
             )}
           </T>
         )}
-        {phase !== 'idle' && meetingItems?.map((item) => (
+        {!outside && meetingItems?.map((item) => (
           <HuddleMeetingButton key={item.id} item={item} testId={`${testId}-meeting-${item.id}`} />
         ))}
         {extras}
-        {phase !== 'idle' && onLeave && <Button variant="danger-solid" size="sm" onClick={onLeave} aria-label={leaveLabel} data-testid={`${testId}-leave`} className="gap-1.5">
+        {!outside && onLeave && <Button variant="danger-solid" size="sm" onClick={onLeave} aria-label={leaveLabel} data-testid={`${testId}-leave`} className="gap-1.5">
           <PhoneOffIcon size={16} />
           <T className="hidden @lg:inline">{leaveLabel}</T>
         </Button>}
