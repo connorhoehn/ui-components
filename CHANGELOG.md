@@ -6,8 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
-## Unreleased
+## 2.480.0
 
+- Call host `roleKey`: the call's id and phase ride to `useMeeting` (realtime-modules 0.136.0), so whoever starts a huddle learns they organize it; before, the meeting answered "organizer?" once, on a subscribe that could beat the call's own registration.
+- `CallHostProviderProps.nameFor(userId)`: the app's directory names (and pictures) people the call knows only by id; passed to `useConversationCall` (realtime-modules 0.136.0) so tiles show names, not ids.
+- `ChatPanel`: a filling panel without the flush composer sits on `--ui-content-gutter` (16px) like the pane header and rows around it, not 12px.
 - `MeetingToolbar` is compact by default: 32px icon-only buttons with 18px icons (the size of the call dock's media toggles), the label shown as a `Tooltip` on hover or focus and kept as the accessible name (a disabled button keeps its reason as the native `title`, since it fires no pointer events), `count` (People, your place in the hand queue) and `badge` (unread) as small badges on the icon, the active pane's underline and the pressed fill unchanged, and a tighter bar (`min-h-10 px-2 py-1`, short dividers). New prop `labels?: 'tooltip' | 'visible'` (default `tooltip`); `labels="visible"` restores the earlier 56px labelled buttons. The phone layout and popover items work as before; phone buttons are 40px touch targets. The bar carries `data-labels`.
 - `meetingToolbarItems().raise` carries `count` (your 1-based place in the hand queue) while your hand is raised, so the queue position shows as a badge on the Raise button.
 - `BreakoutRoomsPanel` uses side-panel density: a 36px header with small title, one-line room rows (name, then `● Open · 2` beside it), 20px member avatars, tighter create/controls/unassigned sections. While every room is closed the list folds into one line, "3 rooms closed", with Show rooms / Hide rooms (`aria-expanded`) and, for organizers with `onDeleteRooms`, Start new rooms (testid `breakout-delete`, replacing the controls' Delete rooms while folded). Participants start folded; organizers start with the list (a closed set may be a draft they are planning) and it folds when the rooms end while the pane is up. New prop `collapseClosedRooms?: boolean` (default true; `false` always lists), also accepted by `WrappedBreakoutRoomsPanel`.

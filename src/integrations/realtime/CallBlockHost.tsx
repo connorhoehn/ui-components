@@ -124,6 +124,8 @@ export interface CallBlockModules extends ConversationCallDockModules {
     gateway?: never;
     discover?: boolean;
     initialMedia?: { micOn: boolean; cameraOn: boolean };
+    /** realtime-modules 0.136.0+: names (and pictures) for people the call's signalling knows only by id. */
+    nameFor?: (userId: string) => { displayName: string; avatarUrl?: string } | null | undefined;
     onCallStarted?(e: never): void;
     onCallEnded?(e: never): void;
     onCallMissed?(e: never): void;
@@ -210,6 +212,13 @@ export interface CallHostProviderProps {
   /** Accept was pressed on a ring: open the page the call is about. */
   onAccept?: (ring: CallBlockRing) => void;
   onCallEvent?: OnCallHostEvent;
+  /**
+   * The app's directory: a call participant's name and picture when the call
+   * itself only knows their id (a page huddle rings nobody). Tiles, the
+   * joinable footer and the rooms panes read names from the call (2.480.0;
+   * realtime-modules 0.136.0, ignored by older pins). Keep the reference stable.
+   */
+  nameFor?: (userId: string) => { displayName: string; avatarUrl?: string } | null | undefined;
   /**
    * Run a meeting beside the call (needs `useMeeting` in the modules): the
    * meeting id is the call's lobby, and the call's MEDIA follows the meeting
@@ -406,7 +415,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
 
   interface PreJoinRequest { kind: PreJoinKind; run(call: Call): void; cancel?(): void; initial: PreJoinChoice }
 
-  function Host({ self, tenant, platformApiUrl, getIdToken, gateway, gatewayConfigured, connectionState, onAccept, onCallEvent, meeting: meetingOption, preJoinStorageKey = DEFAULT_PRE_JOIN_KEY, children }: Omit<CallHostProviderProps, 'scopeKey' | 'videoUrl'>) {
+  function Host({ self, tenant, platformApiUrl, getIdToken, gateway, gatewayConfigured, connectionState, onAccept, onCallEvent, nameFor, meeting: meetingOption, preJoinStorageKey = DEFAULT_PRE_JOIN_KEY, children }: Omit<CallHostProviderProps, 'scopeKey' | 'videoUrl'>) {
     const [lobby, setLobby] = useState<CallLobby | null>(null);
     const pendingRing = useRef<CallBlockRing | null>(null);
     const hostRef = useRef<string | null>(null);
@@ -445,6 +454,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
       gateway: gateway as never,
       discover: !!lobby && gatewayConfigured,
       initialMedia: { micOn: initialMedia.micOn, cameraOn: initialMedia.cameraOn },
+      ...(nameFor ? { nameFor } : {}),
       ...(onCallEvent ? {
         onCallStarted: (e: never) => emit('started', e as CallHostEvent),
         onCallEnded: (e: never) => emit('ended', e as CallHostEvent),

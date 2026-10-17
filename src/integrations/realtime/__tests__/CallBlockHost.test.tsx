@@ -357,3 +357,15 @@ describe('CallBlockHost meeting seams (2.477.0)', () => {
   });
 });
 
+describe('CallBlockHost nameFor (2.480.0)', () => {
+  it('hands the app directory to the call hook', () => {
+    const nameFor = (uid: string) => uid === 'u-bob' ? { displayName: 'Bob Diaz' } : null;
+    const host = createCallBlockHost(modules);
+    render(<host.CallHostProvider self={{ userId: 'u-vera', displayName: 'Vera Green' }} tenant="orgiq" scopeKey="orgiq|u-vera"
+      platformApiUrl="http://platform" getIdToken={() => 'token'} videoUrl="http://sfu" gateway={{}} gatewayConfigured connectionState="connected" nameFor={nameFor}>
+      <span />
+    </host.CallHostProvider>);
+    expect(latestCallOptions.nameFor).toBe(nameFor);
+  });
+});
+
