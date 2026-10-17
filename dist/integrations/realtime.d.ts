@@ -422,6 +422,12 @@ export declare interface CallBlockCall extends RMConversationCallSource {
         host?: string | null;
         startedAt?: number | null;
     }) | null;
+    /** realtime-modules 0.137.0: whether this client's media session records (older pins: absent). */
+    recording?: {
+        enabled: boolean;
+        reason: string | null;
+        sessionId: string;
+    } | null;
     start(targets: {
         userId: string;
         displayName?: string;
@@ -687,6 +693,15 @@ export declare interface CallMediaOutletProps {
     extras?: ReactNode;
     /** An info line above the shelf (ConversationCallDock `notice`). Since 2.477.0. */
     notice?: ReactNode;
+    /**
+     * The recording consent notice, drawn above the shelf while the call's media
+     * session records (realtime-modules 0.137.0 `call.recording`), dismissed per
+     * session. `false` turns it off; the object names the privacy link. Since 2.480.1.
+     */
+    recordingConsent?: false | {
+        privacyHref?: string;
+        privacyLabel?: string;
+    };
     /** The dock's test id for a lobby (default `conversation-call-dock`). */
     dockTestId?: (lobby: CallLobby, tenant: string | null) => string;
 }
@@ -2075,7 +2090,7 @@ declare interface ConversationSurfaceProps {
 /** Bind the host to the installed realtime-modules call hooks. Call once, at module scope. */
 export declare function createCallBlockHost<M extends CallBlockModules>(rm: M): {
     CallHostProvider: ({ scopeKey, videoUrl, children, ...rest }: CallHostProviderProps) => JSX.Element;
-    CallMediaOutlet: ({ id, onOpenPeople, onOpenDocument, overlay, header, extras, notice, dockTestId }: CallMediaOutletProps) => JSX.Element | null;
+    CallMediaOutlet: ({ id, onOpenPeople, onOpenDocument, overlay, header, extras, notice, recordingConsent, dockTestId }: CallMediaOutletProps) => JSX.Element | null;
     CallBlock: ({ placement, compact, documents, className }: CallBlockProps) => JSX.Element;
     PreJoinDialog: ({ kind, title, selfName, selfAvatarUrl, initial, onJoin, onCancel }: {
         kind: PreJoinKind;

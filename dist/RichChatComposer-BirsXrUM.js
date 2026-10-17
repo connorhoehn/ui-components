@@ -2558,7 +2558,7 @@ var Pa = _e(function({ onSend: c, draft: p, onDraftChange: b, onCommand: S, onSe
 	E(() => ($t.current = !0, () => {
 		$t.current = !1;
 	}), []);
-	let [en, tn] = O(!1), [R, nn] = O(!1), rn = ze != null && ze !== !1, an = ze === !0 ? "Read only" : ze, z = Re || rn || en, on = Re || rn, [sn, cn] = O(!0), ln = ke && !z, B = !!Ze || !!Qe, V = ot?.length ? fa.filter((e) => ot.includes(e)) : fa, H = Qe ?? (B ? V.includes(Xe) ? Xe : V[0] ?? "chat" : "chat"), un = H === "terminal", dn = B && H !== "chat", fn = $e?.[H] ?? (H === "chat" ? Me : _a[H]), pn = !!Ze && !Qe, mn = xt && B && !Qe && V.length === 1, hn = D(null), gn = D(!1), [_n, vn] = O(null), yn = (e) => !!F?.includes(e), bn = rn && !V.some((e) => e !== H && !yn(e)), xn = rn && !bn ? { "data-composer-readonly-allow": "Switch to a mode you can use" } : void 0, Sn = (e) => !pn || !V.includes(e) ? !1 : yn(e) ? (vn(I?.[e] ?? `${$[e]} is not available here`), !1) : (vn(null), e !== H && (gn.current = !0, Ze?.(e)), !0), Cn = P && pn ? {
+	let [en, tn] = O(!1), [R, nn] = O(!1), rn = ze != null && ze !== !1, an = ze === !0 ? "Read only" : ze, z = Re || rn || en, on = Re || rn, [sn, cn] = O(!0), ln = ke && !z, B = !!Ze || !!Qe, V = ot?.length ? fa.filter((e) => ot.includes(e)) : fa, H = Qe ?? (B ? V.includes(Xe) ? Xe : V[0] ?? "chat" : "chat"), un = H === "terminal", dn = B && H !== "chat", fn = rn ? "" : $e?.[H] ?? (H === "chat" ? Me : _a[H]), pn = !!Ze && !Qe, mn = xt && B && !Qe && V.length === 1, hn = D(null), gn = D(!1), [_n, vn] = O(null), yn = (e) => !!F?.includes(e), bn = rn && !V.some((e) => e !== H && !yn(e)), xn = rn && !bn ? { "data-composer-readonly-allow": "Switch to a mode you can use" } : void 0, Sn = (e) => !pn || !V.includes(e) ? !1 : yn(e) ? (vn(I?.[e] ?? `${$[e]} is not available here`), !1) : (vn(null), e !== H && (gn.current = !0, Ze?.(e)), !0), Cn = P && pn ? {
 		terminal: (typeof P == "object" ? P.terminalPrefix : void 0) ?? ma,
 		agent: (typeof P == "object" ? P.agentPrefix : void 0) ?? ha
 	} : null, wn = D(() => !1);
@@ -3763,7 +3763,7 @@ var Pa = _e(function({ onSend: c, draft: p, onDraftChange: b, onCommand: S, onSe
 										})]
 									}), /* @__PURE__ */ k(Ce, {
 										editor: G,
-										className: rn && sn ? "hidden" : void 0
+										className: rn ? "cursor-not-allowed opacity-60" : void 0
 									})]
 								})
 							]
