@@ -36,10 +36,10 @@ describe('conversation host gutters', () => {
     expect(screen.getByTestId('chat-panel-composer-slot')).not.toHaveClass(contentGutter);
   });
 
-  it('keeps existing padding for panels without the flush custom composer option', () => {
+  it('a filling panel without the flush composer sits on the content gutter, like the pane header and rows around it', () => {
     const mounted = render(<ChatPanel messages={[]} onSend={() => {}} fill
       composer={<div>Input</div>} />);
-    expect(screen.getByTestId('chat-panel')).toHaveClass('px-3', 'pb-3');
+    expect(screen.getByTestId('chat-panel')).toHaveClass('px-[var(--ui-content-gutter,1rem)]', 'pb-3');
     mounted.rerender(<ChatPanel messages={[]} onSend={() => {}} composer={<div>Input</div>} />);
     expect(screen.getByTestId('chat-panel')).toHaveClass('p-3', 'border');
     expect(screen.getByTestId('chat-panel-messages').parentElement).not.toHaveClass(contentGutter);

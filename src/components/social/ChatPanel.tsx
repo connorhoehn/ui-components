@@ -2791,7 +2791,7 @@ export function ChatPanel({
         // top margin — that margin plus the card's padding was the empty
         // strip between the dock's tab bar and the first message.
         fills
-          ? cn('flex h-full min-h-0 flex-col pt-2', flushComposer && composer ? 'px-0 pb-0' : 'px-3 pb-3')
+          ? cn('flex h-full min-h-0 flex-col pt-2', flushComposer && composer ? 'px-0 pb-0' : 'px-[var(--ui-content-gutter,1rem)] pb-3')
           : cn('border rounded mt-4', flushComposer && composer ? 'px-0 pt-3 pb-0' : 'p-3', dark ? 'border-white/10 bg-white/5' : 'border-border'),
       )}
     >
