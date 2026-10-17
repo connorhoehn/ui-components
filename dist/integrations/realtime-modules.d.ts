@@ -374,6 +374,14 @@ declare interface BreakoutRoomsPanelProps {
     onAddRoom?: () => void;
     /** The server's room cap; Add room is disabled at it. Default 50. */
     maxRooms?: number;
+    /**
+     * Fold the list into one "N rooms closed" line while every room is closed
+     * (2.480.0). Default true. Participants start folded; organizers start
+     * with the list (closed rooms may be a draft they are planning) and it folds
+     * when the rooms are ended while the pane is up (open → draft). Show rooms /
+     * Hide rooms toggles it; `false` always lists the rooms.
+     */
+    collapseClosedRooms?: boolean;
     /** The header ✕. Omitted: no close button. */
     onClose?: () => void;
     title?: string;
@@ -2477,7 +2485,7 @@ export declare function meetingRosterProps(meeting: Pick<RMMeetingSource, 'hands
 declare interface MeetingToolbarItem {
     /** Stable id; the button's testid is `meeting-toolbar-<id>`. */
     id: string;
-    /** Text under the icon, and the accessible name. */
+    /** The accessible name and the hover tooltip (text under the icon with `labels="visible"`). */
     label: string;
     icon: ReactNode;
     onClick?: () => void;
@@ -2485,7 +2493,7 @@ declare interface MeetingToolbarItem {
     active?: boolean;
     /** A toggle that is on (hand raised): filled, `aria-pressed`. */
     pressed?: boolean;
-    /** A number shown beside the icon — the People count. */
+    /** A number on the icon — the People count, your place in the hand queue. A small badge by default; beside the icon with `labels="visible"`. */
     count?: number;
     /** An unread/attention badge on the icon — new chat messages. */
     badge?: number;
@@ -3946,7 +3954,7 @@ export declare function WrappedBreakoutRoomBanner({ meeting, className }: {
 
 export declare function WrappedBreakoutRoomsPanel({ meeting, people, roomNames, renderError, ...rest }: WrappedBreakoutRoomsPanelProps): JSX.Element;
 
-export declare interface WrappedBreakoutRoomsPanelProps extends Pick<BreakoutRoomsPanelProps, 'onClose' | 'title' | 'timerMinutes' | 'maxRooms' | 'className' | 'data-testid'> {
+export declare interface WrappedBreakoutRoomsPanelProps extends Pick<BreakoutRoomsPanelProps, 'onClose' | 'title' | 'timerMinutes' | 'maxRooms' | 'collapseClosedRooms' | 'className' | 'data-testid'> {
     meeting: RMMeetingSource;
     /** Everyone in the meeting (the call roster), for names and the "not in a room" list. */
     people: RMMeetingPerson[];

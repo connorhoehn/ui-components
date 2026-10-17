@@ -33,7 +33,7 @@ import { l as he } from "./railType-C-v_XDgr.js";
 import { n as ge, s as _e, t as ve } from "./PopoverForm-ssRJdFGx.js";
 import { t as ye } from "./InlinePlaceholder-DiPQ7hOM.js";
 import { t as be } from "./MetaLine-DFn2XXGU.js";
-import { F as xe, R as Se, j as Ce, lt as we, rt as Te, st as Ee, tt as De } from "./ConversationSurface-DPLksQCd.js";
+import { F as xe, R as Se, j as Ce, lt as we, rt as Te, st as Ee, tt as De } from "./ConversationSurface-D8_alXXy.js";
 import "./ChatSidePanelRegistry-CVx-Xjtg.js";
 import { t as Oe } from "./rovingFocus-Bj5Y6kwY.js";
 import { n as ke, t as Ae } from "./ReactionPickerPopover-DJgbcskc.js";

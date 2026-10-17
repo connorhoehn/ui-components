@@ -21,8 +21,8 @@ import { t as w } from "./PresenceAvatars-CxgG8QFo.js";
 import { t as T } from "./FileUploadDrop-DrckU_7j.js";
 import { t as E } from "./ActivityFeed-Cp6MhNab.js";
 import { a as D, i as O, n as k, o as A } from "./DockedAside-BDA5tJ1T.js";
-import { d as j, dt as M, lt as N, n as P, t as F, u as ee, ut as te } from "./ConversationSurface-DPLksQCd.js";
-import { E as I, G as ne, R as re, T as ie, Y as L, _ as R, i as ae, k as oe, n as se, q as ce, s as z, t as le, w as ue, x as de, y as fe } from "./BreakoutRoomsPanel-GjVHplSq.js";
+import { d as j, dt as M, lt as N, n as P, t as F, u as ee, ut as te } from "./ConversationSurface-D8_alXXy.js";
+import { E as I, G as ne, R as re, T as ie, Y as L, _ as R, i as ae, k as oe, n as se, q as ce, s as z, t as le, w as ue, x as de, y as fe } from "./BreakoutRoomsPanel-DuqdYSWL.js";
 import { t as pe } from "./useActiveSpeaker-BGKJU3Lb.js";
 import { c as B, o as me, s as he } from "./useDocumentImageUpload-DBdEslx6.js";
 import { Component as V, createContext as H, createElement as ge, useCallback as U, useContext as _e, useEffect as W, useMemo as G, useRef as K, useState as q } from "react";
@@ -2135,7 +2135,7 @@ function _n({ meeting: e, people: t, roomNames: n, renderError: r, ...i }) {
 		onRenameRoom: e.renameRoom,
 		notice: e.error ? r?.(e.error) ?? /* @__PURE__ */ Y(u, {
 			variant: "error",
-			className: "mx-4 mt-3",
+			className: "mx-3 mt-2",
 			"data-testid": "breakout-error",
 			children: e.error.message
 		}) : null
@@ -2193,6 +2193,7 @@ function yn(e, t) {
 			label: n ? "Lower" : "Raise",
 			title: n ? `Lower your hand (${e.myHandPosition} in line)` : "Raise your hand",
 			icon: /* @__PURE__ */ Y(ne, {}),
+			...e.myHandPosition === null ? {} : { count: e.myHandPosition },
 			pressed: n,
 			onClick: e.toggleHand,
 			disabled: !e.ready

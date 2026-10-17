@@ -2269,6 +2269,14 @@ export declare interface BreakoutRoomsPanelProps {
     onAddRoom?: () => void;
     /** The server's room cap; Add room is disabled at it. Default 50. */
     maxRooms?: number;
+    /**
+     * Fold the list into one "N rooms closed" line while every room is closed
+     * (2.480.0). Default true. Participants start folded; organizers start
+     * with the list (closed rooms may be a draft they are planning) and it folds
+     * when the rooms are ended while the pane is up (open → draft). Show rooms /
+     * Hide rooms toggles it; `false` always lists the rooms.
+     */
+    collapseClosedRooms?: boolean;
     /** The header ✕. Omitted: no close button. */
     onClose?: () => void;
     title?: string;
@@ -11405,7 +11413,14 @@ export declare interface HoverCardTriggerProps {
 
 export declare type HoverCardWidth = 'sm' | 'md' | 'lg' | 'xl';
 
-export declare function HuddleBar({ name, showContext, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, startDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, meetingItems, extras, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
+export declare function HuddleBar({ name, showContext, phase, statusLabel, startedAt, participantCount, ringingCount, mic, camera, shareSlot, onToggleChat, chatOpen, chatUnread, onToggleMedia, mediaOpen, mediaToggleLabel, onStart, startLabel, startDisabledReason, liveParticipants, onJoin, joinLabel, joinDisabledReason, chatLabel, chatDisabledReason, onLeave, leaveLabel, meetingItems, extras, className, 'data-testid': testId, }: HuddleBarProps): JSX.Element;
+
+/** Someone in a huddle you have not joined (`phase="joinable"`). */
+export declare interface HuddleBarLiveParticipant {
+    id: string;
+    displayName: string;
+    avatarUrl?: string;
+}
 
 /** One media control: the toggle, and an optional device list behind a caret. */
 export declare interface HuddleBarMedia {
@@ -11421,7 +11436,7 @@ export declare interface HuddleBarMedia {
     disabledReason?: string;
 }
 
-export declare type HuddleBarPhase = 'idle' | 'live' | 'connecting' | 'ringing' | 'reconnecting' | 'ended';
+export declare type HuddleBarPhase = 'idle' | 'joinable' | 'live' | 'connecting' | 'ringing' | 'reconnecting' | 'ended';
 
 export declare interface HuddleBarProps {
     /** The call's name: the place or person it is with. */
@@ -11431,7 +11446,11 @@ export declare interface HuddleBarProps {
     /**
      * Default `live`. `idle` is the pre-call bar: `name` is the page's context,
      * the bar draws `onStart` and the chat button (and no timer, counts, media
-     * or Leave). Since 2.416.0.
+     * or Leave). Since 2.416.0. `joinable` (2.480.0): a huddle is live on this
+     * context and the viewer is not in it — "<name> huddle live · N joined"
+     * (`participantCount`, else the length of `liveParticipants`), an avatar
+     * stack of `liveParticipants` and a primary Join (`onJoin`) in place of the
+     * Huddle start button; no timer, media or Leave.
      */
     phase?: HuddleBarPhase;
     /**
@@ -11466,6 +11485,14 @@ export declare interface HuddleBarProps {
     startLabel?: string;
     /** Idle only: disables the start button and is its tooltip. */
     startDisabledReason?: string;
+    /** Joinable only: who is in the huddle, for the avatar stack. Since 2.480.0. */
+    liveParticipants?: HuddleBarLiveParticipant[];
+    /** Joinable only: join the running huddle. Absent: no Join button. Since 2.480.0. */
+    onJoin?: () => void;
+    /** Joinable only: label of the Join button. Default "Join". */
+    joinLabel?: string;
+    /** Joinable only: disables Join and is its tooltip. */
+    joinDisabledReason?: string;
     /** Wording of the chat button (the icon alone below the bar's `@lg` width). Default "Chat". Since 2.416.0. */
     chatLabel?: string;
     /** Disables the chat button and is its tooltip. Since 2.416.0. */
@@ -13468,8 +13495,8 @@ export declare interface MediaPrecheckRowProps {
     className?: string;
 }
 
-/** The button look, shared by plain buttons, split halves and the More trigger. */
-export declare const MEETING_TOOLBAR_BUTTON: string;
+/** The labelled (`labels="visible"`) button: 56px, label under the icon. */
+export declare const MEETING_TOOLBAR_BUTTON = "relative inline-flex flex-col items-center justify-center rounded-md text-text-secondary transition-colors duration-100 hover:bg-surface-hover hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent h-14 min-w-14 gap-0.5 px-2";
 
 /** A plus in a square: Apps. */
 export declare function MeetingAppsIcon({ size, ...rest }: IconProps): JSX.Element;
@@ -13512,12 +13539,12 @@ export declare interface MeetingStatusClusterProps {
     'data-testid'?: string;
 }
 
-export declare function MeetingToolbar({ start, items, media, moreSections, onLeave, leaveLabel, leaveMenu, compactBelow, compact, phoneBelow, phone: forcedPhone, className, 'data-testid': testId, }: MeetingToolbarProps): JSX.Element;
+export declare function MeetingToolbar({ start, items, media, moreSections, onLeave, leaveLabel, leaveMenu, compactBelow, compact, phoneBelow, phone: forcedPhone, labels, className, 'data-testid': testId, }: MeetingToolbarProps): JSX.Element;
 
 export declare interface MeetingToolbarItem {
     /** Stable id; the button's testid is `meeting-toolbar-<id>`. */
     id: string;
-    /** Text under the icon, and the accessible name. */
+    /** The accessible name and the hover tooltip (text under the icon with `labels="visible"`). */
     label: string;
     icon: ReactNode;
     onClick?: () => void;
@@ -13525,7 +13552,7 @@ export declare interface MeetingToolbarItem {
     active?: boolean;
     /** A toggle that is on (hand raised): filled, `aria-pressed`. */
     pressed?: boolean;
-    /** A number shown beside the icon — the People count. */
+    /** A number on the icon — the People count, your place in the hand queue. A small badge by default; beside the icon with `labels="visible"`. */
     count?: number;
     /** An unread/attention badge on the icon — new chat messages. */
     badge?: number;
@@ -13582,6 +13609,12 @@ export declare interface MeetingToolbarProps {
     phoneBelow?: number;
     /** Force the phone layout (tests, a known phone host); otherwise measured. */
     phone?: boolean;
+    /**
+     * `tooltip` (default since 2.480.0): small icon-only buttons, the label shown
+     * as a tooltip on hover or focus and kept as the accessible name. `visible`:
+     * the earlier 56px buttons with the label under the icon.
+     */
+    labels?: 'tooltip' | 'visible';
     className?: string;
     'data-testid'?: string;
 }

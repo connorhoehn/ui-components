@@ -375,6 +375,14 @@ declare interface BreakoutRoomsPanelProps {
     onAddRoom?: () => void;
     /** The server's room cap; Add room is disabled at it. Default 50. */
     maxRooms?: number;
+    /**
+     * Fold the list into one "N rooms closed" line while every room is closed
+     * (2.480.0). Default true. Participants start folded; organizers start
+     * with the list (closed rooms may be a draft they are planning) and it folds
+     * when the rooms are ended while the pane is up (open → draft). Show rooms /
+     * Hide rooms toggles it; `false` always lists the rooms.
+     */
+    collapseClosedRooms?: boolean;
     /** The header ✕. Omitted: no close button. */
     onClose?: () => void;
     title?: string;
@@ -463,6 +471,11 @@ export declare interface CallBlockModules extends ConversationCallDockModules {
             micOn: boolean;
             cameraOn: boolean;
         };
+        /** realtime-modules 0.136.0+: names (and pictures) for people the call's signalling knows only by id. */
+        nameFor?: (userId: string) => {
+            displayName: string;
+            avatarUrl?: string;
+        } | null | undefined;
         onCallStarted?(e: never): void;
         onCallEnded?(e: never): void;
         onCallMissed?(e: never): void;
@@ -490,6 +503,8 @@ export declare interface CallBlockModules extends ConversationCallDockModules {
     useMeeting?(meetingId: string | null, opts: {
         enabled?: boolean;
         chatChannel?: string;
+        /** realtime-modules 0.136: ask organizer status again when this changes (an older pin ignores it). */
+        roleKey?: string | number | null;
         socket?: {
             send(msg: Record<string, unknown>): void;
             onMessage(handler: (msg: never) => void): () => void;
@@ -581,6 +596,16 @@ export declare interface CallHostProviderProps {
     /** Accept was pressed on a ring: open the page the call is about. */
     onAccept?: (ring: CallBlockRing) => void;
     onCallEvent?: OnCallHostEvent;
+    /**
+     * The app's directory: a call participant's name and picture when the call
+     * itself only knows their id (a page huddle rings nobody). Tiles, the
+     * joinable footer and the rooms panes read names from the call (2.480.0;
+     * realtime-modules 0.136.0, ignored by older pins). Keep the reference stable.
+     */
+    nameFor?: (userId: string) => {
+        displayName: string;
+        avatarUrl?: string;
+    } | null | undefined;
     /**
      * Run a meeting beside the call (needs `useMeeting` in the modules): the
      * meeting id is the call's lobby, and the call's MEDIA follows the meeting
@@ -2807,7 +2832,7 @@ export declare function meetingRosterProps(meeting: Pick<RMMeetingSource, 'hands
 declare interface MeetingToolbarItem {
     /** Stable id; the button's testid is `meeting-toolbar-<id>`. */
     id: string;
-    /** Text under the icon, and the accessible name. */
+    /** The accessible name and the hover tooltip (text under the icon with `labels="visible"`). */
     label: string;
     icon: ReactNode;
     onClick?: () => void;
@@ -2815,7 +2840,7 @@ declare interface MeetingToolbarItem {
     active?: boolean;
     /** A toggle that is on (hand raised): filled, `aria-pressed`. */
     pressed?: boolean;
-    /** A number shown beside the icon — the People count. */
+    /** A number on the icon — the People count, your place in the hand queue. A small badge by default; beside the icon with `labels="visible"`. */
     count?: number;
     /** An unread/attention badge on the icon — new chat messages. */
     badge?: number;
@@ -4326,7 +4351,7 @@ export declare function WrappedBreakoutRoomBanner({ meeting, className }: {
 
 export declare function WrappedBreakoutRoomsPanel({ meeting, people, roomNames, renderError, ...rest }: WrappedBreakoutRoomsPanelProps): JSX.Element;
 
-export declare interface WrappedBreakoutRoomsPanelProps extends Pick<BreakoutRoomsPanelProps, 'onClose' | 'title' | 'timerMinutes' | 'maxRooms' | 'className' | 'data-testid'> {
+export declare interface WrappedBreakoutRoomsPanelProps extends Pick<BreakoutRoomsPanelProps, 'onClose' | 'title' | 'timerMinutes' | 'maxRooms' | 'collapseClosedRooms' | 'className' | 'data-testid'> {
     meeting: RMMeetingSource;
     /** Everyone in the meeting (the call roster), for names and the "not in a room" list. */
     people: RMMeetingPerson[];

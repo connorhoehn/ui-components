@@ -2588,7 +2588,7 @@ function rn({ messages: n, localMessages: r = [], onSend: i, disabled: o = !1, o
 	}
 	let Fn = /* @__PURE__ */ K("div", {
 		"data-testid": "chat-panel",
-		className: e(it ? e("flex h-full min-h-0 flex-col pt-2", je && u ? "px-0 pb-0" : "px-3 pb-3") : e("border rounded mt-4", je && u ? "px-0 pt-3 pb-0" : "p-3", Z ? "border-white/10 bg-white/5" : "border-border")),
+		className: e(it ? e("flex h-full min-h-0 flex-col pt-2", je && u ? "px-0 pb-0" : "px-[var(--ui-content-gutter,1rem)] pb-3") : e("border rounded mt-4", je && u ? "px-0 pt-3 pb-0" : "p-3", Z ? "border-white/10 bg-white/5" : "border-border")),
 		children: [
 			rt && /* @__PURE__ */ K("div", {
 				className: e("text-sm font-semibold mb-2 shrink-0", je && u && "mx-[var(--ui-content-gutter,1rem)]", Z ? "text-white/90" : "text-text-primary"),
