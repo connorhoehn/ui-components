@@ -169,6 +169,13 @@ export interface CallLobby {
 
 export interface CallHostValue<C extends CallBlockCall> {
   call: C;
+  /**
+   * The one-line recording note while the call's media session records and
+   * this viewer has not dismissed it for that session (2.480.2), else null.
+   * A stage header puts it in its row (e.g. `MeetingToolbar start`); the
+   * outlet draws it above the shelf when no meeting stage holds it.
+   */
+  recordingNote: ReactNode | null;
   /** The lobby the call is bound to; null until a page binds one or a ring is answered. */
   lobby: CallLobby | null;
   /** Bind this page's lobby. Ignored while a call is in progress or a ring is being answered. */
@@ -222,6 +229,8 @@ export interface CallHostProviderProps {
    * realtime-modules 0.136.0, ignored by older pins). Keep the reference stable.
    */
   nameFor?: (userId: string) => { displayName: string; avatarUrl?: string } | null | undefined;
+  /** The recording note's privacy link, or `false` for no note at all (2.480.2). */
+  recordingConsent?: false | { privacyHref?: string; privacyLabel?: string };
   /**
    * Run a meeting beside the call (needs `useMeeting` in the modules): the
    * meeting id is the call's lobby, and the call's MEDIA follows the meeting
@@ -424,7 +433,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
 
   interface PreJoinRequest { kind: PreJoinKind; run(call: Call): void; cancel?(): void; initial: PreJoinChoice }
 
-  function Host({ self, tenant, platformApiUrl, getIdToken, gateway, gatewayConfigured, connectionState, onAccept, onCallEvent, nameFor, meeting: meetingOption, preJoinStorageKey = DEFAULT_PRE_JOIN_KEY, children }: Omit<CallHostProviderProps, 'scopeKey' | 'videoUrl'>) {
+  function Host({ self, tenant, platformApiUrl, getIdToken, gateway, gatewayConfigured, connectionState, onAccept, onCallEvent, nameFor, recordingConsent: consentOption, meeting: meetingOption, preJoinStorageKey = DEFAULT_PRE_JOIN_KEY, children }: Omit<CallHostProviderProps, 'scopeKey' | 'videoUrl'>) {
     const [lobby, setLobby] = useState<CallLobby | null>(null);
     const pendingRing = useRef<CallBlockRing | null>(null);
     const hostRef = useRef<string | null>(null);
@@ -571,10 +580,19 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
         : null));
     }, [liveLobby, liveCallId, livePhase]);
 
+    // Recording consent: one dismissal per media session, shared by the stage header and the dock.
+    const recording = consentOption !== false && callDrawn(call.phase, true) ? call.recording ?? null : null;
+    const consent = useConsentDismissal(recording?.enabled ? `call-recording:${recording.sessionId}` : null);
+    const privacyHref = consentOption ? consentOption.privacyHref : undefined;
+    const privacyLabel = consentOption ? consentOption.privacyLabel : undefined;
+    const recordingNote = useMemo(() => (recording?.enabled && !consent.dismissed
+      ? <RecordingConsentNotice open kind="recording" placement="line" onDismiss={consent.dismiss}
+          {...(privacyHref ? { privacyHref } : {})} {...(privacyLabel ? { privacyLabel } : {})} />
+      : null), [recording?.enabled, consent.dismissed, consent.dismiss, privacyHref, privacyLabel]);
     const value = useMemo<CallHostValue<Call>>(() => ({
-      call, lobby, bind, unbind, startBound: lobby && starterRef.current ? startBound : null, self: selfValue, tenant,
+      call, recordingNote, lobby, bind, unbind, startBound: lobby && starterRef.current ? startBound : null, self: selfValue, tenant,
       gatewayConfigured, connectionState, platformApiUrl, unavailableReason, checkDevices, meeting,
-    }), [call, lobby, bind, unbind, startBound, selfValue, tenant, gatewayConfigured, connectionState, platformApiUrl, unavailableReason, checkDevices, meeting]);
+    }), [call, recordingNote, lobby, bind, unbind, startBound, selfValue, tenant, gatewayConfigured, connectionState, platformApiUrl, unavailableReason, checkDevices, meeting]);
 
     const head = rings.rings[0] ?? null;
     return (
@@ -762,12 +780,10 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
       const at = new Map(hands.map((h, i) => [h.userId, i + 1]));
       return (userId: string) => at.get(userId);
     }, [hands]);
-    // Recording consent: while the session records, until dismissed for that session.
-    const recording = draw && recordingConsent !== false ? host?.call.recording ?? null : null;
-    const consent = useConsentDismissal(recording?.enabled ? `call-recording:${recording.sessionId}` : null);
-    const consentNotice = recording?.enabled && !consent.dismissed ? <RecordingConsentNotice open kind="recording" placement="inline"
-      onDismiss={consent.dismiss} {...(recordingConsent && recordingConsent.privacyHref ? { privacyHref: recordingConsent.privacyHref } : {})}
-      {...(recordingConsent && recordingConsent.privacyLabel ? { privacyLabel: recordingConsent.privacyLabel } : {})} /> : null;
+    // The recording note: in the meeting stage's own row when a stage header holds it, else above the shelf.
+    // Only while the header is actually drawn: a page holds the dock (the footer shelf draws no header).
+    const stageHoldsNote = !!target && header !== undefined && header !== null && !!host?.meeting;
+    const consentNotice = recordingConsent === false || stageHoldsNote ? null : host?.recordingNote ?? null;
     const shownNotice = consentNotice && notice !== undefined ? <Stack gap="xs">{consentNotice}{notice}</Stack> : consentNotice ?? notice;
     const dock = draw && lobby && host ? <ConversationCallDock
       call={host.call}

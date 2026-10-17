@@ -653,6 +653,14 @@ describe('ChatPanel post rhythm', () => {
     return screen.getAllByTestId('message-row-author').length;
   }
 
+  it("postRhythm='chat' groups one person's consecutive posts under one head, with no hairline (2.480.2)", () => {
+    render(<ChatPanel threaded postRhythm="chat" messages={posts} onSend={vi.fn()} onReply={vi.fn()} />);
+    expect(heads()).toBe(1);
+    expect(screen.queryAllByTestId('chat-post-boundary')).toHaveLength(0);
+    expect(rowOf('p2').getAttribute('data-continues')).toBe('true');
+    expect(rowOf('p3').getAttribute('data-continues')).toBe('true');
+  });
+
   it('keeps consecutive posts separate, each with its own head', () => {
     render(<ChatPanel threaded messages={posts} onSend={vi.fn()} onReply={vi.fn()} />);
     // A post is a thread starter, so three posts stay three posts — no run

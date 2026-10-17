@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.480.2
+
+- `RecordingConsentNotice placement="line"`: one compact line (a red dot, "Recording · by attending you agree to be included", dismiss inline) that truncates rather than wraps; no title block, no band.
+- The call host owns the recording note (`useCallHost().recordingNote`, one dismissal per media session): a meeting stage puts it in its toolbar row (`MeetingToolbar start`, left of the controls); the outlet draws it above the shelf only when no drawn stage header holds it (the footer shelf, a lobby without a meeting). `CallHostProviderProps.recordingConsent` names the privacy link or turns it off.
+- `ChatPanel postRhythm="chat"` (and `WrappedChatPanel`): in threaded mode, one person's consecutive posts group under one head with no hairline between posts, for a call's huddle chat; `channel` (default) keeps the Teams-channel rhythm.
+
 ## 2.480.1
 
 - Read-only composer keeps a visible, disabled editor (ui-dom-audit `composer.presence` counts it): the textbox stays on screen, `contenteditable=false`, `aria-disabled`/`aria-readonly`, described by the read-only note, with no inviting placeholder; before, an empty read-only editor was hidden and the frame showed no input.

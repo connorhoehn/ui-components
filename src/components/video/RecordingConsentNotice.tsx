@@ -22,8 +22,13 @@ export interface RecordingConsentNoticeProps {
   privacyHref?: string;
   privacyLabel?: string;
   onDismiss: () => void;
-  /** `overlay` (default) floats over the stage; `inline` sits in the flow. */
-  placement?: 'overlay' | 'inline';
+  /**
+   * `overlay` (default) floats over the stage; `inline` sits in the flow;
+   * `line` is one compact text line (a red dot, "Recording · by attending you
+   * agree to be included", the dismiss inline) that truncates rather than
+   * wraps, for a call's stage header row (2.480.2).
+   */
+  placement?: 'overlay' | 'inline' | 'line';
   className?: string;
   'data-testid'?: string;
 }
@@ -47,6 +52,26 @@ export function RecordingConsentNotice({
 }: RecordingConsentNoticeProps) {
   if (!open) return null;
   const title = RECORDING_CONSENT_TITLES[kind];
+  if (placement === 'line') {
+    const sentence = `${title}${startedBy ? ` by ${startedBy}` : ''} · by attending you agree to be included`;
+    return (
+      <div role="status" aria-live="polite" aria-label={title} data-testid={testId} data-kind={kind} data-placement="line"
+        title={sentence}
+        className={cn('flex h-8 min-w-0 items-center gap-1.5', className)}>
+        <span aria-hidden className="h-2 w-2 shrink-0 rounded-full bg-danger" />
+        <T size="xs" tone="secondary" className="min-w-0 truncate">{sentence}</T>
+        {privacyHref && (
+          <T size="xs" className="shrink-0">
+            <Link href={privacyHref} external className="text-primary-fg underline" data-testid={`${testId}-privacy`}>
+              {privacyLabel}
+            </Link>
+          </T>
+        )}
+        <IconButton aria-label="Dismiss recording note" variant="ghost" size="sm" icon={<CloseIcon />} onClick={onDismiss}
+          className="h-6 w-6 shrink-0" data-testid={`${testId}-dismiss`} />
+      </div>
+    );
+  }
   return (
     <section
       role="status"

@@ -228,6 +228,8 @@ export interface WrappedChatPanelProps {
   unreadFrom?: string;
   /** Nest replies under their root message (realtime-examples `DocumentChatPanel.tsx:856`). */
   threaded?: boolean;
+  /** ChatPanel `postRhythm`: `chat` groups a person's consecutive posts in threaded mode (2.480.2). */
+  postRhythm?: ChatPanelProps['postRhythm'];
   onJumpToMessage?: (messageId: string) => void;
   highlightedMessageId?: string | null;
   documentEditors?: ChatPanelProps['documentEditors'];
@@ -299,6 +301,7 @@ export function WrappedChatPanel({
   readReceiptsEnabled,
   unreadFrom,
   threaded,
+  postRhythm,
   onJumpToMessage,
   highlightedMessageId,
   documentEditors,
@@ -541,6 +544,7 @@ export function WrappedChatPanel({
       readReceiptsEnabled={readReceiptsEnabled}
       unreadFrom={unreadFrom}
       threaded={threaded}
+      {...(postRhythm ? { postRhythm } : {})}
       onJumpToMessage={onJumpToMessage}
       highlightedMessageId={highlightedMessageId}
       documentEditors={documentEditors}

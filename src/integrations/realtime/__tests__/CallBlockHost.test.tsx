@@ -345,7 +345,8 @@ describe('CallBlockHost meeting seams (2.477.0)', () => {
   });
 
   it('the outlet shows recording consent while the session records, until dismissed for that session (2.480.1)', async () => {
-    const always = () => true;
+    // No meeting on this lobby, so no stage holds the note: the dock draws it.
+    const always = () => false;
     phase = 'idle';
     const r = render(<GatedShell enabledFor={always}><GatedPage lobby="orgiq:initiative:p-auth" /></GatedShell>);
     phase = 'live'; recordingNow = { enabled: true, reason: 'default', sessionId: 'sess-consent-1' };
@@ -359,6 +360,32 @@ describe('CallBlockHost meeting seams (2.477.0)', () => {
     r.rerender(<GatedShell enabledFor={always}><GatedPage lobby="orgiq:initiative:p-auth" /></GatedShell>);
     await act(async () => {});
     expect(screen.queryByTestId('recording-consent')).toBeNull();
+    recordingNow = null;
+  });
+
+  it('the recording note is one line; with a meeting stage it is the host\'s to place, not the dock\'s (2.480.2)', async () => {
+    const always = () => true;
+    function NoteInStage() {
+      const host = gated.useCallHost();
+      return <span data-testid="stage-row">{host?.recordingNote}</span>;
+    }
+    function StageShell({ children }: { children: ReactNode }) {
+      return <gated.CallHostProvider self={{ userId: 'u-vera', displayName: 'Vera Green' }} tenant="orgiq" scopeKey="orgiq|u-vera"
+        platformApiUrl="http://platform" getIdToken={() => 'token'} videoUrl="http://sfu" gateway={{ send: vi.fn(), onMessage: () => () => {} }}
+        gatewayConfigured connectionState="connected" meeting={{ enabledFor: always }}>
+        {children}
+        <gated.CallMediaOutlet header={<NoteInStage />} />
+      </gated.CallHostProvider>;
+    }
+    phase = 'idle';
+    const r = render(<StageShell><GatedPage lobby="orgiq:initiative:p-auth" /></StageShell>);
+    phase = 'live'; recordingNow = { enabled: true, reason: 'default', sessionId: 'sess-line-1' };
+    r.rerender(<StageShell><GatedPage lobby="orgiq:initiative:p-auth" /></StageShell>);
+    await act(async () => {});
+    const notes = screen.getAllByTestId('recording-consent');
+    expect(notes).toHaveLength(1);
+    expect(notes[0]!.getAttribute('data-placement')).toBe('line');
+    expect(notes[0]!.textContent).toContain('Recording · by attending you agree to be included');
     recordingNow = null;
   });
 

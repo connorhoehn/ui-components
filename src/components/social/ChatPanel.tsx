@@ -315,6 +315,15 @@ export interface ChatPanelProps {
   threaded?: boolean;
 
   /**
+   * How threaded posts sit next to each other. `channel` (default): each post
+   * is a thread starter with its own head, air and a hairline between posts
+   * (Teams channels). `chat`: a conversation such as a call's huddle, where
+   * replies still thread but consecutive posts by one person group under one
+   * head, tight, with no hairline (2.480.2).
+   */
+  postRhythm?: 'channel' | 'chat';
+
+  /**
    * Draw your own messages right-aligned in their own bubble. True by
    * default, which is what a two-person chat wants.
    *
@@ -1427,6 +1436,7 @@ export function ChatPanel({
   onJumpToMessage,
   highlightedMessageId,
   threaded = false,
+  postRhythm = 'channel',
   alignOwnMessages = true,
   documentEditors,
   documentUnavailable,
@@ -2549,8 +2559,9 @@ export function ChatPanel({
     // than to the post above it. In a channel where every root carries the
     // foot control, that means top-level posts never collapse and only
     // replies within a thread do — the correct answer, not a limitation.
+    const chatRhythm = postRhythm === 'chat';
     const previousRoot =
-      previousGroup && previousGroup.replies.length === 0 && !threadReplyTarget(previousGroup.root)
+      previousGroup && previousGroup.replies.length === 0 && (chatRhythm || !threadReplyTarget(previousGroup.root))
         ? previousGroup.root
         : undefined;
     const rootNode = renderTimelineEntry(group.root, index, previousTimestamp, previousRoot);
@@ -2590,7 +2601,7 @@ export function ChatPanel({
       // The unread line is a divider on exactly the same footing and stands
       // down the same way — an accent rule and a grey hairline a few pixels
       // apart read as one botched border, not as two facts.
-      index > 0 && index !== unreadAnchorIndex && !isNewDay(rootTimestamp, previousTimestamp) ? (
+      !chatRhythm && index > 0 && index !== unreadAnchorIndex && !isNewDay(rootTimestamp, previousTimestamp) ? (
         <div
           aria-hidden="true"
           data-testid="chat-post-boundary"
