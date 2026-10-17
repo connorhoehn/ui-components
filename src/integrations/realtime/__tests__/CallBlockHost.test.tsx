@@ -254,6 +254,8 @@ describe('CallBlockHost meeting (2.476.0)', () => {
     expect(last.opts.enabled).toBe(true);
     expect(typeof last.opts.socket.send).toBe('function');
     expect(latestCallOptions.mediaLobby).toBe('orgiq:initiative:p-auth');
+    // The call's id and phase ride as roleKey, so organizer status is asked again once the call is seated.
+    expect(last.opts.roleKey).toBe('c-1:live');
     // The organizer opens rooms: the meeting says this person belongs in r1.
     activeLobby = 'orgiq:initiative:p-auth~breakout~r1';
     rerender(<MeetingShell meeting={{ chatChannelFor: (_l, callId) => `orgiq:huddle:${callId}` }}><MeetingPage /></MeetingShell>);

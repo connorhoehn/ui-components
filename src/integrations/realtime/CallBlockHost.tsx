@@ -142,6 +142,8 @@ export interface CallBlockModules extends ConversationCallDockModules {
   useMeeting?(meetingId: string | null, opts: {
     enabled?: boolean;
     chatChannel?: string;
+    /** realtime-modules 0.136: ask organizer status again when this changes (an older pin ignores it). */
+    roleKey?: string | number | null;
     socket?: { send(msg: Record<string, unknown>): void; onMessage(handler: (msg: never) => void): () => void };
   }): CallHostMeeting;
 }
@@ -417,7 +419,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
     // The meeting rides a LIVE call: its id is the call's lobby. `inCall`
     // trails the call by a render (set below), which is what lets the media
     // lobby feed back into the one useConversationCall without a cycle.
-    const [liveCall, setLiveCall] = useState<{ lobbyName: string; callId: string | null } | null>(null);
+    const [liveCall, setLiveCall] = useState<{ lobbyName: string; callId: string | null; phase: string } | null>(null);
     const meetingId = meetingOption && rm.useMeeting && liveCall && (!meetingOption.enabledFor || meetingOption.enabledFor(liveCall.lobbyName))
       ? liveCall.lobbyName : null;
     const g = gateway as { send?(m: Record<string, unknown>): void; sendMessage?(m: Record<string, unknown>): void; onMessage?(h: (m: never) => void): () => void } | null | undefined;
@@ -429,7 +431,9 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
       : undefined;
     // Same function on every render: rm.useMeeting is fixed per createCallBlockHost.
     const meetingResult = rm.useMeeting
-      ? rm.useMeeting(meetingId, { enabled: !!meetingId, socket: meetingSocket, ...(chatChannel ? { chatChannel } : {}) })
+      // roleKey: the server answers "organizer?" when asked; ask again once this socket's call is seated
+      // (the caller organizes, and the first subscribe can beat the call's own registration).
+      ? rm.useMeeting(meetingId, { enabled: !!meetingId, socket: meetingSocket, roleKey: liveCall ? `${liveCall.callId ?? ''}:${liveCall.phase}` : null, ...(chatChannel ? { chatChannel } : {}) })
       : null;
     const meeting = meetingId && meetingResult ? meetingResult : null;
     const rawCall = rm.useConversationCall({
@@ -541,11 +545,12 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
     // Track the live call for the meeting (see `liveCall` above).
     const liveLobby = lobby && callOn(rawCall.phase, true) && rawCall.call ? lobby.lobbyName : null;
     const liveCallId = rawCall.call?.callId ?? null;
+    const livePhase = liveLobby ? String(rawCall.phase) : '';
     useEffect(() => {
       setLiveCall((cur) => (liveLobby
-        ? (cur && cur.lobbyName === liveLobby && cur.callId === liveCallId ? cur : { lobbyName: liveLobby, callId: liveCallId })
+        ? (cur && cur.lobbyName === liveLobby && cur.callId === liveCallId && cur.phase === livePhase ? cur : { lobbyName: liveLobby, callId: liveCallId, phase: livePhase })
         : null));
-    }, [liveLobby, liveCallId]);
+    }, [liveLobby, liveCallId, livePhase]);
 
     const value = useMemo<CallHostValue<Call>>(() => ({
       call, lobby, bind, unbind, startBound: lobby && starterRef.current ? startBound : null, self: selfValue, tenant,
