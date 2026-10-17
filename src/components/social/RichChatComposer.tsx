@@ -1130,8 +1130,10 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // Agent AND Terminal are "the console": both send somewhere that is not the
   // conversation, and both wear the dark surface that says so.
   const consoleMode = modesEnabled && activeMode !== 'chat';
-  const effectivePlaceholder =
-    modePlaceholders?.[activeMode] ?? (activeMode === 'chat' ? placeholder : MODE_PLACEHOLDERS[activeMode]);
+  // Read-only: the editor stays on screen, disabled and described by the note
+  // above it (2.480.1); it invites no words, so it shows no placeholder.
+  const effectivePlaceholder = readOnlyOn ? ''
+    : modePlaceholders?.[activeMode] ?? (activeMode === 'chat' ? placeholder : MODE_PLACEHOLDERS[activeMode]);
   // Shortcuts and triggers switch modes on the host's behalf, so they exist
   // only where the host can be told (`onModeChange`) and the mode can move.
   const switchable = !!onModeChange && !fixedMode;
@@ -3100,7 +3102,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
               <span className="min-w-0">{readOnlyNote}</span>
             </p>
           )}
-          <EditorContent editor={editor} className={readOnlyOn && empty ? 'hidden' : undefined} />
+          <EditorContent editor={editor} className={readOnlyOn ? 'cursor-not-allowed opacity-60' : undefined} />
         </div>
         </div>
 

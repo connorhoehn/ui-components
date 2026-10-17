@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.480.1
+
+- Read-only composer keeps a visible, disabled editor (ui-dom-audit `composer.presence` counts it): the textbox stays on screen, `contenteditable=false`, `aria-disabled`/`aria-readonly`, described by the read-only note, with no inviting placeholder; before, an empty read-only editor was hidden and the frame showed no input.
+- `CallMediaOutlet` shows `RecordingConsentNotice` above the shelf while the call's media session records (realtime-modules 0.137.0 `call.recording`), dismissed per session (`useConsentDismissal`); `recordingConsent={false}` turns it off, `{ privacyHref, privacyLabel }` names the link.
+
 ## 2.480.0
 
 - Call host `roleKey`: the call's id and phase ride to `useMeeting` (realtime-modules 0.136.0), so whoever starts a huddle learns they organize it; before, the meeting answered "organizer?" once, on a subscribe that could beat the call's own registration.

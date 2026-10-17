@@ -18,6 +18,7 @@ const start = vi.fn(async () => { captureAtEntry.push(latestCallOptions.initialM
 const rejoin = vi.fn(async () => { captureAtEntry.push(latestCallOptions.initialMedia); });
 const accept = vi.fn(async () => { captureAtEntry.push(latestCallOptions.initialMedia); });
 let knownIdleCall = false;
+let recordingNow: CallBlockCall['recording'] = null;
 let incomingAccept: ((ring: never) => void) | undefined;
 const deviceRequests: Array<{ requestOnMount?: boolean } | undefined> = [];
 const previewRequests: Array<{ preview: boolean; previewAudio: boolean; previewVideo: boolean }> = [];
@@ -33,6 +34,7 @@ function fakeCall(lobbyName: string): CallBlockCall {
     devices: { prefs: {}, set: vi.fn(), list: { microphones: [], cameras: [], speakers: [], permission: { microphone: 'granted', camera: 'granted' } } },
     toggleMic: vi.fn(), toggleCamera: vi.fn(), toggleScreenShare: vi.fn(),
     start, rejoin, accept, leave: vi.fn(async () => {}),
+    ...(recordingNow ? { recording: recordingNow } : {}),
   };
 }
 
@@ -340,6 +342,24 @@ describe('CallBlockHost meeting seams (2.477.0)', () => {
     await act(async () => {});
     expect(screen.getByTestId('has-meeting')).toHaveTextContent('no');
     expect(seen.every((id) => id === null)).toBe(true);
+  });
+
+  it('the outlet shows recording consent while the session records, until dismissed for that session (2.480.1)', async () => {
+    const always = () => true;
+    phase = 'idle';
+    const r = render(<GatedShell enabledFor={always}><GatedPage lobby="orgiq:initiative:p-auth" /></GatedShell>);
+    phase = 'live'; recordingNow = { enabled: true, reason: 'default', sessionId: 'sess-consent-1' };
+    r.rerender(<GatedShell enabledFor={always}><GatedPage lobby="orgiq:initiative:p-auth" /></GatedShell>);
+    await act(async () => {});
+    expect(screen.getByTestId('recording-consent')).toBeInTheDocument();
+    await act(async () => { screen.getByTestId('recording-consent-dismiss').click(); });
+    expect(screen.queryByTestId('recording-consent')).toBeNull();
+    // A session that does not record shows nothing.
+    recordingNow = { enabled: false, reason: 'document-call-not-recorded', sessionId: 'sess-consent-2' };
+    r.rerender(<GatedShell enabledFor={always}><GatedPage lobby="orgiq:initiative:p-auth" /></GatedShell>);
+    await act(async () => {});
+    expect(screen.queryByTestId('recording-consent')).toBeNull();
+    recordingNow = null;
   });
 
   it('the outlet draws its header above the dock only while a page holds it', async () => {

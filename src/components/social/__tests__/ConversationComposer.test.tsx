@@ -623,3 +623,19 @@ describe('ConversationComposer — read-only ways out are declared (2.479.0)', (
   });
 });
 
+describe('ConversationComposer — read-only keeps a visible, disabled editor (2.480.1)', () => {
+  const REASON = 'You can read this discussion; posting needs the SME role.';
+  it('the textbox is on screen, not editable, described by the reason, with no inviting placeholder', () => {
+    setup({ capabilities: { maySend: false, readOnlyReason: REASON }, defaultMode: 'chat', expanded: true,
+      recipients: [{ id: 'discussion', label: 'Discussion', channel: CHANNEL }] });
+    const box = screen.getByTestId('composer-input');
+    expect(box.closest('.hidden')).toBeNull();
+    expect(box).toHaveAttribute('aria-disabled', 'true');
+    expect(box).toHaveAttribute('aria-readonly', 'true');
+    expect(box.getAttribute('contenteditable')).toBe('false');
+    const note = document.getElementById(box.getAttribute('aria-describedby')!);
+    expect(note?.textContent).toBe(REASON);
+    expect(box.querySelector('[data-placeholder]')?.getAttribute('data-placeholder') ?? '').toBe('');
+  });
+});
+

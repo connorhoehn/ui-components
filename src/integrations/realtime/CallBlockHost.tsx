@@ -56,6 +56,7 @@ import Switch from '../../components/shared/Switch';
 import { WrappedAudioVideoSettingsForm, type RMAudioVideoSettingsSource, type RMMediaDevicesSource } from '../realtime-modules/WrappedAudioVideoSettingsForm';
 import { createConversationCallDock, type ConversationCallDockModules } from './ConversationCallDock';
 import { IncomingCallToast } from './IncomingCallToast';
+import { RecordingConsentNotice, useConsentDismissal } from '../../components/video/RecordingConsentNotice';
 import type { RMConversationCallSource, RMIncomingConversationCall } from './conversationCallTypes';
 import type { RMMeetingSource } from './meetingSource';
 import {
@@ -85,6 +86,8 @@ import {
 /** The call the host drives: RM `useConversationCall()`'s result, restated to what is read here. */
 export interface CallBlockCall extends RMConversationCallSource {
   call: (NonNullable<RMConversationCallSource['call']> & { callId: string; host?: string | null; startedAt?: number | null }) | null;
+  /** realtime-modules 0.137.0: whether this client's media session records (older pins: absent). */
+  recording?: { enabled: boolean; reason: string | null; sessionId: string } | null;
   start(targets: { userId: string; displayName?: string }[], opts?: { audioOnly?: boolean }): Promise<void>;
   accept(ring?: never): Promise<void>;
   rejoin(): Promise<void>;
@@ -290,6 +293,12 @@ export interface CallMediaOutletProps {
   extras?: ReactNode;
   /** An info line above the shelf (ConversationCallDock `notice`). Since 2.477.0. */
   notice?: ReactNode;
+  /**
+   * The recording consent notice, drawn above the shelf while the call's media
+   * session records (realtime-modules 0.137.0 `call.recording`), dismissed per
+   * session. `false` turns it off; the object names the privacy link. Since 2.480.1.
+   */
+  recordingConsent?: false | { privacyHref?: string; privacyLabel?: string };
   /** The dock's test id for a lobby (default `conversation-call-dock`). */
   dockTestId?: (lobby: CallLobby, tenant: string | null) => string;
 }
@@ -735,7 +744,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
    * stays in the footer collapsed (`display: none`; media keeps playing).
    * Moving between claimants moves this one dock — no second subscription.
    */
-  function CallMediaOutlet({ id, onOpenPeople, onOpenDocument, overlay, header, extras, notice, dockTestId }: CallMediaOutletProps) {
+  function CallMediaOutlet({ id, onOpenPeople, onOpenDocument, overlay, header, extras, notice, recordingConsent, dockTestId }: CallMediaOutletProps) {
     const host = useContext(HostContext);
     const target = useClaimsSnapshot((c) => c.current, noTarget);
     const placement = useClaimsSnapshot((c) => c.placement, noPlacement);
@@ -753,6 +762,13 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
       const at = new Map(hands.map((h, i) => [h.userId, i + 1]));
       return (userId: string) => at.get(userId);
     }, [hands]);
+    // Recording consent: while the session records, until dismissed for that session.
+    const recording = draw && recordingConsent !== false ? host?.call.recording ?? null : null;
+    const consent = useConsentDismissal(recording?.enabled ? `call-recording:${recording.sessionId}` : null);
+    const consentNotice = recording?.enabled && !consent.dismissed ? <RecordingConsentNotice open kind="recording" placement="inline"
+      onDismiss={consent.dismiss} {...(recordingConsent && recordingConsent.privacyHref ? { privacyHref: recordingConsent.privacyHref } : {})}
+      {...(recordingConsent && recordingConsent.privacyLabel ? { privacyLabel: recordingConsent.privacyLabel } : {})} /> : null;
+    const shownNotice = consentNotice && notice !== undefined ? <Stack gap="xs">{consentNotice}{notice}</Stack> : consentNotice ?? notice;
     const dock = draw && lobby && host ? <ConversationCallDock
       call={host.call}
       title={lobby.title}
@@ -767,7 +783,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
       layout={layout}
       {...(handFor ? { handFor } : {})}
       {...(extras !== undefined ? { extras } : {})}
-      {...(notice !== undefined ? { notice } : {})}
+      {...(shownNotice !== undefined && shownNotice !== null ? { notice: shownNotice } : {})}
       data-testid={dockTestId ? dockTestId(lobby, host.tenant) : 'conversation-call-dock'}
     /> : null;
     if (!dock) return null;
