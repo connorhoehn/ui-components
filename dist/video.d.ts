@@ -2587,8 +2587,13 @@ export declare interface RecordingConsentNoticeProps {
     privacyHref?: string;
     privacyLabel?: string;
     onDismiss: () => void;
-    /** `overlay` (default) floats over the stage; `inline` sits in the flow. */
-    placement?: 'overlay' | 'inline';
+    /**
+     * `overlay` (default) floats over the stage; `inline` sits in the flow;
+     * `line` is one compact text line (a red dot, "Recording · by attending you
+     * agree to be included", the dismiss inline) that truncates rather than
+     * wraps, for a call's stage header row (2.480.2).
+     */
+    placement?: 'overlay' | 'inline' | 'line';
     className?: string;
     'data-testid'?: string;
 }

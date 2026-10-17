@@ -15,6 +15,51 @@ var f = {
 function p({ open: o, kind: s, startedBy: c, privacyHref: p, privacyLabel: m = "Privacy policy", onDismiss: h, placement: g = "overlay", className: _, "data-testid": v = "recording-consent" }) {
 	if (!o) return null;
 	let y = f[s];
+	if (g === "line") {
+		let a = `${y}${c ? ` by ${c}` : ""} · by attending you agree to be included`;
+		return /* @__PURE__ */ d("div", {
+			role: "status",
+			"aria-live": "polite",
+			"aria-label": y,
+			"data-testid": v,
+			"data-kind": s,
+			"data-placement": "line",
+			title: a,
+			className: e("flex h-8 min-w-0 items-center gap-1.5", _),
+			children: [
+				/* @__PURE__ */ u("span", {
+					"aria-hidden": !0,
+					className: "h-2 w-2 shrink-0 rounded-full bg-danger"
+				}),
+				/* @__PURE__ */ u(r, {
+					size: "xs",
+					tone: "secondary",
+					className: "min-w-0 truncate",
+					children: a
+				}),
+				p && /* @__PURE__ */ u(r, {
+					size: "xs",
+					className: "shrink-0",
+					children: /* @__PURE__ */ u(i, {
+						href: p,
+						external: !0,
+						className: "text-primary-fg underline",
+						"data-testid": `${v}-privacy`,
+						children: m
+					})
+				}),
+				/* @__PURE__ */ u(t, {
+					"aria-label": "Dismiss recording note",
+					variant: "ghost",
+					size: "sm",
+					icon: /* @__PURE__ */ u(n, {}),
+					onClick: h,
+					className: "h-6 w-6 shrink-0",
+					"data-testid": `${v}-dismiss`
+				})
+			]
+		});
+	}
 	return /* @__PURE__ */ u("section", {
 		role: "status",
 		"aria-live": "polite",

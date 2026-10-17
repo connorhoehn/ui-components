@@ -31,7 +31,7 @@ import { t as Se } from "./PresenceAvatars-CxgG8QFo.js";
 import { t as Ce } from "./Checkbox-Jycr-rlf.js";
 import { t as we } from "./activationKey-CjbL3LUv.js";
 import { C as Te, E as Ee, H as De, L as Oe, S as ke, V as Ae, Z as je } from "./BreakoutRoomsPanel-DuqdYSWL.js";
-import "./RecordingConsentNotice-BlFf60VC.js";
+import "./RecordingConsentNotice-4an_kNAx.js";
 import { useCallback as W, useEffect as G, useImperativeHandle as Me, useLayoutEffect as Ne, useMemo as K, useRef as q, useState as J } from "react";
 import { Fragment as Y, jsx as X, jsxs as Z } from "react/jsx-runtime";
 //#region src/components/video/VideoPlayer.tsx

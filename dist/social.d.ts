@@ -1058,7 +1058,7 @@ declare interface ChatMessage {
     deletedAt?: string;
 }
 
-export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, dock: dockSlot, currentUserId, reactionsFor, onToggleReaction, onReply, reply, onCancelReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, canEditMessage, canDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, alignOwnMessages, documentEditors, documentUnavailable, callParticipants, agentRunStatus, onOpenRun, agentLoopStatus, onOpenLab, onOpenResult, onDecideRun, onReviewRun, onRetryRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, tone, showHeader, fill, flushComposer, contentAlign, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, localMessages, onSend, disabled, onTyping, typingUsers, emptyState, composer, dock: dockSlot, currentUserId, reactionsFor, onToggleReaction, onReply, reply, onCancelReply, onForwardMessage, onCopyLink, onTogglePin, onEditMessage, onDeleteMessage, canEditMessage, canDeleteMessage, pinnedMessageIds, onJumpToMessage, highlightedMessageId, threaded, postRhythm, alignOwnMessages, documentEditors, documentUnavailable, callParticipants, agentRunStatus, onOpenRun, agentLoopStatus, onOpenLab, onOpenResult, onDecideRun, onReviewRun, onRetryRun, onJoinCall, onOpenRecording, onCopyRecordingLink, onShareRecording, onDownloadRecording, onOpenRecordingTranscript, onManageRecordingExpiry, recordingStatus, onOpenDocument, renderMessageReferences, tone, showHeader, fill, flushComposer, contentAlign, onLoadMore, hasMore, loadingMore, onSendFiles, transfers, currentActor, onCancelTransfer, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, readReceipts: readReceiptsProp, readReceiptsEnabled, unreadFrom, emojis, }: ChatPanelProps): JSX.Element;
 
 export declare interface ChatPanelProps {
     messages: ChatMessage[];
@@ -1304,6 +1304,14 @@ export declare interface ChatPanelProps {
      * exactly as it does with this off.
      */
     threaded?: boolean;
+    /**
+     * How threaded posts sit next to each other. `channel` (default): each post
+     * is a thread starter with its own head, air and a hairline between posts
+     * (Teams channels). `chat`: a conversation such as a call's huddle, where
+     * replies still thread but consecutive posts by one person group under one
+     * head, tight, with no hairline (2.480.2).
+     */
+    postRhythm?: 'channel' | 'chat';
     /**
      * Draw your own messages right-aligned in their own bubble. True by
      * default, which is what a two-person chat wants.

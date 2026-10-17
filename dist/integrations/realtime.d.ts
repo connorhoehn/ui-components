@@ -612,6 +612,11 @@ export declare interface CallHostProviderProps {
         displayName: string;
         avatarUrl?: string;
     } | null | undefined;
+    /** The recording note's privacy link, or `false` for no note at all (2.480.2). */
+    recordingConsent?: false | {
+        privacyHref?: string;
+        privacyLabel?: string;
+    };
     /**
      * Run a meeting beside the call (needs `useMeeting` in the modules): the
      * meeting id is the call's lobby, and the call's MEDIA follows the meeting
@@ -632,6 +637,13 @@ export declare interface CallHostProviderProps {
 
 export declare interface CallHostValue<C extends CallBlockCall> {
     call: C;
+    /**
+     * The one-line recording note while the call's media session records and
+     * this viewer has not dismissed it for that session (2.480.2), else null.
+     * A stage header puts it in its row (e.g. `MeetingToolbar start`); the
+     * outlet draws it above the shelf when no meeting stage holds it.
+     */
+    recordingNote: ReactNode | null;
     /** The lobby the call is bound to; null until a page binds one or a ring is answered. */
     lobby: CallLobby | null;
     /** Bind this page's lobby. Ignored while a call is in progress or a ring is being answered. */
@@ -1593,6 +1605,14 @@ declare interface ChatPanelProps {
      * exactly as it does with this off.
      */
     threaded?: boolean;
+    /**
+     * How threaded posts sit next to each other. `channel` (default): each post
+     * is a thread starter with its own head, air and a hairline between posts
+     * (Teams channels). `chat`: a conversation such as a call's huddle, where
+     * replies still thread but consecutive posts by one person group under one
+     * head, tight, with no hairline (2.480.2).
+     */
+    postRhythm?: 'channel' | 'chat';
     /**
      * Draw your own messages right-aligned in their own bubble. True by
      * default, which is what a two-person chat wants.
@@ -4402,7 +4422,7 @@ export declare interface WrappedCanvasDocumentProps extends Omit<CanvasDocumentV
     beforeConvert?: () => void | Promise<void>;
 }
 
-export declare function WrappedChatPanel({ chat, localMessages, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, flushComposer, contentAlign, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, renderMessageReferences, transformMessages, dock, emojis, onReply, reply, onCancelReply, readReceipts, readReceiptsEnabled, unreadFrom, threaded, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, editable, canEdit, canDelete, onForwardMessage, }: WrappedChatPanelProps): JSX.Element;
+export declare function WrappedChatPanel({ chat, localMessages, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, flushComposer, contentAlign, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, renderMessageReferences, transformMessages, dock, emojis, onReply, reply, onCancelReply, readReceipts, readReceiptsEnabled, unreadFrom, threaded, postRhythm, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, editable, canEdit, canDelete, onForwardMessage, }: WrappedChatPanelProps): JSX.Element;
 
 export declare interface WrappedChatPanelProps {
     /** Return value of useChat(channel) from realtime-modules */
@@ -4556,6 +4576,8 @@ export declare interface WrappedChatPanelProps {
     unreadFrom?: string;
     /** Nest replies under their root message (realtime-examples `DocumentChatPanel.tsx:856`). */
     threaded?: boolean;
+    /** ChatPanel `postRhythm`: `chat` groups a person's consecutive posts in threaded mode (2.480.2). */
+    postRhythm?: ChatPanelProps['postRhythm'];
     onJumpToMessage?: (messageId: string) => void;
     highlightedMessageId?: string | null;
     documentEditors?: ChatPanelProps['documentEditors'];

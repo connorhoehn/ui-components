@@ -1297,6 +1297,14 @@ declare interface ChatPanelProps {
      */
     threaded?: boolean;
     /**
+     * How threaded posts sit next to each other. `channel` (default): each post
+     * is a thread starter with its own head, air and a hairline between posts
+     * (Teams channels). `chat`: a conversation such as a call's huddle, where
+     * replies still thread but consecutive posts by one person group under one
+     * head, tight, with no hairline (2.480.2).
+     */
+    postRhythm?: 'channel' | 'chat';
+    /**
      * Draw your own messages right-aligned in their own bubble. True by
      * default, which is what a two-person chat wants.
      *
@@ -3990,7 +3998,7 @@ export declare interface WrappedCanvasDocumentProps extends Omit<CanvasDocumentV
     beforeConvert?: () => void | Promise<void>;
 }
 
-export declare function WrappedChatPanel({ chat, localMessages, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, flushComposer, contentAlign, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, renderMessageReferences, transformMessages, dock, emojis, onReply, reply, onCancelReply, readReceipts, readReceiptsEnabled, unreadFrom, threaded, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, editable, canEdit, canDelete, onForwardMessage, }: WrappedChatPanelProps): JSX.Element;
+export declare function WrappedChatPanel({ chat, localMessages, presence, upload, reactions, pins, currentActor, currentUserId, displayName, avatarUrl, sendMetadata, publishTyping, attachmentSrc, onOpenAttachment, acceptFiles, maxFileSize, onFileError, disabled, typingUsers: typingUsersOverride, tone, fill, flushComposer, contentAlign, showHeader, loadMoreHistory, joinHistoryLimit, historyPageSize, onLoadMore, hasMore, loadingMore, composer, renderMessageReferences, transformMessages, dock, emojis, onReply, reply, onCancelReply, readReceipts, readReceiptsEnabled, unreadFrom, threaded, postRhythm, onJumpToMessage, highlightedMessageId, documentEditors, callParticipants, onJoinCall, onOpenDocument, wrapWithNetworkShim, editable, canEdit, canDelete, onForwardMessage, }: WrappedChatPanelProps): JSX.Element;
 
 export declare interface WrappedChatPanelProps {
     /** Return value of useChat(channel) from realtime-modules */
@@ -4144,6 +4152,8 @@ export declare interface WrappedChatPanelProps {
     unreadFrom?: string;
     /** Nest replies under their root message (realtime-examples `DocumentChatPanel.tsx:856`). */
     threaded?: boolean;
+    /** ChatPanel `postRhythm`: `chat` groups a person's consecutive posts in threaded mode (2.480.2). */
+    postRhythm?: ChatPanelProps['postRhythm'];
     onJumpToMessage?: (messageId: string) => void;
     highlightedMessageId?: string | null;
     documentEditors?: ChatPanelProps['documentEditors'];
