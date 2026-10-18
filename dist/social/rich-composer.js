@@ -5,9 +5,9 @@ import { t as o } from "../Select-DjpQtNw3.js";
 import { a as s, c, i as l, l as u, n as d, r as f, t as p } from "../composerSendError-BdrmEzxB.js";
 import { a as m, i as h, n as g, r as _, t as v } from "../composerContext-BLn1-Nao.js";
 import { a as ee, i as y, n as b, o as x, r as te, s as S, t as C } from "../ConversationInputs-DZp8ImyW.js";
-import { a as w, c as T, i as E, l as D, n as ne, o as re, r as O, s as ie, t as ae, u as oe } from "../RichChatComposer-BirsXrUM.js";
-import { t as se } from "../ContextComposer-DgjbHiHy.js";
-import { t as ce } from "../AgentComposerDock-CRNWsSV8.js";
+import { a as w, c as T, i as E, l as D, n as ne, o as re, r as O, s as ie, t as ae, u as oe } from "../RichChatComposer-WEFKVHFH.js";
+import { t as se } from "../ContextComposer-uSMAYnh8.js";
+import { t as ce } from "../AgentComposerDock-BoibEGBK.js";
 import { useCallback as k, useEffect as A, useId as le, useMemo as j, useRef as M, useState as N } from "react";
 import { jsx as P, jsxs as F } from "react/jsx-runtime";
 //#region src/components/social/composerPromptModel.ts
@@ -259,6 +259,7 @@ function Ce({ deck: t, prompts: o, input: s = null, variant: c = "card", classNa
 			variant: "link",
 			size: "sm",
 			onClick: p.dismissReceipt,
+			"data-composer-readonly-allow": "Dismisses the local answer receipt without changing a record or submitting an answer",
 			children: "Dismiss"
 		})]
 	}) : null;
@@ -287,6 +288,7 @@ function Ce({ deck: t, prompts: o, input: s = null, variant: c = "card", classNa
 					size: "sm",
 					onClick: () => p.setCollapsed(!1),
 					"aria-keyshortcuts": "Control+ArrowDown Meta+ArrowDown",
+					"data-composer-readonly-allow": "Shows the prompt's existing facts without changing a record or submitting an answer",
 					"data-testid": `${u}-show`,
 					children: "Show"
 				}),
@@ -361,6 +363,7 @@ function Ce({ deck: t, prompts: o, input: s = null, variant: c = "card", classNa
 									"aria-label": "Previous question",
 									"aria-keyshortcuts": "Control+ArrowUp Meta+ArrowUp",
 									onClick: () => p.page(-1),
+									"data-composer-readonly-allow": "Reads the previous prompt without changing a record or submitting an answer",
 									"data-testid": `${u}-previous`,
 									children: "‹"
 								}),
@@ -370,6 +373,7 @@ function Ce({ deck: t, prompts: o, input: s = null, variant: c = "card", classNa
 									"aria-label": "Next question",
 									"aria-keyshortcuts": "Control+ArrowDown Meta+ArrowDown",
 									onClick: () => p.page(1),
+									"data-composer-readonly-allow": "Reads the next prompt without changing a record or submitting an answer",
 									"data-testid": `${u}-next`,
 									children: "›"
 								})
@@ -383,6 +387,7 @@ function Ce({ deck: t, prompts: o, input: s = null, variant: c = "card", classNa
 							onClick: () => {
 								p.setCollapsed(!0), s?.focus();
 							},
+							"data-composer-readonly-allow": "Hides the prompt's existing facts without changing a record or submitting an answer",
 							"data-testid": `${u}-hide`,
 							children: "Hide"
 						})
