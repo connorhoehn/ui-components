@@ -1309,7 +1309,8 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
           if (!marked && !said) continue;
           measured++;
           const allow = rule.allow ? css(rule.allow) : null;
-          // A control that is the way out of the read-only state (the To: selector, a mode switch)
+          // A control that is the way out of the read-only state (the To: selector, a mode switch),
+          // or only discloses existing facts (a prompt deck's Show/Hide),
           // declares it: data-composer-readonly-allow="<reason>". A blank or placeholder reason fails coverage.
           const exempt = el => { const host = el.closest('[data-composer-readonly-allow]'); if (!host || !surface.contains(host)) return false; const reason = (host.getAttribute('data-composer-readonly-allow') ?? '').trim(); if (!reason || PLACEHOLDER_REASON.test(reason)) { add(rule, host, 'read-only exemption reason', 'data-composer-readonly-allow names why this control stays live', reason, 'coverage'); return false; } return true; };
           const live = [...surface.querySelectorAll('button, [role="button"], [role="menuitem"], [aria-haspopup], input, textarea, select, [contenteditable="true"], [role="textbox"]')].filter(el => {

@@ -61,6 +61,17 @@ describe('toolbar="compact"', () => {
     expect(screen.getByTestId('composer-format-more')).toBeInTheDocument();
     expect(screen.queryByTestId('composer-hints-toggle')).toBeNull();
   });
+
+  it.each([
+    { readOnly: 'Your role cannot post' },
+    { disabled: true },
+  ])('blocks the narrow formatting menu when the editor is blocked: %j', async (blocked) => {
+    render(<RichChatComposer {...base} {...blocked} layout="medium" toolbar="compact" />);
+    const more = screen.getByRole('button', { name: 'More formatting' });
+    expect(more).toBeDisabled();
+    await act(async () => { fireEvent.click(more); });
+    expect(screen.queryByTestId('composer-format-more-menu')).toBeNull();
+  });
 });
 
 // `toolbar="editor"` + `moreActions` (2.385.6): the document page's docked

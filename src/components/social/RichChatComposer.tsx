@@ -3259,6 +3259,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
                 trigger={<span aria-hidden="true" className="text-sm leading-none">⋯</span>}
                 triggerLabel="More formatting"
                 triggerTitle="More formatting"
+                disabled={blocked}
                 triggerTabIndex={-1}
                 triggerTestId={`${testId}-format-more`}
                 data-testid={`${testId}-format-more-menu`}

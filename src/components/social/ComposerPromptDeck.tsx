@@ -275,7 +275,7 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, vari
       <Text as="p" size="xs" tone="secondary" wrap role="status" className="min-w-0">
         {`Answered · ${receipt}`}
       </Text>
-      <Button variant="link" size="sm" onClick={deck.dismissReceipt}>Dismiss</Button>
+      <Button variant="link" size="sm" onClick={deck.dismissReceipt} data-composer-readonly-allow="Dismisses the local answer receipt without changing a record or submitting an answer">Dismiss</Button>
     </Inline>
   ) : null;
 
@@ -287,7 +287,7 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, vari
             <Text size="xs" tone="secondary" wrap className="min-w-0 flex-1">
               {count === 1 ? `1 question waiting · ${active.title}` : `${count} questions waiting · ${active.title}`}
             </Text>
-            <Button variant="link" size="sm" onClick={() => deck.setCollapsed(false)} aria-keyshortcuts="Control+ArrowDown Meta+ArrowDown" data-testid={`${testId}-show`}>
+            <Button variant="link" size="sm" onClick={() => deck.setCollapsed(false)} aria-keyshortcuts="Control+ArrowDown Meta+ArrowDown" data-composer-readonly-allow="Shows the prompt's existing facts without changing a record or submitting an answer" data-testid={`${testId}-show`}>
               Show
             </Button>
             <Keycap>{`${mod}↓`}</Keycap>
@@ -331,11 +331,11 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, vari
           {count > 1 && (
             <Inline gap="xs" align="center" wrap={false} className="shrink-0">
               <Text size="xs" tone="secondary" tabular data-testid={`${testId}-position`}>{`${index + 1} of ${count}`}</Text>
-              <Button variant="ghost" size="sm" aria-label="Previous question" aria-keyshortcuts="Control+ArrowUp Meta+ArrowUp" onClick={() => deck.page(-1)} data-testid={`${testId}-previous`}>‹</Button>
-              <Button variant="ghost" size="sm" aria-label="Next question" aria-keyshortcuts="Control+ArrowDown Meta+ArrowDown" onClick={() => deck.page(1)} data-testid={`${testId}-next`}>›</Button>
+              <Button variant="ghost" size="sm" aria-label="Previous question" aria-keyshortcuts="Control+ArrowUp Meta+ArrowUp" onClick={() => deck.page(-1)} data-composer-readonly-allow="Reads the previous prompt without changing a record or submitting an answer" data-testid={`${testId}-previous`}>‹</Button>
+              <Button variant="ghost" size="sm" aria-label="Next question" aria-keyshortcuts="Control+ArrowDown Meta+ArrowDown" onClick={() => deck.page(1)} data-composer-readonly-allow="Reads the next prompt without changing a record or submitting an answer" data-testid={`${testId}-next`}>›</Button>
             </Inline>
           )}
-          <Button variant="ghost" size="sm" className="shrink-0" aria-keyshortcuts="Escape" onClick={() => { deck.setCollapsed(true); input?.focus(); }} data-testid={`${testId}-hide`}>Hide</Button>
+          <Button variant="ghost" size="sm" className="shrink-0" aria-keyshortcuts="Escape" onClick={() => { deck.setCollapsed(true); input?.focus(); }} data-composer-readonly-allow="Hides the prompt's existing facts without changing a record or submitting an answer" data-testid={`${testId}-hide`}>Hide</Button>
         </Inline>
 
         {count > 1 && (

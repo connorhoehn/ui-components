@@ -858,6 +858,7 @@ table{width:100%;border-collapse:collapse} th,td{padding:0 12px;height:44px;text
     const cmeasure = () => dpage.evaluate(measureDOM, deep(['composer.readonly-coherent']));
     for (const [name, mutate] of [['a read-only composer with every affordance disabled and the reason inline', () => {}],
       ['the To: selector kept live as the way out, with its reason', () => { document.querySelector('#to').insertAdjacentHTML('beforeend', '<button aria-haspopup="listbox" data-composer-readonly-allow="Choosing another destination is the way out of read-only">Initiative discussion ▾</button>'); }],
+      ['a prompt disclosure kept live with its local-only reason', () => { document.querySelector('#c').insertAdjacentHTML('beforeend', '<button data-composer-readonly-allow="Shows existing prompt facts without changing a record or submitting an answer">Show</button>'); }],
       ['an ordinary composer whose Send waits for a draft', () => { document.querySelector('#note').remove(); document.querySelectorAll('button').forEach(b => { if (b.id !== 'send') b.disabled = false; }); document.querySelector('#ed').contentEditable = 'true'; }]]) {
       await dpage.setContent(composerHtml); await dpage.evaluate(mutate);
       const r = await cmeasure();
@@ -867,6 +868,7 @@ table{width:100%;border-collapse:collapse} th,td{padding:0 12px;height:44px;text
     await dpage.setContent(composerHtml); assert.ok((await cmeasure()).coverage.some(c => c.rule === 'composer.readonly-coherent' && c.matched === 1), 'the read-only fixture is exercised');
     for (const [name, mutate, property] of [
       ['formatting buttons left live under the read-only note', () => { document.querySelector('#bold').disabled = false; }, 'enabled controls in a read-only composer'],
+      ['a prompt disclosure exemption does not exempt neighboring formatting', () => { document.querySelector('#c').insertAdjacentHTML('beforeend', '<button data-composer-readonly-allow="Shows existing prompt facts without changing a record or submitting an answer">Show</button>'); document.querySelector('#bold').disabled = false; }, 'enabled controls in a read-only composer'],
       ['an editor still editable under the read-only note', () => { document.querySelector('#ed').contentEditable = 'true'; }, 'enabled controls in a read-only composer'],
       ['the Chat mode menu and Workflow still live', () => { document.querySelector('#mode').disabled = false; document.querySelector('#wf').disabled = false; }, 'enabled controls in a read-only composer'],
       ['a live control exempted with a placeholder reason', () => { document.querySelector('#to').insertAdjacentHTML('beforeend', '<button data-composer-readonly-allow="TODO">Initiative discussion ▾</button>'); }, 'read-only exemption reason'],

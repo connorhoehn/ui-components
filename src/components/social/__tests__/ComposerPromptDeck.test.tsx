@@ -99,10 +99,25 @@ describe('ComposerPromptDeck', () => {
     expect(deck().getAttribute('data-deck-variant')).toBe('inset');
   });
 
-  it('a read-only prompt shows why and offers no answers', () => {
-    const p = prompts();
+  it('a read-only prompt can disclose its facts without offering or submitting answers', () => {
+    const onAnswer = vi.fn();
+    const p = prompts(onAnswer);
     render(<ComposerPromptDeck prompts={[{ ...p[0]!, readOnlyReason: 'An SME or leader authorizes jobs' }]} />);
     expect(screen.getByTestId('composer-prompt-deck-read-only').textContent).toBe('An SME or leader authorizes jobs');
+    expect(screen.queryByTestId('composer-prompt-deck-option-dispatch')).toBeNull();
+    const hide = screen.getByTestId('composer-prompt-deck-hide');
+    expect(hide).toBeEnabled();
+    expect(hide.getAttribute('data-composer-readonly-allow')).toContain('without changing a record');
+    fireEvent.click(hide);
+    expect(screen.queryByTestId('composer-prompt-deck-card')).toBeNull();
+    const show = screen.getByTestId('composer-prompt-deck-show');
+    expect(show).toBeEnabled();
+    expect(show.getAttribute('data-composer-readonly-allow')).toContain('without changing a record');
+    fireEvent.click(show);
+    expect(screen.getByTestId('composer-prompt-deck-read-only')).toBeInTheDocument();
+    screen.getByTestId('composer-prompt-deck-hide').focus();
+    act(() => { key('1'); key('Enter'); });
+    expect(onAnswer).not.toHaveBeenCalled();
     expect(screen.queryByTestId('composer-prompt-deck-option-dispatch')).toBeNull();
   });
 
