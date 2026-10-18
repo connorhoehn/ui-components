@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.480.3
+
+- Count badges use the shared 12px control floor and identify themselves to the DOM audit. Icon alignment measures ordinary labels separately from positioned count overlays, with valid and broken fixtures.
+
 ## 2.480.2
 
 - `RecordingConsentNotice placement="line"`: one compact line (a red dot, "Recording · by attending you agree to be included", dismiss inline) that truncates rather than wraps; no title block, no band.

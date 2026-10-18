@@ -55,10 +55,11 @@ export function Badge({
     return (
       <span
         data-testid={testId}
+        data-ui-badge="count"
         aria-label={ariaLabel ?? `${label} items`}
         className={cn(
           'inline-flex items-center justify-center min-w-[18px] h-[18px]',
-          'px-1.5 rounded-full text-[10px] font-semibold leading-none select-none',
+          'px-1.5 rounded-full text-xs font-semibold leading-none select-none',
           TONE_SOFT[BADGE_TONE[color]],
           className,
         )}

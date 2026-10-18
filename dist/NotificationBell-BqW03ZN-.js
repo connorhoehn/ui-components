@@ -3,7 +3,7 @@ import { n as t } from "./Button-uREUOWUk.js";
 import { t as n } from "./IconButton-IE5g44md.js";
 import { a as r, bt as i, p as a } from "./Icons-GSE-QGuJ.js";
 import { i as o, r as s, t as c } from "./Text-KEOV-uPA.js";
-import { t as l } from "./Badge-B51Hl2wN.js";
+import { t as l } from "./Badge-C_6niQBE.js";
 import { t as u } from "./Tooltip-DWyAb81m.js";
 import { t as d } from "./InlinePopover-BSeEQkYe.js";
 import { t as f } from "./EmptyState-CpS13Gy4.js";

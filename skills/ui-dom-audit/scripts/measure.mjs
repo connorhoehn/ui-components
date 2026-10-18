@@ -1144,7 +1144,13 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
           if (found >= (rule.maxPerPage ?? 10)) break;
           const icon = [...host.querySelectorAll('svg')].find(svg => { const b = svg.getBoundingClientRect(); return visible(svg) && b.width >= 8 && b.width <= 32 && !svg.parentElement.closest('svg'); });
           if (!icon) continue;
-          const runs = textRuns(host).filter(r => !r.el.closest('[data-ui-text="avatar"]'));
+          const runs = textRuns(host).filter(r => {
+            if (r.el.closest('[data-ui-text="avatar"]')) return false;
+            // Count badges sit on the icon's corner, not on its label baseline.
+            // Only a library-marked, positioned badge is excluded; ordinary labels still count.
+            const badge = r.el.closest('[data-ui-badge="count"]');
+            return !badge || getComputedStyle(badge).position !== 'absolute';
+          });
           const run = runs[0];
           if (!run) continue;
           // One line of text only: an icon beside a two-line block centres on the block by design.

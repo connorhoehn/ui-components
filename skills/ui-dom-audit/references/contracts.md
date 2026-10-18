@@ -808,3 +808,7 @@ read-only guard. A state may declare `before(page)` / `after(handle)` hooks
 state's empty page does not owe the list route's table). Loading and error data
 states carry a composer exemption: the composer policy is judged on the resting
 state.
+
+### Count badges beside icons
+
+`Badge variant="count"` emits `data-ui-badge="count"` and uses the 12px control floor. A count positioned absolutely over an icon is an overlay, so `align.icon-center` omits only that marked badge from its text baseline. Ordinary labels in the same button remain measured; inline badges remain measured. Font size and contrast still apply to the badge.

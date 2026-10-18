@@ -65,8 +65,9 @@ function m({ variant: n, value: r, color: a = "accent", "aria-label": o, classNa
 		let t = p(r);
 		return /* @__PURE__ */ l("span", {
 			"data-testid": c,
+			"data-ui-badge": "count",
 			"aria-label": o ?? `${t} items`,
-			className: e("inline-flex items-center justify-center min-w-[18px] h-[18px]", "px-1.5 rounded-full text-[10px] font-semibold leading-none select-none", i[f[a]], s),
+			className: e("inline-flex items-center justify-center min-w-[18px] h-[18px]", "px-1.5 rounded-full text-xs font-semibold leading-none select-none", i[f[a]], s),
 			children: t
 		});
 	}
