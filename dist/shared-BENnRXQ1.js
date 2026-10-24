@@ -66,7 +66,7 @@ import "./useMeasuredWidth-Cig3ZfGG.js";
 import "./SectionLabel-Ch_rkHQZ.js";
 import "./InlinePlaceholder-DiPQ7hOM.js";
 import "./FloatingPanel-CP5vaOcJ.js";
-import "./ChangeDiff-BHerlwTS.js";
+import "./ChangeDiff-BEScRhcZ.js";
 import "./Link-h2c9gcsw.js";
 import "./MetaLine-DFn2XXGU.js";
 import "./NumberInput-D_suV6tQ.js";
@@ -1623,7 +1623,7 @@ function It({ file: t, annotations: n, collapsed: r, onToggle: i, maxLines: a })
 				className: "px-3 py-2 text-[12px] text-text-tertiary",
 				children: "Binary file — no text diff."
 			}) : /* @__PURE__ */ Z("table", {
-				className: "w-full border-collapse font-mono text-[11.5px] leading-[1.5]",
+				className: "w-full border-collapse font-mono text-xs leading-[1.5]",
 				children: /* @__PURE__ */ Q("tbody", { children: [c.map((t, n) => t.kind === "hunk" ? /* @__PURE__ */ Z("tr", {
 					className: Pt.hunk,
 					children: /* @__PURE__ */ Z("td", {
@@ -1731,7 +1731,7 @@ function Lt({ diff: t, annotations: n = [], defaultCollapsed: r = !1, maxLinesPe
 					type: "button",
 					onClick: () => m(t.path),
 					title: t.path,
-					className: e("px-1.5 py-0.5 rounded border border-border bg-surface text-[10.5px] font-mono cursor-pointer", "text-text-secondary hover:border-border-emphasis hover:text-text-primary truncate max-w-[220px]", (f.get(t.path)?.length ?? 0) > 0 && "border-warning/60"),
+					className: e("px-1.5 py-0.5 rounded border border-border bg-surface text-xs font-mono cursor-pointer", "text-text-secondary hover:border-border-emphasis hover:text-text-primary truncate max-w-[220px]", (f.get(t.path)?.length ?? 0) > 0 && "border-warning/60"),
 					children: t.path.split("/").pop()
 				}, t.path))]
 			}),

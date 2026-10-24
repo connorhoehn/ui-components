@@ -12,7 +12,7 @@ function r({ marker: r, label: i, value: a, emptyText: o, tone: s, testId: c }) 
 		}), /* @__PURE__ */ n("div", {
 			className: "min-w-0 flex-1",
 			children: [/* @__PURE__ */ t("div", {
-				className: e("text-[10px] uppercase tracking-wide", s === "danger" ? "text-danger-fg/70" : "text-success-fg/70"),
+				className: e("text-xs uppercase tracking-wide", s === "danger" ? "text-danger-fg/70" : "text-success-fg/70"),
 				children: i
 			}), /* @__PURE__ */ t("div", {
 				className: e("break-words text-xs", s === "danger" ? "text-danger-fg line-through decoration-danger-fg/40" : "text-success-fg"),

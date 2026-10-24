@@ -3,8 +3,8 @@ import { n as t } from "./Button-uREUOWUk.js";
 import { n } from "./overlayStack-C0EBgmzL.js";
 import { t as r } from "./Input-_B49FdRY.js";
 import { t as i } from "./Avatar-CpUrJRJP.js";
-import { t as a } from "./ChangeDiff-BHerlwTS.js";
-import { o, t as s } from "./VerdictChip-DNmt9VaC.js";
+import { t as a } from "./ChangeDiff-BEScRhcZ.js";
+import { o, t as s } from "./VerdictChip-DoD3-HAG.js";
 import { Children as c, useState as l } from "react";
 import { Fragment as u, jsx as d, jsxs as f } from "react/jsx-runtime";
 //#region src/components/change-review/ChangeReviewList.tsx

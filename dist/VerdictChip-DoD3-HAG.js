@@ -7,7 +7,7 @@ function s({ path: t, hint: n, rootLabel: r = "Document level", className: s, "d
 	let l = t.filter((e) => e && e.trim().length > 0);
 	return /* @__PURE__ */ o("div", {
 		"data-testid": c,
-		className: e("flex min-w-0 items-center gap-1 overflow-x-auto rounded border border-border", "bg-surface-inset px-2 py-1 font-mono text-[11px] text-text-tertiary", s),
+		className: e("flex min-w-0 items-center gap-1 overflow-x-auto rounded border border-border", "bg-surface-inset px-2 py-1 font-mono text-xs text-text-tertiary", s),
 		children: [
 			/* @__PURE__ */ a("span", {
 				"aria-hidden": !0,
