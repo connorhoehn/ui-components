@@ -68,7 +68,7 @@ function Side({
       <div className="min-w-0 flex-1">
         <div
           className={cn(
-            'text-[10px] uppercase tracking-wide',
+            'text-xs uppercase tracking-wide',
             tone === 'danger' ? 'text-danger-fg/70' : 'text-success-fg/70',
           )}
         >

@@ -200,7 +200,7 @@ function FileSection({ file, annotations, collapsed, onToggle, maxLines }: {
           {file.binary ? (
             <div className="px-3 py-2 text-[12px] text-text-tertiary">Binary file — no text diff.</div>
           ) : (
-            <table className="w-full border-collapse font-mono text-[11.5px] leading-[1.5]">
+            <table className="w-full border-collapse font-mono text-xs leading-[1.5]">
               <tbody>
                 {shown.map((l, i) => (
                   l.kind === 'hunk' ? (
@@ -323,7 +323,7 @@ export function DiffViewer({
             onClick={() => jumpTo(f.path)}
             title={f.path}
             className={cn(
-              'px-1.5 py-0.5 rounded border border-border bg-surface text-[10.5px] font-mono cursor-pointer',
+              'px-1.5 py-0.5 rounded border border-border bg-surface text-xs font-mono cursor-pointer',
               'text-text-secondary hover:border-border-emphasis hover:text-text-primary truncate max-w-[220px]',
               (byFile.get(f.path)?.length ?? 0) > 0 && 'border-warning/60',
             )}

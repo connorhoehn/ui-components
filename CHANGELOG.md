@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.480.5
+
+- Change review and diffs on the page type scale: `ChangeDiff`'s "Now"/"Proposed" labels (10px), `ChangeLocation`'s `@@` line (11px), `DiffViewer`'s rows (11.5px) and file-jump chips (10.5px) all use `text-xs` (12px), the scale's small step. The aws-agentcore type-scale sweep flagged all four on the runbook proposal review.
+
 ## 2.480.3
 
 - Count badges use the shared 12px control floor and identify themselves to the DOM audit. Icon alignment measures ordinary labels separately from positioned count overlays, with valid and broken fixtures.

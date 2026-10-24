@@ -39,7 +39,7 @@ export function ChangeLocation({
       data-testid={testId}
       className={cn(
         'flex min-w-0 items-center gap-1 overflow-x-auto rounded border border-border',
-        'bg-surface-inset px-2 py-1 font-mono text-[11px] text-text-tertiary',
+        'bg-surface-inset px-2 py-1 font-mono text-xs text-text-tertiary',
         className,
       )}
     >
