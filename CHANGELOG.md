@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.481.2 — 2026-10-25
+
+- The hangout sidebar's overflow link uses the shared secondary-text token, correcting its contrast on the light sidebar surface. Verified through the directory's deep audit with expanded data.
+
 ## 2.481.1 — 2026-10-25
 
 - Dedicated call-stage placement owns the single media outlet and puts responsive controls below the participant grid. Side-pane hosts expose whether the measured split fits.

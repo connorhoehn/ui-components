@@ -307,7 +307,7 @@ function Ae(e, { rooms: r, occupancyFor: i, occupancyAdapter: a, participantId: 
 			}, t.slug)), w > 0 && u && /* @__PURE__ */ Y(A, {
 				"data-testid": "hangout-rooms-browse-all",
 				label: /* @__PURE__ */ X("span", {
-					className: "text-[12px] text-neutral",
+					className: "text-xs text-text-secondary",
 					children: [
 						"Browse all (",
 						S.length,
