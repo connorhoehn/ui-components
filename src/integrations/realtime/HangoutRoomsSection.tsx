@@ -238,7 +238,7 @@ function HangoutRoomsSectionView(HangoutRoomRow: HangoutRoomRowComponent, {
               <SidebarRow
                 data-testid="hangout-rooms-browse-all"
                 label={
-                  <span className="text-[12px] text-neutral">
+                  <span className="text-xs text-text-secondary">
                     Browse all ({activeRooms.length})
                   </span>
                 }
