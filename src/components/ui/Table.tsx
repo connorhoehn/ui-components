@@ -120,8 +120,8 @@ export function TableTh({ children, sortable, sortDirection, numeric, className,
     <th
       className={cn(
         size === 'sm'
-          ? 'text-left px-[var(--ui-table-inset,0.75rem)] py-2 text-neutral font-semibold text-xs uppercase tracking-wide whitespace-nowrap select-none'
-          : 'text-left px-4 py-2.5 text-neutral font-semibold text-[12px] uppercase tracking-wide select-none',
+          ? 'text-left px-[var(--ui-table-inset,0.75rem)] py-2 text-text-secondary font-semibold text-xs uppercase tracking-wide whitespace-nowrap select-none'
+          : 'text-left px-4 py-2.5 text-text-secondary font-semibold text-[12px] uppercase tracking-wide select-none',
         numeric && 'text-right',
         sortable && 'cursor-pointer hover:text-text-primary transition-colors',
         className,

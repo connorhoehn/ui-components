@@ -844,6 +844,20 @@ table{width:100%;border-collapse:collapse} th,td{padding:0 12px;height:44px;text
     }
     // Rules that judge exercise their valid fixture (a pass is not a zero-match).
     await dpage.setContent(deepHtml);
+    // A full-width bottom dock deliberately leaves flexible space above it.
+    // Keep checking gaps inside that dock and a dock detached from the bottom.
+    {
+      const dockHtml = deepHtml.replace('</main>', '<div data-column-dock style="margin-top:auto"><button>Command</button></div></main>');
+      const dockCheck = () => dpage.evaluate(measureDOM, { ...deep(['density.blank-band']), selectors: { ...dselectors, composerDocks: '[data-column-dock]' } });
+      await dpage.setContent(dockHtml);
+      assert.deepEqual((await dockCheck()).issues, [], 'flex space before an anchored column dock is intentional');
+      await dpage.locator('[data-column-dock]').evaluate(el => el.style.marginBottom = '40px');
+      assert.ok((await dockCheck()).issues.some(i => i.rule === 'density.blank-band'), 'a detached dock is not exempt');
+      await dpage.setContent(dockHtml);
+      await dpage.locator('[data-column-dock]').evaluate(el => { el.innerHTML = '<button>First</button><div style="height:150px"></div><button>Second</button>'; });
+      assert.ok((await dockCheck()).issues.some(i => i.rule === 'density.blank-band'), 'a gap inside the dock still fails');
+      await dpage.setContent(deepHtml);
+    }
     const exercised = await dmeasure(['density.blank-band', 'density.table-first', 'density.narrow-block', 'align.grid', 'align.baseline', 'align.icon-center', 'a11y.contrast']);
     for (const c of exercised.coverage) assert.ok(c.matched > 0, `${c.rule} is exercised by the valid deep fixture: ${JSON.stringify(c)}`);
     console.log('PASS each deep layout rule is exercised by the valid fixture');
@@ -1116,5 +1130,38 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
   }
   console.log('PASS CLI strict coverage propagation, validation and real exit codes; failed readiness cannot resolve prior findings');
   assert.throws(() => validateContract({ version: 1, rules: [{id:'a',kind:'bogus'}] }));
+  // A form, card toolbar and standalone shelf body must be measured even with no breadcrumb.
+  {
+    const contractPage = await browser.newPage();
+    const ids = ['toolbar.inset', 'collection.cards-inset', 'page.body-inset', 'form.text-control-height'];
+    const subset = { ...fullContract, rules: fullContract.rules.filter(r => ids.includes(r.id)) };
+    const fixture = `<style>:root{--ui-page-gutter:24px;--ui-table-inset:12px}*{box-sizing:border-box}</style><main data-page-body="inset" style="padding:0 24px"><div data-toolbar-variant="collection" data-collection-layout="cards" style="padding:0">Find hangouts</div><div data-toolbar-variant="collection" style="padding:0 12px">Ordinary table toolbar</div><div data-ui-dialog="form"><input type="text" style="height:28px" aria-label="Name"><div data-ui-control="combobox"><div style="height:28px"><input role="combobox" style="height:16px" aria-label="Person"></div></div></div></main>`;
+    const check = () => contractPage.evaluate(measureDOM, { ...payload, required: [], contract: subset });
+    await contractPage.setContent(fixture);
+    assert.deepEqual((await check()).issues, []);
+    for (const [selector, property, value, rule] of [
+      ['[data-page-body]', 'paddingLeft', '0px', 'page.body-inset'],
+      ['[data-collection-layout]', 'paddingLeft', '12px', 'collection.cards-inset'],
+      ['[data-toolbar-variant]:not([data-collection-layout])', 'paddingLeft', '0px', 'toolbar.inset'],
+      ['input', 'height', '40px', 'form.text-control-height'],
+      ['[data-ui-control="combobox"] > div', 'height', '40px', 'form.text-control-height'],
+    ]) {
+      await contractPage.setContent(fixture);
+      await contractPage.evaluate(([selector, property, value]) => { document.querySelector(selector).style[property] = value; }, [selector, property, value]);
+      assert.ok((await check()).issues.some(i => i.rule === rule), `${rule} rejects the reported defect`);
+    }
+    const activityRules = { ...fullContract, rules: fullContract.rules.filter(r => r.id === 'page.activity-unique') };
+    const activity = '<section data-page-activity>Activity and summaries</section>';
+    const checkActivity = () => contractPage.evaluate(measureDOM, { ...payload, required: [], contract: activityRules });
+    await contractPage.setContent(`<main>${activity}</main>`);
+    assert.deepEqual((await checkActivity()).issues, []);
+    await contractPage.setContent(`<main>${activity}${activity}</main>`);
+    assert.ok((await checkActivity()).issues.some(i => i.rule === 'page.activity-unique'));
+    // Separate page/pane owners may each show their own activity.
+    await contractPage.setContent(`<main>${activity}</main><aside>${activity}</aside>`);
+    assert.deepEqual((await checkActivity()).issues, []);
+    await contractPage.close();
+    console.log('PASS standalone gutters, card toolbars and compact form controls');
+  }
   console.log(`PASS clean four-column layout, repeatability, ${mutations.length} defect mutations, navigation coverage, cross-tenant grouping and honest report comparison`);
 } finally { await browser.close(); fs.rmSync(temp, { recursive: true, force: true }); }

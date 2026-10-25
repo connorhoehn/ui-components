@@ -44,6 +44,17 @@ describe('SidePane pure rules', () => {
 });
 
 describe('SidePane in a host', () => {
+  it('exposes the measured fit policy even without a registered pane', () => {
+    const rect = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({
+      x: 0, y: 0, left: 0, top: 0, right: 900, bottom: 800, width: 900, height: 800, toJSON: () => ({}),
+    });
+    function Fits() { return <output data-testid="fits">{String(useSidePaneHost().fits)}</output>; }
+    try {
+      render(<SidePaneProvider><SidePaneSplit><Fits /></SidePaneSplit></SidePaneProvider>);
+      expect(screen.getByTestId('fits')).toHaveTextContent('false');
+    } finally { rect.mockRestore(); }
+  });
+
   it('portals the page pane into the frame, at compact density, with its tab row and footer', () => {
     const onValueChange = vi.fn();
     render(

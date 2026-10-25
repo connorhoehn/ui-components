@@ -44,6 +44,8 @@ export interface CollectionSelection {
 }
 export interface CollectionToolbarProps {
   label: string;
+  /** Tables add a cell inset; cards and standalone collections align to their content edge. */
+  layout?: 'table' | 'cards';
   search?: Pick<SearchInputProps, 'value' | 'onChange' | 'placeholder' | 'aria-label' | 'data-testid'>;
   filters?: CollectionFilter[];
   summary?: ReactNode;
@@ -59,19 +61,19 @@ export interface CollectionToolbarProps {
 
 /** One collection control row: filters, count, notices and named icon actions.
  * Hosts supply state and commands, never control geometry or presentation. */
-export function CollectionToolbar({ label, search, filters = [], summary, notices = [], actions = [], onRefresh, refreshing = false, selection, children }: CollectionToolbarProps) {
+export function CollectionToolbar({ label, layout = 'table', search, filters = [], summary, notices = [], actions = [], onRefresh, refreshing = false, selection, children }: CollectionToolbarProps) {
   const infoRef = useRef<HTMLButtonElement>(null);
   const [infoOpen, setInfoOpen] = useState(false);
   const active = filters.filter(f => f.value !== (f.emptyValue ?? ''));
   if (selection && selection.count > 0) {
     // Same Toolbar, same variant and control scale: the selection replaces the
     // resting controls on this row, so the table under it keeps its top edge.
-    return <Toolbar aria-label={`${label}: selection`} wrap variant="collection" data-collection-selection="active" end={selection.actions}>
+    return <Toolbar aria-label={`${label}: selection`} wrap variant="collection" data-collection-layout={layout} className={layout === 'cards' ? 'px-0' : undefined} data-collection-selection="active" end={selection.actions}>
       <Tooltip content="Clear selection"><IconButton aria-label="Clear selection" icon={<CloseIcon />} onClick={selection.onClear} /></Tooltip>
       <span className="min-w-0 truncate text-xs font-medium text-text-primary" role="status" data-collection-selection-count>{selection.label ?? `${selection.count} selected`}</span>
     </Toolbar>;
   }
-  return <Toolbar aria-label={label} wrap variant="collection" data-collection-selection={selection ? 'idle' : undefined} end={<>
+  return <Toolbar aria-label={label} wrap variant="collection" data-collection-layout={layout} className={layout === 'cards' ? 'px-0' : undefined} data-collection-selection={selection ? 'idle' : undefined} end={<>
     {actions.map(action => <Tooltip key={action.id} content={action.label}><IconButton aria-label={action.label} icon={action.icon} onClick={action.onClick} disabled={action.disabled} data-testid={action['data-testid']} /></Tooltip>)}
     {onRefresh && <Tooltip content="Refresh"><IconButton aria-label="Refresh" icon={<RepeatIcon />} onClick={onRefresh} disabled={refreshing} /></Tooltip>}
   </>}>

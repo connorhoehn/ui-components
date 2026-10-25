@@ -71,6 +71,7 @@ export interface ToolbarProps {
   'data-testid'?: string;
   /** Set by `CollectionToolbar`: `active` while the row shows a selection in place of its controls. Since 2.442.0. */
   'data-collection-selection'?: 'idle' | 'active';
+  'data-collection-layout'?: 'table' | 'cards';
 }
 
 const SIZE = {
@@ -105,6 +106,7 @@ export function Toolbar({
   'aria-label': ariaLabel = 'Toolbar',
   'data-testid': testId,
   'data-collection-selection': selectionState,
+  'data-collection-layout': collectionLayout,
 }: ToolbarProps) {
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -156,6 +158,7 @@ export function Toolbar({
       data-testid={testId}
       data-toolbar-variant={variant}
       data-collection-selection={selectionState}
+      data-collection-layout={collectionLayout}
       onKeyDown={onKeyDown}
       className={cn(
         'flex flex-none',

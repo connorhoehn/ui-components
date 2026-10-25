@@ -100,6 +100,7 @@
   --color-warning-border: #fde68a;
 
   --color-danger: #dc2626;
+  --color-on-danger: #ffffff;
   --color-danger-bg: #fef2f2;
   --color-danger-fg: #dc2626;
   --color-danger-border: #fecaca;
@@ -395,6 +396,7 @@
   --color-warning-border: #92400e;
 
   --color-danger: #f87171;
+  --color-on-danger: #0f172a;
   --color-danger-bg: #7f1d1d;
   --color-danger-fg: #fca5a5;
   --color-danger-border: #991b1b;

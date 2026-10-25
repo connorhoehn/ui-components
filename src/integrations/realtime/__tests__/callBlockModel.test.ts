@@ -36,7 +36,7 @@ describe('the one media sink', () => {
     expect(notified).toBe(4);
   });
 
-  it('composer > page > block > pane; layout and narrow form follow the holder', () => {
+  it('stage > composer > page > block > pane; layout and narrow form follow the holder', () => {
     const claims = new CallBlockClaims<string>();
     expect(claims.placement()).toBe('footer');
     expect(callBlockLayout(claims.placement())).toBe('shelf');
@@ -55,6 +55,14 @@ describe('the one media sink', () => {
     expect(callBlockLayout('composer', true)).toBe('stack');
     expect(callBlockLayout('composer')).toBe('shelf');
     expect(claims.pageClaimed()).toBe(true);
+    const releaseStage = claims.claim('stage', 'stage');
+    expect(claims.current()).toBe('stage');
+    expect(callBlockLayout(claims.placement())).toBe('stage');
+    const releaseLaterComposer = claims.claim('new-composer', 'composer');
+    expect(claims.current()).toBe('stage');
+    releaseLaterComposer();
+    releaseStage();
+    expect(claims.current()).toBe('composer');
     releaseComposer();
     expect(claims.current()).toBe('page');
     expect(claims.documents()).toEqual([]);

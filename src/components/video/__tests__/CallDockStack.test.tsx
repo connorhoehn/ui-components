@@ -64,6 +64,20 @@ describe('CallDock layout="stack"', () => {
 });
 
 describe('CallDock tileSize', () => {
+  it.each([false, true])('dedicated stage keeps media and working controls together (compact=%s)', compact => {
+    const onLeave = vi.fn();
+    const onMute = vi.fn();
+    const p = props({ layout: 'stage', compact, onLeave });
+    render(<CallDock {...p} mic={{ ...p.mic, onToggle: onMute }} />);
+    expect(screen.getByTestId('call-dock')).toHaveAttribute('data-layout', 'stage');
+    expect(screen.getByTestId('call-dock-tile-row')).toHaveAttribute('data-variant', 'grid');
+    fireEvent.click(screen.getByTestId('call-dock-mic'));
+    expect(onMute).toHaveBeenCalledOnce();
+    fireEvent.click(screen.getByTestId('call-dock-leave'));
+    expect(onLeave).toHaveBeenCalledOnce();
+    expect(screen.queryByTestId('call-dock-more') !== null).toBe(compact);
+  });
+
   it.each([
     ['sm', '132px', '74px'],
     ['md', '176px', '88px'],

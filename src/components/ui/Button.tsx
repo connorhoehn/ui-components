@@ -76,7 +76,7 @@ const variantClasses: Record<ButtonVariant, string> = {
   secondary: 'bg-primary/5 text-text-primary border border-primary/20 enabled:hover:bg-primary/12 enabled:hover:border-primary/30 aria-pressed:bg-primary/12 aria-pressed:text-primary',
   ghost: 'bg-transparent text-text-primary border border-transparent enabled:hover:bg-primary/10 enabled:hover:text-primary aria-pressed:bg-primary/12 aria-pressed:text-primary',
   danger: 'bg-transparent text-danger-fg border border-danger-border hover:bg-danger-bg',
-  'danger-solid': 'bg-danger text-white border-none hover:bg-danger/90',
+  'danger-solid': 'bg-danger text-on-danger border-none hover:bg-danger/90',
   success: 'bg-transparent text-success-fg border border-success-border hover:bg-success-bg',
   info: 'bg-info text-white border-none hover:bg-info/90',
   link: 'bg-transparent text-primary border-none p-0 no-underline hover:underline',

@@ -76,7 +76,7 @@ export interface RMConversationCallSource {
   toggleCamera(): void;
   toggleScreenShare(): void;
   leave(): void | Promise<void>;
-  rejoin(): void | Promise<void>;
+  rejoin(opts?: { audioOnly?: boolean }): void | Promise<void>;
 }
 
 /** Mirror of RM `IncomingConversationCall` — one entry of `useIncomingConversationCalls().rings`. */

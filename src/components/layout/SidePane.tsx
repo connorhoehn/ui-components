@@ -216,6 +216,8 @@ export function SidePaneProvider({ storageKey = 'uic.side-pane', defaultOpen = t
 }
 
 export interface SidePaneHostState {
+  /** The measured split has room for the page and pane at the host's bounds. */
+  fits: boolean;
   /** A page has registered a pane. */
   registered: boolean;
   /** The pane is asked for (registered and open, or page-owned) — on screen or waiting for room. */
@@ -237,7 +239,7 @@ export interface SidePaneHostState {
 }
 
 const NO_HOST: SidePaneHostState = {
-  registered: false, asked: false, shown: false, explored: false, reveal: () => {}, collapse: () => {}, folded: false, toggleFolded: () => {}, paneWidthPx: 0,
+  fits: true, registered: false, asked: false, shown: false, explored: false, reveal: () => {}, collapse: () => {}, folded: false, toggleFolded: () => {}, paneWidthPx: 0,
 };
 
 /** What the shell reads: whether a pane is asked for, shown, exploring a selection. */
@@ -250,7 +252,7 @@ export function useSidePaneHost(): SidePaneHostState {
     const effective = host.sized ? host.ratio : boundedSidePaneRatio(host.ratio, host.width, host.registration?.widthPx);
     const paneWidthPx = !host.shown || host.folded ? 0 : host.width == null ? null : Math.round((1 - effective) * host.width);
     return {
-      registered, asked, shown: host.shown, explored: asked && !!host.registration?.explores, reveal: host.reveal, collapse: host.collapse,
+      fits: host.fits, registered, asked, shown: host.shown, explored: asked && !!host.registration?.explores, reveal: host.reveal, collapse: host.collapse,
       folded: host.folded, toggleFolded: host.toggleFolded, paneWidthPx,
     };
   }, [host]);

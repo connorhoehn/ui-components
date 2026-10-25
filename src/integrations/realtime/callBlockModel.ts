@@ -4,6 +4,7 @@
 // ONE media sink: the call dock whose tiles carry every remote stream. Where
 // that sink draws is decided by CLAIMS, highest first:
 //
+//   stage     a dedicated call page; keeps media central even with chat open;
 //   composer  a conversation composer whose conversation holds the call — the
 //             full call bar over the tiles, flush on the composer's top edge
 //             (`ConversationComposer callBlock`);
@@ -25,7 +26,7 @@
 export type CallPhase = 'idle' | 'calling' | 'ringing' | 'connecting' | 'live' | 'reconnecting' | 'ended' | 'failed';
 
 /** Where the one call-media sink draws. */
-export type CallBlockPlacement = 'composer' | 'page' | 'block' | 'pane' | 'footer';
+export type CallBlockPlacement = 'stage' | 'composer' | 'page' | 'block' | 'pane' | 'footer';
 export type CallBlockClaimPlacement = Exclude<CallBlockPlacement, 'footer'>;
 
 /** What a call is about, drawn as the bar's document chips. */
@@ -39,7 +40,7 @@ export interface CallBlockClaimOptions {
 }
 
 const NO_DOCUMENTS: readonly CallBlockDocument[] = [];
-const RANK: readonly CallBlockClaimPlacement[] = ['composer', 'page', 'block', 'pane'];
+const RANK: readonly CallBlockClaimPlacement[] = ['stage', 'composer', 'page', 'block', 'pane'];
 
 /** The sink's claims. Each read is a stable snapshot for `useSyncExternalStore`. */
 export class CallBlockClaims<T> {
@@ -81,7 +82,8 @@ export class CallBlockClaims<T> {
  * block the full bar too; the pane's media panel the reflowing tile grid; the
  * footer's collapsed shelf the thumbnail strip.
  */
-export function callBlockLayout(placement: CallBlockPlacement, compact = false): 'grid' | 'shelf' | 'stack' {
+export function callBlockLayout(placement: CallBlockPlacement, compact = false): 'grid' | 'shelf' | 'stack' | 'stage' {
+  if (placement === 'stage') return 'stage';
   if (placement === 'composer') return compact ? 'stack' : 'shelf';
   return placement === 'pane' ? 'grid' : 'shelf';
 }

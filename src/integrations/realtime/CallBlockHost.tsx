@@ -90,7 +90,7 @@ export interface CallBlockCall extends RMConversationCallSource {
   recording?: { enabled: boolean; reason: string | null; sessionId: string } | null;
   start(targets: { userId: string; displayName?: string }[], opts?: { audioOnly?: boolean }): Promise<void>;
   accept(ring?: never): Promise<void>;
-  rejoin(): Promise<void>;
+  rejoin(opts?: { audioOnly?: boolean }): Promise<void>;
   leave(): Promise<void>;
 }
 
@@ -251,7 +251,7 @@ export interface CallHostProviderProps {
 
 export interface CallBlockProps {
   placement: CallBlockClaimPlacement;
-  /** The narrow bar (mic, camera, Leave; the rest in ⋯) over tiles two to a row. Composer placement only. */
+  /** The narrow bar (mic, camera, Leave; the rest in ⋯). Composer and stage placements. */
   compact?: boolean;
   documents?: readonly CallBlockDocument[];
   className?: string;
@@ -494,10 +494,10 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
       request('start', (c) => { void c.start(targets, opts); });
       return Promise.resolve();
     }, [request]);
-    const gatedRejoin = useCallback<Call['rejoin']>(() => {
+    const gatedRejoin = useCallback<Call['rejoin']>((opts) => {
       const c = callRef.current;
-      if (!preJoinGate('rejoin', c.phase, !!c.call)) return c.rejoin();
-      request('join', (next) => { void next.rejoin(); });
+      if (!preJoinGate('rejoin', c.phase, !!c.call)) return c.rejoin(opts);
+      request('join', (next) => { void next.rejoin(opts); });
       return Promise.resolve();
     }, [request]);
     const checkDevices = useCallback(() => {
@@ -690,7 +690,8 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
    * tiles, flush on a composer's top edge (claimed only while laid out on
    * screen; narrow below 640px). `page` / `block`: a content column's block
    * for a call no composer carries, while the media panel is open. `pane`: the
-   * side pane's tile grid.
+   * side pane's tile grid. `stage`: a dedicated call page that owns the full
+   * grid regardless of the media-panel toggle and takes precedence over chat.
    */
   function CallBlock({ placement, compact = false, documents, className }: CallBlockProps) {
     const host = useContext(HostContext);
@@ -698,14 +699,16 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
     const [target, setTarget] = useState<HTMLElement | null>(null);
     const width = useLaidOutWidth(target);
     const drawn = !!host?.lobby && callDrawn(host.call.phase, true);
-    const enabled = placement === 'composer' ? width > 0
+    const enabled = placement === 'stage' ? drawn && width > 0
+      : placement === 'composer' ? width > 0
       : placement === 'pane' ? true
       : drawn && !!media?.open && width > 0;
-    const narrow = placement === 'composer' && (compact || callBlockNarrow(width));
+    const sized = placement === 'composer' || placement === 'stage';
+    const narrow = sized && (compact || callBlockNarrow(width));
     const holds = useClaimCallBlock(target, placement, enabled, { compact: narrow, ...(documents ? { documents } : {}) });
-    const testId = placement === 'composer' ? 'composer-call-dock' : placement === 'page' ? 'page-call-block' : placement === 'block' ? 'shell-call-block' : 'call-block-pane';
+    const testId = placement === 'stage' ? 'call-stage' : placement === 'composer' ? 'composer-call-dock' : placement === 'page' ? 'page-call-block' : placement === 'block' ? 'shell-call-block' : 'call-block-pane';
     return <Stack ref={setTarget} gap="none" className={className ?? (placement === 'composer' ? 'min-w-0' : 'shrink-0 min-w-0')} aria-label="Huddle"
-      data-testid={testId} data-holds-media={holds ? 'true' : 'false'} {...(placement === 'composer' ? { 'data-compact': narrow ? 'true' : 'false' } : {})} />;
+      data-testid={testId} data-holds-media={holds ? 'true' : 'false'} {...(sized ? { 'data-compact': narrow ? 'true' : 'false' } : {})} />;
   }
 
   /** Bind a page's lobby (with its start) while mounted; returns whether the shell's call is this lobby's. */

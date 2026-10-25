@@ -14,6 +14,13 @@ function Filtered() {
   return <DensityProvider density="compact"><CollectionToolbar label="Run filters" filters={[{ id: 'status', label: 'Status', value: status, onChange: setStatus, options: [{ value: '', label: 'Any status' }, { value: 'running', label: 'Running' }] }]} summary="193 runs" notices={['196 traces have no run id.']} /></DensityProvider>;
 }
 describe('collection design inheritance', () => {
+  it('aligns a card collection to its page edge without table-cell padding in either state', () => {
+    const { rerender } = render(<CollectionToolbar label="Rooms" layout="cards" />);
+    expect(screen.getByRole('toolbar')).toHaveAttribute('data-collection-layout', 'cards');
+    expect(screen.getByRole('toolbar')).toHaveClass('px-0');
+    rerender(<CollectionToolbar label="Rooms" layout="cards" selection={{ count: 1, onClear: () => {} }} />);
+    expect(screen.getByRole('toolbar')).toHaveClass('px-0');
+  });
   it('keeps filters and advisory text out of the resting row, and exposes state and clear in the panel', () => {
     render(<Filtered />);
     expect(screen.queryByRole('combobox')).not.toBeInTheDocument();

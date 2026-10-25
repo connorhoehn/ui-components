@@ -29,3 +29,5 @@ export const Selection: Story = {
     </>;
   },
 };
+
+export const CardCollection: Story = { args: { label: 'Hangouts', layout: 'cards', search: { value: '', onChange: () => {}, placeholder: 'Find a hangout' }, summary: '2 hangouts' } };

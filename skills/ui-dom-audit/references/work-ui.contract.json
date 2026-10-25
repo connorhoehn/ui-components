@@ -310,7 +310,7 @@
     {
       "id": "toolbar.inset",
       "kind": "style",
-      "selector": "$collectionToolbars",
+      "selector": "[data-toolbar-variant=\"collection\"]:not([data-collection-layout=\"cards\"])",
       "properties": {
         "paddingLeft": {
           "token": "--ui-table-inset"
@@ -399,6 +399,13 @@
       "selector": "$nestedComposers",
       "expected": 0,
       "owner": "ComposerSurface"
+    },
+    {
+      "id": "page.activity-unique",
+      "kind": "count",
+      "selector": "[data-page-activity] ~ [data-page-activity]",
+      "expected": 0,
+      "owner": "Page activity region \u2014 repeated configuration must not leave duplicate sibling sections"
     },
     {
       "id": "dock.clearance",
@@ -890,7 +897,8 @@
       "deep": true,
       "selector": "$contentColumns",
       "maxGap": 96,
-      "owner": "the page composing the content column (or the composite holding a fixed height)"
+      "owner": "the page composing the content column (or the composite holding a fixed height)",
+      "anchoredDocks": "$composerDocks"
     },
     {
       "id": "density.table-first",
@@ -1142,6 +1150,42 @@
       "selector": "[data-shell-nav] :is(li, [role=\"listitem\"], div, p)",
       "tolerance": 2,
       "owner": "the list composite drawing the marker (align-items: first baseline / start, not center)"
+    },
+    {
+      "id": "collection.cards-inset",
+      "kind": "style",
+      "selector": "[data-collection-layout=\"cards\"]",
+      "properties": {
+        "paddingLeft": 0,
+        "paddingRight": 0
+      },
+      "owner": "CollectionToolbar card layout aligns to page content"
+    },
+    {
+      "id": "page.body-inset",
+      "kind": "style",
+      "selector": "[data-page-body=\"inset\"]",
+      "properties": {
+        "paddingLeft": {
+          "token": "--ui-page-gutter"
+        },
+        "paddingRight": {
+          "token": "--ui-page-gutter"
+        }
+      },
+      "owner": "Standalone content body; covers shelf and empty states without a breadcrumb"
+    },
+    {
+      "id": "form.text-control-height",
+      "kind": "box",
+      "selector": "[data-ui-dialog=\"form\"] input:is([type=\"text\"],:not([type])):not([data-ui-control=\"combobox\"] input), [data-ui-dialog=\"form\"] [data-ui-control=\"combobox\"] > div:first-child",
+      "properties": {
+        "height": {
+          "min": 28,
+          "max": 32
+        }
+      },
+      "owner": "Input / PersonPicker in compact application forms"
     }
   ]
 }

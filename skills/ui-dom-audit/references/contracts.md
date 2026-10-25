@@ -16,6 +16,11 @@ measurement and must not substitute for it.
 
 ## Measured rules
 
+`page.activity-unique` rejects repeated sibling `[data-page-activity]` regions.
+An activity timeline is one region within its owner; separate pane owners may
+each expose their own history. Repeated configuration-open/close probes must
+leave that count unchanged (a duplicate React child key caused this regression).
+
 | Kind | Contract fields | What it detects |
 | --- | --- | --- |
 | `text` | selector, properties | Actual visible labels including nested spans; ignores icon-only/visually hidden text |
@@ -812,3 +817,12 @@ state.
 ### Count badges beside icons
 
 `Badge variant="count"` emits `data-ui-badge="count"` and uses the 12px control floor. A count positioned absolutely over an icon is an overlay, so `align.icon-center` omits only that marked badge from its text baseline. Ordinary labels in the same button remain measured; inline badges remain measured. Font size and contrast still apply to the badge.
+
+Card collection toolbars explicitly use `data-collection-layout="cards"`: their search aligns with the card content edge (zero horizontal toolbar inset). Table toolbars retain the 12px table-row inset. The two profiles have independent rules and mutation checks; the card profile does not exempt controls from typography, size, or containment checks.
+
+The blank-band rule recognizes a semantic composer dock only when it reaches the measured column bottom. Flexible space immediately before that anchored dock is intentional. Gaps inside the dock, detached docks, and gaps between ordinary content blocks remain failures, with mutation coverage for each case.
+
+Compact form height measures the standalone input or a Combobox’s painted field
+frame. Its internal unbordered input occupies only the text line (16px); it is not
+a second field. The valid fixture includes that inner input and rejects both an
+oversized standalone input and an oversized Combobox frame.

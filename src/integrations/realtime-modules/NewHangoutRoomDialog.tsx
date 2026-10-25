@@ -15,10 +15,14 @@
 // tiny menus; a form with multiple fields + toggles deserves a focused
 // dialog. We still expose InlinePopover separately for other consumers.
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useState } from 'react';
 import Modal from '../../components/shared/Modal';
 import { Button } from '../../components/ui/Button';
 import Switch from '../../components/shared/Switch';
+import FormField from '../../components/shared/FormField';
+import { Input } from '../../components/forms/Input';
+import { Textarea } from '../../components/forms/Textarea';
+import InlineAlert from '../../components/shared/InlineAlert';
 import type {
   RMCreateRoomInput,
   RMRoom,
@@ -34,6 +38,9 @@ export interface NewHangoutRoomDialogProps {
   onCreated?: (room: RMRoom) => void;
   /** Default visibility. Server defaults to 'org' if omitted. */
   defaultVisibility?: RMRoomVisibility;
+  /** Name the parent resource in a host that calls these hangouts. */
+  title?: string;
+  submitLabel?: string;
 }
 
 const NAME_MIN = 3;
@@ -67,7 +74,10 @@ export function NewHangoutRoomDialog({
   onCreate,
   onCreated,
   defaultVisibility,
+  title = 'New room',
+  submitLabel = 'Create room',
 }: NewHangoutRoomDialogProps) {
+  const formId = useId();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [audioOnly, setAudioOnly] = useState(false);
@@ -115,117 +125,34 @@ export function NewHangoutRoomDialog({
   }
 
   return (
-    <Modal
-      open={open}
-      onClose={submitting ? () => {} : onClose}
-      title="New room"
-      maxWidth={440}
-      rawChildren
-      backdropTestId="new-hangout-room-dialog"
-      footer={null}
-    >
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <label className="flex flex-col gap-1">
-          <span className="text-[12px] font-semibold text-text-primary">Name</span>
-          <input
-            data-autofocus
-            data-testid="new-hangout-room-name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Team standup"
-            maxLength={NAME_MAX + 10}
-            disabled={submitting}
-            className="w-full px-3 py-2 text-sm border border-border-emphasis rounded-md focus:outline-none focus:ring-2 focus:ring-info"
-          />
-          <div className="flex items-center justify-between text-[11px] text-text-tertiary">
-            <span data-testid="new-hangout-room-slug-preview">
-              {slugPreview ? `#${slugPreview}` : 'Slug preview appears here'}
-            </span>
-            <span>{`${name.trim().length}/${NAME_MAX}`}</span>
-          </div>
-          {nameError && name.length > 0 && (
-            <span
-              data-testid="new-hangout-room-name-error"
-              className="text-[11px] text-danger-fg"
-            >
-              {nameError}
-            </span>
-          )}
-        </label>
-
-        <label className="flex flex-col gap-1">
-          <span className="text-[12px] font-semibold text-text-primary">
-            Description <span className="font-normal text-text-tertiary">(optional)</span>
-          </span>
-          <textarea
-            data-testid="new-hangout-room-description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="What's this room for?"
-            rows={2}
-            disabled={submitting}
-            className="w-full px-3 py-2 text-sm border border-border-emphasis rounded-md focus:outline-none focus:ring-2 focus:ring-info resize-none"
-          />
-        </label>
-
-        <div className="flex flex-col gap-3">
-          <label className="flex items-center justify-between gap-3">
-            <span className="flex flex-col">
-              <span className="text-[13px] font-semibold text-text-primary">Audio only</span>
-              <span className="text-[11px] text-text-tertiary">Skip video tracks — voice-only room.</span>
-            </span>
-            <Switch
-              checked={audioOnly}
-              onChange={setAudioOnly}
-              disabled={submitting}
-              aria-label="Audio only"
-              data-testid="new-hangout-room-audio-only"
-            />
-          </label>
-          <label className="flex items-center justify-between gap-3">
-            <span className="flex flex-col">
-              <span className="text-[13px] font-semibold text-text-primary">Recording enabled</span>
-              <span className="text-[11px] text-text-tertiary">Allow server-side recording of sessions.</span>
-            </span>
-            <Switch
-              checked={recordingEnabled}
-              onChange={setRecordingEnabled}
-              disabled={submitting}
-              aria-label="Recording enabled"
-              data-testid="new-hangout-room-recording"
-            />
-          </label>
-        </div>
-
-        {submitError && (
-          <div
-            data-testid="new-hangout-room-error"
-            role="alert"
-            className="text-[12px] text-danger-fg bg-danger-bg border border-danger-border rounded-md px-3 py-2"
-          >
-            {submitError}
-          </div>
-        )}
-
-        <div className="flex justify-end gap-2 pt-1">
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={onClose}
-            disabled={submitting}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            variant="primary"
-            disabled={!canSubmit}
-            data-testid="new-hangout-room-submit"
-          >
-            {submitting ? 'Creating…' : 'Create room'}
-          </Button>
-        </div>
+    <Modal open={open} onClose={submitting ? () => {} : onClose} title={title}
+      maxWidth={440} backdropTestId="new-hangout-room-dialog" dialogKind="form"
+      footer={<div className="flex justify-end gap-2">
+        <Button type="button" variant="secondary" size="sm" onClick={onClose} disabled={submitting}>Cancel</Button>
+        <Button type="submit" form={formId} variant="primary" size="sm" disabled={!canSubmit} data-testid="new-hangout-room-submit">
+          {submitting ? 'Creating…' : submitLabel}
+        </Button>
+      </div>}>
+      <form id={formId} onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <FormField label="Name" required error={name.length > 0 ? nameError ?? undefined : undefined}
+          hint={slugPreview ? `Room address: #${slugPreview}` : 'Choose a clear name people will recognize.'}
+          hintTestId={name.length > 0 && nameError ? 'new-hangout-room-name-error' : 'new-hangout-room-slug-preview'}>
+          {wiring => <Input {...wiring} data-autofocus data-testid="new-hangout-room-name" value={name}
+            onChange={e => setName(e.target.value)} placeholder="Team standup" maxLength={NAME_MAX + 10} disabled={submitting} size="sm" />}
+        </FormField>
+        <FormField label="Description" hint="Optional. Explain what people will use this space for.">
+          {wiring => <Textarea {...wiring} data-testid="new-hangout-room-description" value={description}
+            onChange={e => setDescription(e.target.value)} placeholder="Purpose of this space" rows={2} disabled={submitting} />}
+        </FormField>
+        <FormField label="Start with audio only" layout="inline" hint="People join with their cameras off.">
+          {wiring => <Switch aria-labelledby={wiring.labelId} checked={audioOnly} onChange={setAudioOnly}
+            disabled={submitting} size="sm" data-testid="new-hangout-room-audio-only" />}
+        </FormField>
+        <FormField label="Record calls" layout="inline" hint="Record new calls in this hangout. People see a recording notice when they join.">
+          {wiring => <Switch aria-labelledby={wiring.labelId} checked={recordingEnabled} onChange={setRecordingEnabled}
+            disabled={submitting} size="sm" data-testid="new-hangout-room-recording" />}
+        </FormField>
+        {submitError && <InlineAlert tone="error" data-testid="new-hangout-room-error">{submitError}</InlineAlert>}
       </form>
     </Modal>
   );

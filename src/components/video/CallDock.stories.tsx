@@ -412,3 +412,9 @@ export const FourPeopleTalking: Story = {
   decorators: [themed('light')],
   render: (args) => <FourPeopleTalkingDemo {...args} />,
 };
+
+/** The dedicated call page owns the grid while chat remains beside it. */
+export const DedicatedStage: Story = {
+  args: base({ layout: 'stage' }),
+  decorators: [themed('light')],
+};

@@ -999,8 +999,18 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
             return { el: r.el, top: Math.max(t, top), bottom: Math.min(b, bottom) };
           }).filter(r => r.bottom - r.top > 1).sort((a, b) => a.top - b.top);
           if (!bands.length) continue;
-          let cursor = bands[0].top, worst = { gap: 0 };
-          for (const r of bands) { if (r.top - cursor > worst.gap) worst = { gap: r.top - cursor, at: cursor, next: r.el }; cursor = Math.max(cursor, r.bottom); }
+          // A semantic column dock is intentionally anchored below short content.
+          // Only its leading flexible space is allowed: gaps within the dock,
+          // or before a dock that no longer reaches the column bottom, still fail.
+          const anchored = rule.anchoredDocks ? query(rule.anchoredDocks).filter(d => column.contains(d)
+            && Math.abs(d.getBoundingClientRect().bottom - c.bottom) <= tol) : [];
+          let cursor = bands[0].top, worst = { gap: 0 }, previousDock = null;
+          for (const r of bands) {
+            const dock = anchored.find(d => d.contains(r.el));
+            const leadingDockSpace = dock && dock !== previousDock && cursor <= dock.getBoundingClientRect().top + tol;
+            if (!leadingDockSpace && r.top - cursor > worst.gap) worst = { gap: r.top - cursor, at: cursor, next: r.el };
+            cursor = Math.max(cursor, r.bottom); previousDock = dock;
+          }
           samples.push({ rule: rule.id, selector: selectorOf(column), property: 'largest interior blank band', actual: round(worst.gap), expected: { max: maxGap } });
           if (worst.gap > maxGap + tol) add(rule, worst.next, 'interior blank band', `<= ${maxGap}px between consecutive blocks in the column`, `${Math.round(worst.gap)}px blank from y=${Math.round(worst.at)} above "${snippet((worst.next.textContent ?? '').trim()) || worst.next.tagName.toLowerCase()}"`);
           // A scroller in the column that hides content while blank space sits below it.
