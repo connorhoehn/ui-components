@@ -1630,7 +1630,7 @@ export declare interface ConversationCallDockProps {
      * `stack` (2.432.0): the narrow `shelf` for a side pane — mic ▾, camera ▾
      * and Leave on the bar, the rest in its "⋯" menu, the tiles two to a row.
      */
-    layout?: 'shelf' | 'grid' | 'stack';
+    layout?: 'shelf' | 'grid' | 'stack' | 'stage';
     className?: string;
     /** The dock's test id; the notice is `<id>-notice`, the settings dialog `<id>-settings`. Default `conversation-call-dock`. */
     'data-testid'?: string;
@@ -2641,7 +2641,7 @@ export declare interface NetworkShimOptions {
     className?: string;
 }
 
-export declare function NewHangoutRoomDialog({ open, onClose, onCreate, onCreated, defaultVisibility, }: NewHangoutRoomDialogProps): JSX.Element;
+export declare function NewHangoutRoomDialog({ open, onClose, onCreate, onCreated, defaultVisibility, title, submitLabel, }: NewHangoutRoomDialogProps): JSX.Element;
 
 export declare interface NewHangoutRoomDialogProps {
     open: boolean;
@@ -2652,6 +2652,9 @@ export declare interface NewHangoutRoomDialogProps {
     onCreated?: (room: RMRoom) => void;
     /** Default visibility. Server defaults to 'org' if omitted. */
     defaultVisibility?: RMRoomVisibility;
+    /** Name the parent resource in a host that calls these hangouts. */
+    title?: string;
+    submitLabel?: string;
 }
 
 declare interface NotificationBellProps {
@@ -3129,7 +3132,9 @@ export declare interface RMConversationCallSource {
     toggleCamera(): void;
     toggleScreenShare(): void;
     leave(): void | Promise<void>;
-    rejoin(): void | Promise<void>;
+    rejoin(opts?: {
+        audioOnly?: boolean;
+    }): void | Promise<void>;
 }
 
 export declare interface RMCreateRoomInput {

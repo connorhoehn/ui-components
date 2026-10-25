@@ -1185,10 +1185,12 @@ export declare interface CollectionSelection {
 
 /** One collection control row: filters, count, notices and named icon actions.
  * Hosts supply state and commands, never control geometry or presentation. */
-export declare function CollectionToolbar({ label, search, filters, summary, notices, actions, onRefresh, refreshing, selection, children }: CollectionToolbarProps): JSX.Element;
+export declare function CollectionToolbar({ label, layout, search, filters, summary, notices, actions, onRefresh, refreshing, selection, children }: CollectionToolbarProps): JSX.Element;
 
 export declare interface CollectionToolbarProps {
     label: string;
+    /** Tables add a cell inset; cards and standalone collections align to their content edge. */
+    layout?: 'table' | 'cards';
     search?: Pick<SearchInputProps, 'value' | 'onChange' | 'placeholder' | 'aria-label' | 'data-testid'>;
     filters?: CollectionFilter[];
     summary?: ReactNode;
@@ -6779,7 +6781,7 @@ export declare const TONES: readonly ["neutral", "success", "warning", "danger",
  */
 export declare function toneVar(tone: ToneOrAlias): string;
 
-export declare function Toolbar({ children, end, tone, variant, size, sticky, bordered, wrap, className, 'aria-label': ariaLabel, 'data-testid': testId, 'data-collection-selection': selectionState, }: ToolbarProps): JSX.Element;
+export declare function Toolbar({ children, end, tone, variant, size, sticky, bordered, wrap, className, 'aria-label': ariaLabel, 'data-testid': testId, 'data-collection-selection': selectionState, 'data-collection-layout': collectionLayout, }: ToolbarProps): JSX.Element;
 
 export declare function ToolbarGroup({ children, divided, tone, className, 'aria-label': ariaLabel, }: ToolbarGroupProps): JSX.Element;
 
@@ -6844,6 +6846,7 @@ export declare interface ToolbarProps {
     'data-testid'?: string;
     /** Set by `CollectionToolbar`: `active` while the row shows a selection in place of its controls. Since 2.442.0. */
     'data-collection-selection'?: 'idle' | 'active';
+    'data-collection-layout'?: 'table' | 'cards';
 }
 
 export declare function ToolbarSeparator({ tone, className }: ToolbarSeparatorProps): JSX.Element;

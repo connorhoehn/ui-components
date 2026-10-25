@@ -1,15 +1,16 @@
-import { n as e } from "../Button-uREUOWUk.js";
-import { c as t, l as n, n as r } from "../Text-KEOV-uPA.js";
-import { t as i } from "../Modal-CEiWhFnj.js";
+import { n as e } from "../Button-C-I3BxWI.js";
+import { c as t, l as n, n as r } from "../Text-CSM3FBdF.js";
+import { t as i } from "../Modal-PO0F6rAp.js";
 import { n as a } from "../Slider-DEbQCKD1.js";
-import { n as o, r as s } from "../RecordingConsentNotice-BIzoGaRA.js";
-import { i as c, n as l, r as u, t as d } from "../useDocumentImageUpload-DBdEslx6.js";
-import { $ as f, A as p, B as m, C as h, D as g, E as _, F as v, G as y, H as b, I as x, J as S, K as C, L as w, M as T, N as E, O as D, P as O, Q as k, R as A, S as ee, St as te, T as ne, U as re, V as j, W as ie, X as M, Y as N, Z as P, _ as ae, _t as oe, a as F, at as se, b as ce, bt as le, c as I, ct as ue, d as L, dt as R, et as de, f as z, ft as fe, g as pe, gt as B, h as me, ht as he, i as ge, it as V, j as _e, k as ve, l as H, lt as U, m as ye, mt as be, n as xe, nt as Se, o as W, ot as Ce, p as we, pt as Te, q as Ee, r as De, rt as Oe, s as ke, st as Ae, t as je, tt as Me, u as Ne, ut as Pe, v as Fe, vt as Ie, w as Le, x as Re, xt as ze, y as Be, yt as Ve, z as He } from "../meeting-0i0W2gu2.js";
+import { n as o, r as s } from "../RecordingConsentNotice-Cwn_hKhs.js";
+import { i as c, n as l, r as u, t as d } from "../useDocumentImageUpload-BF5gCpjJ.js";
+import { $ as f, A as p, B as m, C as h, D as g, E as _, F as v, G as y, H as b, I as x, J as S, K as C, L as w, M as T, N as E, O as D, P as O, Q as k, R as A, S as ee, St as te, T as ne, U as re, V as j, W as ie, X as M, Y as N, Z as P, _ as ae, _t as oe, a as F, at as se, b as ce, bt as le, c as I, ct as ue, d as L, dt as R, et as de, f as z, ft as fe, g as pe, gt as B, h as me, ht as he, i as ge, it as V, j as _e, k as ve, l as H, lt as U, m as ye, mt as be, n as xe, nt as Se, o as W, ot as Ce, p as we, pt as Te, q as Ee, r as De, rt as Oe, s as ke, st as Ae, t as je, tt as Me, u as Ne, ut as Pe, v as Fe, vt as Ie, w as Le, x as Re, xt as ze, y as Be, yt as Ve, z as He } from "../meeting-C5g6LTb4.js";
 import { createContext as Ue, useCallback as G, useContext as K, useEffect as q, useLayoutEffect as We, useMemo as J, useRef as Y, useState as X, useSyncExternalStore as Ge } from "react";
 import { jsx as Z, jsxs as Q } from "react/jsx-runtime";
 import { createPortal as Ke } from "react-dom";
 //#region src/integrations/realtime/callBlockModel.ts
 var qe = [], Je = [
+	"stage",
 	"composer",
 	"page",
 	"block",
@@ -47,7 +48,7 @@ var qe = [], Je = [
 	}
 };
 function Xe(e, t = !1) {
-	return e === "composer" ? t ? "stack" : "shelf" : e === "pane" ? "grid" : "shelf";
+	return e === "stage" ? "stage" : e === "composer" ? t ? "stack" : "shelf" : e === "pane" ? "grid" : "shelf";
 }
 function Ze(e) {
 	return e > 0 && e < 640;
@@ -359,11 +360,11 @@ function Tt(c) {
 			});
 		}, [_]), se = G((e, t) => at("start", M.current.phase, !!M.current.call) ? (F("start", (n) => {
 			n.start(e, t);
-		}), Promise.resolve()) : M.current.start(e, t), [F]), ce = G(() => {
-			let e = M.current;
-			return at("rejoin", e.phase, !!e.call) ? (F("join", (e) => {
-				e.rejoin();
-			}), Promise.resolve()) : e.rejoin();
+		}), Promise.resolve()) : M.current.start(e, t), [F]), ce = G((e) => {
+			let t = M.current;
+			return at("rejoin", t.phase, !!t.call) ? (F("join", (t) => {
+				t.rejoin(e);
+			}), Promise.resolve()) : t.rejoin(e);
 		}, [F]), le = G(() => {
 			P((e) => e ?? {
 				kind: "check",
@@ -588,8 +589,8 @@ function Tt(c) {
 		return !!e && c === e;
 	}
 	function E({ placement: e, compact: t = !1, documents: r, className: i }) {
-		let a = K(l), o = K(d), [s, c] = X(null), u = St(s), f = !!a?.lobby && $(a.call.phase, !0), p = e === "composer" ? u > 0 : e === "pane" || f && !!o?.open && u > 0, m = e === "composer" && (t || Ze(u)), h = T(s, e, p, {
-			compact: m,
+		let a = K(l), o = K(d), [s, c] = X(null), u = St(s), f = !!a?.lobby && $(a.call.phase, !0), p = e === "stage" ? f && u > 0 : e === "composer" ? u > 0 : e === "pane" || f && !!o?.open && u > 0, m = e === "composer" || e === "stage", h = m && (t || Ze(u)), g = T(s, e, p, {
+			compact: h,
 			...r ? { documents: r } : {}
 		});
 		return /* @__PURE__ */ Z(n, {
@@ -597,9 +598,9 @@ function Tt(c) {
 			gap: "none",
 			className: i ?? (e === "composer" ? "min-w-0" : "shrink-0 min-w-0"),
 			"aria-label": "Huddle",
-			"data-testid": e === "composer" ? "composer-call-dock" : e === "page" ? "page-call-block" : e === "block" ? "shell-call-block" : "call-block-pane",
-			"data-holds-media": h ? "true" : "false",
-			...e === "composer" ? { "data-compact": m ? "true" : "false" } : {}
+			"data-testid": e === "stage" ? "call-stage" : e === "composer" ? "composer-call-dock" : e === "page" ? "page-call-block" : e === "block" ? "shell-call-block" : "call-block-pane",
+			"data-holds-media": g ? "true" : "false",
+			...m ? { "data-compact": h ? "true" : "false" } : {}
 		});
 	}
 	function D(e, t) {

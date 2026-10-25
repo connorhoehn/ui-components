@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.481.1 — 2026-10-25
+
+- Dedicated call-stage placement owns the single media outlet and puts responsive controls below the participant grid. Side-pane hosts expose whether the measured split fits.
+- Hangout creation uses shared compact forms; call rejoin forwards audio-only configuration. Card collection toolbars align to their content gutter.
+- Table headers and solid danger buttons meet text contrast in both themes; `--color-on-danger` is the shared danger-button foreground.
+- DOM audit coverage now checks page gutters, duplicate activity regions, card toolbars and painted combobox frames, with valid and broken fixtures.
+- Consumer migration and verification: [contextual hangouts handoff](docs/consumer-handoffs/contextual-hangouts.md).
+
 ## 2.480.5
 
 - Change review and diffs on the page type scale: `ChangeDiff`'s "Now"/"Proposed" labels (10px), `ChangeLocation`'s `@@` line (11px), `DiffViewer`'s rows (11.5px) and file-jump chips (10.5px) all use `text-xs` (12px), the scale's small step. The aws-agentcore type-scale sweep flagged all four on the runbook proposal review.

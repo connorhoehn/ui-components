@@ -437,7 +437,7 @@ export declare interface CallDockProps {
      * and pop-out, then Leave) over the reflowing tile grid, at most two tiles
      * to a row. For a conversation composer in a side pane.
      */
-    layout?: 'shelf' | 'grid' | 'stack';
+    layout?: 'shelf' | 'grid' | 'stack' | 'stage';
     className?: string;
     'data-testid'?: string;
 }
