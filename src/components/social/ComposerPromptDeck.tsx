@@ -20,6 +20,13 @@
 // in a live region; an answer the host refuses (`{ error }`) stays on the card.
 // The keys are in `composerPromptModel.ts` (`deckKeyAction`).
 //
+// Routing (2.482.0): an answer may resolve `{ next }` and the follow-up takes
+// the card in place (no receipt; Back returns to the question). A prompt may
+// carry a `path` (`DecisionPath`, "Choose → Draft request → Confirm → Done")
+// and a `kind: 'compose'` prompt draws `ComposerConfirmFlow` — a prefilled
+// message, its review and its done state — inside the same card, owning Enter,
+// Esc and every typed key; the deck only pages.
+//
 // Markers: `data-composer-prompt-deck` on the deck (`expanded` | `collapsed`),
 // `data-composer-prompt` (the id) and `data-composer-prompt-kind` on the card,
 // `data-composer-prompt-option` on each answer — the DOM audit counts a page's
@@ -30,11 +37,15 @@ import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
 import { Inline, Stack } from '../ui/Stack';
 import { Text } from '../shared/Text';
+import { DecisionPath } from '../shared/DecisionPath';
+import { ComposerConfirmFlow, type ComposerConfirmResult } from './ComposerConfirmFlow';
 import {
   activeIndex,
   answerForOption,
   deckKeyAction,
   defaultOption,
+  followUpParent,
+  livePromptIds,
   optionKey,
   parseTypedAnswer,
   pendingPrompts,
@@ -44,6 +55,7 @@ import {
   type ComposerPrompt,
   type ComposerPromptAnswer,
   type ComposerPromptField,
+  type ComposerPromptFollowUps,
   type ComposerPromptResult,
 } from './composerPromptModel';
 
@@ -79,13 +91,30 @@ export interface ComposerPromptDeckState {
   pick: (optionId: string) => Promise<boolean>;
   /** Answer the active text / number prompt with typed words. True when taken. */
   answerTyped: (raw: string) => Promise<boolean>;
+  /**
+   * Confirm the active compose prompt with its edited message (2.482.0). The
+   * host's `{ error }` comes back for the flow to show; ok leaves the prompt on
+   * screen in its done state until `finish`.
+   */
+  answerCompose: (message: string) => Promise<ComposerConfirmResult>;
+  /** The active prompt followed an answered question (`{ next }`), so `back` has somewhere to go. */
+  isFollowUp: boolean;
+  /** Return to the question the active follow-up came from. False when it is a root prompt. */
+  back: () => boolean;
+  /** Drop the active prompt after its done state, with no receipt. */
+  finish: () => void;
   dismissReceipt: () => void;
 }
 
 const NO_PROMPTS: readonly ComposerPrompt[] = [];
+const NO_FOLLOW_UPS: ComposerPromptFollowUps = {};
 
 function isError(result: ComposerPromptResult): result is { error: string } {
   return !!result && typeof result === 'object' && 'error' in result && typeof result.error === 'string';
+}
+
+function isNext(result: ComposerPromptResult): result is { next: ComposerPrompt } {
+  return !!result && typeof result === 'object' && 'next' in result && !!result.next && typeof result.next === 'object';
 }
 
 /** The deck's state over the host's queue. Hosts that render the deck themselves call this once. */
@@ -97,19 +126,27 @@ export function useComposerPromptDeck(prompts: readonly ComposerPrompt[] | null 
   const [busyId, setBusyId] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [receipt, setReceipt] = useState<string | null>(null);
-  const pending = useMemo(() => pendingPrompts(queue, answered), [queue, answered]);
+  const [followUps, setFollowUps] = useState<ComposerPromptFollowUps>(NO_FOLLOW_UPS);
+  const followUpsRef = useRef(followUps);
+  followUpsRef.current = followUps;
+  const pending = useMemo(() => pendingPrompts(queue, answered, followUps), [queue, answered, followUps]);
   const index = activeIndex(pending, activeId);
   const active = index >= 0 ? pending[index]! : null;
   const busy = busyId != null;
   const busyRef = useRef(false);
 
-  // Forget answers to prompts the host has dropped, so the set never grows forever.
+  // Forget answers to (and follow-ups of) prompts the host has dropped, so
+  // neither set grows forever.
   const ids = queue.map((p) => p.id).join('\u0000');
   useEffect(() => {
+    const live = livePromptIds(queue, followUpsRef.current);
     setAnswered((prev) => {
-      const live = new Set(queue.map((p) => p.id));
       const next = new Set([...prev].filter((id) => live.has(id)));
       return next.size === prev.size ? prev : next;
+    });
+    setFollowUps((prev) => {
+      const kept = Object.entries(prev).filter(([id]) => live.has(id));
+      return kept.length === Object.keys(prev).length ? prev : Object.fromEntries(kept);
     });
   }, [ids]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -141,11 +178,55 @@ export function useComposerPromptDeck(prompts: readonly ComposerPrompt[] | null 
       setErrors((prev) => ({ ...prev, [prompt.id]: result.error }));
       return false;
     }
+    if (isNext(result)) {
+      // The follow-up takes the card in place: no receipt, Back returns here.
+      setFollowUps((prev) => ({ ...prev, [prompt.id]: result.next }));
+      setAnswered((prev) => new Set(prev).add(prompt.id));
+      setActiveId(null);
+      return true;
+    }
     setAnswered((prev) => new Set(prev).add(prompt.id));
     setActiveId(null);
     setReceipt(result && 'receipt' in result ? result.receipt : receiptFor(prompt, value));
     return true;
   }, []);
+
+  // A compose prompt's confirm: the flow shows the error or its done state
+  // itself, so the deck neither records the error nor drops the prompt here.
+  const answerCompose = useCallback(async (message: string): Promise<ComposerConfirmResult> => {
+    const prompt = active;
+    if (!prompt || prompt.kind !== 'compose' || prompt.readOnlyReason) return { error: 'This question takes no message.' };
+    if (busyRef.current) return { error: 'Still working on the last answer.' };
+    busyRef.current = true;
+    setBusyId(prompt.id);
+    let result: ComposerPromptResult;
+    try {
+      result = await prompt.onAnswer({ kind: 'compose', message });
+    } catch (err) {
+      result = { error: err instanceof Error && err.message ? err.message : 'That could not be confirmed. Try again.' };
+    } finally {
+      busyRef.current = false;
+      setBusyId(null);
+    }
+    if (isError(result)) return result;
+    return result && 'receipt' in result ? { receipt: result.receipt } : undefined;
+  }, [active]);
+
+  const parentId = active ? followUpParent(active.id, followUps) : null;
+  const back = useCallback(() => {
+    if (!active || parentId == null) return false;
+    const child = active.id;
+    setFollowUps((prev) => { const { [parentId]: _gone, ...rest } = prev; return rest; });
+    setAnswered((prev) => { const next = new Set(prev); next.delete(parentId); next.delete(child); return next; });
+    setActiveId(parentId);
+    return true;
+  }, [active, parentId]);
+
+  const finish = useCallback(() => {
+    if (!active) return;
+    setAnswered((prev) => new Set(prev).add(active.id));
+    setActiveId(null);
+  }, [active]);
 
   const pick = useCallback(async (optionId: string) => {
     if (!active) return false;
@@ -184,6 +265,10 @@ export function useComposerPromptDeck(prompts: readonly ComposerPrompt[] | null 
     page,
     pick,
     answerTyped,
+    answerCompose,
+    isFollowUp: parentId != null,
+    back,
+    finish,
     dismissReceipt: () => setReceipt(null),
   };
 }
@@ -300,6 +385,7 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, vari
 
   const options = promptOptions(active);
   const typed = takesTypedAnswer(active);
+  const compose = active.kind === 'compose' && !active.readOnlyReason;
   const fallback = defaultOption(active);
   const titleId = `${baseId}-title`;
   const questionId = `${baseId}-question`;
@@ -323,6 +409,7 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, vari
         data-composer-prompt-kind={active.kind}
         data-testid={`${testId}-card`}
       >
+        {active.path && !compose && <DecisionPath steps={active.path.steps} current={active.path.current} data-testid={`${testId}-path`} />}
         <Inline gap="sm" align="center" wrap={false} className="min-w-0">
           <Stack gap="none" className="min-w-0 flex-1">
             {active.eyebrow && <Text size="xs" tone="tertiary" className="truncate">{active.eyebrow}</Text>}
@@ -364,6 +451,30 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, vari
 
         {active.readOnlyReason ? (
           <Text as="p" size="xs" tone="secondary" wrap data-testid={`${testId}-read-only`}>{active.readOnlyReason}</Text>
+        ) : compose ? (
+          // The flow owns the rest of the card: the path advances with its
+          // stage, Back from a follow-up returns to the question it followed,
+          // the done state's action drops the prompt.
+          <ComposerConfirmFlow
+            key={active.id}
+            recipient={active.compose?.recipient}
+            defaultMessage={active.compose?.initialMessage}
+            messageLabel={active.compose?.messageLabel}
+            placeholder={active.compose?.placeholder}
+            reviewTitle={active.compose?.reviewTitle}
+            note={active.compose?.note}
+            doneTitle={active.compose?.doneTitle}
+            doneMessage={active.compose?.doneMessage}
+            continueLabel={active.compose?.continueLabel}
+            confirmLabel={active.compose?.confirmLabel}
+            backLabel={active.compose?.backLabel}
+            doneActionLabel={active.compose?.doneActionLabel}
+            path={active.path}
+            onConfirm={(message) => deck.answerCompose(message)}
+            onCancel={deck.isFollowUp ? () => { deck.back(); } : active.compose?.onCancel ? () => { active.compose?.onCancel?.(); deck.finish(); } : undefined}
+            onDone={() => { deck.finish(); input?.focus(); }}
+            data-testid={`${testId}-compose`}
+          />
         ) : options.length > 0 && (
           <Inline gap="xs" wrap className="min-w-0" role="list" aria-label="Answers">
             {options.map((option, i) => {
@@ -393,9 +504,9 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, vari
           </Inline>
         )}
 
-        {error && <Text as="p" size="xs" wrap role="alert" className="text-danger-fg" data-testid={`${testId}-error`}>{error}</Text>}
-        {busy && <Text as="p" size="xs" tone="secondary" role="status" data-testid={`${testId}-busy`}>Working…</Text>}
-        {!active.readOnlyReason && <Text as="p" size="xs" tone="tertiary" wrap className="min-w-0" data-testid={`${testId}-keys`}>{keyHint}</Text>}
+        {error && !compose && <Text as="p" size="xs" wrap role="alert" className="text-danger-fg" data-testid={`${testId}-error`}>{error}</Text>}
+        {busy && !compose && <Text as="p" size="xs" tone="secondary" role="status" data-testid={`${testId}-busy`}>Working…</Text>}
+        {!active.readOnlyReason && !compose && <Text as="p" size="xs" tone="tertiary" wrap className="min-w-0" data-testid={`${testId}-keys`}>{keyHint}</Text>}
       </section>
       {receiptRow}
     </Stack>

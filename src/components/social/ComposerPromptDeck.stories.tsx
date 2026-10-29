@@ -116,3 +116,49 @@ export const ReadOnly: Story = {
     }],
   },
 };
+
+/**
+ * A funding gate that routes (2.482.0): `1` requests budget and the choice's
+ * `{ next }` puts a `compose` prompt in the same card — a prefilled message,
+ * Enter to review, Enter to confirm, Done only after the host resolves — with
+ * the path advancing Choose → Draft request → Confirm → Done; `2` saves for
+ * later on its own path. Nothing is sent: the confirm resolves after a moment.
+ */
+export const BudgetRequest: Story = {
+  render: function BudgetRequestStory() {
+    const [rev, setRev] = useState(0);
+    const path = ['Choose', 'Draft request', 'Confirm', 'Done'];
+    const request: ComposerPrompt = {
+      id: `request:${rev}`, eyebrow: 'Agent dialogue · ORG-OBS-11', title: 'Request more budget', kind: 'compose',
+      question: 'Recipient: Sienna Garcia. The request includes the work item and the current forecast.',
+      path: { steps: path, current: 1 },
+      compose: {
+        initialMessage: 'Sienna, please grant Nora a sprint envelope for ORG-OBS-11 on Observability Platform. The estimated run cost is $0.03–$0.30.',
+        recipient: 'To Sienna Garcia · ORG-OBS-11',
+        reviewTitle: 'Confirm budget request',
+        note: 'Story preview — nothing is sent.',
+        doneTitle: 'Request confirmed',
+        doneActionLabel: 'Back to preparation',
+      },
+      onAnswer: async (a) => {
+        await new Promise((r) => setTimeout(r, 600));
+        if (a.kind === 'compose' && /decline/i.test(a.message)) return { error: 'Sienna cannot be reached right now.' };
+        return { receipt: 'Request sent to Sienna Garcia · ORG-OBS-11' };
+      },
+    };
+    const saved: ComposerPrompt = {
+      id: `saved:${rev}`, eyebrow: 'Agent dialogue · ORG-OBS-11', title: 'Job draft saved', kind: 'choice',
+      question: 'The job settings are retained.', path: { steps: ['Choose', 'Saved'], current: 1 },
+      options: [{ id: 'back', label: 'Back to preparation' }], defaultOptionId: 'back',
+      onAnswer: () => { setRev((r) => r + 1); return { receipt: 'Back to preparation' }; },
+    };
+    const funding: ComposerPrompt = {
+      id: `funding:${rev}`, eyebrow: 'Agent dialogue · ORG-OBS-11', title: 'This job needs a sprint envelope', kind: 'choice',
+      fields: [{ label: 'Item', value: 'ORG-OBS-11', mono: true }, { label: 'Holder', value: 'Nora' }, { label: 'Forecast', value: '$0.03–$0.30' }],
+      question: 'Nora needs funding on Observability Platform before this job can run.', path: { steps: path, current: 0 },
+      options: [{ id: 'request', label: 'Request budget', emphasis: 'primary' }, { id: 'save', label: 'Save for later' }],
+      onAnswer: (a) => ({ next: a.optionId === 'request' ? request : saved }),
+    };
+    return <ComposerPromptDeck key={rev} prompts={[funding]} />;
+  },
+};

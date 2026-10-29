@@ -147,9 +147,17 @@ export {
 export type {
   ComposerPrompt,
   ComposerPromptAnswer,
+  ComposerPromptCompose,
   ComposerPromptField,
+  ComposerPromptFollowUps,
   ComposerPromptKind,
   ComposerPromptOption,
   ComposerPromptResult,
   ComposerPromptTone,
 } from './composerPromptModel';
+
+// ComposerConfirmFlow (2.482.0): draft → review → done inside one response box,
+// the body of a `kind: 'compose'` prompt and usable on its own. Its path strip
+// is `DecisionPath` on `/shared`.
+export { ComposerConfirmFlow } from './ComposerConfirmFlow';
+export type { ComposerConfirmFlowProps, ComposerConfirmResult, ComposerConfirmStage } from './ComposerConfirmFlow';

@@ -476,6 +476,10 @@ export { TaskStrip, AGENT_TASK_STATUS_LABELS, AGENT_TASK_STATUS_DOT, taskPercent
 export type { TaskStripProps, AgentTaskStatus } from './TaskStrip';
 export { WorkflowStepper } from './WorkflowStepper';
 export type { WorkflowStepperProps, WorkflowStep } from './WorkflowStepper';
+// DecisionPath (2.482.0): the one-line path a multi-stage answer walks inside
+// a response box ("Choose → Draft request → Confirm → Done"), ticks for done.
+export { DecisionPath } from './DecisionPath';
+export type { DecisionPathProps, DecisionPathState } from './DecisionPath';
 export { Wizard } from './Wizard';
 export type { WizardProps, WizardStep } from './Wizard';
 // FormWizard (2.445.0): the one multi-field form frame — single page or stepped,

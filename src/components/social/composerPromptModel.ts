@@ -15,10 +15,17 @@
 //   ⌘/Ctrl+↓ / ↑   next / previous prompt (J / K when the input is empty and
 //                  the prompt is not a typed one: there, letters are the answer)
 //   Esc            collapse the deck to the plain composer, answering nothing
+//
+// A `compose` prompt (2.482.0) owns its keys: it draws `ComposerConfirmFlow`
+// (draft → review → done) in the card, so Enter, digits and Esc are the
+// flow's; only ⌘/Ctrl+↓ / ↑ still page. An answer may also route to a
+// follow-up question (`{ next }`): the follow-up takes the card in place, no
+// receipt, and Back from it returns to the question it followed.
 
 import type { ReactNode } from 'react';
+import type { DecisionPathState } from '../shared/DecisionPath';
 
-export type ComposerPromptKind = 'choice' | 'confirm' | 'text' | 'number';
+export type ComposerPromptKind = 'choice' | 'confirm' | 'text' | 'number' | 'compose';
 export type ComposerPromptTone = 'neutral' | 'success' | 'warning' | 'danger' | 'info';
 
 /** One prepopulated fact on the prompt's header card. */
@@ -51,14 +58,55 @@ export type ComposerPromptAnswer =
   | { kind: 'text'; text: string; optionId?: undefined }
   | { kind: 'number'; value: number; optionId?: undefined }
   /** A text / number prompt answered with one of its quick options instead of typing. */
-  | { kind: 'option'; optionId: string };
+  | { kind: 'option'; optionId: string }
+  /** A compose prompt confirmed with its (edited) message. Since 2.482.0. */
+  | { kind: 'compose'; message: string; optionId?: undefined };
 
 /**
  * What `onAnswer` resolves to. Nothing (or `{ receipt }`): answered — the prompt
  * drops off and the receipt (default: the answer's label) is announced. `{ error }`:
- * not answered — the error shows on the card and the prompt stays.
+ * not answered — the error shows on the card and the prompt stays. `{ next }`
+ * (2.482.0): answered, and the follow-up question takes the card in place with
+ * no receipt (a choice that routes to a compose prompt); Back from the
+ * follow-up returns to this question. A compose prompt's own result is
+ * `{ receipt }` / `{ error }` only: ok shows its done state, error keeps it on
+ * review.
  */
-export type ComposerPromptResult = void | undefined | { error: string } | { receipt: string };
+export type ComposerPromptResult = void | undefined | { error: string } | { receipt: string } | { next: ComposerPrompt };
+
+/**
+ * A compose prompt's message flow (2.482.0): a prefilled, editable message
+ * reviewed and confirmed inside the same card. Every label is the host's
+ * wording; see `ComposerConfirmFlow` for the defaults.
+ */
+export interface ComposerPromptCompose {
+  /** The prefilled message the person edits. */
+  initialMessage?: string;
+  /** "To Sienna Garcia · ORG-OBS-11", shown beside the title in every stage. */
+  recipient?: string;
+  /** The editor's label (default "Message") and placeholder. */
+  messageLabel?: string;
+  placeholder?: string;
+  /** A heading for the review stage ("Confirm budget request"); default none (the card's title stands). */
+  reviewTitle?: string;
+  /** The done stage's heading (default "Done") and its status line when `onAnswer` gives no receipt (default "Confirmed."). */
+  doneTitle?: string;
+  doneMessage?: string;
+  /** Button labels: Continue / Confirm / Back / the done stage's action (default "Back"). */
+  continueLabel?: string;
+  confirmLabel?: string;
+  backLabel?: string;
+  doneActionLabel?: string;
+  /** A small line under the review ("Nothing is sent until you confirm."). */
+  note?: ReactNode;
+  /**
+   * Back from the draft of a ROOT compose prompt (one that is not a `{ next }`
+   * follow-up): the deck drops the prompt and calls this. A follow-up's Back
+   * returns to the question it followed and never calls it. Without it a root
+   * prompt's draft has no Back.
+   */
+  onCancel?: () => void;
+}
 
 export interface ComposerPrompt {
   /** Stable while the question is the same; a new id is a new question (re-asked prompts take a new id). */
@@ -84,6 +132,15 @@ export interface ComposerPrompt {
   max?: number;
   /** Shown on the card instead of answers: the reader may look but not decide. */
   readOnlyReason?: string;
+  /**
+   * The decision path drawn above the card's header (2.482.0): `Choose →
+   * Draft request → Confirm → Done` with `current` at this question's step.
+   * On a compose prompt `current` is the drafting step; the flow advances it
+   * through review (+1) and done (+2) itself.
+   */
+  path?: DecisionPathState;
+  /** Compose: the message flow's wording and prefilled text. */
+  compose?: ComposerPromptCompose;
   onAnswer: (answer: ComposerPromptAnswer) => ComposerPromptResult | Promise<ComposerPromptResult>;
 }
 
@@ -148,13 +205,50 @@ export function parseTypedAnswer(prompt: ComposerPrompt, raw: string): { answer:
 export function receiptFor(prompt: ComposerPrompt, answer: ComposerPromptAnswer): string {
   if (answer.kind === 'text') return `${prompt.title}: ${answer.text}`;
   if (answer.kind === 'number') return `${prompt.title}: ${answer.value}`;
+  if (answer.kind === 'compose') return `${prompt.title}: ${answer.message}`;
   const option = promptOptions(prompt).find((o) => o.id === answer.optionId);
   return `${prompt.title}: ${option?.label ?? answer.optionId}`;
 }
 
-/** The prompts still waiting: the host's queue minus what this deck saw answered. */
-export function pendingPrompts(prompts: readonly ComposerPrompt[], answered: ReadonlySet<string>): ComposerPrompt[] {
-  return prompts.filter((p) => !answered.has(p.id));
+/** The follow-up each answered prompt routed to (`{ next }`), by the answered prompt's id. */
+export type ComposerPromptFollowUps = Readonly<Record<string, ComposerPrompt>>;
+
+/**
+ * The prompts still waiting: the host's queue minus what this deck saw
+ * answered, an answered prompt standing in for the follow-up it routed to
+ * (and that one for its own, down the chain).
+ */
+export function pendingPrompts(prompts: readonly ComposerPrompt[], answered: ReadonlySet<string>, followUps: ComposerPromptFollowUps = {}): ComposerPrompt[] {
+  const out: ComposerPrompt[] = [];
+  for (const root of prompts) {
+    let prompt: ComposerPrompt | undefined = root;
+    const seen = new Set<string>();
+    while (prompt && answered.has(prompt.id) && !seen.has(prompt.id)) {
+      seen.add(prompt.id);
+      prompt = followUps[prompt.id];
+    }
+    if (prompt && !answered.has(prompt.id)) out.push(prompt);
+  }
+  return out;
+}
+
+/** Every prompt id the queue can still reach: the roots and their follow-up chains. */
+export function livePromptIds(prompts: readonly ComposerPrompt[], followUps: ComposerPromptFollowUps = {}): Set<string> {
+  const live = new Set<string>();
+  for (const root of prompts) {
+    let prompt: ComposerPrompt | undefined = root;
+    while (prompt && !live.has(prompt.id)) {
+      live.add(prompt.id);
+      prompt = followUps[prompt.id];
+    }
+  }
+  return live;
+}
+
+/** The id of the question `promptId` followed (`{ next }`), if any. */
+export function followUpParent(promptId: string, followUps: ComposerPromptFollowUps): string | null {
+  for (const [parent, next] of Object.entries(followUps)) if (next.id === promptId) return parent;
+  return null;
 }
 
 /** The prompt on screen: the chosen one while it is still waiting, else the first. */
@@ -201,6 +295,9 @@ export function deckKeyAction(
   if (mod && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
     return { type: 'page', delta: event.key === 'ArrowDown' ? 1 : -1 };
   }
+  // A compose prompt's flow owns Enter (continue / confirm), Esc (back to the
+  // draft) and every typed key; the deck only pages.
+  if (prompt.kind === 'compose') return null;
   if (event.key === 'Escape' && quiet) return { type: 'collapse' };
   if (mod || event.shiftKey) return null;
   const typed = takesTypedAnswer(prompt);

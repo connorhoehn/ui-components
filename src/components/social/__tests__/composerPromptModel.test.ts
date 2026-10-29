@@ -4,6 +4,8 @@ import {
   answerForOption,
   deckKeyAction,
   defaultOption,
+  followUpParent,
+  livePromptIds,
   parseTypedAnswer,
   pendingPrompts,
   promptOptions,
@@ -98,5 +100,39 @@ describe('composerPromptModel — keys', () => {
     const p = { ...choice, options: [{ id: 'yes', label: 'Yes', shortcut: 'Y' }, { id: 'no', label: 'No', shortcut: 'n' }] };
     expect(deckKeyAction({ key: 'y' }, { ...base, prompt: p })).toEqual({ type: 'pick', optionId: 'yes' });
     expect(deckKeyAction({ key: '1' }, { ...base, prompt: p })).toBeNull();
+  });
+});
+
+describe('composerPromptModel — compose prompts and follow-ups (2.482.0)', () => {
+  const compose: ComposerPrompt = { id: 'request', title: 'Request more budget', question: 'Edit the message.', kind: 'compose', compose: { initialMessage: 'Sienna, please…' }, onAnswer: noop };
+
+  it('a compose prompt owns Enter, digits and Esc; the deck only pages it', () => {
+    expect(deckKeyAction({ key: 'Enter' }, { ...base, prompt: compose })).toBeNull();
+    expect(deckKeyAction({ key: '1' }, { ...base, prompt: compose })).toBeNull();
+    expect(deckKeyAction({ key: '1' }, { ...base, prompt: compose, inDeck: true })).toBeNull();
+    expect(deckKeyAction({ key: 'Escape' }, { ...base, prompt: compose, inDeck: true })).toBeNull();
+    expect(deckKeyAction({ key: 'j' }, { ...base, prompt: compose, inDeck: true })).toBeNull();
+    expect(deckKeyAction({ key: 'ArrowDown', metaKey: true }, { ...base, prompt: compose })).toEqual({ type: 'page', delta: 1 });
+    expect(deckKeyAction({ key: 'ArrowDown', ctrlKey: true }, { ...base, prompt: compose, collapsed: true })).toEqual({ type: 'expand' });
+    expect(takesTypedAnswer(compose)).toBe(false);
+    expect(promptOptions(compose)).toEqual([]);
+    expect(defaultOption(compose)).toBeNull();
+    expect(receiptFor(compose, { kind: 'compose', message: 'Sienna, please…' })).toBe('Request more budget: Sienna, please…');
+  });
+
+  it('an answered prompt stands in for its follow-up, down the chain; Back finds the question it followed', () => {
+    const saved: ComposerPrompt = { ...choice, id: 'saved', title: 'Saved' };
+    const followUps = { dispatch: compose, request: saved };
+    expect(pendingPrompts([choice, confirm], new Set(), followUps).map((p) => p.id)).toEqual(['dispatch', 'gate']);
+    expect(pendingPrompts([choice, confirm], new Set(['dispatch']), followUps).map((p) => p.id)).toEqual(['request', 'gate']);
+    expect(pendingPrompts([choice, confirm], new Set(['dispatch', 'request']), followUps).map((p) => p.id)).toEqual(['saved', 'gate']);
+    expect(pendingPrompts([choice, confirm], new Set(['dispatch', 'request', 'saved']), followUps).map((p) => p.id)).toEqual(['gate']);
+    // An answered prompt with no follow-up drops off, as before.
+    expect(pendingPrompts([choice, confirm], new Set(['gate']), followUps).map((p) => p.id)).toEqual(['dispatch']);
+    expect([...livePromptIds([choice, confirm], followUps)].sort()).toEqual(['dispatch', 'gate', 'request', 'saved']);
+    expect([...livePromptIds([confirm], followUps)]).toEqual(['gate']);
+    expect(followUpParent('request', followUps)).toBe('dispatch');
+    expect(followUpParent('saved', followUps)).toBe('request');
+    expect(followUpParent('dispatch', followUps)).toBeNull();
   });
 });

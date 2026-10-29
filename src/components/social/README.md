@@ -61,6 +61,18 @@ A host's own controls go in four slots that stay off the idle row:
 `submitLead` (beside Send), `modeRowEnd` (a scope switch), `referencesAction`
 (after the chips) and `referenceDrop` (the card as a drop target, idle too).
 
+## Composer prompts and the confirm flow
+
+`ComposerPromptDeck` (`/social/rich-composer`) asks a page's questions in the
+docked composer, one card at a time, answered from the keyboard
+(`composerPromptModel.ts` holds the contract). Since 2.482.0 an answer may
+resolve `{ next: ComposerPrompt }` to route to a follow-up in the same card
+(no receipt; Back returns to the question), a prompt may carry a `path`
+(`DecisionPath` on `/shared`: "Choose → Draft request → Confirm → Done"), and
+`kind: 'compose'` draws `ComposerConfirmFlow` inside the card — a prefilled,
+editable message, its review and its done state, with no modal and no toolbar.
+`ComposerConfirmFlow` is also exported on its own.
+
 ## Agent composer dock (deprecated)
 
 Deprecated since 2.407.0 — a thin preset over `ContextComposer`.

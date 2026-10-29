@@ -182,3 +182,111 @@ describe('ConversationComposer prompts', () => {
     expect(handle?.editor?.getText()).toBe('lots');
   });
 });
+
+describe('ComposerPromptDeck — routing to a compose prompt (2.482.0)', () => {
+  const PATH = ['Choose', 'Draft request', 'Confirm', 'Done'];
+  function funding(onConfirm: (a: ComposerPromptAnswer) => unknown, onCancel?: () => void): ComposerPrompt[] {
+    const request: ComposerPrompt = {
+      id: 'request', eyebrow: 'Agent dialogue · ORG-OBS-11', title: 'Request more budget', kind: 'compose',
+      question: 'Recipient: Sienna Garcia. The request includes the work item and the current forecast.',
+      path: { steps: PATH, current: 1 },
+      compose: { initialMessage: 'Sienna, please grant Nora a sprint envelope for ORG-OBS-11.', recipient: 'To Sienna Garcia · ORG-OBS-11', reviewTitle: 'Confirm budget request', doneTitle: 'Request confirmed', doneActionLabel: 'Back to preparation', onCancel },
+      onAnswer: (a) => onConfirm(a) as void,
+    };
+    const saved: ComposerPrompt = {
+      id: 'saved', title: 'Job draft saved', kind: 'choice', question: 'The job settings are retained.', path: { steps: ['Choose', 'Saved'], current: 1 },
+      options: [{ id: 'back', label: 'Back to preparation' }], onAnswer: () => undefined,
+    };
+    return [{
+      id: 'funding', eyebrow: 'Agent dialogue · ORG-OBS-11', title: 'This job needs a sprint envelope', kind: 'choice',
+      question: 'Nora needs funding before this job can run.', path: { steps: PATH, current: 0 },
+      options: [{ id: 'request', label: 'Request budget', emphasis: 'primary' }, { id: 'save', label: 'Save for later' }],
+      onAnswer: (a) => ({ next: a.optionId === 'request' ? request : saved }),
+    }];
+  }
+  const card = () => screen.getByTestId('composer-prompt-deck-card');
+  const editor = () => screen.getByTestId('composer-prompt-deck-compose-editor') as HTMLTextAreaElement;
+  const pathCurrent = (id: string) => screen.getByTestId(id).querySelector('[aria-current="step"]')?.getAttribute('data-decision-step');
+
+  it('1 routes to the compose flow in the same card with no receipt; the path advances; Back returns to the question', async () => {
+    const onConfirm = vi.fn();
+    render(<ComposerPromptDeck prompts={funding(onConfirm)} />);
+    expect(pathCurrent('composer-prompt-deck-path')).toBe('Choose');
+    screen.getByTestId('composer-prompt-deck-option-request').focus();
+    await act(async () => { key('1'); });
+    expect(card().getAttribute('data-composer-prompt')).toBe('request');
+    expect(card().getAttribute('data-composer-prompt-kind')).toBe('compose');
+    expect(screen.queryByTestId('composer-prompt-deck-receipt')).toBeNull();
+    expect(screen.queryByTestId('composer-prompt-deck-keys')).toBeNull();
+    expect(screen.getByTestId('composer-prompt-deck-compose').getAttribute('data-composer-confirm-flow')).toBe('draft');
+    expect(pathCurrent('composer-prompt-deck-compose-path')).toBe('Draft request');
+    expect(document.activeElement).toBe(editor());
+    expect(screen.queryByRole('dialog')).toBeNull();
+    // Digits type in the editor; they are not the deck's shortcuts.
+    expect(fireEvent.keyDown(editor(), { key: '1' })).toBe(true);
+    expect(onConfirm).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByTestId('composer-prompt-deck-compose-cancel'));
+    expect(card().getAttribute('data-composer-prompt')).toBe('funding');
+    expect(screen.getByTestId('composer-prompt-deck-option-request')).toBeInTheDocument();
+  });
+
+  it('Enter reviews, Enter confirms through onAnswer, Done shows after it resolves, and its action drops the prompt', async () => {
+    let resolve!: (r: unknown) => void;
+    const onConfirm = vi.fn(() => new Promise((r) => { resolve = r; }));
+    render(<ComposerPromptDeck prompts={funding(onConfirm)} />);
+    await act(async () => { fireEvent.click(screen.getByTestId('composer-prompt-deck-option-request')); });
+    fireEvent.change(editor(), { target: { value: 'Sienna, please grant Nora $12.' } });
+    fireEvent.keyDown(editor(), { key: 'Enter' });
+    const flow = screen.getByTestId('composer-prompt-deck-compose');
+    expect(flow.getAttribute('data-composer-confirm-flow')).toBe('review');
+    expect(screen.getByText('Confirm budget request')).toBeInTheDocument();
+    expect(screen.getByTestId('composer-prompt-deck-compose-message').textContent).toBe('Sienna, please grant Nora $12.');
+    const reviewRegion = screen.getByTestId('composer-prompt-deck-compose-review');
+    fireEvent.keyDown(reviewRegion, { key: 'Enter', repeat: true });
+    expect(onConfirm).not.toHaveBeenCalled();
+    await act(async () => { fireEvent.keyDown(reviewRegion, { key: 'Enter' }); });
+    expect(onConfirm).toHaveBeenCalledWith({ kind: 'compose', message: 'Sienna, please grant Nora $12.' });
+    expect(flow.getAttribute('data-composer-confirm-flow')).toBe('review');
+    expect(screen.getByTestId('composer-prompt-deck-compose-busy')).toBeInTheDocument();
+    expect(screen.queryByTestId('composer-prompt-deck-busy')).toBeNull();
+    await act(async () => { resolve({ receipt: 'Request sent to Sienna Garcia' }); });
+    await waitFor(() => expect(screen.getByTestId('composer-prompt-deck-compose').getAttribute('data-composer-confirm-flow')).toBe('done'));
+    expect(screen.getByText('Request confirmed')).toBeInTheDocument();
+    expect(screen.getByTestId('composer-prompt-deck-compose-done-message').textContent).toBe('Request sent to Sienna Garcia');
+    expect(pathCurrent('composer-prompt-deck-compose-path')).toBe('Done');
+    fireEvent.click(screen.getByTestId('composer-prompt-deck-compose-done-action'));
+    expect(screen.queryByTestId('composer-prompt-deck')).toBeNull();
+  });
+
+  it('a refused confirm stays on review with the error in the flow, not on the deck', async () => {
+    render(<ComposerPromptDeck prompts={funding(() => ({ error: 'No approver is available.' }))} />);
+    await act(async () => { fireEvent.click(screen.getByTestId('composer-prompt-deck-option-request')); });
+    fireEvent.keyDown(editor(), { key: 'Enter' });
+    await act(async () => { fireEvent.click(screen.getByTestId('composer-prompt-deck-compose-confirm')); });
+    expect(screen.getByTestId('composer-prompt-deck-compose').getAttribute('data-composer-confirm-flow')).toBe('review');
+    expect(screen.getByTestId('composer-prompt-deck-compose-error').textContent).toBe('No approver is available.');
+    expect(screen.queryByTestId('composer-prompt-deck-error')).toBeNull();
+    expect(card().getAttribute('data-composer-prompt')).toBe('request');
+  });
+
+  it('2 takes the Saved branch with its own path', async () => {
+    render(<ComposerPromptDeck prompts={funding(() => undefined)} />);
+    screen.getByTestId('composer-prompt-deck-option-save').focus();
+    await act(async () => { key('2'); });
+    expect(card().getAttribute('data-composer-prompt')).toBe('saved');
+    const path = screen.getByTestId('composer-prompt-deck-path');
+    expect(path.textContent).toContain('Saved');
+    expect(path.querySelectorAll('[data-complete]')).toHaveLength(1);
+    expect(pathCurrent('composer-prompt-deck-path')).toBe('Saved');
+  });
+
+  it('a root compose prompt’s Back calls its onCancel and drops the prompt', async () => {
+    const onCancel = vi.fn();
+    const [, request] = [null, funding(() => undefined, onCancel)[0]!.onAnswer({ kind: 'choice', optionId: 'request' }) as { next: ComposerPrompt }];
+    render(<ComposerPromptDeck prompts={[request.next]} />);
+    expect(screen.getByTestId('composer-prompt-deck-compose').getAttribute('data-composer-confirm-flow')).toBe('draft');
+    fireEvent.click(screen.getByTestId('composer-prompt-deck-compose-cancel'));
+    expect(onCancel).toHaveBeenCalledTimes(1);
+    expect(screen.queryByTestId('composer-prompt-deck')).toBeNull();
+  });
+});
