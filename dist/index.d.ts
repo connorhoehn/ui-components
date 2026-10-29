@@ -7649,6 +7649,22 @@ export declare interface DaySeparatorProps {
     className?: string;
 }
 
+export declare function DecisionPath({ steps, current, className, 'aria-label': ariaLabel, 'data-testid': testId }: DecisionPathProps): JSX.Element;
+
+export declare interface DecisionPathProps extends DecisionPathState {
+    /** Names the list for assistive tech. Default "Decision path". */
+    'aria-label'?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** Where a path stands: its labels and the 0-based current step. */
+export declare interface DecisionPathState {
+    steps: readonly string[];
+    /** 0-based; steps before it are complete. Past the end: every step is complete. */
+    current: number;
+}
+
 export declare function DecisionsEditorRenderer({ section, fragment, ydoc, provider, user, editable, onAddItem, onUpdateItem, onRemoveItem, onUpdateCursorInfo, extensions, editorComponent, }: SectionRendererProps): JSX.Element;
 
 export declare const decisionsFieldType: FieldTypeDefinition;

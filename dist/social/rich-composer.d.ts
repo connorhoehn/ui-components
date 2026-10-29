@@ -319,6 +319,65 @@ export declare interface ComposerCommandArgument {
  */
 export declare function composerCommandArgumentText(draft: string, command: ComposerCommand): string;
 
+export declare function ComposerConfirmFlow({ title, recipient, defaultMessage, message: messageProp, onMessageChange, messageLabel, placeholder, reviewTitle, note, doneTitle, doneMessage, continueLabel, confirmLabel, backLabel, doneActionLabel, onConfirm, onCancel, onDone, onStageChange, path, autoFocus, className, 'data-testid': testId, }: ComposerConfirmFlowProps): JSX.Element;
+
+export declare interface ComposerConfirmFlowProps {
+    /** The draft's heading ("Request more budget"). Omit when the frame around the flow already names it. */
+    title?: string;
+    /** "To Sienna Garcia · ORG-OBS-11", shown beside the heading in every stage. */
+    recipient?: string;
+    /** Uncontrolled: the prefilled message. */
+    defaultMessage?: string;
+    /** Controlled: the message and its change handler (a host that keeps the draft across its own view switches). */
+    message?: string;
+    onMessageChange?: (message: string) => void;
+    /** The editor's label. Default "Message". */
+    messageLabel?: string;
+    placeholder?: string;
+    /** The review stage's heading ("Confirm budget request"). Default: `title`. */
+    reviewTitle?: string;
+    /** A small line under the review ("Nothing is sent until you confirm."). */
+    note?: ReactNode;
+    /** The done stage's heading. Default "Done". */
+    doneTitle?: string;
+    /** The done stage's status line when `onConfirm` gives no receipt. Default "Confirmed." */
+    doneMessage?: string;
+    /** Button labels. Defaults: Continue / Confirm / Back / Back. */
+    continueLabel?: string;
+    confirmLabel?: string;
+    backLabel?: string;
+    doneActionLabel?: string;
+    /** Called with the message as edited. Done shows only after this resolves without an error. */
+    onConfirm: (message: string) => ComposerConfirmResult | Promise<ComposerConfirmResult>;
+    /** Back from the draft. Without it the draft offers no Back. */
+    onCancel?: () => void;
+    /** The done stage's action. Without it the done stage offers none. */
+    onDone?: () => void;
+    onStageChange?: (stage: ComposerConfirmStage) => void;
+    /**
+     * The decision path above the flow, `current` at the drafting step; review
+     * and done advance it by one and two.
+     */
+    path?: DecisionPathState;
+    /** Focus the editor on mount. Default true: the flow replaces the choices that were just answered. */
+    autoFocus?: boolean;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/**
+ * What `onConfirm` resolves to. Nothing or `{ receipt }`: confirmed — the done
+ * stage shows (the receipt as its status line). `{ error }`: not confirmed —
+ * the error shows inline and the flow stays on review with the message intact.
+ */
+export declare type ComposerConfirmResult = void | undefined | {
+    error: string;
+} | {
+    receipt: string;
+};
+
+export declare type ComposerConfirmStage = 'draft' | 'review' | 'done';
+
 /** What the composer is attached to. */
 export declare type ComposerContext = {
     kind: 'conversation';
@@ -485,6 +544,15 @@ export declare interface ComposerPrompt {
     max?: number;
     /** Shown on the card instead of answers: the reader may look but not decide. */
     readOnlyReason?: string;
+    /**
+     * The decision path drawn above the card's header (2.482.0): `Choose →
+     * Draft request → Confirm → Done` with `current` at this question's step.
+     * On a compose prompt `current` is the drafting step; the flow advances it
+     * through review (+1) and done (+2) itself.
+     */
+    path?: DecisionPathState;
+    /** Compose: the message flow's wording and prefilled text. */
+    compose?: ComposerPromptCompose;
     onAnswer: (answer: ComposerPromptAnswer) => ComposerPromptResult | Promise<ComposerPromptResult>;
 }
 
@@ -508,7 +576,47 @@ export declare type ComposerPromptAnswer = {
 | {
     kind: 'option';
     optionId: string;
+}
+/** A compose prompt confirmed with its (edited) message. Since 2.482.0. */
+| {
+    kind: 'compose';
+    message: string;
+    optionId?: undefined;
 };
+
+/**
+ * A compose prompt's message flow (2.482.0): a prefilled, editable message
+ * reviewed and confirmed inside the same card. Every label is the host's
+ * wording; see `ComposerConfirmFlow` for the defaults.
+ */
+export declare interface ComposerPromptCompose {
+    /** The prefilled message the person edits. */
+    initialMessage?: string;
+    /** "To Sienna Garcia · ORG-OBS-11", shown beside the title in every stage. */
+    recipient?: string;
+    /** The editor's label (default "Message") and placeholder. */
+    messageLabel?: string;
+    placeholder?: string;
+    /** A heading for the review stage ("Confirm budget request"); default none (the card's title stands). */
+    reviewTitle?: string;
+    /** The done stage's heading (default "Done") and its status line when `onAnswer` gives no receipt (default "Confirmed."). */
+    doneTitle?: string;
+    doneMessage?: string;
+    /** Button labels: Continue / Confirm / Back / the done stage's action (default "Back"). */
+    continueLabel?: string;
+    confirmLabel?: string;
+    backLabel?: string;
+    doneActionLabel?: string;
+    /** A small line under the review ("Nothing is sent until you confirm."). */
+    note?: ReactNode;
+    /**
+     * Back from the draft of a ROOT compose prompt (one that is not a `{ next }`
+     * follow-up): the deck drops the prompt and calls this. A follow-up's Back
+     * returns to the question it followed and never calls it. Without it a root
+     * prompt's draft has no Back.
+     */
+    onCancel?: () => void;
+}
 
 export declare function ComposerPromptDeck({ deck: deckProp, prompts, input, variant, className, 'data-testid': testId }: ComposerPromptDeckProps): JSX.Element | null;
 
@@ -552,6 +660,18 @@ export declare interface ComposerPromptDeckState {
     pick: (optionId: string) => Promise<boolean>;
     /** Answer the active text / number prompt with typed words. True when taken. */
     answerTyped: (raw: string) => Promise<boolean>;
+    /**
+     * Confirm the active compose prompt with its edited message (2.482.0). The
+     * host's `{ error }` comes back for the flow to show; ok leaves the prompt on
+     * screen in its done state until `finish`.
+     */
+    answerCompose: (message: string) => Promise<ComposerConfirmResult>;
+    /** The active prompt followed an answered question (`{ next }`), so `back` has somewhere to go. */
+    isFollowUp: boolean;
+    /** Return to the question the active follow-up came from. False when it is a root prompt. */
+    back: () => boolean;
+    /** Drop the active prompt after its done state, with no receipt. */
+    finish: () => void;
     dismissReceipt: () => void;
 }
 
@@ -565,6 +685,9 @@ export declare interface ComposerPromptField {
     mono?: boolean;
 }
 
+/** The follow-up each answered prompt routed to (`{ next }`), by the answered prompt's id. */
+export declare type ComposerPromptFollowUps = Readonly<Record<string, ComposerPrompt>>;
+
 /** The composer input the deck reads and steers. */
 export declare interface ComposerPromptInput {
     /** True when the input holds no text. */
@@ -574,7 +697,7 @@ export declare interface ComposerPromptInput {
     focus: () => void;
 }
 
-export declare type ComposerPromptKind = 'choice' | 'confirm' | 'text' | 'number';
+export declare type ComposerPromptKind = 'choice' | 'confirm' | 'text' | 'number' | 'compose';
 
 /** One answer a prompt offers. Its position (1–9) is its default shortcut. */
 export declare interface ComposerPromptOption {
@@ -593,12 +716,19 @@ export declare interface ComposerPromptOption {
 /**
  * What `onAnswer` resolves to. Nothing (or `{ receipt }`): answered — the prompt
  * drops off and the receipt (default: the answer's label) is announced. `{ error }`:
- * not answered — the error shows on the card and the prompt stays.
+ * not answered — the error shows on the card and the prompt stays. `{ next }`
+ * (2.482.0): answered, and the follow-up question takes the card in place with
+ * no receipt (a choice that routes to a compose prompt); Back from the
+ * follow-up returns to this question. A compose prompt's own result is
+ * `{ receipt }` / `{ error }` only: ok shows its done state, error keeps it on
+ * review.
  */
 export declare type ComposerPromptResult = void | undefined | {
     error: string;
 } | {
     receipt: string;
+} | {
+    next: ComposerPrompt;
 };
 
 export declare type ComposerPromptTone = 'neutral' | 'success' | 'warning' | 'danger' | 'info';
@@ -1160,6 +1290,13 @@ export declare interface ConversationReply {
 
 /** Bind the composer to the installed realtime-modules `useFileUpload`. Call once, at module scope. */
 export declare function createConversationComposer(rm: ConversationComposerModules): ConversationComposerComponent;
+
+/** Where a path stands: its labels and the 0-based current step. */
+declare interface DecisionPathState {
+    steps: readonly string[];
+    /** 0-based; steps before it are complete. Past the end: every step is complete. */
+    current: number;
+}
 
 declare interface DeckKey {
     key: string;

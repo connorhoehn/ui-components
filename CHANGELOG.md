@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.482.0 — 2026-10-29
+
+The inline multi-stage response flow aws-agentcore approved in its dispatch prototype (`docs/claude-code-handoff-2026-10-28-ui.md`), as library API:
+
+- `DecisionPath` (`/shared`, root): the one-line path a multi-stage answer walks inside a response box — "Choose → Draft request → Confirm → Done" — completed steps ticked (`data-complete`), the current step emphasised (`aria-current="step"`), an alternate branch ("Choose → Saved") as its own list. `DecisionPathState` is `{ steps, current }`; `current` past the end means every step is complete. Not `WorkflowStepper`, which stays the page's readiness track.
+- `ComposerConfirmFlow` (`/social/rich-composer`): draft → review → done inside the same box, no modal, backdrop, overlay, navigation or rich-text toolbar. Draft: a prefilled editable `Textarea` with title and recipient line, focus in the editor, digits type normally, Enter continues, Shift+Enter is a newline, an empty message cannot advance. Review: the message as edited plus Confirm / Back; Enter or Confirm confirms, Escape or Back returns to the retained draft. A held Enter (`repeat`) never crosses a stage and an IME composition never confirms. Confirm calls the async `onConfirm(message)` (`ComposerConfirmResult`: `void` / `{ receipt }` / `{ error }`), is busy until it resolves, shows Done (heading, status line, one back action) only when it resolved ok, and otherwise shows the error inline and stays on review. Controlled (`message` / `onMessageChange`) or uncontrolled (`defaultMessage`); `path` advances with the stage; `onCancel`, `onDone`, `onStageChange`; every label is a prop. Markers: `data-composer-confirm-flow` (the stage), `data-composer-readonly-allow` on the non-mutating buttons.
+- `ComposerPromptDeck` routes: `onAnswer` may resolve `{ next: ComposerPrompt }` and the follow-up takes the card in place with no receipt; `ComposerPromptDeckState.back()` (and the compose flow's Back) returns to the question it followed, `isFollowUp` says whether it can. A prompt may carry `path` (drawn above the card's header). New `kind: 'compose'` with `compose: ComposerPromptCompose` (initial message, recipient, labels, `onCancel` for a root prompt) draws `ComposerConfirmFlow` in the card: it answers `{ kind: 'compose', message }` through `onAnswer`, an `{ error }` keeps it on review, ok shows its done state until the done action (`finish()`) drops the prompt. A compose prompt owns Enter, Escape and every typed key (`deckKeyAction` returns null; only ⌘/Ctrl+↓ / ↑ page). The host may still swap prompts instead of returning `next`; both are supported.
+
 ## 2.481.2 — 2026-10-25
 
 - The hangout sidebar's overflow link uses the shared secondary-text token, correcting its contrast on the light sidebar surface. Verified through the directory's deep audit with expanded data.

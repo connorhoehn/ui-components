@@ -5,12 +5,12 @@ import { t as r } from "./IconButton-J9jGN6eo.js";
 import { S as i, c as a, m as ee } from "./Icons-GSE-QGuJ.js";
 import { t as te } from "./Banner-CU6GChN-.js";
 import { t as ne } from "./DropdownMenu-DMjUIGR6.js";
-import { r as re } from "./TaskStrip-CkChEMFS.js";
+import { i as re } from "./DecisionPath-Yp8i0AZB.js";
 import { t as ie } from "./QuoteBlock-qqQqscMP.js";
 import { i as ae } from "./composerSendError-CRAoWhRG.js";
 import { a as oe, i as se, r as o } from "./composerContext-BLn1-Nao.js";
 import { i as ce, t as le } from "./FloatingComposerDock-D10uQ4k3.js";
-import { r as ue } from "./RichChatComposer-l1D-aZx-.js";
+import { r as ue } from "./RichChatComposer-DbfyeuQ8.js";
 import { useCallback as s, useMemo as de, useRef as c, useState as l } from "react";
 import { Fragment as u, jsx as d, jsxs as f } from "react/jsx-runtime";
 //#region src/components/social/ContextComposer.tsx

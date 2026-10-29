@@ -40,7 +40,7 @@ import { t as z } from "./DropdownMenu-DMjUIGR6.js";
 import "./DockedPanelContext-pH9A5z1h.js";
 import { t as B } from "./Textarea-BwvE1HPn.js";
 import { n as le, t as V } from "./Avatar-DkkMISPQ.js";
-import { a as ue } from "./TaskStrip-CkChEMFS.js";
+import { o as ue } from "./DecisionPath-Yp8i0AZB.js";
 import "./TitledFrame-B0QW93da.js";
 import "./DotMeter-B6ZDgLU7.js";
 import "./StatusDot-GwVn-q5q.js";
