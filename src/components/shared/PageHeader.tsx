@@ -1,6 +1,6 @@
 // PageHeader — page-level title + description + actions header.
 //
-// Replaces the ad-hoc `<h1>Title</h1><p>Description</p><button>Action</button>`
+// Replaces the ad-hoc `<Heading>Title</Heading><p>Description</p><button>Action</button>`
 // pattern repeated across every portal page. Supports an optional back link
 // rendered above the title and an optional badge to the right of it.
 
@@ -33,6 +33,8 @@ export interface PageHeaderTab {
 
 export interface PageHeaderProps {
   title: string;
+  /** Semantic heading level for a header embedded under another page title; visual size is unchanged. */
+  as?: 'h1' | 'h2' | 'h3' | 'h4';
   description?: string;
   /** Right-aligned action area (buttons, menus). */
   actions?: React.ReactNode;
@@ -102,6 +104,7 @@ export interface PageHeaderProps {
 
 function PageHeader({
   title,
+  as: Heading = 'h1',
   description,
   actions,
   back,
@@ -171,9 +174,9 @@ function PageHeader({
         <div className="flex h-7 min-w-0 items-center gap-3" data-testid={`${testId}-row`}>
           {compactBack}
           <div className="flex min-w-0 flex-1 items-center gap-2">
-            <h1 className={cn('m-0 min-w-0 truncate font-semibold text-[var(--color-text-primary)]', size === 'sm' ? 'text-sm leading-5' : 'text-xl leading-7')} title={title} data-title-size={size}>
+            <Heading className={cn('m-0 min-w-0 truncate font-semibold text-[var(--color-text-primary)]', size === 'sm' ? 'text-sm leading-5' : 'text-xl leading-7')} title={title} data-title-size={size}>
               {title}
-            </h1>
+            </Heading>
             {badge}
             {info ?? (description || meta ? <HeaderDescriptionInfo title={title} width={meta ? 'xl' : 'lg'} description={<>{description}{meta && <div className="mt-2 whitespace-normal">{meta}</div>}</>} data-testid={`${testId}-description`} /> : null)}
             {/* The people give up width before the title does (they clip; each keeps its tooltip). */}
@@ -219,14 +222,14 @@ function PageHeader({
             wraps under it (since 2.446.4) instead of squeezing the title onto
             two lines. */}
         <div className="min-w-0 flex flex-wrap items-center gap-x-2.5 gap-y-2">
-          <h1
+          <Heading
             className={cn(
               'font-semibold text-[var(--color-text-primary)] leading-tight',
               size === 'lg' ? 'text-[28px] font-bold tracking-[-0.01em]' : size === 'sm' ? 'text-sm' : 'text-xl',
             )}
           >
             {title}
-          </h1>
+          </Heading>
           {badge}
           {info}
           {chevron}

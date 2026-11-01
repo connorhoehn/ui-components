@@ -49,7 +49,7 @@ function ErrorState({
           ? <div className="text-[14px] mb-2" aria-hidden>{icon}</div>
           : <div className="mb-2">{icon}</div>
       )}
-      <div className="text-sm font-semibold text-[var(--color-state-error,#dc2626)]">{title}</div>
+      <div className="text-sm font-semibold text-danger-fg">{title}</div>
       {resolvedDescription && (
         <div className="text-sm text-center max-w-[340px] text-text-secondary leading-normal">
           {resolvedDescription}

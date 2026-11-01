@@ -1087,6 +1087,18 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
     await dpage.evaluate(() => { let n = 0; const list = document.querySelector('#list'); const tick = () => { list.style.marginTop = (n++ % 40) + 'px'; requestAnimationFrame(tick); }; tick(); });
     const moving = await measureCase(dpage, { ...deep(['density.table-first']) });
     assert.ok(moving.stable === false && moving.issues.some(i => i.rule === 'coverage.stability' && i.moved?.length), 'a page that keeps moving is reported unstable with what moved: ' + JSON.stringify(moving.issues));
+    // Aggregate fingerprint counts need a concrete owner in their diagnostic.
+    let measurementPass = 0;
+    const fingerprintMotion = await measureCase({
+      addStyleTag: async () => {},
+      evaluate: async fn => fn === measureDOM ? {
+        issues: [],
+        samples: [{ rule: 'consistency.fingerprint', selector: 'document', property: 'fingerprints', actual: measurementPass ? 0 : 1 }],
+        fingerprints: measurementPass++ ? [] : [{ family: 'button', key: 'height=28', selector: '#moving-control', value: '{"height":28}' }],
+      } : undefined,
+    }, { contract: fullContract, selectors: dselectors });
+    assert.equal(fingerprintMotion.stable, false);
+    assert.ok(fingerprintMotion.issues[0].moved.some(x => x.selector === '#moving-control' && x.second === 'absent'));
     // classifyContext: a page outside the app frame is recorded, not judged; a placeholder reason fails coverage.
     const ctxRun = await runAudit(browser, {
       baseURL: 'http://cross.test', selectors: dselectors, contract: crossPath,

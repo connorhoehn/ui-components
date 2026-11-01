@@ -184,7 +184,7 @@ export function CommentContextHeader({ context }: { context: CommentContext }) {
       )}
     >
       {removed && (
-        <div className={cn('text-[11px] font-medium text-text-tertiary')}>Original text was removed</div>
+        <div className={cn('text-[12px] font-medium text-text-tertiary')}>Original text was removed</div>
       )}
       <blockquote
         title={context.text}
@@ -250,7 +250,7 @@ export function ResolvedBanner({ resolvedBy, resolvedAt, expanded, onToggle, onR
         Resolved by {who}
       </span>
       {short && (
-        <span className={cn('text-text-tertiary text-[11px] whitespace-nowrap shrink-0')}>{short}</span>
+        <span className={cn('text-text-tertiary text-[12px] whitespace-nowrap shrink-0')}>{short}</span>
       )}
       {onReopen && (
         <button
@@ -414,21 +414,21 @@ function CommentThreadNode({
                 {/* Avatar + name + time */}
         <div className={cn('flex items-center gap-1.5 mb-1')}>
           <div
-            className={cn('w-6 h-6 rounded-full text-white flex items-center justify-center text-[10px] font-semibold shrink-0')}
+            className={cn('w-6 h-6 rounded-full text-white flex items-center justify-center text-[12px] font-semibold shrink-0')}
             style={{ background: `linear-gradient(135deg, ${comment.color}, ${comment.color}dd)` }}
           >
             {getInitials(comment.displayName)}
           </div>
-          <span className={cn('font-semibold text-[13px] text-text-primary')}>
+          <span className={cn('font-semibold text-[14px] text-text-primary')}>
             {comment.displayName}
           </span>
-          <span className={cn('text-[11px] text-text-tertiary')}>
+          <span className={cn('text-[12px] text-text-tertiary')}>
             {relativeTime(comment.timestamp)}
           </span>
         </div>
 
         {/* Comment text */}
-        <div className={cn('text-[13px] leading-normal text-text-primary pl-[30px] whitespace-pre-wrap')}>
+        <div className={cn('text-[14px] leading-normal text-text-primary pl-[30px] whitespace-pre-wrap')}>
           {renderCommentText(comment.text)}
         </div>
 

@@ -39,3 +39,12 @@ it.each([{ density: 'compact' as const }, { collapsed: true }])('retains back na
   expect(link).toHaveAttribute('href', '/pipelines/runs');
   fireEvent.click(link); expect(onClick).toHaveBeenCalledOnce();
 });
+
+// An embedded list keeps the same header geometry without a second page h1.
+it.each(['comfortable', 'compact'] as const)('uses an embedded h2 at %s density without changing title size', density => {
+  const { rerender } = render(<PageHeader title="Documents" density={density} />);
+  const className = screen.getByRole('heading', { level: 1 }).className;
+  rerender(<PageHeader as="h2" title="Documents" density={density} />);
+  expect(screen.queryByRole('heading', { level: 1 })).toBeNull();
+  expect(screen.getByRole('heading', { level: 2, name: 'Documents' }).className).toBe(className);
+});

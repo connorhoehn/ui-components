@@ -57,3 +57,6 @@ export const WithBadge: Story = {
     actions: <Button variant="ghost" size="sm">Refresh</Button>,
   },
 };
+
+/** A header inside an existing record page preserves the application outline. */
+export const Embedded: Story = { args: { title: 'Documents & files', as: 'h2', description: 'Documents belonging to this team.' } };

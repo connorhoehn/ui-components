@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.484.0 — 2026-10-31
+
+- PageHeader accepts semantic `as="h1" | "h2" | "h3" | "h4"` for embedded lists without changing title size; h1 remains the default.
+
+- CommentThread uses 14px author/body text and 12px metadata/initials in the document margin and reply stack.
+- ErrorState titles use the danger foreground token, retaining readable contrast on panel surfaces.
+- Audit stability reports identify individual fingerprint changes, including controls or panels that appear or disappear between measurements; the stability comparison remains unchanged.
+
 ## 2.483.0 — 2026-10-31
 
 - `DetailSection` and `CardHeader` accept semantic `as="h2" | "h3" | "h4"` without changing visual size; h3 remains the default. `Breadcrumbs` accepts `aria-label`; EditorShell distinguishes its document location trail.

@@ -53,9 +53,18 @@ export async function measureCase(page, { contract, selectors, required = [], co
   // Name what moved, so an unstable case points at its moving node instead of a bare hash.
   const key = x => `${x.rule}|${x.selector}|${x.property}`, before = new Map(first.samples.map(x => [key(x), JSON.stringify(x.actual)]));
   const after = new Set(second.samples.map(key));
+  const fingerprintKey = x => `${x.family}|${x.selector}|${x.key}`;
+  const fingerprintsBefore = new Map(first.fingerprints.map(x => [fingerprintKey(x), x]));
+  const fingerprintsAfter = new Map(second.fingerprints.map(x => [fingerprintKey(x), x]));
+  const movedFingerprints = [...new Set([...fingerprintsBefore.keys(), ...fingerprintsAfter.keys()])].flatMap(k => {
+    const a = fingerprintsBefore.get(k), b = fingerprintsAfter.get(k);
+    return a?.value === b?.value ? [] : [{ rule: 'consistency.fingerprint', selector: (b ?? a).selector,
+      property: `${(b ?? a).family} fingerprint`, first: a ? JSON.parse(a.value) : 'absent', second: b ? JSON.parse(b.value) : 'absent' }];
+  });
   const moved = [
     ...second.samples.filter(x => before.get(key(x)) !== JSON.stringify(x.actual)).map(x => ({ rule: x.rule, selector: x.selector, property: x.property, first: before.has(key(x)) ? JSON.parse(before.get(key(x))) : 'absent', second: x.actual })),
     ...first.samples.filter(x => !after.has(key(x))).map(x => ({ rule: x.rule, selector: x.selector, property: x.property, first: x.actual, second: 'absent' })),
+    ...movedFingerprints,
   ].slice(0, 6);
   return { ...second, stable: false, issues: [...second.issues, { rule: 'coverage.stability', category: 'coverage', selector: 'document', property: 'measurement hash', expected: hash(first.samples), actual: hash(second.samples), moved }] };
 }
