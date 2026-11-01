@@ -83,7 +83,7 @@ function ResourceNode({ data, selected }: NodeProps<ActivityNode>) {
 // effort read as "Coverag…" (NFR #164). The title truncates with a tooltip.
 function EffortFrame({ data }: NodeProps<FrameNode>) {
   return <TitledFrame tone="surface" titleText={data.title} title={
-    <span className="flex min-w-0 max-w-full items-center gap-1.5 font-sans text-[12px] font-semibold text-text-secondary">
+    <span className="flex min-w-0 max-w-full items-center gap-1.5 font-sans text-[12px] leading-4 font-semibold text-text-secondary">
       {data.live && <span aria-hidden="true" className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-primary/50" />}
       <span className="truncate" data-work-effort-title="">{data.title}</span>
     </span>

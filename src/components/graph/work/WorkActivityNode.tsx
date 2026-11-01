@@ -89,7 +89,7 @@ export function WorkActivityNode({ node, detail, selected, selectedRevisionId, l
         </header>
         <div className={cn('space-y-1.5 py-2 pl-3.5 pr-2.5 text-xs leading-snug', muted ? 'text-text-tertiary' : 'text-text-secondary')}>
           {lines.map((line, index) => (
-            <div key={`${index}-${line}`} className="flex items-start justify-between gap-1.5">
+            <div key={`${index}-${line}`} className="flex flex-col items-start gap-1.5">
               <span data-ui-text="graph-detail" className="min-w-0">{line}</span>
               {index === 0 && visible?.badge && (
                 <span data-ui-text="graph-metadata" className={cn('shrink-0 rounded px-1.5 py-px text-xs font-semibold', node.status === 'running' ? 'border border-info-border text-info-fg' : 'bg-info-bg text-info-fg')}>{visible.badge}</span>
