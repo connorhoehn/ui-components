@@ -1760,7 +1760,7 @@ export declare function duplicateSlide(spec: DeckSpec, id: string): DeckSpec;
 /** True when another tab of mine (same user, another socket) has unsaved edits to this deck. */
 export declare function editingInMyOtherTab(roster: readonly DeckRosterEntry[], documentId: string, ownClientId: string | null): boolean;
 
-export declare function EditorShell({ breadcrumbs, title, onTitleChange, titleLabel, kind, starred, onStarredChange, statusPill, path, crumbsTrailing, subtitle, metaBar, participants, onParticipantClick, onFollowParticipant, followingParticipantId, meta, saveState, headActions, tabs, activeTab, onTabChange, toolbar, children, footer, proposal, surface, explorer, workbench, label, variant, itemType, itemKey, titleSize, titleAs: TitleTag, titleOverflow, tabsTrailing, className, 'data-testid': testId, }: EditorShellProps): JSX.Element;
+export declare function EditorShell({ breadcrumbs, title, onTitleChange, titleLabel, kind, starred, onStarredChange, statusPill, path, crumbsTrailing, subtitle, metaBar, participants, onParticipantClick, onFollowParticipant, followingParticipantId, meta, saveState, headActions, tabs, activeTab, onTabChange, toolbar, children, footer, proposal, surface, explorer, workbench, label, variant, itemType, itemKey, titleSize, titleAs: TitleTag, titleOverflow, tabsTrailing, headerInset, className, 'data-testid': testId, }: EditorShellProps): JSX.Element;
 
 export declare interface EditorShellProps {
     /** The trail above the title — "Sprint planning / Sprint review". */
@@ -1889,6 +1889,9 @@ export declare interface EditorShellProps {
      * reads as belonging to the row, not the title. Since 2.389.0.
      */
     tabsTrailing?: ReactNode;
+    /** Horizontal header inset: `editor` (default) is 20px; `page` aligns
+     * with a host page's 24px breadcrumb gutter. Since 2.485.0. */
+    headerInset?: 'editor' | 'page';
     className?: string;
     'data-testid'?: string;
 }
