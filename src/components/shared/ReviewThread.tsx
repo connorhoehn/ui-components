@@ -30,6 +30,8 @@ export interface ReviewPostData {
   id: string;
   authorKind: ReviewAuthorKind;
   authorName: string;
+  /** Profile image supplied by the authorized people data source. */
+  avatarUrl?: string;
   /** Post kind slug — e.g. 'problem' | 'question' | 'decision'. */
   kind: string;
   body: string;
@@ -123,7 +125,7 @@ function Post({ post, labels, tones, onAnswer, busy, placeholder, submitLabel, i
     )}>
       <div className="flex min-w-0 items-center gap-2">
         {post.authorKind === 'human'
-          ? <Avatar name={post.authorName} size={20} />
+          ? <Avatar name={post.authorName} src={post.avatarUrl} size={20} />
           : <span className="text-[13px]" role="img" aria-label="agent">🤖</span>}
         <span className="truncate text-xs font-semibold text-text-primary">{post.authorName}</span>
         <Chip tone={tones[post.kind] ?? 'neutral'} size="xs" uppercase>{labels[post.kind] ?? post.kind}</Chip>

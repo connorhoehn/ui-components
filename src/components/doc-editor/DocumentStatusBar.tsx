@@ -94,7 +94,7 @@ export function DocumentStatusBar({
     <div
       data-testid={testId}
       className={cn(
-        'flex items-center gap-3 border-t border-border bg-surface-panel px-3 py-1 text-xs text-text-tertiary',
+        'flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-border bg-surface-panel px-3 py-1 text-xs text-text-tertiary',
         className,
       )}
     >

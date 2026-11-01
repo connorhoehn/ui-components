@@ -13,6 +13,7 @@ import { Avatar } from './Avatar';
 
 export interface SignoffEntry {
   name: string;
+  avatarUrl?: string;
   /** e.g. 'owner', 'sme', 'org-leader' — shown as the chip's title. */
   role?: string;
   decision: 'approve' | 'reject';
@@ -56,7 +57,7 @@ export function SignoffPanel({
         <>
           {signoffs.map((s) => (
             <span key={s.name} className="flex items-center gap-1.5" title={s.role ? `${s.name} · ${s.role}` : s.name}>
-              <Avatar name={s.name} size={18} />
+              <Avatar name={s.name} src={s.avatarUrl} size={18} />
               <span className="text-xs text-text-secondary">{s.name}</span>
               <Chip tone={s.decision === 'approve' ? 'success' : 'danger'} size="xs">
                 {s.decision === 'approve' ? '✓' : '✕'}

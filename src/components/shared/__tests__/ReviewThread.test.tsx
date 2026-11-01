@@ -11,6 +11,11 @@ const posts: ReviewPostData[] = [
 ];
 
 describe('ReviewThread', () => {
+  it('preserves the supplied person photo', () => {
+    render(<ReviewThread posts={[{ id: "p", authorName: "Vera", authorKind: "human", kind: "answer", body: "Confirmed", avatarUrl: "/vera.jpg" }]} />);
+    expect(screen.getByRole('img', { name: 'Vera' })).toHaveAttribute('src', '/vera.jpg');
+  });
+
   it('renders posts with their kind vocabulary', () => {
     render(<ReviewThread posts={posts} />);
     expect(screen.getByText('problem statement')).toBeInTheDocument();

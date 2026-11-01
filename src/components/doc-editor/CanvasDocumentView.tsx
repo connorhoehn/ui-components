@@ -882,6 +882,26 @@ export default function CanvasDocumentView({
     contentsRef.current?.focus({ preventScroll: true });
     setReadingSection(null);
   };
+  // Wheel/trackpad reading changes the active section too. Debounce until the
+  // scroll settles so smooth section jumps do not highlight every heading en route.
+  useEffect(() => {
+    const workspace = workspaceRef.current;
+    if (!readingNavigation || editable || !editor || !workspace) return;
+    let timer: ReturnType<typeof setTimeout>;
+    const update = () => {
+      const entries = numberedOutline(outline.entries);
+      const top = workspace.getBoundingClientRect().top + 32;
+      const last = workspace.scrollTop > 0 && workspace.scrollTop + workspace.clientHeight >= workspace.scrollHeight - 2;
+      const current = last ? entries.at(-1) : entries.filter(entry => {
+        const heading = elementForPosition(editor as Parameters<typeof useDocumentOutline>[0], entry.id);
+        return heading && heading.getBoundingClientRect().top <= top;
+      }).at(-1);
+      setReadingSection(current?.id ?? null);
+    };
+    const schedule = () => { clearTimeout(timer); timer = setTimeout(update, 120); };
+    workspace.addEventListener('scroll', schedule, { passive: true });
+    return () => { clearTimeout(timer); workspace.removeEventListener('scroll', schedule); };
+  }, [readingNavigation, editable, editor, outline.entries]);
   const wordCount = useDocumentWordCount(editor as Parameters<typeof useDocumentWordCount>[0]);
 
   // One inch or three quarters, in DOCUMENT pixels — the ruler scales it.
@@ -1403,7 +1423,8 @@ export default function CanvasDocumentView({
             data-testid={`${testId}-status-bar`}
           >
             {readingNavigation && !editable && readingEntries.length > 0 && (
-              <Button size="sm" variant="ghost" onClick={returnToContents} data-testid={`${testId}-back-to-top`}>Back to contents ↑</Button>
+              <DocumentOutline entries={readingEntries} activeId={readingSection} onSelect={goToReadingSection}
+                presentation="controls" compact onContents={returnToContents} aria-label="Document section navigation" data-testid={`${testId}-section-navigation`} />
             )}
             {/* Only while something IS selected. A standing "0 selected"
                 would be a permanent line of chrome reporting the absence of a

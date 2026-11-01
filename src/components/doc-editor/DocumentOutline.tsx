@@ -11,6 +11,9 @@
 // at all. Whoever owns the document owns the scrolling.
 
 import { cn } from '../../lib/cn';
+import { Button } from '../ui/Button';
+import { IconButton } from '../ui/IconButton';
+import { ChevronIcon } from '../ui/Icons';
 
 export interface OutlineEntry {
   /** Opaque to this component — an element id, a position, whatever the host resolves. */
@@ -22,6 +25,11 @@ export interface OutlineEntry {
 
 export interface DocumentOutlineProps {
   entries: readonly OutlineEntry[];
+  /** The same section order as a compact previous/contents/next control. */
+  presentation?: 'outline' | 'controls';
+  onContents?: () => void;
+  /** Short contents label for a document's crowded status bar. */
+  compact?: boolean;
   /** The entry the reader is currently inside, if the host tracks it. */
   activeId?: string | null;
   onSelect?: (id: string) => void;
@@ -48,6 +56,9 @@ function indentFor(level: number, minLevel: number): number {
 
 export function DocumentOutline({
   entries,
+  presentation = 'outline',
+  onContents,
+  compact = false,
   activeId,
   onSelect,
   emptyLabel = 'Headings you add will appear here',
@@ -57,6 +68,24 @@ export function DocumentOutline({
   'aria-label': ariaLabel = 'Document outline',
 }: DocumentOutlineProps) {
   const minLevel = entries.length > 0 ? Math.min(...entries.map((e) => e.level)) : 1;
+  if (presentation === 'controls') {
+    const index = entries.findIndex(entry => entry.id === activeId);
+    const previous = entries[index - 1];
+    const next = entries[index + 1];
+    return <nav aria-label={ariaLabel} data-testid={testId} className={cn('flex min-w-0 items-center justify-center gap-1', className)}>
+      <IconButton size="sm" variant="ghost" aria-label="Previous section" title={previous ? previous.text : 'At the first section'}
+        disabled={!previous} onClick={() => previous && onSelect?.(previous.id)} icon={<ChevronIcon dir="up" size={16} />} data-testid={`${testId}-previous`} />
+      <Button size="sm" variant="ghost" onClick={onContents} aria-label="Back to contents" data-testid={`${testId}-contents`}>
+        {compact ? 'Contents' : 'Back to contents'}
+      </Button>
+      <span className="shrink-0 text-xs tabular-nums text-text-secondary" aria-live="polite" aria-label={index < 0 ? 'Contents' : `Section ${index + 1} of ${entries.length}`}>
+        {index < 0 ? `— / ${entries.length}` : `${index + 1} / ${entries.length}`}
+      </span>
+      <IconButton size="sm" variant="ghost" aria-label="Next section" title={next ? next.text : 'At the last section'}
+        disabled={!next} onClick={() => next && onSelect?.(next.id)} icon={<ChevronIcon dir="down" size={16} />} data-testid={`${testId}-next`} />
+    </nav>;
+  }
+
 
   return (
     <nav

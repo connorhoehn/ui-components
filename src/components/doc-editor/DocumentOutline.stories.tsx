@@ -4,7 +4,6 @@ import { DocumentOutline } from './DocumentOutline';
 import EditorShell from './EditorShell';
 import { Stack } from '../ui/Stack';
 import { Text as T } from '../shared/Text';
-import { Button } from '../ui/Button';
 import Chip from '../shared/Chip';
 
 const meta = { title: 'Doc-Editor/DocumentOutline', component: DocumentOutline } satisfies Meta<typeof DocumentOutline>;
@@ -20,12 +19,12 @@ export const ReviewPage: Story = {
     const [active, setActive] = useState<string | null>(null);
     const goTo = (id: string) => {
       const target = root.current?.querySelector<HTMLElement>(`#${id}`);
-      target?.focus({ preventScroll: true }); target?.scrollIntoView({ behavior: 'smooth', block: 'start' }); setActive(id);
+      target?.focus({ preventScroll: true }); target?.scrollIntoView({ behavior: 'smooth', block: 'start' }); setActive(id === 'contents' ? null : id);
     };
     return <Stack ref={root} className="h-[680px] w-full max-w-5xl">
       <EditorShell title="SAML to Cognito migration" titleAs="h1" titleSize="md" headerInset="page" surface="plain" statusPill={<Chip size="md" tone="neutral">Runbook proposal</Chip>}
         breadcrumbs={[{ label: 'Runbooks' }, { label: 'Proposals' }]} subtitle="Proposed update · version 1"
-        footer={<Stack className="px-6 py-2"><Button size="sm" variant="ghost" onClick={() => goTo('contents')}>Back to contents ↑</Button></Stack>}>
+        footer={<Stack className="px-6 py-2"><DocumentOutline entries={entries} activeId={active} onSelect={goTo} presentation="controls" onContents={() => goTo('contents')} aria-label="Section navigation" /></Stack>}>
         <Stack gap="lg" className="px-6 py-4">
           <Stack id="contents" tabIndex={-1} gap="sm" className="border-b border-border pb-4">
             <h2 className="text-base font-semibold">On this page</h2>

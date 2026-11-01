@@ -2,6 +2,11 @@ import { render, screen } from '@testing-library/react';
 import { SignoffPanel } from '../SignoffPanel';
 
 describe('SignoffPanel', () => {
+  it('preserves the supplied person photo', () => {
+    render(<SignoffPanel signoffs={[{ name: "Vera", decision: "approve", avatarUrl: "/vera.jpg" }]} />);
+    expect(screen.getByRole('img', { name: 'Vera' })).toHaveAttribute('src', '/vera.jpg');
+  });
+
   it('shows the quorum hint when nobody has signed', () => {
     render(<SignoffPanel signoffs={[]} />);
     expect(screen.getByText(/2 approvals ratify/)).toBeInTheDocument();

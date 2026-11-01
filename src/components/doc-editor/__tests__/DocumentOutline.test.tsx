@@ -14,6 +14,20 @@ const entries = [
 const items = () => screen.getAllByTestId('document-outline-entry');
 
 describe('DocumentOutline', () => {
+  it('moves through the actual section order and stops at either end', () => {
+    const onSelect = vi.fn(), onContents = vi.fn();
+    const { rerender } = render(<DocumentOutline entries={entries} presentation="controls" onSelect={onSelect} onContents={onContents} />);
+    expect(screen.getByRole('button', { name: 'Previous section' })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Next section' }));
+    expect(onSelect).toHaveBeenLastCalledWith('1');
+    rerender(<DocumentOutline entries={entries} presentation="controls" activeId="4" onSelect={onSelect} onContents={onContents} />);
+    expect(screen.getByRole('button', { name: 'Next section' })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Previous section' }));
+    expect(onSelect).toHaveBeenLastCalledWith('3');
+    fireEvent.click(screen.getByRole('button', { name: 'Back to contents' }));
+    expect(onContents).toHaveBeenCalledOnce();
+  });
+
   it('lists the headings in document order', () => {
     render(<DocumentOutline entries={entries} />);
     expect(items().map((e) => e.textContent)).toEqual([
