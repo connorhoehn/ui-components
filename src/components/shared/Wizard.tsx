@@ -75,7 +75,7 @@ export function Wizard({
               >
                 <span
                   className={cn(
-                    'flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-semibold',
+                    'flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold',
                     isDone
                       ? 'bg-success text-white'
                       : isActive

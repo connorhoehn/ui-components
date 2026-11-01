@@ -80,6 +80,17 @@ inside its scroll container; page overflow is not. Composer checks use an
 explicit ancestor content region; choosing its immediately padded wrapper would
 hide the exact defect users have repeatedly reported.
 
+The repeated-label check treats each native or ARIA table cell as its own
+composition: equal answers under separate column headers are valid (for example,
+the Social permission matrix), while duplicated adjacent labels inside one cell
+still fail. The self-test covers both cases, including ARIA cells.
+
+The application heading outline excludes a named `role="document"` body.
+`CanvasDocumentView` owns that semantic boundary for authored document content
+in both edit and read-only modes. Toolbars and titles outside the body still
+count; a document cannot excuse a missing or duplicated application h1.
+Mutation fixtures cover those neighboring failures.
+
 ## Content column rules (one edge, one title, nothing clipped)
 
 Five rules judge the content column as a reader sees it. They exist because a

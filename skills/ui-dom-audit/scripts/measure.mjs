@@ -1218,10 +1218,13 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
           }
           // Duplicated adjacent labels: the same words twice in a row, outside list/table items.
           const row = el => el.closest('tr, li, [role="row"], [role="option"], [role="listitem"], [role="menuitem"], [role="tab"]');
+          // Separate cells answer separate column questions (e.g. each role's
+          // permission can be Yes). Repetition inside one cell still fails.
+          const cell = el => el.closest('td, th, [role="cell"], [role="gridcell"], [role="columnheader"], [role="rowheader"]');
           // Adjacent means one composition: the two labels share an ancestor within three levels
           // (a rail caption beside the page title is two regions). Rows a many-rows state repeated are copies.
           const near = (a, b) => { for (let n = a.parentElement, k = 0; n && k < 3; n = n.parentElement, k++) if (n.contains(b)) return true; return false; };
-          if (prev && rule.duplicates !== false && !(probe?.kind === 'data-state' && probe.mode === 'many') && near(run.el, prev.el) && run.text.length >= 3 && run.text.toLowerCase() === prev.text.toLowerCase() && row(run.el) === row(prev.el) && !prev.el.contains(run.el) && !run.el.contains(prev.el) && Math.abs(run.rects[0].top - prev.rects[0].top) < 48 && count < (rule.maxPerPage ?? 12)) {
+          if (prev && rule.duplicates !== false && !(probe?.kind === 'data-state' && probe.mode === 'many') && near(run.el, prev.el) && run.text.length >= 3 && run.text.toLowerCase() === prev.text.toLowerCase() && row(run.el) === row(prev.el) && cell(run.el) === cell(prev.el) && !prev.el.contains(run.el) && !run.el.contains(prev.el) && Math.abs(run.rects[0].top - prev.rects[0].top) < 48 && count < (rule.maxPerPage ?? 12)) {
             count++; add(rule, run.el, 'duplicated adjacent label', 'each label once', `"${snippet(run.text)}" twice in a row (also ${selectorOf(prev.el)})`);
           }
           prev = run;
@@ -1272,7 +1275,11 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
         // Accessibility (family 8): one h1; levels never skip on the way down.
         const shown = el => { const s = cs(el); return s.display !== 'none' && s.visibility !== 'hidden' && (typeof el.checkVisibility !== 'function' || el.checkVisibility()); };
         const heads = nodes.length ? nodes : query(rule.selector, true);
-        const all = [...document.querySelectorAll('h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]')].filter(el => shown(el) && !el.closest('[role="dialog"], [data-ui-dialog], [aria-hidden="true"]') && (!heads.length || heads.some(h => h.contains(el))));
+        // Authored documents have an independent outline (CanvasDocumentView
+        // marks its body, including read-only mode). Only that named document
+        // body is outside the application outline; its toolbar/title remain
+        // accountable, and the app still needs exactly one primary heading.
+        const all = [...document.querySelectorAll('h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]')].filter(el => shown(el) && !el.closest('[role="dialog"], [data-ui-dialog], [aria-hidden="true"]') && !el.closest('[role="document"]')?.getAttribute('aria-label')?.trim() && (!heads.length || heads.some(h => h.contains(el))));
         const level = el => el.getAttribute('aria-level') ? parseInt(el.getAttribute('aria-level'), 10) : parseInt(el.tagName.slice(1), 10);
         const h1 = all.filter(el => level(el) === 1);
         samples.push({ rule: rule.id, selector: 'document', property: 'h1 count', actual: h1.length, expected: 1 });

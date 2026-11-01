@@ -34,6 +34,11 @@ export function PlusIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
+/** Italic formatting, drawn as a glyph rather than changing the control font. */
+export function ItalicIcon({ size = 16, ...rest }: GlyphProps) {
+  return <svg {...base(size, rest)}><path d="M7 3h6M3 13h6M10 3L6 13" /></svg>;
+}
+
 /** An X: "close", "dismiss". */
 export function CloseIcon({ size = 16, ...rest }: GlyphProps) {
   return (

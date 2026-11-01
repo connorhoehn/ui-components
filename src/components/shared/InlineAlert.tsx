@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { cn } from '../../lib/cn';
-import type { SurfaceTone } from './tones';
+import { TONE_BORDER, TONE_SOFT, type SurfaceTone, type Tone } from './tones';
 
 export type InlineAlertTone = 'error' | 'success' | 'info' | 'warning';
 
@@ -33,15 +33,8 @@ export interface InlineAlertProps {
   'data-testid'?: string;
 }
 
-const TONE_CLASSES: Record<InlineAlertTone, string> = {
-  error:
-    'bg-[var(--color-danger-bg,#fef2f2)] border-[var(--color-danger,#dc2626)] text-[var(--color-danger,#dc2626)]',
-  success:
-    'bg-[var(--color-success-bg,#f0fdf4)] border-[var(--color-success,#16a34a)] text-[var(--color-success,#16a34a)]',
-  info:
-    'bg-[var(--color-info-bg,#eff6ff)] border-[var(--color-info,#2563eb)] text-[var(--color-info,#2563eb)]',
-  warning:
-    'bg-[var(--color-warning-bg,#fffbeb)] border-[var(--color-warning,#f59e0b)] text-[var(--color-warning,#f59e0b)]',
+const TONE_KEY: Record<InlineAlertTone, Tone> = {
+  error: 'danger', success: 'success', info: 'info', warning: 'warning',
 };
 
 // One panel background for all four severities: the accent border and the
@@ -51,11 +44,6 @@ const CODE_TONE_CLASSES: Record<InlineAlertTone, string> = {
   success: 'bg-code-surface border-code-green text-code-green',
   info: 'bg-code-surface border-code-blue text-code-blue',
   warning: 'bg-code-surface border-code-peach text-code-peach',
-};
-
-const PALETTE: Record<InlineAlertPalette, Record<InlineAlertTone, string>> = {
-  surface: TONE_CLASSES,
-  code: CODE_TONE_CLASSES,
 };
 
 function InlineAlert({
@@ -73,7 +61,7 @@ function InlineAlert({
       aria-live={tone === 'error' || tone === 'warning' ? 'assertive' : 'polite'}
       className={cn(
         'flex items-start gap-2 px-3 py-2 rounded-md border-l-[3px] text-sm',
-        (PALETTE[palette] ?? TONE_CLASSES)[tone],
+        palette === 'code' ? CODE_TONE_CLASSES[tone] : cn(TONE_SOFT[TONE_KEY[tone]], TONE_BORDER[TONE_KEY[tone]]),
         className,
       )}
     >

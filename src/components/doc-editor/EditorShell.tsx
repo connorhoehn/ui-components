@@ -386,7 +386,7 @@ export function EditorShell({
                   {/* The 12px meta step (Breadcrumbs size="sm"; 13px before 2.441.3) — the "Saved …" line's
                       and the status pill's size; a class on the nav never
                       reached the 14px crumbs inside it (2.407.13). */}
-                  <Breadcrumbs items={path} maxItems={4} lastIsCurrent={false} size="sm" className="min-w-0" data-testid={`${testId}-path-crumbs`} />
+                  <Breadcrumbs items={path} aria-label="Document location" maxItems={4} lastIsCurrent={false} size="sm" className="min-w-0" data-testid={`${testId}-path-crumbs`} />
                 </span>
               )}
             </div>

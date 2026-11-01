@@ -37,7 +37,7 @@ import {
 import type { DocumentZoomControl } from './DocumentStatusBar';
 import {
   BulletListIcon, ChecklistIcon, ChevronIcon, CodeIcon, HighlighterIcon, ImageIcon, LinkIcon, ListStyleIcon,
-  MoreIcon, NumberedListIcon, RedoIcon, UndoIcon,
+  ItalicIcon, MoreIcon, NumberedListIcon, RedoIcon, UndoIcon,
 } from '../ui/Icons';
 
 export interface DocumentToolbarProps {
@@ -308,7 +308,7 @@ function Glyph({ icon: Icon }: { icon: (p: { size?: number }) => ReactNode }) {
 // both.
 const MARKS: MarkButton[] = [
   { key: 'bold', label: <span className="font-bold">B</span>, hint: 'Bold  **text**', run: (e) => { e.chain().focus().toggleBold().run(); }, active: (e) => e.isActive('bold') },
-  { key: 'italic', label: <span className="font-serif italic">I</span>, hint: 'Italic  *text*', run: (e) => { e.chain().focus().toggleItalic().run(); }, active: (e) => e.isActive('italic') },
+  { key: 'italic', label: <Glyph icon={ItalicIcon} />, hint: 'Italic  *text*', run: (e) => { e.chain().focus().toggleItalic().run(); }, active: (e) => e.isActive('italic') },
   { key: 'underline', label: <span className="underline underline-offset-2">U</span>, hint: 'Underline', run: (e) => { e.chain().focus().toggleUnderline().run(); }, active: (e) => e.isActive('underline') },
   { key: 'strike', label: <span className="line-through">S</span>, hint: 'Strikethrough  ~~text~~', run: (e) => { e.chain().focus().toggleStrike().run(); }, active: (e) => e.isActive('strike') },
   { key: 'code', label: <Glyph icon={CodeIcon} />, hint: 'Inline code  `text`', run: (e) => { e.chain().focus().toggleCode().run(); }, active: (e) => e.isActive('code') },

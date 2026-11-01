@@ -5,7 +5,12 @@ import { CardHeader } from '../CardHeader';
 describe('CardHeader', () => {
   it('renders the title as a heading', () => {
     render(<CardHeader title="Recent Runs" />);
-    expect(screen.getByRole('heading', { name: 'Recent Runs' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Recent Runs', level: 3 })).toBeInTheDocument();
+  });
+
+  it('can follow a page title without skipping a heading level', () => {
+    render(<><h1>Dashboard</h1><CardHeader as="h2" title="Recent Runs" /></>);
+    expect(screen.getAllByRole('heading').map(heading => heading.tagName)).toEqual(['H1', 'H2']);
   });
 
   it('renders subtitle only when provided', () => {

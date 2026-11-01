@@ -3,6 +3,14 @@ import { describe, it, expect, vi } from 'vitest';
 import { InlineAlert } from '../InlineAlert';
 
 describe('InlineAlert', () => {
+  it.each(['error', 'success', 'info', 'warning'] as const)('uses the readable foreground on a %s tinted surface', (tone) => {
+    render(<InlineAlert tone={tone}>Status</InlineAlert>);
+    const key = tone === 'error' ? 'danger' : tone;
+    const alert = screen.getByText('Status').parentElement!;
+    expect(alert).toHaveClass(`bg-${key}-bg`, `text-${key}-fg`);
+    expect(alert).not.toHaveClass(`text-${key}`);
+  });
+
   it('error and warning tones are assertive alerts', () => {
     const { rerender } = render(<InlineAlert tone="error">Sync failed</InlineAlert>);
     expect(screen.getByRole('alert')).toHaveTextContent('Sync failed');

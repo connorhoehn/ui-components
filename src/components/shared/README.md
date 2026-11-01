@@ -15,6 +15,12 @@ import { Button, Card, Modal, EmptyState } from '@connorhoehnslalom/ui-component
 
 ## Categories
 
+`DetailSection` and `CardHeader` accept `as="h2" | "h3" | "h4"` to match
+the surrounding document outline without changing their visual scale. Both
+default to `h3` for nested sections; use `h2` directly below the page's `h1`.
+`Breadcrumbs` accepts `aria-label` for distinct trails; `EditorShell` names its
+folder path "Document location" separately from the application breadcrumb.
+
 | Category | Primitives |
 |---|---|
 | Atoms | `Button`, `IconButton`, `Badge`, `Chip`, `Avatar`, `AvatarGroup`, `PresenceDot`, `UserChip`, `Spinner`, `TypingIndicator`, `ConnectionPill` |

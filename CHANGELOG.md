@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## 2.483.0 — 2026-10-31
+
+- `DetailSection` and `CardHeader` accept semantic `as="h2" | "h3" | "h4"` without changing visual size; h3 remains the default. `Breadcrumbs` accepts `aria-label`; EditorShell distinguishes its document location trail.
+- Surface InlineAlert uses the tone foreground/background pair. ActivityFeed retains readable opacity on every visible row and uses surface text tokens; PageSection descriptions use secondary ink.
+- DM picker labels, unread counts, wizard step numbers and comment anchors use the shared compact type scale. Reaction add controls use a solid border. DocumentToolbar uses the shared SVG `ItalicIcon`.
+- CanvasDocumentView marks the authored body as a named document. The DOM audit separates that outline from application headings and distinguishes equal values in separate table cells from accidental duplicate labels. Valid and broken mutation fixtures retain checks on neighboring application headings and duplicate labels inside cells.
+
 ## 2.482.0 — 2026-10-29
 
 The inline multi-stage response flow aws-agentcore approved in its dispatch prototype (`docs/claude-code-handoff-2026-10-28-ui.md`), as library API:

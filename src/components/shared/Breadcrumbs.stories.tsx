@@ -85,3 +85,7 @@ export const HiddenWhenShallow: Story = {
   name: 'minItems={3} — nothing renders here',
   args: { items: [{ label: 'Home', href: '/' }, { label: 'Settings' }], minItems: 3 },
 };
+
+export const DocumentLocation: Story = {
+  args: { ...Default.args, "aria-label": "Document location", lastIsCurrent: false },
+};

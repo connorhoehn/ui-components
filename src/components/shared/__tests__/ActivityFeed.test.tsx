@@ -30,6 +30,15 @@ describe('ActivityFeed', () => {
     expect(screen.getByText('K8S-1')).toBeInTheDocument();
   });
 
+  it('keeps every visible row readable and uses surface ink for timestamps', () => {
+    const { container } = render(<ActivityFeed items={ITEMS.map(item => ({ ...item, timeLabel: '2m ago' }))} visibleCount={4} rotateMs={0} />);
+    for (const row of container.querySelectorAll<HTMLElement>('.uc-activity-row')) expect(row.style.opacity).toBe('');
+    for (const label of screen.getAllByText('2m ago')) {
+      expect(label).toHaveClass('text-text-secondary');
+      expect(label).not.toHaveClass('text-code-subtle');
+    }
+  });
+
   it('rotates the pool on the interval, newest first', () => {
     render(<ActivityFeed items={ITEMS} visibleCount={2} rotateMs={1000} />);
     expect(screen.queryByText('Cai L.')).toBeNull();

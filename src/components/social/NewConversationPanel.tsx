@@ -145,8 +145,8 @@ export function NewConversationPanel({
               >
                 <Avatar name={p.displayName} src={p.avatarUrl} color={p.color} size={26} />
                 <span className="flex min-w-0 flex-col">
-                  <span className="truncate text-[13px] text-text-primary">{p.displayName}</span>
-                  {p.hint && <span className="truncate text-[11px] text-text-tertiary">{p.hint}</span>}
+                  <span className="truncate text-sm text-text-primary">{p.displayName}</span>
+                  {p.hint && <span className="truncate text-xs text-text-tertiary">{p.hint}</span>}
                 </span>
               </button>
             </li>
@@ -173,7 +173,7 @@ export function NewConversationPanel({
                 >
                   #
                 </span>
-                <span className="min-w-0 truncate text-[13px] text-text-primary">
+                <span className="min-w-0 truncate text-sm text-text-primary">
                   Create channel <span className="font-semibold">#{channelName}</span>
                 </span>
               </button>

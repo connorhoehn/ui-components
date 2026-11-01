@@ -19,6 +19,8 @@ import { Divider } from './Divider';
 
 export interface DetailSectionProps {
   title: string;
+  /** Semantic heading level, independent of visual size. Default h3 preserves nested detail sections; use h2 directly under a page title. */
+  as?: 'h2' | 'h3' | 'h4';
   /** Quiet qualifier beside the title — a count, a state, a caveat. */
   hint?: ReactNode;
   /** Right-aligned affordance for this section only. */
@@ -54,7 +56,7 @@ export interface DetailSectionProps {
 }
 
 export function DetailSection({
-  title, hint, actions, first = false, variant = 'label', size: sizeProp, description, children, className, 'data-testid': testId,
+  title, as: Heading = 'h3', hint, actions, first = false, variant = 'label', size: sizeProp, description, children, className, 'data-testid': testId,
 }: DetailSectionProps) {
   const size = useDensitySize<'sm' | 'md' | 'lg'>('DetailSection', sizeProp, { comfortable: 'md', compact: 'sm' });
   if (variant === 'heading') {
@@ -66,7 +68,7 @@ export function DetailSection({
         {/* A fixed 24px row: a hover action may be taller, but never pushes
             the body down (the mockup's heading → text pitch is 24px). */}
         <div className={cn('flex items-center gap-2', lg ? 'h-7' : 'h-6', lg ? (hasDescription ? 'mb-0' : 'mb-2') : 'mb-0.5')}>
-          <h3 className={cn('m-0 font-semibold text-text-primary', lg ? 'text-[19px] leading-7' : sm ? 'text-sm leading-5' : 'text-base leading-6')}>{title}</h3>
+          <Heading className={cn('m-0 font-semibold text-text-primary', lg ? 'text-[19px] leading-7' : sm ? 'text-sm leading-5' : 'text-base leading-6')}>{title}</Heading>
           {hint != null && <span className={cn('min-w-0 truncate text-text-tertiary', sm ? 'text-xs' : 'text-[13px]')}>{hint}</span>}
           {actions != null && (
             <>
@@ -90,9 +92,9 @@ export function DetailSection({
     <section className={cn(className)} {...(testId ? { 'data-testid': testId } : {})}>
       {!first && <Divider spacing="md" />}
       <div className="mb-2 flex items-baseline gap-2">
-        <h3 className="m-0 text-xs font-semibold uppercase tracking-wide text-text-tertiary">
+        <Heading className="m-0 text-xs font-semibold uppercase tracking-wide text-text-tertiary">
           {title}
-        </h3>
+        </Heading>
         {hint != null && <span className="min-w-0 truncate text-xs text-text-tertiary">{hint}</span>}
         {actions != null && (
           <>

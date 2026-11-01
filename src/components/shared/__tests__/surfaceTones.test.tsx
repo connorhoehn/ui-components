@@ -96,14 +96,14 @@ describe('IconButton tone', () => {
 describe('InlineAlert palette', () => {
   it('keeps the app tokens by default', () => {
     render(<InlineAlert tone="error">boom</InlineAlert>);
-    expect(screen.getByRole('alert').className).toContain('--color-danger-bg');
+    expect(screen.getByRole('alert')).toHaveClass('bg-danger-bg', 'text-danger-fg');
   });
 
   it('paints in the code family', () => {
     render(<InlineAlert tone="error" palette="code">boom</InlineAlert>);
     const alert = screen.getByRole('alert');
     expect(alert).toHaveClass('bg-code-surface', 'border-code-red', 'text-code-red');
-    expect(alert.className).not.toContain('--color-danger-bg');
+    expect(alert).not.toHaveClass('bg-danger-bg');
   });
 
   it('keeps the aria wiring tied to severity, independent of the palette', () => {

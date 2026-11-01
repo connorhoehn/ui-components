@@ -3,6 +3,11 @@ import { Breadcrumbs } from '../Breadcrumbs';
 import type { BreadcrumbItem } from '../Breadcrumbs';
 
 describe('Breadcrumbs', () => {
+  it('distinguishes a document location from the surrounding page trail', () => {
+    render(<><Breadcrumbs items={[{ label: 'Workspace' }]} /><Breadcrumbs aria-label="Document location" items={[{ label: 'Folder' }]} /></>);
+    expect(screen.getByRole('navigation', { name: 'Breadcrumb' })).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'Document location' })).toBeInTheDocument();
+  });
   it('renders nothing when items is empty', () => {
     const { container } = render(<Breadcrumbs items={[]} />);
     expect(container.firstChild).toBeNull();

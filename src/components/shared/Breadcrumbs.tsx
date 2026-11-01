@@ -35,6 +35,8 @@ export type BreadcrumbOverflow = 'ellipsis' | 'menu';
 
 export interface BreadcrumbsProps {
   items: BreadcrumbItem[];
+  /** Distinguish this trail from other navigation landmarks on the page. */
+  'aria-label'?: string;
   /** Custom separator rendered between items (default: "/") */
   separator?: ReactNode;
   /**
@@ -195,6 +197,7 @@ function OverflowMenu({ items, size }: { items: BreadcrumbItem[]; size: Breadcru
 
 export function Breadcrumbs({
   items,
+  'aria-label': label = 'Breadcrumb',
   separator = '/',
   maxItems,
   overflow = 'ellipsis',
@@ -212,7 +215,7 @@ export function Breadcrumbs({
   const hidden = maxItems != null ? hiddenItems(items, maxItems) : [];
 
   return (
-    <nav aria-label="Breadcrumb" data-testid={testId} className={cn('flex items-center', className)}>
+    <nav aria-label={label} data-testid={testId} className={cn('flex items-center', className)}>
       <ol className="flex items-center gap-1 flex-wrap list-none m-0 p-0">
         {visible.map((item, idx) => {
           const isLast = idx === visible.length - 1;

@@ -120,7 +120,7 @@ export function ReactionsBar({
           aria-expanded={pickerOpen}
           data-testid="reactions-bar-add"
           className={cn(
-            'inline-flex items-center justify-center rounded-full border border-dashed border-[var(--color-border)]',
+            'inline-flex items-center justify-center rounded-full border border-solid border-[var(--color-border)]',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
             'h-6 min-w-6 px-1.5 text-xs text-[var(--color-text-secondary)] transition-colors',
             !disabled && 'hover:border-[var(--color-primary)] hover:text-[var(--color-text-primary)]',

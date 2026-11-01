@@ -759,7 +759,7 @@ export function ConversationList({
                       data-testid="conversation-mention"
                       aria-label="You were mentioned"
                       title="You were mentioned"
-                      className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-danger text-[11px] font-bold leading-none text-white"
+                      className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-danger text-xs font-bold leading-none text-white"
                     >
                       @
                     </span>
@@ -769,7 +769,7 @@ export function ConversationList({
                       data-testid="conversation-unread"
                       data-muted={muted ? 'true' : 'false'}
                       className={cn(
-                        'grid h-5 min-w-5 shrink-0 place-items-center rounded-full px-1.5 text-[11px] font-semibold leading-none',
+                        'grid h-5 min-w-5 shrink-0 place-items-center rounded-full px-1.5 text-xs font-semibold leading-none',
                         // Muted keeps the count and drops the accent: the
                         // traffic is still worth knowing about, just not worth
                         // pulling the eye across the rail for.

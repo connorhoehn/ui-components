@@ -168,7 +168,7 @@ export type CommentContext =
 export function CommentContextHeader({ context }: { context: CommentContext }) {
   if (context.kind === 'document') {
     return (
-      <div data-testid="comment-context" data-kind="document" className={cn('mb-1.5 text-[11px] italic text-text-tertiary')}>
+      <div data-testid="comment-context" data-kind="document" className={cn('mb-1.5 text-xs italic text-text-tertiary')}>
         On the whole document
       </div>
     );

@@ -17,6 +17,10 @@ export const Default: Story = {
   args: { title: 'Recent Runs' },
 };
 
+export const PageSection: Story = {
+  args: { title: 'Recent Runs', as: 'h2', subtitle: 'Directly under a page title; the visual scale is unchanged.' },
+};
+
 export const WithEverything: Story = {
   args: {
     title: 'Recent Runs',

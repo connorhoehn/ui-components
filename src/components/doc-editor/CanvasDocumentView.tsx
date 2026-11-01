@@ -1262,6 +1262,8 @@ export default function CanvasDocumentView({
             <div
               ref={bodyRef}
               data-testid={`${testId}-body`}
+              role="document"
+              aria-label="Document content"
               className={cn(
                 'doc-page__body py-8 sm:py-10 lg:py-12',
                 // 11.76cqi is 96px on an 816px sheet; 8.82cqi is 72px.

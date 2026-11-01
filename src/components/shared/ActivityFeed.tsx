@@ -62,19 +62,15 @@ function shortName(fullName: string): string {
 
 // ─── ActivityRow ──────────────────────────────────────────────────────────────
 
-const ROW_OPACITIES = [1, 0.5, 0.18] as const;
-
 interface ActivityRowProps {
   item: ActivityFeedItem;
-  opacity: number;
   dotColor: string;
 }
 
-function ActivityRow({ item, opacity, dotColor }: ActivityRowProps) {
+function ActivityRow({ item, dotColor }: ActivityRowProps) {
   return (
     <div
-      className="uc-activity-row flex items-center gap-1.5 py-[3.5px] overflow-hidden min-w-0 transition-[opacity] duration-[380ms] ease-in-out"
-      style={{ opacity }}
+      className="uc-activity-row flex items-center gap-1.5 py-[3.5px] overflow-hidden min-w-0"
     >
       {/* Type dot — color is dynamic per-entity, keep inline */}
       <span
@@ -118,7 +114,7 @@ function ActivityRow({ item, opacity, dotColor }: ActivityRowProps) {
 
       {/* Timestamp */}
       {item.timeLabel && (
-        <span className="text-xs text-code-subtle shrink-0 whitespace-nowrap">
+        <span className="text-xs text-text-secondary shrink-0 whitespace-nowrap">
           {item.timeLabel}
         </span>
       )}
@@ -180,18 +176,17 @@ export function ActivityFeed({
   if (visible.length === 0) {
     return (
       <div className={cn('flex-1 flex items-center', className)}>
-        <span className="text-xs text-border">No recent activity</span>
+        <span className="text-xs text-text-secondary">No recent activity</span>
       </div>
     );
   }
 
   return (
     <div className={cn('flex-1 flex flex-col overflow-hidden', className)}>
-      {visible.map((item, i) => (
+      {visible.map((item) => (
         <ActivityRow
           key={item.id}
           item={item}
-          opacity={ROW_OPACITIES[i] ?? 0.1}
           dotColor={palette[item.kind ?? ''] ?? 'var(--color-text-tertiary)'}
         />
       ))}

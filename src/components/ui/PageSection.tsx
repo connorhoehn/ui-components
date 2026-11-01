@@ -105,7 +105,7 @@ export function PageSection({
           {isEmpty ? (
             <span data-ui-empty="" className={cn('min-w-0 truncate text-text-tertiary', sm ? 'text-xs' : 'text-sm')}>{empty}</span>
           ) : description && (
-            <p className="text-sm text-neutral mt-1 mb-0">{description}</p>
+            <p className="text-sm text-text-secondary mt-1 mb-0">{description}</p>
           )}
         </div>
         {actions && <div className={cn('flex max-w-full min-w-0 flex-wrap items-center gap-2 shrink-0', sm && 'text-sm')}>{actions}</div>}

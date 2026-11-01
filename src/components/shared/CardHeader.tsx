@@ -9,6 +9,8 @@ import { cn } from '../../lib/cn';
 
 export interface CardHeaderProps {
   title: string;
+  /** Semantic heading level, independent of visual size. Use h2 directly under a page title. */
+  as?: 'h2' | 'h3' | 'h4';
   /** Small text below the title. */
   subtitle?: string;
   /** Extra content rendered immediately to the right of the title (badges/chips). */
@@ -25,7 +27,7 @@ export interface CardHeaderProps {
   className?: string;
 }
 
-function CardHeader({ title, subtitle, meta, action, inset = false, className }: CardHeaderProps) {
+function CardHeader({ title, as: Heading = 'h3', subtitle, meta, action, inset = false, className }: CardHeaderProps) {
   return (
     <div
       className={cn(
@@ -36,9 +38,9 @@ function CardHeader({ title, subtitle, meta, action, inset = false, className }:
     >
       <div className="min-w-0">
         <div className="flex items-center gap-2 min-w-0">
-          <h3 className="text-sm font-semibold text-[var(--color-text-primary)] truncate">
+          <Heading className="text-sm font-semibold text-[var(--color-text-primary)] truncate">
             {title}
-          </h3>
+          </Heading>
           {meta}
         </div>
         {subtitle && (
