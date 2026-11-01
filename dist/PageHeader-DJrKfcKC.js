@@ -82,7 +82,10 @@ function T({ label: t, content: n, children: r, width: i = "md", openOnFocus: a 
 				e.stopPropagation(), P();
 				return;
 			}
-			o && (e.key === "Enter" || e.key === " ") && (A(), C((e) => !e));
+			o && (e.key === "Enter" || e.key === " ") && (e.preventDefault(), A(), C((e) => !e));
+		},
+		onClick: () => {
+			A(), d(!1), C((e) => !e);
 		},
 		"aria-expanded": T,
 		"aria-controls": T ? k : void 0,
@@ -92,6 +95,7 @@ function T({ label: t, content: n, children: r, width: i = "md", openOnFocus: a 
 		id: k,
 		role: "dialog",
 		"aria-modal": "false",
+		"data-ui-focus": "trigger",
 		"aria-label": t,
 		"data-testid": l,
 		"data-pinned": S ? "true" : "false",

@@ -434,6 +434,11 @@ export declare interface ActivityTickerProps {
     }[];
     /** Explicitly label host-supplied demonstration data. */
     sample?: boolean;
+    /** The host owns the two dock locations; the grip also moves by keyboard click. */
+    placement?: 'header' | 'footer';
+    onPlacementChange?: (placement: 'header' | 'footer') => void;
+    onMoveStart?: () => void;
+    onMoveEnd?: () => void;
     activeCall?: boolean;
     /** Scope this key to the current identity/context; null never reads shared storage. */
     preferencesKey?: string | null;
@@ -4985,10 +4990,12 @@ export declare interface ChecklistItem {
 
 export declare function ChecklistReaderRenderer({ section, fragment, ydoc, provider, onUpdateItem, onNavigateToEditor, extensions, editorComponent, }: SectionRendererProps): JSX.Element;
 
-export declare function ChecklistSection({ title, items, onToggle, onAdd, onEdit, onRemove, onMove, readOnlyReason, emptyLabel, addPlaceholder, first, variant, className, 'data-testid': testId, }: ChecklistSectionProps): JSX.Element;
+export declare function ChecklistSection({ title, items, onToggle, onAdd, onEdit, onRemove, onMove, readOnlyReason, emptyLabel, addPlaceholder, first, as, variant, className, 'data-testid': testId, }: ChecklistSectionProps): JSX.Element;
 
 export declare interface ChecklistSectionProps {
     title?: string;
+    /** Semantic heading level; use h2 for a section directly under the page title. */
+    as?: 'h2' | 'h3' | 'h4';
     items: ChecklistItem[];
     onToggle?: (id: string, done: boolean) => void;
     onAdd?: (text: string) => void;
@@ -11438,6 +11445,7 @@ export declare interface HoverCardTriggerProps {
     onFocus: (e: FocusEvent_2<HTMLElement>) => void;
     onBlur: (e: FocusEvent_2<HTMLElement>) => void;
     onKeyDown: (e: KeyboardEvent_2<HTMLElement>) => void;
+    onClick: (e: MouseEvent_2<HTMLElement>) => void;
     'aria-expanded': boolean;
     'aria-controls': string | undefined;
     'aria-describedby': string | undefined;
@@ -12868,10 +12876,12 @@ export declare interface LinkedItem {
     onRemove?: () => void;
 }
 
-export declare function LinkedItemsSection({ title, items, onSearchDocuments, onAdd, relations, emptyLabel, first, variant, className, 'data-testid': testId, }: LinkedItemsSectionProps): JSX.Element;
+export declare function LinkedItemsSection({ title, items, onSearchDocuments, onAdd, relations, emptyLabel, first, as, variant, className, 'data-testid': testId, }: LinkedItemsSectionProps): JSX.Element;
 
 export declare interface LinkedItemsSectionProps {
     title?: string;
+    /** Semantic heading level; use h2 for a section directly under the page title. */
+    as?: 'h2' | 'h3' | 'h4';
     items: LinkedItem[];
     onSearchDocuments?: (q: string) => Promise<LinkableDocument[]> | LinkableDocument[];
     onAdd?: (doc: LinkableDocument, relation: string) => void;
@@ -14962,10 +14972,12 @@ export declare function orgInsight(people: OrgGraphPerson[]): {
     atRisk: AtRiskSkill[];
 };
 
-export declare function OutcomeSection({ title, value, onChange, placeholder, readOnlyReason, pending, first, variant, size, className, 'data-testid': testId, }: OutcomeSectionProps): JSX.Element;
+export declare function OutcomeSection({ title, value, onChange, placeholder, readOnlyReason, pending, first, as, variant, size, className, 'data-testid': testId, }: OutcomeSectionProps): JSX.Element;
 
 export declare interface OutcomeSectionProps {
     title?: string;
+    /** Semantic heading level; use h2 for a section directly under the page title. */
+    as?: 'h2' | 'h3' | 'h4';
     value: string | null;
     onChange?: (v: string) => void;
     placeholder?: string;

@@ -127,6 +127,11 @@ export declare interface ActivityTickerProps {
     }[];
     /** Explicitly label host-supplied demonstration data. */
     sample?: boolean;
+    /** The host owns the two dock locations; the grip also moves by keyboard click. */
+    placement?: 'header' | 'footer';
+    onPlacementChange?: (placement: 'header' | 'footer') => void;
+    onMoveStart?: () => void;
+    onMoveEnd?: () => void;
     activeCall?: boolean;
     /** Scope this key to the current identity/context; null never reads shared storage. */
     preferencesKey?: string | null;
@@ -3158,6 +3163,7 @@ export declare interface HoverCardTriggerProps {
     onFocus: (e: FocusEvent_2<HTMLElement>) => void;
     onBlur: (e: FocusEvent_2<HTMLElement>) => void;
     onKeyDown: (e: KeyboardEvent_2<HTMLElement>) => void;
+    onClick: (e: MouseEvent_2<HTMLElement>) => void;
     'aria-expanded': boolean;
     'aria-controls': string | undefined;
     'aria-describedby': string | undefined;

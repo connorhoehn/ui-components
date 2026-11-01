@@ -50,6 +50,7 @@ function E({ title: t, items: n, titleAction: r, railHeader: i, railWidth: a = 2
 		className: "flex h-full min-h-0",
 		children: [
 			/* @__PURE__ */ C("aside", {
+				"aria-label": f ?? `${t} navigation`,
 				className: e("flex-none border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col overflow-hidden", g && "w-11 min-w-11"),
 				style: g ? void 0 : { width: a },
 				"data-collapsed": g ? "true" : void 0,
@@ -75,6 +76,7 @@ function E({ title: t, items: n, titleAction: r, railHeader: i, railWidth: a = 2
 				]
 			}),
 			y && /* @__PURE__ */ C("aside", {
+				"aria-label": `${s ?? t} sections`,
 				className: "flex-none border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col overflow-hidden",
 				style: { width: u },
 				children: [/* @__PURE__ */ S("div", {

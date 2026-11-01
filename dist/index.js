@@ -19,7 +19,7 @@ import { t as nt } from "./useEventCallback-Cwx9QVSi.js";
 import { n as rt, r as it, t as at } from "./useAudioRecorder-BhPxnLmg.js";
 import { a as ot, c as st, i as ct, n as lt, o as ut, r as dt, s as ft, t as pt } from "./usePromptContext-CUNhKC01.js";
 import { a as mt, c as ht, d as gt, f as _t, i as vt, l as yt, m as bt, n as xt, o as St, p as Ct, r as wt, s as Tt, t as Et, u as Dt } from "./GroupedList-C1tY3bPR.js";
-import { $ as Ot, A as kt, At, B as jt, C as Mt, Ct as Nt, D as Pt, Dt as Ft, E as It, Et as Lt, F as Rt, Ft as zt, G as Bt, H as Vt, I as Ht, It as Ut, J as Wt, K as Gt, L as Kt, Lt as qt, M as Jt, Mt as Yt, N as Xt, Nt as Zt, O as Qt, Ot as $t, P as en, Pt as tn, Q as nn, R as rn, Rt as an, S as on, St as sn, T as cn, Tt as ln, U as un, V as dn, W as fn, X as pn, Y as mn, Z as hn, _ as gn, _t as _n, a as vn, at as yn, b as bn, bt as xn, c as Sn, ct as Cn, d as wn, dt as Tn, et as En, f as Dn, ft as On, g as kn, gt as An, h as jn, ht as Mn, i as Nn, it as Pn, j as Fn, jt as In, k as Ln, kt as Rn, l as zn, lt as Bn, m as Vn, mt as Hn, n as Un, nt as Wn, o as Gn, ot as Kn, p as qn, pt as Jn, q as Yn, r as Xn, rt as Zn, s as Qn, st as $n, t as er, tt as tr, u as nr, ut as rr, v as ir, vt as ar, w as or, wt as sr, x as cr, xt as lr, y as ur, yt as dr, z as fr } from "./shared-7qZrkRzw.js";
+import { $ as Ot, A as kt, At, B as jt, C as Mt, Ct as Nt, D as Pt, Dt as Ft, E as It, Et as Lt, F as Rt, Ft as zt, G as Bt, H as Vt, I as Ht, It as Ut, J as Wt, K as Gt, L as Kt, Lt as qt, M as Jt, Mt as Yt, N as Xt, Nt as Zt, O as Qt, Ot as $t, P as en, Pt as tn, Q as nn, R as rn, Rt as an, S as on, St as sn, T as cn, Tt as ln, U as un, V as dn, W as fn, X as pn, Y as mn, Z as hn, _ as gn, _t as _n, a as vn, at as yn, b as bn, bt as xn, c as Sn, ct as Cn, d as wn, dt as Tn, et as En, f as Dn, ft as On, g as kn, gt as An, h as jn, ht as Mn, i as Nn, it as Pn, j as Fn, jt as In, k as Ln, kt as Rn, l as zn, lt as Bn, m as Vn, mt as Hn, n as Un, nt as Wn, o as Gn, ot as Kn, p as qn, pt as Jn, q as Yn, r as Xn, rt as Zn, s as Qn, st as $n, t as er, tt as tr, u as nr, ut as rr, v as ir, vt as ar, w as or, wt as sr, x as cr, xt as lr, y as ur, yt as dr, z as fr } from "./shared-BgUBNPPC.js";
 import { a as pr, c as mr, l as hr, n as V, o as gr, s as _r, t as vr } from "./Button-C-I3BxWI.js";
 import { t as yr } from "./Card-CbTNNNkk.js";
 import { a as br, i as xr, n as Sr, o as Cr, r as wr, t as Tr } from "./Table-Cntt19RZ.js";
@@ -67,7 +67,7 @@ import { n as ps, t as ms } from "./RovingToolbar-B1Fai5PF.js";
 import { t as hs } from "./InlineAlert-BqOYETP1.js";
 import { t as gs } from "./CardHeader-DzQxX5J-.js";
 import { t as _s } from "./Breadcrumbs-B1UvNQLg.js";
-import { _ as vs, a as ys, c as bs, d as xs, f as Ss, g as Cs, h as ws, i as Ts, l as Es, m as Ds, n as Os, o as ks, p as As, r as js, s as Ms, t as Ns, u as Ps } from "./PageHeader-C8rZYNIO.js";
+import { _ as vs, a as ys, c as bs, d as xs, f as Ss, g as Cs, h as ws, i as Ts, l as Es, m as Ds, n as Os, o as ks, p as As, r as js, s as Ms, t as Ns, u as Ps } from "./PageHeader-DJrKfcKC.js";
 import { n as Fs, r as Is, t as Ls } from "./NotificationBell-C8qR3wDm.js";
 import { n as Rs, t as zs } from "./LogStream-C9pn1oLa.js";
 import { t as Bs } from "./RisingParticles-BBIjT11W.js";
@@ -78,7 +78,7 @@ import { t as tc } from "./PresenceAvatars--JG3ZaTz.js";
 import { t as nc } from "./FileUploadDrop-D7fSKjmK.js";
 import { t as rc } from "./ActivityFeed-BU9LDJNO.js";
 import { a as ic, c as ac, d as oc, f as sc, i as cc, l as lc, n as uc, o as dc, r as fc, s as pc, t as mc, u as hc } from "./railType-C-v_XDgr.js";
-import { a as gc, i as _c, n as vc, o as yc, r as bc, t as xc } from "./PopoverForm-CD2x0i2_.js";
+import { a as gc, i as _c, n as vc, o as yc, r as bc, t as xc } from "./PopoverForm-Dp3q4UGT.js";
 import { t as Sc } from "./useMeasuredWidth-ByiZ0YWl.js";
 import { t as Cc } from "./SectionLabel-Ch_rkHQZ.js";
 import { t as wc } from "./InlinePlaceholder-DiPQ7hOM.js";
@@ -90,7 +90,7 @@ import { t as jc } from "./NumberInput-C1JOoCoC.js";
 import { t as Mc } from "./Checkbox-Dvt09s3H.js";
 import { n as Nc, t as Pc } from "./FileKindMark-D7I7FHuP.js";
 import { a as Fc, i as Ic, n as Lc, o as Rc, r as zc, t as Bc } from "./DockedAside-2JxMbMzB.js";
-import { $ as Vc, A as Hc, B as Uc, C as Wc, D as Gc, E as Kc, F as qc, G as Jc, H as Yc, I as Xc, J as Zc, K as Qc, L as $c, M as el, N as tl, O as nl, P as rl, Q as il, R as al, S as ol, T as sl, U as cl, V as ll, W as ul, X as dl, Y as fl, Z as pl, _ as ml, a as hl, at as gl, b as _l, c as vl, ct as yl, d as bl, et as xl, f as Sl, g as Cl, h as wl, i as Tl, it as El, j as Dl, k as Ol, l as kl, m as Al, n as jl, nt as Ml, o as Nl, ot as Pl, p as Fl, q as Il, r as Ll, rt as Rl, s as zl, st as Bl, t as Vl, tt as Hl, u as Ul, v as Wl, w as Gl, x as Kl, y as ql, z as Jl } from "./social-CVS0-PSd.js";
+import { $ as Vc, A as Hc, B as Uc, C as Wc, D as Gc, E as Kc, F as qc, G as Jc, H as Yc, I as Xc, J as Zc, K as Qc, L as $c, M as el, N as tl, O as nl, P as rl, Q as il, R as al, S as ol, T as sl, U as cl, V as ll, W as ul, X as dl, Y as fl, Z as pl, _ as ml, a as hl, at as gl, b as _l, c as vl, ct as yl, d as bl, et as xl, f as Sl, g as Cl, h as wl, i as Tl, it as El, j as Dl, k as Ol, l as kl, m as Al, n as jl, nt as Ml, o as Nl, ot as Pl, p as Fl, q as Il, r as Ll, rt as Rl, s as zl, st as Bl, t as Vl, tt as Hl, u as Ul, v as Wl, w as Gl, x as Kl, y as ql, z as Jl } from "./social-CKuOTyZ1.js";
 import { $ as Yl, A as Xl, B as Zl, C as Ql, D as $l, E as eu, F as tu, G as nu, H as ru, I as iu, J as au, K as ou, L as su, M as cu, N as lu, O as uu, P as du, Q as fu, R as pu, S as mu, T as hu, U as gu, V as _u, W as vu, X as yu, Y as bu, Z as xu, _ as Su, a as Cu, at as wu, b as Tu, c as Eu, ct as Du, d as Ou, dt as ku, et as Au, f as ju, g as Mu, h as Nu, i as Pu, it as Fu, j as Iu, k as Lu, l as Ru, lt as zu, m as Bu, n as Vu, nt as Hu, o as Uu, ot as Wu, p as Gu, q as Ku, r as qu, rt as Ju, s as Yu, st as Xu, t as Zu, tt as Qu, u as $u, ut as ed, v as td, w as nd, x as rd, y as id, z as ad } from "./ConversationSurface-Dbbq5ZXs.js";
 import { t as od } from "./activationKey-CjbL3LUv.js";
 import { B as sd, C as cd, D as ld, E as ud, F as dd, I as fd, L as pd, M as md, N as hd, O as gd, P as _d, R as vd, S as yd, T as bd, V as xd, _ as Sd, a as Cd, b as wd, c as Td, d as Ed, f as Dd, g as Od, h as kd, i as Ad, j as jd, l as Md, m as Nd, n as Pd, o as Fd, p as Id, r as Ld, s as Rd, t as zd, u as Bd, v as Vd, w as Hd, x as Ud, y as Wd, z as Gd } from "./renderers-CTbdrwJE.js";
@@ -2791,7 +2791,7 @@ function Hy({ tabs: e, value: t, onValueChange: n, trailing: r, label: i = "Pane
 			value: t,
 			onValueChange: n
 		}), r && /* @__PURE__ */ Z("div", {
-			className: "ml-auto flex min-w-0 flex-wrap items-center justify-end gap-1 py-1",
+			className: "ml-auto flex min-h-12 min-w-0 flex-wrap items-center justify-end gap-1 py-1",
 			"data-testid": `${a}-actions`,
 			children: r
 		})]
@@ -4374,6 +4374,7 @@ function Xb({ breadcrumbs: e, title: t, controls: n, link: r, menu: i, menuLabel
 		children: [/* @__PURE__ */ Q("div", {
 			className: "flex h-5 min-w-0 flex-1 items-center gap-2",
 			children: [h.length > 0 && /* @__PURE__ */ Z(_s, {
+				"aria-label": `${t ?? "Scope"} location`,
 				items: h,
 				separator: "›",
 				maxItems: 5,
@@ -4481,7 +4482,7 @@ function tx({ crumbs: e, title: t, titleHint: n, lg: r, sm: i = !1, after: a, te
 		"data-testid": `${o}-trail`,
 		children: [
 			e.length > 0 && /* @__PURE__ */ Z("nav", {
-				"aria-label": "Breadcrumb",
+				"aria-label": `${t ?? "Scope"} location`,
 				"data-testid": `${o}-crumbs`,
 				"data-collapsed": m.length > 0 ? "true" : void 0,
 				className: "flex min-w-0 shrink items-center overflow-hidden",
@@ -4706,6 +4707,7 @@ function rx({ breadcrumbs: e, title: t = "", status: n, progress: r, spentUsd: i
 				className: "flex h-7 min-w-0 items-center gap-2",
 				children: [
 					n.length > 0 && /* @__PURE__ */ Z(_s, {
+						"aria-label": `${t ?? "Scope"} location`,
 						items: n,
 						separator: "›",
 						maxItems: 5,
@@ -4736,6 +4738,7 @@ function rx({ breadcrumbs: e, title: t = "", status: n, progress: r, spentUsd: i
 		className: B("flex min-w-0 flex-col gap-1.5 px-[var(--ui-page-gutter,1.5rem)] pt-3", O && "gap-1 pt-2", P && "gap-0 pt-4", !te && (P ? "pb-4" : O ? "pb-2" : "pb-3"), T),
 		children: [
 			e && e.length > 0 && /* @__PURE__ */ Z(_s, {
+				"aria-label": `${t ?? "Scope"} location`,
 				items: e,
 				separator: "›",
 				maxItems: 5,
@@ -5313,28 +5316,29 @@ function mx({ status: e, points: t, owner: n, priority: r, appearance: i = "inli
 }
 //#endregion
 //#region src/components/work/OutcomeSection.tsx
-function hx({ title: e = "Outcome", value: t, onChange: n, placeholder: r = "What is true when this is done?", readOnlyReason: i, pending: a = !1, first: o, variant: s = "heading", size: c = "md", className: l, "data-testid": u = "outcome-section" }) {
-	let d = !!n && !i, [f, p] = Y(!1), [m, h] = Y(""), g = J(!1), _ = J(null), v = K(), y = t?.trim() ? t : null, b = s === "heading" ? c === "lg" ? "text-[15px] leading-6" : "text-sm leading-5" : "text-sm leading-relaxed";
+function hx({ title: e = "Outcome", value: t, onChange: n, placeholder: r = "What is true when this is done?", readOnlyReason: i, pending: a = !1, first: o, as: s, variant: c = "heading", size: l = "md", className: u, "data-testid": d = "outcome-section" }) {
+	let f = !!n && !i, [p, m] = Y(!1), [h, g] = Y(""), _ = J(!1), v = J(null), y = K(), b = t?.trim() ? t : null, x = c === "heading" ? l === "lg" ? "text-[15px] leading-6" : "text-sm leading-5" : "text-sm leading-relaxed";
 	G(() => {
-		f && _.current?.focus();
-	}, [f]);
-	let x = () => {
-		h(t ?? ""), g.current = !1, p(!0);
-	}, S = (e) => {
-		if (g.current) return;
-		g.current = !0, p(!1);
-		let r = m.trim();
+		p && v.current?.focus();
+	}, [p]);
+	let S = () => {
+		g(t ?? ""), _.current = !1, m(!0);
+	}, C = (e) => {
+		if (_.current) return;
+		_.current = !0, m(!1);
+		let r = h.trim();
 		e && r !== (t ?? "").trim() && n?.(r);
-	}, C = d && !f && y ? /* @__PURE__ */ Z(V, {
+	}, w = f && !p && b ? /* @__PURE__ */ Z(V, {
 		variant: "link",
 		size: "sm",
 		className: "text-sm",
-		onClick: x,
+		onClick: S,
 		disabled: a,
 		"aria-label": `Edit ${e.toLowerCase()}`,
 		children: "Edit"
 	}) : void 0;
 	return /* @__PURE__ */ Z(xt, {
+		as: s,
 		title: e,
 		hint: a ? /* @__PURE__ */ Q("span", {
 			className: "inline-flex items-center gap-1",
@@ -5342,54 +5346,54 @@ function hx({ title: e = "Outcome", value: t, onChange: n, placeholder: r = "Wha
 				size: "sm",
 				decorative: !0
 			}), " Saving…"]
-		}) : f ? "⌘Enter to save · Esc to cancel" : void 0,
-		actions: C,
+		}) : p ? "⌘Enter to save · Esc to cancel" : void 0,
+		actions: w,
 		first: o,
-		variant: s,
-		...c === "lg" ? { size: c } : {},
-		className: l,
-		"data-testid": u,
+		variant: c,
+		...l === "lg" ? { size: l } : {},
+		className: u,
+		"data-testid": d,
 		children: /* @__PURE__ */ Q("div", {
 			"aria-busy": a || void 0,
 			title: i,
-			className: c === "lg" ? "-mt-1.5" : void 0,
-			children: [f ? /* @__PURE__ */ Z(qo, {
-				ref: _,
+			className: l === "lg" ? "-mt-1.5" : void 0,
+			children: [p ? /* @__PURE__ */ Z(qo, {
+				ref: v,
 				"aria-label": e,
-				value: m,
+				value: h,
 				placeholder: r,
 				autoResize: !0,
 				minRows: 2,
-				onChange: (e) => h(e.target.value),
-				onBlur: () => S(!0),
+				onChange: (e) => g(e.target.value),
+				onBlur: () => C(!0),
 				onKeyDown: (e) => {
-					e.key === "Enter" && (e.metaKey || e.ctrlKey) ? (e.preventDefault(), S(!0)) : e.key === "Escape" && (e.preventDefault(), e.stopPropagation(), S(!1));
+					e.key === "Enter" && (e.metaKey || e.ctrlKey) ? (e.preventDefault(), C(!0)) : e.key === "Escape" && (e.preventDefault(), e.stopPropagation(), C(!1));
 				}
-			}) : y ? d ? /* @__PURE__ */ Z("button", {
+			}) : b ? f ? /* @__PURE__ */ Z("button", {
 				type: "button",
-				onClick: x,
+				onClick: S,
 				disabled: a,
-				className: `m-0 w-full cursor-text whitespace-pre-wrap rounded-md border-none bg-transparent p-0 text-left font-[inherit] ${b} text-text-primary hover:bg-surface-hover disabled:cursor-default`,
-				children: y
+				className: `m-0 w-full cursor-text whitespace-pre-wrap rounded-md border-none bg-transparent p-0 text-left font-[inherit] ${x} text-text-primary hover:bg-surface-hover disabled:cursor-default`,
+				children: b
 			}) : /* @__PURE__ */ Z("p", {
-				className: `m-0 whitespace-pre-wrap ${b} text-text-primary`,
-				"aria-describedby": i ? v : void 0,
-				children: y
+				className: `m-0 whitespace-pre-wrap ${x} text-text-primary`,
+				"aria-describedby": i ? y : void 0,
+				children: b
 			}) : /* @__PURE__ */ Q("div", {
 				className: "flex items-center gap-2",
 				children: [/* @__PURE__ */ Z("p", {
 					className: "m-0 text-xs text-text-tertiary",
-					"aria-describedby": i ? v : void 0,
+					"aria-describedby": i ? y : void 0,
 					children: "No outcome yet"
-				}), d && /* @__PURE__ */ Z(V, {
+				}), f && /* @__PURE__ */ Z(V, {
 					variant: "link",
 					size: "sm",
-					onClick: x,
+					onClick: S,
 					disabled: a,
 					children: "Add outcome"
 				})]
 			}), i && /* @__PURE__ */ Z(Lo, {
-				id: v,
+				id: y,
 				children: i
 			})]
 		})
@@ -5485,42 +5489,43 @@ function gx({ item: e, index: t, count: n, locked: r, large: i, reasonId: a, onT
 		]
 	});
 }
-function _x({ title: e = "Acceptance criteria", items: t, onToggle: n, onAdd: r, onEdit: i, onRemove: a, onMove: o, readOnlyReason: s, emptyLabel: c = "No acceptance criteria yet", addPlaceholder: l = "Add criterion", first: u, variant: d = "heading", className: f, "data-testid": p = "checklist-section" }) {
-	let m = K(), [h, g] = Y(""), _ = !!s, v = d === "heading", [y, b] = Y(!1), x = J(null);
+function _x({ title: e = "Acceptance criteria", items: t, onToggle: n, onAdd: r, onEdit: i, onRemove: a, onMove: o, readOnlyReason: s, emptyLabel: c = "No acceptance criteria yet", addPlaceholder: l = "Add criterion", first: u, as: d, variant: f = "heading", className: p, "data-testid": m = "checklist-section" }) {
+	let h = K(), [g, _] = Y(""), v = !!s, y = f === "heading", [b, x] = Y(!1), S = J(null);
 	G(() => {
-		y && x.current?.focus();
-	}, [y]);
-	let S = t.filter((e) => e.done).length, C = !v && t.length > 0 ? `${S} of ${t.length}` : void 0, w = !!r && !_, T = l.charAt(0).toUpperCase() + l.slice(1), E = /* @__PURE__ */ Q(V, {
+		b && S.current?.focus();
+	}, [b]);
+	let C = t.filter((e) => e.done).length, w = !y && t.length > 0 ? `${C} of ${t.length}` : void 0, T = !!r && !v, E = l.charAt(0).toUpperCase() + l.slice(1), D = /* @__PURE__ */ Q(V, {
 		variant: "link",
 		size: "sm",
-		onClick: () => b(!0),
-		className: "inline-flex items-center gap-1 text-[13px]",
-		"data-testid": `${p}-add`,
+		onClick: () => x(!0),
+		className: "inline-flex items-center gap-1 text-sm",
+		"data-testid": `${m}-add`,
 		children: [/* @__PURE__ */ Z(Xi, {
 			size: 12,
 			"aria-hidden": "true"
-		}), T]
-	}), D = v && w && !y && t.length > 0 ? E : void 0, O = w && (!v || y), k = () => {
-		let e = h.trim();
-		e && (r?.(e), g(""));
+		}), E]
+	}), O = y && T && !b && t.length > 0 ? D : void 0, k = T && (!y || b), A = () => {
+		let e = g.trim();
+		e && (r?.(e), _(""));
 	};
 	return /* @__PURE__ */ Z(xt, {
+		as: d,
 		title: e,
-		hint: C,
-		actions: D,
+		hint: w,
+		actions: O,
 		first: u,
-		variant: d,
-		className: f,
-		"data-testid": p,
+		variant: f,
+		className: p,
+		"data-testid": m,
 		children: /* @__PURE__ */ Q("div", {
 			title: s,
 			children: [
 				t.length === 0 ? /* @__PURE__ */ Q("div", {
 					className: "flex items-center gap-2",
 					children: [/* @__PURE__ */ Z("p", {
-						className: B("m-0 text-text-tertiary", v ? "text-sm" : "text-[13px]"),
+						className: B("m-0 text-text-tertiary", y ? "text-sm" : "text-[13px]"),
 						children: c
-					}), v && w && !y && E]
+					}), y && T && !b && D]
 				}) : /* @__PURE__ */ Z("ul", {
 					className: "m-0 flex list-none flex-col p-0",
 					"aria-label": e,
@@ -5528,32 +5533,32 @@ function _x({ title: e = "Acceptance criteria", items: t, onToggle: n, onAdd: r,
 						item: e,
 						index: r,
 						count: t.length,
-						locked: _,
-						large: v,
-						reasonId: s ? m : void 0,
+						locked: v,
+						large: y,
+						reasonId: s ? h : void 0,
 						onToggle: n,
 						onEdit: i,
 						onRemove: a,
 						onMove: o
 					}, e.id))
 				}),
-				O && /* @__PURE__ */ Z(eo, {
-					ref: x,
+				k && /* @__PURE__ */ Z(eo, {
+					ref: S,
 					size: "sm",
 					"aria-label": l,
 					placeholder: `${l}…`,
-					value: h,
-					onChange: (e) => g(e.target.value),
+					value: g,
+					onChange: (e) => _(e.target.value),
 					onKeyDown: (e) => {
-						e.key === "Enter" ? (e.preventDefault(), k()) : e.key === "Escape" && (g(""), v && (e.stopPropagation(), b(!1)));
+						e.key === "Enter" ? (e.preventDefault(), A()) : e.key === "Escape" && (_(""), y && (e.stopPropagation(), x(!1)));
 					},
-					...v ? { onBlur: () => {
-						h.trim() || b(!1);
+					...y ? { onBlur: () => {
+						g.trim() || x(!1);
 					} } : {},
 					className: "mt-1.5"
 				}),
 				s && /* @__PURE__ */ Z(Lo, {
-					id: m,
+					id: h,
 					children: s
 				})
 			]
@@ -5586,17 +5591,18 @@ function yx({ item: e, large: t }) {
 		children: e.title
 	});
 }
-function bx({ title: e = "Dependencies & decisions", items: t, onSearchDocuments: n, onAdd: r, relations: i = vx, emptyLabel: a = "No linked documents", first: o, variant: s = "heading", className: c, "data-testid": l = "linked-items-section" }) {
-	let u = s === "heading", [d, f] = Y(!1), [p, m] = Y(i[0]?.value ?? ""), h = J(null), g = !!r && !!n;
+function bx({ title: e = "Dependencies & decisions", items: t, onSearchDocuments: n, onAdd: r, relations: i = vx, emptyLabel: a = "No linked documents", first: o, as: s, variant: c = "heading", className: l, "data-testid": u = "linked-items-section" }) {
+	let d = c === "heading", [f, p] = Y(!1), [m, h] = Y(i[0]?.value ?? ""), g = J(null), _ = !!r && !!n;
 	return /* @__PURE__ */ Q(xt, {
+		as: s,
 		title: e,
-		actions: g ? /* @__PURE__ */ Q(V, {
-			ref: h,
+		actions: _ ? /* @__PURE__ */ Q(V, {
+			ref: g,
 			variant: "link",
 			size: "sm",
 			"aria-haspopup": "dialog",
-			"aria-expanded": d,
-			onClick: () => f((e) => !e),
+			"aria-expanded": f,
+			onClick: () => p((e) => !e),
 			className: "inline-flex items-center gap-1 text-[13px]",
 			children: [/* @__PURE__ */ Z(Xi, {
 				size: 12,
@@ -5604,30 +5610,30 @@ function bx({ title: e = "Dependencies & decisions", items: t, onSearchDocuments
 			}), "Add link"]
 		}) : void 0,
 		first: o,
-		variant: s,
-		className: c,
-		"data-testid": l,
+		variant: c,
+		className: l,
+		"data-testid": u,
 		children: [t.length === 0 ? /* @__PURE__ */ Z("p", {
-			className: u ? "m-0 text-sm text-text-tertiary" : "m-0 text-[13px] text-text-tertiary",
+			className: d ? "m-0 text-sm text-text-tertiary" : "m-0 text-[13px] text-text-tertiary",
 			children: a
 		}) : /* @__PURE__ */ Z("ul", {
-			className: u ? "m-0 flex list-none flex-col p-0" : "m-0 flex list-none flex-col gap-1 p-0",
+			className: d ? "m-0 flex list-none flex-col p-0" : "m-0 flex list-none flex-col gap-1 p-0",
 			"aria-label": e,
 			children: t.map((e) => /* @__PURE__ */ Q("li", {
-				className: u ? "group flex min-h-[29px] items-center gap-2.5" : "group flex min-h-7 items-center gap-2",
-				...u && e.relation ? { title: e.relation } : {},
+				className: d ? "group flex min-h-[29px] items-center gap-2.5" : "group flex min-h-7 items-center gap-2",
+				...d && e.relation ? { title: e.relation } : {},
 				"data-testid": `linked-item-${e.id}`,
 				children: [
 					/* @__PURE__ */ Z(Nc, {
 						kind: e.kind ?? "page",
-						size: u ? "md" : "sm",
+						size: d ? "md" : "sm",
 						variant: "plain"
 					}),
 					/* @__PURE__ */ Z(yx, {
 						item: e,
-						large: u
+						large: d
 					}),
-					e.relation && (u ? /* @__PURE__ */ Z(Lo, { children: `(${e.relation})` }) : /* @__PURE__ */ Z("span", {
+					e.relation && (d ? /* @__PURE__ */ Z(Lo, { children: `(${e.relation})` }) : /* @__PURE__ */ Z("span", {
 						className: "shrink-0 text-[11px] text-text-tertiary",
 						children: e.relation
 					})),
@@ -5636,7 +5642,7 @@ function bx({ title: e = "Dependencies & decisions", items: t, onSearchDocuments
 						tone: e.status.tone,
 						label: e.status.label,
 						size: "sm",
-						...u ? { variant: "tag" } : {}
+						...d ? { variant: "tag" } : {}
 					}),
 					e.onRemove && /* @__PURE__ */ Z(H, {
 						size: "sm",
@@ -5647,10 +5653,10 @@ function bx({ title: e = "Dependencies & decisions", items: t, onSearchDocuments
 					})
 				]
 			}, e.id))
-		}), g && /* @__PURE__ */ Z(ax, {
-			trigger: h,
-			open: d,
-			onClose: () => f(!1),
+		}), _ && /* @__PURE__ */ Z(ax, {
+			trigger: g,
+			open: f,
+			onClose: () => p(!1),
 			label: "Search documents",
 			placeholder: "Search documents…",
 			search: n,
@@ -5663,13 +5669,13 @@ function bx({ title: e = "Dependencies & decisions", items: t, onSearchDocuments
 				className: "truncate",
 				children: e.title
 			})] }),
-			onPick: (e) => r?.(e, p),
+			onPick: (e) => r?.(e, m),
 			header: i.length > 1 ? /* @__PURE__ */ Z(no, {
 				size: "sm",
 				"aria-label": "Relation",
-				value: p,
+				value: m,
 				options: i,
-				onChange: (e) => m(e.target.value),
+				onChange: (e) => h(e.target.value),
 				className: "mb-1.5"
 			}) : void 0,
 			"data-testid": "linked-items-picker"

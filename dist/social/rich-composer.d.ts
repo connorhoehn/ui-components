@@ -624,7 +624,7 @@ export declare interface ComposerPromptDeckProps {
     /** From `useComposerPromptDeck`; or pass `prompts` and the deck keeps its own state. */
     deck?: ComposerPromptDeckState;
     prompts?: readonly ComposerPrompt[];
-    /** The composer input: its emptiness gates bare-key shortcuts; it takes the caret after an answer. */
+    /** External answer input, when embedded above an existing editor. Without one, text/number prompts own a plain answer field; choices own focus. */
     input?: ComposerPromptInput | null;
     /**
      * `card` (default): a bordered card of its own, for a composer's `above`.
@@ -1201,10 +1201,9 @@ export declare interface ConversationComposerOwnProps {
      */
     offModes?: Partial<Record<ComposerMode, string>>;
     /**
-     * Human-in-the-loop prompts, shown one at a time as the composer card's
-     * first section, above the input (`ComposerPromptDeck`, 2.444.0; inside the
-     * card since 2.446.0). A text / number prompt takes the typed
-     * words as its answer: Enter answers it instead of sending a message.
+     * Human-in-the-loop prompts replace the message editor while expanded.
+     * Choices use numbered buttons; text/number prompts expose a plain answer
+     * field. Hide or finish restores the conversation draft and its tools.
      */
     prompts?: readonly ComposerPrompt[];
 }
