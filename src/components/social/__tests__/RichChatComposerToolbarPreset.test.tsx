@@ -90,14 +90,14 @@ describe('toolbar="editor"', () => {
 
   // 2.386.0: the docked editor card has no `?` and no `⋯` on its strip —
   // what they held is under `Agent ⌄`, after the modes.
-  it('files strikethrough and numbered list under Agent ⌄ → Formatting, with no ? on the strip', async () => {
+  it('keeps formatting out of the Agent mode menu', async () => {
     render(<RichChatComposer {...base} toolbar="editor" hints={[]} />);
     expect(screen.queryByTestId('composer-hints-toggle')).toBeNull();
     await act(async () => { fireEvent.click(screen.getByTestId('composer-mode-menu')); });
     const menu = screen.getByTestId('composer-mode-menu-list');
-    expect(within(menu).getByText('Formatting')).toBeInTheDocument();
-    expect(within(menu).getByText('Strikethrough')).toBeInTheDocument();
-    expect(within(menu).getByText('Numbered list')).toBeInTheDocument();
+    expect(within(menu).queryByText('Formatting')).toBeNull();
+    expect(within(menu).queryByText('Strikethrough')).toBeNull();
+    expect(within(menu).queryByText('Numbered list')).toBeNull();
     expect(within(menu).queryByText('Code')).toBeNull();
     expect(within(menu).queryByText('Quote')).toBeNull();
   });

@@ -867,3 +867,8 @@ fixtures enforce both boundaries without changing composer geometry rules.
 For presence, a choice/confirmation marker must contain visible, named
 `button[data-composer-prompt-option]` answers. Empty markers fail, manual-answer
 prompts still require a field, and another composer still requires its own input.
+
+The `rail.indicator-width` box rule measures GroupedList’s named decorative
+indicator column (`data-ui-rail-leading="indicator"`) at 8px. Interactive status
+controls keep their normal hit area and ordinary control checks. The valid
+fixture and a 24px mutation guard the title space without exempting row actions.

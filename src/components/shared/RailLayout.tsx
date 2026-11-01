@@ -4,7 +4,7 @@
 // thread, a diff, a document. Below the lg breakpoint the rail stacks under
 // the main column rather than crushing it.
 
-import type { ReactNode } from 'react';
+import { createContext, useContext, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK } from './railType';
 
@@ -15,6 +15,8 @@ export interface RailLayoutProps {
   rail: ReactNode;
   /** Rail width at lg+. Default 'md' (300px). */
   railWidth?: 'sm' | 'md' | 'lg';
+  /** Plain record sections, responsive to the available column rather than the viewport. */
+  variant?: 'card' | 'plain';
   className?: string;
   'data-testid'?: string;
 }
@@ -25,7 +27,17 @@ const RAIL_WIDTH: Record<NonNullable<RailLayoutProps['railWidth']>, string> = {
   lg: 'lg:w-[340px]',
 };
 
-export function RailLayout({ children, rail, railWidth = 'md', className, 'data-testid': testId }: RailLayoutProps) {
+const RailStyle = createContext<'card' | 'plain'>('card');
+
+export function RailLayout({ children, rail, railWidth = 'md', variant = 'card', className, 'data-testid': testId }: RailLayoutProps) {
+  if (variant === 'plain') return <div className={cn('@container min-w-0', className)} data-testid={testId} data-variant="plain">
+    <div className="flex min-w-0 flex-col gap-6 @3xl:flex-row @3xl:items-start">
+      <div className="min-w-0 flex-1">{children}</div>
+      <aside aria-label="Record context" className="w-full min-w-0 shrink-0 border-t border-border @3xl:w-[260px] @3xl:border-t-0 @3xl:border-l @3xl:pl-5">
+        <RailStyle.Provider value="plain">{rail}</RailStyle.Provider>
+      </aside>
+    </div>
+  </div>;
   return (
     <div
       className={cn('flex flex-col gap-4 lg:flex-row lg:items-start', className)}
@@ -49,8 +61,9 @@ export interface RailSectionProps {
 
 /** One titled block in the rail. Sections divide themselves. */
 export function RailSection({ title, children, className }: RailSectionProps) {
+  const variant = useContext(RailStyle);
   return (
-    <section className={cn('border-b border-border px-3.5 py-3 last:border-b-0', className)}>
+    <section className={cn('border-b border-border py-3 last:border-b-0', variant === 'card' && 'px-3.5', className)}>
       {/* The shared rail group label (railType, 2.397.1) — was 10px, the one
           rail heading left off the 2.397.0 scale. */}
       <h3 className={cn('mb-2', RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK)} data-testid="rail-section-title">{title}</h3>

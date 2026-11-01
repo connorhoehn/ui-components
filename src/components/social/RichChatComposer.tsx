@@ -382,11 +382,13 @@ export interface RichChatComposerProps {
    * - `basic` (2.390.0): the docked card as a light prompt box — B, I, code,
    *   link, attach, then the divider before `toolbarExtras`. No lists and no
    *   quote on the strip (a prompt is a sentence, not a document); bulleted
-   *   and numbered lists, quote and strikethrough go under the card's mode
-   *   menu → Formatting. Docks like `editor` under `modeControl="menu"`, with
+   *   and numbered lists, quote and strikethrough are omitted. Docks like
+   *   `editor` under `modeControl="menu"`, with
    *   the mode as a boxed picker ("Agent ⌄", no glyph), the input in its own
    *   bordered well and no rule over the strip — the Initiatives mockup.
    *
+   * In docked mode, the mode menu contains modes, host actions and keyboard
+   * hints only; formatting belongs on the editor's toolbar.
    * Sizes are unchanged in all of them: every control is the same 28px box.
    * Below wide the strip folds exactly as before, whichever preset is set.
    */
@@ -2282,8 +2284,8 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   const showBulletedList = wide && !basicToolbar;
   const formatInHints = wide && !fullToolbar;
   // The editor dock has no `?` and no `⋯` on its strip (the mockup's strip
-  // ends in `/ commands` and Send): what they held — the two folded marks,
-  // the host's actions, the keys — is under `Agent ⌄` after the modes.
+  // ends in `/ commands` and Send). Its mode menu carries host actions and
+  // keyboard hints only; formatting belongs to the editor toolbar.
   // A single-mode label has no menu to hold them: they go back to the `⋯`.
   const showMoreActions = !!moreActions?.length && (!docked || singleMode);
   const inlineCommand = docked && !!activeCommand && !collapsed && !terminalMode;
@@ -2292,15 +2294,6 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
     ? (activeCommand ?? (defaultCommand ? commands?.find((c) => c.trigger === defaultCommand) ?? null : null))
     : null;
   const dockedMenuSections: DropdownMenuSection[] = !docked ? [] : [
-    ...(editor && formatInHints ? [{
-      label: 'Formatting',
-      items: [
-        { label: 'Strikethrough', checked: editor.isActive('strike'), onSelect: () => { editor.chain().focus().toggleStrike().run(); } },
-        ...(basicToolbar ? [{ label: 'Bulleted list', checked: editor.isActive('bulletList'), onSelect: () => { editor.chain().focus().toggleBulletList().run(); } }] : []),
-        { label: 'Numbered list', checked: editor.isActive('orderedList'), onSelect: () => { editor.chain().focus().toggleOrderedList().run(); } },
-        ...(basicToolbar ? [{ label: 'Quote', checked: editor.isActive('blockquote'), onSelect: () => { editor.chain().focus().toggleBlockquote().run(); } }] : []),
-      ],
-    }] : []),
     ...(moreActions ?? []),
     ...(resolvedHints.length ? [{
       label: 'Keys',

@@ -20,6 +20,7 @@ export interface SignoffEntry {
 }
 
 export interface SignoffPanelProps {
+  variant?: 'card' | 'inline';
   signoffs: SignoffEntry[];
   /** Approvals needed to ratify. Default 2. */
   required?: number;
@@ -31,6 +32,7 @@ export interface SignoffPanelProps {
 }
 
 export function SignoffPanel({
+  variant = 'card',
   signoffs,
   required = 2,
   actions,
@@ -43,7 +45,8 @@ export function SignoffPanel({
 
   return (
     <div
-      className={cn('flex flex-wrap items-center gap-3 rounded-lg border border-border bg-surface px-4 py-3', className)}
+      className={cn('flex flex-wrap items-center gap-3 border-border bg-surface py-3', variant === 'inline' ? 'border-t' : 'rounded-lg border px-4', className)}
+      data-variant={variant}
       {...(testId ? { 'data-testid': testId } : {})}
     >
       <span className="text-xs font-semibold text-text-primary">Sign-offs</span>

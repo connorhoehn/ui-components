@@ -17,6 +17,7 @@ const meta: Meta<typeof ConversationComposer> = {
 };
 export default meta;
 type Story = StoryObj<typeof ConversationComposer>;
+export const ModeSelection: Story = { args: { prompts: [], channel: 'storybook:discussion', chat: { sendMessage: () => undefined } } };
 const manual: ComposerPrompt = {
   id: 'instruction', title: 'Instruction', eyebrow: 'Prepare job', kind: 'text',
   question: 'What should the agent know?', placeholder: 'Add an instruction…',

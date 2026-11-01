@@ -65,6 +65,8 @@ export const REVIEW_KIND_TONES: Record<string, ToneOrAlias> = {
 };
 
 export interface ReviewThreadProps {
+  /** Plain, divided posts inside a record; the default retains the standalone card. */
+  variant?: 'card' | 'inline';
   posts: ReviewPostData[];
   /** Answer an open question. Omit to render read-only (terminal threads). */
   onAnswer?: (postId: string, body: string) => void;
@@ -101,7 +103,8 @@ export function ArtifactTile({ name, type, url }: { name: string; type?: string;
   );
 }
 
-function Post({ post, labels, tones, onAnswer, busy, placeholder, submitLabel }: {
+function Post({ post, labels, tones, onAnswer, busy, placeholder, submitLabel, inline }: {
+  inline: boolean;
   post: ReviewPostData;
   labels: Record<string, string>;
   tones: Record<string, ToneOrAlias>;
@@ -115,7 +118,7 @@ function Post({ post, labels, tones, onAnswer, busy, placeholder, submitLabel }:
 
   return (
     <div className={cn(
-      'border-b border-border px-4 py-3 last:border-b-0',
+      'border-b border-border py-3 last:border-b-0', inline ? 'px-0' : 'px-4',
       openQuestion && 'bg-warning-bg/20',
     )}>
       <div className="flex min-w-0 items-center gap-2">
@@ -166,6 +169,7 @@ function Post({ post, labels, tones, onAnswer, busy, placeholder, submitLabel }:
 }
 
 export function ReviewThread({
+  variant = 'card',
   posts,
   onAnswer,
   answerBusy = false,
@@ -182,13 +186,15 @@ export function ReviewThread({
 
   return (
     <div
-      className={cn('overflow-hidden rounded-lg border border-border bg-surface', className)}
+      className={cn('min-w-0 overflow-hidden bg-surface', variant === 'card' && 'rounded-lg border border-border', className)}
+      data-variant={variant}
       {...(testId ? { 'data-testid': testId } : {})}
     >
       {posts.length === 0 ? (
         <div className="px-4 py-8 text-center text-xs text-text-tertiary">{emptyLabel}</div>
       ) : posts.map((p) => (
         <Post
+          inline={variant === 'inline'}
           key={p.id}
           post={p}
           labels={labels}

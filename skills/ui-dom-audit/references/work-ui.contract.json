@@ -31,8 +31,12 @@
       "selector": "[data-call-dock-header]",
       "anchor": "[data-call-dock]",
       "ancestor": true,
-      "edges": ["top"],
-      "offset": { "min": 8 },
+      "edges": [
+        "top"
+      ],
+      "offset": {
+        "min": 8
+      },
       "owner": "CallDock composition"
     },
     {
@@ -1219,6 +1223,15 @@
         }
       },
       "owner": "Input / PersonPicker in compact application forms"
+    },
+    {
+      "id": "rail.indicator-width",
+      "kind": "box",
+      "selector": "[data-ui-rail-leading=\"indicator\"]",
+      "properties": {
+        "width": 8
+      },
+      "owner": "GroupedList / decorative indicator column"
     }
   ]
 }

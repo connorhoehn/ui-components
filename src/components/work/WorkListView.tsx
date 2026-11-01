@@ -194,6 +194,8 @@ export interface WorkListToolbarProps {
 }
 
 export interface WorkListViewProps extends Omit<WorkListToolbarProps, 'className' | 'data-testid'> {
+  /** A narrow navigation rail: small status marks, full-width titles and keys on the metadata line. */
+  layout?: 'default' | 'rail';
   /** Default "Work". */
   title?: string;
   /** The header count. Defaults to `items.length`. */
@@ -249,12 +251,12 @@ export interface WorkListViewProps extends Omit<WorkListToolbarProps, 'className
 // Row mapping
 // ---------------------------------------------------------------------------
 
-function SignalDot({ signal }: { signal: WorkListSignal }) {
+function SignalDot({ signal, compact = false }: { signal: WorkListSignal; compact?: boolean }) {
   if (signal.state === 'review') {
     return (
       <StatusDot
         color="transparent"
-        size="md"
+        size={compact ? 'xs' : 'md'}
         aria-label={signal.label}
         className="rounded-full ring-[1.5px] ring-text-tertiary"
         data-testid="work-signal-dot"
@@ -264,7 +266,7 @@ function SignalDot({ signal }: { signal: WorkListSignal }) {
   return (
     <StatusDot
       color={signal.state === 'running' ? 'var(--color-primary)' : 'var(--color-danger)'}
-      size="md"
+      size={compact ? 'xs' : 'md'}
       aria-label={signal.label}
       data-testid="work-signal-dot"
     />
@@ -337,6 +339,7 @@ function MetaLine({ item, testId, unit = 'pts' }: { item: WorkListItem; testId: 
 }
 
 export interface ToWorkListRowsOptions {
+  layout?: 'default' | 'rail';
   onToggleDone?: (item: WorkListItem, done: boolean) => void;
   testId?: string;
   /** Since 2.390.0. See `WorkListViewProps.metaStyle`. */
@@ -350,12 +353,12 @@ export interface ToWorkListRowsOptions {
 /** Items → `GroupedListRow`s: leading checkbox or signal dot, and the meta line. Exported for tests. */
 export function toWorkListRows(
   items: WorkListItem[],
-  { onToggleDone, testId = 'work-list', metaStyle = 'default', pointsLabel = 'pts', signalDisplay = 'dot' }: ToWorkListRowsOptions = {},
+  { onToggleDone, testId = 'work-list', metaStyle = 'default', pointsLabel = 'pts', signalDisplay = 'dot', layout = 'default' }: ToWorkListRowsOptions = {},
 ): GroupedListRow[] {
   return items.map((item) => {
     let leading: ReactNode = undefined;
     if (item.signal && signalDisplay !== 'meta') {
-      const dot = <SignalDot signal={item.signal} />;
+      const dot = <SignalDot signal={item.signal} compact={layout === 'rail'} />;
       leading = item.signal.onClick ? (
         <IconButton
           aria-label={`${item.signal.label}: ${item.title}`}
@@ -384,21 +387,21 @@ export function toWorkListRows(
         </span>
       );
     }
+    const compactMark = layout === 'rail' && !item.signal?.onClick && !onToggleDone;
+    const meta = metaStyle === 'text' ? <TextMetaLine item={item} testId={testId} unit={pointsLabel} /> : <MetaLine item={item} testId={testId} unit={pointsLabel} />;
+    const tag = item.tag && <Chip size="sm" tone={item.tag.tone ?? 'neutral'} mono className="shrink-0" data-testid={`${testId}-tag-${item.id}`}>{item.tag.label}</Chip>;
     return {
       id: item.id,
       groupId: item.groupId,
       title: item.title,
       disabled: item.disabled,
-      leading,
-      meta: metaStyle === 'text'
-        ? <TextMetaLine item={item} testId={testId} unit={pointsLabel} />
-        : <MetaLine item={item} testId={testId} unit={pointsLabel} />,
-      ...(item.tag
+      leading: leading ?? (compactMark ? <span className="h-2 w-2" aria-hidden="true" /> : undefined),
+      ...(compactMark ? { leadingSize: 'indicator' as const } : {}),
+      meta: layout === 'rail' ? <span className="flex min-w-0 flex-1 items-center gap-2"><span className="min-w-0 flex-1 truncate">{meta}</span>{tag}</span> : meta,
+      ...(item.tag && layout !== 'rail'
         ? {
             trailing: (
-              <Chip size="sm" tone={item.tag.tone ?? 'neutral'} mono className="shrink-0" data-testid={`${testId}-tag-${item.id}`}>
-                {item.tag.label}
-              </Chip>
+              tag
             ),
           }
         : {}),
@@ -531,6 +534,7 @@ export function WorkListToolbar({
 // ---------------------------------------------------------------------------
 
 export function WorkListView({
+  layout = 'default',
   title = 'Work',
   count,
   onCreate,
@@ -572,8 +576,8 @@ export function WorkListView({
 }: WorkListViewProps) {
   const visible = useMemo(() => items.filter((item) => matches(item, query)), [items, query]);
   const rows = useMemo(
-    () => toWorkListRows(visible, { onToggleDone, testId, metaStyle, pointsLabel, signalDisplay }),
-    [visible, onToggleDone, testId, metaStyle, pointsLabel, signalDisplay],
+    () => toWorkListRows(visible, { onToggleDone, testId, metaStyle, pointsLabel, signalDisplay, layout }),
+    [visible, onToggleDone, testId, metaStyle, pointsLabel, signalDisplay, layout],
   );
   const byId = useMemo(() => new Map(visible.map((item) => [item.id, item])), [visible]);
   const activeFilterCount = activeFilterCountProp ?? facetCount(filterFacets);
@@ -639,7 +643,7 @@ export function WorkListView({
   const shownCount = count ?? items.length;
 
   return (
-    <div data-testid={testId} data-chrome={chrome} className={cn('flex h-full min-h-0 flex-col gap-3', chrome === 'full' ? 'pt-3' : 'pt-1', className)}>
+    <div data-testid={testId} data-chrome={chrome} data-layout={layout} className={cn('flex h-full min-h-0 flex-col gap-3', chrome === 'full' ? 'pt-3' : 'pt-1', className)}>
       {chrome === 'full' && (
         <div className="flex items-center gap-2 pl-5 pr-3" data-testid={`${testId}-title-row`}>
           <h2 className="m-0 truncate text-[18px] font-semibold text-text-primary">{title}</h2>

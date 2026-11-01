@@ -152,6 +152,8 @@ export interface GroupedListRow {
    * row's button, so pressing it never opens the row.
    */
   leading?: ReactNode;
+  /** A decorative status mark needs only an 8px column; controls keep their full target. */
+  leadingSize?: 'control' | 'indicator' | 'none';
   /**
    * A second line inside the row's button, above `subline` — avatar, points,
    * owner. Non-interactive by contract (it is inside a button).
@@ -793,7 +795,8 @@ function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onF
           }
         : {})}
       className={cn(
-        'group relative flex items-center gap-3 px-2',
+        'group relative flex items-center px-2',
+        row.leadingSize === 'indicator' ? 'gap-2' : 'gap-3',
         rowStyle === 'plain' ? 'border-t-0' : 'border-t border-border',
         // plain rows are the rail form: the shared rail pitch at any size.
         rowStyle === 'plain' ? RAIL_ROW_PAD_Y : md ? 'py-[7px]' : 'py-2.5',
@@ -811,7 +814,7 @@ function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onF
       )}
     >
       {hasLeading && (
-        <span className={cn('flex shrink-0 items-center justify-center', md ? 'w-6' : 'w-5')} data-testid={`${testId}-row-leading-${row.id}`}>
+        <span className={cn('flex shrink-0 items-center justify-center', row.leadingSize === 'indicator' ? 'w-2' : md ? 'w-6' : 'w-5')} data-ui-rail-leading={row.leadingSize} data-testid={`${testId}-row-leading-${row.id}`}>
           {row.leading}
         </span>
       )}
@@ -833,7 +836,7 @@ function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onF
         )}
       >
         {/* Caret column of the header, kept so a row's mark lines up under the folder mark. */}
-        {!hasLeading && <span className="w-5 shrink-0" aria-hidden="true" />}
+        {!hasLeading && row.leadingSize !== 'none' && <span className="w-5 shrink-0" aria-hidden="true" />}
         {row.icon && (
           <span className="flex shrink-0 items-center" data-testid={`${testId}-row-icon-${row.id}`}>
             {row.icon}

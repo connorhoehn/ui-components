@@ -77,3 +77,11 @@ Compose classes via `cn()` from `src/lib/cn.ts` (`clsx` +
   §1 no-touch list.
 - [`../../../ROADMAP.md`](../../../ROADMAP.md) Wave 4 for the
   test/story coverage plan.
+
+For a document-like review, `RailLayout variant="plain"` pairs an unboxed
+content column with context that stacks according to the column's width.
+`ReviewThread` and `SignoffPanel` offer `variant="inline"` for the same surface.
+The default card variants remain available. `GroupedList.leadingSize` reserves
+8px for a decorative indicator, keeps the normal hit area for controls, or
+omits an absent leading slot; `WorkListView layout="rail"` uses this compact
+indicator and moves item identifiers into metadata to preserve title width.

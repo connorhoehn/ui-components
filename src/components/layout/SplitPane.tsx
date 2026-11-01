@@ -42,6 +42,10 @@ export interface SplitPaneProps {
   dividerLabel?: string;
   /** Enter / Space on the focused divider (2.438.1): a host's fold of the secondary pane. */
   onDividerActivate?: () => void;
+  /** Keep a controlled split without offering a resize handle (e.g. a folded rail). */
+  resizable?: boolean;
+  /** Keep the primary mounted but hide it while the secondary owns a narrow viewport. */
+  primaryHidden?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -58,6 +62,8 @@ export function SplitPane({
   minSecondaryPx = 360,
   dividerLabel = 'Resize panes',
   onDividerActivate,
+  resizable = true,
+  primaryHidden = false,
   className,
   'data-testid': testId = 'split-pane',
 }: SplitPaneProps) {
@@ -107,10 +113,11 @@ export function SplitPane({
   // A window that shrinks under a fixed ratio can push a pane below its floor;
   // re-clamp on resize so the floors hold.
   useEffect(() => {
+    if (!resizable) return;
     const onResize = () => setRatio(ratio);
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
-  }, [ratio, setRatio]);
+  }, [ratio, setRatio, resizable]);
 
   if (secondary === null || secondary === undefined) {
     return (
@@ -125,10 +132,10 @@ export function SplitPane({
     <div ref={rootRef} data-testid={testId} className={cn('flex h-full min-h-0 min-w-0', className)}>
       {/* Widths are the one thing here that has to be computed, so they are the
           one place a style attribute is right: there is no class for 55.0%. */}
-      <div data-testid={`${testId}-primary`} className="flex min-h-0 min-w-0 flex-col" style={{ flexBasis: `${pct}%`, flexGrow: 0, flexShrink: 0 }}>
+      <div data-testid={`${testId}-primary`} hidden={primaryHidden} className={cn('min-h-0 min-w-0 flex-col', primaryHidden ? 'hidden' : 'flex')} style={{ flexBasis: `${pct}%`, flexGrow: 0, flexShrink: 0 }}>
         {primary}
       </div>
-      <div
+      {resizable && <div
         role="separator"
         aria-orientation="vertical"
         aria-label={dividerLabel}
@@ -148,7 +155,7 @@ export function SplitPane({
         className="group relative z-10 -mx-1 w-2 shrink-0 cursor-col-resize select-none touch-none bg-transparent outline-none focus-visible:bg-primary/20"
       >
         <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border transition-colors group-hover:bg-primary group-focus-visible:bg-primary" />
-      </div>
+      </div>}
       <div data-testid={`${testId}-secondary`} className="flex min-h-0 min-w-0 flex-1 flex-col">
         {secondary}
       </div>

@@ -99,6 +99,8 @@ export function boundedSidePaneRatio(ratio: number, splitWidthPx: number | null,
 // ─── The host ───────────────────────────────────────────────────────────────
 
 export interface SidePaneRegistration {
+  /** Documents get a readable pane; below 1120px of split space they temporarily take the column. */
+  presentation?: 'standard' | 'document';
   /** The frame's title ("Discussion", "Details"). */
   title: string;
   /** The second line: what the pane is about. */
@@ -141,6 +143,16 @@ interface HostValue {
 }
 
 const HostContext = createContext<HostValue | null>(null);
+
+function documentOwnsColumn(host: HostValue): boolean {
+  return host.registration?.presentation === 'document' && host.width != null && host.width < host.bounds.minPrimaryPx + 600;
+}
+function drawnRatio(host: HostValue): number {
+  if (documentOwnsColumn(host)) return 0;
+  const desired = host.sized ? host.ratio : boundedSidePaneRatio(host.ratio, host.width, host.registration?.widthPx);
+  return host.registration?.presentation === 'document' && host.width
+    ? Math.max(host.bounds.minPrimaryPx / host.width, desired) : desired;
+}
 
 function readStored(key: string): string | null {
   if (typeof window === 'undefined') return null;
@@ -195,12 +207,22 @@ export function SidePaneProvider({ storageKey = 'uic.side-pane', defaultOpen = t
   // An explicit reveal holds only until the window next changes band.
   useEffect(() => { setRevealed(false); }, [fits]);
   const pageOwned = !!registration?.onClose;
-  const shown = !!registration && (open || pageOwned) && (fits || revealed);
+  const documentPane = registration?.presentation === 'document';
+  const shown = !!registration && (open || pageOwned) && (fits || revealed || documentPane);
+  const opener = useRef<HTMLElement | null>(null);
+  const documentPaneRef = useRef(documentPane);
+  documentPaneRef.current = documentPane;
   const reveal = useCallback(() => {
+    if (document.activeElement instanceof HTMLElement) opener.current = document.activeElement;
     setOpen(true); writeStored(openKey, '1'); setRevealed(true);
     setFolded(false); writeStored(foldKey, '0');
   }, [openKey, foldKey]);
-  const collapse = useCallback(() => { setOpen(false); writeStored(openKey, '0'); setRevealed(false); }, [openKey]);
+  const collapse = useCallback(() => {
+    setOpen(false); writeStored(openKey, '0'); setRevealed(false);
+    if (documentPaneRef.current) requestAnimationFrame(() => {
+      if (opener.current?.isConnected) opener.current.focus({ preventScroll: true });
+    });
+  }, [openKey]);
   const toggleFolded = useCallback(() => setFolded((was) => { writeStored(foldKey, was ? '0' : '1'); return !was; }), [foldKey]);
   const setRatio = useCallback((next: number) => {
     const clamped = Math.min(bounds.ratioMax, Math.max(bounds.ratioMin, next));
@@ -249,7 +271,7 @@ export function useSidePaneHost(): SidePaneHostState {
     if (!host) return NO_HOST;
     const registered = !!host.registration;
     const asked = registered && host.open;
-    const effective = host.sized ? host.ratio : boundedSidePaneRatio(host.ratio, host.width, host.registration?.widthPx);
+    const effective = drawnRatio(host);
     const paneWidthPx = !host.shown || host.folded ? 0 : host.width == null ? null : Math.round((1 - effective) * host.width);
     return {
       fits: host.fits, registered, asked, shown: host.shown, explored: asked && !!host.registration?.explores, reveal: host.reveal, collapse: host.collapse,
@@ -287,7 +309,6 @@ function SplitInner({ children, before, after, paneTestId = 'side-pane', divider
   // never flashes the pane open on its first frame.
   const [measured, setMeasured] = useState<HTMLDivElement | null>(null);
   const setWidth = host.setWidth;
-  const width = host.width;
   useLayoutEffect(() => {
     if (!measured) return undefined;
     // Zero is "not laid out yet" (a hidden tab, a test DOM), not "too narrow".
@@ -327,12 +348,14 @@ function SplitInner({ children, before, after, paneTestId = 'side-pane', divider
       : <div className="flex h-full min-h-0 flex-col bg-surface" data-testid={`${testId}-stack`}>{before}{pane}{after}</div>)
     : null;
   // Until the reader sizes it, a width-bounded pane opens inside its bounds.
-  const ratio = shown && !host.sized ? boundedSidePaneRatio(host.ratio, width, registration?.widthPx) : host.ratio;
+  const exclusive = shown && !folded && documentOwnsColumn(host);
+  const ratio = shown ? drawnRatio(host) : host.ratio;
   // One tree whether or not the pane is folded, so the page never remounts.
   return (
     <div ref={setMeasured} className={cn('flex h-full min-h-0 min-w-0 flex-row', className)}>
       <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col">
         <SplitPane primary={children} secondary={secondary} ratio={ratio} onRatioChange={host.setRatio}
+          primaryHidden={exclusive} resizable={!exclusive}
           onDividerActivate={host.toggleFolded}
           minPrimaryPx={host.bounds.minPrimaryPx} minSecondaryPx={host.bounds.minSecondaryPx} dividerLabel={dividerLabel}
           className="h-full min-h-0" data-testid={testId} />
@@ -415,7 +438,7 @@ export interface SidePaneProps extends SidePaneRegistration {
  * column is unchanged).
  */
 export function SidePane({
-  title, subtitle, closeLabel, onClose, widthPx, paneId, explores = false,
+  title, subtitle, closeLabel, onClose, widthPx, paneId, explores = false, presentation,
   tabs, value, onValueChange, trailing, footer, density = 'compact', children, 'data-testid': testId = 'side-pane-content',
 }: SidePaneProps) {
   const host = useContext(HostContext);
@@ -425,10 +448,10 @@ export function SidePane({
   const owned = !!onClose;
   const wMin = widthPx?.min, wMax = widthPx?.max;
   useEffect(() => register?.({
-    title, ...(subtitle ? { subtitle } : {}), ...(closeLabel ? { closeLabel } : {}), ...(paneId ? { paneId } : {}), explores,
+    title, ...(subtitle ? { subtitle } : {}), ...(closeLabel ? { closeLabel } : {}), ...(paneId ? { paneId } : {}), explores, presentation,
     ...(owned ? { onClose: () => closeRef.current?.() } : {}),
     ...(wMin != null && wMax != null ? { widthPx: { min: wMin, max: wMax } } : {}),
-  }), [register, title, subtitle, closeLabel, paneId, explores, owned, wMin, wMax]);
+  }), [register, title, subtitle, closeLabel, paneId, explores, presentation, owned, wMin, wMax]);
   if (!host?.node) return null;
   const tabRow = tabs && tabs.length > 0 && value != null && onValueChange
     ? <PaneHeader tabs={tabs.map((t) => ({ ...t, testId: t.testId ?? `${testId}-tab-${t.id}` }))} value={value} onValueChange={onValueChange}

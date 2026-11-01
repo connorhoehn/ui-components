@@ -41,12 +41,12 @@ describe('toolbar="basic"', () => {
     expect(within(trigger).getByTestId('composer-mode-label').querySelectorAll('svg')).toHaveLength(1);
   });
 
-  it('files lists and quote under the mode menu → Formatting', async () => {
+  it('keeps lists and quote out of the mode menu', async () => {
     render(<RichChatComposer {...base} toolbar="basic" />);
     await act(async () => { fireEvent.click(screen.getByTestId('composer-mode-menu')); });
     const menu = screen.getByTestId('composer-mode-menu-list');
     for (const item of ['Strikethrough', 'Bulleted list', 'Numbered list', 'Quote']) {
-      expect(within(menu).getByText(item)).toBeInTheDocument();
+      expect(within(menu).queryByText(item)).toBeNull();
     }
   });
 

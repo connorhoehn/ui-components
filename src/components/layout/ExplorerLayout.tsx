@@ -27,9 +27,13 @@
 // content column that only grows, so the pane clears the 0.55 floor at the
 // breakpoint's own minimum (732/1288 = 0.568) and improves from there.
 
-import type { ReactNode } from 'react';
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { WorkspaceRail, type WorkspaceRailBack } from './WorkspaceRail';
+import { SplitPane } from './SplitPane';
+import { IconButton } from '../ui/IconButton';
+import { MaximizeIcon } from '../ui/Icons';
+import { Tooltip } from '../shared/Tooltip';
 
 export interface ExplorerLayoutProps {
   /** Left rail — flush to the pane's left edge, its own border, scrolls independently. */
@@ -47,6 +51,8 @@ export interface ExplorerLayoutProps {
    * is 264px for a one-line title list (the Initiatives v2 rail, since 2.392.0).
    */
   railWidth?: 'xs' | 'sm' | 'ms' | 'md' | 'ml' | 'lg';
+  /** Opt-in adjustable rail. Width is remembered in pixels when a storage key is supplied. */
+  railResize?: { minPx?: number; maxPx?: number; storageKey?: string };
   /**
    * A band ABOVE all three columns — a scope header (breadcrumb, title, stats,
    * tabs) that names what the rail, the pane and the aside are all looking at.
@@ -130,6 +136,7 @@ export function ExplorerLayout({
   children,
   aside,
   railWidth = 'md',
+  railResize,
   header,
   paneHeader,
   paneFooter,
@@ -149,6 +156,39 @@ export function ExplorerLayout({
   className,
   'data-testid': testId = 'explorer-layout',
 }: ExplorerLayoutProps) {
+  const frameRef = useRef<HTMLDivElement>(null);
+  const [frameWidth, setFrameWidth] = useState(0);
+  const baseWidth = { xs: 220, sm: 240, ms: 264, md: 300, ml: 320, lg: 368 }[railWidth];
+  const minWidth = railResize?.minPx ?? 260;
+  const maxWidth = railResize?.maxPx ?? 560;
+  const [preferredWidth, setPreferredWidth] = useState(() => {
+    try {
+      const saved = railResize?.storageKey ? Number(localStorage.getItem(railResize.storageKey)) : NaN;
+      return Number.isFinite(saved) && saved > 0 ? Math.max(minWidth, Math.min(maxWidth, saved)) : baseWidth;
+    } catch { return baseWidth; }
+  });
+  useLayoutEffect(() => {
+    const frame = frameRef.current;
+    if (!frame || !railResize) return;
+    const update = () => setFrameWidth(frame.getBoundingClientRect().width);
+    update();
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(update);
+    observer?.observe(frame);
+    return () => observer?.disconnect();
+  }, [!!railResize]);
+  const limit = frameWidth > 0 ? Math.min(maxWidth, Math.max(minWidth, frameWidth - 360)) : maxWidth;
+  const drawnWidth = railCollapsed ? 36 : Math.min(limit, Math.max(minWidth, preferredWidth));
+  const resize = (width: number) => {
+    const next = Math.round(Math.min(limit, Math.max(minWidth, width)));
+    setPreferredWidth(next);
+    try { if (railResize?.storageKey) localStorage.setItem(railResize.storageKey, String(next)); } catch { /* Optional device memory. */ }
+  };
+  const wide = drawnWidth > baseWidth + 20;
+  const resizeAction = railResize && <Tooltip content={wide ? `Reset ${railLabel} width` : `Widen ${railLabel}`}>
+    <IconButton variant="ghost" size="sm" icon={<MaximizeIcon size={14} />}
+      aria-label={wide ? `Reset ${railLabel} width` : `Widen ${railLabel}`}
+      aria-pressed={wide} onClick={() => resize(wide ? baseWidth : limit)} data-testid={`${testId}-widen`} />
+  </Tooltip>;
   const pane = (
     <div
       data-testid={`${testId}-pane`}
@@ -190,15 +230,19 @@ export function ExplorerLayout({
       </div>
   );
 
-  const frame = (
-    <div data-testid={testId} className={cn('flex h-full min-h-0', header ? 'min-w-0 flex-1' : className)}>
-      <WorkspaceRail title={railTitle} label="Explorer" actions={railActions} header={railHeader} footer={railFooter}
+  const railNode = <WorkspaceRail title={railTitle} label="Explorer" actions={railResize ? <>{railActions}{resizeAction}</> : railActions} header={railHeader} footer={railFooter}
         width={railWidth} {...(typeof railCount === 'number' ? { count: railCount } : {})} heading={railHeading}
+        className={railResize ? 'w-full' : undefined}
         {...(railCountStyle ? { countStyle: railCountStyle } : {})} {...(railBack ? { back: railBack } : {})} collapsed={railCollapsed} onToggle={onToggleRail}
         toggleLabel={`${railCollapsed ? 'Show' : 'Hide'} ${railLabel}`} data-testid={`${testId}-rail`}>
         {rail}
-      </WorkspaceRail>
-      {columns}
+      </WorkspaceRail>;
+  const frame = (
+    <div ref={frameRef} data-testid={testId} className={cn('flex h-full min-h-0', header ? 'min-w-0 flex-1' : className)}>
+      {railResize ? <SplitPane primary={railNode} secondary={columns} className="min-w-0 flex-1"
+        ratio={frameWidth > 0 ? drawnWidth / frameWidth : 0.25} onRatioChange={ratio => resize(ratio * frameWidth)}
+        minPrimaryPx={minWidth} minSecondaryPx={360} resizable={!railCollapsed}
+        dividerLabel={`Resize ${railLabel}`} data-testid={`${testId}-rail-split`} /> : <>{railNode}{columns}</>}
     </div>
   );
 

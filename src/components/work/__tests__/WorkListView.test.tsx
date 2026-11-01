@@ -29,6 +29,19 @@ afterEach(cleanup);
 beforeEach(() => window.localStorage.clear());
 
 describe('WorkListView', () => {
+  it('uses the full rail row as navigation, including its key, while status actions stay independent', () => {
+    const opened = vi.fn(), signal = vi.fn();
+    renderView({ layout: 'rail', onOpenItem: opened, items: [
+      { ...ITEMS[0]!, tag: { label: 'ORG-OBS-5' } },
+      { ...ITEMS[4]!, signal: { state: 'running', label: 'Running', onClick: signal } },
+    ] });
+    fireEvent.click(screen.getByText('ORG-OBS-5'));
+    expect(opened).toHaveBeenCalledTimes(1);
+    expect(opened.mock.calls[0]?.[0].id).toBe('s4');
+    fireEvent.click(screen.getByRole('button', { name: 'Running: Span-metrics connector' }));
+    expect(signal).toHaveBeenCalledOnce();
+    expect(opened).toHaveBeenCalledTimes(1);
+  });
   it('groups items by status with counts, the header count and per-group empty labels', () => {
     renderView({ onCreate: () => {}, onCollapse: () => {} });
     expect(screen.getByRole('heading', { name: 'Work' })).toBeInTheDocument();
