@@ -24,7 +24,7 @@ import { t as ne } from "./InlinePopover-CdWlzyRG.js";
 import "./Toolbar-BaVKrro_.js";
 import "./FormField-CQ27qxWt.js";
 import "./SearchInput-DDKsA6gZ.js";
-import { n as R } from "./DataTable-CjUuRcUH.js";
+import { n as R } from "./DataTable-D4no5ZhH.js";
 import { t as re } from "./EmptyState-D5ucMp2y.js";
 import { t as ie } from "./ThinkingDots-52RnodUR.js";
 import "./Drawer-hsPDQBJM.js";
@@ -3659,7 +3659,7 @@ function br({ variant: t = "card", posts: n, onAnswer: r, answerBusy: i = !1, an
 		...c
 	};
 	return /* @__PURE__ */ Z("div", {
-		className: e("min-w-0 overflow-hidden bg-surface", t === "card" && "rounded-lg border border-border", u),
+		className: e("min-w-0 bg-surface", t === "card" && "overflow-hidden rounded-lg border border-border", u),
 		"data-variant": t,
 		...d ? { "data-testid": d } : {},
 		children: n.length === 0 ? /* @__PURE__ */ Z("div", {
@@ -3719,10 +3719,10 @@ function Cr({ children: t, rail: n, railWidth: r = "md", variant: i = "card", cl
 	});
 }
 function wr({ title: t, children: n, className: r }) {
-	let i = Oe(Sr);
+	let i = Oe(Sr), a = i === "plain" ? "h2" : "h3";
 	return /* @__PURE__ */ Q("section", {
 		className: e("border-b border-border py-3 last:border-b-0", i === "card" && "px-3.5", r),
-		children: [/* @__PURE__ */ Z("h3", {
+		children: [/* @__PURE__ */ Z(a, {
 			className: e("mb-2", W, _e),
 			"data-testid": "rail-section-title",
 			children: t
@@ -4076,31 +4076,31 @@ function Nr({ items: t, frameless: r = !1, connectors: i, variant: a = "default"
 }
 //#endregion
 //#region src/components/shared/KeyValue.tsx
-function Pr({ items: t, layout: n = "row", labelWidth: r = "w-28", divided: i = !1, className: a, "aria-label": o, "data-testid": s = "key-value" }) {
+function Pr({ items: t, layout: n = "row", labelWidth: r = "w-28", divided: i = !1, responsive: a = !1, className: o, "aria-label": s, "data-testid": c = "key-value" }) {
 	if (t.length === 0) return null;
-	let c = n === "row", l = c && i;
+	let l = n === "row", u = l && i;
 	return /* @__PURE__ */ Z("dl", {
-		className: e("m-0 min-w-0", n === "grid" ? "grid grid-cols-2 gap-x-6 gap-y-3" : l ? "flex flex-col border-t border-border" : c ? "flex flex-col gap-1.5" : "flex flex-col gap-3", a),
+		className: e("m-0 min-w-0", a && "@container/key-value", n === "grid" ? "grid grid-cols-2 gap-x-6 gap-y-3" : u ? "flex flex-col border-t border-border" : l ? "flex flex-col gap-1.5" : "flex flex-col gap-3", o),
 		"data-layout": n,
-		"data-divided": l || void 0,
-		"data-testid": s,
-		...o ? { "aria-label": o } : {},
+		"data-divided": u || void 0,
+		"data-testid": c,
+		...s ? { "aria-label": s } : {},
 		children: t.map((t, n) => /* @__PURE__ */ Q("div", {
-			className: e("min-w-0", l ? "flex min-h-[38px] items-center gap-3 border-b border-border px-2.5 py-1.5" : c ? "flex items-baseline gap-3" : "flex flex-col gap-0.5"),
-			"data-testid": `${s}-item`,
+			className: e("min-w-0", a && u && "flex-wrap @lg/key-value:flex-nowrap", u ? "flex min-h-[38px] items-center gap-3 border-b border-border px-2.5 py-1.5" : l ? "flex items-baseline gap-3" : "flex flex-col gap-0.5"),
+			"data-testid": `${c}-item`,
 			children: [
 				/* @__PURE__ */ Z("dt", {
-					className: e("m-0", l ? e("shrink-0 text-sm text-text-primary", r) : "text-text-secondary", !l && (c ? e("shrink-0 text-xs", r) : "text-[12px]")),
+					className: e("m-0", a && u && "basis-full @lg/key-value:basis-auto", u ? e("shrink-0 text-sm text-text-primary", r) : "text-text-secondary", !u && (l ? e("shrink-0 text-xs", r) : "text-[12px]")),
 					children: t.label
 				}),
 				/* @__PURE__ */ Z("dd", {
-					className: e("m-0 min-w-0 truncate", "text-sm", t.muted ? "text-text-tertiary" : "text-text-primary", c && "flex-1", t.mono && "font-mono text-[12px]"),
+					className: e("m-0 min-w-0 truncate", "text-sm", t.muted ? "text-text-tertiary" : "text-text-primary", l && "flex-1", t.mono && "font-mono text-[12px]"),
 					...t.title ? { title: t.title } : {},
 					children: t.value
 				}),
-				c && t.action != null && t.action !== !1 && /* @__PURE__ */ Z("dd", {
+				l && t.action != null && t.action !== !1 && /* @__PURE__ */ Z("dd", {
 					className: "m-0 flex shrink-0 items-center",
-					"data-testid": `${s}-action`,
+					"data-testid": `${c}-action`,
 					children: t.action
 				})
 			]
@@ -5838,6 +5838,7 @@ function zi({ items: e, categories: t, placement: n = "footer", onPlacementChang
 			}),
 			B && !E.hidden && je(/* @__PURE__ */ Q("div", {
 				ref: se,
+				"data-uic-popover": "",
 				role: "toolbar",
 				"aria-label": `${he}Today controls`,
 				className: "activity-ticker-toolbar",

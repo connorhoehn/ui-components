@@ -158,125 +158,126 @@ function N(e) {
 	if (e === "right") return "text-right";
 	if (e === "center") return "text-center";
 }
-function P({ data: c, columns: l, keyField: u, onRowClick: f, rowActions: m, searchable: h = !1, searchPlaceholder: g = "Search…", pageSize: _, emptyMessage: v = "No records.", loading: y = !1, loadingRows: x = 5, frameless: C = !1, size: D, striped: A = !1, className: j, "data-testid": P, staticRows: F }) {
-	let I = Array.isArray(c) ? c : [], L = Array.isArray(l) ? l : [], [R, z] = S(null), [B, V] = S("asc"), [H, U] = S(""), [W, G] = S(0), K = (e) => {
-		R === e ? V((e) => e === "asc" ? "desc" : "asc") : (z(e), V("asc"));
-	}, q = b(() => {
-		if (!h || H.trim() === "") return I;
-		let e = H.trim().toLowerCase();
-		return I.filter((t, n) => L.some((r) => r.filterable !== !1 && M(r, t, n).toLowerCase().includes(e)));
+function P({ rowHeight: c = "fixed", data: l, columns: u, keyField: f, onRowClick: m, rowActions: h, searchable: g = !1, searchPlaceholder: _ = "Search…", pageSize: v, emptyMessage: y = "No records.", loading: x = !1, loadingRows: C = 5, frameless: D = !1, size: A, striped: j = !1, className: P, "data-testid": F, staticRows: I }) {
+	let L = Array.isArray(l) ? l : [], R = Array.isArray(u) ? u : [], [z, B] = S(null), [V, H] = S("asc"), [U, W] = S(""), [G, K] = S(0), q = (e) => {
+		z === e ? H((e) => e === "asc" ? "desc" : "asc") : (B(e), H("asc"));
+	}, J = b(() => {
+		if (!g || U.trim() === "") return L;
+		let e = U.trim().toLowerCase();
+		return L.filter((t, n) => R.some((r) => r.filterable !== !1 && M(r, t, n).toLowerCase().includes(e)));
 	}, [
-		I,
-		L,
-		H,
-		h
-	]), J = b(() => {
-		if (!R) return q;
-		let e = L.find((e) => e.key === R);
-		if (!e || !e.sortable) return q;
-		let t = e.compare ?? ((t, n) => k(t[e.key], n[e.key])), n = [...q];
-		return n.sort((e, n) => B === "asc" ? t(e, n) : -t(e, n)), n;
-	}, [
-		q,
 		L,
 		R,
-		B
-	]), Y = _ && _ > 0 ? Math.max(1, Math.ceil(J.length / _)) : 1, X = Math.min(W, Y - 1), Z = b(() => {
-		if (!_ || _ <= 0) return J;
-		let e = X * _;
-		return J.slice(e, e + _);
+		U,
+		g
+	]), Y = b(() => {
+		if (!z) return J;
+		let e = R.find((e) => e.key === z);
+		if (!e || !e.sortable) return J;
+		let t = e.compare ?? ((t, n) => k(t[e.key], n[e.key])), n = [...J];
+		return n.sort((e, n) => V === "asc" ? t(e, n) : -t(e, n)), n;
 	}, [
 		J,
-		_,
-		X
+		R,
+		z,
+		V
+	]), X = v && v > 0 ? Math.max(1, Math.ceil(Y.length / v)) : 1, Z = Math.min(G, X - 1), Q = b(() => {
+		if (!v || v <= 0) return Y;
+		let e = Z * v;
+		return Y.slice(e, e + v);
+	}, [
+		Y,
+		v,
+		Z
 	]);
 	return /* @__PURE__ */ T("div", {
-		className: e("flex min-w-0 flex-col gap-3", j),
-		"data-testid": P,
+		className: e("flex min-w-0 flex-col gap-3", P),
+		"data-testid": F,
 		"data-collection-table": "",
-		"data-collection-rows": f ? "activatable" : F ? "static" : void 0,
-		"data-collection-rows-reason": !f && F ? F : void 0,
+		"data-collection-rows": m ? "activatable" : I ? "static" : void 0,
+		"data-collection-rows-reason": !m && I ? I : void 0,
 		children: [
-			h && /* @__PURE__ */ w(E, {
+			g && /* @__PURE__ */ w(E, {
 				label: "Table controls",
 				search: {
-					value: H,
+					value: U,
 					onChange: (e) => {
-						U(e), G(0);
+						W(e), K(0);
 					},
-					placeholder: g,
+					placeholder: _,
 					"aria-label": "Search",
 					"data-testid": "datatable-search"
 				}
 			}),
 			/* @__PURE__ */ T(o, {
-				...D ? { size: D } : {},
-				className: C ? void 0 : "border border-border rounded-lg overflow-hidden",
-				children: [/* @__PURE__ */ w(a, { children: /* @__PURE__ */ T("tr", { children: [L.map((t) => {
-					let n = t.sortable && R === t.key;
+				"data-ui-table-rows": c,
+				...A ? { size: A } : {},
+				className: D ? void 0 : "border border-border rounded-lg overflow-hidden",
+				children: [/* @__PURE__ */ w(a, { children: /* @__PURE__ */ T("tr", { children: [R.map((t) => {
+					let n = t.sortable && z === t.key;
 					return /* @__PURE__ */ w(i, {
 						sortable: t.sortable,
-						sortDirection: n ? B : null,
+						sortDirection: n ? V : null,
 						style: t.width ? { width: t.width } : void 0,
 						numeric: t.numeric,
 						className: e(N(t.align), t.className),
-						onClick: t.sortable ? () => K(t.key) : void 0,
+						onClick: t.sortable ? () => q(t.key) : void 0,
 						"data-testid": t.sortable ? `datatable-header-${t.key}` : void 0,
 						children: t.header
 					}, t.key);
-				}), m && /* @__PURE__ */ w(i, {
+				}), h && /* @__PURE__ */ w(i, {
 					className: "text-right",
 					children: "Actions"
-				})] }) }), /* @__PURE__ */ w(r, { children: y ? Array.from({ length: x }).map((e, r) => /* @__PURE__ */ T(n, {
+				})] }) }), /* @__PURE__ */ w(r, { children: x ? Array.from({ length: C }).map((e, r) => /* @__PURE__ */ T(n, {
 					"data-testid": "datatable-loading-row",
-					children: [L.map((e) => /* @__PURE__ */ w(t, {
+					children: [R.map((e) => /* @__PURE__ */ w(t, {
 						numeric: e.numeric,
 						className: N(e.align),
 						children: /* @__PURE__ */ w("div", { className: "h-4 w-3/4 animate-pulse rounded bg-surface-hover" })
-					}, e.key)), m && /* @__PURE__ */ w(t, {
+					}, e.key)), h && /* @__PURE__ */ w(t, {
 						className: "text-right",
 						children: /* @__PURE__ */ w("div", { className: "ml-auto h-4 w-16 animate-pulse rounded bg-surface-hover" })
 					})]
-				}, `skeleton-${r}`)) : Z.length === 0 ? /* @__PURE__ */ w(n, { children: /* @__PURE__ */ w(t, {
-					colSpan: L.length + +!!m,
+				}, `skeleton-${r}`)) : Q.length === 0 ? /* @__PURE__ */ w(n, { children: /* @__PURE__ */ w(t, {
+					colSpan: R.length + +!!h,
 					className: "text-center text-text-secondary py-8",
-					children: v
-				}) }) : Z.map((r, i) => /* @__PURE__ */ T(n, {
-					clickable: !!f,
-					className: e(A && i % 2 == 1 ? "bg-surface-inset" : void 0, f && "focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"),
-					tabIndex: f ? 0 : void 0,
-					"aria-rowindex": f ? i + 2 : void 0,
-					onClick: f ? (e) => {
-						O(e.target, e.currentTarget) || f(r);
+					children: y
+				}) }) : Q.map((r, i) => /* @__PURE__ */ T(n, {
+					clickable: !!m,
+					className: e(j && i % 2 == 1 ? "bg-surface-inset" : void 0, m && "focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"),
+					tabIndex: m ? 0 : void 0,
+					"aria-rowindex": m ? i + 2 : void 0,
+					onClick: m ? (e) => {
+						O(e.target, e.currentTarget) || m(r);
 					} : void 0,
-					onKeyDown: f ? (e) => {
-						e.target === e.currentTarget && (e.key === "Enter" || e.key === " ") && (e.preventDefault(), f(r));
+					onKeyDown: m ? (e) => {
+						e.target === e.currentTarget && (e.key === "Enter" || e.key === " ") && (e.preventDefault(), m(r));
 					} : void 0,
-					children: [L.map((n) => /* @__PURE__ */ w(t, {
+					children: [R.map((n) => /* @__PURE__ */ w(t, {
 						numeric: n.numeric,
 						className: e(N(n.align), n.className),
 						children: n.render ? n.render(r, i) : String(r[n.key] ?? "")
-					}, n.key)), m && /* @__PURE__ */ w(t, {
+					}, n.key)), h && /* @__PURE__ */ w(t, {
 						className: "text-right",
 						onClick: (e) => e.stopPropagation(),
 						children: /* @__PURE__ */ w("div", {
 							className: "flex items-center justify-end gap-2",
-							children: m(r)
+							children: h(r)
 						})
 					})]
-				}, u(r))) })]
+				}, f(r))) })]
 			}),
-			_ && _ > 0 && J.length > _ && /* @__PURE__ */ T("div", {
+			v && v > 0 && Y.length > v && /* @__PURE__ */ T("div", {
 				className: "flex items-center justify-between text-xs text-text-secondary",
 				children: [/* @__PURE__ */ T("span", {
 					"data-testid": "datatable-page-summary",
 					children: [
 						"Page ",
-						X + 1,
+						Z + 1,
 						" of ",
-						Y,
+						X,
 						" · ",
-						J.length,
+						Y.length,
 						" total"
 					]
 				}), /* @__PURE__ */ T("div", {
@@ -289,8 +290,8 @@ function P({ data: c, columns: l, keyField: u, onRowClick: f, rowActions: m, sea
 							size: "sm",
 							"aria-label": "Previous page",
 							icon: /* @__PURE__ */ w(d, { dir: "left" }),
-							onClick: () => G(Math.max(0, X - 1)),
-							disabled: X === 0,
+							onClick: () => K(Math.max(0, Z - 1)),
+							disabled: Z === 0,
 							"data-testid": "datatable-prev"
 						})
 					}), /* @__PURE__ */ w(p, {
@@ -299,8 +300,8 @@ function P({ data: c, columns: l, keyField: u, onRowClick: f, rowActions: m, sea
 							size: "sm",
 							"aria-label": "Next page",
 							icon: /* @__PURE__ */ w(d, { dir: "right" }),
-							onClick: () => G(Math.min(Y - 1, X + 1)),
-							disabled: X >= Y - 1,
+							onClick: () => K(Math.min(X - 1, Z + 1)),
+							disabled: Z >= X - 1,
 							"data-testid": "datatable-next"
 						})
 					})]

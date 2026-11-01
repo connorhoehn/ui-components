@@ -4770,9 +4770,11 @@ export declare interface ChatSidePanelApi {
  * the title on the left and the way out on the right, and a body that fills
  * the rest and scrolls on its own.
  */
-export declare function ChatSidePanelFrame({ title, subtitle, onClose, onOpenFullPage, actions, expanded, onToggleExpanded, size: sizeProp, closeLabel, children, className, 'data-testid': testId, }: ChatSidePanelFrameProps): JSX.Element;
+export declare function ChatSidePanelFrame({ titleAs: Title, title, subtitle, onClose, onOpenFullPage, actions, expanded, onToggleExpanded, size: sizeProp, closeLabel, children, className, 'data-testid': testId, }: ChatSidePanelFrameProps): JSX.Element;
 
 export declare interface ChatSidePanelFrameProps {
+    /** A document occupying the main column owns its page heading. */
+    titleAs?: 'span' | 'h1' | 'h2';
     title: string;
     /** A second clause under the title — "12 results", "Edited by Grace". */
     subtitle?: string;
@@ -7533,7 +7535,7 @@ export declare function dataAccentProps(accent: DataAccent | undefined): {
 
 export declare type DataAccentSlot = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
-export declare function DataTable<T>({ data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
+export declare function DataTable<T>({ rowHeight, data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
 
 export declare interface DataTableColumn<T> {
     /** Stable id for the column. When `accessor` is omitted, used as the data key on T. */
@@ -7563,6 +7565,8 @@ export declare interface DataTableColumn<T> {
 }
 
 export declare interface DataTableProps<T> {
+    /** Document tables may wrap prose; ordinary collection rows retain their fixed rhythm. */
+    rowHeight?: 'fixed' | 'content';
     data: T[];
     columns: DataTableColumn<T>[];
     /** Stable id for each row. Used as React key. */
@@ -12623,7 +12627,7 @@ declare interface KeyboardShortcut {
     preventDefault?: boolean;
 }
 
-export declare function KeyValue({ items, layout, labelWidth, divided, className, 'aria-label': ariaLabel, 'data-testid': testId, }: KeyValueProps): JSX.Element | null;
+export declare function KeyValue({ items, layout, labelWidth, divided, responsive, className, 'aria-label': ariaLabel, 'data-testid': testId, }: KeyValueProps): JSX.Element | null;
 
 export declare interface KeyValueItem {
     label: string;
@@ -12665,6 +12669,8 @@ export declare interface KeyValueProps {
      * checklist table ("Complete the brief"). Default `false`. Since 2.390.0.
      */
     divided?: boolean;
+    /** Let ruled rows put labels above their values when the column is narrow. */
+    responsive?: boolean;
     className?: string;
     'aria-label'?: string;
     'data-testid'?: string;
@@ -20684,7 +20690,7 @@ export declare interface SidePaneProviderProps {
 }
 
 export declare interface SidePaneRegistration {
-    /** Documents get a readable pane; below 1120px of split space they temporarily take the column. */
+    /** Documents get a readable pane; below 1240px of split space they temporarily take the column. */
     presentation?: 'standard' | 'document';
     /** The frame's title ("Discussion", "Details"). */
     title: string;

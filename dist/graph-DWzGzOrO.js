@@ -29,7 +29,7 @@ import { t as ce } from "./SectionLabel-Ch_rkHQZ.js";
 import { t as V } from "./Link-h2c9gcsw.js";
 import { t as H } from "./MetaLine-DFn2XXGU.js";
 import { t as le } from "./Checkbox-Dvt09s3H.js";
-import { n as ue } from "./ChatSidePanelRegistry-B5RDmIC_.js";
+import { n as ue } from "./ChatSidePanelRegistry-ZlWWPUK2.js";
 import { n as U } from "./useComputeProjects-ZSazDRet.js";
 import { t as de } from "./formatBytes-05ivRSJY.js";
 import { n as fe, r as pe } from "./PaneStatusLine-CJqgPf85.js";

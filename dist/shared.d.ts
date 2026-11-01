@@ -1526,7 +1526,7 @@ export declare function dataAccentProps(accent: DataAccent | undefined): {
 
 export declare type DataAccentSlot = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
-export declare function DataTable<T>({ data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
+export declare function DataTable<T>({ rowHeight, data: dataProp, columns: columnsProp, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, size, striped, className, 'data-testid': testId, staticRows, }: DataTableProps<T>): JSX.Element;
 
 export declare interface DataTableColumn<T> {
     /** Stable id for the column. When `accessor` is omitted, used as the data key on T. */
@@ -1556,6 +1556,8 @@ export declare interface DataTableColumn<T> {
 }
 
 export declare interface DataTableProps<T> {
+    /** Document tables may wrap prose; ordinary collection rows retain their fixed rhythm. */
+    rowHeight?: 'fixed' | 'content';
     data: T[];
     columns: DataTableColumn<T>[];
     /** Stable id for each row. Used as React key. */
@@ -3432,7 +3434,7 @@ export declare function ItalicIcon({ size, ...rest }: GlyphProps): JSX.Element;
 /** A keyboard: shortcuts. Since 2.411.0. */
 export declare function KeyboardIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function KeyValue({ items, layout, labelWidth, divided, className, 'aria-label': ariaLabel, 'data-testid': testId, }: KeyValueProps): JSX.Element | null;
+export declare function KeyValue({ items, layout, labelWidth, divided, responsive, className, 'aria-label': ariaLabel, 'data-testid': testId, }: KeyValueProps): JSX.Element | null;
 
 export declare interface KeyValueItem {
     label: string;
@@ -3474,6 +3476,8 @@ export declare interface KeyValueProps {
      * checklist table ("Complete the brief"). Default `false`. Since 2.390.0.
      */
     divided?: boolean;
+    /** Let ruled rows put labels above their values when the column is narrow. */
+    responsive?: boolean;
     className?: string;
     'aria-label'?: string;
     'data-testid'?: string;

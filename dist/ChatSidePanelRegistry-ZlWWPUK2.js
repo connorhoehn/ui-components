@@ -26,19 +26,19 @@ var y = {};
 function b(e) {
 	return v()[e] ?? null;
 }
-function x({ title: n, subtitle: a, onClose: c, onOpenFullPage: l, actions: u, expanded: d = !1, onToggleExpanded: f, size: g, closeLabel: _ = "Close panel", children: v, className: y, "data-testid": b = "chat-side-panel" }) {
-	let x = t("ChatSidePanelFrame", g, {
+function x({ titleAs: n = "span", title: a, subtitle: c, onClose: l, onOpenFullPage: u, actions: d, expanded: f = !1, onToggleExpanded: g, size: _, closeLabel: v = "Close panel", children: y, className: b, "data-testid": x = "chat-side-panel" }) {
+	let S = t("ChatSidePanelFrame", _, {
 		comfortable: "xs",
 		compact: "sm"
 	}) === "sm";
 	return /* @__PURE__ */ h("section", {
-		"aria-label": n,
-		"data-testid": b,
-		"data-size": x ? "sm" : void 0,
+		"aria-label": a,
+		"data-testid": x,
+		"data-size": S ? "sm" : void 0,
 		"data-uic-popover-boundary": "",
-		className: e("flex h-full min-h-0 flex-col border-l border-border bg-surface", y),
+		className: e("flex h-full min-h-0 flex-col border-l border-border bg-surface", b),
 		children: [/* @__PURE__ */ h("header", {
-			className: e("flex shrink-0 items-center justify-between gap-2 border-b border-border", x ? "px-[var(--ui-content-gutter,1rem)] py-1.5" : "px-3 py-1.5"),
+			className: e("flex shrink-0 items-center justify-between gap-2 border-b border-border", S ? "px-[var(--ui-content-gutter,1rem)] py-1.5" : "px-3 py-1.5"),
 			children: [/* @__PURE__ */ h(o, {
 				gap: "sm",
 				align: "center",
@@ -46,14 +46,14 @@ function x({ title: n, subtitle: a, onClose: c, onOpenFullPage: l, actions: u, e
 				className: "min-w-0 flex-1",
 				children: [/* @__PURE__ */ h("span", {
 					className: "flex min-w-0 flex-1 flex-col",
-					children: [/* @__PURE__ */ m("span", {
-						className: e("truncate font-semibold", x ? "text-sm leading-5 text-text-primary" : "text-[12px] text-text-secondary"),
-						"data-testid": `${b}-title`,
-						children: n
-					}), a && /* @__PURE__ */ m("span", {
-						className: e("truncate", x ? "text-xs leading-4 text-text-secondary" : "text-[11px] text-text-tertiary"),
-						"data-testid": `${b}-subtitle`,
+					children: [/* @__PURE__ */ m(n, {
+						className: e("m-0 truncate font-semibold", S ? "text-sm leading-5 text-text-primary" : "text-[12px] text-text-secondary"),
+						"data-testid": `${x}-title`,
 						children: a
+					}), c && /* @__PURE__ */ m("span", {
+						className: e("truncate", S ? "text-xs leading-4 text-text-secondary" : "text-[11px] text-text-tertiary"),
+						"data-testid": `${x}-subtitle`,
+						children: c
 					})]
 				}), /* @__PURE__ */ h(o, {
 					gap: "xs",
@@ -61,15 +61,15 @@ function x({ title: n, subtitle: a, onClose: c, onOpenFullPage: l, actions: u, e
 					wrap: !1,
 					className: "shrink-0",
 					children: [
-						f && /* @__PURE__ */ m(s, {
-							content: d ? "Show chat" : "Expand board",
+						g && /* @__PURE__ */ m(s, {
+							content: f ? "Show chat" : "Expand board",
 							placement: "bottom",
 							children: /* @__PURE__ */ m(r, {
-								size: x ? "sm" : void 0,
-								"aria-label": d ? "Show chat" : "Expand board",
-								"aria-pressed": d,
-								onClick: f,
-								"data-testid": `${b}-expand`,
+								size: S ? "sm" : void 0,
+								"aria-label": f ? "Show chat" : "Expand board",
+								"aria-pressed": f,
+								onClick: g,
+								"data-testid": `${x}-expand`,
 								children: /* @__PURE__ */ m("svg", {
 									width: "16",
 									height: "16",
@@ -80,7 +80,7 @@ function x({ title: n, subtitle: a, onClose: c, onOpenFullPage: l, actions: u, e
 									strokeLinecap: "round",
 									strokeLinejoin: "round",
 									"aria-hidden": "true",
-									children: d ? /* @__PURE__ */ h(p, { children: [/* @__PURE__ */ m("rect", {
+									children: f ? /* @__PURE__ */ h(p, { children: [/* @__PURE__ */ m("rect", {
 										x: "2",
 										y: "2.5",
 										width: "12",
@@ -90,14 +90,14 @@ function x({ title: n, subtitle: a, onClose: c, onOpenFullPage: l, actions: u, e
 								})
 							})
 						}),
-						l && /* @__PURE__ */ m(s, {
+						u && /* @__PURE__ */ m(s, {
 							content: "Open full page",
 							placement: "bottom",
 							children: /* @__PURE__ */ m(r, {
-								size: x ? "sm" : void 0,
+								size: S ? "sm" : void 0,
 								"aria-label": "Open full page",
-								onClick: l,
-								"data-testid": `${b}-open-full`,
+								onClick: u,
+								"data-testid": `${x}-open-full`,
 								children: /* @__PURE__ */ m("svg", {
 									width: "16",
 									height: "16",
@@ -112,24 +112,24 @@ function x({ title: n, subtitle: a, onClose: c, onOpenFullPage: l, actions: u, e
 								})
 							})
 						}),
-						u
+						d
 					]
 				})]
 			}), /* @__PURE__ */ m(s, {
-				content: _,
+				content: v,
 				placement: "bottom",
 				children: /* @__PURE__ */ m(r, {
-					size: x ? "sm" : void 0,
-					"aria-label": _,
-					onClick: c,
-					"data-testid": `${b}-close`,
+					size: S ? "sm" : void 0,
+					"aria-label": v,
+					onClick: l,
+					"data-testid": `${x}-close`,
 					className: "shrink-0",
 					children: /* @__PURE__ */ m(i, {})
 				})
 			})]
 		}), /* @__PURE__ */ m("div", {
 			className: "min-h-0 flex-1 overflow-auto",
-			children: v
+			children: y
 		})]
 	});
 }
