@@ -27,8 +27,12 @@ export interface DocumentOutlineProps {
   onSelect?: (id: string) => void;
   /** Shown when the document has no headings yet. */
   emptyLabel?: string;
+  /** Keep long headings readable in a vertical reading pane. */
+  wrap?: boolean;
   className?: string;
   'data-testid'?: string;
+  /** Label the navigation for non-document readers such as a review page. */
+  'aria-label'?: string;
 }
 
 /**
@@ -48,14 +52,16 @@ export function DocumentOutline({
   onSelect,
   emptyLabel = 'Headings you add will appear here',
   className,
+  wrap = false,
   'data-testid': testId = 'document-outline',
+  'aria-label': ariaLabel = 'Document outline',
 }: DocumentOutlineProps) {
   const minLevel = entries.length > 0 ? Math.min(...entries.map((e) => e.level)) : 1;
 
   return (
     <nav
       data-testid={testId}
-      aria-label="Document outline"
+      aria-label={ariaLabel}
       className={cn('flex flex-col gap-0.5 text-sm', className)}
     >
       {entries.length === 0 ? (
@@ -76,7 +82,8 @@ export function DocumentOutline({
               onClick={() => onSelect?.(entry.id)}
               style={{ paddingLeft: 8 + indentFor(entry.level, minLevel) }}
               className={cn(
-                'truncate rounded py-1 pr-2 text-left transition-colors',
+                'rounded py-1 pr-2 text-left transition-colors',
+                wrap ? 'whitespace-normal break-words' : 'truncate',
                 'hover:bg-surface-hover',
                 active ? 'bg-surface-inset font-medium text-text-primary' : 'text-text-secondary',
               )}

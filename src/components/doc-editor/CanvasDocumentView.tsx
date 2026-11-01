@@ -31,7 +31,7 @@ import TiptapEditor from './TiptapEditor';
 import { DocumentRuler } from './DocumentRuler';
 import { DocumentOutline } from './DocumentOutline';
 import { DocumentStatusBar, ZOOM_FIT, ZOOM_STEPS, type DocumentZoomControl } from './DocumentStatusBar';
-import { useDocumentOutline, useDocumentWordCount } from './useDocumentOutline';
+import { elementForPosition, useDocumentOutline, useDocumentWordCount } from './useDocumentOutline';
 import DocumentToolbar from './DocumentToolbar';
 import DocumentGutter, { type GutterItem } from './DocumentGutter';
 import Banner from '../shared/Banner';
@@ -41,6 +41,7 @@ import Chip from '../shared/Chip';
 import DocumentFindBar from './DocumentFindBar';
 import { DOC_PAGE_HEIGHT, canvasPageAt } from './canvas/pageFlow';
 import { useCanvasPageFlow } from './canvas/useCanvasPageFlow';
+import { numberedOutline, readingContentsExtension } from './canvas/readingContents';
 
 /**
  * A form the ProseMirror schema could not express, surfaced rather than
@@ -379,6 +380,8 @@ export interface CanvasDocumentViewProps {
   onDocumentStats?: (stats: { wordCount: number | null; pageCount: number | null }) => void;
   /** `fit` pins the sheet to the pane's width and ignores the remembered zoom — for a document shown in a narrow host. */
   zoomMode?: 'remembered' | 'fit';
+  /** Optional starting scale for an embedded reader; later zoom choices still work. */
+  initialZoom?: number;
   /**
    * `card` (since 2.386.5) draws the toolbar as one white rounded card on the
    * workspace grey, as the word-processor row (`DocumentToolbar
@@ -405,6 +408,10 @@ export interface CanvasDocumentViewProps {
    * emptiness next to the thing you are reading.
    */
   showOutline?: boolean;
+  /** Read-only document layout. Pane keeps normal-size text and a continuous sheet. */
+  readingPresentation?: 'page' | 'pane';
+  /** Contents at the top and a persistent return-to-contents control. */
+  readingNavigation?: boolean;
   /**
    * Draw page boundaries on the sheet: a 24px band of desk every 1056px with
    * a one-inch margin of white on each side of it, and a page count in the
@@ -522,22 +529,29 @@ export default function CanvasDocumentView({
   onFocusGutterItem,
   onHoverGutterItem,
   gutterVisible = true,
-  showRuler = true,
+  showRuler: requestedRuler = true,
   toolbarDensity = 'full',
   showStatusBar = true,
   zoomMode = 'remembered',
+  initialZoom,
   toolbarStyle = 'bar',
   pageMargin = 'normal',
   onDocumentStats,
   fitHeight = 'viewport',
-  showOutline = false,
-  paginate = true,
+  showOutline: requestedOutline = false,
+  paginate: requestedPagination = true,
+  readingPresentation = 'page',
+  readingNavigation = false,
   onToggleGutter,
   renderFrame,
   onInsertImage,
   onEditorReady,
   'data-testid': testId = 'canvas-document',
 }: CanvasDocumentViewProps) {
+  const readingPane = !editable && readingPresentation === 'pane';
+  const paginate = requestedPagination && !readingPane;
+  const showOutline = requestedOutline && !readingPane;
+  const showRuler = requestedRuler && !readingPane;
   // Display scale of the sheet. CSS `zoom` rather than a transform: it scales
   // the LAYOUT box, so the workspace scrolls the right distance and the sheet
   // reserves the space it visually occupies. A transform would paint a larger
@@ -579,7 +593,7 @@ export default function CanvasDocumentView({
   // everything after it. All three inputs are props, so nothing is lost by
   // deriving it here.
 
-  const [storedZoomSetting, setZoomSetting] = useState<number | typeof ZOOM_FIT>(readStoredZoomSetting);
+  const [storedZoomSetting, setZoomSetting] = useState<number | typeof ZOOM_FIT>(() => initialZoom == null ? readStoredZoomSetting() : clampZoom(initialZoom));
   const zoomSetting = zoomMode === 'fit' ? ZOOM_FIT : storedZoomSetting;
   // Storage throws outright in some privacy modes rather than returning
   // null, and a zoom control that takes the page down is worse than one that
@@ -654,7 +668,7 @@ export default function CanvasDocumentView({
     // an 816px sheet in a 1576px workspace.
   }, [showGutter, showOutline, isCanvas, body]);
 
-  const zoom = zoomSetting === ZOOM_FIT ? fitZoom : zoomSetting;
+  const zoom = readingPane ? 1 : zoomSetting === ZOOM_FIT ? fitZoom : zoomSetting;
   const fitActive = zoomSetting === ZOOM_FIT;
 
   // The ruler measures the sheet by MEASURING it, not by predicting it.
@@ -813,6 +827,61 @@ export default function CanvasDocumentView({
   // Derived from the document, not the DOM: a canvas heading carries no id,
   // so there is nothing in the rendered page to address it by.
   const outline = useDocumentOutline(editor as Parameters<typeof useDocumentOutline>[0]);
+  // The document title is already visible in the page and host header.
+  const readingEntries = numberedOutline(outline.entries);
+  const contentsContainer = useMemo(() => {
+    if (typeof document === 'undefined') return null;
+    const container = document.createElement('div');
+    container.dataset.readingContents = '';
+    container.contentEditable = 'false';
+    return container;
+  }, []);
+  const readerExtensions = useMemo(() => readingNavigation && !editable && contentsContainer
+    ? [...extensions, readingContentsExtension(contentsContainer)] : extensions,
+  [extensions, readingNavigation, editable, contentsContainer]);
+  const [headingPages, setHeadingPages] = useState<Record<string, number>>({});
+  useEffect(() => {
+    if (!readingNavigation || !paginate || !editor) return;
+    let frame = 0;
+    const readPages = () => {
+      frame = 0;
+      const paper = paperRef.current;
+      if (!paper) return;
+      const top = paper.getBoundingClientRect().top;
+      const pages: Record<string, number> = {};
+      for (const entry of outline.entries) {
+        const heading = elementForPosition(editor as Parameters<typeof useDocumentOutline>[0], entry.id);
+        if (heading) pages[entry.id] = Math.max(1, Math.floor((heading.getBoundingClientRect().top - top) / zoom / PAGE_HEIGHT) + 1);
+      }
+      setHeadingPages(previous => JSON.stringify(previous) === JSON.stringify(pages) ? previous : pages);
+    };
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(readPages); };
+    schedule();
+    const bodyElement = bodyRef.current;
+    const mutation = typeof MutationObserver === 'undefined' ? null : new MutationObserver(schedule);
+    const resize = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(schedule);
+    if (bodyElement) {
+      mutation?.observe(bodyElement, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['style'] });
+      resize?.observe(bodyElement);
+    }
+    return () => { if (frame) cancelAnimationFrame(frame); mutation?.disconnect(); resize?.disconnect(); };
+  }, [readingNavigation, paginate, editor, outline.entries, pageCount, zoom]);
+  const contentsRef = useRef<HTMLDivElement | null>(null);
+  const [readingSection, setReadingSection] = useState<string | null>(null);
+  const goToReadingSection = (id: string) => {
+    const heading = elementForPosition(editor as Parameters<typeof useDocumentOutline>[0], id);
+    const workspace = workspaceRef.current;
+    if (!(heading instanceof HTMLElement) || !workspace) return;
+    heading.tabIndex = -1;
+    heading.focus({ preventScroll: true });
+    workspace.scrollTo({ top: workspace.scrollTop + heading.getBoundingClientRect().top - workspace.getBoundingClientRect().top - 16, behavior: 'smooth' });
+    setReadingSection(id);
+  };
+  const returnToContents = () => {
+    workspaceRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+    contentsRef.current?.focus({ preventScroll: true });
+    setReadingSection(null);
+  };
   const wordCount = useDocumentWordCount(editor as Parameters<typeof useDocumentWordCount>[0]);
 
   // One inch or three quarters, in DOCUMENT pixels — the ruler scales it.
@@ -1060,6 +1129,20 @@ export default function CanvasDocumentView({
         </Banner>
       )}
 
+      {readingNavigation && !editable && contentsContainer && createPortal(
+        <div ref={contentsRef} tabIndex={-1} data-testid={`${testId}-contents`} className="doc-reading-contents">
+          <p className="doc-reading-contents-title">Contents</p>
+          <nav aria-label="Document contents">
+            {readingEntries.map(entry => <button key={entry.id} type="button" className="doc-reading-contents-entry"
+              data-depth={entry.number.split('.').length} aria-current={readingSection === entry.id ? 'location' : undefined}
+              onClick={() => goToReadingSection(entry.id)}>
+              <span className="doc-reading-section-number">{entry.number}.</span>
+              <span className="doc-reading-contents-label">{entry.text}</span>
+              {paginate && <><span className="doc-reading-leader" aria-hidden="true" /><span className="doc-reading-page-number" aria-label={`Page ${headingPages[entry.id] ?? 1}`}>{headingPages[entry.id] ?? 1}</span></>}
+            </button>)}
+          </nav>
+        </div>, contentsContainer)}
+
       {isCanvas && body ? (
         // The workspace: a recessed grey field the page floats on — `bg-workspace`,
         // NOT `bg-surface-inset`, whose 2% tint is invisible against white paper. This is
@@ -1070,7 +1153,8 @@ export default function CanvasDocumentView({
           ref={workspaceRef}
           // `overflow-x-auto`: a page zoomed past the width of the workspace
           // has to be scrollable to, not squeezed into it.
-          className={cn('rounded-lg bg-workspace overflow-y-auto overflow-x-auto', fitHeight === 'parent' && 'min-h-0 flex-1')}
+          data-reading-presentation={readingPane ? 'pane' : 'page'}
+          className={cn('@container rounded-lg bg-workspace overflow-y-auto overflow-x-auto', fitHeight === 'parent' && 'min-h-0 flex-1')}
           style={fitHeight === 'parent' || workspaceHeight === null ? undefined : { height: workspaceHeight }}
         >
           {/* Chrome, not paper: the toolbar is themed and goes dark, while the
@@ -1103,6 +1187,7 @@ export default function CanvasDocumentView({
               box rather than as a second toolbar. The cost is one ~44px shift
               of the sheet on open, which does not recur while searching. */}
           {!framed && toolbarNode}
+
           {/* Status, not formatting: zoom and length describe the document and
               the view of it rather than acting on a selection, so they sit
               along the bottom edge like every word processor puts them,
@@ -1149,8 +1234,8 @@ export default function CanvasDocumentView({
             // clear of the paper's top edge. Bottom padding is untouched — the
             // page still needs room to end in.
             className={cn(
-              'flex px-2 pb-4 sm:px-6 sm:pb-8',
-              showRuler ? 'pt-2 sm:pt-3' : 'pt-4 sm:pt-8',
+              readingPane ? 'flex px-2 pb-4' : 'flex px-2 pb-4 sm:px-6 sm:pb-8',
+              readingPane ? 'pt-3' : showRuler ? 'pt-2 sm:pt-3' : 'pt-4 sm:pt-8',
               (showGutter || showOutline) && 'gap-3 sm:gap-6',
             )}
           >
@@ -1233,11 +1318,13 @@ export default function CanvasDocumentView({
             // else inside a `zoom`ed box.
             style={canvasPaperStyle(zoom, paginate ? pageCount * PAGE_HEIGHT : null)}
             className={cn(
-              'doc-page @container min-h-[1056px] mx-auto bg-paper text-paper-ink shadow-[0_1px_3px_rgba(60,64,67,0.15),0_4px_12px_rgba(60,64,67,0.15)]',
+              'doc-page @container mx-auto bg-paper text-paper-ink shadow-[0_1px_3px_rgba(60,64,67,0.15),0_4px_12px_rgba(60,64,67,0.15)]',
               // Hand-authored in styles.css, NOT a utility class: it carries
               // the whole baseline grid, and the consuming app has no Tailwind
               // build to generate anything this package did not already ship.
               paginate && 'doc-page--paginated',
+              readingNavigation && !editable && 'doc-page--reading',
+              !readingPane && 'min-h-[1056px]',
               // At 100% the sheet stays responsive: it gives way on a narrow
               // window rather than forcing a sideways scroll to read a
               // paragraph. Zoomed, it takes its true width and the workspace
@@ -1245,7 +1332,7 @@ export default function CanvasDocumentView({
               // it clamped the page to the space available and the text column
               // narrowed instead of the page growing. That is resizing a
               // window, not zooming a document.
-              zoom === 1 ? 'w-full max-w-[816px]' : 'w-[816px] shrink-0',
+              readingPane ? 'w-full min-w-0' : zoom === 1 ? 'w-full max-w-[816px]' : 'w-[816px] shrink-0',
             )}
           >
             {/* The margin lives one level IN, because `cqi` asks the nearest
@@ -1265,9 +1352,10 @@ export default function CanvasDocumentView({
               role="document"
               aria-label="Document content"
               className={cn(
-                'doc-page__body py-8 sm:py-10 lg:py-12',
+                'doc-page__body',
+                readingPane ? 'px-5 py-6' : 'py-8 sm:py-10 lg:py-12',
                 // 11.76cqi is 96px on an 816px sheet; 8.82cqi is 72px.
-                pageMargin === 'narrow' ? 'px-[8.82cqi]' : 'px-[11.76cqi]',
+                !readingPane && (pageMargin === 'narrow' ? 'px-[8.82cqi]' : 'px-[11.76cqi]'),
               )}
             >
             <TiptapEditor
@@ -1276,7 +1364,7 @@ export default function CanvasDocumentView({
               provider={provider}
               user={user}
               editable={editable}
-              extensions={extensions}
+              extensions={readerExtensions}
               placeholder="Start writing…"
               // The page owns the surface: no widget border, no imposed ink.
               chrome="none"
@@ -1309,11 +1397,14 @@ export default function CanvasDocumentView({
             className="sticky bottom-0 z-10"
             wordCount={wordCount}
             zoom={zoom}
-            onZoomChange={setZoom}
+            onZoomChange={readingPane || zoomMode === 'fit' ? undefined : setZoom}
             fitActive={fitActive}
             onFitWidth={setFitWidth}
             data-testid={`${testId}-status-bar`}
           >
+            {readingNavigation && !editable && readingEntries.length > 0 && (
+              <Button size="sm" variant="ghost" onClick={returnToContents} data-testid={`${testId}-back-to-top`}>Back to contents ↑</Button>
+            )}
             {/* Only while something IS selected. A standing "0 selected"
                 would be a permanent line of chrome reporting the absence of a
                 thing, next to a total that already covers that case. */}
@@ -1414,7 +1505,7 @@ export default function CanvasDocumentView({
                 provider={null}
                 user={user}
                 editable={false}
-                extensions={extensions}
+                extensions={readerExtensions}
                 chrome="none"
                 hideToolbar
                 onEditorReady={(e) => onEditorReady?.(e)}

@@ -1,3 +1,4 @@
+import { createRequire } from 'node:module';
 import type { StorybookConfig } from '@storybook/react-vite';
 import type { InlineConfig } from 'vite';
 import { rmSrc as rmSrcFrom } from '../scripts/resolve-realtime-modules.mjs';
@@ -12,6 +13,10 @@ import { rmSrc as rmSrcFrom } from '../scripts/resolve-realtime-modules.mjs';
 // worktree has no node_modules of its own, and cwd-relative resolution
 // produced an opaque UNLOADABLE_DEPENDENCY there. See the helper for detail.
 const rmSrc = rmSrcFrom(import.meta.dirname);
+// distributed-core 0.48's ESM entry imports a Node createRequire banner.
+// Its browser-safe document CJS entry is prebundled by Vite instead.
+const runtimeRequire = createRequire(rmSrc('../package.json'));
+const documentEntry = runtimeRequire.resolve('distributed-core/applications/document');
 
 // Every subpath a story imports must be listed. These are PREFIX aliases, so
 // an unlisted subpath does not fall back to node resolution — it matches the
@@ -64,6 +69,7 @@ const config: StorybookConfig = {
         alias: {
           ...((config.resolve?.alias as Record<string, string>) ?? {}),
           ...realtimeModulesAliases,
+          'distributed-core/applications/document': documentEntry,
         },
         // The aliases above point at realtime-modules' TS SOURCE, which lives
         // in a sibling checkout with its own node_modules. Without deduping,

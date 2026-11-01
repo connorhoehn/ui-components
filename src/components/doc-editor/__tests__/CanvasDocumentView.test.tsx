@@ -453,3 +453,18 @@ describe('CanvasDocumentView belowRuler is sticky (2.395.1)', () => {
     expect(ws!.contains(wrapper)).toBe(true);
   });
 });
+
+describe('read-only pane presentation', () => {
+  it('keeps text at normal size without page furniture or editing controls', () => {
+    window.localStorage.setItem('uic:canvas-document:zoom', '1.5');
+    renderView({ editable: false, readingPresentation: 'pane', readingNavigation: true, showOutline: true });
+    expect(screen.getByTestId('canvas-document-workspace')).toHaveAttribute('data-reading-presentation', 'pane');
+    expect(screen.getByTestId('canvas-document-paper')).not.toHaveClass('doc-page--paginated');
+    expect(screen.getByTestId('canvas-document-paper')).toHaveStyle({ zoom: 1 });
+    expect(screen.queryByTestId('canvas-document-outline')).toBeNull();
+    expect(screen.queryByTestId('canvas-document-page-count')).toBeNull();
+    expect(screen.queryByTestId('canvas-document-status-bar-zoom')).toBeNull();
+    expect(screen.queryByTestId('toolbar-stub')).toBeNull();
+    window.localStorage.removeItem('uic:canvas-document:zoom');
+  });
+});

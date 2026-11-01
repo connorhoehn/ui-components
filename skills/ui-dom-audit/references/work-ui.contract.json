@@ -150,6 +150,10 @@
         {
           "selector": "[data-ui-code-surface=\"terminal\"] textarea.xterm-helper-textarea",
           "reason": "xterm's hidden input helper inside a marked terminal code surface is not a visible form control"
+        },
+        {
+          "selector": "[data-reading-contents] button",
+          "reason": "Embedded document contents use the paper font, checked by document.contents-font."
         }
       ],
       "tolerance": 0.1
@@ -316,7 +320,13 @@
       "selector": "$contentColumns",
       "titleSize": 20,
       "expected": 1,
-      "owner": "one header per page: SectionHeader title, or the conversation/record header with the title folded into the trail"
+      "owner": "one header per page: SectionHeader title, or the conversation/record header with the title folded into the trail",
+      "exclude": [
+        {
+          "selector": "[role=\"document\"]",
+          "reason": "Headings inside a semantic document describe its contents, separately from the host page title."
+        }
+      ]
     },
     {
       "id": "layout.contained-controls",
@@ -981,7 +991,13 @@
       ],
       "maxStray": 12,
       "tolerance": 1.5,
-      "owner": "the block whose padding/margin is off the inset grid"
+      "owner": "the block whose padding/margin is off the inset grid",
+      "exclude": [
+        {
+          "selector": "[data-reading-presentation]",
+          "reason": "CanvasDocumentView uses a document page grid and compact document status bar, independently of the host application gutter. Text, controls, contrast, overflow and table checks still apply."
+        }
+      ]
     },
     {
       "id": "align.baseline",
@@ -1267,6 +1283,18 @@
       "max": 2,
       "maxGap": 1,
       "owner": "ExplorerLayout adjustable rail / SplitPane logical columns"
+    },
+    {
+      "id": "document.contents-font",
+      "kind": "text",
+      "selector": "[data-reading-contents] button",
+      "properties": {
+        "fontFamily": {
+          "from": ".doc-page",
+          "property": "fontFamily"
+        }
+      },
+      "owner": "CanvasDocumentView embedded document contents"
     }
   ]
 }

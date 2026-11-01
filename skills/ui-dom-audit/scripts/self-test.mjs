@@ -190,6 +190,15 @@ try {
   assert.deepEqual((await measure()).issues, [], 'a marked code input (Input mono) is measured on the code profile');
   console.log('PASS a marked monospace input passes; unmarked or off-profile ones fail');
   await page.setContent(html);
+  await page.evaluate(() => document.querySelector('#content').insertAdjacentHTML('beforeend', '<div class="doc-page" style="font-family:Arial"><div data-reading-contents><button class="control" style="font-family:inherit">1. Preparation</button></div></div>'));
+  assert.deepEqual((await measure()).issues, [], 'embedded contents inherit the document paper font');
+  await page.evaluate(() => document.querySelector('[data-reading-contents] button').style.fontFamily = 'serif');
+  assert.ok((await measure()).issues.some(i => i.rule === 'document.contents-font'), 'contents with an unrelated font fail their own profile');
+  await page.evaluate(() => { document.querySelector('[data-reading-contents] button').style.fontFamily = 'inherit'; document.querySelector('#toolbar button').style.fontFamily = 'Arial'; });
+  assert.ok((await measure()).issues.some(i => i.rule === 'control.font-family'), 'an ordinary action beside the paper still uses the UI font');
+  console.log('PASS document contents font and neighboring ordinary control mutation');
+
+  await page.setContent(html);
   await page.evaluate(() => {
     const s = document.createElement('select'); s.className = 'control'; s.setAttribute('data-ui-native-select', ''); s.setAttribute('data-ui-native-reason', 'Mobile OS picker for a long list'); s.innerHTML = '<option>One</option>'; document.querySelector('#toolbar').append(s);
     const u = document.createElement('ul'); u.setAttribute('role', 'listbox'); u.setAttribute('data-ui-listbox', 'select'); u.style.cssText = 'position:fixed;top:100px;left:300px;width:200px;margin:0;padding:0'; u.innerHTML = '<li role="option" style="font-size:14px">One</li><li role="option" style="font-size:12px">Two</li>'; document.body.append(u);
@@ -574,6 +583,7 @@ table{border-collapse:collapse;margin:8px} td{width:120px;max-width:120px;paddin
   assert.deepEqual(columnClean.issues, [], 'a column whose body shares the trail edge passes: ' + JSON.stringify(columnClean.issues));
   for (const rule of columnRules) assert.ok(columnClean.coverage.find(c => c.rule === rule.id)?.matched > 0, `${rule.id} is exercised by the valid column`);
   const columnValid = [
+    ['a document with its own heading below the host page title', () => { document.querySelector('#body').insertAdjacentHTML('beforeend', '<article role="document"><h1>Document title</h1><h2>Section</h2></article>'); }],
     ['a full-bleed hover row whose text keeps the edge', () => { document.querySelector('.row').style.cssText = 'display:flex;justify-content:space-between;padding:8px 24px;margin:0 -24px;background:#eee'; }],
     ['four stretched tiles in a 288px rail section', () => { const t = document.querySelector('#tiles'); t.style.gridTemplateColumns = 'repeat(4,1fr)'; t.style.width = '264px'; }],
     ['a tab row scrolling inside its own scroller', () => { const tabs = document.querySelector('#convo .tabs'); tabs.style.overflowX = 'auto'; tabs.style.minWidth = '0'; tabs.style.flex = '1'; tabs.innerHTML += '<button role="tab">Pinned</button><button role="tab">Calls</button>'.repeat(4);
@@ -592,6 +602,7 @@ table{border-collapse:collapse;margin:8px} td{width:120px;max-width:120px;paddin
     ['conversation header starting left of the trail edge', () => { document.querySelector('#title').remove(); const c = document.querySelector('#convo'); c.style.display = 'flex'; c.style.paddingLeft = '16px'; }, 'content.header-alignment'],
     ['title indented past the trail edge', () => { document.querySelector('#title').style.paddingLeft = '40px'; }, 'content.header-alignment'],
     ['a second title-size header under the page title', () => { document.querySelector('#convo').style.display = 'flex'; }, 'content.single-title'],
+    ['a document heading does not excuse a second host heading', () => { document.querySelector('#body').insertAdjacentHTML('beforeend', '<article role="document"><h1>Document title</h1></article><h2 style="font-size:20px">Duplicate page title</h2>'); }, 'content.single-title'],
     ['no title at all', () => { document.querySelector('#title h1').style.fontSize = '14px'; }, 'content.single-title'],
     ['a button clipped at the column edge', () => { const j = document.querySelector('#join'); j.style.cssText = 'margin-right:-120px'; }, 'layout.contained-controls'],
     ['a tab row running past the column', () => { document.querySelector('#title').remove(); const c = document.querySelector('#convo'); c.style.display = 'flex'; c.querySelector('.tabs').innerHTML += '<button role="tab">Pinned</button><button role="tab">Calls</button>'.repeat(4); }, 'layout.contained-controls'],
@@ -792,8 +803,8 @@ table{width:100%;border-collapse:collapse} th,td{padding:0 12px;height:44px;text
           ['a table starting below the fold', () => document.querySelector('#filters').insertAdjacentHTML('afterend', '<p style="margin:0;height:520px">Long introduction</p>'), 'table below the fold']] },
       { ids: ['density.narrow-block'], valid: [['a full-width table', () => {}], ['a narrow table with a summary beside it', () => { const l = document.querySelector('#list'); const row = document.createElement('div'); row.style.cssText = 'display:flex;gap:16px'; l.before(row); row.append(l); l.style.width = '420px'; row.insertAdjacentHTML('beforeend', '<div class="card" style="flex:1">Summary of runs</div>'); }]],
         broken: [['a table held to 420px with the rest of the column blank', () => { document.querySelector('#list').style.maxWidth = '420px'; }, 'block width']] },
-      { ids: ['align.grid'], valid: [['lines on the gutter, the table inset and card padding', () => {}], ['a card inside a card (16 + 16)', () => { document.querySelector('#card').insertAdjacentHTML('beforeend', '<div class="card" style="margin-top:8px">Nested note</div>'); }], ['a centred empty state', () => { document.querySelector('#body').insertAdjacentHTML('beforeend', '<div style="text-align:center;padding:4px">Nothing else</div>'); }]],
-        broken: [['a paragraph indented 4px off the grid', () => document.querySelector('#body').insertAdjacentHTML('beforeend', '<p style="padding-left:4px">Stray paragraph</p>'), 'line start off the grid'],
+      { ids: ['align.grid'], valid: [['lines on the gutter, the table inset and card padding', () => {}], ['a document page uses its own inset grid', () => { document.querySelector('#body').insertAdjacentHTML('beforeend', '<section data-reading-presentation="page"><p style="padding-left:4px">Document page text</p></section>'); }], ['a card inside a card (16 + 16)', () => { document.querySelector('#card').insertAdjacentHTML('beforeend', '<div class="card" style="margin-top:8px">Nested note</div>'); }], ['a centred empty state', () => { document.querySelector('#body').insertAdjacentHTML('beforeend', '<div style="text-align:center;padding:4px">Nothing else</div>'); }]],
+        broken: [['a paragraph indented 4px off the grid', () => document.querySelector('#body').insertAdjacentHTML('beforeend', '<p style="padding-left:4px">Stray paragraph</p>'), 'line start off the grid'], ['an ordinary paragraph beside a document still fails', () => document.querySelector('#body').insertAdjacentHTML('beforeend', '<section data-reading-presentation="page"><p style="padding-left:4px">Document page text</p></section><p style="padding-left:4px">Stray host paragraph</p>'), 'line start off the grid'],
           ['a header action 6px short of the reading edge', () => { const f = document.querySelector('#filters'); f.style.justifyContent = 'space-between'; f.insertAdjacentHTML('beforeend', '<button style="margin-right:6px">Export</button>'); }, 'right edge off the grid']] },
       { ids: ['align.baseline'], valid: [['a label and value on one baseline', () => {}], ['a ✓ glyph centred beside its label (an icon, not a label)', () => { document.querySelector('#body').insertAdjacentHTML('beforeend', '<div style="display:flex;align-items:center;gap:6px"><span style="font-size:16px">✓</span><span style="font-size:12px">Contract complete</span></div>'); }]],
         broken: [['a 12px label centred against a 24px value', () => { document.querySelector('#meta').style.alignItems = 'center'; }, 'baseline delta']] },

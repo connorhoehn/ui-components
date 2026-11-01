@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useEffect, useMemo, useState, type ComponentProps } from 'react';
 import * as Y from 'yjs';
 import { Awareness, encodeAwarenessUpdate, applyAwarenessUpdate } from 'y-protocols/awareness';
+import { TableKit } from '@tiptap/extension-table';
 import { ySyncPluginKey, absolutePositionToRelativePosition } from '@tiptap/y-tiptap';
 import useFollowCursor from './useFollowCursor';
 import CanvasDocumentView, { type CanvasUnsupportedForm } from './CanvasDocumentView';
@@ -634,3 +635,24 @@ export const FollowBarPinnedWhileScrollingDark: Story = {
     </div>
   ),
 };
+
+const READING_EXTENSIONS = [...EXTENSIONS, TableKit];
+const READING_HTML = '<h1>Release guide</h1><p>How to prepare, validate and publish a component release.</p>' +
+  ['Prepare the change', 'Validate the package', 'Publish the release', 'Recover a failed release'].map((title, i) =>
+    `<h2>${title}</h2><p>Section ${i + 1} explains the decisions, required checks and links for this stage.</p>` +
+    Array.from({ length: 6 }, () => '<p>Keep the document readable at every pane width. Check the actual packed package and the consuming application before completing this stage.</p>').join('') +
+    '<h3>Checklist</h3><ul><li>Review the change</li><li>Record the result</li></ul><table><tr><th>Symptom</th><th>Cause</th><th>Recovery</th></tr><tr><td>The installed package does not include the expected component.</td><td>The consumer is using the previous packed release.</td><td>Install the verified release and refresh the development bundle.</td></tr></table>').join('');
+
+function ReadingExample({ pane = false }: { pane?: boolean }) {
+  const fixture = useFixture();
+  const onReady = useSeed(READING_HTML, fixture.body);
+  return <div className={pane ? 'h-[640px] w-full max-w-[480px]' : 'h-[720px] w-full max-w-[1100px]'}>
+    <CanvasDocumentView {...fixture} {...BASE} extensions={READING_EXTENSIONS} isCanvas editable={false} fitHeight="parent" readingNavigation
+      readingPresentation={pane ? 'pane' : 'page'} showRuler={false} onEditorReady={onReady} />
+  </div>;
+}
+
+/** The same document surface arranged vertically for a right-hand pane. */
+export const ReadOnlyPane: Story = { args: { isCanvas: true, body: null, ydoc: null as never, provider: null, ...BASE }, render: () => <ReadingExample pane /> };
+/** A wide workspace document, with contents and persistent return navigation. */
+export const ReadOnlyPage: Story = { args: { isCanvas: true, body: null, ydoc: null as never, provider: null, ...BASE }, render: () => <ReadingExample /> };

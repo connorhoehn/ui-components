@@ -129,7 +129,9 @@ page body scroller that is itself flush to the rail still fails.
   page-title step (20px) or larger in the column. A conversation route folds
   the page title into the trail (ScopeHeader `collapsed`) and its
   ChannelHeader name is the one title; two stacked 20px headers fail, and so
-  does a column with no title at all.
+  does a column with no title at all. Headings inside an explicit `role="document"`
+  belong to the document outline and do not count as host page titles; an
+  ordinary second heading beside that document still fails.
 - **`layout.contained-controls`** (`contained`): every visible control
   (`button`, links, tabs, inputs) lies inside the viewport, inside its region
   (content column, rail, shell header/footer) and inside every ancestor that
@@ -882,3 +884,7 @@ retaining header type, cell type and inset checks. Ordinary tables continue
 to require the fixed collection rhythm. A valid tall row, a broken inset and
 a tall ordinary neighbor are mutation-tested. Focus walks reset the browser's
 sequential navigation start and omit programmatically focusable controls.
+
+CanvasDocumentView marks its independent document viewport with `data-reading-presentation`. Its paper margins and status bar use the document grid, so the host `align.grid` rule excludes only that viewport. Text, control, contrast, overflow and table rules continue to run there; neighboring host content remains on the application grid. The self-test covers both the document inset and a stray host paragraph beside it.
+
+Embedded contents buttons (`data-reading-contents`) use the paper font, checked against `.doc-page` by `document.contents-font`. Ordinary host buttons remain on the UI font profile. Fixtures reject both a mismatched contents font and a neighboring host control incorrectly using the paper font.
