@@ -36,7 +36,7 @@ import { o as Ze, t as Qe } from "./VerdictChip-Z5qQHvzJ.js";
 import { a as $e, c as et, d as tt, f as nt, h as rt, i as it, l as at, m as ot, n as st, o as ct, p as lt, r as ut, s as dt, t as ft, u as pt } from "./TiptapEditor-BjjwDyPa.js";
 import { i as mt, n as ht, r as gt, t as _t } from "./FloatingComposerDock-D10uQ4k3.js";
 import { A as vt, B as yt, C as bt, D as xt, E as St, F as Ct, G as wt, H as Tt, I as Et, J as Dt, K as Ot, L as kt, M as At, N as jt, O as Mt, P as Nt, R as Pt, S as Ft, T as It, U as Lt, V as Rt, W as zt, _ as Bt, a as Vt, b as Ht, c as Ut, d as Wt, f as Gt, g as Kt, h as qt, i as Jt, j as Yt, k as Xt, l as Zt, m as Qt, o as $t, p as en, q as tn, r as nn, s as rn, t as an, u as on, v as sn, w as cn, x as ln, y as un, z as dn } from "./DocumentEditorPage-DkeDrm_f.js";
-import { C as fn, S as pn, T as mn, _ as hn, a as gn, b as _n, c as vn, d as yn, f as bn, g as xn, h as Sn, i as Cn, l as wn, m as Tn, n as En, o as Dn, p as On, r as kn, s as An, t as jn, u as Mn, v as Nn, w as Pn, x as Fn, y as In } from "./useDocumentImageUpload-CmMHKE9G.js";
+import { C as fn, S as pn, T as mn, _ as hn, a as gn, b as _n, c as vn, d as yn, f as bn, g as xn, h as Sn, i as Cn, l as wn, m as Tn, n as En, o as Dn, p as On, r as kn, s as An, t as jn, u as Mn, v as Nn, w as Pn, x as Fn, y as In } from "./useDocumentImageUpload-DnofibTU.js";
 import { i as Ln } from "./ConversationInputs-D6Bhkit6.js";
 import { r as Rn } from "./RichChatComposer-DZnIJe_3.js";
 import { forwardRef as zn, useCallback as z, useEffect as B, useId as Bn, useImperativeHandle as Vn, useMemo as V, useRef as H, useState as U } from "react";
@@ -45,8 +45,8 @@ import * as Hn from "yjs";
 import { relativePositionToAbsolutePosition as Un, ySyncPluginKey as Wn } from "@tiptap/y-tiptap";
 import { Extension as Gn, Mark as Kn, mergeAttributes as qn } from "@tiptap/core";
 import { EditorState as Jn, Plugin as Yn, PluginKey as Xn, TextSelection as q } from "@tiptap/pm/state";
-import { AddMarkStep as Zn, AddNodeMarkStep as Qn, AttrStep as $n, RemoveMarkStep as er, RemoveNodeMarkStep as tr, ReplaceAroundStep as nr, ReplaceStep as rr, Transform as ir, replaceStep as ar } from "@tiptap/pm/transform";
-import { Decoration as or, DecorationSet as sr } from "@tiptap/pm/view";
+import { Decoration as Zn, DecorationSet as Qn } from "@tiptap/pm/view";
+import { AddMarkStep as $n, AddNodeMarkStep as er, AttrStep as tr, RemoveMarkStep as nr, RemoveNodeMarkStep as rr, ReplaceAroundStep as ir, ReplaceStep as ar, Transform as or, replaceStep as sr } from "@tiptap/pm/transform";
 //#region src/components/doc-editor/DocumentListPage.tsx
 function cr(e) {
 	let t = Date.now(), n = new Date(e).getTime();
@@ -2046,16 +2046,16 @@ function Fi(e) {
 function Ii(e) {
 	let { deletion: t, insertion: n } = X(e.schema), r = [], i = null, a = null, o = 0;
 	return e.doc.descendants((e, s, c) => {
-		if (e.isTextblock && e.childCount && (e.children.every((e) => !!Z(e.marks, t)) && r.push(or.node(s, s + e.nodeSize, { "data-node-deletion": "true" })), e.children.every((e) => !!Z(e.marks, n)) && r.push(or.node(s, s + e.nodeSize, { "data-node-insertion": "true" }))), e.type.name !== "text") return !0;
+		if (e.isTextblock && e.childCount && (e.children.every((e) => !!Z(e.marks, t)) && r.push(Zn.node(s, s + e.nodeSize, { "data-node-deletion": "true" })), e.children.every((e) => !!Z(e.marks, n)) && r.push(Zn.node(s, s + e.nodeSize, { "data-node-insertion": "true" }))), e.type.name !== "text") return !0;
 		let l = Z(e.marks, t), u = Z(e.marks, n), d = a ? Z(a.marks, t) : void 0, f = a ? Z(a.marks, n) : void 0, p = o;
-		return a = e, o = s + e.nodeSize, c === i ? (i = c, !0) : (i = c, (!l || !d) && (!u || !f) || !Y(J(l), J(d)) && !Y(J(u), J(f)) || (l && r.push(or.widget(p, Pi, {
+		return a = e, o = s + e.nodeSize, c === i ? (i = c, !0) : (i = c, (!l || !d) && (!u || !f) || !Y(J(l), J(d)) && !Y(J(u), J(f)) || (l && r.push(Zn.widget(p, Pi, {
 			key: Fi(l),
 			marks: [l]
-		})), u && r.push(or.widget(p, Pi, {
+		})), u && r.push(Zn.widget(p, Pi, {
 			key: Fi(u),
 			marks: [u]
 		})), !0));
-	}), sr.create(e.doc, r);
+	}), Qn.create(e.doc, r);
 }
 //#endregion
 //#region src/components/doc-editor/suggestions/vendor/plugin.ts
@@ -2157,15 +2157,15 @@ function Hi(e, t, n, r, i, a) {
 	});
 }
 function Ui(e) {
-	let { deletion: t, insertion: n } = X(e.type.schema), r = new ir(e);
+	let { deletion: t, insertion: n } = X(e.type.schema), r = new or(e);
 	return zi(r, t), Bi(e, r, n, t), Hi(r.doc, r, 1), r.doc;
 }
 function Wi(e) {
-	let { deletion: t, insertion: n } = X(e.type.schema), r = new ir(e);
+	let { deletion: t, insertion: n } = X(e.type.schema), r = new or(e);
 	return zi(r, n), Bi(e, r, t, n), Hi(r.doc, r, -1), r.doc;
 }
 function Gi(e, t, n) {
-	let r = e.resolve(t).blockRange(e.resolve(n)), { deletion: i, insertion: a } = X(e.type.schema), o = new ir(e);
+	let r = e.resolve(t).blockRange(e.resolve(n)), { deletion: i, insertion: a } = X(e.type.schema), o = new or(e);
 	return Bi(e, o, a, i, void 0, r.start, r.end), Hi(e, o, 1, void 0, r.start, r.end), o.doc.slice(o.mapping.map(t), o.mapping.map(n));
 }
 function Ki(e, t) {
@@ -2239,7 +2239,7 @@ function Zi(e, t, n, r, i, a) {
 function Qi(e, t, n, r, i, a) {
 	let o = r.apply(n).doc;
 	if (!o) return !1;
-	let s = Gi(o, r.from, r.to), c = ar(n, r.from, r.to, s);
+	let s = Gi(o, r.from, r.to), c = sr(n, r.from, r.to, s);
 	return c ? Zi(e, t, n, c, i, a) : !1;
 }
 //#endregion
@@ -2281,7 +2281,7 @@ function ea(e, t, n, r, i, a) {
 function ta(e, t, n, r, i, a) {
 	let o = r.apply(n).doc;
 	if (!o) return !1;
-	let s = Gi(o, r.from, r.to), c = ar(n, r.from, r.to, s);
+	let s = Gi(o, r.from, r.to), c = sr(n, r.from, r.to, s);
 	return c ? Zi(e, t, n, c, i, a) : !1;
 }
 //#endregion
@@ -2303,10 +2303,10 @@ function ra(e, t, n, r, i, a) {
 		let { modification: o } = X(t.schema), s = r.slice.content.firstChild, c = $(r.from, i, e.steps), l = e.doc.resolve(c).nodeAfter;
 		if (!s || !l) throw Error("Failed to apply modifications to node: unexpected ReplaceAroundStep as oldNode / newNode is null");
 		if (s.marks.filter((e) => !l?.marks.some((t) => t.eq(e))).forEach((s) => {
-			s.type !== o && $i(e, t, n, new Qn(r.from, s), i, a);
+			s.type !== o && $i(e, t, n, new er(r.from, s), i, a);
 		}), c = $(r.from, i, e.steps), l = e.doc.resolve(c).nodeAfter, !l) throw Error("Failed to apply modifications to node: unexpected ReplaceAroundStep as oldNode is null");
 		if (l.marks.filter((e) => !s.marks.some((t) => t.eq(e))).forEach((s) => {
-			s.type !== o && na(e, t, n, new tr(r.from, s), i, a);
+			s.type !== o && na(e, t, n, new rr(r.from, s), i, a);
 		}), s.type.name !== l.type.name) {
 			let t = $(r.from, i, e.steps), n = e.doc.resolve(t).nodeAfter;
 			if (!n) throw Error("Failed to apply modifications to node: no node found");
@@ -2319,7 +2319,7 @@ function ra(e, t, n, r, i, a) {
 			}).addToSet(c), e.setNodeMarkup(t, s.type, null, c);
 		}
 		let u = /* @__PURE__ */ new Set([...Object.keys(s.attrs), ...Object.keys(l.attrs)]);
-		for (let o of u) s.attrs[o] !== l.attrs[o] && ea(e, t, n, new $n(r.from, o, s.attrs[o]), i, a);
+		for (let o of u) s.attrs[o] !== l.attrs[o] && ea(e, t, n, new tr(r.from, o, s.attrs[o]), i, a);
 		return !0;
 	}
 	return !1;
@@ -2330,13 +2330,13 @@ function ia(e, t, n, r, i, a) {
 	if (!o) return !1;
 	let s = r.getMap().map(r.from, -1), c = r.getMap().map(r.to, 1), l = o.resolve(s).blockRange(o.resolve(c));
 	if (!l) return !1;
-	let u = ar(n, r.getMap().invert().map(l.start), r.getMap().invert().map(l.end), Gi(o, l.start, l.end));
+	let u = sr(n, r.getMap().invert().map(l.start), r.getMap().invert().map(l.end), Gi(o, l.start, l.end));
 	return u ? Zi(e, t, n, u, i, a) : !1;
 }
 //#endregion
 //#region src/components/doc-editor/suggestions/vendor/withSuggestChanges.ts
 function aa(e) {
-	return e instanceof rr ? Zi : e instanceof nr ? ia : e instanceof Zn ? Qi : e instanceof er ? ta : e instanceof Qn ? $i : e instanceof tr ? na : e instanceof $n ? ea : (e, t, n, r, i) => {
+	return e instanceof ar ? Zi : e instanceof ir ? ia : e instanceof $n ? Qi : e instanceof nr ? ta : e instanceof er ? $i : e instanceof rr ? na : e instanceof tr ? ea : (e, t, n, r, i) => {
 		let a = i.slice().reverse().reduce((e, t) => e?.map(t.getMap().invert()) ?? null, r), o = e.steps.reduce((e, t) => e?.map(t.getMap()) ?? null, a);
 		return o && e.step(o), !1;
 	};

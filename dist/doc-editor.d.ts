@@ -162,7 +162,7 @@ export declare interface CanvasDocumentFrame {
     surface: ReactNode;
 }
 
-export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, belowRuler, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, onHoverGutterItem, gutterVisible, showRuler, toolbarDensity, showStatusBar, zoomMode, toolbarStyle, pageMargin, onDocumentStats, fitHeight, showOutline, paginate, onToggleGutter, renderFrame, onInsertImage, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
+export declare function CanvasDocumentView({ isCanvas, body, ydoc, provider, user, editable, extensions, onConvert, convertSlot, unsupported, schemaProbe, header, belowRuler, toolbarActions, gutterItems, gutterLead, onFocusGutterItem, onHoverGutterItem, gutterVisible, showRuler: requestedRuler, toolbarDensity, showStatusBar, zoomMode, initialZoom, toolbarStyle, pageMargin, onDocumentStats, fitHeight, showOutline: requestedOutline, paginate: requestedPagination, readingPresentation, readingNavigation, onToggleGutter, renderFrame, onInsertImage, onEditorReady, 'data-testid': testId, }: CanvasDocumentViewProps): JSX.Element;
 
 export declare interface CanvasDocumentViewProps {
     /** True when the document is already a canvas (`meta.schemaVersion >= 2`). */
@@ -335,6 +335,8 @@ export declare interface CanvasDocumentViewProps {
     }) => void;
     /** `fit` pins the sheet to the pane's width and ignores the remembered zoom — for a document shown in a narrow host. */
     zoomMode?: 'remembered' | 'fit';
+    /** Optional starting scale for an embedded reader; later zoom choices still work. */
+    initialZoom?: number;
     /**
      * `card` (since 2.386.5) draws the toolbar as one white rounded card on the
      * workspace grey, as the word-processor row (`DocumentToolbar
@@ -361,6 +363,10 @@ export declare interface CanvasDocumentViewProps {
      * emptiness next to the thing you are reading.
      */
     showOutline?: boolean;
+    /** Read-only document layout. Pane keeps normal-size text and a continuous sheet. */
+    readingPresentation?: 'page' | 'pane';
+    /** Contents at the top and a persistent return-to-contents control. */
+    readingNavigation?: boolean;
     /**
      * Draw page boundaries on the sheet: a 24px band of desk every 1056px with
      * a one-inch margin of white on each side of it, and a page count in the
@@ -1445,7 +1451,7 @@ export declare interface DocumentModePillProps {
     'data-testid'?: string;
 }
 
-export declare function DocumentOutline({ entries, activeId, onSelect, emptyLabel, className, 'data-testid': testId, }: DocumentOutlineProps): JSX.Element;
+export declare function DocumentOutline({ entries, activeId, onSelect, emptyLabel, className, wrap, 'data-testid': testId, 'aria-label': ariaLabel, }: DocumentOutlineProps): JSX.Element;
 
 export declare interface DocumentOutlineProps {
     entries: readonly OutlineEntry[];
@@ -1454,8 +1460,12 @@ export declare interface DocumentOutlineProps {
     onSelect?: (id: string) => void;
     /** Shown when the document has no headings yet. */
     emptyLabel?: string;
+    /** Keep long headings readable in a vertical reading pane. */
+    wrap?: boolean;
     className?: string;
     'data-testid'?: string;
+    /** Label the navigation for non-document readers such as a review page. */
+    'aria-label'?: string;
 }
 
 export declare function DocumentOwnership({ owner, collaborators, maxAvatars, onShare, className, 'data-testid': testId, }: DocumentOwnershipProps): JSX.Element | null;

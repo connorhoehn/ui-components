@@ -1020,6 +1020,8 @@ declare interface CanvasDocumentViewProps {
     }) => void;
     /** `fit` pins the sheet to the pane's width and ignores the remembered zoom — for a document shown in a narrow host. */
     zoomMode?: 'remembered' | 'fit';
+    /** Optional starting scale for an embedded reader; later zoom choices still work. */
+    initialZoom?: number;
     /**
      * `card` (since 2.386.5) draws the toolbar as one white rounded card on the
      * workspace grey, as the word-processor row (`DocumentToolbar
@@ -1046,6 +1048,10 @@ declare interface CanvasDocumentViewProps {
      * emptiness next to the thing you are reading.
      */
     showOutline?: boolean;
+    /** Read-only document layout. Pane keeps normal-size text and a continuous sheet. */
+    readingPresentation?: 'page' | 'pane';
+    /** Contents at the top and a persistent return-to-contents control. */
+    readingNavigation?: boolean;
     /**
      * Draw page boundaries on the sheet: a 24px band of desk every 1056px with
      * a one-inch margin of white on each side of it, and a page count in the
