@@ -4,11 +4,11 @@ import { n as r, o as i } from "./Button-C-I3BxWI.js";
 import { t as a } from "./Card-CbTNNNkk.js";
 import { n as o } from "./overlayStack-DxIDMUs-.js";
 import { t as s } from "./IconButton-J9jGN6eo.js";
-import { ht as c, lt as l, m as u } from "./Icons-GSE-QGuJ.js";
+import { gt as c, m as l, ut as u } from "./Icons-C__ztBBw.js";
 import { i as d } from "./MediaIcons-_ai5Til2.js";
-import { c as f, i as p, l as m, n as h } from "./Text-CSM3FBdF.js";
-import { t as g } from "./Badge-DDvIKsHa.js";
-import { t as _ } from "./Banner-CU6GChN-.js";
+import { c as f, i as p, l as m, n as h } from "./Text-DqNdYJ7p.js";
+import { t as g } from "./Badge-CogooeUA.js";
+import { t as _ } from "./Banner-9a794qOE.js";
 import { t as v } from "./Modal-PO0F6rAp.js";
 import { t as y } from "./Input-B0LB5k_L.js";
 import { t as b } from "./Select-DovxLSsz.js";
@@ -16,29 +16,29 @@ import { t as x } from "./InlinePopover-CdWlzyRG.js";
 import { t as S } from "./EmptyState-D5ucMp2y.js";
 import { n as C } from "./ThinkingDots-mZ3dq0w9.js";
 import { n as w } from "./StatusPill-CLkB5jFS.js";
-import { t as T } from "./DropdownMenu-DMjUIGR6.js";
+import { t as T } from "./DropdownMenu-iRFl_IXz.js";
 import { t as E } from "./Textarea-BwvE1HPn.js";
 import { t as ee } from "./Avatar-DkkMISPQ.js";
 import { t as te } from "./SegmentedControl-DJWbLQSw.js";
-import { t as D } from "./InlineAlert-CBtteaVZ.js";
-import { t as O } from "./CardHeader-C50GEAmo.js";
-import { t as ne } from "./Breadcrumbs-Cd7msRTF.js";
+import { t as D } from "./InlineAlert-BqOYETP1.js";
+import { t as O } from "./CardHeader-DzQxX5J-.js";
+import { t as ne } from "./Breadcrumbs-B1UvNQLg.js";
 import { t as k } from "./PresenceAvatars--JG3ZaTz.js";
 import { t as re } from "./ChangeDiff-BEScRhcZ.js";
 import { t as A } from "./MetaLine-DFn2XXGU.js";
 import { t as j } from "./Checkbox-Dvt09s3H.js";
-import { n as M } from "./FileKindMark-DEeDqhYT.js";
+import { n as M } from "./FileKindMark-D7I7FHuP.js";
 import { t as N } from "./activationKey-CjbL3LUv.js";
 import { A as ie, k as ae } from "./renderers-CTbdrwJE.js";
-import { A as P, B as oe, C as F, D as se, E as ce, F as le, G as I, H as L, I as R, J as ue, K as z, L as de, M as fe, N as pe, O as me, P as he, R as ge, S as _e, T as ve, U as ye, V as be, W as xe, X as Se, _ as Ce, a as we, b as Te, c as Ee, d as De, f as Oe, g as ke, h as Ae, i as je, j as Me, k as Ne, l as Pe, m as Fe, n as Ie, o as Le, p as Re, q as ze, r as Be, s as Ve, t as He, u as Ue, v as We, w as Ge, x as Ke, y as qe, z as Je } from "./ProposedEditStrip-DzFMlcjv.js";
+import { A as P, B as oe, C as F, D as se, E as ce, F as le, G as I, H as L, I as R, J as ue, K as z, L as de, M as fe, N as pe, O as me, P as he, R as ge, S as _e, T as ve, U as ye, V as be, W as xe, X as Se, _ as Ce, a as we, b as Te, c as Ee, d as De, f as Oe, g as ke, h as Ae, i as je, j as Me, k as Ne, l as Pe, m as Fe, n as Ie, o as Le, p as Re, q as ze, r as Be, s as Ve, t as He, u as Ue, v as We, w as Ge, x as Ke, y as qe, z as Je } from "./ProposedEditStrip-CWI2in3a.js";
 import { t as Ye } from "./InlineEditableText-CzB64Ufv.js";
 import { o as Xe, t as Ze } from "./VerdictChip-Z5qQHvzJ.js";
 import { a as Qe, c as $e, d as et, f as tt, h as nt, i as rt, l as it, m as at, n as ot, o as st, p as ct, r as lt, s as ut, t as dt, u as ft } from "./TiptapEditor-BjjwDyPa.js";
 import { i as pt, n as mt, r as ht, t as gt } from "./FloatingComposerDock-D10uQ4k3.js";
-import { A as _t, B as vt, C as yt, D as bt, E as xt, F as St, G as Ct, H as wt, I as Tt, J as Et, K as Dt, L as Ot, M as kt, N as At, O as jt, P as Mt, R as Nt, S as Pt, T as Ft, U as It, V as Lt, W as Rt, _ as zt, a as Bt, b as Vt, c as Ht, d as Ut, f as Wt, g as Gt, h as Kt, i as qt, j as Jt, k as Yt, l as Xt, m as Zt, o as Qt, p as $t, q as en, r as tn, s as nn, t as rn, u as an, v as on, w as sn, x as cn, y as ln, z as un } from "./DocumentEditorPage-Bpi7km_b.js";
-import { C as dn, S as fn, T as pn, _ as mn, a as hn, b as gn, c as _n, d as vn, f as yn, g as bn, h as xn, i as Sn, l as Cn, m as wn, n as Tn, o as En, p as Dn, r as On, s as kn, t as An, u as jn, v as Mn, w as Nn, x as Pn, y as Fn } from "./useDocumentImageUpload-BF5gCpjJ.js";
-import { i as In } from "./ConversationInputs-BEAIzYyi.js";
-import { r as Ln } from "./RichChatComposer-DbfyeuQ8.js";
+import { A as _t, B as vt, C as yt, D as bt, E as xt, F as St, G as Ct, H as wt, I as Tt, J as Et, K as Dt, L as Ot, M as kt, N as At, O as jt, P as Mt, R as Nt, S as Pt, T as Ft, U as It, V as Lt, W as Rt, _ as zt, a as Bt, b as Vt, c as Ht, d as Ut, f as Wt, g as Gt, h as Kt, i as qt, j as Jt, k as Yt, l as Xt, m as Zt, o as Qt, p as $t, q as en, r as tn, s as nn, t as rn, u as an, v as on, w as sn, x as cn, y as ln, z as un } from "./DocumentEditorPage-DIk5VjIQ.js";
+import { C as dn, S as fn, T as pn, _ as mn, a as hn, b as gn, c as _n, d as vn, f as yn, g as bn, h as xn, i as Sn, l as Cn, m as wn, n as Tn, o as En, p as Dn, r as On, s as kn, t as An, u as jn, v as Mn, w as Nn, x as Pn, y as Fn } from "./useDocumentImageUpload-CmMHKE9G.js";
+import { i as In } from "./ConversationInputs-D6Bhkit6.js";
+import { r as Ln } from "./RichChatComposer-DLCjmujA.js";
 import { forwardRef as Rn, useCallback as B, useEffect as V, useId as zn, useImperativeHandle as Bn, useMemo as H, useRef as U, useState as W } from "react";
 import { Fragment as G, jsx as K, jsxs as q } from "react/jsx-runtime";
 import * as Vn from "yjs";
@@ -2963,7 +2963,7 @@ function Ia({ filled: e }) {
 		children: /* @__PURE__ */ K("path", { d: "M8 1.9l1.8 3.7 4.1.6-3 2.9.7 4.1L8 11.3l-3.6 1.9.7-4.1-3-2.9 4.1-.6L8 1.9Z" })
 	});
 }
-function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: a, starred: c = !1, onStarredChange: l, statusPill: d, path: f, crumbsTrailing: m, subtitle: h, metaBar: _, participants: v, onParticipantClick: y, onFollowParticipant: b, followingParticipantId: x, meta: S, saveState: C, headActions: w, tabs: T, activeTab: E, onTabChange: ee, toolbar: te, children: D, footer: O, proposal: re, surface: A = "workspace", explorer: j, workbench: N, label: ie = "Editor", variant: ae = "document", itemType: P, itemKey: oe, titleSize: F = "md", titleAs: se = "h1", titleOverflow: ce = "truncate", tabsTrailing: le, className: I, "data-testid": L = "editor-shell" }) {
+function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: a, starred: c = !1, onStarredChange: u, statusPill: d, path: f, crumbsTrailing: m, subtitle: h, metaBar: _, participants: v, onParticipantClick: y, onFollowParticipant: b, followingParticipantId: x, meta: S, saveState: C, headActions: w, tabs: T, activeTab: E, onTabChange: ee, toolbar: te, children: D, footer: O, proposal: re, surface: A = "workspace", explorer: j, workbench: N, label: ie = "Editor", variant: ae = "document", itemType: P, itemKey: oe, titleSize: F = "md", titleAs: se = "h1", titleOverflow: ce = "truncate", tabsTrailing: le, className: I, "data-testid": L = "editor-shell" }) {
 	let R = ae === "work-item", ue = R && (P || oe) ? /* @__PURE__ */ q(G, { children: [P && /* @__PURE__ */ K(o, {
 		size: "sm",
 		tone: "info",
@@ -3013,7 +3013,7 @@ function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 						className: "flex h-7 min-w-0 items-center gap-2 text-[13px] text-text-secondary",
 						"data-testid": `${L}-crumbs-row`,
 						children: [
-							/* @__PURE__ */ K(u, {
+							/* @__PURE__ */ K(l, {
 								dir: "right",
 								size: 12,
 								"aria-hidden": "true",
@@ -3100,12 +3100,12 @@ function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 													"data-testid": `${L}-title`,
 													"data-title-size": F,
 													children: t
-												}), l && /* @__PURE__ */ K(s, {
+												}), u && /* @__PURE__ */ K(s, {
 													size: "sm",
 													"aria-label": c ? "Remove star" : "Star this file",
 													"aria-pressed": c,
 													title: c ? "Starred" : "Star",
-													onClick: () => l(!c),
+													onClick: () => u(!c),
 													className: c ? "shrink-0 text-primary" : "shrink-0 text-text-tertiary",
 													"data-testid": `${L}-star`,
 													children: /* @__PURE__ */ K(Ia, { filled: c })
@@ -3117,6 +3117,7 @@ function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 												"data-testid": `${L}-path`,
 												children: /* @__PURE__ */ K(ne, {
 													items: f,
+													"aria-label": "Document location",
 													maxItems: 4,
 													lastIsCurrent: !1,
 													size: "sm",
@@ -3861,15 +3862,15 @@ var Ja = Rn(function({ mentionUsers: e, onReply: t, onResolve: r, onAskAgent: i,
 });
 //#endregion
 //#region src/components/doc-editor/CommentHandoffBar.tsx
-function Ya({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1, onResolveOnApplyChange: a, onDismiss: o, className: s, "data-testid": u = "comment-handoff-bar" }) {
+function Ya({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1, onResolveOnApplyChange: a, onDismiss: o, className: s, "data-testid": l = "comment-handoff-bar" }) {
 	let d = r === "reply", f = d ? "Stop replying" : "Stop answering this comment";
 	return /* @__PURE__ */ q("div", {
 		role: "status",
-		"data-testid": u,
+		"data-testid": l,
 		"data-variant": r,
 		className: n("flex min-w-0 items-center gap-3 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-text-secondary shadow-sm", s),
 		children: [
-			d ? /* @__PURE__ */ K(l, {
+			d ? /* @__PURE__ */ K(u, {
 				size: 14,
 				"aria-hidden": "true",
 				className: "shrink-0 text-primary"
@@ -3905,7 +3906,7 @@ function Ya({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1,
 				children: [/* @__PURE__ */ K(j, {
 					checked: i,
 					onChange: (e) => a?.(e),
-					"data-testid": `${u}-resolve`
+					"data-testid": `${l}-resolve`
 				}), "Resolve when applied"]
 			}),
 			/* @__PURE__ */ K("button", {
@@ -3913,7 +3914,7 @@ function Ya({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1,
 				onClick: o,
 				"aria-label": f,
 				title: f,
-				"data-testid": `${u}-dismiss`,
+				"data-testid": `${l}-dismiss`,
 				className: "grid h-6 w-6 shrink-0 place-items-center rounded border-0 bg-transparent p-0 text-text-tertiary hover:bg-surface-hover hover:text-text-primary",
 				children: /* @__PURE__ */ K("span", {
 					"aria-hidden": "true",

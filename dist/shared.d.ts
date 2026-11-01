@@ -473,12 +473,14 @@ export declare interface BreadcrumbItem {
 
 export declare type BreadcrumbOverflow = 'ellipsis' | 'menu';
 
-export declare function Breadcrumbs({ items, separator, maxItems, overflow, minItems, lastIsCurrent, size, className, 'data-testid': testId, }: BreadcrumbsProps): JSX.Element | null;
+export declare function Breadcrumbs({ items, 'aria-label': label, separator, maxItems, overflow, minItems, lastIsCurrent, size, className, 'data-testid': testId, }: BreadcrumbsProps): JSX.Element | null;
 
 export declare type BreadcrumbSize = 'sm' | 'md';
 
 export declare interface BreadcrumbsProps {
     items: BreadcrumbItem[];
+    /** Distinguish this trail from other navigation landmarks on the page. */
+    'aria-label'?: string;
     /** Custom separator rendered between items (default: "/") */
     separator?: ReactNode;
     /**
@@ -610,10 +612,12 @@ export declare interface CapabilityDeniedFallbackProps {
 
 export declare function Card({ children, padding, className, ref, ...rest }: CardProps): JSX.Element;
 
-export declare function CardHeader({ title, subtitle, meta, action, inset, className }: CardHeaderProps): default_2.JSX.Element;
+export declare function CardHeader({ title, as: Heading, subtitle, meta, action, inset, className }: CardHeaderProps): default_2.JSX.Element;
 
 export declare interface CardHeaderProps {
     title: string;
+    /** Semantic heading level, independent of visual size. Use h2 directly under a page title. */
+    as?: 'h2' | 'h3' | 'h4';
     /** Small text below the title. */
     subtitle?: string;
     /** Extra content rendered immediately to the right of the title (badges/chips). */
@@ -1660,10 +1664,12 @@ export declare interface DetailHeaderProps {
     'data-testid'?: string;
 }
 
-export declare function DetailSection({ title, hint, actions, first, variant, size: sizeProp, description, children, className, 'data-testid': testId, }: DetailSectionProps): JSX.Element;
+export declare function DetailSection({ title, as: Heading, hint, actions, first, variant, size: sizeProp, description, children, className, 'data-testid': testId, }: DetailSectionProps): JSX.Element;
 
 export declare interface DetailSectionProps {
     title: string;
+    /** Semantic heading level, independent of visual size. Default h3 preserves nested detail sections; use h2 directly under a page title. */
+    as?: 'h2' | 'h3' | 'h4';
     /** Quiet qualifier beside the title — a count, a state, a caveat. */
     hint?: ReactNode;
     /** Right-aligned affordance for this section only. */
@@ -3411,6 +3417,9 @@ declare const INTENSITY_SCALE: {
 };
 
 export declare function isRichHeaderContent(kind: HeaderContentKind | undefined): boolean;
+
+/** Italic formatting, drawn as a glyph rather than changing the control font. */
+export declare function ItalicIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 /** A keyboard: shortcuts. Since 2.411.0. */
 export declare function KeyboardIcon({ size, ...rest }: GlyphProps): JSX.Element;

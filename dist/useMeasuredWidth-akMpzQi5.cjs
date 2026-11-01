@@ -1,0 +1,1 @@
+const e=require("./Text-Bc9kx4N6.cjs");function t(t){let{ref:n,size:r}=e.s(t?{forward:t}:{});return{ref:n,width:r}}Object.defineProperty(exports,"t",{enumerable:!0,get:function(){return t}});

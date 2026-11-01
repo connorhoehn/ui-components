@@ -10,7 +10,7 @@ import { t as u } from "./Select-DovxLSsz.js";
 import { t as d } from "./EmptyState-D5ucMp2y.js";
 import { n as f, t as p } from "./Sparkline-BIYPNDRu.js";
 import { t as m } from "./StatusDot-GwVn-q5q.js";
-import { t as h } from "./CardHeader-C50GEAmo.js";
+import { t as h } from "./CardHeader-DzQxX5J-.js";
 import { t as g } from "./Checkbox-Dvt09s3H.js";
 import { t as _ } from "./activationKey-CjbL3LUv.js";
 import { n as v } from "./EventStreamContext-CLzG8O5_.js";
