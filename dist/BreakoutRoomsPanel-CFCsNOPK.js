@@ -1450,10 +1450,12 @@ function et({ title: n, participantCount: a, elapsedMs: o, phase: c, callingTo: 
 		"data-testid": oe,
 		"data-phase": c,
 		"data-layout": pe ? "stage" : Q ? "stack" : "shelf",
+		"data-call-dock": !0,
 		"data-compact": se === "sm" || Q ? "true" : "false",
 		"data-tile-size": Q ? void 0 : se,
 		children: [/* @__PURE__ */ K("div", {
 			className: e("flex min-w-0 flex-wrap items-center gap-x-2 gap-y-2", pe && "order-last justify-center"),
+			"data-call-dock-header": !0,
 			"data-testid": `${oe}-header`,
 			children: [!pe && /* @__PURE__ */ K("div", {
 				className: "flex min-w-0 flex-auto items-baseline gap-3",

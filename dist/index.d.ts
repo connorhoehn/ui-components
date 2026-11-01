@@ -13587,7 +13587,7 @@ export declare interface MeetingToolbarItem {
     active?: boolean;
     /** A toggle that is on (hand raised): filled, `aria-pressed`. */
     pressed?: boolean;
-    /** A number on the icon — the People count, your place in the hand queue. A small badge by default; beside the icon with `labels="visible"`. */
+    /** A number on the icon — the People count, your place in the hand queue. An inline badge by default; plain text with `labels="visible"`. */
     count?: number;
     /** An unread/attention badge on the icon — new chat messages. */
     badge?: number;

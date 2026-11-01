@@ -30,8 +30,8 @@ import { n as xe } from "./RovingToolbar-B1Fai5PF.js";
 import { t as Se } from "./PresenceAvatars--JG3ZaTz.js";
 import { t as Ce } from "./Checkbox-Dvt09s3H.js";
 import { t as we } from "./activationKey-CjbL3LUv.js";
-import { C as Te, E as Ee, H as De, L as Oe, S as ke, V as Ae, Z as je } from "./BreakoutRoomsPanel-DLt_d5ZS.js";
-import "./RecordingConsentNotice-D7FRgOCP.js";
+import { C as Te, E as Ee, H as De, L as Oe, S as ke, V as Ae, Z as je } from "./BreakoutRoomsPanel-CFCsNOPK.js";
+import "./RecordingConsentNotice-x1cB8WjU.js";
 import { useCallback as W, useEffect as G, useImperativeHandle as Me, useLayoutEffect as Ne, useMemo as K, useRef as q, useState as J } from "react";
 import { Fragment as Y, jsx as X, jsxs as Z } from "react/jsx-runtime";
 //#region src/components/video/VideoPlayer.tsx
@@ -5862,7 +5862,7 @@ function si({ item: t, look: n = "compact" }) {
 		className: e(oi[n], u && "text-primary-fg hover:text-primary-fg", t.pressed && "bg-primary-bg text-primary-fg hover:bg-primary-bg hover:text-primary-fg", t.tone === "danger" && "text-danger hover:bg-danger-bg hover:text-danger", t.menu && n !== "phone" && "rounded-r-none pr-1", t.menu && n === "compact" && "pr-0.5"),
 		children: [
 			/* @__PURE__ */ Z("span", {
-				className: "relative inline-flex items-center gap-1",
+				className: "relative inline-flex items-center gap-1.5",
 				children: [
 					t.icon,
 					t.count !== void 0 && (r ? /* @__PURE__ */ X(I, {
@@ -5870,7 +5870,7 @@ function si({ item: t, look: n = "compact" }) {
 						color: "muted",
 						value: t.count,
 						"aria-label": String(t.count),
-						className: "absolute -bottom-1.5 -right-2.5 h-3.5 min-w-3.5 px-1 ring-1 ring-surface",
+						className: "shrink-0",
 						"data-testid": `meeting-toolbar-${t.id}-count`
 					}) : /* @__PURE__ */ X(F, {
 						size: "sm",
@@ -5884,7 +5884,7 @@ function si({ item: t, look: n = "compact" }) {
 						variant: "count",
 						color: "danger",
 						value: t.badge,
-						className: e("absolute -top-1.5", r ? "-right-2.5 h-3.5 min-w-3.5 px-1 ring-1 ring-surface" : "-right-2.5"),
+						className: "shrink-0",
 						"data-testid": `meeting-toolbar-${t.id}-badge`
 					})
 				]
@@ -5981,6 +5981,7 @@ function di({ start: t, items: n, media: r = [], moreSections: i = [], onLeave: 
 		...h,
 		role: "toolbar",
 		"aria-label": "Meeting controls",
+		"data-ui-meeting-toolbar": !0,
 		"data-testid": m,
 		"data-compact": v ? "true" : void 0,
 		"data-layout": _ ? "phone" : void 0,
