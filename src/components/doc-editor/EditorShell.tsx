@@ -185,6 +185,9 @@ export interface EditorShellProps {
    * reads as belonging to the row, not the title. Since 2.389.0.
    */
   tabsTrailing?: ReactNode;
+  /** Horizontal header inset: `editor` (default) is 20px; `page` aligns
+   * with a host page's 24px breadcrumb gutter. Since 2.485.0. */
+  headerInset?: 'editor' | 'page';
   className?: string;
   'data-testid'?: string;
 }
@@ -235,6 +238,7 @@ export function EditorShell({
   titleAs: TitleTag = 'h1',
   titleOverflow = 'truncate',
   tabsTrailing,
+  headerInset = 'editor',
   className,
   'data-testid': testId = 'editor-shell',
 }: EditorShellProps) {
@@ -285,7 +289,7 @@ export function EditorShell({
 
   const pane = (
     <section aria-label={label} data-testid={testId} data-surface={surface} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-surface">
-      <header className="flex flex-col gap-1 border-b border-border px-5 pt-3" data-variant={variant} data-testid={`${testId}-header`}>
+      <header className={cn('flex flex-col gap-1 border-b border-border pt-3', headerInset === 'page' ? 'px-6' : 'px-5')} data-variant={variant} data-header-inset={headerInset} data-testid={`${testId}-header`}>
         {crumbsRow && (
           <div className="flex h-7 min-w-0 items-center gap-2 text-[13px] text-text-secondary" data-testid={`${testId}-crumbs-row`}>
             <ChevronIcon dir="right" size={12} aria-hidden="true" className="-ml-1 shrink-0 text-text-tertiary" />

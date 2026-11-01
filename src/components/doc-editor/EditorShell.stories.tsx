@@ -7,6 +7,7 @@ import { TaskStrip } from '../shared/TaskStrip';
 import { StatusPill } from '../shared/StatusPill';
 import { TreeView, type TreeNode } from '../shared/TreeView';
 import { FileKindMark } from '../shared/FileKindMark';
+import { Breadcrumbs } from '../shared/Breadcrumbs';
 import { Workbench } from '../layout/Workbench';
 import { AgentTaskCard } from '../layout/AgentTaskCard';
 import { Button } from '../ui/Button';
@@ -23,6 +24,15 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/** A host owns the trail; the document's mark/title group shares its gutter. */
+export const PageHeaderInset: Story = {
+  args: { title: 'CI/CD Standards', kind: 'page', headerInset: 'page', children: <PageSurface /> },
+  render: args => <div className="flex h-[760px] flex-col">
+    <div className="px-6 py-3"><Breadcrumbs items={[{ label: 'Enterprise', href: '#' }, { label: 'Standards' }]} /></div>
+    <EditorShell {...args} />
+  </div>,
+};
 
 /** A long record headline in the space left beside desktop navigation. */
 export const WrappedRecordTitle: Story = {
