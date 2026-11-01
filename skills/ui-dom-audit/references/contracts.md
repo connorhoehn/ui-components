@@ -839,3 +839,10 @@ a second field. The valid fixture includes that inner input and rejects both an
 oversized standalone input and an oversized Combobox frame.
 
 Meeting toolbar count badges stay within their owning button (`meeting.badge-contained`), including simultaneous count and attention badges. Call headers retain at least 8px above their controls (`call.header-inset`); a composer host must not zero this inset when joining the call dock to its editor. Both contracts have valid and deliberately broken fixtures.
+
+Tabs have their own consistency family regardless of their selected/hover paint.
+The painted-button family excludes only semantic `role=tab` controls; the tab
+family retains height, font weight, inset and radius. This avoids transient
+button membership when an underline fades (shared `Tabs` / `ConversationSurface`),
+without excluding tab typography or geometry. Fixtures prove selected/unselected
+parity and detect both an oversized tab and an oversized ordinary button.

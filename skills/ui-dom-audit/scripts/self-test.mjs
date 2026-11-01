@@ -1191,5 +1191,25 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
     await page.close();
     console.log('PASS contained meeting counts and call control top inset');
   }
+  {
+    const page = await browser.newPage();
+    const subset = { ...fullContract, rules: fullContract.rules.filter(r => r.id === 'consistency.fingerprint') };
+    const fixture = `<style>button{font:14px sans-serif;height:28px;border:1px solid #222;border-radius:4px;background:#fff}[role=tab]{height:34px;border:0;border-bottom:2px solid blue;border-radius:0;background:transparent;padding:0 12px;font-weight:500}</style><div data-shell-nav><button id="ordinary">Action</button><button id="tab" role="tab">Chat</button></div>`;
+    const check = () => page.evaluate(measureDOM, { ...payload, required: [], contract: subset });
+    await page.setContent(fixture);
+    const before = await check();
+    assert.deepEqual(before.fingerprints.filter(f => f.family === 'button').map(f => f.selector), ['#ordinary']);
+    assert.equal(before.fingerprints.filter(f => f.family === 'tab').length, 1);
+    await page.locator('#tab').evaluate(el => { el.style.borderColor = 'transparent'; });
+    assert.deepEqual((await check()).fingerprints, before.fingerprints, 'selection paint cannot reclassify a tab as a button');
+    const outliers = changed => consistencyOutliers(Array.from({ length: 5 }, (_, i) => ({ route: `/fixture-${i}`, state: 'default', width: 1280, samples: [1], issues: [], fingerprints: i === 4 ? changed.fingerprints : before.fingerprints })));
+    await page.locator('#tab').evaluate(el => { el.style.height = '50px'; });
+    assert.ok(outliers(await check()).issues.some(i => i.issue.rule === 'consistency.tab'), 'the tab is still measured and wrong geometry fails');
+    await page.setContent(fixture);
+    await page.locator('#ordinary').evaluate(el => { el.style.height = '44px'; });
+    assert.ok(outliers(await check()).issues.some(i => i.issue.rule === 'consistency.button'), 'ordinary buttons retain their independent contract');
+    await page.close();
+    console.log('PASS tabs retain their own fingerprint while painted buttons remain checked');
+  }
   console.log(`PASS clean four-column layout, repeatability, ${mutations.length} defect mutations, navigation coverage, cross-tenant grouping and honest report comparison`);
 } finally { await browser.close(); fs.rmSync(temp, { recursive: true, force: true }); }

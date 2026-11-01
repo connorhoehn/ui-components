@@ -813,7 +813,7 @@
         },
         {
           "name": "button",
-          "selector": "[data-shell-nav] button",
+          "selector": "[data-shell-nav] button:not([role=\"tab\"])",
           "where": "control",
           "keyBy": [
             "fontSize",
@@ -843,7 +843,8 @@
           "properties": [
             "height",
             "fontWeight",
-            "paddingLeft"
+            "paddingLeft",
+            "borderRadius"
           ]
         },
         {
