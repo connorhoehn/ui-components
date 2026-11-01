@@ -165,8 +165,10 @@ export function CodeBlock({
       data-theme={theme}
       className={cn(
         // The monospace face is the code's (on the <pre>), not the block's: the
-        // copy button over it is a control and keeps the page face (2.441.3).
-        'relative rounded-lg border overflow-hidden',
+        // copy button beside it is a control and keeps the page face (2.441.3).
+        // Reserve its own column so horizontally scrolling code never sits
+        // underneath the action, including a long first line.
+        'relative flex rounded-lg border overflow-hidden',
         isConsole
           ? 'bg-code-bg text-code-text border-code-border'
           : isDark
@@ -185,7 +187,7 @@ export function CodeBlock({
           className={cn(
             // A control on code is still a control: the page face at the 12px step,
             // not the block's monospace 11px (2.441.3).
-            'absolute top-2 right-2 font-[inherit] text-xs font-medium px-2 py-1 rounded border transition-opacity',
+            'order-2 m-2 shrink-0 self-start font-[inherit] text-xs font-medium px-2 py-1 rounded border transition-opacity',
             isConsole
               ? 'bg-code-panel text-code-text border-code-border hover:bg-code-raised'
               : isDark
@@ -197,7 +199,7 @@ export function CodeBlock({
           {copied ? 'Copied' : 'Copy'}
         </button>
       )}
-      <pre className="m-0 px-4 py-3 overflow-x-auto font-mono text-xs leading-relaxed">
+      <pre className="m-0 min-w-0 flex-1 px-4 py-3 overflow-x-auto font-mono text-xs leading-relaxed">
         {showLineNumbers ? (
           <div className="flex">
             <div

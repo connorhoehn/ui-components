@@ -46,7 +46,8 @@ export const PrepareJob: Story = {
       defaultOptionId: 'dispatch',
       onAnswer: (a) => {
         if (a.optionId === 'model' || a.optionId === 'cap') { setEditing(a.optionId); return; }
-        return { receipt: `Dispatched on ${label}` };
+        if (a.optionId === 'instruction') return { next: { id: `instruction:${rev}`, title: 'Instruction', kind: 'text', question: 'What should the agent know?', onAnswer: () => { setRev((r) => r + 1); return { receipt: 'Instruction saved in this preview' }; } } };
+        return { receipt: `Preview dispatch on ${label}; nothing was sent` };
       },
     };
     const modelPrompt: ComposerPrompt = {
@@ -55,10 +56,15 @@ export const PrepareJob: Story = {
       onAnswer: (a) => { setModel(a.optionId!); setEditing(null); setRev((r) => r + 1); return { receipt: `Model → ${MODELS.find((m) => m.id === a.optionId)!.label}` }; },
     };
     const capPrompt: ComposerPrompt = {
-      id: `cap:${rev}`, eyebrow: 'Prepare job', title: 'Run cap', kind: 'number', min: 0, question: 'Cap this run at how many dollars? Type an amount, or pick one.',
-      placeholder: 'A dollar amount, e.g. 2.50', options: [{ id: 'none', label: 'No cap' }, { id: 'high', label: 'Forecast high ($1.10)' }], defaultOptionId: 'none',
+      id: `cap:${rev}`, eyebrow: 'Prepare job', title: 'Run cap', kind: 'choice', question: 'Choose a cap for this run.',
+      options: [{ id: 'none', label: 'No cap' }, { id: 'high', label: 'Forecast high ($1.10)' }, { id: 'custom', label: 'Custom amount' }], defaultOptionId: 'none',
       onAnswer: (a) => {
-        setCap(a.kind === 'number' ? a.value : a.optionId === 'high' ? 1.1 : null); setEditing(null); setRev((r) => r + 1);
+        if (a.optionId === 'custom') return { next: {
+          id: `amount:${rev}`, eyebrow: 'Prepare job', title: 'Custom run cap', kind: 'number', min: 0,
+          question: 'How many dollars can this run spend?', placeholder: 'A dollar amount, e.g. 2.50',
+          onAnswer: answer => { if (answer.kind === 'number') setCap(answer.value); setEditing(null); setRev(r => r + 1); },
+        } };
+        setCap(a.optionId === 'high' ? 1.1 : null); setEditing(null); setRev((r) => r + 1);
       },
     };
     const queue = editing === 'model' ? [modelPrompt] : editing === 'cap' ? [capPrompt] : [dispatch];

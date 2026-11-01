@@ -39,6 +39,7 @@ export interface HoverCardTriggerProps {
   onFocus: (e: FocusEvent<HTMLElement>) => void;
   onBlur: (e: FocusEvent<HTMLElement>) => void;
   onKeyDown: (e: KeyboardEvent<HTMLElement>) => void;
+  onClick: (e: MouseEvent<HTMLElement>) => void;
   'aria-expanded': boolean;
   'aria-controls': string | undefined;
   'aria-describedby': string | undefined;
@@ -155,8 +156,9 @@ export function HoverCard({
     onBlur: () => { if (openOnFocus) later(false, HOVER_CARD_CLOSE_MS); },
     onKeyDown: (e) => {
       if (e.key === 'Escape' && open) { e.stopPropagation(); dismiss(); return; }
-      if (pinOnKey && (e.key === 'Enter' || e.key === ' ')) { clear(); setPinned((v) => !v); }
+      if (pinOnKey && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); clear(); setPinned((v) => !v); }
     },
+    onClick: () => { clear(); setHoverOpen(false); setPinned((value) => !value); },
     'aria-expanded': open,
     'aria-controls': open ? id : undefined,
     'aria-describedby': open ? id : undefined,
@@ -171,6 +173,7 @@ export function HoverCard({
           id={id}
           role="dialog"
           aria-modal="false"
+          data-ui-focus="trigger"
           aria-label={label}
           data-testid={testId}
           data-pinned={pinned ? 'true' : 'false'}

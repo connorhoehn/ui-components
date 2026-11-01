@@ -601,7 +601,7 @@ function ScopeCrumbs({
     <div data-testid={testId} data-variant="crumbs" data-collapsed={folded ? 'true' : 'false'} className={cn('flex min-w-0 items-start gap-4 px-[var(--ui-page-gutter,1.5rem)] pb-1 pt-2', className)}>
       <div className="flex h-5 min-w-0 flex-1 items-center gap-2">
         {trail.length > 0 && (
-          <Breadcrumbs items={trail} separator="›" maxItems={5} className="min-w-0" data-testid={`${testId}-crumbs`} />
+          <Breadcrumbs aria-label={`${title ?? "Scope"} location`} items={trail} separator="›" maxItems={5} className="min-w-0" data-testid={`${testId}-crumbs`} />
         )}
         {folded && onToggleCollapsed && <HeaderCollapseToggle collapsed onToggle={onToggleCollapsed} data-testid={`${testId}-collapse-toggle`} />}
       </div>
@@ -766,7 +766,7 @@ function InlineTrail({ crumbs, title, titleHint, lg, sm = false, after, testId }
         // overflow-hidden (2.407.10): a squeezed crumb list clips inside its
         // own box — the first crumb (shrink-0) used to overflow the nav and
         // paint under the start of a long title.
-        <nav aria-label="Breadcrumb" data-testid={`${testId}-crumbs`} data-collapsed={hidden.length > 0 ? 'true' : undefined} className="flex min-w-0 shrink items-center overflow-hidden">
+        <nav aria-label={`${title ?? "Scope"} location`} data-testid={`${testId}-crumbs`} data-collapsed={hidden.length > 0 ? 'true' : undefined} className="flex min-w-0 shrink items-center overflow-hidden">
           <ol className="m-0 flex min-w-0 list-none flex-nowrap items-center gap-1 p-0">
             {visible.map((item, i) => (
               // The first crumb never goes below its own width (2.407.2).
@@ -1162,7 +1162,7 @@ function ScopeHeaderFull({
     return (
       <div data-testid={testId} data-title-size={titleSize} data-density={density} data-collapsed="true" className={cn('flex min-w-0 flex-col gap-1 px-[var(--ui-page-gutter,1.5rem)] pt-2', !hasTabs && 'pb-2', className)}>
         <div className="flex h-7 min-w-0 items-center gap-2">
-          {trail.length > 0 && <Breadcrumbs items={trail} separator="›" maxItems={5} className="min-w-0" data-testid={`${testId}-crumbs`} />}
+          {trail.length > 0 && <Breadcrumbs aria-label={`${title ?? "Scope"} location`} items={trail} separator="›" maxItems={5} className="min-w-0" data-testid={`${testId}-crumbs`} />}
           {statusNode}
           {onToggleCollapsed && <HeaderCollapseToggle collapsed onToggle={onToggleCollapsed} data-testid={`${testId}-collapse-toggle`} />}
           <div className="ml-auto flex shrink-0 items-center gap-3">{rightGroup}</div>
@@ -1175,7 +1175,7 @@ function ScopeHeaderFull({
   return (
     <div data-testid={testId} data-title-size={titleSize} data-density={density} data-collapsed="false" {...(tabSize ? { 'data-tab-size': tabSize } : {})} {...(hasTabs && tabsRule === 'inset' ? { 'data-tabs-rule': 'inset' } : {})} className={cn('flex min-w-0 flex-col gap-1.5 px-[var(--ui-page-gutter,1.5rem)] pt-3', dense && 'gap-1 pt-2', lg && 'gap-0 pt-4', !hasTabs && (lg ? 'pb-4' : dense ? 'pb-2' : 'pb-3'), className)}>
       {breadcrumbs && breadcrumbs.length > 0 && (
-        <Breadcrumbs items={breadcrumbs} separator="›" maxItems={5} className="min-w-0" data-testid={`${testId}-crumbs`} />
+        <Breadcrumbs aria-label={`${title ?? "Scope"} location`} items={breadcrumbs} separator="›" maxItems={5} className="min-w-0" data-testid={`${testId}-crumbs`} />
       )}
       <div className={cn('flex min-w-0 items-center gap-x-4 gap-y-2', dense ? 'h-7 flex-nowrap' : 'flex-wrap')}>
         <div className="flex min-w-0 items-center gap-3">

@@ -56,6 +56,18 @@ describe('HoverCard viewport placement', () => {
     expect(document.activeElement).toBe(trigger);
   });
 
+  it('click reopens after Escape without moving focus or doubling a keyboard activation', () => {
+    const { trigger } = open();
+    fireEvent.keyDown(trigger, { key: 'Escape' });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    fireEvent.click(trigger);
+    expect(screen.getByRole('dialog')).toHaveAttribute('data-ui-focus', 'trigger');
+    expect(trigger).toHaveFocus();
+    fireEvent.keyDown(trigger, { key: 'Escape' });
+    expect(fireEvent.keyDown(trigger, { key: 'Enter' })).toBe(false);
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+
   it('opens above a lower-edge anchor and keeps its right edge in view', () => {
     anchor = { left: 980, top: 720, bottom: 740 };
     const { panel } = open();

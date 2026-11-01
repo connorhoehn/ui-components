@@ -35,6 +35,7 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
+import { Textarea } from '../forms/Textarea';
 import { Inline, Stack } from '../ui/Stack';
 import { Text } from '../shared/Text';
 import { DecisionPath } from '../shared/DecisionPath';
@@ -277,7 +278,7 @@ export interface ComposerPromptDeckProps {
   /** From `useComposerPromptDeck`; or pass `prompts` and the deck keeps its own state. */
   deck?: ComposerPromptDeckState;
   prompts?: readonly ComposerPrompt[];
-  /** The composer input: its emptiness gates bare-key shortcuts; it takes the caret after an answer. */
+  /** External answer input, when embedded above an existing editor. Without one, text/number prompts own a plain answer field; choices own focus. */
   input?: ComposerPromptInput | null;
   /**
    * `card` (default): a bordered card of its own, for a composer's `above`.
@@ -300,7 +301,7 @@ const FIELD_TONE: Record<NonNullable<ComposerPromptField['tone']>, string> = {
 
 function Keycap({ children }: { children: ReactNode }) {
   return (
-    <kbd className="inline-flex h-4 min-w-4 items-center justify-center rounded-sm border border-border bg-surface px-1 font-mono text-xs font-normal leading-none text-text-secondary">
+    <kbd className="inline-flex h-4 min-w-4 items-center justify-center rounded-sm border border-border bg-surface px-1 font-mono text-[11px] font-normal leading-none text-text-secondary">
       {children}
     </kbd>
   );
@@ -321,7 +322,13 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, vari
   const deck = deckProp ?? own;
   const root = useRef<HTMLElement | null>(null);
   const baseId = useId();
+  const answerRef = useRef<HTMLTextAreaElement | null>(null);
+  const [draft, setDraft] = useState({ id: '', text: '' });
   const { active, pending, index, collapsed, busy, error, receipt } = deck;
+
+  const answerText = draft.id === active?.id ? draft.text : '';
+  const inlineAnswer = !input && deck.typed && !active?.readOnlyReason;
+  const submitAnswer = async () => { if (await deck.answerTyped(answerText)) setDraft({ id: '', text: '' }); };
 
   // ── keys ── captured at the document so they reach the deck before the
   // editor's own Enter / Escape, but only from the deck or its composer input.
@@ -335,8 +342,10 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, vari
       const current = document.activeElement;
       const otherEditor = current?.closest('input,textarea,select,[contenteditable="true"]');
       const nextInput = state.current.input;
-      if (otherEditor && !nextInput?.contains(current)) return;
-      nextInput?.focus();
+      if (otherEditor && !root.current?.contains(current) && !nextInput?.contains(current)) return;
+      if (nextInput) nextInput.focus();
+      else if (answerRef.current) answerRef.current.focus();
+      else (root.current?.querySelector<HTMLElement>('[data-default="true"]:not(:disabled)') ?? root.current?.querySelector<HTMLElement>('[data-composer-prompt-option]:not(:disabled)'))?.focus();
     });
     return () => cancelAnimationFrame(frame);
   }, [active?.id, collapsed, active?.kind, active?.readOnlyReason]);
@@ -347,10 +356,11 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, vari
       const target = event.target as Node | null;
       const inDeck = !!root.current && !!target && root.current.contains(target);
       const inInput = !!i && i.contains(target);
+      const inAnswer = !!target && answerRef.current?.contains(target);
       if (!inDeck && !inInput) return;
       const action = deckKeyAction(
         { key: event.key, altKey: event.altKey, ctrlKey: event.ctrlKey, metaKey: event.metaKey, shiftKey: event.shiftKey, code: event.code },
-        { prompt: d.active, collapsed: d.collapsed, inputEmpty: i ? i.isEmpty() : true, inDeck, busy: d.busy },
+        { prompt: d.active, collapsed: d.collapsed, inputEmpty: i ? i.isEmpty() : !answerRef.current?.value.trim(), inDeck: inDeck && !inAnswer, busy: d.busy },
       );
       if (!action) return;
       event.preventDefault();
@@ -405,13 +415,13 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, vari
   const optionKeys = options.map((o, i) => optionKey(o, i));
   const keyHint = [
     options.length ? `${typed ? 'Alt+' : ''}${optionKeys.filter(Boolean).length > 1 ? `${optionKeys[0]}–${optionKeys[optionKeys.length - 1]}` : optionKeys[0] ?? ''} choose` : null,
-    typed ? 'type the answer below · Enter send' : fallback ? `Enter ${fallback.label}` : null,
+    typed ? 'type an answer · Enter answer' : fallback ? `Enter ${fallback.label}` : null,
     count > 1 ? `${mod}↓ next` : null,
     'Esc hide',
   ].filter(Boolean).join(' · ');
 
   return (
-    <Stack gap="xs" className={cn('min-w-0', inset && 'border-b border-border', className)} data-composer-prompt-deck="expanded" data-deck-variant={variant} data-testid={testId} ref={root}>
+    <Stack gap="xs" className={cn('min-w-0', inset && 'border-b border-border', className)} data-composer-prompt-deck="expanded" data-composer-dialogue={input ? undefined : active.kind} data-deck-variant={variant} data-testid={testId} ref={root}>
       <section
         role="group"
         aria-labelledby={titleId}
@@ -515,6 +525,22 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, vari
               );
             })}
           </Inline>
+        )}
+
+        {inlineAnswer && (
+          <Stack gap="sm" className="min-w-0">
+            <Textarea ref={answerRef} aria-label={active.title} placeholder={active.placeholder ?? 'Your answer'}
+              value={answerText} disabled={busy} autoResize minRows={active.kind === 'number' ? 1 : 2}
+              inputMode={active.kind === 'number' ? 'decimal' : undefined}
+              onChange={(event) => setDraft({ id: active.id, text: event.target.value })}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing && !event.repeat) {
+                  event.preventDefault(); if (!busy) void submitAnswer();
+                }
+              }} data-testid={`${testId}-answer`} />
+            <Button variant="primary" size="sm" className="self-end" disabled={busy || !answerText.trim()}
+              onClick={() => { void submitAnswer(); }} data-testid={`${testId}-submit`}>Answer</Button>
+          </Stack>
         )}
 
         {error && !compose && <Text as="p" size="xs" wrap role="alert" className="text-danger-fg" data-testid={`${testId}-error`}>{error}</Text>}

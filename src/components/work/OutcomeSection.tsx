@@ -15,6 +15,8 @@ import VisuallyHidden from '../shared/VisuallyHidden';
 
 export interface OutcomeSectionProps {
   title?: string;
+  /** Semantic heading level; use h2 for a section directly under the page title. */
+  as?: 'h2' | 'h3' | 'h4';
   value: string | null;
   onChange?: (v: string) => void;
   placeholder?: string;
@@ -39,7 +41,7 @@ export interface OutcomeSectionProps {
 
 export function OutcomeSection({
   title = 'Outcome', value, onChange, placeholder = 'What is true when this is done?',
-  readOnlyReason, pending = false, first, variant = 'heading', size = 'md', className, 'data-testid': testId = 'outcome-section',
+  readOnlyReason, pending = false, first, as, variant = 'heading', size = 'md', className, 'data-testid': testId = 'outcome-section',
 }: OutcomeSectionProps) {
   const editable = !!onChange && !readOnlyReason;
   const [editing, setEditing] = useState(false);
@@ -74,7 +76,7 @@ export function OutcomeSection({
   ) : editing ? '⌘Enter to save · Esc to cancel' : undefined;
 
   return (
-    <DetailSection title={title} hint={hint} actions={actions} first={first} variant={variant} {...(size === 'lg' ? { size } : {})} className={className} data-testid={testId}>
+    <DetailSection as={as} title={title} hint={hint} actions={actions} first={first} variant={variant} {...(size === 'lg' ? { size } : {})} className={className} data-testid={testId}>
       {/* lg: the text starts 27px under the heading's centre, as the
           Initiatives mockup sets it — the heading row's 8px gap is too loose
           for a paragraph (it suits a ruled list). */}

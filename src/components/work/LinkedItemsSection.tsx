@@ -39,6 +39,8 @@ export interface LinkRelationOption { value: string; label: string }
 
 export interface LinkedItemsSectionProps {
   title?: string;
+  /** Semantic heading level; use h2 for a section directly under the page title. */
+  as?: 'h2' | 'h3' | 'h4';
   items: LinkedItem[];
   onSearchDocuments?: (q: string) => Promise<LinkableDocument[]> | LinkableDocument[];
   onAdd?: (doc: LinkableDocument, relation: string) => void;
@@ -73,7 +75,7 @@ function ItemTitle({ item, large }: { item: LinkedItem; large: boolean }) {
 export function LinkedItemsSection({
   title = 'Dependencies & decisions', items, onSearchDocuments, onAdd,
   relations = DEFAULT_LINK_RELATIONS, emptyLabel = 'No linked documents',
-  first, variant = 'heading', className, 'data-testid': testId = 'linked-items-section',
+  first, as, variant = 'heading', className, 'data-testid': testId = 'linked-items-section',
 }: LinkedItemsSectionProps) {
   const heading = variant === 'heading';
   const [open, setOpen] = useState(false);
@@ -97,7 +99,7 @@ export function LinkedItemsSection({
   ) : undefined;
 
   return (
-    <DetailSection title={title} actions={actions} first={first} variant={variant} className={className} data-testid={testId}>
+    <DetailSection as={as} title={title} actions={actions} first={first} variant={variant} className={className} data-testid={testId}>
       {items.length === 0 ? (
         <p className={heading ? 'm-0 text-sm text-text-tertiary' : 'm-0 text-[13px] text-text-tertiary'}>{emptyLabel}</p>
       ) : (

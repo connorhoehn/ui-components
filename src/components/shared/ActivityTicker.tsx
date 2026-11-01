@@ -1,6 +1,6 @@
 import { type ReactNode, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ActivityIcon, ChevronIcon, CloseIcon, EyeIcon, EyeOffIcon, HistoryIcon, SlidersIcon } from '../ui/Icons';
+import { ActivityIcon, ChevronIcon, CloseIcon, EyeIcon, EyeOffIcon, GripIcon, HistoryIcon, SlidersIcon } from '../ui/Icons';
 import { Button } from '../ui/Button';
 import { IconButton } from '../ui/IconButton';
 import { Checkbox } from '../forms/Checkbox';
@@ -18,6 +18,11 @@ export interface ActivityTickerProps {
   categories: readonly { id: string; label: string }[];
   /** Explicitly label host-supplied demonstration data. */
   sample?: boolean;
+  /** The host owns the two dock locations; the grip also moves by keyboard click. */
+  placement?: 'header' | 'footer';
+  onPlacementChange?: (placement: 'header' | 'footer') => void;
+  onMoveStart?: () => void;
+  onMoveEnd?: () => void;
   activeCall?: boolean;
   /** Scope this key to the current identity/context; null never reads shared storage. */
   preferencesKey?: string | null;
@@ -46,7 +51,7 @@ export function ActivityTicker(props: ActivityTickerProps) {
   return <Ticker key={props.preferencesKey ?? 'unpersisted'} {...props} />;
 }
 
-function Ticker({ items, categories, sample = false, activeCall = false, preferencesKey: storageKey = null,
+function Ticker({ items, categories, placement = 'footer', onPlacementChange, onMoveStart, onMoveEnd, sample = false, activeCall = false, preferencesKey: storageKey = null,
   preferences, onPreferencesChange, preferencesHint, renderActions, 'data-testid': testId = 'activity-ticker' }: ActivityTickerProps) {
   const categoryIds = categories.map(category => category.id);
   const [localPrefs, setPrefs] = useState<ActivityTickerPreferences>(() => load(storageKey, categoryIds));
@@ -59,7 +64,7 @@ function Ticker({ items, categories, sample = false, activeCall = false, prefere
   const leaveTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const restore = useRef<HTMLButtonElement>(null);
   const pendingFocus = useRef(false);
-  const [anchor, setAnchor] = useState<{ left: number; bottom: number } | null>(null);
+  const [anchor, setAnchor] = useState<{ left: number; bottom?: number; top?: number } | null>(null);
   const hint = useId();
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   const compact = useMediaQuery('(max-width: 1100px)') || activeCall;
@@ -88,7 +93,7 @@ function Ticker({ items, categories, sample = false, activeCall = false, prefere
     if (!engaged || prefs.hidden) { setAnchor(null); return; }
     const position = () => {
       const rect = trigger.current?.getBoundingClientRect();
-      if (rect) setAnchor({ left: Math.max(8, Math.min(rect.left, window.innerWidth - 220)), bottom: window.innerHeight - rect.top });
+      if (rect) setAnchor({ left: Math.max(8, Math.min(rect.left, window.innerWidth - 220)), ...(rect.top >= 48 ? { bottom: window.innerHeight - rect.top } : { top: rect.bottom }) });
     };
     position(); window.addEventListener('resize', position); window.addEventListener('scroll', position, true);
     return () => { window.removeEventListener('resize', position); window.removeEventListener('scroll', position, true); };
@@ -106,8 +111,15 @@ function Ticker({ items, categories, sample = false, activeCall = false, prefere
   }, [prefs.hidden]);
   function hide() { pendingFocus.current = true; update({ hidden: true }); setPanel(null); setHovered(false); setFocused(false); }
 
-  return <div ref={root} className="activity-ticker" data-compact={compact || undefined} data-call={activeCall || undefined} data-hidden={prefs.hidden || undefined} data-testid={testId}
+  return <div ref={root} className="activity-ticker" data-compact={compact || undefined} data-call={activeCall || undefined} data-hidden={prefs.hidden || undefined} data-testid={testId} data-placement={placement}
     onMouseEnter={enter} onMouseLeave={leave} onFocusCapture={() => setFocused(true)} onBlurCapture={event => blur(event.relatedTarget)}>
+    {onPlacementChange && <Tooltip content={`Drag Today to the ${placement === 'footer' ? 'header' : 'footer'}, or click to move it`}>
+      <IconButton size="sm" variant="ghost" icon={<GripIcon size={14} />} className="shrink-0 cursor-grab active:cursor-grabbing"
+        aria-label={`Move Today strip to ${placement === 'footer' ? 'header' : 'footer'}`} draggable
+        onDragStart={event => { event.dataTransfer.setData('text/x-activity-ticker', 'today'); event.dataTransfer.effectAllowed = 'move'; onMoveStart?.(); }}
+        onDragEnd={onMoveEnd} onClick={() => onPlacementChange(placement === 'footer' ? 'header' : 'footer')}
+        data-testid={`${testId}-move`} />
+    </Tooltip>}
     {prefs.hidden ? <Tooltip content={`Restore ${sampleWord}Today strip`}><IconButton ref={restore} aria-label={`Restore ${sampleWord}Today strip`} size="sm" icon={<EyeIcon size={14} />} onClick={() => { pendingFocus.current = true; update({ hidden: false }); }} /></Tooltip>
       : <Button ref={trigger} variant="ghost" size="sm" className="activity-ticker-summary" data-dimmed={prefs.dimmed || undefined}
         aria-label={current ? `${sample ? 'Demo today' : 'Today'}: ${current.label}. ${current.summary}` : `${sample ? 'Demo today: no sample' : 'Today: no'} categories selected`}
@@ -119,7 +131,7 @@ function Ticker({ items, categories, sample = false, activeCall = false, prefere
       </Button>}
     <span id={hint} className="sr-only">{sample ? 'Sample content. ' : ''}Arrow Up opens the controls. Automatic rotation pauses while focused.</span>
     {anchor && !prefs.hidden && createPortal(<div ref={toolbar} role="toolbar" aria-label={`${titlePrefix}Today controls`} className="activity-ticker-toolbar"
-      style={{ left: anchor.left, bottom: anchor.bottom }} onMouseEnter={enter} onMouseLeave={leave}
+      style={{ left: anchor.left, bottom: anchor.bottom, top: anchor.top }} onMouseEnter={enter} onMouseLeave={leave}
       onFocusCapture={() => setFocused(true)} onBlurCapture={event => blur(event.relatedTarget)}>
       <Tooltip content="Hide this strip"><IconButton aria-label={`Hide ${sampleWord}Today strip`} size="sm" icon={<EyeOffIcon size={14} />} onClick={hide} /></Tooltip>
       <Tooltip content={prefs.dimmed ? 'Restore brightness' : 'Dim this strip'}><IconButton aria-label={`Dim ${sampleWord}Today strip`} aria-pressed={prefs.dimmed} size="sm" icon={<EyeIcon size={14} />} onClick={() => update({ dimmed: !prefs.dimmed })} /></Tooltip>

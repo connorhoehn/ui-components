@@ -932,6 +932,29 @@ document.querySelectorAll('[role=tab]').forEach(t => t.addEventListener('click',
       console.log('PASS tabs.stable detects ' + name);
     }
 
+    // Descriptive nonmodal cards preserve focus on a linked trigger. Ordinary
+    // dialogs and broken trigger-focus cards still fail their focus contract.
+    for (const variant of ['valid', 'steals-focus', 'ordinary-dialog']) {
+      await dpage.setContent(`<!doctype html><html><body><button id="about" aria-expanded="false">About</button><script>
+      { const trigger = document.querySelector('#about');
+      trigger.onclick = () => {
+        const panel = document.createElement('div'); panel.id = 'about-panel'; panel.role = 'dialog'; panel.setAttribute('aria-modal', 'false');
+        panel.setAttribute('data-ui-focus', 'trigger'); panel.tabIndex = -1;
+        panel.style.cssText = 'position:fixed;left:20px;top:60px;padding:12px;background:white;border:1px solid gray;z-index:99'; panel.textContent = 'About this setting';
+        document.body.append(panel); trigger.setAttribute('aria-expanded', 'true'); trigger.setAttribute('aria-controls', panel.id); trigger.setAttribute('aria-describedby', panel.id);
+        if (window.variant === 'steals-focus') panel.focus();
+        if (window.variant === 'ordinary-dialog') panel.removeAttribute('data-ui-focus');
+      };
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.querySelector('#about-panel')?.remove(); trigger.setAttribute('aria-expanded','false'); trigger.focus(); } }); }
+      </script></body></html>`);
+      await dpage.evaluate(v => { window.variant = v; }, variant);
+      const probe = await probes.openLayer(dpage, { index: 0, name: 'About' });
+      const measured = await dpage.evaluate(measureDOM, { ...deep(['layer.behaviour']), probe });
+      if (variant === 'valid') assert.deepEqual(measured.issues, [], 'a linked descriptive card keeps focus on its trigger');
+      else assert.ok(measured.issues.some(i => i.property === (variant === 'steals-focus' ? 'focus stays on the trigger' : 'focus moves into the layer')), `${variant} must retain its focus failure: ${JSON.stringify(measured.issues)}`);
+    }
+    console.log('PASS layer.behaviour: linked descriptive cards retain focus; ordinary dialogs and broken cards are still judged');
+
     // layer.behaviour: a menu opened through the openLayer probe.
     const layerHtml = `<!doctype html><html><head><style>*{box-sizing:border-box} body{margin:0;font:14px system-ui;height:900px} header{height:44px;background:#eee} footer{position:fixed;bottom:0;left:0;right:0;height:44px;background:#eee;z-index:5}
 #menu{position:fixed;left:200px;top:120px;width:200px;background:#fff;border:1px solid #ccc;z-index:10;padding:4px} #menu[hidden]{display:none} #menu button{display:block;width:100%;font:inherit}
@@ -1210,6 +1233,37 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
     assert.ok(outliers(await check()).issues.some(i => i.issue.rule === 'consistency.button'), 'ordinary buttons retain their independent contract');
     await page.close();
     console.log('PASS tabs retain their own fingerprint while painted buttons remain checked');
+  }
+  {
+    const page = await browser.newPage();
+    const subset = { ...fullContract, rules: fullContract.rules.filter(r => ['composer.dialogue-tools', 'composer.choice-input'].includes(r.id)) };
+    const check = () => page.evaluate(measureDOM, { ...payload, required: [], contract: subset });
+    await page.setContent('<section data-composer-dialogue="choice"><button>1 Choose</button></section><section data-composer-dialogue="text"><textarea aria-label="Answer"></textarea></section><aside><div role="toolbar"><button>Bold</button></div><textarea aria-label="Discussion"></textarea></aside>');
+    assert.deepEqual((await check()).issues, [], 'choice buttons, a permitted answer field, and an ordinary neighboring composer are valid');
+    await page.locator('[data-composer-dialogue=choice]').evaluate(el => el.insertAdjacentHTML('beforeend', '<textarea aria-label="Unused input"></textarea>'));
+    assert.ok((await check()).issues.some(i => i.rule === 'composer.choice-input'));
+    await page.locator('[data-composer-dialogue=text]').evaluate(el => el.insertAdjacentHTML('beforeend', '<div role="toolbar"><button>Bold</button></div>'));
+    assert.ok((await check()).issues.some(i => i.rule === 'composer.dialogue-tools'));
+    await page.close();
+    console.log('PASS prompt dialogue: choices have no input, manual answers have no message tools, ordinary composers retain theirs');
+  }
+  {
+    const page = await browser.newPage();
+    const subset = { ...fullContract, rules: fullContract.rules.filter(r => r.id === 'composer.presence') };
+    const check = () => page.evaluate(measureDOM, { ...payload, required: [], selectors: { ...selectors, composers: '[data-composer-surface]' }, contract: subset });
+    const fixture = '<style>[data-composer-surface]{min-height:28px}</style><section data-composer-surface><div data-composer-dialogue="choice"><button data-composer-prompt-option="one">1 Choose</button></div></section><aside data-composer-surface><textarea aria-label="Discussion"></textarea></aside>';
+    await page.setContent(fixture);
+    assert.deepEqual((await check()).issues, [], 'an active choice replaces its editor; a neighboring ordinary composer retains its input');
+    await page.locator('aside textarea').evaluate(el => el.remove());
+    assert.ok((await check()).issues.some(i => i.rule === 'composer.presence'), 'a prompt cannot excuse a missing neighboring editor');
+    await page.setContent(fixture);
+    await page.locator('[data-composer-prompt-option]').evaluate(el => el.remove());
+    assert.ok((await check()).issues.some(i => i.rule === 'composer.presence'), 'an empty prompt marker cannot replace input');
+    await page.setContent(fixture);
+    await page.locator('[data-composer-dialogue]').evaluate(el => el.setAttribute('data-composer-dialogue', 'number'));
+    assert.ok((await check()).issues.some(i => i.rule === 'composer.presence'), 'a manual answer still needs a field');
+    await page.close();
+    console.log('PASS active choice presence requires real answers and leaves neighboring editors checked');
   }
   console.log(`PASS clean four-column layout, repeatability, ${mutations.length} defect mutations, navigation coverage, cross-tenant grouping and honest report comparison`);
 } finally { await browser.close(); fs.rmSync(temp, { recursive: true, force: true }); }

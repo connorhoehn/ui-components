@@ -196,10 +196,9 @@ export interface ConversationComposerOwnProps {
    */
   offModes?: Partial<Record<ComposerMode, string>>;
   /**
-   * Human-in-the-loop prompts, shown one at a time as the composer card's
-   * first section, above the input (`ComposerPromptDeck`, 2.444.0; inside the
-   * card since 2.446.0). A text / number prompt takes the typed
-   * words as its answer: Enter answers it instead of sending a message.
+   * Human-in-the-loop prompts replace the message editor while expanded.
+   * Choices use numbered buttons; text/number prompts expose a plain answer
+   * field. Hide or finish restores the conversation draft and its tools.
    */
   prompts?: readonly ComposerPrompt[];
 }
@@ -464,6 +463,13 @@ function ConversationComposerImpl({
 
   // ── prompts ── the deck reads the input's emptiness and hands the caret back.
   const deck = useComposerPromptDeck(prompts);
+  const dialogueOpen = !!deck.active && !deck.collapsed;
+  const wasDialogueOpen = useRef(false);
+  useEffect(() => {
+    if (dialogueOpen) chat?.setTyping?.(false);
+    else if (wasDialogueOpen.current) focusSoon();
+    wasDialogueOpen.current = dialogueOpen;
+  }, [dialogueOpen, chat, focusSoon]);
   const deckInput = useMemo<ComposerPromptInput>(() => ({
     isEmpty: () => !(handle.current?.editor?.getText().trim()),
     contains: (node: Node | null) => { try { return !!node && !!handle.current?.editor?.view.dom.contains(node); } catch { return false; } },
@@ -698,8 +704,9 @@ function ConversationComposerImpl({
       modeUnavailableReasons={modeState.reasons}
       chatAvailable={hasChat && !modeState.reasons.chat}
       contextChip={contextChip ?? (reference ? false : undefined)}
-      {...(notices ? { above: notices } : {})}
-      {...(deck.visible ? { header: <ComposerPromptDeck deck={deck} input={deckInput} variant="inset" data-testid={`${testId}-prompts`} /> } : {})}
+      above={dialogueOpen ? hostAbove : notices}
+      {...(dialogueOpen ? { replacement: <ComposerPromptDeck deck={deck} data-testid={`${testId}-prompts`} /> }
+        : deck.visible ? { header: <ComposerPromptDeck deck={deck} input={deckInput} variant="inset" data-testid={`${testId}-prompts`} /> } : {})}
       {...(modeRowEnd ? { modeRowEnd } : {})}
       {...(references ? { references, onRemoveReference: removeReference } : {})}
       modePlaceholders={placeholders}

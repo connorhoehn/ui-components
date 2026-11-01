@@ -311,9 +311,16 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
         else if (mode === 'required') {
           if (nodes.length === 0) add(rule, null, 'composer count', '>= 1', 0);
           else {
-            const inputs = nodes.flatMap(el => [...el.querySelectorAll(rule.input ?? '[contenteditable="true"], textarea, [role="textbox"]')].filter(visible));
-            samples.push({ rule: rule.id, selector: css(rule.selector), property: 'composer input count', actual: inputs.length, expected: '>= 1' });
-            if (!inputs.length) add(rule, nodes[0], 'composer input count', '>= 1 visible input inside composer', 0);
+            for (const el of nodes) {
+              const inputs = [...el.querySelectorAll(rule.input ?? '[contenteditable="true"], textarea, [role="textbox"]')].filter(visible);
+              // ComposerPromptDeck owns the answer surface while a choice or
+              // confirmation is active. Its actual answer buttons replace the
+              // editor; a marker alone or an unrelated page button cannot.
+              const answers = [...el.querySelectorAll('[data-composer-dialogue="choice"] [data-composer-prompt-option], [data-composer-dialogue="confirm"] [data-composer-prompt-option]')]
+                .filter(button => visible(button) && button.matches('button') && button.textContent?.trim());
+              samples.push({ rule: rule.id, selector: selectorOf(el), property: 'composer input count', actual: inputs.length, expected: '>= 1 input or active prompt answer', answers: answers.length });
+              if (!inputs.length && !answers.length) add(rule, el, 'composer input count', '>= 1 visible input or active prompt answer inside composer', 0);
+            }
           }
         }
         else if (mode === 'exempt' && (!reason || PLACEHOLDER_REASON.test(reason))) {
@@ -1356,9 +1363,10 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
           // A disclosure opens in place: no layer to judge; every other rule measures what it revealed.
           else if (opened.disclosure) samples.push({ rule: rule.id, selector: 'probe', property: 'disclosure opened', actual: opened.trigger, expected: 'judged by the page rules' });
           else {
+            if (opened.triggerFocus && !opened.focusOnTrigger) add(rule, null, 'focus stays on the trigger', `${label}: a descriptive nonmodal card keeps focus on its linked trigger`, opened.focusAfterOpen ?? 'body');
             if (opened.focusExpected && !opened.focusInside) add(rule, null, 'focus moves into the layer', `${label}: focus inside the opened ${opened.role}`, opened.focusAfterOpen ?? 'body');
             if (opened.escapeCloses === false) add(rule, null, 'Escape closes', `${label}: Escape closes it`, 'still open after Escape');
-            if (opened.focusExpected && opened.escapeCloses && opened.focusReturned === false) add(rule, null, 'focus returns to the trigger', `${label}: focus back on its trigger after Escape`, opened.focusAfterEscape ?? 'body');
+            if ((opened.focusExpected || opened.triggerFocus) && opened.escapeCloses && opened.focusReturned === false) add(rule, null, 'focus returns to the trigger', `${label}: focus back on its trigger after Escape`, opened.focusAfterEscape ?? 'body');
             const layer = document.querySelector('[data-audit-layer]');
             if (!layer || !visible(layer)) add(rule, null, 'layer still open when measured', label, 'closed', 'coverage');
             else {

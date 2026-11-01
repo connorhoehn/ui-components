@@ -663,10 +663,11 @@ and returning the same object. State overrides take precedence, then the hook,
 then the case. Do not infer an exemption merely because the composer is absent.
 
 The `composer-presence` rule counts visible `$composers` and requires a visible
-contenteditable/textarea/textbox inside a matched surface. An empty particle
-wrapper or unrelated page textbox does not satisfy it; disabled/read-only visible
-inputs still count. Required + zero surfaces or zero contained inputs is a
-violation. Exempt requires a nonempty trimmed contextual reason. Blank/non-string
+contenteditable/textarea/textbox inside each matched surface, or the active
+choice/confirmation profile described below. An empty particle wrapper or
+unrelated page textbox does not satisfy it; disabled/read-only visible inputs
+still count. Required + zero surfaces or a surface without an answer control is
+a violation. Exempt requires a nonempty trimmed contextual reason. Blank/non-string
 reasons and standalone placeholders (`TODO`, `TBD`, `N/A`, `none`, `exempt`,
 `not applicable`, `coming soon`, punctuation) are coverage failures. This is a
 placeholder guard, not an automated judgment of whether a written rationale is
@@ -846,3 +847,23 @@ family retains height, font weight, inset and radius. This avoids transient
 button membership when an underline fades (shared `Tabs` / `ConversationSurface`),
 without excluding tab typography or geometry. Fixtures prove selected/unselected
 parity and detect both an oversized tab and an oversized ordinary button.
+
+### Descriptive card focus
+
+HoverCard emits `data-ui-focus="trigger"` on its nonmodal dialog. Its controlling
+trigger names the same panel with `aria-controls` and `aria-describedby`. Only
+this complete relationship uses the keep-focus-on-trigger profile: both opens
+and Escape must retain focus there. Ordinary dialogs still move focus inside.
+Valid, focus-stealing, and neighboring ordinary-dialog fixtures exercise it.
+
+### Prompt dialogue
+
+A self-contained ComposerPromptDeck emits `data-composer-dialogue` with its
+answer kind. Choice and confirmation panels have no text entry. All prompt
+dialogues exclude message formatting toolbars and the rich message editor;
+text, number and compose prompts own their explicit answer fields. Neighboring
+conversation editors remain ordinary composers. Count rules and valid/broken
+fixtures enforce both boundaries without changing composer geometry rules.
+For presence, a choice/confirmation marker must contain visible, named
+`button[data-composer-prompt-option]` answers. Empty markers fail, manual-answer
+prompts still require a field, and another composer still requires its own input.

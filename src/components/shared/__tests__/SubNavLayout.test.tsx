@@ -150,6 +150,16 @@ describe('SubNavLayout — focus handoff on group collapse', () => {
   it('applies railLabel as the primary nav aria-label', () => {
     render(<SubNavLayout title="T" items={FLAT} railLabel="Ingest sections">c</SubNavLayout>);
     expect(screen.getByRole('navigation', { name: 'Ingest sections' })).toBeInTheDocument();
+    expect(screen.getByRole('complementary', { name: 'Ingest sections' })).toBeInTheDocument();
+  });
+
+  it('names primary and secondary landmarks distinctly when rails are nested', () => {
+    render(<SubNavLayout title="Work" items={FLAT}>
+      <SubNavLayout title="Runbooks" items={FLAT} secondaryTitle="Library" secondaryItems={FLAT}>Content</SubNavLayout>
+    </SubNavLayout>);
+    for (const name of ['Work navigation', 'Runbooks navigation', 'Library sections']) {
+      expect(screen.getByRole('complementary', { name })).toBeInTheDocument();
+    }
   });
 
   it('renders the content pane as <main> by default and as <section> with contentLabel when contentAs is set', () => {

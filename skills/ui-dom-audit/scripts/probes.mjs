@@ -188,19 +188,20 @@ export async function openLayer(page, { index, name, timeout = 3000 }) {
       const trig = document.querySelector('[data-audit-trigger]');
       const disclosure = !layer && (trig?.getAttribute('aria-expanded') === 'true' || (trig?.matches('summary') && trig.parentElement?.open === true));
       const a = document.activeElement;
-      return { found: !!layer, role: layer ? (layer.getAttribute('role') ?? layer.getAttribute('data-ui-dialog') ?? layer.tagName.toLowerCase()) : disclosure ? 'disclosure' : null, focusInside: !!layer && layer.contains(a), focus: a ? (a.getAttribute('aria-label') || a.tagName.toLowerCase()) : 'body' };
+      const triggerFocus = layer?.getAttribute('data-ui-focus') === 'trigger' && layer.getAttribute('aria-modal') === 'false' && !!layer.id && trig?.getAttribute('aria-controls') === layer.id && (trig?.getAttribute('aria-describedby') ?? '').split(/\s+/).includes(layer.id);
+      return { triggerFocus, focusOnTrigger: a === trig || !!trig?.contains(a), found: !!layer, role: layer ? (layer.getAttribute('role') ?? layer.getAttribute('data-ui-dialog') ?? layer.tagName.toLowerCase()) : disclosure ? 'disclosure' : null, focusInside: !!layer && layer.contains(a), focus: a ? (a.getAttribute('aria-label') || a.tagName.toLowerCase()) : 'body' };
     }, { sel: LAYERS, before: [...before] });
     const first = await find();
     if (!first.found) return { kind: 'layer', trigger: name, role: first.role, opened: first.role === 'disclosure', disclosure: first.role === 'disclosure', reason: 'no layer appeared' };
     // A listbox may keep focus on its combobox (aria-activedescendant, the select-only combobox pattern);
     // a dialog or menu takes it.
-    const focusExpected = /^(dialog|alertdialog|menu)$/.test(first.role) || (/^(dialog|menu|true)$/.test(marker ?? '') && !/^(tooltip|popover|listbox)$/.test(first.role));
+    const focusExpected = !first.triggerFocus && (/^(dialog|alertdialog|menu)$/.test(first.role) || (/^(dialog|menu|true)$/.test(marker ?? '') && !/^(tooltip|popover|listbox)$/.test(first.role)));
     await page.keyboard.press('Escape'); await frames(page);
     const after = await page.evaluate(() => { const l = document.querySelector('[data-audit-layer]'); const b = l?.getBoundingClientRect(); const a = document.activeElement; return { open: !!l && l.isConnected && b.width > 0 && b.height > 0 && getComputedStyle(l).visibility !== 'hidden', returned: !!a && a !== document.body && (!!a.closest('[data-audit-trigger]') || !!a.querySelector(':scope > [data-audit-trigger]')), focus: a ? (a.getAttribute('aria-label') || a.tagName.toLowerCase()) : 'body' }; });
     if (after.open) await page.mouse.click(2, 2).catch(() => undefined);
     await open();
     const again = await find();
-    return { kind: 'layer', trigger: name, role: first.role, opened: again.found, focusExpected, focusInside: first.focusInside, focusAfterOpen: first.focus, escapeCloses: !after.open, focusReturned: after.returned, focusAfterEscape: after.focus };
+    return { kind: 'layer', trigger: name, role: first.role, opened: again.found, focusExpected, triggerFocus: first.triggerFocus, focusOnTrigger: first.focusOnTrigger && again.focusOnTrigger, focusInside: first.focusInside, focusAfterOpen: first.focus, escapeCloses: !after.open, focusReturned: after.returned, focusAfterEscape: after.focus };
   });
 }
 

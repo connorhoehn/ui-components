@@ -4,6 +4,20 @@
   "tolerance": 1,
   "rules": [
     {
+      "id": "composer.dialogue-tools",
+      "kind": "count",
+      "selector": "[data-composer-dialogue] :is([role=toolbar], .ProseMirror, [data-composer-mode])",
+      "expected": 0,
+      "owner": "ConversationComposer prompt dialogue"
+    },
+    {
+      "id": "composer.choice-input",
+      "kind": "count",
+      "selector": "[data-composer-dialogue=choice] :is(input, textarea, [contenteditable=true]), [data-composer-dialogue=confirm] :is(input, textarea, [contenteditable=true])",
+      "expected": 0,
+      "owner": "ComposerPromptDeck choice and confirm answers"
+    },
+    {
       "id": "meeting.badge-contained",
       "kind": "within",
       "selector": "[data-ui-meeting-toolbar] button [data-ui-badge=\"count\"]",

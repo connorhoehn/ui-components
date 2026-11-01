@@ -236,6 +236,7 @@ export function SubNavLayout({
     <div className="flex h-full min-h-0">
       {/* Primary rail — width is prop-driven, keep inline (the folded strip is a fixed 44px) */}
       <aside
+        aria-label={railLabel ?? `${title} navigation`}
         className={cn('flex-none border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col overflow-hidden', collapsed && 'w-11 min-w-11')}
         style={collapsed ? undefined : { width: railWidth }}
         data-collapsed={collapsed ? 'true' : undefined}
@@ -261,6 +262,7 @@ export function SubNavLayout({
       {/* Secondary rail — width is prop-driven, keep inline */}
       {hasSecondary && (
         <aside
+          aria-label={`${secondaryTitle ?? title} sections`}
           className="flex-none border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col overflow-hidden"
           style={{ width: secondaryRailWidth }}
         >

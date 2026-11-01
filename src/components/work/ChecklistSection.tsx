@@ -24,6 +24,8 @@ export interface ChecklistItem { id: string; text: string; done: boolean; pendin
 
 export interface ChecklistSectionProps {
   title?: string;
+  /** Semantic heading level; use h2 for a section directly under the page title. */
+  as?: 'h2' | 'h3' | 'h4';
   items: ChecklistItem[];
   onToggle?: (id: string, done: boolean) => void;
   onAdd?: (text: string) => void;
@@ -147,7 +149,7 @@ function Row({ item, index, count, locked, large, reasonId, onToggle, onEdit, on
 export function ChecklistSection({
   title = 'Acceptance criteria', items, onToggle, onAdd, onEdit, onRemove, onMove,
   readOnlyReason, emptyLabel = 'No acceptance criteria yet', addPlaceholder = 'Add criterion',
-  first, variant = 'heading', className, 'data-testid': testId = 'checklist-section',
+  first, as, variant = 'heading', className, 'data-testid': testId = 'checklist-section',
 }: ChecklistSectionProps) {
   const reasonId = useId();
   const [newText, setNewText] = useState('');
@@ -162,7 +164,7 @@ export function ChecklistSection({
   const canAdd = !!onAdd && !locked;
   const addLabel = addPlaceholder.charAt(0).toUpperCase() + addPlaceholder.slice(1);
   const addButton = (
-    <Button variant="link" size="sm" onClick={() => setAdding(true)} className="inline-flex items-center gap-1 text-[13px]" data-testid={`${testId}-add`}>
+    <Button variant="link" size="sm" onClick={() => setAdding(true)} className="inline-flex items-center gap-1 text-sm" data-testid={`${testId}-add`}>
       <PlusIcon size={12} aria-hidden="true" />
       {addLabel}
     </Button>
@@ -178,7 +180,7 @@ export function ChecklistSection({
   };
 
   return (
-    <DetailSection title={title} hint={hint} actions={actions} first={first} variant={variant} className={className} data-testid={testId}>
+    <DetailSection as={as} title={title} hint={hint} actions={actions} first={first} variant={variant} className={className} data-testid={testId}>
       <div title={readOnlyReason}>
         {items.length === 0 ? (
           <div className="flex items-center gap-2">

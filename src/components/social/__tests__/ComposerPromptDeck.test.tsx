@@ -178,37 +178,53 @@ describe('ConversationComposer prompts', () => {
   }
   let handle: RichChatComposerHandle | null = null;
 
-  it('shows the deck above the input, and Enter answers a number prompt with the typed words instead of posting', async () => {
+  it('a number prompt owns a plain answer field, with no message tools, and never posts to chat', async () => {
     const onCap = vi.fn();
     const chat = { sendMessage: vi.fn() };
     render(<Host onCap={onCap} chat={chat} />);
-    const deckEl = screen.getByTestId('conversation-composer-prompts');
-    expect(deckEl.getAttribute('data-composer-prompt-deck')).toBe('expanded');
-    // One card: the deck is the composer card's first section, above its input.
-    const card = screen.getByTestId('composer');
-    expect(card.contains(deckEl)).toBe(true);
-    expect(deckEl.getAttribute('data-deck-variant')).toBe('inset');
-    const input = card.querySelector('.ProseMirror') as HTMLElement;
-    expect(deckEl.compareDocumentPosition(input) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    await act(async () => { input.focus(); fireEvent.focusIn(input); });
-    act(() => { handle?.editor?.commands.setContent('<p>$5</p>', { emitUpdate: true }); });
-    await act(async () => { fireEvent.click(screen.getByTestId('composer-send')); });
-    await waitFor(() => expect(onCap).toHaveBeenCalledWith({ kind: 'number', value: 5 }));
+    const field = screen.getByRole('textbox', { name: 'Run cap' });
+    await waitFor(() => expect(field).toHaveFocus());
+    expect(screen.queryByTestId('composer')).toBeNull();
+    expect(screen.queryByRole('toolbar', { name: 'Message formatting' })).toBeNull();
+    fireEvent.change(field, { target: { value: '$5' } });
+    await act(async () => { fireEvent.keyDown(field, { key: 'Enter' }); });
+    expect(onCap).toHaveBeenCalledWith({ kind: 'number', value: 5 });
     expect(chat.sendMessage).not.toHaveBeenCalled();
-    expect(screen.getByRole('status').textContent).toContain('Run cap: 5');
+    expect(screen.getByRole('status')).toHaveTextContent('Run cap: 5');
+    await waitFor(() => expect(screen.getByTestId('composer').querySelector('.ProseMirror')).toHaveFocus());
   });
 
-  it('a bad typed answer keeps the draft and shows why on the card', async () => {
+  it('a bad typed answer stays in its field and shows why', async () => {
     const onCap = vi.fn();
     render(<Host onCap={onCap} chat={{ sendMessage: vi.fn() }} />);
-    const input = screen.getByTestId('composer').querySelector('.ProseMirror') as HTMLElement;
-    await act(async () => { input.focus(); fireEvent.focusIn(input); });
-    act(() => { handle?.editor?.commands.setContent('<p>lots</p>', { emitUpdate: true }); });
-    await act(async () => { fireEvent.click(screen.getByTestId('composer-send')); });
+    const field = screen.getByRole('textbox', { name: 'Run cap' });
+    fireEvent.change(field, { target: { value: 'lots' } });
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: /^Answer$/ })); });
     expect(onCap).not.toHaveBeenCalled();
-    expect(screen.getByRole('alert').textContent).toBe('Type a number, or pick an option.');
-    expect(handle?.editor?.getText()).toBe('lots');
+    expect(screen.getByRole('alert')).toHaveTextContent('Type a number, or pick an option.');
+    expect(field).toHaveValue('lots');
   });
+
+  it('choices replace the editor, take numbered keys immediately, and Hide restores the existing draft', async () => {
+    const answer = vi.fn();
+    const chat = { sendMessage: vi.fn() };
+    render(<ConversationComposer channel="orgiq:work:w-1" chat={chat} context={context} capabilities={{ maySend: true }}
+      defaultDraft={{ html: '<p>Unsent discussion draft</p>', files: [] }}
+      recipients={[{ id: 'discussion', label: 'Discussion', channel: 'orgiq:work:w-1' }, { id: 'other', label: 'Other conversation', channel: 'orgiq:work:w-2' }]} composerTestId="composer" prompts={prompts(answer)} />);
+    await waitFor(() => expect(screen.getByTestId('conversation-composer-prompts-option-dispatch')).toHaveFocus());
+    expect(screen.queryByRole('textbox')).toBeNull();
+    expect(screen.queryByRole('toolbar')).toBeNull();
+    expect(screen.queryByTestId('conversation-composer-recipient')).toBeNull();
+    await act(async () => { key('2'); });
+    expect(answer).toHaveBeenCalledWith('dispatch', { kind: 'choice', optionId: 'model' });
+    fireEvent.click(screen.getByTestId('conversation-composer-prompts-hide'));
+    await waitFor(() => expect(screen.getByTestId('composer').querySelector('.ProseMirror')).toHaveFocus());
+    expect(screen.getByTestId('composer').querySelector('.ProseMirror')).toHaveTextContent('Unsent discussion draft');
+    fireEvent.click(screen.getByTestId('conversation-composer-prompts-show'));
+    expect(screen.queryByTestId('composer')).toBeNull();
+    expect(chat.sendMessage).not.toHaveBeenCalled();
+  });
+
 });
 
 describe('ComposerPromptDeck — routing to a compose prompt (2.482.0)', () => {
