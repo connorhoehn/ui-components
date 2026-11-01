@@ -2480,7 +2480,7 @@ function Dn({ node: e, detail: n, selected: r, selectedRevisionId: i, live: a, o
 						className: t("space-y-1.5 py-2 pl-3.5 pr-2.5 text-xs leading-snug", h ? "text-text-tertiary" : "text-text-secondary"),
 						children: [
 							w.map((n, r) => /* @__PURE__ */ Z("div", {
-								className: "flex items-start justify-between gap-1.5",
+								className: "flex flex-col items-start gap-1.5",
 								children: [
 									/* @__PURE__ */ X("span", {
 										"data-ui-text": "graph-detail",
@@ -2761,7 +2761,7 @@ function Fn({ data: e }) {
 		tone: "surface",
 		titleText: e.title,
 		title: /* @__PURE__ */ Z("span", {
-			className: "flex min-w-0 max-w-full items-center gap-1.5 font-sans text-[12px] font-semibold text-text-secondary",
+			className: "flex min-w-0 max-w-full items-center gap-1.5 font-sans text-[12px] leading-4 font-semibold text-text-secondary",
 			children: [e.live && /* @__PURE__ */ X("span", {
 				"aria-hidden": "true",
 				className: "inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-primary/50"
