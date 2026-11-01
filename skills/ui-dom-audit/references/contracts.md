@@ -837,3 +837,5 @@ Compact form height measures the standalone input or a Combobox’s painted fiel
 frame. Its internal unbordered input occupies only the text line (16px); it is not
 a second field. The valid fixture includes that inner input and rejects both an
 oversized standalone input and an oversized Combobox frame.
+
+Meeting toolbar count badges stay within their owning button (`meeting.badge-contained`), including simultaneous count and attention badges. Call headers retain at least 8px above their controls (`call.header-inset`); a composer host must not zero this inset when joining the call dock to its editor. Both contracts have valid and deliberately broken fixtures.

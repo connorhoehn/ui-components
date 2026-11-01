@@ -73,6 +73,15 @@ export const Labelled: Story = {
   render: () => <Bar compact={false} labels="visible" />,
 };
 
+/** Counts and attention indicators retain their own space, including 99+. */
+export const Counts: Story = {
+  args: { items: [
+    { id: 'people', label: 'People', icon: <UsersIcon />, count: 120, badge: 12 },
+    { id: 'raise', label: 'Lower hand', icon: <MeetingHandIcon />, count: 1, pressed: true },
+    { id: 'chat', label: 'Chat', icon: <ChatBubbleIcon />, badge: 99 },
+  ], compact: false, phone: false },
+};
+
 /** Narrow: View, Notes and Apps fold into More. */
 export const Compact: Story = {
   args: { items: [], onLeave: () => {} },

@@ -467,8 +467,8 @@ function ConversationComposerImpl({
   const deckInput = useMemo<ComposerPromptInput>(() => ({
     isEmpty: () => !(handle.current?.editor?.getText().trim()),
     contains: (node: Node | null) => { try { return !!node && !!handle.current?.editor?.view.dom.contains(node); } catch { return false; } },
-    focus: () => handle.current?.focus(),
-  }), []);
+    focus: focusSoon,
+  }), [focusSoon]);
 
   const choose = useCallback((id: string) => {
     setChosen(id);
@@ -670,7 +670,9 @@ function ConversationComposerImpl({
   const placeholders: Partial<Record<ComposerMode, string>> = {
     ...hostPlaceholders,
     ...(mode === 'chat' && recipient?.placeholder ? { chat: recipient.placeholder } : {}),
-    ...(deck.typed && deck.active ? { [mode]: deck.active.placeholder ?? 'Type your answer and press Enter' } : {}),
+    ...(!deck.collapsed && deck.active && !deck.active.readOnlyReason && deck.active.kind !== 'compose'
+      ? { [mode]: deck.typed ? deck.active.placeholder ?? 'Type your answer and press Enter' : 'Choose an answer above, or press its number' }
+      : {}),
   };
   // ONE note: when the To: row already carries the reason, the input says
   // only what to do; otherwise the input carries the reason itself.

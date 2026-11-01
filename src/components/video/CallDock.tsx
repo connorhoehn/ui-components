@@ -445,6 +445,7 @@ export function CallDock({
       data-testid={testId}
       data-phase={phase}
       data-layout={stage ? 'stage' : stack ? 'stack' : 'shelf'}
+      data-call-dock
       data-compact={size === 'sm' || stack ? 'true' : 'false'}
       data-tile-size={stack ? undefined : size}
     >
@@ -453,7 +454,7 @@ export function CallDock({
           outgrow the dock — a narrow chat column, a caller's `extras` — the
           controls move to their own right-aligned line instead of painting
           over the name and the clock. */}
-      <div className={cn('flex min-w-0 flex-wrap items-center gap-x-2 gap-y-2', stage && 'order-last justify-center')} data-testid={`${testId}-header`}>
+      <div className={cn('flex min-w-0 flex-wrap items-center gap-x-2 gap-y-2', stage && 'order-last justify-center')} data-call-dock-header data-testid={`${testId}-header`}>
         {!stage && <div className="flex min-w-0 flex-auto items-baseline gap-3">
           <button
             type="button"

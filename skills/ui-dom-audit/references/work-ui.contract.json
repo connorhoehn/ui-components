@@ -4,6 +4,24 @@
   "tolerance": 1,
   "rules": [
     {
+      "id": "meeting.badge-contained",
+      "kind": "within",
+      "selector": "[data-ui-meeting-toolbar] button [data-ui-badge=\"count\"]",
+      "anchor": "button",
+      "ancestor": true,
+      "owner": "MeetingToolbar"
+    },
+    {
+      "id": "call.header-inset",
+      "kind": "align",
+      "selector": "[data-call-dock-header]",
+      "anchor": "[data-call-dock]",
+      "ancestor": true,
+      "edges": ["top"],
+      "offset": { "min": 8 },
+      "owner": "CallDock composition"
+    },
+    {
       "id": "shell.header.count",
       "kind": "count",
       "selector": "$header",

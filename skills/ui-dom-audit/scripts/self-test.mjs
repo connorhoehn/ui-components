@@ -1175,5 +1175,21 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
     await contractPage.close();
     console.log('PASS standalone gutters, card toolbars and compact form controls');
   }
+  {
+    const ids = ['meeting.badge-contained', 'call.header-inset'];
+    const page = await browser.newPage();
+    const subset = { ...fullContract, rules: fullContract.rules.filter(r => ids.includes(r.id)) };
+    const fixture = `<style>*{box-sizing:border-box}button{position:relative;display:inline-flex;align-items:center;gap:6px;height:32px;padding:6px} [data-ui-badge]{display:inline-flex;height:18px;min-width:18px}</style><div data-ui-meeting-toolbar><button>People <span data-ui-badge="count">99+</span><span data-ui-badge="count">12</span></button><button>Raise <span data-ui-badge="count">1</span></button></div><section data-call-dock style="padding-top:12px"><div data-call-dock-header>Call controls</div></section>`;
+    const check = () => page.evaluate(measureDOM, { ...payload, required: [], contract: subset });
+    await page.setContent(fixture);
+    assert.deepEqual((await check()).issues, []);
+    await page.locator('[data-ui-badge]').first().evaluate(el => { el.style.position = 'absolute'; el.style.right = '-12px'; });
+    assert.ok((await check()).issues.some(i => i.rule === 'meeting.badge-contained'));
+    await page.setContent(fixture);
+    await page.locator('[data-call-dock]').evaluate(el => { el.style.paddingTop = '0'; });
+    assert.ok((await check()).issues.some(i => i.rule === 'call.header-inset'));
+    await page.close();
+    console.log('PASS contained meeting counts and call control top inset');
+  }
   console.log(`PASS clean four-column layout, repeatability, ${mutations.length} defect mutations, navigation coverage, cross-tenant grouping and honest report comparison`);
 } finally { await browser.close(); fs.rmSync(temp, { recursive: true, force: true }); }

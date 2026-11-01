@@ -327,9 +327,22 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, vari
   // editor's own Enter / Escape, but only from the deck or its composer input.
   const state = useRef({ deck, input });
   state.current = { deck, input };
+  // A new question puts the caret where its keyboard hints apply. Do not
+  // interrupt another editor or take focus from a compose prompt's own flow.
+  useEffect(() => {
+    if (!active || collapsed || active.readOnlyReason || active.kind === 'compose') return;
+    const frame = requestAnimationFrame(() => {
+      const current = document.activeElement;
+      const otherEditor = current?.closest('input,textarea,select,[contenteditable="true"]');
+      const nextInput = state.current.input;
+      if (otherEditor && !nextInput?.contains(current)) return;
+      nextInput?.focus();
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [active?.id, collapsed, active?.kind, active?.readOnlyReason]);
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if (event.defaultPrevented || event.isComposing) return;
+      if (event.defaultPrevented || event.isComposing || event.repeat) return;
       const { deck: d, input: i } = state.current;
       const target = event.target as Node | null;
       const inDeck = !!root.current && !!target && root.current.contains(target);
@@ -494,7 +507,7 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, vari
                     data-default={fallback?.id === option.id || undefined}
                     data-testid={`${testId}-option-${option.id}`}
                   >
-                    {key && <Keycap>{key}</Keycap>}
+                    {shortcut && <Keycap>{shortcut}</Keycap>}
                     {option.label}
                   </Button>
                   {option.hint && <Text size="xs" tone="tertiary" className="hidden" id={`${baseId}-hint-${i}`}>{option.hint}</Text>}

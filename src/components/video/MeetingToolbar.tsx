@@ -25,7 +25,7 @@
 //
 // Compact by default (2.480.0): small icon buttons the size of the call dock's
 // media toggles (32px, 18px icons), the label is the accessible name and a
-// hover/focus `Tooltip`, counts and unread numbers are small badges on the
+// hover/focus `Tooltip`, counts and unread numbers are inline badges beside the
 // icon, and the active pane keeps its underline. `labels="visible"` restores
 // the earlier 56px buttons with the label under the icon.
 
@@ -51,7 +51,7 @@ export interface MeetingToolbarItem {
   active?: boolean;
   /** A toggle that is on (hand raised): filled, `aria-pressed`. */
   pressed?: boolean;
-  /** A number on the icon — the People count, your place in the hand queue. A small badge by default; beside the icon with `labels="visible"`. */
+  /** A number on the icon — the People count, your place in the hand queue. An inline badge by default; plain text with `labels="visible"`. */
   count?: number;
   /** An unread/attention badge on the icon — new chat messages. */
   badge?: number;
@@ -177,7 +177,7 @@ function ToolbarButton({ item, look = 'compact' }: { item: MeetingToolbarItem; l
         item.menu && look === 'compact' && 'pr-0.5',
       )}
     >
-      <span className="relative inline-flex items-center gap-1">
+      <span className="relative inline-flex items-center gap-1.5">
         {item.icon}
         {item.count !== undefined && (iconOnly ? (
           <Badge
@@ -185,7 +185,7 @@ function ToolbarButton({ item, look = 'compact' }: { item: MeetingToolbarItem; l
             color="muted"
             value={item.count}
             aria-label={String(item.count)}
-            className="absolute -bottom-1.5 -right-2.5 h-3.5 min-w-3.5 px-1 ring-1 ring-surface"
+            className="shrink-0"
             data-testid={`meeting-toolbar-${item.id}-count`}
           />
         ) : (
@@ -198,7 +198,7 @@ function ToolbarButton({ item, look = 'compact' }: { item: MeetingToolbarItem; l
             variant="count"
             color="danger"
             value={item.badge}
-            className={cn('absolute -top-1.5', iconOnly ? '-right-2.5 h-3.5 min-w-3.5 px-1 ring-1 ring-surface' : '-right-2.5')}
+            className="shrink-0"
             data-testid={`meeting-toolbar-${item.id}-badge`}
           />
         )}
@@ -331,6 +331,7 @@ export function MeetingToolbar({
       {...roving}
       role="toolbar"
       aria-label="Meeting controls"
+      data-ui-meeting-toolbar
       data-testid={testId}
       data-compact={narrow ? 'true' : undefined}
       data-layout={phone ? 'phone' : undefined}

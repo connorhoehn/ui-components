@@ -34,6 +34,34 @@ const deck = () => screen.getByTestId('composer-prompt-deck');
 const key = (k: string, init: KeyboardEventInit = {}) => fireEvent.keyDown(document.activeElement ?? document.body, { key: k, ...init });
 
 describe('ComposerPromptDeck', () => {
+  it('focuses a new question once, preserves focus in other editors, and ignores held or composing keys', async () => {
+    const onAnswer = vi.fn();
+    const input = document.createElement('textarea');
+    document.body.append(input);
+    const bridge = { isEmpty: () => !input.value, contains: (node: Node | null) => node === input, focus: vi.fn(() => input.focus()) };
+    const { rerender, unmount } = render(<ComposerPromptDeck prompts={prompts(onAnswer)} input={bridge} />);
+    try {
+      await waitFor(() => expect(input).toHaveFocus());
+      key('2', { repeat: true });
+      key('2', { isComposing: true });
+      expect(onAnswer).not.toHaveBeenCalled();
+      input.blur();
+      rerender(<ComposerPromptDeck prompts={prompts(onAnswer)} input={bridge} />);
+      expect(bridge.focus).toHaveBeenCalledTimes(1);
+      const other = document.createElement('textarea'); document.body.append(other); other.focus();
+      rerender(<ComposerPromptDeck prompts={prompts(onAnswer).map(p => ({ ...p, id: `${p.id}:new` }))} input={bridge} />);
+      await act(async () => { await new Promise(resolve => requestAnimationFrame(resolve)); });
+      expect(other).toHaveFocus(); other.remove();
+    } finally { unmount(); input.remove(); }
+  });
+
+  it('prints the actual Alt shortcut on typed-answer options', () => {
+    render(<ComposerPromptDeck prompts={[{ id: 'number', title: 'Amount', question: 'How much?', kind: 'number', options: [{ id: 'none', label: 'None' }], onAnswer: vi.fn() }]} />);
+    const option = screen.getByTestId('composer-prompt-deck-option-none');
+    expect(option).toHaveAttribute('aria-keyshortcuts', 'Alt+1');
+    expect(option.querySelector('kbd')).toHaveTextContent('Alt+1');
+  });
+
   it('draws the header card, the question, numbered answers, position and progress, with markers', () => {
     render(<ComposerPromptDeck prompts={prompts()} />);
     expect(deck().getAttribute('data-composer-prompt-deck')).toBe('expanded');

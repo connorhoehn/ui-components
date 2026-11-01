@@ -274,7 +274,7 @@ describe('MeetingToolbar keyboard (WAI-ARIA toolbar, 2.458.2)', () => {
       expect(people.className).toContain('h-8');
       // The count is a small badge on the icon; the unread number stays a badge too.
       expect(screen.getByTestId('meeting-toolbar-people-count')).toHaveTextContent('15');
-      expect(screen.getByTestId('meeting-toolbar-people-count')).toHaveClass('absolute');
+      expect(screen.getByTestId('meeting-toolbar-people-count')).not.toHaveClass('absolute');
       expect(screen.getByTestId('meeting-toolbar-chat-badge')).toHaveTextContent('3');
       // The active pane keeps its underline; a pressed toggle its state.
       expect(screen.getByTestId('meeting-toolbar-rooms-active')).toBeInTheDocument();
