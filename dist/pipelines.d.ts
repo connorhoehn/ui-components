@@ -881,6 +881,8 @@ declare interface GroupedListRow {
      * row's button, so pressing it never opens the row.
      */
     leading?: ReactNode;
+    /** A decorative status mark needs only an 8px column; controls keep their full target. */
+    leadingSize?: 'control' | 'indicator' | 'none';
     /**
      * A second line inside the row's button, above `subline` — avatar, points,
      * owner. Non-interactive by contract (it is inside a button).

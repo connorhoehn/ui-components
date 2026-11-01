@@ -9440,7 +9440,7 @@ export declare interface ExpertSkillMatch {
     strength?: number;
 }
 
-export declare function ExplorerLayout({ rail, children, aside, railWidth, header, paneHeader, paneFooter, railCount, railCountStyle, railBack, railHeading, railCollapsed, onToggleRail, railLabel, railTitle, railActions, railHeader, railFooter, panePadding, asidePlacement, className, 'data-testid': testId, }: ExplorerLayoutProps): JSX.Element;
+export declare function ExplorerLayout({ rail, children, aside, railWidth, railResize, header, paneHeader, paneFooter, railCount, railCountStyle, railBack, railHeading, railCollapsed, onToggleRail, railLabel, railTitle, railActions, railHeader, railFooter, panePadding, asidePlacement, className, 'data-testid': testId, }: ExplorerLayoutProps): JSX.Element;
 
 export declare interface ExplorerLayoutProps {
     /** Left rail — flush to the pane's left edge, its own border, scrolls independently. */
@@ -9458,6 +9458,12 @@ export declare interface ExplorerLayoutProps {
      * is 264px for a one-line title list (the Initiatives v2 rail, since 2.392.0).
      */
     railWidth?: 'xs' | 'sm' | 'ms' | 'md' | 'ml' | 'lg';
+    /** Opt-in adjustable rail. Width is remembered in pixels when a storage key is supplied. */
+    railResize?: {
+        minPx?: number;
+        maxPx?: number;
+        storageKey?: string;
+    };
     /**
      * A band ABOVE all three columns — a scope header (breadcrumb, title, stats,
      * tabs) that names what the rail, the pane and the aside are all looking at.
@@ -10868,6 +10874,8 @@ export declare interface GroupedListRow {
      * row's button, so pressing it never opens the row.
      */
     leading?: ReactNode;
+    /** A decorative status mark needs only an 8px column; controls keep their full target. */
+    leadingSize?: 'control' | 'indicator' | 'none';
     /**
      * A second line inside the row's button, above `subline` — avatar, points,
      * owner. Non-interactive by contract (it is inside a button).
@@ -17383,7 +17391,7 @@ export declare interface RailFold {
 /** The storage key a rail's fold is remembered under in a band. */
 export declare function railFoldKey(storageKey: string, band: RailBand): string;
 
-export declare function RailLayout({ children, rail, railWidth, className, 'data-testid': testId }: RailLayoutProps): JSX.Element;
+export declare function RailLayout({ children, rail, railWidth, variant, className, 'data-testid': testId }: RailLayoutProps): JSX.Element;
 
 export declare interface RailLayoutProps {
     /** The main column. */
@@ -17392,6 +17400,8 @@ export declare interface RailLayoutProps {
     rail: ReactNode;
     /** Rail width at lg+. Default 'md' (300px). */
     railWidth?: 'sm' | 'md' | 'lg';
+    /** Plain record sections, responsive to the available column rather than the viewport. */
+    variant?: 'card' | 'plain';
     className?: string;
     'data-testid'?: string;
 }
@@ -18762,9 +18772,11 @@ export declare interface ReviewPostData {
     timeLabel?: string;
 }
 
-export declare function ReviewThread({ posts, onAnswer, answerBusy, answerPlaceholder, answerLabel, kindLabels, kindTones, emptyLabel, className, 'data-testid': testId, }: ReviewThreadProps): JSX.Element;
+export declare function ReviewThread({ variant, posts, onAnswer, answerBusy, answerPlaceholder, answerLabel, kindLabels, kindTones, emptyLabel, className, 'data-testid': testId, }: ReviewThreadProps): JSX.Element;
 
 export declare interface ReviewThreadProps {
+    /** Plain, divided posts inside a record; the default retains the standalone card. */
+    variant?: 'card' | 'inline';
     posts: ReviewPostData[];
     /** Answer an open question. Omit to render read-only (terminal threads). */
     onAnswer?: (postId: string, body: string) => void;
@@ -18941,11 +18953,13 @@ declare interface RichChatComposerProps {
      * - `basic` (2.390.0): the docked card as a light prompt box — B, I, code,
      *   link, attach, then the divider before `toolbarExtras`. No lists and no
      *   quote on the strip (a prompt is a sentence, not a document); bulleted
-     *   and numbered lists, quote and strikethrough go under the card's mode
-     *   menu → Formatting. Docks like `editor` under `modeControl="menu"`, with
+     *   and numbered lists, quote and strikethrough are omitted. Docks like
+     *   `editor` under `modeControl="menu"`, with
      *   the mode as a boxed picker ("Agent ⌄", no glyph), the input in its own
      *   bordered well and no rule over the strip — the Initiatives mockup.
      *
+     * In docked mode, the mode menu contains modes, host actions and keyboard
+     * hints only; formatting belongs on the editor's toolbar.
      * Sizes are unchanged in all of them: every control is the same 28px box.
      * Below wide the strip folds exactly as before, whichever preset is set.
      */
@@ -20583,7 +20597,7 @@ export declare interface SidebarSectionProps {
  * into its right column. Outside a host it renders nothing (the page's own
  * column is unchanged).
  */
-export declare function SidePane({ title, subtitle, closeLabel, onClose, widthPx, paneId, explores, tabs, value, onValueChange, trailing, footer, density, children, 'data-testid': testId, }: SidePaneProps): ReactPortal | null;
+export declare function SidePane({ title, subtitle, closeLabel, onClose, widthPx, paneId, explores, presentation, tabs, value, onValueChange, trailing, footer, density, children, 'data-testid': testId, }: SidePaneProps): ReactPortal | null;
 
 export declare interface SidePaneBounds {
     /** The split's ratio (page share) when nothing is remembered. Default 0.72. */
@@ -20670,6 +20684,8 @@ export declare interface SidePaneProviderProps {
 }
 
 export declare interface SidePaneRegistration {
+    /** Documents get a readable pane; below 1120px of split space they temporarily take the column. */
+    presentation?: 'standard' | 'document';
     /** The frame's title ("Discussion", "Details"). */
     title: string;
     /** The second line: what the pane is about. */
@@ -20722,9 +20738,10 @@ export declare interface SignoffEntry {
     timeLabel?: string;
 }
 
-export declare function SignoffPanel({ signoffs, required, actions, emptyHint, className, 'data-testid': testId, }: SignoffPanelProps): JSX.Element;
+export declare function SignoffPanel({ variant, signoffs, required, actions, emptyHint, className, 'data-testid': testId, }: SignoffPanelProps): JSX.Element;
 
 export declare interface SignoffPanelProps {
+    variant?: 'card' | 'inline';
     signoffs: SignoffEntry[];
     /** Approvals needed to ratify. Default 2. */
     required?: number;
@@ -20996,7 +21013,7 @@ export declare function splitEffectLabel(label: string): {
     text: string;
 };
 
-export declare function SplitPane({ primary, secondary, defaultRatio, ratio: controlled, onRatioChange, minPrimaryPx, minSecondaryPx, dividerLabel, onDividerActivate, className, 'data-testid': testId, }: SplitPaneProps): JSX.Element;
+export declare function SplitPane({ primary, secondary, defaultRatio, ratio: controlled, onRatioChange, minPrimaryPx, minSecondaryPx, dividerLabel, onDividerActivate, resizable, primaryHidden, className, 'data-testid': testId, }: SplitPaneProps): JSX.Element;
 
 export declare interface SplitPaneProps {
     primary: ReactNode;
@@ -21014,6 +21031,10 @@ export declare interface SplitPaneProps {
     dividerLabel?: string;
     /** Enter / Space on the focused divider (2.438.1): a host's fold of the secondary pane. */
     onDividerActivate?: () => void;
+    /** Keep a controlled split without offering a resize handle (e.g. a folded rail). */
+    resizable?: boolean;
+    /** Keep the primary mounted but hide it while the secondary owns a narrow viewport. */
+    primaryHidden?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -23213,9 +23234,10 @@ export declare interface TopNavProps {
 }
 
 /** Items → `GroupedListRow`s: leading checkbox or signal dot, and the meta line. Exported for tests. */
-export declare function toWorkListRows(items: WorkListItem[], { onToggleDone, testId, metaStyle, pointsLabel, signalDisplay }?: ToWorkListRowsOptions): GroupedListRow[];
+export declare function toWorkListRows(items: WorkListItem[], { onToggleDone, testId, metaStyle, pointsLabel, signalDisplay, layout }?: ToWorkListRowsOptions): GroupedListRow[];
 
 export declare interface ToWorkListRowsOptions {
+    layout?: 'default' | 'rail';
     onToggleDone?: (item: WorkListItem, done: boolean) => void;
     testId?: string;
     /** Since 2.390.0. See `WorkListViewProps.metaStyle`. */
@@ -26975,9 +26997,11 @@ declare interface UseActivityBusReturn {
       'data-testid'?: string;
   }
 
-  export declare function WorkListView({ title, count, onCreate, createLabel, onCollapse, collapseLabel, chrome, query, onQueryChange, searchPlaceholder, sort, sortOptions, onSortChange, sortLabel, filters, filterFacets, activeFilterCount: activeFilterCountProp, onClearFilters, groups, items, currentId, onOpenItem, onToggleDone, onReorder, loading, error, onRetry, emptyLabel, storageKey, toolbarLayout, sortStyle, metaStyle, pointsLabel, signalDisplay, currentStyle, groupCountStyle, className, 'data-testid': testId, }: WorkListViewProps): JSX.Element;
+  export declare function WorkListView({ layout, title, count, onCreate, createLabel, onCollapse, collapseLabel, chrome, query, onQueryChange, searchPlaceholder, sort, sortOptions, onSortChange, sortLabel, filters, filterFacets, activeFilterCount: activeFilterCountProp, onClearFilters, groups, items, currentId, onOpenItem, onToggleDone, onReorder, loading, error, onRetry, emptyLabel, storageKey, toolbarLayout, sortStyle, metaStyle, pointsLabel, signalDisplay, currentStyle, groupCountStyle, className, 'data-testid': testId, }: WorkListViewProps): JSX.Element;
 
   export declare interface WorkListViewProps extends Omit<WorkListToolbarProps, 'className' | 'data-testid'> {
+      /** A narrow navigation rail: small status marks, full-width titles and keys on the metadata line. */
+      layout?: 'default' | 'rail';
       /** Default "Work". */
       title?: string;
       /** The header count. Defaults to `items.length`. */

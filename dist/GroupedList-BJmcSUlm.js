@@ -1077,10 +1077,11 @@ function fe({ row: e, current: n, currentStyle: r, rowStyle: i, testId: o, size:
 		...y ? { onContextMenu: (e) => {
 			e.target.closest("[data-grouped-list-menu]") || (e.preventDefault(), de(e.currentTarget));
 		} } : {},
-		className: t("group relative flex items-center gap-3 px-2", i === "plain" ? "border-t-0" : "border-t border-border", i === "plain" ? p : D ? "py-[7px]" : "py-2.5", "transition-colors duration-100", n ? t(m, "hover:bg-primary/12") : "hover:bg-surface-hover", O && n && "rounded-r-md border-transparent shadow-[inset_3px_0_0_0_var(--color-primary)]", !O && n && r === "bar" && "shadow-[inset_2px_0_0_0_var(--color-primary)]", e.disabled && "opacity-60", k.dragging && "opacity-50", k.over && !k.dragging && "shadow-[inset_0_2px_0_0_var(--color-primary)]"),
+		className: t("group relative flex items-center px-2", e.leadingSize === "indicator" ? "gap-2" : "gap-3", i === "plain" ? "border-t-0" : "border-t border-border", i === "plain" ? p : D ? "py-[7px]" : "py-2.5", "transition-colors duration-100", n ? t(m, "hover:bg-primary/12") : "hover:bg-surface-hover", O && n && "rounded-r-md border-transparent shadow-[inset_3px_0_0_0_var(--color-primary)]", !O && n && r === "bar" && "shadow-[inset_2px_0_0_0_var(--color-primary)]", e.disabled && "opacity-60", k.dragging && "opacity-50", k.over && !k.dragging && "shadow-[inset_0_2px_0_0_var(--color-primary)]"),
 		children: [
 			S && /* @__PURE__ */ T("span", {
-				className: t("flex shrink-0 items-center justify-center", D ? "w-6" : "w-5"),
+				className: t("flex shrink-0 items-center justify-center", e.leadingSize === "indicator" ? "w-2" : D ? "w-6" : "w-5"),
+				"data-ui-rail-leading": e.leadingSize,
 				"data-testid": `${o}-row-leading-${e.id}`,
 				children: e.leading
 			}),
@@ -1097,7 +1098,7 @@ function fe({ row: e, current: n, currentStyle: r, rowStyle: i, testId: o, size:
 				},
 				className: t("flex min-w-0 flex-1 items-center gap-3 rounded-md border-0 bg-transparent p-0 text-left", "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", e.disabled ? "cursor-default" : "cursor-pointer"),
 				children: [
-					!S && /* @__PURE__ */ T("span", {
+					!S && e.leadingSize !== "none" && /* @__PURE__ */ T("span", {
 						className: "w-5 shrink-0",
 						"aria-hidden": "true"
 					}),

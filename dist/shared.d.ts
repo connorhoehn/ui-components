@@ -2957,6 +2957,8 @@ export declare interface GroupedListRow {
      * row's button, so pressing it never opens the row.
      */
     leading?: ReactNode;
+    /** A decorative status mark needs only an 8px column; controls keep their full target. */
+    leadingSize?: 'control' | 'indicator' | 'none';
     /**
      * A second line inside the row's button, above `subline` — avatar, points,
      * owner. Non-interactive by contract (it is inside a button).
@@ -4950,7 +4952,7 @@ export declare interface RailFold {
 /** The storage key a rail's fold is remembered under in a band. */
 export declare function railFoldKey(storageKey: string, band: RailBand): string;
 
-export declare function RailLayout({ children, rail, railWidth, className, 'data-testid': testId }: RailLayoutProps): JSX.Element;
+export declare function RailLayout({ children, rail, railWidth, variant, className, 'data-testid': testId }: RailLayoutProps): JSX.Element;
 
 export declare interface RailLayoutProps {
     /** The main column. */
@@ -4959,6 +4961,8 @@ export declare interface RailLayoutProps {
     rail: ReactNode;
     /** Rail width at lg+. Default 'md' (300px). */
     railWidth?: 'sm' | 'md' | 'lg';
+    /** Plain record sections, responsive to the available column rather than the viewport. */
+    variant?: 'card' | 'plain';
     className?: string;
     'data-testid'?: string;
 }
@@ -5084,9 +5088,11 @@ export declare interface ReviewPostData {
     timeLabel?: string;
 }
 
-export declare function ReviewThread({ posts, onAnswer, answerBusy, answerPlaceholder, answerLabel, kindLabels, kindTones, emptyLabel, className, 'data-testid': testId, }: ReviewThreadProps): JSX.Element;
+export declare function ReviewThread({ variant, posts, onAnswer, answerBusy, answerPlaceholder, answerLabel, kindLabels, kindTones, emptyLabel, className, 'data-testid': testId, }: ReviewThreadProps): JSX.Element;
 
 export declare interface ReviewThreadProps {
+    /** Plain, divided posts inside a record; the default retains the standalone card. */
+    variant?: 'card' | 'inline';
     posts: ReviewPostData[];
     /** Answer an open question. Omit to render read-only (terminal threads). */
     onAnswer?: (postId: string, body: string) => void;
@@ -5514,9 +5520,10 @@ export declare interface SignoffEntry {
     timeLabel?: string;
 }
 
-export declare function SignoffPanel({ signoffs, required, actions, emptyHint, className, 'data-testid': testId, }: SignoffPanelProps): JSX.Element;
+export declare function SignoffPanel({ variant, signoffs, required, actions, emptyHint, className, 'data-testid': testId, }: SignoffPanelProps): JSX.Element;
 
 export declare interface SignoffPanelProps {
+    variant?: 'card' | 'inline';
     signoffs: SignoffEntry[];
     /** Approvals needed to ratify. Default 2. */
     required?: number;

@@ -3092,53 +3092,17 @@ var Pa = _e(function({ onSend: o, draft: f, onDraftChange: h, onCommand: S, onSe
 		J,
 		Y
 	]);
-	let Rr = Pr && (Nr || J), zr = jr && !Nr && at !== "menu", Br = !!_t?.length && !!vt, Vr = Br && jr && sn && br && !(Tt && !Tr), Hr = Br && !jr, Z = Tt && !Dt && !Tr && sn && !gt && !Ye?.length && !Jt.length && !W && !R && !_n && !un && !Wt.open && !(Ie && Fe === "hidden"), Ur = Tt && "motion-safe:[animation:composerReveal_140ms_ease-out]", [Wr, Gr] = O(!1), Q = (Mr || q) && !Wr || Z, Kr = Z && Mr, qr = q || Kr, Jr = br || !sn, Yr = Ke === "compact", Xr = Ke === "basic", Zr = Ke === "editor" || Ke === "prompt" || Xr, Qr = !Yr && !Zr, $r = jr && Qr, ei = jr && !Yr, ti = jr && Qr, ni = jr && !Yr && !Xr, ri = jr && !Xr, ii = jr && !Qr, ai = !!qe?.length && (!Y || mn), oi = Y && !!W && !Z && !un, si = Fr && !Z && !un ? W ?? (Nt ? Pe?.find((e) => e.trigger === Nt) ?? null : null) : null, ci = Y ? [
-		...G && ii ? [{
-			label: "Formatting",
-			items: [
-				{
-					label: "Strikethrough",
-					checked: G.isActive("strike"),
-					onSelect: () => {
-						G.chain().focus().toggleStrike().run();
-					}
-				},
-				...Xr ? [{
-					label: "Bulleted list",
-					checked: G.isActive("bulletList"),
-					onSelect: () => {
-						G.chain().focus().toggleBulletList().run();
-					}
-				}] : [],
-				{
-					label: "Numbered list",
-					checked: G.isActive("orderedList"),
-					onSelect: () => {
-						G.chain().focus().toggleOrderedList().run();
-					}
-				},
-				...Xr ? [{
-					label: "Quote",
-					checked: G.isActive("blockquote"),
-					onSelect: () => {
-						G.chain().focus().toggleBlockquote().run();
-					}
-				}] : []
-			]
-		}] : [],
-		...qe ?? [],
-		...nr.length ? [{
-			label: "Keys",
-			items: nr.map((e) => ({
-				label: e.label,
-				trailing: /* @__PURE__ */ k("kbd", {
-					className: "rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary",
-					children: e.key
-				}),
-				...e.onSelect ? { onSelect: e.onSelect } : {}
-			}))
-		}] : []
-	] : [], li = ne(yr, dt, dn), ui = re(), di = dn && li !== "none" && !(Z && !ui?.painting), fi = di && !!ui?.painting, pi = di && !fi, mi = ft ?? ui?.working ?? !1, hi = {};
+	let Rr = Pr && (Nr || J), zr = jr && !Nr && at !== "menu", Br = !!_t?.length && !!vt, Vr = Br && jr && sn && br && !(Tt && !Tr), Hr = Br && !jr, Z = Tt && !Dt && !Tr && sn && !gt && !Ye?.length && !Jt.length && !W && !R && !_n && !un && !Wt.open && !(Ie && Fe === "hidden"), Ur = Tt && "motion-safe:[animation:composerReveal_140ms_ease-out]", [Wr, Gr] = O(!1), Q = (Mr || q) && !Wr || Z, Kr = Z && Mr, qr = q || Kr, Jr = br || !sn, Yr = Ke === "compact", Xr = Ke === "basic", Zr = Ke === "editor" || Ke === "prompt" || Xr, Qr = !Yr && !Zr, $r = jr && Qr, ei = jr && !Yr, ti = jr && Qr, ni = jr && !Yr && !Xr, ri = jr && !Xr, ii = jr && !Qr, ai = !!qe?.length && (!Y || mn), oi = Y && !!W && !Z && !un, si = Fr && !Z && !un ? W ?? (Nt ? Pe?.find((e) => e.trigger === Nt) ?? null : null) : null, ci = Y ? [...qe ?? [], ...nr.length ? [{
+		label: "Keys",
+		items: nr.map((e) => ({
+			label: e.label,
+			trailing: /* @__PURE__ */ k("kbd", {
+				className: "rounded border border-border bg-surface-inset px-1 font-mono text-[10px] text-text-secondary",
+				children: e.key
+			}),
+			...e.onSelect ? { onSelect: e.onSelect } : {}
+		}))
+	}] : []] : [], li = ne(yr, dt, dn), ui = re(), di = dn && li !== "none" && !(Z && !ui?.painting), fi = di && !!ui?.painting, pi = di && !fi, mi = ft ?? ui?.working ?? !1, hi = {};
 	ut && (hi["--composer-radius"] = ua[ut]), pt !== void 0 && (hi["--composer-input-max"] = typeof pt == "number" ? `${pt}px` : pt);
 	let gi = mi ? 30 : 22, _i = (t, n, r, i, a, o) => /* @__PURE__ */ k("button", {
 		ref: a,

@@ -1696,11 +1696,13 @@ export declare interface RichChatComposerProps {
      * - `basic` (2.390.0): the docked card as a light prompt box — B, I, code,
      *   link, attach, then the divider before `toolbarExtras`. No lists and no
      *   quote on the strip (a prompt is a sentence, not a document); bulleted
-     *   and numbered lists, quote and strikethrough go under the card's mode
-     *   menu → Formatting. Docks like `editor` under `modeControl="menu"`, with
+     *   and numbered lists, quote and strikethrough are omitted. Docks like
+     *   `editor` under `modeControl="menu"`, with
      *   the mode as a boxed picker ("Agent ⌄", no glyph), the input in its own
      *   bordered well and no rule over the strip — the Initiatives mockup.
      *
+     * In docked mode, the mode menu contains modes, host actions and keyboard
+     * hints only; formatting belongs on the editor's toolbar.
      * Sizes are unchanged in all of them: every control is the same 28px box.
      * Below wide the strip folds exactly as before, whichever preset is set.
      */
