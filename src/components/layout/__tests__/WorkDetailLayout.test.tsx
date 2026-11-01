@@ -1,6 +1,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { useState } from 'react';
+import { DataTable } from '../../shared/DataTable';
 import { ExplorerLayout } from '../ExplorerLayout';
 import { SidePane, SidePaneProvider, SidePaneSplit, useSidePaneHost } from '../SidePane';
 
@@ -43,8 +44,17 @@ it.each([900, 1680])('gives a document usable space at %ipx without discarding t
   const draft = screen.getByLabelText('Unsent text');
   fireEvent.click(screen.getByText('Preview'));
   expect(screen.getByText('Document text')).toBeVisible();
+  expect(screen.queryByRole('heading', { level: 1, name: 'Brief' }) !== null).toBe(value === 900);
   expect(screen.getByTestId('side-pane-split-primary').hidden).toBe(value === 900);
   fireEvent.click(screen.getByRole('button', { name: 'Collapse brief' }));
   expect(screen.getByLabelText('Unsent text')).toBe(draft);
   expect(draft).toBeVisible();
+});
+
+it('document tables declare their wrapping row profile', () => {
+  const columns = [{ key: 'text', header: 'Text' }];
+  const { container, rerender } = render(<DataTable rowHeight="content" data={[{ text: 'A long document paragraph' }]} columns={columns} keyField={row => row.text} />);
+  expect(container.querySelector('table')).toHaveAttribute('data-ui-table-rows', 'content');
+  rerender(<DataTable data={[{ text: 'A row' }]} columns={columns} keyField={row => row.text} />);
+  expect(container.querySelector('table')).toHaveAttribute('data-ui-table-rows', 'fixed');
 });

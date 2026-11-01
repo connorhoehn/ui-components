@@ -57,6 +57,8 @@ export function useChatSidePanelRenderer(kind: string): ChatSidePanelRenderer | 
 // ---------------------------------------------------------------------------
 
 export interface ChatSidePanelFrameProps {
+  /** A document occupying the main column owns its page heading. */
+  titleAs?: 'span' | 'h1' | 'h2';
   title: string;
   /** A second clause under the title — "12 results", "Edited by Grace". */
   subtitle?: string;
@@ -89,7 +91,7 @@ export interface ChatSidePanelFrameProps {
  * the rest and scrolls on its own.
  */
 export function ChatSidePanelFrame({
-  title, subtitle, onClose, onOpenFullPage, actions, expanded = false, onToggleExpanded, size: sizeProp, closeLabel = 'Close panel', children, className, 'data-testid': testId = 'chat-side-panel',
+  titleAs: Title = 'span', title, subtitle, onClose, onOpenFullPage, actions, expanded = false, onToggleExpanded, size: sizeProp, closeLabel = 'Close panel', children, className, 'data-testid': testId = 'chat-side-panel',
 }: ChatSidePanelFrameProps) {
   const size = useDensitySize('ChatSidePanelFrame', sizeProp, { comfortable: 'xs', compact: 'sm' });
   const sm = size === 'sm';
@@ -105,7 +107,7 @@ export function ChatSidePanelFrame({
       <header className={cn('flex shrink-0 items-center justify-between gap-2 border-b border-border', sm ? 'px-[var(--ui-content-gutter,1rem)] py-1.5' : 'px-3 py-1.5')}>
         <Inline gap="sm" align="center" wrap={false} className="min-w-0 flex-1">
           <span className="flex min-w-0 flex-1 flex-col">
-            <span className={cn('truncate font-semibold', sm ? 'text-sm leading-5 text-text-primary' : 'text-[12px] text-text-secondary')} data-testid={`${testId}-title`}>{title}</span>
+            <Title className={cn('m-0 truncate font-semibold', sm ? 'text-sm leading-5 text-text-primary' : 'text-[12px] text-text-secondary')} data-testid={`${testId}-title`}>{title}</Title>
             {subtitle && <span className={cn('truncate', sm ? 'text-xs leading-4 text-text-secondary' : 'text-[11px] text-text-tertiary')} data-testid={`${testId}-subtitle`}>{subtitle}</span>}
           </span>
           <Inline gap="xs" align="center" wrap={false} className="shrink-0">

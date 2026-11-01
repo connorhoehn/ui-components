@@ -6,6 +6,8 @@ import { WorkListView } from '../work/WorkListView';
 import { Button } from '../ui/Button';
 import { Select } from '../forms/Select';
 import { Tabs } from '../shared/Tabs';
+import { KeyValue } from '../shared/KeyValue';
+import { DataTable } from '../shared/DataTable';
 import { RailLayout, RailSection } from '../shared/RailLayout';
 import { ReviewThread } from '../shared/ReviewThread';
 import { SignoffPanel } from '../shared/SignoffPanel';
@@ -45,7 +47,9 @@ function WorkFrame() {
       paneId="storybook-brief" widthPx={{ min: 960, max: 1280 }} closeLabel="Close brief preview">
       <div className="min-h-0 flex-1 overflow-y-auto p-6" data-testid="story-brief">
         <h2 className="text-sm font-semibold">Context for this work</h2>
+        <KeyValue divided responsive labelWidth="w-52" items={[{ label: 'Acceptance criteria', value: 'Not defined yet', action: <Button variant="link">Draft with agent</Button> }]} />
         <p className="mt-3 text-sm">Confirm the dependency map, group duplicate alerts and preserve the affected services on the incident.</p>
+        <DataTable rowHeight="content" data={[{ section: 'Dependencies', text: 'Confirm the dependency map and group related alerts so the response includes every affected service. '.repeat(4) }]} columns={[{ key: 'section', header: 'Section' }, { key: 'text', header: 'Content', className: 'whitespace-normal' }]} keyField={row => row.section} />
         {Array.from({ length: 18 }, (_, index) => <p key={index} className="mt-4 text-sm text-text-secondary">Acceptance criterion {index + 1}: verify the behaviour against the dependency outage example, including recovery.</p>)}
       </div>
     </SidePane>

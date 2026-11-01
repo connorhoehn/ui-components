@@ -57,6 +57,8 @@ export interface KeyValueProps {
    * checklist table ("Complete the brief"). Default `false`. Since 2.390.0.
    */
   divided?: boolean;
+  /** Let ruled rows put labels above their values when the column is narrow. */
+  responsive?: boolean;
   className?: string;
   'aria-label'?: string;
   'data-testid'?: string;
@@ -67,6 +69,7 @@ export function KeyValue({
   layout = 'row',
   labelWidth = 'w-28',
   divided = false,
+  responsive = false,
   className,
   'aria-label': ariaLabel,
   'data-testid': testId = 'key-value',
@@ -77,7 +80,7 @@ export function KeyValue({
   return (
     <dl
       className={cn(
-        'm-0 min-w-0',
+        'm-0 min-w-0', responsive && '@container/key-value',
         layout === 'grid' ? 'grid grid-cols-2 gap-x-6 gap-y-3' : ruled ? 'flex flex-col border-t border-border' : row ? 'flex flex-col gap-1.5' : 'flex flex-col gap-3',
         className,
       )}
@@ -90,14 +93,14 @@ export function KeyValue({
         <div
           key={`${item.label}-${i}`}
           className={cn(
-            'min-w-0',
+            'min-w-0', responsive && ruled && 'flex-wrap @lg/key-value:flex-nowrap',
             ruled ? 'flex min-h-[38px] items-center gap-3 border-b border-border px-2.5 py-1.5' : row ? 'flex items-baseline gap-3' : 'flex flex-col gap-0.5',
           )}
           data-testid={`${testId}-item`}
         >
           <dt
             className={cn(
-              'm-0',
+              'm-0', responsive && ruled && 'basis-full @lg/key-value:basis-auto',
               ruled ? cn('shrink-0 text-sm text-text-primary', labelWidth) : 'text-text-secondary',
               !ruled && (row ? cn('shrink-0 text-xs', labelWidth) : 'text-[12px]'),
             )}

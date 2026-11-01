@@ -56,6 +56,13 @@ try {
   await page.setContent(html);
   const clean = await measure(); assert.deepEqual(clean.issues, [], JSON.stringify(clean.issues));
   assert.deepEqual((await measure()).samples, clean.samples, 'same DOM produces identical measurements');
+  await page.evaluate(() => { const table = document.querySelector('table'); table.dataset.uiTableRows = 'content'; table.querySelector('tbody td').style.height = '180px'; });
+  assert.equal((await measure()).issues.filter(i => i.rule.startsWith('table.')).length, 0, 'document prose may make a row taller');
+  await page.evaluate(() => document.querySelector('tbody td').style.paddingLeft = '3px');
+  assert.ok((await measure()).issues.some(i => i.rule === 'table.document-geometry'), 'document cells still obey their inset');
+  await page.evaluate(() => { document.querySelector('tbody td').style.paddingLeft = '12px'; document.querySelector('table').removeAttribute('data-ui-table-rows'); });
+  assert.ok((await measure()).issues.some(i => i.rule === 'table.geometry'), 'ordinary neighboring tables retain fixed row heights');
+  await page.setContent(html);
   const mutations = [
     ['graph detail typography drift', () => document.querySelector('[data-ui-text="graph-detail"]').style.fontSize='14px', 'graph.detail'],
     ['graph metadata typography drift', () => document.querySelector('[data-ui-text="graph-metadata"]').style.fontSize='8px', 'graph.metadata'],
@@ -207,6 +214,10 @@ try {
     await page.setContent(html); await page.evaluate(pinned);
     await page.evaluate(() => { const p = document.createElement('p'); p.textContent = 'Next step drawn under the deck'; p.style.cssText = 'position:absolute;left:0;right:0;bottom:4px;margin:0;z-index:-1'; document.querySelector('#content').append(p); });
     assert.ok((await measure()).issues.some(i => i.rule === 'dock.clearance'), 'content painted inside the dock box fails');
+    await page.evaluate(() => { const overlay = document.querySelector('#content > p'); overlay.setAttribute('data-uic-popover', ''); overlay.setAttribute('role', 'toolbar'); overlay.style.zIndex = '10'; });
+    assert.deepEqual((await measure()).issues.filter(i => i.rule === 'dock.clearance'), [], 'floating controls use the established popover layer profile');
+    await page.evaluate(() => { const ordinary = document.querySelector('#content > p').cloneNode(true); ordinary.removeAttribute('data-uic-popover'); document.querySelector('#content').append(ordinary); });
+    assert.ok((await measure()).issues.some(i => i.rule === 'dock.clearance'), 'an ordinary toolbar beside the popup still cannot paint in the dock');
     console.log('PASS a pinned dock takes layout space; content under it fails, content scrolling above it passes');
     // An embedded command host is the LAST ROW of a scrolling column: it scrolls
     // with that column, and its box running past the column's bottom edge lies
@@ -1015,6 +1026,11 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && window.var
       const probe = await probes.focusWalk(dpage, { count: 4 });
       return dpage.evaluate(measureDOM, { ...deep(['focus.visible']), probe });
     };
+    await dpage.setContent('<button>First</button><button tabindex="-1">Programmatic</button><button>Last</button>');
+    await dpage.getByRole('button', { name: 'Last' }).focus();
+    const fromEnd = await probes.focusWalk(dpage);
+    assert.equal(fromEnd.total, 2);
+    assert.deepEqual(fromEnd.steps.map(step => step.name), ['First', 'Last'], 'focus walks reset the browser navigation start and count sequential controls');
     assert.deepEqual((await focusCase('')).issues, [], 'the browser focus ring passes');
     assert.deepEqual((await focusCase('button:focus-visible{outline:none;box-shadow:0 0 0 2px #2563eb}')).issues, [], 'a ring drawn as a shadow passes');
     assert.ok((await focusCase('button:focus{outline:none}')).issues.some(i => i.rule === 'focus.visible' && i.property === 'no visible focus indicator'), 'outline:none with no replacement fails');
@@ -1107,6 +1123,18 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
     await dpage.setContent(deepHtml);
     const once = await measureCase(dpage, { ...deep(['align.grid']) });
     assert.equal(once.stable, true, 'a still page measures stable'); assert.deepEqual(once.issues, []);
+    // Layered important transitions survive an unlayered duration override.
+    // Settle their endpoint without exempting the control from its box rule.
+    const transitionContract = { ...fullContract, rules: [{ id: 'fixture.control-height', kind: 'box', selector: '#fade', properties: { height: 28 } }] };
+    for (const height of [28, 18]) {
+      await dpage.setContent(`<style>@layer controls { #fade { transition: background-color 10s linear !important; } }</style><button id="fade" style="height:${height}px;background:rgb(100,90,200)">Choice</button>`);
+      await dpage.evaluate(async () => { const el = document.querySelector('#fade'); getComputedStyle(el).backgroundColor; await new Promise(r => requestAnimationFrame(r)); el.style.backgroundColor = 'transparent'; });
+      await dpage.waitForFunction(() => document.querySelector('#fade').getAnimations().some(a => a instanceof CSSTransition));
+      const faded = await measureCase(dpage, { contract: transitionContract, selectors: {} });
+      assert.equal(faded.stable, true, 'a finite CSS transition is measured at its endpoint');
+      assert.equal(await dpage.$eval('#fade', el => getComputedStyle(el).backgroundColor), 'rgba(0, 0, 0, 0)');
+      assert.equal(faded.issues.some(i => i.rule === 'fixture.control-height'), height !== 28, 'a malformed endpoint still fails');
+    }
     await dpage.setContent(deepHtml);
     await dpage.evaluate(() => { let n = 0; const list = document.querySelector('#list'); const tick = () => { list.style.marginTop = (n++ % 40) + 'px'; requestAnimationFrame(tick); }; tick(); });
     const moving = await measureCase(dpage, { ...deep(['density.table-first']) });

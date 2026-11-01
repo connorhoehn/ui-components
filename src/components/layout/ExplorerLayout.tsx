@@ -176,7 +176,7 @@ export function ExplorerLayout({
     observer?.observe(frame);
     return () => observer?.disconnect();
   }, [!!railResize]);
-  const limit = frameWidth > 0 ? Math.min(maxWidth, Math.max(minWidth, frameWidth - 360)) : maxWidth;
+  const limit = frameWidth > 0 ? Math.min(maxWidth, Math.max(minWidth, frameWidth - 480)) : maxWidth;
   const drawnWidth = railCollapsed ? 36 : Math.min(limit, Math.max(minWidth, preferredWidth));
   const resize = (width: number) => {
     const next = Math.round(Math.min(limit, Math.max(minWidth, width)));
@@ -241,7 +241,7 @@ export function ExplorerLayout({
     <div ref={frameRef} data-testid={testId} className={cn('flex h-full min-h-0', header ? 'min-w-0 flex-1' : className)}>
       {railResize ? <SplitPane primary={railNode} secondary={columns} className="min-w-0 flex-1"
         ratio={frameWidth > 0 ? drawnWidth / frameWidth : 0.25} onRatioChange={ratio => resize(ratio * frameWidth)}
-        minPrimaryPx={minWidth} minSecondaryPx={360} resizable={!railCollapsed}
+        minPrimaryPx={minWidth} minSecondaryPx={480} resizable={!railCollapsed}
         dividerLabel={`Resize ${railLabel}`} data-testid={`${testId}-rail-split`} /> : <>{railNode}{columns}</>}
     </div>
   );

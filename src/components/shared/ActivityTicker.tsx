@@ -130,7 +130,7 @@ function Ticker({ items, categories, placement = 'footer', onPlacementChange, on
         <span className="activity-ticker-copy">{current ? <><strong>{current.label}</strong><span className="activity-ticker-description"> · {current.summary}</span></> : 'Today · No categories selected'}</span>
       </Button>}
     <span id={hint} className="sr-only">{sample ? 'Sample content. ' : ''}Arrow Up opens the controls. Automatic rotation pauses while focused.</span>
-    {anchor && !prefs.hidden && createPortal(<div ref={toolbar} role="toolbar" aria-label={`${titlePrefix}Today controls`} className="activity-ticker-toolbar"
+    {anchor && !prefs.hidden && createPortal(<div ref={toolbar} data-uic-popover="" role="toolbar" aria-label={`${titlePrefix}Today controls`} className="activity-ticker-toolbar"
       style={{ left: anchor.left, bottom: anchor.bottom, top: anchor.top }} onMouseEnter={enter} onMouseLeave={leave}
       onFocusCapture={() => setFocused(true)} onBlurCapture={event => blur(event.relatedTarget)}>
       <Tooltip content="Hide this strip"><IconButton aria-label={`Hide ${sampleWord}Today strip`} size="sm" icon={<EyeOffIcon size={14} />} onClick={hide} /></Tooltip>

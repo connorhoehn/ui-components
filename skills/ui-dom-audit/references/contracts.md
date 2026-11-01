@@ -227,7 +227,10 @@ realtime connections and background polling make that an unreliable readiness
 signal. An adapter should wait for known loading rows to disappear and expected
 content/empty/error state to render. Spinner absence alone can pass before a
 lazy page mounts; require a positive control or view marker before classifying
-its composer policy. Do not add long sleeps or silence instability.
+its composer policy. Do not add long sleeps or silence instability. The snapshot
+finishes finite CSS transitions at their endpoints before measuring; a transition
+already running or a layered important duration can survive the reduced-motion
+style override. Endpoint defects and script-driven movement remain checked.
 
 ## Interaction rules (records open as pages, selections stay put)
 
@@ -872,3 +875,10 @@ The `rail.indicator-width` box rule measures GroupedList’s named decorative
 indicator column (`data-ui-rail-leading="indicator"`) at 8px. Interactive status
 controls keep their normal hit area and ordinary control checks. The valid
 fixture and a 24px mutation guard the title space without exempting row actions.
+
+Document tables declare `data-ui-table-rows="content"` through DataTable's
+`rowHeight="content"`. Their profile permits rows at least 44px tall while
+retaining header type, cell type and inset checks. Ordinary tables continue
+to require the fixed collection rhythm. A valid tall row, a broken inset and
+a tall ordinary neighbor are mutation-tested. Focus walks reset the browser's
+sequential navigation start and omit programmatically focusable controls.

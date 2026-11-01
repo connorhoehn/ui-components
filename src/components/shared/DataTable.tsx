@@ -51,6 +51,8 @@ export interface DataTableColumn<T> {
 }
 
 export interface DataTableProps<T> {
+  /** Document tables may wrap prose; ordinary collection rows retain their fixed rhythm. */
+  rowHeight?: 'fixed' | 'content';
   data: T[];
   columns: DataTableColumn<T>[];
   /** Stable id for each row. Used as React key. */
@@ -203,6 +205,7 @@ function alignClass(a?: 'left' | 'right' | 'center'): string | undefined {
 }
 
 export function DataTable<T>({
+  rowHeight = 'fixed',
   data: dataProp,
   columns: columnsProp,
   keyField,
@@ -291,7 +294,7 @@ export function DataTable<T>({
       {searchable && <CollectionToolbar label="Table controls" search={{ value: query, onChange: value => { setQuery(value); setPage(0); }, placeholder: searchPlaceholder, 'aria-label': 'Search', 'data-testid': 'datatable-search' }} />}
       {/* `Table` draws its own horizontal scroller (since 2.446.4), so a wide
           table's spill stays inside the table's box. */}
-        <Table {...(size ? { size } : {})} className={frameless ? undefined : 'border border-border rounded-lg overflow-hidden'}>
+        <Table data-ui-table-rows={rowHeight} {...(size ? { size } : {})} className={frameless ? undefined : 'border border-border rounded-lg overflow-hidden'}>
         <TableHead>
           <tr>
             {columns.map((col) => {

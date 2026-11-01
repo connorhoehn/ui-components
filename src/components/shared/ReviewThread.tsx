@@ -186,7 +186,7 @@ export function ReviewThread({
 
   return (
     <div
-      className={cn('min-w-0 overflow-hidden bg-surface', variant === 'card' && 'rounded-lg border border-border', className)}
+      className={cn('min-w-0 bg-surface', variant === 'card' && 'overflow-hidden rounded-lg border border-border', className)}
       data-variant={variant}
       {...(testId ? { 'data-testid': testId } : {})}
     >

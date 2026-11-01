@@ -7,7 +7,8 @@ for (const width of [1440, 900]) test(`work layout uses its available width at $
   const row = page.getByTestId('work-list-groups-row-open-alerts');
   const before = (await row.boundingBox())!.width;
   await page.getByRole('button', { name: 'Widen work items' }).click();
-  await expect.poll(async () => (await row.boundingBox())!.width).toBeGreaterThan(before + 180);
+  await expect.poll(async () => (await row.boundingBox())!.width).toBeGreaterThan(before + (width === 900 ? 50 : 180));
+  expect((await page.getByTestId('explorer-layout-pane').boundingBox())!.width).toBeGreaterThanOrEqual(479);
   const divider = page.getByRole('separator', { name: 'Resize work items' });
   await divider.focus(); await page.keyboard.press('ArrowLeft');
   const resized = (await rail.boundingBox())!.width;
@@ -23,7 +24,7 @@ for (const width of [1440, 900]) test(`work layout uses its available width at $
   await expect(page.getByTestId('story-brief')).toBeVisible();
   await expect(pane.getByRole('tablist')).toHaveCount(0);
   const available = (await page.getByTestId('side-pane-split').boundingBox())!.width;
-  const expectedWidth = available < 1120 ? available : Math.min(960, available - 520);
+  const expectedWidth = available < 1240 ? available : Math.min(960, available - 640);
   expect(Math.abs((await pane.boundingBox())!.width - expectedWidth)).toBeLessThanOrEqual(2);
   if (width === 900) await expect(row).toBeHidden();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -32,6 +33,9 @@ for (const width of [1440, 900]) test(`work layout uses its available width at $
     await page.setViewportSize({ width: 390, height: 844 });
     await expect(pane).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    const draftAction = (await page.getByRole('button', { name: 'Draft with agent' }).boundingBox())!;
+    const paneBounds = (await pane.boundingBox())!;
+    expect(draftAction.x + draftAction.width).toBeLessThanOrEqual(paneBounds.x + paneBounds.width);
     await page.screenshot({ path: test.info().outputPath('brief-390.png') });
     await page.setViewportSize({ width, height: 1000 });
   }

@@ -399,7 +399,7 @@ function OwnerField({ f, boxed: boxedIn, big = false }: { f: NonNullable<WorkIte
             aria-expanded={open}
             aria-label={`Owner: ${f.value?.name ?? 'Unassigned'}. Change owner`}
             onClick={() => setOpen((o) => !o)}
-            className={cn('inline-flex min-w-0 cursor-pointer items-center rounded-md border-none bg-transparent px-1 py-0.5 font-[inherit] hover:bg-surface-hover disabled:cursor-default', boxed ? 'gap-2' : 'gap-1.5')}
+            className={cn('inline-flex min-w-0 max-w-64 cursor-pointer items-center rounded-md border-none bg-transparent px-1 py-0.5 font-[inherit] hover:bg-surface-hover disabled:cursor-default', boxed ? 'gap-2' : 'gap-1.5')}
           >
             {face}
           </button>

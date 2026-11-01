@@ -230,8 +230,13 @@ export async function hoverTooltip(page, { index, name, selector, timeout = 1500
  */
 export async function focusWalk(page, { count = 20 } = {}) {
   return readOnly(page, async () => {
-    await page.evaluate(() => { document.activeElement?.blur?.(); window.scrollTo(0, 0); });
-    const total = await page.evaluate(() => [...document.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]), [contenteditable="true"]')].filter(el => el.getBoundingClientRect().width > 0).length);
+    await page.evaluate(() => {
+      const previous = document.body.getAttribute('tabindex');
+      document.body.tabIndex = -1; document.body.focus();
+      if (previous == null) document.body.removeAttribute('tabindex'); else document.body.setAttribute('tabindex', previous);
+      window.scrollTo(0, 0);
+    });
+    const total = await page.evaluate(() => [...document.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]), [contenteditable="true"]')].filter(el => (el.tabIndex >= 0 || el.matches('[contenteditable="true"]:not([tabindex="-1"])')) && !el.closest('[inert]') && getComputedStyle(el).visibility !== 'hidden' && el.getBoundingClientRect().width > 0).length);
     const steps = [];
     const snap = () => page.evaluate(() => {
       const el = document.activeElement;

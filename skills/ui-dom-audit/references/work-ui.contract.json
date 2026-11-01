@@ -374,7 +374,13 @@
       "bodyFontFamily": {
         "property": "fontFamily",
         "from": "body"
-      }
+      },
+      "exclude": [
+        {
+          "selector": "[data-ui-table-rows=\"content\"]",
+          "reason": "Document tables wrap prose and use the content-row profile; cells and headings remain checked."
+        }
+      ]
     },
     {
       "id": "composer.surface",
@@ -1232,6 +1238,35 @@
         "width": 8
       },
       "owner": "GroupedList / decorative indicator column"
+    },
+    {
+      "id": "table.document-geometry",
+      "kind": "table",
+      "selector": "table[data-ui-table-rows=\"content\"]",
+      "rowHeight": {
+        "min": 44
+      },
+      "cellInset": {
+        "token": "--ui-table-inset"
+      },
+      "headerFontSize": 12,
+      "headerFontWeight": 600,
+      "owner": "DataTable content rows",
+      "bodyFontSize": 14,
+      "bodyFontFamily": {
+        "property": "fontFamily",
+        "from": "body"
+      }
+    },
+    {
+      "id": "workspace.resizable-columns",
+      "kind": "columns",
+      "selector": "[data-testid$=\"-rail-split\"]",
+      "children": ":scope > [data-testid$=\"-primary\"], :scope > [data-testid$=\"-secondary\"]",
+      "min": 2,
+      "max": 2,
+      "maxGap": 1,
+      "owner": "ExplorerLayout adjustable rail / SplitPane logical columns"
     }
   ]
 }

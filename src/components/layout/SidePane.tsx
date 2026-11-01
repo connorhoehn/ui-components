@@ -99,7 +99,7 @@ export function boundedSidePaneRatio(ratio: number, splitWidthPx: number | null,
 // ─── The host ───────────────────────────────────────────────────────────────
 
 export interface SidePaneRegistration {
-  /** Documents get a readable pane; below 1120px of split space they temporarily take the column. */
+  /** Documents get a readable pane; below 1240px of split space they temporarily take the column. */
   presentation?: 'standard' | 'document';
   /** The frame's title ("Discussion", "Details"). */
   title: string;
@@ -145,13 +145,13 @@ interface HostValue {
 const HostContext = createContext<HostValue | null>(null);
 
 function documentOwnsColumn(host: HostValue): boolean {
-  return host.registration?.presentation === 'document' && host.width != null && host.width < host.bounds.minPrimaryPx + 600;
+  return host.registration?.presentation === 'document' && host.width != null && host.width < Math.max(640, host.bounds.minPrimaryPx) + 600;
 }
 function drawnRatio(host: HostValue): number {
   if (documentOwnsColumn(host)) return 0;
   const desired = host.sized ? host.ratio : boundedSidePaneRatio(host.ratio, host.width, host.registration?.widthPx);
   return host.registration?.presentation === 'document' && host.width
-    ? Math.max(host.bounds.minPrimaryPx / host.width, desired) : desired;
+    ? Math.max(Math.max(640, host.bounds.minPrimaryPx) / host.width, desired) : desired;
 }
 
 function readStored(key: string): string | null {
@@ -330,7 +330,7 @@ function SplitInner({ children, before, after, paneTestId = 'side-pane', divider
   const extra = before != null || after != null;
   const title = registration?.title ?? '';
   const pane = shown && registration
-    ? <DensityProvider density="compact"><ChatSidePanelFrame title={registration.title} {...(registration.subtitle ? { subtitle: registration.subtitle } : {})}
+    ? <DensityProvider density="compact"><ChatSidePanelFrame titleAs={documentOwnsColumn(host) ? 'h1' : undefined} title={registration.title} {...(registration.subtitle ? { subtitle: registration.subtitle } : {})}
         closeLabel={registration.closeLabel ?? `Collapse ${registration.title.toLowerCase()}`} onClose={registration.onClose ?? host.collapse}
         actions={<Tooltip content={`Minimize ${title.toLowerCase()} to the edge`} placement="bottom">
           <IconButton aria-label={`Minimize ${title.toLowerCase()}`} aria-expanded onClick={host.toggleFolded}

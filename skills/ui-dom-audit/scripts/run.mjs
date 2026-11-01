@@ -42,7 +42,19 @@ export const isDeepRule = (contract, id) => id.startsWith('consistency.') || id 
  */
 export async function measureCase(page, { contract, selectors, required = [], composerExpectation, probe } = {}) {
   await page.addStyleTag({ content: '*,*::before,*::after { animation-play-state: paused !important; transition-duration: 0s !important; caret-color: transparent !important; }' });
-  await page.evaluate(async () => { await document.fonts.ready; await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); });
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    // A transition already in flight (or a layered !important duration) can
+    // survive the style override. Measure its endpoint, as we do with reduced
+    // motion, instead of fingerprinting a button's fading background twice.
+    // Only CSS transitions finish here; recurring script-driven movement must
+    // still fail the two measurements below.
+    for (const animation of document.getAnimations()) {
+      if (animation instanceof CSSTransition && Number.isFinite(animation.effect?.getComputedTiming().endTime)) animation.finish();
+    }
+    await new Promise(r => requestAnimationFrame(r));
+  });
   const payload = { contract, selectors, required, composerExpectation, probe };
   const first = await page.evaluate(measureDOM, payload);
   // Repeat the same DOM measurement to expose unstable geometry instead

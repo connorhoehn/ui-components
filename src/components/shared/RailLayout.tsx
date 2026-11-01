@@ -62,11 +62,12 @@ export interface RailSectionProps {
 /** One titled block in the rail. Sections divide themselves. */
 export function RailSection({ title, children, className }: RailSectionProps) {
   const variant = useContext(RailStyle);
+  const Heading = variant === 'plain' ? 'h2' : 'h3';
   return (
     <section className={cn('border-b border-border py-3 last:border-b-0', variant === 'card' && 'px-3.5', className)}>
       {/* The shared rail group label (railType, 2.397.1) — was 10px, the one
           rail heading left off the 2.397.0 scale. */}
-      <h3 className={cn('mb-2', RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK)} data-testid="rail-section-title">{title}</h3>
+      <Heading className={cn('mb-2', RAIL_GROUP_LABEL, RAIL_GROUP_LABEL_INK)} data-testid="rail-section-title">{title}</Heading>
       <div className="flex flex-col gap-2 text-xs text-text-secondary">{children}</div>
     </section>
   );

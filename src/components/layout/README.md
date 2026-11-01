@@ -62,6 +62,6 @@ Replacement is `<ConnectionPill>` in `/shared`.
 `ExplorerLayout.railResize` enables a bounded, keyboard-resizable work list
 with an optional device storage key and a widen/reset action. Folding preserves
 the pane subtree. `SidePane.presentation="document"` gives documents their
-requested width while preserving a readable main column; below 1120px of split
+requested width while preserving a readable main column; below 1240px of split
 space the document takes that column until closed. See the
 `Layout/WorkDetailLayout` stories for the combined layout and narrow preview.
