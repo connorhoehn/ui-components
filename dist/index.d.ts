@@ -14988,7 +14988,7 @@ export declare interface OutcomeSectionProps {
     'data-testid'?: string;
 }
 
-export declare function PageHeader({ title, description, actions, back, badge, size, breadcrumbs, density: densityProp, collapsed, onToggleCollapsed, people, info, meta, tabs, activeTab, onTabChange, className, 'data-testid': testId, }: PageHeaderProps): default_2.JSX.Element;
+export declare function PageHeader({ title, as: Heading, description, actions, back, badge, size, breadcrumbs, density: densityProp, collapsed, onToggleCollapsed, people, info, meta, tabs, activeTab, onTabChange, className, 'data-testid': testId, }: PageHeaderProps): default_2.JSX.Element;
 
 export declare interface PageHeaderBack {
     label: string;
@@ -14998,6 +14998,8 @@ export declare interface PageHeaderBack {
 
 export declare interface PageHeaderProps {
     title: string;
+    /** Semantic heading level for a header embedded under another page title; visual size is unchanged. */
+    as?: 'h1' | 'h2' | 'h3' | 'h4';
     description?: string;
     /** Right-aligned action area (buttons, menus). */
     actions?: default_2.ReactNode;

@@ -18,7 +18,7 @@ import { t as M } from "./Textarea-BwvE1HPn.js";
 import { t as he } from "./Avatar-DkkMISPQ.js";
 import { t as N } from "./activationKey-CjbL3LUv.js";
 import { O as ge } from "./renderers-CTbdrwJE.js";
-import { Y as _e } from "./ProposedEditStrip-CWI2in3a.js";
+import { Y as _e } from "./ProposedEditStrip-BUHe_t98.js";
 import { t as ve } from "./TiptapEditor-BjjwDyPa.js";
 import { t as ye } from "./useHangoutEmbed-ChkoGDC_.js";
 import { t as P } from "./useActiveSpeaker-BGKJU3Lb.js";
@@ -3088,7 +3088,7 @@ function vn({ context: e }) {
 		"data-kind": e.kind,
 		className: p("mb-1.5 border-l-2 pl-2 text-xs leading-snug", t ? "border-l-border-emphasis" : "border-l-warning"),
 		children: [t && /* @__PURE__ */ U("div", {
-			className: p("text-[11px] font-medium text-text-tertiary"),
+			className: p("text-[12px] font-medium text-text-tertiary"),
 			children: "Original text was removed"
 		}), /* @__PURE__ */ U("blockquote", {
 			title: e.text,
@@ -3130,7 +3130,7 @@ function bn({ resolvedBy: e, resolvedAt: t, expanded: n, onToggle: r, onReopen: 
 				children: ["Resolved by ", a]
 			}),
 			s && /* @__PURE__ */ U("span", {
-				className: p("text-text-tertiary text-[11px] whitespace-nowrap shrink-0"),
+				className: p("text-text-tertiary text-[12px] whitespace-nowrap shrink-0"),
 				children: s
 			}),
 			i && /* @__PURE__ */ U("button", {
@@ -3200,22 +3200,22 @@ function xn({ comment: e, context: t, actions: n, onAskAgent: r, renderReply: i,
 						className: p("flex items-center gap-1.5 mb-1"),
 						children: [
 							/* @__PURE__ */ U("div", {
-								className: p("w-6 h-6 rounded-full text-white flex items-center justify-center text-[10px] font-semibold shrink-0"),
+								className: p("w-6 h-6 rounded-full text-white flex items-center justify-center text-[12px] font-semibold shrink-0"),
 								style: { background: `linear-gradient(135deg, ${e.color}, ${e.color}dd)` },
 								children: un(e.displayName)
 							}),
 							/* @__PURE__ */ U("span", {
-								className: p("font-semibold text-[13px] text-text-primary"),
+								className: p("font-semibold text-[14px] text-text-primary"),
 								children: e.displayName
 							}),
 							/* @__PURE__ */ U("span", {
-								className: p("text-[11px] text-text-tertiary"),
+								className: p("text-[12px] text-text-tertiary"),
 								children: dn(e.timestamp)
 							})
 						]
 					}),
 					/* @__PURE__ */ U("div", {
-						className: p("text-[13px] leading-normal text-text-primary pl-[30px] whitespace-pre-wrap"),
+						className: p("text-[14px] leading-normal text-text-primary pl-[30px] whitespace-pre-wrap"),
 						children: mn(e.text)
 					}),
 					/* @__PURE__ */ W("div", {

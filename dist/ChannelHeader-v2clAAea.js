@@ -1,5 +1,5 @@
 import { t as e } from "./cn-D4QmbyEy.js";
-import { t } from "./ThinkingDots-mZ3dq0w9.js";
+import { t } from "./ThinkingDots-52RnodUR.js";
 import { t as n } from "./Avatar-DkkMISPQ.js";
 import { t as r } from "./StatusDot-GwVn-q5q.js";
 import { useEffect as i, useRef as a, useState as o } from "react";

@@ -17,7 +17,7 @@ function r({ icon: r = "⚠️", title: i, body: a, description: o, actionLabel:
 				children: r
 			})),
 			/* @__PURE__ */ t("div", {
-				className: "text-sm font-semibold text-[var(--color-state-error,#dc2626)]",
+				className: "text-sm font-semibold text-danger-fg",
 				children: i
 			}),
 			f && /* @__PURE__ */ t("div", {
