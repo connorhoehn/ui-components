@@ -3584,6 +3584,7 @@ function yr({ post: t, labels: n, tones: i, onAnswer: a, busy: o, placeholder: s
 				children: [
 					t.authorKind === "human" ? /* @__PURE__ */ Z(V, {
 						name: t.authorName,
+						src: t.avatarUrl,
 						size: 20
 					}) : /* @__PURE__ */ Z("span", {
 						className: "text-[13px]",
@@ -3754,6 +3755,7 @@ function Tr({ variant: t = "card", signoffs: n, required: r = 2, actions: i, emp
 				children: [
 					/* @__PURE__ */ Z(V, {
 						name: e.name,
+						src: e.avatarUrl,
 						size: 18
 					}),
 					/* @__PURE__ */ Z("span", {

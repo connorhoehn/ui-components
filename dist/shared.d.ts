@@ -5076,6 +5076,8 @@ export declare interface ReviewPostData {
     id: string;
     authorKind: ReviewAuthorKind;
     authorName: string;
+    /** Profile image supplied by the authorized people data source. */
+    avatarUrl?: string;
     /** Post kind slug — e.g. 'problem' | 'question' | 'decision'. */
     kind: string;
     body: string;
@@ -5518,6 +5520,7 @@ export declare interface ShortcutsHelpSection {
 
 export declare interface SignoffEntry {
     name: string;
+    avatarUrl?: string;
     /** e.g. 'owner', 'sme', 'org-leader' — shown as the chip's title. */
     role?: string;
     decision: 'approve' | 'reject';

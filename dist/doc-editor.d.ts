@@ -1451,10 +1451,15 @@ export declare interface DocumentModePillProps {
     'data-testid'?: string;
 }
 
-export declare function DocumentOutline({ entries, activeId, onSelect, emptyLabel, className, wrap, 'data-testid': testId, 'aria-label': ariaLabel, }: DocumentOutlineProps): JSX.Element;
+export declare function DocumentOutline({ entries, presentation, onContents, compact, activeId, onSelect, emptyLabel, className, wrap, 'data-testid': testId, 'aria-label': ariaLabel, }: DocumentOutlineProps): JSX.Element;
 
 export declare interface DocumentOutlineProps {
     entries: readonly OutlineEntry[];
+    /** The same section order as a compact previous/contents/next control. */
+    presentation?: 'outline' | 'controls';
+    onContents?: () => void;
+    /** Short contents label for a document's crowded status bar. */
+    compact?: boolean;
     /** The entry the reader is currently inside, if the host tracks it. */
     activeId?: string | null;
     onSelect?: (id: string) => void;

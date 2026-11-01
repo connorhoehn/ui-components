@@ -36,7 +36,7 @@ import { o as Ze, t as Qe } from "./VerdictChip-Z5qQHvzJ.js";
 import { a as $e, c as et, d as tt, f as nt, h as rt, i as it, l as at, m as ot, n as st, o as ct, p as lt, r as ut, s as dt, t as ft, u as pt } from "./TiptapEditor-BjjwDyPa.js";
 import { i as mt, n as ht, r as gt, t as _t } from "./FloatingComposerDock-D10uQ4k3.js";
 import { A as vt, B as yt, C as bt, D as xt, E as St, F as Ct, G as wt, H as Tt, I as Et, J as Dt, K as Ot, L as kt, M as At, N as jt, O as Mt, P as Nt, R as Pt, S as Ft, T as It, U as Lt, V as Rt, W as zt, _ as Bt, a as Vt, b as Ht, c as Ut, d as Wt, f as Gt, g as Kt, h as qt, i as Jt, j as Yt, k as Xt, l as Zt, m as Qt, o as $t, p as en, q as tn, r as nn, s as rn, t as an, u as on, v as sn, w as cn, x as ln, y as un, z as dn } from "./DocumentEditorPage-DkeDrm_f.js";
-import { C as fn, S as pn, T as mn, _ as hn, a as gn, b as _n, c as vn, d as yn, f as bn, g as xn, h as Sn, i as Cn, l as wn, m as Tn, n as En, o as Dn, p as On, r as kn, s as An, t as jn, u as Mn, v as Nn, w as Pn, x as Fn, y as In } from "./useDocumentImageUpload-DnofibTU.js";
+import { C as fn, S as pn, T as mn, _ as hn, a as gn, b as _n, c as vn, d as yn, f as bn, g as xn, h as Sn, i as Cn, l as wn, m as Tn, n as En, o as Dn, p as On, r as kn, s as An, t as jn, u as Mn, v as Nn, w as Pn, x as Fn, y as In } from "./useDocumentImageUpload-CVrJLP8r.js";
 import { i as Ln } from "./ConversationInputs-D6Bhkit6.js";
 import { r as Rn } from "./RichChatComposer-DZnIJe_3.js";
 import { forwardRef as zn, useCallback as z, useEffect as B, useId as Bn, useImperativeHandle as Vn, useMemo as V, useRef as H, useState as U } from "react";
