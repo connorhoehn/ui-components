@@ -42,6 +42,8 @@ export interface TenantSwitcherDestination {
 export interface TenantSwitcherProps {
   /** The current workspace's name, drawn beside the planet ("Work"). */
   label: string;
+  /** Compact project context beside a separate application title. Default md. */
+  size?: 'sm' | 'md';
   /** Draws the orbiting moon — the shell's "connected and healthy" hint. */
   healthy?: boolean;
   /**
@@ -90,9 +92,9 @@ function activityText(unread: number, live: boolean): string {
   return live ? 'No unread notices in this inbox.' : 'Live notification updates are currently unavailable.';
 }
 
-function PlanetGlyph() {
+function PlanetGlyph({ compact = false }: { compact?: boolean }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" className="size-6">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" className={compact ? 'size-5' : 'size-6'}>
       <circle cx="12" cy="12" r="6.5" />
       <ellipse cx="12" cy="12" rx="11" ry="3.5" transform="rotate(-22 12 12)" />
     </svg>
@@ -101,6 +103,7 @@ function PlanetGlyph() {
 
 export function TenantSwitcher({
   label,
+  size = 'md',
   healthy = false,
   motion = true,
   destinations,
@@ -217,8 +220,8 @@ export function TenantSwitcher({
           setOpen(true);
         }}
       >
-        <span className="tenant-brand-planet relative grid size-[26px] shrink-0 place-items-center text-text-secondary" aria-hidden="true">
-          <PlanetGlyph />
+        <span className={cn('tenant-brand-planet relative grid shrink-0 place-items-center text-text-secondary', size === 'sm' ? 'size-[22px]' : 'size-[26px]')} aria-hidden="true">
+          <PlanetGlyph compact={size === 'sm'} />
           {healthy && (
             <span
               className={cn(
@@ -237,7 +240,7 @@ export function TenantSwitcher({
             </span>
           )}
         </span>
-        <Text size="base" weight="bold" className="tenant-brand-label min-w-0 truncate leading-[22px]">{label}</Text>
+        <Text size={size === 'sm' ? 'sm' : 'base'} weight={size === 'sm' ? 'medium' : 'bold'} className={cn('tenant-brand-label min-w-0 truncate', size === 'sm' ? 'leading-5' : 'leading-[22px]')}>{label}</Text>
       </button>
       {open && (
         <div

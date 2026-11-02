@@ -1,3 +1,7 @@
+## 2.494.0
+
+- TenantSwitcher supports a compact size for project context beside a separate application title; default tenant branding remains unchanged.
+
 ## 2.493.0
 
 - Add MediaCollectionCard: an episode thumbnail, duration/status metadata and accessible preview carousel; no media playback until requested.

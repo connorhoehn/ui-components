@@ -41,4 +41,4 @@ export const Refused: Story = {
 /** Ambient motion off: the moon is drawn but still. */
 export const Still: Story = { args: { motion: false } };
 
-export const Projects: Story = { args: { label: 'Spike Cartoon', triggerLabel: 'Switch project', dialogLabel: 'Projects', showActivity: false, motion: false, healthy: false, destinations: [{id:'demo',label:'Workshop demo'}] } };
+export const Projects: Story = { args: { label: 'Spike Cartoon', size: 'sm', triggerLabel: 'Switch project', dialogLabel: 'Projects', showActivity: false, motion: false, healthy: false, destinations: [{id:'demo',label:'Workshop demo'}] } };
