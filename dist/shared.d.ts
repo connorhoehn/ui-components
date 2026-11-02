@@ -3764,10 +3764,12 @@ export declare interface MeasuredWidth<T extends HTMLElement> {
 
 /** One episode/collection, with its real preview versions inside a bounded
  * carousel. Hosts supply duration/provenance, never inferred by the card. */
-export declare function MediaCollectionCard({ title, status, previews, onOpen, onPlay }: MediaCollectionCardProps): JSX.Element;
+export declare function MediaCollectionCard({ title, headingAs: Heading, status, previews, onOpen, onPlay }: MediaCollectionCardProps): JSX.Element;
 
 export declare interface MediaCollectionCardProps {
     title: string;
+    /** Match the host document outline; visual title styling stays compact. */
+    headingAs?: 'h2' | 'h3' | 'h4';
     status?: ReactNode;
     previews: readonly MediaCollectionPreview[];
     onOpen: () => void;

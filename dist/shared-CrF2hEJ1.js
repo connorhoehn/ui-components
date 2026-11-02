@@ -6109,18 +6109,18 @@ function Wi({ items: t, variant: n = "images", label: r, onOpen: i, actions: a, 
 }
 //#endregion
 //#region src/components/shared/MediaCollectionCard.tsx
-function Gi({ title: e, status: t, previews: n, onOpen: r, onPlay: i }) {
-	let [a, s] = Y(0), c = Math.min(a, Math.max(0, n.length - 1)), l = n[c];
+function Gi({ title: e, headingAs: t = "h3", status: n, previews: r, onOpen: i, onPlay: a }) {
+	let [s, c] = Y(0), l = Math.min(s, Math.max(0, r.length - 1)), u = r[l];
 	return /* @__PURE__ */ Q(o, {
 		padding: "none",
 		className: "min-w-0 overflow-hidden",
 		"data-media-collection": !0,
 		children: [
-			/* @__PURE__ */ Z("h3", {
+			/* @__PURE__ */ Z(t, {
 				className: "m-0 px-3 py-2 text-sm font-semibold",
 				children: /* @__PURE__ */ Z("button", {
 					type: "button",
-					onClick: r,
+					onClick: i,
 					className: "block w-full truncate text-left text-text-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-primary",
 					title: e,
 					children: e
@@ -6128,18 +6128,18 @@ function Gi({ title: e, status: t, previews: n, onOpen: r, onPlay: i }) {
 			}),
 			/* @__PURE__ */ Q("button", {
 				type: "button",
-				disabled: !l,
+				disabled: !u,
 				"aria-label": `Play ${e}`,
-				onClick: () => l && i(l),
+				onClick: () => u && a(u),
 				className: "group relative flex aspect-video w-full items-center justify-center overflow-hidden bg-surface-muted text-text-secondary focus-visible:outline-2 focus-visible:outline-primary",
-				children: [l?.image ? /* @__PURE__ */ Z("img", {
-					src: l.image,
-					alt: `${e} · ${l.label}`,
+				children: [u?.image ? /* @__PURE__ */ Z("img", {
+					src: u.image,
+					alt: `${e} · ${u.label}`,
 					className: "h-full w-full object-cover"
 				}) : /* @__PURE__ */ Z("span", {
 					className: "text-xs",
-					children: l ? "Preview unavailable" : "No review movie"
-				}), l && /* @__PURE__ */ Z("span", {
+					children: u ? "Preview unavailable" : "No review movie"
+				}), u && /* @__PURE__ */ Z("span", {
 					className: "absolute rounded-full bg-surface p-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100",
 					children: /* @__PURE__ */ Z(k, { size: 24 })
 				})]
@@ -6148,36 +6148,36 @@ function Gi({ title: e, status: t, previews: n, onOpen: r, onPlay: i }) {
 				className: "flex min-w-0 items-center justify-between gap-1 px-2 py-1 text-xs text-text-secondary",
 				children: [/* @__PURE__ */ Z("span", {
 					className: "shrink-0 tabular-nums",
-					children: l?.duration || "Length unknown"
-				}), t]
+					children: u?.duration || "Length unknown"
+				}), n]
 			}),
-			l && /* @__PURE__ */ Q("div", {
+			u && /* @__PURE__ */ Q("div", {
 				className: "flex min-w-0 items-center gap-1 border-t border-border px-1 py-1",
 				children: [
-					n.length > 1 && /* @__PURE__ */ Z(h, {
+					r.length > 1 && /* @__PURE__ */ Z(h, {
 						size: "sm",
 						"aria-label": `Previous preview for ${e}`,
-						disabled: c === 0,
-						onClick: () => s(c - 1),
+						disabled: l === 0,
+						onClick: () => c(l - 1),
 						children: /* @__PURE__ */ Z(w, { dir: "left" })
 					}),
 					/* @__PURE__ */ Z("span", {
 						className: "min-w-0 flex-1 truncate text-xs text-text-secondary",
-						title: l.label,
-						children: l.label
+						title: u.label,
+						children: u.label
 					}),
-					n.length > 1 && /* @__PURE__ */ Q(X, { children: [/* @__PURE__ */ Q("span", {
+					r.length > 1 && /* @__PURE__ */ Q(X, { children: [/* @__PURE__ */ Q("span", {
 						className: "text-xs tabular-nums text-text-secondary",
 						children: [
-							c + 1,
+							l + 1,
 							"/",
-							n.length
+							r.length
 						]
 					}), /* @__PURE__ */ Z(h, {
 						size: "sm",
 						"aria-label": `Next preview for ${e}`,
-						disabled: c === n.length - 1,
-						onClick: () => s(c + 1),
+						disabled: l === r.length - 1,
+						onClick: () => c(l + 1),
 						children: /* @__PURE__ */ Z(w, { dir: "right" })
 					})] })
 				]
