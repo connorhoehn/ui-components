@@ -73,14 +73,14 @@ export function CollectionToolbar({ label, layout = 'table', search, filters = [
       <span className="min-w-0 truncate text-xs font-medium text-text-primary" role="status" data-collection-selection-count>{selection.label ?? `${selection.count} selected`}</span>
     </Toolbar>;
   }
-  return <Toolbar aria-label={label} wrap variant="collection" data-collection-layout={layout} className={layout === 'cards' ? 'px-0' : undefined} data-collection-selection={selection ? 'idle' : undefined} end={<>
+  return <Toolbar aria-label={label} wrap variant="collection" data-collection-layout={layout} className={layout === 'cards' ? 'px-0' : undefined} data-collection-selection={selection ? 'idle' : undefined} end={actions.length ? <>
     {actions.map(action => <Tooltip key={action.id} content={action.label}><IconButton aria-label={action.label} icon={action.icon} onClick={action.onClick} disabled={action.disabled} data-testid={action['data-testid']} /></Tooltip>)}
-    {onRefresh && <Tooltip content="Refresh"><IconButton aria-label="Refresh" icon={<RepeatIcon />} onClick={onRefresh} disabled={refreshing} /></Tooltip>}
-  </>}>
+  </> : undefined}>
     {search && <SearchInput {...search} className="min-w-0 w-full max-w-64" />}
     {filters.length > 0 && <FilterPopover label="Filters" trigger="icon" activeCount={active.length} panelLabel={label} onClear={() => filters.forEach(f => f.onChange(f.emptyValue ?? ''))}>
       {filters.map(filter => <FormField key={filter.id} label={filter.label}>{wiring => <Select {...wiring} aria-label={filter.label} value={filter.value} options={filter.options} onChange={event => filter.onChange(event.target.value)} chevron="custom" />}</FormField>)}
     </FilterPopover>}
+    {onRefresh && <Tooltip content="Refresh"><IconButton aria-label="Refresh" icon={<RepeatIcon />} onClick={onRefresh} disabled={refreshing} /></Tooltip>}
     {active.length > 0 && <span className="min-w-0 truncate text-xs text-text-primary" title={active.map(f => `${f.label}: ${f.options.find(o => o.value === f.value)?.label ?? f.value}`).join(' · ')}>{active.map(f => f.options.find(o => o.value === f.value)?.label ?? f.value).join(' · ')}</span>}
     {summary && <span className="min-w-0 text-xs text-text-secondary" data-collection-summary>{summary}</span>}
     {notices.length > 0 && <>

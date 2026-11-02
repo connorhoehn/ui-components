@@ -65,6 +65,23 @@ try {
   await page.locator('[data-composer-surface]').evaluate(el => { el.style.height = '160px'; });
   assert.ok((await compactMeasure()).issues.some(i => i.rule === 'composer.folded.height'));
   await page.setContent(html);
+  // Content-width segments must hug their last option even inside a stretch column.
+  const segments = { ...fullContract, rules: fullContract.rules.filter(r => r.id.startsWith('control.segmented-content-width.')) };
+  const segmentMeasure = () => page.evaluate(measureDOM, { contract: segments, selectors: {} });
+  for (const [tone, padding] of [['neutral', 2], ['accent', 3]]) {
+    await page.setContent(`<div style="display:flex;flex-direction:column;width:800px"><div data-segmented-width="content" data-segmented-tone="${tone}" style="display:inline-flex;align-self:start;border:1px solid;padding:${padding}px;gap:2px"><button>All</button><button>Missed</button></div><div data-segmented-width="full" data-segmented-tone="${tone}" style="display:flex;width:100%"><button>All</button><button>Missed</button></div></div>`);
+    assert.deepEqual((await segmentMeasure()).issues, []);
+    await page.locator('[data-segmented-width="content"]').evaluate(el => { el.style.alignSelf = 'stretch'; });
+    assert.ok((await segmentMeasure()).issues.some(i => i.rule === `control.segmented-content-width.${tone}`));
+  }
+  await page.setContent(html);
+  const refreshRules = { ...fullContract, rules: fullContract.rules.filter(r => r.id === 'collection.refresh-with-query') };
+  const refreshMeasure = () => page.evaluate(measureDOM, { contract: refreshRules, selectors: {} });
+  await page.setContent('<div data-toolbar-variant="collection"><div data-toolbar-controls><input aria-label="Search"><button aria-label="Refresh">Refresh</button></div><div id="trailing-actions"></div></div>');
+  assert.deepEqual((await refreshMeasure()).issues, []);
+  await page.evaluate(() => document.querySelector('#trailing-actions').append(document.querySelector('[aria-label="Refresh"]')));
+  assert.ok((await refreshMeasure()).issues.some(i => i.rule === 'collection.refresh-with-query'));
+  await page.setContent(html);
   const clean = await measure(); assert.deepEqual(clean.issues, [], JSON.stringify(clean.issues));
   assert.deepEqual((await measure()).samples, clean.samples, 'same DOM produces identical measurements');
   await page.evaluate(() => { const table = document.querySelector('table'); table.dataset.uiTableRows = 'content'; table.querySelector('tbody td').style.height = '180px'; });

@@ -98,6 +98,24 @@ sections, review screenshots into `review.jsonl`, and triage.
 
 Breadcrumbs name each level once: omit redundant singular/plural grouping and “All” collection repetitions. Keep the trail to one line, truncate long labels with ellipsis while retaining their full accessible names, and verify `navigation.breadcrumb` on every rendered trail.
 
+## Context and compact collection controls
+
+Inventory each rail/header action against the current page's purpose. Remove
+cross-context shortcuts already served by primary navigation unless they have a
+clear task reason. Parent/back links, an overflow link to the same collection,
+and explicit actions on the selected record (Message, Call, View work) are valid;
+a generic “Browse hangouts” in a Channels toolbar is not. Record the reason for
+any cross-context action retained. This is a semantic review; DOM geometry alone
+cannot establish intent. Verify navigation without sending messages or starting
+calls.
+
+Content-sized segmented filters must hug their options inside flex/grid columns;
+only an explicit `fullWidth` mode fills the row. The shared alignment checks use
+`data-segmented-width` and `data-segmented-tone` to check the last option's inset.
+Keep search, filters, refresh and result counts together. Put compact presence
+summaries on that row when practical; avoid a separate heading/avatar block that
+pushes the collection down. Check narrow wrapping and keyboard selection too.
+
 ## Refine from a reported defect
 
 1. Reproduce the supplied path/state. Inspect measured values and identify the

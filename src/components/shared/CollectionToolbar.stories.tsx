@@ -31,3 +31,8 @@ export const Selection: Story = {
 };
 
 export const CardCollection: Story = { args: { label: 'Hangouts', layout: 'cards', search: { value: '', onChange: () => {}, placeholder: 'Find a hangout' }, summary: '2 hangouts' } };
+
+/** Refresh stays beside the query; record actions keep their own trailing slot. */
+export const QueryAndActions: Story = {
+  args: { label: 'Contacts', search: { value: '', onChange: () => {}, placeholder: 'Find a person' }, summary: '16 people', onRefresh: () => {}, actions: [{ id: 'add', label: 'Add contact', icon: '+', onClick: () => {} }] },
+};

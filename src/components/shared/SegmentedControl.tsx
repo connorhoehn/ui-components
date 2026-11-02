@@ -130,8 +130,10 @@ export function SegmentedControl({
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledBy}
       data-testid={testId}
+      data-segmented-width={fullWidth ? 'full' : 'content'}
+      data-segmented-tone={tone}
       className={cn(
-        fullWidth ? 'flex w-full items-center' : 'inline-flex items-center',
+        fullWidth ? 'flex w-full items-center' : 'inline-flex w-fit max-w-full self-start items-center',
         'rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-inset,#f8fafc)] p-0.5 gap-0.5',
         tone === 'accent' && 'bg-surface p-[3px] gap-1',
         className,
@@ -166,7 +168,7 @@ export function SegmentedControl({
             data-testid={option.testId ?? (testId ? `${testId}-${option.value}` : undefined)}
             {...(compact ? { 'aria-label': hasBadge && (typeof option.badge === 'string' || typeof option.badge === 'number') ? `${option.label}, ${option.badge}` : option.label } : {})}
             className={cn(
-              'inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md font-medium transition-all cursor-pointer',
+              'inline-flex items-center justify-center gap-1.5 whitespace-nowrap border border-transparent rounded-md font-medium transition-all cursor-pointer',
               fullWidth && 'flex-1',
               disabled && 'cursor-not-allowed opacity-60',
               compact ? cn('relative', ICON_SIZE_CLASSES[size]) : SIZE_CLASSES[size],

@@ -28,6 +28,15 @@ describe('SegmentedControl', () => {
     expect(screen.getByRole('radio', { name: 'List' })).toHaveAttribute('aria-checked', 'false');
   });
 
+  it('distinguishes intrinsic width from an explicit full-width group', () => {
+    const { rerender } = render(<SegmentedControl options={OPTIONS} value="list" onChange={() => {}} />);
+    expect(screen.getByRole('radiogroup')).toHaveAttribute('data-segmented-width', 'content');
+    expect(screen.getByRole('radiogroup')).toHaveClass('w-fit', 'self-start');
+    rerender(<SegmentedControl options={OPTIONS} value="list" onChange={() => {}} fullWidth />);
+    expect(screen.getByRole('radiogroup')).toHaveAttribute('data-segmented-width', 'full');
+    expect(screen.getByRole('radiogroup')).not.toHaveClass('self-start');
+  });
+
   it('reports the clicked value', () => {
     const onChange = vi.fn();
     render(<SegmentedControl options={OPTIONS} value="list" onChange={onChange} />);

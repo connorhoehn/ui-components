@@ -41,6 +41,15 @@ describe('collection design inheritance', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Open graph' }));
     expect(run).toHaveBeenCalledOnce();
   });
+  it('groups refresh with the query and keeps record actions in the trailing slot', () => {
+    const refresh = vi.fn();
+    render(<CollectionToolbar label="Contacts" search={{ value: '', onChange: () => {}, 'aria-label': 'Find person' }} onRefresh={refresh} actions={[{ id: 'add', label: 'Add contact', icon: '+', onClick: () => {} }]} />);
+    const controls = screen.getByRole('textbox').closest('[data-toolbar-controls]');
+    expect(controls).toContainElement(screen.getByRole('button', { name: 'Refresh' }));
+    expect(controls).not.toContainElement(screen.getByRole('button', { name: 'Add contact' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Refresh' }));
+    expect(refresh).toHaveBeenCalledOnce();
+  });
   it('inherits the compact control scale without page-level size props', () => {
     render(<DensityProvider density="compact"><Button>Save</Button><IconButton aria-label="Refresh" /><Input aria-label="Name" prefix="$" /><Select aria-label="Kind" options={[]} /></DensityProvider>);
     expect(screen.getByRole('button', { name: 'Save' })).toHaveAttribute('data-size', 'sm');

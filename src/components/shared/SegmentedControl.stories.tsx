@@ -42,3 +42,9 @@ export const AccentDark: Story = {
   ...Accent,
   decorators: [(S) => <div data-theme="dark" className="bg-surface p-4"><S /></div>],
 };
+
+/** Intrinsic controls retain their width inside a stretching flex column. */
+export const InCollectionColumn: Story = {
+  args: { options: [{ label: 'All', value: 'all' }, { label: 'Missed', value: 'missed', badge: 3 }], value: 'all', onChange: () => {} },
+  render: (args) => <div className="flex w-[560px] max-w-full flex-col gap-3"><SegmentedControl {...args} /><SegmentedControl {...args} fullWidth aria-label="Explicitly full width" /></div>,
+};

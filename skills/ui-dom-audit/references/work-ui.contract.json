@@ -1396,6 +1396,38 @@
         }
       },
       "owner": "ContextComposer explicit collapse"
+    },
+    {
+      "id": "control.segmented-content-width.neutral",
+      "kind": "align",
+      "selector": "[data-segmented-width=\"content\"][data-segmented-tone=\"neutral\"] > :last-child",
+      "anchor": "[data-segmented-width=\"content\"]",
+      "ancestor": true,
+      "edges": [
+        "right"
+      ],
+      "offset": -3,
+      "owner": "SegmentedControl intrinsic width"
+    },
+    {
+      "id": "control.segmented-content-width.accent",
+      "kind": "align",
+      "selector": "[data-segmented-width=\"content\"][data-segmented-tone=\"accent\"] > :last-child",
+      "anchor": "[data-segmented-width=\"content\"]",
+      "ancestor": true,
+      "edges": [
+        "right"
+      ],
+      "offset": -4,
+      "owner": "SegmentedControl intrinsic width"
+    },
+    {
+      "id": "collection.refresh-with-query",
+      "kind": "within",
+      "selector": "[data-toolbar-variant=\"collection\"] button[aria-label=\"Refresh\"]",
+      "anchor": "[data-toolbar-controls]",
+      "ancestor": true,
+      "owner": "CollectionToolbar query controls"
     }
   ]
 }
