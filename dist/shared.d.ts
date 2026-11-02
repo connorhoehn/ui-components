@@ -4937,7 +4937,7 @@ export declare const RAIL_GROUP_LABEL_INK = "text-text-secondary";
 export declare const RAIL_GROUP_PAD_Y = "py-2";
 
 /** A count at an item's right edge ("Initiatives 3"): muted, tabular. */
-export declare const RAIL_ITEM_COUNT = "text-[12px] font-medium leading-4 tabular-nums text-text-tertiary";
+export declare const RAIL_ITEM_COUNT = "text-[12px] font-medium leading-4 tabular-nums text-text-secondary";
 
 /** A rail item's label: 14px (the app body step), medium weight, 20px line. Was 13px before 2.452.0. */
 export declare const RAIL_ITEM_TEXT = "text-[14px] font-medium leading-5";
@@ -5070,7 +5070,7 @@ export declare const railType: {
     readonly item: "text-[14px] font-medium leading-5";
     readonly rowPadY: "py-2";
     readonly rowPitch: 36;
-    readonly itemCount: "text-[12px] font-medium leading-4 tabular-nums text-text-tertiary";
+    readonly itemCount: "text-[12px] font-medium leading-4 tabular-nums text-text-secondary";
     readonly groupLabel: "text-[12px] font-semibold uppercase leading-4 tracking-wide";
     readonly groupLabelInk: "text-text-secondary";
     readonly groupCount: "text-[12px] font-medium leading-4 normal-case tracking-normal tabular-nums text-text-tertiary";
