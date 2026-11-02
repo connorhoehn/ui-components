@@ -89,3 +89,9 @@ export const HiddenWhenShallow: Story = {
 export const DocumentLocation: Story = {
   args: { ...Default.args, "aria-label": "Document location", lastIsCurrent: false },
 };
+
+/** Long titles stay on one line, with the full label available on hover. */
+export const NarrowRecordTrail: Story = {
+  args: { items: [{ label: 'Designs', href: '/designs' }, { label: 'A long design title that must fit a narrow record column without wrapping the header' }], separator: '›' },
+  decorators: [Story => <div className="w-80 max-w-full"><Story /></div>],
+};

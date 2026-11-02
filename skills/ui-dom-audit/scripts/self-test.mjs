@@ -1305,5 +1305,25 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
     await page.close();
     console.log('PASS active choice presence requires real answers and leaves neighboring editors checked');
   }
+  {
+    const page = await browser.newPage();
+    const subset = { ...fullContract, rules: fullContract.rules.filter(r => r.id === 'navigation.breadcrumb') };
+    const check = () => page.evaluate(measureDOM, { ...payload, required: [], contract: subset });
+    const fixture = '<style>nav{width:300px}ol{display:flex;list-style:none;padding:0;gap:8px}li{min-width:0}li:last-child{flex:1}a,span{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}</style><nav data-ui-breadcrumbs><ol><li><a href="/designs">Designs</a></li><li><span title="A long design title describing the work in this record">A long design title describing the work in this record</span></li></ol></nav>';
+    await page.setContent(fixture);
+    assert.deepEqual((await check()).issues, [], 'a single collection level and truncated record title are valid');
+    await page.locator('li:last-child span').evaluate(el => el.textContent = 'Design');
+    assert.ok((await check()).issues.some(i => i.rule === 'navigation.breadcrumb'), 'singular/plural duplication fails');
+    await page.locator('li:last-child span').evaluate(el => el.textContent = 'All designs');
+    assert.ok((await check()).issues.some(i => i.rule === 'navigation.breadcrumb'), 'redundant all collection level fails');
+    await page.setContent(fixture);
+    await page.locator('ol').evaluate(el => el.style.flexDirection = 'column');
+    assert.ok((await check()).issues.some(i => i.rule === 'navigation.breadcrumb'), 'wrapped trails fail');
+    await page.setContent(fixture);
+    await page.locator('li:last-child span').evaluate(el => el.style.textOverflow = 'clip');
+    assert.ok((await check()).issues.some(i => i.rule === 'navigation.breadcrumb'), 'silent clipping fails');
+    await page.close();
+    console.log('PASS breadcrumb distinct levels, single-line layout and explicit ellipsis');
+  }
   console.log(`PASS clean four-column layout, repeatability, ${mutations.length} defect mutations, navigation coverage, cross-tenant grouping and honest report comparison`);
 } finally { await browser.close(); fs.rmSync(temp, { recursive: true, force: true }); }

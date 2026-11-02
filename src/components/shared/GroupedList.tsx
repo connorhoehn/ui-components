@@ -830,7 +830,8 @@ function Row({ row, current, currentStyle, rowStyle, testId, size, tabbable, onF
           if (!row.disabled) onOpenRow?.(row);
         }}
         className={cn(
-          'flex min-w-0 flex-1 items-center gap-3 rounded-md border-0 bg-transparent p-0 text-left',
+          'flex min-w-0 flex-1 items-center rounded-md border-0 bg-transparent p-0 text-left',
+          !hasLeading && row.leadingSize !== 'none' ? 'gap-2.5' : 'gap-3',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
           row.disabled ? 'cursor-default' : 'cursor-pointer',
         )}

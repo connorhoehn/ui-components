@@ -57,11 +57,14 @@ export interface RailSectionProps {
   title: string;
   children: ReactNode;
   className?: string;
+  /** A section used directly in an information pane, without a RailLayout wrapper. */
+  variant?: 'card' | 'plain';
 }
 
 /** One titled block in the rail. Sections divide themselves. */
-export function RailSection({ title, children, className }: RailSectionProps) {
-  const variant = useContext(RailStyle);
+export function RailSection({ title, children, className, variant: variantProp }: RailSectionProps) {
+  const inheritedVariant = useContext(RailStyle);
+  const variant = variantProp ?? inheritedVariant;
   const Heading = variant === 'plain' ? 'h2' : 'h3';
   return (
     <section className={cn('border-b border-border py-3 last:border-b-0', variant === 'card' && 'px-3.5', className)}>

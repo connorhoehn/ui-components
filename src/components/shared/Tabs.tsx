@@ -126,7 +126,7 @@ function variantItemClasses(variant: TabsVariant, active: boolean, disabled: boo
     );
   }
   return cn(
-    'rounded-md',
+    'rounded-md border border-transparent',
     active
       ? 'bg-surface shadow-sm text-[var(--color-text-primary)] border border-[var(--color-border)]'
       : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)]',

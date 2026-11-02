@@ -5009,12 +5009,14 @@ export declare interface RailNavListProps {
 }
 
 /** One titled block in the rail. Sections divide themselves. */
-export declare function RailSection({ title, children, className }: RailSectionProps): JSX.Element;
+export declare function RailSection({ title, children, className, variant: variantProp }: RailSectionProps): JSX.Element;
 
 export declare interface RailSectionProps {
     title: string;
     children: ReactNode;
     className?: string;
+    /** A section used directly in an information pane, without a RailLayout wrapper. */
+    variant?: 'card' | 'plain';
 }
 
 /** Everything above, as one object — `railType.item`, `railType.groupLabel`… */
@@ -7427,6 +7429,10 @@ export declare interface WorkflowStep {
     label: string;
     done: boolean;
     active: boolean;
+    /** Supporting timestamp or explanation, below the milestone label. */
+    description?: ReactNode;
+    /** Terminal outcomes must not look like successful completion. */
+    outcome?: 'failed' | 'cancelled';
 }
 
 export declare function WorkflowStepper({ steps, size: sizeProp, className, 'aria-label': ariaLabel, 'data-testid': testId }: WorkflowStepperProps): JSX.Element;

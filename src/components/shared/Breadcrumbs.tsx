@@ -101,12 +101,13 @@ function BreadcrumbLink({
     isLast
       ? 'text-[var(--color-text-primary)] font-medium cursor-default'
       : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] font-normal',
+    !block && 'block min-w-0 truncate',
     block && 'block w-full px-3 py-1.5 rounded-sm hover:bg-[var(--color-surface-hover)]',
   );
 
   if (isLast || (!item.href && !item.onClick)) {
     return (
-      <span className={baseClass} aria-current={isLast ? 'page' : undefined}>
+      <span title={item.label} className={baseClass} aria-current={isLast ? 'page' : undefined}>
         {item.label}
       </span>
     );
@@ -114,7 +115,7 @@ function BreadcrumbLink({
 
   if (item.href) {
     return (
-      <a href={item.href} onClick={activate} className={cn(baseClass, 'no-underline')}>
+      <a title={item.label} href={item.href} onClick={activate} className={cn(baseClass, 'no-underline')}>
         {item.label}
       </a>
     );
@@ -123,6 +124,7 @@ function BreadcrumbLink({
   return (
     <button
       type="button"
+      title={item.label}
       onClick={activate}
       className={cn(
         baseClass,
@@ -199,7 +201,7 @@ export function Breadcrumbs({
   items,
   'aria-label': label = 'Breadcrumb',
   separator = '/',
-  maxItems,
+  maxItems = 4,
   overflow = 'ellipsis',
   minItems,
   lastIsCurrent = true,
@@ -215,14 +217,14 @@ export function Breadcrumbs({
   const hidden = maxItems != null ? hiddenItems(items, maxItems) : [];
 
   return (
-    <nav aria-label={label} data-testid={testId} className={cn('flex items-center', className)}>
-      <ol className="flex items-center gap-1 flex-wrap list-none m-0 p-0">
+    <nav aria-label={label} data-testid={testId} data-ui-breadcrumbs="" className={cn('flex min-w-0 max-w-full items-center overflow-hidden', className)}>
+      <ol className="flex min-w-0 max-w-full items-center gap-1 list-none m-0 p-0">
         {visible.map((item, idx) => {
           const isLast = idx === visible.length - 1;
           const isEllipsis = item === null;
 
           return (
-            <li key={idx} className="flex items-center gap-1">
+            <li key={idx} className={cn("flex min-w-0 items-center gap-1", isLast ? "flex-1" : "shrink-[2]")}>
               {isEllipsis ? (
                 overflow === 'menu' && hidden.length > 0 ? (
                   <OverflowMenu items={hidden} size={size} />
@@ -240,7 +242,7 @@ export function Breadcrumbs({
               )}
               {!isLast && (
                 <span
-                  className={cn('text-[var(--color-text-tertiary)] select-none', CRUMB_TEXT[size])}
+                  className={cn('shrink-0 text-[var(--color-text-tertiary)] select-none', CRUMB_TEXT[size])}
                   aria-hidden="true"
                 >
                   {separator}

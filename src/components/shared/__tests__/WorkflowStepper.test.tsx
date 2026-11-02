@@ -38,3 +38,15 @@ describe('WorkflowStepper', () => {
     expect(screen.getByRole('list').tagName).toBe('OL');
   });
 });
+
+it('keeps recorded timing under its milestone and distinguishes a failed terminal state', () => {
+  render(<WorkflowStepper steps={[
+    { step: 1, label: 'Queued', description: '08:00:00', done: true, active: false },
+    { step: 2, label: 'Failed', description: '08:01:00', done: false, active: true, outcome: 'failed' },
+  ]} />);
+  const rows = screen.getAllByRole('listitem');
+  expect(rows[0]).toHaveTextContent('Queued08:00:00');
+  expect(rows[1]).toHaveTextContent('Failed08:01:00');
+  expect(rows[1]).toHaveAttribute('data-state', 'failed');
+  expect(rows[1].querySelector('svg')).toBeNull();
+});

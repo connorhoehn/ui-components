@@ -31,3 +31,17 @@ export const Small: Story = {
 export const AllDone: Story = {
   args: { steps: STEPS.map((s) => ({ ...s, done: true, active: false })) },
 };
+
+/** Run milestones carry recorded timestamps; a failed run never gets a success check. */
+export const RunTiming: Story = {
+  args: { size: 'compact', 'aria-label': 'Run timing', steps: [
+    { step: 1, label: 'Queued', done: true, active: false, description: 'Nov 2, 2026, 08:00:00' },
+    { step: 2, label: 'Claimed', done: true, active: false, description: 'Nov 2, 2026, 08:00:03' },
+    { step: 3, label: 'Started', done: true, active: false, description: 'Nov 2, 2026, 08:00:04' },
+    { step: 4, label: 'Finished', done: true, active: false, description: 'Nov 2, 2026, 08:02:14' },
+  ] },
+};
+export const FailedRun: Story = {
+  args: { ...RunTiming.args, steps: RunTiming.args!.steps!.map(step => step.step === 4
+    ? { ...step, label: 'Failed', done: false, active: true, outcome: 'failed' as const } : step) },
+};

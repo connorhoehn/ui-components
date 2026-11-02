@@ -1295,6 +1295,12 @@
         }
       },
       "owner": "CanvasDocumentView embedded document contents"
+    },
+    {
+      "id": "navigation.breadcrumb",
+      "kind": "breadcrumb",
+      "selector": "[data-ui-breadcrumbs], nav[aria-label=\"Breadcrumb\"], nav[aria-label=\"Breadcrumbs\"]",
+      "owner": "Shared Breadcrumbs and route hierarchy: one distinct level per crumb, one truncated line"
     }
   ]
 }

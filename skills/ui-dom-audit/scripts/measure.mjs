@@ -327,6 +327,27 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
           add(rule, null, 'exemption reason', 'documented contextual reason, not blank or a placeholder', reason, 'coverage');
         }
       }
+      else if (rule.kind === 'breadcrumb') {
+        // Labels, not separators; a collection and its singular grouping label
+        // name the same place (Design / Designs, or Runs / All runs).
+        const canonical = value => value.trim().toLowerCase().replace(/^all\s+/, '').replace(/s$/, '');
+        for (const nav of nodes) {
+          const list = nav.querySelector('ol');
+          if (!list) continue;
+          const labels = [...list.children].map(li => li.querySelector('a, button, span:not([aria-hidden="true"])')).filter(el => el && visible(el));
+          for (let i = 1; i < labels.length; i++) {
+            if (canonical(labels[i].textContent) === canonical(labels[i - 1].textContent))
+              add(rule, labels[i], 'adjacent labels', 'distinct navigation levels', [labels[i - 1].textContent, labels[i].textContent]);
+          }
+          const tops = labels.map(el => rect(el).top);
+          if (tops.length && Math.max(...tops) - Math.min(...tops) > 4)
+            add(rule, nav, 'trail lines', 'one line', tops);
+          for (const label of labels) {
+            if (label.scrollWidth > label.clientWidth + tolerance && getComputedStyle(label).textOverflow !== 'ellipsis')
+              add(rule, label, 'overflow text', 'ellipsis with full accessible label', getComputedStyle(label).textOverflow);
+          }
+        }
+      }
       else if (rule.kind === 'text') {
         const labels = new Set();
         for (const scope of nodes) {

@@ -10,6 +10,7 @@
 // scorecard's level track) instead of stretching to its container.
 
 import { cn } from '../../lib/cn';
+import type { ReactNode } from 'react';
 import { useDensity, warnDeprecatedSize } from './Density';
 
 export interface WorkflowStep {
@@ -17,6 +18,10 @@ export interface WorkflowStep {
   label: string;
   done: boolean;
   active: boolean;
+  /** Supporting timestamp or explanation, below the milestone label. */
+  description?: ReactNode;
+  /** Terminal outcomes must not look like successful completion. */
+  outcome?: 'failed' | 'cancelled';
 }
 
 export interface WorkflowStepperProps {
@@ -60,9 +65,10 @@ export function WorkflowStepper({ steps, size: sizeProp, className, 'aria-label'
   if (sizeProp === 'sm') warnDeprecatedSize('WorkflowStepper', 'sm');
   const size: StepperSize = sizeProp ?? (density === 'compact' ? 'compact' : 'md');
   const compact = size === 'compact';
+  const detailed = steps.some(step => step.description != null);
   return (
     <ol
-      className={cn(compact ? 'm-0 inline-flex max-w-full list-none items-center overflow-x-auto p-0' : 'flex items-center overflow-x-auto', className)}
+      className={cn(detailed || compact ? 'm-0 inline-flex w-fit max-w-full list-none overflow-x-auto p-0' : 'flex overflow-x-auto', detailed ? 'items-start' : 'items-center', className)}
       data-testid={testId}
       {...(compact ? { 'data-density': 'compact' } : {})}
       {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}
@@ -75,38 +81,30 @@ export function WorkflowStepper({ steps, size: sizeProp, className, 'aria-label'
             ? 'bg-success'
             : 'bg-gradient-to-r from-success to-success/30'
           : 'bg-border';
-        return (
-          <li
-            key={step.step}
-            aria-current={step.active ? 'step' : undefined}
-            className={compact ? 'flex items-center' : 'flex flex-1 items-center last:flex-none'}
-          >
-            <div className={cn('flex items-center whitespace-nowrap', compact ? 'gap-1' : 'gap-1.5')}>
-              <div
-                className={cn(
-                  'flex flex-shrink-0 items-center justify-center rounded-full transition-colors',
-                  NODE_SIZE[size],
-                  step.done
-                    ? 'bg-success text-white'
-                    : step.active
-                      ? cn(compact ? 'border-[1.5px]' : 'border-2', 'border-info bg-info-bg')
-                      : 'border border-border bg-surface-inset',
-                )}
-              >
-                {step.done ? <CheckIcon compact={compact} /> : step.active ? <span className={cn('rounded-full bg-info', compact ? 'h-1.5 w-1.5' : 'h-2 w-2')} /> : null}
-              </div>
-              <span
-                className={cn(
-                  LABEL_SIZE[size],
-                  step.active ? 'text-text-primary' : step.done ? 'text-text-secondary' : 'text-text-tertiary',
-                )}
-              >
-                {step.label}
-              </span>
-            </div>
-            {!isLast && <div aria-hidden="true" className={cn(compact ? 'mx-1.5 h-0.5 w-3' : 'mx-2 h-1 flex-1', 'rounded-full transition-colors', connectorClass)} />}
-          </li>
-        );
+        const state = step.outcome ?? (step.done ? 'done' : step.active ? 'active' : 'pending');
+        const node = <div className={cn('flex flex-shrink-0 items-center justify-center rounded-full transition-colors', NODE_SIZE[size],
+          step.outcome === 'failed' ? 'border-2 border-danger bg-danger-bg text-danger'
+            : step.outcome === 'cancelled' ? 'border-2 border-border bg-surface-inset text-text-secondary'
+              : step.done ? 'bg-success text-white'
+                : step.active ? cn(compact ? 'border-[1.5px]' : 'border-2', 'border-info bg-info-bg')
+                  : 'border border-border bg-surface-inset')}>
+          {step.outcome ? <span className={cn('rounded-full', step.outcome === 'failed' ? 'bg-danger' : 'bg-text-secondary', compact ? 'h-1.5 w-1.5' : 'h-2 w-2')} />
+            : step.done ? <CheckIcon compact={compact} /> : step.active ? <span className={cn('rounded-full bg-info', compact ? 'h-1.5 w-1.5' : 'h-2 w-2')} /> : null}
+        </div>;
+        const label = <span className={cn(detailed ? 'block text-xs font-semibold leading-4' : LABEL_SIZE[size],
+          step.active ? 'text-text-primary' : step.done ? 'text-text-secondary' : 'text-text-tertiary')}>{step.label}</span>;
+        if (detailed) return <li key={step.step} aria-current={step.active ? 'step' : undefined} data-state={state}
+          className={cn('shrink-0', compact ? 'w-32' : 'w-40')}>
+          <div className="flex items-center">{node}{!isLast && <div aria-hidden="true" data-workflow-connector="" className={cn('h-0.5 flex-1', connectorClass)} />}</div>
+          <div className="mt-2 pr-3 space-y-1">{label}
+            {step.description != null && <div data-ui-text="workflow-step-description" className="text-xs text-text-secondary leading-5 break-words">{step.description}</div>}
+          </div>
+        </li>;
+        return <li key={step.step} aria-current={step.active ? 'step' : undefined} data-state={state}
+          className={compact ? 'flex items-center' : 'flex flex-1 items-center last:flex-none'}>
+          <div className={cn('flex items-center whitespace-nowrap', compact ? 'gap-1' : 'gap-1.5')}>{node}{label}</div>
+          {!isLast && <div aria-hidden="true" className={cn(compact ? 'mx-1.5 h-0.5 w-3' : 'mx-2 h-1 flex-1', 'rounded-full transition-colors', connectorClass)} />}
+        </li>;
       })}
     </ol>
   );

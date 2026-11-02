@@ -23,6 +23,7 @@ leave that count unchanged (a duplicate React child key caused this regression).
 
 | Kind | Contract fields | What it detects |
 | --- | --- | --- |
+| `breadcrumb` | selector (navigation landmark) | Adjacent duplicate collection names (including singular/plural and “All”), wrapping trails and clipped titles without ellipsis |
 | `text` | selector, properties | Actual visible labels including nested spans; ignores icon-only/visually hidden text |
 | `style` | selector, properties | Computed font family/size/weight, padding, border style |
 | `box` | selector, properties | Rendered width/height/edges outside a size contract |

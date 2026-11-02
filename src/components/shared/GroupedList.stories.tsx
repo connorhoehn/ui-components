@@ -217,3 +217,10 @@ export const LabelHeadingsBarCurrent: Story = {
     </div>
   ),
 };
+
+export const DesignRecordRail: Story = {
+  args: { size: 'md', rowStyle: 'ruled', currentStyle: 'bar', groupHeading: 'title', currentId: 'dashboards',
+    groups: [{ id: 'input', title: 'Needs input', count: 1 }, { id: 'ideating', title: 'Ideating', count: 1 }],
+    rows: [{ id: 'tokens', groupId: 'input', title: 'Session token rotation on tenant switch' }, { id: 'dashboards', groupId: 'ideating', title: 'RED dashboards from span metrics' }], onOpenRow: () => {} },
+  decorators: [Story => <div className="w-80 bg-surface"><Story /></div>],
+};

@@ -96,6 +96,8 @@ rules. Consistency outliers (a family value few routes use) and theme parity
 are judged across the whole matrix. Expect findings; the brief says how to run
 sections, review screenshots into `review.jsonl`, and triage.
 
+Breadcrumbs name each level once: omit redundant singular/plural grouping and “All” collection repetitions. Keep the trail to one line, truncate long labels with ellipsis while retaining their full accessible names, and verify `navigation.breadcrumb` on every rendered trail.
+
 ## Refine from a reported defect
 
 1. Reproduce the supplied path/state. Inspect measured values and identify the
