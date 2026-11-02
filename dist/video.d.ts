@@ -2104,6 +2104,26 @@ export declare interface MediaEffectsTrayProps {
 /** Browser media permission for one kind of device. */
 export declare type MediaPermission = 'prompt' | 'granted' | 'denied' | 'unavailable';
 
+/** One media sink under the scrolling shell, never a fixed overlay.
+ * Source keys discard the old decoder and its events before starting another.
+ * Uses the same Stack/Inline footer composition as the huddle shell, with the
+ * shared button, icon, form and typography primitives throughout. */
+export declare function MediaPlaybackDock({ source, autoPlay, onClose, onPrevious, onNext, status, emptyLabel, className, 'data-testid': testId, }: MediaPlaybackDockProps): JSX.Element;
+
+export declare interface MediaPlaybackDockProps {
+    source?: PlaybackSource | null;
+    /** Enable only after the user explicitly chooses Play. */
+    autoPlay?: boolean;
+    onClose?: () => void;
+    onPrevious?: () => void;
+    onNext?: () => void;
+    /** Connection/freshness context. Kept separate from playback announcements. */
+    status?: ReactNode;
+    emptyLabel?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function MediaPrecheckRow({ micOn, cameraOn, showCamera, permission, onToggleMic, onToggleCamera, onOpenSettings, testIdPrefix, settingsTestId, className, }: MediaPrecheckRowProps): JSX.Element;
 
 export declare interface MediaPrecheckRowProps {
@@ -2417,6 +2437,15 @@ export declare interface PlaybackReactionsLayerProps {
     /** Current playhead position in ms (player timeupdate). */
     currentTimeMs: number;
     className?: string;
+}
+
+export declare interface PlaybackSource {
+    /** Stable identity, including a revision when the bytes change. */
+    id: string;
+    src: string;
+    kind: 'audio' | 'video';
+    title: string;
+    subtitle?: string;
 }
 
 export declare type PlayerPhase = 'idle' | 'connecting' | 'buffering' | 'playing' | 'error';
