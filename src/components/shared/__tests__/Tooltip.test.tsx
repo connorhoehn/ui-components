@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, act, cleanup } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Tooltip } from '../Tooltip';
+import { createPortal } from 'react-dom';
 
 function setup(props = {}) {
   return render(
@@ -71,6 +72,21 @@ describe('Tooltip', () => {
     setup({ disabled: true });
     fireEvent.mouseEnter(screen.getByText('Toggle'));
     act(() => { vi.advanceTimersByTime(1000); });
+    expect(tip()).toBeNull();
+    fireEvent.focus(screen.getByText('Toggle'));
+    expect(tip()).toBeNull();
+  });
+
+  it('dismisses on activation and does not reopen when a portal menu takes focus', () => {
+    render(<Tooltip content="Choose scope"><span><button>Scope</button>{createPortal(<button>Menu choice</button>, document.body)}</span></Tooltip>);
+    fireEvent.focus(screen.getByText('Scope'));
+    expect(tip()).not.toBeNull();
+    fireEvent.click(screen.getByText('Scope'));
+    expect(tip()).toBeNull();
+    fireEvent.focus(screen.getByText('Menu choice'));
+    expect(tip()).toBeNull();
+    fireEvent.focus(screen.getByText('Scope'));
+    fireEvent.keyDown(screen.getByText('Scope'), { key: 'Enter' });
     expect(tip()).toBeNull();
   });
 

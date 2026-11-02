@@ -711,6 +711,13 @@
 }
 .ProseMirror p { margin: 0 0 0.5em; }
 .ProseMirror:focus { outline: none; }
+/* Message editors are keyboard controls. The surrounding card's focus-within
+   tint cannot identify the input when focus moves from a neighboring chip. */
+.chat-composer .chat-composer-input:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+  border-radius: 4px;
+}
 .ProseMirror .is-empty::before {
   content: attr(data-placeholder);
   color: #94a3b8;

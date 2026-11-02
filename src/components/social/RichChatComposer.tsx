@@ -2260,7 +2260,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
   // mode pill plus a context chip plus Send left a 340px dock's input ~64px
   // wide ("Sear…"); under `narrow` the chips fold into ONE mode chip whose
   // menu (and tooltip) carries what the draft is about.
-  const foldedChip = collapsed && narrow;
+  const foldedChip = collapsed && (narrow || (!!references?.length && rootWidth !== null && rootWidth > 0 && rootWidth < 640));
   const chipRow = pane || foldedChip;
   // The pane's Aa / ? / ⋯ / row end: while focus is inside OR the draft holds
   // something. Keyed on focus alone, pressing Send on an unfocused draft

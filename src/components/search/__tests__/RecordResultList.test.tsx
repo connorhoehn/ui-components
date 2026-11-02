@@ -44,6 +44,7 @@ describe('RecordResultList', () => {
   it('draws group headings with counts and a See all when the host holds more', () => {
     const props = setup();
     const work = screen.getByRole('region', { name: 'Work' });
+    expect(within(work).getByRole('heading', { level: 2 })).toHaveTextContent('Work');
     expect(within(work).getByText('4')).toBeInTheDocument();
     fireEvent.click(within(work).getByRole('button', { name: 'See all 4' }));
     expect(props.groups[1].onSeeAll).toHaveBeenCalledOnce();

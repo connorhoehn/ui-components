@@ -114,13 +114,17 @@ export function Tooltip({
         className="inline-flex"
         onMouseEnter={scheduleOpen}
         onMouseLeave={scheduleClose}
-        onFocus={() => {
+        onFocus={(event) => {
+          // React portal focus bubbles through its trigger even though the
+          // menu is outside this span. Do not reopen the trigger's tooltip.
+          if (disabled || !event.currentTarget.contains(event.target)) return;
           clear();
           setOpen(true);
         }}
         onBlur={closeNow}
-        onKeyDown={(event) => {
-          if (event.key === 'Escape') closeNow();
+        onClickCapture={closeNow}
+        onKeyDownCapture={(event) => {
+          if (['Escape', 'Enter', ' '].includes(event.key)) closeNow();
         }}
         aria-describedby={open ? tooltipId : undefined}
       >

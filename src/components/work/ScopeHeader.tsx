@@ -381,7 +381,7 @@ function RightGroup({
           triggerTestId={`${testId}-menu`}
           align="end"
           sections={sections}
-          triggerClassName="h-8 w-8 shrink-0 border-transparent px-0 py-0 text-text-secondary hover:border-border"
+          triggerClassName="h-8 w-8 shrink-0 border-transparent px-0 py-0 text-text-secondary hover:border-transparent hover:bg-surface-hover"
         />
       )}
     </>

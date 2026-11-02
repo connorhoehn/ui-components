@@ -114,10 +114,10 @@ function GroupHeading({ group, onToggleGroup }: { group: RecordResultGroup; onTo
       <span className="text-sm tabular-nums text-text-tertiary">{group.count}</span>
     </Inline>
   );
-  let lead: ReactNode = <h3 className="m-0">{title}</h3>;
+  let lead: ReactNode = <h2 className="m-0">{title}</h2>;
   if (onToggleGroup) {
     lead = (
-      <h3 className="m-0">
+      <h2 className="m-0">
         <Button
           variant="ghost"
           size="sm"
@@ -128,12 +128,12 @@ function GroupHeading({ group, onToggleGroup }: { group: RecordResultGroup; onTo
           {title}
           <ChevronIcon size={14} dir={group.collapsed ? 'right' : 'down'} aria-hidden />
         </Button>
-      </h3>
+      </h2>
     );
   } else if (group.collapsed && (group.onSeeAll || group.seeAllHref)) {
     lead = (
       <Inline gap="xs" align="center">
-        <h3 className="m-0">{title}</h3>
+        <h2 className="m-0">{title}</h2>
         {group.seeAllHref ? (
           <a
             href={group.seeAllHref}
@@ -156,7 +156,7 @@ function GroupHeading({ group, onToggleGroup }: { group: RecordResultGroup; onTo
   } else if (group.collapsed) {
     lead = (
       <Inline gap="xs" align="center">
-        <h3 className="m-0">{title}</h3>
+        <h2 className="m-0">{title}</h2>
         <ChevronIcon size={14} dir="right" aria-hidden className="text-text-tertiary" />
       </Inline>
     );

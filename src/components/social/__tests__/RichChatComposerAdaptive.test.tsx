@@ -47,6 +47,17 @@ const root = () => screen.getByTestId('composer');
 const withHints = { hints: [{ key: '⌘K', label: 'quick open' }, { key: 'Enter', label: 'send' }] };
 
 describe('size classes come from the composer’s own width', () => {
+  it('folds idle references before they squeeze a medium-width editor, and restores them when widened', () => {
+    render(<RichChatComposer onSend={vi.fn()} data-testid="composer" mode="agent" onModeChange={vi.fn()}
+      modeControl="menu" collapseWhenIdle references={[{ id: 'initiative', label: 'LLM Application Platform' }]} />);
+    emit!(540);
+    expect(screen.getByTestId('composer-context-chip')).toHaveAttribute('data-folded', 'true');
+    expect(screen.getByTestId('composer-context-chip')).toHaveAttribute('title', 'Agent · LLM Application Platform');
+    expect(screen.queryByTestId('composer-references')).not.toBeInTheDocument();
+    emit!(900);
+    expect(screen.getByTestId('composer-references')).toHaveTextContent('LLM Application Platform');
+  });
+
   it('maps widths to wide / medium / narrow at the published breakpoints', () => {
     expect(composerSizeFor(null)).toBe('wide');
     expect(composerSizeFor(COMPOSER_BREAKPOINTS.narrow - 1)).toBe('narrow');

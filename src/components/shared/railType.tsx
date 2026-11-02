@@ -36,7 +36,7 @@ export const RAIL_ROW_PAD_Y = 'py-2';
 export const RAIL_ROW_PITCH = 36;
 
 /** A count at an item's right edge ("Initiatives 3"): muted, tabular. */
-export const RAIL_ITEM_COUNT = 'text-[12px] font-medium leading-4 tabular-nums text-text-tertiary';
+export const RAIL_ITEM_COUNT = 'text-[12px] font-medium leading-4 tabular-nums text-text-secondary';
 
 /**
  * A group heading ("PLAN", "IN PROGRESS"): 12px semibold uppercase,
