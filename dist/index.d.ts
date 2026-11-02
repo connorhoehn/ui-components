@@ -3198,6 +3198,9 @@ export declare interface CallTileRowProps {
      * keeps them in one dark strip with the controls at the end, for a dock
      * that is itself a panel.
      *
+     * `gallery`: bounded 16:9 participant tiles (maximum 26rem), reflowing with
+     * available width. A lone participant stays the same comfortable size.
+     *
      * `grid` (2.423.0): the call's media panel — the same dock tiles (camera-off
      * initials with the media kept playing, audio sink, name, mic state,
      * speaking/followed ring, reconnecting veil), fluid 16:9 tiles in a grid
@@ -3206,7 +3209,7 @@ export declare interface CallTileRowProps {
      * a PiP — and nobody is collapsed into `+N`. `tileWidth`, `tileHeight`,
      * `overflow` and `maxVisible` are ignored.
      */
-    variant?: 'floating' | 'bar' | 'dock' | 'grid';
+    variant?: 'floating' | 'bar' | 'dock' | 'grid' | 'gallery';
     /** `grid` only (2.432.0): never more columns than this — a narrow pane keeps two tiles to a row. */
     maxColumns?: number;
     className?: string;
@@ -6633,6 +6636,11 @@ export declare interface ContextComposerProps {
     identity?: ComposerIdentity | null;
     /** Force the full card. */
     expanded?: boolean;
+    /** Offer an explicit collapse control. Keeps the editor, draft and files mounted;
+     * a focus request reopens it. Prompt replacements keep their own controls. */
+    collapsible?: boolean;
+    /** Destination shown in the collapsed row (e.g. the selected conversation). */
+    collapsedLabel?: string;
     /**
      * `pane` (since 2.431.0): the simplified responsive mode for a composer in
      * a side pane — one input row with a single mode · subject chip, icon-only

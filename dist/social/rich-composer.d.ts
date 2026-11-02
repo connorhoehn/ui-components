@@ -996,6 +996,11 @@ export declare interface ContextComposerProps {
     identity?: ComposerIdentity | null;
     /** Force the full card. */
     expanded?: boolean;
+    /** Offer an explicit collapse control. Keeps the editor, draft and files mounted;
+     * a focus request reopens it. Prompt replacements keep their own controls. */
+    collapsible?: boolean;
+    /** Destination shown in the collapsed row (e.g. the selected conversation). */
+    collapsedLabel?: string;
     /**
      * `pane` (since 2.431.0): the simplified responsive mode for a composer in
      * a side pane — one input row with a single mode · subject chip, icon-only

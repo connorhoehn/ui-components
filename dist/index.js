@@ -105,9 +105,9 @@ import { n as Hm } from "./useComputeProjects-ZSazDRet.js";
 import { n as Um, t as Wm } from "./QuoteBlock-qqQqscMP.js";
 import { t as Gm } from "./formatBytes-05ivRSJY.js";
 import { a as Km, c as qm, i as Jm, l as Ym, n as Xm, o as Zm, r as Qm, s as $m, t as eh } from "./composerSendError-DbyF0DW9.js";
-import { $ as th, A as nh, B as rh, C as ih, D as ah, E as oh, F as sh, G as ch, H as lh, I as uh, J as dh, K as fh, L as ph, M as mh, N as hh, O as gh, P as _h, Q as vh, R as yh, S as bh, T as xh, U as Sh, V as Ch, W as wh, X as Th, Y as Eh, Z as Dh, _ as Oh, _t as kh, a as Ah, at as jh, b as Mh, c as Nh, ct as Ph, d as Fh, dt as Ih, et as Lh, f as Rh, ft as zh, g as Bh, gt as Vh, h as Hh, ht as Uh, i as Wh, it as Gh, j as Kh, k as qh, l as Jh, lt as Yh, m as Xh, mt as Zh, n as Qh, nt as $h, o as eg, ot as tg, p as ng, pt as rg, q as ig, r as ag, rt as og, s as sg, st as cg, t as lg, tt as ug, u as dg, ut as fg, v as pg, vt as mg, w as hg, x as gg, y as _g, yt as vg, z as yg } from "./video-BUlsmHGU.js";
-import { A as bg, B as xg, C as Sg, D as Cg, E as wg, F as Tg, G as Eg, H as Dg, I as Og, J as kg, K as Ag, L as jg, M as Mg, N as Ng, O as Pg, P as Fg, Q as Ig, R as Lg, S as Rg, T as zg, U as Bg, V as Vg, W as Hg, X as Ug, Y as Wg, Z as Gg, _ as Kg, a as qg, b as Jg, c as Yg, d as Xg, f as Zg, g as Qg, h as $g, i as e_, j as t_, k as n_, l as r_, m as i_, n as a_, o as o_, p as s_, q as c_, r as l_, s as u_, t as d_, u as f_, v as p_, w as m_, x as h_, y as g_, z as __ } from "./BreakoutRoomsPanel-G4HJqq4t.js";
-import { n as v_, r as y_, t as b_ } from "./RecordingConsentNotice-DtsJlSKD.js";
+import { $ as th, A as nh, B as rh, C as ih, D as ah, E as oh, F as sh, G as ch, H as lh, I as uh, J as dh, K as fh, L as ph, M as mh, N as hh, O as gh, P as _h, Q as vh, R as yh, S as bh, T as xh, U as Sh, V as Ch, W as wh, X as Th, Y as Eh, Z as Dh, _ as Oh, _t as kh, a as Ah, at as jh, b as Mh, c as Nh, ct as Ph, d as Fh, dt as Ih, et as Lh, f as Rh, ft as zh, g as Bh, gt as Vh, h as Hh, ht as Uh, i as Wh, it as Gh, j as Kh, k as qh, l as Jh, lt as Yh, m as Xh, mt as Zh, n as Qh, nt as $h, o as eg, ot as tg, p as ng, pt as rg, q as ig, r as ag, rt as og, s as sg, st as cg, t as lg, tt as ug, u as dg, ut as fg, v as pg, vt as mg, w as hg, x as gg, y as _g, yt as vg, z as yg } from "./video-CG4G1EsL.js";
+import { A as bg, B as xg, C as Sg, D as Cg, E as wg, F as Tg, G as Eg, H as Dg, I as Og, J as kg, K as Ag, L as jg, M as Mg, N as Ng, O as Pg, P as Fg, Q as Ig, R as Lg, S as Rg, T as zg, U as Bg, V as Vg, W as Hg, X as Ug, Y as Wg, Z as Gg, _ as Kg, a as qg, b as Jg, c as Yg, d as Xg, f as Zg, g as Qg, h as $g, i as e_, j as t_, k as n_, l as r_, m as i_, n as a_, o as o_, p as s_, q as c_, r as l_, s as u_, t as d_, u as f_, v as p_, w as m_, x as h_, y as g_, z as __ } from "./BreakoutRoomsPanel-2m5earOc.js";
+import { n as v_, r as y_, t as b_ } from "./RecordingConsentNotice-DMp20B6H.js";
 import { t as x_ } from "./InlineEditableText-CzB64Ufv.js";
 import { A as S_, C as C_, D as w_, E as T_, O as E_, S as D_, T as O_, _ as k_, a as A_, b as j_, c as M_, d as N_, f as P_, g as F_, h as I_, i as L_, k as R_, l as z_, m as B_, n as V_, o as H_, p as U_, r as W_, s as G_, t as K_, u as q_, v as J_, w as Y_, x as X_, y as Z_ } from "./identity-DkgOdJYE.js";
 import { n as Q_, t as $_ } from "./ChangeReviewCard-CJMf8aql.js";
@@ -7779,7 +7779,7 @@ async function yC(e, t) {
 }
 //#endregion
 //#region src/components/social/AgentComposerDockLazy.tsx
-var bC = mv(() => import("./AgentComposerDock-CTmdRV9H.js").then((e) => e.n).then((e) => ({ default: e.AgentComposerDock })));
+var bC = mv(() => import("./AgentComposerDock-DfQ2csxB.js").then((e) => e.n).then((e) => ({ default: e.AgentComposerDock })));
 function xC(e) {
 	return /* @__PURE__ */ Z(dv, {
 		fallback: null,
@@ -7788,7 +7788,7 @@ function xC(e) {
 }
 //#endregion
 //#region src/components/social/ContextComposerLazy.tsx
-var SC = mv(() => import("./ContextComposer-iemvWZUJ.js").then((e) => e.r).then((e) => ({ default: e.ContextComposer })));
+var SC = mv(() => import("./ContextComposer-COdpAn_3.js").then((e) => e.r).then((e) => ({ default: e.ContextComposer })));
 function CC(e) {
 	return /* @__PURE__ */ Z(dv, {
 		fallback: null,
