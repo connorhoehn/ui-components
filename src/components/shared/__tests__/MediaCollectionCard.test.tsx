@@ -14,4 +14,11 @@ describe('MediaCollectionCard',()=>{
   render(<MediaCollectionCard title="Empty" previews={[]} onOpen={()=>{}} onPlay={()=>{}}/>);
   expect(screen.getByRole('button',{name:'Play Empty'})).toBeDisabled();expect(screen.getByText('Length unknown')).toBeInTheDocument();
  });
+ it('uses the host heading level while preserving the title action and default outline',()=>{
+  const open=vi.fn(); const {rerender}=render(<MediaCollectionCard title="Production previews" headingAs="h2" previews={[]} onOpen={open} onPlay={()=>{}}/>);
+  expect(screen.getByRole('heading',{level:2,name:'Production previews'})).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button',{name:'Production previews'}));expect(open).toHaveBeenCalledOnce();
+  rerender(<MediaCollectionCard title="Episode" previews={[]} onOpen={open} onPlay={()=>{}}/>);
+  expect(screen.getByRole('heading',{level:3,name:'Episode'})).toBeInTheDocument();
+ });
 });
