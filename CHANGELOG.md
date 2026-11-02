@@ -1,3 +1,7 @@
+# 2.491.0
+
+- Add `MediaPlaybackDock` / `PlaybackSource`: one persistent audio/video sink, shared transport/form controls, expandable picture, source-change teardown and load errors. Includes Storybook examples and regression checks. Additive exports at root and `/video`; Storymaker consumes the packed release.
+
 # Changelog
 
 All notable changes to `@connorhoehnslalom/ui-components` will be documented here.

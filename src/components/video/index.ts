@@ -355,3 +355,5 @@ export {
   MeetingShieldIcon,
   MeetingShareIcon,
 } from './MeetingIcons';
+export { MediaPlaybackDock } from './MediaPlaybackDock';
+export type { MediaPlaybackDockProps, PlaybackSource } from './MediaPlaybackDock';

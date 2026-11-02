@@ -59,3 +59,7 @@ Recent splits (Wave 1, May 2026):
 - [`../../../docs/AUTONOMY_CHARTER.md`](../../../docs/AUTONOMY_CHARTER.md)
   §1 — `/video` stable-exports list.
 - Wave 5 `/video-ivs` graduation is not yet filed.
+
+## Persistent playback (2.491.0)
+
+`MediaPlaybackDock` is a nonshrinking shell footer composed from `Stack`, `Inline`, `IconButton`, `Button`, `Slider` and `Select`. Mount one outside the page scroll area. Pass a registered `PlaybackSource`; the host owns file authorization and queue selection. A source change or close stops the previous decoder. The dock owns seeking, volume, speed, errors and an expandable video surface. Set `autoPlay` only after a user action. Do not mount a second inline player for the same source. Storybook: Video/MediaPlaybackDock (idle, audio, narrow, missing video, persistent footer).
