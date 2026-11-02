@@ -25,13 +25,13 @@ import { t as _e } from "./DockedPanelContext-pH9A5z1h.js";
 import { t as ve } from "./Textarea-BwvE1HPn.js";
 import { n as ye, t as U } from "./Avatar-DkkMISPQ.js";
 import { i as be, r as xe, t as Se } from "./ChoiceList-B3BfW3Ls.js";
-import { t as Ce } from "./SegmentedControl-DJWbLQSw.js";
+import { t as Ce } from "./SegmentedControl-CiO6OKWy.js";
 import { n as we } from "./RovingToolbar-B1Fai5PF.js";
 import { t as Te } from "./PresenceAvatars--JG3ZaTz.js";
 import { t as Ee } from "./Checkbox-Dvt09s3H.js";
 import { t as De } from "./activationKey-CjbL3LUv.js";
-import { C as Oe, E as ke, H as Ae, L as je, S as Me, V as Ne, Z as Pe } from "./BreakoutRoomsPanel-2m5earOc.js";
-import "./RecordingConsentNotice-DMp20B6H.js";
+import { C as Oe, E as ke, H as Ae, L as je, S as Me, V as Ne, Z as Pe } from "./BreakoutRoomsPanel-CT4QjXvP.js";
+import "./RecordingConsentNotice-DJEQbIW2.js";
 import { useCallback as W, useEffect as G, useImperativeHandle as Fe, useLayoutEffect as Ie, useMemo as K, useRef as q, useState as J } from "react";
 import { Fragment as Y, jsx as X, jsxs as Z } from "react/jsx-runtime";
 //#region src/components/video/VideoPlayer.tsx

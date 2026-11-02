@@ -18,7 +18,7 @@ import { t as ee } from "./DropdownMenu-2S3snVPG.js";
 import { t as M } from "./Avatar-DkkMISPQ.js";
 import { t as N } from "./TitledFrame-B0QW93da.js";
 import { t as P } from "./StatusDot-GwVn-q5q.js";
-import { t as te } from "./SegmentedControl-DJWbLQSw.js";
+import { t as te } from "./SegmentedControl-CiO6OKWy.js";
 import { t as F } from "./InlineAlert-BqOYETP1.js";
 import { t as I } from "./CardHeader-DzQxX5J-.js";
 import { t as L } from "./LogStream-C9pn1oLa.js";

@@ -14,7 +14,7 @@ import { t as k } from "./DropdownMenu-2S3snVPG.js";
 import { t as A } from "./Textarea-BwvE1HPn.js";
 import { t as j } from "./Avatar-DkkMISPQ.js";
 import { t as M } from "./StatusDot-GwVn-q5q.js";
-import { t as N } from "./SegmentedControl-DJWbLQSw.js";
+import { t as N } from "./SegmentedControl-CiO6OKWy.js";
 import { t as P } from "./InlineAlert-BqOYETP1.js";
 import { t as F } from "./ActivityFeed-BU9LDJNO.js";
 import { t as I } from "./NumberInput-C1JOoCoC.js";

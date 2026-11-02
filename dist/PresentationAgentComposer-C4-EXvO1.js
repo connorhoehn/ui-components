@@ -1,5 +1,5 @@
 import { o as e } from "./Button-C-I3BxWI.js";
-import { t } from "./SegmentedControl-DJWbLQSw.js";
+import { t } from "./SegmentedControl-CiO6OKWy.js";
 import { t as n } from "./FollowUpChips-BWHw0Y0h.js";
 import { r } from "./RichChatComposer-B7iLRQ9m.js";
 import { jsx as i, jsxs as a } from "react/jsx-runtime";

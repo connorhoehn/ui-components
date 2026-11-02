@@ -26,7 +26,9 @@ function d({ options: d, value: f, onChange: p, size: m, "aria-label": h, "aria-
 		"aria-label": h,
 		"aria-labelledby": g,
 		"data-testid": S,
-		className: e(v ? "flex w-full items-center" : "inline-flex items-center", "rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-inset,#f8fafc)] p-0.5 gap-0.5", y === "accent" && "bg-surface p-[3px] gap-1", x),
+		"data-segmented-width": v ? "full" : "content",
+		"data-segmented-tone": y,
+		className: e(v ? "flex w-full items-center" : "inline-flex w-fit max-w-full self-start items-center", "rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-inset,#f8fafc)] p-0.5 gap-0.5", y === "accent" && "bg-surface p-[3px] gap-1", x),
 		children: d.map((t, r) => {
 			let m = t.value === f, h = b && t.icon != null, g = t.badge !== void 0 && t.badge !== null && t.badge !== !1, x = /* @__PURE__ */ a("button", {
 				type: "button",
@@ -51,7 +53,7 @@ function d({ options: d, value: f, onChange: p, size: m, "aria-label": h, "aria-
 				disabled: _,
 				"data-testid": t.testId ?? (S ? `${S}-${t.value}` : void 0),
 				...h ? { "aria-label": g && (typeof t.badge == "string" || typeof t.badge == "number") ? `${t.label}, ${t.badge}` : t.label } : {},
-				className: e("inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md font-medium transition-all cursor-pointer", v && "flex-1", _ && "cursor-not-allowed opacity-60", h ? e("relative", o[C]) : s[C], m ? y === "accent" ? u : l : c, y === "accent" && "h-[30px] py-0 text-sm", y === "accent" && !m && "text-text-primary"),
+				className: e("inline-flex items-center justify-center gap-1.5 whitespace-nowrap border border-transparent rounded-md font-medium transition-all cursor-pointer", v && "flex-1", _ && "cursor-not-allowed opacity-60", h ? e("relative", o[C]) : s[C], m ? y === "accent" ? u : l : c, y === "accent" && "h-[30px] py-0 text-sm", y === "accent" && !m && "text-text-primary"),
 				children: [
 					t.icon,
 					!h && t.label,

@@ -41,7 +41,7 @@ function E({ label: e, layout: t = "table", search: n, filters: r = [], summary:
 		"data-collection-layout": t,
 		className: t === "cards" ? "px-0" : void 0,
 		"data-collection-selection": b ? "idle" : void 0,
-		end: /* @__PURE__ */ T(C, { children: [o.map((e) => /* @__PURE__ */ w(p, {
+		end: o.length ? /* @__PURE__ */ w(C, { children: o.map((e) => /* @__PURE__ */ w(p, {
 			content: e.label,
 			children: /* @__PURE__ */ w(s, {
 				"aria-label": e.label,
@@ -50,15 +50,7 @@ function E({ label: e, layout: t = "table", search: n, filters: r = [], summary:
 				disabled: e.disabled,
 				"data-testid": e["data-testid"]
 			})
-		}, e.id)), d && /* @__PURE__ */ w(p, {
-			content: "Refresh",
-			children: /* @__PURE__ */ w(s, {
-				"aria-label": "Refresh",
-				icon: /* @__PURE__ */ w(u, {}),
-				onClick: d,
-				disabled: y
-			})
-		})] }),
+		}, e.id)) }) : void 0,
 		children: [
 			n && /* @__PURE__ */ w(v, {
 				...n,
@@ -81,6 +73,15 @@ function E({ label: e, layout: t = "table", search: n, filters: r = [], summary:
 						chevron: "custom"
 					})
 				}, e.id))
+			}),
+			d && /* @__PURE__ */ w(p, {
+				content: "Refresh",
+				children: /* @__PURE__ */ w(s, {
+					"aria-label": "Refresh",
+					icon: /* @__PURE__ */ w(u, {}),
+					onClick: d,
+					disabled: y
+				})
 			}),
 			A.length > 0 && /* @__PURE__ */ w("span", {
 				className: "min-w-0 truncate text-xs text-text-primary",
