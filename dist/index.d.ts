@@ -22723,7 +22723,7 @@ export declare interface TechnicalDetailsProps {
 /** A page with a dashed block: "a template". Since 2.390.3. */
 export declare function TemplateIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function TenantSwitcher({ label, healthy, motion, destinations, onSelect, live, showActivity, blockedReason, emptyMessage, resetKey, avatarColor, avatarForeground, triggerLabel, dialogLabel, errorFallback, className, 'data-testid': testId, }: TenantSwitcherProps): JSX.Element;
+export declare function TenantSwitcher({ label, size, healthy, motion, destinations, onSelect, live, showActivity, blockedReason, emptyMessage, resetKey, avatarColor, avatarForeground, triggerLabel, dialogLabel, errorFallback, className, 'data-testid': testId, }: TenantSwitcherProps): JSX.Element;
 
 export declare interface TenantSwitcherDestination {
     /** Stable id handed back to `onSelect`; also written as `data-tenant`. */
@@ -22739,6 +22739,8 @@ export declare interface TenantSwitcherDestination {
 export declare interface TenantSwitcherProps {
     /** The current workspace's name, drawn beside the planet ("Work"). */
     label: string;
+    /** Compact project context beside a separate application title. Default md. */
+    size?: 'sm' | 'md';
     /** Draws the orbiting moon — the shell's "connected and healthy" hint. */
     healthy?: boolean;
     /**

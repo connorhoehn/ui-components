@@ -5153,13 +5153,13 @@ var mi = 250, hi = 300;
 function gi(e, t) {
 	return e > 0 ? `${e} unread ${e === 1 ? "notice" : "notices"} in this inbox.${t ? "" : " Live updates are currently unavailable."}` : t ? "No unread notices in this inbox." : "Live notification updates are currently unavailable.";
 }
-function _i() {
+function _i({ compact: e = !1 }) {
 	return /* @__PURE__ */ Q("svg", {
 		viewBox: "0 0 24 24",
 		fill: "none",
 		stroke: "currentColor",
 		strokeWidth: "1.25",
-		className: "size-6",
+		className: e ? "size-5" : "size-6",
 		children: [/* @__PURE__ */ Z("circle", {
 			cx: "12",
 			cy: "12",
@@ -5173,103 +5173,103 @@ function _i() {
 		})]
 	});
 }
-function vi({ label: t, healthy: n = !1, motion: i = !0, destinations: a, onSelect: o, live: s = !1, showActivity: c = !0, blockedReason: l, emptyMessage: u = "No other tenants are available for your account.", resetKey: d, avatarColor: f = "var(--color-primary-bg)", avatarForeground: p = "var(--color-primary-fg)", triggerLabel: m, dialogLabel: h = "Switch tenant", errorFallback: g = "Could not switch workspace. Try again.", className: _, "data-testid": y = "tenant-switcher" }) {
-	let [b, x] = Y(!1), [S, C] = Y(!1), [w, T] = Y(""), E = J(null), D = J(null), k = J(void 0), A = Ae(), j = l != null && l !== !1, P = () => {
-		clearTimeout(k.current), x(!1), T("");
+function vi({ label: t, size: n = "md", healthy: i = !1, motion: a = !0, destinations: o, onSelect: s, live: c = !1, showActivity: l = !0, blockedReason: u, emptyMessage: d = "No other tenants are available for your account.", resetKey: f, avatarColor: p = "var(--color-primary-bg)", avatarForeground: m = "var(--color-primary-fg)", triggerLabel: h, dialogLabel: g = "Switch tenant", errorFallback: _ = "Could not switch workspace. Try again.", className: y, "data-testid": b = "tenant-switcher" }) {
+	let [x, S] = Y(!1), [C, w] = Y(!1), [T, E] = Y(""), D = J(null), k = J(null), A = J(void 0), j = Ae(), P = u != null && u !== !1, F = () => {
+		clearTimeout(A.current), S(!1), E("");
 	};
-	K(() => () => clearTimeout(k.current), []), K(() => {
-		P(), C(!1);
-	}, [d]), K(() => {
-		if (!b) return;
+	K(() => () => clearTimeout(A.current), []), K(() => {
+		F(), w(!1);
+	}, [f]), K(() => {
+		if (!x) return;
 		let e = (e) => {
-			E.current?.contains(e.target) || P();
+			D.current?.contains(e.target) || F();
 		}, t = (e) => {
 			if (e.key !== "Escape") return;
-			let t = E.current?.contains(document.activeElement);
-			P(), t && D.current?.focus();
+			let t = D.current?.contains(document.activeElement);
+			F(), t && k.current?.focus();
 		};
 		return document.addEventListener("pointerdown", e), document.addEventListener("keydown", t), () => {
 			document.removeEventListener("pointerdown", e), document.removeEventListener("keydown", t);
 		};
-	}, [b]);
-	let F = async (e) => {
-		if (!(S || j)) {
-			C(!0), T("");
+	}, [x]);
+	let I = async (e) => {
+		if (!(C || P)) {
+			w(!0), E("");
 			try {
-				await o(e);
+				await s(e);
 			} catch (e) {
-				T(e instanceof Error && e.message ? e.message : g), C(!1);
+				E(e instanceof Error && e.message ? e.message : _), w(!1);
 			}
 		}
 	};
 	return /* @__PURE__ */ Q("div", {
-		ref: E,
-		className: e("tenant-switcher relative z-[60] min-w-0 max-w-full shrink-0", _),
-		"data-testid": y,
+		ref: D,
+		className: e("tenant-switcher relative z-[60] min-w-0 max-w-full shrink-0", y),
+		"data-testid": b,
 		onPointerEnter: (e) => {
-			e.pointerType === "mouse" && (clearTimeout(k.current), k.current = setTimeout(() => x(!0), mi));
+			e.pointerType === "mouse" && (clearTimeout(A.current), A.current = setTimeout(() => S(!0), mi));
 		},
 		onPointerLeave: () => {
-			clearTimeout(k.current), E.current?.contains(document.activeElement) || (k.current = setTimeout(P, hi));
+			clearTimeout(A.current), D.current?.contains(document.activeElement) || (A.current = setTimeout(F, hi));
 		},
 		onBlur: (e) => {
-			e.currentTarget.contains(e.relatedTarget) || P();
+			e.currentTarget.contains(e.relatedTarget) || F();
 		},
 		onKeyDown: (e) => {
-			e.key === "Escape" && (e.preventDefault(), P(), D.current?.focus()), e.key === "ArrowDown" && e.target === D.current && (e.preventDefault(), x(!0), requestAnimationFrame(() => E.current?.querySelector("[role=\"dialog\"] button")?.focus()));
+			e.key === "Escape" && (e.preventDefault(), F(), k.current?.focus()), e.key === "ArrowDown" && e.target === k.current && (e.preventDefault(), S(!0), requestAnimationFrame(() => D.current?.querySelector("[role=\"dialog\"] button")?.focus()));
 		},
 		children: [/* @__PURE__ */ Q("button", {
-			ref: D,
+			ref: k,
 			type: "button",
 			className: e("tenant-switcher-trigger flex min-w-0 max-w-full cursor-pointer items-center gap-2 rounded-lg border-0 bg-transparent px-1 py-0.5 font-[inherit] text-text-primary", "hover:bg-surface-hover aria-expanded:bg-surface-hover", "focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-primary"),
-			"aria-label": m ?? `${t}: switch tenant`,
+			"aria-label": h ?? `${t}: switch tenant`,
 			"aria-haspopup": "dialog",
-			"aria-expanded": b,
-			"aria-controls": b ? A : void 0,
-			"data-testid": `${y}-trigger`,
+			"aria-expanded": x,
+			"aria-controls": x ? j : void 0,
+			"data-testid": `${b}-trigger`,
 			onClick: () => {
-				clearTimeout(k.current), x(!0);
+				clearTimeout(A.current), S(!0);
 			},
 			children: [/* @__PURE__ */ Q("span", {
-				className: "tenant-brand-planet relative grid size-[26px] shrink-0 place-items-center text-text-secondary",
+				className: e("tenant-brand-planet relative grid shrink-0 place-items-center text-text-secondary", n === "sm" ? "size-[22px]" : "size-[26px]"),
 				"aria-hidden": "true",
-				children: [/* @__PURE__ */ Z(_i, {}), n && /* @__PURE__ */ Z("span", {
-					className: e("tenant-brand-orbit pointer-events-none absolute inset-0 [transform:rotate(12deg)]", i && "animate-[tenant-orbit-plane_40s_ease-in-out_infinite] motion-reduce:animate-none"),
+				children: [/* @__PURE__ */ Z(_i, { compact: n === "sm" }), i && /* @__PURE__ */ Z("span", {
+					className: e("tenant-brand-orbit pointer-events-none absolute inset-0 [transform:rotate(12deg)]", a && "animate-[tenant-orbit-plane_40s_ease-in-out_infinite] motion-reduce:animate-none"),
 					"aria-hidden": "true",
-					"data-motion": i ? "on" : "off",
-					children: /* @__PURE__ */ Z("span", { className: e("absolute left-[calc(50%-2px)] top-[calc(50%-2px)] size-1 rounded-full bg-success shadow-[0_0_0_1px_var(--color-surface)] [transform:translate(12px,7px)]", i && "animate-[tenant-orbit_5s_linear_infinite] motion-reduce:animate-none") })
+					"data-motion": a ? "on" : "off",
+					children: /* @__PURE__ */ Z("span", { className: e("absolute left-[calc(50%-2px)] top-[calc(50%-2px)] size-1 rounded-full bg-success shadow-[0_0_0_1px_var(--color-surface)] [transform:translate(12px,7px)]", a && "animate-[tenant-orbit_5s_linear_infinite] motion-reduce:animate-none") })
 				})]
 			}), /* @__PURE__ */ Z(N, {
-				size: "base",
-				weight: "bold",
-				className: "tenant-brand-label min-w-0 truncate leading-[22px]",
+				size: n === "sm" ? "sm" : "base",
+				weight: n === "sm" ? "medium" : "bold",
+				className: e("tenant-brand-label min-w-0 truncate", n === "sm" ? "leading-5" : "leading-[22px]"),
 				children: t
 			})]
-		}), b && /* @__PURE__ */ Z("div", {
-			id: A,
+		}), x && /* @__PURE__ */ Z("div", {
+			id: j,
 			role: "dialog",
-			"aria-label": h,
-			"data-testid": `${y}-panel`,
+			"aria-label": g,
+			"data-testid": `${b}-panel`,
 			className: e("tenant-switcher-panel absolute left-0 top-[calc(100%+8px)] w-[min(224px,calc(100vw-32px))] rounded-xl border border-border bg-surface p-1.5 shadow-lg", "before:absolute before:inset-x-0 before:-top-2.5 before:h-2.5 before:content-['']"),
 			children: /* @__PURE__ */ Q(ee, {
 				gap: "sm",
 				children: [
-					w && /* @__PURE__ */ Z(H, {
+					T && /* @__PURE__ */ Z(H, {
 						tone: "error",
-						children: w
+						children: T
 					}),
-					j && /* @__PURE__ */ Z(N, {
+					P && /* @__PURE__ */ Z(N, {
 						as: "p",
 						size: "xs",
 						tone: "secondary",
 						className: "m-0",
-						children: l
+						children: u
 					}),
-					a.length > 0 && /* @__PURE__ */ Z(ee, {
+					o.length > 0 && /* @__PURE__ */ Z(ee, {
 						gap: "none",
 						className: "tenant-destinations",
-						children: a.map((t) => {
-							let n = Math.max(0, t.unread ?? 0), i = gi(n, s);
+						children: o.map((t) => {
+							let n = Math.max(0, t.unread ?? 0), i = gi(n, c);
 							return /* @__PURE__ */ Q(M, {
 								role: "group",
 								gap: "none",
@@ -5277,14 +5277,14 @@ function vi({ label: t, healthy: n = !1, motion: i = !0, destinations: a, onSele
 								wrap: !1,
 								className: "tenant-destination rounded-md hover:bg-surface-hover focus-within:bg-surface-hover",
 								"aria-label": n > 0 ? `${t.label}, ${n} unread notifications` : t.label,
-								"data-testid": `${y}-destination-${t.id}`,
+								"data-testid": `${b}-destination-${t.id}`,
 								children: [/* @__PURE__ */ Q(r, {
 									variant: "ghost",
 									size: "sm",
 									className: e("tenant-destination-action h-[38px] min-w-0 flex-1 justify-start gap-2 border-0 bg-transparent px-2 py-1.5", "enabled:hover:bg-transparent focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"),
 									"aria-label": t.label,
-									disabled: S || j,
-									onClick: () => void F(t.id),
+									disabled: C || P,
+									onClick: () => void I(t.id),
 									children: [/* @__PURE__ */ Z("span", {
 										"aria-hidden": "true",
 										"data-tenant": t.id,
@@ -5292,8 +5292,8 @@ function vi({ label: t, healthy: n = !1, motion: i = !0, destinations: a, onSele
 											name: t.label,
 											initials: t.initials ?? t.label.slice(0, 2),
 											size: 24,
-											color: f,
-											foreground: p,
+											color: p,
+											foreground: m,
 											showTitle: !1
 										})
 									}), /* @__PURE__ */ Z(N, {
@@ -5301,7 +5301,7 @@ function vi({ label: t, healthy: n = !1, motion: i = !0, destinations: a, onSele
 										weight: "semibold",
 										children: t.label
 									})]
-								}), c && /* @__PURE__ */ Z(z, {
+								}), l && /* @__PURE__ */ Z(z, {
 									content: i,
 									placement: "right",
 									children: /* @__PURE__ */ Z("span", {
@@ -5309,7 +5309,7 @@ function vi({ label: t, healthy: n = !1, motion: i = !0, destinations: a, onSele
 										role: "img",
 										"aria-label": `${t.label}: ${i}`,
 										className: e("tenant-activity mr-2 inline-flex h-[30px] min-w-6 items-center justify-end gap-1 rounded-sm px-0.5 text-text-tertiary", "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary", n > 0 && "tenant-activity-unread text-primary"),
-										"data-status": n > 0 ? "unread" : s ? "empty" : "unavailable",
+										"data-status": n > 0 ? "unread" : c ? "empty" : "unavailable",
 										children: n > 0 ? /* @__PURE__ */ Q(X, { children: [/* @__PURE__ */ Z(O, {
 											size: 14,
 											"aria-hidden": "true"
@@ -5326,13 +5326,13 @@ function vi({ label: t, healthy: n = !1, motion: i = !0, destinations: a, onSele
 							}, t.id);
 						})
 					}),
-					a.length === 0 && /* @__PURE__ */ Z(N, {
+					o.length === 0 && /* @__PURE__ */ Z(N, {
 						as: "p",
 						size: "sm",
 						tone: "secondary",
 						className: "m-0",
-						"data-testid": `${y}-empty`,
-						children: u
+						"data-testid": `${b}-empty`,
+						children: d
 					})
 				]
 			})
