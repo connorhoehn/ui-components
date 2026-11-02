@@ -82,9 +82,9 @@ describe('the hover action bar', () => {
   // screen, one for a message you were no longer pointing at.
   it('reveals on hover and on KEYBOARD focus only', () => {
     render(<ChatPanel messages={[msg]} onSend={vi.fn()} onReply={vi.fn()} />);
-    const bar = screen.getByTestId('message-actions');
-    expect(bar.className).toContain('group-hover:opacity-100');
-    expect(bar.className).toContain('group-has-[:focus-visible]:opacity-100');
+    const bar = screen.getByRole('button', { name: 'Message actions' });
+    expect(bar).toHaveAttribute('aria-haspopup', 'dialog');
+    expect(bar).toHaveAttribute('aria-expanded', 'false');
     expect(bar.className).not.toContain('focus-within:opacity-100');
   });
 
@@ -92,7 +92,7 @@ describe('the hover action bar', () => {
   // author line — with the hovered row tinted so bar and message read as one.
   it('sits at the top right of the row, off the author line', () => {
     render(<ChatPanel messages={[msg]} onSend={vi.fn()} onReply={vi.fn()} />);
-    const bar = screen.getByTestId('message-actions');
+    const bar = screen.getByRole('button', { name: 'Message actions' });
     // Since fc1f8c1a the bar lives in the row header's own actions slot, so it
     // takes layout space instead of overlaying the author line.
     expect(bar.className).not.toContain('absolute');

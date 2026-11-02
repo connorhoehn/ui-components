@@ -3,6 +3,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vite
 import { createConversationComposer, type ConversationComposerProps } from '../ConversationComposer';
 import { ConversationInputProvider, useComposerFocus, useThreadInput } from '../ConversationInputs';
 import { DensityProvider } from '../../shared/Density';
+import { ToastProvider } from '../../shared/ToastProvider';
 import type { RichChatComposerHandle } from '../RichChatComposer';
 import { draftStorageKey } from '../conversationComposerModel';
 import * as client from '@connorhoehn/realtime-modules/client';
@@ -45,7 +46,7 @@ function setup(overrides: Partial<ConversationComposerProps> = {}) {
     composerRef: (h) => { handle = h; },
     ...overrides,
   };
-  const utils = render(<ConversationInputProvider><ConversationComposer {...props} /></ConversationInputProvider>);
+  const utils = render(<ConversationInputProvider><ConversationComposer {...props} /></ConversationInputProvider>, { wrapper: ToastProvider });
   return { ...utils, props, chat, handle: () => handle };
 }
 
@@ -279,7 +280,8 @@ describe('ConversationComposer — confirmed sends preserve current drafts', () 
     expect(input().textContent).toBe('newer thought');
     expect(saved()).toContain('newer thought');
     expect(clearReply).not.toHaveBeenCalled();
-    expect(screen.getByTestId('conversation-composer-note')).toHaveTextContent('Your current draft has been kept');
+    expect(screen.getByTestId('toast-stack')).toHaveTextContent('Your current draft has been kept');
+    expect(screen.queryByTestId('conversation-composer-note')).toBeNull();
     unmount();
     setup();
     await waitFor(() => expect(input().textContent).toBe('newer thought'));

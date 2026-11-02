@@ -64,6 +64,25 @@ describe('CallDock layout="stack"', () => {
 });
 
 describe('CallDock tileSize', () => {
+  it('compact columns keep the preview small and all call actions reachable', () => {
+    const onMute = vi.fn();
+    const onLeave = vi.fn();
+    const onOpenPeople = vi.fn();
+    const p = props({ layout: 'compact', tileSize: 'lg', onLeave, onOpenPeople });
+    render(<CallDock {...p} mic={{ ...p.mic, onToggle: onMute }} />);
+    expect(screen.getByTestId('call-dock')).toHaveAttribute('data-layout', 'compact');
+    const row = screen.getByTestId('call-dock-tile-row');
+    expect(row).toHaveAttribute('data-variant', 'dock');
+    expect((row.querySelector('[data-peer-id]') as HTMLElement).style.height).toBe('74px');
+    fireEvent.click(screen.getByTestId('call-dock-mic'));
+    expect(onMute).toHaveBeenCalledOnce();
+    fireEvent.click(screen.getByTestId('call-dock-more'));
+    fireEvent.click(screen.getByTestId('call-dock-people'));
+    expect(onOpenPeople).toHaveBeenCalledOnce();
+    fireEvent.click(screen.getByTestId('call-dock-leave'));
+    expect(onLeave).toHaveBeenCalledOnce();
+  });
+
   it.each([false, true])('dedicated stage keeps media and working controls together (compact=%s)', compact => {
     const onLeave = vi.fn();
     const onMute = vi.fn();

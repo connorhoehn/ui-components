@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { MessageRow, formatChatTime } from '../MessageRow';
 
 describe('MessageRow', () => {
@@ -49,7 +49,7 @@ describe('MessageRow', () => {
     expect(screen.getByTestId('custom-footer')).toBeInTheDocument();
   });
 
-  it('keeps actions in the header before the body, independently of metadata', () => {
+  it('keeps actions beside metadata and puts continued-row actions in a compact popup', () => {
     const { rerender } = render(<MessageRow {...baseProps} actions={<button>Reply</button>} />);
     const header = screen.getByTestId('message-row-header');
     expect(header).toContainElement(screen.getByTestId('message-row-author'));
@@ -57,7 +57,12 @@ describe('MessageRow', () => {
     expect(header.compareDocumentPosition(screen.getByTestId('message-row-content')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     rerender(<MessageRow {...baseProps} hideAuthor hideAvatar timestamp="" actions={<button>Reply</button>} />);
     expect(screen.queryByTestId('message-row-author')).toBeNull();
-    expect(screen.getByTestId('message-row-header')).toContainElement(screen.getByRole('button', { name: 'Reply' }));
+    expect(screen.queryByTestId('message-row-header')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Reply' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Message actions' }));
+    expect(screen.getByRole('dialog', { name: 'Message actions' })).toContainElement(screen.getByRole('button', { name: 'Reply' }));
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(screen.queryByRole('dialog')).toBeNull();
   });
 
   it('accepts ReactNode content (e.g. inline mention chips)', () => {

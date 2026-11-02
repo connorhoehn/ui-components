@@ -117,6 +117,17 @@ export const Compact: Story = {
 };
 export const CompactDark: Story = { ...Compact, decorators: [themed('dark')] };
 
+/** The same small shelf above a composer and in the shell when the page has no composer. */
+export const CompactColumns: Story = {
+  args: base({ layout: 'compact', documents: [], participants: PEOPLE.slice(0, 1), participantCount: 1 }),
+  decorators: [themed('light')],
+};
+export const CompactColumnsDark: Story = { ...CompactColumns, decorators: [themed('dark')] };
+export const CompactColumnsNarrow: Story = {
+  ...CompactColumns,
+  render: args => <div className="w-[320px]"><Interactive {...args} /></div>,
+};
+
 export const Connecting: Story = { args: base({ phase: 'connecting', participantCount: 1 }), decorators: [themed('light')] };
 export const Reconnecting: Story = { args: base({ phase: 'reconnecting' }), decorators: [themed('light')] };
 export const ReconnectingDark: Story = { args: base({ phase: 'reconnecting' }), decorators: [themed('dark')] };

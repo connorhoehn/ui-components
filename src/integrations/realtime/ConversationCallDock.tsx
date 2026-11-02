@@ -92,7 +92,7 @@ export interface ConversationCallDockProps {
    * `stack` (2.432.0): the narrow `shelf` for a side pane — mic ▾, camera ▾
    * and Leave on the bar, the rest in its "⋯" menu, the tiles two to a row.
    */
-  layout?: 'shelf' | 'grid' | 'stack' | 'stage';
+  layout?: CallDockProps['layout'];
   className?: string;
   /** The dock's test id; the notice is `<id>-notice`, the settings dialog `<id>-settings`. Default `conversation-call-dock`. */
   'data-testid'?: string;

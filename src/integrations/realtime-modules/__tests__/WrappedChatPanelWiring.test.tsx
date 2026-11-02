@@ -1,3 +1,4 @@
+import { openMessageActions } from '../../../components/social/__tests__/chatTestActions';
 // src/integrations/realtime-modules/__tests__/WrappedChatPanelWiring.test.tsx
 //
 // The second half of the drift problem.
@@ -257,6 +258,7 @@ describe('pins', () => {
       metadata: { displayName: 'Bob' },
     };
     render(<WrappedChatPanel chat={makeChat([msg])} pins={pins} currentUserId="u1" />);
+    openMessageActions(document.querySelector('[data-message-id="m1"]')!);
     fireEvent.click(screen.getByTitle(/pin/i));
     expect(pins.pin).toHaveBeenCalledWith({
       messageId: 'm1',
@@ -272,6 +274,7 @@ describe('pins', () => {
       unpin: vi.fn(async () => {}),
     };
     render(<WrappedChatPanel chat={makeChat([makeMsg('m1')])} pins={pins} currentUserId="u1" />);
+    openMessageActions(document.querySelector('[data-message-id="m1"]')!);
     fireEvent.click(screen.getByTitle(/pin/i));
     expect(pins.unpin).toHaveBeenCalledWith('m1');
   });
@@ -332,6 +335,7 @@ describe('host-owned props reach the panel', () => {
     render(
       <WrappedChatPanel chat={makeChat([makeMsg('m1')])} onReply={onReply} currentUserId="u1" />,
     );
+    openMessageActions(document.querySelector('[data-message-id="m1"]')!);
     fireEvent.click(screen.getByTitle(/reply/i));
     expect(onReply).toHaveBeenCalledWith(expect.objectContaining({ id: 'm1' }));
   });

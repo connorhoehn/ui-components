@@ -77,14 +77,13 @@ export class CallBlockClaims<T> {
 }
 
 /**
- * How the one dock draws for a placement: above a composer the full bar over
- * the tiles (`shelf`, or the narrow `stack` in a side pane); a page or shell
- * block the full bar too; the pane's media panel the reflowing tile grid; the
+ * Composer and shell fallback share compact columns, so losing the composer
+ * never expands the call. A page keeps its shelf; the pane uses a tile grid; the
  * footer's collapsed shelf the thumbnail strip.
  */
-export function callBlockLayout(placement: CallBlockPlacement, compact = false): 'grid' | 'shelf' | 'stack' | 'stage' {
+export function callBlockLayout(placement: CallBlockPlacement, _compact = false): 'grid' | 'shelf' | 'stack' | 'stage' | 'compact' {
   if (placement === 'stage') return 'stage';
-  if (placement === 'composer') return compact ? 'stack' : 'shelf';
+  if (placement === 'composer' || placement === 'block') return 'compact';
   return placement === 'pane' ? 'grid' : 'shelf';
 }
 

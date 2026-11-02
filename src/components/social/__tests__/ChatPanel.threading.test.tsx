@@ -1,6 +1,7 @@
-import { render, screen, cleanup, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, cleanup, fireEvent, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ChatPanel } from '../ChatPanel';
+import { openMessageActions } from './chatTestActions';
 import type { ChatMessage } from '../../../hooks/useChat';
 
 afterEach(cleanup);
@@ -115,12 +116,12 @@ describe('ChatPanel threading', () => {
     const onReply = vi.fn();
     render(<ChatPanel threaded messages={[root, reply]} onSend={vi.fn()} onReply={onReply} />);
 
-    fireEvent.click(rowOf('m3').querySelector('[aria-label="Reply"]')!);
+    fireEvent.click(openMessageActions(rowOf('m3')).querySelector('[aria-label="Reply"]')!);
     expect(onReply).toHaveBeenCalledTimes(1);
     expect(onReply.mock.calls[0][0].id).toBe('m1');
 
     // And the root still reports itself.
-    fireEvent.click(rowOf('m1').querySelector('[aria-label="Reply"]')!);
+    fireEvent.click(openMessageActions(rowOf('m1')).querySelector('[aria-label="Reply"]')!);
     expect(onReply.mock.calls[1][0].id).toBe('m1');
   });
 
@@ -227,20 +228,21 @@ describe('ChatPanel threading', () => {
     expect(row.querySelector('[data-testid="message-row"]')?.getAttribute('data-mine')).toBe('true');
 
     // By testid rather than by the emoji label: the first quick reaction is 👍.
-    fireEvent.click(row.querySelector('[data-testid^="message-actions-react-"]')!);
+    fireEvent.click(openMessageActions(row).querySelector('[data-testid^="message-actions-react-"]')!);
     expect(onToggleReaction).toHaveBeenCalledWith('m3', '👍');
     // The chips for the nested message render with it, not with its root.
     expect(row.querySelector('[data-testid="reaction-chips"]')).toBeTruthy();
 
-    fireEvent.click(row.querySelector('[aria-label="Edit message"]')!);
+    fireEvent.click(openMessageActions(row).querySelector('[aria-label="Edit message"]')!);
     const input = screen.getByTestId('message-editor-input') as HTMLTextAreaElement;
     fireEvent.change(input, { target: { value: 'Yes — audit signed off' } });
     fireEvent.click(screen.getByRole('button', { name: 'Save' }));
     await waitFor(() => expect(onEditMessage).toHaveBeenCalled());
     expect(onEditMessage.mock.calls[0][0].id).toBe('m3');
     expect(onEditMessage.mock.calls[0][1]).toBe('Yes — audit signed off');
+    expect(screen.queryByRole('dialog', { name: 'Message actions' })).toBeNull();
 
-    fireEvent.click(rowOf('m3').querySelector('[aria-label="Delete message"]')!);
+    fireEvent.click(openMessageActions(rowOf('m3')).querySelector('[aria-label="Delete message"]')!);
     fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
     expect(onDeleteMessage).toHaveBeenCalledTimes(1);
     expect(onDeleteMessage.mock.calls[0][0].id).toBe('m3');
@@ -260,7 +262,7 @@ describe('ChatPanel threading', () => {
     expect(rowOf('m3').querySelector('[data-testid="pinned-marker"]')).toBeTruthy();
     // The pin glyph and "Pinned" share one line (preflight makes an svg a block).
     expect(rowOf('m3').querySelector('[data-testid="pinned-marker"]')!.className).toContain('flex');
-    fireEvent.click(rowOf('m3').querySelector('[aria-label="Unpin"]')!);
+    fireEvent.click(openMessageActions(rowOf('m3')).querySelector('[aria-label="Unpin"]')!);
     expect(onTogglePin.mock.calls[0][0].id).toBe('m3');
   });
 
@@ -299,7 +301,7 @@ describe('ChatPanel threading', () => {
     expect(screen.getByTestId('chat-thread-replies').querySelectorAll('[data-testid="chat-day-separator"]')).toHaveLength(0);
   });
 
-  it('gives a post with no replies no foot Reply — the hover bar already has one', () => {
+  it('gives a post with no replies no foot Reply — its action menu already has one', () => {
     // It used to carry one, revealed on hover. So did the action bar, revealed
     // by the same gesture: hovering an ordinary message offered Reply twice,
     // once as an arrow in the toolbar and once as a word underneath. The
@@ -308,13 +310,13 @@ describe('ChatPanel threading', () => {
     render(<ChatPanel threaded messages={[root]} onSend={vi.fn()} onReply={vi.fn()} />);
     expect(screen.queryByTestId('chat-thread-reply')).toBeNull();
     // The one that remains is reachable, and reports the same target.
-    expect(screen.getByTestId('message-actions-reply')).toBeInTheDocument();
+    expect(within(openMessageActions(rowOf('m1'))).getByTestId('message-actions-reply')).toBeInTheDocument();
   });
 
-  it('still answers the root from the hover bar', () => {
+  it('answers the root from its action menu', () => {
     const onReply = vi.fn();
     render(<ChatPanel threaded messages={[root]} onSend={vi.fn()} onReply={onReply} />);
-    fireEvent.click(screen.getByTestId('message-actions-reply'));
+    fireEvent.click(within(openMessageActions(rowOf('m1'))).getByTestId('message-actions-reply'));
     expect(onReply.mock.calls[0][0].id).toBe('m1');
   });
 
@@ -380,8 +382,8 @@ describe('ChatPanel threading', () => {
     render(<ChatPanel messages={[root, other, reply]} onSend={vi.fn()} onReply={vi.fn()} />);
     expect(screen.queryByTestId('chat-thread-reply')).toBeNull();
     expect(screen.queryByTestId('chat-thread')).toBeNull();
-    // The hover ↩ is untouched — that path is what existing callers rely on.
-    expect(rowOf('m1').querySelector('[aria-label="Reply"]')).toBeTruthy();
+    // Reply is still available from the message's action menu.
+    expect(openMessageActions(rowOf('m1')).querySelector('[aria-label="Reply"]')).toBeTruthy();
   });
 
   it('adds nothing when the host passes no onReply', () => {
@@ -594,7 +596,7 @@ describe('ChatPanel author runs', () => {
     expect(isBare('t3')).toBe(false);
   });
 
-  it('keeps the hover bar, reactions and edit/delete working on a continued row', async () => {
+  it('keeps reactions and edit/delete working through a continued row’s compact actions', async () => {
     const onToggleReaction = vi.fn();
     const onEditMessage = vi.fn().mockResolvedValue(undefined);
     const onDeleteMessage = vi.fn();
@@ -621,17 +623,21 @@ describe('ChatPanel author runs', () => {
     expect(row.querySelector('[data-testid="message-row"]')?.getAttribute('data-mine')).toBe('true');
     expect(row.querySelector('[data-testid="reaction-chips"]')).toBeTruthy();
 
-    fireEvent.click(row.querySelector('[data-testid^="message-actions-react-"]')!);
+    fireEvent.click(within(row).getByRole('button', { name: 'Message actions' }));
+    const actions = () => screen.getByRole('dialog', { name: 'Message actions' });
+    fireEvent.click(actions().querySelector('[data-testid^="message-actions-react-"]')!);
     expect(onToggleReaction).toHaveBeenCalledWith('a2', '👍');
 
-    fireEvent.click(row.querySelector('[aria-label="Edit message"]')!);
+    fireEvent.click(within(actions()).getByRole('button', { name: 'Edit message' }));
     const input = screen.getByTestId('message-editor-input') as HTMLTextAreaElement;
     fireEvent.change(input, { target: { value: 'two, corrected' } });
     fireEvent.click(screen.getByRole('button', { name: 'Save' }));
     await waitFor(() => expect(onEditMessage).toHaveBeenCalled());
     expect(onEditMessage.mock.calls[0][0].id).toBe('a2');
 
-    fireEvent.click(rowOf('a2').querySelector('[aria-label="Delete message"]')!);
+    const trigger = within(rowOf('a2')).getByRole('button', { name: 'Message actions' });
+    if (trigger.getAttribute('aria-expanded') !== 'true') fireEvent.click(trigger);
+    fireEvent.click(within(actions()).getByRole('button', { name: 'Delete message' }));
     fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
     expect(onDeleteMessage.mock.calls[0][0].id).toBe('a2');
   });
@@ -800,6 +806,6 @@ describe('ChatPanel own-message alignment', () => {
         onEditMessage={onEditMessage}
       />,
     );
-    expect(screen.getByLabelText('Edit message')).toBeTruthy();
+    expect(within(openMessageActions(rowOf('m1'))).getByLabelText('Edit message')).toBeTruthy();
   });
 });

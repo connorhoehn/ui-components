@@ -7,6 +7,7 @@
 
 import { render, screen } from '@testing-library/react';
 import { ChatPanel } from '../ChatPanel';
+import { openMessageActions } from './chatTestActions';
 // ChatMessage lives on the hook, not the panel — the panel consumes it.
 import type { ChatMessage } from '../../../hooks/useChat';
 
@@ -41,7 +42,7 @@ const documentNotice = msg({
 const plain = msg({ id: 'plain-1', content: 'a normal message' });
 
 function renderWith(messages: ChatMessage[]) {
-  return render(
+  const result = render(
     <ChatPanel
       messages={messages}
       onSend={NOOP}
@@ -51,6 +52,8 @@ function renderWith(messages: ChatMessage[]) {
       currentUserId="u-someone-else"
     />,
   );
+  openMessageActions(screen.getByTestId('chat-message'));
+  return result;
 }
 
 describe('interactions on a system notice', () => {

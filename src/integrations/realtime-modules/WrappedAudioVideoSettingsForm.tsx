@@ -35,7 +35,7 @@ export interface RMAudioVideoSettingsSource {
 }
 
 export interface WrappedAudioVideoSettingsFormProps
-  extends Pick<AudioVideoSettingsFormProps, 'selfName' | 'selfAvatarUrl' | 'layout' | 'className' | 'data-testid'> {
+  extends Pick<AudioVideoSettingsFormProps, 'selfName' | 'selfAvatarUrl' | 'layout' | 'previewControls' | 'className' | 'data-testid'> {
   devices: RMMediaDevicesSource;
   settings: RMAudioVideoSettingsSource;
   /** Whether the viewer's camera is on (the preview shows "Camera is off" otherwise). */

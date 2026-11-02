@@ -44,6 +44,21 @@ function av(over: Partial<Parameters<typeof AudioVideoSettingsForm>[0]> = {}) {
 }
 
 describe('AudioVideoSettingsForm', () => {
+  it('keeps pre-join audio tests in disclosures and uses library device listboxes', () => {
+    const onTestMic = vi.fn(), onTestSound = vi.fn();
+    av({ layout: 'prejoin', onTestMic, onTestSound });
+    expect(screen.getByTestId('settings-test-mic')).not.toBeVisible();
+    expect(screen.getByTestId('settings-test-sound')).not.toBeVisible();
+    fireEvent.click(screen.getByText('Microphone test & settings'));
+    fireEvent.click(screen.getByTestId('settings-test-mic'));
+    expect(onTestMic).toHaveBeenCalledOnce();
+    fireEvent.click(screen.getByText('Speaker test & volume'));
+    fireEvent.click(screen.getByTestId('settings-test-sound'));
+    expect(onTestSound).toHaveBeenCalledOnce();
+    fireEvent.click(screen.getByRole('combobox', { name: 'Camera' }));
+    expect(screen.getByRole('listbox')).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'FaceTime HD Camera' })).toBeInTheDocument();
+  });
   it('lists the devices and reports changes immediately', () => {
     const onChange = vi.fn();
     av({ onChange });

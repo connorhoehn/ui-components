@@ -44,7 +44,7 @@ export interface InlinePopoverProps {
   offset?: number;
   /** Optional className for the panel. */
   className?: string;
-  /** Optional z-index (default 9500 — under modals at 10000). */
+  /** Minimum z-index (default 9500); raised above the trigger's containing layers. */
   zIndex?: number;
   /** Optional testid for the panel. Default 'inline-popover'. */
   'data-testid'?: string;
@@ -182,6 +182,7 @@ export function InlinePopover({
 }: InlinePopoverProps) {
   const panelRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState<CSSProperties | null>(null);
+  const [layerZ, setLayerZ] = useState(zIndex);
   const clampedRef = useRef(false);
   // The rect the current position was derived from. The correction pass below
   // measures the PANEL, which is enough to slide it back on screen and not
@@ -202,10 +203,18 @@ export function InlinePopover({
     const el = trigger.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
+    // Portalling removes the trigger's stacking context. A menu opened in a
+    // modal (or another menu) must still paint above that containing layer.
+    let nextZ = zIndex;
+    for (let ancestor: HTMLElement | null = el; ancestor; ancestor = ancestor.parentElement) {
+      const value = Number.parseInt(window.getComputedStyle(ancestor).zIndex, 10);
+      if (Number.isFinite(value)) nextZ = Math.max(nextZ, value + 1);
+    }
+    setLayerZ(nextZ);
     clampedRef.current = false;
     anchorRectRef.current = rect;
     setPosition(computePosition(rect, placement, offset));
-  }, [trigger, placement, offset]);
+  }, [trigger, placement, offset, zIndex]);
 
   useLayoutEffect(() => {
     if (!open) {
@@ -434,7 +443,7 @@ export function InlinePopover({
         'shadow-lg p-1 text-sm text-text-primary',
         className,
       )}
-      style={{ ...position, zIndex }}
+      style={{ ...position, zIndex: layerZ }}
     >
       {children}
     </div>,

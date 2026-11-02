@@ -2,8 +2,10 @@
 // an avatar, author name, content, and a timestamp. Designed to compose
 // inside a list (e.g. ChatPanel) or a grouped bundle (see MessageGroup).
 
-import type { ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Avatar } from '../shared/Avatar';
+import { InlinePopover } from '../shared/InlinePopover';
+import { MoreIcon } from '../ui/Icons';
 import { cn } from '../../lib/cn';
 import { fullTimestampLabel } from './dayBoundary';
 
@@ -38,9 +40,10 @@ export interface MessageRowProps {
    * Indented under the content so it lines up under text, not under the avatar.
    */
   footer?: ReactNode;
-  /** Message actions in the header, beside metadata or on a wrapped line.
-   *  Keep the slot mounted while hiding its controls to avoid hover layout shifts. */
+  /** Message actions beside metadata; continued rows use a compact action trigger. */
   actions?: ReactNode;
+  /** Keep the metadata row compact, with actions in an anchored menu. */
+  actionsLayout?: 'inline' | 'menu';
   /** Surface the row renders on. 'light' (default) keeps the theme tokens;
    *  'dark' swaps to white/alpha classes for dark call chrome — without it
    *  the message text renders dark-on-dark and disappears. Mirrors
@@ -99,6 +102,7 @@ export function MessageRow({
   mine = false,
   footer,
   actions,
+  actionsLayout = 'inline',
   tone = 'light',
   editedAt,
   contentLayout = 'inline',
@@ -106,12 +110,22 @@ export function MessageRow({
 }: MessageRowProps) {
   const dark = tone === 'dark';
   const time = formatChatTime(timestamp);
+  const [actionsOpen, setActionsOpen] = useState(false);
+  const actionsTrigger = useRef<HTMLButtonElement>(null);
   // One layout for every row: a meta line (author + time) above a
   // full-width body. The old single wrapping line put author, body and
   // time in one `flex-wrap` run, so a short message rendered inline and a
   // long one spilled onto three lines — its timestamp landing directly
   // under the PREVIOUS message's text, where it read as that message's.
   const metaVisible = !hideAuthor || !!time;
+  const menuActions = !!actions && (actionsLayout === 'menu' || !metaVisible);
+  // Editing removes the actions slot; finishing the edit must not reopen it.
+  useEffect(() => { if (!menuActions) setActionsOpen(false); }, [menuActions]);
+  const actionTrigger = <button ref={actionsTrigger} type="button" aria-label="Message actions" aria-expanded={actionsOpen} aria-haspopup="dialog"
+    onClick={() => setActionsOpen(open => !open)} data-testid="message-row-actions-toggle"
+    className="grid h-5 w-5 shrink-0 place-items-center rounded text-text-secondary opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-primary aria-expanded:opacity-100">
+    <MoreIcon size={16} />
+  </button>;
   return (
     <div
       data-testid="message-row"
@@ -124,16 +138,16 @@ export function MessageRow({
       )}
     >
       <div className="w-5 shrink-0 mt-0.5">
-        {!hideAvatar && <Avatar name={author} src={avatarUrl} size={20} />}
+        {menuActions && !metaVisible ? actionTrigger : !hideAvatar && <Avatar name={author} src={avatarUrl} size={20} />}
       </div>
       <div className={cn('flex grow flex-col min-w-0', mine && 'items-end')}>
-        {(metaVisible || actions) && (
+        {metaVisible && (
           <div
             data-testid="message-row-header"
-            className={cn(actions && 'mb-1 flex w-full min-w-0 flex-wrap items-center justify-between gap-x-2 gap-y-1', actions && mine && 'flex-row-reverse')}
+            className={cn(actions && 'mb-1 flex w-full min-w-0 flex-wrap items-center justify-between gap-x-2 gap-y-1', menuActions && 'flex-nowrap', actions && mine && 'flex-row-reverse')}
           >
           {metaVisible && (
-            <div className={cn('flex items-baseline gap-2 min-w-0 max-w-full', actions && 'shrink-0', mine && 'flex-row-reverse')}>
+            <div className={cn('flex items-baseline gap-2 min-w-0 max-w-full', actions && (menuActions ? 'flex-1' : 'shrink-0'), mine && 'flex-row-reverse')}>
               {!hideAuthor && (
                 <span
                   data-testid="message-row-author"
@@ -171,7 +185,7 @@ export function MessageRow({
               )}
             </div>
           )}
-          {actions && <div data-testid="message-row-actions" className="max-w-full shrink-0">{actions}</div>}
+          {menuActions ? actionTrigger : actions && <div data-testid="message-row-actions" className="max-w-full shrink-0">{actions}</div>}
           </div>
         )}
         {/* `break-words` + `min-w-0` are what stop a 400-char unbroken
@@ -205,6 +219,10 @@ export function MessageRow({
           </div>
         )}
       </div>
+      {menuActions && <InlinePopover trigger={actionsTrigger} open={actionsOpen} onClose={() => setActionsOpen(false)}
+        placement={mine ? 'bottom-end' : 'bottom-start'} aria-label="Message actions" className="min-w-0 max-w-[calc(100vw-16px)] p-0">
+        {actions}
+      </InlinePopover>}
     </div>
   );
 }

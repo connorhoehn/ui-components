@@ -52,8 +52,9 @@ describe('the one media sink', () => {
     expect(claims.current()).toBe('composer');
     expect(claims.compact()).toBe(true);
     expect(claims.documents()).toBe(docs);
-    expect(callBlockLayout('composer', true)).toBe('stack');
-    expect(callBlockLayout('composer')).toBe('shelf');
+    expect(callBlockLayout('composer', true)).toBe('compact');
+    expect(callBlockLayout('composer')).toBe('compact');
+    expect(callBlockLayout('block')).toBe('compact');
     expect(claims.pageClaimed()).toBe(true);
     const releaseStage = claims.claim('stage', 'stage');
     expect(claims.current()).toBe('stage');

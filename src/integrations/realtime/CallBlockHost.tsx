@@ -53,6 +53,10 @@ import { Button } from '../../components/ui/Button';
 import { Text } from '../../components/shared/Text';
 import Modal from '../../components/shared/Modal';
 import Switch from '../../components/shared/Switch';
+import { DeviceToggleSelect } from '../../components/video/DeviceToggleSelect';
+import { SparklesIcon } from '../../components/video/MediaIcons';
+import { DropdownMenu } from '../../components/shared/DropdownMenu';
+import type { RMMediaEffectsControllerSource } from '../realtime-modules/WrappedMediaEffectsTray';
 import { WrappedAudioVideoSettingsForm, type RMAudioVideoSettingsSource, type RMMediaDevicesSource } from '../realtime-modules/WrappedAudioVideoSettingsForm';
 import { createConversationCallDock, type ConversationCallDockModules } from './ConversationCallDock';
 import { IncomingCallToast } from './IncomingCallToast';
@@ -115,6 +119,12 @@ export type OnCallHostEvent = (kind: CallHostEventKind, event: CallHostEvent, ct
 
 /** The realtime-modules functions the host calls (spread `/client/video`). */
 export interface CallBlockModules extends ConversationCallDockModules {
+  /** Shared pre-join and outgoing camera effects (realtime-modules 0.141+). */
+  useCallMediaEffects?(): RMMediaEffectsControllerSource & {
+    outputTrack: MediaStreamTrack | null;
+    processStream(stream: MediaStream): MediaStream;
+    detach(): void;
+  };
   LVSProvider: ComponentType<{ baseUrl: string; getAuthToken: () => string; children: ReactNode }>;
   // Method syntax on purpose: the installed hooks' option types are wider than what is passed here.
   useConversationCall(opts: {
@@ -362,6 +372,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
   const MediaPanelContext = createContext<CallMediaPanelState | null>(null);
   const ConversationCallDock = createConversationCallDock(rm);
   const { LVSProvider } = rm;
+  const usePreJoinEffects = rm.useCallMediaEffects ?? (() => null);
 
   // ── the device check ──
 
@@ -373,6 +384,14 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
     const [choice, setChoice] = useState(initial);
     const devices = rm.useMediaDevices({ requestOnMount: false });
     const settings = rm.useAudioVideoSettings({ preview: choice.micOn || choice.cameraOn, previewAudio: choice.micOn, previewVideo: choice.cameraOn } as never) as unknown as RMAudioVideoSettingsSource;
+    const effects = usePreJoinEffects();
+    const [processedPreview, setProcessedPreview] = useState<MediaStream | null>(null);
+    const processPreview = effects?.processStream;
+    const detachPreview = effects?.detach;
+    useEffect(() => {
+      if (!settings.previewStream) { detachPreview?.(); setProcessedPreview(null); return; }
+      setProcessedPreview(processPreview?.(settings.previewStream) ?? settings.previewStream);
+    }, [settings.previewStream, processPreview, detachPreview, effects?.outputTrack]);
     const total = preJoinCountdownMs(kind);
     const [remaining, setRemaining] = useState<number | null>(total);
     const stopped = useRef(false);
@@ -403,28 +422,49 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
       return () => window.clearInterval(timer);
     }, [total]);
     return (
-      <Modal open onClose={onCancel} title={PREJOIN_TITLE[kind]} maxWidth={900} rawChildren
-        cardClassName="flex max-h-[88vh] flex-col overflow-hidden border border-border border-t-4 border-t-primary" backdropTestId="prejoin-backdrop"
-        footer={<Inline gap="sm" justify="end">
-          <Button variant="secondary" onClick={onCancel} data-testid="prejoin-cancel">{kind === 'accept' ? 'Decline' : 'Cancel'}</Button>
-          <Button onClick={join} data-testid="prejoin-join">{remaining !== null ? `Join as last time (${countdownSeconds(remaining)})` : kind === 'check' ? 'Save' : 'Join'}</Button>
-        </Inline>}>
-        <Stack gap="md" className="min-h-0 overflow-y-auto" data-testid="prejoin-dialog">
-          <Inline justify="between" align="center" gap="md" className="rounded-md border border-border bg-surface-panel px-3 py-2">
-            <Text size="sm" weight="semibold">{title}</Text><Text size="xs" tone="secondary">Joining as {selfName}</Text>
-          </Inline>
-          <WrappedAudioVideoSettingsForm devices={devices} settings={settings} cameraOn={choice.cameraOn} selfName={selfName} selfAvatarUrl={selfAvatarUrl} layout="prejoin" data-testid="prejoin-devices" />
-          <Inline gap="md" align="center">
-            <Switch checked={choice.micOn} onChange={(micOn: boolean) => setChoice((c) => ({ ...c, micOn }))} aria-label="Join with microphone on" data-testid="prejoin-mic" />
-            <Text size="sm">{choice.micOn ? 'Microphone on' : 'Microphone off'}</Text>
-            <Switch checked={choice.cameraOn} onChange={(cameraOn: boolean) => setChoice((c) => ({ ...c, cameraOn }))} aria-label="Join with camera on" data-testid="prejoin-camera" />
-            <Text size="sm">{choice.cameraOn ? 'Camera on' : 'Camera off'}</Text>
-          </Inline>
-          <Inline gap="sm" align="center">
-            <Switch checked={choice.remember} onChange={(remember: boolean) => setChoice((c) => ({ ...c, remember }))} aria-label="Remember and skip this check next time" data-testid="prejoin-remember" />
-            <Text size="sm">Skip device setup next time</Text>
-          </Inline>
+      <Modal open onClose={onCancel} ariaLabel={PREJOIN_TITLE[kind]} maxWidth={1000} rawChildren
+        cardClassName="flex max-h-[90dvh] flex-col gap-5 overflow-hidden border border-border p-5 sm:p-6" backdropTestId="prejoin-backdrop">
+        <Inline justify="between" align="baseline" gap="md" wrap={false} className="min-w-0 shrink-0 border-b border-border pb-4" data-testid="prejoin-header">
+          <h2 className="m-0 shrink-0 text-lg font-semibold text-text-primary">{PREJOIN_TITLE[kind]}</h2>
+          <Text size="sm" weight="medium" className="min-w-0 truncate text-right" title={title} data-testid="prejoin-title">{title}</Text>
+        </Inline>
+        <Stack gap="md" className="min-h-0 overflow-y-auto" data-testid="prejoin-dialog"
+          onPointerDownCapture={() => { stopped.current = true; setRemaining(null); }}
+          onKeyDownCapture={() => { stopped.current = true; setRemaining(null); }}>
+          <Text size="xs" tone="secondary">Joining as {selfName}</Text>
+          <WrappedAudioVideoSettingsForm devices={devices} settings={{ ...settings, previewStream: processedPreview }} cameraOn={choice.cameraOn}
+            selfName={selfName} selfAvatarUrl={selfAvatarUrl} layout="prejoin" data-testid="prejoin-devices"
+            previewControls={<>
+              <DeviceToggleSelect kind="microphone" on={choice.micOn} onToggle={() => setChoice(c => ({ ...c, micOn: !c.micOn }))}
+                devices={devices.microphones} selectedDeviceId={settings.settings.microphoneId} onSelectDevice={microphoneId => settings.update({ microphoneId })}
+                permission={devices.permission.microphone} level={settings.micLevel} showLabel data-testid="prejoin-mic" />
+              <DeviceToggleSelect kind="camera" on={choice.cameraOn} onToggle={() => setChoice(c => ({ ...c, cameraOn: !c.cameraOn }))}
+                devices={devices.cameras} selectedDeviceId={settings.settings.cameraId} onSelectDevice={cameraId => settings.update({ cameraId })}
+                permission={devices.permission.camera} showLabel data-testid="prejoin-camera" />
+              {effects && <>
+                <Button size="sm" variant="secondary" aria-pressed={effects.backgroundMode === 'blur'}
+                  onClick={() => effects.setBackgroundMode(effects.backgroundMode === 'blur' ? 'none' : 'blur')} data-testid="prejoin-blur"><SparklesIcon size={16} />Blur</Button>
+                <DropdownMenu trigger="Effects" triggerLabel="Camera effects" triggerVariant="secondary" triggerTestId="prejoin-effects"
+                  sections={[
+                    { label: 'Background', items: [{ label: 'None', checked: effects.backgroundMode === 'none', onSelect: () => effects.setBackgroundMode('none') },
+                      { label: 'Blur background', checked: effects.backgroundMode === 'blur', onSelect: () => effects.setBackgroundMode('blur') },
+                      ...effects.backgrounds.map(bg => ({ label: bg.label, checked: effects.backgroundMode === 'image' && effects.backgroundImageUrl === bg.url,
+                        onSelect: () => { effects.setBackgroundImageUrl(bg.url); effects.setBackgroundMode('image'); } }))] },
+                    { label: 'Appearance', items: effects.filters.map(filter => ({ label: filter.label, checked: effects.filterId === filter.id, onSelect: () => effects.setFilter(filter.id) })) },
+                  ]} />
+              </>}
+            </>} />
         </Stack>
+        <Inline justify="between" align="center" gap="md" wrap className="shrink-0 border-t border-border pt-4" data-testid="prejoin-footer">
+          <Inline gap="sm" align="center" wrap={false}>
+            <Switch checked={choice.remember} onChange={(remember: boolean) => setChoice((c) => ({ ...c, remember }))} aria-label="Remember and skip this check next time" data-testid="prejoin-remember" />
+            <Text size="xs" tone="secondary">Skip device setup next time</Text>
+          </Inline>
+          <Inline gap="sm" justify="end" className="ml-auto">
+            <Button variant="secondary" onClick={onCancel} data-testid="prejoin-cancel">{kind === 'accept' ? 'Decline' : 'Cancel'}</Button>
+            <Button onClick={join} data-testid="prejoin-join">{remaining !== null ? `Join as last time (${countdownSeconds(remaining)})` : kind === 'check' ? 'Save' : 'Join now'}</Button>
+          </Inline>
+        </Inline>
       </Modal>
     );
   }

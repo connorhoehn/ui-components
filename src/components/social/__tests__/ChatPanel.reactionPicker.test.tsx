@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ChatPanel } from '../ChatPanel';
+import { openMessageActions } from './chatTestActions';
 
 // MessageActionBar has always had a "More reactions" control and ChatPanel
 // never wired it, so no host could reach it: three quick reactions were the
@@ -14,6 +15,7 @@ describe('ChatPanel — reacting with something other than the quick three', () 
   it('opens the picker from the message and toggles the emoji that was chosen', () => {
     const onToggleReaction = vi.fn();
     render(<ChatPanel messages={[msg]} onSend={vi.fn()} onToggleReaction={onToggleReaction} />);
+    openMessageActions(screen.getByTestId('chat-message'));
     fireEvent.click(screen.getByTestId('message-actions-more-reactions'));
     // Whatever the grid offers, the first cell is a real choice.
     const first = screen.getAllByTestId('reaction-picker-item')[0];
@@ -24,6 +26,7 @@ describe('ChatPanel — reacting with something other than the quick three', () 
 
   it('closes after a choice, so the grid does not sit over the next message', () => {
     render(<ChatPanel messages={[msg]} onSend={vi.fn()} onToggleReaction={vi.fn()} />);
+    openMessageActions(screen.getByTestId('chat-message'));
     fireEvent.click(screen.getByTestId('message-actions-more-reactions'));
     fireEvent.click(screen.getAllByTestId('reaction-picker-item')[0]);
     expect(screen.queryByTestId('reaction-picker-popover')).toBeNull();

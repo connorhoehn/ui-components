@@ -91,7 +91,7 @@ describe('CallBlockHost', () => {
     expect(screen.getByTestId('prejoin-devices')).toHaveAttribute('data-layout', 'prejoin');
     await act(async () => { screen.getByTestId('prejoin-camera').click(); screen.getByTestId('prejoin-mic').click(); });
     expect(screen.getByText('Camera off')).toBeInTheDocument();
-    expect(screen.getByText('Microphone off')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^Mic off$/ })).toHaveAttribute('aria-pressed', 'false');
     expect(screen.getByTestId('settings-preview-off').querySelector('img')).toHaveAttribute('src', '/inert-vera-avatar.svg');
     expect(previewRequests.at(-1)).toEqual({ preview: false, previewAudio: false, previewVideo: false });
     expect(start).not.toHaveBeenCalled();

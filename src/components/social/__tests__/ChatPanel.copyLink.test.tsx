@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ChatPanel } from '../ChatPanel';
+import { openMessageActions } from './chatTestActions';
 
 // MessageActionBar has had a "Copy link to message" control all along and
 // ChatPanel never passed the prop, so no host could reach it — while the app
@@ -21,6 +22,7 @@ describe('ChatPanel — copying a link to a message', () => {
   it('hands the host the message, because only the host knows the route', () => {
     const onCopyLink = vi.fn();
     render(<ChatPanel messages={[msg]} onSend={vi.fn()} onCopyLink={onCopyLink} />);
+    openMessageActions(screen.getByTestId('chat-message'));
     fireEvent.click(screen.getByTestId('message-actions-copy-link'));
     expect(onCopyLink).toHaveBeenCalledTimes(1);
     expect(onCopyLink.mock.calls[0][0].id).toBe('m1');

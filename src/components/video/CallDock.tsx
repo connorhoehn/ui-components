@@ -156,7 +156,8 @@ export interface CallDockProps {
    * and pop-out, then Leave) over the reflowing tile grid, at most two tiles
    * to a row. For a conversation composer in a side pane.
    */
-  layout?: 'shelf' | 'grid' | 'stack' | 'stage';
+  /** `compact`: a small preview beside call details and controls; wraps controls below on narrow hosts. */
+  layout?: 'shelf' | 'grid' | 'stack' | 'stage' | 'compact';
   className?: string;
   'data-testid'?: string;
 }
@@ -306,7 +307,7 @@ export function CallDock({
   className,
   'data-testid': testId = 'call-dock',
 }: CallDockProps) {
-  const size: CallDockTileSize = tileSize ?? (compact ? 'sm' : 'md');
+  const size: CallDockTileSize = layout === 'compact' ? 'sm' : tileSize ?? (compact ? 'sm' : 'md');
   const leaveRef = useRef<HTMLButtonElement | null>(null);
   const [confirmLeave, setConfirmLeave] = useState(false);
   // The host's handler, read at click time: an inline `onTileClick` gets a new
@@ -368,8 +369,9 @@ export function CallDock({
     else onLeave();
   };
   const stage = layout === 'stage';
+  const compactDock = layout === 'compact';
   const grid = layout === 'grid' || stage;
-  const stack = layout === 'stack' || (stage && size === 'sm');
+  const stack = layout === 'stack' || compactDock || (stage && size === 'sm');
   // `stack`: what the wide bar draws inline, as menu rows (mic, camera and Leave stay on the bar).
   const shareReason = calling ? 'You can share once someone joins' : connecting ? 'Connecting…' : screenShare.disabledReason;
   const stackMenuItems: DropdownMenuItem[] = [
@@ -385,7 +387,7 @@ export function CallDock({
   ];
 
   const tiles = (
-    <div className="relative" data-testid="call-dock-tiles">
+    <div className={cn('relative min-w-0', compactDock && 'col-start-1 row-start-1 @min-[520px]:row-span-2 @min-[900px]:row-span-1')} data-testid="call-dock-tiles">
       {reconnecting && (
         <div
           className="mb-2 inline-flex rounded-full bg-warning-bg px-3 py-1 text-xs font-medium text-warning-fg"
@@ -400,7 +402,7 @@ export function CallDock({
           <div
             className={cn(
               'shrink-0 overflow-hidden rounded-md',
-              grid || stack ? 'aspect-video w-full' : TILE_PX[size].box,
+              grid || (stack && !compactDock) ? 'aspect-video w-full' : TILE_PX[size].box,
             )}
           >
             <SkeletonCard height="100%" rounded="md" />
@@ -414,8 +416,8 @@ export function CallDock({
           followingUserId={followingUserId}
           reconnecting={reconnecting}
           size={size}
-          grid={grid || stack}
-          {...(stack ? { maxColumns: 2 } : {})}
+          grid={grid || (stack && !compactDock)}
+          {...(stack && !compactDock ? { maxColumns: 2 } : {})}
           onTileClick={onTileClick ? stableTileClick : undefined}
           title={title}
         />
@@ -440,34 +442,35 @@ export function CallDock({
 
   return (
     <section
-      className={cn('@container flex flex-col gap-2.5 border-t border-border bg-surface px-5 pt-3 pb-3.5', className)}
+      className={cn('@container flex flex-col gap-2.5 border-t border-border bg-surface px-5 pt-3 pb-3.5', compactDock && 'gap-0 px-3 py-2', className)}
       aria-label={`Call: ${title}`}
       data-testid={testId}
       data-phase={phase}
-      data-layout={stage ? 'stage' : stack ? 'stack' : 'shelf'}
+      data-layout={compactDock ? 'compact' : stage ? 'stage' : stack ? 'stack' : 'shelf'}
       data-call-dock
       data-compact={size === 'sm' || stack ? 'true' : 'false'}
-      data-tile-size={stack ? undefined : size}
+      data-tile-size={stack && !compactDock ? undefined : size}
     >
+      <div className={compactDock ? 'grid min-w-0 grid-cols-[132px_minmax(0,1fr)] items-center gap-x-3 gap-y-2 @min-[900px]:grid-cols-[132px_minmax(0,1fr)_auto]' : 'contents'} data-testid={compactDock ? 'call-dock-compact-columns' : undefined}>
       {/* The header wraps rather than overlaps: the title block's basis is its
           content (`flex-auto`, not `flex-1`), so when title + meta + controls
           outgrow the dock — a narrow chat column, a caller's `extras` — the
           controls move to their own right-aligned line instead of painting
           over the name and the clock. */}
-      <div className={cn('flex min-w-0 flex-wrap items-center gap-x-2 gap-y-2', stage && 'order-last justify-center')} data-call-dock-header data-testid={`${testId}-header`}>
-        {!stage && <div className="flex min-w-0 flex-auto items-baseline gap-3">
+      <div className={cn('flex min-w-0 flex-wrap items-center gap-x-2 gap-y-2', stage && 'order-last justify-center', compactDock && 'contents')} data-call-dock-header data-testid={`${testId}-header`}>
+        {!stage && <div className={cn('flex min-w-0 flex-auto items-baseline gap-3', compactDock && 'col-start-2 row-start-1 flex-col items-start gap-0.5')}>
           <button
             type="button"
             onClick={onTitleClick}
             disabled={!onTitleClick}
-            className="max-w-[45cqw] shrink-0 truncate whitespace-nowrap border-none bg-transparent p-0 text-left font-[inherit] text-base font-semibold text-text-primary enabled:cursor-pointer enabled:hover:underline"
+            className={cn('max-w-[45cqw] shrink-0 truncate whitespace-nowrap border-none bg-transparent p-0 text-left font-[inherit] text-base font-semibold text-text-primary enabled:cursor-pointer enabled:hover:underline', compactDock && 'max-w-full text-sm')}
             data-testid="call-dock-title"
             title={title}
           >
             {title}
           </button>
           <CallDockMeta phase={phase} callingTo={callingTo} participantCount={participantCount} elapsedMs={elapsedMs} />
-          {documents.length > 0 && (
+          {!compactDock && documents.length > 0 && (
             <span className="hidden min-w-0 flex-1 items-center gap-4 overflow-hidden @min-[1240px]:flex" data-testid="call-dock-documents-chips">
               {documents.map((d) => (
                 <button
@@ -494,7 +497,7 @@ export function CallDock({
         {/* The controls shrink to the header's width and wrap (right-aligned)
             rather than running past the dock's edge in a narrow column. */}
         <div
-          className={cn('flex min-w-0 max-w-full flex-wrap items-center gap-2', stage ? 'justify-center' : 'ml-auto justify-end')}
+          className={cn('flex min-w-0 max-w-full flex-wrap items-center gap-2', stage ? 'justify-center' : 'ml-auto justify-end', compactDock && 'col-span-2 row-start-2 ml-0 justify-start @min-[520px]:col-span-1 @min-[520px]:col-start-2 @min-[900px]:col-start-3 @min-[900px]:row-start-1 @min-[900px]:justify-end')}
           data-testid={`${testId}-controls`}
         >
           <DeviceToggleSelect kind="microphone" {...mic} data-testid="call-dock-mic" {...(connecting ? { disabledReason: 'Connecting…' } : {})} />
@@ -640,6 +643,7 @@ export function CallDock({
       </div>
 
       {tiles}
+      </div>
     </section>
   );
 }

@@ -10,6 +10,7 @@
 
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { openMessageActions } from './chatTestActions';
 import {
   ChatPanel,
   forwardAttributionLine,
@@ -36,7 +37,7 @@ function msg(overrides: Partial<ChatMessage> = {}): ChatMessage {
 }
 
 function renderPanel(messages: ChatMessage[], props: Record<string, unknown> = {}) {
-  return render(
+  const result = render(
     <ChatPanel
       messages={messages}
       onSend={NOOP}
@@ -47,6 +48,9 @@ function renderPanel(messages: ChatMessage[], props: Record<string, unknown> = {
       {...props}
     />,
   );
+  const row = screen.getAllByTestId('chat-message').at(-1)!;
+  if (row.querySelector('[data-testid="message-row-actions-toggle"]')) openMessageActions(row);
+  return result;
 }
 
 describe('the Forward control', () => {
@@ -92,9 +96,8 @@ describe('the Forward control', () => {
       metadata: { replyTo: { messageId: 'root-1', author: 'Hank Anderson', text: 'what broke?' } },
     });
     renderPanel([root, reply], { onForwardMessage, threaded: true });
-    const buttons = screen.getAllByTestId('message-actions-forward');
-    // Root first, then its one reply.
-    fireEvent.click(buttons[1]);
+    // The helper opens the last row's actions, which belongs to the reply.
+    fireEvent.click(screen.getByTestId('message-actions-forward'));
     expect(onForwardMessage.mock.calls[0][0]).toMatchObject({ id: 'reply-1' });
   });
 });

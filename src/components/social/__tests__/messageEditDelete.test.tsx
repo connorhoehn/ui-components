@@ -1,6 +1,7 @@
 import { render, screen, cleanup, fireEvent, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ChatPanel } from '../ChatPanel';
+import { openMessageActions } from './chatTestActions';
 import { InlineMessageEditor } from '../InlineMessageEditor';
 
 afterEach(cleanup);
@@ -32,8 +33,8 @@ function rowOf(id: string): HTMLElement {
 describe('edit and delete on own messages', () => {
   it('offers Edit and Delete only on own, undeleted, plain messages', () => {
     panel();
-    expect(rowOf('m1').querySelector('[aria-label="Edit message"]')).toBeTruthy();
-    expect(rowOf('m1').querySelector('[aria-label="Delete message"]')).toBeTruthy();
+    expect(openMessageActions(rowOf('m1')).querySelector('[aria-label="Edit message"]')).toBeTruthy();
+    expect(openMessageActions(rowOf('m1')).querySelector('[aria-label="Delete message"]')).toBeTruthy();
     expect(rowOf('m2').querySelector('[aria-label="Edit message"]')).toBeNull();
     expect(rowOf('m2').querySelector('[aria-label="Delete message"]')).toBeNull();
     // A deleted message has no action bar at all; a card has no edit.
@@ -55,7 +56,7 @@ describe('edit and delete on own messages', () => {
   it('edits in place and hands the text to the host', async () => {
     const onEditMessage = vi.fn().mockResolvedValue(undefined);
     panel({ onEditMessage });
-    fireEvent.click(rowOf('m1').querySelector('[aria-label="Edit message"]')!);
+    fireEvent.click(openMessageActions(rowOf('m1')).querySelector('[aria-label="Edit message"]')!);
     const input = screen.getByTestId('message-editor-input') as HTMLTextAreaElement;
     expect(input.value).toBe('first draft');
     expect((screen.getByTestId('message-editor-save') as HTMLButtonElement).disabled).toBe(true);
@@ -68,7 +69,7 @@ describe('edit and delete on own messages', () => {
   it('Escape cancels without saving', () => {
     const onEditMessage = vi.fn();
     panel({ onEditMessage });
-    fireEvent.click(rowOf('m1').querySelector('[aria-label="Edit message"]')!);
+    fireEvent.click(openMessageActions(rowOf('m1')).querySelector('[aria-label="Edit message"]')!);
     const input = screen.getByTestId('message-editor-input');
     fireEvent.change(input, { target: { value: 'changed' } });
     fireEvent.keyDown(input, { key: 'Escape' });
@@ -80,7 +81,7 @@ describe('edit and delete on own messages', () => {
   it('asks before deleting, then hands the message to the host', async () => {
     const onDeleteMessage = vi.fn().mockResolvedValue(undefined);
     panel({ onDeleteMessage });
-    fireEvent.click(rowOf('m1').querySelector('[aria-label="Delete message"]')!);
+    fireEvent.click(openMessageActions(rowOf('m1')).querySelector('[aria-label="Delete message"]')!);
     expect(screen.getByText('Delete this message?')).toBeTruthy();
     fireEvent.click(screen.getByTestId('confirm-dialog-confirm'));
     await waitFor(() => expect(onDeleteMessage).toHaveBeenCalledWith(expect.objectContaining({ id: 'm1' })));

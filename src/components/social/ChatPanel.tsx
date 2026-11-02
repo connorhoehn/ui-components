@@ -1985,7 +1985,7 @@ export function ChatPanel({
   // been told sits on Monday, and the next root would then have to repeat
   // Monday to undo it.
   const daySeparator = !thread && isNewDay(entryTimestamp, previousTimestamp) ? (
-    <DaySeparator key={`day:${entryTimestamp}:${index}`} timestamp={entryTimestamp} tone={tone} />
+    <DaySeparator key={`day:${entryTimestamp}:${index}`} timestamp={entryTimestamp} tone={tone} className={index === 0 ? 'pt-0' : undefined} />
   ) : null;
 
   if (entry.kind === 'local') {
@@ -2400,7 +2400,7 @@ export function ChatPanel({
       // `group` drives the hover reveal; keyboard focus reveals the same
       // reserved controls without changing the row geometry.
       className={cn(
-        'group relative rounded-md px-2 py-1 transition-colors hover:bg-surface-hover',
+        'group relative rounded-md px-2 transition-colors hover:bg-surface-hover',
         // `ring-inset`: an outset ring is drawn OUTSIDE the row's
         // box, and the scroll container clips overflow — so the
         // right edge of the highlight was cut off against the
@@ -2411,6 +2411,8 @@ export function ChatPanel({
       )}
     >
       <MessageRow
+        actionsLayout="menu"
+        className={continues ? 'py-0.5' : undefined}
         author={author}
         content={withInteractions}
         // An EMPTY timestamp on a continued row, which is what collapses the
@@ -2419,8 +2421,8 @@ export function ChatPanel({
         // keeping the time would trade a name for a stray HH:MM and leave the
         // row two lines tall — half the repetition and none of the density
         // this is for. `formatChatTime('')` yields '', so nothing is rendered
-        // and no invalid `dateTime` reaches the DOM. Actions retain their own
-        // header space when the repeated metadata is hidden.
+        // and no invalid `dateTime` reaches the DOM. Continued rows put their
+        // actions in the avatar gutter instead of reserving an empty header.
         timestamp={continues ? '' : message.timestamp}
         editedAt={isDeleted ? undefined : message.editedAt}
         avatarUrl={message.avatarUrl}
@@ -2443,12 +2445,9 @@ export function ChatPanel({
         contentLayout={hasCardBody ? 'block' : 'inline'}
         actions={messageId && !isDeleted && !editing && (onToggleReaction || canEditDelete || (canForward && onForwardMessage) || (!isActivityNotice && (onReply || onTogglePin || onCopyLink))) ? (
         <MessageActionBar
-          // The row header reserves this geometry even while controls are
-          // hidden. Metadata and actions wrap instead of overlapping, and the
-          // first visible row has no negative-positioned toolbar to be clipped.
-          // Keyboard-only focus reveal avoids a mouse reaction leaving an old
-          // bar stuck open after the pointer has moved to another message.
-          className="max-w-full flex-wrap opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100"
+          // The anchored menu keeps long action lists out of the transcript's
+          // layout, including narrow panes where an inline bar would wrap.
+          className="max-w-full flex-wrap"
           onReact={onToggleReaction ? (e) => onToggleReaction(messageId, e) : undefined}
           onOpenReactionPicker={
             onToggleReaction
@@ -2802,7 +2801,7 @@ export function ChatPanel({
         // top margin — that margin plus the card's padding was the empty
         // strip between the dock's tab bar and the first message.
         fills
-          ? cn('flex h-full min-h-0 flex-col pt-2', flushComposer && composer ? 'px-0 pb-0' : 'px-[var(--ui-content-gutter,1rem)] pb-3')
+          ? cn('flex h-full min-h-0 flex-col', flushComposer && composer ? 'px-0 pb-0' : 'px-[var(--ui-content-gutter,1rem)] pb-3')
           : cn('border rounded mt-4', flushComposer && composer ? 'px-0 pt-3 pb-0' : 'p-3', dark ? 'border-white/10 bg-white/5' : 'border-border'),
       )}
     >
@@ -2900,7 +2899,7 @@ export function ChatPanel({
               not decoration — the newest message is the one you are reading
               while you type a reply, and a line of text hard against a focused
               input reads as part of the input. */}
-          <div data-chat-content className={cn('pb-[var(--ui-chat-gap,1rem)]', contentAlign === 'end' ? 'mt-auto' : 'pt-2')}>
+          <div data-chat-content className={cn('pb-[var(--ui-chat-gap,1rem)]', contentAlign === 'end' && 'mt-auto')}>
           {canLoadMore && messages.length > 0 && (
             <div className="flex justify-center pb-1">
               <button

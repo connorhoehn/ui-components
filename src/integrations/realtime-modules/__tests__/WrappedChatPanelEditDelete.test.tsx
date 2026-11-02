@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, within } from '@testing-library/react';
+import { openMessageActions } from '../../../components/social/__tests__/chatTestActions';
 import { WrappedChatPanel } from '../WrappedChatPanel';
 import type { RMUseChatReturn, RMChatMessage } from '../types';
 
@@ -20,6 +21,7 @@ describe('WrappedChatPanel edit/delete', () => {
   it('maps edit onto chat.editMessage with matching html, own messages only', () => {
     const { chat, editMessage } = make([msg('m1', 'me', 'mine'), msg('m2', 'other', 'theirs')]);
     render(<WrappedChatPanel chat={chat} currentUserId="me" />);
+    openMessageActions(document.querySelector('[data-message-id="m1"]')!);
     expect(screen.getAllByRole('button', { name: /^edit/i })).toHaveLength(1);
     fireEvent.click(screen.getByRole('button', { name: /^edit/i }));
     const box = screen.getByRole('textbox', { name: /edit|message/i });
@@ -31,8 +33,9 @@ describe('WrappedChatPanel edit/delete', () => {
   it('maps delete onto chat.deleteMessage after confirm', () => {
     const { chat, deleteMessage } = make([msg('m1', 'me', 'mine')]);
     render(<WrappedChatPanel chat={chat} currentUserId="me" />);
+    openMessageActions(document.querySelector('[data-message-id="m1"]')!);
     fireEvent.click(screen.getByRole('button', { name: /^delete/i }));
-    const dialog = screen.getByRole('dialog');
+    const dialog = screen.getByRole('dialog', { name: 'Delete this message?' });
     fireEvent.click(within(dialog).getByRole('button', { name: /^delete/i }));
     expect(deleteMessage).toHaveBeenCalledWith('m1');
   });
@@ -40,6 +43,7 @@ describe('WrappedChatPanel edit/delete', () => {
   it('canEdit/canDelete predicates replace the own-message default', () => {
     const { chat } = make([msg('m2', 'other', 'theirs')]);
     render(<WrappedChatPanel chat={chat} currentUserId="me" canDelete={() => true} />);
+    openMessageActions(document.querySelector('[data-message-id="m2"]')!);
     expect(screen.queryByRole('button', { name: /^edit/i })).toBeNull();
     expect(screen.getByRole('button', { name: /^delete/i })).toBeInTheDocument();
   });

@@ -55,6 +55,7 @@ import { useDensityForm } from '../shared/Density';
 import { Select } from '../forms/Select';
 import { Inline, Stack } from '../ui/Stack';
 import { Text } from '../shared/Text';
+import { useToastOptional } from '../shared/ToastProvider';
 import { ContextComposer, type ContextComposerProps } from './ContextComposer';
 import { ComposerReferences } from './ComposerReferences';
 import { ComposerSendError } from './composerSendError';
@@ -444,6 +445,7 @@ function ConversationComposerImpl({
 
   // ── notes ──
   const [note, setNote] = useState<string | null>(null);
+  const notifications = useToastOptional();
 
   // ── the composer handle ──
   const handle = useRef<RichChatComposerHandle | null>(null);
@@ -603,7 +605,7 @@ function ConversationComposerImpl({
     // scope arrived while sending. Clearing storage first loses that newer
     // draft on reload even though RichChatComposer correctly keeps it visible.
     if (generation.current !== started || currentControlledDraft.current !== draftProp) {
-      if (currentScope.current === startedScope) setNote(SENT_KEPT);
+      if (currentScope.current === startedScope) notifications?.toast(SENT_KEPT, { type: 'success' });
       return false;
     }
     if (toConversation) reply?.clear();

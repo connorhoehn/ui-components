@@ -33,6 +33,14 @@ function Host({
 }
 
 describe('InlinePopover', () => {
+  it('raises a portalled panel above the modal containing its trigger', () => {
+    render(<div style={{ position: 'fixed', zIndex: 12000 }}><Host /></div>);
+    expect(screen.getByTestId('inline-popover')).toHaveStyle({ zIndex: 12001 });
+  });
+  it('keeps ordinary page popovers below modal layers', () => {
+    render(<Host />);
+    expect(screen.getByTestId('inline-popover')).toHaveStyle({ zIndex: 9500 });
+  });
   it('names its kind for rendered-UI audits (default popover)', () => {
     function Kind({ kind }: { kind?: string }) {
       const ref = useRef<HTMLButtonElement | null>(null);

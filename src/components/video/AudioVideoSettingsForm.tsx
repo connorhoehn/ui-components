@@ -26,6 +26,7 @@ import { StreamVideo } from './StreamVideo';
 import { AudioLevelMeter } from './AudioLevelMeter';
 import { VolumeSlider } from './VolumeSlider';
 import type { DeviceOption, MediaPermission } from './DeviceToggleSelect';
+import { PreJoinDeviceSetup } from './PreJoinDeviceSetup';
 
 export interface AudioVideoSettings {
   microphoneId?: string;
@@ -61,6 +62,8 @@ export interface AudioVideoSettingsFormProps {
   selfAvatarUrl?: string;
   /** Two-column device setup; the default stack remains the call-settings form. */
   layout?: 'stack' | 'prejoin';
+  /** Capture and effects actions under the pre-join preview. */
+  previewControls?: ReactNode;
   className?: string;
   'data-testid'?: string;
 }
@@ -134,6 +137,7 @@ export function AudioVideoSettingsForm({
   selfName = 'You',
   selfAvatarUrl,
   layout = 'stack',
+  previewControls,
   className,
   'data-testid': testId = 'audio-video-settings-form',
 }: AudioVideoSettingsFormProps) {
@@ -169,9 +173,14 @@ export function AudioVideoSettingsForm({
     );
   }
 
+  if (layout === 'prejoin') return <PreJoinDeviceSetup value={value} onChange={onChange} devices={devices} permission={permission}
+    micLevel={micLevel} previewStream={previewStream} cameraOn={cameraOn} speakerSelectionSupported={speakerSelectionSupported}
+    onTestMic={onTestMic} onTestSound={onTestSound} testMicState={testMicState} preview={preview} previewControls={previewControls}
+    selfName={selfName} selfAvatarUrl={selfAvatarUrl} className={className} data-testid={testId} />;
+
   return (
-    <div className={cn(layout === 'prejoin' ? 'grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-x-6' : 'flex flex-col', className)} data-testid={testId} data-layout={layout}>
-      <Section divided={layout !== 'prejoin'} className={layout === 'prejoin' ? 'md:col-start-2 md:row-start-1 py-0' : undefined}>
+    <div className={cn('flex flex-col', className)} data-testid={testId} data-layout={layout}>
+      <Section>
         <FieldLabel htmlFor={`${testId}-mic`}>Microphone</FieldLabel>
         {micDenied ? (
           <InlineAlert tone="error" data-testid="settings-mic-denied">
@@ -216,7 +225,7 @@ export function AudioVideoSettingsForm({
         </div>
       </Section>
 
-      <Section divided={layout !== 'prejoin'} className={layout === 'prejoin' ? 'md:col-start-2 md:row-start-2 py-0' : undefined}>
+      <Section>
         {speakerSelectionSupported && (
           <>
             <FieldLabel htmlFor={`${testId}-speaker`}>Speakers</FieldLabel>
@@ -236,7 +245,7 @@ export function AudioVideoSettingsForm({
         <VolumeSlider value={value.volume} onChange={(v) => set({ volume: v })} onTest={() => void onTestSound()} />
       </Section>
 
-      <Section divided={layout !== 'prejoin'} className={layout === 'prejoin' ? 'md:col-start-1 md:row-start-1 md:row-span-3 py-0' : undefined}>
+      <Section>
         <FieldLabel htmlFor={`${testId}-camera`}>Camera</FieldLabel>
         {camDenied ? (
           <InlineAlert tone="error" data-testid="settings-camera-denied">
@@ -255,7 +264,7 @@ export function AudioVideoSettingsForm({
               data-testid="settings-camera-select"
             />
             <div
-              className={layout === 'prejoin' ? 'relative aspect-video w-full overflow-hidden rounded-xl border border-border bg-video-stage' : 'relative aspect-[338/156] w-full overflow-hidden rounded-lg bg-video-stage'}
+              className={'relative aspect-[338/156] w-full overflow-hidden rounded-lg bg-video-stage'}
               data-testid="settings-preview"
               data-mirrored={value.mirrorPreview ? 'true' : 'false'}
             >
@@ -286,7 +295,7 @@ export function AudioVideoSettingsForm({
         </div>
       </Section>
 
-      <Section divided={layout !== 'prejoin'} className={layout === 'prejoin' ? 'md:col-start-2 md:row-start-3 py-0' : 'py-1.5'}>
+      <Section className="py-1.5">
         <Disclosure
           summary="Advanced"
           variant="plain"
@@ -332,7 +341,7 @@ export function AudioVideoSettingsForm({
         </Disclosure>
       </Section>
 
-      <Section divided={false} className={layout === 'prejoin' ? 'hidden' : 'pt-2.5 pb-0'}>
+      <Section divided={false} className="pt-2.5 pb-0">
         <CheckRow checked={value.rememberDevices} onChange={(v) => set({ rememberDevices: v })} testId="settings-remember">
           Use these devices next time
         </CheckRow>

@@ -63,3 +63,17 @@ Recent splits (Wave 1, May 2026):
 ## Persistent playback (2.491.0)
 
 `MediaPlaybackDock` is a nonshrinking shell footer composed from `Stack`, `Inline`, `IconButton`, `Button`, `Slider` and `Select`. Mount one outside the page scroll area. Pass a registered `PlaybackSource`; the host owns file authorization and queue selection. A source change or close stops the previous decoder. The dock owns seeking, volume, speed, errors and an expandable video surface. Set `autoPlay` only after a user action. Do not mount a second inline player for the same source. Storybook: Video/MediaPlaybackDock (idle, audio, narrow, missing video, persistent footer).
+
+## Shared huddle device check (2.492.0)
+
+`createCallBlockHost` owns the start/join device dialog for every tenant. It uses
+`AudioVideoSettingsForm layout="prejoin"`: a responsive preview and controls toolbar,
+library device selects, and collapsible microphone, speaker and advanced settings.
+`previewControls` supplies capture/effects actions below the preview. The ordinary
+call-settings form keeps its stacked layout.
+
+Provide realtime-modules 0.141's `useCallMediaEffects` with the other factory modules
+to enable blur, backgrounds and appearance filters. Preview and outgoing video use
+separate media engines with shared preferences; closing the dialog cannot end the
+call's camera stream. Applications supply identity and page title through the host,
+without defining tenant-specific copies of the dialog.

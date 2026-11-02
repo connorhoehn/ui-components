@@ -180,3 +180,23 @@ function themedStory(theme: StoryTheme): Story {
 
 export const Light: Story = themedStory('light');
 export const Dark: Story = themedStory('dark');
+
+function PreJoinForm() {
+  const [value, setValue] = useState(DEFAULT_AV);
+  const [mic, setMic] = useState(false);
+  const [camera, setCamera] = useState(true);
+  return <div className="mx-auto w-full max-w-[960px] rounded-xl border border-border bg-surface p-6">
+    <AudioVideoSettingsForm layout="prejoin" value={value} onChange={setValue} devices={DEVICES}
+      permission={{ microphone: 'granted', camera: 'granted' }} micLevel={mic ? 0.4 : 0}
+      previewStream={camera ? fakeCameraStream('prejoin-camera', 205) : null} cameraOn={camera}
+      speakerSelectionSupported onTestMic={noop} onTestSound={noop} selfName="Connor Hoehn"
+      previewControls={<>
+        <DeviceToggleSelect kind="microphone" on={mic} onToggle={() => setMic(!mic)} showLabel
+          devices={DEVICES.microphones} permission="granted" onSelectDevice={microphoneId => setValue({ ...value, microphoneId })} />
+        <DeviceToggleSelect kind="camera" on={camera} onToggle={() => setCamera(!camera)} showLabel
+          devices={DEVICES.cameras} permission="granted" onSelectDevice={cameraId => setValue({ ...value, cameraId })} />
+      </>} />
+  </div>;
+}
+export const PreJoinLight: Story = { render: () => <PreJoinForm />, decorators: [themed('light')] };
+export const PreJoinDark: Story = { render: () => <PreJoinForm />, decorators: [themed('dark')] };
