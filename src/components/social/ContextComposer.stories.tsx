@@ -335,3 +335,12 @@ export const ControlledAgent: Story = {
     );
   },
 };
+
+
+/** Explicit folding keeps the destination, text and staged files intact. */
+export const CollapsibleDraft: StoryObj<typeof ContextComposer> = {
+  args: { context: CONTEXTS.initiative, collapsible: true, expanded: true,
+    collapsedLabel: 'Initiative discussion', above: <span>To: Initiative discussion</span>,
+    defaultDraft: { html: '<p>Review the rollout plan with the team.</p>', files: [] },
+    defaultMode: 'chat', onSend: () => false },
+};

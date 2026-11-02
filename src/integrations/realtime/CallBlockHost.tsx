@@ -847,7 +847,7 @@ export function createCallBlockHost<M extends CallBlockModules>(rm: M) {
     /> : null;
     if (!dock) return null;
     return target
-      ? createPortal(<Stack gap="none" className="relative" data-testid="shell-call-media" data-placement={placement} data-layout={layout} data-expanded="true">{header}{dock}{overlay}</Stack>, target)
+      ? createPortal(<Stack gap="none" className={placement === 'stage' ? 'relative h-full min-h-0' : 'relative'} data-testid="shell-call-media" data-placement={placement} data-layout={layout} data-expanded="true">{header}{dock}{overlay}</Stack>, target)
       : <Stack id={id} gap="none" className="hidden" data-testid="shell-call-media" data-placement="footer" data-layout={layout} data-expanded="false">{dock}</Stack>;
   }
 

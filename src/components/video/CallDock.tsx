@@ -235,6 +235,7 @@ const CallDockTiles = memo(function CallDockTiles({
   reconnecting,
   size,
   grid = false,
+  gallery = false,
   maxColumns,
   onTileClick,
   title,
@@ -246,6 +247,7 @@ const CallDockTiles = memo(function CallDockTiles({
   reconnecting: boolean;
   size: CallDockTileSize;
   grid?: boolean;
+  gallery?: boolean;
   maxColumns?: number;
   onTileClick: ((userId: string) => void) | undefined;
   title: string;
@@ -254,7 +256,7 @@ const CallDockTiles = memo(function CallDockTiles({
   const remotes = participants.filter((p) => p.userId !== localParticipantId);
   return (
     <CallTileRow
-      variant={grid ? 'grid' : 'dock'}
+      variant={gallery ? 'gallery' : grid ? 'grid' : 'dock'}
       participants={remotes.map((p) => toTile(p, false, reconnecting))}
       localParticipant={local ? toTile(local, true, reconnecting) : null}
       activeSpeakerId={activeSpeakerId}
@@ -387,7 +389,7 @@ export function CallDock({
   ];
 
   const tiles = (
-    <div className={cn('relative min-w-0', compactDock && 'col-start-1 row-start-1 @min-[520px]:row-span-2 @min-[900px]:row-span-1')} data-testid="call-dock-tiles">
+    <div className={cn('relative min-w-0', stage && 'min-h-0 flex-1 overflow-y-auto', compactDock && 'col-start-1 row-start-1 @min-[520px]:row-span-2 @min-[900px]:row-span-1')} data-testid="call-dock-tiles">
       {reconnecting && (
         <div
           className="mb-2 inline-flex rounded-full bg-warning-bg px-3 py-1 text-xs font-medium text-warning-fg"
@@ -402,7 +404,7 @@ export function CallDock({
           <div
             className={cn(
               'shrink-0 overflow-hidden rounded-md',
-              grid || (stack && !compactDock) ? 'aspect-video w-full' : TILE_PX[size].box,
+              stage ? 'aspect-video w-full max-w-[26rem] mx-auto' : grid || (stack && !compactDock) ? 'aspect-video w-full' : TILE_PX[size].box,
             )}
           >
             <SkeletonCard height="100%" rounded="md" />
@@ -417,6 +419,7 @@ export function CallDock({
           reconnecting={reconnecting}
           size={size}
           grid={grid || (stack && !compactDock)}
+          gallery={stage}
           {...(stack && !compactDock ? { maxColumns: 2 } : {})}
           onTileClick={onTileClick ? stableTileClick : undefined}
           title={title}
@@ -442,7 +445,7 @@ export function CallDock({
 
   return (
     <section
-      className={cn('@container flex flex-col gap-2.5 border-t border-border bg-surface px-5 pt-3 pb-3.5', compactDock && 'gap-0 px-3 py-2', className)}
+      className={cn('@container flex flex-col gap-2.5 border-t border-border bg-surface px-5 pt-3 pb-3.5', compactDock && 'gap-0 px-3 py-2', stage && 'h-full min-h-0 border-t-0 px-3', className)}
       aria-label={`Call: ${title}`}
       data-testid={testId}
       data-phase={phase}
@@ -457,7 +460,7 @@ export function CallDock({
           outgrow the dock — a narrow chat column, a caller's `extras` — the
           controls move to their own right-aligned line instead of painting
           over the name and the clock. */}
-      <div className={cn('flex min-w-0 flex-wrap items-center gap-x-2 gap-y-2', stage && 'order-last justify-center', compactDock && 'contents')} data-call-dock-header data-testid={`${testId}-header`}>
+      <div className={cn('flex min-w-0 flex-wrap items-center gap-x-2 gap-y-2', stage && 'order-last shrink-0 justify-center', compactDock && 'contents')} data-call-dock-header data-testid={`${testId}-header`}>
         {!stage && <div className={cn('flex min-w-0 flex-auto items-baseline gap-3', compactDock && 'col-start-2 row-start-1 flex-col items-start gap-0.5')}>
           <button
             type="button"

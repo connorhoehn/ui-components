@@ -429,3 +429,10 @@ export const DedicatedStage: Story = {
   args: base({ layout: 'stage' }),
   decorators: [themed('light')],
 };
+
+
+/** Solo calls use the same bounded tile as the multi-person gallery. */
+export const SoloGallery: Story = {
+  args: base({ layout: 'stage', participants: [base().participants[0]!], participantCount: 1 }),
+  decorators: [themed('light')],
+};

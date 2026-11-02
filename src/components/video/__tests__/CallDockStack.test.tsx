@@ -89,7 +89,7 @@ describe('CallDock tileSize', () => {
     const p = props({ layout: 'stage', compact, onLeave });
     render(<CallDock {...p} mic={{ ...p.mic, onToggle: onMute }} />);
     expect(screen.getByTestId('call-dock')).toHaveAttribute('data-layout', 'stage');
-    expect(screen.getByTestId('call-dock-tile-row')).toHaveAttribute('data-variant', 'grid');
+    expect(screen.getByTestId('call-dock-tile-row')).toHaveAttribute('data-variant', 'gallery');
     fireEvent.click(screen.getByTestId('call-dock-mic'));
     expect(onMute).toHaveBeenCalledOnce();
     fireEvent.click(screen.getByTestId('call-dock-leave'));

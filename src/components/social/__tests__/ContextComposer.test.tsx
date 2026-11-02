@@ -448,3 +448,34 @@ describe('ContextComposer — host slots (2.407.11)', () => {
     expect(onDrop).toHaveBeenCalledTimes(1);
   });
 });
+
+
+describe('explicit composer collapse', () => {
+  it('keeps the editor, files and call mounted; reopening restores the draft and caret', async () => {
+    const file = new File(['notes'], 'notes.txt', { type: 'text/plain' });
+    const { handle } = setup({ collapsible: true, expanded: true, defaultMode: 'chat',
+      defaultDraft: { html: '<p>Do not lose this draft</p>', files: [file] },
+      above: <span>To: Initiative discussion</span>, dock: <span data-testid="call-live">Live call</span> });
+    const editor = handle()!.editor;
+    fireEvent.click(screen.getByRole('button', { name: 'Collapse composer' }));
+    const expand = screen.getByRole('button', { name: 'Expand composer' });
+    expect(expand).toHaveAttribute('aria-expanded', 'false');
+    expect(expand).toHaveTextContent('1 attached');
+    expect(screen.getByTestId('composer')).not.toBeVisible();
+    expect(screen.queryByText('To: Initiative discussion')).toBeNull();
+    expect(screen.getByTestId('call-live')).toBeVisible();
+    expect(handle()!.editor).toBe(editor);
+    fireEvent.click(expand);
+    await waitFor(() => expect(input()).toHaveFocus());
+    expect(editor!.getText()).toBe('Do not lose this draft');
+    expect(screen.getByText('notes.txt')).toBeVisible();
+  });
+  it('external focus reopens a collapsed composer without resetting its mode', async () => {
+    const { handle } = setup({ collapsible: true, expanded: true, defaultMode: 'chat' });
+    fireEvent.click(screen.getByRole('button', { name: 'Collapse composer' }));
+    act(() => handle()!.focus());
+    await waitFor(() => expect(input()).toHaveFocus());
+    expect(screen.queryByRole('button', { name: 'Expand composer' })).toBeNull();
+    expect(screen.getByTestId('composer-mode-menu')).toHaveTextContent('Chat');
+  });
+});

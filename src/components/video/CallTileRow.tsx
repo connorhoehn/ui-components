@@ -88,6 +88,9 @@ export interface CallTileRowProps {
    * keeps them in one dark strip with the controls at the end, for a dock
    * that is itself a panel.
    *
+   * `gallery`: bounded 16:9 participant tiles (maximum 26rem), reflowing with
+   * available width. A lone participant stays the same comfortable size.
+   *
    * `grid` (2.423.0): the call's media panel — the same dock tiles (camera-off
    * initials with the media kept playing, audio sink, name, mic state,
    * speaking/followed ring, reconnecting veil), fluid 16:9 tiles in a grid
@@ -96,7 +99,7 @@ export interface CallTileRowProps {
    * a PiP — and nobody is collapsed into `+N`. `tileWidth`, `tileHeight`,
    * `overflow` and `maxVisible` are ignored.
    */
-  variant?: 'floating' | 'bar' | 'dock' | 'grid';
+  variant?: 'floating' | 'bar' | 'dock' | 'grid' | 'gallery';
   /** `grid` only (2.432.0): never more columns than this — a narrow pane keeps two tiles to a row. */
   maxColumns?: number;
   className?: string;
@@ -123,19 +126,19 @@ export function CallTileRow({
   style,
   'data-testid': testId = 'call-tile-row',
 }: CallTileRowProps) {
-  if (variant === 'grid') {
+  if (variant === 'grid' || variant === 'gallery') {
     const all = localParticipant ? [localParticipant, ...participants] : participants;
     const cols = maxColumns ? Math.max(1, Math.min(gridCols(all.length), maxColumns)) : gridCols(all.length);
     return (
       <div
-        className={cn('grid w-full min-w-0 gap-2', GRID_COLUMNS[cols] ?? GRID_COLUMNS[4], className)}
+        className={cn('grid w-full min-w-0 gap-3', variant === 'gallery' ? 'grid-cols-[repeat(auto-fit,minmax(min(100%,15rem),1fr))] justify-items-center [&>*]:max-w-[26rem]' : GRID_COLUMNS[cols] ?? GRID_COLUMNS[4], className)}
         style={style}
         role="group"
         aria-label={typeof title === 'string' ? `Call: ${title}` : 'Call participants'}
         data-testid={testId}
-        data-variant="grid"
+        data-variant={variant}
         data-tile-count={all.length}
-        data-columns={cols}
+        data-columns={variant === 'gallery' ? undefined : cols}
       >
         {all.map((p) => (
           <DockTile
@@ -515,10 +518,10 @@ function DockTileImpl({
       data-ringing={p.ringing ? 'true' : undefined}
       data-hand-raised={p.handRaised ? 'true' : undefined}
     >
-      {p.videoElement && p.cameraOff && (
-        // Kept playing for its audio; 1px and transparent rather than
-        // display:none so no browser decides it may pause it.
-        <div className="pointer-events-none absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true" data-testid={`${testId}-media-sink`}>
+      {p.videoElement && (
+        // Keep the SAME sink mounted when the camera toggles; replacing the
+        // video node can interrupt remote audio and restart stream playback.
+        <div className={p.cameraOff ? 'pointer-events-none absolute left-0 top-0 h-px w-px overflow-hidden opacity-0' : 'absolute inset-0'} aria-hidden={p.cameraOff || undefined} data-testid={p.cameraOff ? `${testId}-media-sink` : `${testId}-media`}>
           {p.videoElement}
         </div>
       )}
@@ -527,7 +530,7 @@ function DockTileImpl({
           {p.audioElement}
         </div>
       )}
-      {p.videoElement && !p.cameraOff ? p.videoElement : (
+      {(!p.videoElement || p.cameraOff) && (
         <div className="absolute inset-0 flex items-center justify-center">
           <Avatar
             name={p.displayName}

@@ -692,7 +692,9 @@ function ConversationComposerImpl({
 
   return (
     <ContextComposer
+      collapsible
       {...rest}
+      collapsedLabel={rest.collapsedLabel ?? (mode === 'chat' ? recipient?.label : context.reference?.label ?? context.title)}
       context={context}
       composerRef={setHandle}
       data-testid={testId}

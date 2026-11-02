@@ -108,3 +108,15 @@ describe('CallTileRow', () => {
     expect(screen.getByTestId('call-tile-p6-media-sink')).toContainElement(screen.getByTestId('p6-video'));
   });
 });
+
+
+it('gallery keeps every media sink mounted across participant and camera changes', () => {
+  const people = [p('a', 'Ada', { videoElement: <video data-testid="gallery-media" /> })];
+  const { rerender } = render(<CallTileRow variant="gallery" participants={people} />);
+  const media = screen.getByTestId('gallery-media');
+  expect(screen.getByTestId('call-tile-row')).toHaveAttribute('data-variant', 'gallery');
+  rerender(<CallTileRow variant="gallery" participants={[{ ...people[0], cameraOff: true }, ...Array.from({ length: 11 }, (_, i) => p(`extra${i}`, `Person ${i}`))]} />);
+  expect(screen.getByTestId('call-tile-row')).toHaveAttribute('data-tile-count', '12');
+  expect(screen.getByTestId('gallery-media')).toBe(media);
+  expect(screen.queryByTestId('call-tile-overflow')).toBeNull();
+});

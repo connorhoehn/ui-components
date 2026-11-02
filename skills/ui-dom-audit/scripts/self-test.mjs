@@ -54,6 +54,17 @@ try {
   const payload = { contract, selectors, required: ['$header', '$footer', '$tables', '$composers'], composerExpectation: { mode: 'required' } };
   const measure = () => page.evaluate(measureDOM, payload);
   await page.setContent(html);
+  // A one-person call must not become a full-width portrait; a manually
+  // folded composer must remain a single row even with a retained draft.
+  await page.setContent('<section data-call-dock data-layout="stage"><div data-dock-item style="width:416px;height:234px"></div></section><button data-composer-surface="collapsed" style="height:40px">Chat · Draft kept</button>');
+  const compactContract = { ...fullContract, rules: fullContract.rules.filter(r => ['call.gallery.tile-width', 'composer.folded.height'].includes(r.id)) };
+  const compactMeasure = () => page.evaluate(measureDOM, { contract: compactContract, selectors: {} });
+  assert.deepEqual((await compactMeasure()).issues, []);
+  await page.locator('[data-dock-item]').evaluate(el => { el.style.width = '900px'; });
+  assert.ok((await compactMeasure()).issues.some(i => i.rule === 'call.gallery.tile-width'));
+  await page.locator('[data-composer-surface]').evaluate(el => { el.style.height = '160px'; });
+  assert.ok((await compactMeasure()).issues.some(i => i.rule === 'composer.folded.height'));
+  await page.setContent(html);
   const clean = await measure(); assert.deepEqual(clean.issues, [], JSON.stringify(clean.issues));
   assert.deepEqual((await measure()).samples, clean.samples, 'same DOM produces identical measurements');
   await page.evaluate(() => { const table = document.querySelector('table'); table.dataset.uiTableRows = 'content'; table.querySelector('tbody td').style.height = '180px'; });

@@ -1374,6 +1374,28 @@
         "fontWeight": 600
       },
       "owner": "WorkTableView"
+    },
+    {
+      "id": "call.gallery.tile-width",
+      "kind": "box",
+      "selector": "[data-call-dock][data-layout=\"stage\"] [data-dock-item]",
+      "properties": {
+        "width": {
+          "max": 416
+        }
+      },
+      "owner": "CallDock stage / CallTileRow gallery"
+    },
+    {
+      "id": "composer.folded.height",
+      "kind": "box",
+      "selector": "[data-composer-surface=\"collapsed\"]",
+      "properties": {
+        "height": {
+          "max": 48
+        }
+      },
+      "owner": "ContextComposer explicit collapse"
     }
   ]
 }

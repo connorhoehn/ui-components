@@ -46,8 +46,8 @@
 // "Prepare run"), and `/workflow` is offered as a slash command with an
 // argument picker. Elsewhere a pick writes `/<id> `.
 
-import { useCallback, useMemo, useRef, useState, type ReactNode, type Ref } from 'react';
-import { BUTTON_WEIGHT } from '../ui/Button';
+import { useCallback, useId, useMemo, useRef, useState, type ReactNode, type Ref } from 'react';
+import { Button, BUTTON_WEIGHT } from '../ui/Button';
 import { cn } from '../../lib/cn';
 import { DropdownMenu, type DropdownMenuSection } from '../shared/DropdownMenu';
 import Banner from '../shared/Banner';
@@ -279,6 +279,11 @@ export interface ContextComposerProps {
   // ── state ──
   /** Force the full card. */
   expanded?: boolean;
+  /** Offer an explicit collapse control. Keeps the editor, draft and files mounted;
+   * a focus request reopens it. Prompt replacements keep their own controls. */
+  collapsible?: boolean;
+  /** Destination shown in the collapsed row (e.g. the selected conversation). */
+  collapsedLabel?: string;
   /**
    * `pane` (since 2.431.0): the simplified responsive mode for a composer in
    * a side pane — one input row with a single mode · subject chip, icon-only
@@ -445,6 +450,8 @@ export function ContextComposerBase({
   onSend,
   identity,
   expanded,
+  collapsible = false,
+  collapsedLabel,
   responsive,
   working,
   console: consoleOn = true,
@@ -485,11 +492,16 @@ export function ContextComposerBase({
   const [seed, setSeed] = useState(0);
   const [keyOf, setKeyOf] = useState(draftKey);
   const [chipHidden, setChipHidden] = useState(false);
+  const [folded, setFolded] = useState(false);
+  const disclosureId = useId();
+  const reopenRef = useRef<HTMLButtonElement>(null);
+  const manuallyCollapsed = collapsible && folded && !replacement && !header;
   if (keyOf !== draftKey) {
     setKeyOf(draftKey);
     setInnerDraft(asDraft(defaultDraft));
     setSeed(0);
     setChipHidden(false);
+    setFolded(false);
   }
   const controlled = draftProp !== undefined;
   const draft = controlled ? draftProp : innerDraft;
@@ -545,8 +557,20 @@ export function ContextComposerBase({
   const handleRef = useRef<RichChatComposerHandle | null>(null);
   const setHandle = useCallback((handle: RichChatComposerHandle | null) => {
     handleRef.current = handle;
-    assignRef(composerRef, handle);
+    assignRef(composerRef, handle ? { ...handle, focus: () => {
+      setFolded(false);
+      requestAnimationFrame(() => handle.focus());
+    } } : null);
   }, [composerRef]);
+  const reopen = () => {
+    setFolded(false);
+    requestAnimationFrame(() => handleRef.current?.focus());
+  };
+  const collapse = () => {
+    handleRef.current?.editor?.commands.blur();
+    setFolded(true);
+    requestAnimationFrame(() => reopenRef.current?.focus());
+  };
 
   const author = identityDisplayName(identity);
   const send = useCallback((message: ComposedMessage) => {
@@ -695,8 +719,8 @@ export function ContextComposerBase({
         label={label ?? preset.regionLabel}
         data-testid={testId}
         className={cn(look.className, className)}
-        above={aboveRow}
-        strip={stripRow ?? undefined}
+        above={manuallyCollapsed ? undefined : aboveRow}
+        strip={manuallyCollapsed ? undefined : stripRow ?? undefined}
         composer={(
           <>
             {dock != null && dock !== false && (
@@ -704,6 +728,19 @@ export function ContextComposerBase({
                 {dock}
               </div>
             )}
+            {manuallyCollapsed && (
+              <Button ref={reopenRef} variant="ghost" size="sm" onClick={reopen}
+                data-composer-readonly-allow={readOnlyOn ? 'Expand composer' : undefined}
+                aria-label="Expand composer" aria-expanded={false} aria-controls={disclosureId}
+                className="w-full justify-start gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm"
+                data-composer-surface="collapsed" data-testid={`${testId}-expand`}>
+                <span className="shrink-0 font-semibold">{mode === 'agent' ? 'Agent' : mode === 'chat' ? 'Chat' : mode === 'terminal' ? 'Terminal' : 'Search'}</span>
+                <span className="min-w-0 flex-1 truncate text-left font-normal text-text-secondary">{collapsedLabel || context.title || 'Write a message…'}</span>
+                {(draftText || draft?.files.length) ? <span className="shrink-0 text-xs text-text-secondary">Draft kept{draft?.files.length ? ` · ${draft.files.length} attached` : ''}</span> : null}
+                <ChevronIcon dir="up" size={16} />
+              </Button>
+            )}
+            <div id={disclosureId} hidden={manuallyCollapsed}>
             {replacement != null && replacement !== false ? replacement : (
               <RichChatComposer
                 key={`${draftKey}:${seed}`}
@@ -762,7 +799,10 @@ export function ContextComposerBase({
                 maxInputHeight={maxInputHeight}
                 toolbarExtras={extras}
                 submitLead={submitLead}
-                modeRowEnd={modeRowEnd}
+                modeRowEnd={modeRowEnd != null || collapsible ? <>{modeRowEnd}{collapsible && !header && <IconButton size="sm" aria-label="Collapse composer"
+                  data-composer-readonly-allow={readOnlyOn ? 'Collapse composer' : undefined}
+                  title="Collapse composer" aria-expanded aria-controls={disclosureId} onClick={collapse}
+                  icon={<ChevronIcon dir="down" size={16} />} data-testid={`${testId}-collapse`} />}</> : undefined}
                 modeRowStart={modeRowStart}
                 {...(hasHeader ? { header } : {})}
                 sendWithReferencesOnly={sendWithReferencesOnly}
@@ -773,6 +813,7 @@ export function ContextComposerBase({
                 onSend={send}
               />
             )}
+            </div>
           </>
         )}
       />
