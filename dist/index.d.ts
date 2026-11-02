@@ -13403,6 +13403,25 @@ export declare interface MeasuredWidth<T extends HTMLElement> {
     width: number | null;
 }
 
+/** One episode/collection, with its real preview versions inside a bounded
+ * carousel. Hosts supply duration/provenance, never inferred by the card. */
+export declare function MediaCollectionCard({ title, status, previews, onOpen, onPlay }: MediaCollectionCardProps): JSX.Element;
+
+export declare interface MediaCollectionCardProps {
+    title: string;
+    status?: ReactNode;
+    previews: readonly MediaCollectionPreview[];
+    onOpen: () => void;
+    onPlay: (preview: MediaCollectionPreview) => void;
+}
+
+export declare interface MediaCollectionPreview {
+    id: string;
+    image?: string;
+    label: string;
+    duration?: string;
+}
+
 export declare function MediaControlsBar({ audioOn, videoOn, screenSharing, onToggleAudio, onToggleVideo, onToggleScreenShare, onLeave, audioDisabled, videoDisabled, screenShareDisabled, extras, leaveLabel, size, className, 'data-testid': testId, }: MediaControlsBarProps): JSX.Element;
 
 export declare interface MediaControlsBarProps {
@@ -22704,7 +22723,7 @@ export declare interface TechnicalDetailsProps {
 /** A page with a dashed block: "a template". Since 2.390.3. */
 export declare function TemplateIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
-export declare function TenantSwitcher({ label, healthy, motion, destinations, onSelect, live, blockedReason, emptyMessage, resetKey, avatarColor, avatarForeground, triggerLabel, dialogLabel, errorFallback, className, 'data-testid': testId, }: TenantSwitcherProps): JSX.Element;
+export declare function TenantSwitcher({ label, healthy, motion, destinations, onSelect, live, showActivity, blockedReason, emptyMessage, resetKey, avatarColor, avatarForeground, triggerLabel, dialogLabel, errorFallback, className, 'data-testid': testId, }: TenantSwitcherProps): JSX.Element;
 
 export declare interface TenantSwitcherDestination {
     /** Stable id handed back to `onSelect`; also written as `data-tenant`. */
@@ -22737,6 +22756,8 @@ export declare interface TenantSwitcherProps {
     onSelect: (id: string) => void | Promise<unknown>;
     /** Whether live notification updates are available. Shapes each activity hint. */
     live?: boolean;
+    /** Omit inbox activity for project/file workspaces without a notification service. */
+    showActivity?: boolean;
     /** When set, every destination is disabled and this explains why. */
     blockedReason?: ReactNode;
     /** Shown when `destinations` is empty. */
