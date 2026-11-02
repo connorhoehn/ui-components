@@ -3399,7 +3399,7 @@ export declare interface InlinePopoverProps {
     offset?: number;
     /** Optional className for the panel. */
     className?: string;
-    /** Optional z-index (default 9500 — under modals at 10000). */
+    /** Minimum z-index (default 9500); raised above the trigger's containing layers. */
     zIndex?: number;
     /** Optional testid for the panel. Default 'inline-popover'. */
     'data-testid'?: string;

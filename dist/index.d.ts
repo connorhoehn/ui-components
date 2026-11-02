@@ -1632,7 +1632,7 @@ export declare interface AudioVideoSettings {
     rememberDevices: boolean;
 }
 
-export declare function AudioVideoSettingsForm({ value, onChange, devices, permission, micLevel, previewStream, cameraOn, speakerSelectionSupported, onTestMic, onTestSound, testMicState, selfName, selfAvatarUrl, layout, className, 'data-testid': testId, }: AudioVideoSettingsFormProps): JSX.Element;
+export declare function AudioVideoSettingsForm({ value, onChange, devices, permission, micLevel, previewStream, cameraOn, speakerSelectionSupported, onTestMic, onTestSound, testMicState, selfName, selfAvatarUrl, layout, previewControls, className, 'data-testid': testId, }: AudioVideoSettingsFormProps): JSX.Element;
 
 export declare interface AudioVideoSettingsFormProps {
     value: AudioVideoSettings;
@@ -1660,6 +1660,8 @@ export declare interface AudioVideoSettingsFormProps {
     selfAvatarUrl?: string;
     /** Two-column device setup; the default stack remains the call-settings form. */
     layout?: 'stack' | 'prejoin';
+    /** Capture and effects actions under the pre-join preview. */
+    previewControls?: ReactNode;
     className?: string;
     'data-testid'?: string;
 }
@@ -2684,7 +2686,8 @@ export declare interface CallDockProps {
      * and pop-out, then Leave) over the reflowing tile grid, at most two tiles
      * to a row. For a conversation composer in a side pane.
      */
-    layout?: 'shelf' | 'grid' | 'stack' | 'stage';
+    /** `compact`: a small preview beside call details and controls; wraps controls below on narrow hosts. */
+    layout?: 'shelf' | 'grid' | 'stack' | 'stage' | 'compact';
     className?: string;
     'data-testid'?: string;
 }
@@ -12383,7 +12386,7 @@ export declare interface InlinePopoverProps {
     offset?: number;
     /** Optional className for the panel. */
     className?: string;
-    /** Optional z-index (default 9500 — under modals at 10000). */
+    /** Minimum z-index (default 9500); raised above the trigger's containing layers. */
     zIndex?: number;
     /** Optional testid for the panel. Default 'inline-popover'. */
     'data-testid'?: string;
@@ -13998,7 +14001,7 @@ export declare interface MessageReaction {
     displayName?: string;
 }
 
-export declare function MessageRow({ author, content, timestamp, avatarUrl, hideAvatar, hideAuthor, mine, footer, actions, tone, editedAt, contentLayout, className, }: MessageRowProps): JSX.Element;
+export declare function MessageRow({ author, content, timestamp, avatarUrl, hideAvatar, hideAuthor, mine, footer, actions, actionsLayout, tone, editedAt, contentLayout, className, }: MessageRowProps): JSX.Element;
 
 export declare interface MessageRowProps {
     /** Display name shown next to the message; required even for anonymous rows (use a fallback). */
@@ -14031,9 +14034,10 @@ export declare interface MessageRowProps {
      * Indented under the content so it lines up under text, not under the avatar.
      */
     footer?: ReactNode;
-    /** Message actions in the header, beside metadata or on a wrapped line.
-     *  Keep the slot mounted while hiding its controls to avoid hover layout shifts. */
+    /** Message actions beside metadata; continued rows use a compact action trigger. */
     actions?: ReactNode;
+    /** Keep the metadata row compact, with actions in an anchored menu. */
+    actionsLayout?: 'inline' | 'menu';
     /** Surface the row renders on. 'light' (default) keeps the theme tokens;
      *  'dark' swaps to white/alpha classes for dark call chrome — without it
      *  the message text renders dark-on-dark and disappears. Mirrors

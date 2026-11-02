@@ -304,6 +304,8 @@ declare interface AudioVideoSettingsFormProps {
     selfAvatarUrl?: string;
     /** Two-column device setup; the default stack remains the call-settings form. */
     layout?: 'stack' | 'prejoin';
+    /** Capture and effects actions under the pre-join preview. */
+    previewControls?: ReactNode;
     className?: string;
     'data-testid'?: string;
 }
@@ -412,6 +414,117 @@ declare interface CallActivityParticipant {
     userId: string;
     displayName?: string;
     avatarUrl?: string;
+}
+
+declare interface CallDockParticipant extends HangoutLayoutParticipant {
+    userId: string;
+    cameraOn: boolean;
+    audioOn: boolean;
+    screenSharing: boolean;
+    presenting: boolean;
+    /**
+     * `ringing` (2.436.0): an invitee whose phone is still ringing — drawn as a
+     * placeholder tile (their avatar, "Ringing…", no mic state) until they
+     * answer. A ringing participant never counts toward `participantCount`.
+     */
+    connection: 'connected' | 'reconnecting' | 'ringing';
+    /**
+     * An audio sink independent of the camera (an `<audio autoPlay>` on the
+     * person's stream). Optional: with camera off the dock keeps `videoElement`
+     * mounted but invisible anyway, so the audio that rides that stream plays.
+     */
+    audioElement?: ReactNode;
+}
+
+/**
+ * `calling` is the caller's side of a ring before anyone answers: the call
+ * exists but nobody else is in it, so the meta names who is being called
+ * instead of "1 person · 00:33".
+ */
+declare type CallDockPhase = 'calling' | 'connecting' | 'active' | 'reconnecting' | 'ended' | 'error';
+
+declare interface CallDockProps {
+    title: string;
+    participantCount: number;
+    /** Elapsed call time; null before the call has a start time. */
+    elapsedMs: number | null;
+    phase: CallDockPhase;
+    /** `phase: 'calling'`: who is being rung — the meta reads "Calling <name>…" (else "Calling…"). */
+    callingTo?: string;
+    /** The review documents; omit (or pass []) with no `onOpenDocuments` for a call without documents. */
+    documents?: {
+        id: string;
+        title: string;
+        presenting?: boolean;
+    }[];
+    /** Everyone in the call, the viewer included (matched by `localParticipantId`). */
+    participants: CallDockParticipant[];
+    localParticipantId: string;
+    activeSpeakerId?: string | null;
+    /** The person being followed — their tile gets the accent ring. */
+    followingUserId?: string | null;
+    mic: Omit<DeviceToggleSelectProps, 'kind'>;
+    camera: Omit<DeviceToggleSelectProps, 'kind'>;
+    screenShare: {
+        on: boolean;
+        disabledReason?: string;
+        onToggle: () => void;
+    };
+    onOpenPeople: () => void;
+    /** Omitted → no Documents button (a conversation call). */
+    onOpenDocuments?: () => void;
+    peopleOpen?: boolean;
+    documentsOpen?: boolean;
+    onOpenSettings: () => void;
+    /** Host controls rendered in the controls row, before the settings gear. */
+    extras?: ReactNode;
+    onPopOut: () => void;
+    onLeave: () => void;
+    /** The host with others present: Leave asks "Leave the call? Others stay on." with End for everyone. */
+    canEndForEveryone?: boolean;
+    onEndForEveryone?: () => void;
+    onTileClick?: (userId: string) => void;
+    onTitleClick?: () => void;
+    onDocumentClick?: (id: string) => void;
+    /** Ended: the line after "Call ended · 12:04 · ". */
+    endedSummary?: ReactNode;
+    /**
+     * The error banner. `title` replaces the default "Lost the call — <message>"
+     * (a join that never connected reads "Couldn't join the call — …"), and
+     * `retryLabel` replaces "Rejoin" ("Try again" for that same case).
+     */
+    error?: {
+        message: string;
+        onRetry: () => void;
+        title?: string;
+        retryLabel?: string;
+    };
+    onDismiss?: () => void;
+    /** 132 × 74 tiles (a 1280 × 720 window) instead of 176 × 88 (the mockup's 166 × 84 at its 1.054 scale). */
+    compact?: boolean;
+    /**
+     * Shelf tile size (2.432.0): `sm` 132 × 74 (what `compact` picks), `md`
+     * 176 × 88 (the default), `lg` 240 × 135 — the tiles above a full-width
+     * conversation composer. Wins over `compact` when both are given.
+     */
+    tileSize?: CallDockTileSize;
+    /**
+     * `shelf` (default): the header row (title, meta, device controls, Leave)
+     * over a row of fixed-size tiles. `grid` (2.423.0): the call's media
+     * panel — ONLY the tile stage, as a reflowing grid of fluid 16:9 tiles
+     * (`CallTileRow variant="grid"`, the viewer first as "You"). No header,
+     * meta or controls render: the host's bar (e.g. `HuddleBar`) owns mic,
+     * camera and Leave. Connecting draws one fluid skeleton; reconnecting keeps
+     * its badge; the ended and error phases render as they do for `shelf`.
+     * `stack` (2.432.0): the narrow form of `shelf` — the header (title, meta,
+     * mic ▾, camera ▾, a "⋯" menu holding Share, People, Documents, settings
+     * and pop-out, then Leave) over the reflowing tile grid, at most two tiles
+     * to a row. For a conversation composer in a side pane.
+     */
+    /** `compact`: a small preview beside call details and controls; wraps controls below on narrow hosts. */
+    layout?: 'shelf' | 'grid' | 'stack' | 'stage' | 'compact';
+    className?: string;
+    'data-testid'?: string;
 }
 
 declare type CallDockTileSize = 'sm' | 'md' | 'lg';
@@ -1636,7 +1749,7 @@ export declare interface ConversationCallDockProps {
      * `stack` (2.432.0): the narrow `shelf` for a side pane — mic ▾, camera ▾
      * and Leave on the bar, the rest in its "⋯" menu, the tiles two to a row.
      */
-    layout?: 'shelf' | 'grid' | 'stack' | 'stage';
+    layout?: CallDockProps['layout'];
     className?: string;
     /** The dock's test id; the notice is `<id>-notice`, the settings dialog `<id>-settings`. Default `conversation-call-dock`. */
     'data-testid'?: string;
@@ -1846,6 +1959,34 @@ export declare function defaultRoomDrafts(count: number): {
 declare interface DeviceOption {
     deviceId: string;
     label: string;
+}
+
+declare interface DeviceToggleSelectProps {
+    kind: 'microphone' | 'camera';
+    on: boolean;
+    onToggle: () => void;
+    devices: DeviceOption[];
+    selectedDeviceId?: string;
+    onSelectDevice: (deviceId: string) => void;
+    permission: MediaPermission;
+    /** 0..1 live input level (microphone only). Above 0.08 draws the speaking ring. */
+    level?: number;
+    /** `sm` = 32px (the dock), `md` = 40px (the incoming-call popover). Default `sm`. */
+    size?: 'sm' | 'md';
+    /** Show "Mic on" / "Camera off" beside the icon. Default false (icon only). */
+    showLabel?: boolean;
+    /** Extra menu rows after the device list, e.g. "Blur background…". */
+    extraItems?: DropdownMenuItem[];
+    /** Disables the toggle with this as its title (e.g. "Microphone blocked in the browser"). */
+    disabledReason?: string;
+    /**
+     * Draw the device caret and its menu. Default true. `false` gives a bare
+     * icon toggle (the shell footer), the host picking the device elsewhere.
+     */
+    deviceMenu?: boolean;
+    className?: string;
+    /** Test id on the toggle; the chevron gets `<id>-menu`. */
+    'data-testid'?: string;
 }
 
 declare interface DocumentActivityEditor {
@@ -3958,7 +4099,7 @@ export declare interface WrappedActivityPanelProps {
 
 export declare function WrappedAudioVideoSettingsForm({ devices, settings, cameraOn, ...rest }: WrappedAudioVideoSettingsFormProps): JSX.Element;
 
-export declare interface WrappedAudioVideoSettingsFormProps extends Pick<AudioVideoSettingsFormProps, 'selfName' | 'selfAvatarUrl' | 'layout' | 'className' | 'data-testid'> {
+export declare interface WrappedAudioVideoSettingsFormProps extends Pick<AudioVideoSettingsFormProps, 'selfName' | 'selfAvatarUrl' | 'layout' | 'previewControls' | 'className' | 'data-testid'> {
     devices: RMMediaDevicesSource;
     settings: RMAudioVideoSettingsSource;
     /** Whether the viewer's camera is on (the preview shows "Camera is off" otherwise). */

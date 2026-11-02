@@ -55,7 +55,7 @@ export declare interface AudioVideoSettings {
     rememberDevices: boolean;
 }
 
-export declare function AudioVideoSettingsForm({ value, onChange, devices, permission, micLevel, previewStream, cameraOn, speakerSelectionSupported, onTestMic, onTestSound, testMicState, selfName, selfAvatarUrl, layout, className, 'data-testid': testId, }: AudioVideoSettingsFormProps): JSX.Element;
+export declare function AudioVideoSettingsForm({ value, onChange, devices, permission, micLevel, previewStream, cameraOn, speakerSelectionSupported, onTestMic, onTestSound, testMicState, selfName, selfAvatarUrl, layout, previewControls, className, 'data-testid': testId, }: AudioVideoSettingsFormProps): JSX.Element;
 
 export declare interface AudioVideoSettingsFormProps {
     value: AudioVideoSettings;
@@ -83,6 +83,8 @@ export declare interface AudioVideoSettingsFormProps {
     selfAvatarUrl?: string;
     /** Two-column device setup; the default stack remains the call-settings form. */
     layout?: 'stack' | 'prejoin';
+    /** Capture and effects actions under the pre-join preview. */
+    previewControls?: ReactNode;
     className?: string;
     'data-testid'?: string;
 }
@@ -437,7 +439,8 @@ export declare interface CallDockProps {
      * and pop-out, then Leave) over the reflowing tile grid, at most two tiles
      * to a row. For a conversation composer in a side pane.
      */
-    layout?: 'shelf' | 'grid' | 'stack' | 'stage';
+    /** `compact`: a small preview beside call details and controls; wraps controls below on narrow hosts. */
+    layout?: 'shelf' | 'grid' | 'stack' | 'stage' | 'compact';
     className?: string;
     'data-testid'?: string;
 }
