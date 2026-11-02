@@ -132,7 +132,7 @@ export function Disclosure({
         data-testid={`${testId}-summary`}
         className={cn(
           'flex items-center gap-2 cursor-pointer select-none list-none marker:hidden [&::-webkit-details-marker]:hidden',
-          compact ? 'px-2 py-1' : lg ? (plain ? 'gap-3 px-0 py-0.5' : 'gap-3 px-3 py-2.5') : 'px-3 py-2',
+          compact ? 'px-3 py-1' : lg ? (plain ? 'gap-3 px-0 py-0.5' : 'gap-3 px-3 py-2.5') : 'px-3 py-2',
           plain
             ? cn('text-text-primary', !lg && 'hover:bg-surface-hover')
             : (key ? TONE_SOFT[key] : 'bg-surface text-text-primary hover:bg-surface-hover'),
@@ -157,7 +157,7 @@ export function Disclosure({
         data-testid={`${testId}-body`}
         className={cn(
           !plain && 'border-t',
-          compact ? 'px-2 py-1' : 'px-3 py-2',
+          compact ? 'px-3 py-1' : 'px-3 py-2',
           !plain && (key ? TONE_BORDER[key] : 'border-border'),
           bodyClassName,
         )}

@@ -43,6 +43,14 @@ describe('Text', () => {
     expect(el).toHaveAttribute('aria-label', 'a note');
   });
 
+  it('keeps wrapped prose and inline marks in a single flow', () => {
+    render(<Text wrap data-testid="prose">Expect <code>ready</code>, then continue.</Text>);
+    const prose = screen.getByTestId('prose');
+    expect(prose.children).toHaveLength(1);
+    expect(prose.firstElementChild?.textContent).toBe('Expect ready, then continue.');
+    expect(prose.firstElementChild?.tagName).toBe('SPAN');
+  });
+
   it('exports T as an alias for Text', () => {
     expect(T).toBe(Text);
   });

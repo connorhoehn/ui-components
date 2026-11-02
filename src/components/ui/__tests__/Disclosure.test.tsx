@@ -157,9 +157,9 @@ describe('Disclosure', () => {
       </Disclosure>,
     );
     expect(screen.getByTestId('disclosure').className).toContain('text-xs');
-    expect(screen.getByTestId('disclosure-summary').className).toContain('px-2');
+    expect(screen.getByTestId('disclosure-summary').className).toContain('px-3');
     expect(screen.getByTestId('disclosure-summary').className).toContain('py-1');
-    expect(screen.getByTestId('disclosure-body').className).toContain('px-2');
+    expect(screen.getByTestId('disclosure-body').className).toContain('px-3');
   });
 
   it('defaults to the default variant — border, background tint kept', () => {
@@ -204,7 +204,7 @@ describe('Disclosure', () => {
       </Disclosure>,
     );
     expect(screen.getByTestId('disclosure').className).toContain('text-xs');
-    expect(screen.getByTestId('disclosure-summary').className).toContain('px-2');
+    expect(screen.getByTestId('disclosure-summary').className).toContain('px-3');
     expect(screen.getByTestId('disclosure-summary').className.split(' ')).not.toContain('bg-surface');
   });
 

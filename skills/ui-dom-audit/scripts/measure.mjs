@@ -263,6 +263,7 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
       const s = cs(n);
       // A control centres its own label; that says nothing about where the control sits.
       if (/^(center|right|end)$/.test(s.textAlign) && !/inline/.test(s.display) && !n.matches('button, [role="button"], input, select, th, td')) return true;
+      if (/grid/.test(s.display) && /^(center|end|right)$/.test(s.justifyItems)) return true;
       if (/flex|grid/.test(s.display) && /^(center|flex-end|end|right|space-around|space-evenly)$/.test(s.justifyContent) && !/column/.test(s.flexDirection)) return true;
       if (/flex/.test(s.display) && /column/.test(s.flexDirection) && /^(center|flex-end|end)$/.test(s.alignItems)) return true;
       if (s.marginLeft === s.marginRight && parseFloat(s.marginLeft) > 8 && n.parentElement) return true;

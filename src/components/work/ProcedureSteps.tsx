@@ -99,6 +99,7 @@ export function ProcedureSteps({
     <ol
       className={cn('m-0 flex list-none flex-col p-0', size === 'sm' ? 'gap-2.5' : 'gap-3', className)}
       data-testid={testId}
+      data-ui-procedure={size}
       {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}
     >
       {steps.map((step, index) => {

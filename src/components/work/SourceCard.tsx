@@ -113,14 +113,14 @@ export function SourceCard({
       className,
     );
     const interactive = 'cursor-pointer border-none bg-transparent no-underline hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
-    const common = { 'data-testid': testId, 'data-layout': 'row', 'aria-label': title, ...(current ? { 'aria-current': 'true' as const } : {}) };
+    const common = { 'data-testid': testId, 'data-layout': 'row', 'data-ui-source-row': '', 'aria-label': title, ...(current ? { 'aria-current': 'true' as const } : {}) };
     if (onOpen) {
       return <button type="button" onClick={() => onOpen(id)} className={cn(rowCls, interactive)} {...common}>{inner}</button>;
     }
     if (href) {
       return <a href={href} className={cn(rowCls, interactive)} {...common}>{inner}</a>;
     }
-    return <div className={rowCls} data-testid={testId} data-layout="row" {...(current ? { 'aria-current': 'true' as const } : {})}>{inner}</div>;
+    return <div className={rowCls} data-testid={testId} data-layout="row" data-ui-source-row="" {...(current ? { 'aria-current': 'true' as const } : {})}>{inner}</div>;
   }
 
   return (

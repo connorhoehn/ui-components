@@ -38,7 +38,7 @@ export interface TextProps {
   className?: string;
   title?: string;
   /** Forwarded to `Inline`'s own `wrap` (`flex-wrap` vs not). Default
-   *  `false` — a single line of text, matching a plain inline element. */
+   *  `false`. Wrapped prose keeps text and inline marks in one flow. */
   wrap?: boolean;
   role?: string;
   'aria-label'?: string;
@@ -65,7 +65,7 @@ export function Text({
     .filter(Boolean).join(' ') || undefined;
   return (
     <Inline as={as} gap="none" wrap={wrap} className={classes} title={title} {...rest}>
-      {children}
+      {wrap ? <span className="min-w-0">{children}</span> : children}
     </Inline>
   );
 }

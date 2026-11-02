@@ -16,9 +16,10 @@
 // Theme-aware by construction: every colour is a design token, so the same
 // diff reads correctly in day and night. No hard-coded terminal palette.
 
-import { useMemo, useRef, useState, type ReactNode } from 'react';
+import { Fragment, useMemo, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import Chip from './Chip';
+import { ChevronIcon } from '../ui/Icons';
 
 export interface DiffAnnotation {
   /** Path as it appears in the diff (new side). */
@@ -133,8 +134,8 @@ const LINE_BG: Record<DiffLine['kind'], string> = {
 
 function AnnotationRow({ a }: { a: DiffAnnotation }) {
   return (
-    <div className="flex items-start gap-2 px-3 py-2 border-y border-border bg-surface-panel">
-      <Chip tone={SEVERITY_TONE[a.severity ?? 'info']} size="xs" uppercase>{a.severity ?? 'note'}</Chip>
+    <div className="flex items-start gap-2 px-3 py-2 font-sans border-y border-border bg-surface-panel">
+      <Chip tone={SEVERITY_TONE[a.severity ?? 'info']} size="md" uppercase>{a.severity ?? 'note'}</Chip>
       <div className="min-w-0">
         <span className="text-[12px] text-text-primary leading-snug">{a.note}</span>
         {a.author && <span className="ml-2 text-xs text-text-tertiary whitespace-nowrap">— {a.author}</span>}
@@ -179,28 +180,28 @@ function FileSection({ file, annotations, collapsed, onToggle, maxLines }: {
         aria-expanded={!collapsed}
         className="w-full flex items-center gap-2 px-3 py-2 bg-surface-panel border-0 cursor-pointer text-left hover:bg-surface-hover min-w-0"
       >
-        <span aria-hidden className="text-xs text-text-tertiary">{collapsed ? '▸' : '▾'}</span>
+        <ChevronIcon dir={collapsed ? 'right' : 'down'} size={12} className="shrink-0 text-text-tertiary" />
         <span className="text-[12px] font-mono font-semibold text-text-primary truncate">
           {file.oldPath ? `${file.oldPath} → ${file.path}` : file.path}
         </span>
-        <Chip tone={STATUS_TONE[file.status]} size="xs">{file.status}</Chip>
+        <Chip tone={STATUS_TONE[file.status]} size="md">{file.status}</Chip>
         {annotations.length > 0 && (
-          <Chip tone="warning" size="xs" mono>{annotations.length} note{annotations.length === 1 ? '' : 's'}</Chip>
+          <Chip tone="warning" size="md" mono>{annotations.length} note{annotations.length === 1 ? '' : 's'}</Chip>
         )}
         <span className="flex-1" />
         <span className="text-xs font-mono tabular-nums whitespace-nowrap">
-          <span className="text-success">+{file.adds}</span>{' '}
-          <span className="text-danger">−{file.dels}</span>
+          <span className="text-success-fg">+{file.adds}</span>{' '}
+          <span className="text-danger-fg">−{file.dels}</span>
         </span>
       </button>
 
       {!collapsed && (
-        <div className="overflow-x-auto">
+        <div data-ui-diff-scroll="" className="overflow-x-auto">
           {floating.map((a, i) => <AnnotationRow key={`f${i}`} a={a} />)}
           {file.binary ? (
             <div className="px-3 py-2 text-[12px] text-text-tertiary">Binary file — no text diff.</div>
           ) : (
-            <table className="w-full border-collapse font-mono text-xs leading-[1.5]">
+            <table data-ui-table-rows="code-diff" className="w-full border-collapse font-mono text-xs leading-[1.5]">
               <tbody>
                 {shown.map((l, i) => (
                   l.kind === 'hunk' ? (
@@ -208,18 +209,18 @@ function FileSection({ file, annotations, collapsed, onToggle, maxLines }: {
                       <td colSpan={3} className="px-3 py-0.5 text-xs text-text-tertiary select-none">{l.text}</td>
                     </tr>
                   ) : (
-                    <>
-                      <tr key={i} className={LINE_BG[l.kind]}>
-                        <td className="w-[3.2em] px-1.5 text-right text-xs text-text-tertiary select-none align-top tabular-nums border-r border-border/60">
+                    <Fragment key={i}>
+                      <tr data-diff-line={l.kind} className={LINE_BG[l.kind]}>
+                        <td data-diff-cell="gutter" className="w-[3.2em] px-1.5 text-right text-xs leading-[1.5] text-text-tertiary select-none align-top tabular-nums border-r border-border/60">
                           {l.oldNo ?? ''}
                         </td>
-                        <td className="w-[3.2em] px-1.5 text-right text-xs text-text-tertiary select-none align-top tabular-nums border-r border-border/60">
+                        <td data-diff-cell="gutter" className="w-[3.2em] px-1.5 text-right text-xs leading-[1.5] text-text-tertiary select-none align-top tabular-nums border-r border-border/60">
                           {l.newNo ?? ''}
                         </td>
-                        <td className={cn(
+                        <td data-diff-cell="code" className={cn(
                           'px-2 whitespace-pre align-top',
-                          l.kind === 'add' && 'text-success',
-                          l.kind === 'del' && 'text-danger',
+                          l.kind === 'add' && 'text-success-fg',
+                          l.kind === 'del' && 'text-danger-fg',
                           l.kind === 'ctx' && 'text-text-secondary',
                         )}>
                           <span className="select-none inline-block w-[1ch] mr-1 text-text-tertiary">
@@ -233,7 +234,7 @@ function FileSection({ file, annotations, collapsed, onToggle, maxLines }: {
                           <td colSpan={3} className="p-0"><AnnotationRow a={a} /></td>
                         </tr>
                       ))}
-                    </>
+                    </Fragment>
                   )
                 ))}
                 {truncated && (
@@ -314,7 +315,7 @@ export function DiffViewer({
       <div className="flex items-center gap-1.5 flex-wrap">
         <span className="text-xs text-text-secondary font-medium whitespace-nowrap">
           {files.length} file{files.length === 1 ? '' : 's'}
-          {' '}<span className="font-mono tabular-nums"><span className="text-success">+{totalAdds}</span> <span className="text-danger">−{totalDels}</span></span>
+          {' '}<span className="font-mono tabular-nums"><span className="text-success-fg">+{totalAdds}</span> <span className="text-danger-fg">−{totalDels}</span></span>
         </span>
         {files.map((f) => (
           <button
@@ -323,12 +324,12 @@ export function DiffViewer({
             onClick={() => jumpTo(f.path)}
             title={f.path}
             className={cn(
-              'px-1.5 py-0.5 rounded border border-border bg-surface text-xs font-mono cursor-pointer',
+              'px-1.5 py-0.5 rounded border border-border bg-surface text-xs cursor-pointer',
               'text-text-secondary hover:border-border-emphasis hover:text-text-primary truncate max-w-[220px]',
               (byFile.get(f.path)?.length ?? 0) > 0 && 'border-warning/60',
             )}
           >
-            {f.path.split('/').pop()}
+            <code className="font-mono">{f.path.split('/').pop()}</code>
           </button>
         ))}
       </div>

@@ -108,6 +108,81 @@ try {
     await page.locator(selector).evaluate((el, [property, value]) => { el.style[property] = value; }, [property, prior]);
   }
   await page.setContent(html);
+  // Real code-review geometry, including intentional nested marker/composer grids.
+  const diffFixture = `<style>
+    :root{--ui-table-inset:12px;--ui-table-row:44px;--ui-content-gutter:16px}
+    *{box-sizing:border-box}body{margin:0;font:14px system-ui,sans-serif}
+    main{width:600px;padding:24px} [data-trail]{height:24px}
+    table{border-collapse:collapse;font:inherit} #ordinary td{height:44px;padding:0 12px}
+    [data-ui-diff-scroll]{overflow-x:auto;width:240px}
+    [data-diff-cell]{font:12px/18px monospace;padding-top:0;padding-bottom:0}
+    [data-diff-cell=gutter]{padding-left:6px;padding-right:6px}
+    [data-diff-cell=code]{padding-left:8px;padding-right:8px;white-space:pre}
+    [data-ui-change-location]{padding:4px 8px;display:flex;gap:4px}
+    [data-ui-change-diff-side]{padding:4px 8px;display:flex;gap:8px}
+    [data-ui-composer-modes]{padding:4px 12px;display:flex;justify-content:flex-end}
+    button{font:12px system-ui,sans-serif}
+    </style><main><div data-trail>Review</div>
+    <div data-ui-change-location><span aria-hidden=true>@@</span><span>Document level</span></div>
+    <div data-ui-change-diff-side><span aria-hidden=true>+</span><span>Proposed text</span></div>
+    <div data-ui-diff-scroll><table data-ui-table-rows="code-diff"><tbody><tr data-diff-line=ctx>
+    <td data-diff-cell=gutter>16</td><td data-diff-cell=gutter>16</td><td data-diff-cell=code>${'long_complete_identifier '.repeat(20)}</td>
+    </tr></tbody></table></div>
+    <table id=ordinary><tbody><tr><td>Neighbor</td><td>Ready</td></tr></tbody></table>
+    <div data-ui-composer-modes=docked><button>Help</button></div>
+    <ol data-ui-procedure=md style="list-style:none;padding:0;margin:0"><li style="display:flex;gap:12px"><span aria-hidden=true style="display:block;flex:none;width:24px;height:24px">1</span><span>Run the command.</span></li></ol>
+    <button data-ui-source-row style="display:flex;gap:12px;padding:0;border:0"><span aria-hidden=true style="width:32px;height:32px;flex:none"></span><span>Source title<br>Source description</span></button>
+    <button data-ui-control=select data-ui-size=sm data-variant=default style="padding:0 6px 0 8px"><span>Select a record</span></button>
+    <div id=neighbor>Ordinary prose</div></main>`;
+  await page.setContent(diffFixture);
+  const diffMeasure = () => page.evaluate(measureDOM, { contract: { ...fullContract, rules: fullContract.rules.filter(r => r.id.startsWith('source.row-') || r.id.startsWith('control.select-inset') || r.id.startsWith('procedure.') || r.id.startsWith('diff.') || r.id.startsWith('change.') || r.id.startsWith('composer.mode-inset') || ['table.geometry','table.column-hog','align.grid','control.font-size'].includes(r.id)) }, selectors, context: {} });
+  assert.deepEqual((await diffMeasure()).issues, [], 'code review and mode controls use their own measured inner grids');
+  for (const [selector, property, value, rule] of [
+    ['[data-diff-cell=code]', 'fontSize', '14px', 'diff.line-type'],
+    ['[data-diff-cell=code]', 'fontFamily', 'serif', 'diff.line-type'],
+    ['[data-diff-cell=code]', 'paddingLeft', '12px', 'diff.code-inset'],
+    ['[data-diff-cell=code]', 'whiteSpace', 'normal', 'diff.code-inset'],
+    ['[data-diff-cell=gutter]', 'paddingRight', '12px', 'diff.gutter-inset'],
+    ['[data-diff-line]', 'height', '44px', 'diff.line-height'],
+    ['[data-ui-diff-scroll]', 'overflowX', 'hidden', 'diff.scroll'],
+    ['[data-ui-change-location]', 'paddingLeft', '20px', 'change.location-inset'],
+    ['[data-ui-change-diff-side]', 'columnGap', '20px', 'change.diff-inset'],
+    ['[data-ui-composer-modes]', 'paddingRight', '16px', 'composer.mode-inset-docked'],
+    ['[data-ui-composer-modes] button', 'fontSize', '18px', 'control.font-size'],
+    ['#ordinary td', 'height', '68px', 'table.geometry'],
+    ['#ordinary td', 'paddingLeft', '8px', 'table.geometry'],
+    ['[data-ui-procedure] > li', 'columnGap', '16px', 'procedure.marker-gap'],
+    ['[data-ui-procedure] > li > span', 'width', '28px', 'procedure.marker-md'],
+    ['[data-ui-source-row]', 'paddingLeft', '4px', 'source.row-inset'],
+    ['[data-ui-source-row] > span', 'width', '28px', 'source.row-mark'],
+    ['[data-ui-control=select]', 'paddingLeft', '12px', 'control.select-inset-field-sm'],
+    ['[data-ui-control=select] > span', 'fontSize', '18px', 'control.font-size'],
+    ['#neighbor', 'paddingLeft', '20px', 'align.grid'],
+  ]) {
+    await page.locator(selector).first().evaluate((el, [property, value]) => { el.style[property] = value; }, [property, value]);
+    assert.ok((await diffMeasure()).issues.some(i => i.rule === rule), `code review profile rejects ${rule} at ${selector}`);
+    await page.setContent(diffFixture);
+  }
+  for (const [size, left, right] of [['sm', 8, 6], ['md', 10, 8]]) for (const variant of ['default', 'ghost', 'pill']) {
+    await page.locator('[data-ui-control=select]').evaluate((el, [size, variant, left, right]) => {
+      el.dataset.uiSize = size; el.dataset.variant = variant;
+      el.style.paddingLeft = `${left}px`; el.style.paddingRight = `${right}px`;
+    }, [size, variant, left, variant === 'pill' ? right - 2 : right]);
+    assert.deepEqual((await diffMeasure()).issues, [], `valid ${size} ${variant} selector inset`);
+    await page.locator('[data-ui-control=select]').evaluate(el => { el.style.paddingRight = '20px'; });
+    assert.ok((await diffMeasure()).issues.some(i => i.rule === `control.select-inset-${variant === 'pill' ? 'pill' : 'field'}-${size}`), 'selector variant rejects the wrong inset');
+  }
+  await page.setContent(diffFixture);
+  await page.locator('[data-ui-table-rows="code-diff"]').evaluate(el => el.removeAttribute('data-ui-table-rows'));
+  const ordinaryDiff = await diffMeasure();
+  assert.ok(ordinaryDiff.issues.some(i => i.rule === 'table.geometry'), 'unmarked tables retain ordinary geometry checks');
+  assert.ok(ordinaryDiff.issues.some(i => i.rule === 'table.column-hog'), 'unmarked overflowing tables retain column-share checks');
+  await page.setContent(diffFixture);
+  await page.locator('[data-ui-composer-modes]').evaluate(el => { el.dataset.uiComposerModes = 'compact'; el.style.padding = '4px 8px'; });
+  assert.deepEqual((await diffMeasure()).issues, [], 'compact mode uses its 8px grid');
+  await page.locator('[data-ui-composer-modes]').evaluate(el => { el.style.paddingLeft = '12px'; });
+  assert.ok((await diffMeasure()).issues.some(i => i.rule === 'composer.mode-inset-compact'), 'compact mode rejects a docked inset');
+  await page.setContent(html);
   const mutations = [
     ['graph detail typography drift', () => document.querySelector('[data-ui-text="graph-detail"]').style.fontSize='14px', 'graph.detail'],
     ['graph metadata typography drift', () => document.querySelector('[data-ui-text="graph-metadata"]').style.fontSize='8px', 'graph.metadata'],
@@ -859,7 +934,7 @@ table{width:100%;border-collapse:collapse} th,td{padding:0 12px;height:44px;text
           ['a table starting below the fold', () => document.querySelector('#filters').insertAdjacentHTML('afterend', '<p style="margin:0;height:520px">Long introduction</p>'), 'table below the fold']] },
       { ids: ['density.narrow-block'], valid: [['a full-width table', () => {}], ['a narrow table with a summary beside it', () => { const l = document.querySelector('#list'); const row = document.createElement('div'); row.style.cssText = 'display:flex;gap:16px'; l.before(row); row.append(l); l.style.width = '420px'; row.insertAdjacentHTML('beforeend', '<div class="card" style="flex:1">Summary of runs</div>'); }]],
         broken: [['a table held to 420px with the rest of the column blank', () => { document.querySelector('#list').style.maxWidth = '420px'; }, 'block width']] },
-      { ids: ['align.grid'], valid: [['lines on the gutter, the table inset and card padding', () => {}], ['a document page uses its own inset grid', () => { document.querySelector('#body').insertAdjacentHTML('beforeend', '<section data-reading-presentation="page"><p style="padding-left:4px">Document page text</p></section>'); }], ['a card inside a card (16 + 16)', () => { document.querySelector('#card').insertAdjacentHTML('beforeend', '<div class="card" style="margin-top:8px">Nested note</div>'); }], ['a centred empty state', () => { document.querySelector('#body').insertAdjacentHTML('beforeend', '<div style="text-align:center;padding:4px">Nothing else</div>'); }]],
+      { ids: ['align.grid'], valid: [['lines on the gutter, the table inset and card padding', () => {}], ['a document page uses its own inset grid', () => { document.querySelector('#body').insertAdjacentHTML('beforeend', '<section data-reading-presentation="page"><p style="padding-left:4px">Document page text</p></section>'); }], ['a card inside a card (16 + 16)', () => { document.querySelector('#card').insertAdjacentHTML('beforeend', '<div class="card" style="margin-top:8px">Nested note</div>'); }], ['an icon centred inside its grid cell', () => { document.querySelector('#body').insertAdjacentHTML('beforeend', '<span style="display:inline-grid;place-items:center;width:28px;height:28px;margin-left:12px"><svg width="24" height="24"><path d="M0 0h24v24H0z" /></svg></span>'); }], ['a centred empty state', () => { document.querySelector('#body').insertAdjacentHTML('beforeend', '<div style="text-align:center;padding:4px">Nothing else</div>'); }]],
         broken: [['a paragraph indented 4px off the grid', () => document.querySelector('#body').insertAdjacentHTML('beforeend', '<p style="padding-left:4px">Stray paragraph</p>'), 'line start off the grid'], ['an ordinary paragraph beside a document still fails', () => document.querySelector('#body').insertAdjacentHTML('beforeend', '<section data-reading-presentation="page"><p style="padding-left:4px">Document page text</p></section><p style="padding-left:4px">Stray host paragraph</p>'), 'line start off the grid'],
           ['a header action 6px short of the reading edge', () => { const f = document.querySelector('#filters'); f.style.justifyContent = 'space-between'; f.insertAdjacentHTML('beforeend', '<button style="margin-right:6px">Export</button>'); }, 'right edge off the grid']] },
       { ids: ['align.baseline'], valid: [['a label and value on one baseline', () => {}], ['a ✓ glyph centred beside its label (an icon, not a label)', () => { document.querySelector('#body').insertAdjacentHTML('beforeend', '<div style="display:flex;align-items:center;gap:6px"><span style="font-size:16px">✓</span><span style="font-size:12px">Contract complete</span></div>'); }]],

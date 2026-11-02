@@ -37,7 +37,7 @@
 // `data-ui-native-select`, which the DOM audit accepts and every other
 // `<select>` fails.
 //
-// Markers: the trigger carries `data-ui-control="select"`, the popup
+// Markers: the trigger carries `data-ui-control="select"` and `data-ui-size`, the popup
 // `data-ui-listbox="select"`, each option `data-ui-option`.
 
 import {
@@ -426,6 +426,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
       data-value={value}
       data-testid={testId}
       data-ui-control="select"
+      data-ui-size={size}
       data-variant={variant}
       onClick={(e) => { (rest.onClick as ((ev: unknown) => void) | undefined)?.(e); if (open) close(); else openList(); }}
       onKeyDown={onKeyDown}

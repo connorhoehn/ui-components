@@ -166,7 +166,7 @@ export function ChangeReviewCard({
       data-status={status}
       data-category={category}
       className={cn(
-        'flex flex-col gap-2.5 rounded-lg border bg-surface p-3',
+        'flex flex-col gap-2.5 rounded-lg border bg-surface p-4',
         applied ? 'border-success-border' : 'border-border',
         rejected && 'opacity-60',
         className,

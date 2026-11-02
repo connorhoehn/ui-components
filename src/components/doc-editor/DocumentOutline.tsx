@@ -109,9 +109,9 @@ export function DocumentOutline({
               data-active={active ? 'true' : 'false'}
               aria-current={active ? 'location' : undefined}
               onClick={() => onSelect?.(entry.id)}
-              style={{ paddingLeft: 8 + indentFor(entry.level, minLevel) }}
+              style={{ paddingLeft: 12 + indentFor(entry.level, minLevel) }}
               className={cn(
-                'rounded py-1 pr-2 text-left transition-colors',
+                'rounded py-1 pr-3 text-left transition-colors',
                 wrap ? 'whitespace-normal break-words' : 'truncate',
                 'hover:bg-surface-hover',
                 active ? 'bg-surface-inset font-medium text-text-primary' : 'text-text-secondary',

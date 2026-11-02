@@ -187,7 +187,7 @@ export function CodeBlock({
           className={cn(
             // A control on code is still a control: the page face at the 12px step,
             // not the block's monospace 11px (2.441.3).
-            'order-2 m-2 shrink-0 self-start font-[inherit] text-xs font-medium px-2 py-1 rounded border transition-opacity',
+            'order-2 m-3 shrink-0 self-start font-[inherit] text-xs font-medium px-2 py-1 rounded border transition-opacity',
             isConsole
               ? 'bg-code-panel text-code-text border-code-border hover:bg-code-raised'
               : isDark

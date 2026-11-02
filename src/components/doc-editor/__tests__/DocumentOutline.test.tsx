@@ -38,7 +38,7 @@ describe('DocumentOutline', () => {
   it('indents by level', () => {
     render(<DocumentOutline entries={entries} />);
     const pads = items().map((e) => e.style.paddingLeft);
-    expect(pads).toEqual(['8px', '20px', '32px', '8px']);
+    expect(pads).toEqual(['12px', '24px', '36px', '12px']);
   });
 
   // A document whose top heading is an h2 should not sit permanently indented
@@ -48,7 +48,7 @@ describe('DocumentOutline', () => {
       { id: 'a', text: 'Section', level: 2 },
       { id: 'b', text: 'Sub', level: 3 },
     ]} />);
-    expect(items().map((e) => e.style.paddingLeft)).toEqual(['8px', '20px']);
+    expect(items().map((e) => e.style.paddingLeft)).toEqual(['12px', '24px']);
   });
 
   it('marks where the reader is', () => {

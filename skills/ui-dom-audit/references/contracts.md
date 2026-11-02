@@ -899,3 +899,40 @@ Gutter measurements clip a text Range to the element's own overflow box as
 well as its ancestors. Browsers report the full unpainted Range for ellipsized
 text. This does not relax containment: visible overflow and clipped controls
 retain separate failing mutation fixtures.
+
+## Diff review and composer interior profiles
+
+`DiffViewer` marks only its code table with `data-ui-table-rows="code-diff"`.
+Full code lines scroll horizontally; truncation would hide the proposed change.
+The profile requires 12px monospace text on 18px lines, 6px line-number gutters,
+8px code padding and preserved whitespace. It replaces ordinary table geometry
+and column-share checks only for that table. File actions, annotations, contrast,
+page overflow and neighboring ordinary tables stay under their usual rules.
+
+`ChangeLocation` and each `ChangeDiff` side have semantic markers for their hunk
+coordinate and +/- gutter. Their text follows those markers rather than the page
+reading edge; dedicated inset/gap checks retain the compact 8px spacing. The
+review card's outer edge and its other content remain on the page grid.
+
+`RichChatComposer` marks its mode row with `data-ui-composer-modes`: `docked`
+uses a 12px inset from the composer border and `compact` uses 8px. It is not the
+page reading grid: ComposerSurface has its own gutter, often 16px beside a 24px
+page. The mode-inset rule checks both sides independently; `composer.surface`
+still checks outer placement. This does not exempt any control from typography,
+contrast, containment or keyboard checks.
+
+`ProcedureSteps` marks its document list with `data-ui-procedure`. The marker is
+24px (`md`) or 20px (`sm`), followed by a 12px gap. Those nested document lines
+use the procedure's own grid; measured marker dimensions and gap replace the
+page-inset heuristic. Ordinary content beside the procedure remains checked.
+A grid cell using `justify-items: center` is treated like centered flex content
+by the alignment heuristic; its centered icon is not a left-aligned reading line.
+
+Source rows use the existing `SourceCard layout="row"`: a 32px file mark, 12px
+gap and zero outer horizontal padding. Its title/meta column follows that mark;
+profile checks cover those dimensions without exempting the row action.
+
+Select's label uses the trigger's small/medium inset (8/10px left; 6/8px right,
+2px less on the right for pills). `data-ui-size` and `data-variant` select the
+exact profile. Only the label is omitted from the page reading-line heuristic;
+the trigger and popup keep typography, focus, containment and contrast checks.

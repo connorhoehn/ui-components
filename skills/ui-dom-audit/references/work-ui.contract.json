@@ -393,6 +393,10 @@
         {
           "selector": "[data-ui-table-rows=\"work\"]",
           "reason": "Work rows share the overview title/subline and owner/fact columns; their explicit work profile checks typography, height and cell edges."
+        },
+        {
+          "selector": "[data-ui-table-rows=\"code-diff\"]",
+          "reason": "DiffViewer preserves complete code lines in a horizontal scroller, with two compact line-number gutters. The code-diff profile checks its 12px monospace type, 18px lines and 6/8px cell insets; annotations and ordinary controls retain their own checks."
         }
       ]
     },
@@ -1000,6 +1004,34 @@
         {
           "selector": "[data-reading-presentation]",
           "reason": "CanvasDocumentView uses a document page grid and compact document status bar, independently of the host application gutter. Text, controls, contrast, overflow and table checks still apply."
+        },
+        {
+          "selector": "[data-ui-table-rows=\"code-diff\"]",
+          "reason": "DiffViewer preserves complete code lines in a horizontal scroller, with two compact line-number gutters. The code-diff profile checks its 12px monospace type, 18px lines and 6/8px cell insets; annotations and ordinary controls retain their own checks."
+        },
+        {
+          "selector": "[data-ui-change-location]",
+          "reason": "ChangeLocation is a hunk coordinate strip: text follows the @@ marker. Its explicit profile checks the 8px strip inset; control, contrast and overflow checks remain active."
+        },
+        {
+          "selector": "[data-ui-change-diff-side]",
+          "reason": "ChangeDiff has a +/- gutter before prose. Its explicit profile checks 8px insets and 8px marker gap; contrast, wrapping and overflow remain checked."
+        },
+        {
+          "selector": "[data-ui-composer-modes]",
+          "reason": "RichChatComposer mode controls follow the composer border (12px docked, 8px compact), not the page reading gutter. composer.surface still checks the outer placement; composer.mode-inset checks this inner grid, and all control/focus/contrast checks remain active."
+        },
+        {
+          "selector": "[data-ui-procedure]",
+          "reason": "ProcedureSteps has a numbered/bulleted marker column (24px md or 20px sm) plus a 12px gap before its prose and code. The procedure profile checks this anatomy; text, contrast, overflow and controls are still checked."
+        },
+        {
+          "selector": "[data-ui-source-row] > span:nth-child(2)",
+          "reason": "The SourceCard row title/meta column follows a 32px file mark and 12px gap. Its source-row profile checks the marker, gap and outer insets; the row control and neighboring content remain checked."
+        },
+        {
+          "selector": "[data-ui-control=\"select\"] > span",
+          "reason": "Select labels follow the trigger inset, not the page gutter. Explicit select profiles check both inset sizes and variants; trigger typography, focus, containment and the popup remain checked."
         }
       ]
     },
@@ -1204,7 +1236,13 @@
       "deep": true,
       "selector": "$tables",
       "maxShare": 0.5,
-      "owner": "DataTable column sizing (a growing text column truncates) / the page defining the columns"
+      "owner": "DataTable column sizing (a growing text column truncates) / the page defining the columns",
+      "exclude": [
+        {
+          "selector": "[data-ui-table-rows=\"code-diff\"]",
+          "reason": "DiffViewer preserves complete code lines in a horizontal scroller, with two compact line-number gutters. The code-diff profile checks its 12px monospace type, 18px lines and 6/8px cell insets; annotations and ordinary controls retain their own checks."
+        }
+      ]
     },
     {
       "id": "list.marker-alignment",
@@ -1428,6 +1466,189 @@
       "anchor": "[data-toolbar-controls]",
       "ancestor": true,
       "owner": "CollectionToolbar query controls"
+    },
+    {
+      "id": "diff.line-type",
+      "kind": "style",
+      "selector": "[data-ui-table-rows=\"code-diff\"] [data-diff-cell]",
+      "properties": {
+        "fontSize": 12,
+        "lineHeight": 18,
+        "fontFamily": {
+          "contains": "monospace"
+        }
+      },
+      "owner": "DiffViewer"
+    },
+    {
+      "id": "diff.line-height",
+      "kind": "box",
+      "selector": "[data-ui-table-rows=\"code-diff\"] [data-diff-line]",
+      "properties": {
+        "height": 18
+      },
+      "owner": "DiffViewer"
+    },
+    {
+      "id": "diff.gutter-inset",
+      "kind": "style",
+      "selector": "[data-ui-table-rows=\"code-diff\"] [data-diff-cell=\"gutter\"]",
+      "properties": {
+        "paddingLeft": 6,
+        "paddingRight": 6
+      },
+      "owner": "DiffViewer"
+    },
+    {
+      "id": "diff.code-inset",
+      "kind": "style",
+      "selector": "[data-ui-table-rows=\"code-diff\"] [data-diff-cell=\"code\"]",
+      "properties": {
+        "paddingLeft": 8,
+        "paddingRight": 8,
+        "whiteSpace": "pre"
+      },
+      "owner": "DiffViewer"
+    },
+    {
+      "id": "diff.scroll",
+      "kind": "style",
+      "selector": "[data-ui-diff-scroll]",
+      "properties": {
+        "overflowX": "auto"
+      },
+      "owner": "DiffViewer"
+    },
+    {
+      "id": "change.location-inset",
+      "kind": "style",
+      "selector": "[data-ui-change-location]",
+      "properties": {
+        "paddingLeft": 8,
+        "paddingRight": 8
+      },
+      "owner": "ChangeLocation"
+    },
+    {
+      "id": "change.diff-inset",
+      "kind": "style",
+      "selector": "[data-ui-change-diff-side]",
+      "properties": {
+        "paddingLeft": 8,
+        "paddingRight": 8,
+        "columnGap": 8
+      },
+      "owner": "ChangeDiff"
+    },
+    {
+      "id": "composer.mode-inset-docked",
+      "kind": "style",
+      "selector": "[data-ui-composer-modes=\"docked\"]",
+      "properties": {
+        "paddingLeft": 12,
+        "paddingRight": 12
+      },
+      "owner": "RichChatComposer mode row"
+    },
+    {
+      "id": "composer.mode-inset-compact",
+      "kind": "style",
+      "selector": "[data-ui-composer-modes=\"compact\"]",
+      "properties": {
+        "paddingLeft": 8,
+        "paddingRight": 8
+      },
+      "owner": "RichChatComposer mode row"
+    },
+    {
+      "id": "procedure.marker-gap",
+      "kind": "style",
+      "selector": "[data-ui-procedure] > li",
+      "properties": {
+        "columnGap": 12
+      },
+      "owner": "ProcedureSteps"
+    },
+    {
+      "id": "procedure.marker-md",
+      "kind": "box",
+      "selector": "[data-ui-procedure=\"md\"] > li > :first-child",
+      "properties": {
+        "width": 24,
+        "height": 24
+      },
+      "owner": "ProcedureSteps"
+    },
+    {
+      "id": "procedure.marker-sm",
+      "kind": "box",
+      "selector": "[data-ui-procedure=\"sm\"] > li > :first-child",
+      "properties": {
+        "width": 20,
+        "height": 20
+      },
+      "owner": "ProcedureSteps"
+    },
+    {
+      "id": "source.row-inset",
+      "kind": "style",
+      "selector": "[data-ui-source-row]",
+      "properties": {
+        "paddingLeft": 0,
+        "paddingRight": 0,
+        "columnGap": 12
+      },
+      "owner": "SourceCard row"
+    },
+    {
+      "id": "source.row-mark",
+      "kind": "box",
+      "selector": "[data-ui-source-row] > :first-child",
+      "properties": {
+        "width": 32,
+        "height": 32
+      },
+      "owner": "SourceCard row"
+    },
+    {
+      "id": "control.select-inset-field-sm",
+      "kind": "style",
+      "selector": "[data-ui-control=\"select\"][data-ui-size=\"sm\"]:is([data-variant=\"default\"],[data-variant=\"ghost\"])",
+      "properties": {
+        "paddingLeft": 8,
+        "paddingRight": 6
+      },
+      "owner": "Select trigger"
+    },
+    {
+      "id": "control.select-inset-pill-sm",
+      "kind": "style",
+      "selector": "[data-ui-control=\"select\"][data-ui-size=\"sm\"][data-variant=\"pill\"]",
+      "properties": {
+        "paddingLeft": 8,
+        "paddingRight": 4
+      },
+      "owner": "Select trigger"
+    },
+    {
+      "id": "control.select-inset-field-md",
+      "kind": "style",
+      "selector": "[data-ui-control=\"select\"][data-ui-size=\"md\"]:is([data-variant=\"default\"],[data-variant=\"ghost\"])",
+      "properties": {
+        "paddingLeft": 10,
+        "paddingRight": 8
+      },
+      "owner": "Select trigger"
+    },
+    {
+      "id": "control.select-inset-pill-md",
+      "kind": "style",
+      "selector": "[data-ui-control=\"select\"][data-ui-size=\"md\"][data-variant=\"pill\"]",
+      "properties": {
+        "paddingLeft": 10,
+        "paddingRight": 6
+      },
+      "owner": "Select trigger"
     }
   ]
 }

@@ -49,6 +49,7 @@ function Side({
   return (
     <div
       data-testid={testId}
+      data-ui-change-diff-side=""
       className={cn(
         'flex min-w-0 gap-2 rounded border px-2 py-1',
         tone === 'danger'
@@ -60,7 +61,7 @@ function Side({
         aria-hidden
         className={cn(
           'shrink-0 select-none font-mono text-xs leading-5',
-          tone === 'danger' ? 'text-danger-fg/70' : 'text-success-fg/70',
+          tone === 'danger' ? 'text-danger-fg' : 'text-success-fg',
         )}
       >
         {marker}
@@ -69,7 +70,7 @@ function Side({
         <div
           className={cn(
             'text-xs uppercase tracking-wide',
-            tone === 'danger' ? 'text-danger-fg/70' : 'text-success-fg/70',
+            tone === 'danger' ? 'text-danger-fg' : 'text-success-fg',
           )}
         >
           {label}

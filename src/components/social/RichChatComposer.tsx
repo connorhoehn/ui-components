@@ -2664,7 +2664,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
         {/* Narrow always takes the compact pill: three segmented tabs with
             labels do not fit beside anything at that width. */}
         {compactModeRow && !collapsed && !pane && (
-          <div className={cn('flex min-w-0 items-center gap-1.5 text-xs', docked ? 'px-3 pt-2' : 'px-2 pt-1', compact && 'flex-wrap', reveal)} data-testid={`${testId}-modes`} data-mode-control={menuModeRow ? 'menu' : 'compact'}>
+          <div className={cn('flex min-w-0 items-center gap-1.5 text-xs', docked ? 'px-3 pt-2' : 'px-2 pt-1', compact && 'flex-wrap', reveal)} data-testid={`${testId}-modes`} data-mode-control={menuModeRow ? 'menu' : 'compact'} data-ui-composer-modes={docked ? 'docked' : 'compact'}>
             {docked && modeRowStart != null && (
               <span className="flex shrink-0 items-center" data-testid={`${testId}-mode-row-start`}>{modeRowStart}</span>
             )}

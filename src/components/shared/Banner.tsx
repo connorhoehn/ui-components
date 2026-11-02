@@ -146,7 +146,7 @@ export default function Banner({
           // lg hangs the action off the title line, not the block's middle.
           'rounded-md flex gap-4 border text-text-primary',
           lg ? 'items-start' : 'items-center',
-          lg ? 'px-6 py-3 text-[15px]' : 'px-5 py-3 text-sm',
+          lg ? 'px-6 py-3 text-[15px]' : 'px-4 py-3 text-sm',
           CALLOUT_CLASSES[variant],
           accent === 'bar' && cn('border-l-[3px]', ACCENT_BAR_CLASSES[variant]),
           className,
