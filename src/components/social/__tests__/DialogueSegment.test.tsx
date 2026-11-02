@@ -2,6 +2,11 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { DialogueSegment } from '../DialogueSegment';
 describe('DialogueSegment', () => {
+  it('makes the exact segment draggable only when the host provides its payload', () => {
+    const drag=vi.fn();const {container,rerender}=render(<DialogueSegment author="Cup" text="Hello" onDragStart={drag} />);
+    const row=container.querySelector('[data-dialogue-segment]')!;fireEvent.dragStart(row);expect(drag).toHaveBeenCalledOnce();
+    expect(row).toHaveAttribute('draggable','true');rerender(<DialogueSegment author="Cup" text="Hello" />);expect(row).toHaveAttribute('draggable','false');
+  });
   it('keeps the full line accessible and gives host actions their actual trigger', () => {
     const play = vi.fn(), queue = vi.fn();
     render(<DialogueSegment author="Peb" text="I like this spot." metadata="Scene 2" actions={[

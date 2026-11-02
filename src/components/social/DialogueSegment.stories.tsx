@@ -18,3 +18,4 @@ export const Editor: Story = {
 };
 export const MissingTake: Story = { args: { author: 'Map', text: "I'm Mape. I fell from a tree too! Do you want to play?", metadata: 'No take', actions: [{ id: 'play', label: 'No playable take', icon: <PlayCircleIcon />, disabled: true, onClick: () => {} }, { id: 'rework', label: 'Queue for rework', icon: <RepeatIcon />, onClick: () => {} }] } };
 export const LongLine: Story = { ...Editor, args: { ...Editor.args, text: 'A very long line stays on one text line. Its full contents remain available to assistive technology, the title tooltip, and a host-provided inspector.' } };
+export const Draggable: Story = { ...Editor, name: 'Clip context drag', args: { ...Editor.args, onDragStart: event => { event.dataTransfer.setData('application/x-example-clip','clip-42'); event.dataTransfer.effectAllowed='copy'; } } };

@@ -4,6 +4,13 @@ import { Breadcrumbs } from '../Breadcrumbs';
 import { Toolbar } from '../Toolbar';
 
 describe('WorkArea', () => {
+  it('keeps a composer footer full bleed and outside the body scroller/status inset', () => {
+    const { container } = render(<WorkArea status={<span>counts</span>} footer={<div data-composer-surface>prompt</div>}>body</WorkArea>);
+    const footer = container.querySelector('[data-workarea-footer]')!;
+    expect(footer).toContainElement(container.querySelector('[data-composer-surface]') as HTMLElement);
+    expect(footer.className).not.toMatch(/px-|py-|border/);
+    expect(container.querySelector('.overflow-auto')).not.toContainElement(footer as HTMLElement);
+  });
   it('renders body content', () => {
     render(<WorkArea data-testid="area"><p>body</p></WorkArea>);
     expect(screen.getByText('body')).toBeInTheDocument();

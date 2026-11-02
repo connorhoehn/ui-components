@@ -40,6 +40,8 @@ export interface WorkAreaProps {
   children: ReactNode;
   /** Pinned bottom row — counts, freshness, a connection pill. */
   status?: ReactNode;
+  /** Pinned full-width content, such as ComposerSurface. It owns its insets/background. */
+  footer?: ReactNode;
   /** Comfortable padding around `children`. Off for canvases and nested rails. */
   padded?: boolean;
   tone?: WorkAreaTone;
@@ -67,6 +69,7 @@ export function WorkArea({
   toolbar,
   children,
   status,
+  footer,
   padded = true,
   tone = 'surface',
   className,
@@ -105,6 +108,7 @@ export function WorkArea({
           {status}
         </div>
       )}
+      {footer && <div className="min-w-0 shrink-0" data-workarea-footer>{footer}</div>}
     </div>
   );
 }

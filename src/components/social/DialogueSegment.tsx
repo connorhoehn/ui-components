@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode, DragEvent } from 'react';
 import { cn } from '../../lib/cn';
 import { Avatar } from '../shared/Avatar';
 import { MessageActionBar, type MessageAction } from './MessageActionBar';
@@ -11,12 +11,13 @@ export interface DialogueSegmentProps {
   status?: ReactNode;
   actions?: readonly MessageAction[];
   className?: string;
+  onDragStart?: (event: DragEvent<HTMLDivElement>) => void;
 }
 /** Two-line transcript row. The host owns playback, persistence and full-text
  * inspection; the same action toolbar used by chat owns keyboard navigation. */
-export function DialogueSegment({ author, avatarUrl, text, metadata, status, actions = [], className }: DialogueSegmentProps) {
+export function DialogueSegment({ author, avatarUrl, text, metadata, status, actions = [], className, onDragStart }: DialogueSegmentProps) {
   return (
-    <div data-dialogue-segment className={cn('group relative flex min-w-0 items-center gap-2 border-b border-border-subtle px-2 py-1 hover:bg-surface-hover focus-within:bg-surface-hover', className)}>
+    <div data-dialogue-segment draggable={!!onDragStart} onDragStart={onDragStart} className={cn('group relative flex min-w-0 items-center gap-2 border-b border-border-subtle px-2 py-1 hover:bg-surface-hover focus-within:bg-surface-hover', className)}>
       <Avatar name={author} src={avatarUrl} size={32} />
       <div className="min-w-0 flex-1">
         <div className="flex h-5 min-w-0 items-center gap-2 pr-24 text-xs text-text-secondary">

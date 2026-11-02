@@ -3,6 +3,8 @@ import { WorkArea } from './WorkArea';
 import { Breadcrumbs } from './Breadcrumbs';
 import { Toolbar, ToolbarGroup, ToolbarLabel } from './Toolbar';
 import { Button } from '../ui/Button';
+import { ComposerSurface } from './ComposerSurface';
+import { ContextComposer } from '../social/ContextComposer';
 
 const meta = {
   title: 'Shared/WorkArea',
@@ -87,4 +89,9 @@ export const CodeTone: Story = {
       <pre className="font-mono text-[12px] text-code-green">$ pytest -q{'\n'}42 passed in 3.2s</pre>
     ),
   },
+};
+
+export const ComposerFooter: Story = {
+  name: 'Full-bleed composer footer',
+  args: { padded: false, children: <LongBody />, footer: <ComposerSurface compact><ContextComposer context={{ kind: "initiative", id: "story", title: "Story production" }} modes={["agent"]} defaultMode="agent" console={false} expanded allowAttachments={false} allowEmoji={false} workflows={[{ id: "inspect", label: "Inspect inputs" }]} onSend={() => false} /></ComposerSurface> },
 };
