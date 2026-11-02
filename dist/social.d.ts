@@ -2538,6 +2538,20 @@ export declare function describeReactors(group: ReactionGroup): string;
 /** "Mia Zhao and 2 others" — the sentence beside the avatar row. */
 export declare function describeRecordingParticipants(participants: readonly RecordingParticipant[], total: number): string;
 
+/** Two-line transcript row. The host owns playback, persistence and full-text
+ * inspection; the same action toolbar used by chat owns keyboard navigation. */
+export declare function DialogueSegment({ author, avatarUrl, text, metadata, status, actions, className }: DialogueSegmentProps): JSX.Element;
+
+export declare interface DialogueSegmentProps {
+    author: string;
+    avatarUrl?: string;
+    text: string;
+    metadata?: ReactNode;
+    status?: ReactNode;
+    actions?: readonly MessageAction[];
+    className?: string;
+}
+
 export declare function DocumentActivityCard({ documentId, title, icon, createdBy, editors, onOpen, unavailable, className, 'data-testid': testId, }: DocumentActivityCardProps): JSX.Element;
 
 export declare interface DocumentActivityCardProps {
@@ -3122,9 +3136,20 @@ export declare interface MembersPanelProps {
 /** Later commands win by trigger (case-insensitive); the first occurrence keeps its position. */
 export declare function mergeChatCommands(...layers: ReadonlyArray<readonly ChatCommand[] | undefined>): ChatCommand[];
 
-export declare function MessageActionBar({ quickReactions, onReact, onOpenReactionPicker, onReply, onForward, onTogglePin, pinned, onCopyLink, onEdit, onDelete, className, 'data-testid': testId, }: MessageActionBarProps): JSX.Element | null;
+export declare interface MessageAction {
+    id: string;
+    label: string;
+    icon: React.ReactNode;
+    onClick: (trigger: HTMLElement) => void;
+    disabled?: boolean;
+}
+
+export declare function MessageActionBar({ actions: customActions, label, quickReactions, onReact, onOpenReactionPicker, onReply, onForward, onTogglePin, pinned, onCopyLink, onEdit, onDelete, className, 'data-testid': testId, }: MessageActionBarProps): JSX.Element | null;
 
 export declare interface MessageActionBarProps {
+    /** Domain actions reuse the chat toolbar keyboard and hover hierarchy. */
+    actions?: readonly MessageAction[];
+    label?: string;
     /** Emoji offered inline. Keep it short; the picker covers the rest. */
     quickReactions?: readonly string[];
     onReact?: (emoji: string) => void;

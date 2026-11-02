@@ -44,61 +44,65 @@ function T({ items: e, storageKey: t, title: n, renderNavItem: r, railLabel: i }
 		})
 	});
 }
-function E({ title: t, items: n, titleAction: r, railHeader: i, railWidth: a = 220, storageKey: o = "subnav", secondaryTitle: s, secondaryItems: c, secondaryStorageKey: l, secondaryRailWidth: u = 200, renderNavItem: d, railLabel: f, contentAs: m = "main", contentLabel: h, collapsed: g = !1, children: _ }) {
-	let v = m, y = c && c.length > 0, [x, w] = b(0), E = p((e) => e ? (w((e) => e + 1), () => w((e) => e - 1)) : () => {}, []), O = g && x > 0;
+function E({ title: t, items: n, compactHeader: r = !1, railContent: i, contentPadding: a = "default", titleAction: o, railHeader: s, railWidth: c = 220, storageKey: l = "subnav", secondaryTitle: u, secondaryItems: d, secondaryStorageKey: f, secondaryRailWidth: m = 200, renderNavItem: h, railLabel: g, contentAs: _ = "main", contentLabel: v, collapsed: y = !1, children: x }) {
+	let w = _, E = d && d.length > 0, [O, k] = b(0), A = p((e) => e ? (k((e) => e + 1), () => k((e) => e - 1)) : () => {}, []), j = y && O > 0;
 	return /* @__PURE__ */ C("div", {
 		className: "flex h-full min-h-0",
 		children: [
 			/* @__PURE__ */ C("aside", {
-				"aria-label": f ?? `${t} navigation`,
-				className: e("flex-none border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col overflow-hidden", g && "w-11 min-w-11"),
-				style: g ? void 0 : { width: a },
-				"data-collapsed": g ? "true" : void 0,
+				"aria-label": g ?? `${t} navigation`,
+				className: e("flex-none border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col overflow-hidden", y && "w-11 min-w-11"),
+				style: y ? void 0 : { width: c },
+				"data-collapsed": y ? "true" : void 0,
 				children: [
 					/* @__PURE__ */ C("div", {
-						className: e("flex items-center border-b border-[var(--color-border)]", g ? "justify-center px-0" : "justify-between px-4", O ? "h-9 py-0" : "py-[14px]"),
-						children: [!g && /* @__PURE__ */ S("span", {
-							className: "text-[12px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-[0.05em]",
+						className: e("flex flex-none items-center border-b border-[var(--color-border)]", y ? "justify-center px-0" : "justify-between px-4", j ? "h-9 py-0" : r ? "py-2.5" : "py-[14px]"),
+						children: [!y && /* @__PURE__ */ S("span", {
+							className: e("font-semibold text-[var(--color-text-tertiary)] uppercase tracking-[0.05em]", r ? "text-[11px]" : "text-[12px]"),
 							children: t
-						}), r]
+						}), o]
 					}),
-					i && !g && /* @__PURE__ */ S("div", {
+					s && !y && /* @__PURE__ */ S("div", {
 						className: "px-3 py-2 border-b border-[var(--color-border)]",
-						children: i
+						children: s
 					}),
-					!g && /* @__PURE__ */ S(T, {
+					!y && (i ? /* @__PURE__ */ S("div", {
+						className: "min-h-0 flex-1 overflow-auto",
+						"data-subnav-explorer": !0,
+						children: i
+					}) : /* @__PURE__ */ S(T, {
 						items: n,
-						storageKey: o,
+						storageKey: l,
 						title: t,
-						renderNavItem: d,
-						railLabel: f
-					})
+						renderNavItem: h,
+						railLabel: g
+					}))
 				]
 			}),
-			y && /* @__PURE__ */ C("aside", {
-				"aria-label": `${s ?? t} sections`,
+			E && /* @__PURE__ */ C("aside", {
+				"aria-label": `${u ?? t} sections`,
 				className: "flex-none border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col overflow-hidden",
-				style: { width: u },
+				style: { width: m },
 				children: [/* @__PURE__ */ S("div", {
 					className: "flex items-center justify-between px-4 py-[14px] border-b border-[var(--color-border)]",
 					children: /* @__PURE__ */ S("span", {
 						className: "text-[12px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-[0.05em]",
-						children: s ?? ""
+						children: u ?? ""
 					})
 				}), /* @__PURE__ */ S(T, {
-					items: c,
-					storageKey: l ?? `${o}.secondary`,
-					title: s ?? "secondary",
-					renderNavItem: d
+					items: d,
+					storageKey: f ?? `${l}.secondary`,
+					title: u ?? "secondary",
+					renderNavItem: h
 				})]
 			}),
-			/* @__PURE__ */ S(v, {
-				"aria-label": h,
+			/* @__PURE__ */ S(w, {
+				"aria-label": v,
 				"data-subnav-content": !0,
-				className: "flex-1 min-w-0 overflow-auto p-[var(--ui-page-gutter,1.5rem)]",
+				className: e("flex-1 min-w-0 min-h-0 overflow-auto", a === "none" ? "p-0" : "p-[var(--ui-page-gutter,1.5rem)]"),
 				children: /* @__PURE__ */ S(D.Provider, {
-					value: E,
-					children: _
+					value: A,
+					children: x
 				})
 			})
 		]

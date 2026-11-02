@@ -1506,6 +1506,19 @@ export declare function ArtifactTile({ name, type, url }: {
 
 declare type AssertTrue<T extends true> = T;
 
+/** Borderless collection: fixed thumbnail ratio, concise captions, shared
+ * Avatar identity. Full source metadata belongs in the host's inspection view. */
+export declare function AssetGallery({ items, variant, label, onOpen, actions, className }: AssetGalleryProps): JSX.Element;
+
+export declare interface AssetGalleryProps {
+    items: readonly GalleryAsset[];
+    variant?: 'avatars' | 'images';
+    label: string;
+    onOpen: (item: GalleryAsset) => void;
+    actions?: (item: GalleryAsset) => ReactNode;
+    className?: string;
+}
+
 /** An @ sign: mentions, "someone named you". */
 export declare function AtIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -8032,6 +8045,20 @@ export declare const diagramFieldType: FieldTypeDefinition;
 
 export declare function DiagramReaderRenderer({ section }: SectionRendererProps): JSX.Element;
 
+/** Two-line transcript row. The host owns playback, persistence and full-text
+ * inspection; the same action toolbar used by chat owns keyboard navigation. */
+export declare function DialogueSegment({ author, avatarUrl, text, metadata, status, actions, className }: DialogueSegmentProps): JSX.Element;
+
+export declare interface DialogueSegmentProps {
+    author: string;
+    avatarUrl?: string;
+    text: string;
+    metadata?: ReactNode;
+    status?: ReactNode;
+    actions?: readonly MessageAction[];
+    className?: string;
+}
+
 export declare interface DiffAnnotation {
     /** Path as it appears in the diff (new side). */
     file: string;
@@ -10336,6 +10363,13 @@ export declare function fullDateLabel(isoString: string): string;
 
 /** Full local date AND time — the `title` of a row's truncated HH:MM. */
 export declare function fullTimestampLabel(isoString: string): string;
+
+export declare interface GalleryAsset {
+    id: string;
+    title: string;
+    src?: string;
+    subtitle?: string;
+}
 
 /** Runtime configuration read from env vars */
 export declare interface GatewayConfig {
@@ -13822,9 +13856,20 @@ export declare function MenuIcon({ size, ...rest }: GlyphProps): JSX.Element;
 /** Later commands win by trigger (case-insensitive); the first occurrence keeps its position. */
 export declare function mergeChatCommands(...layers: ReadonlyArray<readonly ChatCommand[] | undefined>): ChatCommand[];
 
-export declare function MessageActionBar({ quickReactions, onReact, onOpenReactionPicker, onReply, onForward, onTogglePin, pinned, onCopyLink, onEdit, onDelete, className, 'data-testid': testId, }: MessageActionBarProps): JSX.Element | null;
+export declare interface MessageAction {
+    id: string;
+    label: string;
+    icon: React.ReactNode;
+    onClick: (trigger: HTMLElement) => void;
+    disabled?: boolean;
+}
+
+export declare function MessageActionBar({ actions: customActions, label, quickReactions, onReact, onOpenReactionPicker, onReply, onForward, onTogglePin, pinned, onCopyLink, onEdit, onDelete, className, 'data-testid': testId, }: MessageActionBarProps): JSX.Element | null;
 
 export declare interface MessageActionBarProps {
+    /** Domain actions reuse the chat toolbar keyboard and hover hierarchy. */
+    actions?: readonly MessageAction[];
+    label?: string;
     /** Emoji offered inline. Keep it short; the picker covers the rest. */
     quickReactions?: readonly string[];
     onReact?: (emoji: string) => void;
@@ -22059,12 +22104,18 @@ export declare interface SubNavItem {
     groupScrollAfter?: number;
 }
 
-export declare function SubNavLayout({ title, items, titleAction, railHeader, railWidth, storageKey, secondaryTitle, secondaryItems, secondaryStorageKey, secondaryRailWidth, renderNavItem, railLabel, contentAs, contentLabel, collapsed, children, }: SubNavLayoutProps): JSX.Element;
+export declare function SubNavLayout({ title, items, compactHeader, railContent, contentPadding, titleAction, railHeader, railWidth, storageKey, secondaryTitle, secondaryItems, secondaryStorageKey, secondaryRailWidth, renderNavItem, railLabel, contentAs, contentLabel, collapsed, children, }: SubNavLayoutProps): JSX.Element;
 
 export declare interface SubNavLayoutProps {
     /** Section title shown at top of the rail. */
     title: string;
     items: SubNavItem[];
+    /** Align with the compact primary NavRail heading. */
+    compactHeader?: boolean;
+    /** Explorer/tree content in place of navigation links. */
+    railContent?: ReactNode;
+    /** A child WorkArea can own its gutter without nesting padding. */
+    contentPadding?: "default" | "none";
     /** Optional element rendered next to the title (e.g. a help "?" button). */
     titleAction?: ReactNode;
     /** Optional content rendered above the nav items (e.g. a [+ New] button). */

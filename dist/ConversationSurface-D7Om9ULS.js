@@ -1542,27 +1542,36 @@ var gt = [
 	"🎉",
 	"❤️"
 ], _t = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
-function vt({ quickReactions: t = gt, onReact: n, onOpenReactionPicker: r, onReply: i, onForward: a, onTogglePin: c, pinned: l = !1, onCopyLink: u, onEdit: d, onDelete: m, className: h, "data-testid": g = "message-actions" }) {
-	let y = [], x = (e, t, n, r) => y.push({
+function vt({ actions: t = [], label: n = "Message actions", quickReactions: r = gt, onReact: i, onOpenReactionPicker: a, onReply: c, onForward: l, onTogglePin: u, pinned: d = !1, onCopyLink: m, onEdit: h, onDelete: g, className: y, "data-testid": x = "message-actions" }) {
+	let S = [], C = (e, t, n, r) => S.push({
 		key: e,
 		label: t,
 		glyph: n,
 		onClick: r
 	});
-	if (n) for (let e of t) x(`react-${e}`, `React ${e}`, /* @__PURE__ */ W("span", {
+	if (i) for (let e of r) C(`react-${e}`, `React ${e}`, /* @__PURE__ */ W("span", {
 		"aria-hidden": !0,
 		children: e
-	}), () => n(e));
-	return r && x("more-reactions", "More reactions", /* @__PURE__ */ W(p, { size: 14 }), (e) => r(e.currentTarget)), i && x("reply", "Reply", /* @__PURE__ */ W(_, { size: 14 }), i), a && x("forward", "Forward to another conversation", /* @__PURE__ */ W(o, { size: 14 }), (e) => a(e.currentTarget)), c && x("pin", l ? "Unpin" : "Pin to channel", /* @__PURE__ */ W(f, { size: 14 }), c), u && x("copy-link", "Copy link to message", /* @__PURE__ */ W(s, { size: 14 }), u), d && x("edit", "Edit message", /* @__PURE__ */ W(v, { size: 13 }), d), m && x("delete", "Delete message", /* @__PURE__ */ W(b, { size: 13 }), m), y.length === 0 ? null : /* @__PURE__ */ W(M, {
-		label: "Message actions",
-		"data-testid": g,
-		className: e("gap-0.5 rounded-lg border border-border bg-surface p-0.5 shadow-sm", h),
-		children: y.map((e) => /* @__PURE__ */ W("button", {
+	}), () => i(e));
+	a && C("more-reactions", "More reactions", /* @__PURE__ */ W(p, { size: 14 }), (e) => a(e.currentTarget)), c && C("reply", "Reply", /* @__PURE__ */ W(_, { size: 14 }), c), l && C("forward", "Forward to another conversation", /* @__PURE__ */ W(o, { size: 14 }), (e) => l(e.currentTarget)), u && C("pin", d ? "Unpin" : "Pin to channel", /* @__PURE__ */ W(f, { size: 14 }), u), m && C("copy-link", "Copy link to message", /* @__PURE__ */ W(s, { size: 14 }), m), h && C("edit", "Edit message", /* @__PURE__ */ W(v, { size: 13 }), h), g && C("delete", "Delete message", /* @__PURE__ */ W(b, { size: 13 }), g);
+	for (let e of t) S.push({
+		key: e.id,
+		label: e.label,
+		glyph: e.icon,
+		disabled: e.disabled,
+		onClick: (t) => e.onClick(t.currentTarget)
+	});
+	return S.length === 0 ? null : /* @__PURE__ */ W(M, {
+		label: n,
+		"data-testid": x,
+		className: e("gap-0.5 rounded-lg border border-border bg-surface p-0.5 shadow-sm", y),
+		children: S.map((e) => /* @__PURE__ */ W("button", {
 			type: "button",
 			"aria-label": e.label,
 			title: e.label,
-			"data-testid": `${g}-${e.key}`,
+			"data-testid": `${x}-${e.key}`,
 			onClick: e.onClick,
+			disabled: e.disabled,
 			className: `grid h-6 w-6 place-items-center rounded text-xs leading-none text-text-secondary hover:bg-surface-hover hover:text-text-primary ${_t}`,
 			children: e.glyph
 		}, e.key))

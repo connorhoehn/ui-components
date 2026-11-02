@@ -24,7 +24,7 @@ import { t as D } from "./PresenceAvatars--JG3ZaTz.js";
 import { t as O } from "./FileUploadDrop-D7fSKjmK.js";
 import { t as k } from "./ActivityFeed-BU9LDJNO.js";
 import { a as A, i as j, n as M, o as N } from "./DockedAside-2JxMbMzB.js";
-import { d as P, dt as F, lt as ee, n as te, t as I, u as ne, ut as re } from "./ConversationSurface-BKKivjSM.js";
+import { d as P, dt as F, lt as ee, n as te, t as I, u as ne, ut as re } from "./ConversationSurface-D7Om9ULS.js";
 import { E as ie, G as ae, R as L, T as oe, Y as se, _ as R, i as z, k as B, n as ce, q as le, s as ue, t as de, w as fe, x as pe, y as V } from "./BreakoutRoomsPanel-COMq4k_v.js";
 import { t as me } from "./useActiveSpeaker-BGKJU3Lb.js";
 import { c as he, o as ge, s as _e } from "./useDocumentImageUpload-CiVzrQ_-.js";

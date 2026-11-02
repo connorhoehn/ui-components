@@ -61,7 +61,7 @@ import "./PresenceAvatars--JG3ZaTz.js";
 import "./FileUploadDrop-D7fSKjmK.js";
 import { t as ge } from "./ActivityFeed-BU9LDJNO.js";
 import { a as _e, c as ve, d as ye, i as W, l as be, o as xe } from "./railType-C-v_XDgr.js";
-import "./PopoverForm-Dp3q4UGT.js";
+import "./PopoverForm-BLNwxGmv.js";
 import "./useMeasuredWidth-oaIDIeJQ.js";
 import "./SectionLabel-Ch_rkHQZ.js";
 import "./InlinePlaceholder-DiPQ7hOM.js";
@@ -6048,4 +6048,56 @@ function Hi({ children: t, className: n, compact: r, ...a }) {
 	});
 }
 //#endregion
-export { Nn as $, _r as A, lt as At, Hn as B, Pr as C, Tt as Ct, wr as D, vt as Dt, Cr as E, bt as Et, ur as F, rt as Ft, Cn as G, Yn as H, cr as I, Qe as It, wn as J, kn as K, or as L, tt as Lt, hr as M, ct as Mt, mr as N, et as Nt, vr as O, gt as Ot, dr as P, $e as Pt, Mn as Q, rr as R, Ge as Rt, Fr as S, Ot as St, Tr as T, Ct as Tt, Fn as U, Ln as V, Sn as W, Dn as X, En as Y, An as Z, ii as _, qt as _t, ki as a, fn as at, Yr as b, Mt as bt, Ei as c, un as ct, xi as d, rn as dt, xn as et, bi as f, Qt as ft, fi as g, Jt as gt, _i as h, Yt as ht, Mi as i, mn as it, br as j, st as jt, gr as k, ft as kt, wi as l, ln as lt, vi as m, Zt as mt, Bi as n, gn as nt, Di as o, pn as ot, yi as p, nn as pt, Tn as q, Ri as r, hn as rt, Oi as s, dn as st, Hi as t, _n as tt, Ci as u, sn as ut, ti as v, Ht as vt, Nr as w, wt, Br as x, At as xt, $r as y, Rt as yt, ir as z };
+//#region src/components/shared/AssetGallery.tsx
+function Ui({ items: t, variant: n = "images", label: r, onOpen: i, actions: a, className: o }) {
+	return /* @__PURE__ */ Z("div", {
+		role: "list",
+		"aria-label": r,
+		"data-asset-gallery": n,
+		className: e("grid gap-3", n === "avatars" ? "grid-cols-2 sm:grid-cols-4 lg:grid-cols-8" : "grid-cols-2 md:grid-cols-3 xl:grid-cols-4", o),
+		children: t.map((t) => /* @__PURE__ */ Q("div", {
+			role: "listitem",
+			className: "group min-w-0",
+			children: [/* @__PURE__ */ Q("button", {
+				type: "button",
+				"aria-label": `Inspect ${t.title}`,
+				onClick: () => i(t),
+				className: "block w-full min-w-0 rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+				children: [
+					/* @__PURE__ */ Z("span", {
+						"data-gallery-thumbnail": !0,
+						className: e("flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-surface-muted transition-colors group-hover:bg-surface-hover", n === "images" && "aspect-[4/3]"),
+						children: n === "avatars" ? /* @__PURE__ */ Z(V, {
+							name: t.title,
+							src: t.src,
+							size: 88
+						}) : t.src ? /* @__PURE__ */ Z("img", {
+							src: t.src,
+							alt: t.title,
+							loading: "lazy",
+							className: "h-full w-full object-cover transition-transform group-hover:scale-105"
+						}) : /* @__PURE__ */ Z("span", {
+							className: "text-xs text-text-secondary",
+							children: "Image unavailable"
+						})
+					}),
+					/* @__PURE__ */ Z("span", {
+						className: "mt-1 block truncate text-sm font-medium text-text-primary",
+						title: t.title,
+						children: t.title
+					}),
+					t.subtitle && /* @__PURE__ */ Z("span", {
+						className: "block truncate text-xs text-text-secondary",
+						title: t.subtitle,
+						children: t.subtitle
+					})
+				]
+			}), a && /* @__PURE__ */ Z("div", {
+				className: "flex h-8 items-center justify-end opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 [@media(hover:none)]:opacity-100",
+				children: a(t)
+			})]
+		}, t.id))
+	});
+}
+//#endregion
+export { Mn as $, gr as A, ft as At, ir as B, Fr as C, Ot as Ct, Cr as D, bt as Dt, Tr as E, Ct as Et, dr as F, $e as Ft, Sn as G, Ln as H, ur as I, rt as It, Tn as J, Cn as K, cr as L, Qe as Lt, br as M, st as Mt, hr as N, ct as Nt, wr as O, vt as Ot, mr as P, et as Pt, An as Q, or as R, tt as Rt, Br as S, At as St, Nr as T, wt as Tt, Yn as U, Hn as V, Fn as W, En as X, wn as Y, Dn as Z, fi as _, Jt as _t, Mi as a, mn as at, $r as b, Rt as bt, Oi as c, dn as ct, Ci as d, sn as dt, Nn as et, xi as f, rn as ft, _i as g, Yt as gt, vi as h, Zt as ht, Ri as i, hn as it, _r as j, lt as jt, vr as k, gt as kt, Ei as l, un as lt, yi as m, nn as mt, Hi as n, _n as nt, ki as o, fn as ot, bi as p, Qt as pt, kn as q, Bi as r, gn as rt, Di as s, pn as st, Ui as t, xn as tt, wi as u, ln as ut, ii as v, qt as vt, Pr as w, Tt as wt, Yr as x, Mt as xt, ti as y, Ht as yt, rr as z, Ge as zt };

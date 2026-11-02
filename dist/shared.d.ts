@@ -170,6 +170,19 @@ export declare function ArtifactTile({ name, type, url }: {
     url?: string | null;
 }): JSX.Element;
 
+/** Borderless collection: fixed thumbnail ratio, concise captions, shared
+ * Avatar identity. Full source metadata belongs in the host's inspection view. */
+export declare function AssetGallery({ items, variant, label, onOpen, actions, className }: AssetGalleryProps): JSX.Element;
+
+export declare interface AssetGalleryProps {
+    items: readonly GalleryAsset[];
+    variant?: 'avatars' | 'images';
+    label: string;
+    onOpen: (item: GalleryAsset) => void;
+    actions?: (item: GalleryAsset) => ReactNode;
+    className?: string;
+}
+
 /** An @ sign: mentions, "someone named you". */
 export declare function AtIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
@@ -2813,6 +2826,13 @@ export declare interface FormWizardSection {
 
 /** A hooked arrow: forwarded — this came from somewhere else. */
 export declare function ForwardIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+export declare interface GalleryAsset {
+    id: string;
+    title: string;
+    src?: string;
+    subtitle?: string;
+}
 
 /**
  * Maps an event type prefix to a category for filter UIs.
@@ -6150,12 +6170,18 @@ export declare interface SubNavItem {
     groupScrollAfter?: number;
 }
 
-export declare function SubNavLayout({ title, items, titleAction, railHeader, railWidth, storageKey, secondaryTitle, secondaryItems, secondaryStorageKey, secondaryRailWidth, renderNavItem, railLabel, contentAs, contentLabel, collapsed, children, }: SubNavLayoutProps): JSX.Element;
+export declare function SubNavLayout({ title, items, compactHeader, railContent, contentPadding, titleAction, railHeader, railWidth, storageKey, secondaryTitle, secondaryItems, secondaryStorageKey, secondaryRailWidth, renderNavItem, railLabel, contentAs, contentLabel, collapsed, children, }: SubNavLayoutProps): JSX.Element;
 
 export declare interface SubNavLayoutProps {
     /** Section title shown at top of the rail. */
     title: string;
     items: SubNavItem[];
+    /** Align with the compact primary NavRail heading. */
+    compactHeader?: boolean;
+    /** Explorer/tree content in place of navigation links. */
+    railContent?: ReactNode;
+    /** A child WorkArea can own its gutter without nesting padding. */
+    contentPadding?: "default" | "none";
     /** Optional element rendered next to the title (e.g. a help "?" button). */
     titleAction?: ReactNode;
     /** Optional content rendered above the nav items (e.g. a [+ New] button). */
