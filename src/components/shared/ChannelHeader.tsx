@@ -61,6 +61,8 @@ export interface ChannelHeaderProps {
    * the full-width bar over a chat pane.
    */
   size?: 'md' | 'sm';
+  /** Use 1 when this is the page's title; embedded conversation panels default to 2. */
+  headingLevel?: 1 | 2;
   /**
    * Element the bar renders as. Defaults to `'div'`. Pass `'header'` when a
    * host uses this as the page's own site header, so it lands as a `banner`
@@ -82,12 +84,14 @@ export function ChannelHeader({
   online,
   onMembersClick,
   size = 'md',
+  headingLevel = 2,
   as = 'div',
   className,
   'data-testid': testId,
 }: ChannelHeaderProps) {
   const small = size === 'sm';
   const Root = as;
+  const Heading = headingLevel === 1 ? 'h1' : 'h2';
 
   // ── Rename in place ──────────────────────────────────────────────────
   const [editing, setEditing] = useState(false);
@@ -125,7 +129,7 @@ export function ChannelHeader({
       )}
     >
       {/* Left: avatar + name + status */}
-      <div className={cn('flex min-w-0 items-center', small ? 'gap-2' : 'gap-3')}>
+      <div className={cn('flex min-w-0 max-w-full items-center', small ? 'gap-2' : 'gap-3')}>
         <div className="relative shrink-0">
           {avatarUrl ? (
             <img
@@ -148,7 +152,7 @@ export function ChannelHeader({
         </div>
 
         <div className="min-w-0 flex flex-col gap-0.5">
-          <div className="flex items-center gap-2">
+          <div className="flex items-baseline gap-2">
             {editing ? (
               <input
                 ref={input}
@@ -176,10 +180,10 @@ export function ChannelHeader({
                 )}
               />
             ) : (
-              <h2
+              <Heading
                 className={cn(
                   'font-semibold text-[var(--color-text-primary)] leading-tight truncate',
-                  'text-sm',
+                  headingLevel === 1 ? 'text-xl' : 'text-sm',
                   onRename && 'cursor-text',
                 )}
                 onDoubleClick={onRename ? () => setEditing(true) : undefined}
@@ -187,7 +191,7 @@ export function ChannelHeader({
                 data-testid={testId ? `${testId}-name` : undefined}
               >
                 {name}
-              </h2>
+              </Heading>
             )}
             {/* A button only when there is somewhere to go.
                 Without a handler this rendered a DISABLED button, which a
@@ -237,7 +241,7 @@ export function ChannelHeader({
         // Full size: the tabs never shrink below their own width (`flex-[1_0_auto]`);
         // when identity + tabs + actions do not fit, the row wraps and the tabs
         // drop to a line of their own instead of the last one clipping to "Call".
-        <div className={cn('flex max-w-full items-center overflow-x-auto overscroll-x-contain whitespace-nowrap [&>*]:shrink-0 @max-3xl:order-last @max-3xl:basis-full', small ? 'min-w-0 flex-1' : 'flex-[1_0_auto]')}>
+        <div className={cn('flex max-w-full items-center justify-end overflow-x-auto overscroll-x-contain whitespace-nowrap [&>*]:shrink-0 @max-3xl:order-last @max-3xl:basis-full @max-3xl:justify-start', small ? 'min-w-0 flex-1' : 'flex-[1_0_auto]')}>
           {tabs}
         </div>
       )}

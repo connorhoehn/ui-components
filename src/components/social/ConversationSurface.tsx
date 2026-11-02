@@ -76,6 +76,8 @@ export const ALL_CONVERSATION_FEATURES: readonly ConversationFeature[] = [
 export interface ConversationSurfaceProps {
   /** Channel name, or the people in a DM. */
   name: string;
+  /** Page title (1) or an embedded conversation heading (2, default). */
+  headingLevel?: 1 | 2;
   /** Sub-line under the name. */
   description?: string;
   online?: boolean;
@@ -227,6 +229,7 @@ const LABELS: Record<ConversationFeature, string> = {
 
 export function ConversationSurface({
   name,
+  headingLevel,
   description,
   online,
   avatarUrl,
@@ -310,6 +313,7 @@ export function ConversationSurface({
   return (
     <section className={cn('flex min-w-0 flex-col', className)} data-testid={testId}>
       <ChannelHeader
+        headingLevel={headingLevel}
         className={headerClassName}
         name={name}
         onRename={onRename}

@@ -84,6 +84,17 @@ export default meta;
 
 type Story = StoryObj<typeof ConversationSurface>;
 
+export const PageHeading: Story = {
+  args: {
+    name: '#general',
+    headingLevel: 1,
+    description: 'Team announcements and shared work',
+    memberCount: 12,
+    features: ['chat', 'files', 'documents'],
+    className: 'flex-1',
+  },
+};
+
 function Harness({
   features,
   withCalls = true,

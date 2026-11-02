@@ -97,7 +97,9 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
   // a wide table inside its own scroller is judged by the scroller's window.
   const clipToAncestors = (r, stop) => {
     let { left, right } = r;
-    for (let n = r.el.parentElement; n && n !== stop; n = n.parentElement) {
+    // A Range extends beyond its own ellipsized text element. Include that
+    // element's clipping box before its ancestors when measuring painted ink.
+    for (let n = r.el; n && n !== stop; n = n.parentElement) {
       if (getComputedStyle(n).overflowX === 'visible') continue;
       const c = n.getBoundingClientRect(); left = Math.max(left, c.left); right = Math.min(right, c.right);
     }

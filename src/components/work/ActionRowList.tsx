@@ -140,6 +140,8 @@ export interface ActionRowListProps {
   tone?: ActionRowTone;
   /** `bar`: a 3px bar in the row's tone on its left edge. Default `none`. Since 2.392.0. */
   accent?: 'none' | 'bar';
+  /** Alternate neutral row surfaces. Semantic row tones always take precedence. */
+  striped?: boolean;
   /** Every row's worded target in place of the chevron ("Open"). Since 2.392.0. */
   action?: string;
   /**
@@ -241,6 +243,7 @@ export function ActionRowList({
   columns,
   tone = 'neutral',
   accent = 'none',
+  striped = false,
   action,
   size: sizeProp,
   'aria-label': ariaLabel,
@@ -252,12 +255,12 @@ export function ActionRowList({
   const toned = tone !== 'neutral';
   const hasColumns = !!columns && columns.length > 0;
   return (
-    <div className={cn('flex min-w-0 flex-col', className)} data-testid={testId} {...(size === 'sm' ? { 'data-size': 'sm' } : {})}>
+    <div className={cn('flex min-w-0 flex-col', className)} data-testid={testId} data-striped={striped || undefined} {...(size === 'sm' ? { 'data-size': 'sm' } : {})}>
       {items.length === 0 ? (
         emptyLabel != null && <p className="m-0 py-2 text-sm text-text-tertiary" data-testid={`${testId}-empty`}>{emptyLabel}</p>
       ) : (
         <ul className={cn('m-0 list-none p-0', toned ? 'flex flex-col gap-1' : 'border-t border-border')} {...(ariaLabel ? { 'aria-label': ariaLabel } : {})} {...(toned ? { 'data-tone': tone } : {})}>
-          {items.map((item) => {
+          {items.map((item, index) => {
             const rowTone = item.tone ?? tone;
             const rowAccent = item.accent ?? accent;
             const rowAction = item.action ?? action;
@@ -270,7 +273,7 @@ export function ActionRowList({
             );
             const body = <RowBody item={item} {...(hasColumns ? { columns } : {})} {...(rowAction ? { action: rowAction } : {})} size={size} />;
             return (
-            <li key={item.id} className={toned ? undefined : 'border-b border-border'} data-testid={`${testId}-row-${item.id}`} {...(rowTone !== 'neutral' ? { 'data-tone': rowTone } : {})} {...(rowAccent === 'bar' ? { 'data-accent': 'bar' } : {})}>
+            <li key={item.id} className={cn(!toned && 'border-b border-border', striped && rowTone === 'neutral' && (index % 2 ? 'bg-surface-panel' : 'bg-surface'))} data-testid={`${testId}-row-${item.id}`} {...(rowTone !== 'neutral' ? { 'data-tone': rowTone } : {})} {...(rowAccent === 'bar' ? { 'data-accent': 'bar' } : {})}>
               {item.href && !item.disabled ? (
                 <a href={item.href} onClick={() => onOpen?.(item)} className={rowClass} data-testid={`${testId}-open-${item.id}`}>
                   {body}

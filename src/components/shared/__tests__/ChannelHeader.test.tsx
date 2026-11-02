@@ -2,6 +2,13 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { ChannelHeader } from '../ChannelHeader';
 
 describe('ChannelHeader', () => {
+  it('uses a page heading only when the host requests one', () => {
+    const { rerender } = render(<ChannelHeader name="#general" headingLevel={1} />);
+    expect(screen.getByRole('heading', { level: 1, name: '#general' })).toHaveClass('text-xl');
+    rerender(<ChannelHeader name="#general" />);
+    expect(screen.queryByRole('heading', { level: 1 })).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2 })).toHaveClass('text-sm');
+  });
   it('renders channel name', () => {
     render(<ChannelHeader name="general" />);
     expect(screen.getByText('general')).toBeInTheDocument();

@@ -613,6 +613,17 @@ table{border-collapse:collapse;margin:8px} td{width:120px;max-width:120px;paddin
     const valid = await columnMeasure();
     assert.deepEqual(valid.issues, [], `${name} must pass: ${JSON.stringify(valid.issues)}`);
   }
+  // An ellipsized element clips its own text Range, not just its children.
+  await columnPage.setContent(columnHtml);
+  await columnPage.evaluate(() => {
+    const p = document.createElement('p');
+    p.id = 'long-description'; p.textContent = 'A long channel description '.repeat(40);
+    p.style.cssText = 'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%';
+    document.querySelector('#body').append(p);
+  });
+  assert.deepEqual((await columnMeasure()).issues, [], 'ellipsized text paints within its own box');
+  await columnPage.evaluate(() => { document.querySelector('#long-description').style.overflow = 'visible'; });
+  assert.ok((await columnMeasure()).issues.some(i => i.rule === 'content.gutter'), 'unclipped neighboring text still fails the gutter');
   const columnBroken = [
     ['body flush to the rail while the trail and title are inset', () => { document.querySelector('#body').style.padding = '0'; }, 'content.gutter'],
     ['a section action against the window edge', () => { document.querySelector('#body').style.paddingRight = '0'; }, 'content.gutter'],

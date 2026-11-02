@@ -17,6 +17,13 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+export const Conversation: Story = {
+  args: {
+    node: { ...meta.args.node, id: 'general', kind: 'project', title: '#general', status: 'idle' },
+    detail: { lines: ['Channel'], badge: 'Channel', footer: { label: 'Conversation · #general' } },
+  },
+};
+
 /** The summary keeps the card's full reading width when a status is present. */
 export const LongSummaryWithStatus: Story = {
   args: {

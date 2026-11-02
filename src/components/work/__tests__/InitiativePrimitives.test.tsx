@@ -226,6 +226,20 @@ describe('WorkItemMetaBar (2.390.0)', () => {
 });
 
 describe('ActionRowList', () => {
+  it('stripes only neutral rows and preserves tones and row navigation', () => {
+    const open = vi.fn();
+    const items = [{ id: 'a', title: 'First' }, { id: 'b', title: 'Second' }, { id: 'c', title: 'Blocked', tone: 'warning' as const }];
+    const { rerender } = render(<ActionRowList striped items={items} onOpen={open} />);
+    expect(screen.getByTestId('action-row-list-row-a')).toHaveClass('bg-surface');
+    expect(screen.getByTestId('action-row-list-row-b')).toHaveClass('bg-surface-panel');
+    expect(screen.getByTestId('action-row-list-row-c')).not.toHaveClass('bg-surface');
+    expect(screen.getByTestId('action-row-list-open-c')).toHaveClass('bg-warning-callout');
+    fireEvent.click(screen.getByTestId('action-row-list-open-b'));
+    expect(open).toHaveBeenCalledWith(items[1]);
+    rerender(<ActionRowList items={items} />);
+    expect(screen.getByTestId('action-row-list-row-b')).not.toHaveClass('bg-surface-panel');
+  });
+
   it('tints a toned row with the callout surface, never the generic -bg (2.393.1)', () => {
     const tones = ['success', 'warning', 'danger', 'info', 'caution', 'accent'] as const;
     for (const tone of tones) {

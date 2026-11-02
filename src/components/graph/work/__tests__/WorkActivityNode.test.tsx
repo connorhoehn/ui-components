@@ -13,6 +13,16 @@ const show = (entity: WorkGraphNodeData, detail?: WorkActivityNodeDetail, onSele
 };
 
 describe('Active Now node card', () => {
+  it('does not repeat the summary as a badge, but keeps a distinct status', () => {
+    const { rerender } = render(<WorkActivityNode node={node('channel', 'project', '#general')}
+      detail={{ lines: ['Channel'], badge: 'Channel' }} selected={false} live onSelect={vi.fn()} />);
+    expect(screen.getAllByText('Channel')).toHaveLength(1);
+    rerender(<WorkActivityNode node={node('channel', 'project', '#general')}
+      detail={{ lines: ['Channel'], badge: 'Private' }} selected={false} live onSelect={vi.fn()} />);
+    expect(screen.getByText('Channel')).toBeInTheDocument();
+    expect(screen.getByText('Private')).toBeInTheDocument();
+  });
+
   it('marks compact text leaves without exempting the card or embedded controls', () => {
     const { container } = render(<WorkActivityNode node={node('deck', 'document', 'Release', 'completed')}
       detail={{ lines: ['Release status'], badge: 'Ready', footer: { label: 'Updated today' },

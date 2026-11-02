@@ -108,6 +108,12 @@ describe('the transcript', () => {
 });
 
 describe('everything else passes straight through', () => {
+  it('keeps the page-level heading through the runtime wrapper', () => {
+    render(<WrappedConversationSurface name="#general" headingLevel={1} declare={['chat']} />);
+    expect(screen.getByRole('heading', { level: 1, name: '#general' })).toHaveClass('text-xl');
+    expect(screen.queryByRole('heading', { level: 2, name: '#general' })).not.toBeInTheDocument();
+  });
+
   it('forwards the rows each view renders', () => {
     render(
       <WrappedConversationSurface

@@ -66,3 +66,11 @@ export const AsSiteHeader: Story = {
     as: 'header',
   },
 };
+
+/** The conversation supplies the page title, including before joining it. */
+export const PageHeading: Story = {
+  args: { name: '#general', headingLevel: 1, memberCount: 12,
+    description: 'Release trains, change freezes, office hours and new runbooks. Questions without a home start here.',
+    actions: <Button size="sm">Your work</Button> },
+  decorators: [(Story) => <div className="max-w-lg"><Story /></div>],
+};

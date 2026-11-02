@@ -894,3 +894,8 @@ Work tables declare `data-ui-table-rows="work"`: title and key/status occupy two
 lines, with the same 14px/12px type scale, 10px title inset, 24px portraits and
 184px person column used by compact overview action rows. The `work.*` rules
 check this named profile; ordinary tables retain `table.geometry`.
+
+Gutter measurements clip a text Range to the element's own overflow box as
+well as its ancestors. Browsers report the full unpainted Range for ellipsized
+text. This does not relax containment: visible overflow and clipped controls
+retain separate failing mutation fixtures.
