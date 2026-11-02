@@ -3,6 +3,7 @@ import { ButtonHTMLAttributes } from 'react';
 import { Context } from 'react';
 import { CSSProperties } from 'react';
 import { default as default_2 } from 'react';
+import { DragEvent as DragEvent_2 } from 'react';
 import { DragEventHandler } from 'react';
 import { ElementType } from 'react';
 import { FocusEvent as FocusEvent_2 } from 'react';
@@ -172,7 +173,7 @@ export declare function ArtifactTile({ name, type, url }: {
 
 /** Borderless collection: fixed thumbnail ratio, concise captions, shared
  * Avatar identity. Full source metadata belongs in the host's inspection view. */
-export declare function AssetGallery({ items, variant, label, onOpen, actions, className }: AssetGalleryProps): JSX.Element;
+export declare function AssetGallery({ items, variant, label, onOpen, actions, onDragStart, className }: AssetGalleryProps): JSX.Element;
 
 export declare interface AssetGalleryProps {
     items: readonly GalleryAsset[];
@@ -180,6 +181,8 @@ export declare interface AssetGalleryProps {
     label: string;
     onOpen: (item: GalleryAsset) => void;
     actions?: (item: GalleryAsset) => ReactNode;
+    /** Host-owned typed drag payload; never infer identity from an image URL. */
+    onDragStart?: (item: GalleryAsset, event: DragEvent_2<HTMLButtonElement>) => void;
     className?: string;
 }
 
@@ -7452,7 +7455,7 @@ export declare interface WizardStep {
     canAdvance?: boolean;
 }
 
-export declare function WorkArea({ breadcrumbs, toolbar, children, status, padded, tone, className, bodyClassName, 'data-testid': testId, }: WorkAreaProps): JSX.Element;
+export declare function WorkArea({ breadcrumbs, toolbar, children, status, footer, padded, tone, className, bodyClassName, 'data-testid': testId, }: WorkAreaProps): JSX.Element;
 
 export declare interface WorkAreaProps {
     /** The trail row. Usually a `<Breadcrumbs>`; renders nothing when omitted. */
@@ -7463,6 +7466,8 @@ export declare interface WorkAreaProps {
     children: ReactNode;
     /** Pinned bottom row — counts, freshness, a connection pill. */
     status?: ReactNode;
+    /** Pinned full-width content, such as ComposerSurface. It owns its insets/background. */
+    footer?: ReactNode;
     /** Comfortable padding around `children`. Off for canvases and nested rails. */
     padded?: boolean;
     tone?: WorkAreaTone;

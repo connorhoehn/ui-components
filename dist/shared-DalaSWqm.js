@@ -3332,24 +3332,29 @@ var or = {
 		status: "bg-code-panel text-code-subtle"
 	}
 };
-function sr({ breadcrumbs: t, toolbar: n, children: r, status: i, padded: a = !0, tone: o = "surface", className: s, bodyClassName: c, "data-testid": l }) {
-	let u = or[o];
+function sr({ breadcrumbs: t, toolbar: n, children: r, status: i, footer: a, padded: o = !0, tone: s = "surface", className: c, bodyClassName: l, "data-testid": u }) {
+	let d = or[s];
 	return /* @__PURE__ */ Q("div", {
-		"data-testid": l,
-		className: e("flex h-full min-h-0 min-w-0 flex-1 flex-col", u.column, s),
+		"data-testid": u,
+		className: e("flex h-full min-h-0 min-w-0 flex-1 flex-col", d.column, c),
 		children: [
 			t && /* @__PURE__ */ Z("div", {
-				className: e("flex flex-none items-center overflow-x-auto border-b px-3 py-1.5", u.divider),
+				className: e("flex flex-none items-center overflow-x-auto border-b px-3 py-1.5", d.divider),
 				children: t
 			}),
 			n,
 			/* @__PURE__ */ Z("div", {
-				className: e("min-h-0 flex-1 overflow-auto", a && "p-[var(--ui-page-gutter,1.5rem)]", c),
+				className: e("min-h-0 flex-1 overflow-auto", o && "p-[var(--ui-page-gutter,1.5rem)]", l),
 				children: r
 			}),
 			i && /* @__PURE__ */ Z("div", {
-				className: e("flex flex-none items-center gap-3 border-t px-3 py-1 text-[11px]", u.divider, u.status),
+				className: e("flex flex-none items-center gap-3 border-t px-3 py-1 text-[11px]", d.divider, d.status),
 				children: i
+			}),
+			a && /* @__PURE__ */ Z("div", {
+				className: "min-w-0 shrink-0",
+				"data-workarea-footer": !0,
+				children: a
 			})
 		]
 	});
@@ -6049,17 +6054,19 @@ function Ui({ children: t, className: n, compact: r, ...a }) {
 }
 //#endregion
 //#region src/components/shared/AssetGallery.tsx
-function Wi({ items: t, variant: n = "images", label: r, onOpen: i, actions: a, className: o }) {
+function Wi({ items: t, variant: n = "images", label: r, onOpen: i, actions: a, onDragStart: o, className: s }) {
 	return /* @__PURE__ */ Z("div", {
 		role: "list",
 		"aria-label": r,
 		"data-asset-gallery": n,
-		className: e("grid gap-3", n === "avatars" ? "grid-cols-2 sm:grid-cols-4 lg:grid-cols-8" : "grid-cols-2 md:grid-cols-3 xl:grid-cols-4", o),
+		className: e("grid gap-3", n === "avatars" ? "grid-cols-2 sm:grid-cols-4 lg:grid-cols-8" : "grid-cols-2 md:grid-cols-3 xl:grid-cols-4", s),
 		children: t.map((t) => /* @__PURE__ */ Q("div", {
 			role: "listitem",
 			className: "group min-w-0",
 			children: [/* @__PURE__ */ Q("button", {
 				type: "button",
+				draggable: !!o,
+				onDragStart: (e) => o?.(t, e),
 				"aria-label": `Inspect ${t.title}`,
 				onClick: () => i(t),
 				className: "block w-full min-w-0 rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
@@ -6072,6 +6079,7 @@ function Wi({ items: t, variant: n = "images", label: r, onOpen: i, actions: a, 
 							src: t.src,
 							size: 88
 						}) : t.src ? /* @__PURE__ */ Z("img", {
+							draggable: !1,
 							src: t.src,
 							alt: t.title,
 							loading: "lazy",

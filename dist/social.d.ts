@@ -1,4 +1,5 @@
 import { CSSProperties } from 'react';
+import { DragEvent as DragEvent_2 } from 'react';
 import { HTMLAttributes } from 'react';
 import { JSX } from 'react';
 import { ReactNode } from 'react';
@@ -2542,7 +2543,7 @@ export declare function describeRecordingParticipants(participants: readonly Rec
 
 /** Two-line transcript row. The host owns playback, persistence and full-text
  * inspection; the same action toolbar used by chat owns keyboard navigation. */
-export declare function DialogueSegment({ author, avatarUrl, text, metadata, status, actions, className }: DialogueSegmentProps): JSX.Element;
+export declare function DialogueSegment({ author, avatarUrl, text, metadata, status, actions, className, onDragStart }: DialogueSegmentProps): JSX.Element;
 
 export declare interface DialogueSegmentProps {
     author: string;
@@ -2552,6 +2553,7 @@ export declare interface DialogueSegmentProps {
     status?: ReactNode;
     actions?: readonly MessageAction[];
     className?: string;
+    onDragStart?: (event: DragEvent_2<HTMLDivElement>) => void;
 }
 
 export declare function DocumentActivityCard({ documentId, title, icon, createdBy, editors, onOpen, unavailable, className, 'data-testid': testId, }: DocumentActivityCardProps): JSX.Element;

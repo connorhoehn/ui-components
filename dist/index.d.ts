@@ -5,6 +5,7 @@ import { Component } from 'react';
 import { Context } from 'react';
 import { CSSProperties } from 'react';
 import { default as default_2 } from 'react';
+import { DragEvent as DragEvent_2 } from 'react';
 import { DragEventHandler } from 'react';
 import { Editor } from '@tiptap/core';
 import { ElementType } from 'react';
@@ -1510,7 +1511,7 @@ declare type AssertTrue<T extends true> = T;
 
 /** Borderless collection: fixed thumbnail ratio, concise captions, shared
  * Avatar identity. Full source metadata belongs in the host's inspection view. */
-export declare function AssetGallery({ items, variant, label, onOpen, actions, className }: AssetGalleryProps): JSX.Element;
+export declare function AssetGallery({ items, variant, label, onOpen, actions, onDragStart, className }: AssetGalleryProps): JSX.Element;
 
 export declare interface AssetGalleryProps {
     items: readonly GalleryAsset[];
@@ -1518,6 +1519,8 @@ export declare interface AssetGalleryProps {
     label: string;
     onOpen: (item: GalleryAsset) => void;
     actions?: (item: GalleryAsset) => ReactNode;
+    /** Host-owned typed drag payload; never infer identity from an image URL. */
+    onDragStart?: (item: GalleryAsset, event: DragEvent_2<HTMLButtonElement>) => void;
     className?: string;
 }
 
@@ -8064,7 +8067,7 @@ export declare function DiagramReaderRenderer({ section }: SectionRendererProps)
 
 /** Two-line transcript row. The host owns playback, persistence and full-text
  * inspection; the same action toolbar used by chat owns keyboard navigation. */
-export declare function DialogueSegment({ author, avatarUrl, text, metadata, status, actions, className }: DialogueSegmentProps): JSX.Element;
+export declare function DialogueSegment({ author, avatarUrl, text, metadata, status, actions, className, onDragStart }: DialogueSegmentProps): JSX.Element;
 
 export declare interface DialogueSegmentProps {
     author: string;
@@ -8074,6 +8077,7 @@ export declare interface DialogueSegmentProps {
     status?: ReactNode;
     actions?: readonly MessageAction[];
     className?: string;
+    onDragStart?: (event: DragEvent_2<HTMLDivElement>) => void;
 }
 
 export declare interface DiffAnnotation {
@@ -26493,7 +26497,7 @@ declare interface UseActivityBusReturn {
       following: boolean;
   }
 
-  export declare function WorkArea({ breadcrumbs, toolbar, children, status, padded, tone, className, bodyClassName, 'data-testid': testId, }: WorkAreaProps): JSX.Element;
+  export declare function WorkArea({ breadcrumbs, toolbar, children, status, footer, padded, tone, className, bodyClassName, 'data-testid': testId, }: WorkAreaProps): JSX.Element;
 
   export declare interface WorkAreaProps {
       /** The trail row. Usually a `<Breadcrumbs>`; renders nothing when omitted. */
@@ -26504,6 +26508,8 @@ declare interface UseActivityBusReturn {
       children: ReactNode;
       /** Pinned bottom row — counts, freshness, a connection pill. */
       status?: ReactNode;
+      /** Pinned full-width content, such as ComposerSurface. It owns its insets/background. */
+      footer?: ReactNode;
       /** Comfortable padding around `children`. Off for canvases and nested rails. */
       padded?: boolean;
       tone?: WorkAreaTone;
@@ -27486,29 +27492,14 @@ declare interface UseActivityBusReturn {
   export { }
 
 
-declare global {
-    interface Window {
-        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
-        __pipelineEditor?: unknown;
-    }
-}
-
-
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        actionItemsMacro: {
-            /** Inserts an action-items block at the selection. */
-            insertActionItems: (texts?: readonly string[]) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        attachmentMacro: {
-            /** Inserts a file card at the selection. Requires `name` and `url`. */
-            insertAttachment: (draft: AttachmentDraft) => ReturnType;
+        canvasListStyle: {
+            /**
+             * Make the caret's block a list of the style's kind (if it is not one
+             * already) and set its marker.
+             */
+            setListStyle: (style: ListStyle) => ReturnType;
         };
     }
 }
@@ -27535,29 +27526,6 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        canvasListStyle: {
-            /**
-             * Make the caret's block a list of the style's kind (if it is not one
-             * already) and set its marker.
-             */
-            setListStyle: (style: ListStyle) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
-        decisionMacro: {
-            /** Inserts a decision record at the selection. */
-            insertDecision: (draft: DecisionDraft) => ReturnType;
-        };
-    }
-}
-
-
-declare module '@tiptap/core' {
-    interface Commands<ReturnType> {
         diagramMacro: {
             /**
              * Inserts a diagram block at the selection, minting an id unless one
@@ -27571,9 +27539,9 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
-        fieldMacro: {
-            /** Inserts a typed field at the selection. */
-            insertField: (draft: FieldDraft) => ReturnType;
+        actionItemsMacro: {
+            /** Inserts an action-items block at the selection. */
+            insertActionItems: (texts?: readonly string[]) => ReturnType;
         };
     }
 }
@@ -27607,12 +27575,42 @@ declare module '@tiptap/core' {
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
+        decisionMacro: {
+            /** Inserts a decision record at the selection. */
+            insertDecision: (draft: DecisionDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        fieldMacro: {
+            /** Inserts a typed field at the selection. */
+            insertField: (draft: FieldDraft) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
         linksMacro: {
             /** Inserts a links block at the selection. */
             insertLinks: (rows?: readonly {
                 label?: string;
                 url?: string;
             }[]) => ReturnType;
+        };
+    }
+}
+
+
+declare module '@tiptap/core' {
+    interface Commands<ReturnType> {
+        attachmentMacro: {
+            /** Inserts a file card at the selection. Requires `name` and `url`. */
+            insertAttachment: (draft: AttachmentDraft) => ReturnType;
         };
     }
 }
@@ -27636,5 +27634,13 @@ declare module '@tiptap/core' {
             /** Move the selection onto a suggestion. */
             selectSuggestion: (id: SuggestionIdentity) => ReturnType;
         };
+    }
+}
+
+
+declare global {
+    interface Window {
+        /** Dev-only imperative canvas bridge — see `DevEditorBridge` above. */
+        __pipelineEditor?: unknown;
     }
 }

@@ -5956,9 +5956,11 @@ function Mr({ open: e, onClose: t, candidates: n, onAdd: r, title: i = "Add peop
 }
 //#endregion
 //#region src/components/social/DialogueSegment.tsx
-function Nr({ author: e, avatarUrl: t, text: n, metadata: r, status: i, actions: a = [], className: s }) {
+function Nr({ author: e, avatarUrl: t, text: n, metadata: r, status: i, actions: a = [], className: s, onDragStart: c }) {
 	return /* @__PURE__ */ $("div", {
 		"data-dialogue-segment": !0,
+		draggable: !!c,
+		onDragStart: c,
 		className: o("group relative flex min-w-0 items-center gap-2 border-b border-border-subtle px-2 py-1 hover:bg-surface-hover focus-within:bg-surface-hover", s),
 		children: [
 			/* @__PURE__ */ Q(H, {
