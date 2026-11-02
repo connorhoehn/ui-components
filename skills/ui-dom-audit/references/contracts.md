@@ -889,3 +889,8 @@ sequential navigation start and omit programmatically focusable controls.
 CanvasDocumentView marks its independent document viewport with `data-reading-presentation`. Its paper margins and status bar use the document grid, so the host `align.grid` rule excludes only that viewport. Text, control, contrast, overflow and table rules continue to run there; neighboring host content remains on the application grid. The self-test covers both the document inset and a stray host paragraph beside it.
 
 Embedded contents buttons (`data-reading-contents`) use the paper font, checked against `.doc-page` by `document.contents-font`. Ordinary host buttons remain on the UI font profile. Fixtures reject both a mismatched contents font and a neighboring host control incorrectly using the paper font.
+
+Work tables declare `data-ui-table-rows="work"`: title and key/status occupy two
+lines, with the same 14px/12px type scale, 10px title inset, 24px portraits and
+184px person column used by compact overview action rows. The `work.*` rules
+check this named profile; ordinary tables retain `table.geometry`.

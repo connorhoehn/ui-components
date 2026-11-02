@@ -389,6 +389,10 @@
         {
           "selector": "[data-ui-table-rows=\"content\"]",
           "reason": "Document tables wrap prose and use the content-row profile; cells and headings remain checked."
+        },
+        {
+          "selector": "[data-ui-table-rows=\"work\"]",
+          "reason": "Work rows share the overview title/subline and owner/fact columns; their explicit work profile checks typography, height and cell edges."
         }
       ]
     },
@@ -1301,6 +1305,75 @@
       "kind": "breadcrumb",
       "selector": "[data-ui-breadcrumbs], nav[aria-label=\"Breadcrumb\"], nav[aria-label=\"Breadcrumbs\"]",
       "owner": "Shared Breadcrumbs and route hierarchy: one distinct level per crumb, one truncated line"
+    },
+    {
+      "id": "work.row-geometry",
+      "kind": "box",
+      "selector": "[data-work-row]",
+      "properties": {
+        "height": 44
+      },
+      "owner": "WorkTableView"
+    },
+    {
+      "id": "work.title",
+      "kind": "style",
+      "selector": "[data-work-title]",
+      "properties": {
+        "fontSize": 14,
+        "fontWeight": 500,
+        "lineHeight": 20
+      },
+      "owner": "WorkTableView"
+    },
+    {
+      "id": "work.secondary",
+      "kind": "style",
+      "selector": "[data-work-description]",
+      "properties": {
+        "fontSize": 12,
+        "lineHeight": 16
+      },
+      "owner": "WorkTableView"
+    },
+    {
+      "id": "work.title-inset",
+      "kind": "style",
+      "selector": "[data-work-row] > td:first-child",
+      "properties": {
+        "paddingLeft": 10,
+        "paddingRight": 10
+      },
+      "owner": "WorkTableView"
+    },
+    {
+      "id": "work.owner-column",
+      "kind": "box",
+      "selector": "[data-work-row] > td:nth-child(2)",
+      "properties": {
+        "width": 184
+      },
+      "owner": "WorkTableView"
+    },
+    {
+      "id": "work.portrait",
+      "kind": "box",
+      "selector": "[data-work-row] [data-ui-text=\"avatar\"]",
+      "properties": {
+        "width": 24,
+        "height": 24
+      },
+      "owner": "ActionRowPerson in WorkTableView"
+    },
+    {
+      "id": "work.header",
+      "kind": "style",
+      "selector": "table[data-ui-table-rows=\"work\"] thead th",
+      "properties": {
+        "fontSize": 12,
+        "fontWeight": 600
+      },
+      "owner": "WorkTableView"
     }
   ]
 }

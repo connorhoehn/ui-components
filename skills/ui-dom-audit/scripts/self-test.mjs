@@ -63,6 +63,23 @@ try {
   await page.evaluate(() => { document.querySelector('tbody td').style.paddingLeft = '12px'; document.querySelector('table').removeAttribute('data-ui-table-rows'); });
   assert.ok((await measure()).issues.some(i => i.rule === 'table.geometry'), 'ordinary neighboring tables retain fixed row heights');
   await page.setContent(html);
+  // Work tables intentionally share overview row anatomy, not comparison-table insets.
+  await page.setContent(`<table data-ui-table-rows="work" style="border-collapse:collapse"><thead><tr><th style="font-size:12px;font-weight:600">Work</th></tr></thead><tbody><tr data-work-row style="height:44px"><td style="padding:0 10px"><span data-work-title style="font-size:14px;font-weight:500;line-height:20px">Fix alerts</span><div data-work-description style="font-size:12px;line-height:16px">ORG-OBS-11</div></td><td style="width:184px;padding:0"><span data-ui-text="avatar" style="display:block;width:24px;height:24px"></span></td></tr></tbody></table>`);
+  const workMeasure = () => page.evaluate(measureDOM, { contract: { ...fullContract, rules: fullContract.rules.filter(r => r.id.startsWith('work.')) }, selectors: {}, context: {} });
+  assert.equal((await workMeasure()).issues.length, 0, 'work profile accepts overview typography and columns');
+  for (const [selector, property, value, rule] of [
+    ['[data-work-title]', 'fontSize', '18px', 'work.title'],
+    ['[data-work-description]', 'fontSize', '14px', 'work.secondary'],
+    ['[data-work-row] > td:first-child', 'paddingLeft', '32px', 'work.title-inset'],
+    ['[data-work-row] > td:nth-child(2)', 'width', '220px', 'work.owner-column'],
+    ['[data-ui-text="avatar"]', 'width', '28px', 'work.portrait'],
+  ]) {
+    const prior = await page.locator(selector).evaluate((el, property) => el.style[property], property);
+    await page.locator(selector).evaluate((el, [property, value]) => { el.style[property] = value; }, [property, value]);
+    assert.ok((await workMeasure()).issues.some(i => i.rule === rule), `work profile rejects ${rule}`);
+    await page.locator(selector).evaluate((el, [property, value]) => { el.style[property] = value; }, [property, prior]);
+  }
+  await page.setContent(html);
   const mutations = [
     ['graph detail typography drift', () => document.querySelector('[data-ui-text="graph-detail"]').style.fontSize='14px', 'graph.detail'],
     ['graph metadata typography drift', () => document.querySelector('[data-ui-text="graph-metadata"]').style.fontSize='8px', 'graph.metadata'],

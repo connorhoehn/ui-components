@@ -75,6 +75,8 @@ export interface WorkListItem {
   id: string;
   groupId: string;
   title: string;
+  /** Human-readable item key, shown below the title rather than as a badge. */
+  reference?: string;
   done?: boolean;
   /** A done toggle is in flight: the checkbox is disabled and busy. */
   donePending?: boolean;
@@ -280,6 +282,7 @@ function pointsText(points: number, unit: 'pts' | 'points'): string {
 
 function TextMetaLine({ item, testId, unit }: { item: WorkListItem; testId: string; unit: 'pts' | 'points' }) {
   const parts: ReactNode[] = [];
+  if (item.reference) parts.push(<span key="reference" className="font-mono">{item.reference}</span>);
   if (item.signal) {
     parts.push(
       <span key="signal" className={cn(item.signal.state === 'running' && 'font-medium text-primary')}>
@@ -304,6 +307,7 @@ function TextMetaLine({ item, testId, unit }: { item: WorkListItem; testId: stri
 
 function MetaLine({ item, testId, unit = 'pts' }: { item: WorkListItem; testId: string; unit?: 'pts' | 'points' }) {
   const parts: ReactNode[] = [];
+  if (item.reference) parts.push(<span key="reference" className="font-mono">{item.reference}</span>);
   if (item.signal) {
     parts.push(
       <span key="signal" className={cn(item.signal.state === 'running' && 'font-medium text-primary')}>
@@ -415,7 +419,7 @@ function facetCount(facets: WorkListFilterFacet[] | undefined): number {
 
 function matches(item: WorkListItem, query: string): boolean {
   const q = query.trim().toLowerCase();
-  return !q || item.title.toLowerCase().includes(q);
+  return !q || item.title.toLowerCase().includes(q) || !!item.reference?.toLowerCase().includes(q);
 }
 
 // ---------------------------------------------------------------------------

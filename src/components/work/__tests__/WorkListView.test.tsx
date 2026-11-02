@@ -32,7 +32,7 @@ describe('WorkListView', () => {
   it('uses the full rail row as navigation, including its key, while status actions stay independent', () => {
     const opened = vi.fn(), signal = vi.fn();
     renderView({ layout: 'rail', onOpenItem: opened, items: [
-      { ...ITEMS[0]!, tag: { label: 'ORG-OBS-5' } },
+      { ...ITEMS[0]!, reference: 'ORG-OBS-5' },
       { ...ITEMS[4]!, signal: { state: 'running', label: 'Running', onClick: signal } },
     ] });
     fireEvent.click(screen.getByText('ORG-OBS-5'));
@@ -41,6 +41,11 @@ describe('WorkListView', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Running: Span-metrics connector' }));
     expect(signal).toHaveBeenCalledOnce();
     expect(opened).toHaveBeenCalledTimes(1);
+  });
+  it('finds a row by its public reference', () => {
+    renderView({ query: 'org-obs-5', items: [{ ...ITEMS[0]!, reference: 'ORG-OBS-5' }, ITEMS[1]!] });
+    expect(screen.getByText('Decommission legacy StatsD bridge')).toBeInTheDocument();
+    expect(screen.queryByText('Set SLO alert thresholds')).not.toBeInTheDocument();
   });
   it('groups items by status with counts, the header count and per-group empty labels', () => {
     renderView({ onCreate: () => {}, onCollapse: () => {} });

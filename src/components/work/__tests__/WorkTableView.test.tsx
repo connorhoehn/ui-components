@@ -15,12 +15,12 @@ const props: WorkTableViewProps = {
 describe('WorkTableView', () => {
   it('shows actual data in aligned columns and keeps finished work collapsed', () => {
     render(<WorkTableView {...props} />);
-    for (const name of ['Work item', 'Owner', 'Type', 'Points']) expect(screen.getByRole('columnheader', { name })).toBeInTheDocument();
+    for (const name of ['Work item', 'Owner', 'Points']) expect(screen.getByRole('columnheader', { name })).toBeInTheDocument();
     expect(screen.getByText('1 next up · 1 in progress · 1 done')).toBeInTheDocument();
     expect(screen.queryByText('Previous release')).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Done 1' }));
     expect(screen.getByText('Previous release')).toBeInTheDocument();
-    expect(screen.getAllByText('—')).toHaveLength(2);
+    expect(screen.getAllByText('Unsized')).toHaveLength(2);
   });
   it('truncates long titles, types and owners inside their own columns', () => {
     const long = 'ORG-AUTH-8 ' + 'very long work title '.repeat(8).trim();
@@ -28,11 +28,11 @@ describe('WorkTableView', () => {
     const title = screen.getByText(long);
     expect(title).toHaveClass('min-w-0', 'truncate');
     expect(title).toHaveAttribute('title', long);
-    expect(screen.getByTestId('work-table-title-cell')).toHaveClass('max-w-0');
+    expect(screen.getByTestId('work-table-title-cell')).toHaveClass('min-w-0');
     const owner = screen.getByText('Bartholomew Featherstonehaugh-Cholmondeley');
     expect(owner).toHaveClass('min-w-0', 'truncate');
     expect(owner).toHaveAttribute('title', 'Bartholomew Featherstonehaugh-Cholmondeley');
-    expect(screen.getByTestId('work-table-owner-cell')).toHaveClass('min-w-0', 'max-w-[12rem]');
+    expect(screen.getByTestId('work-table-owner-cell')).toHaveClass('min-w-0');
     expect(screen.getByText('Extraordinarily long kind label')).toHaveClass('truncate');
   });
   it('opens a row and toggles completion independently', () => {
@@ -74,18 +74,21 @@ describe('WorkTableView', () => {
     expect(onRetry).toHaveBeenCalledOnce();
   });
 
-  it('pins 14px controls, 44px rows and a title column capped at half the table', () => {
-    const long = 'A very long work item title '.repeat(10).trim();
-    render(<WorkTableView {...props} items={[{ ...props.items[0]!, title: long }, ...props.items.slice(1)]} />);
-    expect(screen.getByRole('button', { name: /^Next up/ }).className).toContain('text-sm');
-    const title = screen.getByRole('button', { name: long });
-    expect(title.className).toContain('text-sm');
-    expect(title.className).toContain('truncate');
-    expect(title).toHaveAttribute('title', long);
-    const cell = screen.getAllByTestId('work-table-title-cell')[0]!;
-    expect(cell.className).toContain('h-11');
-    expect(cell.className).toContain('w-1/2');
-    expect(cell.className).toContain('max-w-0');
-    expect(cell.className).not.toContain('py-2.5');
+  it('places keys and state below titles, without decorative completion icons', () => {
+    render(<WorkTableView {...props} items={[{ ...props.items[0], reference: 'ORG-UI-11', signal: { state: 'blocked', label: 'Blocked' } }]} />);
+    expect(screen.getByText('ORG-UI-11').closest('[data-work-description]')).toContainElement(screen.getByText('Blocked'));
+    expect(screen.getByText('Fix contract').closest('[data-work-description]')).toBeNull();
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+  });
+  it('opens from an owner cell without double-opening from nested controls', () => {
+    const onOpenItem = vi.fn(), onSignal = vi.fn();
+    render(<WorkTableView {...props} onOpenItem={onOpenItem} items={[{ ...props.items[0], signal: { state: 'running', label: 'Agent running', onClick: onSignal } }]} />);
+    fireEvent.click(screen.getByText('Isabel Vasquez'));
+    expect(onOpenItem).toHaveBeenCalledOnce();
+    fireEvent.click(screen.getByText('Fix contract'));
+    expect(onOpenItem).toHaveBeenCalledTimes(2);
+    fireEvent.click(screen.getByRole('button', { name: 'Agent running' }));
+    expect(onSignal).toHaveBeenCalledOnce();
+    expect(onOpenItem).toHaveBeenCalledTimes(2);
   });
 });
