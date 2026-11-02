@@ -121,3 +121,10 @@ describe('TenantSwitcher', () => {
     expect(within(dialog()).queryAllByRole('button')).toHaveLength(0);
   });
 });
+
+it('can switch project workspaces without claiming an inbox connection', () => {
+ render(<TenantSwitcher label="Spike" showActivity={false} destinations={[{id:'demo',label:'Workshop'}]} onSelect={()=>{}} />);
+ fireEvent.click(screen.getByRole('button',{name:'Spike: switch tenant'}));
+ expect(screen.getByRole('button',{name:'Workshop'})).toBeInTheDocument();
+ expect(screen.queryByRole('img',{name:/inbox|notification/i})).toBeNull();
+});

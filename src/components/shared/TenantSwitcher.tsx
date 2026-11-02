@@ -59,6 +59,8 @@ export interface TenantSwitcherProps {
   onSelect: (id: string) => void | Promise<unknown>;
   /** Whether live notification updates are available. Shapes each activity hint. */
   live?: boolean;
+  /** Omit inbox activity for project/file workspaces without a notification service. */
+  showActivity?: boolean;
   /** When set, every destination is disabled and this explains why. */
   blockedReason?: ReactNode;
   /** Shown when `destinations` is empty. */
@@ -104,6 +106,7 @@ export function TenantSwitcher({
   destinations,
   onSelect,
   live = false,
+  showActivity = true,
   blockedReason,
   emptyMessage = 'No other tenants are available for your account.',
   resetKey,
@@ -169,7 +172,7 @@ export function TenantSwitcher({
   return (
     <div
       ref={root}
-      className={cn('tenant-switcher relative z-[60] shrink-0', className)}
+      className={cn('tenant-switcher relative z-[60] min-w-0 max-w-full shrink-0', className)}
       data-testid={testId}
       onPointerEnter={(event) => {
         if (event.pointerType !== 'mouse') return;
@@ -200,7 +203,7 @@ export function TenantSwitcher({
         ref={trigger}
         type="button"
         className={cn(
-          'tenant-switcher-trigger flex cursor-pointer items-center gap-2 rounded-lg border-0 bg-transparent px-1 py-0.5 font-[inherit] text-text-primary',
+          'tenant-switcher-trigger flex min-w-0 max-w-full cursor-pointer items-center gap-2 rounded-lg border-0 bg-transparent px-1 py-0.5 font-[inherit] text-text-primary',
           'hover:bg-surface-hover aria-expanded:bg-surface-hover',
           'focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-primary',
         )}
@@ -214,7 +217,7 @@ export function TenantSwitcher({
           setOpen(true);
         }}
       >
-        <span className="tenant-brand-planet relative grid size-[26px] place-items-center text-text-secondary" aria-hidden="true">
+        <span className="tenant-brand-planet relative grid size-[26px] shrink-0 place-items-center text-text-secondary" aria-hidden="true">
           <PlanetGlyph />
           {healthy && (
             <span
@@ -234,7 +237,7 @@ export function TenantSwitcher({
             </span>
           )}
         </span>
-        <Text size="base" weight="bold" className="tenant-brand-label leading-[22px]">{label}</Text>
+        <Text size="base" weight="bold" className="tenant-brand-label min-w-0 truncate leading-[22px]">{label}</Text>
       </button>
       {open && (
         <div
@@ -291,7 +294,7 @@ export function TenantSwitcher({
                         </span>
                         <Text size="sm" weight="semibold">{destination.label}</Text>
                       </Button>
-                      <Tooltip content={activity} placement="right">
+                      {showActivity && <Tooltip content={activity} placement="right">
                         <span
                           tabIndex={0}
                           role="img"
@@ -312,7 +315,7 @@ export function TenantSwitcher({
                             <InfoIcon size={14} aria-hidden="true" />
                           )}
                         </span>
-                      </Tooltip>
+                      </Tooltip>}
                     </Inline>
                   );
                 })}

@@ -1,3 +1,8 @@
+## 2.493.0
+
+- Add MediaCollectionCard: an episode thumbnail, duration/status metadata and accessible preview carousel; no media playback until requested.
+- TenantSwitcher can omit inbox activity for project workspaces without a notification service.
+
 ## 2.492.0
 
 - Add DialogueSegment: compact two-line dialogue with Avatar and the same roving hover/focus toolbar as chat. MessageActionBar accepts typed domain actions.
