@@ -1,3 +1,10 @@
+## 2.492.0
+
+- Add DialogueSegment: compact two-line dialogue with Avatar and the same roving hover/focus toolbar as chat. MessageActionBar accepts typed domain actions.
+- Add borderless AssetGallery with eight-column avatar mode and uniform reference thumbnails.
+- SubNavLayout can host a full-height explorer, align compact headings with NavRail, and delegate the content gutter to WorkArea.
+- Storymaker consumer: dialogue rework stays in project state; the shared controls own appearance and keyboard behavior.
+
 # 2.491.0
 
 - Add `MediaPlaybackDock` / `PlaybackSource`: one persistent audio/video sink, shared transport/form controls, expandable picture, source-change teardown and load errors. Includes Storybook examples and regression checks. Additive exports at root and `/video`; Storymaker consumes the packed release.

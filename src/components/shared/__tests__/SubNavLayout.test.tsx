@@ -206,3 +206,10 @@ describe('SubNavLayout — focus handoff on group collapse', () => {
     expect(activeNavItemClassName).toContain('border-primary');
   });
 });
+
+it('hosts a custom explorer without a duplicate nav or nested content gutter', () => {
+ const { container } = render(<SubNavLayout title="Voices" items={[]} compactHeader contentPadding="none" railContent={<button>Choose line</button>}>Details</SubNavLayout>);
+ expect(screen.getByRole('button',{name:'Choose line'})).toBeInTheDocument();
+ expect(container.querySelector('[data-subnav-content]')).toHaveClass('p-0');
+ expect(container.querySelector('[data-subnav-explorer]')).toBeInTheDocument();
+});

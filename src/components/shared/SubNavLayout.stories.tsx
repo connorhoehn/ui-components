@@ -72,3 +72,8 @@ export const NamedLandmarks: Story = {
     </div>
   ),
 };
+
+export const CompactExplorer: Story = {
+  args: { title: 'Voices', items: [], compactHeader: true, railWidth: 260, contentPadding: 'none', railContent: <div className="p-3">Host-owned searchable explorer</div>, children: <div className="p-4">One content gutter</div> },
+  render: args => <div className="h-[360px]"><SubNavLayout {...args} /></div>,
+};

@@ -94,7 +94,7 @@ export type { MessageBodyProps } from './MessageBody';
 export { ReactionChips, groupReactions, describeReactors } from './ReactionChips';
 export type { ReactionChipsProps, MessageReaction, ReactionGroup } from './ReactionChips';
 export { MessageActionBar } from './MessageActionBar';
-export type { MessageActionBarProps } from './MessageActionBar';
+export type { MessageActionBarProps, MessageAction } from './MessageActionBar';
 export { QuoteBlock, excerpt } from './QuoteBlock';
 export type { QuoteBlockProps, QuotedMessage } from './QuoteBlock';
 
@@ -280,3 +280,6 @@ export { CallLogList } from './CallLogList';
 export type { CallLogListProps, CallLogEntry } from './CallLogList';
 export { AddPeoplePicker } from './AddPeoplePicker';
 export type { AddPeoplePickerProps, AddPeoplePickerCandidate } from './AddPeoplePicker';
+
+export { DialogueSegment } from "./DialogueSegment";
+export type { DialogueSegmentProps } from "./DialogueSegment";

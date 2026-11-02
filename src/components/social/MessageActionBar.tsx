@@ -32,7 +32,18 @@ import { cn } from '../../lib/cn';
 import { RovingToolbar } from '../shared/RovingToolbar';
 import { EditIcon, ForwardIcon, LinkIcon, PinIcon, ReplyIcon, SmileyIcon, TrashIcon } from '../ui/Icons';
 
+export interface MessageAction {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  onClick: (trigger: HTMLElement) => void;
+  disabled?: boolean;
+}
+
 export interface MessageActionBarProps {
+  /** Domain actions reuse the chat toolbar keyboard and hover hierarchy. */
+  actions?: readonly MessageAction[];
+  label?: string;
   /** Emoji offered inline. Keep it short; the picker covers the rest. */
   quickReactions?: readonly string[];
   onReact?: (emoji: string) => void;
@@ -82,6 +93,8 @@ const FOCUS_RING =
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary';
 
 export function MessageActionBar({
+  actions: customActions = [],
+  label = "Message actions",
   quickReactions = DEFAULT_QUICK,
   onReact,
   onOpenReactionPicker,
@@ -109,6 +122,7 @@ export function MessageActionBar({
     key: string;
     label: string;
     glyph: React.ReactNode;
+    disabled?: boolean;
     onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
   };
   const actions: Action[] = [];
@@ -132,6 +146,8 @@ export function MessageActionBar({
   if (onEdit) add('edit', 'Edit message', <EditIcon size={13} />, onEdit);
   if (onDelete) add('delete', 'Delete message', <TrashIcon size={13} />, onDelete);
 
+  for (const action of customActions) actions.push({ key: action.id, label: action.label, glyph: action.icon, disabled: action.disabled, onClick: (event) => action.onClick(event.currentTarget) });
+
   // The index lives in a ref AS WELL as state: state to render the tabIndex,
   // ref to compute the next one. Two keydowns in the same tick — holding the
   // arrow key down — would otherwise both read the pre-render state and move
@@ -140,7 +156,7 @@ export function MessageActionBar({
 
   return (
     <RovingToolbar
-      label="Message actions"
+      label={label}
       data-testid={testId}
       // `group-hover` reveals it in a dense list; `focus-within` is what keeps
       // it reachable without a pointer. Both, or it serves only half the users.
@@ -157,6 +173,7 @@ export function MessageActionBar({
           title={a.label}
           data-testid={`${testId}-${a.key}`}
           onClick={a.onClick}
+          disabled={a.disabled}
           // The bar reveals itself on :focus-visible (see ChatPanel), but the
           // BUTTON inside it had no focus style of its own — so a keyboard user
           // could see the bar appear and not which of its controls they were

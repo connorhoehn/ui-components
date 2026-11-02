@@ -64,6 +64,12 @@ export interface SubNavLayoutProps {
   /** Section title shown at top of the rail. */
   title: string;
   items: SubNavItem[];
+  /** Align with the compact primary NavRail heading. */
+  compactHeader?: boolean;
+  /** Explorer/tree content in place of navigation links. */
+  railContent?: ReactNode;
+  /** A child WorkArea can own its gutter without nesting padding. */
+  contentPadding?: "default" | "none";
   /** Optional element rendered next to the title (e.g. a help "?" button). */
   titleAction?: ReactNode;
   /** Optional content rendered above the nav items (e.g. a [+ New] button). */
@@ -206,6 +212,9 @@ function RailNav({
 export function SubNavLayout({
   title,
   items,
+  compactHeader = false,
+  railContent,
+  contentPadding = "default",
   titleAction,
   railHeader,
   railWidth = 220,
@@ -241,11 +250,11 @@ export function SubNavLayout({
         style={collapsed ? undefined : { width: railWidth }}
         data-collapsed={collapsed ? 'true' : undefined}
       >
-        <div className={cn('flex items-center border-b border-[var(--color-border)]',
+        <div className={cn('flex flex-none items-center border-b border-[var(--color-border)]',
           collapsed ? 'justify-center px-0' : 'justify-between px-4',
-          alignHeader ? 'h-9 py-0' : 'py-[14px]')}>
+          alignHeader ? 'h-9 py-0' : compactHeader ? 'py-2.5' : 'py-[14px]')}>
           {!collapsed && (
-            <span className="text-[12px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-[0.05em]">
+            <span className={cn("font-semibold text-[var(--color-text-tertiary)] uppercase tracking-[0.05em]", compactHeader ? "text-[11px]" : "text-[12px]")}>
               {title}
             </span>
           )}
@@ -256,7 +265,7 @@ export function SubNavLayout({
             {railHeader}
           </div>
         )}
-        {!collapsed && <RailNav items={items} storageKey={storageKey} title={title} renderNavItem={renderNavItem} railLabel={railLabel} />}
+        {!collapsed && (railContent ? <div className="min-h-0 flex-1 overflow-auto" data-subnav-explorer>{railContent}</div> : <RailNav items={items} storageKey={storageKey} title={title} renderNavItem={renderNavItem} railLabel={railLabel} />)}
       </aside>
 
       {/* Secondary rail — width is prop-driven, keep inline */}
@@ -280,7 +289,7 @@ export function SubNavLayout({
         </aside>
       )}
 
-      <Content aria-label={contentLabel} data-subnav-content className="flex-1 min-w-0 overflow-auto p-[var(--ui-page-gutter,1.5rem)]">
+      <Content aria-label={contentLabel} data-subnav-content className={cn("flex-1 min-w-0 min-h-0 overflow-auto", contentPadding === "none" ? "p-0" : "p-[var(--ui-page-gutter,1.5rem)]")}>
         <RailHeaderAlignContext.Provider value={report}>{children}</RailHeaderAlignContext.Provider>
       </Content>
     </div>
