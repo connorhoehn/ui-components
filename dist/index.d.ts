@@ -143,7 +143,7 @@ export declare interface ActionRowItem {
     action?: string;
 }
 
-export declare function ActionRowList({ items, onOpen, footer, emptyLabel, columns, tone, accent, action, size: sizeProp, 'aria-label': ariaLabel, className, 'data-testid': testId, }: ActionRowListProps): JSX.Element | null;
+export declare function ActionRowList({ items, onOpen, footer, emptyLabel, columns, tone, accent, striped, action, size: sizeProp, 'aria-label': ariaLabel, className, 'data-testid': testId, }: ActionRowListProps): JSX.Element | null;
 
 export declare interface ActionRowListProps {
     items: ActionRowItem[];
@@ -166,6 +166,8 @@ export declare interface ActionRowListProps {
     tone?: ActionRowTone;
     /** `bar`: a 3px bar in the row's tone on its left edge. Default `none`. Since 2.392.0. */
     accent?: 'none' | 'bar';
+    /** Alternate neutral row surfaces. Semantic row tones always take precedence. */
+    striped?: boolean;
     /** Every row's worded target in place of the chevron ("Open"). Since 2.392.0. */
     action?: string;
     /**
@@ -3837,7 +3839,7 @@ export declare interface ChannelFilesPanelProps {
     'data-testid'?: string;
 }
 
-export declare function ChannelHeader({ name, onRename, memberCount, description, tabs, actions, avatarUrl, online, onMembersClick, size, as, className, 'data-testid': testId, }: ChannelHeaderProps): JSX.Element;
+export declare function ChannelHeader({ name, onRename, memberCount, description, tabs, actions, avatarUrl, online, onMembersClick, size, headingLevel, as, className, 'data-testid': testId, }: ChannelHeaderProps): JSX.Element;
 
 export declare interface ChannelHeaderProps {
     /** Display name of the channel or user */
@@ -3878,6 +3880,8 @@ export declare interface ChannelHeaderProps {
      * the full-width bar over a chat pane.
      */
     size?: 'md' | 'sm';
+    /** Use 1 when this is the page's title; embedded conversation panels default to 2. */
+    headingLevel?: 1 | 2;
     /**
      * Element the bar renders as. Defaults to `'div'`. Pass `'header'` when a
      * host uses this as the page's own site header, so it lands as a `banner`
@@ -7203,11 +7207,13 @@ export declare interface ConversationStartReceipt {
     onAction?: () => void;
 }
 
-export declare function ConversationSurface({ name, description, online, avatarUrl, features, children, canvas, members, memberCount, files, thumbnailSrc, documents, onOpenDocument, onRename, onCreateDocument, onCreateWhiteboard, pins, onUnpin, mentions, onOpenMention, recordings, onOpenRecording, onJumpToMessage, onStartCall, callModeFixed, onWatch, watchLabel, watchHint, watchViewerCount, callInProgress, headerActions, headerClassName, view: controlledView, onViewChange, className, 'data-testid': testId, }: ConversationSurfaceProps): JSX.Element;
+export declare function ConversationSurface({ name, headingLevel, description, online, avatarUrl, features, children, canvas, members, memberCount, files, thumbnailSrc, documents, onOpenDocument, onRename, onCreateDocument, onCreateWhiteboard, pins, onUnpin, mentions, onOpenMention, recordings, onOpenRecording, onJumpToMessage, onStartCall, callModeFixed, onWatch, watchLabel, watchHint, watchViewerCount, callInProgress, headerActions, headerClassName, view: controlledView, onViewChange, className, 'data-testid': testId, }: ConversationSurfaceProps): JSX.Element;
 
 export declare interface ConversationSurfaceProps {
     /** Channel name, or the people in a DM. */
     name: string;
+    /** Page title (1) or an embedded conversation heading (2, default). */
+    headingLevel?: 1 | 2;
     /** Sub-line under the name. */
     description?: string;
     online?: boolean;

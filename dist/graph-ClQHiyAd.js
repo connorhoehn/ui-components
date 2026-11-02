@@ -2487,7 +2487,7 @@ function Dn({ node: e, detail: n, selected: r, selectedRevisionId: i, live: a, o
 										className: "min-w-0",
 										children: n
 									}),
-									r === 0 && c?.badge && /* @__PURE__ */ X("span", {
+									r === 0 && c?.badge && c.badge.trim() !== n.trim() && /* @__PURE__ */ X("span", {
 										"data-ui-text": "graph-metadata",
 										className: t("shrink-0 rounded px-1.5 py-px text-xs font-semibold", e.status === "running" ? "border border-info-border text-info-fg" : "bg-info-bg text-info-fg"),
 										children: c.badge

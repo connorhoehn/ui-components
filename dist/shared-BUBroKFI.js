@@ -34,7 +34,7 @@ import { t as oe } from "./Sparkline-BIYPNDRu.js";
 import { i as se } from "./focusTrap-D9J7npjl.js";
 import "./FilterChip-CRblMyt0.js";
 import "./SkeletonCard-D3FL0TB7.js";
-import { a as ce, i as le } from "./ChannelHeader-v2clAAea.js";
+import { a as ce, i as le } from "./ChannelHeader-CGQmKfU_.js";
 import "./Slider-DEbQCKD1.js";
 import { t as B } from "./DropdownMenu-2S3snVPG.js";
 import "./DockedPanelContext-pH9A5z1h.js";

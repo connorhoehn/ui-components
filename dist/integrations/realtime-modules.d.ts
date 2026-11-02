@@ -1796,6 +1796,8 @@ declare type ConversationFeaturesForOptions = {
 declare interface ConversationSurfaceProps {
     /** Channel name, or the people in a DM. */
     name: string;
+    /** Page title (1) or an embedded conversation heading (2, default). */
+    headingLevel?: 1 | 2;
     /** Sub-line under the name. */
     description?: string;
     online?: boolean;

@@ -707,7 +707,7 @@ export declare interface ChangeDiffProps {
     'data-testid'?: string;
 }
 
-export declare function ChannelHeader({ name, onRename, memberCount, description, tabs, actions, avatarUrl, online, onMembersClick, size, as, className, 'data-testid': testId, }: ChannelHeaderProps): JSX.Element;
+export declare function ChannelHeader({ name, onRename, memberCount, description, tabs, actions, avatarUrl, online, onMembersClick, size, headingLevel, as, className, 'data-testid': testId, }: ChannelHeaderProps): JSX.Element;
 
 export declare interface ChannelHeaderProps {
     /** Display name of the channel or user */
@@ -748,6 +748,8 @@ export declare interface ChannelHeaderProps {
      * the full-width bar over a chat pane.
      */
     size?: 'md' | 'sm';
+    /** Use 1 when this is the page's title; embedded conversation panels default to 2. */
+    headingLevel?: 1 | 2;
     /**
      * Element the bar renders as. Defaults to `'div'`. Pass `'header'` when a
      * host uses this as the page's own site header, so it lands as a `banner`
