@@ -18,7 +18,7 @@ import { t as M } from "./Textarea-BwvE1HPn.js";
 import { t as he } from "./Avatar-DkkMISPQ.js";
 import { t as N } from "./activationKey-CjbL3LUv.js";
 import { O as ge } from "./renderers-DarOLZU_.js";
-import { Y as _e } from "./ProposedEditStrip-BWjF1ckM.js";
+import { Y as _e } from "./ProposedEditStrip-BRXbaXAg.js";
 import { t as ve } from "./TiptapEditor-BjjwDyPa.js";
 import { t as ye } from "./useHangoutEmbed-ChkoGDC_.js";
 import { t as P } from "./useActiveSpeaker-BGKJU3Lb.js";

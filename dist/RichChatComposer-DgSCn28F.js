@@ -3794,6 +3794,7 @@ var Pa = ve(function({ onSend: o, draft: f, onDraftChange: h, onCommand: ee, onS
 						}),
 						/* @__PURE__ */ k("div", {
 							className: e("flex min-w-0 items-center", Y ? "px-2 py-1.5" : "px-1.5 py-1", Q ? "shrink-0" : X ? "pt-1" : "border-t border-border", q && "ml-auto", Mr && !Q && "flex-wrap gap-y-1", !Q && Ur),
+							"data-ui-composer-tools": Y ? "docked" : "compact",
 							"data-testid": `${L}-toolbar`,
 							children: [
 								(Mr || q) && !Z && (!q || Jr) && _i(Wr ? "Hide formatting" : "Show formatting", Wr, () => Gr((e) => !e), /* @__PURE__ */ O("span", {
