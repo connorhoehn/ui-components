@@ -18,6 +18,7 @@
 import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, it, expect } from 'vitest';
+import { execFileSync } from 'node:child_process';
 
 const ROOT = join(__dirname, '..', '..');
 const DIST = join(ROOT, 'dist');
@@ -72,6 +73,13 @@ function bareImports(files: string[]): Set<string> {
 const distExists = existsSync(join(DIST, 'index.js'));
 
 describe.skipIf(!distExists)('packaging contract (requires a build)', () => {
+  it('ships the portable audit so consumers do not require a sibling source checkout', () => {
+    const [archive] = JSON.parse(execFileSync('npm', ['pack', '--dry-run', '--json', '--ignore-scripts'], { cwd: ROOT, encoding: 'utf8' }));
+    const files = new Set(archive.files.map((file: { path: string }) => file.path));
+    for (const file of walk(join(ROOT, 'skills', 'ui-dom-audit'), () => true)) {
+      expect(files.has(file.slice(ROOT.length + 1)), `Missing packaged audit resource: ${file}`).toBe(true);
+    }
+  });
   it('every runtime import in dist/ is a declared dependency or peer', () => {
     const js = walk(DIST, (f) => f.endsWith('.js') || f.endsWith('.cjs'));
     const undeclaredRuntime = [...bareImports(js)].filter((n) => !declared.has(n)).sort();

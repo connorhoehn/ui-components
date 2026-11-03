@@ -124,7 +124,8 @@
     "./package.json": "./package.json"
   },
   "files": [
-    "dist"
+    "dist",
+    "skills/ui-dom-audit"
   ],
   "scripts": {
     "build": "node scripts/vite-build.mjs && npm run build:fix-subpath-dts && npm run build:normalize-dts",
