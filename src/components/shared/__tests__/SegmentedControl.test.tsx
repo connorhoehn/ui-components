@@ -136,3 +136,17 @@ describe('SegmentedControl — iconOnly (2.434.0)', () => {
     expect(onChange).toHaveBeenCalledWith('pins');
   });
 });
+
+describe('SegmentedControl — accent tone', () => {
+  // A 14px label on the soft primary fill must take the fill's own foreground
+  // token: `text-primary` on `bg-primary-bg` measured 4.13:1 in the dark theme
+  // (the Connections Force | Radial switch), below the 4.5:1 text floor.
+  it('paints the chosen segment with the on-fill foreground token, never the brand text token', () => {
+    render(<SegmentedControl tone="accent" options={OPTIONS} value="grid" onChange={() => {}} />);
+    const chosen = screen.getByRole('radio', { name: 'Grid' });
+    expect(chosen).toHaveClass('bg-primary-bg', 'text-primary-fg');
+    expect(chosen).not.toHaveClass('text-primary');
+    expect(screen.getByRole('radio', { name: 'List' })).toHaveClass('text-text-primary');
+    expect(screen.getByRole('radiogroup')).toHaveAttribute('data-segmented-tone', 'accent');
+  });
+});

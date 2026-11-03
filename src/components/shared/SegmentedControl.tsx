@@ -92,7 +92,12 @@ const INACTIVE_CLASSES =
 const ACTIVE_CLASSES =
   'bg-surface shadow-sm text-[var(--color-text-primary)] border border-[var(--color-border)]';
 
-const ACCENT_ACTIVE_CLASSES = 'bg-primary-bg text-primary border border-transparent';
+// The chosen accent segment is text ON the soft primary fill, so it takes the
+// fill's own foreground token (`--color-primary-fg`), not the brand text token.
+// `text-primary` on `bg-primary-bg` measured 4.13:1 in the dark theme (and
+// 4.04:1 in light) for a 14px label; the `-fg` token is what the tone system
+// pairs with `-bg` and measures 7.3:1 dark / 4.5:1 light (2.500.1).
+const ACCENT_ACTIVE_CLASSES = 'bg-primary-bg text-primary-fg border border-transparent';
 
 export function SegmentedControl({
   options,
