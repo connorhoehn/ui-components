@@ -137,7 +137,7 @@ function buildComponents(scale: MarkdownViewScale): Components {
   code({ className, children }) {
     if (!className) {
       return (
-        <code className={cn('rounded bg-surface-inset px-1 py-0.5 text-text-primary', t.inlineCode)}>{children}</code>
+        <code data-ui-inline-code="" className={cn('rounded bg-surface-inset px-1 py-0.5 text-text-primary', t.inlineCode)}>{children}</code>
       );
     }
     // Handled by the parent <pre> override for fenced blocks; inline code

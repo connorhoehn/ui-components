@@ -1,10 +1,10 @@
 # CLAUDE.md — @connorhoehnslalom/ui-components
 
 React component library for real-time collaborative applications. Current
-version is in `package.json` (**2.442.1** as of 2026-10-13). The primary
+version is in `package.json`. The primary
 consumer is the aws-agentcore portal, which installs a packed tarball of this
 package from `../aws-agentcore/portal/vendor/`. The current workspace handoff is
-`../aws-agentcore/docs/claude-code-handoff-2026-10-12.md`; this repo's own
+`../aws-agentcore/docs/claude-code-handoff-2026-11-02-ui.md`; this repo's own
 history is `CHANGELOG.md`, and the contribution rules are `CONTRIBUTING.md`.
 
 Historical notes: the `agent-hub` coordination system was retired on

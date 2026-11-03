@@ -76,7 +76,7 @@ export interface ToolbarProps {
 
 const SIZE = {
   sm: 'min-h-9 px-3 gap-2 text-xs',
-  md: 'min-h-11 px-4 gap-2.5 text-[13px]',
+  md: 'min-h-11 px-4 gap-2.5 text-sm',
 } as const;
 
 const TONE = {

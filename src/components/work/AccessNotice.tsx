@@ -60,8 +60,9 @@ export function AccessNotice({
       role="note"
       aria-labelledby={titleId}
       data-tone={tone}
+      data-ui-access-notice=""
       data-testid={testId}
-      className={cn('flex items-start gap-2.5 py-3 text-sm', className)}
+      className={cn('flex items-start gap-2 py-3 text-sm', className)}
     >
       <StatusDot color={DOT[tone]} size="sm" className="mt-1.5 shrink-0" />
       <div className="min-w-0 flex-1">

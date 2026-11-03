@@ -1480,5 +1480,25 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
     await page.close();
     console.log('PASS breadcrumb distinct levels, single-line layout and explicit ellipsis');
   }
+  {
+    const page = await browser.newPage();
+    const subset = { ...fullContract, rules: fullContract.rules.filter(r => ['align.grid', 'markdown.inline-code-inset', 'notice.marker-gap'].includes(r.id)) };
+    const fixture = `<style>:root{--ui-table-inset:12px;--ui-content-gutter:16px}main{width:800px}p{margin:8px 0}code{padding:2px 4px;margin:0}[data-ui-access-notice]{display:flex;gap:8px}.dot{width:8px;flex-shrink:0}</style><main id="prose"><nav data-trail>Runbook</nav><p><code data-ui-inline-code>data/snapshot.json</code> records the captured result.</p><div data-ui-access-notice><span class="dot"></span><div>Read access<br>Only the owner may approve.</div></div><p id="neighbor">Ordinary section</p></main>`;
+    const check = () => page.evaluate(measureDOM, { ...payload, required: [], selectors: { ...selectors, contentColumns: '#prose', trail: '[data-trail]' }, contract: subset });
+    await page.setContent(fixture);
+    assert.deepEqual((await check()).issues, [], 'code background insets do not move the paragraph reading edge');
+    for (const [selector, property, value, rule] of [
+      ['code', 'paddingLeft', '8px', 'markdown.inline-code-inset'],
+      ['code', 'marginLeft', '4px', 'markdown.inline-code-inset'],
+      ['[data-ui-access-notice]', 'gap', '10px', 'notice.marker-gap'],
+      ['#neighbor', 'paddingLeft', '5px', 'align.grid'],
+    ]) {
+      await page.setContent(fixture);
+      await page.locator(selector).evaluate((el, x) => { el.style[x.property] = x.value; }, { property, value });
+      assert.ok((await check()).issues.some(i => i.rule === rule), `prose profile must catch ${rule}`);
+    }
+    await page.close();
+    console.log('PASS inline-code and notice profiles preserve neighboring prose alignment');
+  }
   console.log(`PASS clean four-column layout, repeatability, ${mutations.length} defect mutations, navigation coverage, cross-tenant grouping and honest report comparison`);
 } finally { await browser.close(); fs.rmSync(temp, { recursive: true, force: true }); }

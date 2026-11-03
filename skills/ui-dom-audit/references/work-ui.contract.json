@@ -1040,6 +1040,10 @@
         {
           "selector": "[data-ui-composer-tools]",
           "reason": "RichChatComposer toolbar follows the composer boundary with 8px docked / 6px compact side padding. Explicit composer.tools-inset rules check this inner grid; outer dock, controls, contrast and focus remain measured."
+        },
+        {
+          "selector": "[data-ui-inline-code]",
+          "reason": "MarkdownView inline code uses a 4px background inset within the paragraph. markdown.inline-code-inset checks its padding and zero margins; only the code token uses this profile, while paragraph neighbors, type and contrast remain checked."
         }
       ]
     },
@@ -1707,6 +1711,27 @@
         "paddingRight": 6
       },
       "owner": "RichChatComposer toolbar"
+    },
+    {
+      "id": "markdown.inline-code-inset",
+      "kind": "style",
+      "selector": "[data-ui-inline-code]",
+      "properties": {
+        "paddingLeft": "4px",
+        "paddingRight": "4px",
+        "marginLeft": "0px",
+        "marginRight": "0px"
+      },
+      "owner": "MarkdownView inline code token"
+    },
+    {
+      "id": "notice.marker-gap",
+      "kind": "style",
+      "selector": "[data-ui-access-notice]",
+      "properties": {
+        "columnGap": "8px"
+      },
+      "owner": "AccessNotice marker-to-prose gap"
     }
   ]
 }
