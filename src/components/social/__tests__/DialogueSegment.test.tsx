@@ -2,6 +2,16 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { DialogueSegment } from '../DialogueSegment';
 describe('DialogueSegment', () => {
+  it('keeps missing and failed character portraits on a semantic foreground/background pair', () => {
+    const {rerender}=render(<DialogueSegment author="Guide" text="Hello" />);
+    const fallback=screen.getByTitle('Guide');
+    expect(fallback).toHaveClass('bg-neutral-bg', 'text-neutral-fg');
+    expect(fallback.style.background).toBe('');
+    expect(fallback.style.color).toBe('');
+    rerender(<DialogueSegment author="Guide" avatarUrl="/missing.png" text="Hello" />);
+    fireEvent.error(screen.getByRole('img', {name:'Guide'}));
+    expect(screen.getByText('Gu')).toHaveClass('bg-neutral-bg', 'text-neutral-fg');
+  });
   it('makes the exact segment draggable only when the host provides its payload', () => {
     const drag=vi.fn();const {container,rerender}=render(<DialogueSegment author="Cup" text="Hello" onDragStart={drag} />);
     const row=container.querySelector('[data-dialogue-segment]')!;fireEvent.dragStart(row);expect(drag).toHaveBeenCalledOnce();

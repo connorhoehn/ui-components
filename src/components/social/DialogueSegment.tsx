@@ -18,7 +18,7 @@ export interface DialogueSegmentProps {
 export function DialogueSegment({ author, avatarUrl, text, metadata, status, actions = [], className, onDragStart }: DialogueSegmentProps) {
   return (
     <div data-dialogue-segment draggable={!!onDragStart} onDragStart={onDragStart} className={cn('group relative flex min-w-0 items-center gap-2 border-b border-border-subtle px-2 py-1 hover:bg-surface-hover focus-within:bg-surface-hover', className)}>
-      <Avatar name={author} src={avatarUrl} size={32} />
+      <Avatar name={author} src={avatarUrl} size={32} tone="neutral" />
       <div className="min-w-0 flex-1">
         <div className="flex h-5 min-w-0 items-center gap-2 pr-24 text-xs text-text-secondary">
           <strong className="shrink-0 font-semibold text-text-primary">{author}</strong>
