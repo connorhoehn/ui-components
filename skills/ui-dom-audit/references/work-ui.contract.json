@@ -1032,6 +1032,14 @@
         {
           "selector": "[data-ui-control=\"select\"] > span",
           "reason": "Select labels follow the trigger inset, not the page gutter. Explicit select profiles check both inset sizes and variants; trigger typography, focus, containment and the popup remain checked."
+        },
+        {
+          "selector": "[data-testid=\"message-row-content\"], [data-testid=\"message-row-header\"], [data-testid=\"message-row-footer\"]",
+          "reason": "MessageRow has a 20px avatar slot and 8px gap, inside ChatPanel\u2019s 8px hover inset (36px text / 8px actions from the transcript edge). The chat.message profiles enforce this anatomy; continued rows retain the slot, own bubbles reverse it. Only row content uses this grid; ordinary neighbors and control/contrast/overflow checks remain active."
+        },
+        {
+          "selector": "[data-ui-composer-tools]",
+          "reason": "RichChatComposer toolbar follows the composer boundary with 8px docked / 6px compact side padding. Explicit composer.tools-inset rules check this inner grid; outer dock, controls, contrast and focus remain measured."
         }
       ]
     },
@@ -1649,6 +1657,56 @@
         "paddingRight": 6
       },
       "owner": "Select trigger"
+    },
+    {
+      "id": "chat.message-inset",
+      "kind": "style",
+      "selector": "[data-testid=\"chat-message\"]",
+      "properties": {
+        "paddingLeft": 8,
+        "paddingRight": 8
+      },
+      "owner": "ChatPanel message hover surface"
+    },
+    {
+      "id": "chat.message-gap",
+      "kind": "style",
+      "selector": "[data-testid=\"message-row\"]",
+      "properties": {
+        "columnGap": 8,
+        "paddingLeft": 0,
+        "paddingRight": 0
+      },
+      "owner": "MessageRow avatar/content grid"
+    },
+    {
+      "id": "chat.message-avatar-slot",
+      "kind": "box",
+      "selector": "[data-testid=\"message-row\"] > :first-child",
+      "properties": {
+        "width": 20
+      },
+      "owner": "MessageRow stable avatar slot"
+    },
+    {
+      "id": "composer.tools-inset-docked",
+      "kind": "style",
+      "selector": "[data-ui-composer-tools=\"docked\"]",
+      "properties": {
+        "paddingLeft": 8,
+        "paddingRight": 8
+      },
+      "owner": "RichChatComposer toolbar"
+    },
+    {
+      "id": "composer.tools-inset-compact",
+      "kind": "style",
+      "selector": "[data-ui-composer-tools=\"compact\"]",
+      "properties": {
+        "paddingLeft": 6,
+        "paddingRight": 6
+      },
+      "owner": "RichChatComposer toolbar"
     }
   ]
 }

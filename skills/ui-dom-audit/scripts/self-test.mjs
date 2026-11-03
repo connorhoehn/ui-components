@@ -120,6 +120,7 @@ try {
     [data-diff-cell=code]{padding-left:8px;padding-right:8px;white-space:pre}
     [data-ui-change-location]{padding:4px 8px;display:flex;gap:4px}
     [data-ui-change-diff-side]{padding:4px 8px;display:flex;gap:8px}
+    [data-ui-composer-tools]{padding:4px 8px;display:flex;justify-content:flex-end}
     [data-ui-composer-modes]{padding:4px 12px;display:flex;justify-content:flex-end}
     button{font:12px system-ui,sans-serif}
     </style><main><div data-trail>Review</div>
@@ -129,13 +130,14 @@ try {
     <td data-diff-cell=gutter>16</td><td data-diff-cell=gutter>16</td><td data-diff-cell=code>${'long_complete_identifier '.repeat(20)}</td>
     </tr></tbody></table></div>
     <table id=ordinary><tbody><tr><td>Neighbor</td><td>Ready</td></tr></tbody></table>
+    <div data-ui-composer-tools=docked><button>Send</button></div>
     <div data-ui-composer-modes=docked><button>Help</button></div>
     <ol data-ui-procedure=md style="list-style:none;padding:0;margin:0"><li style="display:flex;gap:12px"><span aria-hidden=true style="display:block;flex:none;width:24px;height:24px">1</span><span>Run the command.</span></li></ol>
     <button data-ui-source-row style="display:flex;gap:12px;padding:0;border:0"><span aria-hidden=true style="width:32px;height:32px;flex:none"></span><span>Source title<br>Source description</span></button>
     <button data-ui-control=select data-ui-size=sm data-variant=default style="padding:0 6px 0 8px"><span>Select a record</span></button>
     <div id=neighbor>Ordinary prose</div></main>`;
   await page.setContent(diffFixture);
-  const diffMeasure = () => page.evaluate(measureDOM, { contract: { ...fullContract, rules: fullContract.rules.filter(r => r.id.startsWith('source.row-') || r.id.startsWith('control.select-inset') || r.id.startsWith('procedure.') || r.id.startsWith('diff.') || r.id.startsWith('change.') || r.id.startsWith('composer.mode-inset') || ['table.geometry','table.column-hog','align.grid','control.font-size'].includes(r.id)) }, selectors, context: {} });
+  const diffMeasure = () => page.evaluate(measureDOM, { contract: { ...fullContract, rules: fullContract.rules.filter(r => r.id.startsWith('source.row-') || r.id.startsWith('control.select-inset') || r.id.startsWith('procedure.') || r.id.startsWith('diff.') || r.id.startsWith('change.') || r.id.startsWith('composer.mode-inset') || r.id.startsWith('composer.tools-inset') || ['table.geometry','table.column-hog','align.grid','control.font-size'].includes(r.id)) }, selectors, context: {} });
   assert.deepEqual((await diffMeasure()).issues, [], 'code review and mode controls use their own measured inner grids');
   for (const [selector, property, value, rule] of [
     ['[data-diff-cell=code]', 'fontSize', '14px', 'diff.line-type'],
@@ -147,6 +149,8 @@ try {
     ['[data-ui-diff-scroll]', 'overflowX', 'hidden', 'diff.scroll'],
     ['[data-ui-change-location]', 'paddingLeft', '20px', 'change.location-inset'],
     ['[data-ui-change-diff-side]', 'columnGap', '20px', 'change.diff-inset'],
+    ['[data-ui-composer-tools]', 'paddingRight', '16px', 'composer.tools-inset-docked'],
+    ['[data-ui-composer-tools] button', 'fontSize', '18px', 'control.font-size'],
     ['[data-ui-composer-modes]', 'paddingRight', '16px', 'composer.mode-inset-docked'],
     ['[data-ui-composer-modes] button', 'fontSize', '18px', 'control.font-size'],
     ['#ordinary td', 'height', '68px', 'table.geometry'],
@@ -1384,6 +1388,26 @@ fetch('/api/runs').then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d 
     assert.ok((await check()).issues.some(i => i.rule === 'call.header-inset'));
     await page.close();
     console.log('PASS contained meeting counts and call control top inset');
+  }
+  {
+    const page = await browser.newPage();
+    const subset = { ...fullContract, rules: fullContract.rules.filter(r => r.id.startsWith('chat.message-') || r.id === 'align.grid') };
+    const fixture = `<style>:root{--ui-table-inset:12px;--ui-content-gutter:16px}*{box-sizing:border-box}main{width:800px} [data-testid=chat-message]{padding:0 8px}[data-testid=message-row]{display:flex;gap:8px} .slot{width:20px;height:20px;flex-shrink:0;text-align:center}.body{flex:1;min-width:0}[data-testid=message-row-header]{display:flex;justify-content:space-between}p{margin:8px 0}</style><main id="chat"><nav data-trail>Conversation</nav><div data-testid="chat-message"><div data-testid="message-row"><div class="slot">A</div><div class="body"><div data-testid="message-row-header"><span>Alex</span><button>More</button></div><div data-testid="message-row-content"><p>Message text</p></div><div data-testid="message-row-footer">Reply</div></div></div></div><p id="neighbor">Ordinary section</p></main>`;
+    const check = () => page.evaluate(measureDOM, { ...payload, required: [], selectors: { ...selectors, contentColumns: '#chat', trail: '[data-trail]' }, contract: subset });
+    await page.setContent(fixture);
+    assert.deepEqual((await check()).issues, [], 'message text follows the avatar while its actions follow the hover inset');
+    for (const [selector, property, value, rule] of [
+      ['[data-testid=chat-message]', 'paddingLeft', '4px', 'chat.message-inset'],
+      ['[data-testid=message-row]', 'gap', '12px', 'chat.message-gap'],
+      ['.slot', 'width', '28px', 'chat.message-avatar-slot'],
+      ['#neighbor', 'paddingLeft', '5px', 'align.grid'],
+    ]) {
+      await page.setContent(fixture);
+      await page.locator(selector).evaluate((el, x) => { el.style[x.property] = x.value; }, { property, value });
+      assert.ok((await check()).issues.some(i => i.rule === rule), `message profile must catch ${rule}`);
+    }
+    await page.close();
+    console.log('PASS message avatar/inset profile preserves ordinary neighboring grid checks');
   }
   {
     const page = await browser.newPage();

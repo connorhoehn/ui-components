@@ -160,3 +160,13 @@ requirements. Reuse it across its tenants; supply `--contract` for a different
 product's documented design system. Pixel/style checks do not establish correct
 copy, visual taste, full accessibility or backend/realtime behavior. Add explicit
 interaction assertions when those are the reported problem.
+
+## Source and installed-package checks
+
+Use [the source audit API](references/source-audit.md) to find composition
+candidates and compare an installed package with its reviewed archive. The
+shared implementation is `scripts/source-audit.cjs`; consumer adapters own
+source roots, density entry points, required migrations and ratchet policies.
+Source candidates are review evidence, not automatic UI defects. Run the source
+fixtures with `node --test skills/ui-dom-audit/scripts/source-self-test.cjs` in
+the library after changing this mode.

@@ -3162,6 +3162,7 @@ export const RichChatComposer = forwardRef<RichChatComposerHandle, RichChatCompo
             narrow && !singleRow && 'flex-wrap gap-y-1',
             !singleRow && reveal,
           )}
+          data-ui-composer-tools={docked ? 'docked' : 'compact'}
           data-testid={`${testId}-toolbar`}
         >
           {(narrow || pane) && !collapsed && (!pane || paneTools) && toolbarButton(
