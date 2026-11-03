@@ -109,7 +109,7 @@ function g({ children: s, label: g = "Filter", activeCount: _ = 0, onClear: v, c
 //#region src/components/shared/Toolbar.tsx
 var _ = {
 	sm: "min-h-9 px-3 gap-2 text-xs",
-	md: "min-h-11 px-4 gap-2.5 text-[13px]"
+	md: "min-h-11 px-4 gap-2.5 text-sm"
 }, v = {
 	surface: "bg-surface text-text-primary border-border",
 	code: "bg-code-panel text-code-text border-code-border"

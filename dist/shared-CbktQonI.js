@@ -21,10 +21,10 @@ import { t as L } from "./Input-B0LB5k_L.js";
 import { n as R } from "./Select-BFyECVVL.js";
 import { t as z } from "./Tooltip-C2PEm6cS.js";
 import { t as te } from "./InlinePopover-Dx8-r-XU.js";
-import "./Toolbar-Dcusuzc1.js";
+import "./Toolbar-Dbwp_BwM.js";
 import "./FormField-CQ27qxWt.js";
 import "./SearchInput-DDKsA6gZ.js";
-import { n as ne } from "./DataTable-1yJ9R6Xg.js";
+import { n as ne } from "./DataTable-BieMoBa3.js";
 import { t as re } from "./EmptyState-D5ucMp2y.js";
 import { t as ie } from "./ThinkingDots-52RnodUR.js";
 import "./Drawer-hsPDQBJM.js";
@@ -5125,6 +5125,7 @@ function ui(t) {
 				className: t,
 				children: r
 			}) : /* @__PURE__ */ Z("code", {
+				"data-ui-inline-code": "",
 				className: e("rounded bg-surface-inset px-1 py-0.5 text-text-primary", n.inlineCode),
 				children: r
 			});
