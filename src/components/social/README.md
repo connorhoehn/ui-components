@@ -73,6 +73,11 @@ resolve `{ next: ComposerPrompt }` to route to a follow-up in the same card
 editable message, its review and its done state, with no modal and no toolbar.
 `ComposerConfirmFlow` is also exported on its own.
 
+For text/number questions where the deck owns the input, `inputDraft` lets the
+host retain unsent text across remounts or conflicts. The host chooses its
+persistence scope and clears it after acceptance. It does not control an
+external editor bridge or the separate compose message flow.
+
 ## Agent composer dock (deprecated)
 
 Deprecated since 2.407.0 — a thin preset over `ContextComposer`.

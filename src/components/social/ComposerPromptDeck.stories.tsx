@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { ComposerPromptDeck } from './ComposerPromptDeck';
 import type { ComposerPrompt } from './composerPromptModel';
+import { Button } from '../ui/Button';
 
 const meta: Meta<typeof ComposerPromptDeck> = {
   title: 'Social/ComposerPromptDeck',
@@ -11,6 +12,23 @@ const meta: Meta<typeof ComposerPromptDeck> = {
 export default meta;
 
 type Story = StoryObj<typeof ComposerPromptDeck>;
+
+/** Host-owned drafts survive hiding/remounting. Persistence belongs to the app. */
+export const ControlledAnswerDraft: Story = {
+  render: function ControlledDraftStory() {
+    const [visible, setVisible] = useState(true);
+    const [value, setValue] = useState('A rough story direction');
+    return <div className="space-y-3">
+      <Button variant="secondary" onClick={() => setVisible(v => !v)}>Toggle question</Button>
+      {visible && <ComposerPromptDeck prompts={[{
+        id: 'story-direction', title: 'Story direction', kind: 'text',
+        question: 'Develop the idea, then hide and reopen this question.',
+        inputDraft: { value, onChange: setValue },
+        onAnswer: () => ({ error: 'Preview only: your draft is preserved.' }),
+      }]} />}
+    </div>;
+  },
+};
 
 const MODELS = [
   { id: 'haiku', label: 'Haiku 4.5', hint: '$0.10–$0.40' },

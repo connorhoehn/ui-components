@@ -34,6 +34,33 @@ const deck = () => screen.getByTestId('composer-prompt-deck');
 const key = (k: string, init: KeyboardEventInit = {}) => fireEvent.keyDown(document.activeElement ?? document.body, { key: k, ...init });
 
 describe('ComposerPromptDeck', () => {
+  it('preserves host-owned answer drafts across remounts and refusals without clearing a different question on a late answer', async () => {
+    const saved: Record<string, string> = { first: 'First draft', second: 'Second draft' };
+    let finish: ((value: { receipt: string }) => void) | undefined;
+    const answer = vi.fn(() => new Promise<{ receipt: string }>(resolve => { finish = resolve; }));
+    function Host({ id }: { id: string }) {
+      const [, redraw] = useState(0);
+      return <ComposerPromptDeck prompts={[{
+        id, title: `Question ${id}`, question: 'Develop an idea', kind: 'text',
+        inputDraft: { value: saved[id], onChange: value => { saved[id] = value; redraw(n => n + 1); } },
+        onAnswer: id === 'first' ? answer : () => ({ error: 'Conflict: compare the saved answer.' }),
+      }]} />;
+    }
+    const initial = render(<Host id="first" />);
+    fireEvent.change(screen.getByRole('textbox', { name: 'Question first' }), { target: { value: 'Edited draft' } });
+    initial.unmount();
+    const reopened = render(<Host id="first" />);
+    expect(screen.getByRole('textbox', { name: 'Question first' })).toHaveValue('Edited draft');
+    fireEvent.click(screen.getByTestId('composer-prompt-deck-submit'));
+    reopened.rerender(<Host id="second" />);
+    await act(async () => finish?.({ receipt: 'First accepted' }));
+    expect(screen.getByRole('textbox', { name: 'Question second' })).toHaveValue('Second draft');
+    fireEvent.click(screen.getByTestId('composer-prompt-deck-submit'));
+    await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('Conflict'));
+    expect(screen.getByRole('textbox', { name: 'Question second' })).toHaveValue('Second draft');
+    expect(saved.first).toBe('Edited draft'); // Only the host can clear an accepted controlled draft.
+  });
+
   it('focuses a new question once, preserves focus in other editors, and ignores held or composing keys', async () => {
     const onAnswer = vi.fn();
     const input = document.createElement('textarea');

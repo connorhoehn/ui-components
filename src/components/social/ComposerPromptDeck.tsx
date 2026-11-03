@@ -326,9 +326,14 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, vari
   const [draft, setDraft] = useState({ id: '', text: '' });
   const { active, pending, index, collapsed, busy, error, receipt } = deck;
 
-  const answerText = draft.id === active?.id ? draft.text : '';
+  const answerText = active?.inputDraft?.value ?? (draft.id === active?.id ? draft.text : '');
   const inlineAnswer = !input && deck.typed && !active?.readOnlyReason;
-  const submitAnswer = async () => { if (await deck.answerTyped(answerText)) setDraft({ id: '', text: '' }); };
+  const submitAnswer = async () => {
+    const answeredId = active?.id;
+    if (await deck.answerTyped(answerText)) {
+      setDraft(current => current.id === answeredId ? { id: '', text: '' } : current);
+    }
+  };
 
   // ── keys ── captured at the document so they reach the deck before the
   // editor's own Enter / Escape, but only from the deck or its composer input.
@@ -532,7 +537,7 @@ export function ComposerPromptDeck({ deck: deckProp, prompts, input = null, vari
             <Textarea ref={answerRef} aria-label={active.title} placeholder={active.placeholder ?? 'Your answer'}
               value={answerText} disabled={busy} autoResize minRows={active.kind === 'number' ? 1 : 2}
               inputMode={active.kind === 'number' ? 'decimal' : undefined}
-              onChange={(event) => setDraft({ id: active.id, text: event.target.value })}
+              onChange={(event) => active.inputDraft ? active.inputDraft.onChange(event.target.value) : setDraft({ id: active.id, text: event.target.value })}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing && !event.repeat) {
                   event.preventDefault(); if (!busy) void submitAnswer();
