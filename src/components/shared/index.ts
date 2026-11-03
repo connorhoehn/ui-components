@@ -96,6 +96,9 @@ export type { FollowBannerProps } from './FollowBanner';
 // A heading renamed in place — the text with a pencil; Enter/blur commits, Esc reverts (2.391.0).
 export { EditableHeading } from './EditableHeading';
 export type { EditableHeadingProps } from './EditableHeading';
+// One element full screen and back: an icon button over useFullscreen; hidden where the API is absent (2.500.3).
+export { FullscreenToggle } from './FullscreenToggle';
+export type { FullscreenToggleProps } from './FullscreenToggle';
 export { default as SuggestionCard } from './SuggestionCard';
 export { default as TaskComposer } from './TaskComposer';
 export type { TaskComposerProps, ComposerSuggestion } from './TaskComposer';

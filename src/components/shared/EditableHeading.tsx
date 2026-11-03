@@ -24,6 +24,19 @@ export interface EditableHeadingProps {
   readOnly?: boolean;
   /** Accessible name of the pencil button. Default `Rename`. */
   editLabel?: string;
+  /**
+   * The element the text renders as. Default `span`; a page title passes
+   * `h1` so the page keeps its one heading while the title stays renameable.
+   * Since 2.500.3.
+   */
+  as?: 'span' | 'h1' | 'h2' | 'h3';
+  /**
+   * Keep the pencil out of the way until the pointer is over the heading or
+   * focus is inside it. A page title that is read far more often than it is
+   * renamed wants the quiet form; a drawer title keeps the pencil standing.
+   * Since 2.500.3.
+   */
+  revealOnHover?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -40,6 +53,8 @@ export function EditableHeading({
   size = 'md',
   readOnly = false,
   editLabel = 'Rename',
+  as: Tag = 'span',
+  revealOnHover = false,
   className,
   'data-testid': testId = 'editable-heading',
 }: EditableHeadingProps) {
@@ -103,17 +118,18 @@ export function EditableHeading({
 
   return (
     <div
-      className={cn('flex min-w-0 items-center gap-1.5', className)}
+      className={cn('group/heading flex min-w-0 items-center gap-1.5', className)}
       data-testid={testId}
       data-editing="false"
+      data-reveal={revealOnHover ? 'hover-focus' : undefined}
     >
-      <span
-        className={cn('min-w-0 truncate font-semibold text-text-primary', SIZE[size], !readOnly && 'cursor-text')}
+      <Tag
+        className={cn('m-0 min-w-0 truncate font-semibold text-text-primary', SIZE[size], !readOnly && 'cursor-text')}
         onClick={readOnly ? undefined : () => setEditing(true)}
         title={value}
       >
         {value || placeholder}
-      </span>
+      </Tag>
       {!readOnly && (
         <IconButton
           aria-label={editLabel}
@@ -121,7 +137,11 @@ export function EditableHeading({
           size="sm"
           onClick={() => setEditing(true)}
           data-testid={`${testId}-edit`}
-          className="shrink-0 text-text-secondary hover:text-text-primary"
+          className={cn(
+            'shrink-0 text-text-secondary hover:text-text-primary',
+            // Hidden, not removed: it stays in the tab order and shows itself on keyboard focus.
+            revealOnHover && 'opacity-0 transition-opacity focus-visible:opacity-100 group-hover/heading:opacity-100 group-focus-within/heading:opacity-100',
+          )}
           icon={<EditIcon size={15} />}
         />
       )}

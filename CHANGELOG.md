@@ -1,3 +1,8 @@
+## 2.500.3
+
+- `useFullscreen(ref)` (hooks) and `FullscreenToggle` (shared): one element into the browser's full-screen mode and back, hidden where the API is absent; the copies inside StreamStage, RecordGraph and RecordingPlayer are candidates to adopt it. `MinimizeIcon` pairs with `MaximizeIcon`.
+- `EditableHeading` takes `as` (`h1`/`h2`/`h3`/`span`) so a renameable page title stays the page's heading, and `revealOnHover` keeps the pencil hidden until the pointer or keyboard focus reaches the heading. Default rendering is unchanged.
+
 ## 2.500.2
 
 - Tooltips measure their content, flip when needed and stay inside viewport edges while scrolling/resizing.

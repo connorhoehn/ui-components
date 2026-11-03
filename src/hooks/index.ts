@@ -46,6 +46,8 @@ export { useDocumentTypes } from './useDocumentTypes';
 export { useFriends } from './useFriends';
 export { useGroups } from './useGroups';
 export { useIdleDetector } from './useIdleDetector';
+export { useFullscreen, fullscreenSupported } from './useFullscreen';
+export type { UseFullscreenReturn } from './useFullscreen';
 export { useIngestAudit } from './useIngestAudit';
 export { useIngestDLQ } from './useIngestDLQ';
 export { useIngestItems } from './useIngestItems';

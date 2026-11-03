@@ -29,6 +29,25 @@ describe('EditableHeading', () => {
     render(<EditableHeading value="T" onCommit={() => {}} readOnly data-testid="t" />);
     expect(screen.queryByTestId('t-edit')).toBeNull();
   });
+
+  it('renders as the page heading and keeps the pencil quiet until hover or focus', () => {
+    render(<EditableHeading as="h1" size="lg" revealOnHover value="Cutover board" onCommit={() => {}} data-testid="t" />);
+    expect(screen.getByRole('heading', { level: 1, name: 'Cutover board' })).toBeTruthy();
+    expect(screen.getByTestId('t').getAttribute('data-reveal')).toBe('hover-focus');
+    const pencil = screen.getByTestId('t-edit');
+    expect(pencil.className).toContain('opacity-0');
+    expect(pencil.className).toContain('group-hover/heading:opacity-100');
+    expect(pencil.className).toContain('focus-visible:opacity-100');
+    // Still a real control: the pencil opens the editor as before.
+    fireEvent.click(pencil);
+    expect((screen.getByTestId('t') as HTMLInputElement).value).toBe('Cutover board');
+  });
+
+  it('a standing pencil has no reveal classes', () => {
+    render(<EditableHeading value="T" onCommit={() => {}} data-testid="t" />);
+    expect(screen.getByTestId('t-edit').className).not.toContain('opacity-0');
+    expect(screen.getByTestId('t').getAttribute('data-reveal')).toBeNull();
+  });
 });
 
 describe('FollowBanner bar', () => {

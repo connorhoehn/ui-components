@@ -852,6 +852,15 @@ export function MaximizeIcon({ size = 16, ...rest }: GlyphProps) {
   );
 }
 
+/** Four corners pulled inward: "leave full screen". Since 2.500.3. */
+export function MinimizeIcon({ size = 16, ...rest }: GlyphProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M6 2.5V6H2.5M10 2.5V6h3.5M13.5 10H10v3.5M2.5 10H6v3.5" />
+    </svg>
+  );
+}
+
 /** A keyboard: shortcuts. Since 2.411.0. */
 export function KeyboardIcon({ size = 16, ...rest }: GlyphProps) {
   return (
