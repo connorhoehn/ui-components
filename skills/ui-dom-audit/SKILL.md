@@ -38,6 +38,12 @@ semantic selectors and read-only UI states. Keep tenant routes and authenticatio
 out of the shared engine. A split frontend repo can reuse the same skill and
 contract with another adapter.
 
+The npm archive includes this skill alongside `dist`. Consumer automation should
+prefer that installed copy so its audit contract is pinned with the UI runtime;
+it must not require a sibling source checkout or personal skill installation.
+For library development, set `UI_DOM_AUDIT_SKILL` explicitly to the source skill
+directory, then verify the released package without that override.
+
 ## Run
 
 Read [the contract/adapter reference](references/contracts.md) when adapting a
