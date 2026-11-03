@@ -13,7 +13,7 @@ import { useFullscreen } from '../../hooks/useFullscreen';
 import { IconButton, type IconButtonProps } from '../ui/IconButton';
 import { MaximizeIcon, MinimizeIcon } from '../ui/Icons';
 
-export interface FullscreenToggleProps extends Omit<IconButtonProps, 'aria-label' | 'icon' | 'onClick' | 'children'> {
+export interface FullscreenToggleProps extends Omit<IconButtonProps, 'aria-label' | 'icon' | 'onClick' | 'onChange' | 'children'> {
   /** The element to present full screen. */
   target: RefObject<HTMLElement | null>;
   /** Accessible name while not in full screen. Default `Full screen`. */
