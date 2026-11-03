@@ -41,18 +41,20 @@ export interface TooltipProps {
   'data-testid'?: string;
 }
 
-function computePosition(anchor: DOMRect, placement: TooltipPlacement, offset: number): CSSProperties {
-  switch (placement) {
-    case 'top':
-      return { position: 'fixed', bottom: window.innerHeight - anchor.top + offset, left: anchor.left + anchor.width / 2, transform: 'translateX(-50%)' };
-    case 'left':
-      return { position: 'fixed', top: anchor.top + anchor.height / 2, right: window.innerWidth - anchor.left + offset, transform: 'translateY(-50%)' };
-    case 'right':
-      return { position: 'fixed', top: anchor.top + anchor.height / 2, left: anchor.right + offset, transform: 'translateY(-50%)' };
-    case 'bottom':
-    default:
-      return { position: 'fixed', top: anchor.bottom + offset, left: anchor.left + anchor.width / 2, transform: 'translateX(-50%)' };
+function computePosition(anchor: DOMRect, tip: DOMRect, placement: TooltipPlacement): CSSProperties {
+  const gap = 6, inset = 8, width = tip.width, height = tip.height;
+  let left = anchor.left + (anchor.width - width) / 2;
+  let top = placement === 'top' ? anchor.top - height - gap : anchor.bottom + gap;
+  if (placement === 'left' || placement === 'right') {
+    left = placement === 'left' ? anchor.left - width - gap : anchor.right + gap;
+    top = anchor.top + (anchor.height - height) / 2;
+    if (left < inset && anchor.right + gap + width <= window.innerWidth - inset) left = anchor.right + gap;
+    else if (left + width > window.innerWidth - inset && anchor.left - width - gap >= inset) left = anchor.left - width - gap;
+  } else {
+    if (top < inset && anchor.bottom + gap + height <= window.innerHeight - inset) top = anchor.bottom + gap;
+    else if (top + height > window.innerHeight - inset && anchor.top - height - gap >= inset) top = anchor.top - height - gap;
   }
+  return { position: 'fixed', left: Math.max(inset, Math.min(left, window.innerWidth - width - inset)), top: Math.max(inset, Math.min(top, window.innerHeight - height - inset)) };
 }
 
 export function Tooltip({
@@ -68,6 +70,7 @@ export function Tooltip({
   const [open, setOpen] = useState(false);
   const [position, setPosition] = useState<CSSProperties | null>(null);
   const triggerRef = useRef<HTMLSpanElement | null>(null);
+  const tipRef = useRef<HTMLDivElement | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tooltipId = useId();
 
@@ -82,14 +85,19 @@ export function Tooltip({
 
   const recompute = useCallback(() => {
     const el = triggerRef.current;
-    if (!el) return;
-    setPosition(computePosition(el.getBoundingClientRect(), placement, 6));
+    if (!el || !tipRef.current) return;
+    setPosition(computePosition(el.getBoundingClientRect(), tipRef.current.getBoundingClientRect(), placement));
   }, [placement]);
 
   useLayoutEffect(() => {
-    if (open) recompute();
-    else setPosition(null);
-  }, [open, recompute]);
+    if (!open) { setPosition(null); return; }
+    recompute();
+    window.addEventListener('resize', recompute);
+    window.addEventListener('scroll', recompute, true);
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(recompute);
+    if (tipRef.current) observer?.observe(tipRef.current);
+    return () => { window.removeEventListener('resize', recompute); window.removeEventListener('scroll', recompute, true); observer?.disconnect(); };
+  }, [open, recompute, content]);
 
   const scheduleOpen = useCallback(() => {
     if (disabled) return;
@@ -132,21 +140,21 @@ export function Tooltip({
       </span>
 
       {open &&
-        position &&
         typeof document !== 'undefined' &&
         createPortal(
           <div
+            ref={tipRef}
             role="tooltip"
             id={tooltipId}
             data-testid={testId}
             className={cn(
-              'pointer-events-none z-[9500] max-w-xs rounded-md border border-border bg-surface px-2 py-1 text-xs text-text-primary shadow-lg',
+              'pointer-events-none z-[9500] w-max max-w-[min(20rem,calc(100vw-16px))] break-words rounded-md border border-border bg-surface px-2 py-1 text-xs text-text-primary shadow-lg',
               className,
             )}
             // Position only — placement is measured from the trigger's
             // getBoundingClientRect at open time and cannot be a class. The
             // stacking order was a static literal and is now `z-[9500]`.
-            style={position}
+            style={position || { position: 'fixed', visibility: 'hidden' }}
           >
             {content}
           </div>,

@@ -1,3 +1,8 @@
+## 2.500.2
+
+- Tooltips measure their content, flip when needed and stay inside viewport edges while scrolling/resizing.
+- RichChatComposer retains its rounded surface focus treatment without a second rectangular outline inside the editor. Plain ChatComposer keeps its own keyboard focus indicator. No public API change.
+
 ## 2.494.0
 
 - TenantSwitcher supports a compact size for project context beside a separate application title; default tenant branding remains unchanged.
