@@ -542,6 +542,17 @@ export declare interface ComposerPrompt {
     /** Number: bounds a typed answer must sit inside. */
     min?: number;
     max?: number;
+    /**
+     * Optional host-owned draft for the deck's text / number input (no external
+     * input bridge). The host may persist it by question identity across mounts.
+     * The host also clears it after an accepted answer; refused answers and late
+     * acknowledgments never clear another question's draft. Does not control the
+     * external composer input or a compose prompt's separate message flow.
+     */
+    inputDraft?: {
+        value: string;
+        onChange: (value: string) => void;
+    };
     /** Shown on the card instead of answers: the reader may look but not decide. */
     readOnlyReason?: string;
     /**

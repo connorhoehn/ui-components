@@ -571,11 +571,12 @@ function Ee({ deck: t, prompts: n, input: s = null, variant: c = "card", classNa
 	let p = c === "inset", m = Se(t ? null : n), h = t ?? m, g = R(null), _ = oe(), v = R(null), [y, ee] = z({
 		id: "",
 		text: ""
-	}), { active: b, pending: x, index: te, collapsed: S, busy: C, error: w, receipt: T } = h, E = y.id === b?.id ? y.text : "", D = !s && h.typed && !b?.readOnlyReason, O = async () => {
-		await h.answerTyped(E) && ee({
+	}), { active: b, pending: x, index: te, collapsed: S, busy: C, error: w, receipt: T } = h, E = b?.inputDraft?.value ?? (y.id === b?.id ? y.text : ""), D = !s && h.typed && !b?.readOnlyReason, O = async () => {
+		let e = b?.id;
+		await h.answerTyped(E) && ee((t) => t.id === e ? {
 			id: "",
 			text: ""
-		});
+		} : t);
 	}, ne = R({
 		deck: h,
 		input: s
@@ -894,7 +895,7 @@ function Ee({ deck: t, prompts: n, input: s = null, variant: c = "card", classNa
 						autoResize: !0,
 						minRows: b.kind === "number" ? 1 : 2,
 						inputMode: b.kind === "number" ? "decimal" : void 0,
-						onChange: (e) => ee({
+						onChange: (e) => b.inputDraft ? b.inputDraft.onChange(e.target.value) : ee({
 							id: b.id,
 							text: e.target.value
 						}),
