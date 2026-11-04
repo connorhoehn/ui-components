@@ -5398,6 +5398,24 @@ export declare interface SectionLabelProps {
     'data-testid'?: string;
 }
 
+export declare function SectionStack({ children, density: densityProp, divided, as, className, ref, ...rest }: SectionStackProps): JSX.Element;
+
+export declare interface SectionStackProps extends Omit<HTMLAttributes<HTMLElement>, 'children'> {
+    /** The sections — typically `PageSection`s, or any block. Null/false children are skipped. */
+    children?: ReactNode;
+    /**
+     * Vertical rhythm. `comfortable`: 24px either side of each rule. `compact`:
+     * 16px. Unset, follows the nearest `DensityProvider` (comfortable without one).
+     */
+    density?: Density;
+    /** Draw a rule between sections. `false` keeps the spacing, no rule. Default `true`. */
+    divided?: boolean;
+    /** Container element. Default `div`; `section` when the stack is itself a landmark region. */
+    as?: 'div' | 'section';
+    ref?: Ref<HTMLElement>;
+    'data-testid'?: string;
+}
+
 export declare function SegmentedControl({ options, value, onChange, size: sizeProp, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, disabled, fullWidth, tone, iconOnly, className, 'data-testid': testId, }: SegmentedControlProps): JSX.Element;
 
 export declare interface SegmentedControlProps {

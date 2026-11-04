@@ -167,7 +167,21 @@ export declare interface ActionRowListProps {
     tone?: ActionRowTone;
     /** `bar`: a 3px bar in the row's tone on its left edge. Default `none`. Since 2.392.0. */
     accent?: 'none' | 'bar';
-    /** Alternate neutral row surfaces. Semantic row tones always take precedence. */
+    /**
+     * Zebra rows: every second neutral row (the 2nd, 4th, …) sits on
+     * `surface-inset`, the tint `DataTable striped` uses, so a striped list and a
+     * striped table beside it read as one system. The first row stays on the
+     * page's own surface, so the list opens flush rather than on a band.
+     *
+     * Hover (`surface-hover`) is darker than the stripe, so the row under the
+     * pointer stays unambiguous on a striped row too; a disabled row keeps the
+     * stripe and its muted text, with no hover fill. A toned row keeps its tone
+     * (semantic tones always win over the stripe). The keyboard focus ring is
+     * unchanged. Works with and without `columns`. Emits `data-striped` on the
+     * list and `data-stripe` on each striped row. Since 2.502.0 the stripe is
+     * `surface-inset` (it was `surface-panel` on odd rows and an opaque
+     * `surface` on even ones, which painted white over a tinted host).
+     */
     striped?: boolean;
     /** Every row's worded target in place of the chevron ("Open"). Since 2.392.0. */
     action?: string;
@@ -20356,6 +20370,24 @@ export declare interface SectionReview {
     status: 'reviewed' | 'approved' | 'changes_requested';
     timestamp: string;
     comment?: string;
+}
+
+export declare function SectionStack({ children, density: densityProp, divided, as, className, ref, ...rest }: SectionStackProps): JSX.Element;
+
+export declare interface SectionStackProps extends Omit<HTMLAttributes<HTMLElement>, 'children'> {
+    /** The sections — typically `PageSection`s, or any block. Null/false children are skipped. */
+    children?: ReactNode;
+    /**
+     * Vertical rhythm. `comfortable`: 24px either side of each rule. `compact`:
+     * 16px. Unset, follows the nearest `DensityProvider` (comfortable without one).
+     */
+    density?: Density;
+    /** Draw a rule between sections. `false` keeps the spacing, no rule. Default `true`. */
+    divided?: boolean;
+    /** Container element. Default `div`; `section` when the stack is itself a landmark region. */
+    as?: 'div' | 'section';
+    ref?: Ref<HTMLElement>;
+    'data-testid'?: string;
 }
 
 /** Specialized section renderer type — extends beyond the base `type` for richer UIs. */
