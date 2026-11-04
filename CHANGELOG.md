@@ -1,3 +1,10 @@
+## 2.501.0
+
+- `WorkflowStepper` takes `wrap`: steps wrap onto further rows instead of scrolling the track, so none is hidden past its edge. Default unchanged (scrolls).
+- `StepThread`'s status badge uses the theme's tinted pairs (`success`, `danger`, `info`, `warning`, inset for pending) at 11px instead of 10px white on the raw status colour, which fell to 1.92:1 on dark success. A labelled step's type subtitle stays on one line and the title takes the shrink, so a narrow column no longer breaks "action" letter by letter.
+- `ExecutorLog`'s live indicator, status filter chips and time presets are 12px, the control scale.
+- `NavRail` count badges use the label tone instead of the tertiary hint tone (4.18:1 on a selected row in light).
+
 ## 2.500.3
 
 - `useFullscreen(ref)` (hooks) and `FullscreenToggle` (shared): one element into the browser's full-screen mode and back, hidden where the API is absent; the copies inside StreamStage, RecordGraph and RecordingPlayer are candidates to adopt it. `MinimizeIcon` pairs with `MaximizeIcon`.

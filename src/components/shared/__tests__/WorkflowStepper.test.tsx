@@ -50,3 +50,14 @@ it('keeps recorded timing under its milestone and distinguishes a failed termina
   expect(rows[1]).toHaveAttribute('data-state', 'failed');
   expect(rows[1].querySelector('svg')).toBeNull();
 });
+
+it('wraps instead of scrolling when wrap is set', () => {
+  const steps = Array.from({ length: 8 }, (_, i) => ({ step: i + 1, label: `Stage ${i + 1}`, done: i < 3, active: i === 3 }));
+  const { getByTestId, rerender } = render(<WorkflowStepper steps={steps} />);
+  expect(getByTestId('workflow-stepper').className).toContain('overflow-x-auto');
+  rerender(<WorkflowStepper steps={steps} wrap />);
+  const track = getByTestId('workflow-stepper');
+  expect(track.className).toContain('flex-wrap');
+  expect(track.className).not.toContain('overflow-x-auto');
+  expect(track.hasAttribute('data-wrap')).toBe(true);
+});

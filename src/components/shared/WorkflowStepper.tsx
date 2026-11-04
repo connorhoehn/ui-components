@@ -34,6 +34,11 @@ export interface WorkflowStepperProps {
   size?: 'sm' | 'md' | 'compact';
   /** Names the track for assistive tech ("Level L1 of target L3"). */
   'aria-label'?: string;
+  /**
+   * Wrap onto further rows instead of scrolling when the steps don't fit, so
+   * no step is ever hidden past the track's edge. Default false (scrolls).
+   */
+  wrap?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -60,7 +65,7 @@ function CheckIcon({ compact }: { compact: boolean }) {
   );
 }
 
-export function WorkflowStepper({ steps, size: sizeProp, className, 'aria-label': ariaLabel, 'data-testid': testId = 'workflow-stepper' }: WorkflowStepperProps) {
+export function WorkflowStepper({ steps, size: sizeProp, wrap = false, className, 'aria-label': ariaLabel, 'data-testid': testId = 'workflow-stepper' }: WorkflowStepperProps) {
   const density = useDensity();
   if (sizeProp === 'sm') warnDeprecatedSize('WorkflowStepper', 'sm');
   const size: StepperSize = sizeProp ?? (density === 'compact' ? 'compact' : 'md');
@@ -68,7 +73,8 @@ export function WorkflowStepper({ steps, size: sizeProp, className, 'aria-label'
   const detailed = steps.some(step => step.description != null);
   return (
     <ol
-      className={cn(detailed || compact ? 'm-0 inline-flex w-fit max-w-full list-none overflow-x-auto p-0' : 'flex overflow-x-auto', detailed ? 'items-start' : 'items-center', className)}
+      className={cn(detailed || compact ? 'm-0 inline-flex w-fit max-w-full list-none p-0' : 'flex', wrap ? 'flex-wrap gap-y-2' : 'overflow-x-auto', detailed ? 'items-start' : 'items-center', className)}
+      {...(wrap ? { 'data-wrap': '' } : {})}
       data-testid={testId}
       {...(compact ? { 'data-density': 'compact' } : {})}
       {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}
