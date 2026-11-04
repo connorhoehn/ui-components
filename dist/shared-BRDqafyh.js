@@ -4741,7 +4741,7 @@ function ii({ steps: e, size: n, wrap: r = !1, className: i, "aria-label": s, "d
 					children: [c, l]
 				}), !i && /* @__PURE__ */ Z("div", {
 					"aria-hidden": "true",
-					className: t(d ? "mx-1.5 h-0.5 w-3" : "mx-2 h-1 flex-1", "rounded-full transition-colors", o)
+					className: t(d ? "mx-2 h-0.5 w-3" : "mx-2 h-1 flex-1", "rounded-full transition-colors", o)
 				})]
 			}, n.step);
 		})
