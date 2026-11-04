@@ -109,7 +109,7 @@ export function WorkflowStepper({ steps, size: sizeProp, wrap = false, className
         return <li key={step.step} aria-current={step.active ? 'step' : undefined} data-state={state}
           className={compact ? 'flex items-center' : 'flex flex-1 items-center last:flex-none'}>
           <div className={cn('flex items-center whitespace-nowrap', compact ? 'gap-1' : 'gap-1.5')}>{node}{label}</div>
-          {!isLast && <div aria-hidden="true" className={cn(compact ? 'mx-1.5 h-0.5 w-3' : 'mx-2 h-1 flex-1', 'rounded-full transition-colors', connectorClass)} />}
+          {!isLast && <div aria-hidden="true" className={cn(compact ? 'mx-2 h-0.5 w-3' : 'mx-2 h-1 flex-1', 'rounded-full transition-colors', connectorClass)} />}
         </li>;
       })}
     </ol>

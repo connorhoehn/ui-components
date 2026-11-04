@@ -1,3 +1,7 @@
+## 2.501.1
+
+- `WorkflowStepper` compact connectors use 8px side margins (`mx-2`) instead of 6px, on the 4px spacing scale.
+
 ## 2.501.0
 
 - `WorkflowStepper` takes `wrap`: steps wrap onto further rows instead of scrolling the track, so none is hidden past its edge. Default unchanged (scrolls).

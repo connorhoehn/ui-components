@@ -61,3 +61,14 @@ it('wraps instead of scrolling when wrap is set', () => {
   expect(track.className).not.toContain('overflow-x-auto');
   expect(track.hasAttribute('data-wrap')).toBe(true);
 });
+
+it('spaces compact connectors on the 4px scale', () => {
+  const steps = [1, 2, 3].map((n) => ({ step: n, label: `S${n}`, done: n === 1, active: n === 2 }));
+  const { container } = render(<WorkflowStepper steps={steps} size="compact" />);
+  const connectors = [...container.querySelectorAll('ol > li > div[aria-hidden="true"]')];
+  expect(connectors.length).toBe(2);
+  for (const c of connectors) {
+    expect(c.className).toContain('mx-2');
+    expect(c.className).not.toContain('mx-1.5');
+  }
+});
