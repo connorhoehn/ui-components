@@ -1,14 +1,14 @@
-import { n as e, t } from "./useWebSocket-Cmv4zMFO.js";
+import { n as e, t } from "./useWebSocket-C9oAM0NL.js";
 import { t as n } from "./cn-D4QmbyEy.js";
 import { n as r, o as i } from "./Button-C-I3BxWI.js";
 import { t as a } from "./Card-CbTNNNkk.js";
 import { n as o } from "./overlayStack-DxIDMUs-.js";
 import { t as s } from "./IconButton-J9jGN6eo.js";
-import { gt as c, m as l, ut as u } from "./Icons-C__ztBBw.js";
+import { _t as c, dt as l, m as u } from "./Icons-CqVFbuiZ.js";
 import { i as d } from "./MediaIcons-_ai5Til2.js";
-import { c as f, i as p, l as m, n as h } from "./Text-Bges3p6o.js";
-import { t as g } from "./Badge-DzOQFL9h.js";
-import { t as _ } from "./Banner-CfPGjbpw.js";
+import { c as f, i as p, l as m, n as h } from "./Text-AlKB4riU.js";
+import { t as g } from "./Badge-D58pEJIm.js";
+import { t as _ } from "./Banner-DTMyQNum.js";
 import { t as v } from "./Modal-PO0F6rAp.js";
 import { t as y } from "./Input-B0LB5k_L.js";
 import { t as b } from "./Select-BFyECVVL.js";
@@ -16,7 +16,7 @@ import { t as x } from "./InlinePopover-Dx8-r-XU.js";
 import { t as S } from "./EmptyState-D5ucMp2y.js";
 import { n as C } from "./ThinkingDots-52RnodUR.js";
 import { n as w } from "./StatusPill-CLkB5jFS.js";
-import { t as T } from "./DropdownMenu-2S3snVPG.js";
+import { t as T } from "./DropdownMenu-DcFIdC5O.js";
 import { t as E } from "./Textarea-BwvE1HPn.js";
 import { t as ee } from "./Avatar-DkkMISPQ.js";
 import { t as te } from "./SegmentedControl-CMpxVHLC.js";
@@ -27,18 +27,18 @@ import { t as k } from "./PresenceAvatars--JG3ZaTz.js";
 import { t as re } from "./ChangeDiff-CGfT-mcu.js";
 import { t as A } from "./MetaLine-DFn2XXGU.js";
 import { t as j } from "./Checkbox-Dvt09s3H.js";
-import { n as ie } from "./FileKindMark-D7I7FHuP.js";
+import { n as ie } from "./FileKindMark-BZmXUxaT.js";
 import { t as M } from "./activationKey-CjbL3LUv.js";
 import { A as ae, k as oe } from "./renderers-DarOLZU_.js";
-import { A as N, B as se, C as P, D as ce, E as le, F as ue, G as F, H as I, I as L, J as R, K as de, L as fe, M as pe, N as me, O as he, P as ge, R as _e, S as ve, T as ye, U as be, V as xe, W as Se, X as Ce, _ as we, a as Te, b as Ee, c as De, d as Oe, f as ke, g as Ae, h as je, i as Me, j as Ne, k as Pe, l as Fe, m as Ie, n as Le, o as Re, p as ze, q as Be, r as Ve, s as He, t as Ue, u as We, v as Ge, w as Ke, x as qe, y as Je, z as Ye } from "./ProposedEditStrip-B5PV_3N7.js";
+import { A as N, B as se, C as P, D as ce, E as le, F as ue, G as F, H as I, I as L, J as R, K as de, L as fe, M as pe, N as me, O as he, P as ge, R as _e, S as ve, T as ye, U as be, V as xe, W as Se, X as Ce, _ as we, a as Te, b as Ee, c as De, d as Oe, f as ke, g as Ae, h as je, i as Me, j as Ne, k as Pe, l as Fe, m as Ie, n as Le, o as Re, p as ze, q as Be, r as Ve, s as He, t as Ue, u as We, v as Ge, w as Ke, x as qe, y as Je, z as Ye } from "./ProposedEditStrip-C-Eby3IC.js";
 import { t as Xe } from "./InlineEditableText-CzB64Ufv.js";
 import { o as Ze, t as Qe } from "./VerdictChip-DDweSKeO.js";
 import { a as $e, c as et, d as tt, f as nt, h as rt, i as it, l as at, m as ot, n as st, o as ct, p as lt, r as ut, s as dt, t as ft, u as pt } from "./TiptapEditor-BjjwDyPa.js";
 import { i as mt, n as ht, r as gt, t as _t } from "./FloatingComposerDock-D10uQ4k3.js";
-import { A as vt, B as yt, C as bt, D as xt, E as St, F as Ct, G as wt, H as Tt, I as Et, J as Dt, K as Ot, L as kt, M as At, N as jt, O as Mt, P as Nt, R as Pt, S as Ft, T as It, U as Lt, V as Rt, W as zt, _ as Bt, a as Vt, b as Ht, c as Ut, d as Wt, f as Gt, g as Kt, h as qt, i as Jt, j as Yt, k as Xt, l as Zt, m as Qt, o as $t, p as en, q as tn, r as nn, s as rn, t as an, u as on, v as sn, w as cn, x as ln, y as un, z as dn } from "./DocumentEditorPage-DUy7RCOS.js";
-import { C as fn, S as pn, T as mn, _ as hn, a as gn, b as _n, c as vn, d as yn, f as bn, g as xn, h as Sn, i as Cn, l as wn, m as Tn, n as En, o as Dn, p as On, r as kn, s as An, t as jn, u as Mn, v as Nn, w as Pn, x as Fn, y as In } from "./useDocumentImageUpload-DkzQO_hc.js";
-import { i as Ln } from "./ConversationInputs-C0svPSt1.js";
-import { r as Rn } from "./RichChatComposer-CPBE6W4k.js";
+import { A as vt, B as yt, C as bt, D as xt, E as St, F as Ct, G as wt, H as Tt, I as Et, J as Dt, K as Ot, L as kt, M as At, N as jt, O as Mt, P as Nt, R as Pt, S as Ft, T as It, U as Lt, V as Rt, W as zt, _ as Bt, a as Vt, b as Ht, c as Ut, d as Wt, f as Gt, g as Kt, h as qt, i as Jt, j as Yt, k as Xt, l as Zt, m as Qt, o as $t, p as en, q as tn, r as nn, s as rn, t as an, u as on, v as sn, w as cn, x as ln, y as un, z as dn } from "./DocumentEditorPage-PaxnpI9b.js";
+import { C as fn, S as pn, T as mn, _ as hn, a as gn, b as _n, c as vn, d as yn, f as bn, g as xn, h as Sn, i as Cn, l as wn, m as Tn, n as En, o as Dn, p as On, r as kn, s as An, t as jn, u as Mn, v as Nn, w as Pn, x as Fn, y as In } from "./useDocumentImageUpload-nQ26kXw3.js";
+import { i as Ln } from "./ConversationInputs-tjSIC0L-.js";
+import { r as Rn } from "./RichChatComposer-DBr8FO96.js";
 import { forwardRef as zn, useCallback as z, useEffect as B, useId as Bn, useImperativeHandle as Vn, useMemo as V, useRef as H, useState as U } from "react";
 import { Fragment as W, jsx as G, jsxs as K } from "react/jsx-runtime";
 import * as Hn from "yjs";
@@ -2963,7 +2963,7 @@ function Ia({ filled: e }) {
 		children: /* @__PURE__ */ G("path", { d: "M8 1.9l1.8 3.7 4.1.6-3 2.9.7 4.1L8 11.3l-3.6 1.9.7-4.1-3-2.9 4.1-.6L8 1.9Z" })
 	});
 }
-function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: a, starred: c = !1, onStarredChange: u, statusPill: d, path: f, crumbsTrailing: m, subtitle: h, metaBar: _, participants: v, onParticipantClick: y, onFollowParticipant: b, followingParticipantId: x, meta: S, saveState: C, headActions: w, tabs: T, activeTab: E, onTabChange: ee, toolbar: te, children: D, footer: O, proposal: re, surface: A = "workspace", explorer: j, workbench: M, label: ae = "Editor", variant: oe = "document", itemType: N, itemKey: se, titleSize: P = "md", titleAs: ce = "h1", titleOverflow: le = "truncate", tabsTrailing: ue, headerInset: F = "editor", className: I, "data-testid": L = "editor-shell" }) {
+function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File name", kind: a, starred: c = !1, onStarredChange: l, statusPill: d, path: f, crumbsTrailing: m, subtitle: h, metaBar: _, participants: v, onParticipantClick: y, onFollowParticipant: b, followingParticipantId: x, meta: S, saveState: C, headActions: w, tabs: T, activeTab: E, onTabChange: ee, toolbar: te, children: D, footer: O, proposal: re, surface: A = "workspace", explorer: j, workbench: M, label: ae = "Editor", variant: oe = "document", itemType: N, itemKey: se, titleSize: P = "md", titleAs: ce = "h1", titleOverflow: le = "truncate", tabsTrailing: ue, headerInset: F = "editor", className: I, "data-testid": L = "editor-shell" }) {
 	let R = oe === "work-item", de = R && (N || se) ? /* @__PURE__ */ K(W, { children: [N && /* @__PURE__ */ G(o, {
 		size: "sm",
 		tone: "info",
@@ -3014,7 +3014,7 @@ function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 						className: "flex h-7 min-w-0 items-center gap-2 text-[13px] text-text-secondary",
 						"data-testid": `${L}-crumbs-row`,
 						children: [
-							/* @__PURE__ */ G(l, {
+							/* @__PURE__ */ G(u, {
 								dir: "right",
 								size: 12,
 								"aria-hidden": "true",
@@ -3101,12 +3101,12 @@ function La({ breadcrumbs: e, title: t, onTitleChange: r, titleLabel: i = "File 
 													"data-testid": `${L}-title`,
 													"data-title-size": P,
 													children: t
-												}), u && /* @__PURE__ */ G(s, {
+												}), l && /* @__PURE__ */ G(s, {
 													size: "sm",
 													"aria-label": c ? "Remove star" : "Star this file",
 													"aria-pressed": c,
 													title: c ? "Starred" : "Star",
-													onClick: () => u(!c),
+													onClick: () => l(!c),
 													className: c ? "shrink-0 text-primary" : "shrink-0 text-text-tertiary",
 													"data-testid": `${L}-star`,
 													children: /* @__PURE__ */ G(Ia, { filled: c })
@@ -3863,15 +3863,15 @@ var Ja = zn(function({ mentionUsers: e, onReply: t, onResolve: r, onAskAgent: i,
 });
 //#endregion
 //#region src/components/doc-editor/CommentHandoffBar.tsx
-function Ya({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1, onResolveOnApplyChange: a, onDismiss: o, className: s, "data-testid": l = "comment-handoff-bar" }) {
+function Ya({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1, onResolveOnApplyChange: a, onDismiss: o, className: s, "data-testid": u = "comment-handoff-bar" }) {
 	let d = r === "reply", f = d ? "Stop replying" : "Stop answering this comment";
 	return /* @__PURE__ */ K("div", {
 		role: "status",
-		"data-testid": l,
+		"data-testid": u,
 		"data-variant": r,
 		className: n("flex min-w-0 items-center gap-3 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-text-secondary shadow-sm", s),
 		children: [
-			d ? /* @__PURE__ */ G(u, {
+			d ? /* @__PURE__ */ G(l, {
 				size: 14,
 				"aria-hidden": "true",
 				className: "shrink-0 text-primary"
@@ -3907,7 +3907,7 @@ function Ya({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1,
 				children: [/* @__PURE__ */ G(j, {
 					checked: i,
 					onChange: (e) => a?.(e),
-					"data-testid": `${l}-resolve`
+					"data-testid": `${u}-resolve`
 				}), "Resolve when applied"]
 			}),
 			/* @__PURE__ */ G("button", {
@@ -3915,7 +3915,7 @@ function Ya({ author: e, quote: t, variant: r = "agent", resolveOnApply: i = !1,
 				onClick: o,
 				"aria-label": f,
 				title: f,
-				"data-testid": `${l}-dismiss`,
+				"data-testid": `${u}-dismiss`,
 				className: "grid h-6 w-6 shrink-0 place-items-center rounded border-0 bg-transparent p-0 text-text-tertiary hover:bg-surface-hover hover:text-text-primary",
 				children: /* @__PURE__ */ G("span", {
 					"aria-hidden": "true",

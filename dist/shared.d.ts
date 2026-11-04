@@ -2149,7 +2149,7 @@ export declare interface DropdownMenuSection {
     'data-testid'?: string;
 }
 
-export declare function EditableHeading({ value, onCommit, placeholder, size, readOnly, editLabel, className, 'data-testid': testId, }: EditableHeadingProps): JSX.Element;
+export declare function EditableHeading({ value, onCommit, placeholder, size, readOnly, editLabel, as: Tag, revealOnHover, className, 'data-testid': testId, }: EditableHeadingProps): JSX.Element;
 
 export declare interface EditableHeadingProps {
     value: string;
@@ -2163,6 +2163,19 @@ export declare interface EditableHeadingProps {
     readOnly?: boolean;
     /** Accessible name of the pencil button. Default `Rename`. */
     editLabel?: string;
+    /**
+     * The element the text renders as. Default `span`; a page title passes
+     * `h1` so the page keeps its one heading while the title stays renameable.
+     * Since 2.500.3.
+     */
+    as?: 'span' | 'h1' | 'h2' | 'h3';
+    /**
+     * Keep the pencil out of the way until the pointer is over the heading or
+     * focus is inside it. A page title that is read far more often than it is
+     * renamed wants the quiet form; a drawer title keeps the pencil standing.
+     * Since 2.500.3.
+     */
+    revealOnHover?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -2831,6 +2844,21 @@ export declare interface FormWizardSection {
 
 /** A hooked arrow: forwarded — this came from somewhere else. */
 export declare function ForwardIcon({ size, ...rest }: GlyphProps): JSX.Element;
+
+export declare function FullscreenToggle({ target, label, exitLabel, onChange, size, variant, 'data-testid': testId, ...rest }: FullscreenToggleProps & {
+    'data-testid'?: string;
+}): JSX.Element | null;
+
+export declare interface FullscreenToggleProps extends Omit<IconButtonProps, 'aria-label' | 'icon' | 'onClick' | 'onChange' | 'children'> {
+    /** The element to present full screen. */
+    target: RefObject<HTMLElement | null>;
+    /** Accessible name while not in full screen. Default `Full screen`. */
+    label?: string;
+    /** Accessible name while in full screen. Default `Exit full screen`. */
+    exitLabel?: string;
+    /** After the browser accepted or refused the request. */
+    onChange?: (active: boolean) => void;
+}
 
 export declare interface GalleryAsset {
     id: string;
@@ -3845,6 +3873,9 @@ export declare interface MeterRowProps {
     'aria-label'?: string;
     'data-testid'?: string;
 }
+
+/** Four corners pulled inward: "leave full screen". Since 2.500.3. */
+export declare function MinimizeIcon({ size, ...rest }: GlyphProps): JSX.Element;
 
 export declare function Modal({ open, onClose, title, ariaLabel, maxWidth, children, footer, backdropTestId, backdropStyle, cardStyle, cardClassName, zIndex, rawChildren, dialogKind, }: ModalProps): ReactPortal | null;
 
@@ -7493,7 +7524,7 @@ export declare interface WorkflowStep {
     outcome?: 'failed' | 'cancelled';
 }
 
-export declare function WorkflowStepper({ steps, size: sizeProp, className, 'aria-label': ariaLabel, 'data-testid': testId }: WorkflowStepperProps): JSX.Element;
+export declare function WorkflowStepper({ steps, size: sizeProp, wrap, className, 'aria-label': ariaLabel, 'data-testid': testId }: WorkflowStepperProps): JSX.Element;
 
 export declare interface WorkflowStepperProps {
     steps: WorkflowStep[];
@@ -7505,6 +7536,11 @@ export declare interface WorkflowStepperProps {
     size?: 'sm' | 'md' | 'compact';
     /** Names the track for assistive tech ("Level L1 of target L3"). */
     'aria-label'?: string;
+    /**
+     * Wrap onto further rows instead of scrolling when the steps don't fit, so
+     * no step is ever hidden past the track's edge. Default false (scrolls).
+     */
+    wrap?: boolean;
     className?: string;
     'data-testid'?: string;
 }
