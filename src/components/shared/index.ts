@@ -4,6 +4,7 @@ export * from '../ui/Button';
 export * from '../ui/Card';
 export * from '../ui/Table';
 export * from '../ui/PageSection';
+export * from '../ui/SectionStack';
 export * from '../ui/IconButton';
 export * from '../ui/Icons';
 // The call set's monitor glyph, reachable from /shared for hosts that only import the shared entry.

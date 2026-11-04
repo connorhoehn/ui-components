@@ -936,3 +936,11 @@ Select's label uses the trigger's small/medium inset (8/10px left; 6/8px right,
 2px less on the right for pills). `data-ui-size` and `data-variant` select the
 exact profile. Only the label is omitted from the page reading-line heuristic;
 the trigger and popup keep typography, focus, containment and contrast checks.
+
+Section separation markers (ui-components 2.502.0, no rule yet):
+`SectionStack` emits `data-ui-section-stack="comfortable|compact"` on the
+container and `data-ui-section-rule` on each `<hr>` between its sections
+(24px / 16px either side; `data-divided="false"` for rhythm without rules).
+`ActionRowList striped` emits `data-striped` on the list and `data-stripe` on
+each `surface-inset` row, matching `DataTable striped`. A future rule that
+flags hand-rolled section borders should bind these rather than page names.

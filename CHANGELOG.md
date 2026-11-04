@@ -1,3 +1,8 @@
+## 2.502.0
+
+- `SectionStack` (root and `/shared`): a page's sections stacked with a full-width hairline (`border-border`) between each — none before the first or after the last, and null/false children are skipped, so a conditional section leaves no orphan or doubled rule. 24px either side of each rule; `density="compact"` (or a compact `DensityProvider`) 16px. `divided={false}` keeps the same distance without rules. `as="div" | "section"`, `ref`, and any HTML/aria attribute pass through. Emits `data-ui-section-stack` and `data-ui-section-rule`. PageSection is unchanged: SectionStack owns the separation.
+- `ActionRowList striped` now stripes the 2nd, 4th, … neutral row with `surface-inset`, the tint `DataTable striped` uses, and leaves the other rows unpainted. It previously painted `surface-panel` on odd rows and an opaque `surface` on even ones, which showed white bands over a tinted host. Hover (`surface-hover`) stays darker than the stripe, a disabled row keeps the stripe with no hover fill, toned rows keep their tone, and the focus ring is unchanged. Striped rows emit `data-stripe`.
+
 ## 2.501.1
 
 - `WorkflowStepper` compact connectors use 8px side margins (`mx-2`) instead of 6px, on the 4px spacing scale.

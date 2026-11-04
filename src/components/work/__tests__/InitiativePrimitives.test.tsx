@@ -230,14 +230,63 @@ describe('ActionRowList', () => {
     const open = vi.fn();
     const items = [{ id: 'a', title: 'First' }, { id: 'b', title: 'Second' }, { id: 'c', title: 'Blocked', tone: 'warning' as const }];
     const { rerender } = render(<ActionRowList striped items={items} onOpen={open} />);
-    expect(screen.getByTestId('action-row-list-row-a')).toHaveClass('bg-surface');
-    expect(screen.getByTestId('action-row-list-row-b')).toHaveClass('bg-surface-panel');
-    expect(screen.getByTestId('action-row-list-row-c')).not.toHaveClass('bg-surface');
+    expect(screen.getByTestId('action-row-list-row-a')).not.toHaveClass('bg-surface-inset');
+    expect(screen.getByTestId('action-row-list-row-b')).toHaveClass('bg-surface-inset');
+    expect(screen.getByTestId('action-row-list-row-c')).not.toHaveClass('bg-surface-inset');
     expect(screen.getByTestId('action-row-list-open-c')).toHaveClass('bg-warning-callout');
     fireEvent.click(screen.getByTestId('action-row-list-open-b'));
     expect(open).toHaveBeenCalledWith(items[1]);
     rerender(<ActionRowList items={items} />);
-    expect(screen.getByTestId('action-row-list-row-b')).not.toHaveClass('bg-surface-panel');
+    expect(screen.getByTestId('action-row-list-row-b')).not.toHaveClass('bg-surface-inset');
+  });
+
+  it('striped: odd rows take DataTable\'s surface-inset stripe; even rows paint nothing (2.502.0)', () => {
+    const items = ['a', 'b', 'c', 'd', 'e'].map((id) => ({ id, title: id.toUpperCase() }));
+    const { container } = render(<ActionRowList striped items={items} />);
+    expect(screen.getByTestId('action-row-list')).toHaveAttribute('data-striped', 'true');
+    const lis = [...container.querySelectorAll('li')];
+    lis.forEach((li, i) => {
+      const odd = i % 2 === 1;
+      expect(li.classList.contains('bg-surface-inset')).toBe(odd);
+      expect(li.hasAttribute('data-stripe')).toBe(odd);
+      // No opaque fill on the plain rows: a tinted host shows through, as in DataTable.
+      expect(li).not.toHaveClass('bg-surface');
+      expect(li).not.toHaveClass('bg-surface-panel');
+    });
+    expect(container.querySelectorAll('[data-stripe]')).toHaveLength(2);
+  });
+
+  it('striped: hover and the focus ring stay on the row target, darker than the stripe', () => {
+    render(<ActionRowList striped items={[{ id: 'a', title: 'A' }, { id: 'b', title: 'B' }]} />);
+    const striped = screen.getByTestId('action-row-list-open-b');
+    expect(striped).toHaveClass('hover:bg-surface-hover');
+    expect(striped).toHaveClass('focus-visible:ring-2', 'focus-visible:ring-inset', 'focus-visible:ring-primary');
+    expect(striped).not.toHaveClass('bg-surface-inset');
+  });
+
+  it('striped: a disabled row keeps the stripe and its muted state, with no hover fill', () => {
+    render(<ActionRowList striped items={[{ id: 'a', title: 'A' }, { id: 'b', title: 'B', disabled: true, disabledReason: 'Locked' }]} />);
+    expect(screen.getByTestId('action-row-list-row-b')).toHaveClass('bg-surface-inset');
+    const btn = screen.getByTestId('action-row-list-open-b');
+    expect(btn).toBeDisabled();
+    expect(btn).toHaveClass('opacity-60', 'hover:bg-transparent');
+  });
+
+  it('striped works with columns', () => {
+    const columns = [{ id: 'owner', width: 'lg' as const }, { id: 'pts', width: 'xs' as const, align: 'end' as const }];
+    const items = [1, 2, 3].map((n) => ({ id: `r${n}`, title: `Row ${n}`, cells: { owner: 'Layla', pts: `${n}` } }));
+    render(<ActionRowList striped columns={columns} items={items} />);
+    expect(screen.getByTestId('action-row-list-row-r1')).not.toHaveClass('bg-surface-inset');
+    expect(screen.getByTestId('action-row-list-row-r2')).toHaveClass('bg-surface-inset');
+    expect(screen.getByTestId('action-row-list-row-r3')).not.toHaveClass('bg-surface-inset');
+    expect(screen.getAllByTestId('action-row-cell-owner')).toHaveLength(3);
+    expect(screen.getByTestId('action-row-list-open-r2')).toHaveClass('hover:bg-surface-hover');
+  });
+
+  it('not striped: no row carries a stripe', () => {
+    const { container } = render(<ActionRowList items={[{ id: 'a', title: 'A' }, { id: 'b', title: 'B' }]} />);
+    expect(screen.getByTestId('action-row-list')).not.toHaveAttribute('data-striped');
+    expect(container.querySelectorAll('.bg-surface-inset, [data-stripe]')).toHaveLength(0);
   });
 
   it('tints a toned row with the callout surface, never the generic -bg (2.393.1)', () => {
