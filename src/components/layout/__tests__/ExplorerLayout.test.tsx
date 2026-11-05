@@ -17,6 +17,8 @@ describe('ExplorerLayout', () => {
     expect(rail.querySelector('.overflow-y-auto')).not.toBeNull();
     expect(rail.className).toContain('w-[300px]');
     expect(screen.getByTestId('explorer-layout-pane').className).toContain('overflow-y-auto');
+    // Same page gutter token as AppShell, WorkArea and SubNavLayout.
+    expect(screen.getByTestId('explorer-layout-pane').className).toContain('p-[var(--ui-page-gutter,1.5rem)]');
     expect(screen.getByTestId('explorer-layout-aside').tagName).toBe('ASIDE');
     // The frame fills its parent and never grows past it.
     expect(screen.getByTestId('explorer-layout').className).toContain('min-h-0');
@@ -30,7 +32,7 @@ describe('ExplorerLayout', () => {
     );
     expect(screen.queryByTestId('explorer-layout-aside')).toBeNull();
     expect(screen.getByTestId('explorer-layout-rail').className).toContain('w-[240px]');
-    expect(screen.getByTestId('explorer-layout-pane').className).not.toContain('px-8');
+    expect(screen.getByTestId('explorer-layout-pane').className).not.toContain('ui-page-gutter');
   });
 
   it('railWidth="xs" is the Org rail’s 220px, one step under sm (240px)', () => {

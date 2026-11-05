@@ -30,9 +30,11 @@ export interface DetailSectionProps {
   /**
    * `label` (default): a small uppercase caption under a hairline, for a
    * drawer or side panel. `heading` (since 2.386.15): a 16px sentence-case
-   * heading with no rule, for a document-like body (a work item's Brief); its
-   * `actions` stay quiet until the section is hovered or focused (always shown
-   * where there is no hover).
+   * heading for a document-like body (a work item's Brief); its `actions`
+   * stay quiet until the section is hovered or focused (always shown where
+   * there is no hover). Since 2.501.0 the `heading` variant draws the same
+   * leading hairline as `label` (suppressed by `first`): stacked heading
+   * sections with no rule read as one long section.
    */
   variant?: 'label' | 'heading';
   /**
@@ -65,6 +67,7 @@ export function DetailSection({
     const hasDescription = description != null && description !== false;
     return (
       <section className={cn('group/section', className)} data-variant="heading" data-size={size} {...(testId ? { 'data-testid': testId } : {})}>
+        {!first && <Divider spacing="md" />}
         {/* A fixed 24px row: a hover action may be taller, but never pushes
             the body down (the mockup's heading → text pitch is 24px). */}
         <div className={cn('flex items-center gap-2', lg ? 'h-7' : 'h-6', lg ? (hasDescription ? 'mb-0' : 'mb-2') : 'mb-0.5')}>

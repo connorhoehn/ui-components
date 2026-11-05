@@ -85,6 +85,10 @@ export interface DataTableProps<T> {
    * reads as the darker row — a stripe that fights the hover state is worse
    * than no stripe, because it makes the row under the pointer ambiguous.
    * Both are tokens, so the relationship holds in dark mode too.
+   *
+   * Default `true` since 2.501.0 (was `false`): an unstriped wide table is
+   * the default nobody should get by accident. Pass `striped={false}` to opt
+   * out, e.g. for a two-row summary table.
    */
   striped?: boolean;
   /**
@@ -219,7 +223,7 @@ export function DataTable<T>({
   loadingRows = 5,
   frameless = false,
   size,
-  striped = false,
+  striped = true,
   className,
   'data-testid': testId,
   staticRows,
@@ -317,7 +321,9 @@ export function DataTable<T>({
             {rowActions && <TableTh className="text-right">Actions</TableTh>}
           </tr>
         </TableHead>
-        <TableBody>
+        {/* DataTable stripes its data rows itself (odd index), so skeleton and
+            empty-state rows never band; the body-level stripe stays off. */}
+        <TableBody striped={false}>
           {loading
             ? Array.from({ length: loadingRows }).map((_, i) => (
                 <TableRow key={`skeleton-${i}`} data-testid="datatable-loading-row">

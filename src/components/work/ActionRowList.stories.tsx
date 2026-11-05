@@ -12,7 +12,9 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+/** Striped by default since 2.501.0. */
 export const Default: Story = {};
+export const Unstriped: Story = { args: { striped: false } };
 export const Striped: Story = { args: { striped: true } };
 export const StripedWithStatus: Story = { args: { striped: true,
   items: meta.args.items.map((item, index) => index === 1 ? { ...item, tone: 'warning', description: 'ORG-OBS-10 · Blocked' } : item),

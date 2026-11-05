@@ -17,6 +17,20 @@ import { useDensitySize } from '../shared/Density';
 export type TableSize = 'md' | 'sm';
 
 const TableSizeContext = createContext<TableSize>('md');
+// Whether rows in the enclosing body stripe. False outside a `TableBody`, so
+// header rows (and rows rendered without a body) never pick up the band.
+const TableStripedContext = createContext(false);
+
+/**
+ * The stripe fill, shared with `DataTable`: `surface-inset` at full strength,
+ * lighter than `surface-panel` (the hover fill) so hover still reads as the
+ * darker row. `even:` sorts before `hover:` in Tailwind's variant order, so a
+ * clickable striped row still shows its hover fill.
+ */
+const STRIPE_ROW_CLASS = 'even:bg-surface-inset';
+// A row that sets its own background (selected, blocked, highlighted) owns
+// its fill; the stripe must never paint over a state colour.
+const OWN_BACKGROUND = /(?:^|\s)bg-/;
 
 // ---------------------------------------------------------------------------
 // Table root
@@ -68,13 +82,25 @@ export function TableHead({ children, className, ...rest }: TableHeadProps) {
 
 export interface TableBodyProps extends HTMLAttributes<HTMLTableSectionElement> {
   children: ReactNode;
+  /**
+   * Tint every second row (the even DOM children, so the first row stays on
+   * the plain surface) with the same `surface-inset` band `DataTable` uses.
+   * Default `true` since 2.501.0: zebra rows are the reading aid a wide table
+   * needs, and a hand-composed table should not have to opt in to it. A row
+   * that sets its own `bg-*` class keeps it. Pass `false` when the body
+   * stripes itself or holds non-data rows (group headers) that would shift
+   * the band.
+   */
+  striped?: boolean;
 }
 
-export function TableBody({ children, className, ...rest }: TableBodyProps) {
+export function TableBody({ children, className, striped = true, ...rest }: TableBodyProps) {
   return (
-    <tbody className={cn('', className)} {...rest}>
-      {children}
-    </tbody>
+    <TableStripedContext.Provider value={striped}>
+      <tbody className={cn('', className)} data-striped={striped ? '' : undefined} {...rest}>
+        {children}
+      </tbody>
+    </TableStripedContext.Provider>
   );
 }
 
@@ -88,10 +114,12 @@ export interface TableRowProps extends HTMLAttributes<HTMLTableRowElement> {
 }
 
 export function TableRow({ children, clickable, className, ...rest }: TableRowProps) {
+  const striped = useContext(TableStripedContext);
   return (
     <tr
       className={cn(
         'border-b border-border-subtle last:border-b-0 transition-colors',
+        striped && !(className && OWN_BACKGROUND.test(className)) && STRIPE_ROW_CLASS,
         clickable && 'cursor-pointer hover:bg-surface-panel',
         className,
       )}

@@ -20,7 +20,7 @@ describe('ListRailLayout', () => {
     expect(screen.getByLabelText('Composer')).toBeTruthy();
     expect(screen.getByTestId('explorer-layout-rail').className).toContain('w-[264px]');
     // No pane padding: the record owns its inset.
-    expect(screen.getByTestId('explorer-layout-pane').className).not.toContain('px-8');
+    expect(screen.getByTestId('explorer-layout-pane').className).not.toContain('ui-page-gutter');
     expect(screen.getByTestId('explorer-layout').closest('[data-list-rail]')).not.toBeNull();
   });
   it('omits an unknown count and folds when the host gives a fold', () => {

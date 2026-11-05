@@ -207,6 +207,34 @@ describe('Table primitives', () => {
     expect(screen.getByText('Alice')).toBeInTheDocument();
   });
 
+  it('TableBody stripes its rows by default with the DataTable token (since 2.501.0)', () => {
+    render(
+      <Table>
+        <TableHead><TableRow><TableTh>Name</TableTh></TableRow></TableHead>
+        <TableBody>
+          <TableRow clickable><TableTd>A</TableTd></TableRow>
+          <TableRow className="bg-warning-callout"><TableTd>B</TableTd></TableRow>
+        </TableBody>
+      </Table>,
+    );
+    const [head, a, b] = screen.getAllByRole('row');
+    // Header rows sit outside a TableBody and never band.
+    expect(head!.className).not.toContain('bg-surface-inset');
+    expect(a!.className).toContain('even:bg-surface-inset');
+    // The stripe sorts before hover, so the clickable row still hovers.
+    expect(a!.className).toContain('hover:bg-surface-panel');
+    // A row with its own background keeps it.
+    expect(b!.className).toContain('bg-warning-callout');
+    expect(b!.className).not.toContain('bg-surface-inset');
+  });
+
+  it('TableBody striped={false} opts out', () => {
+    render(
+      <Table><TableBody striped={false}><TableRow><TableTd>A</TableTd></TableRow></TableBody></Table>,
+    );
+    expect(screen.getByRole('row').className).not.toContain('bg-surface-inset');
+  });
+
   it('TableRow with clickable applies cursor-pointer', () => {
     render(
       <table><tbody>

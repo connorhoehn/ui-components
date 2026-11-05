@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AppShell } from './AppShell';
+import { SplitPane } from './SplitPane';
 
 const Header = () => (
   <div className="flex h-[53px] items-center border-b border-border bg-surface px-6 text-[15px] font-semibold text-text-primary">
@@ -71,5 +72,26 @@ export const LoadingState: Story = {
   args: {
     sidebar: <Sidebar />,
     loading: true,
+  },
+};
+
+const LongPane = ({ label }: { label: string }) => (
+  <div className="h-full overflow-y-auto p-4 text-sm text-text-secondary">
+    {Array.from({ length: 60 }, (_, i) => (
+      <p key={i} className="m-0 py-1">{label} line {i + 1}</p>
+    ))}
+  </div>
+);
+
+/**
+ * `layout="fill"`, the recommended mode for portal apps (since 2.501.0).
+ * The shell is exactly 100dvh, the document never scrolls, and each pane of
+ * the child layout scrolls on its own.
+ */
+export const Fill: Story = {
+  args: {
+    layout: 'fill',
+    sidebar: <Sidebar />,
+    children: <SplitPane primary={<LongPane label="Primary" />} secondary={<LongPane label="Secondary" />} />,
   },
 };

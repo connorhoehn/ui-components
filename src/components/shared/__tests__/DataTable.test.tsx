@@ -296,9 +296,23 @@ describe('DataTable', () => {
     );
   });
 
-  it('is unstriped by default', () => {
+  it('is striped by default (since 2.501.0)', () => {
     const { container } = render(
       <DataTable
+        data={[{ id: 'a' }, { id: 'b' }]}
+        columns={[{ key: 'id', header: 'ID' }]}
+        keyField={(r) => r.id}
+      />,
+    );
+    const rows = [...container.querySelectorAll('tbody tr')];
+    expect(rows[0]!.className).not.toContain('bg-surface-inset');
+    expect(rows[1]!.className).toContain('bg-surface-inset');
+  });
+
+  it('striped={false} opts out', () => {
+    const { container } = render(
+      <DataTable
+        striped={false}
         data={[{ id: 'a' }, { id: 'b' }]}
         columns={[{ key: 'id', header: 'ID' }]}
         keyField={(r) => r.id}

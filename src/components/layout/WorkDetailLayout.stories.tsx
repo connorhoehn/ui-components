@@ -12,7 +12,11 @@ import { RailLayout, RailSection } from '../shared/RailLayout';
 import { ReviewThread } from '../shared/ReviewThread';
 import { SignoffPanel } from '../shared/SignoffPanel';
 
-const meta: Meta = { title: 'Layout/WorkDetailLayout', parameters: { layout: 'fullscreen' } };
+// A composition story, not a component's: ExplorerLayout (resizable work
+// rail) + SidePane (document presentation). There is no WorkDetailLayout
+// component; the title is kept because tests/storybook/work-layout.spec.ts
+// addresses these stories by id. A DetailPage template is the eventual home.
+const meta: Meta<typeof ExplorerLayout> = { title: 'Layout/WorkDetailLayout', component: ExplorerLayout, parameters: { layout: 'fullscreen' } };
 export default meta;
 type Story = StoryObj;
 const items = [

@@ -47,6 +47,13 @@ export interface PageSectionProps {
    * gap (2.441.5). An explicit size always wins, `lg` included.
    */
   size?: 'lg' | 'md' | 'sm';
+  /**
+   * Draw a token-coloured hairline (`border`) between the section's direct
+   * child groups, with `--ui-section-gap` above and below each rule, so a
+   * stack of groups reads as separate blocks rather than one long scroll.
+   * Emits `data-section-divided`. Default false. Since 2.501.0.
+   */
+  divided?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -60,6 +67,7 @@ export function PageSection({
   countTone = 'neutral',
   empty,
   size: sizeProp,
+  divided = false,
   className,
   'data-testid': testId,
 }: PageSectionProps) {
@@ -110,7 +118,15 @@ export function PageSection({
         </div>
         {actions && <div className={cn('flex max-w-full min-w-0 flex-wrap items-center gap-2 shrink-0', sm && 'text-sm')}>{actions}</div>}
       </div>
-      {!isEmpty && children}
+      {!isEmpty && (divided ? (
+        <div
+          className="flex flex-col divide-y divide-border [&>*:not(:first-child)]:pt-[var(--ui-section-gap,0.75rem)] [&>*:not(:last-child)]:pb-[var(--ui-section-gap,0.75rem)]"
+          data-section-divided=""
+          {...(testId ? { 'data-testid': `${testId}-groups` } : {})}
+        >
+          {children}
+        </div>
+      ) : children)}
     </section>
   );
 }

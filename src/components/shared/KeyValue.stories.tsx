@@ -61,7 +61,7 @@ export const InitiativeOverview: Story = {
       { label: 'Owner', value: 'Paolo Mancini' },
       { label: 'SMEs', value: <LayoutStack gap="xs"><T size="sm" wrap>Caleb Turner</T><T size="sm" wrap>Briana Patel</T></LayoutStack> },
     ]} />
-    <DetailSection title="Next work item" variant="heading" as="h2" className="border-t border-border pt-4">
+    <DetailSection title="Next work item" variant="heading" as="h2">
       <LayoutStack gap="sm">
         <T size="sm" weight="medium" wrap>Cold-start latency after scale-to-zero</T>
         <T size="xs" tone="secondary" wrap>ORG-INF-4 · Paolo Mancini · 3 points</T>

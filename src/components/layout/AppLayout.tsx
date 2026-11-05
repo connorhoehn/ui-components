@@ -207,6 +207,12 @@ export interface AppLayoutProps {
  * the cross-pipeline approvals page and the document-trigger hook can
  * share a single runs store for the whole app. Events are sourced from the
  * gateway WS bridge — there is no other producer.
+ *
+ * @deprecated Since 2.501.0. `AppLayout` is the demo app's wired shell
+ * (channel routing, gateway transport, pipeline providers), not a layout
+ * primitive. Build an app's frame from `AppShell` (`layout="fill"` for a
+ * portal app) plus the pane layouts (`ExplorerLayout`, `SplitPane`,
+ * `SubNavLayout`, ...). The export stays for back-compat.
  */
 export function AppLayout(props: AppLayoutProps) {
   // Gateway channel transport for the event stream. Without this,
