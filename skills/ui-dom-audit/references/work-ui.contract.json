@@ -1500,7 +1500,7 @@
       "id": "collection.refresh-with-query",
       "kind": "within",
       "selector": "[data-toolbar-variant=\"collection\"] button[aria-label=\"Refresh\"]",
-      "anchor": "[data-toolbar-controls]",
+      "anchor": "[data-collection-query]",
       "ancestor": true,
       "owner": "CollectionToolbar query controls"
     },

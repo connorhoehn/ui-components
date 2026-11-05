@@ -77,8 +77,14 @@ try {
   await page.setContent(html);
   const refreshRules = { ...fullContract, rules: fullContract.rules.filter(r => r.id === 'collection.refresh-with-query') };
   const refreshMeasure = () => page.evaluate(measureDOM, { contract: refreshRules, selectors: {} });
-  await page.setContent('<div data-toolbar-variant="collection"><div data-toolbar-controls><input aria-label="Search"><button aria-label="Refresh">Refresh</button></div><div id="trailing-actions"></div></div>');
-  assert.deepEqual((await refreshMeasure()).issues, []);
+  // Refresh belongs to the query group (data-collection-query), which since
+  // 2.503.0 sits in the toolbar's trailing end — with the search open or
+  // folded to its icon button. Valid: open field; valid: collapsed search
+  // (an icon, no input). Defect: Refresh moved among the named actions.
+  for (const search of ['<input aria-label="Search">', '<button aria-label="Search" aria-expanded="false" data-search-collapsed>S</button>']) {
+    await page.setContent(`<div data-toolbar-variant="collection" style="display:flex"><div data-toolbar-controls><span>3 bots</span></div><div style="display:flex"><div data-collection-query style="display:flex">${search}<button aria-label="Refresh">Refresh</button></div><div id="trailing-actions" style="display:flex"><button aria-label="Add bot">+</button></div></div></div>`);
+    assert.deepEqual((await refreshMeasure()).issues, [], search);
+  }
   await page.evaluate(() => document.querySelector('#trailing-actions').append(document.querySelector('[aria-label="Refresh"]')));
   assert.ok((await refreshMeasure()).issues.some(i => i.rule === 'collection.refresh-with-query'));
   await page.setContent(html);

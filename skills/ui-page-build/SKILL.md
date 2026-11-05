@@ -25,7 +25,7 @@ scrolling.
 | Archetype | Template | Not this |
 | --- | --- | --- |
 | A list of records (runs, users, files) | `CollectionPage` | A heading over a raw `<table>` |
-| A list plus the selected record beside it | `MasterDetailPage` | Two hand-made columns, a drawer per row |
+| A list plus the selected record beside it (or an overview while nothing is selected) | `MasterDetailPage`; `body="docked"` when the overview or record docks a composer at the column bottom | Two hand-made columns, a drawer per row, a local `ListRailLayout` + `DockedColumn` shim |
 | One record with several facets | `DetailPage` (DetailHeader + Tabs) | A stack of cards, one per facet |
 | Numbers and summary panels | `DashboardPage` | A grid of hand-sized divs |
 | Preferences grouped by topic | `SettingsPage` | One long form |
@@ -92,6 +92,12 @@ export function TeamsPage({ teams, selected, onSelect }: TeamsPageProps) {
 ```
 
 Build the rail body from a library list (`GroupedList`, `RailNavList`), never `<ul>` + buttons.
+
+A catalog that shows an overview while nothing is selected and docks that
+overview's command composer at the column bottom takes `body="docked"`: the
+overview goes in `emptyDetail` with its composer wrapped in `ColumnDock` (or
+pass the composer as `footer`), exactly as with `PageFrame body="docked"`.
+`dockedBody="fill"` makes the body a fixed frame for a conversation.
 
 **Detail (tabs, not stacked cards)**
 
