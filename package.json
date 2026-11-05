@@ -139,6 +139,7 @@
     "docs/consumer-handoffs/eslint-plugin.md",
     "patterns",
     "llms.txt",
+    "CHANGELOG.md",
     "eslint-plugin",
     "scripts/guard-cli.mjs",
     "scripts/check-static-styles.mjs",
