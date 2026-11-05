@@ -58,6 +58,7 @@ const ROUTES: ReadonlyArray<Route> = [
   // that demo is a coverage gap, not a smoke-test fix.
 
   // Workflows — Agents
+  { path: '/workflows/layouts/page-templates' },
   { path: '/workflows/agents/dashboard' },
   { path: '/workflows/agents/flow' },
   { path: '/workflows/agents/invoke' },

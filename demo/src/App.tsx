@@ -70,6 +70,7 @@ const ShallowLayoutDemo = lazy(() => import('./demos/layouts/ShallowLayoutDemo')
 const SectionLayoutDemo = lazy(() => import('./demos/layouts/SectionLayoutDemo'));
 const DeepLayoutDemo = lazy(() => import('./demos/layouts/DeepLayoutDemo'));
 const TerminalLayoutDemo = lazy(() => import('./demos/layouts/TerminalLayoutDemo'));
+const PageTemplatesDemo = lazy(() => import('./demos/layouts/PageTemplatesDemo'));
 
 // Identity demos (lazy)
 const IdentityLoginDemo = lazy(() => import('./demos/identity/auth/LoginDemo'));
@@ -157,6 +158,7 @@ export default function App() {
           <Route path="layouts/section" element={<S><SectionLayoutDemo /></S>} />
           <Route path="layouts/deep" element={<S><DeepLayoutDemo /></S>} />
           <Route path="layouts/terminal" element={<S><TerminalLayoutDemo /></S>} />
+          <Route path="layouts/page-templates" element={<S><PageTemplatesDemo /></S>} />
           {/* Documents */}
           <Route path="document-workspace" element={<S><DocumentWorkspace /></S>} />
           <Route path="collaboration" element={<S><Collaboration /></S>} />

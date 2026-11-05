@@ -535,6 +535,19 @@ export type { ActivityTickerProps, ActivityTickerItem, ActivityTickerPreferences
 
 export * from './CollectionToolbar';
 export * from './CollectionPage';
+// Page templates: one per page shape, each `h-full min-h-0` with one scrolling
+// region and `data-page-template="<name>"`. CollectionPage (above) is the list one.
+export { PageFrame } from './PageFrame';
+export type { PageFrameProps } from './PageFrame';
+export { MasterDetailPage } from './MasterDetailPage';
+export type { MasterDetailPageProps } from './MasterDetailPage';
+export { DetailPage } from './DetailPage';
+export type { DetailPageProps, DetailPageTab } from './DetailPage';
+export { DashboardPage } from './DashboardPage';
+export type { DashboardPageProps, DashboardPanel, DashboardColumns } from './DashboardPage';
+export { SettingsPage } from './SettingsPage';
+export type { SettingsPageProps } from './SettingsPage';
+export type { PageGutter, PageTemplateHeaderProps } from './pageTemplate';
 export * from './ComposerSurface';
 export { AssetGallery } from './AssetGallery';
 export type { AssetGalleryProps, GalleryAsset } from './AssetGallery';

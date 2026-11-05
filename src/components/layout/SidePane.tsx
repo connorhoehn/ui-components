@@ -280,6 +280,11 @@ export function useSidePaneHost(): SidePaneHostState {
   }, [host]);
 }
 
+/** Whether a `SidePaneProvider` (or a self-hosting `SidePaneSplit`) is above this tree. Internal: the page templates host their own split only when the shell does not. */
+export function useHasSidePaneHost(): boolean {
+  return useContext(HostContext) != null;
+}
+
 /** The page's view of its pane: on screen (focus waits for it), how to bring it back, and whether it is attached. */
 export function useSidePane(): { visible: boolean; reveal(): void; attached(): boolean } {
   const host = useContext(HostContext);
