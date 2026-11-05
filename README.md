@@ -44,17 +44,16 @@ import is fine for most consumers; sub-paths exist for code-splitting and
 for surfaces that have not yet graduated to stable.
 
 ```tsx
-// Root — shared primitives, layout, hooks, social, video, identity, types
+// Prefer subpaths: a root import pulls every optional peer into your bundle
 import {
   Button,
   AppShell,
   ChannelHeader,
-  ChatPanel,
-  HangoutLayout,
-  CallWidget,
   PresenceAvatars,
   PageHeader,
-} from '@connorhoehnslalom/ui-components';
+} from '@connorhoehnslalom/ui-components/shared';
+import { ChatPanel } from '@connorhoehnslalom/ui-components/social';
+import { HangoutLayout, CallWidget } from '@connorhoehnslalom/ui-components/video';
 
 // Sub-paths for in-flux or specialised surfaces
 import { TiptapEditor, StandaloneTiptap } from '@connorhoehnslalom/ui-components/doc-editor';

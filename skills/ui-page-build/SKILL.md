@@ -17,8 +17,8 @@ here are a starting point; the index and `dist/*.d.ts` are authoritative.
 
 Every page starts from exactly one template (each emits
 `data-page-template="<Name>"`). Import from
-`@connorhoehnslalom/ui-components/shared` (or the root). Put it inside the
-app's one `AppShell` (a root-only import: there is no `/layout` subpath); use
+`@connorhoehnslalom/ui-components/shared`. Put it inside the
+app's one `AppShell` (import it from `/shared`, like everything else the index lists there; avoid root imports, which pull the whole library into the bundle; there is no `/layout` subpath); use
 `AppShell layout="fill"` (no document scroll) so the template's body owns
 scrolling.
 

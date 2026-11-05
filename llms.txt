@@ -2,7 +2,7 @@
 
 > React component library for real-time collaborative applications: page templates, app shells, tables, forms, chat, presence, video, collaborative documents, diagrams, pipelines and identity flows. Styled with Tailwind v4 design tokens; never hand-roll markup or inline styles for something the library already has.
 
-Paths below are relative to the package root (`node_modules/@connorhoehnslalom/ui-components/` in a consumer repo). Import from the package root unless the index names a subpath. Layout components (`AppShell`, `AppLayout`, `CollapsibleSidebar`) are root-only: there is no `/layout` subpath. Import `@connorhoehnslalom/ui-components/styles.css` once at the app entry.
+Paths below are relative to the package root (`node_modules/@connorhoehnslalom/ui-components/` in a consumer repo). Import from the subpath the index names (usually `/shared`), not the package root: the root barrel reaches every optional peer, so a root import pulls the whole library into your bundle. `AppShell` and `ThemeProvider` are on `/shared`; there is no `/layout` subpath. Import `@connorhoehnslalom/ui-components/styles.css` once at the app entry.
 
 ## Start here
 

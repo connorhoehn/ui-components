@@ -424,7 +424,7 @@ const CANONICAL = [
   ['A dashboard', 'DashboardPage', 'KPI row plus a grid of chart/stat panels. Use `StatCard`/`KPIGrid` inside it.', 'Not the observability cluster dashboard: that is a different `DashboardPage` on the `/observability` subpath.', ['/observability']],
   ['Pages inside a sectioned area', 'SectionLayout', 'Section rail (`items`, `railFold`) + optional list rail (`list`, `listFold`) + the content column: with `header`, the trail row (`trailControls`), the title band and a body whose `footer`/`ColumnDock` composer docks at the column\'s bottom; fills the viewport (`fill="viewport"`). Without `header` the child page template is the column.', 'Not for one standalone page (use `PageFrame` or the matching template); not for a list + record with no section rail (use `MasterDetailPage`).'],
   ['A settings page', 'SettingsPage', 'Section rail + settings content with consistent row spacing. (`SettingsLayout` is the lower-level shell.)', 'Not for a one-off form inside a modal (use the `forms/` controls in a `Modal`).'],
-  ['App chrome', 'AppShell', 'Sidebar + top bar + content region. Pass `layout="fill"` when the content area must fill the viewport (canvases, chat, editors) rather than scroll as a document.', 'Not inside a page; there is exactly one per app. Root-only import: there is no `/layout` subpath.'],
+  ['App chrome', 'AppShell', 'Sidebar + top bar + content region. Pass `layout="fill"` when the content area must fill the viewport (canvases, chat, editors) rather than scroll as a document.', 'Not inside a page; there is exactly one per app. Import it (and `ThemeProvider`) from `/shared`; there is no `/layout` subpath.'],
   ['A data table', 'DataTable', 'Columns + rows with sorting, selection, empty/loading states and row striping by default. Start here for any tabular data.', 'Don\'t drop to `Table` primitives unless you need cell layouts `DataTable` cannot express.'],
   ['Table building blocks', 'Table', '`Table`, `TableHead`, `TableBody`, `TableRow`, `TableTh`, `TableTd`: the styled primitives `DataTable` is made of.', 'Not a first choice: no sorting, selection or states built in.'],
   ['Identity admin tables', 'EntityTable', 'The identity-admin entity list (users, groups, roles) with row actions.', 'Not a general-purpose table; use `DataTable` outside identity admin.'],
@@ -448,13 +448,17 @@ const isPascal = (n) => /^[A-Z][A-Za-z0-9]*$/.test(n) && (/[a-z]/.test(n) || n.l
 
 /**
  * Which entry a row's import path names when several export the same
- * declaration: the root first (it re-exports shared/layout/social/video/
- * identity), then `/integrations/realtime-modules` over the scope-agnostic
- * `/integrations/realtime` (canonical installs), then package.json order.
+ * declaration: a subpath before the root, because the root barrel reaches
+ * every optional peer and the package deliberately declares no `sideEffects`
+ * (docs/bundle-side-effects.md), so a root import costs consumers the whole
+ * library. `/shared` first, `/integrations/realtime-modules` over the
+ * scope-agnostic `/integrations/realtime`, then package.json order; the root
+ * only for names no subpath exports.
  */
 function entryRank(key, i) {
-  if (key === '.') return -2;
+  if (key === './shared') return -2;
   if (key === './integrations/realtime-modules') return -1;
+  if (key === '.') return 10_000;
   return i;
 }
 
@@ -508,7 +512,7 @@ export function render() {
   L.push('');
   L.push(`Every component-shaped (PascalCase, runtime) export of \`${PKG_NAME}\`, grouped by job. `
     + 'Before writing any page or hand-rolling markup, find the component here. '
-    + 'Import paths are the ones to use: layout components (`AppShell`, `AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.');
+    + 'Import paths are the ones to use: each names a subpath where one exports the component, because a root import pulls the whole library into a consumer bundle. `AppShell` and `ThemeProvider` are on `/shared`; other layout components (`AppLayout`, `CollapsibleSidebar`) are root-only; there is no `/layout` subpath.');
   L.push('');
   L.push(`${rows.length} components across ${entries.length} entry points; ${documented} carry a one-line description from their source doc comment. `
     + 'Story ids are Storybook ids (`npm run storybook`, then `?path=/docs/<id>--docs`).');

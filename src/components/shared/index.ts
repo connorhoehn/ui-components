@@ -558,3 +558,11 @@ export type { AssetGalleryProps, GalleryAsset } from './AssetGallery';
 
 export { MediaCollectionCard } from './MediaCollectionCard';
 export type { MediaCollectionCardProps, MediaCollectionPreview } from './MediaCollectionCard';
+
+// App chrome on the /shared subpath (since 2.504.1), so a consumer importing
+// only from subpaths never pulls the root barrel (which reaches every peer;
+// see docs/bundle-side-effects.md for why `sideEffects` stays undeclared).
+export { AppShell } from '../layout/AppShell';
+export type { AppShellProps } from '../layout/AppShell';
+export { ThemeProvider, useThemeContext, useTheme } from '../../theme';
+export type { ThemeTokens, ThemeProviderProps, ToneOverride } from '../../theme';

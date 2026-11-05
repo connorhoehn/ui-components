@@ -30,10 +30,11 @@ describe('docs/COMPONENT_INDEX.md', () => {
   it('indexes the components the canonical-choices table depends on', () => {
     const { rows } = collect() as { rows: Array<{ name: string; subpath: string }> };
     const at = (name: string) => rows.filter((r) => r.name === name).map((r) => r.subpath);
-    // Layout is root-only; a regression that routed it to a subpath would
-    // re-teach consumers the nonexistent `/layout` import.
-    expect(at('AppShell')).toEqual(['']);
-    expect(at('DataTable')).toEqual(['']);
+    // Rows name a subpath where one exists (a root import pulls every peer);
+    // never the nonexistent `/layout`. AppShell is on `/shared` since 2.504.1.
+    expect(at('AppShell')).toEqual(['/shared']);
+    expect(at('DataTable')).toEqual(['/shared']);
+    expect(rows.some((r) => r.subpath === '/layout')).toBe(false);
     expect(at('PipelineEditorPage')).toEqual(['/pipelines']);
   });
 });

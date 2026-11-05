@@ -204,7 +204,7 @@ applies anywhere.
 **After** (ui-components composites + Tailwind tokens):
 
 ```tsx
-import { PageHeader, Button } from '@connorhoehnslalom/ui-components';
+import { PageHeader, Button } from '@connorhoehnslalom/ui-components/shared';
 
 <PageHeader
   title="Sessions"
@@ -264,7 +264,7 @@ they break when the third user has the same initial as the first.
 **After:**
 
 ```tsx
-import { PresenceAvatars } from '@connorhoehnslalom/ui-components';
+import { PresenceAvatars } from '@connorhoehnslalom/ui-components/shared';
 
 <PresenceAvatars users={users} maxVisible={5} size={24} />
 ```
@@ -312,7 +312,7 @@ ordering. The library has a single component for it.
 **After** (pure):
 
 ```tsx
-import { ChatPanel } from '@connorhoehnslalom/ui-components';
+import { ChatPanel } from '@connorhoehnslalom/ui-components/social';
 
 <ChatPanel
   messages={messages}

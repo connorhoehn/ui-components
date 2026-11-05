@@ -136,7 +136,7 @@
     "docs/COMPONENT_INDEX.md",
     "docs/consumer-adoption.md",
     "docs/integrations-realtime-modules.md",
-    "docs/consumer-handoffs/eslint-plugin.md",
+    "docs/consumer-handoffs",
     "patterns",
     "llms.txt",
     "CHANGELOG.md",
