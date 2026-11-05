@@ -57,6 +57,13 @@ export interface CollectionToolbarProps {
   layout?: 'table' | 'cards';
   search?: CollectionSearch;
   filters?: CollectionFilter[];
+  /**
+   * Host-built content for the same Filters popover, for filters that are not
+   * single selects (multi-select facets such as `WorkListFilters`). Drawn
+   * after any `filters`; `activeCount` joins the trigger's count and
+   * `onClear` runs with the panel's Clear. Since 2.503.0.
+   */
+  filterPanel?: { content: ReactNode; activeCount?: number; onClear?: () => void };
   /** A count line ("12 of 40 runs"). Hidden while `resultCount` is 0 — the empty state says it instead. */
   summary?: ReactNode;
   /**
@@ -83,7 +90,7 @@ export interface CollectionToolbarProps {
 
 /** One collection control row: filters, count, notices and named icon actions.
  * Hosts supply state and commands, never control geometry or presentation. */
-export function CollectionToolbar({ label, layout = 'table', search, filters = [], summary, resultCount, placement = 'band', notices = [], actions = [], onRefresh, refreshing = false, selection, children }: CollectionToolbarProps) {
+export function CollectionToolbar({ label, layout = 'table', search, filters = [], filterPanel, summary, resultCount, placement = 'band', notices = [], actions = [], onRefresh, refreshing = false, selection, children }: CollectionToolbarProps) {
   const infoRef = useRef<HTMLButtonElement>(null);
   const [infoOpen, setInfoOpen] = useState(false);
   const active = filters.filter(f => f.value !== (f.emptyValue ?? ''));
@@ -102,8 +109,9 @@ export function CollectionToolbar({ label, layout = 'table', search, filters = [
   // results (active filters, count, notices).
   const query = <>
     {search && <SearchInput {...searchProps} collapsible={collapsible} className={collapsible ? 'min-w-0 w-56 max-w-full' : 'min-w-0 w-full max-w-64'} />}
-    {filters.length > 0 && <FilterPopover label="Filters" trigger="icon" activeCount={active.length} panelLabel={label} onClear={() => filters.forEach(f => f.onChange(f.emptyValue ?? ''))}>
+    {(filters.length > 0 || filterPanel) && <FilterPopover label="Filters" trigger="icon" placement="bottom-end" activeCount={active.length + (filterPanel?.activeCount ?? 0)} panelLabel={label} onClear={() => { filters.forEach(f => f.onChange(f.emptyValue ?? '')); filterPanel?.onClear?.(); }}>
       {filters.map(filter => <FormField key={filter.id} label={filter.label}>{wiring => <Select {...wiring} aria-label={filter.label} value={filter.value} options={filter.options} onChange={event => filter.onChange(event.target.value)} chevron="custom" />}</FormField>)}
+      {filterPanel?.content}
     </FilterPopover>}
     {onRefresh && <Tooltip content="Refresh"><IconButton aria-label="Refresh" icon={<RepeatIcon />} onClick={onRefresh} disabled={refreshing} /></Tooltip>}
     {actions.map(action => <Tooltip key={action.id} content={action.label}><IconButton aria-label={action.label} icon={action.icon} onClick={action.onClick} disabled={action.disabled} data-testid={action['data-testid']} /></Tooltip>)}
@@ -111,7 +119,7 @@ export function CollectionToolbar({ label, layout = 'table', search, filters = [
   const described = active.length > 0 || showSummary || notices.length > 0 || children != null;
   return <Toolbar aria-label={label} wrap={placement === 'band'} variant="collection" bordered={false} data-collection-layout={layout} data-collection-placement={placement}
     className={placement === 'header' ? 'min-h-0 px-0 py-0' : layout === 'cards' ? 'px-0' : undefined} data-collection-selection={selection ? 'idle' : undefined}
-    end={search || filters.length > 0 || onRefresh || actions.length ? query : undefined}>
+    end={search || filters.length > 0 || filterPanel || onRefresh || actions.length ? query : undefined}>
     {described && <>
       {active.length > 0 && <span className="min-w-0 truncate text-xs text-text-primary" title={active.map(f => `${f.label}: ${f.options.find(o => o.value === f.value)?.label ?? f.value}`).join(' · ')}>{active.map(f => f.options.find(o => o.value === f.value)?.label ?? f.value).join(' · ')}</span>}
       {showSummary && <span className="min-w-0 text-xs text-text-secondary" data-collection-summary>{summary}</span>}

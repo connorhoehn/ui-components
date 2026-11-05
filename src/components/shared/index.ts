@@ -536,6 +536,7 @@ export type { ActivityTickerProps, ActivityTickerItem, ActivityTickerPreferences
 
 export * from './CollectionToolbar';
 export * from './CollectionPage';
+export * from './ActivityResumeChip';
 export * from './ComposerSurface';
 export { AssetGallery } from './AssetGallery';
 export type { AssetGalleryProps, GalleryAsset } from './AssetGallery';

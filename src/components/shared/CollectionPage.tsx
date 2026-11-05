@@ -7,6 +7,8 @@ export interface CollectionPageProps extends Omit<HTMLAttributes<HTMLDivElement>
   title: string;
   description?: string;
   headerActions?: ReactNode;
+  /** Beside the title (a scope chip such as the episode the page is filtered to). Since 2.503.0. */
+  badge?: ReactNode;
   toolbar?: CollectionToolbarProps;
   /**
    * Where the toolbar draws (since 2.503.0). `auto` (default) puts its
@@ -22,13 +24,13 @@ export interface CollectionPageProps extends Omit<HTMLAttributes<HTMLDivElement>
 }
 /** Collection layout policy belongs here. A page supplies content and state;
  * it does not reproduce Stack/PageHeader/Toolbar spacing at each route. */
-export function CollectionPage({ title, description, headerActions, toolbar, toolbarPlacement = 'auto', back, children, className, ...rest }: CollectionPageProps) {
+export function CollectionPage({ title, description, headerActions, badge, toolbar, toolbarPlacement = 'auto', back, children, className, ...rest }: CollectionPageProps) {
   const inHeader = !!toolbar && (toolbarPlacement === 'header' || (toolbarPlacement === 'auto' && collectionToolbarFitsHeader(toolbar)));
   const actions = inHeader
     ? <><CollectionToolbar {...toolbar} placement="header" />{headerActions}</>
     : headerActions;
   return <div className={cn('flex min-w-0 flex-col gap-[var(--ui-section-gap,0.75rem)]', className)} data-collection-page {...rest}>
-    <PageHeader title={title} description={description} actions={actions} back={back} density="compact" />
+    <PageHeader title={title} description={description} badge={badge} actions={actions} back={back} density="compact" />
     {toolbar && !inHeader && <CollectionToolbar {...toolbar} />}
     {children}
   </div>;

@@ -59,3 +59,21 @@ describe('CollectionPage hosts the toolbar in the header (2.503.0)', () => {
     expect(screen.getByTestId('page-header')).not.toContainElement(screen.getByRole('toolbar'));
   });
 });
+
+describe('CollectionToolbar filterPanel (2.503.0)', () => {
+  it('draws host filter content in the Filters popover, counts it and clears it', () => {
+    let cleared = 0;
+    render(<CollectionToolbar label="Artwork" filterPanel={{ content: <p>Facet list</p>, activeCount: 2, onClear: () => { cleared++; } }} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Filters (2 active)' }));
+    expect(screen.getByText('Facet list')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Clear filters' }));
+    expect(cleared).toBe(1);
+  });
+});
+
+describe('CollectionPage badge (2.503.0)', () => {
+  it('draws the badge beside the title', () => {
+    render(<CollectionPage title="Artwork" badge={<span>Episode 2</span>}><p>grid</p></CollectionPage>);
+    expect(screen.getByTestId('page-header')).toHaveTextContent('Episode 2');
+  });
+});
