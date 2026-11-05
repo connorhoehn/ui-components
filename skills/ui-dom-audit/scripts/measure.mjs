@@ -236,9 +236,9 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
   const opacityOf = el => { let o = 1; for (let n = el; n && n !== document.documentElement; n = n.parentElement) o *= parseFloat(cs(n).opacity); return o; };
   // A visible border: some side drawn (width ≥ 1, a style) in a colour that
   // differs from what is painted behind it.
-  const borderVisible = el => {
+  const borderVisible = (el, sides = ['Top', 'Right', 'Bottom', 'Left']) => {
     const s = cs(el), base = backdrop(el.parentElement ?? el);
-    for (const side of ['Top', 'Right', 'Bottom', 'Left']) {
+    for (const side of sides) {
       if (parseFloat(s[`border${side}Width`]) < 1 || /none|hidden/.test(s[`border${side}Style`])) continue;
       const c = toRGBA(s[`border${side}Color`]);
       if (!base) return true;
@@ -1622,6 +1622,124 @@ export function measureDOM({ contract, selectors, required = [], composerExpecta
           samples.push({ rule: rule.id, selector: selectorOf(host), property: 'marker on the first line', actual: Math.round(mid - (first.top + first.bottom) / 2), expected: 0 });
           if (mid < first.top - tol || mid > first.bottom + tol) { found++; add(rule, mark, 'list marker position', 'on the first line of its item', `centred ${Math.round(mid - (first.top + first.bottom) / 2)}px below the first line of "${snippet(runs[0].text)}" (${lines.length} lines)`); }
         }
+        coverage.at(-1).matched = measured;
+      }
+      else if (rule.kind === 'zebra') {
+        // Alternating rows (table.zebra): a table — native, or hand-rolled
+        // with role="table"/"grid" — holding `minRows` body rows or more paints
+        // adjacent rows in different backgrounds, so the eye can follow one row
+        // across. A table inside the library stripe marker is trusted.
+        const minRows = rule.minRows ?? 4;
+        let measured = 0;
+        for (const table of nodes) {
+          const native = table.matches('table');
+          const rows = (native
+            ? [...table.querySelectorAll(':scope > tbody > tr, :scope > tr')]
+            : [...table.querySelectorAll('[role="row"]')].filter(r => r.parentElement?.closest('table, [role="table"], [role="grid"], [role="treegrid"]') === table && !r.querySelector('[role="columnheader"]')))
+            // A full-width group/empty row is not part of the stripe.
+            .filter(r => visible(r) && !(r.children.length === 1 && r.children[0].hasAttribute('colspan')));
+          if (rows.length < minRows) continue;
+          measured++;
+          if (rule.marker && table.closest(css(rule.marker))) { samples.push({ rule: rule.id, selector: selectorOf(table), property: 'stripe marker', actual: 'present', expected: 'present or alternating backgrounds' }); continue; }
+          // A row's paint is what shows behind its first cell: the cell, the row and everything under them.
+          const paint = row => { const c = backdrop([...row.children].find(visible) ?? row); return c && `rgb(${c.r}, ${c.g}, ${c.b})`; };
+          const colors = rows.map(paint);
+          if (colors.some(c => !c)) continue;
+          let same = 0, at = -1;
+          for (let i = 1; i < colors.length; i++) if (colors[i] === colors[i - 1]) { same++; if (at < 0) at = i; }
+          samples.push({ rule: rule.id, selector: selectorOf(table), property: 'adjacent rows sharing a background', actual: same, expected: 0 });
+          if (same) add(rule, rows[at], 'alternating row background', `adjacent body rows differ in background (DataTable/Table stripe by default${rule.marker ? `; or ${rule.marker}` : ''})`, `${same} of ${rows.length - 1} adjacent pairs share ${colors[at]} (${rows.length} rows)`);
+        }
+        coverage.at(-1).matched = measured;
+      }
+      else if (rule.kind === 'separator') {
+        // Group separation (section.separator): two content groups stacked one
+        // above the other under the same parent are told apart by a border or
+        // shadow on a facing edge, a divider between them, distinct surfaces,
+        // or at least `minGap` (the section-gap token) of blank space between
+        // what they draw. Flush groups with none of these read as one block.
+        const groups = css(rule.groups), divider = 'hr, [role="separator"]';
+        const tol = rule.tolerance ?? tolerance;
+        let measured = 0, found = 0, minGap = null;
+        const edge = (el, side) => borderVisible(el, [side]) || cs(el).boxShadow !== 'none';
+        const endsWithDivider = (el, first) => { const kids = [...el.children].filter(visible); const k = first ? kids[0] : kids.at(-1); return !!k && k.matches(divider); };
+        const parents = new Set();
+        for (const scope of nodes) for (const g of scope.querySelectorAll(groups)) if (visible(g) && g.parentElement && scope.contains(g.parentElement)) parents.add(g.parentElement);
+        for (const parent of parents) {
+          const kids = [...parent.children].filter(visible);
+          for (let i = 1; i < kids.length; i++) {
+            const a = kids[i - 1], b = kids[i];
+            if (!a.matches(groups) || !b.matches(groups)) continue;
+            const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+            // Stacked: b starts below a and the two share horizontal extent (side by side is a columns concern).
+            if (rb.top < ra.bottom - tol || Math.min(ra.right, rb.right) - Math.max(ra.left, rb.left) <= 1) continue;
+            measured++;
+            if (edge(a, 'Bottom') || edge(b, 'Top') || endsWithDivider(a, false) || endsWithDivider(b, true)) continue;
+            const ca = backdrop(a), cb = backdrop(b);
+            if (ca && cb && (ca.r !== cb.r || ca.g !== cb.g || ca.b !== cb.b)) continue;
+            minGap ??= resolve(rule.minGap ?? 12);
+            const inkA = inkRects(a), inkB = inkRects(b);
+            const gap = inkA.length && inkB.length ? Math.min(...inkB.map(r => r.top)) - Math.max(...inkA.map(r => r.bottom)) : rb.top - ra.bottom;
+            samples.push({ rule: rule.id, selector: selectorOf(b), property: 'separation from the group above', actual: round(gap), expected: { min: minGap } });
+            if (gap < minGap - tol && found < (rule.maxPerPage ?? 8)) { found++; add(rule, b, 'separation from the group above', `a border or divider between stacked groups, or >= ${minGap}px between their content (PageSection divided / the template's section gap)`, `${Math.round(gap)}px, no border or divider, below ${selectorOf(a)}`); }
+          }
+        }
+        coverage.at(-1).matched = measured;
+      }
+      else if (rule.kind === 'vertical-budget') {
+        // Page length at rest (page.vertical-budget): a portal page fits about
+        // one viewport. It may scroll one long flow (a collection's rows, a
+        // document, a transcript: `scrollingContent`), but it does not stack
+        // section after section; those become tabs or a master-detail split.
+        const maxRatio = rule.maxScrollRatio ?? 2, maxStacked = rule.maxStackedSections ?? 4;
+        const groups = css(rule.groups), flowing = rule.scrollingContent ? css(rule.scrollingContent) : null;
+        let measured = 0;
+        for (const column of nodes) {
+          measured++;
+          const top = [...column.querySelectorAll(groups)].filter(g => {
+            if (!visible(g)) return false;
+            const outer = g.parentElement?.closest(groups);
+            return !outer || outer === column || !column.contains(outer);
+          });
+          // Side-by-side groups (a dashboard row of tiles) count as one row.
+          const rows = rowsOf(top.map(g => { const b = g.getBoundingClientRect(); return { el: g, top: b.top, bottom: b.bottom, left: b.left, right: b.right }; }));
+          samples.push({ rule: rule.id, selector: selectorOf(column), property: 'stacked rows of top-level sections', actual: rows.length, expected: { max: maxStacked } });
+          if (rows.length > maxStacked) add(rule, rows[maxStacked].items[0].el, 'stacked rows of top-level sections', `<= ${maxStacked} in the content column (DetailPage tabs or MasterDetailPage instead of stacked cards)`, `${rows.length} rows of ${top.length} sections`);
+          if (flowing && (column.matches(flowing) || column.querySelector(flowing))) continue;
+          // The column's length: its own scroll height, or that of a main
+          // scroller inside it (a fill-layout shell scrolls an inner body).
+          const c = column.getBoundingClientRect();
+          let length = column.scrollHeight;
+          for (const n of column.querySelectorAll('*')) {
+            if (!/^(auto|scroll)$/.test(cs(n).overflowY) || n.clientHeight < c.height / 2 || !visible(n)) continue;
+            length = Math.max(length, n.scrollHeight + (n.getBoundingClientRect().top - c.top));
+          }
+          const ratio = Math.round(length / innerHeight * 100) / 100;
+          samples.push({ rule: rule.id, selector: selectorOf(column), property: 'content height / viewport', actual: ratio, expected: { max: maxRatio } });
+          if (ratio > maxRatio + 0.01) add(rule, column, 'content height / viewport', `<= ${maxRatio} viewports at rest (move secondary groups behind tabs or a master-detail split)`, `${ratio} (${Math.round(length)}px in a ${innerHeight}px viewport)`);
+        }
+        coverage.at(-1).matched = measured;
+      }
+      else if (rule.kind === 'unmarked') {
+        // Hand-rolled DOM (element.unmarked): an interactive element or page
+        // section in the content column that carries no library marker and
+        // sits inside no library composite (`owners`) was not rendered by the
+        // component library, so every marker-keyed rule is blind to it.
+        const owners = rule.owners ? css(rule.owners) : null, max = rule.maxPerPage ?? 10;
+        let measured = 0, total = 0;
+        const counts = {};
+        for (const scope of nodes) for (const spec of rule.elements ?? []) {
+          for (const el of scope.querySelectorAll(css(spec.selector))) {
+            if (!visible(el)) continue;
+            if (spec.topLevel) { const outer = el.parentElement?.closest(css(spec.selector)); if (outer && scope.contains(outer)) continue; }
+            measured++;
+            if (el.matches(css(spec.marker)) || (owners && el.closest(owners))) continue;
+            total++; counts[spec.name] = (counts[spec.name] ?? 0) + 1;
+            if (total <= max) add(rule, el, `unmarked ${spec.name}`, `a library component (${spec.marker})`, `hand-rolled <${el.tagName.toLowerCase()}>${(el.textContent ?? '').trim() ? ` "${snippet((el.textContent ?? '').trim())}"` : ''}`);
+          }
+        }
+        samples.push({ rule: rule.id, selector: 'document', property: 'unmarked elements', actual: total, expected: 0 });
+        if (total > max) add(rule, null, `unmarked elements beyond the first ${max}`, 0, JSON.stringify(counts));
         coverage.at(-1).matched = measured;
       }
     } catch (error) { add(rule, null, 'rule evaluation', 'valid selector/token/config', String(error.message), 'coverage'); }

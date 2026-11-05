@@ -54,6 +54,10 @@ leave that count unchanged (a duplicate React child key caused this regression).
 | `panel-empty` | selector (open panels), empty (empty-state marker), maxGap | A panel holding an empty state with a blank band (between what it draws, padded top to padded bottom) taller than `maxGap`: a fixed height where the cap should be a maximum |
 | `composer-last` | selector (composers), column, dock?, ignore? | Ink in the composer's column laid out below it (scrolled into view or not; its own dock and fixed layers excepted), or a composer band with side margins inside its column |
 | `section-empty` | selector (page sections), empty (empty-state marker), maxLines | A page section with nothing to show (its own empty state, no ink but headings and controls) drawn on more than `maxLines` lines |
+| `zebra` | selector (tables: native, `role=table`, `role=grid`), minRows, marker? | A table with `minRows`+ body rows whose adjacent rows paint the same background (judged behind each row's first cell, so cell- and row-painted stripes both count); a table inside `marker` is trusted (`table.zebra`). Hand-rolled tables are judged the same way |
+| `separator` | selector (scope), groups, minGap, maxPerPage? | Two sibling content groups stacked one above the other with no facing border/shadow, no divider (`hr`, `role=separator`) between or at their edge, the same surface, and less than `minGap` between their ink (`section.separator`) |
+| `vertical-budget` | selector (content columns), groups, maxScrollRatio, maxStackedSections, scrollingContent? | At rest, more than `maxStackedSections` rows of top-level groups (side-by-side tiles count as one row), or a column (or its main inner scroller) longer than `maxScrollRatio` viewports unless it holds one long flow named by `scrollingContent` (`page.vertical-budget`) |
+| `unmarked` | selector (scope), elements[{name, selector, marker, topLevel?}], owners, maxPerPage | An element matching an entry's `selector` that carries none of its library `marker`s and sits inside no `owners` composite: DOM the component library did not render, which every marker-keyed rule cannot see (`element.unmarked`). Beyond `maxPerPage`, one finding carries the per-kind counts |
 
 `columns` can alternatively use `regions: ["$primary", "$secondary",
 "$content", "$right"]`. Never select nested parents and children as peers.
@@ -195,6 +199,9 @@ export default {
   // (outside the app frame, an unreadable record). skip: true records it without measuring; a
   // blank/placeholder reason fails coverage (coverage.context).
   // Optional dataApi {include, exclude[], permissions} and deep {chrome[], panes, chromeTriggers}: deep-audit.md.
+  // Optional ruleOptions { [ruleId]: { threshold: value } }: tune a threshold the rule already declares
+  // (e.g. { 'page.vertical-budget': { maxScrollRatio: 3 } }). id, kind, deep, selector and exclude cannot
+  // be overridden, and an unknown rule or field throws, so an adapter cannot silently drop a check.
 };
 ```
 
